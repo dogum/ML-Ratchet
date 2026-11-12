@@ -20,7 +20,7 @@ The losses are published too.
 
 | Model | The question it answers | Real exam | Record vs baselines |
 |---|---|---|---|
-| [**ChirpNet**](models/chirpnet/) | Is there a black-hole or neutron-star merger in this LIGO data, and how heavy was it? | 5 O1/O2 events + time-slid background | 5 wins · 1 loss |
+| [**ChirpNet**](models/chirpnet/) | Is there a black-hole or neutron-star merger in this LIGO data, and how heavy was it? | 13 events from O1–O3 + time-slid background | 8 wins · 3 losses |
 | [**SunDoctor**](models/sundoctor/) | Why did this solar array make less power today, and what did each cause cost? | 2 real PV farms, independent answer keys | 4 wins · 0 losses · 1 tie |
 | [**CellSense**](models/cellsense/) | How worn is this battery cell, why, and how many cycles are left? | 118 cells | 1 win · 1 loss · 2 mixed |
 | [**TransitNet**](models/transitnet/) | Is this dip in a TESS light curve a planet, and how big is it? | 1,196 planets + 832 false positives | 3 wins · 2 losses |
@@ -107,8 +107,8 @@ Then follow [docs/adding-a-model.md](docs/adding-a-model.md). Building with an A
 [docs/agent-brief.md](docs/agent-brief.md) — the last four models were built by parallel agents from that brief.
 Twelve candidates with physics, data and an exam already lined up are in [the backlog](docs/backlog.md).
 
-**Help wanted:** ChirpNet's O3 exam and CellSense's other chemistries are waiting on data downloads.
-See [docs/roadmap.md](docs/roadmap.md).
+**Help wanted:** CellSense's other chemistries are waiting on data (ChirpNet's O3 exam, once blocked the same way,
+is now done: 7 of 7 in-range events found). See [docs/roadmap.md](docs/roadmap.md).
 
 ## Licence and data
 

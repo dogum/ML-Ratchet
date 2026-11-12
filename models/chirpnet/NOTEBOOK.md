@@ -56,3 +56,26 @@
 - https://claude.ai/artifact/T2b4hUR7A5CVLogNbfkm3T (v2 adds the Local Group scenario).
 
 - Greg enjoys learning outside his field. Explain in plain language, and keep visuals front and center.
+
+## O3 exam — 12 Nov 2026 (in the repository, from a home connection)
+
+GWOSC, blocked from the cloud sandbox, answered from a home connection (v2 API). `training/o3_exam.py` ran the
+released v2 cascade and posterior network, unchanged, on the eight O3 events named on 30 Oct, with the O1/O2
+exam's protocol (32 s, 4 kHz, H1 + L1; time-slid background from the same files, event windows removed).
+
+| Event | Catalogue | Statistic | Found | Chirp mass (det.) | Catalogue | In 68% |
+|---|---|---|---|---|---|---|
+| GW190408_181802 | GWTC-2.1 | 11.07 | yes | 24.5 | 23.9 | yes |
+| GW190412 | GWTC-2.1 | 12.41 | yes | 15.4 | 15.3 | yes |
+| GW190521 | GWTC-2.1 | −0.63 | **no** | — | 98.7 (outside training range) | — |
+| GW190828_063405 | GWTC-2.1 | 14.11 | yes | 33.5 | 33.9 | yes |
+| GW191204_171526 | GWTC-3 | 12.60 | yes | 10.0 | 9.7 | yes |
+| GW200129_065458 | GWTC-3 | 12.35 | yes | 31.4 | 32.1 | yes |
+| GW200224_222234 | GWTC-3 | 9.89 | yes | 35.0 | 41.1 | **no** (−15%) |
+| GW200311_115853 | GWTC-3 | 11.85 | yes | 32.8 | 32.7 | yes |
+
+- Background: 29,879 time-slid O3 windows, 1.04 h; loudest 7.24 — one window above the 7.0 threshold set on O1/O2.
+- Posteriors: all 35 catalogue medians (m1, m2, source-frame chirp mass, χ_eff, distance × 7 events) inside the 90% ranges.
+- Merger times are 24–100 ms from the catalogue's (geocentric) GPS times, looser than in O1/O2.
+- One-detector views still clear the threshold for GW190408 (both), GW190412 (H1), GW191204 (L1) and GW200311 (both):
+  the known limit of the coincidence check.

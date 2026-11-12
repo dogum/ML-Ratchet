@@ -8,7 +8,7 @@ to route around a refusal; find another documented source or download it yoursel
 
 | Source | What | Used by | Notes |
 |---|---|---|---|
-| [GWOSC](https://gwosc.org) | LIGO/Virgo strain, event files | ChirpNet | Blocked from the sandbox for O3 files — the O3 exam waits on a local download |
+| [GWOSC](https://gwosc.org) | LIGO/Virgo strain, event files | ChirpNet | Blocked from the cloud sandbox; reachable from a home connection (v2 API `/api/v2/events/<name>`), which is how the O3 exam was run |
 | [LIGO DCC](https://dcc.ligo.org) | GW170817 data products | ChirpNet | |
 | [OEDI / PVDAQ](https://data.openei.org/submissions/4568) | PV system time series | SunDoctor | S3 bucket reachable |
 | [data.matr.io](https://data.matr.io/1/) | Severson 2019 battery cycling | CellSense | |

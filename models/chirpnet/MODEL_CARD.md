@@ -66,6 +66,26 @@ pipeline's statistic with the partner detector slid by 5, 9 or 13 s (the maximum
 | GW151226 | 10.1 | 6.5 | 7.9 / 1.8 | < 0.50 | 10.2 [9.5, 10.9] | 9.7 [9.4, 10.0] | -2 ms |
 | GW170104 | 9.8 | 7.1 | 5.7 / 8.9 | < 0.50 | 23.2 [20.9, 25.8] | 25.7 [23.5, 28.3] | -1 ms |
 
+### Final exam, part 2: O3 (12 Nov 2026)
+
+The released model, unchanged, on eight O3 events named in advance (32 s, 4 kHz GWOSC files; `training/o3_exam.py`,
+results in `training/logs/o3_exam.json`). Background: L1 slid against H1 by 3–25 s within each file, event windows
+removed: 29,879 windows, 1.04 h, loudest 7.24 (one window above the 7.0 threshold).
+
+| Event | Statistic | Chirp mass (detector frame), ChirpNet | GWTC | Posterior medians inside 90% |
+|---|---|---|---|---|
+| GW190408_181802 | 11.07 | 24.5 [22.3, 26.9] | 23.9 | 5 / 5 |
+| GW190412 | 12.41 | 15.4 [14.7, 16.1] | 15.3 | 5 / 5 |
+| GW190521 | −0.63 (missed) | — | 98.7 | — |
+| GW190828_063405 | 14.11 | 33.5 [30.6, 36.6] | 33.9 | 5 / 5 |
+| GW191204_171526 | 12.60 | 10.0 [9.6, 10.5] | 9.7 | 5 / 5 |
+| GW200129_065458 | 12.35 | 31.4 [28.4, 34.7] | 32.1 | 5 / 5 |
+| GW200224_222234 | 9.89 | 35.0 [30.9, 39.7] | 41.1 | 5 / 5 |
+| GW200311_115853 | 11.85 | 32.8 [29.3, 36.7] | 32.7 | 5 / 5 |
+
+GW190521's detector-frame chirp mass (98.7) is more than twice the training range's upper edge (45); it was kept in
+the exam because it was named in advance. Merger times are 24–100 ms from the catalogue's geocentric GPS times.
+
 ## 2. Posteriors (DINGO-style neural posterior estimation)
 
 A ChirpNet trunk (started from rung 4) embeds the 2 s window. Each detector's noise spectrum is summarized as its ASD at
@@ -124,4 +144,4 @@ with chirp mass **1.1365 M☉** (LIGO: 1.1975 +0.0001/−0.0001, detector frame)
   They are upper limits, nowhere near the significance of LIGO's production searches.
 - The neutron-star chirp mass is good to about 2% on simulations, versus LIGO's 0.01%, because 16 s windows give up the early
   inspiral. On GW170817 the released rung is 5% low and its 68% interval misses LIGO's value; rung 2 had been within 1.3%.
-- All five real events are from O1/O2 (2015-2017). Untested on O3/O4 data.
+- Real events tested come from O1–O3 (2015–2020); untested on O4. Mergers heavier than the training range (GW190521) are missed.

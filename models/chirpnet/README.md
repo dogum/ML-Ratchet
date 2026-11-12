@@ -3,9 +3,6 @@
 
 > **Neural networks that never saw a real gravitational wave, then found five.**
 
-> [!NOTE]
-> Released, with part of the exam still waiting on data — see [Help wanted](#help-wanted).
-
 *Is there a black-hole or neutron-star merger in this LIGO data, and how heavy was it?*
 
 Four small networks trained only on simulated mergers from general relativity. Pointed at real recordings from the two LIGO observatories they find the black-hole and neutron-star mergers, weigh them, and give calibrated posterior ranges. Everything runs on plain numpy.
@@ -43,7 +40,7 @@ post = chirpnet.ChirpPE("chirpnet_pe_weights.npz").weigh(h1, l1, t0, hits[0]["gp
 
 ## The exam
 
-Five real O1/O2 events, plus hours of time-slid real background to bound false alarms. Every number here is on real data that never chose anything.
+Thirteen real events — five from O1/O2 and eight from O3, the O3 set named in advance — plus hours of time-slid real background from the same files to bound false alarms. Every number here is on real data that never chose anything.
 
 | Metric | ChirpNet | Baselines | |
 |---|---|---|---|
@@ -53,24 +50,33 @@ Five real O1/O2 events, plus hours of time-slid real background to bound false a
 | GW170817 statistic vs loudest background (6.2 h) | **14.4** | Loudest time-slid background (dumb baseline): 5 | ✅ wins |
 | GW170817 chirp mass (detector frame, M☉)<br><sub>5% low with an over-confident interval; rung 2 had been within 1.3%.</sub> | **1.136** | LIGO (published): 1.1975 | ❌ loses |
 | Loud one-detector fakes passed | **17%** | Finder alone (rung 4) (classical): 99.6% | ✅ wins |
+| O3 black-hole events found, within the training range (7 events)<br><sub>Statistics 9.9–14.1. Named in advance; data first reached on 12 Nov 2026 (the cloud sandbox could not reach GWOSC).</sub> | **7 / 7** | Loudest of 29,879 time-slid O3 background windows (dumb baseline): 7.24 | ✅ wins |
+| O3 chirp mass inside ChirpNet's 68% range<br><sub>Within 4% on six events; GW200224_222234 reads 15% low (35.0 vs 41.1).</sub> | **6 / 7** | GWTC-2.1 / GWTC-3 (detector frame) (published): reference | ✅ wins |
+| O3 catalogue medians inside ChirpNet's 90% posterior ranges<br><sub>m1, m2, chirp mass (source frame), effective spin and distance for seven events.</sub> | **35 / 35** | — | ✅ wins |
+| GW190521 (detector-frame chirp mass 98.7, far above the 45 the model trained on)<br><sub>Statistic −0.6. Outside the training range, named in advance anyway.</sub> | **missed** | LIGO/Virgo search (published): found | ❌ loses |
+| O3 time-slid background windows above the O1/O2 threshold (7.0)<br><sub>The loudest O3 background window scores 7.24 in 1.04 h: O3 noise is a little rougher than the threshold assumed.</sub> | **1 of 29,879** | O1/O2 background (57,760 windows) (dumb baseline): 0 | ❌ loses |
 
 ### Where it wins
 
 - Finds all four O1/O2 black-hole events with a clear gap above real background.
 - Posteriors are calibrated (P-P within chance) and contain every GWTC-1 median.
 - The cascade cuts loud single-detector fakes from 99.6% to 17%.
+- Unchanged since O1/O2, it finds all seven in-range O3 events named in advance, and every O3 catalogue median lands inside its 90% posteriors.
 
 ### Where it loses
 
 - GW170817 chirp mass 5% low with too narrow an interval.
-- GW151226's Hanford signal alone still scores above threshold.
+- GW151226's Hanford signal alone still scores above threshold (so do GW190408's and GW200311's in O3).
+- Misses GW190521, a merger heavier than anything in its training set.
+- One O3 background window (7.24) clears the 7.0 threshold set on O1/O2 noise.
 
 ## Limits
 
 - Aligned spins only; no precession or higher modes.
 - False-alarm rates rest on hours of time slides, so they are upper limits.
 - The neutron-star model has no coincidence check yet.
-- Every real event tested is from O1/O2 (2015–2017).
+- Real events tested come from O1–O3 (2015–2020); O4 is untested.
+- Very heavy mergers (detector-frame chirp mass above ~45) are outside the training range: GW190521 is missed.
 
 ## The ratchet
 
@@ -126,12 +132,10 @@ Aligned-spin waveforms from general relativity (IMRPhenomD for black holes, IMRP
 
 - Posterior P-P test on 400 held-out injections — largest gaps 0.025–0.06 (chance allows about 0.07)
 
-## Help wanted
-
-- O3 exam: H1 + L1 32 s / 4 kHz HDF5 files for GW190412, GW190408_181802, GW190828_063405, GW191204_171526, GW200129_065458, GW200224_222234, GW200311_115853 and GW190521 (GWOSC).
-
 ## Next rungs
 
+- Extend the training bank to heavier mergers (GW190521-like) and re-run the ratchet.
+- Re-set the threshold with O3 noise in the background (one O3 time-slide window reached 7.24).
 - A coincidence checker for the neutron-star model.
 - Longer neutron-star windows to fix the chirp-mass bias.
 - Live posterior sampling in the browser.

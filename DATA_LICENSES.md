@@ -11,6 +11,7 @@ instrument noise, the fetch scripts in `models/*/training/` download that noise 
 | Model | Source | Terms | Bundled here |
 |---|---|---|---|
 | ChirpNet | [Gravitational Wave Open Science Center](https://gwosc.org) — LIGO Scientific Collaboration and Virgo Collaboration | CC BY 4.0 | 8 × 32 s strain files (GW150914, GW151012, GW151226, GW170104) |
+| ChirpNet | GWOSC O3 event files (GWTC-2.1, GWTC-3) for the O3 exam | CC BY 4.0 | No — `training/o3_exam.py` downloads them |
 | ChirpNet | [LIGO DCC P1700349 / P1700337](https://dcc.ligo.org/LIGO-P1700349/public) (GW170817) | CC BY 4.0 | No — download links in `models/chirpnet/examples/README.md` |
 | SunDoctor | [NREL PVDAQ via OEDI](https://data.openei.org/submissions/4568) (systems 2107, 9068) | CC BY 4.0 | Two CSV excerpts |
 | CellSense | [Severson et al. 2019](https://data.matr.io/1/) (Toyota Research Institute, Stanford, MIT) | CC BY 4.0 | One cell (b3c33), seven readings |

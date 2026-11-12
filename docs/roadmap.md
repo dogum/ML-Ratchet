@@ -4,8 +4,9 @@ Where the collection goes next, beyond each model's own next rungs (in its `mode
 
 ## Exams waiting on data (help wanted)
 
-- **ChirpNet O3 exam.** H1 + L1 32 s / 4 kHz HDF5 files from GWOSC for GW190412, GW190408_181802, GW190828_063405,
-  GW191204_171526, GW200129_065458, GW200224_222234, GW200311_115853 and GW190521.
+- ~~**ChirpNet O3 exam.**~~ Done 12 Nov 2026 once GWOSC was reachable: 7 of 7 in-range events found, every catalogue
+  median inside the 90% posteriors; GW190521 (outside the training range) missed; one O3 background window above
+  threshold. See `models/chirpnet/training/logs/o3_exam.json`.
 - **CellSense, other chemistries.** Sandia NCA / NMC / LFP cycling (Preger et al. 2020) from BatteryArchive, or
   another public multi-chemistry dataset with a documented download (Zhu et al. 2022; Pozzato et al. 2022).
 
