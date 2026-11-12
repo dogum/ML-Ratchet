@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import ExamRows from '../../components/ExamRows.astro';
 import Coverage from '../../components/Coverage.astro';
 import LadderChart from '../../components/LadderChart.astro';
+import Instrument from '../../components/Instrument.astro';
 import { getModels, ghFile, ghTree, mb, type Model } from '../../lib/data';
 import { url } from '../../lib/url';
 
@@ -14,6 +15,7 @@ interface Props { m: Model; prev: Model; next: Model }
 const { m, prev, next } = Astro.props;
 const dir = `models/${m.id}`;
 const toc = [
+  ...(m.hasInstrument ? [["live", "Run it live"]] : []),
   ['exam', 'The exam'],
   ['verdict', 'Wins & losses'],
   ['ratchet', 'The ratchet'],
@@ -62,6 +64,19 @@ const released = m.released ? new Date(m.released as string).toLocaleDateString(
         </dl>
       </div>
     </header>
+
+    {m.hasInstrument && (
+      <section class="live" id="live" aria-label="Live instrument">
+        <div class="wrap">
+          <div class="live-head">
+            <p class="kicker tick-label">Live · the real network, in your browser</p>
+            <h2 class="section">Run it on a <em>real</em> record.</h2>
+            <p class="muted">These are real exam examples the model never trained on, drawn by a fixed seed. Change the input and watch the reading — and its error bars — respond. Nothing is precomputed: every number below comes from the network running on your device.</p>
+          </div>
+          <Instrument id={m.id} accent={m.accent} name={m.name} />
+        </div>
+      </section>
+    )}
 
     <div class="wrap body">
       <aside class="toc" aria-label="On this page">
@@ -251,6 +266,13 @@ ${m.usage.demo}`}</code></pre>
   .facts ul { margin: 0; padding-left: 1.1em; }
   .small { font-size: 12px !important; }
 
+  .live { padding: 56px 0 8px; }
+  .live-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 40px; align-items: end; margin-bottom: 22px; }
+  .live-head .kicker { grid-column: 1 / -1; }
+  .live-head .section { margin: 0; }
+  .live-head .section em { color: var(--c); }
+  .live-head p.muted { margin: 0; max-width: 60ch; }
+  @media (max-width: 860px) { .live-head { grid-template-columns: minmax(0, 1fr); } }
   .body { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 56px; margin-top: 64px; }
   .toc { position: sticky; top: 92px; align-self: start; }
   .toc ol { list-style: none; margin: 12px 0 0; padding: 0; border-left: 1px solid var(--rule); }

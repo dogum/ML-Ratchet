@@ -1,0 +1,58 @@
+---
+// A live instrument: the model's real network, running in the visitor's browser on real exam data.
+// Loads its weights when it scrolls near the viewport (or on click for `defer`).
+import { existsSync, readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import { url } from '../lib/url';
+interface Props { id: string; accent: string; name: string; compact?: boolean; defer?: boolean }
+const { id, accent, name, compact = false, defer = false } = Astro.props;
+const dir = join(process.cwd(), 'public', 'instruments', id);
+const bytes = existsSync(dir) ? readdirSync(dir).reduce((s, f) => s + statSync(join(dir, f)).size, 0) : 0;
+const mb = (bytes / 1048576).toFixed(1);
+---
+<div class={`inst booting${compact ? ' compact' : ''}`} style={`--accent:${accent}; --c:${accent}`}
+  data-instrument={id} data-base={url(`instruments/${id}/`)} data-accent={accent} data-compact={compact ? '1' : ''} data-defer={defer ? '1' : ''}>
+  <div class="inst-boot">
+    <span class="inst-live"><i></i> {name} · live instrument</span>
+    <div class="bar"><span></span></div>
+    <span class="msg">{defer ? `${mb} MB of weights — runs entirely in your browser` : `warming up · ${mb} MB of weights`}</span>
+    {defer && <button type="button" class="inst-btn" data-power>Power on</button>}
+  </div>
+</div>
+
+<script>
+  import { instruments } from '../instruments/index.ts';
+
+  async function boot(el: HTMLElement) {
+    if (el.dataset.booted) return;
+    el.dataset.booted = '1';
+    const id = el.dataset.instrument!;
+    const msg = el.querySelector<HTMLElement>('.msg');
+    const bar = el.querySelector<HTMLElement>('.bar span');
+    if (bar) bar.style.width = '35%';
+    try {
+      const mod = await instruments[id]();
+      if (bar) bar.style.width = '70%';
+      el.classList.remove('booting');
+      await mod.mount({ root: el, base: el.dataset.base!, accent: el.dataset.accent!, compact: !!el.dataset.compact });
+    } catch (e) {
+      console.error(e);
+      el.classList.add('booting');
+      if (msg) msg.textContent = 'The instrument could not start in this browser. The lab page has the original.';
+    }
+  }
+
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (e.isIntersecting) { io.unobserve(e.target); boot(e.target as HTMLElement); }
+  }), { rootMargin: '300px 0px' });
+
+  document.querySelectorAll<HTMLElement>('[data-instrument]').forEach((el) => {
+    if (el.dataset.defer) el.querySelector('[data-power]')?.addEventListener('click', () => boot(el));
+    else io.observe(el);
+  });
+  // allow other scripts (e.g. the rack) to boot an instrument on demand
+  window.addEventListener('mlr:boot', (ev) => {
+    const el = (ev as CustomEvent<HTMLElement>).detail;
+    if (el) boot(el);
+  });
+</script>

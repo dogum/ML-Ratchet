@@ -1,0 +1,326 @@
+---
+// The Ratchet Machine: a ratchet wheel and pawl that play through every rung decision in the collection.
+// A kept rung advances the wheel one tooth (the pawl rides up the ramp and clicks down) and paints that tooth
+// in the model's colour. A rejected rung strains forward half a tooth and slips back against the pawl.
+import { getModels } from '../lib/data';
+
+const models = getModels();
+type Step = { m: string; name: string; c: string; ladder: string; id: string; change: string; why: string; sim: number | null; inc: number | null; margin: number; d: string };
+const steps: Step[] = [];
+for (const m of models) {
+  for (const lad of m.ladders) {
+    let inc: number | null = null;
+    for (const r of lad.rungs) {
+      steps.push({ m: m.id, name: m.name, c: m.accent, ladder: m.ladders.length > 1 ? lad.name : '', id: r.id, change: r.change, why: r.why, sim: r.sim ?? null, inc, margin: lad.margin, d: r.decision });
+      if (r.decision !== 'rejected' && r.sim !== undefined) inc = r.sim;
+    }
+  }
+}
+const N = 40; // teeth
+const R = 150, r = 120, CX = 200, CY = 200;
+const pitch = 360 / N;
+const pt = (deg: number, rad: number) => [CX + rad * Math.sin((deg * Math.PI) / 180), CY - rad * Math.cos((deg * Math.PI) / 180)];
+// sawtooth: each tooth rises slowly (clockwise) from root to tip, then drops radially
+const teeth = Array.from({ length: N }, (_, i) => {
+  const a0 = i * pitch, a1 = (i + 1) * pitch;
+  const [x0, y0] = pt(a0, r), [x1, y1] = pt(a1 - 0.6, R), [x2, y2] = pt(a1, R), [x3, y3] = pt(a1, r);
+  // inner arc back to a0 to close a tooth wedge
+  const [xi, yi] = pt(a0, r - 18), [xj, yj] = pt(a1, r - 18);
+  return `M${xi.toFixed(2)} ${yi.toFixed(2)}L${x0.toFixed(2)} ${y0.toFixed(2)}L${x1.toFixed(2)} ${y1.toFixed(2)}L${x2.toFixed(2)} ${y2.toFixed(2)}L${x3.toFixed(2)} ${y3.toFixed(2)}L${xj.toFixed(2)} ${yj.toFixed(2)}A${r - 18} ${r - 18} 0 0 0 ${xi.toFixed(2)} ${yi.toFixed(2)}Z`;
+});
+const spokes = Array.from({ length: 6 }, (_, i) => i * 60);
+const kept = steps.filter((s) => s.d !== 'rejected').length;
+---
+<div class="machine" data-machine data-steps={JSON.stringify(steps)} data-teeth={N}>
+  <div class="mach-fig">
+    <svg viewBox="0 0 400 400" class="wheel-svg" role="img" aria-label={`A ratchet wheel that has advanced ${kept} teeth for ${kept} kept rungs, and held still for ${steps.length - kept} rejected ones.`}>
+      <defs>
+        <radialGradient id="hub" cx="50%" cy="45%" r="60%">
+          <stop offset="0" stop-color="var(--paper-3)" />
+          <stop offset="1" stop-color="var(--paper-2)" />
+        </radialGradient>
+      </defs>
+      <circle cx={CX} cy={CY} r={R + 26} class="halo" />
+      <g class="wheel" data-wheel>
+        <circle cx={CX} cy={CY} r={r - 18} class="disc" />
+        {teeth.map((d, i) => <path d={d} class="tooth" data-tooth={i} />)}
+        {spokes.map((a) => { const [x, y] = pt(a, r - 30); return <line x1={CX} y1={CY} x2={x} y2={y} class="spoke" />; })}
+        <circle cx={CX} cy={CY} r="52" class="hub" />
+        <circle cx={CX} cy={CY} r="6" class="axle" />
+      </g>
+      <g class="pawl" data-pawl>
+        <path d="M318 46 C 300 56, 262 64, 240 62 L 236 51 C 262 52, 296 44, 312 34 Z" class="pawl-body" />
+        <circle cx="318" cy="40" r="9" class="pivot" />
+        <circle cx="318" cy="40" r="3" class="axle" />
+      </g>
+      <path d="M326 34 q 14 -8 22 -26 q 4 -8 12 -6" class="spring" />
+      <g class="flash" data-flash><circle cx="238" cy="60" r="14" /></g>
+    </svg>
+    <div class="stamp" data-stamp aria-hidden="true"></div>
+  </div>
+
+  <div class="mach-panel">
+    <div class="ticker" aria-live="polite">
+      <p class="kicker t-model" data-t-model>—</p>
+      <p class="t-change" data-t-change>Press play, or just watch.</p>
+      <div class="t-score">
+        <div class="t-bar" data-t-bar>
+          <span class="t-inc"></span><span class="t-band"></span><span class="t-cand"></span>
+        </div>
+        <p class="mono t-delta" data-t-delta></p>
+      </div>
+      <p class="t-why" data-t-why></p>
+    </div>
+    <dl class="counters">
+      <div><dt class="kicker">decisions</dt><dd class="num" data-n-all>0</dd></div>
+      <div><dt class="kicker">kept · teeth</dt><dd class="num" data-n-kept>0</dd></div>
+      <div><dt class="kicker">rejected</dt><dd class="num" data-n-rej>0</dd></div>
+    </dl>
+    <div class="timeline" data-timeline role="group" aria-label="Every rung decision; click one to jump to it">
+      {steps.map((s, i) => (
+        <button type="button" class={`tk ${s.d}`} style={`--c:${s.c}`} data-i={i} aria-label={`${s.name} ${s.id}: ${s.d}`} title={`${s.name} ${s.id} — ${s.d}`}></button>
+      ))}
+      <span class="playhead" data-playhead></span>
+    </div>
+    <div class="mach-ctl">
+      <button type="button" class="mbtn" data-play aria-label="Pause">❚❚</button>
+      <button type="button" class="mbtn" data-step aria-label="Next rung">→</button>
+      <button type="button" class="mbtn" data-reset aria-label="Start over">↺</button>
+      <button type="button" class="mbtn sound" data-sound aria-pressed="false" title="Click sound">sound off</button>
+      <span class="mono faint legend-s">● kept advances a tooth · ○ rejected slips back</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  type Step = { m: string; name: string; c: string; ladder: string; id: string; change: string; why: string; sim: number | null; inc: number | null; margin: number; d: string };
+
+  document.querySelectorAll<HTMLElement>('[data-machine]').forEach((root) => {
+    const steps: Step[] = JSON.parse(root.dataset.steps!);
+    const N = +root.dataset.teeth!;
+    const pitch = 360 / N;
+    const $ = <T extends Element>(s: string) => root.querySelector<T>(s)!;
+    const wheel = $<SVGGElement>('[data-wheel]');
+    const pawl = $<SVGGElement>('[data-pawl]');
+    const flash = $<SVGGElement>('[data-flash]');
+    const stamp = $<HTMLElement>('[data-stamp]');
+    const teeth = [...root.querySelectorAll<SVGPathElement>('[data-tooth]')];
+    const ticks = [...root.querySelectorAll<HTMLButtonElement>('.tk')];
+    const playhead = $<HTMLElement>('[data-playhead]');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let pos = 0;            // current wheel position in teeth (float, animated)
+    let target = 0;         // teeth advanced so far (integer)
+    let strain = 0;         // extra forward strain for a rejected attempt (0..0.5)
+    let i = -1;             // index of the last shown decision
+    let playing = !reduce;
+    let sound = false;
+    let audio: AudioContext | null = null;
+    let next = 0;
+
+    // The pawl tip meets the wheel at ~14.9° clockwise from the top. Offset the wheel so that at a whole number of
+    // teeth the tip sits in a notch (just past a tooth's drop); as the wheel turns, the tip rides up the ramp.
+    const TIP = 14.9;
+    const OFFSET = TIP % pitch;
+    const LIFT = 20; // degrees of pawl rotation between notch and tooth tip
+    const draw = () => {
+      wheel.style.transform = `rotate(${-(pos + strain) * pitch + OFFSET}deg)`;
+      const phase = ((pos + strain) % 1 + 1) % 1;
+      pawl.style.transform = `rotate(${-LIFT + phase * LIFT}deg)`;
+    };
+
+    const click = (strong: boolean) => {
+      if (!sound) return;
+      audio ??= new AudioContext();
+      const t = audio.currentTime;
+      const len = Math.floor(audio.sampleRate * 0.03);
+      const buf = audio.createBuffer(1, len, audio.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let k = 0; k < len; k++) d[k] = (Math.random() * 2 - 1) * Math.exp(-k / (len * 0.12));
+      const src = audio.createBufferSource(); src.buffer = buf;
+      const f = audio.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = strong ? 2600 : 900; f.Q.value = 3;
+      const g = audio.createGain(); g.gain.value = strong ? 0.5 : 0.25;
+      src.connect(f).connect(g).connect(audio.destination); src.start(t);
+    };
+
+    function show(k: number) {
+      const s = steps[k];
+      root.style.setProperty('--c', s.c);
+      $('[data-t-model]').textContent = `${s.name}${s.ladder ? ` · ${s.ladder}` : ''} · rung ${s.id}`;
+      $('[data-t-change]').textContent = s.change;
+      $('[data-t-why]').textContent = s.why;
+      const bar = $<HTMLElement>('[data-t-bar]');
+      const delta = $<HTMLElement>('[data-t-delta]');
+      if (s.sim !== null && s.inc !== null) {
+        const gain = s.sim - s.inc;
+        const span = Math.max(Math.abs(gain), s.margin) * 1.6;
+        const toPct = (v: number) => 50 + (v / span) * 50;
+        bar.style.setProperty('--cand', `${Math.max(2, Math.min(98, toPct(gain)))}%`);
+        bar.style.setProperty('--band', `${Math.min(48, (s.margin / span) * 50)}%`);
+        bar.classList.remove('hidden');
+        delta.innerHTML = `frozen set <b>${gain >= 0 ? '+' : '−'}${Math.abs(gain).toFixed(3)}</b> · needs more than <b>+${s.margin}</b>`;
+      } else {
+        bar.classList.add('hidden');
+        delta.textContent = s.inc === null ? 'first rung — becomes the incumbent' : '';
+      }
+      stamp.textContent = s.d === 'released' ? 'released' : s.d === 'rejected' ? 'rejected' : 'kept';
+      stamp.className = `stamp on ${s.d}`;
+      ticks.forEach((t, j) => t.classList.toggle('done', j <= k));
+      playhead.style.left = `${((k + 0.5) / steps.length) * 100}%`;
+      const done = steps.slice(0, k + 1);
+      $('[data-n-all]').textContent = String(done.length);
+      $('[data-n-kept]').textContent = String(done.filter((x) => x.d !== 'rejected').length);
+      $('[data-n-rej]').textContent = String(done.filter((x) => x.d === 'rejected').length);
+    }
+
+    function paint(k: number) {
+      // colour the teeth for every kept rung up to k
+      teeth.forEach((t) => { t.style.fill = ''; t.classList.remove('lit'); });
+      let n = 0;
+      for (let j = 0; j <= k; j++) {
+        if (steps[j].d === 'rejected') continue;
+        const tooth = teeth[(n + 1) % N]; // the tooth that just passed under the pawl
+        tooth.style.fill = steps[j].c;
+        tooth.classList.add('lit');
+        n++;
+      }
+      return n;
+    }
+
+    function jump(k: number) {
+      i = k;
+      target = paint(k);
+      pos = target;
+      strain = 0;
+      show(k);
+      draw();
+    }
+
+    function advance() {
+      if (i >= steps.length - 1) { jump(-1 + 0); i = -1; target = 0; pos = 0; teeth.forEach((t) => { t.style.fill = ''; t.classList.remove('lit'); }); }
+      i++;
+      const s = steps[i];
+      show(i);
+      if (s.d === 'rejected') {
+        // strain forward, then slip back against the pawl
+        animate(0, 0.5, 260, (v) => { strain = v; draw(); }, () => {
+          flash.classList.remove('go'); void (flash as unknown as HTMLElement).getBoundingClientRect(); flash.classList.add('go');
+          click(false);
+          animate(0.5, 0, 220, (v) => { strain = v; draw(); });
+        });
+      } else {
+        const from = pos;
+        target = paint(i);
+        animate(from, target, 520, (v) => { pos = v; draw(); }, () => click(true));
+      }
+    }
+
+    function animate(a: number, b: number, ms: number, onT: (v: number) => void, done?: () => void) {
+      if (reduce) { onT(b); done?.(); return; }
+      const t0 = performance.now();
+      const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - t0) / ms);
+        onT(a + (b - a) * ease(t));
+        if (t < 1) requestAnimationFrame(tick); else done?.();
+      };
+      requestAnimationFrame(tick);
+    }
+
+    const loop = (now: number) => {
+      if (playing && visible && now >= next) {
+        advance();
+        const s = steps[i];
+        next = now + (s.d === 'released' ? 2200 : s.d === 'rejected' ? 1500 : 1150);
+      }
+      requestAnimationFrame(loop);
+    };
+
+    let visible = false;
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(root);
+
+    const playBtn = $<HTMLButtonElement>('[data-play]');
+    const setPlay = (p: boolean) => { playing = p; playBtn.textContent = p ? '❚❚' : '▶'; playBtn.setAttribute('aria-label', p ? 'Pause' : 'Play'); };
+    playBtn.addEventListener('click', () => setPlay(!playing));
+    $<HTMLButtonElement>('[data-step]').addEventListener('click', () => { setPlay(false); advance(); });
+    $<HTMLButtonElement>('[data-reset]').addEventListener('click', () => { jump(0); next = performance.now() + 1200; });
+    const sb = $<HTMLButtonElement>('[data-sound]');
+    sb.addEventListener('click', () => { sound = !sound; sb.setAttribute('aria-pressed', String(sound)); sb.textContent = sound ? 'sound on' : 'sound off'; if (sound) click(true); });
+    ticks.forEach((t) => t.addEventListener('click', () => { setPlay(false); jump(+t.dataset.i!); }));
+
+    setPlay(playing);
+    if (reduce) jump(steps.length - 1);
+    else { jump(0); next = performance.now() + 1400; }
+    requestAnimationFrame(loop);
+  });
+</script>
+
+<style>
+  .machine { --c: var(--signal); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: center; }
+  .mach-fig { position: relative; }
+  .wheel-svg { width: 100%; height: auto; overflow: visible; }
+  .halo { fill: none; stroke: var(--rule); stroke-dasharray: 2 5; }
+  .wheel { transform-origin: 200px 200px; transform-box: view-box; }
+  .disc { fill: var(--paper-3); stroke: var(--ink); stroke-width: 1.5; }
+  .tooth { fill: var(--paper-2); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: miter; transition: fill 0.5s; }
+  .tooth.lit { stroke: var(--ink); }
+  .spoke { stroke: var(--rule); stroke-width: 10; stroke-linecap: round; }
+  .hub { fill: url(#hub); stroke: var(--ink); stroke-width: 1.5; }
+  .axle { fill: var(--ink); }
+  .pawl { transform-origin: 318px 40px; transform-box: view-box; transition: none; }
+  .pawl-body { fill: var(--ink); }
+  .pivot { fill: var(--paper-3); stroke: var(--ink); stroke-width: 1.5; }
+  .spring { fill: none; stroke: var(--ink-3); stroke-width: 1.5; stroke-linecap: round; }
+  .flash circle { fill: none; stroke: var(--loss); stroke-width: 2; opacity: 0; transform-origin: 238px 60px; transform-box: view-box; }
+  .flash:global(.go) circle { animation: flash 0.5s ease-out; }
+  @keyframes flash { 0% { opacity: 1; transform: scale(0.4); } 100% { opacity: 0; transform: scale(1.8); } }
+
+  .stamp {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-8deg) scale(0.8);
+    font-family: var(--mono); font-variation-settings: 'wdth' 87.5; font-size: clamp(12px, 1.4vw, 15px); letter-spacing: 0.16em; text-transform: uppercase;
+    padding: 6px 12px; border: 2px solid currentColor; border-radius: 3px; color: var(--c); background: color-mix(in srgb, var(--paper-3) 88%, transparent);
+    opacity: 0; pointer-events: none;
+  }
+  .stamp.on { animation: stamp 0.45s cubic-bezier(0.2, 1.6, 0.4, 1) forwards; }
+  .stamp.rejected { color: var(--ink-3); border-style: dashed; }
+  .stamp.released { color: var(--paper); background: var(--c); border-color: var(--c); }
+  @keyframes stamp { from { opacity: 0; transform: translate(-50%, -50%) rotate(-8deg) scale(1.6); } to { opacity: 1; transform: translate(-50%, -50%) rotate(-8deg) scale(1); } }
+
+  .mach-panel { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+  .ticker { min-height: 210px; border-left: 3px solid var(--c); padding-left: 18px; transition: border-color 0.4s; }
+  .t-model { color: var(--c); margin: 0 0 8px; transition: color 0.4s; }
+  .t-change { font-family: var(--display); font-size: clamp(24px, 2.4vw, 32px); line-height: 1.08; margin: 0 0 16px; }
+  .t-score { margin-bottom: 12px; }
+  .t-bar { position: relative; height: 22px; border: 1px solid var(--rule); background: var(--paper-3); --cand: 50%; --band: 10%; }
+  .t-bar.hidden { visibility: hidden; }
+  .t-inc { position: absolute; left: 50%; top: -4px; bottom: -4px; border-left: 2px solid var(--ink); }
+  .t-band { position: absolute; left: 50%; width: var(--band); top: 0; bottom: 0; background: color-mix(in srgb, var(--c) 22%, transparent); }
+  .t-cand { position: absolute; left: var(--cand); top: 4px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--c); transition: left 0.5s var(--ease), background 0.4s; }
+  .t-delta { font-size: 11px; color: var(--ink-3); margin: 8px 0 0; }
+  .t-delta :global(b) { color: var(--ink); font-weight: 500; }
+  .t-why { margin: 0; color: var(--ink-2); font-size: 15px; }
+
+  .counters { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border-top: 1px solid var(--ink); }
+  .counters div { padding-top: 10px; }
+  .counters dd { margin: 4px 0 0; font-size: 34px; letter-spacing: -0.04em; line-height: 1; }
+
+  .timeline { position: relative; display: flex; gap: 2px; height: 34px; align-items: flex-end; }
+  .tk { flex: 1; min-width: 0; padding: 0; border: 0; cursor: pointer; background: var(--rule); height: 14px; border-radius: 1px; transition: height 0.2s, background 0.3s; }
+  .tk.rejected { height: 7px; background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); opacity: 0.6; }
+  .tk.done { background: var(--c); }
+  .tk.done.rejected { background: transparent; box-shadow: inset 0 0 0 1px var(--c); opacity: 1; }
+  .tk.released { height: 24px; }
+  .tk:hover { height: 30px; }
+  .playhead { position: absolute; bottom: -8px; width: 0; height: 0; border: 5px solid transparent; border-bottom-color: var(--ink); transform: translateX(-50%); transition: left 0.4s var(--ease); }
+  .mach-ctl { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .mbtn { min-width: 38px; height: 34px; padding: 0 10px; border: 1px solid var(--rule); background: var(--paper-3); color: var(--ink); border-radius: var(--radius); cursor: pointer; font-family: var(--mono); font-size: 12px; }
+  .mbtn:hover { border-color: var(--c); color: var(--c); }
+  .mbtn.sound { font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .mbtn.sound[aria-pressed='true'] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .legend-s { font-size: 10px; margin-left: 8px; }
+  @media (max-width: 860px) {
+    .machine { grid-template-columns: minmax(0, 1fr); }
+    .mach-fig { max-width: 420px; margin-inline: auto; width: 100%; }
+    .ticker { min-height: 0; }
+  }
+</style>

@@ -1,0 +1,255 @@
+---
+// Scrollytelling: the method, told through one model and one real record.
+import Base from '../layouts/Base.astro';
+import Instrument from '../components/Instrument.astro';
+import { getModel } from '../lib/data';
+import { ladderGeometry } from '../lib/ladder';
+import { url } from '../lib/url';
+
+const q = getModel('quakenet')!;
+const lad = q.ladders[0];
+const W = 560, H = 230;
+const g = ladderGeometry(lad.rungs, { w: W, h: H, top: 16, right: 10, bottom: 30, left: 40 }, lad.margin, { bands: true });
+// cumulative staircase path up to rung k, on the full ladder's fixed scale
+const stairsUpTo = lad.rungs.map((_, k) => {
+  let d = '';
+  for (const m of g.marks.slice(0, k + 1)) {
+    if (m.kind === 'rejected' || m.y === null) continue;
+    d += d ? `H${m.x.toFixed(1)}V${m.y.toFixed(1)}` : `M${(m.x - g.colW / 2).toFixed(1)} ${m.y.toFixed(1)}H${m.x.toFixed(1)}`;
+  }
+  const last = g.marks[k];
+  return d + `H${(last.x + g.colW / 2).toFixed(1)}`;
+});
+const exam = (k: number) => lad.rungs[k].metrics as number[];
+const steps = [
+  { k: 'record', kicker: '1 January 2024, 07:10 UTC', h: 'One seismometer in Hawaii.', p: ['A magnitude 7.5 earthquake strikes the Noto Peninsula in Japan. Eight minutes later the ground under station IU.POHA, on Hawaii’s Big Island — 60° of arc, 6,700 km away — starts to move.', 'This is that record: 41 minutes of three-component ground velocity. QuakeNet never saw it during training. From this one station it has to say how big the quake was, how far, how deep, and which way.'] },
+  { k: 'physics', kicker: 'Physics first', h: 'The Earth tells you when each wave should arrive.', p: ['Compressional P waves come first, shear S waves later, and the slow surface waves — Love and Rayleigh — last. How far apart they arrive depends on distance; how they look depends on depth and size.', 'A 1-D model of the Earth (ak135) predicts all of it. QuakeNet’s simulator builds thousands of synthetic earthquakes from it, laid into 1,284 windows of real, quiet station noise.'] },
+  { k: 'r1', kicker: 'Rung 1 · textbook Earth', h: 'Trained only on the textbook.', p: [`A network trained on the plain textbook simulator reads real records with a median distance error of ${exam(0)[1].toFixed(1)}° and depth off by ${exam(0)[2]} km.`, 'Not useless — but plotting real development records next to simulations of the same quakes showed what the textbook misses.'] },
+  { k: 'r2', kicker: 'Rung 2 · measured on dev', h: 'Real surface waves are slower.', p: ['On the 74 development records, real surface waves arrived about 6.5% later than ak135 predicts. That mismatch became the next rung: stretch everything after S by a measured factor.', `Frozen-set score ${lad.rungs[0].sim?.toFixed(3)} → ${lad.rungs[1].sim?.toFixed(3)}. Exam distance error ${exam(0)[1].toFixed(1)}° → ${exam(1)[1]}° — though the exam never chose anything.`] },
+  { k: 'r3', kicker: 'Rung 3 · measured on dev', h: 'The real Earth keeps ringing.', p: ['A layered textbook Earth goes quiet after the main arrivals. The real one doesn’t: waves scatter off everything and arrive as a long coda. Its energy was fitted on the dev records and built in.', `Frozen set ${lad.rungs[1].sim?.toFixed(3)} → ${lad.rungs[2].sim?.toFixed(3)}. Distance error → ${exam(2)[1]}°.`] },
+  { k: 'ladder', kicker: 'Rungs 4–7 · the ratchet', h: 'Every rung must earn its place.', p: ['The world’s mix of depths and sizes, water layers above offshore quakes, surface waves measured per component. Each candidate had to beat the incumbent on a frozen simulated set by more than 0.01 — and not get worse on the dev records.', `Rung 6 gained 0.001 and was rejected. When the physics changed, the frozen set was rebuilt and every decision re-taken: rung 5 was turned down once, then kept.`] },
+  { k: 'exam', kicker: 'The final exam', h: '3,105 real records it never saw.', p: ['Graded once, beside the classical one-station methods and a dumb baseline. It wins on magnitude, distance and direction by a wide margin.', 'And it loses where it loses: shallow quakes still read too deep. Always guessing 31 km beats it there. The card says so.'] },
+];
+---
+<Base title="The story" description="How QuakeNet learned to read the Earth from one seismometer — the method, scroll by scroll, on a real record." accent={q.accent}>
+  <section class="intro wrap">
+    <p class="kicker tick-label">The method, in one model</p>
+    <h1 class="display h">How a network learned<br /><em>to read the Earth.</em></h1>
+    <p class="muted lead">Scroll. One real earthquake, one seismometer, and every rung QuakeNet climbed — from a textbook simulator to a model that reads real records it has never seen.</p>
+  </section>
+
+  <section class="scrolly" data-scrolly style={`--c:${q.accent}`}>
+    <div class="fig-wrap">
+      <figure class="fig" data-fig data-step="record" data-base={url('instruments/quakenet/')}>
+        <div class="screen">
+          <canvas class="seis" data-seis></canvas>
+          <div class="seis-boot mono" data-boot>loading the Noto record…</div>
+        </div>
+        <div class="fig-lower">
+          <svg viewBox={`0 0 ${W} ${H}`} class="mini-ladder" aria-hidden="true">
+            {g.ticks.map((t) => <g class="ax"><line x1="40" x2={W - 10} y1={g.y(t)} y2={g.y(t)} /><text x="34" y={g.y(t) + 3} text-anchor="end">{t.toFixed(2)}</text></g>)}
+            {stairsUpTo.map((d, k) => <path class={`st s${k}`} d={d} />)}
+            {g.marks.map((m) => (
+              <g class={`mk m${m.i} ${m.kind}`}>
+                {m.kind === 'rejected' && m.y !== null && <line x1={m.x} x2={m.x} y1={m.incY} y2={m.y} class="stem" />}
+                {m.y !== null && (m.kind === 'released' ? <path d={`M${m.x} ${m.y - 7}l7 7l-7 7l-7 -7z`} /> : <circle cx={m.x} cy={m.y} r="4.5" />)}
+                <text x={m.x} y={H - 10} text-anchor="middle">{m.rung.id}</text>
+              </g>
+            ))}
+          </svg>
+          <div class="readouts">
+            <div><span class="kicker">frozen-set score</span><b class="num" data-r-sim>—</b></div>
+            <div><span class="kicker">exam distance error</span><b class="num" data-r-dist>—</b></div>
+            <div><span class="kicker">exam depth error</span><b class="num" data-r-depth>—</b></div>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="steps">
+      {steps.map((s, i) => (
+        <article class="step" data-k={s.k} data-i={i}>
+          <div class="step-card">
+          <p class="kicker">{s.kicker}</p>
+          <h2 class="display">{s.h}</h2>
+          {s.p.map((t) => <p>{t}</p>)}
+          {s.k === 'exam' && (
+            <dl class="exam-mini">
+              <div><dt>Distance</dt><dd><b class="num">5.1°</b> vs S−P 13.0°</dd></div>
+              <div><dt>Magnitude</dt><dd><b class="num">0.13</b> vs Ms 0.57</dd></div>
+              <div><dt>Direction</dt><dd><b class="num">6.0°</b> vs P-polarisation 43.7°</dd></div>
+              <div class="lose"><dt>Shallow depth</dt><dd><b class="num">33 km</b> vs guessing 31 km: <b>21 km</b></dd></div>
+            </dl>
+          )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap now">
+    <p class="kicker tick-label">Now you</p>
+    <h2 class="section">Same network. <em>Your hands.</em></h2>
+    <p class="muted">Add noise. Cut the record short. Make the quake ten times bigger at the station. Watch which readings hold — and which error bars admit they can’t.</p>
+    <Instrument id="quakenet" accent={q.accent} name="QuakeNet" />
+    <div class="next">
+      <a class="btn" href={url('models/quakenet/')}>QuakeNet in full <span class="arrow">→</span></a>
+      <a class="btn ghost" href={url('method/')}>The method, for every model</a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { fetchPack } from '../lib/nn/pack';
+  import { canvas as mkCanvas, gridLines, trace, label, SCOPE } from '../instruments/kit';
+
+  const fig = document.querySelector<HTMLElement>('[data-fig]')!;
+  const steps = [...document.querySelectorAll<HTMLElement>('.step')];
+  const order = steps.map((s) => s.dataset.k!);
+  const L = 2460, PRE = 60;
+  const sim = ['0.556', '0.690', '0.808', '0.869'];
+  const dist = ['11.0°', '7.4°', '5.7°', '5.1°'];
+  const depth = ['110 km', '72 km', '52 km', '39 km'];
+  const accent = getComputedStyle(fig).getPropertyValue('--c').trim() || '#d9480f';
+  let x: Float32Array | null = null;
+  let step = 'record';
+  let reveal = 0; // 0..1 how much of the record is drawn
+
+  // Noto at POHA, 60.3°: approximate arrivals after P (s)
+  const dP = 10.0 * 60, dS = 18.1 * 60, km = 60.32 * 111.19;
+  const arrivals = (slow: number) => [['P', PRE], ['S', PRE + dS - dP], ['Love', PRE + km / 4.4 - dP], ['Rayleigh', PRE + (dS - dP) + (km / 3.9 - dS) * slow]] as [string, number][];
+
+  const screen = fig.querySelector<HTMLElement>('.screen')!;
+  fig.querySelector('canvas')?.remove();
+  const plot = mkCanvas(screen, 2.1, (c) => {
+    const { ctx: g, w, h } = c;
+    g.fillStyle = SCOPE.bg; g.fillRect(0, 0, w, h);
+    const padL = 22, top = 14, bot = 22, iw = w - padL - 10, ih = h - top - bot, rowH = ih / 3;
+    gridLines(c, padL, top, iw, ih, 8, 3);
+    const xs = (t: number) => padL + (t / L) * iw;
+    if (!x) return;
+    const upto = Math.floor(L * reveal);
+    const si = order.indexOf(step);
+    // coda highlight
+    if (step === 'r3') {
+      const a = xs(arrivals(1.065)[3][1] + 240), b = xs(L);
+      g.fillStyle = 'rgba(255,255,255,0.05)'; g.fillRect(a, top, b - a, ih);
+      label(c, w < 560 ? 'coda' : 'coda: the Earth keeps ringing', a + 8, top + ih - 10, accent);
+    }
+    // markers
+    if (si >= 1) {
+      const slow = si >= 3 ? 1.065 : 1;
+      for (const [n, t] of arrivals(slow)) {
+        const xx = xs(t);
+        g.strokeStyle = n === 'P' ? SCOPE.ink : accent; g.globalAlpha = 0.8; g.setLineDash(n === 'P' ? [] : [3, 3]);
+        g.beginPath(); g.moveTo(xx + 0.5, top); g.lineTo(xx + 0.5, top + ih); g.stroke(); g.setLineDash([]); g.globalAlpha = 1;
+        label(c, n, xx + 4, top + 6, n === 'P' ? SCOPE.text : accent);
+      }
+      if (si >= 3 && step !== 'exam') {
+        const t0 = arrivals(1)[3][1], t1 = arrivals(1.065)[3][1];
+        g.strokeStyle = SCOPE.faint; g.setLineDash([2, 4]);
+        g.beginPath(); g.moveTo(xs(t0) + 0.5, top); g.lineTo(xs(t0) + 0.5, top + ih); g.stroke(); g.setLineDash([]);
+        label(c, step === 'r2' ? 'textbook →' : '', xs(t0) - 4, top + 20, SCOPE.text, 'right');
+      }
+    }
+    for (let ch = 0; ch < 3; ch++) {
+      trace(c, x, padL, top + ch * rowH, Math.max(1, (upto / L) * iw), rowH, ch === 0 ? accent : SCOPE.ink, 0.12, ch === 0 ? 1 : 0.7, ch * L, ch * L + Math.max(1, upto));
+      label(c, 'ZNE'[ch], 6, top + ch * rowH + rowH / 2);
+    }
+    for (let m = 0; m <= 40; m += 10) label(c, m === 0 ? 'P' : `${m} min`, xs(PRE + m * 60), h - 9, SCOPE.faint, m === 40 ? 'right' : 'center', 9);
+  });
+
+  fetchPack(`${fig.dataset.base}examples`).then((p) => {
+    const ex = (p.meta as { id: string }[]).findIndex((e) => e.id === 'us6000m0xl');
+    x = p.t[`x${ex >= 0 ? ex : 1}`].data;
+    fig.querySelector('[data-boot]')?.remove();
+    animateReveal(1);
+  }).catch(() => { const b = fig.querySelector('[data-boot]'); if (b) b.textContent = 'could not load the record'; });
+
+  function animateReveal(to: number) {
+    const from = reveal, t0 = performance.now(), ms = 1600;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - t0) / ms);
+      reveal = from + (to - from) * (1 - (1 - t) ** 3);
+      plot.redraw();
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  function setStep(k: string) {
+    if (k === step) return;
+    step = k;
+    fig.dataset.step = k;
+    const si = order.indexOf(k);
+    const rung = k === 'r1' ? 0 : k === 'r2' ? 1 : k === 'r3' ? 2 : si >= order.indexOf('ladder') ? 3 : -1;
+    const set = (sel: string, v: string) => { const e = fig.querySelector(sel); if (e) e.textContent = v; };
+    set('[data-r-sim]', rung >= 0 ? sim[rung] : '—');
+    set('[data-r-dist]', rung >= 0 ? dist[rung] : '—');
+    set('[data-r-depth]', rung >= 0 ? depth[rung] : '—');
+    steps.forEach((s) => s.classList.toggle('on', s.dataset.k === k));
+    plot.redraw();
+  }
+
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setStep((e.target as HTMLElement).dataset.k!); }), { rootMargin: '-45% 0px -45% 0px' });
+  steps.forEach((s) => io.observe(s));
+  steps[0].classList.add('on');
+</script>
+
+<style>
+  .intro { padding-top: clamp(40px, 7vw, 90px); }
+  .h { font-size: clamp(54px, 9vw, 132px); line-height: 0.9; letter-spacing: -0.035em; margin: 16px 0 24px; }
+  .h em { color: var(--c, var(--accent)); }
+  .lead { max-width: 58ch; font-size: 18px; }
+
+  .scrolly { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 56px; width: var(--page); margin: 60px auto 0; }
+  .fig-wrap { position: relative; }
+  .fig { position: sticky; top: 84px; margin: 0; background: #0d0f0c; border-radius: 6px; padding: 14px; color: #ebe6d8; box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.55); }
+  .screen { position: relative; border: 1px solid rgb(235 230 216 / 0.1); border-radius: 4px; overflow: hidden; }
+  .seis-boot { position: absolute; inset: 0; display: grid; place-items: center; font-size: 11px; color: rgb(235 230 216 / 0.4); }
+  .fig-lower { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 14px; margin-top: 12px; align-items: center; }
+  .mini-ladder { width: 100%; height: auto; font-family: var(--mono); }
+  .ax line { stroke: rgb(235 230 216 / 0.08); }
+  .ax text, .mk text { fill: rgb(235 230 216 / 0.45); font-size: 13px; }
+  .st { fill: none; stroke: var(--c); stroke-width: 2.4; opacity: 0; transition: opacity 0.5s; }
+  .mk { opacity: 0; transition: opacity 0.5s; }
+  .mk circle, .mk path { fill: var(--c); }
+  .mk.rejected circle { fill: #0d0f0c; stroke: rgb(235 230 216 / 0.5); stroke-width: 1.5; }
+  .mk .stem { stroke: rgb(235 230 216 / 0.4); stroke-dasharray: 3 3; }
+  .fig[data-step='r1'] .s0, .fig[data-step='r1'] .m0 { opacity: 1; }
+  .fig[data-step='r2'] .s1, .fig[data-step='r2'] :is(.m0, .m1) { opacity: 1; }
+  .fig[data-step='r3'] .s2, .fig[data-step='r3'] :is(.m0, .m1, .m2) { opacity: 1; }
+  .fig:is([data-step='ladder'], [data-step='exam']) .s6, .fig:is([data-step='ladder'], [data-step='exam']) .mk { opacity: 1; }
+  .readouts { display: flex; flex-direction: column; gap: 10px; }
+  .readouts div { display: flex; flex-direction: column; gap: 2px; border-left: 2px solid var(--c); padding-left: 10px; }
+  .readouts .kicker { color: rgb(235 230 216 / 0.45); font-size: 9.5px; }
+  .readouts b { font-weight: 400; font-size: 24px; letter-spacing: -0.03em; }
+
+  .steps { padding-bottom: 30vh; }
+  .step { min-height: 78vh; display: flex; flex-direction: column; justify-content: center; opacity: 0.28; transition: opacity 0.5s var(--ease); }
+  .step:global(.on) { opacity: 1; }
+  .step .kicker { color: var(--c); margin: 0 0 12px; }
+  .step h2 { font-size: clamp(34px, 3.6vw, 52px); line-height: 1; margin: 0 0 18px; }
+  .step p { color: var(--ink-2); font-size: 17px; max-width: 48ch; }
+  .exam-mini { margin: 10px 0 0; border-top: 1px solid var(--ink); }
+  .exam-mini div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--rule); font-size: 15px; }
+  .exam-mini dt { color: var(--ink-2); }
+  .exam-mini b { font-weight: 500; color: var(--c); }
+  .exam-mini .lose b { color: var(--loss); }
+
+  .now { margin-top: 40px; }
+  .now .section { margin: 12px 0 14px; }
+  .now .section em { color: var(--c, var(--accent)); }
+  .now > p { max-width: 62ch; margin-bottom: 24px; }
+  .next { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+
+  @media (max-width: 960px) {
+    .scrolly { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .fig-wrap, .steps { grid-area: 1 / 1; }
+    .fig { top: 64px; padding: 10px; }
+    .fig-lower { grid-template-columns: minmax(0, 1fr) auto; }
+    .readouts b { font-size: 18px; }
+    .steps { position: relative; z-index: 2; padding-top: 70vh; }
+    .step { min-height: 95vh; justify-content: flex-end; padding-bottom: 4vh; opacity: 1; }
+    .step-card { background: color-mix(in srgb, var(--paper-3) 96%, transparent); border: 1px solid var(--rule); border-radius: var(--radius); padding: 18px 18px 6px; box-shadow: var(--shadow); }
+  }
+</style>

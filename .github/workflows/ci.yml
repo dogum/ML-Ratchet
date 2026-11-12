@@ -48,4 +48,6 @@ jobs:
           cache-dependency-path: site/package-lock.json
       - run: npm ci
       - run: npm run check
+      - name: Live instruments match Python (parity)
+        run: npm test
       - run: npm run build

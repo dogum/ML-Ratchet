@@ -12,7 +12,10 @@ const marks = m.exam.results.map((r) => r.verdict);
   <div class="top">
     <span class="idx num">{String(index + 1).padStart(2, '0')}</span>
     <span class="kicker">{m.domain}</span>
-    {m.status === 'partial' && <span class="kicker partial">exam partly pending</span>}
+    <span class="badges">
+      {m.hasInstrument && <span class="kicker live"><i></i>live</span>}
+      {m.status === 'partial' && <span class="kicker partial">exam partly pending</span>}
+    </span>
   </div>
   <h3 class="display name">{m.name}</h3>
   <p class="q">{m.question}</p>
@@ -45,7 +48,10 @@ const marks = m.exam.results.map((r) => r.verdict);
   .card:hover::before { transform: scaleX(1); }
   .top { display: flex; align-items: baseline; gap: 12px; }
   .idx { font-size: 11px; color: var(--c); }
-  .partial { margin-left: auto; color: var(--c); }
+  .badges { margin-left: auto; display: flex; gap: 10px; }
+  .partial { color: var(--c); }
+  .live { display: inline-flex; align-items: center; gap: 5px; color: var(--c); }
+  .live i { width: 6px; height: 6px; border-radius: 50%; background: var(--c); box-shadow: 0 0 6px var(--c); }
   .name { font-size: 44px; line-height: 0.95; }
   .q { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.45; min-height: 4.35em; }
   .spark { margin: 4px 0 2px; }

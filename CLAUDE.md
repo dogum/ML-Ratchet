@@ -11,13 +11,19 @@ To build a new model, follow `docs/agent-brief.md` exactly.
 - `models/*/lab/index.html` are the original self-contained pages (large, base64-embedded); don't reformat them.
 - `models/*/NOTEBOOK.md` and `docs/history/` are historical records; add dated entries, don't rewrite history.
 
+## Live instruments
+
+`site/src/instruments/README.md` is the contract for in-browser instruments: `models/<id>/web/export_instrument.py`
+writes `site/public/instruments/<id>/`; `site/src/instruments/<id>/{net,parity,ui}.ts` port and present it; `npm test`
+in `site/` checks the browser network against Python.
+
 ## Checks before you finish
 
 ```bash
 mlratchet validate
 mlratchet readme --check
 pytest -q                      # demos are compared to tests/golden/
-cd site && npm run check && npm run build
+cd site && npm run check && npm test && npm run build
 ```
 
 ## Rules

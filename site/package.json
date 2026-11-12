@@ -8,7 +8,8 @@
     "dev": "npm run labs && astro dev",
     "build": "npm run labs && astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "test": "node --test --experimental-strip-types tests/parity.test.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.4",

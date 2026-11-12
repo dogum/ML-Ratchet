@@ -18,6 +18,7 @@ models/<id>/
 ├── examples/            a few real exam examples (fixed random draw within strata)
 ├── training/            every script that built it, as run
 │   └── _paths.py        portable paths: code here, outputs in ../work or $ML_RATCHET_WORK/<id>
+├── web/                 optional: export_instrument.py → the live in-browser instrument (site/src/instruments/README.md)
 ├── lab/                 optional
 │   ├── index.html       the interactive page, self-contained (the network runs in the browser)
 │   └── src/             its sources

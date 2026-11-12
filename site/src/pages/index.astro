@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import HeroRatchet from '../components/HeroRatchet.astro';
+import RatchetMachine from '../components/RatchetMachine.astro';
+import Instrument from '../components/Instrument.astro';
 import ModelCard from '../components/ModelCard.astro';
 import LadderChart from '../components/LadderChart.astro';
 import { collectionStats, getBacklog, getModels, getModel, REPO_URL } from '../lib/data';
@@ -9,6 +10,8 @@ import { url } from '../lib/url';
 const models = getModels();
 const s = collectionStats();
 const quake = getModel('quakenet')!;
+const live = models.filter((m) => m.hasInstrument);
+const first = live.find((m) => m.id === 'quakenet') ?? live[0];
 const ideas = getBacklog().slice(0, 6);
 const losses = models.filter((m) => m.losses?.length).map((m) => ({ m, text: m.losses![0] }));
 const help = models.flatMap((m) => (m.help_wanted ?? []).map((h) => ({ m, h })));
@@ -34,10 +37,14 @@ const steps = [
       </p>
       <div class="ctas reveal">
         <a class="btn" href={url('models/')}>Explore the models <span class="arrow">→</span></a>
-        <a class="btn ghost" href={url('method/')}>Read the method</a>
+        <a class="btn ghost" href={url('story/')}>Watch how one learned</a>
+        <a class="btn ghost" href={url('#live')}>Run one live</a>
       </div>
     </div>
-    <div class="hero-figure reveal"><HeroRatchet /></div>
+    <div class="hero-figure frame reveal">
+      <div class="hf-head"><span class="kicker">The ratchet, running · every rung decision in the collection, in order</span></div>
+      <RatchetMachine />
+    </div>
 
     <dl class="stats">
       <div><dt class="kicker">models</dt><dd class="num">{s.models}</dd></div>
@@ -79,6 +86,35 @@ const steps = [
       {models.map((m, i) => <ModelCard m={m} index={i} />)}
     </div>
   </section>
+
+  {live.length > 0 && (
+  <section class="rack-sec" id="live">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="kicker tick-label">Don't take our word for it</p>
+          <h2 class="section reveal">The networks,<br /><em>running live.</em></h2>
+        </div>
+        <p class="muted reveal">Every model's real network runs here, in your browser, on real exam records it never trained on. Add noise, cut the record short, hide a detector — and watch the reading and its error bars respond. Weights load only when you open one.</p>
+      </div>
+      <div class="rack" data-rack>
+        <div class="rack-tabs" role="tablist" aria-label="Choose a model">
+          {live.map((m) => (
+            <button type="button" role="tab" class="rt" style={`--c:${m.accent}`} aria-selected={m.id === first.id ? 'true' : 'false'} data-tab={m.id}>
+              <span class="display">{m.name}</span><small class="mono">{m.domain}</small>
+            </button>
+          ))}
+        </div>
+        {live.map((m) => (
+          <div class="rack-panel" data-panel={m.id} hidden={m.id !== first.id} role="tabpanel">
+            <Instrument id={m.id} accent={m.accent} name={m.name} />
+            <a class="more mono" href={url(`models/${m.id}/`)}>{m.name}: the exam, the ratchet, the physics →</a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  )}
 
   <section class="wrap anatomy">
     <div class="anat-text">
@@ -165,7 +201,8 @@ mlratchet new gridpulse`}</code></pre>
   .lede { font-size: clamp(17px, 1.6vw, 20px); line-height: 1.55; margin: 0; max-width: 60ch; color: var(--ink-2); }
   .lede b { color: var(--ink); font-weight: 600; }
   .ctas { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
-  .hero-figure { margin-bottom: 36px; }
+  .hero-figure { margin-bottom: 36px; padding: 22px clamp(16px, 3vw, 36px) 26px; }
+  .hf-head { margin-bottom: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--rule-2); }
   .stats { display: grid; grid-template-columns: repeat(6, 1fr); margin: 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
   .stats div { padding: 16px 16px 18px 0; border-right: 1px solid var(--rule); }
   .stats div + div { padding-left: 16px; }
@@ -195,6 +232,15 @@ mlratchet new gridpulse`}</code></pre>
   .section em { color: var(--ink-2); }
   .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 
+  .rack-sec { margin-top: clamp(90px, 12vw, 150px); }
+  .rack-tabs { display: flex; gap: 0; overflow-x: auto; border-bottom: 1px solid var(--ink); margin-bottom: 18px; scrollbar-width: thin; }
+  .rt { flex: none; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 16px 12px; background: none; border: 0; border-bottom: 3px solid transparent; cursor: pointer; color: var(--ink-3); text-align: left; }
+  .rt .display { font-size: 24px; line-height: 1; }
+  .rt small { font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .rt:hover { color: var(--ink); }
+  .rt[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--c); }
+  .rt[aria-selected="true"] .display { color: var(--c); }
+  .rack-panel .more { display: inline-block; margin-top: 14px; }
   .anatomy { margin-top: clamp(90px, 12vw, 150px); display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr); gap: 48px; align-items: start; }
   .anat-text { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 18px; }
   .anat-text .section { margin: 4px 0 6px; }
@@ -257,3 +303,13 @@ mlratchet new gridpulse`}</code></pre>
     .loss-list li a { padding-left: 0 !important; }
   }
 </style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-rack]').forEach((rack) => {
+    const tabs = [...rack.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+    tabs.forEach((t) => t.addEventListener('click', () => {
+      tabs.forEach((x) => x.setAttribute('aria-selected', String(x === t)));
+      rack.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => { p.hidden = p.dataset.panel !== t.dataset.tab; });
+    }));
+  });
+</script>

@@ -10,7 +10,7 @@ An open collection of machine-learning models that learned only from physics sim
 only when they beat a frozen test *and* a small real dev set, and were graded once on real data they never saw.
 The losses are published too.
 
-[**Website**](https://dogum.github.io/ML-Ratchet/) · [The method](docs/method.md) · [Scoreboard](https://dogum.github.io/ML-Ratchet/scoreboard/) · [Add a model](docs/adding-a-model.md) · [Backlog](docs/backlog.md)
+[**Website**](https://dogum.github.io/ML-Ratchet/) · [Run them live](https://dogum.github.io/ML-Ratchet/#live) · [The story](https://dogum.github.io/ML-Ratchet/story/) · [The method](docs/method.md) · [Scoreboard](https://dogum.github.io/ML-Ratchet/scoreboard/) · [Add a model](docs/adding-a-model.md) · [Backlog](docs/backlog.md)
 
 </div>
 
@@ -29,6 +29,9 @@ The losses are published too.
 | [**SwellCast**](models/swellcast/) | How far away was the storm whose swell is arriving at this buoy? | 288 hurricane-swell arrivals | 2 wins · 2 losses |
 | [**BeatNet**](models/beatnet/) | Is each heartbeat normal, supraventricular, ventricular or fusion? *(research only)* | MIT-BIH DS2, 49,705 beats | 3 wins · 2 losses |
 | [**StarQuake**](models/starquake/) | How massive and how big is this red giant, from how it rings? | 420 Kepler giants × 5 lengths | 4 wins · 1 loss · 1 tie |
+
+Every model also runs **live in your browser** on the website — the real network, ported to TypeScript and checked
+against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
 **0** real labelled examples were used for training. **61** rung decisions are logged, **24** of them rejections.
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself.
@@ -88,6 +91,7 @@ mlratchet/            the Python package: registry, CLI, schemas, and the ratche
   templates/model/      the scaffold behind `mlratchet new`
 docs/                 the method, the contract, lessons, the agent brief, data sources, backlog, roadmap
 site/                 the website (Astro + TypeScript), built from models/ and docs/, deployed to GitHub Pages
+  src/instruments/      each model's network running live in the browser (parity-tested against Python)
 tests/                core tests, the contract, and every demo against its golden output
 ```
 

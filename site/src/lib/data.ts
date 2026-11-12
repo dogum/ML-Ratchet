@@ -38,6 +38,7 @@ export interface Ladder {
 export interface Model extends Card {
   ladders: Ladder[];
   hasLab: boolean;
+  hasInstrument: boolean;
   labBytes: number;
   weightBytes: number;
   tally: Record<Verdict, number>;
@@ -67,6 +68,7 @@ export function getModels(): Model[] {
       ...card,
       ladders: lad.ladders,
       hasLab: existsSync(lab),
+      hasInstrument: existsSync(join(REPO_ROOT, 'site', 'public', 'instruments', id, 'reference.json')),
       labBytes: existsSync(lab) ? statSync(lab).size : 0,
       weightBytes: card.files.weights.reduce((s, w) => s + (existsSync(join(p, w)) ? statSync(join(p, w)).size : 0), 0),
       tally,
