@@ -1,15 +1,15 @@
-// A faster conv1d for ChirpNet's trunk (same numbers as ops.conv1d up to float32 summation order):
+// Faster conv1d / conv2d for ChirpNet's networks (same numbers as ops.conv1d / conv2d up to summation order):
 // im2col + a 4x4 register-tiled matrix multiply, with the weights repacked once per tensor.
 import type { Tensor } from '../../lib/nn/tensor.ts';
 
 interface Packed { O: number; CK: number; ob: number; w: Float32Array }
 const cache = new WeakMap<Float32Array, Packed>();
 
-/** Weights [O, C, K] -> blocks of 4 output channels, laid out [block][p = c*K + k][4] (zero-padded). */
+/** Weights [O, C, K] (or [O, C, KH, KW], flattened per output) -> blocks of 4 output channels, laid out [block][p = c*K + k][4] (zero-padded). */
 function pack(w: Tensor): Packed {
   let p = cache.get(w.data);
   if (p) return p;
-  const [O, C, K] = w.shape, CK = C * K, ob = Math.ceil(O / 4);
+  const O = w.shape[0], CK = w.data.length / O, ob = Math.ceil(O / 4);
   const out = new Float32Array(ob * CK * 4);
   for (let o = 0; o < O; o++) {
     const b = o >> 2, l = o & 3;
@@ -22,28 +22,9 @@ function pack(w: Tensor): Packed {
 
 let colBuf = new Float32Array(1 << 16);
 
-/** y = conv1d(x [C, L], w [O, C, K], b [O]) with zero padding `pad` and `stride`, as numpy's _conv. */
-export function conv1dFast(x: Tensor, w: Tensor, b: Tensor | null, stride: number, pad: number): Tensor {
-  const [C, L] = x.shape;
-  const K = w.shape[2];
-  const Lout = Math.floor((L + 2 * pad - K) / stride) + 1;
-  const P = pack(w), CK = P.CK, O = P.O;
-  const Lp = (Lout + 3) & ~3; // pad columns to a multiple of 4
-  const need = CK * Lp;
-  if (colBuf.length < need) colBuf = new Float32Array(need);
-  const col = colBuf, xd = x.data;
-  // im2col: col[c*K + k][j] = x[c][j*stride + k - pad] (0 outside)
-  for (let c = 0; c < C; c++) {
-    const xr = c * L;
-    for (let k = 0; k < K; k++) {
-      const row = (c * K + k) * Lp;
-      const sh = k - pad;
-      for (let j = 0; j < Lp; j++) {
-        const i = j * stride + sh;
-        col[row + j] = j < Lout && i >= 0 && i < L ? xd[xr + i] : 0;
-      }
-    }
-  }
+/** out[o][j] = bias[o] + sum_q W[o][q] col[q][j] for the packed weights; col rows are Lp long (Lp % 4 == 0). */
+function gemm(P: Packed, col: Float32Array, Lp: number, Lout: number, b: Tensor | null): Float32Array {
+  const CK = P.CK, O = P.O;
   const out = new Float32Array(O * Lout);
   const wp = P.w, bd = b ? b.data : null;
   for (let blk = 0; blk < P.ob; blk++) {
@@ -74,7 +55,33 @@ export function conv1dFast(x: Tensor, w: Tensor, b: Tensor | null, stride: numbe
       put(o0, a00, a01, a02, a03); put(o0 + 1, a10, a11, a12, a13); put(o0 + 2, a20, a21, a22, a23); put(o0 + 3, a30, a31, a32, a33);
     }
   }
-  return { data: out, shape: [O, Lout] };
+  return out;
+}
+
+
+/** y = conv1d(x [C, L], w [O, C, K], b [O]) with zero padding `pad` and `stride`, as numpy's _conv. */
+export function conv1dFast(x: Tensor, w: Tensor, b: Tensor | null, stride: number, pad: number): Tensor {
+  const [C, L] = x.shape;
+  const K = w.shape[2];
+  const Lout = Math.floor((L + 2 * pad - K) / stride) + 1;
+  const P = pack(w), CK = P.CK, O = P.O;
+  const Lp = (Lout + 3) & ~3; // pad columns to a multiple of 4
+  const need = CK * Lp;
+  if (colBuf.length < need) colBuf = new Float32Array(need);
+  const col = colBuf, xd = x.data;
+  // im2col: col[c*K + k][j] = x[c][j*stride + k - pad] (0 outside)
+  for (let c = 0; c < C; c++) {
+    const xr = c * L;
+    for (let k = 0; k < K; k++) {
+      const row = (c * K + k) * Lp;
+      const sh = k - pad;
+      for (let j = 0; j < Lp; j++) {
+        const i = j * stride + sh;
+        col[row + j] = j < Lout && i >= 0 && i < L ? xd[xr + i] : 0;
+      }
+    }
+  }
+  return { data: gemm(P, col, Lp, Lout, b), shape: [O, Lout] };
 }
 
 /** Batched dense layer: X [n, I] (row-major), W [O, I] (PyTorch layout), bias [O] -> Y [n, O] = X W^T + bias. 4x4 tiles. */
@@ -113,4 +120,35 @@ export function linearBatch(X: Float32Array, n: number, I: number, W: Float32Arr
     }
   }
   return Y;
+}
+
+/** y = conv2d(x [C, H, W], w [O, C, KH, KW], b [O]) with zero padding [ph, pw] and stride [sh, sw], as numpy's _conv2d. */
+export function conv2dFast(x: Tensor, w: Tensor, b: Tensor | null, stride: [number, number], pad: [number, number]): Tensor {
+  const [C, H, W] = x.shape;
+  const [, , KH, KW] = w.shape;
+  const [sh, sw] = stride, [ph, pw] = pad;
+  const Ho = Math.floor((H + 2 * ph - KH) / sh) + 1, Wo = Math.floor((W + 2 * pw - KW) / sw) + 1;
+  const N = Ho * Wo, Lp = (N + 3) & ~3;
+  const P = pack(w);
+  const need = P.CK * Lp;
+  if (colBuf.length < need) colBuf = new Float32Array(need);
+  const col = colBuf, xd = x.data;
+  for (let c = 0; c < C; c++) {
+    for (let kh = 0; kh < KH; kh++) {
+      for (let kw = 0; kw < KW; kw++) {
+        const row = ((c * KH + kh) * KW + kw) * Lp;
+        for (let i = 0; i < Ho; i++) {
+          const y = i * sh + kh - ph, base = row + i * Wo;
+          if (y < 0 || y >= H) { col.fill(0, base, base + Wo); continue; }
+          const xr = (c * H + y) * W;
+          for (let j = 0; j < Wo; j++) {
+            const xx = j * sw + kw - pw;
+            col[base + j] = xx >= 0 && xx < W ? xd[xr + xx] : 0;
+          }
+        }
+        col.fill(0, row + N, row + Lp);
+      }
+    }
+  }
+  return { data: gemm(P, col, Lp, N, b), shape: [P.O, Ho, Wo] };
 }

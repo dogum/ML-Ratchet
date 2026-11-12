@@ -155,6 +155,7 @@ limits:
 next:
   - Extend the training bank to heavier mergers (GW190521-like) and re-run the ratchet.
   - Re-set the threshold with O3 noise in the background (one O3 time-slide window reached 7.24).
+  - "Fix the inverted cosine taper in chirpnet.gate (the ramps drop at the outer edge, not next to the gate), then re-run the exams that gate (GW170817 raw L1)."
   - A coincidence checker for the neutron-star model.
   - Longer neutron-star windows to fix the chirp-mass bias.
   - Live posterior sampling in the browser.

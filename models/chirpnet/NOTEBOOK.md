@@ -79,3 +79,14 @@ exam's protocol (32 s, 4 kHz, H1 + L1; time-slid background from the same files,
 - Merger times are 24–100 ms from the catalogue's (geocentric) GPS times, looser than in O1/O2.
 - One-detector views still clear the threshold for GW190408 (both), GW190412 (H1), GW191204 (L1) and GW200311 (both):
   the known limit of the coincidence check.
+
+## GW170817 live, and a gating bug — 12 Nov 2026
+
+- The live instrument gained a neutron-star mode: ChirpNetBNS runs in the browser on 46 s of whitened GW170817
+  strain from LIGO-P1700349 (and the raw P1700337 L1 with its glitch). Parity with Python 1e-7. The scan runs in a
+  Web Worker. What it shows: statistic 13.8 (14.4 with Python's finer scan), chirp mass 1.122 vs LIGO 1.1975
+  (outside its bar), no coincidence checker — sliding L1 by 4 s still reads "Merger" (statistic 7.0), and each
+  detector alone clears the 5.5 threshold (H1 8.1, L1 10.7).
+- Found while porting: `chirpnet.gate`'s cosine tapers are reversed (the mask falls to 0 at the outer edge of each
+  0.1 s ramp and jumps back to 1 next to the zeroed stretch). It matters only near gates. Left as released (the
+  browser port matches it exactly); listed as a next rung, since fixing it changes the gated GW170817 numbers.

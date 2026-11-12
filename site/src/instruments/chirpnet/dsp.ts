@@ -30,7 +30,7 @@ export const tfFreq = (r: number) => TF_FLO * (TF_FHI / TF_FLO) ** (r / (TF_ROWS
 
 /** Band-passed copies of two equal-length streams and their combined time-frequency energy map
  *  (rows: TF_ROWS log-spaced frequencies 20-512 Hz, Q ~ 6; cols: `cols` time bins; each row divided by its median). */
-export function display(streams: Float32Array[], fs: number, cols: number) {
+export function display(streams: Float32Array[], fs: number, cols: number, withTF = true) {
   const n = streams[0].length;
   let N = 1;
   while (N < n + fs) N <<= 1; // zero-pad by at least 1 s
@@ -55,6 +55,7 @@ export function display(streams: Float32Array[], fs: number, cols: number) {
     }
     fft(br, bi, true);
     bands.push(Float32Array.from(br.subarray(0, n)));
+    if (!withTF) continue;
     // constant-Q energy
     const yr = new Float64Array(M), yi = new Float64Array(M), row = new Float64Array(cols);
     for (let r = 0; r < TF_ROWS; r++) {
