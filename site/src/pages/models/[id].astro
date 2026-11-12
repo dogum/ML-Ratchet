@@ -27,7 +27,12 @@ const toc = [
 ];
 const released = m.released ? new Date(m.released as string).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : null;
 ---
-<Base title={`${m.name} — ${m.tagline}`} description={m.summary} accent={m.accent}>
+<Base title={`${m.name} — ${m.tagline}`} description={m.summary} accent={m.accent}
+  keywords={[m.name, m.domain, ...(m.tags ?? [])]}
+  jsonld={[{ '@context': 'https://schema.org', '@type': 'SoftwareSourceCode', name: m.name, description: m.summary,
+    codeRepository: ghTree(dir), programmingLanguage: 'Python', license: 'https://opensource.org/licenses/MIT',
+    keywords: [m.domain, ...(m.tags ?? []), 'physics-informed machine learning', 'trained on simulations'].join(', '),
+    isBasedOn: m.data.map((d) => d.url) }]}>
   <article style={`--c:${m.accent}`}>
     <header class="mhero">
       <div class="wrap">

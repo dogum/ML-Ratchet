@@ -9,12 +9,34 @@ interface Props {
   description?: string;
   accent?: string;
   wide?: boolean;
+  keywords?: string[];
+  /** extra schema.org JSON-LD objects for this page */
+  jsonld?: Record<string, unknown>[];
 }
 const {
   title,
   description = 'Physics-first machine learning. Every model learned only from simulations, moved up a rung only when it beat a frozen test and a real dev set, and was graded once on real data it never saw.',
   accent,
+  keywords = [],
+  jsonld = [],
 } = Astro.props;
+const baseKeywords = ['physics-informed machine learning', 'simulation-based inference', 'scientific machine learning', 'simulation to real', 'sim-to-real', 'model cards', 'uncertainty quantification', 'numpy neural network', 'open source', 'ratchet'];
+const siteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'ML Ratchet',
+  url: new URL(url(), Astro.site).href,
+  description: 'Physics-first machine learning: models trained only on simulations, kept only when they ratchet up, graded on real data they never saw.',
+};
+const codeLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareSourceCode',
+  name: 'ML Ratchet',
+  codeRepository: REPO_URL,
+  programmingLanguage: ['Python', 'TypeScript'],
+  license: 'https://opensource.org/licenses/MIT',
+  keywords: [...baseKeywords, 'gravitational waves', 'LIGO', 'seismology', 'earthquake magnitude', 'exoplanets', 'TESS', 'asteroseismology', 'Kepler', 'battery state of health', 'solar PV fault detection', 'bearing fault diagnosis', 'ECG arrhythmia', 'ocean swell'].join(', '),
+};
 const fullTitle = title ? `${title} · ML Ratchet` : 'ML Ratchet — trained on physics, graded on reality';
 const path = Astro.url.pathname;
 const nav = [
@@ -34,6 +56,10 @@ const canonical = new URL(path, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content={[...keywords, ...baseKeywords].join(', ')} />
+    <meta name="author" content="ML Ratchet contributors" />
+    <link rel="sitemap" href={url('sitemap-index.xml')} />
+    <script type="application/ld+json" set:html={JSON.stringify([siteLd, codeLd, ...jsonld])} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
     <meta name="theme-color" content="#f2eee4" media="(prefers-color-scheme: light)" />

@@ -88,5 +88,5 @@
 - Money view: $ lost per cause.
 
 ## Next project
-- CellSense: battery health from one charge, using PyBaMM physics and the Severson 2019 data. Greg has a Tesla Model Y, so there may be a personal-data angle.
+- CellSense: battery health from one charge, using PyBaMM physics and the Severson 2019 data.
 - Collection repo / "physics MCP" serving these models: name TBD.
