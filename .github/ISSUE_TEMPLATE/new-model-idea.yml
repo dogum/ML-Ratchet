@@ -1,0 +1,39 @@
+name: New model idea
+description: Propose a physics → data → real exam problem for the collection
+labels: [idea]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Good candidates have three things: physics you can simulate, public real data to grade on, and a classical
+        method to beat. See docs/backlog.md for ideas already on the list.
+  - type: input
+    id: name
+    attributes:
+      label: Working name
+      placeholder: GridPulse
+  - type: textarea
+    id: question
+    attributes:
+      label: The question it answers
+      placeholder: How many MW were lost, and how much inertia does the grid have, from the frequency dip after a plant trips?
+    validations:
+      required: true
+  - type: textarea
+    id: physics
+    attributes:
+      label: Physics / simulator
+      description: Governing equations, and an independent reference to check the simulator against.
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Real data
+      description: Documented public source(s), licence, and what can be the noise pool, the dev set and the exam.
+    validations:
+      required: true
+  - type: textarea
+    id: baseline
+    attributes:
+      label: Classical method and dumb baseline

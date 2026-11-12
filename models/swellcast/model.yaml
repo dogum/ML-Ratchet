@@ -1,0 +1,125 @@
+id: swellcast
+name: SwellCast
+version: "1.0"
+status: released
+released: 2026-11-06
+order: 7
+domain: Oceanography
+tags: [ocean waves, dispersion, storm location, spectra, uncertainty]
+accent: "#0e9aa7"
+tagline: One buoy hears a storm thousands of kilometres away.
+question: Is swell from a distant storm arriving at this buoy — and how far away, when, and from which direction was the storm?
+summary: >-
+  From ten days of NOAA buoy wave spectra, SwellCast says whether storm swell is arriving, how far away the
+  storm was, when it peaked and which way it lies. It is Munk's 1963 idea — long waves outrun short ones, so the
+  arriving frequency rises linearly in time at a rate set by the distance — learned by a network from
+  simulated storms laid onto real buoy records.
+
+reads: 240 hours of NOAA NDBC spectral wave data (energy and first directional moments) from one buoy.
+returns:
+  - Swell detected (yes/no with a score)
+  - Storm distance (km) with a 68% range
+  - Time of the storm's peak ± hours
+  - Direction to the storm ± degrees, and the storm's wave height
+
+physics:
+  summary: >-
+    Deep-water dispersion (group speed g/4πf) from a moving, growing and decaying JONSWAP storm patch, spherical
+    spreading on the great circle, Ardhuin et al. 2009 swell dissipation, directional moments, and the buoy's
+    own estimation noise and quantisation.
+  simulator:
+    - Moving, growing, decaying JONSWAP storm patch (7 sub-areas), partly beamed along the storm heading
+    - Great-circle spherical spreading and Ardhuin 2009 dissipation
+    - χ²(24) estimation noise and NDBC 0.01 m²/Hz quantisation
+    - "v3: 65% of storms follow real IBTrACS 1985–2007 hurricane tracks at their real place relative to the buoy"
+  checks:
+    - "Ridge slope vs g/(4πD) within 1.4% at 1,500 km and 0.1% at 9,000 km; energy received/emitted 1.0003"
+    - "Hurricane Marie 2014 (not in dev or exam): the real ridge at 4 buoys runs parallel to the predicted one"
+noise: Quiet 240-hour windows from 27 NDBC buoys (2008–2025); 25% of each batch is a real null window
+network: 2-D CNN over frequency × time (log energy, anomaly, two directional moments, data mask), 4 residual stages, 296k parameters; β-NLL and von Mises heads
+
+data:
+  - name: NOAA National Data Buoy Center spectral wave data
+    url: https://www.ndbc.noaa.gov/
+    licence: Public domain (U.S. Government)
+    role: noise, dev, exam
+  - name: IBTrACS v04r01 (NOAA NCEI)
+    url: https://www.ncei.noaa.gov/products/international-best-track-archive
+    licence: Public domain; cite Knapp et al. 2010
+    role: truth, physics
+
+split:
+  dev: 18 storms (seed 2026), 29 confirmed arrivals
+  exam: 288 confirmed arrivals (632 visible, 2,081 storm–buoy pairs in all)
+
+exam:
+  summary: 288 confirmed storm-swell arrivals.
+  results:
+    - metric: Distance, median error
+      better: lower
+      model: 38
+      unit: "%"
+      baselines:
+        - { name: "Classical ridge fit f = a(t − t0)", kind: classical, value: 59 }
+        - { name: "Dev median guess", kind: dumb, value: 28 }
+      verdict: loss
+    - metric: Storm time, median error
+      better: lower
+      model: 33
+      unit: h
+      baselines:
+        - { name: "Classical ridge fit", kind: classical, value: 48 }
+        - { name: "Dev median guess", kind: dumb, value: 24 }
+      verdict: loss
+    - metric: Direction, median error
+      better: lower
+      model: 19
+      unit: deg
+      baselines:
+        - { name: "Classical ridge fit", kind: classical, value: 20 }
+        - { name: "Dev median guess", kind: dumb, value: 56 }
+      verdict: win
+    - metric: Arrivals detected
+      better: higher
+      model: 63
+      unit: "%"
+      baselines:
+        - { name: "Classical ridge fit", kind: classical, value: 43 }
+      verdict: win
+  coverage:
+    - { output: Distance, actual: 67 }
+    - { output: Time, actual: 74 }
+    - { output: Direction, actual: 70 }
+
+wins:
+  - Beats the classical ridge fit on distance, time and detection; ties it on direction; calibrated error bars.
+losses:
+  - Doesn't beat the dumb median guess on distance or time — the exam geography is narrow and the window is centred within ±36 h of the arrival.
+limits:
+  - Truth is tropical cyclones only; Southern Ocean and North Pacific winter storms are not graded.
+  - One-point truth (peak wind) for a storm that makes swell for days along a track.
+  - The calibrated v2/v3 simulators match dev statistics better but alone make real dev readings worse; the cause is not understood.
+next:
+  - Sliding-window search without the ±36 h centring hint — the honest monitoring task.
+  - Track-level truth and loss (the energy-weighted source), or a hybrid swap test like QuakeNet's.
+  - Two-buoy triangulation, and extratropical truth from reanalysis.
+
+usage:
+  install: pip install numpy scipy
+  demo: python demo.py
+  python: |
+    import pipeline as PL, swellcast as SC
+    rec = PL.read_ndbc("51004w2018.txt.gz", "51004d2018.txt.gz", "51004j2018.txt.gz")
+    win, centre = PL.window(rec, hour)
+    r = SC.SwellCast().read(win)
+    print(r["detected"], r["D_km"], r["t0"], r["dir"])
+
+files:
+  inference: [swellcast.py, pipeline.py]
+  weights: [swellcast_weights.npz]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 2

@@ -1,0 +1,410 @@
+<title>ChirpNet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Neural networks trained only on simulated mergers find and weigh the real black holes and neutron stars in LIGO data, with calibrated error bars.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a long-form lab notebook around one instrument console. The two detectors carry their own colors everywhere: Hanford amber, Livingston cyan; the network's own voice is violet. */
+:root{
+  --bg:#07080c; --panel:#0d0f16; --panel2:#121522; --line:rgba(205,214,255,.10); --line2:rgba(205,214,255,.18);
+  --ink:#e8eaf2; --dim:#9aa0b8; --faint:#646a82;
+  --h1:#ffb35c; --l1:#58d6ea; --net:#b9a2ff; --hit:#ff6fa0; --ok:#7be3a8;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --sans:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+a{color:var(--net);text-underline-offset:3px}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--net);outline-offset:2px;border-radius:6px}
+.mono{font-family:var(--mono)}
+.tab{font-variant-numeric:tabular-nums}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(7,8,12,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:21;background:var(--bg)}
+.topin{display:flex;align-items:center;gap:20px;height:56px}
+.mark{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:-.02em;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.mark svg{width:26px;height:16px}
+.ver{font-family:var(--mono);font-size:11px;color:var(--dim);border:1px solid var(--line2);border-radius:999px;padding:3px 9px;white-space:nowrap}
+nav.links{margin-left:auto;display:flex;gap:18px;font-size:14px}
+nav.links a{color:var(--dim);text-decoration:none}
+nav.links a:hover{color:var(--ink)}
+
+/* hero */
+.hero{padding-block:64px 28px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:48px;align-items:end}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--net)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(40px,6.2vw,76px);line-height:.98;letter-spacing:-.035em;margin:14px 0 0;text-wrap:balance}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--h1),var(--hit) 55%,var(--l1));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:18px;color:#c6cadb;max-width:56ch;margin:0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:26px}
+.stat{background:var(--panel);padding:14px 16px}
+.stat b{display:block;font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:-.02em;line-height:1.1}
+.stat span{font-size:13px;color:var(--dim);line-height:1.35;display:block;margin-top:4px}
+
+/* console */
+.console{border:1px solid var(--line2);border-radius:18px;background:linear-gradient(180deg,var(--panel),#0a0c12);overflow:hidden}
+.cgrid{display:grid;grid-template-columns:220px minmax(0,1fr) 300px}
+.evlist{border-right:1px solid var(--line);padding:10px;display:flex;flex-direction:column;gap:4px}
+.ev{display:block;width:100%;text-align:left;padding:11px 12px;border-radius:10px;border:1px solid transparent;transition:background .2s,border-color .2s}
+.ev:hover{background:rgba(205,214,255,.04)}
+.ev[aria-pressed="true"]{background:rgba(185,162,255,.08);border-color:rgba(185,162,255,.35)}
+.ev .n{font-family:var(--mono);font-weight:500;font-size:14px;display:flex;justify-content:space-between;gap:8px}
+.ev .n i{font-style:normal;color:var(--dim);font-weight:400}
+.ev .d{font-size:12.5px;color:var(--dim);line-height:1.35;margin-top:3px}
+.plots{padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.plabel{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em}
+.plabel .det{font-weight:500}
+.plabel .det.h{color:var(--h1)} .plabel .det.l{color:var(--l1)}
+.cv{display:block;width:100%;border-radius:8px;background:#05060a}
+.spec{height:150px}
+.strain{height:120px}
+.score{height:110px}
+.legendrow{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.legendrow i{display:inline-block;width:14px;height:2px;vertical-align:3px;margin-right:6px;border-radius:2px}
+.readout{border-left:1px solid var(--line);padding:16px 18px;display:flex;flex-direction:column;gap:16px}
+.verdict{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.01em}
+.verdict .dot{width:12px;height:12px;border-radius:50%;background:var(--hit);box-shadow:0 0 0 6px rgba(255,111,160,.15),0 0 18px var(--hit)}
+.verdict.no .dot{background:var(--faint);box-shadow:none}
+.rk{font-size:13px;color:var(--dim);line-height:1.45}
+.rk b{color:var(--ink);font-weight:600}
+.kv{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:14px;align-items:baseline}
+.kv dt{color:var(--dim)} .kv dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.big{font-family:var(--display);font-weight:700;font-size:40px;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.big small{font-family:var(--mono);font-weight:400;font-size:13px;color:var(--dim);letter-spacing:0;margin-left:6px}
+.cmp{margin-top:6px}
+.cmp svg{display:block;width:100%;height:auto}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-size:13.5px;font-weight:500;padding:8px 13px;border-radius:999px;border:1px solid var(--line2);color:var(--ink);transition:all .2s;display:inline-flex;align-items:center;gap:7px}
+.btn:hover{border-color:rgba(205,214,255,.4);background:rgba(205,214,255,.05)}
+.btn.primary{background:var(--net);color:#120c26;border-color:var(--net)}
+.btn.primary:hover{background:#cbb9ff}
+.btn svg{width:14px;height:14px}
+.btn[disabled]{opacity:.5;cursor:default}
+.note{font-size:12.5px;color:var(--faint);line-height:1.45}
+
+/* sections */
+section.s{padding-block:84px 8px}
+h2{font-family:var(--display);font-weight:800;font-size:clamp(30px,3.8vw,46px);line-height:1.02;letter-spacing:-.03em;margin:10px 0 14px;text-wrap:balance}
+.sub{color:#c2c6d6;max-width:64ch;margin:0 0 26px;font-size:17px}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--panel)}
+
+/* lab */
+.lab{display:grid;grid-template-columns:320px minmax(0,1fr);gap:0;overflow:hidden}
+.ctl{padding:20px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:20px}
+.ctl label{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:8px}
+.ctl label b{font-family:var(--mono);font-weight:500;color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--net)}
+.seg{display:flex;border:1px solid var(--line2);border-radius:999px;padding:3px;gap:2px}
+.seg button{flex:1;font-family:var(--mono);font-size:12px;padding:7px 6px;border-radius:999px;color:var(--dim)}
+.seg button[aria-pressed="true"]{background:rgba(185,162,255,.16);color:var(--ink)}
+.sw{display:flex;align-items:center;justify-content:space-between;font-size:14px}
+.sw button{width:42px;height:24px;border-radius:999px;background:#262a3a;position:relative;transition:background .2s;flex:none}
+.sw button::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#d6d9e6;transition:transform .2s}
+.sw button[aria-pressed="true"]{background:var(--hit)}
+.sw button[aria-pressed="true"]::after{transform:translateX(18px)}
+.labview{padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.labres{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.labres div{background:var(--panel2);padding:12px 14px}
+.labres span{display:block;font-size:12px;color:var(--dim)}
+.labres b{display:block;font-family:var(--mono);font-weight:500;font-size:18px;margin-top:2px;font-variant-numeric:tabular-nums}
+.labres b.yes{color:var(--hit)} .labres b.nope{color:var(--faint)}
+
+/* ratchet */
+.rungs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.rung{padding:16px;border-radius:14px;border:1px solid var(--line);background:var(--panel);position:relative;display:flex;flex-direction:column;gap:8px}
+.rung.acc{border-color:rgba(123,227,168,.35)}
+.rung.rej{opacity:.72}
+.rung .tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;display:flex;justify-content:space-between;color:var(--dim)}
+.rung .tag b{font-weight:500}
+.rung.acc .tag b{color:var(--ok)} .rung.rej .tag b{color:var(--faint)}
+.rung h3{font-family:var(--display);font-weight:700;font-size:18px;line-height:1.15;margin:0;letter-spacing:-.01em}
+.rung p{margin:0;font-size:13.5px;color:var(--dim);line-height:1.45}
+.rung .m{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-top:auto;padding-top:8px;border-top:1px solid var(--line)}
+.rung .m span{font-size:11px;color:var(--faint);display:block}
+.rung .m b{font-family:var(--mono);font-weight:500;font-size:14px;font-variant-numeric:tabular-nums}
+.charts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.chart{padding:16px}
+.chart h4{margin:0 0 4px;font-size:15px;font-weight:600}
+.chart p{margin:0 0 10px;font-size:13px;color:var(--dim)}
+.chart svg{display:block;width:100%;height:auto}
+
+/* how */
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.how .card{padding:20px}
+.how h3{font-family:var(--display);font-weight:700;font-size:19px;margin:0 0 8px;letter-spacing:-.01em}
+.how p{margin:0 0 10px;font-size:14.5px;color:#c4c8d8}
+.formula{font-family:var(--mono);font-size:13px;background:#05060a;border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--ink);overflow-x:auto;white-space:nowrap}
+.arch{padding:20px;margin-top:12px}
+.arch svg{display:block;width:100%;height:auto}
+
+/* use */
+.use{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px}
+pre.code{margin:0;padding:18px;background:#05060a;border:1px solid var(--line);border-radius:14px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.6;color:#d8dbe8}
+pre.code .c{color:var(--faint)} pre.code .k{color:var(--net)} pre.code .s{color:var(--h1)} pre.code .o{color:var(--l1)}
+.files{padding:20px;display:flex;flex-direction:column;gap:12px}
+.file{display:flex;gap:12px;align-items:baseline;font-size:14px}
+.file code{font-family:var(--mono);font-size:13px;color:var(--ink);white-space:nowrap}
+.file span{color:var(--dim)}
+ul.limits{margin:0;padding-left:18px;color:#c4c8d8;font-size:14.5px}
+ul.limits li{margin-bottom:6px}
+footer{padding-block:60px 50px;color:var(--faint);font-size:13px;border-top:1px solid var(--line);margin-top:80px}
+footer a{color:var(--dim)}
+
+/* neutron stars */
+.bgrid{display:grid;grid-template-columns:minmax(0,1fr) 300px}
+.bspec{height:300px}
+
+/* posteriors */
+.pecard{padding:16px 18px}
+.pebar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pills button{font-family:var(--mono);font-size:12.5px;padding:7px 12px;border-radius:999px;border:1px solid var(--line2);color:var(--dim)}
+.pills button[aria-pressed="true"]{background:rgba(185,162,255,.14);border-color:rgba(185,162,255,.45);color:var(--ink)}
+.pegrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.pep{min-width:0;display:flex;flex-direction:column;gap:6px}
+.pecv{height:250px}
+.petab{margin-top:14px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.petab div{background:var(--panel2);padding:10px 12px;min-width:0}
+.petab span{display:block;font-size:12px;color:var(--dim)}
+.petab b{display:block;font-family:var(--mono);font-weight:500;font-size:15px;margin-top:2px;font-variant-numeric:tabular-nums}
+.petab em{display:block;font-style:normal;font-family:var(--mono);font-size:11.5px;color:var(--h1);margin-top:2px}
+.petab .okk{font-style:normal;color:var(--ok)}
+
+@media (max-width:1020px){
+  .pegrid{grid-template-columns:1fr}
+  .bgrid{grid-template-columns:1fr}
+  .bspec{height:220px}
+  .petab{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cgrid{grid-template-columns:1fr}
+  .evlist{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .ev{min-width:190px}
+  .readout{border-left:0;border-top:1px solid var(--line)}
+  .hero{grid-template-columns:1fr;gap:20px}
+  .lab{grid-template-columns:1fr}
+  .ctl{border-right:0;border-bottom:1px solid var(--line)}
+  .charts,.how,.use{grid-template-columns:1fr}
+  .rungs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:560px){
+  nav.links{display:none}
+  .stats{grid-template-columns:1fr}
+  .labres{grid-template-columns:1fr 1fr}
+  .rungs{grid-template-columns:1fr}
+  .spec{height:120px}
+  .hero{padding-block:40px 20px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+
+<header class="top"><div class="wrap topin">
+  <div class="mark"><svg viewBox="0 0 26 16" fill="none" aria-hidden="true"><path d="M1 8c3 0 3-1 5-1s2 2 4 2 2-5 4-5 1.5 9 3.5 9S19 1 21 1s1 7 4 7" stroke="url(#gr)" stroke-width="1.8" stroke-linecap="round"/><defs><linearGradient id="gr" x1="0" x2="26" y1="0" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#ffb35c"/><stop offset=".55" stop-color="#ff6fa0"/><stop offset="1" stop-color="#58d6ea"/></linearGradient></defs></svg>ChirpNet</div>
+  <span class="ver" id="verTag">v1.0</span>
+  <nav class="links"><a href="#events">Real events</a><a href="#pe">Error bars</a><a href="#bns">Neutron stars</a><a href="#lab">Try to fool it</a><a href="#ratchet">The ratchet</a><a href="#how">How it works</a><a href="#use">Use it</a></nav>
+</div></header>
+
+<main>
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Neural network · general relativity · real LIGO data</div>
+      <h1>It never heard a merger. Then it found <em>five</em>.</h1>
+    </div>
+    <div>
+      <p class="lede" id="lede">ChirpNet is a small neural network trained only on simulated black-hole mergers, generated from Einstein’s equations and buried in simulated detector noise. Pointed at real recordings from the two LIGO observatories, it picks out the actual mergers and estimates how heavy they were, in milliseconds. Version 2 adds a check that both detectors agree, full posterior error bars, and a neutron-star model that finds GW170817.</p>
+    </div>
+  </section>
+  <div class="stats" id="stats"></div>
+</div>
+
+<div class="wrap" id="events" style="padding-top:28px">
+  <div class="console">
+    <div class="cgrid">
+      <div class="evlist" id="evlist" role="group" aria-label="Choose a real event"></div>
+      <div class="plots">
+        <div class="plabel"><span><span class="det h">Hanford H1</span> · time–frequency energy, 20–512 Hz</span><span id="chirpLbl">— network’s predicted chirp</span></div>
+        <canvas class="cv spec" id="specH" aria-label="Hanford spectrogram"></canvas>
+        <div class="plabel"><span><span class="det l">Livingston L1</span> · time–frequency energy</span><span>seconds from merger</span></div>
+        <canvas class="cv spec" id="specL" aria-label="Livingston spectrogram"></canvas>
+        <div class="plabel"><span>Whitened strain, last 0.35 s (30–350 Hz)</span><span class="legendrow"><span><i style="background:var(--h1)"></i>H1</span><span><i style="background:var(--l1)"></i>L1</span></span></div>
+        <canvas class="cv strain" id="strain" aria-label="Whitened strain"></canvas>
+        <div class="plabel"><span>Detection statistic, sliding a 2 s window over 8 s of data</span><span class="legendrow"><span><i style="background:var(--net)"></i>network</span><span><i style="background:var(--faint)"></i>loudest real noise</span></span></div>
+        <canvas class="cv score" id="scoreCv" aria-label="Detection statistic over time"></canvas>
+      </div>
+      <div class="readout" aria-live="polite">
+        <div>
+          <div class="verdict" id="verdict"><span class="dot"></span><span id="verdictTxt">Detected</span></div>
+          <p class="rk" id="verdictSub" style="margin:8px 0 0"></p>
+        </div>
+        <div>
+          <div class="rk" style="margin-bottom:4px">Chirp mass, detector frame</div>
+          <div class="big" id="mcBig">—</div>
+          <div class="cmp"><svg id="cmpSvg" viewBox="0 0 300 66" aria-label="Network estimate compared with LIGO's published range"></svg></div>
+        </div>
+        <dl class="kv" id="kv"></dl>
+        <div class="btnrow">
+          <button class="btn primary" id="liveBtn" type="button"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4.5 2.8v10.4a.6.6 0 0 0 .9.5l8.2-5.2a.6.6 0 0 0 0-1L5.4 2.3a.6.6 0 0 0-.9.5z"/></svg><span>Run it in your browser</span></button>
+          <button class="btn" id="listenBtn" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 6v4h2.5L9 13V3L5.5 6z" fill="currentColor" stroke="none"/><path d="M11.5 5.5a3.5 3.5 0 0 1 0 5M13 3.5a6 6 0 0 1 0 9"/></svg><span>Listen</span></button>
+          <button class="btn" id="speedBtn" type="button" aria-pressed="false" title="Play four times faster (and higher)">×4</button>
+        </div>
+        <p class="note" id="liveNote">The traces above were computed with the released weights. “Run it” repeats the whole scan here, on your device.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <section class="s" id="pe">
+    <div class="eyebrow">Error bars, done properly</div>
+    <h2>Not one answer. Every answer the data allows.</h2>
+    <p class="sub">A second network, built the way <a href="https://arxiv.org/abs/2106.12594" target="_blank" rel="noopener">DINGO</a> is, reads the same 2 s of strain plus each detector’s noise spectrum and returns the whole posterior: thousands of random draws of chirp mass, mass ratio, spin, distance and inclination that are consistent with the data. There is no sampler and no likelihood loop. One pass through a normalizing flow turns plain random numbers into posterior samples.</p>
+    <div class="card pecard">
+      <div class="pebar"><div class="pills" id="pePills" role="group" aria-label="Choose an event"></div><span class="note" id="peNote"></span></div>
+      <div class="pegrid">
+        <div class="pep"><div class="plabel"><span>Component masses, source frame</span><span id="peMl"></span></div><canvas class="cv pecv" id="peM" aria-label="Posterior of the two masses"></canvas></div>
+        <div class="pep"><div class="plabel"><span>Distance vs inclination</span><span>face-on ↔ edge-on</span></div><canvas class="cv pecv" id="peD" aria-label="Posterior of distance and inclination"></canvas></div>
+        <div class="pep"><div class="plabel"><span>Effective spin χ<sub>eff</sub></span><span class="legendrow"><span><i style="background:var(--net)"></i>ChirpNet</span><span><i style="background:var(--h1)"></i>LIGO 90%</span></span></div><canvas class="cv pecv" id="peX" aria-label="Posterior of effective spin"></canvas></div>
+      </div>
+      <div class="petab" id="peTab"></div>
+    </div>
+    <div class="charts" style="margin-top:12px">
+      <div class="card chart"><h4>Are the error bars honest?</h4><p>For 400 held-out simulated mergers, where the true answer is known, each line tracks how often the truth falls below a given posterior percentile. If the posteriors are calibrated, every line follows the diagonal. The shaded band is what chance alone allows.</p><svg id="ppSvg" viewBox="0 0 520 330" aria-label="P-P calibration plot"></svg></div>
+      <div class="card chart"><h4>What it learned to be unsure about</h4>
+        <ul class="limits" style="margin-top:8px">
+          <li><b>Chirp mass is sharp, the individual masses are not.</b> The inspiral fixes ℳ; splitting it into m₁ and m₂ needs subtler higher-order phase, so the mass cloud stretches along a curve of constant ℳ. LIGO’s posteriors show the same banana.</li>
+          <li><b>Distance and inclination trade off.</b> A face-on binary far away and a tilted one nearby look alike to two nearly aligned detectors. The flow found that degeneracy without being told about it.</li>
+          <li><b>Spin is mostly prior.</b> At these signal strengths χ<sub>eff</sub> is barely measured, and the flow says so with wide intervals, as LIGO’s do.</li>
+          <li><b>Not shown:</b> its merger-time posterior is wider than it should be (the embedding pools over time), and it assumes aligned spins and no higher modes. Source-frame masses use its own distance and the Planck 2015 cosmology.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" id="bns">
+    <div class="eyebrow">Neutron stars · GW170817</div>
+    <h2>Then it learned neutron stars, and heard the most famous one.</h2>
+    <p class="sub" id="bnsSub">Neutron stars are about thirty times lighter than these black holes, so their chirp is slower: it sweeps through LIGO’s band for more than a minute instead of a fraction of a second. A second detector reads 16 s windows with tidal waveforms (IMRPhenomD_NRTidalv2). It was trained only on simulations, then pointed at the real 34 minutes of Hanford and Livingston data around 17 August 2017, from LIGO’s public data release.</p>
+    <div class="console">
+      <div class="bgrid">
+        <div class="plots">
+          <div class="plabel"><span id="bSpecLbl">Hanford + Livingston · time–frequency energy, 24–420 Hz</span><span id="bChirpLbl"></span></div>
+          <canvas class="cv bspec" id="bSpec" aria-label="GW170817 spectrogram"></canvas>
+          <div class="seg" role="group" aria-label="Spectrogram view" id="bView" style="max-width:560px"><button data-v="0" aria-pressed="true">Both detectors</button><button data-v="1" aria-pressed="false">Livingston as recorded</button><button data-v="2" aria-pressed="false">Livingston, gated</button></div>
+          <div class="plabel" style="margin-top:6px"><span>Detection statistic as a 16 s window slides toward the merger</span><span class="legendrow"><span><i style="background:var(--net)"></i>gated</span><span><i style="background:var(--hit)"></i>glitch left in</span><span><i style="background:var(--faint)"></i>loudest noise</span></span></div>
+          <canvas class="cv score" id="bScore" aria-label="Neutron-star detection statistic"></canvas>
+        </div>
+        <div class="readout" aria-live="polite">
+          <div>
+            <div class="verdict" id="bVerdict"><span class="dot"></span><span id="bVerdictTxt">Detected</span></div>
+            <p class="rk" id="bVerdictSub" style="margin:8px 0 0"></p>
+          </div>
+          <div>
+            <div class="rk" style="margin-bottom:4px">Chirp mass, detector frame</div>
+            <div class="big" id="bMc">—</div>
+            <p class="rk" id="bMcSub" style="margin:6px 0 0"></p>
+          </div>
+          <dl class="kv" id="bKv"></dl>
+          <div class="btnrow">
+            <button class="btn" id="bListen" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 6v4h2.5L9 13V3L5.5 6z" fill="currentColor" stroke="none"/><path d="M11.5 5.5a3.5 3.5 0 0 1 0 5M13 3.5a6 6 0 0 1 0 9"/></svg><span>Listen: the data</span></button>
+            <button class="btn" id="bListenT" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 6v4h2.5L9 13V3L5.5 6z" fill="currentColor" stroke="none"/><path d="M11.5 5.5a3.5 3.5 0 0 1 0 5M13 3.5a6 6 0 0 1 0 9"/></svg><span>Its chirp</span></button>
+          </div>
+          <p class="note" id="bNote">The last 14 seconds, at real speed. In the data the chirp is buried; “Its chirp” is a clean tone sweep at the network’s chirp mass, so you know what to listen for.</p>
+        </div>
+      </div>
+    </div>
+      <div class="rungs" id="bRungs" style="margin-top:12px"></div>
+    <p class="note" style="margin:0">The same ratchet, with its own objective (sensitivity − 2 × chirp-mass error on 600 held-out neutron-star waveforms), and GW170817 never used to decide. Rung 3 beat rung 2 on that validation set, so it shipped, even though rung 2 happened to land closer to LIGO’s chirp mass on this one real event.</p>
+  </section>
+
+  <section class="s" id="lab">
+    <div class="eyebrow">Try to fool it</div>
+    <h2>Make a merger. Bury it in noise. See if it notices.</h2>
+    <p class="sub">Pick the masses, choose how loud the signal is, and the network looks at the result live in your browser. Turn the signal down past an SNR of about 7 and it starts to miss; add a glitch and see whether it gets fooled.</p>
+    <div class="card lab">
+      <div class="ctl">
+        <div><label for="mcR">Chirp mass <b id="mcV">24 M☉</b></label><input id="mcR" type="range" min="0" max="15" step="1" value="10"></div>
+        <div><label>Mass ratio <b id="qV">1.0</b></label><div class="seg" role="group" aria-label="Mass ratio" id="qSeg"><button data-q="0" aria-pressed="true">Equal</button><button data-q="1" aria-pressed="false">0.6</button><button data-q="2" aria-pressed="false">0.3</button></div></div>
+        <div><label for="snrR">Signal-to-noise ratio <b id="snrV">10</b></label><input id="snrR" type="range" min="0" max="30" step="0.5" value="10"></div>
+        <div class="sw"><span>Add a loud glitch to Hanford</span><button id="glBtn" aria-pressed="false" aria-label="Add a glitch"></button></div>
+        <button class="btn" id="noiseBtn" type="button" style="align-self:flex-start"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7"/><path d="M3.2 1.8v3h3"/></svg>New noise</button>
+        <p class="note" id="labTruth"></p>
+      </div>
+      <div class="labview">
+        <div class="plabel"><span>Your 2 s of data: <span class="det h">H1</span> and <span class="det l">L1</span> (true merger at the dashed line)</span><span id="labTime"></span></div>
+        <canvas class="cv strain" id="labStrain" aria-label="Injected strain"></canvas>
+        <div class="plabel"><span>Combined time–frequency energy</span><span></span></div>
+        <canvas class="cv spec" id="labSpec" aria-label="Injected spectrogram"></canvas>
+        <div class="labres" id="labRes"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" id="ratchet">
+    <div class="eyebrow">The ratchet</div>
+    <h2>Every rung had to beat the last one, or it was thrown away.</h2>
+    <p class="sub" id="ratchetSub">Each candidate was scored on the same frozen validation set: tens of thousands of windows of simulated noise and held-out waveforms the network never trained on. Only an improvement moved the ratchet. The real LIGO events were never used to choose anything; they are shown here as the final exam.</p>
+    <div class="rungs" id="rungs"></div>
+    <div class="card" style="padding:18px 20px;margin-bottom:12px">
+      <h3 style="font-family:var(--display);font-size:18px;margin:0 0 8px">The rules changed three times, in the open</h3>
+      <p style="margin:0 0 8px;font-size:14.5px;color:#c4c8d8"><b>Rule 1</b> kept a rung only if sensitivity in Gaussian noise went up. Rung 3 lost 0.01 of it, well within measurement noise, while learning to ignore glitches, and rule 1 threw it away. That showed the rule was guarding one axis only.</p>
+      <p style="margin:0 0 8px;font-size:14.5px;color:#c4c8d8"><b>Rule 2</b> scores one number: Gaussian sensitivity + glitchy sensitivity − 2 × chirp-mass error. Rung 3 re-judged under it was kept, rung 4 beat it, and test-time averaging (rung 5) did not earn its 3× cost.</p>
+      <p style="margin:0 0 8px;font-size:14.5px;color:#c4c8d8"><b>Rule 3</b> came from a stress test on time-slid real data: a loud chirp in one detector alone also fools rung 4. Rung 6 trained against that and fixed it, but lost a third of its sensitivity and would have missed GW151226 outright. The ratchet rejected it, so version 1 shipped rung 4 with the weakness documented.</p>
+      <p style="margin:0 0 8px;font-size:14.5px;color:#c4c8d8"><b>Rule 4</b> counts only <i>loud</i> one-detector chirps (SNR 12 and up), since a quiet chirp in one detector really is ambiguous. Under it, a fix must halve those false alarms and keep the objective within 0.01. Rung 7 (louder fakes) and rung 8 (a new two-stream network that reads each detector separately, then compares them) both cut the fakes to a few percent but cost too much sensitivity.</p>
+      <p style="margin:0;font-size:14.5px;color:#c4c8d8"><b>Rung 9</b> stopped asking one network to do both jobs. Rung 4 proposes candidates and rung 8 confirms that both detectors agree, with a veto level chosen on fresh simulations before the ratchet saw it. It kept the sensitivity, became more robust to glitches, cut loud one-detector fakes from 99.6% to 17%, and was kept. That 17% is what is left of the flaw.</p>
+    </div>
+    <div class="charts">
+      <div class="card chart"><h4>Sensitivity, rung by rung</h4><p>Fraction of held-out mergers detected at a fixed false-alarm probability of 1 in 1,000 windows of Gaussian noise.</p><svg id="effSvg" viewBox="0 0 520 300" aria-label="Detection efficiency versus signal-to-noise ratio for each rung"></svg></div>
+      <div class="card chart"><h4>The real events, rung by rung</h4><p>Chirp-mass estimates (68% range) for the four real events against LIGO’s published 90% range.</p><svg id="convSvg" viewBox="0 0 520 300" aria-label="Chirp mass estimates per rung compared with LIGO"></svg></div>
+    </div>
+  </section>
+
+  <section class="s" id="how">
+    <div class="eyebrow">How it works</div>
+    <h2>Physics in, physics out.</h2>
+    <div class="how">
+      <div class="card"><h3>The chirp</h3><p>Two black holes spiraling together radiate gravitational waves whose frequency sweeps upward faster and faster. To leading order the sweep depends on one combination of the two masses, the chirp mass:</p><div class="formula">ℳ = (m₁m₂)<sup>3/5</sup> / (m₁+m₂)<sup>1/5</sup><br>f(τ) = π⁻¹ (5/256τ)<sup>3/8</sup> (Gℳ/c³)<sup>−5/8</sup></div><p style="margin-top:10px">The violet curve on the spectrograms is that formula, drawn with the network’s estimate of ℳ and the merger time.</p></div>
+      <div class="card"><h3>The training data</h3><p id="howData">Waveforms come from IMRPhenomD, a model of the full inspiral, merger and ringdown calibrated to numerical relativity. Each one is projected onto Hanford and Livingston for a random sky position, with the real light-travel delay between the sites, then whitened with LIGO noise spectra and dropped into fresh random noise at a chosen loudness.</p></div>
+      <div class="card"><h3>The real data</h3><p>32-second public recordings from the Gravitational Wave Open Science Center, whitened with their own noise spectrum. To measure false alarms on real noise, Livingston is slid against Hanford by whole seconds, so no true signal can line up, and the network scans every shift. Before the network sees anything, any excursion beyond 25σ is gated out, as LIGO’s own searches do.</p></div>
+    </div>
+    <div class="card arch"><svg id="archSvg" viewBox="0 0 1100 170" aria-label="Network architecture"></svg></div>
+  </section>
+
+  <section class="s" id="use">
+    <div class="eyebrow">Use it</div>
+    <h2>One Python file, four weight files, any GWOSC recording.</h2>
+    <p class="sub">The release runs on plain numpy. No deep-learning framework needed. Point it at two detectors’ strain and it returns candidate mergers with their chirp mass, mass ratio, component masses, a coincidence check and a false-alarm rate measured on real noise. One more call gives the full posterior.</p>
+    <div class="use">
+      <pre class="code" id="codeBlock"></pre>
+      <div class="card files" id="files"></div>
+    </div>
+    <div class="card" style="padding:20px;margin-top:12px">
+      <h3 style="font-family:var(--display);font-size:19px;margin:0 0 10px">What it can’t do (yet)</h3>
+      <ul class="limits">
+        <li>The black-hole detector was trained on aligned-spin binaries between about 6 and 45 M☉ in chirp mass (detector frame). Precessing spins, higher modes and very heavy systems are outside what it has seen. Neutron stars have their own model, tested on one real event.</li>
+        <li>The detector itself estimates detector-frame masses. The posterior network adds distance and source-frame masses, but it assumes aligned spins, and its merger-time posterior is too wide to use.</li>
+        <li>Its false-alarm rates come from about <span id="liveH">—</span> hours of time-slid real noise, so its significance numbers are upper limits, not the one-in-millions figures of LIGO’s full pipelines.</li>
+        <li>The coincidence check is not perfect. About 1 in 6 loud one-detector chirps still gets through in simulation, and GW151226’s Hanford signal on its own still scores above threshold. Every hit reports the checker’s score and each detector alone (<code>coincidence</code>, <code>h1_alone</code>, <code>l1_alone</code>).</li>
+        <li>The neutron-star model has no coincidence check yet: Hanford or Livingston alone, with the other detector’s data slid away, still scores above its loudest background. It has seen one real event, and its 16 s windows give up the early inspiral, so its chirp mass is good to about 2% on simulations, versus LIGO’s 0.01%. On GW170817 it came out 5% low, with an error bar too narrow to cover LIGO’s value.</li>
+        <li>All five real events are from 2015–2017 (O1 and O2). Later observing runs have different noise; whitening absorbs most of that, but it is untested there.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+</main>
+<footer><div class="wrap">
+  Data: LIGO Scientific Collaboration and Virgo Collaboration, <a href="https://gwosc.org" target="_blank" rel="noopener">Gravitational Wave Open Science Center</a> (32 s event files from the GWOSC event tutorial). GW170817: 2048 s cleaned and raw data products, <a href="https://dcc.ligo.org/P1700349/public" target="_blank" rel="noopener">LIGO-P1700349</a> and <a href="https://dcc.ligo.org/P1700337/public" target="_blank" rel="noopener">LIGO-P1700337</a>. Published values: <a href="https://arxiv.org/abs/1811.12907" target="_blank" rel="noopener">GWTC-1</a>, Tables I and III. Posterior method after <a href="https://arxiv.org/abs/2106.12594" target="_blank" rel="noopener">DINGO</a> (Dax et al. 2021). Waveforms: IMRPhenomD and IMRPhenomD_NRTidalv2 via LALSuite. ChirpNet was designed, trained and tested end to end for this page.
+</div></footer>
+
+<script>
+/*__CHIRPJS__*/
+</script>
+<script>
+const DATA = /*__DATA__*/;
+const WEIGHTS = /*__WEIGHTS__*/;
+/*__APP__*/
+</script>

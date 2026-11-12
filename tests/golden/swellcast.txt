@@ -1,0 +1,41 @@
+Part 1: raw NDBC files, buoy 51004, Hurricane Olivia (2018)
+  window centre 2018-09-09T15
+  swell detected: yes (score 0.98)
+  distance     1498 km  (68%: 983-2284)   truth    2432 km
+  storm peak 2018-09-08T07 +- 29 h   truth 2018-09-07T00
+  swell from    50 deg +- 21            truth    83 deg
+  storm Hs    10.7 m (x/÷ 1.2)
+
+Part 2: pre-cut exam windows
+EDOUARD -> buoy 41010 (NA 2014)
+  swell detected: no (score 0.32)
+  distance     2003 km  (68%: 1044-3843)   truth    2003 km
+  storm peak 2014-09-15T23 +- 50 h   truth 2014-09-16T12
+  swell from    81 deg +- 37            truth    79 deg
+  storm Hs     6.1 m (x/÷ 1.4)
+DANIELLE -> buoy 41047 (NA 2010)
+  swell detected: yes (score 1.00)
+  distance     2516 km  (68%: 1780-3555)   truth    1125 km
+  storm peak 2010-08-25T09 +- 28 h   truth 2010-08-27T18
+  swell from    99 deg +- 10            truth    90 deg
+  storm Hs    10.8 m (x/÷ 1.2)
+MARGOT -> buoy 44008 (NA 2023)
+  swell detected: yes (score 0.92)
+  distance     1373 km  (68%: 749-2517)   truth    2694 km
+  storm peak 2023-09-14T18 +- 35 h   truth 2023-09-13T09
+  swell from    93 deg +- 51            truth    98 deg
+  storm Hs     8.9 m (x/÷ 1.3)
+VANCE -> buoy 46025 (EP 2014)
+  swell detected: no (score 0.01)
+  distance     6322 km  (68%: 3597-11112)   truth    2097 km
+  storm peak 2014-10-29T09 +- 89 h   truth 2014-11-03T21
+  swell from   228 deg +- 53            truth   155 deg
+  storm Hs     4.8 m (x/÷ 1.4)
+DOLORES -> buoy 46047 (EP 2015)
+  swell detected: yes (score 0.56)
+  distance     2988 km  (68%: 1977-4517)   truth    1888 km
+  storm peak 2015-07-13T08 +- 54 h   truth 2015-07-15T06
+  swell from   156 deg +- 26            truth   145 deg
+  storm Hs     8.7 m (x/÷ 1.3)
+
+done in 1.0 s

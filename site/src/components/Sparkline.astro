@@ -1,0 +1,31 @@
+---
+// A small ratchet ladder for cards.
+import type { Rung } from '../lib/data';
+import { ladderGeometry } from '../lib/ladder';
+interface Props { rungs: Rung[]; accent: string; w?: number; h?: number; label?: string }
+const { rungs, accent, w = 240, h = 64, label = 'Ratchet ladder' } = Astro.props;
+const g = ladderGeometry(rungs, { w, h, top: 8, right: 4, bottom: 8, left: 4 });
+const kept = rungs.filter((r) => r.decision !== 'rejected').length;
+---
+<svg class="spark" viewBox={`0 0 ${w} ${h}`} width={w} height={h} role="img" aria-label={`${label}: ${rungs.length} rungs, ${kept} kept`} style={`--c:${accent}`} data-draw>
+  {g.marks.filter((m) => m.kind === 'rejected' && m.y !== null).map((m) => (
+    <g class="ghost">
+      <line x1={m.x} x2={m.x} y1={m.incY} y2={m.y!} />
+      <circle cx={m.x} cy={m.y!} r="2.6" />
+    </g>
+  ))}
+  <path class="stairs" d={g.stairs} pathLength="1" />
+  {g.marks.filter((m) => m.kind === 'released' && m.y !== null).map((m) => (
+    <path class="rel" d={`M${m.x} ${m.y! - 5}l5 5l-5 5l-5 -5z`} />
+  ))}
+</svg>
+<style>
+  .spark { width: 100%; height: auto; overflow: visible; }
+  .stairs { fill: none; stroke: var(--c); stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .spark:global(.in) .stairs { animation: draw 1.4s var(--ease) forwards 0.15s; }
+  :global(.no-js) .stairs { stroke-dashoffset: 0; }
+  .ghost line { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 2 2; opacity: 0.6; }
+  .ghost circle { fill: var(--paper-3); stroke: var(--ink-3); stroke-width: 1.2; }
+  .rel { fill: var(--c); stroke: var(--paper-3); stroke-width: 1.5; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+</style>

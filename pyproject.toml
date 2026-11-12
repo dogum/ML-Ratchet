@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ml-ratchet"
+version = "0.1.0"
+description = "Physics-first machine learning: models trained only on simulations, kept only when they ratchet up, and graded on real data they never saw."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "ML Ratchet contributors" }]
+keywords = ["physics", "simulation", "machine learning", "simulation-based inference", "model cards", "numpy"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = ["numpy>=1.24", "scipy>=1.10", "pyyaml>=6"]
+
+[project.optional-dependencies]
+models = ["pandas>=2", "h5py>=3"]        # SunDoctor reads CSV with pandas; ChirpNet reads GWOSC HDF5
+dev = ["pytest>=8", "jsonschema>=4", "pandas>=2", "h5py>=3"]
+
+[project.scripts]
+mlratchet = "mlratchet.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/dogum/ML-Ratchet"
+Documentation = "https://github.com/dogum/ML-Ratchet/tree/main/docs"
+
+[tool.setuptools.packages.find]
+include = ["mlratchet*"]
+
+[tool.setuptools.package-data]
+mlratchet = ["schema/*.json", "templates/model/**/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: demos that take more than a few seconds (ChirpNet)"]

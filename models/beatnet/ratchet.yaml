@@ -1,0 +1,19 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json.
+model: beatnet
+ladders:
+  - name: BeatNet
+    objective: Macro-F1 (N/S/V/F) on a frozen simulated set of 400 patients, rebuilt for each physics version
+    rule: Keep if macro-F1 rises by more than 0.01 AND the dev mean S/V F1 drops by no more than 0.02.
+    margin: 0.01
+    dev_gate: Dev mean S/V F1 may not drop by more than 0.02
+    frozen_sets: [v1val, v2val, v3val, v4val]
+    scored_on: v4val
+    note: DS2 macro-F1 fell from rung 1 to rung 2; the exam never decided anything, so it is reported as is.
+    columns_source: Dev S/V F1 (gate input) and DS2 exam macro-F1 (reported after, never used)
+    columns: [Dev S/V F1, DS2 macro-F1]
+    rungs:
+      - { id: r1, change: "Textbook simulator (physics v1)", sim: 0.829, decision: kept, why: First rung., metrics: [0.467, 0.605] }
+      - { id: r2, change: "Physics v2: dev-calibrated T wave (APD +47 ms), PVC gain 1.35, less noise; + AF output", sim: 0.873, decision: kept, why: "+0.044; dev gate passed.", metrics: [0.476, 0.541] }
+      - { id: r3, change: "Template channel (median neighbour beat)", sim: 0.860, decision: rejected, why: "Score fell (−0.013).", metrics: [0.465, 0.530] }
+      - { id: r4, change: "Physics v3: dev noise floor and a fusion visibility rule", sim: 0.892, decision: rejected, why: "Dev gate failed (−0.035).", metrics: [0.441, 0.528] }
+      - { id: r5, change: "Physics v4: dev-calibrated premature-beat coupling (S pre-RR ratio 0.78 → 0.59; dev 0.56)", sim: 0.897, decision: released, why: "+0.024 over rung 2; dev S/V F1 up.", metrics: [0.509, 0.549] }

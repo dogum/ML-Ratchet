@@ -1,0 +1,19 @@
+{
+ "fails": [
+  "Left bundle-branch block read as ventricular: record 214 (LBBB throughout) has 2,003 N beats; BeatNet called 1,522 of them V. A wide, slurred LBBB beat and a septal PVC look alike in one lead; the simulator's LBBB beats are not yet varied enough. This one record makes about half of all false V calls on DS2.",
+  "More false V calls in 233 (579 of 2,230 N beats), 221 (281 of 2,031, during atrial fibrillation) and 202 (216 of 2,061, atrial flutter/fibrillation). V sensitivity is 97% but only half of the beats BeatNet calls V really are V (+P 50%).",
+  "Fusion beats are almost never found: 3 of 388 on DS2 (F1 0.01). In record 213, 238 of 362 F beats are called N and 121 V. In record 231 (2:1 AV block, RBBB), 315 normal beats are called F. The simulator's fusion beats do not match how the annotators used F.",
+  "S beats that are not premature are missed: record 232 (sinus bradycardia with long pauses) has 1,382 S beats; BeatNet found 683. The S class depends on prematurity, and 232's ectopic atrial beats come after long pauses.",
+  "Aberrated atrial premature beats (wide QRS) are called V: on dev record 201, 107 of 128 S beats; this is the main reason dev S sensitivity is only 22%.",
+  "Other held-out sets are harder than DS2: S sensitivity 19% on the rest of DS1 and 24% on the Supraventricular Arrhythmia Database (SVDB, 128 Hz, different leads), where the textbook rules do better on S (F1 0.54 vs 0.35)."
+ ],
+ "limits": [
+  "Not a medical device. Research and teaching only; never use it for diagnosis, monitoring or treatment.",
+  "One lead (modified lead II). It was examined only on MIT-BIH-style Holter records (1975-79 tape, 360 Hz) and SVDB; other devices, leads and populations are untested.",
+  "It classifies beats you give it. With its own simple QRS detector, 1,006 of 49,705 DS2 beats are missed (837 N, mostly record 228 with its large noise and baseline shifts) and 44 false beats appear.",
+  "No Q class: paced and unclassifiable beats are not predicted (paced records are excluded, as is standard).",
+  "The QRS width output is a rough number: mean error 17 ms against cardiologists' calipers on the QT database, and its error bar had to be widened 5x on dev to cover 68%.",
+  "The simulator is calibrated on only six dev records. Two of its four dev corrections (noise floor, ectopic coupling) are population numbers; per-patient twins were not built.",
+  "Published inter-patient methods were trained on real DS1 labels; BeatNet never saw a real label. The comparison is context, not a like-for-like contest."
+ ]
+}

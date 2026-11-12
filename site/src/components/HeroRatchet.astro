@@ -1,0 +1,78 @@
+---
+// Every model's ratchet on one instrument: each ladder normalised to its own range, drawn as the
+// incumbent's staircase. Ghost rings are rungs the ratchet rejected. Nothing ever steps down.
+import { getModels } from '../lib/data';
+import { ladderGeometry, mainLadder } from '../lib/ladder';
+import { url } from '../lib/url';
+const W = 1200, H = 380;
+const models = getModels();
+const traces = models.map((m, k) => {
+  const lad = mainLadder(m.ladders)!;
+  const inset = 26 + k * 3;
+  const g = ladderGeometry(lad.rungs, { w: W, h: H, top: 30 + k * 4, right: 40, bottom: 34 + (models.length - k) * 4, left: inset });
+  return { m, g, k };
+});
+---
+<figure class="hero-fig" aria-label="The ratchet ladders of every model in the collection">
+  <div class="screen" data-draw>
+    <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" class="field" aria-hidden="true">
+      <defs>
+        <pattern id="hgrid" width="40" height="38" patternUnits="userSpaceOnUse">
+          <path d="M40 0H0V38" fill="none" stroke="var(--grid-strong)" stroke-width="1" />
+        </pattern>
+      </defs>
+      <rect width={W} height={H} fill="url(#hgrid)" />
+      {traces.map(({ m, g, k }) => (
+        <g style={`--c:${m.accent}; --d:${0.25 + k * 0.16}s`} class="trace">
+          {g.marks.filter((x) => x.kind === 'rejected' && x.y !== null).map((x) => (
+            <circle class="ghost" cx={x.x} cy={x.y!} r="3.4" />
+          ))}
+          <path class="st" d={g.stairs} pathLength="1" vector-effect="non-scaling-stroke" />
+        </g>
+      ))}
+    </svg>
+    <div class="readout mono">
+      <span>rung →</span>
+      <span>score on each model's frozen simulated set, normalised ↑</span>
+    </div>
+  </div>
+  <figcaption class="legend">
+    {models.map((m) => (
+      <a href={url(`models/${m.id}/`)} style={`--c:${m.accent}`}><i></i>{m.name}</a>
+    ))}
+  </figcaption>
+</figure>
+<style>
+  .hero-fig { margin: 0; --grid-strong: color-mix(in srgb, var(--ink) 7%, transparent); }
+  .screen {
+    position: relative;
+    border: 1px solid var(--ink);
+    background: color-mix(in srgb, var(--paper-3) 70%, transparent);
+    border-radius: var(--radius);
+    overflow: hidden;
+    width: 100%;
+    height: clamp(230px, 31.7vw, 420px);
+  }
+  .screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 90% at 85% 10%, color-mix(in srgb, var(--signal) 8%, transparent), transparent 60%);
+    pointer-events: none;
+  }
+  .field { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .st { fill: none; stroke: var(--c); stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0.92; }
+  .ghost { fill: none; stroke: var(--c); stroke-width: 1; opacity: 0; vector-effect: non-scaling-stroke; }
+  .screen:global(.in) .st { animation: draw 2.6s var(--ease) forwards var(--d); }
+  .screen:global(.in) .ghost { animation: ghost 1.2s ease forwards calc(var(--d) + 1.2s); }
+  :global(.no-js) .st { stroke-dashoffset: 0; }
+  :global(.no-js) .ghost { opacity: 0.55; }
+  .readout { position: absolute; left: 14px; right: 14px; bottom: 10px; display: flex; justify-content: space-between; gap: 12px; font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 14px; }
+  .legend a { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-variation-settings: 'wdth' 87.5; font-size: 11px; letter-spacing: 0.03em; color: var(--ink-2); text-decoration: none; }
+  .legend a:hover { color: var(--c); }
+  .legend i { width: 14px; height: 0; border-top: 2px solid var(--c); }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes ghost { to { opacity: 0.6; } }
+  @media (max-width: 640px) { .readout span:last-child { display: none; } }
+</style>

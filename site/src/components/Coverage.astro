@@ -1,0 +1,39 @@
+---
+// How often the truth falls inside the nominal 68% error bars, on the real exam.
+interface Props { items: { output: string; actual: number }[]; accent: string }
+const { items, accent } = Astro.props;
+const rows = items.map((x) => {
+  const off = x.actual - 68.3;
+  const tone = Math.abs(off) <= 5 ? 'ok' : off < 0 ? 'narrow' : 'wide';
+  return { ...x, tone };
+});
+---
+<div class="cov" style={`--c:${accent}`}>
+  {rows.map((x) => {
+    const tone = x.tone;
+    return (
+      <div class={`g ${tone}`}>
+        <div class="lab"><span>{x.output}</span><b class="num">{x.actual}%</b></div>
+        <div class="bar" role="img" aria-label={`${x.output}: ${x.actual}% of truths inside the 68% bars`}>
+          <div class="fill" style={`width:${x.actual}%`}></div>
+          <div class="target" style="left:68.3%"></div>
+        </div>
+        <div class="hint mono">{tone === 'ok' ? 'honest' : tone === 'narrow' ? 'bars too narrow' : 'bars too wide'}</div>
+      </div>
+    );
+  })}
+  <p class="leg mono faint"><i></i> the 68% a perfect error bar would cover</p>
+</div>
+<style>
+  .cov { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 22px 32px; }
+  .lab { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; margin-bottom: 8px; }
+  .lab b { font-weight: 500; font-size: 13px; }
+  .bar { position: relative; height: 10px; background: var(--paper-2); border: 1px solid var(--rule); }
+  .fill { position: absolute; inset: 0 auto 0 0; background: var(--c); }
+  .narrow .fill { background: repeating-linear-gradient(-45deg, var(--c) 0 3px, color-mix(in srgb, var(--c) 45%, transparent) 3px 6px); }
+  .target { position: absolute; top: -5px; bottom: -5px; width: 0; border-left: 2px solid var(--ink); }
+  .hint { font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 7px; color: var(--ink-3); }
+  .narrow .hint { color: var(--loss); }
+  .leg { grid-column: 1 / -1; font-size: 10.5px; margin: 0; display: flex; align-items: center; gap: 8px; }
+  .leg i { display: inline-block; width: 0; height: 14px; border-left: 2px solid var(--ink); }
+</style>

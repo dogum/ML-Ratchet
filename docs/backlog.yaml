@@ -1,0 +1,119 @@
+# The idea backlog: physics -> data -> real exam. docs/backlog.md and the site's /backlog page are generated
+# from this file (mlratchet readme --write). Data reachability was checked from a cloud sandbox in Nov 2026.
+# status: candidate | checked (data endpoints answered) | blocked | in-progress
+ideas:
+  - id: gridpulse
+    name: GridPulse
+    domain: Energy
+    question: How many MW were lost, and how much inertia does the grid have, from the frequency dip after a plant trips?
+    physics: Swing equation with governor and load response
+    data: GB system operator (NESO) data portal API
+    data_url: https://www.neso.energy/data-portal
+    exam: Real trip events with known MW lost
+    status: checked
+    note: Few real events to grade on.
+  - id: roomsense
+    name: RoomSense
+    domain: Acoustics
+    question: How big is this room and how long does it ring, from one recorded clap?
+    physics: Image-source and ray-tracing room acoustics (pyroomacoustics)
+    data: Measured room impulse responses on Zenodo
+    data_url: https://zenodo.org
+    exam: Rooms with measured geometry and RT60
+    status: candidate
+    note: Impulse-response sets not yet checked.
+  - id: stormnet
+    name: StormNet
+    domain: Space weather
+    question: How strong will this geomagnetic storm get, from the solar wind arriving now?
+    physics: Burton-type ring-current response to the solar wind
+    data: OMNIWeb solar wind; Kyoto Dst; INTERMAGNET / BGS magnetometers
+    data_url: https://omniweb.gsfc.nasa.gov/
+    exam: Real Dst and storm onsets
+    status: checked
+  - id: tsunaminet
+    name: TsunamiNet
+    domain: Geophysics
+    question: How big is the tsunami coming, from the first deep-ocean pressure readings?
+    physics: Shallow-water propagation from Okada seafloor sources
+    data: NOAA NCTR / DART buoys
+    data_url: https://nctr.pmel.noaa.gov/Dart/
+    exam: Real tsunamis against USGS finite-fault sources
+    status: checked
+    note: Landing page answered; file path still to confirm.
+  - id: gpsquake
+    name: GPSQuake
+    domain: Geophysics
+    question: How far did the ground move, and was it an earthquake, slow slip or the seasons?
+    physics: Okada dislocations, slow-slip transients, seasonal loading
+    data: Nevada Geodetic Laboratory GNSS time series
+    data_url: http://geodesy.unr.edu/
+    exam: Known earthquakes' offsets; Cascadia slow-slip events
+    status: checked
+    note: Landing page answered; tenv3 path to confirm.
+  - id: xrdnet
+    name: XRDNet
+    domain: Materials
+    question: Which crystal phases are in this powder, from its X-ray diffraction pattern?
+    physics: Kinematic powder diffraction from crystal structures
+    data: Crystallography Open Database (500k+ structures)
+    data_url: https://www.crystallography.net/cod/
+    exam: Measured diffraction patterns
+    status: blocked
+    note: RRUFF (measured patterns) returned 403; another source of measured patterns is needed.
+  - id: frbnet
+    name: FRBNet
+    domain: Astrophysics
+    question: How much plasma did this fast radio burst cross, and how much was it scattered?
+    physics: Cold-plasma dispersion and multipath scattering
+    data: CHIME/FRB catalogue
+    data_url: https://www.chime-frb.ca/catalog
+    exam: Catalogue DM and scattering times
+    status: checked
+  - id: spinnet
+    name: SpinNet
+    domain: Sports physics
+    question: How fast and which way is this pitch spinning, from its flight alone?
+    physics: Drag, Magnus force and seam-shifted wake
+    data: Baseball Savant pitch tracking
+    data_url: https://baseballsavant.mlb.com/
+    exam: Measured Hawk-Eye spin
+    status: checked
+    note: Check the terms of use before redistributing anything.
+  - id: spinrock
+    name: SpinRock
+    domain: Planetary science
+    question: How fast is this asteroid spinning, and what shape is it, from sparse survey photometry?
+    physics: Asteroid light-curve inversion (shape, spin axis, phase effects)
+    data: ZTF via IRSA TAP; JPL Small-Body Database
+    data_url: https://irsa.ipac.caltech.edu/
+    exam: Known spin periods
+    status: checked
+  - id: spectranet
+    name: SpectraNet
+    domain: Chemistry
+    question: Which gases, and how much of each, are in this infrared spectrum?
+    physics: HITRAN line-by-line absorption
+    data: HITRAN; NIST Chemistry WebBook
+    data_url: https://hitran.org/
+    exam: Measured gas spectra
+    status: checked
+  - id: wakenet
+    name: WakeNet
+    domain: Energy
+    question: How much power is each wind turbine losing to its neighbours' wakes?
+    physics: FLORIS wake models
+    data: Kelmarsh and Penmanshiel SCADA (Zenodo)
+    data_url: https://zenodo.org
+    exam: Real farm SCADA with wake-steering periods
+    status: candidate
+  - id: jetnet
+    name: JetNet
+    domain: Particle physics
+    question: Which particle started this jet?
+    physics: Parton showers and hadronisation (Pythia-style)
+    data: CERN Open Data
+    data_url: https://opendata.cern.ch/
+    exam: Real-data control regions
+    status: candidate
+    note: Harder to grade on real data than the others.

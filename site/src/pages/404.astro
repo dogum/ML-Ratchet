@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+---
+<Base title="Not found">
+  <section class="wrap nf">
+    <p class="kicker">404 · rejected</p>
+    <h1 class="display">This rung<br /><em>didn't clear the margin.</em></h1>
+    <p class="muted">The page you asked for isn't here. The incumbent is.</p>
+    <a class="btn" href={url()}>Back to the collection <span class="arrow">→</span></a>
+  </section>
+</Base>
+<style>
+  .nf { padding-top: 12vh; min-height: 60vh; }
+  h1 { font-size: clamp(54px, 9vw, 120px); line-height: 0.9; margin: 16px 0 24px; }
+  h1 em { color: var(--ink-2); }
+  p.muted { font-size: 18px; margin-bottom: 28px; }
+</style>

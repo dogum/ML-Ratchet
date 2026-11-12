@@ -1,0 +1,56 @@
+# The ratchet ladder, normalised. Raw per-rung logs: training/ (ratchet.py writes ratchet.json in the work folder).
+model: quakenet
+ladders:
+  - name: QuakeNet
+    objective: Mean skill over Mw, distance, log depth and back-azimuth on the frozen simulated set
+    rule: Keep if the simulated objective beats the incumbent by more than 0.01 AND the dev records get no more than 5% worse.
+    margin: 0.01
+    dev_gate: Dev-record errors may not get more than 5% worse
+    frozen_sets: [val, val2, val3, val4, val5, val7, val8]
+    scored_on: val8
+    note: Every rung was re-scored on each new frozen set and every decision re-taken in order.
+    columns_source: Real exam (3,105 records), reported after the fact; never used to choose
+    columns: ["Mw", "Distance (°)", "Depth (km, median)", "Back-azimuth (°)"]
+    rungs:
+      - id: r1
+        change: Textbook ak135 Earth
+        sim: 0.556
+        decision: kept
+        why: First rung.
+        metrics: [0.21, 11.0, 110, 8.7]
+      - id: r2
+        change: Slower surface waves — warp after S, median 1.065, measured on dev
+        sim: 0.690
+        decision: kept
+        why: +0.134 on the frozen set; dev gate passed.
+        metrics: [0.15, 7.4, 72, 8.0]
+      - id: r3
+        change: Scattering coda above 0.04 Hz, fitted on dev coda/P energy ratios
+        sim: 0.808
+        decision: kept
+        why: +0.118; dev gate passed.
+        metrics: [0.14, 5.7, 52, 6.6]
+      - id: r4
+        change: "World mix: 70% of depth/Mw drawn from the 1990–2011 catalogue"
+        sim: 0.827
+        decision: kept
+        why: +0.019; dev gate passed.
+        metrics: [0.13, 5.3, 44, 6.4]
+      - id: r5
+        change: Layered Earth — water-column reverberation for offshore sources, Moho Ps and sediment reverberation at the station
+        sim: 0.838
+        decision: kept
+        why: Fell 0.002 short on val5 and was rejected at first; passed when every decision was re-taken on val7.
+        metrics: [0.13, 5.2, 42, 6.2]
+      - id: r6
+        change: Weaker short-period surface waves on all components (calib_swq.py)
+        sim: 0.839
+        decision: rejected
+        why: +0.001 over rung 5 on val8, short of the 0.01 margin.
+        metrics: [0.13, 5.2, 43, 6.1]
+      - id: r7
+        change: Surface waves per component (calib_love.py) plus short-period Rayleigh delay of 17 s per 1000 km
+        sim: 0.869
+        decision: released
+        why: +0.031 over rung 5; dev gate passed.
+        metrics: [0.13, 5.1, 39, 6.0]

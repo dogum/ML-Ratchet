@@ -1,0 +1,74 @@
+# The structured card for __NAME__. README.md, the CLI and the website are generated from this file
+# and ratchet.yaml. Fill it in as you go; `mlratchet validate __ID__` tells you what is missing.
+# Schema: mlratchet/schema/model.schema.json
+id: __ID__
+name: __NAME__
+version: "0.1"
+status: in-progress          # in-progress -> released (or partial, if part of the exam waits on data)
+released: null
+order: 99
+domain: TODO                 # e.g. Geophysics, Energy, Astrophysics, Machinery
+tags: []
+accent: "#6b7280"            # one colour rooted in the subject; used on the site
+tagline: TODO — one line, under 90 characters.
+question: TODO — the one question this model answers, in plain words?
+summary: >-
+  TODO — two or three plain sentences: what it reads, what it returns, what it learned from,
+  and what real data it was graded on.
+
+reads: TODO — the input, with units.
+returns:
+  - TODO — each output, with its error bar
+
+physics:
+  summary: TODO — the governing physics in a sentence or two.
+  simulator:
+    - TODO — what the simulator includes
+  checks:
+    - TODO — an independent check with a number (a published formula, a library, a known case) and its file
+
+noise: TODO — which REAL instrument recordings the simulated signals are laid into
+network: TODO — architecture, size, loss
+
+data:
+  - name: TODO
+    url: https://example.org
+    licence: TODO — read the terms before downloading
+    role: noise, dev, exam
+
+split:
+  dev: TODO — a handful of real units, chosen by a fixed seed, never in the exam
+  exam: TODO — everything else, never used to choose anything
+
+exam:
+  summary: TODO
+  results:
+    - metric: TODO
+      better: lower
+      model: TODO
+      baselines:
+        - { name: "TODO classical method", kind: classical, value: TODO }
+        - { name: "Dev median / majority class", kind: dumb, value: TODO }
+      verdict: info
+  coverage: []
+
+wins: []
+losses: []
+limits:
+  - TODO — where it fails; say it plainly
+next: []
+
+usage:
+  install: pip install numpy scipy
+  demo: python demo.py
+  python: |
+    from __ID__ import __NAME__
+    model = __NAME__()
+
+files:
+  inference: [__ID__.py]
+  weights: []                # e.g. [__ID___weights.npz]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  notebook: NOTEBOOK.md

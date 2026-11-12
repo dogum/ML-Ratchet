@@ -1,0 +1,61 @@
+---
+import type { Model } from '../lib/data';
+import { mainLadder } from '../lib/ladder';
+import { url } from '../lib/url';
+import Sparkline from './Sparkline.astro';
+interface Props { m: Model; index: number }
+const { m, index } = Astro.props;
+const lad = mainLadder(m.ladders);
+const marks = m.exam.results.map((r) => r.verdict);
+---
+<a class="card reveal" href={url(`models/${m.id}/`)} style={`--c:${m.accent}; transition-delay:${(index % 3) * 70}ms`}>
+  <div class="top">
+    <span class="idx num">{String(index + 1).padStart(2, '0')}</span>
+    <span class="kicker">{m.domain}</span>
+    {m.status === 'partial' && <span class="kicker partial">exam partly pending</span>}
+  </div>
+  <h3 class="display name">{m.name}</h3>
+  <p class="q">{m.question}</p>
+  {lad && <div class="spark"><Sparkline rungs={lad.rungs} accent={m.accent} label={`${m.name} ratchet`} /></div>}
+  <div class="foot">
+    <span class="marks" aria-label={`${m.tally.win} exam wins, ${m.tally.loss} losses`}>
+      {marks.map((v) => <i class={v}></i>)}
+    </span>
+    <span class="num tally">{m.tally.win}W · {m.tally.loss}L · {m.rungCount} rungs</span>
+  </div>
+  <span class="go" aria-hidden="true">→</span>
+</a>
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 22px 22px 18px;
+    background: var(--paper-3);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--ink);
+    overflow: hidden;
+    transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.3s, opacity 0.9s var(--ease);
+  }
+  .card::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--c); transform: scaleX(0.18); transform-origin: left; transition: transform 0.5s var(--ease); }
+  .card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--c) 50%, var(--rule)); }
+  .card:hover::before { transform: scaleX(1); }
+  .top { display: flex; align-items: baseline; gap: 12px; }
+  .idx { font-size: 11px; color: var(--c); }
+  .partial { margin-left: auto; color: var(--c); }
+  .name { font-size: 44px; line-height: 0.95; }
+  .q { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.45; min-height: 4.35em; }
+  .spark { margin: 4px 0 2px; }
+  .foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-top: 12px; border-top: 1px solid var(--rule-2); }
+  .marks { display: flex; gap: 3px; }
+  .marks i { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); opacity: 0.35; }
+  .marks i.win { background: var(--win); opacity: 1; }
+  .marks i.loss { background: var(--loss); opacity: 1; border-radius: 0; transform: rotate(45deg) scale(0.85); }
+  .marks i.tie, .marks i.mixed { background: var(--tie); opacity: 1; height: 3px; margin-top: 2.5px; border-radius: 0; }
+  .tally { font-size: 10.5px; color: var(--ink-3); }
+  .go { position: absolute; right: 20px; top: 18px; font-size: 20px; color: var(--c); transform: translateX(-6px); opacity: 0; transition: all 0.35s var(--ease); }
+  .card:hover .go { transform: none; opacity: 1; }
+</style>

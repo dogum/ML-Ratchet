@@ -1,0 +1,40 @@
+# The ratchet ladders, normalised. Raw logs: training/logs/ratchet_log.json and bns_ratchet_log.json.
+model: chirpnet
+ladders:
+  - name: Black holes
+    objective: Gaussian sensitivity + glitchy sensitivity − 2 × median chirp-mass error (rule 2 onward)
+    rule: >-
+      The rule changed in the open, three times. Rule 1: Gaussian sensitivity must rise. Rule 2: the single objective
+      must rise by 0.01. Rule 3: halve one-detector false alarms without losing more than 0.01 of objective.
+      Rule 4: as rule 3, counting only loud (SNR ≥ 12) one-detector chirps.
+    margin: 0.01
+    dev_gate: None — the stress tests use simulations and time-slid real noise, never real events
+    frozen_sets: [val]
+    scored_on: val
+    note: Rule 1 wrongly rejected rung 3, which had gained 55 points of glitch robustness; rule 2 re-judged it.
+    columns_source: Frozen simulated validation set
+    columns: [Found at SNR 10, Chirp-mass error, Found with glitches, Loud one-detector fakes passed]
+    rungs:
+      - { id: r1, change: "Baseline 6-layer residual CNN, SNR 6–30, Gaussian noise", sim: 0.199, decision: kept, why: First rung., metrics: ["71%", "11.6%", "0%", "—"] }
+      - { id: r2, change: "SNR curriculum: start loud, anneal to the threshold", sim: 0.477, decision: kept, why: Sensitivity and chirp mass both improved., metrics: ["89%", "5.8%", "0%", "—"] }
+      - { id: r3, change: "Glitch training: loud glitches in one detector in 35% of windows", sim: 1.029, decision: rejected, why: "Rule 1 (Gaussian sensitivity must rise) said no.", metrics: ["88%", "5.3%", "55%", "—"] }
+      - { id: r3b, change: "Rung 3 re-judged under rule 2 (one objective that also counts glitch robustness)", sim: 1.029, decision: kept, why: "Objective 1.029 vs 0.477.", metrics: ["88%", "5.3%", "55%", "—"] }
+      - { id: r4, change: "Polish: longer, gentler training near the threshold, glitches on", sim: 1.105, decision: kept, why: "Objective 1.105 vs 1.029.", metrics: ["91%", "4.9%", "58%", "100%"] }
+      - { id: r5, change: "Test-time averaging (3× compute)", sim: 1.109, decision: rejected, why: "+0.004, short of the margin.", metrics: ["91%", "4.8%", "59%", "—"] }
+      - { id: r6, change: "Coincidence training: one-detector chirps labelled as noise", sim: 0.721, decision: rejected, why: "Cut one-detector fakes to 3.5% but lost too much sensitivity (rule 3).", metrics: ["61%", "5.5%", "41%", "2%"] }
+      - { id: r7, change: "Loud singles only as negatives", sim: 0.726, decision: rejected, why: "Same trade-off (rule 4).", metrics: ["59%", "5.4%", "42%", "1%"] }
+      - { id: r8, change: "Two-stream network: one encoder per detector plus an interaction stage", sim: 0.953, decision: rejected, why: "Fakes to 1%, sensitivity still down.", metrics: ["80%", "5.3%", "52%", "1%"] }
+      - { id: r9, change: "Cascade: rung 4 proposes, rung 8 confirms both detectors agree", sim: 1.116, decision: released, why: "Objective 1.116 vs 1.105, loud one-detector fakes 17% vs 99.6%.", metrics: ["90%", "4.9%", "60%", "17%"] }
+  - name: Neutron stars
+    objective: Gaussian sensitivity (SNR 6–12) − 2 × median chirp-mass error, with glitch false alarms ≤ 5%
+    rule: Keep if the objective rises by more than 0.01 and glitch false alarms stay at or below 5%.
+    margin: 0.01
+    dev_gate: Glitch false alarms ≤ 5% on simulations
+    frozen_sets: [bns_val]
+    scored_on: bns_val
+    columns_source: Simulations, plus the GW170817 exam reported after the fact (never used to choose)
+    columns: [Found at SNR 15, Chirp-mass error, GW170817 vs background, GW170817 ℳ]
+    rungs:
+      - { id: b1, change: "Plain CNN stretched to 16 s windows at 1024 Hz", sim: -0.286, decision: kept, why: First rung., metrics: ["17%", "14.9%", "10.8 vs 12.9", "1.460"] }
+      - { id: b2, change: "Time-frequency front end (0.375 s frames, 64 log bands) + 2-D CNN", sim: 0.054, decision: kept, why: "Objective 0.054 vs −0.286.", metrics: ["94%", "2.6%", "11.1 vs 5.5", "1.182"] }
+      - { id: b3, change: "Polish at lower learning rate", sim: 0.093, decision: released, why: "Objective 0.093 vs 0.054.", metrics: ["97%", "2.2%", "14.4 vs 5.0", "1.137"] }

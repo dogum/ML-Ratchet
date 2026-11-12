@@ -1,0 +1,15 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json.
+model: transitnet
+ladders:
+  - name: TransitNet
+    objective: 0.5 × (2·AUC − 1) + 0.5 × mean parameter skill, on a frozen 5,000-reading set (val2, v2 physics)
+    rule: Keep if the objective rises by more than 0.01 AND dev log-loss is no more than 0.05 worse AND the dev radius-ratio error no more than 1 point worse.
+    margin: 0.01
+    dev_gate: Dev log-loss ≤ +0.05 and dev k error ≤ +1 point
+    frozen_sets: [val, val2]
+    scored_on: val2
+    rungs:
+      - { id: r1, change: "Baseline multi-view CNN", sim: 0.838, decision: kept, why: First rung. }
+      - { id: r2, change: "Limb-darkening prior from dev planets, plus centroids in the data", sim: 0.735, decision: rejected, why: "The absolute-k head failed to learn (k error 34%)." }
+      - { id: r3, change: "Predict corrections to model-free estimates (k from √depth, a/R* from P and T14), on rung 2 data", sim: 0.859, decision: released, why: "0.859 vs 0.838; removed a 3–5% k bias seen even on simulations." }
+      - { id: r4, change: "Centroid branch", sim: 0.861, decision: rejected, why: "+0.002 only, needed +0.01." }

@@ -1,0 +1,143 @@
+---
+// The full ratchet ladder for one model: staircase of the incumbent, the margin band each rung had to clear,
+// rejected rungs as ghosts, and every rung's change and reason one hover (or tap) away.
+import type { Ladder } from '../lib/data';
+import { ladderGeometry } from '../lib/ladder';
+interface Props { ladder: Ladder; accent: string; uid: string; compact?: boolean }
+const { ladder, accent, uid, compact = false } = Astro.props;
+const W = 920, H = 340;
+const box = { w: W, h: H, top: 28, right: 18, bottom: 46, left: 58 };
+const g = ladderGeometry(ladder.rungs, box, ladder.margin, { bands: true });
+const hasScores = ladder.rungs.some((r) => r.sim !== undefined);
+const label: Record<string, string> = { first: 'kept · first rung', kept: 'kept', rejected: 'rejected', released: 'released' };
+---
+<figure class="ladder" style={`--c:${accent}`} data-ladder={uid}>
+  {hasScores ? (
+    <div class="chart-wrap">
+      <svg viewBox={`0 0 ${W} ${H}`} class="chart" role="img" aria-labelledby={`${uid}-t`} data-draw>
+        <title id={`${uid}-t`}>{`${ladder.name}: frozen-set score of each rung. The incumbent only steps up.`}</title>
+        <g class="axis">
+          {g.ticks.map((t) => (
+            <g>
+              <line x1={box.left} x2={W - box.right} y1={g.y(t)} y2={g.y(t)} />
+              <text x={box.left - 10} y={g.y(t) + 3.5} text-anchor="end">{t.toFixed(g.max - g.min < 0.15 ? 3 : 2)}</text>
+            </g>
+          ))}
+        </g>
+        {g.bands.map((b) => (
+          <rect class="band" x={b.x0} width={b.x1 - b.x0} y={b.y0} height={Math.max(b.y1 - b.y0, 1.2)} />
+        ))}
+        <path class="stairs" d={g.stairs} pathLength="1" />
+        {g.marks.map((m) => (
+          <g class={`rung ${m.kind}`} data-rung={m.i} tabindex="0" role="button" aria-label={`Rung ${m.rung.id}: ${m.rung.change}. ${label[m.kind]}. ${m.rung.why}`}>
+            <rect class="hit" x={m.x - g.colW / 2} width={g.colW} y={box.top - 10} height={H - box.top - box.bottom + 20} />
+            {m.kind === 'rejected' && m.y !== null && <line class="stem" x1={m.x} x2={m.x} y1={m.incY} y2={m.y} />}
+            {m.y !== null && (m.kind === 'released'
+              ? <path class="dot" d={`M${m.x} ${m.y - 8}l8 8l-8 8l-8 -8z`} />
+              : <circle class="dot" cx={m.x} cy={m.y} r={m.kind === 'rejected' ? 5 : 4.5} />)}
+            <text class="rid" x={m.x} y={H - box.bottom + 22} text-anchor="middle">{m.rung.id}</text>
+          </g>
+        ))}
+        <text class="ylab" x={14} y={box.top + 4} transform={`rotate(-90 14 ${box.top + 4})`} text-anchor="end">frozen-set score</text>
+      </svg>
+    </div>
+  ) : null}
+  <figcaption class="legend">
+    <span><i class="lg-stairs"></i> incumbent</span>
+    <span><i class="lg-band"></i> margin to clear (+{ladder.margin})</span>
+    <span><i class="lg-ghost"></i> rejected</span>
+    <span><i class="lg-rel"></i> released</span>
+  </figcaption>
+  {!compact && <ol class="rungs">
+    {ladder.rungs.map((r, i) => (
+      <li class={`r-${r.decision}`} data-rung={i}>
+        <span class="rid num">{r.id}</span>
+        <span class="chg">{r.change}</span>
+        <span class="score num">{r.sim !== undefined ? r.sim.toFixed(3) : '—'}</span>
+        <span class={`dec ${r.decision}`}>{r.decision}</span>
+        <span class="why">{r.why}</span>
+        {ladder.columns && r.metrics && (
+          <span class="mets">
+            {ladder.columns.map((c, j) => <span><em>{c}</em> <b class="num">{r.metrics![j]}</b></span>)}
+          </span>
+        )}
+      </li>
+    ))}
+  </ol>}
+  {!compact && ladder.columns_source && <p class="src faint mono">Per-rung numbers: {ladder.columns_source}.</p>}
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ladder]').forEach((fig) => {
+    const set = (i: string | null) => {
+      fig.querySelectorAll('[data-rung]').forEach((el) => el.classList.toggle('on', (el as HTMLElement).dataset.rung === i));
+    };
+    fig.querySelectorAll<HTMLElement>('[data-rung]').forEach((el) => {
+      el.addEventListener('mouseenter', () => set(el.dataset.rung ?? null));
+      el.addEventListener('focus', () => set(el.dataset.rung ?? null));
+      el.addEventListener('click', () => {
+        set(el.dataset.rung ?? null);
+        if (el.tagName === 'g') fig.querySelector(`li[data-rung="${el.dataset.rung}"]`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      });
+    });
+    fig.addEventListener('mouseleave', () => set(null));
+  });
+</script>
+
+<style>
+  .ladder { margin: 0; }
+  .chart-wrap { overflow-x: auto; margin-inline: -4px; }
+  .chart { width: 100%; min-width: 560px; height: auto; overflow: visible; font-family: var(--mono); }
+  .axis line { stroke: var(--rule); stroke-width: 1; }
+  .axis text, .ylab, .rid { fill: var(--ink-3); font-size: 10.5px; font-variation-settings: 'wdth' 87.5; }
+  .band { fill: var(--c); opacity: 0.1; }
+  .stairs { fill: none; stroke: var(--c); stroke-width: 2.5; stroke-linejoin: miter; stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .chart:global(.in) .stairs { animation: draw 2s var(--ease) forwards 0.2s; }
+  :global(.no-js) .stairs { stroke-dashoffset: 0; }
+  .hit { fill: transparent; }
+  .rung { cursor: pointer; outline: none; }
+  .rung .dot { fill: var(--c); stroke: var(--paper-3); stroke-width: 2; transition: transform 0.25s var(--ease); transform-box: fill-box; transform-origin: center; }
+  .rung.rejected .dot { fill: var(--paper-3); stroke: var(--ink-3); stroke-width: 1.5; }
+  .rung .stem { stroke: var(--ink-3); stroke-dasharray: 3 3; }
+  .rung:global(.on) .hit, .rung:focus-visible .hit { fill: color-mix(in srgb, var(--c) 8%, transparent); }
+  .rung:global(.on) .dot { transform: scale(1.35); }
+  .rung:global(.on) .rid { fill: var(--ink); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 10px 0 22px; font-family: var(--mono); font-variation-settings: 'wdth' 87.5; font-size: 10.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .legend i { display: inline-block; }
+  .lg-stairs { width: 18px; height: 8px; border-top: 2.5px solid var(--c); border-right: 2.5px solid var(--c); transform: scaleY(-1); }
+  .lg-band { width: 16px; height: 8px; background: var(--c); opacity: 0.18; }
+  .lg-ghost { width: 9px; height: 9px; border: 1.5px solid var(--ink-3); border-radius: 50%; }
+  .lg-rel { width: 9px; height: 9px; background: var(--c); transform: rotate(45deg); }
+
+  .rungs { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+  .rungs li {
+    display: grid;
+    grid-template-columns: 52px 1fr 70px 92px;
+    grid-template-areas: 'id chg score dec' '. why why why' '. mets mets mets';
+    column-gap: 14px;
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--rule);
+    transition: background 0.2s;
+  }
+  .rungs li:global(.on) { background: color-mix(in srgb, var(--c) 9%, transparent); }
+  .rungs .rid { grid-area: id; color: var(--ink-3); font-size: 12px; }
+  .rungs .chg { grid-area: chg; font-weight: 500; }
+  .rungs .score { grid-area: score; text-align: right; font-size: 12.5px; }
+  .rungs .dec { grid-area: dec; justify-self: end; font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: 99px; border: 1px solid currentColor; height: fit-content; }
+  .dec.kept { color: var(--ink-2); }
+  .dec.released { color: var(--paper); background: var(--c); border-color: var(--c); }
+  .dec.rejected { color: var(--ink-3); border-style: dashed; }
+  .r-rejected .chg { color: var(--ink-2); font-weight: 400; }
+  .rungs .why { grid-area: why; color: var(--ink-2); font-size: 14.5px; margin-top: 3px; }
+  .rungs .mets { grid-area: mets; display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 6px; font-size: 12px; }
+  .rungs .mets em { font-style: normal; color: var(--ink-3); font-size: 11.5px; }
+  .rungs .mets b { font-weight: 400; font-size: 11.5px; }
+  .src { font-size: 10.5px; margin-top: 10px; }
+  @media (max-width: 640px) {
+    .rungs li { grid-template-columns: 40px 1fr auto; grid-template-areas: 'id chg dec' '. score score' '. why why' '. mets mets'; }
+    .rungs .score { text-align: left; color: var(--ink-3); }
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+</style>

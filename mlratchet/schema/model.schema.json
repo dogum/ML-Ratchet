@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/dogum/ML-Ratchet/mlratchet/schema/model.schema.json",
+  "title": "ML Ratchet model card (model.yaml)",
+  "description": "Structured card for one model. The site, the scoreboard and the CLI read this file; MODEL_CARD.md holds the long-form detail.",
+  "type": "object",
+  "required": ["id", "name", "version", "status", "domain", "accent", "tagline", "question", "summary", "reads", "returns", "physics", "data", "split", "exam", "limits", "usage", "files"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "name": { "type": "string" },
+    "version": { "type": "string" },
+    "status": { "enum": ["released", "partial", "in-progress", "idea"], "description": "partial = released, but part of the exam is still waiting on data" },
+    "released": { "type": ["string", "null"], "format": "date" },
+    "order": { "type": "integer", "description": "Build order in the collection" },
+    "domain": { "type": "string" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "accent": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+    "tagline": { "type": "string", "maxLength": 90 },
+    "question": { "type": "string" },
+    "summary": { "type": "string" },
+    "disclaimer": { "type": "string" },
+    "reads": { "type": "string" },
+    "returns": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "physics": {
+      "type": "object",
+      "required": ["summary", "simulator", "checks"],
+      "additionalProperties": false,
+      "properties": {
+        "summary": { "type": "string" },
+        "simulator": { "type": "array", "items": { "type": "string" } },
+        "checks": { "type": "array", "items": { "type": "string" }, "description": "Independent checks of the simulator, with numbers" }
+      }
+    },
+    "noise": { "type": "string", "description": "Where the noise came from (ideally real instrument recordings)" },
+    "network": { "type": "string" },
+    "data": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "url", "licence", "role"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "url": { "type": "string" },
+          "licence": { "type": "string" },
+          "role": { "type": "string", "description": "Any of truth, noise, dev, exam, physics" }
+        }
+      }
+    },
+    "split": {
+      "type": "object",
+      "required": ["dev", "exam"],
+      "additionalProperties": false,
+      "properties": { "dev": { "type": "string" }, "exam": { "type": "string" } }
+    },
+    "exam": {
+      "type": "object",
+      "required": ["summary", "results"],
+      "additionalProperties": false,
+      "properties": {
+        "summary": { "type": "string" },
+        "results": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["metric", "better", "model", "baselines", "verdict"],
+            "additionalProperties": false,
+            "properties": {
+              "metric": { "type": "string" },
+              "better": { "enum": ["lower", "higher", "closer"] },
+              "unit": { "type": "string" },
+              "model": { "type": ["number", "string"] },
+              "baselines": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["name", "kind", "value"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "name": { "type": "string" },
+                    "kind": { "enum": ["classical", "dumb", "published"] },
+                    "value": { "type": ["number", "string"] }
+                  }
+                }
+              },
+              "verdict": { "enum": ["win", "loss", "tie", "mixed", "info"] },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "coverage": {
+          "type": "array",
+          "description": "Exam coverage (%) of the nominal 68% error bars",
+          "items": {
+            "type": "object",
+            "required": ["output", "actual"],
+            "additionalProperties": false,
+            "properties": { "output": { "type": "string" }, "actual": { "type": "number" } }
+          }
+        }
+      }
+    },
+    "wins": { "type": "array", "items": { "type": "string" } },
+    "losses": { "type": "array", "items": { "type": "string" } },
+    "limits": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "help_wanted": { "type": "array", "items": { "type": "string" } },
+    "next": { "type": "array", "items": { "type": "string" } },
+    "usage": {
+      "type": "object",
+      "required": ["install", "demo"],
+      "additionalProperties": false,
+      "properties": { "install": { "type": "string" }, "demo": { "type": "string" }, "python": { "type": "string" } }
+    },
+    "files": {
+      "type": "object",
+      "required": ["inference", "weights", "demo", "card"],
+      "additionalProperties": false,
+      "properties": {
+        "inference": { "type": "array", "items": { "type": "string" } },
+        "weights": { "type": "array", "items": { "type": "string" } },
+        "demo": { "type": "string" },
+        "examples": { "type": "string" },
+        "card": { "type": "string" },
+        "lab": { "type": "string" },
+        "notebook": { "type": "string" }
+      }
+    },
+    "demo_seconds": { "type": "number" }
+  }
+}

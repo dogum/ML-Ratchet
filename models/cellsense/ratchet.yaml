@@ -1,0 +1,21 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json.
+model: cellsense
+ladders:
+  - name: CellSense
+    objective: Health half (with reference, without it, and as partial discharges; skill floored at 0) plus lifetime skill, on the frozen simulated sets
+    rule: Keep if the objective rises by more than 0.01 AND the six calibration cells' capacity error does not get worse AND their lifetime error (read every 50 cycles) is no more than 2 points worse.
+    margin: 0.01
+    dev_gate: Calibration-cell capacity error, and lifetime error within +2 points
+    frozen_sets: [val, life_v2, life_v3]
+    scored_on: life_v3
+    note: The frozen lifetime set was regenerated twice; all rungs were re-scored.
+    rungs:
+      - { id: c1, change: "Baseline 1-D residual CNN along the voltage axis, 100,000 simulated new/aged pairs", sim: 0.037, decision: kept, why: First rung. }
+      - { id: c2, change: "Transport aging: slow polarisation grows several-fold with age", sim: 0.170, decision: rejected, why: "Dev gate: calibration cells 13.3 vs 11.4 mAh." }
+      - { id: c3, change: "Slow graphite: a growing share sits out the 4C discharge", sim: 0.211, decision: rejected, why: "Dev gate: calibration cells 21.6 vs 11.4 mAh." }
+      - { id: c4, change: "Lifetime network on whole simulated aging trajectories", sim: -0.124, decision: rejected, why: "Score fell." }
+      - { id: c5, change: "Lifetime with aging priors refitted to the six calibration cells", sim: 0.190, decision: kept, why: "0.190 vs 0.037." }
+      - { id: c6, change: "Early-life physics: slow graphite from the first cycles, SEI linear in cycles", sim: 0.316, decision: rejected, why: "New lifetime gate: dev lifetime error 45% vs 31%." }
+      - { id: c7, change: "Early life plus a whole-life check against real curves at 50, 80 and 100% of life", sim: 0.375, decision: kept, why: "0.375 vs 0.190; dev lifetime 22%." }
+      - { id: c8, change: "Partial discharges in one network (half the readings cut short)", sim: 0.625, decision: rejected, why: "Dev gate: calibration cells 16.6 vs 11.4 mAh." }
+      - { id: c9, change: "Partial-discharge specialist reading curves smoothed over 24 mV", sim: 0.466, decision: released, why: "0.466 vs 0.375; full curves stay with the health network." }

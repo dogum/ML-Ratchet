@@ -1,0 +1,69 @@
+---
+// Long-form docs, rendered from the repository's docs/*.md.
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { DOC_ROUTES } from '../lib/rehype-doc-links.mjs';
+import { ghFile } from '../lib/data';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+  const routes = DOC_ROUTES as Record<string, string>;
+  return docs
+    .filter((d) => routes[`${d.id}.md`])
+    .map((d) => ({ params: { doc: routes[`${d.id}.md`] }, props: { entry: d } }));
+}
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const h1 = headings.find((h) => h.depth === 1)?.text ?? entry.id;
+const toc = headings.filter((h) => h.depth === 2);
+const kicker: Record<string, string> = {
+  method: 'How every model is built',
+  'model-contract': 'One folder, one layout',
+  'adding-a-model': 'Contribute',
+  'agent-brief': 'For AI research agents',
+  lessons: 'Nine models in',
+  'data-sources': 'Where the data comes from',
+  roadmap: 'Where this goes',
+};
+---
+<Base title={h1}>
+  <div class="wrap doc">
+    <aside class="side">
+      <p class="kicker tick-label">{kicker[entry.id] ?? 'Docs'}</p>
+      {toc.length > 2 && (
+        <ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+      )}
+      <a class="edit mono" href={ghFile(`docs/${entry.id}.md`)}>Edit on GitHub →</a>
+    </aside>
+    <article class="md">
+      <Content />
+    </article>
+  </div>
+</Base>
+<style>
+  .doc { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 64px; padding-top: clamp(40px, 6vw, 80px); }
+  .side { position: sticky; top: 92px; align-self: start; display: flex; flex-direction: column; gap: 16px; }
+  .side ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--rule); }
+  .side li a { display: block; padding: 5px 0 5px 14px; font-size: 14px; color: var(--ink-2); text-decoration: none; }
+  .side li a:hover { color: var(--accent); }
+  .edit { font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; color: var(--ink-3); }
+  .md { max-width: 78ch; font-size: 17px; }
+  .md :global(h1) { font-family: var(--display); font-size: clamp(54px, 8vw, 110px); line-height: 0.9; letter-spacing: -0.035em; margin: 0 0 32px; }
+  .md :global(h2) { font-family: var(--display); font-size: clamp(32px, 3.6vw, 46px); line-height: 1; margin: 64px 0 18px; padding-top: 22px; border-top: 1px solid var(--rule); scroll-margin-top: 84px; }
+  .md :global(h3) { font-family: var(--sans); font-weight: 600; font-size: 18px; margin: 32px 0 10px; }
+  .md :global(p), .md :global(li) { color: var(--ink-2); }
+  .md :global(strong) { color: var(--ink); font-weight: 600; }
+  .md :global(li) { margin-bottom: 7px; }
+  .md :global(ul), .md :global(ol) { padding-left: 1.3em; margin: 0 0 1.2em; }
+  .md :global(table) { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0 28px; display: block; overflow-x: auto; }
+  .md :global(th) { text-align: left; font-family: var(--mono); font-weight: 400; font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--ink); padding: 8px 14px 8px 0; }
+  .md :global(td) { border-bottom: 1px solid var(--rule); padding: 10px 14px 10px 0; vertical-align: top; color: var(--ink-2); }
+  .md :global(blockquote) { margin: 0 0 1.2em; padding-left: 16px; border-left: 3px solid var(--accent); }
+  .md :global(hr) { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+  .md :global(a) { color: var(--ink); }
+  @media (max-width: 900px) {
+    .doc { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+    .side { position: static; }
+    .side ol { display: none; }
+  }
+</style>

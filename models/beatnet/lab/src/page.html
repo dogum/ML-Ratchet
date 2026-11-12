@@ -1,0 +1,438 @@
+<title>BeatNet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a Holter reading desk. Chart paper strips carry the live network; the lab sits beside a voxel heart; the exam and the ladder follow as plain tables. */
+:root {
+  --bg: #fbf8f7; --sheet: #ffffff; --ink: #1f1a22; --muted: #6d6170; --rule: #e6dadd;
+  --grid1: #f6dfe1; --grid2: #eab9be; --trace: #1f1a22; --accent: #c3243f;
+  --cN: #6d6170; --cS: #b46a00; --cV: #c3243f; --cF: #2f6fb0; --good: #2b7a4b;
+  --display: "Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #151217; --sheet: #1c181f; --ink: #f1e9ec; --muted: #a798a6; --rule: #352d38;
+  --grid1: #261d24; --grid2: #45303c; --trace: #f6eef1; --accent: #ff6f86;
+  --cN: #a798a6; --cS: #f0a63a; --cV: #ff6f86; --cF: #78b2f0; --good: #63c98d; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #151217; --sheet: #1c181f; --ink: #f1e9ec; --muted: #a798a6; --rule: #352d38;
+  --grid1: #261d24; --grid2: #45303c; --trace: #f6eef1; --accent: #ff6f86;
+  --cN: #a798a6; --cS: #f0a63a; --cV: #ff6f86; --cF: #78b2f0; --good: #63c98d; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--body); margin: 0 }
+.wrap { max-width: 1140px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 26px 70px }
+h1, h2 { font-family: var(--display); font-weight: 800; text-wrap: balance; margin: 0; line-height: 1.02; letter-spacing: -0.01em }
+h1 { font-size: clamp(54px, 10vw, 104px) }
+h2 { font-size: clamp(30px, 4.6vw, 44px); margin-bottom: 12px }
+h3 { font: 700 16px/1.3 var(--body); margin: 0 0 6px }
+p { margin: 0 0 12px; max-width: 68ch }
+.lede { font-size: clamp(18px, 2.3vw, 21px); max-width: 58ch; margin-top: 16px }
+.mono, .num { font-family: var(--mono); font-variant-numeric: tabular-nums }
+.label { font: 600 11px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+.small { font-size: 14px; color: var(--muted) }
+a { color: var(--accent) }
+.warn { display: inline-block; margin-top: 14px; padding: 6px 10px; border: 1.5px solid var(--accent); color: var(--accent); border-radius: 3px; font: 600 13px/1.3 var(--mono); letter-spacing: .04em }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px 28px; margin-top: 26px; padding-top: 16px; border-top: 2px solid var(--ink) }
+@media (max-width: 700px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+.stat b { display: block; font: 600 28px/1.05 var(--mono); font-variant-numeric: tabular-nums }
+.stat span { font-size: 13px; color: var(--muted) }
+section { margin-top: 68px }
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 16px; display: grid; gap: 14px; min-width: 0 }
+.row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; min-width: 0 }
+.row.between { justify-content: space-between }
+button, select { font: 600 14px var(--body); color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 7px 12px; cursor: pointer; min-width: 0; max-width: 100% }
+button:hover, select:hover { border-color: var(--ink) }
+button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink) }
+button:focus-visible, select:focus-visible, input:focus-visible, canvas:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+canvas { display: block; width: 100%; max-width: 100% }
+#strip { height: 250px; cursor: pointer }
+#overview { height: 46px; cursor: pointer }
+#labstrip { height: 230px }
+.vec { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.5fr); gap: 14px }
+@media (max-width: 860px) { .vec { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) } .vec #leads { grid-column: 1 / -1 } }
+#loopF, #loopH { aspect-ratio: 1; height: auto }
+#leads { height: 280px }
+#heartmap { aspect-ratio: 1; height: auto; cursor: crosshair; max-width: 100% }
+.chip { display: inline-flex; align-items: center; gap: 6px; font: 600 12px/1 var(--mono) }
+.dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 16px }
+.grid2b { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); gap: 16px }
+@media (max-width: 860px) { .grid2, .grid2b { grid-template-columns: minmax(0, 1fr) } }
+.bars { display: grid; gap: 6px }
+.bar { display: grid; grid-template-columns: 26px minmax(0, 1fr) 54px; gap: 8px; align-items: center; font: 600 13px var(--mono) }
+.bar i { display: block; height: 12px; border-radius: 2px; background: var(--rule); position: relative; overflow: hidden }
+.bar i u { position: absolute; inset: 0 auto 0 0; background: var(--c, var(--ink)) }
+.kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; font-size: 14px }
+.kv dt { color: var(--muted) } .kv dd { margin: 0; font-family: var(--mono); font-variant-numeric: tabular-nums }
+.controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px }
+@media (max-width: 560px) { .controls { grid-template-columns: minmax(0, 1fr) } }
+.ctl { display: grid; gap: 4px; min-width: 0 }
+.ctl label { font: 600 13px var(--body); display: flex; justify-content: space-between; gap: 8px }
+.ctl label span { font: 400 13px var(--mono); color: var(--muted) }
+input[type=range] { width: 100%; accent-color: var(--accent) }
+.seg { display: flex; flex-wrap: wrap; gap: 6px }
+.seg button { padding: 5px 10px; font-size: 13px }
+.tablewrap { overflow-x: auto; max-width: 100% }
+table { border-collapse: collapse; font-size: 14px; min-width: 100% }
+th, td { padding: 7px 10px; text-align: right; border-bottom: 1px solid var(--rule); white-space: nowrap; font-variant-numeric: tabular-nums }
+th:first-child, td:first-child { text-align: left; white-space: normal; min-width: 180px }
+thead th { font: 600 11px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--ink) }
+td.num, td .num { font-family: var(--mono) }
+tr.ours td { font-weight: 700 }
+tr.pub td { color: var(--muted) }
+.cm td { text-align: center; font-family: var(--mono); min-width: 64px }
+.cm th:first-child { min-width: 90px }
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px }
+@media (max-width: 860px) { .cols { grid-template-columns: minmax(0, 1fr) } }
+.cols > div { min-width: 0 }
+.steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--sheet) }
+@media (max-width: 860px) { .steps { grid-template-columns: minmax(0, 1fr) } }
+.steps > div { padding: 14px; border-right: 1px solid var(--rule); min-width: 0 }
+.steps > div:last-child { border-right: 0 }
+@media (max-width: 860px) { .steps > div { border-right: 0; border-bottom: 1px solid var(--rule) } }
+.steps b { font: 600 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent) }
+.pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font: 600 12px var(--mono); border: 1px solid currentColor }
+.pill.ok { color: var(--good) } .pill.no { color: var(--muted) }
+pre { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 14px; overflow-x: auto; font: 13px/1.5 var(--mono); max-width: 100% }
+ul { padding-left: 20px; margin: 0 } li { margin-bottom: 6px; max-width: 70ch }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px }
+footer { margin-top: 70px; padding-top: 16px; border-top: 1px solid var(--rule) }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important } }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="label">Physics + machine learning · MIT-BIH inter-patient exam</div>
+  <h1>BeatNet</h1>
+  <p class="lede">A heartbeat classifier that has never seen a labelled heartbeat from a real patient. It learned from a simulated heart: electrical activation spreading through a voxel model of the ventricles and atria, projected onto an ECG lead and buried in real recorded noise. Here it reads real Holter recordings of 22 patients it never met.</p>
+  <span class="warn">Research and teaching model. Not a medical device. Do not use it for diagnosis or treatment.</span>
+  <div class="stats" id="stats"></div>
+</header>
+
+<section id="explorer">
+  <h2>Real recordings, read live</h2>
+  <p>Each record is one minute of modified lead II from the MIT-BIH Arrhythmia Database exam set (DS2). The minute was drawn at random, by a fixed seed, among the minutes that contain the record's rarest beat class. Your browser runs the network on every beat. Above the trace is the cardiologists' label, below it BeatNet's. A box marks a disagreement. Click a beat to see what the network saw.</p>
+  <div class="panel">
+    <div class="row between">
+      <div class="row"><label class="label" for="rec">Record</label><select id="rec"></select></div>
+      <div class="row" id="pager"></div>
+    </div>
+    <canvas id="strip" tabindex="0" aria-label="ECG strip with beat labels"></canvas>
+    <canvas id="overview" aria-label="Whole minute overview"></canvas>
+    <div class="legend" id="legend"></div>
+    <div class="grid2">
+      <div class="panel" style="padding:12px"><div class="label">The beat as BeatNet sees it: 2.5 s window (ink) and the median of its 40 neighbours (shaded)</div><canvas id="beatwin" style="height:160px"></canvas></div>
+      <div class="panel" style="padding:12px;align-content:start">
+        <div class="label" id="beattitle">Beat</div>
+        <div class="bars" id="beatbars"></div>
+        <dl class="kv" id="beatkv"></dl>
+      </div>
+    </div>
+    <div class="small" id="segsum"></div>
+  </div>
+</section>
+
+<section id="lab">
+  <h2>The heart lab</h2>
+  <p>This is the same simulator that made the training data, running in your browser. Move the ectopic focus on the heart (or click the map), slow the conduction, rotate the heart, add a bundle-branch block or real noise. The strip is rebuilt from the physics, and BeatNet reads the ninth beat.</p>
+  <div class="grid2b">
+    <div class="panel" style="align-content:start">
+      <canvas id="heartmap" aria-label="Ventricles coloured by activation time"></canvas>
+      <div class="small" id="mapnote">Ventricles seen from the front, coloured by activation time of the ninth beat (dark = early). The ring is the ectopic focus.</div>
+    </div>
+    <div class="panel">
+      <div class="controls">
+        <div class="ctl"><label>Ninth beat</label><div class="seg" id="ctype"></div></div>
+        <div class="ctl"><label>Bundle-branch block (all beats)</label><div class="seg" id="cbbb"></div></div>
+        <div class="ctl"><label for="height">Focus height <span id="vheight"></span></label><input type="range" id="height" min="0" max="1" step="0.05" value="0.35"></div>
+        <div class="ctl"><label for="angle">Focus around the wall <span id="vangle"></span></label><input type="range" id="angle" min="-180" max="180" step="5" value="-150"></div>
+        <div class="ctl"><label for="depth">Focus depth, endo to epi <span id="vdepth"></span></label><input type="range" id="depth" min="0" max="1" step="0.1" value="0.5"></div>
+        <div class="ctl"><label for="aang">Atrial focus (for S) <span id="vaang"></span></label><input type="range" id="aang" min="-180" max="180" step="10" value="-90"></div>
+        <div class="ctl"><label for="myo">Muscle conduction speed <span id="vmyo"></span></label><input type="range" id="myo" min="0.15" max="0.6" step="0.01" value="0.30"></div>
+        <div class="ctl"><label for="engage">Purkinje engagement of the ectopic wave <span id="vengage"></span></label><input type="range" id="engage" min="1" max="8" step="0.25" value="3"></div>
+        <div class="ctl"><label for="coupling">Prematurity (coupling / RR) <span id="vcoupling"></span></label><input type="range" id="coupling" min="0.26" max="1.1" step="0.02" value="0.62"></div>
+        <div class="ctl"><label for="hr">Heart rate <span id="vhr"></span></label><input type="range" id="hr" min="40" max="150" step="2" value="72"></div>
+        <div class="ctl"><label for="frontal">Heart rotation, frontal plane <span id="vfrontal"></span></label><input type="range" id="frontal" min="-60" max="60" step="5" value="0"></div>
+        <div class="ctl"><label>Real noise (MIT-BIH NSTDB)</label><div class="seg" id="cnoise"></div></div>
+        <div class="ctl"><label for="snr">Signal-to-noise <span id="vsnr"></span></label><input type="range" id="snr" min="0" max="40" step="1" value="24"></div>
+      </div>
+      <canvas id="labstrip" aria-label="Simulated strip"></canvas>
+      <div class="grid2" style="gap:12px">
+        <div class="bars" id="labbars"></div>
+        <dl class="kv" id="labkv"></dl>
+      </div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:16px">
+    <div class="label">The ninth beat's heart vector, and how each lead sees it</div>
+    <div class="vec">
+      <div><canvas id="loopF" aria-label="Frontal-plane vector loop"></canvas><div class="small">Front view (patient's left to the right, feet down)</div></div>
+      <div><canvas id="loopH" aria-label="Horizontal-plane vector loop"></canvas><div class="small">View from above (chest front at the bottom)</div></div>
+      <canvas id="leads" aria-label="The same beat projected on four leads"></canvas>
+    </div>
+    <p class="small" style="margin:0">The whole heart's electrical activity at each millisecond adds up to one arrow, the heart dipole. Its tip draws a P loop (small, <span style="color:var(--cS)">orange</span>), a QRS loop (large, ink) and a T loop (<span style="color:var(--cF)">blue</span>). A lead is a fixed direction on the chest: its voltage is the dipole's length along that direction (dashed lines, Dower lead vectors). MIT-BIH records modified lead II, so BeatNet reads the projection on II. A ventricular focus swings the QRS loop to a new direction and makes it slower and wider; that is all a PVC is, to a lead.</p>
+  </div>
+</section>
+
+<section id="exam">
+  <h2>The exam</h2>
+  <p id="examintro"></p>
+  <div class="tablewrap"><table id="examtab"></table></div>
+  <p class="small" style="margin-top:10px">Se = sensitivity (share of the class found). +P = positive predictivity (share of the calls that were right). Published methods were trained on real labelled beats from the other 22 records (DS1); BeatNet, the rules and the simulated linear discriminant never saw a real label.</p>
+  <div class="cols" style="margin-top:26px">
+    <div><h3>BeatNet confusion on DS2</h3><div class="tablewrap"><table class="cm" id="cm"></table></div><p class="small" id="cmnote"></p></div>
+    <div><h3>Other held-out sets</h3><div class="tablewrap"><table id="othertab"></table></div><p class="small">DS1 rest: the 16 DS1 records outside the dev set (never used). SVDB: MIT-BIH Supraventricular Arrhythmia Database, 78 records, first channel, 128 Hz, a different set of patients and leads.</p></div>
+    <div><h3>QRS width</h3><dl class="kv" id="qrskv"></dl><p class="small" id="qrsnote"></p></div>
+  </div>
+  <div id="afbox" style="margin-top:26px"><h3>Rhythm: atrial fibrillation, beat by beat (DS2)</h3><div class="tablewrap"><table id="aftab"></table></div><p class="small" id="afnote"></p></div>
+  <h3 style="margin-top:26px">Where it fails</h3>
+  <ul id="fails"></ul>
+</section>
+
+<section id="ladder">
+  <h2>The ratchet</h2>
+  <p>Each rung changes one thing. It is kept only if it beats the incumbent by more than 0.01 macro-F1 on a frozen simulated test set AND does not lose more than 0.02 of S/V F1 on six real development records. The exam column is shown for the record; it never decided anything.</p>
+  <div class="tablewrap"><table id="ratchet"></table></div>
+</section>
+
+<section id="how">
+  <h2>How it was built</h2>
+  <div class="steps">
+    <div><b>1 · Activation</b><p class="small">A 2 mm voxel heart: thick left ventricle, crescent right ventricle, thin atria. Shortest-path (eikonal) spread: muscle 0.2–0.4 mm/ms, Purkinje endocardium 1.2–2.2 mm/ms, atria 0.75–1.1 mm/ms.</p></div>
+    <div><b>2 · Dipole</b><p class="small">Every voxel's membrane potential rises when the wave arrives and falls an action-potential duration later. The heart vector is the volume sum of −grad V<sub>m</sub>: QRS from the activation-time gradients, T from the repolarisation-time gradients.</p></div>
+    <div><b>3 · Lead</b><p class="small">Random heart orientation and electrode placement, Dower lead vectors measured on Frank's torso model, breathing modulation. Beat types come from where activation starts: sinus node, ectopic atrial focus, ectopic ventricular focus, or both at once (fusion).</p></div>
+    <div><b>4 · Real noise</b><p class="small">Baseline wander, electrode motion and muscle noise recorded for the MIT-BIH Noise Stress Test Database, quiet background from dev records, amplifier noise, Holter filters and an 11-bit, 5 µV converter.</p></div>
+    <div><b>5 · Network</b><p class="small">A 1-D CNN (170 k weights) reads a 2.5 s window, the median of the 40 neighbouring beats and six RR features. Trained on 24,000 to 40,000 simulated beats per rung, never on a real one.</p></div>
+  </div>
+  <div class="cols" style="margin-top:22px">
+    <div><h3>Physics checks</h3><dl class="kv" id="physkv"></dl></div>
+    <div><h3>Beyond ECGSYN</h3><p class="small">ECGSYN (McSharry et al. 2003) draws one lead as five Gaussian bumps on a limit cycle. BeatNet uses ECGSYN's RR model for heart-rate variability and checks its average beat against ECGSYN's, but the shapes come from where activation starts and how fast it spreads. A ventricular focus, a blocked bundle or a fused beat is a change of physics, not a new bump.</p></div>
+    <div><h3>Rhythm</h3><p class="small">Sinus RR with Mayer-wave and respiratory variability; atrial fibrillation (irregular RR, 4–9 Hz fibrillatory waves) and flutter (sawtooth, 2:1–4:1); premature ventricular beats keep the sinus clock running, so the pause is fully compensatory; atrial premature beats reset it and arrive at 0.28–0.60 of the RR (measured on the dev records: real S beats came much earlier than the textbook simulator's). Bigeminy, trigeminy, couplets and short runs.</p></div>
+  </div>
+</section>
+
+<section id="limits">
+  <h2>Limits</h2>
+  <ul id="limitlist"></ul>
+</section>
+
+<section id="use">
+  <h2>Use the release</h2>
+  <p>The release zip (beatnet-v1.0.zip) holds a numpy and scipy module, its weights, a demo on real exam records, the model card and every training script.</p>
+<pre>pip install numpy scipy wfdb
+python demo.py
+
+from beatnet import BeatNet
+net = BeatNet()
+out = net.classify(ecg_mV, fs=360, beats=r_peak_samples)   # beats=None runs a simple QRS detector
+out['label'], out['probs'], out['qrs_ms'], out['qrs_sig_ms'], out['heart_rate_bpm']</pre>
+</section>
+
+<footer>
+  <h3>Data and credits</h3>
+  <p class="small">MIT-BIH Arrhythmia Database (Moody &amp; Mark 2001), MIT-BIH Noise Stress Test Database (Moody, Muldrow &amp; Mark 1984), MIT-BIH Supraventricular Arrhythmia Database (Greenwald 1990) and the QT Database (Laguna et al. 1997), all from PhysioNet (Goldberger et al. 2000), Open Data Commons Attribution licence. Lead vectors: Dower et al. 1980. Rhythm model: McSharry et al. 2003 (ECGSYN). Inter-patient split: de Chazal, O'Dwyer &amp; Reilly 2004. Part of a collection of physics + machine learning projects that share one recipe: real physics, simulations in real noise, a ratchet, and an exam on data never used for choosing.</p>
+  <p class="small"><b>Not a medical device.</b> BeatNet is a research and teaching model. Its errors on real patients are listed above.</p>
+</footer>
+</div>
+
+<script>/*BNET*/</script>
+<script>/*BEATSIM*/</script>
+<script>
+const DATA = /*DATA*/null;
+const HEART = /*HEART*/null;
+const CLS = ['N', 'S', 'V', 'F'], CNAME = { N: 'normal', S: 'supraventricular ectopic', V: 'ventricular ectopic', F: 'fusion', Q: 'unclassifiable' };
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const ccol = (c) => css('--c' + c);
+const net = BNet.load(DATA.weights);
+const pct = (x) => (x == null || !isFinite(x) ? '–' : (100 * x).toFixed(1));
+function fitCanvas(cv) { const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1; cv.width = Math.max(1, Math.round(r.width * d)); cv.height = Math.max(1, Math.round(r.height * d)); const g = cv.getContext('2d'); g.setTransform(d, 0, 0, d, 0, 0); return [g, r.width, r.height]; }
+function paper(g, W, H, pxs, pxmv, t0) {   // ECG paper: 40 ms / 0.1 mV small squares, 200 ms / 0.5 mV large
+  g.fillStyle = css('--sheet'); g.fillRect(0, 0, W, H);
+  for (const [step, col, lw] of [[0.04, css('--grid1'), 1], [0.2, css('--grid2'), 1]]) { g.strokeStyle = col; g.lineWidth = lw; g.beginPath();
+    const s0 = Math.ceil(t0 / step) * step; for (let t = s0; (t - t0) * pxs <= W; t += step) { const x = Math.round((t - t0) * pxs) + 0.5; g.moveTo(x, 0); g.lineTo(x, H); }
+    const vs = step === 0.04 ? 0.1 : 0.5; for (let v = 0; v * pxmv <= H; v += vs) { const y = Math.round(H / 2 + v * pxmv) + 0.5, y2 = Math.round(H / 2 - v * pxmv) + 0.5; g.moveTo(0, y); g.lineTo(W, y); g.moveTo(0, y2); g.lineTo(W, y2); } g.stroke(); }
+}
+// ------------------------------------------------------------------ hero numbers
+(function stats() {
+  const E = DATA.exam, el = document.getElementById('stats'); if (!E) return; const b = E.ds2.beatnet;
+  const items = [[pct(b.se[2]) + '%', 'of ventricular ectopic beats found in DS2 (V sensitivity)'], [pct(b.ppv[2]) + '%', 'of its V calls correct (V +P)'],
+    [pct(b.se[1]) + '%', 'of supraventricular ectopic beats found (S sensitivity)'], [E.ds2.beatnet.n.toLocaleString(), 'real exam beats, 22 patients, zero real labels in training']];
+  el.innerHTML = items.map(([v, s]) => `<div class="stat"><b>${v}</b><span>${s}</span></div>`).join('');
+})();
+// ------------------------------------------------------------------ explorer
+const recSel = document.getElementById('rec'); let cur = null, page = 0, selBeat = null;
+DATA.records.forEach((r, i) => { const o = document.createElement('option'); o.value = i; const c = r.counts; o.textContent = `${r.rec} · N ${c[0]} · S ${c[1]} · V ${c[2]} · F ${c[3]} (whole record)`; recSel.appendChild(o); });
+document.getElementById('legend').innerHTML = CLS.map((c) => `<span class="chip"><span class="dot" style="background:var(--c${c})"></span>${c} ${CNAME[c]}</span>`).join('') + '<span class="chip small">top: reference · bottom: BeatNet</span>';
+function loadRecord(i) {
+  const r = DATA.records[i]; const bin = atob(r.mv), u = new Uint8Array(bin.length); for (let k = 0; k < bin.length; k++) u[k] = bin.charCodeAt(k);
+  const adc = new Int16Array(u.buffer), x = Float64Array.from(adc, (v) => v / 200), y = BNet.filt360(x), keep = []; for (let k = r.show[0]; k <= r.show[1]; k++) keep.push(k);
+  const F = BNet.features(y, r.pos, keep), out = F.map((f) => BNet.read(net, f)); let maxd = 0; out.forEach((o) => { o.af = o.raw.length > 6 ? 1 / (1 + Math.exp(-o.raw[6])) : null; });
+  out.forEach((o, j) => { const py = r.py_probs[keep[j]]; for (let c = 0; c < 4; c++) maxd = Math.max(maxd, Math.abs(o.p[c] - py[c])); if (r.py_af && o.af != null) maxd = Math.max(maxd, Math.abs(o.af - r.py_af[keep[j]])); });
+  cur = { r, x, keep, F, out, maxd, t0: 30 }; page = 0; selBeat = keep.find((k) => r.cls[k] === r.target) ?? keep[0]; page = Math.floor((r.pos[selBeat] / 360 - 30) / 10);
+  buildPager(); drawStrip(); drawOverview(); showBeat(selBeat); summary();
+}
+function buildPager() { const p = document.getElementById('pager'); p.innerHTML = '<span class="label">Seconds</span>';
+  for (let k = 0; k < 6; k++) { const b = document.createElement('button'); b.textContent = `${k * 10}–${k * 10 + 10}`; b.setAttribute('aria-pressed', k === page); b.onclick = () => { page = k; buildPager(); drawStrip(); drawOverview(); }; p.appendChild(b); } }
+let beatBoxes = [];
+function drawStrip() {
+  const cv = document.getElementById('strip'), [g, W, H] = fitCanvas(cv), r = cur.r, t0 = 30 + page * 10, pxs = W / 10, pxmv = Math.min(H / 4.2, pxs * 0.4 / 0.1 * 0.25);
+  paper(g, W, H, pxs, pxmv * 2.5 / 2.5, t0); const mid = H / 2 + 0.15 * pxmv; g.strokeStyle = css('--trace'); g.lineWidth = 1.3; g.beginPath();
+  const i0 = Math.floor(t0 * 360), i1 = Math.min(cur.x.length, Math.ceil((t0 + 10) * 360)); let base = 0; for (let i = i0; i < i1; i++) base += cur.x[i]; base /= Math.max(1, i1 - i0);
+  for (let i = i0; i < i1; i++) { const X = (i / 360 - t0) * pxs, Y = mid - (cur.x[i] - base) * pxmv; i === i0 ? g.moveTo(X, Y) : g.lineTo(X, Y); } g.stroke();
+  beatBoxes = []; g.font = '600 12px JetBrains Mono, monospace'; g.textAlign = 'center';
+  cur.keep.forEach((k, j) => { const t = r.pos[k] / 360; if (t < t0 || t > t0 + 10) return; const X = (t - t0) * pxs, ref = r.cls[k] < 4 ? CLS[r.cls[k]] : 'Q', o = cur.out[j], bn = CLS[o.p.indexOf(Math.max(...o.p))];
+    g.fillStyle = ccol(ref === 'Q' ? 'N' : ref); g.fillText(ref, X, 16); g.fillStyle = ccol(bn); g.fillText(bn, X, H - 8);
+    if (ref !== bn && ref !== 'Q') { g.strokeStyle = css('--accent'); g.lineWidth = 1.5; g.strokeRect(X - 13, 3, 26, H - 6); }
+    if (k === selBeat) { g.fillStyle = css('--ink'); g.globalAlpha = 0.08; g.fillRect(X - 14, 0, 28, H); g.globalAlpha = 1; }
+    beatBoxes.push([X, k]); });
+}
+function drawOverview() {
+  const cv = document.getElementById('overview'), [g, W, H] = fitCanvas(cv), r = cur.r; g.fillStyle = css('--sheet'); g.fillRect(0, 0, W, H); g.strokeStyle = css('--rule'); g.strokeRect(0.5, 0.5, W - 1, H - 1);
+  g.fillStyle = css('--ink'); g.globalAlpha = 0.07; g.fillRect(page * W / 6, 0, W / 6, H); g.globalAlpha = 1;
+  cur.keep.forEach((k, j) => { const t = r.pos[k] / 360 - 30; if (t < 0 || t > 60) return; const X = t / 60 * W, ref = r.cls[k] < 4 ? CLS[r.cls[k]] : 'N', o = cur.out[j], bn = CLS[o.p.indexOf(Math.max(...o.p))];
+    g.fillStyle = ccol(ref); g.fillRect(X - 1, 4, 2, ref === 'N' ? 8 : 16); g.fillStyle = ccol(bn); g.fillRect(X - 1, H - (bn === 'N' ? 12 : 20), 2, bn === 'N' ? 8 : 16);
+    if (o.af != null) { const w = W / 60 * 1.2; if (r.rhy && r.rhy[k] === 1) { g.fillStyle = css('--good'); g.fillRect(X - w / 2, H / 2 - 4, w, 3); } g.fillStyle = css('--good'); g.globalAlpha = o.af; g.fillRect(X - w / 2, H / 2 + 1, w, 3); g.globalAlpha = 1; } });
+}
+document.getElementById('overview').onclick = (e) => { const r = e.target.getBoundingClientRect(); page = Math.min(5, Math.floor((e.clientX - r.left) / r.width * 6)); buildPager(); drawStrip(); drawOverview(); };
+document.getElementById('strip').onclick = (e) => { const r = e.target.getBoundingClientRect(), x = e.clientX - r.left; let best = null, bd = 1e9; for (const [X, k] of beatBoxes) if (Math.abs(X - x) < bd) { bd = Math.abs(X - x); best = k; } if (best != null) { selBeat = best; drawStrip(); showBeat(best); } };
+function bars(el, p, labels) { el.innerHTML = p.map((v, c) => `<div class="bar" style="--c:var(--c${CLS[c]})"><span>${CLS[c]}</span><i><u style="width:${(100 * v).toFixed(1)}%"></u></i><span>${(100 * v).toFixed(1)}%</span></div>`).join(''); }
+function showBeat(k) {
+  const j = cur.keep.indexOf(k), f = cur.F[j], o = cur.out[j], r = cur.r, ref = r.cls[k] < 4 ? CLS[r.cls[k]] : 'Q', bn = CLS[o.p.indexOf(Math.max(...o.p))], t = r.pos[k] / 360 - 30;
+  document.getElementById('beattitle').textContent = `Beat at ${t.toFixed(2)} s · reference ${ref} (symbol ${r.sym[k]}) · BeatNet ${bn}`; bars(document.getElementById('beatbars'), o.p);
+  const pre = j > 0 || k > 0 ? (r.pos[k] - r.pos[k - 1]) / 360 : NaN, post = k + 1 < r.pos.length ? (r.pos[k + 1] - r.pos[k]) / 360 : NaN;
+  document.getElementById('beatkv').innerHTML = `<dt>QRS width</dt><dd>${o.qrs.toFixed(0)} ± ${o.qrsSig.toFixed(0)} ms</dd><dt>RR before / after</dt><dd>${(pre * 1000).toFixed(0)} / ${(post * 1000).toFixed(0)} ms</dd><dt>Prematurity</dt><dd>${(Math.exp(f.rr[0]) * 100).toFixed(0)}% of local mean RR</dd><dt>Heart rate (local)</dt><dd>${(60 / (Math.exp(f.rr[2]) * 0.8)).toFixed(0)} bpm</dd>${o.af != null ? `<dt>Atrial fibrillation?</dt><dd>${(100 * o.af).toFixed(0)}% (reference: ${r.rhy && r.rhy[k] === 1 ? 'AF' : r.rhy && r.rhy[k] === 2 ? 'flutter' : 'not AF'})</dd>` : ''}`;
+  const cv = document.getElementById('beatwin'), [g, W, H] = fitCanvas(cv); g.fillStyle = css('--sheet'); g.fillRect(0, 0, W, H); const sx = W / 450, sy = H / 3.2, my = H * 0.6;
+  g.strokeStyle = css('--rule'); g.beginPath(); g.moveTo(W / 2 + 0.5, 0); g.lineTo(W / 2 + 0.5, H); g.stroke();
+  g.fillStyle = css('--grid2'); g.beginPath(); g.moveTo(0, my); for (let i = 0; i < 450; i++) g.lineTo(i * sx, my - f.tpl[i] * sy); g.lineTo(W, my); g.closePath(); g.fill();
+  g.strokeStyle = css('--trace'); g.lineWidth = 1.4; g.beginPath(); for (let i = 0; i < 450; i++) { const X = i * sx, Y = my - f.w[i] * sy; i ? g.lineTo(X, Y) : g.moveTo(X, Y); } g.stroke();
+}
+function summary() { const r = cur.r, cm = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; let agree = 0, n = 0;
+  cur.keep.forEach((k, j) => { const t = r.pos[k] / 360 - 30; if (t < 0 || t > 60 || r.cls[k] > 3) return; const bn = cur.out[j].p.indexOf(Math.max(...cur.out[j].p)); cm[r.cls[k]][bn]++; n++; if (bn === r.cls[k]) agree++; });
+  let afr = 0, afn = 0, nn = 0; cur.keep.forEach((k, j) => { const t = r.pos[k] / 360 - 30; if (t < 0 || t > 60) return; nn++; if (r.rhy && r.rhy[k] === 1) afr++; if (cur.out[j].af > 0.5) afn++; });
+  const rh = cur.out[0].af != null ? ` Rhythm: the reference marks ${Math.round(100 * afr / Math.max(nn, 1))}% of these beats as atrial fibrillation; BeatNet's AF output says ${Math.round(100 * afn / Math.max(nn, 1))}% (green band in the overview: top = reference, bottom = BeatNet).` : '';
+  document.getElementById('segsum').innerHTML = `This minute: ${agree} of ${n} beats agree with the reference.${rh} The browser's answers match the Python release to within ${cur.maxd.toExponential(1)} in probability (float32 weights). Segment starts at ${(r.start_s / 60).toFixed(1)} min into the 30 min record.`; }
+recSel.onchange = () => loadRecord(+recSel.value);
+// ------------------------------------------------------------------ lab
+BeatSim.init(HEART); const G = BeatSim.G;
+const L = { type: 'V', bbb: 'none', noise: 'none' };
+function seg(id, key, opts) { const el = document.getElementById(id); el.innerHTML = ''; for (const [v, t] of opts) { const b = document.createElement('button'); b.textContent = t; b.setAttribute('aria-pressed', L[key] === v); b.onclick = () => { L[key] = v; seg(id, key, opts); runLab(); }; el.appendChild(b); } }
+seg('ctype', 'type', [['N', 'Normal'], ['S', 'Atrial premature'], ['V', 'Ventricular premature'], ['F', 'Fusion']]);
+seg('cbbb', 'bbb', [['none', 'None'], ['LBBB', 'Left'], ['RBBB', 'Right']]);
+seg('cnoise', 'noise', [['none', 'None'], ['bw', 'Baseline wander'], ['em', 'Electrode motion'], ['ma', 'Muscle'], ['all', 'All three']]);
+const ids = ['height', 'angle', 'depth', 'aang', 'myo', 'engage', 'coupling', 'hr', 'frontal', 'snr'], fmt = { hr: (v) => v + ' bpm', height: (v) => (v * 100).toFixed(0) + '% to base', angle: (v) => v + '°', depth: (v) => (+v).toFixed(1), aang: (v) => v + '°', myo: (v) => (+v).toFixed(2) + ' mm/ms', engage: (v) => '×' + (+v).toFixed(2), coupling: (v) => (+v).toFixed(2), frontal: (v) => v + '°', snr: (v) => v + ' dB' };
+let tmr = null; ids.forEach((id) => { const el = document.getElementById(id); const up = () => { document.getElementById('v' + id).textContent = fmt[id](el.value); }; up(); el.oninput = () => { up(); clearTimeout(tmr); tmr = setTimeout(runLab, 120); }; });
+const val = (id) => +document.getElementById(id).value;
+let focus = null;
+function runLab() {
+  focus = BeatSim.pickFocus(val('height'), val('angle'), val('depth')); const afocus = BeatSim.pickAtrial(val('aang'));
+  const o = { type: L.type, focus, afocus, myo: val('myo'), engage: val('engage'), bbb: L.bbb, frontal: val('frontal'), coupling: val('coupling'), hr: val('hr'), noise: L.noise, snr: val('snr'), seed: 7 };
+  if (L.type === 'F') o.coupling = 0.75 + (val('coupling') - 0.4) / 0.7 * 0.375;   // fusion: ectopic fires -50..+25 ms around the sinus beat
+  const s = BeatSim.strip(o), y = BNet.filt360(s.x), all = s.ann.map((_, i) => i), F = BNet.features(y, s.ann, all), out = F.map((f) => BNet.read(net, f)), k = s.labels.findIndex((l) => l > 0) >= 0 ? s.labels.findIndex((l) => l > 0) : 8;
+  drawLabStrip(s, out, k); bars(document.getElementById('labbars'), out[k].p);
+  const tau = k >= 0 ? s.tauEct : s.tauN, ax = axisOf(s, k, o);
+  document.getElementById('labkv').innerHTML = `<dt>Simulated as</dt><dd>${CLS[s.labels[k]]} · ${CNAME[CLS[s.labels[k]]]}</dd><dt>BeatNet reads</dt><dd>${CLS[out[k].p.indexOf(Math.max(...out[k].p))]}</dd><dt>QRS width, simulator</dt><dd>${s.widths[k].toFixed(0)} ms</dd><dt>QRS width, BeatNet</dt><dd>${out[k].qrs.toFixed(0)} ± ${out[k].qrsSig.toFixed(0)} ms</dd><dt>Frontal QRS axis</dt><dd>${ax.toFixed(0)}°</dd>`;
+  drawHeart(s.labels[k] === 0 || s.labels[k] === 1 ? s.tauN : s.tauEct, s.labels[k] >= 2); drawVector(s, k, o);
+}
+const DOWER = { I: [0.632, -0.235, 0.059], II: [0.235, 1.066, -0.132], V1: [-0.515, 0.157, -0.917], V5: [1.125, 0.127, -0.086] };
+function beatVector(s, k, o) {   // body-frame heart vector (1 ms steps) from 300 ms before beat k's QRS onset to 650 ms after, all overlapping events summed
+  const e = s.ev[k], t0 = Math.floor(e.t) - 300, L = 950, H = new Float64Array(3 * L), M = BeatSim.bodyM(o.frontal);
+  const add = (d, ts) => { const a = Math.floor(ts) - t0; for (let t = Math.max(0, -a); t < d.length / 3 && a + t < L; t++) for (let c = 0; c < 3; c++) H[3 * (a + t) + c] += d[3 * t + c]; };
+  s.ev.forEach((v) => { if (v.t < t0 + L && v.t > t0 - 900) add(BeatSim.vbeat(v.tau, v.rr, v.gain), v.t); });
+  s.Aev.forEach((a) => { if (a.t < t0 + L && a.t > t0 - 400) add(BeatSim.abeat(a.f), a.t); });
+  const B = []; for (let t = 0; t < L; t++) { const h = [H[3 * t], H[3 * t + 1], H[3 * t + 2]]; B.push([0, 1, 2].map((r) => M[r][0] * h[0] + M[r][1] * h[1] + M[r][2] * h[2])); }
+  return { B, on: 300, w: s.widths[k] };
+}
+function drawLoop(id, V, px, py, axes) {   // px, py: functions body-vector -> plane coordinates (screen right, screen down)
+  const cv = document.getElementById(id), [g, W, H] = fitCanvas(cv); g.fillStyle = css('--sheet'); g.fillRect(0, 0, W, H);
+  let mx = 1e-6; for (const b of V.B) mx = Math.max(mx, Math.hypot(px(b), py(b))); const sc = 0.42 * Math.min(W, H) / mx, cx = W / 2, cy = H / 2;
+  g.strokeStyle = css('--rule'); g.lineWidth = 1; g.beginPath(); g.moveTo(cx, 6); g.lineTo(cx, H - 6); g.moveTo(6, cy); g.lineTo(W - 6, cy); g.stroke();
+  g.font = '600 11px JetBrains Mono, monospace'; g.textAlign = 'center';
+  for (const [nm, hi] of axes) { const L = DOWER[nm], ax = px(L), ay = py(L), n = Math.hypot(ax, ay), ux = ax / n, uy = ay / n, R = 0.47 * Math.min(W, H);
+    g.setLineDash([4, 4]); g.strokeStyle = hi ? css('--accent') : css('--muted'); g.lineWidth = hi ? 1.6 : 1; g.beginPath(); g.moveTo(cx - ux * R, cy - uy * R); g.lineTo(cx + ux * R, cy + uy * R); g.stroke(); g.setLineDash([]);
+    g.fillStyle = hi ? css('--accent') : css('--muted'); g.fillText(nm, cx + ux * (R - 8) + (uy > 0.9 ? 12 : 0), cy + uy * (R - 8) + 4); }
+  const seg = (a, b, col, lw) => { g.strokeStyle = col; g.lineWidth = lw; g.beginPath(); for (let t = a; t < b; t++) { const X = cx + px(V.B[t]) * sc, Y = cy + py(V.B[t]) * sc; t === a ? g.moveTo(X, Y) : g.lineTo(X, Y); } g.stroke(); };
+  const q1 = V.on + Math.round(V.w) + 12; seg(0, V.on - 5, css('--cS'), 1.6); seg(q1, V.B.length, css('--cF'), 1.6); seg(V.on - 5, q1, css('--trace'), 2);
+  g.fillStyle = css('--trace'); g.beginPath(); g.arc(cx, cy, 2.5, 0, 7); g.fill();
+}
+function drawVector(s, k, o) {
+  const V = beatVector(s, k, o);
+  drawLoop('loopF', V, (b) => b[0], (b) => b[1], [['I', 0], ['II', 1]]);
+  drawLoop('loopH', V, (b) => b[0], (b) => -b[2], [['V1', 0], ['V5', 0]]);
+  const cv = document.getElementById('leads'), [g, W, H] = fitCanvas(cv), names = ['I', 'II', 'V1', 'V5'], rowH = H / 4, pxs = W / 0.95, pxmv = rowH / 2.6;
+  g.fillStyle = css('--sheet'); g.fillRect(0, 0, W, H);
+  for (let t = 0; t <= 0.95; t += 0.04) { const x = Math.round(t * pxs) + 0.5; g.strokeStyle = Math.abs(t / 0.2 - Math.round(t / 0.2)) < 1e-6 ? css('--grid2') : css('--grid1'); g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
+  g.fillStyle = css('--ink'); g.globalAlpha = 0.06; g.fillRect(V.on * pxs / 1000, 0, (Math.round(V.w) + 12) * pxs / 1000, H); g.globalAlpha = 1;
+  names.forEach((nm, i) => { const L = DOWER[nm], y0 = rowH * (i + 0.62); g.strokeStyle = nm === 'II' ? css('--accent') : css('--trace'); g.lineWidth = nm === 'II' ? 1.8 : 1.3; g.beginPath();
+    V.B.forEach((b, t) => { const X = t / 1000 * pxs, Y = y0 - (L[0] * b[0] + L[1] * b[1] + L[2] * b[2]) * pxmv; t ? g.lineTo(X, Y) : g.moveTo(X, Y); }); g.stroke();
+    g.fillStyle = nm === 'II' ? css('--accent') : css('--muted'); g.font = '600 12px JetBrains Mono, monospace'; g.textAlign = 'left'; g.fillText(nm, 6, rowH * i + 15); });
+  g.fillStyle = css('--muted'); g.font = '11px JetBrains Mono, monospace'; g.textAlign = 'right'; g.fillText('P · QRS (shaded) · T  —  0.95 s, clean, no noise', W - 6, H - 6);
+}
+function axisOf(s, k, o) {   // frontal axis of beat k's QRS from the heart vector (leads I and aVF)
+  const tau = s.labels[k] >= 2 ? s.tauEct : s.tauN, d = BeatSim.vbeat(tau, 0.8, 1), w = Math.round(s.widths[k]) + 5, M = G.M, th = o.frontal * Math.PI / 180, c = Math.cos(th), sn = Math.sin(th); let I = 0, F = 0;
+  for (let t = 0; t < w; t++) { const h = [0, 1, 2].map((r) => M[r][0] * d[3 * t] + M[r][1] * d[3 * t + 1] + M[r][2] * d[3 * t + 2]), X = c * h[0] - sn * h[1], Y = sn * h[0] + c * h[1], Z = h[2];
+    I += 0.632 * X - 0.235 * Y + 0.059 * Z; F += -0.081 * X + 1.1835 * Y - 0.1615 * Z; } return Math.atan2(F, I) * 180 / Math.PI; }
+function drawLabStrip(s, out, k) {
+  const cv = document.getElementById('labstrip'), [g, W, H] = fitCanvas(cv), dur = Math.min(s.x.length / 360, 12.5), t0 = Math.max(0, s.ann[k] / 360 - dur / 2), pxs = W / dur, pxmv = H / 3.6;
+  paper(g, W, H, pxs, pxmv, t0); const mid = H * 0.58; g.strokeStyle = css('--trace'); g.lineWidth = 1.3; g.beginPath();
+  for (let i = Math.floor(t0 * 360); i < Math.min(s.x.length, (t0 + dur) * 360); i++) { const X = (i / 360 - t0) * pxs, Y = mid - s.x[i] * pxmv; i === Math.floor(t0 * 360) ? g.moveTo(X, Y) : g.lineTo(X, Y); } g.stroke();
+  g.font = '600 12px JetBrains Mono, monospace'; g.textAlign = 'center';
+  s.ann.forEach((a, i) => { const X = (a / 360 - t0) * pxs; if (X < 0 || X > W) return; const ref = CLS[s.labels[i]], bn = CLS[out[i].p.indexOf(Math.max(...out[i].p))];
+    g.fillStyle = ccol(ref); g.fillText(ref, X, 15); g.fillStyle = ccol(bn); g.fillText(bn, X, H - 7); if (i === k) { g.fillStyle = css('--ink'); g.globalAlpha = 0.08; g.fillRect(X - 14, 0, 28, H); g.globalAlpha = 1; } });
+}
+function drawHeart(tau, showFocus) {
+  const cv = document.getElementById('heartmap'), [g, W, H] = fitCanvas(cv); g.fillStyle = css('--sheet'); g.fillRect(0, 0, W, H);
+  const P = G.pos, n = G.n; let pmin = 1e9, pmax = -1e9, wmin = 1e9, wmax = -1e9; for (let v = 0; v < n; v++) { pmin = Math.min(pmin, P[3 * v]); pmax = Math.max(pmax, P[3 * v]); wmin = Math.min(wmin, P[3 * v + 2]); wmax = Math.max(wmax, P[3 * v + 2]); }
+  const sc = Math.min(W / (pmax - pmin + 8), H / (wmax - wmin + 8)), ox = W / 2, oy = H / 2, cx = (pmin + pmax) / 2, cw = (wmin + wmax) / 2, order = [];
+  for (let v = 0; v < n; v++) order.push(v); order.sort((a, b) => P[3 * b + 1] - P[3 * a + 1]);   // paint back to front (q toward the viewer last)
+  let tmax = 0; for (let v = 0; v < n; v++) if (isFinite(tau[v])) tmax = Math.max(tmax, tau[v]);
+  const lo = [40, 20, 60], hi = [250, 226, 140], acc = css('--accent');
+  for (const v of order) { const X = ox - (P[3 * v] - cx) * sc, Y = oy - (P[3 * v + 2] - cw) * sc;
+    if (G.atr[v]) { g.fillStyle = css('--rule'); } else { const f = isFinite(tau[v]) ? tau[v] / Math.max(tmax, 1) : 1, c = lo.map((a, i) => Math.round(a + (hi[i] - a) * f)); g.fillStyle = `rgb(${c})`; }
+    g.fillRect(X - sc, Y - sc, 2 * sc + 0.5, 2 * sc + 0.5); }
+  if (showFocus && focus != null) { const X = ox - (P[3 * focus] - cx) * sc, Y = oy - (P[3 * focus + 2] - cw) * sc; g.strokeStyle = acc; g.lineWidth = 3; g.beginPath(); g.arc(X, Y, 9, 0, 7); g.stroke(); }
+  g.fillStyle = css('--muted'); g.font = '12px JetBrains Mono, monospace'; g.textAlign = 'left'; g.fillText(`0 → ${tmax.toFixed(0)} ms`, 8, H - 8); g.textAlign = 'right'; g.fillText('atria', W - 8, 16);
+  cv._map = { ox, oy, cx, cw, sc };
+}
+document.getElementById('heartmap').onclick = (e) => { const m = e.target._map; if (!m) return; const r = e.target.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+  const p = m.cx - (x - m.ox) / m.sc, w = m.cw - (y - m.oy) / m.sc; let best = -1, bd = 1e18; const d = val('depth');
+  for (let v = 0; v < G.n; v++) { if (G.atr[v]) continue; const dd = (G.pos[3 * v] - p) ** 2 + (G.pos[3 * v + 2] - w) ** 2 + 30 * (G.e[v] - d) ** 2; if (dd < bd) { bd = dd; best = v; } }
+  if (best < 0) return; const h = Math.min(1, Math.max(0, 1 - G.pos[3 * best + 2] / G.apex)), a = Math.round(Math.atan2(G.pos[3 * best + 1], G.pos[3 * best]) * 180 / Math.PI / 5) * 5;
+  document.getElementById('height').value = h.toFixed(2); document.getElementById('angle').value = a; ['height', 'angle'].forEach((id) => document.getElementById('v' + id).textContent = fmt[id](document.getElementById(id).value));
+  if (L.type !== 'V' && L.type !== 'F') { L.type = 'V'; seg('ctype', 'type', [['N', 'Normal'], ['S', 'Atrial premature'], ['V', 'Ventricular premature'], ['F', 'Fusion']]); } runLab(); };
+// ------------------------------------------------------------------ exam, ladder, physics, limits
+function examTables() {
+  const E = DATA.exam; if (!E) return; const d = E.ds2, row = (nm, s, cls) => `<tr class="${cls || ''}"><td>${nm}</td>${[0, 1, 2, 3].map((c) => `<td class="num">${pct(s.se[c])}</td><td class="num">${pct(s.ppv[c])}</td>`).join('')}</tr>`;
+  document.getElementById('examintro').textContent = `MIT-BIH DS2: ${d.counts.slice(0, 4).reduce((a, b) => a + b, 0).toLocaleString()} beats from 22 patients (N ${d.counts[0].toLocaleString()}, S ${d.counts[1].toLocaleString()}, V ${d.counts[2].toLocaleString()}, F ${d.counts[3]}), the standard inter-patient exam of de Chazal et al. 2004. Beat positions are the reference annotations, as in the published work. Paced records are excluded. The ${d.counts[4]} unclassifiable (Q) beats are left out of the scores.`;
+  let h = `<thead><tr><th>Method (% on DS2)</th>${CLS.map((c) => `<th>${c} Se</th><th>${c} +P</th>`).join('')}</tr></thead><tbody>`;
+  h += row('BeatNet (simulation only)', d.beatnet, 'ours') + row('Linear discriminant, de Chazal features, trained on our simulations', d.ld_sim) + row('Textbook rules: RR prematurity, QRS width, shape', d.rules) + row('Always N', d.majority);
+  for (const [nm, s] of Object.entries(E.published)) h += row(nm + ' · trained on real DS1', s, 'pub');
+  document.getElementById('examtab').innerHTML = h + '</tbody>';
+  const cm = d.beatnet.cm; let c = '<thead><tr><th>true ↓ / called →</th>' + CLS.map((x) => `<th>${x}</th>`).join('') + '</tr></thead><tbody>';
+  cm.forEach((r, i) => { const s = r.reduce((a, b) => a + b, 0); c += `<tr><th>${CLS[i]}</th>` + r.map((v, j) => `<td style="background:color-mix(in srgb, var(--c${CLS[j]}) ${Math.round(70 * v / Math.max(1, s))}%, transparent)">${v.toLocaleString()}</td>`).join('') + '</tr>'; });
+  document.getElementById('cm').innerHTML = c + '</tbody>';
+  document.getElementById('cmnote').textContent = `Shading = share of the true class's row. Calibration: expected calibration error ${(100 * d.ece).toFixed(1)}% on DS2. Class priors were set with one number chosen on the dev records (λ = ${E.prior.lam}).`;
+  let o = '<thead><tr><th>Set</th><th>beats</th><th>S Se</th><th>S +P</th><th>V Se</th><th>V +P</th></tr></thead><tbody>';
+  for (const [k, nm] of [['ds2', 'DS2 (exam)'], ['ds1rest', 'DS1 rest'], ['svdb', 'SVDB'], ['dev', 'dev (used for choosing)']]) { const s = E[k].beatnet; o += `<tr><td>${nm}</td><td class="num">${s.n.toLocaleString()}</td><td class="num">${pct(s.se[1])}</td><td class="num">${pct(s.ppv[1])}</td><td class="num">${pct(s.se[2])}</td><td class="num">${pct(s.ppv[2])}</td></tr>`; }
+  document.getElementById('othertab').innerHTML = o + '</tbody>';
+  const q = E.qrs; document.getElementById('qrskv').innerHTML = `<dt>Exam beats (MLII)</dt><dd>${q.exam_MLII.n} in ${q.exam_MLII.records} records</dd><dt>BeatNet mean error</dt><dd>${q.exam_MLII.beatnet_mae.toFixed(1)} ms</dd><dt>Classical slope rule</dt><dd>${q.exam_MLII.classical_mae.toFixed(1)} ms</dd><dt>Guess the median</dt><dd>${q.exam_MLII.median_guess_mae.toFixed(1)} ms</dd><dt>68% bar coverage</dt><dd>${pct(q.exam_MLII.coverage_68)}%</dd><dt>Other leads, BeatNet</dt><dd>${q.exam_other_leads.beatnet_mae.toFixed(1)} ms (${q.exam_other_leads.n} beats)</dd>`;
+  document.getElementById('qrsnote').textContent = `QT Database, cardiologists' QRS onset and offset (truth median ${q.exam_MLII.truth_median.toFixed(0)} ms). The map from the simulator's vector definition to calipers (width = ${q.a.toFixed(0)} + ${q.b.toFixed(2)} × raw) and an error-bar factor of ${q.sig_factor.toFixed(2)} were fitted on 8 dev records; the widen-only rule allows factors of 1 or more.`;
+}
+function afTable() { const E = DATA.exam; if (!E || !E.ds2.af) { document.getElementById('afbox').style.display = 'none'; return; } const A = E.ds2.af;
+  const row = (nm, s, cls) => `<tr class="${cls || ''}"><td>${nm}</td><td class="num">${pct(s.se)}</td><td class="num">${pct(s.ppv)}</td><td class="num">${pct(s.spec)}</td><td class="num">${s.auc != null && isFinite(s.auc) ? s.auc.toFixed(3) : '–'}</td></tr>`;
+  document.getElementById('aftab').innerHTML = '<thead><tr><th>Method</th><th>AF Se</th><th>AF +P</th><th>non-AF specificity</th><th>AUC</th></tr></thead><tbody>' + row('BeatNet AF output (simulation only)', A.beatnet, 'ours') + row('RR irregularity rule (threshold fitted on simulations)', A.rr_rule) + row('Never AF', A.never) + '</tbody>';
+  document.getElementById('afnote').textContent = `${A.beatnet.n_af.toLocaleString()} of ${A.beatnet.n.toLocaleString()} DS2 beats sit inside a reference atrial-fibrillation episode (records 202, 210, 219, 221, 222). Flutter beats are left out. The rule and BeatNet both see the same RR numbers; BeatNet can also look for missing P waves and fibrillatory baseline in the 2.5 s window.`; }
+function ladder() { const R = DATA.ratchet; if (!R) return; let h = '<thead><tr><th>Rung</th><th>sim macro-F1</th><th>dev S/V F1</th><th>exam S F1</th><th>exam V F1</th><th>kept</th><th>why</th></tr></thead><tbody>';
+  R.forEach((r, i) => { h += `<tr><td><b>${i + 1}</b> · ${r.note}</td><td class="num">${r.objective.toFixed(3)}</td><td class="num">${r.dev.sv_f1.toFixed(3)}</td><td class="num">${r.exam.f1[1].toFixed(3)}</td><td class="num">${r.exam.f1[2].toFixed(3)}</td><td><span class="pill ${r.accepted ? 'ok' : 'no'}">${r.accepted ? 'kept' : 'not kept'}</span></td><td style="text-align:left;white-space:normal;min-width:260px" class="small">${r.why}</td></tr>`; });
+  document.getElementById('ratchet').innerHTML = h + '</tbody>'; }
+function physics() { const P = DATA.physics; if (!P) return; const ph = P.physiology;
+  const items = [['Eikonal vs exact travel time', `+${(100 * P.eikonal.median_rel_err).toFixed(1)}% median (26-neighbour paths)`], ['Dipole: volume vs surface form', `r = ${P.dipole.volume_vs_surface_corr.toFixed(3)}`], ['Lead II: Dower vs open-conductor model', `${P.lead_field.angle_deg_dower_vs_infinite_medium.II.toFixed(0)}° apart (median all leads ${P.lead_field.median_angle.toFixed(0)}°)`],
+    ['ECGSYN RR model, LF/HF asked 2.0', `measured ${P.ecgsyn.rr_lfhf[2].measured_median.toFixed(2)}`], ['Average beat vs ECGSYN, lead II', `r = ${P.ecgsyn.beat_corr_leadII.toFixed(2)}`], ['QRS normal / LBBB / RBBB / PVC', `${ph.qrs_ms_normal_p10_50_90[1].toFixed(0)} / ${ph.qrs_ms_LBBB[1].toFixed(0)} / ${ph.qrs_ms_RBBB[1].toFixed(0)} / ${ph.qrs_ms_PVC[1].toFixed(0)} ms`],
+    ['Frontal QRS axis (median)', `${ph.frontal_axis_deg[1].toFixed(0)}°`], ['Pause around PVC / APB', `${ph.pause_ratio_PVC_median.toFixed(2)} / ${ph.pause_ratio_APB_median.toFixed(2)} × 2 RR`]];
+  document.getElementById('physkv').innerHTML = items.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join(''); }
+function lists() { const F = DATA.fails || [], Lm = DATA.limits || []; document.getElementById('fails').innerHTML = F.map((x) => `<li>${x}</li>`).join(''); document.getElementById('limitlist').innerHTML = Lm.map((x) => `<li>${x}</li>`).join(''); }
+examTables(); afTable(); ladder(); physics(); lists(); loadRecord(0); runLab();
+let rz = null; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { drawStrip(); drawOverview(); showBeat(selBeat); runLab(); }, 200); });
+</script>

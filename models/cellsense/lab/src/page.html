@@ -1,0 +1,325 @@
+<title>CellSense</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="A neural network trained only on lithium-ion battery physics reads one fast discharge of a real cell and returns its true capacity, resistance, degradation modes and remaining life.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Chivo:ital,wght@0,400;0,500;0,600;1,400&family=Chivo+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a cell's datasheet crossed with a cycler log. Voltage-capacity curves are the instrument every section reads from. */
+:root{
+  --bg:#edf0ed; --panel:#ffffff; --panel2:#e4e9e5; --ink:#121a17; --dim:#4c5953; --faint:#86928c; --line:rgba(18,26,23,.10); --line2:rgba(18,26,23,.18); --grid:rgba(18,26,23,.07);
+  --copper:#a9521a; --cufill:#d47530; --net:#0b7a7e; --li:#5a4fcf; --gr:#55606b; --lfp:#5f7d17; --bad:#c23b2c; --ok:#1c8655;
+  --display:"Big Shoulders Display","Arial Narrow","Roboto Condensed",Impact,sans-serif;
+  --sans:"Chivo",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"Chivo Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1210; --panel:#121a17; --panel2:#18221e; --ink:#e3eae6; --dim:#a2afa9; --faint:#6b7972; --line:rgba(214,232,224,.10); --line2:rgba(214,232,224,.18); --grid:rgba(214,232,224,.07);
+  --copper:#ec8d4c; --cufill:#f0a160; --net:#3fc8cb; --li:#a197ff; --gr:#a3aeb9; --lfp:#a9c95c; --bad:#ff6d5e; --ok:#4fd396; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1210; --panel:#121a17; --panel2:#18221e; --ink:#e3eae6; --dim:#a2afa9; --faint:#6b7972; --line:rgba(214,232,224,.10); --line2:rgba(214,232,224,.18); --grid:rgba(214,232,224,.07);
+  --copper:#ec8d4c; --cufill:#f0a160; --net:#3fc8cb; --li:#a197ff; --gr:#a3aeb9; --lfp:#a9c95c; --bad:#ff6d5e; --ok:#4fd396; color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--net);text-underline-offset:3px}
+button,input{font:inherit;color:inherit}
+button{background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--net);outline-offset:2px;border-radius:6px}
+.mono{font-family:var(--mono)}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:21;background:var(--bg)}
+.topin{display:flex;align-items:center;gap:16px;height:56px}
+.mark{font-family:var(--display);font-weight:900;font-size:25px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:9px;white-space:nowrap}
+.mark svg{width:14px;height:24px}
+.ver{font-family:var(--mono);font-size:11px;color:var(--dim);border:1px solid var(--line2);border-radius:4px;padding:2px 8px;white-space:nowrap}
+nav.links{margin-left:auto;display:flex;gap:18px;font-size:14px}
+nav.links a{color:var(--dim);text-decoration:none}
+nav.links a:hover{color:var(--ink)}
+
+/* the cell-wrapper strip: the subject's own label */
+.wrapper{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line2);border-radius:4px;overflow:hidden;font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;margin-top:22px;width:fit-content;max-width:100%}
+.wrapper span{padding:5px 10px;border-right:1px solid var(--line2);white-space:nowrap;color:var(--dim)}
+.wrapper span:first-child{background:var(--ink);color:var(--bg);font-weight:500}
+.wrapper span:last-child{border-right:0}
+
+.hero{padding-block:46px 10px;display:grid;grid-template-columns:minmax(0,0.95fr) minmax(0,1.05fr);gap:40px;align-items:center}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--copper)}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(44px,6.2vw,80px);line-height:.92;letter-spacing:.005em;text-transform:uppercase;margin:12px 0 18px;text-wrap:balance}
+h1 em{font-style:normal;color:var(--copper)}
+.lede{font-size:18px;color:var(--dim);max-width:52ch;margin:0}
+.herofig{margin:0}
+.herofig figcaption{font-size:13px;color:var(--dim);margin-top:8px;line-height:1.45}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:26px}
+.stat{background:var(--panel);padding:14px 16px}
+.stat b{display:block;font-family:var(--display);font-weight:800;font-size:38px;line-height:1;letter-spacing:.01em}
+.stat span{font-size:13px;color:var(--dim);line-height:1.35;display:block;margin-top:6px}
+
+section.s{padding-block:76px 8px}
+h2{font-family:var(--display);font-weight:800;font-size:clamp(34px,4.3vw,52px);line-height:.98;letter-spacing:.005em;text-transform:uppercase;margin:10px 0 14px;text-wrap:balance}
+.sub{color:var(--dim);max-width:68ch;margin:0 0 24px;font-size:17px}
+.card{border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.plabel{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.03em;flex-wrap:wrap}
+.cv{display:block;width:100%;border-radius:6px;background:var(--panel2)}
+.big{height:340px}
+.mid{height:190px}
+.sm{height:150px}
+.legendrow{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.legendrow i{display:inline-block;width:14px;height:3px;vertical-align:3px;margin-right:6px;border-radius:2px}
+.legendrow i.dot{width:7px;height:7px;border-radius:50%;vertical-align:1px}
+.note{font-size:12.5px;color:var(--faint);line-height:1.45}
+.seg{display:flex;border:1px solid var(--line2);border-radius:6px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{flex:1;font-family:var(--mono);font-size:12px;padding:5px 9px;border-radius:4px;color:var(--dim);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--panel2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line2)}
+
+.pair{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:12px}
+.pair > *{min-width:0}
+.chart{padding:16px;min-width:0}
+.chart h4{margin:0 0 4px;font-size:15px;font-weight:600}
+.chart p{margin:0 0 10px;font-size:13.5px;color:var(--dim)}
+table.t{width:100%;border-collapse:collapse;font-size:13.5px}
+table.t th{text-align:left;font-weight:500;color:var(--dim);font-size:12px;padding:6px 8px;border-bottom:1px solid var(--line2)}
+table.t td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+table.t td.num,table.t th.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+table.t tr.hl td{background:color-mix(in srgb,var(--net) 9%,transparent)}
+table.t td.grp{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--copper);padding-top:14px}
+.tw{overflow-x:auto}
+
+/* cell explorer */
+.console{display:grid;grid-template-columns:210px minmax(0,1fr) 290px;overflow:hidden}
+.clist{border-right:1px solid var(--line);padding:10px;display:flex;flex-direction:column;gap:4px}
+.cbtn{display:block;width:100%;text-align:left;padding:9px 11px;border-radius:7px;border:1px solid transparent}
+.cbtn:hover{background:var(--panel2)}
+.cbtn[aria-pressed="true"]{background:var(--panel2);border-color:var(--line2)}
+.cbtn .n{font-weight:600;font-size:14px;display:flex;justify-content:space-between;gap:6px}
+.cbtn .n i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--faint);font-weight:400}
+.cbtn .d{font-size:12.5px;color:var(--dim);line-height:1.35;margin-top:2px;font-family:var(--mono)}
+.plots{padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.readout{border-left:1px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.rbig{font-family:var(--display);font-weight:800;font-size:30px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
+.kv{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:13.5px;align-items:baseline;margin:0}
+.kv dt{color:var(--dim)} .kv dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.kv dd small{color:var(--faint);font-size:11px;margin-left:4px}
+.scrub{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.scrub input{flex:1}
+input[type=range]{width:100%;accent-color:var(--copper)}
+
+/* lab */
+.lab{display:grid;grid-template-columns:300px minmax(0,1fr);overflow:hidden}
+.ctl{padding:18px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:14px}
+.ctl label{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--dim);margin-bottom:5px}
+.ctl label b{font-family:var(--mono);font-weight:500;color:var(--ink)}
+.ctl .hint{font-size:12px;color:var(--faint);margin-top:2px;line-height:1.35}
+.labview{padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.diag{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.diag div{background:var(--panel2);padding:10px 12px;min-width:0}
+.diag span{display:block;font-size:12px;color:var(--dim)}
+.diag b{display:block;font-family:var(--mono);font-weight:500;font-size:17px;margin-top:2px;font-variant-numeric:tabular-nums}
+.diag em{display:block;font-style:normal;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:1px}
+.btn{font-size:13.5px;font-weight:500;padding:7px 13px;border-radius:6px;border:1px solid var(--line2);display:inline-flex;align-items:center;gap:7px}
+.btn:hover{background:var(--panel2)}
+
+/* ratchet */
+.rungs{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:12px}
+.rung{padding:15px;border-radius:10px;border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;gap:7px}
+.rung.rej{opacity:.78}
+.rung .tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;display:flex;justify-content:space-between;gap:8px;color:var(--dim)}
+.rung.acc .tag b{color:var(--ok)} .rung.rej .tag b{color:var(--faint)} .rung.rel{border-color:var(--copper)} .rung.rel .tag b{color:var(--copper)}
+.rung h3{font-family:var(--display);font-weight:800;font-size:22px;line-height:1;text-transform:uppercase;margin:0}
+.rung p{margin:0;font-size:13.5px;color:var(--dim);line-height:1.45}
+.rung .m{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-top:auto;padding-top:8px;border-top:1px solid var(--line)}
+.rung .m span{font-size:11px;color:var(--faint);display:block;line-height:1.3}
+.rung .m b{font-family:var(--mono);font-weight:500;font-size:14px;font-variant-numeric:tabular-nums}
+
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.how .card{padding:18px;min-width:0}
+.how h3{font-family:var(--display);font-weight:800;font-size:24px;text-transform:uppercase;margin:0 0 8px;line-height:1}
+.how p{margin:0 0 10px;font-size:14.5px;color:var(--dim)}
+.formula{font-family:var(--mono);font-size:12px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow-x:auto;color:var(--ink);line-height:1.6}
+
+.use{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px}
+.use > *{min-width:0}
+pre.code{margin:0;padding:16px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6}
+pre.code .c{color:var(--faint)} pre.code .k{color:var(--net)} pre.code .s{color:var(--copper)}
+.files{padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.file{display:flex;gap:12px;align-items:baseline;font-size:14px}
+.file code{font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+.file span{color:var(--dim)}
+ul.limits{margin:0;padding-left:18px;color:var(--dim);font-size:14.5px}
+ul.limits li{margin-bottom:7px}
+footer{padding-block:56px 46px;color:var(--faint);font-size:13px;border-top:1px solid var(--line);margin-top:76px}
+footer a{color:var(--dim)}
+
+@media (max-width:1020px){
+  .hero{grid-template-columns:1fr;gap:22px}
+  .console{grid-template-columns:minmax(0,1fr)}
+  .clist{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);min-width:0}
+  .cbtn{min-width:170px}
+  .readout{border-left:0;border-top:1px solid var(--line)}
+  .lab{grid-template-columns:minmax(0,1fr)} .ctl{border-right:0;border-bottom:1px solid var(--line)}
+  .pair,.how,.use{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:560px){
+  nav.links{display:none}
+  .big{height:270px}
+  .diag{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .file{flex-direction:column;gap:2px}
+  .hero{padding-block:30px 10px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+
+<header class="top"><div class="wrap topin">
+  <div class="mark"><svg viewBox="0 0 14 24" aria-hidden="true"><rect x="4" y="0" width="6" height="3" rx="1" fill="var(--copper)"/><rect x="1" y="3" width="12" height="20" rx="2.5" fill="none" stroke="var(--ink)" stroke-width="1.8"/><rect x="3.2" y="11" width="7.6" height="9.8" rx="1" fill="var(--lfp)"/></svg>CellSense</div>
+  <span class="ver" id="verTag">v1.0</span>
+  <nav class="links"><a href="#hidden">Hidden capacity</a><a href="#cells">Real cells</a><a href="#lab">Age a cell</a><a href="#life">Lifetime</a><a href="#ratchet">The ratchet</a><a href="#use">Use it</a></nav>
+</div></header>
+
+<main>
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Neural network · battery physics · 124 real cells</div>
+      <h1>It learned batteries from physics alone. Then it read <em id="nCells">118</em> real cells.</h1>
+      <p class="lede">CellSense's networks never trained on a real battery. They learned from a physics model of a lithium-iron-phosphate cell (lithium moving through graphite and LFP crystals, heat, slow wear), tuned to six real cells that are left out of every test. Now CellSense reads one fast discharge of a real cell and says how much charge is really left, how much resistance it has picked up, what is wearing out, and roughly how many cycles remain.</p>
+      <div class="wrapper" aria-label="The cell"><span>A123 APR18650M1A</span><span>LFP / graphite</span><span>1.1 Ah</span><span>3.3 V</span><span>4C to 2.0 V, hold to C/50</span><span>30 °C</span></div>
+    </div>
+    <figure class="herofig">
+      <div class="plabel"><span id="heroTitle">One cell, cycle 10 to end of life</span><span class="legendrow" id="heroLeg"></span></div>
+      <canvas class="cv big" id="heroCv" aria-label="Discharge curves of one real cell through its life"></canvas>
+      <figcaption id="heroCap"></figcaption>
+    </figure>
+  </section>
+  <div class="stats" id="stats"></div>
+</div>
+
+<div class="wrap">
+  <section class="s" id="hidden">
+    <div class="eyebrow">The hidden capacity</div>
+    <h2>A fast discharge leaves charge behind. CellSense finds it.</h2>
+    <p class="sub">Every cycle in Severson et al.'s experiment drains the cell at 4C, four times its rated current, down to 2.0 V, then holds 2.0 V until the current fades to a trickle. The 4C part is the curve; the hold recovers charge that was there but couldn't get out fast enough. In a new cell the hold adds about 16 mAh. Near end of life it adds up to 120 mAh. CellSense sees only the 4C curve and estimates the total.</p>
+    <div class="pair">
+      <div class="card chart"><h4>Total capacity, every reading of every cell</h4><p id="hidSub"></p><canvas class="cv" id="hidCv" style="height:360px" aria-label="Measured total capacity against CellSense's estimate"></canvas>
+        <div class="legendrow" style="margin-top:8px"><span><i class="dot" style="background:var(--net)"></i>CellSense, from the 4C curve</span><span><i class="dot" style="background:var(--faint)"></i>reading the curve's end</span></div></div>
+      <div class="card chart"><h4>How close, and where it misses</h4><p>Errors against the cycler's own measurement, by stage of each cell's life. The curve's own end is what you'd read off with no model at all.</p><div class="tw"><table class="t" id="hidTable"></table></div>
+        <p class="note" style="margin-top:12px" id="hidNote"></p></div>
+    </div>
+  </section>
+
+  <section class="s" id="cells">
+    <div class="eyebrow">Real cells</div>
+    <h2>Pick a cell. Scrub through its life.</h2>
+    <p class="sub">Each cell was fast-charged with its own recipe, between 3.6C and 8C, and cycled until it lost a fifth of its capacity. CellSense reads one discharge at a time, plus the same cell's discharge from its first ten cycles. The cycler's own measurements are the answer key.</p>
+    <div class="card console">
+      <div class="clist" id="clist" role="group" aria-label="Choose a cell"></div>
+      <div class="plots">
+        <div class="plabel"><span id="cTitle">Discharge curves</span><span class="legendrow"><span><i style="background:var(--faint)"></i>new</span><span><i style="background:var(--copper)"></i>this cycle</span><span><i style="background:var(--net)"></i>CellSense's total</span></span></div>
+        <canvas class="cv mid" id="cCurve" aria-label="Discharge curve at the selected cycle"></canvas>
+        <div class="scrub"><span>cycle</span><input id="cScrub" type="range" min="0" max="10" value="0" aria-label="Cycle"><b id="cCyc" class="mono">—</b></div>
+        <div class="plabel"><span>Capacity (Ah)</span><span class="legendrow"><span><i class="dot" style="background:var(--ink)"></i>measured</span><span><i style="background:var(--net)"></i>CellSense ± error bar</span><span><i style="background:var(--faint)"></i>4C curve's end</span></span></div>
+        <canvas class="cv sm" id="cCap" aria-label="Capacity through life"></canvas>
+        <div class="plabel"><span>What is wearing out (CellSense)</span><span class="legendrow"><span><i style="background:var(--li)"></i>lithium lost</span><span><i style="background:var(--gr)"></i>graphite lost</span><span><i style="background:var(--lfp)"></i>LFP lost</span></span></div>
+        <canvas class="cv sm" id="cModes" aria-label="Degradation modes through life"></canvas>
+        <div class="plabel"><span>Forecast end of life (cycles)</span><span class="legendrow"><span><i style="background:var(--copper)"></i>CellSense ± error bar</span><span><i style="background:var(--ink)"></i>actual</span></span></div>
+        <canvas class="cv sm" id="cLife" aria-label="Lifetime forecast through life"></canvas>
+      </div>
+      <div class="readout" aria-live="polite">
+        <div><div class="rbig" id="rHead">—</div><p class="note" id="rSub" style="margin:6px 0 0"></p></div>
+        <dl class="kv" id="rKv"></dl>
+        <p class="note" id="rNote"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" id="lab">
+    <div class="eyebrow">Age a cell yourself</div>
+    <h2>Wear a cell out. Watch it get diagnosed.</h2>
+    <p class="sub">The same physics model CellSense learned from runs here in your browser. Choose how a new cell has worn and it discharges at 4C, then holds at 2.0 V. The network reads the 4C curve, as it would read a real cell, and reports what it thinks happened. It is never told your settings.</p>
+    <div class="card lab">
+      <div class="ctl">
+        <div><label for="lLi">Lithium lost <b id="lLiV">0%</b></label><input id="lLi" type="range" min="0" max="25" step="1" value="8"><div class="hint">Locked away in the film that grows on graphite, or plated as metal.</div></div>
+        <div><label for="lGr">Graphite lost <b id="lGrV">0%</b></label><input id="lGr" type="range" min="0" max="25" step="1" value="4"><div class="hint">Cracked or cut off. Some of it takes its lithium along.</div></div>
+        <div><label for="lFp">LFP lost <b id="lFpV">0%</b></label><input id="lFp" type="range" min="0" max="20" step="1" value="0"></div>
+        <div><label for="lSl">Poorly connected graphite <b id="lSlV">0%</b></label><input id="lSl" type="range" min="0" max="25" step="1" value="6"><div class="hint">Sits out a fast discharge, gives up its charge during the hold.</div></div>
+        <div><label for="lTr">Slow polarization <b id="lTrV">×1</b></label><input id="lTr" type="range" min="0" max="20" step="1" value="4"><div class="hint">Electrolyte and transport losses that build over minutes.</div></div>
+        <div><label for="lOh">Ohmic resistance <b id="lOhV">×1</b></label><input id="lOh" type="range" min="0" max="10" step="1" value="1"></div>
+        <div><label for="lSt">Stop the discharge at <b id="lStV">full</b></label><input id="lSt" type="range" min="0.3" max="1.1" step="0.05" value="1.1"><div class="hint">Cut it short, as a cell that never fully empties would be. A third network reads partial curves.</div></div>
+        <button class="btn" id="lReset" type="button" style="align-self:flex-start">Back to new</button>
+      </div>
+      <div class="labview">
+        <div class="plabel"><span>4C discharge, then the hold at 2.0 V</span><span class="legendrow"><span><i style="background:var(--faint)"></i>new</span><span><i style="background:var(--copper)"></i>your cell</span><span id="lTime"></span></span></div>
+        <canvas class="cv big" id="lCv" style="height:300px" aria-label="Your cell's discharge"></canvas>
+        <div class="diag" id="lDiag"></div>
+        <p class="note" id="lNote"></p>
+      </div>
+    </div>
+    <div class="card chart" style="margin-top:16px"><h4>Partial discharges on the real cells</h4><p id="partSub"></p><div class="tw"><table class="t" id="partTable"></table></div><p class="note" id="partNote" style="margin-top:10px"></p></div>
+  </section>
+
+  <section class="s" id="life">
+    <div class="eyebrow">The stretch goal</div>
+    <h2 id="lifeH">How many cycles are left?</h2>
+    <p class="sub" id="lifeSub"></p>
+    <div class="card chart" style="margin-bottom:16px"><h4>What changes by cycle 100</h4><p id="earlySub"></p><canvas class="cv" id="earlyCv" style="height:300px" aria-label="Change in the 4C discharge between cycles 10 and 100, real and simulated, for the six calibration cells"></canvas>
+      <div class="legendrow" id="earlyLeg" style="margin-top:8px"></div></div>
+    <div class="pair">
+      <div class="card chart"><h4>Forecast at cycle 100 against the real end of life</h4><p id="lifeSc"></p><canvas class="cv" id="lifeCv" style="height:360px" aria-label="Predicted against actual cycle life"></canvas>
+        <div class="legendrow" style="margin-top:8px"><span><i class="dot" style="background:var(--copper)"></i>Severson's primary test cells</span><span><i class="dot" style="background:var(--net)"></i>secondary test cells</span><span><i class="dot" style="background:var(--faint)"></i>their training cells</span></span></div></div>
+      <div class="card chart"><h4>Against the models that learned from real cells</h4><p>Severson et al.'s three models trained on 41 real cells and their cycle lives. CellSense's networks trained on none; six cells tuned its physics. Same test cells, same 100 cycles.</p><div class="tw"><table class="t" id="lifeTable"></table></div>
+        <p class="note" id="lifeNote" style="margin-top:10px"></p>
+        <h4 style="margin-top:18px">Reading later in life</h4><div class="tw"><table class="t" id="stageTable"></table></div></div>
+    </div>
+  </section>
+
+  <section class="s" id="ratchet">
+    <div class="eyebrow">The ratchet</div>
+    <h2>Every rung had to beat the last, or it was thrown away.</h2>
+    <p class="sub" id="ratchetSub"></p>
+    <div class="rungs" id="rungs"></div>
+  </section>
+
+  <section class="s" id="how">
+    <div class="eyebrow">How it works</div>
+    <h2>Physics in, diagnosis out.</h2>
+    <div class="how">
+      <div class="card"><h3>The physics</h3><p>A single-particle model of each electrode: lithium diffusing through graphite and LFP particles, reacting at their surfaces, an electrolyte that polarizes over minutes, and a cell that heats up. Wear is written as Dubarry's degradation modes plus resistance and a slowly growing share of poorly connected graphite. A whole aging trajectory to end of life adds the knee: lost graphite until the graphite limits the cell, then lithium plating.</p><div class="formula" id="physChecks"></div></div>
+      <div class="card"><h3>Calibrated, then let loose</h3><p>Six real cells, two from each batch, set the new-cell physics from their first ten cycles: curve shape, heating, capacity and pulse resistance. They are left out of every exam. Their worn-out curves showed what the first simulator missed: charge that only comes out slowly. Training cells are then drawn around those six and aged at random.</p><div class="formula" id="calFacts"></div></div>
+      <div class="card"><h3>The network</h3><p>A 1-D convolutional network reads the discharge along the voltage axis: capacity and can temperature at 250 voltages from 3.5 V to 2.0 V, next to the same cell when new and their difference. For the lifetime it also gets the cycle number and the charging time. Every output comes with its own error bar.</p><div class="formula" id="netFacts"></div></div>
+    </div>
+  </section>
+
+  <section class="s" id="use">
+    <div class="eyebrow">Use it</div>
+    <h2>One Python file, two weight files.</h2>
+    <p class="sub">Give it a 4C discharge of an A123 APR18650M1A-like LFP cell as capacity and temperature against voltage, optionally with the same cell's early discharge, its cycle number and its charging time. It needs only numpy.</p>
+    <div class="use">
+      <pre class="code" id="codeBlock"></pre>
+      <div class="card files" id="files"></div>
+    </div>
+    <div class="card" style="padding:18px;margin-top:12px">
+      <h3 style="font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:24px;margin:0 0 10px">What it can't do (yet)</h3>
+      <ul class="limits" id="limits"></ul>
+    </div>
+  </section>
+</div>
+</main>
+<footer><div class="wrap">
+  Data: Severson, Attia et al., "Data-driven prediction of battery cycle life before capacity degradation", Nature Energy 4, 383–391 (2019), via <a href="https://data.matr.io/1/" target="_blank" rel="noopener">data.matr.io</a> (Toyota Research Institute). Physics checked against <a href="https://pybamm.org" target="_blank" rel="noopener">PyBaMM</a> (Prada2013 parameter set). Degradation modes after Dubarry et al.; aging knees after Attia et al., J. Electrochem. Soc. 2022. Uncertainty training after Seitzer et al. 2022 (β-NLL). CellSense was designed, trained and tested end to end for this page.
+</div></footer>
+
+<script>
+/*__SIMJS__*/
+</script>
+<script>
+/*__NETJS__*/
+</script>
+<script>
+const DATA = /*__DATA__*/;
+const WEIGHTS = /*__WEIGHTS__*/;
+const WEIGHTS_P = /*__WEIGHTSP__*/;
+</script>
+<script>
+/*__APP__*/
+</script>

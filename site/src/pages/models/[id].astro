@@ -1,0 +1,330 @@
+---
+import Base from '../../layouts/Base.astro';
+import ExamRows from '../../components/ExamRows.astro';
+import Coverage from '../../components/Coverage.astro';
+import LadderChart from '../../components/LadderChart.astro';
+import { getModels, ghFile, ghTree, mb, type Model } from '../../lib/data';
+import { url } from '../../lib/url';
+
+export function getStaticPaths() {
+  const ms = getModels();
+  return ms.map((m, i) => ({ params: { id: m.id }, props: { m, prev: ms[(i - 1 + ms.length) % ms.length], next: ms[(i + 1) % ms.length] } }));
+}
+interface Props { m: Model; prev: Model; next: Model }
+const { m, prev, next } = Astro.props;
+const dir = `models/${m.id}`;
+const toc = [
+  ['exam', 'The exam'],
+  ['verdict', 'Wins & losses'],
+  ['ratchet', 'The ratchet'],
+  ['physics', 'Physics'],
+  ['run', 'Run it'],
+  ['limits', 'Limits'],
+  ...(m.hasLab ? [['lab', 'The lab']] : []),
+  ['data', 'Data & credits'],
+];
+const released = m.released ? new Date(m.released as string).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : null;
+---
+<Base title={`${m.name} — ${m.tagline}`} description={m.summary} accent={m.accent}>
+  <article style={`--c:${m.accent}`}>
+    <header class="mhero">
+      <div class="wrap">
+        <nav class="crumbs mono" aria-label="Breadcrumb"><a href={url('models/')}>Models</a> <span>/</span> {m.domain}</nav>
+        <div class="title-row">
+          <h1 class="display name">{m.name}</h1>
+          <div class="badges">
+            <span class="badge num">v{m.version}</span>
+            <span class={`badge ${m.status}`}>{m.status === 'partial' ? 'exam partly pending' : m.status}</span>
+            {released && <span class="badge faint">{released}</span>}
+          </div>
+        </div>
+        <p class="display tagline">{m.tagline}</p>
+        <div class="intro">
+          <p class="question">{m.question}</p>
+          <p class="summary">{m.summary}</p>
+        </div>
+        {m.disclaimer && <p class="disclaimer" role="note"><b>Read this first.</b> {m.disclaimer}</p>}
+        <div class="actions">
+          {m.hasLab && <a class="btn" href={url(`models/${m.id}/lab/`)}>Open the interactive lab <span class="arrow">→</span></a>}
+          <a class="btn ghost" href={ghTree(dir)}>Code &amp; weights</a>
+          <a class="btn ghost" href={ghFile(`${dir}/MODEL_CARD.md`)}>Full model card</a>
+          <a class="btn ghost" href={ghFile(`${dir}/NOTEBOOK.md`)}>Lab notebook</a>
+        </div>
+        <dl class="facts">
+          <div><dt class="kicker">Reads</dt><dd>{m.reads}</dd></div>
+          <div><dt class="kicker">Returns</dt><dd><ul>{m.returns.map((r) => <li>{r}</li>)}</ul></dd></div>
+          <div><dt class="kicker">Learned from</dt><dd>{m.physics.summary}</dd></div>
+          {m.noise && <div><dt class="kicker">Noise</dt><dd>{m.noise}</dd></div>}
+          {m.network && <div><dt class="kicker">Network</dt><dd>{m.network}</dd></div>}
+          <div><dt class="kicker">Dev set</dt><dd>{m.split.dev}</dd></div>
+          <div><dt class="kicker">Exam</dt><dd>{m.split.exam}</dd></div>
+          <div><dt class="kicker">Ships</dt><dd class="num small">{mb(m.weightBytes)} of weights · numpy only · demo ≈ {m.demo_seconds ?? '?'} s</dd></div>
+        </dl>
+      </div>
+    </header>
+
+    <div class="wrap body">
+      <aside class="toc" aria-label="On this page">
+        <p class="kicker">On this page</p>
+        <ol>{toc.map(([id, l]) => <li><a href={`#${id}`}>{l}</a></li>)}</ol>
+      </aside>
+
+      <div class="content">
+        <section id="exam">
+          <p class="kicker tick-label">Real data, never used to choose anything</p>
+          <h2 class="section">The exam</h2>
+          <p class="lead muted">{m.exam.summary}</p>
+          <ExamRows rows={m.exam.results} name={m.name} accent={m.accent} />
+          <p class="glyph-key mono faint"><i class="g-model"></i>{m.name} <i class="g-classical"></i>classical method <i class="g-dumb"></i>dumb baseline <i class="g-published"></i>published</p>
+          {m.exam.coverage && m.exam.coverage.length > 0 && (
+            <div class="cov-block">
+              <h3 class="sub">Do the error bars mean what they say?</h3>
+              <p class="muted">Share of exam truths inside the model's 68% error bars, after one widen-only factor per output fitted on dev.</p>
+              <Coverage items={m.exam.coverage} accent={m.accent} />
+            </div>
+          )}
+        </section>
+
+        <section id="verdict" class="wl">
+          <div>
+            <h3 class="sub win-h">Where it wins</h3>
+            <ul>{(m.wins ?? []).map((w) => <li>{w}</li>)}</ul>
+          </div>
+          <div>
+            <h3 class="sub loss-h">Where it loses</h3>
+            <ul>{(m.losses ?? []).map((w) => <li>{w}</li>)}</ul>
+          </div>
+        </section>
+
+        <section id="ratchet">
+          <p class="kicker tick-label">Every rung, kept or not</p>
+          <h2 class="section">The ratchet</h2>
+          {m.ladders.map((lad, i) => (
+            <div class="lad">
+              {m.ladders.length > 1 && <h3 class="sub">{lad.name}</h3>}
+              <dl class="rules">
+                <div><dt class="kicker">Objective</dt><dd>{lad.objective}</dd></div>
+                <div><dt class="kicker">Keep a rung if</dt><dd>{lad.rule}</dd></div>
+                {lad.frozen_sets && lad.frozen_sets.length > 1 && <div><dt class="kicker">Frozen sets</dt><dd class="num small">{lad.frozen_sets.join(' → ')}</dd></div>}
+              </dl>
+              <div class="frame chart-frame"><LadderChart ladder={lad} accent={m.accent} uid={`${m.id}-${i}`} /></div>
+              {lad.note && <p class="lad-note">{lad.note}</p>}
+            </div>
+          ))}
+        </section>
+
+        <section id="physics">
+          <p class="kicker tick-label">The simulator is the model</p>
+          <h2 class="section">Physics</h2>
+          <p class="lead">{m.physics.summary}</p>
+          <div class="phys">
+            <div>
+              <h3 class="sub">What the simulator includes</h3>
+              <ul class="bul">{m.physics.simulator.map((s) => <li>{s}</li>)}</ul>
+            </div>
+            <div>
+              <h3 class="sub">Checked against independent references</h3>
+              <ul class="checks">{m.physics.checks.map((s) => <li><span class="ok" aria-hidden="true">✓</span>{s}</li>)}</ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="run">
+          <p class="kicker tick-label">Runs on numpy, in seconds</p>
+          <h2 class="section">Run it</h2>
+          <pre><code>{`git clone https://github.com/dogum/ML-Ratchet
+cd ML-Ratchet/models/${m.id}
+${m.usage.install}
+${m.usage.demo}`}</code></pre>
+          {m.usage.python && (<>
+            <p class="muted">From Python, inside the model's folder (or anywhere with <code>mlratchet.load("{m.id}")</code>):</p>
+            <pre><code>{m.usage.python.trim()}</code></pre>
+          </>)}
+        </section>
+
+        <section id="limits">
+          <h2 class="section">Limits</h2>
+          <ul class="bul big">{m.limits.map((l) => <li>{l}</li>)}</ul>
+          {m.help_wanted && m.help_wanted.length > 0 && (
+            <div class="helpw frame">
+              <p class="kicker">Help wanted</p>
+              {m.help_wanted.map((h) => <p>{h}</p>)}
+            </div>
+          )}
+          {m.next && m.next.length > 0 && (<>
+            <h3 class="sub">Next rungs worth trying</h3>
+            <ol class="nexts">{m.next.map((n) => <li>{n}</li>)}</ol>
+          </>)}
+        </section>
+
+        {m.hasLab && (
+          <section id="lab">
+            <p class="kicker tick-label">The network, running in your browser</p>
+            <h2 class="section">The lab</h2>
+            <p class="muted">The original interactive page: real-data explorer, the network ported to JavaScript, and sliders that change the input. It has its own visual identity and is self-contained ({mb(m.labBytes)}).</p>
+            <div class="lab-frame frame" data-lab={url(`models/${m.id}/lab/`)}>
+              <div class="lab-cover">
+                <span class="display">{m.name} lab</span>
+                <div class="lab-btns">
+                  <button class="btn" type="button" data-load>Load it here <span class="arrow">↓</span></button>
+                  <a class="btn ghost" href={url(`models/${m.id}/lab/`)}>Open full screen</a>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        <section id="data">
+          <h2 class="section">Data &amp; credits</h2>
+          <div class="table-scroll">
+            <table class="data">
+              <thead><tr><th>Source</th><th>Used for</th><th>Licence / terms</th></tr></thead>
+              <tbody>
+                {m.data.map((d) => (
+                  <tr><td><a href={d.url}>{d.name}</a></td><td class="mono small">{d.role}</td><td>{d.licence}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="muted small-p">Please cite the providers when you use this model. Full citations, including the physics papers, are in the <a href={ghFile(`${dir}/MODEL_CARD.md`)}>model card</a>.</p>
+        </section>
+
+        <nav class="pager" aria-label="More models">
+          <a href={url(`models/${prev.id}/`)} style={`--c:${prev.accent}`}><span class="kicker">← Previous</span><span class="display">{prev.name}</span></a>
+          <a href={url(`models/${next.id}/`)} style={`--c:${next.accent}`} class="nx"><span class="kicker">Next →</span><span class="display">{next.name}</span></a>
+        </nav>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-lab]').forEach((box) => {
+    box.querySelector('[data-load]')?.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = box.dataset.lab!;
+      f.title = 'Interactive lab';
+      f.loading = 'lazy';
+      box.innerHTML = '';
+      box.appendChild(f);
+      box.classList.add('loaded');
+    });
+  });
+  // highlight the current section in the TOC
+  const links = new Map([...document.querySelectorAll<HTMLAnchorElement>('.toc a')].map((a) => [a.hash.slice(1), a]));
+  const io = new IntersectionObserver((es) => {
+    es.forEach((e) => { if (e.isIntersecting) { links.forEach((a) => a.classList.remove('cur')); links.get(e.target.id)?.classList.add('cur'); } });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  links.forEach((_, id) => { const s = document.getElementById(id); if (s) io.observe(s); });
+</script>
+
+<style>
+  .mhero {
+    position: relative;
+    padding: clamp(28px, 5vw, 56px) 0 0;
+    background:
+      radial-gradient(90% 120% at 100% 0%, color-mix(in srgb, var(--c) 16%, transparent), transparent 60%);
+    border-bottom: 1px solid var(--ink);
+  }
+  .crumbs { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+  .crumbs a { color: var(--ink-3); text-decoration: none; }
+  .crumbs a:hover { color: var(--c); }
+  .crumbs span { margin: 0 6px; }
+  .title-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-top: 14px; }
+  .name { font-size: clamp(72px, 14vw, 200px); line-height: 0.82; letter-spacing: -0.04em; color: var(--ink); }
+  .name::after { content: '.'; color: var(--c); }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; padding-bottom: 12px; }
+  .badge { font-family: var(--mono); font-variation-settings: 'wdth' 87.5; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--rule); border-radius: 99px; background: var(--paper-3); }
+  .badge.released { color: var(--win); border-color: currentColor; }
+  .badge.partial { color: var(--c); border-color: currentColor; }
+  .tagline { font-size: clamp(28px, 3.4vw, 46px); line-height: 1.05; font-style: italic; color: var(--ink-2); margin: 22px 0 28px; max-width: 26ch; }
+  .intro { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr); gap: 40px; align-items: start; }
+  .question { font-size: 21px; line-height: 1.35; font-weight: 500; margin: 0; padding-left: 16px; border-left: 3px solid var(--c); }
+  .summary { margin: 0; color: var(--ink-2); font-size: 17px; }
+  .disclaimer { margin: 26px 0 0; padding: 14px 18px; background: color-mix(in srgb, var(--loss) 10%, var(--paper-3)); border: 1px solid var(--loss); border-radius: var(--radius); font-size: 15px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 30px 0 40px; }
+  .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; border-top: 1px solid var(--rule); }
+  .facts div { padding: 16px 18px 20px 0; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .facts div:not(:nth-child(4n + 1)) { padding-left: 18px; }
+  .facts div:nth-child(4n) { border-right: 0; }
+  .facts dd { margin: 6px 0 0; font-size: 14.5px; line-height: 1.5; }
+  .facts ul { margin: 0; padding-left: 1.1em; }
+  .small { font-size: 12px !important; }
+
+  .body { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 56px; margin-top: 64px; }
+  .toc { position: sticky; top: 92px; align-self: start; }
+  .toc ol { list-style: none; margin: 12px 0 0; padding: 0; border-left: 1px solid var(--rule); }
+  .toc a { display: block; padding: 6px 0 6px 14px; margin-left: -1px; font-size: 14px; color: var(--ink-2); text-decoration: none; border-left: 2px solid transparent; transition: all 0.2s; }
+  .toc a:hover { color: var(--ink); }
+  .toc a:global(.cur) { color: var(--ink); border-left-color: var(--c); }
+  .content > section { padding-bottom: 72px; margin-bottom: 72px; border-bottom: 1px solid var(--rule); scroll-margin-top: 84px; }
+  .content .section { margin: 10px 0 18px; }
+  .lead { font-size: 18px; max-width: 70ch; }
+  .sub { font-family: var(--display); font-size: 28px; line-height: 1.05; margin: 30px 0 12px; }
+  .glyph-key { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 10.5px; letter-spacing: 0.04em; text-transform: uppercase; margin: 14px 0 0; }
+  .glyph-key i { display: inline-block; width: 10px; height: 10px; border: 1.5px solid var(--ink-2); margin-left: 8px; }
+  .glyph-key i:first-child { margin-left: 0; }
+  .g-model { background: var(--c); border-color: var(--c) !important; border-radius: 50%; }
+  .g-classical { border-radius: 50%; }
+  .g-dumb { background: var(--ink-3); border-color: var(--ink-3) !important; }
+  .g-published { transform: rotate(45deg) scale(0.85); }
+  .cov-block { margin-top: 44px; }
+  .cov-block p { max-width: 64ch; }
+
+  .wl { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .wl ul { margin: 0; padding: 0; list-style: none; }
+  .wl li { padding: 12px 0 12px 26px; border-top: 1px solid var(--rule); position: relative; }
+  .wl li::before { position: absolute; left: 0; top: 13px; font-size: 12px; }
+  .wl div:first-child li::before { content: '▲'; color: var(--win); }
+  .wl div:last-child li::before { content: '▼'; color: var(--loss); }
+  .wl .sub { margin-top: 0; }
+
+  .lad { margin-bottom: 44px; }
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 32px; margin: 0 0 22px; }
+  .rules dd { margin: 6px 0 0; font-size: 15px; }
+  .rules div:nth-child(3) { grid-column: 1 / -1; }
+  .chart-frame { padding: 22px 22px 14px; }
+  .lad-note { margin: 16px 0 0; padding-left: 14px; border-left: 2px solid var(--c); color: var(--ink-2); max-width: 75ch; }
+
+  .phys { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .bul { padding-left: 1.1em; margin: 0; }
+  .bul li { margin-bottom: 8px; }
+  .bul.big li { font-size: 17px; margin-bottom: 12px; }
+  .checks { list-style: none; padding: 0; margin: 0; }
+  .checks li { position: relative; padding: 12px 14px 12px 40px; margin-bottom: 8px; background: var(--paper-3); border: 1px solid var(--rule); border-radius: var(--radius); font-size: 15px; }
+  .ok { position: absolute; left: 13px; top: 11px; width: 18px; height: 18px; border-radius: 50%; background: var(--win); color: var(--paper); font-size: 11px; display: grid; place-items: center; }
+
+  .helpw { padding: 20px 22px; margin: 28px 0; border-left: 3px solid var(--c); }
+  .helpw p:last-child { margin-bottom: 0; }
+  .nexts { padding-left: 1.4em; }
+  .nexts li { margin-bottom: 8px; }
+  .nexts li::marker { font-family: var(--mono); font-size: 12px; color: var(--c); }
+
+  .lab-frame { position: relative; height: min(80vh, 760px); overflow: hidden; margin-top: 18px; background: repeating-linear-gradient(-45deg, var(--paper-2) 0 10px, var(--paper-3) 10px 20px); }
+  .lab-frame :global(iframe) { width: 100%; height: 100%; border: 0; background: #fff; }
+  .lab-cover { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 22px; text-align: center; }
+  .lab-cover .display { font-size: clamp(40px, 6vw, 80px); color: var(--c); }
+  .lab-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .small-p { font-size: 14px; margin-top: 14px; }
+
+  .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .pager a { display: flex; flex-direction: column; gap: 6px; padding: 22px; border: 1px solid var(--rule); border-radius: var(--radius); text-decoration: none; transition: border-color 0.3s, transform 0.3s var(--ease); }
+  .pager a:hover { border-color: var(--c); transform: translateY(-2px); }
+  .pager .display { font-size: 38px; color: var(--c); line-height: 1; }
+  .pager .nx { text-align: right; }
+
+  @media (max-width: 1020px) {
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .facts div { padding-left: 0 !important; border-right: 0 !important; }
+    .facts div:nth-child(2n) { padding-left: 18px !important; border-left: 1px solid var(--rule); }
+    .body { grid-template-columns: minmax(0, 1fr); }
+    .toc { display: none; }
+  }
+  @media (max-width: 720px) {
+    .intro, .wl, .phys, .rules { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    .facts { grid-template-columns: 1fr; }
+    .facts div:nth-child(2n) { padding-left: 0 !important; border-left: 0; }
+    .content > section { padding-bottom: 48px; margin-bottom: 48px; }
+    .pager .display { font-size: 28px; }
+  }
+</style>

@@ -1,0 +1,518 @@
+[
+ {
+  "ckpt": "s1_baseline.pt",
+  "note": "Baseline: 2-D CNN over 14 days x 96 solar-time steps, Gaussian error bars on every output, 3,000 steps",
+  "val": {
+   "pf": {
+    "mae": 0.024658232927322388,
+    "baseline_mae": 0.13711944222450256,
+    "skill": 0.8201696817950147,
+    "cov68": 0.7875894108104122
+   },
+   "soil": {
+    "mae": 0.02555352821946144,
+    "baseline_mae": 0.02768569067120552,
+    "skill": 0.07701315734057645,
+    "cov68": 0.743934813066883
+   },
+   "frac": {
+    "mae": 0.03242631256580353,
+    "baseline_mae": 0.11974748969078064,
+    "skill": 0.7292109199989348,
+    "cov68": 0.8891305950888577
+   },
+   "shade": {
+    "mae": 0.00827652495354414,
+    "baseline_mae": 0.010114290751516819,
+    "skill": 0.18169991778188432,
+    "cov68": 0.9180370179190325
+   },
+   "clip": {
+    "mae": 0.007947959937155247,
+    "baseline_mae": 0.008799705654382706,
+    "skill": 0.09679252360029178,
+    "cov68": 0.9329695450188039
+   },
+   "outage": {
+    "mae": 0.04435761272907257,
+    "baseline_mae": 0.04432728514075279,
+    "skill": -0.0006841742782910387,
+    "cov68": 0.8637637342378881
+   },
+   "dfrac": {
+    "mae": 0.006421941798180342,
+    "baseline_mae": 0.005922313779592514,
+    "skill": -0.08436365197492202,
+    "cov68": 0.7012019762554383
+   },
+   "step_auc": 0.9976306426987007,
+   "count_acc": 0.8939400549714236,
+   "count_acc_dead": 0.7514022885348889,
+   "dead_auc": 0.984113974709714,
+   "eta0": {
+    "mae": 0.02173769287765026,
+    "cov68": 0.751
+   },
+   "ac_limit": {
+    "mae": 0.07860249280929565,
+    "cov68": 0.6465
+   },
+   "objective": 1.2631523532081306
+  },
+  "objective": 1.2631523532081306,
+  "real": {
+   "n_inverter_days": 41495,
+   "count_acc": 0.9043499216773105,
+   "count_acc_when_dead": 0.29055100685992474,
+   "healthy_called_healthy": 0.9793649935093033,
+   "frac_mae": 0.03197816493877777,
+   "confusion_true_rows_0_1_2_3plus": [
+    [
+     36213,
+     303,
+     150,
+     310
+    ],
+    [
+     2991,
+     1055,
+     15,
+     23
+    ],
+    [
+     60,
+     61,
+     250,
+     2
+    ],
+    [
+     19,
+     9,
+     23,
+     11
+    ]
+   ],
+   "n_dead_days": 4519,
+   "onsets_true": 348,
+   "onsets_found_pm1day": 129,
+   "step_alarms": 2054
+  },
+  "eval_s": 28,
+  "accepted": true,
+  "why": "first rung",
+  "real_rescored": "answer key v2 and one-year reference, same as later rungs"
+ },
+ {
+  "ckpt": "s2_beta_nll.pt",
+  "note": "Beta-NLL: each point's loss is weighted by its own error bar (beta = 0.5), so rare large losses (outages, clipping, shading) cannot be waved away with a huge sigma",
+  "val": {
+   "pf": {
+    "mae": 0.01822592504322529,
+    "baseline_mae": 0.13711944222450256,
+    "skill": 0.8670799359482195,
+    "cov68": 0.7252783718014896
+   },
+   "soil": {
+    "mae": 0.018333101645112038,
+    "baseline_mae": 0.02768569067120552,
+    "skill": 0.33781310125741726,
+    "cov68": 0.7586461175429541
+   },
+   "frac": {
+    "mae": 0.015740642324090004,
+    "baseline_mae": 0.11974748969078064,
+    "skill": 0.8685513795342478,
+    "cov68": 0.8579750755843965
+   },
+   "shade": {
+    "mae": 0.0035224584862589836,
+    "baseline_mae": 0.010114290751516819,
+    "skill": 0.6517345039017464,
+    "cov68": 0.8962834599218347
+   },
+   "clip": {
+    "mae": 0.003123159985989332,
+    "baseline_mae": 0.008799705654382706,
+    "skill": 0.645083584763561,
+    "cov68": 0.9084138337880687
+   },
+   "outage": {
+    "mae": 0.004163351375609636,
+    "baseline_mae": 0.04432728514075279,
+    "skill": 0.9060770051134485,
+    "cov68": 0.8653122926037903
+   },
+   "dfrac": {
+    "mae": 0.002266939962282777,
+    "baseline_mae": 0.005922313779592514,
+    "skill": 0.617220558273298,
+    "cov68": 0.8098591549295775
+   },
+   "step_auc": 0.9991817906836056,
+   "count_acc": 0.9308494393787357,
+   "count_acc_dead": 0.8310522773165807,
+   "dead_auc": 0.9859166794655274,
+   "eta0": {
+    "mae": 0.020754843950271606,
+    "cov68": 0.692
+   },
+   "ac_limit": {
+    "mae": 0.06675244867801666,
+    "cov68": 0.6925
+   },
+   "objective": 1.6777388667842774
+  },
+  "objective": 1.6777388667842774,
+  "real": {
+   "n_inverter_days": 41269,
+   "count_acc": 0.9452131139596307,
+   "count_acc_when_dead": 0.5976397238922289,
+   "healthy_called_healthy": 0.9876556637120018,
+   "frac_mae": 0.020981244354896362,
+   "confusion_true_rows_0_1_2_3plus": [
+    [
+     36324,
+     224,
+     132,
+     98
+    ],
+    [
+     1451,
+     2361,
+     256,
+     0
+    ],
+    [
+     52,
+     13,
+     303,
+     2
+    ],
+    [
+     12,
+     8,
+     7,
+     26
+    ]
+   ],
+   "n_dead_days": 4491,
+   "onsets_true": 330,
+   "onsets_found_pm1day": 177,
+   "step_alarms": 1068
+  },
+  "eval_s": 15,
+  "accepted": true,
+  "why": "objective 1.678 vs 1.263",
+  "vs": "s1_baseline.pt",
+  "real_rescored": "answer key v2 and one-year reference, same as later rungs"
+ },
+ {
+  "ckpt": "s3_polish.pt",
+  "note": "Polish: 4,000 more steps from rung 2 at a lower learning rate",
+  "val": {
+   "pf": {
+    "mae": 0.01541746873408556,
+    "baseline_mae": 0.13711944222450256,
+    "skill": 0.8875617601416225,
+    "cov68": 0.7392891379691763
+   },
+   "soil": {
+    "mae": 0.014895118772983551,
+    "baseline_mae": 0.02768569067120552,
+    "skill": 0.4619921550855436,
+    "cov68": 0.7768969839982303
+   },
+   "frac": {
+    "mae": 0.013180713169276714,
+    "baseline_mae": 0.11974748969078064,
+    "skill": 0.8899291066283497,
+    "cov68": 0.8696630042032298
+   },
+   "shade": {
+    "mae": 0.002654420677572489,
+    "baseline_mae": 0.010114290751516819,
+    "skill": 0.7375574083457694,
+    "cov68": 0.8733869183688519
+   },
+   "clip": {
+    "mae": 0.00235844892449677,
+    "baseline_mae": 0.008799705654382706,
+    "skill": 0.7319854757503006,
+    "cov68": 0.9130595088857754
+   },
+   "outage": {
+    "mae": 0.003104651579633355,
+    "baseline_mae": 0.04432728514075279,
+    "skill": 0.9299607099831373,
+    "cov68": 0.8611090627534843
+   },
+   "dfrac": {
+    "mae": 0.0017816248582676053,
+    "baseline_mae": 0.005922313779592514,
+    "skill": 0.6991674327681114,
+    "cov68": 0.9329695450188039
+   },
+   "step_auc": 0.9995354046034627,
+   "count_acc": 0.9507438593429606,
+   "count_acc_dead": 0.8847879739735248,
+   "dead_auc": 0.9923755982769151,
+   "eta0": {
+    "mae": 0.0182486642152071,
+    "cov68": 0.7205
+   },
+   "ac_limit": {
+    "mae": 0.06445193290710449,
+    "cov68": 0.6765
+   },
+   "objective": 1.748304067962332
+  },
+  "objective": 1.748304067962332,
+  "real": {
+   "n_inverter_days": 41265,
+   "count_acc": 0.9393432691142615,
+   "count_acc_when_dead": 0.6378619153674833,
+   "healthy_called_healthy": 0.9761522773623386,
+   "frac_mae": 0.021531244613366547,
+   "confusion_true_rows_0_1_2_3plus": [
+    [
+     35898,
+     665,
+     167,
+     45
+    ],
+    [
+     1326,
+     2536,
+     207,
+     0
+    ],
+    [
+     43,
+     20,
+     306,
+     1
+    ],
+    [
+     13,
+     5,
+     8,
+     25
+    ]
+   ],
+   "n_dead_days": 4490,
+   "onsets_true": 328,
+   "onsets_found_pm1day": 173,
+   "step_alarms": 866
+  },
+  "eval_s": 40,
+  "accepted": true,
+  "why": "objective 1.748 vs 1.678",
+  "vs": "s2_beta_nll.pt"
+ },
+ {
+  "ckpt": "s4_memory.pt",
+  "note": "Longer memory: 28-day windows and the system's own healthy level supplied 90% of the time, so slow dust and long-lived faults can be told apart",
+  "val": {
+   "pf": {
+    "mae": 0.014983628876507282,
+    "baseline_mae": 0.13711944222450256,
+    "skill": 0.8907257159639337,
+    "cov68": 0.7750165916967775
+   },
+   "soil": {
+    "mae": 0.014884773641824722,
+    "baseline_mae": 0.02768569067120552,
+    "skill": 0.4623658185524113,
+    "cov68": 0.7907971388540668
+   },
+   "frac": {
+    "mae": 0.014042800292372704,
+    "baseline_mae": 0.11974748969078064,
+    "skill": 0.8827298983165752,
+    "cov68": 0.8872502027874051
+   },
+   "shade": {
+    "mae": 0.0026253287214785814,
+    "baseline_mae": 0.010114290751516819,
+    "skill": 0.740433730255889,
+    "cov68": 0.8971683504166359
+   },
+   "clip": {
+    "mae": 0.002219171728938818,
+    "baseline_mae": 0.008799705654382706,
+    "skill": 0.7478129591944298,
+    "cov68": 0.9150873829363616
+   },
+   "outage": {
+    "mae": 0.0027168807573616505,
+    "baseline_mae": 0.04432728514075279,
+    "skill": 0.9387086136961756,
+    "cov68": 0.8808716171373793
+   },
+   "dfrac": {
+    "mae": 0.0017262077890336514,
+    "baseline_mae": 0.005922313779592514,
+    "skill": 0.7085247669615331,
+    "cov68": 0.9467959590000737
+   },
+   "step_auc": 0.9994641776855933,
+   "count_acc": 0.9527943806989224,
+   "count_acc_dead": 0.8944357190935607,
+   "dead_auc": 0.9926438075234036,
+   "eta0": {
+    "mae": 0.01882220059633255,
+    "cov68": 0.7285
+   },
+   "ac_limit": {
+    "mae": 0.06425658613443375,
+    "cov68": 0.6815
+   },
+   "objective": 1.753258735188827
+  },
+  "objective": 1.753258735188827,
+  "real": {
+   "n_inverter_days": 41261,
+   "count_acc": 0.929158285063377,
+   "count_acc_when_dead": 0.6574548696233563,
+   "healthy_called_healthy": 0.9623103279490944,
+   "frac_mae": 0.023216027032170173,
+   "confusion_true_rows_0_1_2_3plus": [
+    [
+     35388,
+     1140,
+     101,
+     145
+    ],
+    [
+     1311,
+     2624,
+     133,
+     1
+    ],
+    [
+     48,
+     13,
+     306,
+     3
+    ],
+    [
+     13,
+     8,
+     6,
+     21
+    ]
+   ],
+   "n_dead_days": 4487,
+   "onsets_true": 322,
+   "onsets_found_pm1day": 167,
+   "step_alarms": 921
+  },
+  "eval_s": 18,
+  "accepted": false,
+  "why": "objective 1.753 vs 1.748",
+  "vs": "s3_polish.pt"
+ },
+ {
+  "ckpt": "s5_realism.pt",
+  "note": "Realism: the simulated array now drifts away from the physics prior the way real ones do (spectral response, a slow seasonal bias) and dust seasons can run long",
+  "val": {
+   "pf": {
+    "mae": 0.014871809631586075,
+    "baseline_mae": 0.13711944222450256,
+    "skill": 0.8915412038561475,
+    "cov68": 0.7478430794189219
+   },
+   "soil": {
+    "mae": 0.015057627111673355,
+    "baseline_mae": 0.02768569067120552,
+    "skill": 0.4561223958434951,
+    "cov68": 0.7972494653786594
+   },
+   "frac": {
+    "mae": 0.012420621700584888,
+    "baseline_mae": 0.11974748969078064,
+    "skill": 0.8962765588434615,
+    "cov68": 0.8821620824422978
+   },
+   "shade": {
+    "mae": 0.004993006587028503,
+    "baseline_mae": 0.010114290751516819,
+    "skill": 0.5063414025071691,
+    "cov68": 0.9501880392301453
+   },
+   "clip": {
+    "mae": 0.00212822575122118,
+    "baseline_mae": 0.008799705654382706,
+    "skill": 0.7581480750823507,
+    "cov68": 0.8938131406238478
+   },
+   "outage": {
+    "mae": 0.002674042247235775,
+    "baseline_mae": 0.04432728514075279,
+    "skill": 0.9396750277228829,
+    "cov68": 0.8587493547673476
+   },
+   "dfrac": {
+    "mae": 0.001666092430241406,
+    "baseline_mae": 0.005922313779592514,
+    "skill": 0.7186754210858375,
+    "cov68": 0.938610721923162
+   },
+   "step_auc": 0.9996469622331692,
+   "count_acc": 0.9535360586361852,
+   "count_acc_dead": 0.8914067758582006,
+   "dead_auc": 0.9917407361714142,
+   "eta0": {
+    "mae": 0.018046023324131966,
+    "cov68": 0.7355
+   },
+   "ac_limit": {
+    "mae": 0.0640542283654213,
+    "cov68": 0.6715
+   },
+   "objective": 1.717942287743928
+  },
+  "objective": 1.717942287743928,
+  "real": {
+   "n_inverter_days": 41265,
+   "count_acc": 0.9436810856658185,
+   "count_acc_when_dead": 0.6474788041053101,
+   "healthy_called_healthy": 0.9797732648234239,
+   "frac_mae": 0.020277839889313167,
+   "confusion_true_rows_0_1_2_3plus": [
+    [
+     36039,
+     580,
+     164,
+     0
+    ],
+    [
+     1354,
+     2576,
+     133,
+     0
+    ],
+    [
+     43,
+     22,
+     305,
+     0
+    ],
+    [
+     9,
+     7,
+     6,
+     27
+    ]
+   ],
+   "n_dead_days": 4482,
+   "onsets_true": 322,
+   "onsets_found_pm1day": 183,
+   "step_alarms": 1238
+  },
+  "eval_s": 18,
+  "accepted": false,
+  "why": "objective 1.718 vs 1.748",
+  "vs": "s3_polish.pt"
+ }
+]

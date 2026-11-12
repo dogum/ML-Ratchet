@@ -1,0 +1,259 @@
+---
+import Base from '../layouts/Base.astro';
+import HeroRatchet from '../components/HeroRatchet.astro';
+import ModelCard from '../components/ModelCard.astro';
+import LadderChart from '../components/LadderChart.astro';
+import { collectionStats, getBacklog, getModels, getModel, REPO_URL } from '../lib/data';
+import { url } from '../lib/url';
+
+const models = getModels();
+const s = collectionStats();
+const quake = getModel('quakenet')!;
+const ideas = getBacklog().slice(0, 6);
+const losses = models.filter((m) => m.losses?.length).map((m) => ({ m, text: m.losses![0] }));
+const help = models.flatMap((m) => (m.help_wanted ?? []).map((h) => ({ m, h })));
+const steps = [
+  ['Real physics', 'Write the simulator from the governing equations. Check it against an independent reference, and record the number.'],
+  ['Real noise', 'Lay simulated signals into real instrument recordings — quiet seismometers, healthy machines, quiet stars.'],
+  ['Simulations only', 'Train the network on simulations alone. No real labelled example is ever a training sample.'],
+  ['The ratchet', 'Keep a rung only if it beats the incumbent on a frozen simulated set by more than a margin AND passes a real dev gate.'],
+  ['Calibrate on dev', 'Plot real dev data next to simulations of the same case. The mismatch becomes the next rung.'],
+  ['One exam', 'Grade once, on real data that chose nothing — beside a classical method and a dumb baseline, with coverage and failures.'],
+];
+---
+<Base>
+  <section class="hero wrap">
+    <p class="kicker eyebrow reveal">An open collection of physics-first machine learning</p>
+    <h1 class="display title reveal">Trained on physics.<br /><em>Graded on reality.</em></h1>
+    <div class="lede-row">
+      <p class="lede reveal">
+        Every model here learned only from simulations of the real physics — earthquakes, black-hole mergers, swell,
+        heartbeats, starlight — laid into real instrument noise. A new version is kept only when it <b>ratchets up</b>:
+        better on a frozen simulated test <i>and</i> no worse on a handful of real units. Then each one sits one exam,
+        on real data it never saw. The losses are published too.
+      </p>
+      <div class="ctas reveal">
+        <a class="btn" href={url('models/')}>Explore the models <span class="arrow">→</span></a>
+        <a class="btn ghost" href={url('method/')}>Read the method</a>
+      </div>
+    </div>
+    <div class="hero-figure reveal"><HeroRatchet /></div>
+
+    <dl class="stats">
+      <div><dt class="kicker">models</dt><dd class="num">{s.models}</dd></div>
+      <div><dt class="kicker">real labels used in training</dt><dd class="num signal">{s.realTrainingLabels}</dd></div>
+      <div><dt class="kicker">rung decisions logged</dt><dd class="num">{s.rungs}</dd></div>
+      <div><dt class="kicker">rejected by the ratchet</dt><dd class="num">{s.rejected}</dd></div>
+      <div><dt class="kicker">exam wins vs baselines</dt><dd class="num">{s.wins}</dd></div>
+      <div><dt class="kicker">exam losses, published</dt><dd class="num">{s.losses}</dd></div>
+    </dl>
+  </section>
+
+  <section class="rule-sec">
+    <div class="wrap">
+      <p class="kicker tick-label">The rule</p>
+      <blockquote class="display rule-quote reveal">
+        A model moves up only if it beats the incumbent on a <span class="hl">frozen simulated test</span> by more than
+        <span class="num inline">0.01</span> — and gets no worse on a <span class="hl">handful of real units</span>.
+        The real exam <em>never chooses anything.</em>
+      </blockquote>
+      <ol class="steps">
+        {steps.map(([h, p], i) => (
+          <li class="reveal" style={`transition-delay:${i * 60}ms`}>
+            <span class="n num">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{h}</h3>
+            <p>{p}</p>
+          </li>
+        ))}
+      </ol>
+      <a class="more mono" href={url('method/')}>The method, in full →</a>
+    </div>
+  </section>
+
+  <section class="wrap collection" id="models">
+    <div class="sec-head">
+      <h2 class="section reveal">The collection</h2>
+      <p class="muted reveal">Nine models across {s.domains.length} fields. Each one runs on numpy in seconds, ships its real exam examples, and keeps every rung it ever tried.</p>
+    </div>
+    <div class="grid">
+      {models.map((m, i) => <ModelCard m={m} index={i} />)}
+    </div>
+  </section>
+
+  <section class="wrap anatomy">
+    <div class="anat-text">
+      <p class="kicker tick-label">How to read a ladder</p>
+      <h2 class="section reveal">Every rung,<br /><em>kept or not.</em></h2>
+      <p class="muted reveal">
+        This is QuakeNet's ladder. The line is the incumbent: it only ever steps up. The tinted band above it is the
+        margin a new rung had to clear. Ghost rings are rungs the ratchet turned down — rung 6 gained 0.001, short of the
+        0.01 it needed. The diamond is the release.
+      </p>
+      <p class="muted reveal">
+        When the physics changed, the frozen set was rebuilt and every decision re-taken in order. Rung 5 was rejected
+        on one set and kept on the next. That's in the log too.
+      </p>
+      <a class="btn ghost" href={url('models/quakenet/')}>QuakeNet in full <span class="arrow">→</span></a>
+    </div>
+    <div class="anat-chart frame reveal">
+      <LadderChart ladder={quake.ladders[0]} accent={quake.accent} uid="home-quake" compact />
+    </div>
+  </section>
+
+  <section class="losses-sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 class="section reveal">We publish<br /><em>the losses.</em></h2>
+        <p class="muted reveal">
+          Every model is graded beside a classical method and a dumb baseline. {s.wins} rows won, {s.losses} lost,
+          {s.ties} tied or mixed. A model that can't say where it fails isn't finished.
+        </p>
+      </div>
+      <ul class="loss-list">
+        {losses.map(({ m, text }, i) => (
+          <li class="reveal" style={`--c:${m.accent}; transition-delay:${(i % 3) * 60}ms`}>
+            <a href={url(`models/${m.id}/#exam`)}>
+              <span class="kicker">{m.name}</span>
+              <p>{text}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <a class="btn" href={url('scoreboard/')}>The full scoreboard <span class="arrow">→</span></a>
+    </div>
+  </section>
+
+  <section class="wrap next-sec">
+    <div class="next-grid">
+      <div>
+        <p class="kicker tick-label">Next up</p>
+        <h2 class="section reveal">Physics → data →<br /><em>a real exam.</em></h2>
+        <p class="muted reveal">Twelve more problems have physics to simulate, public data, and an exam lined up. Pick one up.</p>
+        <ul class="ideas">
+          {ideas.map((i) => (
+            <li class="reveal"><b>{i.name}</b> <span class="faint mono">{i.domain}</span><br /><span class="muted">{i.question}</span></li>
+          ))}
+        </ul>
+        <a class="more mono" href={url('backlog/')}>The whole backlog →</a>
+      </div>
+      <div class="help frame">
+        <p class="kicker">Help wanted — exams waiting on data</p>
+        {help.map(({ m, h }) => (
+          <div class="help-item" style={`--c:${m.accent}`}>
+            <span class="display hn">{m.name}</span>
+            <p>{h}</p>
+          </div>
+        ))}
+        <p class="kicker start">Start here</p>
+        <pre><code>{`git clone ${REPO_URL}
+cd ML-Ratchet && pip install -e .
+mlratchet list
+mlratchet demo quakenet
+mlratchet new gridpulse`}</code></pre>
+        <a class="btn" href={url('contribute/')}>Add a model <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { padding-top: clamp(40px, 8vw, 96px); }
+  .eyebrow { margin: 0 0 22px; color: var(--signal); }
+  .title { font-size: clamp(58px, 11.5vw, 168px); line-height: 0.86; letter-spacing: -0.035em; margin-bottom: 34px; }
+  .title em { color: var(--ink-2); }
+  .lede-row { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 40px; align-items: end; margin-bottom: 44px; }
+  .lede { font-size: clamp(17px, 1.6vw, 20px); line-height: 1.55; margin: 0; max-width: 60ch; color: var(--ink-2); }
+  .lede b { color: var(--ink); font-weight: 600; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .hero-figure { margin-bottom: 36px; }
+  .stats { display: grid; grid-template-columns: repeat(6, 1fr); margin: 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
+  .stats div { padding: 16px 16px 18px 0; border-right: 1px solid var(--rule); }
+  .stats div + div { padding-left: 16px; }
+  .stats div:last-child { border-right: 0; }
+  .stats dt { min-height: 2.6em; }
+  .stats dd { margin: 6px 0 0; font-size: clamp(28px, 3.4vw, 46px); letter-spacing: -0.04em; line-height: 1; }
+  .signal { color: var(--signal); }
+
+  .rule-sec { margin-top: clamp(80px, 12vw, 150px); padding-block: clamp(60px, 9vw, 110px); background: var(--ink); color: var(--paper); --rule: color-mix(in srgb, var(--paper) 18%, transparent); }
+  .rule-sec .kicker { color: color-mix(in srgb, var(--paper) 60%, transparent); }
+  .rule-quote { font-size: clamp(32px, 4.6vw, 64px); line-height: 1.05; margin: 22px 0 64px; max-width: 22ch; max-width: 1050px; }
+  .rule-quote em { color: var(--signal); }
+  .hl { background: linear-gradient(transparent 62%, color-mix(in srgb, var(--signal) 45%, transparent) 62% 92%, transparent 92%); }
+  .inline { font-size: 0.62em; vertical-align: 0.12em; padding: 0 0.2em; border: 1px solid color-mix(in srgb, var(--paper) 40%, transparent); border-radius: 3px; }
+  .steps { list-style: none; margin: 0 0 36px; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); border-top: 1px solid var(--rule); }
+  .steps li { padding: 20px 18px 8px 0; border-right: 1px solid var(--rule); }
+  .steps li + li { padding-left: 18px; }
+  .steps li:last-child { border-right: 0; }
+  .steps .n { font-size: 11px; color: var(--signal); }
+  .steps h3 { font-family: var(--display); font-size: 27px; line-height: 1; margin: 12px 0 10px; }
+  .steps p { font-size: 14.5px; line-height: 1.5; color: color-mix(in srgb, var(--paper) 72%, transparent); }
+  .more { font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; color: var(--signal); }
+
+  .collection { margin-top: clamp(80px, 11vw, 140px); }
+  .sec-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: end; margin-bottom: 36px; }
+  .sec-head p { margin: 0; max-width: 52ch; }
+  .section em { color: var(--ink-2); }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+
+  .anatomy { margin-top: clamp(90px, 12vw, 150px); display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr); gap: 48px; align-items: start; }
+  .anat-text { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 18px; }
+  .anat-text .section { margin: 4px 0 6px; }
+  .anat-text p { margin: 0; }
+  .anat-text .btn { align-self: flex-start; margin-top: 8px; }
+  .anat-chart { padding: 22px 22px 14px; }
+
+  .losses-sec { margin-top: clamp(90px, 12vw, 150px); padding-block: clamp(60px, 8vw, 100px); background: var(--paper-2); border-block: 1px solid var(--rule); }
+  .loss-list { list-style: none; margin: 0 0 32px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--ink); }
+  .loss-list li { border-bottom: 1px solid var(--rule); border-right: 1px solid var(--rule); }
+  .loss-list li:nth-child(3n) { border-right: 0; }
+  .loss-list a { display: block; height: 100%; padding: 20px 20px 22px 0; text-decoration: none; color: var(--ink); transition: background 0.3s; }
+  .loss-list li:not(:nth-child(3n + 1)) a { padding-left: 20px; }
+  .loss-list a:hover { background: color-mix(in srgb, var(--c) 7%, transparent); }
+  .loss-list .kicker { color: var(--c); }
+  .loss-list p { margin: 8px 0 0; font-size: 15.5px; line-height: 1.45; }
+  .loss-list p::before { content: '▼ '; color: var(--loss); font-size: 0.7em; vertical-align: 0.15em; }
+
+  .next-sec { margin-top: clamp(90px, 12vw, 150px); }
+  .next-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: start; }
+  .next-grid .section { margin: 14px 0 18px; }
+  .ideas { list-style: none; padding: 0; margin: 26px 0 22px; border-top: 1px solid var(--rule); }
+  .ideas li { padding: 12px 0; border-bottom: 1px solid var(--rule); font-size: 15px; line-height: 1.45; }
+  .ideas .mono { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; margin-left: 6px; }
+  .help { padding: 26px; display: flex; flex-direction: column; gap: 16px; }
+  .help-item { border-left: 3px solid var(--c); padding-left: 14px; }
+  .help-item p { margin: 4px 0 0; font-size: 14px; color: var(--ink-2); }
+  .hn { font-size: 26px; }
+  .start { margin-top: 8px; }
+  .help pre { margin: 0; }
+  .help .btn { align-self: flex-start; }
+
+  @media (max-width: 1020px) {
+    .stats { grid-template-columns: repeat(3, 1fr); }
+    .stats div:nth-child(3) { border-right: 0; }
+    .stats div:nth-child(4) { padding-left: 0; }
+    .stats div:nth-child(-n + 3) { border-bottom: 1px solid var(--rule); }
+    .steps { grid-template-columns: repeat(3, 1fr); }
+    .steps li:nth-child(3) { border-right: 0; }
+    .steps li:nth-child(4) { padding-left: 0; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .anatomy { grid-template-columns: minmax(0, 1fr); }
+    .anat-text { position: static; }
+    .loss-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .loss-list li:nth-child(3n) { border-right: 1px solid var(--rule); }
+    .loss-list li:nth-child(2n) { border-right: 0; }
+    .loss-list li a { padding-left: 20px !important; }
+    .loss-list li:nth-child(2n + 1) a { padding-left: 0 !important; }
+  }
+  @media (max-width: 720px) {
+    .lede-row, .sec-head, .next-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+    .ctas { justify-content: flex-start; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stats div { border-right: 1px solid var(--rule) !important; padding-left: 0 !important; padding-right: 12px; border-bottom: 1px solid var(--rule); }
+    .stats div:nth-child(2n) { border-right: 0 !important; padding-left: 14px !important; }
+    .steps { grid-template-columns: 1fr; }
+    .steps li { border-right: 0 !important; padding-left: 0 !important; border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
+    .grid, .loss-list { grid-template-columns: 1fr; }
+    .loss-list li { border-right: 0 !important; }
+    .loss-list li a { padding-left: 0 !important; }
+  }
+</style>

@@ -1,0 +1,128 @@
+id: cellsense
+name: CellSense
+version: "1.1"
+status: partial
+released: 2026-10-31
+order: 3
+domain: Energy
+tags: [batteries, state of health, lifetime prediction, electrochemistry, uncertainty]
+accent: "#12b76a"
+tagline: Battery health and remaining life from one fast discharge.
+question: How worn is this battery cell, why, and how many cycles does it have left?
+summary: >-
+  CellSense reads one fast discharge curve of a lithium-ion cell and returns its total capacity, resistance,
+  how much lithium and electrode material it has lost, and a forecast of its cycle life. It learned from an
+  electrochemical simulator calibrated on six real cells, and was examined on 118 others.
+
+reads: One 4C discharge curve (capacity vs voltage, plus temperature) of an A123 LFP/graphite 18650 cell; optionally a reference curve from when it was new.
+returns:
+  - Total capacity ± error bar, and pulse resistance
+  - Lithium lost, graphite lost, cathode lost (degradation modes)
+  - Cycle-life forecast with a range
+  - A partial-discharge reading for curves that stop before 2.0 V
+
+physics:
+  summary: >-
+    A vectorized single-particle model of each electrode (PyBaMM Prada2013 open-circuit curves, exact Fickian
+    diffusion, Butler-Volmer kinetics, lumped thermal model) with aging: SEI growth (lithium loss), graphite and
+    cathode loss, transport polarisation, and a growing share of slow, poorly connected graphite — the one
+    mechanism that fits early-life change on all six calibration cells.
+  simulator:
+    - Discharge at 4.4 A to 2.0 V then a hold, as in Severson et al. 2019
+    - Aging model v2.1 — slow graphite share grows as cycles^0.8 and levels off at 8–14%
+    - SEI loss linear in cycles (these cells aren't √t)
+    - Late transport polarisation growth, and a lifetime bank of whole aging trajectories with a knee
+  checks:
+    - "Matches PyBaMM 26.10 (SPM, Prada2013): capacity within 0.003–0.21%, median voltage error ≈ 0.3 mV"
+    - Severson's own variance feature reproduces on this data (r = −0.93 over 124 cells)
+noise: Measurement noise and cell-to-cell scatter in simulation; six real cells calibrate the aging priors.
+network: Three 1-D residual CNNs along the voltage axis (health, lifetime, partial discharge), β-NLL error bars
+
+data:
+  - name: Severson et al. 2019 fast-charging dataset (Toyota Research Institute / Stanford / MIT)
+    url: https://data.matr.io/1/
+    licence: CC BY 4.0
+    role: exam, dev
+
+split:
+  dev: Six calibration cells
+  exam: 118 cells, 3,771 health readings; Severson's primary and secondary test splits for lifetime
+
+exam:
+  summary: Health on 118 cells; lifetime from cycle 100 on Severson's own test splits.
+  results:
+    - metric: Total capacity error (full curves)
+      better: lower
+      model: 13.2
+      unit: mAh
+      baselines: []
+      verdict: info
+      note: Fade correlation 0.979.
+    - metric: Lifetime error at cycle 100, primary test
+      better: lower
+      model: 22.4
+      unit: "%"
+      baselines:
+        - { name: "Median guess", kind: dumb, value: 34 }
+        - { name: "Severson's models (trained on 41 real cells)", kind: published, value: "13–15" }
+      verdict: mixed
+    - metric: Lifetime error at cycle 100, secondary test
+      better: lower
+      model: 13.1
+      unit: "%"
+      baselines:
+        - { name: "Median guess", kind: dumb, value: 19 }
+        - { name: "Severson's models", kind: published, value: "9–11" }
+      verdict: mixed
+    - metric: Partial discharge stopped at 0.90 Ah, capacity error
+      better: lower
+      model: 17
+      unit: mAh
+      baselines:
+        - { name: "No-model baseline", kind: dumb, value: 58 }
+      verdict: win
+    - metric: Partial discharge stopped at 0.45 Ah, capacity error
+      better: lower
+      model: 52
+      unit: mAh
+      baselines:
+        - { name: "Assume no fade", kind: dumb, value: 46 }
+      verdict: loss
+  coverage: []
+
+wins:
+  - Beats the median guess on lifetime from cycle 100, using no real labelled cells for training.
+  - Partial discharges to 0.75 Ah or more read 2–3× better than the no-model baseline.
+losses:
+  - Severson's models, trained on 41 real cells, still forecast lifetime better (13–15% vs 22%).
+  - Last quarter of life — worn cells read about 6% too healthy (36% life error).
+  - Partial discharges stopped at 0.6 Ah or below are no better than assuming no fade.
+limits:
+  - It knows one cell — A123 APR18650M1A at Severson's protocol (4C to 2.0 V, 30 °C).
+  - Other chemistries, sizes, rates and temperatures are outside what it learned.
+  - The simulator's graphite-staging features are sharper than real cells'.
+help_wanted:
+  - "Other chemistries: Sandia NCA / NMC / LFP cycling files (Preger et al. 2020) from BatteryArchive, or another public multi-chemistry dataset with a documented download (Zhu et al. 2022 on Zenodo; Pozzato et al. 2022 on Mendeley Data)."
+next:
+  - Multi-chemistry simulator and dev gate once the data is in.
+  - Fix the late-life lifetime bias — feed the lifetime net the health net's capacity reading.
+  - Electrode-scale heterogeneity to soften the staging features.
+
+usage:
+  install: pip install numpy
+  demo: python demo.py
+  python: |
+    import numpy as np, cellsense
+    cs = cellsense.CellSense(); d = np.load("examples/b3c33.npz")
+    r = cs.diagnose(d["Q"][3], d["T"][3], d["Q"][0], d["T"][0], cycle=int(d["cycle"][3]))
+    print(r["q_total"], r["life"], r["lli"])
+
+files:
+  inference: [cellsense.py]
+  weights: [cellsense_weights.npz, cellsense_life_weights.npz, cellsense_partial_weights.npz]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 3

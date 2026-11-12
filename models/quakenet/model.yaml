@@ -1,0 +1,137 @@
+id: quakenet
+name: QuakeNet
+version: "1.2"
+status: released
+released: 2026-11-05
+order: 5
+domain: Geophysics
+tags: [seismology, time series, regression, uncertainty, one-station location]
+accent: "#d9480f"
+tagline: One seismometer, one earthquake.
+question: How big was that earthquake, how far, how deep, and which way?
+summary: >-
+  From 41 minutes of three-component ground velocity at a single seismic station, QuakeNet estimates the
+  earthquake's magnitude, distance, depth and direction, each with an error bar. It learned only from
+  simulated earthquakes laid into real quiet-time station noise, and was examined on 3,105 real records.
+
+reads: 41 minutes of three-component ground velocity (1 sample/s, response removed) from one GSN station, plus a rough P-wave time.
+returns:
+  - Moment magnitude Mw ± 68% bar
+  - Epicentral distance (degrees) ± bar
+  - Depth (km) with a bar on log depth
+  - Back-azimuth (compass direction to the quake) ± bar
+
+physics:
+  summary: >-
+    Green's functions for a 1-D Earth (ak135f) on a 27-depth × 71-distance grid, combined locally into any
+    moment tensor, plus measured corrections for what a 1-D Earth leaves out: slower surface waves, a
+    scattering coda, and per-component surface-wave gains.
+  simulator:
+    - Syngine ak135f_2s Green's functions, 27 depths (2–700 km) × 71 distances (25–95°)
+    - Random double couple plus CLVD; source duration scaled to size
+    - Travel-time stretch, amplitude scatter, sensor misorientation
+    - Surface-wave slow-down, scattering coda and per-component gains, all measured on dev records
+    - 70% of sources drawn from the 1990–2011 catalogue (before every exam event)
+  checks:
+    - "Local synthesis vs Syngine full synthetics: correlation 0.9999 on equatorial receivers"
+noise: 1,284 real quiet-time windows from 127 GSN stations
+network: 1-D residual CNN, 7 stride-2 blocks, 1.44 M parameters; β-NLL on Mw, distance, log depth; von Mises NLL on back-azimuth
+
+data:
+  - name: USGS ComCat catalogue and moment tensors
+    url: https://earthquake.usgs.gov/earthquakes/search/
+    licence: Public domain (U.S. Government)
+    role: truth
+  - name: EarthScope / IRIS DMC waveforms (IU and II networks)
+    url: https://ds.iris.edu/ds/nodes/dmc/
+    licence: Open; cite the networks (IU, II)
+    role: exam, dev, noise
+  - name: EarthScope Syngine Green's functions (ak135f)
+    url: https://ds.iris.edu/ds/products/syngine/
+    licence: Open; cite Syngine
+    role: physics
+
+split:
+  dev: 74 records from 40 events (fixed seed)
+  exam: 3,105 records from 1,734 events, M ≥ 5.5, 2012–2025, distance 25–95°
+
+exam:
+  summary: 3,105 real one-station records.
+  results:
+    - metric: Magnitude, median |error|
+      better: lower
+      model: 0.13
+      unit: Mw
+      baselines:
+        - { name: "Ms, dev-calibrated", kind: classical, value: 0.57 }
+      verdict: win
+    - metric: Distance, median |error|
+      better: lower
+      model: 5.1
+      unit: deg
+      baselines:
+        - { name: "S−P time", kind: classical, value: 13.0 }
+      verdict: win
+    - metric: Back-azimuth, median |error|
+      better: lower
+      model: 6.0
+      unit: deg
+      baselines:
+        - { name: "P-wave polarisation", kind: classical, value: 43.7 }
+      verdict: win
+    - metric: Depth within a factor of 2
+      better: higher
+      model: 46
+      unit: "%"
+      baselines:
+        - { name: "Always guess 31 km", kind: dumb, value: 22 }
+      verdict: win
+    - metric: Shallow quakes (≤ 70 km), median depth |error|
+      better: lower
+      model: 33
+      unit: km
+      baselines:
+        - { name: "Always guess 31 km", kind: dumb, value: 21 }
+      verdict: loss
+  coverage:
+    - { output: Mw, actual: 63 }
+    - { output: Distance, actual: 66 }
+    - { output: Depth, actual: 51 }
+    - { output: Back-azimuth, actual: 68 }
+
+wins:
+  - Magnitude, distance and direction from one station, far ahead of the classical one-station methods.
+  - "Deep quakes (> 70 km): median depth error 52 km against 136 km for the guess; 82% within a factor of 2."
+losses:
+  - Shallow quakes are read too deep (median ratio 3.7 on the exam); always guessing 31 km beats it there.
+  - Very deep quakes (500–700 km) read too shallow (ratio 0.83).
+limits:
+  - Distances 25–95° only, magnitudes about 5.5–8, long-period (LH) data.
+  - One-station epicentre misses by a median 764 km.
+  - Depth error bars are too narrow (51% coverage for a 68% bar).
+  - Magnitude bias rose to +0.05 at rung 7; watch it.
+next:
+  - Shallow depth, continued — source-region structure, overtones, or a saliency map on real vs twin records.
+  - Multi-station reading, which turns the one-station locator into a real one.
+  - Regional distances (< 25°) and broadband channels for M4.5+.
+
+usage:
+  install: pip install numpy scipy
+  demo: python demo.py
+  python: |
+    import numpy as np, json
+    from quakenet import QuakeNet
+    net = QuakeNet()
+    z = np.load("examples/us6000m0xl_IU_POHA.npz"); meta = json.loads(str(z["meta"]))
+    r = net.read(z["zne"], meta["p_guess"])
+    print(r["mw"], r["dist"], r["depth"], r["baz"])
+
+files:
+  inference: [quakenet.py, pipeline.py]
+  weights: [quakenet_weights.npz]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 3

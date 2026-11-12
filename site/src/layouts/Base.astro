@@ -1,0 +1,221 @@
+---
+import '../styles/global.css';
+import RatchetMark from '../components/RatchetMark.astro';
+import { url } from '../lib/url';
+import { REPO_URL } from '../lib/data';
+
+interface Props {
+  title?: string;
+  description?: string;
+  accent?: string;
+  wide?: boolean;
+}
+const {
+  title,
+  description = 'Physics-first machine learning. Every model learned only from simulations, moved up a rung only when it beat a frozen test and a real dev set, and was graded once on real data it never saw.',
+  accent,
+} = Astro.props;
+const fullTitle = title ? `${title} · ML Ratchet` : 'ML Ratchet — trained on physics, graded on reality';
+const path = Astro.url.pathname;
+const nav = [
+  { href: 'models/', label: 'Models' },
+  { href: 'method/', label: 'Method' },
+  { href: 'scoreboard/', label: 'Scoreboard' },
+  { href: 'backlog/', label: 'Backlog' },
+  { href: 'contribute/', label: 'Contribute' },
+];
+const canonical = new URL(path, Astro.site);
+---
+<!doctype html>
+<html lang="en" class="no-js" style={accent ? `--accent:${accent}` : undefined}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
+    <meta name="theme-color" content="#f2eee4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0c0d0b" media="(prefers-color-scheme: dark)" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(url('og.png'), Astro.site)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>
+      (function () {
+        document.documentElement.classList.remove('no-js');
+        try {
+          var t = localStorage.getItem('mlr-theme');
+          if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip btn" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="wrap bar">
+        <a class="brand" href={url()} aria-label="ML Ratchet home">
+          <RatchetMark size={26} />
+          <span class="brand-name">ML&nbsp;Ratchet</span>
+        </a>
+        <nav aria-label="Main">
+          <ul>
+            {nav.map((n) => (
+              <li><a href={url(n.href)} aria-current={path.startsWith(url(n.href)) ? 'page' : undefined}>{n.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+        <div class="tools">
+          <a class="gh" href={REPO_URL} aria-label="Source on GitHub">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            <span class="gh-label">GitHub</span>
+          </a>
+          <button class="theme" type="button" aria-label="Switch light or dark theme" title="Light / dark">
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7.2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9 1.8a7.2 7.2 0 0 1 0 14.4z" fill="currentColor"/></svg>
+          </button>
+          <button class="menu" type="button" aria-label="Menu" aria-expanded="false">
+            <span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap foot">
+        <div class="foot-brand">
+          <RatchetMark size={34} />
+          <p class="display foot-line">Trained on physics.<br /><em>Graded on reality.</em></p>
+        </div>
+        <div class="foot-cols">
+          <div>
+            <p class="kicker">Collection</p>
+            <a href={url('models/')}>All models</a>
+            <a href={url('scoreboard/')}>Scoreboard</a>
+            <a href={url('backlog/')}>Idea backlog</a>
+            <a href={url('roadmap/')}>Roadmap</a>
+          </div>
+          <div>
+            <p class="kicker">Method</p>
+            <a href={url('method/')}>The method</a>
+            <a href={url('lessons/')}>Lessons</a>
+            <a href={url('contract/')}>Model contract</a>
+            <a href={url('data/')}>Data sources</a>
+          </div>
+          <div>
+            <p class="kicker">Build</p>
+            <a href={url('contribute/')}>Add a model</a>
+            <a href={url('agent-brief/')}>Agent brief</a>
+            <a href={REPO_URL}>Source</a>
+            <a href={`${REPO_URL}/blob/main/DATA_LICENSES.md`}>Data licences</a>
+          </div>
+        </div>
+      </div>
+      <div class="wrap fine">
+        <span class="mono faint">Code and weights MIT · real data under its providers' terms · BeatNet is not a medical device</span>
+      </div>
+    </footer>
+
+    <script>
+      const root = document.documentElement;
+      document.querySelector('.theme')?.addEventListener('click', () => {
+        const dark = root.dataset.theme
+          ? root.dataset.theme === 'dark'
+          : matchMedia('(prefers-color-scheme: dark)').matches;
+        root.dataset.theme = dark ? 'light' : 'dark';
+        try { localStorage.setItem('mlr-theme', root.dataset.theme); } catch {}
+      });
+      const menu = document.querySelector<HTMLButtonElement>('.menu');
+      menu?.addEventListener('click', () => {
+        const open = document.body.classList.toggle('nav-open');
+        menu.setAttribute('aria-expanded', String(open));
+      });
+      const io = new IntersectionObserver(
+        (es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }),
+        { rootMargin: '0px 0px -8% 0px' },
+      );
+      document.querySelectorAll('.reveal, [data-draw]').forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--paper) 86%, transparent);
+    backdrop-filter: blur(10px) saturate(1.2);
+    -webkit-backdrop-filter: blur(10px) saturate(1.2);
+    border-bottom: 1px solid var(--rule);
+  }
+  .bar { display: flex; align-items: center; gap: 24px; height: 60px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+  .brand-name { font-family: var(--display); font-size: 25px; letter-spacing: -0.01em; line-height: 1; }
+  nav { margin-left: auto; }
+  nav ul { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+  nav a {
+    display: block;
+    padding: 8px 12px;
+    font-family: var(--mono);
+    font-variation-settings: 'wdth' 87.5;
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink-2);
+    border-radius: var(--radius);
+    transition: color 0.2s, background 0.2s;
+  }
+  nav a:hover { color: var(--ink); background: var(--paper-2); }
+  nav a[aria-current='page'] { color: var(--ink); box-shadow: inset 0 -2px 0 var(--accent); border-radius: 0; }
+  .tools { display: flex; align-items: center; gap: 4px; }
+  .tools a, .tools button {
+    display: inline-flex; align-items: center; gap: 8px;
+    height: 36px; padding: 0 10px;
+    color: var(--ink-2); background: none; border: 1px solid transparent; border-radius: var(--radius);
+    cursor: pointer; text-decoration: none;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .tools a:hover, .tools button:hover { color: var(--ink); border-color: var(--rule); }
+  .menu { display: none !important; flex-direction: column; justify-content: center; gap: 5px; width: 40px; }
+  .menu span { display: block; width: 18px; height: 1.5px; background: currentColor; transition: transform 0.3s var(--ease); }
+
+  @media (max-width: 860px) {
+    .gh-label { display: none; }
+    .menu { display: inline-flex !important; }
+    nav {
+      position: fixed; inset: 60px 0 auto 0; margin: 0;
+      background: var(--paper); border-bottom: 1px solid var(--rule);
+      transform: translateY(-120%); transition: transform 0.4s var(--ease);
+      z-index: -1;
+    }
+    nav ul { flex-direction: column; padding: 12px var(--gutter) 20px; }
+    nav a { font-size: 14px; padding: 14px 0; border-bottom: 1px solid var(--rule-2); border-radius: 0; }
+    :global(body.nav-open) nav { transform: none; }
+    :global(body.nav-open) .menu span:first-child { transform: translateY(3.25px) rotate(45deg); }
+    :global(body.nav-open) .menu span:last-child { transform: translateY(-3.25px) rotate(-45deg); }
+    .tools { margin-left: auto; }
+  }
+
+  .site-footer { margin-top: 140px; border-top: 1px solid var(--ink); background: var(--paper-2); }
+  .foot { display: grid; grid-template-columns: 1.2fr 2fr; gap: 48px; padding-block: 56px 40px; }
+  .foot-brand { display: flex; flex-direction: column; gap: 22px; }
+  .foot-line { font-size: clamp(34px, 4vw, 48px); }
+  .foot-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .foot-cols div { display: flex; flex-direction: column; gap: 8px; }
+  .foot-cols a { text-decoration: none; color: var(--ink-2); font-size: 15px; }
+  .foot-cols a:hover { color: var(--accent); }
+  .fine { padding-block: 18px 28px; border-top: 1px solid var(--rule); }
+  .fine span { font-size: 11px; }
+  @media (max-width: 760px) {
+    .foot { grid-template-columns: 1fr; }
+    .foot-cols { grid-template-columns: 1fr 1fr; }
+  }
+</style>

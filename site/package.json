@@ -1,0 +1,26 @@
+{
+  "name": "ml-ratchet-site",
+  "private": true,
+  "type": "module",
+  "description": "The ML Ratchet website, built from models/*/model.yaml, ratchet.yaml and docs/.",
+  "scripts": {
+    "labs": "node scripts/copy-labs.mjs",
+    "dev": "npm run labs && astro dev",
+    "build": "npm run labs && astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.7.4",
+    "@fontsource-variable/martian-mono": "5.2.6",
+    "@fontsource-variable/schibsted-grotesk": "5.2.6",
+    "@fontsource/instrument-serif": "5.2.6",
+    "astro": "5.18.2",
+    "js-yaml": "4.1.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.4",
+    "@types/js-yaml": "4.0.9",
+    "typescript": "5.9.3"
+  }
+}

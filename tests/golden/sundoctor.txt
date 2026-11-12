@@ -1,0 +1,30 @@
+
+PVDAQ 2107, inverter 11, Jun-Nov 2019
+  with irradiance sensor: 182 days, 36,602 kWh made
+    lost to outage           0.11%  (41 kWh)
+    lost to clipping         0.36%  (138 kWh)
+    lost to shading          0.45%  (170 kWh)
+    lost to soiling          1.81%  (690 kWh)
+    lost to dead_strings     1.36%  (519 kWh)
+    days a string failed or was repaired: 2019-09-27, 2019-10-15, 2019-10-16
+
+PVDAQ 2107, inverter 11, Jun-Nov 2019
+  home (no irradiance sensor): 183 days, 36,630 kWh made
+    lost to outage           0.53%  (209 kWh)
+    lost to clipping         0.49%  (194 kWh)
+    lost to shading          0.52%  (206 kWh)
+    lost to soiling          4.25%  (1,676 kWh)
+    lost to dead_strings     1.22%  (482 kWh)
+    days a string failed or was repaired: 2019-06-10, 2019-09-27
+  (the 23 sibling inverters show one string out from 2019-09-27, restored by 2019-10-16)
+
+PVDAQ 9068, module 2 (single-axis trackers), Dec 2017-Mar 2018
+  with irradiance sensor: 104 days, 221,175 kWh made
+    lost to outage           2.72%  (7,058 kWh)
+    lost to clipping         2.19%  (5,693 kWh)
+    lost to snow             2.47%  (6,422 kWh)
+    lost to shading          3.43%  (8,905 kWh)
+    lost to stuck_trackers   3.19%  (8,297 kWh)
+    lost to soiling          0.68%  (1,776 kWh)
+    lost to dead_strings     0.16%  (412 kWh)
+    snow days (over 20% lost): 2018-01-21 (100%), 2018-01-22 (95%), 2018-01-23 (43%), 2018-02-09 (28%), 2018-02-10 (42%), 2018-02-19 (46%), 2018-02-20 (48%)

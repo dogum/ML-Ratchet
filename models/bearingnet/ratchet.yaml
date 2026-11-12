@@ -1,0 +1,18 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json.
+model: bearingnet
+ladders:
+  - name: BearingNet
+    objective: Fault balanced accuracy plus speed and size skill on the frozen simulated set (val2)
+    rule: Keep if the objective rises by more than 0.01 AND dev balanced accuracy does not fall.
+    margin: 0.01
+    dev_gate: Dev balanced accuracy (CWRU + Paderborn dev files) may not fall
+    frozen_sets: [val, val2]
+    scored_on: val2
+    note: "The big win came from a twin test — rung 1 got 100% of simulated dev twins right but only 22% of real CWRU dev files. Real faults were 10–25 dB above background and rang longer; physics v2 fixed that."
+    columns_source: Dev balanced accuracy (real dev files)
+    columns: [Dev balanced accuracy]
+    rungs:
+      - { id: r1, change: "v1 physics (textbook)", sim: 0.572, decision: kept, why: First rung., metrics: [0.31] }
+      - { id: r2, change: "v2 physics, calibrated on dev (louder faults, longer ringing, shaft modulation)", sim: 0.691, decision: released, why: "+0.119; dev 0.31 → 0.68.", metrics: [0.68] }
+      - { id: r3, change: "HypNet — one trunk shared across fault hypotheses", sim: 0.692, decision: rejected, why: "+0.001 and the dev gate failed (0.64).", metrics: [0.64] }
+      - { id: r4, change: "Rung 2 + band dropout", sim: 0.690, decision: rejected, why: "Score fell (−0.001).", metrics: [0.69] }

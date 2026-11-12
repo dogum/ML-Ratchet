@@ -1,0 +1,129 @@
+{
+ "OR": {
+  "h1": {
+   "theory_hz": 105.87,
+   "found_hz": 105.835,
+   "rel_err": -0.00033,
+   "prominence": 33.3
+  },
+  "h2": {
+   "theory_hz": 211.741,
+   "found_hz": 211.67,
+   "rel_err": -0.00033,
+   "prominence": 31.1
+  },
+  "h3": {
+   "theory_hz": 317.611,
+   "found_hz": 317.505,
+   "rel_err": -0.00033,
+   "prominence": 25.5
+  }
+ },
+ "IR": {
+  "h1": {
+   "theory_hz": 159.93,
+   "found_hz": 159.668,
+   "rel_err": -0.00164,
+   "prominence": 21.6
+  },
+  "h2": {
+   "theory_hz": 319.859,
+   "found_hz": 319.336,
+   "rel_err": -0.00164,
+   "prominence": 17.7
+  },
+  "h3": {
+   "theory_hz": 479.789,
+   "found_hz": 479.004,
+   "rel_err": -0.00164,
+   "prominence": 13.7
+  },
+  "sideband-1": {
+   "theory_hz": 130.396,
+   "found_hz": 130.371,
+   "prominence": 17.2
+  },
+  "sideband+1": {
+   "theory_hz": 189.463,
+   "found_hz": 189.331,
+   "prominence": 19.6
+  }
+ },
+ "B": {
+  "h1": {
+   "theory_hz": 139.204,
+   "found_hz": 139.16,
+   "rel_err": -0.00031,
+   "prominence": 22.7
+  },
+  "h2": {
+   "theory_hz": 278.407,
+   "found_hz": 278.32,
+   "rel_err": -0.00031,
+   "prominence": 21.2
+  },
+  "h3": {
+   "theory_hz": 417.611,
+   "found_hz": 417.48,
+   "rel_err": -0.00031,
+   "prominence": 13.0
+  },
+  "sideband-1": {
+   "theory_hz": 127.44,
+   "found_hz": 127.441,
+   "prominence": 19.8
+  },
+  "sideband+1": {
+   "theory_hz": 150.967,
+   "found_hz": 150.879,
+   "prominence": 21.0
+  }
+ },
+ "kinematics_vs_CWRU_table": {
+  "SKF6205": {
+   "BPFI": {
+    "ours": 5.41522,
+    "published": 5.4152,
+    "rel_err": 4.5175136795805315e-06
+   },
+   "BPFO": {
+    "ours": 3.58478,
+    "published": 3.5848,
+    "rel_err": 6.824157575913148e-06
+   },
+   "FTF": {
+    "ours": 0.39831,
+    "published": 0.39828,
+    "rel_err": 7.128897590802374e-05
+   },
+   "B2": {
+    "ours": 4.71344,
+    "published": 4.7135,
+    "rel_err": 1.2007758630527832e-05
+   }
+  },
+  "SKF6203": {
+   "BPFI": {
+    "ours": 4.94688,
+    "published": 4.9469,
+    "rel_err": 3.927629428135404e-06
+   },
+   "BPFO": {
+    "ours": 3.05312,
+    "published": 3.053,
+    "rel_err": 3.911876515494406e-05
+   },
+   "FTF": {
+    "ours": 0.38164,
+    "published": 0.3817,
+    "rel_err": 0.00015737831084028375
+   },
+   "B2": {
+    "ours": 3.98768,
+    "published": 3.9874,
+    "rel_err": 6.958112026667074e-05
+   }
+  }
+ },
+ "bin_width_hz": 0.3662109375
+}

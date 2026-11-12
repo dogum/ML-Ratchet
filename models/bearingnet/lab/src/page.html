@@ -1,0 +1,409 @@
+<title>BearingNet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a machinist's inspection sheet. One column of reading text, wide instrument panels (spectra) that break out to the full measure. */
+:root {
+  --bg: #eef0f2; --panel: #f8f9fa; --ink: #1c232b; --mute: #5a6672; --rule: #c9d0d6;
+  --accent: #2443b8;           /* layout-fluid blue */
+  --brass: #a8761c;
+  --c-N: #5d7a63; --c-OR: #2f5fd0; --c-IR: #c0711a; --c-B: #a63b86;
+  --good: #2e7d4f; --bad: #b8402e; --plot-bg: #ffffff; --grid: #e2e6ea;
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12161b; --panel: #1a2027; --ink: #e3e8ed; --mute: #98a4b0; --rule: #2e3742; --accent: #7f9bff; --brass: #d7a54a;
+  --c-N: #8fb597; --c-OR: #7aa0ff; --c-IR: #eca04a; --c-B: #e07cc4; --good: #6cc790; --bad: #f08a76; --plot-bg: #0f1317; --grid: #232b34; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #12161b; --panel: #1a2027; --ink: #e3e8ed; --mute: #98a4b0; --rule: #2e3742; --accent: #7f9bff; --brass: #d7a54a;
+  --c-N: #8fb597; --c-OR: #7aa0ff; --c-IR: #eca04a; --c-B: #e07cc4; --good: #6cc790; --bad: #f08a76; --plot-bg: #0f1317; --grid: #232b34; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body); margin: 0 }
+.wrap { max-width: 1060px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 }
+section { padding-block: 44px 8px; border-top: 1px solid var(--rule) }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.02; margin: 0; letter-spacing: 0.01em }
+h1 { font-size: clamp(64px, 12vw, 128px); font-weight: 800; text-transform: uppercase }
+h2 { font-size: clamp(32px, 5vw, 46px); font-weight: 800; text-transform: uppercase; margin-bottom: 14px }
+h3 { font-size: 22px; font-weight: 600; text-transform: uppercase; margin: 18px 0 8px }
+p { max-width: 66ch; margin: 0 0 12px }
+.lead { font-size: 19px; max-width: 60ch }
+.eyebrow { font: 500 12px/1.3 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute) }
+.mono, code { font-family: var(--mono); font-size: 0.92em }
+a { color: var(--accent) }
+.hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 28px; align-items: center; padding-block: 36px 28px }
+.hero > div { min-width: 0 }
+.hero h1 span { color: var(--accent) }
+#bearing { width: 100%; max-width: 420px; aspect-ratio: 1 / 1.18; display: block; margin: 0 auto }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--rule); background: var(--panel); margin-top: 18px }
+.stat { padding: 12px 14px; border-right: 1px solid var(--rule); min-width: 0 }
+.stat:last-child { border-right: 0 }
+.stat b { display: block; font: 800 34px/1 var(--display); font-variant-numeric: tabular-nums }
+.stat small { display: block; color: var(--mute); font-size: 13px; line-height: 1.35; margin-top: 4px }
+.panel { background: var(--panel); border: 1px solid var(--rule); padding: 14px }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px }
+.grid2 > * { min-width: 0 }
+.freqs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 1px solid var(--rule); background: var(--panel); margin: 10px 0 14px }
+.freqs div { padding: 10px 12px; border-right: 1px solid var(--rule); min-width: 0 }
+.freqs div:last-child { border-right: 0 }
+.freqs b { font: 600 13px var(--mono); display: block }
+.freqs span { font: 800 28px/1.1 var(--display); font-variant-numeric: tabular-nums }
+.freqs small { display: block; color: var(--mute); font-size: 12.5px; line-height: 1.35 }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 12px }
+.chip { font: 500 12.5px/1 var(--mono); padding: 7px 9px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; display: inline-flex; gap: 6px; align-items: center }
+.chip i { width: 9px; height: 9px; border-radius: 50%; display: inline-block }
+.chip[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--bg) }
+.chip:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+canvas.plot { width: 100%; display: block; background: var(--plot-bg); border: 1px solid var(--rule) }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font: 12.5px var(--mono); color: var(--mute); margin-top: 6px }
+.legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 5px }
+.probs { display: grid; gap: 6px; margin: 6px 0 10px }
+.prob { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) 3.4em; gap: 8px; align-items: center; font-size: 14px }
+.prob .bar { height: 14px; background: var(--grid); position: relative }
+.prob .bar > div { position: absolute; inset: 0 auto 0 0; transition: width .25s }
+.prob .v { font: 500 13px var(--mono); text-align: right; font-variant-numeric: tabular-nums }
+.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 12px; font-size: 14px; margin: 0 }
+.kv dt { color: var(--mute) } .kv dd { margin: 0; font-variant-numeric: tabular-nums }
+.verdict { font: 800 26px/1.1 var(--display); text-transform: uppercase; margin: 2px 0 8px }
+.ok { color: var(--good) } .no { color: var(--bad) }
+.controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 18px; margin-bottom: 12px }
+.ctl label { display: flex; justify-content: space-between; font-size: 13.5px; color: var(--mute) }
+.ctl label output { font: 500 13px var(--mono); color: var(--ink) }
+.ctl input[type=range] { width: 100%; accent-color: var(--accent) }
+select { font: 14px var(--body); padding: 6px; background: var(--panel); color: var(--ink); border: 1px solid var(--rule); width: 100% }
+.seg { display: flex; flex-wrap: wrap; gap: 0 }
+.seg button { font: 500 13px var(--mono); padding: 7px 10px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; margin-right: -1px }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); border-color: var(--accent) }
+.tbl { overflow-x: auto; margin: 8px 0 14px }
+table { border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; min-width: 100% }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap }
+th { font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--mute) }
+td.num, th.num { text-align: right }
+tr.best td { font-weight: 600 }
+.conf { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px }
+.conf table td { text-align: center; min-width: 40px } .conf table th { text-align: center }
+.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; max-width: 72ch }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 2.2em minmax(0, 1fr); gap: 10px }
+.steps li::before { content: counter(s); font: 800 26px/1 var(--display); color: var(--accent) }
+.tag { font: 500 11.5px var(--mono); padding: 2px 6px; border: 1px solid currentColor; text-transform: uppercase; letter-spacing: 0.05em }
+pre { background: var(--panel); border: 1px solid var(--rule); padding: 12px; overflow-x: auto; font: 13px/1.5 var(--mono) }
+.note { color: var(--mute); font-size: 13.5px }
+footer { padding-block: 30px 50px; color: var(--mute); font-size: 13.5px; border-top: 1px solid var(--rule); margin-top: 30px }
+@media (max-width: 760px) {
+  .hero, .grid2 { grid-template-columns: minmax(0, 1fr) }
+  #bearing { max-width: 300px }
+  .freqs { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+  .freqs div:nth-child(2) { border-right: 0 } .freqs div:nth-child(-n+2) { border-bottom: 1px solid var(--rule) }
+  .controls { grid-template-columns: minmax(0, 1fr) }
+  .stat b { font-size: 26px }
+}
+@media (prefers-reduced-motion: reduce) { .prob .bar > div { transition: none } }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Physics + ML collection · rolling-bearing diagnosis</div>
+      <h1>Bearing<span>Net</span></h1>
+      <p class="lead">A crack in a ball bearing clicks every time a ball rolls over it. The click rate is fixed by the bearing's geometry and the shaft speed. BearingNet listens to 2.7 seconds of an accelerometer and says which part is damaged: outer race, inner race or a ball. It never saw a real faulty bearing while learning. It was trained only on simulated defects added into recordings of healthy machines.</p>
+      <p>The question it tests: does a model that learned from physics carry over to a machine it never heard? Short answer: <b id="heroAnswer">see the exam below</b>.</p>
+      <div class="stats" id="heroStats"></div>
+    </div>
+    <div><canvas id="bearing" aria-label="Animated rolling bearing with an outer-race defect; each ball passing the defect makes an impact on the trace below"></canvas></div>
+  </header>
+
+  <section id="physics">
+    <div class="eyebrow">The physics</div>
+    <h2>Four frequencies from geometry</h2>
+    <p>Balls roll between a fixed outer ring and an inner ring that turns with the shaft. The cage carrying the balls turns at a bit under half the shaft speed. From the number of balls <i>n</i>, ball diameter <i>d</i> and pitch diameter <i>D</i>, each kind of defect has its own click rate, in multiples of the shaft speed:</p>
+    <div class="freqs" id="freqs"></div>
+    <p>Each click rings the machine like a small hammer blow, at a few kHz. So the useful trick (the classical method, too) is to band-pass the signal around those kHz resonances, take its envelope, and look at the envelope's spectrum. A fault shows up as a comb of lines at its click rate. Inner-race defects turn with the shaft, through the loaded zone and out again, so their lines get side-lines one shaft speed apart. Ball defects get side-lines at the cage speed.</p>
+    <p class="note" id="kinCheck"></p>
+  </section>
+
+  <section id="explorer">
+    <div class="eyebrow">Real data · exam recordings</div>
+    <h2>Explore real recordings</h2>
+    <p>Recordings from the final exam, drawn at random within each class (fixed seed, not picked for how well the network did). The network runs here in your browser on the same 2.7 s window the Python release reads. The coloured lines mark where each fault's comb should sit.</p>
+    <div class="chips" id="exChips" role="group" aria-label="Choose a recording"></div>
+    <div class="grid2">
+      <div>
+        <canvas class="plot" id="exWave" height="120"></canvas>
+        <div class="note" id="exWaveCap" style="margin:4px 0 10px"></div>
+        <canvas class="plot" id="exEnv" height="260"></canvas>
+        <div class="legend" id="envLegend"></div>
+      </div>
+      <div class="panel">
+        <div class="eyebrow" id="exTitle"></div>
+        <div class="verdict" id="exVerdict"></div>
+        <div class="probs" id="exProbs"></div>
+        <dl class="kv" id="exKV"></dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="lab">
+    <div class="eyebrow">Simulator, in your browser</div>
+    <h2>Lab: put a defect in a healthy machine</h2>
+    <p>Pick a real recording of a healthy machine, add a defect, and change the speed, the defect size, how loud the defect is and extra sensor noise. This is a short JavaScript version of the training simulator (one fixed pair of resonances, 1% timing jitter), so the network's job here is easier than on real data.</p>
+    <div class="grid2">
+      <div>
+        <div class="controls">
+          <div class="ctl"><label for="labBg">Healthy background</label><select id="labBg"></select></div>
+          <div class="ctl"><label>Defect</label><div class="seg" id="labCls" role="group" aria-label="Defect type"></div></div>
+          <div class="ctl"><label for="labRpm">Shaft speed <output id="labRpmO"></output></label><input type="range" id="labRpm" min="0.7" max="1.3" step="0.01" value="1"></div>
+          <div class="ctl"><label for="labSize">Defect length <output id="labSizeO"></output></label><input type="range" id="labSize" min="-1" max="0.7" step="0.05" value="-0.3"></div>
+          <div class="ctl"><label for="labSnr">Defect loudness (0.5–5.7 kHz, vs machine) <output id="labSnrO"></output></label><input type="range" id="labSnr" min="-20" max="25" step="1" value="5"></div>
+          <div class="ctl"><label for="labNoise">Extra sensor noise <output id="labNoiseO"></output></label><input type="range" id="labNoise" min="-30" max="20" step="1" value="-30"></div>
+        </div>
+        <canvas class="plot" id="labEnv" height="240"></canvas>
+        <div class="legend" id="labLegend"></div>
+      </div>
+      <div class="panel">
+        <div class="eyebrow">The network reads the lab signal</div>
+        <div class="verdict" id="labVerdict">…</div>
+        <div class="probs" id="labProbs"></div>
+        <dl class="kv" id="labKV"></dl>
+        <p class="note" style="margin-top:10px">The network is told only the bearing geometry and a nominal speed (the background's own speed). Move the speed slider and it has to find the true speed itself.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="exam">
+    <div class="eyebrow">Final exam · real data never used for any choice</div>
+    <h2>The exam</h2>
+    <div id="examText"></div>
+    <div class="tbl"><table id="examTable"></table></div>
+    <h3>Who gets confused with whom</h3>
+    <p class="note">Rows: true condition. Columns: the answer. Counts of readings.</p>
+    <div class="conf" id="confs"></div>
+    <h3>By load, defect size and sensor</h3>
+    <div class="grid2"><div class="tbl"><table id="byLoad"></table></div><div class="tbl"><table id="bySize"></table></div></div>
+    <div id="examMore"></div>
+  </section>
+
+  <section id="ratchet">
+    <div class="eyebrow">How the model improved</div>
+    <h2>The ratchet</h2>
+    <p>Each change (a "rung") was kept only if it beat the current model by more than 0.01 on a frozen set of simulations <b>and</b> did not lose more than 0.03 balanced accuracy on a small real development set (10 CWRU files, 3 Paderborn bearings). When the physics changed, a new frozen set was built and every earlier rung was re-scored on it.</p>
+    <div class="tbl"><table id="rungs"></table></div>
+  </section>
+
+  <section id="built">
+    <div class="eyebrow">Recipe</div>
+    <h2>How it was built</h2>
+    <ol class="steps" id="steps"></ol>
+  </section>
+
+  <section id="limits">
+    <div class="eyebrow">Read before use</div>
+    <h2>Limits</h2>
+    <div id="limitsText"></div>
+  </section>
+
+  <section id="use">
+    <div class="eyebrow">Release</div>
+    <h2>Use it</h2>
+    <p>The release is <code>bearingnet-v1.0.zip</code>: a numpy/scipy-only module, the weights, a demo on real exam recordings, the model card and every training script.</p>
+<pre>import bearingnet as BNet
+net = BNet.BearingNet()
+r = net.read(x, fs=12000, bearing='SKF6205', rpm_nominal=1750)   # or bearing=dict(n=9, d=7.94, D=39.04)
+print(r['condition'], r['p'], r['rpm'], r['rpm_sig'], r['size_mm'])</pre>
+  </section>
+
+  <footer id="credits"></footer>
+</div>
+
+<script id="data" type="application/json">/*DATA*/</script>
+<script id="weights" type="application/json">/*WEIGHTS*/</script>
+<script>/*BNET*/</script>
+<script>/*LAB*/</script>
+<script>
+const D = JSON.parse(document.getElementById('data').textContent);
+const CLS = ['N', 'OR', 'IR', 'B'], NAME = { N: 'Healthy', OR: 'Outer race', IR: 'Inner race', B: 'Ball' };
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const col = (c) => css('--c-' + c);
+const pct = (v, d = 0) => (100 * v).toFixed(d) + '%';
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let NET = null;
+
+function b64f32(s) { const b = atob(s), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u.buffer; }
+function decodeSig(e) { const i16 = new Int16Array(b64f32(e.x)), x = new Float32Array(i16.length); for (let i = 0; i < i16.length; i++) x[i] = i16[i] / 32767 * e.q; return x; }
+
+// ---------- hero ----------
+function hero() {
+  const H = D.headline, s = document.getElementById('heroStats');
+  s.innerHTML = H.stats.map((t) => `<div class="stat"><b>${t.v}</b><small>${t.k}</small></div>`).join('');
+  document.getElementById('heroAnswer').textContent = H.answer;
+}
+function bearingAnim() {
+  const cv = document.getElementById('bearing'), ctx = cv.getContext('2d'), reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W, Hh; const g = D.geomDE, o = BNet.orders(g.n, g.d, g.D, 0); const trace = []; let last = performance.now(), th = 0, hits = [];
+  function size() { const r = cv.getBoundingClientRect(), dpr = devicePixelRatio || 1; cv.width = r.width * dpr; cv.height = r.height * dpr; W = r.width; Hh = r.height; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  size(); addEventListener('resize', size);
+  const shaftRev = 0.08;   // shaft turns per second, shown slowed down
+  function draw(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now; if (!reduce) th += 2 * Math.PI * shaftRev * dt;
+    const cx = W / 2, cy = W / 2, R = W * 0.46, ink = css('--ink'), mute = css('--mute'), acc = css('--accent'), brass = css('--brass'), bg = css('--plot-bg'), rule = css('--rule');
+    ctx.clearRect(0, 0, W, Hh);
+    const ro = R, ri = R * 0.80, rb = R * 0.135, rp = R * 0.655, rin = R * 0.51, rh = R * 0.30;
+    ctx.fillStyle = css('--panel'); ctx.beginPath(); ctx.arc(cx, cy, ro, 0, 7); ctx.arc(cx, cy, ri, 0, 7, true); ctx.fill(); ctx.strokeStyle = ink; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(cx, cy, ro, 0, 7); ctx.stroke(); ctx.beginPath(); ctx.arc(cx, cy, ri, 0, 7); ctx.stroke();
+    // inner ring (rotates with shaft)
+    ctx.beginPath(); ctx.arc(cx, cy, rin, 0, 7); ctx.arc(cx, cy, rh, 0, 7, true); ctx.fillStyle = css('--panel'); ctx.fill(); ctx.beginPath(); ctx.arc(cx, cy, rin, 0, 7); ctx.stroke(); ctx.beginPath(); ctx.arc(cx, cy, rh, 0, 7); ctx.stroke();
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(th); ctx.strokeStyle = mute; ctx.beginPath(); ctx.moveTo(0, -rh); ctx.lineTo(0, -rin); ctx.stroke(); ctx.restore();
+    // load zone shading (bottom) and defect on the outer race at 6 o'clock
+    ctx.strokeStyle = brass; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, ri - 3, Math.PI * 0.25, Math.PI * 0.75); ctx.stroke(); ctx.lineWidth = 1.5;
+    const dA = Math.PI / 2; ctx.fillStyle = acc; ctx.beginPath(); ctx.arc(cx + Math.cos(dA) * ri, cy + Math.sin(dA) * ri, 4.5, 0, 7); ctx.fill();
+    // balls with cage
+    const cage = th * o.FTF;
+    for (let k = 0; k < g.n; k++) {
+      const a = cage + 2 * Math.PI * k / g.n, x = cx + Math.cos(a) * rp, y = cy + Math.sin(a) * rp;
+      let d = ((a - dA) % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI; const near = Math.abs(d) < 0.05;
+      ctx.beginPath(); ctx.arc(x, y, rb, 0, 7); ctx.fillStyle = near ? acc : bg; ctx.fill(); ctx.strokeStyle = ink; ctx.stroke();
+      ctx.save(); ctx.translate(x, y); ctx.rotate(-th * o.BSF * 0.5); ctx.strokeStyle = mute; ctx.beginPath(); ctx.moveTo(-rb * 0.6, 0); ctx.lineTo(rb * 0.6, 0); ctx.stroke(); ctx.restore();
+    }
+    // impacts: a ball crosses the defect every 1/BPFO shaft periods
+    const ph = (cage * g.n / (2 * Math.PI)) - (dA * g.n / (2 * Math.PI));
+    if (Math.floor(ph) !== draw.lastPh) { if (draw.lastPh !== undefined && !reduce) hits.push(now); draw.lastPh = Math.floor(ph); }
+    const ty = W + (Hh - W) * 0.5, tw = W * 0.92, tx = (W - tw) / 2, span = 4000;
+    ctx.strokeStyle = rule; ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(tx + tw, ty); ctx.stroke();
+    ctx.strokeStyle = acc; ctx.beginPath(); hits = hits.filter((h) => now - h < span);
+    for (let i = 0; i <= 400; i++) {
+      const tt = now - span + span * i / 400; let v = 0;
+      for (const h of hits) { const u = (tt - h) / 1000; if (u >= 0 && u < 0.4) v += Math.exp(-u * 12) * Math.sin(u * 160); }
+      const X = tx + tw * i / 400, Y = ty - v * (Hh - W) * 0.32; i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y);
+    }
+    ctx.stroke(); ctx.fillStyle = mute; ctx.font = '11px ' + css('--mono'); ctx.fillText('accelerometer: one ring per ball over the defect', tx, Hh - 4);
+    if (!reduce) requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+}
+
+// ---------- physics ----------
+function physics() {
+  const k = D.kin, f = document.getElementById('freqs');
+  const items = [['BPFO', 'Outer race', 'ball pass, outer race'], ['BPFI', 'Inner race', 'ball pass, inner race'], ['B2', 'Ball (2×BSF)', 'a ball defect hits both races'], ['FTF', 'Cage', 'fundamental train']];
+  f.innerHTML = items.map(([key, nm, sub]) => `<div><b>${key === 'B2' ? '2·BSF' : key}</b><span>${k[key].ours.toFixed(3)}×</span><small>${nm}: ${sub}. CWRU table ${k[key].published}×</small></div>`).join('');
+  document.getElementById('kinCheck').textContent = D.kinNote;
+}
+
+// ---------- plots ----------
+function setupCanvas(cv) { const r = cv.getBoundingClientRect(), dpr = devicePixelRatio || 1, h = +cv.getAttribute('height'); cv.style.height = h + 'px'; cv.width = r.width * dpr; cv.height = h * dpr; const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); return [ctx, r.width, h]; }
+function plotWave(cv, x, fs, seconds) {
+  const [ctx, W, H] = setupCanvas(cv), n = Math.min(x.length, Math.round(seconds * fs)); let m = 0; for (let i = 0; i < n; i++) m = Math.max(m, Math.abs(x[i]));
+  ctx.strokeStyle = css('--grid'); ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke();
+  ctx.strokeStyle = css('--ink'); ctx.lineWidth = 0.8; ctx.beginPath();
+  for (let p = 0; p < W; p++) { const a = Math.floor(p / W * n), b = Math.max(a + 1, Math.floor((p + 1) / W * n)); let lo = 1e9, hi = -1e9; for (let i = a; i < b; i++) { lo = Math.min(lo, x[i]); hi = Math.max(hi, x[i]); } ctx.moveTo(p + 0.5, H / 2 - hi / m * H * 0.46); ctx.lineTo(p + 0.5, H / 2 - lo / m * H * 0.46); }
+  ctx.stroke();
+}
+function plotEnv(cv, ses, fr, geom, fmax, truthFreq) {
+  const [ctx, W, H] = setupCanvas(cv), df = BNet.FS / BNet.NWIN, n = Math.floor(fmax / df), L = 44, B = 26, T = 8, R = 8, pw = W - L - R, ph = H - B - T;
+  let lo = Infinity, hi = -Infinity; const y = new Float64Array(n);
+  for (let i = 1; i < n; i++) { y[i] = Math.log10(ses[i] + 1e-12); } const srt = Array.from(y.slice(3)).sort((a, b) => a - b); lo = srt[Math.floor(srt.length * 0.02)]; hi = srt[srt.length - 1] + 0.1;
+  const X = (f) => L + pw * f / fmax, Y = (v) => T + ph * (1 - (v - lo) / (hi - lo));
+  ctx.font = '11px ' + css('--mono'); ctx.fillStyle = css('--mute'); ctx.strokeStyle = css('--grid'); ctx.lineWidth = 1;
+  const step = fmax > 600 ? 200 : fmax > 300 ? 100 : 50;
+  for (let f = 0; f <= fmax; f += step) { ctx.beginPath(); ctx.moveTo(X(f), T); ctx.lineTo(X(f), T + ph); ctx.stroke(); ctx.fillText(f + (f === 0 ? ' Hz' : ''), X(f) - (f ? 10 : 0), H - 8); }
+  ctx.save(); ctx.translate(11, T + ph / 2); ctx.rotate(-Math.PI / 2); ctx.fillText('envelope power (log)', -55, 0); ctx.restore();
+  const o = BNet.orders(geom.n, geom.d, geom.D, geom.phi || 0), marks = [['OR', o.BPFO], ['IR', o.BPFI], ['B', 2 * o.BSF]];
+  for (const [c, ord] of marks) { ctx.strokeStyle = col(c); ctx.setLineDash([4, 3]); ctx.lineWidth = 1.2; for (let h = 1; h * ord * fr < fmax; h++) { ctx.globalAlpha = h === 1 ? 0.95 : 0.55; ctx.beginPath(); ctx.moveTo(X(h * ord * fr), T); ctx.lineTo(X(h * ord * fr), T + ph); ctx.stroke(); } }
+  ctx.setLineDash([1, 3]); ctx.strokeStyle = css('--mute'); ctx.globalAlpha = 0.8; for (let h = 1; h * fr < fmax; h++) { ctx.beginPath(); ctx.moveTo(X(h * fr), T + ph * 0.75); ctx.lineTo(X(h * fr), T + ph); ctx.stroke(); }
+  ctx.setLineDash([]); ctx.globalAlpha = 1; ctx.strokeStyle = css('--ink'); ctx.lineWidth = 1; ctx.beginPath();
+  for (let i = 1; i < n; i++) { const xx = X(i * df), yy = Y(Math.max(lo, y[i])); i > 1 ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy); } ctx.stroke();
+  ctx.strokeStyle = css('--rule'); ctx.strokeRect(L, T, pw, ph);
+}
+function legend(el) { el.innerHTML = CLS.slice(1).map((c) => `<span><i style="background:${col(c)}"></i>${NAME[c]} comb</span>`).join('') + `<span><i style="background:${css('--mute')}"></i>shaft harmonics (short ticks)</span>`; }
+function probBars(el, p, truth) {
+  el.innerHTML = CLS.map((c, i) => `<div class="prob"><span>${NAME[c]}${c === truth ? ' <span class="tag">true</span>' : ''}</span><div class="bar"><div style="width:${(100 * p[i]).toFixed(1)}%;background:${col(c)}"></div></div><span class="v">${pct(p[i], p[i] < 0.1 && p[i] > 0 ? 1 : 0)}</span></div>`).join('');
+}
+
+// network on one signal: up to 3 windows (like the release reads up to 8)
+function readSignal(x, geom, fNom, maxWin = 1) {
+  const N = BNet.NWIN, starts = []; if (x.length <= N) starts.push(0); else { const k = Math.min(maxWin, Math.floor((x.length - N) / (N / 2)) + 1); for (let i = 0; i < k; i++) starts.push(Math.round(i * (x.length - N) / Math.max(1, k - 1))); }
+  let lp = [0, 0, 0, 0], ft = null; const outs = [];
+  for (const s of starts) {
+    const f = BNet.features(x.subarray(s, s + N), geom, fNom); if (!ft) ft = f;
+    const o = BNet.forward(NET, f.F, f.sc), d = BNet.decode(NET, o, fNom); outs.push(d); d.p.forEach((v, i) => lp[i] += Math.log(Math.max(v, 1e-9)) / starts.length);
+  }
+  lp[0] += (NET.meta.calib && NET.meta.calib.nbias) || 0;   // dev-fitted log-prior on 'healthy' (same as the Python release)
+  const m = Math.max(...lp), e = lp.map((v) => Math.exp(v - m)), s = e.reduce((a, b) => a + b, 0), p = e.map((v) => v / s);
+  const w = outs.map((d) => 1 / (d.fSigRel * d.fSigRel)), sw = w.reduce((a, b) => a + b, 0), f = outs.reduce((a, d, i) => a + d.f * w[i], 0) / sw;
+  return { p, cls: CLS[p.indexOf(Math.max(...p))], f, fSigRel: Math.sqrt(1 / sw), size: outs[0].sizeMm, feat: ft };
+}
+
+// ---------- explorer ----------
+let exSel = 0; const exCache = {};
+function explorer() {
+  const box = document.getElementById('exChips');
+  box.innerHTML = D.examples.map((e, i) => `<button class="chip" aria-pressed="${i === exSel}" data-i="${i}"><i style="background:${col(e.cls)}"></i>${esc(e.short)}</button>`).join('');
+  box.onclick = (ev) => { const b = ev.target.closest('.chip'); if (!b) return; exSel = +b.dataset.i; box.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', c.dataset.i == exSel)); showEx(); };
+  legend(document.getElementById('envLegend')); showEx();
+}
+function showEx() {
+  const e = D.examples[exSel]; if (!exCache[exSel]) { const x = decodeSig(e); exCache[exSel] = { x, r: readSignal(x, e.geom, e.f_nom) }; }
+  const { x, r } = exCache[exSel];
+  plotWave(document.getElementById('exWave'), x, BNet.FS, 0.25);
+  document.getElementById('exWaveCap').textContent = `First 0.25 s of the window, ${e.chan} accelerometer, resampled to 12 kHz.`;
+  plotEnv(document.getElementById('exEnv'), r.feat.ses, e.f_true, e.geom, Math.min(600, 9 * e.f_true * 2.3));
+  document.getElementById('exTitle').textContent = e.title;
+  const ok = r.cls === e.cls; const v = document.getElementById('exVerdict'); v.innerHTML = `${NAME[r.cls]} <span class="${ok ? 'ok' : 'no'}" style="font-size:16px">${ok ? '✓ right' : '✗ wrong'}</span>`;
+  probBars(document.getElementById('exProbs'), r.p, e.cls);
+  const rows = [['Truth', NAME[e.cls] + (e.size_txt ? ', ' + e.size_txt : '')], ['Machine', e.machine], ['Speed (true)', (e.f_true * 60).toFixed(0) + ' rpm'], ['Told', (e.f_nom * 60).toFixed(0) + ' rpm (nominal)'],
+    ['Network speed', `${(r.f * 60).toFixed(0)} ± ${(r.f * 60 * r.fSigRel * (NET.meta.calib?.speed || 1)).toFixed(0)} rpm`], ['Python release (all windows)', `${NAME[e.py.pred]} (${pct(Math.max(...e.py.p))})`], ['Envelope method', NAME[e.cl_pred]]];
+  if (e.cls !== 'N') rows.push(['Size estimate', `${r.size.toFixed(2)} mm (weak, see limits)`]);
+  document.getElementById('exKV').innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('');
+}
+
+// ---------- lab ----------
+const lab = { cls: 'OR', bg: 0 }; let labTimer = null; const labBgs = [];
+function labInit() {
+  const sel = document.getElementById('labBg'); sel.innerHTML = D.labBg.map((b, i) => `<option value="${i}">${esc(b.name)}</option>`).join('');
+  D.labBg.forEach((b) => labBgs.push(decodeSig(b)));
+  const seg = document.getElementById('labCls'); seg.innerHTML = CLS.map((c) => `<button aria-pressed="${c === lab.cls}" data-c="${c}">${c === 'N' ? 'none' : c}</button>`).join('');
+  seg.onclick = (ev) => { const b = ev.target.closest('button'); if (!b) return; lab.cls = b.dataset.c; seg.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', x.dataset.c === lab.cls)); labRun(); };
+  ['labBg', 'labRpm', 'labSize', 'labSnr', 'labNoise'].forEach((id) => document.getElementById(id).addEventListener('input', labRun));
+  legend(document.getElementById('labLegend')); labRun();
+}
+function labRun() {
+  const b = D.labBg[+document.getElementById('labBg').value], rho = +document.getElementById('labRpm').value, size = Math.pow(10, +document.getElementById('labSize').value), snr = +document.getElementById('labSnr').value, nz = +document.getElementById('labNoise').value;
+  document.getElementById('labRpmO').textContent = (b.f * rho * 60).toFixed(0) + ' rpm';
+  document.getElementById('labSizeO').textContent = size.toFixed(2) + ' mm';
+  document.getElementById('labSnrO').textContent = (snr > 0 ? '+' : '') + snr + ' dB';
+  document.getElementById('labNoiseO').textContent = nz <= -30 ? 'off' : (nz > 0 ? '+' : '') + nz + ' dB';
+  clearTimeout(labTimer); labTimer = setTimeout(() => {
+    const bg = labBgs[+document.getElementById('labBg').value];
+    const s = BLab.make(bg, b.f, { cls: lab.cls, fr: b.f * rho, geom: b.geom, sizeMm: size, snrDb: snr, noiseDb: nz <= -30 ? -99 : nz, seed: 11 });
+    const r = readSignal(new Float32Array(s.x), b.geom, b.f);
+    plotEnv(document.getElementById('labEnv'), r.feat.ses, b.f * rho, b.geom, Math.min(600, 9 * b.f * rho * 2.3));
+    document.getElementById('labVerdict').innerHTML = `${NAME[r.cls]} <span class="${r.cls === lab.cls ? 'ok' : 'no'}" style="font-size:16px">${r.cls === lab.cls ? '✓' : '✗'}</span>`;
+    probBars(document.getElementById('labProbs'), r.p, lab.cls);
+    const rows = [['True speed', (b.f * rho * 60).toFixed(0) + ' rpm'], ['Told', (b.f * 60).toFixed(0) + ' rpm'], ['Network speed', (r.f * 60).toFixed(0) + ' rpm']];
+    if (s.fDef) rows.push(['Defect click rate', s.fDef.toFixed(1) + ' Hz']); if (lab.cls !== 'N') rows.push(['Size estimate', r.size.toFixed(2) + ' mm (true ' + size.toFixed(2) + ')']);
+    document.getElementById('labKV').innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+  }, 60);
+}
+
+// ---------- exam, ratchet, text ----------
+function tableHTML(head, rows) {
+  const isNum = (j) => rows.every((r) => /^[-+\d.%\s]+$/.test(String(r.c[j])));
+  const nc = head.map((_, j) => j > 0 && isNum(j) ? 'num' : '');
+  return `<thead><tr>${head.map((h, i) => `<th class="${nc[i]}">${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr class="${r.best ? 'best' : ''}">${r.c.map((v, i) => `<td class="${nc[i]}">${v}</td>`).join('')}</tr>`).join('')}</tbody>`;
+}
+function exam() {
+  const E = D.exam; document.getElementById('examText').innerHTML = E.text;
+  document.getElementById('examTable').innerHTML = tableHTML(E.table.head, E.table.rows);
+  document.getElementById('confs').innerHTML = E.confs.map((c) => `<div><div class="eyebrow">${esc(c.title)}</div><div class="tbl"><table><thead><tr><th></th>${CLS.map((k) => `<th>${k}</th>`).join('')}</tr></thead><tbody>${c.m.map((row, i) => row.some((v) => v) ? `<tr><th>${CLS[i]}</th>${row.map((v, j) => `<td style="${v && i === j ? 'font-weight:600;color:var(--good)' : v ? 'color:var(--bad)' : 'color:var(--mute)'}">${v}</td>`).join('')}</tr>` : '').join('')}</tbody></table></div></div>`).join('');
+  document.getElementById('byLoad').innerHTML = tableHTML(E.byLoad.head, E.byLoad.rows);
+  document.getElementById('bySize').innerHTML = tableHTML(E.bySize.head, E.bySize.rows);
+  document.getElementById('examMore').innerHTML = E.more;
+  document.getElementById('rungs').innerHTML = tableHTML(D.ratchet.head, D.ratchet.rows);
+  document.getElementById('steps').innerHTML = D.steps.map((s) => `<li><div>${s}</div></li>`).join('');
+  document.getElementById('limitsText').innerHTML = D.limits; document.getElementById('credits').innerHTML = D.credits;
+}
+
+hero(); physics(); exam(); bearingAnim();
+setTimeout(() => { NET = BNet.load(JSON.parse(document.getElementById('weights').textContent)); explorer(); labInit(); }, 30);
+let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if (NET) { showEx(); labRun(); } }, 200); });
+</script>

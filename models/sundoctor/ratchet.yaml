@@ -1,0 +1,29 @@
+# The ratchet ladders, normalised. Raw logs: training/ratchet.json (v1) and training/ratchet2.json (v2).
+model: sundoctor
+ladders:
+  - name: v1 — fixed mounts
+    objective: Sum of skills over dead strings, soiling, shading, clipping, outage and step detection on the frozen simulated set
+    rule: Keep if the objective rises by more than 0.01.
+    margin: 0.01
+    dev_gate: None (real data was the exam)
+    frozen_sets: [val_set]
+    scored_on: val_set
+    rungs:
+      - { id: s1, change: "Baseline 2-D CNN over 14 days × 96 solar-time steps, Gaussian error bars", sim: 1.263, decision: kept, why: First rung. }
+      - { id: s2, change: "β-NLL: each point's loss weighted by its own error bar, so rare large losses can't be waved away", sim: 1.678, decision: kept, why: "1.678 vs 1.263." }
+      - { id: s3, change: "Polish: 4,000 more steps at a lower learning rate", sim: 1.748, decision: kept, why: "1.748 vs 1.678. Released as v1." }
+      - { id: s4, change: "Longer memory: 28-day windows plus the system's own healthy level", sim: 1.753, decision: rejected, why: "+0.005, short of the margin." }
+      - { id: s5, change: "Realism: arrays drift from the physics prior; long dust seasons", sim: 1.718, decision: rejected, why: "Score fell." }
+  - name: v2 — trackers, snow, no sensor
+    objective: Mean of the with-sensor and no-sensor scores on a new frozen set of 2,000 fortnights (seed 778), half with no sensor
+    rule: Keep if the objective rises by more than 0.01.
+    margin: 0.01
+    dev_gate: None
+    frozen_sets: [val_set_v2]
+    scored_on: val_set_v2
+    note: The answer keys were fixed twice (outages not graded on cold dim days; snow graded per module). Every rung was re-scored; no decision changed.
+    rungs:
+      - { id: s3, change: "Start: the v1 release seen through v2 inputs", sim: 0.341, decision: kept, why: Starting point. }
+      - { id: s6, change: "v2 simulator: trackers, snow, stuck rows, thin film, sensor faults, no-sensor fortnights; v1 weights transplanted", sim: 1.579, decision: kept, why: "1.579 vs 0.341." }
+      - { id: s7, change: "Polish: 4,000 more steps at a third of the learning rate", sim: 1.615, decision: kept, why: "1.615 vs 1.579." }
+      - { id: s8, change: "Weather fronts: day-to-day temperature swings, cold fronts on overcast days", sim: 1.628, decision: released, why: "1.628 vs 1.615." }

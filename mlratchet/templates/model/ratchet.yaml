@@ -1,0 +1,12 @@
+# Every rung you try, kept or not, with the reason. training/ratchet.py appends to this file.
+# Schema: mlratchet/schema/ratchet.schema.json
+model: __ID__
+ladders:
+  - name: __NAME__
+    objective: TODO — the single score on the frozen simulated set (a skill in [0, 1] is easiest to read)
+    rule: Keep if the frozen-set objective beats the incumbent by more than 0.01 AND the dev gate passes.
+    margin: 0.01
+    dev_gate: TODO — e.g. dev errors no more than 5% worse
+    frozen_sets: [val1]
+    scored_on: val1
+    rungs: []

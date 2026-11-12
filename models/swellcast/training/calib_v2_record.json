@@ -1,0 +1,43 @@
+{
+ "note": "Ridge-aligned comparison of the 29 confirmed DEV arrivals with simulated visible arrivals (1,000-8,000 km). src/calib_dev.py",
+ "dev_real": {
+  "n": 29,
+  "ridge_anom_at_0": 0.8659245751488857,
+  "ridge_fwhm_h": 78.0,
+  "peak_f_on_ridge": 0.07250000000000001,
+  "r1_on_ridge": 0.46729721457656775,
+  "r1_off_ridge": 0.3213029204159834,
+  "lowest_f_median": 0.052500000000000005,
+  "contrast_median": 0.5139856338500977
+ },
+ "sim_v1": {
+  "ridge_anom_at_0": 1.494,
+  "ridge_fwhm_h": 60.0,
+  "peak_f_on_ridge": 0.0575,
+  "r1_on_ridge": 0.794,
+  "r1_off_ridge": 0.328,
+  "contrast_median": 0.893,
+  "n": 400
+ },
+ "probe_v2a": {
+  "change": "hs log-uniform 2.5-14 m (was uniform 4-15), tp_c 3.0-4.6 (was 3.6-5.2), sig1 12-48 h, sig2 12-72 h (were 8-36, 8-48), intrinsic r1 0.35-0.8 (was 0.93-0.99), + crossing swells + NDBC low-frequency cutoff",
+  "ridge_anom_at_0": 1.062,
+  "ridge_fwhm_h": 60.0,
+  "peak_f_on_ridge": 0.0625,
+  "r1_on_ridge": 0.463,
+  "contrast_median": 0.666,
+  "n": 158
+ },
+ "probe_v2b_adopted": {
+  "change": "as v2a with tp_c 2.9-4.3",
+  "n": 221,
+  "ridge_anom_at_0": 0.9837328255751578,
+  "ridge_fwhm_h": 90.0,
+  "peak_f_on_ridge": 0.0625,
+  "r1_on_ridge": 0.45232340326361936,
+  "r1_off_ridge": 0.3288699235922847,
+  "lowest_f_median": 0.0575,
+  "contrast_median": 0.6033192736681643
+ },
+ "decision": "v2 = probe_v2b priors. Remaining mismatch: ridge peak frequency (sim 0.0625 vs real 0.0725 Hz); part of the real profile width may come from truth timing errors (IBTrACS peak-wind time is not the exact swell-generation time)."
+}

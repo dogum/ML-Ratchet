@@ -1,0 +1,104 @@
+---
+import Base from '../layouts/Base.astro';
+import { collectionStats, fmt, getModels } from '../lib/data';
+import { url } from '../lib/url';
+const models = getModels();
+const s = collectionStats();
+const verdictText = { win: 'wins', loss: 'loses', tie: 'tie', mixed: 'mixed', info: 'context' } as const;
+const coverage = models.flatMap((m) => (m.exam.coverage ?? []).map((c) => ({ m, ...c })));
+---
+<Base title="Scoreboard" description="Every exam row of every model, against its baselines. The wins and the losses.">
+  <section class="wrap head">
+    <p class="kicker tick-label">Every exam row, every model</p>
+    <h1 class="display h">The scoreboard.</h1>
+    <div class="summary">
+      <p class="muted lead">
+        Each row is one headline metric on real data that chose nothing. A row is a <span class="chip win">win</span> only
+        if the model beats <b>every</b> baseline listed — the dumb one included. Otherwise it's a
+        <span class="chip loss">loss</span>, even when the classical method lost too.
+      </p>
+      <dl class="totals">
+        <div><dt class="kicker">wins</dt><dd class="num w">{s.wins}</dd></div>
+        <div><dt class="kicker">losses</dt><dd class="num l">{s.losses}</dd></div>
+        <div><dt class="kicker">tied / mixed</dt><dd class="num">{s.ties}</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="wrap">
+    {models.map((m) => (
+      <div class="block" style={`--c:${m.accent}`} id={m.id}>
+        <div class="bh">
+          <a class="display mn" href={url(`models/${m.id}/#exam`)}>{m.name}</a>
+          <span class="muted q">{m.exam.summary}</span>
+        </div>
+        <div class="table-scroll">
+          <table class="data">
+            <thead><tr><th>Metric</th><th class="num">{m.name}</th><th>Baselines</th><th>Verdict</th></tr></thead>
+            <tbody>
+              {m.exam.results.map((r) => (
+                <tr class={`v-${r.verdict}`}>
+                  <td class="metric">{r.metric}{r.note && <span class="note">{r.note}</span>}</td>
+                  <td class="num model">{fmt(r.model, r.unit)}</td>
+                  <td class="bl">{r.baselines.length ? r.baselines.map((b) => <div><span class="faint mono k">{b.kind}</span> {b.name}: <b class="num">{fmt(b.value, r.unit)}</b></div>) : <span class="faint">—</span>}</td>
+                  <td><span class={`chip ${r.verdict}`}>{verdictText[r.verdict]}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    ))}
+  </section>
+
+  <section class="wrap cov">
+    <h2 class="section">Error-bar honesty</h2>
+    <p class="muted lead">The share of real exam truths inside each model's nominal 68% bars. The line is 68%. Too low means over-confident.</p>
+    <div class="cov-chart" role="img" aria-label="Coverage of 68% error bars across the collection">
+      {coverage.map((c) => (
+        <div class="cr" style={`--c:${c.m.accent}`}>
+          <span class="cl"><b>{c.m.name}</b> <span class="faint">{c.output}</span></span>
+          <span class="cb"><span class="cf" style={`width:${c.actual}%`}></span><span class="ct"></span></span>
+          <span class="cv num">{c.actual}%</span>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>
+<style>
+  .head { padding-top: clamp(40px, 7vw, 90px); }
+  .h { font-size: clamp(60px, 10vw, 140px); margin: 16px 0 24px; letter-spacing: -0.035em; }
+  .summary { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: end; margin-bottom: 56px; }
+  .lead { font-size: 17.5px; max-width: 62ch; margin: 0; }
+  .lead .chip { vertical-align: 2px; }
+  .totals { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border-top: 1px solid var(--ink); }
+  .totals div { padding: 12px 0; }
+  .totals dd { margin: 4px 0 0; font-size: 54px; letter-spacing: -0.04em; line-height: 1; }
+  .w { color: var(--win); }
+  .l { color: var(--loss); }
+  .block { margin-bottom: 56px; }
+  .bh { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; margin-bottom: 10px; padding-bottom: 6px; }
+  .mn { font-size: 40px; text-decoration: none; color: var(--c); line-height: 1; }
+  .q { font-size: 14.5px; }
+  .metric { max-width: 40ch; }
+  .note { display: block; font-size: 12.5px; color: var(--ink-3); margin-top: 3px; }
+  .model { font-size: 15px; color: var(--c); white-space: nowrap; }
+  .v-loss .model { color: var(--ink); }
+  .bl { font-size: 13.5px; }
+  .bl div + div { margin-top: 4px; }
+  .k { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.06em; display: inline-block; min-width: 72px; }
+  .bl b { font-weight: 500; font-size: 12.5px; }
+  .cov { margin-top: 40px; }
+  .cov .section { margin-bottom: 14px; }
+  .cov-chart { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; }
+  .cr { display: grid; grid-template-columns: 240px 1fr 60px; align-items: center; gap: 16px; font-size: 14px; }
+  .cb { position: relative; height: 12px; background: var(--paper-2); border: 1px solid var(--rule); }
+  .cf { position: absolute; inset: 0 auto 0 0; background: var(--c); }
+  .ct { position: absolute; left: 68.3%; top: -5px; bottom: -5px; border-left: 2px solid var(--ink); }
+  .cv { text-align: right; font-size: 12.5px; }
+  @media (max-width: 720px) {
+    .summary { grid-template-columns: 1fr; }
+    .cr { grid-template-columns: 1fr 52px; }
+    .cl { grid-column: 1 / -1; }
+  }
+</style>

@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+import { getBacklog, getModels, ghFile } from '../lib/data';
+import { url } from '../lib/url';
+const ideas = getBacklog();
+const upgrades = getModels().flatMap((m) => [
+  ...(m.help_wanted ?? []).map((t) => ({ m, t, kind: 'help wanted' })),
+  ...(m.next ?? []).slice(0, 2).map((t) => ({ m, t, kind: 'next rung' })),
+]);
+---
+<Base title="Backlog" description="The next physics-first models: each has physics to simulate, public real data and a real exam lined up.">
+  <section class="wrap head">
+    <p class="kicker tick-label">What's next</p>
+    <h1 class="display h">Physics → data →<br /><em>a real exam.</em></h1>
+    <p class="muted lead">
+      Each idea has three things: governing physics to simulate, a documented public data source (checked from a cloud
+      sandbox in November 2026), and real data to grade on. Want one? Read <a href={url('contribute/')}>adding a model</a>,
+      then open an issue. Edit the list in <a href={ghFile('docs/backlog.yaml')}><code>docs/backlog.yaml</code></a>.
+    </p>
+  </section>
+  <section class="wrap ideas">
+    {ideas.map((i, k) => (
+      <article class={`idea reveal s-${i.status}`} style={`transition-delay:${(k % 3) * 60}ms`}>
+        <div class="it">
+          <span class="kicker">{i.domain}</span>
+          <span class="status mono">{i.status}</span>
+        </div>
+        <h2 class="display">{i.name}</h2>
+        <p class="q">{i.question}</p>
+        <dl>
+          <div><dt class="kicker">Physics</dt><dd>{i.physics}</dd></div>
+          <div><dt class="kicker">Data</dt><dd><a href={i.data_url}>{i.data}</a></dd></div>
+          <div><dt class="kicker">Exam</dt><dd>{i.exam}</dd></div>
+        </dl>
+        {i.note && <p class="note">{i.note}</p>}
+      </article>
+    ))}
+  </section>
+  <section class="wrap up">
+    <h2 class="section">Upgrades to existing models</h2>
+    <ul>
+      {upgrades.map((u) => (
+        <li style={`--c:${u.m.accent}`}>
+          <a class="mn display" href={url(`models/${u.m.id}/`)}>{u.m.name}</a>
+          <span class={`tag mono ${u.kind === 'help wanted' ? 'hw' : ''}`}>{u.kind}</span>
+          <span class="t">{u.t}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>
+<style>
+  .head { padding-top: clamp(40px, 7vw, 90px); }
+  .h { font-size: clamp(54px, 9vw, 128px); margin: 16px 0 24px; letter-spacing: -0.035em; }
+  .h em { color: var(--ink-2); }
+  .lead { max-width: 64ch; font-size: 17.5px; margin-bottom: 44px; }
+  .ideas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .idea { padding: 22px; background: var(--paper-3); border: 1px solid var(--rule); border-radius: var(--radius); display: flex; flex-direction: column; gap: 10px; }
+  .it { display: flex; justify-content: space-between; }
+  .status { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--rule); color: var(--ink-2); }
+  .s-checked .status { color: var(--win); border-color: currentColor; }
+  .s-blocked .status { color: var(--loss); border-color: currentColor; border-style: dashed; }
+  .idea h2 { font-size: 40px; line-height: 1; }
+  .q { margin: 0; font-weight: 500; line-height: 1.4; }
+  dl { margin: 6px 0 0; display: flex; flex-direction: column; gap: 10px; }
+  dd { margin: 3px 0 0; font-size: 14px; color: var(--ink-2); }
+  .note { margin: 4px 0 0; font-size: 13.5px; color: var(--ink-3); border-left: 2px solid var(--rule); padding-left: 10px; }
+  .up { margin-top: 100px; }
+  .up .section { margin-bottom: 20px; }
+  .up ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--ink); }
+  .up li { display: grid; grid-template-columns: 160px 120px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+  .mn { font-size: 24px; color: var(--c); text-decoration: none; }
+  .tag { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+  .tag.hw { color: var(--signal); }
+  .t { font-size: 15px; }
+  @media (max-width: 1020px) { .ideas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px) { .ideas { grid-template-columns: 1fr; } .up li { grid-template-columns: 1fr; gap: 4px; } }
+</style>

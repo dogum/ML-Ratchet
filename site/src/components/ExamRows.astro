@@ -1,0 +1,82 @@
+---
+// The exam, one row per headline metric: the model against every baseline on one shared track,
+// with the direction of "better" and an honest verdict.
+import type { ExamRow } from '../lib/data';
+import { fmt, numericRow } from '../lib/data';
+interface Props { rows: ExamRow[]; name: string; accent: string }
+const { rows, name, accent } = Astro.props;
+const verdictText = { win: 'wins', loss: 'loses', tie: 'tie', mixed: 'mixed', info: 'context' };
+const kindText = { classical: 'classical', dumb: 'dumb baseline', published: 'published' };
+
+function track(r: ExamRow) {
+  const n = numericRow(r);
+  if (!n) return null;
+  const vals = [n.model, ...n.baselines.map((b) => b.v)];
+  const hi = r.unit === '%' && Math.max(...vals) <= 100 ? 100 : Math.max(...vals) * 1.12;
+  const lo = Math.min(0, ...vals);
+  const pos = (v: number) => ((v - lo) / (hi - lo)) * 100;
+  return { model: pos(n.model), bs: n.baselines.map(({ b, v }) => ({ b, v, p: pos(v) })) };
+}
+---
+<div class="exam" style={`--c:${accent}`}>
+  {rows.map((r) => {
+    const t = track(r);
+    return (
+      <div class={`row v-${r.verdict}`}>
+        <div class="head">
+          <p class="metric">{r.metric}</p>
+          <span class={`chip ${r.verdict}`}>{verdictText[r.verdict]}</span>
+        </div>
+        <div class="vals">
+          <div class="model">
+            <span class="kicker">{name}</span>
+            <span class="big num">{fmt(r.model, r.unit)}</span>
+          </div>
+          <ul class="bls">
+            {r.baselines.map((b) => (
+              <li><span class={`glyph ${b.kind}`}></span><span class="bn">{b.name}</span> <span class="faint mono">{kindText[b.kind]}</span> <b class="num">{fmt(b.value, r.unit)}</b></li>
+            ))}
+            {r.baselines.length === 0 && <li class="faint">No baseline — reported as context.</li>}
+          </ul>
+        </div>
+        {t && (
+          <div class="track" aria-hidden="true">
+            <div class="line"></div>
+            {t.bs.map((x) => <span class={`mk ${x.b.kind}`} style={`left:${x.p}%`} title={`${x.b.name}: ${fmt(x.v, r.unit)}`}></span>)}
+            <span class="mk model" style={`left:${t.model}%`}></span>
+            <span class="better mono">{r.better === 'lower' ? '← better' : r.better === 'higher' ? 'better →' : 'closer is better'}</span>
+          </div>
+        )}
+        {r.note && <p class="note">{r.note}</p>}
+      </div>
+    );
+  })}
+</div>
+
+<style>
+  .exam { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); padding: 1px 0 0 1px; }
+  .row { background: var(--paper-3); border: 1px solid var(--rule); margin: -1px 0 0 -1px; padding: 20px 20px 18px; display: flex; flex-direction: column; gap: 14px; }
+  .head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+  .metric { margin: 0; font-weight: 500; font-size: 15.5px; line-height: 1.35; }
+  .vals { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: start; }
+  .model { display: flex; flex-direction: column; gap: 2px; padding-right: 16px; border-right: 1px solid var(--rule); }
+  .big { font-size: 26px; letter-spacing: -0.03em; color: var(--c); line-height: 1.1; white-space: nowrap; }
+  .bls { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; }
+  .bls li { line-height: 1.35; }
+  .bls b { font-weight: 500; font-size: 12.5px; }
+  .bls .mono { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .glyph { display: inline-block; width: 9px; height: 9px; margin-right: 6px; vertical-align: 0; border: 1.5px solid var(--ink-2); }
+  .glyph.classical { border-radius: 50%; }
+  .glyph.dumb { background: var(--ink-3); border-color: var(--ink-3); }
+  .glyph.published { transform: rotate(45deg) scale(0.85); }
+  .track { position: relative; height: 26px; margin-top: 2px; }
+  .line { position: absolute; left: 0; right: 0; top: 9px; border-top: 1px solid var(--rule); }
+  .mk { position: absolute; top: 4px; width: 11px; height: 11px; transform: translateX(-50%); border: 1.5px solid var(--ink-2); background: var(--paper-3); }
+  .mk.classical { border-radius: 50%; }
+  .mk.dumb { background: var(--ink-3); border-color: var(--ink-3); }
+  .mk.published { transform: translateX(-50%) rotate(45deg) scale(0.85); }
+  .mk.model { width: 15px; height: 15px; top: 2px; border-radius: 50%; background: var(--c); border: 2px solid var(--paper-3); box-shadow: 0 0 0 1px var(--c); z-index: 2; }
+  .better { position: absolute; right: 0; top: 16px; font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+  .note { margin: 0; font-size: 13.5px; color: var(--ink-2); border-left: 2px solid var(--rule); padding-left: 10px; }
+  .v-loss .big { color: var(--ink); text-decoration: underline wavy color-mix(in srgb, var(--loss) 60%, transparent) 1px; text-underline-offset: 6px; }
+</style>

@@ -1,0 +1,15 @@
+* text=auto eol=lf
+
+# Binary data
+*.npz binary
+*.npy binary
+*.hdf5 binary
+*.gz binary
+*.png binary
+*.jpg binary
+*.woff2 binary
+
+# The original interactive pages embed weights and data as base64: keep them out of diffs and language stats
+models/*/lab/index.html linguist-generated=true -diff
+tests/golden/*.txt linguist-generated=true
+

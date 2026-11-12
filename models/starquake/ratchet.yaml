@@ -1,0 +1,19 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json.
+model: starquake
+ladders:
+  - name: StarQuake
+    objective: Mean of the νmax-within-5% rate, the Δν-within-2% rate and detection balanced accuracy, on frozen val2 (5,000 giants + 2,000 non-oscillating, v2 physics)
+    rule: Keep if the objective rises by more than 0.01 AND the mean ratio of the four dev median errors to the incumbent's is at most 1.10.
+    margin: 0.01
+    dev_gate: Mean dev error ratio ≤ 1.10 (whole and 90-day νmax and Δν)
+    frozen_sets: [val, val2]
+    scored_on: val2
+    note: Calibrated physics (v2) alone did not help. Mixing v1 and v2 banks, which widens the amplitude prior, and training longer did.
+    columns_source: Real dev stars, median errors (whole νmax, Δν; 90-day νmax, Δν)
+    columns: [νmax, Δν, νmax 90 d, Δν 90 d]
+    rungs:
+      - { id: r1, change: "v1 physics, 15k simulations", sim: 0.593, decision: kept, why: First rung., metrics: ["1.60%", "0.89%", "1.35%", "2.15%"] }
+      - { id: r2, change: "v2 dev-calibrated physics, 15k", sim: 0.584, decision: rejected, why: "Score fell; dev +29%.", metrics: ["1.66%", "1.20%", "2.49%", "2.00%"] }
+      - { id: r3, change: "Detection output, v2 + 30% non-oscillating, 25k", sim: 0.738, decision: rejected, why: "Dev gate: +32%.", metrics: ["1.65%", "1.32%", "2.61%", "1.80%"] }
+      - { id: r4, change: "Warm start from rung 1 + detection, all 40k (v1 + v2 physics)", sim: 0.737, decision: kept, why: "+0.144; dev +8%. The gain came from detection only.", metrics: ["1.28%", "1.16%", "1.71%", "2.05%"] }
+      - { id: r5, change: "Rung 4 trained 4,000 more steps", sim: 0.757, decision: released, why: "+0.020; dev −10%.", metrics: ["1.01%", "0.78%", "2.34%", "1.57%"] }

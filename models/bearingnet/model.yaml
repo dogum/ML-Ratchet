@@ -1,0 +1,134 @@
+id: bearingnet
+name: BearingNet
+version: "1.0"
+status: released
+released: 2026-11-06
+order: 6
+domain: Machinery
+tags: [condition monitoring, vibration, fault diagnosis, classification, domain shift]
+accent: "#5b7083"
+tagline: Hearing a bearing fail, from impact physics and a healthy machine's hum.
+question: Is this rolling-element bearing healthy, or does it have an outer-race, inner-race or ball defect?
+summary: >-
+  From 3–20 seconds of one accelerometer on a rotating machine, plus the bearing's geometry and a rough shaft
+  speed, BearingNet says whether the bearing is healthy or has an outer-race, inner-race or ball defect, and
+  refines the shaft speed. It learned from simulated impact trains laid into real healthy-machine vibration and
+  was examined on two real rigs — including one it never heard.
+
+reads: 3–20 s of one accelerometer channel, the bearing geometry, and a nominal shaft speed.
+returns:
+  - Condition — healthy (N), outer race (OR), inner race (IR) or ball (B) — with probabilities
+  - Refined shaft speed ± error bar
+  - Defect size (experimental; did not beat the median guess)
+
+physics:
+  summary: >-
+    Bearing kinematics (BPFO, BPFI, BSF, FTF from geometry) drive trains of impacts with slip and jitter,
+    load-zone amplitude modulation, entry/exit pulse pairs, random structural resonances, shaft lines,
+    decoy impact trains and random knocks.
+  simulator:
+    - Impact trains with 0–2% slip and 0.5–2% jitter
+    - Stribeck load-zone modulation (IR at shaft rate, B at cage rate with alternating race strikes)
+    - 1–3 random kHz resonances, shaft lines, decoy trains, random knocks
+    - "v2 physics, calibrated on dev: faults 10–25 dB above background, longer ringing (3.5 ms), shaft-rate modulation on healthy machines"
+  checks:
+    - "Fault frequencies match CWRU's published multiples for SKF 6205/6203 to 1.6e-4"
+    - "Simulated envelope lines within 0.16% of theory"
+noise: Healthy CWRU file 98 and Paderborn K001–K003, time-stretched ±15% for speed (never in dev or exam)
+network: Envelope spectra in 5 bands on fault-aligned log-frequency axes; 1-D residual CNN, 438k parameters, 20k simulations
+
+data:
+  - name: Case Western Reserve University Bearing Data Center
+    url: https://engineering.case.edu/bearingdatacenter
+    licence: Public download; acknowledge CWRU
+    role: noise, dev, exam
+  - name: Paderborn University KAt bearing data
+    url: https://groups.uni-paderborn.de/kat/BearingDataCenter/
+    licence: Use under the terms on that page; cite Lessmeier et al. 2016
+    role: noise, dev, exam
+
+split:
+  dev: 10 CWRU files (seed 20261106) and Paderborn K006, KA01, KI03 — file-level split
+  exam: 150 CWRU files on every sensor position, and 26 Paderborn bearings (919 recordings)
+
+exam:
+  summary: Balanced accuracy over N/OR/IR/B, against classical envelope analysis and the majority class.
+  results:
+    - metric: Paderborn (new machine), balanced accuracy
+      better: higher
+      model: 0.45
+      baselines:
+        - { name: "Envelope analysis", kind: classical, value: 0.28 }
+        - { name: "Majority class", kind: dumb, value: 0.33 }
+      verdict: win
+    - metric: CWRU far sensor, balanced accuracy
+      better: higher
+      model: 0.57
+      baselines:
+        - { name: "Envelope analysis", kind: classical, value: 0.51 }
+        - { name: "Majority class", kind: dumb, value: 0.25 }
+      verdict: win
+    - metric: CWRU near sensor, balanced accuracy
+      better: higher
+      model: 0.39
+      baselines:
+        - { name: "Envelope analysis", kind: classical, value: 0.49 }
+        - { name: "Majority class", kind: dumb, value: 0.25 }
+      verdict: loss
+    - metric: CWRU base plate, balanced accuracy
+      better: higher
+      model: 0.50
+      baselines:
+        - { name: "Envelope analysis", kind: classical, value: 0.67 }
+        - { name: "Majority class", kind: dumb, value: 0.33 }
+      verdict: loss
+    - metric: CWRU shaft-speed error
+      better: lower
+      model: 0.35
+      unit: "%"
+      baselines:
+        - { name: "Nominal speed", kind: dumb, value: 1.36 }
+      verdict: win
+    - metric: Defect size
+      better: lower
+      model: worse
+      baselines:
+        - { name: "Median guess", kind: dumb, value: better }
+      verdict: loss
+  coverage:
+    - { output: Shaft speed (CWRU), actual: 80 }
+
+wins:
+  - On a machine it never heard (Paderborn), it beats the classical envelope method 0.45 to 0.28.
+  - Cuts CWRU shaft-speed error from 1.36% to 0.35%.
+losses:
+  - Classical envelope analysis wins at the CWRU near sensor and base plate.
+  - Ball faults found only 19% of the time on CWRU.
+  - The size output is useless; speed refinement hurts when the nominal speed is already exact.
+limits:
+  - '"Healthy" is weak — a healthy bearing next to a faulty one is called healthy 10% of the time; Paderborn healthy 35%.'
+  - The dev set was small and optimistic (Paderborn dev 0.78 vs exam 0.45).
+next:
+  - Healthy-vs-wrong-bearing — simulate the other bearing's fault comb as a decoy; calibrate the healthy prior per machine.
+  - Bigger, more varied banks and more background machines; score the ratchet on SNR > −6 dB only.
+  - A hybrid with the envelope method — the two fail on different rigs.
+
+usage:
+  install: pip install numpy scipy
+  demo: python demo.py
+  python: |
+    import numpy as np, json, bearingnet
+    net = bearingnet.BearingNet()
+    z = np.load("examples/03_CWRU_135_OR.npz"); m = json.loads(str(z["meta"]))
+    r = net.read(z["x"], fs=float(z["fs"]), bearing=m["bearing"], rpm_nominal=m["rpm_nominal"])
+    print(r["condition"], r["p"], r["rpm"])
+
+files:
+  inference: [bearingnet.py, pipeline.py]
+  weights: [bearingnet_weights.npz]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 3

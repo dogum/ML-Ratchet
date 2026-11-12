@@ -1,0 +1,23 @@
+name: Problem with a model
+description: A demo fails, a number looks wrong, or a model misreads real data
+labels: [bug]
+body:
+  - type: dropdown
+    id: model
+    attributes:
+      label: Model
+      options: [ChirpNet, SunDoctor, CellSense, TransitNet, QuakeNet, BearingNet, SwellCast, BeatNet, StarQuake, the mlratchet package, the website]
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Command, input, output. For a misreading, the data source and identifiers so we can reproduce it.
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      placeholder: OS, Python version, numpy/scipy versions

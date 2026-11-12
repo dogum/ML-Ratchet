@@ -1,0 +1,19 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json.
+model: swellcast
+ladders:
+  - name: SwellCast
+    objective: Mean skill over log distance, storm time, direction, log Hs and detection on the frozen simulated set
+    rule: Keep if the objective rises by more than 0.01 AND dev errors get no more than 5% worse.
+    margin: 0.01
+    dev_gate: Dev errors (distance, time, direction) no more than 5% worse
+    frozen_sets: [val1, val2, val3]
+    scored_on: val3
+    note: Calibrated simulators (v2, v3) matched dev statistics better but alone made real dev readings worse. Mixing all three banks fixed it.
+    columns_source: Real dev set (18 storms), median errors — the gate's input
+    columns: [Distance, Time, Direction]
+    rungs:
+      - { id: r1, change: "296k CNN, 30k v1 simulations (textbook priors)", sim: 0.386, decision: kept, why: First rung., metrics: ["40%", "35 h", "16°"] }
+      - { id: r2, change: "v2 simulations calibrated on dev: weaker, longer-lived storms; shorter periods; crossing swells", sim: 0.442, decision: rejected, why: "Dev gate: errors +30%.", metrics: ["58%", "50 h", "31°"] }
+      - { id: r3, change: "v3: 65% of storms follow real IBTrACS 1985–2007 tracks", sim: 0.582, decision: rejected, why: "Dev gate: errors +21%.", metrics: ["46%", "56 h", "24°"] }
+      - { id: r4, change: "Mix of v1 + v2 + v3 banks (54k), fine-tuned from rung 1", sim: 0.536, decision: released, why: "+0.150 over rung 1; dev +2%.", metrics: ["37%", "37 h", "22°"] }
+      - { id: r5, change: "Rung 4 + 3,000 steps at half the learning rate", sim: 0.545, decision: rejected, why: "+0.009, short of the margin.", metrics: ["43%", "36 h", "19°"] }

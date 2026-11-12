@@ -1,0 +1,92 @@
+{
+ "eikonal": {
+  "median_rel_err": 0.0827036754531388,
+  "max_rel_err": 0.12807195156968157,
+  "min_rel_err": -2.279066887565705e-16,
+  "note": "26-neighbour shortest paths overestimate oblique travel times; max error is a geometry bound (~8% at directions like (2,1,0))"
+ },
+ "dipole": {
+  "sweep_vs_volume_corr": 0.9961376371209318,
+  "sweep_vs_volume_relrms": 0.0975707984592303,
+  "volume_vs_surface_corr": 0.9930920731428035,
+  "volume_vs_surface_relrms": 0.16110133450714786,
+  "note": "volume form -sum(grad Vm) dV and surface form -sum(Vm n dA) agree up to the finite-difference treatment of the wall voxels"
+ },
+ "lead_field": {
+  "angle_deg_dower_vs_infinite_medium": {
+   "I": 9.046802376319482,
+   "II": 16.123040619723795,
+   "V1": 20.23316620214094,
+   "V2": 14.445752161712509,
+   "V3": 9.510547646477129,
+   "V4": 23.133195484869415,
+   "V5": 16.900598488065334,
+   "V6": 16.518354257286305
+  },
+  "median_angle": 16.32069743850505,
+  "note": "Dower vectors come from measurements on a torso model; the infinite medium ignores the torso boundary and lungs, so agreement is expected only to tens of degrees"
+ },
+ "ecgsyn": {
+  "rr_lfhf": [
+   {
+    "target": 0.5,
+    "measured_median": 0.4968979179283032
+   },
+   {
+    "target": 1.0,
+    "measured_median": 1.0540297068454085
+   },
+   {
+    "target": 2.0,
+    "measured_median": 1.9833311367335296
+   }
+  ],
+  "beat_corr_leadII": 0.8703860853162658,
+  "ecgsyn_qt_ms": null,
+  "sim_P_peak_to_R_ms": 152.0,
+  "ecgsyn_P_peak_to_R_ms": 194.44444444444446,
+  "sim_T_peak_after_R_ms": 271.0,
+  "ecgsyn_T_peak_after_R_ms": 277.77777777777777,
+  "note": "ECGSYN is a phenomenological single-lead model (5 Gaussians on a limit cycle); BeatNet beats come from activation physics, so only the gross timing and shape should match"
+ },
+ "physiology": {
+  "qrs_ms_normal_p10_50_90": [
+   59.8,
+   71.5,
+   88.0
+  ],
+  "qrs_ms_LBBB": [
+   134.0,
+   157.5,
+   195.2
+  ],
+  "qrs_ms_RBBB": [
+   94.0,
+   114.5,
+   161.2
+  ],
+  "qrs_ms_PVC": [
+   108.8,
+   142.0,
+   197.20000000000002
+  ],
+  "frontal_axis_deg": [
+   -12.563406558062905,
+   59.036841066337075,
+   77.0681914239791
+  ],
+  "T_over_QRS": [
+   0.09898454808757025,
+   0.24242775851975462,
+   0.5242921618507475
+  ],
+  "P_over_QRS": [
+   0.04517925735610501,
+   0.11615476934218485,
+   0.19651145388014835
+  ],
+  "pause_ratio_PVC_median": 0.9913795992103859,
+  "pause_ratio_APB_median": 0.8825718975481155,
+  "textbook": "normal QRS 70-110 ms (vector-onset/offset definition reads shorter than manual calipers); BBB >= 120 ms; PVC 120-200 ms; axis -30..+90 deg; T/R ~0.1-0.4; P/R ~0.05-0.2; full compensatory pause ratio 1.0 after PVC, < 1 after APB"
+ }
+}

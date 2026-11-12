@@ -1,0 +1,138 @@
+id: transitnet
+name: TransitNet
+version: "1.0"
+status: released
+released: 2026-11-03
+order: 4
+domain: Astrophysics
+tags: [exoplanets, TESS, classification, parameter estimation, light curves]
+accent: "#2f6fed"
+tagline: Planet or impostor? Trained on zero real planets.
+question: Is this periodic dip in a TESS light curve a planet, and if so how big is it?
+summary: >-
+  Given a TESS light curve and a candidate period, TransitNet decides whether the dip is a planet, an
+  eclipsing binary, a background blend or nothing, and measures the planet's size, impact parameter and orbit
+  scale with error bars. It was trained on simulated transits injected into real TESS light curves of ordinary
+  stars, and examined on 1,196 confirmed planets and 832 known false positives.
+
+reads: TESS SPOC 2-minute light curves (one or more sectors), a candidate period, epoch and duration, and the star's catalogue values.
+returns:
+  - Probability of planet, eclipsing binary, background binary, nothing
+  - Radius ratio Rp/R* with a 68% range (and Earth radii when the star's size is known)
+  - Impact parameter b and a/R*, with ranges
+
+physics:
+  summary: >-
+    Exact quadratic limb-darkened occultation, Keplerian (eccentric) orbits, eclipsing binaries, background
+    binaries diluted by third light, and centroid-shift physics — all injected into real TESS light curves.
+  simulator:
+    - Exact quadratic limb-darkened transit (Gauss–Legendre, any radius ratio)
+    - Eclipsing binaries, background binaries (third light 3–3,000×), eccentric orbits, centroid shifts
+    - Limb-darkening prior recalibrated on free fits to the dev planets (q1 0.15–0.55)
+  checks:
+    - "Matches batman to ≤ 0.94 ppm"
+noise: 2,200 real 2-minute TESS light curves of ordinary stars, 220 from each of 10 sectors across the mission
+network: Multi-view 1-D CNN (local, secondary, global, odd/even views + scalars) predicting corrections to model-free estimates
+
+data:
+  - name: TESS SPOC light curves (MAST)
+    url: https://archive.stsci.edu/missions-and-data/tess
+    licence: Public (NASA); cite TESS and MAST
+    role: noise, exam, dev
+  - name: NASA Exoplanet Archive (pscomppars)
+    url: https://exoplanetarchive.ipac.caltech.edu/
+    licence: Public; acknowledge the archive
+    role: truth
+  - name: ExoFOP TOI list
+    url: https://exofop.ipac.caltech.edu/tess/
+    licence: Public; acknowledge ExoFOP
+    role: truth
+
+split:
+  dev: 20 planets and 20 false positives (seed 2026); their host stars are excluded from the exam
+  exam: 1,625 confirmed planets, 992 follow-up false positives, 77 false alarms
+
+exam:
+  summary: 1,196 planets and 832 false positives with SNR ≥ 7.
+  results:
+    - metric: Planet vs false positive, AUC
+      better: higher
+      model: 0.835
+      baselines: []
+      verdict: info
+    - metric: Rp/R* median error, SNR 100+
+      better: lower
+      model: 1.6
+      unit: "%"
+      baselines:
+        - { name: "Least-squares transit fit", kind: classical, value: 2.3 }
+        - { name: "√depth", kind: dumb, value: 4.4 }
+      verdict: win
+    - metric: Rp/R* median error, SNR 20–100
+      better: lower
+      model: 3.5
+      unit: "%"
+      baselines:
+        - { name: "Least-squares transit fit", kind: classical, value: 4.7 }
+        - { name: "√depth", kind: dumb, value: 5.7 }
+      verdict: win
+    - metric: Rp/R* median error, SNR 7–20
+      better: lower
+      model: 6.7
+      unit: "%"
+      baselines:
+        - { name: "Least-squares transit fit", kind: classical, value: 10.7 }
+        - { name: "√depth", kind: dumb, value: 6.8 }
+      verdict: win
+    - metric: a/R* median error, SNR 100+
+      better: lower
+      model: 4.2
+      unit: "%"
+      baselines:
+        - { name: "Least-squares transit fit", kind: classical, value: 3.7 }
+      verdict: loss
+    - metric: False positives also called planet
+      better: lower
+      model: 66
+      unit: "%"
+      baselines: []
+      verdict: loss
+  coverage:
+    - { output: Rp/R*, actual: 70 }
+    - { output: b, actual: 79 }
+    - { output: a/R*, actual: 71 }
+
+wins:
+  - Measures planet size better than a least-squares fit at every SNR.
+  - Calls 98% of real planets planets, with zero real planets in training.
+losses:
+  - 66% of follow-up false positives are also called planet — photometry alone can't rule most of them out.
+  - Least-squares wins on a/R* at high SNR (3.7% vs 4.2%).
+limits:
+  - Some real planets score low (TOI-2109 b at 0.00, TOI-1518 b at 0.30).
+  - The candidates already passed SPOC vetting, so the false positives are the hard ones.
+  - Claret limb-darkening tables were unreachable; the prior comes from dev fits.
+next:
+  - A physical planet-size cap, low-mass stellar companions and R* as an input, against SB1-type false positives.
+  - Difference-image centroids instead of MOM_CENTR.
+  - Single transits, and an in-browser BLS "find it" step.
+
+usage:
+  install: pip install numpy scipy
+  demo: python demo.py
+  python: |
+    import transitnet as tn
+    net = tn.TransitNet()
+    sectors = [tn.load_spoc(p) for p in my_spoc_fits_files]
+    r = net.read(sectors, period=5.66, epoch=1386.27, duration_hours=1.7)
+    print(r["p_planet"], r["k"], r["b"], r["aR"])
+
+files:
+  inference: [transitnet.py, pipeline.py, transitsim.py]
+  weights: [transitnet_weights.npz]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 3

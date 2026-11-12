@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# Training work folders: downloads, banks, checkpoints, figures, release builds
+models/*/work/
+work/
+
+# Training artefacts that should never be committed
+*.pt
+*.ckpt
+*.resume
+
+# Site
+site/node_modules/
+site/dist/
+site/.astro/
+site/public/models/
+site/src/generated/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Source archives this repo was assembled from
+/*.zip
+
+# Local agent / editor config
+.claude/
