@@ -90,3 +90,13 @@ exam's protocol (32 s, 4 kHz, H1 + L1; time-slid background from the same files,
 - Found while porting: `chirpnet.gate`'s cosine tapers are reversed (the mask falls to 0 at the outer edge of each
   0.1 s ramp and jumps back to 1 next to the zeroed stretch). It matters only near gates. Left as released (the
   browser port matches it exactly); listed as a next rung, since fixing it changes the gated GW170817 numbers.
+
+## Gating bug fixed — 12 Nov 2026
+
+- `chirpnet.gate` now tapers into and out of each gate the right way round, exactly as `training/bns_real.py` (which
+  produced the published numbers) does: max difference 0.0 on a synthetic test. The browser port (`bns.ts`) is fixed
+  the same way; parity 5e-7.
+- Effect: the released code now reproduces the model card again. GW170817 with the raw (glitched) L1, gated:
+  11.97 (card 12.0; the reversed tapers gave 12.21). Ungated 9.78 is unchanged.
+- No bundled O1/O2 file triggers a gate, so the demo and its golden output are unchanged. In O3 only GW191204's
+  H1 file gates (6.61–6.68 s, ~10 s before the merger); re-running `o3_exam.py` changed none of the reported numbers.

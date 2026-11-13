@@ -75,9 +75,12 @@ def gate(w, thresh=25.0, half=0.25, taper=0.1, fs=FS):
         lo, hi = max(0, a - h), min(n, b + h)
         mask[lo:hi] = 0
         if tp:
-            r = 0.5 + 0.5 * np.cos(np.linspace(0, np.pi, tp))
-            l0 = max(0, lo - tp); mask[l0:lo] = np.minimum(mask[l0:lo], r[::-1][: lo - l0] if lo - l0 < tp else r[::-1])
-            h1 = min(n, hi + tp); mask[hi:h1] = np.minimum(mask[hi:h1], r[: h1 - hi])
+            # Tukey edges: fall from 1 to 0 approaching the gate, rise from 0 to 1 leaving it
+            # (as in training/bns_real.py, which produced the published exam numbers; fixed 12 Nov 2026 —
+            # the first release had both ramps reversed)
+            down = 0.5 + 0.5 * np.cos(np.linspace(0, np.pi, tp))
+            l0 = max(0, lo - tp); mask[l0:lo] = np.minimum(mask[l0:lo], down[tp - (lo - l0):])
+            h1 = min(n, hi + tp); mask[hi:h1] = np.minimum(mask[hi:h1], down[::-1][: h1 - hi])
     return w * mask, [(a / fs, b / fs) for a, b in gates]
 
 def load_gwosc(path):

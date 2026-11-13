@@ -132,7 +132,7 @@ L1 slid circularly against H1 by 12 shifts of 29-503 s, with windows holding the
 11,086 windows over 6.2 h, loudest 4.98. The released model scores GW170817 at **14.4**
 with chirp mass **1.1365 M☉** (LIGO: 1.1975 +0.0001/−0.0001, detector frame) and merger time
 +963 ms from LIGO's. The raw Livingston data (LIGO-P1700337) still carries the famous glitch
-1.1 s before merger. With automatic gating it scores 12.0 (ℳ 1.1455); with the glitch left in it scores 9.8.
+1.1 s before merger. With automatic gating it scores 12.0 (ℳ 1.1455); with the glitch left in it scores 9.8. (The first release of `chirpnet.py` had its gate tapers reversed and gave 12.2 here; fixed 12 Nov 2026 to match the training code.)
 
 ## Limits
 

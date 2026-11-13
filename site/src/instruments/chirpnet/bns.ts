@@ -117,10 +117,12 @@ export function gate(w: Float32Array, thresh = 25, half = 0.25, taper = 0.1, fs 
     const lo = Math.max(0, a - hs), hi = Math.min(n, b + hs);
     mask.fill(0, lo, hi);
     if (tp) {
+      // Tukey edges: fall from 1 to 0 approaching the gate, rise from 0 to 1 leaving it (fixed 12 Nov 2026,
+      // matching training/bns_real.py; the first release had both ramps reversed)
       const l0 = Math.max(0, lo - tp);
-      for (let i = l0; i < lo; i++) mask[i] = Math.min(mask[i], r[tp - 1 - (i - l0)]);
+      for (let i = l0; i < lo; i++) mask[i] = Math.min(mask[i], r[tp - (lo - l0) + (i - l0)]);
       const h1 = Math.min(n, hi + tp);
-      for (let i = hi; i < h1; i++) mask[i] = Math.min(mask[i], r[i - hi]);
+      for (let i = hi; i < h1; i++) mask[i] = Math.min(mask[i], r[tp - 1 - (i - hi)]);
     }
   }
   const x = new Float32Array(n);
