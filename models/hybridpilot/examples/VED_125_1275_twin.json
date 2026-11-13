@@ -1,0 +1,47 @@
+{
+ "class": "car",
+ "architecture": "hev_powersplit",
+ "mass_kg": 1723.5732950000001,
+ "payload_kg": 0.0,
+ "id": "twin_VED_125",
+ "transmission": {
+  "type": "eCVT",
+  "ring_teeth": 78,
+  "sun_teeth": 30,
+  "mg2_ratio": 2.636
+ },
+ "motors": [
+  {
+   "role": "MG1",
+   "max_power_kW": 60.5,
+   "eff_map": "ipm_generic_150",
+   "max_rpm": 13500
+  },
+  {
+   "role": "MG2",
+   "max_power_kW": 105.0,
+   "eff_map": "ipm_generic_150",
+   "max_rpm": 17000
+  }
+ ],
+ "battery": {
+  "chemistry": "NiMH",
+  "capacity_kWh": 1.3,
+  "nominal_V": 245.0,
+  "soc_window": [
+   0.4,
+   0.8
+  ]
+ },
+ "engine": {
+  "fuel": "gasoline",
+  "displacement_L": 2.4,
+  "max_power_kW": 110.0,
+  "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+ },
+ "meta": {
+  "twin_of": "VED_125",
+  "likely_models": "Toyota Camry hybrid 2007-11 (power split) or Hyundai Sonata hybrid (parallel P2)",
+  "split": "exam"
+ }
+}

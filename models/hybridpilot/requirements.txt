@@ -1,0 +1,4 @@
+numpy>=1.24
+scipy>=1.10
+# demo/pipeline only: the RoadSim package (ML Ratchet Phase 1) on PYTHONPATH or ROADSIM_PATH
+# training only: torch, pandas, pyarrow, and the realdata package (RoadData)

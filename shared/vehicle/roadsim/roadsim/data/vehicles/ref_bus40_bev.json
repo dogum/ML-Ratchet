@@ -1,0 +1,32 @@
+{
+ "id": "ref_bus40_bev",
+ "class": "bus",
+ "architecture": "bev",
+ "notes": "40 ft battery-electric transit bus, 450 kWh",
+ "mass_kg": 14500.0,
+ "payload_kg": 2000.0,
+ "CdA_m2": 6.0,
+ "Crr": 0.007,
+ "Crr_speed_coef": 0.002,
+ "wheel_radius_m": 0.5,
+ "motors": [
+  {
+   "role": "traction",
+   "max_power_kW": 230,
+   "eff_map": "ipm_generic_150",
+   "max_rpm": 6000
+  }
+ ],
+ "battery": {
+  "chemistry": "LFP",
+  "capacity_kWh": 450,
+  "nominal_V": 650,
+  "soc_window": [
+   0.05,
+   0.98
+  ]
+ },
+ "aux": {
+  "base_W": 4000
+ }
+}

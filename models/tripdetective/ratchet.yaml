@@ -1,0 +1,21 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json.
+model: tripdetective
+ladders:
+  - name: TripDetective
+    objective: "Mean simulated skill over architecture, mass, displacement, CdA, Crr, engine-off share, strategy and the ledger, on frozen val_v3 (600 cars × 8 trips)"
+    rule: Keep if the skill beats the incumbent by more than 0.01 AND the mean of 4 dev error ratios is at most 1.05 AND dev VED-type accuracy drops by no more than 0.03.
+    margin: 0.01
+    dev_gate: "Mean of 4 dev error ratios ≤ 1.05; VED-type accuracy drop ≤ 0.03 (16 dev cars)"
+    frozen_sets: [val_v1, val_v2, val_v3]
+    scored_on: val_v3
+    note: "A network twin test found the generator's fleet far heavier than VED-era cars (2,200 vs 1,720 kg), which became the v3 mass prior. Every v2-prior rung made dev engine size worse; the cause was not isolated."
+    columns_source: Dev cars (gate inputs)
+    columns: ["Dev mass error / car", "Dev engine error / car", "Dev type accuracy / trip"]
+    rungs:
+      - { id: r0, change: "CNN + set pooling, generator as published, 1,200 cars", sim: 0.305, decision: kept, why: First rung., metrics: ["140 kg", "0.31 L", 0.91] }
+      - { id: r1, change: "Dev-twin calibrated priors v2, 1,200 cars", sim: 0.362, decision: rejected, why: "Dev errors +23%.", metrics: ["128 kg", "0.52 L", 0.90] }
+      - { id: r2, change: "v2 priors, 2,000 cars", sim: 0.366, decision: rejected, why: "Dev errors +15%.", metrics: ["116 kg", "0.51 L", 0.93] }
+      - { id: r3, change: "+ road-load physics channels", sim: 0.363, decision: rejected, why: "Dev errors +23% and type accuracy fell.", metrics: ["129 kg", "0.53 L", 0.88] }
+      - { id: r4, change: "+ 16 classical per-trip estimates", sim: 0.368, decision: rejected, why: "Dev errors +17%.", metrics: ["136 kg", "0.49 L", 0.90] }
+      - { id: r5, change: "Classical estimates on the v1 bank", sim: 0.317, decision: kept, why: "+0.012; dev +2%.", metrics: ["139 kg", "0.34 L", 0.91] }
+      - { id: r6, change: "v3 mass prior (VED-era fleet) + classical estimates, 2,000 cars", sim: 0.402, decision: released, why: "+0.085; dev mass error 110 kg (bias −9).", metrics: ["110 kg", "0.44 L", 0.92] }

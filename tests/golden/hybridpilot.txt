@@ -1,0 +1,20 @@
+
+VED_125_1275  hev_powersplit  (Toyota Camry hybrid 2007-11 (power split) or Hyundai Sonata hybrid (parallel P2))  3.3 km, 6 C
+  logged (VED, MAF estimate): fuel 179 g
+  hybridpilot      fuel   102.6 g   battery out +0.005 kWh   SOC 0.600 -> 0.596   engine starts  14
+  aecms            fuel   107.0 g   battery out -0.014 kWh   SOC 0.600 -> 0.611   engine starts  13
+  powersplit_rule  fuel    99.6 g   battery out +0.022 kWh   SOC 0.600 -> 0.583   engine starts  14
+
+VED_492_2826  phev_series  (Chevrolet Volt gen 1 (only 1.4 L PHEV of the era; GM-style fuel-rate PID))  8.2 km, -0 C, start SOC 0.85 (logged)
+  logged (VED, MAF estimate): fuel 0 g
+  hybridpilot      fuel    28.4 g   battery out +2.285 kWh   SOC 0.851 -> 0.719   engine starts   7
+  aecms            fuel    29.3 g   battery out +2.278 kWh   SOC 0.851 -> 0.720   engine starts   7
+  phev_cdcs        fuel    23.2 g   battery out +2.308 kWh   SOC 0.851 -> 0.718   engine starts   7
+
+VED_428_465  hev_powersplit  (Toyota Prius / Lexus CT)  9.7 km, -1 C
+  logged (VED, MAF estimate): fuel 337 g
+  hybridpilot      fuel   349.4 g   battery out -0.068 kWh   SOC 0.600 -> 0.652   engine starts  35
+  aecms            fuel   346.3 g   battery out -0.049 kWh   SOC 0.600 -> 0.638   engine starts  35
+  powersplit_rule  fuel   347.2 g   battery out -0.053 kWh   SOC 0.600 -> 0.641   engine starts  25
+
+5.5 s

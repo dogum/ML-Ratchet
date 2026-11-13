@@ -1,0 +1,291 @@
+{
+ "engines": {
+  "gas_na_toyota_a25a": {
+   "label": "SI NA DI/PFI, 2018 Toyota 2.5L A25A-FKS (Tier 3 fuel)",
+   "displacement_L": 2.487,
+   "fuel": "gasoline",
+   "lhv_MJkg_testfuel": 41.954,
+   "w_max": 760.26542216873,
+   "t_grid_per_L": [
+    -23.064903318646156,
+    105.3253066344994,
+    48
+   ],
+   "w_grid": [
+    0.0,
+    760.26542216873,
+    48
+   ],
+   "idle_radps": 60.73745796940266,
+   "peak_bte": 0.3913,
+   "rated_power_kW": 150.3,
+   "peak_torque_Nm": 249.5,
+   "source": "US EPA NVFEL/NCAT ALPHA map package: 2018-toyota-2.5l-a25a-fks-engine-tier3-fuel-alpha-map-package-dated-07-30-20"
+  },
+  "gas_atk_toyota_tnga_hev": {
+   "label": "SI Atkinson hybrid engine, Toyota 2.5L TNGA prototype (2017 Vienna paper, octane-modified Tier 3)",
+   "displacement_L": 2.5,
+   "fuel": "gasoline",
+   "lhv_MJkg_testfuel": 43.3088,
+   "w_max": 670.1205088139742,
+   "t_grid_per_L": [
+    -22.913648840168555,
+    92.80975620000001,
+    48
+   ],
+   "w_grid": [
+    0.0,
+    670.1205088139742,
+    48
+   ],
+   "idle_radps": 60.73745796940266,
+   "peak_bte": 0.3928,
+   "rated_power_kW": 131.1,
+   "peak_torque_Nm": 221.0,
+   "source": "US EPA NVFEL/NCAT ALPHA map package: Toyota-2.5L-TNGA-Prototype-Hybrid-Engine-from-2017-Vienna%20Paper-ALPHA-Map-Package-Dated-03-22-23"
+  },
+  "gas_atk_toyota_tnga_hev_paper": {
+   "label": "SI Atkinson hybrid engine, Toyota 2.5L TNGA prototype (2017 Vienna paper image, as published)",
+   "displacement_L": 2.5,
+   "fuel": "gasoline",
+   "lhv_MJkg_testfuel": 43.3088,
+   "w_max": 670.1205088139742,
+   "t_grid_per_L": [
+    -22.913648840168555,
+    92.80975620000001,
+    48
+   ],
+   "w_grid": [
+    0.0,
+    670.1205088139742,
+    48
+   ],
+   "idle_radps": 60.73745796940266,
+   "peak_bte": 0.4075,
+   "rated_power_kW": 131.1,
+   "peak_torque_Nm": 221.0,
+   "source": "US EPA NVFEL/NCAT ALPHA map package: Toyota-2.5L-TNGA-Prototype-Hybrid-Engine-from-2017-Vienna%20Paper-ALPHA-Map-Package-Dated-03-22-23"
+  },
+  "gas_turbo_ford_27": {
+   "label": "SI turbo GDI V6, 2015 Ford 2.7L EcoBoost (Tier 3)",
+   "displacement_L": 2.694,
+   "fuel": "gasoline",
+   "lhv_MJkg_testfuel": 41.9,
+   "w_max": 633.2550199742993,
+   "t_grid_per_L": [
+    -10.702672605790648,
+    186.79203786191533,
+    48
+   ],
+   "w_grid": [
+    0.0,
+    633.2550199742993,
+    48
+   ],
+   "idle_radps": 73.30382858376184,
+   "peak_bte": 0.3567,
+   "rated_power_kW": 220.5,
+   "peak_torque_Nm": 479.3,
+   "source": "US EPA NVFEL/NCAT ALPHA map package: 2015-ford2.7l-ecoboost-v6-engine-tier3-fuel-alpha-map-package-dated-11-27-19"
+  },
+  "gas_turbo_honda_15": {
+   "label": "SI turbo GDI I4, 2016 Honda 1.5L L15B7 (Tier 3)",
+   "displacement_L": 1.496,
+   "fuel": "gasoline",
+   "lhv_MJkg_testfuel": 41.81,
+   "w_max": 691.1503837897545,
+   "t_grid_per_L": [
+    -22.153879287000898,
+    167.53607995304552,
+    48
+   ],
+   "w_grid": [
+    0.0,
+    691.1503837897545,
+    48
+   ],
+   "idle_radps": 65.97344572538566,
+   "peak_bte": 0.3723,
+   "rated_power_kW": 129.1,
+   "peak_torque_Nm": 238.7,
+   "source": "US EPA NVFEL/NCAT ALPHA map package: 2016-honda-1-5l-l15b7-engine-tier-3-fuel-alpha-map-package-02-04-19"
+  },
+  "gas_na_mazda_20": {
+   "label": "SI NA high-CR I4, 2014 Mazda 2.0L SKYACTIV-G (Tier 2)",
+   "displacement_L": 1.998,
+   "fuel": "gasoline",
+   "lhv_MJkg_testfuel": 42.887,
+   "w_max": 719.948316447661,
+   "t_grid_per_L": [
+    -24.68824075609154,
+    106.07075825825827,
+    48
+   ],
+   "w_grid": [
+    0.0,
+    719.948316447661,
+    48
+   ],
+   "idle_radps": 62.83185307179586,
+   "peak_bte": 0.3747,
+   "rated_power_kW": 115.6,
+   "peak_torque_Nm": 201.8,
+   "source": "US EPA NVFEL/NCAT ALPHA map package: 2014-mazda-2-0l-skyactiv-engine-lev-3-fuel-alpha-map-package-03-29-18"
+  },
+  "gas_v6_gm_43": {
+   "label": "SI NA V6 with cylinder deactivation, 2014 GM 4.3L EcoTec3 (LEV III)",
+   "displacement_L": 4.3,
+   "fuel": "gasoline",
+   "lhv_MJkg_testfuel": 41.824,
+   "w_max": 633.5545184739417,
+   "t_grid_per_L": [
+    -19.80348837209303,
+    100.97691034883722,
+    48
+   ],
+   "w_grid": [
+    0.0,
+    633.5545184739417,
+    48
+   ],
+   "idle_radps": 58.64306286700947,
+   "peak_bte": 0.3609,
+   "rated_power_kW": 210.8,
+   "peak_torque_Nm": 413.5,
+   "source": "US EPA NVFEL/NCAT ALPHA map package: 2014-chevrolet-4-3l-ecotec-lv3-engine-lev-3-fuel-alpha-map-package-10-25-18"
+  },
+  "gas_v8_ford_73": {
+   "label": "SI NA V8 (GT-Power model), 2020 Ford 7.3L (Tier 3)",
+   "displacement_L": 7.293,
+   "fuel": "gasoline",
+   "lhv_MJkg_testfuel": 41.787,
+   "w_max": 616.2857408186156,
+   "t_grid_per_L": [
+    -17.818329207238893,
+    94.02404722141748,
+    48
+   ],
+   "w_grid": [
+    0.0,
+    616.2857408186156,
+    48
+   ],
+   "idle_radps": 52.35987755982988,
+   "peak_bte": 0.3574,
+   "rated_power_kW": 323.7,
+   "peak_torque_Nm": 653.1,
+   "source": "US EPA NVFEL/NCAT ALPHA map package: GT-Power-Baseline-2020-Ford-7.3L-Engine-from-Argonne-Report-Tier3-Fuel-ALPHA-Map-Package-Dated-03-20-23"
+  },
+  "diesel_gm_30": {
+   "label": "CI turbo I6 (GT-Power model), 2020 GM 3.0L Duramax",
+   "displacement_L": 3.0,
+   "fuel": "diesel",
+   "lhv_MJkg_testfuel": 43.098,
+   "w_max": 518.3627878423159,
+   "t_grid_per_L": [
+    -22.74787878787879,
+    217.71482600000002,
+    48
+   ],
+   "w_grid": [
+    0.0,
+    518.3627878423159,
+    48
+   ],
+   "idle_radps": 73.30382858376184,
+   "peak_bte": 0.4195,
+   "rated_power_kW": 212.6,
+   "peak_torque_Nm": 622.0,
+   "source": "US EPA NVFEL/NCAT ALPHA map package: GT-Power-2020-GM-3.0L-Duramax-Engine-from-Argonne-Report-Diesel-Fuel-ALPHA-Map-Package-Dated-06-29-23"
+  },
+  "diesel_bmw_n57": {
+   "label": "CI turbo I6, 2015 BMW 3.0L N57",
+   "displacement_L": 2.993,
+   "fuel": "diesel",
+   "lhv_MJkg_testfuel": 42.874,
+   "w_max": 506.836302753668,
+   "t_grid_per_L": [
+    -22.77545454545455,
+    201.91330624791183,
+    48
+   ],
+   "w_grid": [
+    0.0,
+    506.836302753668,
+    48
+   ],
+   "idle_radps": 57.59586531581287,
+   "peak_bte": 0.4174,
+   "rated_power_kW": 193.3,
+   "peak_torque_Nm": 575.5,
+   "source": "US EPA NVFEL/NCAT ALPHA map package: 2015-bmw-3-0-l-n57-engine-diesel-fuel-alpha-map-package-06-11-18"
+  }
+ },
+ "motors": {
+  "ipm_generic_150": {
+   "label": "Generic IPM 150 kW EDU (EPA ALPHA, 2023)",
+   "w_max": 1570.7963267948965,
+   "T_max": 312.0,
+   "P_max_W": 150000.0,
+   "grid": [
+    41,
+    61
+   ],
+   "peak_eff": 0.9465,
+   "median_eff_envelope": 0.9231,
+   "source": "US EPA NVFEL/NCAT ALPHA e-machine map package: Generic-IPM-150kW-EDU-ALPHA-Map-Package-Dated-04-06-23"
+  },
+  "bolt_edu_150": {
+   "label": "2018 Chevrolet Bolt 150 kW 400 V EDU (EPA ALPHA, SwRI test data)",
+   "w_max": 863.937979737193,
+   "T_max": 360.0,
+   "P_max_W": 150000.0,
+   "grid": [
+    41,
+    61
+   ],
+   "peak_eff": 0.9551,
+   "median_eff_envelope": 0.9279,
+   "source": "US EPA NVFEL/NCAT ALPHA e-machine map package: 2018-chevrolet-bolt-150kw-400v-fwd-edu-alpha-map-package-dated-09-25-23"
+  },
+  "prius_mg2_60": {
+   "label": "2010 Toyota Prius 60 kW MG2 (EPA ALPHA, ORNL test data)",
+   "w_max": 1413.7166941154069,
+   "T_max": 207.0,
+   "P_max_W": 60000.0,
+   "grid": [
+    41,
+    61
+   ],
+   "peak_eff": 0.9554,
+   "median_eff_envelope": 0.9233,
+   "source": "US EPA NVFEL/NCAT ALPHA e-machine map package: 2010-Toyota-Prius-60kW-650V-MG2-EMOT-ALPHA-Map-Package-Dated-04-06-23"
+  },
+  "prius_mg1_est": {
+   "label": "Estimated 2010 Toyota Prius MG1 (EPA ALPHA, ORNL data)",
+   "w_max": 1413.7166941154069,
+   "T_max": 207.0,
+   "P_max_W": 60000.0,
+   "grid": [
+    41,
+    61
+   ],
+   "peak_eff": 0.9554,
+   "median_eff_envelope": 0.9264,
+   "source": "US EPA NVFEL/NCAT ALPHA e-machine map package: est-2010-toyota-prius-60kw-650v-mg1-emot-alpha-map-package-dated-09-18-23"
+  },
+  "sonata_p2_30": {
+   "label": "2011 Hyundai Sonata 30 kW P2 motor (EPA ALPHA, ORNL data)",
+   "w_max": 628.3185307179587,
+   "T_max": 205.0,
+   "P_max_W": 30000.0,
+   "grid": [
+    41,
+    61
+   ],
+   "peak_eff": 0.9346,
+   "median_eff_envelope": 0.8943,
+   "source": "US EPA NVFEL/NCAT ALPHA e-machine map package: 2011-Hyundai-Sonata-30kW-270V-EMOT-ALPHA-Map-Package-Dated-03-23-23"
+  }
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "trip_id": "ZTBus_B183_2021-10-05_13-53-20_2021-10-05_18-14-53_leg00",
+ "vehicle_id": "ZTBus_B183",
+ "source": "ZTBus",
+ "date": "2021-10-05T13:53:20Z",
+ "distance_m": 63001.613842293125,
+ "duration_s": 15694.0,
+ "T_amb_mean": 16.009768089715816,
+ "split": "dev",
+ "mission": "B183_2021-10-05_13-53-20_2021-10-05_18-14-53",
+ "elec_kWh": 78.02156315305444,
+ "kWh_per_km": 1.2384057866892038,
+ "passengers_mean": 20.694150630814324,
+ "grid_available_frac": null,
+ "valid_frac": 1.0,
+ "notes": "Measured outputs: elec_power [W] = total electrical power demand of the bus (traction + auxiliaries), regardless of whether it came from the trolley grid or the battery; negative = regeneration. Grade from smoothed GNSS altitude (no lidar DEM for Zurich here). No wind data (set 0).",
+ "q_label_ok": true
+}

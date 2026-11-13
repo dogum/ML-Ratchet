@@ -1,0 +1,35 @@
+{
+ "id": "ref_bus40_diesel",
+ "class": "bus",
+ "architecture": "conv",
+ "notes": "40 ft transit bus, 8.9 L diesel, 6-speed transit automatic (Allison B400-type); seated load; base accessories 6 kW (engine-driven fan, air compressor, 24 V alternator)",
+ "mass_kg": 13300.0,
+ "payload_kg": 2000.0,
+ "CdA_m2": 6.0,
+ "Crr": 0.007,
+ "Crr_speed_coef": 0.002,
+ "wheel_radius_m": 0.5,
+ "engine": {
+  "fuel": "diesel",
+  "displacement_L": 8.9,
+  "max_power_kW": 209.0,
+  "bsfc_map": "willans_hd_diesel",
+  "idle_rpm": 650,
+  "max_rpm": 2400
+ },
+ "transmission": {
+  "type": "AT",
+  "gears": [
+   3.51,
+   1.91,
+   1.43,
+   1.0,
+   0.75,
+   0.64
+  ]
+ },
+ "final_drive": 5.5,
+ "aux": {
+  "base_W": 6000
+ }
+}

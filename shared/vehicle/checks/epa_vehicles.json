@@ -1,0 +1,3220 @@
+[
+ {
+  "row": 1312,
+  "name": "2024 TOYOTA RAV4",
+  "spec": {
+   "id": "epa_1312",
+   "name": "2024 TOYOTA RAV4",
+   "class": "suv",
+   "architecture": "conv",
+   "mass_kg": 1700.9713875,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.487,
+    "max_power_kW": 151.3771,
+    "bsfc_map": "gas_na_toyota_a25a"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.71,
+     3.14,
+     2.11,
+     1.67,
+     1.29,
+     1.0,
+     0.84,
+     0.67
+    ]
+   },
+   "final_drive": 3.3354605278954446,
+   "CdA_m2": 0.8369167810105705,
+   "Crr": 0.0067482666435154095,
+   "Crr_speed_coef": 0.022241189458776896,
+   "road_load_ABC": {
+    "A_lbf": 25.306,
+    "B_lbf_mph": 0.25161,
+    "C_lbf_mph2": 0.022122,
+    "A_N": 112.5666958096,
+    "B_N_per_mps": 2.503617208249821,
+    "C_N_per_mps2": 0.4923999881075692
+   }
+  },
+  "epa": {
+   "FTP": 36.0,
+   "HWY": 50.7,
+   "FE_Bag_1": 34.3697179,
+   "FE_Bag_2": 35.0379692,
+   "FE_Bag_3": 39.0548221
+  },
+  "bev_unit": null,
+  "abc": [
+   25.306,
+   0.25161,
+   0.022122
+  ],
+  "etw_lb": 3750.0,
+  "split": "heldout"
+ },
+ {
+  "row": 2311,
+  "name": "2023 MAZDA Mazda3",
+  "spec": {
+   "id": "epa_2311",
+   "name": "2023 MAZDA Mazda3",
+   "class": "car",
+   "architecture": "conv",
+   "mass_kg": 1474.1752025,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.0,
+    "max_power_kW": 115.5835,
+    "bsfc_map": "gas_na_toyota_a25a"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.15,
+     2.37,
+     1.56,
+     1.16,
+     0.86,
+     0.69
+    ]
+   },
+   "final_drive": 3.495438590950644,
+   "CdA_m2": 0.6694728938053999,
+   "Crr": 0.007983076895689407,
+   "Crr_speed_coef": 0.01186882443492808,
+   "road_load_ABC": {
+    "A_lbf": 25.945,
+    "B_lbf_mph": 0.13766,
+    "C_lbf_mph2": 0.017696,
+    "A_N": 115.409109412,
+    "B_N_per_mps": 1.369770457802434,
+    "C_N_per_mps2": 0.393884377070407
+   }
+  },
+  "epa": {
+   "FTP": 36.7,
+   "HWY": 52.1,
+   "FE_Bag_1": 33.680768,
+   "FE_Bag_2": 36.2026809,
+   "FE_Bag_3": 40.2060611
+  },
+  "bev_unit": null,
+  "abc": [
+   25.945,
+   0.13766,
+   0.017696
+  ],
+  "etw_lb": 3250.0,
+  "split": "dev"
+ },
+ {
+  "row": 644,
+  "name": "2024 Hyundai Sonata",
+  "spec": {
+   "id": "epa_644",
+   "name": "2024 Hyundai Sonata",
+   "class": "car",
+   "architecture": "conv",
+   "mass_kg": 1700.9713875,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.5,
+    "max_power_kW": 142.4287,
+    "bsfc_map": "gas_na_toyota_a25a"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.71,
+     3.14,
+     2.11,
+     1.67,
+     1.29,
+     1.0,
+     0.84,
+     0.67
+    ]
+   },
+   "final_drive": 3.4036381801951943,
+   "CdA_m2": 0.6013376834898752,
+   "Crr": 0.007412266641237427,
+   "Crr_speed_coef": 0.032178693926390584,
+   "road_load_ABC": {
+    "A_lbf": 27.796,
+    "B_lbf_mph": 0.39985,
+    "C_lbf_mph2": 0.015895,
+    "A_N": 123.6427675936,
+    "B_N_per_mps": 3.978662774606299,
+    "C_N_per_mps2": 0.35379702608126806
+   }
+  },
+  "epa": {
+   "FTP": 31.8,
+   "HWY": 49.7
+  },
+  "bev_unit": null,
+  "abc": [
+   27.796,
+   0.39985,
+   0.015895
+  ],
+  "etw_lb": 3750.0,
+  "split": "heldout"
+ },
+ {
+  "row": 584,
+  "name": "2024 HYUNDAI Elantra",
+  "spec": {
+   "id": "epa_584",
+   "name": "2024 HYUNDAI Elantra",
+   "class": "car",
+   "architecture": "conv",
+   "mass_kg": 1417.47615625,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.0,
+    "max_power_kW": 109.6179,
+    "bsfc_map": "gas_na_toyota_a25a"
+   },
+   "transmission": {
+    "type": "CVT",
+    "ratio_range": [
+     2.6,
+     0.41734118145847704
+    ]
+   },
+   "final_drive": 4.89,
+   "CdA_m2": 0.8296152287668747,
+   "Crr": 0.008615999970441116,
+   "Crr_speed_coef": -0.006523462865445188,
+   "road_load_ABC": {
+    "A_lbf": 26.925,
+    "B_lbf_mph": -0.07852,
+    "C_lbf_mph2": 0.021929,
+    "A_N": 119.76836658,
+    "B_N_per_mps": -0.7813044918396564,
+    "C_N_per_mps2": 0.48810411984499075
+   }
+  },
+  "epa": {
+   "FTP": 41.9,
+   "HWY": 61.1,
+   "US06": 38.5,
+   "SC03": 31.0,
+   "COLD": 34.4,
+   "FE_Bag_1": 40.6822357,
+   "FE_Bag_2": 40.3730507,
+   "FE_Bag_3": 46.8224983,
+   "COLD_bag1": 31.3159,
+   "COLD_bag2": 33.2606,
+   "COLD_bag3": 40.2895
+  },
+  "bev_unit": null,
+  "abc": [
+   26.925,
+   -0.07852,
+   0.021929
+  ],
+  "etw_lb": 3125.0,
+  "split": "heldout"
+ },
+ {
+  "row": 563,
+  "name": "2024 HONDA CR-V FWD",
+  "spec": {
+   "id": "epa_563",
+   "name": "2024 HONDA CR-V FWD",
+   "class": "suv",
+   "architecture": "conv",
+   "mass_kg": 1757.67043375,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 1.5,
+    "max_power_kW": 141.683,
+    "bsfc_map": "gas_turbo_honda_15"
+   },
+   "transmission": {
+    "type": "CVT",
+    "ratio_range": [
+     2.6,
+     0.408195560790416
+    ]
+   },
+   "final_drive": 5.64,
+   "CdA_m2": 0.9790889744396332,
+   "Crr": 0.009953548352949168,
+   "Crr_speed_coef": -0.012185126133280526,
+   "road_load_ABC": {
+    "A_lbf": 38.57,
+    "B_lbf_mph": -0.2101,
+    "C_lbf_mph2": 0.02588,
+    "A_N": 171.567907112,
+    "B_N_per_mps": -2.0905765885826773,
+    "C_N_per_mps2": 0.5760469981115582
+   }
+  },
+  "epa": {
+   "FTP": 36.6,
+   "HWY": 48.8,
+   "FE_Bag_1": 34.5,
+   "FE_Bag_2": 36.4,
+   "FE_Bag_3": 38.5
+  },
+  "bev_unit": null,
+  "abc": [
+   38.57,
+   -0.2101,
+   0.02588
+  ],
+  "etw_lb": 3875.0,
+  "split": "heldout"
+ },
+ {
+  "row": 438,
+  "name": "2024 Ford Escape FWD",
+  "spec": {
+   "id": "epa_438",
+   "name": "2024 Ford Escape FWD",
+   "class": "suv",
+   "architecture": "conv",
+   "mass_kg": 1644.2723412500002,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 1.5,
+    "max_power_kW": 134.226,
+    "bsfc_map": "gas_turbo_honda_15"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.71,
+     3.14,
+     2.11,
+     1.67,
+     1.29,
+     1.0,
+     0.84,
+     0.67
+    ]
+   },
+   "final_drive": 3.5871933979252897,
+   "CdA_m2": 0.9461752415276363,
+   "Crr": 0.005991724117375245,
+   "Crr_speed_coef": 0.012358764044499461,
+   "road_load_ABC": {
+    "A_lbf": 21.72,
+    "B_lbf_mph": 0.12,
+    "C_lbf_mph2": 0.02501,
+    "A_N": 96.615373152,
+    "B_N_per_mps": 1.1940465998568361,
+    "C_N_per_mps2": 0.5566822033527848
+   }
+  },
+  "epa": {
+   "FTP": 34.55,
+   "HWY": 50.15,
+   "FE_Bag_1": 34.0638631,
+   "FE_Bag_2": 33.4729847,
+   "FE_Bag_3": 36.6620423
+  },
+  "bev_unit": null,
+  "abc": [
+   21.72,
+   0.12,
+   0.02501
+  ],
+  "etw_lb": 3625.0,
+  "split": "heldout"
+ },
+ {
+  "row": 449,
+  "name": "2024 Ford F150",
+  "spec": {
+   "id": "epa_449",
+   "name": "2024 Ford F150",
+   "class": "pickup",
+   "architecture": "conv",
+   "mass_kg": 2267.96185,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.39,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.7,
+    "max_power_kW": 242.35250000000002,
+    "bsfc_map": "gas_turbo_ford_27"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.7,
+     2.99,
+     2.15,
+     1.8,
+     1.52,
+     1.28,
+     1.0,
+     0.85,
+     0.69,
+     0.64
+    ]
+   },
+   "final_drive": 3.3973776361618997,
+   "CdA_m2": 1.2802307146459502,
+   "Crr": 0.004935999983066081,
+   "Crr_speed_coef": 0.017710589605649522,
+   "road_load_ABC": {
+    "A_lbf": 24.68,
+    "B_lbf_mph": 0.1954,
+    "C_lbf_mph2": 0.03384,
+    "A_N": 109.782109088,
+    "B_N_per_mps": 1.9443058801002149,
+    "C_N_per_mps2": 0.7532237409619449
+   }
+  },
+  "epa": {
+   "FTP": 23.25,
+   "HWY": 34.75,
+   "FE_Bag_1": 21.05561235,
+   "FE_Bag_2": 24.060808,
+   "FE_Bag_3": 23.83132955
+  },
+  "bev_unit": null,
+  "abc": [
+   24.68,
+   0.1954,
+   0.03384
+  ],
+  "etw_lb": 5000.0,
+  "split": "heldout"
+ },
+ {
+  "row": 454,
+  "name": "2024 Ford F150 PICKUP 2WD",
+  "spec": {
+   "id": "epa_454",
+   "name": "2024 Ford F150 PICKUP 2WD",
+   "class": "pickup",
+   "architecture": "conv",
+   "mass_kg": 2494.7580350000003,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.39,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 3.5,
+    "max_power_kW": 298.28000000000003,
+    "bsfc_map": "gas_turbo_ford_27"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.7,
+     2.99,
+     2.15,
+     1.8,
+     1.52,
+     1.28,
+     1.0,
+     0.85,
+     0.69,
+     0.64
+    ]
+   },
+   "final_drive": 3.3973776361618997,
+   "CdA_m2": 1.283635583567881,
+   "Crr": 0.004732727256490721,
+   "Crr_speed_coef": 0.013191306985414932,
+   "road_load_ABC": {
+    "A_lbf": 26.03,
+    "B_lbf_mph": 0.1535,
+    "C_lbf_mph2": 0.03393,
+    "A_N": 115.78720824800001,
+    "B_N_per_mps": 1.5273846089835361,
+    "C_N_per_mps2": 0.7552269955921628
+   }
+  },
+  "epa": {
+   "FTP": 21.4,
+   "HWY": 35.3,
+   "FE_Bag_1": 19.196819,
+   "FE_Bag_2": 21.838421,
+   "FE_Bag_3": 22.375534
+  },
+  "bev_unit": null,
+  "abc": [
+   26.03,
+   0.1535,
+   0.03393
+  ],
+  "etw_lb": 5500.0,
+  "split": "dev"
+ },
+ {
+  "row": 1901,
+  "name": "2023 Ford F150 Super Crew Cab 4X2",
+  "spec": {
+   "id": "epa_1901",
+   "name": "2023 Ford F150 Super Crew Cab 4X2",
+   "class": "pickup",
+   "architecture": "conv",
+   "mass_kg": 2154.5637575,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.39,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 5.0,
+    "max_power_kW": 298.28000000000003,
+    "bsfc_map": "gas_v8_ford_73"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.7,
+     2.99,
+     2.15,
+     1.8,
+     1.52,
+     1.28,
+     1.0,
+     0.85,
+     0.69,
+     0.64
+    ]
+   },
+   "final_drive": 3.2546306766592985,
+   "CdA_m2": 1.3237373730928426,
+   "Crr": 0.004806315772984671,
+   "Crr_speed_coef": 0.021066198107389248,
+   "road_load_ABC": {
+    "A_lbf": 22.83,
+    "B_lbf_mph": 0.215,
+    "C_lbf_mph2": 0.03499,
+    "A_N": 101.55289912799999,
+    "B_N_per_mps": 2.1393334914101647,
+    "C_N_per_mps2": 0.778820883459174
+   }
+  },
+  "epa": {
+   "FTP": 18.225,
+   "HWY": 30.7,
+   "FE_Bag_1": 17.125,
+   "FE_Bag_2": 17.525000000000002,
+   "FE_Bag_3": 20.700000000000003
+  },
+  "bev_unit": null,
+  "abc": [
+   22.83,
+   0.215,
+   0.03499
+  ],
+  "etw_lb": 4750.0,
+  "split": "heldout"
+ },
+ {
+  "row": 364,
+  "name": "2024 CHEVROLET SILVERADO 2WD",
+  "spec": {
+   "id": "epa_364",
+   "name": "2024 CHEVROLET SILVERADO 2WD",
+   "class": "pickup",
+   "architecture": "conv",
+   "mass_kg": 2267.96185,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.39,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 5.3,
+    "max_power_kW": 264.7235,
+    "bsfc_map": "gas_v8_ford_73"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.7,
+     2.99,
+     2.15,
+     1.8,
+     1.52,
+     1.28,
+     1.0,
+     0.85,
+     0.69,
+     0.64
+    ]
+   },
+   "final_drive": 3.2974547645100794,
+   "CdA_m2": 1.5110051637990323,
+   "Crr": 0.0063719999781396,
+   "Crr_speed_coef": 0.0009197697873795566,
+   "road_load_ABC": {
+    "A_lbf": 31.86,
+    "B_lbf_mph": 0.0131,
+    "C_lbf_mph2": 0.03994,
+    "A_N": 141.720340176,
+    "B_N_per_mps": 0.13035008715103796,
+    "C_N_per_mps2": 0.8889998881211607
+   }
+  },
+  "epa": {
+   "FTP": 17.7,
+   "HWY": 28.5,
+   "US06": 16.25,
+   "FE_Bag_1": 19.9,
+   "FE_Bag_2": 19.7,
+   "FE_Bag_3": 22.6
+  },
+  "bev_unit": null,
+  "abc": [
+   31.86,
+   0.0131,
+   0.03994
+  ],
+  "etw_lb": 5000.0,
+  "split": "heldout"
+ },
+ {
+  "row": 363,
+  "name": "2024 CHEVROLET SILVERADO 2WD",
+  "spec": {
+   "id": "epa_363",
+   "name": "2024 CHEVROLET SILVERADO 2WD",
+   "class": "pickup",
+   "architecture": "conv",
+   "mass_kg": 2494.7580350000003,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.39,
+   "engine": {
+    "fuel": "diesel",
+    "displacement_L": 3.0,
+    "max_power_kW": 227.4385,
+    "bsfc_map": "diesel_gm_30"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.7,
+     2.99,
+     2.15,
+     1.8,
+     1.52,
+     1.28,
+     1.0,
+     0.85,
+     0.69,
+     0.64
+    ]
+   },
+   "final_drive": 3.2403559807090385,
+   "CdA_m2": 1.458797173662761,
+   "Crr": 0.005681818162325586,
+   "Crr_speed_coef": 0.0008804581245526128,
+   "road_load_ABC": {
+    "A_lbf": 31.25,
+    "B_lbf_mph": 0.0123,
+    "C_lbf_mph2": 0.03856,
+    "A_N": 139.006925,
+    "B_N_per_mps": 0.1223897764853257,
+    "C_N_per_mps2": 0.8582833171244855
+   }
+  },
+  "epa": {
+   "FTP": 30.0,
+   "HWY": 44.79999999999999,
+   "US06": 26.600000000000005,
+   "FE_Bag_1": 26.8,
+   "FE_Bag_2": 30.3,
+   "FE_Bag_3": 32.2
+  },
+  "bev_unit": null,
+  "abc": [
+   31.25,
+   0.0123,
+   0.03856
+  ],
+  "etw_lb": 5500.0,
+  "split": "heldout"
+ },
+ {
+  "row": 688,
+  "name": "2024 Jeep Grand Cherokee L 4X2",
+  "spec": {
+   "id": "epa_688",
+   "name": "2024 Jeep Grand Cherokee L 4X2",
+   "class": "suv",
+   "architecture": "conv",
+   "mass_kg": 2267.96185,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 3.6,
+    "max_power_kW": 219.9815,
+    "bsfc_map": "gas_v6_gm_43"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.71,
+     3.14,
+     2.11,
+     1.67,
+     1.29,
+     1.0,
+     0.84,
+     0.67
+    ]
+   },
+   "final_drive": 3.322873884393952,
+   "CdA_m2": 1.1179319627005857,
+   "Crr": 0.007277999975031389,
+   "Crr_speed_coef": 0.009441973466874311,
+   "road_load_ABC": {
+    "A_lbf": 36.39,
+    "B_lbf_mph": 0.1536,
+    "C_lbf_mph2": 0.02955,
+    "A_N": 161.87078402400002,
+    "B_N_per_mps": 1.5283796478167502,
+    "C_N_per_mps2": 0.6577352702548896
+   }
+  },
+  "epa": {
+   "FTP": 24.0,
+   "HWY": 36.4,
+   "FE_Bag_1": 23.29,
+   "FE_Bag_2": 22.8,
+   "FE_Bag_3": 25.83
+  },
+  "bev_unit": null,
+  "abc": [
+   36.39,
+   0.1536,
+   0.02955
+  ],
+  "etw_lb": 5000.0,
+  "split": "dev"
+ },
+ {
+  "row": 392,
+  "name": "2024 Chrysler Pacifica",
+  "spec": {
+   "id": "epa_392",
+   "name": "2024 Chrysler Pacifica",
+   "class": "van",
+   "architecture": "conv",
+   "mass_kg": 2154.5637575,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 3.6,
+    "max_power_kW": 214.01590000000002,
+    "bsfc_map": "gas_v6_gm_43"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.71,
+     2.84,
+     1.91,
+     1.38,
+     1.0,
+     0.81,
+     0.7,
+     0.58,
+     0.48
+    ]
+   },
+   "final_drive": 3.3029450321832567,
+   "CdA_m2": 0.8871575135475037,
+   "Crr": 0.005715789454075069,
+   "Crr_speed_coef": 0.022888431010413005,
+   "road_load_ABC": {
+    "A_lbf": 27.15,
+    "B_lbf_mph": 0.2778,
+    "C_lbf_mph2": 0.02345,
+    "A_N": 120.76921644,
+    "B_N_per_mps": 2.7642178786685756,
+    "C_N_per_mps2": 0.5219591230956738
+   }
+  },
+  "epa": {
+   "FTP": 23.9,
+   "HWY": 40.0,
+   "FE_Bag_1": 23.51,
+   "FE_Bag_2": 22.73,
+   "FE_Bag_3": 26.955
+  },
+  "bev_unit": null,
+  "abc": [
+   27.15,
+   0.2778,
+   0.02345
+  ],
+  "etw_lb": 4750.0,
+  "split": "heldout"
+ },
+ {
+  "row": 3372,
+  "name": "2022 Ford Transit RWD Wagon Low Roof",
+  "spec": {
+   "id": "epa_3372",
+   "name": "2022 Ford Transit RWD Wagon Low Roof",
+   "class": "van",
+   "architecture": "conv",
+   "mass_kg": 2721.55422,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 3.5,
+    "max_power_kW": 205.0675,
+    "bsfc_map": "gas_v6_gm_43"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.7,
+     2.99,
+     2.15,
+     1.8,
+     1.52,
+     1.28,
+     1.0,
+     0.85,
+     0.69,
+     0.64
+    ]
+   },
+   "final_drive": 3.8739328701936593,
+   "CdA_m2": 1.5420273028655116,
+   "Crr": 0.006834999976551187,
+   "Crr_speed_coef": 0.01681656812583205,
+   "road_load_ABC": {
+    "A_lbf": 41.01,
+    "B_lbf_mph": 0.3083,
+    "C_lbf_mph2": 0.04076,
+    "A_N": 182.421567816,
+    "B_N_per_mps": 3.0677047227988554,
+    "C_N_per_mps2": 0.9072517636409239
+   }
+  },
+  "epa": {
+   "FTP": 16.25,
+   "HWY": 23.700000000000003,
+   "FE_Bag_1": 15.45,
+   "FE_Bag_2": 15.9,
+   "FE_Bag_3": 17.5
+  },
+  "bev_unit": null,
+  "abc": [
+   41.01,
+   0.3083,
+   0.04076
+  ],
+  "etw_lb": 6000.0,
+  "split": "heldout"
+ },
+ {
+  "row": 474,
+  "name": "2024 Ford Maverick FWD",
+  "spec": {
+   "id": "epa_474",
+   "name": "2024 Ford Maverick FWD",
+   "class": "pickup",
+   "architecture": "conv",
+   "mass_kg": 1757.67043375,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.39,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.0,
+    "max_power_kW": 186.425,
+    "bsfc_map": "gas_turbo_honda_15"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.71,
+     3.14,
+     2.11,
+     1.67,
+     1.29,
+     1.0,
+     0.84,
+     0.67
+    ]
+   },
+   "final_drive": 3.722499815566331,
+   "CdA_m2": 1.0479429904164543,
+   "Crr": 0.006590967719323872,
+   "Crr_speed_coef": 0.0006744091405175763,
+   "road_load_ABC": {
+    "A_lbf": 25.54,
+    "B_lbf_mph": 0.0077,
+    "C_lbf_mph2": 0.0277,
+    "A_N": 113.607579664,
+    "B_N_per_mps": 0.07661799015748032,
+    "C_N_per_mps2": 0.616557258411521
+   }
+  },
+  "epa": {
+   "FTP": 29.1,
+   "HWY": 45.0,
+   "FE_Bag_1": 28.5701036,
+   "FE_Bag_2": 27.8450411,
+   "FE_Bag_3": 32.4328375
+  },
+  "bev_unit": null,
+  "abc": [
+   25.54,
+   0.0077,
+   0.0277
+  ],
+  "etw_lb": 3875.0,
+  "split": "dev"
+ },
+ {
+  "row": 1258,
+  "name": "2024 TOYOTA CAMRY LE/SE",
+  "spec": {
+   "id": "epa_1258",
+   "name": "2024 TOYOTA CAMRY LE/SE",
+   "class": "car",
+   "architecture": "conv",
+   "mass_kg": 1644.2723412500002,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.487,
+    "max_power_kW": 151.3771,
+    "bsfc_map": "gas_na_toyota_a25a"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.71,
+     3.14,
+     2.11,
+     1.67,
+     1.29,
+     1.0,
+     0.84,
+     0.67
+    ]
+   },
+   "final_drive": 2.8959768923016744,
+   "CdA_m2": 0.6193456568991977,
+   "Crr": 0.007058482734405174,
+   "Crr_speed_coef": 0.017212178730592515,
+   "road_load_ABC": {
+    "A_lbf": 25.587,
+    "B_lbf_mph": 0.19688,
+    "C_lbf_mph2": 0.016371,
+    "A_N": 113.8166460792,
+    "B_N_per_mps": 1.9590324548317823,
+    "C_N_per_mps2": 0.364392017236643
+   }
+  },
+  "epa": {
+   "FTP": 36.150000000000006,
+   "HWY": 56.95,
+   "FE_Bag_1": 34.9059193,
+   "FE_Bag_2": 35.1032922,
+   "FE_Bag_3": 39.8964643
+  },
+  "bev_unit": null,
+  "abc": [
+   25.587,
+   0.19688,
+   0.016371
+  ],
+  "etw_lb": 3625.0,
+  "split": "dev"
+ },
+ {
+  "row": 1265,
+  "name": "2024 TOYOTA COROLLA",
+  "spec": {
+   "id": "epa_1265",
+   "name": "2024 TOYOTA COROLLA",
+   "class": "car",
+   "architecture": "conv",
+   "mass_kg": 1474.1752025,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 1.987,
+    "max_power_kW": 126.0233,
+    "bsfc_map": "gas_na_toyota_a25a"
+   },
+   "transmission": {
+    "type": "CVT",
+    "ratio_range": [
+     2.6,
+     0.4833985122608067
+    ]
+   },
+   "final_drive": 3.79,
+   "CdA_m2": 0.6519567347959118,
+   "Crr": 0.006099384594459476,
+   "Crr_speed_coef": 0.021335698165702764,
+   "road_load_ABC": {
+    "A_lbf": 19.823,
+    "B_lbf_mph": 0.18907,
+    "C_lbf_mph2": 0.017233,
+    "A_N": 88.1770967768,
+    "B_N_per_mps": 1.8813199219577668,
+    "C_N_per_mps2": 0.3835787449171747
+   }
+  },
+  "epa": {
+   "FTP": 43.5,
+   "HWY": 62.7,
+   "FE_Bag_1": 41.3016624,
+   "FE_Bag_2": 42.7112732,
+   "FE_Bag_3": 47.1302948
+  },
+  "bev_unit": null,
+  "abc": [
+   19.823,
+   0.18907,
+   0.017233
+  ],
+  "etw_lb": 3250.0,
+  "split": "heldout"
+ },
+ {
+  "row": 549,
+  "name": "2024 HONDA CIVIC 4DR",
+  "spec": {
+   "id": "epa_549",
+   "name": "2024 HONDA CIVIC 4DR",
+   "class": "car",
+   "architecture": "conv",
+   "mass_kg": 1474.1752025,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 1.5,
+    "max_power_kW": 134.226,
+    "bsfc_map": "gas_turbo_honda_15"
+   },
+   "transmission": {
+    "type": "CVT",
+    "ratio_range": [
+     2.6,
+     0.42428240692971986
+    ]
+   },
+   "final_drive": 4.81,
+   "CdA_m2": 0.8084672095739939,
+   "Crr": 0.010769230732284803,
+   "Crr_speed_coef": -0.022746446466918906,
+   "road_load_ABC": {
+    "A_lbf": 35.0,
+    "B_lbf_mph": -0.3559,
+    "C_lbf_mph2": 0.02137,
+    "A_N": 155.687756,
+    "B_N_per_mps": -3.5413432074087328,
+    "C_N_per_mps2": 0.4756616827528593
+   }
+  },
+  "epa": {
+   "FTP": 44.1,
+   "HWY": 62.1,
+   "FE_Bag_1": 41.45,
+   "FE_Bag_2": 43.5,
+   "FE_Bag_3": 47.650000000000006
+  },
+  "bev_unit": null,
+  "abc": [
+   35.0,
+   -0.3559,
+   0.02137
+  ],
+  "etw_lb": 3250.0,
+  "split": "heldout"
+ },
+ {
+  "row": 583,
+  "name": "2024 HYUNDAI Elantra",
+  "spec": {
+   "id": "epa_583",
+   "name": "2024 HYUNDAI Elantra",
+   "class": "car",
+   "architecture": "conv",
+   "mass_kg": 1530.87424875,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 1.6,
+    "max_power_kW": 145.41150000000002,
+    "bsfc_map": "gas_turbo_honda_15"
+   },
+   "transmission": {
+    "type": "DCT",
+    "gears": [
+     3.64,
+     2.26,
+     1.48,
+     1.03,
+     0.85,
+     0.67,
+     0.56
+    ]
+   },
+   "final_drive": 4.900456060287088,
+   "CdA_m2": 0.7916698562258023,
+   "Crr": 0.008951703672993121,
+   "Crr_speed_coef": 0.007334532936942576,
+   "road_load_ABC": {
+    "A_lbf": 30.212,
+    "B_lbf_mph": 0.09906,
+    "C_lbf_mph2": 0.020926,
+    "A_N": 134.3896709792,
+    "B_N_per_mps": 0.9856854681818181,
+    "C_N_per_mps2": 0.4657789599104508
+   }
+  },
+  "epa": {
+   "FTP": 35.3,
+   "HWY": 51.8,
+   "US06": 31.7,
+   "SC03": 28.9,
+   "COLD": 32.5,
+   "FE_Bag_1": 34.856,
+   "FE_Bag_2": 33.9068,
+   "FE_Bag_3": 38.9,
+   "COLD_bag1": 29.8012,
+   "COLD_bag2": 31.7252,
+   "COLD_bag3": 36.4777
+  },
+  "bev_unit": null,
+  "abc": [
+   30.212,
+   0.09906,
+   0.020926
+  ],
+  "etw_lb": 3375.0,
+  "split": "heldout"
+ },
+ {
+  "row": 647,
+  "name": "2024 Hyundai Sonata",
+  "spec": {
+   "id": "epa_647",
+   "name": "2024 Hyundai Sonata",
+   "class": "car",
+   "architecture": "conv",
+   "mass_kg": 1757.67043375,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.5,
+    "max_power_kW": 216.25300000000001,
+    "bsfc_map": "gas_turbo_ford_27"
+   },
+   "transmission": {
+    "type": "DCT",
+    "gears": [
+     4.66,
+     2.95,
+     1.94,
+     1.39,
+     1.09,
+     0.87,
+     0.69,
+     0.56
+    ]
+   },
+   "final_drive": 3.4786335977249188,
+   "CdA_m2": 0.7506601016549923,
+   "Crr": 0.008275870939349932,
+   "Crr_speed_coef": 0.01258289743127923,
+   "road_load_ABC": {
+    "A_lbf": 32.069,
+    "B_lbf_mph": 0.18039,
+    "C_lbf_mph2": 0.019842,
+    "A_N": 142.65001849040002,
+    "B_N_per_mps": 1.794950551234789,
+    "C_N_per_mps2": 0.44165087080871474
+   }
+  },
+  "epa": {
+   "FTP": 28.9,
+   "HWY": 45.55,
+   "US06": 29.15,
+   "SC03": 24.7,
+   "COLD": 26.2,
+   "FE_Bag_1": 28.64772205,
+   "FE_Bag_2": 27.3165901,
+   "FE_Bag_3": 32.682506200000006,
+   "COLD_bag1": 23.9,
+   "COLD_bag2": 25.05,
+   "COLD_bag3": 31.15
+  },
+  "bev_unit": null,
+  "abc": [
+   32.069,
+   0.18039,
+   0.019842
+  ],
+  "etw_lb": 3875.0,
+  "split": "dev"
+ },
+ {
+  "row": 464,
+  "name": "2024 Ford Ford Explorer Timberline",
+  "spec": {
+   "id": "epa_464",
+   "name": "2024 Ford Ford Explorer Timberline",
+   "class": "suv",
+   "architecture": "conv",
+   "mass_kg": 2267.96185,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.3,
+    "max_power_kW": 201.339,
+    "bsfc_map": "gas_turbo_ford_27"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.7,
+     2.99,
+     2.15,
+     1.8,
+     1.52,
+     1.28,
+     1.0,
+     0.85,
+     0.69,
+     0.64
+    ]
+   },
+   "final_drive": 3.307337246321798,
+   "CdA_m2": 1.2442904315811258,
+   "Crr": 0.009223999968355252,
+   "Crr_speed_coef": 0.0017024385050110476,
+   "road_load_ABC": {
+    "A_lbf": 46.12,
+    "B_lbf_mph": 0.0351,
+    "C_lbf_mph2": 0.03289,
+    "A_N": 205.151980192,
+    "B_N_per_mps": 0.34925863045812455,
+    "C_N_per_mps2": 0.7320782754207554
+   }
+  },
+  "epa": {
+   "FTP": 24.2,
+   "HWY": 35.2,
+   "US06": 20.1,
+   "FE_Bag_1": 23.2,
+   "FE_Bag_2": 23.9,
+   "FE_Bag_3": 25.8
+  },
+  "bev_unit": null,
+  "abc": [
+   46.12,
+   0.0351,
+   0.03289
+  ],
+  "etw_lb": 5000.0,
+  "split": "dev"
+ },
+ {
+  "row": 1266,
+  "name": "2024 TOYOTA COROLLA CROSS",
+  "spec": {
+   "id": "epa_1266",
+   "name": "2024 TOYOTA COROLLA CROSS",
+   "class": "suv",
+   "architecture": "conv",
+   "mass_kg": 1587.5732950000001,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 1.987,
+    "max_power_kW": 126.0233,
+    "bsfc_map": "gas_na_toyota_a25a"
+   },
+   "transmission": {
+    "type": "CVT",
+    "ratio_range": [
+     2.6,
+     0.46476416540298177
+    ]
+   },
+   "final_drive": 4.01,
+   "CdA_m2": 0.927410630580107,
+   "Crr": 0.006929714261940537,
+   "Crr_speed_coef": 0.0087175401304932,
+   "road_load_ABC": {
+    "A_lbf": 24.254,
+    "B_lbf_mph": 0.09452,
+    "C_lbf_mph2": 0.024514,
+    "A_N": 107.88716668640001,
+    "B_N_per_mps": 0.9405107051539012,
+    "C_N_per_mps2": 0.545642044501806
+   }
+  },
+  "epa": {
+   "FTP": 41.3,
+   "HWY": 53.6,
+   "US06": 29.96666666666667,
+   "FE_Bag_1": 39.5658716,
+   "FE_Bag_2": 41.3126029,
+   "FE_Bag_3": 42.6954857
+  },
+  "bev_unit": null,
+  "abc": [
+   24.254,
+   0.09452,
+   0.024514
+  ],
+  "etw_lb": 3500.0,
+  "split": "heldout"
+ },
+ {
+  "row": 1254,
+  "name": "2024 TOYOTA CAMRY HYBRID LE",
+  "spec": {
+   "id": "epa_1254",
+   "name": "2024 TOYOTA CAMRY HYBRID LE",
+   "class": "car",
+   "architecture": "hev_powersplit",
+   "mass_kg": 1700.9713875,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.487,
+    "max_power_kW": 131.2432,
+    "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+   },
+   "transmission": {
+    "type": "eCVT",
+    "ring_teeth": 78,
+    "sun_teeth": 30,
+    "mg2_ratio": 3.0
+   },
+   "final_drive": 3.19,
+   "motors": [
+    {
+     "role": "MG1",
+     "max_power_kW": 65,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 13500
+    },
+    {
+     "role": "MG2",
+     "max_power_kW": 88,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 17000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 1.1,
+    "nominal_V": 259,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.4,
+     0.8
+    ]
+   },
+   "CdA_m2": 0.6059153405960265,
+   "Crr": 0.005241866648683411,
+   "Crr_speed_coef": 0.019296804550219517,
+   "road_load_ABC": {
+    "A_lbf": 19.657,
+    "B_lbf_mph": 0.16957,
+    "C_lbf_mph2": 0.016016,
+    "A_N": 87.4386919912,
+    "B_N_per_mps": 1.687287349481031,
+    "C_N_per_mps2": 0.3564902906396722
+   }
+  },
+  "epa": {
+   "FTP": 73.1,
+   "HWY": 71.9,
+   "US06": 48.9,
+   "SC03": 52.9,
+   "COLD": 46.8,
+   "FE_Bag_1": 50.1998786,
+   "FE_Bag_2": 112.0355808,
+   "FE_Bag_3": 55.2876957,
+   "COLD_bag1": 28.2149377,
+   "COLD_bag2": 77.3508521,
+   "COLD_bag3": 39.420598
+  },
+  "bev_unit": null,
+  "abc": [
+   19.657,
+   0.16957,
+   0.016016
+  ],
+  "etw_lb": 3750.0,
+  "split": "heldout"
+ },
+ {
+  "row": 1319,
+  "name": "2024 TOYOTA RAV4 HYBRID AWD",
+  "spec": {
+   "id": "epa_1319",
+   "name": "2024 TOYOTA RAV4 HYBRID AWD",
+   "class": "suv",
+   "architecture": "hev_powersplit",
+   "mass_kg": 1814.36948,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.487,
+    "max_power_kW": 131.2432,
+    "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+   },
+   "transmission": {
+    "type": "eCVT",
+    "ring_teeth": 78,
+    "sun_teeth": 30,
+    "mg2_ratio": 3.0
+   },
+   "final_drive": 3.61,
+   "motors": [
+    {
+     "role": "MG1",
+     "max_power_kW": 65,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 13500
+    },
+    {
+     "role": "MG2",
+     "max_power_kW": 128,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 17000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 1.6,
+    "nominal_V": 245,
+    "chemistry": "NiMH",
+    "soc_window": [
+     0.4,
+     0.8
+    ]
+   },
+   "CdA_m2": 1.0099597859984717,
+   "Crr": 0.006860999976461989,
+   "Crr_speed_coef": 0.000999301812439403,
+   "road_load_ABC": {
+    "A_lbf": 27.444,
+    "B_lbf_mph": 0.01226,
+    "C_lbf_mph2": 0.026696,
+    "A_N": 122.0769935904,
+    "B_N_per_mps": 0.1219917609520401,
+    "C_N_per_mps2": 0.5942098400922009
+   }
+  },
+  "epa": {
+   "FTP": 57.6,
+   "HWY": 53.7,
+   "US06": 36.75,
+   "SC03": 43.6,
+   "COLD": 42.5,
+   "FE_Bag_1": 39.9924524,
+   "FE_Bag_2": 88.1601235,
+   "FE_Bag_3": 43.4207212,
+   "COLD_bag1": 26.4810334,
+   "COLD_bag2": 49.4206437,
+   "COLD_bag3": 39.7253743
+  },
+  "bev_unit": null,
+  "abc": [
+   27.444,
+   0.01226,
+   0.026696
+  ],
+  "etw_lb": 4000.0,
+  "split": "dev"
+ },
+ {
+  "row": 1920,
+  "name": "2023 Ford Maverick",
+  "spec": {
+   "id": "epa_1920",
+   "name": "2023 Ford Maverick",
+   "class": "pickup",
+   "architecture": "hev_powersplit",
+   "mass_kg": 1814.36948,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.39,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.5,
+    "max_power_kW": 120.80340000000001,
+    "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+   },
+   "transmission": {
+    "type": "eCVT",
+    "ring_teeth": 78,
+    "sun_teeth": 30,
+    "mg2_ratio": 3.0
+   },
+   "final_drive": 2.91,
+   "motors": [
+    {
+     "role": "MG1",
+     "max_power_kW": 70,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 13500
+    },
+    {
+     "role": "MG2",
+     "max_power_kW": 94,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 14000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 1.1,
+    "nominal_V": 280,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.4,
+     0.8
+    ]
+   },
+   "CdA_m2": 1.033945195959628,
+   "Crr": 0.006897499976336769,
+   "Crr_speed_coef": 0.01595610954245402,
+   "road_load_ABC": {
+    "A_lbf": 27.59,
+    "B_lbf_mph": 0.1968,
+    "C_lbf_mph2": 0.02733,
+    "A_N": 122.72643394400001,
+    "B_N_per_mps": 1.9582364237652112,
+    "C_N_per_mps2": 0.6083216560428472
+   }
+  },
+  "epa": {
+   "FTP": 56.1,
+   "HWY": 50.6,
+   "US06": 35.0,
+   "FE_Bag_1": 53.6550313,
+   "FE_Bag_2": 58.4610434
+  },
+  "bev_unit": null,
+  "abc": [
+   27.59,
+   0.1968,
+   0.02733
+  ],
+  "etw_lb": 4000.0,
+  "split": "heldout"
+ },
+ {
+  "row": 439,
+  "name": "2024 Ford Escape FWD HEV",
+  "spec": {
+   "id": "epa_439",
+   "name": "2024 Ford Escape FWD HEV",
+   "class": "suv",
+   "architecture": "hev_powersplit",
+   "mass_kg": 1814.36948,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.5,
+    "max_power_kW": 120.80340000000001,
+    "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+   },
+   "transmission": {
+    "type": "eCVT",
+    "ring_teeth": 78,
+    "sun_teeth": 30,
+    "mg2_ratio": 3.0
+   },
+   "final_drive": 2.91,
+   "motors": [
+    {
+     "role": "MG1",
+     "max_power_kW": 70,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 13500
+    },
+    {
+     "role": "MG2",
+     "max_power_kW": 88,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 14000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 1.1,
+    "nominal_V": 280,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.4,
+     0.8
+    ]
+   },
+   "CdA_m2": 0.9457969227585328,
+   "Crr": 0.0062524999785495685,
+   "Crr_speed_coef": 0.017915167504937896,
+   "road_load_ABC": {
+    "A_lbf": 25.01,
+    "B_lbf_mph": 0.2003,
+    "C_lbf_mph2": 0.025,
+    "A_N": 111.250022216,
+    "B_N_per_mps": 1.9930627829277023,
+    "C_N_per_mps2": 0.5564596195049828
+   }
+  },
+  "epa": {
+   "FTP": 59.2,
+   "HWY": 52.6,
+   "FE_Bag_1": 57.0774621,
+   "FE_Bag_2": 61.3903696
+  },
+  "bev_unit": null,
+  "abc": [
+   25.01,
+   0.2003,
+   0.025
+  ],
+  "etw_lb": 4000.0,
+  "split": "dev"
+ },
+ {
+  "row": 1269,
+  "name": "2024 TOYOTA COROLLA CROSS HYBRID AWD",
+  "spec": {
+   "id": "epa_1269",
+   "name": "2024 TOYOTA COROLLA CROSS HYBRID AWD",
+   "class": "suv",
+   "architecture": "hev_powersplit",
+   "mass_kg": 1700.9713875,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 1.987,
+    "max_power_kW": 111.855,
+    "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+   },
+   "transmission": {
+    "type": "eCVT",
+    "ring_teeth": 78,
+    "sun_teeth": 30,
+    "mg2_ratio": 3.0
+   },
+   "final_drive": 3.61,
+   "motors": [
+    {
+     "role": "MG1",
+     "max_power_kW": 55,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 13500
+    },
+    {
+     "role": "MG2",
+     "max_power_kW": 110,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 17000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 0.9,
+    "nominal_V": 222,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.4,
+     0.8
+    ]
+   },
+   "CdA_m2": 0.9789754788089021,
+   "Crr": 0.007456266641086476,
+   "Crr_speed_coef": 0.019025278767335126,
+   "road_load_ABC": {
+    "A_lbf": 27.961,
+    "B_lbf_mph": 0.23781,
+    "C_lbf_mph2": 0.025877,
+    "A_N": 124.3767241576,
+    "B_N_per_mps": 2.366301849266285,
+    "C_N_per_mps2": 0.5759802229572176
+   }
+  },
+  "epa": {
+   "FTP": 64.6,
+   "HWY": 56.3,
+   "US06": 37.7,
+   "SC03": 44.95,
+   "COLD": 47.4,
+   "FE_Bag_1": 45.2460928,
+   "FE_Bag_2": 96.618012,
+   "FE_Bag_3": 51.1258868,
+   "COLD_bag1": 29.0844434,
+   "COLD_bag2": 68.9592951,
+   "COLD_bag3": 41.0781469
+  },
+  "bev_unit": null,
+  "abc": [
+   27.961,
+   0.23781,
+   0.025877
+  ],
+  "etw_lb": 3750.0,
+  "split": "heldout"
+ },
+ {
+  "row": 1304,
+  "name": "2024 TOYOTA PRIUS",
+  "spec": {
+   "id": "epa_1304",
+   "name": "2024 TOYOTA PRIUS",
+   "class": "car",
+   "architecture": "hev_powersplit",
+   "mass_kg": 1530.87424875,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 1.987,
+    "max_power_kW": 111.855,
+    "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+   },
+   "transmission": {
+    "type": "eCVT",
+    "ring_teeth": 78,
+    "sun_teeth": 30,
+    "mg2_ratio": 3.0
+   },
+   "final_drive": 3.39,
+   "motors": [
+    {
+     "role": "MG1",
+     "max_power_kW": 55,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 13500
+    },
+    {
+     "role": "MG2",
+     "max_power_kW": 83,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 17000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 0.9,
+    "nominal_V": 222,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.4,
+     0.8
+    ]
+   },
+   "CdA_m2": 0.6294845999111691,
+   "Crr": 0.006031703683010757,
+   "Crr_speed_coef": 0.018809077227044852,
+   "road_load_ABC": {
+    "A_lbf": 20.357,
+    "B_lbf_mph": 0.17117,
+    "C_lbf_mph2": 0.016639,
+    "A_N": 90.5524471112,
+    "B_N_per_mps": 1.7032079708124552,
+    "C_N_per_mps2": 0.37035726435773636
+   }
+  },
+  "epa": {
+   "FTP": 82.8,
+   "HWY": 77.8,
+   "US06": 55.4,
+   "SC03": 53.4,
+   "COLD": 57.0,
+   "FE_Bag_1": 55.0082016,
+   "FE_Bag_2": 124.1424484,
+   "FE_Bag_3": 62.3543968,
+   "COLD_bag1": 33.0251098,
+   "COLD_bag2": 98.4418139,
+   "COLD_bag3": 48.3177276
+  },
+  "bev_unit": null,
+  "abc": [
+   20.357,
+   0.17117,
+   0.016639
+  ],
+  "etw_lb": 3375.0,
+  "split": "heldout"
+ },
+ {
+  "row": 587,
+  "name": "2024 HYUNDAI Elantra Hybrid",
+  "spec": {
+   "id": "epa_587",
+   "name": "2024 HYUNDAI Elantra Hybrid",
+   "class": "car",
+   "architecture": "hev_parallel_p2",
+   "mass_kg": 1530.87424875,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 1.6,
+    "max_power_kW": 77.5528,
+    "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+   },
+   "transmission": {
+    "type": "DCT",
+    "gears": [
+     3.92,
+     2.43,
+     1.45,
+     1.03,
+     0.77,
+     0.63
+    ]
+   },
+   "final_drive": 4.233257817337203,
+   "motors": [
+    {
+     "role": "P2",
+     "max_power_kW": 32,
+     "max_torque_Nm": 170,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 7000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 1.32,
+    "nominal_V": 240,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.3,
+     0.8
+    ]
+   },
+   "CdA_m2": 0.5979328145679444,
+   "Crr": 0.006249481460041405,
+   "Crr_speed_coef": 0.04262926903998042,
+   "road_load_ABC": {
+    "A_lbf": 21.092,
+    "B_lbf_mph": 0.40195,
+    "C_lbf_mph2": 0.015805,
+    "A_N": 93.8218899872,
+    "B_N_per_mps": 3.9995585901037938,
+    "C_N_per_mps2": 0.3517937714510501
+   }
+  },
+  "epa": {
+   "FTP": 68.3,
+   "HWY": 67.4,
+   "US06": 47.1,
+   "SC03": 51.9,
+   "COLD": 41.6,
+   "FE_Bag_1": 50.6242,
+   "FE_Bag_2": 142.1667,
+   "FE_Bag_3": 45.7343,
+   "COLD_bag1": 24.626,
+   "COLD_bag2": 53.7005,
+   "COLD_bag3": 46.1324
+  },
+  "bev_unit": null,
+  "abc": [
+   21.092,
+   0.40195,
+   0.015805
+  ],
+  "etw_lb": 3375.0,
+  "split": "heldout"
+ },
+ {
+  "row": 717,
+  "name": "2024 KIA NIRO HYBRID",
+  "spec": {
+   "id": "epa_717",
+   "name": "2024 KIA NIRO HYBRID",
+   "class": "suv",
+   "architecture": "hev_parallel_p2",
+   "mass_kg": 1530.87424875,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 1.6,
+    "max_power_kW": 77.5528,
+    "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+   },
+   "transmission": {
+    "type": "DCT",
+    "gears": [
+     3.92,
+     2.43,
+     1.45,
+     1.03,
+     0.77,
+     0.63
+    ]
+   },
+   "final_drive": 4.417312505047516,
+   "motors": [
+    {
+     "role": "P2",
+     "max_power_kW": 32,
+     "max_torque_Nm": 170,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 7000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 1.32,
+    "nominal_V": 240,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.3,
+     0.8
+    ]
+   },
+   "CdA_m2": 0.7076830894848447,
+   "Crr": 0.005525333314377589,
+   "Crr_speed_coef": 0.03282711205939552,
+   "road_load_ABC": {
+    "A_lbf": 18.648,
+    "B_lbf_mph": 0.27366,
+    "C_lbf_mph2": 0.018706,
+    "A_N": 82.9504363968,
+    "B_N_per_mps": 2.7230232709735147,
+    "C_N_per_mps2": 0.4163653456984084
+   }
+  },
+  "epa": {
+   "FTP": 70.4,
+   "HWY": 66.7,
+   "US06": 46.65,
+   "SC03": 56.1,
+   "COLD": 50.0,
+   "FE_Bag_1": 52.5459328,
+   "FE_Bag_2": 134.5846558,
+   "FE_Bag_3": 41.0077972,
+   "COLD_bag1": 29.3969,
+   "COLD_bag2": 72.7863,
+   "COLD_bag3": 47.3311
+  },
+  "bev_unit": null,
+  "abc": [
+   18.648,
+   0.27366,
+   0.018706
+  ],
+  "etw_lb": 3375.0,
+  "split": "heldout"
+ },
+ {
+  "row": 597,
+  "name": "2024 HYUNDAI SONATA HYBRID",
+  "spec": {
+   "id": "epa_597",
+   "name": "2024 HYUNDAI SONATA HYBRID",
+   "class": "car",
+   "architecture": "hev_parallel_p2",
+   "mass_kg": 1757.67043375,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.0,
+    "max_power_kW": 111.855,
+    "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+   },
+   "transmission": {
+    "type": "DCT",
+    "gears": [
+     3.92,
+     2.43,
+     1.45,
+     1.03,
+     0.77,
+     0.63
+    ]
+   },
+   "final_drive": 4.405042192533496,
+   "motors": [
+    {
+     "role": "P2",
+     "max_power_kW": 39,
+     "max_torque_Nm": 205,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 7000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 1.76,
+    "nominal_V": 270,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.3,
+     0.8
+    ]
+   },
+   "CdA_m2": 0.6942906050585838,
+   "Crr": 0.008242322552368252,
+   "Crr_speed_coef": -0.0023840856439316153,
+   "road_load_ABC": {
+    "A_lbf": 31.939,
+    "B_lbf_mph": -0.03404,
+    "C_lbf_mph2": 0.018352,
+    "A_N": 142.0717496824,
+    "B_N_per_mps": -0.33871121882605587,
+    "C_N_per_mps2": 0.4084858774862178
+   }
+  },
+  "epa": {
+   "FTP": 56.3,
+   "HWY": 67.0,
+   "US06": 44.5,
+   "SC03": 43.3,
+   "COLD": 41.1,
+   "FE_Bag_1": 47.4722672,
+   "FE_Bag_2": 100.8680573,
+   "FE_Bag_3": 33.1599236,
+   "COLD_bag1": 25.6336,
+   "COLD_bag2": 52.212,
+   "COLD_bag3": 43.3454
+  },
+  "bev_unit": null,
+  "abc": [
+   31.939,
+   -0.03404,
+   0.018352
+  ],
+  "etw_lb": 3875.0,
+  "split": "dev"
+ },
+ {
+  "row": 602,
+  "name": "2024 HYUNDAI TUCSON HYBRID",
+  "spec": {
+   "id": "epa_602",
+   "name": "2024 HYUNDAI TUCSON HYBRID",
+   "class": "suv",
+   "architecture": "hev_parallel_p2",
+   "mass_kg": 1814.36948,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 1.6,
+    "max_power_kW": 131.9889,
+    "bsfc_map": "gas_turbo_honda_15"
+   },
+   "transmission": {
+    "type": "DCT",
+    "gears": [
+     3.92,
+     2.43,
+     1.45,
+     1.03,
+     0.77,
+     0.63
+    ]
+   },
+   "final_drive": 4.096053413771333,
+   "motors": [
+    {
+     "role": "P2",
+     "max_power_kW": 44,
+     "max_torque_Nm": 264,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 7000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 1.49,
+    "nominal_V": 270,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.3,
+     0.8
+    ]
+   },
+   "CdA_m2": 0.9493152873111944,
+   "Crr": 0.006980999976050306,
+   "Crr_speed_coef": 0.01653749921686402,
+   "road_load_ABC": {
+    "A_lbf": 27.924,
+    "B_lbf_mph": 0.20644,
+    "C_lbf_mph2": 0.025093,
+    "A_N": 124.2121399584,
+    "B_N_per_mps": 2.054158167287044,
+    "C_N_per_mps2": 0.5585296492895413
+   }
+  },
+  "epa": {
+   "FTP": 49.6,
+   "HWY": 50.9,
+   "US06": 33.8,
+   "SC03": 41.1,
+   "COLD": 37.5,
+   "FE_Bag_1": 33.319,
+   "FE_Bag_2": 98.6252,
+   "FE_Bag_3": 33.9727,
+   "COLD_bag1": 22.8553,
+   "COLD_bag2": 52.9616,
+   "COLD_bag3": 34.9497
+  },
+  "bev_unit": null,
+  "abc": [
+   27.924,
+   0.20644,
+   0.025093
+  ],
+  "etw_lb": 4000.0,
+  "split": "heldout"
+ },
+ {
+  "row": 452,
+  "name": "2024 Ford F150 HEV",
+  "spec": {
+   "id": "epa_452",
+   "name": "2024 Ford F150 HEV",
+   "class": "pickup",
+   "architecture": "hev_parallel_p2",
+   "mass_kg": 2721.55422,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.39,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 3.5,
+    "max_power_kW": 298.28000000000003,
+    "bsfc_map": "gas_turbo_ford_27"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.7,
+     2.99,
+     2.15,
+     1.8,
+     1.52,
+     1.28,
+     1.0,
+     0.85,
+     0.69,
+     0.64
+    ]
+   },
+   "final_drive": 3.6114980754158013,
+   "motors": [
+    {
+     "role": "P2",
+     "max_power_kW": 35,
+     "max_torque_Nm": 240,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 7000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 1.5,
+    "nominal_V": 300,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.3,
+     0.8
+    ]
+   },
+   "CdA_m2": 1.2469386629648498,
+   "Crr": 0.00601333331270341,
+   "Crr_speed_coef": 0.0359596188855752,
+   "road_load_ABC": {
+    "A_lbf": 36.08,
+    "B_lbf_mph": 0.58,
+    "C_lbf_mph2": 0.03296,
+    "A_N": 160.491835328,
+    "B_N_per_mps": 5.771225232641374,
+    "C_N_per_mps2": 0.7336363623553694
+   }
+  },
+  "epa": {
+   "FTP": 26.2,
+   "HWY": 32.7,
+   "FE_Bag_1": 24.885876,
+   "FE_Bag_2": 27.415491
+  },
+  "bev_unit": null,
+  "abc": [
+   36.08,
+   0.58,
+   0.03296
+  ],
+  "etw_lb": 6000.0,
+  "split": "heldout"
+ },
+ {
+  "row": 1343,
+  "name": "2024 TOYOTA TACOMA HYBRID 4WD",
+  "spec": {
+   "id": "epa_1343",
+   "name": "2024 TOYOTA TACOMA HYBRID 4WD",
+   "class": "pickup",
+   "architecture": "hev_parallel_p2",
+   "mass_kg": 2494.7580350000003,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.39,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.393,
+    "max_power_kW": 170,
+    "bsfc_map": "gas_turbo_ford_27"
+   },
+   "transmission": {
+    "type": "AT",
+    "gears": [
+     4.71,
+     3.14,
+     2.11,
+     1.67,
+     1.29,
+     1.0,
+     0.84,
+     0.67
+    ]
+   },
+   "final_drive": 3.5588734500469315,
+   "motors": [
+    {
+     "role": "P2",
+     "max_power_kW": 36,
+     "max_torque_Nm": 250,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 7000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 1.87,
+    "nominal_V": 288,
+    "chemistry": "NiMH",
+    "soc_window": [
+     0.3,
+     0.8
+    ]
+   },
+   "CdA_m2": 1.276144871939633,
+   "Crr": 0.007922545427365603,
+   "Crr_speed_coef": 0.023720026018812516,
+   "road_load_ABC": {
+    "A_lbf": 43.574,
+    "B_lbf_mph": 0.46205,
+    "C_lbf_mph2": 0.033732,
+    "A_N": 193.8268079984,
+    "B_N_per_mps": 4.597576928865426,
+    "C_N_per_mps2": 0.7508198354056832
+   }
+  },
+  "epa": {
+   "FTP": 29.3,
+   "HWY": 34.1,
+   "FE_Bag_1": 22.3828163,
+   "FE_Bag_2": 34.0195045,
+   "FE_Bag_3": 25.8037109
+  },
+  "bev_unit": null,
+  "abc": [
+   43.574,
+   0.46205,
+   0.033732
+  ],
+  "etw_lb": 5500.0,
+  "split": "heldout"
+ },
+ {
+  "row": 544,
+  "name": "2024 HONDA ACCORD",
+  "spec": {
+   "id": "epa_544",
+   "name": "2024 HONDA ACCORD",
+   "class": "car",
+   "architecture": "hev_series",
+   "mass_kg": 1700.9713875,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.0,
+    "max_power_kW": 108.8722,
+    "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+   },
+   "transmission": {
+    "type": "single"
+   },
+   "final_drive": 9.676105373056563,
+   "motors": [
+    {
+     "role": "traction",
+     "max_power_kW": 135,
+     "max_torque_Nm": 335,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 14000
+    },
+    {
+     "role": "generator",
+     "max_power_kW": 105,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 14000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 1.05,
+    "nominal_V": 260,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.3,
+     0.8
+    ]
+   },
+   "CdA_m2": 0.6544914705489047,
+   "Crr": 0.005757333313581668,
+   "Crr_speed_coef": 0.019333594816922255,
+   "road_load_ABC": {
+    "A_lbf": 21.59,
+    "B_lbf_mph": 0.1866,
+    "C_lbf_mph2": 0.0173,
+    "A_N": 96.037104344,
+    "B_N_per_mps": 1.85674246277738,
+    "C_N_per_mps2": 0.3850700566974481
+   }
+  },
+  "epa": {
+   "FTP": 72.4,
+   "HWY": 66.9,
+   "US06": 46.3,
+   "SC03": 44.1,
+   "COLD": 44.3,
+   "FE_Bag_1": 42.9,
+   "FE_Bag_2": 181.3,
+   "FE_Bag_3": 42.8,
+   "COLD_bag1": 30.8,
+   "COLD_bag2": 51.6,
+   "COLD_bag3": 47.2
+  },
+  "bev_unit": null,
+  "abc": [
+   21.59,
+   0.1866,
+   0.0173
+  ],
+  "etw_lb": 3750.0,
+  "split": "dev"
+ },
+ {
+  "row": 565,
+  "name": "2024 HONDA CR-V FWD",
+  "spec": {
+   "id": "epa_565",
+   "name": "2024 HONDA CR-V FWD",
+   "class": "suv",
+   "architecture": "hev_series",
+   "mass_kg": 1814.36948,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "engine": {
+    "fuel": "gasoline",
+    "displacement_L": 2.0,
+    "max_power_kW": 108.12650000000001,
+    "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+   },
+   "transmission": {
+    "type": "single"
+   },
+   "final_drive": 10.555751316061704,
+   "motors": [
+    {
+     "role": "traction",
+     "max_power_kW": 135,
+     "max_torque_Nm": 335,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 14000
+    },
+    {
+     "role": "generator",
+     "max_power_kW": 105,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 14000
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 1.06,
+    "nominal_V": 260,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.3,
+     0.8
+    ]
+   },
+   "CdA_m2": 0.8553787369428171,
+   "Crr": 0.006397499978052117,
+   "Crr_speed_coef": 0.021844876099429276,
+   "road_load_ABC": {
+    "A_lbf": 25.59,
+    "B_lbf_mph": 0.2499,
+    "C_lbf_mph2": 0.02261,
+    "A_N": 113.829990744,
+    "B_N_per_mps": 2.4866020442018613,
+    "C_N_per_mps2": 0.5032620798803065
+   }
+  },
+  "epa": {
+   "FTP": 61.1,
+   "HWY": 54.75,
+   "FE_Bag_1": 38.4396591,
+   "FE_Bag_2": 114.2195435,
+   "FE_Bag_3": 39.4460258
+  },
+  "bev_unit": null,
+  "abc": [
+   25.59,
+   0.2499,
+   0.02261
+  ],
+  "etw_lb": 4000.0,
+  "split": "heldout"
+ },
+ {
+  "row": 1373,
+  "name": "2024 Tesla Model 3 RWD",
+  "spec": {
+   "id": "epa_1373",
+   "name": "2024 Tesla Model 3 RWD",
+   "class": "car",
+   "architecture": "bev",
+   "mass_kg": 1927.7675725000001,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "transmission": {
+    "type": "single"
+   },
+   "final_drive": 8.889841416408128,
+   "motors": [
+    {
+     "role": "traction",
+     "max_power_kW": 208,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 14291.537421458686
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 57.5,
+    "nominal_V": 350,
+    "chemistry": "LFP",
+    "soc_window": [
+     0.02,
+     0.98
+    ]
+   },
+   "CdA_m2": 0.4615488983061641,
+   "Crr": 0.006357647037012369,
+   "Crr_speed_coef": 0.02378504058872057,
+   "road_load_ABC": {
+    "A_lbf": 27.02,
+    "B_lbf_mph": 0.2873,
+    "C_lbf_mph2": 0.0122,
+    "A_N": 120.190947632,
+    "B_N_per_mps": 2.8587465678239083,
+    "C_N_per_mps2": 0.27155229431843164
+   }
+  },
+  "epa": {
+   "CD_UDDS": 199.5,
+   "CD_HWY": 178.0
+  },
+  "bev_unit": "MPGe",
+  "abc": [
+   27.02,
+   0.2873,
+   0.0122
+  ],
+  "etw_lb": 4250.0,
+  "split": "dev"
+ },
+ {
+  "row": 1380,
+  "name": "2024 Tesla Model Y Long Range AWD",
+  "spec": {
+   "id": "epa_1380",
+   "name": "2024 Tesla Model Y Long Range AWD",
+   "class": "suv",
+   "architecture": "bev",
+   "mass_kg": 2154.5637575,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "transmission": {
+    "type": "single"
+   },
+   "final_drive": 9.107695237679788,
+   "motors": [
+    {
+     "role": "traction",
+     "max_power_kW": 291,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 13421.617752326416
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 75.0,
+    "nominal_V": 350,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.02,
+     0.98
+    ]
+   },
+   "CdA_m2": 0.6469250951668365,
+   "Crr": 0.008073684182827954,
+   "Crr_speed_coef": 0.003948907091840496,
+   "road_load_ABC": {
+    "A_lbf": 38.35,
+    "B_lbf_mph": 0.0677,
+    "C_lbf_mph2": 0.0171,
+    "A_N": 170.58929836000002,
+    "B_N_per_mps": 0.6736412900858983,
+    "C_N_per_mps2": 0.3806183797414083
+   }
+  },
+  "epa": {
+   "CD_UDDS": 165.7,
+   "CD_HWY": 152.5
+  },
+  "bev_unit": "MPGe",
+  "abc": [
+   38.35,
+   0.0677,
+   0.0171
+  ],
+  "etw_lb": 4750.0,
+  "split": "heldout"
+ },
+ {
+  "row": 1919,
+  "name": "2023 Ford Mach-E RWD",
+  "spec": {
+   "id": "epa_1919",
+   "name": "2023 Ford Mach-E RWD",
+   "class": "suv",
+   "architecture": "bev",
+   "mass_kg": 2154.5637575,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "transmission": {
+    "type": "single"
+   },
+   "final_drive": 9.225757953723786,
+   "motors": [
+    {
+     "role": "traction",
+     "max_power_kW": 198,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 13595.601686152871
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 70.0,
+    "nominal_V": 360,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.02,
+     0.98
+    ]
+   },
+   "CdA_m2": 0.8141419911105451,
+   "Crr": 0.006616842082562779,
+   "Crr_speed_coef": 0.009102900151249064,
+   "road_load_ABC": {
+    "A_lbf": 31.43,
+    "B_lbf_mph": 0.1279,
+    "C_lbf_mph2": 0.02152,
+    "A_N": 139.80760488800001,
+    "B_N_per_mps": 1.2726546676807446,
+    "C_N_per_mps2": 0.4790004404698892
+   }
+  },
+  "epa": {
+   "CD_UDDS": 157.4,
+   "CD_HWY": 136.9
+  },
+  "bev_unit": "MPGe",
+  "abc": [
+   31.43,
+   0.1279,
+   0.02152
+  ],
+  "etw_lb": 4750.0,
+  "split": "heldout"
+ },
+ {
+  "row": 705,
+  "name": "2024 KIA EV6 Long Range RWD",
+  "spec": {
+   "id": "epa_705",
+   "name": "2024 KIA EV6 Long Range RWD",
+   "class": "suv",
+   "architecture": "bev",
+   "mass_kg": 2041.165665,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "transmission": {
+    "type": "single"
+   },
+   "final_drive": 10.650943597397752,
+   "motors": [
+    {
+     "role": "traction",
+     "max_power_kW": 168,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 15695.83631591506
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 77.4,
+    "nominal_V": 697,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.02,
+     0.98
+    ]
+   },
+   "CdA_m2": 0.8400946586710392,
+   "Crr": 0.00518066664889337,
+   "Crr_speed_coef": 0.011455746746809723,
+   "road_load_ABC": {
+    "A_lbf": 23.313,
+    "B_lbf_mph": 0.11939,
+    "C_lbf_mph2": 0.022206,
+    "A_N": 103.7013901608,
+    "B_N_per_mps": 1.1879768629742304,
+    "C_N_per_mps2": 0.49426969242910596
+   }
+  },
+  "epa": {
+   "CD_UDDS": 17.1,
+   "CD_HWY": 22.7
+  },
+  "bev_unit": "kWh/100mi",
+  "abc": [
+   23.313,
+   0.11939,
+   0.022206
+  ],
+  "etw_lb": 4500.0,
+  "split": "heldout"
+ },
+ {
+  "row": 1047,
+  "name": "2024 NISSAN LEAF",
+  "spec": {
+   "id": "epa_1047",
+   "name": "2024 NISSAN LEAF",
+   "class": "car",
+   "architecture": "bev",
+   "mass_kg": 1757.67043375,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "transmission": {
+    "type": "single"
+   },
+   "final_drive": 8.696583994312299,
+   "motors": [
+    {
+     "role": "traction",
+     "max_power_kW": 110,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 13980.851825340018
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 40.0,
+    "nominal_V": 350,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.02,
+     0.98
+    ]
+   },
+   "CdA_m2": 0.7358300059061386,
+   "Crr": 0.006681290299659164,
+   "Crr_speed_coef": 0.029799896760508433,
+   "road_load_ABC": {
+    "A_lbf": 25.89,
+    "B_lbf_mph": 0.3449,
+    "C_lbf_mph2": 0.01945,
+    "A_N": 115.164457224,
+    "B_N_per_mps": 3.4318889357551896,
+    "C_N_per_mps2": 0.4329255839748766
+   }
+  },
+  "epa": {
+   "CD_UDDS": 174.0,
+   "CD_HWY": 141.1
+  },
+  "bev_unit": "MPGe",
+  "abc": [
+   25.89,
+   0.3449,
+   0.01945
+  ],
+  "etw_lb": 3875.0,
+  "split": "heldout"
+ },
+ {
+  "row": 1403,
+  "name": "2024 Volkswagen ID.4 Pro",
+  "spec": {
+   "id": "epa_1403",
+   "name": "2024 Volkswagen ID.4 Pro",
+   "class": "suv",
+   "architecture": "bev",
+   "mass_kg": 2267.96185,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "transmission": {
+    "type": "single"
+   },
+   "final_drive": 7.72467484973582,
+   "motors": [
+    {
+     "role": "traction",
+     "max_power_kW": 157,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 11383.520241787961
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 77.0,
+    "nominal_V": 400,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.02,
+     0.98
+    ]
+   },
+   "CdA_m2": 0.6805954656170402,
+   "Crr": 0.005565999980904741,
+   "Crr_speed_coef": 0.017819934457364753,
+   "road_load_ABC": {
+    "A_lbf": 27.83,
+    "B_lbf_mph": 0.2217,
+    "C_lbf_mph2": 0.01799,
+    "A_N": 123.79400712799999,
+    "B_N_per_mps": 2.2060010932355048,
+    "C_N_per_mps2": 0.4004283421957856
+   }
+  },
+  "epa": {
+   "CD_UDDS": 175.0,
+   "CD_HWY": 147.89999999999998
+  },
+  "bev_unit": "MPGe",
+  "abc": [
+   27.83,
+   0.2217,
+   0.01799
+  ],
+  "etw_lb": 5000.0,
+  "split": "heldout"
+ },
+ {
+  "row": 446,
+  "name": "2024 Ford F-150 Lightning",
+  "spec": {
+   "id": "epa_446",
+   "name": "2024 Ford F-150 Lightning",
+   "class": "pickup",
+   "architecture": "bev",
+   "mass_kg": 2948.350405,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.39,
+   "transmission": {
+    "type": "single"
+   },
+   "final_drive": 9.501237624493111,
+   "motors": [
+    {
+     "role": "traction",
+     "max_power_kW": 318,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 12924.520798536549
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 98.0,
+    "nominal_V": 400,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.02,
+     0.98
+    ]
+   },
+   "CdA_m2": 1.3339519798586348,
+   "Crr": 0.005959999979553047,
+   "Crr_speed_coef": 0.01934366695503936,
+   "road_load_ABC": {
+    "A_lbf": 38.74,
+    "B_lbf_mph": 0.335,
+    "C_lbf_mph2": 0.03526,
+    "A_N": 172.324104784,
+    "B_N_per_mps": 3.333380091267001,
+    "C_N_per_mps2": 0.7848306473498278
+   }
+  },
+  "epa": {
+   "CD_UDDS": 108.9,
+   "CD_HWY": 86.7
+  },
+  "bev_unit": "MPGe",
+  "abc": [
+   38.74,
+   0.335,
+   0.03526
+  ],
+  "etw_lb": 6500.0,
+  "split": "dev"
+ },
+ {
+  "row": 719,
+  "name": "2024 KIA Niro Electric",
+  "spec": {
+   "id": "epa_719",
+   "name": "2024 KIA Niro Electric",
+   "class": "suv",
+   "architecture": "bev",
+   "mass_kg": 1814.36948,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "transmission": {
+    "type": "single"
+   },
+   "final_drive": 11.797838553253726,
+   "motors": [
+    {
+     "role": "traction",
+     "max_power_kW": 150,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 17385.965958800607
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 64.8,
+    "nominal_V": 358,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.02,
+     0.98
+    ]
+   },
+   "CdA_m2": 0.7690463938334181,
+   "Crr": 0.006222249978653347,
+   "Crr_speed_coef": 0.015620536283460773,
+   "road_load_ABC": {
+    "A_lbf": 24.889,
+    "B_lbf_mph": 0.1738,
+    "C_lbf_mph2": 0.020328,
+    "A_N": 110.7117874024,
+    "B_N_per_mps": 1.7293774921259844,
+    "C_N_per_mps2": 0.4524684458118916
+   }
+  },
+  "epa": {
+   "CD_UDDS": 18.4,
+   "CD_HWY": 23.0
+  },
+  "bev_unit": "kWh/100mi",
+  "abc": [
+   24.889,
+   0.1738,
+   0.020328
+  ],
+  "etw_lb": 4000.0,
+  "split": "dev"
+ },
+ {
+  "row": 1731,
+  "name": "2023 CHEVROLET BOLT EUV",
+  "spec": {
+   "id": "epa_1731",
+   "name": "2023 CHEVROLET BOLT EUV",
+   "class": "suv",
+   "architecture": "bev",
+   "mass_kg": 1814.36948,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "transmission": {
+    "type": "single"
+   },
+   "final_drive": 8.095729100159812,
+   "motors": [
+    {
+     "role": "traction",
+     "max_power_kW": 150,
+     "eff_map": "bolt_edu_150",
+     "max_rpm": 11930.326890956814
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 65.0,
+    "nominal_V": 350,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.02,
+     0.98
+    ]
+   },
+   "CdA_m2": 0.8515955492517829,
+   "Crr": 0.007779999973309179,
+   "Crr_speed_coef": 0.0012579172593493587,
+   "road_load_ABC": {
+    "A_lbf": 31.12,
+    "B_lbf_mph": 0.0175,
+    "C_lbf_mph2": 0.02251,
+    "A_N": 138.428656192,
+    "B_N_per_mps": 0.17413179581245528,
+    "C_N_per_mps2": 0.5010362414022865
+   }
+  },
+  "epa": {
+   "CD_UDDS": 174.15,
+   "CD_HWY": 148.7
+  },
+  "bev_unit": "MPGe",
+  "abc": [
+   31.12,
+   0.0175,
+   0.02251
+  ],
+  "etw_lb": 4000.0,
+  "split": "heldout"
+ },
+ {
+  "row": 617,
+  "name": "2024 Hyundai Ioniq 5",
+  "spec": {
+   "id": "epa_617",
+   "name": "2024 Hyundai Ioniq 5",
+   "class": "suv",
+   "architecture": "bev",
+   "mass_kg": 1927.7675725000001,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.36,
+   "transmission": {
+    "type": "single"
+   },
+   "final_drive": 10.71840800656575,
+   "motors": [
+    {
+     "role": "traction",
+     "max_power_kW": 125,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 15795.255706673035
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 58.0,
+    "nominal_V": 522,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.02,
+     0.98
+    ]
+   },
+   "CdA_m2": 0.6216534013907283,
+   "Crr": 0.004439529396534026,
+   "Crr_speed_coef": 0.07070866938436325,
+   "road_load_ABC": {
+    "A_lbf": 18.868,
+    "B_lbf_mph": 0.59641,
+    "C_lbf_mph2": 0.016432,
+    "A_N": 83.9290451488,
+    "B_N_per_mps": 5.934511105171797,
+    "C_N_per_mps2": 0.36574977870823505
+   }
+  },
+  "epa": {
+   "CD_UDDS": 18.3,
+   "CD_HWY": 24.7
+  },
+  "bev_unit": "kWh/100mi",
+  "abc": [
+   18.868,
+   0.59641,
+   0.016432
+  ],
+  "etw_lb": 4250.0,
+  "split": "heldout"
+ },
+ {
+  "row": 625,
+  "name": "2024 Hyundai Ioniq 6 Standard Range RWD",
+  "spec": {
+   "id": "epa_625",
+   "name": "2024 Hyundai Ioniq 6 Standard Range RWD",
+   "class": "car",
+   "architecture": "bev",
+   "mass_kg": 1927.7675725000001,
+   "rot_mass_frac": 0.015,
+   "tire": {
+    "K_t": 0.0,
+    "temp_effects": false
+   },
+   "wheel_radius_m": 0.33,
+   "transmission": {
+    "type": "single"
+   },
+   "final_drive": 9.786555854932773,
+   "motors": [
+    {
+     "role": "traction",
+     "max_power_kW": 111,
+     "eff_map": "ipm_generic_150",
+     "max_rpm": 15733.118587449299
+    }
+   ],
+   "battery": {
+    "capacity_kWh": 53.0,
+    "nominal_V": 522,
+    "chemistry": "NMC",
+    "soc_window": [
+     0.02,
+     0.98
+    ]
+   },
+   "CdA_m2": 0.5513239422144038,
+   "Crr": 0.005185411746916307,
+   "Crr_speed_coef": 0.022360227596726755,
+   "road_load_ABC": {
+    "A_lbf": 22.038,
+    "B_lbf_mph": 0.22029,
+    "C_lbf_mph2": 0.014573,
+    "A_N": 98.0299076208,
+    "B_N_per_mps": 2.191971045687187,
+    "C_N_per_mps2": 0.32437144140184454
+   }
+  },
+  "epa": {
+   "CD_UDDS": 15.2,
+   "CD_HWY": 19.1
+  },
+  "bev_unit": "kWh/100mi",
+  "abc": [
+   22.038,
+   0.22029,
+   0.014573
+  ],
+  "etw_lb": 4250.0,
+  "split": "heldout"
+ }
+]

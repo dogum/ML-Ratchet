@@ -1,0 +1,47 @@
+[
+ {
+  "name": "r1_abs",
+  "version": "v1",
+  "mode": "abs",
+  "change": "baseline MLP: predicts log trip energy directly; physics integrals are only inputs"
+ },
+ {
+  "name": "r2_corr",
+  "version": "v1",
+  "mode": "corr",
+  "change": "predict a correction to the generic road-load physics estimate (TransitNet lesson)"
+ },
+ {
+  "name": "r3_maf",
+  "version": "v2",
+  "mode": "corr",
+  "change": "dev twin rung: MAF label model (OBD MAF fuel estimates read idle-level fuel during fuel cut-off); flag input says when the target is such an estimate"
+ },
+ {
+  "name": "r4_rw",
+  "version": "v3",
+  "mode": "corr",
+  "change": "dev twin rung: on-road loads the simulator misses (A/C, accessories, real-world hybrid operation), fitted on label-matched dev twins; not applied to dynamometer tests"
+ },
+ {
+  "name": "r5_phev",
+  "version": "v4",
+  "mode": "corr",
+  "bank": "train_v4",
+  "change": "dev twin rung: plug-in hardware patch (pack power >= 1.2 x motor, power-cell resistance, MG2 torque) so simulated charge-depleting trips stay electric like the dev Volt and Energi"
+ },
+ {
+  "name": "r6_ens",
+  "version": "v4",
+  "mode": "corr",
+  "bank": "train_v4",
+  "members": [
+   "r5_phev",
+   "r6_s1",
+   "r6_s2",
+   "r6_s3",
+   "r6_s4"
+  ],
+  "change": "ensemble of 5 networks (different seeds); sigma includes their spread"
+ }
+]

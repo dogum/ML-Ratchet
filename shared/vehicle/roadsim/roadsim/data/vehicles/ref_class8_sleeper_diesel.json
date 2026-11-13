@@ -1,0 +1,27 @@
+{
+ "id": "ref_class8_sleeper_diesel",
+ "class": "truck_hd",
+ "architecture": "conv",
+ "notes": "GEM-like Class 8 high-roof sleeper with standard 53 ft box trailer; total test mass incl. 19 t payload (40 CFR 1037 standard payload)",
+ "mass_kg": 13600.0,
+ "payload_kg": 17237.0,
+ "CdA_m2": 5.9,
+ "Crr": 0.0063,
+ "Crr_speed_coef": 0.0015,
+ "wheel_radius_m": 0.505,
+ "rot_mass_frac": 0.04,
+ "engine": {
+  "fuel": "diesel",
+  "displacement_L": 15.0,
+  "max_power_kW": 339.0,
+  "bsfc_map": "willans_hd_diesel",
+  "idle_rpm": 600
+ },
+ "transmission": {
+  "type": "AMT",
+  "n_gears": 12
+ },
+ "aux": {
+  "base_W": 2000
+ }
+}

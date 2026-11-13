@@ -29,6 +29,7 @@ export interface Card {
   usage: { install: string; demo: string; python?: string };
   files: { inference: string[]; weights: string[]; demo: string; examples?: string; card: string; lab?: string; notebook?: string };
   demo_seconds?: number;
+  platform?: string;
 }
 export interface Rung { id: string; change: string; sim?: number; decision: Decision; why: string; metrics?: (number | string)[] }
 export interface Ladder {

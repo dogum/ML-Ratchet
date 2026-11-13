@@ -1,0 +1,18 @@
+{
+ "trip_id": "ZTBus_B208_2022-10-09_03-26-03_2022-10-09_22-56-13_leg12",
+ "vehicle_id": "ZTBus_B208",
+ "source": "ZTBus",
+ "date": "2022-10-09T18:42:53Z",
+ "distance_m": 24716.115664836132,
+ "duration_s": 5003.0,
+ "T_amb_mean": 15.176161463122126,
+ "split": "exam",
+ "mission": "B208_2022-10-09_03-26-03_2022-10-09_22-56-13",
+ "elec_kWh": 37.92086754399445,
+ "kWh_per_km": 1.534256760173074,
+ "passengers_mean": 15.278748920006814,
+ "grid_available_frac": null,
+ "valid_frac": 1.0,
+ "notes": "Measured outputs: elec_power [W] = total electrical power demand of the bus (traction + auxiliaries), regardless of whether it came from the trolley grid or the battery; negative = regeneration. Grade from smoothed GNSS altitude (no lidar DEM for Zurich here). No wind data (set 0).",
+ "q_label_ok": true
+}

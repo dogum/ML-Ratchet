@@ -27,6 +27,19 @@ instrument noise, the fetch scripts in `models/*/training/` download that noise 
 | StarQuake | Yu et al. 2018, ApJS 236, 42 | Journal tables; cite the paper | Truth values for the examples |
 | StarQuake | [Gaia DR3](https://www.cosmos.esa.int/web/gaia/dr3) (ESA/Gaia/DPAC) | CC BY-SA 3.0 IGO | No |
 
+
+### The vehicle platform (`shared/vehicle`) and its models (EnergyNet, TripDetective, HybridPilot)
+
+| Source | Terms | Bundled here |
+|---|---|---|
+| [Vehicle Energy Dataset (VED)](https://github.com/gsoh/VED) — Oh, LeBlanc, Peng, IEEE T-ITS 2020 | Apache-2.0 | Example trips in the three models' `examples/` and RoadData's baseline tables; the 1.2 GB of processed trips is rebuilt by `shared/vehicle/data/scripts/` |
+| US EPA test-car data, drive cycles, ALPHA engine/motor maps; fueleconomy.gov | U.S. public domain | Processed tables in `shared/vehicle/data/proc/`, the maps used in `roadsim/roadsim/data/` |
+| [USGS 3DEP lidar](https://www.usgs.gov/3d-elevation-program) | U.S. public domain | Grades inside the example trips |
+| [Iowa Environmental Mesonet ASOS](https://mesonet.agron.iastate.edu/) | Free use with credit | Weather inside the example trips |
+| [ZTBus](https://www.research-collection.ethz.ch/handle/20.500.11850/626734) — Widmer et al., ETH Zurich | CC BY 4.0 | Processed legs in `shared/vehicle/data/proc/hd/ztbus/` |
+| Mersin bus trips — Abut, Zenodo | CC BY 4.0 | Trip totals in `shared/vehicle/data/proc/hd/` |
+| ICCT 2018 tractor-trailer tests (Rodriguez, Delgado, Muncrief) | Cite the report | Six published numbers |
+
 Every model card (`models/*/MODEL_CARD.md`) carries the full citation list, including the physics papers.
 
 ## Before redistributing

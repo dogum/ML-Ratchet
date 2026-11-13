@@ -29,12 +29,16 @@ The losses are published too.
 | [**SwellCast**](models/swellcast/) | How far away was the storm whose swell is arriving at this buoy? | 288 hurricane-swell arrivals | 2 wins · 2 losses |
 | [**BeatNet**](models/beatnet/) | Is each heartbeat normal, supraventricular, ventricular or fusion? *(research only)* | MIT-BIH DS2, 49,705 beats | 3 wins · 2 losses |
 | [**StarQuake**](models/starquake/) | How massive and how big is this red giant, from how it rings? | 420 Kepler giants × 5 lengths | 4 wins · 1 loss · 1 tie |
+| [**EnergyNet**](models/energynet/) | How much fuel or electricity will this trip take, and where does it go? | 25,793 VED trips, EPA tests, buses, trucks | 5 wins · 5 losses |
+| [**TripDetective**](models/tripdetective/) | From a trip log alone: what powertrain, how heavy, what engine, how much drag? | 351 real cars | 3 wins · 1 loss |
+| [**HybridPilot**](models/hybridpilot/) | How should a hybrid run its engine, second by second? *(graded in simulation)* | 430 real routes, simulated twins | 2 wins · 2 losses · 1 tie |
 
 Every model also runs **live in your browser** on the website — the real network, ported to TypeScript and checked
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
-**0** real labelled examples were used for training. **72** rung decisions are logged, **31** of them rejections.
-Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself.
+**0** real labelled examples were used for training. **93** rung decisions are logged, **41** of them rejections.
+Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself. The three
+vehicle models share one simulator and dataset: [the vehicle platform](docs/vehicle-platform.md).
 
 ## Try it
 
@@ -71,7 +75,7 @@ QuakeNet = mlratchet.load("quakenet").QuakeNet     # imports in isolation; model
 6. **One final exam** on real data that chose nothing — beside a classical method and a dumb baseline, with error-bar
    coverage and where it fails.
 
-Read [docs/method.md](docs/method.md) for the why, and [docs/lessons.md](docs/lessons.md) for what nine models taught.
+Read [docs/method.md](docs/method.md) for the why, and [docs/lessons.md](docs/lessons.md) for what the first nine models taught.
 
 ## Repository layout
 
@@ -92,7 +96,8 @@ mlratchet/            the Python package: registry, CLI, schemas, and the ratche
 docs/                 the method, the contract, lessons, the agent brief, data sources, backlog, roadmap
 site/                 the website (Astro + TypeScript), built from models/ and docs/, deployed to GitHub Pages
   src/instruments/      each model's network running live in the browser (parity-tested against Python)
-tests/                core tests, the contract, and every demo against its golden output
+shared/vehicle/       a shared platform: RoadSim (whole-vehicle simulator) + RoadData (real trips, frozen splits)
+tests/                core tests, the contract, the vehicle platform, and every demo against its golden output
 ```
 
 ## Add a model

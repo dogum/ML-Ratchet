@@ -1,0 +1,429 @@
+{
+ "check": "hybrid strategy comparison on UDDS/HWFET",
+ "method": "Check: hybrid energy-management strategies compared on UDDS and HWFET (hot start, HVAC off, dyno road load).\n\nMain vehicle: 2024 Toyota Camry Hybrid LE (power-split; EPA validation spec). Also the 2024 Hyundai Elantra Hybrid\n(parallel P2) and the 2024 Honda Accord Hybrid (modelled as series). Each strategy starts at the same SOC (window\nmiddle); fuel is corrected for the net battery energy with the same 1/(0.33 x 0.90) equivalence as the EPA emulation,\nand the SOC change is reported so the correction size is visible. DP (offline, knows the whole cycle) ends at its start\nSOC by construction (terminal penalty).",
+ "vehicles": {
+  "2024 TOYOTA CAMRY HYBRID LE": {
+   "architecture": "hev_powersplit",
+   "epa": {
+    "FTP": 73.1,
+    "HWY": 71.9
+   },
+   "results": {
+    "udds": {
+     "powersplit_rule": {
+      "mpg_soc_corrected": 76.96,
+      "mpg_raw": 81.04,
+      "dsoc": -0.0423,
+      "engine_on_frac": 0.179,
+      "engine_starts": 29,
+      "mean_engine_eff": 0.3871,
+      "trace_rms_mps": 0.0,
+      "closure": 1.6487852809865042e-16,
+      "wall_s": 0.319,
+      "pct_of_dp": 95.4
+     },
+     "ecms": {
+      "mpg_soc_corrected": 78.85,
+      "mpg_raw": 83.71,
+      "dsoc": -0.0477,
+      "engine_on_frac": 0.136,
+      "engine_starts": 25,
+      "mean_engine_eff": 0.3934,
+      "trace_rms_mps": 0.0,
+      "closure": 6.792140906587423e-16,
+      "wall_s": 0.347,
+      "pct_of_dp": 97.8
+     },
+     "aecms": {
+      "mpg_soc_corrected": 78.89,
+      "mpg_raw": 79.11,
+      "dsoc": -0.0017,
+      "engine_on_frac": 0.145,
+      "engine_starts": 34,
+      "mean_engine_eff": 0.3919,
+      "trace_rms_mps": 0.0,
+      "closure": 1.1429174277883252e-15,
+      "wall_s": 0.368,
+      "pct_of_dp": 97.8
+     },
+     "dp": {
+      "mpg_soc_corrected": 80.65,
+      "mpg_raw": 80.26,
+      "dsoc": 0.0043,
+      "engine_on_frac": 0.176,
+      "engine_starts": 27,
+      "mean_engine_eff": 0.3885,
+      "trace_rms_mps": 0.0,
+      "closure": 2.4772520648638176e-15,
+      "wall_s": 0.827,
+      "pct_of_dp": 100.0
+     },
+     "mpc": {
+      "mpg_soc_corrected": 79.36,
+      "mpg_raw": 79.16,
+      "dsoc": 0.0027,
+      "engine_on_frac": 0.137,
+      "engine_starts": 37,
+      "mean_engine_eff": 0.3923,
+      "trace_rms_mps": 0.0,
+      "closure": 1.799152270422674e-15,
+      "wall_s": 1.104,
+      "pct_of_dp": 98.4
+     }
+    },
+    "hwfet": {
+     "powersplit_rule": {
+      "mpg_soc_corrected": 70.6,
+      "mpg_raw": 59.58,
+      "dsoc": 0.2277,
+      "engine_on_frac": 0.78,
+      "engine_starts": 23,
+      "mean_engine_eff": 0.3838,
+      "trace_rms_mps": 0.0,
+      "closure": 7.595843211339845e-15,
+      "wall_s": 0.205,
+      "pct_of_dp": 96.3
+     },
+     "ecms": {
+      "mpg_soc_corrected": 73.71,
+      "mpg_raw": 70.31,
+      "dsoc": 0.0588,
+      "engine_on_frac": 0.397,
+      "engine_starts": 20,
+      "mean_engine_eff": 0.3983,
+      "trace_rms_mps": 0.0,
+      "closure": 1.2525088638117188e-15,
+      "wall_s": 0.201,
+      "pct_of_dp": 100.5
+     },
+     "aecms": {
+      "mpg_soc_corrected": 72.97,
+      "mpg_raw": 69.44,
+      "dsoc": 0.0624,
+      "engine_on_frac": 0.404,
+      "engine_starts": 37,
+      "mean_engine_eff": 0.3953,
+      "trace_rms_mps": 0.0,
+      "closure": 2.059368667968105e-15,
+      "wall_s": 0.2,
+      "pct_of_dp": 99.5
+     },
+     "dp": {
+      "mpg_soc_corrected": 73.31,
+      "mpg_raw": 72.39,
+      "dsoc": 0.0157,
+      "engine_on_frac": 0.514,
+      "engine_starts": 22,
+      "mean_engine_eff": 0.3903,
+      "trace_rms_mps": 0.0,
+      "closure": 1.518341091337798e-15,
+      "wall_s": 0.498,
+      "pct_of_dp": 100.0
+     },
+     "mpc": {
+      "mpg_soc_corrected": 73.39,
+      "mpg_raw": 70.16,
+      "dsoc": 0.0562,
+      "engine_on_frac": 0.412,
+      "engine_starts": 28,
+      "mean_engine_eff": 0.3963,
+      "trace_rms_mps": 0.0,
+      "closure": 2.7097034393103466e-15,
+      "wall_s": 0.821,
+      "pct_of_dp": 100.1
+     }
+    }
+   }
+  },
+  "2024 HYUNDAI Elantra Hybrid": {
+   "architecture": "hev_parallel_p2",
+   "epa": {
+    "FTP": 68.3,
+    "HWY": 67.4
+   },
+   "results": {
+    "udds": {
+     "parallel_rule": {
+      "mpg_soc_corrected": 72.26,
+      "mpg_raw": 77.32,
+      "dsoc": -0.05,
+      "engine_on_frac": 0.272,
+      "engine_starts": 40,
+      "mean_engine_eff": 0.3674,
+      "trace_rms_mps": 0.0,
+      "closure": 1.5726448975743718e-15,
+      "wall_s": 0.237,
+      "pct_of_dp": 92.2
+     },
+     "ecms": {
+      "mpg_soc_corrected": 76.12,
+      "mpg_raw": 82.67,
+      "dsoc": -0.0574,
+      "engine_on_frac": 0.188,
+      "engine_starts": 28,
+      "mean_engine_eff": 0.3967,
+      "trace_rms_mps": 0.0,
+      "closure": 1.3386128460307966e-15,
+      "wall_s": 0.264,
+      "pct_of_dp": 97.2
+     },
+     "aecms": {
+      "mpg_soc_corrected": 77.51,
+      "mpg_raw": 76.52,
+      "dsoc": 0.0095,
+      "engine_on_frac": 0.215,
+      "engine_starts": 37,
+      "mean_engine_eff": 0.3954,
+      "trace_rms_mps": 0.0,
+      "closure": 1.4242849683879198e-15,
+      "wall_s": 0.265,
+      "pct_of_dp": 98.9
+     },
+     "dp": {
+      "mpg_soc_corrected": 78.34,
+      "mpg_raw": 77.8,
+      "dsoc": 0.0051,
+      "engine_on_frac": 0.213,
+      "engine_starts": 35,
+      "mean_engine_eff": 0.3949,
+      "trace_rms_mps": 0.0,
+      "closure": 2.4187653278999463e-15,
+      "wall_s": 0.741,
+      "pct_of_dp": 100.0
+     },
+     "mpc": {
+      "mpg_soc_corrected": 77.44,
+      "mpg_raw": 77.09,
+      "dsoc": 0.0035,
+      "engine_on_frac": 0.213,
+      "engine_starts": 41,
+      "mean_engine_eff": 0.3944,
+      "trace_rms_mps": 0.0,
+      "closure": 9.59080955488441e-16,
+      "wall_s": 0.974,
+      "pct_of_dp": 98.9
+     }
+    },
+    "hwfet": {
+     "parallel_rule": {
+      "mpg_soc_corrected": 64.36,
+      "mpg_raw": 61.03,
+      "dsoc": 0.0636,
+      "engine_on_frac": 0.881,
+      "engine_starts": 15,
+      "mean_engine_eff": 0.3689,
+      "trace_rms_mps": 0.0,
+      "closure": 1.2675919331991769e-15,
+      "wall_s": 0.136,
+      "pct_of_dp": 95.1
+     },
+     "ecms": {
+      "mpg_soc_corrected": 69.17,
+      "mpg_raw": 62.44,
+      "dsoc": 0.1163,
+      "engine_on_frac": 0.613,
+      "engine_starts": 26,
+      "mean_engine_eff": 0.4023,
+      "trace_rms_mps": 0.0,
+      "closure": 1.0983528496766706e-15,
+      "wall_s": 0.154,
+      "pct_of_dp": 102.2
+     },
+     "aecms": {
+      "mpg_soc_corrected": 67.53,
+      "mpg_raw": 65.59,
+      "dsoc": 0.0331,
+      "engine_on_frac": 0.578,
+      "engine_starts": 34,
+      "mean_engine_eff": 0.4015,
+      "trace_rms_mps": 0.0,
+      "closure": 5.886802495887138e-16,
+      "wall_s": 0.152,
+      "pct_of_dp": 99.8
+     },
+     "dp": {
+      "mpg_soc_corrected": 67.69,
+      "mpg_raw": 67.05,
+      "dsoc": 0.0109,
+      "engine_on_frac": 0.582,
+      "engine_starts": 26,
+      "mean_engine_eff": 0.4018,
+      "trace_rms_mps": 0.0,
+      "closure": 1.412298767197295e-15,
+      "wall_s": 0.405,
+      "pct_of_dp": 100.0
+     },
+     "mpc": {
+      "mpg_soc_corrected": 67.89,
+      "mpg_raw": 65.81,
+      "dsoc": 0.0352,
+      "engine_on_frac": 0.593,
+      "engine_starts": 30,
+      "mean_engine_eff": 0.4017,
+      "trace_rms_mps": 0.0,
+      "closure": 5.903786494109719e-16,
+      "wall_s": 0.743,
+      "pct_of_dp": 100.3
+     }
+    }
+   }
+  },
+  "2024 HONDA ACCORD": {
+   "architecture": "hev_series",
+   "epa": {
+    "FTP": 72.4,
+    "HWY": 66.9
+   },
+   "results": {
+    "udds": {
+     "series_thermostat": {
+      "mpg_soc_corrected": 68.71,
+      "mpg_raw": 60.76,
+      "dsoc": 0.1301,
+      "engine_on_frac": 0.166,
+      "engine_starts": 28,
+      "mean_engine_eff": 0.401,
+      "trace_rms_mps": 0.0,
+      "closure": 2.4355262633030314e-16,
+      "wall_s": 0.292,
+      "pct_of_dp": 98.4
+     },
+     "series_power_follower": {
+      "mpg_soc_corrected": 68.32,
+      "mpg_raw": 69.03,
+      "dsoc": -0.01,
+      "engine_on_frac": 0.203,
+      "engine_starts": 37,
+      "mean_engine_eff": 0.3933,
+      "trace_rms_mps": 0.0,
+      "closure": 3.7025182714830194e-15,
+      "wall_s": 0.281,
+      "pct_of_dp": 97.9
+     },
+     "ecms": {
+      "mpg_soc_corrected": 67.9,
+      "mpg_raw": 78.5,
+      "dsoc": -0.1393,
+      "engine_on_frac": 0.127,
+      "engine_starts": 29,
+      "mean_engine_eff": 0.399,
+      "trace_rms_mps": 0.0,
+      "closure": 1.708854390512257e-15,
+      "wall_s": 0.307,
+      "pct_of_dp": 97.3
+     },
+     "aecms": {
+      "mpg_soc_corrected": 69.29,
+      "mpg_raw": 69.24,
+      "dsoc": 0.0015,
+      "engine_on_frac": 0.142,
+      "engine_starts": 37,
+      "mean_engine_eff": 0.3983,
+      "trace_rms_mps": 0.0,
+      "closure": 2.0061745094781973e-15,
+      "wall_s": 0.299,
+      "pct_of_dp": 99.2
+     },
+     "dp": {
+      "mpg_soc_corrected": 69.82,
+      "mpg_raw": 69.51,
+      "dsoc": 0.0048,
+      "engine_on_frac": 0.161,
+      "engine_starts": 29,
+      "mean_engine_eff": 0.3987,
+      "trace_rms_mps": 0.0,
+      "closure": 1.4324854064107537e-15,
+      "wall_s": 0.751,
+      "pct_of_dp": 100.0
+     },
+     "mpc": {
+      "mpg_soc_corrected": 69.59,
+      "mpg_raw": 70.73,
+      "dsoc": -0.0155,
+      "engine_on_frac": 0.135,
+      "engine_starts": 36,
+      "mean_engine_eff": 0.3988,
+      "trace_rms_mps": 0.0,
+      "closure": 2.4784639652447584e-15,
+      "wall_s": 1.028,
+      "pct_of_dp": 99.7
+     }
+    },
+    "hwfet": {
+     "series_thermostat": {
+      "mpg_soc_corrected": 59.3,
+      "mpg_raw": 54.17,
+      "dsoc": 0.1496,
+      "engine_on_frac": 0.447,
+      "engine_starts": 17,
+      "mean_engine_eff": 0.4047,
+      "trace_rms_mps": 0.0,
+      "closure": 4.290933839577762e-15,
+      "wall_s": 0.165,
+      "pct_of_dp": 99.4
+     },
+     "series_power_follower": {
+      "mpg_soc_corrected": 59.1,
+      "mpg_raw": 57.84,
+      "dsoc": 0.0351,
+      "engine_on_frac": 0.639,
+      "engine_starts": 24,
+      "mean_engine_eff": 0.397,
+      "trace_rms_mps": 0.0,
+      "closure": 1.9031092980425896e-15,
+      "wall_s": 0.156,
+      "pct_of_dp": 99.1
+     },
+     "ecms": {
+      "mpg_soc_corrected": 58.97,
+      "mpg_raw": 61.59,
+      "dsoc": -0.0689,
+      "engine_on_frac": 0.417,
+      "engine_starts": 31,
+      "mean_engine_eff": 0.4016,
+      "trace_rms_mps": 0.0,
+      "closure": 2.9280708910694955e-15,
+      "wall_s": 0.177,
+      "pct_of_dp": 98.9
+     },
+     "aecms": {
+      "mpg_soc_corrected": 59.69,
+      "mpg_raw": 57.8,
+      "dsoc": 0.0525,
+      "engine_on_frac": 0.446,
+      "engine_starts": 44,
+      "mean_engine_eff": 0.4005,
+      "trace_rms_mps": 0.0,
+      "closure": 2.241396278098813e-15,
+      "wall_s": 0.178,
+      "pct_of_dp": 100.1
+     },
+     "dp": {
+      "mpg_soc_corrected": 59.65,
+      "mpg_raw": 59.06,
+      "dsoc": 0.0164,
+      "engine_on_frac": 0.553,
+      "engine_starts": 23,
+      "mean_engine_eff": 0.4002,
+      "trace_rms_mps": 0.0,
+      "closure": 5.849896661500139e-15,
+      "wall_s": 0.453,
+      "pct_of_dp": 100.0
+     },
+     "mpc": {
+      "mpg_soc_corrected": 59.81,
+      "mpg_raw": 58.68,
+      "dsoc": 0.031,
+      "engine_on_frac": 0.438,
+      "engine_starts": 30,
+      "mean_engine_eff": 0.4022,
+      "trace_rms_mps": 0.0,
+      "closure": 3.3381606442826415e-15,
+      "wall_s": 0.759,
+      "pct_of_dp": 100.3
+     }
+    }
+   }
+  }
+ }
+}

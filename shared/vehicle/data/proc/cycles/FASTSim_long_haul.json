@@ -1,0 +1,17 @@
+{
+ "trip_id": "FASTSim_long_haul",
+ "vehicle_id": null,
+ "source": "cycle",
+ "date": null,
+ "distance_m": 804614.5182043333,
+ "duration_s": 83043.0,
+ "T_amb_mean": 25.0,
+ "split": "train_noise",
+ "v_mean": 9.68913115138342,
+ "v_max": 33.48075306,
+ "idle_frac": 0.5970400876654264,
+ "notes": "From FASTSim 2.1.5 package resources (Apache-2.0, NREL). Provenance of the long-haul trace is not documented in the package.",
+ "duty": "heavy",
+ "source_url": "https://pypi.org/project/fastsim/2.1.5/",
+ "source_file": "fastsim/resources/cycles/longHaulDriveCycle.csv"
+}

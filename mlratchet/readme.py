@@ -39,7 +39,8 @@ def render(m: Model) -> str:
         w("> [!NOTE]\n> Released, with part of the exam still waiting on data — see [Help wanted](#help-wanted).\n")
     w(f"*{c['question']}*\n")
     w(" ".join(c["summary"].split()) + "\n")
-    w(f"[Interactive lab]({SITE}/models/{m.id}/lab/) · [Project page]({SITE}/models/{m.id}/) · "
+    lab = f"[Interactive lab]({SITE}/models/{m.id}/lab/) · " if (m.path / c["files"].get("lab", "lab/index.html")).exists() else ""
+    w(f"{lab}[Project page]({SITE}/models/{m.id}/) · "
       f"[Model card](MODEL_CARD.md) · [Lab notebook](NOTEBOOK.md) · [The method]({REPO}/blob/main/docs/method.md)\n")
 
     w("| | |\n|---|---|")

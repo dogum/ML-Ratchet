@@ -1,0 +1,1270 @@
+{
+ "check": "coast-down vs EPA target road-load coefficients",
+ "n_vehicles": 47,
+ "method": "Check: coast-down. For every EPA validation vehicle (47; >= 20 required) the spec is built from its EPA test weight\nand target road-load A/B/C (CdA from C, Crr from A, speed coefficient from B, at the reference air density).\nroadsim's road-load model then *drives a virtual coast-down*: 80 -> 15 mph in neutral, both directions, steady wind of\nrandom speed (0-3 m/s) and direction, 10 Hz speed with 0.05 mph noise. A, B, C are recovered with an SAE J2263-style\nfit and compared with the EPA targets: road-load force at 20/40/60 mph and the coefficients.\n\nSecond part (independent reference): the same coast-down at 5 C ambient (rho from the ideal-gas law), corrected back to\n20 C with SAE J2263's standard corrections (aero x rho_std/rho, rolling x [1 + 0.0086 (T - 20)]); this tests roadsim's\nISO 28580-based tyre temperature model and air-density model against the SAE correction.\n\nTolerance ('the test's spread'): the coefficient of variation of the 50 mph road-load force among repeat EPA target\nentries of the same make/model/test weight in the test-car lists (MY2022-24).",
+ "epa_repeat_target_cv_F50_pct": {
+  "median": 3.06,
+  "p75": 5.66,
+  "n_model_groups": 515
+ },
+ "standard_conditions": {
+  "abs_err_pct_median": [
+   1.562,
+   0.819,
+   0.516
+  ],
+  "abs_err_pct_max": [
+   5.481,
+   2.074,
+   1.097
+  ],
+  "speeds_mph": [
+   20,
+   40,
+   60
+  ]
+ },
+ "at_5C_J2263_corrected": {
+  "err_pct_median": [
+   1.097,
+   0.511,
+   0.35
+  ],
+  "abs_err_pct_max": [
+   6.104,
+   3.074,
+   1.757
+  ],
+  "speeds_mph": [
+   20,
+   40,
+   60
+  ]
+ },
+ "frac_within_epa_spread": 0.915,
+ "frac_within_epa_spread_5C": 0.915,
+ "vehicles": [
+  {
+   "name": "2024 TOYOTA RAV4",
+   "architecture": "conv",
+   "etw_lb": 3750.0,
+   "target_abc_lbf": [
+    25.306,
+    0.25161,
+    0.022122
+   ],
+   "fitted_abc_lbf": [
+    25.8674,
+    0.2653,
+    0.022
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    25.5651,
+    0.2415,
+    0.0222
+   ],
+   "err_F20_pct": 1.966,
+   "err5C_F20_pct": 0.247,
+   "err_F40_pct": 1.201,
+   "err5C_F40_pct": 0.021,
+   "err_F60_pct": 0.667,
+   "err5C_F60_pct": 0.012
+  },
+  {
+   "name": "2023 MAZDA Mazda3",
+   "architecture": "conv",
+   "etw_lb": 3250.0,
+   "target_abc_lbf": [
+    25.945,
+    0.13766,
+    0.017696
+   ],
+   "fitted_abc_lbf": [
+    26.2572,
+    0.1504,
+    0.0175
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    26.6273,
+    0.1328,
+    0.0178
+   ],
+   "err_F20_pct": 1.406,
+   "err5C_F20_pct": 1.722,
+   "err_F40_pct": 0.945,
+   "err5C_F40_pct": 1.025,
+   "err_F60_pct": 0.508,
+   "err5C_F60_pct": 0.687
+  },
+  {
+   "name": "2024 Hyundai Sonata",
+   "architecture": "conv",
+   "etw_lb": 3750.0,
+   "target_abc_lbf": [
+    27.796,
+    0.39985,
+    0.015895
+   ],
+   "fitted_abc_lbf": [
+    28.3853,
+    0.371,
+    0.0162
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    27.7417,
+    0.4021,
+    0.0159
+   ],
+   "err_F20_pct": 0.352,
+   "err5C_F20_pct": -0.047,
+   "err_F40_pct": -0.031,
+   "err5C_F40_pct": -0.011,
+   "err_F60_pct": 0.074,
+   "err5C_F60_pct": -0.017
+  },
+  {
+   "name": "2024 HYUNDAI Elantra",
+   "architecture": "conv",
+   "etw_lb": 3125.0,
+   "target_abc_lbf": [
+    26.925,
+    -0.07852,
+    0.021929
+   ],
+   "fitted_abc_lbf": [
+    28.3711,
+    -0.1206,
+    0.0223
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    27.5681,
+    -0.0714,
+    0.0219
+   ],
+   "err_F20_pct": 2.247,
+   "err5C_F20_pct": 2.304,
+   "err_F40_pct": 0.7,
+   "err5C_F40_pct": 1.584,
+   "err_F60_pct": 0.378,
+   "err5C_F60_pct": 1.07
+  },
+  {
+   "name": "2024 HONDA CR-V FWD",
+   "architecture": "conv",
+   "etw_lb": 3875.0,
+   "target_abc_lbf": [
+    38.57,
+    -0.2101,
+    0.02588
+   ],
+   "fitted_abc_lbf": [
+    40.0044,
+    -0.2295,
+    0.0261
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    38.7193,
+    -0.199,
+    0.0258
+   ],
+   "err_F20_pct": 2.497,
+   "err5C_F20_pct": 0.741,
+   "err_F40_pct": 1.314,
+   "err5C_F40_pct": 0.607,
+   "err_F60_pct": 0.759,
+   "err5C_F60_pct": 0.385
+  },
+  {
+   "name": "2024 Ford Escape FWD",
+   "architecture": "conv",
+   "etw_lb": 3625.0,
+   "target_abc_lbf": [
+    21.72,
+    0.12,
+    0.02501
+   ],
+   "fitted_abc_lbf": [
+    22.0167,
+    0.1234,
+    0.0251
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    23.0721,
+    0.0898,
+    0.0253
+   ],
+   "err_F20_pct": 1.123,
+   "err5C_F20_pct": 2.527,
+   "err_F40_pct": 0.762,
+   "err5C_F40_pct": 0.902,
+   "err_F60_pct": 0.561,
+   "err5C_F60_pct": 0.476
+  },
+  {
+   "name": "2024 Ford F150",
+   "architecture": "conv",
+   "etw_lb": 5000.0,
+   "target_abc_lbf": [
+    24.68,
+    0.1954,
+    0.03384
+   ],
+   "fitted_abc_lbf": [
+    28.2949,
+    0.1157,
+    0.0346
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    26.1302,
+    0.1764,
+    0.0341
+   ],
+   "err_F20_pct": 5.481,
+   "err5C_F20_pct": 2.784,
+   "err_F40_pct": 1.823,
+   "err5C_F40_pct": 1.271,
+   "err_F60_pct": 0.903,
+   "err5C_F60_pct": 0.781
+  },
+  {
+   "name": "2024 Ford F150 PICKUP 2WD",
+   "architecture": "conv",
+   "etw_lb": 5500.0,
+   "target_abc_lbf": [
+    26.03,
+    0.1535,
+    0.03393
+   ],
+   "fitted_abc_lbf": [
+    29.1289,
+    0.0723,
+    0.0347
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    27.3564,
+    0.1523,
+    0.034
+   ],
+   "err_F20_pct": 4.159,
+   "err5C_F20_pct": 3.111,
+   "err_F40_pct": 1.214,
+   "err5C_F40_pct": 1.596,
+   "err_F60_pct": 0.588,
+   "err5C_F60_pct": 0.942
+  },
+  {
+   "name": "2023 Ford F150 Super Crew Cab 4X2",
+   "architecture": "conv",
+   "etw_lb": 4750.0,
+   "target_abc_lbf": [
+    22.83,
+    0.215,
+    0.03499
+   ],
+   "fitted_abc_lbf": [
+    23.079,
+    0.2815,
+    0.0343
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    25.1412,
+    0.2255,
+    0.035
+   ],
+   "err_F20_pct": 3.174,
+   "err5C_F20_pct": 6.104,
+   "err_F40_pct": 2.074,
+   "err5C_F40_pct": 3.074,
+   "err_F60_pct": 1.097,
+   "err5C_F60_pct": 1.757
+  },
+  {
+   "name": "2024 CHEVROLET SILVERADO 2WD",
+   "architecture": "conv",
+   "etw_lb": 5000.0,
+   "target_abc_lbf": [
+    31.86,
+    0.0131,
+    0.03994
+   ],
+   "fitted_abc_lbf": [
+    34.1111,
+    -0.0237,
+    0.0404
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    33.5294,
+    -0.0244,
+    0.0403
+   ],
+   "err_F20_pct": 3.546,
+   "err5C_F20_pct": 2.24,
+   "err_F40_pct": 1.599,
+   "err5C_F40_pct": 0.834,
+   "err_F60_pct": 0.995,
+   "err5C_F60_pct": 0.479
+  },
+  {
+   "name": "2024 CHEVROLET SILVERADO 2WD",
+   "architecture": "conv",
+   "etw_lb": 5500.0,
+   "target_abc_lbf": [
+    31.25,
+    0.0123,
+    0.03856
+   ],
+   "fitted_abc_lbf": [
+    31.1488,
+    0.0578,
+    0.038
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    30.1136,
+    0.0857,
+    0.0379
+   ],
+   "err_F20_pct": 1.251,
+   "err5C_F20_pct": 0.183,
+   "err_F40_pct": 0.891,
+   "err5C_F40_pct": 0.876,
+   "err_F60_pct": 0.371,
+   "err5C_F60_pct": 0.621
+  },
+  {
+   "name": "2024 Jeep Grand Cherokee L 4X2",
+   "architecture": "conv",
+   "etw_lb": 5000.0,
+   "target_abc_lbf": [
+    36.39,
+    0.1536,
+    0.02955
+   ],
+   "fitted_abc_lbf": [
+    38.1203,
+    0.1156,
+    0.03
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    36.1407,
+    0.1855,
+    0.0292
+   ],
+   "err_F20_pct": 2.224,
+   "err5C_F20_pct": 0.514,
+   "err_F40_pct": 0.991,
+   "err5C_F40_pct": 0.588,
+   "err_F60_pct": 0.644,
+   "err5C_F60_pct": 0.358
+  },
+  {
+   "name": "2024 Chrysler Pacifica",
+   "architecture": "conv",
+   "etw_lb": 4750.0,
+   "target_abc_lbf": [
+    27.15,
+    0.2778,
+    0.02345
+   ],
+   "fitted_abc_lbf": [
+    26.5371,
+    0.356,
+    0.0227
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    27.7855,
+    0.2379,
+    0.0239
+   ],
+   "err_F20_pct": 1.509,
+   "err5C_F20_pct": 0.053,
+   "err_F40_pct": 1.649,
+   "err5C_F40_pct": -0.293,
+   "err_F60_pct": 0.96,
+   "err5C_F60_pct": -0.077
+  },
+  {
+   "name": "2022 Ford Transit RWD Wagon Low Roof",
+   "architecture": "conv",
+   "etw_lb": 6000.0,
+   "target_abc_lbf": [
+    41.01,
+    0.3083,
+    0.04076
+   ],
+   "fitted_abc_lbf": [
+    43.2647,
+    0.2688,
+    0.0412
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    43.6343,
+    0.2537,
+    0.0414
+   ],
+   "err_F20_pct": 2.589,
+   "err5C_F20_pct": 2.802,
+   "err_F40_pct": 1.172,
+   "err5C_F40_pct": 1.203,
+   "err_F60_pct": 0.723,
+   "err5C_F60_pct": 0.761
+  },
+  {
+   "name": "2024 Ford Maverick FWD",
+   "architecture": "conv",
+   "etw_lb": 3875.0,
+   "target_abc_lbf": [
+    25.54,
+    0.0077,
+    0.0277
+   ],
+   "fitted_abc_lbf": [
+    27.2535,
+    -0.0394,
+    0.0282
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    25.3546,
+    0.0669,
+    0.0271
+   ],
+   "err_F20_pct": 2.592,
+   "err5C_F20_pct": 2.071,
+   "err_F40_pct": 0.791,
+   "err5C_F40_pct": 1.759,
+   "err_F60_pct": 0.413,
+   "err5C_F60_pct": 0.98
+  },
+  {
+   "name": "2024 TOYOTA CAMRY LE/SE",
+   "architecture": "conv",
+   "etw_lb": 3625.0,
+   "target_abc_lbf": [
+    25.587,
+    0.19688,
+    0.016371
+   ],
+   "fitted_abc_lbf": [
+    25.3803,
+    0.2221,
+    0.0161
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    26.3293,
+    0.1966,
+    0.0163
+   ],
+   "err_F20_pct": 0.539,
+   "err5C_F20_pct": 2.019,
+   "err_F40_pct": 0.655,
+   "err5C_F40_pct": 1.169,
+   "err_F60_pct": 0.397,
+   "err5C_F60_pct": 0.675
+  },
+  {
+   "name": "2024 TOYOTA COROLLA",
+   "architecture": "conv",
+   "etw_lb": 3250.0,
+   "target_abc_lbf": [
+    19.823,
+    0.18907,
+    0.017233
+   ],
+   "fitted_abc_lbf": [
+    18.5299,
+    0.2456,
+    0.0167
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    19.9721,
+    0.1922,
+    0.0172
+   ],
+   "err_F20_pct": -1.212,
+   "err5C_F20_pct": 0.67,
+   "err_F40_pct": 0.253,
+   "err5C_F40_pct": 0.444,
+   "err_F60_pct": 0.251,
+   "err5C_F60_pct": 0.288
+  },
+  {
+   "name": "2024 HONDA CIVIC 4DR",
+   "architecture": "conv",
+   "etw_lb": 3250.0,
+   "target_abc_lbf": [
+    35.0,
+    -0.3559,
+    0.02137
+   ],
+   "fitted_abc_lbf": [
+    34.5188,
+    -0.3182,
+    0.021
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    33.9898,
+    -0.3175,
+    0.021
+   ],
+   "err_F20_pct": 0.301,
+   "err5C_F20_pct": -1.027,
+   "err_F40_pct": 0.678,
+   "err5C_F40_pct": -0.003,
+   "err_F60_pct": 0.34,
+   "err5C_F60_pct": 0.118
+  },
+  {
+   "name": "2024 HYUNDAI Elantra",
+   "architecture": "conv",
+   "etw_lb": 3375.0,
+   "target_abc_lbf": [
+    30.212,
+    0.09906,
+    0.020926
+   ],
+   "fitted_abc_lbf": [
+    30.6625,
+    0.1032,
+    0.0209
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    30.6136,
+    0.0892,
+    0.0211
+   ],
+   "err_F20_pct": 1.275,
+   "err5C_F20_pct": 0.644,
+   "err_F40_pct": 0.815,
+   "err5C_F40_pct": 0.347,
+   "err_F60_pct": 0.496,
+   "err5C_F60_pct": 0.289
+  },
+  {
+   "name": "2024 Hyundai Sonata",
+   "architecture": "conv",
+   "etw_lb": 3875.0,
+   "target_abc_lbf": [
+    32.069,
+    0.18039,
+    0.019842
+   ],
+   "fitted_abc_lbf": [
+    31.3677,
+    0.2236,
+    0.0195
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    30.9531,
+    0.2447,
+    0.0191
+   ],
+   "err_F20_pct": 0.076,
+   "err5C_F20_pct": -0.317,
+   "err_F40_pct": 0.718,
+   "err5C_F40_pct": 0.311,
+   "err_F60_pct": 0.638,
+   "err5C_F60_pct": -0.033
+  },
+  {
+   "name": "2024 Ford Ford Explorer Timberline",
+   "architecture": "conv",
+   "etw_lb": 5000.0,
+   "target_abc_lbf": [
+    46.12,
+    0.0351,
+    0.03289
+   ],
+   "fitted_abc_lbf": [
+    47.3873,
+    0.0375,
+    0.0327
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    47.0513,
+    0.0517,
+    0.0327
+   ],
+   "err_F20_pct": 2.094,
+   "err5C_F20_pct": 2.011,
+   "err_F40_pct": 1.125,
+   "err5C_F40_pct": 1.363,
+   "err_F60_pct": 0.528,
+   "err5C_F60_pct": 0.845
+  },
+  {
+   "name": "2024 TOYOTA COROLLA CROSS",
+   "architecture": "conv",
+   "etw_lb": 3500.0,
+   "target_abc_lbf": [
+    24.254,
+    0.09452,
+    0.024514
+   ],
+   "fitted_abc_lbf": [
+    24.5796,
+    0.1151,
+    0.0243
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    26.2464,
+    0.0443,
+    0.0251
+   ],
+   "err_F20_pct": 1.831,
+   "err5C_F20_pct": 3.37,
+   "err_F40_pct": 1.239,
+   "err5C_F40_pct": 1.307,
+   "err_F60_pct": 0.721,
+   "err5C_F60_pct": 0.841
+  },
+  {
+   "name": "2024 TOYOTA CAMRY HYBRID LE",
+   "architecture": "hev_powersplit",
+   "etw_lb": 3750.0,
+   "target_abc_lbf": [
+    19.657,
+    0.16957,
+    0.016016
+   ],
+   "fitted_abc_lbf": [
+    19.4644,
+    0.1928,
+    0.0158
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    19.6074,
+    0.1949,
+    0.0157
+   ],
+   "err_F20_pct": 0.599,
+   "err5C_F20_pct": 1.163,
+   "err_F40_pct": 0.678,
+   "err5C_F40_pct": 0.972,
+   "err_F60_pct": 0.385,
+   "err5C_F60_pct": 0.505
+  },
+  {
+   "name": "2024 TOYOTA RAV4 HYBRID AWD",
+   "architecture": "hev_powersplit",
+   "etw_lb": 4000.0,
+   "target_abc_lbf": [
+    27.444,
+    0.01226,
+    0.026696
+   ],
+   "fitted_abc_lbf": [
+    27.8111,
+    0.0206,
+    0.0267
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    26.7123,
+    0.044,
+    0.0264
+   ],
+   "err_F20_pct": 1.364,
+   "err5C_F20_pct": -0.518,
+   "err_F40_pct": 0.93,
+   "err5C_F40_pct": 0.182,
+   "err_F60_pct": 0.618,
+   "err5C_F60_pct": 0.201
+  },
+  {
+   "name": "2023 Ford Maverick",
+   "architecture": "hev_powersplit",
+   "etw_lb": 4000.0,
+   "target_abc_lbf": [
+    27.59,
+    0.1968,
+    0.02733
+   ],
+   "fitted_abc_lbf": [
+    29.3,
+    0.1591,
+    0.0277
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    26.7978,
+    0.2752,
+    0.0266
+   ],
+   "err_F20_pct": 2.607,
+   "err5C_F20_pct": 1.097,
+   "err_F40_pct": 1.016,
+   "err5C_F40_pct": 1.393,
+   "err_F60_pct": 0.584,
+   "err5C_F60_pct": 0.813
+  },
+  {
+   "name": "2024 Ford Escape FWD HEV",
+   "architecture": "hev_powersplit",
+   "etw_lb": 4000.0,
+   "target_abc_lbf": [
+    25.01,
+    0.2003,
+    0.025
+   ],
+   "fitted_abc_lbf": [
+    24.9114,
+    0.2475,
+    0.0245
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    25.5296,
+    0.2049,
+    0.0249
+   ],
+   "err_F20_pct": 1.667,
+   "err5C_F20_pct": 1.468,
+   "err_F40_pct": 1.381,
+   "err5C_F40_pct": 0.75,
+   "err_F60_pct": 0.768,
+   "err5C_F60_pct": 0.35
+  },
+  {
+   "name": "2024 TOYOTA COROLLA CROSS HYBRID AWD",
+   "architecture": "hev_powersplit",
+   "etw_lb": 3750.0,
+   "target_abc_lbf": [
+    27.961,
+    0.23781,
+    0.025877
+   ],
+   "fitted_abc_lbf": [
+    28.5339,
+    0.235,
+    0.026
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    29.7117,
+    0.2088,
+    0.0261
+   ],
+   "err_F20_pct": 1.293,
+   "err5C_F20_pct": 2.95,
+   "err_F40_pct": 0.786,
+   "err5C_F40_pct": 1.254,
+   "err_F60_pct": 0.563,
+   "err5C_F60_pct": 0.669
+  },
+  {
+   "name": "2024 TOYOTA PRIUS",
+   "architecture": "hev_powersplit",
+   "etw_lb": 3375.0,
+   "target_abc_lbf": [
+    20.357,
+    0.17117,
+    0.016639
+   ],
+   "fitted_abc_lbf": [
+    19.731,
+    0.2116,
+    0.0163
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    20.9485,
+    0.1945,
+    0.0163
+   ],
+   "err_F20_pct": 0.141,
+   "err5C_F20_pct": 3.025,
+   "err_F40_pct": 0.806,
+   "err5C_F40_pct": 1.81,
+   "err_F60_pct": 0.603,
+   "err5C_F60_pct": 0.831
+  },
+  {
+   "name": "2024 HYUNDAI Elantra Hybrid",
+   "architecture": "hev_parallel_p2",
+   "etw_lb": 3375.0,
+   "target_abc_lbf": [
+    21.092,
+    0.40195,
+    0.015805
+   ],
+   "fitted_abc_lbf": [
+    21.0425,
+    0.4188,
+    0.0157
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    20.6247,
+    0.4213,
+    0.0155
+   ],
+   "err_F20_pct": 0.639,
+   "err5C_F20_pct": -0.53,
+   "err_F40_pct": 0.606,
+   "err5C_F40_pct": -0.197,
+   "err_F60_pct": 0.399,
+   "err5C_F60_pct": -0.266
+  },
+  {
+   "name": "2024 KIA NIRO HYBRID",
+   "architecture": "hev_parallel_p2",
+   "etw_lb": 3375.0,
+   "target_abc_lbf": [
+    18.648,
+    0.27366,
+    0.018706
+   ],
+   "fitted_abc_lbf": [
+    19.3405,
+    0.2765,
+    0.0187
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    19.1675,
+    0.2649,
+    0.0188
+   ],
+   "err_F20_pct": 2.315,
+   "err5C_F20_pct": 1.179,
+   "err_F40_pct": 1.238,
+   "err5C_F40_pct": 0.474,
+   "err_F60_pct": 0.691,
+   "err5C_F60_pct": 0.243
+  },
+  {
+   "name": "2024 HYUNDAI SONATA HYBRID",
+   "architecture": "hev_parallel_p2",
+   "etw_lb": 3875.0,
+   "target_abc_lbf": [
+    31.939,
+    -0.03404,
+    0.018352
+   ],
+   "fitted_abc_lbf": [
+    32.7569,
+    -0.0553,
+    0.0185
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    30.8716,
+    0.0176,
+    0.0178
+   ],
+   "err_F20_pct": 1.215,
+   "err5C_F20_pct": -0.623,
+   "err_F40_pct": 0.458,
+   "err5C_F40_pct": 0.293,
+   "err_F60_pct": 0.244,
+   "err5C_F60_pct": 0.188
+  },
+  {
+   "name": "2024 HYUNDAI TUCSON HYBRID",
+   "architecture": "hev_parallel_p2",
+   "etw_lb": 4000.0,
+   "target_abc_lbf": [
+    27.924,
+    0.20644,
+    0.025093
+   ],
+   "fitted_abc_lbf": [
+    28.6865,
+    0.209,
+    0.025
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    28.0019,
+    0.2037,
+    0.0252
+   ],
+   "err_F20_pct": 1.85,
+   "err5C_F20_pct": 0.159,
+   "err_F40_pct": 0.951,
+   "err5C_F40_pct": 0.188,
+   "err_F60_pct": 0.461,
+   "err5C_F60_pct": 0.235
+  },
+  {
+   "name": "2024 Ford F150 HEV",
+   "architecture": "hev_parallel_p2",
+   "etw_lb": 6000.0,
+   "target_abc_lbf": [
+    36.08,
+    0.58,
+    0.03296
+   ],
+   "fitted_abc_lbf": [
+    35.9003,
+    0.5922,
+    0.033
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    39.8975,
+    0.5027,
+    0.0337
+   ],
+   "err_F20_pct": 0.126,
+   "err5C_F20_pct": 4.201,
+   "err_F40_pct": 0.321,
+   "err5C_F40_pct": 1.667,
+   "err_F60_pct": 0.353,
+   "err5C_F60_pct": 0.922
+  },
+  {
+   "name": "2024 TOYOTA TACOMA HYBRID 4WD",
+   "architecture": "hev_parallel_p2",
+   "etw_lb": 5500.0,
+   "target_abc_lbf": [
+    43.574,
+    0.46205,
+    0.033732
+   ],
+   "fitted_abc_lbf": [
+    44.4294,
+    0.4793,
+    0.0334
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    44.8526,
+    0.4523,
+    0.0339
+   ],
+   "err_F20_pct": 1.63,
+   "err5C_F20_pct": 1.747,
+   "err_F40_pct": 0.92,
+   "err5C_F40_pct": 1.025,
+   "err_F60_pct": 0.424,
+   "err5C_F60_pct": 0.712
+  },
+  {
+   "name": "2024 HONDA ACCORD",
+   "architecture": "hev_series",
+   "etw_lb": 3750.0,
+   "target_abc_lbf": [
+    21.59,
+    0.1866,
+    0.0173
+   ],
+   "fitted_abc_lbf": [
+    22.7604,
+    0.145,
+    0.0177
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    21.9984,
+    0.1462,
+    0.0179
+   ],
+   "err_F20_pct": 1.597,
+   "err5C_F20_pct": -0.494,
+   "err_F40_pct": 0.376,
+   "err5C_F40_pct": -0.434,
+   "err_F60_pct": 0.28,
+   "err5C_F60_pct": 0.155
+  },
+  {
+   "name": "2024 HONDA CR-V FWD",
+   "architecture": "hev_series",
+   "etw_lb": 4000.0,
+   "target_abc_lbf": [
+    25.59,
+    0.2499,
+    0.02261
+   ],
+   "fitted_abc_lbf": [
+    26.7112,
+    0.2227,
+    0.023
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    26.5419,
+    0.2125,
+    0.023
+   ],
+   "err_F20_pct": 1.827,
+   "err5C_F20_pct": 0.919,
+   "err_F40_pct": 0.865,
+   "err5C_F40_pct": 0.134,
+   "err_F60_pct": 0.665,
+   "err5C_F60_pct": 0.122
+  },
+  {
+   "name": "2024 Tesla Model 3 RWD",
+   "architecture": "bev",
+   "etw_lb": 4250.0,
+   "target_abc_lbf": [
+    27.02,
+    0.2873,
+    0.0122
+   ],
+   "fitted_abc_lbf": [
+    27.0431,
+    0.3077,
+    0.0119
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    27.3728,
+    0.254,
+    0.0127
+   ],
+   "err_F20_pct": 0.853,
+   "err5C_F20_pct": -0.346,
+   "err_F40_pct": 0.685,
+   "err5C_F40_pct": -0.429,
+   "err_F60_pct": 0.286,
+   "err5C_F60_pct": -0.003
+  },
+  {
+   "name": "2024 Tesla Model Y Long Range AWD",
+   "architecture": "bev",
+   "etw_lb": 4750.0,
+   "target_abc_lbf": [
+    38.35,
+    0.0677,
+    0.0171
+   ],
+   "fitted_abc_lbf": [
+    38.0794,
+    0.087,
+    0.017
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    39.6608,
+    0.0083,
+    0.0178
+   ],
+   "err_F20_pct": 0.165,
+   "err5C_F20_pct": 0.88,
+   "err_F40_pct": 0.505,
+   "err5C_F40_pct": 0.12,
+   "err_F60_pct": 0.516,
+   "err5C_F60_pct": 0.316
+  },
+  {
+   "name": "2023 Ford Mach-E RWD",
+   "architecture": "bev",
+   "etw_lb": 4750.0,
+   "target_abc_lbf": [
+    31.43,
+    0.1279,
+    0.02152
+   ],
+   "fitted_abc_lbf": [
+    32.3055,
+    0.0854,
+    0.0221
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    32.406,
+    0.0959,
+    0.0219
+   ],
+   "err_F20_pct": 0.582,
+   "err5C_F20_pct": 1.106,
+   "err_F40_pct": 0.088,
+   "err5C_F40_pct": 0.333,
+   "err_F60_pct": 0.275,
+   "err5C_F60_pct": 0.234
+  },
+  {
+   "name": "2024 KIA EV6 Long Range RWD",
+   "architecture": "bev",
+   "etw_lb": 4500.0,
+   "target_abc_lbf": [
+    23.313,
+    0.11939,
+    0.022206
+   ],
+   "fitted_abc_lbf": [
+    23.3677,
+    0.1391,
+    0.022
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    24.9551,
+    0.0488,
+    0.023
+   ],
+   "err_F20_pct": 1.064,
+   "err5C_F20_pct": 1.553,
+   "err_F40_pct": 0.819,
+   "err5C_F40_pct": 0.074,
+   "err_F60_pct": 0.465,
+   "err5C_F60_pct": 0.155
+  },
+  {
+   "name": "2024 NISSAN LEAF",
+   "architecture": "bev",
+   "etw_lb": 3875.0,
+   "target_abc_lbf": [
+    25.89,
+    0.3449,
+    0.01945
+   ],
+   "fitted_abc_lbf": [
+    27.2464,
+    0.2995,
+    0.0199
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    25.2382,
+    0.3766,
+    0.0192
+   ],
+   "err_F20_pct": 1.562,
+   "err5C_F20_pct": -0.301,
+   "err_F40_pct": 0.398,
+   "err5C_F40_pct": 0.278,
+   "err_F60_pct": 0.257,
+   "err5C_F60_pct": 0.263
+  },
+  {
+   "name": "2024 Volkswagen ID.4 Pro",
+   "architecture": "bev",
+   "etw_lb": 5000.0,
+   "target_abc_lbf": [
+    27.83,
+    0.2217,
+    0.01799
+   ],
+   "fitted_abc_lbf": [
+    27.373,
+    0.2529,
+    0.0176
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    28.3465,
+    0.2065,
+    0.0182
+   ],
+   "err_F20_pct": 0.046,
+   "err5C_F20_pct": 0.771,
+   "err_F40_pct": 0.298,
+   "err5C_F40_pct": 0.42,
+   "err_F60_pct": 0.069,
+   "err5C_F60_pct": 0.406
+  },
+  {
+   "name": "2024 Ford F-150 Lightning",
+   "architecture": "bev",
+   "etw_lb": 6500.0,
+   "target_abc_lbf": [
+    38.74,
+    0.335,
+    0.03526
+   ],
+   "fitted_abc_lbf": [
+    40.071,
+    0.3287,
+    0.0355
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    38.5005,
+    0.3631,
+    0.0348
+   ],
+   "err_F20_pct": 2.186,
+   "err5C_F20_pct": 0.258,
+   "err_F40_pct": 1.348,
+   "err5C_F40_pct": 0.19,
+   "err_F60_pct": 0.978,
+   "err5C_F60_pct": -0.044
+  },
+  {
+   "name": "2024 KIA Niro Electric",
+   "architecture": "bev",
+   "etw_lb": 4000.0,
+   "target_abc_lbf": [
+    24.889,
+    0.1738,
+    0.020328
+   ],
+   "fitted_abc_lbf": [
+    25.0812,
+    0.1887,
+    0.0201
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    24.6506,
+    0.2036,
+    0.0199
+   ],
+   "err_F20_pct": 1.113,
+   "err5C_F20_pct": 0.553,
+   "err_F40_pct": 0.704,
+   "err5C_F40_pct": 0.511,
+   "err_F60_pct": 0.307,
+   "err5C_F60_pct": 0.133
+  },
+  {
+   "name": "2023 CHEVROLET BOLT EUV",
+   "architecture": "bev",
+   "etw_lb": 4000.0,
+   "target_abc_lbf": [
+    31.12,
+    0.0175,
+    0.02251
+   ],
+   "fitted_abc_lbf": [
+    31.5269,
+    0.0419,
+    0.0222
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    31.8186,
+    0.0,
+    0.0228
+   ],
+   "err_F20_pct": 1.936,
+   "err5C_F20_pct": 1.129,
+   "err_F40_pct": 1.383,
+   "err5C_F40_pct": 0.635,
+   "err_F60_pct": 0.769,
+   "err5C_F60_pct": 0.549
+  },
+  {
+   "name": "2024 Hyundai Ioniq 5",
+   "architecture": "bev",
+   "etw_lb": 4250.0,
+   "target_abc_lbf": [
+    18.868,
+    0.59641,
+    0.016432
+   ],
+   "fitted_abc_lbf": [
+    18.6822,
+    0.6475,
+    0.0159
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    18.375,
+    0.621,
+    0.0161
+   ],
+   "err_F20_pct": 1.7,
+   "err5C_F20_pct": -0.381,
+   "err_F40_pct": 1.529,
+   "err5C_F40_pct": -0.109,
+   "err_F60_pct": 0.944,
+   "err5C_F60_pct": -0.256
+  },
+  {
+   "name": "2024 Hyundai Ioniq 6 Standard Range RWD",
+   "architecture": "bev",
+   "etw_lb": 4250.0,
+   "target_abc_lbf": [
+    22.038,
+    0.22029,
+    0.014573
+   ],
+   "fitted_abc_lbf": [
+    23.4239,
+    0.1676,
+    0.0151
+   ],
+   "fitted_5C_corrected_abc_lbf": [
+    23.7211,
+    0.1522,
+    0.0153
+   ],
+   "err_F20_pct": 1.731,
+   "err5C_F20_pct": 1.843,
+   "err_F40_pct": 0.344,
+   "err5C_F40_pct": 0.096,
+   "err_F60_pct": 0.307,
+   "err5C_F60_pct": 0.062
+  }
+ ]
+}

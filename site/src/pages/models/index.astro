@@ -9,7 +9,7 @@ const domains = [...new Set(models.map((m) => m.domain))];
 <Base title="Models" description="Every model in ML Ratchet: what it reads, what it returns, and how it did on its real exam.">
   <section class="wrap head">
     <p class="kicker tick-label">The collection</p>
-    <h1 class="display h">Nine models.<br /><em>Zero real labels.</em></h1>
+    <h1 class="display h">{models.length} models.<br /><em>Zero real labels.</em></h1>
     <p class="muted lead">Each learned only from simulated physics, climbed a logged ratchet, and sat one real exam beside a classical method and a dumb baseline. Filter by field:</p>
     <div class="filters" role="group" aria-label="Filter by field">
       <button type="button" class="f on" data-f="all">All <span class="num">{models.length}</span></button>

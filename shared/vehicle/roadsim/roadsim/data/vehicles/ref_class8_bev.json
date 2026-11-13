@@ -1,0 +1,37 @@
+{
+ "id": "ref_class8_bev",
+ "class": "truck_hd",
+ "architecture": "bev",
+ "notes": "battery-electric Class 8 tractor-trailer, 900 kWh LFP, same body/payload as the diesel reference",
+ "mass_kg": 17500.0,
+ "payload_kg": 17237.0,
+ "CdA_m2": 5.6,
+ "Crr": 0.006,
+ "Crr_speed_coef": 0.0015,
+ "wheel_radius_m": 0.505,
+ "rot_mass_frac": 0.03,
+ "motors": [
+  {
+   "role": "traction",
+   "max_power_kW": 600,
+   "eff_map": "ipm_generic_150",
+   "max_rpm": 12000
+  }
+ ],
+ "battery": {
+  "chemistry": "LFP",
+  "capacity_kWh": 900,
+  "nominal_V": 800,
+  "soc_window": [
+   0.05,
+   0.98
+  ],
+  "thermal": {
+   "heater_W": 8000,
+   "cooler_W": 6000
+  }
+ },
+ "aux": {
+  "base_W": 2500
+ }
+}

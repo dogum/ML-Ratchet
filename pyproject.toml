@@ -22,7 +22,8 @@ dependencies = ["numpy>=1.24", "scipy>=1.10", "pyyaml>=6"]
 
 [project.optional-dependencies]
 models = ["pandas>=2", "h5py>=3"]        # SunDoctor reads CSV with pandas; ChirpNet reads GWOSC HDF5
-dev = ["pytest>=8", "jsonschema>=4", "pandas>=2", "h5py>=3"]
+vehicle = ["pandas>=2", "pyarrow>=14"]   # RoadData (realdata) reads parquet; RoadSim itself is numpy/scipy
+dev = ["pytest>=8", "jsonschema>=4", "pandas>=2", "h5py>=3", "pyarrow>=14"]
 
 [project.scripts]
 mlratchet = "mlratchet.cli:main"
@@ -31,11 +32,18 @@ mlratchet = "mlratchet.cli:main"
 Homepage = "https://github.com/dogum/ML-Ratchet"
 Documentation = "https://github.com/dogum/ML-Ratchet/tree/main/docs"
 
-[tool.setuptools.packages.find]
-include = ["mlratchet*"]
+[tool.setuptools]
+# mlratchet, plus the shared vehicle platform's two packages (RoadSim and RoadData), which live in shared/vehicle
+packages = ["mlratchet", "roadsim", "realdata"]
+
+[tool.setuptools.package-dir]
+mlratchet = "mlratchet"
+roadsim = "shared/vehicle/roadsim/roadsim"
+realdata = "shared/vehicle/realdata"
 
 [tool.setuptools.package-data]
 mlratchet = ["schema/*.json", "templates/model/**/*"]
+roadsim = ["data/*", "data/**/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

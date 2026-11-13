@@ -1,0 +1,18 @@
+{
+ "trip_id": "NYCC",
+ "vehicle_id": null,
+ "source": "cycle",
+ "date": null,
+ "distance_m": 1896.5224959999985,
+ "duration_s": 601.0,
+ "T_amb_mean": 25,
+ "split": "train_noise",
+ "v_mean": 3.155611474209648,
+ "v_max": 12.383008,
+ "idle_frac": 0.39767054908485855,
+ "notes": "Dynamometer schedule; zero grade unless stated; nominal test temperature; no measured outputs.",
+ "duty": "light",
+ "source_url": "https://www.epa.gov/vehicle-and-fuel-emissions-testing/dynamometer-drive-schedules",
+ "source_file": "epa-new-york-city-cycle.txt",
+ "unit_in_file": "mph"
+}

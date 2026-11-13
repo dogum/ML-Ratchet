@@ -25,7 +25,7 @@ const toc = [
   ...(m.hasLab ? [['lab', 'The lab']] : []),
   ['data', 'Data & credits'],
 ];
-const released = m.released ? new Date(m.released as string).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : null;
+const released = m.released ? new Date(m.released as string).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }) : null;
 ---
 <Base title={`${m.name} — ${m.tagline}`} description={m.summary} accent={m.accent}
   keywords={[m.name, m.domain, ...(m.tags ?? [])]}
@@ -43,6 +43,7 @@ const released = m.released ? new Date(m.released as string).toLocaleDateString(
             <span class="badge num">v{m.version}</span>
             <span class={`badge ${m.status}`}>{m.status === 'partial' ? 'exam partly pending' : m.status}</span>
             {released && <span class="badge faint">{released}</span>}
+            {m.platform === 'vehicle' && <a class="badge plat" href={url('vehicle/')}>on the vehicle platform →</a>}
           </div>
         </div>
         <p class="display tagline">{m.tagline}</p>
@@ -256,6 +257,7 @@ ${m.usage.demo}`}</code></pre>
   .badges { display: flex; gap: 8px; flex-wrap: wrap; padding-bottom: 12px; }
   .badge { font-family: var(--mono); font-variation-settings: 'wdth' 87.5; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--rule); border-radius: 99px; background: var(--paper-3); }
   .badge.released { color: var(--win); border-color: currentColor; }
+  .badge.plat { text-decoration: none; color: var(--c); border-color: currentColor; }
   .badge.partial { color: var(--c); border-color: currentColor; }
   .tagline { font-size: clamp(28px, 3.4vw, 46px); line-height: 1.05; font-style: italic; color: var(--ink-2); margin: 22px 0 28px; max-width: 26ch; }
   .intro { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr); gap: 40px; align-items: start; }

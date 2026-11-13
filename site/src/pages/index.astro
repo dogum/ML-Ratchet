@@ -80,7 +80,7 @@ const steps = [
   <section class="wrap collection" id="models">
     <div class="sec-head">
       <h2 class="section reveal">The collection</h2>
-      <p class="muted reveal">Nine models across {s.domains.length} fields. Each one runs on numpy in seconds, ships its real exam examples, and keeps every rung it ever tried.</p>
+      <p class="muted reveal">{s.models} models across {s.domains.length} fields, three of them on a shared vehicle simulator. Each one runs on numpy in seconds, ships its real exam examples, and keeps every rung it ever tried.</p>
     </div>
     <div class="grid">
       {models.map((m, i) => <ModelCard m={m} index={i} />)}
@@ -95,7 +95,7 @@ const steps = [
           <p class="kicker tick-label">Don't take our word for it</p>
           <h2 class="section reveal">The networks,<br /><em>running live.</em></h2>
         </div>
-        <p class="muted reveal">Every model's real network runs here, in your browser, on real exam records it never trained on. Add noise, cut the record short, hide a detector — and watch the reading and its error bars respond. Weights load only when you open one.</p>
+        <p class="muted reveal">{live.length} of the {models.length} networks run here, in your browser, on real exam records they never trained on. Add noise, cut the record short, hide a detector — and watch the reading and its error bars respond. Weights load only when you open one.</p>
       </div>
       <div class="rack" data-rack>
         <div class="rack-tabs" role="tablist" aria-label="Choose a model">

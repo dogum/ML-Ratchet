@@ -1,0 +1,20 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json (and training/rungs.json).
+model: energynet
+ladders:
+  - name: EnergyNet
+    objective: "Skill = 1 − median |log error| / median |log error| of the class-median guess, on the frozen simulated validation set (3,991 examples from 400 unseen vehicles)"
+    rule: Keep if the skill beats the incumbent by more than 0.01 AND the dev score D (mean of 15 dev median errors across VED fleets, EPA tests, ZTBus, Mersin and ICCT) gets no more than 0.01 worse.
+    margin: 0.01
+    dev_gate: "D (mean of 15 dev MdAPEs) may not rise by more than 0.01"
+    frozen_sets: [val_v1, val_v2, val_v3, val_v4]
+    scored_on: val_v4
+    note: The frozen set was re-scored at each physics version (v2 MAF label model, v3 on-road loads, v4 plug-in patch).
+    columns_source: Frozen-set median error and the dev score D (lower is better)
+    columns: ["Val MdAPE", "Dev D"]
+    rungs:
+      - { id: r1, change: "MLP predicts log energy directly", sim: 0.544, decision: kept, why: First rung., metrics: ["11.2%", 0.152] }
+      - { id: r2, change: "Predict a correction to the physics energy estimate", sim: 0.556, decision: kept, why: "+0.012; dev D 0.160 (within +0.01).", metrics: ["11.0%", 0.160] }
+      - { id: r3, change: "MAF label model + flag input (physics v2)", sim: 0.580, decision: kept, why: "+0.024; dev D 0.152.", metrics: ["10.3%", 0.152] }
+      - { id: r4, change: "On-road loads vs temperature, fitted on dev (physics v3)", sim: 0.641, decision: kept, why: "+0.061; dev D 0.142.", metrics: ["9.0%", 0.142] }
+      - { id: r5, change: "Plug-in hardware patch (physics v4)", sim: 0.648, decision: rejected, why: "+0.007, short of the 0.01 margin.", metrics: ["8.9%", 0.129] }
+      - { id: r6, change: "Ensemble of 5 networks on v4 physics", sim: 0.656, decision: released, why: "+0.015 over rung 4; dev D 0.129.", metrics: ["8.7%", 0.129] }

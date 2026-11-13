@@ -1,0 +1,206 @@
+id: energynet
+name: EnergyNet
+version: "1.0"
+status: released
+released: 2026-11-12
+order: 10
+domain: Transportation
+platform: vehicle
+tags: [vehicles, energy prediction, fuel consumption, electric vehicles, hybrids, heavy duty, uncertainty]
+accent: "#7cb518"
+tagline: How much fuel or electricity will this trip take, before you drive it?
+question: How much energy will this vehicle use on this route, in this weather — and where does it go?
+summary: >-
+  EnergyNet predicts a trip's fuel or battery energy before the trip, with a 68% and 95% range and a split into air
+  drag, rolling, braking, accessories and powertrain losses. It covers 7 vehicle classes from cars to Class-8 trucks
+  and 7 powertrains. It learned only from the RoadSim vehicle simulator driven over real Ann Arbor routes and weather,
+  and was examined on 26,000 real trips, 47,000 EPA tests and real buses.
+
+reads: A route at 1 Hz (speed, grade, temperature, wind, heading, air density, surface) and whatever is known about the vehicle (architecture, class, mass, road load, engine, battery, window-sticker label, start charge); unknown fields are masked.
+returns:
+  - Trip energy (MJ) with 68% and 95% ranges — fuel chemical energy, battery energy, or both for plug-ins
+  - Split into aero, rolling, friction braking, accessories/HVAC and powertrain losses
+
+physics:
+  summary: >-
+    The shared RoadSim simulator (shared/vehicle): a forward-facing 1 Hz whole-vehicle model with real road loads,
+    EPA ALPHA engine and motor maps, transmissions, a battery with thermal model, HVAC and seven powertrains, driven
+    over real Ann Arbor routes with lidar grades and airport weather.
+  simulator:
+    - 2,400 training vehicles from RoadSim's generator, widened to cover 2005–2010-era engines and older automatics
+    - Routes from 1,092 unlabelled real VED trips, dynamometer cycles and synthetic urban/highway/bus/truck drives
+    - Simulated window-sticker labels (FTP-75 and HWFET, EPA 5-cycle formulas)
+    - "Dev-calibrated wrappers (training/wrappers.py): OBD MAF fuel during fuel cut-off, on-road loads vs temperature, plug-in hardware patch"
+  checks:
+    - "RoadSim vs EPA on 33 held-out vehicles: conventional FTP +5.6% / HWFET −4.3%, power-split hybrids −2.3%, BEV −0.5% / −1.7%"
+    - "Energy ledger closes in all 600 stress runs (max 5e-4); FASTSim 3.1 cross-check within 3% (conventional), 4% (BEV)"
+noise: Real routes and station weather; the simulated car drives slightly different conditions (temperature ± 1.5 °C, wind × 0.4–0.9) than the input reports
+network: Ensemble of 5 MLPs (149 → 256 → 256 → 256 → 128 → 7), predicting a correction to a physics energy estimate, its log σ and 5 energy components; Gaussian NLL
+
+data:
+  - name: Vehicle Energy Dataset (VED) — Oh, LeBlanc, Peng, IEEE T-ITS 2020
+    url: https://github.com/gsoh/VED
+    licence: Apache-2.0
+    role: noise (routes), dev, exam
+  - name: US EPA test-car lists, drive cycles and ALPHA maps; fueleconomy.gov
+    url: https://www.epa.gov/compliance-and-fuel-economy-data/data-cars-used-testing-fuel-economy
+    licence: Public domain (U.S. Government)
+    role: physics, dev, exam
+  - name: USGS 3DEP lidar elevation
+    url: https://www.usgs.gov/3d-elevation-program
+    licence: Public domain (U.S. Government)
+    role: physics (road grade)
+  - name: Iowa Environmental Mesonet ASOS weather
+    url: https://mesonet.agron.iastate.edu/request/download.phtml
+    licence: Free use with credit
+    role: physics (weather)
+  - name: ZTBus — Widmer et al., ETH Zurich
+    url: https://www.research-collection.ethz.ch/handle/20.500.11850/626734
+    licence: CC BY 4.0
+    role: dev, exam (trolleybuses)
+  - name: Mersin bus trips — Abut, Zenodo
+    url: https://zenodo.org
+    licence: CC BY 4.0
+    role: dev, exam (diesel and CNG buses)
+  - name: ICCT 2018 tractor-trailer tests (Rodriguez, Delgado, Muncrief)
+    url: https://theicct.org
+    licence: Cite the report
+    role: dev, exam (trucks)
+
+split:
+  dev: 16 VED cars plus dev EPA vehicles, ZTBus legs, Mersin routes and one ICCT truck — RoadData's frozen split (sha256 d917df78…)
+  exam: 25,793 VED trips from 350 cars, EPA exam families (47,718 tests), ZTBus, Mersin and ICCT exam sets
+
+exam:
+  summary: Real VED trips and EPA tests split once and frozen; median absolute % error.
+  results:
+    - metric: Petrol cars, per trip (14,469 VED trips)
+      better: lower
+      model: 8.9
+      unit: "%"
+      baselines:
+        - { name: "MOVES-like", kind: classical, value: 10.3 }
+        - { name: "Window label × distance", kind: classical, value: 13.0 }
+        - { name: "Class median", kind: dumb, value: 22.8 }
+      verdict: win
+    - metric: Plug-in hybrids, per trip (2,916 trips)
+      better: lower
+      model: 20.1
+      unit: "%"
+      baselines:
+        - { name: "MOVES-like", kind: classical, value: 41.3 }
+        - { name: "Class median", kind: dumb, value: 42.7 }
+      verdict: win
+      note: EnergyNet is given the logged start charge; the baselines are not.
+    - metric: Hybrids, per trip (8,241 trips)
+      better: lower
+      model: 16.7
+      unit: "%"
+      baselines:
+        - { name: "MOVES-like", kind: classical, value: 15.3 }
+        - { name: "Class median", kind: dumb, value: 17.2 }
+      verdict: loss
+      note: Biased +12%.
+    - metric: Electric (2 Nissan Leafs), per trip
+      better: lower
+      model: 22.8
+      unit: "%"
+      baselines:
+        - { name: "MOVES-like", kind: classical, value: 19.0 }
+        - { name: "Class median", kind: dumb, value: 27.1 }
+      verdict: loss
+      note: Biased −20%.
+    - metric: EPA hybrid FTP tests (1,098)
+      better: lower
+      model: 8.7
+      unit: "%"
+      baselines:
+        - { name: "Log-linear regression (fit on dev)", kind: classical, value: 16.3 }
+        - { name: "Dev median", kind: dumb, value: 49.0 }
+      verdict: win
+    - metric: EPA BEV city tests (746)
+      better: lower
+      model: 7.9
+      unit: "%"
+      baselines:
+        - { name: "Log-linear regression", kind: classical, value: 9.8 }
+        - { name: "Dev median", kind: dumb, value: 19.0 }
+      verdict: win
+    - metric: EPA petrol highway tests (20,426)
+      better: lower
+      model: 15.6
+      unit: "%"
+      baselines:
+        - { name: "Log-linear regression", kind: classical, value: 5.0 }
+        - { name: "Dev median", kind: dumb, value: 16.8 }
+      verdict: loss
+      note: Biased +15% — the fleet prior was widened toward older engines to fit VED.
+    - metric: ZTBus trolleybus legs (78)
+      better: lower
+      model: 16.4
+      unit: "%"
+      baselines:
+        - { name: "Dev kWh/km × distance", kind: classical, value: 22.1 }
+      verdict: win
+    - metric: Mersin diesel bus trips (652)
+      better: lower
+      model: 14.8
+      unit: "%"
+      baselines:
+        - { name: "Dev median on the same route", kind: dumb, value: 8.6 }
+      verdict: loss
+    - metric: ICCT tractor-trailers (2 trucks × 3 cycles)
+      better: lower
+      model: 11.4
+      unit: "%"
+      baselines:
+        - { name: "Dev truck on the same cycle", kind: classical, value: 7.0 }
+      verdict: loss
+  coverage:
+    - { output: "VED petrol", actual: 55 }
+    - { output: "VED hybrid", actual: 65 }
+    - { output: "VED electric", actual: 47 }
+    - { output: "VED plug-in", actual: 65 }
+    - { output: "EPA petrol FTP", actual: 77 }
+    - { output: "EPA petrol highway", actual: 54 }
+
+wins:
+  - "Petrol cars: 8.9% per trip against 10.3% for the best classical method, in every temperature, speed, grade and length band."
+  - "Plug-ins: 20% against 41% (with the start charge as an input)."
+  - EPA hybrid and electric tests, and the Zurich trolleybus legs.
+losses:
+  - Real hybrids (+12% bias) and the two exam Leafs (−20%) lose to simple baselines.
+  - EPA petrol highway and US06 tests are biased +11–15%; a regression on the label wins easily.
+  - Diesel and CNG buses and the trucks lose to the dev median on the same route or cycle.
+limits:
+  - Error bars are too narrow on real VED trips (47–65% inside the 68% band) despite dev widening.
+  - VED fuel is a MAF-based estimate, Ann Arbor 2017–18 only, mostly warm trip fragments.
+  - Heavy duty is thin and partly synthetic (Mersin speed profiles, ZTBus mass unknown).
+  - "Built before the 13 Nov RoadData fixes: its twins ran VED cars 136 kg heavy (EPA labels were graded corrected)."
+  - Cold-start penalty and P2 city optimism are not modelled from dev.
+next:
+  - Upstream the dev-calibrated wrappers into RoadSim (bump PHYSICS_VERSION), rebuild the frozen set, re-score every rung.
+  - Cold-start calibration from EPA dev FTP_cold; a model-era input; per-architecture σ.
+  - Real Mersin speed profiles; ZTBus bus mass.
+
+usage:
+  install: pip install numpy
+  demo: python demo.py
+  python: |
+    import json, numpy as np
+    from energynet import EnergyNet
+    net = EnergyNet()                                  # the 5-network ensemble in weights/
+    ex = json.load(open("examples/examples.json"))[0]
+    z = np.load(f"examples/{ex['trip_id']}.npz")
+    trip = {k: z[k] for k in z.files if k != "valid"}
+    r = net.predict(trip, ex["vehicle"])
+    print(r["energy_MJ"])
+
+files:
+  inference: [energynet.py, features.py, model_np.py]
+  weights: [weights/r5_phev.npz, weights/r6_s1.npz, weights/r6_s2.npz, weights/r6_s3.npz, weights/r6_s4.npz, sigma_factors.json]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  notebook: NOTEBOOK.md
+demo_seconds: 3

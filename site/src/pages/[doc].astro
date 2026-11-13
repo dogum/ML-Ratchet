@@ -24,6 +24,7 @@ const kicker: Record<string, string> = {
   lessons: 'Nine models in',
   'data-sources': 'Where the data comes from',
   roadmap: 'Where this goes',
+  'vehicle-platform': 'A shared simulator',
 };
 ---
 <Base title={h1}>
@@ -61,6 +62,7 @@ const kicker: Record<string, string> = {
   .md :global(blockquote) { margin: 0 0 1.2em; padding-left: 16px; border-left: 3px solid var(--accent); }
   .md :global(hr) { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
   .md :global(a) { color: var(--ink); }
+  .md :global(code) { overflow-wrap: anywhere; }
   @media (max-width: 900px) {
     .doc { grid-template-columns: minmax(0, 1fr); gap: 24px; }
     .side { position: static; }

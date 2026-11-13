@@ -1,0 +1,18 @@
+{
+ "trip_id": "FTP_motorcycle_1B",
+ "vehicle_id": null,
+ "source": "cycle",
+ "date": null,
+ "distance_m": 15455.833333333343,
+ "duration_s": 1875.0,
+ "T_amb_mean": 25,
+ "split": "train_noise",
+ "v_mean": 8.243111111111116,
+ "v_max": 16.305555555555557,
+ "idle_frac": 0.19253333333333333,
+ "notes": "Dynamometer schedule; zero grade unless stated; nominal test temperature; no measured outputs.",
+ "duty": "motorcycle",
+ "source_url": "https://www.epa.gov/vehicle-and-fuel-emissions-testing/dynamometer-drive-schedules",
+ "source_file": "ftpmc1b.txt",
+ "unit_in_file": "kmh"
+}

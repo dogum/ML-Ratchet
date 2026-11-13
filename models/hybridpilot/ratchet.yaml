@@ -1,0 +1,22 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json.
+model: hybridpilot
+ladders:
+  - name: HybridPilot
+    objective: "Frozen skill = 1 − Σ gap(policy) / Σ gap(rule strategies) over strata, gap = 1 − min(% of DP, 1), on a frozen set of 106 trips (36 held-out generated vehicles on held-out routes, synthetic drives and cycles)"
+    rule: Keep if the frozen skill beats the incumbent by more than 0.01 AND dev % of DP is no more than 0.2 points worse AND dev charge-holding is no more than 3 points worse.
+    margin: 0.01
+    dev_gate: "Dev % of DP ≥ incumbent − 0.2 pt; dev charge-holding ≥ incumbent − 3 pt (76 dev trips)"
+    frozen_sets: [frozen_106]
+    scored_on: frozen_106
+    note: "R0 is RoadSim's adaptive ECMS, the incumbent to beat. Grading re-solves DP to each strategy's own final charge (matched SOC)."
+    columns_source: Frozen set (% of DP, charge holding) and dev set (% of DP, charge holding)
+    columns: ["Frozen % of DP", "Frozen holds", "Dev % of DP", "Dev holds"]
+    rungs:
+      - { id: R0, change: "RoadSim adaptive ECMS (the incumbent)", sim: 0.564, decision: kept, why: "Starting incumbent.", metrics: [98.88, "98%", 98.99, "100%"] }
+      - { id: R1, change: "Behaviour cloning: s and on/off from the network", sim: 0.592, decision: rejected, why: "Dev charge holding fell to 74%.", metrics: [98.70, "69%", 99.64, "74%"] }
+      - { id: R2, change: "DAgger round 1 + SOC feedback (Kp 6)", sim: 0.596, decision: kept, why: "+0.032; dev gate passed.", metrics: [98.88, "94%", 99.20, "99%"] }
+      - { id: R3, change: "On/off by the cost with the learned s (on/off head unused)", sim: 0.702, decision: released, why: "+0.106; dev gate passed.", metrics: [99.31, "94%", 99.26, "99%"] }
+      - { id: R4, change: "R3 + 30 s preview", sim: 0.709, decision: rejected, why: "+0.007, short of the margin.", metrics: [99.34, "94%", 99.26, "99%"] }
+      - { id: R5, change: "Policy-search fine-tune of head knobs on 60 training trips", sim: 0.671, decision: rejected, why: "Score fell.", metrics: [99.19, "96%", 99.13, "99%"] }
+      - { id: R6, change: "DAgger round 2 (+600 trips driven by R3)", sim: 0.674, decision: rejected, why: "Score fell.", metrics: [99.28, "94%", 99.22, "99%"] }
+      - { id: R7, change: "R6 + 30 s preview", sim: 0.677, decision: rejected, why: "Score fell.", metrics: [99.23, "92%", 99.21, "99%"] }

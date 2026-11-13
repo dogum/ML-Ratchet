@@ -1,0 +1,18 @@
+{
+ "trip_id": "EUDC_low",
+ "vehicle_id": null,
+ "source": "cycle",
+ "date": null,
+ "distance_m": 6609.111111111097,
+ "duration_s": 401.0,
+ "T_amb_mean": 25,
+ "split": "train_noise",
+ "v_mean": 16.481573843169816,
+ "v_max": 25.0,
+ "idle_frac": 0.10473815461346633,
+ "notes": "Dynamometer schedule; zero grade unless stated; nominal test temperature; no measured outputs.",
+ "duty": "light",
+ "source_url": "https://www.epa.gov/vehicle-and-fuel-emissions-testing/dynamometer-drive-schedules",
+ "source_file": "eudclcol.txt",
+ "unit_in_file": "kmh"
+}

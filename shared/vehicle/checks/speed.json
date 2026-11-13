@@ -1,0 +1,65 @@
+{
+ "check": "speed benchmark (single thread)",
+ "method": "Check: simulation speed, single thread (OMP_NUM_THREADS=1), full output recording on.\n\nTimes simulate() on (a) UDDS and (b) a 93-minute mixed trip (UDDS+HWFET+US06+LA92 twice, with grade, wind and\ntemperature variation) for one vehicle of each architecture (car class), the Class 8 diesel and the BEV bus, and the\nthroughput over 200 generated vehicles on random cycles. Reports x real time = simulated seconds / wall seconds.\nAlso times the offline DP solve on UDDS.",
+ "target": ">= 200x real time for a 1 Hz car trip",
+ "results": {
+  "car conv (AT8)": {
+   "x_realtime_udds": 62004,
+   "x_realtime_93min_trip": 50914,
+   "closure": 1.7097461615224445e-13
+  },
+  "car conv (CVT)": {
+   "x_realtime_udds": 63843,
+   "x_realtime_93min_trip": 54124,
+   "closure": 7.384316746929547e-06
+  },
+  "car bev": {
+   "x_realtime_udds": 62551,
+   "x_realtime_93min_trip": 45461,
+   "closure": 6.121397506410724e-15
+  },
+  "car hev_powersplit aecms": {
+   "x_realtime_udds": 4232,
+   "x_realtime_93min_trip": 4101,
+   "closure": 1.3546545453386099e-14
+  },
+  "car hev_powersplit rule": {
+   "x_realtime_udds": 4522,
+   "x_realtime_93min_trip": 4108,
+   "closure": 3.0789586290583554e-15
+  },
+  "car hev_parallel_p2 aecms": {
+   "x_realtime_udds": 5142,
+   "x_realtime_93min_trip": 4986,
+   "closure": 1.8969321827132617e-15
+  },
+  "car hev_series aecms": {
+   "x_realtime_udds": 4720,
+   "x_realtime_93min_trip": 4590,
+   "closure": 2.3517868510426358e-14
+  },
+  "car phev_powersplit cdcs": {
+   "x_realtime_udds": 4361,
+   "x_realtime_93min_trip": 4136,
+   "closure": 5.1285882508802626e-15
+  },
+  "class8 diesel": {
+   "x_realtime_udds": 53052,
+   "x_realtime_93min_trip": 23051,
+   "closure": 5.9557625263753334e-06
+  },
+  "bus bev": {
+   "x_realtime_udds": 31920,
+   "x_realtime_93min_trip": 29904,
+   "closure": 5.688867108203166e-10
+  },
+  "generated fleet (200 vehicles, random cycles, incl. compile)": {
+   "sim_seconds": 175322,
+   "wall_s": 21.62,
+   "x_realtime": 8109
+  },
+  "DP on UDDS (solve + forward run), s": 0.78,
+  "MPC 15 s horizon on UDDS, s": 1.13
+ },
+ "cpu": "\t: Intel(R) Xeon(R) Processor @ 2.10GHz"
+}

@@ -52,7 +52,7 @@ A new version of the model — a **rung** — is kept only if both of these hold
    dev S/V F1 drops by no more than 0.02.
 
 Every rung is logged, kept or not, with the reason (`models/*/ratchet.yaml`). Rejected rungs are as informative as
-kept ones: across the collection, 31 of the 72 rung decisions were rejections.
+kept ones: across the collection, 41 of the 93 rung decisions were rejections.
 
 **When the physics changes, the frozen set changes.** Build a new frozen set from the new physics, score every
 rung on it, and re-take every decision in order. QuakeNet's rung 5 was rejected on val5 by 0.002 and kept when every

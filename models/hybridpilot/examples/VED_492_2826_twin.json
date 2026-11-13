@@ -1,0 +1,44 @@
+{
+ "class": "car",
+ "architecture": "phev_series",
+ "mass_kg": 1950.36948,
+ "payload_kg": 0.0,
+ "id": "twin_VED_492",
+ "transmission": {
+  "type": "single"
+ },
+ "motors": [
+  {
+   "role": "traction",
+   "max_power_kW": 111.0,
+   "eff_map": "ipm_generic_150",
+   "max_rpm": 12000
+  },
+  {
+   "role": "generator",
+   "max_power_kW": 55.0,
+   "eff_map": "ipm_generic_150",
+   "max_rpm": 12000
+  }
+ ],
+ "battery": {
+  "chemistry": "NMC",
+  "capacity_kWh": 16.0,
+  "nominal_V": 360.0,
+  "soc_window": [
+   0.15,
+   0.95
+  ]
+ },
+ "engine": {
+  "fuel": "gasoline",
+  "displacement_L": 1.4,
+  "max_power_kW": 63.0,
+  "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+ },
+ "meta": {
+  "twin_of": "VED_492",
+  "likely_models": "Chevrolet Volt gen 1 (only 1.4 L PHEV of the era; GM-style fuel-rate PID)",
+  "split": "exam"
+ }
+}

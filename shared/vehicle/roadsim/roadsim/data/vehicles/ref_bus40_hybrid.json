@@ -1,0 +1,47 @@
+{
+ "id": "ref_bus40_hybrid",
+ "class": "bus",
+ "architecture": "hev_series",
+ "notes": "40 ft series diesel-hybrid transit bus (BAE-HybriDrive-like), 6.7 L engine, Li-ion energy storage",
+ "mass_kg": 13800.0,
+ "payload_kg": 2000.0,
+ "CdA_m2": 6.0,
+ "Crr": 0.007,
+ "Crr_speed_coef": 0.002,
+ "wheel_radius_m": 0.5,
+ "engine": {
+  "fuel": "diesel",
+  "displacement_L": 6.7,
+  "max_power_kW": 194.0,
+  "bsfc_map": "willans_hd_diesel",
+  "idle_rpm": 650,
+  "max_rpm": 2500
+ },
+ "motors": [
+  {
+   "role": "traction",
+   "max_power_kW": 200,
+   "eff_map": "ipm_generic_150",
+   "max_rpm": 6000
+  },
+  {
+   "role": "generator",
+   "max_power_kW": 170,
+   "eff_map": "ipm_generic_150",
+   "max_rpm": 3000
+  }
+ ],
+ "battery": {
+  "chemistry": "NMC",
+  "capacity_kWh": 32,
+  "nominal_V": 650,
+  "soc_window": [
+   0.3,
+   0.8
+  ],
+  "max_power_kW": 200
+ },
+ "aux": {
+  "base_W": 4000
+ }
+}

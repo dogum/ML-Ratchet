@@ -1,0 +1,54 @@
+{
+ "before": {
+  "conv_bag_ratio_logerr": [
+   0.08536318715835776,
+   7
+  ],
+  "hev_bag_ratio_logerr": [
+   -0.007499257726405383,
+   1
+  ],
+  "bev_logerr": [
+   -0.08837254500963536,
+   6
+  ]
+ },
+ "after": {
+  "conv_bag_ratio_logerr": [
+   0.00018634474400787944,
+   7
+  ],
+  "hev_bag_ratio_logerr": [
+   0.002035111977710929,
+   1
+  ],
+  "bev_logerr": [
+   0.00033773685100069954,
+   6
+  ]
+ },
+ "calibration": {
+  "cold_fric_gasoline": 45.27,
+  "cold_fric_diesel": 45.27,
+  "cat_warmup_s": 10.0,
+  "motor_loss_scale": 1.0,
+  "bev_motor_loss_scale": 0.472,
+  "cold_fric_hybrid_factor": 0.158
+ },
+ "dev_vehicles": [
+  "2023 MAZDA Mazda3",
+  "2024 Ford F150 PICKUP 2WD",
+  "2024 Jeep Grand Cherokee L 4X2",
+  "2024 Ford Maverick FWD",
+  "2024 TOYOTA CAMRY LE/SE",
+  "2024 Hyundai Sonata",
+  "2024 Ford Ford Explorer Timberline",
+  "2024 TOYOTA RAV4 HYBRID AWD",
+  "2024 Ford Escape FWD HEV",
+  "2024 HYUNDAI SONATA HYBRID",
+  "2024 HONDA ACCORD",
+  "2024 Tesla Model 3 RWD",
+  "2024 Ford F-150 Lightning",
+  "2024 KIA Niro Electric"
+ ]
+}

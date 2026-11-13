@@ -38,3 +38,12 @@ Thumbs.db
 
 # Local agent / editor config
 .claude/
+
+# Vehicle platform: rebuildable data (scripts in shared/vehicle/data/scripts; sources in DATA.md)
+shared/vehicle/data/raw/
+shared/vehicle/data/proc/ved/
+shared/vehicle/data/proc/ved_*/
+shared/vehicle/data/proc/splits_ved_part*
+shared/vehicle/data/proc/dem_*/
+shared/vehicle/roadsim/refdata/
+shared/vehicle/roadsim/logs/

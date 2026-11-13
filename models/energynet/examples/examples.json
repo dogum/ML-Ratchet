@@ -1,0 +1,130 @@
+[
+ {
+  "trip_id": "VED_10_2909",
+  "stratum": "EV",
+  "vehicle": {
+   "class": "car",
+   "architecture": "bev",
+   "mass_kg": 1723.5732950000001,
+   "mass_kind": "reported",
+   "fuel": null,
+   "thermal": "warm",
+   "obd_maf": false,
+   "transmission": "single",
+   "label_city": 26.0,
+   "label_hwy": 33.0,
+   "battery_kWh": 24.0,
+   "soc_start": 0.7707318067550659
+  },
+  "measured": 0.9474077820777893,
+  "unit_note": "MJ (fuel g x 0.042, battery kWh x 3.6)",
+  "exam_prediction_MJ": 0.6887129250854239,
+  "baselines_MJ": {
+   "label": 2.4630596515733556,
+   "moves_like": 1.1823556296392883,
+   "class_median": 1.8882043638164046
+  }
+ },
+ {
+  "trip_id": "VED_458_1353",
+  "stratum": "HEV",
+  "vehicle": {
+   "class": "car",
+   "architecture": "hev_powersplit",
+   "mass_kg": 1723.5732950000001,
+   "mass_kind": "reported",
+   "fuel": "gasoline",
+   "thermal": "warm",
+   "obd_maf": true,
+   "displacement_L": 2.4,
+   "transmission": "eCVT",
+   "label_city": 33.0,
+   "label_hwy": 35.0
+  },
+  "measured": 18.944557189941406,
+  "unit_note": "MJ (fuel g x 0.042, battery kWh x 3.6)",
+  "exam_prediction_MJ": 18.366337847155584,
+  "baselines_MJ": {
+   "label": 21.008086159319966,
+   "moves_like": 18.947133621360273,
+   "class_median": 15.696038016933043
+  }
+ },
+ {
+  "trip_id": "VED_470_1423",
+  "stratum": "ICE",
+  "vehicle": {
+   "class": "car",
+   "architecture": "conv",
+   "mass_kg": 1269.980925,
+   "mass_kind": "reported",
+   "fuel": "gasoline",
+   "thermal": "warm",
+   "obd_maf": true,
+   "displacement_L": 1.8,
+   "label_city": 26.0,
+   "label_hwy": 34.0
+  },
+  "measured": 21.688556671142578,
+  "unit_note": "MJ (fuel g x 0.042, battery kWh x 3.6)",
+  "exam_prediction_MJ": 21.7411107205366,
+  "baselines_MJ": {
+   "label": 22.233922303800426,
+   "moves_like": 21.903970917025262,
+   "class_median": 20.086391345214263
+  }
+ },
+ {
+  "trip_id": "VED_565_1317",
+  "stratum": "P2",
+  "vehicle": {
+   "class": "car",
+   "architecture": "hev_parallel_p2",
+   "mass_kg": 1269.980925,
+   "mass_kind": "reported",
+   "fuel": "gasoline",
+   "thermal": "warm",
+   "obd_maf": true,
+   "displacement_L": 1.3,
+   "transmission": "CVT",
+   "label_city": 40.0,
+   "label_hwy": 43.0
+  },
+  "measured": 8.311206817626953,
+  "unit_note": "MJ (fuel g x 0.042, battery kWh x 3.6)",
+  "exam_prediction_MJ": 8.084641117134478,
+  "baselines_MJ": {
+   "label": 9.064761749054497,
+   "moves_like": 7.145175062578869,
+   "class_median": 8.308544664287455
+  }
+ },
+ {
+  "trip_id": "VED_398_1186",
+  "stratum": "PHEV",
+  "vehicle": {
+   "class": "car",
+   "architecture": "phev_powersplit",
+   "mass_kg": 1496.77711,
+   "mass_kind": "reported",
+   "fuel": "gasoline",
+   "thermal": "warm",
+   "obd_maf": true,
+   "displacement_L": 1.8,
+   "transmission": "eCVT",
+   "label_city": 51.0,
+   "label_hwy": 49.0,
+   "label_city_kWh_per_100mi": 26.0,
+   "label_hwy_kWh_per_100mi": 33.0,
+   "soc_start": 0.0
+  },
+  "measured": 3.8585169315338135,
+  "unit_note": "MJ (fuel g x 0.042, battery kWh x 3.6)",
+  "exam_prediction_MJ": 3.3948103614566394,
+  "baselines_MJ": {
+   "label": 3.104924632041299,
+   "moves_like": 1.7286338996530568,
+   "class_median": 2.1678742575442036
+  }
+ }
+]
