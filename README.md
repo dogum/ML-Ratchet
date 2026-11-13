@@ -33,7 +33,7 @@ The losses are published too.
 Every model also runs **live in your browser** on the website — the real network, ported to TypeScript and checked
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
-**0** real labelled examples were used for training. **70** rung decisions are logged, **28** of them rejections.
+**0** real labelled examples were used for training. **72** rung decisions are logged, **31** of them rejections.
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself.
 
 ## Try it

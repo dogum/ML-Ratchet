@@ -11,6 +11,7 @@ Physics versions (each one is a frozen-set version too, val_<physics>.npz):
             spline wiggle added to each electrode (the size of what the dev fits leave), so the network cannot lean on
             exact curve shapes
   ocpj2     ocpj twice as wide: correction scaled 0-2, 8 mV per coefficient
+  ocpd      the jitter measured on the dev cells (nmc_ocpjit.py): correction scaled by N(1.15, 0.09), 7.0 mV per coefficient
 Aging: lithium lost (LLI, fraction of the new cell's cyclable lithium), negative electrode lost (LAM_NE, a random part of it
 lithiated), positive lost (LAM_PE) and resistance growth. Labels: capacity to 2.5 V at C/20 (Ah), fade, lli, lam_ne, lam_pe,
 r_growth.
@@ -71,18 +72,27 @@ JITTER = {'ocpj': dict(scale=(0.5, 1.5), sd=0.004),     # the correction scaled 
           'ocpj2': dict(scale=(0.0, 2.0), sd=0.008)}    # twice as wide
 
 
+def ocpd_jitter():
+    """physics 'ocpd': the jitter MEASURED on the dev cells (nmc_ocpjit.py): scale ~ N(mean, sd) of the per-test fits, wiggle
+    size matched to what a window fit leaves on the real dev tests"""
+    path = os.path.join(OUT, 'ocp_jitter.json')
+    J = json.load(open(path if os.path.exists(path) else os.path.join(_P.SRC, 'nmc_ocp_jitter.json')))
+    return dict(scale_mu=J['scale_mu'], scale_sd=J['scale_sd'], sd=J['sigma'])
+
+
 def jitter(rng, P, K, physics='ocpj'):
-    J = JITTER[physics]; B = len(P['Q_p']); P['ocp_scale'] = rng.uniform(*J['scale'], B)
+    J = JITTER[physics] if physics in JITTER else ocpd_jitter(); B = len(P['Q_p'])
+    P['ocp_scale'] = np.maximum(0.0, rng.normal(J['scale_mu'], J['scale_sd'], B)) if 'scale_mu' in J else rng.uniform(*J['scale'], B)
     P['dU_p'] = rng.normal(0, J['sd'], (B, K)); P['dU_n'] = rng.normal(0, J['sd'], (B, K)); return P
 
 
 def make(physics, seed, B, out=None, chunk=2000):
-    rng = np.random.default_rng(seed); F, M, corr = (None, None, None) if physics == 'textbook' else load_cal('ocp' if physics.startswith('ocpj') else physics)
-    rg = mode_ranges('ocp' if physics.startswith('ocpj') else physics, M)
+    rng = np.random.default_rng(seed); F, M, corr = (None, None, None) if physics == 'textbook' else load_cal('ocp' if physics.startswith(('ocpj', 'ocpd')) else physics)
+    rg = mode_ranges('ocp' if physics.startswith(('ocpj', 'ocpd')) else physics, M)
     R = {k: [] for k in ('Q0', 'Q1', 'y')}
     for s in range(0, B, chunk):
         n = min(chunk, B - s); P0 = fresh(rng, n, physics, F)
-        if physics.startswith('ocpj'): P0 = jitter(rng, P0, NS.N_SPL, physics)
+        if physics.startswith(('ocpj', 'ocpd')): P0 = jitter(rng, P0, NS.N_SPL, physics)
         P1, m = age(rng, P0, rg, corr)
         T = rng.uniform(22.0, 24.0, n)
         o0 = NS.simulate(P0, dt=60.0, T=T, corr=corr); o1 = NS.simulate(P1, dt=60.0, T=T + rng.normal(0, 0.3, n), corr=corr)

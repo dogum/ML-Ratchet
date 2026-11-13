@@ -175,12 +175,13 @@ limits:
   - The simulator's graphite-staging features are sharper than real cells'.
   - "NMC811: no lifetime forecast — the Pozzato cells lost only 3–9% and never reached end of life."
   - "NMC811: its open-circuit curves are corrected on three cells; ±15 mV features near the end of discharge remain, and they set the real error."
+  - "NMC811: test-to-test variation of the open-circuit curves (measured on the dev cells, 5.1 mV left after a window fit) limits what the simulated frozen set can tell apart."
   - "NMC811: lithium lost versus negative lost is poorly separated by a C/20 curve; the degradation modes have no answer key."
 
 help_wanted:
   - "More chemistries and rates: Sandia NCA / NMC / LFP cycling files (Preger et al. 2020) from BatteryArchive (download by email request), or Zhu et al. 2022 (Zenodo). NMC811 at C/20 is done (Pozzato et al. 2022 on OSF); it needs aged cells far from new and faster discharges."
 next:
-  - "NMC811: set the open-circuit-curve jitter from per-test dev fits and rebuild the frozen set (rung n9 — twice the jitter — read the dev cells to 84 mAh but was rejected on the old frozen set)."
+  - "NMC811: the jitter is now measured on the dev cells (scale 1.15 ± 0.09, 7.0 mV per coefficient; frozen set val_ocpd), but every jitter-trained network scores 0.713-0.718 on it, so rungs that read the dev cells better (n10: 114 mAh, n11: 91 mAh, vs n8's 126) cannot clear the 0.01 margin. Next: a frozen-set objective that separates them (e.g. more pairs, or scoring the jitter-free twin of each pair), decided before the rungs are re-judged."
   - "NMC811: a two-material negative (graphite + SiOx) with its own silicon loss, for the features near the end of discharge."
   - "NMC811: read the HPPC pulses in the same tests for resistance, and cut-short tests that start below full."
   - Multi-chemistry simulator and dev gate once the data is in.

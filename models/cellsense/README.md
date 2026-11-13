@@ -83,6 +83,7 @@ Coverage of the 68% error bars on the exam: NMC811 capacity (all readings) **61%
 - The simulator's graphite-staging features are sharper than real cells'.
 - NMC811: no lifetime forecast — the Pozzato cells lost only 3–9% and never reached end of life.
 - NMC811: its open-circuit curves are corrected on three cells; ±15 mV features near the end of discharge remain, and they set the real error.
+- NMC811: test-to-test variation of the open-circuit curves (measured on the dev cells, 5.1 mV left after a window fit) limits what the simulated frozen set can tell apart.
 - NMC811: lithium lost versus negative lost is poorly separated by a C/20 curve; the degradation modes have no answer key.
 
 ## The ratchet
@@ -113,19 +114,21 @@ The frozen lifetime set was regenerated twice; all rungs were re-scored.
 
 | Rung | Change | Frozen-set score | Decision | Why | Exam partial (mAh) | Exam full (mAh) |
 |---|---|---|---|---|---|---|
-| n1 | Textbook Chen2020 cell, wide degradation-mode priors, 1-D CNN on C/20 Q(V), 60,000 simulated pairs | 0.192 | ● kept | First rung. | 585.5 | 252.6 |
-| n2 | Simulator calibrated on the dev cells: new cells drawn around their fits, mode ranges from their voltage fits | 0.235 | ● kept | +0.043; dev 255 vs 607 mAh partial, 231 vs 257 full. | 245.0 | 211.3 |
-| n3 | Open-circuit-curve correction fitted on the dev cells (one spline per electrode); new cells and mode ranges refitted on it; resistance may fall | 0.423 | ● kept | +0.188; dev 124 vs 255 mAh partial, 59 vs 231 full. | 182.7 | 111.9 |
-| n4 | Capacity head predicts the charge still to come below where the curve stops, not the capacity | 0.464 | ○ rejected | +0.041, but dev 181 vs 124 mAh partial and 80 vs 59 full. | 251.1 | 143.6 |
-| n5 | n3 reading curves smoothed over 26 mV (the dQ/dV peaks are where the simulator is least right) | 0.413 | ○ rejected | -0.010 on val_ocpj (on val_ocp: +0.024 but dev 167 vs 124 mAh). | 209.7 | 132.3 |
-| n6 | n3 reading curves smoothed over 53 mV | 0.422 | ○ rejected | -0.001 on val_ocpj (-0.042 on val_ocp). | 227.2 | 130.2 |
-| n7 | n3, and a curve that reaches 2.5 V takes its capacity and fade from its own end (coulomb counting, no network) | 0.484 | ● kept | +0.061 on val_ocpj; dev full 0 vs 59 mAh. (Rejected on val_ocp: +0.006.) | 182.7 | 0.0 |
-| n8 | OCP jitter: each simulated cell's correction scaled 0.5-1.5 plus 4 mV spline wiggles per electrode (the size of what the dev fits leave); with n7's rule | 0.773 | **◆ released** | +0.290; dev 126.1 vs 124.4 mAh partial (inside 5%), full 0 vs 0. | 135.4 | 0.0 |
-| n9 | Training cells jittered twice as wide (scale 0-2, 8 mV per coefficient); frozen set unchanged; with the rule | 0.742 | ○ rejected | -0.031 on val_ocpj, although dev fell to 84 mAh. The best next rung: set the jitter from dev measurements and rebuild the frozen set. | 91.4 | 0.0 |
+| n1 | Textbook Chen2020 cell, wide degradation-mode priors, 1-D CNN on C/20 Q(V), 60,000 simulated pairs | 0.163 | ● kept | First rung. | 585.5 | 252.6 |
+| n2 | Simulator calibrated on the dev cells: new cells drawn around their fits, mode ranges from their voltage fits | 0.152 | ○ rejected | -0.011 vs n1 on val_ocpd (kept on val_cal to val_ocpj: +0.043 on val_ocpj; dev 255 vs 607 mAh). | 245.0 | 211.3 |
+| n3 | Open-circuit-curve correction fitted on the dev cells (one spline per electrode); new cells and mode ranges refitted on it; resistance may fall | 0.276 | ● kept | +0.113 vs n1; dev 124 vs 607 mAh partial, 59 vs 257 full. | 182.7 | 111.9 |
+| n4 | Capacity head predicts the charge still to come below where the curve stops, not the capacity | 0.319 | ○ rejected | +0.043, but dev 181 vs 124 mAh partial and 80 vs 59 full. | 251.1 | 143.6 |
+| n5 | n3 reading curves smoothed over 26 mV (the dQ/dV peaks are where the simulator is least right) | 0.290 | ○ rejected | +0.015, but dev 167 vs 124 mAh partial and 95 vs 59 full. | 209.7 | 132.3 |
+| n6 | n3 reading curves smoothed over 53 mV | 0.306 | ○ rejected | +0.031, but dev 202 vs 124 mAh partial and 136 vs 59 full. | 227.2 | 130.2 |
+| n7 | n3, and a curve that reaches 2.5 V takes its capacity and fade from its own end (coulomb counting, no network) | 0.366 | ● kept | +0.091; dev full 0 vs 59 mAh. (Rejected on val_ocp: +0.006.) | 182.7 | 0.0 |
+| n8 | OCP jitter by guess: each simulated cell's correction scaled 0.5-1.5 plus 4 mV spline wiggles per electrode; with n7's rule | 0.713 | **◆ released** | +0.347; dev 126.1 vs 124.4 mAh partial (inside 5%), full 0 vs 0. | 135.4 | 0.0 |
+| n9 | Training cells jittered twice as wide (scale 0-2, 8 mV per coefficient); with the rule | 0.714 | ○ rejected | +0.001 on val_ocpd (-0.031 on val_ocpj), although dev fell to 84 mAh. | 91.4 | 0.0 |
+| n10 | OCP jitter as measured on the dev cells (nmc_ocpjit.py): correction scaled by N(1.15, 0.09), 7.0 mV per coefficient; with the rule | 0.718 | ○ rejected | +0.005 on its own frozen set, needs more than +0.01 (dev 114 vs 126 mAh). | 140.8 | 0.0 |
+| n11 | Half the measured-jitter bank, half the wide-jitter bank (ocpd + ocpj2); with the rule | 0.717 | ○ rejected | +0.004, needs more than +0.01 (dev 91 vs 126 mAh). | 115.1 | 0.0 |
 
 <sub>Columns after *Why*: Real exam (7 cells, 75 tests), reported after the fact; never used to choose.</sub>
 
-Raw log: training/nmc_ratchet.json. The frozen set was rebuilt with each physics version (textbook, dev-calibrated, OCP-corrected, OCP-jittered); every rung was re-scored on each and every decision re-taken. On val_ocpj n7 flipped from rejected (+0.006 on val_ocp) to kept (+0.061). n4-n6 were first rejected by the dev gate on val_ocp. n8 judged as a bare network failed the full-curve gate against n7's rule (39 vs 0 mAh); every rung after n7 includes the rule, and n8 was judged again with it.
+Raw log: training/nmc_ratchet.json. The frozen set was rebuilt with each physics version (textbook, dev-calibrated, OCP-corrected, OCP-jittered by guess, OCP-jittered as measured on the dev cells); every rung was re-scored on each and every decision re-taken. Flips: n7 rejected on val_ocp (+0.006), kept on val_ocpj (+0.061); n2 kept until val_ocpj, rejected on val_ocpd (-0.011 vs n1), after which n3 is judged against n1 and still kept. n4-n6 were first rejected by the dev gate on val_ocp. n8 judged as a bare network failed the full-curve gate against n7's rule (39 vs 0 mAh); every rung after n7 includes the rule, and n8 was judged again with it.
 
 Raw per-rung logs are in [`training/`](training/).
 
@@ -154,7 +157,7 @@ A vectorized single-particle model of each electrode (PyBaMM Prada2013 open-circ
 
 ## Next rungs
 
-- NMC811: set the open-circuit-curve jitter from per-test dev fits and rebuild the frozen set (rung n9 — twice the jitter — read the dev cells to 84 mAh but was rejected on the old frozen set).
+- NMC811: the jitter is now measured on the dev cells (scale 1.15 ± 0.09, 7.0 mV per coefficient; frozen set val_ocpd), but every jitter-trained network scores 0.713-0.718 on it, so rungs that read the dev cells better (n10: 114 mAh, n11: 91 mAh, vs n8's 126) cannot clear the 0.01 margin. Next: a frozen-set objective that separates them (e.g. more pairs, or scoring the jitter-free twin of each pair), decided before the rungs are re-judged.
 - NMC811: a two-material negative (graphite + SiOx) with its own silicon loss, for the features near the end of discharge.
 - NMC811: read the HPPC pulses in the same tests for resistance, and cut-short tests that start below full.
 - Multi-chemistry simulator and dev gate once the data is in.

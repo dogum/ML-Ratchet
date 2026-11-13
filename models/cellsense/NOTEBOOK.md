@@ -306,3 +306,36 @@ and without the reference ("partial"), and on full curves.
     python nmc_exam.py --fit-only ocp && python nmc_exam.py n8_ocpj.pt+endrule ocp
     python nmc_export.py "../work/nmc/ckpt/n8_ocpj.pt+endrule" "../work/nmc/exam_n8_ocpj+endrule.json"
     python nmc_examples.py
+
+## 12 Nov 2026 (evening) — v1.3 rung: OCP jitter measured on the dev cells (physics "ocpd")
+
+- `training/nmc_ocpjit.py` (dev cells only): every dev test fitted on its own with the shared correction scaled by a
+  per-test factor s, its own spline wiggle on each electrode (same penalties as the shared fit), and its own window.
+  Per-test rms 5.1 -> 4.5 mV (median). s = **1.15 ± 0.09** over the 26 tests (0.91-1.28).
+- The fitted wiggle coefficients (rms 5.5 mV positive, 8.1 mV negative) are not usable directly: a full-cell curve cannot
+  say which electrode a wiggle belongs to, and the wiggles trade against the window. A first attempt measured the
+  full-cell departure along each test's trajectory (10.4 mV rms) and gave 10.7 mV per coefficient; that number mixes in
+  the window trade-off and was dropped.
+- Used instead: fit only the window (5 numbers) with the nominal curves (1.15 x the correction) to the real dev tests:
+  median leftover 5.1 mV (4.0-7.4). Do the same to simulated jittered curves along the same 26 trajectories:
+  2 / 4 / 6 / 8 / 10 / 12 mV per coefficient leave 1.7 / 2.9 / 4.6 / 5.6 / 7.0 / 8.6 mV. Matching gives
+  **sigma = 7.0 mV per coefficient** (record: `training/nmc_ocp_jitter.json`).
+- Compared with the earlier guesses: ocpj (n8) drew scale U(0.5, 1.5) and 4 mV; ocpj2 (n9) U(0, 2) and 8 mV. The dev cells
+  say: narrower in scale, centred above 1, and wiggles nearer n9's.
+- New frozen set val_ocpd (3,000 pairs, seed 999). Every rung re-scored, every decision re-taken:
+  n1 0.163, n2 0.152, n3 0.276, n4 0.319, n5 0.290, n6 0.306, n7 0.366, n8 0.713, n9 0.714.
+  **n2 flips to rejected** (-0.011 vs n1 on val_ocpd); n3 is then judged against n1 and kept. n9 stays rejected
+  (+0.001 over n8). Everything else unchanged.
+- Training: n10 on 60,000 ocpd pairs; n11 = 30,000 ocpd + 30,000 ocpj2 pairs (a wider mix), in parallel, judged in order.
+- n10 (60,000 ocpd pairs, rule on): val_ocpd 0.718, +0.005 over n8: **rejected** by the margin. Dev 114 / 0 mAh
+  (n8: 126 / 0). Exam, never used: 141 mAh partial.
+- n11 (30,000 ocpd + 30,000 ocpj2): 0.717, +0.004: **rejected**. Dev 91 / 0 mAh. Exam, never used: 115 mAh partial.
+- n8 stays released; no re-export, the exam and demo output are unchanged (still 135 mAh vs the dev median's 105 on
+  cut-short tests: it still does not beat the median guess).
+- Reading: every jitter-trained network (n8-n11) scores 0.713-0.718 on val_ocpd. With 7 mV wiggles in the frozen set
+  itself, the attainable skill seems capped and the 0.01 margin cannot separate rungs that differ on the dev cells by
+  30%. The rule was not changed after seeing this. A fix would have to be decided before re-judging, e.g. a bigger
+  frozen set, or scoring each pair's jitter-free twin.
+- Reproduce: `python nmc_ocpjit.py`, then `python nmcbank.py ocpd <seed> 15000 ...` (seeds 51-54; 999 x 3000 ->
+  val_ocpd.npz), `python nmc_ratchet.py rescore ocpd`, `nmc_train.py --name n10_ocpd --banks bank_ocpd_5*.npz`,
+  `nmc_ratchet.py add n10 ... n10_ocpd.pt+endrule`.

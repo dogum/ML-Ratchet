@@ -250,6 +250,9 @@ exam cell.
   fade) negative lost ~7%, NMC lost ~4%, lithium lost within ±5% (lithium and negative loss trade off in a C/20 curve), and
   resistance *falls* 10-50% after the first test. Training draws reach 2.5× the largest dev value: lithium 12%, negative
   18%, NMC 10%, resistance −50% to +100%.
+- **Test-to-test variation of the curves** (added later, `training/nmc_ocpjit.py`): fitting each dev test on its own,
+  the shared correction needs a scale of 1.15 ± 0.09 (0.91-1.28); spline wiggles of 7.0 mV per coefficient reproduce
+  what a window fit leaves on the real tests (5.1 mV median). This is physics version "ocpd" (rungs n10-n11).
 - **Measurement realism in training:** capacity gain error 0.2%, voltage offset 3 mV rms, rest voltage at the start
   ±2 mV, test temperature 22-24 °C, the reference curve withheld 30% of the time, 70% of curves cut short at random depths.
 
@@ -270,17 +273,19 @@ cut short, each with and without the reference). Kept only if it beats the incum
 dev cells' capacity error on tests cut at 1.5, 2.5 and 3.5 Ah is no more than 5% worse **and** their full-curve error
 no more than 2 mAh worse. The frozen set was rebuilt with each physics version and every rung re-scored and re-judged.
 
-| Rung | Change | val_ocpj | Dev partial / full (mAh) | Decision | Exam partial / full (mAh), never used |
-|---|---|---|---|---|---|
-| n1 | Textbook Chen2020, wide mode priors | 0.192 | 607 / 257 | kept | 586 / 253 |
-| n2 | New cells and mode ranges from the dev cells | 0.235 | 255 / 231 | kept | 245 / 211 |
-| n3 | OCP correction fitted on dev; resistance may fall | 0.423 | 124 / 59 | kept | 183 / 112 |
-| n4 | Capacity head predicts the charge left below the cut | 0.464 | 181 / 80 | rejected (dev) | 251 / 144 |
-| n5 | Curves smoothed over 26 mV | 0.413 | 167 / 95 | rejected | 210 / 132 |
-| n6 | Curves smoothed over 53 mV | 0.422 | 202 / 136 | rejected | 227 / 130 |
-| n7 | n3 + full curves read off their end | 0.484 | 124 / 0 | kept (flipped on val_ocpj) | 183 / 0 |
-| n8 | OCP jitter per simulated cell (0.5-1.5× the correction, 4 mV wiggles) | 0.773 | 126 / 0 | **released** | 135 / 0 |
-| n9 | Jitter twice as wide | 0.742 | 84 / 0 | rejected (−0.031) | 91 / 0 |
+| Rung | Change | val_ocpj | val_ocpd | Dev partial / full (mAh) | Decision (on val_ocpd) | Exam partial / full (mAh), never used |
+|---|---|---|---|---|---|---|
+| n1 | Textbook Chen2020, wide mode priors | 0.192 | 0.163 | 607 / 257 | kept | 586 / 253 |
+| n2 | New cells and mode ranges from the dev cells | 0.235 | 0.152 | 255 / 231 | rejected (flipped on val_ocpd) | 245 / 211 |
+| n3 | OCP correction fitted on dev; resistance may fall | 0.423 | 0.276 | 124 / 59 | kept | 183 / 112 |
+| n4 | Capacity head predicts the charge left below the cut | 0.464 | 0.319 | 181 / 80 | rejected (dev) | 251 / 144 |
+| n5 | Curves smoothed over 26 mV | 0.413 | 0.290 | 167 / 95 | rejected (dev) | 210 / 132 |
+| n6 | Curves smoothed over 53 mV | 0.422 | 0.306 | 202 / 136 | rejected (dev) | 227 / 130 |
+| n7 | n3 + full curves read off their end | 0.484 | 0.366 | 124 / 0 | kept (flipped on val_ocpj) | 183 / 0 |
+| n8 | OCP jitter by guess (0.5-1.5× the correction, 4 mV wiggles) | 0.773 | 0.713 | 126 / 0 | **released** | 135 / 0 |
+| n9 | Jitter twice as wide | 0.742 | 0.714 | 84 / 0 | rejected (+0.001) | 91 / 0 |
+| n10 | OCP jitter as measured on dev (1.15 ± 0.09× the correction, 7.0 mV) | — | 0.718 | 114 / 0 | rejected (+0.005) | 141 / 0 |
+| n11 | Half n10's bank, half n9's | — | 0.717 | 91 / 0 | rejected (+0.004) | 115 / 0 |
 
 What the ladder says:
 
@@ -293,6 +298,14 @@ What the ladder says:
 - **Decisions flipped once.** n7 (full curves read off their end) gained 0.006 on val_ocp and was rejected; on val_ocpj
   it gained 0.061 and was kept.
 - Simulated skill and real error disagree often: n4 and n5 scored higher than n3 on val_ocp and read the dev cells worse.
+- **The jitter, measured (v1.3 attempt, rungs n10-n11).** Every dev test was fitted on its own (`training/nmc_ocpjit.py`):
+  the shared correction needs a scale of 1.15 ± 0.09 per test, and simulated jittered curves leave as much after a
+  window fit as the real tests do (5.1 mV median) at 7.0 mV per spline coefficient. Built in as physics "ocpd" with a
+  new frozen set, val_ocpd. Re-scoring flipped n2 to rejected (−0.011 against n1); nothing downstream changed. On
+  val_ocpd every jitter-trained network lands at 0.713-0.718: n10 (trained on the measured jitter) gained 0.005 and n11
+  (half measured, half wide) 0.004, both under the 0.01 margin, although they read the dev cells better (114 and 91 vs
+  126 mAh). Neither was released; n8 stays. The frozen set now seems to sit near the ceiling the jitter itself allows,
+  so the margin rule cannot see differences that the dev cells do.
 
 ## Final exam: 7 cells, 75 tests, never used to choose
 
