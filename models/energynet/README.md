@@ -7,7 +7,7 @@
 
 EnergyNet predicts a trip's fuel or battery energy before the trip, with a 68% and 95% range and a split into air drag, rolling, braking, accessories and powertrain losses. It covers 7 vehicle classes from cars to Class-8 trucks and 7 powertrains. It learned only from the RoadSim vehicle simulator driven over real Ann Arbor routes and weather, and was examined on 26,000 real trips, 47,000 EPA tests and real buses.
 
-[Project page](https://dogum.github.io/ML-Ratchet/models/energynet/) · [Model card](MODEL_CARD.md) · [Lab notebook](NOTEBOOK.md) · [The method](https://github.com/dogum/ML-Ratchet/blob/main/docs/method.md)
+[Interactive lab](https://dogum.github.io/ML-Ratchet/models/energynet/lab/) · [Project page](https://dogum.github.io/ML-Ratchet/models/energynet/) · [Model card](MODEL_CARD.md) · [Lab notebook](NOTEBOOK.md) · [The method](https://github.com/dogum/ML-Ratchet/blob/main/docs/method.md)
 
 | | |
 |---|---|
@@ -131,6 +131,7 @@ The shared RoadSim simulator (shared/vehicle): a forward-facing 1 Hz whole-vehic
 | `MODEL_CARD.md` | Full model card: every number, every caveat |
 | `model.yaml`, `ratchet.yaml` | Structured card and ladder (this README, the CLI and the site are generated from them) |
 | `training/` | Every script that built it, as run; paths via `training/_paths.py` |
+| `lab/index.html` | The original interactive page, self-contained (the network runs in the browser) |
 | `NOTEBOOK.md` | Lab notebook: the build story, dead ends and sandbox gotchas, as recorded |
 
 ## Data and credits

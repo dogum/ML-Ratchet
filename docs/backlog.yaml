@@ -2,6 +2,35 @@
 # from this file (mlratchet readme --write). Data reachability was checked from a cloud sandbox in Nov 2026.
 # status: candidate | checked (data endpoints answered) | blocked | in-progress
 ideas:
+  - id: gridsim
+    name: GridSim
+    domain: Energy
+    question: "Next up (chosen 13 Nov 2026): a shared electric-grid simulator and data package, like the vehicle platform, with several ratchet models on top."
+    physics: Generation with ramp limits, heat rates and droop; AC/DC power flow (pandapower as the independent check); inertia, governor and inverter response, load shedding; storage; weather-driven demand; unit commitment and dispatch
+    data: EIA grid monitor, ERCOT load history, CAISO OASIS, NESO 1-second frequency, PUDL, Texas A&M synthetic grids, BPA wind, IEM / NASA POWER weather
+    data_url: https://www.eia.gov/electricity/gridmonitor/
+    exam: "Per model: real frequency events (GridPulse), real demand and renewable output, dispatch against the optimum (as HybridPilot against DP)"
+    status: checked
+    note: "Candidate models: GridPulse, demand and renewable forecasting, a learned dispatcher vs optimal power flow, a plant-flexibility detective, a battery arbitrage controller. EIA API v2 needs a free key (403 without one); the FNET/GridEye site timed out."
+  - id: buildingsim
+    name: BuildingSim
+    domain: Energy
+    question: A shared building-energy simulator for load, HVAC fault and retrofit models.
+    physics: Building thermal networks and HVAC; EnergyPlus as the reference
+    data: NREL ResStock/ComStock (OEDI S3), Building Data Genome 2 (~1,600 real meters), LBNL HVAC fault-detection data
+    data_url: https://data.openei.org/
+    exam: Real meters and labelled HVAC faults
+    status: checked
+  - id: watershed
+    name: Watershed
+    domain: Earth science
+    question: How much water will this river carry, from rain, snow and the basin's shape?
+    physics: Rainfall-runoff and snowmelt models
+    data: USGS NWIS streamflow, SNOTEL snowpack
+    data_url: https://waterdata.usgs.gov/nwis
+    exam: Real gauged basins held out
+    status: checked
+    note: The CAMELS download server (gdex) timed out on 13 Nov.
   - id: gridpulse
     name: GridPulse
     domain: Energy
@@ -11,7 +40,7 @@ ideas:
     data_url: https://www.neso.energy/data-portal
     exam: Real trip events with known MW lost
     status: checked
-    note: Few real events to grade on.
+    note: Few real events to grade on. Now planned as GridSim's first model.
   - id: roomsense
     name: RoomSense
     domain: Acoustics
@@ -106,7 +135,8 @@ ideas:
     data: Kelmarsh and Penmanshiel SCADA (Zenodo)
     data_url: https://zenodo.org
     exam: Real farm SCADA with wake-steering periods
-    status: candidate
+    status: checked
+    note: Kelmarsh and Penmanshiel SCADA on Zenodo answered on 13 Nov (as the WindFarm idea).
   - id: jetnet
     name: JetNet
     domain: Particle physics

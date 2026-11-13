@@ -7,7 +7,7 @@
 
 TripDetective reads one or more 1 Hz trip logs of a light-duty vehicle — speed plus whatever an OBD logger has — and infers its architecture, total mass, engine size, CdA, rolling resistance, hybrid strategy and each trip's energy ledger, every output with an error bar. It learned only from the RoadSim simulator with an emulated OBD logger, and was graded on 351 real cars it never saw.
 
-[Project page](https://dogum.github.io/ML-Ratchet/models/tripdetective/) · [Model card](MODEL_CARD.md) · [Lab notebook](NOTEBOOK.md) · [The method](https://github.com/dogum/ML-Ratchet/blob/main/docs/method.md)
+[Interactive lab](https://dogum.github.io/ML-Ratchet/models/tripdetective/lab/) · [Project page](https://dogum.github.io/ML-Ratchet/models/tripdetective/) · [Model card](MODEL_CARD.md) · [Lab notebook](NOTEBOOK.md) · [The method](https://github.com/dogum/ML-Ratchet/blob/main/docs/method.md)
 
 | | |
 |---|---|
@@ -121,6 +121,7 @@ The shared RoadSim simulator (shared/vehicle) drives generated cars over real An
 | `MODEL_CARD.md` | Full model card: every number, every caveat |
 | `model.yaml`, `ratchet.yaml` | Structured card and ladder (this README, the CLI and the site are generated from them) |
 | `training/` | Every script that built it, as run; paths via `training/_paths.py` |
+| `lab/index.html` | The original interactive page, self-contained (the network runs in the browser) |
 | `NOTEBOOK.md` | Lab notebook: the build story, dead ends and sandbox gotchas, as recorded |
 
 ## Data and credits

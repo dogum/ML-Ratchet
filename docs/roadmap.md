@@ -20,8 +20,8 @@ Where the collection goes next, beyond each model's own next rungs (in its `mode
 - **A physics MCP server.** Each model becomes one tool that returns its readings *with* error bars and the card's
   limits: `chirpnet.scan`, `sundoctor.diagnose`, `cellsense.health`, `transitnet.read`, `quakenet.read`,
   `bearingnet.diagnose`, `swellcast.read`, `beatnet.classify` (with its not-a-medical-device notice),
-  `starquake.read`. `mlratchet.load()` already imports any model in isolation, which is most of the work.
-- **One design language for the labs.** The nine interactive pages were each built with their own visual identity.
+  `starquake.read`, and for the vehicle models `energynet.predict`, `tripdetective.read_car`, `hybridpilot.compare`. `mlratchet.load()` already imports any model in isolation, which is most of the work.
+- **One design language for the labs.** The twelve interactive pages were each built with their own visual identity.
   The website now wraps them in one system; porting each lab natively into the site (shared JS network runtime,
   shared chart components) is the next step.
 - **A shared JS runtime** for in-browser networks: numpy-equivalent conv/GELU/BatchNorm in TypeScript, with parity
@@ -33,6 +33,16 @@ Where the collection goes next, beyond each model's own next rungs (in its `mode
 - **Per-stratum σ widening** (StarQuake showed one pooled factor isn't enough across observing lengths).
 - **Saliency on real vs twin** inputs, to show where a network looks when it misreads real data.
 
+## The vehicle platform
+
+What is left to make it complete is in [shared/vehicle/HANDOFF.md](../shared/vehicle/HANDOFF.md); its status as of
+13 Nov 2026 is in [shared/vehicle/STATUS.md](../shared/vehicle/STATUS.md). In short: move the models' dev-calibrated
+wrappers into RoadSim (a new physics version), rebuild the frozen sets and re-score every rung; a `mlratchet data
+vehicle` command that rebuilds RoadData from the raw downloads; real heavy-duty traces for at least two truck and
+three bus types.
+
 ## New models
 
-See [backlog.md](backlog.md). Twelve candidates have physics, data and an exam lined up.
+Next up is **GridSim**: a shared electric-grid simulator and data package built the same way as the vehicle platform,
+with GridPulse and four other models on top. See [backlog.md](backlog.md) for it and the other candidates with physics,
+data and an exam lined up.

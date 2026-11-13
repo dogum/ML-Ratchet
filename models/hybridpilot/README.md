@@ -10,7 +10,7 @@
 
 HybridPilot is a learned, causal energy-management policy for hybrids: every second it decides engine on/off and engine power, holding charge in hybrids and depleting-then-sustaining in plug-ins. It learned by imitating the dynamic-programming (DP) optimum inside the RoadSim simulator, and was examined on 430 trips — real VED routes and bus legs driven by simulated twins — against rule-based control, ECMS, adaptive ECMS and MPC.
 
-[Project page](https://dogum.github.io/ML-Ratchet/models/hybridpilot/) · [Model card](MODEL_CARD.md) · [Lab notebook](NOTEBOOK.md) · [The method](https://github.com/dogum/ML-Ratchet/blob/main/docs/method.md)
+[Interactive lab](https://dogum.github.io/ML-Ratchet/models/hybridpilot/lab/) · [Project page](https://dogum.github.io/ML-Ratchet/models/hybridpilot/) · [Model card](MODEL_CARD.md) · [Lab notebook](NOTEBOOK.md) · [The method](https://github.com/dogum/ML-Ratchet/blob/main/docs/method.md)
 
 | | |
 |---|---|
@@ -125,6 +125,7 @@ The shared RoadSim simulator (shared/vehicle): EPA ALPHA engine and motor maps, 
 | `MODEL_CARD.md` | Full model card: every number, every caveat |
 | `model.yaml`, `ratchet.yaml` | Structured card and ladder (this README, the CLI and the site are generated from them) |
 | `training/` | Every script that built it, as run; paths via `training/_paths.py` |
+| `lab/index.html` | The original interactive page, self-contained (the network runs in the browser) |
 | `NOTEBOOK.md` | Lab notebook: the build story, dead ends and sandbox gotchas, as recorded |
 
 ## Data and credits

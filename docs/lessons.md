@@ -1,7 +1,8 @@
-# Lessons from nine models
+# Lessons from twelve models
 
-What building ChirpNet, SunDoctor, CellSense, TransitNet, QuakeNet, BearingNet, SwellCast, BeatNet and StarQuake
-taught, in rough order of how much it mattered.
+What building ChirpNet, SunDoctor, CellSense, TransitNet, QuakeNet, BearingNet, SwellCast, BeatNet and StarQuake,
+and then the vehicle platform with EnergyNet, TripDetective and HybridPilot, taught, in rough order of how much it
+mattered.
 
 ## The simulator is the model
 
@@ -47,3 +48,18 @@ taught, in rough order of how much it mattered.
 - Never kill processes by name on a shared machine — another agent's `simbank.py` is not yours.
 - If a data host is blocked, don't route around it. Record it and ask (ChirpNet's O3 exam and CellSense's other
   chemistries are waiting on exactly that).
+
+## Big systems (the vehicle platform)
+
+- **Build a shared platform in two phases.** Phase 1: one simulator and one real-data/splits package, built in
+  parallel against a written contract. Phase 2: the models in parallel on top. Freeze the shared layers during
+  Phase 2, let each model patch in its own wrappers, and upstream the fixes afterwards with a new physics version.
+- **Agents checking each other's data catch real bugs.** EnergyNet found swapped EPA cycle labels and a driver-and-load
+  mass counted twice (136 kg) in RoadData.
+- **A controller can only be examined in the simulator.** HybridPilot's exam is real routes driven by simulated twins.
+  It needs a separate simulator-versus-real check: RoadSim burns about 20% less fuel than real hybrids, a gap far larger
+  than the 1–3% between strategies, so the ranking holds only inside its physics.
+- **Fleet priors can matter more than physics.** TripDetective's dev mass bias fell from +106 kg to −9 kg by matching
+  the simulated fleet's mass distribution (median 2,200 kg) to the real one (1,720 kg).
+- **Grade at matched end states.** Correcting hybrid fuel with a fixed battery-energy factor credited ECMS with 105% of
+  the optimum; re-solving DP to each strategy's own final charge gave 99.6%.
