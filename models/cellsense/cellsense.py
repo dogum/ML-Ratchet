@@ -86,9 +86,14 @@ def _run(net, X, S):
 
 class CellSense:
     """three networks: health (capacity, resistance, degradation modes) for full discharges, a partial-discharge network for
-    curves that stop short of 2.0 V, and lifetime (cycle life, cycles left)"""
+    curves that stop short of 2.0 V, and lifetime (cycle life, cycles left). CellSense(chemistry='nmc811') returns the
+    separate NMC811 reader instead (CellSenseNMC)."""
+    def __new__(cls, *args, chemistry='lfp', **kw):
+        if str(chemistry).lower() in ('nmc811', 'nmc'): return CellSenseNMC(*args, **kw)
+        return super().__new__(cls)
+
     def __init__(self, health=os.path.join(HERE, 'cellsense_weights.npz'), life=os.path.join(HERE, 'cellsense_life_weights.npz'),
-                 partial=os.path.join(HERE, 'cellsense_partial_weights.npz')):
+                 partial=os.path.join(HERE, 'cellsense_partial_weights.npz'), chemistry='lfp'):
         self.health = CellSenseNet(health); self.life = CellSenseNet(life) if life and os.path.exists(life) else None
         self.partial = CellSenseNet(partial) if partial and os.path.exists(partial) else None
     def diagnose(self, Q_now, T_now, Q_new=None, T_new=None, cycle=None, charge_time_min=None):
@@ -109,4 +114,60 @@ class CellSense:
             sm = self.life.meta.get('smooth', 0); L = _run(self.life, features(Q_now, T_now, Q_new, T_new, smooth=sm) if sm else X, S)
             for k in ('log_life', 'log_life_sig', 'left', 'left_sig'): r[k] = L[k]
             r['life'] = 10 ** r['log_life']; r['life_lo'] = 10 ** (r['log_life'] - r['log_life_sig']); r['life_hi'] = 10 ** (r['log_life'] + r['log_life_sig'])
+        return {k: (v if B > 1 else float(v[0])) for k, v in r.items()}
+
+
+# ---- NMC811: the LG INR21700-M50T (NMC811 / graphite-SiOx, 4.85 Ah), a second, separate network ----------------------------
+VGRID_NMC = np.linspace(4.15, 2.50, 250)                    # 250 voltage levels, 4.15 V down to 2.50 V (6.6 mV apart)
+
+
+def q_of_v_nmc(V, Q, tol=0.001):
+    """a C/20 discharge recorded in time (V falling from the rest after full charge, Q counted from the start of the discharge)
+    -> capacity at each VGRID_NMC voltage. A test that stopped within tol of 2.50 V counts as complete (cyclers stop a hair
+    above the cut-off); one that stopped earlier is a partial discharge and leaves NaN below where it stopped."""
+    V, Q = np.asarray(V, float), np.asarray(Q, float)
+    if V[-1] - VGRID_NMC[-1] < tol: V, Q = np.append(V, VGRID_NMC[-1]), np.append(Q, Q[-1])
+    return q_of_v(V, Q, vgrid=VGRID_NMC)[0]
+
+
+def features_nmc(Q1, Q0=None, smooth=0):
+    """(B, 250) capacity-vs-voltage curves on VGRID_NMC -> (B, 6, 250) channels; NaN (a curve that stopped early) is masked,
+    with the last value carried forward; smooth: Gaussian width in grid points applied to the filled curves"""
+    def fill(a):
+        a = np.atleast_2d(np.asarray(a, np.float64)); m = np.isfinite(a); out = np.where(m, a, 0.0); B, L = a.shape
+        idx = np.where(m, np.arange(L)[None], 0); np.maximum.accumulate(idx, axis=1, out=idx); out = np.take_along_axis(out, idx, 1)
+        first = np.argmax(m, 1); out = np.where(np.arange(L)[None] < first[:, None], out[np.arange(B), first][:, None], out)
+        out[~m.any(1)] = 0.0; return out, m.astype(np.float32)
+    q1, m1 = fill(Q1); B, L = q1.shape
+    has = np.zeros(B, np.float32) if Q0 is None else np.isfinite(np.atleast_2d(Q0)).any(1).astype(np.float32)
+    q0, m0 = (np.zeros_like(q1), np.zeros_like(m1)) if Q0 is None else fill(Q0); h = has[:, None] * np.ones((1, L), np.float32)
+    if smooth: q1, q0 = gsmooth(q1, smooth), gsmooth(q0, smooth)
+    return np.nan_to_num(np.stack([q1, q0 * h, (q1 - q0) * 10 * h, m1, m0 * h, h], 1)).astype(np.float32)
+
+
+class CellSenseNMC:
+    """Reads one slow (C/20, 0.24 A) discharge from full of an LG INR21700-M50T NMC811 cell, as capacity discharged Q (Ah)
+    on VGRID_NMC (use q_of_v_nmc(V, Q) for raw data), complete to 2.5 V or stopped early (a partial discharge:
+    NaN below where it stopped), optionally beside the same cell's first full test. Returns, each with a 68% error bar
+    (already widened by the dev-fitted factor; raw=True gives the network's own):
+      q_total   capacity to 2.5 V at C/20 (Ah)
+      fade      capacity fade since the reference test (only meaningful with a reference)
+      lli       lithium lost; lam_ne: negative electrode (graphite-SiOx) lost; lam_pe: NMC811 lost (fractions of new)
+    The degradation modes have no answer key in the data it was examined on: they are the physics model's explanation."""
+    def __init__(self, weights=os.path.join(HERE, 'cellsense_nmc811_weights.npz')):
+        self.net = CellSenseNet(weights); self.widen = self.net.meta.get('widen', {})
+
+    def diagnose(self, Q_now, Q_new=None, raw=False):
+        X = features_nmc(Q_now, Q_new, self.net.meta.get('smooth', 0)); r = _run(self.net, X, None)
+        Qn = np.atleast_2d(np.asarray(Q_now, float))
+        if self.net.meta.get('target') == 'rest':          # the network gives the charge still to come below where the curve stops
+            r['q_total'] = r['q_total'] + np.nanmax(np.where(np.isfinite(Qn), Qn, -np.inf), 1)
+        if self.net.meta.get('endrule'):                   # a curve that reached 2.5 V: its capacity is its end (coulomb counting)
+            full = np.isfinite(Qn[:, -1]); r['q_total'] = np.where(full, Qn[:, -1], r['q_total']); r['q_total_sig'] = np.where(full, 0.002, r['q_total_sig'])
+            if Q_new is not None:
+                Q0 = np.atleast_2d(np.asarray(Q_new, float)); ok = full & np.isfinite(Q0[:, -1])
+                r['fade'] = np.where(ok, 1 - Qn[:, -1] / np.where(ok, Q0[:, -1], 1.0), r['fade']); r['fade_sig'] = np.where(ok, 0.002 / 4.8, r['fade_sig'])
+        if not raw:
+            for k, f in self.widen.items(): r[k + '_sig'] = r[k + '_sig'] * f
+        r['partial'] = (~np.isfinite(np.atleast_2d(Q_now)[:, -1])).astype(float); B = len(X)
         return {k: (v if B > 1 else float(v[0])) for k, v in r.items()}

@@ -22,7 +22,7 @@ The losses are published too.
 |---|---|---|---|
 | [**ChirpNet**](models/chirpnet/) | Is there a black-hole or neutron-star merger in this LIGO data, and how heavy was it? | 13 events from O1–O3 + time-slid background | 8 wins · 3 losses |
 | [**SunDoctor**](models/sundoctor/) | Why did this solar array make less power today, and what did each cause cost? | 2 real PV farms, independent answer keys | 4 wins · 0 losses · 1 tie |
-| [**CellSense**](models/cellsense/) | How worn is this battery cell, why, and how many cycles are left? | 118 cells | 1 win · 1 loss · 2 mixed |
+| [**CellSense**](models/cellsense/) | How worn is this battery cell, why, and how many cycles are left? (LFP, and now NMC811) | 118 LFP cells + 7 NMC811 cells | 3 wins · 4 losses · 2 mixed · 1 tie |
 | [**TransitNet**](models/transitnet/) | Is this dip in a TESS light curve a planet, and how big is it? | 1,196 planets + 832 false positives | 3 wins · 2 losses |
 | [**QuakeNet**](models/quakenet/) | How big, how far, how deep, which way — from one seismometer? | 3,105 one-station records | 4 wins · 1 loss |
 | [**BearingNet**](models/bearingnet/) | Healthy, or an outer-race, inner-race or ball defect? | 2 rigs, one never heard | 3 wins · 3 losses |
@@ -33,7 +33,7 @@ The losses are published too.
 Every model also runs **live in your browser** on the website — the real network, ported to TypeScript and checked
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
-**0** real labelled examples were used for training. **61** rung decisions are logged, **24** of them rejections.
+**0** real labelled examples were used for training. **70** rung decisions are logged, **28** of them rejections.
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself.
 
 ## Try it

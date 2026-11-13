@@ -16,7 +16,7 @@ for (const m of models) {
     }
   }
 }
-const N = 40; // teeth
+const N = Math.max(40, steps.filter((s) => s.d !== 'rejected').length + 4); // one tooth per kept rung, plus a few blank
 const R = 150, r = 120, CX = 200, CY = 200;
 const pitch = 360 / N;
 const pt = (deg: number, rad: number) => [CX + rad * Math.sin((deg * Math.PI) / 180), CY - rad * Math.cos((deg * Math.PI) / 180)];

@@ -7,8 +7,11 @@ Where the collection goes next, beyond each model's own next rungs (in its `mode
 - ~~**ChirpNet O3 exam.**~~ Done 12 Nov 2026 once GWOSC was reachable: 7 of 7 in-range events found, every catalogue
   median inside the 90% posteriors; GW190521 (outside the training range) missed; one O3 background window above
   threshold. See `models/chirpnet/training/logs/o3_exam.json`.
-- **CellSense, other chemistries.** Sandia NCA / NMC / LFP cycling (Preger et al. 2020) from BatteryArchive, or
-  another public multi-chemistry dataset with a documented download (Zhu et al. 2022; Pozzato et al. 2022).
+- **CellSense, other chemistries.** Partly done 12 Nov 2026: a second, separate network for NMC811 (LG M50T), from
+  Pozzato et al. 2022 (OSF, CC BY 4.0), reading slow C/20 discharges cut short. Health only: those cells lost 3-9% and
+  never reached end of life. See `models/cellsense/MODEL_CARD.md` (v2). Still waiting: Sandia NCA / NMC / LFP cycling
+  (Preger et al. 2020; BatteryArchive asks for an email) for fast-rate curves, other temperatures and lifetime, and
+  Zhu et al. 2022 (Zenodo) for a second NMC/NCA cell.
 
 ## The collection as a tool
 

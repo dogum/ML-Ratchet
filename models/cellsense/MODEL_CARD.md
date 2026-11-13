@@ -1,4 +1,4 @@
-# CellSense model card (v1.1, rung 9)
+# CellSense model card (v1.2: LFP v1.1 rung 9; NMC811 rung n8)
 
 **What it is.** Three 1-D convolutional networks (1,934,516 weights in all) that read one 4C constant-current
 discharge of an LFP/graphite cell (the A123 APR18650M1A, 1.1 Ah, of Severson et al. 2019) as capacity Q(V) and can
@@ -193,3 +193,157 @@ early total. Assuming no fade at all errs by 45.7 mAh; the full-curve network on
 - The aging rates were calibrated on six real cells' trajectories, all charged in about 10 minutes. Charging recipes much faster or slower than that rely on the physics alone.
 - Pulse resistance follows the real cells (correlation 0.76) with about 1.2 mΩ error. The model's 30 ms pulse is ohmic plus charge transfer with no double layer, so absolute values carry the calibration's error.
 - Partial discharges from full read well down to about 0.75 Ah (29 mAh capacity error) and no better than assuming no fade at 0.6 Ah and below. Discharges that start partway (cycling between 20% and 80%, say), other cut-off voltages and other rates are untested.
+
+---
+
+# v2 — NMC811 (LG INR21700-M50T)
+
+A second, separate network for a second chemistry: the LG INR21700-M50T, an NMC811 / graphite-SiOx 21700 cell (4.85 Ah
+nominal), the cell Chen et al. 2020 measured for PyBaMM's Chen2020 parameter set. It has its own simulator
+(`training/nmcsim.py`), its own ladder in `ratchet.yaml` and its own weights (`cellsense_nmc811_weights.npz`). The LFP
+networks above are unchanged.
+
+**What it reads.** One slow (C/20, 0.24 A) discharge from full, as capacity discharged Q at 250 voltages from 4.15 V to
+2.50 V, complete or stopped early, optionally beside the same cell's first test. `CellSense(chemistry='nmc811')` (or
+`CellSenseNMC()`) returns, each with a 68% error bar: `q_total` (capacity to 2.5 V at C/20, Ah), `fade` (since the
+reference), `lli`, `lam_ne`, `lam_pe` (lithium, negative electrode and NMC lost, as fractions of new).
+
+**What the data support, and what they don't.** Pozzato et al. 2022 aged ten cells for up to 23 months with real driving
+discharges. Their capacity tests are C/20 discharges; the cells lost 3-9% of their capacity, none got near 80%, and cycle
+counts exist only for the first nine tests. So this is **health now**, not lifetime: there is no end of life to forecast.
+Reading a full C/20 curve's capacity is trivial (the end of the curve); the useful question is a test that stops early.
+
+## The physics
+
+A vectorized single-particle model of each electrode with PyBaMM's Chen2020 open-circuit curves and constants (both
+electrodes measured on material harvested from this cell), Fickian diffusion solved exactly between time steps (cellsim's
+`Sphere`), Butler-Volmer kinetics with the surface-dependent exchange current, ohmic resistance and a lagged electrolyte
+term, isothermal at the test temperature. Degradation modes: lithium lost, negative lost (part of it lithiated, taking
+its lithium), NMC lost, resistance change.
+
+Checked against PyBaMM 26.10.1.1 (Chen2020 set, 25 °C, `training/nmc_check.py`, numbers in `training/nmc_physics_check.json`):
+
+| Case | C/20 capacity | C/20 max V error | C/2 | 1C |
+|---|---|---|---|---|
+| fresh | 0.00005% | 0.013 mV | 0.0003%, 0.17 mV | 0.0003%, 0.19 mV |
+| lithium lost 10% | 0.0002% | 0.016 mV | 0.0003%, 0.18 mV | 0.0004%, 0.20 mV |
+| negative lost 10% | 0.0002% | 0.012 mV | 0.0002%, 0.17 mV | 0.00004%, 0.19 mV |
+| NMC lost 10% | 0.0002% | 0.010 mV | 0.0002%, 0.19 mV | 0.057%, 0.22 mV |
+
+Against PyBaMM's SPMe with two lag constants fitted at 1C on the fresh cell and then held: at C/20, capacity within
+0.0005% and voltage within 0.06 mV on all four cases (C/2: 0.015%, 6.7 mV; 1C: 0.03%, 19 mV at the very end).
+
+## Calibration on three dev cells
+
+Dev cells W3, W4, W8 (26 tests), drawn by `mlratchet.splits.split_units(cells, 3, seed=811)`. Nothing below used an
+exam cell.
+
+- **Textbook Chen2020 does not match the real cell.** It holds 5.12 Ah at C/20 against 4.82-4.88 Ah, and its curve sits
+  30-100 mV above the real one through the middle. Fitting 11 cell parameters per dev cell leaves 10.5-12.2 mV rms with
+  several parameters on their bounds.
+- **An open-circuit-curve correction, fitted on dev.** One additive spline per electrode (24 coefficients each), shared
+  by all 26 dev tests and fitted jointly with each test's electrode window (`training/nmc_ocpfit.py`): per-test rms
+  11.9 → 5.1 mV (median), 15.1 → 7.1 mV (max). Refitted new cells: 4.6, 4.6, 6.6 mV rms, ohmic resistance 28-31 mOhm.
+- **What is left:** ±15 mV features between 3.5 and 4.6 Ah discharged, where the negative is nearly empty and the SiOx
+  and graphite's dilute stages work. They move from test to test, and a smooth correction cannot follow them.
+- **Aging priors** from voltage fits of every dev test on the corrected model (5-9 mV rms): by the last dev test (8.6%
+  fade) negative lost ~7%, NMC lost ~4%, lithium lost within ±5% (lithium and negative loss trade off in a C/20 curve), and
+  resistance *falls* 10-50% after the first test. Training draws reach 2.5× the largest dev value: lithium 12%, negative
+  18%, NMC 10%, resistance −50% to +100%.
+- **Measurement realism in training:** capacity gain error 0.2%, voltage offset 3 mV rms, rest voltage at the start
+  ±2 mV, test temperature 22-24 °C, the reference curve withheld 30% of the time, 70% of curves cut short at random depths.
+
+## The network
+
+The same 1-D residual CNN as the LFP health network, narrower (widths 32-128; 380,346 weights after folding BatchNorm),
+along the voltage axis. Six input channels: the curve (carried forward past where it stops), the reference, ten times
+their difference, the two data masks and a has-reference flag. β-NLL heads (β = 0.5) give each output a mean and a
+standard deviation. 60,000 simulated pairs, 5,000 steps of 256, EMA weights. numpy inference matches torch to 2e-6.
+A curve that reaches 2.5 V takes its capacity and fade from its own end (coulomb counting) and the network only
+supplies the degradation modes; a curve that stops early is read by the network.
+
+## The ratchet (ladder "v2 — NMC811 (LG M50T)")
+
+Objective: mean skill (1 − MAE / MAE of guessing the median, floored at 0) over capacity, lithium lost, negative lost
+and NMC lost (and fade with a reference), on a frozen set of 3,000 simulated pairs, averaged over four readings (full and
+cut short, each with and without the reference). Kept only if it beats the incumbent by more than 0.01 **and** the three
+dev cells' capacity error on tests cut at 1.5, 2.5 and 3.5 Ah is no more than 5% worse **and** their full-curve error
+no more than 2 mAh worse. The frozen set was rebuilt with each physics version and every rung re-scored and re-judged.
+
+| Rung | Change | val_ocpj | Dev partial / full (mAh) | Decision | Exam partial / full (mAh), never used |
+|---|---|---|---|---|---|
+| n1 | Textbook Chen2020, wide mode priors | 0.192 | 607 / 257 | kept | 586 / 253 |
+| n2 | New cells and mode ranges from the dev cells | 0.235 | 255 / 231 | kept | 245 / 211 |
+| n3 | OCP correction fitted on dev; resistance may fall | 0.423 | 124 / 59 | kept | 183 / 112 |
+| n4 | Capacity head predicts the charge left below the cut | 0.464 | 181 / 80 | rejected (dev) | 251 / 144 |
+| n5 | Curves smoothed over 26 mV | 0.413 | 167 / 95 | rejected | 210 / 132 |
+| n6 | Curves smoothed over 53 mV | 0.422 | 202 / 136 | rejected | 227 / 130 |
+| n7 | n3 + full curves read off their end | 0.484 | 124 / 0 | kept (flipped on val_ocpj) | 183 / 0 |
+| n8 | OCP jitter per simulated cell (0.5-1.5× the correction, 4 mV wiggles) | 0.773 | 126 / 0 | **released** | 135 / 0 |
+| n9 | Jitter twice as wide | 0.742 | 84 / 0 | rejected (−0.031) | 91 / 0 |
+
+What the ladder says:
+
+- **The simulator's open-circuit curves set the real error.** The twin test on n2 read simulated twins of the dev tests to
+  10-73 mAh and the real tests to 183-297 mAh, even from full curves. A 10 mV error where dQ/dV is 10 Ah/V moves Q(V) by
+  100 mAh, and the network reads the middle of the curve. The dev-fitted OCP correction (n3) halved the dev error.
+- **Robustness beats exactness.** Jittering each simulated cell's curves by about what the dev fits leave (n8) cut the
+  exam error from 183 to 135 mAh. Jittering twice as wide (n9) read the dev cells better still (84 mAh) and the exam too
+  (91 mAh), but scored 0.031 lower on the frozen set, so the rule rejected it. It was not admitted by changing the rule.
+- **Decisions flipped once.** n7 (full curves read off their end) gained 0.006 on val_ocp and was rejected; on val_ocpj
+  it gained 0.061 and was kept.
+- Simulated skill and real error disagree often: n4 and n5 scored higher than n3 on val_ocp and read the dev cells worse.
+
+## Final exam: 7 cells, 75 tests, never used to choose
+
+Exam cells W5, W7, W9, W10, G1, V4, V5. Every C/20 test is read in full and cut after 1.5, 2.5 and 3.5 Ah (everything
+after thrown away), with the cell's first test as the reference (tests 2 onward) and without it. Answer key: the
+capacity the cycler counted to 2.5 V. Capacity error (mAh); best in bold:
+
+| Reading | Tests | CellSense | Dev median (dumb) | No fade (dumb) | Shift at cut (classical) | Voltage fit (classical) |
+|---|---|---|---|---|---|---|
+| full curve, with reference | 68 | **0** | 98 | 234 | **0** | 10 |
+| stopped at 1.5 Ah, with reference | 68 | 169 | **98** | 234 | 184 | 595 |
+| stopped at 2.5 Ah, with reference | 68 | **69** | 98 | 234 | 152 | 258 |
+| stopped at 3.5 Ah, with reference | 68 | 115 | 98 | 234 | **84** | 125 |
+| full curve, no reference | 75 | **0** | 111 | — | — | 10 |
+| stopped at 1.5 Ah, no reference | 75 | 196 | **111** | — | — | 491 |
+| stopped at 2.5 Ah, no reference | 75 | 164 | **111** | — | — | 174 |
+| stopped at 3.5 Ah, no reference | 75 | **94** | 111 | — | — | 106 |
+
+- Dev median = always guess 4.631 Ah, the dev cells' median. No fade = the reference's capacity. Shift at cut = the
+  reference's capacity plus the gap between the two curves where the cut curve stops. Voltage fit = lithium, negative,
+  NMC lost and resistance fitted by least squares to the recorded part with the same corrected electrode model, then
+  simulated to 2.5 V (`training/nmc_fitbase.py`).
+- Over all six partial readings: CellSense 135 mAh, the dev median 105 mAh. **Guessing the median wins overall.**
+  CellSense wins only at 2.5 Ah with a reference (69 vs 98) and at 3.5 Ah without one (94 vs 111).
+- Full curves: the capacity is the curve's end (coulomb counting), 0 mAh by construction; the bare n8 network read them
+  to 46 mAh, so the shipped system does not use it there.
+- Fade from partial curves with a reference: 2.47 points (correlation 0.76) against 1.94 for guessing the dev median fade
+  and 4.80 for assuming none. A loss to the median; a win only at 2.5 Ah (1.42 points).
+- **Error bars.** Widen factors fitted on dev: capacity 1.56, fade 2.45. Exam coverage of the 68% bars: capacity 61%
+  overall (full curves 100%, 1.5 Ah 41%, 2.5 Ah 66%, 3.5 Ah 36%), fade 71%.
+- **Where it fails.** Error grows with age: 92 mAh on tests 2-5, 162 on tests 6-10, 180 on tests 11-15. Without a
+  reference it reads cells as healthier than they are (bias +92 to +191 mAh); with one, cut at 3.5 Ah, too worn (−115).
+  By cell, partial error runs from 71 mAh (W7, 4 tests) to 154-159 mAh (W9, W10).
+- **Degradation modes** have no answer key. On full curves with a reference the network says lithium 3.9%, negative 2.3%,
+  NMC 1.8% lost on average; the voltage fit says 2.1%, 3.7%, 4.4% (correlation −0.15, 0.36, 0.74). Treat the split
+  between lithium and negative loss as unknown: a C/20 curve barely separates them.
+
+## Limits (NMC811)
+
+- It knows one cell (LG INR21700-M50T) at one test: a C/20 discharge from full at 23 °C. Faster discharges, other
+  temperatures, charge curves and other NMC cells are outside what it learned.
+- On curves cut short it loses to guessing the dev median capacity overall (135 vs 105 mAh). The exam cells span only
+  4.45-4.90 Ah, which makes the median hard to beat; nothing here shows how it does on cells far from new.
+- No lifetime: the data end at 3-9% fade with no end of life.
+- The open-circuit curves are corrected on three dev cells; ±15 mV features near the end of discharge (graphite-SiOx
+  nearly empty) remain and move test to test. That is where the network's real errors come from.
+- Error bars under-cover when the curve is cut short (36-66% for a nominal 68%).
+
+## Credits (NMC811)
+
+Pozzato G., Allam A., Onori S. (2022), *Lithium-ion battery aging dataset based on electric vehicle real-driving
+profiles*, Data in Brief 41, 107995 (data on OSF, CC BY 4.0). Chen C.-H. et al. (2020), *Development of experimental
+techniques for parameterization of multi-scale lithium-ion battery models*, J. Electrochem. Soc. 167, 080534 (the
+Chen2020 parameters). PyBaMM (Sulzer et al. 2021, J. Open Res. Softw. 9, 14) for the reference solutions.
