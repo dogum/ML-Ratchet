@@ -63,3 +63,11 @@ Every rung logged, kept or not; new win/loss tables; instruments re-exported.
 
 One page where a visitor picks a vehicle and a real route and sees all three models on the same trip: EnergyNet's
 forecast, the RoadSim run, TripDetective reading the log back, HybridPilot driving it.
+
+## Decisions log
+
+- **14 Nov 2026 — ZTBus split for the full set (owner's decision).** v1's rule left 2 of 1,409 missions as dev. The
+  by-month split (fixed 13 Nov, before any full trace was processed) is now in force: 294 dev missions, 1,115 exam; the
+  v1 trace-exam sample missions stay exam. EnergyNet v1's numbers on ZTBus mission totals are re-scored on the 1,115
+  exam missions before comparing with v2. Details: data/DATA.md, proc/hd/ztbus_full_splits.json.
+

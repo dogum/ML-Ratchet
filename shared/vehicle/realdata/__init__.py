@@ -232,8 +232,9 @@ def ztbus_full(split=None, table='legs', label_ok=None):
                        distance, passengers, T_amb, route, grid/door fractions, season, q_label_ok, split, path.
                        Arrays: load_trips(split, source='ZTBus_full') or load_trip('ZTBusFull_...').
     table='missions' : ETH metaData.csv (energy, distance, passengers, T) + trace checks (E_ratio, d_ratio, n_legs), split.
-    table='splits'   : the frozen per-mission split file (dict).
-    split: 'dev' | 'exam' (the frozen split: 2 dev missions, 1,407 exam; see data/DATA.md)."""
+    table='splits'   : the per-mission split file (dict).
+    split: 'dev' | 'exam' — the by-month split in force since 14 Nov 2026 (294 dev missions, 1,115 exam); the v1 rule
+           (2 dev missions) is kept in the mission table as split_v1_rule. See data/DATA.md."""
     if table == 'splits':
         return json.load(open(f'{PROC}/hd/ztbus_full_splits.json', encoding='utf-8'))
     if table not in ('legs', 'missions'):

@@ -218,26 +218,35 @@ def ztbus_full_split_content(meta_all):
     prop = {n: ('dev' if (int(b), m) in dev_blocks else 'exam') for n, b, m in zip(blk.name, blk.bus, blk.month)}
     prop = {n: prop[n] for n in names}
     moved = sorted(n for n in names if missions[n] == 'exam' and prop[n] == 'dev')
+    # Amendment (2026-11-14, approved by the project owner): the by-month proposal is in force, except that the v1
+    # sample missions graded as exam traces in v1 (proc/hd/ztbus_legs.parquet) stay exam, so v1's ZTBus trace exam is
+    # unchanged. v1 results on ZTBus mission totals are re-scored on the missions that are exam under this split.
+    v1_trace_exam = set(pd.read_parquet(f'{ROOT}/proc/hd/ztbus_legs.parquet').query("split == 'exam'").mission)
+    pinned = sorted(n for n in names if prop[n] == 'dev' and n in v1_trace_exam)
+    adopted = {n: ('exam' if n in v1_trace_exam else prop[n]) for n in names}
     count = lambda d: {s: sum(v == s for v in d.values()) for s in ('dev', 'exam')}
     return {
-        'version': 1, 'frozen': True, 'created': '2026-11-13', 'dataset': 'ZTBus full (1,409 missions), doi:10.3929/ethz-b-000626723',
+        'version': 2, 'frozen': True, 'created': '2026-11-13', 'amended': '2026-11-14',
+        'dataset': 'ZTBus full (1,409 missions), doi:10.3929/ethz-b-000626723',
         'unit': 'mission',
-        'in_force': 'frozen_v1',
-        'rule': ('proc/splits.json HD.ZTBus (sha256 d917df78...): "' + frozen['rule'] + '". That rule already covers all '
-                 '1,409 missions, so this file only writes it out per mission; no mission changes side.'),
-        'counts': count(missions),
-        'missions': missions,
-        'proposal_v2_not_in_force': {
-            'status': 'NOT in force. Adopting it moves exam missions of the frozen split to dev; that is a decision for the '
-                      'owner, not for the build. Fixed on 2026-11-13 before any full-data trace was processed.',
-            'seed': SEED_FULL,
-            'rule': 'unit = (bus, calendar month UTC); within each (bus, meteorological season) stratum, max(1, round(0.2 n)) '
-                    'months drawn with numpy default_rng(20261113) (strata sorted by bus then season name, months sorted); '
-                    'months holding the two frozen dev missions are dev too; every mission takes its month\'s side.',
-            'dev_blocks': sorted(f'B{b}_{m}' for b, m in dev_blocks),
-            'counts': count(prop),
-            'exam_missions_that_would_move_to_dev': len(moved),
-            'missions_dev': sorted(n for n in names if prop[n] == 'dev')},
+        'in_force': 'v2_by_month',
+        'rule': ('unit = (bus, calendar month UTC); within each (bus, meteorological season) stratum, max(1, round(0.2 n)) '
+                 'months drawn with numpy default_rng(20261113) (strata sorted by bus then season name, months sorted); '
+                 'months holding the two frozen dev missions are dev too; every mission takes the side of its month, except the '
+                 'v1 trace-exam sample missions, which stay exam. Fixed on 2026-11-13 before any full-data trace was '
+                 'processed; put in force on 2026-11-14.'),
+        'why': ('Under the frozen v1 rule (proc/splits.json HD.ZTBus: one mission per bus = dev, all others = exam) the '
+                'simulator could calibrate on 2 bus missions only. The other missions had never been downloaded as traces; '
+                'EnergyNet v1 graded the mission totals of all 1,409 as exam, so those v1 numbers are re-scored on the '
+                'missions that remain exam here, and the change is logged in the open (proc/splits.json is not edited).'),
+        'counts': count(adopted),
+        'missions': adopted,
+        'v1_rule': ('proc/splits.json HD.ZTBus (sha256 d917df78...): "' + frozen['rule'] + '"'),
+        'v1_counts': count(missions),
+        'moved_from_v1_exam_to_dev': len([n for n in names if missions[n] == 'exam' and adopted[n] == 'dev']),
+        'pinned_exam_v1_trace_missions': pinned,
+        'seed': SEED_FULL,
+        'dev_blocks': sorted(f'B{b}_{m}' for b, m in dev_blocks),
     }
 
 
@@ -422,7 +431,7 @@ def ztbus_full(zpath, jobs=8):
     mt = meta_all.copy()
     mt['bus'] = 'B' + mt.busNumber.astype(str)
     mt['split'] = mt.name.map(split['missions'])
-    mt['split_proposal_v2'] = np.where(mt.name.isin(split['proposal_v2_not_in_force']['missions_dev']), 'dev', 'exam')
+    mt['split_v1_rule'] = np.where(mt.name.isin(json.load(open(f'{ROOT}/proc/splits.json'))['HD']['ZTBus']['dev_missions']), 'dev', 'exam')
     mt['kWh'] = mt.energyConsumption / 3.6e6
     mt['kWh_per_km'] = mt.kWh / (mt.drivenDistance / 1000)
     mt['T_amb_mean_C'] = mt.temperature_ambient_mean - 273.15

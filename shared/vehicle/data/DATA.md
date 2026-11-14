@@ -216,7 +216,7 @@ cold FTP 2.9k configurations; charge-depleting UDDS/HWY kWh/mi for ~850 BEV/PHEV
   line is never in dev and exam): 10% of families per architecture stratum = dev (210 families; 3,095 conv, 73 HEV,
   61 PHEV, 140 BEV EPA configurations in dev).
 - **HD:** ZTBus by mission (only 2 physical buses exist): one seeded traced mission per bus is dev, everything else exam
-  (78 exam legs, 1,407 exam missions). ICCT trucks: BIC-US is dev, BIC-EU and AVG-EU exam. Mersin: the 7-day
+  (78 exam legs, 1,407 exam missions under the v1 rule; the full set uses the by-month split below). ICCT trucks: BIC-US is dev, BIC-EU and AVG-EU exam. Mersin: the 7-day
   short-term subsample (16-22 Feb 2026) is dev, the rest exam.
 
 ## 10. Baselines (fitted on dev only) and their exam errors
@@ -352,21 +352,27 @@ Legs: median 15.2 km / 56 min (p10-p90 9.0-63.5 km). Missions last 3-24 h (media
 leg-km: 83 (48%), 33, 72, 46, 32, 31, night routes N1-N4.
 
 **Split** (`proc/hd/ztbus_full_splits.json`; sha256 of canonical JSON (sorted keys, no whitespace, UTF-8) without the sha
-field = `70ddd546…`; written once, then only recomputed and compared). The frozen `proc/splits.json` already covers every
-ZTBus mission. Its rule says: one seeded traced mission per bus is dev, and all other missions are exam (the
-1,409-mission table included). This file writes that rule out per mission, and no mission changes side:
+field = `18e0fead…`; written once, then only recomputed and compared). **Changed on 14 Nov 2026, in the open, with the
+owner's approval.**
 
-| side | missions | legs | legs `q_label_ok` |
-|---|---|---|---|
-| dev | 2 (`B183_2021-10-05_13-53-20…`, `B208_2022-11-30_04-47-53…`) | 5 | 5 |
-| exam | 1,407 | 7,562 | 7,485 |
+- **v1 rule** (`proc/splits.json` HD.ZTBus, unchanged and still hashed): one seeded traced mission per bus is dev, all
+  other missions are exam. Applied to the full set it gives 2 dev missions (5 legs) and 1,407 exam: the simulator could
+  calibrate on only 2 bus missions.
+- **In force since 14 Nov 2026: a by-month split**, fixed on 13 Nov before any full-data trace was processed. The unit is
+  the (bus, calendar month) block. Within each (bus, season) stratum, max(1, round(0.2 n)) months are drawn with seed
+  20261113, plus the months that hold the two v1 dev missions; every mission takes the side of its month, **except the
+  v1 trace-exam sample missions, which stay exam** (one of them, `B208_2021-05-27…`, fell in a dev month and is pinned),
+  so v1's ZTBus trace exam (78 legs) is unchanged.
 
-So the full set adds almost nothing to dev: **calibration on ZTBus still has 2 missions (5 legs)**. The file also
-records a *proposal, not in force*, fixed before any full trace was processed. Its unit is the (bus, calendar month)
-block. Within each (bus, season) stratum, max(1, round(0.2 n)) months are drawn with seed 20261113, plus the months that
-hold the two frozen dev missions. That gives 14 dev months, 295 dev missions (1,668 legs) and 1,114 exam missions.
-Adopting it would move 293 frozen-exam missions to dev, which the frozen split forbids, so the owner has to decide.
-`missions.parquet` carries it as `split_proposal_v2`. Loaders use only `split`.
+| side | missions | legs |
+|---|---|---|
+| dev | 294 | 1,662 |
+| exam | 1,115 | 5,905 |
+
+292 missions moved from v1-exam to dev. They had never been processed as traces, but EnergyNet v1 graded the
+**mission totals** of all 1,409 missions as exam. So every v1 number on ZTBus mission totals is re-scored on the 1,115
+missions that are exam now, before any v1-vs-v2 comparison. `missions.parquet` keeps the v1 rule as `split_v1_rule`;
+loaders use `split`.
 
 **Energy per km** (legs with `q_label_ok`, pooled kWh / km; all splits, descriptive only):
 
