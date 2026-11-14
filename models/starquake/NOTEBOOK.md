@@ -5,7 +5,7 @@
 
 # StarQuake — status (6 Nov 2026, v1.0)
 
-- **What it is:** red-giant asteroseismology from a Kepler light curve. A small network decides whether solar-like oscillations are present, then reads νmax (where the oscillation hump peaks) and Δν (the spacing of the comb of modes), each with an error bar. With an effective temperature, the scaling relations turn those into mass and radius. It was trained only on simulated stars; no real star was ever a training example. Sixth project in Greg's physics-ML collection.
+- **What it is:** red-giant asteroseismology from a Kepler light curve. A small network decides whether solar-like oscillations are present, then reads νmax (where the oscillation hump peaks) and Δν (the spacing of the comb of modes), each with an error bar. With an effective temperature, the scaling relations turn those into mass and radius. It was trained only on simulated stars; no real star was ever a training example. Sixth project in the physics-ML collection.
 - **Page:** https://claude.ai/artifact/Wfu9o3WtAegSyqMzPEKBav (5.7 MB)
   - Hero: a real red-clump giant (KIC 11518690) read live in the browser, with sonification.
   - Explorer: 12 exam giants (2 per νmax band, fixed seed) plus 2 quiet dwarfs, at 4 yr / 1 yr / 90 / 54 / 27 days. Shows the light curve, the power spectrum, an échelle diagram, and a zoom on the comb with the expected l=0/2 modes.

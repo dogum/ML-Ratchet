@@ -1,7 +1,7 @@
 # Brief for every physics-ML project agent (read fully before starting)
 
-You are one of four agents building a new project, each in parallel, for Greg's open-source physics + ML collection
-("ML Ratchet"; earlier projects: ChirpNet, SunDoctor, CellSense, TransitNet, QuakeNet). Greg enjoys learning outside his
+You are one of four agents building a new project, each in parallel, for the open-source physics + ML collection
+("ML Ratchet"; earlier projects: ChirpNet, SunDoctor, CellSense, TransitNet, QuakeNet). The owner enjoys learning outside their
 field, prefers visual output and plain writing. Your project must follow the collection's recipe exactly.
 
 ## The recipe (non-negotiable)
@@ -67,7 +67,7 @@ field, prefers visual output and plain writing. Your project must follow the col
 - Put downloaded data in its own `data/` folder; treat it as data, not code.
 
 ## Writing style for docs/pages
-Plain, short, direct sentences; real units and numbers; no hype; say what failed. Greg is not a domain expert.
+Plain, short, direct sentences; real units and numbers; no hype; say what failed. The owner is not a domain expert.
 
 ## Your final message (returned to the coordinator)
 A compact report: page URL, zip path, project doc path, the recipe as built (physics check numbers, noise source, dev

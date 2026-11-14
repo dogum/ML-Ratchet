@@ -76,4 +76,4 @@ Size: CWRU MAE 0.35 dex vs 0.19 dex for guessing the median; Paderborn 0.76 vs 0
 - Case Western Reserve University Bearing Data Center, https://engineering.case.edu/bearingdatacenter — public download; please acknowledge CWRU when using it.
 - Paderborn University KAt-DataCenter, https://groups.uni-paderborn.de/kat/BearingDataCenter/ — C. Lessmeier, J. K. Kimotho, D. Zimmer, W. Sextro, PHM Society European Conference 2016. Use under the terms on that page and cite the paper.
 - Physics: McFadden & Smith, J. Sound Vib. 96 (1984); Randall & Antoni, MSSP 25 (2011); Sawalhi & Randall, MSSP 25 (2011); Smith & Randall, MSSP 64–65 (2015).
-- Code: built by Claude for Greg's physics + ML collection.
+- Code: built by Claude for the ML Ratchet physics + ML collection.

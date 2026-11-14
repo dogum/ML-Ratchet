@@ -5,7 +5,7 @@
 
 # TransitNet — status (3 Nov 2026, v1.0)
 
-- **What it is:** a network that decides whether a periodic dip in a TESS light curve is a planet, and if so measures it. It was trained on zero real planets. Fourth project in Greg's physics-ML collection, after ChirpNet, SunDoctor and CellSense.
+- **What it is:** a network that decides whether a periodic dip in a TESS light curve is a planet, and if so measures it. It was trained on zero real planets. Fourth project in the physics-ML collection, after ChirpNet, SunDoctor and CellSense.
 - **Page:** https://claude.ai/artifact/1hdMeCpp4qDXBN3a8B9Ff5
   - Hero: TOI-270 c.
   - Real-star explorer with 10 picks: HD 209458 b, KELT-9 b, pi Men c, LHS 3844 b, HD 219134 b, TOI-700 b, and the false positives TOI-617.01, TOI-236.01, TOI-570.01, TOI-523.01.

@@ -300,7 +300,7 @@ Q, T = cellsense.q_of_v(volts, amp_hours, can_temp)`;
     <div class="file"><code>examples/</code><span>one real exam cell's discharges through life, with the cycler's measurements.</span></div>
     <div class="file"><code>MODEL_CARD.md</code><span>the physics and its PyBaMM checks, the calibration, every rung, both exams and the limits.</span></div>
     <div class="file"><code>training/</code><span>simulator, calibration, data, training, ratchet and exam scripts (PyTorch, PyBaMM).</span></div>
-    <p class="note" style="margin:4px 0 0">The files are attached in the chat alongside this page.</p>`;
+    <p class="note" style="margin:4px 0 0">The files are in this model's folder of the ML Ratchet repository.</p>`;
   $('limits').innerHTML = DATA.limits.map((x) => `<li>${x}</li>`).join('');
 }
 

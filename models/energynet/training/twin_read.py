@@ -1,7 +1,7 @@
 """Twin test (DEV only, method.md step 5): does the network read the dev cars' RoadSim twins as it reads the real cars?
 For every dev VED trip: the network's prediction (real features, as in the dev gate), the logged energy, and the energy of
 the car's label-matched RoadSim v2 twin on the same trip through the OBD label model (shared/vehicle/checks/
-ved_twin__roadsim-physics-v2.json, written by the RoadSim calibration agents on dev cars only).
+ved_twin__roadsim-physics-v2.json, written by the RoadSim calibration passes on dev cars only).
   pred / real   what the dev gate sees
   pred / twin   the network vs the simulator on the same car: a gap here is the prior / generator, not the physics
   twin / real   the simulator vs reality: a gap here is the physics

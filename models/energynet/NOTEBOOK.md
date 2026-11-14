@@ -234,7 +234,7 @@ rung's first-rule decision too.
 Notes on the ladder:
 - r3 (RoadSim's own label model) and r5 (plug-in patch) each missed the D2 margin by a hair (-0.0093, -0.0100), and v1
   had kept both. Together (r5b) they pass (-0.0102). The twin read (`twin_read.py`, dev cars against their own RoadSim v2
-  twins from the calibration agents' check) showed why the patch matters: before it, the network put the dev Volt and
+  twins from the RoadSim calibration check) showed why the patch matters: before it, the network put the dev Volt and
   Energi 33% above their own twins (the generated plug-ins' packs are energy cells at 3 C, so the engine starts); after,
   6%.
 - r6 (plain 5-network ensemble) gained only +0.004 skill and was rejected; r7 (5 networks reading the model year) gained

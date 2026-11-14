@@ -2,7 +2,7 @@
 
 # Vehicle project (RoadSim) — status (13 Nov 2026)
 
-Greg's whole-vehicle physics + systems project for ML Ratchet: every architecture (conventional, P2/series/power-split
+The whole-vehicle physics + systems project for ML Ratchet: every architecture (conventional, P2/series/power-split
 hybrid, PHEV, BEV), cars through class-8 trucks and buses, at subsystem level, on real roads with real grades and weather.
 Built in two phases by parallel Opus agents from `VEHICLE_BRIEF.md` and `PHASE2_BRIEF.md` (both in the zip).
 
@@ -11,9 +11,9 @@ Built in two phases by parallel Opus agents from `VEHICLE_BRIEF.md` and `PHASE2_
   - `roadsim` package, checks, briefs
   - `realdata` loader, frozen splits, EPA/fueleconomy/heavy-duty tables, cycles, baselines
   - The VED trips (≈1.2 GB) are not included; build scripts and sources are.
-- **EnergyNet v1.0**, trip energy predictor: https://claude.ai/artifact/UYg6maW3hrMNAG3h8h6jRg · `energynet-v1.0.zip` · `claude/energynet-status.md`
-- **TripDetective v1.0**, infers the vehicle from a trip log: https://claude.ai/artifact/2DFuvMBBAwREG9rx5e3tHg · `tripdetective-v1.0.zip` · `claude/tripdetective-status.md`
-- **HybridPilot v1.0**, learned hybrid energy management: https://claude.ai/artifact/3MU8pXNtGc65HTDnQ8Cgup · `hybridpilot-v1.0.zip` · `claude/hybridpilot-status.md`
+- **EnergyNet v1.0**, trip energy predictor: `models/energynet/lab/` · `energynet-v1.0.zip` · `claude/energynet-status.md`
+- **TripDetective v1.0**, infers the vehicle from a trip log: `models/tripdetective/lab/` · `tripdetective-v1.0.zip` · `claude/tripdetective-status.md`
+- **HybridPilot v1.0**, learned hybrid energy management: `models/hybridpilot/lab/` · `hybridpilot-v1.0.zip` · `claude/hybridpilot-status.md`
 - Pages are private until shared.
 - All demos were run from unzipped copies on 13 Nov.
 
@@ -114,13 +114,13 @@ Built in two phases by parallel Opus agents from `VEHICLE_BRIEF.md` and `PHASE2_
 - The simulator-vs-real check (exam HEVs) shows RoadSim fuel at 0.80× logged. That is far larger than the gaps between strategies, so the ranking holds only inside RoadSim.
 - The fixed SOC correction over-credits (constant-s ECMS 105% vs 99.6% matched).
 
-## Next (for Greg's code agent)
+## Next (for the repository integration pass)
 1. **Upstream the dev-calibrated wrappers** into roadsim, bump `PHYSICS_VERSION`, re-run checks and re-score every rung:
    - EnergyNet's MAF label model, on-road loads and PHEV hardware patch
    - TripDetective's OBD emulator and mass prior
    - HybridPilot's twin fixes: engine on above ~70 km/h, electric cabin heat for PHEVs, start penalty
 2. **Fix the known simulator gaps:** P2 torque converter and start losses, cold weather, A/C, Leaf heating.
-3. **Find real heavy-duty trip data** (Fleet DNA via Greg's browser; the full ZTBus set from ETH was rate-limited).
+3. **Find real heavy-duty trip data** (Fleet DNA needs a browser download; the full ZTBus set from ETH was rate-limited).
 4. **Replace the hard-coded `/home/claude/road` paths.** Add RoadSim to ML Ratchet as a shared module under the three models.
 
 ## Added 14 Nov 2026

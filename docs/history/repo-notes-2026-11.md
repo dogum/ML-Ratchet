@@ -1,6 +1,6 @@
 # ML Ratchet repo — running notes
 
-Greg's running document for turning the physics-ML collection into one big open-source repo. He'll work out the details in Claude Code when he's ready; until then, add to this file whenever a repo-level decision, to-do or idea comes up.
+The running document for turning the physics-ML collection into one big open-source repo. The details were to be worked out in Claude Code later; until then, add to this file whenever a repo-level decision, to-do or idea comes up.
 
 ## The idea
 
@@ -8,7 +8,7 @@ Physics first, data second. Every model learns only from simulated physics (inje
 
 ## Name
 
-- Greg leans toward **ML Ratchet**. Other names he liked: **First Light**, **Ratchet**, **Ab Initio**.
+- The owner leans toward **ML Ratchet**. Other names considered: **First Light**, **Ratchet**, **Ab Initio**.
 - "Ratchet" names what makes the collection different. A model only moves up a rung if it beats a frozen simulated test by more than a margin and doesn't get worse on a small real dev set. The final exam on real data is never used to choose anything.
 - "Ab Initio" ("from first principles") names the physics-first idea.
 
@@ -26,8 +26,8 @@ Physics first, data second. Every model learns only from simulated physics (inje
 | BeatNet v1.0 | Heartbeat classes from ECG (research only, not a medical device) | https://claude.ai/artifact/BtCFF3jmGchgCqkbjpAyeH | `beatnet-v1.0.zip` |
 | StarQuake v1.0 | Red-giant oscillations → mass and radius | https://claude.ai/artifact/Wfu9o3WtAegSyqMzPEKBav | `starquake-v1.0.zip` |
 
-- Related, not ML: Collision Course (https://claude.ai/artifact/T2b4hUR7A5CVLogNbfkm3T) and Soft-Body Lab (own git repo on Greg's Mac, `~/Developer/soft-body-lab`).
-- All zips were sent in the 6–7 Nov cloud session chat. The four newest were built by parallel Opus agents from a shared brief (the recipe as a checklist; worth turning into the repo's "how to add a model" guide).
+- Related, not ML: Collision Course (https://claude.ai/artifact/T2b4hUR7A5CVLogNbfkm3T) and Soft-Body Lab (its own git repo, kept locally).
+- All zips were delivered in the 6–7 Nov cloud session. The four newest were built by parallel Opus agents from a shared brief (the recipe as a checklist; worth turning into the repo's "how to add a model" guide).
 - Note: the four newest zips unpack into a top-level folder (`<name>-v1.0/`); the older five unpack flat. Normalize this in the repo. Cloud workspaces are temporary, so the downloaded zips and the pages are the durable copies.
 - Per-project details are in each `claude/<project>-status.md` doc.
 
@@ -35,9 +35,9 @@ Physics first, data second. Every model learns only from simulated physics (inje
 
 - **License:** none chosen yet. ChirpNet's README has a TODO for it. LIGO data stays CC BY 4.0. Check every dataset's terms (GWOSC, PVDAQ, Severson/Toyota, MAST/TESS, EarthScope/USGS) and credit each in its model card.
 - **Paths:** the `training/` scripts in every zip are hardcoded to cloud paths (`/home/claude/gw`, `/sun`, `/cell`, `/transit`, `/quake`, `/bearing`, `/swell`, `/beat`, `/star`). They need to become relative paths or one config setting.
-- **Exams waiting on data from Greg:**
-  - ChirpNet's O3 exam: the GWOSC servers are blocked from the cloud sandbox. Greg attaches H1+L1 32 s / 4 kHz HDF5 files for the listed O3 events.
-  - CellSense's other chemistries: Sandia NCA/NMC/LFP files from BatteryArchive, downloaded in his browser or via his Mac.
+- **Exams waiting on data the owner must fetch:**
+  - ChirpNet's O3 exam: the GWOSC servers are blocked from the cloud sandbox. The fix: attach H1+L1 32 s / 4 kHz HDF5 files for the listed O3 events.
+  - CellSense's other chemistries: Sandia NCA/NMC/LFP files from BatteryArchive, downloaded in a browser or on a local machine.
 - **Shared layout:** every zip already has a numpy-only model, a model card with its limits, a demo on real examples and the full training code. That should make the merge straightforward.
 
 ## Repo shape (ideas, not decided)

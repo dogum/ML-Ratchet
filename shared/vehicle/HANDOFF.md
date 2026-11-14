@@ -1,6 +1,6 @@
 # Vehicle project handoff: what exists, what's missing, and how to finish it
 
-For Greg's code agent, 13 Nov 2026. This is the "make it complete" list for the whole-vehicle work in ML Ratchet
+Written 13 Nov 2026 for the repository integration pass. This is the "make it complete" list for the whole-vehicle work in ML Ratchet
 (github.com/dogum/ML-Ratchet). Read this first, then `VEHICLE_BRIEF.md` (the contract), `roadsim/README.md`,
 `roadsim/LIMITS.md` and `data/DATA.md`.
 
@@ -11,10 +11,10 @@ For Greg's code agent, 13 Nov 2026. This is the "make it complete" list for the 
 | RoadSim simulator (`roadsim`, numpy/scipy) | `roadsim-roaddata-v1.0.zip` → `roadsim/` | v1, verified (section 3) |
 | Real data loader (`realdata`), frozen splits, baselines | same zip → `realdata/`, `data/` | v1, two bugs fixed 13 Nov |
 | Physics checks and their JSONs | same zip → `checks/` (`run_all.sh`) | pass; numbers in `roadsim/README.md` |
-| EnergyNet (trip energy predictor) | `energynet-v1.0.zip`, page https://claude.ai/artifact/UYg6maW3hrMNAG3h8h6jRg | v1.0 released |
-| TripDetective (infers the car from a log) | `tripdetective-v1.0.zip`, page https://claude.ai/artifact/2DFuvMBBAwREG9rx5e3tHg | v1.0 released |
-| HybridPilot (learned hybrid energy management) | `hybridpilot-v1.0.zip`, page https://claude.ai/artifact/3MU8pXNtGc65HTDnQ8Cgup | v1.0 released |
-| Status docs | claude.ai project "Physics Fun": `roadsim-status.md`, `energynet-status.md`, `tripdetective-status.md`, `hybridpilot-status.md` | current |
+| EnergyNet (trip energy predictor) | `energynet-v1.0.zip`, page now `models/energynet/lab/` | v1.0 released |
+| TripDetective (infers the car from a log) | `tripdetective-v1.0.zip`, page now `models/tripdetective/lab/` | v1.0 released |
+| HybridPilot (learned hybrid energy management) | `hybridpilot-v1.0.zip`, page now `models/hybridpilot/lab/` | v1.0 released |
+| Status docs | the cloud project where the vehicle work was built: `roadsim-status.md`, `energynet-status.md`, `tripdetective-status.md`, `hybridpilot-status.md` | current |
 
 - Each model zip has a numpy-only inference module, weights, a demo on real exam data, `MODEL_CARD.md`, and `training/` with every script, including the dev-calibration wrappers listed in section 4.
 - The HybridPilot demo needs `roadsim`; the other two don't.
@@ -24,9 +24,9 @@ For Greg's code agent, 13 Nov 2026. This is the "make it complete" list for the 
   - the EPA ALPHA map archive, 298 MB (`roadsim/tools/` fetches it; the maps actually used ship inside `roadsim/roadsim/data/`)
   - the simulated training banks
 
-## 2. Greg's original ask vs what was built
+## 2. The original ask vs what was built
 
-Greg asked for every architecture, many hybrid control strategies, subsystem-level models, and real grades, speeds,
+The ask was for every architecture, many hybrid control strategies, subsystem-level models, and real grades, speeds,
 dynamics, terrain, tire rolling resistance, weights, aero, wind and temperature, all supported by real data where possible.
 
 | Ask | Status | Notes / gap |
@@ -122,14 +122,14 @@ Each item has a "done when". Every physics change must:
 | Generated hybrids | ~20 % less efficient than real EPA hybrids | Draw hybrid bodies from efficient car/SUV donors | EPA dev | Generator HEV FE distribution matches EPA |
 | City/highway tilt | FTP +5.6 %, HWFET −4.3 % | Low-load losses (idle, converter slip) up; highway driveline/aux down | EPA dev | Both medians within ±3 % |
 
-### P1: real data still missing (blocked here; Greg can download in a browser)
+### P1: real data still missing (blocked from the sandbox; each needs a browser download)
 - **Argonne D3 (Downloadable Dynamometer Database).** anl.gov returns 403 from the sandbox. It has 10 Hz dyno tests of modern HEVs, PHEVs and BEVs with fuel, current, voltage, engine speed and temperature. This is the best twin-calibration data available for the P1 table above, especially P2, e:HEV, cold and A/C. Use it as dev and a second exam, split by vehicle.
 - **NREL Fleet DNA and bus evaluations.** nrel.gov is blocked. These are real truck and bus drive traces with fuel; they give heavy duty a real exam. Grade by vehicle, never by trip.
 - **Full ZTBus set** (1,409 missions, ETH repository returned HTTP 429). Only 10 missions have traces now. Adding the rest grades EnergyNet on buses properly, and lets TripDetective estimate bus mass from passenger counts.
 - **More EVs.** VED has only 3 Leafs (2 in the exam). Any public EV trip set with battery current would help EnergyNet's EV bias (−20 %).
 - **A modern-fleet trip dataset.** VED is 2017–18 cars. EnergyNet's petrol highway bias (+15 % on EPA) comes from an old-fleet prior; a model-year input plus newer data fixes it.
 
-### P2: physics Greg asked for that is still simplified
+### P2: requested physics that is still simplified
 1. **Sub-second mode (10 Hz)** for shifts, engine starts, clutch slip and tip-ins. Today it's 1 Hz with lumped events. Needed for drivability metrics and P2 fidelity.
 2. **Tyre model.** Slip, load transfer and a friction ellipse, so regen limits come from physics, and snow/gravel/wet change traction, not only Crr. Also tyre size and brand Crr classes (EU label A–E).
 3. **Driver model.** Lag, overshoot and aggressiveness variation (VED shows it); eco vs aggressive drivers as an input.
@@ -170,7 +170,7 @@ Each item has a "done when". Every physics change must:
   - `tripdetective.read`
   - `hybridpilot.compare`
 - **Website lab.** One "garage" page where a visitor picks a vehicle and route and sees all three models on the same trip.
-- **Share the pages.** The three Artifact pages are private on claude.ai; the repo site should host its own copies.
+- **Share the pages.** The three original pages were private; the repo site should host its own copies.
 
 ## 5. Known caveats to keep in the docs
 - **VED fuel is estimated.** For 351 of 384 cars it comes from MAF and fuel trims (or load × rpm), not metered. It misses enrichment and can read air during fuel cut-off.

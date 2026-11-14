@@ -1,6 +1,6 @@
 # RoadSim / vehicle project: shared plan (read with /home/claude/AGENT_BRIEF.md)
 
-Greg's next collection project (repo: github.com/dogum/ML-Ratchet, physics first, graded on reality). It is both a
+The collection's next project (repo: github.com/dogum/ML-Ratchet, physics first, graded on reality). It is both a
 physics problem and a systems problem: whole vehicles at subsystem level, every architecture, many hybrid control
 strategies, real roads, real weather, light-duty AND heavy-duty. It is staged:
 
