@@ -43,7 +43,7 @@ print(E["ba"][0], E["day"][0], d["mw"][0].round(), E["d_true"][0])
 
 ## The exam
 
-Every day of 2023-2025, forecast at 10:00 local standard time the day before for the 24 hours of the next day. Demand error is the mean absolute percentage error over hours where every method has a value; wind and solar error is total absolute error over total output. The headline uses the weather that actually happened, an upper bound: the grids' own forecasts had to use forecast weather. A second run uses real archived day-ahead forecasts, reachable only for 2024 before the archive's rate limit. Raw results: training/exam_r8_wide.json. Every number here is on real data that never chose anything.
+Every day of 2023-2025, forecast at 10:00 local standard time the day before for the 24 hours of the next day. Demand error is the mean absolute percentage error over hours where every method has a value; wind and solar error is total absolute error over total output. The headline uses the weather that actually happened, an upper bound: the grids' own forecasts had to use forecast weather. A second run uses real archived day-ahead forecasts, reachable only for 2024 before the archive's rate limit. Raw results: training/exam_r8_wide.json. Re-scored in the repository from the shipped weights (training/rescore_release.py): every actual-weather number reproduced. Every number here is on real data that never chose anything.
 
 | Metric | DemandCast | Baselines | |
 |---|---|---|---|
@@ -135,7 +135,6 @@ Demand is a building-stock thermal model (training/buildings.py): conductance ×
 ## Help wanted
 
 - Open-Meteo Previous Runs API (archived day-ahead weather forecasts) answered HTTP 429 after 1-25 year-requests per half hour from the shared cloud address; only 2024 population points (and 2022 temperature) were fetched. A full 2022-2025 forecast-weather archive is needed for the forecast-mode exam and for training on real forecast errors.
-- NASA POWER hourly series at every GridData weather point are not in the GridData v1.0 zip (data/raw/), so the weather bundles (training/wxprep.py) and the full 2023-2025 exam cannot be rebuilt from the repository without the full data rebuild.
 
 ## Next rungs
 

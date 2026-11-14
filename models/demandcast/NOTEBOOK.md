@@ -124,3 +124,30 @@ and solar physics stay tabulated in Python over weather multipliers (wind × 0.5
 0.1) and are interpolated, as on the original page. With neutral controls the stepper reproduces the page's stored
 prior to 1.3e-4 (prior stored to 1 MW) and the physics features to 5e-4 (temperature stored to 0.01 K). Float16 weights
 move demand by at most 6e-5. Browser vs Python on 80 cases (16 days × 5 control settings): worst 2.3e-7 relative.
+
+## 14 Nov 2026 — exam re-scored from the shipped weights
+
+NASA POWER hourly series for all 184 GridData weather points were fetched into `shared/grid/data/raw/weather/power/`
+(the data rebuild's `power` stage; the v1.0 zip does not carry them), which removed the blocker above. The pipeline was
+rebuilt in `work/` from the scripts as run: `wxprep.py` (8 grids in parallel, about 2 min), `renew.py`,
+`calib_demand.py dev2019` / `dev2021` and `calib_renew.py dev2019` / `dev2021` (the per-year fits the cross-year dev
+bank needs; the zip ships only the two-year `dev` fits, which the exam uses), `realbank.py dev` (5,840 days) and
+`realbank.py exam` (8,760 days). Then `training/rescore_release.py` (new) ran `exam.main()` unchanged, with a numpy
+stand-in for `evaluate.py` (load / predict / sigma_scale on `demandcast.py` and `demandcast_weights.npz`; `exam.py` and
+`evaluate.py` need the torch checkpoint). About 25 min wall clock.
+
+- The rebuilt physics matches the release: the wind and solar dev scales from the rebuilt priors equal the released
+  `calib/renew_dev.json` to 4 decimals for all 8 grids, and the rebuilt exam rows for the 16 `examples/` days equal
+  `examples/exam_days.npz` exactly (inputs, physics prior, truth, grid forecast, wind and solar; difference 0).
+- Re-fitted sigma scales on the rebuilt dev bank: demand 1.14078 (released 1.14077), wind 1.0 (1.0), solar 1.33997
+  (1.33996).
+- All 125 compared numbers reproduce to the printed precision (`work/data/exam/release_vs_released.json`): pooled demand
+  2.38 % vs grid DA 3.41, persistence 4.90, same hour last week 7.95, physics alone 5.02, bands 64 / 89 %, 209,340
+  hours; wind 19.2 % vs physics 22.7, persistence 43.5, climatology 41.4, bands 71 / 94 %; solar 29.9 % vs physics
+  36.3, persistence 19.1, climatology 39.2, bands 65 / 84 %; per grid demand ERCO 2.25 (DA 2.40), CISO 3.37 (6.86),
+  PJM 2.10 (3.49), MISO 1.88 (2.71), SWPP 2.41 (4.31), ISNE 3.00 (2.56), NYIS 1.97 (2.97), BPAT 2.10 (2.00), and every
+  per-grid wind, solar, persistence, physics and coverage value. Largest difference: solar 68 % coverage 65.42 vs
+  65.43 %. The temperature bands agree to 2e-7 (3.25 % below -10 °C, as noted above).
+- Not re-scored: the forecast-weather mode (2024: 2.92 % vs 3.20 %, wins in 4 of 8 grids). The Open-Meteo cache is not
+  shipped, so `real.Forecasts` finds no archived forecasts and `realbank.py exam` builds actual-weather rows only. The
+  named-period numbers (`events.py`) were not re-run. No released number changed.

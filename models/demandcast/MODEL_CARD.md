@@ -163,10 +163,14 @@ grid phase 1); pvlib (BSD-3); PsychroLib (MIT) for checks.
   `training/exam.py`, recovered from the page's embedded copy), to the printed precision. Two corrections against that
   file: specific humidity matches PsychroLib to 0.22 % (`training/checks/physics.json`; "0.3 %" above), and below
   -10 C (913 h) the demand error is 3.25 % (grid DA 3.33 %), so "flat at 2.2-2.7 %" holds from -10 C up.
-- The full 2023-2025 exam was **not** re-scored here: the weather bundles (`training/wxprep.py`) need NASA POWER series
-  at every GridData weather point (`shared/grid/data/raw/weather/power/`), which the GridData v1.0 zip does not ship;
-  the forecast-weather numbers also need the Open-Meteo cache, which is not shipped either. Physics checks 1-3, the COP
-  points and the wind-table check were re-run and reproduce `training/checks/physics.json` exactly.
+- The 2023-2025 actual-weather exam was re-scored from the shipped weights (`training/rescore_release.py`: the whole
+  pipeline rebuilt in `work/`, then `exam.py`'s own metrics with a numpy stand-in for the torch loader). All 125
+  compared numbers (pooled and per grid: demand, wind, solar, every baseline, coverage, hours, the dev-fitted sigma
+  scales) reproduce to the printed precision, e.g. pooled demand 2.38 % vs grid DA 3.41 %, wind 19.2 %, solar 29.9 %,
+  bands 64 / 89 %. The NASA POWER per-point series it needs are not in the GridData v1.0 zip; they come from the data
+  rebuild's `power` stage. The forecast-weather numbers were not re-scored: they need the Open-Meteo cache, which is
+  not shipped. Physics checks 1-3, the COP points and the wind-table check reproduce `training/checks/physics.json`
+  exactly.
 - Live instrument: the three networks (float16) on the 112 exam days of the original page (14 per grid), re-running the
   building physics for the 38 h after issue and the tabulated wind/solar physics when temperature, humidity, sunshine
   or wind change. Browser = Python to 2.3e-7 on 80 cases (`site/tests/parity.test.ts`). On those 112 days with the

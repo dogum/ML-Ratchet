@@ -7,9 +7,8 @@ The days are the release page's fixed draw (training/webdata.py, seed 2024): one
 each exam year, plus each grid's hottest and coldest exam day, 14 per grid. Their per-day inputs (weather for the 38 h
 from issue to the end of day D, filter states at issue, occupancy schedules, the network's other inputs, wind and solar
 physics tabulated over weather multipliers, the truth and the grid's own day-ahead forecast) were written by that script
-into the original page, lab/index.html, which this exporter reads. The release pipeline's weather bundles need NASA
-POWER series at every weather point, which the GridData v1.0 zip does not ship (NOTEBOOK.md), so they are not rebuilt
-here.
+into the original page, lab/index.html, which this exporter reads, so it runs without the pipeline's weather bundles
+(those need NASA POWER series at every weather point from GridData's data rebuild, not the v1.0 zip; NOTEBOOK.md).
 
 The browser re-runs the building-stock physics for those 38 h and the three networks on every change. perturb() below is
 the one definition of what each control does (ui.ts and net.ts mirror it); physics() is checked here against the

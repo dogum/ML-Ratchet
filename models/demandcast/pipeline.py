@@ -1,6 +1,6 @@
 """Full DemandCast pipeline for one grid and one day, from raw inputs (needs the ML-Ratchet grid data: GridData's
 EIA-930, fleet and weather files, and DemandCast's weather bundles built by training/wxprep.py into work/data/wx/;
-wxprep.py needs NASA POWER series at every weather point, which the GridData v1.0 zip does not ship).
+wxprep.py needs NASA POWER series at every weather point: GridData's data rebuild, `power` stage, not the v1.0 zip).
 
     python3 pipeline.py ERCO 2024-08-20            # actual weather (upper bound)
     python3 pipeline.py ERCO 2024-08-20 forecast   # day-ahead forecast weather (Open-Meteo previous runs, if cached)
