@@ -75,7 +75,12 @@ From `checks/*.json`; re-run `checks/run_all.sh` after any change.
   `--from-zip` unpacks the v1.0 release instead. The NESO data come through the CKAN datastore API; CAMPD through the
   no-key bulk route.
 - **P0.4 licences: done** (`DATA_LICENSES.md`, checked on the providers' pages; CAISO's terms page did not load).
-- **Checks:** `checks/run_all.py` re-runs every check and compares every number with the v1 JSONs.
+- **Checks reproduce** (`checks/REPRODUCED.md`): `checks/run_all.py` re-ran every check on this repository's machine
+  and compared every number with the v1 JSONs. Exact: analytic frequency, GB 9 Aug 2019, dev events, ANDES, generator,
+  renewables, demand, the dev-2019 calibration. ERCOT 2019 and 2022 by fuel, CO2 and prices to the published digits
+  (MILP noise in the 4th-6th digit). One real difference: the ACTIVSg2000 24 h MILP prices in hours 14-16.
+- **Models re-scored from their shipped weights** on this data: GridPulse, PlantDetective (395 units, on CAMPD rebuilt
+  from EPA), DemandCast (actual weather) exactly; BatteryPilot ERCOT exactly, CAISO 0.641 vs 0.642 (price decimals).
 - **Not done:** P0.5 (outage-rate leak), P0.6 (upstream fixes), P0.7 (the 3 Dec 2019 label), and everything in P1-P3.
 
 ## 4. Prioritised work list

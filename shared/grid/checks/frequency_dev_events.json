@@ -1,0 +1,272 @@
+{
+ "GB": [
+  {
+   "event": "GB_20190809T155233",
+   "inputs": "ESO report inputs (D fitted on nadir 1)",
+   "measured_nadir_dev_Hz": -1.243694915254224,
+   "sim_nadir_dev_Hz": -1.2045137448722087,
+   "measured_t_nadir_s": 76.0,
+   "sim_t_nadir_s": 76.10000000000001,
+   "measured_f60_dev_Hz": -0.9096949152542209,
+   "sim_f60_dev_Hz": -0.8461459486887364,
+   "rms_Hz": 0.274447992601704,
+   "rms_0_75s_Hz": 0.043566416621614056,
+   "nadir_dev_err_pct": 3.150384382974362
+  },
+  {
+   "event": "GB_20191203T200030",
+   "inputs": "loss 1788 MW (medium), inertia 333 GVA s, demand 43733 MW",
+   "measured_nadir_dev_Hz": -0.28977966101694363,
+   "sim_nadir_dev_Hz": -1.2061507357568928,
+   "measured_t_nadir_s": 13.0,
+   "sim_t_nadir_s": 17.9,
+   "measured_f60_dev_Hz": -0.24677966101694437,
+   "sim_f60_dev_Hz": -0.5228621081912692,
+   "rms_Hz": 0.5523278726143555,
+   "rms_0_75s_Hz": 0.5523278726143555,
+   "nadir_dev_err_pct": -316.2302942601511
+  },
+  {
+   "event": "GB_20190711T075329",
+   "inputs": "loss 1153 MW (medium), inertia 285 GVA s, demand 32998 MW",
+   "measured_nadir_dev_Hz": -0.3869322033898328,
+   "sim_nadir_dev_Hz": -0.49106808136279767,
+   "measured_t_nadir_s": 11.0,
+   "sim_t_nadir_s": 11.0,
+   "measured_f60_dev_Hz": -0.17393220338983895,
+   "sim_f60_dev_Hz": -0.381513667445013,
+   "rms_Hz": 0.14227356955240134,
+   "rms_0_75s_Hz": 0.14227356955240134,
+   "nadir_dev_err_pct": -26.913210392066627
+  },
+  {
+   "event": "GB_20190701T072734",
+   "inputs": "loss 1000 MW (medium), inertia 196 GVA s, demand 32737 MW",
+   "measured_nadir_dev_Hz": -0.34842372881355743,
+   "sim_nadir_dev_Hz": -0.4673262766505033,
+   "measured_t_nadir_s": 6.0,
+   "sim_t_nadir_s": 6.7,
+   "measured_f60_dev_Hz": -0.1824237288135535,
+   "sim_f60_dev_Hz": -0.30717370252435217,
+   "rms_Hz": 0.1226693028567165,
+   "rms_0_75s_Hz": 0.1226693028567165,
+   "nadir_dev_err_pct": -34.12584677910125
+  }
+ ],
+ "ERCO": [
+  {
+   "event": "ERCO_20190421T203000",
+   "mw_loss": 423.214,
+   "load_MW": 40226.0,
+   "inertia_GWs": 174.778,
+   "sim_inertia_before_rescale_GWs": 181.0357394703148,
+   "measured_nadir_dev_Hz": -0.117,
+   "sim_nadir_dev_Hz": -0.10946500149571392,
+   "sim_t_nadir_s": 5.05,
+   "sim_settle_dev_Hz": -0.09192457746507898,
+   "sim_headroom_MW": 2367.3730139375566,
+   "nadir_dev_err_pct": 6.44016966178298,
+   "measured_MW_per_0.1Hz": 361.7213675213675,
+   "sim_MW_per_0.1Hz": 386.62037566095574
+  },
+  {
+   "event": "ERCO_20190523T214100",
+   "mw_loss": 568.977,
+   "load_MW": 61048.0,
+   "inertia_GWs": 288.788,
+   "sim_inertia_before_rescale_GWs": 296.9942037546871,
+   "measured_nadir_dev_Hz": -0.11,
+   "sim_nadir_dev_Hz": -0.0928259730291785,
+   "sim_t_nadir_s": 4.9,
+   "sim_settle_dev_Hz": -0.07759436004991471,
+   "sim_headroom_MW": 3629.376506968778,
+   "nadir_dev_err_pct": 15.61275179165591,
+   "measured_MW_per_0.1Hz": 517.2518181818181,
+   "sim_MW_per_0.1Hz": 612.9502136445694
+  },
+  {
+   "event": "ERCO_20210117T033500",
+   "mw_loss": 453.471,
+   "load_MW": 41291.0,
+   "inertia_GWs": 211.857,
+   "sim_inertia_before_rescale_GWs": 223.857197697,
+   "measured_nadir_dev_Hz": -0.111,
+   "sim_nadir_dev_Hz": -0.12735740529447526,
+   "sim_t_nadir_s": 6.65,
+   "sim_settle_dev_Hz": -0.10796535313080113,
+   "sim_headroom_MW": 1770.3284272906255,
+   "nadir_dev_err_pct": -14.736401166193925,
+   "measured_MW_per_0.1Hz": 408.5324324324324,
+   "sim_MW_per_0.1Hz": 356.06174525265044
+  },
+  {
+   "event": "ERCO_20210501T031400",
+   "mw_loss": 780.28,
+   "load_MW": 38735.0,
+   "inertia_GWs": 238.935,
+   "sim_inertia_before_rescale_GWs": 215.79578093547707,
+   "measured_nadir_dev_Hz": -0.161,
+   "sim_nadir_dev_Hz": -0.16984551003695003,
+   "sim_t_nadir_s": 7.000000000000001,
+   "sim_settle_dev_Hz": -0.1464022979236148,
+   "sim_headroom_MW": 1585.0425829660524,
+   "nadir_dev_err_pct": -5.494105613012439,
+   "measured_MW_per_0.1Hz": 484.6459627329192,
+   "sim_MW_per_0.1Hz": 459.4057269045554
+  },
+  {
+   "event": "ERCO_20210519T170600",
+   "mw_loss": 420.15,
+   "load_MW": 41658.0,
+   "inertia_GWs": 223.178,
+   "sim_inertia_before_rescale_GWs": 204.0861051204505,
+   "measured_nadir_dev_Hz": -0.09,
+   "sim_nadir_dev_Hz": -0.09043172924303633,
+   "sim_t_nadir_s": 6.1,
+   "sim_settle_dev_Hz": -0.07840843814843623,
+   "sim_headroom_MW": 1749.410539490327,
+   "nadir_dev_err_pct": -0.47969915892925874,
+   "measured_MW_per_0.1Hz": 466.83333333333337,
+   "sim_MW_per_0.1Hz": 464.6046288364584
+  }
+ ],
+ "ERCO_damping_fit": {
+  "D_pct_per_pct": 2.5,
+  "D_pct_per_Hz": 4.166666666666667,
+  "nadir_err_pct_after_fit": [
+   6.44016966178298,
+   15.61275179165591,
+   -14.736401166193925,
+   -5.494105613012439,
+   -0.47969915892925874
+  ],
+  "grid_rms_err_pct": [
+   [
+    1.0,
+    30.27147787647796
+   ],
+   [
+    1.25,
+    25.157383580514598
+   ],
+   [
+    1.5,
+    20.64071832866117
+   ],
+   [
+    1.75,
+    16.75489840849206
+   ],
+   [
+    2.0,
+    13.603496985053196
+   ],
+   [
+    2.25,
+    11.381318207490844
+   ],
+   [
+    2.5,
+    10.322893304509337
+   ],
+   [
+    2.75,
+    10.48830297571497
+   ],
+   [
+    3.0,
+    11.614224125883096
+   ],
+   [
+    3.25,
+    13.310676208307685
+   ],
+   [
+    3.5,
+    15.282113237761227
+   ],
+   [
+    3.75,
+    17.35712806932219
+   ],
+   [
+    4.0,
+    19.445385363834788
+   ],
+   [
+    4.25,
+    21.499758088781306
+   ],
+   [
+    4.5,
+    23.49685255598403
+   ],
+   [
+    4.75,
+    25.424862796307103
+   ],
+   [
+    5.0,
+    27.279076575215953
+   ],
+   [
+    5.25,
+    29.058607515637835
+   ],
+   [
+    5.5,
+    30.76436436754792
+   ],
+   [
+    5.75,
+    32.398561447628694
+   ],
+   [
+    6.0,
+    33.96406977232125
+   ],
+   [
+    6.25,
+    35.46394594897065
+   ],
+   [
+    6.5,
+    36.90146445026904
+   ],
+   [
+    6.75,
+    38.279760372008695
+   ],
+   [
+    7.0,
+    39.602040728214725
+   ],
+   [
+    7.25,
+    40.871259751314945
+   ],
+   [
+    7.5,
+    42.09030454717667
+   ],
+   [
+    7.75,
+    43.261858793543404
+   ],
+   [
+    8.0,
+    44.388416440188884
+   ]
+  ]
+ },
+ "GB_summary": {
+  "n": 4,
+  "nadir_dev_err_pct_mean": -93.52974176208615,
+  "nadir_dev_err_pct_mae": 95.10493395357334
+ },
+ "ERCO_summary": {
+  "n": 5,
+  "nadir_dev_err_pct_mean": 0.26854310306065365,
+  "nadir_dev_err_pct_mae": 8.552625478314901
+ }
+}

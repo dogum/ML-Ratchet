@@ -1,0 +1,302 @@
+{
+ "what": "gridsim power flow vs PYPOWER 5.1 (independent Python port of MATPOWER) and pandapower 3.5",
+ "reference_env": ".refenv (pandas 2.3, numpy 2.4)",
+ "cases": {
+  "case9": {
+   "n_bus": 9,
+   "n_branch": 9,
+   "n_gen": 3,
+   "ac": {
+    "converged": true,
+    "iterations": 4,
+    "max_dVm_pu": 2.220446049250313e-16,
+    "max_dVa_deg": 2.398081733190338e-14,
+    "max_dPf_MW": 2.2737367544323206e-13,
+    "max_dQf_MVAr": 3.446132268436486e-13,
+    "losses_MW": 4.641021474482809,
+    "losses_ref_MW": 4.641021474482848,
+    "t_gridsim_s": 0.012926013000007211,
+    "t_pypower_s": 0.013248671333334036
+   },
+   "dc": {
+    "max_dVa_deg": 3.552713678800501e-15,
+    "max_dPf_MW": 4.263256414560601e-14,
+    "t_gridsim_s": 0.0011444040000014866,
+    "t_pypower_s": 0.0025177296666546076
+   },
+   "dc_vs_ac": {
+    "median_abs_flow_err_pct": 0.8932680817472515,
+    "p95_abs_flow_err_MW": 3.8435043990486597
+   }
+  },
+  "case14": {
+   "n_bus": 14,
+   "n_branch": 20,
+   "n_gen": 5,
+   "ac": {
+    "converged": true,
+    "iterations": 3,
+    "max_dVm_pu": 4.440892098500626e-16,
+    "max_dVa_deg": 3.019806626980426e-14,
+    "max_dPf_MW": 1.2789769243681803e-13,
+    "max_dQf_MVAr": 5.542233338928781e-13,
+    "losses_MW": 13.39327235789871,
+    "losses_ref_MW": 13.393272357898612,
+    "t_gridsim_s": 0.00825936933332135,
+    "t_pypower_s": 0.007798456666667637
+   },
+   "dc": {
+    "max_dVa_deg": 0.0,
+    "max_dPf_MW": 0.0,
+    "t_gridsim_s": 0.0010013803333398148,
+    "t_pypower_s": 0.001975763666640281
+   },
+   "dc_vs_ac": {
+    "median_abs_flow_err_pct": 2.949374437861556,
+    "p95_abs_flow_err_MW": 4.583743262540691
+   }
+  },
+  "case30": {
+   "n_bus": 30,
+   "n_branch": 41,
+   "n_gen": 6,
+   "ac": {
+    "converged": true,
+    "iterations": 4,
+    "max_dVm_pu": 6.661338147750939e-16,
+    "max_dVa_deg": 3.241851231905457e-14,
+    "max_dPf_MW": 4.263256414560601e-13,
+    "max_dQf_MVAr": 1.3891110484109959e-12,
+    "losses_MW": 2.443803136777384,
+    "losses_ref_MW": 2.4438031367772393,
+    "t_gridsim_s": 0.012133817999976296,
+    "t_pypower_s": 0.011259147999984028
+   },
+   "dc": {
+    "max_dVa_deg": 7.993605777301127e-15,
+    "max_dPf_MW": 4.263256414560601e-14,
+    "t_gridsim_s": 0.0020322369999803414,
+    "t_pypower_s": 0.001928404333322457
+   },
+   "dc_vs_ac": {
+    "median_abs_flow_err_pct": 3.2981657090315406,
+    "p95_abs_flow_err_MW": 0.9895904709535541
+   }
+  },
+  "case57": {
+   "n_bus": 57,
+   "n_branch": 80,
+   "n_gen": 7,
+   "ac": {
+    "converged": true,
+    "iterations": 3,
+    "max_dVm_pu": 2.886579864025407e-15,
+    "max_dVa_deg": 4.263256414560601e-14,
+    "max_dPf_MW": 8.757439218243235e-13,
+    "max_dQf_MVAr": 1.4210854715202004e-12,
+    "losses_MW": 27.86375150557035,
+    "losses_ref_MW": 27.863751505570637,
+    "t_gridsim_s": 0.007908715333352726,
+    "t_pypower_s": 0.00997592399998363
+   },
+   "dc": {
+    "max_dVa_deg": 1.0658141036401503e-14,
+    "max_dPf_MW": 1.7763568394002505e-13,
+    "t_gridsim_s": 0.0011622220000238788,
+    "t_pypower_s": 0.001821643333338822
+   },
+   "dc_vs_ac": {
+    "median_abs_flow_err_pct": 5.71288022591289,
+    "p95_abs_flow_err_MW": 5.5897677037760625
+   }
+  },
+  "case118": {
+   "n_bus": 118,
+   "n_branch": 186,
+   "n_gen": 54,
+   "ac": {
+    "converged": true,
+    "iterations": 3,
+    "max_dVm_pu": 9.992007221626409e-16,
+    "max_dVa_deg": 1.5276668818842154e-13,
+    "max_dPf_MW": 2.9345414986892138e-12,
+    "max_dQf_MVAr": 3.510081114654895e-12,
+    "losses_MW": 132.86287188870406,
+    "losses_ref_MW": 132.86287188870247,
+    "t_gridsim_s": 0.009218984999999217,
+    "t_pypower_s": 0.009760427333314206
+   },
+   "dc": {
+    "max_dVa_deg": 3.197442310920451e-14,
+    "max_dPf_MW": 1.0658141036401503e-12,
+    "t_gridsim_s": 0.0012113916666673201,
+    "t_pypower_s": 0.00200354266667091
+   },
+   "dc_vs_ac": {
+    "median_abs_flow_err_pct": 4.9188709990877415,
+    "p95_abs_flow_err_MW": 13.073114740420072
+   }
+  },
+  "case300": {
+   "n_bus": 300,
+   "n_branch": 411,
+   "n_gen": 69,
+   "ac": {
+    "converged": true,
+    "iterations": 5,
+    "max_dVm_pu": 3.552713678800501e-15,
+    "max_dVa_deg": 5.080380560684716e-13,
+    "max_dPf_MW": 2.7114310796605423e-11,
+    "max_dQf_MVAr": 6.866684998385608e-11,
+    "losses_MW": 408.31558178638545,
+    "losses_ref_MW": 408.31558178638613,
+    "t_gridsim_s": 0.01716603933330892,
+    "t_pypower_s": 0.020893802999997508
+   },
+   "dc": {
+    "max_dVa_deg": 8.526512829121202e-14,
+    "max_dPf_MW": 2.8421709430404007e-12,
+    "t_gridsim_s": 0.0021844413333080106,
+    "t_pypower_s": 0.002976328333337127
+   },
+   "dc_vs_ac": {
+    "median_abs_flow_err_pct": 4.11822887170534,
+    "p95_abs_flow_err_MW": 44.30362255685224
+   }
+  },
+  "case_ACTIVSg200": {
+   "n_bus": 200,
+   "n_branch": 245,
+   "n_gen": 49,
+   "ac": {
+    "converged": true,
+    "iterations": 2,
+    "max_dVm_pu": 1.532107773982716e-14,
+    "max_dVa_deg": 3.232969447708456e-13,
+    "max_dPf_MW": 5.156763904778927e-12,
+    "max_dQf_MVAr": 1.717948006074721e-11,
+    "losses_MW": 12.606896739622353,
+    "losses_ref_MW": 12.60689673962209,
+    "t_gridsim_s": 0.007445850666689087,
+    "t_pypower_s": 0.009660090000011223
+   },
+   "dc": {
+    "max_dVa_deg": 4.085620730620576e-14,
+    "max_dPf_MW": 1.4210854715202004e-12,
+    "t_gridsim_s": 0.0017053143333214393,
+    "t_pypower_s": 0.002386268000009295
+   },
+   "dc_vs_ac": {
+    "median_abs_flow_err_pct": 0.6182124378325153,
+    "p95_abs_flow_err_MW": 1.1806160461719972
+   }
+  },
+  "case_ACTIVSg2000": {
+   "n_bus": 2000,
+   "n_branch": 3206,
+   "n_gen": 544,
+   "ac": {
+    "converged": true,
+    "iterations": 4,
+    "max_dVm_pu": 5.329070518200751e-15,
+    "max_dVa_deg": 8.462563982902793e-12,
+    "max_dPf_MW": 2.730757842073217e-10,
+    "max_dQf_MVAr": 1.1795009413617663e-10,
+    "losses_MW": 1631.6626976268956,
+    "losses_ref_MW": 1631.662697626905,
+    "t_gridsim_s": 0.05522684366667363,
+    "t_pypower_s": 0.07854937933332924
+   },
+   "dc": {
+    "max_dVa_deg": 2.7036151095671812e-12,
+    "max_dPf_MW": 8.765255188336596e-11,
+    "t_gridsim_s": 0.007913812999997086,
+    "t_pypower_s": 0.008819595333344902
+   },
+   "dc_vs_ac": {
+    "median_abs_flow_err_pct": 2.670541588346781,
+    "p95_abs_flow_err_MW": 28.214157466916284
+   }
+  }
+ },
+ "pandapower": {
+  "case9": {
+   "max_dVm_pu": 8.956502206558525e-12,
+   "max_dVa_deg": 2.071756100008315e-10,
+   "losses_pp_MW": 4.641021474394353,
+   "losses_gridsim_MW": 4.641021474482809,
+   "dc_max_dVa_deg": 3.552713678800501e-15
+  },
+  "case14": {
+   "error": "FloatingPointError('invalid value encountered in divide')"
+  },
+  "case30": {
+   "max_dVm_pu": 8.937406370534973e-12,
+   "max_dVa_deg": 6.358891191382554e-10,
+   "losses_pp_MW": 2.4438031364029573,
+   "losses_gridsim_MW": 2.443803136777384,
+   "dc_max_dVa_deg": 3.1086244689504383e-15
+  },
+  "case57": {
+   "error": "FloatingPointError('invalid value encountered in divide')"
+  },
+  "case118": {
+   "max_dVm_pu": 2.4424906541753444e-14,
+   "max_dVa_deg": 1.2878587085651816e-12,
+   "losses_pp_MW": 132.68389451558104,
+   "losses_gridsim_MW": 132.86287188870406,
+   "dc_max_dVa_deg": 4.796163466380676e-14
+  },
+  "case300": {
+   "max_dVm_pu": 0.1071252586089475,
+   "max_dVa_deg": 3.064307477222277,
+   "losses_pp_MW": 389.01539466361766,
+   "losses_gridsim_MW": 408.31558178638545,
+   "dc_max_dVa_deg": 0.002559768753773284
+  }
+ },
+ "dc_opf_congested": {
+  "case_ACTIVSg200": {
+   "status": "Optimal",
+   "ref_success": true,
+   "n_tightened": 8,
+   "n_binding_gridsim": 3,
+   "cost_gridsim": 29599.308288175067,
+   "cost_pypower": 29599.308288206023,
+   "cost_rel_diff": 1.0458204417526124e-12,
+   "max_dPg_MW": 9.868327000006616e-08,
+   "max_dLMP_per_MWh": 0.00010261552291979115,
+   "lmp_range_gridsim": [
+    -24.104769815505243,
+    92.85633699589667
+   ],
+   "lmp_range_pypower": [
+    -24.10483401066121,
+    92.85643961141959
+   ],
+   "t_gridsim_s": 0.006922098000018195,
+   "t_pypower_s": 0.1533392520000234
+  },
+  "case_ACTIVSg2000": {
+   "status": "Optimal",
+   "ref_success": true,
+   "n_tightened": 8,
+   "n_binding_gridsim": 4,
+   "cost_gridsim": 1221613.499476557,
+   "cost_pypower": 1221613.4994768857,
+   "cost_rel_diff": 2.691169252632218e-13,
+   "max_dPg_MW": 0.004331062908448757,
+   "max_dLMP_per_MWh": 0.012739569431801101,
+   "lmp_range_gridsim": [
+    -773.3916673964991,
+    816.5527242307511
+   ],
+   "lmp_range_pypower": [
+    -773.3789278270673,
+    816.5458827556193
+   ],
+   "t_gridsim_s": 1.221841609500018,
+   "t_pypower_s": 2.715305118999936
+  }
+ }
+}
