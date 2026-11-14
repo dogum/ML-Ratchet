@@ -43,7 +43,8 @@ against Python, on real exam records, with controls that change the input so you
 <!-- totals:end -->
 
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself. The three
-vehicle models share one simulator and dataset: [the vehicle platform](docs/vehicle-platform.md).
+vehicle models share one simulator and dataset, [the vehicle platform](docs/vehicle-platform.md); the four power-grid
+models share another, [the grid platform](docs/grid-platform.md).
 
 ## Try it
 
@@ -102,6 +103,8 @@ docs/                 the method, the contract, lessons, the agent brief, data s
 site/                 the website (Astro + TypeScript), built from models/ and docs/, deployed to GitHub Pages
   src/instruments/      each model's network running live in the browser (parity-tested against Python)
 shared/vehicle/       a shared platform: RoadSim (whole-vehicle simulator) + RoadData (real trips, frozen splits)
+shared/grid/          a shared platform: GridSim (power-system simulator) + GridData (real grid data, frozen splits;
+                      `mlratchet data grid` fetches it)
 tests/                core tests, the contract, the vehicle platform, and every demo against its golden output
 ```
 

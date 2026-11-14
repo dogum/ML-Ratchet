@@ -10,6 +10,8 @@ repository: paths, page links and "status" refer to the cloud sessions where the
 | `ideas-2026-11.md` | The idea pool and lessons as they stood (7 Nov). Successors: [../backlog.md](../backlog.md), [../lessons.md](../lessons.md). |
 | `ideas-2026-11-13.md` | The same, updated 13 Nov 2026: GridSim chosen as the next project, other big-system candidates checked, vehicle lessons. |
 | `repo-notes-2026-11-13.md` | The repository notes as updated 13 Nov 2026, after publication. |
+| `ideas-2026-11-14.md` | The idea pool updated 14 Nov 2026: the power-grid project done (GridSim and four models), next big-system candidates (BuildingSim, Watershed, WindFarm), grid lessons. |
+| `repo-notes-2026-11-14.md` | The repository notes as updated 14 Nov 2026: the grid project waiting to come in as a shared module next to RoadSim. |
 
 ## Edits since
 
@@ -17,5 +19,9 @@ repository: paths, page links and "status" refer to the cloud sessions where the
   references to chat or agent sessions became project terms ("the owner", "the second v2 calibration pass"). Facts,
   numbers, dates and paths are unchanged. The original page links stay in the notebooks and the files above as records.
 
+- **14 Nov 2026.** The grid project's two notes files added (`*-2026-11-14.md`) with the same neutral wording; their
+  claude.ai page links were replaced by each model's `lab/` folder.
+
 Each model's own build notes are in `models/<id>/NOTEBOOK.md`. The vehicle platform's status as of 13 Nov 2026 is
-[shared/vehicle/STATUS.md](../../shared/vehicle/STATUS.md).
+[shared/vehicle/STATUS.md](../../shared/vehicle/STATUS.md); the grid platform's, as of 14 Nov 2026,
+[shared/grid/STATUS.md](../../shared/grid/STATUS.md).

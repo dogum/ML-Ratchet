@@ -2,16 +2,46 @@
 # from this file (mlratchet readme --write). Data reachability was checked from a cloud sandbox in Nov 2026.
 # status: candidate | checked (data endpoints answered) | blocked | in-progress
 ideas:
-  - id: gridsim
-    name: GridSim
-    domain: Energy
-    question: "Next up (chosen 13 Nov 2026): a shared electric-grid simulator and data package, like the vehicle platform, with several ratchet models on top."
-    physics: Generation with ramp limits, heat rates and droop; AC/DC power flow (pandapower as the independent check); inertia, governor and inverter response, load shedding; storage; weather-driven demand; unit commitment and dispatch
-    data: EIA grid monitor, ERCOT load history, CAISO OASIS, NESO 1-second frequency, PUDL, Texas A&M synthetic grids, BPA wind, IEM / NASA POWER weather
+  - id: dispatchnet
+    name: DispatchNet
+    domain: Power grids
+    question: "Can a network dispatch a power system's fleet hour by hour as well as the optimiser, in a fraction of the time? The fifth GridSim model, planned but not built (14 Nov 2026)."
+    physics: GridSim unit commitment and economic dispatch (MILP) on the real ERCOT fleet as the teacher; network constraints from ACTIVSg2000
+    data: EIA-930 generation by fuel and ERCOT prices (GridData's frozen splits)
     data_url: https://www.eia.gov/electricity/gridmonitor/
-    exam: "Per model: real frequency events (GridPulse), real demand and renewable output, dispatch against the optimum (as HybridPilot against DP)"
+    exam: "No real 'optimal dispatch' exists: grade on EIA-930 generation by fuel and real prices in 2023-2025, and on speed against the MILP"
+    status: candidate
+    note: "Wait for GridSim's coal/gas commitment fix (coal -43 % to +28 % by year today); otherwise the exam grades the simulator's gap, not the dispatcher."
+  - id: gridsim-v2
+    name: GridSim v2 calibration
+    domain: Power grids
+    question: "Close GridSim's measured gaps, then re-train and re-score all four grid models on the new physics version."
+    physics: "Coal must-run and self-commitment (PlantDetective's DP), coal delivered prices from EIA-923 receipts, ORDC scarcity and unforecast outages in the core, synchronous commitment at low net load, era-aware frequency response (Dynamic Containment, batteries), soft history constraints across days, a reduced real-topology ERCOT network"
+    data: "Dev years 2019 and 2021 only (EIA-930, CAMPD, ERCOT prices and inertia reports, GB and ERCOT dev events); pre-2023 NERC GADS outage rates"
+    data_url: https://www.nerc.com/pa/RAPA/gads/Pages/default.aspx
+    exam: "Each gap's 'done when' in shared/grid/HANDOFF.md (e.g. coal and gas within 10 % on held-out years, hours above $1,000 within 25 %, minimum inertia within 15 %); then every model's frozen set rebuilt and every rung re-scored"
+    status: in-progress
+    note: "First, the possible exam leak: the default outage rates cite Texas RE 2024/2025 aggregates; replace them with pre-2023 values and re-run the checks. Then PJM or CAISO dispatched and calibrated like ERCOT."
+  - id: forecastwx
+    name: Forecast-weather archive
+    domain: Power grids
+    question: "A day-ahead forecast-weather archive for 2022-2025 so DemandCast can be graded as it would be used (today its headline uses actual weather, an upper bound) and trained on real forecast errors."
+    physics: Unchanged (DemandCast's building-stock and farm physics)
+    data: Open-Meteo Previous-Runs API (CC BY 4.0)
+    data_url: https://open-meteo.com/en/docs/previous-runs-api
+    exam: DemandCast 2023-2025 with forecast weather against each balancing authority's own day-ahead forecast
     status: checked
-    note: "Candidate models: GridPulse, demand and renewable forecasting, a learned dispatcher vs optimal power flow, a plant-flexibility detective, a battery arbitrage controller. EIA API v2 needs a free key (403 without one); the FNET/GridEye site timed out."
+    note: "The cloud sandbox's shared IP got HTTP 429 after a few requests, so only 2024 population points were fetched. A single request from the repository's own machine answered 200 on 14 Nov; fetch it slowly from there (src/fetch_openmeteo.py is resumable)."
+  - id: subsecond
+    name: Sub-second grid frequency
+    domain: Power grids
+    question: "PMU-grade frequency (10-100 samples a second) so GridPulse can read inertia from the first 500 ms instead of from demand."
+    physics: GridSim's swing equation already runs at 10 ms
+    data: "FNET/GridEye (University of Tennessee) or another PMU archive; NESO publishes 1 s only"
+    data_url: https://fnetpublic.utk.edu/
+    exam: GB or US events with known inertia
+    status: candidate
+    note: "The FNET site timed out from the cloud sandbox; it answered from the repository's own machine on 14 Nov (the public pages, not yet a data download)."
   - id: buildingsim
     name: BuildingSim
     domain: Energy
@@ -21,6 +51,7 @@ ideas:
     data_url: https://data.openei.org/
     exam: Real meters and labelled HVAC faults
     status: checked
+    note: "DemandCast's building-stock demand model (models/demandcast/training/buildings.py: UA x setpoint hinge, RC envelope lag, solar and latent gains, heat-pump COPs) is a head start."
   - id: watershed
     name: Watershed
     domain: Earth science
@@ -31,16 +62,6 @@ ideas:
     exam: Real gauged basins held out
     status: checked
     note: The CAMELS download server (gdex) timed out on 13 Nov.
-  - id: gridpulse
-    name: GridPulse
-    domain: Energy
-    question: How many MW were lost, and how much inertia does the grid have, from the frequency dip after a plant trips?
-    physics: Swing equation with governor and load response
-    data: GB system operator (NESO) data portal API
-    data_url: https://www.neso.energy/data-portal
-    exam: Real trip events with known MW lost
-    status: checked
-    note: Few real events to grade on. Now planned as GridSim's first model.
   - id: roomsense
     name: RoomSense
     domain: Acoustics

@@ -41,6 +41,32 @@ instrument noise, the fetch scripts in `models/*/training/` download that noise 
 | Mersin bus trips — Abut, Zenodo | CC BY 4.0 | Trip totals in `shared/vehicle/data/proc/hd/` |
 | ICCT 2018 tractor-trailer tests (Rodriguez, Delgado, Muncrief) | Cite the report | Six published numbers |
 
+### The grid platform (`shared/grid`) and its models (GridPulse, BatteryPilot, PlantDetective, DemandCast)
+
+None of GridData's tables are in git: `mlratchet data grid` downloads them from the sources below (or unpacks the v1.0
+release) into the git-ignored `shared/grid/data/`. Only the four models' `examples/`, their instrument excerpts
+(`site/public/instruments/<id>/`) and their lab pages carry real data. Terms checked on the providers' pages on
+14 Nov 2026.
+
+| Source | Terms | Bundled here |
+|---|---|---|
+| [EIA-930 Hourly Electric Grid Monitor](https://www.eia.gov/electricity/gridmonitor/) six-month bulk files (U.S. Energy Information Administration) | U.S. public domain | DemandCast's 16 example days and lab; BatteryPilot's lab (demand forecast input) |
+| EIA-860, EIA-860M, EIA-861, EIA-923 via [PUDL](https://catalyst.coop/pudl/) (Catalyst Cooperative) | EIA data U.S. public domain; PUDL's processed tables CC BY 4.0 — cite Catalyst Cooperative, Public Utility Data Liberation project | No (fleets, heat rates and fuel costs rebuild from PUDL) |
+| [EPA Clean Air Markets Program Data](https://campd.epa.gov/) hourly emissions bulk files; EPA-EIA crosswalk (via PUDL) | U.S. public domain | PlantDetective's 3 example units and lab |
+| [NESO data portal](https://www.neso.energy/data-portal): system frequency (1 s), system inertia, historic generation mix | [NESO Open Data Licence v1.0](https://www.neso.energy/data-portal/neso-open-licence) (based on OGL v3.0): commercial reuse and redistribution allowed; attribution "Supported by National Energy SO Open Data"; no implied endorsement | GridPulse's example windows, instrument and lab (frequency excerpts, inertia) |
+| National Grid ESO, *Technical Report on the events of 9 August 2019* (6 Sep 2019); Ofgem, *9 August 2019 power outage report* (Jan 2020) | Cited, not redistributed | Published numbers only (GridSim's reference event) |
+| [Elexon BMRS](https://bmrs.elexon.co.uk/) REMIT, B1610, FUELINST (GB loss labels) | [BMRS data licence](https://www.elexon.co.uk/bsc/data/balancing-mechanism-reporting-agent/copyright-licence-bmrs-data/): commercial reuse allowed; attribution required: "Contains BMRS data © Elexon Limited copyright and database right 2026."; no implied endorsement | Loss labels in GridPulse's examples and lab |
+| [ERCOT](https://www.ercot.com/) monthly Operations Reports (frequency events) and settlement point prices (DAM 13060, RTM 13061) | [ERCOT terms of use](https://www.ercot.com/help/terms): public content may be reused and redistributed unmodified with its notices; raw data may be used in compilations, charts and analyses; "ERCOT" is a trademark | BatteryPilot's 2 ERCOT example node-years and lab; GridPulse's ERCOT summary numbers |
+| [CAISO OASIS](http://oasis.caiso.com/) LMPs (PRC_LMP, PRC_RTPD_LMP) | Public market data; cite CAISO OASIS (terms page not reachable on 14 Nov 2026 — check before reuse outside this project) | BatteryPilot's CAISO example node-year and lab |
+| [NASA POWER](https://power.larc.nasa.gov/) hourly (MERRA-2, CERES SYN1deg) — NASA Langley Research Center POWER Project | No licence stated; cite the POWER reference and data reference ("The data was obtained from the POWER Project's Hourly 2.x.x version on YYYY/MM/DD") | Weather inside DemandCast's and BatteryPilot's examples and labs |
+| [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/) ASOS (Iowa State University) | Public domain per the IEM disclaimer; credit appreciated | Station temperatures inside DemandCast's examples |
+| [Open-Meteo](https://open-meteo.com/) Previous-Runs API (archived day-ahead forecasts, 2024 only) | CC BY 4.0 | No (DemandCast's forecast-weather exam; not shipped) |
+| [MATPOWER](https://github.com/MATPOWER/matpower) test cases (IEEE 9-300, RTS-GMLC) | Case data per file header (IEEE cases public); MATPOWER code BSD-3 | No (fetched into `gridsim/refdata/`) |
+| Texas A&M synthetic grids ACTIVSg200/500/2000 (Birchfield et al., IEEE TPWRS 2017), MATPOWER copies | CC BY 4.0 | No |
+| [RTS-GMLC](https://github.com/GridMod/RTS-GMLC) generator data (Barrows et al., IEEE TPWRS 2020) | BSD-3-Clause | No (fleet defaults by unit type) |
+| U.S. Census 2020 Gazetteer places | U.S. public domain | No (approximate ACTIVSg bus coordinates) |
+| EIA Henry Hub daily spot price | U.S. public domain | No (`gridsim/refdata/fuel/`) |
+
 Every model card (`models/*/MODEL_CARD.md`) carries the full citation list, including the physics papers.
 
 ## Before redistributing

@@ -25,6 +25,14 @@ to route around a refusal; find another documented source or download it yoursel
 | [PhysioNet](https://physionet.org) | MIT-BIH, NSTDB, SVDB, QT DB | BeatNet | `wfdb` reads format 212 and annotations directly |
 | [Gaia TAP](https://gea.esac.esa.int/archive/) | DR3 FLAME radii | StarQuake | Upload joins worked |
 | Journal machine-readable tables | Yu et al. 2018 red giants | StarQuake | Used because VizieR was blocked |
+| [EIA-930 bulk files](https://www.eia.gov/electricity/gridmonitor/) | Hourly demand, forecasts, generation by fuel, interchange | Grid platform: DemandCast, BatteryPilot, GridSim checks | Six-month CSVs need no key; the api.eia.gov API needs one |
+| [PUDL](https://catalyst.coop/pudl/) parquet tables (S3) | EIA-860/861/923, EPA-EIA crosswalk | Grid platform: fleets, heat rates | `s3.us-west-2.amazonaws.com/pudl.catalyst.coop/stable/<table>.parquet` |
+| [EPA CAMPD](https://campd.epa.gov/) bulk files | Hourly unit output, heat input, CO2 | PlantDetective, GridSim checks | The file route `api.epa.gov/easey/bulk-files/...` needs no key (0.77 GB per state-year); the file listing needs an api.data.gov key |
+| [NESO data portal](https://www.neso.energy/data-portal) CKAN API | GB 1 s frequency, inertia, generation mix | GridPulse, GridSim checks | Direct file downloads redirect to a storage host the sandbox proxy refused (403); the datastore SQL API worked |
+| [Elexon BMRS](https://bmrs.elexon.co.uk/) API | REMIT, B1610, FUELINST | GridPulse (loss labels) | |
+| [ERCOT](https://www.ercot.com/) MIS documents and monthly reports | Prices; frequency events | BatteryPilot, GridPulse | 17 monthly operations reports 2018-2026 not found |
+| [CAISO OASIS](http://oasis.caiso.com/) | LMPs | BatteryPilot | Serves only about 3 years (from 2023-08) |
+| [MATPOWER](https://github.com/MATPOWER/matpower) cases | IEEE and ACTIVSg test grids | GridSim | The Texas A&M download form asks for an email; MATPOWER's copies are the same data |
 
 ## Checked for backlog ideas
 
@@ -44,7 +52,11 @@ EIA, Zenodo.
 | Open-Meteo (forecast, archive, marine) | Timeouts / daily limit exceeded on a shared IP |
 | ds.iris.edu file listings | Unreachable (FDSN web services worked) |
 | MFPT bearing data | No longer offers downloads (contact only) |
+| Open-Meteo Previous-Runs API | HTTP 429 after a few requests on the shared IP (DemandCast's forecast-weather archive: 2024 only). One request from the repository's own machine answered 200 on 14 Nov 2026 |
+| fnetpublic.utk.edu (FNET/GridEye) | Timed out from the sandbox; the public pages answered from the repository's own machine on 14 Nov 2026 |
+| NERC reliability reports (nerc.com) | Returned an HTML page instead of the PDF |
+| nationalgrideso.com | 502 (the old ESO domain; the same reports are on neso.energy and ofgem.gov.uk) |
 
 ## Python packages that helped
 
-pvlib, PyBaMM, FLORIS, batman-package, astroquery, wfdb, LALSuite (training only), libarchive-c.
+pvlib, PyBaMM, FLORIS, highspy (HiGHS MILP with duals), pandapower / PYPOWER / ANDES (GridSim checks only), batman-package, astroquery, wfdb, LALSuite (training only), libarchive-c.
