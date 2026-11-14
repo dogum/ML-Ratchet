@@ -1,5 +1,5 @@
 {
- "_about": "Hand-entered facts for the Argonne D3 vehicles, used by data/scripts/d3_specs.py to build RoadSim twins. anl.gov refuses scripted requests (HTTP 403), so the D3 vehicle pages could not be read by the build. Test weight and dyno road-load targets come from the D3 test files themselves; engine size, rated power, transmission, axle and N/V ratios come from the EPA test-car tables (data/proc/epa) where the model matches. The motor, battery and the remaining engine/transmission entries below are published manufacturer figures entered by hand (rounded, 13 Nov 2026) and NOT re-checked against the D3 pages; every spec built from them marks those fields 'reported (hand table)'. Entries marked null could not be filled. epa: [make regex, model regex] to find the EPA test-car rows. arch_note: where RoadSim's architecture is an approximation. hvac_source (cabin heater type: ptc = resistive, heat_pump) is given only where the type is not optional on the model; elsewhere RoadSim v1 defaults apply (BEV heat pump, PHEV PTC, hybrids engine heat).",
+ "_about": "Hand-entered facts for the Argonne D3 vehicles, used by data/scripts/d3_specs.py to build RoadSim twins. anl.gov refuses scripted requests (HTTP 403), so the D3 vehicle pages could not be read by the build. Test weight and dyno road-load targets come from the D3 test files themselves; engine size, rated power, transmission, axle and N/V ratios come from the EPA test-car tables (data/proc/epa) where the model matches. The motor, battery and the remaining engine/transmission entries below are published manufacturer figures entered by hand (rounded, 13 Nov 2026) and NOT re-checked against the D3 pages; every spec built from them marks those fields 'reported (hand table)'. Entries marked null could not be filled. epa: [make regex, model regex] to find the EPA test-car rows. arch_note: where RoadSim's architecture is an approximation. hvac_source (cabin heater type: ptc = resistive, heat_pump) is given only where the type is not optional on the model; elsewhere RoadSim v1 defaults apply (BEV heat pump, PHEV PTC, hybrids engine heat). 14 Nov 2026 (v2 calibration, agent 1): the conventional dev vehicles were cross-checked against fueleconomy.gov vehicles.csv and the EPA test-car table; each checked entry carries \"verified\" (verified / unverified / CORRECTED per fact). Hybrid, plug-in and BEV entries are not re-checked yet.",
  "vehicles": {
   "2020 Chrysler Pacifica": {
    "class": "van",
@@ -32,7 +32,14 @@
     "CHEVROLET|GENERAL MOTORS",
     "BLAZER"
    ],
-   "notes": "engine from the VIN in the TDMS test info (3GNKBJRS7KS569010: 8th character S = 3.6 L LGX V6); the EPA 2.5 L and 3.6 L FWD rows share test weight and road load, so the road load alone cannot tell them apart"
+   "notes": "engine from the VIN in the TDMS test info (3GNKBJRS7KS569010: 8th character S = 3.6 L LGX V6); the EPA 2.5 L and 3.6 L FWD rows share test weight and road load, so the road load alone cannot tell them apart; auto stop-start (fueleconomy.gov startStop Y; engine speed 0 at stops in the D3 files)",
+   "verified": {
+    "engine_L": "verified: 3.6 V6, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy), and the VIN in the D3 TDMS test info",
+    "engine_kW": "verified: 308 hp = 230 kW, EPA test-car table (data/proc/epa)",
+    "trans": "verified: Automatic 9-spd, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy); EPA test-car table (data/proc/epa)",
+    "idle_stop": "CORRECTED 14 Nov 2026 (was missing = false): startStop Y for every 2019 Blazer in fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy); the D3 tests log engine speed 0 at most stops"
+   },
+   "idle_stop": true
   },
   "2019 Chevrolet Silverado": {
    "class": "pickup",
@@ -81,7 +88,13 @@
     "TOYOTA",
     "^CAMRY(?!.*HYBRID)"
    ],
-   "notes": "A25A-FKS; RoadSim map gas_na_toyota_a25a is this engine"
+   "notes": "A25A-FKS; RoadSim map gas_na_toyota_a25a is this engine",
+   "verified": {
+    "engine_L": "verified: 2.5 (A25A-FKS), fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
+    "engine_kW": "verified: 203-206 hp = 151-154 kW, EPA test-car table (data/proc/epa)",
+    "trans": "verified: Automatic (S8), fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy); EPA test-car table (data/proc/epa); D3 file logs gears 1-8",
+    "idle_stop": "verified false: startStop N, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)"
+   }
   },
   "2018 Honda Accord LX": {
    "class": "car",
@@ -97,7 +110,14 @@
    "epa": [
     "HONDA",
     "^ACCORD(?!.*HYBRID)"
-   ]
+   ],
+   "verified": {
+    "engine_L": "verified: 1.5 turbo, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
+    "engine_kW": "verified: 192-193 hp = 143-144 kW, EPA test-car table (data/proc/epa)",
+    "turbo": "verified: fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
+    "trans": "verified: CVT, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy); EPA test-car table (data/proc/epa)",
+    "idle_stop": "verified false: startStop N, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)"
+   }
   },
   "2017 Ford F150": {
    "class": "pickup",
@@ -130,7 +150,14 @@
    "epa": [
     "MAZDA",
     "CX.?9"
-   ]
+   ],
+   "verified": {
+    "engine_L": "verified: 2.5 turbo, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
+    "engine_kW": "verified: 227 hp = 169 kW, EPA test-car table (data/proc/epa)",
+    "turbo": "verified: fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
+    "trans": "verified: Automatic (S6), fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy); EPA test-car table (data/proc/epa)",
+    "idle_stop": "verified false: startStop N, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy); D3 engine speed at stops ~560 rpm"
+   }
   },
   "2014 Chevrolet Cruze Diesel": {
    "class": "car",
@@ -193,7 +220,13 @@
    "epa": [
     "HYUNDAI",
     "^SONATA(?!.*HYBRID)"
-   ]
+   ],
+   "verified": {
+    "engine_L": "verified: 2.4, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
+    "engine_kW": "verified: 190-198 hp = 142-148 kW, EPA test-car table (data/proc/epa)",
+    "trans": "verified: Automatic 6-spd, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy); EPA test-car table (data/proc/epa)",
+    "idle_stop": "verified false: startStop N, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)"
+   }
   },
   "2013 Nissan Altima": {
    "class": "car",
@@ -223,7 +256,15 @@
    "epa": [
     "VOLKSWAGEN",
     "JETTA"
-   ]
+   ],
+   "verified": {
+    "engine_L": "verified: 2.0 diesel, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
+    "engine_kW": "verified: 140 hp = 104 kW, EPA test-car table (data/proc/epa) (Jetta SportWagen TDI row)",
+    "trans": "verified: Automatic (AM-S6) = 6-speed DSG, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
+    "turbo": "CORRECTED 14 Nov 2026: turbo true (tCharger T in fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)); the diesel map does not depend on it",
+    "idle_stop": "verified false: startStop N, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)"
+   },
+   "turbo": true
   },
   "2012 Chrysler 300": {
    "class": "car",
@@ -238,7 +279,13 @@
    "epa": [
     "CHRYSLER",
     "^300"
-   ]
+   ],
+   "verified": {
+    "engine_L": "verified: 3.6, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
+    "engine_kW": "verified: 292 hp = 218 kW, EPA test-car table (data/proc/epa) (300 AWD row)",
+    "trans": "verified: Automatic 8-spd (3.6 L), fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
+    "idle_stop": "verified false: fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy) has no start-stop entry for MY2012 (field empty)"
+   }
   },
   "2012 Fiat 500 Sport": {
    "class": "car",
@@ -270,7 +317,13 @@
    "epa": [
     "FORD",
     "F.?150"
-   ]
+   ],
+   "verified": {
+    "engine_L": "verified: 3.5 turbo, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
+    "engine_kW": "unverified: 365 hp = 272 kW is the published rating; no 3.5 L EcoBoost row in the EPA test-car table",
+    "turbo": "verified: fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
+    "trans": "verified: 6-speed automatic, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)"
+   }
   },
   "2012 Ford Focus": {
    "class": "car",
@@ -315,7 +368,10 @@
    "idle_stop": true,
    "epa": null,
    "arch_note": "European model (not in the EPA list); 6-speed manual run as a clutch gearbox; i-stop idle stop on",
-   "notes": "engine power is the EU rating (151 PS); hand table"
+   "notes": "engine power is the EU rating (151 PS); hand table",
+   "verified": {
+    "all": "unverified: European i-stop model, not in fueleconomy.gov or the EPA test-car table (US 2010 Mazda3 2.0 has no i-stop)"
+   }
   },
   "2010 SmartCar MHD": {
    "class": "car",
@@ -330,7 +386,12 @@
    "idle_stop": true,
    "epa": null,
    "arch_note": "European micro-hybrid (MHD = idle stop); 5-speed automated manual",
-   "notes": "hand table"
+   "notes": "hand table",
+   "verified": {
+    "engine_L": "verified: 1.0 3-cylinder, Automatic (AM5), fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy) (US fortwo)",
+    "engine_kW": "unverified: 52 kW is the EU MHD rating (US fortwo 70 hp = 52 kW, same engine)",
+    "idle_stop": "unverified: MHD (micro hybrid drive) is the European idle-stop version; the US fortwo has none"
+   }
   },
   "2010 VW Golf TDI Bluemotion": {
    "class": "car",
@@ -345,7 +406,10 @@
    "idle_stop": true,
    "epa": null,
    "arch_note": "European model; 5-speed manual run as a clutch gearbox; stop-start on",
-   "notes": "hand table"
+   "notes": "hand table",
+   "verified": {
+    "all": "unverified: European 1.6 TDI BlueMotion, not in fueleconomy.gov (US Golf TDI is 2.0 L)"
+   }
   },
   "2009 Volkswagen Jetta TDI": {
    "class": "car",
