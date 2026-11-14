@@ -1,20 +1,20 @@
 
-VED_125_1275  hev_powersplit  (Toyota Camry hybrid 2007-11 (power split) or Hyundai Sonata hybrid (parallel P2))  3.3 km, 6 C
+VED_125_1275  hev_powersplit  (2007 Toyota Camry Hybrid; 2007 Saturn Vue Hybrid; 2007 Saturn Aura Hybrid; 2008 Chevrolet Malibu Hybrid; 2008 Saturn Aura Hybrid; 2008 Toyota Camry Hybrid)  3.3 km, 6 C
   logged (VED, MAF estimate): fuel 179 g
-  hybridpilot      fuel   102.6 g   battery out +0.005 kWh   SOC 0.600 -> 0.596   engine starts  14
-  aecms            fuel   107.0 g   battery out -0.014 kWh   SOC 0.600 -> 0.611   engine starts  13
-  powersplit_rule  fuel    99.6 g   battery out +0.022 kWh   SOC 0.600 -> 0.583   engine starts  14
+  hybridpilot      fuel   161.3 g   battery out +0.131 kWh   SOC 0.600 -> 0.500   engine starts  16
+  aecms            fuel   170.0 g   battery out +0.108 kWh   SOC 0.600 -> 0.517   engine starts  16
+  powersplit_rule  fuel   206.7 g   battery out -0.010 kWh   SOC 0.600 -> 0.608   engine starts  16
 
-VED_492_2826  phev_series  (Chevrolet Volt gen 1 (only 1.4 L PHEV of the era; GM-style fuel-rate PID))  8.2 km, -0 C, start SOC 0.85 (logged)
+VED_492_2826  phev_series  (2011 Chevrolet Volt; 2012 Chevrolet Volt; 2013 Chevrolet Volt; 2014 Chevrolet Volt; 2015 Chevrolet Volt)  8.2 km, -0 C, start SOC 0.85 (logged)
   logged (VED, MAF estimate): fuel 0 g
-  hybridpilot      fuel    28.4 g   battery out +2.285 kWh   SOC 0.851 -> 0.719   engine starts   7
-  aecms            fuel    29.3 g   battery out +2.278 kWh   SOC 0.851 -> 0.720   engine starts   7
-  phev_cdcs        fuel    23.2 g   battery out +2.308 kWh   SOC 0.851 -> 0.718   engine starts   7
+  hybridpilot      fuel    10.1 g   battery out +2.045 kWh   SOC 0.851 -> 0.737   engine starts   2
+  aecms            fuel    14.5 g   battery out +2.006 kWh   SOC 0.851 -> 0.739   engine starts   2
+  phev_cdcs        fuel    10.1 g   battery out +2.044 kWh   SOC 0.851 -> 0.737   engine starts   2
 
-VED_428_465  hev_powersplit  (Toyota Prius / Lexus CT)  9.7 km, -1 C
+VED_428_465  hev_powersplit  (2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v)  9.7 km, -1 C
   logged (VED, MAF estimate): fuel 337 g
-  hybridpilot      fuel   349.4 g   battery out -0.068 kWh   SOC 0.600 -> 0.652   engine starts  35
-  aecms            fuel   346.3 g   battery out -0.049 kWh   SOC 0.600 -> 0.638   engine starts  35
-  powersplit_rule  fuel   347.2 g   battery out -0.053 kWh   SOC 0.600 -> 0.641   engine starts  25
+  hybridpilot      fuel   398.6 g   battery out -0.057 kWh   SOC 0.600 -> 0.644   engine starts  25
+  aecms            fuel   401.3 g   battery out -0.060 kWh   SOC 0.600 -> 0.646   engine starts  28
+  powersplit_rule  fuel   401.6 g   battery out -0.060 kWh   SOC 0.600 -> 0.645   engine starts  28
 
-5.5 s
+4.9 s

@@ -60,3 +60,52 @@ Graded only in simulation. Small overall margin. The on/off head is unused, and 
 
 - The original claude.ai page is now `lab/index.html`, unchanged.
 - The site's model page has a live instrument (`web/export_instrument.py`, `site/src/instruments/hybridpilot/`). Three real VED routes driven by RoadSim twins; whole-trip runs precomputed per strategy, the network and decision rule live at recorded moments. Parity with Python: 96 cases, worst 3.9e-15.
+
+## 14 Nov 2026 — v2: rebuilt on RoadSim physics v2 (Phase D)
+
+**Why.** RoadSim physics v2 (13 Nov) changed the hybrid physics (P2 converter and start energy, 8 s / 3 s minimum on/off,
+Toyota-type engine-on speed, plug-in CD rules, on-road loads, calibrated twins). Physics changed, so the sets were rebuilt
+and every ratchet decision re-taken from R0. Two other agents rebuilt EnergyNet and TripDetective at the same time.
+
+**What moved.**
+- All 13 RoadSim calls pinned to `options='roadsim-physics-v2'` (training, `pipeline.py`, `web/export_instrument.py`);
+  `hp_env.PHYS` is the one place. v2.1 not used.
+- VED cars are driven by RoadSim's calibrated twins: `hp_env.build_twins` calls the upstream builder
+  `shared/vehicle/checks/check_ved_twin.build_twin` (115 twins, cached in work/; replaces `twin_spec_v1`, kept for
+  reference). CR-Z-type cars become mild P1 twins (`engine_on_moving`), a new stratum. The simulator–real check now uses
+  `roadsim.obd.label_fuel` (upstream) instead of raw fuel.
+- Generated hybrids use the v2 donor model; WARM fragments also set the v2 oil and axle nodes.
+- Bus routes: full ZTBus (`source='ZTBus_full'`), by-month split, 24 dev / 12 exam legs drawn by seed.
+- DP stage tables are built with the v2 powertrain (`hp_policy.make_pt`: options, brake blending, start energy).
+  Reference for grading: DP with the 8 s / 3 s timers and real start fuel (`dp_backward_timed`, a copy of RoadSim's
+  `dp_solve_timed` recursion that shares one stage table across terminal SOCs).
+- HybridPilot obeys the platform like every RoadSim strategy: 8 s / 3 s timers (v1 code forced 4 s / 2 s), forced-on
+  rules, plug-in CD rules (as `phev_cdcs`), direct-drive candidates for series. The teacher, when it drives, obeys the
+  forced-on rules too.
+- Evaluation, banks, tuning and the twin check run on 5 processes (`HP_WORKERS`); training on the GPU (CUDA, < 0.5 GB).
+
+**Ladder (frozen skill; dev % of DP / dev charge holding).** R0 A-ECMS 0.255 (98.20 / 97 %). R1–R7, v1's rungs, all
+scored 0.62–0.73 on the frozen set but held charge on only 70–91 % of dev trips (gate 94 %): on v2 the learned s drifts
+the charge (power-split twins deplete, mild CR-Z twins charge up). R8 = R3 with A-ECMS's own feedback gains (Kp 12,
+Ki 0.02): 0.659 (99.19 / 97 %), **kept and released**. Then rejected: R9 mild P1 class in training (0.657), R10
+timed-DP teacher (0.624), R11 20 kJ start cost (0.560), R12 distance-to-go plug-in plan (0.659), R13 3 × 256 net on GPU
+(0.671, dev holds 93 %), R14 preview 30 s (0.667, +0.007), R15 re-tune incl. Ki (0.682, dev holds 88 %).
+Release choice committed (c70a8a3) before the exam ran.
+
+**Exam (430 trips, once).** % of DP (holds): v2 98.84 (95 %), A-ECMS 98.32 (96 %), rule 97.39, ECMS 98.53 (74 %),
+MPC 98.80, v1 release re-scored 99.00 (89 %). v2 − A-ECMS +0.53 [+0.20, +0.82]: power-split +0.89, P2 +1.32, series
++1.04, mild +0.60, series bus +0.70; losses: power-split plug-ins −0.29 [−2.31, +1.53], series plug-ins −0.35
+[−1.09, +0.12], P2 buses −0.48. Starts/km 4.0 vs 4.5.
+
+**Simulator vs real (twins driven by HybridPilot, OBD label model, trip median).** Exam: power-split HEV +2.2 %, mild
++0.3 %, P2 +1.6 % (5 trips), plug-in power-split −22 %, plug-in series −31 %. Dev: all within 8 % (−7.8 to +2.9).
+Target met for hybrids, not for plug-ins (RoadSim's plug-in gap). Simulated starts are about twice the real rate.
+
+**What got worse.** Frozen skill of the released rung (0.659) is below R3–R5's (0.72–0.73): charge holding costs fuel.
+v2 burns 0.16 points more than the v1 network on the v2 exam, which however fails to hold charge on 11 % of trips.
+
+**Gotchas.**
+- RoadSim v2's `pt.evaluate` reads per-run state (thermal nodes, transient fuel), so a candidate grid re-evaluated after
+  the run differs; the instrument exporter now computes each moment's grid inside a second, identical run.
+- Series hybrids' candidate count varies (direct-drive window); the exporter pads it.
+- The dev gate's charge-holding rule, not the frozen margin, decided every v1 rung on v2.

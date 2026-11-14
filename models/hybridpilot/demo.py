@@ -1,7 +1,7 @@
 """Demo: three real VED exam trips (Ann Arbor speed, lidar grade, airport weather), each driven by a RoadSim twin of
-the car that drove it, under HybridPilot, RoadSim's A-ECMS and the rule-based strategy. Runs in a few seconds.
-The logged fuel is printed for reference only (see MODEL_CARD: the simulator reads ~30 % lower than VED's
-MAF-based fuel on real trips)."""
+the car that drove it (RoadSim physics v2, calibrated twins), under HybridPilot, RoadSim's A-ECMS and the rule-based
+strategy. Runs in a few seconds. The logged fuel is printed for reference only: it is VED's MAF-based estimate, and the
+simulated fuel here is raw (MODEL_CARD compares the two through RoadSim's OBD label model)."""
 import json, os, time
 import numpy as np
 from pipeline import compare, load_example, HERE
