@@ -24,9 +24,14 @@ for r in L['rungs']:
     m = re.search(r'val2\[(\w)\] skill ([\d.]+) vs ([\d.]+) \(d ([+-][\d.]+)\); dev D2 ([\d.]+) vs ([\d.]+) \(d ([+-][\d.]+)\)', why)
     short = (f"skill {m.group(4)} on val2[{fv}] ({m.group(2)} vs {m.group(3)}); dev D2 {m.group(5)} vs {m.group(6)} ({m.group(7)})"
              + ('; gate-only rung' if r.get('gate_only') else '')) if m else why
+    if 'physics rung' in why:
+        short += f"; physics rung, judged on D2 (needs < -0.01); first rule: {r.get('rule1')}"
     if r.get('note'): short += '. ' + r['note']
     rows.append(f"      - {{ id: v2-{r['name'].split('_')[0]}, change: {q(r['change'])}, sim: {v['skill']:.3f}, decision: {dec}, "
                 f"why: {q(short)}, metrics: [\"{100 * v['MdAPE']:.1f}%\", {r['dev']['D']:.4f}] }}")
+sg = json.load(open(os.path.join(_P.SRC, 'sigma_rung.json')))
+rows.append(f"      - {{ id: v2-r12, change: {q('error bars: sigma x a per-architecture factor that brings the simulated val2 set to 68% (simulation only), then the dev factor per group')}, "
+            f"decision: kept, why: {q('leave-one-car-out on the 16 dev VED cars, mean |held-out coverage - 68%%|: %.3f vs %.3f with v1 factors alone, %.3f with a car-level term; no effect on the energy' % (sg['sim+v1']['err'], sg['v1']['err'], sg['car']['err']))} }}")
 head = f'''# The ratchet ladders, normalised. Raw logs: training/ratchet2.json + rungs2.json (Phase D), training/ratchet.json + rungs.json (v1).
 model: energynet
 ladders:

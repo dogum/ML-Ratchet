@@ -1,7 +1,34 @@
-# The ratchet ladder, normalised. Raw log: training/ratchet.json (and training/rungs.json).
+# The ratchet ladders, normalised. Raw logs: training/ratchet2.json + rungs2.json (Phase D), training/ratchet.json + rungs.json (v1).
 model: energynet
 ladders:
-  - name: EnergyNet
+  - name: "v2 (RoadSim physics v2, Phase D, 14 Nov 2026)"
+    objective: "Skill = 1 - median |log error| / median |log error| of the class-median guess, on the frozen simulated set val2 (400 unseen generated vehicles x 10 trips on RoadSim physics v2)"
+    rule: "Keep if the val2 skill beats the incumbent by more than 0.01 AND the dev score D2 (mean of 18 dev median errors: VED 4 fleets, EPA 9 tests, full-ZTBus dev legs and missions, Mersin, ICCT) gets no more than 0.01 worse. A rung that changes the simulated physics is judged on its own physics version of val2, the incumbent re-scored on it. Gate-only rungs (inputs only real data carries) must improve D2 by more than 0.01."
+    margin: 0.01
+    dev_gate: "D2 (mean of 18 dev MdAPEs) may not rise by more than 0.01"
+    frozen_sets: [val2_a, val2_b, val2_c, val2_d, val2_e]
+    scored_on: val2
+    note: "Versions of val2: a RoadSim v2 raw, b + OBD label model, c + v1's on-road wrapper, d c + v1's plug-in patch, e b + plug-in patch. Each rung is scored on the version it was judged on."
+    columns_source: Frozen-set median error and the dev score D2 (lower is better)
+    columns: ["Val2 MdAPE", "Dev D2"]
+    rungs:
+      - { id: v2-r1, change: "MLP predicts log trip energy directly (physics integrals only as inputs); RoadSim physics v2, raw simulated energy", sim: 0.614, decision: kept, why: "first rung", metrics: ["9.0%", 0.1376] }
+      - { id: v2-r2, change: "predict a correction to the generic road-load physics estimate", sim: 0.629, decision: kept, why: "skill +0.016 on val2[a] (0.629 vs 0.614); dev D2 0.1327 vs 0.1376 (-0.0049)", metrics: ["8.6%", 0.1327] }
+      - { id: v2-r3, change: "RoadSim's OBD label model (roadsim.obd.label_fuel: MAF fuel-cut air, missed enrichment) for MAF-estimated fuel; flag input", sim: 0.630, decision: rejected, why: "skill +0.003 on val2[b] (0.630 vs 0.628); dev D2 0.1234 vs 0.1327 (-0.0093); physics rung, judged on D2 (needs < -0.01); first rule: rejected", metrics: ["8.6%", 0.1234] }
+      - { id: v2-r4, change: "v1's dev-fitted on-road loads wrapper on top of v2 (v2 already carries its own on-road load)", sim: 0.631, decision: rejected, why: "skill +0.097 on val2[c] (0.631 vs 0.534); dev D2 0.1378 vs 0.1327 (+0.0050); physics rung, judged on D2 (needs < -0.01); first rule: kept", metrics: ["8.3%", 0.1378] }
+      - { id: v2-r5, change: "v1's plug-in hardware patch on the generated plug-ins (pack power >= 1.2 x motor, resistance / 2.5, MG2 torque x 1.8); dev twin read: the network put the dev plug-ins 33% above their own RoadSim twins", sim: 0.626, decision: rejected, why: "skill +0.005 on val2[f] (0.626 vs 0.622); dev D2 0.1228 vs 0.1327 (-0.0100); physics rung, judged on D2 (needs < -0.01); first rule: rejected", metrics: ["8.7%", 0.1228] }
+      - { id: v2-r5b, change: "both near-misses together: RoadSim's OBD label model (r3) and the plug-in patch (r5), each of which improved D2 by just under 0.01 alone", sim: 0.632, decision: kept, why: "skill +0.013 on val2[e] (0.632 vs 0.619); dev D2 0.1225 vs 0.1327 (-0.0102); physics rung, judged on D2 (needs < -0.01); first rule: kept", metrics: ["8.6%", 0.1225] }
+      - { id: v2-r6, change: "ensemble of 5 networks (seeds); sigma includes their spread", sim: 0.636, decision: rejected, why: "skill +0.004 on val2[e] (0.636 vs 0.632); dev D2 0.1259 vs 0.1225 (+0.0033)", metrics: ["8.4%", 0.1259] }
+      - { id: v2-r7, change: "model-year input (VED: fueleconomy.gov models matched to the car; EPA: test year); the fleet's engine efficiency follows the fueleconomy.gov dev era trend, so the network can tell a 2006 car from a 2022 one", sim: 0.651, decision: kept, why: "skill +0.019 on val2[e] (0.651 vs 0.632); dev D2 0.1260 vs 0.1225 (+0.0035)", metrics: ["8.1%", 0.1260] }
+      - { id: v2-r8, change: "EPA test-car hybrids told their hybrid system (P2 / power-split / series, from the model line; RoadSim's public spec-sheet table) instead of 'power-split' for all; the same networks", sim: 0.651, decision: rejected, why: "skill +0.000 on val2[e] (0.651 vs 0.651); dev D2 0.1195 vs 0.1260 (-0.0065); gate-only rung", metrics: ["8.1%", 0.1195] }
+      - { id: v2-r9, change: "ZTBus told the trolleybus's published curb mass (19 t, 'reported' mass) instead of the class prior (15 t); the same networks", sim: 0.651, decision: rejected, why: "skill +0.000 on val2[e] (0.651 vs 0.651); dev D2 0.1239 vs 0.1260 (-0.0021); gate-only rung", metrics: ["8.1%", 0.1239] }
+      - { id: v2-r9b, change: "both public-spec inputs together (r8 EPA hybrid system + r9 bus curb mass), each short of the margin alone", sim: 0.651, decision: rejected, why: "skill +0.000 on val2[e] (0.651 vs 0.651); dev D2 0.1174 vs 0.1260 (-0.0086); gate-only rung", metrics: ["8.1%", 0.1174] }
+      - { id: v2-r10, change: "simulated window-sticker labels by RoadSim's EPA procedure emulation (FTP-75 with hot soak, hybrids preconditioned and corrected for net battery energy) instead of fleet.py's shortcut; physics rung (labels change)", sim: 0.640, decision: rejected, why: "val2[e+L] skill 0.640 vs 0.649 (d -0.009); dev D2 0.1277 vs 0.1260 (d +0.0016); physics rung: dev D2 must improve by > 0.01; own-version skill 0.640 vs incumbent's 0.651 on its own version (may not drop by > 0.01); first rule: rejected; physics rung, judged on D2 (needs < -0.01); first rule: rejected", metrics: ["8.3%", 0.1277] }
+      - { id: v2-r11, change: "GPU: twice the simulated data (a second bank of 28,800 trips on the same fleet, new seed), wider networks (512 units, 0.73M weights each) and 100 epochs", sim: 0.632, decision: rejected, why: "skill -0.019 on val2[e] (0.632 vs 0.651); dev D2 0.1219 vs 0.1260 (-0.0041)", metrics: ["8.6%", 0.1219] }
+      - { id: v2-r11b, change: "twice the simulated data only (both banks, 57,600 trips), networks and training as r7", sim: 0.660, decision: rejected, why: "skill +0.009 on val2[e] (0.660 vs 0.651); dev D2 0.1195 vs 0.1260 (-0.0065)", metrics: ["7.9%", 0.1195] }
+      - { id: v2-r13, change: "three times the simulated data (three banks on the same fleet, 86,400 trips), networks and training as r7", sim: 0.670, decision: released, why: "skill +0.019 on val2[e] (0.670 vs 0.651); dev D2 0.1195 vs 0.1260 (-0.0065)", metrics: ["7.7%", 0.1195] }
+      - { id: v2-r12, change: "error bars: sigma x a per-architecture factor that brings the simulated val2 set to 68% (simulation only), then the dev factor per group", decision: kept, why: "leave-one-car-out on the 16 dev VED cars, mean |held-out coverage - 68%|: 0.064 vs 0.072 with v1 factors alone, 0.074 with a car-level term; no effect on the energy" }
+  - name: "v1 (RoadSim physics v1, 12 Nov 2026)"
     objective: "Skill = 1 − median |log error| / median |log error| of the class-median guess, on the frozen simulated validation set (3,991 examples from 400 unseen vehicles)"
     rule: Keep if the skill beats the incumbent by more than 0.01 AND the dev score D (mean of 15 dev median errors across VED fleets, EPA tests, ZTBus, Mersin and ICCT) gets no more than 0.01 worse.
     margin: 0.01
@@ -17,4 +44,4 @@ ladders:
       - { id: r3, change: "MAF label model + flag input (physics v2)", sim: 0.580, decision: kept, why: "+0.024; dev D 0.152.", metrics: ["10.3%", 0.152] }
       - { id: r4, change: "On-road loads vs temperature, fitted on dev (physics v3)", sim: 0.641, decision: kept, why: "+0.061; dev D 0.142.", metrics: ["9.0%", 0.142] }
       - { id: r5, change: "Plug-in hardware patch (physics v4)", sim: 0.648, decision: rejected, why: "+0.007, short of the 0.01 margin.", metrics: ["8.9%", 0.129] }
-      - { id: r6, change: "Ensemble of 5 networks on v4 physics", sim: 0.656, decision: released, why: "+0.015 over rung 4; dev D 0.129.", metrics: ["8.7%", 0.129] }
+      - { id: r6, change: "Ensemble of 5 networks on v4 physics", sim: 0.656, decision: kept, why: "+0.015 over rung 4; dev D 0.129. Released as v1.0; superseded by v2.", metrics: ["8.7%", 0.129] }

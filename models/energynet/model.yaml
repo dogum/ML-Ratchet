@@ -198,7 +198,7 @@ usage:
 
 files:
   inference: [energynet.py, features.py, model_np.py]
-  weights: [weights/r5_phev.npz, weights/r6_s1.npz, weights/r6_s2.npz, weights/r6_s3.npz, weights/r6_s4.npz, sigma_factors.json]
+  weights: [weights/r13_s0.npz, weights/r13_s1.npz, weights/r13_s2.npz, weights/r13_s3.npz, weights/r13_s4.npz, sigma_factors.json]
   demo: demo.py
   examples: examples/
   card: MODEL_CARD.md

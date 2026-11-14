@@ -75,3 +75,17 @@ def apply_sim(d, ks):
     """d: real frame with 'arch' and 'sig' -> sig scaled by the architecture's simulation factor."""
     d = d.copy(); d['sig'] = d.sig * d.arch.map(ks).fillna(1.0)
     return d
+
+
+class SimScaled:
+    """a model whose sigma is first multiplied by its architecture's simulation factor (method 'simv1' = this, then
+    v1's dev factor per group). The architecture is read from the input's one-hot (features.vehicle_vec)."""
+    def __init__(self, m, ks):
+        import features as F
+        self.m, self.meta, self.mode = m, m.meta, m.mode
+        self.f = np.array([ks.get(a, 1.0) for a in F.ARCHS]); self.c0 = F.NR + F.NF
+
+    def predict(self, X, E):
+        p, s, c = self.m.predict(X, E)
+        a = np.argmax(np.asarray(X)[:, self.c0:self.c0 + 7], axis=1)
+        return p, s * self.f[a], c

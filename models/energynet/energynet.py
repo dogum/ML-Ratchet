@@ -85,6 +85,7 @@ class EnergyNet:
         elif cls in F.HD: k = self.k.get('HD_ICCT', 1.0)
         else: k = self.k.get(f'VED_{g}', 1.0)
         k, tau = (k if isinstance(k, (list, tuple)) else (k, 0.0))     # dev-fitted widening k and car-level term tau
+        k *= self.k.get(f'SIM_{arch}', 1.0)                             # simulation factor per architecture (v2)
         S = float(np.sqrt((float(s[0]) * k) ** 2 + tau ** 2))
         e = float(p[0])
         unit, f = ('kWh', 1 / 3.6) if arch == 'bev' else (('MJ', 1.0) if arch.startswith('phev') else ('g fuel', 1 / LHV))

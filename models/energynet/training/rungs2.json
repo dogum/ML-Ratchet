@@ -137,5 +137,33 @@
   ],
   "era": true,
   "change": "GPU: twice the simulated data (a second bank of 28,800 trips on the same fleet, new seed), wider networks (512 units, 0.73M weights each) and 100 epochs"
+ },
+ {
+  "name": "r11b_data",
+  "version": "e",
+  "mode": "corr",
+  "members": [
+   "r11b_s0",
+   "r11b_s1",
+   "r11b_s2",
+   "r11b_s3",
+   "r11b_s4"
+  ],
+  "era": true,
+  "change": "twice the simulated data only (both banks, 57,600 trips), networks and training as r7"
+ },
+ {
+  "name": "r13_data3",
+  "version": "e",
+  "mode": "corr",
+  "members": [
+   "r13_s0",
+   "r13_s1",
+   "r13_s2",
+   "r13_s3",
+   "r13_s4"
+  ],
+  "era": true,
+  "change": "three times the simulated data (three banks on the same fleet, 86,400 trips), networks and training as r7"
  }
 ]

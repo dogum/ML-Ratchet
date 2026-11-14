@@ -1,7 +1,7 @@
 """Phase D final exam (real data never used for choosing). Run ONCE, after the release choice is committed.
 python exam2.py <rung> [--sigma v1|car]
 
-1. error bars fitted on DEV only (calib.py; the method chosen by rung r10): VED groups, EPA architectures, heavy duty
+1. error bars fitted on DEV only (sigma_dev.py; v1's method, kept by the sigma rung): VED groups, EPA architectures, heavy duty
 2. VED exam trips: EnergyNet v2 vs the v1 release (re-scored on the same trips) vs label / MOVES-like / class-median
 3. EPA exam families: FTP, HWY, US06, 20 F cold FTP, SC03 vs the dev-fitted log-linear regression and the dev median
 4. Full ZTBus exam (1,115 missions by month): legs and mission totals, v2 and v1 (both on the full traces) vs the dev
@@ -11,48 +11,31 @@ import _paths as _P  # portable paths (see _paths.py)
 import sys, os, json, argparse
 sys.path.insert(0, _P.SRC); sys.path.insert(0, _P.VEHICLE)
 import numpy as np, pandas as pd
-import evaluate as EV, calib as CB
+import evaluate as EV, calib as CB, sigma_dev as SD
 from model_np import Ensemble
 from ratchet2 import RUNGS, load
 import realdata as rd
 
-ap = argparse.ArgumentParser(); ap.add_argument('rung'); ap.add_argument('--sigma', default='car')
+ap = argparse.ArgumentParser(); ap.add_argument('rung'); ap.add_argument('--sigma', default='simv1')
 a = ap.parse_args()
 W = _P.WORK
 R0 = {r['name']: r for r in RUNGS}[a.rung]
-v2 = load(R0); bus_spec = bool(R0.get('bus_spec'))
+v2 = load(R0)
+if a.sigma == 'simv1':
+    v2 = CB.SimScaled(v2, {k[4:]: v for k, v in json.load(open(os.path.join(_P.MODEL, 'sigma_factors.json'))).items() if k.startswith('SIM_')})
+bus_spec = bool(R0.get('bus_spec')); epa_hyb = bool(R0.get('epa_hyb'))
 v1 = Ensemble(sorted(os.path.join(_P.WORK, 'weights_v1', f) for f in os.listdir(os.path.join(_P.WORK, 'weights_v1')) if f.endswith('.npz'))) \
     if os.path.isdir(os.path.join(_P.WORK, 'weights_v1')) else None
 K1 = json.load(open(os.path.join(_P.WORK, 'weights_v1', 'sigma_factors_v1.json'))) if v1 else {}
 
 
-def frames(m, bs):
-    return dict(ved_dev=EV.predict_real(m, 'ved_dev'), ved_exam=EV.predict_real(m, 'ved_exam'), epa_dev=EV.epa_frame(m, 'dev'),
-                epa_exam=EV.epa_frame(m, 'exam'), hd=EV.predict_real(m, 'hd'), ztb=EV.predict_real(m, 'ztb', bs))
-
-
-def sigma_fit(Fr, method):
-    S = {}
-    dv = Fr['ved_dev']; dv = dv[dv.y > dv.group.map(EV.FLOOR)]
-    for g, d in dv.groupby('group'):
-        S[f'VED_{g}'] = CB.fit(d, method)
-    o = epa_vehicle(Fr['epa_dev'])
-    for ar, d in o.groupby('arch'):
-        S[f'EPA_{ar}'] = (CB.fit_k(d.assign(vehicle_id=d.vehicle_id)), 0.0)
-    z = Fr['ztb']; zl = z[(z.split == 'dev') & (z.kind == 'leg') & z.label_ok & (z.y > 0)]
-    S['HD_ZTBus'] = (CB.fit_k(zl.assign(vehicle_id=zl.mission)), 0.0)
-    h = Fr['hd']
-    ms = h[(h.set == 'Mersin') & (h.split == 'dev')].groupby('trip_id').agg(pred=('pred', 'mean'), y=('y', 'first'), sig=('sig', 'mean'), fuel=('fuel', 'first'))
-    ms['pred'] = ms.pred * np.where(ms.fuel == 'cng', EV.LHV / EV.CNG_LHV, 1.0)
-    S['HD_Mersin'] = (CB.fit_k(ms.reset_index().assign(vehicle_id=0)), 0.0)
-    ic = h[(h.set == 'ICCT') & (h.split == 'dev')]
-    S['HD_ICCT'] = (CB.fit_k(ic.assign(vehicle_id=0)), 0.0)
-    return S
+def frames(m, bs, eh=False):
+    return dict(ved_exam=EV.predict_real(m, 'ved_exam'), epa_exam=EV.epa_frame(m, 'exam', eh), hd=EV.predict_real(m, 'hd'),
+                ztb=EV.predict_real(m, 'ztb', bs))
 
 
 def epa_vehicle(M):
-    r, o = EV.epa_metrics(M)
-    return o.join(M.groupby(['vehicle_id', 'test']).sig.mean(), on=['vehicle_id', 'test'])
+    return SD.epa_vehicle(M)
 
 
 def cover(p, y, s, kt):
@@ -74,9 +57,9 @@ def ved_block(ex, S):
     return out
 
 
-def run_model(m, bs, S_method, label):
-    Fr = frames(m, bs)
-    S = sigma_fit(Fr, S_method)
+def run_model(m, bs, S_method, label, eh=False, S=None):
+    Fr = frames(m, bs, eh)
+    S = S or SD.dev_sigma(m, bs, eh, S_method)
     R = {'sigma_dev': {k: dict(k=v[0], tau=v[1]) for k, v in S.items()}}
     ex = Fr['ved_exam']; ex = ex[ex.y > ex.group.map(EV.FLOOR)].copy()
     R['VED'] = ved_block(ex, S)
@@ -112,9 +95,11 @@ def run_model(m, bs, S_method, label):
     return R
 
 
-OUT = {'rung': a.rung, 'sigma_method': a.sigma, 'v2': run_model(v2, bus_spec, a.sigma, 'v2')}
+S2 = {k: (tuple(v) if isinstance(v, list) else (float(v), 0.0)) for k, v in json.load(open(os.path.join(_P.MODEL, 'sigma_factors.json'))).items() if not k.startswith('SIM_')}
+OUT = {'rung': a.rung, 'sigma_method': a.sigma, 'v2': run_model(v2, bus_spec, 'v1', 'v2', epa_hyb, S=S2)}   # the shipped dev factors
 if v1 is not None:
-    OUT['v1_release'] = run_model(v1, False, 'v1', 'v1')
+    S1 = {k: (float(v), 0.0) for k, v in K1.items()}; S1['HD_ZTBus'] = S1.get('HD_ZTBus_leg', (1.0, 0.0))
+    OUT['v1_release'] = run_model(v1, False, 'v1', 'v1', S=S1)      # v1 as shipped: its own dev factors
 # baselines
 ex = pd.read_parquet(f'{W}/data/exam2_ved_v2.parquet')
 OUT['baselines'] = {'VED': {g: dict(label=mdape(d.b_label, d.y), moves_like=mdape(d.b_vsp, d.y), class_median=mdape(d.b_class, d.y),
