@@ -491,3 +491,28 @@ Verdict: v2.1 improves engine operation (engine-on shares, VED engine-on gap) an
 points both ways. It fixes none of the large hybrid errors, which exam-2 now measures on fresh cars: pre-TNGA Toyota
 and Lexus engines (+17 % FTP), TMED P2s (-10 %), converter P2s (+26 %), plug-in series (+19 %), hybrid A/C, and VED
 plug-ins (-20 to -23 %). v2 stays the default.
+
+## 14 Nov 2026 — RoadSim v3 pass: hardware on hybrids (physics v3)
+
+Same rules: dev data only. A new clean judge was frozen before any v3 fitting: exam-2, the EPA held-out vehicles, the
+D3 exam and the VED exam had all been seen, so they judge nothing here (second looks only).
+
+### H21 Exam-3 frozen (no physics change)
+
+`checks/exam3_hybrids.py` -> `checks/exam3_hybrids.json` (sha256 dcd6ea16…): 64 EPA test-car records no check had
+simulated, in held-out families, with each record's test-car fields stored in the file.
+- 21 from the MY2000-2007 EPA test-car files (`checks/epa_pre2008.py`; RoadData's table starts at MY2008, so no check
+  had ever run on them; downloaded 14 Nov 2026 from epa.gov, git-ignored under data/raw/epa_pre2008/, sha256 of each
+  file in the json). Carry-over copies of MY2008+ records are dropped (Prius 2004-2007, RX 400h, Camry, GS 450h and
+  Altima 2007 were all copies), which leaves 3 pre-TNGA Toyota records (2001 Prius, 2006 Highlander Hybrid 2WD/4WD).
+- 43 MY2008-2026 hybrids and plug-ins that RoadData labels conventional (no hybrid word in the name): FHEV / REX /
+  e-tron / TFSIe tokens, hybrid-only model lines (Venza, Crown, Sequoia, Karma) or FTP >= 0.9 x HWY.
+- Groups: mild 18, Toyota power-split 14 (3 pre-TNGA, 11 TNGA-era Venza / Crown / Crown Signia / Mazda CX-50),
+  converter P2 9 (Explorer and F-150 FHEV, Sequoia), Ford power-split 8 (Maverick, Milan), Honda e:HEV 7, plug-in P2 5,
+  plug-in series 2, plug-in power-split 1. 29 of 64 are in families without any exam-2 record.
+- Hardware rules for records the old table did not cover (gen-1 Prius and Civic Hybrid, Venza, Crown, CX-50, Prelude,
+  Crosstrek plug-in, Sienna, 2026 Maverick, A7 TFSIe) were added as `hybrid_specs.SUPP_HW` / `lookup_ext()` before any
+  of these records was simulated; `lookup()` is unchanged.
+- Dev additions (`dev_extra`, 9 records of dev families found the same way: Sienna 2021+, Audi Q5 TFSIe / e-tron).
+- **Too small for some groups.** No TMED record and 3 pre-TNGA Toyota records are clean; the TMED and older-Toyota
+  verdicts stay second looks (exam-2). Plug-ins: 8 records.

@@ -181,6 +181,33 @@ GROUP = {'ps': 'toyota_ps', 'fps': 'ford_ps', 'ops': 'other_ps', 'series': 'hond
 
 HYBRID_MAX = dict(mot=64, mot_T=292, batt=(1.0, 288, 'NiMH'), tc=False, turbo=True, awd_rear=76)
 
+# Supplementary rules (14 Nov 2026, RoadSim v3 pass), written from public spec sheets before any of these records was
+# simulated. They cover the exam-3 records (checks/exam3_hybrids.py): MY2000-2007 hybrids (EPA files RoadData's table
+# does not hold) and hybrids RoadData labels conventional because the model name has no hybrid word. lookup() is
+# unchanged (EnergyNet's epa_hybkind.py reads it); lookup_ext() tries these first, then lookup().
+SUPP_HW = [
+    ('TOYOTA', r'PRIUS', Y0, 2003, 'ps', dict(mg2=33, mg2_T=350, mg1=15, batt=(1.79, 274, 'NiMH'), mg2_rpm=5600, mg2_ratio=1.0, eng_kW=52)),
+    ('HONDA', r'CIVIC', Y0, 2005, 'p2', dict(mot=10, mot_T=62, batt=(0.86, 144, 'NiMH'), tc=False, mild=True, cvt_as='DCT')),
+    ('TOYOTA', r'VENZA', 2021, Y9, 'ps', dict(mg2=88, mg1=65, batt=(1.1, 259, 'NMC'), mg2_rpm=17000, awd_rear=40)),
+    ('TOYOTA', r'CROWN', 2023, Y9, 'ps', dict(mg2=88, mg1=65, batt=(1.6, 245, 'NiMH'), mg2_rpm=17000, awd_rear=40)),
+    ('MAZDA', r'CX-50', 2025, Y9, 'ps', dict(mg2=88, mg1=65, batt=(1.6, 245, 'NiMH'), mg2_rpm=17000, awd_rear=40)),
+    ('HONDA', r'PRELUDE', 2026, Y9, 'series', dict(mot=135, mot_T=315, gen=105, batt=(1.06, 260, 'NMC'))),
+    ('SUBARU', r'CROSSTREK', 2019, 2023, 'phev_ps', dict(mg2=88, mg1=65, batt=(8.8, 351, 'NMC'), mg2_rpm=17000)),
+    ('TOYOTA', r'SIENNA', 2021, Y9, 'ps', dict(mg2=134, mg1=88, batt=(1.6, 245, 'NiMH'), mg2_rpm=17000, awd_rear=40)),
+    ('FORD', r'MAVERIK', 2026, Y9, 'fps', dict(mg2=88, mg1=70, batt=(1.1, 280, 'NMC'), mg2_rpm=14000)),
+    ('AUDI', r'A7.*TFSI ?E', Y0, Y9, 'phev_p2', dict(mot=105, mot_T=350, batt=(14.1, 380, 'NMC'), tc=False, turbo=True)),
+    ('CHEVROLET', r'MALIBU', 2016, Y9, 'exclude', 'GM two-motor EVT (two-mode type)'),
+]
+
+
+def lookup_ext(make, model, year, disp=None):
+    """lookup() with the supplementary rules of the v3 pass tried first."""
+    mk = str(make).upper(); md = re.sub(r'\s+', ' ', str(model).upper())
+    for mre, dre, y0, y1, kind, hw in SUPP_HW:
+        if re.search(mre, mk) and re.search(dre, md) and y0 <= year <= y1:
+            return kind, hw
+    return lookup(make, model, year, disp)
+
 
 def lookup(make, model, year, disp=None):
     """-> (kind, hw) or ('exclude', reason) or (None, 'no rule')."""
@@ -238,10 +265,12 @@ def _num(x, d=None):
         return d
 
 
-def spec_of(r):
-    """EPA test-car row (realdata.epa_testcars(), a pandas row) -> (spec, kind, group) or (None, 'exclude'|None, reason)."""
+def spec_of(r, ext=False):
+    """EPA test-car row (realdata.epa_testcars(), a pandas row) -> (spec, kind, group) or (None, 'exclude'|None, reason).
+    ext: use lookup_ext (the supplementary rules of the v3 pass first). The spec carries the model year
+    ('model_year'; read only by the v3 era option, see roadsim/options.py)."""
     year = int(r.model_year)
-    kind, hw = lookup(r.make, r.model, year, _num(r.displacement_L))
+    kind, hw = (lookup_ext if ext else lookup)(r.make, r.model, year, _num(r.displacement_L))
     if kind in (None, 'exclude'):
         return None, kind, hw
     if hw.get('mild') and kind != 'p2':
@@ -252,7 +281,7 @@ def spec_of(r):
     P = _num(r.rated_hp, 100.0) * 0.7457
     nv = _num(r.nv_ratio, 0.0); axle = _num(r.axle_ratio, 0.0)
     awd = 'All' in str(r.drive) or '4-Wheel' in str(r.drive)
-    spec = {'id': 'epahyb_%s' % r.name, 'name': f'{year} {r.make} {r.model}', 'class': cls, 'mass_kg': mass,
+    spec = {'id': 'epahyb_%s' % r.name, 'name': f'{year} {r.make} {r.model}', 'class': cls, 'mass_kg': mass, 'model_year': year,
             'rot_mass_frac': 0.015, 'tire': {'K_t': 0.0, 'temp_effects': False}}
     rr = 0.33 if cls == 'car' else 0.36 if cls in ('suv', 'van') else 0.39
     spec['wheel_radius_m'] = rr
