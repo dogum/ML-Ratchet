@@ -1,6 +1,6 @@
 {
- "about": "RoadSim physics v2 (draft): the option values of the preset roadsim-physics-v2 (roadsim/options.py loads \"preset\" from this file) and, for every fitted number, the dev data it came from. Calibrated on dev only (VED dev cars, EPA dev vehicles of checks/epa_vehicles.json, D3 dev vehicles). The decision log is roadsim/CALIBRATION.md. Conventional and shared physics: calibration agent 1 (14 Nov 2026); hybrid, PHEV and BEV control: still the B1/B2 values, to be calibrated by agent 2.",
- "status": "draft: conventional and shared physics calibrated on dev (agent 1, 14 Nov 2026); hybrid/PHEV/BEV control still B1/B2 values",
+ "about": "RoadSim physics v2 (draft): the option values of the preset roadsim-physics-v2 (roadsim/options.py loads \"preset\" from this file) and, for every fitted number, the dev data it came from. Calibrated on dev only (VED dev cars, EPA dev vehicles of checks/epa_vehicles.json, D3 dev vehicles). The decision log is roadsim/CALIBRATION.md. Conventional and shared physics: calibration agent 1 (14 Nov 2026); hybrid, plug-in, BEV, HVAC and bus: calibration agent 2 (14 Nov 2026).",
+ "status": "final: physics v2 frozen 14 Nov 2026 (agents 1 and 2), before any held-out result was computed",
  "preset": {
   "p2_torque_converter": true,
   "hybrid_start_energy": true,
@@ -72,7 +72,20 @@
    "oil_C_J_K_per_L": 10000.0,
    "oil_C0_J_K": 12000.0,
    "oil_fric_scale": 0.25,
-   "cop_eta_belt": 0.25
+   "cop_eta_belt": 0.25,
+   "cabin_UA_body_frac": 0.3,
+   "cop_eta_el": 0.5,
+   "door_cd": 0.2,
+   "door_min_ms": 0.03,
+   "air_kg_s_max": {
+    "car": 0.13,
+    "suv": 0.15,
+    "pickup": 0.15,
+    "van": 0.2,
+    "bus": 0.8,
+    "truck_md": 0.15,
+    "truck_hd": 0.17
+   }
   },
   "substeps": 1,
   "tyre_model": true,
@@ -87,8 +100,26 @@
   "conv_tc_slip_rpm": 30.0,
   "eng_transient_fuel": 0.5,
   "onroad_aux_W": {
-   "conv": 700.0
-  }
+   "conv": 700.0,
+   "hev_powersplit": 1250.0,
+   "hev_parallel_p2": 1250.0,
+   "hev_series": 1250.0,
+   "phev_powersplit": 300.0,
+   "phev_series": 300.0,
+   "bev": 300.0
+  },
+  "phev_engine_heat": true,
+  "regen_share": {
+   "hev_parallel_p2": 0.75
+  },
+  "series_dd_rpm_per_kph": 22.7,
+  "series_dd_v_min_kph": 65,
+  "series_dd_prefer": true,
+  "ps_engine_on_kph": 45.0,
+  "phev_heat_engine_below_C": -10.0,
+  "hybrid_chg_cap_frac": null,
+  "phev_heat_cold_start_only": false,
+  "eng_fullload_enrich": 0.0
  },
  "provenance": {
   "p2_torque_converter": "work-package default (B1/B2/B3 preset), not fitted",
@@ -135,7 +166,12 @@
    "oil_C_J_K_per_L": "fitted: oil node capacity x2 so the oil follows the D3 dev dipstick at -7 C (UDDS cold start, CX9/Accord/Camry: 62/56/53 C sim vs 64/49/60 C measured at 1300 s; B2 values gave 71/70/60)",
    "oil_C0_J_K": "fitted with oil_C_J_K_per_L (x2)",
    "oil_fric_scale": "fitted: keeps the 24 C cold-start penalty after the slower oil (D3 dev extended UDDS cold start vs hot start at test-cell temperature: +0.1 vs +0.9 % FE)",
-   "cop_eta_belt": "fitted: belt A/C COP / Carnot 0.33 -> 0.25: D3 dev Accord LX SC03 fuel with A/C auto vs off x1.28 sim vs x1.29 measured (x1.21 at 0.33); D3 SC03 AUTO phases +0.3 %, EPA pool SC03 -0.7 % (n 47), check-dev Sonata SC03 +3.9 %"
+   "cop_eta_belt": "fitted: belt A/C COP / Carnot 0.33 -> 0.25: D3 dev Accord LX SC03 fuel with A/C auto vs off x1.28 sim vs x1.29 measured (x1.21 at 0.33); D3 SC03 AUTO phases +0.3 %, EPA pool SC03 -0.7 % (n 47), check-dev Sonata SC03 +3.9 %",
+   "cabin_UA_body_frac": "calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H7): 0.6 -> 0.3 (conduction 36 W/K for a car). D3 dev -7 C tests: cabin at the end of each phase 5-9 K too cold (CX9, Accord LX, Camry) -> 4-5 K; CX9 cold-start UDDS coolant at 1200 s 55 -> 66 C (measured 74); Prius Prime logged heat-pump power +151 -> +43 % (HWFET), Leaf ePlus +30/+49 -> -2 %; SC03 conventional -1.2 points",
+   "cop_eta_el": "calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H7b): 0.36 -> 0.50: D3 dev hot tests, logged electric A/C energy sim/measured 1.38 -> 1.06 (Prius Prime) and 1.38 -> 1.17 (Leaf ePlus)",
+   "door_cd": "calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H9): bus door exchange 0.6 -> 0.2 with door_min_ms 0.15 -> 0.03 and bus fresh-air flow 2.2 -> 0.8 kg/s: 40 ft BEV bus CBD14 10-32 C 2.10 -> 1.83 kWh/mi (Foothill 1.82-2.15), heating at 7.5 C ~9 kW (ZTBus dev 18 m bus: ~4.5 kW above the 15-20 C standstill base); the PTC loop still saturates at stops (controller, not fixed)",
+   "door_min_ms": "with door_cd (H9)",
+   "air_kg_s_max": "bus 2.2 -> 0.8 kg/s with door_cd (H9); light-duty unchanged (fresh-air flow 0.6x made the D3 cabins colder: rejected)"
   },
   "substeps": "rejected as default: B3 measured <= 0.1 % trip energy change (0.8 % worst P2) at 10x run time; use substeps=10 for drivability / OBD-like signals",
   "tyre_model": "decided: +0.5 % fuel on VED dev conventional twins (slip losses), costs 8 % run time (conventional, 1 Hz) / 2 % (hybrid); kept for the physics (regen and traction limits for agent 2)",
@@ -149,13 +185,23 @@
   "conv_tc_open_gears": "measured: D3 dev Camry XLE (8AT) and CX9 (6AT) engine minus turbine speed on hot UDDS/HWFET/US06: 1st gear always open (400-740 rpm slip), 2nd mostly open (40-310 rpm; CX9 130-166 rpm, locked < 10 % of the time)",
   "conv_tc_slip_rpm": "measured: same D3 data, locked gears 3 to top-1 run 15-70 rpm controlled slip under drive (Camry 20-50, CX9 15-70 rpm); top gear ~0-15 rpm",
   "eng_transient_fuel": "fitted with eng_family_adj (same objective); D3 dev metered fuel shows accelerations under-fuelled and steady cruise over-fuelled at equal load; 0.5 s balances D3 US06 (+7.6 % FE) and EPA pool US06 (-1.4 %)",
-  "onroad_aux_W": "fitted (conventional only; other architectures 0 until agent 2 fits them): VED dev conventional label-matched twins, median over the 8 cars of the per-car median trip error -> 0 (-8.1 -> -0.4 %; trip median -9.1 -> -2.3 %); flat across temperature bands; replaces EnergyNet's empirical rw (1380 W fuel power + 133 W/K above 15 C) now that A/C, heater, wind height and the label model are physics"
+  "onroad_aux_W": "conv 700 W: calibration agent 1 (rung C6). Electrified, calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H6): hev 1250 W fitted on the VED dev Toyota twins (car median -13.4 -> +0.7 % at 45 km/h; 1000 W -5.5, 1300 W +0.7; no other VED dev hybrid has a usable label: CR-Z twins excluded), applied to every HEV type for want of data; bev and phev 300 W fitted on the VED dev Leaf (car median -8.0 -> -0.1 %); the Volt and Energi twins give -10 / -12 % with it",
+  "regen_share": "calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H2): D3 dev 2021 Sonata Hybrid regen capture (battery charge in braking / negative wheel energy, hot std UDDS/HWFET/US06): 0.53/0.50/0.55 measured vs 0.70/0.57/0.69 simulated; 0.75 for P2 only. D3 Sonata UDDS fuel_corr -20.0 -> -9.2 %, EPA check-dev Sonata Hybrid FTP +15.5 -> +4.3 % FE (HWY -3.9 -> -5.9, US06 -5.2 -> -9.5). Power-split, series and plug-in regen matched the measurement within 0.1 and are left at 1",
+  "series_dd_rpm_per_kph": "calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H3): measured on D3 dev 2015 Accord Hybrid: engine rpm / road speed at lock-up 22.7 rpm per km/h (mode of all UDDS/HWFET/US06 seconds; 79-80 % of engine-on seconds at 70-100 km/h sit within 0.6 of it)",
+  "series_dd_v_min_kph": "calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H3): same data: lock-up share 0.02 at 40-60, 0.23 at 60-70, 0.79 at 70-80 km/h",
+  "series_dd_prefer": "calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H3): a running engine drives through the clutch inside the window (i-MMD engine drive at cruise); D3 Accord HWFET +4.5 -> +1.9 % fuel, engine-on gap -16 -> -11 points; EPA check-dev Accord HWY -5.5 -> -4.6 % FE",
+  "ps_engine_on_kph": "calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H5): VED dev Toyota twins (VED_241, 258, 375): engine-on share gap -24 -> -11.6 points at 45 km/h (55: -18); EPA check-dev RAV4 FTP +7.9 -> +5.5, Escape +3.9 -> +1.7 % FE; D3 dev 2010 Prius UDDS engine-on +4 -> +9 points (legacy data)",
+  "phev_engine_heat": "calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H4): D3 dev plug-ins at -7 C in charge sustaining: a PTC-only cabin made the engine recharge the battery for the heater (Volt CS UDDS fuel +45-50 %, Energi +54-64 %); with the heater core on the engine loop: Volt -0.1 to -11 %, Energi +4 to +16 %",
+  "phev_heat_engine_below_C": "calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H4): Volt-type engine-assisted heating below -10 C; D3 dev Prius Prime -18 C cold-start CD 8xUDDS +1 % energy (engine-on 0.54 vs 0.70); a 0 C threshold made Volt/Prime -7 C tests +36-62 % (rejected)",
+  "hybrid_chg_cap_frac": "calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H2b): rejected (None). Capping engine charging at 5-10 % of engine power moved D3 Sonata UDDS -20 -> -14/-19 % but HWFET +2.6 -> +12/+6 %",
+  "phev_heat_cold_start_only": "calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H4): rejected (False). Engine heat after cold starts only fixed the Energi cold-start tests (-45/-36 -> -3/+10 %) but put the Volt and Prius Prime 8xUDDS cold starts at +62 / +36 %",
+  "eng_fullload_enrich": "calibration agent 2, 14 Nov 2026 (CALIBRATION.md rung H8): rejected (0). 10-20 % extra fuel above 85 % of full torque moved D3 dev extended US06 only -6.3 -> -6.0 %; from 60 % torque -6.3 -> -4.2 % but the EPA dev pool US06 already burns 2.9 % too much (opposite sign): left at 0"
  },
  "dev_data": {
   "VED": "realdata.load_trips(\"dev\") cars of data/proc/splits.json; label matched twins (checks/check_ved_twin.py)",
   "EPA": "checks/epa_vehicles.json split dev + checks/epa_dev_pool.json (RoadData dev families, held-out families excluded)",
-  "D3": "data/proc/d3/splits.json dev vehicles: 2016 Mazda CX9, 2018 Honda Accord LX, 2018 Toyota Camry XLE, 2019 Chevrolet Blazer (metered, weighted most); legacy-era conventional cars (modal fuel) shapes only",
-  "ZTBus": "realdata.ztbus_full(\"dev\") standstill power (checked, nothing fitted)"
+  "D3": "data/proc/d3/splits.json dev vehicles: 2016 Mazda CX9, 2018 Honda Accord LX, 2018 Toyota Camry XLE, 2019 Chevrolet Blazer (metered, weighted most); legacy-era conventional cars (modal fuel) shapes only; electrified dev: 2021 Sonata Hybrid (metered), 2015 Accord Hybrid, 2010 Prius / Fusion Hybrid / Insight / S400h (legacy, fuel weighted low), 2013 C-Max and Fusion Energi, 2016 Volt, 2017 Prius Prime, Leafs, Bolt, Ioniq5, i-MiEV, Soul EV, e-Golf",
+  "ZTBus": "realdata.ztbus_full(\"dev\") standstill power (bus HVAC compared, rung H9)"
  },
  "log": "roadsim/CALIBRATION.md"
 }
