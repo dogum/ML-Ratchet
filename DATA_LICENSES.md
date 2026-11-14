@@ -36,6 +36,7 @@ instrument noise, the fetch scripts in `models/*/training/` download that noise 
 | US EPA test-car data, drive cycles, ALPHA engine/motor maps; fueleconomy.gov | U.S. public domain | Processed tables in `shared/vehicle/data/proc/`, the maps used in `roadsim/roadsim/data/` |
 | [USGS 3DEP lidar](https://www.usgs.gov/3d-elevation-program) | U.S. public domain | Grades inside the example trips |
 | [Iowa Environmental Mesonet ASOS](https://mesonet.agron.iastate.edu/) | Free use with credit | Weather inside the example trips |
+| [Downloadable Dynamometer Database (D3)](https://www.anl.gov/taps/downloadable-dynamometer-database) — Argonne National Laboratory | Use with attribution: "This data is from the Downloadable Dynamometer Database and was generated at the Advanced Mobility Technology Laboratory (AMTL) at Argonne National Laboratory under the funding and guidance of the U.S. Department of Energy (DOE)" | Not redistributed. `shared/vehicle/data/scripts/d3_fetch.py` downloads the 10 Hz chassis-dynamometer tests into the git-ignored `data/raw/d3/`; only derived calibration and exam results are published |
 | [ZTBus](https://www.research-collection.ethz.ch/handle/20.500.11850/626734) — Widmer et al., ETH Zurich | CC BY 4.0 | Processed legs in `shared/vehicle/data/proc/hd/ztbus/` |
 | Mersin bus trips — Abut, Zenodo | CC BY 4.0 | Trip totals in `shared/vehicle/data/proc/hd/` |
 | ICCT 2018 tractor-trailer tests (Rodriguez, Delgado, Muncrief) | Cite the report | Six published numbers |
