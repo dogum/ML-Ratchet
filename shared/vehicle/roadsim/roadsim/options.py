@@ -23,12 +23,33 @@ DEFAULTS = {
     # ---- end thermal
 
     # ---- dynamics: sub-second steps, tyre model, driver model, wind
-
+    'substeps': 1,                  # integration sub-steps per trip second (1 = v1 at 1 Hz; 10 = 10 Hz), -
+    'substep_record': False,        # also return the sub-step arrays in out['hf'] (needs substeps > 1)
+    'tyre_model': False,            # brush-model slip, axle load transfer, friction-ellipse limits on traction and regen
+    'tyre_mu_scale': 1.0,           # multiplier on the peak tyre-road friction table tyre.MU_PEAK, -
+    'tyre_regen_mu_frac': 0.8,      # share of the driven axle's friction the brake controller lets regen use, -
+    'tyre_ref_eu_class': 'C',       # EU-label class the spec's Crr stands for (rescaled when spec tire.eu_class is set)
+    'driver_model': 'pi',           # 'pi' (v1 feed-forward + PI follower) or 'human' (lag, anticipation, overshoot)
+    'driver_aggressiveness': 0.5,   # human driver: 0 eco, 0.5 typical, 1 aggressive, -
+    'driver_reaction_s': 0.5,       # human driver: perception-reaction delay, s
+    'wind_profile': 'none',         # 'none' (v1: trip wind acts at road level) or 'log' (10 m station wind to road height)
+    'wind_z0_ref_m': 0.03,          # roughness length at the wind station (open airport), m
+    'wind_z0_site_m': 0.1,          # roughness length around the road, m
+    'wind_shelter': 1.0,            # terrain/roadside sheltering factor on the road-height mean wind, -
+    'wind_gusts': False,            # add seeded Kaimal-spectrum turbulence (along and across the mean wind)
+    'wind_turb_seed': 0,            # seed of the turbulence realisation, -
+    'drafting': False,              # CdA reduction behind a lead vehicle (trip 'gap_m' [m] or draft_headway_s)
+    'draft_headway_s': None,        # time gap to a lead vehicle when the trip has no 'gap_m' (None = no lead), s
     # ---- end dynamics
 }
 
 PRESETS = {
     'roadsim-physics-v1': {},
+    'roadsim-physics-v2-b3': {
+        'substeps': 10, 'tyre_model': True, 'tyre_mu_scale': 1.0, 'tyre_regen_mu_frac': 0.8, 'tyre_ref_eu_class': 'C',
+        'driver_model': 'pi', 'wind_profile': 'log', 'wind_z0_ref_m': 0.03, 'wind_z0_site_m': 0.1, 'wind_shelter': 1.0,
+        'wind_gusts': True, 'drafting': True,
+    },
 }
 
 
