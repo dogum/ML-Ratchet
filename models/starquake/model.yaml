@@ -9,6 +9,7 @@ tags: [asteroseismology, Kepler, red giants, spectra, uncertainty]
 accent: "#d6409f"
 tagline: Weighing stars by listening to them ring.
 question: How massive and how big is this red giant, from the way its surface oscillates?
+question_short: "How massive and how big is this red giant, from how it rings?"
 summary: >-
   From a Kepler light curve, StarQuake decides whether a red giant's solar-like oscillations are present, then
   reads where the oscillation hump peaks (νmax) and the spacing of its comb of modes (Δν), each with an error bar.
@@ -64,6 +65,7 @@ split:
   exam: 420 stars, 70 in each of six νmax strata from 8 to 250 μHz (seed 2026), each read at 4 yr, 1 yr, 90, 54 and 27 days
 
 exam:
+  short: "420 Kepler giants × 5 lengths"
   summary: 420 red giants, each read from five lengths of its own light curve.
   results:
     - metric: νmax median error, 4-year light curves

@@ -76,6 +76,10 @@
     "question": {
       "type": "string"
     },
+    "question_short": {
+      "type": "string",
+      "description": "Short form of the question for the root README table"
+    },
     "summary": {
       "type": "string"
     },
@@ -206,6 +210,10 @@
       ],
       "additionalProperties": false,
       "properties": {
+        "short": {
+          "type": "string",
+          "description": "Short exam description for the root README table"
+        },
         "summary": {
           "type": "string"
         },

@@ -201,6 +201,17 @@ def cmd_readme(args) -> int:
         elif args.check and current != text:
             stale += 1
             _out("✗ docs/backlog.md is out of date — run `mlratchet readme --write`")
+        from .readme import render_root  # the root README's collection table and totals
+
+        path = repo_root() / "README.md"
+        current = path.read_text(encoding="utf-8")
+        text = render_root(current, list_models())
+        if args.write and current != text:
+            path.write_text(text, encoding="utf-8", newline="\n")
+            _out("wrote README.md")
+        elif args.check and current != text:
+            stale += 1
+            _out("✗ README.md (collection table or totals) is out of date — run `mlratchet readme --write`")
     return 1 if stale else 0
 
 

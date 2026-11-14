@@ -9,6 +9,7 @@ tags: [seismology, time series, regression, uncertainty, one-station location]
 accent: "#d9480f"
 tagline: One seismometer, one earthquake.
 question: How big was that earthquake, how far, how deep, and which way?
+question_short: "How big, how far, how deep, which way — from one seismometer?"
 summary: >-
   From 41 minutes of three-component ground velocity at a single seismic station, QuakeNet estimates the
   earthquake's magnitude, distance, depth and direction, each with an error bar. It learned only from
@@ -62,6 +63,7 @@ split:
   exam: 3,105 records from 1,734 events, M ≥ 5.5, 2012–2025, distance 25–95°
 
 exam:
+  short: "3,105 one-station records"
   summary: 3,105 real one-station records.
   results:
     - metric: Magnitude, median |error|

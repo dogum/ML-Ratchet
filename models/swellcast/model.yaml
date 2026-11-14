@@ -9,6 +9,7 @@ tags: [ocean waves, dispersion, storm location, spectra, uncertainty]
 accent: "#0e9aa7"
 tagline: One buoy hears a storm thousands of kilometres away.
 question: Is swell from a distant storm arriving at this buoy — and how far away, when, and from which direction was the storm?
+question_short: "How far away was the storm whose swell is arriving at this buoy?"
 summary: >-
   From ten days of NOAA buoy wave spectra, SwellCast says whether storm swell is arriving, how far away the
   storm was, when it peaked and which way it lies. It is Munk's 1963 idea — long waves outrun short ones, so the
@@ -59,6 +60,7 @@ split:
   exam: 288 confirmed arrivals (632 visible, 2,081 storm–buoy pairs in all)
 
 exam:
+  short: "288 hurricane-swell arrivals"
   summary: 288 confirmed storm-swell arrivals.
   results:
     - metric: Distance, median error

@@ -9,6 +9,7 @@ tags: [ECG, arrhythmia, cardiac electrophysiology, classification, research only
 accent: "#e5484d"
 tagline: Heartbeat classes from a simulated voxel heart. Research and teaching only.
 question: Is each heartbeat in this ECG normal, supraventricular, ventricular or a fusion beat?
+question_short: "Is each heartbeat normal, supraventricular, ventricular or fusion? *(research only)*"
 summary: >-
   For every heartbeat in a single-lead ECG, BeatNet gives the AAMI class (normal, supraventricular ectopic,
   ventricular ectopic, fusion), a QRS width with an error bar, and the chance the beat sits inside atrial
@@ -66,6 +67,7 @@ split:
   exam: DS2 — 22 records, 49,705 beats (de Chazal 2004 inter-patient split); also SVDB and QT DB
 
 exam:
+  short: "MIT-BIH DS2, 49,705 beats"
   summary: The standard inter-patient DS2 exam, 49,705 beats.
   results:
     - metric: Macro-F1 over N/S/V/F

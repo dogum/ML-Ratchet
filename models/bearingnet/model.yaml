@@ -9,6 +9,7 @@ tags: [condition monitoring, vibration, fault diagnosis, classification, domain 
 accent: "#5b7083"
 tagline: Hearing a bearing fail, from impact physics and a healthy machine's hum.
 question: Is this rolling-element bearing healthy, or does it have an outer-race, inner-race or ball defect?
+question_short: "Healthy, or an outer-race, inner-race or ball defect?"
 summary: >-
   From 3–20 seconds of one accelerometer on a rotating machine, plus the bearing's geometry and a rough shaft
   speed, BearingNet says whether the bearing is healthy or has an outer-race, inner-race or ball defect, and
@@ -58,6 +59,7 @@ split:
   exam: 150 CWRU files on every sensor position, and 26 Paderborn bearings (919 recordings)
 
 exam:
+  short: "2 rigs, one never heard"
   summary: Balanced accuracy over N/OR/IR/B, against classical envelope analysis and the majority class.
   results:
     - metric: Paderborn (new machine), balanced accuracy

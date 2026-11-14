@@ -10,6 +10,7 @@ tags: [vehicles, energy prediction, fuel consumption, electric vehicles, hybrids
 accent: "#7cb518"
 tagline: How much fuel or electricity will this trip take, before you drive it?
 question: How much energy will this vehicle use on this route, in this weather — and where does it go?
+question_short: "How much fuel or electricity will this trip take, and where does it go?"
 summary: >-
   EnergyNet predicts a trip's fuel or battery energy before the trip, with a 68% and 95% range and a split into air
   drag, rolling, braking, accessories and powertrain losses. It covers 7 vehicle classes from cars to Class-8 trucks
@@ -80,6 +81,7 @@ split:
   exam: 25,793 VED trips from 350 cars, EPA exam families, 1,115 ZTBus missions, Mersin and ICCT exam sets
 
 exam:
+  short: "25,793 VED trips, EPA tests, buses, trucks"
   summary: >-
     Real VED trips, EPA tests and ZTBus missions split once and frozen; median absolute % error. Run once, after the
     release choice was committed. The v1.0 release was re-scored on the same data (notes).

@@ -10,6 +10,7 @@ tags: [vehicles, system identification, OBD logs, mass estimation, road load, cl
 accent: "#9c6644"
 tagline: What car was this? Read it from one trip log.
 question: From a car's trip log alone, what kind of powertrain is it, how heavy, what engine, how much drag — and where did the energy go?
+question_short: "From a trip log alone: what powertrain, how heavy, what engine, how much drag?"
 summary: >-
   TripDetective reads one or more 1 Hz trip logs of a light-duty vehicle — speed plus whatever an OBD logger has —
   and infers its architecture, total mass, engine size, CdA, rolling resistance, hybrid strategy and each trip's
@@ -71,6 +72,7 @@ split:
   exam: "350 VED exam cars (at most 40 trips each, fixed seed), 25 EPA road-load cars, 150 EPA exam vehicles rebuilt in RoadSim, and 5,847 ZTBus legs of the 1,115 exam missions"
 
 exam:
+  short: "350 real cars + 5,847 Zurich bus legs"
   summary: "Real VED exam cars and ZTBus exam legs; baselines fitted on dev only. v1.0 is re-scored on the same exam with the same code (in each note)."
   results:
     - metric: Curb mass per car, median |error| (335 cars)
