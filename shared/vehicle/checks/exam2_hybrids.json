@@ -1,0 +1,7733 @@
+{
+ "about": "Exam-2 for hybrids and plug-ins: data no RoadSim check had looked at before 14 Nov 2026, frozen before the v2.1 fit.\n\nWrites exam2_hybrids.json (lists only, no results) with a sha256 over its canonical content (sorted keys, no\nwhitespace, UTF-8, without the sha256 field). Written once; `check` recomputes the list and the hash and compares.\n\n(a) VED exam HEV and PHEV cars (data/proc/splits.json, split 'exam'): run as label-matched twins on their own\n    q_label_ok trips, exactly as checks/check_ved_twin.py runs the dev cars (check_ved_twin.py --split exam). No VED\n    exam check existed before. VED exam is the models' exam too: used for the v2.1 report only, nothing is chosen by\n    it, and no per-trip prediction is written under models/.\n(b) EPA test-car records (data/proc/epa/testcars_vehicles.parquet) of hybrids and plug-ins (RoadData architecture hev\n    or phev) in held-out model families (family split 'exam'), one per test vehicle and result set (carry-over copies\n    of the same test in later model years dropped), with an FTP, HWY or US06 result, that no check had simulated:\n      - not a check_cycles vehicle (checks/epa_vehicles.json; same model year and test vehicle id), nor a carry-over\n        copy of one (same family, FTP and HWY);\n      - not the EPA row a D3 twin was matched to (data/proc/d3/specs.json, epa_match);\n      - not in the family of a check_cycles DEV hybrid (HYUNDAI|SONATA, TOYOTA|RAV4, FORD|ESCAPE, HONDA|ACCORD): v2\n        was fitted on those cars (regen share, Toyota and e:HEV rules), so their siblings are not a fresh judge;\n      - an architecture RoadSim models (checks/hybrid_specs.py; excluded designs are listed with the reason).\n    Each record carries its reporting group (hybrid_specs.GROUP) and whether its family held a check_cycles held-out\n    vehicle (seen once, at the v2 report: 'family_seen_v2').\n\nusage: python exam2_hybrids.py write | check",
+ "frozen": "14 Nov 2026, calibration agent 3, before any v2.1 fitting",
+ "fit_families": [
+  "HYUNDAI|SONATA",
+  "TOYOTA|RAV4",
+  "FORD|ESCAPE",
+  "HONDA|ACCORD"
+ ],
+ "epa": [
+  {
+   "epa_vehicle_id": "EPA2013_HNX_ED9C1C_c2",
+   "family": "ACURA|ILX",
+   "make": "ACURA",
+   "model": "ILX HYBRID",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 53.0,
+    "HWY": 57.5,
+    "US06": 37.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_HNX_ED9C1C_c3",
+   "family": "ACURA|ILX",
+   "make": "ACURA",
+   "model": "ILX HYBRID",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 52.3,
+    "HWY": 57.5,
+    "US06": 38.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_HNX_ED9C2C_c2",
+   "family": "ACURA|ILX",
+   "make": "ACURA",
+   "model": "ILX HYBRID",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 53.7,
+    "HWY": 59.0,
+    "US06": 37.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_HNX_ED9C2C_c3",
+   "family": "ACURA|ILX",
+   "make": "ACURA",
+   "model": "ILX HYBRID",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 52.7,
+    "HWY": 57.9,
+    "US06": 36.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2014_HNX_ED9C2C_c2",
+   "family": "ACURA|ILX",
+   "make": "ACURA",
+   "model": "ILX HYBRID",
+   "model_year": 2014,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 51.8,
+    "HWY": 59.0,
+    "US06": 37.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_VGA_AU373-6-0813/16_c0",
+   "family": "AUDI|A3",
+   "make": "AUDI",
+   "model": "A3 e-tron",
+   "model_year": 2017,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 43.6,
+    "HWY": 52.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_VGA_MNAP-A8_c0",
+   "family": "AUDI|A8L",
+   "make": "AUDI",
+   "model": "A8L PHEV",
+   "model_year": 2021,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 26.4,
+    "HWY": 36.0,
+    "US06": 24.1,
+    "SC03": 21.6,
+    "COLD": 22.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_VGA_BY63639868_c0",
+   "family": "BENTLEY|BENTAYGA",
+   "make": "BENTLEY",
+   "model": "Bentayga Hybrid",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 22.1,
+    "HWY": 33.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_VGA_BY63183268_c0",
+   "family": "BENTLEY|FLYING",
+   "make": "BENTLEY",
+   "model": "Flying Spur Hybrid",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 21.5,
+    "HWY": 30.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_BMX_K478507_c1",
+   "family": "BMW|330E",
+   "make": "BMW",
+   "model": "330e",
+   "model_year": 2016,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 35.6,
+    "HWY": 48.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_BMX_K478507_c2",
+   "family": "BMW|330E",
+   "make": "BMW",
+   "model": "330e",
+   "model_year": 2016,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 36.7,
+    "HWY": 50.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_BMX_FH19878_c0",
+   "family": "BMW|330E",
+   "make": "BMW",
+   "model": "330e",
+   "model_year": 2021,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 33.5,
+    "HWY": 46.0,
+    "US06": 29.8,
+    "SC03": 25.6,
+    "COLD": 24.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_BMX_FM00670_c0",
+   "family": "BMW|330E",
+   "make": "BMW",
+   "model": "330e Sedan",
+   "model_year": 2023,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 34.8,
+    "HWY": 46.4,
+    "US06": 30.1,
+    "SC03": 18.7,
+    "COLD": 22.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_BMX_AK22515_c1",
+   "family": "BMW|330E",
+   "make": "BMW",
+   "model": "330e xDrive",
+   "model_year": 2021,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 30.7,
+    "HWY": 43.5,
+    "US06": 27.7,
+    "SC03": 21.0,
+    "COLD": 24.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_BMX_FM00680_c1",
+   "family": "BMW|330E",
+   "make": "BMW",
+   "model": "330e xDrive Sedan",
+   "model_year": 2023,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 32.2,
+    "HWY": 46.0,
+    "US06": 30.2,
+    "SC03": 17.8,
+    "COLD": 23.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_BMX_CP43825_c2",
+   "family": "BMW|550E",
+   "make": "BMW",
+   "model": "550e xDrive Sedan",
+   "model_year": 2025,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 32.7,
+    "HWY": 40.2,
+    "US06": 26.6,
+    "SC03": 19.1,
+    "COLD": 23.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_BMX_CS79001_c2",
+   "family": "BMW|550E",
+   "make": "BMW",
+   "model": "550e xDrive Sedan",
+   "model_year": 2026,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 31.8,
+    "HWY": 39.9,
+    "US06": 28.0,
+    "SC03": 18.6,
+    "COLD": 24.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_BMX_G497504_c1",
+   "family": "BMW|740E",
+   "make": "BMW",
+   "model": "740e xDrive",
+   "model_year": 2017,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 32.1,
+    "HWY": 42.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_BMX_BM70481_c1",
+   "family": "BMW|745E",
+   "make": "BMW",
+   "model": "745e xDrive",
+   "model_year": 2020,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 26.5,
+    "HWY": 37.2,
+    "US06": 24.3,
+    "SC03": 17.1,
+    "COLD": 18.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_BMX_CJ80117_c0",
+   "family": "BMW|750E",
+   "make": "BMW",
+   "model": "750e xDrive Sedan",
+   "model_year": 2024,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 32.8,
+    "HWY": 39.6,
+    "US06": 27.3,
+    "SC03": 20.1,
+    "COLD": 24.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_BMX_CT63527_c0",
+   "family": "BMW|750E",
+   "make": "BMW",
+   "model": "750e xDrive Sedan",
+   "model_year": 2026,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 34.2,
+    "HWY": 40.7,
+    "US06": 26.6,
+    "SC03": 17.6,
+    "COLD": 22.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_BMX_F145016_c0",
+   "family": "BMW|ACTIVEHYBRID",
+   "make": "BMW",
+   "model": "ActiveHybrid 3",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 31.2,
+    "HWY": 44.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_BMX_F145016_c1",
+   "family": "BMW|ACTIVEHYBRID",
+   "make": "BMW",
+   "model": "ActiveHybrid 3",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 33.8,
+    "HWY": 48.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2014_BMX_F145016_c0",
+   "family": "BMW|ACTIVEHYBRID",
+   "make": "BMW",
+   "model": "ActiveHybrid 3",
+   "model_year": 2014,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 31.2,
+    "HWY": 44.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_BMX_C751520_c0",
+   "family": "BMW|ACTIVEHYBRID",
+   "make": "BMW",
+   "model": "ActiveHybrid 5",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 28.299999999999997,
+    "HWY": 42.0,
+    "US06": 27.200000000000003,
+    "SC03": 22.8,
+    "COLD": 25.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_BMX_C197010_c0",
+   "family": "BMW|ACTIVEHYBRID",
+   "make": "BMW",
+   "model": "ActiveHybrid 7",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 21.7,
+    "HWY": 34.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_BMX_DD85512_c0",
+   "family": "BMW|ACTIVEHYBRID",
+   "make": "BMW",
+   "model": "ActiveHybrid 7",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 27.9,
+    "HWY": 43.15,
+    "US06": 27.2,
+    "SC03": 22.8,
+    "COLD": 23.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_BMX_DD85512_c1",
+   "family": "BMW|ACTIVEHYBRID",
+   "make": "BMW",
+   "model": "ActiveHybrid 7",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 28.6,
+    "HWY": 43.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_BMX_C197010_c1",
+   "family": "BMW|ACTIVEHYBRID",
+   "make": "BMW",
+   "model": "ActiveHybrid 7 L",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 21.4,
+    "HWY": 33.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_BMX_V550807_c1",
+   "family": "BMW|I3",
+   "make": "BMW",
+   "model": "I3 REX",
+   "model_year": 2017,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 49.2,
+    "HWY": 48.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_BMX_VB86646_c1",
+   "family": "BMW|I3S",
+   "make": "BMW",
+   "model": "I3s REX",
+   "model_year": 2018,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 46.7,
+    "HWY": 45.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_BMX_VD32273_c1",
+   "family": "BMW|I3S",
+   "make": "BMW",
+   "model": "I3s REX",
+   "model_year": 2019,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 44.7,
+    "HWY": 44.8,
+    "US06": 34.7,
+    "SC03": 30.4,
+    "COLD": 24.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_BMX_LG69397_c2",
+   "family": "BMW|X3",
+   "make": "BMW",
+   "model": "X3 xDrive30e",
+   "model_year": 2020,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 30.8,
+    "HWY": 38.9,
+    "US06": 24.8,
+    "SC03": 19.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_BMX_0F74534_c0",
+   "family": "BMW|X5",
+   "make": "BMW",
+   "model": "X5 xDrive40e",
+   "model_year": 2016,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 29.4,
+    "HWY": 37.85,
+    "US06": 23.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_BMX_LE48294_c2",
+   "family": "BMW|X5",
+   "make": "BMW",
+   "model": "X5 xDrive45e",
+   "model_year": 2021,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 24.3,
+    "HWY": 31.9,
+    "US06": 20.9,
+    "SC03": 15.2,
+    "COLD": 22.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_BMX_9N02301_c2",
+   "family": "BMW|X5",
+   "make": "BMW",
+   "model": "X5 xDrive50e",
+   "model_year": 2024,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 30.3,
+    "HWY": 36.0,
+    "US06": 24.0,
+    "SC03": 18.0,
+    "COLD": 20.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_BMX_9W42320_c0",
+   "family": "BMW|X5",
+   "make": "BMW",
+   "model": "X5 xDrive50e",
+   "model_year": 2026,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 29.5,
+    "HWY": 35.9,
+    "US06": 23.9,
+    "SC03": 18.7,
+    "COLD": 22.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_GMX_146GRE2000_c0",
+   "family": "CADILLAC|ELR",
+   "make": "CADILLAC",
+   "model": "ELR",
+   "model_year": 2016,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 42.7,
+    "HWY": 46.9,
+    "US06": 32.2,
+    "SC03": 30.8,
+    "COLD": 27.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2008_40_24Z7Z63276_c2",
+   "family": "CHEVROLET|MALIBU",
+   "make": "GENERAL MOTORS",
+   "model": "MALIBU HYBRID",
+   "model_year": 2008,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 30.6,
+    "HWY": 44.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2009_40_2418Z46934_c0",
+   "family": "CHEVROLET|MALIBU",
+   "make": "GENERAL MOTORS",
+   "model": "MALIBU HYBRID",
+   "model_year": 2009,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 33.2,
+    "HWY": 48.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2008_40_2488LN8043_c0",
+   "family": "CHEVROLET|VUE",
+   "make": "GENERAL MOTORS",
+   "model": "VUE HYBRID",
+   "model_year": 2008,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 31.8,
+    "HWY": 45.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_CRX_L7RUE4615_c0",
+   "family": "CHRYSLER|PACIFICA",
+   "make": "CHRYSLER",
+   "model": "Pacifica Hybrid",
+   "model_year": 2017,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 47.3,
+    "HWY": 46.8,
+    "US06": 34.0,
+    "SC03": 33.9,
+    "COLD": 22.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_CRX_N9RUE0658_c0",
+   "family": "CHRYSLER|PACIFICA",
+   "make": "CHRYSLER",
+   "model": "Pacifica Hybrid",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 42.75,
+    "HWY": 42.8,
+    "US06": 30.7,
+    "SC03": 34.0,
+    "COLD": 22.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_FSK_F132_c0",
+   "family": "FISKER|KARMA",
+   "make": "FISKER",
+   "model": "Karma",
+   "model_year": 2012,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 24.35,
+    "HWY": 29.6,
+    "US06": 21.15,
+    "SC03": 20.4,
+    "COLD": 22.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_FMX_HL100002_c0",
+   "family": "FORD|C-MAX",
+   "make": "FORD",
+   "model": "C-Max (HEV)",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "fps",
+   "group": "ford_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 58.0,
+    "HWY": 56.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_FMX_DL500090_c2",
+   "family": "FORD|C-MAX",
+   "make": "FORD",
+   "model": "C-Max (PHEV)",
+   "model_year": 2013,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.0,
+    "HWY": 51.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_FMX_HL100018_c0",
+   "family": "FORD|C-MAX",
+   "make": "FORD",
+   "model": "C-Max Energi (PHEV)",
+   "model_year": 2017,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 56.5,
+    "HWY": 56.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_FMX_NNA00004_c0",
+   "family": "FORD|EXPLORER",
+   "make": "FORD",
+   "model": "EXPLORER HEV RWD",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 32.1,
+    "HWY": 39.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_FMX_MNA05938_c0",
+   "family": "FORD|EXPLORER",
+   "make": "FORD",
+   "model": "Explorer Platinum HEV AWD",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 29.4,
+    "HWY": 33.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_FMX_NNA00003_c0",
+   "family": "FORD|EXPLORER",
+   "make": "FORD",
+   "model": "Explorer Platinum HEV RWD",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 32.9,
+    "HWY": 37.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_FMX_MFB70516_c1",
+   "family": "FORD|F150",
+   "make": "FORD",
+   "model": "F150 HYBRID",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 32.5,
+    "HWY": 35.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_FMX_MFB70519_c1",
+   "family": "FORD|F150",
+   "make": "FORD",
+   "model": "F150 HYBRID",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 29.7,
+    "HWY": 33.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_FMX_NFD1-3.5-J-406_c0",
+   "family": "FORD|F150",
+   "make": "FORD",
+   "model": "F150 HYBRID",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 25.4,
+    "HWY": 28.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_FMX_MFB70519_c1",
+   "family": "FORD|F150",
+   "make": "FORD",
+   "model": "F150 HYBRID",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 29.8,
+    "HWY": 32.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_FMX_ER317196_c0",
+   "family": "FORD|FUSION",
+   "make": "FORD",
+   "model": "Fusion (HEV)",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "fps",
+   "group": "ford_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 60.6,
+    "HWY": 58.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_FMX_HR100051_c0",
+   "family": "FORD|FUSION",
+   "make": "FORD",
+   "model": "Fusion (HEV)",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "fps",
+   "group": "ford_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 62.4,
+    "HWY": 62.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_FMX_HR100058_c0",
+   "family": "FORD|FUSION",
+   "make": "FORD",
+   "model": "Fusion (HEV)",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "fps",
+   "group": "ford_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.4,
+    "HWY": 56.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_FMX_HR100040_c0",
+   "family": "FORD|FUSION",
+   "make": "FORD",
+   "model": "Fusion (PHEV)",
+   "model_year": 2017,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 59.8,
+    "HWY": 61.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_FMX_KR100046_c0",
+   "family": "FORD|FUSION",
+   "make": "FORD",
+   "model": "Fusion (PHEV)",
+   "model_year": 2019,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 59.6,
+    "HWY": 59.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_FMX_KR100187_c0",
+   "family": "FORD|FUSION",
+   "make": "FORD",
+   "model": "Fusion (PHEV)",
+   "model_year": 2019,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 60.3,
+    "HWY": 59.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_FMX_RGA00110_c0",
+   "family": "FORD|INTERCEPTOR",
+   "make": "FORD",
+   "model": "INTERCEPTOR UTILITY HEV AWD",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 27.3,
+    "HWY": 35.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2009_30_9M71-2.5-C-792_c1",
+   "family": "FORD|MARINER",
+   "make": "FORD MOTOR COMPANY",
+   "model": "MARINER HYBRID 4WD",
+   "model_year": 2009,
+   "architecture": "hev",
+   "kind": "fps",
+   "group": "ford_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 37.4,
+    "HWY": 37.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_FMX_DC91-2.0-J-268_c1",
+   "family": "FORD|MKZ",
+   "make": "FORD",
+   "model": "MKZ (HEV)",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "fps",
+   "group": "ford_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 50.6,
+    "HWY": 50.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_FMX_LGA00073_c0",
+   "family": "FORD|POLICE",
+   "make": "FORD",
+   "model": "Police Interceptor Utility HEV",
+   "model_year": 2020,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 30.0,
+    "HWY": 33.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_FMX_KC71-2.0-H-265_c0",
+   "family": "FORD|POLICE",
+   "make": "FORD",
+   "model": "Police Responder Hybrid Sedan FHEV",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "fps",
+   "group": "ford_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.4,
+    "HWY": 52.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2008_260_E6MX1C_c2",
+   "family": "HONDA|CIVIC",
+   "make": "HONDA",
+   "model": "CIVIC HYBRID",
+   "model_year": 2008,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 54.6,
+    "HWY": 65.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_HNX_EBMX1C_c1",
+   "family": "HONDA|CIVIC",
+   "make": "HONDA",
+   "model": "CIVIC HYBRID",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 54.6,
+    "HWY": 65.0,
+    "US06": 42.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_HNX_ECW01C_c0",
+   "family": "HONDA|CIVIC",
+   "make": "HONDA",
+   "model": "CIVIC HYBRID",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 56.6,
+    "HWY": 64.9,
+    "US06": 40.85
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_HNX_ECW01C_c1",
+   "family": "HONDA|CIVIC",
+   "make": "HONDA",
+   "model": "CIVIC HYBRID",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 62.3,
+    "HWY": 68.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_HNX_ECW02C_c0",
+   "family": "HONDA|CIVIC",
+   "make": "HONDA",
+   "model": "CIVIC HYBRID",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 61.5,
+    "HWY": 66.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_HNX_ECW02C_c1",
+   "family": "HONDA|CIVIC",
+   "make": "HONDA",
+   "model": "CIVIC HYBRID",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 62.3,
+    "HWY": 67.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2014_HNX_EEW01C_c0",
+   "family": "HONDA|CIVIC",
+   "make": "HONDA",
+   "model": "CIVIC HYBRID",
+   "model_year": 2014,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 61.6,
+    "HWY": 67.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2014_HNX_EEW01C_c1",
+   "family": "HONDA|CIVIC",
+   "make": "HONDA",
+   "model": "CIVIC HYBRID",
+   "model_year": 2014,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 60.7,
+    "HWY": 66.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2014_HNX_EEW02C_c0",
+   "family": "HONDA|CIVIC",
+   "make": "HONDA",
+   "model": "CIVIC HYBRID",
+   "model_year": 2014,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 61.6,
+    "HWY": 67.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2014_HNX_EEW02C_c1",
+   "family": "HONDA|CIVIC",
+   "make": "HONDA",
+   "model": "CIVIC HYBRID",
+   "model_year": 2014,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 60.7,
+    "HWY": 66.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_HNX_EJWJ1C_c1",
+   "family": "HONDA|CLARITY",
+   "make": "HONDA",
+   "model": "Clarity Plug-in Hybrid",
+   "model_year": 2018,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 61.8,
+    "HWY": 61.8,
+    "US06": 42.4,
+    "SC03": 37.5,
+    "COLD": 45.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_HNX_EJWJ1C_c3",
+   "family": "HONDA|CLARITY",
+   "make": "HONDA",
+   "model": "Clarity Plug-in Hybrid",
+   "model_year": 2018,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 62.6,
+    "HWY": 61.8,
+    "US06": 43.2,
+    "SC03": 37.5,
+    "COLD": 44.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_HNX_EABJ2C_c1",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.1,
+    "HWY": 61.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_HNX_DKL21C_c0",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "series",
+   "group": "honda_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 74.8,
+    "HWY": 66.5,
+    "US06": 47.2,
+    "SC03": 42.4,
+    "COLD": 50.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_HNX_DKL21C_c1",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "series",
+   "group": "honda_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 71.6,
+    "HWY": 68.0,
+    "US06": 44.3,
+    "SC03": 43.5,
+    "COLD": 50.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_HNX_EKL21C_c1",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "series",
+   "group": "honda_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 80.8,
+    "HWY": 72.4,
+    "US06": 51.2,
+    "SC03": 45.9,
+    "COLD": 54.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_HNX_EKL21C_c2",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "series",
+   "group": "honda_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 79.2,
+    "HWY": 72.8,
+    "US06": 48.2,
+    "SC03": 46.9,
+    "COLD": 53.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_HNX_EBBJ1C_c2",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT DX/LX",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.4,
+    "HWY": 60.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_HNX_EBBJ1C_c5",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT DX/LX",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.7,
+    "HWY": 60.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_HNX_EBBJ2C_c1",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT DX/LX",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.1,
+    "HWY": 61.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_HNX_EBBJ2C_c3",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT DX/LX",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.7,
+    "HWY": 61.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_HNX_ECBJ1C_c2",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT DX/LX",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.3,
+    "HWY": 63.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_HNX_ECBJ1C_c3",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT DX/LX",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.6,
+    "HWY": 63.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_HNX_ECBJ2C_c2",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT DX/LX",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.7,
+    "HWY": 63.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_HNX_ECBJ2C_c3",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT DX/LX",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.3,
+    "HWY": 63.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_HNX_EBBJ1C_c1",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT EX",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.0,
+    "HWY": 61.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_HNX_EBBJ1C_c4",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT EX",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.7,
+    "HWY": 60.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_HNX_EBBJ2C_c0",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT EX",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.1,
+    "HWY": 61.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_HNX_EBBJ2C_c2",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT EX",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.4,
+    "HWY": 61.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_HNX_ECBJ1C_c0",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT EX",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.6,
+    "HWY": 63.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_HNX_ECBJ2C_c0",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT EX",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.6,
+    "HWY": 63.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_HNX_ECBJ2C_c1",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT EX",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.6,
+    "HWY": 63.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_HNX_EABJ1C_c2",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT TOP",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 53.9,
+    "HWY": 63.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_HNX_EABJ2C_c0",
+   "family": "HONDA|INSIGHT",
+   "make": "HONDA",
+   "model": "INSIGHT TOP",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "mild",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.1,
+    "HWY": 61.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_HYX_CN7U1K6GD042F_c0",
+   "family": "HYUNDAI|ELANTRA",
+   "make": "HYUNDAI",
+   "model": "Elantra Hybrid Blue",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 72.8,
+    "HWY": 72.3,
+    "US06": 49.5,
+    "SC03": 57.5,
+    "COLD": 43.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_HYX_CN7U4K6GA013F_c0",
+   "family": "HYUNDAI|ELANTRA",
+   "make": "HYUNDAI",
+   "model": "Elantra Hybrid Blue",
+   "model_year": 2024,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 67.8,
+    "HWY": 71.3,
+    "US06": 51.5,
+    "SC03": 54.0,
+    "COLD": 42.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_KMX_AE7G6VU01AC_c0",
+   "family": "HYUNDAI|IONIQ",
+   "make": "HYUNDAI",
+   "model": "IONIQ",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 75.7,
+    "HWY": 79.1,
+    "US06": 52.9,
+    "SC03": 58.9,
+    "COLD": 52.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_KMX_AE7G6VU03AC_c0",
+   "family": "HYUNDAI|IONIQ",
+   "make": "HYUNDAI",
+   "model": "IONIQ",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 75.7,
+    "HWY": 78.5,
+    "US06": 52.1,
+    "SC03": 61.0,
+    "COLD": 55.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_KMX_AE7G6VU03AC_c1",
+   "family": "HYUNDAI|IONIQ",
+   "make": "HYUNDAI",
+   "model": "IONIQ",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 68.3,
+    "HWY": 70.4,
+    "US06": 47.6,
+    "SC03": 52.0,
+    "COLD": 48.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_HYX_AE-U0G6GD048F_c0",
+   "family": "HYUNDAI|IONIQ",
+   "make": "HYUNDAI",
+   "model": "IONIQ",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 80.8,
+    "HWY": 80.1,
+    "US06": 54.1,
+    "SC03": 57.2,
+    "COLD": 51.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_HYX_AE-U0G6GD049F_c0",
+   "family": "HYUNDAI|IONIQ",
+   "make": "HYUNDAI",
+   "model": "IONIQ",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 76.5,
+    "HWY": 78.0,
+    "US06": 53.0,
+    "SC03": 54.7,
+    "COLD": 55.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_HYX_AE-U0G6GD050F_c0",
+   "family": "HYUNDAI|IONIQ",
+   "make": "HYUNDAI",
+   "model": "IONIQ",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 69.0,
+    "HWY": 70.7,
+    "US06": 48.5,
+    "SC03": 50.1,
+    "COLD": 47.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_HYX_AE8G6WU01AC_c0",
+   "family": "HYUNDAI|IONIQ",
+   "make": "HYUNDAI",
+   "model": "IONIQ PHEV",
+   "model_year": 2018,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 71.6,
+    "HWY": 72.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_HYX_AE8G6WU01AC_c0",
+   "family": "HYUNDAI|IONIQ",
+   "make": "HYUNDAI",
+   "model": "IONIQ PHEV",
+   "model_year": 2020,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 71.6,
+    "HWY": 72.3,
+    "US06": 48.0,
+    "SC03": 52.0,
+    "COLD": 46.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_HYX_AE-U1G6PD051F_c0",
+   "family": "HYUNDAI|IONIQ",
+   "make": "HYUNDAI",
+   "model": "IONIQ PHEV",
+   "model_year": 2021,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 72.3,
+    "HWY": 72.4,
+    "US06": 46.7,
+    "SC03": 49.6,
+    "COLD": 48.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_HYX_LX3-KU5H5HA713F_c0",
+   "family": "HYUNDAI|PALISADE",
+   "make": "HYUNDAI",
+   "model": "Palisade Hybrid",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.9,
+    "HWY": 43.3,
+    "US06": 29.3,
+    "SC03": 34.4,
+    "COLD": 31.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_HYX_LX3-KU5H5HA733F_c0",
+   "family": "HYUNDAI|PALISADE",
+   "make": "HYUNDAI",
+   "model": "Palisade Hybrid",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 45.3,
+    "HWY": 46.0,
+    "US06": 29.6,
+    "SC03": 37.9,
+    "COLD": 34.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_HYX_LX3-KU5H5HA739A_c0",
+   "family": "HYUNDAI|PALISADE",
+   "make": "HYUNDAI",
+   "model": "Palisade Hybrid",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 39.5,
+    "HWY": 41.3,
+    "US06": 26.9,
+    "SC03": 33.9,
+    "COLD": 30.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_HYX_LX3-KU5H5HA739A_c1",
+   "family": "HYUNDAI|PALISADE",
+   "make": "HYUNDAI",
+   "model": "Palisade Hybrid",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.5,
+    "HWY": 42.1,
+    "US06": 28.2,
+    "SC03": 36.1,
+    "COLD": 32.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_HYX_LX3-KU5H5HA742A_c0",
+   "family": "HYUNDAI|PALISADE",
+   "make": "HYUNDAI",
+   "model": "Palisade Hybrid",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 38.5,
+    "HWY": 39.9,
+    "US06": 26.6,
+    "SC03": 31.0,
+    "COLD": 31.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_HYX_TM-U1G6HA025A_c0",
+   "family": "HYUNDAI|SANTA FE",
+   "make": "HYUNDAI",
+   "model": "SANTA FE HYBRID",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 48.0,
+    "HWY": 45.0,
+    "US06": 30.5,
+    "SC03": 39.3,
+    "COLD": 38.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_HYX_TM-U1G6HA026A_c0",
+   "family": "HYUNDAI|SANTA FE",
+   "make": "HYUNDAI",
+   "model": "SANTA FE HYBRID",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 44.0,
+    "HWY": 42.5,
+    "US06": 29.5,
+    "SC03": 35.4,
+    "COLD": 34.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_HYX_MX5U4G6HA147F_c0",
+   "family": "HYUNDAI|SANTA FE",
+   "make": "HYUNDAI",
+   "model": "SANTA FE HYBRID",
+   "model_year": 2024,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 46.2,
+    "HWY": 46.9,
+    "US06": 31.3,
+    "SC03": 35.1,
+    "COLD": 35.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_HYX_MX5U4G6HA147F_c1",
+   "family": "HYUNDAI|SANTA FE",
+   "make": "HYUNDAI",
+   "model": "SANTA FE HYBRID",
+   "model_year": 2024,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 50.5,
+    "HWY": 50.6,
+    "US06": 34.2,
+    "SC03": 38.9,
+    "COLD": 37.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_HYX_MX5U4G6HA148A_c0",
+   "family": "HYUNDAI|SANTA FE",
+   "make": "HYUNDAI",
+   "model": "SANTA FE HYBRID",
+   "model_year": 2024,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 45.7,
+    "HWY": 45.0,
+    "US06": 30.4,
+    "SC03": 33.6,
+    "COLD": 34.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_HYX_MX5U4G6HA148A_c1",
+   "family": "HYUNDAI|SANTA FE",
+   "make": "HYUNDAI",
+   "model": "SANTA FE HYBRID",
+   "model_year": 2024,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 48.4,
+    "HWY": 48.4,
+    "US06": 32.3,
+    "SC03": 33.6,
+    "COLD": 35.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_HYX_TM-U1G6PA011A_c0",
+   "family": "HYUNDAI|SANTA FE",
+   "make": "HYUNDAI",
+   "model": "SANTA FE PHEV",
+   "model_year": 2022,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 45.8,
+    "HWY": 43.7,
+    "US06": 29.9,
+    "SC03": 35.2,
+    "COLD": 32.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_HYX_NX4U2G6HA279A_c0",
+   "family": "HYUNDAI|TUCSON",
+   "make": "HYUNDAI",
+   "model": "TUCSON HYBRID",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 50.7,
+    "HWY": 48.0,
+    "US06": 32.7,
+    "SC03": 39.0,
+    "COLD": 36.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_HYX_NX4U5G6HA127A_c0",
+   "family": "HYUNDAI|TUCSON",
+   "make": "HYUNDAI",
+   "model": "TUCSON HYBRID",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 50.1,
+    "HWY": 48.5,
+    "US06": 33.5,
+    "SC03": 41.3,
+    "COLD": 39.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_HYX_NX4U5G6HA139A_c0",
+   "family": "HYUNDAI|TUCSON",
+   "make": "HYUNDAI",
+   "model": "TUCSON HYBRID",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 45.7,
+    "HWY": 45.9,
+    "US06": 32.1,
+    "SC03": 37.6,
+    "COLD": 37.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_HYX_NX4U6G6HA004A_c0",
+   "family": "HYUNDAI|TUCSON",
+   "make": "HYUNDAI",
+   "model": "TUCSON HYBRID",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 49.7,
+    "HWY": 48.6,
+    "US06": 34.0,
+    "SC03": 38.1,
+    "COLD": 33.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_HYX_NX4U2G6PA320A_c0",
+   "family": "HYUNDAI|TUCSON",
+   "make": "HYUNDAI",
+   "model": "TUCSON PHEV",
+   "model_year": 2022,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 47.9,
+    "HWY": 45.9,
+    "US06": 32.2,
+    "SC03": 34.4,
+    "COLD": 33.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_HYX_NX4U4G6PA265A_c0",
+   "family": "HYUNDAI|TUCSON",
+   "make": "HYUNDAI",
+   "model": "TUCSON PHEV",
+   "model_year": 2025,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 44.5,
+    "HWY": 46.2,
+    "US06": 31.7,
+    "SC03": 36.7,
+    "COLD": 36.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_NSX_HSB053_c4",
+   "family": "INFINITI|Q50",
+   "make": "INFINITI",
+   "model": "Q50 HYBRID",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_clutch",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 35.0,
+    "HWY": 45.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_NSX_HSB053_c6",
+   "family": "INFINITI|Q50",
+   "make": "INFINITI",
+   "model": "Q50 HYBRID",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_clutch",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 34.9,
+    "HWY": 46.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_NSX_HSB051_c4",
+   "family": "INFINITI|Q50",
+   "make": "INFINITI",
+   "model": "Q50 HYBRID AWD",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_clutch",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 33.7,
+    "HWY": 43.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_NSX_HSB051_c5",
+   "family": "INFINITI|Q50",
+   "make": "INFINITI",
+   "model": "Q50 HYBRID AWD",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_clutch",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 33.3,
+    "HWY": 43.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_NSX_DPE487_c0",
+   "family": "INFINITI|Q70",
+   "make": "INFINITI",
+   "model": "Q70 HYBRID",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_clutch",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 36.8,
+    "HWY": 47.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_NSX_DPE487_c1",
+   "family": "INFINITI|Q70",
+   "make": "INFINITI",
+   "model": "Q70 HYBRID",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_clutch",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 36.8,
+    "HWY": 47.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_CRX_N2WLX2325_c0",
+   "family": "JEEP|GRAND CHEROKEE",
+   "make": "JEEP",
+   "model": "Grand Cherokee 4xe",
+   "model_year": 2022,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 30.3,
+    "HWY": 37.4,
+    "US06": 23.8,
+    "SC03": 23.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_CRX_L0JLX9483_c0",
+   "family": "JEEP|WRANGLER",
+   "make": "JEEP",
+   "model": "Wrangler 4dr 4xe",
+   "model_year": 2021,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 27.6,
+    "HWY": 29.8,
+    "US06": 19.7,
+    "SC03": 17.9,
+    "COLD": 23.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_KAL_PV2_c0",
+   "family": "KARMA|REVERO",
+   "make": "KARMA",
+   "model": "Revero",
+   "model_year": 2018,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 24.6,
+    "HWY": 28.1,
+    "US06": 20.2,
+    "SC03": 19.2,
+    "COLD": 19.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_KMX_KA4U4G6HA309F_c0",
+   "family": "KIA|CARNIVAL",
+   "make": "KIA",
+   "model": "Carnival Hybrid",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 45.4,
+    "HWY": 44.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_KMX_KA4U4G6HA309F_c1",
+   "family": "KIA|CARNIVAL",
+   "make": "KIA",
+   "model": "Carnival Hybrid",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 46.6,
+    "HWY": 46.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_KMX_DE7G6VU01AC_c0",
+   "family": "KIA|NIRO",
+   "make": "KIA",
+   "model": "NIRO",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 60.0,
+    "HWY": 58.4,
+    "US06": 39.4,
+    "SC03": 48.6,
+    "COLD": 42.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_KMX_DE7G6VU01AC_c1",
+   "family": "KIA|NIRO",
+   "make": "KIA",
+   "model": "NIRO",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 65.7,
+    "HWY": 62.5,
+    "US06": 44.0,
+    "SC03": 52.9,
+    "COLD": 46.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_KMX_DE7G6VU05AC_c0",
+   "family": "KIA|NIRO",
+   "make": "KIA",
+   "model": "NIRO",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 68.2,
+    "HWY": 66.2,
+    "US06": 45.8,
+    "SC03": 52.9,
+    "COLD": 48.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_KMX_DE-U1G6GD170F_c0",
+   "family": "KIA|NIRO",
+   "make": "KIA",
+   "model": "NIRO",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 72.3,
+    "HWY": 69.0,
+    "US06": 45.3,
+    "SC03": 56.1,
+    "COLD": 45.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_KMX_DE-U1G6GD405F_c0",
+   "family": "KIA|NIRO",
+   "make": "KIA",
+   "model": "NIRO",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 65.5,
+    "HWY": 61.4,
+    "US06": 41.0,
+    "SC03": 46.7,
+    "COLD": 41.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_KMX_DE-U1G6GD885F_c0",
+   "family": "KIA|NIRO",
+   "make": "KIA",
+   "model": "NIRO",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 72.9,
+    "HWY": 69.0,
+    "US06": 45.7,
+    "SC03": 55.7,
+    "COLD": 44.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_KMX_SG2U3K6HD176F_c0",
+   "family": "KIA|NIRO",
+   "make": "KIA",
+   "model": "NIRO HYBRID",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 68.2,
+    "HWY": 62.5,
+    "US06": 43.1,
+    "SC03": 51.0,
+    "COLD": 49.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_KMX_SG2U3G6PD065F_c0",
+   "family": "KIA|NIRO",
+   "make": "KIA",
+   "model": "Niro PHEV",
+   "model_year": 2023,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 69.8,
+    "HWY": 66.7,
+    "US06": 45.2,
+    "SC03": 52.1,
+    "COLD": 51.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_KMX_SG2U3G6PD070F_c0",
+   "family": "KIA|NIRO",
+   "make": "KIA",
+   "model": "Niro PHEV",
+   "model_year": 2023,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 65.2,
+    "HWY": 63.4,
+    "US06": 42.7,
+    "SC03": 49.3,
+    "COLD": 48.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_KMX_DE8G6WU11AC_c0",
+   "family": "KIA|NIRO",
+   "make": "KIA",
+   "model": "Niro Plug-in",
+   "model_year": 2018,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 63.9,
+    "HWY": 61.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_KMX_DE8G6WU11AC_c0",
+   "family": "KIA|NIRO",
+   "make": "KIA",
+   "model": "Niro Plug-in",
+   "model_year": 2020,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 63.9,
+    "HWY": 61.8,
+    "US06": 42.7,
+    "SC03": 47.5,
+    "COLD": 44.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_HYX_HTF3FUP109A_c0",
+   "family": "KIA|OPTIMA",
+   "make": "KIA",
+   "model": "OPTIMA HYBRID",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 48.0,
+    "HWY": 56.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_HYX_HJF7N0AU01C_c0",
+   "family": "KIA|OPTIMA",
+   "make": "KIA",
+   "model": "Optima Hybrid",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.3,
+    "HWY": 63.0,
+    "US06": 40.2,
+    "SC03": 38.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_HYX_HJF7N0AU03C_c0",
+   "family": "KIA|OPTIMA",
+   "make": "KIA",
+   "model": "Optima Hybrid",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 53.6,
+    "HWY": 62.5,
+    "US06": 39.4,
+    "SC03": 38.0,
+    "COLD": 32.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_HYX_HJF7N0AU01C_c0",
+   "family": "KIA|OPTIMA",
+   "make": "KIA",
+   "model": "Optima Hybrid",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "HWY": 63.0,
+    "US06": 40.2,
+    "SC03": 38.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_HYX_HJF7N0AU03C_c0",
+   "family": "KIA|OPTIMA",
+   "make": "KIA",
+   "model": "Optima Hybrid",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "HWY": 62.5,
+    "US06": 39.4,
+    "SC03": 38.0,
+    "COLD": 32.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_KMX_JF9F0VU01AC_c0",
+   "family": "KIA|OPTIMA",
+   "make": "KIA",
+   "model": "Optima Hybrid",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 56.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_KMX_JF0N0VU07AC_c0",
+   "family": "KIA|OPTIMA",
+   "make": "KIA",
+   "model": "Optima Hybrid",
+   "model_year": 2020,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.6,
+    "HWY": 61.9,
+    "US06": 40.7,
+    "SC03": 38.9,
+    "COLD": 32.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_HYX_HTF3FUP110A_c0",
+   "family": "KIA|OPTIMA",
+   "make": "KIA",
+   "model": "OPTIMA HYBRID EX",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 47.0,
+    "HWY": 55.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_HYX_JF7N0WU01AC_c0",
+   "family": "KIA|OPTIMA",
+   "make": "KIA",
+   "model": "OPTIMA PLUG-IN HYBRID",
+   "model_year": 2017,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.2,
+    "HWY": 60.4,
+    "US06": 38.7,
+    "SC03": 42.0,
+    "COLD": 31.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_HYX_JF7N0WU01AC_c0",
+   "family": "KIA|OPTIMA",
+   "make": "KIA",
+   "model": "OPTIMA PLUG-IN HYBRID",
+   "model_year": 2019,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "HWY": 60.4,
+    "US06": 38.7,
+    "SC03": 42.0,
+    "COLD": 31.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_KMX_JF9F0WU01AC_c0",
+   "family": "KIA|OPTIMA",
+   "make": "KIA",
+   "model": "OPTIMA PLUG-IN HYBRID",
+   "model_year": 2019,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 53.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_KMX_JF0N0WU03AC_c0",
+   "family": "KIA|OPTIMA",
+   "make": "KIA",
+   "model": "OPTIMA PLUG-IN HYBRID",
+   "model_year": 2020,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.6,
+    "HWY": 61.4,
+    "US06": 39.9,
+    "SC03": 38.2,
+    "COLD": 31.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_KMX_MQ4U1G6HA579F_c0",
+   "family": "KIA|SORENTO",
+   "make": "KIA",
+   "model": "SORENTO HYBRID",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.0,
+    "HWY": 49.8,
+    "US06": 33.6,
+    "SC03": 39.6,
+    "COLD": 38.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_KMX_MQ4U2G6HA004A_c0",
+   "family": "KIA|SORENTO",
+   "make": "KIA",
+   "model": "Sorento Hybrid AWD",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 51.0,
+    "HWY": 48.0,
+    "US06": 32.2,
+    "SC03": 38.3,
+    "COLD": 36.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_KMX_MQ4U2G6HA010A_c0",
+   "family": "KIA|SORENTO",
+   "make": "KIA",
+   "model": "Sorento Hybrid AWD",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 48.7,
+    "HWY": 45.3,
+    "US06": 31.6,
+    "SC03": 37.1,
+    "COLD": 33.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_KMX_MQ4U4G6HA309A_c0",
+   "family": "KIA|SORENTO",
+   "make": "KIA",
+   "model": "Sorento Hybrid AWD",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 44.6,
+    "HWY": 44.8,
+    "US06": 30.5,
+    "SC03": 37.9,
+    "COLD": 34.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_KMX_MQ4U4G6HA002A_c0",
+   "family": "KIA|SORENTO",
+   "make": "KIA",
+   "model": "Sorento Hybrid AWD",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 42.8,
+    "HWY": 44.8,
+    "US06": 31.8,
+    "SC03": 36.7,
+    "COLD": 34.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_KMX_MQ4U4G6HA308F_c0",
+   "family": "KIA|SORENTO",
+   "make": "KIA",
+   "model": "Sorento Hybrid FWD",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 48.4,
+    "HWY": 49.2,
+    "US06": 32.2,
+    "SC03": 37.8,
+    "COLD": 35.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_KMX_MQ4-KU6G6HA508F_c0",
+   "family": "KIA|SORENTO",
+   "make": "KIA",
+   "model": "Sorento Hybrid FWD",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 50.6,
+    "HWY": 47.6,
+    "US06": 32.4,
+    "SC03": 41.3,
+    "COLD": 35.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_KMX_MQ4U2G6TA564A_c0",
+   "family": "KIA|SORENTO",
+   "make": "KIA",
+   "model": "Sorento PHEV",
+   "model_year": 2022,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 47.4,
+    "HWY": 45.1,
+    "US06": 31.5,
+    "SC03": 36.0,
+    "COLD": 33.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_KMX_MQ4U4G6PA318A_c0",
+   "family": "KIA|SORENTO",
+   "make": "KIA",
+   "model": "Sorento PHEV",
+   "model_year": 2025,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 45.9,
+    "HWY": 43.7,
+    "US06": 31.5,
+    "SC03": 32.1,
+    "COLD": 33.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_KMX_NQ5U3G6HA507A_c0",
+   "family": "KIA|SPORTAGE",
+   "make": "KIA",
+   "model": "SPORTAGE HYBRID",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 53.2,
+    "HWY": 49.4,
+    "US06": 33.4,
+    "SC03": 41.3,
+    "COLD": 38.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_KMX_NQ5U3G6HA557A_c0",
+   "family": "KIA|SPORTAGE",
+   "make": "KIA",
+   "model": "SPORTAGE HYBRID",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 51.8,
+    "HWY": 50.1,
+    "US06": 34.6,
+    "SC03": 41.4,
+    "COLD": 37.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_KMX_NQ5U3G6HA558F_c0",
+   "family": "KIA|SPORTAGE",
+   "make": "KIA",
+   "model": "SPORTAGE HYBRID",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 57.7,
+    "HWY": 55.6,
+    "US06": 38.8,
+    "SC03": 46.8,
+    "COLD": 39.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_KMX_NQ5U4G6HA002A_c0",
+   "family": "KIA|SPORTAGE",
+   "make": "KIA",
+   "model": "SPORTAGE HYBRID",
+   "model_year": 2024,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 50.6,
+    "HWY": 50.3,
+    "US06": 33.6,
+    "SC03": 39.8,
+    "COLD": 36.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_KMX_NQ5-KU6G6HA302A_c0",
+   "family": "KIA|SPORTAGE",
+   "make": "KIA",
+   "model": "SPORTAGE HYBRID",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 45.3,
+    "HWY": 46.2,
+    "US06": 32.4,
+    "SC03": 34.4,
+    "COLD": 37.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_KMX_NQ5-KU6G6HA304F_c0",
+   "family": "KIA|SPORTAGE",
+   "make": "KIA",
+   "model": "SPORTAGE HYBRID",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_tmed",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 54.7,
+    "HWY": 56.8,
+    "US06": 38.4,
+    "SC03": 40.3,
+    "COLD": 40.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_KMX_NQ5U3G6PA004A_c0",
+   "family": "KIA|SPORTAGE",
+   "make": "KIA",
+   "model": "Sportage PHEV",
+   "model_year": 2023,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 48.5,
+    "HWY": 46.2,
+    "US06": 31.9,
+    "SC03": 37.3,
+    "COLD": 34.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_KMX_NQ5-KU6G6P306A_c0",
+   "family": "KIA|SPORTAGE",
+   "make": "KIA",
+   "model": "Sportage PHEV",
+   "model_year": 2026,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 47.5,
+    "HWY": 48.5,
+    "US06": 33.1,
+    "SC03": 31.2,
+    "COLD": 36.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_JLX_3RRTT075_c0",
+   "family": "LAND ROVER|RANGE ROVER",
+   "make": "LAND ROVER",
+   "model": "Range Rover PHEV",
+   "model_year": 2026,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 25.9,
+    "HWY": 35.2,
+    "US06": 22.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_JLX_LW807615_c0",
+   "family": "LAND ROVER|RANGE ROVER",
+   "make": "LAND ROVER",
+   "model": "Range Rover Sport",
+   "model_year": 2019,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "US06": 20.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_JLX_3RRTT075_c1",
+   "family": "LAND ROVER|RANGE ROVER",
+   "make": "LAND ROVER",
+   "model": "Range Rover Sport PHEV",
+   "model_year": 2026,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 25.9,
+    "HWY": 34.9,
+    "US06": 22.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_TYX_11-ZA1H_c0",
+   "family": "LEXUS|CT",
+   "make": "LEXUS",
+   "model": "CT 200h",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 58.3,
+    "HWY": 56.9,
+    "US06": 39.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_TYX_11-ZA1H_c1",
+   "family": "LEXUS|CT",
+   "make": "LEXUS",
+   "model": "CT 200h",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.8,
+    "HWY": 56.2,
+    "US06": 37.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_TYX_11-ZA1H_c2",
+   "family": "LEXUS|CT",
+   "make": "LEXUS",
+   "model": "CT 200h",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 59.8,
+    "HWY": 57.9,
+    "US06": 37.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_TYX_13-AV2H_c0",
+   "family": "LEXUS|ES",
+   "make": "LEXUS",
+   "model": "ES 300h",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.3,
+    "HWY": 53.3,
+    "US06": 35.6,
+    "SC03": 39.2,
+    "COLD": 41.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_TYX_13-AV2H_c1",
+   "family": "LEXUS|ES",
+   "make": "LEXUS",
+   "model": "ES 300h",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 57.4,
+    "HWY": 54.2,
+    "US06": 37.8,
+    "SC03": 38.4,
+    "COLD": 42.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_TYX_13-AV2H_c2",
+   "family": "LEXUS|ES",
+   "make": "LEXUS",
+   "model": "ES 300h",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.6,
+    "HWY": 55.0,
+    "US06": 38.0,
+    "SC03": 40.4,
+    "COLD": 42.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_19-AZ1H_c0",
+   "family": "LEXUS|ES",
+   "make": "LEXUS",
+   "model": "ES 300h",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 61.2,
+    "HWY": 63.0,
+    "US06": 43.7,
+    "SC03": 46.8,
+    "COLD": 42.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_19-AZ2H_c0",
+   "family": "LEXUS|ES",
+   "make": "LEXUS",
+   "model": "ES 300h",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 59.5,
+    "HWY": 60.4,
+    "US06": 42.4,
+    "SC03": 44.3,
+    "COLD": 42.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_07-GS1H_c1",
+   "family": "LEXUS|GS",
+   "make": "LEXUS",
+   "model": "GS 450h",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 27.9,
+    "HWY": 35.35
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_TYX_13-GW1H_c0",
+   "family": "LEXUS|GS",
+   "make": "LEXUS",
+   "model": "GS 450h",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 36.3,
+    "HWY": 41.3,
+    "US06": 30.4,
+    "SC03": 25.4,
+    "COLD": 29.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_TYX_13-GW2H_c0",
+   "family": "LEXUS|GS",
+   "make": "LEXUS",
+   "model": "GS 450h",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 40.3,
+    "HWY": 44.5,
+    "US06": 32.7,
+    "SC03": 29.5,
+    "COLD": 30.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_TYX_13-GW2H_c1",
+   "family": "LEXUS|GS",
+   "make": "LEXUS",
+   "model": "GS 450h",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 40.6,
+    "HWY": 44.7,
+    "US06": 32.8,
+    "SC03": 30.0,
+    "COLD": 30.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_TYX_13-GW2H_c2",
+   "family": "LEXUS|GS",
+   "make": "LEXUS",
+   "model": "GS 450h",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 38.3,
+    "HWY": 43.6,
+    "US06": 31.6,
+    "SC03": 27.8,
+    "COLD": 29.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-AF1H_c0",
+   "family": "LEXUS|HS",
+   "make": "LEXUS",
+   "model": "HS 250h",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 46.5,
+    "HWY": 46.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-AF1H_c1",
+   "family": "LEXUS|HS",
+   "make": "LEXUS",
+   "model": "HS 250h",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 46.8,
+    "HWY": 46.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-AF1H_c2",
+   "family": "LEXUS|HS",
+   "make": "LEXUS",
+   "model": "HS 250h",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 47.3,
+    "HWY": 46.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-AF1H_c3",
+   "family": "LEXUS|HS",
+   "make": "LEXUS",
+   "model": "HS 250h",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 47.5,
+    "HWY": 48.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-AF1H_c4",
+   "family": "LEXUS|HS",
+   "make": "LEXUS",
+   "model": "HS 250h",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 47.5,
+    "HWY": 48.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-AF1H_c5",
+   "family": "LEXUS|HS",
+   "make": "LEXUS",
+   "model": "HS 250h",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 47.8,
+    "HWY": 49.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_TYX_18-GF3H_c0",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h",
+   "model_year": 2018,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 33.2,
+    "HWY": 46.5,
+    "US06": 29.4,
+    "SC03": 24.85,
+    "COLD": 27.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_TYX_18-GF3H_c1",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h",
+   "model_year": 2018,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 34.4,
+    "HWY": 46.5,
+    "US06": 29.25,
+    "SC03": 27.4,
+    "COLD": 27.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_18-GF3H_c0",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 33.1,
+    "HWY": 46.2,
+    "US06": 29.3,
+    "SC03": 24.8,
+    "COLD": 26.85
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_18-GF3H_c1",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 34.3,
+    "HWY": 46.2,
+    "US06": 29.2,
+    "SC03": 27.25,
+    "COLD": 26.75
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_TYX_21-GF3H_c0",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 34.2,
+    "HWY": 45.099999999999994,
+    "US06": 29.9,
+    "SC03": 26.3,
+    "COLD": 27.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_TYX_21-GF3H_c1",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 34.6,
+    "HWY": 45.5,
+    "US06": 30.4,
+    "SC03": 27.9,
+    "COLD": 27.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_TYX_18-GF2H_c0",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h AWD",
+   "model_year": 2018,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 31.0,
+    "HWY": 41.6,
+    "US06": 27.4,
+    "SC03": 22.7,
+    "COLD": 24.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_TYX_18-GF2H_c1",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h AWD",
+   "model_year": 2018,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 30.3,
+    "HWY": 42.0,
+    "US06": 28.2,
+    "SC03": 25.3,
+    "COLD": 24.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_18-GF2H_c0",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h AWD",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 30.9,
+    "HWY": 41.35,
+    "US06": 27.25,
+    "SC03": 22.549999999999997,
+    "COLD": 24.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_18-GF2H_c1",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h AWD",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 30.200000000000003,
+    "HWY": 41.75,
+    "US06": 28.049999999999997,
+    "SC03": 25.15,
+    "COLD": 24.35
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_TYX_18-GF2H_c0",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h AWD",
+   "model_year": 2020,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 30.8,
+    "HWY": 41.1,
+    "US06": 27.1,
+    "SC03": 22.4,
+    "COLD": 23.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_TYX_18-GF2H_c1",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h AWD",
+   "model_year": 2020,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 30.1,
+    "HWY": 41.5,
+    "US06": 27.9,
+    "SC03": 25.0,
+    "COLD": 24.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_TYX_21-GF2H_c0",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h AWD",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 29.8,
+    "HWY": 39.25,
+    "US06": 26.5,
+    "SC03": 24.0,
+    "COLD": 24.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_TYX_21-GF2H_c1",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h AWD",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 31.2,
+    "HWY": 41.2,
+    "US06": 27.0,
+    "SC03": 26.7,
+    "COLD": 24.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_TYX_21-GF1H_c2",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 500h AWD",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 29.2,
+    "HWY": 39.0,
+    "US06": 26.6,
+    "SC03": 24.3,
+    "COLD": 23.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_08-UF2H_c0",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 600h L",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 24.7,
+    "HWY": 30.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_TYX_08-UF2H_c0",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 600h L",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 24.7,
+    "HWY": 30.3,
+    "SC03": 22.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_TYX_08-UF2H_c4",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 600h L",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "US06": 21.8,
+    "SC03": 20.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_08-UF2H_c3",
+   "family": "LEXUS|LS",
+   "make": "LEXUS",
+   "model": "LS 600h L",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "US06": 21.7,
+    "COLD": 18.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_TYX_25-VJ1H_c0",
+   "family": "LEXUS|LX",
+   "make": "LEXUS",
+   "model": "LX 700h",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 23.6,
+    "HWY": 30.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2015_TYX_15-AZ3H_c0",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 300h",
+   "model_year": 2015,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 45.5,
+    "HWY": 42.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2015_TYX_15-AZ3H_c1",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 300h",
+   "model_year": 2015,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 45.7,
+    "HWY": 43.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2015_TYX_15-AZ3H_c2",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 300h",
+   "model_year": 2015,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 46.0,
+    "HWY": 43.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2015_TYX_15-AZ3H_c3",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 300h",
+   "model_year": 2015,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 47.5,
+    "HWY": 44.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2015_TYX_15-AZ1H_c0",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 300h AWD",
+   "model_year": 2015,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 44.2,
+    "HWY": 42.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2015_TYX_15-AZ2H_c1",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 300h AWD",
+   "model_year": 2015,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 44.8,
+    "HWY": 43.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2015_TYX_15-AZ2H_c2",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 300h AWD",
+   "model_year": 2015,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 43.0,
+    "HWY": 42.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2015_TYX_15-AZ2H_c3",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 300h AWD",
+   "model_year": 2015,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 43.9,
+    "HWY": 42.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2015_TYX_15-AZ2H_c4",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 300h AWD",
+   "model_year": 2015,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 44.2,
+    "HWY": 42.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2015_TYX_15-AZ2H_c5",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 300h AWD",
+   "model_year": 2015,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 45.1,
+    "HWY": 43.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_TYX_26-AZ1H_c0",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 350h",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 58.6,
+    "HWY": 52.7,
+    "US06": 38.3,
+    "SC03": 43.6,
+    "COLD": 41.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_TYX_26-AZ1H_c1",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 350h",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 56.0,
+    "HWY": 51.1,
+    "US06": 36.8,
+    "SC03": 43.4,
+    "COLD": 39.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_TYX_22-AZ3H_c0",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 350h AWD",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.7,
+    "HWY": 51.3,
+    "US06": 36.0,
+    "SC03": 43.9,
+    "COLD": 39.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_TYX_22-AZ3H_c1",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 350h AWD",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 56.8,
+    "HWY": 52.1,
+    "US06": 35.9,
+    "SC03": 44.9,
+    "COLD": 39.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_TYX_22-AZ4H_c1",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 450h+ AWD",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 49.7,
+    "HWY": 47.6,
+    "US06": 34.5,
+    "SC03": 37.3,
+    "COLD": 37.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2022_TYX_22-AZ6H_c1",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 450h+ AWD",
+   "model_year": 2022,
+   "architecture": "hev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 49.6,
+    "HWY": 47.5,
+    "US06": 32.9,
+    "SC03": 35.6,
+    "COLD": 37.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_TYX_26-AZ2H_c0",
+   "family": "LEXUS|NX",
+   "make": "LEXUS",
+   "model": "NX 450h+ AWD",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 50.2,
+    "HWY": 47.8,
+    "US06": 33.6,
+    "SC03": 29.05,
+    "COLD": 36.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-AH2H_c0",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 350h AWD",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 49.6,
+    "HWY": 48.0,
+    "US06": 32.5,
+    "SC03": 41.8,
+    "COLD": 37.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-AH2H_c1",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 350h AWD",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 50.8,
+    "HWY": 48.3,
+    "US06": 32.9,
+    "SC03": 40.8,
+    "COLD": 37.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-AH2H_c2",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 350h AWD",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 50.2,
+    "HWY": 48.0,
+    "US06": 32.5,
+    "SC03": 41.8,
+    "COLD": 37.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-GL2H_c0",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.2,
+    "HWY": 38.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-GL2H_c1",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.7,
+    "HWY": 39.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_TYX_16-GL3H_c0",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h",
+   "model_year": 2016,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 42.7,
+    "HWY": 40.9,
+    "US06": 28.2,
+    "SC03": 32.4,
+    "COLD": 31.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_TYX_16-GL3H_c1",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h",
+   "model_year": 2016,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 42.3,
+    "HWY": 40.9,
+    "US06": 28.1,
+    "SC03": 32.0,
+    "COLD": 31.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_TYX_16-GL3H_c2",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h",
+   "model_year": 2016,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 42.5,
+    "HWY": 40.9,
+    "US06": 28.2,
+    "SC03": 32.6,
+    "COLD": 31.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-GL3H_c0",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h AWD",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 40.3,
+    "HWY": 38.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-GL3H_c1",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h AWD",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 36.9,
+    "HWY": 38.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-GL3H_c2",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h AWD",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 40.4,
+    "HWY": 38.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-GL3H_c3",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h AWD",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 40.0,
+    "HWY": 38.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_TYX_16-GL1H_c1",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h AWD",
+   "model_year": 2016,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.3,
+    "HWY": 39.7,
+    "US06": 27.0,
+    "SC03": 31.9,
+    "COLD": 31.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_TYX_16-GL2H_c0",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h AWD",
+   "model_year": 2016,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.5,
+    "HWY": 39.8,
+    "US06": 27.0,
+    "SC03": 30.6,
+    "COLD": 31.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_TYX_16-GL2H_c1",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h AWD",
+   "model_year": 2016,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.7,
+    "HWY": 40.2,
+    "US06": 27.3,
+    "SC03": 32.2,
+    "COLD": 31.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_16-GL1H_c1",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h AWD",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.3,
+    "HWY": 39.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_16-GL2H_c0",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h AWD",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.5,
+    "HWY": 39.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_16-GL2H_c1",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h AWD",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.7,
+    "HWY": 40.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_TYX_24-AL2H_c0",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h+ AWD",
+   "model_year": 2024,
+   "architecture": "hev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 50.0,
+    "HWY": 47.0,
+    "US06": 34.1,
+    "SC03": 34.1,
+    "COLD": 36.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_TYX_24-AL2H_c1",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h+ AWD",
+   "model_year": 2024,
+   "architecture": "hev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 49.9,
+    "HWY": 47.3,
+    "US06": 33.0,
+    "SC03": 35.7,
+    "COLD": 35.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_TYX_26-AL1H_c1",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 450h+ AWD",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 49.4,
+    "HWY": 48.3,
+    "US06": 34.3,
+    "SC03": 36.7,
+    "COLD": 36.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-TL2H_c0",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 500h AWD",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_clutch",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 35.1,
+    "HWY": 39.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-TL2H_c1",
+   "family": "LEXUS|RX",
+   "make": "LEXUS",
+   "model": "RX 500h AWD",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_clutch",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 36.4,
+    "HWY": 40.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_TYX_24-TA1H_c0",
+   "family": "LEXUS|TX",
+   "make": "LEXUS",
+   "model": "TX 500h AWD",
+   "model_year": 2024,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_clutch",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 35.1,
+    "HWY": 39.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_TYX_24-GU3H_c0",
+   "family": "LEXUS|TX",
+   "make": "LEXUS",
+   "model": "TX 550h+ AWD",
+   "model_year": 2024,
+   "architecture": "hev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 39.4,
+    "HWY": 39.6,
+    "US06": 26.9,
+    "SC03": 28.9,
+    "COLD": 30.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_19-MA3H_c0",
+   "family": "LEXUS|UX",
+   "make": "LEXUS",
+   "model": "UX 250h",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 59.5,
+    "HWY": 58.0,
+    "US06": 40.0,
+    "SC03": 42.7,
+    "COLD": 42.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_19-MA3H_c1",
+   "family": "LEXUS|UX",
+   "make": "LEXUS",
+   "model": "UX 250h",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 59.5,
+    "HWY": 58.3,
+    "US06": 39.1,
+    "SC03": 44.0,
+    "COLD": 44.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_19-MA1H_c0",
+   "family": "LEXUS|UX",
+   "make": "LEXUS",
+   "model": "UX 250h AWD",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 55.8,
+    "HWY": 54.7,
+    "US06": 37.3,
+    "SC03": 42.7,
+    "COLD": 40.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_19-MA1H_c1",
+   "family": "LEXUS|UX",
+   "make": "LEXUS",
+   "model": "UX 250h AWD",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 56.1,
+    "HWY": 55.1,
+    "US06": 36.6,
+    "SC03": 43.6,
+    "COLD": 43.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_TYX_25-MA2H_c0",
+   "family": "LEXUS|UX",
+   "make": "LEXUS",
+   "model": "UX 300h",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 65.6,
+    "HWY": 59.0,
+    "US06": 40.1,
+    "SC03": 43.3,
+    "COLD": 45.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_TYX_25-MA1H_c1",
+   "family": "LEXUS|UX",
+   "make": "LEXUS",
+   "model": "UX 300h AWD",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 64.2,
+    "HWY": 58.6,
+    "US06": 38.2,
+    "SC03": 42.0,
+    "COLD": 45.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_FMX_LGL00094_c0",
+   "family": "LINCOLN|AVIATOR",
+   "make": "LINCOLN",
+   "model": "Aviator PHEV",
+   "model_year": 2020,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 27.4,
+    "HWY": 34.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_FMX_HC91-2.0-J-815_c0",
+   "family": "LINCOLN|MKZ",
+   "make": "LINCOLN",
+   "model": "MKZ (HEV)",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "fps",
+   "group": "ford_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 51.0,
+    "HWY": 52.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_FMX_RJ722118_c0",
+   "family": "LINCOLN|NAUTILUS",
+   "make": "LINCOLN",
+   "model": "NAUTILUS HEV AWD",
+   "model_year": 2024,
+   "architecture": "hev",
+   "kind": "ops",
+   "group": "other_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 39.5,
+    "HWY": 44.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_FMX_TJ940674_c0",
+   "family": "LINCOLN|NAUTILUS",
+   "make": "LINCOLN",
+   "model": "Nautilus HEV AWD",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "ops",
+   "group": "other_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 38.0,
+    "HWY": 45.0,
+    "US06": 30.4,
+    "SC03": 27.3,
+    "COLD": 27.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_FMX_TJ940677_c0",
+   "family": "LINCOLN|NAUTILUS",
+   "make": "LINCOLN",
+   "model": "Nautilus HEV AWD",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "ops",
+   "group": "other_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 39.7,
+    "HWY": 46.0,
+    "US06": 31.8,
+    "SC03": 28.8,
+    "COLD": 28.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_MBX_W214E30DETC-Z2567_c1",
+   "family": "MERCEDES-BENZ|AMG",
+   "make": "MERCEDES-BENZ",
+   "model": "AMG E 53 HYBRID 4MATIC+",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 26.7,
+    "HWY": 36.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_MBX_W214E30DETC-Z2667_c1",
+   "family": "MERCEDES-BENZ|AMG",
+   "make": "MERCEDES-BENZ",
+   "model": "AMG E 53 HYBRID 4MATIC+",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 27.4,
+    "HWY": 37.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_MBX_S214E30DETC-Z2667-1_c1",
+   "family": "MERCEDES-BENZ|AMG",
+   "make": "MERCEDES-BENZ",
+   "model": "AMG E 53 HYBRID 4MATIC+ (station wagon)",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 26.2,
+    "HWY": 35.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_MBX_W205E20DETC-Z6029_c1",
+   "family": "MERCEDES-BENZ|C 350E",
+   "make": "MERCEDES-BENZ",
+   "model": "C 350e",
+   "model_year": 2016,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 37.4,
+    "HWY": 46.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2013_MBX_W212E35DEHHyb-Z3017_c1",
+   "family": "MERCEDES-BENZ|E 400",
+   "make": "MERCEDES-BENZ",
+   "model": "E 400 HYBRID",
+   "model_year": 2013,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 31.4,
+    "HWY": 41.95,
+    "US06": 27.4,
+    "SC03": 27.8,
+    "COLD": 23.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2015_MBX_W212E35DEHHyb-Z3017_c3",
+   "family": "MERCEDES-BENZ|E 400",
+   "make": "MERCEDES-BENZ",
+   "model": "E 400 HYBRID",
+   "model_year": 2015,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 30.2,
+    "HWY": 40.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_MBX_X254E20DETC-Z2539_c0",
+   "family": "MERCEDES-BENZ|GLC",
+   "make": "MERCEDES-BENZ",
+   "model": "GLC 350 e 4MATIC with EQ Hybrid Technology",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 30.0,
+    "HWY": 39.6,
+    "US06": 26.1,
+    "SC03": 24.9,
+    "COLD": 21.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_MBX_X254E20DETC-Z2639_c0",
+   "family": "MERCEDES-BENZ|GLC",
+   "make": "MERCEDES-BENZ",
+   "model": "GLC 350 e 4MATIC with EQ Hybrid Technology",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 29.7,
+    "HWY": 38.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_MBX_X253E20DETC-Z8026_c1",
+   "family": "MERCEDES-BENZ|GLC",
+   "make": "MERCEDES-BENZ",
+   "model": "GLC 350e 4MATIC",
+   "model_year": 2018,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 31.9,
+    "HWY": 38.3,
+    "US06": 26.0,
+    "SC03": 25.4,
+    "COLD": 21.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_MBX_X253E20DETC-Z2029_c2",
+   "family": "MERCEDES-BENZ|GLC",
+   "make": "MERCEDES-BENZ",
+   "model": "GLC 350e 4MATIC",
+   "model_year": 2020,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 31.9,
+    "HWY": 39.8,
+    "US06": 26.1,
+    "SC03": 24.3,
+    "COLD": 19.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_MBX_V167E20DETC-Z2617_c1",
+   "family": "MERCEDES-BENZ|GLE",
+   "make": "MERCEDES-BENZ",
+   "model": "GLE 450 e 4MATIC with EQ Hybrid Technology",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 26.3,
+    "HWY": 34.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_MBX_V222E30DETC-Z9029_c1",
+   "family": "MERCEDES-BENZ|S 560E",
+   "make": "MERCEDES-BENZ",
+   "model": "S 560e",
+   "model_year": 2019,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 28.7,
+    "HWY": 41.0,
+    "US06": 23.9,
+    "SC03": 21.2,
+    "COLD": 19.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_FMX_AM71-2.5-C-947_c0",
+   "family": "MERCURY|MARINER",
+   "make": "MERCURY",
+   "model": "MARINER HEV 4X4",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "fps",
+   "group": "ford_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 39.6,
+    "HWY": 37.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_FMX_AM71-2.5-C-947_c1",
+   "family": "MERCURY|MARINER",
+   "make": "MERCURY",
+   "model": "MARINER HEV 4X4",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "fps",
+   "group": "ford_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 40.1,
+    "HWY": 38.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_MTX_EB18-RH41_c2",
+   "family": "MITSUBISHI|OUTLANDER",
+   "make": "MITSUBISHI",
+   "model": "OUTLANDER PHEV",
+   "model_year": 2018,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 38.2,
+    "HWY": 40.7,
+    "US06": 25.5,
+    "SC03": 24.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_MTX_EB21-RH61_c3",
+   "family": "MITSUBISHI|OUTLANDER",
+   "make": "MITSUBISHI",
+   "model": "Outlander PHEV",
+   "model_year": 2021,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "US06": 25.5,
+    "SC03": 20.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_MTX_EB21-RH61_c7",
+   "family": "MITSUBISHI|OUTLANDER",
+   "make": "MITSUBISHI",
+   "model": "Outlander PHEV",
+   "model_year": 2021,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 37.7,
+    "HWY": 40.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_MTX_EB23-DH11_c2",
+   "family": "MITSUBISHI|OUTLANDER",
+   "make": "MITSUBISHI",
+   "model": "Outlander PHEV",
+   "model_year": 2023,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "US06": 26.1,
+    "SC03": 24.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_MTX_EB23-DH11_c4",
+   "family": "MITSUBISHI|OUTLANDER",
+   "make": "MITSUBISHI",
+   "model": "Outlander PHEV",
+   "model_year": 2023,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 37.7,
+    "HWY": 39.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_MTX_EB23-DH13_c0",
+   "family": "MITSUBISHI|OUTLANDER",
+   "make": "MITSUBISHI",
+   "model": "Outlander PHEV",
+   "model_year": 2023,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "US06": 27.9,
+    "SC03": 25.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_MTX_EB23-DH13_c2",
+   "family": "MITSUBISHI|OUTLANDER",
+   "make": "MITSUBISHI",
+   "model": "Outlander PHEV",
+   "model_year": 2023,
+   "architecture": "phev",
+   "kind": "phev_series",
+   "group": "plugin_series",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.4,
+    "HWY": 42.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2008_380_FLB106_c0",
+   "family": "NISSAN|ALTIMA",
+   "make": "NISSAN",
+   "model": "ALTIMA HYBRID",
+   "model_year": 2008,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 46.8,
+    "HWY": 46.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_PRX_ECFE-9YAH-21_c0",
+   "family": "PORSCHE|CAYENNE",
+   "make": "PORSCHE",
+   "model": "Cayenne Coupe E-Hybrid",
+   "model_year": 2021,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 25.2,
+    "HWY": 30.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_PRX_ECFE-9YAH-19_c0",
+   "family": "PORSCHE|CAYENNE",
+   "make": "PORSCHE",
+   "model": "Cayenne e-Hybrid",
+   "model_year": 2019,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 25.1,
+    "HWY": 31.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_PRX_ECFE-9YAH-24_c0",
+   "family": "PORSCHE|CAYENNE",
+   "make": "PORSCHE",
+   "model": "Cayenne E-Hybrid",
+   "model_year": 2024,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 26.3,
+    "HWY": 31.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_PRX_ECFE-9YAH-24_c1",
+   "family": "PORSCHE|CAYENNE",
+   "make": "PORSCHE",
+   "model": "Cayenne E-Hybrid",
+   "model_year": 2024,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 27.9,
+    "HWY": 32.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_PRX_FE-9YAH-20_c0",
+   "family": "PORSCHE|CAYENNE",
+   "make": "PORSCHE",
+   "model": "Cayenne e-Hybrid Coupe",
+   "model_year": 2020,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 19.6,
+    "HWY": 30.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2015_PRX_ECFE-92AIIH-15_c0",
+   "family": "PORSCHE|CAYENNE",
+   "make": "PORSCHE",
+   "model": "Cayenne S e-Hybrid",
+   "model_year": 2015,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 26.3,
+    "HWY": 33.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_PRX_ECFE-9YASH-24_c1",
+   "family": "PORSCHE|CAYENNE",
+   "make": "PORSCHE",
+   "model": "Cayenne S E-Hybrid",
+   "model_year": 2024,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 25.9,
+    "HWY": 32.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_PRX_ECFE-9YATH-24_c1",
+   "family": "PORSCHE|CAYENNE",
+   "make": "PORSCHE",
+   "model": "Cayenne Turbo E-Hybrid",
+   "model_year": 2024,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 21.9,
+    "HWY": 28.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_PRX_ECFE-9YATH-24_c2",
+   "family": "PORSCHE|CAYENNE",
+   "make": "PORSCHE",
+   "model": "Cayenne Turbo E-Hybrid",
+   "model_year": 2024,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 22.2,
+    "HWY": 28.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_PRX_ECFE-9YATH-25_c1",
+   "family": "PORSCHE|CAYENNE",
+   "make": "PORSCHE",
+   "model": "Cayenne Turbo E-Hybrid Coupe",
+   "model_year": 2025,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 23.5,
+    "HWY": 28.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_PRX_ECFE-9YATSH-21_c0",
+   "family": "PORSCHE|CAYENNE",
+   "make": "PORSCHE",
+   "model": "Cayenne Turbo S Coupe E-Hybrid",
+   "model_year": 2021,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 21.2,
+    "HWY": 26.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_PRX_ECFE-9YATSH-20_c0",
+   "family": "PORSCHE|CAYENNE",
+   "make": "PORSCHE",
+   "model": "Cayenne Turbo S e-Hybrid",
+   "model_year": 2020,
+   "architecture": "phev",
+   "kind": "phev_p2",
+   "group": "plugin_p2",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 20.1,
+    "HWY": 27.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_FJX_TBF-JG19_c0",
+   "family": "SUBARU|CROSSTREK",
+   "make": "SUBARU",
+   "model": "CROSSTREK HYBRID AWD",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "ops",
+   "group": "other_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 53.4,
+    "HWY": 50.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_FJX_SBF-JS19_c0",
+   "family": "SUBARU|FORESTER",
+   "make": "SUBARU",
+   "model": "FORESTER HYBRID AWD",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "ops",
+   "group": "other_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 52.3,
+    "HWY": 49.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_FJX_SBF-JS19_c1",
+   "family": "SUBARU|FORESTER",
+   "make": "SUBARU",
+   "model": "FORESTER HYBRID AWD",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "ops",
+   "group": "other_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 50.6,
+    "HWY": 48.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_19-AX2H_c0",
+   "family": "TOYOTA|AVALON",
+   "make": "TOYOTA",
+   "model": "AVALON HYBRID",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 59.1,
+    "HWY": 59.5,
+    "US06": 41.1,
+    "SC03": 44.0,
+    "COLD": 42.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_19-AX1H_c0",
+   "family": "TOYOTA|AVALON",
+   "make": "TOYOTA",
+   "model": "AVALON HYBRID XLE",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 60.8,
+    "HWY": 61.6,
+    "US06": 42.0,
+    "SC03": 45.4,
+    "COLD": 40.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_19-AX1H_c1",
+   "family": "TOYOTA|AVALON",
+   "make": "TOYOTA",
+   "model": "AVALON HYBRID XLE",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 60.9,
+    "HWY": 61.2,
+    "US06": 42.2,
+    "SC03": 44.9,
+    "COLD": 41.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_19-AX1H_c2",
+   "family": "TOYOTA|AVALON",
+   "make": "TOYOTA",
+   "model": "AVALON HYBRID XLE",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 60.7,
+    "HWY": 61.6,
+    "US06": 42.5,
+    "SC03": 47.4,
+    "COLD": 39.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_TYX_25-AV2H_c0",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "CAMRY HEV AWD LE",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 68.4,
+    "HWY": 68.0,
+    "US06": 48.1,
+    "SC03": 51.3,
+    "COLD": 48.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_TYX_26-AV2H_c0",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "CAMRY HEV AWD LE",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 68.0,
+    "HWY": 69.1,
+    "US06": 46.5,
+    "SC03": 50.25,
+    "COLD": 52.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_TYX_25-AV1H_c1",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "CAMRY HEV AWD SE/XLE",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 62.3,
+    "HWY": 61.1,
+    "US06": 44.3,
+    "SC03": 50.1,
+    "COLD": 45.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_TYX_26-AV1H_c1",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "CAMRY HEV AWD SE/XLE",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 64.5,
+    "HWY": 63.1,
+    "US06": 43.0,
+    "SC03": 48.2,
+    "COLD": 46.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_TYX_25-AV3H_c0",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "CAMRY HEV FF LE",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 74.1,
+    "HWY": 69.5,
+    "US06": 48.1,
+    "SC03": 51.9,
+    "COLD": 51.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_TYX_26-AV3H_c0",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "CAMRY HEV FF LE",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 70.7,
+    "HWY": 69.6,
+    "US06": 47.5,
+    "SC03": 52.9,
+    "COLD": 51.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2025_TYX_25-AV4H_c0",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "CAMRY HEV FF SE/XLE/XSE",
+   "model_year": 2025,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 63.5,
+    "HWY": 65.0,
+    "US06": 44.3,
+    "SC03": 49.8,
+    "COLD": 47.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_TYX_26-AV4H_c0",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "CAMRY HEV FF SE/XLE/XSE",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 63.8,
+    "HWY": 64.6,
+    "US06": 42.55,
+    "SC03": 47.15,
+    "COLD": 48.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2008_570_07-AV4H_c1",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "CAMRY HYBRID",
+   "model_year": 2008,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 44.25,
+    "HWY": 48.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_TYX_07-AV4H_c3",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "CAMRY HYBRID",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "US06": 33.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-AV1H_c4",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "Camry Hybrid LE",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 58.9,
+    "HWY": 56.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-AV1H_c5",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "Camry Hybrid LE",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 58.2,
+    "HWY": 56.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_TYX_18-AV1H_c1",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "CAMRY HYBRID LE",
+   "model_year": 2018,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 66.5,
+    "HWY": 66.0,
+    "US06": 46.4,
+    "SC03": 45.7,
+    "COLD": 45.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-AV1H_c0",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "Camry Hybrid XLE",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 55.7,
+    "HWY": 54.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-AV1H_c1",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "Camry Hybrid XLE",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 54.3,
+    "HWY": 54.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-AV1H_c2",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "Camry Hybrid XLE",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 54.9,
+    "HWY": 55.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-AV1H_c3",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "Camry Hybrid XLE",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 57.8,
+    "HWY": 56.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2018_TYX_18-AV4H_c1",
+   "family": "TOYOTA|CAMRY",
+   "make": "TOYOTA",
+   "model": "CAMRY HYBRID XLE/SE",
+   "model_year": 2018,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 61.7,
+    "HWY": 64.5,
+    "US06": 46.5,
+    "SC03": 41.6,
+    "COLD": 42.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-MG2H_c0",
+   "family": "TOYOTA|COROLLA",
+   "make": "TOYOTA",
+   "model": "COROLLA CROSS HYBRID AWD",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 67.6,
+    "HWY": 58.2,
+    "US06": 38.0,
+    "SC03": 42.9,
+    "COLD": 48.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_TYX_26-MG1H_c0",
+   "family": "TOYOTA|COROLLA",
+   "make": "TOYOTA",
+   "model": "COROLLA CROSS HYBRID AWD",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 67.5,
+    "HWY": 59.8,
+    "US06": 38.9,
+    "SC03": 46.3,
+    "COLD": 48.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2026_TYX_26-MG2H_c1",
+   "family": "TOYOTA|COROLLA",
+   "make": "TOYOTA",
+   "model": "COROLLA CROSS HYBRID AWD",
+   "model_year": 2026,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 62.2,
+    "HWY": 54.0,
+    "US06": 37.5,
+    "SC03": 45.2,
+    "COLD": 48.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_TYX_20-ZE1H_c0",
+   "family": "TOYOTA|COROLLA",
+   "make": "TOYOTA",
+   "model": "COROLLA HYBRID",
+   "model_year": 2020,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 78.1,
+    "HWY": 76.2,
+    "US06": 50.9,
+    "SC03": 52.3,
+    "COLD": 51.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_TYX_20-ZE2H_c0",
+   "family": "TOYOTA|COROLLA",
+   "make": "TOYOTA",
+   "model": "COROLLA HYBRID",
+   "model_year": 2020,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 71.5,
+    "HWY": 71.1,
+    "US06": 46.6,
+    "SC03": 50.1,
+    "COLD": 48.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-ZE4H_c0",
+   "family": "TOYOTA|COROLLA",
+   "make": "TOYOTA",
+   "model": "COROLLA HYBRID",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 77.1,
+    "HWY": 72.2,
+    "US06": 46.5,
+    "SC03": 47.7,
+    "COLD": 53.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-ZE5H_c0",
+   "family": "TOYOTA|COROLLA",
+   "make": "TOYOTA",
+   "model": "COROLLA HYBRID",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 70.8,
+    "HWY": 64.2,
+    "US06": 44.4,
+    "SC03": 46.0,
+    "COLD": 49.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-ZE1H_c0",
+   "family": "TOYOTA|COROLLA",
+   "make": "TOYOTA",
+   "model": "COROLLA HYBRID AWD",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 72.7,
+    "HWY": 67.2,
+    "US06": 44.6,
+    "SC03": 48.8,
+    "COLD": 51.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-ZE3H_c1",
+   "family": "TOYOTA|COROLLA",
+   "make": "TOYOTA",
+   "model": "COROLLA HYBRID AWD",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 65.5,
+    "HWY": 61.0,
+    "US06": 42.7,
+    "SC03": 45.2,
+    "COLD": 46.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2008_570_07-GS1H_c1",
+   "family": "TOYOTA|GS",
+   "make": "TOYOTA",
+   "model": "GS 450H",
+   "model_year": 2008,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 27.9,
+    "HWY": 35.35
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_TYX_20-AU3H_c0",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID",
+   "model_year": 2020,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 49.3,
+    "HWY": 48.2,
+    "US06": 33.8,
+    "SC03": 37.4,
+    "COLD": 36.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2008_570_08-MU1H_c0",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID 4WD",
+   "model_year": 2008,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 35.3,
+    "HWY": 35.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2008_570_08-MU1H_c1",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID 4WD",
+   "model_year": 2008,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 35.4,
+    "HWY": 34.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_TYX_11-GU1H_c0",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID 4WD",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 38.4,
+    "HWY": 37.4,
+    "US06": 25.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_TYX_11-GU1H_c1",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID 4WD",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 39.8,
+    "HWY": 37.9,
+    "US06": 26.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_TYX_11-GU1H_c2",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID 4WD",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 40.5,
+    "HWY": 38.4,
+    "US06": 27.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2011_TYX_11-GU1H_c3",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID 4WD",
+   "model_year": 2011,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 39.8,
+    "HWY": 38.4,
+    "US06": 26.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2014_TYX_14-GU2H_c2",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD",
+   "model_year": 2014,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 38.7,
+    "HWY": 39.2,
+    "US06": 25.8,
+    "SC03": 25.9,
+    "COLD": 30.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2014_TYX_14-GU2H_c3",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD",
+   "model_year": 2014,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 38.6,
+    "HWY": 38.4,
+    "US06": 26.2,
+    "SC03": 25.9,
+    "COLD": 30.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2015_TYX_14-GU1H_c0",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD",
+   "model_year": 2015,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 38.2,
+    "HWY": 38.2,
+    "US06": 23.3,
+    "SC03": 26.5,
+    "COLD": 28.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-GU1H_c0",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 40.3,
+    "HWY": 38.6,
+    "US06": 26.3,
+    "SC03": 27.5,
+    "COLD": 30.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-GU1H_c1",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 39.4,
+    "HWY": 38.8,
+    "US06": 26.4,
+    "SC03": 28.5,
+    "COLD": 30.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-GU1H_c2",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 40.5,
+    "HWY": 38.6,
+    "US06": 26.2,
+    "SC03": 26.4,
+    "COLD": 30.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-GU1H_c3",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.1,
+    "HWY": 38.6,
+    "US06": 25.9,
+    "SC03": 27.7,
+    "COLD": 31.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_TYX_20-AU2H_c1",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD",
+   "model_year": 2020,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 47.6,
+    "HWY": 46.4,
+    "US06": 33.2,
+    "SC03": 36.8,
+    "COLD": 36.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2014_TYX_14-GU2H_c0",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD LE Plus",
+   "model_year": 2014,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 39.1,
+    "HWY": 38.3,
+    "US06": 26.3,
+    "SC03": 25.9,
+    "COLD": 29.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2014_TYX_14-GU2H_c1",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD LE Plus",
+   "model_year": 2014,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 39.1,
+    "HWY": 38.9,
+    "US06": 26.4,
+    "SC03": 27.8,
+    "COLD": 30.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-GU2H_c1",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD LE Plus",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.5,
+    "HWY": 39.0,
+    "US06": 26.7,
+    "SC03": 27.5,
+    "COLD": 31.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-GU2H_c2",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD LE Plus",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 41.9,
+    "HWY": 38.6,
+    "US06": 26.9,
+    "SC03": 28.2,
+    "COLD": 30.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_TYX_20-AU1H_c1",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD LTD/PLAT",
+   "model_year": 2020,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 48.0,
+    "HWY": 46.2,
+    "US06": 32.2,
+    "SC03": 35.1,
+    "COLD": 35.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2020_TYX_20-AU2H_c0",
+   "family": "TOYOTA|HIGHLANDER",
+   "make": "TOYOTA",
+   "model": "HIGHLANDER HYBRID AWD LTD/PLAT",
+   "model_year": 2020,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 48.2,
+    "HWY": 47.0,
+    "US06": 32.8,
+    "SC03": 36.8,
+    "COLD": 36.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2009_570_08-UF2H_c0",
+   "family": "TOYOTA|LS",
+   "make": "TOYOTA",
+   "model": "LS 600H L",
+   "model_year": 2009,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 24.7,
+    "HWY": 30.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2008_570_04-NHW2_c0",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS",
+   "model_year": 2008,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 66.6,
+    "HWY": 64.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-ZW1H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 68.1,
+    "HWY": 66.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-ZW1H_c2",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 68.1,
+    "HWY": 66.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-ZW1H_c3",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 71.8,
+    "HWY": 70.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2010_TYX_10-ZW1H_c4",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS",
+   "model_year": 2010,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 72.4,
+    "HWY": 69.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_TYX_16-ZV1H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS",
+   "model_year": 2016,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 71.1,
+    "HWY": 66.0,
+    "US06": 45.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_TYX_16-ZV1H_c2",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS",
+   "model_year": 2016,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 78.0,
+    "HWY": 71.2,
+    "US06": 48.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_TYX_16-ZV3H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS",
+   "model_year": 2016,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 64.9,
+    "HWY": 63.6,
+    "US06": 42.9,
+    "SC03": 46.15,
+    "COLD": 50.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_TYX_16-ZV3H_c2",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS",
+   "model_year": 2016,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 77.3,
+    "HWY": 76.1,
+    "US06": 48.6,
+    "SC03": 52.3,
+    "COLD": 55.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_16-ZV3H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 64.9,
+    "HWY": 63.6,
+    "US06": 42.9,
+    "SC03": 46.6,
+    "COLD": 50.8
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_19-ZW1H_c0",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS AWD",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 73.4,
+    "HWY": 71.1,
+    "US06": 45.6,
+    "SC03": 50.1,
+    "COLD": 54.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2019_TYX_19-ZW1H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS AWD",
+   "model_year": 2019,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 76.7,
+    "HWY": 70.5,
+    "US06": 46.1,
+    "SC03": 55.2,
+    "COLD": 55.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_TYX_19-ZW1H_c0",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS AWD",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 73.4,
+    "HWY": 71.1,
+    "US06": 45.6,
+    "COLD": 54.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2021_TYX_19-ZW1H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS AWD",
+   "model_year": 2021,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 76.7,
+    "HWY": 70.5,
+    "US06": 46.1,
+    "COLD": 55.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-MW3H_c0",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS AWD",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 77.9,
+    "HWY": 74.6,
+    "US06": 51.8,
+    "SC03": 49.6,
+    "COLD": 55.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-MW1H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS AWD XLE/LTD",
+   "model_year": 2023,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 71.0,
+    "HWY": 69.3,
+    "US06": 47.3,
+    "SC03": 48.8,
+    "COLD": 51.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-NP1H_c0",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS c",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 65.9,
+    "HWY": 63.6,
+    "US06": 41.0,
+    "SC03": 48.6,
+    "COLD": 53.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-NP1H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS c",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 71.4,
+    "HWY": 66.6,
+    "US06": 45.1,
+    "SC03": 48.1,
+    "COLD": 53.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-NP2H_c0",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS c",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 69.0,
+    "HWY": 68.0,
+    "US06": 42.6,
+    "SC03": 50.2,
+    "COLD": 57.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-NP2H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS c",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 75.0,
+    "HWY": 71.4,
+    "US06": 47.6,
+    "SC03": 50.8,
+    "COLD": 58.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-NP4H_c0",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS c",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 66.4,
+    "HWY": 61.4,
+    "US06": 42.2,
+    "SC03": 41.3,
+    "COLD": 51.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-NP4H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS c",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 66.9,
+    "HWY": 61.8,
+    "US06": 42.4,
+    "SC03": 42.9,
+    "COLD": 51.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-NP5H_c0",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS c",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 69.0,
+    "HWY": 64.0,
+    "US06": 42.4,
+    "SC03": 43.7,
+    "COLD": 52.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-NP5H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS c",
+   "model_year": 2017,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 69.0,
+    "HWY": 64.1,
+    "US06": 41.8,
+    "SC03": 44.9,
+    "COLD": 52.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_TYX_16-ZV2H_c0",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS Eco",
+   "model_year": 2016,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 84.1,
+    "HWY": 76.9,
+    "US06": 50.55,
+    "SC03": 58.0,
+    "COLD": 56.6
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_TYX_16-ZV2H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS Eco",
+   "model_year": 2016,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 84.1,
+    "HWY": 78.2,
+    "US06": 50.900000000000006,
+    "SC03": 58.2,
+    "COLD": 56.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2016_TYX_16-ZV2H_c2",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS Eco",
+   "model_year": 2016,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 82.5,
+    "HWY": 78.2,
+    "US06": 51.6,
+    "SC03": 59.05,
+    "COLD": 58.0
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-ZW4H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS Plug-in Hybrid",
+   "model_year": 2012,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 70.6,
+    "HWY": 68.0,
+    "US06": 47.6,
+    "COLD": 52.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-ZW4H_c2",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS Plug-in Hybrid",
+   "model_year": 2012,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 72.5,
+    "HWY": 69.2,
+    "US06": 47.3,
+    "COLD": 52.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-ZW1H_c2",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS PRIME",
+   "model_year": 2017,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "US06": 48.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-ZW2H_c0",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS PRIME",
+   "model_year": 2017,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 78.2,
+    "HWY": 73.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-ZW2H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS PRIME",
+   "model_year": 2017,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 78.0,
+    "HWY": 72.4,
+    "US06": 51.4
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2017_TYX_17-ZW2H_c2",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS PRIME",
+   "model_year": 2017,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 80.3,
+    "HWY": 74.9
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-MX6H_c0",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS PRIME",
+   "model_year": 2023,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 70.3,
+    "HWY": 66.1,
+    "US06": 45.1,
+    "SC03": 43.5,
+    "COLD": 52.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2023_TYX_23-MX3H_c0",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS PRIME SE",
+   "model_year": 2023,
+   "architecture": "phev",
+   "kind": "phev_ps",
+   "group": "plugin_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 77.7,
+    "HWY": 72.7,
+    "US06": 50.9,
+    "SC03": 47.0,
+    "COLD": 54.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-ZW2H_c0",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS v",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 59.2,
+    "HWY": 55.5
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-ZW2H_c1",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS v",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 59.4,
+    "HWY": 56.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-ZW2H_c2",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS v",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 59.4,
+    "HWY": 55.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-ZW2H_c3",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS v",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 61.5,
+    "HWY": 58.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-ZW2H_c4",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS v",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 58.5,
+    "HWY": 57.1
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2012_TYX_12-ZW2H_c5",
+   "family": "TOYOTA|PRIUS",
+   "make": "TOYOTA",
+   "model": "PRIUS v",
+   "model_year": 2012,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 60.400000000000006,
+    "HWY": 58.3
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2008_570_06-MU2C_c3",
+   "family": "TOYOTA|RX",
+   "make": "TOYOTA",
+   "model": "RX 400H 2WD",
+   "model_year": 2008,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 34.9,
+    "HWY": 33.2
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2008_570_06-MU1C_c0",
+   "family": "TOYOTA|RX",
+   "make": "TOYOTA",
+   "model": "RX 400H 4WD",
+   "model_year": 2008,
+   "architecture": "hev",
+   "kind": "ps",
+   "group": "toyota_ps",
+   "family_seen_v2": false,
+   "epa": {
+    "FTP": 33.2,
+    "HWY": 33.7
+   }
+  },
+  {
+   "epa_vehicle_id": "EPA2024_TYX_24-TN3H_c0",
+   "family": "TOYOTA|TACOMA",
+   "make": "TOYOTA",
+   "model": "TACOMA HYBRID 4WD",
+   "model_year": 2024,
+   "architecture": "hev",
+   "kind": "p2",
+   "group": "p2_converter",
+   "family_seen_v2": true,
+   "epa": {
+    "FTP": 28.6,
+    "HWY": 33.1
+   }
+  }
+ ],
+ "epa_excluded": {
+  "EPA row of a D3 twin": [
+   "EPA2010_HNX_EABJ1C_c1",
+   "EPA2010_MBX_V221E35-Z0025_c1",
+   "EPA2010_TYX_10-ZW1H_c0",
+   "EPA2011_HYX_HYF1F4GUA3A_c0",
+   "EPA2012_TYX_12-ZW3H_c0",
+   "EPA2013_VWX_VW361730385/13_c0",
+   "EPA2014_BMX_VX62501_c0",
+   "EPA2014_FMX_EL510048_c0",
+   "EPA2017_TYX_17-ZW1H_c0"
+  ],
+  "family of a check_cycles dev hybrid (fitted on in v2)": [
+   "EPA2008_30_8M71-2.3-E-784_c0",
+   "EPA2008_30_8M71-2.3-E-786_c0",
+   "EPA2009_30_9KA00034_c0",
+   "EPA2010_FMX_AKA00007_c1",
+   "EPA2013_HYX_HYF3FUP107A_c0",
+   "EPA2013_HYX_HYF3FUP108A_c0",
+   "EPA2014_HNX_CEK01C_c0",
+   "EPA2014_HNX_CEK01C_c1",
+   "EPA2014_HNX_EEK11C_c0",
+   "EPA2014_HNX_EEK11C_c1",
+   "EPA2016_HYX_HLF6NAUP11A_c0",
+   "EPA2016_HYX_HLF6NAUP12A_c0",
+   "EPA2016_HYX_HLF6NAUP13A_c0",
+   "EPA2016_HYX_PLF5NAUP11A_c0",
+   "EPA2016_TYX_16-AA2H_c0",
+   "EPA2016_TYX_16-AA2H_c1",
+   "EPA2016_TYX_16-AA2H_c2",
+   "EPA2016_TYX_16-AA2H_c3",
+   "EPA2016_TYX_16-AA2H_c4",
+   "EPA2016_TYX_16-AA2H_c5",
+   "EPA2017_HNX_EHK11C_c0",
+   "EPA2017_HNX_EHK11C_c1",
+   "EPA2017_HNX_EHK11C_c2",
+   "EPA2017_HNX_EHK11C_c3",
+   "EPA2017_HYX_HLF6NAUP11A_c0",
+   "EPA2017_HYX_HLF6NAUP12A_c0",
+   "EPA2017_HYX_HLF6NAUP13A_c0",
+   "EPA2018_HNX_EJC21C_c0",
+   "EPA2018_HNX_EJC21C_c1",
+   "EPA2018_HYX_LF8N0VU05AC_c0",
+   "EPA2018_HYX_LF8N0VU09AC_c0",
+   "EPA2018_HYX_LF8N0WU05AC_c0",
+   "EPA2019_HNX_DJC21C_c1",
+   "EPA2019_HNX_DJC21C_c2",
+   "EPA2020_FMX_LUA00427_c0",
+   "EPA2020_HNX_DJC21C_c3",
+   "EPA2020_HNX_DJC21C_c4",
+   "EPA2020_HYX_DN8U0H0HA002F_c0",
+   "EPA2020_HYX_DN8U0H0HA003F_c0",
+   "EPA2021_FMX_LUA00427_c1",
+   "EPA2021_HNX_EMC21F_c0",
+   "EPA2021_HNX_EMC21F_c1",
+   "EPA2021_TYX_21-AP4H_c0",
+   "EPA2021_TYX_21-AP5H_c0",
+   "EPA2021_TYX_21-AP5H_c1",
+   "EPA2021_TYX_21-AP5H_c2",
+   "EPA2023_FMX_PTF1-2.5-J-644_c0",
+   "EPA2023_FMX_PUA00021_c0",
+   "EPA2023_TYX_23-AA1H_c0",
+   "EPA2026_HYX_DN8U4N0HA553F_c0"
+  ],
+  "not modelled: GM EVT plug-in (two-mode type)": [
+   "EPA2017_GMX_20YS16PV68_c0"
+  ],
+  "not modelled: GM two-mode": [
+   "EPA2009_40_60XECU8122_c2",
+   "EPA2009_40_60XECU8122_c3",
+   "EPA2009_CRX_N9HG59424_c0",
+   "EPA2011_GMX_60C0K41256_c0",
+   "EPA2011_GMX_60C0K41256_c1",
+   "EPA2011_GMX_60C0K41256_c2",
+   "EPA2012_GMX_60C0K41256_c4",
+   "EPA2012_GMX_60C0K41256_c5",
+   "EPA2013_GMX_60C0K41256_c10"
+  ],
+  "not modelled: P2 with a CVT (RoadSim P2 needs stepped gears)": [
+   "EPA2017_NSX_BWC152_c0",
+   "EPA2017_NSX_BWC280_c2",
+   "EPA2017_NSX_BWC280_c3"
+  ],
+  "not modelled: SH-AWD: P2 plus twin rear motors": [
+   "EPA2014_HNX_EE9S1A_c1",
+   "EPA2014_HNX_EE9S1A_c2",
+   "EPA2017_HNX_EHWS1D_c3",
+   "EPA2017_HNX_EHWS1D_c4",
+   "EPA2018_HNX_EJ9S1D_c1"
+  ],
+  "not modelled: T8: rear-axle motor (P4, through the road)": [
+   "EPA2016_VVX_201615_c0",
+   "EPA2016_VVX_201615_c1",
+   "EPA2018_VVX_201801_c0",
+   "EPA2018_VVX_201802_c1",
+   "EPA2018_VVX_201811_c0",
+   "EPA2019_VVX_201901_c0",
+   "EPA2019_VVX_201902_c0",
+   "EPA2019_VVX_201927_c0",
+   "EPA2020_VVX_202001_c1",
+   "EPA2020_VVX_202002_c0",
+   "EPA2020_VVX_202003_c0",
+   "EPA2020_VVX_202004_c0",
+   "EPA2022_VVX_202207_c0",
+   "EPA2022_VVX_202211_c1",
+   "EPA2022_VVX_202211_c2",
+   "EPA2022_VVX_202212_c1",
+   "EPA2022_VVX_202213_c0",
+   "EPA2023_VVX_202308_c0"
+  ],
+  "not modelled: hypercar, three machines": [
+   "EPA2015_PRX_ECFE-918-15_c0"
+  ],
+  "not modelled: rear-axle motor (P4)": [
+   "EPA2024_CRX_L3GG72812_c0"
+  ],
+  "not modelled: through the road": [
+   "EPA2014_BMX_VX64010_c0",
+   "EPA2019_BMX_VB82740_c1",
+   "EPA2020_BMX_3F94106_c2"
+  ],
+  "not modelled: two-mode": [
+   "EPA2010_BMX_LC66005_c0",
+   "EPA2010_BMX_LC66005_c1",
+   "EPA2010_MBX_W164E45-Z0030_c2",
+   "EPA2011_BMX_LC66005_c0",
+   "EPA2011_MBX_W164E45-Z0030_c4"
+  ],
+  "simulated by check_cycles (or a carry-over copy)": [
+   "EPA2018_TYX_18-AV2H_c0",
+   "EPA2018_TYX_18-AV2H_c1",
+   "EPA2018_TYX_18-AV2H_c2",
+   "EPA2019_TYX_19-AA2H_c0",
+   "EPA2019_TYX_19-AA2H_c1",
+   "EPA2021_HYX_CN7U1K6GD044F_c0",
+   "EPA2022_HYX_NX4U2G6HA278A_c0",
+   "EPA2023_FMX_PUA00033_c0",
+   "EPA2023_KMX_SG2U3K6HD102F_c0",
+   "EPA2023_TYX_23-MG1H_c1",
+   "EPA2023_TYX_23-MW2H_c0",
+   "EPA2023_TYX_23-MW2H_c1",
+   "EPA2024_FMX_RFA00090_c0",
+   "EPA2024_HYX_DN8U4N0HA554F_c0",
+   "EPA2024_TYX_24-TN1H_c2"
+  ]
+ },
+ "ved": [
+  {
+   "vehicle_id": "VED_115",
+   "architecture": "hev_powersplit",
+   "example_models": "2007 Nissan Altima Hybrid; 2008 Nissan Altima Hybrid; 2009 Ford Escape Hybrid FWD; 2009 Mazda Tribute Hybrid 2WD; 2009 M",
+   "match_confidence": "low",
+   "n_label_trips": 82
+  },
+  {
+   "vehicle_id": "VED_124",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 77
+  },
+  {
+   "vehicle_id": "VED_125",
+   "architecture": "hev_powersplit",
+   "example_models": "2007 Toyota Camry Hybrid; 2007 Saturn Vue Hybrid; 2007 Saturn Aura Hybrid; 2008 Chevrolet Malibu Hybrid; 2008 Saturn Aur",
+   "match_confidence": "low",
+   "n_label_trips": 74
+  },
+  {
+   "vehicle_id": "VED_201",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 96
+  },
+  {
+   "vehicle_id": "VED_212",
+   "architecture": "hev_powersplit",
+   "example_models": "2005 Ford Escape Hybrid 2WD; 2005 Ford Escape Hybrid 4WD; 2006 Ford Escape Hybrid FWD; 2006 Ford Escape Hybrid 4WD; 2006",
+   "match_confidence": "medium",
+   "n_label_trips": 7
+  },
+  {
+   "vehicle_id": "VED_220",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 143
+  },
+  {
+   "vehicle_id": "VED_231",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 136
+  },
+  {
+   "vehicle_id": "VED_242",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 51
+  },
+  {
+   "vehicle_id": "VED_272",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 41
+  },
+  {
+   "vehicle_id": "VED_292",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 125
+  },
+  {
+   "vehicle_id": "VED_298",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 21
+  },
+  {
+   "vehicle_id": "VED_328",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 5
+  },
+  {
+   "vehicle_id": "VED_338",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 69
+  },
+  {
+   "vehicle_id": "VED_344",
+   "architecture": "hev_powersplit",
+   "example_models": "2005 Ford Escape Hybrid 2WD; 2005 Ford Escape Hybrid 4WD; 2006 Ford Escape Hybrid FWD; 2006 Ford Escape Hybrid 4WD; 2006",
+   "match_confidence": "medium",
+   "n_label_trips": 16
+  },
+  {
+   "vehicle_id": "VED_346",
+   "architecture": "hev_powersplit",
+   "example_models": "2013 Ford C-MAX Hybrid FWD; 2013 Ford Fusion Hybrid FWD; 2013 Lincoln MKZ Hybrid FWD; 2013 Audi Q5 Hybrid; 2014 Audi Q5 ",
+   "match_confidence": "low",
+   "n_label_trips": 59
+  },
+  {
+   "vehicle_id": "VED_347",
+   "architecture": "hev_powersplit",
+   "example_models": "2006 Lexus RX 400h 2WD; 2006 Toyota Highlander Hybrid 2WD; 2006 Lexus RX 400h 4WD; 2006 Toyota Highlander Hybrid 4WD; 20",
+   "match_confidence": "medium",
+   "n_label_trips": 153
+  },
+  {
+   "vehicle_id": "VED_348",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 14
+  },
+  {
+   "vehicle_id": "VED_349",
+   "architecture": "hev_powersplit",
+   "example_models": "2007 Nissan Altima Hybrid; 2008 Nissan Altima Hybrid; 2009 Ford Escape Hybrid FWD; 2009 Mazda Tribute Hybrid 2WD; 2009 M",
+   "match_confidence": "low",
+   "n_label_trips": 187
+  },
+  {
+   "vehicle_id": "VED_350",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 113
+  },
+  {
+   "vehicle_id": "VED_351",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 217
+  },
+  {
+   "vehicle_id": "VED_353",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 131
+  },
+  {
+   "vehicle_id": "VED_355",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 199
+  },
+  {
+   "vehicle_id": "VED_357",
+   "architecture": "hev_powersplit",
+   "example_models": "2007 Nissan Altima Hybrid; 2008 Nissan Altima Hybrid; 2009 Ford Escape Hybrid FWD; 2009 Mazda Tribute Hybrid 2WD; 2009 M",
+   "match_confidence": "low",
+   "n_label_trips": 11
+  },
+  {
+   "vehicle_id": "VED_360",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 10
+  },
+  {
+   "vehicle_id": "VED_368",
+   "architecture": "hev_powersplit",
+   "example_models": "2007 Toyota Camry Hybrid; 2007 Saturn Vue Hybrid; 2007 Saturn Aura Hybrid; 2008 Chevrolet Malibu Hybrid; 2008 Saturn Aur",
+   "match_confidence": "low",
+   "n_label_trips": 6
+  },
+  {
+   "vehicle_id": "VED_369",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 75
+  },
+  {
+   "vehicle_id": "VED_371",
+   "architecture": "phev_powersplit",
+   "example_models": "2013 Ford C-MAX Energi Plug-in Hybrid; 2013 Ford Fusion Energi Plug-in Hybrid; 2014 Ford Fusion Energi Plug-in Hybrid; 2",
+   "match_confidence": "high",
+   "n_label_trips": 377
+  },
+  {
+   "vehicle_id": "VED_372",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 138
+  },
+  {
+   "vehicle_id": "VED_374",
+   "architecture": "hev_powersplit",
+   "example_models": "2013 Ford C-MAX Hybrid FWD; 2013 Ford Fusion Hybrid FWD; 2013 Lincoln MKZ Hybrid FWD; 2013 Audi Q5 Hybrid; 2014 Audi Q5 ",
+   "match_confidence": "low",
+   "n_label_trips": 213
+  },
+  {
+   "vehicle_id": "VED_376",
+   "architecture": "hev_powersplit",
+   "example_models": "2006 Lexus RX 400h 2WD; 2006 Toyota Highlander Hybrid 2WD; 2006 Lexus RX 400h 4WD; 2006 Toyota Highlander Hybrid 4WD; 20",
+   "match_confidence": "medium",
+   "n_label_trips": 7
+  },
+  {
+   "vehicle_id": "VED_378",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 17
+  },
+  {
+   "vehicle_id": "VED_379",
+   "architecture": "phev_series",
+   "example_models": "2011 Chevrolet Volt; 2012 Chevrolet Volt; 2013 Chevrolet Volt; 2014 Chevrolet Volt; 2015 Chevrolet Volt",
+   "match_confidence": "high",
+   "n_label_trips": 4
+  },
+  {
+   "vehicle_id": "VED_381",
+   "architecture": "hev_powersplit",
+   "example_models": "2007 Toyota Camry Hybrid; 2007 Saturn Vue Hybrid; 2007 Saturn Aura Hybrid; 2008 Chevrolet Malibu Hybrid; 2008 Saturn Aur",
+   "match_confidence": "low",
+   "n_label_trips": 58
+  },
+  {
+   "vehicle_id": "VED_382",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 89
+  },
+  {
+   "vehicle_id": "VED_383",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 83
+  },
+  {
+   "vehicle_id": "VED_384",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 98
+  },
+  {
+   "vehicle_id": "VED_385",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 94
+  },
+  {
+   "vehicle_id": "VED_386",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 73
+  },
+  {
+   "vehicle_id": "VED_387",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 61
+  },
+  {
+   "vehicle_id": "VED_388",
+   "architecture": "phev_powersplit",
+   "example_models": "2013 Ford C-MAX Energi Plug-in Hybrid; 2013 Ford Fusion Energi Plug-in Hybrid; 2014 Ford Fusion Energi Plug-in Hybrid; 2",
+   "match_confidence": "high",
+   "n_label_trips": 341
+  },
+  {
+   "vehicle_id": "VED_389",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 28
+  },
+  {
+   "vehicle_id": "VED_392",
+   "architecture": "hev_powersplit",
+   "example_models": "2007 Lexus GS 450h; 2008 Lexus GS 450h; 2009 Lexus GS 450h; 2010 Lexus RX 450h; 2010 Lexus RX 450h AWD; 2010 Mercedes-Be",
+   "match_confidence": "medium",
+   "n_label_trips": 102
+  },
+  {
+   "vehicle_id": "VED_393",
+   "architecture": "hev_powersplit",
+   "example_models": "2007 Nissan Altima Hybrid; 2008 Nissan Altima Hybrid; 2009 Ford Escape Hybrid FWD; 2009 Mazda Tribute Hybrid 2WD; 2009 M",
+   "match_confidence": "low",
+   "n_label_trips": 90
+  },
+  {
+   "vehicle_id": "VED_397",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 59
+  },
+  {
+   "vehicle_id": "VED_398",
+   "architecture": "phev_powersplit",
+   "example_models": "2012 Toyota Prius Plug-in Hybrid; 2013 Toyota Prius Plug-in Hybrid; 2014 Toyota Prius Plug-in Hybrid; 2015 Toyota Prius ",
+   "match_confidence": "high",
+   "n_label_trips": 148
+  },
+  {
+   "vehicle_id": "VED_399",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 83
+  },
+  {
+   "vehicle_id": "VED_402",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 29
+  },
+  {
+   "vehicle_id": "VED_403",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 36
+  },
+  {
+   "vehicle_id": "VED_404",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 38
+  },
+  {
+   "vehicle_id": "VED_405",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 69
+  },
+  {
+   "vehicle_id": "VED_407",
+   "architecture": "hev_powersplit",
+   "example_models": "2005 Ford Escape Hybrid 2WD; 2005 Ford Escape Hybrid 4WD; 2006 Ford Escape Hybrid FWD; 2006 Ford Escape Hybrid 4WD; 2006",
+   "match_confidence": "medium",
+   "n_label_trips": 25
+  },
+  {
+   "vehicle_id": "VED_410",
+   "architecture": "hev_powersplit",
+   "example_models": "2007 Nissan Altima Hybrid; 2008 Nissan Altima Hybrid; 2009 Ford Escape Hybrid FWD; 2009 Mazda Tribute Hybrid 2WD; 2009 M",
+   "match_confidence": "low",
+   "n_label_trips": 183
+  },
+  {
+   "vehicle_id": "VED_411",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 213
+  },
+  {
+   "vehicle_id": "VED_417",
+   "architecture": "phev_powersplit",
+   "example_models": "2013 Ford C-MAX Energi Plug-in Hybrid; 2013 Ford Fusion Energi Plug-in Hybrid; 2014 Ford Fusion Energi Plug-in Hybrid; 2",
+   "match_confidence": "high",
+   "n_label_trips": 62
+  },
+  {
+   "vehicle_id": "VED_418",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 179
+  },
+  {
+   "vehicle_id": "VED_422",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 142
+  },
+  {
+   "vehicle_id": "VED_428",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 97
+  },
+  {
+   "vehicle_id": "VED_430",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 74
+  },
+  {
+   "vehicle_id": "VED_431",
+   "architecture": "phev_powersplit",
+   "example_models": "2013 Ford C-MAX Energi Plug-in Hybrid; 2013 Ford Fusion Energi Plug-in Hybrid; 2014 Ford Fusion Energi Plug-in Hybrid; 2",
+   "match_confidence": "high",
+   "n_label_trips": 46
+  },
+  {
+   "vehicle_id": "VED_436",
+   "architecture": "hev_powersplit",
+   "example_models": "2013 Ford C-MAX Hybrid FWD; 2013 Ford Fusion Hybrid FWD; 2013 Lincoln MKZ Hybrid FWD; 2013 Audi Q5 Hybrid; 2014 Audi Q5 ",
+   "match_confidence": "low",
+   "n_label_trips": 68
+  },
+  {
+   "vehicle_id": "VED_437",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 121
+  },
+  {
+   "vehicle_id": "VED_438",
+   "architecture": "hev_powersplit",
+   "example_models": "2007 Lexus GS 450h; 2008 Lexus GS 450h; 2009 Lexus GS 450h; 2010 Lexus RX 450h; 2010 Lexus RX 450h AWD; 2010 Mercedes-Be",
+   "match_confidence": "medium",
+   "n_label_trips": 151
+  },
+  {
+   "vehicle_id": "VED_439",
+   "architecture": "hev_powersplit",
+   "example_models": "2013 Ford C-MAX Hybrid FWD; 2013 Ford Fusion Hybrid FWD; 2013 Lincoln MKZ Hybrid FWD; 2013 Audi Q5 Hybrid; 2014 Audi Q5 ",
+   "match_confidence": "low",
+   "n_label_trips": 46
+  },
+  {
+   "vehicle_id": "VED_441",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 92
+  },
+  {
+   "vehicle_id": "VED_443",
+   "architecture": "phev_powersplit",
+   "example_models": "2013 Ford C-MAX Energi Plug-in Hybrid; 2013 Ford Fusion Energi Plug-in Hybrid; 2014 Ford Fusion Energi Plug-in Hybrid; 2",
+   "match_confidence": "high",
+   "n_label_trips": 52
+  },
+  {
+   "vehicle_id": "VED_444",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 162
+  },
+  {
+   "vehicle_id": "VED_445",
+   "architecture": "hev_powersplit",
+   "example_models": "2007 Toyota Camry Hybrid; 2007 Saturn Vue Hybrid; 2007 Saturn Aura Hybrid; 2008 Chevrolet Malibu Hybrid; 2008 Saturn Aur",
+   "match_confidence": "low",
+   "n_label_trips": 124
+  },
+  {
+   "vehicle_id": "VED_447",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 124
+  },
+  {
+   "vehicle_id": "VED_448",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 44
+  },
+  {
+   "vehicle_id": "VED_449",
+   "architecture": "phev_powersplit",
+   "example_models": "2013 Ford C-MAX Energi Plug-in Hybrid; 2013 Ford Fusion Energi Plug-in Hybrid; 2014 Ford Fusion Energi Plug-in Hybrid; 2",
+   "match_confidence": "high",
+   "n_label_trips": 184
+  },
+  {
+   "vehicle_id": "VED_450",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 359
+  },
+  {
+   "vehicle_id": "VED_451",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 134
+  },
+  {
+   "vehicle_id": "VED_452",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 210
+  },
+  {
+   "vehicle_id": "VED_453",
+   "architecture": "phev_powersplit",
+   "example_models": "2013 Ford C-MAX Energi Plug-in Hybrid; 2013 Ford Fusion Energi Plug-in Hybrid; 2014 Ford Fusion Energi Plug-in Hybrid; 2",
+   "match_confidence": "high",
+   "n_label_trips": 33
+  },
+  {
+   "vehicle_id": "VED_456",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 64
+  },
+  {
+   "vehicle_id": "VED_457",
+   "architecture": "phev_series",
+   "example_models": "2011 Chevrolet Volt; 2012 Chevrolet Volt; 2013 Chevrolet Volt; 2014 Chevrolet Volt; 2015 Chevrolet Volt",
+   "match_confidence": "high",
+   "n_label_trips": 223
+  },
+  {
+   "vehicle_id": "VED_458",
+   "architecture": "hev_powersplit",
+   "example_models": "2007 Toyota Camry Hybrid; 2007 Saturn Vue Hybrid; 2007 Saturn Aura Hybrid; 2008 Chevrolet Malibu Hybrid; 2008 Saturn Aur",
+   "match_confidence": "low",
+   "n_label_trips": 303
+  },
+  {
+   "vehicle_id": "VED_468",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 223
+  },
+  {
+   "vehicle_id": "VED_474",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 101
+  },
+  {
+   "vehicle_id": "VED_475",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 92
+  },
+  {
+   "vehicle_id": "VED_477",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 167
+  },
+  {
+   "vehicle_id": "VED_492",
+   "architecture": "phev_series",
+   "example_models": "2011 Chevrolet Volt; 2012 Chevrolet Volt; 2013 Chevrolet Volt; 2014 Chevrolet Volt; 2015 Chevrolet Volt",
+   "match_confidence": "high",
+   "n_label_trips": 94
+  },
+  {
+   "vehicle_id": "VED_497",
+   "architecture": "phev_powersplit",
+   "example_models": "2012 Toyota Prius Plug-in Hybrid; 2013 Toyota Prius Plug-in Hybrid; 2014 Toyota Prius Plug-in Hybrid; 2015 Toyota Prius ",
+   "match_confidence": "high",
+   "n_label_trips": 12
+  },
+  {
+   "vehicle_id": "VED_5",
+   "architecture": "hev_powersplit",
+   "example_models": "2013 Ford C-MAX Hybrid FWD; 2013 Ford Fusion Hybrid FWD; 2013 Lincoln MKZ Hybrid FWD; 2013 Audi Q5 Hybrid; 2014 Audi Q5 ",
+   "match_confidence": "low",
+   "n_label_trips": 41
+  },
+  {
+   "vehicle_id": "VED_526",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 47
+  },
+  {
+   "vehicle_id": "VED_532",
+   "architecture": "hev_powersplit",
+   "example_models": "2007 Nissan Altima Hybrid; 2008 Nissan Altima Hybrid; 2009 Ford Escape Hybrid FWD; 2009 Mazda Tribute Hybrid 2WD; 2009 M",
+   "match_confidence": "low",
+   "n_label_trips": 52
+  },
+  {
+   "vehicle_id": "VED_536",
+   "architecture": "phev_series",
+   "example_models": "2011 Chevrolet Volt; 2012 Chevrolet Volt; 2013 Chevrolet Volt; 2014 Chevrolet Volt; 2015 Chevrolet Volt",
+   "match_confidence": "high",
+   "n_label_trips": 63
+  },
+  {
+   "vehicle_id": "VED_542",
+   "architecture": "phev_series",
+   "example_models": "2011 Chevrolet Volt; 2012 Chevrolet Volt; 2013 Chevrolet Volt; 2014 Chevrolet Volt; 2015 Chevrolet Volt",
+   "match_confidence": "high",
+   "n_label_trips": 42
+  },
+  {
+   "vehicle_id": "VED_543",
+   "architecture": "hev_powersplit",
+   "example_models": "2013 Ford C-MAX Hybrid FWD; 2013 Ford Fusion Hybrid FWD; 2013 Lincoln MKZ Hybrid FWD; 2013 Audi Q5 Hybrid; 2014 Audi Q5 ",
+   "match_confidence": "low",
+   "n_label_trips": 12
+  },
+  {
+   "vehicle_id": "VED_545",
+   "architecture": "phev_series",
+   "example_models": "2016 Chevrolet Volt; 2017 Chevrolet Volt; 2018 Chevrolet Volt",
+   "match_confidence": "high",
+   "n_label_trips": 11
+  },
+  {
+   "vehicle_id": "VED_549",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 69
+  },
+  {
+   "vehicle_id": "VED_550",
+   "architecture": "phev_series",
+   "example_models": "2011 Chevrolet Volt; 2012 Chevrolet Volt; 2013 Chevrolet Volt; 2014 Chevrolet Volt; 2015 Chevrolet Volt",
+   "match_confidence": "high",
+   "n_label_trips": 242
+  },
+  {
+   "vehicle_id": "VED_554",
+   "architecture": "phev_series",
+   "example_models": "2011 Chevrolet Volt; 2012 Chevrolet Volt; 2013 Chevrolet Volt; 2014 Chevrolet Volt; 2015 Chevrolet Volt",
+   "match_confidence": "high",
+   "n_label_trips": 63
+  },
+  {
+   "vehicle_id": "VED_555",
+   "architecture": "hev_powersplit",
+   "example_models": "2013 Ford C-MAX Hybrid FWD; 2013 Ford Fusion Hybrid FWD; 2013 Lincoln MKZ Hybrid FWD; 2013 Audi Q5 Hybrid; 2014 Audi Q5 ",
+   "match_confidence": "low",
+   "n_label_trips": 14
+  },
+  {
+   "vehicle_id": "VED_558",
+   "architecture": "hev_parallel_p2",
+   "example_models": "2017 Hyundai Ioniq; 2017 Hyundai Ioniq Blue; 2017 Kia Niro; 2017 Kia Niro Touring; 2017 Kia Niro FE; 2018 Hyundai Ioniq ",
+   "match_confidence": "medium",
+   "n_label_trips": 2
+  },
+  {
+   "vehicle_id": "VED_560",
+   "architecture": "phev_powersplit",
+   "example_models": "2012 Toyota Prius Plug-in Hybrid; 2013 Toyota Prius Plug-in Hybrid; 2014 Toyota Prius Plug-in Hybrid; 2015 Toyota Prius ",
+   "match_confidence": "high",
+   "n_label_trips": 368
+  },
+  {
+   "vehicle_id": "VED_561",
+   "architecture": "phev_powersplit",
+   "example_models": "2013 Ford C-MAX Energi Plug-in Hybrid; 2013 Ford Fusion Energi Plug-in Hybrid; 2014 Ford Fusion Energi Plug-in Hybrid; 2",
+   "match_confidence": "high",
+   "n_label_trips": 316
+  },
+  {
+   "vehicle_id": "VED_564",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 180
+  },
+  {
+   "vehicle_id": "VED_565",
+   "architecture": "hev_parallel_p2",
+   "example_models": "2005 Honda Civic Hybrid; 2010 Honda Insight; 2011 Honda Insight; 2012 Honda Insight; 2013 Honda Insight; 2014 Honda Insi",
+   "match_confidence": "medium",
+   "n_label_trips": 245
+  },
+  {
+   "vehicle_id": "VED_566",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 80
+  },
+  {
+   "vehicle_id": "VED_567",
+   "architecture": "phev_series",
+   "example_models": "2011 Chevrolet Volt; 2012 Chevrolet Volt; 2013 Chevrolet Volt; 2014 Chevrolet Volt; 2015 Chevrolet Volt",
+   "match_confidence": "high",
+   "n_label_trips": 14
+  },
+  {
+   "vehicle_id": "VED_569",
+   "architecture": "phev_series",
+   "example_models": "2011 Chevrolet Volt; 2012 Chevrolet Volt; 2013 Chevrolet Volt; 2014 Chevrolet Volt; 2015 Chevrolet Volt",
+   "match_confidence": "high",
+   "n_label_trips": 218
+  },
+  {
+   "vehicle_id": "VED_573",
+   "architecture": "hev_powersplit",
+   "example_models": "2010 Toyota Prius; 2011 Toyota Prius; 2011 Lexus CT 200h; 2012 Lexus CT 200h; 2012 Toyota Prius; 2012 Toyota Prius v",
+   "match_confidence": "low",
+   "n_label_trips": 19
+  },
+  {
+   "vehicle_id": "VED_574",
+   "architecture": "hev_powersplit",
+   "example_models": "2013 Ford C-MAX Hybrid FWD; 2013 Ford Fusion Hybrid FWD; 2013 Lincoln MKZ Hybrid FWD; 2013 Audi Q5 Hybrid; 2014 Audi Q5 ",
+   "match_confidence": "low",
+   "n_label_trips": 161
+  },
+  {
+   "vehicle_id": "VED_579",
+   "architecture": "hev_powersplit",
+   "example_models": "2013 Ford C-MAX Hybrid FWD; 2013 Ford Fusion Hybrid FWD; 2013 Lincoln MKZ Hybrid FWD; 2013 Audi Q5 Hybrid; 2014 Audi Q5 ",
+   "match_confidence": "low",
+   "n_label_trips": 86
+  },
+  {
+   "vehicle_id": "VED_605",
+   "architecture": "hev_powersplit",
+   "example_models": "2005 Ford Escape Hybrid 2WD; 2005 Ford Escape Hybrid 4WD; 2006 Ford Escape Hybrid FWD; 2006 Ford Escape Hybrid 4WD; 2006",
+   "match_confidence": "medium",
+   "n_label_trips": 63
+  },
+  {
+   "vehicle_id": "VED_610",
+   "architecture": "hev_powersplit",
+   "example_models": "2011 Honda CR-Z; 2012 Honda CR-Z; 2013 Honda CR-Z; 2014 Honda CR-Z; 2015 Honda CR-Z; 2016 Honda CR-Z",
+   "match_confidence": "low",
+   "n_label_trips": 89
+  },
+  {
+   "vehicle_id": "VED_9",
+   "architecture": "phev_series",
+   "example_models": "2011 Chevrolet Volt; 2012 Chevrolet Volt; 2013 Chevrolet Volt; 2014 Chevrolet Volt; 2015 Chevrolet Volt",
+   "match_confidence": "high",
+   "n_label_trips": 3
+  }
+ ],
+ "counts": {
+  "epa": 409,
+  "epa_by_group": {
+   "toyota_ps": 166,
+   "plugin_p2": 67,
+   "p2_tmed": 53,
+   "mild": 38,
+   "plugin_ps": 22,
+   "p2_converter": 19,
+   "plugin_series": 15,
+   "ford_ps": 10,
+   "p2_clutch": 9,
+   "other_ps": 6,
+   "honda_series": 4
+  },
+  "epa_excluded": {
+   "not modelled: SH-AWD: P2 plus twin rear motors": 5,
+   "not modelled: two-mode": 5,
+   "EPA row of a D3 twin": 9,
+   "not modelled: through the road": 3,
+   "not modelled: GM EVT plug-in (two-mode type)": 1,
+   "not modelled: GM two-mode": 9,
+   "not modelled: rear-axle motor (P4)": 1,
+   "family of a check_cycles dev hybrid (fitted on in v2)": 50,
+   "simulated by check_cycles (or a carry-over copy)": 15,
+   "not modelled: P2 with a CVT (RoadSim P2 needs stepped gears)": 3,
+   "not modelled: hypercar, three machines": 1,
+   "not modelled: T8: rear-axle motor (P4, through the road)": 18
+  },
+  "ved_cars": 108,
+  "ved_by_arch": {
+   "hev_powersplit": 84,
+   "phev_powersplit": 11,
+   "phev_series": 11,
+   "hev_parallel_p2": 2
+  },
+  "ved_trips": 11157
+ },
+ "sha256": "fd18096272d0c81bae8dcce263cd6024e9ef5826c8b0795bb526c27564940923"
+}
