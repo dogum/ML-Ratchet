@@ -263,3 +263,41 @@ dev cars' own twins in every group (petrol -1%, hybrid +2%, Leaf +4%, plug-ins +
 **Release choice (before the exam):** r13 (5 networks, 151 -> 256 -> 256 -> 256 -> 128 -> 7, trained on 86,400
 simulated trips) with the r12 error bars. `training/release.py r13_data3` copied the networks to `weights/`, fitted
 `sigma_factors.json` on dev and wrote `ratchet.yaml`.
+
+## 14 Nov 2026 — Phase D, step 3: the exam, once (v2.0)
+
+`training/exam2.py r13_data3`, run once after the release-choice commit (`work/exam2.json`, copied to
+`training/exam2.json`). The v1.0 release was re-scored on the same data in the same run (its own shipped error-bar
+factors; v1's 149 inputs are the first 149 of v2's 151).
+
+| set | EnergyNet v2 | v1.0 re-scored | best baseline |
+|---|---|---|---|
+| VED petrol trips (14,469) | **8.7%** (bias -0.7%) | 9.1% | 10.3% MOVES-like |
+| VED hybrid trips (8,241) | **13.5%** (+3.9%) | 15.5% (+8.4%) | 15.3% MOVES-like |
+| VED Leaf trips (167) | 22.6% (-19.5%) | 24.5% (-21.6%) | **19.0%** MOVES-like |
+| VED plug-in trips (2,916) | **17.1%** (-9.6%) | 19.6% | 41.3% MOVES-like |
+| EPA petrol FTP / HWY / US06 | 8.9 / 6.7 / **5.1%** | 9.6 / 15.6 / 11.5% | **7.1 / 5.0** / 6.9% regression |
+| EPA petrol 20 F cold FTP / SC03 | **9.5** / 18.9% | 7.5 / 15.6% | 9.7 / **9.3%** |
+| EPA hybrid FTP / HWY / US06 | **10.2 / 6.0 / 12.7%** | 8.7 / 5.9 / 14.9% | 16.3 / 21.5 / 15.8% |
+| EPA BEV city / HWY | **8.8 / 4.6%** | 7.9 / 5.0% | 9.8 / 6.5% |
+| ZTBus missions (1,115, full traces) | **9.5%** (-8.9%) | 14.6% (route proxy 16.0%) | 10.7% dev kWh/km |
+| ZTBus legs (5,847) | **8.6%** | 12.5% | 14.0% |
+| Mersin diesel / CNG | 17.0 / 18.0% | 14.8 / 15.5% | **8.6 / 7.1%** same-route median |
+| ICCT trucks (6) | 10.0% | 11.4% | **7.0%** |
+
+Coverage of the 68% band: VED pooled 61% (v1.0 60%); petrol 57%, hybrid 66%, Leafs 43%, plug-in 65%; EPA petrol FTP
+65%, highway 76%, SC03 20%; ZTBus missions 88% (too wide).
+
+Phase D targets: hybrids beat MOVES-like (13.5 vs 15.3%): met. EVs beat MOVES-like: not met (22.6 vs 19.0%; the bias
+barely moved, -21.6 -> -19.5%). 68% bands cover 60-75% of VED exam trips: met pooled (61%), not for petrol (57%) or the
+Leafs (43%). Buses on full ZTBus: 9.5% on 1,115 missions, a win (v1.0 lost at 16.0%).
+
+What got worse than v1.0: EPA hybrid FTP (8.7 -> 10.2%) and BEV city (7.9 -> 8.8%) — still wins; EPA petrol cold FTP
+(7.5 -> 9.5%) and SC03 (15.6 -> 18.9%); VED P2 hybrids (10.4 -> 17.2%, 247 trips, biased -17%); plug-in car totals
+(10.1 -> 20.1%); Mersin buses (14.8 -> 17.0%, 15.5 -> 18.0%). Rung r8 (EPA hybrids told their hybrid system) cut the dev
+hybrid FTP error from 25 to 17% but was rejected on D2; it is the first candidate for the next ladder.
+
+Release: `weights/r13_s*.npz`, `sigma_factors.json` (simulation factors per architecture + dev factors per group),
+`examples/examples.json` rebuilt from today's RoadData (same five trips; VED mass without the double-counted 136 kg; model
+year), demo golden regenerated, live instrument re-exported (parity 32 cases, worst 1.3e-7; the JS port reads the model
+year, per-member masked inputs and the new error-bar factors).

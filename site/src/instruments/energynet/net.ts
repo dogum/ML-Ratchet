@@ -18,7 +18,7 @@ const SURF = [1.0, 0.95, 1.12, 1.6, 2.2];
 const SPD_E = [0.5, 4.17, 8.33, 13.89, 19.44, 25.0, 30.56];
 const ACC_E = [-1.5, -0.5, -0.1, 0.1, 0.5, 1.5];
 const GRD_E = [-0.06, -0.03, -0.01, 0.01, 0.03, 0.06];
-const NR = 90, NF = 12, NV = 47;
+const NR = 90, NF = 12, NV = 49;
 const MI = 1609.344, LHV = 0.042;
 export const COMPONENTS = ['aero', 'rolling', 'friction_brakes', 'aux_hvac', 'powertrain_losses'] as const;
 
@@ -34,12 +34,14 @@ export interface Vehicle {
   label_city?: number | null; label_hwy?: number | null;
   label_city_kWh_per_100mi?: number | null; label_hwy_kWh_per_100mi?: number | null;
   soc_start?: number | null; thermal?: string | null; obd_maf?: boolean | null; dyno?: boolean | null;
+  model_year?: number | null;
 }
 
 export interface EMeta {
   members: string[]; mode: string; n_params: number;
   phys_k: { ice: number[]; hev: number[]; bev: number[] };
-  sigma_factors: Record<string, number>;
+  sigma_factors: Record<string, number | [number, number]>; // k, or [k, tau]: sigma = sqrt((k s)^2 + tau^2)
+  masked?: number[][]; // per member: inputs the network does not read (held at zero)
 }
 export interface EExample {
   id: string; stratum: string; vehicle: Vehicle; measured_MJ: number;
@@ -235,6 +237,7 @@ export function features(K: EMeta['phys_k'], trip: Trip, veh: Vehicle) {
   }
   if (soc != null) { V[41] = soc; V[42] = 1; }
   V[43] = veh.thermal === 'warm' ? 1 : 0; V[44] = veh.thermal === 'cold' ? 1 : 0; V[45] = veh.obd_maf ? 1 : 0; V[46] = veh.dyno ? 1 : 0;
+  if (veh.model_year) { V[47] = (veh.model_year - 2015) / 10; V[48] = 1; }
   const x = new Float64Array(NR + NF + NV);
   x.set(routeVec(P), 0); x.set(Fv, NR); x.set(V, NR + NF);
   return { x, E, dist, dur, ph, P, m, cda, crr, cv, rot, hd };
@@ -249,7 +252,9 @@ const geluTanh = (v: Float32Array) => {
 /** One member's raw outputs: log(E/E_phys), raw log sigma, 5 log components (ENet.forward before exp). */
 export function member(W: Pack<EMeta>, j: number, x: ArrayLike<number>): Float32Array {
   const t = W.t, mu = t[`m${j}_x_mu`].data, sd = t[`m${j}_x_sd`].data;
-  let h: ArrayLike<number> = Float64Array.from(x, (v, i) => clip((v - mu[i]) / sd[i], -8, 8));
+  const xm = Float64Array.from({ length: mu.length }, (_, i) => x[i]);
+  for (const i of W.meta.masked?.[j] ?? []) xm[i] = 0;
+  let h: ArrayLike<number> = Float64Array.from(xm, (v, i) => clip((v - mu[i]) / sd[i], -8, 8));
   for (const k of [0, 2, 4, 6]) h = geluTanh(linear(h, t[`m${j}_body_${k}_weight`], t[`m${j}_body_${k}_bias`]));
   return linear(h, t[`m${j}_head_weight`], t[`m${j}_head_bias`]);
 }
@@ -281,11 +286,14 @@ export function predict(W: Pack<EMeta>, trip: Trip, veh: Vehicle): Prediction {
   const varL = L.reduce((s, l) => s + (l - Lm) ** 2, 0) / n;
   const e = Math.exp(Lm), s = Math.sqrt(mean(S2) + varL);
   const arch = veh.architecture, cls = veh.class, K = meta.sigma_factors;
-  let k: number;
-  if (cls === 'bus') k = K[arch === 'bev' ? 'HD_ZTBus_leg' : 'HD_Mersin'] ?? 1;
-  else if (HD.includes(cls)) k = K.HD_ICCT ?? 1;
-  else k = K[`VED_${group(arch)}`] ?? 1;
-  const S = s * k;
+  let kk: number | [number, number] | undefined;
+  if (cls === 'bus') kk = arch === 'bev' ? K.HD_ZTBus ?? K.HD_ZTBus_leg : K.HD_Mersin;
+  else if (HD.includes(cls)) kk = K.HD_ICCT;
+  else kk = K[`VED_${group(arch)}`];
+  const [k0, tau] = Array.isArray(kk) ? kk : [kk ?? 1, 0];
+  const ks = K[`SIM_${arch}`];
+  const k = k0 * (typeof ks === 'number' ? ks : 1); // simulation factor per architecture (v2)
+  const S = Math.sqrt((s * k) ** 2 + tau ** 2);
   const [unit, u] = arch === 'bev' ? ['kWh', 1 / 3.6] : arch.startsWith('phev') ? ['MJ', 1] : ['g fuel', 1 / LHV];
   return {
     energy_MJ: e, sigma_log: S, physics_estimate_MJ: f.E, value: e * u, unit, lo68: e * u * Math.exp(-S), hi68: e * u * Math.exp(S),
