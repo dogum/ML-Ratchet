@@ -14,6 +14,7 @@ import numpy as np
 from .constants import G, R_AIR, T0K, FUELS, MPH, MILE, GAL, KWH, EPA_KWH_PER_GAL
 from .vehicle import Vehicle
 from .powertrain import ARCH_CLASSES, ETA_ALT, ETA_DCDC
+from .options import resolve as resolve_options
 from .strategies import make_strategy
 
 SURFACE_RR = [1.0, 0.95, 1.12, 1.6, 2.2]     # dry asphalt, concrete, wet, gravel, snow (Wong 2008 table 1.1; Ejsmont 2017)
@@ -92,7 +93,7 @@ def _f(x):
 
 
 def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, init_temps=None, rng=None,
-             driver=None, record=True, check=True, ledger_tol=0.005):
+             driver=None, record=True, check=True, ledger_tol=0.005, options=None):
     """Simulate one trip. See README.md for the full description of inputs and outputs.
 
     vehicle_spec : dict (contract spec), path/id (see load_vehicle), or a compiled Vehicle
@@ -103,6 +104,7 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
     init_temps   : {'engine': C, 'cabin': C, 'battery': C, 'tire_warm': 0..1} (default: soaked at ambient, cold tires)
     rng          : numpy Generator or seed -> small random driver gain variation (None = deterministic)
     driver       : {'Kp': 1/s, 'Ki': 1/s^2, 'a_max': m/s2, 'a_min': m/s2}
+    options      : physics options (roadsim/options.py): a dict, a preset name, or None (= physics v1)
     """
     t_wall = time.perf_counter()
     veh = get_vehicle(vehicle_spec)
@@ -111,8 +113,11 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
     arch = veh.arch
     strat = make_strategy(arch, strategy if strategy is not None else (veh.control.get('strategy') and
                                                                         {'strategy': veh.control.get('strategy'), 'params': veh.control.get('params', {})}))
+    opt = resolve_options(options, veh.spec)
+    strat.opt = opt
     PT = ARCH_CLASSES[arch]
     pt = PT(veh, shift=strat.shift) if arch == 'conv' else PT(veh)
+    pt.opt = opt
     if arch == 'conv' and getattr(strat, 'idle_stop', False):
         veh.engine.idle_stop = True
     elif arch == 'conv':
