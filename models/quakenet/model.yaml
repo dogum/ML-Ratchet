@@ -37,6 +37,12 @@ physics:
 noise: 1,284 real quiet-time windows from 127 GSN stations
 network: 1-D residual CNN, 7 stride-2 blocks, 1.44 M parameters; β-NLL on Mw, distance, log depth; von Mises NLL on back-azimuth
 
+approach:
+  real_backdrop: "1,284 real quiet-time windows from 127 GSN stations"
+  physics_inputs: false
+  physics_anchor: false
+  real_data_roles: [backdrop, calibration, gate, error_bars, exam]
+
 data:
   - name: USGS ComCat catalogue and moment tensors
     url: https://earthquake.usgs.gov/earthquakes/search/

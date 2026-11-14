@@ -38,6 +38,12 @@ physics:
 noise: Simulated weather and sensor faults (no instrument archive noise injection; this predates the real-noise recipe)
 network: 2-D CNN over 14 days × 96 solar-time steps, 12 input channels, Gaussian error bars on every output (591k weights)
 
+approach:
+  real_backdrop: false
+  physics_inputs: "Clear-sky sunlight on the panels and the healthy array's expected power, as input channels"
+  physics_anchor: false
+  real_data_roles: [exam]
+
 data:
   - name: NREL PVDAQ via OEDI (systems 2107 and 9068)
     url: https://data.openei.org/submissions/4568

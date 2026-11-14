@@ -126,6 +126,33 @@
     "network": {
       "type": "string"
     },
+    "approach": {
+      "type": "object",
+      "description": "Where physics and real data enter the model. Each string field says how; false says it does not. The site's 'Mental models' page builds its grey-box table from this block.",
+      "required": ["real_backdrop", "physics_inputs", "physics_anchor", "real_data_roles"],
+      "additionalProperties": false,
+      "properties": {
+        "real_backdrop": {
+          "description": "Real recordings (or real routes) the simulated training signals are laid into, or false",
+          "oneOf": [{ "type": "string", "minLength": 1 }, { "const": false }]
+        },
+        "physics_inputs": {
+          "description": "Physics-derived features or axes the network reads, or false",
+          "oneOf": [{ "type": "string", "minLength": 1 }, { "const": false }]
+        },
+        "physics_anchor": {
+          "description": "The physics estimate or physics-based decision the network's output corrects or feeds, or false",
+          "oneOf": [{ "type": "string", "minLength": 1 }, { "const": false }]
+        },
+        "real_data_roles": {
+          "description": "Every job real data does. Training labels is never one of them.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["backdrop", "calibration", "gate", "error_bars", "exam"] }
+        }
+      }
+    },
     "data": {
       "type": "array",
       "minItems": 1,

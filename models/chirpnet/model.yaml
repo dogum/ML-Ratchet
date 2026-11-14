@@ -36,6 +36,12 @@ physics:
 noise: Simulated Gaussian noise coloured by O1/O2 and design spectra; the exam background is time-slid real LIGO data.
 network: 1-D residual CNN finder + two-stream coincidence checker (882k weights), an 8-layer RealNVP posterior flow, and a 2-D time-frequency CNN for neutron stars
 
+approach:
+  real_backdrop: false
+  physics_inputs: false
+  physics_anchor: false
+  real_data_roles: [exam]
+
 data:
   - name: Gravitational Wave Open Science Center (LIGO/Virgo strain)
     url: https://gwosc.org

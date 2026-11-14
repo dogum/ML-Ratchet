@@ -39,6 +39,12 @@ physics:
 noise: Real Kepler light curves of 232 quiet dwarfs (training) and 42 (validation), after a variability screen
 network: Two CNN branches, 412k parameters — 1-D on the log spectrum, 2-D on a comb map (autocorrelation in units of the expected Δν)
 
+approach:
+  real_backdrop: "Kepler light curves of 232 quiet dwarf stars"
+  physics_inputs: "A comb map: the autocorrelation in units of the expected Δν"
+  physics_anchor: false
+  real_data_roles: [backdrop, calibration, gate, error_bars, exam]
+
 data:
   - name: Kepler light curves (NASA, via MAST)
     url: https://archive.stsci.edu/missions-and-data/kepler

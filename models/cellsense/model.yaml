@@ -44,6 +44,12 @@ physics:
 noise: "Measurement noise and cell-to-cell scatter in simulation; six real cells calibrate the LFP aging priors, three the NMC811 ones. NMC811 also: cycler gain error, a few mV of voltage offset, per-cell open-circuit-curve jitter."
 network: Three 1-D residual CNNs along the voltage axis for LFP (health, lifetime, partial discharge) and a fourth, smaller one for NMC811; β-NLL error bars
 
+approach:
+  real_backdrop: false
+  physics_inputs: false
+  physics_anchor: false
+  real_data_roles: [calibration, gate, error_bars, exam]
+
 data:
   - name: Severson et al. 2019 fast-charging dataset (Toyota Research Institute / Stanford / MIT)
     url: https://data.matr.io/1/

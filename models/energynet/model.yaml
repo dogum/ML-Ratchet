@@ -39,6 +39,12 @@ physics:
 noise: Real routes and station weather; the simulated car drives slightly different conditions (temperature ± 1.5 °C, wind × 0.4–0.9) than the input reports
 network: Ensemble of 5 MLPs (151 → 256 → 256 → 256 → 128 → 7), predicting a correction to a physics energy estimate, its log σ and 5 energy components; Gaussian NLL; trained on a GPU
 
+approach:
+  real_backdrop: "Real VED routes with lidar grade and station weather"
+  physics_inputs: "Road-load work integrals (aero, rolling, grade, inertia) from the same physics as RoadSim"
+  physics_anchor: "Predicts log(E / E_phys), a correction to a physics energy estimate"
+  real_data_roles: [backdrop, calibration, gate, error_bars, exam]
+
 data:
   - name: Vehicle Energy Dataset (VED) — Oh, LeBlanc, Peng, IEEE T-ITS 2020
     url: https://github.com/gsoh/VED

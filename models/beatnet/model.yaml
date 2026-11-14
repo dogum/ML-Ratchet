@@ -37,6 +37,12 @@ physics:
 noise: Real MIT-BIH Noise Stress Test recordings plus quiet real background cut from the dev records, mains, amplifier noise and 11-bit quantisation
 network: 1-D residual CNN, 172k weights, 2.5 s window at 180 Hz plus 6 RR features
 
+approach:
+  real_backdrop: "MIT-BIH Noise Stress Test recordings and quiet background cut from the dev records"
+  physics_inputs: false
+  physics_anchor: false
+  real_data_roles: [backdrop, calibration, gate, exam]
+
 data:
   - name: MIT-BIH Arrhythmia Database (PhysioNet)
     url: https://physionet.org/content/mitdb/

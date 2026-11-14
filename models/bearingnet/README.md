@@ -16,6 +16,8 @@ From 3–20 seconds of one accelerometer on a rotating machine, plus the bearing
 | **Learned from** | Bearing kinematics (BPFO, BPFI, BSF, FTF from geometry) drive trains of impacts with slip and jitter, load-zone amplitude modulation, entry/exit pulse pairs, random structural resonances, shaft lines, decoy impact trains and random knocks. |
 | **Noise** | Healthy CWRU file 98 and Paderborn K001–K003, time-stretched ±15% for speed (never in dev or exam) |
 | **Network** | Envelope spectra in 5 bands on fault-aligned log-frequency axes; 1-D residual CNN, 438k parameters, 20k simulations |
+| **Physics also enters** | inputs: Envelope spectra on log-frequency axes aligned to the fault orders computed from the bearing geometry |
+| **Real data's jobs** | backdrop, calibration, gate, exam (never training labels) |
 | **Dev set** | 10 CWRU files (seed 20261106) and Paderborn K006, KA01, KI03 — file-level split |
 | **Exam** | 150 CWRU files on every sensor position, and 26 Paderborn bearings (919 recordings) |
 

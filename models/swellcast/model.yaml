@@ -38,6 +38,12 @@ physics:
 noise: Quiet 240-hour windows from 27 NDBC buoys (2008–2025); 25% of each batch is a real null window
 network: 2-D CNN over frequency × time (log energy, anomaly, two directional moments, data mask), 4 residual stages, 296k parameters; β-NLL and von Mises heads
 
+approach:
+  real_backdrop: "Quiet 240-hour windows from 27 NDBC buoys"
+  physics_inputs: false
+  physics_anchor: false
+  real_data_roles: [backdrop, calibration, gate, exam]
+
 data:
   - name: NOAA National Data Buoy Center spectral wave data
     url: https://www.ndbc.noaa.gov/

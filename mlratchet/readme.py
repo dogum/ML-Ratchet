@@ -51,6 +51,11 @@ def render(m: Model) -> str:
         w(f"| **Noise** | {_cell(c['noise'])} |")
     if c.get("network"):
         w(f"| **Network** | {_cell(c['network'])} |")
+    if c.get("approach"):
+        a = c["approach"]
+        enters = [f"{k}: {_cell(a[f])}" for f, k in (("physics_inputs", "inputs"), ("physics_anchor", "output")) if a.get(f)]
+        w(f"| **Physics also enters** | {'<br>'.join(enters) or 'only through the simulated training data'} |")
+        w(f"| **Real data's jobs** | {', '.join(r.replace('_', ' ') for r in a['real_data_roles'])} (never training labels) |")
     w(f"| **Dev set** | {_cell(c['split']['dev'])} |")
     w(f"| **Exam** | {_cell(c['split']['exam'])} |\n")
 

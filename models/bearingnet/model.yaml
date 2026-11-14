@@ -37,6 +37,12 @@ physics:
 noise: Healthy CWRU file 98 and Paderborn K001–K003, time-stretched ±15% for speed (never in dev or exam)
 network: Envelope spectra in 5 bands on fault-aligned log-frequency axes; 1-D residual CNN, 438k parameters, 20k simulations
 
+approach:
+  real_backdrop: "Healthy CWRU and Paderborn recordings, time-stretched for speed"
+  physics_inputs: "Envelope spectra on log-frequency axes aligned to the fault orders computed from the bearing geometry"
+  physics_anchor: false
+  real_data_roles: [backdrop, calibration, gate, exam]
+
 data:
   - name: Case Western Reserve University Bearing Data Center
     url: https://engineering.case.edu/bearingdatacenter

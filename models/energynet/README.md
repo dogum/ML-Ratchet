@@ -16,6 +16,8 @@ EnergyNet predicts a trip's fuel or battery energy before the trip, with a 68% a
 | **Learned from** | The shared RoadSim simulator (shared/vehicle), physics v2 (pinned: roadsim-physics-v2): a forward-facing 1 Hz whole-vehicle model with real road loads, EPA ALPHA engine and motor maps, transmissions, a battery with thermal model, two-node HVAC, a tyre model and seven powertrains, calibrated on dev data only, driven over real Ann Arbor routes with lidar grades and airport weather. |
 | **Noise** | Real routes and station weather; the simulated car drives slightly different conditions (temperature ± 1.5 °C, wind × 0.4–0.9) than the input reports |
 | **Network** | Ensemble of 5 MLPs (151 → 256 → 256 → 256 → 128 → 7), predicting a correction to a physics energy estimate, its log σ and 5 energy components; Gaussian NLL; trained on a GPU |
+| **Physics also enters** | inputs: Road-load work integrals (aero, rolling, grade, inertia) from the same physics as RoadSim<br>output: Predicts log(E / E_phys), a correction to a physics energy estimate |
+| **Real data's jobs** | backdrop, calibration, gate, error bars, exam (never training labels) |
 | **Dev set** | 16 VED cars plus dev EPA vehicles, 294 ZTBus missions (by month), Mersin routes and one ICCT truck — RoadData's frozen splits (sha256 d917df78…; ZTBus by-month split 18e0fead…) |
 | **Exam** | 25,793 VED trips from 350 cars, EPA exam families, 1,115 ZTBus missions, Mersin and ICCT exam sets |
 

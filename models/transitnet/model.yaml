@@ -34,6 +34,12 @@ physics:
 noise: 2,200 real 2-minute TESS light curves of ordinary stars, 220 from each of 10 sectors across the mission
 network: Multi-view 1-D CNN (local, secondary, global, odd/even views + scalars) predicting corrections to model-free estimates
 
+approach:
+  real_backdrop: "2,200 real TESS light curves of ordinary stars"
+  physics_inputs: "The light curve folded on the candidate period: local, secondary, global and odd/even views"
+  physics_anchor: "Corrections to model-free estimates: radius ratio from √depth, a/R* from period and duration"
+  real_data_roles: [backdrop, calibration, gate, exam]
+
 data:
   - name: TESS SPOC light curves (MAST)
     url: https://archive.stsci.edu/missions-and-data/tess
