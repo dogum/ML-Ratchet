@@ -15,6 +15,7 @@ shared/vehicle/
 ├── data/           the processed tables that ship (24 MB) + scripts/ to rebuild everything else; DATA.md = sources
 │   └── proc/splits.json   the frozen dev / exam split — sha256 d917df78…; never change it
 ├── checks/         every physics check and its JSON (run_all.sh)
+├── garage/         export_garage.py: the RoadSim grid behind the site's garage page (site/public/garage/)
 ├── HANDOFF.md      what exists, what's missing, and the prioritised path to v2 — start here to extend it
 ├── VEHICLE_BRIEF.md   the shared contract: trip format, vehicle spec, simulator API, energy ledger
 └── PHASE2_BRIEF.md    how the three models were set up

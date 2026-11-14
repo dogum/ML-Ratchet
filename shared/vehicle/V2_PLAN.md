@@ -64,6 +64,25 @@ Every rung logged, kept or not; new win/loss tables; instruments re-exported.
 One page where a visitor picks a vehicle and a real route and sees all three models on the same trip: EnergyNet's
 forecast, the RoadSim run, TripDetective reading the log back, HybridPilot driving it.
 
+**Done 14 Nov 2026.** Page `site/src/pages/garage.astro` (in the site nav; a button on the three model pages), code in
+`site/src/garage/`, data in `site/public/garage/` (6.5 MB) written by `shared/vehicle/garage/export_garage.py`.
+- Grid, RoadSim physics v2 pinned, 156 runs: six vehicles (RoadSim's calibrated twins of VED exam cars 470 and 10,
+  HybridPilot's twins of VED exam cars 428 and 492, a generated P2 hybrid, the ZTBus trolleybus twin) x five real exam
+  routes (the four EnergyNet / HybridPilot example trips of 10 minutes or more, one ZTBus exam leg drawn with seed
+  2026; the bus drives only that one) x air temperature -10 / 20 / 35 C (EnergyNet's own perturb) x load +0 / +400 kg
+  (bus +60 riders). A third load level would have taken it past 8 MB: HybridPilot's inputs at every decision second
+  dominate the size.
+- Per run: ledger, traces, the VED-style OBD log TripDetective reads, and for the three hybrids HybridPilot, A-ECMS,
+  the rule and DP graded as HybridPilot's exam grades. The networks are the instruments' own ports, run live.
+- Parity (`site/tests/garage.test.ts`): 156 EnergyNet cases worst 9.5e-8, 83 TripDetective cases 6.4e-5, 30
+  HybridPilot cases 6.4e-15 (tolerance 2e-3). HybridPilot's s from the stored float16 inputs is within 2.6e-3 of the
+  run's own.
+- What it shows, against RoadSim (not reality), median [range] over each vehicle's runs: EnergyNet vs RoadSim energy
+  sedan -9.7 % [-24, +4] (low with +400 kg, about -11 %, and at 35 C), Leaf -1.5 % [-12, +16], bus -6.8 % [-16, +2], power-split +3.9 %
+  [-14, +18], P2 +15.5 % [-5, +57], plug-in started near charge sustaining +33 % [-29, +57]; inside its 68 % band on 119
+  of 156 runs. HybridPilot minus A-ECMS, points of DP: power-split +0.82 [-0.19, +5.91], P2 +4.51 [-12.5, +13.2],
+  plug-in +4.64 [+0.84, +8.86]. TripDetective's single-trip mass: median |error| 112-268 kg by vehicle.
+
 ## Decisions log
 
 - **13 Nov 2026 — ZTBus split for the full set (owner's decision).** v1's rule left 2 of 1,409 missions as dev. The

@@ -122,3 +122,6 @@ Built in two phases by parallel Opus agents from `VEHICLE_BRIEF.md` and `PHASE2_
 2. **Fix the known simulator gaps:** P2 torque converter and start losses, cold weather, A/C, Leaf heating.
 3. **Find real heavy-duty trip data** (Fleet DNA via Greg's browser; the full ZTBus set from ETH was rate-limited).
 4. **Replace the hard-coded `/home/claude/road` paths.** Add RoadSim to ML Ratchet as a shared module under the three models.
+
+## Added 14 Nov 2026
+- **The garage** (V2_PLAN Phase E): site page `garage/` — one vehicle and one real route, RoadSim's run and all three models on it, the networks live in the browser. Exporter `shared/vehicle/garage/export_garage.py`.
