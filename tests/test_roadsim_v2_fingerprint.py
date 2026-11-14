@@ -3,7 +3,8 @@ behaviour fingerprint (tests/golden/roadsim_v2_fingerprint.json, written 14 Nov 
 (roadsim-physics-v2.1, ...) may change hybrid and plug-in runs only: every conventional, BEV, bus and Class 8 run of a
 later preset must match the v2 golden to 1e-9 too (the v2.1 guard, shared/vehicle/roadsim/CALIBRATION.md).
 Physics v2.1 reproduces its own golden (tests/golden/roadsim_v2_1_fingerprint.json, written 14 Nov 2026 before any v3
-change) to 1e-9; v3 (the hardware pass) is a later preset under the same non-hybrid guard."""
+change) to 1e-9; v3 (the hardware pass) is a later preset under the same non-hybrid guard and reproduces its own golden
+(tests/golden/roadsim_v3_fingerprint.json, written 14 Nov 2026 before any v3.1 change) to 1e-9."""
 import json, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -39,3 +40,10 @@ def test_roadsim_reproduces_v2_1_fingerprint():
     gold = json.load(open(fp.GOLDS['roadsim-physics-v2.1'], encoding='utf-8'))
     bad = fp.compare(gold, fp.run('roadsim-physics-v2.1'))
     assert not bad, f'{len(bad)} runs changed under roadsim-physics-v2.1:' + chr(10) + chr(10).join(bad[:20])
+
+
+def test_roadsim_reproduces_v3_fingerprint():
+    import fingerprint as fp
+    gold = json.load(open(fp.GOLDS['roadsim-physics-v3'], encoding='utf-8'))
+    bad = fp.compare(gold, fp.run('roadsim-physics-v3'))
+    assert not bad, f'{len(bad)} runs changed under roadsim-physics-v3:' + chr(10) + chr(10).join(bad[:20])
