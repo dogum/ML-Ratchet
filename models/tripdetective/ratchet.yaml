@@ -1,7 +1,8 @@
-# The ratchet ladder, normalised. Raw log: training/ratchet.json.
+# The ratchet ladders, normalised. Raw logs: training/ratchet.json (v1.0, physics v1), training/ratchet_v2.json (v2.0,
+# physics v2) and training/ratchet_bus.json (bus ladder).
 model: tripdetective
 ladders:
-  - name: TripDetective
+  - name: v1.0 — RoadSim physics v1
     objective: "Mean simulated skill over architecture, mass, displacement, CdA, Crr, engine-off share, strategy and the ledger, on frozen val_v3 (600 cars × 8 trips)"
     rule: Keep if the skill beats the incumbent by more than 0.01 AND the mean of 4 dev error ratios is at most 1.05 AND dev VED-type accuracy drops by no more than 0.03.
     margin: 0.01
@@ -18,4 +19,44 @@ ladders:
       - { id: r3, change: "+ road-load physics channels", sim: 0.363, decision: rejected, why: "Dev errors +23% and type accuracy fell.", metrics: ["129 kg", "0.53 L", 0.88] }
       - { id: r4, change: "+ 16 classical per-trip estimates", sim: 0.368, decision: rejected, why: "Dev errors +17%.", metrics: ["136 kg", "0.49 L", 0.90] }
       - { id: r5, change: "Classical estimates on the v1 bank", sim: 0.317, decision: kept, why: "+0.012; dev +2%.", metrics: ["139 kg", "0.34 L", 0.91] }
-      - { id: r6, change: "v3 mass prior (VED-era fleet) + classical estimates, 2,000 cars", sim: 0.402, decision: released, why: "+0.085; dev mass error 110 kg (bias −9).", metrics: ["110 kg", "0.44 L", 0.92] }
+      - { id: r6, change: "v3 mass prior (VED-era fleet) + classical estimates, 2,000 cars", sim: 0.402, decision: kept, why: "+0.085; dev mass error 110 kg (bias −9). Released as v1.0.", metrics: ["110 kg", "0.44 L", 0.92] }
+  - name: v2.0 — RoadSim physics v2 (Phase D, 14 Nov 2026)
+    objective: "Mean simulated skill over architecture, mass, displacement, CdA, Crr, engine-off behaviour, strategy and the ledger (single trip and whole car), on frozen sets rebuilt on physics v2 (600 cars × 8 trips, seed 99)"
+    rule: Keep if the skill beats the incumbent by more than 0.01 AND the mean of 4 dev error ratios is at most 1.05 AND dev VED-type accuracy drops by no more than 0.03 (unchanged from v1.0).
+    margin: 0.01
+    dev_gate: "Mean of 4 dev error ratios ≤ 1.05; VED-type accuracy drop ≤ 0.03 (16 dev cars)"
+    frozen_sets: [p2_val_v3, p2_val_v4, p2_val_v5, p2_val_v6]
+    scored_on: p2_val_v6
+    note: "Every v1.0 decision re-taken from r0 on physics v2, then rescored in order on each new frozen set; no decision changed between sets. The v1.0 dev-twin wrappers (priors v2) now over-correct: physics v2 already carries VED-era engine efficiency (twin fuel/km 0.95× real with the plain generator, 1.07× with the wrappers). Mass response = median change of the pooled estimate when 64 simulated cars (stratified by type) get +800 kg, 8 trips (sweep.py; info, not part of the rule). v1.0 on the same sweep: +182 kg."
+    columns_source: Dev cars (gate inputs) and the identifiability sweep
+    columns: ["Dev mass error / car", "Dev engine error / car", "Dev type accuracy / trip", "Mass response to +800 kg"]
+    rungs:
+      - { id: p2r0, change: "CNN + set pooling, generator as published (prior v1), 1,200 cars", sim: 0.378, decision: kept, why: First rung., metrics: ["156 kg", "0.39 L", 0.85, "+257 kg"] }
+      - { id: p2r1, change: "v1.0's dev-twin priors (v2), 1,200 cars", sim: 0.363, decision: rejected, why: "Sim −0.015; dev errors +14%.", metrics: ["106 kg", "0.60 L", 0.91, "+202 kg"] }
+      - { id: p2r2, change: "v2 priors, 2,000 cars", sim: 0.377, decision: rejected, why: "Sim −0.001; dev errors +13%.", metrics: ["123 kg", "0.55 L", 0.89, "+222 kg"] }
+      - { id: p2r3, change: "+ road-load physics channels", sim: 0.374, decision: rejected, why: "Sim −0.004; dev errors +7%.", metrics: ["103 kg", "0.56 L", 0.85, "+215 kg"] }
+      - { id: p2r4, change: "+ 16 classical per-trip estimates", sim: 0.386, decision: rejected, why: "Sim +0.008; dev errors +17%.", metrics: ["125 kg", "0.67 L", 0.91, "+275 kg"] }
+      - { id: p2r5, change: "Classical estimates on the v1 bank", sim: 0.397, decision: kept, why: "+0.019; dev +0%.", metrics: ["134 kg", "0.46 L", 0.93, "+331 kg"] }
+      - { id: p2r6, change: "v3 mass prior + classical estimates, 2,000 cars (v1.0's release recipe)", sim: 0.405, decision: rejected, why: "+0.008 (short of the margin); dev VED-type accuracy −0.043.", metrics: ["122 kg", "0.51 L", 0.89, "+227 kg"] }
+      - { id: p2r7, change: "Priors rebuilt: the v1 generator + the v3 VED-era mass prior (prior v4), 2,000 cars", sim: 0.430, decision: kept, why: "+0.033; dev errors −9%.", metrics: ["126 kg", "0.43 L", 0.92, "+295 kg"] }
+      - { id: p2r8, change: "BEV cabin heat matched to the dev Leaf (prior v5)", sim: 0.430, decision: rejected, why: "+0.000; dev errors −10%.", metrics: ["102 kg", "0.35 L", 0.91, "+226 kg"] }
+      - { id: p2r9, change: "VED logger channel mix measured on the dev cars (prior v6)", sim: 0.431, decision: rejected, why: "+0.001; dev errors −5%, dev type 16/16 cars.", metrics: ["121 kg", "0.32 L", 0.93, "+360 kg"] }
+      - { id: p2r10, change: "Sharper channels: a wheel-equivalent source-power channel (feature version 4)", sim: 0.432, decision: rejected, why: "+0.002; dev errors −7%.", metrics: ["116 kg", "0.37 L", 0.90, "+257 kg"] }
+      - { id: p2r11, change: "Physics-regression head: the road-load fit's normal equations pooled over a car's trips and solved; mass = b0 × a learned efficiency correction", sim: 0.450, decision: released, why: "+0.020; dev errors −10%.", metrics: ["133 kg", "0.31 L", 0.91, "+524 kg"] }
+      - { id: p2r12, change: "Pooled multi-trip training: 90% of samples pool 2-8 trips, 32 cars per batch", sim: 0.452, decision: rejected, why: "+0.002; dev VED-type accuracy −0.031.", metrics: ["122 kg", "0.27 L", 0.88, "+519 kg"] }
+      - { id: p2r13, change: "GPU: wider CNN (48-192 channels, 160-d embedding), 8,000 steps", sim: 0.491, decision: rejected, why: "+0.041 in simulation, but dev errors +6%.", metrics: ["142 kg", "0.33 L", 0.91, "+571 kg"] }
+      - { id: p2r14, change: "VED logger channel mix again, with the physics head", sim: 0.444, decision: rejected, why: "−0.006.", metrics: ["121 kg", "0.25 L", 0.91, "+503 kg"] }
+      - { id: p2r15, change: "BEV cabin heat again, with the physics head", sim: 0.450, decision: rejected, why: "+0.000; dev errors +3%.", metrics: ["128 kg", "0.32 L", 0.90, "+485 kg"] }
+  - name: v2.0 bus — city-bus mass (Phase D)
+    objective: "Mean skill over log mass, log CdA and log Crr on a frozen set of 300 simulated electric buses × 6 windows (single window and pooled)"
+    rule: Keep if the skill beats the incumbent by more than 0.01 AND the level-corrected dev mass error is at most 5% worse AND the slope of estimated mass on passenger mass drops by no more than 0.1.
+    margin: 0.01
+    dev_gate: "ZTBus dev legs (757 legs, the 'gate' half of the 294 dev missions); truth 19,000 kg + 70 kg per passenger; level fitted on dev"
+    frozen_sets: [p2_bus_val]
+    scored_on: p2_bus_val
+    note: "Rule changed in the open after pb2 and before any other rung: the first rule gated on the raw error. The truth's level is a convention (19 t curb): on 40 dev legs both the logged power and the logged traction force regress to 0.67-0.73 × (19 t + passengers). pb2 fails under both rules."
+    columns_source: ZTBus dev gate legs
+    columns: ["Dev mass error (raw)", "Dev mass error (level-corrected)", "Slope on passenger mass", "Correlation with passengers"]
+    rungs:
+      - { id: pb1, change: "Bus network: CNN + set pooling + classical estimates on 1,500 simulated electric buses (power ÷ 12)", sim: 0.524, decision: released, why: First rung., metrics: ["1,127 kg", "805 kg", 0.42, 0.25] }
+      - { id: pb2, change: "+ physics-regression head and the source-power channel", sim: 0.546, decision: rejected, why: "Reads 4.8 t light; level-corrected error +239%.", metrics: ["4,832 kg", "2,731 kg", 1.25, 0.29] }

@@ -25,5 +25,21 @@ def main(ntr=5):
         print(vid, t, len(metas))
 
 
+
+def bus_example():
+    """One ZTBus exam leg (fixed random draw, seed 7; CC BY 4.0, Widmer et al. 2023) for the bus reader in demo.py."""
+    zl = rd.ztbus_full(); zl = zl[(zl.split == 'exam') & zl.q_label_ok & zl.q_route_ok].sort_values('trip_id')
+    row = zl.iloc[int(np.random.default_rng(7).integers(len(zl)))]
+    m, a = rd.load_trip(row.trip_id)
+    T = np.where(np.isfinite(a['T_amb']), a['T_amb'], np.nanmean(a['T_amb'])); rho = np.where(np.isfinite(a['rho_air']) & (a['rho_air'] > 0.5), a['rho_air'], 1.2)
+    info = dict(trip_id=row.trip_id, bus=row.vehicle_id, km=round(float(row.distance_m) / 1000, 2), passengers_mean=round(float(row.passengers_mean), 1),
+                season=row.season, source='ZTBus (Widmer, Ritter, Onder, Scientific Data 2023), CC BY 4.0; processed by RoadData')
+    np.savez_compressed(f'{ROOT}/release/examples/ZTBus_exam_leg.npz', info=np.array(json.dumps(info)), v=np.nan_to_num(a['v']).astype(np.float32),
+                        power_W=np.nan_to_num(a['elec_power']).astype(np.float32), grade=np.nan_to_num(a['grade']).astype(np.float32),
+                        T_amb=T.astype(np.float32), rho_air=rho.astype(np.float32), valid=a['valid'])
+    print('bus example', info)
+
+
 if __name__ == '__main__':
     main()
+    bus_example()

@@ -62,3 +62,83 @@ From a trip log alone (speed + whatever the OBD logger has), infer the vehicle's
 
 - The original claude.ai page is now `lab/index.html`, unchanged.
 - The site's model page has a live instrument (`web/export_instrument.py`, `site/src/instruments/tripdetective/`). The page's 13 real exam cars (8 trips each) with trip pooling, log length and channel removal, plus the simulated-car lab. Parity with Python: 58 cases, worst 2.6e-5.
+
+## 14 Nov 2026 — Phase D: rebuilt on RoadSim physics v2 (v2.0)
+
+Built on this machine (16 cores, RTX 3080), in parallel with the EnergyNet and HybridPilot rebuilds. Work folder
+`work/` (git-ignored); every script as run is in `training/`, the rung plans in `training/plans_v2/`.
+
+**Moved / pinned.**
+- Every RoadSim call pins `options=PHYSICS` = `'roadsim-physics-v2'` (`training/common.py`; v1.0 ran
+  `'roadsim-physics-v1'`). Banks record the physics in `info.json`.
+- `training/obdlog.py` now re-exports the upstream emulator (`roadsim/obd.py`, EMU_VERSION 1, this file's v1.0 code
+  moved there unchanged). Kept here: `logger_config_ved()` (VED channel mix, rung p2r9).
+- The MAF label model upstream (`obd.label_fuel`) is EnergyNet's; TripDetective never used it (the emulator has its
+  own MAF estimate), so nothing else moved.
+
+**Dev twin test on physics v2** (`twin.py 15 p2_v1 v1` / `p2_v2 v2`; ratios twin / real of per-car medians):
+conventional fuel/km 0.95 with the plain generator, 1.07 with v1.0's wrappers (eff_scale 0.88 etc.); HEV 1.03 vs
+1.11; HEV engine-off while moving 0.31 vs 0.19 real (both). The wrappers now over-correct, as the ladder confirmed
+(p2r1-p2r4 rejected, and below the incumbent on every frozen set built later). Dev Leaf: 1.57x energy per km and
+2.7x power at stops (heating). With set point 17 C, heat below 3 C, 2 kW, 70 % recirculation and series regen the
+twin is 1.06x per trip (IQR 0.96-1.15): the V2_PLAN BEV-twin target (±10 %) holds on dev with these settings.
+v2's HVAC ignores the spec's `T_heat_set`; the set point is the option `hvac_T_set`, so priors set it per car
+through `spec['physics']`.
+
+**Frozen sets.** p2_val_v3 (v1.0's val_v3 definition on physics v2), then p2_val_v4 / v5 / v6 as the priors changed;
+every rung re-scored in order on each (`ratchet.py --rescore`). No decision changed between sets. Identifiability
+sweep `p2_sweep` (sweep.py): 64 cars stratified by type (24 ICE, 16 HEV, 12 PHEV, 12 EV), each driven over the same
+8 routes as drawn, +800 kg and CdA x1.5, same logger and random draws. A first 60-car draw held one BEV (the mass
+prior rejects heavy BEVs); it was rebuilt stratified before any rung was judged with it (the first draw only scored
+the v1.0 release: +182 kg, kept in `work/bank/old/`).
+
+**Mistakes and how they were handled.**
+- Prior v6 was first defined as v5 + VED logger; p2r8 (v5, BEV heat) was then rejected, so v6 was redefined as v4 +
+  VED logger before its training bank was built (its first frozen set was discarded and the rescore on it repeated).
+- p2r13 first started with p2r12's rejected sampling options; it was stopped and retrained on p2r11's settings.
+
+**Ladder (p2_val_v6; margin 0.01; dev gate unchanged).** p2r0 0.378 kept; p2r1-p2r4 (v1.0's v2 priors, physics
+channels, classical numbers on them) rejected, dev errors +7 to +17 %; p2r5 classical numbers on the v1 bank 0.397
+kept; p2r6 (v1.0's release recipe: v3 mass prior) 0.405 rejected (+0.008, dev type accuracy -0.043); **p2r7 priors
+rebuilt as v1 + v3 mass prior (v4) 0.430 kept** (dev -9 %); p2r8 BEV heat 0.430 rejected; p2r9 VED logger mix 0.431
+rejected (dev type 16/16 cars); p2r10 source-power channel 0.432 rejected; **p2r11 physics-regression head 0.450
+kept and released** (dev -10 %, +800 kg -> +524 kg); p2r12 pooled multi-trip training 0.452 rejected (type -0.031);
+p2r13 wider CNN, 8,000 GPU steps 0.491 rejected (dev +6 %: the GPU bought simulation skill the dev cars did not
+confirm); p2r14 / p2r15 (VED logger, BEV heat on the head) rejected.
+
+**Why the physics head.** Pooled over a car's 8 simulated trips, the road-load fit's b0 (mass x 0.30 / marginal
+efficiency) tracks the true mass with a log-sd of 3 % for BEVs, 13 % for ICE and 34-39 % for hybrids and plug-ins
+(the battery buffers the engine). The head sums the per-window normal equations, solves them per car, and adds
+log(b0) to the mass output with a learned weight (it stays at ~1). On dev twins the real log's b0 is 0.83-1.37x the
+twin's (median 1.01): efficiency differs car by car, which the network has to absorb.
+
+**Bus ladder.** 1,500 simulated electric buses on ZTBus dev routes (route half of the dev missions, hash split);
+dev gate on the other half (757 legs). pb1 (no head) reads +916 kg heavy, slope on passenger mass 0.42; pb2 (head)
+reads 4.8 t light, slope 1.25. Probe: on 40 dev route legs the ZTBus power and even the logged traction force regress
+to 0.67-0.73 x (19 t + 70 kg x passengers), and the fit scatters ±15 % per leg (RoadSim twin 0.96, ±3 %). No lag
+explains it (best at 0-1 s). The rule was changed in the open to a level-corrected error (the 19 t is a convention);
+pb2 fails either way. pb1 released.
+
+**Release committed before the exam** (commit 36e4419): p2r11, sigma factors from dev (mass x1.02 per car, others 1),
+numpy == torch 4.6e-6; bus pb1 (sigma x1.62).
+
+**Exam (once; v1.0 re-scored with the same code and data; it reproduces its card: 98.9 %, 116 kg, 0.50 L).**
+- Type per car 97.1 % (v1.0 98.9 %, rule 99.4 %): loss, and worse than v1.0. 10 HEVs read conventional, 8 of them
+  small Prius-c-type cars (1.5 L, 'medium' RoadData confidence); RoadData-agreement on medium-confidence cars fell
+  from 93 % to 34 %.
+- Curb mass per car 127 kg median (v1.0 116), per trip 112 (114); ICE 116, HEV 181 (93), PHEV 100 (182), Leafs
+  -119 / -105 kg (v1.0 +641 / +278): Leafs within 150 kg met. Coverage 1σ 56 % per car (73 %).
+- Displacement 0.38 L (v1.0 0.50; idle-fuel law 0.64; dev median 0.60): now a clear win.
+- Road load vs EPA (25 cars) 24 / 19 / 18 % at 20/40/60 mph (v1.0 16 / 17 / 18); ETW 5.0 % (7.5 %).
+- Pooling: 165 kg (1 trip) -> 138 (4-8) -> 150 (32); v1.0 153 -> 126. More trips sharpen the fit around each
+  car's own efficiency bias.
+- EPA families rebuilt in RoadSim v2: mass vs ETW 5.0 % MdAPE (v1.0 7.8 % on v1), F60 10.3 %.
+- ZTBus exam (5,847 legs, 1,115 missions): mean |error| 1,204 kg (752 kg with the dev-fitted level 0.957) vs the
+  dev median 453 kg and the scaled physics fit 3,547 kg: loss. Slope 0.70, correlation 0.35 with passengers.
+
+**Targets (V2_PLAN).** Mass responds to +800 kg by >= 500 kg: met in simulation (+524 kg, 8 trips; +489 kg with 2).
+Leafs within 150 kg: met (119, 105 kg). Beat the rule on powertrain type: not met (97.1 vs 99.4 %).
+
+**Next.** Powertrain type: the dev-measured VED channel mix (p2r9) fixed the dev cars but gained only +0.001 in
+simulation; the objective weights 7 architectures, not the 4 VED types. A dev twin check of Prius-c-type HEVs under
+physics v2. For buses, a measurement model for the ZTBus power log before the physics head can help.

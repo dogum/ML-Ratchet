@@ -18,7 +18,7 @@ def load_example(path):
 
 if __name__ == '__main__':
     td = TD.TripDetective()
-    for p in sorted(glob.glob(os.path.join(HERE, 'examples', '*.npz'))):
+    for p in sorted(glob.glob(os.path.join(HERE, 'examples', 'VED_*.npz'))):
         info, trips = load_example(p)
         est = info['trips'][0]['fuel_source'] != 'obd_fuel_rate_Lph'
         t0 = time.time()
@@ -35,3 +35,12 @@ if __name__ == '__main__':
                   f"curb {r['curb_kg']:.0f} kg (1 sigma {lo - 136:.0f}-{hi - 136:.0f}){disp}, CdA {r['CdA_m2']:.2f} m2, Crr {r['Crr']:.4f}")
         led = car['ledger_kJ_per_km'][0]
         print('  ledger of trip 1 (kJ/km, simulated-truth-trained, not real-graded):', ', '.join(f"{k} {v[0]:.0f}" for k, v in led.items()))
+
+    # a city bus (v2.0): one ZTBus exam leg read by the bus network; truth convention 19,000 kg + 70 kg per passenger
+    z = np.load(os.path.join(HERE, 'examples', 'ZTBus_exam_leg.npz'))
+    info = json.loads(str(z['info']))
+    r = TD.TripDetectiveBus().read_leg({k: z[k] for k in z.files if k != 'info'})
+    lo, hi = r['mass_kg_1sigma']
+    print(f"\n{info['bus']} leg, {info['km']} km, {info['passengers_mean']} passengers on average "
+          f"(convention: {19000 + 70 * info['passengers_mean']:.0f} kg)\n  bus mass {r['mass_kg']:.0f} kg (1 sigma {lo:.0f}-{hi:.0f}), "
+          f"{r['n_windows']} windows")

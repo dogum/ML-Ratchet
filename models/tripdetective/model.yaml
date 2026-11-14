@@ -1,8 +1,8 @@
 id: tripdetective
 name: TripDetective
-version: "1.0"
+version: "2.0"
 status: released
-released: 2026-11-12
+released: 2026-11-14
 order: 11
 domain: Transportation
 platform: vehicle
@@ -13,8 +13,10 @@ question: From a car's trip log alone, what kind of powertrain is it, how heavy,
 summary: >-
   TripDetective reads one or more 1 Hz trip logs of a light-duty vehicle — speed plus whatever an OBD logger has —
   and infers its architecture, total mass, engine size, CdA, rolling resistance, hybrid strategy and each trip's
-  energy ledger, every output with an error bar. It learned only from the RoadSim simulator with an emulated OBD
-  logger, and was graded on 351 real cars it never saw.
+  energy ledger, every output with an error bar. It learned only from the RoadSim simulator (physics v2) with an
+  emulated OBD logger, and was graded on 350 real cars it never saw. Version 2.0 adds a physics-regression head: the
+  road-load fit of each trip is pooled over a car's trips and solved, so a heavier car now reads heavier (+524 kg for
+  +800 kg in simulation; v1.0 +182 kg). A separate bus network reads city-bus mass from a power log (ZTBus).
 
 reads: One or more 1 Hz trip logs (speed, and when logged fuel rate, rpm, HV battery current/voltage/SOC, A/C power), with route grade and weather.
 returns:
@@ -25,24 +27,30 @@ returns:
 
 physics:
   summary: >-
-    The shared RoadSim simulator (shared/vehicle) drives generated cars over real Ann Arbor routes; an OBD-logger
-    emulator then polls each signal on its own clock, holds and quantises it, and estimates fuel from MAF the way
-    real loggers do.
+    The shared RoadSim simulator (shared/vehicle, physics v2, pinned) drives generated cars over real Ann Arbor
+    routes; RoadSim's OBD-logger emulator (roadsim/obd.py, moved there from this model) then polls each signal on
+    its own clock, holds and quantises it, and estimates fuel from MAF the way real loggers do.
   simulator:
-    - RoadSim road loads, ALPHA engine and motor maps, transmissions, battery, HVAC, 7 architectures, 14 strategies
-    - "OBD emulator (training/obdlog.py): per-PID polling cadences measured on dev cars, held values, MAF fuel estimate, dropouts"
-    - "Dev-twin priors (training/priors.py): VED-era engine efficiency, idle, hybrid strategy spread, milder HVAC, and a VED-era mass prior (median 1,720 kg)"
+    - "RoadSim physics v2 (dev-calibrated): road loads with a tyre model, ALPHA engine maps with per-map efficiency tilt, P2 converter and start energy, Toyota production rules, two-node HVAC, on-road loads; 7 architectures, 14 strategies"
+    - "OBD emulator (roadsim/obd.py, EMU_VERSION 1): per-PID polling cadences measured on dev cars, held values, MAF fuel estimate, dropouts"
+    - "Priors (training/priors.py, v4): the RoadSim generator as is plus a VED-era mass prior (median 1,750 kg total); v1.0's engine-efficiency wrappers now over-correct and were dropped"
+    - "Buses (training/busbank.py): battery-electric city buses of 14-24 t plus 0-110 passengers, driven on ZTBus dev routes"
   checks:
     - "RoadSim road-load force within 1.6 / 0.8 / 0.5% of 47 real EPA coast-down targets at 20 / 40 / 60 mph"
-    - "Energy ledger closes to max 5e-4 over 600 stress runs; numpy == torch to 8e-6"
+    - "Energy ledger closes to max 5.6e-4 over 600 stress runs (physics v2); numpy == torch to 4.6e-6; browser == Python to 1.6e-5"
+    - "Dev twin test on physics v2: conventional twin fuel/km 0.95x real and HEV 1.03x with the plain generator (with v1.0's wrappers 1.07x / 1.11x); the dev Leaf's twin used 1.44x its real energy (cabin heat)"
 noise: Real routes and weather; the emulated logger reproduces real OBD cadences, holds, quantisation and MAF-based fuel estimates
-network: 1-D CNN over each trip window plus 16 classical road-load estimates, pooled across a car's trips, with heads for architecture, strategy and 7 regressions (Gaussian NLL); 0.40 M parameters
+network: "1-D CNN over each trip window (23 channels, incl. a source-power channel) plus 16 classical estimates; trip embeddings pooled across a car's trips together with the road-load regression's normal equations, which are solved per car (physics-regression head: mass = fitted b0 x a learned efficiency correction); heads for architecture, strategy and 7 regressions (Gaussian NLL); 0.40 M parameters. A second, separately trained copy reads buses."
 
 data:
   - name: Vehicle Energy Dataset (VED) — Oh, LeBlanc, Peng, IEEE T-ITS 2020
     url: https://github.com/gsoh/VED
     licence: Apache-2.0
     role: noise (routes), dev, exam
+  - name: ZTBus — Widmer, Ritter, Onder, Scientific Data 2023 (full set, 1,409 missions)
+    url: https://doi.org/10.3929/ethz-b-000626723
+    licence: CC-BY-4.0
+    role: noise (bus routes from dev missions), dev, exam
   - name: US EPA test-car lists, coast-down targets, ALPHA maps; fueleconomy.gov
     url: https://www.epa.gov/compliance-and-fuel-economy-data/data-cars-used-testing-fuel-economy
     licence: Public domain (U.S. Government)
@@ -53,72 +61,102 @@ data:
     role: physics
 
 split:
-  dev: 16 VED dev cars — RoadData's frozen split (sha256 d917df78…)
-  exam: 351 VED exam cars (at most 40 trips each, fixed seed), 25 EPA road-load cars, and 150 EPA exam vehicles rebuilt in RoadSim
+  dev: "16 VED dev cars — RoadData's frozen split (sha256 d917df78…); 757 ZTBus legs of the dev missions (by-month split, the 'gate' half)"
+  exam: "350 VED exam cars (at most 40 trips each, fixed seed), 25 EPA road-load cars, 150 EPA exam vehicles rebuilt in RoadSim, and 5,847 ZTBus legs of the 1,115 exam missions"
 
 exam:
-  summary: Real VED exam cars; baselines fitted on dev only.
+  summary: "Real VED exam cars and ZTBus exam legs; baselines fitted on dev only. v1.0 is re-scored on the same exam with the same code (in each note)."
   results:
     - metric: Curb mass per car, median |error| (335 cars)
       better: lower
-      model: 116
+      model: 127
       unit: kg
       baselines:
         - { name: "Physics least-squares fit", kind: classical, value: 205 }
         - { name: "Dev median", kind: dumb, value: 227 }
       verdict: win
-    - metric: Road-load force vs EPA target at 40 mph (25 cars)
-      better: lower
-      model: 17
-      unit: "%"
-      baselines:
-        - { name: "Physics least-squares fit", kind: classical, value: 35 }
-      verdict: win
+      note: "v1.0: 116 kg. Per trip v2.0 is a little better (112 vs 114 kg); per car worse, mostly on HEVs (181 vs 93 kg)."
     - metric: Engine displacement per car, median |error|
       better: lower
-      model: 0.50
+      model: 0.38
       unit: L
       baselines:
         - { name: "Idle-fuel law", kind: classical, value: 0.64 }
         - { name: "Dev median", kind: dumb, value: 0.60 }
       verdict: win
-      note: Only narrowly better than the dev median; biased −0.48 L.
-    - metric: Powertrain type per car (351 cars)
+      note: "v1.0: 0.50 L (bias −0.48 L); v2.0 bias −0.31 L."
+    - metric: Road-load force vs EPA target at 40 mph (25 cars)
+      better: lower
+      model: 19
+      unit: "%"
+      baselines:
+        - { name: "Physics least-squares fit", kind: classical, value: 35 }
+      verdict: win
+      note: "v1.0: 17%. At 20 mph v2.0 is worse (24% vs 16%)."
+    - metric: Powertrain type per car (350 cars)
       better: higher
-      model: 98.9
+      model: 97.1
       unit: "%"
       baselines:
         - { name: "Simple rule", kind: classical, value: 99.4 }
         - { name: "Majority class", kind: dumb, value: 68.6 }
       verdict: loss
-    - metric: Mass response to +800 kg (simulated sweep)
+      note: "v1.0: 98.9%. v2.0 calls 10 of 86 HEVs conventional (8 of them small Prius-c-type cars)."
+    - metric: The two Leafs, curb mass |error|
+      better: lower
+      model: "119 / 105"
+      unit: kg
+      baselines:
+        - { name: "Physics least-squares fit", kind: classical, value: "173 / 373" }
+        - { name: "Dev median", kind: dumb, value: "0 / 0" }
+      verdict: loss
+      note: "v1.0: +641 / +278 kg. Both Leafs sit in the 3,500 lb class, which is also the dev median, so the dumb guess is exact here."
+    - metric: Mass response to +800 kg (64 simulated cars, 8 trips)
       better: closer
-      model: "≈ +200 kg"
+      model: "+524 kg"
       baselines: []
       verdict: info
-      note: It mostly recognises the kind of car rather than reading the physics of each acceleration.
+      note: "v1.0 on the same sweep: +182 kg. BEVs +760, PHEVs +679, ICE +448, HEVs +384 kg. CdA ×1.5 still barely registers (×1.03)."
+    - metric: Bus mass per ZTBus exam leg, mean |error| (5,847 legs)
+      better: lower
+      model: 1204
+      unit: kg
+      baselines:
+        - { name: "Physics least-squares fit (scaled on dev)", kind: classical, value: 3547 }
+        - { name: "Dev median", kind: dumb, value: 453 }
+      verdict: loss
+      note: "Truth = 19 t + 70 kg per passenger. Reads 1.0 t heavy; with the dev-fitted level, 752 kg. Slope on passenger mass 0.70, correlation 0.35."
+    - metric: EPA exam families rebuilt in RoadSim (150 vehicles, 4 trips), mass vs test weight, MdAPE
+      better: lower
+      model: 5.0
+      unit: "%"
+      baselines: []
+      verdict: info
+      note: "v1.0 (on physics v1): 7.8%. Road-load force at 60 mph 10.3% (v1.0 9.4%)."
   coverage:
-    - { output: "Mass, per car", actual: 73 }
-    - { output: "Mass, per trip", actual: 79 }
-    - { output: "Engine size, per car", actual: 61 }
+    - { output: "Mass, per car", actual: 56 }
+    - { output: "Mass, per trip", actual: 76 }
+    - { output: "Engine size, per car", actual: 48 }
+    - { output: "Bus mass, per leg", actual: 68 }
 
 wins:
-  - "Mass within 116 kg per car against 205 kg for the physics fit and 227 kg for the dev median."
-  - "Road load about 17% off EPA targets against 19–66% for the physics fit."
-  - "On 150 EPA cars rebuilt in RoadSim: mass vs test weight 7.8%, road load at 60 mph 9.4%."
+  - "Mass within 127 kg per car (112 kg per trip) against 205 kg for the physics fit and 227 kg for the dev median."
+  - "Engine size 0.38 L against 0.60 L for the dev median (v1.0: 0.50 L)."
+  - "Mass now follows the physics: +800 kg moves the estimate +524 kg in simulation (v1.0: +182 kg); the two Leafs read within 120 kg (v1.0: +641 / +278 kg)."
 losses:
-  - A simple rule beats it on powertrain type (99.4% vs 98.9%).
-  - Engine size only narrowly beats guessing the dev median.
-  - The two Leafs read 460 kg heavy (RoadSim's Leaf twin over-heats its cabin).
+  - A simple rule beats it on powertrain type (99.4% vs 97.1%); v2.0 is worse here than v1.0 (98.9%).
+  - "Per car, mass is a little worse than v1.0 (127 vs 116 kg), driven by HEVs (181 vs 93 kg); 1σ coverage fell to 56%."
+  - "Buses: the dev-median guess (453 kg) beats the bus network (1,204 kg; 752 kg with the dev-fitted level)."
 limits:
-  - "Mass, efficiency and drag trade off in 1 Hz MAF-based logs: +800 kg moves the estimate only ~200 kg and CdA barely registers. Pooling 32 trips helps little (153 → 126 kg)."
+  - "CdA and Crr are still weakly identified: CdA ×1.5 moves the estimate by 3%."
+  - "Real cars turn power into acceleration differently from their twins (dev twin b0 ratio 0.83-1.37 per car); the dev Leaf's battery power fits a lighter car (0.83× its twin)."
+  - "ZTBus: the logged power and the logged traction force both regress to ~0.7 × (19 t + passengers), so the bus mass level is not verified; per leg the physics fit scatters ±15%."
   - The energy ledger has only simulated truth; no skill on net grade work.
-  - Light duty only; RoadSim limits apply (P2 city optimistic, cold too mild, A/C too cheap).
-  - "Built before the 13 Nov RoadData fixes (VED mass double-counted 136 kg)."
+  - "Light duty is graded on 2017-18-era VED cars only. RoadSim v2 limits apply (older Toyota hybrids too frugal on the FTP, TMED P2 too thirsty, plug-in series engine-on too low)."
 next:
-  - Find which v2 prior hurts engine size; rebuild on v1 plus the v3 mass prior.
-  - Make mass and drag identifiable from the dynamics (a physics-regression head, pooled multi-trip training).
-  - Fix BEV cabin heat; add buses (ZTBus mass vs passengers).
+  - "Powertrain type: the VED channel mix (rung p2r9: 16/16 dev cars) gained only +0.001 in simulation; try a type-weighted objective or the rule as an input."
+  - Check the small Prius-c-type HEVs on dev twins (engine-on share under physics v2).
+  - "Buses: a measurement model for the ZTBus power log (why its road-load fit reads 0.7×), then the physics head again."
 
 usage:
   install: pip install numpy scipy
@@ -128,10 +166,11 @@ usage:
     td = TD.TripDetective()
     car = td.read_car(trips)            # trips: list of dicts of 1 Hz arrays (see demo.py)
     one = td.read_trip(trips[0])
+    bus = TD.TripDetectiveBus().read_leg(leg)   # leg: dict of 1 Hz v, power_W, grade, T_amb, rho_air
 
 files:
   inference: [tripdetective.py, pipeline.py]
-  weights: [tripdetective_weights.npz]
+  weights: [tripdetective_weights.npz, tripdetective_bus_weights.npz]
   demo: demo.py
   examples: examples/
   card: MODEL_CARD.md

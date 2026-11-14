@@ -1,20 +1,23 @@
 
-VED_436  published: HEV, weight class 3500.0 lb (curb ~1588 kg, +-113 kg), engine 2.0 L  [0.17 s]
-  1 trip : HEV (hev_powersplit, p=0.43), curb 1485 kg (1 sigma 1293-1703), engine 1.7 L (1.3-2.3), CdA 0.72 m2, Crr 0.0083
-  5 trips: HEV (hev_series, p=0.44), curb 1598 kg (1 sigma 1424-1791), engine 1.7 L (1.3-2.3), CdA 0.73 m2, Crr 0.0087
-  ledger of trip 1 (kJ/km, simulated-truth-trained, not real-graded): aero 103, rolling 220, grade -1, brake 43, powertrain 1292, aux 78
+VED_436  published: HEV, weight class 3500.0 lb (curb ~1588 kg, +-113 kg), engine 2.0 L  [0.09 s]
+  1 trip : HEV (hev_series, p=0.54), curb 1539 kg (1 sigma 1352-1748), engine 2.0 L (1.6-2.5), CdA 0.73 m2, Crr 0.0091
+  5 trips: HEV (hev_parallel_p2, p=0.44), curb 1622 kg (1 sigma 1439-1826), engine 2.2 L (1.8-2.8), CdA 0.72 m2, Crr 0.0093
+  ledger of trip 1 (kJ/km, simulated-truth-trained, not real-graded): aero 104, rolling 237, grade -1, brake 70, powertrain 1342, aux 134
 
 VED_541  published: EV, weight class 3500.0 lb (curb ~1588 kg, +-113 kg), engine None L  [0.03 s]
-  1 trip : EV (bev, p=0.96), curb 2031 kg (1 sigma 1746-2358), CdA 0.72 m2, Crr 0.0070
-  5 trips: EV (bev, p=0.97), curb 1834 kg (1 sigma 1591-2112), CdA 0.66 m2, Crr 0.0066
-  ledger of trip 1 (kJ/km, simulated-truth-trained, not real-graded): aero 93, rolling 164, grade -20, brake 74, powertrain 127, aux 88
+  1 trip : EV (bev, p=0.81), curb 1456 kg (1 sigma 1309-1618), CdA 0.69 m2, Crr 0.0074
+  5 trips: EV (bev, p=0.94), curb 1476 kg (1 sigma 1384-1573), CdA 0.67 m2, Crr 0.0072
+  ledger of trip 1 (kJ/km, simulated-truth-trained, not real-graded): aero 80, rolling 170, grade -38, brake 90, powertrain 138, aux 92
 
-VED_545  published: PHEV, weight class 3500.0 lb (curb ~1588 kg, +-113 kg), engine 1.5 L  [0.38 s]
-  1 trip : PHEV (phev_powersplit, p=0.72), curb 1724 kg (1 sigma 1466-2023), engine 1.8 L (1.3-2.5), CdA 0.82 m2, Crr 0.0097
-  5 trips: PHEV (phev_powersplit, p=0.76), curb 1664 kg (1 sigma 1439-1920), engine 1.5 L (1.0-2.1), CdA 0.74 m2, Crr 0.0087
-  ledger of trip 1 (kJ/km, simulated-truth-trained, not real-graded): aero 87, rolling 264, grade 6, brake 18, powertrain 3771, aux 277
+VED_545  published: PHEV, weight class 3500.0 lb (curb ~1588 kg, +-113 kg), engine 1.5 L  [0.09 s]
+  1 trip : PHEV (phev_powersplit, p=0.97), curb 1803 kg (1 sigma 1540-2107), engine 2.3 L (1.7-3.2), CdA 0.78 m2, Crr 0.0098
+  5 trips: PHEV (phev_powersplit, p=0.62), curb 1715 kg (1 sigma 1574-1868), engine 1.9 L (1.5-2.3), CdA 0.77 m2, Crr 0.0090
+  ledger of trip 1 (kJ/km, simulated-truth-trained, not real-graded): aero 91, rolling 447, grade 39, brake 20, powertrain 3698, aux 281
 
-VED_597  published: ICE, weight class 3000.0 lb (curb ~1361 kg, +-113 kg), engine 2.0 L  [0.41 s]
-  1 trip : ICE (conv, p=0.99), curb 1260 kg (1 sigma 1106-1434), engine 1.5 L (1.2-1.8), CdA 0.66 m2, Crr 0.0078
-  5 trips: ICE (conv, p=1.00), curb 1242 kg (1 sigma 1096-1405), engine 1.5 L (1.2-1.9), CdA 0.66 m2, Crr 0.0079
-  ledger of trip 1 (kJ/km, simulated-truth-trained, not real-graded): aero 316, rolling 178, grade -1, brake 120, powertrain 1874, aux 46
+VED_597  published: ICE, weight class 3000.0 lb (curb ~1361 kg, +-113 kg), engine 2.0 L  [0.14 s]
+  1 trip : ICE (conv, p=0.95), curb 1192 kg (1 sigma 1052-1348), engine 1.5 L (1.2-1.7), CdA 0.65 m2, Crr 0.0080
+  5 trips: ICE (conv, p=0.98), curb 1175 kg (1 sigma 1048-1316), engine 1.5 L (1.3-1.7), CdA 0.63 m2, Crr 0.0078
+  ledger of trip 1 (kJ/km, simulated-truth-trained, not real-graded): aero 315, rolling 174, grade 16, brake 96, powertrain 1715, aux 80
+
+ZTBus_B208 leg, 18.86 km, 20.6 passengers on average (convention: 20442 kg)
+  bus mass 22021 kg (1 sigma 20473-23687), 4 windows
