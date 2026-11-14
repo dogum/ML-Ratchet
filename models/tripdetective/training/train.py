@@ -1,5 +1,7 @@
 """Train TripDetective on a simulation bank. Resumable (checkpoint every 500 steps).
-usage: python3 train.py <bank_tag> <ckpt_name> [steps=6000] [opts as k=v: width=..., chdrop=0.1, kmax=8, seed=0]"""
+usage: python3 train.py <bank_tag> <ckpt_name> [steps=6000] [opts as k=v: width=..., chdrop=0.1, kmax=8, seed=0]
+Phase D options: feat=4 (physics channels + classical numbers + pooled road-load regression), phys=1 (physics-
+regression head), p1=0.35 (share of single-trip samples), device=cuda (GPU; the v1.0 rungs ran on CPU)."""
 from common import *
 import time, torch, torch.nn.functional as Fn
 torch.set_num_threads(1)
@@ -8,8 +10,8 @@ from model import TDNet, reg_targets, LED_SCALE, REG
 
 
 class BankSampler:
-    def __init__(s, bank, seed=0, chdrop=0.1, kmax=8):
-        s.b = bank; s.rng = np.random.default_rng(seed); s.chdrop = chdrop; s.kmax = kmax; s.feat = 1
+    def __init__(s, bank, seed=0, chdrop=0.1, kmax=8, p1=0.35):
+        s.b = bank; s.rng = np.random.default_rng(seed); s.chdrop = chdrop; s.kmax = kmax; s.feat = 1; s.p1 = p1
         s.meta = {m['vid']: m for m in bank['meta']}
         vids = bank['veh']
         s.cars = sorted(s.meta)
@@ -18,6 +20,17 @@ class BankSampler:
         s.arch = {v: ARCHS.index(s.meta[v]['arch']) for v in s.cars}
         s.strat = {v: STRATS.index(s.meta[v]['strategy']) for v in s.cars}
         s.reg = {v: reg_targets(s.meta[v]) for v in s.cars}
+        s.sc_cache = {}
+
+    def _sc(s, j, raw, fl, key):
+        """classical numbers of one trip window under one channel-drop pattern, computed once"""
+        k = (j, key)
+        if k not in s.sc_cache:
+            n = min(raw.shape[1], L)
+            if s.feat >= 4: s.sc_cache[k] = np.r_[F.scalars(raw[:, :n], fl), F.pstats(raw[:, :n], fl)].astype(np.float32)
+            elif s.feat >= 3: s.sc_cache[k] = F.scalars(raw[:, :n], fl)
+            else: s.sc_cache[k] = np.zeros(F.NSC, np.float32)
+        return s.sc_cache[k]
 
     def trip_input(s, j, drop=None):
         o = s.b['offs']; raw = s.b['raw'][o[j]:o[j + 1]].T.astype(np.float32)
@@ -27,14 +40,15 @@ class BankSampler:
             if drop[0] and fl[0]: fl[0] = 0; fl[1] = 0; raw[5] = 0
             if drop[1] and fl[2]: fl[2] = 0; raw[6] = 0
             if drop[2] and fl[3]: fl[3] = 0; fl[4] = 0; raw[7] = 0; raw[8] = 0; raw[9] = 0
-        return F.net_input(raw, fl, feat=s.feat)
+        key = tuple(bool(x) for x in drop) if drop is not None else (False, False, False)
+        return F.net_input(raw, fl, feat=s.feat, sc=s._sc(j, raw, fl, key))
 
     def batch(s, ncar=24, k=None):
         cars = s.rng.choice(s.cars, ncar, replace=False)
         X, M, SC, grp, led, ledm = [], [], [], [], [], []
         for gi, v in enumerate(cars):
             tr = s.trips[v]
-            kk = k or (1 if s.rng.random() < 0.35 else int(s.rng.integers(2, s.kmax + 1)))
+            kk = k or (1 if s.rng.random() < s.p1 else int(s.rng.integers(2, s.kmax + 1)))
             sel = s.rng.choice(tr, min(kk, len(tr)), replace=False)
             drop = s.rng.random(3) < s.chdrop
             for j in sel:
@@ -66,25 +80,36 @@ def loss_fn(out, b, w_led=0.5, w_strat=0.3):
 
 def make_net(opts):
     width = tuple(int(x) for x in opts.get('width', '32,48,64,96,128,160').split(','))
-    return TDNet(width=width, feat=int(opts.get('feat', 1)))
+    return TDNet(width=width, feat=int(opts.get('feat', 1)), phys=int(opts.get('phys', 0)), emb=int(opts.get('emb', 128)))
+
+
+def to_dev(b, dev):
+    return {k: (v.to(dev) if torch.is_tensor(v) else v) for k, v in b.items()}
 
 
 def train(bank_tag, name, steps=6000, **opts):
     torch.manual_seed(int(opts.get('seed', 0)))
     bank = simbank.load_bank(bank_tag, int(opts['chunks']) if 'chunks' in opts else None)
-    S = BankSampler(bank, seed=int(opts.get('seed', 0)), chdrop=float(opts.get('chdrop', 0.1)), kmax=int(opts.get('kmax', 8)))
-    net = make_net(opts)
+    S = BankSampler(bank, seed=int(opts.get('seed', 0)), chdrop=float(opts.get('chdrop', 0.1)), kmax=int(opts.get('kmax', 8)),
+                    p1=float(opts.get('p1', 0.35)))
+    dev = torch.device(opts.get('device', 'cuda' if torch.cuda.is_available() else 'cpu'))
+    net = make_net(opts).to(dev)
     S.feat = int(opts.get('feat', 1))
     print(name, 'params', sum(p.numel() for p in net.parameters()), 'cars', len(S.cars), 'trips', len(bank['veh']), flush=True)
     opt = torch.optim.AdamW(net.parameters(), lr=float(opts.get('lr', 2e-3)), weight_decay=1e-4)
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=float(opts.get('lr', 2e-3)), total_steps=steps, pct_start=0.05)
     ck = f'{ROOT}/ckpt/{name}.pt'; part = ck + '.part'; step = 0
     if os.path.exists(part):
-        st = torch.load(part, weights_only=False); net.load_state_dict(st['net']); opt.load_state_dict(st['opt']); sched.load_state_dict(st['sched'])
+        st = torch.load(part, weights_only=False, map_location=dev); net.load_state_dict(st['net']); opt.load_state_dict(st['opt']); sched.load_state_dict(st['sched'])
         step = st['step']; S.rng = np.random.default_rng([int(opts.get('seed', 0)), step]); print('resume', step)
     net.train(); t0 = time.time(); run = {}
+    import threading, queue
+    q = queue.Queue(maxsize=6)
+    def producer():
+        while True: q.put(S.batch(ncar=int(opts.get('ncar', 24))))
+    threading.Thread(target=producer, daemon=True).start()
     while step < steps:
-        b = S.batch(ncar=int(opts.get('ncar', 24)))
+        b = to_dev(q.get(), dev)
         out = net(b['x'], b['mask'], b['group'], b['n'], b['sc'])
         loss, parts = loss_fn(out, b, w_led=float(opts.get('w_led', 0.5)))
         opt.zero_grad(); loss.backward(); torch.nn.utils.clip_grad_norm_(net.parameters(), 2.0); opt.step(); sched.step(); step += 1
@@ -93,7 +118,7 @@ def train(bank_tag, name, steps=6000, **opts):
             print(f'{step} {time.time() - t0:.0f}s ' + ' '.join(f'{k} {v:.3f}' for k, v in run.items()), flush=True)
         if step % 500 == 0 or step == steps:
             torch.save(dict(net=net.state_dict(), opt=opt.state_dict(), sched=sched.state_dict(), step=step), part)
-    torch.save(dict(net=net.state_dict(), opts=opts, bank=bank_tag, steps=steps), ck)
+    torch.save(dict(net={k: v.cpu() for k, v in net.state_dict().items()}, opts=opts, bank=bank_tag, steps=steps), ck)
     os.remove(part)
     print('saved', ck, flush=True)
 

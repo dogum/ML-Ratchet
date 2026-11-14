@@ -1,0 +1,111 @@
+[
+ {
+  "ckpt": "pb1.pt",
+  "note": "Bus network: CNN + set pooling + classical estimates on 1,500 simulated electric buses (power / 12)",
+  "val_tag": "p2_bus_val",
+  "val": {
+   "single": {
+    "mass_mdape": 0.014070868492126465,
+    "mass_in1s": 0.8588888888888889,
+    "CdA_mdape": 0.11723524332046509,
+    "CdA_in1s": 0.5566666666666666,
+    "Crr_mdape": 0.03617405891418457,
+    "Crr_in1s": 0.6888888888888889,
+    "skill": {
+     "mass": 0.838,
+     "CdA": 0.0086,
+     "Crr": 0.6242
+    },
+    "objective": 0.49026134610176086
+   },
+   "pooled": {
+    "mass_mdape": 0.007436275482177734,
+    "mass_in1s": 0.9766666666666667,
+    "CdA_mdape": 0.11732646822929382,
+    "CdA_in1s": 0.5466666666666666,
+    "Crr_mdape": 0.0256921648979187,
+    "Crr_in1s": 0.8533333333333334,
+    "skill": {
+     "mass": 0.9176,
+     "CdA": 0.0103,
+     "Crr": 0.7449
+    },
+    "objective": 0.5575705170631409
+   },
+   "objective": 0.5239159315824509
+  },
+  "objective": 0.5239159315824509,
+  "dev": {
+   "n": 757,
+   "mae": 1127.2351353424801,
+   "med_ae": 1031.5912893327913,
+   "bias": 916.4002447975763,
+   "mdape": 0.05140111365251712,
+   "slope": 0.421744399840613,
+   "r": 0.25322094785739596,
+   "in1s": 0.4319682959048877,
+   "in2s": 0.7912813738441216,
+   "level_factor": 0.9569610313030102,
+   "mae_lc": 804.8804435909552,
+   "med_ae_lc": 696.3063097524064
+  },
+  "accepted": true,
+  "why": "first rung"
+ },
+ {
+  "ckpt": "pb2.pt",
+  "note": "+ physics-regression head (pooled road-load fit over the leg's windows) and the source-power channel",
+  "val_tag": "p2_bus_val",
+  "val": {
+   "single": {
+    "mass_mdape": 0.008929938077926636,
+    "mass_in1s": 0.6744444444444444,
+    "CdA_mdape": 0.11670523881912231,
+    "CdA_in1s": 0.6244444444444445,
+    "Crr_mdape": 0.03386738896369934,
+    "Crr_in1s": 0.7088888888888889,
+    "skill": {
+     "mass": 0.9049,
+     "CdA": 0.0114,
+     "Crr": 0.6168
+    },
+    "objective": 0.5110495090484619
+   },
+   "pooled": {
+    "mass_mdape": 0.004854828119277954,
+    "mass_in1s": 0.7766666666666666,
+    "CdA_mdape": 0.11893928050994873,
+    "CdA_in1s": 0.54,
+    "Crr_mdape": 0.02212125062942505,
+    "Crr_in1s": 0.7933333333333333,
+    "skill": {
+     "mass": 0.9515,
+     "CdA": 0.013,
+     "Crr": 0.7787
+    },
+    "objective": 0.5810466408729553
+   },
+   "objective": 0.5460480749607086
+  },
+  "objective": 0.5460480749607086,
+  "dev": {
+   "n": 757,
+   "mae": 4831.653971621457,
+   "med_ae": 4784.816214576742,
+   "bias": -4784.816214576742,
+   "mdape": 0.23778830782386895,
+   "slope": 1.2491345577491924,
+   "r": 0.29076109948983886,
+   "in1s": 0.003963011889035667,
+   "in2s": 0.005284015852047556,
+   "level_factor": 1.3119714775628515,
+   "mae_lc": 2730.9950476473573,
+   "med_ae_lc": 2447.662109375
+  },
+  "dev_rel": 3.393044357573265,
+  "accepted": false,
+  "vs": "pb1.pt",
+  "why": "sim objective 0.546 vs 0.524; dev level-corrected mass error +239% (gate fails); passenger slope 1.25 vs 0.42",
+  "note_rule": "first judged by the raw-error rule: rejected (dev mass error +329%)"
+ }
+]

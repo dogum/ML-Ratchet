@@ -8,37 +8,45 @@ from model import TDNet, REG, from_reg, LED_SCALE, reg_targets
 import realdata as rd
 
 
+DEV = torch.device('cuda' if torch.cuda.is_available() and os.environ.get('TD_CPU') != '1' else 'cpu')
+
+
 def load_net(path):
-    st = torch.load(path, weights_only=False)
+    st = torch.load(path, weights_only=False, map_location='cpu')
     o = st.get('opts', {})
     width = tuple(int(x) for x in o.get('width', '32,48,64,96,128,160').split(','))
     feat = int(o.get('feat', 1)); F.FEAT = feat          # inputs built after loading use this network's feature version
-    net = TDNet(width=width, feat=feat); net.load_state_dict(st['net']); net.eval()
-    return net
+    net = TDNet(width=width, feat=feat, phys=int(o.get('phys', 0)), emb=int(o.get('emb', 128)))
+    net.load_state_dict(st['net']); net.eval()
+    return net.to(DEV)
 
 
 @torch.no_grad()
-def predict(net, inputs, groups, bs=64):
+def predict(net, inputs, groups, bs=256):
     """inputs: list of (x (NIN, L), mask (L,)); groups: car/pool index per input (ints, contiguous 0..G-1).
     Pools are formed by groups; trips are encoded in batches, then pooled."""
+    if hasattr(net, 'np_predict'):                     # a released numpy model (npnet.py)
+        return net.np_predict(inputs, groups)
     groups = np.asarray(groups); G = int(groups.max()) + 1
     E = []
     for i in range(0, len(inputs), bs):
         xs = inputs[i:i + bs]
         T = int(max(it[1].sum() for it in xs)); T = min(L, max(32, int(np.ceil(T / 32) * 32)))
-        x = torch.tensor(np.stack([it[0][:, :T] for it in xs])); m = torch.tensor(np.stack([it[1][:T] for it in xs]))
-        sc = torch.tensor(np.stack([it[2] for it in xs]))
+        dv = next(net.parameters()).device
+        x = torch.tensor(np.stack([it[0][:, :T] for it in xs]), device=dv); m = torch.tensor(np.stack([it[1][:T] for it in xs]), device=dv)
+        sc = torch.tensor(np.stack([it[2] for it in xs]), device=dv)
         E.append(net.encode(x, m, sc))
+    dv = next(net.parameters()).device
     e = torch.cat(E)
-    g = torch.tensor(groups)
-    cnt = torch.zeros(G).index_add_(0, g, torch.ones(len(g)))
-    z = torch.zeros(G, e.shape[1]).index_add_(0, g, e) / cnt[:, None]
-    z = net.car(torch.cat([z, torch.log(cnt)[:, None]], 1))
-    r = net.h_reg(z)
+    g = torch.tensor(groups, device=dv)
+    SC = torch.tensor(np.stack([it[2] for it in inputs]), device=dv)
+    z, sk = net.pool(e, g, G, SC)
+    mu, ls = net.heads(z, sk)
     led = net.h_led(torch.cat([e, z[g]], 1))
-    return dict(arch=torch.softmax(net.h_arch(z), 1).numpy(), strat=torch.softmax(net.h_strat(z), 1).numpy(),
-                mu=r[:, :len(REG)].numpy(), sig=torch.exp(r[:, len(REG):].clamp(-6, 3)).numpy(),
-                led_mu=(led[:, :6].numpy() * LED_SCALE), led_sig=(torch.exp(led[:, 6:].clamp(-6, 3)).numpy() * LED_SCALE))
+    c = lambda t: t.detach().cpu().numpy()
+    return dict(arch=c(torch.softmax(net.h_arch(z), 1)), strat=c(torch.softmax(net.h_strat(z), 1)),
+                mu=c(mu), sig=c(torch.exp(ls)),
+                led_mu=(c(led[:, :6]) * LED_SCALE), led_sig=(c(torch.exp(led[:, 6:].clamp(-6, 3))) * LED_SCALE))
 
 
 def bank_inputs(bank, idx):

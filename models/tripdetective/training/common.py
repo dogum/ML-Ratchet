@@ -28,6 +28,9 @@ LHV_GAS = 42.6e3      # J/g (E10 gasoline lower heating value, approx.)
 CURB_OFFSET = 136.0   # kg: RoadData convention, spec mass = curb + 136 kg (driver + load)
 LB = 0.45359237
 WARM = {'engine': 85, 'driveline': 70, 'tire_warm': 1, 'cabin': 21}
+# RoadSim physics, pinned so a later default change never moves the model silently. v1.0 (12 Nov 2026) was built on
+# 'roadsim-physics-v1'; the Phase D rebuild (14 Nov 2026) on 'roadsim-physics-v2' (shared/vehicle/roadsim/README.md).
+PHYSICS = os.environ.get('TD_PHYSICS', 'roadsim-physics-v2')
 
 
 def jload(p, default=None):

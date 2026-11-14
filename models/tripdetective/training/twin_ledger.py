@@ -26,9 +26,9 @@ def run(ckpt, split='dev', ntr=12, maxcars=None):
         for m, a in rd.load_trips(split, vehicles=[vid], label_ok=True, limit=ntr, seed=1):
             if len(a['v']) > L: continue
             rng = np.random.default_rng(abs(hash(m['trip_id'])) % 2**32)
-            sp = priors.vehicle_prior(copy.deepcopy(spec0), rng, 'v2')
+            sp = priors.vehicle_prior(copy.deepcopy(spec0), rng, priors.FINAL)
             soc0 = float(np.nanmedian(a['soc'][:30])) if np.isfinite(a['soc'][:30]).any() else None
-            out = simulate(sp, a, init_temps=dict(WARM, battery=float(np.nanmean(a['T_amb'])) + 10), init_soc=soc0, options='roadsim-physics-v1')
+            out = simulate(sp, a, init_temps=dict(WARM, battery=float(np.nanmean(a['T_amb'])) + 10), init_soc=soc0, options=PHYSICS)
             cfg = obdlog.logger_config(row.architecture, rng); cfg['fuel'] = FSRC.get(m['fuel_source'])
             cfg['rpm'] = bool(np.isfinite(a['engine_rpm']).mean() > 0.5); cfg['batt'] = bool(np.isfinite(a['batt_current']).mean() > 0.5)
             cfg['aux'] = bool(np.isfinite(a['aux_power']).mean() > 0.5); cfg['p_dropout'] = 0

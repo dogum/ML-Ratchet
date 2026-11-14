@@ -15,7 +15,30 @@ from common import *
 VERSION = {'v1': 'RoadSim generator as is; emulator v1',
            'v2': 'dev-twin calibrated: engine efficiency/idle, hybrid strategy parameters, HVAC use',
            'v3': 'v2 + fleet mass prior matched to VED-era cars (dev + train_noise static weights): rejection sampling '
-                 'to 85 % lognormal(median 1,750 kg total, sigma 0.20) + 15 % generator fleet; class mix car 0.60 / suv 0.30 / pickup 0.05 / van 0.05'}
+                 'to 85 % lognormal(median 1,750 kg total, sigma 0.20) + 15 % generator fleet; class mix car 0.60 / suv 0.30 / pickup 0.05 / van 0.05',
+           # Phase D (14 Nov 2026, RoadSim physics v2): physics v2 now carries what the v2 wrappers patched (engine
+           # efficiency and idle, hybrid engine-on rules, HVAC), so the rebuild starts again from the v1 generator.
+           'v4': 'v1 (generator as is) + the v3 VED-era mass prior and class mix',
+           'v5': 'v4 + BEV cabin heat matched to the dev Leaf (set point 16-20 C, heat below 0-8 C, 1.5-3.5 kW, recirculation)',
+           'v6': 'v4 + the VED logger channel mix measured on the dev cars (obdlog.logger_config_ved). Built on v4, not v5: '
+                 'the BEV-heat rung (v5) was rejected (sim objective -0.002), so its change is not carried forward'}
+
+V2_BASED = ('v2', 'v3')                   # priors that apply the v1.0 dev-twin wrappers (vehicle_prior below)
+MASS_PRIOR = ('v3', 'v4', 'v5', 'v6')                 # priors with the VED-era mass prior (accept_v3)
+VED_LOGGER = ('v6',)                           # priors whose banks use the VED channel mix (obdlog.logger_config_ved)
+
+
+def mass_prior(prior):
+    return prior in MASS_PRIOR
+
+
+def logger_kind(prior):
+    return 'ved' if prior in VED_LOGGER else 'generic'
+
+
+def warm_pack(prior):
+    """v2-based priors start the battery warm from driving (v1.0's v2 wrapper); the others as v1"""
+    return prior in V2_BASED
 
 # v3 mass prior. Source: published curb weights (+136 kg RoadData convention) of the 16 dev + 17 train_noise VED cars:
 # median 1,724 kg, 5-95 % 1,270-2,177 kg (log-sd ~0.17). Payload in the generator adds ~0-250 kg, so the target total
@@ -25,8 +48,8 @@ V3_CLS = {'car': 0.60, 'suv': 0.30, 'pickup': 0.05, 'van': 0.05}
 
 
 def vehicle_prior(spec, rng, prior):
-    if prior == 'v1':
-        return spec
+    if prior not in V2_BASED:
+        return extra_prior(spec, rng, prior)
     arch = spec['architecture']; e = spec.get('engine')
     if e:
         hyb = arch != 'conv'
@@ -65,6 +88,27 @@ def vehicle_prior(spec, rng, prior):
     return spec
 
 
+BEV_HEAT = ('v5',)                   # priors with the dev-Leaf BEV cabin heat
+
+
+def extra_prior(spec, rng, prior):
+    """Phase D priors built on v1 (no v1.0 wrappers): v1 and v4 leave the generated spec as is.
+    v5+ BEV cabin heat. The dev Leaf (VED_455, 64 trips) logs 1.5-1.8 kW of heater power below 5 C and 0.15-0.2 kW at
+    5-15 C; its RoadSim v2 twin with the generator's HVAC drew 2.3-3.0 kW at 5-15 C and 3.6-4.8 kW below 5 C (per-trip
+    energy 1.44x real). v2's HVAC heats whenever the cabin falls 4 K below the set point (option hvac_T_set, 21.5 C), so
+    the driver's set point is drawn per car through spec['physics']. With set point 17 C, heat below 3 C, 2 kW and 70 %
+    recirculation the twin draws 0.6-0.8 kW at 0-5 C and ~0 at 5-15 C, and the per-trip energy ratio is 1.06 (IQR
+    0.96-1.15) with the series-regen strategy (the twin's library body had parallel regen: 1.28)."""
+    if prior in BEV_HEAT and spec['architecture'] == 'bev':
+        h = spec.setdefault('aux', {}).setdefault('HVAC', {})
+        h['heat_on_below_C'] = round(float(rng.uniform(0, 8)), 1)
+        h['heat_max_W'] = round(float(rng.uniform(1500, 3500)))
+        ph = spec.setdefault('physics', {})
+        ph['hvac_T_set'] = round(float(rng.uniform(16, 20)), 1)
+        ph['hvac_recirc_heat'] = round(float(rng.uniform(0.3, 0.8)), 2)
+    return spec
+
+
 def logger_tweak(cfg, spec, rng, prior):
     return cfg
 
@@ -91,3 +135,7 @@ def accept_v3(mass_total, rng):
     tgt = V3_MIX * np.exp(-0.5 * ((x - np.log(V3_MED)) / V3_SIG) ** 2) / (V3_SIG * np.sqrt(2 * np.pi)) + (1 - V3_MIX) * h[i]
     r = tgt / h[i]
     return rng.random() < min(1.0, r / 6.0)        # envelope constant 6 (max ratio near the light tail)
+
+
+# the prior of the released network's bank (twin tests and the EPA exam families use it). v1.0: 'v3'.
+FINAL = 'v4'

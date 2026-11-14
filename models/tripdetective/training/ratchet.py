@@ -6,11 +6,14 @@ Objective: mean skill on the frozen simulated validation set (average of single-
 Kept only if the objective rises by more than 0.01 AND the dev gate passes on the 16 real dev cars: the mean of the
 dev errors (mass and displacement, per car pooled and per trip), each relative to the incumbent's, is no more than
 5 % worse, and the per-trip VED-type accuracy drops by no more than 0.03. The exam is never computed here.
-usage: python3 ratchet.py <ckpt> <val_tag> "<note>"   |   python3 ratchet.py --rescore <val_tag>"""
+usage: python3 ratchet.py <ckpt> <val_tag> "<note>"   |   python3 ratchet.py --rescore <val_tag>
+Phase D (14 Nov 2026): the log is work/ratchet_p2.json (physics v2; v1.0's log is training/ratchet.json); each record
+also carries the identifiability sweep (sweep.py, info only: the rule above decides)."""
 from common import *
 import evaluate as E, simbank
 
-LOG = f'{ROOT}/ratchet.json'
+LOG = os.environ.get('TD_RATCHET', f'{ROOT}/ratchet_p2.json')
+SWEEP = os.environ.get('TD_SWEEP', 'p2_sweep')
 DKEYS = ('mass_mae_car', 'disp_mae_car', 'mass_mae_trip', 'disp_mae_trip')
 
 
@@ -27,10 +30,21 @@ def decide(rec, inc):
                   ('' if a_ok else '; dev VED-type accuracy dropped'))
 
 
+_BANKS = {}
+
+
+def bank(tag):
+    if tag not in _BANKS: _BANKS[tag] = simbank.load_bank(tag)
+    return _BANKS[tag]
+
+
 def score(ckpt, val_tag):
     net = E.load_net(f'{ROOT}/ckpt/{ckpt}')
-    v = E.sim_scores(net, simbank.load_bank(val_tag))
+    v = E.sim_scores(net, bank(val_tag))
     dv, _ = E.real_scores(net, 'dev')
+    if os.path.exists(f'{ROOT}/bank/{SWEEP}/chunk_000.npz'):
+        import sweep
+        v['sweep'] = sweep.sweep_scores(net, bank(SWEEP))
     return v, dv
 
 
@@ -42,6 +56,7 @@ def main(ckpt, val_tag, note):
     decide(rec, inc); log.append(rec); jsave(log, LOG)
     print(f"{ckpt}: objective {v['objective']:.3f}  single {json.dumps(v['single']['skill'])}\n  pooled {json.dumps(v['pooled']['skill'])}")
     print('  dev', {k: round(dv[k], 3) for k in list(DKEYS) + ['vedtype_acc_trip', 'vedtype_acc_car', 'mass_bias_car', 'mass_within_bin_car']})
+    if 'sweep' in v: print('  sweep', json.dumps({k: (x['mass_response_kg'], round(x['cda_ratio'], 3)) for k, x in v['sweep'].items()}))
     print(' ', 'ACCEPTED' if rec['accepted'] else 'rejected', '-', rec['why'])
 
 
@@ -51,7 +66,7 @@ def rescore(val_tag):
         v, dv = score(rec['ckpt'], val_tag)
         rec['val'] = v; rec['objective'] = v['objective']; rec['dev'] = dv; rec['val_tag'] = val_tag
         decide(rec, inc); inc = rec if rec['accepted'] else inc
-        print(rec['ckpt'], round(rec['objective'], 3), rec['accepted'], rec['why'])
+        print(rec['ckpt'], round(rec['objective'], 3), rec['accepted'], rec['why'], flush=True)
     jsave(log, LOG)
 
 

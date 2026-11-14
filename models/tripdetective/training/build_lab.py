@@ -1,6 +1,7 @@
 """Precompute the page's lab: three base cars (conventional, power-split hybrid, BEV) with mass, CdA and strategy changed
 on a grid, each driven by RoadSim over the same two real Ann Arbor routes (train_noise), logged by the OBD emulator.
-The browser runs the network on these logs live. usage: python3 build_lab.py <ckpt>"""
+The browser runs the network on these logs live. usage: python3 build_lab.py <ckpt>
+Phase D: rebuilt on RoadSim physics v2 (common.PHYSICS); same grid, so the instrument's layout is unchanged."""
 from common import *
 import copy, base64
 from roadsim import simulate
@@ -25,7 +26,7 @@ def base_specs():
             e = abs(s['mass_kg'] + s['payload_kg'] - m) / m + (abs(s['engine']['displacement_L'] - d) / d if d else 0)
             if best is None or e < best[0]: best = (e, s)
         s = best[1]; s['payload_kg'] = 80.0; s['mass_kg'] = float(m - 80)
-        if s.get('engine'): s['engine']['eff_scale'] = 0.88
+        # v1.0 set eff_scale 0.88 here (its v2 priors); physics v2 carries VED-era engine efficiency itself (Phase D)
         out[arch] = s
     return out
 
@@ -62,7 +63,7 @@ def build(ckpt):
                     logs, inp, led = [], [], []
                     for r in R:
                         trip = {k: r[k] for k in routes.KEYS}
-                        out = simulate(s, trip, init_temps=dict(WARM, battery=float(np.mean(r['T_amb'])) + 10), init_soc=0.6 if arch != 'bev' else 0.8, options='roadsim-physics-v1')
+                        out = simulate(s, trip, init_temps=dict(WARM, battery=float(np.mean(r['T_amb'])) + 10), init_soc=0.6 if arch != 'bev' else 0.8, options=PHYSICS)
                         lg = obdlog.emulate(out, cfg, rng, s)
                         a = {k: r[k] for k in ['grade', 'T_amb', 'wind_speed', 'wind_dir', 'heading', 'rho_air']} | lg
                         a['v'] = r['v']; a['valid'] = np.ones(len(r['v']))           # shared logged speed, no dropouts

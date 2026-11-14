@@ -25,8 +25,8 @@ def draw_vehicle(rng, cls_w=None, quick=False, prior='v1'):
         s = generate_vehicle(rng, cls, arch)
         m = s['mass_kg'] + s['payload_kg']
         if quick: return m
-        if prior != 'v3': return s
         import priors
+        if not priors.mass_prior(prior): return s
         if priors.accept_v3(m, rng): return s
 
 

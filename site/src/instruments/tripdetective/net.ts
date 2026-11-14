@@ -15,7 +15,7 @@ export const VEDTYPE: Record<string, string> = {
 };
 
 export interface TMeta {
-  n_blocks: number; strides: number[]; feat: number; params: number;
+  n_blocks: number; strides: number[]; feat: number; params: number; phys?: number;
   archs: string[]; strats: string[]; reg: string[]; ledger: string[];
   sigk: { mass_car?: number; disp_car?: number; mass_trip?: number; disp_trip?: number };
 }
@@ -84,9 +84,10 @@ export function apply(raw: Raw, flags: Flags, drop: string[] = [], cut: number |
 }
 
 // ---------------- features ----------------
-/** net_input(): the 22 network channels [22, L] and the number of real samples. */
-export function netInput(raw: Raw, fl: Flags): { x: Tensor; n: number } {
-  const n = Math.min(raw.n, L), C = 22, x = new Float32Array(C * L), r = raw.rows;
+/** net_input(): the network channels [22 (feature version 3) or 23 (version 4), L] and the number of real samples. */
+export function netInput(raw: Raw, fl: Flags, feat = 3): { x: Tensor; n: number } {
+  const n = Math.min(raw.n, L), C = feat >= 4 ? 23 : 22, x = new Float32Array(C * L), r = raw.rows;
+  const P = feat >= 4 ? srcPower(raw, fl, n) : null;
   const v = r[0];
   for (let i = 0; i < n; i++) {
     const a = n > 2 && i > 0 && i < n - 1 ? Math.fround((v[i + 1] - v[i - 1]) / 2) : 0;
@@ -100,8 +101,62 @@ export function netInput(raw: Raw, fl: Flags): { x: Tensor; n: number } {
     x[19 * L + i] = (v[i] * (1.03 * a + (9.81 * r[1][i]) / 100)) / 10;
     x[20 * L + i] = (0.5 * r[4][i] * va2 * Math.abs(va2) * v[i]) / 2000;
     x[21 * L + i] = (9.81 * v[i]) / 200;
+    if (P) x[22 * L + i] = (P[i] / 20000) * va;
   }
   return { x: { data: x, shape: [C, L] }, n };
+}
+
+// ---------------- physics-regression head (feature version 4) ----------------
+export const NPS = 15;
+const XS = [10, 100, 600, 1], YS = 20000;
+/** wheel-equivalent source power [W]: 0.30 x fuel chemical power + 0.90 x HV battery power. */
+function srcPower(raw: Raw, fl: Flags, n: number): Float64Array {
+  const P = new Float64Array(n), r = raw.rows;
+  if (fl[0] > 0.5) for (let i = 0; i < n; i++) P[i] += 0.3 * r[5][i] * 42600;
+  if (fl[3] > 0.5) for (let i = 0; i < n; i++) P[i] += 0.9 * r[7][i] * 1000;
+  return P;
+}
+/** pstats(): normal equations of P_src = b0 v(1.03a + g grade) + b1 g v + b2 0.5 rho v_air|v_air| v + b3 on traction seconds. */
+export function pstats(raw: Raw, fl: Flags): Float32Array {
+  const n = Math.min(raw.n, L), r = raw.rows, out = new Float32Array(NPS);
+  if (fl[0] < 0.5 && fl[3] < 0.5) return out;
+  const v = Float64Array.from(r[0].subarray(0, n)), a = new Float64Array(n);
+  if (n > 2) for (let i = 1; i < n - 1; i++) a[i] = (v[i + 1] - v[i - 1]) / 2;
+  const g = Float64Array.from({ length: n }, (_, i) => r[1][i] / 100);
+  const Ps = smooth5(srcPower(raw, fl, n)), vs = smooth5(v), as = smooth5(a), gs = smooth5(g);
+  const S = Array.from({ length: 4 }, () => [0, 0, 0, 0]), Xy = [0, 0, 0, 0];
+  let yy = 0, m = 0;
+  for (let i = 0; i < n; i++) {
+    if (!(r[10][i] > 0.5 && vs[i] > 3 && as[i] > -0.3 && Ps[i] > 0)) continue;
+    const vw = v[i] + r[3][i];
+    const X = [(vs[i] * (1.03 * as[i] + 9.81 * gs[i])) / XS[0], (9.81 * vs[i]) / XS[1], (0.5 * r[4][i] * vw * Math.abs(vw) * vs[i]) / XS[2], 1];
+    const y = Ps[i] / YS;
+    for (let p = 0; p < 4; p++) { Xy[p] += X[p] * y; for (let q = 0; q < 4; q++) S[p][q] += X[p] * X[q]; }
+    yy += y * y; m++;
+  }
+  if (m < 10) return out;
+  let k = 0;
+  for (let p = 0; p < 4; p++) for (let q = p; q < 4; q++) out[k++] = S[p][q] / 1024;
+  for (let p = 0; p < 4; p++) out[10 + p] = Xy[p] / 1024;
+  out[14] = yy / 1024;
+  return out;
+}
+/** phys_features(): solve the pooled normal equations -> 8 car features and log(b0 / 1800) (0 if the fit is unusable). */
+export function physFeatures(ps: Float32Array): { f: number[]; lb0: number } {
+  const S = Array.from({ length: 4 }, () => [0, 0, 0, 0]);
+  let k = 0;
+  for (let p = 0; p < 4; p++) for (let q = p; q < 4; q++) { S[p][q] = ps[k]; S[q][p] = ps[k]; k++; }
+  const r = [ps[10], ps[11], ps[12], ps[13]], yy = ps[14], nrow = S[3][3];
+  if (!(nrow * 1024 >= 30)) return { f: [0, 0, 0, 0, 0, 0, 0, 0], lb0: 0 };
+  const A = S.map((row, p) => row.map((x, q) => x + (p === q ? 1e-3 * S[p][p] + 1e-9 : 0)));
+  const b = solve(A, r).map(Math.fround);
+  let br = 0, bSb = 0;
+  for (let p = 0; p < 4; p++) { br += b[p] * r[p]; for (let q = 0; q < 4; q++) bSb += b[p] * S[p][q] * b[q]; }
+  const sse = yy - 2 * br + bSb, sst = yy - (r[3] * r[3]) / Math.max(nrow, 1e-9);
+  const r2 = Math.max(-1, Math.min(1, 1 - sse / Math.max(sst, 1e-12)));
+  const bp = b.map((x, p) => (x * YS) / XS[p]);
+  const lb0 = Math.log(Math.max(bp[0], 50) / 1800), pos = bp[0] > 50 ? 1 : 0;
+  return { f: [lb0, Math.asinh(bp[1] / 10), Math.asinh(bp[2] / 0.3), Math.asinh(bp[3] / 2000), r2, Math.log1p(nrow * 1024) / 7, pos, 1], lb0: lb0 * pos };
 }
 
 function smooth5(x: Float64Array) { // np.convolve(x, ones(5)/5, 'same')
@@ -206,7 +261,7 @@ export function slice(raw: Raw, s: number, e: number): Raw { return { rows: raw.
 /** encode(): one trip window -> its embedding. */
 export function encode(W: Pack<TMeta>, raw: Raw, fl: Flags): Float32Array {
   const t = W.t, m = W.meta;
-  const { x, n } = netInput(raw, fl);
+  const { x, n } = netInput(raw, fl, m.feat);
   const T = Math.min(L, Math.max(32, Math.ceil(n / 32) * 32));
   const C0 = x.shape[0];
   const h0 = new Float32Array(C0 * T);
@@ -243,15 +298,23 @@ export function encode(W: Pack<TMeta>, raw: Raw, fl: Flags): Float32Array {
 export interface Heads { arch: number[]; strat: number[]; mu: number[]; sig: number[]; led: { mu: number[]; sig: number[] }[]; }
 
 /** heads(): pool the window embeddings of one car, then architecture, strategy, regressions, per-window ledger. */
-export function heads(W: Pack<TMeta>, E: Float32Array[]): Heads {
-  const t = W.t, D = E[0].length, z0 = new Float32Array(D + 1);
+export function heads(W: Pack<TMeta>, E: Float32Array[], PS: Float32Array[] = []): Heads {
+  const t = W.t, D = E[0].length, phys = (W.meta.phys ?? 0) > 0, z0 = new Float32Array(D + 1 + (phys ? 8 : 0));
   for (let i = 0; i < D; i++) { let s = 0; for (const e of E) s += e[i]; z0[i] = s / E.length; }
   z0[D] = Math.log(E.length);
+  let sk = 0;
+  if (phys) {
+    const ps = new Float32Array(NPS);
+    for (let k = 0; k < NPS; k++) { let s = 0; for (const p of PS) s = Math.fround(s + p[k]); ps[k] = s; }
+    const pf = physFeatures(ps);
+    z0.set(pf.f, D + 1); sk = t.skip.data[0] * pf.lb0;
+  }
   const z = vgelu(linear(vgelu(linear(z0, t.car0_w, t.car0_b)), t.car1_w, t.car1_b));
   const arch = softmax(linear(z, t.arch_w, t.arch_b)), strat = softmax(linear(z, t.strat_w, t.strat_b));
   const r = linear(z, t.reg_w, t.reg_b), nr = r.length / 2;
   const clipExp = (x: number) => Math.exp(Math.min(3, Math.max(-6, x)));
   const mu = Array.from(r.subarray(0, nr)), sig = Array.from(r.subarray(nr), clipExp);
+  mu[0] += sk;
   const led = E.map((e) => {
     const u = new Float32Array(2 * D);
     u.set(e, 0); u.set(z, D);
@@ -270,11 +333,15 @@ export interface Trip { raw: Raw; flags: Flags; }
 
 /** Run the network on several trips of one car (every window of every trip pooled), as read_car(). */
 export function run(W: Pack<TMeta>, trips: Trip[]): { h: Heads; tripOf: number[]; len: number[] } {
-  const E: Float32Array[] = [], tripOf: number[] = [], len: number[] = [];
+  const E: Float32Array[] = [], PS: Float32Array[] = [], tripOf: number[] = [], len: number[] = [];
   trips.forEach((tr, k) => {
-    for (const [s, e] of windows(tr.raw.n)) { E.push(encode(W, slice(tr.raw, s, e), tr.flags)); tripOf.push(k); len.push(e - s); }
+    for (const [s, e] of windows(tr.raw.n)) {
+      const w = slice(tr.raw, s, e);
+      E.push(encode(W, w, tr.flags)); if ((W.meta.phys ?? 0) > 0) PS.push(pstats(w, tr.flags));
+      tripOf.push(k); len.push(e - s);
+    }
   });
-  return { h: heads(W, E), tripOf, len };
+  return { h: heads(W, E, PS), tripOf, len };
 }
 
 export interface Reading {

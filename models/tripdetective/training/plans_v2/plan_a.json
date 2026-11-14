@@ -1,0 +1,11 @@
+{"val": "p2_val_v3",
+ "train_order": ["p2r5", "p2r6", "p2r1", "p2r2", "p2r3", "p2r4"],
+ "ratchet_order": ["p2r1", "p2r2", "p2r3", "p2r4", "p2r5", "p2r6"],
+ "rungs": {
+  "p2r1": {"bank": "p2_train_v2", "nchunks": 12, "opts": {"chunks": 12}, "note": "Dev-twin calibrated priors v2 (v1.0's wrappers), 1,200 cars; physics v2"},
+  "p2r2": {"bank": "p2_train_v2", "nchunks": 20, "opts": {"chunks": 20}, "note": "v2 priors, 2,000 cars"},
+  "p2r3": {"bank": "p2_train_v2", "nchunks": 20, "opts": {"chunks": 20, "feat": 2}, "note": "v2 priors + road-load physics channels"},
+  "p2r4": {"bank": "p2_train_v2", "nchunks": 20, "opts": {"chunks": 20, "feat": 3}, "note": "v2 priors + 16 classical per-trip estimates"},
+  "p2r5": {"bank": "p2_train_v1", "nchunks": 12, "opts": {"feat": 3}, "note": "Classical estimates on the v1 bank (1,200 cars)"},
+  "p2r6": {"bank": "p2_train_v3", "nchunks": 20, "opts": {"chunks": 20, "feat": 3}, "note": "v3 mass prior (VED-era fleet) + classical estimates, 2,000 cars"}
+ }}

@@ -29,7 +29,7 @@ def epa_spec(r, rng):
     if s.get('engine') and np.isfinite(r.displacement_L):
         s['engine']['displacement_L'] = float(r.displacement_L)
         if np.isfinite(r.rated_hp): s['engine']['max_power_kW'] = float(r.rated_hp) * 0.7457 * (0.75 if arch != 'conv' else 1.0)
-    s = priors.vehicle_prior(s, rng, 'v2')
+    s = priors.vehicle_prior(s, rng, priors.FINAL)
     s['id'] = f"epa_{r.name}"; fill_spec(s)
     return s, arch
 
@@ -54,7 +54,7 @@ def run(ckpt, nper=50, K=4):
         inp = []
         for k in range(K):
             route, _ = routes.real_route(rng); simr = routes.perturb_for_sim(route, rng)
-            out_ = simulate(s, simr, init_temps=dict(WARM, battery=float(np.mean(simr['T_amb'])) + 10), init_soc=0.6 if arch != 'bev' else 0.8, options='roadsim-physics-v1')
+            out_ = simulate(s, simr, init_temps=dict(WARM, battery=float(np.mean(simr['T_amb'])) + 10), init_soc=0.6 if arch != 'bev' else 0.8, options=PHYSICS)
             lg = obdlog.emulate(out_, cfg, rng, s)
             a_ = {k2: route[k2] for k2 in ['grade', 'T_amb', 'wind_speed', 'wind_dir', 'heading', 'rho_air']} | lg
             fl = dict(has_fuel=arch != 'bev', fuel_est=arch != 'bev', has_rpm=arch != 'bev', has_batt=arch == 'bev', has_aux=False)

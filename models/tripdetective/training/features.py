@@ -46,13 +46,22 @@ def flags_vec(flags):
 
 NIN = 14 + len(FLAGS)
 FEAT = 1          # feature version: 2 adds three road-load physics channels (specific tractive, aero and rolling power)
+                  # 3 adds 16 classical per-trip numbers (scalars); 4 (Phase D) = 3 + a
+                  # source-power channel + the road-load regression's normal equations per window (pstats), which the
+                  # network pools over a car's trips and solves (the physics-regression head)
 
 
 def nin(feat=None):
-    return NIN + (3 if (feat or FEAT) >= 2 else 0)
+    f = feat or FEAT
+    return NIN + (3 if f >= 2 else 0) + (1 if f >= 4 else 0)
 
 
-def net_input(raw, fl, Lw=L, feat=None):
+def nsc(feat=None):
+    f = feat or FEAT
+    return NSC + NPS if f >= 4 else (NSC if f >= 3 else 0)
+
+
+def net_input(raw, fl, Lw=L, feat=None, sc=None):
     """raw: (len(RAW), n) -> (nin, Lw) float32 normalised, zero-padded; second output = time mask (Lw,)"""
     feat = feat or FEAT
     n = min(raw.shape[1], Lw)
@@ -82,12 +91,66 @@ def net_input(raw, fl, Lw=L, feat=None):
         x[19, :n] = v * (1.03 * a + 9.81 * r[1] / 100) / 10          # specific tractive power, W/kg / 10
         x[20, :n] = 0.5 * r[4] * va2 * np.abs(va2) * v / 2000        # aero power per m2 of CdA, kW / 2
         x[21, :n] = 9.81 * v / 200                                    # rolling power per kg per unit Crr / 200
-    sc = scalars(raw[:, :n], fl) if feat >= 3 else np.zeros(NSC, np.float32)
+    if feat >= 4:
+        x[22, :n] = src_power(r, fl) / 20000.0 * va                    # wheel-equivalent source power, W / 20 kW
+    if sc is not None:
+        pass                                          # cached classical numbers (training)
+    elif feat >= 4:
+        sc = np.r_[scalars(raw[:, :n], fl), pstats(raw[:, :n], fl)].astype(np.float32)
+    elif feat >= 3:
+        sc = scalars(raw[:, :n], fl)
+    else:
+        sc = np.zeros(NSC, np.float32)
     return x, x[13], sc
 
 
 # ---------------- trip-level classical estimates (feature version 3) ----------------
 NSC = 16
+NPS = 15          # pstats: normal equations of the road-load regression (10 unique X'X, 4 X'y, y'y), feature version 4
+ETA_FUEL, ETA_BATT = 0.30, 0.90      # nominal source-to-wheel efficiencies that put fuel and battery power on one scale
+XS = np.array([10.0, 100.0, 600.0, 1.0])   # column scales of the regressors (O(1) numbers); y in units of 20 kW
+YS = 20000.0
+IU = np.triu_indices(4)
+
+
+def src_power(r, fl):
+    """wheel-equivalent source power [W]: 0.30 x fuel chemical power + 0.90 x HV battery power (0 if neither logged)"""
+    P = np.zeros(r.shape[1])
+    if fl[0] > 0.5: P = P + ETA_FUEL * r[5].astype(np.float64) * 42600.0
+    if fl[3] > 0.5: P = P + ETA_BATT * r[7].astype(np.float64) * 1000.0
+    return P
+
+
+def pstats(raw, fl):
+    """per-window normal equations of   P_src = b0 v (1.03 a + g grade) + b1 g v + b2 0.5 rho v_air|v_air| v + b3
+    on traction seconds (5 s smoothing, v > 3 m/s, a > -0.3 m/s2, P > 0), regressors scaled by XS, P by 20 kW, all
+    divided by 1024. Summed over a car's windows and solved at car level (the network's physics-regression head)."""
+    r = raw.astype(np.float64); n = r.shape[1]; out = np.zeros(NPS, np.float32)
+    if fl[0] < 0.5 and fl[3] < 0.5: return out
+    v = r[0]; ok = r[10] > 0.5
+    a = np.zeros(n)
+    if n > 2: a[1:-1] = (v[2:] - v[:-2]) / 2
+    g = r[1] / 100; rho = r[4]; vw = v + r[3]
+    Ps, vs, as_, gs = _smooth(src_power(r, fl)), _smooth(v), _smooth(a), _smooth(g)
+    m = ok & (vs > 3) & (as_ > -0.3) & (Ps > 0)
+    if m.sum() < 10: return out
+    X = np.stack([vs * (1.03 * as_ + 9.81 * gs), 9.81 * vs, 0.5 * rho * vw * np.abs(vw) * vs, np.ones(n)], 1)[m] / XS
+    y = Ps[m] / YS
+    S = X.T @ X
+    out[:10] = S[IU] / 1024; out[10:14] = (X.T @ y) / 1024; out[14] = (y @ y) / 1024
+    return out
+
+
+def psolve(ps, lam=1e-3):
+    """pooled pstats (sum over windows) -> coefficients b (physical units: b0 kg-equivalent, b1 N/kg-ish, b2 m2, b3 W),
+    R2, rows. numpy twin of model.TDNet.phys_head."""
+    S = np.zeros((4, 4)); S[IU] = ps[:10]; S = S + S.T - np.diag(np.diag(S))
+    rr = ps[10:14].astype(np.float64); yy = float(ps[14]); nrow = S[3, 3]
+    if nrow * 1024 < 30: return None
+    A = S + lam * np.diag(np.diag(S)) + 1e-9 * np.eye(4)
+    b = np.linalg.solve(A, rr)
+    sse = yy - 2 * b @ rr + b @ S @ b; sst = yy - rr[3] ** 2 / max(nrow, 1e-9)
+    return dict(b=b * YS / XS, r2=1 - sse / max(sst, 1e-12), rows=nrow * 1024)
 
 
 def _smooth(x, k=5):

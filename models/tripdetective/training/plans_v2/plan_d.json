@@ -1,0 +1,8 @@
+{"steps": [
+ ["rung", "p2r13", "p2_val_v6"],
+ ["rung", "p2r14", "p2_val_v6"]
+],
+ "rungs": {
+  "p2r13": {"bank": "p2_train_v4", "nchunks": 20, "steps": 8000, "opts": {"chunks": 20, "feat": 4, "phys": 1, "width": "48,64,96,128,160,192", "emb": 160}, "note": "GPU: wider CNN (48-192 channels, 160-d embedding) trained 8,000 steps (was 2,500)"},
+  "p2r14": {"bank": "p2_train_v6", "nchunks": 20, "opts": {"chunks": 20, "feat": 4, "phys": 1}, "note": "VED logger channel mix (prior v6) again, now with the physics-regression head"}
+ }}

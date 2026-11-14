@@ -1,0 +1,12 @@
+{"steps": [
+ ["rung", "p2r10", "p2_val_v6"],
+ ["rung", "p2r11", "p2_val_v6"],
+ ["rung", "p2r12", "p2_val_v6"],
+ ["rung", "p2r13", "p2_val_v6"]
+],
+ "rungs": {
+  "p2r10": {"bank": "p2_train_v4", "nchunks": 20, "opts": {"chunks": 20, "feat": 4}, "note": "Sharper channels: a wheel-equivalent source-power channel (0.30 x fuel + 0.90 x battery) next to the road-load channels (feature version 4)"},
+  "p2r11": {"bank": "p2_train_v4", "nchunks": 20, "opts": {"chunks": 20, "feat": 4, "phys": 1}, "note": "Physics-regression head: the road-load fit's normal equations pooled over a car's trips and solved; mass = b0 x a learned efficiency correction"},
+  "p2r12": {"bank": "p2_train_v4", "nchunks": 20, "opts": {"chunks": 20, "feat": 4, "phys": 1, "p1": 0.1, "ncar": 32}, "note": "Pooled multi-trip training: 90 % of samples pool 2-8 trips (was 65 %), 32 cars per batch"},
+  "p2r13": {"bank": "p2_train_v4", "nchunks": 20, "steps": 8000, "opts": {"chunks": 20, "feat": 4, "phys": 1, "p1": 0.1, "ncar": 32, "width": "48,64,96,128,160,192", "emb": 160}, "note": "GPU: wider CNN (48-192 channels, 160-d embedding) trained 8,000 steps"}
+ }}

@@ -1,6 +1,8 @@
 """Final exam on real VED exam cars (never used for choosing anything). Run once, at the end, on the final rung.
 Also: sigma widening factors fitted on dev only (widen-only), baselines on the same trips, pooling curve.
-usage: python3 exam.py <ckpt>"""
+usage: python3 exam.py <ckpt> [tag]  |  python3 exam.py np:<folder of a released numpy model> <tag>
+Phase D: the same exam scores the v2.0 release (torch checkpoint == numpy to ~1e-5) and the v1.0 release (its own
+numpy module, npnet.py); outputs exam_<tag>.json and data/exam_cars_<tag>.csv."""
 from common import *
 import pandas as pd
 import evaluate as E, realbank, baselines as BL
@@ -27,8 +29,15 @@ def car_inputs(rb, c):
     return [rb['raw'][o[j]:o[j + 1]].T.astype(np.float32) for j in js], [rb['flags'][j] for j in js], js
 
 
-def run(ckpt):
-    net = E.load_net(f'{ROOT}/ckpt/{ckpt}')
+def load_model(ckpt):
+    if ckpt.startswith('np:'):
+        import npnet
+        return npnet.load(ckpt[3:])
+    return E.load_net(f'{ROOT}/ckpt/{ckpt}')
+
+
+def run(ckpt, tag='final'):
+    net = load_model(ckpt)
     vt = rd.ved_vehicles()
     dev = realbank.load('dev'); ex = realbank.load('exam')
     B = BL.Baselines(); bfit = B.fit_dev(dev, vt)
@@ -63,7 +72,7 @@ def run(ckpt):
                          strat_pred=STRATS[int(R['Pc']['strat'][i].argmax())], ev_frac=float(mu[4]), P_on=float(from_reg(5, mu[5])),
                          v_ev=float(from_reg(6, mu[6])),
                          b_arch=b['arch'], b_mass=b['mass'], b_disp=b['disp'], b_CdA=b['CdA'], b_Crr=b['Crr']))
-    d = pd.DataFrame(rows); d.to_csv(f'{ROOT}/data/exam_cars.csv', index=False)
+    d = pd.DataFrame(rows); d.to_csv(f'{ROOT}/data/exam_cars_{tag}.csv', index=False)
     # per-trip table
     trows = []
     for i, t in enumerate(R['trips']):
@@ -79,14 +88,14 @@ def run(ckpt):
         raws = [ex['raw'][o[j]:o[j + 1]].T.astype(np.float32) for j in js]; fls = [ex['flags'][j] for j in js]
         b = B.predict(raws, fls); bt.append(b)
     dt['b_arch'] = [b['arch'] for b in bt]; dt['b_mass'] = [b['mass'] for b in bt]; dt['b_disp'] = [b['disp'] for b in bt]
-    dt.to_csv(f'{ROOT}/data/exam_trips.csv', index=False)
+    dt.to_csv(f'{ROOT}/data/exam_trips_{tag}.csv', index=False)
     rep = dict(ckpt=ckpt, sigk=sigk, baseline_fit=bfit, n_cars=len(d), n_trips=len(dt))
     rep['arch'] = arch_report(d, dt)
     rep['mass'] = mass_report(d, dt, curb_med)
     rep['disp'] = disp_report(d, dt, disp_med)
     rep['roadload'] = roadload_report(d)
     rep['pooling'] = pooling_curve(net, ex, vt, sigk)
-    jsave(rep, f'{ROOT}/exam.json')
+    jsave(rep, f'{ROOT}/exam_{tag}.json')
     print(json.dumps({k: rep[k] for k in ['sigk', 'arch', 'mass', 'disp', 'roadload']}, indent=1, default=str)[:6000])
     return rep
 
@@ -196,4 +205,4 @@ def pooling_curve(net, ex, vt, sigk, ks=(1, 2, 4, 8, 16, 32), seed=0):
 
 
 if __name__ == '__main__':
-    run(sys.argv[1])
+    run(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else 'final')

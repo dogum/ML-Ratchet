@@ -1,0 +1,13 @@
+{"steps": [
+ ["rescore", "p2_val_v4"],
+ ["rung", "p2r7", "p2_val_v4"],
+ ["rescore", "p2_val_v5"],
+ ["rung", "p2r8", "p2_val_v5"],
+ ["rescore", "p2_val_v6"],
+ ["rung", "p2r9", "p2_val_v6"]
+],
+ "rungs": {
+  "p2r7": {"bank": "p2_train_v4", "nchunks": 20, "opts": {"chunks": 20, "feat": 3}, "note": "Priors rebuilt: v1 generator + the v3 VED-era mass prior (prior v4), classical estimates, 2,000 cars"},
+  "p2r8": {"bank": "p2_train_v5", "nchunks": 20, "opts": {"chunks": 20, "feat": 3}, "note": "BEV cabin heat matched to the dev Leaf (prior v5)"},
+  "p2r9": {"bank": "p2_train_v6", "nchunks": 20, "opts": {"chunks": 20, "feat": 3}, "note": "VED logger channel mix measured on the dev cars (prior v6)"}
+ }}

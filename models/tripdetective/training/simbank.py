@@ -1,7 +1,9 @@
 """Simulation bank: random light-duty vehicles x K trips each (real Ann Arbor routes, cycle windows, synthetic routes),
 simulated in RoadSim, passed through the OBD log emulator, stored as ragged float16 raw channels + truths.
 Resumable: one npz per chunk of vehicles.
-usage: python3 simbank.py <tag> <n_vehicles> <seed> [K=8] [prior=v1]"""
+usage: python3 simbank.py <tag> <n_vehicles> <seed> [K=8] [prior=v1]
+Several processes may build one bank at once: each claims a chunk with a lock file (chunk_XXX.lock).
+Physics: common.PHYSICS (roadsim-physics-v2 since the Phase D rebuild; v1.0's banks were roadsim-physics-v1)."""
 from common import *
 import time, copy, traceback
 from roadsim import simulate
@@ -33,7 +35,7 @@ def behaviour(on, P, v):
 
 def sim_vehicle(spec, K, rng, prior):
     tr = fleet.truth(spec)
-    cfg = obdlog.logger_config(spec['architecture'], rng)
+    cfg = (obdlog.logger_config_ved if priors.logger_kind(prior) == 'ved' else obdlog.logger_config)(spec['architecture'], rng)
     priors.logger_tweak(cfg, spec, rng, prior)
     trips = []; ons, Ps, vs = [], [], []
     for k in range(K):
@@ -49,9 +51,9 @@ def sim_vehicle(spec, K, rng, prior):
         elif arch == 'bev': soc0 = rng.uniform(0.2, 0.95)
         else: soc0 = None
         temps = WARM if rng.random() < 0.85 else None
-        if temps is not None and prior != 'v1':
+        if temps is not None and priors.warm_pack(prior):
             temps = dict(WARM, battery=float(np.mean(simr['T_amb']) + rng.uniform(5, 15)))   # pack warm from driving
-        out = simulate(s2, simr, init_temps=temps, init_soc=soc0, rng=int(rng.integers(1 << 30)), options='roadsim-physics-v1')
+        out = simulate(s2, simr, init_temps=temps, init_soc=soc0, rng=int(rng.integers(1 << 30)), options=PHYSICS)
         lg = out['ledger']
         if not lg.get('ok', 1): continue
         log = obdlog.emulate(out, cfg, rng, spec)
@@ -77,16 +79,25 @@ def sim_vehicle(spec, K, rng, prior):
 
 def build(tag, nveh, seed, K=8, prior='v1'):
     d = f'{ROOT}/bank/{tag}'; os.makedirs(d, exist_ok=True)
-    jsave(dict(tag=tag, nveh=nveh, seed=seed, K=K, prior=prior, emu=obdlog.EMU_VERSION, prior_version=priors.VERSION.get(prior)), f'{d}/info.json')
+    try:                                               # several workers may start the same bank at once
+        if not os.path.exists(f'{d}/info.json'):
+            jsave(dict(tag=tag, nveh=nveh, seed=seed, K=K, prior=prior, emu=obdlog.EMU_VERSION, prior_version=priors.VERSION.get(prior),
+                       physics=PHYSICS), f'{d}/info.json')
+    except OSError:
+        pass
     for c0 in range(0, nveh, CHUNK):
         fn = f'{d}/chunk_{c0 // CHUNK:03d}.npz'
         if os.path.exists(fn): continue
+        try:
+            fd = os.open(fn[:-4] + '.lock', os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.close(fd)
+        except FileExistsError:
+            continue                                   # another worker has it
         t0 = time.time()
         rng = np.random.default_rng([seed, c0])
         R, offs, FL, LED, TV, KM, EN, META = [], [0], [], [], [], [], [], []
         for i in range(c0, min(nveh, c0 + CHUNK)):
             try:
-                spec = fleet.draw_vehicle(rng, cls_w=priors.V3_CLS if prior == 'v3' else None, prior=prior)
+                spec = fleet.draw_vehicle(rng, cls_w=priors.V3_CLS if priors.mass_prior(prior) else None, prior=prior)
                 spec = priors.vehicle_prior(spec, rng, prior)
                 tr, trips = sim_vehicle(spec, K, rng, prior)
             except Exception:
@@ -100,6 +111,7 @@ def build(tag, nveh, seed, K=8, prior='v1'):
         np.savez(fn, raw=np.concatenate(R).astype(np.float16), offs=np.array(offs, np.int64), flags=np.array(FL), ledger=np.array(LED),
                  veh=np.array(TV), km=np.array(KM), energy=np.array(EN, np.float32),
                  meta=np.array(json.dumps(META, default=lambda x: x.tolist() if hasattr(x, 'tolist') else str(x))))
+        os.remove(fn[:-4] + '.lock')
         print(f'chunk {c0 // CHUNK} {len(META)} veh {len(TV)} trips {time.time() - t0:.0f}s', flush=True)
 
 

@@ -5,7 +5,7 @@ on/off behaviour (EV share, on-threshold power, max EV speed); per-trip heads (t
 energy ledger in kJ/km. Every regression has a mean and a log-sigma (Gaussian NLL)."""
 import torch, torch.nn as nn, torch.nn.functional as Fn
 import numpy as np
-from features import NIN, nin, NSC
+from features import NIN, nin, NSC, NPS, XS, YS
 
 REG = ['mass', 'disp', 'CdA', 'Crr', 'ev_frac', 'P_on', 'v_ev']
 LED_SCALE = np.array([200., 150., 150., 150., 1500., 150.], np.float32)
@@ -43,16 +43,48 @@ class Block(nn.Module):
         return Fn.gelu(s.bn(s.c(x)))
 
 
+NPH = 8           # physics-regression head features per car (feature version 4)
+IU = torch.triu_indices(4, 4)
+
+
+def phys_solve(ps, lam=1e-3):
+    """ps (G, NPS) pooled normal equations -> (G, NPH) features and log b0 (G,) and a validity mask (G,).
+    Same arithmetic as features.psolve. b0 is the mass x (0.30 / marginal efficiency) coefficient [kg]."""
+    G = ps.shape[0]
+    S = torch.zeros(G, 4, 4, dtype=ps.dtype, device=ps.device)
+    S[:, IU[0], IU[1]] = ps[:, :10]
+    S = S + S.transpose(1, 2) - torch.diag_embed(torch.diagonal(S, dim1=1, dim2=2))
+    r = ps[:, 10:14]; yy = ps[:, 14]; nrow = S[:, 3, 3]
+    ok = nrow * 1024 >= 30
+    A = S + lam * torch.diag_embed(torch.diagonal(S, dim1=1, dim2=2)) + 1e-9 * torch.eye(4, device=ps.device)
+    A = torch.where(ok[:, None, None], A, torch.eye(4, device=ps.device).expand(G, 4, 4))
+    b = torch.linalg.solve(A.double(), r.double()[..., None])[..., 0].to(ps.dtype)
+    sse = yy - 2 * (b * r).sum(1) + torch.einsum('gi,gij,gj->g', b, S, b)
+    sst = yy - r[:, 3] ** 2 / nrow.clamp(min=1e-9)
+    r2 = (1 - sse / sst.clamp(min=1e-12)).clamp(-1, 1)
+    bp = b * YS / torch.tensor(XS, dtype=ps.dtype, device=ps.device)
+    lb0 = torch.log(bp[:, 0].clamp(min=50.0) / 1800)
+    okf = ok.to(ps.dtype)
+    f = torch.stack([lb0, torch.asinh(bp[:, 1] / 10), torch.asinh(bp[:, 2] / 0.3), torch.asinh(bp[:, 3] / 2000), r2,
+                     torch.log1p(nrow * 1024) / 7, (bp[:, 0] > 50).to(ps.dtype), okf], 1) * okf[:, None]
+    return f, lb0 * okf * (bp[:, 0] > 50).to(ps.dtype), okf
+
+
 class TDNet(nn.Module):
-    def __init__(s, n_arch=7, n_strat=14, width=(32, 48, 64, 96, 128, 160), emb=128, feat=1):
+    def __init__(s, n_arch=7, n_strat=14, width=(32, 48, 64, 96, 128, 160), emb=128, feat=1, phys=0):
         super().__init__()
         s.feat = feat
+        s.phys = phys            # 1: physics-regression head (pooled road-load fit per car; feature version 4)
         s.stem = Block(nin(feat), width[0], k=7, stride=1)
         s.blocks = nn.ModuleList([Block(width[i], width[i + 1]) for i in range(len(width) - 1)])
         s.down = 2 ** (len(width) - 1)
         s.nsc = NSC if feat >= 3 else 0          # feature version 3: classical per-trip estimates join the trip embedding
         s.trip = nn.Sequential(nn.Linear(2 * width[-1] + 2 + s.nsc, 192), nn.GELU(), nn.Linear(192, emb))
-        s.car = nn.Sequential(nn.Linear(emb + 1, 192), nn.GELU(), nn.Linear(192, emb), nn.GELU())
+        s.car = nn.Sequential(nn.Linear(emb + 1 + (NPH if phys else 0), 192), nn.GELU(), nn.Linear(192, emb), nn.GELU())
+        if phys:
+            # mass = pooled b0 x a learned efficiency correction: mu_mass += skip x log(b0 / 1800); skip starts at 1, so
+            # an untrained head already moves the mass one-for-one with the physics fit
+            s.skip = nn.Parameter(torch.ones(1))
         s.h_arch = nn.Linear(emb, n_arch); s.h_strat = nn.Linear(emb, n_strat)
         s.h_reg = nn.Linear(emb, 2 * len(REG))
         s.h_led = nn.Sequential(nn.Linear(2 * emb, 128), nn.GELU(), nn.Linear(128, 12))
@@ -68,16 +100,32 @@ class TDNet(nn.Module):
         mean = (h * m).sum(2) / n
         mx = (h * m + (m - 1) * 1e4).max(2).values
         dur = mask.sum(1, keepdim=True) / 1024.0
-        parts = [mean, mx, dur, torch.log(dur + 1e-3)] + ([sc] if s.nsc else [])
+        parts = [mean, mx, dur, torch.log(dur + 1e-3)] + ([sc[:, :NSC]] if s.nsc else [])
         return s.trip(torch.cat(parts, 1))
+
+    def pool(s, e, group, n_groups, sc=None):
+        """trip embeddings (N, emb) -> car embedding z (G, emb) and the physics skip term (G,) or None"""
+        cnt = torch.zeros(n_groups, device=e.device).index_add_(0, group, torch.ones(len(group), dtype=e.dtype, device=e.device))
+        z = torch.zeros(n_groups, e.shape[1], device=e.device).index_add_(0, group, e) / cnt[:, None]
+        parts = [z, torch.log(cnt)[:, None]]; sk = None
+        if s.phys:
+            ps = torch.zeros(n_groups, NPS, device=e.device).index_add_(0, group, sc[:, NSC:NSC + NPS])
+            f, lb0, _ = phys_solve(ps)
+            parts.append(f); sk = s.skip * lb0
+        return s.car(torch.cat(parts, 1)), sk
+
+    def heads(s, z, sk):
+        r = s.h_reg(z)
+        mu = r[:, :len(REG)]
+        if sk is not None:
+            mu = torch.cat([mu[:, :1] + sk[:, None], mu[:, 1:]], 1)
+        return mu, r[:, len(REG):].clamp(-6, 3)
 
     def forward(s, x, mask, group, n_groups, sc=None):
         """group (N,) car index of each trip -> dict of outputs per car and per trip"""
         e = s.encode(x, mask, sc)
-        cnt = torch.zeros(n_groups, device=x.device).index_add_(0, group, torch.ones_like(group, dtype=x.dtype))
-        z = torch.zeros(n_groups, e.shape[1], device=x.device).index_add_(0, group, e) / cnt[:, None]
-        z = s.car(torch.cat([z, torch.log(cnt)[:, None]], 1))
-        r = s.h_reg(z)
+        z, sk = s.pool(e, group, n_groups, sc)
+        mu, ls = s.heads(z, sk)
         led = s.h_led(torch.cat([e, z[group]], 1))
-        return dict(arch=s.h_arch(z), strat=s.h_strat(z), mu=r[:, :len(REG)], ls=r[:, len(REG):].clamp(-6, 3),
+        return dict(arch=s.h_arch(z), strat=s.h_strat(z), mu=mu, ls=ls,
                     led_mu=led[:, :6], led_ls=led[:, 6:].clamp(-6, 3))
