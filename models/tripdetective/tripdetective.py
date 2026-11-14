@@ -65,7 +65,7 @@ def raw_from_log(a, flags):
 
 def net_input(raw, fl, Lw=L, feat=1):
     n = min(raw.shape[1], Lw); r = raw[:, :n].astype(np.float32)
-    x = np.zeros((NIN + (3 if feat >= 2 else 0), Lw), np.float32); v = r[0]; a = np.zeros(n, np.float32)
+    x = np.zeros((NIN + (3 if feat >= 2 else 0) + (1 if feat >= 4 else 0), Lw), np.float32); v = r[0]; a = np.zeros(n, np.float32)
     if n > 2: a[1:-1] = (v[2:] - v[:-2]) / 2
     va = r[10]
     x[0, :n] = v / 15; x[1, :n] = a / 1.5; x[2, :n] = r[1] / 3; x[3, :n] = (r[2] - 10) / 12; x[4, :n] = r[3] / 5
@@ -77,7 +77,15 @@ def net_input(raw, fl, Lw=L, feat=1):
         x[19, :n] = v * (1.03 * a + 9.81 * r[1] / 100) / 10
         x[20, :n] = 0.5 * r[4] * va2 * np.abs(va2) * v / 2000
         x[21, :n] = 9.81 * v / 200
-    return x, x[13], (scalars(raw[:, :n], fl) if feat >= 3 else np.zeros(NSC, np.float32))
+    if feat >= 4:      # wheel-equivalent source power (0.30 x fuel chemical + 0.90 x battery), W / 20 kW
+        x[22, :n] = src_power(r, fl) / 20000.0 * va
+    if feat >= 4:
+        sc = np.r_[scalars(raw[:, :n], fl), pstats(raw[:, :n], fl)].astype(np.float32)
+    elif feat >= 3:
+        sc = scalars(raw[:, :n], fl)
+    else:
+        sc = np.zeros(NSC, np.float32)
+    return x, x[13], sc
 
 
 def windows(n, Lw=L, min_len=120):
@@ -144,6 +152,57 @@ def scalars(raw, fl):
     return out
 
 
+# ---------------- physics-regression head (feature version 4) ----------------
+NPS = 15
+ETA_FUEL, ETA_BATT = 0.30, 0.90
+XS = np.array([10.0, 100.0, 600.0, 1.0]); YS = 20000.0
+IU = np.triu_indices(4)
+
+
+def src_power(r, fl):
+    """wheel-equivalent source power [W]: 0.30 x fuel chemical power + 0.90 x HV battery power"""
+    P = np.zeros(r.shape[1])
+    if fl[0] > 0.5: P = P + ETA_FUEL * r[5].astype(np.float64) * 42600.0
+    if fl[3] > 0.5: P = P + ETA_BATT * r[7].astype(np.float64) * 1000.0
+    return P
+
+
+def pstats(raw, fl):
+    """normal equations of the road-load regression P_src = b0 v (1.03 a + g grade) + b1 g v + b2 0.5 rho v_air|v_air| v + b3
+    on traction seconds of one window (summed over a car's windows, solved by phys_features)"""
+    r = raw.astype(np.float64); n = r.shape[1]; out = np.zeros(NPS, np.float32)
+    if fl[0] < 0.5 and fl[3] < 0.5: return out
+    v = r[0]; ok = r[10] > 0.5
+    a = np.zeros(n)
+    if n > 2: a[1:-1] = (v[2:] - v[:-2]) / 2
+    g = r[1] / 100; rho = r[4]; vw = v + r[3]
+    Ps, vs, as_, gs = _smooth(src_power(r, fl)), _smooth(v), _smooth(a), _smooth(g)
+    m = ok & (vs > 3) & (as_ > -0.3) & (Ps > 0)
+    if m.sum() < 10: return out
+    X = np.stack([vs * (1.03 * as_ + 9.81 * gs), 9.81 * vs, 0.5 * rho * vw * np.abs(vw) * vs, np.ones(n)], 1)[m] / XS
+    y = Ps[m] / YS
+    S = X.T @ X
+    out[:10] = S[IU] / 1024; out[10:14] = (X.T @ y) / 1024; out[14] = (y @ y) / 1024
+    return out
+
+
+def phys_features(ps, lam=1e-3):
+    """pooled normal equations -> 8 car features and log(b0 / 1800) (0 when the fit is not usable)"""
+    ps = ps.astype(np.float32)
+    S = np.zeros((4, 4), np.float32); S[IU] = ps[:10]; S = S + S.T - np.diag(np.diag(S))
+    r = ps[10:14]; yy = ps[14]; nrow = S[3, 3]
+    ok = nrow * 1024 >= 30
+    if not ok: return np.zeros(8), 0.0
+    A = S.astype(np.float64) + lam * np.diag(np.diag(S)).astype(np.float64) + 1e-9 * np.eye(4)
+    b = np.linalg.solve(A, r.astype(np.float64)).astype(np.float32)
+    sse = yy - 2 * (b * r).sum() + b @ S @ b; sst = yy - r[3] ** 2 / max(nrow, 1e-9)
+    r2 = float(np.clip(1 - sse / max(sst, 1e-12), -1, 1))
+    bp = b * YS / XS
+    lb0 = float(np.log(max(bp[0], 50.0) / 1800)); pos = float(bp[0] > 50)
+    f = np.array([lb0, np.arcsinh(bp[1] / 10), np.arcsinh(bp[2] / 0.3), np.arcsinh(bp[3] / 2000), r2, np.log1p(nrow * 1024) / 7, pos, 1.0])
+    return f, lb0 * pos
+
+
 # ---------------- network ----------------
 def gelu(x):
     return 0.5 * x * (1 + erf(x / np.sqrt(2)))
@@ -165,7 +224,7 @@ class TripDetective:
         self.W = {k: z[k] for k in z.files}
         self.meta = json.loads(str(self.W['meta']))
         self.nb = int(self.W['n_blocks'])
-        self.sigk = self.meta.get('sigk', {}); self.feat = int(self.meta.get('feat', 1))
+        self.sigk = self.meta.get('sigk', {}); self.feat = int(self.meta.get('feat', 1)); self.phys = int(self.meta.get('phys', 0))
 
     def encode(self, x, m, sc=None):
         W = self.W
@@ -182,19 +241,24 @@ class TripDetective:
         mx = (h * mk + (mk - 1) * 1e4).max(1)
         dur = m.sum() / 1024.0
         f = np.r_[mean, mx, dur, np.log(dur + 1e-3)]
-        if self.feat >= 3: f = np.r_[f, sc]
+        if self.feat >= 3: f = np.r_[f, sc[:NSC]]
         f = gelu(W['trip0_w'] @ f + W['trip0_b'])
         return W['trip1_w'] @ f + W['trip1_b']
 
-    def heads(self, E):
+    def heads(self, E, SC=None):
         W = self.W
         z = np.mean(E, 0)
         z = np.r_[z, np.log(len(E))]
+        sk = 0.0
+        if self.phys:
+            f, lb0 = phys_features(np.sum([sc[NSC:NSC + NPS] for sc in SC], 0))
+            z = np.r_[z, f]; sk = float(W['skip'][0]) * lb0
         z = gelu(W['car0_w'] @ z + W['car0_b']); z = gelu(W['car1_w'] @ z + W['car1_b'])
         sm = lambda u: np.exp(u - u.max()) / np.exp(u - u.max()).sum()
         arch = sm(W['arch_w'] @ z + W['arch_b']); strat = sm(W['strat_w'] @ z + W['strat_b'])
         r = W['reg_w'] @ z + W['reg_b']; nr = len(r) // 2
-        mu, sig = r[:nr], np.exp(np.clip(r[nr:], -6, 3))
+        mu, sig = r[:nr].copy(), np.exp(np.clip(r[nr:], -6, 3))
+        mu[0] += sk
         led = []
         for e in E:
             u = gelu(W['led0_w'] @ np.r_[e, z] + W['led0_b']); u = W['led1_w'] @ u + W['led1_b']
@@ -203,8 +267,9 @@ class TripDetective:
 
     def predict_raw(self, raws, flags):
         """raws: list of (len(RAW), n) arrays; flags: list of flag vectors -> network units (one pooled car)"""
-        E = [self.encode(*net_input(r, np.asarray(f, np.float32), feat=self.feat)) for r, f in zip(raws, flags)]
-        h = self.heads(E)
+        I = [net_input(r, np.asarray(f, np.float32), feat=self.feat) for r, f in zip(raws, flags)]
+        E = [self.encode(*i) for i in I]
+        h = self.heads(E, [i[2] for i in I])
         return dict(arch=h['arch'][None], mu=h['mu'][None], sig=h['sig'][None], led_mu=np.stack([l[0] for l in h['led']]))
 
     def read_car(self, trips, fuel_estimated=True):
@@ -215,8 +280,9 @@ class TripDetective:
             raw = raw_from_log(a, fl)
             for s, e in windows(raw.shape[1]):
                 raws.append(raw[:, s:e]); fls.append(np.array([float(fl[k]) for k in FLAGS], np.float32)); tid.append(t)
-        E = [self.encode(*net_input(r, f, feat=self.feat)) for r, f in zip(raws, fls)]
-        h = self.heads(E)
+        I = [net_input(r, f, feat=self.feat) for r, f in zip(raws, fls)]
+        E = [self.encode(*i) for i in I]
+        h = self.heads(E, [i[2] for i in I])
         A = self.meta['archs']; S = self.meta['strats']; mu, sg = h['mu'], h['sig']
         km = self.sigk.get('mass_car' if len(trips) > 1 else 'mass_trip', 1.0)
         kd = self.sigk.get('disp_car' if len(trips) > 1 else 'disp_trip', 1.0)
@@ -244,3 +310,33 @@ class TripDetective:
 
     def read_trip(self, trip, fuel_estimated=True):
         return self.read_car([trip], fuel_estimated)
+
+
+class TripDetectiveBus:
+    """City-bus mass from a power log (v2.0): a separate network trained only on simulated electric buses (RoadSim class
+    'bus'), shown to it as a scaled car (power / 12, mass / 12). Graded on ZTBus trolleybus legs against 19,000 kg +
+    70 kg per passenger (MODEL_CARD.md: it follows passengers only weakly).
+
+        bus = TD.TripDetectiveBus()
+        r = bus.read_leg(leg)      # leg: dict of 1 Hz arrays v [m/s], power_W (total DC power, + traction), grade,
+                                   # T_amb, rho_air, optional valid
+    """
+    SCALE = 12.0
+
+    def __init__(self, path=None):
+        self.td = TripDetective(path or os.path.join(HERE, 'tripdetective_bus_weights.npz'))
+
+    def raw(self, a):
+        n = len(a['v'])
+        t = dict(v=a['v'], grade=a.get('grade'), T_amb=a.get('T_amb'), rho_air=a.get('rho_air'), valid=a.get('valid'),
+                 batt_current=np.nan_to_num(np.asarray(a['power_W'], float)) / 1000.0 / self.SCALE, batt_voltage=np.full(n, 1000.0),
+                 soc=np.full(n, 0.5))
+        fl = dict(has_fuel=False, fuel_est=False, has_rpm=False, has_batt=True, has_aux=False)
+        return raw_from_log(t, fl), np.array([float(fl[k]) for k in FLAGS], np.float32)
+
+    def read_leg(self, leg):
+        raw, fl = self.raw(leg)
+        I = [net_input(raw[:, s:e], fl, feat=self.td.feat) for s, e in windows(raw.shape[1])]
+        h = self.td.heads([self.td.encode(*i) for i in I], [i[2] for i in I])
+        m = 1800 * np.exp(h['mu'][0]) * self.SCALE; s = h['sig'][0] * self.td.sigk.get('mass_bus', 1.0)
+        return dict(mass_kg=float(m), mass_kg_1sigma=(float(m * np.exp(-s)), float(m * np.exp(s))), n_windows=len(I))
