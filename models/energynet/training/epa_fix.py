@@ -16,11 +16,13 @@ w = t.groupby(['epa_vehicle_id', 'cyc']).fe_mpg.median().unstack()
 w.columns = [f'{c}_mpg_fix' for c in w.columns]
 w.to_parquet(_P.WORK + '/data/epa_fixed.parquet')
 v = rd.epa_testcars().join(w)
+v['FTPcold_mpg_fix'] = v.FTP_cold_mpg; v['SC03_mpg_fix'] = v.SC03_mpg      # Phase D: 20 F cold FTP and SC03 (wide table)
 print('medians conv', v[v.architecture == 'conv'][['FTP_mpg_fix', 'HWY_mpg_fix', 'US06_mpg_fix']].median().to_dict())
 e = v.assign(F50=v.A_N + v.B_N_per_mps * 22.352 + v.C_N_per_mps2 * 22.352 ** 2)
 res = {}
 for arch, cyc_, ycol in [('conv', 'FTP', 'FTP_mpg_fix'), ('conv', 'HWY', 'HWY_mpg_fix'), ('conv', 'US06', 'US06_mpg_fix'),
-                         ('hev', 'FTP', 'FTP_mpg_fix'), ('hev', 'HWY', 'HWY_mpg_fix'), ('hev', 'US06', 'US06_mpg_fix')]:
+                         ('hev', 'FTP', 'FTP_mpg_fix'), ('hev', 'HWY', 'HWY_mpg_fix'), ('hev', 'US06', 'US06_mpg_fix'),
+                         ('conv', 'FTPcold', 'FTPcold_mpg_fix'), ('conv', 'SC03', 'SC03_mpg_fix')]:
     d = e[(e.architecture == arch) & e[ycol].notna() & e.F50.gt(0) & e.test_mass_kg.gt(0) & e.displacement_L.gt(0) & e.rated_hp.gt(0) & e.fuel.eq('gasoline')].copy()
     d['y'] = 1 / d[ycol]
     dv, ex = d[d.split == 'dev'], d[d.split == 'exam']

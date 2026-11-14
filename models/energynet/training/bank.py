@@ -2,7 +2,13 @@
 The network sees the OBSERVED trip (station temperature and wind); the simulator drives the TRUE conditions:
 temperature + N(0, 1.5) C, wind x U(0.4, 0.9) (airport 10 m wind vs car height), so weather uncertainty is in the data.
 
-python bank.py <fleet name> <examples per vehicle> <seed>   -> data/bank_<fleet>/chunk_XXX.npz (resumable)
+python bank.py <fleet name> <examples per vehicle> <seed> [workers] [bank name]   -> data/bank_<bank name or fleet>/chunk_XXX.npz (resumable)
+
+Phase D (14 Nov 2026): RoadSim physics v2 via physics.sim (pinned). Dynamometer draws run on a dyno spec (no on-road
+load, HVAC only for SC03 and the 20 F cold FTP) and may start cold (cold UDDS / FTP / 20 F FTP, as v1 intended: v1 passed
+no cycle name, so its dyno draws never started cold). Targets tg (MJ): [raw, raw + v1 on-road wrapper, OBD label model,
+label + wrapper] (physics.targets); for plug-ins the same four again with v1's plug-in hardware patch (wrappers.phev_patch,
+rung r5 re-taken), else a copy. Each row also carries the vehicle's model year (NaN for heavy duty).
 """
 import sys, os, json, time, glob
 from common import *
@@ -10,7 +16,7 @@ import numpy as np
 import realdata as rd
 from roadsim import make_trip
 from roadsim.vehicle import fill_spec
-import routes, features as F, wrappers
+import routes, features as F, wrappers, physics as PHY
 
 TR_KEYS = ('t', 'v', 'grade', 'elev', 'heading', 'T_amb', 'wind_speed', 'wind_dir', 'rho_air', 'surface')
 LD_CYC = ['UDDS', 'FTP', 'HWFET', 'US06', 'SC03', 'NYCC', 'LA92', 'LA92_short', 'IM240', 'EUDC', 'JP_10_15', 'WLTC_3b', 'FTP_cold_20F']
@@ -69,7 +75,7 @@ def draw_route(rng, cls):
     u = rng.random()
     if hd:
         if u < 0.8:
-            tr, kind = routes.synth_trip(rng, cls); return tr, 'synth', False
+            tr, kind = routes.synth_trip(rng, cls); return tr, 'synth', False, None
         cy = cycles()
         names = ['LA92_HD_class3', 'NYCC', 'UDDS', 'cbd14', 'HD_transient_1037A'] if cls == 'bus' else HD_CYC
         n = names[int(rng.integers(len(names)))]
@@ -78,13 +84,13 @@ def draw_route(rng, cls):
             L = int(rng.integers(1200, 3600)); s0 = int(rng.integers(0, len(tr['v']) - L))
             tr = {k: v[s0:s0 + L] for k, v in tr.items()}; tr['t'] = np.arange(L, dtype=np.float32)
         tr = reweather(_fill(tr), rng) if rng.random() < 0.7 else _fill(tr)
-        return tr, 'cyc_road', False
+        return tr, 'cyc_road', False, None
     if u < 0.45:
         R = ved_routes(); tr = R[int(rng.integers(len(R)))]
         tr = reweather(tr, rng) if rng.random() < 0.4 else dict(tr)
-        return tr, 'ved', False
+        return tr, 'ved', False, None
     if u < 0.80:
-        tr, kind = routes.synth_trip(rng, cls); return tr, 'synth', False
+        tr, kind = routes.synth_trip(rng, cls); return tr, 'synth', False, None
     cy = cycles(); n = LD_CYC[int(rng.integers(len(LD_CYC)))]
     tr = _fill(cy[n])
     if u < 0.93:
@@ -92,13 +98,13 @@ def draw_route(rng, cls):
         tr = dict(tr); N = len(tr['v'])
         tr.update(T_amb=np.full(N, T, np.float32), wind_speed=np.zeros(N, np.float32), grade=np.zeros(N, np.float32),
                   surface=np.zeros(N, np.int8), rho_air=routes.rho_air(np.full(N, T), np.zeros(N)).astype(np.float32))
-        return tr, 'dyno', True
+        return tr, 'dyno', True, n
     tr = reweather(tr, rng)
     N = len(tr['v'])
     x = np.concatenate([[0], np.cumsum(tr['v'][1:])])
     tr['grade'] = routes.grade_profile(rng, x, float(rng.uniform(0.003, 0.03)), rng.uniform(200, 1000)).astype(np.float32)
     tr['heading'] = np.full(N, rng.uniform(0, 360), np.float32)
-    return tr, 'cyc_road', False
+    return tr, 'cyc_road', False, None
 
 
 def _fill(tr):
@@ -151,17 +157,25 @@ def veh_record(spec, full):
                 artic=float(bool(spec.get('articulated'))))
 
 
-def vehicle_examples(spec, lab, K, rng, vid):
+def vehicle_examples(spec, lab, K, rng, vid, my=None):
     rows = []
     full = fill_spec(spec); rec = veh_record(spec, full)
     cls, arch = spec['class'], spec['architecture']
+    patched = wrappers.phev_patch(spec) if arch.startswith('phev') else None
     for k in range(K):
         try:
-            tr, src, dyno = draw_route(rng, cls)
+            tr, src, dyno, name = draw_route(rng, cls)
             obs, tru = observed_and_true(tr, rng, dyno)
-            temps, cold, soc, disp = init_state(rng, spec, full, tru, src, dyno)
-            out = wrappers.simulate(spec, tru, init_soc=soc, init_temps=temps, record=True, rng=int(rng.integers(1 << 30)))
-            tg = wrappers.targets(out, spec, tru['T_amb'], dyno)
+            temps, cold, soc, disp = init_state(rng, spec, full, tru, src, dyno, name)
+            hv = dyno and name in ('SC03', 'FTP_cold_20F')
+            seed = int(rng.integers(1 << 30))
+            out = PHY.sim(spec, tru, dyno=dyno, hvac=hv, init_soc=soc, init_temps=temps, record=True, rng=seed)
+            tg = PHY.targets(out, spec, tru['T_amb'], dyno)
+            if patched is not None:
+                o2 = PHY.sim(patched, tru, dyno=dyno, hvac=hv, init_soc=soc, init_temps=temps, record=True, rng=seed)
+                tg = tg + PHY.targets(o2, patched, tru['T_amb'], dyno)
+            else:
+                tg = tg + tg
         except Exception as ex:
             print('fail', spec['id'], ex, flush=True); continue
         P = F.prep(obs)
@@ -171,7 +185,7 @@ def vehicle_examples(spec, lab, K, rng, vid):
         comp = [L['aero'], L['rolling'], L['brake'], L['aux'], L['eng_loss'] + L['mot_loss'] + L['trans_loss'] + L['batt_loss'],
                 L['grade'], L['kinetic_change'], L['fuel'], L['batt_chem_out']]
         rows.append(dict(R=Rv.astype(np.float32), PH=PH.astype(np.float32), comp=np.array(comp, np.float32) / 1e3,
-                         tg=np.array([tg['E_raw'], tg['E_rw'], tg['E_maf_raw'], tg['E_maf_rw']], np.float32),
+                         tg=np.array(tg, np.float32), my=float(my) if my else np.nan,
                          soc=np.nan if disp is None else disp, cold=float(cold), warm=float(not cold), dyno=float(dyno),
                          src=SRC.index(src), dur=float(len(obs['v'])), dist=float(P['v'].sum()),
                          lab=np.array([lab.get('label_city_fuel', np.nan), lab.get('label_hwy_fuel', np.nan),
@@ -180,21 +194,33 @@ def vehicle_examples(spec, lab, K, rng, vid):
     return rows
 
 
-def main(fleet, K, seed):
-    fdir = f'{EN}/data/fleet_{fleet}'; odir = f'{EN}/data/bank_{fleet}'; os.makedirs(odir, exist_ok=True)
-    chunks = sorted(glob.glob(f'{fdir}/chunk_*.json'))
-    for cp in chunks:
-        ci = int(cp[-8:-5]); op = f'{odir}/chunk_{ci:03d}.npz'
-        if os.path.exists(op): continue
-        rng = np.random.default_rng([seed, ci])
-        rows = []; t0 = time.time()
-        for vi, V in enumerate(json.load(open(cp))):
-            rows += vehicle_examples(V['spec'], V['labels'] or {}, K, rng, ci * 100 + vi)
-        D = {k: np.stack([r[k] for r in rows]) for k in rows[0]}
-        np.savez_compressed(op + '.tmp.npz', **D); os.replace(op + '.tmp.npz', op)
-        print('bank chunk', ci, len(rows), round(time.time() - t0, 1), flush=True)
+def one_chunk(args):
+    fleet, K, seed, cp, out = args
+    odir = f'{EN}/data/bank_{out}'
+    ci = int(cp[-8:-5]); op = f'{odir}/chunk_{ci:03d}.npz'
+    if os.path.exists(op): return
+    rng = np.random.default_rng([seed, ci])
+    rows = []; t0 = time.time()
+    for vi, V in enumerate(json.load(open(cp))):
+        rows += vehicle_examples(V['spec'], V['labels'] or {}, K, rng, ci * 100 + vi, V.get('model_year'))
+    D = {k: np.stack([r[k] for r in rows]) for k in rows[0]}
+    np.savez_compressed(op + '.tmp.npz', **D); os.replace(op + '.tmp.npz', op)
+    print('bank chunk', ci, len(rows), round(time.time() - t0, 1), flush=True)
+
+
+def main(fleet, K, seed, workers=1, out=None):
+    out = out or fleet
+    fdir = f'{EN}/data/fleet_{fleet}'; odir = f'{EN}/data/bank_{out}'; os.makedirs(odir, exist_ok=True)
+    jobs = [(fleet, K, seed, cp, out) for cp in sorted(glob.glob(f'{fdir}/chunk_*.json'))]
+    if workers <= 1:
+        for j in jobs: one_chunk(j)
+    else:
+        from multiprocessing import Pool
+        with Pool(workers) as p:
+            list(p.imap_unordered(one_chunk, jobs))
 
 
 ARCHS, CLASSES = F.ARCHS, F.CLASSES
 if __name__ == '__main__':
-    main(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]))
+    main(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]) if len(sys.argv) > 4 else 1,
+         sys.argv[5] if len(sys.argv) > 5 else None)

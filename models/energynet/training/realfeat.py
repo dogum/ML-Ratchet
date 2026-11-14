@@ -1,7 +1,13 @@
 """Real-data records (same layout as the simulated bank) for dev gates and the exam.
-python realfeat.py ved_dev | ved_exam | epa_dev | epa_exam | hd       -> data/real_<name>.npz + _meta.parquet
-Each record carries a fixed tier: what the real data actually provides."""
-import sys, json
+python realfeat.py ved_dev | ved_exam | epa_dev | epa_exam | hd | ztb       -> data/real_<name>.npz + _meta.parquet
+Each record carries a fixed tier: what the real data actually provides.
+
+Phase D (14 Nov 2026): records carry the model year (VED: median year of the fueleconomy.gov models RoadData matched
+to the car; EPA: the test car's model year; tier 'my'). EPA adds the 20 F cold FTP (cold + hot UDDS at -6.7 C;
+FTP_cold_mpg) and SC03 (35 C, A/C; SC03_mpg) tests. 'ztb': every leg of all 1,409 full-ZTBus missions (split by month,
+proc/hd/ztbus_full_splits.json) plus one standstill record per mission for the layover time between legs, so mission
+totals are the sum of the mission's records."""
+import sys, json, re
 from common import *
 import numpy as np, pandas as pd
 import realdata as rd
@@ -10,9 +16,14 @@ from bank import TR_KEYS, _fill
 
 MI = 1609.344
 FIELDS = ['arch', 'cls', 'm_true', 'm_rep', 'cda', 'crr', 'cv', 'disp', 'power', 'diesel', 'trans', 'ngears', 'cap', 'soc', 'cold', 'warm',
-          'dyno', 'dur', 'dist', 'y', 'vr']
+          'dyno', 'dur', 'dist', 'y', 'vr', 'my']
 TF = dict(m_level=0, rl=False, disp=False, power=False, trans=False, ngears=False, cap=False, labf=False, labe=False, soc=False,
-          thermal=False, maf=False, lab_noise=0.0)
+          thermal=False, maf=False, lab_noise=0.0, my=False)
+
+
+def ved_model_year(r):
+    ys = [int(y) for y in re.findall(r'\b(19\d\d|20\d\d) ', str(r.example_models or ''))]
+    return float(np.median(ys)) if ys else np.nan
 
 
 def mpg_to_mjkm(mpg, dens=745.0):
@@ -79,14 +90,17 @@ def ved(split):
         tr = 'AMT' if tr == 'manual' else tr
         rec = dict(arch=F.ARCHS.index(arch), cls=F.CLASSES.index(cls), disp=r.displacement_L if np.isfinite(r.displacement_L) else np.nan,
                    diesel=float(r.fuel == 'diesel'), trans=F.TRANS.index(tr) if tr in F.TRANS else -1, cap=cap if cap else np.nan,
-                   soc=soc, warm=float(warm), cold=0.0, dyno=0.0, y=y, vr=valid_ratio(P, ok, m_rep or F.CLS[cls][0], cls))
+                   soc=soc, warm=float(warm), cold=0.0, dyno=0.0, y=y, vr=valid_ratio(P, ok, m_rep or F.CLS[cls][0], cls),
+                   my=ved_model_year(r))
         tier = dict(m_level=1 if m_rep else 0, disp=bool(np.isfinite(r.displacement_L)), trans=tr in F.TRANS, cap=bool(cap),
                     labf=bool(np.isfinite(lab[0]) and np.isfinite(lab[1])), labe=bool(np.isfinite(lab[2]) and np.isfinite(lab[3])),
                     soc=bool(np.isfinite(soc)), thermal=bool(warm),
-                    maf=(arch != 'bev') and str(meta.get('fuel_source', '')).startswith(('maf', 'absload')))
+                    maf=(arch != 'bev') and str(meta.get('fuel_source', '')).startswith(('maf', 'absload')),
+                    my=bool(np.isfinite(ved_model_year(r))))
         b = base.loc[meta['trip_id']] if meta['trip_id'] in base.index else None
         conv = {'g': LHV, 'kWh': 3.6, 'MJ': 1.0}[unit_of(arch)]
         M = dict(trip_id=meta['trip_id'], vehicle_id=vid, group=vt, arch=arch, cls=cls, T=meta['T_amb_mean'], v_mean=meta['v_mean'],
+                 model_year=ved_model_year(r), v_start=meta['v_start'],
                  dist_km=meta['distance_m'] / 1000, dur_s=meta['duration_s'], idle=meta['idle_frac'], climb=meta['elev_gain_m'],
                  fuel_source=meta.get('fuel_source'), match=r.match_confidence, unit=unit_of(arch), conv=conv,
                  b_y=float(b.y) * conv if b is not None else np.nan,
@@ -98,18 +112,21 @@ def ved(split):
     A.save(f'ved_{split}')
 
 
-EPA_CYC = {'FTP': [('UDDS', True), ('UDDS', False)], 'HWY': [('HWFET', False)], 'US06': [('US06', False)]}
+EPA_CYC = {'FTP': [('UDDS', True), ('UDDS', False)], 'HWY': [('HWFET', False)], 'US06': [('US06', False)],
+           'FTPcold': [('UDDS', True), ('UDDS', False)], 'SC03': [('SC03', False)]}
+EPA_T = {'FTPcold': -6.7, 'SC03': 35.0}       # test temperature (C); the others 24 C
+EPA_COL = {'FTP': 'FTP_mpg_fix', 'HWY': 'HWY_mpg_fix', 'US06': 'US06_mpg_fix', 'FTPcold': 'FTP_cold_mpg', 'SC03': 'SC03_mpg'}
 
 
 def epa(split):
     A = Acc(); e = rd.epa_testcars(split=split).join(pd.read_parquet(f'{EN}/data/epa_fixed.parquet'))   # corrected cycle labels (epa_fix.py)
     cyc = rd.cycles()
     Ps = {}
-    for n in ('UDDS', 'HWFET', 'US06'):
+    for n, T in (('UDDS', 24.0), ('HWFET', 24.0), ('US06', 24.0), ('UDDS', -6.7), ('SC03', 35.0)):
         tr = _fill({k: cyc[n][1][k] for k in TR_KEYS if k in cyc[n][1]}); N = len(tr['v'])
-        tr.update(T_amb=np.full(N, 24.0, np.float32), wind_speed=np.zeros(N, np.float32), grade=np.zeros(N, np.float32))
+        tr.update(T_amb=np.full(N, T, np.float32), wind_speed=np.zeros(N, np.float32), grade=np.zeros(N, np.float32))
         tr['rho_air'] = routes.rho_air(tr['T_amb'], np.zeros(N)).astype(np.float32)
-        Ps[n] = F.prep(tr)
+        Ps[(n, T)] = F.prep(tr)
     from realdata import _TRANS
     for vid, r in e.iterrows():
         if r.architecture not in ('conv', 'hev', 'bev'): continue
@@ -123,19 +140,19 @@ def epa(split):
         pw = float(r.rated_hp) * 0.7457 if (pd.notna(r.rated_hp) and r.rated_hp > 0 and arch != 'bev') else np.nan
         ng = float(r.gears) if pd.notna(r.gears) and r.gears > 0 else np.nan
         for c, legs in EPA_CYC.items():
-            col = (f'{c}_mpg_fix' if arch != 'bev' else {'FTP': 'CD_UDDS_kWh_per_mi', 'HWY': 'CD_HWY_kWh_per_mi', 'US06': None}[c])
+            col = (EPA_COL[c] if arch != 'bev' else {'FTP': 'CD_UDDS_kWh_per_mi', 'HWY': 'CD_HWY_kWh_per_mi'}.get(c))
             if col is None or col not in r or not (pd.notna(r[col]) and r[col] > 0): continue
             if arch != 'bev' and r.fuel != 'gasoline': continue
             for (cn, cold) in legs:
                 if arch == 'bev' and cold: continue
                 rec = dict(arch=F.ARCHS.index(arch), cls=F.CLASSES.index(cls), disp=disp, power=pw, diesel=0.0,
                            trans=F.TRANS.index(tr) if tr in F.TRANS else -1, ngears=ng, cold=float(cold), warm=float(not cold),
-                           dyno=1.0, y=float(r[col]), vr=1.0, soc=np.nan)
+                           dyno=1.0, y=float(r[col]), vr=1.0, soc=np.nan, my=float(r.model_year))
                 tier = dict(m_level=2, rl=True, disp=bool(np.isfinite(disp)), power=bool(np.isfinite(pw)), trans=tr in F.TRANS,
-                            ngears=bool(np.isfinite(ng)) and tr in F.TRANS, thermal=True)
+                            ngears=bool(np.isfinite(ng)) and tr in F.TRANS, thermal=True, my=True)
                 M = dict(vehicle_id=vid, family=r.family, arch=arch, cls=cls, test=c, cycle=cn, cold=cold, y=float(r[col]),
                          ycol=col, model_year=int(r.model_year), make=r.make, model=r.model)
-                A.add(Ps[cn], cls, rec, tier, meta=M, m_true=m, cda=cda, crr=crr, cv=cv)
+                A.add(Ps[(cn, EPA_T.get(c, 24.0))], cls, rec, tier, meta=M, m_true=m, cda=cda, crr=crr, cv=cv)
         if len(A.rows) % 5000 == 0: print(len(A.rows), flush=True)
     A.save(f'epa_{split}')
 
@@ -212,8 +229,45 @@ def hd():
     A.save('hd')
 
 
+ZTB_CURB_KG = 19000.0     # HESS lighTram 19 DC, curb ~19 t (DATA.md, public spec): what a fleet operator knows pre-trip
+
+
+def ztb():
+    """all legs of the 1,409 full-ZTBus missions (dev and exam by month) + one standstill layover record per mission.
+    Rows carry the v1 tier (class + architecture only) and m_rep = 19 t curb (read by rung r9's tier)."""
+    A = Acc()
+    sp = rd.ztbus_full(table='splits')['missions']
+    M = rd.ztbus_full(table='missions').set_index('name')
+    seen = {}
+    for split in ('dev', 'exam'):
+        for meta, arr in rd.load_trips(split, source='ZTBus_full'):
+            obs = {k: arr[k] for k in TR_KEYS}; P = F.prep(obs)
+            ms = meta['mission']
+            rec = dict(arch=6, cls=4, trans=F.TRANS.index('single'), dyno=0.0, warm=1.0, cold=0.0, y=meta['elec_kWh'] * 3.6, vr=1.0)
+            A.add(P, 'bus', rec, dict(m_level=0, trans=True, thermal=True), m_rep=ZTB_CURB_KG,
+                  meta=dict(set='ZTBus_full', kind='leg', split=sp[ms], trip_id=meta['trip_id'], mission=ms,
+                            label_ok=bool(meta.get('q_label_ok', True)), dist_km=meta['distance_m'] / 1000,
+                            dur_s=float(meta['duration_s']), T=meta['T_amb_mean'], y=meta['elec_kWh'] * 3.6,
+                            route=str(meta.get('route')), season=str(meta.get('season'))))
+            seen[ms] = seen.get(ms, 0) + float(meta['duration_s'])
+            if len(A.rows) % 1000 == 0: print(len(A.rows), flush=True)
+    for ms, r in M.iterrows():
+        gap = float(r.n_seconds) - seen.get(ms, 0.0)
+        N = int(max(gap, 60))
+        T = float(r.T_amb_mean_C) if np.isfinite(r.T_amb_mean_C) else 15.0
+        tr = _fill({'v': np.zeros(N, np.float32)}); tr['T_amb'] = np.full(N, T, np.float32)
+        tr['rho_air'] = routes.rho_air(tr['T_amb'], np.full(N, 410.0)).astype(np.float32)
+        P = F.prep(tr)
+        rec = dict(arch=6, cls=4, trans=F.TRANS.index('single'), dyno=0.0, warm=1.0, cold=0.0, y=np.nan, vr=1.0)
+        A.add(P, 'bus', rec, dict(m_level=0, trans=True, thermal=True), m_rep=ZTB_CURB_KG,
+              meta=dict(set='ZTBus_full', kind='layover', split=sp[ms], trip_id=f'{ms}_layover', mission=ms, label_ok=False,
+                        dist_km=0.0, dur_s=float(max(gap, 0.0)), T=T, y=np.nan, route=str(r.busRoute), season=str(r.season)))
+    A.save('ztb')
+
+
 if __name__ == '__main__':
     w = sys.argv[1]
     if w.startswith('ved_'): ved(w[4:])
     elif w.startswith('epa_'): epa(w[4:])
     elif w == 'hd': hd()
+    elif w == 'ztb': ztb()

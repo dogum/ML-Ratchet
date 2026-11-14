@@ -5,8 +5,9 @@ A trip is described by
   physics integrals (8) for a set of road-load parameters (m, CdA, Crr, c_v): positive / negative wheel energy and
       the work of aero, rolling, grade up/down, inertia, from the same road-load physics as RoadSim (station wind
       along the heading, ISO 28580 tyre temperature factor, surface factors)
-  vehicle vector V (47): architecture, class, mass, road load, engine, transmission, battery, label energy, start SOC,
-      thermal state, label kind (OBD MAF estimate), dynamometer test, each unknown field masked (value 0, flag 0)
+  vehicle vector V (49): architecture, class, mass, road load, engine, transmission, battery, label energy, start SOC,
+      thermal state, label kind (OBD MAF estimate), dynamometer test, model year (v2), each unknown field masked
+      (value 0, flag 0). v1 networks read the first 47 (149 inputs in all).
 The network predicts log(E / E_phys), E_phys being a generic model-free energy estimate from the physics integrals.
 """
 import numpy as np
@@ -24,7 +25,7 @@ SURF = np.array([1.0, 0.95, 1.12, 1.6, 2.2])
 SPD_E = [0.5, 4.17, 8.33, 13.89, 19.44, 25.0, 30.56]           # idle | <15 | 15-30 | 30-50 | 50-70 | 70-90 | 90-110 | >110 km/h
 ACC_E = [-1.5, -0.5, -0.1, 0.1, 0.5, 1.5]
 GRD_E = [-0.06, -0.03, -0.01, 0.01, 0.03, 0.06]
-NR, NP, NV, NF = 90, 8, 47, 12
+NR, NP, NV, NF = 90, 8, 49, 12
 # generic physics-estimate constants (fitted on the simulated training bank only; see fit_phys in train.py)
 PHYS_K = {'ice': [0.2845, 4642.0], 'hev': [0.3023, 0.3757, 1662.0], 'bev': [0.8928, 0.6305, 565.9]}
 
@@ -143,8 +144,9 @@ def phys_vec(ph, E, Eh, Eb, f, m, dist):
 
 
 def vehicle_vec(arch, cls, m_used, m_level, cda, crr, rl_known, disp, power, diesel, trans, ngears, cap, lab_fuel, lab_elec,
-                soc, warm, cold, maf, dyno, E, vmean):
-    """lab_fuel / lab_elec: (city MJ/km, hwy MJ/km) or None. m_level: 2 exact, 1 rounded/reported, 0 unknown."""
+                soc, warm, cold, maf, dyno, E, vmean, model_year=None):
+    """lab_fuel / lab_elec: (city MJ/km, hwy MJ/km) or None. m_level: 2 exact, 1 rounded/reported, 0 unknown.
+    model_year: the vehicle's model year (fueleconomy.gov / EPA), or None."""
     V = np.zeros(NV); i = 0
     V[ARCHS.index(arch)] = 1; i = 7
     V[i + CLASSES.index(cls)] = 1; i = 14
@@ -167,4 +169,5 @@ def vehicle_vec(arch, cls, m_used, m_level, cda, crr, rl_known, disp, power, die
         i += 3
     if soc is not None: V[41] = soc; V[42] = 1
     V[43] = float(bool(warm)); V[44] = float(bool(cold)); V[45] = float(bool(maf)); V[46] = float(bool(dyno))
+    if model_year: V[47] = (float(model_year) - 2015.0) / 10.0; V[48] = 1
     return V

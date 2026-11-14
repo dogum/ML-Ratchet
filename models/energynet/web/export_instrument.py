@@ -77,7 +77,8 @@ def main():
                 W[f"m{j}_{k}"] = z[k]
         keep[f"m{j}_x_mu"] = keep[f"m{j}_x_sd"] = "f32"  # normalisation stays float32 (exact); layers go float16
     meta = {"members": [os.path.basename(p)[:-4] for p in paths], "mode": net.net.mode, "phys_k": F.PHYS_K,
-            "sigma_factors": net.k, "n_params": int(sum(v.size for k, v in W.items() if "x_" not in k))}
+            "sigma_factors": net.k, "n_params": int(sum(v.size for k, v in W.items() if "x_" not in k)),
+            "masked": [list(m.mask) for m in net.net.m]}
     write_pack(OUT / "weights", W, dtype="f16", meta=meta, keep=keep)
 
     # the browser sees float16 layers: reference outputs use the same values

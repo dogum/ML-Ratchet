@@ -1,0 +1,141 @@
+[
+ {
+  "name": "r1_abs",
+  "version": "a",
+  "mode": "abs",
+  "change": "MLP predicts log trip energy directly (physics integrals only as inputs); RoadSim physics v2, raw simulated energy"
+ },
+ {
+  "name": "r2_corr",
+  "version": "a",
+  "mode": "corr",
+  "change": "predict a correction to the generic road-load physics estimate"
+ },
+ {
+  "name": "r3_lab",
+  "version": "b",
+  "mode": "corr",
+  "change": "RoadSim's OBD label model (roadsim.obd.label_fuel: MAF fuel-cut air, missed enrichment) for MAF-estimated fuel; flag input"
+ },
+ {
+  "name": "r4_rw",
+  "version": "c",
+  "mode": "corr",
+  "change": "v1's dev-fitted on-road loads wrapper on top of v2 (v2 already carries its own on-road load)"
+ },
+ {
+  "name": "r5_phev",
+  "version": "f",
+  "mode": "corr",
+  "change": "v1's plug-in hardware patch on the generated plug-ins (pack power >= 1.2 x motor, resistance / 2.5, MG2 torque x 1.8); dev twin read: the network put the dev plug-ins 33% above their own RoadSim twins"
+ },
+ {
+  "name": "r5b_labphev",
+  "version": "e",
+  "mode": "corr",
+  "change": "both near-misses together: RoadSim's OBD label model (r3) and the plug-in patch (r5), each of which improved D2 by just under 0.01 alone"
+ },
+ {
+  "name": "r6_ens",
+  "version": "e",
+  "mode": "corr",
+  "members": [
+   "r5b_labphev",
+   "r6_s1",
+   "r6_s2",
+   "r6_s3",
+   "r6_s4"
+  ],
+  "change": "ensemble of 5 networks (seeds); sigma includes their spread"
+ },
+ {
+  "name": "r7_era",
+  "version": "e",
+  "mode": "corr",
+  "members": [
+   "r7_s0",
+   "r7_s1",
+   "r7_s2",
+   "r7_s3",
+   "r7_s4"
+  ],
+  "change": "model-year input (VED: fueleconomy.gov models matched to the car; EPA: test year); the fleet's engine efficiency follows the fueleconomy.gov dev era trend, so the network can tell a 2006 car from a 2022 one"
+ },
+ {
+  "name": "r8_epahyb",
+  "version": "e",
+  "mode": "corr",
+  "members": [
+   "r7_s0",
+   "r7_s1",
+   "r7_s2",
+   "r7_s3",
+   "r7_s4"
+  ],
+  "era": true,
+  "gate_only": true,
+  "epa_hyb": true,
+  "change": "EPA test-car hybrids told their hybrid system (P2 / power-split / series, from the model line; RoadSim's public spec-sheet table) instead of 'power-split' for all; the same networks"
+ },
+ {
+  "name": "r9_bus",
+  "version": "e",
+  "mode": "corr",
+  "members": [
+   "r7_s0",
+   "r7_s1",
+   "r7_s2",
+   "r7_s3",
+   "r7_s4"
+  ],
+  "era": true,
+  "gate_only": true,
+  "bus_spec": true,
+  "change": "ZTBus told the trolleybus's published curb mass (19 t, 'reported' mass) instead of the class prior (15 t); the same networks"
+ },
+ {
+  "name": "r9b_inputs",
+  "version": "e",
+  "mode": "corr",
+  "members": [
+   "r7_s0",
+   "r7_s1",
+   "r7_s2",
+   "r7_s3",
+   "r7_s4"
+  ],
+  "era": true,
+  "gate_only": true,
+  "bus_spec": true,
+  "epa_hyb": true,
+  "change": "both public-spec inputs together (r8 EPA hybrid system + r9 bus curb mass), each short of the margin alone"
+ },
+ {
+  "name": "r10_epalab",
+  "version": "e+L",
+  "mode": "corr",
+  "members": [
+   "r10_s0",
+   "r10_s1",
+   "r10_s2",
+   "r10_s3",
+   "r10_s4"
+  ],
+  "era": true,
+  "change": "simulated window-sticker labels by RoadSim's EPA procedure emulation (FTP-75 with hot soak, hybrids preconditioned and corrected for net battery energy) instead of fleet.py's shortcut; physics rung (labels change)"
+ },
+ {
+  "name": "r11_big",
+  "version": "e",
+  "mode": "corr",
+  "members": [
+   "r11_s0",
+   "r11_s1",
+   "r11_s2",
+   "r11_s3",
+   "r11_s4"
+  ],
+  "era": true,
+  "change": "GPU: twice the simulated data (a second bank of 28,800 trips on the same fleet, new seed), wider networks (512 units, 0.73M weights each) and 100 epochs"
+ }
+]

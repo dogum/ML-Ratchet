@@ -14,7 +14,7 @@ vehicle : dict, every field optional except class and architecture:
           max_power_kW, fuel ('gasoline'|'diesel'), transmission (AT|DCT|CVT|AMT|single|eCVT), n_gears, battery_kWh,
           label_city / label_hwy (window-sticker mpg; for a BEV kWh/100 mi), label_city_kWh_per_100mi / label_hwy_... (PHEV),
           soc_start (displayed usable SOC 0..1), thermal ('warm' | 'cold' | None), obd_maf (True: predict what an OBD
-          MAF-based fuel estimate reports), dyno (True: dynamometer test, no on-road accessories)
+          MAF-based fuel estimate reports), dyno (True: dynamometer test, no on-road accessories), model_year
 Output energy: fuel chemical energy (conv/HEV, fuel g x 0.042 MJ/g), battery DC net discharge (BEV), sum (PHEV)."""
 import os, json
 import numpy as np
@@ -71,7 +71,8 @@ class EnergyNet:
         th = veh.get('thermal')
         V = F.vehicle_vec(arch, cls, m, ml, cda, crr, bool(rl), veh.get('displacement_L'), veh.get('max_power_kW'), diesel,
                           veh.get('transmission'), veh.get('n_gears'), cap, lf, le, soc, th == 'warm', th == 'cold',
-                          bool(veh.get('obd_maf')), bool(veh.get('dyno')), (E, dist / 1000), dist / max(dur, 1))
+                          bool(veh.get('obd_maf')), bool(veh.get('dyno')), (E, dist / 1000), dist / max(dur, 1),
+                          veh.get('model_year'))
         return np.concatenate([F.route_vec(P), F.phys_vec(ph, E, Eh, Eb, f, m, dist), V]), E, dist, dur
 
     def predict(self, trip, veh, group=None):
@@ -80,10 +81,11 @@ class EnergyNet:
         arch = veh['architecture']
         g = group or ('ICE' if arch == 'conv' else 'EV' if arch == 'bev' else 'PHEV' if arch.startswith('phev') else 'HEV')
         cls = veh['class']
-        if cls == 'bus': k = self.k.get('HD_ZTBus_leg' if arch == 'bev' else 'HD_Mersin', 1.0)
+        if cls == 'bus': k = self.k.get('HD_ZTBus', self.k.get('HD_ZTBus_leg', 1.0)) if arch == 'bev' else self.k.get('HD_Mersin', 1.0)
         elif cls in F.HD: k = self.k.get('HD_ICCT', 1.0)
         else: k = self.k.get(f'VED_{g}', 1.0)
-        S = float(s[0]) * k
+        k, tau = (k if isinstance(k, (list, tuple)) else (k, 0.0))     # dev-fitted widening k and car-level term tau
+        S = float(np.sqrt((float(s[0]) * k) ** 2 + tau ** 2))
         e = float(p[0])
         unit, f = ('kWh', 1 / 3.6) if arch == 'bev' else (('MJ', 1.0) if arch.startswith('phev') else ('g fuel', 1 / LHV))
         return dict(energy_MJ=e, value=e * f, unit=unit, sigma_log=S, lo68=e * f * np.exp(-S), hi68=e * f * np.exp(S),

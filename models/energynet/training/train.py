@@ -12,6 +12,8 @@ import dataset as DS, features as F
 
 torch.set_num_threads(1)
 CK = _P.WORK + '/ckpt'
+DEV = 'cuda' if torch.cuda.is_available() else 'cpu'
+MY_COLS = [F.NR + F.NF + 47, F.NR + F.NF + 48]      # model-year input (Phase D rung r7)
 
 
 class Net(nn.Module):
@@ -32,7 +34,7 @@ def comp_targets(B, E):
 
 
 def export(net, mu, sd, path, meta):
-    sdict = {k: v.detach().numpy().astype(np.float32) for k, v in net.state_dict().items()}
+    sdict = {k: v.detach().cpu().numpy().astype(np.float32) for k, v in net.state_dict().items()}
     np.savez(path, x_mu=mu.astype(np.float32), x_sd=sd.astype(np.float32), meta=json.dumps(meta), **{k.replace('.', '_'): v for k, v in sdict.items()})
 
 
@@ -42,37 +44,47 @@ def main():
     ap.add_argument('--epochs', type=int, default=60); ap.add_argument('--hidden', type=int, default=256)
     ap.add_argument('--seed', type=int, default=0); ap.add_argument('--bank', default='train'); ap.add_argument('--lr', type=float, default=2e-3)
     ap.add_argument('--wc', type=float, default=0.2)
+    ap.add_argument('--era', action='store_true', help='read the model-year input (rung r7); otherwise it is held at zero')
+    ap.add_argument('--batch', type=int, default=256)
+    ap.add_argument('--lab', default='lab', help="'lab_epa': window-sticker labels from the EPA procedure emulation (rung r11)")
     a = ap.parse_args()
     B = DS.load_bank(a.bank)
+    if a.lab != 'lab': B['lab'] = B[a.lab]
     n = len(B['arch']); print('bank', n, flush=True)
     rng = np.random.default_rng(a.seed); torch.manual_seed(a.seed)
-    T0 = DS.draw_tiers(B, np.random.default_rng(12345))
+    def tiers(r):
+        T = DS.draw_tiers(B, r)
+        if not a.era: T['my'] = np.zeros(n, bool)
+        return T
+    T0 = tiers(np.random.default_rng(12345))
     X0, E0 = DS.assemble(B, T0)
     mu = X0.mean(0); sd = X0.std(0) + 1e-3
-    net = Net(X0.shape[1], a.hidden)
+    if not a.era: mu[MY_COLS] = 0.0; sd[MY_COLS] = 1.0
+    net = Net(X0.shape[1], a.hidden).to(DEV)
     opt = torch.optim.AdamW(net.parameters(), lr=a.lr, weight_decay=1e-4)
-    steps_per = (n + 255) // 256; total = a.epochs * steps_per
+    bs = a.batch
+    steps_per = (n + bs - 1) // bs; total = a.epochs * steps_per
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=a.lr, total_steps=total, pct_start=0.1)
     ck = f'{CK}/{a.rung}.pt'; ep0 = 0
     if os.path.exists(ck):
-        s = torch.load(ck, weights_only=False); net.load_state_dict(s['net']); opt.load_state_dict(s['opt']); sched.load_state_dict(s['sched'])
+        s = torch.load(ck, weights_only=False, map_location=DEV); net.load_state_dict(s['net']); opt.load_state_dict(s['opt']); sched.load_state_dict(s['sched'])
         ep0 = s['epoch'] + 1; mu, sd = s['mu'], s['sd']; rng = s['rng']; print('resume', ep0, flush=True)
     for ep in range(ep0, a.epochs):
         t0 = time.time()
-        T = DS.draw_tiers(B, rng)
+        T = tiers(rng)
         X, E = DS.assemble(B, T)
         yv = DS.target(B, T, a.version)
         okm = yv > 0.02
         y = np.log(np.maximum(yv, 0.02))
         yy = y - np.log(E) if a.mode == 'corr' else y
         C = comp_targets(B, E)
-        Xt = torch.tensor(np.clip((X - mu) / sd, -8, 8), dtype=torch.float32)
-        yt = torch.tensor(yy, dtype=torch.float32); Ct = torch.tensor(C, dtype=torch.float32)
-        Wt = torch.tensor(okm.astype(np.float32))
-        perm = torch.randperm(n); tot = 0.0
+        Xt = torch.tensor(np.clip((X - mu) / sd, -8, 8), dtype=torch.float32, device=DEV)
+        yt = torch.tensor(yy, dtype=torch.float32, device=DEV); Ct = torch.tensor(C, dtype=torch.float32, device=DEV)
+        Wt = torch.tensor(okm.astype(np.float32), device=DEV)
+        perm = torch.randperm(n, device=DEV); tot = 0.0
         net.train()
         for k in range(steps_per):
-            idx = perm[k * 256:(k + 1) * 256]
+            idx = perm[k * bs:(k + 1) * bs]
             m, ls, c = net(Xt[idx])
             w = Wt[idx]
             nll = ((ls + 0.5 * ((yt[idx] - m) / ls.exp()) ** 2) * w).sum() / w.sum()
@@ -82,12 +94,13 @@ def main():
         net.eval()
         with torch.no_grad():
             m, ls, c = net(Xt)
-            mae = float(np.median(np.abs(m.numpy() - yy)[okm]))
+            mae = float(np.median(np.abs(m.cpu().numpy() - yy)[okm]))
         print(f'ep {ep} nll {tot / steps_per:.4f} train med|err| {mae:.4f} {time.time() - t0:.1f}s', flush=True)
         torch.save(dict(net=net.state_dict(), opt=opt.state_dict(), sched=sched.state_dict(), epoch=ep, mu=mu, sd=sd, rng=rng), ck + '.tmp')
         os.replace(ck + '.tmp', ck)
     export(net, mu, sd, f'{CK}/{a.rung}.npz', dict(rung=a.rung, version=a.version, mode=a.mode, hidden=a.hidden, nin=int(X0.shape[1]),
-                                                    epochs=a.epochs, seed=a.seed, bank=a.bank, phys_k=F.PHYS_K))
+                                                    epochs=a.epochs, seed=a.seed, bank=a.bank, phys_k=F.PHYS_K, era=bool(a.era), lab=a.lab, lr=a.lr,
+                                                    masked_inputs=[] if a.era else MY_COLS))
     print('exported', flush=True)
 
 

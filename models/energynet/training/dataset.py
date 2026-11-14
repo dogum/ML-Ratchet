@@ -10,11 +10,16 @@ import glob
 import numpy as np
 import features as F
 
-TIER_KEYS = ['m_level', 'rl', 'disp', 'power', 'trans', 'ngears', 'cap', 'labf', 'labe', 'soc', 'thermal', 'maf', 'lab_noise']
+TIER_KEYS = ['m_level', 'rl', 'disp', 'power', 'trans', 'ngears', 'cap', 'labf', 'labe', 'soc', 'thermal', 'maf', 'lab_noise', 'my']
+# Phase D target versions on the physics-v2 bank (tg columns, see bank.py): a raw, b OBD label model (RoadSim's own
+# measurement layer, roadsim.obd), c b + v1's on-road wrapper, d c with v1's plug-in patch, e b with the plug-in patch
+V2COLS = {'a': (0, 0), 'b': (0, 2), 'c': (1, 3), 'd': (5, 7), 'e': (4, 6), 'f': (4, 4)}  # (not MAF-estimated, MAF-estimated)
+# f: a with the plug-in patch (r5 re-taken on the incumbent's physics after r3 and r4 were rejected)
 
 
 def load_bank(name):
-    fs = sorted(glob.glob(f'{_P.WORK}/data/bank_{name}/chunk_*.npz'))
+    """name, or several banks joined with '+' (e.g. 'train2+train2b')."""
+    fs = sorted(f for n in name.split('+') for f in glob.glob(f'{_P.WORK}/data/bank_{n}/chunk_*.npz'))
     parts = [dict(np.load(f)) for f in fs]
     return {k: np.concatenate([p[k] for p in parts]) for k in parts[0]}
 
@@ -39,15 +44,21 @@ def draw_tiers(B, rng):
     T['thermal'] = rng.random(n) < 0.6
     T['maf'] = (~bev) & (B['dyno'] < 0.5) & (rng.random(n) < 0.5)
     T['lab_noise'] = rng.uniform(0.02, 0.12, n) * rng.normal(0, 1, n)
+    my = B.get('my', np.full(n, np.nan))
+    T['my'] = (~hd) & np.isfinite(my) & (rng.random(n) < 0.7)
     return {k: np.asarray(v) for k, v in T.items()}
 
 
 def target(B, T, version):
+    version = version.split('+')[0]          # '+L': same targets, EPA-procedure labels (assembly, not targets)
     tg = B['tg']
     maf = T['maf'].astype(bool)
     if version == 'v1': return tg[:, 0]
     if version == 'v2': return np.where(maf, tg[:, 2], tg[:, 0])
     if version == 'v3': return np.where(maf, tg[:, 3], tg[:, 1])
+    if version in V2COLS:
+        a, b = V2COLS[version]
+        return np.where(maf, tg[:, b], tg[:, a])
     raise ValueError(version)
 
 
@@ -79,7 +90,8 @@ def assemble_one(B, i, T):
                       B['diesel'][i] > 0.5, F.TRANS[tr] if (T['trans'][i] and tr >= 0) else None,
                       float(B['ngears'][i]) if (T['ngears'][i] and np.isfinite(B['ngears'][i])) else None,
                       cap, labf, labe, soc, th and B['warm'][i] > 0.5, th and B['cold'][i] > 0.5,
-                      bool(T['maf'][i]), B['dyno'][i] > 0.5, (E, dist / 1000.0), dist / max(dur, 1.0))
+                      bool(T['maf'][i]), B['dyno'][i] > 0.5, (E, dist / 1000.0), dist / max(dur, 1.0),
+                      float(B['my'][i]) if ('my' in B and T.get('my') is not None and T['my'][i] and np.isfinite(B['my'][i])) else None)
     Fv = F.phys_vec(ph, E, Eh, Eb, f, m, dist)
     return np.concatenate([B['R'][i].astype(float), Fv, V]), E
 

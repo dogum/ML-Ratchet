@@ -15,9 +15,12 @@ class ENet:
         self.L = [(z[f'body_{i}_weight'].astype(np.float64), z[f'body_{i}_bias'].astype(np.float64)) for i in (0, 2, 4, 6)]
         self.H = (z['head_weight'].astype(np.float64), z['head_bias'].astype(np.float64))
         self.mode = self.meta['mode']
+        self.mask = list(self.meta.get('masked_inputs', []))   # inputs this network does not read (held at zero)
 
     def forward(self, X):
-        h = np.clip((np.asarray(X, float) - self.mu) / self.sd, -8, 8)
+        X = np.array(X, float)[:, :len(self.mu)]                  # v1 networks read the first 149 inputs
+        if self.mask: X[:, self.mask] = 0.0
+        h = np.clip((X - self.mu) / self.sd, -8, 8)
         for W, b in self.L:
             h = gelu(h @ W.T + b)
         o = h @ self.H[0].T + self.H[1]

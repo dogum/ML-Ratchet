@@ -8,16 +8,24 @@ articulated buses. Each light-duty vehicle gets simulated label values (EPA-styl
 Labels are stored as energy per km in target units (MJ/km): fuel g x 0.042, wall kWh x 3.6.
 
 python fleet.py <name> <n> <seed>     (resumable chunks of 50 in data/fleet_<name>/)
+
+Phase D (14 Nov 2026), RoadSim physics v2 (physics.PHYSICS, pinned): generator donors 'v2'; labels on a dynamometer
+spec (no tyre-temperature effects, no on-road load, HVAC off); the v1 engine-efficiency widening U(0.68, 1.08) is replaced
+by a model year drawn per light-duty vehicle (2005-2026) and the era prior fitted on fueleconomy.gov dev families
+(era.py): eff_scale = exp(N(0, 0.08)) / era_factor(year). The dev twins' label-matched efficiencies agree with it (MY2005
+cars 0.72-0.84, 2015-18 0.99). Heavy duty keeps eff_scale U(0.88, 1.04) and has no model year.
 """
 import sys, os, json, copy, time
 from common import *
 import numpy as np
-from roadsim import simulate, make_trip
+from roadsim import make_trip
 from roadsim.generator import generate_vehicle
+import physics as PHY, era as ERA
 from roadsim.vehicle import fill_spec
 
 MI = 1609.344; GAL_L = 3.785411784
 _TR = {}
+ERA_P = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'era_prior.json')))
 
 
 def _trip(c):
@@ -26,13 +34,15 @@ def _trip(c):
 
 
 def broaden(s, rng):
-    """widen the generator's distribution (documented in the model card)."""
+    """widen the generator's distribution (documented in the model card). -> (spec, model year or None)"""
     s = copy.deepcopy(s)
     cls, arch = s['class'], s['architecture']
     hd = cls in HD
+    my = None if hd else int(rng.integers(2005, 2027))
     if s.get('engine'):
         if not hd:
-            s['engine']['eff_scale'] = round(float(rng.uniform(0.68, 1.08) if arch == 'conv' else rng.uniform(0.72, 1.10)), 3)
+            grp = 'conv' if arch == 'conv' else 'hev'
+            s['engine']['eff_scale'] = round(float(np.exp(rng.normal(0, 0.08)) / ERA.era_factor(my, grp, ERA_P)), 3)
         else:
             s['engine']['eff_scale'] = round(float(rng.uniform(0.88, 1.04)), 3)
     if not hd:
@@ -54,7 +64,7 @@ def broaden(s, rng):
         if s.get('engine'): s['engine']['max_power_kW'] = round(s['engine']['max_power_kW'] * 1.3, 1)
         if s.get('battery') and arch == 'bev': s['battery']['capacity_kWh'] = round(s['battery']['capacity_kWh'] * 1.3)
         s['articulated'] = True
-    return s
+    return s, my
 
 
 def per_mile(out, fuel):
@@ -74,7 +84,7 @@ def lab_labels(spec):
     W = warm_temps(24)
     r = {}
     def run(c, cold=False, soc=None):
-        return simulate(spec, _trip(c), init_temps=None if cold else W, init_soc=soc, record=False, options='roadsim-physics-v1')
+        return PHY.sim(spec, _trip(c), dyno=True, init_temps=None if cold else W, init_soc=soc, record=False)
     if arch == 'bev':
         u = per_mile(run('udds', soc=0.9), fuel)[1]; h = per_mile(run('hwfet', soc=0.9), fuel)[1]
         for k, dc in (('city', u), ('hwy', h)):
@@ -101,28 +111,39 @@ def lab_labels(spec):
 
 
 def make_vehicle(rng):
-    s = broaden(generate_vehicle(rng), rng)
+    s, my = broaden(generate_vehicle(rng, donor_model=PHY.DONOR_MODEL), rng)
     fill_spec(s)
-    return s
+    return s, my
+
+
+def one_chunk(args):
+    name, n, seed, ci, CH = args
+    p = f'{EN}/data/fleet_{name}/chunk_{ci:03d}.json'
+    if os.path.exists(p): return
+    rng = np.random.default_rng([seed, ci])
+    res = []; t0 = time.time()
+    for j in range(min(CH, n - ci * CH)):
+        for attempt in range(5):
+            try:
+                s, my = make_vehicle(rng); lab = lab_labels(s)
+                break
+            except Exception as e:
+                print('retry', e, flush=True)
+        s['id'] = f'{name}_{ci:03d}_{j:02d}'
+        res.append({'spec': s, 'labels': lab, 'model_year': my})
+    json.dump(res, open(p + '.tmp', 'w'), default=float); os.replace(p + '.tmp', p)
+    print('chunk', ci, round(time.time() - t0, 1), flush=True)
 
 
 if __name__ == '__main__':
     name, n, seed = sys.argv[1], int(sys.argv[2]), int(sys.argv[3])
-    out = f'{EN}/data/fleet_{name}'; os.makedirs(out, exist_ok=True)
+    workers = int(sys.argv[4]) if len(sys.argv) > 4 else 1
+    os.makedirs(f'{EN}/data/fleet_{name}', exist_ok=True)
     CH = 50
-    for ci in range((n + CH - 1) // CH):
-        p = f'{out}/chunk_{ci:03d}.json'
-        if os.path.exists(p): continue
-        rng = np.random.default_rng([seed, ci])
-        res = []; t0 = time.time()
-        for j in range(min(CH, n - ci * CH)):
-            for attempt in range(5):
-                try:
-                    s = make_vehicle(rng); lab = lab_labels(s)
-                    break
-                except Exception as e:
-                    print('retry', e, flush=True)
-            s['id'] = f'{name}_{ci:03d}_{j:02d}'
-            res.append({'spec': s, 'labels': lab})
-        json.dump(res, open(p + '.tmp', 'w'), default=float); os.replace(p + '.tmp', p)
-        print('chunk', ci, round(time.time() - t0, 1), flush=True)
+    jobs = [(name, n, seed, ci, CH) for ci in range((n + CH - 1) // CH)]
+    if workers <= 1:
+        for j in jobs: one_chunk(j)
+    else:
+        from multiprocessing import Pool
+        with Pool(workers) as p:
+            list(p.imap_unordered(one_chunk, jobs))

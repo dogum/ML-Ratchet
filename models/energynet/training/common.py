@@ -28,7 +28,8 @@ def arch_group(arch):
 
 
 def warm_temps(T_amb=20.0):
-    return {'engine': 85.0, 'driveline': 70.0, 'tire_warm': 1.0, 'cabin': 21.0, 'battery': max(20.0, float(T_amb))}
+    # oil and axle: physics v2 thermal nodes (ignored by v1); the VED twin check's warm state
+    return {'engine': 85.0, 'oil': 90.0, 'driveline': 70.0, 'axle': 60.0, 'tire_warm': 1.0, 'cabin': 21.0, 'battery': max(20.0, float(T_amb))}
 
 
 def sim_target(out, arch):
