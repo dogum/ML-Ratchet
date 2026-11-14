@@ -1,0 +1,239 @@
+id: batterypilot
+name: BatteryPilot
+version: "1.0"
+status: released
+released: 2026-11-14
+order: 14
+domain: Power grids
+platform: grid
+tags: [power grids, batteries, energy storage, arbitrage, electricity prices, ERCOT, CAISO, dispatch policy]
+accent: "#087f5b"
+tagline: When should a grid battery charge and discharge, knowing only the past?
+question: Before each hour, what is one stored MWh worth to this battery — and so should it charge, hold or sell at the real-time price?
+question_short: "When should a grid battery buy and sell, knowing only what is known before the hour?"
+summary: >-
+  BatteryPilot is a causal dispatch policy for a 1 MW grid battery doing energy arbitrage. Before each hour a small
+  network returns a value curve: the worth of one stored MWh at 0, 25, 50, 75 and 100 % full. The battery uses that
+  curve as its offer for the hour, cleared against the real-time price, with 85 % round trip and rainflow wear. It was
+  trained only on simulated price paths (GridSim fleets plus a scarcity model calibrated on dev years) and examined
+  once on real ERCOT 2023-25 and CAISO 2024-25 prices. It earns 67 % (ERCOT) and 64 % (CAISO) of perfect hindsight
+  net of wear. That beats the daily-spread and threshold rules but not a rolling day-ahead optimiser (69 % and 68 %).
+
+reads: "Hourly and causal: real-time prices of the last 24 h, day-ahead prices for the rest of today (and tomorrow after 14:00 local; 36 h, masked where not yet published), the RT-DA spread of the last 6 h, the balancing authority's day-ahead demand forecast for 24 h (EIA-930, relative to its 30-day max), the last temperature, hour, day of year, weekend, and the battery (duration, wear cost / price scale, price scale). Prices are scaled by the 7-day median DA price and squashed with asinh; 135 features."
+returns:
+  - "Value curve λ(SOC): $/MWh of stored energy at 5 state-of-charge knots, strictly decreasing"
+  - "Executed by the offer rule: discharge down to the SOC where λ = η_d (p − c_wear), charge up to where λ = p / η_c, within power and energy limits; cleared against the hour's RT price"
+  - "Settled: gross revenue, rainflow wear cost, net revenue ($) and cycles; no error bar on the curve (the exam's intervals are on revenue, from a weekly block bootstrap)"
+
+physics:
+  summary: >-
+    Battery: 1 MW grid side, usable energy = P × duration (5-95 % of nameplate), 85 % round trip (√ each way), wear by
+    rainflow cycle counting (ASTM E1049) on a Wöhler depth curve (depth^1.3 / 6,000 per cycle) with LiFePO4
+    temperature and C-rate dependence (Wang et al. 2011) in an HVAC container, at $130/kWh nameplate. Prices: the shared
+    GridSim fleet dispatch (unmodified) for the real ERCOT and CISO fleets of 2018, 2020 and 2022, wrapped by
+    BatteryPilot's price simulator (training/pricesim.py) with a merit stack, scarcity and day-ahead prices.
+  simulator:
+    - "GridSim (shared/grid, unmodified): real ERCOT / CISO fleets of 2018, 2020, 2022 (heat-rate curves, EIA-923 fuel prices + Henry Hub daily, Markov forced and planned outages, the dev-2019 coal offer adder)"
+    - "Merit-order price from pmin blocks and 3 heat-rate segments per cluster; slow units needed for the day's peak stay at pmin (80 %); below that, wind and solar set a negative price"
+    - "Gas-turbine ambient derate (0.6 %/K CT, 0.4 %/K CC around the 35 °C rating); cold-weather outages f(T) = 0.55 Φ((−3 °C − T)/3 K) persisting with a 36 h time constant, fitted on Uri (dev 2021)"
+    - "ERCOT-style ORDC adder (VOLL − λ) × LOLP(R − X), μ −4,000 MW, σ 5,000 MW, fitted on dev 2019 + 2021 without Uri; a storage fleet that flattens the daily net load"
+    - "Real-time noise (Student-t, AR(1), scaled by net-load ramps); day-ahead price = forecast inputs (real EIA-930 demand-forecast errors, AR(1) wind/solar errors, outages known at noon the day before) + the expected ORDC adder"
+    - "Scenario draws: demand ×0.97-1.22, wind ×0.8-1.6, solar up to 45 % of peak, storage 0-20 % of peak, gas ×0.6-1.8, retirements 0-8 %, caps $5,000/$9,000; a CAISO-like family on the CISO fleet (solar 35-80 % of peak, imports ×0.4-0.95, carbon $10-40/t, caps $1,000/$2,000)"
+    - "Banks: 120 ERCOT + 45 CAISO-like simulated path-years for training; 24 + 9 frozen"
+  checks:
+    - "GridData's perfect-foresight, daily-spread and threshold baselines reproduced on 89 dev days at two hubs to 1e-13 $ (one spread day differs by $1.65 at HB_WEST: a price tie) (training/checks/battery_checks.json)"
+    - "Rainflow counting matches the rainflow package exactly on 200 random series; executor energy balance 1.1e-16 MWh; rainflow wear of a summer-2019 PF schedule $2,414 vs the linear proxy $2,416"
+    - "Uri 2021 (dev): 180 and 166 simulated hours above $1,000 for two outage draws vs 153 real; 92-95 % of the real ones covered (training/checks/calibration.json)"
+    - "CAISO-like family vs real Aug-Dec 2023 (dev): hourly medians $18-25 midday and $59-61 evening vs real $21-25 and $66-72"
+    - "Twin test: the released policy captures 91-94 % of perfect foresight on simulated twins of dev 2019 but 80 % on real 2019; Uri 2021 twins 64-68 % vs real 38 % (training/checks/twin_r4_v3.json)"
+
+noise: "Simulated real-time noise (Student-t, AR(1), scaled by net-load ramps) and real EIA-930 day-ahead demand-forecast errors laid on the simulated day-ahead; scenario randomisation of demand, renewables, storage, gas price, retirements and scarcity parameters"
+network: "MLP 135 → 128 → 128 → 5 (SiLU), 34,565 weights; outputs the top knot and 4 softplus steps (a strictly decreasing curve). Trained by direct policy search: the battery physics (offer execution, limits, losses, linear wear) runs inside the loss in torch, maximising revenue + value of energy left − value at the start over 14-21-day windows, each divided by its own 2 h perfect-foresight value."
+
+approach:
+  real_backdrop: false
+  physics_inputs: "The battery's own wear cost (temperature-dependent linear proxy from the rainflow model) and duration; prices scaled by a causal 7-day median"
+  physics_anchor: "The network's value curve feeds a physics executor: an offer rule with round-trip losses, power and energy limits, and rainflow wear; the battery physics sits inside the training loss"
+  real_data_roles: [calibration, gate, exam]
+
+data:
+  - name: ERCOT historical DAM / RTM settlement point prices (report types 13060, 13061), via GridData
+    url: https://www.ercot.com/mp/data-products
+    licence: Public ERCOT market data (cite ERCOT)
+    role: dev (calibration and gate, 2019 and 2021), exam (2023-2025, 4 hubs + 8 load zones)
+  - name: CAISO OASIS LMPs (PRC_LMP DAM, PRC_RTPD_LMP), via GridData
+    url: http://oasis.caiso.com
+    licence: Public CAISO data (cite CAISO)
+    role: dev (Aug-Dec 2023, CAISO-like family check and gate), exam (2024-2025, 3 trading hubs + 3 DLAPs)
+  - name: EIA-930 Hourly Electric Grid Monitor (demand, day-ahead demand forecast, generation by fuel)
+    url: https://www.eia.gov/electricity/gridmonitor/
+    licence: Public domain (U.S. Government)
+    role: physics (simulator inputs and forecast errors, train-input years), model input (demand forecast)
+  - name: NASA POWER hourly temperature (BA population-weighted)
+    url: https://power.larc.nasa.gov
+    licence: Free use; cite NASA LaRC POWER Project
+    role: physics (simulator weather, wear temperature), model input
+  - name: EIA-860 / EIA-923 generator fleets and fuel costs, via PUDL (through GridSim)
+    url: https://catalyst.coop/pudl/
+    licence: CC BY 4.0 (PUDL); EIA public domain
+    role: physics (fleets, heat rates, fuel prices)
+  - name: GridSim outage-rate defaults (Texas RE reliability-assessment aggregates for 2024/2025)
+    url: https://www.texasre.org
+    licence: Public reports (cited by GridSim)
+    role: physics (forced-outage rates) — published during the exam years; a possible mild exam leak (limits)
+
+split:
+  dev: "GridData's frozen time split (data/proc/splits.json, sha256 895b4e9a…, seed 20261113): dev = ERCOT 2019 and 2021 at HB_HOUSTON, HB_NORTH, HB_SOUTH, HB_WEST; CAISO Aug-Dec 2023 at TH_NP15 and TH_SP15 (OASIS starts 2023-08). Simulator inputs only from the train-input years 2018, 2020, 2022."
+  exam: "ERCOT 2023, 2024, 2025 at 4 hubs + 8 load zones (36 node-years); CAISO 2024, 2025 at TH_NP15, TH_SP15, TH_ZP26 and DLAP PG&E, SCE, SDG&E (12 node-years); 1, 2 and 4 h batteries. Never used for choosing anything; 2026 is held in reserve."
+
+exam:
+  short: "48 real node-years, ERCOT 2023-25 + CAISO 2024-25"
+  summary: >-
+    Share of perfect-hindsight revenue net of wear (each node-year and battery's net revenue divided by an annual LP on
+    the same RT prices, then averaged), on real prices, run once with the released network. Every strategy settles at
+    the hourly RT price with rainflow wear at the BA's temperature. DA optimiser = a rolling LP that re-plans at 14:00
+    with day-ahead prices as the forecast; spread rule and threshold rule are GridData's baselines (the threshold uses
+    the node's dev-period RT quartiles). Revenue intervals come from a weekly block bootstrap (2,000 draws). Re-scored
+    in this repository from the shipped weights on shared/grid/data (notebook).
+  results:
+    - metric: Share of perfect hindsight, ERCOT 2023-25, all batteries (36 node-years × 1/2/4 h)
+      better: higher
+      model: 66.7
+      unit: "%"
+      baselines:
+        - { name: "Rolling day-ahead LP optimiser", kind: classical, value: 68.5 }
+        - { name: "Daily spread rule (GridData)", kind: classical, value: 56.1 }
+        - { name: "Threshold rule, dev RT quartiles (GridData)", kind: dumb, value: 11.4 }
+      verdict: loss
+      note: "Beats the spread rule in 89 % of node-year-battery cases, the threshold rule in all, the DA optimiser in 57 %. About 244 cycles a year vs 300 for the optimiser."
+    - metric: Share of perfect hindsight, CAISO 2024-25, all batteries (12 node-years × 1/2/4 h)
+      better: higher
+      model: 64.2
+      unit: "%"
+      baselines:
+        - { name: "Rolling day-ahead LP optimiser", kind: classical, value: 68.1 }
+        - { name: "Daily spread rule (GridData)", kind: classical, value: 58.9 }
+        - { name: "Threshold rule, dev RT quartiles (GridData)", kind: dumb, value: 15.8 }
+      verdict: loss
+      note: "Beats the spread rule in 81 % of cases, the threshold rule in all, the DA optimiser in 19 %."
+    - metric: Share of perfect hindsight, ERCOT, 1 h battery (36 node-years)
+      better: higher
+      model: 55.9
+      unit: "%"
+      baselines:
+        - { name: "Rolling day-ahead LP optimiser", kind: classical, value: 62.9 }
+        - { name: "Daily spread rule (GridData)", kind: classical, value: 53.1 }
+        - { name: "Threshold rule (GridData)", kind: dumb, value: 1.8 }
+      verdict: loss
+      note: "Beats the optimiser in 25 % of node-years. ERCOT 2023 1 h: −$9.4/kW-yr vs the optimiser, 95 % CI [−18.2, −1.6]."
+    - metric: Share of perfect hindsight, ERCOT, 2 h battery (36 node-years)
+      better: higher
+      model: 67.1
+      unit: "%"
+      baselines:
+        - { name: "Rolling day-ahead LP optimiser", kind: classical, value: 68.4 }
+        - { name: "Daily spread rule (GridData)", kind: classical, value: 57.0 }
+        - { name: "Threshold rule (GridData)", kind: dumb, value: 10.9 }
+      verdict: loss
+      note: "Beats the optimiser in 67 % of node-years but loses on the mean; every year's $ difference interval includes zero."
+    - metric: Share of perfect hindsight, ERCOT, 4 h battery (36 node-years)
+      better: higher
+      model: 76.9
+      unit: "%"
+      baselines:
+        - { name: "Rolling day-ahead LP optimiser", kind: classical, value: 74.2 }
+        - { name: "Daily spread rule (GridData)", kind: classical, value: 58.3 }
+        - { name: "Threshold rule (GridData)", kind: dumb, value: 21.6 }
+      verdict: win
+      note: "Beats the optimiser in 81 % of node-years. ERCOT 2024 4 h: +$3.3/kW-yr, 95 % CI [+1.1, +5.4]; 2023 +$9.0 [−3.0, +21.5]; 2025 −$0.9 [−5.9, +2.9]."
+    - metric: Share of perfect hindsight, CAISO, 1 h battery (12 node-years)
+      better: higher
+      model: 56.3
+      unit: "%"
+      baselines:
+        - { name: "Rolling day-ahead LP optimiser", kind: classical, value: 64.1 }
+        - { name: "Daily spread rule (GridData)", kind: classical, value: 55.2 }
+        - { name: "Threshold rule (GridData)", kind: dumb, value: 10.4 }
+      verdict: loss
+      note: "Loses to the optimiser in all 12 node-years; 2024 1 h: −$1.5/kW-yr, 95 % CI [−2.2, −0.8]."
+    - metric: Share of perfect hindsight, CAISO, 2 h battery (12 node-years)
+      better: higher
+      model: 63.4
+      unit: "%"
+      baselines:
+        - { name: "Rolling day-ahead LP optimiser", kind: classical, value: 68.0 }
+        - { name: "Daily spread rule (GridData)", kind: classical, value: 59.2 }
+        - { name: "Threshold rule (GridData)", kind: dumb, value: 16.6 }
+      verdict: loss
+      note: "Beats the optimiser in 1 of 12 node-years."
+    - metric: Share of perfect hindsight, CAISO, 4 h battery (12 node-years)
+      better: higher
+      model: 73.0
+      unit: "%"
+      baselines:
+        - { name: "Rolling day-ahead LP optimiser", kind: classical, value: 72.3 }
+        - { name: "Daily spread rule (GridData)", kind: classical, value: 62.3 }
+        - { name: "Threshold rule (GridData)", kind: dumb, value: 20.3 }
+      verdict: win
+      note: "A thin win (+0.7 points): beats the optimiser in 6 of 12 node-years, and both years' $ difference intervals include zero (2024 −$1.1 [−3.2, +0.7]; 2025 +$0.9 [−0.5, +2.4])."
+    - metric: "Comparison only: the same network trained on real ERCOT 2018/2020/2022 node prices (breaks the physics-only rule; not released)"
+      better: higher
+      model: "ERCOT 69.0, CAISO 56.4"
+      unit: "%"
+      baselines:
+        - { name: "BatteryPilot (simulator-trained, released)", kind: classical, value: "ERCOT 66.7, CAISO 64.2" }
+      verdict: info
+      note: "What the simulator costs in ERCOT (−2.3 points) and gains in CAISO (+7.8 points), where no real training prices exist."
+
+wins:
+  - "Beats GridData's daily-spread rule (ERCOT 0.667 vs 0.561 of perfect hindsight; CAISO 0.642 vs 0.589) in 89 % / 81 % of node-year-battery cases, and the threshold rule in every case."
+  - "4 h batteries: ERCOT 0.769 vs 0.742 for the rolling day-ahead optimiser (beats it in 81 % of node-years; ERCOT 2024 +$3.3/kW-yr, CI [+1.1, +5.4]); CAISO 0.730 vs 0.723."
+  - "Cycles less: about 245 cycles a year vs 300 (ERCOT) and 282 (CAISO) for the optimiser; its worst month at the median node was never below −$0.17/kW (any node: −$0.21/kW, CAISO December)."
+  - "Trained without a single real price path: real dev years only calibrated the simulator and gated rungs."
+losses:
+  - "Loses to the classical rolling day-ahead optimiser on the mean: ERCOT 0.667 vs 0.685, CAISO 0.642 vs 0.681."
+  - "1 h batteries lose clearly: ERCOT 0.559 vs 0.629 (ERCOT 2023: −$9.4/kW-yr, CI [−18.2, −1.6]); CAISO 0.563 vs 0.641, every node-year."
+  - "CAISO 1 h and 2 h lose to the optimiser in 23 of 24 node-years; the CAISO-like simulator family is hand-set from 5 dev months."
+  - "Real spikes are less predictable from day-ahead prices than simulated ones: on twins of dev 2019 it captures 91-94 %, on real 2019 80 %; Uri twins 64-68 % vs real 38 %."
+limits:
+  - "Energy arbitrage only: hourly settlement (mean of the 15-min RT), no ancillary services, no 5-min prices, price taker; copper-plate simulator (no congestion, nodal differences untrained)."
+  - "The CAISO-like family is hand-set from 5 dev months (Aug-Dec 2023) and is more volatile than real CAISO."
+  - "Calibration hit its grid edges (μ, σ, cold f_max). Simulated day-ahead runs 10-20 % above RT (real 1-5 %)."
+  - "Wear parameters are assumptions from the literature; calendar ageing is not charged."
+  - "Possible mild exam leak: GridSim's outage-rate defaults cite Texas RE's 2024/2025 reliability-assessment aggregates, published during the exam years. Not fixed in this release; the platform plan is to replace them with pre-2023 NERC GADS values and re-score."
+  - "No error bar on the value curve itself; the exam's intervals are on revenue (weekly block bootstrap), so the recipe's coverage step does not apply."
+next:
+  - "Make simulated real-time spikes less predictable from day-ahead prices (unforecast outage events, 15-minute ramp scarcity), fitted until the dev twin capture matches the real one (91-94 % twin vs 80 % real)."
+  - "A 1 h specialist or a 15-minute execution head: BatteryPilot loses to the day-ahead optimiser on 1 h batteries and in CAISO."
+  - "Nodal basis: a West Texas congestion model; a real CAISO import and hydro supply curve; ancillary services."
+  - "Re-train and re-score once GridSim's outage-rate defaults use pre-2023 NERC GADS values (removes the possible exam leak)."
+  - "Upstream to GridSim behind flags: the ORDC adder, the cold-outage curve, the gas-turbine ambient derate, the day-ahead price generator and the single-LP perfect-foresight baseline."
+help_wanted:
+  - "CAISO OASIS serves only about 3 years (data from 2023-08): an archive of CAISO hub and DLAP prices for 2018-2022 would give the CAISO family real dev years and a longer exam."
+  - "Pre-2023 ERCOT forced-outage rates by technology (NERC GADS or Texas RE) to replace GridSim's 2024/2025 aggregates."
+  - "ERCOT and CAISO ancillary-service clearing prices, and ERCOT resource-node prices in West Texas, to add ancillary services and a congestion basis."
+
+usage:
+  install: pip install numpy scipy
+  demo: python demo.py
+  python: |
+    import csv, numpy as np
+    import batterypilot as bp
+    net = bp.PolicyNet()                                   # batterypilot_weights.npz next to batterypilot.py
+    bat = bp.Battery(P=1.0, duration_h=2.0)                # 1 MW / 2 MWh usable, 85 % round trip
+    rows = list(csv.DictReader(open("examples/ERCOT_HB_WEST_2024.csv")))
+    path = {k: np.array([float(r[k]) for r in rows]) for k in ("rt", "da", "df", "T")}
+    path |= {k: np.array([int(r[k]) for r in rows]) for k in ("hour", "day", "dow", "doy")}
+    ch, dis, soc, V = bp.run_policy(net, path, bat, bat.c_lin(path["T"]))
+    res = bp.settle(bat, path["rt"], ch, dis, 0.0, path["T"])
+    print(res["net"] / 1000, "$/kW net of wear;", V[0], "$/MWh at 0/25/50/75/100 % full")
+
+files:
+  inference: [batterypilot.py]
+  weights: [batterypilot_weights.npz]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 15

@@ -1,0 +1,473 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>BatteryPilot</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a trading-desk page. One wide column of panels; the lab is the instrument, everything else is its manual. */
+:root {
+  --bg: #f3f5f7; --panel: #ffffff; --ink: #0e1720; --ink-2: #47525e; --ink-3: #6b7682; --rule: #d9dee4; --grid: #e8ecf0;
+  --accent: #2a78d6; --spike: #c2410c; --good: #0f7a3d; --bad: #b42318;
+  --s-bp: #2a78d6; --s-pf: #eb6834; --s-roll: #1baf7a; --s-spread: #eda100; --s-thr: #e87ba4;
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", Roboto, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d1218; --panel: #141b23; --ink: #e8edf2; --ink-2: #b4bec9; --ink-3: #8b96a2; --rule: #26313d; --grid: #1d2630;
+  --accent: #3987e5; --spike: #f08a4b; --good: #3fbf72; --bad: #f2716a;
+  --s-bp: #3987e5; --s-pf: #d95926; --s-roll: #199e70; --s-spread: #c98500; --s-thr: #d55181; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0d1218; --panel: #141b23; --ink: #e8edf2; --ink-2: #b4bec9; --ink-3: #8b96a2; --rule: #26313d; --grid: #1d2630;
+  --accent: #3987e5; --spike: #f08a4b; --good: #3fbf72; --bad: #f2716a;
+  --s-bp: #3987e5; --s-pf: #d95926; --s-roll: #199e70; --s-spread: #c98500; --s-thr: #d55181; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--f-body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 56px; display: grid; gap: 40px }
+h1, h2, h3 { font-family: var(--f-display); font-stretch: 112%; text-wrap: balance; margin: 0 }
+h1 { font-size: clamp(40px, 7vw, 76px); font-weight: 800; letter-spacing: -0.02em; line-height: 1 }
+h2 { font-size: clamp(24px, 3.2vw, 32px); font-weight: 700; letter-spacing: -0.01em }
+h3 { font-size: 17px; font-weight: 700 }
+p { margin: 0; max-width: 68ch }
+.eyebrow { font: 500 12px/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3) }
+.lede { font-size: 18px; color: var(--ink-2); max-width: 62ch }
+section { display: grid; gap: 16px; min-width: 0 }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 18px; min-width: 0 }
+.mono, .num { font-family: var(--f-mono); font-variant-numeric: tabular-nums }
+.hero { display: grid; gap: 18px }
+.tag { display: inline-flex; gap: 8px; align-items: center; font: 500 13px var(--f-mono); color: var(--ink-2) }
+.tag i { width: 8px; height: 8px; border-radius: 50%; background: var(--spike); display: inline-block }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px }
+.tile { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 4px }
+.tile .big { font: 700 34px/1.05 var(--f-display); font-stretch: 105% }
+.tile .sub { font-size: 13px; color: var(--ink-2) }
+/* lab */
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end }
+.ctl { display: grid; gap: 4px; min-width: 0 }
+.ctl label, .ctl .lab { font: 500 11px var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3) }
+select, button, input[type=range] { font: 500 14px var(--f-body); color: var(--ink) }
+select { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 8px }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden }
+.seg button { background: var(--panel); border: 0; padding: 6px 12px; cursor: pointer; border-right: 1px solid var(--rule) }
+.seg button:last-child { border-right: 0 }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel) }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.datebar { display: flex; gap: 8px; align-items: center; flex: 1 1 280px; min-width: 0 }
+.datebar input { flex: 1; min-width: 0; accent-color: var(--accent) }
+.btn { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 5px 10px; cursor: pointer }
+.chips { display: flex; flex-wrap: wrap; gap: 8px }
+.chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--rule); border-radius: 999px; padding: 3px 10px 3px 8px; font-size: 13px; cursor: pointer; background: var(--panel) }
+.chip[aria-pressed="false"] { opacity: 0.45 }
+.sw { width: 14px; height: 3px; border-radius: 2px; display: inline-block }
+.chart { width: 100%; display: block; overflow: visible }
+.chart text { fill: var(--ink-3); font: 11px var(--f-mono) }
+.chart .gridl { stroke: var(--grid); stroke-width: 1 }
+.chart .axis { stroke: var(--rule) }
+.labgrid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px }
+@media (max-width: 860px) { .labgrid { grid-template-columns: minmax(0, 1fr) } }
+.money table { width: 100%; border-collapse: collapse; font-size: 13px }
+.money td, .money th { padding: 5px 4px; border-bottom: 1px solid var(--grid); text-align: right }
+.money th { font: 500 11px var(--f-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em }
+.money td:first-child, .money th:first-child { text-align: left }
+.note { font-size: 13px; color: var(--ink-2) }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 8px; font: 12px/1.4 var(--f-mono); color: var(--ink); box-shadow: 0 4px 14px rgba(0,0,0,.12); white-space: nowrap; z-index: 5 }
+.rel { position: relative }
+.whatif { display: grid; gap: 10px; border-top: 1px solid var(--rule); padding-top: 12px }
+.whatif .row { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center }
+.whatif input { width: 100% ; accent-color: var(--accent) }
+/* tables */
+.tblwrap { overflow-x: auto; min-width: 0 }
+table.data { border-collapse: collapse; font-size: 13px; min-width: 760px; width: 100% }
+table.data th, table.data td { padding: 6px 8px; border-bottom: 1px solid var(--grid); text-align: right; white-space: nowrap }
+table.data th { font: 500 11px var(--f-mono); color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; position: sticky; top: 0; background: var(--panel) }
+table.data td:first-child, table.data th:first-child { text-align: left }
+table.data td .ci { color: var(--ink-3); font-size: 11px; display: block }
+td.win { color: var(--good); font-weight: 600 } td.lose { color: var(--bad); font-weight: 600 }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px }
+.ladder { display: grid; gap: 8px }
+.rung { display: grid; grid-template-columns: 54px 1fr auto; gap: 12px; align-items: start; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel) }
+.rung .id { font: 700 18px var(--f-display) }
+.pill { font: 500 11px var(--f-mono); padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; text-transform: uppercase; letter-spacing: 0.05em }
+.pill.kept { color: var(--good) } .pill.rej { color: var(--bad) } .pill.inc { color: var(--ink-3) }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px }
+.flow div { border: 1px solid var(--rule); border-radius: 6px; padding: 10px 12px; background: var(--panel); font-size: 13px }
+.flow b { display: block; font-family: var(--f-display); font-size: 14px; margin-bottom: 2px }
+.eq { font: 14px var(--f-mono); background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 12px; overflow-x: auto }
+ul.plain { margin: 0; padding-left: 18px; display: grid; gap: 6px; max-width: 75ch }
+code, pre { font-family: var(--f-mono); font-size: 13px }
+pre { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px; overflow-x: auto; margin: 0 }
+a { color: var(--accent) }
+footer { font-size: 12px; color: var(--ink-3) }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <span class="tag"><i></i>ML Ratchet · GridSim Phase 2 · trained on physics, graded on reality</span>
+  <h1>BatteryPilot</h1>
+  <p class="lede">A grid battery that decides, hour by hour, when to charge and when to sell. It learned only from simulated Texas and California grids. Then it traded real ERCOT prices for 2023–2025 and real CAISO prices for 2024–2025, which it had never seen.</p>
+  <div class="tiles" id="tiles"></div>
+  <p class="note" id="heroNote"></p>
+</header>
+
+<section id="lab">
+  <div class="eyebrow">The lab</div>
+  <h2>Watch it trade a real day</h2>
+  <p class="note">Pick a hub, a year and a battery. The top chart is the real price: real-time (what the battery is paid) and day-ahead (known the day before). The bottom chart is how full each battery is. Hover for the hour. All batteries are 1 MW with 85 % round-trip efficiency; money is net of battery wear.</p>
+  <div class="panel" style="display:grid;gap:14px">
+    <div class="controls">
+      <div class="ctl"><label for="selNode">Hub</label><select id="selNode"></select></div>
+      <div class="ctl"><label for="selYear">Year</label><select id="selYear"></select></div>
+      <div class="ctl"><span class="lab">Battery</span><div class="seg" id="segDur"><button data-v="1">1 h</button><button data-v="2" aria-pressed="true">2 h</button><button data-v="4">4 h</button></div></div>
+      <div class="ctl"><span class="lab">Show</span><div class="seg" id="segSpan"><button data-v="1">Day</button><button data-v="7" aria-pressed="true">Week</button></div></div>
+      <div class="ctl datebar"><button class="btn" id="prev" aria-label="Earlier">◀</button><input type="range" id="date" min="0" max="364" value="200" aria-label="Start day"><button class="btn" id="next" aria-label="Later">▶</button><span class="mono" id="dateLbl" style="min-width:92px"></span></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lab">Jump to</span><div class="seg" id="jump"><button data-v="spike">Biggest spike</button><button data-v="best">BatteryPilot's best day</button><button data-v="worst">its worst day</button></div></div>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="labgrid">
+      <div class="rel" id="chartBox" style="min-width:0">
+        <svg class="chart" id="cPrice" viewBox="0 0 760 230" role="img" aria-label="Real-time and day-ahead price"></svg>
+        <svg class="chart" id="cSoc" viewBox="0 0 760 170" role="img" aria-label="State of charge by strategy"></svg>
+        <div class="tip" id="tip" hidden></div>
+      </div>
+      <div class="money" style="display:grid;gap:12px;align-content:start">
+        <div><h3>The money</h3><p class="note" id="moneyNote"></p></div>
+        <table id="moneyTbl"></table>
+        <div><h3 style="margin-bottom:4px">What it was thinking</h3><p class="note">BatteryPilot's offer for the hovered hour: the value it puts on one more MWh in store, by how full it is. It sells while the price beats that value, and buys while the price is below it (after losses and wear).</p></div>
+        <svg class="chart" id="cVal" viewBox="0 0 300 150" role="img" aria-label="Value of stored energy by state of charge"></svg>
+        <div class="whatif">
+          <h3>What if</h3>
+          <div class="row"><label for="wEta">Round-trip efficiency</label><span class="mono" id="wEtaV"></span><input id="wEta" type="range" min="70" max="95" step="1" value="85"></div>
+          <div class="row"><label for="wCost">Cell replacement cost ($/kWh)</label><span class="mono" id="wCostV"></span><input id="wCost" type="range" min="0" max="300" step="10" value="130"></div>
+          <p class="note" id="whatifNote">At the trained settings the dashed line is the network run live in your browser. Move a slider and it re-runs this window with the new battery.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="exam">
+  <div class="eyebrow">The exam</div>
+  <h2>Three real years it never saw</h2>
+  <p class="note" id="examIntro"></p>
+  <div class="panel"><div class="tblwrap"><table class="data" id="examTbl"></table></div></div>
+  <p class="note" id="examFoot"></p>
+  <div class="panel"><h3 style="margin-bottom:8px">By node: share of perfect hindsight (2 h battery)</h3><div class="tblwrap"><table class="data" id="nodeTbl"></table></div></div>
+</section>
+
+<section id="built">
+  <div class="eyebrow">How it was built</div>
+  <h2>A price simulator with scarcity in it</h2>
+  <p>Batteries in Texas make most of their money in a few dozen hours a year, when reserves run thin and the price jumps from $25 to thousands. GridSim's dispatch gets the everyday price right but has no such spikes. So BatteryPilot's simulator adds the physics that makes them, and fits each new piece only on the development years 2019 and 2021.</p>
+  <div class="flow">
+    <div><b>Real inputs</b>EIA-930 demand, its day-ahead forecast, wind, solar, hydro, nuclear and imports, and NASA POWER temperature from 2018, 2020 and 2022.</div>
+    <div><b>GridSim fleet</b>The real ERCOT (or CAISO) fleet of that year: heat-rate curves, daily fuel prices, random forced and planned outages.</div>
+    <div><b>Supply physics</b>Gas turbines lose output in heat. Gas supply and instruments freeze below about −3 °C. Storage fleets flatten the net load.</div>
+    <div><b>Scarcity</b>An operating-reserve demand curve like ERCOT's ORDC turns thin reserves into price adders up to the cap.</div>
+    <div><b>Two markets</b>Day-ahead prices come from forecasts and the expected adder. Real-time prices come from what actually happened.</div>
+    <div><b>Policy search</b>The network is trained by running the battery through 14–21 day windows of 165 simulated years and climbing the revenue.</div>
+  </div>
+  <div class="eq">adder = (VOLL − λ) × LOLP(R − X),   LOLP(x) = 1 − Φ((x − μ)/σ),   RT = min(λ + adder, cap)<br>λ = marginal cost of the merit-order stack · R = spare thermal + storage capacity · X = minimum contingency level</div>
+  <div class="two">
+    <div class="panel" style="display:grid;gap:8px"><h3>Simulated twin vs real, dev week of 11–17 Aug 2019</h3><svg class="chart" id="cTw1" viewBox="0 0 520 200"></svg><p class="note">Real HB_HUBAVG real-time price and one simulated twin driven by the same week's demand, wind, solar and weather. The twin is a draw, not a forecast: its spikes fall on the same tight evenings, not on the same hours.</p></div>
+    <div class="panel" style="display:grid;gap:8px"><h3>Winter Storm Uri, Feb 2021 (dev)</h3><svg class="chart" id="cTw2" viewBox="0 0 520 200"></svg><p class="note" id="uriNote"></p></div>
+  </div>
+  <div class="panel"><h3 style="margin-bottom:8px">Calibration on the dev years (simulated mean of 2 outage draws vs real, HB_HUBAVG)</h3><div class="tblwrap"><table class="data" id="calTbl"></table></div></div>
+  <h3>The policy</h3>
+  <p>Every hour, a small network (2 × 128 units, 34,000 weights) reads only what a trader would know before the hour: the last 24 hours of real-time prices, today's day-ahead prices and tomorrow's once they clear at 14:00, the grid's own demand forecast, the temperature, the calendar, and the battery. It answers with one curve: what a stored MWh is worth at 0, 25, 50, 75 and 100 % full. That curve becomes the battery's offer for the hour, cleared against the real-time price, the way a battery bids into ERCOT's real-time market. Training runs the battery physics (losses, power and energy limits, wear) inside the loss, so the network learns its curve by trading, not by copying a teacher.</p>
+</section>
+
+<section id="ratchet">
+  <div class="eyebrow">The ratchet</div>
+  <h2>Every rung, kept or not</h2>
+  <p class="note">A rung is kept only if it beats the incumbent on a frozen simulated test set by more than 0.01 (capture of perfect hindsight) and does not lose more than 0.01 on the real dev years (ERCOT 2019 and 2021 at four hubs, CAISO Aug–Dec 2023 at two). When the simulator changed, the frozen set was rebuilt and every rung re-scored.</p>
+  <div class="ladder" id="ladder"></div>
+</section>
+
+<section id="limits">
+  <div class="eyebrow">Limits</div>
+  <h2>Where it falls short</h2>
+  <ul class="plain" id="limitsList"></ul>
+</section>
+
+<section id="use">
+  <div class="eyebrow">Use it</div>
+  <h2>Run it on your own prices</h2>
+  <pre>import batterypilot as bp
+net = bp.PolicyNet('batterypilot_weights.npz')
+bat = bp.Battery(P=1.0, duration_h=2.0)             # 1 MW, 2 h usable, 85 % round trip
+cl  = bat.c_lin(path['T'])                         # wear cost, $ per MWh sold
+ch, dis, soc, V = bp.run_policy(net, path, bat, cl) # hourly arrays: rt, da, df, T, hour, day, dow, doy
+print(bp.settle(bat, path['rt'], ch, dis, 0.0, path['T'])['net'])</pre>
+  <p class="note">The release (batterypilot-v1.0.zip) is numpy and scipy only: the model, weights, the four baselines, a demo on real exam prices that runs in seconds, the model card and every training script.</p>
+</section>
+
+<section id="credits">
+  <div class="eyebrow">Data and credits</div>
+  <ul class="plain">
+    <li>ERCOT historical DAM and RTM settlement point prices (public ERCOT market data). CAISO OASIS LMPs (public CAISO data). Both via GridData.</li>
+    <li>U.S. EIA Hourly Electric Grid Monitor (EIA-930), public domain. NASA POWER hourly weather (NASA LaRC). EIA-860/923 via PUDL (Catalyst Cooperative, CC-BY-4.0).</li>
+    <li>GridSim (Phase 1) supplied the fleets, heat-rate curves, outage model and fuel prices; its dev calibration (coal offer adder) is reused.</li>
+    <li>Degradation: rainflow counting with a Wöhler depth curve (Xu et al., IEEE Trans. Smart Grid 2018) and LiFePO4 temperature and C-rate dependence (Wang et al., J. Power Sources 2011), the chemistry CellSense was built on.</li>
+  </ul>
+</section>
+<footer>BatteryPilot v1.0 · part of ML Ratchet (github.com/dogum/ML-Ratchet). Research code, not trading advice.</footer>
+</div>
+
+<script src="data.js"></script>
+<script src="bp.js"></script>
+<script>
+(function () {
+'use strict';
+const D = window.BPDATA;
+const $ = (id) => document.getElementById(id);
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const NS = 'http://www.w3.org/2000/svg';
+function b64(s, T) { const bin = atob(s); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new T(u.buffer); }
+const fmt$ = (v) => (v < 0 ? '−$' : '$') + Math.abs(v).toLocaleString('en-US', { maximumFractionDigits: 0 });
+const f1 = (v) => v.toFixed(1), f0 = (v) => Math.round(v).toLocaleString('en-US');
+const STRATS = [
+  { k: 'bp', name: 'BatteryPilot', c: '--s-bp' },
+  { k: 'pf', name: 'Perfect hindsight', c: '--s-pf' },
+  { k: 'rolling', name: 'Day-ahead optimiser', c: '--s-roll' },
+  { k: 'spread', name: 'Daily spread rule', c: '--s-spread' },
+  { k: 'threshold', name: 'Threshold rule', c: '--s-thr' }];
+const shown = { bp: true, pf: true, rolling: true, spread: false, threshold: false };
+
+// ---------- network weights
+const W = { x_mu: b64(D.net.x_mu, Float32Array), x_sd: b64(D.net.x_sd, Float32Array),
+  layers: D.net.layers.map(l => ({ W: b64(l.W, Float32Array), b: b64(l.b, Float32Array), nin: l.nin, nout: l.nout })) };
+
+// ---------- lab paths
+const cache = {};
+function calendar(rec) {
+  const fmt = new Intl.DateTimeFormat('en-US', { timeZone: rec.tz, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', weekday: 'short', hourCycle: 'h23' });
+  const t0 = Date.parse(rec.t0_utc), n = rec.n;
+  const hour = new Int16Array(n), day = new Int32Array(n), dow = new Int16Array(n), doy = new Int16Array(n), label = new Array(n);
+  const WD = { Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6 };
+  let d0 = null;
+  for (let i = 0; i < n; i++) {
+    const parts = {}; for (const p of fmt.formatToParts(new Date(t0 + i * 3600e3))) parts[p.type] = p.value;
+    const y = +parts.year, m = +parts.month, dd = +parts.day;
+    const dn = Date.UTC(y, m - 1, dd) / 864e5;
+    if (d0 === null) d0 = dn;
+    hour[i] = +parts.hour; day[i] = dn - d0; dow[i] = WD[parts.weekday];
+    doy[i] = dn - Date.UTC(y, 0, 1) / 864e5 + 1;
+    label[i] = { m, d: dd, h: +parts.hour, y };
+  }
+  return { hour, day, dow, doy, label };
+}
+function path(i) {
+  if (cache[i]) return cache[i];
+  const r = D.lab[i];
+  const p = Object.assign({ rec: r }, calendar(r));
+  p.rt = Float64Array.from(b64(r.rt, Int16Array), v => v / 2);
+  p.da = Float64Array.from(b64(r.da, Int16Array), v => v / 2);
+  p.df = Float64Array.from(b64(r.df, Uint16Array), v => v * 4);
+  p.T = Float64Array.from(b64(r.T, Int16Array), v => v / 100);
+  p.nd = p.day[r.n - 1] + 1;
+  p.strat = {};
+  for (const [k, s] of Object.entries(r.strat)) p.strat[k] = { daily: b64(s.daily, Float32Array), soc: s.soc ? Float64Array.from(b64(s.soc, Uint8Array), v => v / 255) : null, net: s.net, cycles: s.cycles, deg: s.deg };
+  cache[i] = p;
+  return p;
+}
+
+// ---------- state
+const nodes = [...new Set(D.lab.map(r => r.market + ' · ' + r.node))];
+const st = { node: nodes[0], year: null, dur: 2, span: 7, day: 200, hover: null, eta: 85, cost: 130 };
+nodes.forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; $('selNode').appendChild(o); });
+function recIndex() { return D.lab.findIndex(r => r.market + ' · ' + r.node === st.node && r.year === st.year); }
+function fillYears() {
+  const ys = D.lab.filter(r => r.market + ' · ' + r.node === st.node).map(r => r.year);
+  $('selYear').innerHTML = ''; ys.forEach(y => { const o = document.createElement('option'); o.value = y; o.textContent = y; $('selYear').appendChild(o); });
+  if (!ys.includes(st.year)) st.year = ys[ys.length - 1];
+  $('selYear').value = st.year;
+}
+$('selNode').onchange = (e) => { st.node = e.target.value; fillYears(); draw(); };
+$('selYear').onchange = (e) => { st.year = +e.target.value; draw(); };
+function seg(id, key) { $(id).querySelectorAll('button').forEach(b => b.onclick = () => { $(id).querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false')); b.setAttribute('aria-pressed', 'true'); st[key] = +b.dataset.v; draw(); }); }
+seg('segDur', 'dur'); seg('segSpan', 'span');
+$('date').oninput = (e) => { st.day = +e.target.value; draw(); };
+$('prev').onclick = () => { st.day = Math.max(0, st.day - st.span); draw(); };
+$('next').onclick = () => { st.day = st.day + st.span; draw(); };
+$('jump').querySelectorAll('button').forEach(b => b.onclick = () => {
+  const p = path(recIndex()); const dl = p.strat['bp' + st.dur].daily;
+  let best = 0;
+  if (b.dataset.v === 'spike') { let mx = -1e9, at = 0; for (let i = 0; i < p.rt.length; i++) if (p.rt[i] > mx) { mx = p.rt[i]; at = i; } best = p.day[at]; }
+  else { let v = b.dataset.v === 'best' ? -1e18 : 1e18; for (let d = 0; d < dl.length; d++) { const x = dl[d]; if (b.dataset.v === 'best' ? x > v : x < v) { v = x; best = d; } } }
+  st.day = Math.max(0, best - (st.span === 7 ? 3 : 0)); draw();
+});
+STRATS.forEach(s => {
+  const c = document.createElement('button'); c.className = 'chip'; c.setAttribute('aria-pressed', shown[s.k]);
+  c.innerHTML = `<span class="sw" style="background:var(${s.c})"></span>${s.name}`;
+  c.onclick = () => { shown[s.k] = !shown[s.k]; c.setAttribute('aria-pressed', shown[s.k]); draw(); };
+  $('chips').appendChild(c);
+});
+$('wEta').oninput = (e) => { st.eta = +e.target.value; draw(); };
+$('wCost').oninput = (e) => { st.cost = +e.target.value; draw(); };
+
+// ---------- svg helpers
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function niceTicks(lo, hi, n) { const span = hi - lo || 1; const step0 = span / n; const mag = Math.pow(10, Math.floor(Math.log10(step0))); const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= step0); const out = []; for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(+v.toFixed(6)); return out; }
+function line(svg, xs, ys, X, Y, color, opts) {
+  opts = opts || {}; let d = '';
+  for (let i = 0; i < xs.length; i++) { if (!isFinite(ys[i])) continue; d += (d ? 'L' : 'M') + X(xs[i]).toFixed(1) + ' ' + Y(ys[i]).toFixed(1); }
+  return el('path', { d, fill: 'none', stroke: color, 'stroke-width': opts.w || 2, 'stroke-dasharray': opts.dash || '', 'stroke-linejoin': 'round', 'stroke-linecap': 'round', opacity: opts.op || 1 }, svg);
+}
+
+let geom = null, live = null;
+function draw() {
+  const ri = recIndex(); const p = path(ri); const r = p.rec;
+  const nd = p.nd; st.day = Math.min(Math.max(0, st.day), nd - st.span);
+  $('date').max = nd - st.span; $('date').value = st.day;
+  let t0 = p.day.findIndex(d => d === st.day); let t1 = p.day.findIndex(d => d === st.day + st.span); if (t1 < 0) t1 = p.rt.length;
+  const L = p.label[t0]; const L1 = p.label[t1 - 1];
+  const M = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  $('dateLbl').textContent = st.span === 1 ? `${L.d} ${M[L.m - 1]} ${L.y}` : `${L.d} ${M[L.m - 1]}–${L1.d} ${M[L1.m - 1]}`;
+  const xs = []; for (let t = t0; t <= t1; t++) xs.push(t);
+  // live JS run of BatteryPilot for this window, from the Python SOC at the window start
+  const bat = BP.battery(st.dur, { eta_rt: st.eta / 100, cost_per_kWh: st.cost });
+  const soc0 = p.strat['bp' + st.dur].soc[t0];
+  live = BP.runPolicy(W, p, bat, t0, t1, soc0);
+  const spread = BP.dailySpread(p, bat, 0, p.rt.length), thr = BP.threshold(p, bat, 0, p.rt.length, r.thr[0], r.thr[1]);
+  const socs = { bp: p.strat['bp' + st.dur].soc, pf: p.strat['pf' + st.dur].soc, rolling: p.strat['rolling' + st.dur].soc, spread: spread.soc, threshold: thr.soc };
+  // price chart
+  const sv = $('cPrice'); sv.innerHTML = '';
+  const Wd = 760, H = 230, ml = 52, mr = 10, mt = 12, mb = 26;
+  let ymin = 0, ymax = 10;
+  for (let t = t0; t < t1; t++) { ymin = Math.min(ymin, p.rt[t], p.da[t]); ymax = Math.max(ymax, p.rt[t], p.da[t]); }
+  const yt = niceTicks(ymin, ymax * 1.05, 4); ymin = Math.min(ymin, yt[0]); ymax = Math.max(ymax * 1.05, yt[yt.length - 1]);
+  const X = (t) => ml + (t - t0) / (t1 - t0) * (Wd - ml - mr), Y = (v) => mt + (1 - (v - ymin) / (ymax - ymin)) * (H - mt - mb);
+  yt.forEach(v => { el('line', { x1: ml, x2: Wd - mr, y1: Y(v), y2: Y(v), class: 'gridl' }, sv); el('text', { x: ml - 6, y: Y(v) + 4, 'text-anchor': 'end' }, sv).textContent = '$' + f0(v); });
+  for (let t = t0; t <= t1; t++) if (p.hour[t] === 0 || (st.span === 1 && p.hour[t] % 6 === 0)) {
+    el('line', { x1: X(t), x2: X(t), y1: mt, y2: H - mb, class: 'gridl' }, sv);
+    if (t < t1) { const l = p.label[t]; el('text', { x: X(t) + 3, y: H - 8 }, sv).textContent = st.span === 1 ? `${String(l.h).padStart(2, '0')}:00` : `${M[l.m - 1]} ${l.d}`; }
+  }
+  const step = (arr) => { const xx = [], yy = []; for (let t = t0; t < t1; t++) { xx.push(t, t + 1); yy.push(arr[t], arr[t]); } return [xx, yy]; };
+  let [a, b] = step(p.da); line(sv, a, b, X, Y, css('--ink-3'), { w: 1.5, dash: '4 3' });
+  [a, b] = step(p.rt); line(sv, a, b, X, Y, css('--ink'), { w: 1.6 });
+  el('text', { x: ml, y: 10 }, sv).textContent = '$/MWh   — real-time   - - day-ahead';
+  // soc chart
+  const sc = $('cSoc'); sc.innerHTML = '';
+  const H2 = 170, Y2 = (v) => 10 + (1 - v) * (H2 - 34);
+  [0, 0.5, 1].forEach(v => { el('line', { x1: ml, x2: Wd - mr, y1: Y2(v), y2: Y2(v), class: 'gridl' }, sc); el('text', { x: ml - 6, y: Y2(v) + 4, 'text-anchor': 'end' }, sc).textContent = (v * 100) + '%'; });
+  el('text', { x: ml, y: H2 - 8 }, sc).textContent = 'state of charge';
+  STRATS.slice().reverse().forEach(s => { if (!shown[s.k]) return; const ys = xs.map(t => socs[s.k][t]); line(sc, xs, ys, X, Y2, css(s.c), { w: s.k === 'bp' ? 2.5 : 2 }); });
+  const whatif = st.eta !== 85 || st.cost !== 130;
+  if (shown.bp) line(sc, xs, Array.from(live.soc), X, Y2, css('--s-bp'), { w: 1.5, dash: '5 4', op: whatif ? 1 : 0.9 });
+  geom = { t0, t1, X, ml, mr, Wd, p, socs };
+  // money
+  const dlo = st.day, dhi = st.day + st.span;
+  let rows = '<tr><th>Strategy</th><th>This ' + (st.span === 1 ? 'day' : 'week') + '</th><th>Year $/kW</th><th>Share</th><th>Cycles</th></tr>';
+  const pfY = p.strat['pf' + st.dur].net;
+  STRATS.forEach(s => {
+    const S = p.strat[s.k + st.dur]; let w = 0; for (let d = dlo; d < dhi && d < S.daily.length; d++) w += S.daily[d];
+    rows += `<tr><td><span class="sw" style="background:var(${s.c});margin-right:6px;vertical-align:middle"></span>${s.name}</td><td class="num">${fmt$(w)}</td><td class="num">${f1(S.net / 1000)}</td><td class="num">${s.k === 'pf' ? '100%' : Math.round(100 * S.net / pfY) + '%'}</td><td class="num">${f0(S.cycles)}</td></tr>`;
+  });
+  // what-if live window money
+  let g = 0; for (let i = 0; i < live.ch.length; i++) g += p.rt[t0 + i] * (live.dis[i] - live.ch[i]);
+  const T = Array.from(p.T.slice(t0, t1)); const dg = BP.rainflowCost(bat, live.soc, T);
+  rows += `<tr><td><span class="sw" style="background:var(--s-bp);margin-right:6px;vertical-align:middle;opacity:.7"></span>${whatif ? 'What-if run' : 'Live JS run'}</td><td class="num">${fmt$(g - dg)}</td><td class="num">–</td><td class="num">–</td><td class="num">–</td></tr>`;
+  $('moneyTbl').innerHTML = rows;
+  $('moneyNote').textContent = `${r.market} ${r.node}, ${r.year}, 1 MW / ${st.dur} MWh. Net of wear. Year totals settle every hour of ${r.year} at real-time prices.`;
+  $('wEtaV').textContent = st.eta + ' %'; $('wCostV').textContent = '$' + st.cost;
+  $('whatifNote').textContent = whatif ? 'The dashed line is BatteryPilot re-run in your browser with this battery for the window shown (same network; the wear cost is one of its inputs). Year totals above stay at the trained settings.' : 'The dashed line is the network run live in your browser (it should sit on the solid line). Move a slider to re-run this window with a different battery.';
+  drawVal(st.hover === null ? Math.floor((t0 + t1) / 2) : st.hover);
+}
+function drawVal(t) {
+  const sv = $('cVal'); sv.innerHTML = ''; if (!live || !geom) return;
+  const i = t - geom.t0; if (i < 0 || i >= live.V.length) return;
+  const v = live.V[i], price = geom.p.rt[t];
+  const lo = Math.min(...v, price, 0), hi = Math.max(...v, price) * 1.1 + 1;
+  const X = (s) => 40 + s * 250, Y = (y) => 10 + (1 - (y - lo) / (hi - lo)) * 110;
+  niceTicks(lo, hi, 3).forEach(y => { el('line', { x1: 40, x2: 290, y1: Y(y), y2: Y(y), class: 'gridl' }, sv); el('text', { x: 36, y: Y(y) + 4, 'text-anchor': 'end' }, sv).textContent = '$' + f0(y); });
+  line(sv, [0, 0.25, 0.5, 0.75, 1], v, X, Y, css('--s-bp'), { w: 2 });
+  [0, 0.25, 0.5, 0.75, 1].forEach((s, k) => el('circle', { cx: X(s), cy: Y(v[k]), r: 3.5, fill: css('--s-bp'), stroke: css('--panel'), 'stroke-width': 2 }, sv));
+  el('line', { x1: 40, x2: 290, y1: Y(price), y2: Y(price), stroke: css('--spike'), 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }, sv);
+  el('text', { x: 288, y: Y(price) - 4, 'text-anchor': 'end' }, sv).textContent = 'price $' + f0(price);
+  ['0%', '50%', '100% full'].forEach((s, k) => el('text', { x: X(k / 2), y: 142, 'text-anchor': k === 0 ? 'start' : k === 2 ? 'end' : 'middle' }, sv).textContent = s);
+}
+$('chartBox').addEventListener('mousemove', (e) => {
+  if (!geom) return; const svg = $('cPrice'); const r = svg.getBoundingClientRect(); const box = $('chartBox').getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width * geom.Wd; if (x < geom.ml || x > geom.Wd - geom.mr) { $('tip').hidden = true; return; }
+  const t = Math.min(geom.t1 - 1, Math.floor(geom.t0 + (x - geom.ml) / (geom.Wd - geom.ml - geom.mr) * (geom.t1 - geom.t0)));
+  st.hover = t; const p = geom.p, l = p.label[t];
+  let h = `${l.m}/${l.d} ${String(l.h).padStart(2, '0')}:00<br>real-time $${f1(p.rt[t])} · day-ahead $${f1(p.da[t])}`;
+  STRATS.forEach(s => { if (shown[s.k]) h += `<br><span style="color:var(${s.c})">■</span> ${s.name}: ${Math.round(100 * geom.socs[s.k][t + 1])}%`; });
+  const tip = $('tip'); tip.innerHTML = h; tip.hidden = false;
+  const px = e.clientX - box.left; tip.style.left = Math.min(px + 14, box.width - 220) + 'px'; tip.style.top = (e.clientY - box.top + 12) + 'px';
+  drawVal(t);
+});
+$('chartBox').addEventListener('mouseleave', () => { $('tip').hidden = true; });
+
+// ---------- static sections
+function heroAndExam() {
+  const E = D.exam, rows = E.by_market_year_duration;
+  const mean = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+  const er = rows.filter(r => r.market === 'ERCOT'), cr = rows.filter(r => r.market === 'CAISO');
+  const tile = (big, title, sub) => `<div class="tile"><span class="eyebrow">${title}</span><span class="big num">${big}</span><span class="sub">${sub}</span></div>`;
+  const O = E.overall;
+  $('tiles').innerHTML = [
+    tile(Math.round(100 * O.ERCOT.bp_mean_capture) + '%', 'ERCOT 2023–25', `of perfect-hindsight revenue, mean over ${O.ERCOT.node_years} node-years × 3 batteries. Day-ahead optimiser ${Math.round(100 * O.ERCOT.rolling_mean_capture)}%, spread rule ${Math.round(100 * O.ERCOT.spread_mean_capture)}%.`),
+    tile(Math.round(100 * O.CAISO.bp_mean_capture) + '%', 'CAISO 2024–25', `of perfect hindsight over ${O.CAISO.node_years} node-years. Day-ahead optimiser ${Math.round(100 * O.CAISO.rolling_mean_capture)}%, spread rule ${Math.round(100 * O.CAISO.spread_mean_capture)}%.`),
+    tile(Math.round(100 * O.ERCOT.bp_beats_rolling_share) + '%', 'Beats the optimiser', `of ERCOT node-year-battery cases (CAISO ${Math.round(100 * O.CAISO.bp_beats_rolling_share)}%).`),
+    tile('0', 'Real prices in training', 'Real dev-year prices only calibrated the simulator and gated rungs. The exam was run once.')].join('');
+  let h = '<tr><th>Market · year</th><th>Battery</th><th>Perfect hindsight</th><th>BatteryPilot</th><th>Share</th><th>DA optimiser</th><th>Spread rule</th><th>Threshold</th><th>BP − optimiser</th><th>BP cycles/yr</th><th>BP worst month</th></tr>';
+  rows.forEach(r => {
+    const d = r.bp_minus_rolling_ci; const cls = d[0] > 0 ? 'win' : d[1] < 0 ? 'lose' : '';
+    h += `<tr><td>${r.market} ${r.year}</td><td class="num">${r.duration} h</td><td class="num">${f1(r.pf)}</td><td class="num"><b>${f1(r.bp)}</b><span class="ci">${f1(r.bp_ci[0])} – ${f1(r.bp_ci[1])}</span></td><td class="num">${Math.round(100 * r.bp_capture)}%<span class="ci">${Math.round(100 * r.bp_capture_ci[0])}–${Math.round(100 * r.bp_capture_ci[1])}%</span></td><td class="num">${f1(r.rolling)}</td><td class="num">${f1(r.spread)}</td><td class="num">${f1(r.threshold)}</td><td class="num ${cls}">${r.bp_minus_rolling >= 0 ? '+' : ''}${f1(r.bp_minus_rolling)}<span class="ci">${f1(d[0])} – ${f1(d[1])}</span></td><td class="num">${f0(r.bp_cycles)}</td><td class="num">${f1(r.bp_worst_month_median_node)}</td></tr>`;
+  });
+  $('examTbl').innerHTML = h;
+  $('examIntro').textContent = 'Revenue in $ per kW-year net of battery wear, averaged over the ERCOT hubs and load zones (12 nodes) and the CAISO trading hubs and DLAPs (6). Small grey numbers are 95 % intervals from resampling whole weeks. Green: BatteryPilot beats the day-ahead optimiser with the interval clear of zero; red: it loses.';
+  $('examFoot').textContent = 'Perfect hindsight is an annual LP on the real-time prices (an upper bound). The day-ahead optimiser re-plans when day-ahead prices clear at 14:00 and follows its schedule. The spread rule charges in the cheapest day-ahead hours and sells in the dearest later ones. The threshold rule buys below and sells above the node’s dev-period price quartiles. Worst month: median over nodes of each node’s worst month, $ per kW.';
+  // node table (2 h)
+  const bn = E.by_node.filter(r => r.duration === 2);
+  const years = [...new Set(bn.map(r => r.year))].sort();
+  const nodesN = [...new Set(bn.map(r => r.market + ' ' + r.node.replace('_GEN-APND', '').replace('-APND', '')))];
+  let nh = '<tr><th>Node</th>' + years.map(y => `<th>${y} BP</th><th>${y} optimiser</th>`).join('') + '</tr>';
+  nodesN.forEach(n => {
+    nh += `<tr><td>${n}</td>`;
+    years.forEach(y => { const r = bn.find(q => q.market + ' ' + q.node.replace('_GEN-APND', '').replace('-APND', '') === n && q.year === y); if (!r) { nh += '<td></td><td></td>'; return; } const c1 = r.bp / r.pf, c2 = r.rolling / r.pf; nh += `<td class="num ${c1 > c2 ? 'win' : 'lose'}">${Math.round(100 * c1)}%</td><td class="num">${Math.round(100 * c2)}%</td>`; });
+    nh += '</tr>';
+  });
+  $('nodeTbl').innerHTML = nh;
+}
+function twins() {
+  if (!D.twin_week) return;
+  const plot = (id, w, cap) => {
+    const sv = $(id); const n = w.real_rt.length; const Wd = 520, H = 200, ml = 50, mr = 8, mt = 10, mb = 24;
+    const all = w.real_rt.concat(w.sim_rt).map(v => Math.min(v, cap)); const ymax = Math.max(...all) * 1.05, ymin = Math.min(0, ...all);
+    const X = (i) => ml + i / (n - 1) * (Wd - ml - mr), Y = (v) => mt + (1 - (Math.min(v, cap) - ymin) / (ymax - ymin)) * (H - mt - mb);
+    niceTicks(ymin, ymax, 4).forEach(v => { el('line', { x1: ml, x2: Wd - mr, y1: Y(v), y2: Y(v), class: 'gridl' }, sv); el('text', { x: ml - 5, y: Y(v) + 4, 'text-anchor': 'end' }, sv).textContent = '$' + f0(v); });
+    for (let i = 0; i < n; i += 24) { el('line', { x1: X(i), x2: X(i), y1: mt, y2: H - mb, class: 'gridl' }, sv); el('text', { x: X(i) + 3, y: H - 7 }, sv).textContent = w.t[i].slice(5, 10); }
+    line(sv, [...Array(n).keys()], w.sim_rt, X, Y, css('--s-bp'), { w: 1.6 });
+    line(sv, [...Array(n).keys()], w.real_rt, X, Y, css('--ink'), { w: 1.6 });
+    el('text', { x: ml + 4, y: mt + 12 }, sv).textContent = '— real   ';
+    const t = el('text', { x: ml + 64, y: mt + 12 }, sv); t.textContent = '— simulated twin'; t.setAttribute('style', 'fill:var(--s-bp)');
+  };
+  plot('cTw1', D.twin_week['2019'], 1e9); plot('cTw2', D.twin_week['2021'], 1e9);
+  const u = D.calibration.uri;
+  $('uriNote').textContent = `Below about −3 °C the simulator takes up to ${Math.round(100 * u.P.cold_fmax)} % of thermal capacity out (fitted on this storm only). Real prices sat above $1,000/MWh for ${u.real_hours} hours; the two simulated draws gave ${u.sim_hours.join(' and ')} hours, covering ${Math.round(100 * Math.min(...u.overlap))}–${Math.round(100 * Math.max(...u.overlap))} % of the real ones.`;
+  const C = D.calibration; const keys = [['rtmean', 'Mean real-time price $'], ['max_q50', 'Median daily max $'], ['max_q75', 'Daily max, 75th pct $'], ['max_q90', 'Daily max, 90th pct $'], ['min_q50', 'Median daily min $'], ['h100', 'Hours > $100'], ['h1000', 'Hours > $1,000'], ['rtda', 'Median |RT − DA| $'], ['pf', 'Perfect hindsight, 2 h, $/kW']];
+  let h = '<tr><th>Statistic</th><th>2019 real</th><th>2019 sim</th><th>2021 real*</th><th>2021 sim*</th></tr>';
+  keys.forEach(([k, n]) => { h += `<tr><td>${n}</td><td class="num">${f1(C.real['2019'][k])}</td><td class="num">${f1(C.sim['2019'][k])}</td><td class="num">${f1(C.real['2021'][k])}</td><td class="num">${f1(C.sim['2021'][k])}</td></tr>`; });
+  $('calTbl').innerHTML = h + '<tr><td colspan="5" style="text-align:left" class="note">* 2021 without the Uri weeks (8–24 Feb), which were fitted separately.</td></tr>';
+}
+function ladder() {
+  const R = D.ratchet.rungs;
+  $('ladder').innerHTML = R.map(r => `<div class="rung"><span class="id">${r.rung}</span><div><b>${r.change}</b><div class="note">${r.why}</div><div class="note mono">frozen ${r.frozen} ${r.frozen_capture.toFixed(3)} · dev ${r.dev_capture.toFixed(3)}</div></div><span class="pill ${r.rung === 'R0' ? 'inc' : r.kept ? 'kept' : 'rej'}">${r.rung === 'R0' ? 'start' : r.kept ? 'kept' : 'rejected'}</span></div>`).join('');
+  (D.limits || []).forEach(t => { const li = document.createElement('li'); li.textContent = t; $('limitsList').appendChild(li); });
+  if (D.heroNote) $('heroNote').textContent = D.heroNote;
+}
+heroAndExam(); twins(); ladder();
+st.year = D.lab[0].year; fillYears(); st.year = 2023; $('selYear').value = 2023;
+{ const p = path(recIndex()); let mx = -1e9, at = 0; for (let i = 0; i < p.rt.length; i++) if (p.rt[i] > mx) { mx = p.rt[i]; at = i; } st.day = Math.max(0, p.day[at] - 3); }
+draw();
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+</script>
+
+</body></html>

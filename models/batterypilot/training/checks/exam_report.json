@@ -1,0 +1,2921 @@
+{
+ "units": "$ per kW-year net of degradation (1 MW battery; mean over the nodes of each market), 95% intervals from a weekly block bootstrap (2,000 draws, same weeks for every node and strategy)",
+ "by_market_year_duration": [
+  {
+   "market": "CAISO",
+   "year": 2024,
+   "duration": 1,
+   "nodes": 6,
+   "pf": 16.33,
+   "pf_ci": [
+    12.27,
+    21.85
+   ],
+   "pf_cycles": 316.0,
+   "pf_deg": 6.95,
+   "rolling": 11.99,
+   "rolling_ci": [
+    8.02,
+    17.47
+   ],
+   "rolling_cycles": 307.0,
+   "rolling_deg": 6.82,
+   "spread": 10.44,
+   "spread_ci": [
+    6.86,
+    15.55
+   ],
+   "spread_cycles": 285.0,
+   "spread_deg": 6.21,
+   "threshold": 1.58,
+   "threshold_ci": [
+    0.95,
+    2.25
+   ],
+   "threshold_cycles": 110.0,
+   "threshold_deg": 2.44,
+   "bp": 10.46,
+   "bp_ci": [
+    6.62,
+    15.99
+   ],
+   "bp_cycles": 269.0,
+   "bp_deg": 5.91,
+   "bp_capture": 0.641,
+   "bp_capture_ci": [
+    0.527,
+    0.736
+   ],
+   "rolling_capture": 0.734,
+   "bp_minus_rolling": -1.53,
+   "bp_minus_rolling_ci": [
+    -2.22,
+    -0.85
+   ],
+   "spread_capture": 0.639,
+   "bp_minus_spread": 0.02,
+   "bp_minus_spread_ci": [
+    -0.76,
+    0.91
+   ],
+   "threshold_capture": 0.097,
+   "bp_minus_threshold": 8.88,
+   "bp_minus_threshold_ci": [
+    5.23,
+    14.29
+   ],
+   "bp_worst_month_median_node": 0.1,
+   "bp_worst_month_any_node": 0.0,
+   "bp_worst_month_where": "DLAP_PGAE-APND month 12",
+   "rolling_worst_month_median_node": 0.2
+  },
+  {
+   "market": "CAISO",
+   "year": 2024,
+   "duration": 2,
+   "nodes": 6,
+   "pf": 29.63,
+   "pf_ci": [
+    23.2,
+    38.18
+   ],
+   "pf_cycles": 310.0,
+   "pf_deg": 11.94,
+   "rolling": 22.34,
+   "rolling_ci": [
+    16.58,
+    30.16
+   ],
+   "rolling_cycles": 309.0,
+   "rolling_deg": 12.1,
+   "spread": 19.35,
+   "spread_ci": [
+    14.57,
+    26.02
+   ],
+   "spread_cycles": 289.0,
+   "spread_deg": 11.14,
+   "threshold": 5.0,
+   "threshold_ci": [
+    3.0,
+    7.5
+   ],
+   "threshold_cycles": 95.0,
+   "threshold_deg": 3.63,
+   "bp": 20.64,
+   "bp_ci": [
+    14.77,
+    28.78
+   ],
+   "bp_cycles": 268.0,
+   "bp_deg": 10.1,
+   "bp_capture": 0.697,
+   "bp_capture_ci": [
+    0.614,
+    0.768
+   ],
+   "rolling_capture": 0.754,
+   "bp_minus_rolling": -1.7,
+   "bp_minus_rolling_ci": [
+    -3.09,
+    -0.44
+   ],
+   "spread_capture": 0.653,
+   "bp_minus_spread": 1.29,
+   "bp_minus_spread_ci": [
+    -0.36,
+    3.17
+   ],
+   "threshold_capture": 0.169,
+   "bp_minus_threshold": 15.64,
+   "bp_minus_threshold_ci": [
+    10.59,
+    23.19
+   ],
+   "bp_worst_month_median_node": 0.28,
+   "bp_worst_month_any_node": 0.06,
+   "bp_worst_month_where": "DLAP_PGAE-APND month 12",
+   "rolling_worst_month_median_node": 0.38
+  },
+  {
+   "market": "CAISO",
+   "year": 2024,
+   "duration": 4,
+   "nodes": 6,
+   "pf": 47.49,
+   "pf_ci": [
+    37.9,
+    58.78
+   ],
+   "pf_cycles": 284.0,
+   "pf_deg": 20.63,
+   "rolling": 37.55,
+   "rolling_ci": [
+    28.34,
+    48.64
+   ],
+   "rolling_cycles": 288.0,
+   "rolling_deg": 21.27,
+   "spread": 32.31,
+   "spread_ci": [
+    24.49,
+    41.87
+   ],
+   "spread_cycles": 283.0,
+   "spread_deg": 20.48,
+   "threshold": 9.9,
+   "threshold_ci": [
+    5.86,
+    14.96
+   ],
+   "threshold_cycles": 73.0,
+   "threshold_deg": 4.99,
+   "bp": 36.4,
+   "bp_ci": [
+    27.9,
+    46.52
+   ],
+   "bp_cycles": 246.0,
+   "bp_deg": 16.98,
+   "bp_capture": 0.766,
+   "bp_capture_ci": [
+    0.714,
+    0.808
+   ],
+   "rolling_capture": 0.791,
+   "bp_minus_rolling": -1.15,
+   "bp_minus_rolling_ci": [
+    -3.22,
+    0.69
+   ],
+   "spread_capture": 0.68,
+   "bp_minus_spread": 4.09,
+   "bp_minus_spread_ci": [
+    1.94,
+    6.4
+   ],
+   "threshold_capture": 0.208,
+   "bp_minus_threshold": 26.5,
+   "bp_minus_threshold_ci": [
+    18.7,
+    36.69
+   ],
+   "bp_worst_month_median_node": 0.64,
+   "bp_worst_month_any_node": 0.14,
+   "bp_worst_month_where": "TH_NP15_GEN-APND month 12",
+   "rolling_worst_month_median_node": 0.66
+  },
+  {
+   "market": "CAISO",
+   "year": 2025,
+   "duration": 1,
+   "nodes": 6,
+   "pf": 9.04,
+   "pf_ci": [
+    7.23,
+    10.76
+   ],
+   "pf_cycles": 282.0,
+   "pf_deg": 6.15,
+   "rolling": 4.99,
+   "rolling_ci": [
+    3.52,
+    6.45
+   ],
+   "rolling_cycles": 262.0,
+   "rolling_deg": 5.75,
+   "spread": 4.27,
+   "spread_ci": [
+    3.08,
+    5.51
+   ],
+   "spread_cycles": 249.0,
+   "spread_deg": 5.39,
+   "threshold": 1.11,
+   "threshold_ci": [
+    0.63,
+    1.6
+   ],
+   "threshold_cycles": 97.0,
+   "threshold_deg": 2.09,
+   "bp": 4.42,
+   "bp_ci": [
+    3.29,
+    5.57
+   ],
+   "bp_cycles": 239.0,
+   "bp_deg": 5.2,
+   "bp_capture": 0.489,
+   "bp_capture_ci": [
+    0.435,
+    0.534
+   ],
+   "rolling_capture": 0.552,
+   "bp_minus_rolling": -0.57,
+   "bp_minus_rolling_ci": [
+    -1.17,
+    -0.02
+   ],
+   "spread_capture": 0.472,
+   "bp_minus_spread": 0.15,
+   "bp_minus_spread_ci": [
+    -0.3,
+    0.57
+   ],
+   "threshold_capture": 0.123,
+   "bp_minus_threshold": 3.31,
+   "bp_minus_threshold_ci": [
+    2.47,
+    4.16
+   ],
+   "bp_worst_month_median_node": -0.06,
+   "bp_worst_month_any_node": -0.07,
+   "bp_worst_month_where": "DLAP_SCE-APND month 12",
+   "rolling_worst_month_median_node": -0.0
+  },
+  {
+   "market": "CAISO",
+   "year": 2025,
+   "duration": 2,
+   "nodes": 6,
+   "pf": 17.48,
+   "pf_ci": [
+    14.17,
+    20.94
+   ],
+   "pf_cycles": 281.0,
+   "pf_deg": 10.69,
+   "rolling": 10.69,
+   "rolling_ci": [
+    7.82,
+    13.68
+   ],
+   "rolling_cycles": 271.0,
+   "rolling_deg": 10.51,
+   "spread": 9.47,
+   "spread_ci": [
+    7.06,
+    11.96
+   ],
+   "spread_cycles": 257.0,
+   "spread_deg": 9.81,
+   "threshold": 3.03,
+   "threshold_ci": [
+    1.87,
+    4.29
+   ],
+   "threshold_cycles": 80.0,
+   "threshold_deg": 2.92,
+   "bp": 10.11,
+   "bp_ci": [
+    7.75,
+    12.58
+   ],
+   "bp_cycles": 242.0,
+   "bp_deg": 9.03,
+   "bp_capture": 0.578,
+   "bp_capture_ci": [
+    0.528,
+    0.622
+   ],
+   "rolling_capture": 0.612,
+   "bp_minus_rolling": -0.58,
+   "bp_minus_rolling_ci": [
+    -1.61,
+    0.45
+   ],
+   "spread_capture": 0.542,
+   "bp_minus_spread": 0.64,
+   "bp_minus_spread_ci": [
+    -0.1,
+    1.37
+   ],
+   "threshold_capture": 0.173,
+   "bp_minus_threshold": 7.08,
+   "bp_minus_threshold_ci": [
+    5.41,
+    8.95
+   ],
+   "bp_worst_month_median_node": -0.12,
+   "bp_worst_month_any_node": -0.14,
+   "bp_worst_month_where": "DLAP_PGAE-APND month 12",
+   "rolling_worst_month_median_node": -0.03
+  },
+  {
+   "market": "CAISO",
+   "year": 2025,
+   "duration": 4,
+   "nodes": 6,
+   "pf": 29.38,
+   "pf_ci": [
+    23.79,
+    34.92
+   ],
+   "pf_cycles": 255.0,
+   "pf_deg": 18.48,
+   "rolling": 19.66,
+   "rolling_ci": [
+    14.39,
+    24.85
+   ],
+   "rolling_cycles": 254.0,
+   "rolling_deg": 18.71,
+   "spread": 17.33,
+   "spread_ci": [
+    12.59,
+    22.09
+   ],
+   "spread_cycles": 248.0,
+   "spread_deg": 17.75,
+   "threshold": 5.97,
+   "threshold_ci": [
+    3.68,
+    8.45
+   ],
+   "threshold_cycles": 60.0,
+   "threshold_deg": 3.9,
+   "bp": 20.61,
+   "bp_ci": [
+    15.9,
+    25.4
+   ],
+   "bp_cycles": 222.0,
+   "bp_deg": 15.16,
+   "bp_capture": 0.701,
+   "bp_capture_ci": [
+    0.654,
+    0.739
+   ],
+   "rolling_capture": 0.669,
+   "bp_minus_rolling": 0.95,
+   "bp_minus_rolling_ci": [
+    -0.53,
+    2.43
+   ],
+   "spread_capture": 0.59,
+   "bp_minus_spread": 3.28,
+   "bp_minus_spread_ci": [
+    2.08,
+    4.46
+   ],
+   "threshold_capture": 0.203,
+   "bp_minus_threshold": 14.64,
+   "bp_minus_threshold_ci": [
+    10.87,
+    18.46
+   ],
+   "bp_worst_month_median_node": -0.17,
+   "bp_worst_month_any_node": -0.21,
+   "bp_worst_month_where": "DLAP_PGAE-APND month 12",
+   "rolling_worst_month_median_node": 0.09
+  },
+  {
+   "market": "ERCOT",
+   "year": 2023,
+   "duration": 1,
+   "nodes": 12,
+   "pf": 87.81,
+   "pf_ci": [
+    47.62,
+    135.67
+   ],
+   "pf_cycles": 355.0,
+   "pf_deg": 8.16,
+   "rolling": 56.58,
+   "rolling_ci": [
+    29.51,
+    88.45
+   ],
+   "rolling_cycles": 330.0,
+   "rolling_deg": 7.53,
+   "spread": 52.53,
+   "spread_ci": [
+    27.55,
+    82.08
+   ],
+   "spread_cycles": 263.0,
+   "spread_deg": 5.93,
+   "threshold": 1.76,
+   "threshold_ci": [
+    0.86,
+    2.8
+   ],
+   "threshold_cycles": 226.0,
+   "threshold_deg": 5.07,
+   "bp": 47.15,
+   "bp_ci": [
+    26.76,
+    70.84
+   ],
+   "bp_cycles": 257.0,
+   "bp_deg": 5.81,
+   "bp_capture": 0.537,
+   "bp_capture_ci": [
+    0.499,
+    0.602
+   ],
+   "rolling_capture": 0.644,
+   "bp_minus_rolling": -9.43,
+   "bp_minus_rolling_ci": [
+    -18.19,
+    -1.64
+   ],
+   "spread_capture": 0.598,
+   "bp_minus_spread": -5.38,
+   "bp_minus_spread_ci": [
+    -12.64,
+    0.78
+   ],
+   "threshold_capture": 0.02,
+   "bp_minus_threshold": 45.39,
+   "bp_minus_threshold_ci": [
+    24.91,
+    69.43
+   ],
+   "bp_worst_month_median_node": 0.27,
+   "bp_worst_month_any_node": 0.23,
+   "bp_worst_month_where": "LZ_SOUTH month 2",
+   "rolling_worst_month_median_node": 0.07
+  },
+  {
+   "market": "ERCOT",
+   "year": 2023,
+   "duration": 2,
+   "nodes": 12,
+   "pf": 137.53,
+   "pf_ci": [
+    76.47,
+    216.49
+   ],
+   "pf_cycles": 316.0,
+   "pf_deg": 12.39,
+   "rolling": 93.72,
+   "rolling_ci": [
+    49.01,
+    151.67
+   ],
+   "rolling_cycles": 310.0,
+   "rolling_deg": 12.18,
+   "spread": 84.5,
+   "spread_ci": [
+    43.92,
+    136.55
+   ],
+   "spread_cycles": 255.0,
+   "spread_deg": 10.18,
+   "threshold": 6.91,
+   "threshold_ci": [
+    4.72,
+    9.33
+   ],
+   "threshold_cycles": 198.0,
+   "threshold_deg": 7.67,
+   "bp": 95.41,
+   "bp_ci": [
+    52.84,
+    153.65
+   ],
+   "bp_cycles": 244.0,
+   "bp_deg": 9.45,
+   "bp_capture": 0.694,
+   "bp_capture_ci": [
+    0.625,
+    0.754
+   ],
+   "rolling_capture": 0.681,
+   "bp_minus_rolling": 1.69,
+   "bp_minus_rolling_ci": [
+    -6.73,
+    9.33
+   ],
+   "spread_capture": 0.614,
+   "bp_minus_spread": 10.91,
+   "bp_minus_spread_ci": [
+    3.86,
+    20.2
+   ],
+   "threshold_capture": 0.05,
+   "bp_minus_threshold": 88.5,
+   "bp_minus_threshold_ci": [
+    44.98,
+    146.54
+   ],
+   "bp_worst_month_median_node": 0.55,
+   "bp_worst_month_any_node": 0.46,
+   "bp_worst_month_where": "HB_HOUSTON month 2",
+   "rolling_worst_month_median_node": 0.13
+  },
+  {
+   "market": "ERCOT",
+   "year": 2023,
+   "duration": 4,
+   "nodes": 12,
+   "pf": 196.35,
+   "pf_ci": [
+    107.52,
+    316.07
+   ],
+   "pf_cycles": 247.0,
+   "pf_deg": 17.44,
+   "rolling": 153.53,
+   "rolling_ci": [
+    77.66,
+    253.67
+   ],
+   "rolling_cycles": 257.0,
+   "rolling_deg": 18.24,
+   "spread": 135.55,
+   "spread_ci": [
+    66.41,
+    226.82
+   ],
+   "spread_cycles": 217.0,
+   "spread_deg": 16.48,
+   "threshold": 20.7,
+   "threshold_ci": [
+    13.78,
+    29.54
+   ],
+   "threshold_cycles": 157.0,
+   "threshold_deg": 11.01,
+   "bp": 162.49,
+   "bp_ci": [
+    83.94,
+    268.94
+   ],
+   "bp_cycles": 215.0,
+   "bp_deg": 15.33,
+   "bp_capture": 0.828,
+   "bp_capture_ci": [
+    0.763,
+    0.879
+   ],
+   "rolling_capture": 0.782,
+   "bp_minus_rolling": 8.96,
+   "bp_minus_rolling_ci": [
+    -3.03,
+    21.46
+   ],
+   "spread_capture": 0.69,
+   "bp_minus_spread": 26.94,
+   "bp_minus_spread_ci": [
+    13.31,
+    44.74
+   ],
+   "threshold_capture": 0.105,
+   "bp_minus_threshold": 141.79,
+   "bp_minus_threshold_ci": [
+    64.6,
+    247.15
+   ],
+   "bp_worst_month_median_node": 0.98,
+   "bp_worst_month_any_node": 0.78,
+   "bp_worst_month_where": "HB_HOUSTON month 2",
+   "rolling_worst_month_median_node": 0.23
+  },
+  {
+   "market": "ERCOT",
+   "year": 2024,
+   "duration": 1,
+   "nodes": 12,
+   "pf": 28.63,
+   "pf_ci": [
+    19.64,
+    40.46
+   ],
+   "pf_cycles": 317.0,
+   "pf_deg": 7.1,
+   "rolling": 18.42,
+   "rolling_ci": [
+    11.06,
+    28.58
+   ],
+   "rolling_cycles": 318.0,
+   "rolling_deg": 7.18,
+   "spread": 16.18,
+   "spread_ci": [
+    9.36,
+    25.33
+   ],
+   "spread_cycles": 265.0,
+   "spread_deg": 5.92,
+   "threshold": 0.8,
+   "threshold_ci": [
+    0.06,
+    1.69
+   ],
+   "threshold_cycles": 278.0,
+   "threshold_deg": 6.31,
+   "bp": 18.87,
+   "bp_ci": [
+    11.48,
+    29.28
+   ],
+   "bp_cycles": 251.0,
+   "bp_deg": 5.66,
+   "bp_capture": 0.659,
+   "bp_capture_ci": [
+    0.544,
+    0.757
+   ],
+   "rolling_capture": 0.643,
+   "bp_minus_rolling": 0.45,
+   "bp_minus_rolling_ci": [
+    -1.27,
+    2.34
+   ],
+   "spread_capture": 0.565,
+   "bp_minus_spread": 2.69,
+   "bp_minus_spread_ci": [
+    0.93,
+    4.92
+   ],
+   "threshold_capture": 0.028,
+   "bp_minus_threshold": 18.07,
+   "bp_minus_threshold_ci": [
+    10.63,
+    28.64
+   ],
+   "bp_worst_month_median_node": 0.1,
+   "bp_worst_month_any_node": 0.08,
+   "bp_worst_month_where": "HB_SOUTH month 12",
+   "rolling_worst_month_median_node": 0.08
+  },
+  {
+   "market": "ERCOT",
+   "year": 2024,
+   "duration": 2,
+   "nodes": 12,
+   "pf": 47.66,
+   "pf_ci": [
+    32.11,
+    66.38
+   ],
+   "pf_cycles": 299.0,
+   "pf_deg": 11.55,
+   "rolling": 34.04,
+   "rolling_ci": [
+    20.31,
+    51.42
+   ],
+   "rolling_cycles": 305.0,
+   "rolling_deg": 11.91,
+   "spread": 29.08,
+   "spread_ci": [
+    16.9,
+    45.11
+   ],
+   "spread_cycles": 260.0,
+   "spread_deg": 10.26,
+   "threshold": 7.29,
+   "threshold_ci": [
+    4.92,
+    9.86
+   ],
+   "threshold_cycles": 248.0,
+   "threshold_deg": 9.72,
+   "bp": 35.29,
+   "bp_ci": [
+    21.55,
+    52.84
+   ],
+   "bp_cycles": 247.0,
+   "bp_deg": 9.56,
+   "bp_capture": 0.74,
+   "bp_capture_ci": [
+    0.639,
+    0.815
+   ],
+   "rolling_capture": 0.714,
+   "bp_minus_rolling": 1.25,
+   "bp_minus_rolling_ci": [
+    -0.28,
+    2.72
+   ],
+   "spread_capture": 0.61,
+   "bp_minus_spread": 6.21,
+   "bp_minus_spread_ci": [
+    3.51,
+    9.81
+   ],
+   "threshold_capture": 0.153,
+   "bp_minus_threshold": 28.0,
+   "bp_minus_threshold_ci": [
+    14.52,
+    45.07
+   ],
+   "bp_worst_month_median_node": 0.32,
+   "bp_worst_month_any_node": 0.24,
+   "bp_worst_month_where": "HB_SOUTH month 12",
+   "rolling_worst_month_median_node": 0.33
+  },
+  {
+   "market": "ERCOT",
+   "year": 2024,
+   "duration": 4,
+   "nodes": 12,
+   "pf": 63.68,
+   "pf_ci": [
+    44.0,
+    88.31
+   ],
+   "pf_cycles": 234.0,
+   "pf_deg": 16.37,
+   "rolling": 47.73,
+   "rolling_ci": [
+    29.01,
+    71.69
+   ],
+   "rolling_cycles": 238.0,
+   "rolling_deg": 16.57,
+   "spread": 35.3,
+   "spread_ci": [
+    19.61,
+    55.9
+   ],
+   "spread_cycles": 216.0,
+   "spread_deg": 16.15,
+   "threshold": 19.85,
+   "threshold_ci": [
+    14.4,
+    26.13
+   ],
+   "threshold_cycles": 194.0,
+   "threshold_deg": 13.77,
+   "bp": 51.07,
+   "bp_ci": [
+    32.74,
+    73.88
+   ],
+   "bp_cycles": 212.0,
+   "bp_deg": 14.68,
+   "bp_capture": 0.802,
+   "bp_capture_ci": [
+    0.725,
+    0.852
+   ],
+   "rolling_capture": 0.75,
+   "bp_minus_rolling": 3.34,
+   "bp_minus_rolling_ci": [
+    1.09,
+    5.36
+   ],
+   "spread_capture": 0.554,
+   "bp_minus_spread": 15.77,
+   "bp_minus_spread_ci": [
+    10.93,
+    21.56
+   ],
+   "threshold_capture": 0.312,
+   "bp_minus_threshold": 31.22,
+   "bp_minus_threshold_ci": [
+    15.6,
+    51.12
+   ],
+   "bp_worst_month_median_node": 0.58,
+   "bp_worst_month_any_node": 0.47,
+   "bp_worst_month_where": "LZ_HOUSTON month 7",
+   "rolling_worst_month_median_node": 0.59
+  },
+  {
+   "market": "ERCOT",
+   "year": 2025,
+   "duration": 1,
+   "nodes": 12,
+   "pf": 20.13,
+   "pf_ci": [
+    15.63,
+    25.1
+   ],
+   "pf_cycles": 334.0,
+   "pf_deg": 7.57,
+   "rolling": 12.11,
+   "rolling_ci": [
+    8.34,
+    16.61
+   ],
+   "rolling_cycles": 335.0,
+   "rolling_deg": 7.62,
+   "spread": 8.67,
+   "spread_ci": [
+    6.32,
+    11.7
+   ],
+   "spread_cycles": 291.0,
+   "spread_deg": 6.55,
+   "threshold": 0.29,
+   "threshold_ci": [
+    -0.13,
+    0.72
+   ],
+   "threshold_cycles": 211.0,
+   "threshold_deg": 4.79,
+   "bp": 9.76,
+   "bp_ci": [
+    7.18,
+    13.14
+   ],
+   "bp_cycles": 265.0,
+   "bp_deg": 5.95,
+   "bp_capture": 0.485,
+   "bp_capture_ci": [
+    0.389,
+    0.59
+   ],
+   "rolling_capture": 0.602,
+   "bp_minus_rolling": -2.35,
+   "bp_minus_rolling_ci": [
+    -5.59,
+    0.03
+   ],
+   "spread_capture": 0.431,
+   "bp_minus_spread": 1.09,
+   "bp_minus_spread_ci": [
+    0.26,
+    1.94
+   ],
+   "threshold_capture": 0.014,
+   "bp_minus_threshold": 9.47,
+   "bp_minus_threshold_ci": [
+    6.92,
+    12.82
+   ],
+   "bp_worst_month_median_node": 0.27,
+   "bp_worst_month_any_node": 0.17,
+   "bp_worst_month_where": "LZ_HOUSTON month 12",
+   "rolling_worst_month_median_node": 0.33
+  },
+  {
+   "market": "ERCOT",
+   "year": 2025,
+   "duration": 2,
+   "nodes": 12,
+   "pf": 34.36,
+   "pf_ci": [
+    27.87,
+    41.27
+   ],
+   "pf_cycles": 322.0,
+   "pf_deg": 12.65,
+   "rolling": 22.61,
+   "rolling_ci": [
+    16.92,
+    28.96
+   ],
+   "rolling_cycles": 332.0,
+   "rolling_deg": 13.2,
+   "spread": 16.75,
+   "spread_ci": [
+    12.82,
+    21.19
+   ],
+   "spread_cycles": 292.0,
+   "spread_deg": 11.62,
+   "threshold": 4.4,
+   "threshold_ci": [
+    3.28,
+    5.63
+   ],
+   "threshold_cycles": 193.0,
+   "threshold_deg": 7.6,
+   "bp": 20.0,
+   "bp_ci": [
+    15.75,
+    24.6
+   ],
+   "bp_cycles": 265.0,
+   "bp_deg": 10.24,
+   "bp_capture": 0.582,
+   "bp_capture_ci": [
+    0.504,
+    0.663
+   ],
+   "rolling_capture": 0.658,
+   "bp_minus_rolling": -2.61,
+   "bp_minus_rolling_ci": [
+    -6.44,
+    0.6
+   ],
+   "spread_capture": 0.487,
+   "bp_minus_spread": 3.25,
+   "bp_minus_spread_ci": [
+    1.75,
+    4.8
+   ],
+   "threshold_capture": 0.128,
+   "bp_minus_threshold": 15.6,
+   "bp_minus_threshold_ci": [
+    11.51,
+    20.1
+   ],
+   "bp_worst_month_median_node": 0.7,
+   "bp_worst_month_any_node": 0.42,
+   "bp_worst_month_where": "HB_HOUSTON month 12",
+   "rolling_worst_month_median_node": 0.8
+  },
+  {
+   "market": "ERCOT",
+   "year": 2025,
+   "duration": 4,
+   "nodes": 12,
+   "pf": 51.13,
+   "pf_ci": [
+    42.23,
+    60.66
+   ],
+   "pf_cycles": 272.0,
+   "pf_deg": 19.71,
+   "rolling": 35.64,
+   "rolling_ci": [
+    28.3,
+    44.2
+   ],
+   "rolling_cycles": 279.0,
+   "rolling_deg": 20.26,
+   "spread": 26.04,
+   "spread_ci": [
+    20.41,
+    32.01
+   ],
+   "spread_cycles": 271.0,
+   "spread_deg": 20.32,
+   "threshold": 11.86,
+   "threshold_ci": [
+    9.29,
+    14.66
+   ],
+   "threshold_cycles": 157.0,
+   "threshold_deg": 11.17,
+   "bp": 34.78,
+   "bp_ci": [
+    28.14,
+    42.17
+   ],
+   "bp_cycles": 241.0,
+   "bp_deg": 16.95,
+   "bp_capture": 0.68,
+   "bp_capture_ci": [
+    0.601,
+    0.754
+   ],
+   "rolling_capture": 0.697,
+   "bp_minus_rolling": -0.86,
+   "bp_minus_rolling_ci": [
+    -5.88,
+    2.92
+   ],
+   "spread_capture": 0.509,
+   "bp_minus_spread": 8.74,
+   "bp_minus_spread_ci": [
+    5.88,
+    11.9
+   ],
+   "threshold_capture": 0.232,
+   "bp_minus_threshold": 22.92,
+   "bp_minus_threshold_ci": [
+    16.68,
+    30.35
+   ],
+   "bp_worst_month_median_node": 1.23,
+   "bp_worst_month_any_node": 0.79,
+   "bp_worst_month_where": "LZ_SOUTH month 6",
+   "rolling_worst_month_median_node": 1.32
+  }
+ ],
+ "by_node": [
+  {
+   "market": "CAISO",
+   "node": "DLAP_PGAE-APND",
+   "year": 2024,
+   "duration": 1,
+   "pf": 14.13,
+   "rolling": 10.14,
+   "spread": 8.34,
+   "threshold": 0.58,
+   "bp": 9.28,
+   "bp_capture": 0.657,
+   "bp_cycles": 205.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_PGAE-APND",
+   "year": 2024,
+   "duration": 2,
+   "pf": 25.19,
+   "rolling": 18.67,
+   "spread": 14.9,
+   "threshold": 2.42,
+   "bp": 17.33,
+   "bp_capture": 0.688,
+   "bp_cycles": 207.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_PGAE-APND",
+   "year": 2024,
+   "duration": 4,
+   "pf": 38.18,
+   "rolling": 28.41,
+   "spread": 21.73,
+   "threshold": 7.56,
+   "bp": 28.24,
+   "bp_capture": 0.74,
+   "bp_cycles": 191.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_PGAE-APND",
+   "year": 2025,
+   "duration": 1,
+   "pf": 7.79,
+   "rolling": 3.68,
+   "spread": 3.13,
+   "threshold": 0.55,
+   "bp": 3.39,
+   "bp_capture": 0.435,
+   "bp_cycles": 201.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_PGAE-APND",
+   "year": 2025,
+   "duration": 2,
+   "pf": 14.74,
+   "rolling": 8.41,
+   "spread": 7.24,
+   "threshold": 2.22,
+   "bp": 7.83,
+   "bp_capture": 0.531,
+   "bp_cycles": 201.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_PGAE-APND",
+   "year": 2025,
+   "duration": 4,
+   "pf": 23.67,
+   "rolling": 14.3,
+   "spread": 11.55,
+   "threshold": 4.94,
+   "bp": 15.72,
+   "bp_capture": 0.664,
+   "bp_cycles": 179.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_SCE-APND",
+   "year": 2024,
+   "duration": 1,
+   "pf": 17.37,
+   "rolling": 13.28,
+   "spread": 11.84,
+   "threshold": 1.94,
+   "bp": 11.24,
+   "bp_capture": 0.647,
+   "bp_cycles": 302.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_SCE-APND",
+   "year": 2024,
+   "duration": 2,
+   "pf": 31.78,
+   "rolling": 25.02,
+   "spread": 22.27,
+   "threshold": 5.88,
+   "bp": 22.45,
+   "bp_capture": 0.706,
+   "bp_cycles": 299.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_SCE-APND",
+   "year": 2024,
+   "duration": 4,
+   "pf": 52.08,
+   "rolling": 43.64,
+   "spread": 38.95,
+   "threshold": 10.57,
+   "bp": 40.74,
+   "bp_capture": 0.782,
+   "bp_cycles": 275.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_SCE-APND",
+   "year": 2025,
+   "duration": 1,
+   "pf": 9.15,
+   "rolling": 5.67,
+   "spread": 4.82,
+   "threshold": 1.17,
+   "bp": 4.67,
+   "bp_capture": 0.51,
+   "bp_cycles": 258.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_SCE-APND",
+   "year": 2025,
+   "duration": 2,
+   "pf": 17.97,
+   "rolling": 11.86,
+   "spread": 10.58,
+   "threshold": 2.99,
+   "bp": 10.88,
+   "bp_capture": 0.605,
+   "bp_cycles": 259.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_SCE-APND",
+   "year": 2025,
+   "duration": 4,
+   "pf": 31.11,
+   "rolling": 22.32,
+   "spread": 20.13,
+   "threshold": 5.74,
+   "bp": 22.47,
+   "bp_capture": 0.722,
+   "bp_cycles": 241.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_SDGE-APND",
+   "year": 2024,
+   "duration": 1,
+   "pf": 19.29,
+   "rolling": 13.39,
+   "spread": 11.95,
+   "threshold": 2.62,
+   "bp": 11.83,
+   "bp_capture": 0.613,
+   "bp_cycles": 307.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_SDGE-APND",
+   "year": 2024,
+   "duration": 2,
+   "pf": 35.08,
+   "rolling": 25.61,
+   "spread": 22.81,
+   "threshold": 7.17,
+   "bp": 23.96,
+   "bp_capture": 0.683,
+   "bp_cycles": 305.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_SDGE-APND",
+   "year": 2024,
+   "duration": 4,
+   "pf": 57.02,
+   "rolling": 43.67,
+   "spread": 38.79,
+   "threshold": 14.41,
+   "bp": 43.01,
+   "bp_capture": 0.754,
+   "bp_cycles": 280.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_SDGE-APND",
+   "year": 2025,
+   "duration": 1,
+   "pf": 11.42,
+   "rolling": 5.58,
+   "spread": 4.89,
+   "threshold": 2.11,
+   "bp": 5.54,
+   "bp_capture": 0.485,
+   "bp_cycles": 255.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_SDGE-APND",
+   "year": 2025,
+   "duration": 2,
+   "pf": 21.67,
+   "rolling": 11.97,
+   "spread": 10.84,
+   "threshold": 5.09,
+   "bp": 12.27,
+   "bp_capture": 0.566,
+   "bp_cycles": 258.0
+  },
+  {
+   "market": "CAISO",
+   "node": "DLAP_SDGE-APND",
+   "year": 2025,
+   "duration": 4,
+   "pf": 36.15,
+   "rolling": 23.15,
+   "spread": 20.36,
+   "threshold": 9.8,
+   "bp": 24.86,
+   "bp_capture": 0.688,
+   "bp_cycles": 243.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_NP15_GEN-APND",
+   "year": 2024,
+   "duration": 1,
+   "pf": 12.92,
+   "rolling": 8.77,
+   "spread": 7.21,
+   "threshold": 0.44,
+   "bp": 8.14,
+   "bp_capture": 0.63,
+   "bp_cycles": 191.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_NP15_GEN-APND",
+   "year": 2024,
+   "duration": 2,
+   "pf": 22.76,
+   "rolling": 15.65,
+   "spread": 12.35,
+   "threshold": 2.8,
+   "bp": 15.32,
+   "bp_capture": 0.673,
+   "bp_cycles": 194.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_NP15_GEN-APND",
+   "year": 2024,
+   "duration": 4,
+   "pf": 34.21,
+   "rolling": 23.77,
+   "spread": 17.82,
+   "threshold": 6.1,
+   "bp": 24.89,
+   "bp_capture": 0.728,
+   "bp_cycles": 174.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_NP15_GEN-APND",
+   "year": 2025,
+   "duration": 1,
+   "pf": 7.13,
+   "rolling": 3.4,
+   "spread": 2.79,
+   "threshold": 0.39,
+   "bp": 2.93,
+   "bp_capture": 0.411,
+   "bp_cycles": 186.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_NP15_GEN-APND",
+   "year": 2025,
+   "duration": 2,
+   "pf": 13.55,
+   "rolling": 7.26,
+   "spread": 6.25,
+   "threshold": 1.63,
+   "bp": 6.59,
+   "bp_capture": 0.486,
+   "bp_cycles": 189.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_NP15_GEN-APND",
+   "year": 2025,
+   "duration": 4,
+   "pf": 21.64,
+   "rolling": 12.29,
+   "spread": 10.26,
+   "threshold": 3.59,
+   "bp": 13.77,
+   "bp_capture": 0.636,
+   "bp_cycles": 165.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_SP15_GEN-APND",
+   "year": 2024,
+   "duration": 1,
+   "pf": 17.03,
+   "rolling": 13.18,
+   "spread": 11.77,
+   "threshold": 2.08,
+   "bp": 11.01,
+   "bp_capture": 0.647,
+   "bp_cycles": 309.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_SP15_GEN-APND",
+   "year": 2024,
+   "duration": 2,
+   "pf": 31.34,
+   "rolling": 24.78,
+   "spread": 22.2,
+   "threshold": 6.18,
+   "bp": 21.94,
+   "bp_capture": 0.7,
+   "bp_cycles": 305.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_SP15_GEN-APND",
+   "year": 2024,
+   "duration": 4,
+   "pf": 51.64,
+   "rolling": 43.15,
+   "spread": 38.64,
+   "threshold": 10.92,
+   "bp": 40.54,
+   "bp_capture": 0.785,
+   "bp_cycles": 280.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_SP15_GEN-APND",
+   "year": 2025,
+   "duration": 1,
+   "pf": 9.18,
+   "rolling": 5.72,
+   "spread": 4.91,
+   "threshold": 1.17,
+   "bp": 4.74,
+   "bp_capture": 0.516,
+   "bp_cycles": 268.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_SP15_GEN-APND",
+   "year": 2025,
+   "duration": 2,
+   "pf": 18.12,
+   "rolling": 11.94,
+   "spread": 10.61,
+   "threshold": 2.82,
+   "bp": 11.01,
+   "bp_capture": 0.608,
+   "bp_cycles": 270.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_SP15_GEN-APND",
+   "year": 2025,
+   "duration": 4,
+   "pf": 31.33,
+   "rolling": 22.55,
+   "spread": 20.5,
+   "threshold": 5.5,
+   "bp": 22.5,
+   "bp_capture": 0.718,
+   "bp_cycles": 250.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_ZP26_GEN-APND",
+   "year": 2024,
+   "duration": 1,
+   "pf": 17.22,
+   "rolling": 13.16,
+   "spread": 11.54,
+   "threshold": 1.79,
+   "bp": 11.28,
+   "bp_capture": 0.655,
+   "bp_cycles": 304.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_ZP26_GEN-APND",
+   "year": 2024,
+   "duration": 2,
+   "pf": 31.61,
+   "rolling": 24.32,
+   "spread": 21.58,
+   "threshold": 5.56,
+   "bp": 22.82,
+   "bp_capture": 0.722,
+   "bp_cycles": 299.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_ZP26_GEN-APND",
+   "year": 2024,
+   "duration": 4,
+   "pf": 51.83,
+   "rolling": 42.67,
+   "spread": 37.91,
+   "threshold": 9.84,
+   "bp": 41.0,
+   "bp_capture": 0.791,
+   "bp_cycles": 275.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_ZP26_GEN-APND",
+   "year": 2025,
+   "duration": 1,
+   "pf": 9.57,
+   "rolling": 5.86,
+   "spread": 5.08,
+   "threshold": 1.29,
+   "bp": 5.23,
+   "bp_capture": 0.546,
+   "bp_cycles": 269.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_ZP26_GEN-APND",
+   "year": 2025,
+   "duration": 2,
+   "pf": 18.82,
+   "rolling": 12.71,
+   "spread": 11.33,
+   "threshold": 3.45,
+   "bp": 12.12,
+   "bp_capture": 0.644,
+   "bp_cycles": 273.0
+  },
+  {
+   "market": "CAISO",
+   "node": "TH_ZP26_GEN-APND",
+   "year": 2025,
+   "duration": 4,
+   "pf": 32.4,
+   "rolling": 23.39,
+   "spread": 21.19,
+   "threshold": 6.24,
+   "bp": 24.35,
+   "bp_capture": 0.752,
+   "bp_cycles": 255.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_HOUSTON",
+   "year": 2023,
+   "duration": 1,
+   "pf": 87.07,
+   "rolling": 55.46,
+   "spread": 51.41,
+   "threshold": 1.44,
+   "bp": 46.13,
+   "bp_capture": 0.53,
+   "bp_cycles": 241.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_HOUSTON",
+   "year": 2023,
+   "duration": 2,
+   "pf": 135.52,
+   "rolling": 91.36,
+   "spread": 82.41,
+   "threshold": 6.11,
+   "bp": 93.73,
+   "bp_capture": 0.692,
+   "bp_cycles": 224.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_HOUSTON",
+   "year": 2023,
+   "duration": 4,
+   "pf": 192.39,
+   "rolling": 152.02,
+   "spread": 135.14,
+   "threshold": 19.0,
+   "bp": 161.79,
+   "bp_capture": 0.841,
+   "bp_cycles": 198.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_HOUSTON",
+   "year": 2024,
+   "duration": 1,
+   "pf": 24.81,
+   "rolling": 15.61,
+   "spread": 13.95,
+   "threshold": 0.09,
+   "bp": 15.5,
+   "bp_capture": 0.625,
+   "bp_cycles": 226.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_HOUSTON",
+   "year": 2024,
+   "duration": 2,
+   "pf": 40.83,
+   "rolling": 29.13,
+   "spread": 25.3,
+   "threshold": 5.71,
+   "bp": 29.85,
+   "bp_capture": 0.731,
+   "bp_cycles": 222.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_HOUSTON",
+   "year": 2024,
+   "duration": 4,
+   "pf": 52.79,
+   "rolling": 38.93,
+   "spread": 27.72,
+   "threshold": 16.06,
+   "bp": 41.65,
+   "bp_capture": 0.789,
+   "bp_cycles": 186.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_HOUSTON",
+   "year": 2025,
+   "duration": 1,
+   "pf": 16.56,
+   "rolling": 9.09,
+   "spread": 6.88,
+   "threshold": -0.15,
+   "bp": 8.06,
+   "bp_capture": 0.487,
+   "bp_cycles": 245.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_HOUSTON",
+   "year": 2025,
+   "duration": 2,
+   "pf": 27.67,
+   "rolling": 17.14,
+   "spread": 13.43,
+   "threshold": 3.0,
+   "bp": 16.23,
+   "bp_capture": 0.587,
+   "bp_cycles": 240.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_HOUSTON",
+   "year": 2025,
+   "duration": 4,
+   "pf": 40.16,
+   "rolling": 26.36,
+   "spread": 19.9,
+   "threshold": 8.38,
+   "bp": 28.04,
+   "bp_capture": 0.698,
+   "bp_cycles": 213.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_NORTH",
+   "year": 2023,
+   "duration": 1,
+   "pf": 86.42,
+   "rolling": 56.37,
+   "spread": 52.39,
+   "threshold": 1.03,
+   "bp": 46.13,
+   "bp_capture": 0.534,
+   "bp_cycles": 233.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_NORTH",
+   "year": 2023,
+   "duration": 2,
+   "pf": 134.45,
+   "rolling": 93.01,
+   "spread": 83.9,
+   "threshold": 5.52,
+   "bp": 94.53,
+   "bp_capture": 0.703,
+   "bp_cycles": 221.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_NORTH",
+   "year": 2023,
+   "duration": 4,
+   "pf": 191.11,
+   "rolling": 151.31,
+   "spread": 133.84,
+   "threshold": 22.17,
+   "bp": 160.82,
+   "bp_capture": 0.842,
+   "bp_cycles": 196.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_NORTH",
+   "year": 2024,
+   "duration": 1,
+   "pf": 25.86,
+   "rolling": 17.19,
+   "spread": 15.1,
+   "threshold": 0.63,
+   "bp": 17.67,
+   "bp_capture": 0.683,
+   "bp_cycles": 235.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_NORTH",
+   "year": 2024,
+   "duration": 2,
+   "pf": 42.67,
+   "rolling": 31.29,
+   "spread": 26.66,
+   "threshold": 7.13,
+   "bp": 31.57,
+   "bp_capture": 0.74,
+   "bp_cycles": 229.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_NORTH",
+   "year": 2024,
+   "duration": 4,
+   "pf": 55.31,
+   "rolling": 41.8,
+   "spread": 31.21,
+   "threshold": 22.41,
+   "bp": 44.0,
+   "bp_capture": 0.796,
+   "bp_cycles": 193.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_NORTH",
+   "year": 2025,
+   "duration": 1,
+   "pf": 19.11,
+   "rolling": 12.21,
+   "spread": 8.2,
+   "threshold": 0.27,
+   "bp": 8.6,
+   "bp_capture": 0.45,
+   "bp_cycles": 255.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_NORTH",
+   "year": 2025,
+   "duration": 2,
+   "pf": 31.87,
+   "rolling": 21.61,
+   "spread": 15.38,
+   "threshold": 4.67,
+   "bp": 17.67,
+   "bp_capture": 0.554,
+   "bp_cycles": 255.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_NORTH",
+   "year": 2025,
+   "duration": 4,
+   "pf": 46.0,
+   "rolling": 32.66,
+   "spread": 22.45,
+   "threshold": 11.82,
+   "bp": 30.36,
+   "bp_capture": 0.66,
+   "bp_cycles": 225.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_SOUTH",
+   "year": 2023,
+   "duration": 1,
+   "pf": 77.32,
+   "rolling": 48.76,
+   "spread": 45.69,
+   "threshold": 1.14,
+   "bp": 41.47,
+   "bp_capture": 0.536,
+   "bp_cycles": 237.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_SOUTH",
+   "year": 2023,
+   "duration": 2,
+   "pf": 120.08,
+   "rolling": 79.81,
+   "spread": 71.82,
+   "threshold": 5.44,
+   "bp": 82.83,
+   "bp_capture": 0.69,
+   "bp_cycles": 224.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_SOUTH",
+   "year": 2023,
+   "duration": 4,
+   "pf": 169.79,
+   "rolling": 131.65,
+   "spread": 117.14,
+   "threshold": 15.78,
+   "bp": 139.72,
+   "bp_capture": 0.823,
+   "bp_cycles": 198.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_SOUTH",
+   "year": 2024,
+   "duration": 1,
+   "pf": 25.89,
+   "rolling": 16.56,
+   "spread": 14.81,
+   "threshold": -0.11,
+   "bp": 16.96,
+   "bp_capture": 0.655,
+   "bp_cycles": 233.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_SOUTH",
+   "year": 2024,
+   "duration": 2,
+   "pf": 42.93,
+   "rolling": 30.51,
+   "spread": 26.88,
+   "threshold": 5.72,
+   "bp": 31.5,
+   "bp_capture": 0.734,
+   "bp_cycles": 230.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_SOUTH",
+   "year": 2024,
+   "duration": 4,
+   "pf": 56.6,
+   "rolling": 42.11,
+   "spread": 29.52,
+   "threshold": 15.22,
+   "bp": 45.38,
+   "bp_capture": 0.802,
+   "bp_cycles": 193.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_SOUTH",
+   "year": 2025,
+   "duration": 1,
+   "pf": 16.11,
+   "rolling": 9.25,
+   "spread": 6.98,
+   "threshold": -0.54,
+   "bp": 7.79,
+   "bp_capture": 0.484,
+   "bp_cycles": 250.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_SOUTH",
+   "year": 2025,
+   "duration": 2,
+   "pf": 27.68,
+   "rolling": 17.76,
+   "spread": 13.95,
+   "threshold": 2.83,
+   "bp": 16.11,
+   "bp_capture": 0.582,
+   "bp_cycles": 252.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_SOUTH",
+   "year": 2025,
+   "duration": 4,
+   "pf": 41.05,
+   "rolling": 28.07,
+   "spread": 21.65,
+   "threshold": 9.63,
+   "bp": 28.29,
+   "bp_capture": 0.689,
+   "bp_cycles": 228.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_WEST",
+   "year": 2023,
+   "duration": 1,
+   "pf": 90.25,
+   "rolling": 57.29,
+   "spread": 54.65,
+   "threshold": 2.6,
+   "bp": 48.3,
+   "bp_capture": 0.535,
+   "bp_cycles": 308.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_WEST",
+   "year": 2023,
+   "duration": 2,
+   "pf": 141.3,
+   "rolling": 96.7,
+   "spread": 87.44,
+   "threshold": 7.62,
+   "bp": 97.0,
+   "bp_capture": 0.686,
+   "bp_cycles": 290.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_WEST",
+   "year": 2023,
+   "duration": 4,
+   "pf": 201.63,
+   "rolling": 155.58,
+   "spread": 136.16,
+   "threshold": 20.78,
+   "bp": 166.4,
+   "bp_capture": 0.825,
+   "bp_cycles": 251.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_WEST",
+   "year": 2024,
+   "duration": 1,
+   "pf": 30.56,
+   "rolling": 20.75,
+   "spread": 17.37,
+   "threshold": 1.91,
+   "bp": 19.81,
+   "bp_capture": 0.648,
+   "bp_cycles": 288.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_WEST",
+   "year": 2024,
+   "duration": 2,
+   "pf": 51.06,
+   "rolling": 37.6,
+   "spread": 30.69,
+   "threshold": 8.72,
+   "bp": 38.65,
+   "bp_capture": 0.757,
+   "bp_cycles": 283.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_WEST",
+   "year": 2024,
+   "duration": 4,
+   "pf": 68.72,
+   "rolling": 52.92,
+   "spread": 36.28,
+   "threshold": 20.79,
+   "bp": 56.07,
+   "bp_capture": 0.816,
+   "bp_cycles": 246.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_WEST",
+   "year": 2025,
+   "duration": 1,
+   "pf": 21.29,
+   "rolling": 14.25,
+   "spread": 9.96,
+   "threshold": 1.36,
+   "bp": 10.65,
+   "bp_capture": 0.5,
+   "bp_cycles": 302.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_WEST",
+   "year": 2025,
+   "duration": 2,
+   "pf": 36.38,
+   "rolling": 25.77,
+   "spread": 19.41,
+   "threshold": 7.08,
+   "bp": 21.66,
+   "bp_capture": 0.595,
+   "bp_cycles": 303.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "HB_WEST",
+   "year": 2025,
+   "duration": 4,
+   "pf": 54.4,
+   "rolling": 40.33,
+   "spread": 29.64,
+   "threshold": 16.39,
+   "bp": 37.44,
+   "bp_capture": 0.688,
+   "bp_cycles": 273.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_AEN",
+   "year": 2023,
+   "duration": 1,
+   "pf": 94.04,
+   "rolling": 62.52,
+   "spread": 58.29,
+   "threshold": 1.49,
+   "bp": 54.85,
+   "bp_capture": 0.583,
+   "bp_cycles": 250.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_AEN",
+   "year": 2023,
+   "duration": 2,
+   "pf": 148.59,
+   "rolling": 106.28,
+   "spread": 96.26,
+   "threshold": 6.21,
+   "bp": 107.04,
+   "bp_capture": 0.72,
+   "bp_cycles": 238.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_AEN",
+   "year": 2023,
+   "duration": 4,
+   "pf": 215.73,
+   "rolling": 175.44,
+   "spread": 155.88,
+   "threshold": 17.81,
+   "bp": 179.59,
+   "bp_capture": 0.832,
+   "bp_cycles": 211.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_AEN",
+   "year": 2024,
+   "duration": 1,
+   "pf": 29.75,
+   "rolling": 19.23,
+   "spread": 17.0,
+   "threshold": 0.06,
+   "bp": 21.14,
+   "bp_capture": 0.711,
+   "bp_cycles": 241.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_AEN",
+   "year": 2024,
+   "duration": 2,
+   "pf": 49.65,
+   "rolling": 35.39,
+   "spread": 30.16,
+   "threshold": 6.22,
+   "bp": 38.25,
+   "bp_capture": 0.77,
+   "bp_cycles": 240.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_AEN",
+   "year": 2024,
+   "duration": 4,
+   "pf": 67.17,
+   "rolling": 52.32,
+   "spread": 39.83,
+   "threshold": 17.01,
+   "bp": 55.22,
+   "bp_capture": 0.822,
+   "bp_cycles": 208.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_AEN",
+   "year": 2025,
+   "duration": 1,
+   "pf": 22.4,
+   "rolling": 13.29,
+   "spread": 10.03,
+   "threshold": 0.02,
+   "bp": 11.44,
+   "bp_capture": 0.511,
+   "bp_cycles": 264.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_AEN",
+   "year": 2025,
+   "duration": 2,
+   "pf": 38.48,
+   "rolling": 24.79,
+   "spread": 19.12,
+   "threshold": 3.5,
+   "bp": 23.93,
+   "bp_capture": 0.622,
+   "bp_cycles": 267.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_AEN",
+   "year": 2025,
+   "duration": 4,
+   "pf": 57.75,
+   "rolling": 40.74,
+   "spread": 31.78,
+   "threshold": 10.99,
+   "bp": 40.69,
+   "bp_capture": 0.705,
+   "bp_cycles": 249.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_CPS",
+   "year": 2023,
+   "duration": 1,
+   "pf": 88.19,
+   "rolling": 59.34,
+   "spread": 55.57,
+   "threshold": 1.05,
+   "bp": 45.49,
+   "bp_capture": 0.516,
+   "bp_cycles": 248.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_CPS",
+   "year": 2023,
+   "duration": 2,
+   "pf": 137.13,
+   "rolling": 95.86,
+   "spread": 86.9,
+   "threshold": 5.53,
+   "bp": 96.73,
+   "bp_capture": 0.705,
+   "bp_cycles": 237.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_CPS",
+   "year": 2023,
+   "duration": 4,
+   "pf": 194.69,
+   "rolling": 154.16,
+   "spread": 137.16,
+   "threshold": 18.55,
+   "bp": 161.7,
+   "bp_capture": 0.831,
+   "bp_cycles": 210.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_CPS",
+   "year": 2024,
+   "duration": 1,
+   "pf": 28.84,
+   "rolling": 18.82,
+   "spread": 17.02,
+   "threshold": 0.43,
+   "bp": 19.63,
+   "bp_capture": 0.681,
+   "bp_cycles": 243.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_CPS",
+   "year": 2024,
+   "duration": 2,
+   "pf": 47.72,
+   "rolling": 34.85,
+   "spread": 30.26,
+   "threshold": 6.96,
+   "bp": 35.69,
+   "bp_capture": 0.748,
+   "bp_cycles": 243.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_CPS",
+   "year": 2024,
+   "duration": 4,
+   "pf": 62.66,
+   "rolling": 47.68,
+   "spread": 37.3,
+   "threshold": 17.62,
+   "bp": 50.91,
+   "bp_capture": 0.812,
+   "bp_cycles": 211.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_CPS",
+   "year": 2025,
+   "duration": 1,
+   "pf": 21.07,
+   "rolling": 10.82,
+   "spread": 9.58,
+   "threshold": -0.2,
+   "bp": 10.96,
+   "bp_capture": 0.52,
+   "bp_cycles": 260.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_CPS",
+   "year": 2025,
+   "duration": 2,
+   "pf": 35.97,
+   "rolling": 22.91,
+   "spread": 18.48,
+   "threshold": 3.46,
+   "bp": 21.94,
+   "bp_capture": 0.61,
+   "bp_cycles": 265.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_CPS",
+   "year": 2025,
+   "duration": 4,
+   "pf": 53.39,
+   "rolling": 37.46,
+   "spread": 29.62,
+   "threshold": 10.44,
+   "bp": 37.72,
+   "bp_capture": 0.706,
+   "bp_cycles": 249.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_HOUSTON",
+   "year": 2023,
+   "duration": 1,
+   "pf": 87.31,
+   "rolling": 55.63,
+   "spread": 51.52,
+   "threshold": 1.5,
+   "bp": 46.13,
+   "bp_capture": 0.528,
+   "bp_cycles": 247.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_HOUSTON",
+   "year": 2023,
+   "duration": 2,
+   "pf": 135.99,
+   "rolling": 91.53,
+   "spread": 82.91,
+   "threshold": 6.35,
+   "bp": 93.59,
+   "bp_capture": 0.688,
+   "bp_cycles": 228.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_HOUSTON",
+   "year": 2023,
+   "duration": 4,
+   "pf": 193.02,
+   "rolling": 151.97,
+   "spread": 135.03,
+   "threshold": 19.87,
+   "bp": 161.7,
+   "bp_capture": 0.838,
+   "bp_cycles": 200.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_HOUSTON",
+   "year": 2024,
+   "duration": 1,
+   "pf": 25.26,
+   "rolling": 15.55,
+   "spread": 13.77,
+   "threshold": 0.27,
+   "bp": 15.74,
+   "bp_capture": 0.623,
+   "bp_cycles": 229.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_HOUSTON",
+   "year": 2024,
+   "duration": 2,
+   "pf": 41.59,
+   "rolling": 29.0,
+   "spread": 25.22,
+   "threshold": 5.83,
+   "bp": 30.21,
+   "bp_capture": 0.726,
+   "bp_cycles": 225.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_HOUSTON",
+   "year": 2024,
+   "duration": 4,
+   "pf": 53.89,
+   "rolling": 38.79,
+   "spread": 27.22,
+   "threshold": 16.23,
+   "bp": 42.2,
+   "bp_capture": 0.783,
+   "bp_cycles": 187.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_HOUSTON",
+   "year": 2025,
+   "duration": 1,
+   "pf": 16.47,
+   "rolling": 9.11,
+   "spread": 6.91,
+   "threshold": -0.26,
+   "bp": 7.99,
+   "bp_capture": 0.485,
+   "bp_cycles": 243.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_HOUSTON",
+   "year": 2025,
+   "duration": 2,
+   "pf": 27.54,
+   "rolling": 17.01,
+   "spread": 13.45,
+   "threshold": 2.71,
+   "bp": 16.32,
+   "bp_capture": 0.593,
+   "bp_cycles": 239.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_HOUSTON",
+   "year": 2025,
+   "duration": 4,
+   "pf": 39.96,
+   "rolling": 26.32,
+   "spread": 19.86,
+   "threshold": 8.06,
+   "bp": 27.74,
+   "bp_capture": 0.694,
+   "bp_cycles": 214.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_LCRA",
+   "year": 2023,
+   "duration": 1,
+   "pf": 92.45,
+   "rolling": 58.83,
+   "spread": 55.04,
+   "threshold": 1.12,
+   "bp": 50.37,
+   "bp_capture": 0.545,
+   "bp_cycles": 249.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_LCRA",
+   "year": 2023,
+   "duration": 2,
+   "pf": 145.93,
+   "rolling": 98.55,
+   "spread": 89.75,
+   "threshold": 5.6,
+   "bp": 99.07,
+   "bp_capture": 0.679,
+   "bp_cycles": 236.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_LCRA",
+   "year": 2023,
+   "duration": 4,
+   "pf": 209.1,
+   "rolling": 161.86,
+   "spread": 143.67,
+   "threshold": 16.55,
+   "bp": 167.65,
+   "bp_capture": 0.802,
+   "bp_cycles": 212.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_LCRA",
+   "year": 2024,
+   "duration": 1,
+   "pf": 30.73,
+   "rolling": 20.12,
+   "spread": 17.68,
+   "threshold": 0.16,
+   "bp": 21.64,
+   "bp_capture": 0.704,
+   "bp_cycles": 246.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_LCRA",
+   "year": 2024,
+   "duration": 2,
+   "pf": 51.44,
+   "rolling": 37.62,
+   "spread": 32.29,
+   "threshold": 6.86,
+   "bp": 38.63,
+   "bp_capture": 0.751,
+   "bp_cycles": 243.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_LCRA",
+   "year": 2024,
+   "duration": 4,
+   "pf": 70.09,
+   "rolling": 54.59,
+   "spread": 42.87,
+   "threshold": 19.07,
+   "bp": 57.58,
+   "bp_capture": 0.822,
+   "bp_cycles": 212.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_LCRA",
+   "year": 2025,
+   "duration": 1,
+   "pf": 25.59,
+   "rolling": 15.89,
+   "spread": 10.69,
+   "threshold": -0.14,
+   "bp": 13.34,
+   "bp_capture": 0.521,
+   "bp_cycles": 266.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_LCRA",
+   "year": 2025,
+   "duration": 2,
+   "pf": 44.89,
+   "rolling": 30.69,
+   "spread": 20.64,
+   "threshold": 3.55,
+   "bp": 27.12,
+   "bp_capture": 0.604,
+   "bp_cycles": 271.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_LCRA",
+   "year": 2025,
+   "duration": 4,
+   "pf": 67.91,
+   "rolling": 50.3,
+   "spread": 33.55,
+   "threshold": 11.37,
+   "bp": 47.77,
+   "bp_capture": 0.703,
+   "bp_cycles": 251.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_NORTH",
+   "year": 2023,
+   "duration": 1,
+   "pf": 86.96,
+   "rolling": 56.76,
+   "spread": 52.62,
+   "threshold": 1.05,
+   "bp": 46.44,
+   "bp_capture": 0.534,
+   "bp_cycles": 236.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_NORTH",
+   "year": 2023,
+   "duration": 2,
+   "pf": 135.49,
+   "rolling": 93.67,
+   "spread": 84.59,
+   "threshold": 5.9,
+   "bp": 95.77,
+   "bp_capture": 0.707,
+   "bp_cycles": 224.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_NORTH",
+   "year": 2023,
+   "duration": 4,
+   "pf": 192.91,
+   "rolling": 153.75,
+   "spread": 135.23,
+   "threshold": 23.12,
+   "bp": 162.76,
+   "bp_capture": 0.844,
+   "bp_cycles": 199.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_NORTH",
+   "year": 2024,
+   "duration": 1,
+   "pf": 26.81,
+   "rolling": 17.97,
+   "spread": 15.39,
+   "threshold": 0.68,
+   "bp": 18.39,
+   "bp_capture": 0.686,
+   "bp_cycles": 239.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_NORTH",
+   "year": 2024,
+   "duration": 2,
+   "pf": 44.25,
+   "rolling": 32.55,
+   "spread": 27.54,
+   "threshold": 7.26,
+   "bp": 32.97,
+   "bp_capture": 0.745,
+   "bp_cycles": 234.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_NORTH",
+   "year": 2024,
+   "duration": 4,
+   "pf": 57.92,
+   "rolling": 44.11,
+   "spread": 32.85,
+   "threshold": 22.52,
+   "bp": 46.3,
+   "bp_capture": 0.799,
+   "bp_cycles": 198.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_NORTH",
+   "year": 2025,
+   "duration": 1,
+   "pf": 19.97,
+   "rolling": 12.92,
+   "spread": 8.48,
+   "threshold": 0.17,
+   "bp": 9.32,
+   "bp_capture": 0.467,
+   "bp_cycles": 257.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_NORTH",
+   "year": 2025,
+   "duration": 2,
+   "pf": 33.49,
+   "rolling": 22.94,
+   "spread": 15.97,
+   "threshold": 4.31,
+   "bp": 18.64,
+   "bp_capture": 0.557,
+   "bp_cycles": 256.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_NORTH",
+   "year": 2025,
+   "duration": 4,
+   "pf": 48.72,
+   "rolling": 34.6,
+   "spread": 23.67,
+   "threshold": 11.43,
+   "bp": 32.23,
+   "bp_capture": 0.662,
+   "bp_cycles": 229.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_RAYBN",
+   "year": 2023,
+   "duration": 1,
+   "pf": 87.55,
+   "rolling": 57.02,
+   "spread": 52.81,
+   "threshold": 1.16,
+   "bp": 46.78,
+   "bp_capture": 0.534,
+   "bp_cycles": 236.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_RAYBN",
+   "year": 2023,
+   "duration": 2,
+   "pf": 136.35,
+   "rolling": 94.28,
+   "spread": 84.85,
+   "threshold": 6.43,
+   "bp": 96.13,
+   "bp_capture": 0.705,
+   "bp_cycles": 227.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_RAYBN",
+   "year": 2023,
+   "duration": 4,
+   "pf": 194.27,
+   "rolling": 154.84,
+   "spread": 135.91,
+   "threshold": 20.87,
+   "bp": 164.33,
+   "bp_capture": 0.846,
+   "bp_cycles": 201.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_RAYBN",
+   "year": 2024,
+   "duration": 1,
+   "pf": 26.51,
+   "rolling": 16.97,
+   "spread": 15.02,
+   "threshold": 0.83,
+   "bp": 17.76,
+   "bp_capture": 0.67,
+   "bp_cycles": 237.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_RAYBN",
+   "year": 2024,
+   "duration": 2,
+   "pf": 43.67,
+   "rolling": 31.76,
+   "spread": 26.97,
+   "threshold": 7.25,
+   "bp": 32.34,
+   "bp_capture": 0.741,
+   "bp_cycles": 235.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_RAYBN",
+   "year": 2024,
+   "duration": 4,
+   "pf": 56.71,
+   "rolling": 42.55,
+   "spread": 31.59,
+   "threshold": 22.2,
+   "bp": 44.89,
+   "bp_capture": 0.792,
+   "bp_cycles": 197.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_RAYBN",
+   "year": 2025,
+   "duration": 1,
+   "pf": 20.0,
+   "rolling": 12.61,
+   "spread": 8.27,
+   "threshold": 0.19,
+   "bp": 9.04,
+   "bp_capture": 0.452,
+   "bp_cycles": 253.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_RAYBN",
+   "year": 2025,
+   "duration": 2,
+   "pf": 33.32,
+   "rolling": 22.3,
+   "spread": 15.55,
+   "threshold": 4.28,
+   "bp": 18.12,
+   "bp_capture": 0.544,
+   "bp_cycles": 253.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_RAYBN",
+   "year": 2025,
+   "duration": 4,
+   "pf": 47.99,
+   "rolling": 33.23,
+   "spread": 22.65,
+   "threshold": 11.09,
+   "bp": 31.05,
+   "bp_capture": 0.647,
+   "bp_cycles": 224.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_SOUTH",
+   "year": 2023,
+   "duration": 1,
+   "pf": 70.36,
+   "rolling": 45.73,
+   "spread": 39.85,
+   "threshold": 1.2,
+   "bp": 37.9,
+   "bp_capture": 0.539,
+   "bp_cycles": 243.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_SOUTH",
+   "year": 2023,
+   "duration": 2,
+   "pf": 111.43,
+   "rolling": 74.29,
+   "spread": 64.07,
+   "threshold": 6.16,
+   "bp": 75.85,
+   "bp_capture": 0.681,
+   "bp_cycles": 233.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_SOUTH",
+   "year": 2023,
+   "duration": 4,
+   "pf": 159.95,
+   "rolling": 121.62,
+   "spread": 108.0,
+   "threshold": 17.96,
+   "bp": 129.87,
+   "bp_capture": 0.812,
+   "bp_cycles": 212.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_SOUTH",
+   "year": 2024,
+   "duration": 1,
+   "pf": 30.67,
+   "rolling": 18.3,
+   "spread": 16.19,
+   "threshold": 0.54,
+   "bp": 18.22,
+   "bp_capture": 0.594,
+   "bp_cycles": 245.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_SOUTH",
+   "year": 2024,
+   "duration": 2,
+   "pf": 51.66,
+   "rolling": 34.84,
+   "spread": 29.67,
+   "threshold": 5.78,
+   "bp": 36.58,
+   "bp_capture": 0.708,
+   "bp_cycles": 243.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_SOUTH",
+   "year": 2024,
+   "duration": 4,
+   "pf": 71.51,
+   "rolling": 51.3,
+   "spread": 38.05,
+   "threshold": 17.65,
+   "bp": 56.64,
+   "bp_capture": 0.792,
+   "bp_cycles": 210.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_SOUTH",
+   "year": 2025,
+   "duration": 1,
+   "pf": 16.83,
+   "rolling": 9.14,
+   "spread": 5.8,
+   "threshold": -0.2,
+   "bp": 6.66,
+   "bp_capture": 0.396,
+   "bp_cycles": 241.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_SOUTH",
+   "year": 2025,
+   "duration": 2,
+   "pf": 29.54,
+   "rolling": 16.81,
+   "spread": 11.44,
+   "threshold": 3.04,
+   "bp": 15.12,
+   "bp_capture": 0.512,
+   "bp_cycles": 243.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_SOUTH",
+   "year": 2025,
+   "duration": 4,
+   "pf": 45.22,
+   "rolling": 26.72,
+   "spread": 18.07,
+   "threshold": 9.46,
+   "bp": 27.4,
+   "bp_capture": 0.606,
+   "bp_cycles": 220.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_WEST",
+   "year": 2023,
+   "duration": 1,
+   "pf": 105.76,
+   "rolling": 65.18,
+   "spread": 60.53,
+   "threshold": 6.36,
+   "bp": 55.79,
+   "bp_capture": 0.528,
+   "bp_cycles": 361.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_WEST",
+   "year": 2023,
+   "duration": 2,
+   "pf": 168.06,
+   "rolling": 109.26,
+   "spread": 99.06,
+   "threshold": 16.01,
+   "bp": 112.63,
+   "bp_capture": 0.67,
+   "bp_cycles": 344.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_WEST",
+   "year": 2023,
+   "duration": 4,
+   "pf": 241.6,
+   "rolling": 178.17,
+   "spread": 153.47,
+   "threshold": 35.9,
+   "bp": 193.55,
+   "bp_capture": 0.801,
+   "bp_cycles": 294.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_WEST",
+   "year": 2024,
+   "duration": 1,
+   "pf": 37.82,
+   "rolling": 24.02,
+   "spread": 20.81,
+   "threshold": 4.09,
+   "bp": 23.99,
+   "bp_capture": 0.634,
+   "bp_cycles": 348.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_WEST",
+   "year": 2024,
+   "duration": 2,
+   "pf": 64.41,
+   "rolling": 43.95,
+   "spread": 37.29,
+   "threshold": 14.06,
+   "bp": 47.2,
+   "bp_capture": 0.733,
+   "bp_cycles": 343.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_WEST",
+   "year": 2024,
+   "duration": 4,
+   "pf": 90.79,
+   "rolling": 65.63,
+   "spread": 49.18,
+   "threshold": 31.45,
+   "bp": 71.94,
+   "bp_capture": 0.792,
+   "bp_cycles": 300.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_WEST",
+   "year": 2025,
+   "duration": 1,
+   "pf": 26.1,
+   "rolling": 16.72,
+   "spread": 12.22,
+   "threshold": 2.94,
+   "bp": 13.22,
+   "bp_capture": 0.507,
+   "bp_cycles": 340.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_WEST",
+   "year": 2025,
+   "duration": 2,
+   "pf": 45.47,
+   "rolling": 31.63,
+   "spread": 24.14,
+   "threshold": 10.42,
+   "bp": 27.08,
+   "bp_capture": 0.596,
+   "bp_cycles": 337.0
+  },
+  {
+   "market": "ERCOT",
+   "node": "LZ_WEST",
+   "year": 2025,
+   "duration": 4,
+   "pf": 70.97,
+   "rolling": 50.95,
+   "spread": 39.63,
+   "threshold": 23.28,
+   "bp": 48.61,
+   "bp_capture": 0.685,
+   "bp_cycles": 313.0
+  }
+ ],
+ "overall": {
+  "CAISO": {
+   "node_years": 12,
+   "bp_mean_capture": 0.642,
+   "rolling_mean_capture": 0.681,
+   "spread_mean_capture": 0.589,
+   "threshold_mean_capture": 0.158,
+   "bp_beats_rolling_share": 0.194,
+   "bp_beats_spread_share": 0.806,
+   "bp_beats_threshold_share": 1.0
+  },
+  "ERCOT": {
+   "node_years": 36,
+   "bp_mean_capture": 0.667,
+   "rolling_mean_capture": 0.685,
+   "spread_mean_capture": 0.561,
+   "threshold_mean_capture": 0.114,
+   "bp_beats_rolling_share": 0.574,
+   "bp_beats_spread_share": 0.889,
+   "bp_beats_threshold_share": 1.0
+  }
+ }
+}

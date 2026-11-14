@@ -1,0 +1,42 @@
+{
+ "rung": "r4_v3",
+ "cases": [
+  {
+   "d": 1,
+   "max_abs_soc_diff": 2.0945657074333823e-06,
+   "max_rel_value_diff": 5.835903065730604e-07,
+   "hours": 1488
+  },
+  {
+   "d": 2,
+   "max_abs_soc_diff": 7.784822153578119e-07,
+   "max_rel_value_diff": 1.1869582313790204e-06,
+   "hours": 1488
+  },
+  {
+   "d": 4,
+   "max_abs_soc_diff": 3.3291025847148603e-07,
+   "max_rel_value_diff": 2.028203363614055e-06,
+   "hours": 1488
+  },
+  {
+   "d": 1,
+   "max_abs_soc_diff": 1.8529912527709413e-06,
+   "max_rel_value_diff": 9.362975178795492e-07,
+   "hours": 1464
+  },
+  {
+   "d": 2,
+   "max_abs_soc_diff": 4.720904345223431e-07,
+   "max_rel_value_diff": 6.839533571411416e-07,
+   "hours": 1464
+  },
+  {
+   "d": 4,
+   "max_abs_soc_diff": 1.7801476159817753e-07,
+   "max_rel_value_diff": 8.786737822619563e-07,
+   "hours": 1464
+  }
+ ],
+ "note": "dev data (ERCOT HB_HOUSTON Jul-Aug 2019, CAISO SP15 Sep-Oct 2023), full precision"
+}

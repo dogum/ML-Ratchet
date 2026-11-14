@@ -1,0 +1,173 @@
+{
+ "rule": "Ratchet: score a rung on the frozen simulated set and the real dev gate; log to ratchet.json.\n\n    python3 ratchet.py score <rung> <frozen_bank> [--decide \"reason\"]   # rung = ckpt name, or 'rolling' (classical)\n    python3 ratchet.py rescore <frozen_bank>                              # re-score every logged rung on a new set\n\nFrozen score = capture = net revenue / perfect-foresight net revenue, summed over the 3 battery durations (1, 2, 4 h)\nof each path-year and averaged over the path-years of the frozen simulated set (each path-year counts the same; a\ndollar-weighted sum would be dominated by a few scarcity years).  Dev capture is averaged the same way over the 10\nreal dev node-years.  Rule: keep a rung if it beats the incumbent's frozen\nscore by > 0.01 AND passes the dev gate: its aggregate capture on the real dev node-years (ERCOT 2019 and 2021 at\n4 hubs, CAISO Aug-Dec 2023 at NP15/SP15; all 3 durations) is not more than 0.01 below the incumbent's.\n",
+ "rungs": [
+  {
+   "rung": "R0",
+   "name": "rolling",
+   "change": "classical rolling-horizon LP on day-ahead prices (incumbent)",
+   "sim": "v1",
+   "frozen": "v1_frozen",
+   "frozen_capture": 0.1018,
+   "dev_capture": 0.5927,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.7017,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8559,
+    "ERCOT:HB_HOUSTON:2019": 0.7848,
+    "ERCOT:HB_HOUSTON:2021": 0.307,
+    "ERCOT:HB_NORTH:2019": 0.7897,
+    "ERCOT:HB_NORTH:2021": 0.3202,
+    "ERCOT:HB_SOUTH:2019": 0.7893,
+    "ERCOT:HB_SOUTH:2021": 0.2797,
+    "ERCOT:HB_WEST:2019": 0.7836,
+    "ERCOT:HB_WEST:2021": 0.315
+   },
+   "kept": true,
+   "why": "starting incumbent"
+  },
+  {
+   "rung": "R1",
+   "name": "r1_v1",
+   "change": "MLP value-curve policy trained by policy search on sim v1 (GridSim merit-order prices, no scarcity curve, no outage weather, no RT noise); 45 path-years",
+   "sim": "v1",
+   "frozen": "v1_frozen",
+   "frozen_capture": 0.5926,
+   "dev_capture": 0.4828,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.6382,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.7816,
+    "ERCOT:HB_HOUSTON:2019": 0.6205,
+    "ERCOT:HB_HOUSTON:2021": 0.243,
+    "ERCOT:HB_NORTH:2019": 0.6139,
+    "ERCOT:HB_NORTH:2021": 0.2411,
+    "ERCOT:HB_SOUTH:2019": 0.6033,
+    "ERCOT:HB_SOUTH:2021": 0.2359,
+    "ERCOT:HB_WEST:2019": 0.6047,
+    "ERCOT:HB_WEST:2021": 0.2457
+   },
+   "kept": false,
+   "why": "frozen +0.491 but dev gate failed: dev capture 0.483 vs incumbent 0.593 (-0.110); the v1 prices have no scarcity, so the policy cycles on small spreads and is empty when spikes come"
+  },
+  {
+   "rung": "R2",
+   "name": "r2_v2",
+   "change": "same network and policy search, trained on sim v2 (80 ERCOT path-years from 2018/2020/2022 inputs with dev-calibrated scarcity)",
+   "sim": "v2",
+   "frozen": "v2_frozen",
+   "frozen_capture": 0.7671,
+   "dev_capture": 0.5979,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.7454,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8169,
+    "ERCOT:HB_HOUSTON:2019": 0.8084,
+    "ERCOT:HB_HOUSTON:2021": 0.2983,
+    "ERCOT:HB_NORTH:2019": 0.8051,
+    "ERCOT:HB_NORTH:2021": 0.3079,
+    "ERCOT:HB_SOUTH:2019": 0.7971,
+    "ERCOT:HB_SOUTH:2021": 0.2969,
+    "ERCOT:HB_WEST:2019": 0.7964,
+    "ERCOT:HB_WEST:2021": 0.3062
+   },
+   "dev_by_duration": {
+    "1": 0.4857,
+    "2": 0.5334,
+    "4": 0.59
+   },
+   "kept": true,
+   "why": "frozen 0.767 vs incumbent R0 0.489 (+0.278 > 0.01); dev 0.598 vs 0.593 (gate: not more than 0.01 below) -> kept, new incumbent"
+  },
+  {
+   "rung": "R3",
+   "name": "r3_v3",
+   "change": "train on all 120 ERCOT path-years + 45 CAISO-like path-years (CISO fleet, duck-curve solar, carbon price, $1000-2000 caps), 2,500 steps",
+   "sim": "v3",
+   "frozen": "v3_frozen",
+   "frozen_capture": 0.7489,
+   "dev_capture": 0.6228,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.7586,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8458,
+    "ERCOT:HB_HOUSTON:2019": 0.7999,
+    "ERCOT:HB_HOUSTON:2021": 0.3564,
+    "ERCOT:HB_NORTH:2019": 0.7941,
+    "ERCOT:HB_NORTH:2021": 0.3726,
+    "ERCOT:HB_SOUTH:2019": 0.7924,
+    "ERCOT:HB_SOUTH:2021": 0.3545,
+    "ERCOT:HB_WEST:2019": 0.7845,
+    "ERCOT:HB_WEST:2021": 0.3691
+   },
+   "dev_by_duration": {
+    "1": 0.4955,
+    "2": 0.5637,
+    "4": 0.6226
+   },
+   "kept": false,
+   "why": "frozen 0.7489 vs incumbent R2 0.7465 (+0.0024, below the 0.01 margin) -> rejected, although dev improved (0.623 vs 0.598)"
+  },
+  {
+   "rung": "R4",
+   "name": "r4_v3",
+   "change": "fine-tune R3 on the same 165 path-years with longer windows (21 days), batch 64, lower learning rate (900 steps)",
+   "sim": "v3",
+   "frozen": "v3_frozen",
+   "frozen_capture": 0.758,
+   "dev_capture": 0.6372,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.763,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8523,
+    "ERCOT:HB_HOUSTON:2019": 0.8003,
+    "ERCOT:HB_HOUSTON:2021": 0.3689,
+    "ERCOT:HB_NORTH:2019": 0.7959,
+    "ERCOT:HB_NORTH:2021": 0.4067,
+    "ERCOT:HB_SOUTH:2019": 0.793,
+    "ERCOT:HB_SOUTH:2021": 0.3941,
+    "ERCOT:HB_WEST:2019": 0.79,
+    "ERCOT:HB_WEST:2021": 0.4082
+   },
+   "dev_by_duration": {
+    "1": 0.5021,
+    "2": 0.571,
+    "4": 0.6501
+   },
+   "kept": true,
+   "why": "frozen 0.7580 vs incumbent R2 0.7465 (+0.0115 > 0.01); dev 0.637 vs 0.598 -> kept; released"
+  }
+ ],
+ "rescores": [
+  {
+   "frozen": "v2_frozen",
+   "reason": "sim v2 (dev-calibrated ORDC scarcity, cold outages, gas-turbine derate, RT noise, DA expectation) replaced v1: new frozen set, every rung re-scored and decisions re-taken in order",
+   "R0": {
+    "frozen_capture": 0.4894,
+    "dev_capture": 0.5927,
+    "kept": true
+   },
+   "R1": {
+    "frozen_capture": 0.5326,
+    "dev_capture": 0.4828,
+    "kept": false,
+    "why": "frozen +0.043 over R0 but dev gate still fails (-0.110)"
+   }
+  },
+  {
+   "frozen": "v3_frozen",
+   "reason": "the frozen set gained 9 CAISO-like path-years (sim v3 = v2 + a CAISO family on the real CISO fleet); every rung re-scored and decisions re-taken in order",
+   "R0": {
+    "frozen_capture": 0.4472,
+    "dev_capture": 0.5927,
+    "kept": true
+   },
+   "R1": {
+    "frozen_capture": 0.5696,
+    "dev_capture": 0.4828,
+    "kept": false,
+    "why": "dev gate fails"
+   },
+   "R2": {
+    "frozen_capture": 0.7465,
+    "dev_capture": 0.5979,
+    "kept": true,
+    "why": "+0.299 frozen, dev +0.005"
+   }
+  }
+ ]
+}
