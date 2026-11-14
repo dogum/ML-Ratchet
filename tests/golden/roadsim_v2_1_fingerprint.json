@@ -1,0 +1,1541 @@
+{
+"00|bev|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 2.3798325665552666,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.9565099689070166e-15,
+"soc_end": 0.875661905694373,
+"trace_rms_mps": 0.0
+},
+"00|bev|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 5.2329629708569945,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 4.182697554137635e-16,
+"soc_end": 0.846390373045662,
+"trace_rms_mps": 0.0
+},
+"00|bev|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 2.8194755461098984,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.8326649050386885e-15,
+"soc_end": 0.871159653306645,
+"trace_rms_mps": 0.0
+},
+"00|bev|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 1.4222288322976975,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 2.3582903679396206e-15,
+"soc_end": 0.8854609133264656,
+"trace_rms_mps": 0.0
+},
+"00|bev|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 1.6356004855641748,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 3.155813588763833e-16,
+"soc_end": 0.8832782802076764,
+"trace_rms_mps": 0.0
+},
+"00|bev|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 2.6556015547143157,
+"distance_m": 12887.582033410668,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.752785044038138e-15,
+"soc_end": 0.8728382886892925,
+"trace_rms_mps": 0.0
+},
+"01|hev_powersplit|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": -0.2948771607235821,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.8002610802650452,
+"fuel_g": 1177.6333205621224,
+"ledger_closure": 2.8933902171935307e-16,
+"soc_end": 0.8235447075470838,
+"trace_rms_mps": 0.0
+},
+"01|hev_powersplit|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": -0.00802261250384529,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.513248860836029,
+"fuel_g": 1813.4111066519415,
+"ledger_closure": 1.054055227718048e-15,
+"soc_end": 0.5836272180225993,
+"trace_rms_mps": 0.0
+},
+"01|hev_powersplit|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": -0.28200959579353396,
+"distance_m": 11987.661310362699,
+"eng_on_frac": 0.4927007257938385,
+"fuel_g": 1231.5105529734712,
+"ledger_closure": 4.156497124591792e-16,
+"soc_end": 0.8135504788369771,
+"trace_rms_mps": 0.03878848645523848
+},
+"01|hev_powersplit|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.04829260078781722,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.31167882680892944,
+"fuel_g": 806.8985104581243,
+"ledger_closure": 2.1420609814956545e-16,
+"soc_end": 0.5339323416824316,
+"trace_rms_mps": 0.0
+},
+"01|hev_powersplit|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.04430753824288439,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.3014598488807678,
+"fuel_g": 798.5049704838455,
+"ledger_closure": 0.0,
+"soc_end": 0.5375520980291238,
+"trace_rms_mps": 0.0
+},
+"01|hev_powersplit|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": -0.13534144730338965,
+"distance_m": 12887.582033410668,
+"eng_on_frac": 0.7653909921646118,
+"fuel_g": 1101.7127327917817,
+"ledger_closure": 3.0986154631426454e-16,
+"soc_end": 0.6916207775240868,
+"trace_rms_mps": 0.0
+},
+"02|conv|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9986945390701294,
+"fuel_g": 3939.7145343796155,
+"ledger_closure": 1.021868745425961e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"02|conv|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.0,
+"distance_m": 17576.840728029994,
+"eng_on_frac": 0.9994239807128906,
+"fuel_g": 8968.535901640036,
+"ledger_closure": 1.0228678606824952e-15,
+"soc_end": null,
+"trace_rms_mps": 0.5312257431223091
+},
+"02|conv|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354194,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 4921.5520521835615,
+"ledger_closure": 1.3045249540308366e-16,
+"soc_end": null,
+"trace_rms_mps": 0.00011425406626278978
+},
+"02|conv|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 4109.852494005207,
+"ledger_closure": 9.160092474837933e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"02|conv|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 4005.0457165674384,
+"ledger_closure": 1.2495676779485009e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"02|conv|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 12595.680678921486,
+"eng_on_frac": 0.9983360767364502,
+"fuel_g": 4573.320481662515,
+"ledger_closure": 1.2276338563721376e-15,
+"soc_end": null,
+"trace_rms_mps": 1.4550992044026414
+},
+"03|conv|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9960835576057434,
+"fuel_g": 1049.7982099985454,
+"ledger_closure": 2.118933924012895e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"03|conv|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.0,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.8496543765068054,
+"fuel_g": 1975.4314393528905,
+"ledger_closure": 1.3705617263335047e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"03|conv|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8656934499740601,
+"fuel_g": 1169.6865167556382,
+"ledger_closure": 5.675536398088006e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"03|conv|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 897.3470387317341,
+"ledger_closure": 2.5353698035167313e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"03|conv|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.2377794409,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 965.6105044062926,
+"ledger_closure": 6.794066690134265e-16,
+"soc_end": null,
+"trace_rms_mps": 2.6949432880842715e-05
+},
+"03|conv|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 12887.329478034968,
+"eng_on_frac": 0.9534109830856323,
+"fuel_g": 1121.501841447016,
+"ledger_closure": 4.3694167537397706e-16,
+"soc_end": null,
+"trace_rms_mps": 0.022022790411790952
+},
+"04|conv|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9960835576057434,
+"fuel_g": 1264.0060339992492,
+"ledger_closure": 5.496708951086962e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"04|conv|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.0,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.8513824939727783,
+"fuel_g": 2407.8071895065414,
+"ledger_closure": 1.3160210111149457e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"04|conv|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8656934499740601,
+"fuel_g": 1699.9741956665628,
+"ledger_closure": 1.2151479558772968e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"04|conv|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 1312.2759145914865,
+"ledger_closure": 6.509745152314526e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"04|conv|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 1293.278766317011,
+"ledger_closure": 0.0,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"04|conv|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 12887.582033410668,
+"eng_on_frac": 0.9534109830856323,
+"fuel_g": 1298.5482193735113,
+"ledger_closure": 7.786018766454531e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"05|conv|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9960835576057434,
+"fuel_g": 688.5354099457691,
+"ledger_closure": 6.222746021677685e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"05|conv|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.0,
+"distance_m": 17703.48468994981,
+"eng_on_frac": 0.8467742204666138,
+"fuel_g": 1536.2517264368312,
+"ledger_closure": 4.9198426924162694e-05,
+"soc_end": null,
+"trace_rms_mps": 0.028935696012792764
+},
+"05|conv|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8591240644454956,
+"fuel_g": 928.7150075565952,
+"ledger_closure": 2.5259512123197505e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"05|conv|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 674.0501184516114,
+"ledger_closure": 3.4012322705529105e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"05|conv|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 724.220501580562,
+"ledger_closure": 1.947958408672232e-15,
+"soc_end": null,
+"trace_rms_mps": 1.50030138462859e-18
+},
+"05|conv|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 12880.683286843368,
+"eng_on_frac": 0.9534109830856323,
+"fuel_g": 890.8618013346583,
+"ledger_closure": 7.920181058264596e-05,
+"soc_end": null,
+"trace_rms_mps": 0.1075107390885148
+},
+"06|conv|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9960835576057434,
+"fuel_g": 1510.0596903187857,
+"ledger_closure": 3.4252649517598817e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"06|conv|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.0,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.8427419066429138,
+"fuel_g": 2948.254819851334,
+"ledger_closure": 1.4701690540438244e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"06|conv|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 1552.975893948961,
+"ledger_closure": 0.0,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"06|conv|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 1234.2744755149727,
+"ledger_closure": 2.6556936384701693e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"06|conv|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 1285.0926711518457,
+"ledger_closure": 1.283771821426586e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"06|conv|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 12887.582033410668,
+"eng_on_frac": 0.941763699054718,
+"fuel_g": 1880.714480584482,
+"ledger_closure": 3.5480893786957703e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"07|conv|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9986945390701294,
+"fuel_g": 966.4996781282069,
+"ledger_closure": 1.4179008610520528e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"07|conv|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.0,
+"distance_m": 17672.829135742642,
+"eng_on_frac": 0.9994239807128906,
+"fuel_g": 2212.5945555392923,
+"ledger_closure": 9.09048422799694e-05,
+"soc_end": null,
+"trace_rms_mps": 0.15908296037174452
+},
+"07|conv|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.012706527008,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 1250.433180556314,
+"ledger_closure": 6.8548508674012285e-06,
+"soc_end": null,
+"trace_rms_mps": 0.0026227790872748492
+},
+"07|conv|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.149618476395,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 955.3267301157789,
+"ledger_closure": 2.5631009429351045e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0027963496543589148
+},
+"07|conv|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11987.219929568408,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 1078.5431017223818,
+"ledger_closure": 1.611446632724397e-05,
+"soc_end": null,
+"trace_rms_mps": 0.024398710733566507
+},
+"07|conv|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 12825.180087318733,
+"eng_on_frac": 0.9983360767364502,
+"fuel_g": 1275.4380324774709,
+"ledger_closure": 7.487622891610587e-05,
+"soc_end": null,
+"trace_rms_mps": 0.4776526563392715
+},
+"08|hev_parallel_p2|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": -0.4916612675498695,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9138381481170654,
+"fuel_g": 1256.4822882230922,
+"ledger_closure": 5.361581203014788e-16,
+"soc_end": 0.8050126559628807,
+"trace_rms_mps": 0.0
+},
+"08|hev_parallel_p2|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.18090739951098447,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.4907834231853485,
+"fuel_g": 2082.697906111147,
+"ledger_closure": 1.5027418452611618e-16,
+"soc_end": 0.4520908610131733,
+"trace_rms_mps": 0.0
+},
+"08|hev_parallel_p2|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 0.24059481359446447,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.4613138735294342,
+"fuel_g": 1210.7749098803654,
+"ledger_closure": 1.6784892448143007e-15,
+"soc_end": 0.4189338379123774,
+"trace_rms_mps": 0.0
+},
+"08|hev_parallel_p2|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.2645580101909855,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.3226277232170105,
+"fuel_g": 893.723888565965,
+"ledger_closure": 9.364910328410675e-16,
+"soc_end": 0.40572475401602537,
+"trace_rms_mps": 0.0
+},
+"08|hev_parallel_p2|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.2967770271221736,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.3277372121810913,
+"fuel_g": 898.3516942891937,
+"ledger_closure": 3.711514489665738e-16,
+"soc_end": 0.3877965941839389,
+"trace_rms_mps": 0.0
+},
+"08|hev_parallel_p2|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": -0.13622713356212446,
+"distance_m": 12887.582033410668,
+"eng_on_frac": 0.720465898513794,
+"fuel_g": 1185.9401341556213,
+"ledger_closure": 1.4279906747955255e-16,
+"soc_end": 0.6227613306674888,
+"trace_rms_mps": 0.0
+},
+"09|bev|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 2.6019981463764084,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 9.94158444000251e-16,
+"soc_end": 0.8684073225042636,
+"trace_rms_mps": 0.0
+},
+"09|bev|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 6.297621554027886,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 3.6595027340849443e-16,
+"soc_end": 0.8232789364550485,
+"trace_rms_mps": 0.0
+},
+"09|bev|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 4.019467331253351,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 3.856308527937678e-16,
+"soc_end": 0.8511455364381618,
+"trace_rms_mps": 0.0
+},
+"09|bev|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 1.7924407934320152,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.870160709404038e-15,
+"soc_end": 0.8782468171433412,
+"trace_rms_mps": 0.0
+},
+"09|bev|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 1.913433105358586,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.4825587928986436e-15,
+"soc_end": 0.8767769636550491,
+"trace_rms_mps": 0.0
+},
+"09|bev|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 2.6295226921058763,
+"distance_m": 12887.582033410668,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.1799688859190112e-15,
+"soc_end": 0.8680728738325127,
+"trace_rms_mps": 0.0
+},
+"10|bev|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 22.811595428336695,
+"distance_m": 16442.991307118573,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 0.0,
+"soc_end": 0.8646468924713019,
+"trace_rms_mps": 0.31257706421258763
+},
+"10|bev|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 46.59329972186382,
+"distance_m": 15494.879335776897,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.1062285205418355e-15,
+"soc_end": 0.8275909612969353,
+"trace_rms_mps": 2.7405748357777524
+},
+"10|bev|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 29.69648391732665,
+"distance_m": 11721.920561462686,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 2.757933293528155e-16,
+"soc_end": 0.8539465998867667,
+"trace_rms_mps": 0.6654806498161577
+},
+"10|bev|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 15.349520346139474,
+"distance_m": 11806.461795839374,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 3.672583240267436e-15,
+"soc_end": 0.8762252965679562,
+"trace_rms_mps": 0.512412906361719
+},
+"10|bev|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 17.608713096723537,
+"distance_m": 11842.206704352955,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 5.717481395435059e-16,
+"soc_end": 0.8727216203157782,
+"trace_rms_mps": 0.45949551147604384
+},
+"10|bev|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 21.320153619354077,
+"distance_m": 11243.049482311191,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 2.0843425743851498e-15,
+"soc_end": 0.8669625466274827,
+"trace_rms_mps": 3.9808984453848106
+},
+"11|conv|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9986945390701294,
+"fuel_g": 937.7513267791061,
+"ledger_closure": 5.481463495909413e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"11|conv|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.0,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.9994239807128906,
+"fuel_g": 2070.722987953931,
+"ledger_closure": 1.032418070942972e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"11|conv|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 1208.3585039588793,
+"ledger_closure": 2.903686388971167e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"11|conv|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 976.2881059924841,
+"ledger_closure": 3.365165251292425e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"11|conv|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 999.0195368226236,
+"ledger_closure": 8.271636456576438e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"11|conv|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 12887.582033410668,
+"eng_on_frac": 0.9983360767364502,
+"fuel_g": 1110.427664831481,
+"ledger_closure": 1.471192577221859e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"12|bev|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 3.7858642337220587,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 5.466197412045733e-16,
+"soc_end": 0.8673652931949084,
+"trace_rms_mps": 0.0
+},
+"12|bev|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 9.311365251342746,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 4.083625881403612e-16,
+"soc_end": 0.819439306820798,
+"trace_rms_mps": 0.0
+},
+"12|bev|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 5.451683831206655,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 5.68590838135187e-16,
+"soc_end": 0.8529647452927598,
+"trace_rms_mps": 0.0
+},
+"12|bev|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 2.452429429607796,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 8.410004988693225e-16,
+"soc_end": 0.8788712146374379,
+"trace_rms_mps": 0.0
+},
+"12|bev|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 2.5898486033898256,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 2.389357170607775e-15,
+"soc_end": 0.8776861637177213,
+"trace_rms_mps": 0.0
+},
+"12|bev|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 4.035122443364044,
+"distance_m": 12887.582033410668,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.27954155271188e-16,
+"soc_end": 0.8652129491396483,
+"trace_rms_mps": 0.0
+},
+"13|conv|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9960835576057434,
+"fuel_g": 1279.3918806529084,
+"ledger_closure": 2.7060951976111424e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"13|conv|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.0,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.8467742204666138,
+"fuel_g": 2421.3657279622907,
+"ledger_closure": 1.798523292449041e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"13|conv|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8598540425300598,
+"fuel_g": 1437.6448446439506,
+"ledger_closure": 7.091586480376864e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"13|conv|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 1131.7410570597206,
+"ledger_closure": 1.7779032538882967e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"13|conv|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 1171.0429392206058,
+"ledger_closure": 2.0185676039878154e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"13|conv|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 12887.562934218337,
+"eng_on_frac": 0.9534109830856323,
+"fuel_g": 1514.9416853242426,
+"ledger_closure": 3.3211391572133024e-16,
+"soc_end": null,
+"trace_rms_mps": 0.00113793602508216
+},
+"14|conv|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 16506.5171298466,
+"eng_on_frac": 0.9960835576057434,
+"fuel_g": 4218.971071997716,
+"ledger_closure": 1.280514020171315e-15,
+"soc_end": null,
+"trace_rms_mps": 0.02597056933066688
+},
+"14|conv|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.0,
+"distance_m": 17130.54917814923,
+"eng_on_frac": 0.8427419066429138,
+"fuel_g": 7986.152920383987,
+"ledger_closure": 2.8475708508589112e-16,
+"soc_end": null,
+"trace_rms_mps": 1.2185909825927763
+},
+"14|conv|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11974.566297893802,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 4166.173423113731,
+"ledger_closure": 1.3721722871441117e-15,
+"soc_end": null,
+"trace_rms_mps": 0.15813023367403634
+},
+"14|conv|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11981.097083274517,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 3543.5265252526574,
+"ledger_closure": 3.494421656805283e-16,
+"soc_end": null,
+"trace_rms_mps": 0.1144395026220124
+},
+"14|conv|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11983.165111639973,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 3468.765746835021,
+"ledger_closure": 1.7771455041785612e-15,
+"soc_end": null,
+"trace_rms_mps": 0.09883206761647874
+},
+"14|conv|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 12118.513365864452,
+"eng_on_frac": 0.941763699054718,
+"fuel_g": 4418.954112608752,
+"ledger_closure": 2.898741085237778e-16,
+"soc_end": null,
+"trace_rms_mps": 2.3482931939986567
+},
+"15|conv|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9960835576057434,
+"fuel_g": 1328.2107989098706,
+"ledger_closure": 6.499296189405829e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"15|conv|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.0,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.8467742204666138,
+"fuel_g": 2628.0993899026444,
+"ledger_closure": 1.3019594365927343e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"15|conv|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8394160866737366,
+"fuel_g": 1581.5537018081322,
+"ledger_closure": 4.2728516703165e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"15|conv|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 1254.0423727194882,
+"ledger_closure": 1.1943269591154796e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"15|conv|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8379561901092529,
+"fuel_g": 1269.093237386234,
+"ledger_closure": 1.5800036532192847e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"15|conv|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 12887.582033410668,
+"eng_on_frac": 0.9534109830856323,
+"fuel_g": 1493.9569519469394,
+"ledger_closure": 2.225870795057537e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"16|hev_powersplit|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": -0.4038123479454216,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.6932114958763123,
+"fuel_g": 1287.5797027815347,
+"ledger_closure": 2.62253447340014e-16,
+"soc_end": 0.8241773467440675,
+"trace_rms_mps": 0.0
+},
+"16|hev_powersplit|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.08511702756186848,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.4855990707874298,
+"fuel_g": 2084.967644896474,
+"ledger_closure": 7.482990808436983e-16,
+"soc_end": 0.5217445092252663,
+"trace_rms_mps": 0.0
+},
+"16|hev_powersplit|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": -0.3952733623164334,
+"distance_m": 11988.446964465791,
+"eng_on_frac": 0.4248175323009491,
+"fuel_g": 1344.0369328545385,
+"ledger_closure": 6.217146875593181e-16,
+"soc_end": 0.81939169302007,
+"trace_rms_mps": 0.03030799328043277
+},
+"16|hev_powersplit|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.22502412454568244,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.2715328335762024,
+"fuel_g": 849.0686810959787,
+"ledger_closure": 1.942233133033889e-16,
+"soc_end": 0.42964476507120825,
+"trace_rms_mps": 0.0
+},
+"16|hev_powersplit|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.17712549598169772,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.2700729966163635,
+"fuel_g": 862.053090410126,
+"ledger_closure": 5.75760446768639e-16,
+"soc_end": 0.4612627280337025,
+"trace_rms_mps": 0.0
+},
+"16|hev_powersplit|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": -0.08989703439269636,
+"distance_m": 12887.582033410668,
+"eng_on_frac": 0.7554076313972473,
+"fuel_g": 1205.374532576343,
+"ledger_closure": 4.1964349412583978e-16,
+"soc_end": 0.6325039227722997,
+"trace_rms_mps": 0.0
+},
+"17|bev|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 2.7011795986925793,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.9153026689431524e-16,
+"soc_end": 0.8749299020473699,
+"trace_rms_mps": 0.0
+},
+"17|bev|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 5.926374865954328,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.7472270984593974e-15,
+"soc_end": 0.844896239663473,
+"trace_rms_mps": 0.0
+},
+"17|bev|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 3.3481118776579506,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.851001959878802e-15,
+"soc_end": 0.8689166149746692,
+"trace_rms_mps": 0.0
+},
+"17|bev|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 1.8142275073457326,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 7.104515550337094e-16,
+"soc_end": 0.8831676341602465,
+"trace_rms_mps": 0.0
+},
+"17|bev|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 1.9293320847744115,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 8.017686362965251e-16,
+"soc_end": 0.8820989512090496,
+"trace_rms_mps": 0.0
+},
+"17|bev|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 2.7245114712559793,
+"distance_m": 12887.582033410668,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 5.693999628822101e-16,
+"soc_end": 0.8747132747918942,
+"trace_rms_mps": 0.0
+},
+"18|bev|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 3.0336225825924745,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.193779683063072e-15,
+"soc_end": 0.8656541231755668,
+"trace_rms_mps": 0.0
+},
+"18|bev|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 6.778837637432112,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 0.0,
+"soc_end": 0.8230030574285058,
+"trace_rms_mps": 0.0
+},
+"18|bev|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 3.8547937890081543,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 2.679788186527739e-16,
+"soc_end": 0.8563328517533381,
+"trace_rms_mps": 0.0
+},
+"18|bev|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 1.8832173310384503,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 8.213423984157544e-16,
+"soc_end": 0.8786921437240529,
+"trace_rms_mps": 0.0
+},
+"18|bev|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 2.0863245769146856,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 8.651908613875222e-16,
+"soc_end": 0.8763917119483272,
+"trace_rms_mps": 0.0
+},
+"18|bev|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 3.3207334704211298,
+"distance_m": 12887.582033410668,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.0900607513104684e-15,
+"soc_end": 0.8623970322190999,
+"trace_rms_mps": 0.0
+},
+"19|conv|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 16506.16538179908,
+"eng_on_frac": 0.9986945390701294,
+"fuel_g": 4244.569526905656,
+"ledger_closure": 6.370389735436125e-16,
+"soc_end": null,
+"trace_rms_mps": 0.03624156531780448
+},
+"19|conv|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.0,
+"distance_m": 16828.43259321035,
+"eng_on_frac": 0.9994239807128906,
+"fuel_g": 8222.87524200102,
+"ledger_closure": 2.7979448590929796e-16,
+"soc_end": null,
+"trace_rms_mps": 1.5282993564268659
+},
+"19|conv|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11963.332348773043,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 4665.354395531426,
+"ledger_closure": 6.9223872835113715e-16,
+"soc_end": null,
+"trace_rms_mps": 0.21382985703589
+},
+"19|conv|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11975.735564502998,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 3809.3405432802474,
+"ledger_closure": 4.947047947676295e-16,
+"soc_end": null,
+"trace_rms_mps": 0.14873752650510658
+},
+"19|conv|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11971.21420979365,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 4720.508500184181,
+"ledger_closure": 2.56814619696563e-06,
+"soc_end": null,
+"trace_rms_mps": 0.1832314217652372
+},
+"19|conv|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11934.196486835728,
+"eng_on_frac": 0.9983360767364502,
+"fuel_g": 4394.229925679299,
+"ledger_closure": 1.9019752476748643e-15,
+"soc_end": null,
+"trace_rms_mps": 2.6467967710617244
+},
+"20|hev_powersplit|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": -0.08744484524073723,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9242819547653198,
+"fuel_g": 709.6762911856217,
+"ledger_closure": 1.3348184433660805e-15,
+"soc_end": 0.626747236900059,
+"trace_rms_mps": 0.0
+},
+"20|hev_powersplit|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": -0.008693269862726482,
+"distance_m": 17703.269327947895,
+"eng_on_frac": 0.6192396283149719,
+"fuel_g": 1470.0890797875345,
+"ledger_closure": 1.0454268683130892e-16,
+"soc_end": 0.5805564898085247,
+"trace_rms_mps": 0.028363082300536614
+},
+"20|hev_powersplit|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": -0.43233190318340214,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.8043795824050903,
+"fuel_g": 841.1751690649224,
+"ledger_closure": 0.0,
+"soc_end": 0.8237539756578358,
+"trace_rms_mps": 0.0
+},
+"20|hev_powersplit|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.024835618801179335,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.40656933188438416,
+"fuel_g": 509.301690821099,
+"ledger_closure": 1.021361360191985e-15,
+"soc_end": 0.5604567705661203,
+"trace_rms_mps": 0.0
+},
+"20|hev_powersplit|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.031686441484244425,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.40948906540870667,
+"fuel_g": 550.5115314696667,
+"ledger_closure": 1.105139073955798e-15,
+"soc_end": 0.5563500931979779,
+"trace_rms_mps": 0.0
+},
+"20|hev_powersplit|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": -0.1492913125405749,
+"distance_m": 12877.152800543996,
+"eng_on_frac": 0.7670549154281616,
+"fuel_g": 894.7571294266794,
+"ledger_closure": 5.674814076779538e-16,
+"soc_end": 0.663141769793073,
+"trace_rms_mps": 0.13538807497691996
+},
+"21|bev|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 22.743793283873934,
+"distance_m": 16480.614299822093,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 3.599589943415836e-16,
+"soc_end": 0.8281425542485282,
+"trace_rms_mps": 0.16758512041074766
+},
+"21|bev|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 50.20513432292262,
+"distance_m": 16160.281601187713,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 6.103419194765201e-16,
+"soc_end": 0.7411900182583259,
+"trace_rms_mps": 2.1931490166450036
+},
+"21|bev|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 30.919324241556957,
+"distance_m": 11862.54544859094,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 9.02461521987567e-15,
+"soc_end": 0.8022984840341888,
+"trace_rms_mps": 0.4037698881856639
+},
+"21|bev|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 15.2990376800422,
+"distance_m": 11928.32559186899,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 6.678272030257552e-16,
+"soc_end": 0.8516682042635567,
+"trace_rms_mps": 0.28718712991241807
+},
+"21|bev|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 17.410346052342344,
+"distance_m": 11940.11976707045,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.5268627609163383e-15,
+"soc_end": 0.8449969561460002,
+"trace_rms_mps": 0.25259083143814576
+},
+"21|bev|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 21.203984118753258,
+"distance_m": 11460.464947719678,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 0.0,
+"soc_end": 0.8330088925763439,
+"trace_rms_mps": 3.4976018803162967
+},
+"22|phev_powersplit|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 1.5664979566625425,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9308093786239624,
+"fuel_g": 382.12338939570293,
+"ledger_closure": 5.020614475596902e-16,
+"soc_end": 0.8264552292312248,
+"trace_rms_mps": 0.0
+},
+"22|phev_powersplit|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 5.003995541198192,
+"distance_m": 17701.298440601866,
+"eng_on_frac": 0.47407832741737366,
+"fuel_g": 557.0714646538818,
+"ledger_closure": 1.0219687347329163e-15,
+"soc_end": 0.6605405879994158,
+"trace_rms_mps": 0.04414497164899409
+},
+"22|phev_powersplit|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 4.050402177760661,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.40948906540870667,
+"fuel_g": 346.6433420443912,
+"ledger_closure": 4.896833253132837e-16,
+"soc_end": 0.7072738921447723,
+"trace_rms_mps": 0.0
+},
+"22|phev_powersplit|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 1.4530491774704657,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.31897810101509094,
+"fuel_g": 233.66232567811883,
+"ledger_closure": 4.5443874209458345e-16,
+"soc_end": 0.8318149054147682,
+"trace_rms_mps": 0.0
+},
+"22|phev_powersplit|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 1.7911839494862702,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.2547445297241211,
+"fuel_g": 193.07695129486078,
+"ledger_closure": 2.334405507031462e-16,
+"soc_end": 0.8158206627736774,
+"trace_rms_mps": 0.0
+},
+"22|phev_powersplit|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 2.1883006592350416,
+"distance_m": 12872.147500848518,
+"eng_on_frac": 0.7737104892730713,
+"fuel_g": 391.88562209544233,
+"ledger_closure": 0.0,
+"soc_end": 0.7969572483857617,
+"trace_rms_mps": 0.1742878122144359
+},
+"23|bev|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 4.028196944226063,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 8.990632227323439e-16,
+"soc_end": 0.8622790358019393,
+"trace_rms_mps": 0.0
+},
+"23|bev|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 7.6509357029292175,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.6135254062799947e-15,
+"soc_end": 0.8281708333722889,
+"trace_rms_mps": 0.0
+},
+"23|bev|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 4.456535613750779,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.1591579612195467e-15,
+"soc_end": 0.8582579203211508,
+"trace_rms_mps": 0.0
+},
+"23|bev|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 2.6950364667039235,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.148722773010355e-15,
+"soc_end": 0.8747794101388429,
+"trace_rms_mps": 0.0
+},
+"23|bev|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 2.6546929926255287,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 5.829987799507248e-16,
+"soc_end": 0.8751573771323001,
+"trace_rms_mps": 0.0
+},
+"23|bev|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 3.919099440947612,
+"distance_m": 12887.582033410668,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 0.0,
+"soc_end": 0.8633031050107328,
+"trace_rms_mps": 0.0
+},
+"24|phev_powersplit|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 3.6786348050623934,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.2592005003028671e-15,
+"soc_end": 0.7442787545196212,
+"trace_rms_mps": 0.0
+},
+"24|phev_powersplit|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 7.764467353356664,
+"distance_m": 17679.41918139464,
+"eng_on_frac": 0.1837557554244995,
+"fuel_g": 404.77575130793963,
+"ledger_closure": 2.694865840192249e-16,
+"soc_end": 0.5637150526908705,
+"trace_rms_mps": 0.149288712741826
+},
+"24|phev_powersplit|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 6.344273003880054,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.029927007853984833,
+"fuel_g": 43.151382264169875,
+"ledger_closure": 1.0506372073587244e-15,
+"soc_end": 0.6275402132094552,
+"trace_rms_mps": 0.0
+},
+"24|phev_powersplit|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 2.5183395793384498,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.005839415825903416,
+"fuel_g": 5.404824607366341,
+"ledger_closure": 1.5890688805980445e-15,
+"soc_end": 0.7940062878605907,
+"trace_rms_mps": 0.0
+},
+"24|phev_powersplit|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 2.730056147611289,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.005839415825903416,
+"fuel_g": 5.141532855672805,
+"ledger_closure": 1.2872159657496409e-15,
+"soc_end": 0.7849787091643302,
+"trace_rms_mps": 0.0
+},
+"24|phev_powersplit|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 2.785277552279577,
+"distance_m": 12823.20325941596,
+"eng_on_frac": 0.31946754455566406,
+"fuel_g": 406.918725063716,
+"ledger_closure": 1.3229434243314885e-16,
+"soc_end": 0.782626190784287,
+"trace_rms_mps": 0.48481877074713525
+},
+"25|hev_powersplit|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": -0.06722921047813081,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9308093786239624,
+"fuel_g": 772.2949417078773,
+"ledger_closure": 6.666181836919395e-16,
+"soc_end": 0.6164167608406845,
+"trace_rms_mps": 0.0
+},
+"25|hev_powersplit|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.0074367755925023715,
+"distance_m": 17695.651291612186,
+"eng_on_frac": 0.6301843523979187,
+"fuel_g": 1599.171623958355,
+"ledger_closure": 1.9069520845782894e-16,
+"soc_end": 0.5705469409954479,
+"trace_rms_mps": 0.07976356285454304
+},
+"25|hev_powersplit|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": -0.41117875364811185,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.7832117080688477,
+"fuel_g": 936.0832742053091,
+"ledger_closure": 8.711382420859328e-16,
+"soc_end": 0.8257433506601287,
+"trace_rms_mps": 0.0
+},
+"25|hev_powersplit|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.04082449404504547,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.43576642870903015,
+"fuel_g": 627.5392698269426,
+"ledger_closure": 3.963705124863773e-16,
+"soc_end": 0.549878101797947,
+"trace_rms_mps": 0.0
+},
+"25|hev_powersplit|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.0384088921096861,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.4313868582248688,
+"fuel_g": 657.1724984305031,
+"ledger_closure": 2.5238214339686916e-16,
+"soc_end": 0.5513623629250605,
+"trace_rms_mps": 0.0
+},
+"25|hev_powersplit|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": -0.12892663082536718,
+"distance_m": 12855.844619478423,
+"eng_on_frac": 0.780366063117981,
+"fuel_g": 953.7943547645056,
+"ledger_closure": 1.7503654044849381e-16,
+"soc_end": 0.6543306259486474,
+"trace_rms_mps": 0.2994541219856939
+},
+"26|bev|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 20.988314685346378,
+"distance_m": 16465.193891633553,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.562642057064247e-15,
+"soc_end": 0.8039941122617791,
+"trace_rms_mps": 0.23694210938069618
+},
+"26|bev|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 37.20570910195323,
+"distance_m": 15761.270425563383,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 2.3782993314214646e-16,
+"soc_end": 0.7295596489720533,
+"trace_rms_mps": 2.493808819475573
+},
+"26|bev|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 19.5199072636758,
+"distance_m": 11741.939617469274,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 9.966435338246674e-16,
+"soc_end": 0.810714801574513,
+"trace_rms_mps": 0.6023866317381918
+},
+"26|bev|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 12.993713768872041,
+"distance_m": 11841.705444032099,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.573248551655345e-16,
+"soc_end": 0.8405743361522526,
+"trace_rms_mps": 0.44853973327989327
+},
+"26|bev|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 12.028616838751946,
+"distance_m": 11862.829292665243,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.5232799237966883e-15,
+"soc_end": 0.8449890455002064,
+"trace_rms_mps": 0.40091433483815664
+},
+"26|bev|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 20.083223432014805,
+"distance_m": 11447.4057672413,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.7224787020656543e-15,
+"soc_end": 0.8081367683176481,
+"trace_rms_mps": 3.6380289299314685
+},
+"27|conv|hwfet|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 16506.54967787862,
+"eng_on_frac": 0.9986945390701294,
+"fuel_g": 1419.9874125810823,
+"ledger_closure": 2.0591320525922415e-15,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"27|conv|la92|{\"T_amb\": 10.0, \"grade\": 0.02}": {
+"batt_kWh_out": 0.0,
+"distance_m": 17706.00267727673,
+"eng_on_frac": 0.9994239807128906,
+"fuel_g": 2490.968654453388,
+"ledger_closure": 3.715316223847937e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0
+},
+"27|conv|udds|{\"T_amb\": -7.0, \"wind_dir\": 0.0, \"wind_speed\": 5.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 1463.1642739368178,
+"ledger_closure": 5.728049220268172e-16,
+"soc_end": null,
+"trace_rms_mps": 6.00120553851436e-18
+},
+"27|conv|udds|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 1131.7278481446217,
+"ledger_closure": 1.4563154155863025e-16,
+"soc_end": null,
+"trace_rms_mps": 6.00120553851436e-18
+},
+"27|conv|udds|{\"T_amb\": 35.0, \"solar\": 850.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 11990.238637354225,
+"eng_on_frac": 0.9992700815200806,
+"fuel_g": 1245.880260705758,
+"ledger_closure": 2.929248045342877e-15,
+"soc_end": null,
+"trace_rms_mps": 3.1187689827061035e-17
+},
+"27|conv|us06|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 12886.900761659077,
+"eng_on_frac": 0.9983360767364502,
+"fuel_g": 1590.268139983183,
+"ledger_closure": 2.098853813982879e-16,
+"soc_end": null,
+"trace_rms_mps": 0.04607780224125053
+},
+"28|hev_series|hd_transient|{\"T_amb\": 20.0}": {
+"batt_kWh_out": -0.8083989228257292,
+"distance_m": 4570.687957989289,
+"eng_on_frac": 0.31539610028266907,
+"fuel_g": 1290.8090830140977,
+"ledger_closure": 2.5148063813891647e-16,
+"soc_end": 0.5747598331319862,
+"trace_rms_mps": 0.04786532721610954
+},
+"29|conv|hd_transient|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 0.0,
+"distance_m": 4572.981616314391,
+"eng_on_frac": 0.9985052347183228,
+"fuel_g": 2712.3865904233894,
+"ledger_closure": 1.1309407809937576e-16,
+"soc_end": null,
+"trace_rms_mps": 0.0753812804797178
+},
+"30|bev|hd_transient|{\"T_amb\": 20.0}": {
+"batt_kWh_out": 7.297542948091051,
+"distance_m": 4573.682821377356,
+"eng_on_frac": 0.0,
+"fuel_g": 0.0,
+"ledger_closure": 1.399049646783245e-16,
+"soc_end": 0.8922139043894664,
+"trace_rms_mps": 0.0011069361252240002
+}
+}

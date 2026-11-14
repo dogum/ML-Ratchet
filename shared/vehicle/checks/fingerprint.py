@@ -6,7 +6,8 @@ since 13 Nov 2026 simulate()'s default is physics v2), RoadSim must reproduce th
 
 Since 14 Nov 2026 physics v2 has its own golden file (tests/golden/roadsim_v2_fingerprint.json, options
 'roadsim-physics-v2'): later presets (v2.1) may change hybrid and plug-in runs only, so every non-hybrid run of a later
-preset must match the v2 golden to 1e-9 (tests/test_roadsim_v2_fingerprint.py).
+preset must match the v2 golden to 1e-9 (tests/test_roadsim_v2_fingerprint.py). Physics v2.1 has its own golden too
+(tests/golden/roadsim_v2_1_fingerprint.json, written 14 Nov 2026 by the v3 pass from the code before any v3 change).
 
 usage:
     python fingerprint.py write [--options roadsim-physics-v2]   # (re)write a golden file — only on purpose
@@ -18,7 +19,8 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..', '..'))
 GOLD = os.path.join(REPO, 'tests', 'golden', 'roadsim_v1_fingerprint.json')
-GOLDS = {'roadsim-physics-v1': GOLD, 'roadsim-physics-v2': os.path.join(REPO, 'tests', 'golden', 'roadsim_v2_fingerprint.json')}
+GOLDS = {'roadsim-physics-v1': GOLD, 'roadsim-physics-v2': os.path.join(REPO, 'tests', 'golden', 'roadsim_v2_fingerprint.json'),
+         'roadsim-physics-v2.1': os.path.join(REPO, 'tests', 'golden', 'roadsim_v2_1_fingerprint.json')}
 HYBRID_ARCHS = ('hev_powersplit', 'hev_parallel_p2', 'hev_series', 'phev_powersplit', 'phev_series')
 
 from roadsim import simulate, make_trip, load_vehicle
