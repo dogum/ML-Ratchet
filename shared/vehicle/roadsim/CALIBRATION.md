@@ -8,7 +8,7 @@ numbers live in `roadsim/data/calibration_v2.json` (preset `roadsim-physics-v2`,
 Sign conventions: EPA errors are on fuel economy (+ = the sim burns less than EPA). D3 and VED errors are on fuel or
 energy (+ = the sim uses more). D3 conventional errors are over the recognised schedule phases.
 
-## 13 Nov 2026 — calibration agent 1: harness, procedures, conventional and shared physics
+## 13 Nov 2026 — first v2 calibration pass: harness, procedures, conventional and shared physics
 
 ### P0 Harness (no physics change)
 
@@ -131,14 +131,14 @@ Cross-checked against fueleconomy.gov vehicles.csv and the EPA test-car table. T
 2019 Blazer has auto stop-start (startStop Y; the D3 files show 0 rpm at stops; the twin idled: hot UDDS idle fuel
 2.5x measured); 2013 Jetta TDI is turbocharged (cosmetic: diesel map). Unverified: the three European legacy cars
 (Mazda 3 i-stop, Smart MHD, Golf TDI BlueMotion) and the 2012 F-150 EcoBoost rating (no EPA test row).
-Hybrid, plug-in and BEV entries were not checked (agent 2).
+Hybrid, plug-in and BEV entries were not checked (second v2 calibration pass).
 
 ### C8 Heavy duty and buses — decided, not tuned
 - Light-duty-only scope for C2 and the transient term (they had made the diesel bus 4.63 -> 3.93 mpg on CBD14).
 - v1 -> v2: diesel bus CBD14 4.63 -> 4.30 mpg; hybrid bus advantage +75.5 -> +58.3 % (CBD14), +35.1 -> +31.5 % (HD
   transient); BEV bus 1.66 -> 2.10 kWh/mi (Foothill in service 1.82-2.15); Class 8 BEV 2.51 -> 2.49 kWh/mi.
 - Not tuned to the 10-40 % hybrid-bus literature: those are in-service routes; CBD14 has ~7 stops per mile, where a
-  hybrid gains most. HD transient (+31.5 %) is inside the range. The CBD14 gap is in the hybrid powertrain (agent 2).
+  hybrid gains most. HD transient (+31.5 %) is inside the range. The CBD14 gap is in the hybrid powertrain (second v2 calibration pass).
 - Class 8 BEV: the duty explains it (65 mph, 19 t payload: wheel energy alone 2.22 kWh/mi, B2); not tuned.
 - ZTBus dev legs (new by-month split, 294 dev missions / 1,662 legs; used: 1,643 q_label_ok legs, standstill seconds
   after >= 5 s at rest): median standstill electrical power 4.4 kW at 15-20 C, 8.6-9.2 kW at 0-10 C, 12.3 kW above
@@ -161,12 +161,12 @@ D3 dev conventional, extended era (fuel %): all tests median -2.7 -> -0.3, IQR 9
 -9.3 -> -1.2, SC03 -10.2 -> -2.3. Legacy era (modal fuel, weighted low): -22.3 -> -22.4.
 
 VED dev twins: conventional trips -5.1 -> -2.3 (car medians -3.5 -> -0.4), idle fuel -16 -> -12 %. Other
-architectures are agent 2's (v2 numbers there use B1/B2 values: power-split HEV -22 -> -26 %, engine-on -31 -> -31
+architectures belong to the second v2 calibration pass (v2 numbers there use B1/B2 values: power-split HEV -22 -> -26 %, engine-on -31 -> -31
 points; Leaf -1.6 -> -4.7 %; Energi +36 -> +74 %; Volt -12 -> -1 %).
 
 Ledger stress (600 runs, v2 preset): max closure 5.6e-4 (v1 5.1e-4), none above 0.5 %. Fingerprint (v1): passes.
 
-## Not closed (agent 1)
+## Not closed (first v2 calibration pass)
 
 - US06: D3 dev says the sim burns 6-8 % too little at high load (all four extended cars), the EPA pool says -3 %.
   No high-load enrichment model; the transient term is a compromise.
@@ -180,7 +180,7 @@ Ledger stress (600 runs, v2 preset): max closure 5.6e-4 (v1 5.1e-4), none above 
 - Bus heating 2-3x the ZTBus dev standstill power (C8).
 - EPA check-dev Sonata cold FTP went +0.5 -> -6.5 while the pool (n 43) went +7.8 -> +1.4: one car against 43.
 
-## 13 Nov 2026 — calibration agent 2: hybrids, plug-ins, BEVs, HVAC, buses; physics v2 frozen
+## 13 Nov 2026 — second v2 calibration pass: hybrids, plug-ins, BEVs, HVAC, buses; physics v2 frozen
 
 Same rules: dev data only (D3 dev vehicles, VED dev cars, EPA check-dev vehicles, EPA dev pool, ZTBus dev). The
 held-out report was computed once, after the commit that froze every value below.
@@ -242,14 +242,14 @@ every temperature, the twin's 15-30 %. Engine-on gap -24 (72 km/h) -> -18 (55) -
 FTP +7.9 -> +5.5, Escape +3.9 -> +1.7 % FE; D3 dev 2010 Prius (legacy) UDDS engine-on +4 -> +9 points.
 
 ### H6 On-road extra load for electrified cars: kept, hev 1,250 W, phev and bev 300 W
-Fitted as agent 1 did for conventional cars (car median of trip errors -> 0; VED dev label-matched twins; after H5):
+Fitted as the first v2 calibration pass did for conventional cars (car median of trip errors -> 0; VED dev label-matched twins; after H5):
 hev_powersplit 1,000 / 1,300 W -> -5.5 / +0.7 % (600 W: -13.4 %; 0 W at 72 km/h: -27 %). Applied to every HEV type
 (no other VED dev hybrid has a usable label). BEV (2013 Leaf) 0 / 300 / 600 W -> -8.0 / -0.1 / +7.9 %; the same 300 W
 on the plug-ins. The hybrid lump is large: it carries what a warm twin on a logged trace misses on real roads (12 V
 loads, warm-up running in fragments that are not warm, heat and A/C use), not one physical load.
 
 ### H7 Cabin heat loss: kept, `cabin_UA_body_frac` 0.6 -> 0.3; electric A/C `cop_eta_el` 0.36 -> 0.50
-- Cause of agent 1's "coolant 45-50 C, cabin 14-16 C at -7 C": the cabin lost too much heat. The heater sat at its
+- Cause of the first pass's finding "coolant 45-50 C, cabin 14-16 C at -7 C": the cabin lost too much heat. The heater sat at its
   6 kW cap, drew the coolant down, and the cabin still settled 5-9 K below the D3 measurement (CX9, Accord LX, Camry).
   Heat-flow audit of the CX9 cold-start UDDS: the coolant gains 5.7-7.3 kW in the city, the heater takes 5-6 kW, the
   block loses 2 kW; engine heat to the coolant was not the cause. Conduction share 0.6 / 0.4 / 0.3 / 0.2: cabin error
@@ -290,7 +290,7 @@ Dev results, v1 (corrected procedures) -> v2 final:
 
 - EPA check dev (FE %): Sonata Hybrid FTP +27.3 -> +4.3, HWY +2.8 -> -5.9, US06 +4.6 -> -9.5; RAV4 Hybrid FTP +11.6 ->
   +5.5, HWY +2.9 -> -0.7; Escape FTP +6.5 -> +1.7; Accord Hybrid FTP -4.7 -> -4.2, HWY -8.8 -> -4.6, US06 -10.5 ->
-  -8.5, SC03 +7.2 -> +12.5; BEVs UDDS -1.9 / +5.9 / +2.4 -> -3.3 / +7.9 / +2.9. Conventional as agent 1 (Sonata SC03
+  -8.5, SC03 +7.2 -> +12.5; BEVs UDDS -1.9 / +5.9 / +2.4 -> -3.3 / +7.9 / +2.9. Conventional as in the first pass (Sonata SC03
   +9.1 -> +4.1, cold FTP +0.5 -> -5.8).
 - EPA dev pool (n 235): FTP +1.2 -> -1.4, HWY -2.9 -> -1.4, US06 +0.1 -> -2.9, SC03 +4.4 -> -0.3, cold FTP +7.8 -> +2.6.
 - D3 dev (primary %, median): conventional -4.6 -> -1.5; P2 -19.9 -> -5.4 (UDDS -25.1 -> -8.9); power-split (legacy
@@ -305,7 +305,7 @@ Dev results, v1 (corrected procedures) -> v2 final:
   BEV 2.51 -> 2.49 kWh/mi.
 - Ledger stress (600 runs, v2): max closure 5.6e-4, none above 0.5 %.
 
-## Not closed (agent 2)
+## Not closed (second v2 calibration pass)
 - D3 legacy Ford and Toyota hybrids (2010 Prius, Fusion Hybrid, 2013 Energis in CS) burn 20-28 % more than their
   twins: the modern Atkinson map is better than those engines, and their fuel is the legacy measurement. Not fitted.
 - P2: launch engine starts (Sonata), engine-on -11 points; EPA dev Sonata US06 -9.5 % FE.
@@ -320,7 +320,7 @@ Dev results, v1 (corrected procedures) -> v2 final:
 `scoreboard_compare_v1_v2.txt`. The table and what looks wrong (TMED P2s now too thirsty, Toyota EPA cycles 5-7 % too
 thirsty, plug-in series exam -27 %) are in LIMITS.md; they are reported, not fixed.
 
-## 14 Nov 2026 — calibration agent 3: hybrid fix pass (physics v2.1)
+## 14 Nov 2026 — v2.1 hybrid fix pass: hybrid fix pass (physics v2.1)
 
 Same rules: dev data only. Two things were frozen before any fitting: a fresh hybrid exam ("exam-2",
 `checks/exam2_hybrids.json`, commit b2f10c0) and a v2 fingerprint guard (commit 30a5495). The v2 held-out results of

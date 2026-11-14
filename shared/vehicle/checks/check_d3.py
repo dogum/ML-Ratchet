@@ -159,7 +159,7 @@ def run_one(job):
         # level 0.20: the twin charged 150-500 Wh in a UDDS)
         # A logged CS SOC below the twin's window (Prius Prime 0.12-0.15, Volt 0.13-0.16 vs the twin's 0.15) is on
         # another scale: the twin then sustains at its own CS level (window low + 0.05) and starts there; else it
-        # charged 0.3-0.6 kWh from the engine in a UDDS to climb into its window (calibration agent 3, 14 Nov 2026).
+        # charged 0.3-0.6 kWh from the engine in a UDDS to climb into its window (v2.1 hybrid fix pass, 14 Nov 2026).
         if init_soc < veh.battery.soc_lo + 0.01:
             init_soc, soc_src = veh.battery.soc_lo + 0.05, soc_src + ' (below the twin window: its CS level)'
         ctl = dict(spec.get('control') or {})
@@ -345,7 +345,7 @@ def run_one(job):
         if cs_test and mf > 20 and mb is not None:
             # charge-sustaining test: HEV operation, so the HEV headline (fuel corrected by net battery energy, SAE
             # J1711-style). Counting the battery 1:1 with fuel energy made a twin that drains its pack look frugal
-            # (calibration agent 3, 14 Nov 2026; applied to every physics version)
+            # (v2.1 hybrid fix pass, 14 Nov 2026; applied to every physics version)
             fc_m = mf + mb * 3600 / ETA_BATT_EQ / lhv
             fc_s = sim['fuel_g'] + sim['batt_Wh'] * 3600 / ETA_BATT_EQ / lhv
             err['fuel_corr_pct'] = pct(fc_s, fc_m)

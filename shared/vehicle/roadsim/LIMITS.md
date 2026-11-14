@@ -13,7 +13,7 @@ cycles are on fuel economy (+ = the sim burns less); D3 and ZTBus errors are on 
 v1 and v2: computed once after the v2 freeze (13 Nov 2026). v2.1 (`roadsim-physics-v2.1`, the hybrid fix pass of 14 Nov
 2026, not the default): a **second look** at the same sets, which had been seen before v2.1 was fitted, so they judge
 nothing; the fresh judge of v2.1 is exam-2 below. v2.1 changes hybrid and plug-in runs only: every conventional, BEV,
-bus and Class 8 number is identical to v2 ("= v2"). The D3 plug-in rows of v2 were recomputed with agent 3's harness
+bus and Class 8 number is identical to v2 ("= v2"). The D3 plug-in rows of v2 were recomputed with the v2.1 pass's harness
 (charge-sustaining tests at the twin's CS level, scored on corrected fuel); v2 as first reported in brackets.
 
 | check | v1 | v2 | v2.1 (second look) | target (V2_PLAN) |
@@ -179,7 +179,7 @@ the FTP (the TNGA-era Atkinson map stands in for 2008-2017 engines), TMED P2s 8-
 9. **Plug-in hybrids — not met.** v2 adds charge-depleting rules, pack power from the machines, engine heat in charge
    sustaining. D3 dev -8 % (power-split) / -11 % (Volt); D3 exam -16 % / -27 %: the 2012-2013 Volts and the i3 REx run
    their engine 7 % of the time in the twin vs 36 % on the dyno (v1 17 %). VED dev Energi -12.6, Volt -10.7 %.
-   With agent 3's harness (charge-sustaining tests at the twin's CS level and scored on corrected fuel) v2 is D3 exam
+   With the v2.1 pass's harness (charge-sustaining tests at the twin's CS level and scored on corrected fuel) v2 is D3 exam
    -17.8 / -22.6 %, v2.1 the same. Exam-2 (charge-sustaining EPA tests of fresh cars): plug-in power-split FTP +0.5,
    HWY +2.2, 20 F cold -27 %; plug-in series FTP +19, SC03 +46 %; plug-in P2 FTP +7, HWY -8 %. VED exam plug-ins
    -20 to -23 % (trip median). The D3 2016 Volt (dev) runs its engine ~100 % above 60 km/h in charge sustaining, the

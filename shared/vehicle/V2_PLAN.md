@@ -13,7 +13,7 @@ physics change bumps `PHYSICS_VERSION`, rebuilds the frozen sets and re-takes ev
 - **Data now reachable** (checked 13 Nov 2026 from this machine): VED (GitHub), USGS 3DEP lidar, IEM weather, EPA,
   fueleconomy.gov, and the **ETH Research Collection (full ZTBus, 1,409 missions — v1 had 10)**.
 - **Still blocked from scripts:** Argonne D3 (anl.gov, HTTP 403) and NREL Fleet DNA / data.nrel.gov (timeout).
-  Not routed around; Greg can download D3 in a browser.
+  Not routed around; D3 needs a browser download.
 
 ## Phase A — foundation
 
@@ -44,7 +44,7 @@ Kept from v1 and re-run after every change: ledger closure (600 stress runs), EP
 
 - Full ZTBus (1,409 missions, passengers per second): EnergyNet's bus exam, TripDetective's bus mass from passengers.
 - Argonne D3 (10 Hz dyno tests of modern HEVs, PHEVs, BEVs with fuel, current, engine speed, temperature): **needs
-  Greg's browser download.** Best calibration data for P2, e:HEV, cold and A/C. Dev and a second exam, split by vehicle.
+  a browser download.** Best calibration data for P2, e:HEV, cold and A/C. Dev and a second exam, split by vehicle.
 - A model-year input for EnergyNet from fueleconomy.gov, so modern cars stop inheriting the old-fleet prior.
 
 ## Phase D — rebuild and re-score the three models on physics v2 (GPU)
@@ -89,12 +89,12 @@ forecast, the RoadSim run, TripDetective reading the log back, HybridPilot drivi
   by-month split (fixed 13 Nov, before any full trace was processed) is now in force: 294 dev missions, 1,115 exam; the
   v1 trace-exam sample missions stay exam. EnergyNet v1's numbers on ZTBus mission totals are re-scored on the 1,115
   exam missions before comparing with v2. Details: data/DATA.md, proc/hd/ztbus_full_splits.json.
-- **13 Nov 2026 — physics v2 frozen and made the default (calibration agent 2).** `simulate()` without options runs
+- **13 Nov 2026 — physics v2 frozen and made the default (second v2 calibration pass).** `simulate()` without options runs
   `roadsim-physics-v2` (PHYSICS_VERSION); `options='roadsim-physics-v1'` or `None` reproduces v1 exactly (fingerprint
   test). Every RoadSim call under models/ is pinned to v1, so the three released models, their demos and
   tests/golden are unchanged until Phase D rebuilds them. VED CR-Z twins are P1 mild hybrids and are excluded from the
   hybrid targets (low-confidence label). Decisions: roadsim/CALIBRATION.md, rungs H0-H9.
-- **14 Nov 2026 — physics v2.1 frozen, not made the default (calibration agent 3).** A hybrid fix pass on a wider dev
+- **14 Nov 2026 — physics v2.1 frozen, not made the default (v2.1 hybrid fix pass).** A hybrid fix pass on a wider dev
   set (55 EPA dev-family hybrid / plug-in records, D3 dev hybrids and plug-ins at 10 Hz, VED dev twins), with a fresh
   exam frozen first (`checks/exam2_hybrids.json`: 108 VED exam HEV/PHEV cars, 409 unseen EPA hybrid records) and a v2
   fingerprint guard. Kept: engine run-on into braking (2 s, measured on six D3 dev hybrids). Rejected: every physical

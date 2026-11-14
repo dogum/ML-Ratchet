@@ -47,7 +47,7 @@ PHEV_START = os.environ.get('VED_PHEV_ENGINE_START', 'warm')   # 'warm' | 'logge
 PLUGIN_HW = {
     # battery max_power_kW: min(traction machines / 0.9, 9 C), the plug-in rule of data/scripts/d3_specs.py (RoadSim's
     # 'energy' default of 3 C left the Energi twin at 23 kW and forced its engine on in charge depletion). Machines and
-    # engine power from the same public spec sheets as data/d3_facts.json (added 13 Nov 2026, calibration agent 2).
+    # engine power from the same public spec sheets as data/d3_facts.json (added 13 Nov 2026, second v2 calibration pass).
     ('phev_series', 1.4): dict(battery=dict(capacity_kWh=16.5, nominal_V=360, soc_window=[0.2, 0.85], max_power_kW=123.0), P=111,
                                engine_kW=63, motors=[('traction', 111, 370), ('generator', 55, None)]),
     ('phev_series', 1.5): dict(battery=dict(capacity_kWh=18.4, nominal_V=360, soc_window=[0.15, 0.9], max_power_kW=123.0), P=111,

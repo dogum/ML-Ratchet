@@ -41,7 +41,7 @@ DEFAULTS = {
     'regen_share': {},                  # {architecture: s}: series (cooperative) brake blending gives regen at most s x the braking
                                         # force, friction brakes the rest (1 = v1: regen up to the motor/battery/stability caps)
     'hybrid_chg_cap_frac': None,        # ECMS family: battery charging from the engine while driving <= this x engine P_max (None = no cap)
-    # v2.1 hybrid options (calibration agent 3, 14 Nov 2026): every one acts on hybrid / plug-in architectures only
+    # v2.1 hybrid options (v2.1 hybrid fix pass, 14 Nov 2026): every one acts on hybrid / plug-in architectures only
     'p2_regen_fade_kph': None,          # [lo, hi] km/h: P2 regen fades linearly from full at hi to 0 at lo (downshift to
                                         # first and launch-clutch opening; None = v1 fade from regen.min_speed_mps)
     'p2_launch_kph': None,              # P2: engine on while moving below this speed with wheel demand > p2_launch_kW

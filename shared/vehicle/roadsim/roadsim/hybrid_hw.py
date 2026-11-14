@@ -8,7 +8,7 @@ The EPA table gives what the test lab measured on (equivalent test weight, targe
 and rated power, transmission type and gears, N/V and axle ratios) but no electric hardware. HW below adds the hybrid
 system of each model line from public spec sheets (machine power and torque, pack energy and voltage, converter or
 clutch), rounded; rear axle motors of AWD power-splits are lumped into MG2 (as checks/epa_vehicles.py does). The rules
-were written from the model names only, before any of these records was simulated (14 Nov 2026, calibration agent 3).
+were written from the model names only, before any of these records was simulated (14 Nov 2026, v2.1 hybrid fix pass).
 
 Groups (reporting units of checks/check_hybrids_epa.py):
   p2_tmed            Hyundai/Kia TMED: P2 motor in place of the converter (6DCT or 6AT without converter)

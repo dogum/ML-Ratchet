@@ -1,4 +1,4 @@
-# RoadData: real data for the vehicle project (Phase 1, agent B)
+# RoadData: real data for the vehicle project (Phase 1)
 
 Everything Phase 2 is graded on lives here. It is frozen: splits, cleaning rules and baselines below were decided once
 (seed 20261112) and must not be changed after Phase 2 starts. Build scripts are in `road/data/scripts/`; the loader
@@ -288,7 +288,7 @@ Choices the scripts did not record, fixed by matching the shipped tables: IEM AS
 eCFR at the latest issue date. `build_maps.py` needs the EPA ALPHA packages in `roadsim/refdata/alpha/`, which this
 command does not fetch.
 
-## Fixes after Phase 2 (13 Nov 2026, found by the EnergyNet agent; splits.json unchanged, sha256 d917df78…)
+## Fixes after Phase 2 (13 Nov 2026, found while building EnergyNet; splits.json unchanged, sha256 d917df78…)
 - **EPA test-car cycle labels were swapped.** Procedure code 3 is HWFE (highway) and code 21 is the federal 2-day FTP; the
   build mapped them the other way. Fixed in `scripts/epa_testcars.py` and rebuilt. Conventional medians are now FTP 24.5 mpg,
   HWY 37.6 mpg. The EPA baselines were recomputed: conventional regression FTP 7.1 %, HWY 5.1 %, US06 6.9 %; HEV FTP 23.4 %,
