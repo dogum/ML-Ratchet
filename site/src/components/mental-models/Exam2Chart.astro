@@ -1,0 +1,45 @@
+---
+// Section 05: RoadSim exam-2, median city-cycle (FTP) fuel-economy error per hybrid group, physics v2 vs v2.1.
+// Data from shared/vehicle/roadsim/LIMITS.md (exam-2, frozen 14 Nov 2026 before the v2.1 fit; computed once).
+import { EXAM2 } from '../../lib/mental-models';
+const W = 900, L = 250, R = 790, T = 34, rh = 32, lo = -15, hi = 30;
+const x = (v: number) => L + ((R - L) * (v - lo)) / (hi - lo);
+const H = T + rh * EXAM2.length + 10;
+const sg = (v: number) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
+---
+<div class="db-scroll">
+  <svg viewBox={`0 0 ${W} ${H}`} class="db" role="img" aria-labelledby="db-t">
+    <title id="db-t">Exam-2: median city-cycle fuel-economy error on fresh EPA hybrid records, RoadSim physics v2 (hollow) and v2.1 (solid), by hybrid group.</title>
+    {[-10, 0, 10, 20, 30].map((v) => (
+      <g>
+        <line x1={x(v)} x2={x(v)} y1={T - 8} y2={T + rh * EXAM2.length} class={v === 0 ? 'z' : 'g'} />
+        <text x={x(v)} y={T - 14} text-anchor="middle" class="ax">{v > 0 ? '+' : v < 0 ? '−' : ''}{Math.abs(v)}%</text>
+      </g>
+    ))}
+    {EXAM2.map(([name, n, a, b], i) => {
+      const cy = T + rh * i + rh / 2;
+      return (
+        <g>
+          <text x={L - 58} y={cy + 4} text-anchor="end" class="name">{name}</text>
+          <text x={L - 14} y={cy + 4} text-anchor="end" class="ax">n {n}</text>
+          <line x1={x(a)} x2={x(b)} y1={cy} y2={cy} class="bar" />
+          <circle cx={x(a)} cy={cy} r="6" class="a" />
+          <circle cx={x(b)} cy={cy} r="5" class="b" />
+          <text x={x(Math.max(a, b)) + 12} y={cy + 4} class="ax val">{sg(a)} → {sg(b)}</text>
+        </g>
+      );
+    })}
+  </svg>
+</div>
+
+<style>
+  .db-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .db { width: 100%; min-width: 640px; height: auto; }
+  .name { font-family: var(--sans); font-size: 13px; fill: var(--ink); }
+  .ax { font-family: var(--mono); font-size: 10.5px; fill: var(--ink-3); }
+  .val { paint-order: stroke; stroke: var(--paper-3); stroke-width: 4px; stroke-linejoin: round; }
+  .g { stroke: var(--rule); } .z { stroke: var(--ink); stroke-width: 1.5; }
+  .bar { stroke: var(--real); stroke-width: 2; }
+  .a { fill: var(--paper-3); stroke: var(--real); stroke-width: 2; }
+  .b { fill: var(--real); }
+</style>

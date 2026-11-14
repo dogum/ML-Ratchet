@@ -1,0 +1,399 @@
+---
+// Mental models: where this collection sits among other ways to combine physics and ML, where physics enters each
+// model, eight lenses for holding the method in mind, and where the no-real-training-data line could move.
+// Copy and diagram data: src/lib/mental-models.ts. Numbers come from model.yaml / ratchet.yaml at build time.
+import Base from '../layouts/Base.astro';
+import LadderChart from '../components/LadderChart.astro';
+import RatchetMachine from '../components/RatchetMachine.astro';
+import WiringDiagram from '../components/mental-models/WiringDiagram.astro';
+import Lenses from '../components/mental-models/Lenses.astro';
+import RealDataDial from '../components/mental-models/RealDataDial.astro';
+import Exam2Chart from '../components/mental-models/Exam2Chart.astro';
+import { APPROACHES, GUESS_DIFF, LENSES, STOPS } from '../lib/mental-models';
+import { collectionStats, getModels, getModel, ghFile, type ExamRow, type RealDataRole } from '../lib/data';
+import { url } from '../lib/url';
+
+const s = collectionStats();
+const models = getModels();
+const quake = getModel('quakenet')!;
+const qr = (id: string) => quake.ladders[0].rungs.find((r) => r.id === id)?.sim?.toFixed(3) ?? '—';
+
+// EnergyNet's exam rows that carry a regression fitted on real EPA tests: the repo's own black-box baseline
+const energy = getModel('energynet')!;
+const regRows = energy.exam.results.filter((r) => r.baselines.some((b) => b.name.startsWith('Log-linear regression')));
+const short = (r: ExamRow) => r.metric.replace(/^EPA /, '').replace(/\s*\(.*$/, '').replace(/ tests$/, '');
+const list = (xs: string[]) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
+const regWins = regRows.filter((r) => r.verdict === 'loss');
+const regLoses = regRows.filter((r) => r.verdict === 'win');
+const pct = (v: number | string) => (typeof v === 'number' ? v.toFixed(1) : v);
+const regVal = (r: ExamRow) => pct(r.baselines.find((b) => b.name.startsWith('Log-linear regression'))!.value);
+const hwy = regRows.find((r) => /petrol highway/i.test(r.metric));
+const petrolLoss = hwy ? `EnergyNet’s EPA petrol highway row (${pct(hwy.model)}% against the regression’s ${regVal(hwy)}%)` : 'EnergyNet’s EPA petrol rows';
+const anchored = models.filter((m) => m.approach?.physics_anchor).map((m) => m.name);
+
+const fill = (t: string) => t
+  .replace('{blackbox}', `On EnergyNet ${energy.version}’s exam, a log-linear regression fitted on real EPA tests plays this part. It beats the network on ${list(regWins.map(short))}, and loses on ${list(regLoses.map(short))}.`)
+  .replace('{residual}', `${list(anchored)} already shape their output around a physics estimate (section 03), though they learn the correction from simulations. Training it on real data would be the next step along.`)
+  .replace('{petrolLoss}', petrolLoss)
+  .replace('{labels}', String(s.realTrainingLabels))
+  .replace('{q1}', qr('r1')).replace('{q3}', qr('r3'))
+  .replace('{rejected}', String(s.rejected));
+const approaches = APPROACHES.map((a) => ({ ...a, repo: fill(a.repo) }));
+const lenses = LENSES.map((z) => ({ ...z, evi: fill(z.evi), see: fill(z.see) }));
+const stops = STOPS.map((x) => ({ ...x, gain: fill(x.gain) }));
+
+// the grey-box table, generated from each model.yaml's approach block
+const ROLE: Record<RealDataRole, string> = { backdrop: 'noise', calibration: 'calibrate', gate: 'gate', error_bars: 'error bars', exam: 'exam' };
+const grey = models.map((m) => ({ id: m.id, name: m.name, accent: m.accent, a: m.approach }));
+const count = (k: 'real_backdrop' | 'physics_inputs' | 'physics_anchor') => grey.filter((g) => g.a?.[k]).length;
+
+const ladders = models.flatMap((m) => m.ladders.map((l, i) => ({ m, l, uid: `mm-${m.id}-${i}`, label: m.ladders.length > 1 && l.name !== m.name ? `${m.name} · ${l.name.replace(/\s*\(.*\)$/, '')}` : m.name })));
+const startLadder = ladders.findIndex((x) => x.m.id === 'quakenet');
+
+const toc = [
+  ['first-guess', 'A first guess'], ['wiring', 'Where data flows'], ['grey-box', 'Physics-informed?'],
+  ['ratchet', 'The ratchet'], ['worked-example', 'Worked example'], ['lenses', 'Eight lenses'], ['real-data', 'Real data, later'],
+];
+---
+<Base title="Mental models" description="Where ML Ratchet sits among other ways to combine physics and machine learning: the same boxes wired eleven ways, where physics enters each model, eight lenses, and where the no-real-training-data line could move." keywords={['physics-informed neural networks', 'domain randomization', 'surrogate model', 'Bayesian calibration', 'data assimilation', 'domain adaptation', 'transfer learning', 'grey-box modelling']}>
+  <section class="hero wrap">
+    <p class="kicker tick-label">Mental models · ways to think about this project</p>
+    <h1 class="display h"><span class="real-t">Reality</span> teaches the simulator.<br /><em>The <span class="sim-t">simulator</span> teaches the network.</em></h1>
+    <p class="lead muted">
+      That sentence sums up the method. Real data is used at every stage here. It reaches the network only through the
+      simulator, the promotion gate and the exam, and never as a labelled training example. This page places that
+      choice among the other ways to build models from physics and data, and asks where the line could move.
+    </p>
+    <dl class="stats">
+      <div><dt class="kicker">models</dt><dd class="num">{s.models}</dd></div>
+      <div><dt class="kicker">real labelled training examples</dt><dd class="num real-t">{s.realTrainingLabels}</dd></div>
+      <div><dt class="kicker">rung decisions logged</dt><dd class="num">{s.rungs}</dd></div>
+      <div><dt class="kicker">of them rejections</dt><dd class="num">{s.rejected}</dd></div>
+    </dl>
+  </section>
+
+  <nav class="toc" aria-label="On this page">
+    <div class="wrap toc-in">
+      {toc.map(([id, t], i) => <a href={`#${id}`}><span class="num">{String(i + 1).padStart(2, '0')}</span> {t}</a>)}
+    </div>
+  </nav>
+
+  <section class="sec wrap" id="first-guess">
+    <header class="sec-head">
+      <p class="kicker">01 · Baseline</p>
+      <h2 class="section">A common first guess, <em>marked up</em></h2>
+      <p class="muted">A common first reading of this project goes: build physics simulations of an area, produce data, find real data, train a model on it. Most of that holds. One clause is wrong, and three steps are missing.</p>
+    </header>
+    <div class="frame diff-box">
+      <p class="diff">
+        {GUESS_DIFF.map((d, i) => (
+          <>{d.k === 'del' ? <del>{d.t}</del> : d.k === 'ins' ? <ins>{d.t}</ins> : <span class="ok">{d.t}</span>}{i < GUESS_DIFF.length - 1 ? (d.k === 'del' ? ' ' : ', ') : '.'}</>
+        ))}
+      </p>
+      <p class="diff-key mono"><span class="ok">kept</span> <ins>added</ins> <del>struck</del></p>
+    </div>
+    <ul class="tweaks">
+      <li><span class="kicker">Wrong</span><b>Real data as training rows.</b> {s.realTrainingLabels} real labelled examples were used for training. That keeps the exam honest: a network cannot memorise an answer key it never saw. <a href={url('method/')}>The method, step 3</a></li>
+      <li><span class="kicker">Missing</span><b>The simulator is checked first.</b> QuakeNet’s synthesis matches EarthScope Syngine at r = 0.9999; RoadSim’s energy ledger closes in all 600 stress runs. <a href={url('method/')}>Step 1</a></li>
+      <li><span class="kicker">Missing</span><b>The ratchet.</b> A new version is kept only if it beats the incumbent on a frozen simulated set by a fixed margin and passes a gate on real dev units. Every attempt is logged. <a href="#ratchet">Section 04</a></li>
+      <li><span class="kicker">Missing</span><b>Mismatch goes back to physics.</b> When real dev data disagrees with the simulation, the simulator changes, and that measured gap becomes the next rung. <a href={url('story/')}>The story</a></li>
+    </ul>
+  </section>
+
+  <section class="sec wrap" id="wiring">
+    <header class="sec-head">
+      <p class="kicker">02 · Compare approaches</p>
+      <h2 class="section">Same boxes, <em>different wiring</em></h2>
+      <p class="muted">Every physics-plus-ML approach uses the same parts. They differ in which arrows are switched on. Pick one and watch where <span class="real-t">real data</span> and <span class="sim-t">simulated data</span> go.</p>
+    </header>
+    <WiringDiagram approaches={approaches} start="repo" />
+    <p class="note faint">The nine other approaches are general practice, each with one or two published references; the lines about this repository are read from its files.</p>
+  </section>
+
+  <section class="sec wrap" id="grey-box">
+    <header class="sec-head">
+      <p class="kicker">03 · A visitor’s question</p>
+      <h2 class="section">Is this physics-informed ML? <em>Yes, in three places.</em></h2>
+      <p class="muted">The textbook version of physics-informed ML puts the governing equations in the loss function (a PINN, in section 02). No model here does that. The physics sits upstream of the network and around it.</p>
+    </header>
+    <div class="grey-grid">
+      <div class="frame pad">
+        <h3 class="display h3">Where the physics sits</h3>
+        <ol class="where">
+          <li><b>In the data generator.</b> Every training example comes from governing equations. That is true of all {s.models} models.</li>
+          <li><b>In the simulator’s fitted constants.</b> A handful of physical parameters are fitted to real dev data: QuakeNet’s surface waves 6.5% slower than the ak135 Earth model, RoadSim’s engine-oil heat capacity doubled and its base accessory load set to 250 W. This is classic grey-box system identification.</li>
+          <li><b>In the shape of inputs and outputs.</b> {count('physics_inputs')} networks read physics-derived features, and {count('physics_anchor')} anchor their output to a physics estimate or decision. EnergyNet’s rung 2 made exactly that switch, and it was kept.</li>
+        </ol>
+        <p class="muted small">The network’s weights stay a black box. The system around them is grey.</p>
+      </div>
+      <div class="frame pad" data-grey>
+        <div class="grey-head">
+          <h3 class="display h3">Per model, from each card</h3>
+          <button type="button" class="btn ghost tiny" data-grey-toggle aria-pressed="false">Show what each mark says</button>
+        </div>
+        <div class="table-scroll">
+          <table class="data grey">
+            <thead><tr><th>Model</th><th class="c">Real noise or routes under the simulations</th><th class="c">Physics-shaped inputs<sup>*</sup></th><th class="c">Output anchored to physics<sup>*</sup></th><th>Real data’s jobs</th></tr></thead>
+            <tbody>
+              {grey.map((g) => (
+                <tr>
+                  <td><a href={url(`models/${g.id}/`)} style={`--c:${g.accent}`} class="mname">{g.name}</a></td>
+                  {(['real_backdrop', 'physics_inputs', 'physics_anchor'] as const).map((k) => {
+                    const v = g.a?.[k];
+                    return (
+                      <td class="c">
+                        <span class={`dot ${v ? (k === 'real_backdrop' ? 'r' : 's') : 'o'}`} title={v || 'no'}></span>
+                        <span class="sr">{v ? `Yes: ${v}` : 'No'}</span>
+                        {v && <span class="why" aria-hidden="true">{v}</span>}
+                      </td>
+                    );
+                  })}
+                  <td class="roles mono">{g.a ? g.a.real_data_roles.map((r) => ROLE[r]).join(' · ') : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="foot faint">
+          Generated from the <code>approach</code> block of each <a href={ghFile('docs/model-contract.md')}>model.yaml</a>.
+          An empty ring means the card does not claim it. Every model is trained on simulations only.<br />
+          <sup>*</sup> These two columns are judgement calls, read from each model’s inference code and card. Reviewed by the owner: pending.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec wrap" id="ratchet">
+    <header class="sec-head">
+      <p class="kicker">04 · The mechanism</p>
+      <h2 class="section">The ratchet, <em>from the logs</em></h2>
+      <p class="muted">Each model keeps its ladder in <code>ratchet.yaml</code>. A rung is kept only if it clears the margin on the frozen simulated set and passes the real dev gate. {s.rungs} decisions so far, {s.rejected} of them rejections.</p>
+    </header>
+    <div class="frame pad machine-box">
+      <p class="kicker mb-head">Every rung decision in the collection, in log order</p>
+      <RatchetMachine />
+    </div>
+    <div class="lad-pick" data-ladpick>
+      <p class="kicker">One ladder in full</p>
+      <div class="chips-row" role="group" aria-label="Choose a ladder">
+        {ladders.map((x, i) => <button type="button" class="lp" data-i={i} aria-pressed={i === startLadder}>{x.label}</button>)}
+      </div>
+      {ladders.map((x, i) => (
+        <div class="frame pad lad" data-lad={i} hidden={i !== startLadder}>
+          <p class="mono faint lad-meta">{x.l.rungs.length} rungs · {x.l.rungs.filter((r) => r.decision === 'rejected').length} rejected{x.l.scored_on ? ` · scored on ${x.l.scored_on}` : ''}</p>
+          <p class="lad-rule">{x.l.rule}</p>
+          <LadderChart ladder={x.l} accent={x.m.accent} uid={x.uid} />
+        </div>
+      ))}
+      <p class="note faint">Scores are as logged. Some ladders changed frozen set or rule part-way, so a kept rung can sit below an earlier rejected one; each rung’s reason says why.</p>
+    </div>
+  </section>
+
+  <section class="sec wrap" id="worked-example">
+    <header class="sec-head">
+      <p class="kicker">05 · Worked example · RoadSim v2 → v2.1, 14 Nov 2026</p>
+      <h2 class="section">The ratchet, <em>applied to a simulator</em></h2>
+      <p class="muted">No network was trained in this example. RoadSim, the shared vehicle simulator, went through rungs of its own. Each was fitted on dev data only, and a fresh exam was frozen before any fitting began. RoadSim has moved on since; its current state is on the <a href={url('vehicle/')}>vehicle platform</a> page.</p>
+    </header>
+    <ol class="timeline">
+      <li class="frame"><span class="kicker">13 Nov · physics v2</span><h3 class="display">Frozen, made the default</h3><p>The conventional city and highway bias was fixed (held-out FTP +0.4%, HWFET −1.9%). The three released models stayed pinned to v1 until they were rebuilt.</p></li>
+      <li class="frame"><span class="kicker">14 Nov · commit b2f10c0</span><h3 class="display">Exam-2 frozen first</h3><p>The v2 held-out results had already been seen, so they could judge nothing new. A fresh set was fixed before fitting: 409 unseen EPA hybrid records and 108 VED exam cars.</p></li>
+      <li class="frame"><span class="kicker">14 Nov · commit 1896a7d</span><h3 class="display">v2.1 frozen on dev</h3><p>One change kept: the engine runs on for 2 s into braking, the median measured on six D3 dev hybrids.</p>
+        <p class="pills"><span class="pill kept">H13 kept</span>{['H12', 'H14', 'H15', 'H17', 'H18–19', 'H20'].map((h) => <span class="pill rej">{h}</span>)}</p></li>
+      <li class="frame"><span class="kicker">14 Nov · commit 39f5e53</span><h3 class="display">Report, computed once</h3><p>Engine behaviour improved. Fuel errors moved by 0.1 to 2.5 points, mostly toward zero. The large hybrid errors remained, so v2 stayed the default.</p></li>
+    </ol>
+    <div class="frame pad">
+      <h3 class="display h3">Exam-2: city-cycle fuel-economy error on fresh EPA hybrids</h3>
+      <p class="faint small">Median FTP error, %. Positive = the simulation burns less than the real car. Hollow = v2, solid = v2.1. n = records with an FTP result.</p>
+      <Exam2Chart />
+      <p class="verdict">On VED roads the Toyota-type engine-on gap closed from −10.1 to −3.8 points. On the dyno the dots barely move. Older Toyota and Lexus power-splits read 17% too frugal, converter P2s 26%, plug-in series 19%. A hand-built physics fix pass stopped paying on these groups; section 07 uses that as one of its signals.</p>
+      <p class="foot faint">Source: <a href={ghFile('shared/vehicle/roadsim/LIMITS.md')}>shared/vehicle/roadsim/LIMITS.md</a> (exam-2) and <a href={ghFile('shared/vehicle/roadsim/CALIBRATION.md')}>CALIBRATION.md</a> (rungs H11–H20).</p>
+    </div>
+  </section>
+
+  <section class="sec wrap" id="lenses">
+    <header class="sec-head">
+      <p class="kicker">06 · Ways to hold it in mind</p>
+      <h2 class="section">Eight <em>lenses</em></h2>
+      <p class="muted">Each lens explains part of the method and hides another part. The first is the common first guess from section 01; the third is the smallest step on from it. The names and framings are this page’s own. The evidence lines come from the repository.</p>
+    </header>
+    <Lenses lenses={lenses} start={2} />
+  </section>
+
+  <section class="sec wrap" id="real-data">
+    <header class="sec-head">
+      <p class="kicker">07 · An explainer, with possible directions</p>
+      <h2 class="section">Why no real training data, <em>and where that line could move</em></h2>
+      <p class="muted">The no-real-labels rule keeps the exam meaningful, and it has a cost: where a simulator cannot reach, real data could help. How far real data reaches is a dial with seven stops. Stops 0 to 2 describe this repository today. Stops 3 to 6, the signals and the recipe below are possible directions, not plans; the <a href={url('backlog/')}>backlog</a> lists the idea.</p>
+    </header>
+    <RealDataDial stops={stops} start={2} />
+    <div class="grid2">
+      <div class="frame pad">
+        <h3 class="display h3">Signals that a stop past 2 would pay</h3>
+        <ul class="ticks">
+          <li><b>A regression trained on real data beats the network.</b> {hwy ? <>EnergyNet {energy.version} loses EPA petrol highway to a log-linear regression, {pct(hwy.model)}% against {regVal(hwy)}%.</> : <>EnergyNet loses some EPA petrol rows to a log-linear regression.</>} Real data holds information the simulation lacks there.</li>
+          <li><b>Physics fix passes stop paying.</b> RoadSim v2.1 kept one change and rejected the rest, and exam-2 shows the large hybrid errors unchanged.</li>
+          <li><b>The gap is structured, but not in any available spec.</b> Per-engine spread comes from using one of ten benchmark maps per engine. Fitting per-map levels was tried and rejected (rung C3b): it matched the EPA pool and made every metered D3 car worse.</li>
+          <li><b>The labels are measured and can be split by unit.</b> Argonne’s D3 holds 1,661 usable dynamometer traces from 65 vehicles, with measured fuel. The EPA test-car lists hold 80,227 tests.</li>
+        </ul>
+        <h3 class="display h3 mt">Signals to wait</h3>
+        <ul class="ticks wait">
+          <li><b>The labels are estimates.</b> VED fuel is inferred from mass air flow or engine load for 351 of 384 vehicles. A network trained on those labels learns the estimator’s bias.</li>
+          <li><b>The twin test still points at something nameable.</b> If simulated twins read right and real units read wrong for a reason that can be stated, a simulator rung is cheaper and keeps the claim.</li>
+          <li><b>Few distinct units.</b> A small dev set was too kind once already: BearingNet scored 0.78 on its Paderborn dev files and 0.45 on the exam.</li>
+        </ul>
+      </div>
+      <div class="frame pad">
+        <h3 class="display h3">One way it could be done, keeping the ratchet honest</h3>
+        <p class="kicker possible">A possible direction · not planned work</p>
+        <ol class="recipe">
+          <li>Cut a third real split, <b>real-train</b>, by vehicle or family, frozen with a hash like the existing <code>splits.json</code>. Dev and exam stay untouched.</li>
+          <li>Keep the simulation-only model as its own ladder. Start a second ladder for simulation plus real. Publish both columns side by side.</li>
+          <li>Apply the same rule to both: beat the incumbent on the frozen set by the margin, pass the dev gate, log every rung.</li>
+          <li>Move in dial order. Try unlabelled real inputs (stop 3) and a learned discrepancy term (stop 4) before fine-tuning on labels (stop 5). Each earlier stop keeps more of the claim.</li>
+          <li>Keep the real-trained regression as a baseline on every exam row. The simulation-plus-real model has to beat it to count as a win.</li>
+        </ol>
+        <p class="verdict">The difference between the two columns becomes a measurement in its own right: how much reality adds on top of physics, per fleet and per cycle.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sources">
+    <p class="kicker">Sources and status</p>
+    <p class="faint small">
+      Built from the repository: README.md, <a href={url('method/')}>docs/method.md</a>, <a href={url('lessons/')}>docs/lessons.md</a>,
+      <a href={url('vehicle/')}>docs/vehicle-platform.md</a>, every <code>models/*/model.yaml</code> (including its <code>approach</code> block) and
+      <code>ratchet.yaml</code>, and <code>shared/vehicle</code> (roadsim/CALIBRATION.md, roadsim/LIMITS.md, data/DATA.md, data/D3.md).
+      Counts and EnergyNet’s exam numbers are read at build time. Section 02’s other approaches are general practice, with
+      references. Section 06’s lens names are this page’s framing. Section 07’s stops 3 to 6, its signals and its recipe are
+      possible directions; nothing in the repository commits to them. Reading RoadSim’s 700 W on-road term as a discrepancy
+      term is an interpretation of CALIBRATION.md rung C6.
+    </p>
+    <div class="next">
+      <a class="btn" href={url('method/')}>The method, step by step <span class="arrow">→</span></a>
+      <a class="btn ghost" href={url('story/')}>The story: one model, one record</a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ladpick]').forEach((root) => {
+    const btns = [...root.querySelectorAll<HTMLButtonElement>('.lp')];
+    const lads = [...root.querySelectorAll<HTMLElement>('[data-lad]')];
+    btns.forEach((b, i) => b.addEventListener('click', () => {
+      btns.forEach((x, j) => x.setAttribute('aria-pressed', String(i === j)));
+      lads.forEach((l, j) => (l.hidden = i !== j));
+      lads[i].querySelector('.chart')?.classList.add('in');
+    }));
+  });
+  document.querySelectorAll<HTMLElement>('[data-grey]').forEach((root) => {
+    const b = root.querySelector<HTMLButtonElement>('[data-grey-toggle]')!;
+    b.addEventListener('click', () => {
+      const on = root.classList.toggle('show-why');
+      b.setAttribute('aria-pressed', String(on));
+      b.textContent = on ? 'Hide the details' : 'Show what each mark says';
+    });
+  });
+</script>
+
+<style>
+  .hero { padding-top: clamp(40px, 7vw, 90px); }
+  .h { font-size: clamp(44px, 7.4vw, 108px); line-height: 0.92; letter-spacing: -0.03em; margin: 16px 0 24px; text-wrap: balance; }
+  .real-t { color: var(--real); }
+  .sim-t { color: var(--sim); }
+  .lead { max-width: 64ch; font-size: 18px; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); margin: 28px 0 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
+  .stats div { padding: 14px 16px 16px 0; border-right: 1px solid var(--rule); }
+  .stats div + div { padding-left: 16px; }
+  .stats div:last-child { border-right: 0; }
+  .stats dd { margin: 6px 0 0; font-size: clamp(28px, 3.4vw, 44px); letter-spacing: -0.03em; }
+
+  .toc { position: sticky; top: 60px; z-index: 20; margin-top: 36px; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); }
+  .toc-in { display: flex; gap: 4px; overflow-x: auto; padding-block: 8px; scrollbar-width: none; }
+  .toc a { white-space: nowrap; font-family: var(--mono); font-variation-settings: 'wdth' 87.5; font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; color: var(--ink-2); padding: 6px 9px; border: 1px solid transparent; border-radius: var(--radius); }
+  .toc a:hover { color: var(--ink); border-color: var(--rule); }
+  .toc .num { color: var(--ink-3); }
+
+  .sec { padding-top: clamp(56px, 8vw, 96px); scroll-margin-top: 110px; }
+  .sec-head { max-width: 72ch; margin-bottom: 26px; }
+  .sec-head .section { margin: 10px 0 14px; }
+  .sec-head .section em { color: var(--ink-2); }
+  .pad { padding: clamp(16px, 2.5vw, 26px); }
+  .h3 { font-size: clamp(24px, 2.6vw, 32px); line-height: 1.05; margin-bottom: 10px; }
+  .mt { margin-top: 26px; }
+  .small { font-size: 14px; }
+  .note { font-size: 13px; margin-top: 12px; }
+  .verdict { margin: 16px 0 0; padding: 10px 14px; border-left: 3px solid var(--ink); background: var(--paper-2); }
+  .foot { font-size: 12.5px; margin: 12px 0 0; }
+
+  .diff-box { padding: clamp(16px, 3vw, 30px); }
+  .diff { font-size: clamp(18px, 2.2vw, 24px); line-height: 1.85; margin: 0; }
+  .diff del { color: var(--ink-3); text-decoration-thickness: 2px; text-decoration-color: var(--loss); }
+  .diff ins, .diff-key ins { text-decoration: none; background: color-mix(in srgb, var(--win) 16%, transparent); padding: 1px 2px; border-radius: 2px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .diff .ok, .diff-key .ok { border-bottom: 2px solid var(--win); }
+  .diff-key { margin: 12px 0 0; font-size: 11px; color: var(--ink-3); display: flex; gap: 14px; }
+  .diff-key del { text-decoration-color: var(--loss); }
+  .tweaks { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  .tweaks li { background: var(--paper-3); border: 1px solid var(--rule); border-radius: var(--radius); padding: 14px 16px; font-size: 15px; }
+  .tweaks .kicker { display: block; margin-bottom: 6px; }
+  .tweaks b { display: block; margin-bottom: 4px; }
+  .tweaks a { display: inline-block; margin-top: 6px; font-family: var(--mono); font-size: 11px; color: var(--ink-2); }
+
+  .grey-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .where { margin: 6px 0 14px; padding-left: 1.2em; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px 36px; }
+  .grey-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .btn.tiny { padding: 6px 10px; font-size: 10.5px; }
+  .grey { font-size: 14px; }
+  .grey th { font-size: 9.5px; }
+  .grey .c { text-align: center; }
+  .grey td { padding-block: 9px; }
+  .mname { text-decoration: none; border-left: 3px solid var(--c); padding-left: 7px; white-space: nowrap; }
+  .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; }
+  .dot.r { background: var(--real); } .dot.s { background: var(--sim); } .dot.o { border: 1.5px solid var(--rule); }
+  .why { display: none; font-size: 12px; color: var(--ink-2); text-align: left; margin-top: 4px; line-height: 1.35; }
+  [data-grey]:global(.show-why) .why { display: block; }
+  [data-grey]:global(.show-why) .grey .c { text-align: left; min-width: 170px; }
+  .roles { font-size: 10.5px; color: var(--ink-2); white-space: nowrap; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  .machine-box { margin-bottom: 26px; }
+  .mb-head { margin: 0 0 10px; padding-bottom: 10px; border-bottom: 1px solid var(--rule-2); }
+  .lad-pick > .kicker { margin-bottom: 8px; }
+  .chips-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+  .lp { font: inherit; font-size: 13px; color: var(--ink-2); background: var(--paper-3); border: 1px solid var(--rule); border-radius: var(--radius); padding: 5px 10px; cursor: pointer; }
+  .lp:hover { border-color: var(--ink); color: var(--ink); }
+  .lp[aria-pressed='true'] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .lad-meta { font-size: 11px; margin: 0 0 4px; }
+  .lad-rule { font-size: 15px; color: var(--ink-2); max-width: 90ch; }
+
+  .timeline { list-style: none; margin: 0 0 18px; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .timeline li { padding: 14px 16px; border-top: 3px solid var(--ink); font-size: 15px; }
+  .timeline h3 { font-size: 24px; margin: 6px 0 6px; }
+  .timeline p { margin: 0; }
+  .pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px !important; }
+  .pill { font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 7px; border-radius: 99px; border: 1px solid currentColor; }
+  .pill.kept { color: var(--win); } .pill.rej { color: var(--ink-3); border-style: dashed; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; align-items: start; }
+  .ticks { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; font-size: 15px; }
+  .ticks li { position: relative; padding-left: 22px; }
+  .ticks li::before { content: ''; position: absolute; left: 0; top: 0.45em; width: 11px; height: 6px; border-left: 2px solid var(--win); border-bottom: 2px solid var(--win); transform: rotate(-45deg); }
+  .ticks.wait li::before { border: 0; width: 9px; height: 9px; top: 0.42em; border-radius: 50%; background: var(--ink-3); transform: none; }
+  .possible { margin: -2px 0 10px; color: var(--sim); }
+  .recipe { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 8px; font-size: 15px; }
+
+  .sources { padding-top: 70px; }
+  .sources p.small { max-width: 90ch; margin-top: 8px; }
+  .next { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+  @media (max-width: 960px) {
+    .grid2 { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stats div:nth-child(2) { border-right: 0; }
+    .stats div + div:nth-child(3) { padding-left: 0; }
+    .stats div:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+    .toc { top: 60px; }
+  }
+</style>

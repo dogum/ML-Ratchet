@@ -1,0 +1,88 @@
+---
+// Section 07: how far real data reaches toward the network's weights, as seven stops.
+// Stops 0-2 describe the repository; 3-6 are possible directions, labelled as such.
+import { CLAIMS, STATUS_LABEL, type Stop } from '../../lib/mental-models';
+interface Props { stops: Stop[]; start?: number }
+const { stops, start = 2 } = Astro.props;
+---
+<div class="dial frame" data-dial data-start={start}>
+  <div class="track" role="group" aria-label="Stops">
+    {stops.map((s, i) => (
+      <button type="button" class={`stop st-${s.st}`} data-i={i} aria-pressed={i === start}>
+        <b class="num">{i}</b><small>{s.short}</small>
+      </button>
+    ))}
+  </div>
+  <div class="range-row">
+    <label class="kicker" for="dial-range">How far real data reaches toward the network’s weights</label>
+    <input type="range" id="dial-range" min="0" max={stops.length - 1} step="1" value={start} />
+    <div class="ends mono"><span>repository today: stops 0–2</span><span>possible directions: 3–6</span></div>
+  </div>
+  {stops.map((s, i) => (
+    <div class="stop-body" data-body={i} hidden={i !== start}>
+      <div class="head">
+        <h3 class="display">Stop {i}: {s.name}</h3>
+        <span class={`status st-${s.st}`}>{STATUS_LABEL[s.st]}</span>
+      </div>
+      <p class="what">{s.what}</p>
+      <dl class="facts">
+        <div><dt class="kicker">In the repository today</dt><dd>{s.repo}</dd></div>
+        <div><dt class="kicker">What it buys</dt><dd>{s.gain}</dd></div>
+        <div><dt class="kicker">What it risks</dt><dd>{s.risk}</dd></div>
+        <div><dt class="kicker">Guardrail</dt><dd>{s.guard}</dd></div>
+      </dl>
+      <p class="kicker claim-k">Headline claim at this stop</p>
+      <p class="claim display">
+        {CLAIMS[s.claim].map((c) => (c.struck ? <s>{c.t}</s> : c.real ? <span class="real">{c.t}</span> : c.t))}
+      </p>
+    </div>
+  ))}
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-dial]').forEach((root) => {
+    const stops = [...root.querySelectorAll<HTMLButtonElement>('.stop')];
+    const bodies = [...root.querySelectorAll<HTMLElement>('[data-body]')];
+    const range = root.querySelector<HTMLInputElement>('input[type=range]')!;
+    const set = (i: number) => {
+      stops.forEach((b, j) => { b.classList.toggle('in', j <= i); b.setAttribute('aria-pressed', String(j === i)); });
+      bodies.forEach((b, j) => (b.hidden = j !== i));
+      range.value = String(i);
+    };
+    stops.forEach((b, i) => b.addEventListener('click', () => set(i)));
+    range.addEventListener('input', () => set(+range.value));
+    set(+root.dataset.start!);
+  });
+</script>
+
+<style>
+  .dial { padding: clamp(14px, 2.5vw, 24px); }
+  .track { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+  .stop {
+    font: inherit; color: var(--ink); cursor: pointer; text-align: center;
+    background: var(--paper-3); border: 1px solid var(--rule); border-radius: var(--radius); padding: 8px 2px 7px;
+  }
+  .stop b { display: block; font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1; }
+  .stop small { display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .stop.st-n { border-style: dashed; }
+  .stop:global(.in) { background: color-mix(in srgb, var(--real) 13%, var(--paper-3)); border-color: var(--real); }
+  .stop[aria-pressed='true'] { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .range-row { margin: 12px 0 4px; }
+  .range-row label { display: block; margin-bottom: 4px; }
+  input[type='range'] { width: 100%; accent-color: var(--real); }
+  .ends { display: flex; justify-content: space-between; gap: 10px; font-size: 10px; color: var(--ink-3); }
+  .stop-body { margin-top: 18px; }
+  .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px; }
+  .head h3 { font-size: clamp(26px, 3vw, 36px); line-height: 1; }
+  .status { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 8px; border-radius: 99px; border: 1px solid currentColor; }
+  .status.st-y { color: var(--win); } .status.st-p { color: var(--sim); } .status.st-n { color: var(--ink-3); border-style: dashed; }
+  .what { margin: 10px 0 0; max-width: 70ch; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px 22px; margin: 14px 0 0; }
+  .facts div { border-top: 1px solid var(--rule); padding-top: 8px; }
+  .facts dd { margin: 4px 0 0; font-size: 15px; }
+  .claim-k { margin: 20px 0 4px; }
+  .claim { font-size: clamp(24px, 2.8vw, 34px); line-height: 1.1; margin: 0; }
+  .claim s { color: var(--ink-3); }
+  .claim .real { color: var(--real); font-style: italic; }
+  @media (max-width: 520px) { .stop small { display: none; } .stop b { font-size: 22px; } }
+</style>

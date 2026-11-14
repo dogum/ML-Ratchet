@@ -25,6 +25,9 @@
   --accent: var(--signal);
   --shadow: 0 1px 0 rgb(23 21 15 / 0.04), 0 12px 32px -18px rgb(23 21 15 / 0.35);
   --code-bg: #e7e1d3;
+  /* simulated vs real data (the Mental models page): blue for what the simulator made, ochre for what the world measured */
+  --sim: #2f52c9;
+  --real: #a3500b;
 
   --display: 'Instrument Serif', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
   --sans: 'Schibsted Grotesk Variable', 'Avenir Next', 'Segoe UI', sans-serif;
@@ -56,6 +59,8 @@
     --tie: #a79c84;
     --shadow: 0 1px 0 rgb(0 0 0 / 0.3), 0 16px 40px -20px rgb(0 0 0 / 0.8);
     --code-bg: #161814;
+    --sim: #8ea4ff;
+    --real: #f0a24f;
     color-scheme: dark;
   }
 }
@@ -75,6 +80,8 @@
   --tie: #a79c84;
   --shadow: 0 1px 0 rgb(0 0 0 / 0.3), 0 16px 40px -20px rgb(0 0 0 / 0.8);
   --code-bg: #161814;
+  --sim: #8ea4ff;
+  --real: #f0a24f;
   color-scheme: dark;
 }
 

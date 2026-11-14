@@ -95,4 +95,7 @@ dataset. A network trained only on physics, kept only when it improves on a froz
 graded once on real data it never saw, tells you exactly how far physics plus learning gets you — and where it
 doesn't.
 
-See also: [the model contract](model-contract.md) · [adding a model](adding-a-model.md) · [lessons](lessons.md).
+See also: [the model contract](model-contract.md) · [adding a model](adding-a-model.md) · [lessons](lessons.md) ·
+[mental models](https://dogum.github.io/ML-Ratchet/mental-models/): where this method sits among other ways to combine
+physics and ML (fine-tuning, residual learning, PINNs, domain randomisation, surrogates, calibration, data assimilation,
+domain adaptation).

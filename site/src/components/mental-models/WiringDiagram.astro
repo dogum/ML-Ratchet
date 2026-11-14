@@ -1,0 +1,187 @@
+---
+// Section 02: one fixed set of boxes; each approach switches a different set of arrows on.
+// Wide screens get the hand-tuned SVG; phones get the same wiring as a stacked list of lit connections.
+import { NODES, EDGES, REFS, edgeNodes, type Approach } from '../../lib/mental-models';
+interface Props { approaches: Approach[]; start?: string }
+const { approaches, start = 'repo' } = Astro.props;
+const first = approaches.slice(0, 2);
+const rest = approaches.slice(2);
+const payload = approaches.map((a) => ({ ...a, refs: REFS[a.key] ?? [] }));
+const kindOf = (id: string) => EDGES[id].k;
+---
+<div class="wiring" data-wiring data-ap={JSON.stringify(payload)} data-start={start}>
+  <div class="chip-row big" role="group" aria-label="Reference wirings">
+    {first.map((a) => <button type="button" class="pick big" data-key={a.key} aria-pressed="false">{a.chip}</button>)}
+  </div>
+  <div class="chip-row" role="group" aria-label="Other approaches">
+    {rest.map((a) => <button type="button" class="pick" data-key={a.key} aria-pressed="false">{a.chip}</button>)}
+  </div>
+
+  <div class="panel frame">
+    <div class="legend-row mono">
+      <span><i class="sw s"></i>simulated data</span>
+      <span><i class="sw r"></i>real data</span>
+      <span><i class="sw k"></i>the model's reading</span>
+    </div>
+    <svg class="flow" viewBox="0 0 980 400" role="img" aria-labelledby="flow-title">
+      <title id="flow-title">Data flow for the selected approach. Lit arrows carry data; labels say what for.</title>
+      <defs>
+        <marker id="mm-ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke" /></marker>
+      </defs>
+      <text class="band" x="20" y="268">REAL DATA</text>
+      <line class="band-line" x1="20" y1="276" x2="960" y2="276" />
+      <g>
+        {Object.entries(EDGES).map(([id, e]) => <path d={e.d} class={`edge ${e.k}`} data-edge={id} marker-end="url(#mm-ah)" />)}
+      </g>
+      <g>
+        {Object.entries(NODES).map(([id, n]) => (
+          <g class={`node ${n.k}`} data-node={id}>
+            <rect x={n.x} y={n.y} width={n.w} height="56" rx="3" />
+            <text x={n.x + n.w / 2} y={n.y + 25} text-anchor="middle">{n.t}</text>
+            <text x={n.x + n.w / 2} y={n.y + 42} text-anchor="middle" class="sub">{n.s}</text>
+          </g>
+        ))}
+      </g>
+      <g>
+        {Object.entries(EDGES).filter(([, e]) => e.lx).map(([id, e]) => <text class="elabel" data-label={id} x={e.lx} y={e.ly} text-anchor={e.a} />)}
+      </g>
+    </svg>
+
+    <ol class="stack" aria-label="Lit connections">
+      {Object.entries(EDGES).map(([id]) => {
+        const [a, b] = edgeNodes(id);
+        return (
+          <li class={`st ${kindOf(id)}`} data-st={id} hidden>
+            <span class={`nb ${NODES[a].k}`}>{NODES[a].t}</span>
+            <span class="arr" aria-hidden="true">→</span>
+            <span class={`nb ${NODES[b].k}`}>{id === 'dev_gate' ? 'Network (the gate)' : NODES[b].t}</span>
+            <span class="lbl mono" data-st-label></span>
+          </li>
+        );
+      })}
+    </ol>
+
+    <h3 class="ap-name display" data-f="name"></h3>
+    <p class="ap-one" data-f="one"></p>
+    <dl class="facts">
+      <div><dt class="kicker">Physics lives in</dt><dd data-f="physics"></dd></div>
+      <div><dt class="kicker">Real data’s job</dt><dd data-f="real"></dd></div>
+      <div><dt class="kicker">What a real-data test proves</dt><dd data-f="proves"></dd></div>
+      <div><dt class="kicker">Reach for it when</dt><dd data-f="when"></dd></div>
+    </dl>
+    <p class="verdict" data-f="repo"></p>
+    <p class="refs mono" data-refs></p>
+  </div>
+</div>
+
+<script>
+  type Ref = { short: string; full: string; url: string };
+  type Ap = { key: string; name: string; edges: Record<string, string>; one: string; physics: string; real: string; proves: string; when: string; repo: string; refs: Ref[] };
+  document.querySelectorAll<HTMLElement>('[data-wiring]').forEach((root) => {
+    const aps: Ap[] = JSON.parse(root.dataset.ap!);
+    const by = Object.fromEntries(aps.map((a) => [a.key, a]));
+    const picks = [...root.querySelectorAll<HTMLButtonElement>('.pick')];
+    const set = (k: string) => {
+      const A = by[k];
+      if (!A) return;
+      const on = new Set<string>();
+      root.querySelectorAll<SVGPathElement>('[data-edge]').forEach((p) => {
+        const id = p.dataset.edge!, act = id in A.edges;
+        p.classList.toggle('on', act);
+        if (act) id.split('_').forEach((n) => on.add(n === 'gate' ? 'net' : n));
+      });
+      root.querySelectorAll<SVGTextElement>('[data-label]').forEach((t) => {
+        const id = t.dataset.label!, txt = A.edges[id] ?? '';
+        t.textContent = txt;
+        t.classList.toggle('on', !!txt);
+      });
+      root.querySelectorAll<SVGGElement>('[data-node]').forEach((g) => g.classList.toggle('on', on.has(g.dataset.node!)));
+      root.querySelectorAll<HTMLLIElement>('[data-st]').forEach((li) => {
+        const id = li.dataset.st!;
+        li.hidden = !(id in A.edges);
+        li.querySelector('[data-st-label]')!.textContent = A.edges[id] ?? '';
+      });
+      for (const f of ['name', 'one', 'physics', 'real', 'proves', 'when', 'repo'] as const) {
+        const el = root.querySelector(`[data-f="${f}"]`);
+        if (el) el.textContent = A[f];
+      }
+      const refs = root.querySelector<HTMLElement>('[data-refs]')!;
+      refs.replaceChildren();
+      if (A.refs.length) {
+        refs.append('Read more: ');
+        A.refs.forEach((r, i) => {
+          const a = document.createElement('a');
+          a.href = r.url; a.textContent = r.short; a.title = r.full; a.rel = 'noopener';
+          refs.append(...(i ? ['; ', a] : [a]));
+        });
+      }
+      picks.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.key === k)));
+    };
+    picks.forEach((b) => b.addEventListener('click', () => set(b.dataset.key!)));
+    set(root.dataset.start!);
+  });
+</script>
+
+<style>
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .chip-row.big { margin-bottom: 10px; }
+  .pick {
+    font: inherit; font-size: 14px; color: var(--ink-2); cursor: pointer;
+    background: var(--paper-3); border: 1px solid var(--rule); border-radius: var(--radius);
+    padding: 6px 11px; transition: border-color 0.15s, background 0.15s, color 0.15s;
+  }
+  .pick.big { font-family: var(--display); font-size: 22px; line-height: 1.1; color: var(--ink); padding: 7px 16px; }
+  .pick:hover { border-color: var(--ink); color: var(--ink); }
+  .pick[aria-pressed='true'] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  .panel { padding: clamp(14px, 2.5vw, 24px); margin-top: 10px; }
+  .legend-row { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 10.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+  .legend-row span { display: inline-flex; align-items: center; gap: 7px; }
+  .sw { width: 18px; height: 0; border-top: 2.5px dashed; display: inline-block; }
+  .sw.s { border-color: var(--sim); } .sw.r { border-color: var(--real); } .sw.k { border-color: var(--ink); }
+
+  .flow { width: 100%; height: auto; overflow: visible; }
+  .band { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; fill: var(--ink-3); }
+  .band-line { stroke: var(--rule); stroke-dasharray: 2 4; }
+  .node rect { fill: var(--paper-3); stroke: var(--rule); stroke-width: 1.5; transition: fill 0.25s, stroke 0.25s; }
+  .node text { fill: var(--ink-3); font-family: var(--sans); font-size: 14px; font-weight: 600; transition: fill 0.25s; }
+  .node .sub { font-family: var(--mono); font-size: 10px; font-weight: 400; }
+  .node:global(.on) rect { stroke: var(--ink); stroke-width: 2; }
+  .node:global(.on) text { fill: var(--ink); }
+  .node.s:global(.on) rect { stroke: var(--sim); fill: color-mix(in srgb, var(--sim) 12%, var(--paper-3)); }
+  .node.r:global(.on) rect { stroke: var(--real); fill: color-mix(in srgb, var(--real) 13%, var(--paper-3)); }
+  .edge { fill: none; stroke: var(--rule); stroke-width: 1.5; stroke-dasharray: 3 5; transition: stroke 0.25s; }
+  .edge:global(.on) { stroke-width: 2.5; stroke-dasharray: 7 6; animation: mm-flow 1.1s linear infinite; }
+  .edge.s:global(.on) { stroke: var(--sim); } .edge.r:global(.on) { stroke: var(--real); } .edge.k:global(.on) { stroke: var(--ink); }
+  @keyframes mm-flow { to { stroke-dashoffset: -13; } }
+  .elabel { font-family: var(--mono); font-size: 11px; fill: var(--ink); paint-order: stroke; stroke: var(--paper-3); stroke-width: 5px; stroke-linejoin: round; opacity: 0; transition: opacity 0.25s; }
+  .elabel:global(.on) { opacity: 1; }
+
+  .stack { display: none; list-style: none; margin: 0; padding: 0; }
+  .st { display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: 4px 8px; padding: 9px 0; border-bottom: 1px solid var(--rule-2); font-size: 14px; }
+  .st[hidden] { display: none; }
+  .nb { justify-self: start; border: 1.5px solid var(--ink-3); border-radius: var(--radius); padding: 2px 7px; font-weight: 600; font-size: 13px; white-space: nowrap; }
+  .nb.s { border-color: var(--sim); background: color-mix(in srgb, var(--sim) 12%, transparent); }
+  .nb.r { border-color: var(--real); background: color-mix(in srgb, var(--real) 13%, transparent); }
+  .st .arr { color: var(--ink-3); }
+  .st.s .arr { color: var(--sim); } .st.r .arr { color: var(--real); }
+  .st .lbl { grid-column: 1 / -1; color: var(--ink-2); font-size: 11px; }
+  .st .lbl:empty { display: none; }
+
+  .ap-name { font-size: clamp(26px, 3vw, 36px); line-height: 1; margin: 20px 0 8px; }
+  .ap-one { max-width: 70ch; color: var(--ink-2); }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px 22px; margin: 16px 0 0; }
+  .facts div { border-top: 1px solid var(--rule); padding-top: 8px; }
+  .facts dd { margin: 4px 0 0; font-size: 15px; }
+  .verdict { margin: 18px 0 0; padding: 10px 14px; border-left: 3px solid var(--ink); background: var(--paper-2); max-width: none; }
+  .refs { margin: 12px 0 0; font-size: 11px; color: var(--ink-3); }
+  .refs:empty { display: none; }
+  .refs :global(a) { color: var(--ink-2); }
+
+  @media (max-width: 640px) {
+    .flow { display: none; }
+    .stack { display: block; }
+    .pick.big { font-size: 19px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .edge:global(.on) { animation: none; } }
+</style>
