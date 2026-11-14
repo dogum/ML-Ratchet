@@ -223,7 +223,7 @@ def henry_hub_csv():
         d.columns = ['date', 'hh_usd_per_MMBtu']
         d = d.dropna()
         d['date'] = pd.to_datetime(d['date']).dt.strftime('%Y-%m-%d')
-        d.to_csv(out, index=False)
+        d.to_csv(out, index=False, lineterminator='\n')
     except Exception as e:  # reading .xls needs xlrd
         log('  henry hub csv not built:', e)
 

@@ -47,7 +47,8 @@ CHECKS = [
     ('inertia_2022', ['check_ercot_inertia.py', '2022', 'calibrated'], ['ercot_inertia.json'], False, True),
     ('speed', ['check_speed.py'], ['speed.json'], False, False),
 ]
-TIMING_KEYS = ('speed', 'time_s', 'seconds', '_s_per', 'wall', 'elapsed', 'runtime', 'minutes')
+TIMING_KEYS = ('speed', 'time_s', 'seconds', '_s_per', 'wall', 'elapsed', 'runtime', 'minutes', '.t_', 'per_state')
+NOISE = 1e-9   # both values below this: solver round-off (e.g. 2e-14 vs 1e-14 degrees), counted as equal
 
 
 def leaves(x, path=''):
@@ -76,12 +77,12 @@ def compare(old, new, rtol=1e-6):
                 res['differ'].append([k, v, w])
             continue
         res['numbers'] += 1
-        if any(t in k.lower() for t in TIMING_KEYS):
+        if any(t in k.lower() for t in TIMING_KEYS) or k.lower().endswith('_s') or k.startswith('t_'):
             res['timings'] += 1
             continue
         if not isinstance(w, float):
             res['differ'].append([k, v, w])
-        elif (math.isnan(v) and math.isnan(w)) or abs(v - w) <= rtol * max(abs(v), abs(w), 1e-12):
+        elif (math.isnan(v) and math.isnan(w)) or abs(v - w) <= rtol * max(abs(v), abs(w), 1e-12)                 or max(abs(v), abs(w)) < NOISE:
             res['equal'] += 1
         else:
             res['differ'].append([k, v, w])
@@ -103,6 +104,7 @@ def main(argv=None):
     only = set(a.only.split(',')) if a.only else None
     env = dict(os.environ, OMP_NUM_THREADS='1', ML_RATCHET_GRID=str(ROOT), PYTHONIOENCODING='utf-8', MPLBACKEND='Agg')
     ran = {}
+    t_start = time.time()
     for name, cmd, outs, ref, long in CHECKS:
         if a.compare_only or (only and name not in only) or (a.quick and long and not only):
             continue
@@ -117,17 +119,21 @@ def main(argv=None):
         if r.returncode:
             print(r.stderr[-2000:])
     summary = {}
+    prev = json.loads((OUT / 'compare.json').read_text()).get('rerun', {}) if (OUT / 'compare.json').exists() else {}
     for p in sorted(PUB.glob('*.json')):
         cur = HERE / p.name
         if not cur.exists():
             continue
         c = compare(json.loads(p.read_text()), json.loads(cur.read_text()))
+        rerun = cur.stat().st_mtime >= t_start or prev.get(p.name, False) or cur.read_bytes() != p.read_bytes()
+        c['rerun'] = bool(rerun)
         summary[p.name] = c
-        flag = 'same' if not c['differ'] and not c['missing'] else 'DIFFERS'
+        flag = ('same' if not c['differ'] and not c['missing'] else 'DIFFERS') if rerun else 'not re-run'
         print(f'{p.name:52s} {c["equal"]:5d}/{c["numbers"] - c["timings"]:<5d} numbers equal  {c["timings"]:3d} timings  {flag}')
         for d in c['differ'][:6]:
             print('    ', d)
-    (OUT / 'compare.json').write_text(json.dumps({'ran': ran, 'compare': summary}, indent=1, default=str))
+    (OUT / 'compare.json').write_text(json.dumps({'ran': ran, 'rerun': {k: v['rerun'] for k, v in summary.items()},
+                                                  'compare': summary}, indent=1, default=str))
     return 0 if all(r['rc'] == 0 for r in ran.values()) else 1
 
 
