@@ -1,0 +1,2457 @@
+[
+ {
+  "rung": "R0_aecms",
+  "ckpt": "-",
+  "params": {
+   "baseline": "aecms"
+  },
+  "note": "Incumbent: RoadSim's default A-ECMS (SOC-feedback equivalence factor, Onori et al. 2010)",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.2549787029417141,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.025741613873387272,
+     "gap_rule": 0.028019041300125065,
+     "cs": 1.0,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.02034723541062356,
+     "gap_rule": 0.04440509135981775,
+     "cs": 0.8888888888888888,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.007398717541513287,
+     "gap_rule": 0.04755124511210571,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.02736092129328816,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 1.0,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.021962640714142567,
+     "gap_rule": 0.006414908195330517,
+     "cs": 1.0,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.016307366074998775,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.02950282633919406,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.015017831669803828,
+     "gap_rule": 0.044809450961511246,
+     "cs": 1.0,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.018534589544230113,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.98403889749015,
+   "pct_dp_median": 0.9888268515634527,
+   "cs_rate": 0.9622641509433962,
+   "starts_per_km": 3.809560710251066,
+   "chatter_per_km": 3.3379091098673506
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.41140986871590923,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.04831052116860222,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.027529436000555,
+     "gap_rule": 0.021811206121017005,
+     "cs": 1.0,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.027763146817527663,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.8333333333333334,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.002176229001318142,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.012855933714239856,
+     "gap_rule": 0.026164501515909416,
+     "cs": 1.0,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.005180425497207181,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.002604847490615375,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.007519604387351775,
+     "gap_rule": 0.03618294118550802,
+     "cs": 1.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.0,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.0321276361223769,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9819632394308903,
+   "pct_dp_median": 0.991878164270561,
+   "cs_rate": 0.9736842105263158,
+   "starts_per_km": 3.5735561094314168,
+   "chatter_per_km": 2.764410134435891
+  },
+  "kept": true,
+  "decision": "first rung (incumbent by definition)",
+  "wall_s": 0.1416149139404297,
+  "time": "2026-11-14 08:55"
+ },
+ {
+  "rung": "R1_bc",
+  "ckpt": "ckpt/r1_bc.npz",
+  "params": {
+   "Kp": 0
+  },
+  "note": "Behaviour cloning of DP (800 teacher trips with exploration bursts); s and on/off both from the network; no preview",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.6909112697244306,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.023860304595360864,
+     "gap_rule": 0.028019041300125065,
+     "cs": 0.6111111111111112,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.009611290996720102,
+     "gap_rule": 0.04440509135981775,
+     "cs": 0.2222222222222222,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.007111895936798303,
+     "gap_rule": 0.04755124511210571,
+     "cs": 0.4166666666666667,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.00556235735994313,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.8888888888888888,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.006912102815451192,
+     "gap_rule": 0.006414908195330517,
+     "cs": 0.9166666666666666,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.0025270882538989126,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.6666666666666666,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.013393645392593504,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.6666666666666666,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.006555304616324209,
+     "gap_rule": 0.044809450961511246,
+     "cs": 0.6,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 4.4857200375447714e-05,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9927272530861146,
+   "pct_dp_median": 0.9989141068769404,
+   "cs_rate": 0.6320754716981132,
+   "starts_per_km": 3.2554606812491773,
+   "chatter_per_km": 2.6992999831244724
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.6834611706603867,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.0032088739774795614,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 0.9166666666666666,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.021615862180334015,
+     "gap_rule": 0.021811206121017005,
+     "cs": 0.6666666666666666,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.0260551996926649,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.25,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.0,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.0037239182383805858,
+     "gap_rule": 0.026164501515909416,
+     "cs": 0.3333333333333333,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.003629334268565876,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.0023686431010450093,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.023347784545734607,
+     "gap_rule": 0.03618294118550802,
+     "cs": 0.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.0,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.005360241469601679,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9932845704665403,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.6973684210526315,
+   "starts_per_km": 3.325254041117018,
+   "chatter_per_km": 2.451905280629859
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.6909 vs incumbent R0_aecms 0.2550 (+0.4359, margin 0.01); dev %DP 99.33 vs 98.20, dev CS 0.697 vs 0.974",
+  "wall_s": 76.41587734222412,
+  "time": "2026-11-14 08:57"
+ },
+ {
+  "rung": "R2_dagger",
+  "ckpt": "ckpt/r2_dagger.npz",
+  "params": {
+   "Kp": 6
+  },
+  "note": "DAgger round 1 (+600 trips driven by R1, beta 0.3, DP labels at visited states) + A-ECMS-style SOC feedback Kp 6 on s",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.6200688678832684,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.022062298876958247,
+     "gap_rule": 0.028019041300125065,
+     "cs": 0.9444444444444444,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.010540237857660574,
+     "gap_rule": 0.04440509135981775,
+     "cs": 0.4444444444444444,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.0035462693559757583,
+     "gap_rule": 0.04755124511210571,
+     "cs": 0.6666666666666666,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.004293178117901173,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.8888888888888888,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.005407291716230851,
+     "gap_rule": 0.006414908195330517,
+     "cs": 0.75,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.0017008419462050857,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.02551304018602063,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.019832018586657063,
+     "gap_rule": 0.044809450961511246,
+     "cs": 0.9,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 6.1625375761820145e-06,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9920451912543209,
+   "pct_dp_median": 0.9995606058380506,
+   "cs_rate": 0.7830188679245284,
+   "starts_per_km": 3.2008844180879037,
+   "chatter_per_km": 2.5513118047578596
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.6908872468436615,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.002682807381720692,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.01920929971767206,
+     "gap_rule": 0.021811206121017005,
+     "cs": 0.9583333333333334,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.020482066042629466,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.5833333333333334,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.000251066967273994,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.016035811486691698,
+     "gap_rule": 0.026164501515909416,
+     "cs": 0.6666666666666666,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.004339701300877297,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.0075245206912253615,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.008178264676786728,
+     "gap_rule": 0.03618294118550802,
+     "cs": 0.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.0,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.008511088722035542,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9927365450327448,
+   "pct_dp_median": 0.9985458022442998,
+   "cs_rate": 0.881578947368421,
+   "starts_per_km": 3.2390926628290453,
+   "chatter_per_km": 2.305650320703367
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.6201 vs incumbent R0_aecms 0.2550 (+0.3651, margin 0.01); dev %DP 99.27 vs 98.20, dev CS 0.882 vs 0.974",
+  "wall_s": 58.402976512908936,
+  "time": "2026-11-14 09:03"
+ },
+ {
+  "rung": "R3_costonoff",
+  "ckpt": "ckpt/r2_dagger.npz",
+  "params": {
+   "Kp": 6,
+   "onoff": "ecms"
+  },
+  "note": "Same network; engine on/off decided by the cost P_fuel + s P_batt + start fuel with the learned s (on/off head unused)",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.7185339434441773,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.016146680186650157,
+     "gap_rule": 0.028019041300125065,
+     "cs": 0.8888888888888888,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.010706249478461351,
+     "gap_rule": 0.04440509135981775,
+     "cs": 0.5555555555555556,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.0015171771731322021,
+     "gap_rule": 0.04755124511210571,
+     "cs": 0.9166666666666666,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.003493047357174755,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.8888888888888888,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.004197794963235459,
+     "gap_rule": 0.006414908195330517,
+     "cs": 0.75,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.001383496394664933,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.021386489416379845,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.00998741140411713,
+     "gap_rule": 0.044809450961511246,
+     "cs": 0.9,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 6.1625375761820145e-06,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9951114747740337,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.8207547169811321,
+   "starts_per_km": 3.0080827152356866,
+   "chatter_per_km": 2.158056614531272
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.7878743841234185,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.0007691546060797638,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.015103797845221265,
+     "gap_rule": 0.021811206121017005,
+     "cs": 0.875,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.021081634048068176,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.5833333333333334,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.0004116604172699767,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.00460425238602787,
+     "gap_rule": 0.026164501515909416,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.00246696929897397,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.0020651209850637287,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.010003598155464255,
+     "gap_rule": 0.03618294118550802,
+     "cs": 0.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.0018251910805165417,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.0015188094149001241,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9954493149130236,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.868421052631579,
+   "starts_per_km": 3.07335802242906,
+   "chatter_per_km": 2.101279914659292
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.7185 vs incumbent R0_aecms 0.2550 (+0.4636, margin 0.01); dev %DP 99.54 vs 98.20, dev CS 0.868 vs 0.974",
+  "wall_s": 65.91426849365234,
+  "time": "2026-11-14 09:04"
+ },
+ {
+  "rung": "R4_preview30",
+  "ckpt": "ckpt/r2_dagger.npz",
+  "params": {
+   "Kp": 6,
+   "onoff": "ecms",
+   "preview_s": 30
+  },
+  "note": "R3 + 30 s speed/grade preview (as from navigation)",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.7301423990314146,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.016036042339319927,
+     "gap_rule": 0.028019041300125065,
+     "cs": 1.0,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.009680390320501287,
+     "gap_rule": 0.04440509135981775,
+     "cs": 0.5,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.004650572916745689,
+     "gap_rule": 0.04755124511210571,
+     "cs": 0.9166666666666666,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.0017915682338580097,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.9444444444444444,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.0033736952391999753,
+     "gap_rule": 0.006414908195330517,
+     "cs": 0.8333333333333334,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.00198555540346416,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.019805338384473698,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.008656666292690306,
+     "gap_rule": 0.044809450961511246,
+     "cs": 0.9,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 6.1625375761820145e-06,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9955790607853872,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.8490566037735849,
+   "starts_per_km": 3.0200144072636332,
+   "chatter_per_km": 2.135377586030915
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.6453982042193378,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.0007967590301118099,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.016268807041026317,
+     "gap_rule": 0.021811206121017005,
+     "cs": 0.9166666666666666,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.0254638240833632,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.75,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.0011464104658417407,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.0029056905558433135,
+     "gap_rule": 0.026164501515909416,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.0022406789192581933,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.0010492131861943865,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.006509284417940409,
+     "gap_rule": 0.03618294118550802,
+     "cs": 0.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.027315228951418358,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.016353237628034645,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.993436726973163,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.9078947368421053,
+   "starts_per_km": 3.0634105253470247,
+   "chatter_per_km": 2.10053403449711
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.7301 vs incumbent R0_aecms 0.2550 (+0.4752, margin 0.01); dev %DP 99.34 vs 98.20, dev CS 0.908 vs 0.974",
+  "wall_s": 66.0186972618103,
+  "time": "2026-11-14 09:05"
+ },
+ {
+  "rung": "R5_tuned",
+  "ckpt": "ckpt/r2_dagger.npz",
+  "params": {
+   "s_scale": 1.0412282162459832,
+   "s_bias": 0.130036508599813,
+   "Kp": 6.526798855638317,
+   "guard_k": 0.0,
+   "min_on_s": 8.181303290543708,
+   "min_off_s": 4.622311761808309,
+   "pon_w": 0.0,
+   "onoff": "ecms"
+  },
+  "note": "Policy-search fine-tune (black-box (1+3)-ES, 10 iterations, on 60 TRAINING-distribution trips) of the head knobs: s scale/bias, SOC-feedback Kp, SOC guard, min on/off times, on/off-head prior weight; objective mean %DP - 0.002 x chatter/km - CS penalty",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.7336719292184024,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.015016534878189054,
+     "gap_rule": 0.028019041300125065,
+     "cs": 0.9444444444444444,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.009107687442940838,
+     "gap_rule": 0.04440509135981775,
+     "cs": 0.7222222222222222,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.003184407976645783,
+     "gap_rule": 0.04755124511210571,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.0027086161921796767,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.8888888888888888,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.003239535040626379,
+     "gap_rule": 0.006414908195330517,
+     "cs": 0.9166666666666666,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.0021869643314590035,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.01830876431749325,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.01110892459411147,
+     "gap_rule": 0.044809450961511246,
+     "cs": 0.8,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.0002615107962640195,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9955206159256285,
+   "pct_dp_median": 0.9993240974420045,
+   "cs_rate": 0.8773584905660378,
+   "starts_per_km": 2.9055383180326255,
+   "chatter_per_km": 1.686310732614382
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.7304295814638668,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.00012036684881903496,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.011051282380408567,
+     "gap_rule": 0.021811206121017005,
+     "cs": 0.9166666666666666,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.017500386782452877,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.5833333333333334,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.0010222641781771013,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.005738350762214461,
+     "gap_rule": 0.026164501515909416,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.0029648712864155102,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.009161606121867893,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.009968372190991892,
+     "gap_rule": 0.03618294118550802,
+     "cs": 0.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.01031598925463606,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.008214463996537469,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9971088089665293,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.881578947368421,
+   "starts_per_km": 2.9792521173315696,
+   "chatter_per_km": 1.6094465598774246
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.7337 vs incumbent R0_aecms 0.2550 (+0.4787, margin 0.01); dev %DP 99.71 vs 98.20, dev CS 0.882 vs 0.974",
+  "wall_s": 60.487231969833374,
+  "time": "2026-11-14 09:20"
+ },
+ {
+  "rung": "R6_dagger2",
+  "ckpt": "ckpt/r3_dagger2.npz",
+  "params": {
+   "Kp": 6,
+   "onoff": "ecms"
+  },
+  "note": "DAgger round 2: +600 trips driven by the R3 policy (cost-based on/off, Kp 8, beta 0.2), retrained on all 2,000 trips",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.6463479151099583,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.015778853998444378,
+     "gap_rule": 0.028019041300125065,
+     "cs": 0.9444444444444444,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.010517981704044962,
+     "gap_rule": 0.04440509135981775,
+     "cs": 0.4444444444444444,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.0012837021488420475,
+     "gap_rule": 0.04755124511210571,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.005367502125961938,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.9444444444444444,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.010989723567331846,
+     "gap_rule": 0.006414908195330517,
+     "cs": 0.8333333333333334,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.013866498669532453,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.022670099903187597,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.005995021867043449,
+     "gap_rule": 0.044809450961511246,
+     "cs": 1.0,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 6.1625375761820145e-06,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9938276892010806,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.8490566037735849,
+   "starts_per_km": 3.0647116096360665,
+   "chatter_per_km": 2.216305948290642
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.7389997564921407,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.002327167613747183,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.015184614589345224,
+     "gap_rule": 0.021811206121017005,
+     "cs": 0.875,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.020066226425615036,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.6666666666666666,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.00015349798477379828,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.004869237402365482,
+     "gap_rule": 0.026164501515909416,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.0021663560211553357,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.00044119662113156766,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.007925112550278057,
+     "gap_rule": 0.03618294118550802,
+     "cs": 0.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.010968316098584618,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.009538196205781335,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9953814701079634,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.881578947368421,
+   "starts_per_km": 3.072783173416648,
+   "chatter_per_km": 2.089579117444559
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.6463 vs incumbent R0_aecms 0.2550 (+0.3914, margin 0.01); dev %DP 99.54 vs 98.20, dev CS 0.882 vs 0.974",
+  "wall_s": 54.474748373031616,
+  "time": "2026-11-14 09:27"
+ },
+ {
+  "rung": "R7_dagger2_preview30",
+  "ckpt": "ckpt/r3_dagger2.npz",
+  "params": {
+   "Kp": 6,
+   "onoff": "ecms",
+   "preview_s": 30
+  },
+  "note": "R6 + 30 s speed/grade preview",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.6771030749543567,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.015853543918848443,
+     "gap_rule": 0.028019041300125065,
+     "cs": 0.9444444444444444,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.009876964436622473,
+     "gap_rule": 0.04440509135981775,
+     "cs": 0.5555555555555556,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.0018447962669927338,
+     "gap_rule": 0.04755124511210571,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.0033662031972936934,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 1.0,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.005133102244049892,
+     "gap_rule": 0.006414908195330517,
+     "cs": 1.0,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.011860505256653794,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.02081513528215249,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.010198834846728589,
+     "gap_rule": 0.044809450961511246,
+     "cs": 0.9,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 6.1625375761820145e-06,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9947550307302624,
+   "pct_dp_median": 0.9999999436257279,
+   "cs_rate": 0.8867924528301887,
+   "starts_per_km": 3.0224510336390074,
+   "chatter_per_km": 2.151601474378457
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.7163955686164956,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.0009406053220189226,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.016161620921152847,
+     "gap_rule": 0.021811206121017005,
+     "cs": 0.875,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.01892114857983142,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.75,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.0014368366049845372,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.003920425196333122,
+     "gap_rule": 0.026164501515909416,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.00224467540139911,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.003767228444988946,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.009121055963210667,
+     "gap_rule": 0.03618294118550802,
+     "cs": 1.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.011705483100922898,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.0117985012423506,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9954145333656038,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.9078947368421053,
+   "starts_per_km": 3.065045289670089,
+   "chatter_per_km": 2.0997721885990654
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.6771 vs incumbent R0_aecms 0.2550 (+0.4221, margin 0.01); dev %DP 99.54 vs 98.20, dev CS 0.908 vs 0.974",
+  "wall_s": 54.63792419433594,
+  "time": "2026-11-14 09:28"
+ },
+ {
+  "rung": "R8_aecms_gains",
+  "ckpt": "ckpt/r2_dagger.npz",
+  "params": {
+   "Kp": 12,
+   "onoff": "ecms",
+   "Ki": 0.02
+  },
+  "note": "SOC feedback with RoadSim A-ECMS's own gains (Kp 12, Ki 0.02 1/s, integral clipped at 30) instead of Kp 6: v2 dev charge holding fell to 87-91 %",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.65948896008871,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.01849821021931629,
+     "gap_rule": 0.028019041300125065,
+     "cs": 1.0,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.011139690527542902,
+     "gap_rule": 0.04440509135981775,
+     "cs": 0.9444444444444444,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.004522233798615429,
+     "gap_rule": 0.04755124511210571,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.004198498517465084,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.8888888888888888,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.004365085386293738,
+     "gap_rule": 0.006414908195330517,
+     "cs": 0.8333333333333334,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.001567543636000109,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.027703933844911193,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.01126091971804678,
+     "gap_rule": 0.044809450961511246,
+     "cs": 1.0,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 6.1625375761820145e-06,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9933093148721618,
+   "pct_dp_median": 0.9994242642765467,
+   "cs_rate": 0.9339622641509434,
+   "starts_per_km": 3.0981054086151705,
+   "chatter_per_km": 2.2153200033312905
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.5993815016745871,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.0010479802442881954,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.01779881884930268,
+     "gap_rule": 0.021811206121017005,
+     "cs": 1.0,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.024577503289745607,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.8333333333333334,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.000391424589571876,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.006581047062844385,
+     "gap_rule": 0.026164501515909416,
+     "cs": 1.0,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.002722298092829256,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.001917041979492634,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.010404815053978722,
+     "gap_rule": 0.03618294118550802,
+     "cs": 1.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.0004957484598526185,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.047095840573280645,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9918511877919842,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.9736842105263158,
+   "starts_per_km": 3.099686515284483,
+   "chatter_per_km": 2.107094486490814
+  },
+  "kept": true,
+  "decision": "KEPT: frozen skill 0.6595 vs incumbent R0_aecms 0.2550 (+0.4045, margin 0.01); dev %DP 99.19 vs 98.20, dev CS 0.974 vs 0.974",
+  "wall_s": 47.533724308013916,
+  "time": "2026-11-14 09:29"
+ },
+ {
+  "rung": "R9_twin_classes",
+  "ckpt": "ckpt/r9_twin.npz",
+  "params": {
+   "Kp": 12,
+   "onoff": "ecms",
+   "Ki": 0.02
+  },
+  "note": "Re-teach with the calibrated twins' hardware: 40 mild P1 hybrids built with RoadSim's CR-Z twin recipe join the 400 generated training vehicles; +600 DAgger trips driven by the incumbent (beta 0.3), retrained on all banks",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.6570677889980628,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.018237710797952802,
+     "gap_rule": 0.028019041300125065,
+     "cs": 1.0,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.010984700967350793,
+     "gap_rule": 0.04440509135981775,
+     "cs": 1.0,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.003938042560010198,
+     "gap_rule": 0.04755124511210571,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.006775783424291261,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.8888888888888888,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.002813936257188306,
+     "gap_rule": 0.006414908195330517,
+     "cs": 0.9166666666666666,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.003244741757382689,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.028011448359894164,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.009841779967420305,
+     "gap_rule": 0.044809450961511246,
+     "cs": 1.0,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 6.1625375761820145e-06,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9931706941490447,
+   "pct_dp_median": 0.9992739732393987,
+   "cs_rate": 0.9528301886792453,
+   "starts_per_km": 3.13385402094252,
+   "chatter_per_km": 2.264272157769893
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.4787093116954495,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.0009342778348196967,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.01818061731219517,
+     "gap_rule": 0.021811206121017005,
+     "cs": 1.0,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.025138579072465073,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.9166666666666666,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.0013630826355605862,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 0.9,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.007993470499505051,
+     "gap_rule": 0.026164501515909416,
+     "cs": 1.0,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.0027354882129516644,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.0010702981982333992,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.013973718334770568,
+     "gap_rule": 0.03618294118550802,
+     "cs": 1.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.0061090860515910506,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.06958095869486569,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9914792539924918,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.9736842105263158,
+   "starts_per_km": 3.102873410307134,
+   "chatter_per_km": 2.120470110918893
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.6571 vs incumbent R8_aecms_gains 0.6595 (-0.0024, margin 0.01); dev %DP 99.15 vs 99.19, dev CS 0.974 vs 0.974",
+  "wall_s": 53.02322053909302,
+  "time": "2026-11-14 09:36"
+ },
+ {
+  "rung": "R10_timed_teacher",
+  "ckpt": "ckpt/r10_timed.npz",
+  "params": {
+   "Kp": 12,
+   "onoff": "ecms",
+   "Ki": 0.02
+  },
+  "note": "Teacher = DP with the physics' minimum on/off times (8 s / 3 s, roadsim dp_min_on_off), the platform every causal strategy runs on: 800 teacher trips + 600 DAgger trips (beta 0.3), fleet with the mild class; same decision rule as the incumbent",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.6236081349022207,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.01820794833378804,
+     "gap_rule": 0.028019041300125065,
+     "cs": 1.0,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.01336393414161642,
+     "gap_rule": 0.04440509135981775,
+     "cs": 1.0,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.0042512399265184075,
+     "gap_rule": 0.04755124511210571,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.003440170807192882,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.9444444444444444,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.002506187587601433,
+     "gap_rule": 0.006414908195330517,
+     "cs": 0.9166666666666666,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.008179578440774715,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.031347292620678736,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.01073339782253475,
+     "gap_rule": 0.044809450961511246,
+     "cs": 0.9,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 6.1625375761820145e-06,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9927177719633025,
+   "pct_dp_median": 0.9996440768141194,
+   "cs_rate": 0.9528301886792453,
+   "starts_per_km": 3.129096024493572,
+   "chatter_per_km": 2.2691017954997306
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.5717878038058457,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.001808678892344771,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.018539613623317307,
+     "gap_rule": 0.021811206121017005,
+     "cs": 1.0,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.02699780762189838,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.8333333333333334,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.0030145218040155243,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 0.9,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.0067408410888420605,
+     "gap_rule": 0.026164501515909416,
+     "cs": 1.0,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.0029911476330923836,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.0013360219081164637,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.013622706701213572,
+     "gap_rule": 0.03618294118550802,
+     "cs": 1.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.011613295055110162,
+     "gap_rule": 0.0,
+     "cs": 0.5,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.03415330857792298,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9912334748751237,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.9473684210526315,
+   "starts_per_km": 3.0829628737352865,
+   "chatter_per_km": 2.0890254022352113
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.6236 vs incumbent R8_aecms_gains 0.6595 (-0.0359, margin 0.01); dev %DP 99.12 vs 99.19, dev CS 0.947 vs 0.974",
+  "wall_s": 45.968676805496216,
+  "time": "2026-11-14 09:55"
+ },
+ {
+  "rung": "R11_start_pen",
+  "ckpt": "ckpt/r2_dagger.npz",
+  "params": {
+   "Kp": 12,
+   "onoff": "ecms",
+   "Ki": 0.02,
+   "start_pen": 20000
+  },
+  "note": "Drivability term: virtual start cost 20 kJ per engine start in the decision (RoadSim v2's start_penalty_J), on top of the 8 s / 3 s minimum on/off times",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.5597851837999471,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.02183835428820595,
+     "gap_rule": 0.028019041300125065,
+     "cs": 1.0,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.018471550859334274,
+     "gap_rule": 0.04440509135981775,
+     "cs": 0.8333333333333334,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.008549600786497061,
+     "gap_rule": 0.04755124511210571,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.004565631024350949,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.8888888888888888,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.007508720075516774,
+     "gap_rule": 0.006414908195330517,
+     "cs": 0.75,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.0030663421125676584,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.028225608327339873,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.015410027433082762,
+     "gap_rule": 0.044809450961511246,
+     "cs": 1.0,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 6.1625375761820145e-06,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9900189742227481,
+   "pct_dp_median": 0.9994242642765467,
+   "cs_rate": 0.9056603773584906,
+   "starts_per_km": 2.901780915302908,
+   "chatter_per_km": 2.0377276626929417
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.5452213780017459,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.0008490761424519063,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.02230184956083058,
+     "gap_rule": 0.021811206121017005,
+     "cs": 1.0,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.02463862315852659,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.8333333333333334,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.0004602680818648119,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.011402055112103349,
+     "gap_rule": 0.026164501515909416,
+     "cs": 1.0,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.004044441897137457,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.001992224919677099,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.011353452960757404,
+     "gap_rule": 0.03618294118550802,
+     "cs": 1.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.0,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.051271536075800594,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9901187039738432,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.9736842105263158,
+   "starts_per_km": 2.9475736419658327,
+   "chatter_per_km": 2.0128918632016997
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.5598 vs incumbent R8_aecms_gains 0.6595 (-0.0997, margin 0.01); dev %DP 99.01 vs 99.19, dev CS 0.974 vs 0.974",
+  "wall_s": 40.764402866363525,
+  "time": "2026-11-14 09:56"
+ },
+ {
+  "rung": "R12_dtg",
+  "ckpt": "ckpt/r2_dagger.npz",
+  "params": {
+   "Kp": 12,
+   "onoff": "ecms",
+   "Ki": 0.02,
+   "dtg": true,
+   "Kp_dtg": 6
+  },
+  "note": "Distance-to-go plug-in plan: with a known trip length (nav), the SOC reference falls linearly with distance from the start SOC to the CS level at the trip end, as the DP teacher depletes over the known length; SOC feedback Kp 6 both ways",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.6586171327578115,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.01849821021931629,
+     "gap_rule": 0.028019041300125065,
+     "cs": 1.0,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.011139690527542902,
+     "gap_rule": 0.04440509135981775,
+     "cs": 0.9444444444444444,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.004522233798615429,
+     "gap_rule": 0.04755124511210571,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.004322087045366451,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.8888888888888888,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.004454677405414091,
+     "gap_rule": 0.006414908195330517,
+     "cs": 0.75,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.001567543636000109,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.027703933844911193,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.01126091971804678,
+     "gap_rule": 0.044809450961511246,
+     "cs": 1.0,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 6.1625375761820145e-06,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9932593830752596,
+   "pct_dp_median": 0.9994242642765467,
+   "cs_rate": 0.9245283018867925,
+   "starts_per_km": 3.0963338665591733,
+   "chatter_per_km": 2.2154700665717497
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.5945978680633172,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.0010479802442881954,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.01779881884930268,
+     "gap_rule": 0.021811206121017005,
+     "cs": 1.0,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.024577503289745607,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.8333333333333334,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.0004116604172699767,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.006581047062844385,
+     "gap_rule": 0.026164501515909416,
+     "cs": 1.0,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.002722298092829256,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.001917041979492634,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.010404815053978722,
+     "gap_rule": 0.03618294118550802,
+     "cs": 1.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.0018251910805165417,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.047095840573280645,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9918135398509541,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.9736842105263158,
+   "starts_per_km": 3.099686515284483,
+   "chatter_per_km": 2.107094486490814
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.6586 vs incumbent R8_aecms_gains 0.6595 (-0.0009, margin 0.01); dev %DP 99.18 vs 99.19, dev CS 0.974 vs 0.974",
+  "wall_s": 42.78502321243286,
+  "time": "2026-11-14 09:57"
+ },
+ {
+  "rung": "R13_big_gpu",
+  "ckpt": "ckpt/r13_big.npz",
+  "params": {
+   "Kp": 12,
+   "onoff": "ecms",
+   "Ki": 0.02
+  },
+  "note": "Larger network on the GPU: 3 x 256 tanh (~150k parameters) instead of 2 x 96, 40 epochs on the incumbent's banks; same decision rule",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.671016764566073,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.018860995526198805,
+     "gap_rule": 0.028019041300125065,
+     "cs": 1.0,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.011061544395957332,
+     "gap_rule": 0.04440509135981775,
+     "cs": 1.0,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.004268439873150703,
+     "gap_rule": 0.04755124511210571,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.006509805330483305,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.8888888888888888,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.001802414686148936,
+     "gap_rule": 0.006414908195330517,
+     "cs": 0.9166666666666666,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.0011835834371222524,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.027086108373471657,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.009664427714339553,
+     "gap_rule": 0.044809450961511246,
+     "cs": 1.0,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 6.1625375761820145e-06,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9935510121533966,
+   "pct_dp_median": 0.9995109105599576,
+   "cs_rate": 0.9528301886792453,
+   "starts_per_km": 3.13468507499781,
+   "chatter_per_km": 2.248718968111799
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.6880595026805859,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.0011534905350098583,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.01817847111058091,
+     "gap_rule": 0.021811206121017005,
+     "cs": 1.0,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.016450514331130206,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.5833333333333334,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.0,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.0063400447052466835,
+     "gap_rule": 0.026164501515909416,
+     "cs": 1.0,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.00371110273712974,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.0014300685862268236,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.008646286002056414,
+     "gap_rule": 0.03618294118550802,
+     "cs": 1.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.0009842014172032343,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.03111828152381657,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9946789988264155,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.9342105263157895,
+   "starts_per_km": 3.113477136605837,
+   "chatter_per_km": 2.109882904076392
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.6710 vs incumbent R8_aecms_gains 0.6595 (+0.0115, margin 0.01); dev %DP 99.47 vs 99.19, dev CS 0.934 vs 0.974",
+  "wall_s": 53.97519874572754,
+  "time": "2026-11-14 09:59"
+ },
+ {
+  "rung": "R14_preview30",
+  "ckpt": "ckpt/r2_dagger.npz",
+  "params": {
+   "Kp": 12,
+   "onoff": "ecms",
+   "Ki": 0.02,
+   "preview_s": 30
+  },
+  "note": "Incumbent + 30 s speed/grade preview (as from navigation); v1's R4 idea re-tried on the new incumbent",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.6669442897434971,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.01828664768361294,
+     "gap_rule": 0.028019041300125065,
+     "cs": 1.0,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.011765186262909011,
+     "gap_rule": 0.04440509135981775,
+     "cs": 1.0,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.004356940818142936,
+     "gap_rule": 0.04755124511210571,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.0021026524193278823,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.9444444444444444,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.0035957644645614275,
+     "gap_rule": 0.006414908195330517,
+     "cs": 1.0,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.0019634673145412416,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.026934246083443414,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.012428222037624915,
+     "gap_rule": 0.044809450961511246,
+     "cs": 1.0,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 6.1625375761820145e-06,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9937999785003088,
+   "pct_dp_median": 0.9993795340355511,
+   "cs_rate": 0.9716981132075472,
+   "starts_per_km": 3.1046088953459328,
+   "chatter_per_km": 2.207789859736049
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.5332184310804409,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.000702791896374122,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.019169981118300147,
+     "gap_rule": 0.021811206121017005,
+     "cs": 1.0,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.02501880909191902,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.9166666666666666,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.0010476927425946414,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.005188313271399163,
+     "gap_rule": 0.026164501515909416,
+     "cs": 1.0,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.0025351911332070487,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.0007147337594748948,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.007349880518132013,
+     "gap_rule": 0.03618294118550802,
+     "cs": 1.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.024613062067437075,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.045359644128511234,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9910264093751238,
+   "pct_dp_median": 1.0,
+   "cs_rate": 0.9868421052631579,
+   "starts_per_km": 3.0837064453836702,
+   "chatter_per_km": 2.11596186847609
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.6669 vs incumbent R8_aecms_gains 0.6595 (+0.0075, margin 0.01); dev %DP 99.10 vs 99.19, dev CS 0.987 vs 0.974",
+  "wall_s": 51.53048229217529,
+  "time": "2026-11-14 10:00"
+ },
+ {
+  "rung": "R15_retuned",
+  "ckpt": "ckpt/r2_dagger.npz",
+  "params": {
+   "Kp": 8.713568725265754,
+   "onoff": "ecms",
+   "Ki": 0.00401765889086211,
+   "s_scale": 0.9909912449989743,
+   "s_bias": -0.1868291450269709,
+   "guard_k": 0.0,
+   "min_on_s": 8.108583659505417,
+   "min_off_s": 4.027939103426589,
+   "pon_w": 0.0
+  },
+  "note": "Policy-search re-tune of the head knobs (as R5, plus the integral gain Ki) starting from the incumbent, on the 60 TRAINING-distribution tune trips; objective mean %DP - 0.002 x chatter/km - CS penalty",
+  "physics": "roadsim-physics-v2",
+  "frozen": {
+   "set": "frozen",
+   "n": 106,
+   "skill": 0.6816137584994593,
+   "skill_strata": {
+    "power-split HEV": {
+     "gap_pol": 0.015171553574787765,
+     "gap_rule": 0.028019041300125065,
+     "cs": 0.9444444444444444,
+     "n": 18
+    },
+    "P2 HEV": {
+     "gap_pol": 0.011503329604619318,
+     "gap_rule": 0.04440509135981775,
+     "cs": 0.6111111111111112,
+     "n": 18
+    },
+    "series HEV": {
+     "gap_pol": 0.003144093818450655,
+     "gap_rule": 0.04755124511210571,
+     "cs": 0.9166666666666666,
+     "n": 12
+    },
+    "power-split PHEV": {
+     "gap_pol": 0.003071000471769256,
+     "gap_rule": 0.0036171213800833112,
+     "cs": 0.8333333333333334,
+     "n": 18
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.005747319349652169,
+     "gap_rule": 0.006414908195330517,
+     "cs": 0.75,
+     "n": 12
+    },
+    "bus (series)": {
+     "gap_pol": 0.0029241225247589133,
+     "gap_rule": 0.03076043806394609,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "bus (P2)": {
+     "gap_pol": 0.024813349287374553,
+     "gap_rule": 0.038944226945264705,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "truck (P2)": {
+     "gap_pol": 0.011216009347586885,
+     "gap_rule": 0.044809450961511246,
+     "cs": 0.9,
+     "n": 10
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.0002615107962640195,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 6
+    }
+   },
+   "pct_dp_mean": 0.9939786068373103,
+   "pct_dp_median": 0.999207767330601,
+   "cs_rate": 0.8301886792452831,
+   "starts_per_km": 2.8938333288194675,
+   "chatter_per_km": 1.6524506089390432
+  },
+  "dev": {
+   "set": "dev",
+   "n": 76,
+   "skill": 0.5968553494523137,
+   "skill_strata": {
+    "power-split PHEV": {
+     "gap_pol": 0.0006622717052756725,
+     "gap_rule": 0.0014435546274614945,
+     "cs": 1.0,
+     "n": 12
+    },
+    "power-split HEV": {
+     "gap_pol": 0.01570677232587155,
+     "gap_rule": 0.021811206121017005,
+     "cs": 0.8333333333333334,
+     "n": 24
+    },
+    "mild P1 (CR-Z type)": {
+     "gap_pol": 0.02468490446166416,
+     "gap_rule": 0.053795799164738665,
+     "cs": 0.75,
+     "n": 12
+    },
+    "series PHEV (EREV)": {
+     "gap_pol": 0.00014531147444424297,
+     "gap_rule": 0.0012457825129279065,
+     "cs": 1.0,
+     "n": 10
+    },
+    "P2 HEV": {
+     "gap_pol": 0.006988023749430028,
+     "gap_rule": 0.026164501515909416,
+     "cs": 0.8333333333333334,
+     "n": 6
+    },
+    "series HEV": {
+     "gap_pol": 0.002364601820534773,
+     "gap_rule": 0.038866062399835394,
+     "cs": 1.0,
+     "n": 4
+    },
+    "truck (P2)": {
+     "gap_pol": 0.005578306521324655,
+     "gap_rule": 0.034618166843124576,
+     "cs": 1.0,
+     "n": 4
+    },
+    "bus (P2)": {
+     "gap_pol": 0.012629372511784975,
+     "gap_rule": 0.03618294118550802,
+     "cs": 0.0,
+     "n": 1
+    },
+    "truck (PHEV series)": {
+     "gap_pol": 0.006630250874497645,
+     "gap_rule": 0.0,
+     "cs": 1.0,
+     "n": 2
+    },
+    "bus (series)": {
+     "gap_pol": 0.03835544404468627,
+     "gap_rule": 0.06801701554612649,
+     "cs": 1.0,
+     "n": 1
+    }
+   },
+   "pct_dp_mean": 0.9928080031088807,
+   "pct_dp_median": 0.9998153182556297,
+   "cs_rate": 0.881578947368421,
+   "starts_per_km": 2.9793579538320434,
+   "chatter_per_km": 1.6188954263049755
+  },
+  "kept": false,
+  "decision": "REJECTED: frozen skill 0.6816 vs incumbent R8_aecms_gains 0.6595 (+0.0221, margin 0.01); dev %DP 99.28 vs 99.19, dev CS 0.882 vs 0.974",
+  "wall_s": 51.356066942214966,
+  "time": "2026-11-14 10:08"
+ }
+]

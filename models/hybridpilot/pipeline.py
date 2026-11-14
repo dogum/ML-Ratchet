@@ -17,7 +17,8 @@ import hybridpilot as HP
 
 RULE = {'hev_powersplit': 'powersplit_rule', 'hev_parallel_p2': 'parallel_rule', 'hev_series': 'series_thermostat',
         'phev_powersplit': 'phev_cdcs', 'phev_series': 'phev_cdcs'}
-WARM = {'engine': 85.0, 'driveline': 70.0, 'tire_warm': 1.0, 'cabin': 21.0}
+WARM = {'engine': 85.0, 'oil': 90.0, 'driveline': 70.0, 'axle': 60.0, 'tire_warm': 1.0, 'cabin': 21.0}
+PHYSICS = 'roadsim-physics-v2'      # pinned: HybridPilot v2 was trained and examined on this RoadSim physics
 
 
 def starts(on):
@@ -31,8 +32,13 @@ def compare(spec, trip, init_soc=None, warm=True, strategies=('hybridpilot', 'ae
     arch = get_vehicle(spec).arch
     rows = []
     for s in strategies:
-        st = HP.make_roadsim_strategy(**hp_params) if s == 'hybridpilot' else (RULE[arch] if s == 'rule' else s)
-        o = simulate(spec, trip, strategy=st, init_soc=init_soc, init_temps=dict(WARM) if warm else None, record=True, options='roadsim-physics-v1')
+        if s == 'hybridpilot':
+            st = HP.make_roadsim_strategy(**hp_params)
+        else:
+            name = RULE[arch] if s == 'rule' else s
+            prm = (spec.get('control') or {}).get('params') or {}       # mild twins: engine_on_moving
+            st = {'strategy': name, 'params': dict(prm)} if prm else name
+        o = simulate(spec, trip, strategy=st, init_soc=init_soc, init_temps=dict(WARM) if warm else None, record=True, options=PHYSICS)
         S = o['summary']
         rows.append(dict(strategy=s if s != 'rule' else RULE[arch], fuel_g=S['fuel_g'], L_per_100km=S.get('L_per_100km'),
                          batt_kWh_out=S['batt_kWh_out'], soc_start=S['soc_start'], soc_end=S['soc_end'],

@@ -1,13 +1,15 @@
-"""HybridPilot v1.0: a learned, causal hybrid energy-management policy (numpy only).
+"""HybridPilot v2: a learned, causal hybrid energy-management policy (numpy only), built on RoadSim physics v2.
 
 Each second of traction the controller
   1. builds 66 causal features (vehicle parameters, battery/engine state, recent history of the speed trace,
      optionally the next 1-60 s of speed and grade from navigation, optionally the remaining trip distance),
   2. runs a 2x96 tanh MLP -> an equivalence factor s (fuel joules per battery joule) and P(engine on),
-  3. adds SOC feedback  s <- s + Kp (SOC_ref - SOC),
+  3. adds SOC feedback  s <- s + Kp (SOC_ref - SOC) + Ki * integral (plug-ins with a known trip length and dtg: SOC_ref falls
+     linearly with distance to the charge-sustaining level at the trip end),
   4. picks, among the candidate controls the powertrain can deliver, the one minimising
-         P_fuel + s * P_battery,chemical  (+ engine start fuel when starting from off),
-     with minimum engine on/off times and the usual forced-on rules (catalyst light-off, cabin heat).
+         P_fuel + s * P_battery,chemical  (+ engine start fuel, + start_pen, when starting from off),
+     with the platform's minimum engine on/off times (RoadSim v2: 8 s / 3 s) and its forced-on rules (catalyst
+     light-off, warm-up, cabin heat, production speed rules; plug-ins in charge depletion: RoadSim's CD rules).
 
 Use it two ways:
   - with your own powertrain model: `HybridPilotCore.decide(...)` takes candidate arrays (fuel power, battery
@@ -19,11 +21,13 @@ import math, os
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-WEIGHTS = os.path.join(HERE, 'weights', 'hybridpilot_v1.npz')
+WEIGHTS = os.path.join(HERE, 'weights', 'hybridpilot_v2.npz')
 G = 9.80665
 BINS = [(1, 5), (6, 10), (11, 20), (21, 30), (31, 60)]
 N_FEAT = 66
-DEFAULTS = dict(onoff='ecms', Kp=6.0, preview_s=0, nav=False, min_on_s=4.0, min_off_s=2.0, s_scale=1.0, s_bias=0.0)
+# min_on_s / min_off_s None = the simulator's own minimum on / off times (RoadSim v2: 8 s / 3 s)
+DEFAULTS = dict(onoff='ecms', Kp=12.0, Ki=0.02, preview_s=0, nav=False, min_on_s=None, min_off_s=None, s_scale=1.0, s_bias=0.0,
+                start_pen=0.0, dtg=False, Kp_dtg=6.0)
 
 
 class MLP:
@@ -146,26 +150,35 @@ class HybridPilotCore:
 
     def __init__(self, net=None, **params):
         self.net = net or MLP(); self.p = dict(DEFAULTS); self.p.update(params)
+        self.I = 0.0          # integral of (SOC_ref - SOC) over the trip, s (|I| <= 30, as RoadSim's A-ECMS)
 
-    def equivalence(self, x, soc, soc_ref, phev):
+    def equivalence(self, x, soc, soc_ref, phev, plan_ref=None):
+        """plan_ref: the distance-to-go SOC reference (plug-ins with dtg and a known trip length); feedback both ways."""
         s, p_on = self.net.s_pon(x)
         s = max(s * self.p['s_scale'] + self.p['s_bias'], 0.0)
+        if plan_ref is not None:
+            return max(s + self.p['Kp_dtg'] * (plan_ref - soc), 0.0), p_on
         e = soc_ref - soc
-        if self.p['Kp'] and (not phev or e > -0.03):
-            s = max(s + self.p['Kp'] * e, 0.0)
+        if (self.p['Kp'] or self.p['Ki']) and (not phev or e > -0.03):
+            if self.p['Ki']:
+                self.I = min(max(self.I + e, -30.0), 30.0)
+            s = max(s + self.p['Kp'] * e + self.p['Ki'] * self.I, 0.0)
         return s, p_on
 
-    def decide(self, x, soc, soc_ref, phev, P_fuel, P_chem, on, ok, eng_on, t_on, t_off, start_W, forced_on=False):
+    def decide(self, x, soc, soc_ref, phev, P_fuel, P_chem, on, ok, eng_on, t_on, t_off, start_W, forced_on=False,
+               min_on_s=8.0, min_off_s=3.0, plan_ref=None):
         """P_fuel, P_chem [W], on, ok: arrays over candidate controls. Returns (index or -1, s, p_on)."""
-        s, p_on = self.equivalence(x, soc, soc_ref, phev)
+        s, p_on = self.equivalence(x, soc, soc_ref, phev, plan_ref)
+        if self.p['min_on_s'] is not None: min_on_s = self.p['min_on_s']
+        if self.p['min_off_s'] is not None: min_off_s = self.p['min_off_s']
         on = np.asarray(on, bool); ok = np.asarray(ok, bool).copy(); sel = ok.copy()
         if forced_on and (ok & on).any(): sel &= on
-        if eng_on and t_on < self.p['min_on_s'] and (ok & on).any(): sel &= on
-        if (not eng_on) and t_off < self.p['min_off_s'] and (ok & ~on).any(): sel &= ~on
+        if eng_on and t_on < min_on_s and (ok & on).any(): sel &= on
+        if (not eng_on) and t_off < min_off_s and (ok & ~on).any(): sel &= ~on
         if not sel.any(): sel = ok
         if not sel.any(): return -1, s, p_on
         J = np.asarray(P_fuel, float) + s * np.asarray(P_chem, float)
-        if not eng_on: J = J + np.where(on, start_W, 0.0)
+        if not eng_on: J = J + np.where(on, start_W + self.p['start_pen'], 0.0)
         return int(np.argmin(np.where(sel, J, np.inf))), s, p_on
 
 
@@ -179,7 +192,7 @@ def vehicle_params_from_roadsim(veh):
 
 def make_roadsim_strategy(**params):
     """a strategy object for roadsim.simulate(spec, trip, strategy=make_roadsim_strategy())."""
-    from roadsim.strategies import HybridStrategy
+    from roadsim.strategies import HybridStrategy, PHEVCDCS
 
     class HybridPilotRoadSim(HybridStrategy):
         name = 'hybridpilot'
@@ -187,15 +200,39 @@ def make_roadsim_strategy(**params):
         def setup(self, veh, pt, trip, st):
             super().setup(veh, pt, trip, st)
             self.core = HybridPilotCore(**params)
-            self.min_on_s = self.core.p['min_on_s']; self.min_off_s = self.core.p['min_off_s']
+            if self.core.p['min_on_s'] is not None: self.min_on_s = self.core.p['min_on_s']
+            if self.core.p['min_off_s'] is not None: self.min_off_s = self.core.p['min_off_s']
+            if ((getattr(veh, 'control', None) or {}).get('params') or {}).get('engine_on_moving'):
+                self.p['engine_on_moving'] = True       # mild (P0/P1) twin: no electric-only driving
             self.vp = vehicle_params_from_roadsim(veh); self.vf = vehicle_features(self.vp)
             self.tc = TripContext(self.vp, trip)
             self.phev = veh.arch.startswith('phev')
-            self.ref = (veh.battery.soc_lo + 0.05) if self.phev else self.soc_mid
+            self.soc_cs = veh.battery.soc_lo + 0.05
+            self.ref = self.soc_cs if self.phev else self.soc_mid
+            self.cd = self.phev and st['soc'] > self.soc_cs + 0.01
+            self.soc0 = st['soc']
+            self.dtg = bool(self.core.p['dtg']) and self.phev and bool(self.core.p['nav'])
             self.trace = []
 
+        def forced_on(self, st, ctx):
+            """platform rules; plug-ins in charge depletion follow RoadSim's charge-depleting rules (as phev_cdcs)."""
+            if self.phev and self.o.get('phev_cd_rules'):
+                if self.cd and st['soc'] <= self.soc_cs:
+                    self.cd = False
+                if self.cd:
+                    return PHEVCDCS.cd_engine_wanted(self, st, ctx) or st['soc'] < self.soc_lo - 0.02
+            return HybridStrategy.forced_on(self, st, ctx)
+
+        def plan_ref(self, ctx):
+            if not self.dtg:
+                return None
+            f = min(ctx['dist'] / max(self.tc.D, 1.0), 1.0)
+            return max(self.soc_cs, self.soc0 - (self.soc0 - self.soc_cs) * f)
+
         def grid(self, ctx):
-            return self.pt.default_fracs(20) if hasattr(self.pt, 'default_fracs') else self.pt.ctrl_grid(20)
+            if hasattr(self.pt, 'default_fracs'):
+                return self.pt.default_fracs(20)
+            return self.dd_augment(self.pt.ctrl_grid(20), ctx)
 
         def candidates(self, st, ctx):
             return self.grid(ctx)
@@ -205,7 +242,8 @@ def make_roadsim_strategy(**params):
             x = features(self.vf, self.tc, self.vp, st, ctx, self.core.p['preview_s'], self.core.p['nav'], self.ref, cat)
             on = C['on'] & (C['P_fuel'] > 0)
             j, s, p_on = self.core.decide(x, st['soc'], self.ref, self.phev, C['P_fuel'], self.chem_power(C, st), on, C['ok'],
-                                          st['eng_on'], st['t_on'], st['t_off'], self.start_W, self.forced_on(st, ctx))
+                                          st['eng_on'], st['t_on'], st['t_off'], self.start_W, self.forced_on(st, ctx),
+                                          self.min_on_s, self.min_off_s, self.plan_ref(ctx))
             self.trace.append((ctx['k'], s, p_on))
             return j
 

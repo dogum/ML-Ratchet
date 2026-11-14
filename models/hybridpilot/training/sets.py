@@ -1,18 +1,22 @@
 """Fixed case sets: frozen (simulated vehicles x held-out real-noise / synthetic / cycle routes), dev gate (VED dev
 hybrid routes + ZTBus dev legs), exam (VED exam hybrid routes + ZTBus exam legs + HD cycles). Cached as pickles.
-Physics version is recorded with each set (RoadSim physics + any HybridPilot patch)."""
+Physics version is recorded with each set (RoadSim physics + any HybridPilot patch).
+
+Physics v2 rebuild (14 Nov 2026): VED cars are driven by RoadSim's calibrated twins (hp_env.twin_spec), generated
+hybrids use the v2 donor model, and bus routes come from the full ZTBus set under its by-month split (294 dev / 1,115
+exam missions; proc/hd/ztbus_full_splits.json). The draws and seeds are v1's."""
 import sys, os, pickle, copy
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 from hp_env import *
+from hp_env import PHYS
 
-PHYS = 'roadsim-physics-v1'
 
-
-def _ztbus(split, n=None, seed=0, max_s=2400):
+def _ztbus(split, n=24, seed=0, max_s=2400):
+    """a fixed random draw of n ZTBus legs (full set, by-month split) with logged GNSS (real grade)."""
     import realdata as rd
     out = []
-    for meta, arr in rd.load_trips(split, source='ZTBus', limit=n, seed=seed):
+    for meta, arr in rd.load_trips(split, source='ZTBus_full', route_ok=True, limit=n, seed=seed):
         tr = {k: np.nan_to_num(np.asarray(arr[k], float)) for k in ['t', 'v', 'grade', 'elev', 'heading', 'T_amb', 'wind_speed', 'wind_dir', 'surface'] if k in arr}
         tr['surface'] = tr['surface'].astype(int)
         # start at the first stop after 60 s, take max_s seconds (bus legs are hours long)
@@ -56,10 +60,11 @@ def build_dev():
     rng = np.random.default_rng(SEED['dev'])
     import realdata as rd
     cases = []
-    ved = ved_routes('dev', arch=['hev_powersplit', 'phev_series', 'phev_powersplit'], label_ok=True, limit=None)
+    ved = ved_routes('dev', arch=['hev_powersplit', 'hev_parallel_p2', 'phev_series', 'phev_powersplit'], label_ok=True, limit=None)
     byv = {}
     for t in ved:
         byv.setdefault(t['_vehicle'], []).append(t)
+    build_twins(sorted(byv))
     for vid in sorted(byv):
         tw = twin_spec(vid)
         L = byv[vid]
@@ -67,7 +72,7 @@ def build_dev():
             cases.append(_case(tw, copy.deepcopy(L[int(j)]), rng, warm=True))
     fleet = fleet_balanced('dev', 1)
     allv = [t for v in sorted(byv) for t in byv[v]]
-    zt = _ztbus('dev')
+    zt = _ztbus('dev', seed=SEED['dev'])
     for spec in fleet:
         if spec['class'] == 'bus' and zt:
             trs = [zt[int(rng.integers(len(zt)))]]
@@ -88,6 +93,7 @@ def build_exam():
     pick = idx.sort_values('trip_id').sample(frac=1.0, random_state=SEED['exam']).groupby('vehicle_id').head(2).sort_values('trip_id')
     ved = ved_routes('exam', vehicles=None, label_ok=True, limit=None) if False else None
     routes = []
+    build_twins(sorted(set(pick.vehicle_id)))
     for r in pick.itertuples():
         meta_arr = rd.load_trip(r.trip_id) if hasattr(rd, 'load_trip') else None
         meta, arr = meta_arr if isinstance(meta_arr, tuple) else (None, meta_arr)

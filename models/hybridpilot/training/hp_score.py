@@ -1,6 +1,11 @@
 """Scoring: run every strategy on one (vehicle, trip, start state) and grade it against the DP optimum at matched
 battery energy.
 
+Reference (physics v2): DP with the physics' minimum engine on/off times (8 s / 3 s, the same timers every causal
+strategy obeys; roadsim option dp_min_on_off) and the real start fuel (no virtual start penalty): the fuel optimum
+under the platform's drivability constraints. Like RoadSim's DP it ignores the production forced-on rules (Toyota
+engine-on speed, warm-up holds), so causal strategies on those cars cannot reach 100 %.
+
 SOC-corrected fuel: the DP closed-loop policy is re-solved for several terminal SOC targets on the SAME trip; this
 traces DP fuel as a function of net battery chemical energy used, F_DP(E). A strategy that used E_s kJ of battery
 energy and burned F_s is graded  pct_DP = F_DP(E_s) / F_s  (both at the same net battery energy: "matched SOC").
@@ -16,13 +21,14 @@ from roadsim.sim import get_vehicle
 from roadsim.strategies import list_strategies
 from roadsim.dp import DPStrategy
 from roadsim.powertrain import ARCH_CLASSES
-from hp_policy import HybridPilot, make_stage, dp_backward
+from hp_policy import HybridPilot, make_stage, make_pt, dp_backward_timed, timers, dp_select
+from hp_env import PHYS, is_mild
 
 LHV = {'gasoline': 42.9e3, 'diesel': 42.8e3}     # kJ/kg (only for the fixed-factor comparison)
 
 
 class DPFixed(DPStrategy):
-    """DP closed-loop policy from a precomputed solution."""
+    """DP closed-loop policy from a precomputed (timed) solution; starts cost their real fuel only."""
     name = 'dp'
 
     def setup(self, veh, pt, trip, st):
@@ -30,6 +36,19 @@ class DPFixed(DPStrategy):
         HybridStrategy.setup(self, veh, pt, trip, st)
         self.cat_warm_s = 0.0
         self.sol = self.p['sol']; self.k = 0
+        self.timed = bool(self.sol.get('timed'))
+        self.start_pen = 0.0
+
+
+def strat_arg(spec, name):
+    """a RoadSim strategy by name, with the spec's own control parameters (mild twins: engine_on_moving)."""
+    prm = ((spec.get('control') or {}).get('params') or {})
+    return {'strategy': name, 'params': dict(prm)} if prm else name
+
+
+def solve_ref(veh, stage, x):
+    n_on, n_off = timers(veh)
+    return dp_backward_timed(veh, stage, soc_final=x, n_on=n_on, n_off=n_off)
 
 
 def baseline_names(arch):
@@ -60,13 +79,12 @@ def metrics(out, spec_arch, soc0):
 def dp_curve(spec, trip, soc0, temps, targets, stage=None, veh=None):
     veh = veh or get_vehicle(spec)
     if stage is None:
-        pt = ARCH_CLASSES[veh.arch](veh)
         from roadsim.sim import normalize_trip
-        stage = make_stage(veh, pt, normalize_trip(trip))
+        stage = make_stage(veh, make_pt(veh), normalize_trip(trip))
     pts = []; outs = {}
     for x in targets:
-        sol = dp_backward(veh, stage, soc_final=x)
-        o = simulate(spec, trip, strategy=DPFixed(sol=sol), init_soc=soc0, init_temps=temps, record=True, options='roadsim-physics-v1')
+        sol = solve_ref(veh, stage, x)
+        o = simulate(spec, trip, strategy=DPFixed(sol=sol), init_soc=soc0, init_temps=temps, record=True, options=PHYS)
         m = metrics(o, veh.arch, soc0); m['target'] = x
         pts.append(m); outs[x] = (o, sol)
     return pts, outs, stage
@@ -108,8 +126,8 @@ def add_matched(case, veh, stage, pts, soc_end, tol=0.01):
         return False
     b = veh.battery
     x = float(min(max(soc_end, b.soc_lo + 0.005), b.soc_hi - 0.005))
-    sol = dp_backward(veh, stage, soc_final=x)
-    o = simulate(case['spec'], case['trip'], strategy=DPFixed(sol=sol), init_soc=case['soc0'], init_temps=case['temps'], record=True, options='roadsim-physics-v1')
+    sol = solve_ref(veh, stage, x)
+    o = simulate(case['spec'], case['trip'], strategy=DPFixed(sol=sol), init_soc=case['soc0'], init_temps=case['temps'], record=True, options=PHYS)
     m = metrics(o, veh.arch, case['soc0']); m['target'] = x; m['matched'] = True
     pts.append(m)
     return True
@@ -150,11 +168,11 @@ def run_case(case, policies=None, baselines=True, extra_targets=None, keep_stage
     res['dp'] = dict(pts[jn])
     names = baseline_names(veh.arch) if baselines else []
     for nm in names:
-        o = simulate(spec, trip, strategy=nm, init_soc=soc0, init_temps=temps, record=True, options='roadsim-physics-v1')
+        o = simulate(spec, trip, strategy=strat_arg(spec, nm), init_soc=soc0, init_temps=temps, record=True, options=PHYS)
         res[nm] = metrics(o, veh.arch, soc0)
     for nm, prm in (policies or {}).items():
         st = HybridPilot(**prm)
-        o = simulate(spec, trip, strategy=st, init_soc=soc0, init_temps=temps, record=True, options='roadsim-physics-v1')
+        o = simulate(spec, trip, strategy=st, init_soc=soc0, init_temps=temps, record=True, options=PHYS)
         res[nm] = metrics(o, veh.arch, soc0)
     for nm, m in res.items():
         if nm != 'dp':
@@ -165,9 +183,9 @@ def run_case(case, policies=None, baselines=True, extra_targets=None, keep_stage
     res['_dp_points'] = [dict(target=p['target'], E_kJ=p['E_kJ'], fuel_g=p['fuel_g'], soc_end=p['soc_end'], starts_per_km=p['starts_per_km'],
                               chatter_per_km=p['chatter_per_km'], matched=bool(p.get('matched'))) for p in pts]
     if keep_stage:
-        g, PF, PB, OK, ON, Tb = stage
-        res['_stage'] = (g, PF.astype(np.float32), PB.astype(np.float32), OK, ON, Tb)
-    res['_meta'] = dict(arch=veh.arch, cls=veh.cls, hd=bool(veh.hd), phev=phev, soc0=soc0, warm=temps is not None,
+        g, PF, PB, OK, ON, Tb, PBS = stage
+        res['_stage'] = (g, PF.astype(np.float32), PB.astype(np.float32), OK, ON, Tb, None if PBS is None else PBS.astype(np.float32))
+    res['_meta'] = dict(arch=veh.arch, cls=veh.cls, hd=bool(veh.hd), phev=phev, mild=is_mild(spec), soc0=soc0, warm=temps is not None,
                         T_amb=float(np.mean(trip['T_amb'])) if 'T_amb' in trip else 20.0, N=len(trip['v']),
                         dist_km=res['dp']['dist_km'], wall=time.time() - t0, soc_lo=veh.battery.soc_lo, soc_hi=veh.battery.soc_hi,
                         name=trip.get('_name'), kind=trip.get('_kind'), vehicle=spec.get('id'))

@@ -1,47 +1,30 @@
 {
+ "id": "twin_VED_125",
  "class": "car",
  "architecture": "hev_powersplit",
- "mass_kg": 1723.5732950000001,
- "payload_kg": 0.0,
- "id": "twin_VED_125",
- "transmission": {
-  "type": "eCVT",
-  "ring_teeth": 78,
-  "sun_teeth": 30,
-  "mg2_ratio": 2.636
- },
- "motors": [
-  {
-   "role": "MG1",
-   "max_power_kW": 60.5,
-   "eff_map": "ipm_generic_150",
-   "max_rpm": 13500
-  },
-  {
-   "role": "MG2",
-   "max_power_kW": 105.0,
-   "eff_map": "ipm_generic_150",
-   "max_rpm": 17000
-  }
- ],
- "battery": {
-  "chemistry": "NiMH",
-  "capacity_kWh": 1.3,
-  "nominal_V": 245.0,
-  "soc_window": [
-   0.4,
-   0.8
-  ]
- },
+ "mass_kg": 1587.5732950000001,
+ "payload_kg": 136.0,
  "engine": {
   "fuel": "gasoline",
   "displacement_L": 2.4,
-  "max_power_kW": 110.0,
-  "bsfc_map": "gas_atk_toyota_tnga_hev_paper"
+  "max_power_kW": 108.0,
+  "eff_scale": 0.6111935136399615
  },
+ "transmission": {
+  "type": "eCVT"
+ },
+ "CdA_m2": 0.46499999999999997,
+ "Crr": 0.0063750000000000005,
  "meta": {
   "twin_of": "VED_125",
-  "likely_models": "Toyota Camry hybrid 2007-11 (power split) or Hyundai Sonata hybrid (parallel P2)",
-  "split": "exam"
+  "likely_models": "2007 Toyota Camry Hybrid; 2007 Saturn Vue Hybrid; 2007 Saturn Aura Hybrid; 2008 Chevrolet Malibu Hybrid; 2008 Saturn Aura Hybrid; 2008 Toyota Camry Hybrid",
+  "label_match": {
+   "k": 0.75,
+   "eff": 0.6111935136399615,
+   "city": 47.24988875173909,
+   "hwy": 47.98868134579443,
+   "ucity": 44.2454,
+   "uhwy": 51.2
+  }
  }
 }

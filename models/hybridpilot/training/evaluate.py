@@ -1,12 +1,13 @@
 """Score strategies on a fixed case set.
   baselines: every RoadSim strategy for the architecture + the DP curve (cached per set and physics version)
   policies : HybridPilot variants, graded against the cached DP curve at matched battery energy
-usage: evaluate.py base SET           (build the baseline cache)
-       evaluate.py pol SET NAME CKPT [preview_s] [nav: auto|0|1] [extra json params]
+usage: evaluate.py base SET           (build the baseline cache; HP_WORKERS processes, default 5)
 """
 import sys, os, pickle, json, time, copy
+os.environ.setdefault('OMP_NUM_THREADS', '1')
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
+from multiprocessing import Pool
 from hp_env import *
 from hp_score import run_case, metrics, interp_dp, LHV, add_matched, grade
 from roadsim.sim import get_vehicle
@@ -14,12 +15,14 @@ from hp_policy import HybridPilot, MLP
 from roadsim import simulate
 import sets
 
+WORKERS = int(os.environ.get('HP_WORKERS', '5'))
 RULE = {'hev_powersplit': 'powersplit_rule', 'hev_parallel_p2': 'parallel_rule', 'hev_series': 'series_thermostat',
         'phev_powersplit': 'phev_cdcs', 'phev_series': 'phev_cdcs'}
 
 
 def stratum(meta):
     a = meta['arch']
+    if meta.get('mild'): return 'mild P1 (CR-Z type)'
     if meta['cls'] == 'bus': return 'bus (' + ('series' if 'series' in a else 'P2') + ')'
     if meta['cls'] in ('truck_md', 'truck_hd'): return 'truck (' + ('PHEV series' if a.startswith('phev') else 'P2') + ')'
     return {'hev_powersplit': 'power-split HEV', 'hev_parallel_p2': 'P2 HEV', 'hev_series': 'series HEV',
@@ -30,22 +33,28 @@ def base_path(setname):
     return f'{ROOT}/data/base_{setname}_{sets.PHYS}.pkl'
 
 
-def score_baselines(setname, limit=None):
+def _base_job(c):
+    try:
+        return c['case_id'], run_case(c)
+    except Exception as ex:
+        import traceback
+        return c['case_id'], {'_fail': repr(ex) + traceback.format_exc()[-600:]}
+
+
+def score_baselines(setname, limit=None, workers=WORKERS):
     cases = sets.get(setname)
     fn = base_path(setname)
     res = pickle.load(open(fn, 'rb')) if os.path.exists(fn) else {}
+    todo = [c for c in cases[:limit] if c['case_id'] not in res]
     t0 = time.time()
-    for i, c in enumerate(cases[:limit]):
-        if c['case_id'] in res:
-            continue
-        try:
-            r = run_case(c)
-        except Exception as ex:
-            print('FAIL', c['case_id'], repr(ex), flush=True); r = {'_fail': repr(ex)}
-        res[c['case_id']] = r
-        if i % 10 == 0:
-            pickle.dump(res, open(fn, 'wb'))
-            print(f'{i}/{len(cases)} {time.time() - t0:.0f}s', flush=True)
+    with Pool(workers) as pool:
+        for i, (cid, r) in enumerate(pool.imap_unordered(_base_job, todo)):
+            res[cid] = r
+            if '_fail' in r:
+                print('FAIL', cid, r['_fail'], flush=True)
+            if i % 10 == 0:
+                pickle.dump(res, open(fn, 'wb'))
+                print(f'{i}/{len(todo)} {time.time() - t0:.0f}s', flush=True)
     pickle.dump(res, open(fn, 'wb'))
     return res
 
@@ -65,34 +74,57 @@ def regrade(base):
     return base
 
 
+_NETS = {}
+
+
+def _net(ckpt):
+    if ckpt not in _NETS:
+        _NETS[ckpt] = MLP.load(ckpt)
+    return _NETS[ckpt]
+
+
 def policy_params(ckpt, preview_s=0, nav=False, **kw):
-    p = dict(net=MLP.load(ckpt) if isinstance(ckpt, str) else ckpt, preview_s=preview_s, nav=nav)
+    p = dict(net=_net(ckpt) if isinstance(ckpt, str) else ckpt, preview_s=preview_s, nav=nav)
     p.update(kw)
     return p
 
 
-def score_policy(setname, params_fn, base=None, cases=None, match=True):
-    """params_fn(case) -> HybridPilot params. Returns {case_id: metrics incl. pct_dp}."""
+def case_params(c, ckpt, params):
+    """HybridPilot params for one case: params may hold preview_s, nav ('case' = the case's own flag, or 0 / 1) and knobs."""
+    q = dict(params); prev = q.pop('preview_s', 0); navmode = q.pop('nav', 'case')
+    nav = c['nav'] if navmode == 'case' else bool(int(navmode))
+    return policy_params(ckpt, preview_s=prev, nav=nav, **q)
+
+
+def _policy_job(job):
+    c, b, ckpt, params, match = job
+    st = HybridPilot(**case_params(c, ckpt, params))
+    try:
+        o = simulate(c['spec'], c['trip'], strategy=st, init_soc=c['soc0'], init_temps=c['temps'], record=True, options=sets.PHYS)
+    except Exception as ex:
+        print('policy FAIL', c['case_id'], repr(ex), flush=True); return c['case_id'], None
+    m = metrics(o, b['_meta']['arch'], c['soc0'])
+    pts = [dict(p) for p in b['_dp_points']]
+    if '_stage' in b and (match is True or (match == 'phev' and b['_meta']['phev'])):
+        st_ = b['_stage']
+        stage = (st_[0], st_[1].astype(np.float64), st_[2].astype(np.float64), st_[3], st_[4], st_[5],
+                 None if st_[6] is None else st_[6].astype(np.float64))
+        add_matched(c, get_vehicle(c['spec']), stage, pts, m['soc_end'])
+    grade(m, pts, LHV.get(get_vehicle(c['spec']).fuel, 42.9e3) / 1e3, c['soc0'])
+    return c['case_id'], m
+
+
+def score_policy(setname, ckpt, params, base=None, cases=None, match=True, workers=WORKERS):
+    """HybridPilot (checkpoint path + params, see case_params) on a set. Returns {case_id: metrics incl. pct_dp}."""
     cases = cases or sets.get(setname)
     base = base or pickle.load(open(base_path(setname), 'rb'))
+    jobs = [(c, base[c['case_id']], ckpt, params, match) for c in cases
+            if base.get(c['case_id']) is not None and '_fail' not in base[c['case_id']]]
     out = {}
-    for c in cases:
-        b = base.get(c['case_id'])
-        if b is None or '_fail' in b:
-            continue
-        st = HybridPilot(**params_fn(c))
-        try:
-            o = simulate(c['spec'], c['trip'], strategy=st, init_soc=c['soc0'], init_temps=c['temps'], record=True, options='roadsim-physics-v1')
-        except Exception as ex:
-            print('policy FAIL', c['case_id'], repr(ex), flush=True); continue
-        m = metrics(o, b['_meta']['arch'], c['soc0'])
-        pts = [dict(p) for p in b['_dp_points']]
-        if '_stage' in b and (match is True or (match == 'phev' and b['_meta']['phev'])):
-            st_ = b['_stage']
-            stage = (st_[0], st_[1].astype(np.float64), st_[2].astype(np.float64), st_[3], st_[4], st_[5])
-            add_matched(c, get_vehicle(c['spec']), stage, pts, m['soc_end'])
-        grade(m, pts, LHV.get(get_vehicle(c['spec']).fuel, 42.9e3) / 1e3, c['soc0'])
-        out[c['case_id']] = m
+    with Pool(workers) as pool:
+        for cid, m in pool.imap_unordered(_policy_job, jobs, chunksize=2):
+            if m is not None:
+                out[cid] = m
     return out
 
 

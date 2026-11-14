@@ -1,6 +1,7 @@
 """Final exam report: tables per stratum, paired bootstrap CIs (clustered by vehicle) of HybridPilot minus A-ECMS,
 fixed-factor vs matched-SOC comparison, worst cases. Reads data/base_exam_*.pkl and data/pol_exam_*.pkl.
-usage: exam_report.py POLNAME [POLNAME2 ...]  -> data/exam_report.json"""
+usage: exam_report.py POLNAME [POLNAME2 ...]  -> data/exam_report.json
+(physics v2: the first name is the release; every other name is also compared with it, e.g. the v1 release re-scored)"""
 import sys, os, json, pickle
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
@@ -11,9 +12,12 @@ STRATS = ['dp', 'rule', 'ecms', 'aecms', 'mpc', 'phev_cdcs', 'phev_blended', 'se
 
 
 def boot_diff(base, pa, nb, key, ref='aecms', n=2000, seed=0):
-    """mean over cases of (pa - ref) pct_DP, 95 % CI by resampling vehicles (cluster bootstrap)."""
-    rows = [(b['_meta']['vehicle'], pa[c]['pct_dp'] - b[ref]['pct_dp']) for c, b in base.items()
-            if '_fail' not in b and c in pa and ref in b and (key == 'ALL' or E.stratum(b['_meta']) == key or b['_meta'].get('group') == key)]
+    """mean over cases of (pa - ref) pct_DP, 95 % CI by resampling vehicles (cluster bootstrap). ref: a baseline name
+    in the base cache, or a dict of policy results (nb unused)."""
+    get = (lambda c, b: ref[c]['pct_dp'] if c in ref else None) if isinstance(ref, dict) else \
+        (lambda c, b: b[ref]['pct_dp'] if ref in b else None)
+    rows = [(b['_meta']['vehicle'], pa[c]['pct_dp'] - get(c, b)) for c, b in base.items()
+            if '_fail' not in b and c in pa and get(c, b) is not None and (key == 'ALL' or E.stratum(b['_meta']) == key or b['_meta'].get('group') == key)]
     if not rows:
         return None
     veh = sorted(set(r[0] for r in rows)); byv = {v: [r[1] for r in rows if r[0] == v] for v in veh}
@@ -45,6 +49,8 @@ def main(names):
     for s in ['ecms', 'aecms', 'mpc']:
         rep['skill'][s] = E.skill(base, {c: b[s] for c, b in base.items() if s in b})[0]
     rep['boot_vs_aecms'] = {n: {k: boot_diff(base, pols[n], None, k) for k in list(T) + ['twin', 'generated']} for n in names}
+    rep['boot_vs_first'] = {n: {k: boot_diff(base, pols[names[0]], None, k, ref=pols[n]) for k in list(T) + ['twin', 'generated']}
+                            for n in names[1:]}
     # fixed-factor correction vs matched: mean over HEV cases of (fixed-factor fuel ratio) - (matched pct), per strategy
     ff = {}
     for s in ['rule', 'ecms', 'aecms', 'mpc'] + names:

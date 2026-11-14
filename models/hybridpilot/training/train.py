@@ -1,5 +1,5 @@
 """Train the HybridPilot MLP on DP-labelled banks (behaviour cloning / DAgger aggregate).
-usage: train.py OUT_NAME BANK_DIR [BANK_DIR ...] [--hidden 96] [--epochs 30] [--w_on 1.0] [--init ckpt.npz]
+usage: train.py OUT_NAME BANK_DIR [BANK_DIR ...] [--hidden 96] [--depth 2] [--epochs 30] [--w_on 1.0] [--device cpu|cuda]
 Outputs ckpt/<OUT>.npz (numpy weights incl. standardisation) and a json with validation numbers."""
 import _paths as _P  # portable paths (see _paths.py)
 import sys, os, glob, json, time, argparse, zlib
@@ -36,10 +36,10 @@ class Net(nn.Module):
 
 
 def export(net, path):
-    p = {'mu': net.mu.numpy().astype(np.float64), 'sd': net.sd.numpy().astype(np.float64)}
+    p = {'mu': net.mu.cpu().numpy().astype(np.float64), 'sd': net.sd.cpu().numpy().astype(np.float64)}
     lin = [m for m in net.f if isinstance(m, nn.Linear)]
     for i, m in enumerate(lin):
-        p[f'W{i}'] = m.weight.detach().numpy().T.astype(np.float64); p[f'b{i}'] = m.bias.detach().numpy().astype(np.float64)
+        p[f'W{i}'] = m.weight.detach().cpu().numpy().T.astype(np.float64); p[f'b{i}'] = m.bias.detach().cpu().numpy().astype(np.float64)
     np.savez(path, **p)
     return p
 
@@ -51,6 +51,8 @@ def main():
     ap.add_argument('--epochs', type=int, default=30); ap.add_argument('--w_on', type=float, default=1.0)
     ap.add_argument('--lr', type=float, default=2e-3); ap.add_argument('--seed', type=int, default=0)
     ap.add_argument('--drop_feats', default='')
+    ap.add_argument('--device', default='cpu'); ap.add_argument('--bs', type=int, default=1024)
+    ap.add_argument('--wd', type=float, default=0.0)
     a = ap.parse_args()
     torch.manual_seed(a.seed)
     X, S, ON, C, A = load_banks(a.banks)
@@ -66,16 +68,17 @@ def main():
     va = np.array([c in val_c for c in C]); tr = ~va
     mu = X[tr].mean(0); sd = X[tr].std(0); sd = np.where(sd < 1e-3, 1.0, sd)
     print(f'samples {len(X)} train {tr.sum()} val {va.sum()} cases {len(uc)}; on-rate {ON.mean():.3f}', flush=True)
-    net = Net(X.shape[1], a.hidden, mu, sd, a.depth)
-    opt = torch.optim.Adam(net.parameters(), lr=a.lr)
+    dev = torch.device(a.device)
+    net = Net(X.shape[1], a.hidden, mu, sd, a.depth).to(dev)
+    opt = torch.optim.AdamW(net.parameters(), lr=a.lr, weight_decay=a.wd) if a.wd else torch.optim.Adam(net.parameters(), lr=a.lr)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, a.epochs)
-    Xt = torch.tensor(X[tr]); Yt = torch.tensor(y_s[tr]); Ot = torch.tensor(ON[tr])
-    Xv = torch.tensor(X[va]); Yv = torch.tensor(y_s[va]); Ov = torch.tensor(ON[va])
+    Xt = torch.tensor(X[tr]).to(dev); Yt = torch.tensor(y_s[tr]).to(dev); Ot = torch.tensor(ON[tr]).to(dev)
+    Xv = torch.tensor(X[va]).to(dev); Yv = torch.tensor(y_s[va]).to(dev); Ov = torch.tensor(ON[va]).to(dev)
     hub = nn.SmoothL1Loss(beta=0.1); bce = nn.BCEWithLogitsLoss()
-    bs = 1024; n = len(Xt)
+    bs = a.bs; n = len(Xt)
     t0 = time.time()
     for ep in range(a.epochs):
-        net.train(); perm = torch.randperm(n); tl = 0.0
+        net.train(); perm = torch.randperm(n, device=dev); tl = 0.0
         for i in range(0, n, bs):
             b = perm[i:i + bs]
             out = net(Xt[b])
@@ -90,6 +93,7 @@ def main():
             mae_s = (torch.exp(ov[:, 0]) - torch.exp(Yv)).abs().median().item()
         print(f'ep {ep} train {tl / n:.4f} val_s {ls:.4f} val_on {lo:.4f} acc_on {acc:.4f} med|ds| {mae_s:.3f} {time.time() - t0:.0f}s', flush=True)
     os.makedirs(f'{ROOT}/ckpt', exist_ok=True)
+    net = net.cpu()
     p = export(net, f'{ROOT}/ckpt/{a.out}.npz')
     torch.save(net.state_dict(), f'{ROOT}/ckpt/{a.out}.pt')
     # numpy == torch check
@@ -97,12 +101,14 @@ def main():
     from hp_policy import MLP
     m = MLP.load(f'{ROOT}/ckpt/{a.out}.npz')
     xs = X[va][:200]
+    if dev.type == 'cuda':
+        torch.cuda.empty_cache()
     with torch.no_grad():
         yt = net(torch.tensor(xs)).numpy()
     yn = np.stack([m(x.astype(np.float64)) for x in xs])
     err = float(np.abs(yt - yn).max())
     info = dict(out=a.out, banks=a.banks, samples=int(len(X)), val_s_huber=ls, val_on_bce=lo, val_on_acc=acc, val_med_abs_ds=mae_s,
-                numpy_vs_torch_maxabs=err, hidden=a.hidden, depth=a.depth, epochs=a.epochs, w_on=a.w_on,
+                numpy_vs_torch_maxabs=err, hidden=a.hidden, depth=a.depth, epochs=a.epochs, w_on=a.w_on, device=a.device, lr=a.lr, wd=a.wd,
                 n_params=int(sum(p.numel() for p in net.parameters())))
     json.dump(info, open(f'{ROOT}/ckpt/{a.out}.json', 'w'), indent=1)
     print(info, flush=True)

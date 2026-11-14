@@ -13,6 +13,11 @@ from roadsim import load_vehicle, make_trip
 from roadsim.generator import generate_vehicles
 from roadsim.sim import get_vehicle, normalize_trip
 from roadsim.trips import cycle
+from roadsim.options import resolve as _resolve_options
+
+# RoadSim physics every HybridPilot run uses (pinned, so a later default change never moves the model silently)
+PHYS = 'roadsim-physics-v2'
+DONOR = _resolve_options(PHYS)['donor_model']      # generated hybrids: v2 draws hybrid bodies from real hybrid records
 
 HYBRID_ARCHS = ['hev_powersplit', 'hev_parallel_p2', 'hev_series', 'phev_powersplit', 'phev_series']
 # (class, architecture) mix for generated hybrids: light duty 75 %, heavy duty 25 %
@@ -23,7 +28,7 @@ COMBOS = [('car', 'hev_powersplit', 0.13), ('suv', 'hev_powersplit', 0.08), ('va
           ('car', 'phev_series', 0.05), ('pickup', 'phev_series', 0.04),
           ('bus', 'hev_series', 0.08), ('bus', 'hev_parallel_p2', 0.04),
           ('truck_md', 'hev_parallel_p2', 0.05), ('truck_md', 'phev_series', 0.03), ('truck_hd', 'hev_parallel_p2', 0.05)]
-WARM = {'engine': 85.0, 'driveline': 70.0, 'tire_warm': 1.0, 'cabin': 21.0}
+WARM = {'engine': 85.0, 'oil': 90.0, 'driveline': 70.0, 'axle': 60.0, 'tire_warm': 1.0, 'cabin': 21.0}   # v2 has oil and axle nodes
 
 # seeds: one per role, never shared
 SEED = dict(train=101, frozen=202, dev=303, exam=404, lab=505)
@@ -44,7 +49,7 @@ def gen_fleet(n, role):
     out = []
     for i in range(n):
         cls, arch, _ = COMBOS[int(rng.choice(len(COMBOS), p=p))]
-        s = generate_vehicles(1, seed=int(rng.integers(1 << 30)), cls=cls, arch=arch)[0]
+        s = generate_vehicles(1, seed=int(rng.integers(1 << 30)), cls=cls, arch=arch, donor_model=DONOR)[0]
         s['id'] = f'{role}_{i:04d}_{cls}_{arch}'
         out.append(s)
     return out
@@ -56,7 +61,7 @@ def fleet_balanced(role, per_combo):
     out = []
     for cls, arch, _ in COMBOS:
         for j in range(per_combo):
-            s = generate_vehicles(1, seed=int(rng.integers(1 << 30)), cls=cls, arch=arch)[0]
+            s = generate_vehicles(1, seed=int(rng.integers(1 << 30)), cls=cls, arch=arch, donor_model=DONOR)[0]
             s['id'] = f'{role}_{cls}_{arch}_{j}'
             out.append(s)
     return out
@@ -68,8 +73,8 @@ _HEV_KW = {1.5: 55.0, 1.8: 73.0, 2.0: 105.0, 2.3: 99.0, 2.4: 110.0, 2.5: 118.0, 
            1.0: 50.0, 1.4: 63.0}
 
 
-def twin_spec(vehicle_id):
-    """A RoadSim spec for a VED hybrid: VED class, mass, architecture, displacement; hardware sized like the likely
+def twin_spec_v1(vehicle_id):
+    """(v1, kept for reference) A RoadSim spec for a VED hybrid: VED class, mass, architecture, displacement; hardware sized like the likely
     production model; road load from class defaults. Unknown fields stay at RoadSim defaults."""
     import realdata as rd
     s0 = rd.load_vehicle(vehicle_id)
@@ -101,6 +106,53 @@ def twin_spec(vehicle_id):
     s['engine'] = eng
     s['meta'] = {'twin_of': vehicle_id, 'likely_models': s0.get('meta', {}).get('likely_models'), 'split': s0.get('split')}
     return s
+
+
+# Calibrated twins (v2): RoadSim's own VED twin builder (shared/vehicle/checks/check_ved_twin.py, the twins physics v2
+# was calibrated with): RoadData's spec completed generically, published plug-in hardware, mild CR-Z-type cars as P1
+# machines that never drive electrically, then road load and engine efficiency matched to the car's fueleconomy.gov
+# unadjusted city / highway values on the EPA procedures under this physics. Built once per car, cached in WORK.
+TWIN_CACHE = f'{ROOT}/data/twins_{PHYS}.json'
+_TWINS = None
+
+
+def _twin_job(vid):
+    sys.path.insert(0, os.path.join(_P.VEHICLE, 'checks'))
+    import check_ved_twin as cvt
+    v, spec, info = cvt.build_twin((vid, PHYS, True))
+    spec['id'] = f'twin_{vid}'
+    spec['meta'] = {'twin_of': vid, 'likely_models': (info.get('labels') or {}).get('example_models'), 'label_match': info.get('label_match')}
+    return vid, spec
+
+
+def build_twins(vids, workers=5):
+    """calibrated twins for these VED vehicle ids (missing ones only), added to the cache."""
+    global _TWINS
+    cache = json.load(open(TWIN_CACHE)) if os.path.exists(TWIN_CACHE) else {}
+    todo = [v for v in sorted(set(vids)) if v not in cache]
+    if todo:
+        from multiprocessing import Pool
+        with Pool(min(workers, len(todo))) as pool:
+            for vid, spec in pool.imap_unordered(_twin_job, todo):
+                cache[vid] = spec
+                print('twin', vid, spec['architecture'], (spec['meta'].get('label_match') or {}).get('eff'), flush=True)
+        json.dump(cache, open(TWIN_CACHE, 'w'), indent=1, default=float)
+    _TWINS = cache
+    return cache
+
+
+def twin_spec(vehicle_id):
+    """calibrated RoadSim twin of a VED car (see build_twins)."""
+    global _TWINS
+    if _TWINS is None or vehicle_id not in _TWINS:
+        _TWINS = json.load(open(TWIN_CACHE)) if os.path.exists(TWIN_CACHE) else {}
+        if vehicle_id not in _TWINS:
+            _TWINS = build_twins([vehicle_id], workers=1)
+    return copy.deepcopy(_TWINS[vehicle_id])
+
+
+def is_mild(spec):
+    return bool(((spec.get('control') or {}).get('params') or {}).get('engine_on_moving'))
 
 
 # ------------------------------------------------------------------------------------------------ routes
@@ -253,3 +305,40 @@ def train_cases(n_cases, seed, role='train', fleet=None, ved=None, ved_frac=0.45
         prev = int(rng.choice([0, 5, 10, 20, 30, 60]))
         out.append(dict(spec=spec, trip=tr, soc0=soc0, temps=temps, nav=nav, preview=prev, case_id=f'{role}{seed}_{i}'))
     return out
+
+
+def mild_variant(spec, rng, i):
+    """a mild (P0/P1) hybrid built like RoadSim's CR-Z-type twins (shared/vehicle/checks/check_ved_twin.py MILD_HW): the
+    body and engine of a generated P2 car or SUV, a 8-15 kW crank-mounted machine, a 0.5-1.0 kWh NiMH pack, an
+    automated manual, and RoadSim's mild control rule (engine_on_moving: no electric-only driving)."""
+    s = copy.deepcopy(spec)
+    P = float(rng.uniform(8.0, 15.0))
+    s['motors'] = [{'role': 'P2', 'max_power_kW': round(P, 1), 'max_torque_Nm': round(7.8 * P, 0), 'eff_map': 'ipm_generic_150',
+                    'max_rpm': 7000}]
+    s['battery'] = {'capacity_kWh': round(float(rng.uniform(0.5, 1.0)), 2), 'nominal_V': round(float(rng.uniform(100, 170)), 0),
+                    'chemistry': 'NiMH', 'soc_window': [0.3, 0.8]}
+    s['transmission'] = {'type': 'AMT'} if rng.random() < 0.5 else {'type': 'DCT', 'n_gears': 6}
+    s['control'] = {'strategy': 'aecms', 'params': {'engine_on_moving': True}}
+    s['id'] = f'train_mild_{i:03d}'
+    return s
+
+
+def train_fleet(kind='gen'):
+    """training vehicles. 'gen': 400 generated hybrids (COMBOS mix). '+mild': plus 40 mild P1 hybrids made with the
+    calibrated-twin hardware recipe (mild_variant; the VED CR-Z-type twins are this class). '+twin': plus the calibrated
+    twins of the two train_noise VED hybrids (label-free cars), each also at +-15 % mass (never a dev or exam car)."""
+    fleet = gen_fleet(400, 'train')
+    if 'mild' in kind:
+        rng = np.random.default_rng(SEED['train'] + 31)
+        base = [f for f in fleet if f['architecture'] == 'hev_parallel_p2' and f['class'] in ('car', 'suv')]
+        fleet = fleet + [mild_variant(base[int(rng.integers(len(base)))], rng, i) for i in range(40)]
+    if 'twin' in kind:
+        import realdata as rd
+        d = rd.load_trips('train_noise', arch=[a for a in HYBRID_ARCHS], meta_only=True)
+        vids = sorted(set(d.vehicle_id))
+        T = build_twins(vids, workers=1)
+        for vid in vids:
+            for f in (0.85, 1.0, 1.15):
+                s = copy.deepcopy(T[vid]); s['mass_kg'] = float(s['mass_kg']) * f; s['id'] = f'{s["id"]}_m{f}'
+                fleet.append(s)
+    return fleet
