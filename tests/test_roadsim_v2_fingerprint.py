@@ -39,3 +39,14 @@ def test_roadsim_reproduces_v2_1_fingerprint():
     gold = json.load(open(fp.GOLDS['roadsim-physics-v2.1'], encoding='utf-8'))
     bad = fp.compare(gold, fp.run('roadsim-physics-v2.1'))
     assert not bad, f'{len(bad)} runs changed under roadsim-physics-v2.1:' + chr(10) + chr(10).join(bad[:20])
+
+
+def test_roadsim_reproduces_v3_fingerprint():
+    """v3 reproduces its own golden (tests/golden/roadsim_v3_fingerprint.json, written 14 Nov 2026 before the speed pass)."""
+    import fingerprint as fp
+    from roadsim.options import PRESETS
+    if 'roadsim-physics-v3' not in PRESETS:
+        return
+    gold = json.load(open(fp.GOLDS['roadsim-physics-v3'], encoding='utf-8'))
+    bad = fp.compare(gold, fp.run('roadsim-physics-v3'))
+    assert not bad, f'{len(bad)} runs changed under roadsim-physics-v3:' + chr(10) + chr(10).join(bad[:20])
