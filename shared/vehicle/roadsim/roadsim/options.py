@@ -61,6 +61,8 @@ DEFAULTS = {
     'eng_lowload_W_per_L': 0.0,    # extra fuel power per litre at idle, fading to zero at 4 kW/L brake: tilts city vs highway
     'eng_dfmep_bar': 0.0,          # extra engine friction (bar FMEP): moves FTP and HWFET nearly alike
     'eng_family_adj': {},          # per engine map {bsfc_map id: {'eng_eta_scale': .., 'eng_lowload_W_per_L': .., 'eng_dfmep_bar': ..}}
+    'conv_tc_open_gears': 0,       # conventional automatics: converter never locks in the lowest N gears (0 = v1 lock-up rule)
+    'conv_tc_slip_rpm': 0.0,       # conventional automatics: controlled lock-up slip under drive in every locked gear but the top, rpm
     'fead_drag_Nm': 0.0,           # belt / accessory-drive drag on conventional engines (Nm at the crank)
     'axle_cold': False,            # final-drive oil + wheel-bearing drag rising in the cold (axle oil temperature node)
     'tire_thermal': False,         # tyre temperature node; rolling resistance follows it (replaces the v1 warm-up factor)
@@ -151,3 +153,22 @@ def resolve(options=None, spec=None):
                 raise KeyError(f'unknown RoadSim option {k!r} (known: {sorted(out)})')
             out[k] = copy.deepcopy(v)
     return out
+
+
+def _load_v2():
+    """the draft v2 preset: option values (fitted numbers included) from data/calibration_v2.json."""
+    import json, os
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'calibration_v2.json')
+    if not os.path.exists(p):
+        return None
+    with open(p, encoding='utf-8') as f:
+        pre = json.load(f)['preset']
+    bad = sorted(set(pre) - set(DEFAULTS))
+    if bad:
+        raise KeyError(f'calibration_v2.json: unknown RoadSim options {bad}')
+    return pre
+
+
+_v2 = _load_v2()
+if _v2 is not None:
+    PRESETS['roadsim-physics-v2'] = _v2

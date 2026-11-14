@@ -186,9 +186,16 @@ class ConvPT(_Base):
             locked = w_in >= self.w_lock and (g >= 1 or t == 'CVT' or w_in > 1.4 * self.w_lock)
         else:
             locked = w_in >= self.w_launch * 0.98
+        o = getattr(self, 'opt', None)
+        slip = 0.0
+        if o and t == 'AT' and v.tc is not None:     # v2 options (default off = v1): D3 dev converter behaviour
+            if g < int(o.get('conv_tc_open_gears', 0) or 0):
+                locked = False                       # converter open in the lowest gears (D3 Camry XLE / CX9: 1st, 2nd)
+            elif locked and T_in > 0.0 and g < self.ng - 1:
+                slip = float(o.get('conv_tc_slip_rpm', 0.0) or 0.0) * math.pi / 30   # controlled micro-slip under drive
         P_J = 0.0
         if locked:
-            w_e = w_in
+            w_e = w_in + slip
             if w_e > e.w_max:
                 w_e = e.w_max
             # engine + transmission-input inertia accelerate with the wheels in the engaged gear

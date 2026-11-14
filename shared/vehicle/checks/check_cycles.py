@@ -4,12 +4,18 @@ test vehicles (22 conventional, 14 HEV, 11 BEV) vs their EPA test-car-list resul
 Error = simulated / EPA - 1 on fuel economy (mpg, or MPGe; for BEVs reported in kWh/100 mi the error is on
 1/consumption, i.e. also an 'economy' error).  Calibrated constants were fitted on the dev subset only; the headline
 numbers are the held-out vehicles.
+
+usage: python check_cycles.py [--options roadsim-physics-v2] [--split dev|heldout|all]
+  --split dev runs only the dev vehicles (what a calibration pass may look at) and writes <out>__dev.json.
+  The cold FTP (20 F) runs for every vehicle with an EPA cold result (conventional and hybrid).
 """
-import os, sys, json, time
+import os, sys, json, time, argparse
+from multiprocessing import Pool
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, '..', 'roadsim'))
-from epa_procedures import ftp, hot_cycle, sc03, test_spec
+import _opts
+from epa_procedures import ftp, hot_cycle, sc03, test_spec, T_COLD
 import roadsim
 
 V = json.load(open(os.path.join(HERE, 'epa_vehicles.json')))
@@ -24,11 +30,11 @@ def stats(x):
                 min_pct=round(float(np.min(x)), 2), max_pct=round(float(np.max(x)), 2))
 
 
-def main():
-    t0 = time.time()
-    rows = []
+def one(job):
+    v, opt = job
+    _opts.set(opt)
     worst_closure = 0.0; worst_trace = 0.0
-    for v in V:
+    if True:
         s = test_spec(v['spec']); e = v['epa']; a = s['architecture']
         row = dict(name=v['name'], architecture=a, cls=s['class'], split=v['split'], sim={}, epa={}, err_pct={})
         if a == 'bev':
@@ -56,17 +62,36 @@ def main():
                 r = sc03(s); worst_closure = max(worst_closure, r['closure'])
                 row['sim']['SC03'] = round(r['FE'], 2); row['epa']['SC03'] = e['SC03']; row['err_pct']['SC03'] = round(100 * (r['FE'] / e['SC03'] - 1), 2)
                 row['sc03_hvac_W'] = round(r['hvac_W'])
-            if 'COLD' in e and a == 'conv':
-                r = ftp(s, T=-6.7); worst_closure = max(worst_closure, r['closure'])
+                row['sc03_cabin_C'] = dict(start=round(r['cabin_start_C'], 1), t120_300_595=[round(x, 1) for x in r['cabin_C_120_300_595']])
+            if 'COLD' in e:
+                r = ftp(s, T=T_COLD); worst_closure = max(worst_closure, r['closure'])
                 row['sim']['COLD_FTP_20F'] = round(r['FE'], 2); row['epa']['COLD_FTP_20F'] = e['COLD']
                 row['err_pct']['COLD_FTP_20F'] = round(100 * (r['FE'] / e['COLD'] - 1), 2)
-        rows.append(row)
-        print(f"{row['split'][:3]} {a:16s} {row['name'][:36]:36s} " + ' '.join(f"{k} {row['err_pct'][k]:+.1f}%" for k in row['err_pct']), flush=True)
+                for i in (1, 2, 3):
+                    if e.get(f'COLD_bag{i}', 0) > 1:
+                        row.setdefault('cold_bags', {})[f'bag{i}'] = dict(sim=round(r['bags'][i - 1], 2), epa=e[f'COLD_bag{i}'])
+        row['_closure'] = worst_closure; row['_trace'] = worst_trace
+        return row
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--split', default='all', choices=['dev', 'heldout', 'all'])
+    ap.add_argument('--workers', type=int, default=14)
+    _opts.init()
+    a_ = ap.parse_args()
+    t0 = time.time()
+    VV = [v for v in V if a_.split == 'all' or v['split'] == a_.split]
+    with Pool(min(a_.workers, len(VV))) as pool:
+        rows = pool.map(one, [(v, _opts.get()) for v in VV], chunksize=1)
+    worst_closure = max(r.pop('_closure') for r in rows); worst_trace = max(r.pop('_trace') for r in rows)
+    for row in rows:
+        print(f"{row['split'][:3]} {row['architecture']:16s} {row['name'][:36]:36s} " + ' '.join(f"{k} {row['err_pct'][k]:+.1f}%" for k in row['err_pct']), flush=True)
     summary = {}
     groups = {'conv': lambda r: r['architecture'] == 'conv', 'hev': lambda r: r['architecture'].startswith('hev'),
               'hev_powersplit': lambda r: r['architecture'] == 'hev_powersplit', 'hev_parallel_p2': lambda r: r['architecture'] == 'hev_parallel_p2',
               'hev_series': lambda r: r['architecture'] == 'hev_series', 'bev': lambda r: r['architecture'] == 'bev'}
-    for split in ('heldout', 'dev', 'all'):
+    for split in (('heldout', 'dev', 'all') if a_.split == 'all' else (a_.split,)):
         summary[split] = {}
         for g, f in groups.items():
             rr = [r for r in rows if f(r) and (split == 'all' or r['split'] == split)]
@@ -84,9 +109,13 @@ def main():
                calibration=json.load(open(os.path.join(HERE, '..', 'roadsim', 'roadsim', 'data', 'calibration.json'))),
                summary=summary, heldout_bag1_over_bag3_logerr_pct=stats(bag),
                ledger_worst_closure_rel=worst_closure, trace_worst_abs_mps=worst_trace, vehicles=rows,
-               wall_s=round(time.time() - t0, 1), roadsim_version=roadsim.__version__, physics=roadsim.PHYSICS_VERSION)
-    json.dump(out, open(os.path.join(HERE, 'cycles_vs_epa.json'), 'w'), indent=1)
-    print(json.dumps(summary['heldout'], indent=1))
+               wall_s=round(time.time() - t0, 1), roadsim_version=roadsim.__version__, physics=roadsim.PHYSICS_VERSION,
+               options=_opts.get(), options_name=_opts.name(), split_run=a_.split)
+    fn = _opts.out('cycles_vs_epa.json')
+    if a_.split != 'all':
+        fn = fn.replace('.json', f'__{a_.split}.json')
+    json.dump(out, open(os.path.join(HERE, fn), 'w'), indent=1)
+    print(json.dumps(summary[a_.split if a_.split != 'all' else 'heldout'], indent=1))
     print('worst closure', worst_closure, 'worst trace', worst_trace, 'wall', out['wall_s'])
 
 

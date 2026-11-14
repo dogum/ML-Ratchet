@@ -16,8 +16,13 @@ REPO = os.path.dirname(os.path.dirname(VEH))
 sys.path.insert(0, os.path.join(VEH, 'roadsim'))
 
 
+sys.path.insert(0, HERE)
+import _opts
+_opts.init()
+
+
 def _load(name):
-    p = os.path.join(HERE, name)
+    p = os.path.join(HERE, _opts.out(name))
     return json.load(open(p, encoding='utf-8')) if os.path.exists(p) else None
 
 
@@ -56,6 +61,23 @@ def checks():
         for arch, cyc in c['simulated'].items():
             for name, s in cyc.items():
                 out[f'generator.{arch}.{name}.median'] = s['median']
+    c = _load('d3_twin__dev.json') or _load('d3_twin.json')
+    if c:
+        for arch, d in c['summary'].get('dev', {}).items():
+            p = ((d or {}).get('all') or {}).get('primary_pct')
+            if p:
+                out[f'd3_dev.{arch}.primary.median_pct'] = p['median']; out[f'd3_dev.{arch}.primary.iqr_pct'] = p['iqr']
+    c = _load('ved_twin.json')
+    if c:
+        for arch, d in c['summary']['by_arch'].items():
+            p = d.get('err_primary')
+            if p:
+                out[f'ved_dev_twin.{arch}.primary.median_pct'] = p['median']; out[f'ved_dev_twin.{arch}.primary.iqr_pct'] = p['iqr']
+    c = _load('epa_pool.json')
+    if c:
+        for cyc, st in c['summary']['all'].items():
+            if st:
+                out[f'epa_dev_pool.conv.{cyc}.median_pct'] = st['median']; out[f'epa_dev_pool.conv.{cyc}.iqr_pct'] = st['iqr']
     c = _load('speed.json')
     if c:
         for name, r in c['results'].items():
@@ -85,8 +107,9 @@ def models():
 
 def write():
     from roadsim import PHYSICS_VERSION
-    sb = {'physics_version': PHYSICS_VERSION, 'checks': checks(), 'models': models()}
-    p = os.path.join(HERE, f'scoreboard_{PHYSICS_VERSION}.json')
+    name = _opts.name()
+    sb = {'physics_version': name if name != 'roadsim-physics-v1' else PHYSICS_VERSION, 'checks': checks(), 'models': models()}
+    p = os.path.join(HERE, f'scoreboard_{sb["physics_version"]}.json')
     json.dump(sb, open(p, 'w', encoding='utf-8'), indent=1, sort_keys=True)
     print('wrote', os.path.relpath(p, REPO), len(sb['checks']), 'check numbers,', len(sb['models']), 'model numbers')
 

@@ -10,6 +10,9 @@ import os, sys, json, time, warnings
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', 'roadsim'))
+sys.path.insert(0, HERE)
+import _opts
+_opts.init()          # --options NAME|JSON (physics options for every simulate() call; default v1)
 from roadsim import simulate, make_trip, cycle
 from roadsim.generator import generate_vehicles
 
@@ -39,7 +42,7 @@ def main():
             soc = float(rng.uniform(0.3, 0.95)) if v['architecture'] != 'conv' else None
             with warnings.catch_warnings():
                 warnings.simplefilter('ignore')
-                o = simulate(v, trip, init_soc=soc, init_temps=init, record=True)
+                o = simulate(v, trip, init_soc=soc, init_temps=init, record=True, options=_opts.get())
             L = o['ledger']; S = o['summary']
             finite = all(np.isfinite(np.asarray(o[k], float)).all() for k in ('v', 'fuel_rate', 'soc', 'batt_current', 'eng_power'))
             rows.append(dict(id=v['id'], cls=v['class'], arch=v['architecture'], cycle=c, closure=L['closure_rel'],
@@ -56,7 +59,7 @@ def main():
                worst_step_residual_W_max=float(ws.max()), all_finite=bool(all(r['finite'] for r in rows)),
                trace_frac_seconds_over_2mph=dict(median=round(float(np.median(tr)), 4), p95=round(float(np.percentile(tr, 95)), 4), max=round(float(tr.max()), 4)),
                by_architecture=by_arch, wall_s=round(time.time() - t0, 1), runs=rows)
-    json.dump(out, open(os.path.join(HERE, 'ledger.json'), 'w'), indent=1)
+    json.dump(out, open(os.path.join(HERE, _opts.out('ledger.json')), 'w'), indent=1)
     print(json.dumps({k: v for k, v in out.items() if k not in ('runs', 'method')}, indent=1))
 
 

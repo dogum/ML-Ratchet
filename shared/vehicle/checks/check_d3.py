@@ -18,9 +18,18 @@ Compared per test (simulated vs measured):
 Medians and IQRs per architecture, temperature class and cycle are reported separately for dev and exam vehicles
 (data/proc/d3/splits.json). The calibration pass may look only at 'dev'; 'exam' is computed for the final report.
 
+Procedure details (14 Nov 2026, v2 calibration; same for every physics version):
+  * cold starts at cold ambient (< 5 C) begin with soaked tyres (tire_warm 0), as the 20 F FTP in epa_procedures (at
+    test-cell temperature the dyno coefficients and v1's fitted cold-start friction assume warm tyres); the oil starts
+    at the logged dipstick temperature where logged;
+  * key-off soaks between segments cool every thermal state (epa_procedures.soak), then logged temperatures win;
+  * multi-setting tests (SC03 x3-4 with "AUTO-AUTO-ECON-OFF" / "AUTO 72, AUTO 72, MAX, OFF" in the notes) run each
+    segment with its own HVAC setting (OFF = HVAC disabled); per-segment fuel is reported in 'segments'.
+
 usage: python check_d3.py [--options roadsim-physics-v1] [--workers 14] [--split dev|exam|all] [--limit N]
+  Output: d3_twin.json for v1 and --split all; otherwise d3_twin__<preset>[__<split>].json unless --out is given.
 """
-import os, sys, json, time, argparse, math
+import os, sys, json, time, argparse, math, re
 from multiprocessing import Pool
 import numpy as np
 import pandas as pd
@@ -29,6 +38,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 VEH = os.path.abspath(os.path.join(HERE, '..'))
 sys.path.insert(0, os.path.join(VEH, 'roadsim'))
 PROC = os.path.join(VEH, 'data', 'proc', 'd3')
+sys.path.insert(0, HERE)
 STANDARD = {'UDDS', 'HWFET', 'US06', 'SC03', 'LA92', 'NYCC', 'NEDC', 'WLTC', 'JP10_15'}
 ETA_BATT_EQ = 0.33 * 0.90
 TWIN_CATS = {'conventional', 'hybrid', 'plugin', 'electric'}
@@ -65,6 +75,18 @@ def _starts(on):
     return int(np.sum(np.diff(x) == 1) + (1 if len(x) and x[0] else 0))
 
 
+def hvac_sequence(r):
+    """per-phase HVAC settings from the test notes ('AUTO-AUTO-ECON-OFF', 'AUTO 72, AUTO 72, MAX, OFF'), or None."""
+    txt = ' '.join(str(r.get(k) or '') for k in ('notes_text', 'cycle_text')).upper()
+    m = re.search(r'SEQUENCE\s+((?:AUTO|ECON|OFF|MAX)(?:\s*-\s*(?:AUTO|ECON|OFF|MAX))+)', txt)
+    if m:
+        return [x.strip() for x in m.group(1).split('-')]
+    m = re.search(r'HVAC;\s*((?:(?:AUTO(?:\s*72)?|ECON|OFF|MAX)\s*,\s*)+(?:AUTO(?:\s*72)?|ECON|OFF|MAX))', txt)
+    if m:
+        return [x.strip().split()[0] for x in m.group(1).split(',')]
+    return None
+
+
 def run_one(job):
     import roadsim
     from roadsim.constants import FUELS
@@ -94,7 +116,10 @@ def run_one(job):
     if Teng0 is None or (cold and Teng0 > Ta + 15):
         Teng0 = Ta if cold else 88.0
     init = dict(engine=Teng0, cabin=pick('T_cabin0_C', Ta), battery=pick('T_batt0_C', Ta),
-                driveline=pick('T_trans0_C', Ta if cold else 80.0), tire_warm=1.0)
+                driveline=pick('T_trans0_C', Ta if cold else 80.0), tire_warm=0.0 if (cold and Ta < 5.0) else 1.0)
+    To0 = pick('T_oil0_C', None)
+    if To0 is not None and (not cold or To0 < Ta + 15):
+        init['oil'] = To0
     arch = veh.arch
     init_soc, soc_src = None, 'default'
     soc_m = A.get('soc')
@@ -133,28 +158,93 @@ def run_one(job):
         segs.append((a, i)); a = j
     segs.append((a, n))
     segs = [(a_, b_) for a_, b_ in segs if b_ - a_ > 10]
+    seq = hvac_sequence(r) if hvac_on else None
+    try:
+        _meta = json.load(open(os.path.join(PROC, r['path'])[:-4] + '.json'))
+    except Exception:
+        _meta = {}
+    phases = [p for p in (_meta.get('phases') or []) if p.get('cycle') in STANDARD]
+    if seq and len(phases) == len(seq):
+        # split segments between phases (state carried on, no soak) so each phase runs with its own HVAC setting
+        cuts = [(phases[i]['end'] + phases[i + 1]['start']) // 2 for i in range(len(phases) - 1)]
+        for c in cuts:
+            segs = [x for (a_, b_) in segs for x in (((a_, c), (c, b_)) if a_ + 10 < c < b_ - 10 else ((a_, b_),))]
+    # unmetered idle gaps: >= 60 s at standstill with the engine idling (> 400 rpm) but the fuel record exactly 0 (bag
+    # sampling off between phases of multi-cycle tests). The twin idles through them with the HVAC off (the logged cabin
+    # heats back up) and their fuel is excluded from the simulated total, as it is from the measured one.
+    fm_ = A.get('fuel_rate')
+    gaps = []
+    if er is not None and fm_ is not None and np.isfinite(fm_).any():
+        q = still & (np.nan_to_num(fm_, nan=0.0) == 0.0) & (np.nan_to_num(er) > 400)
+        i = 0
+        while i < n:
+            if q[i]:
+                j = i
+                while j < n and q[j]: j += 1
+                if j - i >= 60:
+                    gaps.append((i, j))
+                i = j
+            else:
+                i += 1
+    for (gi, gj) in gaps:
+        segs = [x for (a_, b_) in segs for x in
+                ([y for y in ((a_, gi), (gi, gj), (gj, b_)) if y[1] - y[0] > 0] if a_ < gi and gj < b_ else
+                 [y for y in ((a_, gj), (gj, b_)) if y[1] - y[0] > 0] if a_ >= gi and a_ < gj < b_ else
+                 [y for y in ((a_, gi), (gi, b_)) if y[1] - y[0] > 0] if a_ < gi < b_ <= gj else [(a_, b_)])]
+    gap_mask = np.zeros(n, bool)
+    for (gi, gj) in gaps:
+        gap_mask[gi:gj] = True
+    seg_hvac = [True] * len(segs)
+    if seq and len(phases) == len(seq):
+        for si, (a_, b_) in enumerate(segs):
+            ov = [max(0, min(b_, p['end']) - max(a_, p['start'])) for p in phases]
+            if max(ov) > 0:
+                seg_hvac[si] = seq[int(np.argmax(ov))]
+    for si, (a_, b_) in enumerate(segs):
+        if gap_mask[a_:b_].all():
+            seg_hvac[si] = 'OFF'
+    seg_rows = []
     K = ('fuel_rate', 'batt_current', 'batt_voltage', 'eng_on', 'hvac_power', 'soc')
     full = {k: np.zeros(n) for k in K}
     st, soc, closure, trace, dist = dict(init), init_soc, 0.0, 0.0, 0.0
     prev_end = None
+    from epa_procedures import soak as _soak
     try:
-        for (a_, b_) in segs:
-            if prev_end is not None:
+        for si, (a_, b_) in enumerate(segs):
+            if prev_end is not None and a_ > prev_end:
                 dtk = a_ - prev_end
-                if veh.engine is not None:
-                    e = veh.engine
-                    st['engine'] = Ta + (st['engine'] - Ta) * math.exp(-dtk * e.hA / e.C_th)
-                    st['driveline'] = Ta + (st['driveline'] - Ta) * math.exp(-dtk * 6.0 / 25e3)
-                for key, sig in (('engine', 'T_coolant'), ('cabin', 'T_cabin'), ('driveline', 'T_trans_oil')):
+                st = _soak(spec, st, Ta, dtk, options=options)
+                for key, sig in (('engine', 'T_coolant'), ('cabin', 'T_cabin'), ('driveline', 'T_trans_oil'), ('oil', 'T_oil')):
                     x = A.get(sig)
                     if x is not None and np.isfinite(x[a_]) and x[a_] != 0:
                         st[key] = float(x[a_])
                 st['eng_on'] = False
             tr = {k: (v[a_:b_] if hasattr(v, '__len__') and len(v) == n else v) for k, v in trip.items()}
             tr['t'] = np.arange(b_ - a_, dtype=float)
-            o = roadsim.simulate(spec, tr, init_soc=soc, init_temps=st, options=options, check=False)
+            sh = seg_hvac[si]
+            sp_seg = spec
+            if sh == 'OFF':
+                sp_seg = json.loads(json.dumps(spec)); sp_seg['aux']['HVAC']['enabled'] = False
+            opt_seg = options
+            if hvac_on and cls == 'hot':          # A/C auto 72 F / max: recirculated air (SC03 practice)
+                opt_seg = (dict(options, hvac_recirc_cool=1.0) if isinstance(options, dict) else
+                           {'hvac_recirc_cool': 1.0, **({'preset': options} if isinstance(options, str) else {})})
+            elif hvac_on and cls == 'cold':       # heat auto 72 F, outside air (1066.710(c))
+                opt_seg = (dict(options, hvac_recirc_heat=0.0) if isinstance(options, dict) else
+                           {'hvac_recirc_heat': 0.0, **({'preset': options} if isinstance(options, str) else {})})
+            if isinstance(opt_seg, dict):
+                opt_seg['hvac_T_set'] = 22.2
+            o = roadsim.simulate(sp_seg, tr, init_soc=soc, init_temps=st, options=opt_seg, check=False)
+            fm = A.get('fuel_rate')
+            seg_rows.append(dict(start=a_, end=b_, hvac=sh, sim_fuel_g=float(np.sum(o['fuel_rate'])),
+                                 meas_fuel_g=float(np.nansum(fm[a_:b_])) if fm is not None and np.isfinite(fm[a_:b_]).any() else None,
+                                 sim_hvac_Wh=float(np.sum(o['hvac_power']) / 3600),
+                                 sim_cabin_end=float(o['final_state']['cabin']),
+                                 meas_cabin_end=float(A['T_cabin'][b_ - 1]) if A.get('T_cabin') is not None and np.isfinite(A['T_cabin'][b_ - 1]) else None,
+                                 distance_km=float(o['summary']['distance_m']) / 1000))
             for k in K:
                 full[k][a_:b_] = o[k]
+            full['fuel_rate'][a_:b_][gap_mask[a_:b_]] = 0.0
             st = dict(o['final_state']); soc = st.get('soc', soc)
             closure = max(closure, float(o['ledger']['closure_rel'])); trace = max(trace, float(o['summary']['trace_rms_mps']))
             dist += float(o['summary']['distance_m']); prev_end = b_
@@ -178,6 +268,7 @@ def run_one(job):
                category=r['category'], cycle=r['cycle'], cycle_seq=r.get('cycle_seq'), T_amb_C=Ta, T_class=cls,
                start=r.get('start'), solar=bool(r.get('solar_lamps')), hvac_on=bool(hvac_on), init_soc=init_soc,
                init_soc_source=soc_src, init_temps=init, fuel_source=r.get('fuel_source'), sim=sim, meas=meas,
+               segments=seg_rows, hvac_sequence=seq, unmetered_gaps_s=int(gap_mask.sum()),
                wall_s=round(time.time() - t0, 2))
     err = {}
     if arch == 'conv':
@@ -301,9 +392,19 @@ def main():
     ap.add_argument('--workers', type=int, default=14)
     ap.add_argument('--split', default='all', choices=['dev', 'exam', 'all'])
     ap.add_argument('--limit', type=int, default=None)
-    ap.add_argument('--out', default=os.path.join(HERE, 'd3_twin.json'))
+    ap.add_argument('--out', default=None)
+    ap.add_argument('--vehicles', default=None, help='comma-separated vehicle ids or names (default: all)')
     a = ap.parse_args()
     options = json.loads(a.options) if a.options.strip().startswith('{') else a.options
+    if options == 'roadsim-physics-v1':
+        options = None
+    if a.out is None:
+        import _opts
+        name = _opts.out('d3_twin.json', options)
+        if a.split != 'all':
+            name = name.replace('.json', f'__{a.split}.json')
+        a.out = os.path.join(HERE, name)
+    vsel = set(a.vehicles.split(',')) if a.vehicles else None
     import roadsim
     t0 = time.time()
     idx = pd.read_parquet(os.path.join(PROC, 'index.parquet'))
@@ -321,6 +422,8 @@ def main():
         if split is None:
             skipped['not in split'] = skipped.get('not in split', 0) + 1; continue
         if a.split != 'all' and split != a.split:
+            continue
+        if vsel and r['vehicle_id'] not in vsel and r['vehicle'] not in vsel:
             continue
         jobs.append(dict(row=r, options=options, split=split))
     if a.limit:

@@ -16,6 +16,9 @@ import numpy as np
 warnings.filterwarnings('ignore')
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, '..', 'roadsim'))
+sys.path.insert(0, HERE)
+import _opts
+_opts.init()          # --options NAME|JSON (physics options for every simulate() call; default v1)
 import fastsim as fsim
 from roadsim import cycle
 from roadsim.sim import get_vehicle
@@ -200,7 +203,7 @@ def main():
     out = dict(check='cross-check vs NREL FASTSim 3.1.0', fastsim_version=fsim.__version__, method=__doc__.strip(),
                note='UDDS row compares hot-start UDDS with EPA FTP-75 (cold start) for fuel vehicles; both models carry that offset.',
                summary=summ, vehicles=rows, wall_s=round(time.time() - t0, 1))
-    json.dump(out, open(os.path.join(HERE, 'fastsim_crosscheck.json'), 'w'), indent=1)
+    json.dump(out, open(os.path.join(HERE, _opts.out('fastsim_crosscheck.json')), 'w'), indent=1)
     print(json.dumps(summ, indent=1))
 
 

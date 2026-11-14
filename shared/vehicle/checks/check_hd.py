@@ -23,6 +23,9 @@ import os, sys, json
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', 'roadsim'))
+sys.path.insert(0, HERE)
+import _opts
+_opts.init()          # --options NAME|JSON (physics options for every simulate() call; default v1)
 from roadsim import simulate, load_vehicle, make_trip
 from roadsim.constants import MILE, GAL, FUELS, KWH
 
@@ -33,7 +36,8 @@ WARM = {'engine': 88.0, 'tire_warm': 1.0, 'driveline': 80.0}
 def run(vid, cyc, T=20.0, hvac=False, soc=None):
     spec = load_vehicle(vid)
     spec['aux'].setdefault('HVAC', {})['enabled'] = hvac
-    o = simulate(spec, make_trip(cyc, T_amb=T, solar=400.0 if hvac else 0.0), init_temps=dict(WARM, cabin=21.0, battery=T), init_soc=soc)
+    o = simulate(spec, make_trip(cyc, T_amb=T, solar=400.0 if hvac else 0.0), init_temps=dict(WARM, cabin=21.0, battery=T), init_soc=soc,
+                 options=_opts.get())
     S = o['summary']
     mi = S['distance_m'] / MILE
     r = dict(miles=round(mi, 3), closure=o['ledger']['closure_rel'], trace_rms_mps=round(S['trace_rms_mps'], 3),
@@ -95,7 +99,7 @@ def main():
     bus['reference'] = dict(bev_kWh_per_mi=[1.82, 2.15], cng_mpdge_at_17_6mph=4.29, hybrid_improvement_pct_literature=[10, 40],
                             source='NREL/TP-5400-80022 (Foothill Transit BEB evaluation, 2021), OSTI 1799885')
     out['transit_bus_40ft'] = bus
-    json.dump(out, open(os.path.join(HERE, 'heavy_duty.json'), 'w'), indent=1)
+    json.dump(out, open(os.path.join(HERE, _opts.out('heavy_duty.json')), 'w'), indent=1)
     print(json.dumps({k: v for k, v in out.items() if k != 'method'}, indent=1))
 
 

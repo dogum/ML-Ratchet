@@ -10,6 +10,9 @@ import os, sys, json, time
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, '..', 'roadsim'))
+sys.path.insert(0, HERE)
+import _opts
+_opts.init()          # --options NAME|JSON (physics options for every simulate() call; default v1)
 from roadsim import simulate, make_trip, list_strategies
 from roadsim.sim import get_vehicle
 from roadsim.constants import MILE, GAL, FUELS
@@ -24,7 +27,7 @@ def run(spec, cyc, strat):
     soc0 = 0.5 * (veh.battery.soc_lo + veh.battery.soc_hi)
     t = time.perf_counter()
     o = simulate(spec, make_trip(cyc, T_amb=23.9, rho_air=RHO_REF), strategy=strat, init_soc=soc0,
-                 init_temps=dict(engine=88.0, tire_warm=1.0, driveline=80.0))
+                 init_temps=dict(engine=88.0, tire_warm=1.0, driveline=80.0), options=_opts.get())
     wall = time.perf_counter() - t
     S = o['summary']; L = o['ledger']
     Eb = L['batt_chem_out'] * 1e3
@@ -54,7 +57,7 @@ def main():
             for s in res[cyc]:
                 res[cyc][s]['pct_of_dp'] = round(100 * res[cyc][s]['mpg_soc_corrected'] / best, 1)
         out['vehicles'][name] = dict(architecture=arch, epa={'FTP': v['epa'].get('FTP'), 'HWY': v['epa'].get('HWY')}, results=res)
-    json.dump(out, open(os.path.join(HERE, 'strategies_hev.json'), 'w'), indent=1)
+    json.dump(out, open(os.path.join(HERE, _opts.out('strategies_hev.json')), 'w'), indent=1)
 
 
 if __name__ == '__main__':

@@ -16,6 +16,9 @@ import numpy as np
 import pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', 'roadsim'))
+sys.path.insert(0, HERE)
+import _opts
+_opts.init()          # --options NAME|JSON (physics options for every simulate() call; default v1)
 from roadsim.sim import get_vehicle
 from roadsim.coastdown import coast, fit_abc, to_lbf
 from roadsim.constants import MPH, LBF
@@ -83,7 +86,7 @@ def main():
                frac_within_epa_spread=round(float(np.mean(np.max(np.abs(e), 1) <= cv_med)), 3),
                frac_within_epa_spread_5C=round(float(np.mean(np.max(np.abs(e5), 1) <= cv_med)), 3),
                vehicles=rows)
-    json.dump(res, open(os.path.join(HERE, 'coastdown.json'), 'w'), indent=1)
+    json.dump(res, open(os.path.join(HERE, _opts.out('coastdown.json')), 'w'), indent=1)
     print(json.dumps({k: v for k, v in res.items() if k not in ('vehicles', 'method')}, indent=1))
 
 

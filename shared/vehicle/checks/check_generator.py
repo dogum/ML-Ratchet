@@ -12,6 +12,9 @@ import numpy as np
 import pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, '..', 'roadsim'))
+sys.path.insert(0, HERE)
+import _opts
+_opts.init()          # --options NAME|JSON (physics options for every simulate() call; default v1)
 from roadsim import simulate, make_trip
 from roadsim.generator import generate_vehicles
 from roadsim.constants import MPH, MILE, GAL, FUELS, KWH, EPA_KWH_PER_GAL
@@ -28,7 +31,8 @@ def q(x):
 def fe(spec, cyc):
     veh = get_vehicle(spec)
     o = simulate(spec, make_trip(cyc, T_amb=23.9, rho_air=RHO_REF), init_temps=dict(engine=88.0, tire_warm=1.0, driveline=80.0),
-                 init_soc=None if veh.arch in ('conv', 'bev') else 0.5 * (veh.battery.soc_lo + veh.battery.soc_hi), record=False)
+                 init_soc=None if veh.arch in ('conv', 'bev') else 0.5 * (veh.battery.soc_lo + veh.battery.soc_hi), record=False,
+                 options=_opts.get())
     S = o['summary']; mi = S['distance_m'] / MILE
     if veh.arch == 'bev':
         return EPA_KWH_PER_GAL / (o['ledger']['batt_chem_out'] * 1e3 / KWH / mi / ETA_CHARGE)
@@ -41,7 +45,7 @@ def fe(spec, cyc):
 def zero60(spec):
     v = np.minimum(np.arange(40) * 20.0, 70 * MPH)          # demand far above capability -> WOT
     o = simulate(spec, make_trip(v, T_amb=20), init_temps=dict(engine=88.0, tire_warm=1.0, driveline=80.0),
-                 driver={'a_max': 12.0}, check=False)
+                 driver={'a_max': 12.0}, check=False, options=_opts.get())
     va = o['v']
     i = np.argmax(va >= 60 * MPH)
     if va[i] < 60 * MPH:
@@ -63,9 +67,10 @@ def epa_reference():
 
 
 def main():
-    V = generate_vehicles(400, seed=23, strategy=True)
+    DM = _opts.resolved()['donor_model']
+    V = generate_vehicles(400, seed=23, strategy=True, donor_model=DM)
     V = [v for v in V if v['class'] in ('car', 'suv', 'pickup', 'van')][:400]
-    V += [v for v in generate_vehicles(800, seed=29) if v['class'] in ('car', 'suv', 'pickup', 'van')][:400 - len(V)]
+    V += [v for v in generate_vehicles(800, seed=29, donor_model=DM) if v['class'] in ('car', 'suv', 'pickup', 'van')][:400 - len(V)]
     rows = []
     for v in V:
         s = test_spec(v)
@@ -92,7 +97,7 @@ def main():
                power_to_mass_kW_per_t_generated=q([r['pw'] for r in rows]),
                reference_zero_to_60_s='typical MY2024: cars 6-9 s, SUVs 6.5-9.5 s, pickups 5.5-8.5 s, minivans 7-8 s, BEVs 3.5-7 s (manufacturer/press figures)',
                rows=rows)
-    json.dump(out, open(os.path.join(HERE, 'generator.json'), 'w'), indent=1)
+    json.dump(out, open(os.path.join(HERE, _opts.out('generator.json')), 'w'), indent=1)
     print(json.dumps({k: v for k, v in out.items() if k not in ('rows', 'method')}, indent=1))
 
 
