@@ -1,0 +1,181 @@
+{
+ "check": "heavy-duty vs published ranges",
+ "method": "Check: heavy-duty vehicles against published ranges.\n\nClass 8 high-roof sleeper tractor-trailer (diesel; and a battery-electric version): GEM test cycles = 40 CFR 1037\nAppendix A transient cycle + 55 and 65 mi/hr cruise over the Appendix D grade profile, composite weighted 5/9/86 %\n(sleeper cabs, 40 CFR 1037.510 table 1), payload 19 tons (standard payload, 40 CFR 1037.801), CO2 at 10,180 g/gal\ndiesel. Reference: CO2 standards for Class 8 high-roof sleeper cabs, 40 CFR 1037.106 table 1 (eCFR version of\n2024-01-01): 75.7 (MY2021-23), 70.7 (MY2024-26), 64.3 (MY2027+) g/ton-mile; Phase 1 (MY2017-20) 72 g/ton-mile under\nthe older GEM. GEM credits idle-reduction/speed-limiter/etc. technologies that this reference truck does not have.\n\nClass 6 box truck (diesel): vocational Multi-Purpose weighting 54/29/17 % (40 CFR 1037.510), payload 5.6 tons;\ndriving cycles only (the regulatory composite also adds drive/parked idle). Reference: CI Medium HDV multi-purpose\nstandards 265 / 246 / 235 g/ton-mile (MY2021-23 / 2024-26 / 2027+, 40 CFR 1037.105, 2024 eCFR).\n\n40 ft transit buses (diesel, series diesel-hybrid, battery-electric) on the CBD14 cycle (SAE J1376 construction, 11.8\nmph average incl. stops) and the HD transient cycle (15.3 mph), averaged over ambient temperatures 10/18/25/32 C with\nHVAC on (a southern-California-like spread). Reference (measured in service, NREL/TP-5400-80022, Foothill Transit\nBattery Electric Bus Evaluation, 2021, via OSTI): BEB 2.10-2.15 kWh/mi on a 10.6 mph route, 1.82-1.90 kWh/mi at\n18-21 mph; CNG baseline 3.74 mpgge = 4.29 mpdge at 17.6 mph. A diesel bus on the same duty is expected near or somewhat\nabove the CNG diesel-equivalent value; hybrids are usually reported 10-40 % better than diesel (literature range,\nnot verified from a downloaded source).",
+ "class8_sleeper_diesel": {
+  "cycles": {
+   "hd_transient": {
+    "miles": 2.842,
+    "closure": 4.0174457325807774e-16,
+    "trace_rms_mps": 0.062,
+    "trace_max_mps": 0.9,
+    "mpg": 4.066
+   },
+   "gem_55": {
+    "miles": 13.415,
+    "closure": 2.260386874531393e-16,
+    "trace_rms_mps": 0.163,
+    "trace_max_mps": 1.287,
+    "mpg": 7.016
+   },
+   "gem_65": {
+    "miles": 13.335,
+    "closure": 1.66879031421823e-15,
+    "trace_rms_mps": 0.714,
+    "trace_max_mps": 3.523,
+    "mpg": 6.418
+   }
+  },
+  "composite_mpg": 6.284,
+  "composite_g_co2_per_ton_mile": 85.3,
+  "reference_g_per_ton_mile": {
+   "MY2021-23 std": 75.7,
+   "MY2024-26 std": 70.7,
+   "MY2027+ std": 64.3
+  },
+  "note": "reference truck has no Phase 2 technology packages (aero bin III-ish CdA 5.9, Crr 0.0063, no idle/AES credits); expected at or above the MY2021 standard"
+ },
+ "class8_bev": {
+  "cycles": {
+   "hd_transient": {
+    "miles": 2.842,
+    "closure": 2.3536068407352765e-15,
+    "trace_rms_mps": 0.0,
+    "trace_max_mps": 0.0,
+    "kWh_per_mi_dc": 1.971
+   },
+   "gem_55": {
+    "miles": 13.429,
+    "closure": 1.0090760511991212e-15,
+    "trace_rms_mps": 0.002,
+    "trace_max_mps": 0.036,
+    "kWh_per_mi_dc": 2.138
+   },
+   "gem_65": {
+    "miles": 13.428,
+    "closure": 4.820530031563356e-16,
+    "trace_rms_mps": 0.089,
+    "trace_max_mps": 0.788,
+    "kWh_per_mi_dc": 2.556
+   }
+  },
+  "composite_kWh_per_mi_dc": 2.489,
+  "note": "no regulatory reference; NACFE Run on Less Electric reports ~1.5-2.2 kWh/mi for loaded Class 8 BEVs (literature, not verified)"
+ },
+ "class6_box_diesel": {
+  "cycles": {
+   "hd_transient": {
+    "miles": 2.842,
+    "closure": 1.060139806810738e-15,
+    "trace_rms_mps": 0.012,
+    "trace_max_mps": 0.186,
+    "mpg": 7.666
+   },
+   "gem_55": {
+    "miles": 13.429,
+    "closure": 8.33036078172547e-16,
+    "trace_rms_mps": 0.008,
+    "trace_max_mps": 0.127,
+    "mpg": 10.172
+   },
+   "gem_65": {
+    "miles": 13.42,
+    "closure": 4.128291481525485e-16,
+    "trace_rms_mps": 0.2,
+    "trace_max_mps": 1.437,
+    "mpg": 8.384
+   }
+  },
+  "composite_mpg": 8.387,
+  "composite_g_co2_per_ton_mile": 216.7,
+  "reference_g_per_ton_mile": {
+   "MY2021-23 std": 265,
+   "MY2024-26 std": 246,
+   "MY2027+ std": 235
+  },
+  "note": "driving cycles only (no idle terms), so expected somewhat below the regulatory composite of a comparable vehicle"
+ },
+ "transit_bus_40ft": {
+  "ref_bus40_diesel": {
+   "cbd14": {
+    "mpg": 4.3,
+    "by_temperature_C": {
+     "10.0": 5.01,
+     "18.0": 5.048,
+     "25.0": 4.009,
+     "32.0": 3.532
+    },
+    "worst_closure": 1.2534701459769603e-15
+   },
+   "hd_transient": {
+    "mpg": 5.411,
+    "by_temperature_C": {
+     "10.0": 6.187,
+     "18.0": 6.257,
+     "25.0": 5.025,
+     "32.0": 4.571
+    },
+    "worst_closure": 6.628030362886841e-16
+   }
+  },
+  "ref_bus40_hybrid": {
+   "cbd14": {
+    "mpg": 6.807,
+    "by_temperature_C": {
+     "10.0": 7.558,
+     "18.0": 7.826,
+     "25.0": 6.68,
+     "32.0": 5.624
+    },
+    "worst_closure": 1.4153515969427156e-15,
+    "improvement_vs_diesel_pct": 58.3
+   },
+   "hd_transient": {
+    "mpg": 7.116,
+    "by_temperature_C": {
+     "10.0": 7.602,
+     "18.0": 7.846,
+     "25.0": 7.053,
+     "32.0": 6.198
+    },
+    "worst_closure": 1.405625723890412e-15,
+    "improvement_vs_diesel_pct": 31.5
+   }
+  },
+  "ref_bus40_bev": {
+   "cbd14": {
+    "kWh_per_mi_dc": 2.096,
+    "by_temperature_C": {
+     "10.0": 2.665,
+     "18.0": 1.519,
+     "25.0": 1.873,
+     "32.0": 2.328
+    },
+    "worst_closure": 1.2153011593259539e-15,
+    "mpdge": 17.96
+   },
+   "hd_transient": {
+    "kWh_per_mi_dc": 1.925,
+    "by_temperature_C": {
+     "10.0": 2.414,
+     "18.0": 1.474,
+     "25.0": 1.729,
+     "32.0": 2.081
+    },
+    "worst_closure": 6.2072011132485485e-16,
+    "mpdge": 19.55
+   }
+  },
+  "reference": {
+   "bev_kWh_per_mi": [
+    1.82,
+    2.15
+   ],
+   "cng_mpdge_at_17_6mph": 4.29,
+   "hybrid_improvement_pct_literature": [
+    10,
+    40
+   ],
+   "source": "NREL/TP-5400-80022 (Foothill Transit BEB evaluation, 2021), OSTI 1799885"
+  }
+ }
+}

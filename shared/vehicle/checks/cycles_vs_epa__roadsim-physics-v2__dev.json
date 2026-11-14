@@ -1,0 +1,763 @@
+{
+ "check": "EPA cycles vs EPA test-car list (MY2022-2024)",
+ "n_vehicles": 14,
+ "n_by_arch": {
+  "bev": 3,
+  "conv": 7,
+  "hev_parallel_p2": 1,
+  "hev_powersplit": 2,
+  "hev_series": 1
+ },
+ "method": "Check: EPA cycles (FTP-75 / HWFET / US06, plus SC03 and the 20 F cold FTP where tested) for 47 real MY2022-24\ntest vehicles (22 conventional, 14 HEV, 11 BEV) vs their EPA test-car-list results.  Writes cycles_vs_epa.json.\n\nError = simulated / EPA - 1 on fuel economy (mpg, or MPGe; for BEVs reported in kWh/100 mi the error is on\n1/consumption, i.e. also an 'economy' error).  Calibrated constants were fitted on the dev subset only; the headline\nnumbers are the held-out vehicles.\n\nusage: python check_cycles.py [--options roadsim-physics-v2] [--split dev|heldout|all]\n  --split dev runs only the dev vehicles (what a calibration pass may look at) and writes <out>__dev.json.\n  The cold FTP (20 F) runs for every vehicle with an EPA cold result (conventional and hybrid).",
+ "procedures": "Emulate EPA chassis-dynamometer procedures with roadsim.\n\nFTP-75: cold-start UDDS (bags 1+2) after a soak at 24 C, 10-minute hot soak, hot-start bag 3 (first 505 s of UDDS).\n        FE = 1 / (0.43 (g1+g2)/(d1+d2) + 0.57 (g3+g2)/(d3+d2))  [40 CFR 600.113]\nHWFET, US06: hot start (preceded by a preconditioning run).\nHybrids: test starts at the SOC reached after preconditioning runs; residual net battery energy converted to fuel with a\n          fixed 1/(0.33 x 0.90) equivalence (SAE J1711-style correction).\nBEV: DC battery energy over a warm cycle, divided by an assumed 0.88 wall-to-battery charging efficiency to compare\n     with EPA's AC recharge energy (SAE J1634).  HVAC off for FTP/HWFET/US06 (as on the test).\n\nProcedure corrections of 14 Nov 2026 (applied to every physics version; logged in roadsim/CALIBRATION.md):\n- 20 F cold FTP (40 CFR 1066.710(c)): heat on, A/C off, outside air ((c)(1)(i)(D)), full automatic climate control\n  at 72 F ((c)(2); the D3 cold tests are logged \"HVAC ON-AUTO-72F\"). Before: HVAC off. The vehicle is soaked 12-36 h at\n  -7 C ((e)), so the tyres start at the soak temperature (before: warm tyres).\n- Every soak (FTP 10-minute hot soak, SC03 soak) cools every thermal state RoadSim has: coolant (and oil, coupled),\n  transmission, axle oil, tyres, PTC loop, v1 tyre warm-up state (before: coolant and transmission only).\n- SC03 (40 CFR 1066.835): 35 C, 850 W/m2, preconditioning drive over the first 505 s of the UDDS ((c)(5)), 9-11 min\n  soak with the engine off ((c)(6)), A/C \"maximum\": recirculated air, automatic 72 F ((c)(4)). Cabin air and interior\n  at 45 C at the start of SC03 (D3 dev SC03 tests: 44-46 C). Before: no preconditioning drive, cabin 50 C, hot engine.\n- Options: every simulate() call takes the check chain's physics options (checks/_opts.py; None = physics v1).",
+ "calibration": {
+  "cold_fric_gasoline": 45.27,
+  "cold_fric_diesel": 45.27,
+  "cat_warmup_s": 10.0,
+  "motor_loss_scale": 1.0,
+  "bev_motor_loss_scale": 0.472,
+  "cold_fric_hybrid_factor": 0.158
+ },
+ "summary": {
+  "dev": {
+   "conv": {
+    "FTP": {
+     "n": 7,
+     "median_pct": 1.11,
+     "mean_abs_pct": 4.89,
+     "p25_pct": -2.78,
+     "p75_pct": 3.68,
+     "min_pct": -13.52,
+     "max_pct": 6.71
+    },
+    "HWY": {
+     "n": 7,
+     "median_pct": -1.77,
+     "mean_abs_pct": 5.78,
+     "p25_pct": -6.79,
+     "p75_pct": -0.69,
+     "min_pct": -10.89,
+     "max_pct": 12.83
+    },
+    "US06": {
+     "n": 2,
+     "median_pct": -2.37,
+     "mean_abs_pct": 2.37,
+     "p25_pct": -2.98,
+     "p75_pct": -1.75,
+     "min_pct": -3.6,
+     "max_pct": -1.13
+    },
+    "SC03": {
+     "n": 1,
+     "median_pct": 3.43,
+     "mean_abs_pct": 3.43,
+     "p25_pct": 3.43,
+     "p75_pct": 3.43,
+     "min_pct": 3.43,
+     "max_pct": 3.43
+    },
+    "COLD_FTP_20F": {
+     "n": 1,
+     "median_pct": -6.55,
+     "mean_abs_pct": 6.55,
+     "p25_pct": -6.55,
+     "p75_pct": -6.55,
+     "min_pct": -6.55,
+     "max_pct": -6.55
+    },
+    "all_main_cycles": {
+     "n": 16,
+     "median_pct": -1.15,
+     "mean_abs_pct": 4.96,
+     "p25_pct": -4.75,
+     "p75_pct": 1.11,
+     "min_pct": -13.52,
+     "max_pct": 12.83
+    }
+   },
+   "hev": {
+    "FTP": {
+     "n": 4,
+     "median_pct": 5.88,
+     "mean_abs_pct": 8.1,
+     "p25_pct": 1.65,
+     "p75_pct": 9.78,
+     "min_pct": -5.12,
+     "max_pct": 15.54
+    },
+    "HWY": {
+     "n": 4,
+     "median_pct": -1.96,
+     "mean_abs_pct": 3.27,
+     "p25_pct": -4.62,
+     "p75_pct": 0.52,
+     "min_pct": -6.92,
+     "max_pct": 2.24
+    },
+    "US06": {
+     "n": 3,
+     "median_pct": -5.24,
+     "mean_abs_pct": 5.79,
+     "p25_pct": -6.89,
+     "p75_pct": -0.82,
+     "min_pct": -8.54,
+     "max_pct": 3.6
+    },
+    "SC03": {
+     "n": 3,
+     "median_pct": 2.02,
+     "mean_abs_pct": 2.89,
+     "p25_pct": -0.71,
+     "p75_pct": 2.62,
+     "min_pct": -3.44,
+     "max_pct": 3.22
+    },
+    "COLD_FTP_20F": {
+     "n": 3,
+     "median_pct": -9.82,
+     "mean_abs_pct": 6.83,
+     "p25_pct": -9.92,
+     "p75_pct": -4.58,
+     "min_pct": -10.02,
+     "max_pct": 0.65
+    },
+    "all_main_cycles": {
+     "n": 11,
+     "median_pct": -0.06,
+     "mean_abs_pct": 5.72,
+     "p25_pct": -5.18,
+     "p75_pct": 3.75,
+     "min_pct": -8.54,
+     "max_pct": 15.54
+    }
+   },
+   "hev_powersplit": {
+    "FTP": {
+     "n": 2,
+     "median_pct": 5.88,
+     "mean_abs_pct": 5.88,
+     "p25_pct": 4.89,
+     "p75_pct": 6.87,
+     "min_pct": 3.9,
+     "max_pct": 7.86
+    },
+    "HWY": {
+     "n": 2,
+     "median_pct": 1.09,
+     "mean_abs_pct": 1.15,
+     "p25_pct": 0.52,
+     "p75_pct": 1.67,
+     "min_pct": -0.06,
+     "max_pct": 2.24
+    },
+    "US06": {
+     "n": 1,
+     "median_pct": 3.6,
+     "mean_abs_pct": 3.6,
+     "p25_pct": 3.6,
+     "p75_pct": 3.6,
+     "min_pct": 3.6,
+     "max_pct": 3.6
+    },
+    "SC03": {
+     "n": 1,
+     "median_pct": -3.44,
+     "mean_abs_pct": 3.44,
+     "p25_pct": -3.44,
+     "p75_pct": -3.44,
+     "min_pct": -3.44,
+     "max_pct": -3.44
+    },
+    "COLD_FTP_20F": {
+     "n": 1,
+     "median_pct": -9.82,
+     "mean_abs_pct": 9.82,
+     "p25_pct": -9.82,
+     "p75_pct": -9.82,
+     "min_pct": -9.82,
+     "max_pct": -9.82
+    },
+    "all_main_cycles": {
+     "n": 5,
+     "median_pct": 3.6,
+     "mean_abs_pct": 3.53,
+     "p25_pct": 2.24,
+     "p75_pct": 3.9,
+     "min_pct": -0.06,
+     "max_pct": 7.86
+    }
+   },
+   "hev_parallel_p2": {
+    "FTP": {
+     "n": 1,
+     "median_pct": 15.54,
+     "mean_abs_pct": 15.54,
+     "p25_pct": 15.54,
+     "p75_pct": 15.54,
+     "min_pct": 15.54,
+     "max_pct": 15.54
+    },
+    "HWY": {
+     "n": 1,
+     "median_pct": -3.86,
+     "mean_abs_pct": 3.86,
+     "p25_pct": -3.86,
+     "p75_pct": -3.86,
+     "min_pct": -3.86,
+     "max_pct": -3.86
+    },
+    "US06": {
+     "n": 1,
+     "median_pct": -5.24,
+     "mean_abs_pct": 5.24,
+     "p25_pct": -5.24,
+     "p75_pct": -5.24,
+     "min_pct": -5.24,
+     "max_pct": -5.24
+    },
+    "SC03": {
+     "n": 1,
+     "median_pct": 2.02,
+     "mean_abs_pct": 2.02,
+     "p25_pct": 2.02,
+     "p75_pct": 2.02,
+     "min_pct": 2.02,
+     "max_pct": 2.02
+    },
+    "COLD_FTP_20F": {
+     "n": 1,
+     "median_pct": 0.65,
+     "mean_abs_pct": 0.65,
+     "p25_pct": 0.65,
+     "p75_pct": 0.65,
+     "min_pct": 0.65,
+     "max_pct": 0.65
+    },
+    "all_main_cycles": {
+     "n": 3,
+     "median_pct": -3.86,
+     "mean_abs_pct": 8.21,
+     "p25_pct": -4.55,
+     "p75_pct": 5.84,
+     "min_pct": -5.24,
+     "max_pct": 15.54
+    }
+   },
+   "hev_series": {
+    "FTP": {
+     "n": 1,
+     "median_pct": -5.12,
+     "mean_abs_pct": 5.12,
+     "p25_pct": -5.12,
+     "p75_pct": -5.12,
+     "min_pct": -5.12,
+     "max_pct": -5.12
+    },
+    "HWY": {
+     "n": 1,
+     "median_pct": -6.92,
+     "mean_abs_pct": 6.92,
+     "p25_pct": -6.92,
+     "p75_pct": -6.92,
+     "min_pct": -6.92,
+     "max_pct": -6.92
+    },
+    "US06": {
+     "n": 1,
+     "median_pct": -8.54,
+     "mean_abs_pct": 8.54,
+     "p25_pct": -8.54,
+     "p75_pct": -8.54,
+     "min_pct": -8.54,
+     "max_pct": -8.54
+    },
+    "SC03": {
+     "n": 1,
+     "median_pct": 3.22,
+     "mean_abs_pct": 3.22,
+     "p25_pct": 3.22,
+     "p75_pct": 3.22,
+     "min_pct": 3.22,
+     "max_pct": 3.22
+    },
+    "COLD_FTP_20F": {
+     "n": 1,
+     "median_pct": -10.02,
+     "mean_abs_pct": 10.02,
+     "p25_pct": -10.02,
+     "p75_pct": -10.02,
+     "min_pct": -10.02,
+     "max_pct": -10.02
+    },
+    "all_main_cycles": {
+     "n": 3,
+     "median_pct": -6.92,
+     "mean_abs_pct": 6.86,
+     "p25_pct": -7.73,
+     "p75_pct": -6.02,
+     "min_pct": -8.54,
+     "max_pct": -5.12
+    }
+   },
+   "bev": {
+    "HWY": {
+     "n": 3,
+     "median_pct": 0.33,
+     "mean_abs_pct": 2.53,
+     "p25_pct": -2.79,
+     "p75_pct": 0.84,
+     "min_pct": -5.91,
+     "max_pct": 1.34
+    },
+    "UDDS": {
+     "n": 3,
+     "median_pct": 2.94,
+     "mean_abs_pct": 4.73,
+     "p25_pct": -0.2,
+     "p75_pct": 5.42,
+     "min_pct": -3.34,
+     "max_pct": 7.9
+    },
+    "all_main_cycles": {
+     "n": 6,
+     "median_pct": 0.84,
+     "mean_abs_pct": 3.63,
+     "p25_pct": -2.42,
+     "p75_pct": 2.54,
+     "min_pct": -5.91,
+     "max_pct": 7.9
+    }
+   }
+  }
+ },
+ "heldout_bag1_over_bag3_logerr_pct": null,
+ "ledger_worst_closure_rel": 1.1338053893895957e-14,
+ "trace_worst_abs_mps": 0.0,
+ "vehicles": [
+  {
+   "name": "2023 MAZDA Mazda3",
+   "architecture": "conv",
+   "cls": "car",
+   "split": "dev",
+   "sim": {
+    "FTP": 38.99,
+    "HWY": 58.78
+   },
+   "epa": {
+    "FTP": 36.7,
+    "HWY": 52.1
+   },
+   "err_pct": {
+    "FTP": 6.24,
+    "HWY": 12.83
+   },
+   "bag1_over_bag3": {
+    "sim": 0.8541,
+    "epa": 0.8377
+   }
+  },
+  {
+   "name": "2024 Ford F150 PICKUP 2WD",
+   "architecture": "conv",
+   "cls": "pickup",
+   "split": "dev",
+   "sim": {
+    "FTP": 21.17,
+    "HWY": 32.46
+   },
+   "epa": {
+    "FTP": 21.4,
+    "HWY": 35.3
+   },
+   "err_pct": {
+    "FTP": -1.06,
+    "HWY": -8.05
+   },
+   "bag1_over_bag3": {
+    "sim": 0.8762,
+    "epa": 0.8579
+   }
+  },
+  {
+   "name": "2024 Jeep Grand Cherokee L 4X2",
+   "architecture": "conv",
+   "cls": "suv",
+   "split": "dev",
+   "sim": {
+    "FTP": 20.76,
+    "HWY": 32.44
+   },
+   "epa": {
+    "FTP": 24.0,
+    "HWY": 36.4
+   },
+   "err_pct": {
+    "FTP": -13.52,
+    "HWY": -10.89
+   },
+   "bag1_over_bag3": {
+    "sim": 0.8815,
+    "epa": 0.9017
+   }
+  },
+  {
+   "name": "2024 Ford Maverick FWD",
+   "architecture": "conv",
+   "cls": "pickup",
+   "split": "dev",
+   "sim": {
+    "FTP": 31.05,
+    "HWY": 44.91
+   },
+   "epa": {
+    "FTP": 29.1,
+    "HWY": 45.0
+   },
+   "err_pct": {
+    "FTP": 6.71,
+    "HWY": -0.2
+   },
+   "bag1_over_bag3": {
+    "sim": 0.8867,
+    "epa": 0.8809
+   }
+  },
+  {
+   "name": "2024 TOYOTA CAMRY LE/SE",
+   "architecture": "conv",
+   "cls": "car",
+   "split": "dev",
+   "sim": {
+    "FTP": 34.52,
+    "HWY": 55.94
+   },
+   "epa": {
+    "FTP": 36.150000000000006,
+    "HWY": 56.95
+   },
+   "err_pct": {
+    "FTP": -4.5,
+    "HWY": -1.77
+   },
+   "bag1_over_bag3": {
+    "sim": 0.8522,
+    "epa": 0.8749
+   }
+  },
+  {
+   "name": "2024 Hyundai Sonata",
+   "architecture": "conv",
+   "cls": "car",
+   "split": "dev",
+   "sim": {
+    "FTP": 29.22,
+    "HWY": 45.02,
+    "US06": 28.1,
+    "SC03": 25.55,
+    "COLD_FTP_20F": 24.48
+   },
+   "epa": {
+    "FTP": 28.9,
+    "HWY": 45.55,
+    "US06": 29.15,
+    "SC03": 24.7,
+    "COLD_FTP_20F": 26.2
+   },
+   "err_pct": {
+    "FTP": 1.12,
+    "HWY": -1.17,
+    "US06": -3.6,
+    "SC03": 3.43,
+    "COLD_FTP_20F": -6.55
+   },
+   "bag1_over_bag3": {
+    "sim": 0.8982,
+    "epa": 0.8765
+   },
+   "sc03_hvac_W": 2691,
+   "sc03_cabin_C": {
+    "start": 45.0,
+    "t120_300_595": [
+     31.3,
+     29.0,
+     27.7
+    ]
+   },
+   "cold_bags": {
+    "bag1": {
+     "sim": 20.3,
+     "epa": 23.9
+    },
+    "bag2": {
+     "sim": 24.52,
+     "epa": 25.05
+    },
+    "bag3": {
+     "sim": 28.91,
+     "epa": 31.15
+    }
+   }
+  },
+  {
+   "name": "2024 Ford Ford Explorer Timberline",
+   "architecture": "conv",
+   "cls": "suv",
+   "split": "dev",
+   "sim": {
+    "FTP": 24.47,
+    "HWY": 33.26,
+    "US06": 19.87
+   },
+   "epa": {
+    "FTP": 24.2,
+    "HWY": 35.2,
+    "US06": 20.1
+   },
+   "err_pct": {
+    "FTP": 1.11,
+    "HWY": -5.52,
+    "US06": -1.13
+   },
+   "bag1_over_bag3": {
+    "sim": 0.904,
+    "epa": 0.8992
+   }
+  },
+  {
+   "name": "2024 TOYOTA RAV4 HYBRID AWD",
+   "architecture": "hev_powersplit",
+   "cls": "suv",
+   "split": "dev",
+   "sim": {
+    "FTP": 62.13,
+    "HWY": 53.67,
+    "US06": 38.07,
+    "SC03": 42.1,
+    "COLD_FTP_20F": 38.33
+   },
+   "epa": {
+    "FTP": 57.6,
+    "HWY": 53.7,
+    "US06": 36.75,
+    "SC03": 43.6,
+    "COLD_FTP_20F": 42.5
+   },
+   "err_pct": {
+    "FTP": 7.86,
+    "HWY": -0.06,
+    "US06": 3.6,
+    "SC03": -3.44,
+    "COLD_FTP_20F": -9.82
+   },
+   "bag1_over_bag3": {
+    "sim": 0.8878,
+    "epa": 0.921
+   },
+   "sc03_hvac_W": 2206,
+   "sc03_cabin_C": {
+    "start": 45.0,
+    "t120_300_595": [
+     31.4,
+     29.4,
+     28.1
+    ]
+   },
+   "cold_bags": {
+    "bag1": {
+     "sim": 33.92,
+     "epa": 26.4810334
+    },
+    "bag2": {
+     "sim": 39.13,
+     "epa": 49.4206437
+    },
+    "bag3": {
+     "sim": 40.75,
+     "epa": 39.7253743
+    }
+   }
+  },
+  {
+   "name": "2024 Ford Escape FWD HEV",
+   "architecture": "hev_powersplit",
+   "cls": "suv",
+   "split": "dev",
+   "sim": {
+    "FTP": 61.51,
+    "HWY": 53.78
+   },
+   "epa": {
+    "FTP": 59.2,
+    "HWY": 52.6
+   },
+   "err_pct": {
+    "FTP": 3.9,
+    "HWY": 2.24
+   }
+  },
+  {
+   "name": "2024 HYUNDAI SONATA HYBRID",
+   "architecture": "hev_parallel_p2",
+   "cls": "car",
+   "split": "dev",
+   "sim": {
+    "FTP": 65.05,
+    "HWY": 64.42,
+    "US06": 42.17,
+    "SC03": 44.18,
+    "COLD_FTP_20F": 41.37
+   },
+   "epa": {
+    "FTP": 56.3,
+    "HWY": 67.0,
+    "US06": 44.5,
+    "SC03": 43.3,
+    "COLD_FTP_20F": 41.1
+   },
+   "err_pct": {
+    "FTP": 15.54,
+    "HWY": -3.86,
+    "US06": -5.24,
+    "SC03": 2.02,
+    "COLD_FTP_20F": 0.65
+   },
+   "sc03_hvac_W": 1822,
+   "sc03_cabin_C": {
+    "start": 45.0,
+    "t120_300_595": [
+     31.1,
+     29.0,
+     27.6
+    ]
+   },
+   "cold_bags": {
+    "bag1": {
+     "sim": 37.73,
+     "epa": 25.6336
+    },
+    "bag2": {
+     "sim": 40.67,
+     "epa": 52.212
+    },
+    "bag3": {
+     "sim": 46.22,
+     "epa": 43.3454
+    }
+   }
+  },
+  {
+   "name": "2024 HONDA ACCORD",
+   "architecture": "hev_series",
+   "cls": "car",
+   "split": "dev",
+   "sim": {
+    "FTP": 68.69,
+    "HWY": 62.27,
+    "US06": 42.35,
+    "SC03": 45.52,
+    "COLD_FTP_20F": 39.86
+   },
+   "epa": {
+    "FTP": 72.4,
+    "HWY": 66.9,
+    "US06": 46.3,
+    "SC03": 44.1,
+    "COLD_FTP_20F": 44.3
+   },
+   "err_pct": {
+    "FTP": -5.12,
+    "HWY": -6.92,
+    "US06": -8.54,
+    "SC03": 3.22,
+    "COLD_FTP_20F": -10.02
+   },
+   "sc03_hvac_W": 1822,
+   "sc03_cabin_C": {
+    "start": 45.0,
+    "t120_300_595": [
+     31.1,
+     29.0,
+     27.6
+    ]
+   },
+   "cold_bags": {
+    "bag1": {
+     "sim": 35.17,
+     "epa": 30.8
+    },
+    "bag2": {
+     "sim": 40.95,
+     "epa": 51.6
+    },
+    "bag3": {
+     "sim": 41.98,
+     "epa": 47.2
+    }
+   }
+  },
+  {
+   "name": "2024 Tesla Model 3 RWD",
+   "architecture": "bev",
+   "cls": "car",
+   "split": "dev",
+   "sim": {
+    "UDDS": 192.84,
+    "HWY": 167.49
+   },
+   "epa": {
+    "UDDS": 199.5,
+    "HWY": 178.0
+   },
+   "err_pct": {
+    "UDDS": -3.34,
+    "HWY": -5.91
+   },
+   "unit": "MPGe"
+  },
+  {
+   "name": "2024 Ford F-150 Lightning",
+   "architecture": "bev",
+   "cls": "pickup",
+   "split": "dev",
+   "sim": {
+    "UDDS": 117.5,
+    "HWY": 87.86
+   },
+   "epa": {
+    "UDDS": 108.9,
+    "HWY": 86.7
+   },
+   "err_pct": {
+    "UDDS": 7.9,
+    "HWY": 1.34
+   },
+   "unit": "MPGe"
+  },
+  {
+   "name": "2024 KIA Niro Electric",
+   "architecture": "bev",
+   "cls": "suv",
+   "split": "dev",
+   "sim": {
+    "UDDS": 17.87,
+    "HWY": 22.92
+   },
+   "epa": {
+    "UDDS": 18.4,
+    "HWY": 23.0
+   },
+   "err_pct": {
+    "UDDS": 2.94,
+    "HWY": 0.33
+   },
+   "unit": "kWh/100mi"
+  }
+ ],
+ "wall_s": 7.1,
+ "roadsim_version": "1.0.0",
+ "physics": "roadsim-physics-v1",
+ "options": "roadsim-physics-v2",
+ "options_name": "roadsim-physics-v2",
+ "split_run": "dev"
+}

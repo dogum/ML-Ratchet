@@ -1,6 +1,6 @@
 {
  "about": "RoadSim physics v2 (draft): the option values of the preset roadsim-physics-v2 (roadsim/options.py loads \"preset\" from this file) and, for every fitted number, the dev data it came from. Calibrated on dev only (VED dev cars, EPA dev vehicles of checks/epa_vehicles.json, D3 dev vehicles). The decision log is roadsim/CALIBRATION.md. Conventional and shared physics: calibration agent 1 (14 Nov 2026); hybrid, PHEV and BEV control: still the B1/B2 values, to be calibrated by agent 2.",
- "status": "draft",
+ "status": "draft: conventional and shared physics calibrated on dev (agent 1, 14 Nov 2026); hybrid/PHEV/BEV control still B1/B2 values",
  "preset": {
   "p2_torque_converter": true,
   "hybrid_start_energy": true,
@@ -20,12 +20,38 @@
   "eng_eta_scale": 1.0,
   "eng_lowload_W_per_L": 0.0,
   "eng_dfmep_bar": 0.0,
-  "eng_family_adj": {},
+  "eng_family_adj": {
+   "gas_na_toyota_a25a": {
+    "eng_eta_scale": 1.04,
+    "eng_lowload_W_per_L": 450.0,
+    "eng_dfmep_bar": 0.0
+   },
+   "gas_turbo_honda_15": {
+    "eng_eta_scale": 1.04,
+    "eng_lowload_W_per_L": 450.0,
+    "eng_dfmep_bar": 0.0
+   },
+   "gas_turbo_ford_27": {
+    "eng_eta_scale": 1.04,
+    "eng_lowload_W_per_L": 450.0,
+    "eng_dfmep_bar": 0.0
+   },
+   "gas_v6_gm_43": {
+    "eng_eta_scale": 1.04,
+    "eng_lowload_W_per_L": 450.0,
+    "eng_dfmep_bar": 0.0
+   },
+   "gas_v8_ford_73": {
+    "eng_eta_scale": 1.04,
+    "eng_lowload_W_per_L": 450.0,
+    "eng_dfmep_bar": 0.0
+   }
+  },
   "fead_drag_Nm": 0.0,
   "axle_cold": true,
   "tire_thermal": true,
   "tire_temp_coef": 0.008,
-  "tire_dyno_frac": 0.6,
+  "tire_dyno_frac": 1.0,
   "hvac_model": "v2",
   "hvac_T_set": 21.5,
   "hvac_recirc_heat": 0.3,
@@ -42,15 +68,27 @@
   "batt_age": null,
   "batt_soc_window": null,
   "batt_heat_T_on": -10.0,
-  "thermal_params": {},
+  "thermal_params": {
+   "oil_C_J_K_per_L": 10000.0,
+   "oil_C0_J_K": 12000.0,
+   "oil_fric_scale": 0.25,
+   "cop_eta_belt": 0.25
+  },
   "substeps": 1,
-  "tyre_model": false,
+  "tyre_model": true,
   "wind_profile": "log",
   "wind_z0_ref_m": 0.03,
-  "wind_z0_site_m": 0.1,
+  "wind_z0_site_m": 0.3,
   "wind_shelter": 1.0,
   "wind_gusts": false,
-  "drafting": false
+  "drafting": false,
+  "aux_base_W": 250.0,
+  "conv_tc_open_gears": 2,
+  "conv_tc_slip_rpm": 30.0,
+  "eng_transient_fuel": 0.5,
+  "onroad_aux_W": {
+   "conv": 700.0
+  }
  },
  "provenance": {
   "p2_torque_converter": "work-package default (B1/B2/B3 preset), not fitted",
@@ -71,12 +109,12 @@
   "eng_eta_scale": "work-package default (B1/B2/B3 preset), not fitted",
   "eng_lowload_W_per_L": "work-package default (B1/B2/B3 preset), not fitted",
   "eng_dfmep_bar": "work-package default (B1/B2/B3 preset), not fitted",
-  "eng_family_adj": "work-package default (B1/B2/B3 preset), not fitted",
+  "eng_family_adj": "fitted: conventional gasoline maps only (diesel and the hybrid Atkinson map unchanged); minimises the weighted squared median FE error of D3 dev extended hot UDDS + HWFET phases (weight 2), EPA check dev conventional FTP + HWY and EPA dev pool FTP + HWY (weight 1); see CALIBRATION.md rung C3",
   "fead_drag_Nm": "work-package default (B1/B2/B3 preset), not fitted",
   "axle_cold": "work-package default (B1/B2/B3 preset), not fitted",
   "tire_thermal": "work-package default (B1/B2/B3 preset), not fitted",
   "tire_temp_coef": "work-package default (B1/B2/B3 preset), not fitted",
-  "tire_dyno_frac": "work-package default (B1/B2/B3 preset), not fitted",
+  "tire_dyno_frac": "fitted: D3 dev 20 F tests (UDDS hot start +6.0 -> +4.3 % FE, cold start) and EPA pool cold FTP (n 43, +2.0 -> +0.2 %); physically the whole tyre loss on the roll is the vehicle's own",
   "hvac_model": "work-package default (B1/B2/B3 preset), not fitted",
   "hvac_T_set": "work-package default (B1/B2/B3 preset), not fitted",
   "hvac_recirc_heat": "work-package default (B1/B2/B3 preset), not fitted",
@@ -93,14 +131,31 @@
   "batt_age": "work-package default (B1/B2/B3 preset), not fitted",
   "batt_soc_window": "work-package default (B1/B2/B3 preset), not fitted",
   "batt_heat_T_on": "work-package default (B1/B2/B3 preset), not fitted",
-  "thermal_params": "work-package default (B1/B2/B3 preset), not fitted",
-  "substeps": "work-package default (B1/B2/B3 preset), not fitted",
-  "tyre_model": "work-package default (B1/B2/B3 preset), not fitted",
+  "thermal_params": {
+   "oil_C_J_K_per_L": "fitted: oil node capacity x2 so the oil follows the D3 dev dipstick at -7 C (UDDS cold start, CX9/Accord/Camry: 62/56/53 C sim vs 64/49/60 C measured at 1300 s; B2 values gave 71/70/60)",
+   "oil_C0_J_K": "fitted with oil_C_J_K_per_L (x2)",
+   "oil_fric_scale": "fitted: keeps the 24 C cold-start penalty after the slower oil (D3 dev extended UDDS cold start vs hot start at test-cell temperature: +0.1 vs +0.9 % FE)",
+   "cop_eta_belt": "fitted: belt A/C COP / Carnot 0.33 -> 0.25: D3 dev Accord LX SC03 fuel with A/C auto vs off x1.28 sim vs x1.29 measured (x1.21 at 0.33); D3 SC03 AUTO phases +0.3 %, EPA pool SC03 -0.7 % (n 47), check-dev Sonata SC03 +3.9 %"
+  },
+  "substeps": "rejected as default: B3 measured <= 0.1 % trip energy change (0.8 % worst P2) at 10x run time; use substeps=10 for drivability / OBD-like signals",
+  "tyre_model": "decided: +0.5 % fuel on VED dev conventional twins (slip losses), costs 8 % run time (conventional, 1 Hz) / 2 % (hybrid); kept for the physics (regen and traction limits for agent 2)",
   "wind_profile": "work-package default (B1/B2/B3 preset), not fitted",
   "wind_z0_ref_m": "work-package default (B1/B2/B3 preset), not fitted",
-  "wind_z0_site_m": "work-package default (B1/B2/B3 preset), not fitted",
+  "wind_z0_site_m": "decided: EN 1991-1-4 terrain category III (suburban Ann Arbor roads) instead of 0.1; VED dev conventional twins: error spread calm vs windy trips 5.2 -> 4.7 points (B3 log profile already removed most of v1's windy-day bias)",
   "wind_shelter": "work-package default (B1/B2/B3 preset), not fitted",
-  "wind_gusts": "work-package default (B1/B2/B3 preset), not fitted",
-  "drafting": "work-package default (B1/B2/B3 preset), not fitted"
- }
+  "wind_gusts": "rejected for the default: no change on VED dev twins (-9.05 vs -9.05 % median), adds a random realisation; stays an option",
+  "drafting": "no gap data in any dev set; stays an option",
+  "aux_base_W": "measured: median alternator output of the D3 dev extended-era conventional cars on hot std-temperature UDDS/HWFET/US06 tests, HVAC off (CX9 262, Accord LX 246, Camry XLE 243, Blazer 202 W; 108 tests)",
+  "conv_tc_open_gears": "measured: D3 dev Camry XLE (8AT) and CX9 (6AT) engine minus turbine speed on hot UDDS/HWFET/US06: 1st gear always open (400-740 rpm slip), 2nd mostly open (40-310 rpm; CX9 130-166 rpm, locked < 10 % of the time)",
+  "conv_tc_slip_rpm": "measured: same D3 data, locked gears 3 to top-1 run 15-70 rpm controlled slip under drive (Camry 20-50, CX9 15-70 rpm); top gear ~0-15 rpm",
+  "eng_transient_fuel": "fitted with eng_family_adj (same objective); D3 dev metered fuel shows accelerations under-fuelled and steady cruise over-fuelled at equal load; 0.5 s balances D3 US06 (+7.6 % FE) and EPA pool US06 (-1.4 %)",
+  "onroad_aux_W": "fitted (conventional only; other architectures 0 until agent 2 fits them): VED dev conventional label-matched twins, median over the 8 cars of the per-car median trip error -> 0 (-8.1 -> -0.4 %; trip median -9.1 -> -2.3 %); flat across temperature bands; replaces EnergyNet's empirical rw (1380 W fuel power + 133 W/K above 15 C) now that A/C, heater, wind height and the label model are physics"
+ },
+ "dev_data": {
+  "VED": "realdata.load_trips(\"dev\") cars of data/proc/splits.json; label matched twins (checks/check_ved_twin.py)",
+  "EPA": "checks/epa_vehicles.json split dev + checks/epa_dev_pool.json (RoadData dev families, held-out families excluded)",
+  "D3": "data/proc/d3/splits.json dev vehicles: 2016 Mazda CX9, 2018 Honda Accord LX, 2018 Toyota Camry XLE, 2019 Chevrolet Blazer (metered, weighted most); legacy-era conventional cars (modal fuel) shapes only",
+  "ZTBus": "realdata.ztbus_full(\"dev\") standstill power (checked, nothing fitted)"
+ },
+ "log": "roadsim/CALIBRATION.md"
 }
