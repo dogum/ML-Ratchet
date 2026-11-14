@@ -31,6 +31,14 @@ def timeit(spec, trip, strat=None, reps=3):
     return len(trip['v']) / best, o['ledger']['closure_rel']
 
 
+def _cpu():
+    import platform
+    try:
+        return open('/proc/cpuinfo').read().split('model name')[1].split(chr(10))[0].strip(': ')
+    except OSError:
+        return platform.processor() or platform.machine()
+
+
 def main():
     res = {}
     L = long_trip(); U = make_trip('udds', T_amb=20)
@@ -67,7 +75,7 @@ def main():
     t = time.perf_counter(); simulate(spec, U, strategy='dp'); res['DP on UDDS (solve + forward run), s'] = round(time.perf_counter() - t, 2)
     t = time.perf_counter(); simulate(spec, U, strategy='mpc'); res['MPC 15 s horizon on UDDS, s'] = round(time.perf_counter() - t, 2)
     out = dict(check='speed benchmark (single thread)', method=__doc__.strip(), target='>= 200x real time for a 1 Hz car trip', results=res,
-               cpu=open('/proc/cpuinfo').read().split('model name')[1].split('\n')[0].strip(': '))
+               cpu=_cpu())
     json.dump(out, open(os.path.join(HERE, 'speed.json'), 'w'), indent=1)
     print(json.dumps(res, indent=1))
 
