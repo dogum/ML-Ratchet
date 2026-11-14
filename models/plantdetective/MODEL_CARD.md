@@ -92,11 +92,7 @@ context at test time. No choice was made from them: training used only 2018/2020
 error-bar factors used the dev years 2019 and 2021. Whether to keep this or restrict the context to pre-exam years is an
 open decision (see `model.yaml` `next`).
 
-**Reproduction in this repository (14 Nov 2026).** The 395-unit exam was not re-run here: the CAMPD hourly unit data
-(`shared/grid/data/proc/campd/`) are not part of the shipped platform data (they rebuild with
-`mlratchet data grid --only campd`, about 6 GB of downloads). What was reproduced: the demo prints the release's numbers
-on its three exam units to every printed digit; its pooled readings agree with the Python readings stored in the lab page
-for the same units to 1.7e-4 relative (the examples store prices as float32); `check_dp` gives 1.0058963487522703e-14.
+**Reproduction in this repository (14 Nov 2026).** The full 395-unit exam was re-run from the shipped weights on CAMPD hourly data rebuilt that day from EPA's bulk files (`mlratchet data grid --only campd`; the release ships no CAMPD tables): `cache_real.py dev|exam`, `dev_medians.py`, `exam.py R4_ens exam`, `report.py`, with the ensemble unpacked from `plantdetective_weights.npz` into `work/`. The report is identical to `training/exam_report.txt` on all 190 lines. The demo prints the release's numbers on its three exam units; its pooled readings agree with the lab page's stored readings to 1.7e-4 relative (the examples store prices as float32); `check_dp` gives 1.0058963487522703e-14.
 
 ## Limits
 - Combined-cycle heat rate biased +21 %: the 3 dev CC plants (two cogeneration, one gas-turbine-only reporting) pushed the

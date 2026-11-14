@@ -91,7 +91,6 @@ Coverage of the 68% error bars on the exam: Min stable load (year windows) **69%
 - Minimum up and down times (5th percentile of spells) are noisy targets with the worst coverage (min up: 48% inside the 68% band).
 - Calibrated on 10 dev plants; ERCOT hub prices are used for every unit, including the SPP, MISO and El Paso ones; ramp truth is the observed 99th-percentile change, a lower bound on capability.
 - The exam fed 2023-2025 ERCOT hub prices (exam years) as optional context at test time; no choices were made from them. Training used only 2018/2020/2022 prices.
-- The 395-unit exam was not re-run in this repository: the CAMPD hourly data are not in the shipped platform data. The demo's three units reproduce the release; check_dp reproduces to the digit.
 
 ## The ratchet
 

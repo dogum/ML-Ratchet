@@ -105,3 +105,14 @@ ports `pdcore.features`, `window_vector`, `Detective.windows`, the ensemble, the
 relative difference over all outputs 8.8e-7. Float16 weights move the estimates by at most 2.1e-4 relative. The first
 export used float16-rounded normalisation constants in the Python reference while the browser read float32 ones, which
 gave 2.3e-3; the reference now uses the same float32 values.
+
+## 14 Nov 2026 — the 395-unit exam re-run from the shipped weights
+
+The CAMPD hourly tables were rebuilt from EPA's no-key bulk files (`mlratchet data grid --only campd`: 8 Texas state-years,
+about 10 minutes of downloads on the repository's machine; `units.parquet` has 452 units, as in the build). The ensemble's
+three members were unpacked from `plantdetective_weights.npz` into `work/data/models/R4_ens_s{0,1,2}.npz`, then
+`cache_real.py exam`, `cache_real.py dev`, `dev_medians.py`, `exam.py R4_ens exam` and `report.py` ran as shipped (26 min
+for the exam step, single thread). The report is identical to `training/exam_report.txt` on all 190 lines (line endings
+aside): every exam number in `model.yaml` and the card reproduces. The paragraph above saying the exam was not reproduced
+is superseded; it stays as the record of that pass.
+
