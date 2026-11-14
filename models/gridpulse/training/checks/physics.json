@@ -1,0 +1,46 @@
+{
+ "GB": {
+  "n": 100,
+  "initial_rocof_vs_formula_max_rel_err": 0.0010496344091147636,
+  "median_rel_err": 0.00025988085774697467,
+  "note": "slope over the first 20 ms (governors have not moved yet); first loss step only"
+ },
+ "ERCO": {
+  "n": 100,
+  "initial_rocof_vs_formula_max_rel_err": 0.0012414777307868663,
+  "median_rel_err": 0.0005123574796336849,
+  "note": "slope over the first 20 ms (governors have not moved yet); first loss step only"
+ },
+ "dc_knee": [
+  {
+   "df_Hz": 0.01,
+   "model_MW": 0.0,
+   "NESO_curve_MW": 0.0
+  },
+  {
+   "df_Hz": 0.1,
+   "model_MW": 22.972972972972972,
+   "NESO_curve_MW": 22.972972972972975
+  },
+  {
+   "df_Hz": 0.2,
+   "model_MW": 50.0,
+   "NESO_curve_MW": 50.0
+  },
+  {
+   "df_Hz": 0.3,
+   "model_MW": 366.66666666666663,
+   "NESO_curve_MW": 366.6666666666666
+  },
+  {
+   "df_Hz": 0.5,
+   "model_MW": 1000.0,
+   "NESO_curve_MW": 1000.0
+  },
+  {
+   "df_Hz": 0.8,
+   "model_MW": 1000.0,
+   "NESO_curve_MW": 1000.0
+  }
+ ]
+}
