@@ -25,7 +25,7 @@ def read_txt(fn):
 
 
 def cfr_table(fn):
-    t = open(fn).read()
+    t = open(fn, encoding="utf-8").read()   # eCFR XML is UTF-8 (U+2212 minus signs); the Windows default codec is not
     rows = re.findall(r'<TR>\s*<TD[^>]*>([^<]*)</TD>\s*<TD[^>]*>([^<]*)</TD>\s*</TR>', t)
     a = [(float(x.replace(',', '')), float(y.replace('−', '-').replace('−', '-'))) for x, y in rows if re.match(r'^[\d.,]+$', x.strip())]
     return np.array(a)

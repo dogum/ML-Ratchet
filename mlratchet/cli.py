@@ -8,6 +8,7 @@
     mlratchet validate [id ...]      check folders against the model contract
     mlratchet new gridpulse          scaffold a new model from the template
     mlratchet readme --write         regenerate model READMEs from model.yaml + ratchet.yaml
+    mlratchet data vehicle           download + rebuild the vehicle platform's real data (resumable)
 """
 from __future__ import annotations
 
@@ -203,6 +204,17 @@ def cmd_readme(args) -> int:
     return 1 if stale else 0
 
 
+DATA_TARGETS = {"vehicle": ("shared", "vehicle", "data", "build.py")}
+
+
+def cmd_data(args) -> int:
+    """Thin wrapper: the work is in the target's build script (e.g. shared/vehicle/data/build.py)."""
+    import subprocess
+
+    script = repo_root().joinpath(*DATA_TARGETS[args.target])
+    return subprocess.run([sys.executable, "-I", str(script), *args.extra]).returncode
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="mlratchet", description="Physics-first models that only ratchet up.")
     p.add_argument("--version", action="version", version=f"mlratchet {__version__}")
@@ -218,6 +230,10 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("ids", nargs="*"); g = s.add_mutually_exclusive_group()
     g.add_argument("--write", action="store_true"); g.add_argument("--check", action="store_true")
     s.set_defaults(fn=cmd_readme)
+    s = sub.add_parser("data", help="download and rebuild a shared dataset (resumable)",
+                       description="Pass --list for the stages; other options (--only, --from, --jobs, --offline) go to the build script.")
+    s.add_argument("target", choices=sorted(DATA_TARGETS)); s.add_argument("extra", nargs=argparse.REMAINDER)
+    s.set_defaults(fn=cmd_data)
     args = p.parse_args(argv)
     return args.fn(args)
 

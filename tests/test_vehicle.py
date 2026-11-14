@@ -46,3 +46,22 @@ def test_realdata_reads_the_shipped_tables():
     assert len(epa) > 100
     cyc = rd.cycles()
     assert len(cyc) >= 20
+
+
+def test_rebuilt_ved_dev_trips_load():
+    """After `mlratchet data vehicle`: dev VED trips carry grade, weather and a fuel label (skipped without the data)."""
+    import pytest
+
+    if not (VEH / "data" / "proc" / "ved" / "index.parquet").exists():
+        pytest.skip("VED trips not built here (run `mlratchet data vehicle`)")
+    import numpy as np
+    import realdata as rd
+
+    trips = list(rd.load_trips("dev", arch="conv", label_ok=True, limit=3, seed=0))
+    assert len(trips) == 3
+    for meta, a in trips:
+        assert meta["split"] == "dev" and meta["vehicle_id"] in rd.splits()["VED"]["vehicles"]
+        assert np.isfinite(a["grade"]).all() and np.abs(a["grade"]).max() <= 0.15 + 1e-6
+        assert np.isfinite(a["T_amb"]).all() and np.isfinite(a["rho_air"]).all()
+        assert np.nansum(a["fuel_rate"]) > 0 and meta["fuel_g"] > 0
+    assert (VEH / "data" / "proc" / "dem_annarbor_2m.npz").exists()

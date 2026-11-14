@@ -7,7 +7,8 @@ ROOT = _VEH + '/data'
 KEYS = {'t', 'v', 'grade', 'elev', 'lat', 'lon', 'heading', 'T_amb', 'wind_speed', 'wind_dir', 'rho_air', 'surface',
         'fuel_rate', 'engine_rpm', 'batt_current', 'batt_voltage', 'soc', 'aux_power'}
 rows, bad = [], []
-for jf in sorted(glob.glob(f'{ROOT}/proc/ved/trips/*/*.json')):
+# sort on '/'-separated paths: the row order (and so load_trips(limit=, seed=) draws) must not depend on the OS
+for jf in sorted(glob.glob(f'{ROOT}/proc/ved/trips/*/*.json'), key=lambda p: p.replace(os.sep, '/')):
     m = json.load(open(jf))
     nf = jf[:-5] + '.npz'
     try:
@@ -16,7 +17,7 @@ for jf in sorted(glob.glob(f'{ROOT}/proc/ved/trips/*/*.json')):
             if z.testzip() is not None or not KEYS <= names: raise ValueError('keys/crc')
     except Exception as e:
         bad.append((jf, repr(e))); continue
-    m['path'] = os.path.relpath(nf, f'{ROOT}/proc/ved')
+    m['path'] = os.path.relpath(nf, f'{ROOT}/proc/ved').replace(os.sep, '/')
     rows.append(m)
 idx = pd.DataFrame(rows)
 idx.to_parquet(f'{ROOT}/proc/ved/index.parquet', index=False)

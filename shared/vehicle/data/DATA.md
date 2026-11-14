@@ -253,6 +253,41 @@ scripts/epa_testcars.py; scripts/fe_labels.py; scripts/cycles.py; scripts/hd.py;
 scripts/baselines.py; scripts/qc.py
 ```
 
+### One command: `mlratchet data vehicle` (13 Nov 2026)
+
+```bash
+mlratchet data vehicle                 # everything; safe to re-run, resumes where it stopped
+mlratchet data vehicle --list          # stages, and which downloads are still missing
+mlratchet data vehicle --only tables,verify    # or --from stage2, --offline, --jobs 8
+```
+
+The work is in `data/build.py` (also runnable as `python -I shared/vehicle/data/build.py`). It needs `py7zr`,
+`rasterio` and `openpyxl` on top of numpy/pandas/scipy/pyarrow. Stages, in order:
+
+| Stage | What | Time here (16 cores) |
+|---|---|---|
+| `fetch` | every raw file missing from `raw/<source>/` (2.05 GB; resumes partial files; generic User-Agent; IEM one request at a time) | 21 min (the four DEM tiles, 1.74 GB) |
+| `stage1` | VED .7z -> `proc/ved_stage1/`, CSV shards in parallel | 31 s |
+| `survey`, `splits_ved` | signal survey; `make_splits_ved.py` must reproduce the frozen VED split (it does, 384 vehicles), then the frozen part is used | 20 s |
+| `dem` | `proc/dem_annarbor_2m.npz` (tiles deleted afterwards) | 8 s |
+| `stage2`, `index` | 33,015 trips in `proc/ved/trips/` (16 buckets in parallel), `proc/ved/index.parquet` | 102 s + 6 min |
+| `tables` | EPA, fueleconomy, cycles, HD, splits, baselines, QC, built in a shadow root `data/work/rebuild/` | 2.5 min |
+| `refdata` | `roadsim/refdata/` copied from the same raw files, `roadsim/tools/epa_candidates.py`; shadow runs of `build_cycles.py` and `build_generator_calib.py` | 30 s |
+| `verify` | splits.json sha256, rebuilt vs shipped tables, a dev-trip load; report in `data/work/rebuild_report.json` | 5 s |
+
+Tracked files are never overwritten: tables are rebuilt in the shadow root and compared. `proc/splits.json` is never
+written; the rebuilt one is compared and the frozen one is used. Result of the first full run (Windows 11, Python 3.14,
+pandas 3.1): splits sha256 d917df78… unchanged, and the rebuilt splits file has the same content. All 236 shipped
+tables match: `baselines/summary.json`, `ved_exam/ved_dev.parquet`, every EPA/fueleconomy/cycle/ZTBus/Mersin table and
+the roadsim `cycles.npz`/`generator_calib.json` are equal in value. The only differences are four grade statistics in
+`checks/qc_summary.json`, at about 1e-8 relative (float noise). `checks/dem_vs_epqs.csv` is not rebuilt (it needs 40
+EPQS calls; run `scripts/dem_check_epqs.py` by hand).
+
+Choices the scripts did not record, fixed by matching the shipped tables: IEM ASOS with routine and special reports
+(routine only moves trip T_amb by up to 1.3 degC), 2017-10-31 to 2018-11-13 UTC (gives QC's 8,830 joint ARB/YIP hours);
+eCFR at the latest issue date. `build_maps.py` needs the EPA ALPHA packages in `roadsim/refdata/alpha/`, which this
+command does not fetch.
+
 ## Fixes after Phase 2 (13 Nov 2026, found by the EnergyNet agent; splits.json unchanged, sha256 d917df78…)
 - **EPA test-car cycle labels were swapped.** Procedure code 3 is HWFE (highway) and code 21 is the federal 2-day FTP; the
   build mapped them the other way. Fixed in `scripts/epa_testcars.py` and rebuilt. Conventional medians are now FTP 24.5 mpg,

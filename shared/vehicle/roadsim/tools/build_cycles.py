@@ -35,7 +35,7 @@ def read_epa_txt(fn):
 
 
 def ecfr_text(fn):
-    t = open(os.path.join(REF, 'ecfr', fn)).read()
+    t = open(os.path.join(REF, 'ecfr', fn), encoding='utf-8').read()
     t = re.sub('<[^>]+>', ' ', t)
     return ' '.join(t.split()).replace('−', '-').replace('−', '-')
 

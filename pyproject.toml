@@ -23,6 +23,7 @@ dependencies = ["numpy>=1.24", "scipy>=1.10", "pyyaml>=6"]
 [project.optional-dependencies]
 models = ["pandas>=2", "h5py>=3"]        # SunDoctor reads CSV with pandas; ChirpNet reads GWOSC HDF5
 vehicle = ["pandas>=2", "pyarrow>=14"]   # RoadData (realdata) reads parquet; RoadSim itself is numpy/scipy
+vehicle-data = ["pandas>=2", "pyarrow>=14", "py7zr>=0.21", "rasterio>=1.3", "openpyxl>=3"]   # `mlratchet data vehicle` (rebuild from raw)
 train = ["torch>=2.6", "pandas>=2", "pyarrow>=14", "fastsim==3.1.0"]   # training only (GPU: install torch from download.pytorch.org/whl/cu128 first); inference stays numpy
 dev = ["pytest>=8", "jsonschema>=4", "pandas>=2", "h5py>=3", "pyarrow>=14"]
 
