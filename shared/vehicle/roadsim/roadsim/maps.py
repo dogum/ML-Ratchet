@@ -56,11 +56,21 @@ class Grid2:
         return (z[k] + dz[k] * wy) * (1.0 - wx) + (z[k + ny] + dz[k + ny] * wy) * wx
 
     def vec(self, x, y):
-        fx = _clip((np.asarray(x, float) - self.x0) * self.ix, 0.0, self.nx1)
+        ny = self.ny
+        fx = (x - self.x0) * self.ix if type(x) is float else None
+        if fx is not None and fx == fx:
+            # x a Python float (a motor speed): the same clip and split in scalar arithmetic (np.clip's
+            # max-then-min order, a > b ? a : b), so only y goes through numpy
+            fx = fx if fx > 0.0 else 0.0
+            fx = fx if fx < self.nx1 else self.nx1
+            i = int(fx); wx = fx - i
+        else:
+            fx = _clip((np.asarray(x, float) - self.x0) * self.ix, 0.0, self.nx1)
+            i = fx.astype(np.int64); wx = fx - i
         fy = _clip((np.asarray(y, float) - self.y0) * self.iy, 0.0, self.ny1)
-        i = fx.astype(np.int64); j = fy.astype(np.int64)
-        wx = fx - i; wy = fy - j
-        ny = self.ny; k = i * ny + j; k1 = k + ny
+        j = fy.astype(np.int64)
+        wy = fy - j
+        k = i * ny + j; k1 = k + ny
         Z = self.Zf; dZ = self.dZf
         return (Z[k] + dZ[k] * wy) * (1.0 - wx) + (Z[k1] + dZ[k1] * wy) * wx
 

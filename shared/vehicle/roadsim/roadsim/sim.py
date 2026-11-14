@@ -801,20 +801,21 @@ def _hybrid_fixed(pt, veh, F, u, st, env, ctrl0=True):
 
 
 def _finalize(pt, veh, C, j, env, st, strat):
+    # (x.item(j) = float(x[j]) for the 1-D float arrays of C, without the numpy scalar in between)
     on = bool(C['on'][j])
-    Pf = float(C['P_fuel'][j])
+    Pf = C['P_fuel'].item(j)
     if on and not st.get('eng_on', False) and strat is not None and hasattr(strat, 'start_W'):
         Pf += strat.start_W            # start-up fuel (cranking, enrichment) booked as engine loss
     elif on and env.get('start_spread') and st.get('t_on', 99.0) < 1.0 - 1e-9 and strat is not None and hasattr(strat, 'start_W'):
         Pf += strat.start_W            # sub-steps: the start cost (start_W over one second) lasts the whole first second
-    plan = dict(F=float(C['T_w'][j]) / veh.r, P_fuel=Pf, P_eng=float(C['P_e'][j]) if on or veh.arch in ('hev_powersplit', 'phev_powersplit') else 0.0,
-                w_e=float(C['w_e'][j]), T_e=float(C['T_e'][j]), eng_on=on, gear=int(C.get('gear', 0) or 0),
-                P_trans=float(C['P_trans'][j]), P_mot=float(C['P_mot'][j]), P_batt=float(C['P_batt'][j]),
+    plan = dict(F=C['T_w'].item(j) / veh.r, P_fuel=Pf, P_eng=C['P_e'].item(j) if on or veh.arch in ('hev_powersplit', 'phev_powersplit') else 0.0,
+                w_e=C['w_e'].item(j), T_e=C['T_e'].item(j), eng_on=on, gear=int(C.get('gear', 0) or 0),
+                P_trans=C['P_trans'].item(j), P_mot=C['P_mot'].item(j), P_batt=C['P_batt'].item(j),
                 P_aux=env['P_aux_el'])
-    for a, b in (('T_m', 'T_m'), ('w_m', 'w_m'), ('P_m_el', 'P_m_el'), ('T_g', 'T_g'), ('w_g', 'w_g'), ('P_g_el', 'P_g_el')):
-        if b in C:
-            plan[a] = float(C[b][j])
+    for a in ('T_m', 'w_m', 'P_m_el', 'T_g', 'w_g', 'P_g_el'):
+        if a in C:
+            plan[a] = C[a].item(j)
     if 'T2' in C:
-        plan['T_m'] = float(C['T2'][j]); plan['w_m'] = float(C['w2'][j])
-        plan['T_g'] = float(C['T1'][j]); plan['w_g'] = float(C['w_s'][j])
+        plan['T_m'] = C['T2'].item(j); plan['w_m'] = C['w2'].item(j)
+        plan['T_g'] = C['T1'].item(j); plan['w_g'] = C['w_s'].item(j)
     return plan

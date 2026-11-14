@@ -15,9 +15,38 @@ strategy (strategies.py) picks one and `finalize` turns it into a plan.
 """
 import math
 import numpy as np
+from .maps import _clip
 
 ETA_ALT = 0.65      # alternator efficiency (conventional 12 V supply)
 ETA_DCDC = 0.93     # HV -> 12 V DC/DC efficiency
+
+
+def _bcast(a, b):
+    """np.broadcast_arrays(a, b) for float arrays, without its overhead in the usual (scalar, vector) case: the same
+    values (a writable copy instead of a read-only view)."""
+    if a.shape == b.shape:
+        return a, b
+    if a.ndim == 0 and b.ndim == 1:
+        return np.full(b.shape, a), b
+    if b.ndim == 0 and a.ndim == 1:
+        return a, np.full(a.shape, b)
+    return np.broadcast_arrays(a, b)
+
+
+_GRIDS = {}
+
+
+def _grid(lo, hi, n):
+    """np.concatenate([[0.0], np.linspace(lo, hi, n)]), built once per (lo, hi, n) and shared read-only."""
+    key = (lo, hi, n)
+    g = _GRIDS.get(key)
+    if g is None:
+        g = np.concatenate([[0.0], np.linspace(lo, hi, n)])
+        g.flags.writeable = False
+        if len(_GRIDS) > 4096:
+            _GRIDS.clear()
+        _GRIDS[key] = g
+    return g
 
 
 def _spin(veh):
@@ -380,7 +409,7 @@ class _HybridBase(_ElecBase):
         if not start.any():
             return 0.0, 0.0, 0.0, 0.0
         w_sync = np.asarray(w_sync, float)
-        spun = np.clip(1.0 - (w_spin / np.maximum(w_sync, 1.0)) ** 2, 0.0, 1.0)
+        spun = _clip(1.0 - (w_spin / np.maximum(w_sync, 1.0)) ** 2, 0.0, 1.0)
         KE = 0.5 * e.J * w_sync ** 2 * spun
         wm = 0.5 * w_sync
         E_eng = KE + np.abs(e.tct_curve.vec(wm)) * wm * self._o('start_crank_s', 0.3) * spun
@@ -388,7 +417,7 @@ class _HybridBase(_ElecBase):
         eta = self._o('start_crank_eta', 0.85)
         need = (E_eng + E_slip) / eta / dt
         room = np.maximum(p_dis - P_batt, 0.0)
-        phi = np.where(need > 0.0, np.clip(room / np.maximum(need, 1e-9), 0.0, 1.0), 1.0)
+        phi = np.where(need > 0.0, _clip(room / np.maximum(need, 1e-9), 0.0, 1.0), 1.0)
         P_eng = np.where(start, phi * E_eng / dt, 0.0)
         P_slip = np.where(start, phi * E_slip / dt, 0.0)
         P_el = (P_eng + P_slip) / eta
@@ -409,19 +438,19 @@ class SeriesPT(_HybridBase):
     def ctrl_grid(self, n=14):
         e = self.eng
         Pmin = max(0.12 * e.P_max, 3000.0)
-        return np.concatenate([[0.0], np.linspace(Pmin, e.P_max * 0.98, n)])
+        return _grid(Pmin, e.P_max * 0.98, n)
 
     def evaluate(self, T_w, w_w, ctrl, st, env):
         """ctrl = engine brake power (W); 0 = engine off. With the option series_direct_drive, a negative ctrl -P asks
         for engine power P through the lock-up clutch (engine geared to the wheels, see dd_speed)."""
         e = self.eng; m = self.m; gen = self.gen
         T_w = np.asarray(T_w, float); P_e = np.asarray(ctrl, float)
-        T_w, P_e = np.broadcast_arrays(T_w, P_e)
+        T_w, P_e = _bcast(T_w, P_e)
         w_m = w_w * self.FD
         T_m = np.where(T_w >= 0, T_w / (self.FD * self.eta_dl), T_w * self.eta_dl / self.FD)
         lim = m.t_lim(w_m)
         ok = np.abs(T_m) <= lim + 1e-9
-        P_m = m.elec_vec(np.full_like(T_m, w_m), T_m) if w_m > 0 else np.zeros_like(T_m)
+        P_m = m.elec_vec(w_m, T_m) if w_m > 0 else np.zeros_like(T_m)
         dd_opt = self._o('series_direct_drive', False)
         dd = (P_e < -1.0) if dd_opt else np.zeros(P_e.shape, bool)
         if dd_opt:
@@ -445,8 +474,8 @@ class SeriesPT(_HybridBase):
                 T_ed = P_e / w_d
                 T_wm = T_w - T_ed * R * eta_d
                 T_md = np.where(T_wm >= 0, T_wm / (self.FD * self.eta_dl), T_wm * self.eta_dl / self.FD)
-                P_md = m.elec_vec(np.full_like(T_md, w_m), T_md)
-                P_gd = gen.elec_vec(np.full_like(T_md, w_d), np.zeros_like(T_md))
+                P_md = m.elec_vec(w_m, T_md)
+                P_gd = gen.elec_vec(w_d, np.zeros_like(T_md))
                 ok_d = (np.abs(T_md) <= lim + 1e-9) & (T_ed <= e.t_max(w_d) * 1.001)
                 ok = np.where(dd, ok_d, ok)
                 w_e = np.where(dd, w_d, w_e); T_e = np.where(dd, T_ed, T_e)
@@ -457,9 +486,11 @@ class SeriesPT(_HybridBase):
                 ok = ok & ~dd
         P_mloss = (P_m - T_m * w_m) + np.where(on, P_g - Tg * w_e, 0.0)
         P_eng = np.where(dd, T_e * w_e, P_e) if dd_opt else P_e
-        start = on & (not st.get('eng_on', True))
         P_b0 = P_m + P_g + env['P_aux_el']
-        Ps_e, Ps_slip, Ps_el, Ps_f = self.start_terms(start, self._o('start_crank_rpm', 1000.0) * math.pi / 30, P_b0, env['p_dis'])
+        if st.get('eng_on', True):          # no start this step: start_terms would return zeros
+            Ps_e = Ps_slip = Ps_el = Ps_f = 0.0
+        else:
+            Ps_e, Ps_slip, Ps_el, Ps_f = self.start_terms(on, self._o('start_crank_rpm', 1000.0) * math.pi / 30, P_b0, env['p_dis'])
         P_batt = P_b0 + Ps_el
         P_fuel = np.where(on, e.fuel_cold_vec(w_e, T_e, st['T_eng']), 0.0) + Ps_f
         ok &= (P_batt <= env['p_dis'] + 1e-6) & (P_batt >= -env['p_chg'] - 1e-6)
@@ -500,13 +531,13 @@ class SplitPT(_HybridBase):
     def ctrl_grid(self, n=14):
         e = self.eng
         Pmin = max(0.08 * e.P_max, 3000.0)
-        return np.concatenate([[0.0], np.linspace(Pmin, e.P_max * 0.98, n)])
+        return _grid(Pmin, e.P_max * 0.98, n)
 
     def evaluate(self, T_w, w_w, ctrl, st, env):
         """ctrl = engine brake power (W); 0 = engine unfueled (stopped, or spun by MG1 when the vehicle is fast)."""
         e = self.eng; rho = self.rho; k2 = self.k2; mg1 = self.mg1; mg2 = self.mg2
         T_w = np.asarray(T_w, float); P_e = np.asarray(ctrl, float)
-        T_w, P_e = np.broadcast_arrays(T_w, P_e)
+        T_w, P_e = _bcast(T_w, P_e)
         w_r = w_w * self.FD
         T_r = np.where(T_w >= 0, T_w / (self.FD * self.eta_dl), T_w * self.eta_dl / self.FD)
         w1max = mg1.w_max * 0.97
@@ -514,10 +545,10 @@ class SplitPT(_HybridBase):
         w_hi = (w_r + rho * w1max) / (1 + rho)
         on = P_e > 1.0
         w_ool = e.ool_w.vec(P_e)
-        w_on = np.clip(w_ool, max(w_lo, e.w_min_load), max(min(w_hi, e.w_max), max(w_lo, e.w_min_load)))
+        w_on = _clip(w_ool, max(w_lo, e.w_min_load), max(min(w_hi, e.w_max), max(w_lo, e.w_min_load)))
         w_spin = w_lo
         w_e = np.where(on, w_on, w_spin)
-        T_e = np.where(on, P_e / np.maximum(w_e, 1.0), np.where(w_spin > 0, e.tct_curve.vec(w_spin), 0.0))
+        T_e = np.where(on, P_e / np.maximum(w_e, 1.0), e.tct_curve.vec(w_spin) if w_spin > 0 else 0.0)
         ok = ~on | (T_e <= e.tmax_curve.vec(w_e) * 1.001)
         ok &= w_e <= e.w_max * 1.001
         w_s = (1 + 1 / rho) * w_e - w_r / rho
@@ -527,12 +558,14 @@ class SplitPT(_HybridBase):
         ok &= np.abs(w_s) <= mg1.w_max * 1.0001
         ok &= np.abs(T1) <= mg1.t_lim_vec(np.abs(w_s)) + 1e-9
         ok &= np.abs(T2) <= mg2.t_lim(w2) + 1e-9
-        P1 = mg1.elec_vec(w_s, T1); P2 = mg2.elec_vec(np.full_like(T2, w2), T2)
+        P1 = mg1.elec_vec(w_s, T1); P2 = mg2.elec_vec(w2, T2)
         # engine start (option): MG1 spins the engine up from its unfuelled speed (0 at low road speed)
-        start = on & (not st.get('eng_on', True))
         P_b0 = P1 + P2 + env['P_aux_el']
-        Ps_e, Ps_slip, Ps_el, Ps_f = self.start_terms(start, self._o('start_crank_rpm', 1000.0) * math.pi / 30, P_b0,
-                                                      env['p_dis'], w_spin=w_spin)
+        if st.get('eng_on', True):          # no start this step: start_terms would return zeros
+            Ps_e = Ps_slip = Ps_el = Ps_f = 0.0
+        else:
+            Ps_e, Ps_slip, Ps_el, Ps_f = self.start_terms(on, self._o('start_crank_rpm', 1000.0) * math.pi / 30, P_b0,
+                                                          env['p_dis'], w_spin=w_spin)
         P_batt = P_b0 + Ps_el
         ok &= (P_batt <= env['p_dis'] + 1e-6) & (P_batt >= -env['p_chg'] - 1e-6)
         P_fuel = np.where(on, e.fuel_cold_vec(w_e, T_e, st['T_eng']), 0.0) + Ps_f
@@ -589,7 +622,7 @@ class P2PT(_HybridBase):
         """ctrl = engine torque fraction of T_max at shaft speed (0 = engine off / EV, K0 open)."""
         e = self.eng; m = self.m; v = self.v
         T_w = np.asarray(T_w, float); fr = np.asarray(ctrl, float)
-        T_w, fr = np.broadcast_arrays(T_w, fr)
+        T_w, fr = _bcast(T_w, fr)
         w_o = w_w * self.FD
         T_o = np.where(T_w >= 0, T_w / (self.FD * self.eta_dl), T_w * self.eta_dl / self.FD)
         Tref = float(np.max(T_o)) if T_o.size else 0.0
@@ -617,10 +650,12 @@ class P2PT(_HybridBase):
         ok = np.abs(T_m) <= m.t_lim(w_in) + 1e-9
         ok &= w_in <= m.w_max
         ok &= ~on | (w_e <= e.w_max)
-        P_m = m.elec_vec(np.full_like(T_m, w_in), T_m) if w_in > 0 else T_m * 0.0
-        start = on & (not st.get('eng_on', True))
+        P_m = m.elec_vec(w_in, T_m) if w_in > 0 else T_m * 0.0
         P_b0 = P_m + env['P_aux_el']
-        Ps_e, Ps_slip, Ps_el, Ps_f = self.start_terms(start, w_e, P_b0, env['p_dis'], k0_slip=self.k0_slip())
+        if st.get('eng_on', True):          # no start this step: start_terms would return zeros
+            Ps_e = Ps_slip = Ps_el = Ps_f = 0.0
+        else:
+            Ps_e, Ps_slip, Ps_el, Ps_f = self.start_terms(on, w_e, P_b0, env['p_dis'], k0_slip=self.k0_slip())
         P_batt = P_b0 + Ps_el
         ok &= (P_batt <= env['p_dis'] + 1e-6) & (P_batt >= -env['p_chg'] - 1e-6)
         P_fuel = np.where(on, e.fuel_cold_vec(w_e, T_e, st['T_eng']), 0.0) + Ps_f
@@ -671,9 +706,11 @@ class P2PT(_HybridBase):
         ok &= w_s <= m.w_max
         ok &= ~on | (w_e <= e.w_max)
         P_m = m.elec_vec(w_s, T_m)
-        start = on & (not st.get('eng_on', True))
         P_b0 = P_m + env['P_aux_el']
-        Ps_e, Ps_slip, Ps_el, Ps_f = self.start_terms(start, w_e, P_b0, env['p_dis'], k0_slip=self.k0_slip())
+        if st.get('eng_on', True):          # no start this step: start_terms would return zeros
+            Ps_e = Ps_slip = Ps_el = Ps_f = 0.0
+        else:
+            Ps_e, Ps_slip, Ps_el, Ps_f = self.start_terms(on, w_e, P_b0, env['p_dis'], k0_slip=self.k0_slip())
         P_batt = P_b0 + Ps_el
         ok &= (P_batt <= env['p_dis'] + 1e-6) & (P_batt >= -env['p_chg'] - 1e-6)
         P_fuel = np.where(on, e.fuel_cold_vec(w_e, T_e, st['T_eng']), 0.0) + Ps_f
@@ -685,7 +722,7 @@ class P2PT(_HybridBase):
                     T_w=T_w, T_m=T_m, w_m=w_s * np.ones_like(T_m), gear=g, P_m_el=P_m)
 
     def default_fracs(self, n=12):
-        return np.concatenate([[0.0], np.linspace(0.15, 1.0, n)])
+        return _grid(0.15, 1.0, n)
 
 
 ARCH_CLASSES = {'conv': ConvPT, 'bev': BEVPT, 'hev_series': SeriesPT, 'phev_series': SeriesPT,
