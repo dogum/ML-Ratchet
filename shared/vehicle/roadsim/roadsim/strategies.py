@@ -332,8 +332,16 @@ class PHEVCDCS(AECMS):
                 return True
             if ctx['u'] > o.get('phev_cd_v_max_kph', 135.0) / 3.6:
                 return True
-        below = o.get('phev_heat_engine_below_C')
-        if below is not None and o.get('phev_heat_cold_start_only') and not self.cold_start:
+        below = o.get('phev_heat_engine_below_C'); cso = o.get('phev_heat_cold_start_only')
+        by = o.get('phev_heat_by_type')
+        if by:                           # v3.1: documented heating hardware by plug-in type (roadsim/eras.phev_type)
+            if not hasattr(self, '_phev_t'):
+                from . import eras as _eras
+                self._phev_t = _eras.phev_type(self.veh.spec)
+            r = by.get(self._phev_t)
+            if r is not None:
+                below = r.get('engine_below_C'); cso = r.get('cold_start_only', False)
+        if below is not None and cso and not self.cold_start:
             below = None                 # a warm start keeps heating electrically (D3 Energi: engine on 8-11 % after a warm start)
         return self.heat_request(st, ctx, electric_below=below)
 

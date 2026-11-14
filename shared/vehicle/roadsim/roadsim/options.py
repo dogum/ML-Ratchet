@@ -10,6 +10,7 @@ data/calibration_v2.json; decisions in CALIBRATION.md).
     simulate(spec, trip, options='roadsim-physics-v1')               # physics v1, exactly
     simulate(spec, trip, options='roadsim-physics-v2.1')             # v2 + the hybrid fix pass (data/calibration_v2_1.json)
     simulate(spec, trip, options='roadsim-physics-v3')               # v2.1 + the hardware pass (data/calibration_v3.json)
+    simulate(spec, trip, options='roadsim-physics-v3.1')             # v3 + the second hardware pass (data/calibration_v3_1.json)
     simulate(spec, trip, options={'p2_torque_converter': True})       # v1 plus one option
     simulate(spec, trip, options={'preset': 'roadsim-physics-v2', 'regen_share': {}})   # v2 with one change
     spec['physics'] = {'hvac_model': 'v2'}                           # per vehicle
@@ -75,6 +76,8 @@ DEFAULTS = {
     'phev_cd_v_max_kph': 135.0,         # km/h, power-split PHEV: engine joins in CD above this speed
     'phev_heat_engine_below_C': None,   # C, PHEV with electric heat starts the engine for heat below this (None = never)
     'phev_heat_cold_start_only': False, # ... only in a trip that began with a cold engine (coolant below ps_cat_cold_C)
+    'phev_heat_by_type': {},            # v3.1: {plug-in type (roadsim/eras.phev_type): {'engine_below_C': C or None,
+                                        # 'cold_start_only': bool}} replaces the two options above for that type ({} = off)
     'dp_min_on_off': False,             # DP honours hybrid_min_on_s / hybrid_min_off_s and start_penalty_J
     'donor_model': 'v1',                # generate_vehicles: 'v2' draws hybrid bodies from real hybrid records, vans from minivans
     'gen_hybrid_hw': 'v1',              # generate_vehicles: 'v3' gives generated hybrids the EPA twins' hardware rules
@@ -266,3 +269,25 @@ def _load_v3():
 _v3 = _load_v3()
 if _v3 is not None:
     PRESETS['roadsim-physics-v3'] = _v3
+
+
+def _load_v31():
+    """the v3.1 preset (second hardware pass on hybrids, 14 Nov 2026): v3 plus the kept changes of data/calibration_v3_1.json."""
+    import json, os
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'calibration_v3_1.json')
+    if not os.path.exists(p) or _v3 is None:
+        return None
+    with open(p, encoding='utf-8') as f:
+        ch = json.load(f)['changes']
+    bad = sorted(set(ch) - set(DEFAULTS))
+    if bad:
+        raise KeyError(f'calibration_v3_1.json: unknown RoadSim options {bad}')
+    out = copy.deepcopy(_v3)
+    for k, v in copy.deepcopy(ch).items():
+        out[k] = dict(out.get(k) or {}, **v) if k == 'thermal_params' else v
+    return out
+
+
+_v31 = _load_v31()
+if _v31 is not None:
+    PRESETS['roadsim-physics-v3.1'] = _v31

@@ -160,6 +160,46 @@ def make(veh, opt, trip, trip_inputs, st, it, dt):
     return Thermal(veh, opt, trip, trip_inputs, st, it, dt) if active(opt) else None
 
 
+_OOL = ('ool_w', 'ool_f', 'P_best', 'eta_best')
+
+
+def engine_map(veh, opt):
+    """v3.1 option engine_era with a measured load table (roadsim/eras.py): give the engine of this run a fuel grid
+    re-weighted by BMEP, and the optimal operating line of that grid (the car's controller knows its own engine).
+    Called by sim.py at the start of every run, before the strategy is set up. The vehicle cache keeps one Engine per
+    spec, so every run first restores the engine's own map; a run without a table leaves it untouched."""
+    e = getattr(veh, 'engine', None)
+    if e is None:
+        return
+    base = e.__dict__.get('_era_base')
+    if base is not None:
+        e.fuel_grid = base[0]
+        for k, v in zip(_OOL, base[1]):
+            setattr(e, k, v)
+    tab = _eras.table(veh.spec, e.map_id, (opt or {}).get('engine_era'))
+    if not tab:
+        return
+    if base is None:
+        base = e._era_base = (e.fuel_grid, tuple(getattr(e, k) for k in _OOL))
+    key = tuple(map(tuple, tab))
+    cache = e.__dict__.setdefault('_era_grids', {})
+    if key not in cache:
+        import numpy as np
+        from .maps import Grid2
+        g0 = base[0]
+        x1 = g0.x0 + (g0.nx - 1) / g0.ix; y1 = g0.y0 + (g0.ny - 1) / g0.iy
+        T = np.linspace(g0.y0, y1, g0.ny)
+        bmep = 4.0 * math.pi * T / (e.disp * 1e-3) / 1e5
+        r = np.interp(bmep, [a for a, _ in tab], [b for _, b in tab])
+        e.fuel_grid = Grid2(g0.x0, x1, g0.y0, y1, np.asarray(g0.Z, float) * r[None, :])
+        e._build_ool()
+        cache[key] = (e.fuel_grid, tuple(getattr(e, k) for k in _OOL))
+    g, ool = cache[key]
+    e.fuel_grid = g
+    for k, v in zip(_OOL, ool):
+        setattr(e, k, v)
+
+
 # ------------------------------------------------------------------ helpers
 def p_ws(T):
     """saturation vapour pressure over water (Pa), Magnus form."""

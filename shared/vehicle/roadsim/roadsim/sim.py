@@ -131,6 +131,7 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
         _aging.apply(veh.battery, opt)
     if veh.engine is not None:
         veh.engine._x2 = None
+        _thermal.engine_map(veh, opt)        # v3.1: measured engine-era load table (none: the engine's own map)
     PT = ARCH_CLASSES[arch]
     pt = PT(veh, shift=strat.shift) if arch == 'conv' else PT(veh)
     pt.opt = opt

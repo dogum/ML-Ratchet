@@ -48,13 +48,13 @@ PLUGIN_HW = {
     # battery max_power_kW: min(traction machines / 0.9, 9 C), the plug-in rule of data/scripts/d3_specs.py (RoadSim's
     # 'energy' default of 3 C left the Energi twin at 23 kW and forced its engine on in charge depletion). Machines and
     # engine power from the same public spec sheets as data/d3_facts.json (added 13 Nov 2026, second v2 calibration pass).
-    ('phev_series', 1.4): dict(battery=dict(capacity_kWh=16.5, nominal_V=360, soc_window=[0.2, 0.85], max_power_kW=123.0), P=111,
+    ('phev_series', 1.4): dict(battery=dict(capacity_kWh=16.5, nominal_V=360, soc_window=[0.2, 0.85], max_power_kW=123.0), P=111, phev_type='volt_gen1',
                                engine_kW=63, motors=[('traction', 111, 370), ('generator', 55, None)]),
-    ('phev_series', 1.5): dict(battery=dict(capacity_kWh=18.4, nominal_V=360, soc_window=[0.15, 0.9], max_power_kW=123.0), P=111,
+    ('phev_series', 1.5): dict(battery=dict(capacity_kWh=18.4, nominal_V=360, soc_window=[0.15, 0.9], max_power_kW=123.0), P=111, phev_type='volt_gen2',
                                engine_kW=75, motors=[('traction', 111, 398), ('generator', 75, None)]),
-    ('phev_powersplit', 2.0): dict(battery=dict(capacity_kWh=7.6, nominal_V=300, soc_window=[0.15, 0.95], max_power_kW=68.4), P=145,
+    ('phev_powersplit', 2.0): dict(battery=dict(capacity_kWh=7.6, nominal_V=300, soc_window=[0.15, 0.95], max_power_kW=68.4), P=145, phev_type='ford_energi',
                                    engine_kW=105, motors=[('MG1', 70, None), ('MG2', 88, 240)]),
-    ('phev_powersplit', 1.8): dict(battery=dict(capacity_kWh=8.8, nominal_V=350, soc_window=[0.15, 0.95], max_power_kW=79.2), P=90,
+    ('phev_powersplit', 1.8): dict(battery=dict(capacity_kWh=8.8, nominal_V=350, soc_window=[0.15, 0.95], max_power_kW=79.2), P=90, phev_type='toyota_phev',
                                    engine_kW=71, motors=[('MG1', 23, None), ('MG2', 53, 163)]),
 }
 # Mild (P1) hybrids that RoadData labels hev_powersplit (VED has no P1 type): Honda CR-Z IMA, run as a P2 machine that
@@ -120,6 +120,7 @@ def ved_spec(vid):
     if arch.startswith('phev'):
         hw = PLUGIN_HW.get((arch, (eng or {}).get('displacement_L')))
         if hw:
+            s['phev_type'] = hw['phev_type']        # heating hardware type (roadsim/eras.phev_type, v3.1 option phev_heat_by_type)
             s['battery'] = dict(hw['battery'], chemistry='NMC')
             s['engine']['max_power_kW'] = float(hw['engine_kW'])
             s['motors'] = [dict(role=r_, max_power_kW=float(P_), eff_map='ipm_generic_150', max_rpm=13500 if r_ != 'MG2' else 14000,

@@ -1,0 +1,4920 @@
+{
+ "about": "Dev diagnostic (RoadSim v3.1 pass, item C): do the modern benchmark maps flatter older engines? Conventional gasoline\ntest cars of RoadData's DEV model families, by model-year band, simulated on FTP and HWY with the conventional specs of\nchecks/epa_dev_pool.py (same map rule, gear sets, road-load handling). Mild hybrids (Honda IMA, GM BAS) run on the\nsame conventional maps (gas_na_toyota_a25a below 3.0 L), so an era bias of those maps on dev conventional cars is\nevidence for the mild twins too. Dev families only (the frozen family split); at most 3 test vehicles per family and\nband, drawn with a fixed seed (never by results). Error = sim / EPA - 1 on fuel economy (+ = the sim burns less).\n\nusage: python era_dev_conv.py [--options roadsim-physics-v2] [--per-band 150]\nWrites checks/era_dev_conv.json.",
+ "options": "roadsim-physics-v2",
+ "summary": {
+  "2008-2011|gas_na_toyota_a25a": {
+   "n": 29,
+   "FTP": 24.33,
+   "HWY": 18.63
+  },
+  "2008-2011|gas_turbo_ford_27": {
+   "n": 4,
+   "FTP": 12.97,
+   "HWY": 18.69
+  },
+  "2008-2011|gas_v6_gm_43": {
+   "n": 49,
+   "FTP": 8.5,
+   "HWY": 2.4
+  },
+  "2008-2011|gas_v8_ford_73": {
+   "n": 38,
+   "FTP": 4.49,
+   "HWY": 1.36
+  },
+  "2012-2015|gas_na_toyota_a25a": {
+   "n": 31,
+   "FTP": 19.81,
+   "HWY": 13.13
+  },
+  "2012-2015|gas_turbo_ford_27": {
+   "n": 8,
+   "FTP": 3.41,
+   "HWY": 10.14
+  },
+  "2012-2015|gas_turbo_honda_15": {
+   "n": 9,
+   "FTP": 25.39,
+   "HWY": 6.55
+  },
+  "2012-2015|gas_v6_gm_43": {
+   "n": 39,
+   "FTP": -4.0,
+   "HWY": -5.61
+  },
+  "2012-2015|gas_v8_ford_73": {
+   "n": 14,
+   "FTP": -4.01,
+   "HWY": -5.06
+  },
+  "2016-2017|gas_na_toyota_a25a": {
+   "n": 29,
+   "FTP": 16.53,
+   "HWY": 10.16
+  },
+  "2016-2017|gas_turbo_ford_27": {
+   "n": 8,
+   "FTP": -4.82,
+   "HWY": -0.76
+  },
+  "2016-2017|gas_turbo_honda_15": {
+   "n": 12,
+   "FTP": 22.24,
+   "HWY": 5.0
+  },
+  "2016-2017|gas_v6_gm_43": {
+   "n": 37,
+   "FTP": -6.85,
+   "HWY": -9.83
+  },
+  "2016-2017|gas_v8_ford_73": {
+   "n": 9,
+   "FTP": -11.01,
+   "HWY": -8.98
+  },
+  "2018-2026|gas_na_toyota_a25a": {
+   "n": 31,
+   "FTP": 10.62,
+   "HWY": 7.6
+  },
+  "2018-2026|gas_turbo_ford_27": {
+   "n": 31,
+   "FTP": -4.07,
+   "HWY": -8.57
+  },
+  "2018-2026|gas_turbo_honda_15": {
+   "n": 24,
+   "FTP": 9.2,
+   "HWY": 2.29
+  },
+  "2018-2026|gas_v6_gm_43": {
+   "n": 23,
+   "FTP": -6.8,
+   "HWY": -9.83
+  },
+  "2018-2026|gas_v8_ford_73": {
+   "n": 11,
+   "FTP": -13.52,
+   "HWY": -11.46
+  },
+  "2008-2011|all": {
+   "n": 120,
+   "FTP": 9.88,
+   "HWY": 5.83
+  },
+  "2012-2015|all": {
+   "n": 101,
+   "FTP": 3.41,
+   "HWY": 2.96
+  },
+  "2016-2017|all": {
+   "n": 95,
+   "FTP": 0.82,
+   "HWY": -0.08
+  },
+  "2018-2026|all": {
+   "n": 120,
+   "FTP": -0.77,
+   "HWY": -4.12
+  }
+ },
+ "rows": [
+  {
+   "row": "EPA2008_120_CN93001_c5",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "BMW|650CI",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 11.44,
+    "HWY": 1.01
+   }
+  },
+  {
+   "row": "EPA2008_120_TL77004_c0",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "BMW|MINI CLUBMAN",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 28.09,
+    "HWY": 17.04
+   }
+  },
+  {
+   "row": "EPA2008_200_C216E63-Z8017-1_c0",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "MERCEDES-BENZ|CL63",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 8.22,
+    "HWY": 3.45
+   }
+  },
+  {
+   "row": "EPA2008_200_V221E60TC-Z7023-1_c1",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "MERCEDES-BENZ|S65",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 2.2,
+    "HWY": 3.29
+   }
+  },
+  {
+   "row": "EPA2008_200_X199E55SC-Z5008-1_c0",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "MERCEDES-BENZ|SLR",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -5.78,
+    "HWY": 0.17
+   }
+  },
+  {
+   "row": "EPA2008_20_L4PTC0813_c1",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "CHRYSLER|PT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 17.56,
+    "HWY": 17.33
+   }
+  },
+  {
+   "row": "EPA2008_20_L7KA15076_c1",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "CHRYSLER|NITRO",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 1.32,
+    "HWY": -6.75
+   }
+  },
+  {
+   "row": "EPA2008_20_L8ZBD7285R_c2",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "CHRYSLER|VIPER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -8.02,
+    "HWY": -13.97
+   }
+  },
+  {
+   "row": "EPA2008_260_E6VJ1A_c0",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "HONDA|PILOT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 16.56,
+    "HWY": 3.64
+   }
+  },
+  {
+   "row": "EPA2008_265_MC6D6U16A1_c0",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "HYUNDAI|ACCENT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 24.33,
+    "HWY": 21.41
+   }
+  },
+  {
+   "row": "EPA2008_30_6U51-4.0-C-454_c1",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "FORD|MOUNTAINEER",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 35.04,
+    "HWY": 21.72
+   }
+  },
+  {
+   "row": "EPA2008_30_6U51-4.6-C-456_c3",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "FORD|MOUNTAINEER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 24.5,
+    "HWY": 10.87
+   }
+  },
+  {
+   "row": "EPA2008_30_6U51-4.6-F-455_c3",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "FORD|MOUNTAINEER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 22.87,
+    "HWY": 9.55
+   }
+  },
+  {
+   "row": "EPA2008_338_BL7L3U27A2_c0",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "KIA MOTORS CORPORATION|SORENTO",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 16.14,
+    "HWY": 2.17
+   }
+  },
+  {
+   "row": "EPA2008_338_BL7L8U39A_c0",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "KIA MOTORS CORPORATION|SORENTO",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 9.65,
+    "HWY": 6.88
+   }
+  },
+  {
+   "row": "EPA2008_380_DME559_c1",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "NISSAN|M45X",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 10.3,
+    "HWY": 6.93
+   }
+  },
+  {
+   "row": "EPA2008_40_3926Z12905_c12",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "CHEVROLET|G6",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 15.29,
+    "HWY": 13.59
+   }
+  },
+  {
+   "row": "EPA2008_40_43C6C30928_c6",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "CHEVROLET|C15",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 16.61,
+    "HWY": 14.4
+   }
+  },
+  {
+   "row": "EPA2008_40_53XECR7162_c15",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "CHEVROLET|C15",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -2.31,
+    "HWY": -0.59
+   }
+  },
+  {
+   "row": "EPA2008_40_53XEHP8807_c4",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "CHEVROLET|H1500",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 4.29,
+    "HWY": 10.61
+   }
+  },
+  {
+   "row": "EPA2008_40_62XEKS7281_c3",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "CHEVROLET|ESCALADE",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 6.2,
+    "HWY": -1.69
+   }
+  },
+  {
+   "row": "EPA2008_40_62XEKS7281_c5",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "CHEVROLET|ESCALADE",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 6.48,
+    "HWY": -0.34
+   }
+  },
+  {
+   "row": "EPA2008_576_N05-ZE2_c0",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "NEW UNITED MOTOR MFG INC|VIBE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 24.81,
+    "HWY": 19.54
+   }
+  },
+  {
+   "row": "EPA2008_576_N05-ZE3_c1",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "NEW UNITED MOTOR MFG INC|VIBE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 24.11,
+    "HWY": 14.98
+   }
+  },
+  {
+   "row": "EPA2008_590_461-60137/06_c2",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "VOLKSWAGEN|PASSAT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 5.82,
+    "HWY": -4.3
+   }
+  },
+  {
+   "row": "EPA2008_624_BAX-US100/08_c0",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "BUGATTI AUTOMOBILES S.A.S.|VEYRON",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 21.27,
+    "HWY": 22.61
+   }
+  },
+  {
+   "row": "EPA2008_640_8365-BAQ_c0",
+   "band": "2008-2011",
+   "my": 2008,
+   "family": "AUDI|S5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -6.68,
+    "HWY": -5.7
+   }
+  },
+  {
+   "row": "EPA2009_120_TL77004_c0",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "BMW|MINI CLUBMAN",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 28.09,
+    "HWY": 17.04
+   }
+  },
+  {
+   "row": "EPA2009_120_TL88008_c0",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "BMW|MINI CLUBMAN",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 30.85,
+    "HWY": 20.23
+   }
+  },
+  {
+   "row": "EPA2009_200_C216E63-Z8017-1_c0",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "MERCEDES-BENZ|CL63",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 8.22,
+    "HWY": 3.45
+   }
+  },
+  {
+   "row": "EPA2009_200_R230E63-Z9011_c1",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "MERCEDES-BENZ|SL63",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 7.94,
+    "HWY": 8.32
+   }
+  },
+  {
+   "row": "EPA2009_200_V221E60TC-Z7023-1_c1",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "MERCEDES-BENZ|S65",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 2.2,
+    "HWY": 3.29
+   }
+  },
+  {
+   "row": "EPA2009_200_X199E55SC-Z5008-1_c0",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "MERCEDES-BENZ|SLR",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -5.78,
+    "HWY": 0.17
+   }
+  },
+  {
+   "row": "EPA2009_200_X199E55SC-Z5008-1_c1",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "MERCEDES-BENZ|SLR",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 4.69,
+    "HWY": 2.02
+   }
+  },
+  {
+   "row": "EPA2009_20_K9LCD6371_c1",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHRYSLER|CHALLENGER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 1.26,
+    "HWY": -1.86
+   }
+  },
+  {
+   "row": "EPA2009_20_L4PTC0806_c0",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHRYSLER|PT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 28.62,
+    "HWY": 20.88
+   }
+  },
+  {
+   "row": "EPA2009_20_L4PTC0813_c1",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHRYSLER|PT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 17.56,
+    "HWY": 17.33
+   }
+  },
+  {
+   "row": "EPA2009_20_L7KA10570_c2",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHRYSLER|NITRO",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 16.7,
+    "HWY": 12.56
+   }
+  },
+  {
+   "row": "EPA2009_20_L7KA15076_c2",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHRYSLER|NITRO",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 4.5,
+    "HWY": -2.44
+   }
+  },
+  {
+   "row": "EPA2009_20_L9LCD3881_c0",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHRYSLER|CHALLENGER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -0.94,
+    "HWY": -0.27
+   }
+  },
+  {
+   "row": "EPA2009_20_L9WKT2894_c1",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHRYSLER|COMMANDER",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 23.92,
+    "HWY": 15.82
+   }
+  },
+  {
+   "row": "EPA2009_20_L9WKT2894_c3",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHRYSLER|COMMANDER",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 26.14,
+    "HWY": 17.75
+   }
+  },
+  {
+   "row": "EPA2009_20_V5WKT7786_c4",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHRYSLER|COMMANDER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 26.98,
+    "HWY": 19.71
+   }
+  },
+  {
+   "row": "EPA2009_260_E9N01A_c1",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "HONDA|PILOT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 7.3,
+    "HWY": -3.78
+   }
+  },
+  {
+   "row": "EPA2009_30_9P31-3.5-H-733_c2",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "FORD|FLEX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 9.43,
+    "HWY": 0.37
+   }
+  },
+  {
+   "row": "EPA2009_338_BL7L3U21A2_c0",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "KIA MOTORS CORPORATION|SORENTO",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 14.84,
+    "HWY": 5.77
+   }
+  },
+  {
+   "row": "EPA2009_380_DME559_c1",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "NISSAN|M45X",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 10.3,
+    "HWY": 6.93
+   }
+  },
+  {
+   "row": "EPA2009_40_3528Z56360_c1",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHEVROLET|G6",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 11.56,
+    "HWY": 8.57
+   }
+  },
+  {
+   "row": "EPA2009_40_3926Z12905_c14",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHEVROLET|G6",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 15.15,
+    "HWY": 13.7
+   }
+  },
+  {
+   "row": "EPA2009_40_3949HN8009_c1",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHEVROLET|LUCERNE",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 8.18,
+    "HWY": 6.81
+   }
+  },
+  {
+   "row": "EPA2009_40_53XECR7162_c74",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHEVROLET|C15",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -1.87,
+    "HWY": -0.8
+   }
+  },
+  {
+   "row": "EPA2009_40_53XEGC9005_c2",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHEVROLET|H1500",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 11.76,
+    "HWY": 16.97
+   }
+  },
+  {
+   "row": "EPA2009_40_53XEGC9005_c4",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHEVROLET|H1500",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 7.96,
+    "HWY": 12.31
+   }
+  },
+  {
+   "row": "EPA2009_40_62XEKS7281_c9",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "CHEVROLET|ESCALADE",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 6.0,
+    "HWY": -1.72
+   }
+  },
+  {
+   "row": "EPA2009_570_08-UJ1A_c2",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "TOYOTA|LAND CRUISER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -0.96,
+    "HWY": -0.77
+   }
+  },
+  {
+   "row": "EPA2009_576_N09-AE2A_c0",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "NEW UNITED MOTOR MFG INC|VIBE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 30.56,
+    "HWY": 25.97
+   }
+  },
+  {
+   "row": "EPA2009_590_VW46190122/09_c1",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "VOLKSWAGEN|PASSAT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 5.15,
+    "HWY": -2.07
+   }
+  },
+  {
+   "row": "EPA2009_640_8365-BMQ_c0",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "AUDI|S5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 11.3,
+    "HWY": -7.46
+   }
+  },
+  {
+   "row": "EPA2009_ADX_93UC-Q5A_c0",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "AUDI|Q5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 1.42,
+    "HWY": 14.77
+   }
+  },
+  {
+   "row": "EPA2009_NSX_MMB055_c2",
+   "band": "2008-2011",
+   "my": 2009,
+   "family": "INFINITI|INFINITI",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -5.31,
+    "HWY": -8.58
+   }
+  },
+  {
+   "row": "EPA2010_BGT_BAX-US100/08_c0",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "BUGATTI|VEYRON",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 22.68,
+    "HWY": 26.84
+   }
+  },
+  {
+   "row": "EPA2010_BMX_CN93001_c5",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "BMW|650CI",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 14.94,
+    "HWY": 2.33
+   }
+  },
+  {
+   "row": "EPA2010_BMX_CP00002_c1",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "BMW|650CI",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 3.1,
+    "HWY": 2.21
+   }
+  },
+  {
+   "row": "EPA2010_BMX_KX63709_c4",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "BMW|328XIA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 15.17,
+    "HWY": 0.29
+   }
+  },
+  {
+   "row": "EPA2010_BMX_LK25003_c1",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "BMW|X6",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 4.68,
+    "HWY": 10.14
+   }
+  },
+  {
+   "row": "EPA2010_CRX_K9LCD6371_c1",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "DODGE|CHALLENGER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 5.82,
+    "HWY": 0.42
+   }
+  },
+  {
+   "row": "EPA2010_CRX_L4PTC0810_c0",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "CHRYSLER|P",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 26.2,
+    "HWY": 21.89
+   }
+  },
+  {
+   "row": "EPA2010_CRX_L5ND14803_c5",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "DODGE|DAKOTA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 22.13,
+    "HWY": 16.85
+   }
+  },
+  {
+   "row": "EPA2010_CRX_L8ND10890_c0",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "DODGE|DAKOTA",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 14.62,
+    "HWY": 12.02
+   }
+  },
+  {
+   "row": "EPA2010_CRX_L8RTK4861_c0",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "DODGE|CARAVAN",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 20.76,
+    "HWY": 11.67
+   }
+  },
+  {
+   "row": "EPA2010_CRX_L8RTK4885_c0",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "DODGE|CARAVAN",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 13.28,
+    "HWY": 6.35
+   }
+  },
+  {
+   "row": "EPA2010_CRX_L8RTK4922_c0",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "DODGE|CARAVAN",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -1.97,
+    "HWY": -7.08
+   }
+  },
+  {
+   "row": "EPA2010_CRX_L9LCD3881_c1",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "DODGE|CHALLENGER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 7.26,
+    "HWY": 4.03
+   }
+  },
+  {
+   "row": "EPA2010_FJX_KBF-DC14_c2",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "SUBARU|LEGACY",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 20.47,
+    "HWY": 19.96
+   }
+  },
+  {
+   "row": "EPA2010_FJX_KBF-DC14_c4",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "SUBARU|LEGACY",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 19.47,
+    "HWY": 19.45
+   }
+  },
+  {
+   "row": "EPA2010_FMX_9P31-3.5-H-733_c5",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "FORD|FLEX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 7.61,
+    "HWY": 2.4
+   }
+  },
+  {
+   "row": "EPA2010_FMX_AC71-2.0-J-926_c0",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "FORD|TRANSIT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 23.76,
+    "HWY": 18.99
+   }
+  },
+  {
+   "row": "EPA2010_FMX_AP43-3.5-E-978_c0",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "FORD|FLEX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -9.21,
+    "HWY": -9.88
+   }
+  },
+  {
+   "row": "EPA2010_GMX_2219AN8021_c5",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "CHEVROLET|1AS46",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 25.25,
+    "HWY": 19.97
+   }
+  },
+  {
+   "row": "EPA2010_GMX_2419A43414_c1",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "CHEVROLET|1AS46",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 21.43,
+    "HWY": 16.2
+   }
+  },
+  {
+   "row": "EPA2010_GMX_2488LP8032_c2",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "SATURN|ZLF26",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 31.75,
+    "HWY": 19.48
+   }
+  },
+  {
+   "row": "EPA2010_GMX_2489ZN4101_c4",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "CHEVROLET|ZZS69",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 24.13,
+    "HWY": 12.05
+   }
+  },
+  {
+   "row": "EPA2010_GMX_37XESP9600_c7",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "GMC|CS15643",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 10.11,
+    "HWY": 3.76
+   }
+  },
+  {
+   "row": "EPA2010_GMX_6216Y00050_c4",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "CHEVROLET|1YY67",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -0.83,
+    "HWY": -4.16
+   }
+  },
+  {
+   "row": "EPA2010_HNX_E9N01A_c1",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "HONDA|PILOT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 7.19,
+    "HWY": -3.78
+   }
+  },
+  {
+   "row": "EPA2010_MBX_C216E60TC-Z7023-2_c0",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "MERCEDES-BENZ|CL",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 1.44,
+    "HWY": 1.72
+   }
+  },
+  {
+   "row": "EPA2010_MBX_C216E63-Z8017-1_c0",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "MERCEDES-BENZ|CL",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 8.54,
+    "HWY": 3.31
+   }
+  },
+  {
+   "row": "EPA2010_NSX_KJEB92_c0",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "NISSAN|NISSAN",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 39.69,
+    "HWY": 19.96
+   }
+  },
+  {
+   "row": "EPA2010_NSX_MLE355_c1",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "INFINITI|INFINITI",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 0.09,
+    "HWY": -6.57
+   }
+  },
+  {
+   "row": "EPA2010_NSX_SRE299_c2",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "NISSAN|NISSAN",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 12.65,
+    "HWY": 3.47
+   }
+  },
+  {
+   "row": "EPA2010_PRX_FE70SA-A_c0",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "PORSCHE|PANAMERA",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -9.21,
+    "HWY": -24.56
+   }
+  },
+  {
+   "row": "EPA2010_TYX_08-UJ1A_c2",
+   "band": "2008-2011",
+   "my": 2010,
+   "family": "TOYOTA|LAND CRUISER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -0.93,
+    "HWY": -0.77
+   }
+  },
+  {
+   "row": "EPA2011_ADX_8365-BAQ_c0",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "AUDI|S5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -6.68,
+    "HWY": -5.7
+   }
+  },
+  {
+   "row": "EPA2011_ADX_93UC-Q5A_c0",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "AUDI|Q5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 1.42,
+    "HWY": 14.77
+   }
+  },
+  {
+   "row": "EPA2011_ADX_B3UB-Q5A_c0",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "AUDI|Q5",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 21.32,
+    "HWY": 18.25
+   }
+  },
+  {
+   "row": "EPA2011_BGT_BAX-US100/10_c0",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "BUGATTI|VEYRON",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 3.41,
+    "HWY": 14.77
+   }
+  },
+  {
+   "row": "EPA2011_BMX_KX63709_c4",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "BMW|328XIA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 15.17,
+    "HWY": 0.29
+   }
+  },
+  {
+   "row": "EPA2011_BMX_TX95505_c1",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "MINI|MINI CLUBMAN",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 16.56,
+    "HWY": 10.99
+   }
+  },
+  {
+   "row": "EPA2011_CRX_L8ND10890_c1",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "DODGE|DAKOTA",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 15.96,
+    "HWY": 12.81
+   }
+  },
+  {
+   "row": "EPA2011_CRX_L9LCD3881_c2",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "DODGE|CHALLENGER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -9.02,
+    "HWY": -8.77
+   }
+  },
+  {
+   "row": "EPA2011_FJX_KBF-DC14_c2",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "SUBARU|LEGACY",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 20.47,
+    "HWY": 19.96
+   }
+  },
+  {
+   "row": "EPA2011_FMX_AT014738_c1",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "FORD|TRANSIT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 28.54,
+    "HWY": 18.63
+   }
+  },
+  {
+   "row": "EPA2011_FMX_AT014739_c0",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "FORD|TRANSIT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 27.83,
+    "HWY": 14.94
+   }
+  },
+  {
+   "row": "EPA2011_GMX_306ADP4640_c2",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "CADILLAC|CTS",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 33.58,
+    "HWY": 5.89
+   }
+  },
+  {
+   "row": "EPA2011_GMX_306ADP4640_c3",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "CADILLAC|CTS",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 8.5,
+    "HWY": -0.59
+   }
+  },
+  {
+   "row": "EPA2011_GMX_3668D76588_c2",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "CADILLAC|CTS",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 3.8,
+    "HWY": -3.6
+   }
+  },
+  {
+   "row": "EPA2011_GMX_3689ZP8000_c16",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "BUICK|ENCLAVE",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -1.54,
+    "HWY": -5.86
+   }
+  },
+  {
+   "row": "EPA2011_HNX_EBL51A_c1",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "ACURA|TSX",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 19.81,
+    "HWY": 15.24
+   }
+  },
+  {
+   "row": "EPA2011_HNX_EBL51M_c0",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "ACURA|TSX",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 29.49,
+    "HWY": 12.86
+   }
+  },
+  {
+   "row": "EPA2011_HNX_EBL81A_c0",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "ACURA|TSX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -5.77,
+    "HWY": -2.91
+   }
+  },
+  {
+   "row": "EPA2011_HNX_EBTW1C_c1",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "HONDA|CR-Z",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": -7.65,
+    "HWY": 8.07
+   }
+  },
+  {
+   "row": "EPA2011_HNX_EBTW1M_c0",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "HONDA|CR-Z",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 10.51,
+    "HWY": 13.64
+   }
+  },
+  {
+   "row": "EPA2011_HYX_MC0D6U04A1_c2",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "HYUNDAI|ACCENT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 39.97,
+    "HWY": 20.99
+   }
+  },
+  {
+   "row": "EPA2011_MBX_C216DE46TC4x4_c1",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "MERCEDES-BENZ|CL",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -8.27,
+    "HWY": -7.71
+   }
+  },
+  {
+   "row": "EPA2011_NSX_LTE452_c2",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "INFINITI|INFINITI",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 2.18,
+    "HWY": -1.0
+   }
+  },
+  {
+   "row": "EPA2011_NSX_SEE454_c1",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "NISSAN|NISSAN",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 4.65,
+    "HWY": 3.25
+   }
+  },
+  {
+   "row": "EPA2011_PRX_FE970-11_c0",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "PORSCHE|PANAMERA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -6.62,
+    "HWY": -27.19
+   }
+  },
+  {
+   "row": "EPA2011_TYX_08-UJ1A_c2",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "TOYOTA|LAND CRUISER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -0.93,
+    "HWY": -0.77
+   }
+  },
+  {
+   "row": "EPA2011_TYX_11-GL1A_c0",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "TOYOTA|SIENNA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 5.72,
+    "HWY": 4.03
+   }
+  },
+  {
+   "row": "EPA2011_TYX_11-GL3A_c0",
+   "band": "2008-2011",
+   "my": 2011,
+   "family": "TOYOTA|SIENNA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -2.97,
+    "HWY": -0.71
+   }
+  },
+  {
+   "row": "EPA2012_ADX_93UC-Q5A_c0",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "AUDI|Q5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 1.42,
+    "HWY": 14.77
+   }
+  },
+  {
+   "row": "EPA2012_BGT_BAX-US100/10_c0",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "BUGATTI|VEYRON",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 3.41,
+    "HWY": 14.77
+   }
+  },
+  {
+   "row": "EPA2012_BMX_KX63709_c4",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "BMW|328XIA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 15.17,
+    "HWY": 0.29
+   }
+  },
+  {
+   "row": "EPA2012_BMX_LK25003_c1",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "BMW|X6",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 4.68,
+    "HWY": 10.14
+   }
+  },
+  {
+   "row": "EPA2012_BMX_TX95505_c1",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "MINI|MINI CLUBMAN",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 16.56,
+    "HWY": 10.99
+   }
+  },
+  {
+   "row": "EPA2012_CRX_L1LCD1351_c0",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "DODGE|CHALLENGER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -2.38,
+    "HWY": -7.44
+   }
+  },
+  {
+   "row": "EPA2012_CRX_L1WKT05038_c2",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "DODGE|GRAND CHEROKEE",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 11.44,
+    "HWY": 2.96
+   }
+  },
+  {
+   "row": "EPA2012_CRX_V0LCD1814_c0",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "DODGE|CHALLENGER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 2.31,
+    "HWY": -1.38
+   }
+  },
+  {
+   "row": "EPA2012_FJX_KBF-GT14_c4",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "SUBARU|LEGACY",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 19.05,
+    "HWY": 17.77
+   }
+  },
+  {
+   "row": "EPA2012_FMX_AT014739_c1",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "FORD|TRANSIT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 23.66,
+    "HWY": 15.6
+   }
+  },
+  {
+   "row": "EPA2012_FMX_BP33-3.5-H-122_c2",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "FORD|FLEX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -6.8,
+    "HWY": -11.26
+   }
+  },
+  {
+   "row": "EPA2012_GMX_43C6C30928_c47",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "CHEVROLET|C15",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 16.32,
+    "HWY": 14.4
+   }
+  },
+  {
+   "row": "EPA2012_GMX_43C6C30928_c48",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "CHEVROLET|C15",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 15.92,
+    "HWY": 15.09
+   }
+  },
+  {
+   "row": "EPA2012_HNX_EBL51A_c0",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "ACURA|TSX",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 20.05,
+    "HWY": 17.5
+   }
+  },
+  {
+   "row": "EPA2012_HNX_EBL51A_c1",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "ACURA|TSX",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 19.81,
+    "HWY": 15.24
+   }
+  },
+  {
+   "row": "EPA2012_HNX_EBTW1C_c1",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "HONDA|CR-Z",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": -7.65,
+    "HWY": 8.07
+   }
+  },
+  {
+   "row": "EPA2012_HNX_EBTW1M_c0",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "HONDA|CR-Z",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 10.51,
+    "HWY": 13.64
+   }
+  },
+  {
+   "row": "EPA2012_HNX_ECN01A_c0",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "HONDA|PILOT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 3.22,
+    "HWY": -7.07
+   }
+  },
+  {
+   "row": "EPA2012_MBX_C216E60TC-Z1017-1_c1",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "MERCEDES-BENZ|CL",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -8.81,
+    "HWY": -5.06
+   }
+  },
+  {
+   "row": "EPA2012_NSX_FHB033_c2",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "NISSAN|NISSAN",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -6.16,
+    "HWY": -9.01
+   }
+  },
+  {
+   "row": "EPA2012_TYX_11-AL1A_c0",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "TOYOTA|SIENNA",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 17.13,
+    "HWY": 13.13
+   }
+  },
+  {
+   "row": "EPA2012_TYX_11-GL3A_c3",
+   "band": "2012-2015",
+   "my": 2012,
+   "family": "TOYOTA|SIENNA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -4.0,
+    "HWY": -2.5
+   }
+  },
+  {
+   "row": "EPA2013_ADX_D3UF-BAQ_c0",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "AUDI|S5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -4.35,
+    "HWY": -10.02
+   }
+  },
+  {
+   "row": "EPA2013_ADX_D3UF-BAQ_c1",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "AUDI|S5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -6.49,
+    "HWY": -11.21
+   }
+  },
+  {
+   "row": "EPA2013_ADX_D3UF-Q5A_c1",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "AUDI|Q5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -3.54,
+    "HWY": -5.61
+   }
+  },
+  {
+   "row": "EPA2013_BGT_BAX-US100/10_c0",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "BUGATTI|VEYRON",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 3.41,
+    "HWY": 14.77
+   }
+  },
+  {
+   "row": "EPA2013_BMX_KX63709_c3",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "BMW|328XIA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 16.63,
+    "HWY": -0.27
+   }
+  },
+  {
+   "row": "EPA2013_BMX_KX63709_c4",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "BMW|328XIA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 15.17,
+    "HWY": 0.29
+   }
+  },
+  {
+   "row": "EPA2013_BMX_LK25003_c1",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "BMW|X6",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 4.68,
+    "HWY": 10.14
+   }
+  },
+  {
+   "row": "EPA2013_BMX_TX95505_c1",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "MINI|MINI CLUBMAN",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 16.56,
+    "HWY": 10.99
+   }
+  },
+  {
+   "row": "EPA2013_CRX_L1WKT05038_c0",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "DODGE|GRAND CHEROKEE",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 10.79,
+    "HWY": 4.46
+   }
+  },
+  {
+   "row": "EPA2013_CRX_L1WKT05038_c2",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "DODGE|GRAND CHEROKEE",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 11.44,
+    "HWY": 2.96
+   }
+  },
+  {
+   "row": "EPA2013_FJX_DBE-MP42_c2",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "SUBARU|BRZ",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 13.83,
+    "HWY": 8.67
+   }
+  },
+  {
+   "row": "EPA2013_FJX_DBF-GG14_c1",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "SUBARU|LEGACY",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 6.51,
+    "HWY": 5.48
+   }
+  },
+  {
+   "row": "EPA2013_FJX_DBF-MP52_c0",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "SUBARU|BRZ",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 32.81,
+    "HWY": 10.84
+   }
+  },
+  {
+   "row": "EPA2013_FMX_DP33-3.5-H-337_c3",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "FORD|FLEX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -4.42,
+    "HWY": -8.89
+   }
+  },
+  {
+   "row": "EPA2013_FMX_DP43-3.5-J-220_c0",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "FORD|FLEX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -5.24,
+    "HWY": -9.17
+   }
+  },
+  {
+   "row": "EPA2013_GMX_206DA12399_c0",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "CADILLAC|ATS",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 45.46,
+    "HWY": 22.58
+   }
+  },
+  {
+   "row": "EPA2013_GMX_3689ZP8000_c0",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "BUICK|ENCLAVE",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -4.99,
+    "HWY": -9.92
+   }
+  },
+  {
+   "row": "EPA2013_HNX_EBL81A_c0",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "ACURA|TSX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -5.77,
+    "HWY": -2.91
+   }
+  },
+  {
+   "row": "EPA2013_HNX_ECN01A_c1",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "HONDA|PILOT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 1.88,
+    "HWY": -7.26
+   }
+  },
+  {
+   "row": "EPA2013_HNX_ECN03A_c1",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "HONDA|PILOT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 2.1,
+    "HWY": -5.33
+   }
+  },
+  {
+   "row": "EPA2013_HNX_EDTW1C_c1",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "HONDA|CR-Z",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": -11.91,
+    "HWY": 4.59
+   }
+  },
+  {
+   "row": "EPA2013_HYX_RB1R6GU05A1_c0",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "HYUNDAI|ACCENT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 19.2,
+    "HWY": 12.26
+   }
+  },
+  {
+   "row": "EPA2013_MBX_C216E55TC-Z7014-1_c2",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "MERCEDES-BENZ|CL",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 8.22,
+    "HWY": 8.31
+   }
+  },
+  {
+   "row": "EPA2013_MBX_C216E60TC-Z1017-1_c1",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "MERCEDES-BENZ|CL",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -8.81,
+    "HWY": -5.06
+   }
+  },
+  {
+   "row": "EPA2013_MLN_SBM11BAA0AW99PP06_c2",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "MCLAREN|MP4-12C",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -9.14,
+    "HWY": 0.78
+   }
+  },
+  {
+   "row": "EPA2013_NSX_MKE551_c3",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "INFINITI|INFINITI",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -4.49,
+    "HWY": -7.8
+   }
+  },
+  {
+   "row": "EPA2013_NSX_WXC122_c3",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "NISSAN|NISSAN",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -4.27,
+    "HWY": -0.37
+   }
+  },
+  {
+   "row": "EPA2013_TYX_11-GL3A_c2",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "TOYOTA|SIENNA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -2.54,
+    "HWY": -2.71
+   }
+  },
+  {
+   "row": "EPA2013_TYX_13-UJ1A_c2",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "TOYOTA|LAND CRUISER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -1.55,
+    "HWY": 0.05
+   }
+  },
+  {
+   "row": "EPA2013_TYX_13-UJ1A_c3",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "TOYOTA|LAND CRUISER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -2.76,
+    "HWY": -1.17
+   }
+  },
+  {
+   "row": "EPA2013_VWX_VW324-1-0132_c0",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "VOLKSWAGEN|BEETLE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 27.01,
+    "HWY": 28.86
+   }
+  },
+  {
+   "row": "EPA2013_VWX_VW324-1-240/12_c0",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "VOLKSWAGEN|BEETLE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 28.88,
+    "HWY": 29.85
+   }
+  },
+  {
+   "row": "EPA2013_VWX_VW46190122/09_c1",
+   "band": "2012-2015",
+   "my": 2013,
+   "family": "VOLKSWAGEN|PASSAT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 5.11,
+    "HWY": -2.07
+   }
+  },
+  {
+   "row": "EPA2014_ADX_D3UF-BMQ_c0",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "AUDI|S5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 6.54,
+    "HWY": -11.78
+   }
+  },
+  {
+   "row": "EPA2014_ADX_D3UF-Q5A_c1",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "AUDI|Q5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -3.54,
+    "HWY": -5.61
+   }
+  },
+  {
+   "row": "EPA2014_BMX_F476148_c2",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "BMW|435I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -11.91,
+    "HWY": -13.17
+   }
+  },
+  {
+   "row": "EPA2014_BMX_F476165_c6",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "BMW|435I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -13.14,
+    "HWY": -14.06
+   }
+  },
+  {
+   "row": "EPA2014_BMX_TX95505_c1",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "MINI|MINI CLUBMAN",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 16.56,
+    "HWY": 10.99
+   }
+  },
+  {
+   "row": "EPA2014_CRX_L4BFF5569_c0",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "FIAT|500L",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 24.62,
+    "HWY": 6.13
+   }
+  },
+  {
+   "row": "EPA2014_FJX_DBF-MP52_c1",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "SUBARU|BRZ",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 33.18,
+    "HWY": 8.52
+   }
+  },
+  {
+   "row": "EPA2014_FTG_L4MAS7806_c0",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "FIAT|ALFA",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 25.39,
+    "HWY": 14.02
+   }
+  },
+  {
+   "row": "EPA2014_GMX_2063A50450_c0",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "CADILLAC|ATS",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 26.04,
+    "HWY": 4.26
+   }
+  },
+  {
+   "row": "EPA2014_GMX_244CPP4629_c0",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "BUICK|VERANO",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 27.54,
+    "HWY": 14.38
+   }
+  },
+  {
+   "row": "EPA2014_GMX_3689ZP8000_c0",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "BUICK|ENCLAVE",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -4.99,
+    "HWY": -9.92
+   }
+  },
+  {
+   "row": "EPA2014_KMX_RB4R6AU13A1_c0",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "HYUNDAI|ACCENT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 22.01,
+    "HWY": 11.73
+   }
+  },
+  {
+   "row": "EPA2014_MLN_SBM11BAA0AW99PP06_c2",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "MCLAREN|MP4-12C",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -9.14,
+    "HWY": 0.78
+   }
+  },
+  {
+   "row": "EPA2014_MTX_EB14-LD22_c0",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "MITSUBISHI|MIRAGE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 26.67,
+    "HWY": 18.7
+   }
+  },
+  {
+   "row": "EPA2014_MTX_EB14-LD2A_c2",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "MITSUBISHI|MIRAGE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 6.57,
+    "HWY": 14.79
+   }
+  },
+  {
+   "row": "EPA2014_NSX_KPB088_c5",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "NISSAN|NISSAN",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 10.36,
+    "HWY": 16.31
+   }
+  },
+  {
+   "row": "EPA2014_NSX_LTE527_c1",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "INFINITI|INFINITI",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -6.2,
+    "HWY": -8.85
+   }
+  },
+  {
+   "row": "EPA2014_PRX_ECFE-970IIGTS-14_c0",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "PORSCHE|PANAMERA",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -5.26,
+    "HWY": -25.49
+   }
+  },
+  {
+   "row": "EPA2014_PRX_ECFE-970IIGTS-14_c1",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "PORSCHE|PANAMERA",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -10.02,
+    "HWY": -25.49
+   }
+  },
+  {
+   "row": "EPA2014_TYX_13-UJ1A_c3",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "TOYOTA|LAND CRUISER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -2.76,
+    "HWY": -1.17
+   }
+  },
+  {
+   "row": "EPA2014_VWX_41110206/12_c0",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "VOLKSWAGEN|PASSAT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -3.18,
+    "HWY": -1.66
+   }
+  },
+  {
+   "row": "EPA2014_VWX_VW32430111_c2",
+   "band": "2012-2015",
+   "my": 2014,
+   "family": "VOLKSWAGEN|BEETLE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 17.31,
+    "HWY": 13.52
+   }
+  },
+  {
+   "row": "EPA2015_BGT_BAX-US100/10_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "BUGATTI|VEYRON",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 3.41,
+    "HWY": 14.77
+   }
+  },
+  {
+   "row": "EPA2015_BMX_0C02938_c2",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "BMW|X6",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -12.98,
+    "HWY": -5.44
+   }
+  },
+  {
+   "row": "EPA2015_BMX_F476165_c6",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "BMW|435I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -13.14,
+    "HWY": -14.06
+   }
+  },
+  {
+   "row": "EPA2015_CRX_L4BFF8525_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "FIAT|500L",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 15.45,
+    "HWY": 4.91
+   }
+  },
+  {
+   "row": "EPA2015_CRX_L4BFF9428_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "FIAT|500L",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 26.84,
+    "HWY": 12.61
+   }
+  },
+  {
+   "row": "EPA2015_CRX_L5LAD7673_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "DODGE|CHALLENGER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -6.73,
+    "HWY": -11.46
+   }
+  },
+  {
+   "row": "EPA2015_FJX_FBF-VC14_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "SUBARU|LEGACY",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 1.12,
+    "HWY": 2.06
+   }
+  },
+  {
+   "row": "EPA2015_FMX_EHC3-2.5-L-611_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "FORD|TRANSIT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 25.68,
+    "HWY": 12.46
+   }
+  },
+  {
+   "row": "EPA2015_FMX_TDB50489_c2",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "FORD|TRANSIT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 26.2,
+    "HWY": 10.81
+   }
+  },
+  {
+   "row": "EPA2015_FTG_L4MAS7806_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "FIAT|ALFA",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 25.39,
+    "HWY": 14.02
+   }
+  },
+  {
+   "row": "EPA2015_GMX_204DPN4121_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "BUICK|VERANO",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 24.92,
+    "HWY": 8.19
+   }
+  },
+  {
+   "row": "EPA2015_GMX_2063A50450_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "CADILLAC|ATS",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 28.14,
+    "HWY": 6.55
+   }
+  },
+  {
+   "row": "EPA2015_GMX_206FAE5496_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "CADILLAC|CTS",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 12.83,
+    "HWY": 5.4
+   }
+  },
+  {
+   "row": "EPA2015_GMX_254EPP4802_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "BUICK|VERANO",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 27.11,
+    "HWY": 16.6
+   }
+  },
+  {
+   "row": "EPA2015_GMX_366EAV4600_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "CADILLAC|CTS",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -9.84,
+    "HWY": -10.08
+   }
+  },
+  {
+   "row": "EPA2015_GMX_3689ZP8000_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "BUICK|ENCLAVE",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -6.16,
+    "HWY": -11.03
+   }
+  },
+  {
+   "row": "EPA2015_GMX_626ADN0028_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "CADILLAC|CTS",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 0.99,
+    "HWY": -0.89
+   }
+  },
+  {
+   "row": "EPA2015_GMX_62CPFE1202_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "CHEVROLET|C15",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -11.01,
+    "HWY": -8.98
+   }
+  },
+  {
+   "row": "EPA2015_KMX_RB4R6AU13A1_c1",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "HYUNDAI|ACCENT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 22.57,
+    "HWY": 10.18
+   }
+  },
+  {
+   "row": "EPA2015_MLN_SBM11BAA0AW99PP06_c3",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "MCLAREN|MP4-12C",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -7.57,
+    "HWY": -1.43
+   }
+  },
+  {
+   "row": "EPA2015_MTX_EB14-LD22_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "MITSUBISHI|MIRAGE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 26.67,
+    "HWY": 18.7
+   }
+  },
+  {
+   "row": "EPA2015_NSX_HRB100_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "INFINITI|INFINITI",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -11.21,
+    "HWY": -12.66
+   }
+  },
+  {
+   "row": "EPA2015_PRX_FE-970IIT-14_c1",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "PORSCHE|PANAMERA",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -11.06,
+    "HWY": -32.74
+   }
+  },
+  {
+   "row": "EPA2015_VWX_41110206/12_c0",
+   "band": "2012-2015",
+   "my": 2015,
+   "family": "VOLKSWAGEN|PASSAT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -3.18,
+    "HWY": -1.66
+   }
+  },
+  {
+   "row": "EPA2016_ADX_D3UF-BAQ_c1",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "AUDI|S5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -6.49,
+    "HWY": -11.21
+   }
+  },
+  {
+   "row": "EPA2016_ADX_D3UF-BMQ_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "AUDI|S5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 6.54,
+    "HWY": -11.78
+   }
+  },
+  {
+   "row": "EPA2016_ADX_DFUB-Q5A_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "AUDI|Q5",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 20.37,
+    "HWY": 10.05
+   }
+  },
+  {
+   "row": "EPA2016_BMX_0C02938_c7",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "BMW|X6",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -12.0,
+    "HWY": -4.46
+   }
+  },
+  {
+   "row": "EPA2016_BMX_0H38220_c6",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "BMW|X6",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -13.25,
+    "HWY": -9.07
+   }
+  },
+  {
+   "row": "EPA2016_BMX_0J77228_c2",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "BMW|X6",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -18.33,
+    "HWY": -9.44
+   }
+  },
+  {
+   "row": "EPA2016_BMX_F078099_c2",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "BMW|435I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -5.0,
+    "HWY": -16.12
+   }
+  },
+  {
+   "row": "EPA2016_BMX_F476148_c4",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "BMW|435I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -13.48,
+    "HWY": -13.21
+   }
+  },
+  {
+   "row": "EPA2016_BMX_F476148_c6",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "BMW|435I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -11.94,
+    "HWY": -13.0
+   }
+  },
+  {
+   "row": "EPA2016_BMX_VW84033_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "BMW|M2",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -4.82,
+    "HWY": 2.34
+   }
+  },
+  {
+   "row": "EPA2016_BMX_VW84033_c1",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "BMW|M2",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 0.21,
+    "HWY": 3.17
+   }
+  },
+  {
+   "row": "EPA2016_CRX_L4BFF8525_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "FIAT|500L",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 15.45,
+    "HWY": 4.91
+   }
+  },
+  {
+   "row": "EPA2016_CRX_L4BFF9428_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "FIAT|500L",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 26.84,
+    "HWY": 12.61
+   }
+  },
+  {
+   "row": "EPA2016_CRX_L5LAD9771_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "DODGE|CHALLENGER",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -0.48,
+    "HWY": -0.08
+   }
+  },
+  {
+   "row": "EPA2016_FJX_DBE-MP42_c2",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "SUBARU|BRZ",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 13.83,
+    "HWY": 8.67
+   }
+  },
+  {
+   "row": "EPA2016_FJX_FBF-WC14_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "SUBARU|LEGACY",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 0.82,
+    "HWY": 2.67
+   }
+  },
+  {
+   "row": "EPA2016_FJX_FBF-XD14_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "SUBARU|LEGACY",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 1.82,
+    "HWY": 1.56
+   }
+  },
+  {
+   "row": "EPA2016_FMX_DP33-3.5-H-337_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "FORD|FLEX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -3.27,
+    "HWY": -5.01
+   }
+  },
+  {
+   "row": "EPA2016_FMX_TDB50489_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "FORD|TRANSIT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 22.17,
+    "HWY": 11.08
+   }
+  },
+  {
+   "row": "EPA2016_FMX_TDB50489_c2",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "FORD|TRANSIT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 26.2,
+    "HWY": 10.81
+   }
+  },
+  {
+   "row": "EPA2016_FMX_TDB50492_c1",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "FORD|TRANSIT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 26.71,
+    "HWY": 12.84
+   }
+  },
+  {
+   "row": "EPA2016_FTG_L4MAS7806_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "FIAT|ALFA",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 25.39,
+    "HWY": 14.02
+   }
+  },
+  {
+   "row": "EPA2016_GMX_204DPN4121_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "BUICK|VERANO",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 24.92,
+    "HWY": 8.68
+   }
+  },
+  {
+   "row": "EPA2016_GMX_206GAE2011_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "CADILLAC|ATS",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 3.53,
+    "HWY": 0.48
+   }
+  },
+  {
+   "row": "EPA2016_GMX_206GAE4667_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "CADILLAC|CTS",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 7.19,
+    "HWY": 1.9
+   }
+  },
+  {
+   "row": "EPA2016_GMX_206GAV2201_c1",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "CADILLAC|ATS",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 22.33,
+    "HWY": 5.08
+   }
+  },
+  {
+   "row": "EPA2016_GMX_244CPP4629_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "BUICK|VERANO",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 27.54,
+    "HWY": 14.38
+   }
+  },
+  {
+   "row": "EPA2016_GMX_256GAV4200_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "CADILLAC|ATS",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 16.53,
+    "HWY": 8.61
+   }
+  },
+  {
+   "row": "EPA2016_GMX_361FVP6999_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "BUICK|ENCLAVE",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 5.3,
+    "HWY": -3.62
+   }
+  },
+  {
+   "row": "EPA2016_GMX_53CPGN1110_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "CHEVROLET|C15",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -16.18,
+    "HWY": -10.2
+   }
+  },
+  {
+   "row": "EPA2016_GMX_62CPFE1202_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "CHEVROLET|C15",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -11.01,
+    "HWY": -8.98
+   }
+  },
+  {
+   "row": "EPA2016_HNX_EDTW1C_c1",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "HONDA|CR-Z",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": -11.91,
+    "HWY": 4.59
+   }
+  },
+  {
+   "row": "EPA2016_HNX_EDTW1M_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "HONDA|CR-Z",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 7.0,
+    "HWY": 4.64
+   }
+  },
+  {
+   "row": "EPA2016_HNX_EGLV1A_c4",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "HONDA|PILOT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -10.47,
+    "HWY": -4.25
+   }
+  },
+  {
+   "row": "EPA2016_HNX_EGLV3A_c3",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "HONDA|PILOT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -11.19,
+    "HWY": -8.29
+   }
+  },
+  {
+   "row": "EPA2016_HNX_EGLV4A_c2",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "HONDA|PILOT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -9.36,
+    "HWY": -7.53
+   }
+  },
+  {
+   "row": "EPA2016_KMX_RB4R6AU08A1_c1",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "HYUNDAI|ACCENT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 27.82,
+    "HWY": 11.14
+   }
+  },
+  {
+   "row": "EPA2016_MBX_W205E30DETC-Z5017_c2",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "MERCEDES-BENZ|C 450",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -8.85,
+    "HWY": -2.09
+   }
+  },
+  {
+   "row": "EPA2016_MLN_SBM11BAA0AW99PP06_c3",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "MCLAREN|MP4-12C",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -7.57,
+    "HWY": -1.43
+   }
+  },
+  {
+   "row": "EPA2016_NSX_FPE644_c3",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "NISSAN|NISSAN",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": -0.17,
+    "HWY": 9.02
+   }
+  },
+  {
+   "row": "EPA2016_NSX_HRE757_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "INFINITI|Q50S",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -7.62,
+    "HWY": -10.89
+   }
+  },
+  {
+   "row": "EPA2016_NSX_LME610_c1",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "INFINITI|INFINITI",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -1.65,
+    "HWY": -6.24
+   }
+  },
+  {
+   "row": "EPA2016_NSX_SRE410_c8",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "NISSAN|NISSAN",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 12.33,
+    "HWY": 3.34
+   }
+  },
+  {
+   "row": "EPA2016_NSX_SRE559_c2",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "NISSAN|NISSAN",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 11.24,
+    "HWY": 2.56
+   }
+  },
+  {
+   "row": "EPA2016_PRX_FE-970IIS-14_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "PORSCHE|PANAMERA",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 7.46,
+    "HWY": -12.61
+   }
+  },
+  {
+   "row": "EPA2016_PRX_FE-970IIT-14_c3",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "PORSCHE|PANAMERA",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -18.18,
+    "HWY": -33.73
+   }
+  },
+  {
+   "row": "EPA2016_TYX_11-GL3A_c2",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "TOYOTA|SIENNA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -2.54,
+    "HWY": -2.71
+   }
+  },
+  {
+   "row": "EPA2016_TYX_11-GL3A_c3",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "TOYOTA|SIENNA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -4.0,
+    "HWY": -2.5
+   }
+  },
+  {
+   "row": "EPA2016_TYX_16-UJ1A_c2",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "TOYOTA|LAND CRUISER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -1.04,
+    "HWY": -1.68
+   }
+  },
+  {
+   "row": "EPA2016_TYX_16-UJ1A_c3",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "TOYOTA|LAND CRUISER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 0.82,
+    "HWY": -2.07
+   }
+  },
+  {
+   "row": "EPA2016_VGA_VW324-3-0108/16_c2",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "VOLKSWAGEN|BEETLE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 17.34,
+    "HWY": 10.41
+   }
+  },
+  {
+   "row": "EPA2016_VGA_VW324-3-0109/16_c1",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "VOLKSWAGEN|BEETLE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 24.88,
+    "HWY": 11.87
+   }
+  },
+  {
+   "row": "EPA2016_VGA_VW324-4-0049_c1",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "VOLKSWAGEN|BEETLE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 22.04,
+    "HWY": 10.06
+   }
+  },
+  {
+   "row": "EPA2016_VGA_VW411-4-0167/16_c0",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "VOLKSWAGEN|PASSAT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 15.66,
+    "HWY": 7.82
+   }
+  },
+  {
+   "row": "EPA2016_VGA_VW411-4-0168/16B_c1",
+   "band": "2016-2017",
+   "my": 2016,
+   "family": "VOLKSWAGEN|PASSAT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 15.55,
+    "HWY": 11.59
+   }
+  },
+  {
+   "row": "EPA2017_ADX_D3UF-BAQ_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "AUDI|S5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -4.35,
+    "HWY": -10.02
+   }
+  },
+  {
+   "row": "EPA2017_ADX_D3UF-Q5A_c1",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "AUDI|Q5",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -3.54,
+    "HWY": -5.61
+   }
+  },
+  {
+   "row": "EPA2017_ADX_DFUB-Q5A_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "AUDI|Q5",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 20.37,
+    "HWY": 10.05
+   }
+  },
+  {
+   "row": "EPA2017_BMX_G477611_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "BMW|540I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -17.55,
+    "HWY": -12.86
+   }
+  },
+  {
+   "row": "EPA2017_BMX_G478603_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "BMW|540I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -21.41,
+    "HWY": -13.62
+   }
+  },
+  {
+   "row": "EPA2017_BMX_G478603_c2",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "BMW|540I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -18.67,
+    "HWY": -14.95
+   }
+  },
+  {
+   "row": "EPA2017_BMX_G614303_c1",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "BMW|M760I",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -17.75,
+    "HWY": -9.73
+   }
+  },
+  {
+   "row": "EPA2017_BMX_V638702_c4",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "BMW|M240I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -24.45,
+    "HWY": -16.97
+   }
+  },
+  {
+   "row": "EPA2017_BMX_V640700_c1",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "BMW|M240I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -24.61,
+    "HWY": -19.87
+   }
+  },
+  {
+   "row": "EPA2017_BMX_V665100_c1",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "BMW|M240I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -4.2,
+    "HWY": -9.83
+   }
+  },
+  {
+   "row": "EPA2017_BMX_VW84033_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "BMW|M2",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -4.82,
+    "HWY": 2.34
+   }
+  },
+  {
+   "row": "EPA2017_CRX_L4BFF9428_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "FIAT|500L",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 26.84,
+    "HWY": 12.61
+   }
+  },
+  {
+   "row": "EPA2017_CRX_L5LAD9772_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "DODGE|CHALLENGER",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -5.43,
+    "HWY": -6.74
+   }
+  },
+  {
+   "row": "EPA2017_CRX_L7BAA0458_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "FIAT|124",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 22.16,
+    "HWY": 4.3
+   }
+  },
+  {
+   "row": "EPA2017_CRX_L7BAA2286_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "FIAT|124",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 21.07,
+    "HWY": 3.11
+   }
+  },
+  {
+   "row": "EPA2017_CRX_V0LCD1814_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "DODGE|CHALLENGER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 2.31,
+    "HWY": -1.38
+   }
+  },
+  {
+   "row": "EPA2017_FJX_HBF-MQ42_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "SUBARU|BRZ",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 14.59,
+    "HWY": 9.24
+   }
+  },
+  {
+   "row": "EPA2017_FJX_HBF-MQ52_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "SUBARU|BRZ",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 32.39,
+    "HWY": 7.26
+   }
+  },
+  {
+   "row": "EPA2017_FJX_HBF-VX14_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "SUBARU|LEGACY",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 3.75,
+    "HWY": 6.11
+   }
+  },
+  {
+   "row": "EPA2017_FMX_BP33-3.5-H-122_c2",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "FORD|FLEX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -6.8,
+    "HWY": -11.54
+   }
+  },
+  {
+   "row": "EPA2017_FMX_DP43-3.5-J-220_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "FORD|FLEX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -5.49,
+    "HWY": -8.26
+   }
+  },
+  {
+   "row": "EPA2017_FTG_L4MAS7806_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "FIAT|ALFA",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 25.39,
+    "HWY": 14.02
+   }
+  },
+  {
+   "row": "EPA2017_GMX_206GAE4667_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "CADILLAC|CTS",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 7.19,
+    "HWY": 1.9
+   }
+  },
+  {
+   "row": "EPA2017_GMX_244CPP4629_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "BUICK|VERANO",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 27.54,
+    "HWY": 14.38
+   }
+  },
+  {
+   "row": "EPA2017_GMX_361FVP6999_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "BUICK|ENCLAVE",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 5.3,
+    "HWY": -3.46
+   }
+  },
+  {
+   "row": "EPA2017_GMX_366GAE4656_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "CADILLAC|CTS",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -18.72,
+    "HWY": -19.67
+   }
+  },
+  {
+   "row": "EPA2017_GMX_62CPFE1202_c3",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "CHEVROLET|C15",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -12.78,
+    "HWY": -12.91
+   }
+  },
+  {
+   "row": "EPA2017_KMX_RB4R6AU10A1_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "HYUNDAI|ACCENT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 26.41,
+    "HWY": 12.98
+   }
+  },
+  {
+   "row": "EPA2017_KMX_RB4R6AU13A1_c1",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "HYUNDAI|ACCENT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 22.57,
+    "HWY": 10.18
+   }
+  },
+  {
+   "row": "EPA2017_MTX_EB16-LD3B_c2",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "MITSUBISHI|MIRAGE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 8.15,
+    "HWY": 14.69
+   }
+  },
+  {
+   "row": "EPA2017_MTX_EB16-LD3B_c3",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "MITSUBISHI|MIRAGE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 3.49,
+    "HWY": 12.08
+   }
+  },
+  {
+   "row": "EPA2017_MTX_EB17-LD4A_c3",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "MITSUBISHI|MIRAGE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 7.77,
+    "HWY": 13.73
+   }
+  },
+  {
+   "row": "EPA2017_NSX_GLB066_c5",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "INFINITI|INFINITI",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": -15.87,
+    "HWY": 9.64
+   }
+  },
+  {
+   "row": "EPA2017_NSX_HRE757_c0",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "INFINITI|Q50S",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -7.62,
+    "HWY": -10.89
+   }
+  },
+  {
+   "row": "EPA2017_NSX_HRE757_c1",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "INFINITI|Q50S",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -6.85,
+    "HWY": -10.43
+   }
+  },
+  {
+   "row": "EPA2017_NSX_LME610_c1",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "INFINITI|INFINITI",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -1.65,
+    "HWY": -6.24
+   }
+  },
+  {
+   "row": "EPA2017_PRX_FE-971-17_c1",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "PORSCHE|PANAMERA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -24.44,
+    "HWY": -31.96
+   }
+  },
+  {
+   "row": "EPA2017_TYX_16-UJ1A_c3",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "TOYOTA|LAND CRUISER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": 1.45,
+    "HWY": -0.49
+   }
+  },
+  {
+   "row": "EPA2017_TYX_17-GL3A_c1",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "TOYOTA|SIENNA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -12.02,
+    "HWY": -13.47
+   }
+  },
+  {
+   "row": "EPA2017_VGA_VW411-4-0167/16_c2",
+   "band": "2016-2017",
+   "my": 2017,
+   "family": "VOLKSWAGEN|PASSAT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 15.79,
+    "HWY": 10.16
+   }
+  },
+  {
+   "row": "EPA2018_CRX_L4BFF9428_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "FIAT|500L",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 26.84,
+    "HWY": 12.61
+   }
+  },
+  {
+   "row": "EPA2018_CRX_L7BAA2286_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "FIAT|124",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 21.07,
+    "HWY": 3.11
+   }
+  },
+  {
+   "row": "EPA2018_FMX_BP33-3.5-H-122_c2",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "FORD|FLEX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -6.8,
+    "HWY": -11.12
+   }
+  },
+  {
+   "row": "EPA2018_FMX_DP33-3.5-H-337_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "FORD|FLEX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -1.03,
+    "HWY": -0.18
+   }
+  },
+  {
+   "row": "EPA2018_FMX_JTH1-3.7-J-069_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "FORD|TRANSIT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 2.88,
+    "HWY": -3.44
+   }
+  },
+  {
+   "row": "EPA2018_FTG_L4MAS7806_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "FIAT|ALFA",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 25.39,
+    "HWY": 14.02
+   }
+  },
+  {
+   "row": "EPA2018_GMX_206GAE2010_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "CADILLAC|ATS",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 2.35,
+    "HWY": 0.89
+   }
+  },
+  {
+   "row": "EPA2018_GMX_206GAE2011_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "CADILLAC|ATS",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 3.53,
+    "HWY": 0.48
+   }
+  },
+  {
+   "row": "EPA2018_GMX_206GAV2201_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "CADILLAC|ATS",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 23.12,
+    "HWY": 4.93
+   }
+  },
+  {
+   "row": "EPA2018_GMX_53CPGN1110_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "CHEVROLET|C15",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -16.18,
+    "HWY": -10.2
+   }
+  },
+  {
+   "row": "EPA2018_GMX_62CPFE1202_c3",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "CHEVROLET|C15",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -12.78,
+    "HWY": -12.91
+   }
+  },
+  {
+   "row": "EPA2018_HNX_EHLV2A_c3",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "HONDA|PILOT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 0.28,
+    "HWY": -7.75
+   }
+  },
+  {
+   "row": "EPA2018_KMX_HC8R6AU01AC_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "HYUNDAI|ACCENT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 21.66,
+    "HWY": 15.44
+   }
+  },
+  {
+   "row": "EPA2018_NSX_FGE357_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "NISSAN|NISSAN",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -2.61,
+    "HWY": -14.73
+   }
+  },
+  {
+   "row": "EPA2018_NSX_HRB817_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "INFINITI|INFINITI",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 11.88,
+    "HWY": 6.96
+   }
+  },
+  {
+   "row": "EPA2018_NSX_JJB066_c4",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "NISSAN|NISSAN",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -8.89,
+    "HWY": -6.6
+   }
+  },
+  {
+   "row": "EPA2018_PRX_ECFE-971T-18_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "PORSCHE|PANAMERA",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -16.22,
+    "HWY": -18.01
+   }
+  },
+  {
+   "row": "EPA2018_PRX_FE-971-18_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "PORSCHE|PANAMERA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -23.42,
+    "HWY": -28.78
+   }
+  },
+  {
+   "row": "EPA2018_TYX_17-GL3A_c1",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "TOYOTA|SIENNA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -12.02,
+    "HWY": -13.47
+   }
+  },
+  {
+   "row": "EPA2018_TYX_18-UZ1A_c2",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "LEXUS|LC",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -14.62,
+    "HWY": -17.37
+   }
+  },
+  {
+   "row": "EPA2018_VGA_VW324-17-0129/18_c2",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "VOLKSWAGEN|BEETLE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 10.89,
+    "HWY": 4.62
+   }
+  },
+  {
+   "row": "EPA2018_VGA_VW324-3-0111/15_c2",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "VOLKSWAGEN|BEETLE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 16.96,
+    "HWY": 10.41
+   }
+  },
+  {
+   "row": "EPA2018_VGA_VW411-17-0073/18_c0",
+   "band": "2018-2026",
+   "my": 2018,
+   "family": "VOLKSWAGEN|PASSAT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 8.98,
+    "HWY": 3.29
+   }
+  },
+  {
+   "row": "EPA2019_BMX_G614303_c1",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "BMW|M760I",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -17.75,
+    "HWY": -9.73
+   }
+  },
+  {
+   "row": "EPA2019_CRX_L5LAD2881_c0",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "DODGE|CHALLENGER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -12.92,
+    "HWY": -19.43
+   }
+  },
+  {
+   "row": "EPA2019_CRX_L7BAA0458_c0",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "FIAT|124",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 22.16,
+    "HWY": 4.3
+   }
+  },
+  {
+   "row": "EPA2019_FJX_HBF-VX14_c0",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "SUBARU|LEGACY",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 3.75,
+    "HWY": 6.11
+   }
+  },
+  {
+   "row": "EPA2019_FJX_KBF-MB521_c0",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "SUBARU|86",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 30.48,
+    "HWY": 8.11
+   }
+  },
+  {
+   "row": "EPA2019_FMX_DP43-3.5-J-220_c0",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "FORD|FLEX",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -5.73,
+    "HWY": -10.07
+   }
+  },
+  {
+   "row": "EPA2019_FTG_L4MAS7806_c0",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "FIAT|ALFA",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 25.39,
+    "HWY": 14.02
+   }
+  },
+  {
+   "row": "EPA2019_GMX_206HAE6608_c0",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "CADILLAC|CTS",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 3.82,
+    "HWY": 1.7
+   }
+  },
+  {
+   "row": "EPA2019_GMX_206HAE6608_c1",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "CADILLAC|CTS",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 5.42,
+    "HWY": -0.49
+   }
+  },
+  {
+   "row": "EPA2019_GMX_27KPKNT328_c0",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "GMC|K10",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -2.63,
+    "HWY": -11.42
+   }
+  },
+  {
+   "row": "EPA2019_GMX_27KPKVT823_c1",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "GMC|K10",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 0.95,
+    "HWY": -9.15
+   }
+  },
+  {
+   "row": "EPA2019_GMX_366JAS4012_c1",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "CADILLAC|CTS",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -8.93,
+    "HWY": -8.33
+   }
+  },
+  {
+   "row": "EPA2019_MTX_EB19-LD52_c1",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "MITSUBISHI|MIRAGE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 24.0,
+    "HWY": 16.48
+   }
+  },
+  {
+   "row": "EPA2019_NSX_CQB121_c9",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "INFINITI|INFINITI",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 24.49,
+    "HWY": 17.76
+   }
+  },
+  {
+   "row": "EPA2019_NSX_KEC659_c1",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "NISSAN|NISSAN",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 14.98,
+    "HWY": 15.47
+   }
+  },
+  {
+   "row": "EPA2019_NSX_TWC331_c3",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "INFINITI|INFINITI",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -2.96,
+    "HWY": -4.89
+   }
+  },
+  {
+   "row": "EPA2019_TYX_17-GL2A_c1",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "TOYOTA|SIENNA",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -8.74,
+    "HWY": -11.04
+   }
+  },
+  {
+   "row": "EPA2019_VGA_VW324-17-0129/18_c2",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "VOLKSWAGEN|BEETLE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 10.89,
+    "HWY": 4.62
+   }
+  },
+  {
+   "row": "EPA2019_VGA_VW411-17-0073/18_c0",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "VOLKSWAGEN|PASSAT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 8.98,
+    "HWY": 3.29
+   }
+  },
+  {
+   "row": "EPA2019_VGA_VW483-09-0158_c1",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "VOLKSWAGEN|ARTEON",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 9.36,
+    "HWY": 4.4
+   }
+  },
+  {
+   "row": "EPA2019_VVX_201924_c1",
+   "band": "2018-2026",
+   "my": 2019,
+   "family": "VOLVO|XC40",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 11.86,
+    "HWY": 1.83
+   }
+  },
+  {
+   "row": "EPA2020_BMX_7D55183_c1",
+   "band": "2018-2026",
+   "my": 2020,
+   "family": "BMW|M2",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 5.14,
+    "HWY": -4.01
+   }
+  },
+  {
+   "row": "EPA2020_BMX_BR60681_c1",
+   "band": "2018-2026",
+   "my": 2020,
+   "family": "BMW|540I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -27.21,
+    "HWY": -17.2
+   }
+  },
+  {
+   "row": "EPA2020_BMX_V665100_c1",
+   "band": "2018-2026",
+   "my": 2020,
+   "family": "BMW|M240I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -4.2,
+    "HWY": -9.83
+   }
+  },
+  {
+   "row": "EPA2020_CRX_L4BFF9428_c0",
+   "band": "2018-2026",
+   "my": 2020,
+   "family": "FIAT|500L",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 26.84,
+    "HWY": 12.61
+   }
+  },
+  {
+   "row": "EPA2020_CRX_L5LAD9771_c0",
+   "band": "2018-2026",
+   "my": 2020,
+   "family": "DODGE|CHALLENGER",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -0.48,
+    "HWY": -0.08
+   }
+  },
+  {
+   "row": "EPA2020_CRX_L7BAA2286_c0",
+   "band": "2018-2026",
+   "my": 2020,
+   "family": "FIAT|124",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 21.07,
+    "HWY": 3.11
+   }
+  },
+  {
+   "row": "EPA2020_FJX_KBF-MB521_c0",
+   "band": "2018-2026",
+   "my": 2020,
+   "family": "SUBARU|86",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 30.48,
+    "HWY": 8.11
+   }
+  },
+  {
+   "row": "EPA2020_FTG_L4MAS7806_c0",
+   "band": "2018-2026",
+   "my": 2020,
+   "family": "FIAT|ALFA",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 25.39,
+    "HWY": 14.02
+   }
+  },
+  {
+   "row": "EPA2020_HYX_HCmU0G6MC004F_c1",
+   "band": "2018-2026",
+   "my": 2020,
+   "family": "HYUNDAI|ACCENT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 2.7,
+    "HWY": 8.12
+   }
+  },
+  {
+   "row": "EPA2020_VGA_VW483000092_c1",
+   "band": "2018-2026",
+   "my": 2020,
+   "family": "VOLKSWAGEN|ARTEON",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 9.04,
+    "HWY": 2.77
+   }
+  },
+  {
+   "row": "EPA2021_BMX_BM62876_c1",
+   "band": "2018-2026",
+   "my": 2021,
+   "family": "BMW|M760I",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -15.75,
+    "HWY": -10.59
+   }
+  },
+  {
+   "row": "EPA2021_BMX_LE38305_c2",
+   "band": "2018-2026",
+   "my": 2021,
+   "family": "BMW|X6",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -26.32,
+    "HWY": -13.55
+   }
+  },
+  {
+   "row": "EPA2021_CRX_L0JTJ1724_c0",
+   "band": "2018-2026",
+   "my": 2021,
+   "family": "JEEP|GLADIATOR",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -6.2,
+    "HWY": -6.49
+   }
+  },
+  {
+   "row": "EPA2021_CRX_L0JTJ1727_c0",
+   "band": "2018-2026",
+   "my": 2021,
+   "family": "JEEP|GLADIATOR",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": 2.85,
+    "HWY": -9.59
+   }
+  },
+  {
+   "row": "EPA2021_FJX_LBF-YB14_c1",
+   "band": "2018-2026",
+   "my": 2021,
+   "family": "SUBARU|LEGACY",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": -4.09,
+    "HWY": 3.12
+   }
+  },
+  {
+   "row": "EPA2021_FMX_THD08831_c0",
+   "band": "2018-2026",
+   "my": 2021,
+   "family": "FORD|TRANSIT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 10.62,
+    "HWY": 8.57
+   }
+  },
+  {
+   "row": "EPA2021_GMX_27KPKNT328_c0",
+   "band": "2018-2026",
+   "my": 2021,
+   "family": "GMC|K10",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -2.63,
+    "HWY": -11.42
+   }
+  },
+  {
+   "row": "EPA2021_MTX_EB19-LD5A_c5",
+   "band": "2018-2026",
+   "my": 2021,
+   "family": "MITSUBISHI|MIRAGE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 5.47,
+    "HWY": 10.21
+   }
+  },
+  {
+   "row": "EPA2021_TYX_21-AL3H_c2",
+   "band": "2018-2026",
+   "my": 2021,
+   "family": "TOYOTA|SIENNA",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": -42.26,
+    "HWY": -12.02
+   }
+  },
+  {
+   "row": "EPA2021_VGA_MA7G-Q5_c1",
+   "band": "2018-2026",
+   "my": 2021,
+   "family": "AUDI|Q5",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": -8.81,
+    "HWY": -4.65
+   }
+  },
+  {
+   "row": "EPA2021_VGA_MNAV-SQ8_c1",
+   "band": "2018-2026",
+   "my": 2021,
+   "family": "AUDI|SQ8",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -2.54,
+    "HWY": 0.01
+   }
+  },
+  {
+   "row": "EPA2021_VVX_202016_c1",
+   "band": "2018-2026",
+   "my": 2021,
+   "family": "VOLVO|XC40",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 4.98,
+    "HWY": -2.38
+   }
+  },
+  {
+   "row": "EPA2022_BMX_BM62876_c1",
+   "band": "2018-2026",
+   "my": 2022,
+   "family": "BMW|M760I",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -15.75,
+    "HWY": -10.59
+   }
+  },
+  {
+   "row": "EPA2022_BMX_GM49286_c3",
+   "band": "2018-2026",
+   "my": 2022,
+   "family": "BMW|540I",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -28.68,
+    "HWY": -18.84
+   }
+  },
+  {
+   "row": "EPA2022_FJX_NBF-MZ52_c3",
+   "band": "2018-2026",
+   "my": 2022,
+   "family": "SUBARU|BRZ",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 34.52,
+    "HWY": 13.44
+   }
+  },
+  {
+   "row": "EPA2022_FMX_LGA00053_c0",
+   "band": "2018-2026",
+   "my": 2022,
+   "family": "FORD|FORD",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 3.47,
+    "HWY": -1.39
+   }
+  },
+  {
+   "row": "EPA2022_FMX_LUL00016_c0",
+   "band": "2018-2026",
+   "my": 2022,
+   "family": "LINCOLN|CORSAIR",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 11.04,
+    "HWY": 6.52
+   }
+  },
+  {
+   "row": "EPA2022_FMX_LUL00037_c1",
+   "band": "2018-2026",
+   "my": 2022,
+   "family": "LINCOLN|CORSAIR",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 2.16,
+    "HWY": -4.77
+   }
+  },
+  {
+   "row": "EPA2022_FMX_THD08831_c1",
+   "band": "2018-2026",
+   "my": 2022,
+   "family": "FORD|TRANSIT",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 10.7,
+    "HWY": 9.9
+   }
+  },
+  {
+   "row": "EPA2022_HNX_EGLV1A_c7",
+   "band": "2018-2026",
+   "my": 2022,
+   "family": "HONDA|PILOT",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -11.44,
+    "HWY": -8.35
+   }
+  },
+  {
+   "row": "EPA2022_JLX_3KMTT064_c2",
+   "band": "2018-2026",
+   "my": 2022,
+   "family": "LAND ROVER|NEW RANGE",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -8.66,
+    "HWY": -7.19
+   }
+  },
+  {
+   "row": "EPA2022_VGA_NN7F-S4_c1",
+   "band": "2018-2026",
+   "my": 2022,
+   "family": "AUDI|S5",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -12.26,
+    "HWY": -6.48
+   }
+  },
+  {
+   "row": "EPA2023_BMX_LE38305_c0",
+   "band": "2018-2026",
+   "my": 2023,
+   "family": "BMW|X6",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -27.69,
+    "HWY": -16.35
+   }
+  },
+  {
+   "row": "EPA2023_CRX_L5LAD7673_c0",
+   "band": "2018-2026",
+   "my": 2023,
+   "family": "DODGE|CHALLENGER",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -6.73,
+    "HWY": -11.46
+   }
+  },
+  {
+   "row": "EPA2023_FJX_NBF-MZ42_c1",
+   "band": "2018-2026",
+   "my": 2023,
+   "family": "SUBARU|BRZ",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 20.71,
+    "HWY": 11.26
+   }
+  },
+  {
+   "row": "EPA2023_FJX_NBF-MZ52_c0",
+   "band": "2018-2026",
+   "my": 2023,
+   "family": "SUBARU|BRZ",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 36.8,
+    "HWY": 14.26
+   }
+  },
+  {
+   "row": "EPA2023_JLX_3KMTT004_c1",
+   "band": "2018-2026",
+   "my": 2023,
+   "family": "LAND ROVER|NEW RANGE",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -6.65,
+    "HWY": -10.98
+   }
+  },
+  {
+   "row": "EPA2023_JLX_3KMTT064_c1",
+   "band": "2018-2026",
+   "my": 2023,
+   "family": "LAND ROVER|NEW RANGE",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -10.79,
+    "HWY": -9.13
+   }
+  },
+  {
+   "row": "EPA2023_MTX_EB19-LD5A_c2",
+   "band": "2018-2026",
+   "my": 2023,
+   "family": "MITSUBISHI|MIRAGE",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 7.08,
+    "HWY": 12.85
+   }
+  },
+  {
+   "row": "EPA2023_TYX_18-UZ1A_c3",
+   "band": "2018-2026",
+   "my": 2023,
+   "family": "LEXUS|LC",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -13.52,
+    "HWY": -15.58
+   }
+  },
+  {
+   "row": "EPA2023_VGA_NN7F-S4_c3",
+   "band": "2018-2026",
+   "my": 2023,
+   "family": "AUDI|S5",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -11.04,
+    "HWY": -5.82
+   }
+  },
+  {
+   "row": "EPA2023_VGA_PA7G-Q5-238_c1",
+   "band": "2018-2026",
+   "my": 2023,
+   "family": "AUDI|Q5",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": -3.05,
+    "HWY": 0.03
+   }
+  },
+  {
+   "row": "EPA2023_VGA_VW483030024_c1",
+   "band": "2018-2026",
+   "my": 2023,
+   "family": "VOLKSWAGEN|ARTEON",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": -0.6,
+    "HWY": -0.44
+   }
+  },
+  {
+   "row": "EPA2024_BMX_8B58869_c1",
+   "band": "2018-2026",
+   "my": 2024,
+   "family": "BMW|M240I",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -18.9,
+    "HWY": -13.7
+   }
+  },
+  {
+   "row": "EPA2024_BMX_9L26166_c2",
+   "band": "2018-2026",
+   "my": 2024,
+   "family": "BMW|XM",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -36.8,
+    "HWY": -15.34
+   }
+  },
+  {
+   "row": "EPA2024_BMX_9M75267_c2",
+   "band": "2018-2026",
+   "my": 2024,
+   "family": "BMW|X6",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -26.45,
+    "HWY": -12.64
+   }
+  },
+  {
+   "row": "EPA2024_BMX_FM00672_c1",
+   "band": "2018-2026",
+   "my": 2024,
+   "family": "BMW|M340I",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -18.16,
+    "HWY": -11.88
+   }
+  },
+  {
+   "row": "EPA2024_FJX_PBF-BBA4_c0",
+   "band": "2018-2026",
+   "my": 2024,
+   "family": "SUBARU|LEGACY",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 4.64,
+    "HWY": 6.53
+   }
+  },
+  {
+   "row": "EPA2024_GMX_361PNS5445_c0",
+   "band": "2018-2026",
+   "my": 2024,
+   "family": "BUICK|ENCLAVE",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -3.19,
+    "HWY": -7.04
+   }
+  },
+  {
+   "row": "EPA2024_GMX_361PNS5445_c1",
+   "band": "2018-2026",
+   "my": 2024,
+   "family": "BUICK|ENCLAVE",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -3.85,
+    "HWY": -9.35
+   }
+  },
+  {
+   "row": "EPA2024_TYX_24-TS2A_c1",
+   "band": "2018-2026",
+   "my": 2024,
+   "family": "TOYOTA|GRAND HIGHLANDER",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 1.12,
+    "HWY": 0.64
+   }
+  },
+  {
+   "row": "EPA2024_VGA_RNAT-RS6_c0",
+   "band": "2018-2026",
+   "my": 2024,
+   "family": "AUDI|RS",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -1.62,
+    "HWY": 1.39
+   }
+  },
+  {
+   "row": "EPA2025_BMX_8D89472_c0",
+   "band": "2018-2026",
+   "my": 2025,
+   "family": "BMW|M2",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 6.11,
+    "HWY": -8.57
+   }
+  },
+  {
+   "row": "EPA2025_BMX_FR79374_c0",
+   "band": "2018-2026",
+   "my": 2025,
+   "family": "BMW|M340I",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -29.96,
+    "HWY": -16.83
+   }
+  },
+  {
+   "row": "EPA2025_FEX_284600_c1",
+   "band": "2018-2026",
+   "my": 2025,
+   "family": "FERRARI|F167",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -3.05,
+    "HWY": -9.69
+   }
+  },
+  {
+   "row": "EPA2025_FMX_PUL00015_c0",
+   "band": "2018-2026",
+   "my": 2025,
+   "family": "LINCOLN|CORSAIR",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 7.94,
+    "HWY": 1.5
+   }
+  },
+  {
+   "row": "EPA2025_KMX_CL4U5N0MC253F_c0",
+   "band": "2018-2026",
+   "my": 2025,
+   "family": "KIA|K4",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 5.27,
+    "HWY": 4.66
+   }
+  },
+  {
+   "row": "EPA2025_TYX_24-TH1H_c2",
+   "band": "2018-2026",
+   "my": 2025,
+   "family": "TOYOTA|LAND CRUISER",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -16.48,
+    "HWY": -11.17
+   }
+  },
+  {
+   "row": "EPA2025_TYX_24-TS2A_c0",
+   "band": "2018-2026",
+   "my": 2025,
+   "family": "TOYOTA|GRAND HIGHLANDER",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 1.14,
+    "HWY": 2.36
+   }
+  },
+  {
+   "row": "EPA2025_VGA_SN7S-S5-800_c0",
+   "band": "2018-2026",
+   "my": 2025,
+   "family": "AUDI|S5",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -3.67,
+    "HWY": -5.65
+   }
+  },
+  {
+   "row": "EPA2025_VGA_SNAT-RSQ8perf_c1",
+   "band": "2018-2026",
+   "my": 2025,
+   "family": "AUDI|RS",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -11.01,
+    "HWY": -3.97
+   }
+  },
+  {
+   "row": "EPA2026_BMX_5069809_c0",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "MINI|X2",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": -0.94,
+    "HWY": -5.12
+   }
+  },
+  {
+   "row": "EPA2026_BMX_5069809_c2",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "MINI|X2",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": -1.4,
+    "HWY": -6.7
+   }
+  },
+  {
+   "row": "EPA2026_BMX_8D89472_c0",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "BMW|M2",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 6.11,
+    "HWY": -8.57
+   }
+  },
+  {
+   "row": "EPA2026_BMX_9X90360_c0",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "BMW|XM",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -31.2,
+    "HWY": -8.43
+   }
+  },
+  {
+   "row": "EPA2026_CRX_L0JTJ1724_c0",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "JEEP|GLADIATOR",
+   "map": "gas_v6_gm_43",
+   "err": {
+    "FTP": -5.76,
+    "HWY": -5.25
+   }
+  },
+  {
+   "row": "EPA2026_FEX_284600_c1",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "FERRARI|F167",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -3.05,
+    "HWY": -9.69
+   }
+  },
+  {
+   "row": "EPA2026_FMX_SRA00012_c0",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "FORD|FORD",
+   "map": "gas_turbo_honda_15",
+   "err": {
+    "FTP": 10.58,
+    "HWY": 1.81
+   }
+  },
+  {
+   "row": "EPA2026_GMX_251TLV5598_c1",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "BUICK|ENCLAVE",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -4.07,
+    "HWY": -4.23
+   }
+  },
+  {
+   "row": "EPA2026_KMX_CL4U6N0MC611F_c0",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "KIA|K4",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 10.44,
+    "HWY": 7.6
+   }
+  },
+  {
+   "row": "EPA2026_TYX_18-UZ1A_c3",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "LEXUS|LC",
+   "map": "gas_v8_ford_73",
+   "err": {
+    "FTP": -13.07,
+    "HWY": -14.09
+   }
+  },
+  {
+   "row": "EPA2026_TYX_24-TH1H_c2",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "TOYOTA|LAND CRUISER",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -16.48,
+    "HWY": -11.17
+   }
+  },
+  {
+   "row": "EPA2026_TYX_24-TH3H_c0",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "TOYOTA|LAND CRUISER",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": -21.67,
+    "HWY": -10.39
+   }
+  },
+  {
+   "row": "EPA2026_TYX_24-TS2A_c1",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "TOYOTA|GRAND HIGHLANDER",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 1.12,
+    "HWY": 0.64
+   }
+  },
+  {
+   "row": "EPA2026_VGA_TNAV-SQ8-017_c0",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "AUDI|SQ8",
+   "map": "gas_turbo_ford_27",
+   "err": {
+    "FTP": 0.55,
+    "HWY": 5.41
+   }
+  },
+  {
+   "row": "EPA2026_VVX_202611_c0",
+   "band": "2018-2026",
+   "my": 2026,
+   "family": "VOLVO|XC40",
+   "map": "gas_na_toyota_a25a",
+   "err": {
+    "FTP": 4.23,
+    "HWY": 5.12
+   }
+  }
+ ],
+ "wall_s": 17
+}

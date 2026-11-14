@@ -1,0 +1,475 @@
+{
+ "about": "Measured fuel ratio of an older Toyota hybrid engine (2ZR-FXE, 2017 Prius Prime, D3 dev) to the TNGA hybrid paper map at the same engine speed and torque, by BMEP; used by the v3.1 option engine_era (roadsim/eras.py, mode \"table\"). Built by checks/d3_engine_maps.py; method and assumptions in its docstring.",
+ "source": "Argonne D3, dev vehicles only. This data is from the Downloadable Dynamometer Database and was generated at the Advanced Mobility Technology Laboratory (AMTL) at Argonne National Laboratory under the funding and guidance of the U.S. Department of Energy (DOE).",
+ "assumptions": {
+  "eta_sys": 0.93,
+  "eta_batt_path": 0.9,
+  "eta_dcdc": 0.92,
+  "window_s": 5,
+  "min_rpm": 900,
+  "rpm_spread": 0.06,
+  "min_P_kW": 3.0,
+  "min_coolant_C": 70.0,
+  "bins_bar": 1.0,
+  "min_n": 20,
+  "clip": [
+   0.85,
+   1.6
+  ],
+  "monotone": "non-increasing"
+ },
+ "table_2zr_estec": [
+  [
+   3.5,
+   1.424
+  ],
+  [
+   4.5,
+   1.369
+  ],
+  [
+   5.5,
+   1.309
+  ],
+  [
+   6.5,
+   1.198
+  ],
+  [
+   7.5,
+   0.906
+  ],
+  [
+   8.5,
+   0.906
+  ]
+ ],
+ "cars": {
+  "D3_2017_Toyota_Prius_Prime": {
+   "n_windows": 5850,
+   "fit": [
+    {
+     "bmep_lo": 2.0,
+     "bmep_hi": 3.0,
+     "n": 8,
+     "ratio": 1.62,
+     "rpm": 986,
+     "P_kW": 3.9
+    },
+    {
+     "bmep_lo": 3.0,
+     "bmep_hi": 4.0,
+     "n": 610,
+     "ratio": 1.424,
+     "rpm": 1163,
+     "P_kW": 6.3
+    },
+    {
+     "bmep_lo": 4.0,
+     "bmep_hi": 5.0,
+     "n": 1055,
+     "ratio": 1.369,
+     "rpm": 1222,
+     "P_kW": 8.8
+    },
+    {
+     "bmep_lo": 5.0,
+     "bmep_hi": 6.0,
+     "n": 472,
+     "ratio": 1.309,
+     "rpm": 1248,
+     "P_kW": 9.8
+    },
+    {
+     "bmep_lo": 6.0,
+     "bmep_hi": 7.0,
+     "n": 985,
+     "ratio": 1.198,
+     "rpm": 1760,
+     "P_kW": 16.5
+    },
+    {
+     "bmep_lo": 7.0,
+     "bmep_hi": 8.0,
+     "n": 690,
+     "ratio": 0.896,
+     "rpm": 1500,
+     "P_kW": 16.7
+    },
+    {
+     "bmep_lo": 8.0,
+     "bmep_hi": 9.0,
+     "n": 111,
+     "ratio": 0.971,
+     "rpm": 4667,
+     "P_kW": 60.5
+    },
+    {
+     "bmep_lo": 9.0,
+     "bmep_hi": 10.0,
+     "n": 2,
+     "ratio": 0.998,
+     "rpm": 4513,
+     "P_kW": 61.2
+    },
+    {
+     "bmep_lo": 11.0,
+     "bmep_hi": 12.0,
+     "n": 1,
+     "ratio": 1.127,
+     "rpm": 1504,
+     "P_kW": 26.0
+    }
+   ],
+   "check": [
+    {
+     "bmep_lo": 1.0,
+     "bmep_hi": 2.0,
+     "n": 3,
+     "ratio": 1.077,
+     "rpm": 1568,
+     "P_kW": 4.3
+    },
+    {
+     "bmep_lo": 2.0,
+     "bmep_hi": 3.0,
+     "n": 11,
+     "ratio": 1.3,
+     "rpm": 1568,
+     "P_kW": 5.3
+    },
+    {
+     "bmep_lo": 3.0,
+     "bmep_hi": 4.0,
+     "n": 54,
+     "ratio": 1.495,
+     "rpm": 1195,
+     "P_kW": 6.5
+    },
+    {
+     "bmep_lo": 4.0,
+     "bmep_hi": 5.0,
+     "n": 126,
+     "ratio": 1.373,
+     "rpm": 1228,
+     "P_kW": 8.5
+    },
+    {
+     "bmep_lo": 5.0,
+     "bmep_hi": 6.0,
+     "n": 222,
+     "ratio": 1.253,
+     "rpm": 1272,
+     "P_kW": 10.6
+    },
+    {
+     "bmep_lo": 6.0,
+     "bmep_hi": 7.0,
+     "n": 591,
+     "ratio": 1.041,
+     "rpm": 1824,
+     "P_kW": 18.1
+    },
+    {
+     "bmep_lo": 7.0,
+     "bmep_hi": 8.0,
+     "n": 874,
+     "ratio": 0.959,
+     "rpm": 1873,
+     "P_kW": 20.6
+    },
+    {
+     "bmep_lo": 8.0,
+     "bmep_hi": 9.0,
+     "n": 26,
+     "ratio": 0.957,
+     "rpm": 3916,
+     "P_kW": 49.9
+    },
+    {
+     "bmep_lo": 9.0,
+     "bmep_hi": 10.0,
+     "n": 2,
+     "ratio": 0.963,
+     "rpm": 3913,
+     "P_kW": 53.0
+    },
+    {
+     "bmep_lo": 10.0,
+     "bmep_hi": 11.0,
+     "n": 1,
+     "ratio": 0.993,
+     "rpm": 3768,
+     "P_kW": 57.6
+    }
+   ],
+   "all": [
+    {
+     "bmep_lo": 1.0,
+     "bmep_hi": 2.0,
+     "n": 3,
+     "ratio": 1.077,
+     "rpm": 1568,
+     "P_kW": 4.3
+    },
+    {
+     "bmep_lo": 2.0,
+     "bmep_hi": 3.0,
+     "n": 19,
+     "ratio": 1.613,
+     "rpm": 1133,
+     "P_kW": 5.0
+    },
+    {
+     "bmep_lo": 3.0,
+     "bmep_hi": 4.0,
+     "n": 664,
+     "ratio": 1.426,
+     "rpm": 1165,
+     "P_kW": 6.3
+    },
+    {
+     "bmep_lo": 4.0,
+     "bmep_hi": 5.0,
+     "n": 1181,
+     "ratio": 1.369,
+     "rpm": 1223,
+     "P_kW": 8.7
+    },
+    {
+     "bmep_lo": 5.0,
+     "bmep_hi": 6.0,
+     "n": 694,
+     "ratio": 1.294,
+     "rpm": 1255,
+     "P_kW": 10.1
+    },
+    {
+     "bmep_lo": 6.0,
+     "bmep_hi": 7.0,
+     "n": 1576,
+     "ratio": 1.098,
+     "rpm": 1760,
+     "P_kW": 16.8
+    },
+    {
+     "bmep_lo": 7.0,
+     "bmep_hi": 8.0,
+     "n": 1564,
+     "ratio": 0.936,
+     "rpm": 1799,
+     "P_kW": 19.5
+    },
+    {
+     "bmep_lo": 8.0,
+     "bmep_hi": 9.0,
+     "n": 137,
+     "ratio": 0.969,
+     "rpm": 4354,
+     "P_kW": 57.4
+    },
+    {
+     "bmep_lo": 9.0,
+     "bmep_hi": 10.0,
+     "n": 4,
+     "ratio": 0.982,
+     "rpm": 4124,
+     "P_kW": 56.0
+    },
+    {
+     "bmep_lo": 10.0,
+     "bmep_hi": 11.0,
+     "n": 1,
+     "ratio": 0.993,
+     "rpm": 3768,
+     "P_kW": 57.6
+    },
+    {
+     "bmep_lo": 11.0,
+     "bmep_hi": 12.0,
+     "n": 1,
+     "ratio": 1.127,
+     "rpm": 1504,
+     "P_kW": 26.0
+    }
+   ]
+  },
+  "D3_2010_Toyota_Prius": {
+   "n_windows": 193,
+   "fit": [
+    {
+     "bmep_lo": 2.0,
+     "bmep_hi": 3.0,
+     "n": 7,
+     "ratio": 1.697,
+     "rpm": 1120,
+     "P_kW": 4.8
+    },
+    {
+     "bmep_lo": 3.0,
+     "bmep_hi": 4.0,
+     "n": 19,
+     "ratio": 1.562,
+     "rpm": 1494,
+     "P_kW": 7.9
+    },
+    {
+     "bmep_lo": 4.0,
+     "bmep_hi": 5.0,
+     "n": 18,
+     "ratio": 1.375,
+     "rpm": 1995,
+     "P_kW": 13.3
+    },
+    {
+     "bmep_lo": 5.0,
+     "bmep_hi": 6.0,
+     "n": 3,
+     "ratio": 1.317,
+     "rpm": 2476,
+     "P_kW": 19.4
+    },
+    {
+     "bmep_lo": 7.0,
+     "bmep_hi": 8.0,
+     "n": 1,
+     "ratio": 0.274,
+     "rpm": 4172,
+     "P_kW": 47.8
+    }
+   ],
+   "check": [
+    {
+     "bmep_lo": 1.0,
+     "bmep_hi": 2.0,
+     "n": 4,
+     "ratio": 1.511,
+     "rpm": 1315,
+     "P_kW": 3.6
+    },
+    {
+     "bmep_lo": 2.0,
+     "bmep_hi": 3.0,
+     "n": 21,
+     "ratio": 2.044,
+     "rpm": 1129,
+     "P_kW": 4.6
+    },
+    {
+     "bmep_lo": 3.0,
+     "bmep_hi": 4.0,
+     "n": 70,
+     "ratio": 1.529,
+     "rpm": 1317,
+     "P_kW": 7.0
+    },
+    {
+     "bmep_lo": 4.0,
+     "bmep_hi": 5.0,
+     "n": 33,
+     "ratio": 1.337,
+     "rpm": 1460,
+     "P_kW": 9.9
+    },
+    {
+     "bmep_lo": 5.0,
+     "bmep_hi": 6.0,
+     "n": 10,
+     "ratio": 0.95,
+     "rpm": 2063,
+     "P_kW": 16.3
+    },
+    {
+     "bmep_lo": 6.0,
+     "bmep_hi": 7.0,
+     "n": 1,
+     "ratio": 0.304,
+     "rpm": 3985,
+     "P_kW": 40.6
+    },
+    {
+     "bmep_lo": 7.0,
+     "bmep_hi": 8.0,
+     "n": 5,
+     "ratio": 0.226,
+     "rpm": 4100,
+     "P_kW": 45.7
+    },
+    {
+     "bmep_lo": 8.0,
+     "bmep_hi": 9.0,
+     "n": 1,
+     "ratio": 0.035,
+     "rpm": 3748,
+     "P_kW": 45.7
+    }
+   ],
+   "all": [
+    {
+     "bmep_lo": 1.0,
+     "bmep_hi": 2.0,
+     "n": 4,
+     "ratio": 1.511,
+     "rpm": 1315,
+     "P_kW": 3.6
+    },
+    {
+     "bmep_lo": 2.0,
+     "bmep_hi": 3.0,
+     "n": 28,
+     "ratio": 1.957,
+     "rpm": 1120,
+     "P_kW": 4.7
+    },
+    {
+     "bmep_lo": 3.0,
+     "bmep_hi": 4.0,
+     "n": 89,
+     "ratio": 1.545,
+     "rpm": 1319,
+     "P_kW": 7.1
+    },
+    {
+     "bmep_lo": 4.0,
+     "bmep_hi": 5.0,
+     "n": 51,
+     "ratio": 1.361,
+     "rpm": 1612,
+     "P_kW": 11.1
+    },
+    {
+     "bmep_lo": 5.0,
+     "bmep_hi": 6.0,
+     "n": 13,
+     "ratio": 1.068,
+     "rpm": 2322,
+     "P_kW": 18.4
+    },
+    {
+     "bmep_lo": 6.0,
+     "bmep_hi": 7.0,
+     "n": 1,
+     "ratio": 0.304,
+     "rpm": 3985,
+     "P_kW": 40.6
+    },
+    {
+     "bmep_lo": 7.0,
+     "bmep_hi": 8.0,
+     "n": 6,
+     "ratio": 0.23,
+     "rpm": 4104,
+     "P_kW": 46.1
+    },
+    {
+     "bmep_lo": 8.0,
+     "bmep_hi": 9.0,
+     "n": 1,
+     "ratio": 0.035,
+     "rpm": 3748,
+     "P_kW": 45.7
+    }
+   ]
+  }
+ }
+}
