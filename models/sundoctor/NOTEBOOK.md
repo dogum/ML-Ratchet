@@ -9,8 +9,8 @@
   - dead strings, with failure and repair days
   - shading, clipping, outages, soiling, snow, and stuck or stowed trackers
   - the kWh lost to each cause
-- Second project in Greg's physics-ML collection, after ChirpNet. Collection name is still open; Greg leans toward "ML Ratchet" (also liked First Light, Ratchet, Ab Initio).
-- v2 adds two things Greg picked:
+- Second project in the physics-ML collection, after ChirpNet. Collection name is still open; the owner leans toward "ML Ratchet" (also liked First Light, Ratchet, Ab Initio).
+- v2 adds two things the owner picked:
   1. Power-only "home" mode, for systems with no irradiance sensor.
   2. A second real farm: PVDAQ 9068 in Colorado, with single-axis trackers and snow.
 - Page (same link, updated to v2): https://claude.ai/artifact/VqpkFf7pWwWhodohiaqE97. Sections:

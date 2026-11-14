@@ -49,6 +49,10 @@ The simulator's measured gaps are its next rungs, each with a size and a "done w
 The two most valuable missing datasets — Argonne's dynamometer database and NREL's Fleet DNA truck and bus traces —
 were blocked from the cloud sandbox where the platform was built.
 
+A worked example of the ratchet applied to the simulator itself, RoadSim v2 → v2.1 with a fresh exam frozen before
+any fitting (14 Nov 2026), is on the [mental models](https://dogum.github.io/ML-Ratchet/mental-models/#worked-example)
+page.
+
 ## Using it
 
 ```bash

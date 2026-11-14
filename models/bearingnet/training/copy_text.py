@@ -54,5 +54,5 @@ C['credits'] = ('<b>Data.</b> Case Western Reserve University Bearing Data Cente
  'Paderborn University KAt-DataCenter bearing data (C. Lessmeier, J. K. Kimotho, D. Zimmer, W. Sextro, "Condition monitoring of bearing damage in electromechanical drive systems by using motor current signals of electric motors: a benchmark data set for data-driven classification", PHM Society European Conference 2016); used under the terms on the KAt-DataCenter page. '
  'MFPT fault data was checked as a third source; the MFPT site no longer offers it for download. '
  '<b>Physics.</b> P. D. McFadden & J. D. Smith (1984), J. Sound Vib. 96; R. B. Randall & J. Antoni (2011), "Rolling element bearing diagnostics - a tutorial", MSSP 25; N. Sawalhi & R. B. Randall (2011) on entry/exit events; W. A. Smith & R. B. Randall (2015), CWRU benchmark study, MSSP 64-65. '
- '<b>Built</b> by Claude for Greg\'s physics + ML collection. Fonts: Big Shoulders Display, Public Sans, IBM Plex Mono (Google Fonts).')
+ '<b>Built</b> by Claude for the ML Ratchet physics + ML collection. Fonts: Big Shoulders Display, Public Sans, IBM Plex Mono (Google Fonts).')
 json.dump(C, open(B + 'web/copy.json', 'w'), indent=1); print('ok')

@@ -9,6 +9,7 @@ tags: [gravitational waves, detection, posterior estimation, normalizing flow, t
 accent: "#7c5cff"
 tagline: Neural networks that never saw a real gravitational wave, then found five.
 question: Is there a black-hole or neutron-star merger in this LIGO data, and how heavy was it?
+question_short: "Is there a black-hole or neutron-star merger in this LIGO data, and how heavy was it?"
 summary: >-
   Four small networks trained only on simulated mergers from general relativity. Pointed at real recordings
   from the two LIGO observatories they find the black-hole and neutron-star mergers, weigh them, and give
@@ -36,6 +37,12 @@ physics:
 noise: Simulated Gaussian noise coloured by O1/O2 and design spectra; the exam background is time-slid real LIGO data.
 network: 1-D residual CNN finder + two-stream coincidence checker (882k weights), an 8-layer RealNVP posterior flow, and a 2-D time-frequency CNN for neutron stars
 
+approach:
+  real_backdrop: false
+  physics_inputs: false
+  physics_anchor: false
+  real_data_roles: [exam]
+
 data:
   - name: Gravitational Wave Open Science Center (LIGO/Virgo strain)
     url: https://gwosc.org
@@ -59,6 +66,7 @@ split:
   exam: GW150914, GW151012, GW151226, GW170104 (32 s each) and GW170817 (2,048 s)
 
 exam:
+  short: "13 events from O1–O3 + time-slid background"
   summary: >-
     Thirteen real events — five from O1/O2 and eight from O3, the O3 set named in advance — plus hours of
     time-slid real background from the same files to bound false alarms.

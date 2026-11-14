@@ -19,6 +19,8 @@ CellSense reads one fast discharge curve of a lithium-ion cell and returns its t
 | **Learned from** | A vectorized single-particle model of each electrode (PyBaMM Prada2013 open-circuit curves, exact Fickian diffusion, Butler-Volmer kinetics, lumped thermal model) with aging: SEI growth (lithium loss), graphite and cathode loss, transport polarisation, and a growing share of slow, poorly connected graphite — the one mechanism that fits early-life change on all six calibration cells. |
 | **Noise** | Measurement noise and cell-to-cell scatter in simulation; six real cells calibrate the LFP aging priors, three the NMC811 ones. NMC811 also: cycler gain error, a few mV of voltage offset, per-cell open-circuit-curve jitter. |
 | **Network** | Three 1-D residual CNNs along the voltage axis for LFP (health, lifetime, partial discharge) and a fourth, smaller one for NMC811; β-NLL error bars |
+| **Physics also enters** | only through the simulated training data |
+| **Real data's jobs** | calibration, gate, error bars, exam (never training labels) |
 | **Dev set** | LFP: six calibration cells. NMC811: W3, W4, W8 (26 tests), split_units(cells, 3, seed=811) |
 | **Exam** | LFP: 118 cells, 3,771 health readings; Severson's primary and secondary test splits for lifetime. NMC811: W5, W7, W9, W10, G1, V4, V5 (75 tests) |
 

@@ -16,6 +16,8 @@ Four small networks trained only on simulated mergers from general relativity. P
 | **Learned from** | Aligned-spin waveforms from general relativity (IMRPhenomD for black holes, IMRPhenomD_NRTidalv2 for neutron stars via LALSuite), projected onto the two detectors with the real light-travel delay and whitened with O1/O2 and design noise spectra. |
 | **Noise** | Simulated Gaussian noise coloured by O1/O2 and design spectra; the exam background is time-slid real LIGO data. |
 | **Network** | 1-D residual CNN finder + two-stream coincidence checker (882k weights), an 8-layer RealNVP posterior flow, and a 2-D time-frequency CNN for neutron stars |
+| **Physics also enters** | only through the simulated training data |
+| **Real data's jobs** | exam (never training labels) |
 | **Dev set** | None — real events never chose anything; rules were set on simulations and time-slid noise. |
 | **Exam** | GW150914, GW151012, GW151226, GW170104 (32 s each) and GW170817 (2,048 s) |
 

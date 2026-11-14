@@ -67,6 +67,12 @@ def check(model: Model) -> list[str]:
         if not (p / must).exists():
             problems.append(f"{must} is missing")
 
+    if card.get("status") in ("released", "partial") and "approach" not in card:
+        problems.append("model.yaml has no approach block (where physics and real data enter; see docs/model-contract.md)")
+    roles = card.get("approach", {}).get("real_data_roles", [])
+    if card.get("approach", {}).get("real_backdrop") and "backdrop" not in roles:
+        problems.append("approach.real_backdrop is set but 'backdrop' is not in approach.real_data_roles")
+
     released = [r for lad in ladder.get("ladders", []) for r in lad.get("rungs", []) if r.get("decision") == "released"]
     if card.get("status") in ("released", "partial") and not released:
         problems.append("status is released but no rung in ratchet.yaml is marked 'released'")

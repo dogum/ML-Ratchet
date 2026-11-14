@@ -9,6 +9,7 @@ tags: [condition monitoring, vibration, fault diagnosis, classification, domain 
 accent: "#5b7083"
 tagline: Hearing a bearing fail, from impact physics and a healthy machine's hum.
 question: Is this rolling-element bearing healthy, or does it have an outer-race, inner-race or ball defect?
+question_short: "Healthy, or an outer-race, inner-race or ball defect?"
 summary: >-
   From 3–20 seconds of one accelerometer on a rotating machine, plus the bearing's geometry and a rough shaft
   speed, BearingNet says whether the bearing is healthy or has an outer-race, inner-race or ball defect, and
@@ -37,6 +38,12 @@ physics:
 noise: Healthy CWRU file 98 and Paderborn K001–K003, time-stretched ±15% for speed (never in dev or exam)
 network: Envelope spectra in 5 bands on fault-aligned log-frequency axes; 1-D residual CNN, 438k parameters, 20k simulations
 
+approach:
+  real_backdrop: "Healthy CWRU and Paderborn recordings, time-stretched for speed"
+  physics_inputs: "Envelope spectra on log-frequency axes aligned to the fault orders computed from the bearing geometry"
+  physics_anchor: false
+  real_data_roles: [backdrop, calibration, gate, exam]
+
 data:
   - name: Case Western Reserve University Bearing Data Center
     url: https://engineering.case.edu/bearingdatacenter
@@ -52,6 +59,7 @@ split:
   exam: 150 CWRU files on every sensor position, and 26 Paderborn bearings (919 recordings)
 
 exam:
+  short: "2 rigs, one never heard"
   summary: Balanced accuracy over N/OR/IR/B, against classical envelope analysis and the majority class.
   results:
     - metric: Paderborn (new machine), balanced accuracy

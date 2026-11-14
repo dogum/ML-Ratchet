@@ -30,6 +30,12 @@ physics:
 noise: TODO — which REAL instrument recordings the simulated signals are laid into
 network: TODO — architecture, size, loss
 
+approach:                    # where physics and real data enter; a string says how, false says it does not
+  real_backdrop: TODO — the real recordings the simulated signals are laid into, or false
+  physics_inputs: false      # physics-derived features or axes the network reads
+  physics_anchor: false      # the physics estimate the output corrects, or the physics decision it feeds
+  real_data_roles: [backdrop, gate, exam]   # any of: backdrop, calibration, gate, error_bars, exam
+
 data:
   - name: TODO
     url: https://example.org

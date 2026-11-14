@@ -16,6 +16,8 @@ From ten days of NOAA buoy wave spectra, SwellCast says whether storm swell is a
 | **Learned from** | Deep-water dispersion (group speed g/4πf) from a moving, growing and decaying JONSWAP storm patch, spherical spreading on the great circle, Ardhuin et al. 2009 swell dissipation, directional moments, and the buoy's own estimation noise and quantisation. |
 | **Noise** | Quiet 240-hour windows from 27 NDBC buoys (2008–2025); 25% of each batch is a real null window |
 | **Network** | 2-D CNN over frequency × time (log energy, anomaly, two directional moments, data mask), 4 residual stages, 296k parameters; β-NLL and von Mises heads |
+| **Physics also enters** | only through the simulated training data |
+| **Real data's jobs** | backdrop, calibration, gate, exam (never training labels) |
 | **Dev set** | 18 storms (seed 2026), 29 confirmed arrivals |
 | **Exam** | 288 confirmed arrivals (632 visible, 2,081 storm–buoy pairs in all) |
 

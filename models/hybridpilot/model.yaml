@@ -10,6 +10,7 @@ tags: [hybrid vehicles, energy management, control, imitation learning, dynamic 
 accent: "#3949ab"
 tagline: A learned hybrid controller, raced against the dynamic-programming optimum.
 question: Second by second, should a hybrid run its engine, and how hard — to use the least fuel the physics allows?
+question_short: "How should a hybrid run its engine, second by second? *(graded in simulation)*"
 summary: >-
   HybridPilot is a learned, causal energy-management policy for hybrids: every second it decides engine on/off and
   engine power, holding charge in hybrids and depleting-then-sustaining in plug-ins. It learned by imitating the
@@ -45,6 +46,12 @@ physics:
 noise: Real routes, grades and weather; random start SOC, temperatures from −20 to 36 °C, warm and cold starts
 network: MLP 66 → 96 → 96 → 2 (15,938 parameters) predicting the equivalence factor s; the decision minimises fuel + s × battery power among RoadSim's candidate controls, with A-ECMS-style SOC feedback (Kp 12, Ki 0.02)
 
+approach:
+  real_backdrop: "Real VED and ZTBus routes, grades and weather"
+  physics_inputs: "Wheel power demand from RoadSim's road-load model"
+  physics_anchor: "Its output, the equivalence factor s, sets an ECMS cost over candidate controls scored by the powertrain model"
+  real_data_roles: [backdrop, calibration, gate, exam]
+
 data:
   - name: Vehicle Energy Dataset (VED) — Oh, LeBlanc, Peng, IEEE T-ITS 2020
     url: https://github.com/gsoh/VED
@@ -64,6 +71,7 @@ split:
   exam: 430 trips — 216 real VED exam routes driven by calibrated twins of the 108 exam hybrids, 214 by 54 held-out generated hybrids, full-ZTBus exam legs and HD cycles
 
 exam:
+  short: "430 real routes, simulated twins"
   summary: 430 exam trips, graded as % of the DP optimum (DP with the same 8 s / 3 s on/off timers) at matched final charge. Real routes, simulated cars. Run once, after the release choice was committed.
   results:
     - metric: All 430 trips, % of DP optimum

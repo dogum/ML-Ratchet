@@ -8,7 +8,7 @@
 ## ChirpNet v2.0 (gravitational-wave ML)
 - What it is: small neural networks trained only on simulated mergers (LALSuite waveforms in simulated noise), tested on real LIGO data. A portable numpy release, plus a showpiece page.
 - Page: https://claude.ai/artifact/Kd3TYXDnxFYFM1zTonrUc7 (version 2).
-- Two zips were sent in the cloud session chat. The cloud workspace (`/home/claude/gw`) is ephemeral, so these zips and the page are the durable copies.
+- Two zips were delivered from the cloud session. The cloud workspace (`/home/claude/gw`) is ephemeral, so these zips and the page are the durable copies.
   - `chirpnet-v2.zip` (16 MB): the release.
   - **`chirpnet-repo.zip` (21 MB): GitHub-ready snapshot of everything.** It contains:
     - `chirpnet/`: release code, demo and 4 weight files.
@@ -36,17 +36,17 @@
   4. Like rule 3, but counting only loud fakes. Rung 9 was accepted at 1.116 vs 1.105.
 - BNS ratchet objective: sensitivity − 2 × chirp-mass error, with glitch false alarms ≤ 5%.
 
-## Plans (Greg, 30 Oct)
-- **Open-source it on Greg's GitHub** so others can find and use it. Start from `chirpnet-repo.zip`.
+## Plans (owner, 30 Oct)
+- **Open-source it on the owner's GitHub** so others can find and use it. Start from `chirpnet-repo.zip`.
 - To-dos before publishing:
   - Choose a code license (README has a TODO; the LIGO data stays CC BY 4.0).
   - Replace the hardcoded `/home/claude/gw` paths in `training/`.
   - Optionally enable GitHub Pages on `docs/`.
-- **Artifact Shelf** (https://github.com/dogum/artifact-shelf; local `~/Developer/artifact-shelf`): ChirpNet should go on it, possibly as a shelf-styled version of the page, alongside Collision Course. Only do this when Greg says so. The GitHub API was not enabled for that repo in the cloud session, so shelving needs repo access or his Mac.
-- Greg may move this conversation into his artifacts-collection or public-projects project folder. The work overlaps with both.
+- **Artifact Shelf** (https://github.com/dogum/artifact-shelf): ChirpNet should go on it, possibly as a shelf-styled version of the page, alongside Collision Course. Only on the owner's decision. The GitHub API was not enabled for that repo in the cloud session, so shelving needs repo access or a local machine.
+- The project may move into the artifacts-collection or public-projects folder. The work overlaps with both.
 
 ## Blocked / next
-- **O3 final exam:** the GWOSC servers are blocked from the cloud sandbox. Greg needs to attach H1+L1 files (32 sec, 4 KHz, HDF5) for GW190412, GW190408_181802, GW190828_063405, GW191204_171526, GW200129_065458, GW200224_222234, GW200311_115853 and GW190521.
+- **O3 final exam:** the GWOSC servers are blocked from the cloud sandbox. The owner needs to attach H1+L1 files (32 sec, 4 KHz, HDF5) for GW190412, GW190408_181802, GW190828_063405, GW191204_171526, GW200129_065458, GW200224_222234, GW200311_115853 and GW190521.
 - Ideas next:
   - A coincidence checker for the BNS model.
   - Longer BNS windows, to fix the chirp-mass bias.
@@ -55,7 +55,7 @@
 ## Collision Course (WebGL2 galaxy-collision simulator)
 - https://claude.ai/artifact/T2b4hUR7A5CVLogNbfkm3T (v2 adds the Local Group scenario).
 
-- Greg enjoys learning outside his field. Explain in plain language, and keep visuals front and center.
+- The owner enjoys learning outside their field. Explain in plain language, and keep visuals front and center.
 
 ## O3 exam — 12 Nov 2026 (in the repository, from a home connection)
 

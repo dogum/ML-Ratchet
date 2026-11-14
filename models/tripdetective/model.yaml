@@ -10,6 +10,7 @@ tags: [vehicles, system identification, OBD logs, mass estimation, road load, cl
 accent: "#9c6644"
 tagline: What car was this? Read it from one trip log.
 question: From a car's trip log alone, what kind of powertrain is it, how heavy, what engine, how much drag — and where did the energy go?
+question_short: "From a trip log alone: what powertrain, how heavy, what engine, how much drag?"
 summary: >-
   TripDetective reads one or more 1 Hz trip logs of a light-duty vehicle — speed plus whatever an OBD logger has —
   and infers its architecture, total mass, engine size, CdA, rolling resistance, hybrid strategy and each trip's
@@ -42,6 +43,12 @@ physics:
 noise: Real routes and weather; the emulated logger reproduces real OBD cadences, holds, quantisation and MAF-based fuel estimates
 network: "1-D CNN over each trip window (23 channels, incl. a source-power channel) plus 16 classical estimates; trip embeddings pooled across a car's trips together with the road-load regression's normal equations, which are solved per car (physics-regression head: mass = fitted b0 x a learned efficiency correction); heads for architecture, strategy and 7 regressions (Gaussian NLL); 0.40 M parameters. A second, separately trained copy reads buses."
 
+approach:
+  real_backdrop: "Real VED and ZTBus routes and weather, through an emulated OBD logger"
+  physics_inputs: "16 classical per-trip estimates and the road-load regression's normal equations"
+  physics_anchor: "Mass = the fitted road-load coefficient b0 × a learned efficiency correction"
+  real_data_roles: [backdrop, calibration, gate, exam]
+
 data:
   - name: Vehicle Energy Dataset (VED) — Oh, LeBlanc, Peng, IEEE T-ITS 2020
     url: https://github.com/gsoh/VED
@@ -65,6 +72,7 @@ split:
   exam: "350 VED exam cars (at most 40 trips each, fixed seed), 25 EPA road-load cars, 150 EPA exam vehicles rebuilt in RoadSim, and 5,847 ZTBus legs of the 1,115 exam missions"
 
 exam:
+  short: "350 real cars + 5,847 Zurich bus legs"
   summary: "Real VED exam cars and ZTBus exam legs; baselines fitted on dev only. v1.0 is re-scored on the same exam with the same code (in each note)."
   results:
     - metric: Curb mass per car, median |error| (335 cars)

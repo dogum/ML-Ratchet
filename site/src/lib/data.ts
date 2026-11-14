@@ -15,6 +15,12 @@ export interface ExamRow {
   metric: string; better: 'lower' | 'higher' | 'closer'; unit?: string;
   model: number | string; baselines: Baseline[]; verdict: Verdict; note?: string;
 }
+export type RealDataRole = 'backdrop' | 'calibration' | 'gate' | 'error_bars' | 'exam';
+/** Where physics and real data enter a model (model.yaml `approach`); a string says how, false says it does not. */
+export interface Approach {
+  real_backdrop: string | false; physics_inputs: string | false; physics_anchor: string | false;
+  real_data_roles: RealDataRole[];
+}
 export interface Card {
   id: string; name: string; version: string; status: 'released' | 'partial' | 'in-progress' | 'idea';
   released?: string | Date | null; order?: number; domain: string; tags?: string[]; accent: string;
@@ -22,6 +28,7 @@ export interface Card {
   reads: string; returns: string[];
   physics: { summary: string; simulator: string[]; checks: string[] };
   noise?: string; network?: string;
+  approach?: Approach;
   data: { name: string; url: string; licence: string; role: string }[];
   split: { dev: string; exam: string };
   exam: { summary: string; results: ExamRow[]; coverage?: { output: string; actual: number }[] };

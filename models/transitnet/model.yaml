@@ -9,6 +9,7 @@ tags: [exoplanets, TESS, classification, parameter estimation, light curves]
 accent: "#2f6fed"
 tagline: Planet or impostor? Trained on zero real planets.
 question: Is this periodic dip in a TESS light curve a planet, and if so how big is it?
+question_short: "Is this dip in a TESS light curve a planet, and how big is it?"
 summary: >-
   Given a TESS light curve and a candidate period, TransitNet decides whether the dip is a planet, an
   eclipsing binary, a background blend or nothing, and measures the planet's size, impact parameter and orbit
@@ -34,6 +35,12 @@ physics:
 noise: 2,200 real 2-minute TESS light curves of ordinary stars, 220 from each of 10 sectors across the mission
 network: Multi-view 1-D CNN (local, secondary, global, odd/even views + scalars) predicting corrections to model-free estimates
 
+approach:
+  real_backdrop: "2,200 real TESS light curves of ordinary stars"
+  physics_inputs: "The light curve folded on the candidate period: local, secondary, global and odd/even views"
+  physics_anchor: "Corrections to model-free estimates: radius ratio from √depth, a/R* from period and duration"
+  real_data_roles: [backdrop, calibration, gate, exam]
+
 data:
   - name: TESS SPOC light curves (MAST)
     url: https://archive.stsci.edu/missions-and-data/tess
@@ -53,6 +60,7 @@ split:
   exam: 1,625 confirmed planets, 992 follow-up false positives, 77 false alarms
 
 exam:
+  short: "1,196 planets + 832 false positives"
   summary: 1,196 planets and 832 false positives with SNR ≥ 7.
   results:
     - metric: Planet vs false positive, AUC

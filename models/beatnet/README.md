@@ -19,6 +19,8 @@ For every heartbeat in a single-lead ECG, BeatNet gives the AAMI class (normal, 
 | **Learned from** | A 2 mm voxel heart with eikonal activation through a Purkinje-lined endocardium; membrane potentials with action-potential gradients and restitution; the heart dipole projected through Dower lead vectors; and a rhythm model with ectopy patterns, pauses, AF and flutter. |
 | **Noise** | Real MIT-BIH Noise Stress Test recordings plus quiet real background cut from the dev records, mains, amplifier noise and 11-bit quantisation |
 | **Network** | 1-D residual CNN, 172k weights, 2.5 s window at 180 Hz plus 6 RR features |
+| **Physics also enters** | only through the simulated training data |
+| **Real data's jobs** | backdrop, calibration, gate, exam (never training labels) |
 | **Dev set** | 6 DS1 records (101, 112, 119, 201, 203, 220; seed 2026, stratified) |
 | **Exam** | DS2 — 22 records, 49,705 beats (de Chazal 2004 inter-patient split); also SVDB and QT DB |
 

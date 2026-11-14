@@ -9,6 +9,7 @@ tags: [solar PV, fault diagnosis, loss attribution, time series, uncertainty]
 accent: "#e8a10c"
 tagline: A day-by-day doctor for solar farms, trained on sunlight physics alone.
 question: Why did this solar array make less power today, and how much did each cause cost?
+question_short: "Why did this solar array make less power today, and what did each cause cost?"
 summary: >-
   SunDoctor reads two weeks of a PV system's power (with or without an irradiance sensor) and diagnoses it
   day by day: dead strings with their failure and repair days, shading, clipping, outages, soiling, snow and
@@ -38,6 +39,12 @@ physics:
 noise: Simulated weather and sensor faults (no instrument archive noise injection; this predates the real-noise recipe)
 network: 2-D CNN over 14 days × 96 solar-time steps, 12 input channels, Gaussian error bars on every output (591k weights)
 
+approach:
+  real_backdrop: false
+  physics_inputs: "Clear-sky sunlight on the panels and the healthy array's expected power, as input channels"
+  physics_anchor: false
+  real_data_roles: [exam]
+
 data:
   - name: NREL PVDAQ via OEDI (systems 2107 and 9068)
     url: https://data.openei.org/submissions/4568
@@ -49,6 +56,7 @@ split:
   exam: "PVDAQ 2107 (Arbuckle, California; 24 sibling inverters as the answer key) and PVDAQ 9068 (Kersey, Colorado; 4.7 MW, 224 trackers)"
 
 exam:
+  short: "2 real PV farms, independent answer keys"
   summary: Two real farms, graded against independent answer keys (sibling inverters, the plant's own instruments).
   results:
     - metric: String failures caught within a day (California)

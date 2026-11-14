@@ -16,6 +16,8 @@ From 41 minutes of three-component ground velocity at a single seismic station, 
 | **Learned from** | Green's functions for a 1-D Earth (ak135f) on a 27-depth × 71-distance grid, combined locally into any moment tensor, plus measured corrections for what a 1-D Earth leaves out: slower surface waves, a scattering coda, and per-component surface-wave gains. |
 | **Noise** | 1,284 real quiet-time windows from 127 GSN stations |
 | **Network** | 1-D residual CNN, 7 stride-2 blocks, 1.44 M parameters; β-NLL on Mw, distance, log depth; von Mises NLL on back-azimuth |
+| **Physics also enters** | only through the simulated training data |
+| **Real data's jobs** | backdrop, calibration, gate, error bars, exam (never training labels) |
 | **Dev set** | 74 records from 40 events (fixed seed) |
 | **Exam** | 3,105 records from 1,734 events, M ≥ 5.5, 2012–2025, distance 25–95° |
 

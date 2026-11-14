@@ -9,6 +9,7 @@ tags: [batteries, state of health, lifetime prediction, electrochemistry, uncert
 accent: "#12b76a"
 tagline: Battery health and remaining life from one discharge curve.
 question: How worn is this battery cell, why, and how many cycles does it have left?
+question_short: "How worn is this battery cell, why, and how many cycles are left? (LFP, and now NMC811)"
 summary: >-
   CellSense reads one fast discharge curve of a lithium-ion cell and returns its total capacity, resistance,
   how much lithium and electrode material it has lost, and a forecast of its cycle life. It learned from an
@@ -44,6 +45,12 @@ physics:
 noise: "Measurement noise and cell-to-cell scatter in simulation; six real cells calibrate the LFP aging priors, three the NMC811 ones. NMC811 also: cycler gain error, a few mV of voltage offset, per-cell open-circuit-curve jitter."
 network: Three 1-D residual CNNs along the voltage axis for LFP (health, lifetime, partial discharge) and a fourth, smaller one for NMC811; β-NLL error bars
 
+approach:
+  real_backdrop: false
+  physics_inputs: false
+  physics_anchor: false
+  real_data_roles: [calibration, gate, error_bars, exam]
+
 data:
   - name: Severson et al. 2019 fast-charging dataset (Toyota Research Institute / Stanford / MIT)
     url: https://data.matr.io/1/
@@ -63,6 +70,7 @@ split:
   exam: "LFP: 118 cells, 3,771 health readings; Severson's primary and secondary test splits for lifetime. NMC811: W5, W7, W9, W10, G1, V4, V5 (75 tests)"
 
 exam:
+  short: "118 LFP cells + 7 NMC811 cells"
   summary: "LFP: health on 118 cells; lifetime from cycle 100 on Severson's own test splits. NMC811: capacity from C/20 tests stopped at 1.5, 2.5 and 3.5 Ah on 7 cells (75 tests), with and without the cell's first test as reference."
   results:
     - metric: Total capacity error (full curves)

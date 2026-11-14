@@ -1,0 +1,71 @@
+---
+// Section 06: eight ways to hold the project in mind. Each lens shows something clearly and hides something else.
+import type { Lens } from '../../lib/mental-models';
+interface Props { lenses: Lens[]; start?: number }
+const { lenses, start = 2 } = Astro.props;
+---
+<div class="lenses" data-lenses data-start={start}>
+  <div class="list" role="tablist" aria-label="Lenses">
+    {lenses.map((z, i) => (
+      <button type="button" class="lb" role="tab" id={`lens-tab-${i}`} aria-controls={`lens-panel-${i}`} aria-selected={i === start} data-i={i}>
+        <small class="kicker">{i + 1} · {z.tag}</small>{z.name}
+      </button>
+    ))}
+  </div>
+  <div class="bodies">
+    {lenses.map((z, i) => (
+      <div class="body frame" role="tabpanel" id={`lens-panel-${i}`} aria-labelledby={`lens-tab-${i}`} hidden={i !== start}>
+        <h3 class="display">{z.name}</h3>
+        <p class="one">{z.one}</p>
+        <dl class="tri">
+          <div><dt class="kicker">Sees clearly</dt><dd>{z.see}</dd></div>
+          <div><dt class="kicker">Blind spot</dt><dd>{z.blind}</dd></div>
+          <div><dt class="kicker">The question it raises</dt><dd>{z.ask}</dd></div>
+        </dl>
+        <p class="evi"><span class="kicker">In the repository</span> {z.evi}</p>
+      </div>
+    ))}
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-lenses]').forEach((root) => {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('.lb')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+    const pick = (i: number, focus = false) => {
+      tabs.forEach((t, j) => { t.setAttribute('aria-selected', String(i === j)); t.tabIndex = i === j ? 0 : -1; });
+      panels.forEach((p, j) => (p.hidden = i !== j));
+      if (focus) tabs[i].focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => pick(i));
+      t.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); pick((i + 1) % tabs.length, true); }
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); pick((i - 1 + tabs.length) % tabs.length, true); }
+      });
+    });
+    pick(+root.dataset.start!);
+  });
+</script>
+
+<style>
+  .lenses { display: grid; grid-template-columns: minmax(240px, 300px) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .list { display: flex; flex-direction: column; gap: 5px; }
+  .lb {
+    font: inherit; font-size: 15px; text-align: left; color: var(--ink); cursor: pointer;
+    background: var(--paper-3); border: 1px solid var(--rule); border-left: 3px solid var(--rule); border-radius: var(--radius);
+    padding: 8px 12px; transition: border-color 0.15s, background 0.15s;
+  }
+  .lb small { display: block; font-size: 9.5px; margin-bottom: 1px; }
+  .lb:hover { border-color: var(--ink-3); }
+  .lb[aria-selected='true'] { border-color: var(--ink); border-left-color: var(--real); background: var(--paper-2); }
+  .body { padding: clamp(16px, 2.5vw, 26px); }
+  .body h3 { font-size: clamp(28px, 3vw, 40px); line-height: 1; margin-bottom: 10px; }
+  .one { font-size: 18px; max-width: 60ch; }
+  .tri { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px 22px; margin: 6px 0 0; }
+  .tri div { border-top: 1px solid var(--rule); padding-top: 8px; }
+  .tri dd { margin: 4px 0 0; font-size: 15px; }
+  .evi { margin: 18px 0 0; padding-top: 12px; border-top: 1px dashed var(--rule); font-size: 14.5px; color: var(--ink-2); }
+  .evi .kicker { margin-right: 6px; }
+  @media (max-width: 820px) { .lenses { grid-template-columns: minmax(0, 1fr); } }
+</style>

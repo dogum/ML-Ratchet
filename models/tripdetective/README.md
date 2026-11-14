@@ -16,6 +16,8 @@ TripDetective reads one or more 1 Hz trip logs of a light-duty vehicle — speed
 | **Learned from** | The shared RoadSim simulator (shared/vehicle, physics v2, pinned) drives generated cars over real Ann Arbor routes; RoadSim's OBD-logger emulator (roadsim/obd.py, moved there from this model) then polls each signal on its own clock, holds and quantises it, and estimates fuel from MAF the way real loggers do. |
 | **Noise** | Real routes and weather; the emulated logger reproduces real OBD cadences, holds, quantisation and MAF-based fuel estimates |
 | **Network** | 1-D CNN over each trip window (23 channels, incl. a source-power channel) plus 16 classical estimates; trip embeddings pooled across a car's trips together with the road-load regression's normal equations, which are solved per car (physics-regression head: mass = fitted b0 x a learned efficiency correction); heads for architecture, strategy and 7 regressions (Gaussian NLL); 0.40 M parameters. A second, separately trained copy reads buses. |
+| **Physics also enters** | inputs: 16 classical per-trip estimates and the road-load regression's normal equations<br>output: Mass = the fitted road-load coefficient b0 × a learned efficiency correction |
+| **Real data's jobs** | backdrop, calibration, gate, exam (never training labels) |
 | **Dev set** | 16 VED dev cars — RoadData's frozen split (sha256 d917df78…); 757 ZTBus legs of the dev missions (by-month split, the 'gate' half) |
 | **Exam** | 350 VED exam cars (at most 40 trips each, fixed seed), 25 EPA road-load cars, 150 EPA exam vehicles rebuilt in RoadSim, and 5,847 ZTBus legs of the 1,115 exam missions |
 

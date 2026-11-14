@@ -84,7 +84,7 @@ txt = dict(
          "# -> D_km, logD_sig, t0 (h from tc), t0_sig, dir (deg, from), kappa, hs, p_swell, detected"),
   credits=("Data: NOAA National Data Buoy Center spectral wave data (swden, swdir, swr1; public domain). Storm truth: IBTrACS v04r01, Knapp et al. 2010, NOAA NCEI (public domain). Coastlines: Natural Earth via world-atlas (public domain). "
            "Physics: Munk et al. 1963 and Snodgrass et al. 1966 (swell from distant storms), Hasselmann et al. 1973 (JONSWAP), Ardhuin et al. 2009 (swell dissipation). "
-           "Built for Greg&rsquo;s ML Ratchet collection; code and weights in swellcast-v1.0.zip."))
+           "Built for the ML Ratchet collection; code and weights in swellcast-v1.0.zip."))
 json.dump(txt, open(os.path.join(ROOT, 'web/text.json'), 'w'))
 open(os.path.join(ROOT, 'logs/tables.md'), 'w').write('## exam confirmed\n' + md_table('exam_confirmed') + '\n## exam visible\n' + md_table('exam_True') + '\n## exam all\n' + md_table('exam_None') + '\n## dev confirmed\n' + md_table('dev_confirmed') + '\n## ratchet\n' + rat_md())
 print(open(os.path.join(ROOT, 'logs/tables.md')).read())

@@ -19,6 +19,8 @@ HybridPilot is a learned, causal energy-management policy for hybrids: every sec
 | **Learned from** | The shared RoadSim simulator (shared/vehicle), physics v2 pinned (roadsim-physics-v2): EPA ALPHA engine and motor maps, Thevenin battery, eCVT / P2 (with torque converter and start energy) / series (with direct drive) powertrains, two-node cabin HVAC, tyre model, production hybrid rules (8 s / 3 s minimum on/off, Toyota-type engine-on speed, warm-up holds, plug-in charge-depleting rules), an energy ledger checked on every run. Teacher: DP over engine on/off × 121 SOC points; reference: DP with the same 8 s / 3 s on/off timers. |
 | **Noise** | Real routes, grades and weather; random start SOC, temperatures from −20 to 36 °C, warm and cold starts |
 | **Network** | MLP 66 → 96 → 96 → 2 (15,938 parameters) predicting the equivalence factor s; the decision minimises fuel + s × battery power among RoadSim's candidate controls, with A-ECMS-style SOC feedback (Kp 12, Ki 0.02) |
+| **Physics also enters** | inputs: Wheel power demand from RoadSim's road-load model<br>output: Its output, the equivalence factor s, sets an ECMS cost over candidate controls scored by the powertrain model |
+| **Real data's jobs** | backdrop, calibration, gate, exam (never training labels) |
 | **Dev set** | 76 trips — routes of the VED dev cars (calibrated twins of the 7 dev hybrids + 18 dev generated vehicles) and full-ZTBus dev legs (by-month split) |
 | **Exam** | 430 trips — 216 real VED exam routes driven by calibrated twins of the 108 exam hybrids, 214 by 54 held-out generated hybrids, full-ZTBus exam legs and HD cycles |
 

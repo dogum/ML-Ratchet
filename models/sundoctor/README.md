@@ -16,6 +16,8 @@ SunDoctor reads two weeks of a PV system's power (with or without an irradiance 
 | **Learned from** | Sun position and clear-sky irradiance, plane-of-array transposition for fixed and single-axis tracker mounts (with and without backtracking), row-to-row shading, module temperature, inverter clipping, and a library of faults injected on top. |
 | **Noise** | Simulated weather and sensor faults (no instrument archive noise injection; this predates the real-noise recipe) |
 | **Network** | 2-D CNN over 14 days × 96 solar-time steps, 12 input channels, Gaussian error bars on every output (591k weights) |
+| **Physics also enters** | inputs: Clear-sky sunlight on the panels and the healthy array's expected power, as input channels |
+| **Real data's jobs** | exam (never training labels) |
 | **Dev set** | None separate — the frozen simulated set decided every rung; Colorado was partly seen (see limits) |
 | **Exam** | PVDAQ 2107 (Arbuckle, California; 24 sibling inverters as the answer key) and PVDAQ 9068 (Kersey, Colorado; 4.7 MW, 224 trackers) |
 

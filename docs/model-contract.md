@@ -38,6 +38,7 @@ Key fields:
 | `reads`, `returns` | Inputs with units; each output with its error bar |
 | `physics.summary/simulator/checks` | The governing physics, what the simulator includes, and independent checks **with numbers** |
 | `noise`, `network` | Where the noise came from; the architecture |
+| `approach` | Where physics and real data enter, beyond the simulated training set. `real_backdrop`: the real recordings the simulated signals are laid into. `physics_inputs`: physics-derived features or axes the network reads. `physics_anchor`: the physics estimate its output corrects, or the physics-based decision it feeds. Each is a short string, or `false`. `real_data_roles`: any of `backdrop`, `calibration`, `gate`, `error_bars`, `exam` (training labels is never one). Required once a model is released. |
 | `data[]` | Every source with URL, licence and role (truth, noise, dev, exam, physics) |
 | `split.dev`, `split.exam` | Who is in which, and the seed |
 | `exam.results[]` | One row per headline metric: model value, baselines (`classical`, `dumb`, `published`), and a `verdict` — `win`, `loss`, `tie`, `mixed` or `info` |

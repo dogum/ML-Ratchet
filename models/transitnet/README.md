@@ -16,6 +16,8 @@ Given a TESS light curve and a candidate period, TransitNet decides whether the 
 | **Learned from** | Exact quadratic limb-darkened occultation, Keplerian (eccentric) orbits, eclipsing binaries, background binaries diluted by third light, and centroid-shift physics — all injected into real TESS light curves. |
 | **Noise** | 2,200 real 2-minute TESS light curves of ordinary stars, 220 from each of 10 sectors across the mission |
 | **Network** | Multi-view 1-D CNN (local, secondary, global, odd/even views + scalars) predicting corrections to model-free estimates |
+| **Physics also enters** | inputs: The light curve folded on the candidate period: local, secondary, global and odd/even views<br>output: Corrections to model-free estimates: radius ratio from √depth, a/R* from period and duration |
+| **Real data's jobs** | backdrop, calibration, gate, exam (never training labels) |
 | **Dev set** | 20 planets and 20 false positives (seed 2026); their host stars are excluded from the exam |
 | **Exam** | 1,625 confirmed planets, 992 follow-up false positives, 77 false alarms |
 

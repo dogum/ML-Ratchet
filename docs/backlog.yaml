@@ -147,3 +147,13 @@ ideas:
     exam: Real-data control regions
     status: candidate
     note: Harder to grade on real data than the others.
+  - id: realtrain
+    name: Real-train ladder
+    domain: Method
+    question: "How much does real labelled data add on top of physics? A possible direction, not planned work: a second ladder per model that may also train on a third real split, published beside the simulation-only ladder."
+    physics: Unchanged. The simulation-only model stays its own ladder and keeps the zero-real-labels claim.
+    data: "A frozen real-train split by vehicle or family (as splits.json is frozen); dev and exam untouched. First candidates: Argonne D3 dynamometer traces (measured fuel), EPA test-car lists."
+    data_url: https://dogum.github.io/ML-Ratchet/mental-models/#real-data
+    exam: "The same exam rows, with the simulation-only model, the simulation-plus-real model and the real-trained regression side by side; the second must beat the regression to count as a win"
+    status: candidate
+    note: "Move in dial order: unlabelled real inputs, then a learned discrepancy term, then fine-tuning on labels. Signals and guardrails are on the Mental models page, section 07."

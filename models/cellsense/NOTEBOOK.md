@@ -5,7 +5,7 @@
 
 # CellSense — status (31 Oct 2026, v1.1)
 
-- What it is: battery health and cycle life from one fast discharge, learned from physics alone. Third project in Greg's physics-ML collection, after ChirpNet and SunDoctor.
+- What it is: battery health and cycle life from one fast discharge, learned from physics alone. Third project in the physics-ML collection, after ChirpNet and SunDoctor.
 - Page: https://claude.ai/artifact/Hc6QmjyN1z8gEttKvdiLoP (v1.1). Sections:
   - hidden capacity
   - real-cell explorer
@@ -21,7 +21,7 @@
   - `training/`, `web/`
 - The cloud workspace is ephemeral; the zip and the page are the durable copies.
 
-## v1.1 plan (Greg picked, 30 Oct)
+## v1.1 plan (owner's pick, 30 Oct)
 1. Other chemistries, rates and temperatures, using Sandia's data (Preger et al. 2020): Panasonic NCR18650B NCA, LG 18650HG2 NMC, and the same A123 LFP cell. **Blocked**: see below.
 2. Partial discharges. **Done** for discharges from full, using Severson cells cut short. Sandia's 20–80% and 40–60% windows still need the Sandia data.
 3. A useful lifetime forecast from early-life physics. **Done.**
@@ -29,8 +29,8 @@
 ## Sandia data: blocked
 - BatteryArchive.org has no public download link. Its FAQ says to email info@batteryarchive.org.
 - Probing the archive's database API from the sandbox was denied as circumvention. Not retried, and should not be.
-- Options for Greg:
-  - Download the SNL_18650_{NCA,NMC,LFP}_* cycle and time-series CSVs in his browser and attach them.
+- Options for the owner:
+  - Download the SNL_18650_{NCA,NMC,LFP}_* cycle and time-series CSVs in a browser and attach them.
   - Email BatteryArchive.
   - Approve a different public multi-chemistry dataset with a documented download, for example:
     - Zhu et al. 2022 (Nat. Commun.) NCA/NCM cells on Zenodo
@@ -107,7 +107,7 @@
 - Assuming no fade gives 46 mAh. Readings at 0.6 Ah and below are no better than that.
 
 ## Next
-- Get the Sandia data (Greg's call), then run tasks 31 and 32:
+- Get the Sandia data (owner's decision), then run tasks 31 and 32:
   - NCA_Kim2011 and Chen2020 (NMC811) OCVs
   - temperature and rate dependence
   - calibration on Sandia dev cells

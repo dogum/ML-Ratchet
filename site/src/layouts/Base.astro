@@ -44,6 +44,7 @@ const nav = [
   { href: 'garage/', label: 'Garage' },
   { href: 'story/', label: 'Story' },
   { href: 'method/', label: 'Method' },
+  { href: 'mental-models/', label: 'Mental models' },
   { href: 'scoreboard/', label: 'Scoreboard' },
   { href: 'backlog/', label: 'Backlog' },
   { href: 'contribute/', label: 'Contribute' },
@@ -135,6 +136,7 @@ const canonical = new URL(path, Astro.site);
             <p class="kicker">Method</p>
             <a href={url('story/')}>The story, scroll by scroll</a>
             <a href={url('method/')}>The method</a>
+            <a href={url('mental-models/')}>Mental models</a>
             <a href={url('lessons/')}>Lessons</a>
             <a href={url('contract/')}>Model contract</a>
             <a href={url('data/')}>Data sources</a>
@@ -203,6 +205,12 @@ const canonical = new URL(path, Astro.site);
     color: var(--ink-2);
     border-radius: var(--radius);
     transition: color 0.2s, background 0.2s;
+  }
+  nav a { white-space: nowrap; }
+  @media (max-width: 1180px) and (min-width: 861px) {
+    .bar { gap: 14px; }
+    nav a { padding: 8px 7px; letter-spacing: 0.03em; }
+    .gh-label { display: none; }
   }
   nav a:hover { color: var(--ink); background: var(--paper-2); }
   nav a[aria-current='page'] { color: var(--ink); box-shadow: inset 0 -2px 0 var(--accent); border-radius: 0; }
