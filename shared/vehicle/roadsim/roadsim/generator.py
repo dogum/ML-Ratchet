@@ -107,7 +107,7 @@ def _engine_map(fuel, P_kW, disp, hybrid, rng):
     return 'gas_na_toyota_a25a' if rng.random() < 0.7 else 'gas_na_mazda_20'
 
 
-def _ld(rng, cls, arch, donor_model='v1'):
+def _ld(rng, cls, arch, donor_model='v1', hw='v1', pack_rule=False):
     cal = _cal()
     grp = 'bev' if arch == 'bev' else 'gasoline'
     if arch == 'conv' and cls in ('pickup', 'suv') and rng.random() < 0.06:
@@ -164,8 +164,16 @@ def _ld(rng, cls, arch, donor_model='v1'):
             # a hybrid record's rated power is its engine's (e.g. Camry Hybrid 131 kW engine, 155 kW system)
             f_eng = Pe / P
             Pe, P = P, P / f_eng
-        s['engine'] = dict(fuel='gasoline', displacement_L=round(min(disp, Pe / 50), 1), max_power_kW=round(Pe, 1),
-                           bsfc_map=_engine_map('gasoline', Pe, disp, arch != 'hev_parallel_p2' or rng.random() < 0.5, rng),
+        bm = _engine_map('gasoline', Pe, disp, arch != 'hev_parallel_p2' or rng.random() < 0.5, rng)
+        d_e = round(min(disp, Pe / 50), 1)
+        if hw == 'v3':
+            # the EPA twins' rule (checks/hybrid_specs.py): every non-turbo hybrid engine on the hybrid Atkinson map,
+            # turbo engines (above 80 kW/L) on the turbo maps; the random draws above are kept so the bodies stay the same
+            bm = (('gas_turbo_honda_15' if d_e < 2.2 else 'gas_turbo_ford_27') if Pe / max(d_e, 0.5) > 80
+                  else 'gas_atk_toyota_tnga_hev_paper')
+            if row.get('year') is not None and row.get('year') == row.get('year'):
+                s['model_year'] = int(row['year'])          # engine generation from the donor record (option engine_era)
+        s['engine'] = dict(fuel='gasoline', displacement_L=d_e, max_power_kW=round(Pe, 1), bsfc_map=bm,
                            eff_scale=round(_ln(rng, 0.03), 3))
         plug = arch.startswith('phev')
         if arch in ('hev_powersplit', 'phev_powersplit'):
@@ -182,10 +190,15 @@ def _ld(rng, cls, arch, donor_model='v1'):
             tr = 'DCT' if (cls in ('car', 'suv') and n == 6) else 'AT'
             if (tr, n) not in GEAR_SETS: tr, n = 'AT', 8
             s['transmission'] = dict(type=tr, n_gears=n, gears=GEAR_SETS[(tr, n)])
+            if hw == 'v3' and cls in ('car', 'suv'):
+                s['transmission']['torque_converter'] = False   # car / SUV P2s: motor in place of the converter (TMED type)
             s['motors'] = [dict(role='P2', max_power_kW=round(float(rng.uniform(30, 60)), 1), eff_map='ipm_generic_150', max_rpm=7000)]
         if plug:
             cap = float(rng.uniform(8, 25)); V = 350.0
             s['battery'] = dict(chemistry='NMC', capacity_kWh=round(cap, 1), nominal_V=V, soc_window=[0.15, 0.95])
+            if pack_rule:
+                trac = max(m['max_power_kW'] for m in s['motors'] if m['role'] in ('MG2', 'traction', 'P2'))
+                s['battery']['max_power_kW'] = round(min(trac / 0.9, 9.0 * round(cap, 1)), 1)   # the EPA twins' rule
         else:
             cap = float(rng.uniform(0.8, 1.9)); V = float(rng.choice([220.0, 245.0, 260.0, 280.0]))
             s['battery'] = dict(chemistry='NiMH' if rng.random() < 0.3 else 'NMC', capacity_kWh=round(cap, 2), nominal_V=V,
@@ -243,14 +256,17 @@ def _hd(rng, cls, arch):
     return s
 
 
-def generate_vehicle(rng, cls=None, arch=None, strategy=True, donor_model='v1'):
+def generate_vehicle(rng, cls=None, arch=None, strategy=True, donor_model='v1', hw='v1', pack_rule=False):
     cls = cls or _pick(rng, CLASS_W)
     arch = arch or _pick(rng, ARCH_W[cls])
-    s = _ld(rng, cls, arch, donor_model) if cls in ('car', 'suv', 'pickup', 'van') else _hd(rng, cls, arch)
+    s = _ld(rng, cls, arch, donor_model, hw, pack_rule) if cls in ('car', 'suv', 'pickup', 'van') else _hd(rng, cls, arch)
     if strategy:
         st = _pick(rng, {k: v for k, v in STRAT_W[arch].items() if k in STRATEGIES[arch]})
         s['control'] = {'strategy': st, 'params': {}}
-    s['regen'] = {'blend': 'series' if rng.random() < 0.8 else 'parallel',
+    blend = 'series' if rng.random() < 0.8 else 'parallel'
+    if hw == 'v3' and s['architecture'] not in ('conv', 'bev'):
+        blend = 'series'        # production hybrids and plug-ins blend regen cooperatively (brake-by-wire)
+    s['regen'] = {'blend': blend,
                   'max_decel_g': round(float(rng.uniform(0.18, 0.35)) if cls in ('car', 'suv', 'pickup', 'van') else float(rng.uniform(0.10, 0.18)), 3),
                   'min_speed_mps': round(float(rng.uniform(1.0, 3.0)), 2)}
     h = hashlib.md5(json.dumps(s, sort_keys=True, default=str).encode()).hexdigest()[:10]
@@ -259,13 +275,20 @@ def generate_vehicle(rng, cls=None, arch=None, strategy=True, donor_model='v1'):
     return s
 
 
-def generate_vehicles(n, seed=0, cls=None, arch=None, strategy=True, donor_model=None):
+def generate_vehicles(n, seed=0, cls=None, arch=None, strategy=True, donor_model=None, options=None):
     """donor_model: 'v1' (default, from roadsim.options) or 'v2' (hybrid bodies from real hybrid records, vans mostly
-    from minivans; see _donor_pool)."""
+    from minivans; see _donor_pool). options: RoadSim physics options (a preset name or dict) whose generator keys
+    are used: donor_model (when the argument is None), gen_hybrid_hw ('v3': the EPA twins' hybrid hardware rules),
+    gen_phev_pack_rule (plug-in pack power min(traction / 0.9, 9 C)). options=None keeps the v1 generator; the same
+    seed draws the same bodies under every option."""
+    from .options import DEFAULTS, resolve
+    o = resolve(options) if options is not None else DEFAULTS
     if donor_model is None:
-        from .options import DEFAULTS
-        donor_model = DEFAULTS['donor_model']
+        donor_model = o['donor_model']
     if donor_model not in ('v1', 'v2'):
         raise ValueError('donor_model must be v1 or v2')
+    hw = o.get('gen_hybrid_hw', 'v1'); pack = bool(o.get('gen_phev_pack_rule', False))
+    if hw not in ('v1', 'v3'):
+        raise ValueError('gen_hybrid_hw must be v1 or v3')
     rng = np.random.default_rng(seed)
-    return [generate_vehicle(rng, cls, arch, strategy, donor_model) for _ in range(n)]
+    return [generate_vehicle(rng, cls, arch, strategy, donor_model, hw, pack) for _ in range(n)]

@@ -355,6 +355,9 @@ def spec_of(r, ext=False):
     if A is None or C is None or B is None:
         return None, None, 'no target road load'
     spec = spec_from_abc(spec, A, B, C, mass_kg=mass)
+    if kind in ('p2', 'phev_p2'):
+        g = group_of('p2', hw)        # P2 hardware type for the v3 option p2_k0_slip_by_type (read by nothing else)
+        spec['p2_type'] = {'p2_tmed': 'tmed', 'p2_converter': 'converter', 'p2_clutch': 'clutch'}.get(g, g)
     return spec, kind, group_of(kind, hw)
 
 

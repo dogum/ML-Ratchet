@@ -516,3 +516,95 @@ simulated, in held-out families, with each record's test-car fields stored in th
 - Dev additions (`dev_extra`, 9 records of dev families found the same way: Sienna 2021+, Audi Q5 TFSIe / e-tron).
 - **Too small for some groups.** No TMED record and 3 pre-TNGA Toyota records are clean; the TMED and older-Toyota
   verdicts stay second looks (exam-2). Plug-ins: 8 records.
+
+### H21b Harness and dev set (no physics change)
+
+- `check_hybrids_epa.py --set devx` = dev + exam-3's 9 dev-family records (Sienna 2021+, Audi Q5 TFSIe / e-tron);
+  `--set exam3` runs the frozen exam-3 list from its stored fields. `hybrid_dev.py --epa-set devx`.
+- v2 and v2.1 re-scored on devx (tags v2x, v21x in roadsim/logs/hybrid_dev/): the dev numbers of H11-H20 are
+  unchanged; devx adds one P2-clutch record (P2 FTP median v2 +16.7 instead of +17.6) and the Sienna to Toyota.
+- `roadsim.epa` and `roadsim.hybrid_hw`: the EPA procedures and the hardware rules moved into the package with an
+  explicit `options=` argument; `checks/epa_procedures.py` and `checks/hybrid_specs.py` are wrappers with the old
+  behaviour (dev results identical through both paths, 64 of 64 records).
+- `tests/golden/roadsim_v2_1_fingerprint.json` written from the code before any v3 change; v1, v2 and v2.1 reproduce
+  their goldens; every non-hybrid run of v3 matches v2 (tests/test_roadsim_v2_fingerprint.py).
+- Noise: two D3 dev tests (Accord HWFET, one Sonata UDDS) move by 0.3-0.4 points between identical runs (worker
+  order); differences below 0.5 points on single D3 tests are not read as effects.
+
+### H22 Engine generations by model year: kept, Toyota / Lexus only (new option `engine_era`, roadsim/eras.py)
+
+No EPA, ORNL or ANL engine map of an older Toyota hybrid engine is reachable from a script: EPA's ALPHA list (checked
+14 Nov 2026) has the 2018 A25A-FKS and the TNGA 2.5 prototype only; EPA's 2010 Prius packages cover the motors; ANL's
+Autonomie maps sit behind anl.gov's browser challenge (not used). The option scales the TNGA hybrid map's efficiency
+by published peak brake thermal efficiency, by model year: MY<=2008 37 % (1NZ-FXE), 2009-2015 38.5 % (2ZR-FXE),
+2016-2017 40 % (2ZR-FXE ESTEC, SAE 2016-01-0684), 2018+ 41 % (= the map). Model year and make come from the spec (EPA
+specs carry `model_year`; D3 ids and names carry both). Nothing fitted.
+
+| rung | D3 dev 2010 Prius (std tests, legacy fuel) | D3 dev 2017 Prius Prime | D3 dev Accord HWFET (guard) | EPA dev |
+|---|---|---|---|---|
+| v2.1 | -22.6 | -9.0 | +1.9 | (no dev Toyota older than 2018) |
+| a: every make (Ford, GM, Honda, Nissan too) | -17.1 | -6.9 | +8.7 | 2012 Volt US06 +4.1 points |
+| **b: Toyota / Lexus only** | **-17.1** | **-6.9** | **+1.6** | unchanged |
+
+a rejected: the 2015 Accord's Honda engine is not a Toyota 2ZR, and the guard metric got 6.9 points worse. b kept.
+Dev support is thin (two D3 cars, one of them legacy); the clean test is exam-3's three pre-2008 Toyota records.
+
+### H23 Converter held open in 1st and 2nd gear in P2 automatics: kept (`p2_tc_open_gears` 2, existing option)
+
+The D3 dev conventional automatics (C2) keep 1st always and 2nd mostly open. P2 automatics that keep their converter
+(Ford 10R80 MHT, ZF 8HP in the BMW / Land Rover plug-ins, the Panamera S Hybrid) use the same hardware. EPA dev
+Panamera S Hybrid FTP +38.2 -> +35.5 % FE; plug-in P2 (CS) FTP / US06 / SC03 / cold +13.2 / -3.7 / +26.9 / +26.5 ->
++12.1 / -5.4 / +25.0 / +24.6; TMED and clutch P2s unchanged (no converter). Kept: measured, small, toward zero in the
+city. The city surplus of converter P2s is not mainly converter loss.
+
+### H24 Generator: kept, the twins' hardware for generated hybrids and the plug-in pack rule (`gen_hybrid_hw` v3, `gen_phev_pack_rule`)
+
+- The "20 % too thirsty" of generated hybrids was mostly the check. `check_generator.py` compared them with EPA
+  MY2022-24 gasoline cars of FTP >= 45 mpg (77 % of the hybrid records, none of the hybrid pickups) and drove them with
+  the drawn 0-250 kg on-road payload on top of the donor's EPA test weight, which already holds the 136 kg test load.
+  Harness fixes (every version): payload 0 on the dyno, and a like-for-like reference by body class (`hev_by_class`:
+  RoadData's MY2022-24 hybrid records, any FTP). v2.1 with the fixed harness: car -11.2, SUV -5.8, pickup +15.7, van
+  +9.8 % (hot UDDS vs FTP); the old summary moves from 47.1 to 50.2 mpg. These EPA references span every family: a
+  second look, not a dev number.
+- Diagnosis on generated vehicles only (no EPA data): the strategy draw does not matter (car P2 55-56, series 54-58,
+  power-split 63-67 mpg under every strategy); 'parallel' regen blending (20 % of the draws) costs 13-16 %; the
+  payload 4-6 %.
+- `gen_hybrid_hw` v3: non-turbo hybrid engines on the hybrid Atkinson map (as the EPA twins), turbo engines above
+  80 kW/L on the turbo maps, car / SUV P2s without a converter, cooperative regen blending for hybrids and plug-ins,
+  the donor's model year on the spec (so `engine_era` applies). The same seed draws the same bodies.
+  `gen_phev_pack_rule`: plug-in pack power min(traction / 0.9, 9 C), the twins' rule. Generator check (second look):
+  car -11.2 -> -11.2, SUV -5.8 -> -4.6, pickup +15.7 -> +13.7, van +9.8 -> +12.4 %; generated car P2 and series
+  hybrids stay about 11 % thirstier than real car hybrids (cause not found). Kept as a consistency rule, not on the
+  check's numbers.
+
+### H25 Plug-ins on VED dev roads: cause found, fix rejected
+
+VED dev plug-in errors sit in the cold: below 10 C the Energi (VED_11) is -36.7 % (trip median), the Volt-type car
+(VED_537) -27.0 %; above 10 C -2.4 / -7.5 %. The twins hardly heat: simulated HVAC power 0.01-0.02 kW at 0-10 C,
+because every VED fragment starts with the engine coolant at 85 C and `phev_engine_heat` heats the cabin from an engine
+that has not run. Real plug-ins also run their engines for heat: Volt-type fuel on 83 % of trips below -10 C (twin
+0 %), Energi 1,590 g vs 90 g below -5 C. (VED_537's `aux_power` reads 6 kW at every temperature: not a heater signal.)
+- a: plug-in fragments start with the engine at ambient unless the logged engine turns in the first 10 s
+  (`VED_PHEV_ENGINE_START=logged`, check_ved_twin.py; off by default). Cold-trip totals: Energi -33 -> -12 %,
+  Volt-type -24 -> +21 %; trip medians -12.6 -> +6.1 and -10.7 -> +4.9. Rejected: the Volt flips sign and the true
+  start state of a privacy-trimmed fragment is unknown. Documented in LIMITS.md.
+
+### H26 TMED engine starts without K0 slip: rejected (new option `p2_k0_slip_by_type`; P2 type from roadsim/eras.p2_type)
+
+TMED starts its engine with the belt starter-generator (HSG), then closes the engine clutch; the twin charges every
+start with K0 slip equal to the engine's sync energy. TMED slip 0: EPA dev Sonata FTP / HWY / US06 / SC03 +3.0 / -7.5 /
+-8.7 / -2.7 -> +6.0 / -3.8 / -6.0 / +4.8 % FE; D3 dev P2 -5.3 -> -7.5 % (Sonata UDDS std -10.4 -> -11.8). Rejected: D3
+P2 lands 2.1 points past v2 (-5.4), outside the guard, and the city error doubles. K0 slip is worth 3-4 % of fuel.
+
+## Physics v3 frozen (before exam-3 and every second-look set)
+
+`roadsim/data/calibration_v3.json` (preset `roadsim-physics-v3` = v2.1 + `engine_era` (Toyota / Lexus) +
+`p2_tc_open_gears` 2 + `gen_hybrid_hw` v3 + `gen_phev_pack_rule`). Guard: v1, v2 and v2.1 reproduce their goldens;
+every non-hybrid run of v3 equals v2 (no conventional change, so no conventional guard metrics); no v2-improved dev
+metric is worse (EPA dev Accord HWY -4.5, D3 Accord HWFET +1.9, VED Toyota -0.5 % / -4.9 points, P2 FTP median +15.1:
+all as v2.1). Dev v2.1 -> v3: converter P2 FTP -2.7 points, plug-in P2 -1 to -2 points, D3 2010 Prius -22.6 -> -17.1,
+Prime -9.0 -> -6.9 %; every VED dev and every other EPA dev number unchanged.
+
+**Not the default**: PHYSICS_VERSION stays roadsim-physics-v2. The v3 changes reach three dev vehicles and one dev
+group; the targets of the pass (older Toyota engines on EPA cycles, converter P2 trucks, TMED, plug-ins on roads) have
+almost no dev data, so the dev gain is not clear. Decided and committed before exam-3 was run.

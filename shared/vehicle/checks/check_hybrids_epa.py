@@ -7,9 +7,13 @@ Sets:
   dev    every hybrid / plug-in record of RoadData's DEV model families (frozen family split; carry-over copies
          dropped) that RoadSim models, plus the four check_cycles dev hybrids (Sonata Hybrid, RAV4 Hybrid, Escape HEV,
          Accord Hybrid, with their own specs). The calibration may fit on this set.
+  devx   dev plus exam-3's dev_extra (dev-family hybrids found by the exam-3 rules: Sienna 2021+, Audi Q5 TFSIe /
+         e-tron; v3 pass, 14 Nov 2026). The calibration may fit on this set.
   exam2  the frozen exam-2 list (checks/exam2_hybrids.json, sha256 checked). Final report only.
+  exam3  the frozen exam-3 list (checks/exam3_hybrids.json, sha256 checked; the clean judge of the v3 pass). Final
+         report only.
 
-usage: python check_hybrids_epa.py --set dev|exam2 [--options roadsim-physics-v2] [--workers 14] [--out FILE]
+usage: python check_hybrids_epa.py --set dev|devx|exam2|exam3 [--options roadsim-physics-v2] [--workers 14] [--out FILE]
 Output: hybrids_epa__<set>__<preset>.json
 """
 import os, sys, json, time, argparse, copy
@@ -71,6 +75,23 @@ def exam2_records():
     return out, {}, d['sha256']
 
 
+def exam3_records(part='epa'):
+    """exam-3 records (part 'epa') or its dev_extra (part 'dev_extra'); specs from the stored test-car fields with the
+    supplementary hardware rules (hybrid_specs.spec_of(..., ext=True))."""
+    import hybrid_specs as hs
+    import exam3_hybrids as x3
+    d = x3.load()
+    out = []
+    for r in d[part]:
+        spec, kind, grp = hs.spec_of(x3.row_of(r), ext=True)
+        rec = dict(id=r['epa_vehicle_id'], name=spec['name'], make=str(r['make']), family=r['family'], group=r['group'],
+                   kind=kind, spec=spec, epa=r['epa'], source='exam3' if part == 'epa' else 'exam3 dev_extra',
+                   family_seen_v2=r['family_seen_exam2'])
+        rec['model_year'] = r['model_year']
+        out.append(rec)
+    return out, d['sha256']
+
+
 def cs_setup(spec):
     """plug-ins: charge-sustaining operation at the CS level (soc_cs = window low + 0.05, the PHEV default)."""
     a = spec['architecture']
@@ -95,7 +116,7 @@ def one(job):
     e = rec['epa']
     row = dict(id=rec['id'], name=rec['name'], make=rec['make'], family=rec['family'], group=rec['group'], kind=rec['kind'],
                architecture=s['architecture'], source=rec['source'], sim={}, epa={}, err_pct={}, diag={})
-    for k in ('d3_exam_match', 'family_seen_v2'):
+    for k in ('d3_exam_match', 'family_seen_v2', 'model_year'):
         if k in rec:
             row[k] = rec[k]
     try:
@@ -161,7 +182,7 @@ def table(summ):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--set', default='dev', choices=['dev', 'exam2'])
+    ap.add_argument('--set', default='dev', choices=['dev', 'devx', 'exam2', 'exam3'])
     ap.add_argument('--workers', type=int, default=14)
     ap.add_argument('--out', default=None)
     ap.add_argument('--groups', default=None)
@@ -169,8 +190,12 @@ def main():
     a = ap.parse_args()
     t0 = time.time()
     sha = None
-    if a.set == 'dev':
+    if a.set in ('dev', 'devx'):
         recs, skipped = dev_records()
+        if a.set == 'devx':
+            recs += exam3_records('dev_extra')[0]
+    elif a.set == 'exam3':
+        (recs, sha), skipped = exam3_records('epa'), {}
     else:
         recs, skipped, sha = exam2_records()
     if a.groups:
@@ -182,7 +207,7 @@ def main():
     errors = [r for r in rows if 'error' in r]
     summ = summarize([r for r in rows if r['err_pct']])
     import roadsim
-    out = dict(check=f'EPA hybrids and plug-ins, set {a.set}', method=__doc__.strip(), set=a.set, exam2_sha256=sha,
+    out = dict(check=f'EPA hybrids and plug-ins, set {a.set}', method=__doc__.strip(), set=a.set, exam_sha256=sha, exam2_sha256=sha if a.set == 'exam2' else None,
                options=_opts.get(), options_name=_opts.name(), physics=roadsim.PHYSICS_VERSION, skipped=skipped,
                n=len(rows), n_errors=len(errors), errors=errors[:20], summary=summ, vehicles=rows,
                wall_s=round(time.time() - t0, 1))

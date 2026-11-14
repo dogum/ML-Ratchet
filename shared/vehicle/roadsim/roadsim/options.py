@@ -9,6 +9,7 @@ data/calibration_v2.json; decisions in CALIBRATION.md).
     simulate(spec, trip)                                              # physics v2 (the default)
     simulate(spec, trip, options='roadsim-physics-v1')               # physics v1, exactly
     simulate(spec, trip, options='roadsim-physics-v2.1')             # v2 + the hybrid fix pass (data/calibration_v2_1.json)
+    simulate(spec, trip, options='roadsim-physics-v3')               # v2.1 + the hardware pass (data/calibration_v3.json)
     simulate(spec, trip, options={'p2_torque_converter': True})       # v1 plus one option
     simulate(spec, trip, options={'preset': 'roadsim-physics-v2', 'regen_share': {}})   # v2 with one change
     spec['physics'] = {'hvac_model': 'v2'}                           # per vehicle
@@ -30,6 +31,8 @@ DEFAULTS = {
     'start_crank_s': 0.3,               # s, cranking time against motoring friction
     'start_crank_eta': 0.85,            # -, motor+inverter efficiency while cranking
     'p2_k0_slip_frac': 1.0,             # -, share of the engine's sync energy also lost as K0 slip (1 = motor cranks via K0)
+    'p2_k0_slip_by_type': {},           # v3: {P2 type: K0 slip share} by hardware (roadsim/eras.p2_type: tmed / converter /
+                                        # clutch / mild); TMED starts its engine with the belt HSG, not through K0 ({} = off)
     'start_self_eta': 0.25,             # -, fuel-to-shaft efficiency when the engine spins itself up (battery at its limit)
     'hybrid_min_on_s': None,            # s, minimum engine-on time for every hybrid strategy (None = v1: 4 s, DP 0)
     'hybrid_min_off_s': None,           # s, minimum engine-off time (None = v1: 2 s, DP 0)
@@ -74,6 +77,12 @@ DEFAULTS = {
     'phev_heat_cold_start_only': False, # ... only in a trip that began with a cold engine (coolant below ps_cat_cold_C)
     'dp_min_on_off': False,             # DP honours hybrid_min_on_s / hybrid_min_off_s and start_penalty_J
     'donor_model': 'v1',                # generate_vehicles: 'v2' draws hybrid bodies from real hybrid records, vans from minivans
+    'gen_hybrid_hw': 'v1',              # generate_vehicles: 'v3' gives generated hybrids the EPA twins' hardware rules
+                                        # (hybrid Atkinson map for every non-turbo hybrid engine, car/SUV P2s without a
+                                        # converter, cooperative (series) regen blending, model year from the donor
+                                        # record) (v3 pass)
+    'gen_phev_pack_rule': False,        # generate_vehicles: plug-in pack power = min(traction motor / 0.9, 9 C), the EPA
+                                        # twins' rule (checks/hybrid_specs.py) (v3 pass)
     # ---- end powertrain and hybrid control
 
     # ---- thermal: engine warm-up and cold, HVAC and cabin, A/C, per-engine efficiency, battery aging
@@ -86,6 +95,8 @@ DEFAULTS = {
     'eng_lowload_W_per_L': 0.0,    # extra fuel power per litre at idle, fading to zero at 4 kW/L brake: tilts city vs highway
     'eng_dfmep_bar': 0.0,          # extra engine friction (bar FMEP): moves FTP and HWFET nearly alike
     'eng_family_adj': {},          # per engine map {bsfc_map id: {'eng_eta_scale': .., 'eng_lowload_W_per_L': .., 'eng_dfmep_bar': ..}}
+    'engine_era': {},              # v3: older engine generations, efficiency x (published peak BTE / reference)^exp by model
+                                   # year, for the maps listed (roadsim/eras.py; {} = off)
     'aux_base_W': None,            # light-duty 12 V base electrical load (W) replacing the class default (None = spec / v1)
     'onroad_aux_W': {},            # {architecture: W} light-duty on-road extra load (electrical-equivalent, 12 V supply): lights and
                                    # what real roads, tyres and loads add over the coast-down; only on road runs (tyre
@@ -233,3 +244,25 @@ def _load_v21():
 _v21 = _load_v21()
 if _v21 is not None:
     PRESETS['roadsim-physics-v2.1'] = _v21
+
+
+def _load_v3():
+    """the v3 preset (hardware pass on hybrids, 14 Nov 2026): v2.1 plus the kept changes of data/calibration_v3.json."""
+    import json, os
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'calibration_v3.json')
+    if not os.path.exists(p) or _v21 is None:
+        return None
+    with open(p, encoding='utf-8') as f:
+        ch = json.load(f)['changes']
+    bad = sorted(set(ch) - set(DEFAULTS))
+    if bad:
+        raise KeyError(f'calibration_v3.json: unknown RoadSim options {bad}')
+    out = copy.deepcopy(_v21)
+    for k, v in copy.deepcopy(ch).items():
+        out[k] = dict(out.get(k) or {}, **v) if k == 'thermal_params' else v
+    return out
+
+
+_v3 = _load_v3()
+if _v3 is not None:
+    PRESETS['roadsim-physics-v3'] = _v3

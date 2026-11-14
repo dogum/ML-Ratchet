@@ -6,6 +6,13 @@ MY2022-24 EPA test-car list: conventional gasoline vehicles (FTP < 45 mpg, so hy
 hybrids (gasoline FTP >= 45 mpg) and BEVs (charge-depleting UDDS/HWY in MPGe; records reported in kWh/100 mi are
 converted). Physical consistency: power-to-mass and 0-60 mph times per class.
 Note: simulated UDDS is hot-start while EPA FTP includes a cold start (bag 1), worth about -3 to -5 %.
+Fair hybrid reference (v3 pass, 14 Nov 2026; every physics version): the FTP >= 45 mpg filter above keeps only the
+efficient end of the real hybrid fleet (77 % of MY2022-24 hybrid records; none of the hybrid pickups) while the
+generator draws hybrid pickups, vans and SUVs. 'hev_by_class' compares like with like: RoadData's MY2022-24 hybrid
+records (architecture hev, any FTP, repeated copies dropped) by body class, against the generated hybrids of that class.
+The generated light-duty vehicles run at their donor's test weight (payload 0: the generated mass is the EPA equivalent
+test weight, which already includes the 136 kg test load; before 14 Nov 2026 the drawn 0-250/450 kg on-road payload
+was added on top).
 """
 import os, sys, json
 import numpy as np
@@ -66,14 +73,34 @@ def epa_reference():
                 pw_kW_per_t=q(d['Rated Horsepower'] * 0.7457 / (d['Equivalent Test Weight (lbs.)'] * 0.4536 / 1000)))
 
 
+def hev_reference_by_class():
+    """RoadData's MY2022-24 hybrid records (architecture hev, any FTP; repeated copies dropped) by body class."""
+    sys.path.insert(0, os.path.join(HERE, '..'))
+    import realdata as rd
+    import hybrid_specs as hs
+    e = rd.epa_testcars()
+    h = e[(e.architecture == 'hev') & e.model_year.between(2022, 2024) & e.FTP_mpg.notna()].copy()
+    h['_m'] = h.model.astype(str).str.upper()
+    h = h.drop_duplicates(['make', '_m', 'etw_lb', 'FTP_mpg', 'HWY_mpg'])
+    h['cls'] = [hs.body_class(r) for _, r in h.iterrows()]
+    out = {'all': dict(FTP=q(h.FTP_mpg), HWY=q(h.HWY_mpg.dropna()))}
+    for c, g in h.groupby('cls'):
+        out[c] = dict(FTP=q(g.FTP_mpg), HWY=q(g.HWY_mpg.dropna()))
+    return out
+
+
 def main():
     DM = _opts.resolved()['donor_model']
-    V = generate_vehicles(400, seed=23, strategy=True, donor_model=DM)
+    O = _opts.get()
+    V = generate_vehicles(400, seed=23, strategy=True, donor_model=DM, options=O)
     V = [v for v in V if v['class'] in ('car', 'suv', 'pickup', 'van')][:400]
-    V += [v for v in generate_vehicles(800, seed=29, donor_model=DM) if v['class'] in ('car', 'suv', 'pickup', 'van')][:400 - len(V)]
+    V += [v for v in generate_vehicles(800, seed=29, donor_model=DM, options=O) if v['class'] in ('car', 'suv', 'pickup', 'van')][:400 - len(V)]
     rows = []
     for v in V:
         s = test_spec(v)
+        if s['class'] in ('car', 'suv', 'pickup', 'van'):
+            s['payload_kg'] = 0.0      # the generated mass is the donor's EPA test weight, which already holds the 136 kg
+                                       # test load; the drawn on-road payload is left out on the dyno (v3 pass harness fix)
         a = v['architecture']
         grp = 'conv' if a == 'conv' else ('bev' if a == 'bev' else ('phev' if a.startswith('phev') else 'hev'))
         veh = get_vehicle(s)
@@ -89,11 +116,20 @@ def main():
         rr = [r for r in rows if r['grp'] == g]
         key = ('UDDS_MPGe', 'HWY_MPGe') if g == 'bev' else ('UDDS_hot', 'HWY')
         sim[g] = {key[0]: q([r['udds'] for r in rr]), key[1]: q([r['hwy'] for r in rr])}
+    hev_cls = {}
+    ref_cls = hev_reference_by_class()
+    for c in ('car', 'suv', 'pickup', 'van'):
+        rr = [r for r in rows if r['grp'] == 'hev' and r['cls'] == c]
+        if rr and c in ref_cls:
+            su, sh = q([r['udds'] for r in rr]), q([r['hwy'] for r in rr])
+            hev_cls[c] = dict(sim_UDDS_hot=su, sim_HWY=sh, epa=ref_cls[c],
+                              err_pct=dict(UDDS_vs_FTP=round(100 * (su['median'] / ref_cls[c]['FTP']['median'] - 1), 1),
+                                           HWY=round(100 * (sh['median'] / ref_cls[c]['HWY']['median'] - 1), 1)))
     accel = {c: q([r['zero60'] for r in rows if r['cls'] == c]) for c in ('car', 'suv', 'pickup', 'van')}
     accel_arch = {g: q([r['zero60'] for r in rows if r['grp'] == g]) for g in ('conv', 'hev', 'phev', 'bev')}
     out = dict(check='generated light-duty library vs the real EPA fleet', method=__doc__.strip(), n=len(rows),
                counts={f"{c}|{g}": sum(1 for r in rows if r['cls'] == c and r['grp'] == g) for c in ('car', 'suv', 'pickup', 'van') for g in ('conv', 'hev', 'phev', 'bev')},
-               simulated=sim, epa_testcar_MY2022_24=ref, zero_to_60_s_by_class=accel, zero_to_60_s_by_group=accel_arch,
+               simulated=sim, epa_testcar_MY2022_24=ref, hev_by_class=hev_cls, zero_to_60_s_by_class=accel, zero_to_60_s_by_group=accel_arch,
                power_to_mass_kW_per_t_generated=q([r['pw'] for r in rows]),
                reference_zero_to_60_s='typical MY2024: cars 6-9 s, SUVs 6.5-9.5 s, pickups 5.5-8.5 s, minivans 7-8 s, BEVs 3.5-7 s (manufacturer/press figures)',
                rows=rows)

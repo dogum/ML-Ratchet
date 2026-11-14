@@ -42,6 +42,7 @@ from epa_procedures import ftp, hot_cycle, test_spec
 
 LHV = 0.042            # MJ/g (E10, RoadData's label definition)
 WARM = dict(engine=85.0, oil=90.0, driveline=70.0, axle=60.0, tire_warm=1.0, cabin=21.0)
+PHEV_START = os.environ.get('VED_PHEV_ENGINE_START', 'warm')   # 'warm' | 'logged' (plug-in engine start state, run_trip)
 # Plug-in hardware (public spec sheets), used only for architectures RoadData identified (as EnergyNet's twins)
 PLUGIN_HW = {
     # battery max_power_kW: min(traction machines / 0.9, 9 C), the plug-in rule of data/scripts/d3_specs.py (RoadSim's
@@ -238,6 +239,13 @@ def run_trip(job):
     trip['surface'] = arr['surface'].astype(int)
     T0 = float(np.nanmean(arr['T_amb']))
     init = dict(WARM, battery=max(20.0, T0))
+    if arch.startswith('phev') and job.get('phev_engine_start', 'warm') == 'logged':
+        # plug-ins drive on the battery: unless the logged engine is turning in the first 10 s, the fragment starts
+        # with the engine at ambient (v3 pass harness fix, 14 Nov 2026: the warm 85 C coolant of an engine that had
+        # not run fed the cabin heater for free through the whole trip)
+        er = arr['engine_rpm'].astype(float)[:10]
+        if not (np.isfinite(er) & (er > 300)).any():
+            init.update(engine=min(T0, WARM['engine']), oil=min(T0, WARM['oil']))
     soc0 = None
     if arch != 'conv':
         s = arr['soc'][np.isfinite(arr['soc'])]
@@ -377,7 +385,7 @@ def main():
     print(f'{len(twins)} twins ({time.time() - t0:.0f} s)', flush=True)
     jobs = []
     for meta, arr in rd.load_trips(a.split, label_ok=True, vehicles=dev):
-        jobs.append(dict(meta=meta, arr=arr, spec=twins[meta['vehicle_id']][0], opt=opt))
+        jobs.append(dict(meta=meta, arr=arr, spec=twins[meta['vehicle_id']][0], opt=opt, phev_engine_start=PHEV_START))
     with Pool(a.workers) as pool:
         rows = pool.map(run_trip, jobs, chunksize=4)
     errors = [r for r in rows if 'error' in r]

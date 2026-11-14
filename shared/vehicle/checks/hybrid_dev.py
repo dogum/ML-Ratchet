@@ -111,12 +111,13 @@ def main():
     ap.add_argument('--tag', required=True)
     ap.add_argument('--only', default='epa,d3,ved')
     ap.add_argument('--ref', default='v2')
+    ap.add_argument('--epa-set', default='dev', choices=['dev', 'devx'])
     a = ap.parse_args()
     os.makedirs(LOG, exist_ok=True)
     only = a.only.split(',')
     t0 = time.time()
     if 'epa' in only:
-        run(['check_hybrids_epa.py', '--set', 'dev', '--options', a.options, '--out', os.path.join(LOG, f'{a.tag}__epa.json')],
+        run(['check_hybrids_epa.py', '--set', a.epa_set, '--options', a.options, '--out', os.path.join(LOG, f'{a.tag}__epa.json')],
             os.path.join(LOG, f'{a.tag}__epa.log'))
     if 'd3' in only:
         run(['check_d3.py', '--split', 'dev', '--options', a.options, '--vehicles', ','.join(D3_DEV_HYB),

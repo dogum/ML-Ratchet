@@ -1,0 +1,46 @@
+{
+ "about": "RoadSim physics v3 (hardware pass on hybrids): roadsim-physics-v2.1 plus the changes below, each acting on hybrid and plug-in architectures and the vehicle generator only (roadsim/options.py loads 'changes' on top of the v2.1 preset). Calibrated on dev only: EPA dev-family hybrids and plug-ins plus exam-3's dev_extra (checks/check_hybrids_epa.py --set devx), D3 dev hybrids and plug-ins, VED dev HEV/PHEV twins (checks/hybrid_dev.py). Decision log: roadsim/CALIBRATION.md, rungs H21-.",
+ "status": "final: frozen 14 Nov 2026 before exam-3 (checks/exam3_hybrids.json) or any second-look set was run. Not the default physics (PHYSICS_VERSION stays roadsim-physics-v2): the dev gain is small and rests on three dev vehicles (CALIBRATION.md, v3 freeze).",
+ "base": "roadsim-physics-v2.1",
+ "changes": {
+  "engine_era": {
+   "maps": [
+    "gas_atk_toyota_tnga_hev_paper",
+    "gas_atk_toyota_tnga_hev"
+   ],
+   "ref_bte": 0.41,
+   "eras": [
+    [
+     "TOYOTA|LEXUS",
+     1990,
+     2008,
+     0.37
+    ],
+    [
+     "TOYOTA|LEXUS",
+     2009,
+     2015,
+     0.385
+    ],
+    [
+     "TOYOTA|LEXUS",
+     2016,
+     2017,
+     0.4
+    ]
+   ],
+   "exp": 1.0
+  },
+  "p2_tc_open_gears": 2,
+  "gen_hybrid_hw": "v3",
+  "gen_phev_pack_rule": true
+ },
+ "provenance": {
+  "engine_era": "published, not fitted: Toyota peak brake thermal efficiency by engine generation (1NZ-FXE about 37 %, 2ZR-FXE 2009 38.5 %, 2ZR-FXE ESTEC 2016 40 % (SAE 2016-01-0684), TNGA 2.5 hybrid 41 %, the reference of the TNGA prototype map); efficiency x (BTE_era / 0.41), Toyota / Lexus only (no published history for other makes), by model year: MY<=2008 0.37, 2009-2015 0.385, 2016-2017 0.40, 2018+ the map. Dev effect (CALIBRATION.md H22): D3 dev 2010 Prius std tests median -22.6 -> -17.1 % energy (legacy fuel), 2017 Prius Prime -9.0 -> -6.9 %; no EPA dev Toyota is older than 2018.",
+  "p2_tc_open_gears": "measured on D3 dev conventional automatics (CALIBRATION.md C2: 1st gear always open, 2nd mostly open), applied to P2 automatics that keep their converter: EPA dev Panamera S Hybrid FTP +38.2 -> +35.5 % FE, plug-in P2 CS FTP median +13.2 -> +12.1 % (H23).",
+  "gen_hybrid_hw": "the EPA twins' hardware rules for generated hybrids (hybrid Atkinson map for non-turbo engines, car/SUV P2 without a converter, cooperative regen blending, engine generation from the donor year); a consistency rule, not fitted (H24).",
+  "gen_phev_pack_rule": "the twins' plug-in pack-power rule min(traction / 0.9, 9 C) (checks/hybrid_specs.py, data/scripts/d3_specs.py); not fitted (H24)."
+ },
+ "dev_effect": "v2.1 -> v3 on dev (devx): EPA dev P2 converter FTP +38.2 -> +35.5, plug-in P2 FTP / US06 / SC03 / cold +13.2 / -3.7 / +26.9 / +26.5 -> +12.1 / -5.4 / +25.0 / +24.6 % FE; D3 dev power-split -20.3 -> -18.3, plug-in power-split -9.0 -> -8.8 % energy; every other dev metric identical (VED dev twins, Toyota / Honda / TMED EPA dev records).",
+ "rejected": "VED plug-in twins starting with the engine at ambient (harness, H25: Energi cold -33 -> -12 % but Volt cold -24 -> +21 %); no K0 slip at TMED starts (option p2_k0_slip_by_type {tmed: 0}, H26: EPA dev Sonata HWY -7.5 -> -3.8 but FTP +3.0 -> +6.0, D3 dev P2 -5.3 -> -7.5 %, past the 2-point guard); era scaling for Ford, GM and Honda engines (H22a: no published generation history; D3 Accord HWFET +1.9 -> +8.7 %)."
+}

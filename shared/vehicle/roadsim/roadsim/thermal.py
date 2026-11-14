@@ -23,6 +23,7 @@ Main sources
 - SC03 conditions: 35 C, 100 grains water/lb dry air (~40 % RH), 850 W/m2 solar (40 CFR 86.161).
 """
 import math
+from . import eras as _eras
 from .constants import G, T0K
 
 CP_AIR = 1006.0          # J/kg/K
@@ -147,7 +148,7 @@ def _engine_active(o):
             or o['warmup_enrich'] != 0.0 or o['eng_dfmep_bar'] != 0.0 or o['eng_eta_scale'] != 1.0
             or o['eng_lowload_W_per_L'] != 0.0
             or bool(o['eng_family_adj']) or o['fead_drag_Nm'] != 0.0 or o.get('eng_transient_fuel', 0.0) != 0.0
-            or o.get('eng_fullload_enrich', 0.0) != 0.0)
+            or o.get('eng_fullload_enrich', 0.0) != 0.0 or bool(o.get('engine_era')))
 
 
 def active(o):
@@ -209,7 +210,8 @@ class Thermal:
             adj.update((opt['eng_family_adj'] or {}).get(e.map_id) or {})
             self.dT_adj = (adj['eng_dfmep_bar'] * 1e5 * e.disp * 1e-3 / (4.0 * math.pi)
                            + (opt['fead_drag_Nm'] if self.conv else 0.0))
-            self.f_eta = 1.0 / adj['eng_eta_scale']
+            self.era_scale = _eras.scale(veh.spec, e.map_id, opt.get('engine_era'))   # v3: older engine generations
+            self.f_eta = 1.0 / (adj['eng_eta_scale'] * self.era_scale)
             self.ll_W = adj['eng_lowload_W_per_L'] * e.disp                 # extra fuel power at zero brake power ...
             self.ll_P = max(P['lowload_kW_per_L'] * 1e3 * e.disp, 1.0)     # ... fading linearly to zero at this brake power
             self.law = opt['oil_viscosity']

@@ -613,6 +613,12 @@ class P2PT(_HybridBase):
                     P_m_el=P_m)
 
     def k0_slip(self):
+        by = self._o('p2_k0_slip_by_type', None)
+        if by:                                   # v3 option: K0 slip share by P2 hardware type (roadsim/eras.p2_type)
+            from .eras import p2_type
+            t = p2_type(self.v.spec)
+            if t in by:
+                return float(by[t])
         return float(self.v.spec.get('engine', {}).get('k0_slip_frac', self._o('p2_k0_slip_frac', 1.0)))
 
     def tc_active(self, w_in, g, env):
