@@ -29,7 +29,7 @@ prints the ledgers (and writes `demo_ledger.png`).
 
 ```python
 out = simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, init_temps=None, rng=None,
-               driver=None, record=True, check=True, ledger_tol=0.005)
+               driver=None, record=True, check=True, ledger_tol=0.005, options=<default physics>)
 ```
 
 | argument | meaning |
@@ -42,6 +42,7 @@ out = simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, 
 | `rng` | seed or `numpy.random.Generator`: varies the driver's PI gains ±30 % (deterministic if None). |
 | `driver` | `{'Kp': 0.5, 'Ki': 0.05, 'a_max', 'a_min'}`. Feed-forward from the road-load model plus PI on the lagged speed error. |
 | `record` | False skips the per-second arrays (ledger and summary only); about 10-20 % faster. |
+| `options` | physics: omitted = `roadsim.PHYSICS_VERSION` (`'roadsim-physics-v2'` since 14 Nov 2026); `'roadsim-physics-v1'` or `None` = physics v1 exactly; a preset name; or a dict of options (`{'preset': 'roadsim-physics-v2', ...}` changes single values of a preset; a dict without `preset` builds on v1). See [Physics versions and options](#physics-versions-and-options). |
 
 **Returns** a dict. Arrays (float32, length N; quantities over second k→k+1 are stored at index k+1, like a logger's
 rate over the last second; states are instantaneous):
@@ -77,6 +78,40 @@ from roadsim.coastdown import coast, fit_abc        # virtual coast-down + J2263
 
 `list_cycles()`: udds, hwfet, us06, sc03, nycc, la92 (EPA), hd_transient (40 CFR 1037 App. A), gem_55 / gem_65 (cruise
 over the App. D grade profile; `make_trip('gem_65')` attaches the grade), cbd14 (bus).
+
+## Physics versions and options
+
+A physics version is a named set of option values (`roadsim/options.py`: `DEFAULTS`, `PRESETS`). Every option's
+default is the v1 behaviour, so v1 is always one name away and reproduces exactly (`tests/test_roadsim_fingerprint.py`,
+171 runs to 1e-9).
+
+| name | what it is |
+|---|---|
+| `roadsim-physics-v1` | the Phase 1 simulator (13 Nov 2026); the three released models were trained and scored on it and pin it |
+| `roadsim-physics-v2` | **the default.** v2 physics calibrated on dev data only, fitted numbers in `roadsim/data/calibration_v2.json` (each with its dev source), decisions and dev numbers in [CALIBRATION.md](CALIBRATION.md), held-out results in [LIMITS.md](LIMITS.md) |
+| `roadsim-physics-v2-b1` / `-b2` / `-b3` | the three work packages as built, before calibration (`docs/v2_b1.md`, `v2_b2.md`, `v2_b3.md`) |
+
+```python
+simulate(spec, trip)                                                    # physics v2
+simulate(spec, trip, options='roadsim-physics-v1')                     # physics v1, exactly
+simulate(spec, trip, options={'preset': 'roadsim-physics-v2', 'onroad_aux_W': {}})   # v2, one value changed
+simulate(spec, trip, options={'series_direct_drive': True})            # v1 plus one feature
+spec['physics'] = {'hvac_model': 'v2'}                                 # per vehicle (preset < spec < options dict)
+```
+
+What v2 adds over v1, by group (all behind options; the full list with units is the commented `DEFAULTS` dict):
+
+| group | v2 values (preset) |
+|---|---|
+| hybrid control | P2 torque converter and start energy, min on 8 s / off 3 s, stay-on above 15 % of engine power, 20 kJ start penalty; Toyota rules (engine on above 45 km/h, warm-up 40 C, catalyst hold 40 s); e:HEV lock-up 22.7 rpm per km/h from 65 km/h, engine drive preferred; P2 brake blending (`regen_share` 0.75); plug-in charge-depleting rules; DP with on/off timers |
+| engine and cold | coolant + oil nodes, Vogel oil, enrichment; per-map efficiency tilt for the five conventional gasoline maps (eta 1.04, low-load 450 W/L, transient 0.5 s); converter slip in AT conventional cars; axle and tyre temperature |
+| HVAC | two-node cabin (conduction 0.3 of UA), explicit air flows, belt and electric compressors (COP / Carnot 0.25 / 0.50), PTC and heat pump; plug-ins heat from a warm engine first and run it for heat below -10 C; bus accessories, door exchange |
+| on-road | road-height wind (log profile, z0 0.3 m), tyre model; on-road extra load per architecture (conventional 700 W, HEV 1,250 W, plug-in and BEV 300 W, road runs only) |
+| options kept off in v2 | 10 Hz sub-steps, gusts, drafting, human driver, charge cap, full-load enrichment, battery aging (inputs: `batt_age`, `batt_soh_*`) |
+
+`checks/run_all.py --options NAME` runs every check with a physics version and writes `<check>__NAME.json` (v1: the
+plain names) and `scoreboard_NAME.json`; `scoreboard.py --compare roadsim-physics-v1 roadsim-physics-v2` prints the
+differences. Exam / held-out results are computed only with `--all-splits`, for a final report.
 
 ### Using it at scale (Phase 2)
 

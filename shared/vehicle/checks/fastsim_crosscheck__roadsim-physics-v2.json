@@ -1,0 +1,2347 @@
+{
+ "check": "cross-check vs NREL FASTSim 3.1.0",
+ "fastsim_version": "3.1.0",
+ "method": "Check: cross-check against NREL FASTSim 3.1.0 (pip 'fastsim') on the same 47 EPA vehicles and cycles.\n\nFASTSim is given the same test mass, the same road load (our A + B v + C v^2 least-squares fitted onto FASTSim's\na + c v^2 form at FASTSim's own air density), the same engine / motor / battery ratings and the same auxiliary load,\nbut keeps its own component models (efficiency-vs-power curves, constant transmission efficiency, its HEV controller\nwith built-in SOC balancing) from its shipped templates: 2012 Ford Fusion (conventional), 2016 Toyota Prius Two (HEV),\n2022 Renault Zoe ZE50 (BEV). Both models run hot-start UDDS, HWFET and US06.\nVariant B ('matched components'): FASTSim additionally gets efficiency curves derived from roadsim's own engine\n(efficiency along its best-BSFC line vs power), motor (efficiency vs power at 35 % of max speed) and driveline, so the\nremaining difference reflects model structure (gear/shift operation off the best-BSFC line, regen and blending, aux,\nlimits) rather than component data. The engine power ramp lag of the templates is set to 1 s (US06 otherwise fails). We report roadsim/FASTSim - 1 and each\nmodel's error vs EPA (hot UDDS is compared with EPA FTP for fuel vehicles, so both carry the same cold-start offset).",
+ "note": "UDDS row compares hot-start UDDS with EPA FTP-75 (cold start) for fuel vehicles; both models carry that offset.",
+ "summary": {
+  "conv": {
+   "UDDS": {
+    "roadsim_vs_fastsim": {
+     "n": 22,
+     "median_pct": 10.68,
+     "p25_pct": 2.94,
+     "p75_pct": 12.98,
+     "mean_abs_pct": 12.36
+    },
+    "roadsim_vs_fastsim_matched_components": {
+     "n": 22,
+     "median_pct": -1.9,
+     "p25_pct": -4.04,
+     "p75_pct": 0.99,
+     "mean_abs_pct": 3.5
+    },
+    "roadsim_vs_epa_heldout": {
+     "n": 15,
+     "median_pct": 8.25,
+     "p25_pct": -1.31,
+     "p75_pct": 12.32,
+     "mean_abs_pct": 8.44
+    },
+    "fastsim_vs_epa_heldout": {
+     "n": 15,
+     "median_pct": -3.15,
+     "p25_pct": -12.74,
+     "p75_pct": 5.79,
+     "mean_abs_pct": 13.43
+    }
+   },
+   "HWY": {
+    "roadsim_vs_fastsim": {
+     "n": 22,
+     "median_pct": 14.77,
+     "p25_pct": 8.95,
+     "p75_pct": 17.43,
+     "mean_abs_pct": 13.47
+    },
+    "roadsim_vs_fastsim_matched_components": {
+     "n": 22,
+     "median_pct": -1.16,
+     "p25_pct": -3.39,
+     "p75_pct": 0.38,
+     "mean_abs_pct": 2.71
+    },
+    "roadsim_vs_epa_heldout": {
+     "n": 15,
+     "median_pct": -1.92,
+     "p25_pct": -3.15,
+     "p75_pct": -1.48,
+     "mean_abs_pct": 3.91
+    },
+    "fastsim_vs_epa_heldout": {
+     "n": 15,
+     "median_pct": -13.94,
+     "p25_pct": -16.74,
+     "p75_pct": -10.88,
+     "mean_abs_pct": 14.33
+    }
+   },
+   "US06": {
+    "roadsim_vs_fastsim": {
+     "n": 22,
+     "median_pct": 0.11,
+     "p25_pct": -4.25,
+     "p75_pct": 5.21,
+     "mean_abs_pct": 5.31
+    },
+    "roadsim_vs_fastsim_matched_components": {
+     "n": 22,
+     "median_pct": -6.39,
+     "p25_pct": -7.16,
+     "p75_pct": -5.87,
+     "mean_abs_pct": 6.58
+    },
+    "roadsim_vs_epa_heldout": {
+     "n": 5,
+     "median_pct": -1.82,
+     "p25_pct": -2.74,
+     "p75_pct": 2.52,
+     "mean_abs_pct": 6.35
+    },
+    "fastsim_vs_epa_heldout": {
+     "n": 5,
+     "median_pct": -3.63,
+     "p25_pct": -13.45,
+     "p75_pct": -3.03,
+     "mean_abs_pct": 13.48
+    }
+   }
+  },
+  "hev": {
+   "UDDS": {
+    "roadsim_vs_fastsim": {
+     "n": 14,
+     "median_pct": 3.49,
+     "p25_pct": -17.73,
+     "p75_pct": 4.62,
+     "mean_abs_pct": 10.51
+    },
+    "roadsim_vs_fastsim_matched_components": {
+     "n": 14,
+     "median_pct": 12.53,
+     "p25_pct": -2.61,
+     "p75_pct": 14.16,
+     "mean_abs_pct": 10.75
+    },
+    "roadsim_vs_epa_heldout": {
+     "n": 10,
+     "median_pct": 0.39,
+     "p25_pct": -4.16,
+     "p75_pct": 6.51,
+     "mean_abs_pct": 8.46
+    },
+    "fastsim_vs_epa_heldout": {
+     "n": 10,
+     "median_pct": 4.07,
+     "p25_pct": -0.52,
+     "p75_pct": 16.65,
+     "mean_abs_pct": 15.91
+    }
+   },
+   "HWY": {
+    "roadsim_vs_fastsim": {
+     "n": 14,
+     "median_pct": -4.46,
+     "p25_pct": -12.07,
+     "p75_pct": -1.68,
+     "mean_abs_pct": 6.15
+    },
+    "roadsim_vs_fastsim_matched_components": {
+     "n": 14,
+     "median_pct": 2.26,
+     "p25_pct": -0.38,
+     "p75_pct": 4.22,
+     "mean_abs_pct": 3.92
+    },
+    "roadsim_vs_epa_heldout": {
+     "n": 10,
+     "median_pct": -9.66,
+     "p25_pct": -10.54,
+     "p75_pct": -5.58,
+     "mean_abs_pct": 8.21
+    },
+    "fastsim_vs_epa_heldout": {
+     "n": 10,
+     "median_pct": 0.98,
+     "p25_pct": -1.44,
+     "p75_pct": 1.97,
+     "mean_abs_pct": 3.72
+    }
+   },
+   "US06": {
+    "roadsim_vs_fastsim": {
+     "n": 14,
+     "median_pct": -14.04,
+     "p25_pct": -18.68,
+     "p75_pct": -9.8,
+     "mean_abs_pct": 14.57
+    },
+    "roadsim_vs_fastsim_matched_components": {
+     "n": 14,
+     "median_pct": -8.3,
+     "p25_pct": -13.67,
+     "p75_pct": -6.81,
+     "mean_abs_pct": 10.63
+    },
+    "roadsim_vs_epa_heldout": {
+     "n": 7,
+     "median_pct": -8.1,
+     "p25_pct": -18.77,
+     "p75_pct": -6.39,
+     "mean_abs_pct": 12.23
+    },
+    "fastsim_vs_epa_heldout": {
+     "n": 7,
+     "median_pct": 1.14,
+     "p25_pct": -0.36,
+     "p75_pct": 6.62,
+     "mean_abs_pct": 4.98
+    }
+   }
+  },
+  "bev": {
+   "UDDS": {
+    "roadsim_vs_fastsim": {
+     "n": 11,
+     "median_pct": 25.79,
+     "p25_pct": 25.34,
+     "p75_pct": 26.37,
+     "mean_abs_pct": 25.32
+    },
+    "roadsim_vs_fastsim_matched_components": {
+     "n": 11,
+     "median_pct": 4.7,
+     "p25_pct": 2.57,
+     "p75_pct": 5.16,
+     "mean_abs_pct": 3.92
+    },
+    "roadsim_vs_epa_heldout": {
+     "n": 8,
+     "median_pct": -0.38,
+     "p25_pct": -3.01,
+     "p75_pct": 2.58,
+     "mean_abs_pct": 3.34
+    },
+    "fastsim_vs_epa_heldout": {
+     "n": 8,
+     "median_pct": -20.5,
+     "p25_pct": -22.69,
+     "p75_pct": -16.99,
+     "mean_abs_pct": 20.19
+    }
+   },
+   "HWY": {
+    "roadsim_vs_fastsim": {
+     "n": 11,
+     "median_pct": 11.14,
+     "p25_pct": 10.04,
+     "p75_pct": 11.25,
+     "mean_abs_pct": 10.27
+    },
+    "roadsim_vs_fastsim_matched_components": {
+     "n": 11,
+     "median_pct": -1.29,
+     "p25_pct": -2.77,
+     "p75_pct": -0.79,
+     "mean_abs_pct": 1.86
+    },
+    "roadsim_vs_epa_heldout": {
+     "n": 8,
+     "median_pct": -1.79,
+     "p25_pct": -3.23,
+     "p75_pct": -0.33,
+     "mean_abs_pct": 2.5
+    },
+    "fastsim_vs_epa_heldout": {
+     "n": 8,
+     "median_pct": -11.02,
+     "p25_pct": -12.57,
+     "p75_pct": -9.56,
+     "mean_abs_pct": 11.07
+    }
+   },
+   "US06": {
+    "roadsim_vs_fastsim": {
+     "n": 11,
+     "median_pct": 12.11,
+     "p25_pct": 10.52,
+     "p75_pct": 12.61,
+     "mean_abs_pct": 11.45
+    },
+    "roadsim_vs_fastsim_matched_components": {
+     "n": 11,
+     "median_pct": -3.5,
+     "p25_pct": -4.73,
+     "p75_pct": -3.21,
+     "mean_abs_pct": 3.92
+    },
+    "roadsim_vs_epa_heldout": null,
+    "fastsim_vs_epa_heldout": null
+   }
+  }
+ },
+ "vehicles": [
+  {
+   "name": "2024 TOYOTA RAV4",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 35.73,
+    "HWY": 49.28,
+    "US06": 29.56
+   },
+   "fastsim": {
+    "UDDS": 32.02,
+    "HWY": 41.95,
+    "US06": 28.02
+   },
+   "epa": {
+    "UDDS": 36.0,
+    "HWY": 50.7
+   },
+   "diff_pct": {
+    "UDDS": 11.58,
+    "HWY": 17.47,
+    "US06": 5.49
+   },
+   "err_rs_pct": {
+    "UDDS": -0.74,
+    "HWY": -2.8
+   },
+   "err_fs_pct": {
+    "UDDS": -11.04,
+    "HWY": -17.26
+   },
+   "fastsim_matched": {
+    "UDDS": 36.31,
+    "HWY": 50.15,
+    "US06": 31.67
+   },
+   "diff_matched_pct": {
+    "UDDS": -1.58,
+    "HWY": -1.73,
+    "US06": -6.66
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2023 MAZDA Mazda3",
+   "architecture": "conv",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 42.4,
+    "HWY": 58.78,
+    "US06": 35.06
+   },
+   "fastsim": {
+    "UDDS": 38.15,
+    "HWY": 51.23,
+    "US06": 33.5
+   },
+   "epa": {
+    "UDDS": 36.7,
+    "HWY": 52.1
+   },
+   "diff_pct": {
+    "UDDS": 11.15,
+    "HWY": 14.75,
+    "US06": 4.65
+   },
+   "err_rs_pct": {
+    "UDDS": 15.54,
+    "HWY": 12.83
+   },
+   "err_fs_pct": {
+    "UDDS": 3.95,
+    "HWY": -1.67
+   },
+   "fastsim_matched": {
+    "UDDS": 43.29,
+    "HWY": 60.85,
+    "US06": 37.93
+   },
+   "diff_matched_pct": {
+    "UDDS": -2.04,
+    "HWY": -3.4,
+    "US06": -7.56
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 Hyundai Sonata",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 36.65,
+    "HWY": 51.67,
+    "US06": 31.43
+   },
+   "fastsim": {
+    "UDDS": 33.26,
+    "HWY": 44.82,
+    "US06": 29.85
+   },
+   "epa": {
+    "UDDS": 31.8,
+    "HWY": 49.7
+   },
+   "diff_pct": {
+    "UDDS": 10.21,
+    "HWY": 15.3,
+    "US06": 5.29
+   },
+   "err_rs_pct": {
+    "UDDS": 15.27,
+    "HWY": 3.97
+   },
+   "err_fs_pct": {
+    "UDDS": 4.58,
+    "HWY": -9.82
+   },
+   "fastsim_matched": {
+    "UDDS": 37.87,
+    "HWY": 53.78,
+    "US06": 33.89
+   },
+   "diff_matched_pct": {
+    "UDDS": -3.21,
+    "HWY": -3.92,
+    "US06": -7.26
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 HYUNDAI Elantra",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 45.36,
+    "HWY": 60.14,
+    "US06": 34.97
+   },
+   "fastsim": {
+    "UDDS": 39.23,
+    "HWY": 51.26,
+    "US06": 33.32
+   },
+   "epa": {
+    "UDDS": 41.9,
+    "HWY": 61.1,
+    "US06": 38.5
+   },
+   "diff_pct": {
+    "UDDS": 15.63,
+    "HWY": 17.33,
+    "US06": 4.95
+   },
+   "err_rs_pct": {
+    "UDDS": 8.25,
+    "HWY": -1.57,
+    "US06": -9.16
+   },
+   "err_fs_pct": {
+    "UDDS": -6.38,
+    "HWY": -16.1,
+    "US06": -13.45
+   },
+   "fastsim_matched": {
+    "UDDS": 44.5,
+    "HWY": 60.57,
+    "US06": 37.69
+   },
+   "diff_matched_pct": {
+    "UDDS": 1.93,
+    "HWY": -0.71,
+    "US06": -7.21
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 HONDA CR-V FWD",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 35.7,
+    "HWY": 47.43,
+    "US06": 27.58
+   },
+   "fastsim": {
+    "UDDS": 31.64,
+    "HWY": 42.0,
+    "US06": 27.78
+   },
+   "epa": {
+    "UDDS": 36.6,
+    "HWY": 48.8
+   },
+   "diff_pct": {
+    "UDDS": 12.82,
+    "HWY": 12.93,
+    "US06": -0.7
+   },
+   "err_rs_pct": {
+    "UDDS": -2.46,
+    "HWY": -2.81
+   },
+   "err_fs_pct": {
+    "UDDS": -13.54,
+    "HWY": -13.94
+   },
+   "fastsim_matched": {
+    "UDDS": 35.27,
+    "HWY": 46.8,
+    "US06": 29.44
+   },
+   "diff_matched_pct": {
+    "UDDS": 1.21,
+    "HWY": 1.34,
+    "US06": -6.3
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 Ford Escape FWD",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 38.04,
+    "HWY": 49.19,
+    "US06": 27.19
+   },
+   "fastsim": {
+    "UDDS": 34.07,
+    "HWY": 43.99,
+    "US06": 28.52
+   },
+   "epa": {
+    "UDDS": 34.55,
+    "HWY": 50.15
+   },
+   "diff_pct": {
+    "UDDS": 11.66,
+    "HWY": 11.81,
+    "US06": -4.67
+   },
+   "err_rs_pct": {
+    "UDDS": 10.11,
+    "HWY": -1.92
+   },
+   "err_fs_pct": {
+    "UDDS": -1.39,
+    "HWY": -12.28
+   },
+   "fastsim_matched": {
+    "UDDS": 37.98,
+    "HWY": 48.97,
+    "US06": 30.21
+   },
+   "diff_matched_pct": {
+    "UDDS": 0.18,
+    "HWY": 0.44,
+    "US06": -10.0
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 Ford F150",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 25.14,
+    "HWY": 34.22,
+    "US06": 20.14
+   },
+   "fastsim": {
+    "UDDS": 23.98,
+    "HWY": 30.6,
+    "US06": 20.98
+   },
+   "epa": {
+    "UDDS": 23.25,
+    "HWY": 34.75
+   },
+   "diff_pct": {
+    "UDDS": 4.83,
+    "HWY": 11.84,
+    "US06": -3.99
+   },
+   "err_rs_pct": {
+    "UDDS": 8.14,
+    "HWY": -1.52
+   },
+   "err_fs_pct": {
+    "UDDS": 3.16,
+    "HWY": -11.94
+   },
+   "fastsim_matched": {
+    "UDDS": 25.76,
+    "HWY": 34.47,
+    "US06": 21.52
+   },
+   "diff_matched_pct": {
+    "UDDS": -2.39,
+    "HWY": -0.72,
+    "US06": -6.42
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 Ford F150 PICKUP 2WD",
+   "architecture": "conv",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 22.27,
+    "HWY": 32.46,
+    "US06": 19.47
+   },
+   "fastsim": {
+    "UDDS": 21.76,
+    "HWY": 28.28,
+    "US06": 19.9
+   },
+   "epa": {
+    "UDDS": 21.4,
+    "HWY": 35.3
+   },
+   "diff_pct": {
+    "UDDS": 2.31,
+    "HWY": 14.79,
+    "US06": -2.12
+   },
+   "err_rs_pct": {
+    "UDDS": 4.05,
+    "HWY": -8.05
+   },
+   "err_fs_pct": {
+    "UDDS": 1.7,
+    "HWY": -19.9
+   },
+   "fastsim_matched": {
+    "UDDS": 23.65,
+    "HWY": 33.1,
+    "US06": 20.56
+   },
+   "diff_matched_pct": {
+    "UDDS": -5.85,
+    "HWY": -1.94,
+    "US06": -5.27
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2023 Ford F150 Super Crew Cab 4X2",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 19.74,
+    "HWY": 28.53,
+    "US06": 19.75
+   },
+   "fastsim": {
+    "UDDS": 22.71,
+    "HWY": 28.28,
+    "US06": 20.59
+   },
+   "epa": {
+    "UDDS": 18.224999999999998,
+    "HWY": 30.699999999999996
+   },
+   "diff_pct": {
+    "UDDS": -13.08,
+    "HWY": 0.88,
+    "US06": -4.06
+   },
+   "err_rs_pct": {
+    "UDDS": 8.31,
+    "HWY": -7.07
+   },
+   "err_fs_pct": {
+    "UDDS": 24.6,
+    "HWY": -7.89
+   },
+   "fastsim_matched": {
+    "UDDS": 22.55,
+    "HWY": 30.86,
+    "US06": 21.02
+   },
+   "diff_matched_pct": {
+    "UDDS": -12.46,
+    "HWY": -7.56,
+    "US06": -6.02
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 CHEVROLET SILVERADO 2WD",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 20.12,
+    "HWY": 28.21,
+    "US06": 18.77
+   },
+   "fastsim": {
+    "UDDS": 22.59,
+    "HWY": 27.9,
+    "US06": 19.62
+   },
+   "epa": {
+    "UDDS": 17.7,
+    "HWY": 28.5,
+    "US06": 16.25
+   },
+   "diff_pct": {
+    "UDDS": -10.93,
+    "HWY": 1.1,
+    "US06": -4.32
+   },
+   "err_rs_pct": {
+    "UDDS": 13.66,
+    "HWY": -1.02,
+    "US06": 15.49
+   },
+   "err_fs_pct": {
+    "UDDS": 27.62,
+    "HWY": -2.09,
+    "US06": 20.71
+   },
+   "fastsim_matched": {
+    "UDDS": 22.53,
+    "HWY": 29.89,
+    "US06": 19.95
+   },
+   "diff_matched_pct": {
+    "UDDS": -10.71,
+    "HWY": -5.61,
+    "US06": -5.93
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 CHEVROLET SILVERADO 2WD",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 34.33,
+    "HWY": 43.24,
+    "US06": 26.12
+   },
+   "fastsim": {
+    "UDDS": 23.2,
+    "HWY": 29.53,
+    "US06": 19.53
+   },
+   "epa": {
+    "UDDS": 30.0,
+    "HWY": 44.79999999999999,
+    "US06": 26.600000000000005
+   },
+   "diff_pct": {
+    "UDDS": 47.96,
+    "HWY": 46.41,
+    "US06": 33.7
+   },
+   "err_rs_pct": {
+    "UDDS": 14.43,
+    "HWY": -3.49,
+    "US06": -1.82
+   },
+   "err_fs_pct": {
+    "UDDS": -22.66,
+    "HWY": -34.08,
+    "US06": -26.57
+   },
+   "fastsim_matched": {
+    "UDDS": 33.69,
+    "HWY": 39.13,
+    "US06": 24.0
+   },
+   "diff_matched_pct": {
+    "UDDS": 1.89,
+    "HWY": 10.5,
+    "US06": 8.8
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 Jeep Grand Cherokee L 4X2",
+   "architecture": "conv",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 21.85,
+    "HWY": 32.44,
+    "US06": 20.57
+   },
+   "fastsim": {
+    "UDDS": 24.59,
+    "HWY": 31.88,
+    "US06": 21.75
+   },
+   "epa": {
+    "UDDS": 24.0,
+    "HWY": 36.4
+   },
+   "diff_pct": {
+    "UDDS": -11.14,
+    "HWY": 1.74,
+    "US06": -5.42
+   },
+   "err_rs_pct": {
+    "UDDS": -8.94,
+    "HWY": -10.89
+   },
+   "err_fs_pct": {
+    "UDDS": 2.47,
+    "HWY": -12.42
+   },
+   "fastsim_matched": {
+    "UDDS": 24.19,
+    "HWY": 33.86,
+    "US06": 22.13
+   },
+   "diff_matched_pct": {
+    "UDDS": -9.66,
+    "HWY": -4.21,
+    "US06": -7.01
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 Chrysler Pacifica",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 23.29,
+    "HWY": 35.49,
+    "US06": 22.77
+   },
+   "fastsim": {
+    "UDDS": 25.57,
+    "HWY": 35.21,
+    "US06": 23.96
+   },
+   "epa": {
+    "UDDS": 23.9,
+    "HWY": 40.0
+   },
+   "diff_pct": {
+    "UDDS": -8.91,
+    "HWY": 0.79,
+    "US06": -4.99
+   },
+   "err_rs_pct": {
+    "UDDS": -2.54,
+    "HWY": -11.28
+   },
+   "err_fs_pct": {
+    "UDDS": 7.0,
+    "HWY": -11.97
+   },
+   "fastsim_matched": {
+    "UDDS": 24.57,
+    "HWY": 37.39,
+    "US06": 24.1
+   },
+   "diff_matched_pct": {
+    "UDDS": -5.18,
+    "HWY": -5.09,
+    "US06": -5.56
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2022 Ford Transit RWD Wagon Low Roof",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 19.98,
+    "HWY": 26.36,
+    "US06": 16.13
+   },
+   "fastsim": {
+    "UDDS": 21.44,
+    "HWY": 26.49,
+    "US06": 17.07
+   },
+   "epa": {
+    "UDDS": 16.25,
+    "HWY": 23.700000000000003
+   },
+   "diff_pct": {
+    "UDDS": -6.79,
+    "HWY": -0.49,
+    "US06": -5.49
+   },
+   "err_rs_pct": {
+    "UDDS": 22.98,
+    "HWY": 11.21
+   },
+   "err_fs_pct": {
+    "UDDS": 31.94,
+    "HWY": 11.76
+   },
+   "fastsim_matched": {
+    "UDDS": 20.87,
+    "HWY": 27.28,
+    "US06": 17.23
+   },
+   "diff_matched_pct": {
+    "UDDS": -4.25,
+    "HWY": -3.37,
+    "US06": -6.37
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 Ford Maverick FWD",
+   "architecture": "conv",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 32.76,
+    "HWY": 44.91,
+    "US06": 26.09
+   },
+   "fastsim": {
+    "UDDS": 29.31,
+    "HWY": 38.3,
+    "US06": 26.41
+   },
+   "epa": {
+    "UDDS": 29.1,
+    "HWY": 45.0
+   },
+   "diff_pct": {
+    "UDDS": 11.78,
+    "HWY": 17.25,
+    "US06": -1.22
+   },
+   "err_rs_pct": {
+    "UDDS": 12.59,
+    "HWY": -0.2
+   },
+   "err_fs_pct": {
+    "UDDS": 0.72,
+    "HWY": -14.88
+   },
+   "fastsim_matched": {
+    "UDDS": 33.05,
+    "HWY": 44.18,
+    "US06": 28.14
+   },
+   "diff_matched_pct": {
+    "UDDS": -0.87,
+    "HWY": 1.66,
+    "US06": -7.29
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 TOYOTA CAMRY LE/SE",
+   "architecture": "conv",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 37.59,
+    "HWY": 55.94,
+    "US06": 34.04
+   },
+   "fastsim": {
+    "UDDS": 34.23,
+    "HWY": 47.36,
+    "US06": 31.96
+   },
+   "epa": {
+    "UDDS": 36.150000000000006,
+    "HWY": 56.95
+   },
+   "diff_pct": {
+    "UDDS": 9.82,
+    "HWY": 18.11,
+    "US06": 6.49
+   },
+   "err_rs_pct": {
+    "UDDS": 3.98,
+    "HWY": -1.77
+   },
+   "err_fs_pct": {
+    "UDDS": -5.32,
+    "HWY": -16.84
+   },
+   "fastsim_matched": {
+    "UDDS": 38.91,
+    "HWY": 57.76,
+    "US06": 36.37
+   },
+   "diff_matched_pct": {
+    "UDDS": -3.4,
+    "HWY": -3.15,
+    "US06": -6.42
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 TOYOTA COROLLA",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 43.93,
+    "HWY": 61.61,
+    "US06": 36.13
+   },
+   "fastsim": {
+    "UDDS": 38.3,
+    "HWY": 52.04,
+    "US06": 34.21
+   },
+   "epa": {
+    "UDDS": 43.5,
+    "HWY": 62.7
+   },
+   "diff_pct": {
+    "UDDS": 14.68,
+    "HWY": 18.4,
+    "US06": 5.6
+   },
+   "err_rs_pct": {
+    "UDDS": 0.98,
+    "HWY": -1.73
+   },
+   "err_fs_pct": {
+    "UDDS": -11.95,
+    "HWY": -17.01
+   },
+   "fastsim_matched": {
+    "UDDS": 43.38,
+    "HWY": 62.61,
+    "US06": 38.83
+   },
+   "diff_matched_pct": {
+    "UDDS": 1.27,
+    "HWY": -1.59,
+    "US06": -6.96
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 HONDA CIVIC 4DR",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 41.53,
+    "HWY": 59.19,
+    "US06": 34.86
+   },
+   "fastsim": {
+    "UDDS": 36.74,
+    "HWY": 50.69,
+    "US06": 34.46
+   },
+   "epa": {
+    "UDDS": 44.1,
+    "HWY": 62.1
+   },
+   "diff_pct": {
+    "UDDS": 13.04,
+    "HWY": 16.77,
+    "US06": 1.17
+   },
+   "err_rs_pct": {
+    "UDDS": -5.84,
+    "HWY": -4.69
+   },
+   "err_fs_pct": {
+    "UDDS": -16.7,
+    "HWY": -18.37
+   },
+   "fastsim_matched": {
+    "UDDS": 41.38,
+    "HWY": 58.17,
+    "US06": 36.99
+   },
+   "diff_matched_pct": {
+    "UDDS": 0.35,
+    "HWY": 1.76,
+    "US06": -5.74
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 HYUNDAI Elantra",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 39.18,
+    "HWY": 50.72,
+    "US06": 30.83
+   },
+   "fastsim": {
+    "UDDS": 34.19,
+    "HWY": 44.54,
+    "US06": 30.55
+   },
+   "epa": {
+    "UDDS": 35.3,
+    "HWY": 51.8,
+    "US06": 31.7
+   },
+   "diff_pct": {
+    "UDDS": 14.6,
+    "HWY": 13.87,
+    "US06": 0.92
+   },
+   "err_rs_pct": {
+    "UDDS": 10.99,
+    "HWY": -2.08,
+    "US06": -2.74
+   },
+   "err_fs_pct": {
+    "UDDS": -3.15,
+    "HWY": -14.01,
+    "US06": -3.63
+   },
+   "fastsim_matched": {
+    "UDDS": 38.59,
+    "HWY": 50.7,
+    "US06": 32.75
+   },
+   "diff_matched_pct": {
+    "UDDS": 1.53,
+    "HWY": 0.05,
+    "US06": -5.85
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 Hyundai Sonata",
+   "architecture": "conv",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 30.82,
+    "HWY": 45.02,
+    "US06": 28.1
+   },
+   "fastsim": {
+    "UDDS": 28.63,
+    "HWY": 38.05,
+    "US06": 27.74
+   },
+   "epa": {
+    "UDDS": 28.9,
+    "HWY": 45.55,
+    "US06": 29.15
+   },
+   "diff_pct": {
+    "UDDS": 7.65,
+    "HWY": 18.32,
+    "US06": 1.29
+   },
+   "err_rs_pct": {
+    "UDDS": 6.65,
+    "HWY": -1.17,
+    "US06": -3.6
+   },
+   "err_fs_pct": {
+    "UDDS": -0.93,
+    "HWY": -16.47,
+    "US06": -4.83
+   },
+   "fastsim_matched": {
+    "UDDS": 31.57,
+    "HWY": 44.75,
+    "US06": 28.92
+   },
+   "diff_matched_pct": {
+    "UDDS": -2.37,
+    "HWY": 0.6,
+    "US06": -2.85
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 Ford Ford Explorer Timberline",
+   "architecture": "conv",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 25.54,
+    "HWY": 33.26,
+    "US06": 19.87
+   },
+   "fastsim": {
+    "UDDS": 24.34,
+    "HWY": 30.79,
+    "US06": 20.82
+   },
+   "epa": {
+    "UDDS": 24.2,
+    "HWY": 35.2,
+    "US06": 20.1
+   },
+   "diff_pct": {
+    "UDDS": 4.91,
+    "HWY": 8.0,
+    "US06": -4.56
+   },
+   "err_rs_pct": {
+    "UDDS": 5.53,
+    "HWY": -5.52,
+    "US06": -1.13
+   },
+   "err_fs_pct": {
+    "UDDS": 0.59,
+    "HWY": -12.52,
+    "US06": 3.59
+   },
+   "fastsim_matched": {
+    "UDDS": 26.0,
+    "HWY": 33.28,
+    "US06": 21.43
+   },
+   "diff_matched_pct": {
+    "UDDS": -1.76,
+    "HWY": -0.08,
+    "US06": -7.25
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 TOYOTA COROLLA CROSS",
+   "architecture": "conv",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 40.53,
+    "HWY": 52.83,
+    "US06": 30.72
+   },
+   "fastsim": {
+    "UDDS": 34.83,
+    "HWY": 44.77,
+    "US06": 29.06
+   },
+   "epa": {
+    "UDDS": 41.3,
+    "HWY": 53.6,
+    "US06": 29.96666666666667
+   },
+   "diff_pct": {
+    "UDDS": 16.37,
+    "HWY": 18.0,
+    "US06": 5.72
+   },
+   "err_rs_pct": {
+    "UDDS": -1.87,
+    "HWY": -1.43,
+    "US06": 2.52
+   },
+   "err_fs_pct": {
+    "UDDS": -15.68,
+    "HWY": -16.47,
+    "US06": -3.03
+   },
+   "fastsim_matched": {
+    "UDDS": 39.37,
+    "HWY": 52.73,
+    "US06": 32.72
+   },
+   "diff_matched_pct": {
+    "UDDS": 2.94,
+    "HWY": 0.2,
+    "US06": -6.09
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 TOYOTA CAMRY HYBRID LE",
+   "architecture": "hev_powersplit",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 77.11,
+    "HWY": 68.78,
+    "US06": 47.27
+   },
+   "fastsim": {
+    "UDDS": 74.66,
+    "HWY": 70.79,
+    "US06": 53.97
+   },
+   "epa": {
+    "UDDS": 73.1,
+    "HWY": 71.9,
+    "US06": 48.9
+   },
+   "diff_pct": {
+    "UDDS": 3.29,
+    "HWY": -2.84,
+    "US06": -12.42
+   },
+   "err_rs_pct": {
+    "UDDS": 5.49,
+    "HWY": -4.34,
+    "US06": -3.34
+   },
+   "err_fs_pct": {
+    "UDDS": 2.13,
+    "HWY": -1.54,
+    "US06": 10.37
+   },
+   "fastsim_matched": {
+    "UDDS": 68.75,
+    "HWY": 67.49,
+    "US06": 51.94
+   },
+   "diff_matched_pct": {
+    "UDDS": 12.16,
+    "HWY": 1.91,
+    "US06": -8.99
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 TOYOTA RAV4 HYBRID AWD",
+   "architecture": "hev_powersplit",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 64.36,
+    "HWY": 53.33,
+    "US06": 38.0
+   },
+   "fastsim": {
+    "UDDS": 60.15,
+    "HWY": 53.36,
+    "US06": 39.69
+   },
+   "epa": {
+    "UDDS": 57.6,
+    "HWY": 53.7,
+    "US06": 36.75
+   },
+   "diff_pct": {
+    "UDDS": 7.0,
+    "HWY": -0.07,
+    "US06": -4.25
+   },
+   "err_rs_pct": {
+    "UDDS": 11.73,
+    "HWY": -0.69,
+    "US06": 3.4
+   },
+   "err_fs_pct": {
+    "UDDS": 4.43,
+    "HWY": -0.62,
+    "US06": 7.99
+   },
+   "fastsim_matched": {
+    "UDDS": 54.81,
+    "HWY": 51.15,
+    "US06": 38.67
+   },
+   "diff_matched_pct": {
+    "UDDS": 17.41,
+    "HWY": 4.26,
+    "US06": -1.72
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2023 Ford Maverick",
+   "architecture": "hev_powersplit",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 59.94,
+    "HWY": 50.15,
+    "US06": 33.19
+   },
+   "fastsim": {
+    "UDDS": 57.22,
+    "HWY": 50.03,
+    "US06": 36.01
+   },
+   "epa": {
+    "UDDS": 56.1,
+    "HWY": 50.6,
+    "US06": 35.0
+   },
+   "diff_pct": {
+    "UDDS": 4.77,
+    "HWY": 0.24,
+    "US06": -7.82
+   },
+   "err_rs_pct": {
+    "UDDS": 6.85,
+    "HWY": -0.89,
+    "US06": -5.17
+   },
+   "err_fs_pct": {
+    "UDDS": 1.99,
+    "HWY": -1.13,
+    "US06": 2.87
+   },
+   "fastsim_matched": {
+    "UDDS": 51.99,
+    "HWY": 47.96,
+    "US06": 35.92
+   },
+   "diff_matched_pct": {
+    "UDDS": 15.3,
+    "HWY": 4.56,
+    "US06": -7.6
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 Ford Escape FWD HEV",
+   "architecture": "hev_powersplit",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 63.79,
+    "HWY": 53.53,
+    "US06": 35.52
+   },
+   "fastsim": {
+    "UDDS": 60.58,
+    "HWY": 53.62,
+    "US06": 39.29
+   },
+   "epa": {
+    "UDDS": 59.2,
+    "HWY": 52.6
+   },
+   "diff_pct": {
+    "UDDS": 5.3,
+    "HWY": -0.17,
+    "US06": -9.61
+   },
+   "err_rs_pct": {
+    "UDDS": 7.76,
+    "HWY": 1.78
+   },
+   "err_fs_pct": {
+    "UDDS": 2.33,
+    "HWY": 1.95
+   },
+   "fastsim_matched": {
+    "UDDS": 55.73,
+    "HWY": 51.43,
+    "US06": 38.48
+   },
+   "diff_matched_pct": {
+    "UDDS": 14.47,
+    "HWY": 4.1,
+    "US06": -7.69
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 TOYOTA COROLLA CROSS HYBRID AWD",
+   "architecture": "hev_powersplit",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 62.0,
+    "HWY": 50.62,
+    "US06": 34.65
+   },
+   "fastsim": {
+    "UDDS": 58.39,
+    "HWY": 51.37,
+    "US06": 37.03
+   },
+   "epa": {
+    "UDDS": 64.6,
+    "HWY": 56.3,
+    "US06": 37.7
+   },
+   "diff_pct": {
+    "UDDS": 6.18,
+    "HWY": -1.45,
+    "US06": -6.44
+   },
+   "err_rs_pct": {
+    "UDDS": -4.02,
+    "HWY": -10.09,
+    "US06": -8.1
+   },
+   "err_fs_pct": {
+    "UDDS": -9.61,
+    "HWY": -8.76,
+    "US06": -1.77
+   },
+   "fastsim_matched": {
+    "UDDS": 53.72,
+    "HWY": 49.49,
+    "US06": 37.08
+   },
+   "diff_matched_pct": {
+    "UDDS": 15.41,
+    "HWY": 2.29,
+    "US06": -6.55
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 TOYOTA PRIUS",
+   "architecture": "hev_powersplit",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 79.32,
+    "HWY": 69.02,
+    "US06": 47.66
+   },
+   "fastsim": {
+    "UDDS": 76.15,
+    "HWY": 70.69,
+    "US06": 53.18
+   },
+   "epa": {
+    "UDDS": 82.8,
+    "HWY": 77.8,
+    "US06": 55.4
+   },
+   "diff_pct": {
+    "UDDS": 4.17,
+    "HWY": -2.36,
+    "US06": -10.39
+   },
+   "err_rs_pct": {
+    "UDDS": -4.2,
+    "HWY": -11.28,
+    "US06": -13.98
+   },
+   "err_fs_pct": {
+    "UDDS": -8.03,
+    "HWY": -9.14,
+    "US06": -4.01
+   },
+   "fastsim_matched": {
+    "UDDS": 70.27,
+    "HWY": 67.51,
+    "US06": 51.91
+   },
+   "diff_matched_pct": {
+    "UDDS": 12.89,
+    "HWY": 2.23,
+    "US06": -8.19
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 HYUNDAI Elantra Hybrid",
+   "architecture": "hev_parallel_p2",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 59.57,
+    "HWY": 59.04,
+    "US06": 36.01
+   },
+   "fastsim": {
+    "UDDS": 73.15,
+    "HWY": 67.79,
+    "US06": 47.64
+   },
+   "epa": {
+    "UDDS": 68.3,
+    "HWY": 67.4,
+    "US06": 47.1
+   },
+   "diff_pct": {
+    "UDDS": -18.57,
+    "HWY": -12.91,
+    "US06": -24.41
+   },
+   "err_rs_pct": {
+    "UDDS": -12.78,
+    "HWY": -12.4,
+    "US06": -23.55
+   },
+   "err_fs_pct": {
+    "UDDS": 7.11,
+    "HWY": 0.58,
+    "US06": 1.14
+   },
+   "fastsim_matched": {
+    "UDDS": 68.79,
+    "HWY": 65.87,
+    "US06": 48.7
+   },
+   "diff_matched_pct": {
+    "UDDS": -13.4,
+    "HWY": -10.37,
+    "US06": -26.06
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 KIA NIRO HYBRID",
+   "architecture": "hev_parallel_p2",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 61.55,
+    "HWY": 60.51,
+    "US06": 35.51
+   },
+   "fastsim": {
+    "UDDS": 74.64,
+    "HWY": 67.94,
+    "US06": 47.14
+   },
+   "epa": {
+    "UDDS": 70.4,
+    "HWY": 66.7,
+    "US06": 46.65
+   },
+   "diff_pct": {
+    "UDDS": -17.54,
+    "HWY": -10.94,
+    "US06": -24.67
+   },
+   "err_rs_pct": {
+    "UDDS": -12.58,
+    "HWY": -9.29,
+    "US06": -23.88
+   },
+   "err_fs_pct": {
+    "UDDS": 6.02,
+    "HWY": 1.85,
+    "US06": 1.05
+   },
+   "fastsim_matched": {
+    "UDDS": 69.0,
+    "HWY": 65.77,
+    "US06": 47.94
+   },
+   "diff_matched_pct": {
+    "UDDS": -10.8,
+    "HWY": -8.0,
+    "US06": -25.93
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 HYUNDAI SONATA HYBRID",
+   "architecture": "hev_parallel_p2",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 61.64,
+    "HWY": 63.06,
+    "US06": 40.27
+   },
+   "fastsim": {
+    "UDDS": 68.43,
+    "HWY": 65.85,
+    "US06": 49.45
+   },
+   "epa": {
+    "UDDS": 56.3,
+    "HWY": 67.0,
+    "US06": 44.5
+   },
+   "diff_pct": {
+    "UDDS": -9.93,
+    "HWY": -4.24,
+    "US06": -18.57
+   },
+   "err_rs_pct": {
+    "UDDS": 9.48,
+    "HWY": -5.88,
+    "US06": -9.51
+   },
+   "err_fs_pct": {
+    "UDDS": 21.55,
+    "HWY": -1.71,
+    "US06": 11.13
+   },
+   "fastsim_matched": {
+    "UDDS": 62.97,
+    "HWY": 63.25,
+    "US06": 48.81
+   },
+   "diff_matched_pct": {
+    "UDDS": -2.12,
+    "HWY": -0.3,
+    "US06": -17.5
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 HYUNDAI TUCSON HYBRID",
+   "architecture": "hev_parallel_p2",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 48.86,
+    "HWY": 45.46,
+    "US06": 31.23
+   },
+   "fastsim": {
+    "UDDS": 59.44,
+    "HWY": 51.93,
+    "US06": 38.42
+   },
+   "epa": {
+    "UDDS": 49.6,
+    "HWY": 50.9,
+    "US06": 33.8
+   },
+   "diff_pct": {
+    "UDDS": -17.8,
+    "HWY": -12.45,
+    "US06": -18.71
+   },
+   "err_rs_pct": {
+    "UDDS": -1.49,
+    "HWY": -10.69,
+    "US06": -7.61
+   },
+   "err_fs_pct": {
+    "UDDS": 19.83,
+    "HWY": 2.01,
+    "US06": 13.66
+   },
+   "fastsim_matched": {
+    "UDDS": 49.55,
+    "HWY": 42.93,
+    "US06": 34.1
+   },
+   "diff_matched_pct": {
+    "UDDS": -1.39,
+    "HWY": 5.9,
+    "US06": -8.42
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 Ford F150 HEV",
+   "architecture": "hev_parallel_p2",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 32.54,
+    "HWY": 29.54,
+    "US06": 20.5
+   },
+   "fastsim": {
+    "UDDS": 41.59,
+    "HWY": 34.39,
+    "US06": 25.88
+   },
+   "epa": {
+    "UDDS": 26.2,
+    "HWY": 32.7
+   },
+   "diff_pct": {
+    "UDDS": -21.75,
+    "HWY": -14.1,
+    "US06": -20.79
+   },
+   "err_rs_pct": {
+    "UDDS": 24.21,
+    "HWY": -9.66
+   },
+   "err_fs_pct": {
+    "UDDS": 58.74,
+    "HWY": 5.17
+   },
+   "fastsim_matched": {
+    "UDDS": 33.47,
+    "HWY": 28.85,
+    "US06": 19.79
+   },
+   "diff_matched_pct": {
+    "UDDS": -2.78,
+    "HWY": 2.4,
+    "US06": 3.58
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 TOYOTA TACOMA HYBRID 4WD",
+   "architecture": "hev_parallel_p2",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 32.44,
+    "HWY": 30.81,
+    "US06": 21.21
+   },
+   "fastsim": {
+    "UDDS": 42.28,
+    "HWY": 36.03,
+    "US06": 25.79
+   },
+   "epa": {
+    "UDDS": 29.3,
+    "HWY": 34.1
+   },
+   "diff_pct": {
+    "UDDS": -23.27,
+    "HWY": -14.49,
+    "US06": -17.77
+   },
+   "err_rs_pct": {
+    "UDDS": 10.72,
+    "HWY": -9.65
+   },
+   "err_fs_pct": {
+    "UDDS": 44.3,
+    "HWY": 5.67
+   },
+   "fastsim_matched": {
+    "UDDS": 34.49,
+    "HWY": 28.88,
+    "US06": 21.18
+   },
+   "diff_matched_pct": {
+    "UDDS": -5.94,
+    "HWY": 6.69,
+    "US06": 0.13
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 HONDA ACCORD",
+   "architecture": "hev_series",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 73.05,
+    "HWY": 63.82,
+    "US06": 42.36
+   },
+   "fastsim": {
+    "UDDS": 70.37,
+    "HWY": 66.95,
+    "US06": 49.93
+   },
+   "epa": {
+    "UDDS": 72.4,
+    "HWY": 66.9,
+    "US06": 46.3
+   },
+   "diff_pct": {
+    "UDDS": 3.82,
+    "HWY": -4.69,
+    "US06": -15.17
+   },
+   "err_rs_pct": {
+    "UDDS": 0.9,
+    "HWY": -4.61,
+    "US06": -8.51
+   },
+   "err_fs_pct": {
+    "UDDS": -2.81,
+    "HWY": 0.08,
+    "US06": 7.85
+   },
+   "fastsim_matched": {
+    "UDDS": 64.53,
+    "HWY": 64.08,
+    "US06": 49.33
+   },
+   "diff_matched_pct": {
+    "UDDS": 13.21,
+    "HWY": -0.41,
+    "US06": -14.12
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 HONDA CR-V FWD",
+   "architecture": "hev_series",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 62.49,
+    "HWY": 52.65,
+    "US06": 34.85
+   },
+   "fastsim": {
+    "UDDS": 60.27,
+    "HWY": 55.51,
+    "US06": 40.02
+   },
+   "epa": {
+    "UDDS": 61.1,
+    "HWY": 54.75
+   },
+   "diff_pct": {
+    "UDDS": 3.69,
+    "HWY": -5.15,
+    "US06": -12.92
+   },
+   "err_rs_pct": {
+    "UDDS": 2.28,
+    "HWY": -3.84
+   },
+   "err_fs_pct": {
+    "UDDS": -1.36,
+    "HWY": 1.38
+   },
+   "fastsim_matched": {
+    "UDDS": 55.19,
+    "HWY": 53.43,
+    "US06": 39.75
+   },
+   "diff_matched_pct": {
+    "UDDS": 13.22,
+    "HWY": -1.46,
+    "US06": -12.33
+   },
+   "fastsim_cyc_met": false
+  },
+  {
+   "name": "2024 Tesla Model 3 RWD",
+   "architecture": "bev",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 192.84,
+    "HWY": 167.49,
+    "US06": 122.25
+   },
+   "fastsim": {
+    "UDDS": 153.69,
+    "HWY": 152.49,
+    "US06": 108.11
+   },
+   "epa": {
+    "UDDS": 199.5,
+    "HWY": 178.0
+   },
+   "diff_pct": {
+    "UDDS": 25.48,
+    "HWY": 9.84,
+    "US06": 13.08
+   },
+   "err_rs_pct": {
+    "UDDS": -3.34,
+    "HWY": -5.91
+   },
+   "err_fs_pct": {
+    "UDDS": -22.96,
+    "HWY": -14.33
+   },
+   "fastsim_matched": {
+    "UDDS": 188.04,
+    "HWY": 172.96,
+    "US06": 128.46
+   },
+   "diff_matched_pct": {
+    "UDDS": 2.56,
+    "HWY": -3.16,
+    "US06": -4.83
+   },
+   "fastsim_cyc_met": true
+  },
+  {
+   "name": "2024 Tesla Model Y Long Range AWD",
+   "architecture": "bev",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 163.08,
+    "HWY": 142.4,
+    "US06": 104.54
+   },
+   "fastsim": {
+    "UDDS": 129.32,
+    "HWY": 127.49,
+    "US06": 91.94
+   },
+   "epa": {
+    "UDDS": 165.7,
+    "HWY": 152.5
+   },
+   "diff_pct": {
+    "UDDS": 26.11,
+    "HWY": 11.69,
+    "US06": 13.7
+   },
+   "err_rs_pct": {
+    "UDDS": -1.58,
+    "HWY": -6.62
+   },
+   "err_fs_pct": {
+    "UDDS": -21.96,
+    "HWY": -16.4
+   },
+   "fastsim_matched": {
+    "UDDS": 154.96,
+    "HWY": 143.18,
+    "US06": 108.03
+   },
+   "diff_matched_pct": {
+    "UDDS": 5.24,
+    "HWY": -0.54,
+    "US06": -3.24
+   },
+   "fastsim_cyc_met": true
+  },
+  {
+   "name": "2023 Ford Mach-E RWD",
+   "architecture": "bev",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 167.16,
+    "HWY": 134.76,
+    "US06": 95.51
+   },
+   "fastsim": {
+    "UDDS": 132.47,
+    "HWY": 121.25,
+    "US06": 85.41
+   },
+   "epa": {
+    "UDDS": 157.4,
+    "HWY": 136.9
+   },
+   "diff_pct": {
+    "UDDS": 26.19,
+    "HWY": 11.14,
+    "US06": 11.82
+   },
+   "err_rs_pct": {
+    "UDDS": 6.2,
+    "HWY": -1.56
+   },
+   "err_fs_pct": {
+    "UDDS": -15.84,
+    "HWY": -11.43
+   },
+   "fastsim_matched": {
+    "UDDS": 159.48,
+    "HWY": 136.24,
+    "US06": 98.98
+   },
+   "diff_matched_pct": {
+    "UDDS": 4.82,
+    "HWY": -1.09,
+    "US06": -3.5
+   },
+   "fastsim_cyc_met": true
+  },
+  {
+   "name": "2024 KIA EV6 Long Range RWD",
+   "architecture": "bev",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 187.83,
+    "HWY": 145.48,
+    "US06": 100.98
+   },
+   "fastsim": {
+    "UDDS": 146.46,
+    "HWY": 130.74,
+    "US06": 90.07
+   },
+   "epa": {
+    "UDDS": 197.1052631578947,
+    "HWY": 148.48017621145374
+   },
+   "diff_pct": {
+    "UDDS": 28.25,
+    "HWY": 11.28,
+    "US06": 12.11
+   },
+   "err_rs_pct": {
+    "UDDS": -4.7,
+    "HWY": -2.02
+   },
+   "err_fs_pct": {
+    "UDDS": -25.7,
+    "HWY": -11.95
+   },
+   "fastsim_matched": {
+    "UDDS": 177.4,
+    "HWY": 146.91,
+    "US06": 104.17
+   },
+   "diff_matched_pct": {
+    "UDDS": 5.88,
+    "HWY": -0.97,
+    "US06": -3.07
+   },
+   "fastsim_cyc_met": true
+  },
+  {
+   "name": "2024 NISSAN LEAF",
+   "architecture": "bev",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 177.71,
+    "HWY": 137.17,
+    "US06": 97.18
+   },
+   "fastsim": {
+    "UDDS": 148.4,
+    "HWY": 127.45,
+    "US06": 90.25
+   },
+   "epa": {
+    "UDDS": 174.0,
+    "HWY": 141.1
+   },
+   "diff_pct": {
+    "UDDS": 19.75,
+    "HWY": 7.63,
+    "US06": 7.67
+   },
+   "err_rs_pct": {
+    "UDDS": 2.13,
+    "HWY": -2.79
+   },
+   "err_fs_pct": {
+    "UDDS": -14.71,
+    "HWY": -9.68
+   },
+   "fastsim_matched": {
+    "UDDS": 177.76,
+    "HWY": 142.77,
+    "US06": 103.48
+   },
+   "diff_matched_pct": {
+    "UDDS": -0.03,
+    "HWY": -3.92,
+    "US06": -6.09
+   },
+   "fastsim_cyc_met": true
+  },
+  {
+   "name": "2024 Volkswagen ID.4 Pro",
+   "architecture": "bev",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 176.45,
+    "HWY": 147.03,
+    "US06": 103.31
+   },
+   "fastsim": {
+    "UDDS": 138.37,
+    "HWY": 132.21,
+    "US06": 91.47
+   },
+   "epa": {
+    "UDDS": 175.0,
+    "HWY": 147.89999999999998
+   },
+   "diff_pct": {
+    "UDDS": 27.52,
+    "HWY": 11.21,
+    "US06": 12.95
+   },
+   "err_rs_pct": {
+    "UDDS": 0.83,
+    "HWY": -0.59
+   },
+   "err_fs_pct": {
+    "UDDS": -20.93,
+    "HWY": -10.61
+   },
+   "fastsim_matched": {
+    "UDDS": 168.54,
+    "HWY": 148.96,
+    "US06": 106.7
+   },
+   "diff_matched_pct": {
+    "UDDS": 4.69,
+    "HWY": -1.29,
+    "US06": -3.17
+   },
+   "fastsim_cyc_met": true
+  },
+  {
+   "name": "2024 Ford F-150 Lightning",
+   "architecture": "bev",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 117.5,
+    "HWY": 87.86,
+    "US06": 61.09
+   },
+   "fastsim": {
+    "UDDS": 93.48,
+    "HWY": 79.05,
+    "US06": 55.46
+   },
+   "epa": {
+    "UDDS": 108.9,
+    "HWY": 86.7
+   },
+   "diff_pct": {
+    "UDDS": 25.69,
+    "HWY": 11.15,
+    "US06": 10.15
+   },
+   "err_rs_pct": {
+    "UDDS": 7.9,
+    "HWY": 1.34
+   },
+   "err_fs_pct": {
+    "UDDS": -14.16,
+    "HWY": -8.82
+   },
+   "fastsim_matched": {
+    "UDDS": 111.06,
+    "HWY": 88.15,
+    "US06": 63.31
+   },
+   "diff_matched_pct": {
+    "UDDS": 5.8,
+    "HWY": -0.33,
+    "US06": -3.51
+   },
+   "fastsim_cyc_met": true
+  },
+  {
+   "name": "2024 KIA Niro Electric",
+   "architecture": "bev",
+   "split": "dev",
+   "roadsim": {
+    "UDDS": 188.57,
+    "HWY": 147.02,
+    "US06": 103.93
+   },
+   "fastsim": {
+    "UDDS": 150.62,
+    "HWY": 133.37,
+    "US06": 93.73
+   },
+   "epa": {
+    "UDDS": 183.17934782608694,
+    "HWY": 146.54347826086956
+   },
+   "diff_pct": {
+    "UDDS": 25.2,
+    "HWY": 10.24,
+    "US06": 10.88
+   },
+   "err_rs_pct": {
+    "UDDS": 2.94,
+    "HWY": 0.33
+   },
+   "err_fs_pct": {
+    "UDDS": -17.78,
+    "HWY": -8.99
+   },
+   "fastsim_matched": {
+    "UDDS": 180.1,
+    "HWY": 149.37,
+    "US06": 107.66
+   },
+   "diff_matched_pct": {
+    "UDDS": 4.7,
+    "HWY": -1.57,
+    "US06": -3.47
+   },
+   "fastsim_cyc_met": true
+  },
+  {
+   "name": "2023 CHEVROLET BOLT EUV",
+   "architecture": "bev",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 180.99,
+    "HWY": 141.95,
+    "US06": 101.64
+   },
+   "fastsim": {
+    "UDDS": 143.88,
+    "HWY": 127.24,
+    "US06": 90.56
+   },
+   "epa": {
+    "UDDS": 174.15,
+    "HWY": 148.7
+   },
+   "diff_pct": {
+    "UDDS": 25.79,
+    "HWY": 11.56,
+    "US06": 12.24
+   },
+   "err_rs_pct": {
+    "UDDS": 3.92,
+    "HWY": -4.54
+   },
+   "err_fs_pct": {
+    "UDDS": -17.38,
+    "HWY": -14.43
+   },
+   "fastsim_matched": {
+    "UDDS": 172.23,
+    "HWY": 142.84,
+    "US06": 104.47
+   },
+   "diff_matched_pct": {
+    "UDDS": 5.08,
+    "HWY": -0.62,
+    "US06": -2.7
+   },
+   "fastsim_cyc_met": true
+  },
+  {
+   "name": "2024 Hyundai Ioniq 5",
+   "architecture": "bev",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 179.66,
+    "HWY": 138.42,
+    "US06": 98.5
+   },
+   "fastsim": {
+    "UDDS": 147.22,
+    "HWY": 129.78,
+    "US06": 90.33
+   },
+   "epa": {
+    "UDDS": 184.18032786885246,
+    "HWY": 136.4574898785425
+   },
+   "diff_pct": {
+    "UDDS": 22.03,
+    "HWY": 6.66,
+    "US06": 9.04
+   },
+   "err_rs_pct": {
+    "UDDS": -2.45,
+    "HWY": 1.44
+   },
+   "err_fs_pct": {
+    "UDDS": -20.07,
+    "HWY": -4.89
+   },
+   "fastsim_matched": {
+    "UDDS": 176.52,
+    "HWY": 145.13,
+    "US06": 103.54
+   },
+   "diff_matched_pct": {
+    "UDDS": 1.78,
+    "HWY": -4.62,
+    "US06": -4.87
+   },
+   "fastsim_cyc_met": true
+  },
+  {
+   "name": "2024 Hyundai Ioniq 6 Standard Range RWD",
+   "architecture": "bev",
+   "split": "heldout",
+   "roadsim": {
+    "UDDS": 210.76,
+    "HWY": 177.23,
+    "US06": 123.4
+   },
+   "fastsim": {
+    "UDDS": 166.56,
+    "HWY": 160.25,
+    "US06": 109.92
+   },
+   "epa": {
+    "UDDS": 221.74342105263156,
+    "HWY": 176.46596858638742
+   },
+   "diff_pct": {
+    "UDDS": 26.54,
+    "HWY": 10.6,
+    "US06": 12.26
+   },
+   "err_rs_pct": {
+    "UDDS": -4.95,
+    "HWY": 0.44
+   },
+   "err_fs_pct": {
+    "UDDS": -24.89,
+    "HWY": -9.19
+   },
+   "fastsim_matched": {
+    "UDDS": 205.47,
+    "HWY": 181.55,
+    "US06": 129.39
+   },
+   "diff_matched_pct": {
+    "UDDS": 2.58,
+    "HWY": -2.38,
+    "US06": -4.63
+   },
+   "fastsim_cyc_met": true
+  }
+ ],
+ "wall_s": 84.8
+}

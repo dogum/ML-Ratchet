@@ -1,0 +1,65 @@
+{
+ "check": "speed benchmark (single thread)",
+ "method": "Check: simulation speed, single thread (OMP_NUM_THREADS=1), full output recording on.\n\nTimes simulate() on (a) UDDS and (b) a 93-minute mixed trip (UDDS+HWFET+US06+LA92 twice, with grade, wind and\ntemperature variation) for one vehicle of each architecture (car class), the Class 8 diesel and the BEV bus, and the\nthroughput over 200 generated vehicles on random cycles. Reports x real time = simulated seconds / wall seconds.\nAlso times the offline DP solve on UDDS.",
+ "target": ">= 200x real time for a 1 Hz car trip",
+ "results": {
+  "car conv (AT8)": {
+   "x_realtime_udds": 24144,
+   "x_realtime_93min_trip": 22260,
+   "closure": 3.617060264217133e-15
+  },
+  "car conv (CVT)": {
+   "x_realtime_udds": 25526,
+   "x_realtime_93min_trip": 23600,
+   "closure": 8.91523656812343e-06
+  },
+  "car bev": {
+   "x_realtime_udds": 28010,
+   "x_realtime_93min_trip": 24298,
+   "closure": 8.351680798725984e-16
+  },
+  "car hev_powersplit aecms": {
+   "x_realtime_udds": 3209,
+   "x_realtime_93min_trip": 3087,
+   "closure": 4.895139208609798e-15
+  },
+  "car hev_powersplit rule": {
+   "x_realtime_udds": 3551,
+   "x_realtime_93min_trip": 3461,
+   "closure": 1.686173380994209e-14
+  },
+  "car hev_parallel_p2 aecms": {
+   "x_realtime_udds": 3909,
+   "x_realtime_93min_trip": 3695,
+   "closure": 7.621841552018188e-15
+  },
+  "car hev_series aecms": {
+   "x_realtime_udds": 3319,
+   "x_realtime_93min_trip": 3047,
+   "closure": 1.4292295011738697e-14
+  },
+  "car phev_powersplit cdcs": {
+   "x_realtime_udds": 3201,
+   "x_realtime_93min_trip": 3070,
+   "closure": 5.239970672799742e-15
+  },
+  "class8 diesel": {
+   "x_realtime_udds": 22180,
+   "x_realtime_93min_trip": 15644,
+   "closure": 2.8072436401479915e-15
+  },
+  "bus bev": {
+   "x_realtime_udds": 24805,
+   "x_realtime_93min_trip": 18554,
+   "closure": 1.7868308550876198e-06
+  },
+  "generated fleet (200 vehicles, random cycles, incl. compile)": {
+   "sim_seconds": 175322,
+   "wall_s": 30.51,
+   "x_realtime": 5746
+  },
+  "DP on UDDS (solve + forward run), s": 1.64,
+  "MPC 15 s horizon on UDDS, s": 1.44
+ },
+ "cpu": "Intel64 Family 6 Model 158 Stepping 12, GenuineIntel"
+}

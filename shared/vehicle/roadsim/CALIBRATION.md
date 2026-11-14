@@ -313,3 +313,9 @@ Dev results, v1 (corrected procedures) -> v2 final:
 - Old BEVs (2012-2015 i-MiEV, Leaf SV, Soul EV) use 10-17 % more on D3 than their twins. The BEV loss scale (v1, fitted
   on modern EPA dev BEVs) fits the modern ones (std: Bolt +0.5, Ioniq5 -1.6, Leaf ePlus -1.2 %).
 - VED plug-ins in the cold (above); US06 high load (H8); the bus PTC controller (H9).
+
+## Held-out report (computed once, after the freeze commit; nothing changed afterwards)
+`checks/run_all.py --options roadsim-physics-v1 --all-splits` and `--options roadsim-physics-v2 --all-splits`;
+`checks/scoreboard_roadsim-physics-v1.json` (v1 with the corrected procedures), `scoreboard_roadsim-physics-v2.json`,
+`scoreboard_compare_v1_v2.txt`. The table and what looks wrong (TMED P2s now too thirsty, Toyota EPA cycles 5-7 % too
+thirsty, plug-in series exam -27 %) are in LIMITS.md; they are reported, not fixed.

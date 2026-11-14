@@ -4,62 +4,62 @@
  "target": ">= 200x real time for a 1 Hz car trip",
  "results": {
   "car conv (AT8)": {
-   "x_realtime_udds": 62004,
-   "x_realtime_93min_trip": 50914,
+   "x_realtime_udds": 49941,
+   "x_realtime_93min_trip": 45596,
    "closure": 1.7097461615224445e-13
   },
   "car conv (CVT)": {
-   "x_realtime_udds": 63843,
-   "x_realtime_93min_trip": 54124,
+   "x_realtime_udds": 55054,
+   "x_realtime_93min_trip": 49485,
    "closure": 7.384316746929547e-06
   },
   "car bev": {
-   "x_realtime_udds": 62551,
-   "x_realtime_93min_trip": 45461,
+   "x_realtime_udds": 54786,
+   "x_realtime_93min_trip": 46901,
    "closure": 6.121397506410724e-15
   },
   "car hev_powersplit aecms": {
-   "x_realtime_udds": 4232,
-   "x_realtime_93min_trip": 4101,
+   "x_realtime_udds": 3790,
+   "x_realtime_93min_trip": 3684,
    "closure": 1.3546545453386099e-14
   },
   "car hev_powersplit rule": {
-   "x_realtime_udds": 4522,
-   "x_realtime_93min_trip": 4108,
+   "x_realtime_udds": 4149,
+   "x_realtime_93min_trip": 3989,
    "closure": 3.0789586290583554e-15
   },
   "car hev_parallel_p2 aecms": {
-   "x_realtime_udds": 5142,
-   "x_realtime_93min_trip": 4986,
+   "x_realtime_udds": 4767,
+   "x_realtime_93min_trip": 4618,
    "closure": 1.8969321827132617e-15
   },
   "car hev_series aecms": {
-   "x_realtime_udds": 4720,
-   "x_realtime_93min_trip": 4590,
+   "x_realtime_udds": 4070,
+   "x_realtime_93min_trip": 3996,
    "closure": 2.3517868510426358e-14
   },
   "car phev_powersplit cdcs": {
-   "x_realtime_udds": 4361,
-   "x_realtime_93min_trip": 4136,
-   "closure": 5.1285882508802626e-15
+   "x_realtime_udds": 3901,
+   "x_realtime_93min_trip": 3690,
+   "closure": 5.31175211698313e-15
   },
   "class8 diesel": {
-   "x_realtime_udds": 53052,
-   "x_realtime_93min_trip": 23051,
+   "x_realtime_udds": 45275,
+   "x_realtime_93min_trip": 29464,
    "closure": 5.9557625263753334e-06
   },
   "bus bev": {
-   "x_realtime_udds": 31920,
-   "x_realtime_93min_trip": 29904,
+   "x_realtime_udds": 50440,
+   "x_realtime_93min_trip": 35816,
    "closure": 5.688867108203166e-10
   },
   "generated fleet (200 vehicles, random cycles, incl. compile)": {
    "sim_seconds": 175322,
-   "wall_s": 21.62,
-   "x_realtime": 8109
+   "wall_s": 22.83,
+   "x_realtime": 7681
   },
-  "DP on UDDS (solve + forward run), s": 0.78,
-  "MPC 15 s horizon on UDDS, s": 1.13
+  "DP on UDDS (solve + forward run), s": 0.83,
+  "MPC 15 s horizon on UDDS, s": 1.14
  },
- "cpu": "\t: Intel(R) Xeon(R) Processor @ 2.10GHz"
+ "cpu": "Intel64 Family 6 Model 158 Stepping 12, GenuineIntel"
 }

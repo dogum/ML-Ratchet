@@ -1,0 +1,676 @@
+{
+ "checks": {
+  "coastdown.F20.abs_err_pct_median": 1.562,
+  "coastdown.F40.abs_err_pct_median": 0.819,
+  "coastdown.F60.abs_err_pct_median": 0.516,
+  "d3_dev.bev.primary.iqr_pct": 15.42,
+  "d3_dev.bev.primary.median_pct": -6.66,
+  "d3_dev.conv.primary.iqr_pct": 8.28,
+  "d3_dev.conv.primary.median_pct": -1.53,
+  "d3_dev.hev_all.primary.iqr_pct": 13.19,
+  "d3_dev.hev_all.primary.median_pct": -6.44,
+  "d3_dev.hev_parallel_p2.primary.iqr_pct": 12.34,
+  "d3_dev.hev_parallel_p2.primary.median_pct": -5.38,
+  "d3_dev.hev_powersplit.primary.iqr_pct": 5.34,
+  "d3_dev.hev_powersplit.primary.median_pct": -20.71,
+  "d3_dev.hev_series.primary.iqr_pct": 11.13,
+  "d3_dev.hev_series.primary.median_pct": -6.94,
+  "d3_dev.phev_all.primary.iqr_pct": 18.97,
+  "d3_dev.phev_all.primary.median_pct": -8.21,
+  "d3_dev.phev_powersplit.primary.iqr_pct": 18.84,
+  "d3_dev.phev_powersplit.primary.median_pct": -8.0,
+  "d3_dev.phev_series.primary.iqr_pct": 18.42,
+  "d3_dev.phev_series.primary.median_pct": -11.22,
+  "d3_exam.bev.T_cold.primary.median_pct": -2.81,
+  "d3_exam.bev.T_cold.primary.n": 20,
+  "d3_exam.bev.T_hot.primary.median_pct": -1.15,
+  "d3_exam.bev.T_hot.primary.n": 20,
+  "d3_exam.bev.T_std.primary.median_pct": -2.71,
+  "d3_exam.bev.T_std.primary.n": 22,
+  "d3_exam.bev.all.primary.median_pct": -2.02,
+  "d3_exam.bev.all.primary.n": 62,
+  "d3_exam.bev.cycle_HWFET.primary.median_pct": 5.99,
+  "d3_exam.bev.cycle_HWFET.primary.n": 5,
+  "d3_exam.bev.cycle_NEDC.primary.median_pct": -12.04,
+  "d3_exam.bev.cycle_NEDC.primary.n": 1,
+  "d3_exam.bev.cycle_SC03+HWFET+UDDS.primary.median_pct": -10.45,
+  "d3_exam.bev.cycle_SC03+HWFET+UDDS.primary.n": 2,
+  "d3_exam.bev.cycle_SC03.primary.median_pct": -13.84,
+  "d3_exam.bev.cycle_SC03.primary.n": 3,
+  "d3_exam.bev.cycle_UDDS+HWFET+US06.primary.median_pct": -7.39,
+  "d3_exam.bev.cycle_UDDS+HWFET+US06.primary.n": 20,
+  "d3_exam.bev.cycle_UDDS+HWFET.primary.median_pct": -0.44,
+  "d3_exam.bev.cycle_UDDS+HWFET.primary.n": 10,
+  "d3_exam.bev.cycle_UDDS+US06.primary.median_pct": 2.09,
+  "d3_exam.bev.cycle_UDDS+US06.primary.n": 3,
+  "d3_exam.bev.cycle_UDDS.primary.median_pct": -4.21,
+  "d3_exam.bev.cycle_UDDS.primary.n": 5,
+  "d3_exam.bev.cycle_US06+UDDS+HWFET.primary.median_pct": -7.47,
+  "d3_exam.bev.cycle_US06+UDDS+HWFET.primary.n": 3,
+  "d3_exam.bev.cycle_US06+UDDS.primary.median_pct": -6.23,
+  "d3_exam.bev.cycle_US06+UDDS.primary.n": 4,
+  "d3_exam.bev.cycle_US06.primary.median_pct": 6.7,
+  "d3_exam.bev.cycle_US06.primary.n": 6,
+  "d3_exam.bev.primary.iqr_pct": 14.29,
+  "d3_exam.conv.T_cold.primary.median_pct": -4.94,
+  "d3_exam.conv.T_cold.primary.n": 36,
+  "d3_exam.conv.T_hot.primary.median_pct": -6.26,
+  "d3_exam.conv.T_hot.primary.n": 37,
+  "d3_exam.conv.T_std.primary.median_pct": -2.21,
+  "d3_exam.conv.T_std.primary.n": 167,
+  "d3_exam.conv.all.primary.median_pct": -3.18,
+  "d3_exam.conv.all.primary.n": 240,
+  "d3_exam.conv.cycle_HWFET.primary.median_pct": 3.67,
+  "d3_exam.conv.cycle_HWFET.primary.n": 50,
+  "d3_exam.conv.cycle_LA92.primary.median_pct": -2.22,
+  "d3_exam.conv.cycle_LA92.primary.n": 6,
+  "d3_exam.conv.cycle_NEDC.primary.median_pct": -0.32,
+  "d3_exam.conv.cycle_NEDC.primary.n": 5,
+  "d3_exam.conv.cycle_NYCC.primary.median_pct": -9.76,
+  "d3_exam.conv.cycle_NYCC.primary.n": 2,
+  "d3_exam.conv.cycle_SC03.primary.median_pct": -8.41,
+  "d3_exam.conv.cycle_SC03.primary.n": 9,
+  "d3_exam.conv.cycle_UDDS.primary.median_pct": -3.04,
+  "d3_exam.conv.cycle_UDDS.primary.n": 117,
+  "d3_exam.conv.cycle_US06+UDDS.primary.median_pct": -3.64,
+  "d3_exam.conv.cycle_US06+UDDS.primary.n": 1,
+  "d3_exam.conv.cycle_US06.primary.median_pct": -5.51,
+  "d3_exam.conv.cycle_US06.primary.n": 48,
+  "d3_exam.conv.cycle_WLTC.primary.median_pct": -5.73,
+  "d3_exam.conv.cycle_WLTC.primary.n": 2,
+  "d3_exam.conv.primary.iqr_pct": 10.88,
+  "d3_exam.hev_all.all.primary.median_pct": -17.84,
+  "d3_exam.hev_all.all.primary.n": 111,
+  "d3_exam.hev_all.primary.iqr_pct": 11.7,
+  "d3_exam.hev_parallel_p2.T_cold.primary.median_pct": -17.04,
+  "d3_exam.hev_parallel_p2.T_cold.primary.n": 21,
+  "d3_exam.hev_parallel_p2.T_hot.primary.median_pct": -22.39,
+  "d3_exam.hev_parallel_p2.T_hot.primary.n": 20,
+  "d3_exam.hev_parallel_p2.T_std.primary.median_pct": -17.34,
+  "d3_exam.hev_parallel_p2.T_std.primary.n": 55,
+  "d3_exam.hev_parallel_p2.all.primary.median_pct": -18.65,
+  "d3_exam.hev_parallel_p2.all.primary.n": 96,
+  "d3_exam.hev_parallel_p2.cycle_HWFET.primary.median_pct": -14.21,
+  "d3_exam.hev_parallel_p2.cycle_HWFET.primary.n": 20,
+  "d3_exam.hev_parallel_p2.cycle_LA92.primary.median_pct": -23.77,
+  "d3_exam.hev_parallel_p2.cycle_LA92.primary.n": 1,
+  "d3_exam.hev_parallel_p2.cycle_SC03.primary.median_pct": -22.99,
+  "d3_exam.hev_parallel_p2.cycle_SC03.primary.n": 5,
+  "d3_exam.hev_parallel_p2.cycle_UDDS.primary.median_pct": -20.52,
+  "d3_exam.hev_parallel_p2.cycle_UDDS.primary.n": 53,
+  "d3_exam.hev_parallel_p2.cycle_US06.primary.median_pct": -17.54,
+  "d3_exam.hev_parallel_p2.cycle_US06.primary.n": 16,
+  "d3_exam.hev_parallel_p2.cycle_WLTC.primary.median_pct": -7.92,
+  "d3_exam.hev_parallel_p2.cycle_WLTC.primary.n": 1,
+  "d3_exam.hev_parallel_p2.primary.iqr_pct": 9.96,
+  "d3_exam.hev_powersplit.T_cold.primary.median_pct": -3.56,
+  "d3_exam.hev_powersplit.T_cold.primary.n": 5,
+  "d3_exam.hev_powersplit.T_hot.primary.median_pct": -8.23,
+  "d3_exam.hev_powersplit.T_hot.primary.n": 5,
+  "d3_exam.hev_powersplit.T_std.primary.median_pct": -7.96,
+  "d3_exam.hev_powersplit.T_std.primary.n": 5,
+  "d3_exam.hev_powersplit.all.primary.median_pct": -7.96,
+  "d3_exam.hev_powersplit.all.primary.n": 15,
+  "d3_exam.hev_powersplit.cycle_HWFET.primary.median_pct": 1.61,
+  "d3_exam.hev_powersplit.cycle_HWFET.primary.n": 3,
+  "d3_exam.hev_powersplit.cycle_SC03.primary.median_pct": -18.55,
+  "d3_exam.hev_powersplit.cycle_SC03.primary.n": 1,
+  "d3_exam.hev_powersplit.cycle_UDDS.primary.median_pct": -19.51,
+  "d3_exam.hev_powersplit.cycle_UDDS.primary.n": 7,
+  "d3_exam.hev_powersplit.cycle_US06.primary.median_pct": -7.96,
+  "d3_exam.hev_powersplit.cycle_US06.primary.n": 3,
+  "d3_exam.hev_powersplit.cycle_WLTC.primary.median_pct": -4.77,
+  "d3_exam.hev_powersplit.cycle_WLTC.primary.n": 1,
+  "d3_exam.hev_powersplit.primary.iqr_pct": 16.91,
+  "d3_exam.phev_all.all.primary.median_pct": -23.51,
+  "d3_exam.phev_all.all.primary.n": 168,
+  "d3_exam.phev_all.primary.iqr_pct": 28.28,
+  "d3_exam.phev_powersplit.T_cold.primary.median_pct": -9.18,
+  "d3_exam.phev_powersplit.T_cold.primary.n": 22,
+  "d3_exam.phev_powersplit.T_hot.primary.median_pct": -24.0,
+  "d3_exam.phev_powersplit.T_hot.primary.n": 24,
+  "d3_exam.phev_powersplit.T_std.primary.median_pct": -13.79,
+  "d3_exam.phev_powersplit.T_std.primary.n": 25,
+  "d3_exam.phev_powersplit.all.primary.median_pct": -16.25,
+  "d3_exam.phev_powersplit.all.primary.n": 71,
+  "d3_exam.phev_powersplit.cycle_HWFET.primary.median_pct": -19.34,
+  "d3_exam.phev_powersplit.cycle_HWFET.primary.n": 13,
+  "d3_exam.phev_powersplit.cycle_SC03.primary.median_pct": -25.36,
+  "d3_exam.phev_powersplit.cycle_SC03.primary.n": 3,
+  "d3_exam.phev_powersplit.cycle_UDDS.primary.median_pct": -11.5,
+  "d3_exam.phev_powersplit.cycle_UDDS.primary.n": 36,
+  "d3_exam.phev_powersplit.cycle_US06.primary.median_pct": -17.41,
+  "d3_exam.phev_powersplit.cycle_US06.primary.n": 19,
+  "d3_exam.phev_powersplit.primary.iqr_pct": 28.86,
+  "d3_exam.phev_series.T_cold.primary.median_pct": -19.94,
+  "d3_exam.phev_series.T_cold.primary.n": 24,
+  "d3_exam.phev_series.T_hot.primary.median_pct": -34.15,
+  "d3_exam.phev_series.T_hot.primary.n": 29,
+  "d3_exam.phev_series.T_std.primary.median_pct": -26.53,
+  "d3_exam.phev_series.T_std.primary.n": 44,
+  "d3_exam.phev_series.all.primary.median_pct": -27.13,
+  "d3_exam.phev_series.all.primary.n": 97,
+  "d3_exam.phev_series.cycle_HWFET.primary.median_pct": -25.24,
+  "d3_exam.phev_series.cycle_HWFET.primary.n": 21,
+  "d3_exam.phev_series.cycle_NEDC.primary.median_pct": 13.56,
+  "d3_exam.phev_series.cycle_NEDC.primary.n": 1,
+  "d3_exam.phev_series.cycle_SC03.primary.median_pct": -42.63,
+  "d3_exam.phev_series.cycle_SC03.primary.n": 3,
+  "d3_exam.phev_series.cycle_UDDS+HWFET+US06.primary.median_pct": 8.6,
+  "d3_exam.phev_series.cycle_UDDS+HWFET+US06.primary.n": 3,
+  "d3_exam.phev_series.cycle_UDDS+HWFET.primary.median_pct": 9.4,
+  "d3_exam.phev_series.cycle_UDDS+HWFET.primary.n": 2,
+  "d3_exam.phev_series.cycle_UDDS.primary.median_pct": -30.54,
+  "d3_exam.phev_series.cycle_UDDS.primary.n": 50,
+  "d3_exam.phev_series.cycle_US06.primary.median_pct": -22.33,
+  "d3_exam.phev_series.cycle_US06.primary.n": 16,
+  "d3_exam.phev_series.cycle_WLTC.primary.median_pct": 14.16,
+  "d3_exam.phev_series.cycle_WLTC.primary.n": 1,
+  "d3_exam.phev_series.primary.iqr_pct": 22.65,
+  "epa_dev_pool.conv.COLD.iqr_pct": 11.41,
+  "epa_dev_pool.conv.COLD.median_pct": 2.61,
+  "epa_dev_pool.conv.FTP.iqr_pct": 19.78,
+  "epa_dev_pool.conv.FTP.median_pct": -1.4,
+  "epa_dev_pool.conv.HWY.iqr_pct": 13.88,
+  "epa_dev_pool.conv.HWY.median_pct": -1.38,
+  "epa_dev_pool.conv.SC03.iqr_pct": 16.18,
+  "epa_dev_pool.conv.SC03.median_pct": -0.28,
+  "epa_dev_pool.conv.US06.iqr_pct": 10.11,
+  "epa_dev_pool.conv.US06.median_pct": -2.88,
+  "epa_dev_pool.conv.tilt_FTP_minus_HWY.iqr_pct": 10.26,
+  "epa_dev_pool.conv.tilt_FTP_minus_HWY.median_pct": 1.1,
+  "epa_heldout.bev.HWY.iqr_pct": 2.9,
+  "epa_heldout.bev.HWY.median_pct": -1.79,
+  "epa_heldout.bev.HWY.n": 8,
+  "epa_heldout.bev.UDDS.iqr_pct": 5.59,
+  "epa_heldout.bev.UDDS.median_pct": -0.38,
+  "epa_heldout.bev.UDDS.n": 8,
+  "epa_heldout.conv.COLD_FTP_20F.iqr_pct": 0.37,
+  "epa_heldout.conv.COLD_FTP_20F.median_pct": -5.54,
+  "epa_heldout.conv.COLD_FTP_20F.n": 2,
+  "epa_heldout.conv.FTP.iqr_pct": 12.37,
+  "epa_heldout.conv.FTP.median_pct": 0.41,
+  "epa_heldout.conv.FTP.n": 15,
+  "epa_heldout.conv.HWY.iqr_pct": 1.67,
+  "epa_heldout.conv.HWY.median_pct": -1.92,
+  "epa_heldout.conv.HWY.n": 15,
+  "epa_heldout.conv.SC03.iqr_pct": 0.71,
+  "epa_heldout.conv.SC03.median_pct": 1.93,
+  "epa_heldout.conv.SC03.n": 2,
+  "epa_heldout.conv.US06.iqr_pct": 5.26,
+  "epa_heldout.conv.US06.median_pct": -1.82,
+  "epa_heldout.conv.US06.n": 5,
+  "epa_heldout.hev.COLD_FTP_20F.iqr_pct": 13.46,
+  "epa_heldout.hev.COLD_FTP_20F.median_pct": -6.85,
+  "epa_heldout.hev.COLD_FTP_20F.n": 6,
+  "epa_heldout.hev.FTP.iqr_pct": 9.8,
+  "epa_heldout.hev.FTP.median_pct": -3.0,
+  "epa_heldout.hev.FTP.n": 10,
+  "epa_heldout.hev.HWY.iqr_pct": 4.96,
+  "epa_heldout.hev.HWY.median_pct": -9.66,
+  "epa_heldout.hev.HWY.n": 10,
+  "epa_heldout.hev.SC03.iqr_pct": 15.69,
+  "epa_heldout.hev.SC03.median_pct": -9.05,
+  "epa_heldout.hev.SC03.n": 6,
+  "epa_heldout.hev.US06.iqr_pct": 12.38,
+  "epa_heldout.hev.US06.median_pct": -8.1,
+  "epa_heldout.hev.US06.n": 7,
+  "epa_heldout.hev_parallel_p2.COLD_FTP_20F.iqr_pct": 7.33,
+  "epa_heldout.hev_parallel_p2.COLD_FTP_20F.median_pct": 2.01,
+  "epa_heldout.hev_parallel_p2.COLD_FTP_20F.n": 3,
+  "epa_heldout.hev_parallel_p2.FTP.iqr_pct": 23.71,
+  "epa_heldout.hev_parallel_p2.FTP.median_pct": -4.03,
+  "epa_heldout.hev_parallel_p2.FTP.n": 5,
+  "epa_heldout.hev_parallel_p2.HWY.iqr_pct": 1.04,
+  "epa_heldout.hev_parallel_p2.HWY.median_pct": -9.66,
+  "epa_heldout.hev_parallel_p2.HWY.n": 5,
+  "epa_heldout.hev_parallel_p2.SC03.iqr_pct": 7.56,
+  "epa_heldout.hev_parallel_p2.SC03.median_pct": -17.69,
+  "epa_heldout.hev_parallel_p2.SC03.n": 3,
+  "epa_heldout.hev_parallel_p2.US06.iqr_pct": 8.13,
+  "epa_heldout.hev_parallel_p2.US06.median_pct": -23.55,
+  "epa_heldout.hev_parallel_p2.US06.n": 3,
+  "epa_heldout.hev_powersplit.COLD_FTP_20F.iqr_pct": 5.24,
+  "epa_heldout.hev_powersplit.COLD_FTP_20F.median_pct": -15.87,
+  "epa_heldout.hev_powersplit.COLD_FTP_20F.n": 3,
+  "epa_heldout.hev_powersplit.FTP.iqr_pct": 7.75,
+  "epa_heldout.hev_powersplit.FTP.median_pct": -5.08,
+  "epa_heldout.hev_powersplit.FTP.n": 4,
+  "epa_heldout.hev_powersplit.HWY.iqr_pct": 6.91,
+  "epa_heldout.hev_powersplit.HWY.median_pct": -7.21,
+  "epa_heldout.hev_powersplit.HWY.n": 4,
+  "epa_heldout.hev_powersplit.SC03.iqr_pct": 3.13,
+  "epa_heldout.hev_powersplit.SC03.median_pct": 0.41,
+  "epa_heldout.hev_powersplit.SC03.n": 3,
+  "epa_heldout.hev_powersplit.US06.iqr_pct": 4.86,
+  "epa_heldout.hev_powersplit.US06.median_pct": -6.63,
+  "epa_heldout.hev_powersplit.US06.n": 4,
+  "epa_heldout.hev_series.FTP.iqr_pct": 0.0,
+  "epa_heldout.hev_series.FTP.median_pct": -1.96,
+  "epa_heldout.hev_series.FTP.n": 1,
+  "epa_heldout.hev_series.HWY.iqr_pct": 0.0,
+  "epa_heldout.hev_series.HWY.median_pct": -3.84,
+  "epa_heldout.hev_series.HWY.n": 1,
+  "fastsim_matched.bev.HWY.median_pct": -1.29,
+  "fastsim_matched.bev.UDDS.median_pct": 4.7,
+  "fastsim_matched.bev.US06.median_pct": -3.5,
+  "fastsim_matched.conv.HWY.median_pct": -1.16,
+  "fastsim_matched.conv.UDDS.median_pct": -1.9,
+  "fastsim_matched.conv.US06.median_pct": -6.39,
+  "fastsim_matched.hev.HWY.median_pct": 2.26,
+  "fastsim_matched.hev.UDDS.median_pct": 12.53,
+  "fastsim_matched.hev.US06.median_pct": -8.3,
+  "generator.bev.HWY_MPGe.median": 115.6,
+  "generator.bev.UDDS_MPGe.median": 133.4,
+  "generator.conv.HWY.median": 35.0,
+  "generator.conv.UDDS_hot.median": 24.9,
+  "generator.hev.HWY.median": 45.2,
+  "generator.hev.UDDS_hot.median": 47.5,
+  "hd.class8_bev.kWh_per_mi": 2.489,
+  "hd.class8_diesel.g_co2_per_ton_mile": 85.3,
+  "ledger.closure_rel_max": 0.000558350769829497,
+  "ledger.n_over_0p5pct": 0,
+  "speed.bus bev.x_realtime_udds": 24805,
+  "speed.car bev.x_realtime_udds": 28010,
+  "speed.car conv (AT8).x_realtime_udds": 24144,
+  "speed.car conv (CVT).x_realtime_udds": 25526,
+  "speed.car hev_parallel_p2 aecms.x_realtime_udds": 3909,
+  "speed.car hev_powersplit aecms.x_realtime_udds": 3209,
+  "speed.car hev_powersplit rule.x_realtime_udds": 3551,
+  "speed.car hev_series aecms.x_realtime_udds": 3319,
+  "speed.car phev_powersplit cdcs.x_realtime_udds": 3201,
+  "speed.class8 diesel.x_realtime_udds": 22180,
+  "speed.generated fleet (200 vehicles, random cycles, incl. compile).x_realtime_udds": null,
+  "ved_dev_twin.bev.primary.iqr_pct": 26.15,
+  "ved_dev_twin.bev.primary.median_pct": -0.09,
+  "ved_dev_twin.conv.primary.iqr_pct": 14.88,
+  "ved_dev_twin.conv.primary.median_pct": -2.39,
+  "ved_dev_twin.hev_parallel_p2.primary.iqr_pct": 23.93,
+  "ved_dev_twin.hev_parallel_p2.primary.median_pct": -6.7,
+  "ved_dev_twin.hev_powersplit.primary.iqr_pct": 23.87,
+  "ved_dev_twin.hev_powersplit.primary.median_pct": -0.94,
+  "ved_dev_twin.phev_powersplit.primary.iqr_pct": 46.84,
+  "ved_dev_twin.phev_powersplit.primary.median_pct": -12.61,
+  "ved_dev_twin.phev_series.primary.iqr_pct": 35.5,
+  "ved_dev_twin.phev_series.primary.median_pct": -10.66,
+  "ztbus_dev.kWh_per_km_sim_real": [
+   1.375,
+   1.563
+  ],
+  "ztbus_dev.legs.iqr_pct": 14.82,
+  "ztbus_dev.legs.median_pct": -3.1,
+  "ztbus_dev.legs.n": 1643,
+  "ztbus_exam.kWh_per_km_sim_real": [
+   1.421,
+   1.585
+  ],
+  "ztbus_exam.legs.iqr_pct": 14.65,
+  "ztbus_exam.legs.median_pct": -2.28,
+  "ztbus_exam.legs.n": 5847
+ },
+ "models": {
+  "energynet.coverage68.EPA petrol FTP": 77,
+  "energynet.coverage68.EPA petrol highway": 54,
+  "energynet.coverage68.VED electric": 47,
+  "energynet.coverage68.VED hybrid": 65,
+  "energynet.coverage68.VED petrol": 55,
+  "energynet.coverage68.VED plug-in": 65,
+  "energynet.exam.EPA BEV city tests (746)": {
+   "baselines": {
+    "Dev median": 19.0,
+    "Log-linear regression": 9.8
+   },
+   "model": 7.9,
+   "verdict": "win"
+  },
+  "energynet.exam.EPA hybrid FTP tests (1,098)": {
+   "baselines": {
+    "Dev median": 49.0,
+    "Log-linear regression (fit on dev)": 16.3
+   },
+   "model": 8.7,
+   "verdict": "win"
+  },
+  "energynet.exam.EPA petrol highway tests (20,426)": {
+   "baselines": {
+    "Dev median": 16.8,
+    "Log-linear regression": 5.0
+   },
+   "model": 15.6,
+   "verdict": "loss"
+  },
+  "energynet.exam.Electric (2 Nissan Leafs), per trip": {
+   "baselines": {
+    "Class median": 27.1,
+    "MOVES-like": 19.0
+   },
+   "model": 22.8,
+   "verdict": "loss"
+  },
+  "energynet.exam.Hybrids, per trip (8,241 trips)": {
+   "baselines": {
+    "Class median": 17.2,
+    "MOVES-like": 15.3
+   },
+   "model": 16.7,
+   "verdict": "loss"
+  },
+  "energynet.exam.ICCT tractor-trailers (2 trucks \u00d7 3 cycles)": {
+   "baselines": {
+    "Dev truck on the same cycle": 7.0
+   },
+   "model": 11.4,
+   "verdict": "loss"
+  },
+  "energynet.exam.Mersin diesel bus trips (652)": {
+   "baselines": {
+    "Dev median on the same route": 8.6
+   },
+   "model": 14.8,
+   "verdict": "loss"
+  },
+  "energynet.exam.Petrol cars, per trip (14,469 VED trips)": {
+   "baselines": {
+    "Class median": 22.8,
+    "MOVES-like": 10.3,
+    "Window label \u00d7 distance": 13.0
+   },
+   "model": 8.9,
+   "verdict": "win"
+  },
+  "energynet.exam.Plug-in hybrids, per trip (2,916 trips)": {
+   "baselines": {
+    "Class median": 42.7,
+    "MOVES-like": 41.3
+   },
+   "model": 20.1,
+   "verdict": "win"
+  },
+  "energynet.exam.ZTBus trolleybus legs (78)": {
+   "baselines": {
+    "Dev kWh/km \u00d7 distance": 22.1
+   },
+   "model": 16.4,
+   "verdict": "win"
+  },
+  "energynet.rung.EnergyNet.r1": {
+   "decision": "kept",
+   "metrics": [
+    "11.2%",
+    0.152
+   ],
+   "sim": 0.544
+  },
+  "energynet.rung.EnergyNet.r2": {
+   "decision": "kept",
+   "metrics": [
+    "11.0%",
+    0.16
+   ],
+   "sim": 0.556
+  },
+  "energynet.rung.EnergyNet.r3": {
+   "decision": "kept",
+   "metrics": [
+    "10.3%",
+    0.152
+   ],
+   "sim": 0.58
+  },
+  "energynet.rung.EnergyNet.r4": {
+   "decision": "kept",
+   "metrics": [
+    "9.0%",
+    0.142
+   ],
+   "sim": 0.641
+  },
+  "energynet.rung.EnergyNet.r5": {
+   "decision": "rejected",
+   "metrics": [
+    "8.9%",
+    0.129
+   ],
+   "sim": 0.648
+  },
+  "energynet.rung.EnergyNet.r6": {
+   "decision": "released",
+   "metrics": [
+    "8.7%",
+    0.129
+   ],
+   "sim": 0.656
+  },
+  "energynet.version": "1.0",
+  "hybridpilot.exam.All 430 trips, % of DP optimum": {
+   "baselines": {
+    "Adaptive ECMS": 99.35,
+    "Rule-based": 98.28
+   },
+   "model": 99.49,
+   "verdict": "tie"
+  },
+  "hybridpilot.exam.Charge held within its window (all trips)": {
+   "baselines": {
+    "Adaptive ECMS": 99
+   },
+   "model": 97,
+   "verdict": "loss"
+  },
+  "hybridpilot.exam.Power-split hybrids (204 trips), % of DP": {
+   "baselines": {
+    "Adaptive ECMS": 98.9,
+    "Rule-based": 98.59
+   },
+   "model": 99.31,
+   "verdict": "win"
+  },
+  "hybridpilot.exam.Series hybrid buses (12 trips), % of DP": {
+   "baselines": {
+    "Adaptive ECMS": 99.12,
+    "Rule-based": 95.31
+   },
+   "model": 99.78,
+   "verdict": "win"
+  },
+  "hybridpilot.exam.Series plug-ins (46 trips), % of DP": {
+   "baselines": {
+    "Adaptive ECMS": 100.93,
+    "Rule-based": 100.23
+   },
+   "model": 100.0,
+   "verdict": "loss"
+  },
+  "hybridpilot.exam.Simulator fuel vs real logged fuel (exam power-split hybrids, 252 trips)": {
+   "baselines": {},
+   "model": "0.80\u00d7",
+   "verdict": "info"
+  },
+  "hybridpilot.rung.HybridPilot.R0": {
+   "decision": "kept",
+   "metrics": [
+    98.88,
+    "98%",
+    98.99,
+    "100%"
+   ],
+   "sim": 0.564
+  },
+  "hybridpilot.rung.HybridPilot.R1": {
+   "decision": "rejected",
+   "metrics": [
+    98.7,
+    "69%",
+    99.64,
+    "74%"
+   ],
+   "sim": 0.592
+  },
+  "hybridpilot.rung.HybridPilot.R2": {
+   "decision": "kept",
+   "metrics": [
+    98.88,
+    "94%",
+    99.2,
+    "99%"
+   ],
+   "sim": 0.596
+  },
+  "hybridpilot.rung.HybridPilot.R3": {
+   "decision": "released",
+   "metrics": [
+    99.31,
+    "94%",
+    99.26,
+    "99%"
+   ],
+   "sim": 0.702
+  },
+  "hybridpilot.rung.HybridPilot.R4": {
+   "decision": "rejected",
+   "metrics": [
+    99.34,
+    "94%",
+    99.26,
+    "99%"
+   ],
+   "sim": 0.709
+  },
+  "hybridpilot.rung.HybridPilot.R5": {
+   "decision": "rejected",
+   "metrics": [
+    99.19,
+    "96%",
+    99.13,
+    "99%"
+   ],
+   "sim": 0.671
+  },
+  "hybridpilot.rung.HybridPilot.R6": {
+   "decision": "rejected",
+   "metrics": [
+    99.28,
+    "94%",
+    99.22,
+    "99%"
+   ],
+   "sim": 0.674
+  },
+  "hybridpilot.rung.HybridPilot.R7": {
+   "decision": "rejected",
+   "metrics": [
+    99.23,
+    "92%",
+    99.21,
+    "99%"
+   ],
+   "sim": 0.677
+  },
+  "hybridpilot.version": "1.0",
+  "tripdetective.coverage68.Engine size, per car": 61,
+  "tripdetective.coverage68.Mass, per car": 73,
+  "tripdetective.coverage68.Mass, per trip": 79,
+  "tripdetective.exam.Curb mass per car, median |error| (335 cars)": {
+   "baselines": {
+    "Dev median": 227,
+    "Physics least-squares fit": 205
+   },
+   "model": 116,
+   "verdict": "win"
+  },
+  "tripdetective.exam.Engine displacement per car, median |error|": {
+   "baselines": {
+    "Dev median": 0.6,
+    "Idle-fuel law": 0.64
+   },
+   "model": 0.5,
+   "verdict": "win"
+  },
+  "tripdetective.exam.Mass response to +800 kg (simulated sweep)": {
+   "baselines": {},
+   "model": "\u2248 +200 kg",
+   "verdict": "info"
+  },
+  "tripdetective.exam.Powertrain type per car (351 cars)": {
+   "baselines": {
+    "Majority class": 68.6,
+    "Simple rule": 99.4
+   },
+   "model": 98.9,
+   "verdict": "loss"
+  },
+  "tripdetective.exam.Road-load force vs EPA target at 40 mph (25 cars)": {
+   "baselines": {
+    "Physics least-squares fit": 35
+   },
+   "model": 17,
+   "verdict": "win"
+  },
+  "tripdetective.rung.TripDetective.r0": {
+   "decision": "kept",
+   "metrics": [
+    "140 kg",
+    "0.31 L",
+    0.91
+   ],
+   "sim": 0.305
+  },
+  "tripdetective.rung.TripDetective.r1": {
+   "decision": "rejected",
+   "metrics": [
+    "128 kg",
+    "0.52 L",
+    0.9
+   ],
+   "sim": 0.362
+  },
+  "tripdetective.rung.TripDetective.r2": {
+   "decision": "rejected",
+   "metrics": [
+    "116 kg",
+    "0.51 L",
+    0.93
+   ],
+   "sim": 0.366
+  },
+  "tripdetective.rung.TripDetective.r3": {
+   "decision": "rejected",
+   "metrics": [
+    "129 kg",
+    "0.53 L",
+    0.88
+   ],
+   "sim": 0.363
+  },
+  "tripdetective.rung.TripDetective.r4": {
+   "decision": "rejected",
+   "metrics": [
+    "136 kg",
+    "0.49 L",
+    0.9
+   ],
+   "sim": 0.368
+  },
+  "tripdetective.rung.TripDetective.r5": {
+   "decision": "kept",
+   "metrics": [
+    "139 kg",
+    "0.34 L",
+    0.91
+   ],
+   "sim": 0.317
+  },
+  "tripdetective.rung.TripDetective.r6": {
+   "decision": "released",
+   "metrics": [
+    "110 kg",
+    "0.44 L",
+    0.92
+   ],
+   "sim": 0.402
+  },
+  "tripdetective.version": "1.0"
+ },
+ "physics_default": "roadsim-physics-v2",
+ "physics_version": "roadsim-physics-v2"
+}
