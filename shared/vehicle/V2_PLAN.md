@@ -112,3 +112,15 @@ forecast, the RoadSim run, TripDetective reading the log back, HybridPilot drivi
   not clear). Exam-3: pre-TNGA Toyota FTP +44 -> +31 % (n 3), converter P2 +17 -> +15 % (n 9), every other group
   unchanged. EPA procedures and hybrid hardware rules now live in the package (`roadsim.epa`, `roadsim.hybrid_hw`);
   the old checks/ paths still work. models/ stay pinned to v2.
+- **14 Nov 2026 — physics v3.1 frozen, not made the default (the v3.1 pass, second hardware pass on hybrids).** No
+  clean judge exists: no EPA test-car record or D3 vehicle is left unsimulated, and fueleconomy.gov My MPG averages
+  cannot judge a version (sim / My MPG = seen sim / EPA error x a version-independent factor); every report row is a
+  second look. Kept on dev: an engine-generation scale for hybrids and plug-ins on the conventional benchmark maps,
+  measured on 436 dev conventional cars (MY<=2011 / 2012-2015 / 2016-2017: x 0.875 / 0.942 / 0.975). Offered as
+  options and left off: a measured 2ZR-FXE load table from D3 dev 10 Hz data (right at the engine, but the twin's
+  engine-on rule runs the engine at low load where the real car does not: no dev gain), and documented engine-for-heat
+  rules by plug-in type (Volt gen-1 / gen-2, Ford Energi: every rule overshoots on VED fragments). The VED Volt
+  overshoot of H25 is electric heat: the twin's PTC uses twice what the real car does. The generator reproduces the
+  twins within 2-3 %; the generated hybrids' gap is the twins' own P2 physics. TMED: one dev vehicle, not attempted
+  (CALIBRATION.md H27-H31). `options='roadsim-physics-v3.1'` runs it; PHYSICS_VERSION stays roadsim-physics-v2 (one
+  narrow gain). models/ stay pinned to v2.

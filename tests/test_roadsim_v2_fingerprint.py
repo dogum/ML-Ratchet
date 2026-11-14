@@ -11,7 +11,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', 'shared', 'vehicle', 'checks'))
 sys.path.insert(0, os.path.join(HERE, '..', 'shared', 'vehicle', 'roadsim'))
 
-LATER = ['roadsim-physics-v2.1', 'roadsim-physics-v3']
+LATER = ['roadsim-physics-v2.1', 'roadsim-physics-v3', 'roadsim-physics-v3.1']
 
 
 def _gold():
@@ -47,3 +47,10 @@ def test_roadsim_reproduces_v3_fingerprint():
     gold = json.load(open(fp.GOLDS['roadsim-physics-v3'], encoding='utf-8'))
     bad = fp.compare(gold, fp.run('roadsim-physics-v3'))
     assert not bad, f'{len(bad)} runs changed under roadsim-physics-v3:' + chr(10) + chr(10).join(bad[:20])
+
+
+def test_roadsim_reproduces_v3_1_fingerprint():
+    import fingerprint as fp
+    gold = json.load(open(fp.GOLDS['roadsim-physics-v3.1'], encoding='utf-8'))
+    bad = fp.compare(gold, fp.run('roadsim-physics-v3.1'))
+    assert not bad, f'{len(bad)} runs changed under roadsim-physics-v3.1:' + chr(10) + chr(10).join(bad[:20])

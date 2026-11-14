@@ -1,0 +1,78 @@
+{
+ "about": "RoadSim physics v3.1 (second hardware pass on hybrids): roadsim-physics-v3 plus the changes below, each acting on hybrid and plug-in architectures only (roadsim/options.py loads 'changes' on top of the v3 preset). Calibrated on dev only: EPA dev-family hybrids and plug-ins plus exam-3's dev_extra (checks/check_hybrids_epa.py --set devx), D3 dev hybrids and plug-ins, VED dev HEV/PHEV twins (checks/hybrid_dev.py), and dev-family conventional EPA test cars by model year (checks/era_dev_conv.py). Decision log: roadsim/CALIBRATION.md, rungs H27-H31.",
+ "status": "final: frozen 14 Nov 2026 before any judge or second-look set was run. Not the default physics (PHYSICS_VERSION stays roadsim-physics-v2): the dev gain is real but narrow (CALIBRATION.md, v3.1 freeze).",
+ "base": "roadsim-physics-v3",
+ "changes": {
+  "engine_era": {
+   "maps": [
+    "gas_atk_toyota_tnga_hev_paper",
+    "gas_atk_toyota_tnga_hev"
+   ],
+   "ref_bte": 0.41,
+   "eras": [
+    [
+     "TOYOTA|LEXUS",
+     1990,
+     2008,
+     0.37
+    ],
+    [
+     "TOYOTA|LEXUS",
+     2009,
+     2015,
+     0.385
+    ],
+    [
+     "TOYOTA|LEXUS",
+     2016,
+     2017,
+     0.4
+    ]
+   ],
+   "exp": 1.0,
+   "blocks": [
+    {
+     "maps": [
+      "gas_na_toyota_a25a",
+      "gas_na_mazda_20",
+      "gas_v6_gm_43",
+      "gas_v8_ford_73",
+      "gas_turbo_ford_27",
+      "gas_turbo_honda_15"
+     ],
+     "archs": [
+      "hev",
+      "phev"
+     ],
+     "ref_bte": 1.0,
+     "exp": 1.0,
+     "eras": [
+      [
+       ".",
+       1990,
+       2011,
+       0.875
+      ],
+      [
+       ".",
+       2012,
+       2015,
+       0.942
+      ],
+      [
+       ".",
+       2016,
+       2017,
+       0.975
+      ]
+     ]
+    }
+   ]
+  }
+ },
+ "provenance": {
+  "engine_era": "v3's Toyota / Lexus rows unchanged. New block (H29): hybrids and plug-ins whose engine runs on one of the conventional benchmark maps (mild P0/P1 hybrids, P2 hybrids and plug-ins, turbo power-splits) get the engine-generation scale measured on dev-family conventional gasoline test cars (checks/era_dev_conv.py, 436 records, FTP and HWY, v2 = v3 for conventional cars): the fuel-economy error of the same map relative to the MY2018-2026 cars is +14.3 % for MY2008-2011 (IQR +8.9 to +21.7), +6.2 % for 2012-2015, +2.6 % for 2016-2017, so efficiency x 0.875 / 0.942 / 0.975 (MY<=2011 / 2012-2015 / 2016-2017). Measured on conventional cars, not fitted to hybrid results. Conventional cars are not changed (guard)."
+ },
+ "dev_effect": "v3 -> v3.1 on dev (devx; CALIBRATION.md H29): EPA dev P2 with a clutch (n 13) FTP +15.1 -> +9.4, HWY -0.8 -> -6.4, median |err| over all cycles 10.4 -> 7.9; P2 converter (2012 Panamera S Hybrid) FTP / HWY +35.5 / +3.7 -> +28.9 / -3.2; plug-in P2 FTP median +12.1 -> +10.6 (|err| 7.2 unchanged); D3 dev P2 -5.3 -> -3.2 % (2010 Insight -14.1 -> -1.7, 2010 S400h -0.4 -> +14.0); every Toyota / Honda / TMED / plug-in power-split and series and every VED dev number unchanged.",
+ "rejected": "measured older-Toyota load table from D3 dev 10 Hz data (H27a full / H27b peak-normalised: D3 dev 2010 Prius -17.1 -> -5.9 / +7.6 %, 2017 Prius Prime -6.1 -> +5.3 / +16.1 %, pooled median |err| 9.4 -> 9.3 / 17.8; HWFET overshoots); per-type plug-in heating rules with the VED plug-in start state 'logged' (H28: Ford Energi engine heat after a cold start below 0 / 5 / 10 C: VED dev Energi cold trips -11.5 -> +25.6 / +47.2 / +65.6 % (totals); Volt 35 F setting: VED Volt cold +20 -> +124 %, D3 Volt |err| 11.8 -> 15.0); TMED (one dev vehicle, H31)."
+}

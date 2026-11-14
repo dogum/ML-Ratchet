@@ -630,3 +630,157 @@ Verdict: v3 does what it was built to do where it acts (older Toyota engines, co
 alone, but closes none of the large errors: old Toyotas stay 15-31 % too frugal in the city (and the cold FTP got
 worse), converter P2s +15-23 %, mild hybrids +23 %, plug-ins on VED roads -20 to -23 %, TMED -10 % (second look only).
 v2 stays the default, as decided before the exam.
+
+## 14 Nov 2026 — RoadSim v3.1 pass: second hardware pass on hybrids (physics v3.1)
+
+Same rules: dev data only. Open items from the v3 report: older Toyota engines, plug-ins in the cold, mild hybrids,
+generated hybrids, TMED P2s. `tests/golden/roadsim_v3_fingerprint.json` was written from the v3 code before any v3.1
+change (commit 64e97be).
+
+### H27-0 Judge: no clean judge exists (no physics change)
+
+Checked 14 Nov 2026:
+- EPA test-car files: the newest is MY2026 (26-testcar-2026-01-21.xlsx, the file RoadData already holds; EPA page
+  updated 3 Aug 2026). No newer file and no unsimulated hybrid record is left: dev, held-out, exam-2 and exam-3 cover
+  every modelled hybrid / plug-in record of MY2000-2026 (MY1999 and older have no hybrids).
+- D3: every hybrid and plug-in vehicle on Argonne's pages is downloaded (dev or exam; all seen).
+- fueleconomy.gov "My MPG" shared averages are reachable by script (`/ws/rest/ympg/shared/ympgVehicle/{id}`; 2010 Prius,
+  id 26425: 48.6 mpg over 202 records). They cannot judge a physics version. Every vehicle RoadSim can build a twin for
+  has an EPA test-car record that has been simulated and seen, and sim / My MPG = (sim / EPA) x (EPA / My MPG): the
+  second factor (drivers, routes, weather, label adjustment) does not depend on the version, so a v3 -> v3.1 change
+  measured on My MPG is a re-weighted copy of the seen EPA change. Plug-in averages mix charge-depleting driving and
+  say nothing about the cold.
+- So the v3.1 decisions rest on dev, and every report row after the freeze is a second look.
+
+### H27 Older Toyota engines: a measured load table from D3 dev 10 Hz data: offered as an option, not kept
+
+`checks/d3_engine_maps.py` rebuilds the brake power of the D3 dev Toyota-system cars (dyno force x speed, HV battery
+and DC/DC power; stated efficiencies 0.93 / 0.90 / 0.92, a 3-point error in either moves the result about 3 %), takes
+5-s quasi-steady windows (coolant > 70 C, engine-speed spread < 6 %, > 3 kW) and compares the measured fuel power with
+the twin's TNGA paper map at the same speed and torque. 2017 Prius Prime (2ZR-FXE, metered fuel), 5,850 windows. The
+table is built from its non-standard tests (steady states, pedal maps, passing, WOT; 3,940 windows) and checked on its
+UDDS / HWFET / US06 windows (1,910):
+
+| BMEP, bar | 3-4 | 4-5 | 5-6 | 6-7 | 7-8 | 8-9 |
+|---|---|---|---|---|---|---|
+| fuel ratio real / map, fit set (n) | 1.42 (610) | 1.37 (1,055) | 1.31 (472) | 1.20 (985) | 0.90 (690) | 0.97 (111) |
+| check set, Prime standard cycles (n) | 1.50 (54) | 1.37 (126) | 1.25 (222) | 1.04 (591) | 0.96 (874) | 0.96 (26) |
+| 2010 Prius, modal fuel, all tests (n) | 1.55 (89) | 1.36 (51) | 1.07 (13) | | | |
+
+The older engine matches the map near full load and burns 30-40 % more below about 6 bar (1,100-1,300 rpm, 6-10 kW).
+The 2010 Prius (independent car, legacy fuel) agrees at 3-6 bar; its high-load windows are unusable (modal fuel lags
+the accelerations). Table: clipped to 0.85-1.6, made non-increasing: 3.5 bar 1.42, 4.5 1.37, 5.5 1.31, 6.5 1.20,
+7.5-8.5 0.91 (roadsim/data/engine_era_d3.json). New mode of `engine_era` (roadsim/eras.py, `tables`): the engine's fuel
+grid is re-weighted by BMEP for the run and its optimal operating line rebuilt from that grid (thermal.engine_map(),
+called by sim.py at the start of every run; the cached vehicle keeps its own map).
+
+| rung (D3 dev std tests, energy %) | 2010 Prius median / median abs | 2017 Prime median / median abs | pooled (42 tests) median / abs / mean abs |
+|---|---|---|---|
+| v3 (peak-BTE scale) | -17.1 / 17.1 | -6.1 / 8.9 | -6.6 / 9.4 / 14.1 |
+| a: table, levels relative to the 2016-17 engine | -5.9 / 8.6 | +5.3 / 9.8 | +4.1 / 9.3 / 15.1 |
+| b: table normalised to its high-load value, x v3 BTE | +7.6 / 7.6 | +16.1 / 19.0 | +14.2 / 17.8 / 22.5 |
+| a, operating line not rebuilt | +5.0 | +14.8 | |
+
+Rejected (a and b): no dev gain (pooled 9.4 -> 9.3 / 17.8; HWFET overshoots, Prime std HWFET +4.4 -> +23.6). The table
+is right at the engine and wrong in the twin: the twin runs its engine at 5.7 kW / 1,050 rpm (BMEP 3.6) for 55 % of
+its HWFET fuel, because the 45 km/h engine-on rule forces it on at light demand, where the real Prime runs at 16-24 kW.
+With a realistic low-load map that operation costs what it really costs. The flattering low-load map and the engine-on
+rule were calibrated together; the TNGA paper map is probably as optimistic at low load for TNGA engines (D3 has no dev
+hybrid with a TNGA engine). The option stays for a later controller pass. No older map from outside is reachable (H22).
+
+### H28 Plug-ins in the cold: per-type heating rules (new option `phev_heat_by_type`): rejected; cause of the H25 Volt overshoot found
+
+Documented hardware (read 14 Nov 2026): GM PIC5414C (2011-2014 Volt): the engine runs for heat below 25 F (-3.9 C) even
+with a charged pack, "periodically"; PIC5414G / H (2011-2016) and PIC6231C (2017+): below 35 F (+1.7 C) or 15 F
+(-9.4 C) by the owner's 'Engine Assisted Heating' setting. Ford C-Max / Fusion Energi owner's manual: the engine starts
+in EV mode when it is cold enough that the cabin needs engine heat, and in defrost. The type comes from the spec
+(`roadsim/eras.phev_type`; VED twins carry `phev_type` from checks/check_ved_twin.py).
+
+Why H25 overshot the Volt: with the engine at ambient the twin heats electrically. VED dev Volt gen-2 (VED_537) battery
+Wh/km real / twin: -8..-4 C 184 / 261, -4..0 C 162 / 237, 0..2 C 131 / 219, 5..10 C 138 / 175 (above 15 C 120 / 109).
+The twin's PTC heat is 110-140 Wh/km at -8..2 C; the real car's extra over warm weather is 10-65 Wh/km. The car runs its
+engine only below about -12 C (83 % of trips; 6-15 % of trips between -8 and 0 C): the 15 F setting. The VED dev Leaf
+twin's heating matches its car at the same temperatures (167 / 159 Wh/km at -4..0 C), so the cabin demand model holds
+for a heat-pump BEV; this Volt driver uses about half the twin's electric heat (ECO climate, seat heaters,
+recirculation: owner choices that no hardware rule fixes).
+
+VED harness 'logged' start state (H25a) for every rung below. VED: trip median over all trips / below 10 C (total of the
+cold trips).
+
+| rung | VED Energi (VED_11) | VED Volt gen-2 (VED_537) | D3 dev Energi cold tests (n 18) | D3 dev Volt (n 20) |
+|---|---|---|---|---|
+| v3, warm start (harness default) | -12.6 / -36.7 (-33.4) | -10.7 / -27.0 (-24.9) | -3.2 | -5.9, abs 11.8 |
+| a: v3, logged start (= H25a) | +6.1 / +11.7 (-11.5) | +4.8 / +33.4 (+20.2) | -3.2 | -5.9, abs 11.8 |
+| b0: + Energi engine heat after a cold start below 0 C | +7.5 / +24.4 (+25.6) | = a | -1.1 (cold-start CD -45 / -36 -> -2 / +12) | = a |
+| b5 / b10: ... below 5 C / 10 C | +7.6 / +90.2 (+47.2); +12.3 / +173.7 (+65.6) | = a | -1.1 | = a |
+| c: Volt gen-2 35 F (+1.7 C), gen-1 25 F (-3.9 C) | = a | +6.2 / +186.9 (+123.5) | = a | -5.9, abs 15.0 (CD -7 C tests +17..+37 -> +38..+78) |
+
+Rejected: every engine-for-heat rule overshoots on VED fragments. The twins' rule runs the engine from below 45 C up to
+70 C coolant, which on a 4-km winter trip burns far more than the real cars' periodic runs. The Energi rule fixes the
+two D3 cold-start CD tests (as v2's H4 found) but turns the Energi's VED cold error from -12 to +26..+66 %; the Volt
+35 F setting is wrong for the VED car and too strong for the D3 car. The harness stays 'warm' (as H25 decided); the
+option stays, off.
+
+### H29 Hybrids on conventional maps, by model year: kept (new `engine_era` block, hybrids and plug-ins only)
+
+Mild hybrids (Honda IMA, GM BAS, Mercedes S400) and most P2s run on the conventional benchmark maps (A25A 2.5 L of
+2018, GM 4.3 V6, Ford 7.3 V8, Ford 2.7 / Honda 1.5 turbo). `checks/era_dev_conv.py` (new): dev-family conventional
+gasoline test cars, at most 3 per family and model-year band, fixed seed, FTP and HWY with the epa_dev_pool specs
+(v2 = v3 for conventional cars). Fuel-economy error, + = the sim burns less:
+
+| model years | n | A25A map FTP / HWY | V6 map | V8 map | all maps, ratio to the 2018-2026 cars of the same map: FTP / HWY / pooled (IQR) |
+|---|---|---|---|---|---|
+| 2008-2011 | 120 | +24.3 / +18.6 | +8.5 / +2.4 | +4.5 / +1.4 | 1.161 / 1.123 / 1.143 (1.089-1.217) |
+| 2012-2015 | 101 | +19.8 / +13.1 | -4.0 / -5.6 | -4.0 / -5.1 | 1.078 / 1.055 / 1.062 |
+| 2016-2017 | 95 | +16.5 / +10.2 | -6.8 / -9.8 | -11.0 / -9.0 | 1.029 / 1.023 / 1.026 |
+| 2018-2026 | 120 | +10.6 / +7.6 | -6.8 / -9.8 | -13.5 / -11.5 | 1 |
+
+Every map flatters older engines, in model-year order: the benchmark maps are modern engines. The ratios match v3's
+published Toyota peak-efficiency steps (0.90 / 0.94 / 0.976) without being fitted to them. Option block: hybrids and
+plug-ins whose engine is on one of these maps get efficiency x 0.875 (MY<=2011), 0.942 (2012-2015), 0.975 (2016-2017);
+the 2008-2011 value also covers older cars (RoadData has no record before MY2008; not extrapolated). Conventional cars
+are not changed in this pass (guard); their own era bias is an open item (LIMITS.md).
+
+| dev metric | v3 | H29a (= v3.1) |
+|---|---|---|
+| EPA dev P2 with a clutch (Infiniti Q50 / Q70 2014, Audi Q5 2013; n 13) FTP / HWY / US06 / SC03 / cold | +15.1 / -0.8 / +6.1 / +13.4 / +39.9 | +9.4 / -6.4 / +2.9 / +10.6 / +36.0 |
+| ... median abs error over every cycle | 10.4 | 7.9 |
+| EPA dev P2 converter (2012 Panamera S Hybrid) FTP / HWY; abs | +35.5 / +3.7; 19.6 | +28.9 / -3.2; 16.1 |
+| EPA dev plug-in P2 FTP median (n 22); abs | +12.1; 7.2 | +10.6; 7.2 |
+| P2 FTP median (guard) | +15.1 | +9.4 |
+| D3 dev P2 (incl. mild); 2010 Insight; 2010 S400h | -5.3; -14.1; -0.4 | -3.2; -1.7; +14.0 |
+| every Toyota, Honda, Ford, TMED, plug-in power-split / series EPA dev number; D3 power-split, series, plug-ins; VED dev | | unchanged |
+
+Kept: measured on 436 dev conventional cars, not fitted to hybrid results, and better on 4 of the 5 dev hybrid units it
+touches. Worse: the S400h (legacy modal fuel; 0 -> +14 %) and the Infiniti HWY (-0.8 -> -6.4: the P2s' city / highway
+split is a separate error). VED CR-Z twins carry no model year: unchanged.
+
+### H30 Generated hybrids ~11 % too thirsty: cause looked for, not in the generator (no change)
+
+`checks/gen_hybrid_diag.py` (simulation only, no EPA result read). (1) Generated car / SUV hybrids (v3, n 58) with one
+generator draw set to the twins' rule: Crr speed term unclipped 0.0 / 0.0 % (median, UDDS / HWY; 21 of 58 clipped),
+engine eff_scale 1: -1.1 to +0.7, SOC window 0, strategy 0 (series HWY +2.1), all together -1.5 to +5.0 %. (2) The other
+way, the generator's rules put into the EPA dev twins (n 47): gears and final drive, machine sizes, pack, engine
+displacement and eff_scale, one at a time -0.9 to +2.6 %, together -2.6 to +3.6 %. (3) Generated car hybrids draw
+donor bodies of MY2016-2024 (no old bodies). (4) The architecture mix (generated car hybrids 46 % power-split / 32 % P2 /
+21 % series; RoadData's MY2022-24 car hybrid records 57 / 31 / 10 %) is worth about 2.5 %. The generator reproduces the
+twins within 2-3 %; the rest sits in the twins' own physics for those architectures: generated car P2s are TMED-type
+(P2 motor in place of the converter), and the TMED twins are 8-10 % too thirsty on exam-2 (a second look). Not changed.
+
+### H31 TMED P2: not attempted
+
+One dev TMED vehicle (the Sonata Hybrid: the EPA check-dev record and its D3 twin). A fix needs several dev TMED
+vehicles; H26 already showed the one dev car moving the wrong way in the city. Open.
+
+## Physics v3.1 frozen (before every second-look set)
+
+`roadsim/data/calibration_v3_1.json` (preset `roadsim-physics-v3.1` = v3 + the H29 `engine_era` block). New options,
+off in every preset: `engine_era` load tables (H27), `phev_heat_by_type` (H28). Guard: v1, v2, v2.1 and v3 reproduce
+their goldens (v3's written before any v3.1 change); every non-hybrid run of v3.1 equals v2
+(tests/test_roadsim_v2_fingerprint.py); v3.1 has its own golden (tests/golden/roadsim_v3_1_fingerprint.json). Guard
+metrics: EPA dev Accord HWY -4.5 (= v3), D3 Accord HWFET +1.9 (= v3; +1.6 in some runs, worker-order noise), VED Toyota
+-0.5 % / -4.9 points (= v3), P2 FTP median +15.1 -> +9.4. Nothing v2 fixed on dev got worse.
+
+**Not the default**: PHYSICS_VERSION stays roadsim-physics-v2. The dev gain is real but narrow: one kept change, reaching
+the P2 and mild hybrids on conventional maps (16 EPA dev records, 2 D3 cars), and one of the two D3 cars got worse.
+Decided and committed before any second-look set was run.

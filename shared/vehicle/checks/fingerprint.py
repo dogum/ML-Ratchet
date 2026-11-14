@@ -8,7 +8,8 @@ Since 14 Nov 2026 physics v2 has its own golden file (tests/golden/roadsim_v2_fi
 'roadsim-physics-v2'): later presets (v2.1) may change hybrid and plug-in runs only, so every non-hybrid run of a later
 preset must match the v2 golden to 1e-9 (tests/test_roadsim_v2_fingerprint.py). Physics v2.1 has its own golden too
 (tests/golden/roadsim_v2_1_fingerprint.json, written 14 Nov 2026 by the v3 pass from the code before any v3 change), and
-so has physics v3 (tests/golden/roadsim_v3_fingerprint.json, written 14 Nov 2026 by the v3.1 pass before any v3.1 change).
+so has physics v3 (tests/golden/roadsim_v3_fingerprint.json, written 14 Nov 2026 by the v3.1 pass before any v3.1 change)
+and physics v3.1 (tests/golden/roadsim_v3_1_fingerprint.json, written at the v3.1 freeze).
 
 usage:
     python fingerprint.py write [--options roadsim-physics-v2]   # (re)write a golden file — only on purpose
@@ -22,7 +23,8 @@ REPO = os.path.abspath(os.path.join(HERE, '..', '..', '..'))
 GOLD = os.path.join(REPO, 'tests', 'golden', 'roadsim_v1_fingerprint.json')
 GOLDS = {'roadsim-physics-v1': GOLD, 'roadsim-physics-v2': os.path.join(REPO, 'tests', 'golden', 'roadsim_v2_fingerprint.json'),
          'roadsim-physics-v2.1': os.path.join(REPO, 'tests', 'golden', 'roadsim_v2_1_fingerprint.json'),
-         'roadsim-physics-v3': os.path.join(REPO, 'tests', 'golden', 'roadsim_v3_fingerprint.json')}
+         'roadsim-physics-v3': os.path.join(REPO, 'tests', 'golden', 'roadsim_v3_fingerprint.json'),
+         'roadsim-physics-v3.1': os.path.join(REPO, 'tests', 'golden', 'roadsim_v3_1_fingerprint.json')}
 HYBRID_ARCHS = ('hev_powersplit', 'hev_parallel_p2', 'hev_series', 'phev_powersplit', 'phev_series')
 
 from roadsim import simulate, make_trip, load_vehicle
