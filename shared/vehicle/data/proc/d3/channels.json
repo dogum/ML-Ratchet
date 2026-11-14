@@ -1,0 +1,3518 @@
+{
+ "D3_2016_Toyota_Mirai": {
+  "vehicle": "2016 Toyota Mirai",
+  "category": "alternative",
+  "files_on_disk": 45,
+  "files_listed": 45,
+  "n_tests_found": 43,
+  "n_summary_rows": 43,
+  "eras": [
+   "txt"
+  ],
+  "n_channels_in_file_max": 138,
+  "signals": {
+   "t": {
+    "Time__s_RawFacilities [s]": 43
+   },
+   "v": {
+    "Dyno_Spd__mph [mph]": 43
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule__mph [mph]": 43
+   },
+   "dist": {
+    "Distance__mi [mi]": 43
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce__N [N]": 43
+   },
+   "T_cell": {
+    "Cell_Temp__C [C]": 43
+   },
+   "RH_cell": {
+    "Cell_RH__per [per]": 43
+   },
+   "p_cell": {
+    "Cell_Press__inHg [inHg]": 43
+   },
+   "bag": {
+    "Exhaust_Bag []": 43
+   },
+   "fuel_gas": {
+    "GaseousFuel_High_Flow__gps [gps]": 43
+   },
+   "batt_V": {
+    "HVBatt_Volt_Hioki_analog10hz__U1__V [V]": 43
+   },
+   "batt_I": {
+    "HVBatt_Curr_Hioki_analog10hz__I1__A [A]": 43
+   },
+   "batt_P": {
+    "HVBatt_Power_Hioki_analog10hz__P1__kW [kW]": 43
+   },
+   "soc": {
+    "HVBatt_SOC_vsCAN3__per [per]": 40
+   },
+   "T_cabin": {
+    "Cabin_Temp__C [C]": 43
+   },
+   "T_batt": {
+    "HVBatt_temp_of_battery_tb1_EV__C [C]": 42
+   },
+   "P_heater": {
+    "Heater_Power_Hioki_analog10hz__P7__W [W]": 43
+   },
+   "P_ac": {
+    "HVAC_AC_power_consumption_vsDCAN__W [W]": 40
+   },
+   "P_dcdc": {
+    "DCDC_Out_Power_Hioki_analog10hz__P6__W [W]": 43
+   },
+   "T_solar_ind": {
+    "Solar_Array_Ind_Temp__C [C]": 43
+   }
+  }
+ },
+ "D3_2015_Chevrolet_Bi-Fuel_Impala": {
+  "vehicle": "2015 Chevrolet Bi-Fuel Impala",
+  "category": "alternative",
+  "files_on_disk": 2,
+  "files_listed": 2,
+  "n_tests_found": 30,
+  "n_summary_rows": 30,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 12,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 30
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 30
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 30
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 30
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 30
+   },
+   "bag": {
+    "Phase_# []": 30
+   },
+   "eng_rpm": {
+    "Engine_Speed[rpm] [rpm]": 30
+   },
+   "fuel_vol": {
+    "Fuel_Flow_FuelScale[cc/s] [cc/s]": 30
+   },
+   "fuel_gas": {
+    "Fuel_Flow_CNG_Coriolis[g/s] [g/s]": 30
+   },
+   "T_coolant": {
+    "Engine_Coolant_Temp[C] [C]": 30
+   },
+   "T_oil": {
+    "Engine_Oil_Temp[C] [C]": 30
+   }
+  }
+ },
+ "D3_2010_Honda_Civic_GX": {
+  "vehicle": "2010 Honda Civic GX",
+  "category": "alternative",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 19,
+  "n_summary_rows": 19,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 11,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 19
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 19
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 19
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 19
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 19
+   },
+   "bag": {
+    "Phase # []": 19
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 19
+   },
+   "fuel_modal": {
+    "Fuel flow from bench modal [g/s] [g/s]": 19
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 19
+   }
+  }
+ },
+ "D3_2010_Hyundai_LPI_Hybrid": {
+  "vehicle": "2010 Hyundai LPI Hybrid",
+  "category": "alternative",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 5,
+  "n_summary_rows": 5,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 11,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_modal": {
+    "Fuel flow from bench modal [g/s] [g/s]": 5
+   },
+   "batt_V": {
+    "HV Battery Voltage [V] [V]": 5
+   },
+   "batt_I": {
+    "HV Battery Current [A] [A]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2020_Chrysler_Pacifica": {
+  "vehicle": "2020 Chrysler Pacifica",
+  "category": "conventional",
+  "files_on_disk": 22,
+  "files_listed": 22,
+  "n_tests_found": 21,
+  "n_summary_rows": 21,
+  "eras": [
+   "tdms"
+  ],
+  "n_channels_in_file_max": 182,
+  "signals": {
+   "t": {
+    "Time [s]": 21
+   },
+   "v": {
+    "Dyno_Spd [mph]": 21
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule [mph]": 21
+   },
+   "dist": {
+    "Distance [mi]": 21
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce [N]": 21
+   },
+   "T_cell": {
+    "Cell_Temp [C]": 21
+   },
+   "RH_cell": {
+    "Cell_RH [%]": 21
+   },
+   "p_cell": {
+    "Cell_Press [inHg]": 21
+   },
+   "bag": {
+    "Exhaust_Bag [mph]": 21
+   },
+   "grade": {
+    "Grade_Output_DriveTrace [pct]": 21
+   },
+   "fuel_mass": {
+    "Eng_FuelFlow_Direct2 [gps]": 21
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct [ccps]": 21
+   },
+   "fuel_modal": {
+    "AMA_Dilute_Fuel [g/s]": 20
+   },
+   "T_cabin": {
+    "Cabin_Temp [C]": 21
+   },
+   "P_dcdc": {
+    "Alternator_Power_Hioki_P1 [W]": 21
+   },
+   "T_solar_ind": {
+    "Solar_Array_Ind_Temp [C]": 21
+   },
+   "eng_rpm": {
+    "Eng_spd_CAN [rpm]": 19
+   },
+   "T_coolant": {
+    "eng_coolant_temp_PCM [C]": 19
+   },
+   "T_oil": {
+    "Eng_oil_temp_CAN [C]": 19
+   },
+   "T_trans_oil": {
+    "trans_oil_temp_TCM [C]": 19
+   },
+   "v_veh_can": {
+    "Veh_spd_CAN [mph]": 19
+   }
+  }
+ },
+ "D3_2019_Chevrolet_Blazer": {
+  "vehicle": "2019 Chevrolet Blazer",
+  "category": "conventional",
+  "files_on_disk": 12,
+  "files_listed": 12,
+  "n_tests_found": 11,
+  "n_summary_rows": 11,
+  "eras": [
+   "tdms"
+  ],
+  "n_channels_in_file_max": 208,
+  "signals": {
+   "t": {
+    "Time [s]": 11
+   },
+   "v": {
+    "Dyno_Spd [mph]": 11
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule [mph]": 11
+   },
+   "dist": {
+    "Distance [mi]": 11
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce [N]": 11
+   },
+   "T_cell": {
+    "Cell_Temp [C]": 11
+   },
+   "RH_cell": {
+    "Cell_RH [%]": 11
+   },
+   "p_cell": {
+    "Cell_Press [inHg]": 11
+   },
+   "bag": {
+    "Exhaust_Bag [mph]": 11
+   },
+   "grade": {
+    "Grade_Output_DriveTrace [pct]": 11
+   },
+   "eng_rpm": {
+    "Eng_Spd_ECM [rpm]": 9,
+    "Eng_Spd_TCM [rpm]": 2
+   },
+   "fuel_mass": {
+    "Eng_FuelFlow_Direct2 [gps]": 9
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct [ccps]": 9
+   },
+   "fuel_modal": {
+    "AMA_Dilute_Fuel [gps]": 9,
+    "AMA_Dilute_Fuel [g/s]": 1
+   },
+   "T_oil": {
+    "Engine_Oil_Dipstick_Temp [C]": 11
+   },
+   "P_dcdc": {
+    "Alternator_Power_Hioki_P1 [W]": 11
+   },
+   "T_solar_ind": {
+    "Solar_Array_Ind_Temp [C]": 11
+   },
+   "T_coolant": {
+    "Eng_coolant_temp_ECM [C]": 1
+   },
+   "T_trans_oil": {
+    "Trans_fluid_temp_ECM [C]": 1
+   }
+  }
+ },
+ "D3_2019_Chevrolet_Silverado": {
+  "vehicle": "2019 Chevrolet Silverado",
+  "category": "conventional",
+  "files_on_disk": 57,
+  "files_listed": 57,
+  "n_tests_found": 56,
+  "n_summary_rows": 56,
+  "eras": [
+   "txt"
+  ],
+  "n_channels_in_file_max": 187,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 56
+   },
+   "v": {
+    "Dyno_Spd[mph] [mph]": 56
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 56
+   },
+   "dist": {
+    "Distance[mi] [mi]": 56
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce[N] [N]": 56
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 56
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 56
+   },
+   "p_cell": {
+    "Cell_Press[inHg] [inHg]": 56
+   },
+   "bag": {
+    "Exhaust_Bag []": 56
+   },
+   "grade": {
+    "Grade_Output_DriveTrace[pct] [pct]": 29
+   },
+   "eng_rpm": {
+    "Eng_Spd_ECM__rpm [rpm]": 52
+   },
+   "fuel_mass": {
+    "Eng_FuelFlow_Direct2[gps] [gps]": 56
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct[ccps] [ccps]": 56
+   },
+   "fuel_modal": {
+    "AMA_Dilute_Fuel[g/s] [g/s]": 54
+   },
+   "T_coolant": {
+    "engine_coolant_temp_ECM__C [C]": 52
+   },
+   "T_oil": {
+    "Engine_Oil_Dipstick_Temp[C] [C]": 5,
+    "engine_oil_temp_ECM__C [C]": 51
+   },
+   "T_trans_oil": {
+    "Trans_fluid_temp_ECM__C [C]": 2,
+    "Trans_fluid_temp_TCM__C [C]": 50
+   },
+   "T_cabin": {
+    "Cabin_PassHR_Temp[C] [C]": 56
+   },
+   "P_dcdc": {
+    "Alternator_Power_Hioki_P1[W] [W]": 56
+   },
+   "T_solar_ind": {
+    "Solar_Array_Ind_Temp[C] [C]": 56
+   },
+   "v_veh_can": {
+    "vehicle_speed_ECM__kph [kph]": 51
+   }
+  }
+ },
+ "D3_2019_Infiniti_QX50": {
+  "vehicle": "2019 Infiniti QX50",
+  "category": "conventional",
+  "files_on_disk": 40,
+  "files_listed": 40,
+  "n_tests_found": 39,
+  "n_summary_rows": 43,
+  "eras": [
+   "txt"
+  ],
+  "n_channels_in_file_max": 107,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 39
+   },
+   "v": {
+    "Dyno_Spd[mph] [mph]": 39
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 39
+   },
+   "dist": {
+    "Distance[mi] [mi]": 39
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce[N] [N]": 39
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 39
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 39
+   },
+   "p_cell": {
+    "Cell_Press[inHg] [inHg]": 39
+   },
+   "bag": {
+    "Exhaust_Bag []": 39
+   },
+   "grade": {
+    "Grade_Output_DriveTrace[pct] [pct]": 39
+   },
+   "eng_rpm": {
+    "Eng_spd_CAN2__rpm [rpm]": 39
+   },
+   "fuel_mass": {
+    "Eng_FuelFlow_Direct2[gps] [gps]": 39
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct3[ccps] [ccps]": 39
+   },
+   "fuel_modal": {
+    "AMA_Dilute_Fuel[g/s] [g/s]": 39
+   },
+   "T_coolant": {
+    "Eng_coolant_temp_PCM__C [C]": 39
+   },
+   "T_oil": {
+    "Eng_oil_temp_CAN2__C [C]": 39
+   },
+   "T_trans_oil": {
+    "Trans_CVT_fluid_temp_TCM__C [C]": 39
+   },
+   "T_cabin": {
+    "Cabin_Temp[C] [C]": 39
+   },
+   "P_dcdc": {
+    "Alternator_Power_Hioki_P1[W] [W]": 39
+   },
+   "T_solar_ind": {
+    "Solar_Array_Ind_Temp[C] [C]": 39
+   }
+  }
+ },
+ "D3_2018_Toyota_Camry_XLE": {
+  "vehicle": "2018 Toyota Camry XLE",
+  "category": "conventional",
+  "files_on_disk": 63,
+  "files_listed": 63,
+  "n_tests_found": 62,
+  "n_summary_rows": 62,
+  "eras": [
+   "txt"
+  ],
+  "n_channels_in_file_max": 102,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 62
+   },
+   "v": {
+    "Dyno_Spd[mph] [mph]": 62
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 62
+   },
+   "dist": {
+    "Distance[mi] [mi]": 62
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce[N] [N]": 62
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 62
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 62
+   },
+   "p_cell": {
+    "Cell_Press[inHg] [inHg]": 62
+   },
+   "bag": {
+    "Exhaust_Bag []": 62
+   },
+   "eng_rpm": {
+    "Eng_spd_ECM__rpm [rpm]": 61,
+    "Eng_spd_CAN2__rpm [rpm]": 1
+   },
+   "fuel_mass": {
+    "Eng_FuelFlow_Direct3_total[gps] [gps]": 50,
+    "Eng_FuelFlow_Direct2[gps] [gps]": 12
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct2_PFI[ccps] [ccps]": 50,
+    "Eng_FuelFlow_Direct_DI[ccps] [ccps]": 12
+   },
+   "fuel_vol_pfi": {
+    "Eng_FuelFlow_Direct2_PFI[ccps] [ccps]": 50
+   },
+   "fuel_vol_di": {
+    "Eng_FuelFlow_Direct_DI[ccps] [ccps]": 62
+   },
+   "fuel_modal": {
+    "AMA_Dilute_Fuel[g/s] [g/s]": 60
+   },
+   "T_coolant": {
+    "Eng_coolant_temp_ECM__C [C]": 61
+   },
+   "T_oil": {
+    "Engine_Oil_Dipstick_Temp[C] [C]": 62
+   },
+   "T_trans_oil": {
+    "Trans_oil_temp_TCU__C [C]": 61
+   },
+   "T_cabin": {
+    "Cabin_Temp[C] [C]": 50,
+    "HVAC_room_temp_HVAC__C [C]": 12
+   },
+   "P_dcdc": {
+    "Alternator_Power_Hioki_P1[W] [W]": 62
+   }
+  }
+ },
+ "D3_2018_Honda_Accord_LX": {
+  "vehicle": "2018 Honda Accord LX",
+  "category": "conventional",
+  "files_on_disk": 57,
+  "files_listed": 57,
+  "n_tests_found": 56,
+  "n_summary_rows": 56,
+  "eras": [
+   "txt"
+  ],
+  "n_channels_in_file_max": 133,
+  "signals": {
+   "t": {
+    "Time[s]_RawFacilities []": 56
+   },
+   "v": {
+    "Dyno_Spd__mph [mph]": 56
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule__mph [mph]": 56
+   },
+   "dist": {
+    "Distance__mi [mi]": 56
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce__N [N]": 56
+   },
+   "T_cell": {
+    "Cell_Temp__C [C]": 56
+   },
+   "RH_cell": {
+    "Cell_RH__% [%]": 56
+   },
+   "p_cell": {
+    "Cell_Press__inHg [inHg]": 56
+   },
+   "bag": {
+    "Exhaust_Bag []": 56
+   },
+   "eng_rpm": {
+    "Eng_speed_CAN7__rpm [rpm]": 56
+   },
+   "fuel_mass": {
+    "Eng_FuelFlow_Direct2__gps [gps]": 56
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct__ccps [ccps]": 56
+   },
+   "fuel_modal": {
+    "AMA_Dilute_Fuel[g/s] [g/s]": 56
+   },
+   "T_coolant": {
+    "Eng_starting_engine_coolant_temp_PGM__C [C]": 56
+   },
+   "T_oil": {
+    "Engine_Oil_Dipstick_Temp__C [C]": 56
+   },
+   "T_cabin": {
+    "Cabin_Temp__C [C]": 56
+   },
+   "P_dcdc": {
+    "Alternator_Power_Hioki_P1__kW [kW]": 56
+   },
+   "T_solar_ind": {
+    "Solar_Array_Ind_Temp__C [C]": 56
+   },
+   "v_veh_can": {
+    "Vehicle_speed_CAN2__mph [mph]": 56
+   }
+  }
+ },
+ "D3_2017_Ford_F150": {
+  "vehicle": "2017 Ford F150",
+  "category": "conventional",
+  "files_on_disk": 96,
+  "files_listed": 96,
+  "n_tests_found": 95,
+  "n_summary_rows": 96,
+  "eras": [
+   "txt"
+  ],
+  "n_channels_in_file_max": 175,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 95
+   },
+   "v": {
+    "Dyno_Spd[mph] [mph]": 95
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 95
+   },
+   "dist": {
+    "Distance[mi] [mi]": 95
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce[N] [N]": 95
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 95
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 95
+   },
+   "p_cell": {
+    "Cell_Press[inHg] [inHg]": 95
+   },
+   "bag": {
+    "Exhaust_Bag []": 95
+   },
+   "eng_rpm": {
+    "Eng_speed_PCM[rpm] [rpm]": 4,
+    "Eng_speed_CAN[rpm] [rpm]": 90
+   },
+   "fuel_mass": {
+    "Eng_FuelFlow_Direct2[gps] [gps]": 95
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct[ccps] [ccps]": 95
+   },
+   "fuel_modal": {
+    "AMA_Dilute_Fuel[g/s] [g/s]": 84
+   },
+   "T_oil": {
+    "Engine_Oil_Dipstick_Temp[C] [C]": 95
+   },
+   "T_trans_oil": {
+    "Trans_fluid_temp_TCM[C] [C]": 94
+   },
+   "T_cabin": {
+    "Cabin_Temp[C] [C]": 95
+   },
+   "P_dcdc": {
+    "Alternator_Power_Hioki_P2[W] [W]": 95
+   },
+   "T_solar_ind": {
+    "Solar_Array_Ind_Temp[C] [C]": 95
+   }
+  }
+ },
+ "D3_2016_Mazda_CX9": {
+  "vehicle": "2016 Mazda CX9",
+  "category": "conventional",
+  "files_on_disk": 71,
+  "files_listed": 71,
+  "n_tests_found": 70,
+  "n_summary_rows": 70,
+  "eras": [
+   "txt"
+  ],
+  "n_channels_in_file_max": 145,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 70
+   },
+   "v": {
+    "Dyno_Spd[mph] [mph]": 70
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 70
+   },
+   "dist": {
+    "Distance[mi] [mi]": 70
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce[N] [N]": 70
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 70
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 70
+   },
+   "p_cell": {
+    "Cell_Press[inHg] [inHg]": 70
+   },
+   "bag": {
+    "Exhaust_Bag []": 70
+   },
+   "eng_rpm": {
+    "Eng_speed_CAN[rpm] [rpm]": 70
+   },
+   "fuel_mass": {
+    "Eng_FuelFlow_Direct2[gps] [gps]": 70
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct[ccps] [ccps]": 70
+   },
+   "fuel_modal": {
+    "AMA_Dilute_Fuel[g/s] [g/s]": 70
+   },
+   "T_coolant": {
+    "Eng_coolant_temp_CAN[C] [C]": 70
+   },
+   "T_oil": {
+    "Eng_oil_temp_estimated_PCM[C] [C]": 70
+   },
+   "T_trans_oil": {
+    "Trans_fluid_temp_TCM[C] [C]": 70
+   },
+   "T_cabin": {
+    "Cabin_Temp[C] [C]": 70
+   },
+   "P_dcdc": {
+    "Alternator_Power_Hioki_P2[W] [W]": 70
+   },
+   "T_solar_ind": {
+    "Solar_Array_Ind_Temp[C] [C]": 70
+   },
+   "v_veh_can": {
+    "Veh_speed_CAN[kph] [kph]": 70
+   }
+  }
+ },
+ "D3_2014_Chevrolet_Cruze_Diesel": {
+  "vehicle": "2014 Chevrolet Cruze Diesel",
+  "category": "conventional",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 20,
+  "n_summary_rows": 20,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 10,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 20
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 20
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 20
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 20
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 20
+   },
+   "bag": {
+    "Phase_# []": 20
+   },
+   "eng_rpm": {
+    "Engine_Speed[rpm] [rpm]": 20
+   },
+   "fuel_modal": {
+    "Fuel_Flow_Bench_Modal[g/s] [g/s]": 20
+   },
+   "T_coolant": {
+    "Engine_Coolant_Temp[C] [C]": 20
+   },
+   "T_oil": {
+    "Engine_Oil_Temp[C] [C]": 20
+   }
+  }
+ },
+ "D3_2014_Mazda_3_iEloop": {
+  "vehicle": "2014 Mazda 3 iEloop",
+  "category": "conventional",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 20,
+  "n_summary_rows": 20,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 11,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 20
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 20
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 20
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 20
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 20
+   },
+   "bag": {
+    "Phase_# []": 20
+   },
+   "eng_rpm": {
+    "Engine_Speed[rpm] [rpm]": 20
+   },
+   "fuel_modal": {
+    "Fuel_Flow_Bench_Modal[g/s] [g/s]": 20
+   },
+   "T_coolant": {
+    "Engine_Coolant_Temp[C] [C]": 20
+   },
+   "T_oil": {
+    "Engine_Oil_Temp[C] [C]": 20
+   }
+  }
+ },
+ "D3_2013_Dodge_Ram_1500_HFE": {
+  "vehicle": "2013 Dodge Ram 1500 HFE",
+  "category": "conventional",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 26,
+  "n_summary_rows": 26,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 11,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 26
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 26
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 26
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 26
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 26
+   },
+   "bag": {
+    "Phase_# []": 26
+   },
+   "eng_rpm": {
+    "Engine_Speed[rpm] [rpm]": 26
+   },
+   "fuel_vol": {
+    "Fuel_Flow_FuelScale[cc/s] [cc/s]": 26
+   },
+   "T_coolant": {
+    "Engine_Coolant_Temp[C] [C]": 26
+   },
+   "T_oil": {
+    "Engine_Oil_Temp[C] [C]": 26
+   }
+  }
+ },
+ "D3_2013_Hyundai_Sonata": {
+  "vehicle": "2013 Hyundai Sonata",
+  "category": "conventional",
+  "files_on_disk": 4,
+  "files_listed": 4,
+  "n_tests_found": 5,
+  "n_summary_rows": 9,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 9,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from bench modal [cc/s] [cc/s]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2013_Nissan_Altima": {
+  "vehicle": "2013 Nissan Altima",
+  "category": "conventional",
+  "files_on_disk": 4,
+  "files_listed": 4,
+  "n_tests_found": 5,
+  "n_summary_rows": 6,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 9,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from bench modal [cc/s] [cc/s]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2013_Volkswagen_Jetta_TDI": {
+  "vehicle": "2013 Volkswagen Jetta TDI",
+  "category": "conventional",
+  "files_on_disk": 4,
+  "files_listed": 4,
+  "n_tests_found": 18,
+  "n_summary_rows": 17,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 11,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 18
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 18
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 18
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Force[N] [N]": 18
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 18
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 18
+   },
+   "bag": {
+    "Phase_# []": 18
+   },
+   "eng_rpm": {
+    "Engine_Speed_CAN[rpm] [rpm]": 18
+   },
+   "fuel_modal": {
+    "Modal_Fuel_Flow[g/s] [g/s]": 18
+   },
+   "T_oil": {
+    "Engine_Oil_Dipstick_Temp[C] [C]": 18
+   }
+  }
+ },
+ "D3_2012_Chrysler_300": {
+  "vehicle": "2012 Chrysler 300",
+  "category": "conventional",
+  "files_on_disk": 4,
+  "files_listed": 4,
+  "n_tests_found": 5,
+  "n_summary_rows": 6,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 9,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from bench modal [cc/s] [cc/s]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2012_Fiat_500_Sport": {
+  "vehicle": "2012 Fiat 500 Sport",
+  "category": "conventional",
+  "files_on_disk": 4,
+  "files_listed": 4,
+  "n_tests_found": 5,
+  "n_summary_rows": 7,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 9,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from bench modal [cc/s] [cc/s]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2012_Ford_F150_Ecoboost": {
+  "vehicle": "2012 Ford F150 Ecoboost",
+  "category": "conventional",
+  "files_on_disk": 4,
+  "files_listed": 4,
+  "n_tests_found": 5,
+  "n_summary_rows": 5,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 9,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from bench modal [cc/s] [cc/s]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2012_Ford_Focus": {
+  "vehicle": "2012 Ford Focus",
+  "category": "conventional",
+  "files_on_disk": 4,
+  "files_listed": 4,
+  "n_tests_found": 5,
+  "n_summary_rows": 8,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 9,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from bench modal [cc/s] [cc/s]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2012_Ford_Fusion_V6": {
+  "vehicle": "2012 Ford Fusion V6",
+  "category": "conventional",
+  "files_on_disk": 4,
+  "files_listed": 4,
+  "n_tests_found": 5,
+  "n_summary_rows": 6,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 9,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from bench modal [cc/s] [cc/s]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2010_Mazda_3_i-stop": {
+  "vehicle": "2010 Mazda 3 i-stop",
+  "category": "conventional",
+  "files_on_disk": 4,
+  "files_listed": 4,
+  "n_tests_found": 5,
+  "n_summary_rows": 5,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 9,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from bench modal [cc/s] [cc/s]": 3
+   }
+  }
+ },
+ "D3_2010_SmartCar_MHD": {
+  "vehicle": "2010 SmartCar MHD",
+  "category": "conventional",
+  "files_on_disk": 4,
+  "files_listed": 4,
+  "n_tests_found": 5,
+  "n_summary_rows": 5,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 9,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from bench modal [cc/s] [cc/s]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2010_VW_Golf_TDI_Bluemotion": {
+  "vehicle": "2010 VW Golf TDI Bluemotion",
+  "category": "conventional",
+  "files_on_disk": 4,
+  "files_listed": 4,
+  "n_tests_found": 4,
+  "n_summary_rows": 4,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 9,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 4
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 4
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 4
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 4
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 4
+   },
+   "bag": {
+    "Phase # []": 4
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 4
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from bench modal [cc/s] [cc/s]": 4
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 4
+   }
+  }
+ },
+ "D3_2009_Volkswagen_Jetta_TDI": {
+  "vehicle": "2009 Volkswagen Jetta TDI",
+  "category": "conventional",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 15,
+  "n_summary_rows": 15,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 11,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 15
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 15
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 15
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 15
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 15
+   },
+   "bag": {
+    "Phase # []": 15
+   },
+   "fuel_modal": {
+    "Fuel flow from bench modal [g/s] [g/s]": 15
+   },
+   "T_oil": {
+    "Engine Oil Temp [C] [C]": 15
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 14
+   }
+  }
+ },
+ "D3_2023_Hyundai_Ioniq5": {
+  "vehicle": "2023 Hyundai Ioniq5",
+  "category": "electric",
+  "files_on_disk": 14,
+  "files_listed": 14,
+  "n_tests_found": 13,
+  "n_summary_rows": 13,
+  "eras": [
+   "tdms"
+  ],
+  "n_channels_in_file_max": 129,
+  "signals": {
+   "t": {
+    "Time [s]": 13
+   },
+   "v": {
+    "Dyno_Spd [mph]": 13
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule [mph]": 13
+   },
+   "dist": {
+    "Distance [mi]": 13
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce [N]": 13
+   },
+   "T_cell": {
+    "Cell_Temp [C]": 13
+   },
+   "RH_cell": {
+    "Cell_RH [%]": 13
+   },
+   "p_cell": {
+    "Cell_Press [inHg]": 13
+   },
+   "bag": {
+    "Exhaust_Bag [mph]": 13
+   },
+   "grade": {
+    "Grade_Output_DriveTrace [pct]": 13
+   },
+   "batt_V": {
+    "HVBatt_volt_BMS [V]": 11
+   },
+   "batt_I": {
+    "HVBatt_current_BMS [A]": 11
+   },
+   "soc": {
+    "HVBatt_SOC_BMS [per]": 11
+   }
+  }
+ },
+ "D3_2020_Chevrolet_Bolt": {
+  "vehicle": "2020 Chevrolet Bolt",
+  "category": "electric",
+  "files_on_disk": 112,
+  "files_listed": 112,
+  "n_tests_found": 80,
+  "n_summary_rows": 80,
+  "eras": [
+   "txt"
+  ],
+  "n_channels_in_file_max": 362,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 46
+   },
+   "v": {
+    "Dyno_Spd[mph] [mph]": 46
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 46
+   },
+   "dist": {
+    "Distance[mi] [mi]": 46
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce[N] [N]": 46
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 46
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 46
+   },
+   "p_cell": {
+    "Cell_Press[inHg] [inHg]": 46
+   },
+   "bag": {
+    "Exhaust_Bag []": 46
+   },
+   "grade": {
+    "Grade_Output_DriveTrace[pct] [pct]": 46
+   },
+   "batt_V": {
+    "HVBatt_Volt_Hioki_U1__V [V]": 46
+   },
+   "batt_I": {
+    "HVBatt_Curr_Hioki_I1__A [A]": 46
+   },
+   "batt_P": {
+    "HVBatt_Power_Hioki_P1__kW [kW]": 46
+   },
+   "soc": {
+    "HVBatt_SOC_CAN4__per [per]": 41
+   },
+   "T_trans_oil": {
+    "Trans_oil_temp_CAN__C [C]": 41
+   },
+   "T_cabin": {
+    "Cabin_Pass_Headrest_Temp__C [C]": 46
+   },
+   "T_batt": {
+    "HVBatt_cell_temp_1_CAN3__C [C]": 45
+   },
+   "P_heater": {
+    "Coolant_Heater_Power_Hioki_P6__W [W]": 46
+   },
+   "P_batt_heater": {
+    "Batt_Heater_Power_Hioki_P7__W [W]": 46
+   },
+   "P_ac": {
+    "AC_Comp_Power_Hioki_P5__W [W]": 46
+   },
+   "P_dcdc": {
+    "DCDC_In_Power_Hioki_P2__W [W]": 46
+   },
+   "T_solar_ind": {
+    "Solar_Array_Ind_Temp__C [C]": 46
+   }
+  }
+ },
+ "D3_2019_Nissan_Leaf_ePlus": {
+  "vehicle": "2019 Nissan Leaf ePlus",
+  "category": "electric",
+  "files_on_disk": 112,
+  "files_listed": 112,
+  "n_tests_found": 84,
+  "n_summary_rows": 84,
+  "eras": [
+   "txt"
+  ],
+  "n_channels_in_file_max": 220,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 39
+   },
+   "v": {
+    "Dyno_Spd[mph] [mph]": 39
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 39
+   },
+   "dist": {
+    "Distance[mi] [mi]": 39
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce[N] [N]": 39
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 39
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 39
+   },
+   "p_cell": {
+    "Cell_Press[inHg] [inHg]": 39
+   },
+   "bag": {
+    "Exhaust_Bag []": 39
+   },
+   "grade": {
+    "Grade_Output_DriveTrace[pct] [pct]": 39
+   },
+   "batt_V": {
+    "HVBatt_voltage_CAN5__V [V]": 36
+   },
+   "batt_I": {
+    "HVBatt_current2_CAN5__A [A]": 36
+   },
+   "soc": {
+    "HVBatt_SOC_CAN5__per [per]": 36
+   },
+   "T_cabin": {
+    "veh_interior_temp_CAN5__C [C]": 36,
+    "Cabin_Pass_Headrest_Temp__C [C]": 3
+   },
+   "T_batt": {
+    "HVBatt_temp_1_BECM__C [C]": 36
+   },
+   "P_heater": {
+    "PTC_PosLeg_Power_Hioki_P7__W [W]": 39
+   },
+   "P_ac": {
+    "AC_Comp_PosLeg_Power_Hioki_P5__W [W]": 39
+   },
+   "P_dcdc": {
+    "DCDC_Out_Power_Hioki_P2__W [W]": 39
+   },
+   "T_solar_ind": {
+    "Solar_Array_Ind_Temp__C [C]": 39
+   }
+  }
+ },
+ "D3_2019_Chevrolet_Bolt": {
+  "vehicle": "2019 Chevrolet Bolt",
+  "category": "electric",
+  "files_on_disk": 16,
+  "files_listed": 16,
+  "n_tests_found": 15,
+  "n_summary_rows": 15,
+  "eras": [
+   "tdms"
+  ],
+  "n_channels_in_file_max": 264,
+  "signals": {
+   "t": {
+    "Time [s]": 15
+   },
+   "v": {
+    "Dyno_Spd [mph]": 15
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule [mph]": 15
+   },
+   "dist": {
+    "Distance [mi]": 15
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce [N]": 15
+   },
+   "T_cell": {
+    "Cell_Temp [C]": 15
+   },
+   "RH_cell": {
+    "Cell_RH [%]": 15
+   },
+   "p_cell": {
+    "Cell_Press [inHg]": 15
+   },
+   "bag": {
+    "Exhaust_Bag [mph]": 15
+   },
+   "grade": {
+    "Grade_Output_DriveTrace [pct]": 15
+   },
+   "batt_V": {
+    "HVBatt_voltage_CAN5 [V]": 15
+   },
+   "batt_I": {
+    "HVBatt_current_high_CAN5 [A]": 15
+   },
+   "soc": {
+    "HVBatt_SOC_HPCM [per]": 3,
+    "HVBatt_SOC_CAN4 [per]": 12
+   },
+   "T_trans_oil": {
+    "Trans_oil_temp_CAN [C]": 15
+   },
+   "T_cabin": {
+    "Cabin_Temp [C]": 15
+   },
+   "T_batt": {
+    "HVBatt_cell_temp_1_CAN5 [C]": 15
+   },
+   "P_batt_heater": {
+    "HVBatt_pack_heater_power_command_HPCM2_1 [kW]": 2,
+    "HVBatt_pack_heater_power_command_HPCM2 [kW]": 13
+   },
+   "P_ac": {
+    "HVAC_AC_comp_power_delivered_by HVBatt_HPCM2 [kW]": 2,
+    "HVAC_ac_comp_power_consumption_HPCM [kW]": 13
+   },
+   "P_dcdc": {
+    "DCDC_Out_Power_Hioki_P2 [W]": 15
+   }
+  }
+ },
+ "D3_2017_Chevrolet_Bolt": {
+  "vehicle": "2017 Chevrolet Bolt",
+  "category": "electric",
+  "files_on_disk": 33,
+  "files_listed": 33,
+  "n_tests_found": 32,
+  "n_summary_rows": 32,
+  "eras": [
+   "tdms"
+  ],
+  "n_channels_in_file_max": 233,
+  "signals": {
+   "t": {
+    "Time [s]": 32
+   },
+   "v": {
+    "Dyno_Spd [mph]": 32
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule [mph]": 32
+   },
+   "dist": {
+    "Distance [mi]": 32
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce [N]": 32
+   },
+   "T_cell": {
+    "Cell_Temp [C]": 32
+   },
+   "RH_cell": {
+    "Cell_RH [%]": 32
+   },
+   "p_cell": {
+    "Cell_Press [inHg]": 32
+   },
+   "bag": {
+    "Exhaust_Bag [mph]": 32
+   },
+   "grade": {
+    "Grade_Output_DriveTrace [pct]": 32
+   },
+   "batt_V": {
+    "HVBatt_voltage_CAN [V]": 24
+   },
+   "batt_I": {
+    "HVBatt_current_low_CAN [A]": 24
+   },
+   "soc": {
+    "HVBatt_SOC_HPCM [per]": 18
+   },
+   "T_trans_oil": {
+    "Trans_oil_temp_CAN [C]": 18
+   },
+   "T_batt": {
+    "HVBatt_cell_temp_1_CAN3 [C]": 24
+   },
+   "P_batt_heater": {
+    "HVBatt_pack_heater_power_command_HPCM2_1 [kW]": 18
+   },
+   "P_ac": {
+    "HVAC_AC_comp_power_delivered_by HVBatt_HPCM2 [kW]": 18
+   },
+   "P_dcdc": {
+    "DCDC_Out_Power_Hioki_P3 [W]": 32
+   }
+  }
+ },
+ "D3_2015_Chevrolet_Spark_EV": {
+  "vehicle": "2015 Chevrolet Spark EV",
+  "category": "electric",
+  "files_on_disk": 2,
+  "files_listed": 2,
+  "n_tests_found": 21,
+  "n_summary_rows": 21,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 10,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 21
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 21
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 21
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 21
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 21
+   },
+   "bag": {
+    "Phase_# []": 21
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 21
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 21
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 21
+   }
+  }
+ },
+ "D3_2015_Kia_Soul_Electric": {
+  "vehicle": "2015 Kia Soul Electric",
+  "category": "electric",
+  "files_on_disk": 2,
+  "files_listed": 2,
+  "n_tests_found": 17,
+  "n_summary_rows": 17,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 10,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 17
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 17
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 17
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 17
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 17
+   },
+   "bag": {
+    "Phase_# []": 17
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 17
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 17
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 17
+   }
+  }
+ },
+ "D3_2015_Mercedes-Benz_B-Class_Electric_Drive": {
+  "vehicle": "2015 Mercedes-Benz B-Class Electric Drive",
+  "category": "electric",
+  "files_on_disk": 2,
+  "files_listed": 2,
+  "n_tests_found": 21,
+  "n_summary_rows": 21,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 11,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 21
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 21
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 21
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 21
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 21
+   },
+   "bag": {
+    "Phase_# []": 21
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 21
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 21
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 21
+   }
+  }
+ },
+ "D3_2015_Volkswagen_e-Golf": {
+  "vehicle": "2015 Volkswagen e-Golf",
+  "category": "electric",
+  "files_on_disk": 2,
+  "files_listed": 2,
+  "n_tests_found": 18,
+  "n_summary_rows": 18,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 10,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 18
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 18
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 18
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 18
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 18
+   },
+   "bag": {
+    "Phase_# []": 18
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 18
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 18
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 18
+   }
+  }
+ },
+ "D3_2014_BMW_i3BEV": {
+  "vehicle": "2014 BMW i3BEV",
+  "category": "electric",
+  "files_on_disk": 2,
+  "files_listed": 2,
+  "n_tests_found": 20,
+  "n_summary_rows": 20,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 11,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 20
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 20
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 20
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 20
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 20
+   },
+   "bag": {
+    "Phase_# []": 20
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 20
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 20
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 20
+   }
+  }
+ },
+ "D3_2014_Smart_Electric_Drive": {
+  "vehicle": "2014 Smart Electric Drive",
+  "category": "electric",
+  "files_on_disk": 2,
+  "files_listed": 2,
+  "n_tests_found": 16,
+  "n_summary_rows": 17,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 10,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 16
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 16
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 16
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 16
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 16
+   },
+   "bag": {
+    "Phase_# []": 16
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 16
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 16
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 16
+   }
+  }
+ },
+ "D3_2013_Ford_Focus_Electric": {
+  "vehicle": "2013 Ford Focus Electric",
+  "category": "electric",
+  "files_on_disk": 2,
+  "files_listed": 2,
+  "n_tests_found": 20,
+  "n_summary_rows": 20,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 10,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 20
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 20
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 20
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 20
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 20
+   },
+   "bag": {
+    "Phase_# []": 20
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 20
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 20
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 20
+   }
+  }
+ },
+ "D3_2013_Nissan_Leaf_SV": {
+  "vehicle": "2013 Nissan Leaf SV",
+  "category": "electric",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 33,
+  "n_summary_rows": 33,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 10,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 33
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 33
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 33
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 33
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 33
+   },
+   "bag": {
+    "Phase_# []": 33
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 33
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 33
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 33
+   }
+  }
+ },
+ "D3_2012_Mitsubishi_I-MiEV": {
+  "vehicle": "2012 Mitsubishi I-MiEV",
+  "category": "electric",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 25,
+  "n_summary_rows": 25,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 10,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 25
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 25
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 25
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 25
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 25
+   },
+   "bag": {
+    "Phase_# []": 25
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 25
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 25
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 25
+   }
+  }
+ },
+ "D3_2012_Nissan_Leaf": {
+  "vehicle": "2012 Nissan Leaf",
+  "category": "electric",
+  "files_on_disk": 4,
+  "files_listed": 4,
+  "n_tests_found": 19,
+  "n_summary_rows": 19,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 14,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 19
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 19
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 19
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 19
+   },
+   "RH_cell": {
+    "Cell RH [%] [%]": 19
+   },
+   "bag": {
+    "Phase # []": 19
+   }
+  }
+ },
+ "D3_2021_Hyundai_Sonata_Hybrid": {
+  "vehicle": "2021 Hyundai Sonata Hybrid",
+  "category": "hybrid",
+  "files_on_disk": 76,
+  "files_listed": 76,
+  "n_tests_found": 75,
+  "n_summary_rows": 75,
+  "eras": [
+   "txt"
+  ],
+  "n_channels_in_file_max": 141,
+  "signals": {
+   "t": {
+    "Time[s]_RawFacilities []": 75
+   },
+   "v": {
+    "Dyno_Spd[mph] [mph]": 75
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 75
+   },
+   "dist": {
+    "Distance[mi] [mi]": 75
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce[N] [N]": 75
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 75
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 75
+   },
+   "p_cell": {
+    "Cell_Press[inHg] [inHg]": 75
+   },
+   "bag": {
+    "Exhaust_Bag []": 75
+   },
+   "eng_rpm": {
+    "engine_speed_CCAN__rpm [rpm]": 75
+   },
+   "fuel_mass": {
+    "Eng_FuelFlow_Direct2[gps] [gps]": 74
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct[ccps] [ccps]": 74
+   },
+   "fuel_modal": {
+    "AMA_Dilute_Fuel[g/s] [g/s]": 75
+   },
+   "batt_V": {
+    "HVBatt_Volt_Hioki_U1[V] [V]": 74,
+    "HVBatt_volt_BMS_HCAN__V [V]": 1
+   },
+   "batt_I": {
+    "HVBatt_Curr_Hioki_I1[A] [A]": 74,
+    "HVBatt_current_PCAN__A [A]": 1
+   },
+   "batt_P": {
+    "HVBatt_Power_Hioki_P1[kW] [kW]": 74
+   },
+   "soc": {
+    "HVBatt_SOC_high_precision_PCAN__per [per]": 75
+   },
+   "T_coolant": {
+    "engine_coolant_temp_PCAN__C [C]": 75
+   },
+   "T_oil": {
+    "engine_oil_temp_PCAN__C [C]": 75
+   },
+   "T_trans_oil": {
+    "trans_oil_temperature_TCM_HCAN__C [C]": 75
+   },
+   "T_cabin": {
+    "Cabin_Temp[C] [C]": 74
+   },
+   "T_batt": {
+    "HVBatt_module2_temp_PCAN__C [C]": 75
+   },
+   "P_dcdc": {
+    "DCDC_Out_Power_Hioki_P4[W] [W]": 74
+   },
+   "T_solar_ind": {
+    "Solar_Array_Ind_Temp[C] [C]": 74
+   }
+  }
+ },
+ "D3_2019_Acura_MDX_Sport_Hybrid": {
+  "vehicle": "2019 Acura MDX Sport Hybrid",
+  "category": "hybrid",
+  "files_on_disk": 90,
+  "files_listed": 90,
+  "n_tests_found": 89,
+  "n_summary_rows": 91,
+  "eras": [
+   "txt"
+  ],
+  "n_channels_in_file_max": 206,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 89
+   },
+   "v": {
+    "Dyno_Spd[mph] [mph]": 89
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 89
+   },
+   "dist": {
+    "Distance[mi] [mi]": 89
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce[N] [N]": 89
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 89
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 89
+   },
+   "p_cell": {
+    "Cell_Press[inHg] [inHg]": 89
+   },
+   "bag": {
+    "Exhaust_Bag []": 89
+   },
+   "eng_rpm": {
+    "Eng_speed_CAN5__rpm [rpm]": 89
+   },
+   "fuel_mass": {
+    "Eng_FuelFlow_Direct2__gps [gps]": 89
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct__ccps [ccps]": 89
+   },
+   "fuel_modal": {
+    "AMA_Dilute_Fuel[g/s] [g/s]": 88
+   },
+   "batt_V": {
+    "HVBatt_Volt_Hioki_U1__V [V]": 89
+   },
+   "batt_I": {
+    "HVBatt_Curr_Hioki_I1__A [A]": 89
+   },
+   "batt_P": {
+    "HVBatt_Power_Hioki_P1__kW [kW]": 89
+   },
+   "soc": {
+    "HVBatt_SOC_CAN5__per [per]": 89
+   },
+   "T_coolant": {
+    "Eng_coolant_temp_CAN5__C [C]": 89
+   },
+   "T_oil": {
+    "Engine_Oil_Dipstick_Temp__C [C]": 89
+   },
+   "T_cabin": {
+    "Cabin_Temp__C [C]": 89
+   },
+   "T_batt": {
+    "HVBatt_temp_sensor_1_EPIMA__degC [degC]": 89
+   },
+   "P_dcdc": {
+    "DCDC_Out_Power_Hioki_P3__W [W]": 89
+   }
+  }
+ },
+ "D3_2015_Honda_Accord_Hybrid": {
+  "vehicle": "2015 Honda Accord Hybrid",
+  "category": "hybrid",
+  "files_on_disk": 2,
+  "files_listed": 2,
+  "n_tests_found": 18,
+  "n_summary_rows": 16,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 14,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 18
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 18
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 18
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 18
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 18
+   },
+   "bag": {
+    "Phase_# []": 18
+   },
+   "eng_rpm": {
+    "Engine_Speed[rpm] [rpm]": 18
+   },
+   "fuel_vol": {
+    "Fuel_Flow_FuelScale[cc/s] [cc/s]": 18
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 18
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 18
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 18
+   },
+   "T_coolant": {
+    "Engine_Coolant_Temp[C] [C]": 18
+   },
+   "T_oil": {
+    "Engine_Oil_Temp[C] [C]": 18
+   }
+  }
+ },
+ "D3_2013_Chevrolet_Malibu_Eco": {
+  "vehicle": "2013 Chevrolet Malibu Eco",
+  "category": "hybrid",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 15,
+  "n_summary_rows": 14,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 12,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 15
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 15
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 15
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 15
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 15
+   },
+   "bag": {
+    "Phase_# []": 15
+   },
+   "eng_rpm": {
+    "Engine_Speed[rpm] [rpm]": 15
+   },
+   "fuel_vol": {
+    "Fuel_Flow_FuelScale[cc/s] [cc/s]": 15
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 15
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 15
+   },
+   "T_coolant": {
+    "Engine_Coolant_Temp[C] [C]": 15
+   },
+   "T_oil": {
+    "Engine_Oil_Temp[C] [C]": 15
+   }
+  }
+ },
+ "D3_2013_Ford_Cmax_Hybrid": {
+  "vehicle": "2013 Ford Cmax Hybrid",
+  "category": "hybrid",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 17,
+  "n_summary_rows": 16,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 13,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 17
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 17
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 17
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 17
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 17
+   },
+   "bag": {
+    "Phase_# []": 17
+   },
+   "eng_rpm": {
+    "Engine_Speed[rpm] [rpm]": 17
+   },
+   "fuel_vol": {
+    "Fuel_Flow_FuelScale[cc/s] [cc/s]": 17
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 17
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 17
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 17
+   },
+   "T_coolant": {
+    "Engine_Coolant_Temp[C] [C]": 17
+   },
+   "T_oil": {
+    "Engine_Oil_Temp[C] [C]": 17
+   }
+  }
+ },
+ "D3_2013_Honda_Civic_Hybrid": {
+  "vehicle": "2013 Honda Civic Hybrid",
+  "category": "hybrid",
+  "files_on_disk": 8,
+  "files_listed": 8,
+  "n_tests_found": 21,
+  "n_summary_rows": 18,
+  "eras": [
+   "txt",
+   "zip"
+  ],
+  "n_channels_in_file_max": 54,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 3,
+    "Time[sec] [sec]": 18
+   },
+   "v": {
+    "Dyno_Spd[mph] [mph]": 3,
+    "Dyno_Speed[mph] [mph]": 18
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 3
+   },
+   "dist": {
+    "Distance[mi] [mi]": 3
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce[N] [N]": 3,
+    "Dyno_Tractive_Effort[N] [N]": 18
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 3,
+    "Test_Cell_Temp[C] [C]": 18
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 3,
+    "Test_Cell_RH[%] [%]": 18
+   },
+   "p_cell": {
+    "Cell_Press[inHg] [inHg]": 3
+   },
+   "bag": {
+    "Exhaust_Bag []": 3,
+    "Phase_# []": 18
+   },
+   "eng_rpm": {
+    "Eng_Spd_CAN[rpm] [rpm]": 3,
+    "Engine_Speed[rpm] [rpm]": 18
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct[cc/s] [cc/s]": 3,
+    "Fuel_Flow_FuelScale[cc/s] [cc/s]": 18
+   },
+   "fuel_modal": {
+    "AMA_Dilute_Fuel[g/s] [g/s]": 3
+   },
+   "soc": {
+    "Batt_SOC_CAN[%] [%]": 3,
+    "HV_Battery_SOC[%] [%]": 18
+   },
+   "T_oil": {
+    "Engine_Oil_Dipstick_Temp[C] [C]": 3,
+    "Engine_Oil_Temp[C] [C]": 18
+   },
+   "T_cabin": {
+    "Cabin_Temp[C] [C]": 3
+   },
+   "T_solar_ind": {
+    "Solar_Array_Ind_Temp[C] [C]": 3
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 18
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 18
+   }
+  }
+ },
+ "D3_2013_Volkswagen_Jetta_Hybrid": {
+  "vehicle": "2013 Volkswagen Jetta Hybrid",
+  "category": "hybrid",
+  "files_on_disk": 4,
+  "files_listed": 4,
+  "n_tests_found": 16,
+  "n_summary_rows": 16,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 18,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 16
+   },
+   "v": {
+    "Dyno_Spd[mph] [mph]": 16
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 16
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce[N] [N]": 16
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 16
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 16
+   },
+   "p_cell": {
+    "Cell_Press[inHg] [inHg]": 16
+   },
+   "bag": {
+    "Exhaust_Bag []": 16
+   },
+   "eng_rpm": {
+    "Eng_Spd_CAN[rpm] [rpm]": 16
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct[cc/s] [cc/s]": 16
+   },
+   "soc": {
+    "Batt_SOC_CAN[%] [%]": 16
+   }
+  }
+ },
+ "D3_2011_Hyundai_Sonata_Hybrid": {
+  "vehicle": "2011 Hyundai Sonata Hybrid",
+  "category": "hybrid",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 5,
+  "n_summary_rows": 5,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 13,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from bench modal [cc/s] [cc/s]": 5
+   },
+   "batt_V": {
+    "HV Battery Voltage [V] [V]": 5
+   },
+   "batt_I": {
+    "HV Battery Current [A] [A]": 5
+   },
+   "soc": {
+    "Battery SOC[%] [%]": 5
+   },
+   "T_coolant": {
+    "Engine Coolant Temp [deg C] [deg C]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2010_Ford_Fusion_Hybrid": {
+  "vehicle": "2010 Ford Fusion Hybrid",
+  "category": "hybrid",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 5,
+  "n_summary_rows": 5,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 12,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_vol": {
+    "Fuel flow from Fuel Scale [cc/s] [cc/s]": 5
+   },
+   "batt_V": {
+    "HV Battery Voltage [V] [V]": 5
+   },
+   "batt_I": {
+    "HV Battery Current [A] [A]": 5
+   },
+   "soc": {
+    "Battery SOC[%] [%]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2010_Honda_CR-Z": {
+  "vehicle": "2010 Honda CR-Z",
+  "category": "hybrid",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 5,
+  "n_summary_rows": 5,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 13,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from Bench Modal [cc/s] [cc/s]": 5
+   },
+   "batt_V": {
+    "HV Battery Voltage [V] [V]": 5
+   },
+   "batt_I": {
+    "HV Battery Current [A] [A]": 5
+   },
+   "soc": {
+    "Battery SOC[%] [%]": 5
+   },
+   "T_coolant": {
+    "Engine Coolant Temperature [deg C] [deg C]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2010_Honda_Insight": {
+  "vehicle": "2010 Honda Insight",
+  "category": "hybrid",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 4,
+  "n_summary_rows": 4,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 13,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 4
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 4
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 4
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 4
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 4
+   },
+   "bag": {
+    "Phase # []": 4
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 4
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from Bench Modal [cc/s] [cc/s]": 4
+   },
+   "batt_V": {
+    "HV Battery Voltage [V] [V]": 4
+   },
+   "batt_I": {
+    "HV Battery Current [A] [A]": 4
+   },
+   "soc": {
+    "Battery SOC[%] [%]": 4
+   },
+   "T_coolant": {
+    "Engine Coolant Temperature [deg C] [deg C]": 4
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 4
+   }
+  }
+ },
+ "D3_2010_Toyota_Prius": {
+  "vehicle": "2010 Toyota Prius",
+  "category": "hybrid",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 5,
+  "n_summary_rows": 5,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 13,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from bench modal [cc/s] [cc/s]": 5
+   },
+   "batt_V": {
+    "HV Battery Voltage [V] [V]": 5
+   },
+   "batt_I": {
+    "HV Battery Current [A] [A]": 5
+   },
+   "soc": {
+    "Battery SOC[%] [%]": 5
+   },
+   "T_coolant": {
+    "Engine Coolant Temp [deg C] [deg C]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2010_Mercedes_S400h_BlueHybrid": {
+  "vehicle": "2010 Mercedes S400h BlueHybrid",
+  "category": "hybrid",
+  "files_on_disk": 3,
+  "files_listed": 3,
+  "n_tests_found": 5,
+  "n_summary_rows": 5,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 11,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 5
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 5
+   },
+   "F_tractive": {
+    "Dyno Tractive Force [N] [N]": 5
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 5
+   },
+   "RH_cell": {
+    "Cell RH [%] [%]": 5
+   },
+   "bag": {
+    "Phase # []": 5
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 5
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from Bench Modal [cc/s] [cc/s]": 5
+   },
+   "batt_V": {
+    "HV Battery Voltage [V] [V]": 5
+   },
+   "batt_I": {
+    "HV Battery Current [A] [A]": 5
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 5
+   }
+  }
+ },
+ "D3_2021_Toyota_RAV4_Prime": {
+  "vehicle": "2021 Toyota RAV4 Prime",
+  "category": "plugin",
+  "files_on_disk": 36,
+  "files_listed": 36,
+  "n_tests_found": 35,
+  "n_summary_rows": 53,
+  "eras": [
+   "txt"
+  ],
+  "n_channels_in_file_max": 318,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 35
+   },
+   "v": {
+    "Dyno_Spd[mph] [mph]": 35
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 35
+   },
+   "dist": {
+    "Distance[mi] [mi]": 35
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce[N] [N]": 35
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 35
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 35
+   },
+   "p_cell": {
+    "Cell_Press[inHg] [inHg]": 35
+   },
+   "bag": {
+    "Exhaust_Bag []": 35
+   },
+   "fuel_mass": {
+    "Eng_FuelFlow_Direct2[gps] [gps]": 35
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct[ccps] [ccps]": 35
+   },
+   "fuel_modal": {
+    "AMA_Dilute_Fuel[g/s] [g/s]": 32
+   },
+   "batt_V": {
+    "HVBatt_Volt_Hioki_U1[V] [V]": 35
+   },
+   "batt_I": {
+    "HVBatt_Curr_Hioki_I1[A] [A]": 35
+   },
+   "batt_P": {
+    "HVBatt_Power_Hioki_P1[kW] [kW]": 35
+   },
+   "T_oil": {
+    "Engine_Oil_Dipstick_Temp[C] [C]": 35
+   },
+   "T_cabin": {
+    "Cabin_Temp[C] [C]": 35
+   },
+   "P_dcdc": {
+    "DCDC_In_Power_Hioki_P3[W] [W]": 35
+   },
+   "eng_rpm": {
+    "Eng_spd_ECU[rpm] [rpm]": 32
+   },
+   "soc": {
+    "HVBatt_SOC_BECM_CAN3__per [per]": 32
+   },
+   "T_coolant": {
+    "Eng_coolant_temp_CAN2__C [C]": 32
+   },
+   "T_trans_oil": {
+    "Trans_oil_temp_HCU__C [C]": 32
+   },
+   "T_batt": {
+    "HVBatt_temp_10_BECM[C] [C]": 32
+   },
+   "P_ac": {
+    "HVAC_AC_power_consumption_HCU__kW [kW]": 32
+   },
+   "v_veh_can": {
+    "vehicle_speed_CAN2__kph [kph]": 32
+   }
+  }
+ },
+ "D3_2017_Toyota_Prius_Prime": {
+  "vehicle": "2017 Toyota Prius Prime",
+  "category": "plugin",
+  "files_on_disk": 83,
+  "files_listed": 83,
+  "n_tests_found": 82,
+  "n_summary_rows": 76,
+  "eras": [
+   "txt"
+  ],
+  "n_channels_in_file_max": 278,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 82
+   },
+   "v": {
+    "Dyno_Spd[mph] [mph]": 82
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 82
+   },
+   "dist": {
+    "Distance[mi] [mi]": 82
+   },
+   "F_tractive": {
+    "Dyno_TractiveForce[N] [N]": 82
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 82
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 82
+   },
+   "p_cell": {
+    "Cell_Press[inHg] [inHg]": 82
+   },
+   "bag": {
+    "Exhaust_Bag []": 82
+   },
+   "eng_rpm": {
+    "Eng_spd_HCU[rpm] [rpm]": 82
+   },
+   "fuel_mass": {
+    "Eng_FuelFlow_Direct2[gps] [gps]": 82
+   },
+   "fuel_vol": {
+    "Eng_FuelFlow_Direct[ccps] [ccps]": 82
+   },
+   "fuel_modal": {
+    "AMA_Dilute_Fuel[gps] [gps]": 81
+   },
+   "batt_V": {
+    "HVBatt_voltage_BECM[V] [V]": 82
+   },
+   "batt_I": {
+    "HVBatt_current_BECM[A] [A]": 82
+   },
+   "soc": {
+    "HVBatt_SOC_after_ig_on_BECM[per] [per]": 82
+   },
+   "T_coolant": {
+    "Eng_coolant_temp_CAN2[C] [C]": 82
+   },
+   "T_oil": {
+    "Engine_Oil_Dipstick_Temp[C] [C]": 82
+   },
+   "T_trans_oil": {
+    "Trans_oil_temp_HCU[C] [C]": 82
+   },
+   "T_cabin": {
+    "Cabin_Temp[C] [C]": 82
+   },
+   "T_batt": {
+    "HVBatt_temp_10_BECM[C] [C]": 82
+   },
+   "P_ac": {
+    "HVAC_AC_power_consumption_HCU[kw] [kw]": 82
+   },
+   "P_dcdc": {
+    "DCDC_Out_Power_Hioki_P3[W] [W]": 82
+   },
+   "T_solar_ind": {
+    "Solar_Array_Ind_Temp[C] [C]": 82
+   },
+   "v_veh_can": {
+    "Veh_spd_CAN2[kph] [kph]": 82
+   }
+  }
+ },
+ "D3_2016_Chevrolet_Volt": {
+  "vehicle": "2016 Chevrolet Volt",
+  "category": "plugin",
+  "files_on_disk": 9,
+  "files_listed": 9,
+  "n_tests_found": 22,
+  "n_summary_rows": 22,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 13,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 22
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 22
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 22
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 22
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 22
+   },
+   "bag": {
+    "Phase_# []": 22
+   },
+   "eng_rpm": {
+    "Engine_Speed[rpm] [rpm]": 22
+   },
+   "fuel_modal": {
+    "Fuel_Flow_Bench_Modal[g/s] [g/s]": 22
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 22
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 22
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 22
+   },
+   "T_oil": {
+    "Engine_Oil_Temp[C] [C]": 22
+   }
+  }
+ },
+ "D3_2014_BMW_i3-REX": {
+  "vehicle": "2014 BMW i3-REX",
+  "category": "plugin",
+  "files_on_disk": 5,
+  "files_listed": 5,
+  "n_tests_found": 37,
+  "n_summary_rows": 35,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 14,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 37
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 37
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 37
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 37
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 37
+   },
+   "bag": {
+    "Phase_# []": 37
+   },
+   "fuel_vol": {
+    "Fuel_Flow_FuelScale[cc/s] [cc/s]": 37
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 37
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 37
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 37
+   },
+   "T_oil": {
+    "Engine_Oil_Temp[C] [C]": 37
+   }
+  }
+ },
+ "D3_2013_Ford_Cmax_Energi": {
+  "vehicle": "2013 Ford Cmax Energi",
+  "category": "plugin",
+  "files_on_disk": 8,
+  "files_listed": 8,
+  "n_tests_found": 35,
+  "n_summary_rows": 35,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 13,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 35
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 35
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 35
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 35
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 35
+   },
+   "bag": {
+    "Phase_# []": 35
+   },
+   "eng_rpm": {
+    "Engine_Speed[rpm] [rpm]": 35
+   },
+   "fuel_vol": {
+    "Fuel_Flow_FuelScale[cc/s] [cc/s]": 35
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 35
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 35
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 35
+   },
+   "T_coolant": {
+    "Engine_Coolant_Temp[C] [C]": 35
+   },
+   "T_oil": {
+    "Engine_Oil_Temp[C] [C]": 35
+   }
+  }
+ },
+ "D3_2013_Ford_Fusion_Energi": {
+  "vehicle": "2013 Ford Fusion Energi",
+  "category": "plugin",
+  "files_on_disk": 7,
+  "files_listed": 7,
+  "n_tests_found": 37,
+  "n_summary_rows": 35,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 12,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 37
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 37
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 37
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 37
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 37
+   },
+   "bag": {
+    "Phase_# []": 37
+   },
+   "eng_rpm": {
+    "Engine_Speed[rpm] [rpm]": 37
+   },
+   "fuel_vol": {
+    "Fuel_Flow_FuelScale[cc/s] [cc/s]": 37
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 37
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 37
+   },
+   "T_coolant": {
+    "Engine_Coolant_Temp[C] [C]": 37
+   },
+   "T_oil": {
+    "Engine_Oil_Temp[C] [C]": 37
+   }
+  }
+ },
+ "D3_2013_Chevrolet_Volt": {
+  "vehicle": "2013 Chevrolet Volt",
+  "category": "plugin",
+  "files_on_disk": 7,
+  "files_listed": 7,
+  "n_tests_found": 37,
+  "n_summary_rows": 28,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 13,
+  "signals": {
+   "t": {
+    "Time[sec] [sec]": 37
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 37
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Effort[N] [N]": 37
+   },
+   "T_cell": {
+    "Test_Cell_Temp[C] [C]": 37
+   },
+   "RH_cell": {
+    "Test_Cell_RH[%] [%]": 37
+   },
+   "bag": {
+    "Phase_# []": 37
+   },
+   "eng_rpm": {
+    "Engine_Speed[rpm] [rpm]": 37
+   },
+   "fuel_vol": {
+    "Fuel_Flow_FuelScale[cc/s] [cc/s]": 37
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 37
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 37
+   },
+   "soc": {
+    "HV_Battery_SOC[%] [%]": 37
+   },
+   "T_coolant": {
+    "Engine_Coolant_Temp[C] [C]": 37
+   },
+   "T_oil": {
+    "Engine_Oil_Temp[C] [C]": 37
+   }
+  }
+ },
+ "D3_2012_Chevrolet_Volt": {
+  "vehicle": "2012 Chevrolet Volt",
+  "category": "plugin",
+  "files_on_disk": 7,
+  "files_listed": 7,
+  "n_tests_found": 41,
+  "n_summary_rows": 22,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 12,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 36
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 36
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 36
+   },
+   "T_cell": {
+    "Cell Temp [C] [C]": 36
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 36
+   },
+   "bag": {
+    "Phase # []": 36
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 36
+   },
+   "fuel_modal_vol": {
+    "Fuel flow from bench modal [cc/s] [cc/s]": 36
+   },
+   "batt_V": {
+    "HV Battery Voltage [V] [V]": 36
+   },
+   "batt_I": {
+    "HV Battery Current [A] [A]": 36
+   },
+   "T_coolant": {
+    "Engine Coolant Temp [deg C] [deg C]": 36
+   }
+  }
+ },
+ "D3_2013_Toyota_Prius_Plug-in": {
+  "vehicle": "2013 Toyota Prius Plug-in",
+  "category": "plugin",
+  "files_on_disk": 7,
+  "files_listed": 7,
+  "n_tests_found": 29,
+  "n_summary_rows": 25,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 15,
+  "signals": {
+   "t": {
+    "Time[s] [s]": 24
+   },
+   "v": {
+    "Dyno_Speed[mph] [mph]": 24
+   },
+   "v_sched": {
+    "Drive_Trace_Schedule[mph] [mph]": 24
+   },
+   "F_tractive": {
+    "Dyno_Tractive_Force[N] [N]": 24
+   },
+   "T_cell": {
+    "Cell_Temp[C] [C]": 24
+   },
+   "RH_cell": {
+    "Cell_RH[%] [%]": 24
+   },
+   "bag": {
+    "Phase_# []": 24
+   },
+   "eng_rpm": {
+    "Engine_Speed_CAN[rpm] [rpm]": 24
+   },
+   "fuel_modal": {
+    "Modal_Fuel_Flow[g/s] [g/s]": 24
+   },
+   "batt_V": {
+    "HV_Battery_Voltage[V] [V]": 24
+   },
+   "batt_I": {
+    "HV_Battery_Current[A] [A]": 24
+   },
+   "T_oil": {
+    "Engine_Oil_Dipstick_Temp[C] [C]": 24
+   }
+  }
+ },
+ "D3_2012_Toyota_Prius_Plug-in": {
+  "vehicle": "2012 Toyota Prius Plug-in",
+  "category": "plugin",
+  "files_on_disk": 7,
+  "files_listed": 7,
+  "n_tests_found": 29,
+  "n_summary_rows": 14,
+  "eras": [
+   "zip"
+  ],
+  "n_channels_in_file_max": 14,
+  "signals": {
+   "t": {
+    "Timestamp [sec] [sec]": 26
+   },
+   "v": {
+    "Dyno Speed [mph] [mph]": 26
+   },
+   "F_tractive": {
+    "Dyno Tractive Effort [N] [N]": 26
+   },
+   "T_cell": {
+    "Cell Temp [deg C] [deg C]": 26
+   },
+   "RH_cell": {
+    "Cell RH[%] [%]": 26
+   },
+   "bag": {
+    "Phase # []": 26
+   },
+   "eng_rpm": {
+    "Engine Speed [rpm] [rpm]": 26
+   },
+   "fuel_vol": {
+    "Fuel Flow from Fuel Scale [cc/s] [cc/s]": 26
+   },
+   "batt_V": {
+    "HV Battery Voltage [V] [V]": 26
+   },
+   "batt_I": {
+    "HV Battery Current [A] [A]": 26
+   },
+   "T_coolant": {
+    "Engine Coolant Temp [deg C] [deg C]": 26
+   },
+   "T_oil": {
+    "Engine Oil Temp [deg C] [deg C]": 26
+   }
+  }
+ }
+}
