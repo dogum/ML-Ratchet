@@ -137,6 +137,30 @@ def run_one(job):
         soc_src = 'inferred: charge-depleting (full)' if cd else 'inferred: charge-sustaining (CS level)'
     if init_soc is None and arch == 'bev':
         init_soc = 0.9
+    if arch.startswith('hev'):
+        # charge-sustaining twin: hold the SOC where the car's own controller held it (the test's start SOC) instead of the
+        # strategy's window mid-point. Without this, a twin starting 0.08 below mid charged at 20-40 kW from the first
+        # second (Accord Hybrid UDDS: engine at 3,300 rpm while the car itself charged at 3 kW). A logged SOC outside the
+        # twin's window (2010 Prius 0.31-0.40 vs 0.4-0.8: a different scale) uses the window mid-point for both.
+        b = veh.battery
+        lo, hi = b.soc_lo, b.soc_hi
+        if init_soc is None or not (lo + 0.03 <= init_soc <= hi - 0.03):
+            init_soc, soc_src = 0.5 * (lo + hi), soc_src + ' (outside the twin window: window mid)'
+        ctl = dict(spec.get('control') or {})
+        from roadsim.strategies import DEFAULT as _DEF
+        ctl['strategy'] = ctl.get('strategy') or _DEF[arch]
+        ctl['params'] = dict(ctl.get('params') or {}, soc_target=float(init_soc))
+        spec['control'] = ctl
+        veh = get_vehicle(spec)
+    if arch.startswith('phev') and soc_src == 'measured' and init_soc < veh.battery.soc_lo + 0.10:
+        # a charge-sustaining plug-in test: sustain where the car sustained (Energi 0.16-0.20 logged vs the twin's CS
+        # level 0.20: the twin charged 150-500 Wh in a UDDS)
+        ctl = dict(spec.get('control') or {})
+        from roadsim.strategies import DEFAULT as _DEF
+        ctl['strategy'] = ctl.get('strategy') or _DEF[arch]
+        ctl['params'] = dict(ctl.get('params') or {}, soc_cs=float(max(init_soc, veh.battery.soc_lo + 0.01)))
+        spec['control'] = ctl
+        veh = get_vehicle(spec)
     # key-off soaks: >= 300 s at standstill (with the engine stopped where engine speed is logged) are not driven;
     # the twin is run segment by segment, the soak counts as engine off / zero energy, temperatures restart from the
     # logged values at the segment start (else Newton cooling of the engine and driveline over the soak)
@@ -253,7 +277,7 @@ def run_one(job):
         return dict(test_id=r['test_id'], error=f'{type(e).__name__}: {e}'[:300])
     out = full
     fuel = FUELS[veh.fuel] if veh.engine is not None else None
-    lhv = fuel['lhv'] if fuel else 43e3                         # J/g
+    lhv = fuel['lhv'] / 1e3 if fuel else 42.6e3                 # J/g (FUELS is J/kg)
     sim = dict(fuel_g=float(np.sum(out['fuel_rate'])),
                batt_Wh=float(np.sum(out['batt_current'] * out['batt_voltage']) / 3600) if veh.battery is not None else None,
                eng_on_share=float(np.mean(out['eng_on'])) if veh.engine is not None else 0.0,

@@ -1168,7 +1168,8 @@
     "CHEVROLET|GENERAL MOTORS",
     "VOLT"
    ],
-   "arch_note": "Voltec gen 2 has power-split modes; run as a series PHEV (87 + 48 kW machines lumped as traction 111 kW)"
+   "arch_note": "Voltec gen 2 has power-split modes; run as a series PHEV (87 + 48 kW machines lumped as traction 111 kW)",
+   "hvac_note": "6 kW coolant PTC on the heater loop the engine also heats (phev_engine_heat)"
   },
   "2014 BMW i3-REX": {
    "class": "car",
@@ -1233,7 +1234,8 @@
    "epa": [
     "FORD",
     "C.?MAX ENERGI|C-MAX PHEV"
-   ]
+   ],
+   "hvac_note": "electric (PTC) cabin heat assumed: D3 dev charge-depleting UDDS at -7 C with a warm start uses 3.0-3.4 kWh with the engine on 8-11 % (about +3.5 kW over the warm test), which only an electric heater explains (14 Nov 2026)"
   },
   "2013 Ford Fusion Energi": {
    "class": "car",
@@ -1265,7 +1267,8 @@
    "epa": [
     "FORD",
     "FUSION ENERGI|FUSION PHEV"
-   ]
+   ],
+   "hvac_note": "electric (PTC) cabin heat assumed: D3 dev charge-depleting UDDS at -7 C with a warm start uses 3.0-3.4 kWh with the engine on 8-11 % (about +3.5 kW over the warm test), which only an electric heater explains (14 Nov 2026)"
   },
   "2013 Chevrolet Volt": {
    "class": "car",

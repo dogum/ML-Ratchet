@@ -42,10 +42,24 @@ LHV = 0.042            # MJ/g (E10, RoadData's label definition)
 WARM = dict(engine=85.0, oil=90.0, driveline=70.0, axle=60.0, tire_warm=1.0, cabin=21.0)
 # Plug-in hardware (public spec sheets), used only for architectures RoadData identified (as EnergyNet's twins)
 PLUGIN_HW = {
-    ('phev_series', 1.4): dict(battery=dict(capacity_kWh=16.5, nominal_V=360, soc_window=[0.2, 0.85]), P=111),
-    ('phev_series', 1.5): dict(battery=dict(capacity_kWh=18.4, nominal_V=360, soc_window=[0.15, 0.9]), P=111),
-    ('phev_powersplit', 2.0): dict(battery=dict(capacity_kWh=7.6, nominal_V=300, soc_window=[0.15, 0.95]), P=145),
-    ('phev_powersplit', 1.8): dict(battery=dict(capacity_kWh=8.8, nominal_V=350, soc_window=[0.15, 0.95]), P=90),
+    # battery max_power_kW: min(traction machines / 0.9, 9 C), the plug-in rule of data/scripts/d3_specs.py (RoadSim's
+    # 'energy' default of 3 C left the Energi twin at 23 kW and forced its engine on in charge depletion). Machines and
+    # engine power from the same public spec sheets as data/d3_facts.json (added 14 Nov 2026, calibration agent 2).
+    ('phev_series', 1.4): dict(battery=dict(capacity_kWh=16.5, nominal_V=360, soc_window=[0.2, 0.85], max_power_kW=123.0), P=111,
+                               engine_kW=63, motors=[('traction', 111, 370), ('generator', 55, None)]),
+    ('phev_series', 1.5): dict(battery=dict(capacity_kWh=18.4, nominal_V=360, soc_window=[0.15, 0.9], max_power_kW=123.0), P=111,
+                               engine_kW=75, motors=[('traction', 111, 398), ('generator', 75, None)]),
+    ('phev_powersplit', 2.0): dict(battery=dict(capacity_kWh=7.6, nominal_V=300, soc_window=[0.15, 0.95], max_power_kW=68.4), P=145,
+                                   engine_kW=105, motors=[('MG1', 70, None), ('MG2', 88, 240)]),
+    ('phev_powersplit', 1.8): dict(battery=dict(capacity_kWh=8.8, nominal_V=350, soc_window=[0.15, 0.95], max_power_kW=79.2), P=90,
+                                   engine_kW=71, motors=[('MG1', 23, None), ('MG2', 53, 163)]),
+}
+# Mild (P1) hybrids that RoadData labels hev_powersplit (VED has no P1 type): Honda CR-Z IMA, run as a P2 machine that
+# never drives electrically (strategy parameter engine_on_moving; the D3 Insight / S400h / Civic / CR-Z twins do the same)
+MILD_HW = {
+    'CR-Z': dict(engine_kW=84, transmission={'type': 'AMT'}, motors=[{'role': 'P2', 'max_power_kW': 10, 'max_torque_Nm': 78,
+                 'eff_map': 'ipm_generic_150', 'max_rpm': 7000}], battery={'capacity_kWh': 0.58, 'nominal_V': 101, 'chemistry': 'NiMH',
+                 'soc_window': [0.3, 0.8]}),
 }
 _TRANS = {'AT': 'AT', 'CVT': 'CVT', 'AMT': 'AMT', 'DCT': 'DCT', 'manual': 'AMT', 'single': 'single', 'eCVT': 'eCVT'}
 
@@ -81,7 +95,15 @@ def ved_spec(vid):
         if eng.get('fuel') not in ('gasoline', 'diesel'):
             eng['fuel'] = 'gasoline'
         s['engine'] = eng
+    mild = next((MILD_HW[k] for k in MILD_HW if k in str(labels.get('example_models') or '')), None)
+    if mild is not None and arch.startswith('hev'):
+        arch = s['architecture'] = 'hev_parallel_p2'
+        s['engine']['max_power_kW'] = float(mild['engine_kW'])
+        s['motors'] = copy.deepcopy(mild['motors']); s['battery'] = dict(mild['battery'])
+        s['control'] = {'strategy': 'aecms', 'params': {'engine_on_moving': True}}
     tr = {k: v for k, v in (s.get('transmission') or {}).items() if k in ('type',)}
+    if mild is not None and arch == 'hev_parallel_p2':
+        tr = dict(mild['transmission'])
     if tr.get('type') in _TRANS:
         tr['type'] = _TRANS[tr['type']]
     if arch in ('hev_powersplit', 'phev_powersplit'):
@@ -96,11 +118,14 @@ def ved_spec(vid):
         hw = PLUGIN_HW.get((arch, (eng or {}).get('displacement_L')))
         if hw:
             s['battery'] = dict(hw['battery'], chemistry='NMC')
+            s['engine']['max_power_kW'] = float(hw['engine_kW'])
+            s['motors'] = [dict(role=r_, max_power_kW=float(P_), eff_map='ipm_generic_150', max_rpm=13500 if r_ != 'MG2' else 14000,
+                                **({'max_torque_Nm': float(T_)} if T_ else {})) for r_, P_, T_ in hw['motors']]
     elif arch == 'bev':
         cap = (s.get('battery') or {}).get('capacity_kWh', 24.0)
         s['battery'] = {'capacity_kWh': cap, 'nominal_V': 360, 'chemistry': 'NMC', 'soc_window': [0.02, 0.98]}
         s['motors'] = [{'role': 'traction', 'max_power_kW': 80.0 if cls == 'car' else 150.0, 'eff_map': 'ipm_generic_150'}]
-    else:
+    elif mild is None:
         s.pop('battery', None)
     for k in ('motors', 'aux', 'regen', 'control', 'CdA_m2', 'Crr', 'Crr_speed_coef', 'road_load_ABC', 'wheel_radius_m',
               'final_drive', 'driveline_eff'):
@@ -142,6 +167,21 @@ def city_hwy(spec):
     return ftp(s)['FE'], hot_cycle(s, 'hwfet')['FE']
 
 
+def label_match_phev(spec, ucity, uhwy, ev_city_kWh=None, ev_hwy_kWh=None):
+    """plug-ins: class-default road load (k = 1), engine level from the charge-sustaining label. One k scales CdA and
+    Crr together; neither label ratio fixes it for the Ford Energi (charge-sustaining 51.4/55 needs k at the 1.8 bound
+    with eff_scale 1.31; the electric label 42/34 kWh needs k 1.6 -> +31 % trip energy), so the ratio is not matched.
+    The Volt's electric ratio gives k 0.84. Decided on VED dev, 14 Nov 2026 (CALIBRATION.md, rung H6)."""
+    k = 1.0
+    eff = 1.0
+    for _ in range(3):
+        c, h = city_hwy(_scaled(spec, eff, k))
+        eff *= float(math.sqrt(ucity * uhwy / (c * h)))
+    s = _scaled(spec, eff, k)
+    c3, h3 = city_hwy(s)
+    return s, dict(k=k, eff=eff, city=c3, hwy=h3, ucity=ucity, uhwy=uhwy, k_from='fixed 1 (plug-in)')
+
+
 def label_match(spec, ucity, uhwy, ks=(0.75, 1.0, 1.35, 1.8)):
     tgt = math.log(uhwy / ucity)
     if spec['architecture'] == 'bev':        # level only, through k
@@ -176,7 +216,10 @@ def build_twin(job):
     uc, uh = lab.get('unadj_city_mpg'), lab.get('unadj_hwy_mpg')
     if match and uc and uh and np.isfinite(uc) and np.isfinite(uh):
         try:
-            spec, m = label_match(spec, float(uc), float(uh))
+            if spec['architecture'].startswith('phev'):
+                spec, m = label_match_phev(spec, float(uc), float(uh))
+            else:
+                spec, m = label_match(spec, float(uc), float(uh))
             info['label_match'] = m
         except Exception as e:
             info['label_match_error'] = f'{type(e).__name__}: {e}'[:200]

@@ -200,6 +200,11 @@ def build_one(name, cat, f, d3):
     # ---- motors and battery
     if arch in ('hev_series', 'phev_series'):
         fd = nv * k_nv if (nv and nv > 30) else None
+        # a series hybrid's EPA N/V is the engine's (lock-up / coupled mode), not the traction motor's: keep it only if
+        # it puts the motor's 14,000 rpm between 140 and 260 km/h (2015 Accord Hybrid: 2.84 -> 614 km/h, the motor ran
+        # torque-limited at a few hundred rpm and regenerated 0.46 of the braking energy vs 0.64 measured)
+        if fd and not (140 <= 14000 * math.pi / 30 / fd * rr * 3.6 <= 260):
+            fd = None
         mt = {m[0]: m[1] for m in f['motors']}
         spec['motors'] = [dict(role='traction', max_power_kW=mt['traction'], eff_map='ipm_generic_150', max_rpm=14000),
                           dict(role='generator', max_power_kW=mt['generator'], eff_map='ipm_generic_150', max_rpm=14000)]
@@ -240,8 +245,22 @@ def build_one(name, cat, f, d3):
         spec['battery'] = dict(capacity_kWh=c, nominal_V=V, chemistry=ch if ch in ('NMC', 'LFP', 'NiMH', 'NCA') else 'NMC', soc_window=win)
         if spec['battery']['chemistry'] == 'NCA': spec['battery']['chemistry'] = 'NMC'
         prov['battery'] = HAND + '; SOC window ' + DEF
+        if arch.startswith('phev'):
+            # plug-in packs are sized to drive the car electrically: discharge power = traction machines / 0.9, at most
+            # 9 C (RoadSim's 'energy' default of 3 C gave 23-55 kW; D3 dev plug-ins reach 67 (Energi), 69 (Prius Prime) and
+            # 127 kW (Volt) at 1 Hz, rule: 68 / 79 / 123 kW). Charge power stays RoadSim's 0.6 x discharge.
+            trac = sum(m['max_power_kW'] for m in spec['motors'] if m['role'] in ('traction', 'MG2', 'MG1'))
+            spec['battery']['max_power_kW'] = round(min(trac / 0.9, 9.0 * c), 1)
+            prov['battery'] += '; max_power_kW derived: min(traction machines / 0.9, 9 C) (plug-in rule, 14 Nov 2026)'
+    if arch.startswith('hev') and re.search(r'\bP[01]\b', f.get('arch_note') or ''):
+        # mild hybrids (belt starter-generator P0, crankshaft motor P1): the engine cannot be decoupled, so no electric-only
+        # driving; assist, regen, stop/start and fuel cut only (strategy parameter engine_on_moving, 14 Nov 2026)
+        spec['control'] = {'strategy': 'aecms', 'params': {'engine_on_moving': True}}
+        prov['control'] = 'derived: P0/P1 mild hybrid (arch note) -> A-ECMS with engine_on_moving'
     if f.get('hvac_source'):
         spec.setdefault('aux', {}).setdefault('HVAC', {})['source'] = f['hvac_source']; prov['aux.HVAC.source'] = HAND
+        if f.get('hvac_ptc_W') is not None:
+            spec['aux']['HVAC']['ptc_max_W'] = f['hvac_ptc_W']; prov['aux.HVAC.ptc_max_W'] = HAND
     else:
         prov['aux.HVAC.source'] = DEF + ' (architecture default)'
     # ---- road load

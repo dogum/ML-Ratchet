@@ -372,11 +372,21 @@ def read_text(raw_bytes_or_path, member=None):
     hdr, skip = _header_and_skip(head)
     names = [h.strip() for h in hdr]
     sel = pick_channels(names, {})
-    use = sorted({names.index(r) for r in sel.values()})
+    # some files (2020 Bolt 62009058) carry a constant-zero 'Time[s]' from the power analyser next to the facility
+    # clock: read every time-like column and keep the one that actually advances
+    tcand = [n for n in names if re.match(r'^(time\[s\](_rawfacilities)?|daq_time\[s\]|time)$', n.strip().lower())]
+    use = sorted({names.index(r) for r in sel.values()} | {names.index(n) for n in tcand})
     with fh() as f:
         df = pd.read_csv(f, sep='\t', header=None, skiprows=skip, usecols=use, encoding='latin1', engine='c',
                          low_memory=False, na_values=['NaN', 'Inf', '-Inf', 'nan', ''])
     cols = {names[j]: pd.to_numeric(df[j], errors='coerce').to_numpy(float) for j in use}
+    span = lambda x: float(np.nanmax(x) - np.nanmin(x)) if np.isfinite(x).any() else 0.0
+    if 't' in sel and span(cols[sel['t']]) < 1.0:
+        alt = [n for n in tcand if n != sel['t'] and span(cols[n]) >= 1.0]
+        alt.sort(key=lambda n: (0 if 'rawfacilities' in n.lower() else 1))
+        if alt:
+            sel['t'] = alt[0]
+    cols = {k: v for k, v in cols.items() if k in sel.values()}
     units = {n: split_name(n)[1] for n in names}
     return names, units, cols, sel, {}
 

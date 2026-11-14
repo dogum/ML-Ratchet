@@ -3744,7 +3744,7 @@
     "max_rpm": 14000
    }
   ],
-  "final_drive": 2.837018956366768,
+  "final_drive": 9.676105373056563,
   "battery": {
    "capacity_kWh": 1.3,
    "nominal_V": 259,
@@ -3777,7 +3777,7 @@
    "engine.fuel": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page)",
    "engine.bsfc_map": "derived: rule on fuel, size, turbo and architecture (as checks/epa_vehicles.py)",
    "transmission": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page)",
-   "final_drive": "derived: EPA N/V ratio",
+   "final_drive": "derived: motor 14,000 rpm at 180 km/h (as checks/epa_vehicles.py)",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); maps default: RoadSim fill_spec",
    "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
    "aux.HVAC.source": "default: RoadSim fill_spec (architecture default)",
@@ -3864,6 +3864,12 @@
     0.8
    ]
   },
+  "control": {
+   "strategy": "aecms",
+   "params": {
+    "engine_on_moving": true
+   }
+  },
   "CdA_m2": 0.5461409750776871,
   "Crr": 0.007783794136122584,
   "Crr_speed_coef": 0.019946907367206706,
@@ -3889,6 +3895,7 @@
    "transmission": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page) (type, gears); ratios default: RoadSim fill_spec",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); map default: RoadSim fill_spec",
    "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "control": "derived: P0/P1 mild hybrid (arch note) -> A-ECMS with engine_on_moving",
    "aux.HVAC.source": "default: RoadSim fill_spec (architecture default)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 14 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -4086,6 +4093,12 @@
     0.8
    ]
   },
+  "control": {
+   "strategy": "aecms",
+   "params": {
+    "engine_on_moving": true
+   }
+  },
   "CdA_m2": 0.7898160942571956,
   "Crr": 0.009644607198832476,
   "Crr_speed_coef": -0.010868769219827415,
@@ -4112,6 +4125,7 @@
    "final_drive": "derived: EPA N/V ratio / top gear",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); map default: RoadSim fill_spec",
    "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "control": "derived: P0/P1 mild hybrid (arch note) -> A-ECMS with engine_on_moving",
    "aux.HVAC.source": "default: RoadSim fill_spec (architecture default)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 18 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -4529,6 +4543,12 @@
     0.8
    ]
   },
+  "control": {
+   "strategy": "aecms",
+   "params": {
+    "engine_on_moving": true
+   }
+  },
   "CdA_m2": 0.4978675001400916,
   "Crr": 0.010673831420221989,
   "Crr_speed_coef": 0.018982318900898278,
@@ -4554,6 +4574,7 @@
    "transmission": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page) (type, gears); ratios default: RoadSim fill_spec",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); map default: RoadSim fill_spec",
    "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "control": "derived: P0/P1 mild hybrid (arch note) -> A-ECMS with engine_on_moving",
    "aux.HVAC.source": "default: RoadSim fill_spec (architecture default)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 5 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -4639,6 +4660,12 @@
     0.8
    ]
   },
+  "control": {
+   "strategy": "aecms",
+   "params": {
+    "engine_on_moving": true
+   }
+  },
   "CdA_m2": 0.7211890695418364,
   "Crr": 0.009948186494368197,
   "Crr_speed_coef": -0.0023039278737174897,
@@ -4665,6 +4692,7 @@
    "final_drive": "derived: EPA N/V ratio / top gear",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); map default: RoadSim fill_spec",
    "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "control": "derived: P0/P1 mild hybrid (arch note) -> A-ECMS with engine_on_moving",
    "aux.HVAC.source": "default: RoadSim fill_spec (architecture default)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 4 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -4857,6 +4885,12 @@
     0.8
    ]
   },
+  "control": {
+   "strategy": "aecms",
+   "params": {
+    "engine_on_moving": true
+   }
+  },
   "CdA_m2": 0.6514649203960774,
   "Crr": 0.01010865105183115,
   "Crr_speed_coef": 0.018605902470557545,
@@ -4883,6 +4917,7 @@
    "final_drive": "derived: EPA N/V ratio / top gear",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); map default: RoadSim fill_spec",
    "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "control": "derived: P0/P1 mild hybrid (arch note) -> A-ECMS with engine_on_moving",
    "aux.HVAC.source": "default: RoadSim fill_spec (architecture default)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 5 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -4967,7 +5002,8 @@
    "soc_window": [
     0.15,
     0.95
-   ]
+   ],
+   "max_power_kW": 162.9
   },
   "aux": {
    "HVAC": {
@@ -4999,7 +5035,7 @@
    "transmission": "default: as checks/epa_vehicles.py (mg2_ratio 3.0); planetary 78/30 default: RoadSim fill_spec",
    "final_drive": "reported: EPA test-car EPA2021_TYX_21-AP3H_c0 (axle ratio)",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); maps and top speeds default: RoadSim fill_spec",
-   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec; max_power_kW derived: min(traction machines / 0.9, 9 C) (plug-in rule, 14 Nov 2026)",
    "aux.HVAC.source": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 35 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -5084,7 +5120,8 @@
    "soc_window": [
     0.15,
     0.95
-   ]
+   ],
+   "max_power_kW": 79.2
   },
   "aux": {
    "HVAC": {
@@ -5116,7 +5153,7 @@
    "transmission": "reported: hand table (MG2 reduction); planetary 78/30 default: RoadSim fill_spec",
    "final_drive": "reported: EPA test-car EPA2017_TYX_17-ZW1H_c0 (axle ratio)",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); maps and top speeds default: RoadSim fill_spec",
-   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec; max_power_kW derived: min(traction machines / 0.9, 9 C) (plug-in rule, 14 Nov 2026)",
    "aux.HVAC.source": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 76 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -5190,7 +5227,7 @@
     "max_rpm": 14000
    }
   ],
-  "final_drive": 4.267123879875902,
+  "final_drive": 9.676105373056563,
   "battery": {
    "capacity_kWh": 18.4,
    "nominal_V": 360,
@@ -5198,7 +5235,8 @@
    "soc_window": [
     0.15,
     0.95
-   ]
+   ],
+   "max_power_kW": 123.3
   },
   "aux": {
    "HVAC": {
@@ -5228,9 +5266,9 @@
    "engine.fuel": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page)",
    "engine.bsfc_map": "derived: rule on fuel, size, turbo and architecture (as checks/epa_vehicles.py)",
    "transmission": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page)",
-   "final_drive": "derived: EPA N/V ratio",
+   "final_drive": "derived: motor 14,000 rpm at 180 km/h (as checks/epa_vehicles.py)",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); maps default: RoadSim fill_spec",
-   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec; max_power_kW derived: min(traction machines / 0.9, 9 C) (plug-in rule, 14 Nov 2026)",
    "aux.HVAC.source": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 22 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -5312,7 +5350,8 @@
    "soc_window": [
     0.15,
     0.95
-   ]
+   ],
+   "max_power_kW": 138.9
   },
   "CdA_m2": 0.4498210164639582,
   "Crr": 0.006891493031912933,
@@ -5339,7 +5378,7 @@
    "transmission": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page)",
    "final_drive": "derived: EPA N/V ratio",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); maps default: RoadSim fill_spec",
-   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec; max_power_kW derived: min(traction machines / 0.9, 9 C) (plug-in rule, 14 Nov 2026)",
    "aux.HVAC.source": "default: RoadSim fill_spec (architecture default)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 33 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -5423,7 +5462,8 @@
    "soc_window": [
     0.15,
     0.95
-   ]
+   ],
+   "max_power_kW": 68.4
   },
   "CdA_m2": 0.6348567264324376,
   "Crr": 0.007647338376806125,
@@ -5449,7 +5489,7 @@
    "engine.bsfc_map": "derived: rule on fuel, size, turbo and architecture (as checks/epa_vehicles.py)",
    "transmission": "default: as checks/epa_vehicles.py (mg2_ratio 3.0); planetary 78/30 default: RoadSim fill_spec",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); maps and top speeds default: RoadSim fill_spec",
-   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec; max_power_kW derived: min(traction machines / 0.9, 9 C) (plug-in rule, 14 Nov 2026)",
    "aux.HVAC.source": "default: RoadSim fill_spec (architecture default)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 35 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -5521,7 +5561,8 @@
    "soc_window": [
     0.15,
     0.95
-   ]
+   ],
+   "max_power_kW": 68.4
   },
   "CdA_m2": 0.5217015825936067,
   "Crr": 0.007359845263076903,
@@ -5547,7 +5588,7 @@
    "engine.bsfc_map": "derived: rule on fuel, size, turbo and architecture (as checks/epa_vehicles.py)",
    "transmission": "default: as checks/epa_vehicles.py (mg2_ratio 3.0); planetary 78/30 default: RoadSim fill_spec",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); maps and top speeds default: RoadSim fill_spec",
-   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec; max_power_kW derived: min(traction machines / 0.9, 9 C) (plug-in rule, 14 Nov 2026)",
    "aux.HVAC.source": "default: RoadSim fill_spec (architecture default)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 35 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -5617,7 +5658,8 @@
    "soc_window": [
     0.15,
     0.95
-   ]
+   ],
+   "max_power_kW": 123.3
   },
   "aux": {
    "HVAC": {
@@ -5649,7 +5691,7 @@
    "transmission": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page)",
    "final_drive": "derived: EPA N/V ratio",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); maps default: RoadSim fill_spec",
-   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec; max_power_kW derived: min(traction machines / 0.9, 9 C) (plug-in rule, 14 Nov 2026)",
    "aux.HVAC.source": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 28 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -5731,7 +5773,8 @@
    "soc_window": [
     0.15,
     0.95
-   ]
+   ],
+   "max_power_kW": 123.3
   },
   "aux": {
    "HVAC": {
@@ -5763,7 +5806,7 @@
    "transmission": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page)",
    "final_drive": "derived: EPA N/V ratio",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); maps default: RoadSim fill_spec",
-   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec; max_power_kW derived: min(traction machines / 0.9, 9 C) (plug-in rule, 14 Nov 2026)",
    "aux.HVAC.source": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 20 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -5848,7 +5891,8 @@
    "soc_window": [
     0.15,
     0.95
-   ]
+   ],
+   "max_power_kW": 39.6
   },
   "CdA_m2": 0.4732011163945491,
   "Crr": 0.006102899353707486,
@@ -5875,7 +5919,7 @@
    "transmission": "reported: hand table (MG2 reduction); planetary 78/30 default: RoadSim fill_spec",
    "final_drive": "reported: EPA test-car EPA2013_TYX_12-ZW3H_c0 (axle ratio)",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); maps and top speeds default: RoadSim fill_spec",
-   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec; max_power_kW derived: min(traction machines / 0.9, 9 C) (plug-in rule, 14 Nov 2026)",
    "aux.HVAC.source": "default: RoadSim fill_spec (architecture default)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 22 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
@@ -5960,7 +6004,8 @@
    "soc_window": [
     0.15,
     0.95
-   ]
+   ],
+   "max_power_kW": 39.6
   },
   "CdA_m2": 0.762047496605005,
   "Crr": 0.006537999977570103,
@@ -5987,7 +6032,7 @@
    "transmission": "reported: hand table (MG2 reduction); planetary 78/30 default: RoadSim fill_spec",
    "final_drive": "reported: EPA test-car EPA2012_TYX_12-ZW3H_c0 (axle ratio)",
    "motors": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); maps and top speeds default: RoadSim fill_spec",
-   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec",
+   "battery": "reported: hand table (data/d3_facts.json; manufacturer figure, not re-checked against the D3 page); SOC window default: RoadSim fill_spec; max_power_kW derived: min(traction machines / 0.9, 9 C) (plug-in rule, 14 Nov 2026)",
    "aux.HVAC.source": "default: RoadSim fill_spec (architecture default)",
    "road_load_ABC": "reported: D3 test files: dyno target A/B/C (median of 12 tests)",
    "CdA_m2": "derived: from A/B/C at 1.1767 kg/m3 (spec_from_abc)",
