@@ -134,7 +134,8 @@ class Engine:
         # rotating inertia of crank/flywheel + transmission input (kg m2); Gillespie (1992) mass-factor practice
         self.J = spec.get('inertia_kgm2', (0.08 + 0.06 * self.disp) if self.T_peak < 1500 else 0.25 * self.disp)
         self._build_ool()
-        # physics v2 (thermal.py): (extra torque at the map lookup, fuel factor) for the current step, or None = v1
+        # physics v2 (thermal.py), for the current step: (extra torque at the map lookup, fuel factor, low-load fuel adder
+        # at zero brake power W, brake power where it fades out W), or None = v1
         self._x2 = None
 
     # fuel power (W) for a running engine, warm
@@ -164,7 +165,10 @@ class Engine:
     def fuel_cold(self, w, T, T_eng):
         x = self._x2
         if x is not None:
-            return self.fuel_grid(w, T + x[0]) * x[1]
+            f = self.fuel_grid(w, T + x[0]) * x[1]
+            if x[2]:
+                f += x[2] * max(0.0, 1.0 - max(T * w, 0.0) / x[3])
+            return f
         if T_eng >= self.T_hot:
             return self.fuel_grid(w, T)
         return self.fuel_grid(w, T + self.cold_dT(T_eng))
@@ -172,7 +176,10 @@ class Engine:
     def fuel_cold_vec(self, w, T, T_eng):
         x = self._x2
         if x is not None:
-            return self.fuel_grid.vec(w, T + x[0]) * x[1]
+            f = self.fuel_grid.vec(w, T + x[0]) * x[1]
+            if x[2]:
+                f = f + x[2] * np.maximum(0.0, 1.0 - np.maximum(np.asarray(T) * w, 0.0) / x[3])
+            return f
         return self.fuel_grid.vec(w, T + self.cold_dT(T_eng))
 
     def thermal_step(self, T_eng, P_fuel, P_brake, T_amb, Q_heater, dt, running):
@@ -370,15 +377,16 @@ class Battery:
         self.cooler_W = th.get('cooler_W', 0.0)
         self.T_heat_on = th.get('T_heat_on', 0.0)
         self.T_cool_on = th.get('T_cool_on', 35.0)
-        self._new = (self.Q, self.E_nom, self.R0_25, self.R1, self.soc_lo, self.soc_hi, self.Ah)
+        self._new = (self.Q, self.E_nom, self.R0_25, self.R1, self.soc_lo, self.soc_hi, self.Ah, self.T_heat_on)
 
-    def set_aging(self, cap=1.0, res=1.0, window=None):
-        """state of health for this run (aging.py): capacity and resistance relative to new, optional SOC window [lo, hi].
-        cap = res = 1 and window None restore the new pack exactly."""
-        Q, E, R0, R1, lo, hi, Ah = self._new
+    def set_aging(self, cap=1.0, res=1.0, window=None, T_heat_on=None):
+        """per-run battery state (aging.py): capacity and resistance relative to new, optional SOC window [lo, hi], optional
+        pack-heater switch-on temperature. cap = res = 1 and None restore the spec pack exactly."""
+        Q, E, R0, R1, lo, hi, Ah, Th = self._new
         self.Q = Q * cap; self.E_nom = E * cap; self.Ah = Ah * cap
         self.R0_25 = R0 * res; self.R1 = R1 * res
         self.soc_lo, self.soc_hi = (lo, hi) if window is None else (float(window[0]), float(window[1]))
+        self.T_heat_on = Th if T_heat_on is None else float(T_heat_on)
 
     def usable_kWh(self, T=25.0, P_W=None):
         """energy between the SOC window's ends at constant power P_W (default C/3), with the resistive drop at

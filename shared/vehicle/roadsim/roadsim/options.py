@@ -24,9 +24,10 @@ DEFAULTS = {
     'oil_viscosity': 'arrhenius',  # cold-friction viscosity law: 'arrhenius' (v1, 3776 K) | 'vogel' (multigrade oil, ATF)
     'cold_enrich': 0.0,            # after-start enrichment + catalyst heating: fuel fraction per K of coolant below 25 C at start (1/K)
     'warmup_enrich': 0.0,          # warm-up enrichment: fuel fraction per K of coolant below 20 C (1/K)
-    'eng_dfmep_bar': 0.0,          # extra engine friction (bar FMEP): raises idle and light-load fuel most
     'eng_eta_scale': 1.0,          # engine efficiency scale (fuel divided by it): moves every load alike
-    'eng_family_adj': {},          # per engine map {bsfc_map id: [dfmep_bar, eta_scale]}, replaces the two above for that map
+    'eng_lowload_W_per_L': 0.0,    # extra fuel power per litre at idle, fading to zero at 4 kW/L brake: tilts city vs highway
+    'eng_dfmep_bar': 0.0,          # extra engine friction (bar FMEP): moves FTP and HWFET nearly alike
+    'eng_family_adj': {},          # per engine map {bsfc_map id: {'eng_eta_scale': .., 'eng_lowload_W_per_L': .., 'eng_dfmep_bar': ..}}
     'fead_drag_Nm': 0.0,           # belt / accessory-drive drag on conventional engines (Nm at the crank)
     'axle_cold': False,            # final-drive oil + wheel-bearing drag rising in the cold (axle oil temperature node)
     'tire_thermal': False,         # tyre temperature node; rolling resistance follows it (replaces the v1 warm-up factor)
@@ -47,6 +48,7 @@ DEFAULTS = {
     'batt_soh_resistance': 1.0,    # battery resistance / new
     'batt_age': None,              # {'years', 'efc', 'T_C', 'soc_mean', 'dod'}: SOH from aging.soh (overrides the two above)
     'batt_soc_window': None,       # [lo, hi] usable SOC window override
+    'batt_heat_T_on': None,        # C: pack heater switches on below this (None = spec; v1 default spec 0 C with 3 kW on BEVs)
     'thermal_params': {},          # overrides for numbers in thermal.PARAMS
     # ---- end thermal
 
@@ -59,12 +61,12 @@ PRESETS = {
     'roadsim-physics-v1': {},
     'roadsim-physics-v2-b2': {
         'engine_thermal': 'v2', 'oil_viscosity': 'vogel', 'cold_enrich': 0.008, 'warmup_enrich': 0.004,
-        'eng_dfmep_bar': 0.0, 'eng_eta_scale': 1.0, 'eng_family_adj': {}, 'fead_drag_Nm': 0.0,
+        'eng_eta_scale': 1.0, 'eng_lowload_W_per_L': 0.0, 'eng_dfmep_bar': 0.0, 'eng_family_adj': {}, 'fead_drag_Nm': 0.0,
         'axle_cold': True, 'tire_thermal': True, 'tire_temp_coef': 0.008, 'tire_dyno_frac': 0.6,
         'hvac_model': 'v2', 'hvac_T_set': 21.5, 'hvac_recirc_heat': 0.3, 'hvac_recirc_cool': 0.8,
         'hvac_seat_heat': False, 'hvac_defrost': False, 'ambient_rh': 0.4, 'phev_electric_heat': True,
         'bus_aux': True, 'motor_staging': 2, 'motor_size_exp': 0.1,
-        'batt_soh_capacity': 1.0, 'batt_soh_resistance': 1.0, 'batt_age': None, 'batt_soc_window': None,
+        'batt_soh_capacity': 1.0, 'batt_soh_resistance': 1.0, 'batt_age': None, 'batt_soc_window': None, 'batt_heat_T_on': -10.0,
         'thermal_params': {},
     },
 }

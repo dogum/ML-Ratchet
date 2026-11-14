@@ -115,9 +115,14 @@ def test_engine_efficiency_two_parameters_tilt_city_more(car):
     u1, h1 = run(off, 'udds', it=hot, opt={'eng_dfmep_bar': 0.3}), run(off, 'hwfet', it=hot, opt={'eng_dfmep_bar': 0.3})
     du = u1['summary']['fuel_g'] / u0['summary']['fuel_g'] - 1; dh = h1['summary']['fuel_g'] / h0['summary']['fuel_g'] - 1
     assert du > dh > 0
+    # the low-load adder is the city/highway tilt: several times more on UDDS than on HWFET
+    ll = {'eng_lowload_W_per_L': 300.0}
+    du = run(off, 'udds', it=hot, opt=ll)['summary']['fuel_g'] / u0['summary']['fuel_g'] - 1
+    dh = run(off, 'hwfet', it=hot, opt=ll)['summary']['fuel_g'] / h0['summary']['fuel_g'] - 1
+    assert du > 0.01 and du > 3 * max(dh, 0.0), (du, dh)
     u2 = run(off, 'udds', it=hot, opt={'eng_eta_scale': 1.05})
     assert abs(u2['summary']['fuel_g'] / u0['summary']['fuel_g'] - 1 / 1.05) < 0.01
-    fam = run(off, 'udds', it=hot, opt={'eng_family_adj': {car['engine']['bsfc_map']: [0.0, 1.05]}})
+    fam = run(off, 'udds', it=hot, opt={'eng_family_adj': {car['engine']['bsfc_map']: {'eng_eta_scale': 1.05}}})
     assert fam['summary']['fuel_g'] == pytest.approx(u2['summary']['fuel_g'], rel=1e-12)
 
 
@@ -153,6 +158,11 @@ def test_battery_aging_and_restore():
     from roadsim.sim import get_vehicle
     b = get_vehicle(bev).battery
     assert b.usable_kWh(-10.0) < b.usable_kWh(25.0) <= b.E_nom / 3.6e6
+    # pack heater threshold: the v1 default BEV spec heats below 0 C; at -10 C threshold a -5 C trip needs no pack heat
+    c1 = run(bev, T_amb=-5.0, it=dict(battery=-5.0)); c2 = run(bev, T_amb=-5.0, it=dict(battery=-5.0), opt={'batt_heat_T_on': -10.0})
+    assert c2['summary']['batt_kWh_out'] < c1['summary']['batt_kWh_out'] - 0.3
+    run(bev, T_amb=20.0)
+    assert get_vehicle(bev).battery.T_heat_on == 0.0          # restored to the spec for a v1 run
 
 
 def test_preset_ledger_closes_everywhere():

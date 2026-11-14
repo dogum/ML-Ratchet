@@ -61,11 +61,12 @@ def efc(throughput_kWh, capacity_kWh):
 
 
 def apply(bat, opt):
-    """set the battery's state of health for one run from the options (defaults restore the new pack exactly)."""
+    """set the battery's per-run state from the options: state of health, SOC window, pack-heater threshold (defaults
+    restore the spec pack exactly)."""
     a = opt.get('batt_age')
     if a:
         s = soh(bat.chem, **a)
         cap, res = s['capacity'], s['resistance']
     else:
         cap, res = opt['batt_soh_capacity'], opt['batt_soh_resistance']
-    bat.set_aging(cap, res, opt['batt_soc_window'])
+    bat.set_aging(cap, res, opt['batt_soc_window'], opt['batt_heat_T_on'])

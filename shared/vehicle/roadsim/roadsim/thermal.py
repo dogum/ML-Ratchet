@@ -48,6 +48,8 @@ PARAMS = {
     'enrich_T_ref': 25.0,          # C: after-start enrichment counts K of coolant below this at the start
     'enrich_tau_s': 40.0,          # s: after-start enrichment / catalyst-heating decay
     'warmup_T_ref': 20.0,          # C: warm-up enrichment counts K of coolant below this
+    'lowload_kW_per_L': 4.0,       # brake power per litre where the eng_lowload_W_per_L fuel adder has faded to zero
+                                   # (idle and light city load; HWFET cruise is ~5-8 kW/L)
     # ---- axle / wheel-bearing cold drag (axle_cold)
     'axle_a0_Nm': 1.2,             # warm no-load drag torque at the wheels per driven axle (car), Nm
     'axle_a1_Nm_s': 0.025,         # ... plus per rad/s of wheel speed
@@ -138,13 +140,11 @@ PARAMS = {
     'door_delay_s': 2.0,           # doors open after this long at a stop
 }
 
-ENGINE_KEYS = ('engine_thermal', 'oil_viscosity', 'cold_enrich', 'warmup_enrich', 'eng_dfmep_bar', 'eng_eta_scale',
-               'eng_family_adj', 'fead_drag_Nm')
-
 
 def _engine_active(o):
     return (o['engine_thermal'] != 'v1' or o['oil_viscosity'] != 'arrhenius' or o['cold_enrich'] != 0.0
             or o['warmup_enrich'] != 0.0 or o['eng_dfmep_bar'] != 0.0 or o['eng_eta_scale'] != 1.0
+            or o['eng_lowload_W_per_L'] != 0.0
             or bool(o['eng_family_adj']) or o['fead_drag_Nm'] != 0.0)
 
 
@@ -201,10 +201,15 @@ class Thermal:
         self.eng_on_mod = e is not None and _engine_active(opt)
         self.eng_v2 = e is not None and opt['engine_thermal'] == 'v2'
         if e is not None:
-            fam = (opt['eng_family_adj'] or {}).get(e.map_id)
-            dfmep, eta = (fam if fam is not None else (opt['eng_dfmep_bar'], opt['eng_eta_scale']))
-            self.dT_adj = dfmep * 1e5 * e.disp * 1e-3 / (4.0 * math.pi) + (opt['fead_drag_Nm'] if self.conv else 0.0)
-            self.f_eta = 1.0 / eta
+            # engine adjustment: global keys, replaced per map family by eng_family_adj[map] = {key: value}
+            adj = dict(eng_eta_scale=opt['eng_eta_scale'], eng_lowload_W_per_L=opt['eng_lowload_W_per_L'],
+                       eng_dfmep_bar=opt['eng_dfmep_bar'])
+            adj.update((opt['eng_family_adj'] or {}).get(e.map_id) or {})
+            self.dT_adj = (adj['eng_dfmep_bar'] * 1e5 * e.disp * 1e-3 / (4.0 * math.pi)
+                           + (opt['fead_drag_Nm'] if self.conv else 0.0))
+            self.f_eta = 1.0 / adj['eng_eta_scale']
+            self.ll_W = adj['eng_lowload_W_per_L'] * e.disp                 # extra fuel power at zero brake power ...
+            self.ll_P = max(P['lowload_kW_per_L'] * 1e3 * e.disp, 1.0)     # ... fading linearly to zero at this brake power
             self.law = opt['oil_viscosity']
             self.th1 = P['vogel_theta1']; self.th2 = P['vogel_theta2']; self.pexp = P['oil_visc_exp']
             self.g20 = self._g(20.0)
@@ -213,7 +218,7 @@ class Thermal:
             self.C_oil = P['oil_C0_J_K'] + P['oil_C_J_K_per_L'] * e.disp
             self.UA_oil = P['oil_UA_W_K_per_L'] * e.disp
             self.t_run = 0.0; self.T_start = st['T_eng']; self.was_on = bool(st.get('eng_on', False)) or self.conv
-            e._x2 = (0.0, 1.0) if self.eng_on_mod else None
+            e._x2 = (0.0, 1.0, 0.0, 1.0) if self.eng_on_mod else None
         self.w_e = e.w_idle if e is not None else 0.0          # previous step's engine speed (belt-driven loads)
         # ---------------- driveline oil (transmission) viscosity law
         self.f_dl_vogel = opt['oil_viscosity'] == 'vogel'
@@ -299,7 +304,7 @@ class Thermal:
             a = o['cold_enrich'] * max(0.0, P['enrich_T_ref'] - self.T_start) * math.exp(-self.t_run / P['enrich_tau_s'])
             b = o['warmup_enrich'] * max(0.0, P['warmup_T_ref'] - st['T_eng'])
             f *= 1.0 + a + b
-        e._x2 = (dT, f)
+        e._x2 = (dT, f, self.ll_W, self.ll_P)
 
     def f_dl(self, T_dl):
         """transmission spin-loss factor vs ATF temperature (Vogel), relative to 80 C (v1: Arrhenius)."""
@@ -502,9 +507,9 @@ class Thermal:
                 Q_av = 0.0                       # PHEV: cold engine -> heat electrically, don't start for heat
             Q = min(Q_req, Q_av)
             self.Q_core_eng += Q
-            # engine wanted for heat (B1's strategies decide): the cabin needs heat the coolant can't give and (PHEV)
-            # the electric heater can't cover
-            short = min(Q_need, cab.Q_heat_max) - Q - (self.ptc_max * P['ptc_eff'] if src == 'engine+ptc' else 0.0)
+            # engine wanted for heat (B1's strategies decide): the cabin needs real heat, the coolant is too cold to give
+            # it, and (PHEV with an electric heater) the heater can't cover it. Same thresholds as v1.
+            short = min(Q_need, cab.Q_heat_max) - (self.ptc_max * P['ptc_eff'] if src == 'engine+ptc' else 0.0)
             need = self.hybrid and short > 0.3 * cab.Q_heat_max and st['T_eng'] < 55.0
             rest = Q_req - Q
             if src == 'engine+ptc' and rest > 0.0:
