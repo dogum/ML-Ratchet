@@ -1,0 +1,116 @@
+---
+// The garage (vehicle platform v2, Phase E): one vehicle, one real route, all three vehicle models on the same trip.
+// RoadSim runs are precomputed by shared/vehicle/garage/export_garage.py; the networks run in the browser (src/garage/).
+import Base from '../layouts/Base.astro';
+import { existsSync, readdirSync, statSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { getModel, ghFile } from '../lib/data';
+import { url } from '../lib/url';
+import '../garage/garage.css';
+
+const models = ['energynet', 'tripdetective', 'hybridpilot'].map((id) => getModel(id)!);
+const dir = join(process.cwd(), 'public', 'garage');
+const bytes = existsSync(dir) ? readdirSync(dir).reduce((s, f) => s + statSync(join(dir, f)).size, 0) : 0;
+const meta = existsSync(join(dir, 'routes.json')) ? JSON.parse(readFileSync(join(dir, 'routes.json'), 'utf-8')).meta : null;
+const nRuns = meta ? meta.vehicles.reduce((s: number, v: { routes: number[] }) => s + v.routes.length, 0) * meta.temps.length * 2 : 0;
+const ref = existsSync(join(dir, 'reference.json')) ? JSON.parse(readFileSync(join(dir, 'reference.json'), 'utf-8')).cases.length : 0;
+const what = [
+  ['01', 'The route', 'A real trip: VED in Ann Arbor or a Zurich trolleybus leg. Speed, lidar grade, airport weather, the GPS track.'],
+  ['02', 'EnergyNet', 'Forecasts the trip’s energy before it is driven, with a 68 % band, from the route and what an owner knows about the vehicle.'],
+  ['03', 'RoadSim', 'Drives it, second by second (physics v2): power, charge, engine, heating, and the ledger of where every joule went.'],
+  ['04', 'TripDetective', 'Reads the run’s OBD log back: powertrain, mass, drag, rolling resistance, engine size and the trip’s ledger.'],
+  ['05', 'HybridPilot', 'Drives the hybrids again, against adaptive ECMS and the dynamic-programming optimum.'],
+];
+---
+<Base title="The garage" description="Pick a vehicle and a real route: RoadSim drives it, EnergyNet forecasts it, TripDetective reads the log back and HybridPilot races the optimum — three networks running live in your browser."
+  keywords={['vehicle simulation', 'energy prediction', 'hybrid energy management', 'system identification', 'RoadSim']}>
+  <section class="wrap head">
+    <p class="kicker tick-label">Vehicle platform · RoadSim physics v2 · three networks live</p>
+    <h1 class="display h">The garage.</h1>
+    <div class="intro">
+      <p class="lead muted">Pick a vehicle and a real route. RoadSim drives the trip; EnergyNet forecast it before it was driven;
+        TripDetective reads the run’s log back to find the car; HybridPilot drives the hybrids again against the optimum.
+        Change the air temperature or the load: RoadSim’s {nRuns} runs were computed beforehand in Python, and the three
+        networks run again in your browser on every change. The truth sits next to every reading.</p>
+      <div class="models">
+        {models.map((m) => (
+          <a href={url(`models/${m.id}/`)} style={`--c:${m.accent}`}><span class="display">{m.name}</span><span class="mono faint">v{m.version} · {m.tagline}</span></a>
+        ))}
+      </div>
+    </div>
+    <ol class="what">
+      {what.map(([n, t, d]) => <li><span class="mono n">{n}</span><b>{t}</b><span class="muted">{d}</span></li>)}
+    </ol>
+  </section>
+
+  <section class="wrap">
+    <div id="garage" class="inst booting gar-boot" style="--accent:#e8a33d; --c:#e8a33d" data-base={url('garage/')} data-inst={url('instruments/')}>
+      <div class="inst-boot">
+        <span class="inst-live"><i></i> garage</span>
+        <div class="bar"><span style="width:30%"></span></div>
+        <span class="msg">{(bytes / 1048576).toFixed(1)} MB of precomputed runs, loaded per vehicle · runs entirely in your browser</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap built">
+    <div>
+      <p class="kicker tick-label">How it is built</p>
+      <h2 class="section">Simulated in Python, <em>read live</em>.</h2>
+    </div>
+    <div class="cols">
+      <p>RoadSim is Python, so the simulator runs ahead of time: six vehicles (calibrated twins of four VED exam cars, a
+        generated P2 hybrid and the ZTBus trolleybus twin) over five real exam routes, at three air temperatures and two
+        loads, pinned to RoadSim physics v2. For each run the exporter keeps the energy ledger, the traces, the OBD log a
+        VED-style logger would have written, and — for the hybrids — HybridPilot’s own inputs at every decision second and
+        the rule, adaptive ECMS and DP runs graded the way its exam grades them.</p>
+      <p>The networks are the live instruments’ own browser ports, on the same float16 weights. A parity test checks them
+        against Python on {ref} stored cases: EnergyNet, TripDetective and HybridPilot all agree to better than 1e-4.
+        Choosing a third load level would have pushed the download past 8 MB, so the grid stops at two.</p>
+      <p class="links mono">
+        <a href={ghFile('shared/vehicle/garage/export_garage.py')}>export_garage.py</a> ·
+        <a href={ghFile('shared/vehicle/roadsim/LIMITS.md')}>RoadSim LIMITS.md</a> ·
+        <a href={url('vehicle/')}>the vehicle platform</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { mountGarage } from '../garage/ui.ts';
+  const el = document.getElementById('garage') as HTMLElement | null;
+  if (el) {
+    mountGarage(el, { base: el.dataset.base!, inst: el.dataset.inst! }).catch((e) => {
+      console.error(e);
+      const m = el.querySelector('.msg');
+      if (m) m.textContent = 'The garage could not start in this browser.';
+    });
+  }
+</script>
+
+<style>
+  .head { padding-top: clamp(36px, 6vw, 80px); }
+  .h { font-size: clamp(60px, 10vw, 140px); margin: 16px 0 22px; letter-spacing: -0.035em; }
+  .intro { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 40px; align-items: end; }
+  .lead { font-size: 17.5px; max-width: 64ch; margin: 0; }
+  .models { display: flex; flex-direction: column; border-top: 1px solid var(--ink); }
+  .models a { display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-bottom: 1px solid var(--rule); text-decoration: none; }
+  .models a .display { font-size: 30px; color: var(--c); line-height: 1; }
+  .models a .mono { font-size: 11px; }
+  .models a:hover .display { text-decoration: underline; text-decoration-thickness: 1px; }
+  .what { list-style: none; padding: 0; margin: 36px 0 26px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px; border-top: 1px solid var(--rule); padding-top: 14px; }
+  .what li { display: flex; flex-direction: column; gap: 4px; font-size: 13.5px; line-height: 1.45; }
+  .what .n { color: var(--ink-3); font-size: 11px; }
+  .what b { font-weight: 500; font-size: 15px; }
+  .built { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 40px; margin-top: 72px; }
+  .built .section { margin-top: 10px; }
+  .cols p { font-size: 15.5px; color: var(--ink-2); max-width: 70ch; }
+  .links { font-size: 12px; }
+  @media (max-width: 980px) {
+    .what { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 760px) {
+    .intro, .built { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+    .what { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  }
+</style>

@@ -54,6 +54,7 @@ const released = m.released ? new Date(m.released as string).toLocaleDateString(
         {m.disclaimer && <p class="disclaimer" role="note"><b>Read this first.</b> {m.disclaimer}</p>}
         <div class="actions">
           {m.hasLab && <a class="btn" href={url(`models/${m.id}/lab/`)}>Open the interactive lab <span class="arrow">→</span></a>}
+          {m.platform === 'vehicle' && <a class="btn ghost" href={url('garage/')}>All three in the garage</a>}
           <a class="btn ghost" href={ghTree(dir)}>Code &amp; weights</a>
           <a class="btn ghost" href={ghFile(`${dir}/MODEL_CARD.md`)}>Full model card</a>
           <a class="btn ghost" href={ghFile(`${dir}/NOTEBOOK.md`)}>Lab notebook</a>

@@ -41,6 +41,7 @@ const fullTitle = title ? `${title} · ML Ratchet` : 'ML Ratchet — trained on 
 const path = Astro.url.pathname;
 const nav = [
   { href: 'models/', label: 'Models' },
+  { href: 'garage/', label: 'Garage' },
   { href: 'story/', label: 'Story' },
   { href: 'method/', label: 'Method' },
   { href: 'scoreboard/', label: 'Scoreboard' },
@@ -127,6 +128,7 @@ const canonical = new URL(path, Astro.site);
             <a href={url('scoreboard/')}>Scoreboard</a>
             <a href={url('backlog/')}>Idea backlog</a>
             <a href={url('vehicle/')}>Vehicle platform</a>
+            <a href={url('garage/')}>The garage</a>
             <a href={url('roadmap/')}>Roadmap</a>
           </div>
           <div>
