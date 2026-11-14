@@ -170,7 +170,7 @@ class ConvPT(_Base):
                 if w < e.w_min_load or w > 0.95 * e.w_max:
                     continue
                 Ti = self.box_in(T_o, w, gears[i])
-                if Ti > 0.9 * e.t_max(w):
+                if Ti > 0.9 * e.tmax_curve(w):
                     continue
                 f = e.fuel_W(w, Ti) * (1.0 if i == g else 1.03)
                 if f < bf: bf, best = f, i
@@ -183,13 +183,13 @@ class ConvPT(_Base):
         # upshift while the next gear keeps the engine above the downshift line and has torque reserve
         while g < ng - 1:
             wn = w_o * gears[g + 1]
-            if w > w_up and wn >= w_dn and (T_o <= 0 or self.box_in(T_o, wn, gears[g + 1]) < 0.85 * e.t_max(wn)):
+            if w > w_up and wn >= w_dn and (T_o <= 0 or self.box_in(T_o, wn, gears[g + 1]) < 0.85 * e.tmax_curve(wn)):
                 g += 1; w = wn
             else:
                 break
         # downshift if lugging or not enough torque
         while g > 0:
-            need = T_o > 0 and self.box_in(T_o, w, gears[g]) > 0.92 * e.t_max(max(w, e.w_idle))
+            need = T_o > 0 and self.box_in(T_o, w, gears[g]) > 0.92 * e.tmax_curve(max(w, e.w_idle))
             if (w < w_dn and w_o > 0) or need:
                 wn = w_o * gears[g - 1]
                 if wn > 0.97 * e.w_max:
@@ -275,7 +275,7 @@ class ConvPT(_Base):
                     w_p, T_p = v.tc.solve(max(w_in, 0.0), T_in)
                     w_e = max(w_p, e.w_idle)
                     T_req = T_p + P_aux / w_e
-                    Tmax = e.t_max(w_e)
+                    Tmax = e.tmax_curve(w_e)
                     if T_req > Tmax:
                         # full throttle with the converter slipping: engine/converter equilibrium
                         limited = True
@@ -288,7 +288,7 @@ class ConvPT(_Base):
                 else:   # slipping launch clutch
                     w_e = self.w_launch
                     T_req = T_in + P_aux / w_e
-                    Tmax = e.t_max(w_e)
+                    Tmax = e.tmax_curve(w_e)
                     if T_req > Tmax:
                         limited = True; T_e = Tmax; T_in_d = Tmax - P_aux / w_e
                     else:
@@ -537,9 +537,15 @@ class SplitPT(_HybridBase):
         """ctrl = engine brake power (W); 0 = engine unfueled (stopped, or spun by MG1 when the vehicle is fast)."""
         e = self.eng; rho = self.rho; k2 = self.k2; mg1 = self.mg1; mg2 = self.mg2
         T_w = np.asarray(T_w, float); P_e = np.asarray(ctrl, float)
-        T_w, P_e = _bcast(T_w, P_e)
+        uni = T_w.ndim == 0 and P_e.ndim == 1      # one wheel torque for every candidate: wheel side in scalar arithmetic
         w_r = w_w * self.FD
-        T_r = np.where(T_w >= 0, T_w / (self.FD * self.eta_dl), T_w * self.eta_dl / self.FD)
+        if uni:
+            t = float(T_w)
+            T_r = t / (self.FD * self.eta_dl) if t >= 0 else t * self.eta_dl / self.FD
+            T_w = np.full(P_e.shape, t)
+        else:
+            T_w, P_e = _bcast(T_w, P_e)
+            T_r = np.where(T_w >= 0, T_w / (self.FD * self.eta_dl), T_w * self.eta_dl / self.FD)
         w1max = mg1.w_max * 0.97
         w_lo = max((w_r - rho * w1max) / (1 + rho), 0.0)
         w_hi = (w_r + rho * w1max) / (1 + rho)
@@ -570,9 +576,12 @@ class SplitPT(_HybridBase):
         ok &= (P_batt <= env['p_dis'] + 1e-6) & (P_batt >= -env['p_chg'] - 1e-6)
         P_fuel = np.where(on, e.fuel_cold_vec(w_e, T_e, st['T_eng']), 0.0) + Ps_f
         P_mloss = (P1 - T1 * w_s) + (P2 - T2 * w2)
-        P_fd = T_r * w_r - T_w * w_w
+        P_fd = T_r * w_r - (t if uni else T_w) * w_w
+        P_tr = P_fd + Ps_slip
+        if uni and np.ndim(P_tr) == 0:
+            P_tr = np.full(P_e.shape, P_tr)
         return dict(ok=ok, P_fuel=P_fuel, P_batt=P_batt, P_e=T_e * w_e - Ps_e, w_e=w_e, T_e=T_e, on=on,
-                    P_mot=P_mloss + (Ps_el - Ps_e - Ps_slip), P_trans=P_fd + Ps_slip, T_w=T_w, T1=T1, w_s=w_s, T2=T2,
+                    P_mot=P_mloss + (Ps_el - Ps_e - Ps_slip), P_trans=P_tr, T_w=T_w, T1=T1, w_s=w_s, T2=T2,
                     w2=np.full_like(T2, w2), P_m_el=P2, P_g_el=P1)
 
     def max_ctrl(self):
@@ -622,24 +631,37 @@ class P2PT(_HybridBase):
         """ctrl = engine torque fraction of T_max at shaft speed (0 = engine off / EV, K0 open)."""
         e = self.eng; m = self.m; v = self.v
         T_w = np.asarray(T_w, float); fr = np.asarray(ctrl, float)
-        T_w, fr = _bcast(T_w, fr)
+        # one wheel torque for every candidate (the usual call): the wheel-side terms in scalar arithmetic (the same
+        # operations as the numpy branches, on one value), broadcast where the candidates come in
+        uni = T_w.ndim == 0 and fr.ndim == 1
         w_o = w_w * self.FD
-        T_o = np.where(T_w >= 0, T_w / (self.FD * self.eta_dl), T_w * self.eta_dl / self.FD)
-        Tref = float(np.max(T_o)) if T_o.size else 0.0
+        if uni:
+            t = float(T_w)
+            T_o = t / (self.FD * self.eta_dl) if t >= 0 else t * self.eta_dl / self.FD
+            Tref = T_o
+            T_w = np.full(fr.shape, t)
+        else:
+            T_w, fr = _bcast(T_w, fr)
+            T_o = np.where(T_w >= 0, T_w / (self.FD * self.eta_dl), T_w * self.eta_dl / self.FD)
+            Tref = float(np.max(T_o)) if T_o.size else 0.0
         g = env.get('gear')
         self.conv.f_dl = env.get('f_dl', 1.0)
         if g is None:
             g = self.conv.choose_gear(max(Tref, 0.0), w_o, st, max(Tref * w_o, 0.0))
         gr = v.gears[g]
         w_in = w_o * gr
-        T_in = np.where(T_o >= 0, T_o / (gr * self.eta_g), T_o * self.eta_g / gr) + (self.c0 + self.c1 * w_in) * env.get('f_dl', 1.0)
+        if uni:
+            T_in = (T_o / (gr * self.eta_g) if T_o >= 0 else T_o * self.eta_g / gr) + (self.c0 + self.c1 * w_in) * env.get('f_dl', 1.0)
+        else:
+            T_in = np.where(T_o >= 0, T_o / (gr * self.eta_g), T_o * self.eta_g / gr) + (self.c0 + self.c1 * w_in) * env.get('f_dl', 1.0)
         on = fr > 1e-6
         alpha = env.get('a', 0.0) / self.r * self.FD * gr
         J = np.where(on, e.J, 0.0) + self.J_m
         T_in = T_in + J * alpha             # rotating inertia (engine when coupled + motor rotor) supplied by the shaft
         P_J = J * alpha * w_in
         if self.tc_active(w_in, g, env):
-            return self._evaluate_tc(T_w, w_w, w_o, T_o, T_in, w_in, J, alpha, P_J, on, fr, g, st, env)
+            return self._evaluate_tc(T_w, w_w, w_o, np.full(fr.shape, T_o) if uni else T_o, T_in, w_in, J, alpha, P_J, on,
+                                     fr, g, st, env)
         # engine can only couple above its minimum loaded speed; below that it may slip-launch at w_launch
         slip = on & (w_in < e.w_min_load)
         w_e = np.where(on, np.maximum(w_in, e.w_min_load), 0.0)
@@ -661,7 +683,7 @@ class P2PT(_HybridBase):
         P_fuel = np.where(on, e.fuel_cold_vec(w_e, T_e, st['T_eng']), 0.0) + Ps_f
         P_slip = np.where(slip, T_e * (w_e - w_in), 0.0)
         P_box = (T_in - J * alpha) * w_in - T_o * w_o
-        P_fd = T_o * w_o - T_w * w_w
+        P_fd = T_o * w_o - (t if uni else T_w) * w_w
         return dict(ok=ok, P_fuel=P_fuel, P_batt=P_batt, P_e=T_e * w_e - Ps_e, w_e=w_e, T_e=T_e, on=on,
                     P_mot=P_m - T_m * w_in + 0.0 * P_J + (Ps_el - Ps_e - Ps_slip),
                     P_trans=P_box + P_fd + P_slip + P_J + Ps_slip, T_w=T_w, T_m=T_m, w_m=np.full_like(T_m, w_in), gear=g,
