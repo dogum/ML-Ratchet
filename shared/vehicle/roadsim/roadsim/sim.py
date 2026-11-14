@@ -226,6 +226,10 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
     if hybrid and it.get('eng_on') is not None:
         st['eng_on'] = bool(it['eng_on'])
     th = _thermal.make(veh, opt, trip, trip_inputs, st, it, dt)     # B2 thermal/HVAC/accessories (None = v1)
+    aux_base_o = None if (opt.get('aux_base_W') is None or veh.hd) else float(opt['aux_base_W'])   # v2: light-duty 12 V base load
+    _onr = float((opt.get('onroad_aux_W') or {}).get(arch, 0.0))
+    if _onr and veh.tire_temp_effects and not veh.hd:      # v2: on-road extra load by architecture (never on a dyno spec)
+        aux_base_o = (veh.aux_base if aux_base_o is None else aux_base_o) + _onr
 
     if human:
         from .driver import HumanDriver
@@ -328,7 +332,7 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
                 Q_tms = bat.heater_W; P_tms = bat.heater_W / 0.95
             elif bat.cooler_W > 0 and st['T_bat'] > bat.T_cool_on:
                 Q_tms = -bat.cooler_W; P_tms = bat.cooler_W / 2.5
-        base = veh.aux_base
+        base = veh.aux_base if aux_base_o is None else aux_base_o
         if arch == 'conv':
             P_aux_mech = (base + (P_hvac_el)) / ETA_ALT + P_hvac_mech
             P_aux_el = 0.0

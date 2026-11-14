@@ -188,7 +188,7 @@ class ConvPT(_Base):
             locked = w_in >= self.w_launch * 0.98
         o = getattr(self, 'opt', None)
         slip = 0.0
-        if o and t == 'AT' and v.tc is not None:     # v2 options (default off = v1): D3 dev converter behaviour
+        if o and t == 'AT' and v.tc is not None and not v.hd:   # v2 options (default off = v1): D3 dev LD converter behaviour
             if g < int(o.get('conv_tc_open_gears', 0) or 0):
                 locked = False                       # converter open in the lowest gears (D3 Camry XLE / CX9: 1st, 2nd)
             elif locked and T_in > 0.0 and g < self.ng - 1:

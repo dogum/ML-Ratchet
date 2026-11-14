@@ -7,7 +7,8 @@ are standard schedules (UDDS, HWFET, US06, SC03, LA92, NYCC, NEDC, WLTC; >= 60 %
 grade) are simulated; steady states, WOTs, grades and coast-downs are not.
 
 Compared per test (simulated vs measured):
-  fuel_g          measured fuel flow (or the emissions modal fuel when that is all the file has)
+  fuel_g          measured fuel flow (or the emissions modal fuel when that is all the file has); for conventional
+                  cars the error is over the recognised schedule phases (fuel_pct; whole file: fuel_test_pct)
   fuel_corr_g     hybrids: fuel + net battery energy / (0.33 x 0.90) / LHV on both sides (SAE J1711-style), the
                   headline for HEVs because the twin's SOC path differs from the car's
   batt_Wh         net DC battery energy (+ = discharge): the headline for BEVs
@@ -271,9 +272,23 @@ def run_one(job):
                segments=seg_rows, hvac_sequence=seq, unmetered_gaps_s=int(gap_mask.sum()),
                wall_s=round(time.time() - t0, 2))
     err = {}
+    # fuel over the recognised schedule phases only (drops coast-downs, warm-ups and holds that some files carry after
+    # or before the schedule: in a coast-down the real car is in neutral, the twin follows the trace in gear)
+    fm = A.get('fuel_rate')
+    if phases and fm is not None and np.isfinite(fm).any():
+        pm = np.zeros(n, bool)
+        for p in phases:
+            pm[max(0, p['start']):min(n, p['end'] + 1)] = True
+        pm &= ~gap_mask
+        if pm.sum() > 60:
+            res['sim']['fuel_phases_g'] = float(np.sum(out['fuel_rate'][pm]))
+            res['meas']['fuel_phases_g'] = float(np.nansum(fm[pm]))
+            res['phase_coverage'] = round(float(pm.mean()), 3)
     if arch == 'conv':
         if meas['fuel_g'] and meas['fuel_g'] > 20:
-            err['fuel_pct'] = pct(sim['fuel_g'], meas['fuel_g'])
+            err['fuel_test_pct'] = pct(sim['fuel_g'], meas['fuel_g'])
+            fp = res['meas'].get('fuel_phases_g')
+            err['fuel_pct'] = pct(res['sim']['fuel_phases_g'], fp) if fp and fp > 20 else err['fuel_test_pct']
         err['primary_pct'] = err.get('fuel_pct')
     elif arch.startswith('hev'):
         if meas['fuel_g'] and meas['fuel_g'] > 20:

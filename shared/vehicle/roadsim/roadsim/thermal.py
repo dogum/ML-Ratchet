@@ -145,7 +145,7 @@ def _engine_active(o):
     return (o['engine_thermal'] != 'v1' or o['oil_viscosity'] != 'arrhenius' or o['cold_enrich'] != 0.0
             or o['warmup_enrich'] != 0.0 or o['eng_dfmep_bar'] != 0.0 or o['eng_eta_scale'] != 1.0
             or o['eng_lowload_W_per_L'] != 0.0
-            or bool(o['eng_family_adj']) or o['fead_drag_Nm'] != 0.0)
+            or bool(o['eng_family_adj']) or o['fead_drag_Nm'] != 0.0 or o.get('eng_transient_fuel', 0.0) != 0.0)
 
 
 def active(o):
@@ -218,6 +218,10 @@ class Thermal:
             self.C_oil = P['oil_C0_J_K'] + P['oil_C_J_K_per_L'] * e.disp
             self.UA_oil = P['oil_UA_W_K_per_L'] * e.disp
             self.t_run = 0.0; self.T_start = st['T_eng']; self.was_on = bool(st.get('eng_on', False)) or self.conv
+            # transient fuel: gasoline engines in light-duty vehicles (the D3 evidence); 0 for diesel and heavy duty
+            self.k_tr = (float(opt.get('eng_transient_fuel', 0.0) or 0.0) / max(e.T_peak, 1.0)
+                         if (veh.fuel == 'gasoline' and not veh.hd) else 0.0)   # per (Nm/s)
+            self.T_e_prev = None
             e._x2 = (0.0, 1.0, 0.0, 1.0) if self.eng_on_mod else None
         self.w_e = e.w_idle if e is not None else 0.0          # previous step's engine speed (belt-driven loads)
         # ---------------- driveline oil (transmission) viscosity law
@@ -304,7 +308,10 @@ class Thermal:
             a = o['cold_enrich'] * max(0.0, P['enrich_T_ref'] - self.T_start) * math.exp(-self.t_run / P['enrich_tau_s'])
             b = o['warmup_enrich'] * max(0.0, P['warmup_T_ref'] - st['T_eng'])
             f *= 1.0 + a + b
-        e._x2 = (dT, f, self.ll_W, self.ll_P)
+        if self.k_tr and self.T_e_prev is not None:
+            e._x2 = (dT, f, self.ll_W, self.ll_P, self.T_e_prev, self.k_tr / self.dt)
+        else:
+            e._x2 = (dT, f, self.ll_W, self.ll_P)
 
     def f_dl(self, T_dl):
         """transmission spin-loss factor vs ATF temperature (Vogel), relative to 80 C (v1: Arrhenius)."""
@@ -566,6 +573,7 @@ class Thermal:
                 self.t_run += dt
             self.was_on = running
             self.w_e = plan.get('w_e', 0.0) if running else 0.0
+            self.T_e_prev = float(plan.get('T_e', 0.0)) if running else None
         # ---- cabin
         sol = self.solar[k] * self.cab.A_solar
         if self.hvac2:

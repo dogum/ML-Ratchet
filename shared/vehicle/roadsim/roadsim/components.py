@@ -168,6 +168,8 @@ class Engine:
             f = self.fuel_grid(w, T + x[0]) * x[1]
             if x[2]:
                 f += x[2] * max(0.0, 1.0 - max(T * w, 0.0) / x[3])
+            if len(x) > 4:                       # transient fuel: torque rise since the last step (option eng_transient_fuel)
+                f *= 1.0 + x[5] * max(0.0, T - x[4])
             return f
         if T_eng >= self.T_hot:
             return self.fuel_grid(w, T)
@@ -179,6 +181,8 @@ class Engine:
             f = self.fuel_grid.vec(w, T + x[0]) * x[1]
             if x[2]:
                 f = f + x[2] * np.maximum(0.0, 1.0 - np.maximum(np.asarray(T) * w, 0.0) / x[3])
+            if len(x) > 4:
+                f = f * (1.0 + x[5] * np.maximum(0.0, np.asarray(T) - x[4]))
             return f
         return self.fuel_grid.vec(w, T + self.cold_dT(T_eng))
 

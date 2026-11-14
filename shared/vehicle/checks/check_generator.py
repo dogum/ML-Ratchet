@@ -32,7 +32,7 @@ def fe(spec, cyc):
     veh = get_vehicle(spec)
     o = simulate(spec, make_trip(cyc, T_amb=23.9, rho_air=RHO_REF), init_temps=dict(engine=88.0, tire_warm=1.0, driveline=80.0),
                  init_soc=None if veh.arch in ('conv', 'bev') else 0.5 * (veh.battery.soc_lo + veh.battery.soc_hi), record=False,
-                 options=_opts.get())
+                 options=_opts.merged({'onroad_aux_W': {}}))
     S = o['summary']; mi = S['distance_m'] / MILE
     if veh.arch == 'bev':
         return EPA_KWH_PER_GAL / (o['ledger']['batt_chem_out'] * 1e3 / KWH / mi / ETA_CHARGE)
@@ -45,7 +45,7 @@ def fe(spec, cyc):
 def zero60(spec):
     v = np.minimum(np.arange(40) * 20.0, 70 * MPH)          # demand far above capability -> WOT
     o = simulate(spec, make_trip(v, T_amb=20), init_temps=dict(engine=88.0, tire_warm=1.0, driveline=80.0),
-                 driver={'a_max': 12.0}, check=False, options=_opts.get())
+                 driver={'a_max': 12.0}, check=False, options=_opts.merged({'onroad_aux_W': {}}))
     va = o['v']
     i = np.argmax(va >= 60 * MPH)
     if va[i] < 60 * MPH:

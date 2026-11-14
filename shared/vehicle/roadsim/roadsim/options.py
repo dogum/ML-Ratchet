@@ -61,9 +61,16 @@ DEFAULTS = {
     'eng_lowload_W_per_L': 0.0,    # extra fuel power per litre at idle, fading to zero at 4 kW/L brake: tilts city vs highway
     'eng_dfmep_bar': 0.0,          # extra engine friction (bar FMEP): moves FTP and HWFET nearly alike
     'eng_family_adj': {},          # per engine map {bsfc_map id: {'eng_eta_scale': .., 'eng_lowload_W_per_L': .., 'eng_dfmep_bar': ..}}
-    'conv_tc_open_gears': 0,       # conventional automatics: converter never locks in the lowest N gears (0 = v1 lock-up rule)
-    'conv_tc_slip_rpm': 0.0,       # conventional automatics: controlled lock-up slip under drive in every locked gear but the top, rpm
+    'aux_base_W': None,            # light-duty 12 V base electrical load (W) replacing the class default (None = spec / v1)
+    'onroad_aux_W': {},            # {architecture: W} light-duty on-road extra load (electrical-equivalent, 12 V supply): lights and
+                                   # what real roads, tyres and loads add over the coast-down; only on road runs (tyre
+                                   # temperature effects on), never on a dyno spec. Fitted on VED dev twins
+    'conv_tc_open_gears': 0,       # light-duty conventional automatics: converter never locks in the lowest N gears (0 = v1 lock-up rule)
+    'conv_tc_slip_rpm': 0.0,       # light-duty conventional automatics: controlled lock-up slip under drive in every locked gear but the top, rpm
     'fead_drag_Nm': 0.0,           # belt / accessory-drive drag on conventional engines (Nm at the crank)
+    'eng_transient_fuel': 0.0,     # s: extra fuel fraction per (brake-torque rise per second / peak torque): tip-in
+                                   # enrichment and port/wall wetting that a steady-state map lacks; light-duty gasoline
+                                   # engines only (0 = v1)
     'axle_cold': False,            # final-drive oil + wheel-bearing drag rising in the cold (axle oil temperature node)
     'tire_thermal': False,         # tyre temperature node; rolling resistance follows it (replaces the v1 warm-up factor)
     'tire_temp_coef': 0.008,       # 1/K rolling-resistance change per K of tyre temperature (ISO 28580, passenger tyres)
