@@ -37,6 +37,17 @@ DEFAULTS = {
     'regen_share': {},                  # {architecture: s}: series (cooperative) brake blending gives regen at most s x the braking
                                         # force, friction brakes the rest (1 = v1: regen up to the motor/battery/stability caps)
     'hybrid_chg_cap_frac': None,        # ECMS family: battery charging from the engine while driving <= this x engine P_max (None = no cap)
+    # v2.1 hybrid options (calibration agent 3, 14 Nov 2026): every one acts on hybrid / plug-in architectures only
+    'p2_regen_fade_kph': None,          # [lo, hi] km/h: P2 regen fades linearly from full at hi to 0 at lo (downshift to
+                                        # first and launch-clutch opening; None = v1 fade from regen.min_speed_mps)
+    'p2_launch_kph': None,              # P2: engine on while moving below this speed with wheel demand > p2_launch_kW
+    'p2_launch_kW': None,               # ... (launch with the engine through the slipping clutch; None = off)
+    'p2_engine_on_kph': None,           # P2: engine on above this speed with positive wheel demand (None = off)
+    'p2_ev_max_frac': None,             # P2: electric-only driving only below this x P2 motor power of wheel demand (None = off)
+    'ecms_s0': {},                      # {architecture: s0}: ECMS / A-ECMS base equivalence factor (v1: 2.6, or the spec's
+                                        # control params); a higher s0 prices battery energy higher (less charge-then-EV)
+    'hybrid_runon_s': None,             # s: a running engine keeps running this long into a braking event, at the
+                                        # strategy's lowest engine-on point (None = v1: it stops at once)
     'series_direct_drive': False,       # e:HEV/i-MMD lock-up clutch: engine drives the wheels directly at cruise
     'series_dd_rpm_per_kph': 20.0,      # rpm per km/h, engine speed in direct drive (~2000 rpm at 100 km/h)
     'series_dd_v_min_kph': 70.0,        # km/h, lowest direct-drive speed
@@ -45,6 +56,10 @@ DEFAULTS = {
     'series_dd_eta': 0.96,              # -, engine-to-wheel gear efficiency in direct drive (two meshes + final drive)
     'powersplit_calibration': False,    # Toyota-type production rules on power-split strategies (below)
     'ps_engine_on_kph': 72.0,           # km/h, engine fuelled whenever driving above this (with positive demand)
+    'ps_engine_on_min_kW': 0.0,         # kW, ... and a wheel demand above this (v2.1 option; 0 = any positive demand)
+    'phev_ps_engine_on_kph': None,      # km/h, the same rule for plug-in power-splits (None = ps_engine_on_kph)
+    'phev_series_cs_on_kph': None,      # km/h, series plug-ins in charge sustaining: engine on above this speed with
+                                        # positive demand (Volt-type extended-range operation; None = off)
     'ps_warmup_C': 40.0,                # C, engine held on (also at stops) until the coolant reaches this
     'ps_cat_hold_s': 40.0,              # s, engine kept running this long after a cold start (catalyst light-off)
     'ps_cat_cold_C': 35.0,              # C, a start below this coolant temperature is a cold start
@@ -195,3 +210,25 @@ def _load_v2():
 _v2 = _load_v2()
 if _v2 is not None:
     PRESETS['roadsim-physics-v2'] = _v2
+
+
+def _load_v21():
+    """the v2.1 preset (hybrid fix pass, 14 Nov 2026): v2 plus the kept changes of data/calibration_v2_1.json."""
+    import json, os
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'calibration_v2_1.json')
+    if not os.path.exists(p) or _v2 is None:
+        return None
+    with open(p, encoding='utf-8') as f:
+        ch = json.load(f)['changes']
+    bad = sorted(set(ch) - set(DEFAULTS))
+    if bad:
+        raise KeyError(f'calibration_v2_1.json: unknown RoadSim options {bad}')
+    out = copy.deepcopy(_v2)
+    for k, v in copy.deepcopy(ch).items():
+        out[k] = dict(out.get(k) or {}, **v) if k == 'thermal_params' else v      # thermal_params: merged with v2's
+    return out
+
+
+_v21 = _load_v21()
+if _v21 is not None:
+    PRESETS['roadsim-physics-v2.1'] = _v21

@@ -541,6 +541,14 @@ class P2PT(_HybridBase):
         _HybridBase.reset(self, st)
         st['gear'] = 0
 
+    def regen_force_cap(self, u, st, P_aux, T_bat, soc, v_rc):
+        F = _ElecBase.regen_force_cap(self, u, st, P_aux, T_bat, soc, v_rc)
+        fk = self._o('p2_regen_fade_kph')
+        if fk:
+            lo, hi = fk[0] / 3.6, fk[1] / 3.6
+            F *= min(max((u - lo) / max(hi - lo, 1e-6), 0.0), 1.0)
+        return F
+
     def _regen_motor(self, u):
         w_o = u / self.r * self.FD
         g = self._gear_for_regen(w_o)

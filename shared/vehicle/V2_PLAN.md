@@ -75,3 +75,11 @@ forecast, the RoadSim run, TripDetective reading the log back, HybridPilot drivi
   test). Every RoadSim call under models/ is pinned to v1, so the three released models, their demos and
   tests/golden are unchanged until Phase D rebuilds them. VED CR-Z twins are P1 mild hybrids and are excluded from the
   hybrid targets (low-confidence label). Decisions: roadsim/CALIBRATION.md, rungs H0-H9.
+- **14 Nov 2026 — physics v2.1 frozen, not made the default (calibration agent 3).** A hybrid fix pass on a wider dev
+  set (55 EPA dev-family hybrid / plug-in records, D3 dev hybrids and plug-ins at 10 Hz, VED dev twins), with a fresh
+  exam frozen first (`checks/exam2_hybrids.json`: 108 VED exam HEV/PHEV cars, 409 unseen EPA hybrid records) and a v2
+  fingerprint guard. Kept: engine run-on into braking (2 s, measured on six D3 dev hybrids). Rejected: every physical
+  replacement of the P2 brake-blending share, P2 engine rules, Toyota speed-rule changes, plug-in CS rules, cold and
+  heat thresholds (CALIBRATION.md H12-H20). `options='roadsim-physics-v2.1'` runs it; PHYSICS_VERSION stays
+  roadsim-physics-v2 because the dev fuel/energy gain is not clear (the gain is in engine operation: VED Toyota
+  engine-on gap -10.9 -> -4.9 points). models/ stay pinned to v1.

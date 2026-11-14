@@ -152,9 +152,16 @@ def run_one(job):
         ctl['params'] = dict(ctl.get('params') or {}, soc_target=float(init_soc))
         spec['control'] = ctl
         veh = get_vehicle(spec)
+    cs_test = arch.startswith('phev') and (soc_src.startswith('inferred: charge-sustaining')
+                                           or (soc_src == 'measured' and init_soc < veh.battery.soc_lo + 0.10))
     if arch.startswith('phev') and soc_src == 'measured' and init_soc < veh.battery.soc_lo + 0.10:
         # a charge-sustaining plug-in test: sustain where the car sustained (Energi 0.16-0.20 logged vs the twin's CS
         # level 0.20: the twin charged 150-500 Wh in a UDDS)
+        # A logged CS SOC below the twin's window (Prius Prime 0.12-0.15, Volt 0.13-0.16 vs the twin's 0.15) is on
+        # another scale: the twin then sustains at its own CS level (window low + 0.05) and starts there; else it
+        # charged 0.3-0.6 kWh from the engine in a UDDS to climb into its window (calibration agent 3, 14 Nov 2026).
+        if init_soc < veh.battery.soc_lo + 0.01:
+            init_soc, soc_src = veh.battery.soc_lo + 0.05, soc_src + ' (below the twin window: its CS level)'
         ctl = dict(spec.get('control') or {})
         from roadsim.strategies import DEFAULT as _DEF
         ctl['strategy'] = ctl.get('strategy') or _DEF[arch]
@@ -292,7 +299,7 @@ def run_one(job):
     res = dict(test_id=r['test_id'], vehicle=r['vehicle'], vehicle_id=r['vehicle_id'], split=job['split'], architecture=arch,
                category=r['category'], cycle=r['cycle'], cycle_seq=r.get('cycle_seq'), T_amb_C=Ta, T_class=cls,
                start=r.get('start'), solar=bool(r.get('solar_lamps')), hvac_on=bool(hvac_on), init_soc=init_soc,
-               init_soc_source=soc_src, init_temps=init, fuel_source=r.get('fuel_source'), sim=sim, meas=meas,
+               init_soc_source=soc_src, cs_test=bool(cs_test), init_temps=init, fuel_source=r.get('fuel_source'), sim=sim, meas=meas,
                segments=seg_rows, hvac_sequence=seq, unmetered_gaps_s=int(gap_mask.sum()),
                wall_s=round(time.time() - t0, 2))
     err = {}
@@ -334,6 +341,16 @@ def run_one(job):
             em = mf * lhv / 3.6e6 + mb / 1000; es = sim['fuel_g'] * lhv / 3.6e6 + sim['batt_Wh'] / 1000
             err['energy_pct'] = pct(es, em); res['meas']['energy_kWh'] = em; res['sim']['energy_kWh'] = es
         err['primary_pct'] = err.get('energy_pct')
+        res['primary_metric'] = 'energy'
+        if cs_test and mf > 20 and mb is not None:
+            # charge-sustaining test: HEV operation, so the HEV headline (fuel corrected by net battery energy, SAE
+            # J1711-style). Counting the battery 1:1 with fuel energy made a twin that drains its pack look frugal
+            # (calibration agent 3, 14 Nov 2026; applied to every physics version)
+            fc_m = mf + mb * 3600 / ETA_BATT_EQ / lhv
+            fc_s = sim['fuel_g'] + sim['batt_Wh'] * 3600 / ETA_BATT_EQ / lhv
+            err['fuel_corr_pct'] = pct(fc_s, fc_m)
+            res['meas']['fuel_corr_g'] = fc_m; res['sim']['fuel_corr_g'] = fc_s
+            err['primary_pct'] = err['fuel_corr_pct']; res['primary_metric'] = 'fuel_corr (charge sustaining)'
     elif arch == 'bev':
         if meas['batt_Wh'] is not None and meas['batt_Wh'] > 50:
             err['batt_pct'] = pct(sim['batt_Wh'], meas['batt_Wh'])

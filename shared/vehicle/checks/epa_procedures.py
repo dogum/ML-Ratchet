@@ -136,17 +136,18 @@ def trip_for(name, T=T_TEST, **kw):
     return make_trip(name, T_amb=T, rho_air=RHO_REF, **kw)
 
 
-def precondition(spec, name, strategy=None, n=2, init=None, T=T_TEST, extra=None, solar=0.0):
-    """run the cycle n times warm to settle SOC/temperatures; returns final state."""
+def precondition(spec, name, strategy=None, n=2, init=None, T=T_TEST, extra=None, solar=0.0, soc0=None):
+    """run the cycle n times warm to settle SOC/temperatures; returns final state. soc0: start SOC (None = the
+    simulator's default; plug-in charge-sustaining tests pass their CS level)."""
     st = init or dict(engine=88.0, cabin=T, battery=T, tire_warm=1.0, driveline=80.0)
-    soc = None
+    soc = soc0
     for _ in range(n):
         o = _sim(spec, trip_for(name, T, solar=solar), extra, strategy=strategy, init_soc=soc, init_temps=st, record=False)
         st = o['final_state']; soc = st['soc']
     return st
 
 
-def ftp(spec, strategy=None, T=T_TEST, cold=True):
+def ftp(spec, strategy=None, T=T_TEST, cold=True, soc0=None):
     """FTP-75. At T <= 0 C this is the cold FTP (1066.710): heater on in automatic 72 F with outside air, soaked tyres."""
     veh = get_vehicle(spec)
     fuel = veh.fuel
@@ -156,10 +157,10 @@ def ftp(spec, strategy=None, T=T_TEST, cold=True):
         spec = test_spec(spec, hvac=True, T_set=T_SET_72F)
         extra = COLD_HVAC
     init = dict(engine=T, cabin=T, battery=T, tire_warm=0.0 if cold_test else 1.0)
-    soc0 = None
+    soc_given, soc0 = soc0, None
     if veh.battery is not None:
-        stp = precondition(spec, 'udds', strategy, n=2, T=T, extra=extra)
-        soc0 = stp['soc']
+        stp = precondition(spec, 'udds', strategy, n=2, T=T, extra=extra, soc0=soc_given)
+        soc0 = stp['soc'] if soc_given is None else soc_given     # a given soc0 (plug-in CS test) is also the test's start SOC
     if not cold:
         init = dict(engine=88.0, cabin=T, battery=T, tire_warm=1.0, driveline=80.0)
     o1 = _sim(spec, trip_for('udds', T), extra, strategy=strategy, init_soc=soc0, init_temps=init)
@@ -179,10 +180,11 @@ def ftp(spec, strategy=None, T=T_TEST, cold=True):
                 soc_net=[b1 + b2 + b3], raw_fuel_g=f1 + f2 + f3)
 
 
-def hot_cycle(spec, name, strategy=None, T=T_TEST):
+def hot_cycle(spec, name, strategy=None, T=T_TEST, soc0=None):
     veh = get_vehicle(spec)
-    st = precondition(spec, name, strategy, n=2 if veh.battery is not None else 1, T=T)
-    o = _sim(spec, trip_for(name, T), strategy=strategy, init_soc=st['soc'] if veh.battery is not None else None, init_temps=st)
+    st = precondition(spec, name, strategy, n=2 if veh.battery is not None else 1, T=T, soc0=soc0)
+    soc = (st['soc'] if soc0 is None else soc0) if veh.battery is not None else None
+    o = _sim(spec, trip_for(name, T), strategy=strategy, init_soc=soc, init_temps=st)
     N = len(o['v'])
     if veh.arch == 'bev':
         E_dc = o['ledger']['batt_chem_out'] * 1e3       # J
@@ -197,7 +199,7 @@ def hot_cycle(spec, name, strategy=None, T=T_TEST):
                 trace_max=o['summary']['trace_max_mps'], batt_J=b, o=o)
 
 
-def sc03(spec, strategy=None, return_run=False):
+def sc03(spec, strategy=None, return_run=False, soc0=None):
     """SC03 (1066.835): 35 C, 850 W/m2, A/C maximum (recirculation, automatic 72 F). Preconditioning drive over the first
     505 s of the UDDS (A/C on, lamps on), then a 10-minute soak with the engine off under the lamps, then SC03. Hybrids
     first settle their SOC over two SC03 runs (as before)."""
@@ -207,8 +209,8 @@ def sc03(spec, strategy=None, return_run=False):
     st = dict(engine=88.0, cabin=T, battery=T, tire_warm=1.0, driveline=80.0)
     soc = None
     if veh.battery is not None:
-        stp = precondition(s, 'sc03', strategy, n=2, init=dict(st, cabin=24.0), T=T, extra=SC03_HVAC, solar=SOL)
-        soc = stp['soc']; st = dict(stp, cabin=T)
+        stp = precondition(s, 'sc03', strategy, n=2, init=dict(st, cabin=24.0), T=T, extra=SC03_HVAC, solar=SOL, soc0=soc0)
+        soc = stp['soc'] if soc0 is None else soc0; st = dict(stp, cabin=T)
         st.pop('cabin_mass', None)
     op = _sim(s, make_trip(cycle('udds')[:506], T_amb=T, rho_air=RHO_REF, solar=SOL), SC03_HVAC, strategy=strategy,
               init_soc=soc, init_temps=st, record=False)

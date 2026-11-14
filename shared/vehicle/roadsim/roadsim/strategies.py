@@ -92,6 +92,7 @@ class HybridStrategy(Strategy):
                 self.min_off_s = float(o['hybrid_min_off_s'])
         self.hold_off_rule = o.get('hybrid_min_off_s') is not None
         self.ps_rules = bool(o.get('powersplit_calibration')) and veh.arch in ('hev_powersplit', 'phev_powersplit')
+        self.p2_rules = veh.arch == 'hev_parallel_p2' and any(o.get(k) is not None for k in ('p2_launch_kph', 'p2_engine_on_kph', 'p2_ev_max_frac'))
         self.cold_start = st['T_eng'] < o.get('ps_cat_cold_C', 35.0)
         self.t_run = 0.0
         self.heat_hold = False
@@ -136,7 +137,10 @@ class HybridStrategy(Strategy):
         """Toyota-type production calibration (option powersplit_calibration): engine fuelled above a road speed, held on
         through warm-up and catalyst light-off after a cold start, and on for a heater request."""
         o = self.o
-        if ctx.get('moving') and ctx['u'] > o.get('ps_engine_on_kph', 72.0) / 3.6 and ctx['P_dem_mech'] > 0.0:
+        kph = o.get('ps_engine_on_kph', 72.0)
+        if self.veh.arch == 'phev_powersplit' and o.get('phev_ps_engine_on_kph') is not None:
+            kph = o['phev_ps_engine_on_kph']
+        if ctx.get('moving') and ctx['u'] > kph / 3.6 and ctx['P_dem_mech'] > 1e3 * float(o.get('ps_engine_on_min_kW') or 0.0):
             return True
         if st['T_eng'] < o.get('ps_warmup_C', 40.0):
             return True
@@ -161,7 +165,26 @@ class HybridStrategy(Strategy):
                 return True     # drivability: no engine pull-out while the driver asks for power
             if self.ps_rules and self.production_on(st, ctx):
                 return True
+            if self.p2_rules and self.p2_production_on(st, ctx):
+                return True
+            v = o.get('phev_series_cs_on_kph')
+            if (v is not None and self.veh.arch == 'phev_series' and not getattr(self, 'cd', False) and ctx.get('moving')
+                    and ctx['u'] > v / 3.6 and ctx['P_dem_mech'] > 0.0):
+                return True         # extended-range (charge-sustaining) operation: engine on at road speed
         return False
+
+    def p2_production_on(self, st, ctx):
+        """P2 production rules (v2.1 options): engine on at launch above a wheel power and above a road speed."""
+        o = self.o
+        if not ctx.get('moving') or ctx['P_dem_mech'] <= 0.0:
+            return False
+        if o.get('p2_launch_kph') is not None and ctx['u'] < o['p2_launch_kph'] / 3.6 and ctx['P_dem_mech'] > o['p2_launch_kW'] * 1e3:
+            return True
+        if o.get('p2_ev_max_frac') is not None:
+            m = self.veh.motors.get('P2') or next(iter(self.veh.motors.values()))
+            if ctx['P_dem_mech'] > o['p2_ev_max_frac'] * m.P_max:
+                return True
+        return o.get('p2_engine_on_kph') is not None and ctx['u'] > o['p2_engine_on_kph'] / 3.6
 
     def hold_off(self, st, ctx):
         """option hybrid_min_off_s for the rule strategies: a stopped engine stays off for the minimum off time."""
@@ -217,7 +240,7 @@ class ECMS(HybridStrategy):
 
     def setup(self, veh, pt, trip, st):
         super().setup(veh, pt, trip, st)
-        self.s0 = self.p.get('s', 2.6)
+        self.s0 = self.p.get('s', (self.o.get('ecms_s0') or {}).get(veh.arch, 2.6))
         self.s = self.s0
 
     def s_value(self, st, ctx):

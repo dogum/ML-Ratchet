@@ -95,6 +95,7 @@ PARAMS = {
     'cond_dT1': 13.0,              # ... plus this at standstill, fading with exp(-v / 8 m/s)
     'cop_eta_belt': 0.33,          # COP / Carnot COP, belt compressor incl. mechanical losses (COP ~1.5 idling, ~1.9 at speed, 35 C)
     'cop_eta_el': 0.36,            # electric compressor incl. motor and inverter (no clutch cycling, speed-controlled)
+    'hybrid_heat_engine_C': 55.0,  # hybrids: the engine is started for cabin heat while the coolant is below this (v1/v2: 55 C)
     'cop_clip': [0.8, 5.0],
     'belt_eff': 0.95,
     'cond_fan_factor': 2.0,        # condenser/radiator fan full power = factor x spec blower_W
@@ -528,7 +529,7 @@ class Thermal:
             # engine wanted for heat (B1's strategies decide): the cabin needs real heat, the coolant is too cold to give
             # it, and (PHEV with an electric heater) the heater can't cover it. Same thresholds as v1.
             short = min(Q_need, cab.Q_heat_max) - (self.ptc_max * P['ptc_eff'] if src == 'engine+ptc' else 0.0)
-            need = self.hybrid and short > 0.3 * cab.Q_heat_max and st['T_eng'] < 55.0
+            need = self.hybrid and short > 0.3 * cab.Q_heat_max and st['T_eng'] < P['hybrid_heat_engine_C']
             rest = Q_req - Q
             if src == 'engine+ptc' and rest > 0.0:
                 Qp, P_e = self._ptc(rest, T_in, m_a, Ta)

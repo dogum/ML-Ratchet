@@ -26,6 +26,8 @@ Per trip error = sim/real - 1 (%); per car: median over trips and the ratio of t
 of trip errors and the median over cars. Trips with a label below 2 g fuel / 0.05 kWh are skipped.
 
 usage: python check_ved_twin.py [--options roadsim-physics-v2] [--workers 14] [--vehicles VED_546,...] [--no-match]
+       python check_ved_twin.py --split exam --exam2 --options NAME    (exam-2: the frozen VED exam HEV/PHEV list of
+       checks/exam2_hybrids.json; final report only -> ved_twin_exam2__<preset>.json; nothing is written under models/)
 """
 import os, sys, json, time, argparse, copy, math
 from multiprocessing import Pool
@@ -349,13 +351,18 @@ def main():
     ap.add_argument('--arch', default=None, help='only these architectures (comma list)')
     ap.add_argument('--out', default=None)
     ap.add_argument('--twins', default=None, help='reuse label-matched twins from this ved_twin json')
+    ap.add_argument('--split', default='dev', choices=['dev', 'exam'])
+    ap.add_argument('--exam2', action='store_true', help='exam: only the frozen exam-2 VED list (checks/exam2_hybrids.json)')
     _opts.init()
     a = ap.parse_args()
     import realdata as rd
     t0 = time.time()
     opt = _opts.get()
     vv = rd.ved_vehicles()
-    dev = sorted(vv.index[vv.split == 'dev'])
+    dev = sorted(vv.index[vv.split == a.split])
+    if a.exam2:
+        import exam2_hybrids as x2
+        dev = sorted(v['vehicle_id'] for v in x2.load()['ved'])
     if a.vehicles:
         dev = [v for v in dev if v in a.vehicles.split(',')]
     if a.arch:
@@ -369,18 +376,18 @@ def main():
         twins = {vid: (s, i) for vid, s, i in res}
     print(f'{len(twins)} twins ({time.time() - t0:.0f} s)', flush=True)
     jobs = []
-    for meta, arr in rd.load_trips('dev', label_ok=True, vehicles=dev):
+    for meta, arr in rd.load_trips(a.split, label_ok=True, vehicles=dev):
         jobs.append(dict(meta=meta, arr=arr, spec=twins[meta['vehicle_id']][0], opt=opt))
     with Pool(a.workers) as pool:
         rows = pool.map(run_trip, jobs, chunksize=4)
     errors = [r for r in rows if 'error' in r]
     rows = [r for r in rows if 'error' not in r]
     summ = summarize(rows)
-    out = dict(check='VED dev twins on their own logged trips (OBD label model applied)', method=__doc__.strip(),
+    out = dict(check=f'VED {a.split} twins on their own logged trips (OBD label model applied)', method=__doc__.strip(), split=a.split,
                options=opt, options_name=_opts.name(), label_matched=not a.no_match, n_trips=len(rows), n_errors=len(errors),
                errors=errors[:20], summary=summ, twins={vid: dict(spec=s, info=i) for vid, (s, i) in twins.items()},
                trips=rows, wall_s=round(time.time() - t0, 1))
-    fn = a.out or os.path.join(HERE, _opts.out('ved_twin.json'))
+    fn = a.out or os.path.join(HERE, _opts.out('ved_twin.json' if a.split == 'dev' else ('ved_twin_exam2.json' if a.exam2 else 'ved_twin_exam.json')))
     json.dump(out, open(fn, 'w'), indent=1, default=lambda x: x.item() if hasattr(x, 'item') else str(x))
     for arch, o in summ['by_arch'].items():
         p = o.get('err_primary') or {}; cm = o.get('err_primary_car_medians') or {}

@@ -466,6 +466,7 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
                 st['t_off'] = st['t_off'] + dt if not st['eng_on'] else dt
                 st['t_on'] = 0.0
             st['eng_on'] = running
+            st['t_runon'] = st.get('t_runon', 0.0) + dt if plan.get('runon') else 0.0
         st['gear'] = plan.get('gear', 0)
         if hybrid:
             strat.step_end(st, plan, dict(dt=dt))
@@ -620,7 +621,9 @@ def _plan(pt, strat, veh, F, u, st, env, regen_mode, hybrid, elec, k, dt, trip, 
         if arch == 'bev':
             plan = pt.plan(-F_reg, u, st, env)
         else:
-            plan = _hybrid_fixed(pt, veh, -F_reg, u, st, env, ctrl0=True)
+            plan = _runon(pt, veh, strat, -F_reg, u, st, env)
+            if plan is None:
+                plan = _hybrid_fixed(pt, veh, -F_reg, u, st, env, ctrl0=True)
         plan['limited'] = False
         return plan
     if arch == 'bev':
@@ -707,6 +710,30 @@ def _regen_cap(pt, veh, u, st, env):
         else:
             del rg['max_decel_g']
     return min(cap, cap_t)
+
+
+def _runon(pt, veh, strat, F, u, st, env):
+    """option hybrid_runon_s (v2.1): an engine that is running when braking begins keeps running for this many seconds
+    at the strategy's lowest engine-on point (charging the battery on top of regen), as the D3 dev hybrids do (median
+    run-on 1-3 s at 0.25-0.8 g/s). None if off, not applicable or infeasible (then the engine stops, as in v1)."""
+    o = getattr(strat, 'o', None) or {}
+    T = o.get('hybrid_runon_s')
+    if not T or not st.get('eng_on') or st.get('t_runon', 0.0) >= T or veh.engine is None:
+        return None
+    w_w = u / veh.r
+    if veh.arch == 'hev_parallel_p2':
+        env = dict(env, gear=pt._gear_for_regen(w_w * pt.FD))
+        ctrl = np.array([0.15, 0.08])
+    else:
+        P0 = max(0.08 * veh.engine.P_max, 3000.0)
+        ctrl = np.array([P0, 0.5 * P0, 1200.0])
+    C = pt.evaluate(F * veh.r, w_w, ctrl, st, env)
+    ok = np.flatnonzero(C['ok'] & C['on'])
+    if not len(ok):
+        return None
+    plan = _finalize(pt, veh, C, int(ok[0]), env, st, strat)
+    plan['runon'] = True
+    return plan
 
 
 def _hybrid_fixed(pt, veh, F, u, st, env, ctrl0=True):

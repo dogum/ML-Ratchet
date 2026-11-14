@@ -319,3 +319,150 @@ Dev results, v1 (corrected procedures) -> v2 final:
 `checks/scoreboard_roadsim-physics-v1.json` (v1 with the corrected procedures), `scoreboard_roadsim-physics-v2.json`,
 `scoreboard_compare_v1_v2.txt`. The table and what looks wrong (TMED P2s now too thirsty, Toyota EPA cycles 5-7 % too
 thirsty, plug-in series exam -27 %) are in LIMITS.md; they are reported, not fixed.
+
+## 14 Nov 2026 — calibration agent 3: hybrid fix pass (physics v2.1)
+
+Same rules: dev data only. Two things were frozen before any fitting: a fresh hybrid exam ("exam-2",
+`checks/exam2_hybrids.json`, commit b2f10c0) and a v2 fingerprint guard (commit 30a5495). The v2 held-out results of
+LIMITS.md were already seen, so they judge nothing here.
+
+### H11 Exam-2, guard and a wider dev set (no physics change)
+
+- **Exam-2** (`checks/exam2_hybrids.py`, sha256 fd180962…): 108 VED exam HEV/PHEV cars (11,157 label trips; no VED
+  exam check existed) and 409 EPA test-car hybrid / plug-in records of held-out model families that no check had
+  simulated. Excluded: check_cycles vehicles and their carry-over copies (15), D3-matched rows (9), the families of the
+  four check_cycles dev hybrids that v2 was fitted on (HYUNDAI|SONATA, TOYOTA|RAV4, FORD|ESCAPE, HONDA|ACCORD: 50
+  records), designs RoadSim does not model (two-mode, P4 / through-the-road, P2 with a CVT: 48 records).
+- **Guard**: `tests/golden/roadsim_v2_fingerprint.json` (171 runs, options roadsim-physics-v2) and
+  `tests/test_roadsim_v2_fingerprint.py`: v2 reproduces it to 1e-9, and every conventional, BEV, bus and Class 8 run
+  of v2.1 must match it to 1e-9.
+- **Wider dev set**: `checks/hybrid_specs.py` builds specs for EPA test-car hybrids by rule (hardware by model line
+  from public spec sheets), `checks/check_hybrids_epa.py --set dev` runs all 55 dev records RoadSim models (every
+  hybrid / plug-in of RoadData's dev families: Grand Highlander Hybrid and Hybrid MAX, LC 500h, Altima Hybrid, Infiniti
+  Q50/Q70, Audi Q5 Hybrid, Panamera S Hybrid; plug-ins in charge sustaining: BMW 530e, Range Rover PHEV, Panamera
+  E-Hybrid, Audi Q5 PHEV, Lincoln Corsair, 2012/2016/2019 Volt; plus the four check_cycles dev hybrids).
+  `checks/hybrid_dev.py` runs it with the D3 dev hybrids and plug-ins and the VED dev HEV/PHEV twins in one go.
+  Note: the 2012 Volt record is in a dev family but is the EPA row of the D3 exam 2012/2013 Volts.
+- Harness fixes (every physics version):
+  * `check_d3.py`: a logged charge-sustaining SOC below the twin's window (Prime 0.12-0.15, Volt 0.13-0.16 vs 0.15)
+    is on another scale; the twin now starts and sustains at its own CS level. Before, it charged 0.3-0.6 kWh from the
+    engine in a UDDS. D3 dev plug-in power-split v2 -8.0 -> -9.8 %.
+  * `check_d3.py`: plug-in charge-sustaining tests are scored like HEVs (fuel corrected by net battery energy, SAE
+    J1711-style). Counting the battery 1:1 with fuel energy made a twin that drains its pack look frugal. D3 dev
+    plug-in series v2 -11.2 -> -5.5 %.
+  * `epa_procedures.py`: optional `soc0` (start SOC of a charge-sustaining plug-in test). A local `soc0 = None` in
+    `ftp()` first shadowed it: every plug-in FTP started from the default full pack. Found on the cold Volt (raw
+    fuel 14 g for a cold FTP, 5 kWh from the pack), fixed before any rung was judged.
+
+Dev scoreboard of v2 with the fixed harness (the reference for every rung below; FE % on EPA, + = sim burns less;
+energy % on D3 and VED, + = sim uses more):
+
+| source | v2 |
+|---|---|
+| EPA dev toyota_ps (n 12) FTP / HWY / US06 / SC03 / cold | +4.0 / -3.0 / +2.0 / +9.1 / -12.7 |
+| EPA dev P2 TMED (Sonata Hybrid) | +4.3 / -5.9 / -9.5 / +2.1 / -2.9 |
+| EPA dev P2 clutch (n 12: Infiniti, Q5, Hybrid MAX) FTP / HWY | +17.6 / -0.6 |
+| EPA dev P2 converter (Panamera S Hybrid) FTP / HWY | +39.6 / +3.8 |
+| EPA dev Honda e:HEV (Accord) | -4.2 / -4.6 / -8.5 / +12.5 / -10.6 |
+| EPA dev plug-in P2 CS (n 19) FTP / HWY / SC03 / cold | +16.4 / -4.2 / +42.7 / +22.7 |
+| EPA dev plug-in power-split CS (Corsair, n 5) FTP / HWY | +7.0 / +1.6 |
+| EPA dev plug-in series CS (Volts, n 3) | +11.3 / -6.1 / -0.6 / +17.4 / -16.0 |
+| D3 dev P2 / power-split / series / plug-in PS / plug-in series | -5.4 / -20.7 / -6.9 / -9.7 / -5.5 |
+| D3 engine-on share sim / measured, P2 / PS / series / plug-in PS / plug-in series | 0.29/0.34, 0.44/0.56, 0.43/0.57, 0.25/0.29, 0.13/0.27 |
+| VED dev Toyota car median fuel; engine-on gap | -1.1 %; -10.9 points |
+
+### H12 P2 brake blending re-measured; physical replacements of regen_share — rejected
+
+D3 dev 2021 Sonata Hybrid, hot std UDDS, 10 Hz: the energy the tyres put into the dyno while braking (F_tractive x v
+< 0) is 0.757 kWh per test; the pack takes in 0.654 kWh meanwhile (0.86). The twin at regen_share 0.75 charges 0.42 of
+its 0.69 kWh (0.61), at 1.0 0.57 (0.83). So the measured capture equals the twin's at full regen; H2's 0.53 must have
+used another denominator. The Sonata burns more for other reasons: engine on 24 % of the UDDS vs the twin's 12 %, at
+0.85 g/s when on (twin 1.31 g/s), charging gently (median -5.4 kW, twin -12 kW), launching on the engine above 5 kW
+below 15 km/h (97-100 % of such seconds), and 19 % of its fuel burnt while braking (engine still running). Measured
+capture by speed: 0.55 below 10 km/h, 0.69-0.79 at 10-40 km/h; charge power p99 18 kW, max 30 kW.
+
+| rung | EPA dev P2 FTP median | Sonata FTP / HWY | D3 P2 | verdict |
+|---|---|---|---|---|
+| v2 (share 0.75) | +17.6 | +4.3 / -5.9 | -5.4 | |
+| a: share 1.0 (physical capture) | +29.4 | +15.5 / -3.9 | -13.1 | rejected: every dev P2 too good in the city |
+| b: a + regen fade 5-15 km/h (measured) | +28.9 | +15.7 / -4.3 | -12.6 | rejected (fade is real but small) |
+| c: b + launch engine (> 5 kW below 15 km/h) + engine on above 60 km/h | +20.8 | +17.1 / -13.7 | -9.6 | rejected: engine-on 0.62 vs 0.34, HWY -14 |
+
+H15, rejected: engine on above 0.3 / 0.5 x P2 motor power (EV only at light load): P2 FTP median +14.1 / +15.5,
+Sonata FTP +8.2 / +4.8, HWY unchanged or worse, Panamera HWY -19.6 at 0.3. The city surplus of P2 twins is not a lack
+of engine-on time at high power.
+
+### H13 Engine run-on into braking: kept, `hybrid_runon_s` 2 s (new option, hybrids only)
+
+The twin's engine stopped at the first braking second; on the dyno a running engine keeps running into the
+deceleration. D3 dev, hot std UDDS/HWFET/US06, braking events entered with the engine on: median run-on 3 s (Sonata
+Hybrid, 681 events), 2 s (Accord Hybrid), 2 s (2010 Prius), 1 s (2010 Fusion Hybrid), 1 s (Prius Prime), 2 s (2016 Volt);
+0.25-0.8 g/s meanwhile; 5-19 % of the UDDS fuel is burnt while braking (twin: 0). With the option, a running engine
+keeps running for 2 s (median of the six medians, measured, not fitted) at the strategy's lowest engine-on point,
+charging the pack on top of regen; then it stops as before.
+
+| dev metric | v2 | run-on 2 s | run-on 4 s |
+|---|---|---|---|
+| VED Toyota car-median fuel; engine-on gap | -1.1 %; -10.9 pts | -0.5 %; -4.9 pts | +0.8 %; -1.6 pts |
+| D3 engine-on P2 / PS / series / plug-in PS / plug-in series (measured 0.34 / 0.56 / 0.57 / 0.29 / 0.27) | 0.29 / 0.44 / 0.43 / 0.25 / 0.13 | 0.31 / 0.49 / 0.46 / 0.29 / 0.15 | 0.32 / 0.50 / 0.46 / 0.31 / 0.17 |
+| D3 P2 / PS / series / plug-in PS / plug-in series | -5.4 / -20.7 / -6.9 / -9.7 / -5.5 | -5.3 / -20.3 / -6.6 / -9.0 / -5.9 | -5.0 / -19.9 / -6.6 / -9.2 / -6.5 |
+| EPA dev Toyota FTP / HWY / US06 / SC03 / cold | +4.0 / -3.0 / +2.0 / +9.1 / -12.7 | +2.9 / -3.4 / +1.3 / +9.5 / -13.7 | +2.4 / -3.7 / +1.1 / +9.4 / -13.8 |
+| EPA dev Sonata Hybrid FTP / HWY / US06 / SC03 / cold | +4.3 / -5.9 / -9.5 / +2.1 / -2.9 | +3.0 / -7.5 / -8.7 / -2.7 / -5.3 | +1.9 / -7.3 / -9.2 / +0.7 / -7.0 |
+| EPA dev P2 FTP median (n 14) | +17.6 | +15.2 | +14.0 |
+| EPA dev Accord Hybrid FTP / HWY / US06 / cold | -4.2 / -4.6 / -8.5 / -10.6 | -4.6 / -4.5 / -9.4 / -11.7 | -5.0 / -5.0 / -9.4 / -12.1 |
+| EPA dev plug-in series (Volts) FTP / HWY / US06 / cold | +11.3 / -6.1 / -0.6 / -16.0 | +13.3 / -5.3 / +2.5 / -13.0 | +13.3 / -3.1 / +2.5 / -13.1 |
+| EPA dev plug-in power-split (Corsair) FTP / HWY | +7.0 / +1.6 | +6.1 / +0.9 | +5.8 / +0.9 |
+
+Kept at the measured 2 s: it brings engine-on closer for every type and halves the VED Toyota engine-on gap; fuel and
+energy move 0.4-2.4 points, both ways. (4 s, the measured p75, is not used: not fitted to the outcome.)
+
+### H14 Gentle charging with run-on: rejected (`hybrid_chg_cap_frac` 0.10, the measured p10 charge power / engine P_max)
+Measured charge power while the engine runs (p10): Sonata -11.5, Accord -10.7, Fusion -4.6, Prime -9.2 kW (twin -17 to
+-25). Cap 0.10 x P_max on top of run-on: D3 Accord HWFET +1.6 -> +5.5 % (guard: worse by 3.9 points), EPA dev Accord FTP /
+HWY / US06 -4.6 / -4.5 / -9.4 -> -6.6 / -6.8 / -11.1, VED Toyota -0.5 -> -1.7 %; D3 P2 -5.3 -> -4.2, series -6.6 -> -4.6.
+
+### H16 Toyota engine-on rule: kept at 45 km/h (with run-on)
+| variant | VED Toyota fuel; engine-on gap | EPA dev Toyota FTP / HWY | D3 PS (legacy) |
+|---|---|---|---|
+| 45 km/h (v2) | -0.5 %; -4.9 pts | +2.9 / -3.4 | -20.3 |
+| 55 km/h | +0.3 %; -11.8 pts | +4.5 / -3.4 | -21.3 |
+| 72 km/h (v1) | -3.7 %; -18.5 pts | +5.1 / -2.8 | -21.8 |
+| 45 km/h above 5 kW only | -1.2 %; -11.1 pts | +3.8 / -3.2 | -20.7 |
+The roads (VED) and the EPA dev Toyotas (Grand Highlander Hybrid, LC 500h, Altima Hybrid, RAV4) agree: 45 km/h at any
+positive demand. The held-out EPA Toyota deficit of v2 (-5 to -7 %) does not show on the dev cycles (FTP +2.9 %). The
+on-road lump (1,250 W) was not re-fitted: with run-on the VED car median is -0.5 %.
+
+### H17 Plug-in charge-sustaining rules: rejected
+- Plug-in power-split, speed rule 72 km/h / off (`phev_ps_engine_on_kph`): D3 CS HWFET engine-on 0.85 -> 0.72 / 0.39
+  (measured 0.46-0.57: closer), but D3 plug-in PS -9.0 -> -10.0 / -9.9 % and EPA Corsair HWY +0.9 -> +1.6 / -3.7 %.
+- Volt-type extended-range rule, engine on above 60 / 50 km/h in CS (`phev_series_cs_on_kph`; the D3 2016 Volt runs
+  its engine ~100 % above 60 km/h in CS, the twin 15 % overall vs 27 %): D3 plug-in series -5.9 -> -8.1 / -8.0 %, EPA
+  Volts HWY -5.3 -> +10.9 / +9.2, US06 +2.5 -> +8.7 / +9.2 %.
+- No dev plug-in series of the gen-1 Volt type other than the 2012 Volt EPA record (which is the D3 exam Volts' row);
+  nothing was fitted to it.
+
+### H18-H19 Hybrid cold: rejected
+- Power-split heat rule off at 60 C, or 55 / 40 C: no dev number moves (the rule never binds).
+- Engine started for heat below 40 C instead of 55 C (new thermal parameter `hybrid_heat_engine_C`): Accord cold -11.7
+  -> -11.1, D3 series -6.6 -> -10.5 %: rejected. Warm-up hold 25 C instead of 40 C (`ps_warmup_C`): < 0.7 points.
+- Open: EPA dev hybrid cold FTP Toyota -13.7, Accord -11.7, Volts -13.0 % (sim burns more); plug-in P2 +22 %.
+
+### H20 P2 equivalence factor: rejected (`ecms_s0`, new option)
+s0 3.2 for P2 (v2 2.6): P2 FTP median +15.2 -> +15.4, Sonata HWY -7.5 -> -5.5. With regen share 1.0 and s0 3.2 / 4.0:
+P2 FTP +26.1 / +27.0, D3 P2 -14.2 / -14.4 %.
+
+### Hybrid A/C (d): analysed, not changed
+EPA dev SC03 minus FTP error (A/C share): Toyota +6.6, Accord +17.4, plug-in P2 +23.6, Volts +4.5, Sonata -5.7, P2
+clutch +3.2 points; D3 dev CS SC03 (fuel_corr): Energis -27 / -37, Volt -37, Prime -28 % against -14 to -20 % on their
+std CS UDDS. The one logged electric compressor (Prime, also the Leaf ePlus) matches cop_eta_el 0.50, so no COP
+change; the extra fuel is not in the compressor power but in how the cars run their engines and packs when hot
+(chilled packs on the Volt and BMW are one candidate). Open.
+
+## Physics v2.1 frozen (before exam-2 and every second-look set)
+
+`roadsim/data/calibration_v2_1.json` (preset `roadsim-physics-v2.1` = v2 + `hybrid_runon_s` 2 s). Guard: v1 and v2
+fingerprints reproduce exactly; every non-hybrid run of v2.1 equals v2 (tests/test_roadsim_v2_fingerprint.py); the
+v2-improved dev hybrid metrics are not worse: EPA dev Accord HWY -4.6 -> -4.5, D3 Accord HWFET (std) +1.7 -> +1.6, VED
+Toyota fuel -1.1 -> -0.5 % and engine-on -10.9 -> -4.9 points, P2 FTP median +17.6 -> +15.2 %. Speed: hybrids 11.4 s for
+24 runs in both. **Not the default**: PHYSICS_VERSION stays roadsim-physics-v2, because the fuel and energy gain on dev
+is not clear (EPA dev cycle medians move 0.4-2.4 points either way); the gain is in engine operation.

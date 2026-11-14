@@ -1,0 +1,13 @@
+{
+ "about": "RoadSim physics v2.1 (hybrid fix pass): roadsim-physics-v2 plus the changes below, each acting on hybrid and plug-in architectures only (roadsim/options.py loads 'changes' on top of calibration_v2.json's preset; thermal_params would be merged with v2's). Calibrated on dev only: the EPA dev-family hybrids and plug-ins (checks/check_hybrids_epa.py --set dev), the D3 dev hybrids and plug-ins, the VED dev HEV/PHEV twins (checks/hybrid_dev.py). Decision log: roadsim/CALIBRATION.md, rungs H11-H20 (calibration agent 3, 14 Nov 2026).",
+ "status": "final: frozen 14 Nov 2026 before exam-2 (checks/exam2_hybrids.json) or any second-look set was run. Not the default physics (PHYSICS_VERSION stays roadsim-physics-v2): the dev gain on fuel and energy is not clear (CALIBRATION.md, v2.1 freeze).",
+ "base": "roadsim-physics-v2",
+ "changes": {
+  "hybrid_runon_s": 2.0
+ },
+ "provenance": {
+  "hybrid_runon_s": "measured, not fitted: D3 dev hybrids and plug-ins, hot std UDDS/HWFET/US06 at 10 Hz, braking events entered with the engine running: median run-on 3 s (2021 Sonata Hybrid, 681 events), 2 s (2015 Accord Hybrid, 140), 2 s (2010 Prius, 124), 1 s (2010 Fusion Hybrid, 127), 1 s (2017 Prius Prime, 459), 2 s (2016 Volt, 164); median of the six medians 2 s; fuel during run-on 0.25-0.8 g/s. The twin's engine used to stop at the first braking second."
+ },
+ "dev_effect": "v2 -> v2.1 on dev (CALIBRATION.md H13): VED dev Toyota engine-on gap -10.9 -> -4.9 points, car-median fuel -1.1 -> -0.5 %; D3 dev engine-on shares closer for every type (P2 0.29 -> 0.31 vs 0.34 measured, power-split 0.44 -> 0.49 vs 0.56, series 0.43 -> 0.46 vs 0.57); EPA dev P2 FTP median +17.6 -> +15.2 %; other EPA dev cycle medians move 0.4-2.4 points either way.",
+ "rejected": "regen_share 1.0 and P2 regen fade, P2 launch / speed / power rules, P2 ECMS equivalence factor, engine charging cap, Toyota engine-on speed 55 / 72 km/h and a minimum power, plug-in power-split speed rule 72 km/h / off, Volt-type charge-sustaining speed rule 50 / 60 km/h, power-split heat-rule thresholds, hybrid engine-for-heat below 40 C, warm-up hold 25 C (CALIBRATION.md H12-H20)."
+}
