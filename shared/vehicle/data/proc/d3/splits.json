@@ -1,0 +1,579 @@
+{
+ "source": "Argonne D3 (Downloadable Dynamometer Database)",
+ "seed": 20261113,
+ "created": "2026-11-13",
+ "rule": "1. Same-generation siblings form one unit and always land on the same side (2012/2013 Volt, 2012/2013 Prius Plug-in,\n   2012 Leaf/2013 Leaf SV, 2017/2019 Bolt, C-Max Energi/Fusion Energi share a powertrain and battery): putting one\n   in dev and its twin in exam would leak calibration into the exam.\n2. A few units are pinned by design (reasons in PINS): the calibration targets named in shared/vehicle/V2_PLAN.md\n   that have no second D3 example go to dev; a held-out modern example of each pinned architecture goes to exam.\n3. The remaining units of each stratum are shuffled (seed 20261113) and each goes to the side with fewer vehicles\n   in that stratum (ties: a coin from the same generator).\nCalibration may fit only on dev vehicles. Exam vehicles are for the final report only.",
+ "excluded": {
+  "2020 Tesla Model 3": "not downloaded (905 files, 90 GB)"
+ },
+ "counts": {
+  "dev": {
+   "alternative": 3,
+   "conventional": 11,
+   "electric": 8,
+   "hybrid": 6,
+   "plugin": 4
+  },
+  "exam": {
+   "alternative": 1,
+   "conventional": 12,
+   "electric": 7,
+   "hybrid": 7,
+   "plugin": 6
+  }
+ },
+ "vehicles": {
+  "D3_2009_Volkswagen_Jetta_TDI": {
+   "name": "2009 Volkswagen Jetta TDI",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2010_Ford_Fusion_Hybrid": {
+   "name": "2010 Ford Fusion Hybrid",
+   "category": "hybrid",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2010_Honda_CR-Z": {
+   "name": "2010 Honda CR-Z",
+   "category": "hybrid",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2010_Honda_Civic_GX": {
+   "name": "2010 Honda Civic GX",
+   "category": "alternative",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2010_Honda_Insight": {
+   "name": "2010 Honda Insight",
+   "category": "hybrid",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2010_Hyundai_LPI_Hybrid": {
+   "name": "2010 Hyundai LPI Hybrid",
+   "category": "alternative",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2010_Mazda_3_i-stop": {
+   "name": "2010 Mazda 3 i-stop",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2010_Mercedes_S400h_BlueHybrid": {
+   "name": "2010 Mercedes S400h BlueHybrid",
+   "category": "hybrid",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2010_SmartCar_MHD": {
+   "name": "2010 SmartCar MHD",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2010_Toyota_Prius": {
+   "name": "2010 Toyota Prius",
+   "category": "hybrid",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": "Toyota power-split reference; V2_PLAN calibrates the Toyota HEV engine-on rules"
+  },
+  "D3_2010_VW_Golf_TDI_Bluemotion": {
+   "name": "2010 VW Golf TDI Bluemotion",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2011_Hyundai_Sonata_Hybrid": {
+   "name": "2011 Hyundai Sonata Hybrid",
+   "category": "hybrid",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2012_Chevrolet_Volt": {
+   "name": "2012 Chevrolet Volt",
+   "category": "plugin",
+   "era": "legacy",
+   "split": "exam",
+   "unit": [
+    "2012 Chevrolet Volt",
+    "2013 Chevrolet Volt"
+   ],
+   "pinned": null
+  },
+  "D3_2013_Chevrolet_Volt": {
+   "name": "2013 Chevrolet Volt",
+   "category": "plugin",
+   "era": "legacy",
+   "split": "exam",
+   "unit": [
+    "2012 Chevrolet Volt",
+    "2013 Chevrolet Volt"
+   ],
+   "pinned": null
+  },
+  "D3_2012_Chrysler_300": {
+   "name": "2012 Chrysler 300",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2012_Fiat_500_Sport": {
+   "name": "2012 Fiat 500 Sport",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2012_Ford_F150_Ecoboost": {
+   "name": "2012 Ford F150 Ecoboost",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2012_Ford_Focus": {
+   "name": "2012 Ford Focus",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2012_Ford_Fusion_V6": {
+   "name": "2012 Ford Fusion V6",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2012_Mitsubishi_I-MiEV": {
+   "name": "2012 Mitsubishi I-MiEV",
+   "category": "electric",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2012_Nissan_Leaf": {
+   "name": "2012 Nissan Leaf",
+   "category": "electric",
+   "era": "legacy",
+   "split": "dev",
+   "unit": [
+    "2012 Nissan Leaf",
+    "2013 Nissan Leaf SV"
+   ],
+   "pinned": null
+  },
+  "D3_2013_Nissan_Leaf_SV": {
+   "name": "2013 Nissan Leaf SV",
+   "category": "electric",
+   "era": "legacy",
+   "split": "dev",
+   "unit": [
+    "2012 Nissan Leaf",
+    "2013 Nissan Leaf SV"
+   ],
+   "pinned": null
+  },
+  "D3_2012_Toyota_Prius_Plug-in": {
+   "name": "2012 Toyota Prius Plug-in",
+   "category": "plugin",
+   "era": "legacy",
+   "split": "exam",
+   "unit": [
+    "2012 Toyota Prius Plug-in",
+    "2013 Toyota Prius Plug-in"
+   ],
+   "pinned": null
+  },
+  "D3_2013_Toyota_Prius_Plug-in": {
+   "name": "2013 Toyota Prius Plug-in",
+   "category": "plugin",
+   "era": "legacy",
+   "split": "exam",
+   "unit": [
+    "2012 Toyota Prius Plug-in",
+    "2013 Toyota Prius Plug-in"
+   ],
+   "pinned": null
+  },
+  "D3_2013_Chevrolet_Malibu_Eco": {
+   "name": "2013 Chevrolet Malibu Eco",
+   "category": "hybrid",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2013_Dodge_Ram_1500_HFE": {
+   "name": "2013 Dodge Ram 1500 HFE",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2013_Ford_Cmax_Energi": {
+   "name": "2013 Ford Cmax Energi",
+   "category": "plugin",
+   "era": "legacy",
+   "split": "dev",
+   "unit": [
+    "2013 Ford Cmax Energi",
+    "2013 Ford Fusion Energi"
+   ],
+   "pinned": null
+  },
+  "D3_2013_Ford_Fusion_Energi": {
+   "name": "2013 Ford Fusion Energi",
+   "category": "plugin",
+   "era": "legacy",
+   "split": "dev",
+   "unit": [
+    "2013 Ford Cmax Energi",
+    "2013 Ford Fusion Energi"
+   ],
+   "pinned": null
+  },
+  "D3_2013_Ford_Cmax_Hybrid": {
+   "name": "2013 Ford Cmax Hybrid",
+   "category": "hybrid",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2013_Ford_Focus_Electric": {
+   "name": "2013 Ford Focus Electric",
+   "category": "electric",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2013_Honda_Civic_Hybrid": {
+   "name": "2013 Honda Civic Hybrid",
+   "category": "hybrid",
+   "era": "extended",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2013_Hyundai_Sonata": {
+   "name": "2013 Hyundai Sonata",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2013_Nissan_Altima": {
+   "name": "2013 Nissan Altima",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2013_Volkswagen_Jetta_Hybrid": {
+   "name": "2013 Volkswagen Jetta Hybrid",
+   "category": "hybrid",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2013_Volkswagen_Jetta_TDI": {
+   "name": "2013 Volkswagen Jetta TDI",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2014_BMW_i3-REX": {
+   "name": "2014 BMW i3-REX",
+   "category": "plugin",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2014_BMW_i3BEV": {
+   "name": "2014 BMW i3BEV",
+   "category": "electric",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2014_Chevrolet_Cruze_Diesel": {
+   "name": "2014 Chevrolet Cruze Diesel",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2014_Mazda_3_iEloop": {
+   "name": "2014 Mazda 3 iEloop",
+   "category": "conventional",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2014_Smart_Electric_Drive": {
+   "name": "2014 Smart Electric Drive",
+   "category": "electric",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2015_Chevrolet_Bi-Fuel_Impala": {
+   "name": "2015 Chevrolet Bi-Fuel Impala",
+   "category": "alternative",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2015_Chevrolet_Spark_EV": {
+   "name": "2015 Chevrolet Spark EV",
+   "category": "electric",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2015_Honda_Accord_Hybrid": {
+   "name": "2015 Honda Accord Hybrid",
+   "category": "hybrid",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": "the only i-MMD (e:HEV) in D3; V2_PLAN calibrates the direct-drive clutch on it; e:HEV held-out checks stay on the EPA list"
+  },
+  "D3_2015_Kia_Soul_Electric": {
+   "name": "2015 Kia Soul Electric",
+   "category": "electric",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2015_Mercedes-Benz_B-Class_Electric_Drive": {
+   "name": "2015 Mercedes-Benz B-Class Electric Drive",
+   "category": "electric",
+   "era": "legacy",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2015_Volkswagen_e-Golf": {
+   "name": "2015 Volkswagen e-Golf",
+   "category": "electric",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2016_Chevrolet_Volt": {
+   "name": "2016 Chevrolet Volt",
+   "category": "plugin",
+   "era": "legacy",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2016_Mazda_CX9": {
+   "name": "2016 Mazda CX9",
+   "category": "conventional",
+   "era": "extended",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2016_Toyota_Mirai": {
+   "name": "2016 Toyota Mirai",
+   "category": "alternative",
+   "era": "extended",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2017_Chevrolet_Bolt": {
+   "name": "2017 Chevrolet Bolt",
+   "category": "electric",
+   "era": "extended",
+   "split": "exam",
+   "unit": [
+    "2017 Chevrolet Bolt",
+    "2019 Chevrolet Bolt"
+   ],
+   "pinned": null
+  },
+  "D3_2019_Chevrolet_Bolt": {
+   "name": "2019 Chevrolet Bolt",
+   "category": "electric",
+   "era": "extended",
+   "split": "exam",
+   "unit": [
+    "2017 Chevrolet Bolt",
+    "2019 Chevrolet Bolt"
+   ],
+   "pinned": null
+  },
+  "D3_2017_Ford_F150": {
+   "name": "2017 Ford F150",
+   "category": "conventional",
+   "era": "extended",
+   "split": "exam",
+   "unit": null,
+   "pinned": "held-out modern conventional (turbo truck, 10-speed)"
+  },
+  "D3_2017_Toyota_Prius_Prime": {
+   "name": "2017 Toyota Prius Prime",
+   "category": "plugin",
+   "era": "extended",
+   "split": "dev",
+   "unit": null,
+   "pinned": "the PHEV with the richest channels (CD/CS, cabin, heater); V2_PLAN calibrates PHEV cabin and CD rules on it"
+  },
+  "D3_2018_Honda_Accord_LX": {
+   "name": "2018 Honda Accord LX",
+   "category": "conventional",
+   "era": "extended",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2018_Toyota_Camry_XLE": {
+   "name": "2018 Toyota Camry XLE",
+   "category": "conventional",
+   "era": "extended",
+   "split": "dev",
+   "unit": null,
+   "pinned": "conventional calibration anchor: its engine is the RoadSim A25A map"
+  },
+  "D3_2019_Acura_MDX_Sport_Hybrid": {
+   "name": "2019 Acura MDX Sport Hybrid",
+   "category": "hybrid",
+   "era": "extended",
+   "split": "exam",
+   "unit": null,
+   "pinned": "held-out modern P2-type hybrid (7-speed DCT with motor) for the P2 fix"
+  },
+  "D3_2019_Chevrolet_Blazer": {
+   "name": "2019 Chevrolet Blazer",
+   "category": "conventional",
+   "era": "extended",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2019_Chevrolet_Silverado": {
+   "name": "2019 Chevrolet Silverado",
+   "category": "conventional",
+   "era": "extended",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2019_Infiniti_QX50": {
+   "name": "2019 Infiniti QX50",
+   "category": "conventional",
+   "era": "extended",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2019_Nissan_Leaf_ePlus": {
+   "name": "2019 Nissan Leaf ePlus",
+   "category": "electric",
+   "era": "extended",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2020_Chevrolet_Bolt": {
+   "name": "2020 Chevrolet Bolt",
+   "category": "electric",
+   "era": "extended",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2020_Chrysler_Pacifica": {
+   "name": "2020 Chrysler Pacifica",
+   "category": "conventional",
+   "era": "extended",
+   "split": "exam",
+   "unit": null,
+   "pinned": null
+  },
+  "D3_2021_Hyundai_Sonata_Hybrid": {
+   "name": "2021 Hyundai Sonata Hybrid",
+   "category": "hybrid",
+   "era": "extended",
+   "split": "dev",
+   "unit": null,
+   "pinned": "the only modern P2 hybrid with full 10 Hz channels; V2_PLAN calibrates P2 (torque converter, engine starts) on it"
+  },
+  "D3_2021_Toyota_RAV4_Prime": {
+   "name": "2021 Toyota RAV4 Prime",
+   "category": "plugin",
+   "era": "extended",
+   "split": "exam",
+   "unit": null,
+   "pinned": "held-out modern PHEV (the other extended-data plug-in)"
+  },
+  "D3_2023_Hyundai_Ioniq5": {
+   "name": "2023 Hyundai Ioniq5",
+   "category": "electric",
+   "era": "extended",
+   "split": "dev",
+   "unit": null,
+   "pinned": null
+  }
+ },
+ "sha256": "c628d0860a42155f5c83555e0e07a18c17f1ea66a3d72398b232c61109cac213",
+ "sha256_of": "json.dumps(vehicles, sort_keys=True)"
+}

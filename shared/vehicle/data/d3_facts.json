@@ -1,0 +1,1361 @@
+{
+ "_about": "Hand-entered facts for the Argonne D3 vehicles, used by data/scripts/d3_specs.py to build RoadSim twins. anl.gov refuses scripted requests (HTTP 403), so the D3 vehicle pages could not be read by the build. Test weight and dyno road-load targets come from the D3 test files themselves; engine size, rated power, transmission, axle and N/V ratios come from the EPA test-car tables (data/proc/epa) where the model matches. The motor, battery and the remaining engine/transmission entries below are published manufacturer figures entered by hand (rounded, 13 Nov 2026) and NOT re-checked against the D3 pages; every spec built from them marks those fields 'reported (hand table)'. Entries marked null could not be filled. epa: [make regex, model regex] to find the EPA test-car rows. arch_note: where RoadSim's architecture is an approximation. hvac_source (cabin heater type: ptc = resistive, heat_pump) is given only where the type is not optional on the model; elsewhere RoadSim v1 defaults apply (BEV heat pump, PHEV PTC, hybrids engine heat).",
+ "vehicles": {
+  "2020 Chrysler Pacifica": {
+   "class": "van",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 3.6,
+   "engine_kW": 214,
+   "trans": [
+    "AT",
+    9
+   ],
+   "idle_stop": true,
+   "epa": [
+    "CHRYSLER|FCA",
+    "PACIFICA(?!.*HYBRID)"
+   ],
+   "notes": "stop-start (ESS)"
+  },
+  "2019 Chevrolet Blazer": {
+   "class": "suv",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 3.6,
+   "engine_kW": 230,
+   "trans": [
+    "AT",
+    9
+   ],
+   "epa": [
+    "CHEVROLET|GENERAL MOTORS",
+    "BLAZER"
+   ],
+   "notes": "engine from the VIN in the TDMS test info (3GNKBJRS7KS569010: 8th character S = 3.6 L LGX V6); the EPA 2.5 L and 3.6 L FWD rows share test weight and road load, so the road load alone cannot tell them apart"
+  },
+  "2019 Chevrolet Silverado": {
+   "class": "pickup",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 5.3,
+   "engine_kW": 265,
+   "trans": [
+    "AT",
+    8
+   ],
+   "epa": [
+    "CHEVROLET|GENERAL MOTORS",
+    "SILVERADO"
+   ],
+   "notes": "engine from the channel list: eight cylinder-deactivation solenoid channels and an 8-speed gear signal = 5.3 L V8 with Dynamic Fuel Management (L84), 8-speed; RoadSim has no cylinder deactivation"
+  },
+  "2019 Infiniti QX50": {
+   "class": "suv",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 2.0,
+   "engine_kW": 200,
+   "turbo": true,
+   "trans": [
+    "CVT",
+    1
+   ],
+   "epa": [
+    "INFINITI|NISSAN",
+    "QX50"
+   ],
+   "notes": "VC-Turbo variable compression"
+  },
+  "2018 Toyota Camry XLE": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 2.5,
+   "engine_kW": 151,
+   "trans": [
+    "AT",
+    8
+   ],
+   "epa": [
+    "TOYOTA",
+    "^CAMRY(?!.*HYBRID)"
+   ],
+   "notes": "A25A-FKS; RoadSim map gas_na_toyota_a25a is this engine"
+  },
+  "2018 Honda Accord LX": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 1.5,
+   "engine_kW": 143,
+   "turbo": true,
+   "trans": [
+    "CVT",
+    1
+   ],
+   "epa": [
+    "HONDA",
+    "^ACCORD(?!.*HYBRID)"
+   ]
+  },
+  "2017 Ford F150": {
+   "class": "pickup",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 3.5,
+   "engine_kW": 280,
+   "turbo": true,
+   "trans": [
+    "AT",
+    10
+   ],
+   "epa": [
+    "FORD",
+    "F.?150"
+   ],
+   "notes": "3.5 L EcoBoost, 10R80 (summary file name says EcoBoost)"
+  },
+  "2016 Mazda CX9": {
+   "class": "suv",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 2.5,
+   "engine_kW": 169,
+   "turbo": true,
+   "trans": [
+    "AT",
+    6
+   ],
+   "epa": [
+    "MAZDA",
+    "CX.?9"
+   ]
+  },
+  "2014 Chevrolet Cruze Diesel": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "diesel",
+   "engine_L": 2.0,
+   "engine_kW": 113,
+   "trans": [
+    "AT",
+    6
+   ],
+   "epa": [
+    "CHEVROLET|GENERAL MOTORS",
+    "CRUZE"
+   ]
+  },
+  "2014 Mazda 3 iEloop": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 2.5,
+   "engine_kW": 137,
+   "trans": [
+    "AT",
+    6
+   ],
+   "epa": [
+    "MAZDA",
+    "^(MAZDA)?3"
+   ],
+   "notes": "i-ELOOP capacitor regeneration and idle stop not modelled"
+  },
+  "2013 Dodge Ram 1500 HFE": {
+   "class": "pickup",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 3.6,
+   "engine_kW": 227,
+   "trans": [
+    "AT",
+    8
+   ],
+   "idle_stop": true,
+   "epa": [
+    "CHRYSLER|RAM|DODGE",
+    "RAM.*1500|1500"
+   ],
+   "notes": "stop-start"
+  },
+  "2013 Hyundai Sonata": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 2.4,
+   "engine_kW": 148,
+   "trans": [
+    "AT",
+    6
+   ],
+   "epa": [
+    "HYUNDAI",
+    "^SONATA(?!.*HYBRID)"
+   ]
+  },
+  "2013 Nissan Altima": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 2.5,
+   "engine_kW": 136,
+   "trans": [
+    "CVT",
+    1
+   ],
+   "epa": [
+    "NISSAN",
+    "ALTIMA"
+   ]
+  },
+  "2013 Volkswagen Jetta TDI": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "diesel",
+   "engine_L": 2.0,
+   "engine_kW": 104,
+   "trans": [
+    "DCT",
+    6
+   ],
+   "epa": [
+    "VOLKSWAGEN",
+    "JETTA"
+   ]
+  },
+  "2012 Chrysler 300": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 3.6,
+   "engine_kW": 218,
+   "trans": [
+    "AT",
+    8
+   ],
+   "epa": [
+    "CHRYSLER",
+    "^300"
+   ]
+  },
+  "2012 Fiat 500 Sport": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 1.4,
+   "engine_kW": 75,
+   "trans": [
+    "DCT",
+    5
+   ],
+   "epa": [
+    "FIAT|CHRYSLER",
+    "500"
+   ],
+   "arch_note": "5-speed manual run as a 5-speed clutch gearbox (no torque converter)"
+  },
+  "2012 Ford F150 Ecoboost": {
+   "class": "pickup",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 3.5,
+   "engine_kW": 272,
+   "turbo": true,
+   "trans": [
+    "AT",
+    6
+   ],
+   "epa": [
+    "FORD",
+    "F.?150"
+   ]
+  },
+  "2012 Ford Focus": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 2.0,
+   "engine_kW": 119,
+   "trans": [
+    "DCT",
+    6
+   ],
+   "epa": [
+    "FORD",
+    "FOCUS(?!.*(ELECTRIC|BEV|FWD BEV))"
+   ]
+  },
+  "2012 Ford Fusion V6": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 3.0,
+   "engine_kW": 179,
+   "trans": [
+    "AT",
+    6
+   ],
+   "epa": [
+    "FORD",
+    "FUSION(?!.*(HYBRID|ENERGI))"
+   ]
+  },
+  "2010 Mazda 3 i-stop": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 2.0,
+   "engine_kW": 111,
+   "trans": [
+    "DCT",
+    6
+   ],
+   "idle_stop": true,
+   "epa": null,
+   "arch_note": "European model (not in the EPA list); 6-speed manual run as a clutch gearbox; i-stop idle stop on",
+   "notes": "engine power is the EU rating (151 PS); hand table"
+  },
+  "2010 SmartCar MHD": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "gasoline",
+   "engine_L": 1.0,
+   "engine_kW": 52,
+   "trans": [
+    "AMT",
+    5
+   ],
+   "idle_stop": true,
+   "epa": null,
+   "arch_note": "European micro-hybrid (MHD = idle stop); 5-speed automated manual",
+   "notes": "hand table"
+  },
+  "2010 VW Golf TDI Bluemotion": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "diesel",
+   "engine_L": 1.6,
+   "engine_kW": 77,
+   "trans": [
+    "DCT",
+    5
+   ],
+   "idle_stop": true,
+   "epa": null,
+   "arch_note": "European model; 5-speed manual run as a clutch gearbox; stop-start on",
+   "notes": "hand table"
+  },
+  "2009 Volkswagen Jetta TDI": {
+   "class": "car",
+   "arch": "conv",
+   "fuel": "diesel",
+   "engine_L": 2.0,
+   "engine_kW": 104,
+   "trans": [
+    "DCT",
+    6
+   ],
+   "epa": [
+    "VOLKSWAGEN",
+    "JETTA"
+   ]
+  },
+  "2023 Hyundai Ioniq5": {
+   "class": "suv",
+   "arch": "bev",
+   "motor_kW": null,
+   "battery": [
+    77.4,
+    697,
+    "NMC"
+   ],
+   "epa": [
+    "HYUNDAI",
+    "IONIQ ?5"
+   ],
+   "variants_by_epa_hp": {
+    "167": [
+     58.0,
+     522,
+     "NMC"
+    ],
+    "225": [
+     77.4,
+     697,
+     "NMC"
+    ],
+    "320": [
+     77.4,
+     697,
+     "NMC"
+    ]
+   },
+   "notes": "motor power = EPA rated hp of the matched row; battery by variant"
+  },
+  "2020 Chevrolet Bolt": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 150,
+   "motor_Nm": 360,
+   "motor_map": "bolt_edu_150",
+   "battery": [
+    66.0,
+    350,
+    "NMC"
+   ],
+   "hvac_source": "ptc",
+   "epa": [
+    "CHEVROLET|GENERAL MOTORS",
+    "BOLT"
+   ]
+  },
+  "2019 Nissan Leaf ePlus": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 160,
+   "motor_Nm": 340,
+   "battery": [
+    62.0,
+    350,
+    "NMC"
+   ],
+   "epa": [
+    "NISSAN",
+    "LEAF"
+   ]
+  },
+  "2019 Chevrolet Bolt": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 150,
+   "motor_Nm": 360,
+   "motor_map": "bolt_edu_150",
+   "battery": [
+    60.0,
+    350,
+    "NMC"
+   ],
+   "hvac_source": "ptc",
+   "epa": [
+    "CHEVROLET|GENERAL MOTORS",
+    "BOLT"
+   ]
+  },
+  "2017 Chevrolet Bolt": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 150,
+   "motor_Nm": 360,
+   "motor_map": "bolt_edu_150",
+   "battery": [
+    60.0,
+    350,
+    "NMC"
+   ],
+   "hvac_source": "ptc",
+   "epa": [
+    "CHEVROLET|GENERAL MOTORS",
+    "BOLT"
+   ]
+  },
+  "2015 Chevrolet Spark EV": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 105,
+   "motor_Nm": 444,
+   "battery": [
+    19.0,
+    360,
+    "NMC"
+   ],
+   "hvac_source": "ptc",
+   "epa": [
+    "CHEVROLET|GENERAL MOTORS",
+    "SPARK"
+   ]
+  },
+  "2015 Kia Soul Electric": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 81,
+   "motor_Nm": 285,
+   "battery": [
+    27.0,
+    375,
+    "NMC"
+   ],
+   "epa": [
+    "KIA",
+    "SOUL"
+   ]
+  },
+  "2015 Mercedes-Benz B-Class Electric Drive": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 132,
+   "motor_Nm": 340,
+   "battery": [
+    28.0,
+    350,
+    "NCA"
+   ],
+   "epa": [
+    "MERCEDES|DAIMLER",
+    "B.?(CLASS|250)"
+   ],
+   "notes": "28 kWh usable of a 36 kWh pack"
+  },
+  "2015 Volkswagen e-Golf": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 85,
+   "motor_Nm": 270,
+   "battery": [
+    24.2,
+    323,
+    "NMC"
+   ],
+   "epa": [
+    "VOLKSWAGEN",
+    "GOLF"
+   ]
+  },
+  "2014 BMW i3BEV": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 125,
+   "motor_Nm": 250,
+   "battery": [
+    18.8,
+    360,
+    "NMC"
+   ],
+   "epa": [
+    "BMW",
+    "I3"
+   ],
+   "notes": "18.8 kWh usable of 22 kWh"
+  },
+  "2014 Smart Electric Drive": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 55,
+   "motor_Nm": 130,
+   "battery": [
+    17.6,
+    340,
+    "NMC"
+   ],
+   "hvac_source": "ptc",
+   "epa": [
+    "SMART|MERCEDES|DAIMLER",
+    "FORTWO|SMART"
+   ]
+  },
+  "2013 Ford Focus Electric": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 107,
+   "motor_Nm": 250,
+   "battery": [
+    23.0,
+    318,
+    "NMC"
+   ],
+   "hvac_source": "ptc",
+   "epa": [
+    "FORD",
+    "FOCUS.*(ELECTRIC|BEV)"
+   ]
+  },
+  "2013 Nissan Leaf SV": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 80,
+   "motor_Nm": 254,
+   "battery": [
+    24.0,
+    360,
+    "NMC"
+   ],
+   "hvac_source": "heat_pump",
+   "epa": [
+    "NISSAN",
+    "LEAF"
+   ],
+   "notes": "LMO cells; NMC curve used"
+  },
+  "2012 Mitsubishi I-MiEV": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 49,
+   "motor_Nm": 180,
+   "battery": [
+    16.0,
+    330,
+    "NMC"
+   ],
+   "hvac_source": "ptc",
+   "epa": [
+    "MITSUBISHI",
+    "MIEV|I-MIEV|^I$"
+   ]
+  },
+  "2012 Nissan Leaf": {
+   "class": "car",
+   "arch": "bev",
+   "motor_kW": 80,
+   "motor_Nm": 280,
+   "battery": [
+    24.0,
+    360,
+    "NMC"
+   ],
+   "hvac_source": "ptc",
+   "epa": [
+    "NISSAN",
+    "LEAF"
+   ],
+   "notes": "LMO cells; NMC curve used"
+  },
+  "2021 Hyundai Sonata Hybrid": {
+   "class": "car",
+   "arch": "hev_parallel_p2",
+   "fuel": "gasoline",
+   "engine_L": 2.0,
+   "engine_kW": 112,
+   "trans": [
+    "DCT",
+    6
+   ],
+   "motors": [
+    [
+     "P2",
+     39,
+     205
+    ]
+   ],
+   "battery": [
+    1.76,
+    270,
+    "NMC"
+   ],
+   "epa": [
+    "HYUNDAI",
+    "SONATA HYBRID"
+   ],
+   "arch_note": "6-speed automatic with an engine clutch and no torque converter, run as a clutch gearbox (as checks/epa_vehicles.py)"
+  },
+  "2019 Acura MDX Sport Hybrid": {
+   "class": "suv",
+   "arch": "hev_parallel_p2",
+   "fuel": "gasoline",
+   "engine_L": 3.0,
+   "engine_kW": 192,
+   "trans": [
+    "DCT",
+    7
+   ],
+   "motors": [
+    [
+     "P2",
+     89,
+     300
+    ]
+   ],
+   "battery": [
+    1.3,
+    260,
+    "NMC"
+   ],
+   "epa": [
+    "ACURA|HONDA",
+    "MDX.*HYBRID"
+   ],
+   "arch_note": "SH-AWD: 35 kW motor in the 7-speed DCT plus two 27 kW rear motors; RoadSim has no rear-axle motor, so all three are lumped into one 89 kW P2 machine (as epa_vehicles.py lumps rear motors)"
+  },
+  "2015 Honda Accord Hybrid": {
+   "class": "car",
+   "arch": "hev_series",
+   "fuel": "gasoline",
+   "engine_L": 2.0,
+   "engine_kW": 105,
+   "trans": [
+    "single",
+    1
+   ],
+   "motors": [
+    [
+     "traction",
+     124,
+     307
+    ],
+    [
+     "generator",
+     105,
+     null
+    ]
+   ],
+   "battery": [
+    1.3,
+    259,
+    "NMC"
+   ],
+   "epa": [
+    "HONDA",
+    "ACCORD HYBRID"
+   ],
+   "arch_note": "i-MMD: series hybrid with an engine direct-drive clutch at cruise; RoadSim v1 has no direct-drive clutch (series only)"
+  },
+  "2013 Chevrolet Malibu Eco": {
+   "class": "car",
+   "arch": "hev_parallel_p2",
+   "fuel": "gasoline",
+   "engine_L": 2.4,
+   "engine_kW": 136,
+   "trans": [
+    "AT",
+    6
+   ],
+   "tc": true,
+   "motors": [
+    [
+     "P2",
+     11,
+     110
+    ]
+   ],
+   "battery": [
+    0.5,
+    115,
+    "NMC"
+   ],
+   "epa": [
+    "CHEVROLET|GENERAL MOTORS",
+    "MALIBU"
+   ],
+   "arch_note": "eAssist belt starter-generator (P0) run as a small P2 machine behind a torque-converter automatic"
+  },
+  "2013 Ford Cmax Hybrid": {
+   "class": "car",
+   "arch": "hev_powersplit",
+   "fuel": "gasoline",
+   "engine_L": 2.0,
+   "engine_kW": 105,
+   "trans": [
+    "eCVT",
+    1
+   ],
+   "motors": [
+    [
+     "MG1",
+     70,
+     null
+    ],
+    [
+     "MG2",
+     88,
+     240
+    ]
+   ],
+   "battery": [
+    1.4,
+    280,
+    "NMC"
+   ],
+   "epa": [
+    "FORD",
+    "C.?MAX HYBRID|C-MAX HEV"
+   ]
+  },
+  "2013 Honda Civic Hybrid": {
+   "class": "car",
+   "arch": "hev_parallel_p2",
+   "fuel": "gasoline",
+   "engine_L": 1.5,
+   "engine_kW": 67,
+   "trans": [
+    "DCT",
+    6
+   ],
+   "motors": [
+    [
+     "P2",
+     17,
+     106
+    ]
+   ],
+   "battery": [
+    0.8,
+    144,
+    "NMC"
+   ],
+   "epa": [
+    "HONDA",
+    "CIVIC HYBRID"
+   ],
+   "arch_note": "IMA (motor on the crankshaft, P1) with a CVT, run as P2 with a 6-speed clutch gearbox"
+  },
+  "2013 Volkswagen Jetta Hybrid": {
+   "class": "car",
+   "arch": "hev_parallel_p2",
+   "fuel": "gasoline",
+   "engine_L": 1.4,
+   "engine_kW": 112,
+   "turbo": true,
+   "trans": [
+    "DCT",
+    7
+   ],
+   "motors": [
+    [
+     "P2",
+     20,
+     150
+    ]
+   ],
+   "battery": [
+    1.1,
+    220,
+    "NMC"
+   ],
+   "epa": [
+    "VOLKSWAGEN",
+    "JETTA HYBRID"
+   ]
+  },
+  "2011 Hyundai Sonata Hybrid": {
+   "class": "car",
+   "arch": "hev_parallel_p2",
+   "fuel": "gasoline",
+   "engine_L": 2.4,
+   "engine_kW": 126,
+   "trans": [
+    "DCT",
+    6
+   ],
+   "motors": [
+    [
+     "P2",
+     30,
+     205
+    ]
+   ],
+   "battery": [
+    1.4,
+    270,
+    "NMC"
+   ],
+   "epa": [
+    "HYUNDAI",
+    "SONATA HYBRID"
+   ],
+   "arch_note": "6-speed automatic with the torque converter replaced by a motor and clutch, run as a clutch gearbox"
+  },
+  "2010 Ford Fusion Hybrid": {
+   "class": "car",
+   "arch": "hev_powersplit",
+   "fuel": "gasoline",
+   "engine_L": 2.5,
+   "engine_kW": 116,
+   "trans": [
+    "eCVT",
+    1
+   ],
+   "motors": [
+    [
+     "MG1",
+     70,
+     null
+    ],
+    [
+     "MG2",
+     79,
+     228
+    ]
+   ],
+   "battery": [
+    1.3,
+    275,
+    "NiMH"
+   ],
+   "epa": [
+    "FORD|LINCOLN",
+    "^FUSION"
+   ]
+  },
+  "2010 Honda CR-Z": {
+   "class": "car",
+   "arch": "hev_parallel_p2",
+   "fuel": "gasoline",
+   "engine_L": 1.5,
+   "engine_kW": 84,
+   "trans": [
+    "DCT",
+    6
+   ],
+   "motors": [
+    [
+     "P2",
+     10,
+     78
+    ]
+   ],
+   "battery": [
+    0.58,
+    101,
+    "NiMH"
+   ],
+   "epa": [
+    "HONDA",
+    "CR-Z|CRZ"
+   ],
+   "arch_note": "IMA (P1) run as P2 with a 6-speed clutch gearbox"
+  },
+  "2010 Honda Insight": {
+   "class": "car",
+   "arch": "hev_parallel_p2",
+   "fuel": "gasoline",
+   "engine_L": 1.3,
+   "engine_kW": 65,
+   "trans": [
+    "DCT",
+    6
+   ],
+   "motors": [
+    [
+     "P2",
+     10,
+     78
+    ]
+   ],
+   "battery": [
+    0.58,
+    101,
+    "NiMH"
+   ],
+   "epa": [
+    "HONDA",
+    "INSIGHT"
+   ],
+   "arch_note": "IMA (P1) with a CVT, run as P2 with a 6-speed clutch gearbox"
+  },
+  "2010 Toyota Prius": {
+   "class": "car",
+   "arch": "hev_powersplit",
+   "fuel": "gasoline",
+   "engine_L": 1.8,
+   "engine_kW": 73,
+   "trans": [
+    "eCVT",
+    1
+   ],
+   "mg2_ratio": 2.636,
+   "motors": [
+    [
+     "MG1",
+     42,
+     null
+    ],
+    [
+     "MG2",
+     60,
+     207
+    ]
+   ],
+   "battery": [
+    1.31,
+    202,
+    "NiMH"
+   ],
+   "epa": [
+    "TOYOTA",
+    "^PRIUS$"
+   ]
+  },
+  "2010 Mercedes S400h BlueHybrid": {
+   "class": "car",
+   "arch": "hev_parallel_p2",
+   "fuel": "gasoline",
+   "engine_L": 3.5,
+   "engine_kW": 205,
+   "trans": [
+    "AT",
+    7
+   ],
+   "tc": true,
+   "motors": [
+    [
+     "P2",
+     15,
+     160
+    ]
+   ],
+   "battery": [
+    0.8,
+    120,
+    "NMC"
+   ],
+   "epa": [
+    "MERCEDES|DAIMLER",
+    "S.?400"
+   ],
+   "arch_note": "mild P1 hybrid with a torque-converter 7-speed, run as P2"
+  },
+  "2021 Toyota RAV4 Prime": {
+   "class": "suv",
+   "arch": "phev_powersplit",
+   "fuel": "gasoline",
+   "engine_L": 2.5,
+   "engine_kW": 131,
+   "trans": [
+    "eCVT",
+    1
+   ],
+   "motors": [
+    [
+     "MG1",
+     100,
+     null
+    ],
+    [
+     "MG2",
+     174,
+     270
+    ]
+   ],
+   "battery": [
+    18.1,
+    355,
+    "NMC"
+   ],
+   "hvac_source": "heat_pump",
+   "epa": [
+    "TOYOTA",
+    "RAV4 PRIME|RAV4 PHEV|RAV4 PLUG"
+   ],
+   "arch_note": "front MG2 134 kW and rear 40 kW motor lumped into one 174 kW MG2"
+  },
+  "2017 Toyota Prius Prime": {
+   "class": "car",
+   "arch": "phev_powersplit",
+   "fuel": "gasoline",
+   "engine_L": 1.8,
+   "engine_kW": 71,
+   "trans": [
+    "eCVT",
+    1
+   ],
+   "mg2_ratio": 2.636,
+   "motors": [
+    [
+     "MG1",
+     23,
+     null
+    ],
+    [
+     "MG2",
+     53,
+     163
+    ]
+   ],
+   "battery": [
+    8.8,
+    352,
+    "NMC"
+   ],
+   "hvac_source": "heat_pump",
+   "epa": [
+    "TOYOTA",
+    "PRIUS PRIME"
+   ]
+  },
+  "2016 Chevrolet Volt": {
+   "class": "car",
+   "arch": "phev_series",
+   "fuel": "gasoline",
+   "engine_L": 1.5,
+   "engine_kW": 75,
+   "trans": [
+    "single",
+    1
+   ],
+   "motors": [
+    [
+     "traction",
+     111,
+     398
+    ],
+    [
+     "generator",
+     75,
+     null
+    ]
+   ],
+   "battery": [
+    18.4,
+    360,
+    "NMC"
+   ],
+   "hvac_source": "ptc",
+   "epa": [
+    "CHEVROLET|GENERAL MOTORS",
+    "VOLT"
+   ],
+   "arch_note": "Voltec gen 2 has power-split modes; run as a series PHEV (87 + 48 kW machines lumped as traction 111 kW)"
+  },
+  "2014 BMW i3-REX": {
+   "class": "car",
+   "arch": "phev_series",
+   "fuel": "gasoline",
+   "engine_L": 0.65,
+   "engine_kW": 28,
+   "trans": [
+    "single",
+    1
+   ],
+   "motors": [
+    [
+     "traction",
+     125,
+     250
+    ],
+    [
+     "generator",
+     28,
+     null
+    ]
+   ],
+   "battery": [
+    18.8,
+    360,
+    "NMC"
+   ],
+   "epa": [
+    "BMW",
+    "I3.*(REX|RANGE)"
+   ],
+   "notes": "range extender only above a low SOC"
+  },
+  "2013 Ford Cmax Energi": {
+   "class": "car",
+   "arch": "phev_powersplit",
+   "fuel": "gasoline",
+   "engine_L": 2.0,
+   "engine_kW": 105,
+   "trans": [
+    "eCVT",
+    1
+   ],
+   "motors": [
+    [
+     "MG1",
+     70,
+     null
+    ],
+    [
+     "MG2",
+     88,
+     240
+    ]
+   ],
+   "battery": [
+    7.6,
+    300,
+    "NMC"
+   ],
+   "epa": [
+    "FORD",
+    "C.?MAX ENERGI|C-MAX PHEV"
+   ]
+  },
+  "2013 Ford Fusion Energi": {
+   "class": "car",
+   "arch": "phev_powersplit",
+   "fuel": "gasoline",
+   "engine_L": 2.0,
+   "engine_kW": 105,
+   "trans": [
+    "eCVT",
+    1
+   ],
+   "motors": [
+    [
+     "MG1",
+     70,
+     null
+    ],
+    [
+     "MG2",
+     88,
+     240
+    ]
+   ],
+   "battery": [
+    7.6,
+    300,
+    "NMC"
+   ],
+   "epa": [
+    "FORD",
+    "FUSION ENERGI|FUSION PHEV"
+   ]
+  },
+  "2013 Chevrolet Volt": {
+   "class": "car",
+   "arch": "phev_series",
+   "fuel": "gasoline",
+   "engine_L": 1.4,
+   "engine_kW": 63,
+   "trans": [
+    "single",
+    1
+   ],
+   "motors": [
+    [
+     "traction",
+     111,
+     370
+    ],
+    [
+     "generator",
+     55,
+     null
+    ]
+   ],
+   "battery": [
+    16.5,
+    360,
+    "NMC"
+   ],
+   "hvac_source": "ptc",
+   "epa": [
+    "CHEVROLET|GENERAL MOTORS",
+    "VOLT"
+   ],
+   "arch_note": "Voltec gen 1 couples the engine to the wheels at highway speed; run as a series PHEV"
+  },
+  "2012 Chevrolet Volt": {
+   "class": "car",
+   "arch": "phev_series",
+   "fuel": "gasoline",
+   "engine_L": 1.4,
+   "engine_kW": 63,
+   "trans": [
+    "single",
+    1
+   ],
+   "motors": [
+    [
+     "traction",
+     111,
+     370
+    ],
+    [
+     "generator",
+     55,
+     null
+    ]
+   ],
+   "battery": [
+    16.0,
+    360,
+    "NMC"
+   ],
+   "hvac_source": "ptc",
+   "epa": [
+    "CHEVROLET|GENERAL MOTORS",
+    "VOLT"
+   ],
+   "arch_note": "as the 2013 Volt"
+  },
+  "2013 Toyota Prius Plug-in": {
+   "class": "car",
+   "arch": "phev_powersplit",
+   "fuel": "gasoline",
+   "engine_L": 1.8,
+   "engine_kW": 73,
+   "trans": [
+    "eCVT",
+    1
+   ],
+   "mg2_ratio": 2.636,
+   "motors": [
+    [
+     "MG1",
+     42,
+     null
+    ],
+    [
+     "MG2",
+     60,
+     207
+    ]
+   ],
+   "battery": [
+    4.4,
+    207,
+    "NMC"
+   ],
+   "epa": [
+    "TOYOTA",
+    "PRIUS PLUG"
+   ]
+  },
+  "2012 Toyota Prius Plug-in": {
+   "class": "car",
+   "arch": "phev_powersplit",
+   "fuel": "gasoline",
+   "engine_L": 1.8,
+   "engine_kW": 73,
+   "trans": [
+    "eCVT",
+    1
+   ],
+   "mg2_ratio": 2.636,
+   "motors": [
+    [
+     "MG1",
+     42,
+     null
+    ],
+    [
+     "MG2",
+     60,
+     207
+    ]
+   ],
+   "battery": [
+    4.4,
+    207,
+    "NMC"
+   ],
+   "epa": [
+    "TOYOTA",
+    "PRIUS PLUG"
+   ]
+  },
+  "2016 Toyota Mirai": {
+   "class": "car",
+   "arch": null,
+   "notes": "fuel-cell vehicle: no RoadSim architecture; indexed, no twin"
+  },
+  "2015 Chevrolet Bi-Fuel Impala": {
+   "class": "car",
+   "arch": null,
+   "notes": "CNG/gasoline bi-fuel: indexed, no twin"
+  },
+  "2010 Honda Civic GX": {
+   "class": "car",
+   "arch": null,
+   "notes": "dedicated CNG: indexed, no twin"
+  },
+  "2010 Hyundai LPI Hybrid": {
+   "class": "car",
+   "arch": null,
+   "notes": "LPG mild hybrid (Korean market): indexed, no twin"
+  }
+ }
+}
