@@ -151,3 +151,22 @@ EPA coverage is near nominal.
 
 - The original claude.ai page is now `lab/index.html`, unchanged.
 - The site's model page has a live instrument (`web/export_instrument.py`, `site/src/instruments/energynet/`). Five real exam trips (one per powertrain); temperature, mass, grade, wind, start charge and cold start change the input and the 5-network ensemble reruns. Parity with Python: 32 cases, worst 1.6e-7.
+
+## 14 Nov 2026 — Phase D, step 1: v1 re-scored on the ZTBus by-month exam
+
+Before anything is rebuilt on RoadSim physics v2, the released v1 ensemble (`weights/`, `sigma_factors.json`) is
+re-scored on ZTBus mission totals under the split in force since 13 Nov (`proc/hd/ztbus_full_splits.json`: 294 dev /
+1,115 exam missions; V2_PLAN decisions log). Same method as v1's `exam.py` (route proxy: v1's traced legs of the same bus
+route, run at the mission's mean temperature; baseline: v1's dev kWh/km x distance). Script:
+`training/rescore_v1_ztbus.py` -> `work/rescore_v1_ztbus.json`. Nothing is chosen with it.
+
+| missions | n | EnergyNet v1 MdAPE | bias | baseline MdAPE | inside 68% / 95% band |
+|---|---|---|---|---|---|
+| v1 rule exam (reproduces the card) | 1,407 | 16.2% | -16.2% | 14.5% | 59% / 97% |
+| **by-month exam (the v1 number from now on)** | **1,115** | **16.0%** | **-16.0%** | **14.6%** | **60% / 97%** |
+
+v1 still loses to the dev kWh/km baseline on mission totals (16.0 vs 14.6%) and is biased low by 16%. The v1 card's
+missions row and the v2 comparison use the 1,115-mission numbers.
+
+Fix needed to run the training scripts in this repository: `common.EN` pointed at `shared/vehicle/energynet` (a sandbox
+path); it is now `work/` (`_paths.WORK`), so `realfeat.py`, `bank.py` and `fleet.py` write where `evaluate.py` reads.

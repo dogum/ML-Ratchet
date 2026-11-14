@@ -8,7 +8,7 @@ Target energy (MJ), same definition as RoadData's baselines:
 import _paths as _P  # portable paths (see _paths.py)
 import sys, os, json, copy, math
 ROOT = _P.VEHICLE
-EN = f'{ROOT}/energynet'
+EN = _P.WORK          # outputs (banks, records, checkpoints): models/energynet/work
 for p in (f'{ROOT}/roadsim', ROOT, f'{EN}/src'):
     if p not in sys.path:
         sys.path.insert(0, p)
