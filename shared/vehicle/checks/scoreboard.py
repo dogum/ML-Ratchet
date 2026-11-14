@@ -90,6 +90,19 @@ def checks():
             p = d.get('err_primary')
             if p:
                 out[f'ved_dev_twin.{arch}.primary.median_pct'] = p['median']; out[f'ved_dev_twin.{arch}.primary.iqr_pct'] = p['iqr']
+    for st in ('dev', 'exam2'):            # EPA test-car hybrids / plug-ins by group (check_hybrids_epa.py; exam2 = final report)
+        c = _load(f'hybrids_epa__{st}.json')
+        if c:
+            for g, d in c['summary']['by_group'].items():
+                for cyc in ('FTP', 'HWY', 'US06', 'SC03', 'COLD'):
+                    if cyc in d:
+                        out[f'hybrids_epa_{st}.{g}.{cyc}.median_pct'] = d[cyc]['median']; out[f'hybrids_epa_{st}.{g}.{cyc}.n'] = d[cyc]['n']
+    c = _load('ved_twin_exam2.json')       # VED exam HEV / PHEV twins (exam-2, final report)
+    if c:
+        for arch, d in c['summary']['by_arch'].items():
+            for k in ('err_primary', 'err_primary_car_medians', 'eng_on_pts'):
+                if d.get(k):
+                    out[f'ved_exam2_twin.{arch}.{k}.median'] = d[k]['median']; out[f'ved_exam2_twin.{arch}.{k}.n'] = d[k]['n']
     c = _load('epa_pool.json')
     if c:
         for cyc, st in c['summary']['all'].items():

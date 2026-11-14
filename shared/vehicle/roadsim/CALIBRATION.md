@@ -466,3 +466,28 @@ v2-improved dev hybrid metrics are not worse: EPA dev Accord HWY -4.6 -> -4.5, D
 Toyota fuel -1.1 -> -0.5 % and engine-on -10.9 -> -4.9 points, P2 FTP median +17.6 -> +15.2 %. Speed: hybrids 11.4 s for
 24 runs in both. **Not the default**: PHYSICS_VERSION stays roadsim-physics-v2, because the fuel and energy gain on dev
 is not clear (EPA dev cycle medians move 0.4-2.4 points either way); the gain is in engine operation.
+
+## v2.1 report (computed once, after the freeze commit 1896a7d; nothing changed afterwards)
+
+Exam-2 (the fresh judge; `checks/exam2_report.py` -> `exam2_report.json`), second-look sets (seen before v2.1 was fitted:
+`check_cycles --split all`, D3 exam) and `run_all.py --options roadsim-physics-v2.1 --all-splits`;
+`scoreboard_roadsim-physics-v2.1.json`, `scoreboard_compare_v2_v2.1.txt` (v2 re-scored with the same harness). Tables
+in LIMITS.md. In short:
+- **Exam-2 EPA** (409 fresh records, FE %, v2 -> v2.1 FTP): TMED P2 -10.2 -> -9.8, converter P2 +27.9 -> +26.1, clutch
+  P2 +17.7 -> +15.4, mild +10.8 -> +8.9, Toyota power-split +18.0 -> +17.2, Ford +9.0 -> +8.9, Honda e:HEV -2.9 -> -3.6,
+  plug-in power-split +0.7 -> +0.5, plug-in series +18.5 -> +19.4, plug-in P2 +6.9 -> +7.3. Median absolute error over
+  all cycles falls in 6 of 11 groups (by 0.2-1.7 points) and rises in 5 (0.2-1.7).
+- **Exam-2 VED** (108 cars, 11,157 trips): Toyota-type HEVs trip median -1.8 -> +0.5 %, car median -1.1 -> +3.1 %,
+  engine-on gap -10.1 -> -3.8 points; other HEVs (Ford/Altima labels) +15.0 -> +17.2 %; plug-ins -23 / -20 % unchanged.
+- **Second look**: EPA held-out P2 FTP -4.0 -> -3.1, US06 -23.6 -> -17.6, SC03 -17.7 -> -19.8; power-split FTP / HWY
+  -5.1 / -7.2 -> -5.6 / -8.9, cold -15.9 -> -17.6; e:HEV -2.0 / -3.8 -> -2.6 / -4.0. D3 exam hybrids -17.8 -> -17.8,
+  plug-in power-split -17.8 -> -17.8, plug-in series -22.6 -> -22.6 (v2 re-scored with this harness; first reported
+  -16.2 / -27.1). Conventional, BEV, ZTBus, ledger, coast-down, EPA pool, heavy duty: identical to v2 (guard).
+- **Generator hybrids** (check_generator): hot UDDS 47.5 -> 47.1 mpg, HWY 45.2 -> 45.1 (EPA MY2022-24 hybrids 59.2 /
+  58.2): still ~20 % too thirsty; not addressed.
+- **Speed**: hybrids 2-4 % slower than v2 (UDDS single thread 3,085-3,851 x real time).
+
+Verdict: v2.1 improves engine operation (engine-on shares, VED engine-on gap) and moves fuel errors by 0.1-2.5
+points both ways. It fixes none of the large hybrid errors, which exam-2 now measures on fresh cars: pre-TNGA Toyota
+and Lexus engines (+17 % FTP), TMED P2s (-10 %), converter P2s (+26 %), plug-in series (+19 %), hybrid A/C, and VED
+plug-ins (-20 to -23 %). v2 stays the default.

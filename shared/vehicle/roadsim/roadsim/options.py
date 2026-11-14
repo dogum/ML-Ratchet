@@ -8,6 +8,7 @@ data/calibration_v2.json; decisions in CALIBRATION.md).
 
     simulate(spec, trip)                                              # physics v2 (the default)
     simulate(spec, trip, options='roadsim-physics-v1')               # physics v1, exactly
+    simulate(spec, trip, options='roadsim-physics-v2.1')             # v2 + the hybrid fix pass (data/calibration_v2_1.json)
     simulate(spec, trip, options={'p2_torque_converter': True})       # v1 plus one option
     simulate(spec, trip, options={'preset': 'roadsim-physics-v2', 'regen_share': {}})   # v2 with one change
     spec['physics'] = {'hvac_model': 'v2'}                           # per vehicle

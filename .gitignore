@@ -47,3 +47,5 @@ shared/vehicle/data/proc/splits_ved_part*
 shared/vehicle/data/proc/dem_*/
 shared/vehicle/roadsim/refdata/
 shared/vehicle/roadsim/logs/
+# VED exam-2 per-trip twin results (VED exam is the models' exam too: summaries only are tracked, in exam2_report.json and the scoreboards)
+shared/vehicle/checks/ved_twin_exam2__*.json
