@@ -260,12 +260,12 @@
   "fastsim_matched.hev.HWY.median_pct": 2.26,
   "fastsim_matched.hev.UDDS.median_pct": 12.53,
   "fastsim_matched.hev.US06.median_pct": -8.3,
-  "generator.bev.HWY_MPGe.median": 115.6,
-  "generator.bev.UDDS_MPGe.median": 133.4,
-  "generator.conv.HWY.median": 35.0,
-  "generator.conv.UDDS_hot.median": 24.9,
-  "generator.hev.HWY.median": 45.2,
-  "generator.hev.UDDS_hot.median": 47.5,
+  "generator.bev.HWY_MPGe.median": 118.5,
+  "generator.bev.UDDS_MPGe.median": 139.1,
+  "generator.conv.HWY.median": 36.0,
+  "generator.conv.UDDS_hot.median": 26.0,
+  "generator.hev.HWY.median": 47.2,
+  "generator.hev.UDDS_hot.median": 50.5,
   "hd.class8_bev.kWh_per_mi": 2.489,
   "hd.class8_diesel.g_co2_per_ton_mile": 85.3,
   "hybrids_epa_dev.ford_ps.FTP.median_pct": 1.7,
@@ -340,6 +340,78 @@
   "hybrids_epa_dev.toyota_ps.SC03.n": 10,
   "hybrids_epa_dev.toyota_ps.US06.median_pct": 2.04,
   "hybrids_epa_dev.toyota_ps.US06.n": 10,
+  "hybrids_epa_devx.ford_ps.FTP.median_pct": 1.7,
+  "hybrids_epa_devx.ford_ps.FTP.n": 1,
+  "hybrids_epa_devx.ford_ps.HWY.median_pct": 1.78,
+  "hybrids_epa_devx.ford_ps.HWY.n": 1,
+  "hybrids_epa_devx.honda_series.COLD.median_pct": -10.63,
+  "hybrids_epa_devx.honda_series.COLD.n": 1,
+  "hybrids_epa_devx.honda_series.FTP.median_pct": -4.2,
+  "hybrids_epa_devx.honda_series.FTP.n": 1,
+  "hybrids_epa_devx.honda_series.HWY.median_pct": -4.61,
+  "hybrids_epa_devx.honda_series.HWY.n": 1,
+  "hybrids_epa_devx.honda_series.SC03.median_pct": 12.51,
+  "hybrids_epa_devx.honda_series.SC03.n": 1,
+  "hybrids_epa_devx.honda_series.US06.median_pct": -8.51,
+  "hybrids_epa_devx.honda_series.US06.n": 1,
+  "hybrids_epa_devx.p2_clutch.COLD.median_pct": 42.11,
+  "hybrids_epa_devx.p2_clutch.COLD.n": 2,
+  "hybrids_epa_devx.p2_clutch.FTP.median_pct": 16.7,
+  "hybrids_epa_devx.p2_clutch.FTP.n": 13,
+  "hybrids_epa_devx.p2_clutch.HWY.median_pct": -0.58,
+  "hybrids_epa_devx.p2_clutch.HWY.n": 13,
+  "hybrids_epa_devx.p2_clutch.SC03.median_pct": 12.0,
+  "hybrids_epa_devx.p2_clutch.SC03.n": 2,
+  "hybrids_epa_devx.p2_clutch.US06.median_pct": 5.53,
+  "hybrids_epa_devx.p2_clutch.US06.n": 2,
+  "hybrids_epa_devx.p2_converter.FTP.median_pct": 39.59,
+  "hybrids_epa_devx.p2_converter.FTP.n": 1,
+  "hybrids_epa_devx.p2_converter.HWY.median_pct": 3.82,
+  "hybrids_epa_devx.p2_converter.HWY.n": 1,
+  "hybrids_epa_devx.p2_tmed.COLD.median_pct": -2.87,
+  "hybrids_epa_devx.p2_tmed.COLD.n": 1,
+  "hybrids_epa_devx.p2_tmed.FTP.median_pct": 4.29,
+  "hybrids_epa_devx.p2_tmed.FTP.n": 1,
+  "hybrids_epa_devx.p2_tmed.HWY.median_pct": -5.88,
+  "hybrids_epa_devx.p2_tmed.HWY.n": 1,
+  "hybrids_epa_devx.p2_tmed.SC03.median_pct": 2.08,
+  "hybrids_epa_devx.p2_tmed.SC03.n": 1,
+  "hybrids_epa_devx.p2_tmed.US06.median_pct": -9.51,
+  "hybrids_epa_devx.p2_tmed.US06.n": 1,
+  "hybrids_epa_devx.plugin_p2.COLD.median_pct": 26.97,
+  "hybrids_epa_devx.plugin_p2.COLD.n": 6,
+  "hybrids_epa_devx.plugin_p2.FTP.median_pct": 14.31,
+  "hybrids_epa_devx.plugin_p2.FTP.n": 22,
+  "hybrids_epa_devx.plugin_p2.HWY.median_pct": -4.4,
+  "hybrids_epa_devx.plugin_p2.HWY.n": 22,
+  "hybrids_epa_devx.plugin_p2.SC03.median_pct": 28.49,
+  "hybrids_epa_devx.plugin_p2.SC03.n": 6,
+  "hybrids_epa_devx.plugin_p2.US06.median_pct": -5.14,
+  "hybrids_epa_devx.plugin_p2.US06.n": 8,
+  "hybrids_epa_devx.plugin_ps.FTP.median_pct": 6.97,
+  "hybrids_epa_devx.plugin_ps.FTP.n": 5,
+  "hybrids_epa_devx.plugin_ps.HWY.median_pct": 1.56,
+  "hybrids_epa_devx.plugin_ps.HWY.n": 5,
+  "hybrids_epa_devx.plugin_series.COLD.median_pct": -15.98,
+  "hybrids_epa_devx.plugin_series.COLD.n": 3,
+  "hybrids_epa_devx.plugin_series.FTP.median_pct": 11.32,
+  "hybrids_epa_devx.plugin_series.FTP.n": 3,
+  "hybrids_epa_devx.plugin_series.HWY.median_pct": -6.06,
+  "hybrids_epa_devx.plugin_series.HWY.n": 3,
+  "hybrids_epa_devx.plugin_series.SC03.median_pct": 17.37,
+  "hybrids_epa_devx.plugin_series.SC03.n": 3,
+  "hybrids_epa_devx.plugin_series.US06.median_pct": -0.61,
+  "hybrids_epa_devx.plugin_series.US06.n": 3,
+  "hybrids_epa_devx.toyota_ps.COLD.median_pct": -11.68,
+  "hybrids_epa_devx.toyota_ps.COLD.n": 15,
+  "hybrids_epa_devx.toyota_ps.FTP.median_pct": 4.52,
+  "hybrids_epa_devx.toyota_ps.FTP.n": 16,
+  "hybrids_epa_devx.toyota_ps.HWY.median_pct": -3.63,
+  "hybrids_epa_devx.toyota_ps.HWY.n": 16,
+  "hybrids_epa_devx.toyota_ps.SC03.median_pct": 3.93,
+  "hybrids_epa_devx.toyota_ps.SC03.n": 15,
+  "hybrids_epa_devx.toyota_ps.US06.median_pct": -0.24,
+  "hybrids_epa_devx.toyota_ps.US06.n": 15,
   "hybrids_epa_exam2.ford_ps.FTP.median_pct": 9.03,
   "hybrids_epa_exam2.ford_ps.FTP.n": 10,
   "hybrids_epa_exam2.ford_ps.HWY.median_pct": 5.23,
@@ -434,6 +506,70 @@
   "hybrids_epa_exam2.toyota_ps.SC03.n": 101,
   "hybrids_epa_exam2.toyota_ps.US06.median_pct": 6.41,
   "hybrids_epa_exam2.toyota_ps.US06.n": 113,
+  "hybrids_epa_exam3.ford_ps.FTP.median_pct": 4.77,
+  "hybrids_epa_exam3.ford_ps.FTP.n": 8,
+  "hybrids_epa_exam3.ford_ps.HWY.median_pct": 1.93,
+  "hybrids_epa_exam3.ford_ps.HWY.n": 8,
+  "hybrids_epa_exam3.ford_ps.US06.median_pct": -1.99,
+  "hybrids_epa_exam3.ford_ps.US06.n": 6,
+  "hybrids_epa_exam3.honda_series.COLD.median_pct": -6.97,
+  "hybrids_epa_exam3.honda_series.COLD.n": 4,
+  "hybrids_epa_exam3.honda_series.FTP.median_pct": -0.27,
+  "hybrids_epa_exam3.honda_series.FTP.n": 7,
+  "hybrids_epa_exam3.honda_series.HWY.median_pct": -4.22,
+  "hybrids_epa_exam3.honda_series.HWY.n": 7,
+  "hybrids_epa_exam3.honda_series.SC03.median_pct": 19.51,
+  "hybrids_epa_exam3.honda_series.SC03.n": 4,
+  "hybrids_epa_exam3.honda_series.US06.median_pct": -5.87,
+  "hybrids_epa_exam3.honda_series.US06.n": 4,
+  "hybrids_epa_exam3.mild.FTP.median_pct": 24.66,
+  "hybrids_epa_exam3.mild.FTP.n": 18,
+  "hybrids_epa_exam3.mild.HWY.median_pct": 8.36,
+  "hybrids_epa_exam3.mild.HWY.n": 18,
+  "hybrids_epa_exam3.p2_converter.FTP.median_pct": 18.45,
+  "hybrids_epa_exam3.p2_converter.FTP.n": 9,
+  "hybrids_epa_exam3.p2_converter.HWY.median_pct": -2.68,
+  "hybrids_epa_exam3.p2_converter.HWY.n": 9,
+  "hybrids_epa_exam3.plugin_p2.COLD.median_pct": 25.9,
+  "hybrids_epa_exam3.plugin_p2.COLD.n": 3,
+  "hybrids_epa_exam3.plugin_p2.FTP.median_pct": 10.37,
+  "hybrids_epa_exam3.plugin_p2.FTP.n": 5,
+  "hybrids_epa_exam3.plugin_p2.HWY.median_pct": -7.05,
+  "hybrids_epa_exam3.plugin_p2.HWY.n": 5,
+  "hybrids_epa_exam3.plugin_p2.SC03.median_pct": 19.75,
+  "hybrids_epa_exam3.plugin_p2.SC03.n": 3,
+  "hybrids_epa_exam3.plugin_p2.US06.median_pct": -10.43,
+  "hybrids_epa_exam3.plugin_p2.US06.n": 3,
+  "hybrids_epa_exam3.plugin_ps.COLD.median_pct": -6.66,
+  "hybrids_epa_exam3.plugin_ps.COLD.n": 1,
+  "hybrids_epa_exam3.plugin_ps.FTP.median_pct": 10.41,
+  "hybrids_epa_exam3.plugin_ps.FTP.n": 1,
+  "hybrids_epa_exam3.plugin_ps.HWY.median_pct": 7.06,
+  "hybrids_epa_exam3.plugin_ps.HWY.n": 1,
+  "hybrids_epa_exam3.plugin_ps.SC03.median_pct": 41.67,
+  "hybrids_epa_exam3.plugin_ps.SC03.n": 1,
+  "hybrids_epa_exam3.plugin_ps.US06.median_pct": 8.46,
+  "hybrids_epa_exam3.plugin_ps.US06.n": 1,
+  "hybrids_epa_exam3.plugin_series.COLD.median_pct": -1.96,
+  "hybrids_epa_exam3.plugin_series.COLD.n": 1,
+  "hybrids_epa_exam3.plugin_series.FTP.median_pct": 5.78,
+  "hybrids_epa_exam3.plugin_series.FTP.n": 2,
+  "hybrids_epa_exam3.plugin_series.HWY.median_pct": -12.13,
+  "hybrids_epa_exam3.plugin_series.HWY.n": 2,
+  "hybrids_epa_exam3.plugin_series.SC03.median_pct": 48.71,
+  "hybrids_epa_exam3.plugin_series.SC03.n": 2,
+  "hybrids_epa_exam3.plugin_series.US06.median_pct": -14.79,
+  "hybrids_epa_exam3.plugin_series.US06.n": 1,
+  "hybrids_epa_exam3.toyota_ps.COLD.median_pct": -5.21,
+  "hybrids_epa_exam3.toyota_ps.COLD.n": 10,
+  "hybrids_epa_exam3.toyota_ps.FTP.median_pct": 8.68,
+  "hybrids_epa_exam3.toyota_ps.FTP.n": 14,
+  "hybrids_epa_exam3.toyota_ps.HWY.median_pct": 1.42,
+  "hybrids_epa_exam3.toyota_ps.HWY.n": 14,
+  "hybrids_epa_exam3.toyota_ps.SC03.median_pct": 4.79,
+  "hybrids_epa_exam3.toyota_ps.SC03.n": 10,
+  "hybrids_epa_exam3.toyota_ps.US06.median_pct": 1.89,
+  "hybrids_epa_exam3.toyota_ps.US06.n": 10,
   "ledger.closure_rel_max": 0.000558350769829497,
   "ledger.n_over_0p5pct": 0,
   "speed.bus bev.x_realtime_udds": 24805,
@@ -499,18 +635,20 @@
   "ztbus_exam.legs.n": 5847
  },
  "models": {
-  "energynet.coverage68.EPA petrol FTP": 77,
-  "energynet.coverage68.EPA petrol highway": 54,
-  "energynet.coverage68.VED electric": 47,
-  "energynet.coverage68.VED hybrid": 65,
-  "energynet.coverage68.VED petrol": 55,
+  "energynet.coverage68.EPA petrol FTP": 65,
+  "energynet.coverage68.EPA petrol highway": 76,
+  "energynet.coverage68.VED all trips (pooled)": 61,
+  "energynet.coverage68.VED electric": 43,
+  "energynet.coverage68.VED hybrid": 66,
+  "energynet.coverage68.VED petrol": 57,
   "energynet.coverage68.VED plug-in": 65,
+  "energynet.coverage68.ZTBus missions": 88,
   "energynet.exam.EPA BEV city tests (746)": {
    "baselines": {
     "Dev median": 19.0,
-    "Log-linear regression": 9.8
+    "Log-linear regression (fit on dev)": 9.8
    },
-   "model": 7.9,
+   "model": 8.8,
    "verdict": "win"
   },
   "energynet.exam.EPA hybrid FTP tests (1,098)": {
@@ -518,45 +656,86 @@
     "Dev median": 49.0,
     "Log-linear regression (fit on dev)": 16.3
    },
-   "model": 8.7,
+   "model": 10.2,
+   "verdict": "win"
+  },
+  "energynet.exam.EPA hybrid highway tests (1,156)": {
+   "baselines": {
+    "Dev median": 20.1,
+    "Log-linear regression (fit on dev)": 21.5
+   },
+   "model": 6.0,
+   "verdict": "win"
+  },
+  "energynet.exam.EPA petrol 20 \u00b0F cold FTP tests (1,734)": {
+   "baselines": {
+    "Dev median": 24.5,
+    "Log-linear regression (fit on dev)": 9.7
+   },
+   "model": 9.5,
+   "verdict": "win"
+  },
+  "energynet.exam.EPA petrol FTP tests (20,065)": {
+   "baselines": {
+    "Dev median": 18.7,
+    "Log-linear regression (fit on dev)": 7.1
+   },
+   "model": 8.9,
+   "verdict": "loss"
+  },
+  "energynet.exam.EPA petrol SC03 (A/C) tests (1,819)": {
+   "baselines": {
+    "Dev median": 21.7,
+    "Log-linear regression (fit on dev)": 9.3
+   },
+   "model": 18.9,
+   "verdict": "loss"
+  },
+  "energynet.exam.EPA petrol US06 tests (2,832)": {
+   "baselines": {
+    "Dev median": 17.3,
+    "Log-linear regression (fit on dev)": 6.9
+   },
+   "model": 5.1,
    "verdict": "win"
   },
   "energynet.exam.EPA petrol highway tests (20,426)": {
    "baselines": {
     "Dev median": 16.8,
-    "Log-linear regression": 5.0
+    "Log-linear regression (fit on dev)": 5.0
    },
-   "model": 15.6,
+   "model": 6.7,
    "verdict": "loss"
   },
-  "energynet.exam.Electric (2 Nissan Leafs), per trip": {
+  "energynet.exam.Electric (2 Nissan Leafs), per trip (167 trips)": {
    "baselines": {
     "Class median": 27.1,
     "MOVES-like": 19.0
    },
-   "model": 22.8,
+   "model": 22.6,
    "verdict": "loss"
   },
-  "energynet.exam.Hybrids, per trip (8,241 trips)": {
+  "energynet.exam.Hybrids, per trip (8,241 trips, 86 cars)": {
    "baselines": {
     "Class median": 17.2,
-    "MOVES-like": 15.3
+    "MOVES-like": 15.3,
+    "Window label \u00d7 distance": 16.2
    },
-   "model": 16.7,
-   "verdict": "loss"
+   "model": 13.5,
+   "verdict": "win"
   },
   "energynet.exam.ICCT tractor-trailers (2 trucks \u00d7 3 cycles)": {
    "baselines": {
     "Dev truck on the same cycle": 7.0
    },
-   "model": 11.4,
+   "model": 10.0,
    "verdict": "loss"
   },
   "energynet.exam.Mersin diesel bus trips (652)": {
    "baselines": {
     "Dev median on the same route": 8.6
    },
-   "model": 14.8,
+   "model": 17.0,
    "verdict": "loss"
   },
   "energynet.exam.Petrol cars, per trip (14,469 VED trips)": {
@@ -565,7 +744,7 @@
     "MOVES-like": 10.3,
     "Window label \u00d7 distance": 13.0
    },
-   "model": 8.9,
+   "model": 8.7,
    "verdict": "win"
   },
   "energynet.exam.Plug-in hybrids, per trip (2,916 trips)": {
@@ -573,17 +752,24 @@
     "Class median": 42.7,
     "MOVES-like": 41.3
    },
-   "model": 20.1,
+   "model": 17.1,
    "verdict": "win"
   },
-  "energynet.exam.ZTBus trolleybus legs (78)": {
+  "energynet.exam.ZTBus trolleybus legs (5,847)": {
    "baselines": {
-    "Dev kWh/km \u00d7 distance": 22.1
+    "Dev kWh/km \u00d7 distance": 14.0
    },
-   "model": 16.4,
+   "model": 8.6,
    "verdict": "win"
   },
-  "energynet.rung.EnergyNet.r1": {
+  "energynet.exam.ZTBus trolleybus mission totals (1,115 missions)": {
+   "baselines": {
+    "Dev kWh/km (294 dev missions) \u00d7 distance": 10.7
+   },
+   "model": 9.5,
+   "verdict": "win"
+  },
+  "energynet.rung.v1 (RoadSim physics v1, 12 Nov 2026).r1": {
    "decision": "kept",
    "metrics": [
     "11.2%",
@@ -591,7 +777,7 @@
    ],
    "sim": 0.544
   },
-  "energynet.rung.EnergyNet.r2": {
+  "energynet.rung.v1 (RoadSim physics v1, 12 Nov 2026).r2": {
    "decision": "kept",
    "metrics": [
     "11.0%",
@@ -599,7 +785,7 @@
    ],
    "sim": 0.556
   },
-  "energynet.rung.EnergyNet.r3": {
+  "energynet.rung.v1 (RoadSim physics v1, 12 Nov 2026).r3": {
    "decision": "kept",
    "metrics": [
     "10.3%",
@@ -607,7 +793,7 @@
    ],
    "sim": 0.58
   },
-  "energynet.rung.EnergyNet.r4": {
+  "energynet.rung.v1 (RoadSim physics v1, 12 Nov 2026).r4": {
    "decision": "kept",
    "metrics": [
     "9.0%",
@@ -615,7 +801,7 @@
    ],
    "sim": 0.641
   },
-  "energynet.rung.EnergyNet.r5": {
+  "energynet.rung.v1 (RoadSim physics v1, 12 Nov 2026).r5": {
    "decision": "rejected",
    "metrics": [
     "8.9%",
@@ -623,60 +809,217 @@
    ],
    "sim": 0.648
   },
-  "energynet.rung.EnergyNet.r6": {
-   "decision": "released",
+  "energynet.rung.v1 (RoadSim physics v1, 12 Nov 2026).r6": {
+   "decision": "kept",
    "metrics": [
     "8.7%",
     0.129
    ],
    "sim": 0.656
   },
-  "energynet.version": "1.0",
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r1": {
+   "decision": "kept",
+   "metrics": [
+    "9.0%",
+    0.1376
+   ],
+   "sim": 0.614
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r10": {
+   "decision": "rejected",
+   "metrics": [
+    "8.3%",
+    0.1277
+   ],
+   "sim": 0.64
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r11": {
+   "decision": "rejected",
+   "metrics": [
+    "8.6%",
+    0.1219
+   ],
+   "sim": 0.632
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r11b": {
+   "decision": "rejected",
+   "metrics": [
+    "7.9%",
+    0.1195
+   ],
+   "sim": 0.66
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r12": {
+   "decision": "kept",
+   "metrics": null,
+   "sim": null
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r13": {
+   "decision": "released",
+   "metrics": [
+    "7.7%",
+    0.1195
+   ],
+   "sim": 0.67
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r2": {
+   "decision": "kept",
+   "metrics": [
+    "8.6%",
+    0.1327
+   ],
+   "sim": 0.629
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r3": {
+   "decision": "rejected",
+   "metrics": [
+    "8.6%",
+    0.1234
+   ],
+   "sim": 0.63
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r4": {
+   "decision": "rejected",
+   "metrics": [
+    "8.3%",
+    0.1378
+   ],
+   "sim": 0.631
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r5": {
+   "decision": "rejected",
+   "metrics": [
+    "8.7%",
+    0.1228
+   ],
+   "sim": 0.626
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r5b": {
+   "decision": "kept",
+   "metrics": [
+    "8.6%",
+    0.1225
+   ],
+   "sim": 0.632
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r6": {
+   "decision": "rejected",
+   "metrics": [
+    "8.4%",
+    0.1259
+   ],
+   "sim": 0.636
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r7": {
+   "decision": "kept",
+   "metrics": [
+    "8.1%",
+    0.126
+   ],
+   "sim": 0.651
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r8": {
+   "decision": "rejected",
+   "metrics": [
+    "8.1%",
+    0.1195
+   ],
+   "sim": 0.651
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r9": {
+   "decision": "rejected",
+   "metrics": [
+    "8.1%",
+    0.1239
+   ],
+   "sim": 0.651
+  },
+  "energynet.rung.v2 (RoadSim physics v2, Phase D, 14 Nov 2026).v2-r9b": {
+   "decision": "rejected",
+   "metrics": [
+    "8.1%",
+    0.1174
+   ],
+   "sim": 0.651
+  },
+  "energynet.version": "2.0",
+  "hybridpilot.exam.Against the v1 release re-scored on the same exam (v1 network and settings on physics v2), % of DP": {
+   "baselines": {
+    "HybridPilot v1": 99.0
+   },
+   "model": 98.84,
+   "verdict": "loss"
+  },
   "hybridpilot.exam.All 430 trips, % of DP optimum": {
    "baselines": {
-    "Adaptive ECMS": 99.35,
-    "Rule-based": 98.28
+    "Adaptive ECMS": 98.32,
+    "ECMS (constant s)": 98.53,
+    "MPC, 15 s of the future": 98.8,
+    "Rule-based": 97.39
    },
-   "model": 99.49,
-   "verdict": "tie"
+   "model": 98.84,
+   "verdict": "win"
   },
   "hybridpilot.exam.Charge held within its window (all trips)": {
    "baselines": {
-    "Adaptive ECMS": 99
+    "Adaptive ECMS": 96
    },
-   "model": 97,
+   "model": 95,
    "verdict": "loss"
   },
-  "hybridpilot.exam.Power-split hybrids (204 trips), % of DP": {
+  "hybridpilot.exam.Engine starts per km (all trips)": {
    "baselines": {
-    "Adaptive ECMS": 98.9,
-    "Rule-based": 98.59
+    "Adaptive ECMS": 4.5
    },
-   "model": 99.31,
+   "model": 4.0,
    "verdict": "win"
   },
-  "hybridpilot.exam.Series hybrid buses (12 trips), % of DP": {
+  "hybridpilot.exam.Hybrid buses (24 trips), % of DP": {
    "baselines": {
-    "Adaptive ECMS": 99.12,
-    "Rule-based": 95.31
+    "Adaptive ECMS": 97.39,
+    "Rule-based": 96.6
    },
-   "model": 99.78,
+   "model": 97.5,
+   "verdict": "mixed"
+  },
+  "hybridpilot.exam.Mild P1 hybrids, CR-Z-type twins (56 trips), % of DP": {
+   "baselines": {
+    "Adaptive ECMS": 97.51,
+    "Rule-based": 94.02
+   },
+   "model": 98.1,
    "verdict": "win"
   },
-  "hybridpilot.exam.Series plug-ins (46 trips), % of DP": {
+  "hybridpilot.exam.P2 and series hybrids (63 trips), % of DP": {
    "baselines": {
-    "Adaptive ECMS": 100.93,
-    "Rule-based": 100.23
+    "Adaptive ECMS": 98.63,
+    "Rule-based": 95.84
    },
-   "model": 100.0,
+   "model": 99.84,
+   "verdict": "win"
+  },
+  "hybridpilot.exam.Plug-in hybrids (103 trips), % of DP": {
+   "baselines": {
+    "Adaptive ECMS": 99.59,
+    "Charge-depleting then sustaining": 99.43
+   },
+   "model": 99.27,
    "verdict": "loss"
   },
-  "hybridpilot.exam.Simulator fuel vs real logged fuel (exam power-split hybrids, 252 trips)": {
+  "hybridpilot.exam.Power-split hybrids (148 trips), % of DP": {
+   "baselines": {
+    "Adaptive ECMS": 97.52,
+    "Rule-based": 97.92
+   },
+   "model": 98.41,
+   "verdict": "win"
+  },
+  "hybridpilot.exam.Simulated vs logged fuel, calibrated twins driven by HybridPilot (exam, trip median)": {
    "baselines": {},
-   "model": "0.80\u00d7",
+   "model": "+2.2% HEV, \u221222% / \u221231% plug-ins",
    "verdict": "info"
   },
-  "hybridpilot.rung.HybridPilot.R0": {
+  "hybridpilot.rung.v1 \u2014 RoadSim physics v1.R0": {
    "decision": "kept",
    "metrics": [
     98.88,
@@ -686,7 +1029,7 @@
    ],
    "sim": 0.564
   },
-  "hybridpilot.rung.HybridPilot.R1": {
+  "hybridpilot.rung.v1 \u2014 RoadSim physics v1.R1": {
    "decision": "rejected",
    "metrics": [
     98.7,
@@ -696,7 +1039,7 @@
    ],
    "sim": 0.592
   },
-  "hybridpilot.rung.HybridPilot.R2": {
+  "hybridpilot.rung.v1 \u2014 RoadSim physics v1.R2": {
    "decision": "kept",
    "metrics": [
     98.88,
@@ -706,8 +1049,8 @@
    ],
    "sim": 0.596
   },
-  "hybridpilot.rung.HybridPilot.R3": {
-   "decision": "released",
+  "hybridpilot.rung.v1 \u2014 RoadSim physics v1.R3": {
+   "decision": "kept",
    "metrics": [
     99.31,
     "94%",
@@ -716,7 +1059,7 @@
    ],
    "sim": 0.702
   },
-  "hybridpilot.rung.HybridPilot.R4": {
+  "hybridpilot.rung.v1 \u2014 RoadSim physics v1.R4": {
    "decision": "rejected",
    "metrics": [
     99.34,
@@ -726,7 +1069,7 @@
    ],
    "sim": 0.709
   },
-  "hybridpilot.rung.HybridPilot.R5": {
+  "hybridpilot.rung.v1 \u2014 RoadSim physics v1.R5": {
    "decision": "rejected",
    "metrics": [
     99.19,
@@ -736,7 +1079,7 @@
    ],
    "sim": 0.671
   },
-  "hybridpilot.rung.HybridPilot.R6": {
+  "hybridpilot.rung.v1 \u2014 RoadSim physics v1.R6": {
    "decision": "rejected",
    "metrics": [
     99.28,
@@ -746,7 +1089,7 @@
    ],
    "sim": 0.674
   },
-  "hybridpilot.rung.HybridPilot.R7": {
+  "hybridpilot.rung.v1 \u2014 RoadSim physics v1.R7": {
    "decision": "rejected",
    "metrics": [
     99.23,
@@ -756,47 +1099,245 @@
    ],
    "sim": 0.677
   },
-  "hybridpilot.version": "1.0",
-  "tripdetective.coverage68.Engine size, per car": 61,
-  "tripdetective.coverage68.Mass, per car": 73,
-  "tripdetective.coverage68.Mass, per trip": 79,
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R0": {
+   "decision": "kept",
+   "metrics": [
+    98.4,
+    "96%",
+    98.2,
+    "97%",
+    3.81
+   ],
+   "sim": 0.255
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R1": {
+   "decision": "rejected",
+   "metrics": [
+    99.27,
+    "63%",
+    99.33,
+    "70%",
+    3.26
+   ],
+   "sim": 0.691
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R10": {
+   "decision": "rejected",
+   "metrics": [
+    99.27,
+    "95%",
+    99.12,
+    "95%",
+    3.13
+   ],
+   "sim": 0.624
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R11": {
+   "decision": "rejected",
+   "metrics": [
+    99.0,
+    "91%",
+    99.01,
+    "97%",
+    2.9
+   ],
+   "sim": 0.56
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R12": {
+   "decision": "rejected",
+   "metrics": [
+    99.33,
+    "92%",
+    99.18,
+    "97%",
+    3.1
+   ],
+   "sim": 0.659
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R13": {
+   "decision": "rejected",
+   "metrics": [
+    99.36,
+    "95%",
+    99.47,
+    "93%",
+    3.13
+   ],
+   "sim": 0.671
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R14": {
+   "decision": "rejected",
+   "metrics": [
+    99.38,
+    "97%",
+    99.1,
+    "99%",
+    3.1
+   ],
+   "sim": 0.667
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R15": {
+   "decision": "rejected",
+   "metrics": [
+    99.4,
+    "83%",
+    99.28,
+    "88%",
+    2.89
+   ],
+   "sim": 0.682
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R2": {
+   "decision": "rejected",
+   "metrics": [
+    99.2,
+    "78%",
+    99.27,
+    "88%",
+    3.2
+   ],
+   "sim": 0.62
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R3": {
+   "decision": "rejected",
+   "metrics": [
+    99.51,
+    "82%",
+    99.54,
+    "87%",
+    3.01
+   ],
+   "sim": 0.719
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R4": {
+   "decision": "rejected",
+   "metrics": [
+    99.56,
+    "85%",
+    99.34,
+    "91%",
+    3.02
+   ],
+   "sim": 0.73
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R5": {
+   "decision": "rejected",
+   "metrics": [
+    99.55,
+    "88%",
+    99.71,
+    "88%",
+    2.91
+   ],
+   "sim": 0.734
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R6": {
+   "decision": "rejected",
+   "metrics": [
+    99.38,
+    "85%",
+    99.54,
+    "88%",
+    3.06
+   ],
+   "sim": 0.646
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R7": {
+   "decision": "rejected",
+   "metrics": [
+    99.48,
+    "89%",
+    99.54,
+    "91%",
+    3.02
+   ],
+   "sim": 0.677
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R8": {
+   "decision": "released",
+   "metrics": [
+    99.33,
+    "93%",
+    99.19,
+    "97%",
+    3.1
+   ],
+   "sim": 0.659
+  },
+  "hybridpilot.rung.v2 \u2014 RoadSim physics v2 (calibrated twins).R9": {
+   "decision": "rejected",
+   "metrics": [
+    99.32,
+    "95%",
+    99.15,
+    "97%",
+    3.13
+   ],
+   "sim": 0.657
+  },
+  "hybridpilot.version": "2.0",
+  "tripdetective.coverage68.Bus mass, per leg": 68,
+  "tripdetective.coverage68.Engine size, per car": 48,
+  "tripdetective.coverage68.Mass, per car": 56,
+  "tripdetective.coverage68.Mass, per trip": 76,
+  "tripdetective.exam.Bus mass per ZTBus exam leg, mean |error| (5,847 legs)": {
+   "baselines": {
+    "Dev median": 453,
+    "Physics least-squares fit (scaled on dev)": 3547
+   },
+   "model": 1204,
+   "verdict": "loss"
+  },
   "tripdetective.exam.Curb mass per car, median |error| (335 cars)": {
    "baselines": {
     "Dev median": 227,
     "Physics least-squares fit": 205
    },
-   "model": 116,
+   "model": 127,
    "verdict": "win"
+  },
+  "tripdetective.exam.EPA exam families rebuilt in RoadSim (150 vehicles, 4 trips), mass vs test weight, MdAPE": {
+   "baselines": {},
+   "model": 5.0,
+   "verdict": "info"
   },
   "tripdetective.exam.Engine displacement per car, median |error|": {
    "baselines": {
     "Dev median": 0.6,
     "Idle-fuel law": 0.64
    },
-   "model": 0.5,
+   "model": 0.38,
    "verdict": "win"
   },
-  "tripdetective.exam.Mass response to +800 kg (simulated sweep)": {
+  "tripdetective.exam.Mass response to +800 kg (64 simulated cars, 8 trips)": {
    "baselines": {},
-   "model": "\u2248 +200 kg",
+   "model": "+524 kg",
    "verdict": "info"
   },
-  "tripdetective.exam.Powertrain type per car (351 cars)": {
+  "tripdetective.exam.Powertrain type per car (350 cars)": {
    "baselines": {
     "Majority class": 68.6,
     "Simple rule": 99.4
    },
-   "model": 98.9,
+   "model": 97.1,
    "verdict": "loss"
   },
   "tripdetective.exam.Road-load force vs EPA target at 40 mph (25 cars)": {
    "baselines": {
     "Physics least-squares fit": 35
    },
-   "model": 17,
+   "model": 19,
    "verdict": "win"
   },
-  "tripdetective.rung.TripDetective.r0": {
+  "tripdetective.exam.The two Leafs, curb mass |error|": {
+   "baselines": {
+    "Dev median": "0 / 0",
+    "Physics least-squares fit": "173 / 373"
+   },
+   "model": "119 / 105",
+   "verdict": "loss"
+  },
+  "tripdetective.rung.v1.0 \u2014 RoadSim physics v1.r0": {
    "decision": "kept",
    "metrics": [
     "140 kg",
@@ -805,7 +1346,7 @@
    ],
    "sim": 0.305
   },
-  "tripdetective.rung.TripDetective.r1": {
+  "tripdetective.rung.v1.0 \u2014 RoadSim physics v1.r1": {
    "decision": "rejected",
    "metrics": [
     "128 kg",
@@ -814,7 +1355,7 @@
    ],
    "sim": 0.362
   },
-  "tripdetective.rung.TripDetective.r2": {
+  "tripdetective.rung.v1.0 \u2014 RoadSim physics v1.r2": {
    "decision": "rejected",
    "metrics": [
     "116 kg",
@@ -823,7 +1364,7 @@
    ],
    "sim": 0.366
   },
-  "tripdetective.rung.TripDetective.r3": {
+  "tripdetective.rung.v1.0 \u2014 RoadSim physics v1.r3": {
    "decision": "rejected",
    "metrics": [
     "129 kg",
@@ -832,7 +1373,7 @@
    ],
    "sim": 0.363
   },
-  "tripdetective.rung.TripDetective.r4": {
+  "tripdetective.rung.v1.0 \u2014 RoadSim physics v1.r4": {
    "decision": "rejected",
    "metrics": [
     "136 kg",
@@ -841,7 +1382,7 @@
    ],
    "sim": 0.368
   },
-  "tripdetective.rung.TripDetective.r5": {
+  "tripdetective.rung.v1.0 \u2014 RoadSim physics v1.r5": {
    "decision": "kept",
    "metrics": [
     "139 kg",
@@ -850,8 +1391,8 @@
    ],
    "sim": 0.317
   },
-  "tripdetective.rung.TripDetective.r6": {
-   "decision": "released",
+  "tripdetective.rung.v1.0 \u2014 RoadSim physics v1.r6": {
+   "decision": "kept",
    "metrics": [
     "110 kg",
     "0.44 L",
@@ -859,7 +1400,187 @@
    ],
    "sim": 0.402
   },
-  "tripdetective.version": "1.0"
+  "tripdetective.rung.v2.0 bus \u2014 city-bus mass (Phase D).pb1": {
+   "decision": "released",
+   "metrics": [
+    "1,127 kg",
+    "805 kg",
+    0.42,
+    0.25
+   ],
+   "sim": 0.524
+  },
+  "tripdetective.rung.v2.0 bus \u2014 city-bus mass (Phase D).pb2": {
+   "decision": "rejected",
+   "metrics": [
+    "4,832 kg",
+    "2,731 kg",
+    1.25,
+    0.29
+   ],
+   "sim": 0.546
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r0": {
+   "decision": "kept",
+   "metrics": [
+    "156 kg",
+    "0.39 L",
+    0.85,
+    "+257 kg"
+   ],
+   "sim": 0.378
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r1": {
+   "decision": "rejected",
+   "metrics": [
+    "106 kg",
+    "0.60 L",
+    0.91,
+    "+202 kg"
+   ],
+   "sim": 0.363
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r10": {
+   "decision": "rejected",
+   "metrics": [
+    "116 kg",
+    "0.37 L",
+    0.9,
+    "+257 kg"
+   ],
+   "sim": 0.432
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r11": {
+   "decision": "released",
+   "metrics": [
+    "133 kg",
+    "0.31 L",
+    0.91,
+    "+524 kg"
+   ],
+   "sim": 0.45
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r12": {
+   "decision": "rejected",
+   "metrics": [
+    "122 kg",
+    "0.27 L",
+    0.88,
+    "+519 kg"
+   ],
+   "sim": 0.452
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r13": {
+   "decision": "rejected",
+   "metrics": [
+    "142 kg",
+    "0.33 L",
+    0.91,
+    "+571 kg"
+   ],
+   "sim": 0.491
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r14": {
+   "decision": "rejected",
+   "metrics": [
+    "121 kg",
+    "0.25 L",
+    0.91,
+    "+503 kg"
+   ],
+   "sim": 0.444
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r15": {
+   "decision": "rejected",
+   "metrics": [
+    "128 kg",
+    "0.32 L",
+    0.9,
+    "+485 kg"
+   ],
+   "sim": 0.45
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r2": {
+   "decision": "rejected",
+   "metrics": [
+    "123 kg",
+    "0.55 L",
+    0.89,
+    "+222 kg"
+   ],
+   "sim": 0.377
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r3": {
+   "decision": "rejected",
+   "metrics": [
+    "103 kg",
+    "0.56 L",
+    0.85,
+    "+215 kg"
+   ],
+   "sim": 0.374
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r4": {
+   "decision": "rejected",
+   "metrics": [
+    "125 kg",
+    "0.67 L",
+    0.91,
+    "+275 kg"
+   ],
+   "sim": 0.386
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r5": {
+   "decision": "kept",
+   "metrics": [
+    "134 kg",
+    "0.46 L",
+    0.93,
+    "+331 kg"
+   ],
+   "sim": 0.397
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r6": {
+   "decision": "rejected",
+   "metrics": [
+    "122 kg",
+    "0.51 L",
+    0.89,
+    "+227 kg"
+   ],
+   "sim": 0.405
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r7": {
+   "decision": "kept",
+   "metrics": [
+    "126 kg",
+    "0.43 L",
+    0.92,
+    "+295 kg"
+   ],
+   "sim": 0.43
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r8": {
+   "decision": "rejected",
+   "metrics": [
+    "102 kg",
+    "0.35 L",
+    0.91,
+    "+226 kg"
+   ],
+   "sim": 0.43
+  },
+  "tripdetective.rung.v2.0 \u2014 RoadSim physics v2 (Phase D, 14 Nov 2026).p2r9": {
+   "decision": "rejected",
+   "metrics": [
+    "121 kg",
+    "0.32 L",
+    0.93,
+    "+360 kg"
+   ],
+   "sim": 0.431
+  },
+  "tripdetective.version": "2.0"
  },
  "physics_default": "roadsim-physics-v2",
  "physics_version": "roadsim-physics-v2"

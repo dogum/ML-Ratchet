@@ -102,3 +102,13 @@ forecast, the RoadSim run, TripDetective reading the log back, HybridPilot drivi
   heat thresholds (CALIBRATION.md H12-H20). `options='roadsim-physics-v2.1'` runs it; PHYSICS_VERSION stays
   roadsim-physics-v2 because the dev fuel/energy gain is not clear (the gain is in engine operation: VED Toyota
   engine-on gap -10.9 -> -4.9 points). models/ stay pinned to v1.
+- **14 Nov 2026 — physics v3 frozen, not made the default (the v3 pass, hardware on hybrids).** A clean judge was
+  frozen first (`checks/exam3_hybrids.json`: 64 EPA test-car records no check had simulated, from the MY2000-2007 EPA
+  files and from hybrids RoadData labels conventional). Kept on dev: older Toyota / Lexus engines by model year
+  (published peak efficiency 37 / 38.5 / 40 % vs 41 %, `engine_era`), the converter held open in 1st and 2nd gear in P2
+  automatics, the twins' hardware rules and plug-in pack-power rule in the generator. Rejected: era scaling for other
+  makes, a cold-engine start for VED plug-in twins, no K0 slip for TMED starts (CALIBRATION.md H21-H26).
+  `options='roadsim-physics-v3'` runs it; PHYSICS_VERSION stays roadsim-physics-v2 (dev gain on three dev vehicles,
+  not clear). Exam-3: pre-TNGA Toyota FTP +44 -> +31 % (n 3), converter P2 +17 -> +15 % (n 9), every other group
+  unchanged. EPA procedures and hybrid hardware rules now live in the package (`roadsim.epa`, `roadsim.hybrid_hw`);
+  the old checks/ paths still work. models/ stay pinned to v2.

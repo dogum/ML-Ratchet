@@ -608,3 +608,25 @@ Prime -9.0 -> -6.9 %; every VED dev and every other EPA dev number unchanged.
 **Not the default**: PHYSICS_VERSION stays roadsim-physics-v2. The v3 changes reach three dev vehicles and one dev
 group; the targets of the pass (older Toyota engines on EPA cycles, converter P2 trucks, TMED, plug-ins on roads) have
 almost no dev data, so the dev gain is not clear. Decided and committed before exam-3 was run.
+
+## v3 report (computed once, after the freeze commit 22b4a45; nothing changed afterwards)
+
+Exam-3 (the clean judge; `checks/exam3_report.py` -> `exam3_report.json`, `hybrids_epa__exam3__<preset>.json`), second
+looks (exam-2 EPA and VED, `run_all.py --options roadsim-physics-v3 --all-splits`), `scoreboard_roadsim-physics-v3.json`,
+`scoreboard_compare_v2_v3.txt` (v2 and v2.1 re-scored with the fixed generator harness). Tables in LIMITS.md. In short:
+- **Exam-3** (64 fresh records, FE %, FTP v2 -> v2.1 -> v3): pre-TNGA Toyota (n 3) +44.1 -> +43.8 -> +30.5, HWY +27.6
+  -> +27.1 -> +14.9; converter P2 (9) +18.4 -> +16.6 -> +14.6; TNGA-era Toyota-system (11) +7.4 -> +7.0 -> +7.0; Honda
+  e:HEV (7) -0.3 -> -1.1 -> -1.1; Ford power-split (8) +4.8 -> +4.0 -> +4.0; mild (18) +24.7 -> +23.2 -> +23.2; plug-ins
+  (8) unchanged by v3. No TMED record. Nothing got worse from v2.1 to v3 on exam-3.
+- **Second look, exam-2**: pre-TNGA Toyota FTP +20.2 -> +13.5 (n 100), HWY +11.7 -> +5.9, median |err| 15.6 -> 11.0;
+  but the 20 F cold FTP -5.5 -> -9.9 (n 39). Converter P2 FTP +26.1 -> +23.2; plug-in P2 FTP +7.3 -> +5.6, US06 -8.3 ->
+  -9.3; TMED unchanged (-9.8). VED exam-2: as v2.1 (no model year on VED twins; P2 trip median -0.8 -> -0.6).
+- **Second look, other sets**: D3 exam plug-in power-split -17.8 -> -15.9 %; every conventional, BEV, bus, Class 8,
+  ledger (max 5.6e-4) and coast-down number identical to v2.
+- **Generator** (second look, fixed harness): car -11.2 -> -11.2, SUV -5.8 -> -4.6, pickup +15.7 -> +13.7, van +9.8
+  -> +12.4 % (v2.1 -> v3).
+
+Verdict: v3 does what it was built to do where it acts (older Toyota engines, converter P2s) and leaves the rest
+alone, but closes none of the large errors: old Toyotas stay 15-31 % too frugal in the city (and the cold FTP got
+worse), converter P2s +15-23 %, mild hybrids +23 %, plug-ins on VED roads -20 to -23 %, TMED -10 % (second look only).
+v2 stays the default, as decided before the exam.

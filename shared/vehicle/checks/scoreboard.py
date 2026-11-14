@@ -90,7 +90,7 @@ def checks():
             p = d.get('err_primary')
             if p:
                 out[f'ved_dev_twin.{arch}.primary.median_pct'] = p['median']; out[f'ved_dev_twin.{arch}.primary.iqr_pct'] = p['iqr']
-    for st in ('dev', 'exam2'):            # EPA test-car hybrids / plug-ins by group (check_hybrids_epa.py; exam2 = final report)
+    for st in ('dev', 'devx', 'exam2', 'exam3'):   # EPA test-car hybrids / plug-ins by group (check_hybrids_epa.py; exam2, exam3 = final report)
         c = _load(f'hybrids_epa__{st}.json')
         if c:
             for g, d in c['summary']['by_group'].items():

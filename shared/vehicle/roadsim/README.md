@@ -90,6 +90,7 @@ default is the v1 behaviour, so v1 is always one name away and reproduces exactl
 | `roadsim-physics-v1` | the Phase 1 simulator (13 Nov 2026); the three released models were trained and scored on it and pin it |
 | `roadsim-physics-v2` | **the default.** v2 physics calibrated on dev data only, fitted numbers in `roadsim/data/calibration_v2.json` (each with its dev source), decisions and dev numbers in [CALIBRATION.md](CALIBRATION.md), held-out results in [LIMITS.md](LIMITS.md) |
 | `roadsim-physics-v2.1` | v2 plus the hybrid fix pass of 14 Nov 2026 (`roadsim/data/calibration_v2_1.json`): a running engine keeps running for 2 s into a braking event. Hybrid and plug-in runs only; every other run equals v2 (`tests/test_roadsim_v2_fingerprint.py`). Not the default: its dev gain on fuel is not clear (CALIBRATION.md H11-H20; exam-2 results in LIMITS.md) |
+| `roadsim-physics-v3` | v2.1 plus the hardware pass of 14 Nov 2026 (`roadsim/data/calibration_v3.json`): older Toyota / Lexus hybrid engines by model year (`engine_era`: the TNGA map's efficiency x published peak BTE 37 / 38.5 / 40 % over 41 %), the converter held open in 1st and 2nd gear in P2 automatics, and the generator's hybrid hardware and plug-in pack-power rules. Hybrid, plug-in and generated-vehicle runs only; every other run equals v2. Not the default: the dev gain is small and rests on three dev vehicles (CALIBRATION.md H21-H26; exam-3 results in LIMITS.md) |
 | `roadsim-physics-v2-b1` / `-b2` / `-b3` | the three work packages as built, before calibration (`docs/v2_b1.md`, `v2_b2.md`, `v2_b3.md`) |
 
 ```python
@@ -109,6 +110,7 @@ What v2 adds over v1, by group (all behind options; the full list with units is 
 | HVAC | two-node cabin (conduction 0.3 of UA), explicit air flows, belt and electric compressors (COP / Carnot 0.25 / 0.50), PTC and heat pump; plug-ins heat from a warm engine first and run it for heat below -10 C; bus accessories, door exchange |
 | on-road | road-height wind (log profile, z0 0.3 m), tyre model; on-road extra load per architecture (conventional 700 W, HEV 1,250 W, plug-in and BEV 300 W, road runs only) |
 | options kept off in v2 | 10 Hz sub-steps, gusts, drafting, human driver, charge cap, full-load enrichment, battery aging (inputs: `batt_age`, `batt_soh_*`) |
+| v3 options (off in v2 and v2.1) | `engine_era` (Toyota / Lexus), `p2_tc_open_gears` 2, generator `gen_hybrid_hw` 'v3' and `gen_phev_pack_rule` (`generate_vehicles(..., options='roadsim-physics-v3')`); tried and left off: `p2_k0_slip_by_type` (TMED starts by the belt starter, no K0 slip) |
 | v2.1 options (off in v2) | `hybrid_runon_s` (2 s in v2.1); tried and left off: `p2_regen_fade_kph`, `p2_launch_kph` / `_kW`, `p2_engine_on_kph`, `p2_ev_max_frac`, `ecms_s0`, `ps_engine_on_min_kW`, `phev_ps_engine_on_kph`, `phev_series_cs_on_kph`, thermal `hybrid_heat_engine_C` |
 
 `checks/run_all.py --options NAME` runs every check with a physics version and writes `<check>__NAME.json` (v1: the
@@ -263,7 +265,10 @@ held-out vehicles. Re-run everything with `checks/run_all.sh`.
 
 ```
 roadsim/          the package: sim.py (loop, ledger), powertrain.py, components.py, strategies.py, dp.py, vehicle.py,
-                  generator.py, coastdown.py, trips.py, maps.py, calib.py, data/ (maps.npz, cycles.npz, vehicles/, calibration.json, generator_calib.json)
+                  generator.py, coastdown.py, trips.py, maps.py, calib.py, eras.py (engine generations, P2 types),
+                  epa.py (EPA dyno procedures: ftp, hot_cycle, sc03, 20 F cold FTP; explicit options=),
+                  hybrid_hw.py (hardware rules for EPA test-car hybrids: lookup, lookup_ext, spec_of),
+                  data/ (maps.npz, cycles.npz, vehicles/, calibration*.json, generator_calib.json)
 tools/            build_maps.py (ALPHA .m -> maps), build_cycles.py, build_generator_calib.py, epa_candidates.py
 refdata/          downloaded sources (EPA test-car lists, ALPHA packages, eCFR XML, fueleconomy.gov, NREL report via OSTI)
 demo.py           one trip, seven powertrains, ledgers + demo_ledger.png

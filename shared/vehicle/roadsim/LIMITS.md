@@ -2,8 +2,9 @@
 
 What the simulator gets wrong, by how much where we measured it, and what to watch. Since 13 Nov 2026 the default
 physics is **roadsim-physics-v2** (calibrated on dev data only: [CALIBRATION.md](CALIBRATION.md)); physics v1 stays
-reproducible with `options='roadsim-physics-v1'`, and the hybrid fix pass of 14 Nov 2026 runs with
-`options='roadsim-physics-v2.1'` (not the default). Numbers are from `shared/vehicle/checks/*.json` (v1: plain names,
+reproducible with `options='roadsim-physics-v1'`, the hybrid fix pass of 14 Nov 2026 runs with
+`options='roadsim-physics-v2.1'` and the hardware pass of the same day with `options='roadsim-physics-v3'` (neither is
+the default). Numbers are from `shared/vehicle/checks/*.json` (v1: plain names,
 v2: `__roadsim-physics-v2`), computed once after v2 was frozen; held-out / exam data unless stated. Errors on EPA
 cycles are on fuel economy (+ = the sim burns less); D3 and ZTBus errors are on energy (+ = the sim uses more).
 
@@ -41,6 +42,48 @@ bus and Class 8 number is identical to v2 ("= v2"). The D3 plug-in rows of v2 we
 | Generated hybrids, hot UDDS / HWY median (EPA MY2022-24 hybrids: FTP 59.2, HWY 58.2 mpg) | 48.3 / - | 47.5 / 45.2 mpg | 47.1 / 45.1 mpg | not met |
 | Ledger stress, 600 runs | max 5.1e-4 | max 5.6e-4, none > 0.5 % | = v2 | closes: met |
 | Speed, UDDS single thread | conv 50-55k x, hybrids 3.8-4.8k x | conv 24-26k x, hybrids 3.2-3.9k x | hybrids 3.1-3.9k x (2-4 % slower) | v2 costs 2x on conventional/BEV |
+
+**v3 on these sets (second look, 14 Nov 2026)**: identical to v2.1 for every conventional, BEV, bus, Class 8, ledger and
+coast-down number (fingerprint guard; ledger max 5.6e-4). Hybrid rows that move v2.1 -> v3: D3 exam plug-in
+power-split -17.8 -> -15.9 % (2012/2013 Prius Plug-in under the era scaling; HWFET -21.4 -> -15.9, US06 -20.4 ->
+-14.6), D3 exam P2 -18.2 -> -18.1, EPA held-out P2 FTP IQR 23.0 -> 21.1 points; every EPA held-out median within 0.1
+point of v2.1 (the held-out hybrids are MY2022-24: no era scaling). Speed: hybrids 2-5 % slower than v2 (UDDS single
+thread 3,100-3,700 x real time).
+
+## Exam-3 (clean hybrid exam, frozen 14 Nov 2026 before the v3 fit; computed once after the v3 freeze)
+
+`checks/exam3_hybrids.json` (sha256 dcd6ea16…): 64 EPA test-car records no check had simulated: 21 from the MY2000-2007
+EPA files (not in RoadData's table) and 43 MY2008-2026 hybrids RoadData labels conventional. Results:
+`checks/exam3_report.json`, `hybrids_epa__exam3__<preset>.json`. FE %, + = the sim burns less; median, n.
+
+| group | n | FTP v2 / v2.1 / v3 | HWY | US06 | SC03 | 20 F cold | median abs err |
+|---|---|---|---|---|---|---|---|
+| Toyota / Lexus pre-TNGA (2001 Prius, 2006 Highlander Hybrid x2) | 3 | +44.1 / +43.8 / +30.5 | +27.6 / +27.1 / +14.9 | | | | 33.1 / 32.5 / 20.0 |
+| Toyota-system TNGA era (Venza, Crown, Crown Signia, Mazda CX-50) | 11 | +7.4 / +7.0 / +7.0 | +0.8 / +0.3 / +0.3 | +1.9 / +1.3 / +1.3 (10) | +4.8 / +5.6 / +5.6 (10) | -5.2 / -6.2 / -6.2 (10) | 4.2 / 4.4 / 4.4 |
+| P2 with converter (Explorer and F-150 FHEV, Sequoia) | 9 | +18.4 / +16.6 / +14.6 | -2.7 / -3.0 / -3.0 | | | | 8.3 / 7.2 / 6.6 |
+| P2 TMED | 0 | (no clean record) | | | | | |
+| Honda e:HEV (2020-2026 CR-V, 2025 Civic, 2026 Prelude) | 7 | -0.3 / -1.1 / -1.1 | -4.2 / -4.7 / -4.7 | -5.9 / -6.3 / -6.3 (4) | +19.5 / +19.3 / +19.3 (4) | -7.0 / -8.0 / -8.0 (4) | 5.1 / 5.6 / 5.6 |
+| Ford power-split (Maverick 2022-2026, 2010 Milan) | 8 | +4.8 / +4.0 / +4.0 | +1.9 / +1.3 / +1.3 | -2.0 / -2.4 / -2.4 (6) | | | 2.6 / 2.5 / 2.5 |
+| mild (2001-2006 Insight, 2003-2004 Civic Hybrid, 2007 Aura / Vue) | 18 | +24.7 / +23.2 / +23.2 | +8.4 / +8.1 / +8.1 | | | | 18.6 / 17.1 / 17.1 |
+| plug-in power-split, CS (2019 Crosstrek) | 1 | +10.4 / +9.6 / +9.6 | +7.1 / +7.0 / +7.0 | +8.5 / +7.7 / +7.7 | +41.7 / +40.3 / +40.3 | -6.7 / -5.6 / -5.6 | 8.5 / 7.7 / 7.7 |
+| plug-in series, CS (Karma Revero) | 2 | +5.8 / +5.5 / +5.5 | -12.1 / -12.1 / -12.1 | | +48.7 / +48.9 / +48.9 | | 17.3 / 17.2 / 17.2 |
+| plug-in P2, CS (A3 / A8 e-tron, A7 TFSIe) | 5 | +10.4 / +9.8 / +9.8 | -7.0 / -6.3 / -6.3 | -10.4 / -9.9 / -9.9 (3) | +19.8 / +18.3 / +18.3 (3) | +25.9 / +24.0 / +24.0 (3) | 10.4 / 9.9 / 9.9 |
+
+What exam-3 says: the era scaling halves the old-Toyota error but does not close it (FTP +44 -> +31 %, HWY +28 ->
++15 % on 3 records; 2001 Prius and 2006 Highlander hardware, not only the engine, are older); the converter held open
+takes 2 points off the converter P2s' city surplus (+16.6 -> +14.6 %); every other group is unchanged by v3, as
+designed. TNGA-era Toyota-system cars, Ford power-splits and Honda e:HEVs are within 1-7 % on FTP / HWY in every
+version. Mild hybrids (Insight, Civic IMA) are 23 % too frugal on the FTP: not addressed. The exam is small: 3 old
+Toyota records, no TMED, 8 plug-ins, and 35 of 64 records are in families with exam-2 records (seen at the v2.1 report).
+
+**Second look, exam-2** (409 records, seen at the v2.1 report; judges nothing), FTP / HWY v2 -> v2.1 -> v3: Toyota /
+Lexus pre-TNGA (MY<=2017, n 100) +20.5 / +12.3 -> +20.2 / +11.7 -> +13.5 / +5.9, median |err| 16.2 -> 15.6 -> 11.0;
+TNGA era (n 63) +4.2 / -3.2 unchanged by v3; converter P2 (19) +27.9 -> +26.1 -> +23.2; TMED (53) -10.2 -> -9.8 ->
+-9.8; plug-in P2 (67) +6.9 -> +7.3 -> +5.6; plug-in series (15) +18.5 -> +19.4 -> +19.4; plug-in power-split (22) +0.7 ->
++0.5 -> +0.1. Worse in v3: old-Toyota 20 F cold FTP -5.5 -> -9.9 % (n 39; the older engine burns more when cold too),
+plug-in P2 US06 -8.3 -> -9.3, plug-in power-split cold -27.3 -> -28.2. VED exam-2 twins (11,157 trips): as
+v2.1 for power-splits and plug-ins (VED has no model year, so no era scaling): Toyota-type trip median +0.5, other
+power-split labels +17.2, plug-ins -22.7 / -20.3 %; P2 twins -0.8 -> -0.6 %.
 
 ## Exam-2 (fresh hybrid exam, frozen 14 Nov 2026 before the v2.1 fit; computed once after the v2.1 freeze)
 
@@ -98,6 +141,10 @@ the FTP (the TNGA-era Atkinson map stands in for 2008-2017 engines), TMED P2s 8-
    it runs its engine twice as long at half the power (24 % vs 12 % of the UDDS, launch starts, 19 % of the fuel while
    braking). Every physical replacement tried made every dev P2 more frugal in the city (CALIBRATION.md H12-H20); the
    share stays. Exam-2 confirms the split on fresh cars: TMED FTP -9.8 % (53 records), converter P2 +26.1 % (19).
+   **v3:** the converter is held open in 1st and 2nd gear in P2 automatics (as measured on conventional automatics):
+   exam-3 converter P2 FTP +16.6 -> +14.6 % (n 9, clean), exam-2 +26.1 -> +23.2 % (second look). TMED: no clean
+   record; starting the engine with the belt starter (no K0 slip) was worth 3-4 % of fuel on the dev Sonata but moved
+   its city error the wrong way and was rejected (H26).
 3. **Honda e:HEV direct drive — fixed.** v2 locks the engine at 22.7 rpm per km/h from 65 km/h (measured on the D3
    2015 Accord Hybrid) and prefers engine drive at cruise: held-out CR-V FTP -2.0, HWY -3.8 % (v1 -4.0 / -9.5). US06 on
    the dev Accord -8.5 % FE: open.
@@ -109,7 +156,11 @@ the FTP (the TNGA-era Atkinson map stands in for 2008-2017 engines), TMED P2s 8-
    want 45 km/h (CALIBRATION.md H16). **Exam-2:** 166 fresh Toyota/Lexus records, 2008-2026, are **too frugal**: FTP
    +17 %, HWY +7 %, SC03 +19 % (v2.1). Most are pre-TNGA engines (2AZ/2AR/2ZR/1NZ, 3.3-5.0 L V6/V8) that the TNGA
    paper map flatters, as the D3 2010 Prius (item 11) already showed. VED exam Toyota-type twins: fuel -1.8 -> +0.5 %
-   (trip median), engine-on gap -10.1 -> -3.8 points with v2.1's run-on.
+   (trip median), engine-on gap -10.1 -> -3.8 points with v2.1's run-on. **v3 (14 Nov 2026):** older Toyota / Lexus
+   engines scaled by published peak efficiency by model year (37 / 38.5 / 40 % vs the map's 41 %): exam-3 pre-TNGA FTP
+   +44 -> +31 %, HWY +28 -> +15 % (n 3, clean); exam-2 pre-TNGA (second look, n 100) FTP +20 -> +14 %, but the 20 F
+   cold FTP -5.5 -> -9.9 %. The rest of the gap is not the peak efficiency alone (older motors, inverters, NiMH packs
+   and calibrations are older too); no older engine map is reachable (CALIBRATION.md H22).
 5. **Cold weather.** v1's cold FTP was +10-16 % too good. EPA procedure fixed (heater on, soaked tyres; both versions)
    and v2 cold physics: held-out conventional cold FTP -5.5 % (n 2), D3 exam conventional cold -4.9 % (v1 -9.0).
    Hybrids' held-out cold FTP: power-split -15.9 %, P2 +2.0 % (n 3 each; v1 -14.6 / +7.1).
@@ -132,7 +183,13 @@ the FTP (the TNGA-era Atkinson map stands in for 2008-2017 engines), TMED P2s 8-
    -17.8 / -22.6 %, v2.1 the same. Exam-2 (charge-sustaining EPA tests of fresh cars): plug-in power-split FTP +0.5,
    HWY +2.2, 20 F cold -27 %; plug-in series FTP +19, SC03 +46 %; plug-in P2 FTP +7, HWY -8 %. VED exam plug-ins
    -20 to -23 % (trip median). The D3 2016 Volt (dev) runs its engine ~100 % above 60 km/h in charge sustaining, the
-   twin 15 % overall; a speed rule for it was rejected on dev (H17).
+   twin 15 % overall; a speed rule for it was rejected on dev (H17). **Cause of the VED plug-in deficit (v3 pass, dev):**
+   it sits in the cold. Below 10 C the dev Energi is -37 % and the dev Volt-type car -27 % (trip median); above 10 C
+   -2 / -8 %. The twins hardly heat (0.01-0.02 kW at 0-10 C) because each VED fragment starts with 85 C coolant and the
+   plug-in heats from that engine although it never ran; the real cars also run their engines for heat (Volt-type fuel
+   on 83 % of trips below -10 C, twin 0 %). Starting plug-in fragments with the engine at ambient fixed the Energi
+   (cold -33 -> -12 %) but flipped the Volt (-24 -> +21 %): rejected (H25). The start state of a privacy-trimmed
+   fragment is unknown; a plug-in twin on VED needs it.
 10. **Hybrid motors use the generic IPM map**, not the measured 2010 Prius maps (chosen on the dev hybrids in v1).
 11. **Legacy D3 hybrids** (2010 Prius, Fusion Hybrid, 2013 Energis in charge sustaining): 20-28 % more fuel than the
     twins. Their fuel is the legacy measurement and their engines are older than the TNGA-based Atkinson map. Not fitted.
@@ -183,6 +240,12 @@ the FTP (the TNGA-era Atkinson map stands in for 2008-2017 engines), TMED P2s 8-
 26. Light-duty vehicles bootstrap real EPA test-car records. Generated hybrids stay less efficient than the EPA hybrid
     set with the default v1 donors (check_generator: HEV hot UDDS 47.5 mpg v2, 48.3 v1; EPA ~59); `donor_model='v2'`
     draws hybrid bodies from real hybrid records (docs/v2_b1.md). PHEV and P2 hardware sizing are rules of thumb.
+    **v3 pass:** most of the "20 % too thirsty" was the check: it compared all generated hybrids with EPA hybrids of
+    FTP >= 45 mpg (no hybrid pickups) and drove them with the on-road payload on top of the EPA test weight. Fixed
+    harness (every version): payload 0, reference by body class. v2: car -10.9, SUV -5.2, pickup +17.4, van +11.2 %;
+    v3 (twins' hardware rules, cooperative regen blending, plug-in pack power min(traction / 0.9, 9 C), engine era by
+    donor year): car -11.2, SUV -4.6, pickup +13.7, van +12.4 % (hot UDDS vs FTP; second look). Generated car P2 and
+    series hybrids stay about 11 % thirsty: cause not found ('parallel' regen blending cost 13-16 % where drawn).
 
 ## Speed and robustness
 

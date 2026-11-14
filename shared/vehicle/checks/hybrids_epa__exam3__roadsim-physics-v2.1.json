@@ -1,0 +1,2524 @@
+{
+ "check": "EPA hybrids and plug-ins, set exam3",
+ "method": "Check: EPA test-car hybrids and plug-ins on their own test cycles (FTP-75, HWY, US06, SC03, 20 F cold FTP where\nEPA tested them), specs by rule (checks/hybrid_specs.py), procedures as check_cycles (checks/epa_procedures.py).\nError = simulated / EPA - 1 on fuel economy (+ = the sim burns less). Plug-ins run their charge-sustaining tests: the\ntwin starts and is held at its charge-sustaining SOC.\n\nSets:\n  dev    every hybrid / plug-in record of RoadData's DEV model families (frozen family split; carry-over copies\n         dropped) that RoadSim models, plus the four check_cycles dev hybrids (Sonata Hybrid, RAV4 Hybrid, Escape HEV,\n         Accord Hybrid, with their own specs). The calibration may fit on this set.\n  devx   dev plus exam-3's dev_extra (dev-family hybrids found by the exam-3 rules: Sienna 2021+, Audi Q5 TFSIe /\n         e-tron; v3 pass, 14 Nov 2026). The calibration may fit on this set.\n  exam2  the frozen exam-2 list (checks/exam2_hybrids.json, sha256 checked). Final report only.\n  exam3  the frozen exam-3 list (checks/exam3_hybrids.json, sha256 checked; the clean judge of the v3 pass). Final\n         report only.\n\nusage: python check_hybrids_epa.py --set dev|devx|exam2|exam3 [--options roadsim-physics-v2] [--workers 14] [--out FILE]\nOutput: hybrids_epa__<set>__<preset>.json",
+ "set": "exam3",
+ "exam_sha256": "dcd6ea16c26dfbc2730957752e2e681b91111eb81d9dc6383b72c83722705fb6",
+ "exam2_sha256": null,
+ "options": "roadsim-physics-v2.1",
+ "options_name": "roadsim-physics-v2.1",
+ "physics": "roadsim-physics-v2",
+ "skipped": {},
+ "n": 64,
+ "n_errors": 0,
+ "errors": [],
+ "summary": {
+  "by_group": {
+   "ford_ps": {
+    "n": 8,
+    "FTP": {
+     "n": 8,
+     "median": 4.04,
+     "p25": 1.97,
+     "p75": 6.27,
+     "mean_abs": 4.73
+    },
+    "HWY": {
+     "n": 8,
+     "median": 1.32,
+     "p25": -0.77,
+     "p75": 2.44,
+     "mean_abs": 2.66
+    },
+    "US06": {
+     "n": 6,
+     "median": -2.36,
+     "p25": -4.74,
+     "p75": 0.09,
+     "mean_abs": 3.07
+    },
+    "main": {
+     "n": 22,
+     "median": 1.18,
+     "p25": -0.93,
+     "p75": 3.3,
+     "mean_abs": 3.52
+    }
+   },
+   "honda_series": {
+    "n": 7,
+    "FTP": {
+     "n": 7,
+     "median": -1.11,
+     "p25": -2.9,
+     "p75": 0.93,
+     "mean_abs": 2.24
+    },
+    "HWY": {
+     "n": 7,
+     "median": -4.66,
+     "p25": -5.56,
+     "p75": -3.22,
+     "mean_abs": 4.78
+    },
+    "US06": {
+     "n": 4,
+     "median": -6.29,
+     "p25": -6.63,
+     "p75": -6.05,
+     "mean_abs": 6.4
+    },
+    "SC03": {
+     "n": 4,
+     "median": 19.26,
+     "p25": 17.21,
+     "p75": 20.22,
+     "mean_abs": 18.17
+    },
+    "COLD": {
+     "n": 4,
+     "median": -7.96,
+     "p25": -9.35,
+     "p75": -7.07,
+     "mean_abs": 8.45
+    },
+    "main": {
+     "n": 18,
+     "median": -3.5,
+     "p25": -5.58,
+     "p75": -1.48,
+     "mean_abs": 4.15
+    }
+   },
+   "mild": {
+    "n": 18,
+    "FTP": {
+     "n": 18,
+     "median": 23.18,
+     "p25": 17.93,
+     "p75": 26.04,
+     "mean_abs": 23.26
+    },
+    "HWY": {
+     "n": 18,
+     "median": 8.14,
+     "p25": 6.42,
+     "p75": 13.81,
+     "mean_abs": 10.71
+    },
+    "main": {
+     "n": 36,
+     "median": 17.12,
+     "p25": 8.23,
+     "p75": 23.02,
+     "mean_abs": 16.99
+    }
+   },
+   "p2_converter": {
+    "n": 9,
+    "FTP": {
+     "n": 9,
+     "median": 16.55,
+     "p25": 12.1,
+     "p75": 21.57,
+     "mean_abs": 15.88
+    },
+    "HWY": {
+     "n": 9,
+     "median": -2.95,
+     "p25": -5.93,
+     "p75": -1.66,
+     "mean_abs": 4.44
+    },
+    "main": {
+     "n": 18,
+     "median": 4.98,
+     "p25": -2.9,
+     "p75": 16.24,
+     "mean_abs": 10.16
+    }
+   },
+   "plugin_p2": {
+    "n": 5,
+    "FTP": {
+     "n": 5,
+     "median": 9.85,
+     "p25": 5.12,
+     "p75": 17.85,
+     "mean_abs": 11.1
+    },
+    "HWY": {
+     "n": 5,
+     "median": -6.27,
+     "p25": -7.38,
+     "p75": -5.59,
+     "mean_abs": 6.35
+    },
+    "US06": {
+     "n": 3,
+     "median": -9.86,
+     "p25": -9.88,
+     "p75": -5.41,
+     "mean_abs": 6.9
+    },
+    "SC03": {
+     "n": 3,
+     "median": 18.27,
+     "p25": 17.83,
+     "p75": 20.66,
+     "mean_abs": 19.57
+    },
+    "COLD": {
+     "n": 3,
+     "median": 24.01,
+     "p25": 23.68,
+     "p75": 27.79,
+     "mean_abs": 26.31
+    },
+    "main": {
+     "n": 13,
+     "median": -4.54,
+     "p25": -7.38,
+     "p75": 5.12,
+     "mean_abs": 8.3
+    }
+   },
+   "plugin_ps": {
+    "n": 1,
+    "FTP": {
+     "n": 1,
+     "median": 9.63,
+     "p25": 9.63,
+     "p75": 9.63,
+     "mean_abs": 9.63
+    },
+    "HWY": {
+     "n": 1,
+     "median": 7.0,
+     "p25": 7.0,
+     "p75": 7.0,
+     "mean_abs": 7.0
+    },
+    "US06": {
+     "n": 1,
+     "median": 7.73,
+     "p25": 7.73,
+     "p75": 7.73,
+     "mean_abs": 7.73
+    },
+    "SC03": {
+     "n": 1,
+     "median": 40.34,
+     "p25": 40.34,
+     "p75": 40.34,
+     "mean_abs": 40.34
+    },
+    "COLD": {
+     "n": 1,
+     "median": -5.56,
+     "p25": -5.56,
+     "p75": -5.56,
+     "mean_abs": 5.56
+    },
+    "main": {
+     "n": 3,
+     "median": 7.73,
+     "p25": 7.37,
+     "p75": 8.68,
+     "mean_abs": 8.12
+    }
+   },
+   "plugin_series": {
+    "n": 2,
+    "FTP": {
+     "n": 2,
+     "median": 5.5,
+     "p25": -1.58,
+     "p75": 12.58,
+     "mean_abs": 14.16
+    },
+    "HWY": {
+     "n": 2,
+     "median": -12.07,
+     "p25": -15.86,
+     "p75": -8.28,
+     "mean_abs": 12.07
+    },
+    "US06": {
+     "n": 1,
+     "median": -14.78,
+     "p25": -14.78,
+     "p75": -14.78,
+     "mean_abs": 14.78
+    },
+    "SC03": {
+     "n": 2,
+     "median": 48.91,
+     "p25": 43.88,
+     "p75": 53.94,
+     "mean_abs": 48.91
+    },
+    "COLD": {
+     "n": 1,
+     "median": -3.48,
+     "p25": -3.48,
+     "p75": -3.48,
+     "mean_abs": 3.48
+    },
+    "main": {
+     "n": 5,
+     "median": -8.66,
+     "p25": -14.78,
+     "p75": -4.49,
+     "mean_abs": 13.45
+    }
+   },
+   "toyota_ps": {
+    "n": 14,
+    "FTP": {
+     "n": 14,
+     "median": 8.66,
+     "p25": 5.08,
+     "p75": 28.7,
+     "mean_abs": 16.45
+    },
+    "HWY": {
+     "n": 14,
+     "median": 0.72,
+     "p25": -0.65,
+     "p75": 3.89,
+     "mean_abs": 6.7
+    },
+    "US06": {
+     "n": 10,
+     "median": 1.3,
+     "p25": 0.7,
+     "p75": 2.79,
+     "mean_abs": 2.05
+    },
+    "SC03": {
+     "n": 10,
+     "median": 5.63,
+     "p25": 1.62,
+     "p75": 11.87,
+     "mean_abs": 7.84
+    },
+    "COLD": {
+     "n": 10,
+     "median": -6.25,
+     "p25": -10.08,
+     "p75": -5.62,
+     "mean_abs": 7.72
+    },
+    "main": {
+     "n": 38,
+     "median": 2.99,
+     "p25": 0.63,
+     "p75": 8.74,
+     "mean_abs": 9.07
+    }
+   }
+  },
+  "by_group_make": {
+   "ford_ps|FORD": {
+    "n": 7,
+    "FTP": 3.47,
+    "HWY": 0.87,
+    "US06": -2.36
+   },
+   "ford_ps|LINCOLN-MERCURY": {
+    "n": 1,
+    "FTP": 12.52,
+    "HWY": 10.81
+   },
+   "honda_series|HONDA": {
+    "n": 7,
+    "FTP": -1.11,
+    "HWY": -4.66,
+    "US06": -6.29,
+    "SC03": 19.26,
+    "COLD": -7.96
+   },
+   "mild|GENERAL MOTORS": {
+    "n": 2,
+    "FTP": 41.78,
+    "HWY": 21.33
+   },
+   "mild|HONDA": {
+    "n": 16,
+    "FTP": 21.07,
+    "HWY": 7.98
+   },
+   "p2_converter|FORD": {
+    "n": 7,
+    "FTP": 15.32,
+    "HWY": -2.75
+   },
+   "p2_converter|TOYOTA": {
+    "n": 2,
+    "FTP": 20.81,
+    "HWY": -7.3
+   },
+   "plugin_p2|AUDI": {
+    "n": 5,
+    "FTP": 9.85,
+    "HWY": -6.27,
+    "US06": -9.86,
+    "SC03": 18.27,
+    "COLD": 24.01
+   },
+   "plugin_ps|SUBARU": {
+    "n": 1,
+    "FTP": 9.63,
+    "HWY": 7.0,
+    "US06": 7.73,
+    "SC03": 40.34,
+    "COLD": -5.56
+   },
+   "plugin_series|KARMA": {
+    "n": 2,
+    "FTP": 5.5,
+    "HWY": -12.07,
+    "US06": -14.78,
+    "SC03": 48.91,
+    "COLD": -3.48
+   },
+   "toyota_ps|MAZDA": {
+    "n": 4,
+    "FTP": 8.82,
+    "HWY": 1.32,
+    "US06": 2.67,
+    "SC03": 13.45,
+    "COLD": -5.63
+   },
+   "toyota_ps|TOYOTA": {
+    "n": 10,
+    "FTP": 6.42,
+    "HWY": -0.01,
+    "US06": 0.95,
+    "SC03": 2.37,
+    "COLD": -9.95
+   }
+  }
+ },
+ "vehicles": [
+  {
+   "id": "EPA2018_VGA_AU370170140_c0",
+   "name": "2018 AUDI A3 e-tron",
+   "make": "AUDI",
+   "family": "AUDI|A3",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 48.54,
+    "HWY": 49.96,
+    "US06": 33.79,
+    "SC03": 39.15,
+    "COLD": 40.33
+   },
+   "epa": {
+    "FTP": 47.8,
+    "HWY": 53.3,
+    "US06": 37.5,
+    "SC03": 33.1,
+    "COLD": 32.7
+   },
+   "err_pct": {
+    "FTP": 1.55,
+    "HWY": -6.27,
+    "US06": -9.89,
+    "SC03": 18.27,
+    "COLD": 23.35
+   },
+   "diag": {
+    "HWY_eng_on": 0.48041775822639465,
+    "HWY_starts": 4,
+    "US06_eng_on": 0.5357736945152283,
+    "US06_starts": 4,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "family_seen_v2": true,
+   "model_year": 2018,
+   "wall_s": 8.2
+  },
+  {
+   "id": "EPA2021_VGA_LA3P-C-132_c0",
+   "name": "2021 AUDI A7 55 TFSIe",
+   "make": "AUDI",
+   "family": "AUDI|A7",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 38.01,
+    "HWY": 41.88,
+    "US06": 29.02,
+    "SC03": 31.22,
+    "COLD": 31.13
+   },
+   "epa": {
+    "FTP": 34.6,
+    "HWY": 45.5,
+    "US06": 32.2,
+    "SC03": 26.6,
+    "COLD": 25.1
+   },
+   "err_pct": {
+    "FTP": 9.85,
+    "HWY": -7.96,
+    "US06": -9.86,
+    "SC03": 17.39,
+    "COLD": 24.01
+   },
+   "diag": {
+    "HWY_eng_on": 0.45430809259414673,
+    "HWY_starts": 4,
+    "US06_eng_on": 0.46422627568244934,
+    "US06_starts": 12,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "family_seen_v2": false,
+   "model_year": 2021,
+   "wall_s": 8.2
+  },
+  {
+   "id": "EPA2022_VGA_NA3P-A7_c0",
+   "name": "2022 AUDI A7 55 TFSIe quattro",
+   "make": "AUDI",
+   "family": "AUDI|A7",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 38.07,
+    "HWY": 41.72,
+    "US06": 29.22,
+    "SC03": 31.01,
+    "COLD": 31.05
+   },
+   "epa": {
+    "FTP": 32.3,
+    "HWY": 43.7,
+    "US06": 29.5,
+    "SC03": 25.2,
+    "COLD": 23.6
+   },
+   "err_pct": {
+    "FTP": 17.85,
+    "HWY": -4.54,
+    "US06": -0.95,
+    "SC03": 23.05,
+    "COLD": 31.57
+   },
+   "diag": {
+    "HWY_eng_on": 0.4281984269618988,
+    "HWY_starts": 3,
+    "US06_eng_on": 0.47587352991104126,
+    "US06_starts": 12,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "family_seen_v2": false,
+   "model_year": 2022,
+   "wall_s": 8.3
+  },
+  {
+   "id": "EPA2025_HNX_ESMC2C_c1",
+   "name": "2025 HONDA CIVIC 4Dr",
+   "make": "HONDA",
+   "family": "HONDA|CIVIC",
+   "group": "honda_series",
+   "kind": "series",
+   "architecture": "hev_series",
+   "source": "exam3",
+   "sim": {
+    "FTP": 73.19,
+    "HWY": 65.05,
+    "US06": 43.45,
+    "SC03": 52.05,
+    "COLD": 41.45
+   },
+   "epa": {
+    "FTP": 75.3,
+    "HWY": 68.9,
+    "US06": 46.4,
+    "SC03": 43.4,
+    "COLD": 44.7
+   },
+   "err_pct": {
+    "FTP": -2.81,
+    "HWY": -5.59,
+    "US06": -6.35,
+    "SC03": 19.92,
+    "COLD": -7.26
+   },
+   "diag": {
+    "HWY_eng_on": 0.4295039176940918,
+    "HWY_starts": 11,
+    "US06_eng_on": 0.5574043393135071,
+    "US06_starts": 22,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "family_seen_v2": true,
+   "model_year": 2025,
+   "wall_s": 10.6
+  },
+  {
+   "id": "EPA2025_HNX_ESMC2C_c3",
+   "name": "2025 HONDA CIVIC 4Dr",
+   "make": "HONDA",
+   "family": "HONDA|CIVIC",
+   "group": "honda_series",
+   "kind": "series",
+   "architecture": "hev_series",
+   "source": "exam3",
+   "sim": {
+    "FTP": 71.67,
+    "HWY": 63.46,
+    "US06": 43.23,
+    "SC03": 51.23,
+    "COLD": 40.96
+   },
+   "epa": {
+    "FTP": 74.0,
+    "HWY": 70.6,
+    "US06": 46.1,
+    "SC03": 42.3,
+    "COLD": 43.8
+   },
+   "err_pct": {
+    "FTP": -3.15,
+    "HWY": -10.11,
+    "US06": -6.22,
+    "SC03": 21.11,
+    "COLD": -6.49
+   },
+   "diag": {
+    "HWY_eng_on": 0.44908615946769714,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.5540765523910522,
+    "US06_starts": 21,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "family_seen_v2": true,
+   "model_year": 2025,
+   "wall_s": 10.6
+  },
+  {
+   "id": "EPA2025_HNX_ESMC3C_c0",
+   "name": "2025 HONDA CIVIC 5Dr",
+   "make": "HONDA",
+   "family": "HONDA|CIVIC",
+   "group": "honda_series",
+   "kind": "series",
+   "architecture": "hev_series",
+   "source": "exam3",
+   "sim": {
+    "FTP": 70.71,
+    "HWY": 62.06,
+    "US06": 42.03,
+    "SC03": 51.0,
+    "COLD": 40.74
+   },
+   "epa": {
+    "FTP": 71.5,
+    "HWY": 65.7,
+    "US06": 44.5,
+    "SC03": 43.0,
+    "COLD": 44.6
+   },
+   "err_pct": {
+    "FTP": -1.11,
+    "HWY": -5.54,
+    "US06": -5.54,
+    "SC03": 18.6,
+    "COLD": -8.66
+   },
+   "diag": {
+    "HWY_eng_on": 0.4569190740585327,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.5806988477706909,
+    "US06_starts": 20,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "family_seen_v2": true,
+   "model_year": 2025,
+   "wall_s": 10.4
+  },
+  {
+   "id": "EPA2026_HNX_ETZD1C_c2",
+   "name": "2026 HONDA PRELUDE",
+   "make": "HONDA",
+   "family": "HONDA|PRELUDE",
+   "group": "honda_series",
+   "kind": "series",
+   "architecture": "hev_series",
+   "source": "exam3",
+   "sim": {
+    "FTP": 63.93,
+    "HWY": 57.97,
+    "US06": 39.51,
+    "SC03": 47.26,
+    "COLD": 37.66
+   },
+   "epa": {
+    "FTP": 63.4,
+    "HWY": 60.8,
+    "US06": 42.7,
+    "SC03": 41.8,
+    "COLD": 42.5
+   },
+   "err_pct": {
+    "FTP": 0.84,
+    "HWY": -4.66,
+    "US06": -7.48,
+    "SC03": 13.06,
+    "COLD": -11.4
+   },
+   "diag": {
+    "HWY_eng_on": 0.502610981464386,
+    "HWY_starts": 11,
+    "US06_eng_on": 0.6039933562278748,
+    "US06_starts": 18,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "family_seen_v2": false,
+   "model_year": 2026,
+   "wall_s": 10.4
+  },
+  {
+   "id": "EPA2021_KAL_PV2012_c4",
+   "name": "2021 KARMA Revero GT",
+   "make": "KARMA",
+   "family": "KARMA|REVERO",
+   "group": "plugin_series",
+   "kind": "phev_series",
+   "architecture": "phev_series",
+   "source": "exam3",
+   "sim": {
+    "FTP": 28.86,
+    "HWY": 24.75,
+    "US06": 20.03,
+    "SC03": 25.43,
+    "COLD": 19.88
+   },
+   "epa": {
+    "FTP": 31.6,
+    "HWY": 30.8,
+    "US06": 23.5,
+    "SC03": 16.0,
+    "COLD": 20.6
+   },
+   "err_pct": {
+    "FTP": -8.66,
+    "HWY": -19.65,
+    "US06": -14.78,
+    "SC03": 58.97,
+    "COLD": -3.48
+   },
+   "diag": {
+    "HWY_eng_on": 0.5939947962760925,
+    "HWY_starts": 3,
+    "US06_eng_on": 0.6006655693054199,
+    "US06_starts": 8,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "family_seen_v2": true,
+   "model_year": 2021,
+   "wall_s": 11.1
+  },
+  {
+   "id": "EPA2025_TKX_5EBCWG1-003_c0",
+   "name": "2025 MAZDA CX-50",
+   "make": "MAZDA",
+   "family": "MAZDA|CX-50",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 59.99,
+    "HWY": 53.39,
+    "US06": 36.84,
+    "SC03": 44.61,
+    "COLD": 37.24
+   },
+   "epa": {
+    "FTP": 53.7,
+    "HWY": 52.8,
+    "US06": 35.8,
+    "SC03": 39.0,
+    "COLD": 39.6
+   },
+   "err_pct": {
+    "FTP": 11.72,
+    "HWY": 1.11,
+    "US06": 2.91,
+    "SC03": 14.39,
+    "COLD": -5.95
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7321131229400635,
+    "US06_starts": 14,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "family_seen_v2": false,
+   "model_year": 2025,
+   "wall_s": 10.4
+  },
+  {
+   "id": "EPA2025_TKX_5EBCWG1-003_c1",
+   "name": "2025 MAZDA CX-50",
+   "make": "MAZDA",
+   "family": "MAZDA|CX-50",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 59.99,
+    "HWY": 53.39,
+    "US06": 36.84,
+    "SC03": 44.61,
+    "COLD": 37.24
+   },
+   "epa": {
+    "FTP": 55.3,
+    "HWY": 51.8,
+    "US06": 36.55,
+    "SC03": 38.0,
+    "COLD": 39.5
+   },
+   "err_pct": {
+    "FTP": 8.49,
+    "HWY": 3.06,
+    "US06": 0.8,
+    "SC03": 17.4,
+    "COLD": -5.71
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7321131229400635,
+    "US06_starts": 14,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "family_seen_v2": false,
+   "model_year": 2025,
+   "wall_s": 10.4
+  },
+  {
+   "id": "EPA2025_TKX_5EBCWG2-004_c0",
+   "name": "2025 MAZDA CX-50",
+   "make": "MAZDA",
+   "family": "MAZDA|CX-50",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 57.46,
+    "HWY": 51.17,
+    "US06": 35.34,
+    "SC03": 43.31,
+    "COLD": 36.17
+   },
+   "epa": {
+    "FTP": 52.8,
+    "HWY": 51.0,
+    "US06": 34.5,
+    "SC03": 39.4,
+    "COLD": 38.3
+   },
+   "err_pct": {
+    "FTP": 8.82,
+    "HWY": 0.33,
+    "US06": 2.44,
+    "SC03": 9.94,
+    "COLD": -5.55
+   },
+   "diag": {
+    "HWY_eng_on": 0.9086161851882935,
+    "HWY_starts": 9,
+    "US06_eng_on": 0.7354409098625183,
+    "US06_starts": 14,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "family_seen_v2": false,
+   "model_year": 2025,
+   "wall_s": 10.1
+  },
+  {
+   "id": "EPA2025_TKX_5EBCWG2-004_c1",
+   "name": "2025 MAZDA CX-50",
+   "make": "MAZDA",
+   "family": "MAZDA|CX-50",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 57.46,
+    "HWY": 51.17,
+    "US06": 35.34,
+    "SC03": 43.31,
+    "COLD": 36.17
+   },
+   "epa": {
+    "FTP": 52.8,
+    "HWY": 50.4,
+    "US06": 34.0,
+    "SC03": 38.5,
+    "COLD": 37.9
+   },
+   "err_pct": {
+    "FTP": 8.82,
+    "HWY": 1.53,
+    "US06": 3.94,
+    "SC03": 12.51,
+    "COLD": -4.56
+   },
+   "diag": {
+    "HWY_eng_on": 0.9086161851882935,
+    "HWY_starts": 9,
+    "US06_eng_on": 0.7354409098625183,
+    "US06_starts": 14,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "family_seen_v2": false,
+   "model_year": 2025,
+   "wall_s": 10.2
+  },
+  {
+   "id": "EPA2019_FJX_KBF-CG192_c0",
+   "name": "2019 SUBARU CROSSTREK",
+   "make": "SUBARU",
+   "family": "SUBARU|CROSSTREK",
+   "group": "plugin_ps",
+   "kind": "phev_ps",
+   "architecture": "phev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 56.79,
+    "HWY": 53.61,
+    "US06": 37.06,
+    "SC03": 43.5,
+    "COLD": 29.84
+   },
+   "epa": {
+    "FTP": 51.8,
+    "HWY": 50.1,
+    "US06": 34.4,
+    "SC03": 31.0,
+    "COLD": 31.6
+   },
+   "err_pct": {
+    "FTP": 9.63,
+    "HWY": 7.0,
+    "US06": 7.73,
+    "SC03": 40.34,
+    "COLD": -5.56
+   },
+   "diag": {
+    "HWY_eng_on": 0.9099216461181641,
+    "HWY_starts": 8,
+    "US06_eng_on": 0.722129762172699,
+    "US06_starts": 10,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "family_seen_v2": true,
+   "model_year": 2019,
+   "wall_s": 10.2
+  },
+  {
+   "id": "EPA2023_TYX_23-AS1H_c0",
+   "name": "2023 TOYOTA TOYOTA CROWN AWD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|TOYOTA",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 60.67,
+    "HWY": 57.55,
+    "US06": 40.59,
+    "SC03": 45.39,
+    "COLD": 36.99
+   },
+   "epa": {
+    "FTP": 57.3,
+    "HWY": 57.4,
+    "US06": 38.5,
+    "SC03": 43.7,
+    "COLD": 41.7
+   },
+   "err_pct": {
+    "FTP": 5.88,
+    "HWY": 0.26,
+    "US06": 5.43,
+    "SC03": 3.87,
+    "COLD": -11.3
+   },
+   "diag": {
+    "HWY_eng_on": 0.9007833003997803,
+    "HWY_starts": 12,
+    "US06_eng_on": 0.7321131229400635,
+    "US06_starts": 14,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "family_seen_v2": false,
+   "model_year": 2023,
+   "wall_s": 10.1
+  },
+  {
+   "id": "EPA2023_TYX_23-AS1H_c1",
+   "name": "2023 TOYOTA TOYOTA CROWN AWD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|TOYOTA",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 60.67,
+    "HWY": 57.55,
+    "US06": 40.59,
+    "SC03": 45.39,
+    "COLD": 36.99
+   },
+   "epa": {
+    "FTP": 60.3,
+    "HWY": 58.7,
+    "US06": 40.1,
+    "SC03": 45.0,
+    "COLD": 42.1
+   },
+   "err_pct": {
+    "FTP": 0.62,
+    "HWY": -1.96,
+    "US06": 1.23,
+    "SC03": 0.87,
+    "COLD": -12.14
+   },
+   "diag": {
+    "HWY_eng_on": 0.9007833003997803,
+    "HWY_starts": 12,
+    "US06_eng_on": 0.7321131229400635,
+    "US06_starts": 14,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "family_seen_v2": false,
+   "model_year": 2023,
+   "wall_s": 10.1
+  },
+  {
+   "id": "EPA2025_TYX_25-AS1H_c0",
+   "name": "2025 TOYOTA TOYOTA CROWN SIGNIA AWD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|TOYOTA",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 55.94,
+    "HWY": 51.71,
+    "US06": 36.09,
+    "SC03": 44.54,
+    "COLD": 34.59
+   },
+   "epa": {
+    "FTP": 52.3,
+    "HWY": 52.6,
+    "US06": 35.6,
+    "SC03": 41.9,
+    "COLD": 38.3
+   },
+   "err_pct": {
+    "FTP": 6.95,
+    "HWY": -1.69,
+    "US06": 1.37,
+    "SC03": 6.3,
+    "COLD": -9.68
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7321131229400635,
+    "US06_starts": 14,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "family_seen_v2": false,
+   "model_year": 2025,
+   "wall_s": 10.0
+  },
+  {
+   "id": "EPA2025_TYX_25-AS1H_c1",
+   "name": "2025 TOYOTA TOYOTA CROWN SIGNIA AWD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|TOYOTA",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 56.07,
+    "HWY": 51.6,
+    "US06": 35.96,
+    "SC03": 44.61,
+    "COLD": 34.66
+   },
+   "epa": {
+    "FTP": 53.5,
+    "HWY": 52.0,
+    "US06": 36.0,
+    "SC03": 42.5,
+    "COLD": 38.6
+   },
+   "err_pct": {
+    "FTP": 4.81,
+    "HWY": -0.77,
+    "US06": -0.1,
+    "SC03": 4.97,
+    "COLD": -10.21
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7321131229400635,
+    "US06_starts": 14,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "family_seen_v2": false,
+   "model_year": 2025,
+   "wall_s": 10.0
+  },
+  {
+   "id": "EPA2021_TYX_21-AH1H_c1",
+   "name": "2021 TOYOTA VENZA AWD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|VENZA",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 56.91,
+    "HWY": 52.31,
+    "US06": 35.42,
+    "SC03": 41.91,
+    "COLD": 36.26
+   },
+   "epa": {
+    "FTP": 55.8,
+    "HWY": 53.4,
+    "US06": 36.0,
+    "SC03": 43.4,
+    "COLD": 38.4
+   },
+   "err_pct": {
+    "FTP": 1.98,
+    "HWY": -2.05,
+    "US06": -1.61,
+    "SC03": -3.42,
+    "COLD": -5.59
+   },
+   "diag": {
+    "HWY_eng_on": 0.9073107242584229,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7254575490951538,
+    "US06_starts": 15,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "family_seen_v2": false,
+   "model_year": 2021,
+   "wall_s": 10.0
+  },
+  {
+   "id": "EPA2021_TYX_21-AH2H_c0",
+   "name": "2021 TOYOTA VENZA AWD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|VENZA",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 55.89,
+    "HWY": 51.35,
+    "US06": 34.83,
+    "SC03": 41.54,
+    "COLD": 35.88
+   },
+   "epa": {
+    "FTP": 54.0,
+    "HWY": 51.5,
+    "US06": 34.6,
+    "SC03": 43.6,
+    "COLD": 38.4
+   },
+   "err_pct": {
+    "FTP": 3.5,
+    "HWY": -0.29,
+    "US06": 0.67,
+    "SC03": -4.72,
+    "COLD": -6.55
+   },
+   "diag": {
+    "HWY_eng_on": 0.9086161851882935,
+    "HWY_starts": 9,
+    "US06_eng_on": 0.7254575490951538,
+    "US06_starts": 15,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "family_seen_v2": false,
+   "model_year": 2021,
+   "wall_s": 10.0
+  },
+  {
+   "id": "EPA2025_FMX_SRA00005_c0",
+   "name": "2025 FORD Maverick",
+   "make": "FORD",
+   "family": "FORD|MAVERICK",
+   "group": "ford_ps",
+   "kind": "fps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 62.86,
+    "HWY": 56.22,
+    "US06": 37.11
+   },
+   "epa": {
+    "FTP": 61.2,
+    "HWY": 54.7,
+    "US06": 38.4
+   },
+   "err_pct": {
+    "FTP": 2.71,
+    "HWY": 2.79,
+    "US06": -3.36
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7287853360176086,
+    "US06_starts": 14
+   },
+   "family_seen_v2": false,
+   "model_year": 2025,
+   "wall_s": 5.5
+  },
+  {
+   "id": "EPA2025_FMX_SRA00019_c0",
+   "name": "2025 FORD Maverick",
+   "make": "FORD",
+   "family": "FORD|MAVERICK",
+   "group": "ford_ps",
+   "kind": "fps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 58.25,
+    "HWY": 53.34,
+    "US06": 34.81
+   },
+   "epa": {
+    "FTP": 58.4,
+    "HWY": 53.9,
+    "US06": 37.2
+   },
+   "err_pct": {
+    "FTP": -0.26,
+    "HWY": -1.04,
+    "US06": -6.43
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7271214723587036,
+    "US06_starts": 14
+   },
+   "family_seen_v2": false,
+   "model_year": 2025,
+   "wall_s": 5.6
+  },
+  {
+   "id": "EPA2025_FMX_SRA00020_c0",
+   "name": "2025 FORD Maverick",
+   "make": "FORD",
+   "family": "FORD|MAVERICK",
+   "group": "ford_ps",
+   "kind": "fps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 59.16,
+    "HWY": 53.94,
+    "US06": 34.98
+   },
+   "epa": {
+    "FTP": 55.0,
+    "HWY": 53.0,
+    "US06": 36.9
+   },
+   "err_pct": {
+    "FTP": 7.56,
+    "HWY": 1.78,
+    "US06": -5.2
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7271214723587036,
+    "US06_starts": 14
+   },
+   "family_seen_v2": false,
+   "model_year": 2025,
+   "wall_s": 5.6
+  },
+  {
+   "id": "EPA2026_FMX_TRA00026_c0",
+   "name": "2026 FORD Maverik XL AWD",
+   "make": "FORD",
+   "family": "FORD|MAVERIK",
+   "group": "ford_ps",
+   "kind": "fps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 56.29,
+    "HWY": 50.03,
+    "US06": 34.3
+   },
+   "epa": {
+    "FTP": 54.4,
+    "HWY": 49.6,
+    "US06": 33.8
+   },
+   "err_pct": {
+    "FTP": 3.47,
+    "HWY": 0.87,
+    "US06": 1.48
+   },
+   "diag": {
+    "HWY_eng_on": 0.9086161851882935,
+    "HWY_starts": 9,
+    "US06_eng_on": 0.7271214723587036,
+    "US06_starts": 14
+   },
+   "family_seen_v2": false,
+   "model_year": 2026,
+   "wall_s": 5.5
+  },
+  {
+   "id": "EPA2026_FMX_TRA00027_c0",
+   "name": "2026 FORD Maverik XL AWD",
+   "make": "FORD",
+   "family": "FORD|MAVERIK",
+   "group": "ford_ps",
+   "kind": "fps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 58.32,
+    "HWY": 51.52,
+    "US06": 35.02
+   },
+   "epa": {
+    "FTP": 55.1,
+    "HWY": 52.0,
+    "US06": 35.5
+   },
+   "err_pct": {
+    "FTP": 5.84,
+    "HWY": -0.93,
+    "US06": -1.36
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7254575490951538,
+    "US06_starts": 14
+   },
+   "family_seen_v2": false,
+   "model_year": 2026,
+   "wall_s": 5.5
+  },
+  {
+   "id": "EPA2026_FMX_TRA00024_c0",
+   "name": "2026 FORD Maverik XL FWD",
+   "make": "FORD",
+   "family": "FORD|MAVERIK",
+   "group": "ford_ps",
+   "kind": "fps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 61.82,
+    "HWY": 53.82,
+    "US06": 36.91
+   },
+   "epa": {
+    "FTP": 59.1,
+    "HWY": 54.2,
+    "US06": 36.7
+   },
+   "err_pct": {
+    "FTP": 4.6,
+    "HWY": -0.71,
+    "US06": 0.57
+   },
+   "diag": {
+    "HWY_eng_on": 0.9073107242584229,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7271214723587036,
+    "US06_starts": 14
+   },
+   "family_seen_v2": false,
+   "model_year": 2026,
+   "wall_s": 5.6
+  },
+  {
+   "id": "EPA2020_KAL_PV2015FE_c0",
+   "name": "2020 KARMA Revero GT",
+   "make": "KARMA",
+   "family": "KARMA|REVERO",
+   "group": "plugin_series",
+   "kind": "phev_series",
+   "architecture": "phev_series",
+   "source": "exam3",
+   "sim": {
+    "FTP": 39.13,
+    "HWY": 35.91,
+    "SC03": 33.18
+   },
+   "epa": {
+    "FTP": 32.7,
+    "HWY": 37.6,
+    "SC03": 23.9
+   },
+   "err_pct": {
+    "FTP": 19.66,
+    "HWY": -4.49,
+    "SC03": 38.85
+   },
+   "diag": {
+    "HWY_eng_on": 0.3942558765411377,
+    "HWY_starts": 2,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "family_seen_v2": true,
+   "model_year": 2020,
+   "wall_s": 6.4
+  },
+  {
+   "id": "EPA2016_VGA_AU373-6-0813/16_c1",
+   "name": "2016 AUDI A3 e-tron",
+   "make": "AUDI",
+   "family": "AUDI|A3",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 52.03,
+    "HWY": 54.65
+   },
+   "epa": {
+    "FTP": 49.5,
+    "HWY": 59.0
+   },
+   "err_pct": {
+    "FTP": 5.12,
+    "HWY": -7.38
+   },
+   "diag": {
+    "HWY_eng_on": 0.4242819845676422,
+    "HWY_starts": 2
+   },
+   "family_seen_v2": true,
+   "model_year": 2016,
+   "wall_s": 3.6
+  },
+  {
+   "id": "EPA2020_VGA_LNAP-A8_c0",
+   "name": "2020 AUDI A8 e-tron",
+   "make": "AUDI",
+   "family": "AUDI|A8",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 31.49,
+    "HWY": 36.35
+   },
+   "epa": {
+    "FTP": 26.0,
+    "HWY": 38.5
+   },
+   "err_pct": {
+    "FTP": 21.11,
+    "HWY": -5.59
+   },
+   "diag": {
+    "HWY_eng_on": 0.4595300257205963,
+    "HWY_starts": 4
+   },
+   "family_seen_v2": false,
+   "model_year": 2020,
+   "wall_s": 3.6
+  },
+  {
+   "id": "EPA2007_40_24Z7Z63276_c0",
+   "name": "2007 GENERAL MOTORS AURA HYBRID",
+   "make": "GENERAL MOTORS",
+   "family": "CHEVROLET|AURA",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 43.13,
+    "HWY": 53.82
+   },
+   "epa": {
+    "FTP": 30.6,
+    "HWY": 44.9
+   },
+   "err_pct": {
+    "FTP": 40.94,
+    "HWY": 19.87
+   },
+   "diag": {
+    "HWY_eng_on": 0.9203655123710632,
+    "HWY_starts": 10
+   },
+   "family_seen_v2": false,
+   "model_year": 2007,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2007_40_2487LN4014_c0",
+   "name": "2007 GENERAL MOTORS VUE HYBRID",
+   "make": "GENERAL MOTORS",
+   "family": "CHEVROLET|VUE",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 42.5,
+    "HWY": 50.47
+   },
+   "epa": {
+    "FTP": 29.8,
+    "HWY": 41.1
+   },
+   "err_pct": {
+    "FTP": 42.62,
+    "HWY": 22.79
+   },
+   "diag": {
+    "HWY_eng_on": 0.9255874752998352,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2007,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2020_FMX_LGA00348_c0",
+   "name": "2020 FORD Explorer FHEV",
+   "make": "FORD",
+   "family": "FORD|EXPLORER",
+   "group": "p2_converter",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 36.93,
+    "HWY": 38.3
+   },
+   "epa": {
+    "FTP": 34.6,
+    "HWY": 41.5
+   },
+   "err_pct": {
+    "FTP": 6.75,
+    "HWY": -7.7
+   },
+   "diag": {
+    "HWY_eng_on": 0.3877284526824951,
+    "HWY_starts": 11
+   },
+   "family_seen_v2": true,
+   "model_year": 2020,
+   "wall_s": 3.7
+  },
+  {
+   "id": "EPA2020_FMX_LGA00706_c0",
+   "name": "2020 FORD Explorer FHEV",
+   "make": "FORD",
+   "family": "FORD|EXPLORER",
+   "group": "p2_converter",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 36.93,
+    "HWY": 38.3
+   },
+   "epa": {
+    "FTP": 30.0,
+    "HWY": 36.8
+   },
+   "err_pct": {
+    "FTP": 23.11,
+    "HWY": 4.08
+   },
+   "diag": {
+    "HWY_eng_on": 0.3877284526824951,
+    "HWY_starts": 11
+   },
+   "family_seen_v2": true,
+   "model_year": 2020,
+   "wall_s": 3.6
+  },
+  {
+   "id": "EPA2022_FMX_MGA00010_c0",
+   "name": "2022 FORD Explorer FHEV",
+   "make": "FORD",
+   "family": "FORD|EXPLORER",
+   "group": "p2_converter",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 40.33,
+    "HWY": 41.35
+   },
+   "epa": {
+    "FTP": 34.6,
+    "HWY": 40.5
+   },
+   "err_pct": {
+    "FTP": 16.55,
+    "HWY": 2.09
+   },
+   "diag": {
+    "HWY_eng_on": 0.3603133261203766,
+    "HWY_starts": 10
+   },
+   "family_seen_v2": true,
+   "model_year": 2022,
+   "wall_s": 3.7
+  },
+  {
+   "id": "EPA2021_FMX_MFA00024_c0",
+   "name": "2021 FORD F150 FHEV",
+   "make": "FORD",
+   "family": "FORD|F150",
+   "group": "p2_converter",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 33.03,
+    "HWY": 32.6
+   },
+   "epa": {
+    "FTP": 31.2,
+    "HWY": 34.0
+   },
+   "err_pct": {
+    "FTP": 5.88,
+    "HWY": -4.1
+   },
+   "diag": {
+    "HWY_eng_on": 0.3616187870502472,
+    "HWY_starts": 15
+   },
+   "family_seen_v2": true,
+   "model_year": 2021,
+   "wall_s": 3.6
+  },
+  {
+   "id": "EPA2021_FMX_MFA00037_c0",
+   "name": "2021 FORD F150 FHEV",
+   "make": "FORD",
+   "family": "FORD|F150",
+   "group": "p2_converter",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 35.99,
+    "HWY": 35.99
+   },
+   "epa": {
+    "FTP": 32.1,
+    "HWY": 36.6
+   },
+   "err_pct": {
+    "FTP": 12.1,
+    "HWY": -1.66
+   },
+   "diag": {
+    "HWY_eng_on": 0.33681461215019226,
+    "HWY_starts": 14
+   },
+   "family_seen_v2": true,
+   "model_year": 2021,
+   "wall_s": 3.6
+  },
+  {
+   "id": "EPA2021_FMX_MFD1-3.5-J-945_c0",
+   "name": "2021 FORD F150 FHEV",
+   "make": "FORD",
+   "family": "FORD|F150",
+   "group": "p2_converter",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 28.33,
+    "HWY": 27.27
+   },
+   "epa": {
+    "FTP": 23.3,
+    "HWY": 28.1
+   },
+   "err_pct": {
+    "FTP": 21.57,
+    "HWY": -2.95
+   },
+   "diag": {
+    "HWY_eng_on": 0.4229764938354492,
+    "HWY_starts": 17
+   },
+   "family_seen_v2": true,
+   "model_year": 2021,
+   "wall_s": 3.6
+  },
+  {
+   "id": "EPA2024_FMX_RFA00171_c0",
+   "name": "2024 FORD F150 FHEV",
+   "make": "FORD",
+   "family": "FORD|F150",
+   "group": "p2_converter",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 32.87,
+    "HWY": 32.48
+   },
+   "epa": {
+    "FTP": 28.5,
+    "HWY": 33.4
+   },
+   "err_pct": {
+    "FTP": 15.32,
+    "HWY": -2.75
+   },
+   "diag": {
+    "HWY_eng_on": 0.3590078353881836,
+    "HWY_starts": 14
+   },
+   "family_seen_v2": true,
+   "model_year": 2024,
+   "wall_s": 3.7
+  },
+  {
+   "id": "EPA2022_FMX_NRA00069_c1",
+   "name": "2022 FORD Maverick FHEV FWD",
+   "make": "FORD",
+   "family": "FORD|MAVERICK",
+   "group": "ford_ps",
+   "kind": "fps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 57.87,
+    "HWY": 52.08
+   },
+   "epa": {
+    "FTP": 58.4,
+    "HWY": 50.9
+   },
+   "err_pct": {
+    "FTP": -0.91,
+    "HWY": 2.32
+   },
+   "diag": {
+    "HWY_eng_on": 0.9099216461181641,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": false,
+   "model_year": 2022,
+   "wall_s": 4.3
+  },
+  {
+   "id": "EPA2003_260_E2ZA1C_c4",
+   "name": "2003 HONDA CIVIC HYBRID",
+   "make": "HONDA",
+   "family": "HONDA|CIVIC",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 59.27,
+    "HWY": 68.94
+   },
+   "epa": {
+    "FTP": 53.8,
+    "HWY": 60.8
+   },
+   "err_pct": {
+    "FTP": 10.17,
+    "HWY": 13.39
+   },
+   "diag": {
+    "HWY_eng_on": 0.9255874752998352,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2003,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2003_260_E2ZA1M_c0",
+   "name": "2003 HONDA CIVIC HYBRID",
+   "make": "HONDA",
+   "family": "HONDA|CIVIC",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 61.58,
+    "HWY": 70.08
+   },
+   "epa": {
+    "FTP": 48.7,
+    "HWY": 65.3
+   },
+   "err_pct": {
+    "FTP": 26.45,
+    "HWY": 7.32
+   },
+   "diag": {
+    "HWY_eng_on": 0.9255874752998352,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2003,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2003_260_E2ZA1M_c1",
+   "name": "2003 HONDA CIVIC HYBRID",
+   "make": "HONDA",
+   "family": "HONDA|CIVIC",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 61.58,
+    "HWY": 70.08
+   },
+   "epa": {
+    "FTP": 51.7,
+    "HWY": 64.7
+   },
+   "err_pct": {
+    "FTP": 19.11,
+    "HWY": 8.31
+   },
+   "diag": {
+    "HWY_eng_on": 0.9255874752998352,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2003,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2003_260_E3KE1C_c1",
+   "name": "2003 HONDA CIVIC HYBRID",
+   "make": "HONDA",
+   "family": "HONDA|CIVIC",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 61.61,
+    "HWY": 70.94
+   },
+   "epa": {
+    "FTP": 52.6,
+    "HWY": 60.9
+   },
+   "err_pct": {
+    "FTP": 17.13,
+    "HWY": 16.49
+   },
+   "diag": {
+    "HWY_eng_on": 0.9255874752998352,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2003,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2003_260_E3KE1M_c0",
+   "name": "2003 HONDA CIVIC HYBRID",
+   "make": "HONDA",
+   "family": "HONDA|CIVIC",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 62.83,
+    "HWY": 70.98
+   },
+   "epa": {
+    "FTP": 47.8,
+    "HWY": 63.3
+   },
+   "err_pct": {
+    "FTP": 31.45,
+    "HWY": 12.13
+   },
+   "diag": {
+    "HWY_eng_on": 0.9242819547653198,
+    "HWY_starts": 9
+   },
+   "family_seen_v2": true,
+   "model_year": 2003,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2003_260_E3KE1M_c1",
+   "name": "2003 HONDA CIVIC HYBRID",
+   "make": "HONDA",
+   "family": "HONDA|CIVIC",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 62.83,
+    "HWY": 70.98
+   },
+   "epa": {
+    "FTP": 50.8,
+    "HWY": 65.4
+   },
+   "err_pct": {
+    "FTP": 23.69,
+    "HWY": 8.53
+   },
+   "diag": {
+    "HWY_eng_on": 0.9242819547653198,
+    "HWY_starts": 9
+   },
+   "family_seen_v2": true,
+   "model_year": 2003,
+   "wall_s": 3.3
+  },
+  {
+   "id": "EPA2004_260_E3ZA1C_c0",
+   "name": "2004 HONDA CIVIC HYBRID",
+   "make": "HONDA",
+   "family": "HONDA|CIVIC",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 59.27,
+    "HWY": 68.94
+   },
+   "epa": {
+    "FTP": 53.2,
+    "HWY": 60.5
+   },
+   "err_pct": {
+    "FTP": 11.42,
+    "HWY": 13.95
+   },
+   "diag": {
+    "HWY_eng_on": 0.9255874752998352,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2004,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2004_260_E3ZA1M_c0",
+   "name": "2004 HONDA CIVIC HYBRID",
+   "make": "HONDA",
+   "family": "HONDA|CIVIC",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 61.58,
+    "HWY": 70.08
+   },
+   "epa": {
+    "FTP": 48.3,
+    "HWY": 64.9
+   },
+   "err_pct": {
+    "FTP": 27.49,
+    "HWY": 7.98
+   },
+   "diag": {
+    "HWY_eng_on": 0.9255874752998352,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2004,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2004_260_E3ZA1M_c1",
+   "name": "2004 HONDA CIVIC HYBRID",
+   "make": "HONDA",
+   "family": "HONDA|CIVIC",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 61.58,
+    "HWY": 70.08
+   },
+   "epa": {
+    "FTP": 52.3,
+    "HWY": 64.9
+   },
+   "err_pct": {
+    "FTP": 17.74,
+    "HWY": 7.98
+   },
+   "diag": {
+    "HWY_eng_on": 0.9255874752998352,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2004,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2020_HNX_ELRD1C_c1",
+   "name": "2020 HONDA CR-V AWD",
+   "make": "HONDA",
+   "family": "HONDA|CR-V",
+   "group": "honda_series",
+   "kind": "series",
+   "architecture": "hev_series",
+   "source": "exam3",
+   "sim": {
+    "FTP": 58.21,
+    "HWY": 50.28
+   },
+   "epa": {
+    "FTP": 56.1,
+    "HWY": 52.3
+   },
+   "err_pct": {
+    "FTP": 3.76,
+    "HWY": -3.86
+   },
+   "diag": {
+    "HWY_eng_on": 0.557441234588623,
+    "HWY_starts": 12
+   },
+   "family_seen_v2": false,
+   "model_year": 2020,
+   "wall_s": 4.7
+  },
+  {
+   "id": "EPA2023_HNX_EP9F2C_c1",
+   "name": "2023 HONDA CR-V AWD",
+   "make": "HONDA",
+   "family": "HONDA|CR-V",
+   "group": "honda_series",
+   "kind": "series",
+   "architecture": "hev_series",
+   "source": "exam3",
+   "sim": {
+    "FTP": 54.43,
+    "HWY": 48.22
+   },
+   "epa": {
+    "FTP": 56.1,
+    "HWY": 49.5
+   },
+   "err_pct": {
+    "FTP": -2.98,
+    "HWY": -2.58
+   },
+   "diag": {
+    "HWY_eng_on": 0.5678851008415222,
+    "HWY_starts": 13
+   },
+   "family_seen_v2": false,
+   "model_year": 2023,
+   "wall_s": 4.5
+  },
+  {
+   "id": "EPA2026_HNX_ET9F2C_c0",
+   "name": "2026 HONDA CR-V AWD TrailSport",
+   "make": "HONDA",
+   "family": "HONDA|CR-V",
+   "group": "honda_series",
+   "kind": "series",
+   "architecture": "hev_series",
+   "source": "exam3",
+   "sim": {
+    "FTP": 52.12,
+    "HWY": 46.69
+   },
+   "epa": {
+    "FTP": 51.6,
+    "HWY": 47.2
+   },
+   "err_pct": {
+    "FTP": 1.01,
+    "HWY": -1.09
+   },
+   "diag": {
+    "HWY_eng_on": 0.582245409488678,
+    "HWY_starts": 12
+   },
+   "family_seen_v2": false,
+   "model_year": 2026,
+   "wall_s": 4.6
+  },
+  {
+   "id": "EPA2001_260_E1HM1C_c1",
+   "name": "2001 HONDA INSIGHT",
+   "make": "HONDA",
+   "family": "HONDA|INSIGHT",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 77.82,
+    "HWY": 86.9
+   },
+   "epa": {
+    "FTP": 62.8,
+    "HWY": 71.4
+   },
+   "err_pct": {
+    "FTP": 23.91,
+    "HWY": 21.71
+   },
+   "diag": {
+    "HWY_eng_on": 0.9255874752998352,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2001,
+   "wall_s": 3.3
+  },
+  {
+   "id": "EPA2004_260_E2HM1M_c7",
+   "name": "2004 HONDA INSIGHT",
+   "make": "HONDA",
+   "family": "HONDA|INSIGHT",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 81.13,
+    "HWY": 89.5
+   },
+   "epa": {
+    "FTP": 65.0,
+    "HWY": 84.1
+   },
+   "err_pct": {
+    "FTP": 24.82,
+    "HWY": 6.42
+   },
+   "diag": {
+    "HWY_eng_on": 0.9268929362297058,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2004,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2004_260_E2HM1M_c9",
+   "name": "2004 HONDA INSIGHT",
+   "make": "HONDA",
+   "family": "HONDA|INSIGHT",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 81.13,
+    "HWY": 89.5
+   },
+   "epa": {
+    "FTP": 67.9,
+    "HWY": 84.1
+   },
+   "err_pct": {
+    "FTP": 19.48,
+    "HWY": 6.42
+   },
+   "diag": {
+    "HWY_eng_on": 0.9268929362297058,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2004,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2005_260_E5HM1M_c0",
+   "name": "2005 HONDA INSIGHT",
+   "make": "HONDA",
+   "family": "HONDA|INSIGHT",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 80.34,
+    "HWY": 88.44
+   },
+   "epa": {
+    "FTP": 65.5,
+    "HWY": 84.4
+   },
+   "err_pct": {
+    "FTP": 22.66,
+    "HWY": 4.78
+   },
+   "diag": {
+    "HWY_eng_on": 0.9268929362297058,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2005,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2005_260_E5HM1M_c2",
+   "name": "2005 HONDA INSIGHT",
+   "make": "HONDA",
+   "family": "HONDA|INSIGHT",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 80.34,
+    "HWY": 88.44
+   },
+   "epa": {
+    "FTP": 68.6,
+    "HWY": 84.4
+   },
+   "err_pct": {
+    "FTP": 17.12,
+    "HWY": 4.78
+   },
+   "diag": {
+    "HWY_eng_on": 0.9268929362297058,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2005,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2006_260_E6HM1M_c0",
+   "name": "2006 HONDA INSIGHT",
+   "make": "HONDA",
+   "family": "HONDA|INSIGHT",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 80.34,
+    "HWY": 88.44
+   },
+   "epa": {
+    "FTP": 64.8,
+    "HWY": 84.3
+   },
+   "err_pct": {
+    "FTP": 23.99,
+    "HWY": 4.91
+   },
+   "diag": {
+    "HWY_eng_on": 0.9268929362297058,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2006,
+   "wall_s": 3.3
+  },
+  {
+   "id": "EPA2006_260_E6HM1M_c2",
+   "name": "2006 HONDA INSIGHT",
+   "make": "HONDA",
+   "family": "HONDA|INSIGHT",
+   "group": "mild",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 80.34,
+    "HWY": 88.44
+   },
+   "epa": {
+    "FTP": 67.8,
+    "HWY": 84.2
+   },
+   "err_pct": {
+    "FTP": 18.5,
+    "HWY": 5.03
+   },
+   "diag": {
+    "HWY_eng_on": 0.9268929362297058,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2006,
+   "wall_s": 3.0
+  },
+  {
+   "id": "EPA2010_FMX_AR600011_c1",
+   "name": "2010 LINCOLN-MERCURY MILAN",
+   "make": "LINCOLN-MERCURY",
+   "family": "LINCOLN-MERCURY|MILAN",
+   "group": "ford_ps",
+   "kind": "fps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 63.57,
+    "HWY": 57.18
+   },
+   "epa": {
+    "FTP": 56.5,
+    "HWY": 51.6
+   },
+   "err_pct": {
+    "FTP": 12.52,
+    "HWY": 10.81
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10
+   },
+   "family_seen_v2": false,
+   "model_year": 2010,
+   "wall_s": 3.6
+  },
+  {
+   "id": "EPA2006_570_06-MU2C_c1",
+   "name": "2006 TOYOTA HIGHLANDER HYBRID 2WD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|HIGHLANDER",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 52.92,
+    "HWY": 45.1
+   },
+   "epa": {
+    "FTP": 36.8,
+    "HWY": 35.5
+   },
+   "err_pct": {
+    "FTP": 43.79,
+    "HWY": 27.05
+   },
+   "diag": {
+    "HWY_eng_on": 0.9086161851882935,
+    "HWY_starts": 9
+   },
+   "family_seen_v2": true,
+   "model_year": 2006,
+   "wall_s": 3.5
+  },
+  {
+   "id": "EPA2006_570_06-MU1C_c1",
+   "name": "2006 TOYOTA HIGHLANDER HYBRID 4WD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|HIGHLANDER",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 48.92,
+    "HWY": 42.63
+   },
+   "epa": {
+    "FTP": 35.5,
+    "HWY": 34.9
+   },
+   "err_pct": {
+    "FTP": 37.79,
+    "HWY": 22.16
+   },
+   "diag": {
+    "HWY_eng_on": 0.9086161851882935,
+    "HWY_starts": 9
+   },
+   "family_seen_v2": true,
+   "model_year": 2006,
+   "wall_s": 3.5
+  },
+  {
+   "id": "EPA2001_570_01-NHW1_c0",
+   "name": "2001 TOYOTA PRIUS",
+   "make": "TOYOTA",
+   "family": "TOYOTA|PRIUS",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 87.54,
+    "HWY": 73.71
+   },
+   "epa": {
+    "FTP": 57.3,
+    "HWY": 57.9
+   },
+   "err_pct": {
+    "FTP": 52.78,
+    "HWY": 27.31
+   },
+   "diag": {
+    "HWY_eng_on": 0.9099216461181641,
+    "HWY_starts": 8
+   },
+   "family_seen_v2": true,
+   "model_year": 2001,
+   "wall_s": 3.4
+  },
+  {
+   "id": "EPA2023_TYX_23-VK2H_c1",
+   "name": "2023 TOYOTA SEQUOIA 2WD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|SEQUOIA",
+   "group": "p2_converter",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 31.29,
+    "HWY": 30.87
+   },
+   "epa": {
+    "FTP": 26.8,
+    "HWY": 33.8
+   },
+   "err_pct": {
+    "FTP": 16.76,
+    "HWY": -8.67
+   },
+   "diag": {
+    "HWY_eng_on": 0.48955613374710083,
+    "HWY_starts": 9
+   },
+   "family_seen_v2": false,
+   "model_year": 2023,
+   "wall_s": 2.7
+  },
+  {
+   "id": "EPA2023_TYX_23-VK1H_c0",
+   "name": "2023 TOYOTA SEQUOIA 4WD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|SEQUOIA",
+   "group": "p2_converter",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "exam3",
+   "sim": {
+    "FTP": 29.65,
+    "HWY": 29.26
+   },
+   "epa": {
+    "FTP": 23.75,
+    "HWY": 31.1
+   },
+   "err_pct": {
+    "FTP": 24.86,
+    "HWY": -5.93
+   },
+   "diag": {
+    "HWY_eng_on": 0.5287206172943115,
+    "HWY_starts": 11
+   },
+   "family_seen_v2": false,
+   "model_year": 2023,
+   "wall_s": 2.6
+  },
+  {
+   "id": "EPA2023_TYX_23-TS1H_c0",
+   "name": "2023 TOYOTA TOYOTA CROWN AWD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|TOYOTA",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "exam3",
+   "sim": {
+    "FTP": 52.67,
+    "HWY": 48.75
+   },
+   "epa": {
+    "FTP": 39.2,
+    "HWY": 46.8
+   },
+   "err_pct": {
+    "FTP": 34.36,
+    "HWY": 4.16
+   },
+   "diag": {
+    "HWY_eng_on": 0.7689294815063477,
+    "HWY_starts": 56
+   },
+   "family_seen_v2": false,
+   "model_year": 2023,
+   "wall_s": 2.8
+  }
+ ],
+ "wall_s": 29.3
+}

@@ -1,0 +1,2254 @@
+{
+ "check": "EPA hybrids and plug-ins, set dev",
+ "method": "Check: EPA test-car hybrids and plug-ins on their own test cycles (FTP-75, HWY, US06, SC03, 20 F cold FTP where\nEPA tested them), specs by rule (checks/hybrid_specs.py), procedures as check_cycles (checks/epa_procedures.py).\nError = simulated / EPA - 1 on fuel economy (+ = the sim burns less). Plug-ins run their charge-sustaining tests: the\ntwin starts and is held at its charge-sustaining SOC.\n\nSets:\n  dev    every hybrid / plug-in record of RoadData's DEV model families (frozen family split; carry-over copies\n         dropped) that RoadSim models, plus the four check_cycles dev hybrids (Sonata Hybrid, RAV4 Hybrid, Escape HEV,\n         Accord Hybrid, with their own specs). The calibration may fit on this set.\n  devx   dev plus exam-3's dev_extra (dev-family hybrids found by the exam-3 rules: Sienna 2021+, Audi Q5 TFSIe /\n         e-tron; v3 pass, 14 Nov 2026). The calibration may fit on this set.\n  exam2  the frozen exam-2 list (checks/exam2_hybrids.json, sha256 checked). Final report only.\n  exam3  the frozen exam-3 list (checks/exam3_hybrids.json, sha256 checked; the clean judge of the v3 pass). Final\n         report only.\n\nusage: python check_hybrids_epa.py --set dev|devx|exam2|exam3 [--options roadsim-physics-v2] [--workers 14] [--out FILE]\nOutput: hybrids_epa__<set>__<preset>.json",
+ "set": "dev",
+ "exam_sha256": null,
+ "exam2_sha256": null,
+ "options": "roadsim-physics-v3",
+ "options_name": "roadsim-physics-v3",
+ "physics": "roadsim-physics-v2",
+ "skipped": {
+  "P2 with a CVT (RoadSim P2 needs stepped gears)": 11
+ },
+ "n": 55,
+ "n_errors": 0,
+ "errors": [],
+ "summary": {
+  "by_group": {
+   "ford_ps": {
+    "n": 1,
+    "FTP": {
+     "n": 1,
+     "median": 1.35,
+     "p25": 1.35,
+     "p75": 1.35,
+     "mean_abs": 1.35
+    },
+    "HWY": {
+     "n": 1,
+     "median": 1.54,
+     "p25": 1.54,
+     "p75": 1.54,
+     "mean_abs": 1.54
+    },
+    "main": {
+     "n": 2,
+     "median": 1.45,
+     "p25": 1.4,
+     "p75": 1.49,
+     "mean_abs": 1.45
+    }
+   },
+   "honda_series": {
+    "n": 1,
+    "FTP": {
+     "n": 1,
+     "median": -4.61,
+     "p25": -4.61,
+     "p75": -4.61,
+     "mean_abs": 4.61
+    },
+    "HWY": {
+     "n": 1,
+     "median": -4.53,
+     "p25": -4.53,
+     "p75": -4.53,
+     "mean_abs": 4.53
+    },
+    "US06": {
+     "n": 1,
+     "median": -9.37,
+     "p25": -9.37,
+     "p75": -9.37,
+     "mean_abs": 9.37
+    },
+    "SC03": {
+     "n": 1,
+     "median": 12.82,
+     "p25": 12.82,
+     "p75": 12.82,
+     "mean_abs": 12.82
+    },
+    "COLD": {
+     "n": 1,
+     "median": -11.69,
+     "p25": -11.69,
+     "p75": -11.69,
+     "mean_abs": 11.69
+    },
+    "main": {
+     "n": 3,
+     "median": -4.61,
+     "p25": -6.99,
+     "p75": -4.57,
+     "mean_abs": 6.17
+    }
+   },
+   "p2_clutch": {
+    "n": 12,
+    "FTP": {
+     "n": 12,
+     "median": 15.23,
+     "p25": 13.09,
+     "p75": 17.11,
+     "mean_abs": 16.73
+    },
+    "HWY": {
+     "n": 12,
+     "median": -0.81,
+     "p25": -3.42,
+     "p75": 0.0,
+     "mean_abs": 3.12
+    },
+    "US06": {
+     "n": 1,
+     "median": 9.74,
+     "p25": 9.74,
+     "p75": 9.74,
+     "mean_abs": 9.74
+    },
+    "SC03": {
+     "n": 1,
+     "median": 18.36,
+     "p25": 18.36,
+     "p75": 18.36,
+     "mean_abs": 18.36
+    },
+    "COLD": {
+     "n": 1,
+     "median": 39.88,
+     "p25": 39.88,
+     "p75": 39.88,
+     "mean_abs": 39.88
+    },
+    "main": {
+     "n": 25,
+     "median": 9.74,
+     "p25": -0.81,
+     "p75": 14.41,
+     "mean_abs": 9.91
+    }
+   },
+   "p2_converter": {
+    "n": 1,
+    "FTP": {
+     "n": 1,
+     "median": 35.53,
+     "p25": 35.53,
+     "p75": 35.53,
+     "mean_abs": 35.53
+    },
+    "HWY": {
+     "n": 1,
+     "median": 3.7,
+     "p25": 3.7,
+     "p75": 3.7,
+     "mean_abs": 3.7
+    },
+    "main": {
+     "n": 2,
+     "median": 19.62,
+     "p25": 11.66,
+     "p75": 27.57,
+     "mean_abs": 19.62
+    }
+   },
+   "p2_tmed": {
+    "n": 1,
+    "FTP": {
+     "n": 1,
+     "median": 3.04,
+     "p25": 3.04,
+     "p75": 3.04,
+     "mean_abs": 3.04
+    },
+    "HWY": {
+     "n": 1,
+     "median": -7.47,
+     "p25": -7.47,
+     "p75": -7.47,
+     "mean_abs": 7.47
+    },
+    "US06": {
+     "n": 1,
+     "median": -8.73,
+     "p25": -8.73,
+     "p75": -8.73,
+     "mean_abs": 8.73
+    },
+    "SC03": {
+     "n": 1,
+     "median": -2.67,
+     "p25": -2.67,
+     "p75": -2.67,
+     "mean_abs": 2.67
+    },
+    "COLD": {
+     "n": 1,
+     "median": -5.35,
+     "p25": -5.35,
+     "p75": -5.35,
+     "mean_abs": 5.35
+    },
+    "main": {
+     "n": 3,
+     "median": -7.47,
+     "p25": -8.1,
+     "p75": -2.21,
+     "mean_abs": 6.41
+    }
+   },
+   "plugin_p2": {
+    "n": 19,
+    "FTP": {
+     "n": 19,
+     "median": 16.14,
+     "p25": 7.67,
+     "p75": 21.05,
+     "mean_abs": 14.75
+    },
+    "HWY": {
+     "n": 19,
+     "median": -4.63,
+     "p25": -5.77,
+     "p75": -0.98,
+     "mean_abs": 5.49
+    },
+    "US06": {
+     "n": 6,
+     "median": -5.36,
+     "p25": -6.66,
+     "p75": -4.62,
+     "mean_abs": 5.57
+    },
+    "SC03": {
+     "n": 4,
+     "median": 38.61,
+     "p25": 28.06,
+     "p75": 46.97,
+     "mean_abs": 36.42
+    },
+    "COLD": {
+     "n": 4,
+     "median": 20.43,
+     "p25": 18.22,
+     "p75": 23.37,
+     "mean_abs": 21.16
+    },
+    "main": {
+     "n": 44,
+     "median": -0.5,
+     "p25": -4.83,
+     "p75": 10.91,
+     "mean_abs": 9.5
+    }
+   },
+   "plugin_ps": {
+    "n": 5,
+    "FTP": {
+     "n": 5,
+     "median": 6.14,
+     "p25": 3.1,
+     "p75": 7.7,
+     "mean_abs": 5.13
+    },
+    "HWY": {
+     "n": 5,
+     "median": 0.88,
+     "p25": 0.33,
+     "p75": 2.02,
+     "mean_abs": 1.67
+    },
+    "main": {
+     "n": 10,
+     "median": 2.3,
+     "p25": 0.47,
+     "p75": 5.38,
+     "mean_abs": 3.4
+    }
+   },
+   "plugin_series": {
+    "n": 3,
+    "FTP": {
+     "n": 3,
+     "median": 13.27,
+     "p25": 12.7,
+     "p75": 28.16,
+     "mean_abs": 22.82
+    },
+    "HWY": {
+     "n": 3,
+     "median": -5.3,
+     "p25": -6.64,
+     "p75": 3.48,
+     "mean_abs": 8.52
+    },
+    "US06": {
+     "n": 3,
+     "median": 2.48,
+     "p25": -0.49,
+     "p75": 9.16,
+     "mean_abs": 7.26
+    },
+    "SC03": {
+     "n": 3,
+     "median": 17.81,
+     "p25": 14.58,
+     "p75": 35.58,
+     "mean_abs": 27.5
+    },
+    "COLD": {
+     "n": 3,
+     "median": -13.02,
+     "p25": -13.52,
+     "p75": -10.06,
+     "mean_abs": 11.38
+    },
+    "main": {
+     "n": 9,
+     "median": 12.13,
+     "p25": -3.46,
+     "p75": 13.27,
+     "mean_abs": 12.86
+    }
+   },
+   "toyota_ps": {
+    "n": 12,
+    "FTP": {
+     "n": 11,
+     "median": 2.92,
+     "p25": 1.85,
+     "p75": 28.52,
+     "mean_abs": 14.38
+    },
+    "HWY": {
+     "n": 11,
+     "median": -3.41,
+     "p25": -5.42,
+     "p75": -2.26,
+     "mean_abs": 8.56
+    },
+    "US06": {
+     "n": 10,
+     "median": 1.34,
+     "p25": -0.89,
+     "p75": 5.27,
+     "mean_abs": 4.55
+    },
+    "SC03": {
+     "n": 10,
+     "median": 9.54,
+     "p25": 5.07,
+     "p75": 21.77,
+     "mean_abs": 17.9
+    },
+    "COLD": {
+     "n": 10,
+     "median": -13.71,
+     "p25": -14.6,
+     "p75": 1.29,
+     "mean_abs": 11.55
+    },
+    "main": {
+     "n": 32,
+     "median": 1.5,
+     "p25": -1.98,
+     "p75": 6.05,
+     "mean_abs": 9.31
+    }
+   }
+  },
+  "by_group_make": {
+   "ford_ps|FORD": {
+    "n": 1,
+    "FTP": 1.35,
+    "HWY": 1.54
+   },
+   "honda_series|HONDA": {
+    "n": 1,
+    "FTP": -4.61,
+    "HWY": -4.53,
+    "US06": -9.37,
+    "SC03": 12.82,
+    "COLD": -11.69
+   },
+   "p2_clutch|AUDI": {
+    "n": 1,
+    "FTP": 38.56,
+    "HWY": 11.1,
+    "US06": 9.74,
+    "SC03": 18.36,
+    "COLD": 39.88
+   },
+   "p2_clutch|INFINITI": {
+    "n": 10,
+    "FTP": 15.23,
+    "HWY": -0.81
+   },
+   "p2_clutch|TOYOTA": {
+    "n": 1,
+    "FTP": 7.99,
+    "HWY": -4.72
+   },
+   "p2_converter|PORSCHE": {
+    "n": 1,
+    "FTP": 35.53,
+    "HWY": 3.7
+   },
+   "p2_tmed|HYUNDAI": {
+    "n": 1,
+    "FTP": 3.04,
+    "HWY": -7.47,
+    "US06": -8.73,
+    "SC03": -2.67,
+    "COLD": -5.35
+   },
+   "plugin_p2|AUDI": {
+    "n": 1,
+    "FTP": 7.23,
+    "HWY": -4.64
+   },
+   "plugin_p2|BMW": {
+    "n": 6,
+    "FTP": 8.54,
+    "HWY": -4.89,
+    "US06": -4.82,
+    "SC03": 38.61,
+    "COLD": 20.43
+   },
+   "plugin_p2|LAND ROVER": {
+    "n": 2,
+    "FTP": 2.33,
+    "HWY": -15.43,
+    "US06": -8.24
+   },
+   "plugin_p2|PORSCHE": {
+    "n": 10,
+    "FTP": 21.05,
+    "HWY": -1.96
+   },
+   "plugin_ps|LINCOLN": {
+    "n": 5,
+    "FTP": 6.14,
+    "HWY": 0.88
+   },
+   "plugin_series|CHEVROLET": {
+    "n": 3,
+    "FTP": 13.27,
+    "HWY": -5.3,
+    "US06": 2.48,
+    "SC03": 17.81,
+    "COLD": -13.02
+   },
+   "toyota_ps|LEXUS": {
+    "n": 2,
+    "FTP": 28.52,
+    "HWY": -7.92,
+    "US06": 6.05,
+    "SC03": 27.6,
+    "COLD": 5.92
+   },
+   "toyota_ps|NISSAN": {
+    "n": 3,
+    "FTP": 42.12,
+    "HWY": 26.19,
+    "US06": 23.27,
+    "SC03": 75.49,
+    "COLD": 5.28
+   },
+   "toyota_ps|TOYOTA": {
+    "n": 7,
+    "FTP": 2.1,
+    "HWY": -3.41,
+    "US06": -0.78,
+    "SC03": 5.41,
+    "COLD": -14.46
+   }
+  }
+ },
+ "vehicles": [
+  {
+   "id": "EPA2013_ADX_DHUB-Q5H_c0",
+   "name": "2013 AUDI Q5 Hybrid",
+   "make": "AUDI",
+   "family": "AUDI|Q5",
+   "group": "p2_clutch",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 42.12,
+    "HWY": 44.33,
+    "US06": 30.18,
+    "SC03": 32.55,
+    "COLD": 32.31
+   },
+   "epa": {
+    "FTP": 30.4,
+    "HWY": 39.9,
+    "US06": 27.5,
+    "SC03": 27.5,
+    "COLD": 23.1
+   },
+   "err_pct": {
+    "FTP": 38.56,
+    "HWY": 11.1,
+    "US06": 9.74,
+    "SC03": 18.36,
+    "COLD": 39.88
+   },
+   "diag": {
+    "HWY_eng_on": 0.6096605658531189,
+    "HWY_starts": 7,
+    "US06_eng_on": 0.6589018106460571,
+    "US06_starts": 15,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "d3_exam_match": false,
+   "wall_s": 37.8
+  },
+  {
+   "id": "EPA2020_BMX_G622314_c0",
+   "name": "2020 BMW 530e",
+   "make": "BMW",
+   "family": "BMW|530E",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 36.32,
+    "HWY": 41.01,
+    "US06": 27.33,
+    "SC03": 31.56,
+    "COLD": 30.9
+   },
+   "epa": {
+    "FTP": 33.6,
+    "HWY": 43.8,
+    "US06": 28.6,
+    "SC03": 21.1,
+    "COLD": 26.5
+   },
+   "err_pct": {
+    "FTP": 8.1,
+    "HWY": -6.38,
+    "US06": -4.43,
+    "SC03": 49.55,
+    "COLD": 16.6
+   },
+   "diag": {
+    "HWY_eng_on": 0.5300261378288269,
+    "HWY_starts": 4,
+    "US06_eng_on": 0.5440931916236877,
+    "US06_starts": 11,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "d3_exam_match": false,
+   "wall_s": 25.9
+  },
+  {
+   "id": "EPA2021_BMX_GM43786_c0",
+   "name": "2021 BMW 530e",
+   "make": "BMW",
+   "family": "BMW|530E",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 35.32,
+    "HWY": 40.09,
+    "US06": 26.26,
+    "SC03": 29.5,
+    "COLD": 29.93
+   },
+   "epa": {
+    "FTP": 32.2,
+    "HWY": 41.8,
+    "US06": 27.7,
+    "SC03": 24.8,
+    "COLD": 25.2
+   },
+   "err_pct": {
+    "FTP": 9.7,
+    "HWY": -4.08,
+    "US06": -5.21,
+    "SC03": 18.94,
+    "COLD": 18.76
+   },
+   "diag": {
+    "HWY_eng_on": 0.5378590226173401,
+    "HWY_starts": 5,
+    "US06_eng_on": 0.5457570552825928,
+    "US06_starts": 11,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "d3_exam_match": false,
+   "wall_s": 37.4
+  },
+  {
+   "id": "EPA2020_BMX_G623567_c2",
+   "name": "2020 BMW 530e xDrive",
+   "make": "BMW",
+   "family": "BMW|530E",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 34.44,
+    "HWY": 38.52,
+    "US06": 26.18,
+    "SC03": 29.95,
+    "COLD": 29.18
+   },
+   "epa": {
+    "FTP": 31.6,
+    "HWY": 41.7,
+    "US06": 27.7,
+    "SC03": 20.5,
+    "COLD": 23.9
+   },
+   "err_pct": {
+    "FTP": 8.97,
+    "HWY": -7.62,
+    "US06": -5.5,
+    "SC03": 46.11,
+    "COLD": 22.1
+   },
+   "diag": {
+    "HWY_eng_on": 0.5718015432357788,
+    "HWY_starts": 4,
+    "US06_eng_on": 0.6389350891113281,
+    "US06_starts": 10,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "d3_exam_match": false,
+   "wall_s": 26.9
+  },
+  {
+   "id": "EPA2021_BMX_GM45191_c0",
+   "name": "2021 BMW 530e xDrive",
+   "make": "BMW",
+   "family": "BMW|530E",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 34.26,
+    "HWY": 38.48,
+    "US06": 25.73,
+    "SC03": 28.84,
+    "COLD": 28.87
+   },
+   "epa": {
+    "FTP": 29.5,
+    "HWY": 40.5,
+    "US06": 26.2,
+    "SC03": 22.0,
+    "COLD": 22.7
+   },
+   "err_pct": {
+    "FTP": 16.14,
+    "HWY": -5.0,
+    "US06": -1.79,
+    "SC03": 31.1,
+    "COLD": 27.17
+   },
+   "diag": {
+    "HWY_eng_on": 0.58746737241745,
+    "HWY_starts": 5,
+    "US06_eng_on": 0.6389350891113281,
+    "US06_starts": 10,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "d3_exam_match": false,
+   "wall_s": 36.1
+  },
+  {
+   "id": "EPA2012_GMX_1411R24644_c0",
+   "name": "2012 CHEVROLET VOLT",
+   "make": "CHEVROLET",
+   "family": "CHEVROLET|VOLT",
+   "group": "plugin_series",
+   "kind": "phev_series",
+   "architecture": "phev_series",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 67.95,
+    "HWY": 60.17,
+    "US06": 43.44,
+    "SC03": 49.99,
+    "COLD": 33.44
+   },
+   "epa": {
+    "FTP": 47.5,
+    "HWY": 53.6,
+    "US06": 37.5,
+    "SC03": 32.6,
+    "COLD": 36.0
+   },
+   "err_pct": {
+    "FTP": 43.05,
+    "HWY": 12.27,
+    "US06": 15.83,
+    "SC03": 53.35,
+    "COLD": -7.1
+   },
+   "diag": {
+    "HWY_eng_on": 0.30026111006736755,
+    "HWY_starts": 3,
+    "US06_eng_on": 0.5490848422050476,
+    "US06_starts": 6,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "d3_exam_match": true,
+   "wall_s": 49.0
+  },
+  {
+   "id": "EPA2016_GMX_151GRN4058_c1",
+   "name": "2016 CHEVROLET VOLT",
+   "make": "CHEVROLET",
+   "family": "CHEVROLET|VOLT",
+   "group": "plugin_series",
+   "kind": "phev_series",
+   "architecture": "phev_series",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 65.6,
+    "HWY": 56.31,
+    "US06": 42.73,
+    "SC03": 48.19,
+    "COLD": 33.1
+   },
+   "epa": {
+    "FTP": 58.5,
+    "HWY": 61.2,
+    "US06": 41.7,
+    "SC03": 40.9,
+    "COLD": 38.5
+   },
+   "err_pct": {
+    "FTP": 12.13,
+    "HWY": -7.99,
+    "US06": 2.48,
+    "SC03": 17.81,
+    "COLD": -14.03
+   },
+   "diag": {
+    "HWY_eng_on": 0.27023497223854065,
+    "HWY_starts": 2,
+    "US06_eng_on": 0.47420963644981384,
+    "US06_starts": 7,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "d3_exam_match": false,
+   "wall_s": 35.3
+  },
+  {
+   "id": "EPA2019_GMX_151KRN4107_c0",
+   "name": "2019 CHEVROLET VOLT",
+   "make": "CHEVROLET",
+   "family": "CHEVROLET|VOLT",
+   "group": "plugin_series",
+   "kind": "phev_series",
+   "architecture": "phev_series",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 66.61,
+    "HWY": 57.29,
+    "US06": 43.35,
+    "SC03": 48.77,
+    "COLD": 33.57
+   },
+   "epa": {
+    "FTP": 58.8,
+    "HWY": 60.5,
+    "US06": 44.9,
+    "SC03": 43.8,
+    "COLD": 38.6
+   },
+   "err_pct": {
+    "FTP": 13.27,
+    "HWY": -5.3,
+    "US06": -3.46,
+    "SC03": 11.35,
+    "COLD": -13.02
+   },
+   "diag": {
+    "HWY_eng_on": 0.26892951130867004,
+    "HWY_starts": 2,
+    "US06_eng_on": 0.4675540626049042,
+    "US06_starts": 6,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "d3_exam_match": false,
+   "wall_s": 40.3
+  },
+  {
+   "id": "EPA2018_TYX_18-GZ2H_c2",
+   "name": "2018 LEXUS LC 500h",
+   "make": "LEXUS",
+   "family": "LEXUS|LC",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 47.15,
+    "HWY": 42.98,
+    "US06": 32.66,
+    "SC03": 36.38,
+    "COLD": 28.54
+   },
+   "epa": {
+    "FTP": 36.7,
+    "HWY": 47.3,
+    "US06": 30.8,
+    "SC03": 28.0,
+    "COLD": 26.8
+   },
+   "err_pct": {
+    "FTP": 28.46,
+    "HWY": -9.13,
+    "US06": 6.05,
+    "SC03": 29.91,
+    "COLD": 6.48
+   },
+   "diag": {
+    "HWY_eng_on": 0.7793733477592468,
+    "HWY_starts": 65,
+    "US06_eng_on": 0.7271214723587036,
+    "US06_starts": 12,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "d3_exam_match": false,
+   "wall_s": 24.9
+  },
+  {
+   "id": "EPA2021_TYX_18-GZ2H_c1",
+   "name": "2021 LEXUS LC 500h",
+   "make": "LEXUS",
+   "family": "LEXUS|LC",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 45.9,
+    "HWY": 42.45,
+    "US06": 32.13,
+    "SC03": 35.33,
+    "COLD": 27.92
+   },
+   "epa": {
+    "FTP": 35.7,
+    "HWY": 45.5,
+    "US06": 30.3,
+    "SC03": 28.2,
+    "COLD": 26.5
+   },
+   "err_pct": {
+    "FTP": 28.58,
+    "HWY": -6.71,
+    "US06": 6.05,
+    "SC03": 25.29,
+    "COLD": 5.36
+   },
+   "diag": {
+    "HWY_eng_on": 0.792428195476532,
+    "HWY_starts": 51,
+    "US06_eng_on": 0.7271214723587036,
+    "US06_starts": 12,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "d3_exam_match": false,
+   "wall_s": 31.9
+  },
+  {
+   "id": "EPA2024_TYX_24-AS3H_c0",
+   "name": "2024 TOYOTA GRAND HIGHLANDER HYBRID",
+   "make": "TOYOTA",
+   "family": "TOYOTA|GRAND HIGHLANDER",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 52.83,
+    "HWY": 46.98,
+    "US06": 32.4,
+    "SC03": 40.51,
+    "COLD": 33.21
+   },
+   "epa": {
+    "FTP": 52.6,
+    "HWY": 48.6,
+    "US06": 32.9,
+    "SC03": 38.6,
+    "COLD": 38.5
+   },
+   "err_pct": {
+    "FTP": 0.43,
+    "HWY": -3.33,
+    "US06": -1.53,
+    "SC03": 4.95,
+    "COLD": -13.75
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7271214723587036,
+    "US06_starts": 13,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "d3_exam_match": false,
+   "wall_s": 37.9
+  },
+  {
+   "id": "EPA2024_TYX_24-AS3H_c1",
+   "name": "2024 TOYOTA GRAND HIGHLANDER HYBRID",
+   "make": "TOYOTA",
+   "family": "TOYOTA|GRAND HIGHLANDER",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 52.83,
+    "HWY": 46.98,
+    "US06": 32.4,
+    "SC03": 40.51,
+    "COLD": 33.21
+   },
+   "epa": {
+    "FTP": 52.0,
+    "HWY": 48.6,
+    "US06": 32.7,
+    "SC03": 39.2,
+    "COLD": 39.1
+   },
+   "err_pct": {
+    "FTP": 1.59,
+    "HWY": -3.33,
+    "US06": -0.93,
+    "SC03": 3.35,
+    "COLD": -15.07
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7271214723587036,
+    "US06_starts": 13,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "d3_exam_match": false,
+   "wall_s": 41.5
+  },
+  {
+   "id": "EPA2024_TYX_24-AS1H_c0",
+   "name": "2024 TOYOTA GRAND HIGHLANDER HYBRID AWD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|GRAND HIGHLANDER",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 48.68,
+    "HWY": 43.92,
+    "US06": 30.22,
+    "SC03": 37.84,
+    "COLD": 30.96
+   },
+   "epa": {
+    "FTP": 47.3,
+    "HWY": 45.8,
+    "US06": 30.6,
+    "SC03": 34.1,
+    "COLD": 36.2
+   },
+   "err_pct": {
+    "FTP": 2.92,
+    "HWY": -4.12,
+    "US06": -1.25,
+    "SC03": 10.98,
+    "COLD": -14.46
+   },
+   "diag": {
+    "HWY_eng_on": 0.9086161851882935,
+    "HWY_starts": 9,
+    "US06_eng_on": 0.7271214723587036,
+    "US06_starts": 13,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "d3_exam_match": false,
+   "wall_s": 38.9
+  },
+  {
+   "id": "EPA2024_TYX_24-AS1H_c1",
+   "name": "2024 TOYOTA GRAND HIGHLANDER HYBRID AWD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|GRAND HIGHLANDER",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 49.32,
+    "HWY": 44.48,
+    "US06": 30.56,
+    "SC03": 38.27,
+    "COLD": 31.24
+   },
+   "epa": {
+    "FTP": 48.6,
+    "HWY": 47.7,
+    "US06": 30.8,
+    "SC03": 36.3,
+    "COLD": 36.6
+   },
+   "err_pct": {
+    "FTP": 1.48,
+    "HWY": -6.76,
+    "US06": -0.78,
+    "SC03": 5.41,
+    "COLD": -14.64
+   },
+   "diag": {
+    "HWY_eng_on": 0.9073107242584229,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7271214723587036,
+    "US06_starts": 13,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "d3_exam_match": false,
+   "wall_s": 39.0
+  },
+  {
+   "id": "EPA2024_TYX_24-AS4H_c0",
+   "name": "2024 TOYOTA GRAND HIGHLANDER HYBRID LIMITED",
+   "make": "TOYOTA",
+   "family": "TOYOTA|GRAND HIGHLANDER",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 50.74,
+    "HWY": 45.69,
+    "US06": 31.16,
+    "SC03": 38.92,
+    "COLD": 31.86
+   },
+   "epa": {
+    "FTP": 49.7,
+    "HWY": 47.5,
+    "US06": 30.8,
+    "SC03": 35.0,
+    "COLD": 36.9
+   },
+   "err_pct": {
+    "FTP": 2.1,
+    "HWY": -3.82,
+    "US06": 1.18,
+    "SC03": 11.2,
+    "COLD": -13.67
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7271214723587036,
+    "US06_starts": 13,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "d3_exam_match": false,
+   "wall_s": 32.5
+  },
+  {
+   "id": "EPA2024_TYX_24-AS4H_c1",
+   "name": "2024 TOYOTA GRAND HIGHLANDER HYBRID LIMITED",
+   "make": "TOYOTA",
+   "family": "TOYOTA|GRAND HIGHLANDER",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 50.74,
+    "HWY": 45.69,
+    "US06": 31.16,
+    "SC03": 38.92,
+    "COLD": 31.86
+   },
+   "epa": {
+    "FTP": 49.4,
+    "HWY": 47.3,
+    "US06": 30.7,
+    "SC03": 36.0,
+    "COLD": 38.0
+   },
+   "err_pct": {
+    "FTP": 2.72,
+    "HWY": -3.41,
+    "US06": 1.51,
+    "SC03": 8.11,
+    "COLD": -16.17
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10,
+    "US06_eng_on": 0.7271214723587036,
+    "US06_starts": 13,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "d3_exam_match": false,
+   "wall_s": 34.2
+  },
+  {
+   "id": "epa_1319",
+   "name": "2024 TOYOTA RAV4 HYBRID AWD",
+   "make": "TOYOTA",
+   "family": "check_cycles dev",
+   "group": "toyota_ps",
+   "kind": "hev_powersplit",
+   "architecture": "hev_powersplit",
+   "source": "check_cycles dev vehicle",
+   "sim": {
+    "FTP": 60.86,
+    "HWY": 53.06,
+    "US06": 37.83,
+    "SC03": 45.47,
+    "COLD": 37.97
+   },
+   "epa": {
+    "FTP": 57.6,
+    "HWY": 53.7,
+    "US06": 36.75,
+    "SC03": 43.6,
+    "COLD": 42.5
+   },
+   "err_pct": {
+    "FTP": 5.66,
+    "HWY": -1.2,
+    "US06": 2.94,
+    "SC03": 4.29,
+    "COLD": -10.66
+   },
+   "diag": {
+    "HWY_eng_on": 0.9086161851882935,
+    "HWY_starts": 9,
+    "US06_eng_on": 0.720465898513794,
+    "US06_starts": 14,
+    "SC03_hvac_W": 1631.6070556640625
+   },
+   "d3_exam_match": false,
+   "wall_s": 37.3
+  },
+  {
+   "id": "epa_597",
+   "name": "2024 HYUNDAI SONATA HYBRID",
+   "make": "HYUNDAI",
+   "family": "check_cycles dev",
+   "group": "p2_tmed",
+   "kind": "hev_parallel_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "check_cycles dev vehicle",
+   "sim": {
+    "FTP": 58.01,
+    "HWY": 62.0,
+    "US06": 40.61,
+    "SC03": 42.14,
+    "COLD": 38.9
+   },
+   "epa": {
+    "FTP": 56.3,
+    "HWY": 67.0,
+    "US06": 44.5,
+    "SC03": 43.3,
+    "COLD": 41.1
+   },
+   "err_pct": {
+    "FTP": 3.04,
+    "HWY": -7.47,
+    "US06": -8.73,
+    "SC03": -2.67,
+    "COLD": -5.35
+   },
+   "diag": {
+    "HWY_eng_on": 0.3812010586261749,
+    "HWY_starts": 7,
+    "US06_eng_on": 0.4425956606864929,
+    "US06_starts": 13,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "d3_exam_match": false,
+   "wall_s": 31.0
+  },
+  {
+   "id": "epa_544",
+   "name": "2024 HONDA ACCORD",
+   "make": "HONDA",
+   "family": "check_cycles dev",
+   "group": "honda_series",
+   "kind": "hev_series",
+   "architecture": "hev_series",
+   "source": "check_cycles dev vehicle",
+   "sim": {
+    "FTP": 69.06,
+    "HWY": 63.87,
+    "US06": 41.96,
+    "SC03": 49.75,
+    "COLD": 39.12
+   },
+   "epa": {
+    "FTP": 72.4,
+    "HWY": 66.9,
+    "US06": 46.3,
+    "SC03": 44.1,
+    "COLD": 44.3
+   },
+   "err_pct": {
+    "FTP": -4.61,
+    "HWY": -4.53,
+    "US06": -9.37,
+    "SC03": 12.82,
+    "COLD": -11.69
+   },
+   "diag": {
+    "HWY_eng_on": 0.4281984269618988,
+    "HWY_starts": 15,
+    "US06_eng_on": 0.5657237768173218,
+    "US06_starts": 23,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "d3_exam_match": false,
+   "wall_s": 28.8
+  },
+  {
+   "id": "EPA2024_JLX_3KRTT017_c0",
+   "name": "2024 LAND ROVER New Range Rover PHEV",
+   "make": "LAND ROVER",
+   "family": "LAND ROVER|NEW RANGE",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 25.47,
+    "HWY": 28.48,
+    "US06": 19.98
+   },
+   "epa": {
+    "FTP": 26.1,
+    "HWY": 34.9,
+    "US06": 21.5
+   },
+   "err_pct": {
+    "FTP": -2.42,
+    "HWY": -18.39,
+    "US06": -7.05
+   },
+   "diag": {
+    "HWY_eng_on": 0.2480417788028717,
+    "HWY_starts": 4,
+    "US06_eng_on": 0.41430947184562683,
+    "US06_starts": 20
+   },
+   "d3_exam_match": false,
+   "wall_s": 12.6
+  },
+  {
+   "id": "EPA2023_JLX_3PNTT032_c0",
+   "name": "2023 LAND ROVER New Range Rover Sport PHEV",
+   "make": "LAND ROVER",
+   "family": "LAND ROVER|NEW RANGE",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 25.48,
+    "HWY": 28.97,
+    "US06": 20.2
+   },
+   "epa": {
+    "FTP": 23.8,
+    "HWY": 33.1,
+    "US06": 22.3
+   },
+   "err_pct": {
+    "FTP": 7.07,
+    "HWY": -12.46,
+    "US06": -9.43
+   },
+   "diag": {
+    "HWY_eng_on": 0.2467362880706787,
+    "HWY_starts": 4,
+    "US06_eng_on": 0.4093177914619446,
+    "US06_starts": 20
+   },
+   "d3_exam_match": false,
+   "wall_s": 12.8
+  },
+  {
+   "id": "EPA2011_NSX_FLB106_c0",
+   "name": "2011 NISSAN NISSAN ALTIMA HYBRID 4-DOOR SEDAN",
+   "make": "NISSAN",
+   "family": "NISSAN|NISSAN",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 66.51,
+    "HWY": 58.8,
+    "SC03": 51.94
+   },
+   "epa": {
+    "FTP": 46.8,
+    "HWY": 46.6,
+    "SC03": 29.6
+   },
+   "err_pct": {
+    "FTP": 42.12,
+    "HWY": 26.19,
+    "SC03": 75.49
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10,
+    "SC03_hvac_W": 1353.3978271484375
+   },
+   "d3_exam_match": false,
+   "wall_s": 7.8
+  },
+  {
+   "id": "EPA2024_VGA_RA3P-Q5-239_c1",
+   "name": "2024 AUDI Q5 PHEV PA",
+   "make": "AUDI",
+   "family": "AUDI|Q5",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 34.74,
+    "HWY": 36.43
+   },
+   "epa": {
+    "FTP": 32.4,
+    "HWY": 38.2
+   },
+   "err_pct": {
+    "FTP": 7.23,
+    "HWY": -4.64
+   },
+   "diag": {
+    "HWY_eng_on": 0.45430809259414673,
+    "HWY_starts": 2
+   },
+   "d3_exam_match": false,
+   "wall_s": 12.1
+  },
+  {
+   "id": "EPA2018_BMX_G622303_c2",
+   "name": "2018 BMW 530e",
+   "make": "BMW",
+   "family": "BMW|530E",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 37.79,
+    "HWY": 43.96
+   },
+   "epa": {
+    "FTP": 35.7,
+    "HWY": 43.7
+   },
+   "err_pct": {
+    "FTP": 5.86,
+    "HWY": 0.59
+   },
+   "diag": {
+    "HWY_eng_on": 0.5678851008415222,
+    "HWY_starts": 6
+   },
+   "d3_exam_match": false,
+   "wall_s": 13.0
+  },
+  {
+   "id": "EPA2018_BMX_G622303_c1",
+   "name": "2018 BMW 530e xDrive",
+   "make": "BMW",
+   "family": "BMW|530E",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 35.94,
+    "HWY": 41.8
+   },
+   "epa": {
+    "FTP": 34.8,
+    "HWY": 43.9
+   },
+   "err_pct": {
+    "FTP": 3.28,
+    "HWY": -4.78
+   },
+   "diag": {
+    "HWY_eng_on": 0.5900783538818359,
+    "HWY_starts": 6
+   },
+   "d3_exam_match": false,
+   "wall_s": 13.8
+  },
+  {
+   "id": "EPA2014_NSX_HSB053_c0",
+   "name": "2014 INFINITI INFINITI  Q50 HYBRID PREMIUM",
+   "make": "INFINITI",
+   "family": "INFINITI|INFINITI",
+   "group": "p2_clutch",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 42.67,
+    "HWY": 47.29
+   },
+   "epa": {
+    "FTP": 36.5,
+    "HWY": 47.6
+   },
+   "err_pct": {
+    "FTP": 16.91,
+    "HWY": -0.64
+   },
+   "diag": {
+    "HWY_eng_on": 0.3237597942352295,
+    "HWY_starts": 9
+   },
+   "d3_exam_match": false,
+   "wall_s": 17.4
+  },
+  {
+   "id": "EPA2014_NSX_HSB053_c1",
+   "name": "2014 INFINITI INFINITI Q50 HYBRID PREMIUM",
+   "make": "INFINITI",
+   "family": "INFINITI|INFINITI",
+   "group": "p2_clutch",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 42.67,
+    "HWY": 47.29
+   },
+   "epa": {
+    "FTP": 36.7,
+    "HWY": 48.1
+   },
+   "err_pct": {
+    "FTP": 16.28,
+    "HWY": -1.68
+   },
+   "diag": {
+    "HWY_eng_on": 0.3237597942352295,
+    "HWY_starts": 9
+   },
+   "d3_exam_match": false,
+   "wall_s": 7.0
+  },
+  {
+   "id": "EPA2014_NSX_HSB053_c2",
+   "name": "2014 INFINITI INFINITI Q50 HYBRID PREMIUM",
+   "make": "INFINITI",
+   "family": "INFINITI|INFINITI",
+   "group": "p2_clutch",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 44.97,
+    "HWY": 51.42
+   },
+   "epa": {
+    "FTP": 38.2,
+    "HWY": 53.0
+   },
+   "err_pct": {
+    "FTP": 17.72,
+    "HWY": -2.98
+   },
+   "diag": {
+    "HWY_eng_on": 0.2872062623500824,
+    "HWY_starts": 9
+   },
+   "d3_exam_match": false,
+   "wall_s": 13.8
+  },
+  {
+   "id": "EPA2014_NSX_HSB053_c3",
+   "name": "2014 INFINITI INFINITI Q50 HYBRID PREMIUM",
+   "make": "INFINITI",
+   "family": "INFINITI|INFINITI",
+   "group": "p2_clutch",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 44.97,
+    "HWY": 51.42
+   },
+   "epa": {
+    "FTP": 37.4,
+    "HWY": 51.1
+   },
+   "err_pct": {
+    "FTP": 20.24,
+    "HWY": 0.63
+   },
+   "diag": {
+    "HWY_eng_on": 0.2872062623500824,
+    "HWY_starts": 9
+   },
+   "d3_exam_match": false,
+   "wall_s": 10.1
+  },
+  {
+   "id": "EPA2014_NSX_HSB051_c1",
+   "name": "2014 INFINITI INFINITI Q50S Q50 HYBRID SPORT 4WD",
+   "make": "INFINITI",
+   "family": "INFINITI|INFINITI",
+   "group": "p2_clutch",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 41.54,
+    "HWY": 46.71
+   },
+   "epa": {
+    "FTP": 36.7,
+    "HWY": 50.0
+   },
+   "err_pct": {
+    "FTP": 13.2,
+    "HWY": -6.57
+   },
+   "diag": {
+    "HWY_eng_on": 0.3289817273616791,
+    "HWY_starts": 10
+   },
+   "d3_exam_match": false,
+   "wall_s": 6.9
+  },
+  {
+   "id": "EPA2014_NSX_HSB051_c0",
+   "name": "2014 INFINITI INFINITI Q50S Q50 HYBRID SPORT AWD",
+   "make": "INFINITI",
+   "family": "INFINITI|INFINITI",
+   "group": "p2_clutch",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 41.54,
+    "HWY": 46.71
+   },
+   "epa": {
+    "FTP": 35.8,
+    "HWY": 50.0
+   },
+   "err_pct": {
+    "FTP": 16.05,
+    "HWY": -6.57
+   },
+   "diag": {
+    "HWY_eng_on": 0.3289817273616791,
+    "HWY_starts": 10
+   },
+   "d3_exam_match": false,
+   "wall_s": 8.0
+  },
+  {
+   "id": "EPA2014_NSX_HSB052_c1",
+   "name": "2014 INFINITI INFINITI Q50S Q50 HYBRID SPORT AWD",
+   "make": "INFINITI",
+   "family": "INFINITI|INFINITI",
+   "group": "p2_clutch",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 39.47,
+    "HWY": 43.71
+   },
+   "epa": {
+    "FTP": 34.5,
+    "HWY": 43.8
+   },
+   "err_pct": {
+    "FTP": 14.41,
+    "HWY": -0.21
+   },
+   "diag": {
+    "HWY_eng_on": 0.33289816975593567,
+    "HWY_starts": 11
+   },
+   "d3_exam_match": false,
+   "wall_s": 12.0
+  },
+  {
+   "id": "EPA2014_NSX_HSB052_c2",
+   "name": "2014 INFINITI INFINITI Q50S Q50 HYBRID SPORT AWD",
+   "make": "INFINITI",
+   "family": "INFINITI|INFINITI",
+   "group": "p2_clutch",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 39.47,
+    "HWY": 43.71
+   },
+   "epa": {
+    "FTP": 35.0,
+    "HWY": 43.4
+   },
+   "err_pct": {
+    "FTP": 12.78,
+    "HWY": 0.71
+   },
+   "diag": {
+    "HWY_eng_on": 0.33289816975593567,
+    "HWY_starts": 11
+   },
+   "d3_exam_match": false,
+   "wall_s": 8.9
+  },
+  {
+   "id": "EPA2014_NSX_DPE438_c0",
+   "name": "2014 INFINITI INFINITI Q70 HYBRID",
+   "make": "INFINITI",
+   "family": "INFINITI|INFINITI",
+   "group": "p2_clutch",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 43.33,
+    "HWY": 47.51
+   },
+   "epa": {
+    "FTP": 38.5,
+    "HWY": 47.9
+   },
+   "err_pct": {
+    "FTP": 12.54,
+    "HWY": -0.81
+   },
+   "diag": {
+    "HWY_eng_on": 0.31070494651794434,
+    "HWY_starts": 10
+   },
+   "d3_exam_match": false,
+   "wall_s": 5.1
+  },
+  {
+   "id": "EPA2014_NSX_DPE438_c1",
+   "name": "2014 INFINITI INFINITI Q70 HYBRID",
+   "make": "INFINITI",
+   "family": "INFINITI|INFINITI",
+   "group": "p2_clutch",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 43.33,
+    "HWY": 47.51
+   },
+   "epa": {
+    "FTP": 38.0,
+    "HWY": 47.9
+   },
+   "err_pct": {
+    "FTP": 14.02,
+    "HWY": -0.81
+   },
+   "diag": {
+    "HWY_eng_on": 0.31070494651794434,
+    "HWY_starts": 10
+   },
+   "d3_exam_match": false,
+   "wall_s": 10.9
+  },
+  {
+   "id": "EPA2023_FMX_PTF1-2.5-J-569_c0",
+   "name": "2023 LINCOLN CORSAIR AWD PHEV",
+   "make": "LINCOLN",
+   "family": "LINCOLN|CORSAIR",
+   "group": "plugin_ps",
+   "kind": "phev_ps",
+   "architecture": "phev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 47.22,
+    "HWY": 45.55
+   },
+   "epa": {
+    "FTP": 45.8,
+    "HWY": 45.4
+   },
+   "err_pct": {
+    "FTP": 3.1,
+    "HWY": 0.33
+   },
+   "diag": {
+    "HWY_eng_on": 0.9099216461181641,
+    "HWY_starts": 8
+   },
+   "d3_exam_match": false,
+   "wall_s": 8.2
+  },
+  {
+   "id": "EPA2023_FMX_PUL00033_c0",
+   "name": "2023 LINCOLN CORSAIR AWD PHEV",
+   "make": "LINCOLN",
+   "family": "LINCOLN|CORSAIR",
+   "group": "plugin_ps",
+   "kind": "phev_ps",
+   "architecture": "phev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 49.22,
+    "HWY": 47.11
+   },
+   "epa": {
+    "FTP": 45.7,
+    "HWY": 46.7
+   },
+   "err_pct": {
+    "FTP": 7.7,
+    "HWY": 0.88
+   },
+   "diag": {
+    "HWY_eng_on": 0.9099216461181641,
+    "HWY_starts": 8
+   },
+   "d3_exam_match": false,
+   "wall_s": 17.7
+  },
+  {
+   "id": "EPA2021_FMX_LTF1-2.5-H-558_c0",
+   "name": "2021 LINCOLN Corsair PHEV",
+   "make": "LINCOLN",
+   "family": "LINCOLN|CORSAIR",
+   "group": "plugin_ps",
+   "kind": "phev_ps",
+   "architecture": "phev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 48.41,
+    "HWY": 47.08
+   },
+   "epa": {
+    "FTP": 48.5,
+    "HWY": 48.3
+   },
+   "err_pct": {
+    "FTP": -0.18,
+    "HWY": -2.52
+   },
+   "diag": {
+    "HWY_eng_on": 0.9099216461181641,
+    "HWY_starts": 8
+   },
+   "d3_exam_match": false,
+   "wall_s": 8.8
+  },
+  {
+   "id": "EPA2021_FMX_MUL00007_c0",
+   "name": "2021 LINCOLN Corsair PHEV",
+   "make": "LINCOLN",
+   "family": "LINCOLN|CORSAIR",
+   "group": "plugin_ps",
+   "kind": "phev_ps",
+   "architecture": "phev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 48.93,
+    "HWY": 47.44
+   },
+   "epa": {
+    "FTP": 46.1,
+    "HWY": 46.5
+   },
+   "err_pct": {
+    "FTP": 6.14,
+    "HWY": 2.02
+   },
+   "diag": {
+    "HWY_eng_on": 0.9099216461181641,
+    "HWY_starts": 8
+   },
+   "d3_exam_match": false,
+   "wall_s": 4.7
+  },
+  {
+   "id": "EPA2021_FMX_MUL00007_c1",
+   "name": "2021 LINCOLN Corsair PHEV",
+   "make": "LINCOLN",
+   "family": "LINCOLN|CORSAIR",
+   "group": "plugin_ps",
+   "kind": "phev_ps",
+   "architecture": "phev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 48.41,
+    "HWY": 47.08
+   },
+   "epa": {
+    "FTP": 44.6,
+    "HWY": 45.9
+   },
+   "err_pct": {
+    "FTP": 8.55,
+    "HWY": 2.58
+   },
+   "diag": {
+    "HWY_eng_on": 0.9099216461181641,
+    "HWY_starts": 8
+   },
+   "d3_exam_match": false,
+   "wall_s": 7.5
+  },
+  {
+   "id": "EPA2011_NSX_FLE206_c0",
+   "name": "2011 NISSAN NISSAN ALTIMA HYBRID",
+   "make": "NISSAN",
+   "family": "NISSAN|NISSAN",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "US06": 40.31,
+    "COLD": 38.74
+   },
+   "epa": {
+    "US06": 32.7,
+    "COLD": 36.8
+   },
+   "err_pct": {
+    "US06": 23.27,
+    "COLD": 5.28
+   },
+   "diag": {
+    "US06_eng_on": 0.7038269639015198,
+    "US06_starts": 12
+   },
+   "d3_exam_match": false,
+   "wall_s": 14.5
+  },
+  {
+   "id": "EPA2010_NSX_FLB106_c0",
+   "name": "2010 NISSAN NISSAN ALTIMA HYBRID 4-DOOR SEDAN",
+   "make": "NISSAN",
+   "family": "NISSAN|NISSAN",
+   "group": "toyota_ps",
+   "kind": "ps",
+   "architecture": "hev_powersplit",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 66.51,
+    "HWY": 58.8
+   },
+   "epa": {
+    "FTP": 46.8,
+    "HWY": 46.6
+   },
+   "err_pct": {
+    "FTP": 42.12,
+    "HWY": 26.19
+   },
+   "diag": {
+    "HWY_eng_on": 0.9060052037239075,
+    "HWY_starts": 10
+   },
+   "d3_exam_match": false,
+   "wall_s": 15.1
+  },
+  {
+   "id": "EPA2025_PRX_FE-972H-25_c0",
+   "name": "2025 PORSCHE Panamera 4 E-Hybrid",
+   "make": "PORSCHE",
+   "family": "PORSCHE|PANAMERA",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 30.51,
+    "HWY": 31.87
+   },
+   "epa": {
+    "FTP": 26.0,
+    "HWY": 33.6
+   },
+   "err_pct": {
+    "FTP": 17.34,
+    "HWY": -5.15
+   },
+   "diag": {
+    "HWY_eng_on": 0.3237597942352295,
+    "HWY_starts": 2
+   },
+   "d3_exam_match": false,
+   "wall_s": 8.4
+  },
+  {
+   "id": "EPA2018_PRX_ECFE-971H-18_c1",
+   "name": "2018 PORSCHE Panamera 4 e-Hybrid ST",
+   "make": "PORSCHE",
+   "family": "PORSCHE|PANAMERA",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 30.77,
+    "HWY": 33.38
+   },
+   "epa": {
+    "FTP": 24.7,
+    "HWY": 35.0
+   },
+   "err_pct": {
+    "FTP": 24.58,
+    "HWY": -4.63
+   },
+   "diag": {
+    "HWY_eng_on": 0.2167101800441742,
+    "HWY_starts": 4
+   },
+   "d3_exam_match": false,
+   "wall_s": 5.7
+  },
+  {
+   "id": "EPA2019_PRX_ECFE-971H-19_c0",
+   "name": "2019 PORSCHE Panamera 4 e-Hybrid ST",
+   "make": "PORSCHE",
+   "family": "PORSCHE|PANAMERA",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 30.82,
+    "HWY": 33.32
+   },
+   "epa": {
+    "FTP": 26.9,
+    "HWY": 34.2
+   },
+   "err_pct": {
+    "FTP": 14.56,
+    "HWY": -2.57
+   },
+   "diag": {
+    "HWY_eng_on": 0.2154047042131424,
+    "HWY_starts": 4
+   },
+   "d3_exam_match": false,
+   "wall_s": 10.2
+  },
+  {
+   "id": "EPA2021_PRX_FE-971H-21_c0",
+   "name": "2021 PORSCHE Panamera 4 e-Hybrid ST",
+   "make": "PORSCHE",
+   "family": "PORSCHE|PANAMERA",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 31.67,
+    "HWY": 32.86
+   },
+   "epa": {
+    "FTP": 26.1,
+    "HWY": 33.0
+   },
+   "err_pct": {
+    "FTP": 21.33,
+    "HWY": -0.43
+   },
+   "diag": {
+    "HWY_eng_on": 0.41253262758255005,
+    "HWY_starts": 3
+   },
+   "d3_exam_match": false,
+   "wall_s": 9.0
+  },
+  {
+   "id": "EPA2025_PRX_ECFE-972SH-25_c1",
+   "name": "2025 PORSCHE Panamera 4S E-Hybrid",
+   "make": "PORSCHE",
+   "family": "PORSCHE|PANAMERA",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 30.39,
+    "HWY": 31.68
+   },
+   "epa": {
+    "FTP": 24.7,
+    "HWY": 32.5
+   },
+   "err_pct": {
+    "FTP": 23.03,
+    "HWY": -2.52
+   },
+   "diag": {
+    "HWY_eng_on": 0.3263707458972931,
+    "HWY_starts": 2
+   },
+   "d3_exam_match": false,
+   "wall_s": 11.0
+  },
+  {
+   "id": "EPA2021_PRX_ECFE-971SH-21_c0",
+   "name": "2021 PORSCHE Panamera 4S e-Hybrid ST",
+   "make": "PORSCHE",
+   "family": "PORSCHE|PANAMERA",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 30.98,
+    "HWY": 32.41
+   },
+   "epa": {
+    "FTP": 26.1,
+    "HWY": 32.6
+   },
+   "err_pct": {
+    "FTP": 18.7,
+    "HWY": -0.57
+   },
+   "diag": {
+    "HWY_eng_on": 0.33550915122032166,
+    "HWY_starts": 4
+   },
+   "d3_exam_match": false,
+   "wall_s": 8.7
+  },
+  {
+   "id": "EPA2014_PRX_FE-970H-14_c0",
+   "name": "2014 PORSCHE Panamera S E-Hybrid",
+   "make": "PORSCHE",
+   "family": "PORSCHE|PANAMERA",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 34.29,
+    "HWY": 34.81
+   },
+   "epa": {
+    "FTP": 28.9,
+    "HWY": 41.1
+   },
+   "err_pct": {
+    "FTP": 18.66,
+    "HWY": -15.3
+   },
+   "diag": {
+    "HWY_eng_on": 0.18929503858089447,
+    "HWY_starts": 13
+   },
+   "d3_exam_match": false,
+   "wall_s": 8.9
+  },
+  {
+   "id": "EPA2012_PRX_FE-970H-12_c0",
+   "name": "2012 PORSCHE Panamera S Hybrid",
+   "make": "PORSCHE",
+   "family": "PORSCHE|PANAMERA",
+   "group": "p2_converter",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 41.2,
+    "HWY": 42.42
+   },
+   "epa": {
+    "FTP": 30.4,
+    "HWY": 40.9
+   },
+   "err_pct": {
+    "FTP": 35.53,
+    "HWY": 3.7
+   },
+   "diag": {
+    "HWY_eng_on": 0.2767623960971832,
+    "HWY_starts": 8
+   },
+   "d3_exam_match": false,
+   "wall_s": 10.0
+  },
+  {
+   "id": "EPA2021_PRX_ECFE-971TSH-21_c0",
+   "name": "2021 PORSCHE Panamera Turbo S e-Hybrid",
+   "make": "PORSCHE",
+   "family": "PORSCHE|PANAMERA",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 28.8,
+    "HWY": 31.02
+   },
+   "epa": {
+    "FTP": 22.3,
+    "HWY": 30.1
+   },
+   "err_pct": {
+    "FTP": 29.17,
+    "HWY": 3.05
+   },
+   "diag": {
+    "HWY_eng_on": 0.3185378611087799,
+    "HWY_starts": 4
+   },
+   "d3_exam_match": false,
+   "wall_s": 3.9
+  },
+  {
+   "id": "EPA2018_PRX_ECFE-971TSH-18_c1",
+   "name": "2018 PORSCHE Panamera Turbo S e-Hybrid ST",
+   "make": "PORSCHE",
+   "family": "PORSCHE|PANAMERA",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 29.1,
+    "HWY": 32.24
+   },
+   "epa": {
+    "FTP": 23.6,
+    "HWY": 32.7
+   },
+   "err_pct": {
+    "FTP": 23.32,
+    "HWY": -1.4
+   },
+   "diag": {
+    "HWY_eng_on": 0.23107048869132996,
+    "HWY_starts": 4
+   },
+   "d3_exam_match": false,
+   "wall_s": 8.1
+  },
+  {
+   "id": "EPA2019_PRX_ECFE-971TSH-19_c0",
+   "name": "2019 PORSCHE Panamera Turbo S e-Hybrid ST",
+   "make": "PORSCHE",
+   "family": "PORSCHE|PANAMERA",
+   "group": "plugin_p2",
+   "kind": "phev_p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 29.1,
+    "HWY": 32.24
+   },
+   "epa": {
+    "FTP": 24.1,
+    "HWY": 30.8
+   },
+   "err_pct": {
+    "FTP": 20.76,
+    "HWY": 4.68
+   },
+   "diag": {
+    "HWY_eng_on": 0.23107048869132996,
+    "HWY_starts": 4
+   },
+   "d3_exam_match": false,
+   "wall_s": 9.7
+  },
+  {
+   "id": "EPA2024_TYX_24-TS1H_c1",
+   "name": "2024 TOYOTA GRAND HIGHLANDER HYBRID AWD",
+   "make": "TOYOTA",
+   "family": "TOYOTA|GRAND HIGHLANDER",
+   "group": "p2_clutch",
+   "kind": "p2",
+   "architecture": "hev_parallel_p2",
+   "source": "EPA dev family",
+   "sim": {
+    "FTP": 36.82,
+    "HWY": 36.87
+   },
+   "epa": {
+    "FTP": 34.1,
+    "HWY": 38.7
+   },
+   "err_pct": {
+    "FTP": 7.99,
+    "HWY": -4.72
+   },
+   "diag": {
+    "HWY_eng_on": 0.5926892757415771,
+    "HWY_starts": 14
+   },
+   "d3_exam_match": false,
+   "wall_s": 7.4
+  },
+  {
+   "id": "epa_439",
+   "name": "2024 Ford Escape FWD HEV",
+   "make": "FORD",
+   "family": "check_cycles dev",
+   "group": "ford_ps",
+   "kind": "hev_powersplit",
+   "architecture": "hev_powersplit",
+   "source": "check_cycles dev vehicle",
+   "sim": {
+    "FTP": 60.0,
+    "HWY": 53.41
+   },
+   "epa": {
+    "FTP": 59.2,
+    "HWY": 52.6
+   },
+   "err_pct": {
+    "FTP": 1.35,
+    "HWY": 1.54
+   },
+   "diag": {
+    "HWY_eng_on": 0.9086161851882935,
+    "HWY_starts": 9
+   },
+   "d3_exam_match": false,
+   "wall_s": 6.0
+  }
+ ],
+ "wall_s": 86.5
+}
