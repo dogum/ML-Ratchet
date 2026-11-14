@@ -9,7 +9,8 @@ Since 14 Nov 2026 physics v2 has its own golden file (tests/golden/roadsim_v2_fi
 preset must match the v2 golden to 1e-9 (tests/test_roadsim_v2_fingerprint.py). Physics v2.1 has its own golden too
 (tests/golden/roadsim_v2_1_fingerprint.json, written 14 Nov 2026 by the v3 pass from the code before any v3 change), and
 so has physics v3 (tests/golden/roadsim_v3_fingerprint.json, written 14 Nov 2026 by the v3.1 pass before any v3.1 change)
-and physics v3.1 (tests/golden/roadsim_v3_1_fingerprint.json, written at the v3.1 freeze).
+and physics v3.1 (tests/golden/roadsim_v3_1_fingerprint.json, written at the v3.1 freeze). The speed pass (14 Nov 2026)
+left every one of them unchanged.
 
 usage:
     python fingerprint.py write [--options roadsim-physics-v2]   # (re)write a golden file — only on purpose

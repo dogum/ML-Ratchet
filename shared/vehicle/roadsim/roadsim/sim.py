@@ -10,6 +10,7 @@ t_k+1", like an OBD logger's rate over the last second); index 0 holds zeros. St
 instantaneous values at t_k.
 """
 import math, time, hashlib, json
+from itertools import chain as _chain_it
 import numpy as np
 from .constants import G, R_AIR, T0K, FUELS, MPH, MILE, GAL, KWH, EPA_KWH_PER_GAL
 from .vehicle import Vehicle
@@ -250,9 +251,10 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
             'eng_torque', 'eng_power', 'fuel_rate', 'eng_on', 'T_eng', 'mot_rpm', 'mot_torque', 'mot_power', 'mot_loss',
             'gen_rpm', 'gen_torque', 'gen_power', 'batt_current', 'batt_voltage', 'soc', 'T_batt', 'aux_power',
             'hvac_power', 'P_brake', 'P_regen', 'T_cabin', 'trans_loss', 'batt_loss', 'v_target', 'rho_air', 'headwind']
-    O = {k: [0.0] * (M + 1) for k in keys} if record else None     # M + 1 = N at 1 Hz; sub-step arrays otherwise
-    L = dict(fuel=0.0, eng_loss=0.0, mot_loss=0.0, trans_loss=0.0, batt_loss=0.0, aero=0.0, rolling=0.0, grade=0.0,
-             brake=0.0, aux=0.0, batt_chem=0.0, regen=0.0, tyre_slip=0.0)
+    rows = [] if record else None      # one tuple per integration step in `keys` order (columns built after the loop)
+    # ledger accumulators (J; the dict L after the loop): fuel, eng_loss, mot_loss, trans_loss, batt_loss, aero, rolling,
+    # grade, brake, aux, batt_chem, regen, tyre_slip
+    L_fuel = L_eng = L_mot = L_trans = L_bl = L_aero = L_roll = L_grade = L_brake = L_aux = L_chem = L_regen = L_slip = 0.0
     v0 = v_tgt[0]
     v_start = v0
     I_err = 0.0
@@ -266,16 +268,27 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
     dl_C = 25e3 * (1.0 if not veh.hd else 4.0); dl_hA = 6.0 * (1.0 if not veh.hd else 3.0)
     dl_hc = 25.0 if veh.ttype in ('AT', 'CVT') else 5.0
 
-    def batt_state(v_rc_, soc_, Tb):
-        if not elec:
-            return 0.0, 0.0
-        return bat.limits(soc_, Tb, v_rc_)
+    row0 = dict.fromkeys(keys, 0.0)    # index 0 of the outputs: initial states
+    row0['v'] = v0; row0['soc'] = st['soc']; row0['T_eng'] = st['T_eng']; row0['T_cabin'] = st['T_cab']
+    row0['T_batt'] = st['T_bat']; row0['v_target'] = v_tgt[0]; row0['rho_air'] = rho[0]
+    if elec:
+        row0['batt_voltage'] = bat.ocv(st['soc'])
 
-    if record:
-        O['v'][0] = v0; O['soc'][0] = st['soc']; O['T_eng'][0] = st['T_eng']; O['T_cabin'][0] = st['T_cab']
-        O['T_batt'][0] = st['T_bat']; O['v_target'][0] = v_tgt[0]; O['rho_air'][0] = rho[0]
-        if elec:
-            O['batt_voltage'][0] = bat.ocv(st['soc'])
+    # loop invariants (speed only: the same values the loop used to compute every step)
+    conv = arch == 'conv'
+    Kp = drv['Kp']; Ki = drv['Ki']; a_min = drv['a_min']; a_max = drv['a_max']
+    hvac_v1 = th is None or not th.hvac2       # the two-node cabin (thermal.py) does not use the v1 HVAC block
+    tms = elec and not conv
+    timers = hybrid or conv
+    dl_vogel = th is not None and has_box and th.f_dl_vogel
+    MPH2 = 2 * MPH
+    rec_gear = arch != 'bev'
+    if elec:
+        ex = math.exp(-dt / bat.tau)
+        bat_ocv = bat.ocv; bat_r0 = bat.r0; bat_limits = bat.limits
+    pt_plan = pt.plan if conv else None
+    if tyre_on:
+        tyr_step = tyr.step
 
     for i in range(M):                 # integration steps; k = trip second (i = k at 1 Hz)
         k = i if nsub == 1 else i // nsub
@@ -284,8 +297,9 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
         if th is not None:
             crr = th.crr(k, st, crr, v0, ck)
         # yaw angle from the cross wind (deg) raises CdA (wind-averaged drag; SAE J1252)
-        if w_cross_s[i] > 0.0:
-            psi = math.degrees(math.atan2(w_cross_s[i], max(v0 + wh, 0.5)))
+        wc = w_cross_s[i]
+        if wc > 0.0:
+            psi = math.degrees(math.atan2(wc, max(v0 + wh, 0.5)))
             cda = CdA * (1.0 + yaw_k * min(psi, 30.0) ** 2)
         else:
             cda = CdA
@@ -298,66 +312,81 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
 
         # ---------------- driver: feed-forward + PI on the lagged speed error (or the human driver model)
         err = vt_s[i] - v0
+        # (min / max written as conditionals with the builtins' exact semantics: max(a, b) = b if b > a else a)
         if not sat_prev:
-            I_err = min(max(I_err + err * dt, -5.0), 5.0)
+            x_ = I_err + err * dt
+            I_err = -5.0 if -5.0 > x_ else x_
+            if 5.0 < I_err:
+                I_err = 5.0
         if nsub == 1:
-            a_cmd = (vt_s[i + 1] - v0) / dt + drv['Kp'] * err + drv['Ki'] * I_err
+            a_cmd = (vt_s[i + 1] - v0) / dt + Kp * err + Ki * I_err
         else:   # same driver in continuous form: target slope + the error closed over one trip second + PI
-            a_cmd = (vt_s[i + 1] - vt_s[i]) / dt + err / dt_trip + drv['Kp'] * err + drv['Ki'] * I_err
+            a_cmd = (vt_s[i + 1] - vt_s[i]) / dt + err / dt_trip + Kp * err + Ki * I_err
         if vt_s[i + 1] <= 0.0 and err <= 0.0:
             a_cmd = (0.0 - v0) / dt
         if human:
             a_cmd = hdrv.accel(i, v0)
-        a_cmd = min(max(a_cmd, drv['a_min']), drv['a_max'])
+        if a_min > a_cmd:
+            a_cmd = a_min
+        if a_max < a_cmd:
+            a_cmd = a_max
         v1d = v0 + a_cmd * dt
         if v1d < 0.0:
             v1d = 0.0
         stopped = v0 < 1e-3 and v1d < 1e-3
 
         # ---------------- aux & HVAC
-        Qd = cab.demand(st['T_cab'], Ta, solar[k])
         Q_del = 0.0; Q_eng_heat = 0.0; P_hvac_el = 0.0; P_hvac_mech = 0.0; need_heat = False
-        if Qd > 0.0:
-            if cab.source == 'engine':
-                Q_av = max(0.0, cab.hx_UA * (st['T_eng'] - st['T_cab']))
-                Q_del = min(Qd, Q_av); Q_eng_heat = Q_del
-                need_heat = hybrid and Qd > 0.3 * cab.Q_heat_max and st['T_eng'] < 55.0
-            elif cab.source == 'heat_pump':
-                cop = cab.hp_cop(Ta); Q_del = Qd; P_hvac_el = Qd / cop
-            else:
-                Q_del = Qd; P_hvac_el = Qd / 0.95
-            P_hvac_el += cab.blower_W
-        elif Qd < 0.0:
-            Q_del = Qd
-            P_comp = -Qd / cab.ac_cop(Ta)
-            if arch == 'conv':
-                P_hvac_mech = P_comp / 0.95
-            else:
-                P_hvac_el = P_comp
-            P_hvac_el += cab.blower_W
+        if hvac_v1:
+            Qd = cab.demand(st['T_cab'], Ta, solar[k])
+            if Qd > 0.0:
+                if cab.source == 'engine':
+                    Q_av = max(0.0, cab.hx_UA * (st['T_eng'] - st['T_cab']))
+                    Q_del = min(Qd, Q_av); Q_eng_heat = Q_del
+                    need_heat = hybrid and Qd > 0.3 * cab.Q_heat_max and st['T_eng'] < 55.0
+                elif cab.source == 'heat_pump':
+                    cop = cab.hp_cop(Ta); Q_del = Qd; P_hvac_el = Qd / cop
+                else:
+                    Q_del = Qd; P_hvac_el = Qd / 0.95
+                P_hvac_el += cab.blower_W
+            elif Qd < 0.0:
+                Q_del = Qd
+                P_comp = -Qd / cab.ac_cop(Ta)
+                if conv:
+                    P_hvac_mech = P_comp / 0.95
+                else:
+                    P_hvac_el = P_comp
+                P_hvac_el += cab.blower_W
+        else:
+            Qd = 0.0                   # unused: thermal.aux's two-node cabin replaces this block
         P_tms = 0.0; Q_tms = 0.0
-        if elec and arch != 'conv':
+        if tms:
             if bat.heater_W > 0 and st['T_bat'] < bat.T_heat_on:
                 Q_tms = bat.heater_W; P_tms = bat.heater_W / 0.95
             elif bat.cooler_W > 0 and st['T_bat'] > bat.T_cool_on:
                 Q_tms = -bat.cooler_W; P_tms = bat.cooler_W / 2.5
         base = veh.aux_base if aux_base_o is None else aux_base_o
-        if arch == 'conv':
-            P_aux_mech = (base + (P_hvac_el)) / ETA_ALT + P_hvac_mech
-            P_aux_el = 0.0
-        else:
-            P_aux_mech = 0.0
-            P_aux_el = (base + cab.blower_W * (Qd != 0.0)) / ETA_DCDC + (P_hvac_el - cab.blower_W * (Qd != 0.0)) + P_tms
-        P_hvac_tot = P_hvac_el + P_hvac_mech + P_tms
         if th is not None:
             P_aux_mech, P_aux_el, need_heat, P_hvac_tot = th.aux(k, st, v0, stopped, (Qd, Q_del, Q_eng_heat, P_hvac_el, P_hvac_mech,
                                                                                     need_heat, P_tms, base))
+        else:
+            if conv:
+                P_aux_mech = (base + (P_hvac_el)) / ETA_ALT + P_hvac_mech
+                P_aux_el = 0.0
+            else:
+                P_aux_mech = 0.0
+                P_aux_el = (base + cab.blower_W * (Qd != 0.0)) / ETA_DCDC + (P_hvac_el - cab.blower_W * (Qd != 0.0)) + P_tms
+            P_hvac_tot = P_hvac_el + P_hvac_mech + P_tms
 
-        p_dis, p_chg = batt_state(st['v_rc'], st['soc'], st['T_bat'])
+        if elec:
+            p_dis, p_chg = bat_limits(st['soc'], st['T_bat'], st['v_rc'])
+        else:
+            p_dis = p_chg = 0.0
         # driveline (transmission/axle) oil: spin losses scale with viscosity^0.3 relative to 80 C
-        f_dl = math.exp(0.3 * 3776.0 * (1.0 / (max(st['T_dl'], -40.0) + T0K) - 1.0 / (80.0 + T0K))) if has_box else 1.0
-        if th is not None and has_box and th.f_dl_vogel:
+        if dl_vogel:
             f_dl = th.f_dl(st['T_dl'])
+        else:
+            f_dl = math.exp(0.3 * 3776.0 * (1.0 / (max(st['T_dl'], -40.0) + T0K) - 1.0 / (80.0 + T0K))) if has_box else 1.0
         env = dict(P_aux_mech=P_aux_mech, P_aux_el=P_aux_el, p_dis=p_dis, p_chg=p_chg, stopped=stopped,
                    need_heat=need_heat, k=k, f_dl=f_dl)
 
@@ -372,7 +401,6 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
         # ---------------- powertrain plan (iterate if traction-limited so flows match the final speed)
         plan = None; F_brk = 0.0
         converged = False
-        u_hist = []
         u_pt = u; t_lim = False
         if nsub > 1:
             env['start_spread'] = True     # engine-start fuel spread over the first second of running (see _finalize)
@@ -382,15 +410,20 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
             # its maximum at that speed, and the loop converges on the speed that this force produces
             F_ask = F_req; u_pt = u
             if tyre_on and not stopped:   # friction limits at this pass's load transfer; wheels turn at u (1 + slip)
-                F_ask, u_pt = tyr.step(F_req, u, env['a'], sk, ck, mu_k[k], ayg_k[k], regen_frac, env, elec)
+                F_ask, u_pt = tyr_step(F_req, u, env['a'], sk, ck, mu_k[k], ayg_k[k], regen_frac, env, elec)
                 t_lim = env['tyre_lim']
-            plan = _plan(pt, strat, veh, F_ask, u_pt, st, env, regen_mode, hybrid, elec, k, dt, trip, dist)
+            if conv:
+                plan = pt_plan(F_ask, u_pt, st, env)       # = _plan for 'conv'
+            else:
+                plan = _plan(pt, strat, veh, F_ask, u_pt, st, env, regen_mode, hybrid, elec, k, dt, trip, dist)
             Fd = plan['F']
             if stopped:
                 F_brk = 0.0; u_new = 0.0; v1 = 0.0; converged = True
                 break
             if F_ask < 0.0:
-                F_brk = max(Fd - F_ask, 0.0)     # friction brakes supply the rest of the braking force
+                F_brk = Fd - F_ask               # friction brakes supply the rest of the braking force
+                if 0.0 > F_brk:
+                    F_brk = 0.0
             else:
                 F_brk = 0.0
             F_ext = Fd - F_brk
@@ -404,7 +437,6 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
             if abs(u_new - u) < 1e-7:
                 v1 = 2.0 * u_new - v0; converged = True
                 break
-            u_hist.append(u)
             u = u_new if it_ < 3 else 0.5 * (u + u_new)      # damped after a few passes (gear changes make F(u) jumpy)
         if not converged:
             # exact fallback: take the lower speed estimate and ask for exactly the force that produces it
@@ -419,8 +451,8 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
             F_brk = max(plan['F'] - Fs, 0.0) if Fs < 0 else 0.0
             u_new = us; v1 = 2.0 * us - v0
         u = u_new
-        u = u_new
         # aero/rolling/grade work at the final mean speed; brakes take any residual (stop within the step)
+        pF = plan['F']
         if stopped or u <= 0.0:
             Fa = 0.0; Fr = 0.0; Fgr = 0.0; F_brk = 0.0; v1 = 0.0
             F_net = 0.0; Fcn = 0.0
@@ -428,22 +460,26 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
             rel_v = u + wh
             Fa = ka * rel_v * abs(rel_v); Fr = Frr0 * (1.0 + Crr_v * u) + par; Fgr = Fg
             F_net = m_eff * (v1 - v0) / dt
-            F_brk = plan['F'] - Fa - Fr - Fgr - Fcn - F_net       # exact closure of the momentum balance
-            if F_brk < 0.0 and F_brk > -1e-6 * (abs(plan['F']) + 1.0):
+            F_brk = pF - Fa - Fr - Fgr - Fcn - F_net       # exact closure of the momentum balance
+            if F_brk < 0.0 and F_brk > -1e-6 * (abs(pF) + 1.0):
                 F_brk = 0.0
         # ---------------- battery
         P_b = plan['P_batt']
         if elec:
-            soc = st['soc']; Tb = st['T_bat']
-            I = bat.current(P_b, soc, Tb, st['v_rc'])
-            Voc = bat.ocv(soc)
-            V = Voc - st['v_rc'] - bat.r0(soc, Tb) * I
+            soc = st['soc']; Tb = st['T_bat']; v_rc = st['v_rc']
+            Voc = bat_ocv(soc)
+            R0 = bat_r0(soc, Tb)
+            Vt = Voc - v_rc                # Battery.current, inlined (same arithmetic)
+            disc = Vt * Vt - 4.0 * R0 * P_b
+            if disc < 0.0:
+                disc = 0.0
+            I = (Vt - math.sqrt(disc)) / (2.0 * R0)
+            V = Voc - v_rc - R0 * I
             P_chem = Voc * I
             P_bl = P_chem - P_b
-            ex = math.exp(-dt / bat.tau)
-            st['v_rc'] = st['v_rc'] * ex + bat.R1 * I * (1.0 - ex)
+            st['v_rc'] = v_rc * ex + bat.R1 * I * (1.0 - ex)
             st['soc'] = soc - I * dt / bat.Q
-            st['T_bat'] = Tb + dt * (max(P_bl, 0.0) + Q_tms - bat.hA * (Tb - Ta)) / bat.C_th
+            st['T_bat'] = Tb + dt * ((0.0 if 0.0 > P_bl else P_bl) + Q_tms - bat.hA * (Tb - Ta)) / bat.C_th
         else:
             I = 0.0; V = 0.0; P_chem = 0.0; P_bl = 0.0
         # ---------------- engine thermal, cabin, tyres
@@ -454,12 +490,15 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
             if e is not None:
                 st['T_eng'] = e.thermal_step(st['T_eng'], plan['P_fuel'], plan['P_eng'], Ta, Q_eng_heat, dt, running)
             st['T_cab'] = cab.step(st['T_cab'], Ta, solar[k], Q_del, dt)
+        Ptr = plan['P_trans']
         if has_box:   # driveline oil heated by its own losses and (ATF cooler) by the engine coolant
-            q_dl = 0.5 * max(plan['P_trans'], 0.0) + (dl_hc * (st['T_eng'] - st['T_dl']) if e is not None else 0.0)
-            st['T_dl'] = min(st['T_dl'] + dt * (q_dl - dl_hA * (st['T_dl'] - Ta)) / dl_C, 95.0)
+            T_dl = st['T_dl']
+            q_dl = 0.5 * (0.0 if 0.0 > Ptr else Ptr) + (dl_hc * (st['T_eng'] - T_dl) if e is not None else 0.0)
+            x_ = T_dl + dt * (q_dl - dl_hA * (T_dl - Ta)) / dl_C
+            st['T_dl'] = 95.0 if 95.0 < x_ else x_
         if u > 0.5:
             st['tire'] = st['tire'] + (1.0 - st['tire']) * dt / tire_tau
-        if hybrid or arch == 'conv':
+        if timers:
             if running:
                 st['t_on'] = st['t_on'] + dt if st['eng_on'] else dt
                 st['t_off'] = 0.0
@@ -473,58 +512,67 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
             strat.step_end(st, plan, dict(dt=dt))
 
         # ---------------- ledger
-        Pf = plan['P_fuel']
-        L['fuel'] += Pf * dt
-        L['eng_loss'] += (Pf - plan['P_eng']) * dt
-        L['mot_loss'] += plan['P_mot'] * dt
-        L['trans_loss'] += plan['P_trans'] * dt
-        L['batt_loss'] += P_bl * dt
-        L['batt_chem'] += P_chem * dt
-        L['aux'] += plan['P_aux'] * dt
-        L['aero'] += Fa * u * dt
-        L['rolling'] += Fr * u * dt
-        L['grade'] += Fgr * u * dt
+        Pf = plan['P_fuel']; Pe = plan['P_eng']; Pm = plan['P_mot']; Pa = plan['P_aux']
+        L_fuel += Pf * dt
+        L_eng += (Pf - Pe) * dt
+        L_mot += Pm * dt
+        L_trans += Ptr * dt
+        L_bl += P_bl * dt
+        L_chem += P_chem * dt
+        L_aux += Pa * dt
+        L_aero += Fa * u * dt
+        L_roll += Fr * u * dt
+        L_grade += Fgr * u * dt
         if tyre_on:
             # tyre slip: powertrain force x (wheel-rim speed - vehicle speed), the friction brakes' share of the slip,
             # and cornering drag; the brakes keep the rest of their work
             sl_b = F_brk * u * dt * abs(env.get('tyre_kappa', 0.0)) if F_req < 0.0 else 0.0
-            L['brake'] += F_brk * u * dt - sl_b
-            L['tyre_slip'] += plan['F'] * (u_pt - u) * dt + Fcn * u * dt + sl_b
+            L_brake += F_brk * u * dt - sl_b
+            L_slip += pF * (u_pt - u) * dt + Fcn * u * dt + sl_b
         else:
-            L['brake'] += F_brk * u * dt
-        P_reg = -plan['P_batt'] + plan['P_aux'] if (F_req < 0.0 and elec) else 0.0
+            L_brake += F_brk * u * dt
+        P_reg = -P_b + Pa if (F_req < 0.0 and elec) else 0.0
         if P_reg > 0:
-            L['regen'] += P_reg * dt
+            L_regen += P_reg * dt
         # per-step closure (diagnostic)
         lhs = Pf + P_chem
-        rhs = (Pf - plan['P_eng']) + plan['P_mot'] + plan['P_trans'] + P_bl + plan['P_aux'] + (Fa + Fr + Fgr + F_brk) * u + 0.5 * m_eff * (v1 * v1 - v0 * v0) / dt
+        rhs = (Pf - Pe) + Pm + Ptr + P_bl + Pa + (Fa + Fr + Fgr + F_brk) * u + 0.5 * m_eff * (v1 * v1 - v0 * v0) / dt
         if tyre_on:
-            rhs += Fcn * u + plan['F'] * (u_pt - u)
-        worst_step = max(worst_step, abs(lhs - rhs))
+            rhs += Fcn * u + pF * (u_pt - u)
+        x_ = abs(lhs - rhs)
+        if x_ > worst_step:
+            worst_step = x_
         dist += u * dt
         if record:
-            j = i + 1
-            O['v'][j] = v1; O['a'][j] = (v1 - v0) / dt; O['F_aero'][j] = Fa; O['F_roll'][j] = Fr; O['F_grade'][j] = Fgr
-            O['F_inertia'][j] = m_eff * (v1 - v0) / dt; O['F_wheel'][j] = plan['F']; O['F_brake'][j] = F_brk
-            O['P_wheel'][j] = plan['F'] * u; O['gear'][j] = plan.get('gear', 0) + 1 if arch != 'bev' else 1
-            we = plan.get('w_e', 0.0)
-            O['eng_rpm'][j] = we * 30 / math.pi; O['eng_torque'][j] = plan.get('T_e', 0.0); O['eng_power'][j] = plan['P_eng']
-            O['fuel_rate'][j] = Pf / fuel_lhv * 1e3 if e is not None else 0.0
-            O['eng_on'][j] = 1.0 if running else 0.0; O['T_eng'][j] = st['T_eng']
-            O['mot_rpm'][j] = plan.get('w_m', 0.0) * 30 / math.pi; O['mot_torque'][j] = plan.get('T_m', 0.0)
-            O['mot_power'][j] = plan.get('P_m_el', 0.0); O['mot_loss'][j] = plan['P_mot']
-            O['gen_rpm'][j] = plan.get('w_g', 0.0) * 30 / math.pi; O['gen_torque'][j] = plan.get('T_g', 0.0)
-            O['gen_power'][j] = plan.get('P_g_el', 0.0)
-            O['batt_current'][j] = I; O['batt_voltage'][j] = V; O['soc'][j] = st['soc']; O['T_batt'][j] = st['T_bat']
-            O['aux_power'][j] = plan['P_aux']; O['hvac_power'][j] = P_hvac_tot; O['P_brake'][j] = F_brk * u
-            O['P_regen'][j] = max(P_reg, 0.0); O['T_cabin'][j] = st['T_cab']; O['trans_loss'][j] = plan['P_trans']
-            O['batt_loss'][j] = P_bl; O['v_target'][j] = vt_s[j]; O['rho_air'][j] = rk; O['headwind'][j] = wh
+            g_ = plan.get
+            rows.append((v1, (v1 - v0) / dt, Fa, Fr, Fgr, m_eff * (v1 - v0) / dt, pF, F_brk, pF * u,
+                         g_('gear', 0) + 1 if rec_gear else 1, g_('w_e', 0.0) * 30 / math.pi, g_('T_e', 0.0), Pe,
+                         Pf / fuel_lhv * 1e3 if e is not None else 0.0, 1.0 if running else 0.0, st['T_eng'],
+                         g_('w_m', 0.0) * 30 / math.pi, g_('T_m', 0.0), g_('P_m_el', 0.0), Pm,
+                         g_('w_g', 0.0) * 30 / math.pi, g_('T_g', 0.0), g_('P_g_el', 0.0),
+                         I, V, st['soc'], st['T_bat'], Pa, P_hvac_tot, F_brk * u, 0.0 if 0.0 > P_reg else P_reg, st['T_cab'], Ptr,
+                         P_bl, vt_s[i + 1], rk, wh))
         if nsub == 1 or i % nsub == nsub - 1:      # trace-miss statistics at the trip seconds
             e1 = v1 - v_tgt[k + 1]
-            miss_sq += e1 * e1; miss_max = max(miss_max, abs(e1))
-            if abs(e1) > 2 * MPH: miss_n2 += 1
+            ae1 = abs(e1)
+            miss_sq += e1 * e1
+            if ae1 > miss_max:
+                miss_max = ae1
+            if ae1 > MPH2: miss_n2 += 1
         sat_prev = plan['limited'] or t_lim
         v0 = v1
+
+    L = dict(fuel=L_fuel, eng_loss=L_eng, mot_loss=L_mot, trans_loss=L_trans, batt_loss=L_bl, aero=L_aero, rolling=L_roll,
+             grade=L_grade, brake=L_brake, aux=L_aux, batt_chem=L_chem, regen=L_regen, tyre_slip=L_slip)
+    if record:                         # output columns: index 0 = initial states, step i at index i + 1
+        A_ = np.fromiter(_chain_it.from_iterable(rows), float, count=M * len(keys)).reshape(M, len(keys))
+        O = {}
+        for c_, k_ in enumerate(keys):
+            col = np.empty(M + 1)
+            col[0] = row0[k_]
+            col[1:] = A_[:, c_]
+            O[k_] = col
+        del rows, A_
 
     # ---------------- ledger summary (kJ)
     dKE = 0.5 * m_eff * (v0 * v0 - v_start * v_start)
@@ -754,20 +802,21 @@ def _hybrid_fixed(pt, veh, F, u, st, env, ctrl0=True):
 
 
 def _finalize(pt, veh, C, j, env, st, strat):
+    # (x.item(j) = float(x[j]) for the 1-D float arrays of C, without the numpy scalar in between)
     on = bool(C['on'][j])
-    Pf = float(C['P_fuel'][j])
+    Pf = C['P_fuel'].item(j)
     if on and not st.get('eng_on', False) and strat is not None and hasattr(strat, 'start_W'):
         Pf += strat.start_W            # start-up fuel (cranking, enrichment) booked as engine loss
     elif on and env.get('start_spread') and st.get('t_on', 99.0) < 1.0 - 1e-9 and strat is not None and hasattr(strat, 'start_W'):
         Pf += strat.start_W            # sub-steps: the start cost (start_W over one second) lasts the whole first second
-    plan = dict(F=float(C['T_w'][j]) / veh.r, P_fuel=Pf, P_eng=float(C['P_e'][j]) if on or veh.arch in ('hev_powersplit', 'phev_powersplit') else 0.0,
-                w_e=float(C['w_e'][j]), T_e=float(C['T_e'][j]), eng_on=on, gear=int(C.get('gear', 0) or 0),
-                P_trans=float(C['P_trans'][j]), P_mot=float(C['P_mot'][j]), P_batt=float(C['P_batt'][j]),
+    plan = dict(F=C['T_w'].item(j) / veh.r, P_fuel=Pf, P_eng=C['P_e'].item(j) if on or veh.arch in ('hev_powersplit', 'phev_powersplit') else 0.0,
+                w_e=C['w_e'].item(j), T_e=C['T_e'].item(j), eng_on=on, gear=int(C.get('gear', 0) or 0),
+                P_trans=C['P_trans'].item(j), P_mot=C['P_mot'].item(j), P_batt=C['P_batt'].item(j),
                 P_aux=env['P_aux_el'])
-    for a, b in (('T_m', 'T_m'), ('w_m', 'w_m'), ('P_m_el', 'P_m_el'), ('T_g', 'T_g'), ('w_g', 'w_g'), ('P_g_el', 'P_g_el')):
-        if b in C:
-            plan[a] = float(C[b][j])
+    for a in ('T_m', 'w_m', 'P_m_el', 'T_g', 'w_g', 'P_g_el'):
+        if a in C:
+            plan[a] = C[a].item(j)
     if 'T2' in C:
-        plan['T_m'] = float(C['T2'][j]); plan['w_m'] = float(C['w2'][j])
-        plan['T_g'] = float(C['T1'][j]); plan['w_g'] = float(C['w_s'][j])
+        plan['T_m'] = C['T2'].item(j); plan['w_m'] = C['w2'].item(j)
+        plan['T_g'] = C['T1'].item(j); plan['w_g'] = C['w_s'].item(j)
     return plan

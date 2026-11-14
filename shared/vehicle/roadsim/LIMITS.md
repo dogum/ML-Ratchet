@@ -41,7 +41,7 @@ bus and Class 8 number is identical to v2 ("= v2"). The D3 plug-in rows of v2 we
 | ... hybrids UDDS / HWY / US06 | +18.0 / +6.7 / -4.3 | +12.5 / +2.3 / -8.3 | +11.2 / +1.9 / -8.2 | |
 | Generated hybrids, hot UDDS / HWY median (EPA MY2022-24 hybrids: FTP 59.2, HWY 58.2 mpg) | 48.3 / - | 47.5 / 45.2 mpg | 47.1 / 45.1 mpg | not met |
 | Ledger stress, 600 runs | max 5.1e-4 | max 5.6e-4, none > 0.5 % | = v2 | closes: met |
-| Speed, UDDS single thread | conv 50-55k x, hybrids 3.8-4.8k x | conv 24-26k x, hybrids 3.2-3.9k x | hybrids 3.1-3.9k x (2-4 % slower) | v2 costs 2x on conventional/BEV |
+| Speed, UDDS single thread | conv 50-55k x, hybrids 3.8-4.8k x | conv 24-26k x, hybrids 3.2-3.9k x; speed pass 14 Nov 2026 (results bit-identical): conv / Class 8 x1.15-1.25, BEV / bus x1.25-1.3, hybrids x1.4-1.65, DP x1.24, fleet x1.4 (A/B interleaved on a loaded machine), so about conv 28-30k, BEV 35k, hybrids 5.0-6.1k x | hybrids x1.4-1.65 too | conventional/BEV still ~1.7x slower than v1 (45k target not met); hybrids now faster than v1 |
 
 **v3 on these sets (second look, 14 Nov 2026)**: identical to v2.1 for every conventional, BEV, bus, Class 8, ledger and
 coast-down number (fingerprint guard; ledger max 5.6e-4). Hybrid rows that move v2.1 -> v3: D3 exam plug-in

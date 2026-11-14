@@ -342,6 +342,41 @@ class Thermal:
         self.t_stop = 0.0; self.moving_prev = True; self.brk_prev = False
         self.tank = P['air_tank_J']; self.loading = False
         self.events_J = 0.0
+        self._speed_consts(opt, dt)
+
+    def _speed_consts(self, opt, dt):
+        """per-run constants and tables for the per-second methods (speed only: the same numbers they computed each step)."""
+        P = self.P; e = self.e
+        from .powertrain import ETA_DCDC
+        self._eta_dcdc = ETA_DCDC
+        self._th2 = P['vogel_theta2']
+        if e is not None:
+            self._vogel = self.law == 'vogel'
+            self._inv_hot = 1.0 / (e.T_hot + self.th2) if self._vogel else 1.0 / (e.T_hot + T0K)   # visc_ratio's T_ref term
+            try:
+                self._cfd = e.c_fric * self.fric_scale * e.disp
+            except TypeError:
+                self._cfd = None
+            self._enrich = bool(opt['cold_enrich'] or opt['warmup_enrich'])
+            self._ktr_dt = self.k_tr / self.dt
+            self._fc_fo = e.f_coolant - P['oil_heat_frac']
+            self._Tc_max = e.T_hot + 2.0; self._To_max = e.T_hot + P['oil_T_over']
+        self._inv_atf80 = 1.0 / (80.0 + self._th2)
+        if self.tyre:
+            self._f_lo, self._f_hi = P['tire_f_clip']
+            self._p_a = self.p0 + 101.3; self._p_b = 20.0 + T0K
+        if self.axle:
+            self._inv_ax = 1.0 / (P['axle_T_ref'] + self._th2)
+        self._1m_sti = 1.0 - P['solar_to_interior']
+        if self.hvac2:                      # ambient humidity ratio per trip second (the same w_sat calls, once per value)
+            memo = {}
+            wa = []
+            for r_, Ta_ in zip(self.rh, self.T_amb):
+                x = memo.get(Ta_)
+                if x is None:
+                    x = memo[Ta_] = w_sat(Ta_)
+                wa.append(r_ * x)
+            self._w_amb = wa
 
     # ======================================================== engine
     def _g(self, T):
@@ -356,20 +391,27 @@ class Thermal:
         T_f = self.T_oil if self.eng_v2 else st['T_eng']
         dT = self.dT_adj
         if T_f < e.T_hot:
-            dT += e.c_fric * self.fric_scale * e.disp * self._g(T_f) / self.g20
+            if self._cfd is None:
+                dT += e.c_fric * self.fric_scale * e.disp * self._g(T_f) / self.g20
+            else:                   # self._g inlined (visc_ratio with the precomputed T_ref term)
+                T_ = -40.0 if -40.0 > T_f else T_f
+                r = (math.exp(self.th1 * (1.0 / (T_ + self.th2) - self._inv_hot)) if self._vogel
+                     else math.exp(3776.0 * (1.0 / (T_ + T0K) - self._inv_hot)))
+                dT += self._cfd * (math.sqrt(r) - 1.0 if self.pexp == 0.5 else r ** self.pexp - 1.0) / self.g20
         f = self.f_eta
-        if o['cold_enrich'] or o['warmup_enrich']:
+        if self._enrich:
             a = o['cold_enrich'] * max(0.0, P['enrich_T_ref'] - self.T_start) * math.exp(-self.t_run / P['enrich_tau_s'])
             b = o['warmup_enrich'] * max(0.0, P['warmup_T_ref'] - st['T_eng'])
             f *= 1.0 + a + b
         if self.k_tr and self.T_e_prev is not None:
-            e._x2 = (dT, f, self.ll_W, self.ll_P, self.T_e_prev, self.k_tr / self.dt)
+            e._x2 = (dT, f, self.ll_W, self.ll_P, self.T_e_prev, self._ktr_dt)
         else:
             e._x2 = (dT, f, self.ll_W, self.ll_P)
 
     def f_dl(self, T_dl):
         """transmission spin-loss factor vs ATF temperature (Vogel), relative to 80 C (v1: Arrhenius)."""
-        return visc_ratio(T_dl, 80.0, 'vogel', self.P['atf_theta1'], self.P['vogel_theta2']) ** 0.3
+        T = -40.0 if -40.0 > T_dl else T_dl          # visc_ratio(T_dl, 80.0, 'vogel', atf_theta1, vogel_theta2), inlined
+        return math.exp(self.P['atf_theta1'] * (1.0 / (T + self._th2) - self._inv_atf80)) ** 0.3
 
     # ======================================================== rolling resistance
     def _tyre_rise(self, v, Crr):
@@ -383,22 +425,33 @@ class Thermal:
 
     def crr(self, k, st, crr_v1, v0, ck):
         if self.tyre:
-            lo, hi = self.P['tire_f_clip']
-            f = min(max(math.exp(-self.kt * (self.T_ty - self.T_ty_ref)), lo), hi)
+            f = math.exp(-self.kt * (self.T_ty - self.T_ty_ref))      # min(max(f, lo), hi), written out
+            if self._f_lo > f:
+                f = self._f_lo
+            if self._f_hi < f:
+                f = self._f_hi
             if self.dyno:
                 c = self.base[k] * (1.0 + self.fdyn * (f - 1.0))
             else:
-                fp = (max(self._pg(self.T_ty) * self.veh.tire_p_ratio, 0.5) / self.pg_ref) ** -0.4
+                p0 = self.p0                    # self._pg inlined
+                x = ((self._p_a * (self.T_ty + T0K) / self._p_b - 101.3) / p0) * self.veh.tire_p_ratio
+                fp = ((0.5 if 0.5 > x else x) / self.pg_ref) ** -0.4
                 c = self.base[k] * f * fp
             self.F_ty = c * self.m * G * ck
         else:
             c = crr_v1
             self.F_ty = c * self.m * G * ck
         if self.axle:
-            w = v0 / self.veh.r
-            fx = visc_ratio(self.T_ax, self.P['axle_T_ref'], 'vogel', self.P['gear_theta1'], self.P['vogel_theta2']) ** self.P['axle_visc_exp']
-            self.F_ax = max(fx - 1.0, 0.0) * (self.ax_a0 + self.ax_a1 * w) / self.veh.r
-            c += self.F_ax / (self.m * G * max(ck, 0.5))
+            r = self.veh.r
+            w = v0 / r
+            T = self.T_ax
+            if -40.0 > T:
+                T = -40.0
+            P = self.P                          # visc_ratio(T_ax, axle_T_ref, 'vogel', gear_theta1, vogel_theta2), inlined
+            fx = math.exp(P['gear_theta1'] * (1.0 / (T + self._th2) - self._inv_ax)) ** P['axle_visc_exp']
+            x = fx - 1.0
+            self.F_ax = (0.0 if 0.0 > x else x) * (self.ax_a0 + self.ax_a1 * w) / r
+            c += self.F_ax / (self.m * G * (0.5 if 0.5 > ck else ck))
         return c
 
     # ======================================================== HVAC and accessories (before the plan)
@@ -431,7 +484,7 @@ class Thermal:
                 P_aux_mech = (base + P_hv) / alt + P_mech + P_bus_mech
             P_aux_el = 0.0
         else:
-            from .powertrain import ETA_DCDC
+            ETA_DCDC = self._eta_dcdc
             P_aux_mech = 0.0
             if self.hvac2:
                 P_aux_el = (base + P_12v) / ETA_DCDC + P_hv + P_tms + P_bus_el
@@ -471,7 +524,7 @@ class Thermal:
         cab = self.cab; P = self.P; o = self.o
         self.Q_core_eng = 0.0; self.Q_lp = 0.0; self.P_ptc = 0.0; self.Q_eng_heat = 0.0
         sol = self.solar[k] * cab.A_solar
-        w_amb = self.rh[k] * w_sat(Ta)
+        w_amb = self._w_amb[k]                    # = self.rh[k] * w_sat(Ta)
         T = st['T_cab']
         # bus doors: stack-driven exchange through open doors at stops (one-third Cd A sqrt(g H dT / T) per door)
         self.m_door = 0.0
@@ -491,7 +544,12 @@ class Thermal:
         heat_ok = Ta < cab.heat_on_below or T < Tset - 4.0
         cool_ok = Ta > cab.cool_on_above or T > Tset + 6.0
         defrost = o['hvac_defrost']
-        lvl = min(max(P['blower_min'] + abs(err) / P['blower_span_K'], P['blower_min']), 1.0)
+        bmin = P['blower_min']
+        lvl = bmin + abs(err) / P['blower_span_K']          # min(max(lvl, blower_min), 1.0), written out
+        if bmin > lvl:
+            lvl = bmin
+        if 1.0 < lvl:
+            lvl = 1.0
         eng_src = self.src in ('engine', 'engine+ptc')
         if heat_ok and err < 0 and self.src == 'engine' and st['T_eng'] < P['cold_engine_blower_C'] and not defrost:
             lvl = P['blower_min']
@@ -500,7 +558,7 @@ class Thermal:
         m_a = self.ma_max * lvl
         # heat gains of the air node (without the HVAC supply)
         g_amb = self.UA_b + leak * CP_AIR
-        q_gain = (g_amb * (Ta - T) + self.h_m * (self.T_int - T) + cab.Q_people + (1.0 - P['solar_to_interior']) * sol)
+        q_gain = (g_amb * (Ta - T) + self.h_m * (self.T_int - T) + cab.Q_people + self._1m_sti * sol)
         T_req = T - (q_gain + self.C_a * err / P['ctrl_tau_s']) / (m_a * CP_AIR)
         r_h = 0.0 if defrost else o['hvac_recirc_heat']
         r_c = 1.0 if err > 3.0 else o['hvac_recirc_cool']
@@ -622,15 +680,17 @@ class Thermal:
         if e is not None:
             Q_h = self.Q_eng_heat
             if self.eng_v2:
-                q = max(plan['P_fuel'] - plan['P_eng'], 0.0) if running else 0.0
+                q = plan['P_fuel'] - plan['P_eng'] if running else 0.0
+                if 0.0 > q:
+                    q = 0.0
                 Tc = st['T_eng']; To = self.T_oil
                 q_co = self.UA_oil * (Tc - To)
                 hAo = (P['oil_hA_W_K_per_L'] + P['oil_hA_speed'] * u) * e.disp
                 fo = P['oil_heat_frac']
-                Tc_n = Tc + dt * ((e.f_coolant - fo) * q - q_co - e.hA * (Tc - Ta) - Q_h) / e.C_th
+                Tc_n = Tc + dt * (self._fc_fo * q - q_co - e.hA * (Tc - Ta) - Q_h) / e.C_th
                 To_n = To + dt * (fo * q + q_co - hAo * (To - Ta)) / self.C_oil
-                st['T_eng'] = min(Tc_n, e.T_hot + 2.0)
-                self.T_oil = min(To_n, e.T_hot + P['oil_T_over'])
+                st['T_eng'] = self._Tc_max if self._Tc_max < Tc_n else Tc_n
+                self.T_oil = self._To_max if self._To_max < To_n else To_n
             else:
                 st['T_eng'] = e.thermal_step(st['T_eng'], plan['P_fuel'], plan['P_eng'], Ta, Q_h, dt, running)
             if running:
@@ -646,11 +706,11 @@ class Thermal:
             T = st['T_cab']; Ti = self.T_int
             g_amb = self.UA_b + self.leak * CP_AIR
             gs = self.m_a * CP_AIR
-            q = self.cab.Q_people + (1.0 - P['solar_to_interior']) * sol
+            q = self.cab.Q_people + self._1m_sti * sol
             Tn = (self.C_a * T + dt * (gs * self.T_sup + g_amb * Ta + self.h_m * Ti + q)) / (self.C_a + dt * (gs + g_amb + self.h_m))
             self.T_int = (self.C_m * Ti + dt * (self.h_m * Tn + P['solar_to_interior'] * sol)) / (self.C_m + dt * self.h_m)
             st['T_cab'] = Tn
-            w_amb = self.rh[k] * w_sat(Ta)
+            w_amb = self._w_amb[k]                # = self.rh[k] * w_sat(Ta)
             mw = self.m_a + self.leak
             self.w_cab = (self.m_air * self.w_cab + dt * (self.m_a * self.w_sup + self.leak * w_amb + P['occupant_moist_kg_s'])) / (self.m_air + dt * mw)
             if self.ptc_type != 'air':
@@ -667,7 +727,7 @@ class Thermal:
             self.moving_prev = u > 0.05
         # ---- tyres
         if self.tyre:
-            hA = (P['tire_h0'] + P['tire_h1'] * max(u, 0.0) ** 0.8) * self.A_ty
+            hA = (P['tire_h0'] + P['tire_h1'] * (0.0 if 0.0 > u else u) ** 0.8) * self.A_ty
             q = self.F_ty * u
             self.T_ty += dt * (q - hA * (self.T_ty - self.road[k])) / self.C_ty
         # ---- axle oil: its own churning (warm part + cold excess)

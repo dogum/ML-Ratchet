@@ -162,15 +162,20 @@ class Engine:
             return 0.0
         return self.c_fric * self.disp * self._visc_g(max(T_eng, -40.0)) / self._g20
 
+    _enr = None          # physics v2 full-load enrichment (set by thermal.py), None = off
+
     def fuel_cold(self, w, T, T_eng):
         x = self._x2
         if x is not None:
             f = self.fuel_grid(w, T + x[0]) * x[1]
-            if x[2]:
-                f += x[2] * max(0.0, 1.0 - max(T * w, 0.0) / x[3])
+            if x[2]:                             # (max(a, b) written out: b if b > a else a, the builtin's semantics)
+                p = T * w
+                y = 1.0 - (0.0 if 0.0 > p else p) / x[3]
+                f += x[2] * (y if y > 0.0 else 0.0)
             if len(x) > 4:                       # transient fuel: torque rise since the last step (option eng_transient_fuel)
-                f *= 1.0 + x[5] * max(0.0, T - x[4])
-            en = getattr(self, '_enr', None)
+                y = T - x[4]
+                f *= 1.0 + x[5] * (y if y > 0.0 else 0.0)
+            en = self._enr
             if en:                               # full-load enrichment (option eng_fullload_enrich)
                 f *= 1.0 + en[0] * max(0.0, T / max(self.tmax_curve(w), 1.0) - en[1]) / (1.0 - en[1])
             return f
@@ -305,12 +310,26 @@ class Motor:
         return self.loss_grid(w, T)
 
     def loss_vec(self, w, T):
-        w = np.asarray(w, float); T = np.asarray(T, float)
-        s = np.where(w < 0, -1.0, 1.0)
+        T = np.asarray(T, float)
+        # (w, T) * sign(w), skipping the multiplications by +1.0 (they return their operand unchanged, bit for bit)
+        if isinstance(w, float) or np.ndim(w) == 0:
+            w = float(w)
+            if w < 0:
+                ws = w * -1.0; Ts = T * -1.0
+            else:
+                ws = w; Ts = T
+        else:
+            w = np.asarray(w, float)
+            neg = w < 0
+            if neg.any():
+                s = np.where(neg, -1.0, 1.0)
+                ws = w * s; Ts = T * s
+            else:
+                ws = w; Ts = T
         if self._mod is not None:
-            w_, T_ = np.broadcast_arrays(w * s, T * s)
+            w_, T_ = np.broadcast_arrays(ws, Ts)
             return self._loss_mod_vec(w_, T_)
-        L = self.loss_grid.vec(w * s, T * s)
+        L = self.loss_grid.vec(ws, Ts)
         return np.where(T == 0.0, self.freewheel_frac * L, L)
 
     def elec(self, w, T):
@@ -424,11 +443,22 @@ class Battery:
         """terminal power limits (W): (max discharge, max charge >0)."""
         V = self.ocv(soc) - v_rc
         R = self.r0(soc, T)
-        # current limited by voltage window
-        I_dis = max((V - self.v_min) / R, 0.0)
-        p_dis = min(V * I_dis - R * I_dis * I_dis, V * V / (4 * R) * 0.95, self.P_dis_max)
-        I_chg = max((self.v_max - V) / R, 0.0)
-        p_chg = min(V * I_chg + R * I_chg * I_chg, self.P_chg_max)
+        # current limited by voltage window (min / max written out with the builtins' semantics)
+        I_dis = (V - self.v_min) / R
+        if 0.0 > I_dis:
+            I_dis = 0.0
+        p_dis = V * I_dis - R * I_dis * I_dis
+        x = V * V / (4 * R) * 0.95
+        if x < p_dis:
+            p_dis = x
+        if self.P_dis_max < p_dis:
+            p_dis = self.P_dis_max
+        I_chg = (self.v_max - V) / R
+        if 0.0 > I_chg:
+            I_chg = 0.0
+        p_chg = V * I_chg + R * I_chg * I_chg
+        if self.P_chg_max < p_chg:
+            p_chg = self.P_chg_max
         # temperature derating (Li-ion charging below 0 C) and SOC taper
         if T < 0.0:
             p_chg *= max(0.1, 1.0 + T / 20.0)
