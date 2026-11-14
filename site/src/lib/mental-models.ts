@@ -75,7 +75,7 @@ export const APPROACHES: Approach[] = [
     real: 'Backdrop noise, simulator calibration and priors, the promotion gate, error-bar width, the final exam.',
     proves: 'How far physics plus learning gets on data the network never saw in any form. A loss is as informative as a win.',
     when: 'Real labels are scarce, costly or untrustworthy, and a credible simulator exists or can be built.',
-    repo: 'Research names for this pattern: sim-to-real transfer, simulation-based inference, amortised inversion.',
+    repo: 'The recipe every model here follows today. Research names for the pattern: sim-to-real transfer, simulation-based inference, amortised inversion.',
   },
   {
     key: 'blackbox', chip: 'Black box', name: 'Black-box supervised learning',

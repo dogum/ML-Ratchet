@@ -69,7 +69,7 @@ const kindOf = (id: string) => EDGES[id].k;
       <div><dt class="kicker">What a real-data test proves</dt><dd data-f="proves"></dd></div>
       <div><dt class="kicker">Reach for it when</dt><dd data-f="when"></dd></div>
     </dl>
-    <p class="verdict" data-f="repo"></p>
+    <p class="verdict"><span class="kicker vk">In this repository</span><span data-f="repo"></span></p>
     <p class="refs mono" data-refs></p>
   </div>
 </div>
@@ -174,6 +174,7 @@ const kindOf = (id: string) => EDGES[id].k;
   .facts div { border-top: 1px solid var(--rule); padding-top: 8px; }
   .facts dd { margin: 4px 0 0; font-size: 15px; }
   .verdict { margin: 18px 0 0; padding: 10px 14px; border-left: 3px solid var(--ink); background: var(--paper-2); max-width: none; }
+  .vk { display: block; margin-bottom: 3px; }
   .refs { margin: 12px 0 0; font-size: 11px; color: var(--ink-3); }
   .refs:empty { display: none; }
   .refs :global(a) { color: var(--ink-2); }

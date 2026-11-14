@@ -52,7 +52,7 @@ const startLadder = ladders.findIndex((x) => x.m.id === 'quakenet');
 
 const toc = [
   ['first-guess', 'A first guess'], ['wiring', 'Where data flows'], ['grey-box', 'Physics-informed?'],
-  ['ratchet', 'The ratchet'], ['worked-example', 'Worked example'], ['lenses', 'Eight lenses'], ['real-data', 'Real data, later'],
+  ['ratchet', 'The ratchet'], ['worked-example', 'Worked example'], ['lenses', 'Eight lenses'], ['real-data', 'Real data, later'], ['many-ways', 'Many ways'],
 ];
 ---
 <Base title="Mental models" description="Where ML Ratchet sits among other ways to combine physics and machine learning: the same boxes wired eleven ways, where physics enters each model, eight lenses, and where the no-real-training-data line could move." keywords={['physics-informed neural networks', 'domain randomization', 'surrogate model', 'Bayesian calibration', 'data assimilation', 'domain adaptation', 'transfer learning', 'grey-box modelling']}>
@@ -79,7 +79,7 @@ const toc = [
   </nav>
 
   <section class="sec wrap" id="first-guess">
-    <header class="sec-head">
+    <header class="sec-head reveal">
       <p class="kicker">01 · Baseline</p>
       <h2 class="section">A common first guess, <em>marked up</em></h2>
       <p class="muted">A common first reading of this project goes: build physics simulations of an area, produce data, find real data, train a model on it. Most of that holds. One clause is wrong, and three steps are missing.</p>
@@ -101,17 +101,17 @@ const toc = [
   </section>
 
   <section class="sec wrap" id="wiring">
-    <header class="sec-head">
+    <header class="sec-head reveal">
       <p class="kicker">02 · Compare approaches</p>
       <h2 class="section">Same boxes, <em>different wiring</em></h2>
-      <p class="muted">Every physics-plus-ML approach uses the same parts. They differ in which arrows are switched on. Pick one and watch where <span class="real-t">real data</span> and <span class="sim-t">simulated data</span> go.</p>
+      <p class="muted">Every physics-plus-ML approach uses the same parts. They differ in which arrows are switched on. Read them as a menu, not a ranking: each fits a different problem, and a model here can borrow one when its evidence points that way. Pick one and watch where <span class="real-t">real data</span> and <span class="sim-t">simulated data</span> go.</p>
     </header>
     <WiringDiagram approaches={approaches} start="repo" />
     <p class="note faint">The nine other approaches are general practice, each with one or two published references; the lines about this repository are read from its files.</p>
   </section>
 
   <section class="sec wrap" id="grey-box">
-    <header class="sec-head">
+    <header class="sec-head reveal">
       <p class="kicker">03 · A visitor’s question</p>
       <h2 class="section">Is this physics-informed ML? <em>Yes, in three places.</em></h2>
       <p class="muted">The textbook version of physics-informed ML puts the governing equations in the loss function (a PINN, in section 02). No model here does that. The physics sits upstream of the network and around it.</p>
@@ -164,7 +164,7 @@ const toc = [
   </section>
 
   <section class="sec wrap" id="ratchet">
-    <header class="sec-head">
+    <header class="sec-head reveal">
       <p class="kicker">04 · The mechanism</p>
       <h2 class="section">The ratchet, <em>from the logs</em></h2>
       <p class="muted">Each model keeps its ladder in <code>ratchet.yaml</code>. A rung is kept only if it clears the margin on the frozen simulated set and passes the real dev gate. {s.rungs} decisions so far, {s.rejected} of them rejections.</p>
@@ -190,7 +190,7 @@ const toc = [
   </section>
 
   <section class="sec wrap" id="worked-example">
-    <header class="sec-head">
+    <header class="sec-head reveal">
       <p class="kicker">05 · Worked example · RoadSim v2 → v2.1, 14 Nov 2026</p>
       <h2 class="section">The ratchet, <em>applied to a simulator</em></h2>
       <p class="muted">No network was trained in this example. RoadSim, the shared vehicle simulator, went through rungs of its own. Each was fitted on dev data only, and a fresh exam was frozen before any fitting began. RoadSim has moved on since; its current state is on the <a href={url('vehicle/')}>vehicle platform</a> page.</p>
@@ -212,7 +212,7 @@ const toc = [
   </section>
 
   <section class="sec wrap" id="lenses">
-    <header class="sec-head">
+    <header class="sec-head reveal">
       <p class="kicker">06 · Ways to hold it in mind</p>
       <h2 class="section">Eight <em>lenses</em></h2>
       <p class="muted">Each lens explains part of the method and hides another part. The first is the common first guess from section 01; the third is the smallest step on from it. The names and framings are this page’s own. The evidence lines come from the repository.</p>
@@ -221,7 +221,7 @@ const toc = [
   </section>
 
   <section class="sec wrap" id="real-data">
-    <header class="sec-head">
+    <header class="sec-head reveal">
       <p class="kicker">07 · An explainer, with possible directions</p>
       <h2 class="section">Why no real training data, <em>and where that line could move</em></h2>
       <p class="muted">The no-real-labels rule keeps the exam meaningful, and it has a cost: where a simulator cannot reach, real data could help. How far real data reaches is a dial with seven stops. Stops 0 to 2 describe this repository today. Stops 3 to 6, the signals and the recipe below are possible directions, not plans; the <a href={url('backlog/')}>backlog</a> lists the idea.</p>
@@ -255,6 +255,17 @@ const toc = [
         </ol>
         <p class="verdict">The difference between the two columns becomes a measurement in its own right: how much reality adds on top of physics, per fleet and per cycle.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="sec wrap close" id="many-ways">
+    <header class="sec-head reveal">
+      <p class="kicker">Close</p>
+      <h2 class="section">Many ways to build a model. <em>One way to judge a change.</em></h2>
+    </header>
+    <div class="close-body reveal">
+      <p>Each wiring in section 02 fits some problem better than the rest, and none of them is right everywhere, this repository’s own included. The collection uses one recipe today because, for every model in it, a credible simulator could be built and real labels were scarce or untrustworthy. Where that stops being true for a model, it can borrow another approach: a learned residual, a discrepancy term, a fine-tuned second ladder.</p>
+      <p>The method can change when the evidence says so. The ratchet is how a change gets judged. A new approach enters as a rung, with its pass mark fixed before the result is seen, and the result is logged either way. A kept rung changes the method for that model. A rejected one stays in the log, so the next attempt starts from what it showed.</p>
     </div>
   </section>
 
@@ -382,6 +393,9 @@ const toc = [
   .possible { margin: -2px 0 10px; color: var(--sim); }
   .recipe { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 8px; font-size: 15px; }
 
+  .close-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px 40px; max-width: 1080px; }
+  .close-body p { font-size: 18px; color: var(--ink-2); margin: 0; }
+  .close-body p + p { color: var(--ink); }
   .sources { padding-top: 70px; }
   .sources p.small { max-width: 90ch; margin-top: 8px; }
   .next { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
