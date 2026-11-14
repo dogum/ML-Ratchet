@@ -4,9 +4,13 @@ Every v2 physics feature ships behind an option that is off in physics v1. Run b
 since 13 Nov 2026 simulate()'s default is physics v2), RoadSim must reproduce the v1 fingerprint
 (tests/golden/roadsim_v1_fingerprint.json) to 1e-9 relative: new physics may only change results when it is switched on.
 
+Since 14 Nov 2026 physics v2 has its own golden file (tests/golden/roadsim_v2_fingerprint.json, options
+'roadsim-physics-v2'): later presets (v2.1) may change hybrid and plug-in runs only, so every non-hybrid run of a later
+preset must match the v2 golden to 1e-9 (tests/test_roadsim_v2_fingerprint.py).
+
 usage:
-    python fingerprint.py write   # (re)write the golden file — only when PHYSICS_VERSION's defaults change on purpose
-    python fingerprint.py check   # compare the current code against it
+    python fingerprint.py write [--options roadsim-physics-v2]   # (re)write a golden file — only on purpose
+    python fingerprint.py check [--options roadsim-physics-v2]   # compare the current code against it
 """
 import os, sys, json
 import numpy as np
@@ -14,6 +18,8 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..', '..'))
 GOLD = os.path.join(REPO, 'tests', 'golden', 'roadsim_v1_fingerprint.json')
+GOLDS = {'roadsim-physics-v1': GOLD, 'roadsim-physics-v2': os.path.join(REPO, 'tests', 'golden', 'roadsim_v2_fingerprint.json')}
+HYBRID_ARCHS = ('hev_powersplit', 'hev_parallel_p2', 'hev_series', 'phev_powersplit', 'phev_series')
 
 from roadsim import simulate, make_trip, load_vehicle
 from roadsim.generator import generate_vehicles
@@ -30,12 +36,12 @@ def vehicles():
     return vs
 
 
-def run():
+def run(options='roadsim-physics-v1'):
     out = {}
     for i, spec in enumerate(vehicles()):
         cases = CASES if i < 28 else [('hd_transient', dict(T_amb=20.0))]
         for c, kw in cases:
-            r = simulate(spec, make_trip(c, **kw), record=True, options='roadsim-physics-v1')
+            r = simulate(spec, make_trip(c, **kw), record=True, options=options)
             s = r['summary']
             key = f'{i:02d}|{spec.get("architecture")}|{c}|{json.dumps(kw, sort_keys=True)}'
             out[key] = {k: (None if s.get(k) is None else float(s[k])) for k in KEYS}
@@ -44,9 +50,15 @@ def run():
     return out
 
 
-def compare(a, b, tol=1e-9):
+def is_hybrid_key(k):
+    return k.split('|')[1] in HYBRID_ARCHS
+
+
+def compare(a, b, tol=1e-9, keys=None):
     bad = []
     for k in sorted(set(a) | set(b)):
+        if keys is not None and not keys(k):
+            continue
         if k not in a or k not in b:
             bad.append(f'{k}: missing'); continue
         for q in a[k]:
@@ -60,12 +72,14 @@ def compare(a, b, tol=1e-9):
 
 if __name__ == '__main__':
     cmd = sys.argv[1] if len(sys.argv) > 1 else 'check'
-    cur = run()
+    opt = sys.argv[sys.argv.index('--options') + 1] if '--options' in sys.argv else 'roadsim-physics-v1'
+    gold = GOLDS[opt]
+    cur = run(opt)
     if cmd == 'write':
-        os.makedirs(os.path.dirname(GOLD), exist_ok=True)
-        json.dump(cur, open(GOLD, 'w', encoding='utf-8'), indent=0, sort_keys=True)
-        print('wrote', len(cur), 'runs to', os.path.relpath(GOLD, REPO))
+        os.makedirs(os.path.dirname(gold), exist_ok=True)
+        json.dump(cur, open(gold, 'w', encoding='utf-8', newline='\n'), indent=0, sort_keys=True)
+        print('wrote', len(cur), 'runs to', os.path.relpath(gold, REPO))
     else:
-        bad = compare(json.load(open(GOLD, encoding='utf-8')), cur)
-        print('fingerprint:', 'matches v1' if not bad else f'{len(bad)} differences'); print('\n'.join(bad[:40]))
+        bad = compare(json.load(open(gold, encoding='utf-8')), cur)
+        print('fingerprint:', f'matches {opt}' if not bad else f'{len(bad)} differences'); print('\n'.join(bad[:40]))
         sys.exit(1 if bad else 0)
