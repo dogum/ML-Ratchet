@@ -24,7 +24,7 @@ out = dict(weights={k: np.round(z[k], 7).tolist() for k in z.files}, feat_names=
 for cb in lab.combos():
     if cb['key'] not in ('prius_aa', 'p2_aa', 'bus_zh', 'volt_aa'): continue
     st = Rec(net=net, onoff='ecms', Kp=6, preview_s=30, nav=False); st.X = []
-    o = simulate(cb['spec'], cb['trip'], strategy=st, init_soc=cb['soc0'], init_temps=cb['temps'], record=True)
+    o = simulate(cb['spec'], cb['trip'], strategy=st, init_soc=cb['soc0'], init_temps=cb['temps'], record=True, options='roadsim-physics-v1')
     veh = get_vehicle(cb['spec']); b = veh.battery
     X = st.X
     # base states: decision steps at evenly spaced moments while moving

@@ -54,7 +54,7 @@ def run(ckpt, nper=50, K=4):
         inp = []
         for k in range(K):
             route, _ = routes.real_route(rng); simr = routes.perturb_for_sim(route, rng)
-            out_ = simulate(s, simr, init_temps=dict(WARM, battery=float(np.mean(simr['T_amb'])) + 10), init_soc=0.6 if arch != 'bev' else 0.8)
+            out_ = simulate(s, simr, init_temps=dict(WARM, battery=float(np.mean(simr['T_amb'])) + 10), init_soc=0.6 if arch != 'bev' else 0.8, options='roadsim-physics-v1')
             lg = obdlog.emulate(out_, cfg, rng, s)
             a_ = {k2: route[k2] for k2 in ['grade', 'T_amb', 'wind_speed', 'wind_dir', 'heading', 'rho_air']} | lg
             fl = dict(has_fuel=arch != 'bev', fuel_est=arch != 'bev', has_rpm=arch != 'bev', has_batt=arch == 'bev', has_aux=False)

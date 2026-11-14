@@ -74,7 +74,7 @@ def lab_labels(spec):
     W = warm_temps(24)
     r = {}
     def run(c, cold=False, soc=None):
-        return simulate(spec, _trip(c), init_temps=None if cold else W, init_soc=soc, record=False)
+        return simulate(spec, _trip(c), init_temps=None if cold else W, init_soc=soc, record=False, options='roadsim-physics-v1')
     if arch == 'bev':
         u = per_mile(run('udds', soc=0.9), fuel)[1]; h = per_mile(run('hwfet', soc=0.9), fuel)[1]
         for k, dc in (('city', u), ('hwy', h)):

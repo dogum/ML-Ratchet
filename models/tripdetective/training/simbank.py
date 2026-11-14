@@ -51,7 +51,7 @@ def sim_vehicle(spec, K, rng, prior):
         temps = WARM if rng.random() < 0.85 else None
         if temps is not None and prior != 'v1':
             temps = dict(WARM, battery=float(np.mean(simr['T_amb']) + rng.uniform(5, 15)))   # pack warm from driving
-        out = simulate(s2, simr, init_temps=temps, init_soc=soc0, rng=int(rng.integers(1 << 30)))
+        out = simulate(s2, simr, init_temps=temps, init_soc=soc0, rng=int(rng.integers(1 << 30)), options='roadsim-physics-v1')
         lg = out['ledger']
         if not lg.get('ok', 1): continue
         log = obdlog.emulate(out, cfg, rng, spec)

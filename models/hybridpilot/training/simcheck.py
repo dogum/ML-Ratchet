@@ -70,7 +70,7 @@ def main(split, ckpt=None):
                     stg = HybridPilot(net=net, preview_s=0, nav=False, **HP_PARAMS)
                 else:
                     stg = sname
-                o = simulate(spec, tr, strategy=stg, init_soc=soc0, init_temps=dict(WARM), record=True)
+                o = simulate(spec, tr, strategy=stg, init_soc=soc0, init_temps=dict(WARM), record=True, options='roadsim-physics-v1')
             except Exception as ex:
                 print('fail', r.trip_id, sname, ex); continue
             F_sim = float(o['fuel_rate'][valid].sum())

@@ -1,12 +1,16 @@
 """RoadSim physics options (v2 and later).
 
-Every option defaults to the v1 behaviour, so RoadSim with no options reproduces physics v1 exactly
-(tests/test_roadsim_fingerprint.py). A physics version is a named set of option values (PRESETS); the calibration
-pass fits the numeric parameters on dev data only.
+Every option's DEFAULTS value is the v1 behaviour: options=None, 'roadsim-physics-v1' or a dict without a 'preset'
+key build on physics v1, which stays reproducible exactly (tests/test_roadsim_fingerprint.py). A physics version is a
+named set of option values (PRESETS); the calibration passes fitted the numbers on dev data only. Since 14 Nov 2026
+simulate() without an options argument runs DEFAULT_PHYSICS = 'roadsim-physics-v2' (loaded from
+data/calibration_v2.json; decisions in CALIBRATION.md).
 
-    simulate(spec, trip, options={'p2_torque_converter': True})       # per run
-    spec['physics'] = {'cabin_model': 'v2'}                          # per vehicle
-    simulate(spec, trip, options='roadsim-physics-v2')               # a whole preset
+    simulate(spec, trip)                                              # physics v2 (the default)
+    simulate(spec, trip, options='roadsim-physics-v1')               # physics v1, exactly
+    simulate(spec, trip, options={'p2_torque_converter': True})       # v1 plus one option
+    simulate(spec, trip, options={'preset': 'roadsim-physics-v2', 'regen_share': {}})   # v2 with one change
+    spec['physics'] = {'hvac_model': 'v2'}                           # per vehicle
 
 Precedence: DEFAULTS < preset < spec['physics'] < options dict. Unknown keys raise, so a typo never silently
 falls back to v1.
@@ -30,10 +34,14 @@ DEFAULTS = {
     'hybrid_min_off_s': None,           # s, minimum engine-off time (None = v1: 2 s, DP 0)
     'hybrid_stay_on_P_frac': None,      # engine stays on while wheel power > this x engine P_max (None = no rule)
     'start_penalty_J': 0.0,             # J, virtual drivability cost per start in cost-based choices (not fuel)
+    'regen_share': {},                  # {architecture: s}: series (cooperative) brake blending gives regen at most s x the braking
+                                        # force, friction brakes the rest (1 = v1: regen up to the motor/battery/stability caps)
+    'hybrid_chg_cap_frac': None,        # ECMS family: battery charging from the engine while driving <= this x engine P_max (None = no cap)
     'series_direct_drive': False,       # e:HEV/i-MMD lock-up clutch: engine drives the wheels directly at cruise
     'series_dd_rpm_per_kph': 20.0,      # rpm per km/h, engine speed in direct drive (~2000 rpm at 100 km/h)
     'series_dd_v_min_kph': 70.0,        # km/h, lowest direct-drive speed
     'series_dd_v_max_kph': 140.0,       # km/h, highest direct-drive speed
+    'series_dd_prefer': False,          # ECMS family: inside the lock-up window a running engine always drives through the clutch
     'series_dd_eta': 0.96,              # -, engine-to-wheel gear efficiency in direct drive (two meshes + final drive)
     'powersplit_calibration': False,    # Toyota-type production rules on power-split strategies (below)
     'ps_engine_on_kph': 72.0,           # km/h, engine fuelled whenever driving above this (with positive demand)
@@ -47,6 +55,7 @@ DEFAULTS = {
     'phev_cd_P_on_frac': 0.9,           # power-split PHEV: engine joins in CD above this x MG2 power
     'phev_cd_v_max_kph': 135.0,         # km/h, power-split PHEV: engine joins in CD above this speed
     'phev_heat_engine_below_C': None,   # C, PHEV with electric heat starts the engine for heat below this (None = never)
+    'phev_heat_cold_start_only': False, # ... only in a trip that began with a cold engine (coolant below ps_cat_cold_C)
     'dp_min_on_off': False,             # DP honours hybrid_min_on_s / hybrid_min_off_s and start_penalty_J
     'donor_model': 'v1',                # generate_vehicles: 'v2' draws hybrid bodies from real hybrid records, vans from minivans
     # ---- end powertrain and hybrid control
@@ -71,6 +80,8 @@ DEFAULTS = {
     'eng_transient_fuel': 0.0,     # s: extra fuel fraction per (brake-torque rise per second / peak torque): tip-in
                                    # enrichment and port/wall wetting that a steady-state map lacks; light-duty gasoline
                                    # engines only (0 = v1)
+    'eng_fullload_enrich': 0.0,    # fuel fraction added at full torque (component-protection enrichment), ramping from
+    'eng_fullload_frac': 0.85,     # ... this share of the full-load torque; light-duty gasoline engines only (0 = v1)
     'axle_cold': False,            # final-drive oil + wheel-bearing drag rising in the cold (axle oil temperature node)
     'tire_thermal': False,         # tyre temperature node; rolling resistance follows it (replaces the v1 warm-up factor)
     'tire_temp_coef': 0.008,       # 1/K rolling-resistance change per K of tyre temperature (ISO 28580, passenger tyres)
@@ -82,6 +93,7 @@ DEFAULTS = {
     'hvac_seat_heat': False,       # seat + steering-wheel heaters; air set point 2 K lower (v2)
     'hvac_defrost': False,         # defrost / demist: fresh air, high blower, compressor dehumidifies above 3 C (v2)
     'ambient_rh': 0.4,             # ambient relative humidity when the trip has no 'rh' (v2)
+    'phev_engine_heat': False,     # plug-ins with a PTC or heat pump also heat from a warm engine (>= 50 C coolant) first
     'phev_electric_heat': False,   # PHEVs with engine heat use an electric heater while the coolant is cold (no start for heat)
     'bus_aux': False,              # bus accessories: 24 V alternator, air compressor (stops, brakes), steering, door-open air
     'motor_staging': 0,            # machines above 300 kW act as N units; idle units shed at light load (0 = v1)
@@ -141,6 +153,10 @@ PRESETS = {
 }
 
 
+# the physics simulate() runs when no options are given (options=None is always physics v1)
+DEFAULT_PHYSICS = 'roadsim-physics-v2'
+
+
 def resolve(options=None, spec=None):
     """-> a full option dict (a fresh copy)."""
     out = copy.deepcopy(DEFAULTS)
@@ -163,7 +179,7 @@ def resolve(options=None, spec=None):
 
 
 def _load_v2():
-    """the draft v2 preset: option values (fitted numbers included) from data/calibration_v2.json."""
+    """the v2 preset: option values (fitted numbers included) from data/calibration_v2.json."""
     import json, os
     p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'calibration_v2.json')
     if not os.path.exists(p):

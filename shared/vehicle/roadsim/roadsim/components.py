@@ -170,6 +170,9 @@ class Engine:
                 f += x[2] * max(0.0, 1.0 - max(T * w, 0.0) / x[3])
             if len(x) > 4:                       # transient fuel: torque rise since the last step (option eng_transient_fuel)
                 f *= 1.0 + x[5] * max(0.0, T - x[4])
+            en = getattr(self, '_enr', None)
+            if en:                               # full-load enrichment (option eng_fullload_enrich)
+                f *= 1.0 + en[0] * max(0.0, T / max(self.tmax_curve(w), 1.0) - en[1]) / (1.0 - en[1])
             return f
         if T_eng >= self.T_hot:
             return self.fuel_grid(w, T)
@@ -183,6 +186,10 @@ class Engine:
                 f = f + x[2] * np.maximum(0.0, 1.0 - np.maximum(np.asarray(T) * w, 0.0) / x[3])
             if len(x) > 4:
                 f = f * (1.0 + x[5] * np.maximum(0.0, np.asarray(T) - x[4]))
+            en = getattr(self, '_enr', None)
+            if en:
+                tf = np.asarray(T) / np.maximum(self.tmax_curve.vec(np.asarray(w, float)), 1.0)
+                f = f * (1.0 + en[0] * np.maximum(0.0, tf - en[1]) / (1.0 - en[1]))
             return f
         return self.fuel_grid.vec(w, T + self.cold_dT(T_eng))
 

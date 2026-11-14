@@ -36,7 +36,7 @@ def car():
 def test_defaults_are_v1(car):
     assert not thermal.active(resolve(None))
     assert all(k in DEFAULTS for k in B2)
-    a = simulate(car, make_trip('udds', T_amb=-7.0))
+    a = simulate(car, make_trip('udds', T_amb=-7.0), options='roadsim-physics-v1')
     b = simulate(car, make_trip('udds', T_amb=-7.0), options={k: DEFAULTS[k] for k in B2})
     assert a['summary']['fuel_g'] == b['summary']['fuel_g']
     assert np.array_equal(a['T_cabin'], b['T_cabin'])

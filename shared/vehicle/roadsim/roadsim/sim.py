@@ -14,7 +14,7 @@ import numpy as np
 from .constants import G, R_AIR, T0K, FUELS, MPH, MILE, GAL, KWH, EPA_KWH_PER_GAL
 from .vehicle import Vehicle
 from .powertrain import ARCH_CLASSES, ETA_ALT, ETA_DCDC
-from .options import resolve as resolve_options
+from .options import resolve as resolve_options, DEFAULT_PHYSICS
 from .strategies import make_strategy
 from . import thermal as _thermal, aging as _aging
 
@@ -95,8 +95,11 @@ def _f(x):
     return float(x)
 
 
+_DEFAULT_PHYSICS = object()      # simulate(..., options omitted) -> DEFAULT_PHYSICS; options=None -> physics v1
+
+
 def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, init_temps=None, rng=None,
-             driver=None, record=True, check=True, ledger_tol=0.005, options=None):
+             driver=None, record=True, check=True, ledger_tol=0.005, options=_DEFAULT_PHYSICS):
     """Simulate one trip. See README.md for the full description of inputs and outputs.
 
     vehicle_spec : dict (contract spec), path/id (see load_vehicle), or a compiled Vehicle
@@ -107,7 +110,9 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
     init_temps   : {'engine': C, 'cabin': C, 'battery': C, 'tire_warm': 0..1} (default: soaked at ambient, cold tires)
     rng          : numpy Generator or seed -> small random driver gain variation (None = deterministic)
     driver       : {'Kp': 1/s, 'Ki': 1/s^2, 'a_max': m/s2, 'a_min': m/s2}
-    options      : physics options (roadsim/options.py): a dict, a preset name, or None (= physics v1)
+    options      : physics options (roadsim/options.py): a preset name, a dict, or None. Omitted = DEFAULT_PHYSICS
+                   ('roadsim-physics-v2' since 14 Nov 2026); None or 'roadsim-physics-v1' = physics v1 exactly; a dict
+                   without a 'preset' key applies its values on top of v1
     """
     t_wall = time.perf_counter()
     veh = get_vehicle(vehicle_spec)
@@ -116,6 +121,8 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
     arch = veh.arch
     strat = make_strategy(arch, strategy if strategy is not None else (veh.control.get('strategy') and
                                                                         {'strategy': veh.control.get('strategy'), 'params': veh.control.get('params', {})}))
+    if options is _DEFAULT_PHYSICS:
+        options = DEFAULT_PHYSICS
     opt = resolve_options(options, veh.spec)
     strat.opt = opt
     for _m in veh.motors.values():          # B2: light-load motor options, battery state of health (v1 = no change)
@@ -135,6 +142,7 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
     hybrid = strat.is_hybrid
     elec = bat is not None
     regen_mode = strat.regen_blend or veh.regen.get('blend', 'series')
+    pt.regen_share = float((opt.get('regen_share') or {}).get(arch, 1.0))     # v2 brake-blending calibration (1 = v1)
     if rng is not None and not isinstance(rng, np.random.Generator):
         rng = np.random.default_rng(rng)
 
@@ -608,7 +616,7 @@ def _plan(pt, strat, veh, F, u, st, env, regen_mode, hybrid, elec, k, dt, trip, 
         elif regen_mode == 'one_pedal':
             F_reg = min(Fb, max(F_cap, 0.0))
         else:
-            F_reg = min(Fb, F_cap)
+            F_reg = min(getattr(pt, 'regen_share', 1.0) * Fb, F_cap)
         if arch == 'bev':
             plan = pt.plan(-F_reg, u, st, env)
         else:

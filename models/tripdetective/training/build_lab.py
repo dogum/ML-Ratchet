@@ -62,7 +62,7 @@ def build(ckpt):
                     logs, inp, led = [], [], []
                     for r in R:
                         trip = {k: r[k] for k in routes.KEYS}
-                        out = simulate(s, trip, init_temps=dict(WARM, battery=float(np.mean(r['T_amb'])) + 10), init_soc=0.6 if arch != 'bev' else 0.8)
+                        out = simulate(s, trip, init_temps=dict(WARM, battery=float(np.mean(r['T_amb'])) + 10), init_soc=0.6 if arch != 'bev' else 0.8, options='roadsim-physics-v1')
                         lg = obdlog.emulate(out, cfg, rng, s)
                         a = {k: r[k] for k in ['grade', 'T_amb', 'wind_speed', 'wind_dir', 'heading', 'rho_air']} | lg
                         a['v'] = r['v']; a['valid'] = np.ones(len(r['v']))           # shared logged speed, no dropouts

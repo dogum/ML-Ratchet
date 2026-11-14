@@ -32,7 +32,7 @@ def compare(spec, trip, init_soc=None, warm=True, strategies=('hybridpilot', 'ae
     rows = []
     for s in strategies:
         st = HP.make_roadsim_strategy(**hp_params) if s == 'hybridpilot' else (RULE[arch] if s == 'rule' else s)
-        o = simulate(spec, trip, strategy=st, init_soc=init_soc, init_temps=dict(WARM) if warm else None, record=True)
+        o = simulate(spec, trip, strategy=st, init_soc=init_soc, init_temps=dict(WARM) if warm else None, record=True, options='roadsim-physics-v1')
         S = o['summary']
         rows.append(dict(strategy=s if s != 'rule' else RULE[arch], fuel_g=S['fuel_g'], L_per_100km=S.get('L_per_100km'),
                          batt_kWh_out=S['batt_kWh_out'], soc_start=S['soc_start'], soc_end=S['soc_end'],

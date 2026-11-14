@@ -16,7 +16,7 @@ def _trip(c):
 def cycle_fuel_per_mi(spec, cyc, cold=False, soc=None):
     """gal/mi on a cycle (fuel corrected to zero net battery change roughly: HEV SOC is mid-window and A-ECMS holds it)."""
     it = None if cold else warm_temps(24)
-    o = simulate(spec, _trip(cyc), init_temps=it, init_soc=soc, record=False)
+    o = simulate(spec, _trip(cyc), init_temps=it, init_soc=soc, record=False, options='roadsim-physics-v1')
     s = o['summary']
     return 1.0 / max(s['mpg'], 1e-3)
 

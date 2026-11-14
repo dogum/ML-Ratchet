@@ -40,7 +40,7 @@ def main():
             prm.update(extra)
             st = HybridPilot(**prm)
             try:
-                o = simulate(c['spec'], c['trip'], strategy=st, init_soc=c['soc0'], init_temps=c['temps'], record=False)
+                o = simulate(c['spec'], c['trip'], strategy=st, init_soc=c['soc0'], init_temps=c['temps'], record=False, options='roadsim-physics-v1')
             except Exception as ex:
                 print('fail', ci, ex, flush=True); continue
             L = st.log

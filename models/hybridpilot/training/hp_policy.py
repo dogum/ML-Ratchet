@@ -341,7 +341,7 @@ class HybridPilot(HybridStrategy):
 def run_policy(spec, trip, soc0, temps, params, record=True):
     from roadsim import simulate
     strat = HybridPilot(**params)
-    out = simulate(spec, trip, strategy=strat, init_soc=soc0, init_temps=temps, record=record)
+    out = simulate(spec, trip, strategy=strat, init_soc=soc0, init_temps=temps, record=record, options='roadsim-physics-v1')
     return out, strat
 
 

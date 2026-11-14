@@ -26,7 +26,7 @@ def test_conv_tc_options_default_is_v1_and_cost_fuel():
     s = _car(); s['transmission'] = {'type': 'AT', 'gears': [4.7, 3.0, 2.0, 1.5, 1.2, 1.0, 0.8, 0.65]}
     t = make_trip('udds', T_amb=20.0)
     w = dict(engine=88.0, driveline=80.0, tire_warm=1.0)
-    a = simulate(s, t, init_temps=w)['summary']['fuel_g']
+    a = simulate(s, t, init_temps=w, options='roadsim-physics-v1')['summary']['fuel_g']
     b = simulate(s, t, init_temps=w, options={'conv_tc_open_gears': 0, 'conv_tc_slip_rpm': 0.0})['summary']['fuel_g']
     assert a == b
     o = simulate(s, t, init_temps=w, options={'conv_tc_open_gears': 2, 'conv_tc_slip_rpm': 40.0})
@@ -36,7 +36,7 @@ def test_conv_tc_options_default_is_v1_and_cost_fuel():
 
 def test_obd_label_model():
     s = _car()
-    o = simulate(s, make_trip('udds', T_amb=20.0), init_temps=dict(engine=88.0, driveline=80.0, tire_warm=1.0))
+    o = simulate(s, make_trip('udds', T_amb=20.0), init_temps=dict(engine=88.0, driveline=80.0, tire_warm=1.0), options='roadsim-physics-v1')
     f = np.asarray(o['fuel_rate'], float)
     cut = (np.asarray(o['eng_rpm']) > 300) & (f <= 1e-9)
     assert cut.sum() > 20                                         # UDDS has fuel cut-off seconds
@@ -63,11 +63,11 @@ def test_cold_ftp_procedure_heater_on():
 def test_onroad_aux_and_transient_fuel():
     s = _car(); t = make_trip('udds', T_amb=20.0)
     w = dict(engine=88.0, driveline=80.0, tire_warm=1.0)
-    a = simulate(s, t, init_temps=w)['summary']['fuel_g']
+    a = simulate(s, t, init_temps=w, options='roadsim-physics-v1')['summary']['fuel_g']
     b = simulate(s, t, init_temps=w, options={'onroad_aux_W': {'conv': 500.0}})['summary']['fuel_g']
     assert b > a * 1.02                                            # road spec: the on-road load applies
     d = dict(s, tire=dict(s.get('tire') or {}, temp_effects=False))
-    a2 = simulate(d, t, init_temps=w)['summary']['fuel_g']
+    a2 = simulate(d, t, init_temps=w, options='roadsim-physics-v1')['summary']['fuel_g']
     assert simulate(d, t, init_temps=w, options={'onroad_aux_W': {'conv': 500.0}})['summary']['fuel_g'] == a2   # dyno: never
     o = simulate(s, t, init_temps=w, options={'eng_transient_fuel': 0.5})
     assert o['summary']['fuel_g'] > a and o['ledger']['closure_rel'] < 1e-3

@@ -1,5 +1,5 @@
-"""RoadSim v2 physics ships behind options that are off by default: with every option off, it must still reproduce
-the v1 behaviour fingerprint (shared/vehicle/checks/fingerprint.py) to 1e-9."""
+"""RoadSim physics v1 stays reproducible by name: simulate(..., options='roadsim-physics-v1') (every v2 option off) must
+reproduce the v1 behaviour fingerprint (shared/vehicle/checks/fingerprint.py) to 1e-9. simulate()'s default is v2."""
 import json, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))

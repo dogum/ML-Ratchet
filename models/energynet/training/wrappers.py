@@ -64,7 +64,7 @@ def targets(out, spec, T_sim, dyno=False):
 
 def run(spec, trip, flags='none', init_soc=None, init_temps=None, meta=None, strategy=None, record=True, rng=None):
     fl = set(flags.split('+'))
-    out = simulate(spec, trip, strategy=strategy, init_soc=init_soc, init_temps=init_temps, record=True, rng=rng)
+    out = simulate(spec, trip, strategy=strategy, init_soc=init_soc, init_temps=init_temps, record=True, rng=rng, options='roadsim-physics-v1')
     if (spec.get('engine') or {}) and out.get('eng_rpm') is not None:
         out['fuel_rate_maf'] = maf_fuel(out, spec) if 'maf' in fl else np.asarray(out['fuel_rate'], float)
     return out

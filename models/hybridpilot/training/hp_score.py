@@ -66,7 +66,7 @@ def dp_curve(spec, trip, soc0, temps, targets, stage=None, veh=None):
     pts = []; outs = {}
     for x in targets:
         sol = dp_backward(veh, stage, soc_final=x)
-        o = simulate(spec, trip, strategy=DPFixed(sol=sol), init_soc=soc0, init_temps=temps, record=True)
+        o = simulate(spec, trip, strategy=DPFixed(sol=sol), init_soc=soc0, init_temps=temps, record=True, options='roadsim-physics-v1')
         m = metrics(o, veh.arch, soc0); m['target'] = x
         pts.append(m); outs[x] = (o, sol)
     return pts, outs, stage
@@ -109,7 +109,7 @@ def add_matched(case, veh, stage, pts, soc_end, tol=0.01):
     b = veh.battery
     x = float(min(max(soc_end, b.soc_lo + 0.005), b.soc_hi - 0.005))
     sol = dp_backward(veh, stage, soc_final=x)
-    o = simulate(case['spec'], case['trip'], strategy=DPFixed(sol=sol), init_soc=case['soc0'], init_temps=case['temps'], record=True)
+    o = simulate(case['spec'], case['trip'], strategy=DPFixed(sol=sol), init_soc=case['soc0'], init_temps=case['temps'], record=True, options='roadsim-physics-v1')
     m = metrics(o, veh.arch, case['soc0']); m['target'] = x; m['matched'] = True
     pts.append(m)
     return True
@@ -150,11 +150,11 @@ def run_case(case, policies=None, baselines=True, extra_targets=None, keep_stage
     res['dp'] = dict(pts[jn])
     names = baseline_names(veh.arch) if baselines else []
     for nm in names:
-        o = simulate(spec, trip, strategy=nm, init_soc=soc0, init_temps=temps, record=True)
+        o = simulate(spec, trip, strategy=nm, init_soc=soc0, init_temps=temps, record=True, options='roadsim-physics-v1')
         res[nm] = metrics(o, veh.arch, soc0)
     for nm, prm in (policies or {}).items():
         st = HybridPilot(**prm)
-        o = simulate(spec, trip, strategy=st, init_soc=soc0, init_temps=temps, record=True)
+        o = simulate(spec, trip, strategy=st, init_soc=soc0, init_temps=temps, record=True, options='roadsim-physics-v1')
         res[nm] = metrics(o, veh.arch, soc0)
     for nm, m in res.items():
         if nm != 'dp':

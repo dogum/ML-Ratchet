@@ -82,7 +82,7 @@ def score_policy(setname, params_fn, base=None, cases=None, match=True):
             continue
         st = HybridPilot(**params_fn(c))
         try:
-            o = simulate(c['spec'], c['trip'], strategy=st, init_soc=c['soc0'], init_temps=c['temps'], record=True)
+            o = simulate(c['spec'], c['trip'], strategy=st, init_soc=c['soc0'], init_temps=c['temps'], record=True, options='roadsim-physics-v1')
         except Exception as ex:
             print('policy FAIL', c['case_id'], repr(ex), flush=True); continue
         m = metrics(o, b['_meta']['arch'], c['soc0'])

@@ -179,7 +179,7 @@ def run_trip(spec, trip, soc0, v):
             stg = capture_strategy(**pols[nm]) if (nm == 'hybridpilot' and v['tag'] == 'base') else HP.make_roadsim_strategy(**pols[nm])
         else:
             stg = PL.RULE[veh.arch] if nm == 'rule' else nm
-        o = simulate(spec, trip, strategy=stg, init_soc=soc0, init_temps=temps, record=True)
+        o = simulate(spec, trip, strategy=stg, init_soc=soc0, init_temps=temps, record=True, options='roadsim-physics-v1')
         runs[nm] = (o, S.metrics(o, veh.arch, soc0))
         if nm == 'hybridpilot' and v['tag'] == 'base':
             cap = stg

@@ -102,7 +102,7 @@ def run(ckpt, params, previews=(0, 10, 30, 60)):
             names = {'rule': EV.RULE[vv.arch], 'ecms': 'ecms', 'aecms': 'aecms'}
             for nm in list(names) + list(pols):
                 stg = HybridPilot(**pols[nm]) if nm in pols else names[nm]
-                o = simulate(spec, trip, strategy=stg, init_soc=cb['soc0'], init_temps=cb['temps'], record=True)
+                o = simulate(spec, trip, strategy=stg, init_soc=cb['soc0'], init_temps=cb['temps'], record=True, options='roadsim-physics-v1')
                 runs[nm] = (o, metrics(o, vv.arch, cb['soc0']))
                 if phev:
                     add_matched(case, vv, stage, pts, runs[nm][1]['soc_end'])

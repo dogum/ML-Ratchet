@@ -64,7 +64,7 @@ def run(ntr=20, tag='v1', seed=0, prior='v1'):
             soc0 = None
             if np.isfinite(a['soc']).any(): soc0 = float(np.nanmedian(a['soc'][:30])) if np.isfinite(a['soc'][:30]).any() else None
             sp = priors.vehicle_prior(copy.deepcopy(spec), rng, prior)
-            out = simulate(sp, a, init_temps=dict(WARM, battery=float(np.nanmean(a['T_amb']) + 10)) if prior != 'v1' else WARM, init_soc=soc0)
+            out = simulate(sp, a, init_temps=dict(WARM, battery=float(np.nanmean(a['T_amb']) + 10)) if prior != 'v1' else WARM, init_soc=soc0, options='roadsim-physics-v1')
             cfg = obdlog.logger_config(row.architecture, rng, fuel_src=FSRC.get(m['fuel_source'], 'maf'))
             cfg['fuel'] = FSRC.get(m['fuel_source'])
             cfg['rpm'] = bool(np.isfinite(a['engine_rpm']).mean() > 0.5)

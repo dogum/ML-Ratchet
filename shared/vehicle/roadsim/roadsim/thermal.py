@@ -145,7 +145,8 @@ def _engine_active(o):
     return (o['engine_thermal'] != 'v1' or o['oil_viscosity'] != 'arrhenius' or o['cold_enrich'] != 0.0
             or o['warmup_enrich'] != 0.0 or o['eng_dfmep_bar'] != 0.0 or o['eng_eta_scale'] != 1.0
             or o['eng_lowload_W_per_L'] != 0.0
-            or bool(o['eng_family_adj']) or o['fead_drag_Nm'] != 0.0 or o.get('eng_transient_fuel', 0.0) != 0.0)
+            or bool(o['eng_family_adj']) or o['fead_drag_Nm'] != 0.0 or o.get('eng_transient_fuel', 0.0) != 0.0
+            or o.get('eng_fullload_enrich', 0.0) != 0.0)
 
 
 def active(o):
@@ -223,6 +224,9 @@ class Thermal:
                          if (veh.fuel == 'gasoline' and not veh.hd) else 0.0)   # per (Nm/s)
             self.T_e_prev = None
             e._x2 = (0.0, 1.0, 0.0, 1.0) if self.eng_on_mod else None
+            k_en = float(opt.get('eng_fullload_enrich', 0.0) or 0.0)
+            e._enr = ((k_en, float(opt.get('eng_fullload_frac', 0.85))) if (k_en and veh.fuel == 'gasoline' and not veh.hd)
+                      else None)
         self.w_e = e.w_idle if e is not None else 0.0          # previous step's engine speed (belt-driven loads)
         # ---------------- driveline oil (transmission) viscosity law
         self.f_dl_vogel = opt['oil_viscosity'] == 'vogel'
@@ -278,8 +282,15 @@ class Thermal:
             self.T_lp = it.get('ptc_loop', st['T_cab'])
             self.Q_lp = 0.0; self.P_ptc = 0.0
         self.src = cab.source
-        if opt['phev_electric_heat'] and self.arch in ('phev_series', 'phev_powersplit') and self.src == 'engine':
+        no_ptc = getattr(cab, 'spec_ptc_W', None) == 0          # spec says: no electric heater (2013 Ford Energi)
+        if no_ptc:
+            self.ptc_max = 0.0
+        if opt['phev_electric_heat'] and self.arch in ('phev_series', 'phev_powersplit') and self.src == 'engine' and not no_ptc:
             self.src = 'engine+ptc'
+        if opt.get('phev_engine_heat') and self.arch in ('phev_series', 'phev_powersplit') and self.src in ('ptc', 'heat_pump'):
+            # plug-ins with an electric heater also have a heater core on the engine loop: a warm engine heats the cabin
+            # (v1 / B2: a 'ptc' plug-in heated electrically even in charge sustaining, the engine recharging the battery)
+            self.src = 'engine+ptc' if self.src == 'ptc' else 'engine+hp'
         # step results handed from aux() to post()
         self.m_a = 0.0; self.T_sup = 0.0; self.w_sup = 0.0; self.Q_core_eng = 0.0; self.m_door = 0.0
         self.Q_eng_heat = 0.0; self._Q_del_v1 = 0.0; self.leak = 0.0
@@ -522,6 +533,18 @@ class Thermal:
             if src == 'engine+ptc' and rest > 0.0:
                 Qp, P_e = self._ptc(rest, T_in, m_a, Ta)
                 Q += Qp
+        elif src == 'engine+hp':
+            Q = min(Q_req, P['heater_core_eff'] * m_a * CP_AIR * max(0.0, st['T_eng'] - T_in)) if st['T_eng'] >= 50.0 else 0.0
+            self.Q_core_eng += Q
+            rest = Q_req - Q
+            if rest > 0.0:
+                cap = cab.Q_heat_max * min(max(P['hp_cap_lo'] + P['hp_cap_slope'] * (Ta + 15.0), P['hp_cap_lo']), 1.0)
+                Qh = min(rest, cap)
+                P_e = Qh / cab.hp_cop(Ta)
+                Q += Qh
+                if rest > Qh:
+                    Qp, Pp = self._ptc(rest - Qh, T_in, m_a, Ta)
+                    Q += Qp; P_e += Pp
         elif src == 'heat_pump':
             cap = cab.Q_heat_max * min(max(P['hp_cap_lo'] + P['hp_cap_slope'] * (Ta + 15.0), P['hp_cap_lo']), 1.0)
             Q = min(Q_req, cap)

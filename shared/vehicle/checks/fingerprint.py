@@ -1,8 +1,8 @@
 """RoadSim behaviour fingerprint: a fixed set of vehicles x cycles x conditions, summarised per run.
 
-Every v2 physics feature ships behind an option that is off by default. With every option off, RoadSim must reproduce
-the v1 fingerprint (tests/golden/roadsim_v1_fingerprint.json) to 1e-9 relative: new physics may only change results
-when it is switched on.
+Every v2 physics feature ships behind an option that is off in physics v1. Run by name (options='roadsim-physics-v1',
+since 14 Nov 2026 simulate()'s default is physics v2), RoadSim must reproduce the v1 fingerprint
+(tests/golden/roadsim_v1_fingerprint.json) to 1e-9 relative: new physics may only change results when it is switched on.
 
 usage:
     python fingerprint.py write   # (re)write the golden file — only when PHYSICS_VERSION's defaults change on purpose
@@ -35,7 +35,7 @@ def run():
     for i, spec in enumerate(vehicles()):
         cases = CASES if i < 28 else [('hd_transient', dict(T_amb=20.0))]
         for c, kw in cases:
-            r = simulate(spec, make_trip(c, **kw), record=True)
+            r = simulate(spec, make_trip(c, **kw), record=True, options='roadsim-physics-v1')
             s = r['summary']
             key = f'{i:02d}|{spec.get("architecture")}|{c}|{json.dumps(kw, sort_keys=True)}'
             out[key] = {k: (None if s.get(k) is None else float(s[k])) for k in KEYS}

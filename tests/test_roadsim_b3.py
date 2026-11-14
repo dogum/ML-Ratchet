@@ -45,7 +45,7 @@ def test_options_registered_with_v1_defaults():
 @pytest.mark.parametrize('spec', [CAR, HEV])
 def test_explicit_v1_values_reproduce_v1(spec):
     T = make_trip('udds', wind_speed=4.0, wind_dir=30.0)
-    a = simulate(spec, T)
+    a = simulate(spec, T, options='roadsim-physics-v1')
     b = simulate(spec, T, options={k: OPTION_DEFAULTS[k] for k in B3_KEYS})
     for k in ('fuel_g', 'batt_kWh_out', 'distance_m', 'trace_rms_mps'):
         assert a['summary'][k] == b['summary'][k]

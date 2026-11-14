@@ -148,6 +148,8 @@ class HybridStrategy(Strategy):
         """engine must run: catalyst warm-up after a cold start, cabin heat with a cold coolant, or SOC far below window."""
         if ctx.get('need_heat'):
             return True
+        if self.p.get('engine_on_moving') and ctx.get('moving') and ctx['P_dem_mech'] > 0.0:
+            return True     # mild (P0/P1) hybrid control: no electric-only driving, stop/start and fuel cut only
         if st['T_eng'] < 35.0 and self.t_cat < self.cat_warm_s and ctx['moving']:
             return True
         if st['soc'] < self.soc_lo - 0.02:
@@ -165,6 +167,17 @@ class HybridStrategy(Strategy):
         """option hybrid_min_off_s for the rule strategies: a stopped engine stays off for the minimum off time."""
         return (self.hold_off_rule and not st['eng_on'] and st['t_off'] < self.min_off_s and ctx.get('moving')
                 and not self.forced_on(st, ctx))
+
+    def charge_cap(self, C, ok, on, ctx):
+        """option hybrid_chg_cap_frac: while driving with the engine on, the battery is charged from the engine at no more
+        than this x engine P_max (production calibrations load-level gently; an unlimited ECMS charges at the battery's
+        acceptance and then drives electrically). Candidates charging harder are dropped while another engine-on
+        candidate is feasible."""
+        f = self.o.get('hybrid_chg_cap_frac') if getattr(self, 'o', None) else None
+        if f is None or not ctx.get('moving') or ctx.get('P_dem_mech', 0.0) <= 0.0:
+            return ok
+        keep = ok & ~(on & (np.asarray(C['P_batt'], float) < -f * self.Pe_max))
+        return keep if (keep & on).any() or not (ok & on).any() else ok
 
     def chem_power(self, C, st):
         b = self.veh.battery
@@ -229,6 +242,11 @@ class ECMS(HybridStrategy):
             ok &= on
         if (not st['eng_on']) and st['t_off'] < self.min_off_s and (ok & ~on).any():
             ok &= ~on
+        ok = self.charge_cap(C, ok, on, ctx)
+        if self.o.get('series_dd_prefer') and ctx.get('P_dem_mech', 0.0) > 0.0:
+            dd = np.asarray(ctrl, float) < 0.0          # lock-up candidates (dd_augment)
+            if (ok & dd).any():
+                ok = ok & (dd | ~on)                    # i-MMD at cruise: a running engine drives through the clutch
         if not ok.any():
             return -1
         return int(np.argmin(np.where(ok, J, np.inf)))
@@ -291,7 +309,10 @@ class PHEVCDCS(AECMS):
                 return True
             if ctx['u'] > o.get('phev_cd_v_max_kph', 135.0) / 3.6:
                 return True
-        return self.heat_request(st, ctx, electric_below=o.get('phev_heat_engine_below_C'))
+        below = o.get('phev_heat_engine_below_C')
+        if below is not None and o.get('phev_heat_cold_start_only') and not self.cold_start:
+            below = None                 # a warm start keeps heating electrically (D3 Energi: engine on 8-11 % after a warm start)
+        return self.heat_request(st, ctx, electric_below=below)
 
     def forced_on(self, st, ctx):
         if self.cd_rules():
