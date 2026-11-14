@@ -73,6 +73,24 @@ class ConvPT(_Base):
         self.cvt_range = tr.get('ratio_range', [2.6, 0.4]) if veh.ttype == 'CVT' else None
         self.f_neutral_idle = tr.get('neutral_idle_factor', 0.5)
         self.f_dl = 1.0
+        self._opt = None; self._oc = None
+
+    @property
+    def opt(self):
+        """physics options (set by simulate(); None = v1)."""
+        return self._opt
+
+    @opt.setter
+    def opt(self, o):
+        self._opt = o; self._oc = None
+
+    def _tc_opts(self):
+        """(applies, conv_tc_open_gears, slip rad/s): the v2 converter options plan() reads, once per run."""
+        o = self._opt; v = self.v
+        on = bool(o and v.ttype == 'AT' and v.tc is not None and not v.hd)
+        self._oc = (on, int(o.get('conv_tc_open_gears', 0) or 0) if on else 0,
+                    float(o.get('conv_tc_slip_rpm', 0.0) or 0.0) * math.pi / 30 if on else 0.0)
+        return self._oc
 
     def reset(self, st):
         st['gear'] = 0; st['eng_on'] = True; st['tc_locked'] = False; st['t_in_gear'] = 99
@@ -157,7 +175,9 @@ class ConvPT(_Base):
         P_aux = env['P_aux_mech']
         self.f_dl = env.get('f_dl', 1.0)
         w_w = u / r; T_w = F * r
-        T_o = self.to_box_out(T_w); w_o = w_w * self.FD
+        FD = self.FD
+        T_o = T_w / (FD * self.eta_dl) if T_w >= 0.0 else T_w * self.eta_dl / FD      # self.to_box_out(T_w)
+        w_o = w_w * FD
         stopped = env['stopped']
         Teng = st['T_eng']
         if stopped:
@@ -186,23 +206,23 @@ class ConvPT(_Base):
             locked = w_in >= self.w_lock and (g >= 1 or t == 'CVT' or w_in > 1.4 * self.w_lock)
         else:
             locked = w_in >= self.w_launch * 0.98
-        o = getattr(self, 'opt', None)
+        oc = self._oc or self._tc_opts()
         slip = 0.0
-        if o and t == 'AT' and v.tc is not None and not v.hd:   # v2 options (default off = v1): D3 dev LD converter behaviour
-            if g < int(o.get('conv_tc_open_gears', 0) or 0):
+        if oc[0]:   # v2 options (default off = v1), light-duty AT only: D3 dev LD converter behaviour
+            if g < oc[1]:
                 locked = False                       # converter open in the lowest gears (D3 Camry XLE / CX9: 1st, 2nd)
             elif locked and T_in > 0.0 and g < self.ng - 1:
-                slip = float(o.get('conv_tc_slip_rpm', 0.0) or 0.0) * math.pi / 30   # controlled micro-slip under drive
+                slip = oc[2]                         # controlled micro-slip under drive (conv_tc_slip_rpm)
         P_J = 0.0
         if locked:
             w_e = w_in + slip
             if w_e > e.w_max:
                 w_e = e.w_max
             # engine + transmission-input inertia accelerate with the wheels in the engaged gear
-            T_J = e.J * env.get('a', 0.0) / r * self.FD * gr
+            T_J = e.J * env.get('a', 0.0) / r * FD * gr
             T_req = T_in + P_aux / w_e + T_J
-            Tmax = e.t_max(w_e)
-            Tmin = e.t_min(w_e)
+            Tmax = e.tmax_curve(w_e)
+            Tmin = e.tct_curve(w_e)
             if T_req > Tmax:            # full load: traction limited
                 limited = True
                 T_e = Tmax

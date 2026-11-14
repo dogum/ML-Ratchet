@@ -10,6 +10,7 @@ t_k+1", like an OBD logger's rate over the last second); index 0 holds zeros. St
 instantaneous values at t_k.
 """
 import math, time, hashlib, json
+from itertools import chain as _chain_it
 import numpy as np
 from .constants import G, R_AIR, T0K, FUELS, MPH, MILE, GAL, KWH, EPA_KWH_PER_GAL
 from .vehicle import Vehicle
@@ -310,8 +311,12 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
 
         # ---------------- driver: feed-forward + PI on the lagged speed error (or the human driver model)
         err = vt_s[i] - v0
+        # (min / max written as conditionals with the builtins' exact semantics: max(a, b) = b if b > a else a)
         if not sat_prev:
-            I_err = min(max(I_err + err * dt, -5.0), 5.0)
+            x_ = I_err + err * dt
+            I_err = -5.0 if -5.0 > x_ else x_
+            if 5.0 < I_err:
+                I_err = 5.0
         if nsub == 1:
             a_cmd = (vt_s[i + 1] - v0) / dt + Kp * err + Ki * I_err
         else:   # same driver in continuous form: target slope + the error closed over one trip second + PI
@@ -320,7 +325,10 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
             a_cmd = (0.0 - v0) / dt
         if human:
             a_cmd = hdrv.accel(i, v0)
-        a_cmd = min(max(a_cmd, a_min), a_max)
+        if a_min > a_cmd:
+            a_cmd = a_min
+        if a_max < a_cmd:
+            a_cmd = a_max
         v1d = v0 + a_cmd * dt
         if v1d < 0.0:
             v1d = 0.0
@@ -412,7 +420,9 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
                 F_brk = 0.0; u_new = 0.0; v1 = 0.0; converged = True
                 break
             if F_ask < 0.0:
-                F_brk = max(Fd - F_ask, 0.0)     # friction brakes supply the rest of the braking force
+                F_brk = Fd - F_ask               # friction brakes supply the rest of the braking force
+                if 0.0 > F_brk:
+                    F_brk = 0.0
             else:
                 F_brk = 0.0
             F_ext = Fd - F_brk
@@ -468,7 +478,7 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
             P_bl = P_chem - P_b
             st['v_rc'] = v_rc * ex + bat.R1 * I * (1.0 - ex)
             st['soc'] = soc - I * dt / bat.Q
-            st['T_bat'] = Tb + dt * (max(P_bl, 0.0) + Q_tms - bat.hA * (Tb - Ta)) / bat.C_th
+            st['T_bat'] = Tb + dt * ((0.0 if 0.0 > P_bl else P_bl) + Q_tms - bat.hA * (Tb - Ta)) / bat.C_th
         else:
             I = 0.0; V = 0.0; P_chem = 0.0; P_bl = 0.0
         # ---------------- engine thermal, cabin, tyres
@@ -482,8 +492,9 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
         Ptr = plan['P_trans']
         if has_box:   # driveline oil heated by its own losses and (ATF cooler) by the engine coolant
             T_dl = st['T_dl']
-            q_dl = 0.5 * max(Ptr, 0.0) + (dl_hc * (st['T_eng'] - T_dl) if e is not None else 0.0)
-            st['T_dl'] = min(T_dl + dt * (q_dl - dl_hA * (T_dl - Ta)) / dl_C, 95.0)
+            q_dl = 0.5 * (0.0 if 0.0 > Ptr else Ptr) + (dl_hc * (st['T_eng'] - T_dl) if e is not None else 0.0)
+            x_ = T_dl + dt * (q_dl - dl_hA * (T_dl - Ta)) / dl_C
+            st['T_dl'] = 95.0 if 95.0 < x_ else x_
         if u > 0.5:
             st['tire'] = st['tire'] + (1.0 - st['tire']) * dt / tire_tau
         if timers:
@@ -527,7 +538,9 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
         rhs = (Pf - Pe) + Pm + Ptr + P_bl + Pa + (Fa + Fr + Fgr + F_brk) * u + 0.5 * m_eff * (v1 * v1 - v0 * v0) / dt
         if tyre_on:
             rhs += Fcn * u + pF * (u_pt - u)
-        worst_step = max(worst_step, abs(lhs - rhs))
+        x_ = abs(lhs - rhs)
+        if x_ > worst_step:
+            worst_step = x_
         dist += u * dt
         if record:
             g_ = plan.get
@@ -536,19 +549,22 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
                          Pf / fuel_lhv * 1e3 if e is not None else 0.0, 1.0 if running else 0.0, st['T_eng'],
                          g_('w_m', 0.0) * 30 / math.pi, g_('T_m', 0.0), g_('P_m_el', 0.0), Pm,
                          g_('w_g', 0.0) * 30 / math.pi, g_('T_g', 0.0), g_('P_g_el', 0.0),
-                         I, V, st['soc'], st['T_bat'], Pa, P_hvac_tot, F_brk * u, max(P_reg, 0.0), st['T_cab'], Ptr,
+                         I, V, st['soc'], st['T_bat'], Pa, P_hvac_tot, F_brk * u, 0.0 if 0.0 > P_reg else P_reg, st['T_cab'], Ptr,
                          P_bl, vt_s[i + 1], rk, wh))
         if nsub == 1 or i % nsub == nsub - 1:      # trace-miss statistics at the trip seconds
             e1 = v1 - v_tgt[k + 1]
-            miss_sq += e1 * e1; miss_max = max(miss_max, abs(e1))
-            if abs(e1) > MPH2: miss_n2 += 1
+            ae1 = abs(e1)
+            miss_sq += e1 * e1
+            if ae1 > miss_max:
+                miss_max = ae1
+            if ae1 > MPH2: miss_n2 += 1
         sat_prev = plan['limited'] or t_lim
         v0 = v1
 
     L = dict(fuel=L_fuel, eng_loss=L_eng, mot_loss=L_mot, trans_loss=L_trans, batt_loss=L_bl, aero=L_aero, rolling=L_roll,
              grade=L_grade, brake=L_brake, aux=L_aux, batt_chem=L_chem, regen=L_regen, tyre_slip=L_slip)
     if record:                         # output columns: index 0 = initial states, step i at index i + 1
-        A_ = np.array(rows, float).reshape(M, len(keys))
+        A_ = np.fromiter(_chain_it.from_iterable(rows), float, count=M * len(keys)).reshape(M, len(keys))
         O = {}
         for c_, k_ in enumerate(keys):
             col = np.empty(M + 1)

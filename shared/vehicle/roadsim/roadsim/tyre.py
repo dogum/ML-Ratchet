@@ -121,6 +121,8 @@ class Tyre:
         self.eu_class = t.get('eu_class')
         self.group = 'C3' if heavy else 'C1'
         self.m = veh.mass
+        # constants of axle_loads, as it computes them (for the inlined step)
+        self._mg = self.m * G; self._b = self.ff * self.L; self._ac = self.L - self._b; self._lo_k = 0.05 * self._mg
 
     # ------------------------------------------------------------------ loads
     def axle_loads(self, a, sin_t, cos_t):
@@ -160,19 +162,54 @@ class Tyre:
         """friction-limit the requested tyre force F (N) and return (F_ask, wheel-rim speed u (1 + kappa)).
         Sets env['tyre_regen_cap'], env['tyre_kappa'], env['tyre_lim']. In braking the slip is taken on the driven
         axle when the vehicle regenerates (regen first: the driven axle carries the braking), else on all wheels."""
-        cap_t, cap_b, cap_r, Nd, Nt, ml = self.limits(a, sin_t, cos_t, mu, ayg, regen_frac)
+        # self.limits, axle_loads, drive_load, mu_long and slip inlined (speed; the same arithmetic in the same order)
+        mg = self._mg; L = self.L
+        mgc = mg * cos_t
+        drive = self.drive
+        tr = (self.m * a + mg * sin_t) * self.h / L
+        lo = self._lo_k * cos_t
+        if drive == 'FWD':
+            Nd = mgc * self._b / L - tr
+            if lo > Nd:
+                Nd = lo
+        elif drive == 'RWD':
+            Nd = mgc * self._ac / L + tr
+            if lo > Nd:
+                Nd = lo
+        else:
+            Nf = mgc * self._b / L - tr
+            Nr = mgc * self._ac / L + tr
+            Nd = (lo if lo > Nf else Nf) + (lo if lo > Nr else Nr)
+        x = mu * mu - ayg * ayg; y = 0.04 * mu * mu
+        ml = math.sqrt(y if y > x else x)
+        cap_t = ml * Nd
+        cap_r = regen_frac * ml * Nd
         env['tyre_regen_cap'] = cap_r
         lim = False
         if F > cap_t:
             F = cap_t; lim = True
-        elif F < -cap_b:
-            F = -cap_b; lim = True
-        if F >= 0.0:
-            kap = self.slip(F, Nd, ml)
-        elif regen:
-            kap = self.slip(max(F, -cap_r), Nd, ml)
         else:
-            kap = self.slip(F, Nt, ml)
+            cap_b = ml * mgc               # Ntot = m G cos_t
+            if F < -cap_b:
+                F = -cap_b; lim = True
+        if F >= 0.0:
+            Fs = F; N = Nd
+        elif regen:
+            Fs = -cap_r if -cap_r > F else F; N = Nd
+        else:
+            Fs = F; N = mgc
+        if Fs == 0.0 or N <= 0.0:
+            kap = 0.0
+        else:
+            f = abs(Fs) / (ml * N)
+            if f > 0.999:
+                f = 0.999
+            sig = (1.0 - (1.0 - f) ** (1.0 / 3.0)) / (self.cx / (3.0 * ml))
+            if sig > 0.9:
+                sig = 0.9
+            if Fs < 0.0:
+                sig = -sig
+            kap = sig / (1.0 - sig)
         env['tyre_kappa'] = kap; env['tyre_lim'] = lim
         return F, u * (1.0 + kap)
 

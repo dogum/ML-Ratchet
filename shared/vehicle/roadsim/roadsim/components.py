@@ -162,15 +162,20 @@ class Engine:
             return 0.0
         return self.c_fric * self.disp * self._visc_g(max(T_eng, -40.0)) / self._g20
 
+    _enr = None          # physics v2 full-load enrichment (set by thermal.py), None = off
+
     def fuel_cold(self, w, T, T_eng):
         x = self._x2
         if x is not None:
             f = self.fuel_grid(w, T + x[0]) * x[1]
-            if x[2]:
-                f += x[2] * max(0.0, 1.0 - max(T * w, 0.0) / x[3])
+            if x[2]:                             # (max(a, b) written out: b if b > a else a, the builtin's semantics)
+                p = T * w
+                y = 1.0 - (0.0 if 0.0 > p else p) / x[3]
+                f += x[2] * (y if y > 0.0 else 0.0)
             if len(x) > 4:                       # transient fuel: torque rise since the last step (option eng_transient_fuel)
-                f *= 1.0 + x[5] * max(0.0, T - x[4])
-            en = getattr(self, '_enr', None)
+                y = T - x[4]
+                f *= 1.0 + x[5] * (y if y > 0.0 else 0.0)
+            en = self._enr
             if en:                               # full-load enrichment (option eng_fullload_enrich)
                 f *= 1.0 + en[0] * max(0.0, T / max(self.tmax_curve(w), 1.0) - en[1]) / (1.0 - en[1])
             return f
