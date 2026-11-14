@@ -16,6 +16,7 @@ from .vehicle import Vehicle
 from .powertrain import ARCH_CLASSES, ETA_ALT, ETA_DCDC
 from .options import resolve as resolve_options
 from .strategies import make_strategy
+from . import thermal as _thermal, aging as _aging
 
 SURFACE_RR = [1.0, 0.95, 1.12, 1.6, 2.2]     # dry asphalt, concrete, wet, gravel, snow (Wong 2008 table 1.1; Ejsmont 2017)
 _VEH_CACHE = {}
@@ -117,6 +118,12 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
                                                                         {'strategy': veh.control.get('strategy'), 'params': veh.control.get('params', {})}))
     opt = resolve_options(options, veh.spec)
     strat.opt = opt
+    for _m in veh.motors.values():          # B2: light-load motor options, battery state of health (v1 = no change)
+        _m.set_options(opt)
+    if veh.battery is not None:
+        _aging.apply(veh.battery, opt)
+    if veh.engine is not None:
+        veh.engine._x2 = None
     PT = ARCH_CLASSES[arch]
     pt = PT(veh, shift=strat.shift) if arch == 'conv' else PT(veh)
     pt.opt = opt
@@ -218,6 +225,7 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
     strat.setup(veh, pt, trip, st)
     if hybrid and it.get('eng_on') is not None:
         st['eng_on'] = bool(it['eng_on'])
+    th = _thermal.make(veh, opt, trip, trip_inputs, st, it, dt)     # B2 thermal/HVAC/accessories (None = v1)
 
     if human:
         from .driver import HumanDriver
@@ -260,6 +268,8 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
         k = i if nsub == 1 else i // nsub
         Ta = T_amb[k]; rk = rho[k]; wh = w_head_s[i]; sk = sin_t[k]; ck = cos_t[k]
         crr = crr_k[k] * (1.0 + tire_amp * (1.0 - st['tire']))
+        if th is not None:
+            crr = th.crr(k, st, crr, v0, ck)
         # yaw angle from the cross wind (deg) raises CdA (wind-averaged drag; SAE J1252)
         if w_cross_s[i] > 0.0:
             psi = math.degrees(math.atan2(w_cross_s[i], max(v0 + wh, 0.5)))
@@ -326,10 +336,15 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
             P_aux_mech = 0.0
             P_aux_el = (base + cab.blower_W * (Qd != 0.0)) / ETA_DCDC + (P_hvac_el - cab.blower_W * (Qd != 0.0)) + P_tms
         P_hvac_tot = P_hvac_el + P_hvac_mech + P_tms
+        if th is not None:
+            P_aux_mech, P_aux_el, need_heat, P_hvac_tot = th.aux(k, st, v0, stopped, (Qd, Q_del, Q_eng_heat, P_hvac_el, P_hvac_mech,
+                                                                                    need_heat, P_tms, base))
 
         p_dis, p_chg = batt_state(st['v_rc'], st['soc'], st['T_bat'])
         # driveline (transmission/axle) oil: spin losses scale with viscosity^0.3 relative to 80 C
         f_dl = math.exp(0.3 * 3776.0 * (1.0 / (max(st['T_dl'], -40.0) + T0K) - 1.0 / (80.0 + T0K))) if has_box else 1.0
+        if th is not None and has_box and th.f_dl_vogel:
+            f_dl = th.f_dl(st['T_dl'])
         env = dict(P_aux_mech=P_aux_mech, P_aux_el=P_aux_el, p_dis=p_dis, p_chg=p_chg, stopped=stopped,
                    need_heat=need_heat, k=k, f_dl=f_dl)
 
@@ -420,9 +435,12 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
             I = 0.0; V = 0.0; P_chem = 0.0; P_bl = 0.0
         # ---------------- engine thermal, cabin, tyres
         running = plan.get('eng_on', False)
-        if e is not None:
-            st['T_eng'] = e.thermal_step(st['T_eng'], plan['P_fuel'], plan['P_eng'], Ta, Q_eng_heat, dt, running)
-        st['T_cab'] = cab.step(st['T_cab'], Ta, solar[k], Q_del, dt)
+        if th is not None:
+            th.post(k, st, plan, u, running, F_brk, dt)
+        else:
+            if e is not None:
+                st['T_eng'] = e.thermal_step(st['T_eng'], plan['P_fuel'], plan['P_eng'], Ta, Q_eng_heat, dt, running)
+            st['T_cab'] = cab.step(st['T_cab'], Ta, solar[k], Q_del, dt)
         if has_box:   # driveline oil heated by its own losses and (ATF cooler) by the engine coolant
             q_dl = 0.5 * max(plan['P_trans'], 0.0) + (dl_hc * (st['T_eng'] - st['T_dl']) if e is not None else 0.0)
             st['T_dl'] = min(st['T_dl'] + dt * (q_dl - dl_hA * (st['T_dl'] - Ta)) / dl_C, 95.0)
@@ -547,6 +565,9 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
     out['summary'] = summ
     out['final_state'] = dict(engine=st['T_eng'], cabin=st['T_cab'], battery=st['T_bat'], tire_warm=st['tire'], driveline=st['T_dl'],
                               soc=st['soc'], v_rc=st['v_rc'], eng_on=st['eng_on'], gear=st['gear'])
+    if th is not None:
+        out['final_state'].update(th.final_state())
+        th.done()
     out['strategy'] = strat.name
     out['vehicle_id'] = veh.id
     return out

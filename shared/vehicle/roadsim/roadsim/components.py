@@ -134,6 +134,9 @@ class Engine:
         # rotating inertia of crank/flywheel + transmission input (kg m2); Gillespie (1992) mass-factor practice
         self.J = spec.get('inertia_kgm2', (0.08 + 0.06 * self.disp) if self.T_peak < 1500 else 0.25 * self.disp)
         self._build_ool()
+        # physics v2 (thermal.py), for the current step: (extra torque at the map lookup, fuel factor, low-load fuel adder
+        # at zero brake power W, brake power where it fades out W), or None = v1
+        self._x2 = None
 
     # fuel power (W) for a running engine, warm
     def fuel_W(self, w, T):
@@ -160,11 +163,23 @@ class Engine:
         return self.c_fric * self.disp * self._visc_g(max(T_eng, -40.0)) / self._g20
 
     def fuel_cold(self, w, T, T_eng):
+        x = self._x2
+        if x is not None:
+            f = self.fuel_grid(w, T + x[0]) * x[1]
+            if x[2]:
+                f += x[2] * max(0.0, 1.0 - max(T * w, 0.0) / x[3])
+            return f
         if T_eng >= self.T_hot:
             return self.fuel_grid(w, T)
         return self.fuel_grid(w, T + self.cold_dT(T_eng))
 
     def fuel_cold_vec(self, w, T, T_eng):
+        x = self._x2
+        if x is not None:
+            f = self.fuel_grid.vec(w, T + x[0]) * x[1]
+            if x[2]:
+                f = f + x[2] * np.maximum(0.0, 1.0 - np.maximum(np.asarray(T) * w, 0.0) / x[3])
+            return f
         return self.fuel_grid.vec(w, T + self.cold_dT(T_eng))
 
     def thermal_step(self, T_eng, P_fuel, P_brake, T_amb, Q_heater, dt, running):
@@ -219,6 +234,48 @@ class Motor:
         # at exactly zero torque the inverter stops switching: only iron + windage losses remain (~40 % of the
         # map's zero-torque loss, which includes inverter switching). Used for a freewheeling MG1 / idle P2 motor.
         self.freewheel_frac = spec.get('freewheel_frac', 0.4)
+        # physics v2 light-load options (set per run by set_options): None = v1
+        self._mod = None
+
+    def set_options(self, opt):
+        """motor_size_exp: losses of machines above 150 kW scale with (P_max / 150 kW)^-exp (larger machines are relatively
+        more efficient). motor_staging N: a machine above 300 kW is N equal units; at light load the controller runs the
+        fewest units that carry the torque, the idle ones keep only their spinning (iron + windage) loss."""
+        f = 1.0
+        if opt['motor_size_exp'] and self.P_max > 150e3:
+            f = (self.P_max / 150e3) ** -opt['motor_size_exp']
+        n = int(opt['motor_staging'] or 0) if self.P_max > 300e3 else 0
+        self._mod = None if (f == 1.0 and n <= 1) else (f, max(n, 1))
+
+    def _loss_mod(self, w, T):
+        f, n = self._mod
+        if n == 1:
+            return f * (self.freewheel_frac * self.loss_grid(w, 0.0) if T == 0.0 else self.loss_grid(w, T))
+        # unit loss L_u(w, t) = loss_grid(w, n t) / n (the map is normalised to the machine's rating)
+        idle = self.freewheel_frac * self.loss_grid(w, 0.0) / n
+        if T == 0.0:
+            return f * n * idle
+        tl = max(self.t_lim(w), 1e-9)
+        best = float('inf')
+        for k in range(max(1, min(n, int(math.ceil(abs(T) * n / tl - 1e-9)))), n + 1):
+            L = k * self.loss_grid(w, T * n / k) / n + (n - k) * idle
+            if L < best:
+                best = L
+        return f * best
+
+    def _loss_mod_vec(self, w, T):
+        f, n = self._mod
+        L1 = self.loss_grid.vec(w, T)
+        if n == 1:
+            return f * np.where(T == 0.0, self.freewheel_frac * L1, L1)
+        idle = self.freewheel_frac * self.loss_grid.vec(w, np.zeros_like(T)) / n
+        tl = np.maximum(self.t_lim_vec(w), 1e-9)
+        best = np.where(T == 0.0, n * idle, np.inf)
+        for k in range(1, n + 1):
+            Lk = k * self.loss_grid.vec(w, T * n / k) / n + (n - k) * idle
+            okk = np.abs(T) * n / k <= tl * (1 + 1e-9)
+            best = np.where((T != 0.0) & (okk | (k == n)), np.minimum(best, Lk), best)
+        return f * best
 
     def t_lim(self, w):
         if w > self.w_max:
@@ -230,6 +287,8 @@ class Motor:
 
     def loss(self, w, T):
         if w < 0: w = -w; T = -T
+        if self._mod is not None:
+            return self._loss_mod(w, T)
         if T == 0.0:
             return self.freewheel_frac * self.loss_grid(w, 0.0)
         return self.loss_grid(w, T)
@@ -237,6 +296,9 @@ class Motor:
     def loss_vec(self, w, T):
         w = np.asarray(w, float); T = np.asarray(T, float)
         s = np.where(w < 0, -1.0, 1.0)
+        if self._mod is not None:
+            w_, T_ = np.broadcast_arrays(w * s, T * s)
+            return self._loss_mod_vec(w_, T_)
         L = self.loss_grid.vec(w * s, T * s)
         return np.where(T == 0.0, self.freewheel_frac * L, L)
 
@@ -315,6 +377,31 @@ class Battery:
         self.cooler_W = th.get('cooler_W', 0.0)
         self.T_heat_on = th.get('T_heat_on', 0.0)
         self.T_cool_on = th.get('T_cool_on', 35.0)
+        self._new = (self.Q, self.E_nom, self.R0_25, self.R1, self.soc_lo, self.soc_hi, self.Ah, self.T_heat_on)
+
+    def set_aging(self, cap=1.0, res=1.0, window=None, T_heat_on=None):
+        """per-run battery state (aging.py): capacity and resistance relative to new, optional SOC window [lo, hi], optional
+        pack-heater switch-on temperature. cap = res = 1 and None restore the spec pack exactly."""
+        Q, E, R0, R1, lo, hi, Ah, Th = self._new
+        self.Q = Q * cap; self.E_nom = E * cap; self.Ah = Ah * cap
+        self.R0_25 = R0 * res; self.R1 = R1 * res
+        self.soc_lo, self.soc_hi = (lo, hi) if window is None else (float(window[0]), float(window[1]))
+        self.T_heat_on = Th if T_heat_on is None else float(T_heat_on)
+
+    def usable_kWh(self, T=25.0, P_W=None):
+        """energy between the SOC window's ends at constant power P_W (default C/3), with the resistive drop at
+        temperature T and the voltage floor; a cold or aged pack delivers less of its nameplate energy."""
+        P = self.E_nom / 3600.0 / 3.0 if P_W is None else P_W
+        s = self.soc_hi; E = 0.0; ds = 0.002
+        while s > self.soc_lo:
+            V = self.ocv(s); R = self.r0(s, T) + self.R1
+            disc = V * V - 4.0 * R * P
+            if disc <= 0.0 or (V + math.sqrt(disc)) / 2.0 < self.v_min:
+                break
+            I = (V - math.sqrt(disc)) / (2.0 * R)
+            E += P * (ds * self.Q / max(I, 1e-9))
+            s -= ds
+        return E / 3.6e6
 
     def r0(self, soc, T):
         f = math.exp(self.Ea / 8.314 * (1.0 / (T + T0K) - 1.0 / 298.15))
@@ -442,6 +529,8 @@ class Cabin:
         self.source = heat_source        # 'engine' | 'ptc' | 'heat_pump'
         self.hx_UA = spec.get('heater_core_W_K', 160.0)
         self.enabled = spec.get('enabled', True)
+        self.spec_ptc_W = spec.get('ptc_max_W')            # physics v2 (thermal.py): PTC heater size and type
+        self.spec_ptc_type = spec.get('ptc_type')
 
     @staticmethod
     def hp_cop(T_amb):
