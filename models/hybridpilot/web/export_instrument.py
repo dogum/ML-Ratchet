@@ -9,7 +9,9 @@ drove it. Two parts:
      the exam's own grading).
   2. Decisions (live in the browser): at recorded moments of HybridPilot's own run, the 66-feature vector, the
      candidate controls RoadSim scored that second (on a grid of wheel-power demand x coolant temperature, battery
-     limits left out so the browser applies them for any SOC), the battery model and the decision rule's constants.
+     limits left out so the browser applies them for any SOC), RoadSim's forced-on rules on the same grid (physics v2:
+     warm-up and catalyst holds, the Toyota-type engine-on speed, stay-on under load, cabin heat, plug-in charge-
+     depleting rules), the battery model and the decision rule's constants.
      The browser rebuilds the features for the SOC, demand, coolant temperature and preview you set, runs the MLP and
      picks the control. Also every traction second of the base run, so the page can run the network over the trip.
 
@@ -51,7 +53,7 @@ SHORT = {'VED_125_1275': 'Camry-type hybrid', 'VED_428_465': 'Camry-type hybrid'
 
 
 # ------------------------------------------------------------------------------------------------ capture
-def capture_strategy(**params):
+def capture_strategy(grid_at=None, **params):
     """HybridPilot exactly as pipeline.compare runs it, recording each traction decision and the candidate
     evaluation RoadSim made for it."""
     base = type(HP.make_roadsim_strategy())
@@ -70,12 +72,18 @@ def capture_strategy(**params):
             pt.evaluate = wrap
 
         def select(self, C, ctrl, st, ctx):
+            hold = dict(heat_hold=self.heat_hold, cd=self.cd, t_run=self.t_run, t_cat=self.t_cat)
+            I0 = float(self.core.I)          # SOC-feedback integral before this second's update
             j = super().select(C, ctrl, st, ctx)
             cat = float(st['T_eng'] < 35.0 and self.t_cat < self.cat_warm_s)
             x = HP.features(self.vf, self.tc, self.vp, st, ctx, self.core.p['preview_s'], self.core.p['nav'], self.ref, cat)
             self.cap.append(dict(k=int(ctx['k']), st=dict(st), ctx=dict(ctx), C={a: np.array(b) for a, b in C.items()},
                                  ev=self._last, t_cat=float(self.t_cat), j=int(j), x=x, s=self.trace[-1][1], pon=self.trace[-1][2],
-                                 forced=bool(self.forced_on(st, ctx))))
+                                 hold=hold, I0=I0))
+            if grid_at and int(ctx['k']) in grid_at:
+                # physics v2: the powertrain's evaluation reads per-run state (thermal, transient fuel), so the
+                # candidate grid of a moment is computed at that second, inside the run
+                self.cap[-1]['g'] = moment_grid(self, self.cap[-1])
             return j
 
     return Capture(**params)
@@ -90,6 +98,23 @@ def heat_high(strat, st, k):
     return bool(Qd > 0.3 * cab.Q_heat_max)
 
 
+def forced_grid(strat, c, D, T):
+    """RoadSim's forced-on rules at this moment for each demand x coolant level (the rules' own state - heater
+    hysteresis, charge-depleting flag, run and catalyst timers - restored to what it was at the recorded second)."""
+    st, ctx = c['st'], c['ctx']
+    keep = dict(heat_hold=strat.heat_hold, cd=strat.cd, t_run=strat.t_run, t_cat=strat.t_cat)
+    FG = np.zeros((len(D), len(T)), bool)
+    for a, P in enumerate(D):
+        for b, Te in enumerate(T):
+            for k, v in c['hold'].items():
+                setattr(strat, k, v)
+            need_heat = heat_high(strat, st, c['k']) and Te < 55.0
+            FG[a, b] = strat.forced_on(dict(st, T_eng=Te), dict(ctx, P_dem_mech=P, need_heat=need_heat))
+    for k, v in keep.items():
+        setattr(strat, k, v)
+    return FG
+
+
 def moment_grid(strat, c):
     """candidate controls for this second on a demand x coolant grid; battery power limits left out (ok_mech)."""
     T_w, w_w, ctrl, st, env = c['ev']
@@ -99,14 +124,16 @@ def moment_grid(strat, c):
     assert abs(T_w - P_rec / u * r) < 1e-6 * max(1.0, abs(T_w)), (T_w, P_rec / u * r)
     D = sorted(set([round(f * Pe, 1) for f in D_FRACS] + [P_rec]))
     T = sorted(set(T_LEVELS + [float(st['T_eng'])]))
-    env0 = dict(env, p_dis=np.inf, p_chg=np.inf)
+    env0 = dict(env)          # v2: start terms depend on the battery limits; the recorded limits are kept (the browser
+                              # applies the limits for its own SOC to 'ok')
     n = len(ctrl)
     PF = np.zeros((len(D), len(T), n)); PB = np.zeros_like(PF); OK = np.zeros(PF.shape, bool); ON = np.zeros(PF.shape, bool)
     for a, P in enumerate(D):
         for b, Te in enumerate(T):
             C = strat.ev(P / u * r, w_w, ctrl, dict(st, T_eng=Te), env0)
             PF[a, b] = C['P_fuel']; PB[a, b] = C['P_batt']; OK[a, b] = C['ok']; ON[a, b] = C['on'] & (C['P_fuel'] > 0)
-    return dict(D=D, T=T, d_rec=D.index(P_rec), t_rec=T.index(float(st['T_eng'])), PF=PF, PB=PB, OK=OK, ON=ON)
+    return dict(D=D, T=T, d_rec=D.index(P_rec), t_rec=T.index(float(st['T_eng'])), PF=PF, PB=PB, OK=OK, ON=ON,
+                FG=forced_grid(strat, c, D, T))
 
 
 # ------------------------------------------------------------------------------------------------ decision (reference)
@@ -124,9 +151,10 @@ def decide(core, strat, mo, g, soc, d, t, L, cand=None):
     ok = OKm & (PB <= p_dis + 1e-6) & (PB >= -p_chg - 1e-6)
     I, _ = b.current_vec(PB, soc, st['T_bat'], st['v_rc'])
     chem = b.ocv(soc) * I
-    forced = need_heat or (cat_pending and ctx['moving']) or soc < strat.soc_lo - 0.02
+    forced = bool(g['FG'][d, t]) or soc < strat.soc_lo - 0.02
+    core.I = mo['I0']                    # the integral term's state at the recorded second
     j, s, pon = core.decide(x, soc, strat.ref, strat.phev, PF, chem, ON, ok, st['eng_on'], st['t_on'], st['t_off'],
-                            strat.start_W, forced)
+                            strat.start_W, forced, strat.min_on_s, strat.min_off_s, None)
     return j, s, pon, x
 
 
@@ -179,7 +207,11 @@ def run_trip(spec, trip, soc0, v):
             stg = capture_strategy(**pols[nm]) if (nm == 'hybridpilot' and v['tag'] == 'base') else HP.make_roadsim_strategy(**pols[nm])
         else:
             stg = PL.RULE[veh.arch] if nm == 'rule' else nm
-        o = simulate(spec, trip, strategy=stg, init_soc=soc0, init_temps=temps, record=True, options='roadsim-physics-v1')
+        if not isinstance(stg, str) or nm in pols:
+            pass
+        elif (spec.get('control') or {}).get('params'):
+            stg = {'strategy': stg, 'params': dict(spec['control']['params'])}
+        o = simulate(spec, trip, strategy=stg, init_soc=soc0, init_temps=temps, record=True, options=PL.PHYSICS)
         runs[nm] = (o, S.metrics(o, veh.arch, soc0))
         if nm == 'hybridpilot' and v['tag'] == 'base':
             cap = stg
@@ -196,8 +228,9 @@ def main():
     npz = np.load(HP.WEIGHTS)
     W = {k: npz[k] for k in npz.files}
     keep = {'mu': 'f32', 'sd': 'f32'}             # feature scaling stays float32; the layers go float16
+    layers = [W['W0'].shape[0]] + [W[f'W{i}'].shape[1] for i in range(len([k for k in W if k.startswith('W')]))]
     write_pack(OUT / 'weights', W, dtype='f16', keep=keep,
-               meta=dict(layers=[66, 96, 96, 2], act='tanh', params=int(sum(W[k].size for k in W if k[0] in 'Wb')),
+               meta=dict(layers=layers, act='tanh', params=int(sum(W[k].size for k in W if k[0] in 'Wb')),
                          out=['log(s + 0.05)', 'logit P(engine on)']))
     Wr = {k: (roundtrip({k: v}, keep.get(k, 'f16'))[k]).astype(np.float64) for k, v in W.items()}
     net_ref = HP.MLP(); net_ref.p = Wr
@@ -237,16 +270,22 @@ def main():
         tens[f't{ti}_xs'] = np.stack([c['x'] for c in strat.cap]).astype(np.float32)
         tens[f't{ti}_xsoc'] = np.array([c['st']['soc'] for c in strat.cap], np.float32)
         tens[f't{ti}_xsrec'] = np.array([c['s'] for c in strat.cap], np.float32)
+        tens[f't{ti}_xI'] = np.array([c['I0'] for c in strat.cap], np.float32)
         pick = np.unique(np.linspace(0.04 * len(caps), 0.96 * len(caps), N_MOMENTS).astype(int))
+        ks = {caps[ci]['k'] for ci in pick}
+        st2 = capture_strategy(grid_at=ks)
+        o2 = simulate(spec, trip, strategy=st2, init_soc=soc0, init_temps=dict(PL.WARM), record=True, options=PL.PHYSICS)
+        assert all(a['j'] == b['j'] and a['k'] == b['k'] for a, b in zip(strat.cap, st2.cap)), 'second run differs'
+        by_k = {c['k']: c for c in st2.cap if 'g' in c}
         moments = []
         PF, PB, OK, ONc = [], [], [], []
         for mi, ci in enumerate(pick):
-            c = caps[ci]
+            c = by_k[caps[ci]['k']]          # the second run's capture: candidates and grid from the same run
             st, ctx = c['st'], c['ctx']
-            mo = dict(st=st, ctx=ctx, t_cat=c['t_cat'], heat_high=heat_high(strat, st, c['k']))
+            mo = dict(st=st, ctx=ctx, t_cat=c['t_cat'], heat_high=heat_high(strat, st, c['k']), I0=c['I0'])
             if st['T_eng'] < 55.0:
                 assert mo['heat_high'] == bool(ctx['need_heat']), (tid, c['k'])
-            g = moment_grid(strat, c)
+            g = c['g']
             d, t = g['d_rec'], g['t_rec']
             # the grid at the recorded point reproduces RoadSim's own candidate evaluation
             assert np.allclose(g['PF'][d, t], c['C']['P_fuel']) and np.allclose(g['PB'][d, t], c['C']['P_batt'])
@@ -268,6 +307,7 @@ def main():
                 P_aux=float(ctx['P_aux_el']), x0=[float(q) for q in c['x']],
                 prev60=[float(q) for q in strat.tc.preview(min(k, strat.tc.N - 1), 60)],
                 D=[float(q) for q in g['D']], T=[float(q) for q in g['T']], d_rec=d, t_rec=t,
+                fg=[int(q) for q in g['FG'].ravel()], ctrl=[float(q) for q in c['ev'][2]], I0=float(c['I0']),
                 j_rec=c['j'], s_rec=float(c['s']), pon_rec=float(c['pon'])))
             # ---- parity cases (first four moments): as recorded and perturbed
             if mi % 3 == 0:
@@ -283,8 +323,12 @@ def main():
                     y = net_ref(x)
                     cases.append(dict(example=ti, variant=name, moment=len(moments) - 1, soc=soc, d=dd, t=tt, L=L,
                                       outputs=[float(y[0]), float(y[1]), float(s), float(pon), float(j)]))
-        tens[f't{ti}_pf'] = np.stack(PF); tens[f't{ti}_pb'] = np.stack(PB)
-        tens[f't{ti}_ok'] = np.stack(OK).astype(np.uint8); tens[f't{ti}_onc'] = np.stack(ONc).astype(np.uint8)
+        # physics v2: series machines in the direct-drive window get extra candidates (the same engine powers through
+        # the lock-up clutch), so the candidate count varies by moment: pad with infeasible candidates
+        nmax = max(a.shape[-1] for a in PF)
+        pad = lambda A, v: np.stack([np.concatenate([a, np.full(a.shape[:-1] + (nmax - a.shape[-1],), v, a.dtype)], axis=-1) for a in A])
+        tens[f't{ti}_pf'] = pad(PF, 0.0); tens[f't{ti}_pb'] = pad(PB, 0.0)
+        tens[f't{ti}_ok'] = pad(OK, False).astype(np.uint8); tens[f't{ti}_onc'] = pad(ONc, False).astype(np.uint8)
         ctrl = strat.cap[0]['ev'][2]
         e = veh.engine
         trips_meta.append(dict(
@@ -293,6 +337,7 @@ def main():
             logged_fuel_g=float(np.nansum(trip['fuel_rate'])), soc0=soc0, mass_kg=float(veh.mass), Pe=float(e.P_max),
             E_kWh=float(b.E_nom / 3.6e6), soc_lo=b.soc_lo, soc_hi=b.soc_hi, ref=float(strat.ref), phev=bool(strat.phev),
             ctrl=[float(q) for q in ctrl], start_W=float(strat.start_W), cat_warm_s=float(strat.cat_warm_s),
+            min_on_s=float(strat.min_on_s), min_off_s=float(strat.min_off_s),
             batt=dict(ocv=[float(q) for q in b.ocv.y], R0_25=b.R0_25, Ea=b.Ea, v_min=b.v_min, v_max=b.v_max,
                       P_dis_max=b.P_dis_max, P_chg_max=b.P_chg_max, E_nom=b.E_nom, mass=float(veh.mass)),
             runs=runs_meta, moments=moments))
@@ -302,14 +347,15 @@ def main():
         policy=dict(HP.DEFAULTS), n_feat=HP.N_FEAT, bins=HP.BINS,
         idx=dict(x_soc=12, soc_frac=13, soc_minus_ref=14, T_eng=18, need_heat=21, cat_pending=22, p_dis=23, p_chg=24,
                  P_dem=29, prev=37, E_avail=65),
-        note='RoadSim twins of the VED cars on their real exam routes; simulated fuel, not logged fuel.')
+        physics=PL.PHYSICS,
+        note='Calibrated RoadSim twins of the VED cars on their real exam routes (physics v2); simulated fuel, not logged fuel.')
     keepx = {}
     for name in tens:
         if name.endswith(('_on', '_ok', '_onc')):
             keepx[name] = 'u8'
         elif name.endswith('_xk'):
             keepx[name] = 'i32'
-        elif name.endswith(('_pf', '_pb', '_xs', '_xsoc', '_xsrec')):
+        elif name.endswith(('_pf', '_pb', '_xs', '_xsoc', '_xsrec', '_xI')):
             keepx[name] = 'f32'
     write_pack(OUT / 'examples', tens, dtype='f16', keep=keepx, meta=meta)
     write_json(OUT / 'reference.json', {'cases': cases, 'tolerance': 2e-3})

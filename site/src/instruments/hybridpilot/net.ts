@@ -8,15 +8,22 @@ export interface Moment {
   k: number; v_kmh: number; u: number; soc: number; T_eng: number; T_bat: number; v_rc: number;
   eng_on: boolean; t_on: number; t_off: number; t_cat: number; moving: boolean; heat_high: boolean; P_aux: number;
   x0: number[]; prev60: number[]; D: number[]; T: number[]; d_rec: number; t_rec: number;
+  /** RoadSim's forced-on rules for each demand x coolant level (row-major D x T), from the recorded state */
+  fg: number[];
+  /** the SOC-feedback integral (s) at the recorded second, before its update */
+  I0: number;
+  /** this second's candidate controls (W; negative = the same engine power through a series hybrid's lock-up clutch) */
+  ctrl?: number[];
   j_rec: number; s_rec: number; pon_rec: number;
 }
 export interface Run { v: string; s: string; fuel_g: number; E_kWh: number; soc_end: number; pct_dp: number; extrap: boolean; starts_km: number; L100: number; dist_km: number }
 export interface Trip {
   id: string; vehicle: string; short: string; arch: string; likely: string; N: number; dist_km: number; T_route: number;
   logged_fuel_g: number; soc0: number; mass_kg: number; Pe: number; E_kWh: number; soc_lo: number; soc_hi: number;
-  ref: number; phev: boolean; ctrl: number[]; start_W: number; cat_warm_s: number; batt: Batt; runs: Run[]; moments: Moment[];
+  ref: number; phev: boolean; ctrl: number[]; start_W: number; cat_warm_s: number; min_on_s: number; min_off_s: number;
+  batt: Batt; runs: Run[]; moments: Moment[];
 }
-export interface Policy { Kp: number; min_on_s: number; min_off_s: number; s_scale: number; s_bias: number; preview_s: number; nav: boolean; onoff: string }
+export interface Policy { Kp: number; Ki: number; s_scale: number; s_bias: number; preview_s: number; nav: boolean; onoff: string; start_pen: number }
 export interface HMeta {
   trips: Trip[]; strategies: string[]; temps: number[]; masses: number[]; previews: number[];
   policy: Policy; n_feat: number; bins: [number, number][]; note: string;
@@ -54,11 +61,15 @@ const clamp = (v: number, a: number, b: number) => Math.min(Math.max(v, a), b);
 export const sOf = (y: [number, number]) => Math.exp(clamp(y[0], -5, 3)) - 0.05;
 export const pOn = (y: [number, number]) => 1 / (1 + Math.exp(-clamp(y[1], -30, 30)));
 
-/** HybridPilotCore.equivalence: the network's s, then SOC feedback s <- s + Kp (SOC_ref - SOC). */
-export function equivalence(pol: Policy, trip: Trip, sNet: number, soc: number): number {
+/** HybridPilotCore.equivalence: the network's s, then SOC feedback s <- s + Kp e + Ki I, e = SOC_ref - SOC,
+ *  I = clip(I0 + e, -30, 30) (I0: the integral before this second). */
+export function equivalence(pol: Policy, trip: Trip, sNet: number, soc: number, I0 = 0): number {
   let s = Math.max(sNet * pol.s_scale + pol.s_bias, 0);
   const e = trip.ref - soc;
-  if (pol.Kp && (!trip.phev || e > -0.03)) s = Math.max(s + pol.Kp * e, 0);
+  if ((pol.Kp || pol.Ki) && (!trip.phev || e > -0.03)) {
+    const I = pol.Ki ? clamp(I0 + e, -30, 30) : I0;
+    s = Math.max(s + pol.Kp * e + (pol.Ki || 0) * I, 0);
+  }
   return s;
 }
 
@@ -116,8 +127,9 @@ export function features(meta: HMeta, trip: Trip, m: Moment, set: Setting) {
   });
   const E_av = Math.max(soc - trip.ref, 0.0) * trip.batt.E_nom / 3.6e6;
   x[65] = E_av / (trip.batt.mass / 1000.0);
-  const forced = need_heat || (cat && m.moving) || soc < lo - 0.02;
-  return { x, p_dis, p_chg, need_heat, cat, forced };
+  const rule = !!m.fg[set.d * m.T.length + set.t];
+  const forced = rule || soc < lo - 0.02;
+  return { x, p_dis, p_chg, need_heat, cat, rule, forced };
 }
 
 // ---------------------------------------------------------------------------------------------- decision
@@ -133,16 +145,17 @@ export function cands(X: Pack<HMeta>, ti: number, mi: number, d: number, t: numb
 
 export interface Decision {
   y: [number, number]; sNet: number; s: number; pon: number; j: number;
-  J: number[]; ok: boolean[]; on: boolean[]; chemW: number[]; x: number[]; forced: boolean; need_heat: boolean; cat: boolean;
+  J: number[]; ok: boolean[]; on: boolean[]; chemW: number[]; x: number[]; forced: boolean; rule: boolean; need_heat: boolean; cat: boolean;
 }
 
-/** HybridPilotCore.decide over this second's candidates: minimise P_fuel + s * P_chem (+ start fuel from off). */
+/** HybridPilotCore.decide over this second's candidates: minimise P_fuel + s * P_chem (+ start fuel and the start
+ *  penalty from off), with the platform's minimum on / off times. */
 export function decide(net: Net, meta: HMeta, trip: Trip, m: Moment, c: Cands, set: Setting): Decision {
   const f = features(meta, trip, m, set);
   const pol = meta.policy;
   const y = forward(net, f.x);
   const sNet = sOf(y), pon = pOn(y);
-  const s = equivalence(pol, trip, sNet, set.soc);
+  const s = equivalence(pol, trip, sNet, set.soc, m.I0 ?? 0);
   const n = c.PF.length;
   const ok: boolean[] = [], on: boolean[] = [], chemW: number[] = [];
   let anyOkOn = false, anyOkOff = false;
@@ -156,28 +169,29 @@ export function decide(net: Net, meta: HMeta, trip: Trip, m: Moment, c: Cands, s
   }
   let sel = ok.slice();
   if (f.forced && anyOkOn) sel = sel.map((v, i) => v && on[i]);
-  if (m.eng_on && m.t_on < pol.min_on_s && anyOkOn) sel = sel.map((v, i) => v && on[i]);
-  if (!m.eng_on && m.t_off < pol.min_off_s && anyOkOff) sel = sel.map((v, i) => v && !on[i]);
+  if (m.eng_on && m.t_on < trip.min_on_s && anyOkOn) sel = sel.map((v, i) => v && on[i]);
+  if (!m.eng_on && m.t_off < trip.min_off_s && anyOkOff) sel = sel.map((v, i) => v && !on[i]);
   if (!sel.some(Boolean)) sel = ok.slice();
   const J: number[] = [];
   let j = -1, best = Infinity;
   for (let i = 0; i < n; i++) {
     let Ji = c.PF[i] + s * chemW[i];
-    if (!m.eng_on) Ji += on[i] ? trip.start_W : 0;
+    if (!m.eng_on) Ji += on[i] ? trip.start_W + (pol.start_pen || 0) : 0;
     J.push(Ji);
     if (sel[i] && Ji < best) { best = Ji; j = i; }
   }
-  return { y, sNet, s, pon, j, J, ok, on, chemW, x: f.x, forced: f.forced, need_heat: f.need_heat, cat: f.cat };
+  return { y, sNet, s, pon, j, J, ok, on, chemW, x: f.x, forced: f.forced, rule: f.rule, need_heat: f.need_heat, cat: f.cat };
 }
 
 /** s over the whole recorded trip (every traction second of the base run), with SOC feedback, run live. */
 export function tripS(net: Net, meta: HMeta, trip: Trip, X: Pack<HMeta>, ti: number): { k: Int32Array; s: Float64Array; sNet: Float64Array } {
   const xs = X.t[`t${ti}_xs`], soc = X.t[`t${ti}_xsoc`].data, kk = X.t[`t${ti}_xk`].data;
+  const xI = X.t[`t${ti}_xI`]?.data;
   const [n, F] = xs.shape;
   const k = new Int32Array(n), s = new Float64Array(n), sNet = new Float64Array(n);
   for (let i = 0; i < n; i++) {
     const y = forward(net, xs.data.subarray(i * F, (i + 1) * F));
-    k[i] = kk[i]; sNet[i] = sOf(y); s[i] = equivalence(meta.policy, trip, sNet[i], soc[i]);
+    k[i] = kk[i]; sNet[i] = sOf(y); s[i] = equivalence(meta.policy, trip, sNet[i], soc[i], xI ? xI[i] : 0);
   }
   return { k, s, sNet };
 }

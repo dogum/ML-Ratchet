@@ -178,18 +178,20 @@ export async function mount(ctx: InstrumentContext) {
     probs(ui.readout, 'Network: engine on? (not used by the shipped rule)', [
       { label: 'on', p: d.pon, truth: dpOn === true }, { label: 'off', p: 1 - d.pon, truth: dpOn === false }]);
     const atRec = st.d === m.d_rec && st.t === m.t_rec && Math.abs(st.soc - m.soc) < 1e-9 && st.L === 0;
-    const P = d.j >= 0 ? T.ctrl[d.j] : -1;
+    const ctrl = m.ctrl ?? T.ctrl;
+    const P = d.j >= 0 ? Math.abs(ctrl[d.j]) : -1;
     const what = d.j < 0 ? 'no feasible control' : d.on[d.j] ? `engine ${kW(P, 0)}` : 'engine off';
     const why: string[] = [];
-    if (d.forced) why.push(d.cat ? 'catalyst warm-up forces the engine on' : d.need_heat ? 'cabin heat forces the engine on' : 'charge below the window forces the engine on');
-    else if (m.eng_on && m.t_on < M.policy.min_on_s) why.push(`engine started ${m.t_on.toFixed(0)} s ago: kept on (min ${M.policy.min_on_s} s)`);
-    else if (!m.eng_on && m.t_off < M.policy.min_off_s) why.push(`engine stopped ${m.t_off.toFixed(0)} s ago: kept off (min ${M.policy.min_off_s} s)`);
+    if (d.forced) why.push(d.cat ? 'catalyst warm-up forces the engine on' : d.need_heat ? 'cabin heat forces the engine on'
+      : d.rule ? "RoadSim's production rules force the engine on (warm-up, road speed, load or plug-in rules)" : 'charge below the window forces the engine on');
+    else if (m.eng_on && m.t_on < T.min_on_s) why.push(`engine started ${m.t_on.toFixed(0)} s ago: kept on (min ${T.min_on_s} s)`);
+    else if (!m.eng_on && m.t_off < T.min_off_s) why.push(`engine stopped ${m.t_off.toFixed(0)} s ago: kept off (min ${T.min_off_s} s)`);
     const nOk = d.ok.filter(Boolean).length;
     decEl.innerHTML = `<div class="ig-l">HybridPilot's choice this second</div>
       <div class="hp-pick"><b>${what}</b>${d.j >= 0 && d.on[d.j] ? '<em>to the generator / wheels</em>' : '<em>electric only</em>'}</div>
       <div class="hp-sm">s = network <b>${fmt(d.sNet, 2)}</b> ${d.s >= d.sNet ? '+' : '−'} SOC feedback <b>${fmt(Math.abs(d.s - d.sNet), 2)}</b> · ${nOk} of ${d.ok.length} candidates possible</div>
       ${why.length ? `<div class="hp-sm w">${why.join(' · ')}</div>` : ''}
-      <div class="hp-sm">${atRec ? `RoadSim recorded: <b>${m.j_rec < 0 ? '—' : T.ctrl[m.j_rec] > 0 ? kW(T.ctrl[m.j_rec], 0) : 'engine off'}</b>${m.j_rec === d.j ? ' (same)' : ''}` : 'changed from the recorded second'}${dpOn != null ? ` · DP had the engine <b>${dpOn ? 'on' : 'off'}</b>` : ''}</div>`;
+      <div class="hp-sm">${atRec ? `RoadSim recorded: <b>${m.j_rec < 0 ? '—' : Math.abs(ctrl[m.j_rec]) > 0 ? kW(Math.abs(ctrl[m.j_rec]), 0) : 'engine off'}</b>${m.j_rec === d.j ? ' (same)' : ''}` : 'changed from the recorded second'}${dpOn != null ? ` · DP had the engine <b>${dpOn ? 'on' : 'off'}</b>` : ''}</div>`;
     const V = variant();
     const rows = ROWS.map((s) => ({ s, r: T.runs[runIdx(V, s)] })).filter((x) => x.r);
     const extra = V === 'base' ? M.previews.map((p) => ({ s: `hybridpilot_p${p}`, r: T.runs[runIdx('base', `hybridpilot_p${p}`)], p })).filter((x) => x.r) : [];
@@ -203,11 +205,11 @@ export async function mount(ctx: InstrumentContext) {
       </tbody></table>`;
     const base = T.runs[runIdx('base', 'hybridpilot')];
     const ratio = base ? base.fuel_g / T.logged_fuel_g : NaN;
-    noteEl.innerHTML = `<b>Simulated car, real route.</b> ${T.likely ? `A RoadSim twin of a ${ARCH[T.arch] ?? T.arch} (likely ${T.likely.replace(/\s*\([^)]*\)/g, '')}), ` : ''}`
+    noteEl.innerHTML = `<b>Simulated car, real route.</b> ${T.likely ? `A calibrated RoadSim twin of a ${ARCH[T.arch] ?? T.arch} (likely ${T.likely.replace(/\s*\([^)]*\)/g, '')}), ` : ''}`
       + `driving the speed, grade and weather VED recorded. `
       + (T.logged_fuel_g >= 1 ? `The real car logged <b>${T.logged_fuel_g.toFixed(0)} g</b> of fuel; the twin under HybridPilot burns <b>${base ? base.fuel_g.toFixed(0) : '—'} g</b> (${(100 * ratio).toFixed(0)}%, starting warm). `
         : `The real car logged no fuel on this trip; the twin under HybridPilot burns <b>${base ? base.fuel_g.toFixed(0) : '—'} g</b>. `)
-      + `Across 252 exam trips RoadSim reads about 20% low, far more than the 1–3% between strategies, so this ranking holds only inside the simulator. `
+      + `With HybridPilot driving the calibrated twins (RoadSim physics v2), exam hybrids read within 3% of the logged fuel (trip median, through the OBD fuel model) but plug-ins 22–31% low, while strategies differ by 0.5–1.5%, so this ranking holds only inside the simulator. `
       + `Battery kWh: chemical energy taken from the battery (− = charged). * = DP extrapolated; above 100% means DP was not tight.`;
     ui.readout.append(decEl, tblEl, noteEl); // (re-appended: gauges() and probs() add theirs at the end)
   }
