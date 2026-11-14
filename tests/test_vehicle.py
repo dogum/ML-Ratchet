@@ -68,7 +68,7 @@ def test_rebuilt_ved_dev_trips_load():
 
 
 def test_ztbus_full_split_and_legs():
-    """ZTBus full (1,409 missions): the split file is frozen and agrees with splits.json; legs load (skipped without data)."""
+    """ZTBus full (1,409 missions): the split file is hashed, keeps v1's sides for v1's samples; legs load (skipped without data)."""
     import pytest
 
     sf = VEH / "data" / "proc" / "hd" / "ztbus_full_splits.json"
@@ -81,10 +81,16 @@ def test_ztbus_full_split_and_legs():
     sha = sp.pop("sha256_canonical_content_without_this_field")
     canon = json.dumps(sp, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     assert hashlib.sha256(canon).hexdigest() == sha
-    frozen_dev = set(rd.splits()["HD"]["ZTBus"]["dev_missions"])
-    assert {m for m, s in sp["missions"].items() if s == "dev"} == frozen_dev and len(sp["missions"]) == 1409
+    # by-month split in force since 14 Nov 2026: v1's dev missions stay dev, v1 trace-exam samples stay exam
+    v1_dev = set(rd.splits()["HD"]["ZTBus"]["dev_missions"])
+    dev = {m for m, s in sp["missions"].items() if s == "dev"}
+    assert sp["in_force"] == "v2_by_month" and len(sp["missions"]) == 1409 and v1_dev <= dev
+    import pandas as pd
+    v1_exam = set(pd.read_parquet(VEH / "data" / "proc" / "hd" / "ztbus_legs.parquet").query("split == 'exam'").mission)
+    assert not (dev & v1_exam)
     legs = rd.ztbus_full()
-    assert set(legs.split) <= {"dev", "exam"} and set(legs[legs.split == "dev"].mission) <= frozen_dev
+    assert set(legs.split) <= {"dev", "exam"} and set(legs[legs.split == "dev"].mission) <= dev
+    frozen_dev = dev
     if not (VEH / "data" / "proc" / "hd" / "ztbus_full" / "trips").exists():
         pytest.skip("ZTBus full leg arrays not built here")
     for meta, a in rd.load_trips("dev", source="ZTBus_full", label_ok=True, limit=2, seed=0):
