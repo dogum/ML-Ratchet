@@ -140,7 +140,10 @@ the FTP (the TNGA-era Atkinson map stands in for 2008-2017 engines), TMED P2s 8-
 ## Heavy duty (no per-vehicle truck traces; ZTBus for buses)
 
 12. **ZTBus (18 m battery-trolleybus) — new check.** Twin with mass from passengers + 19 t curb, nothing fitted:
-    exam legs -2.3 % median (v1 -13.8 %), IQR 14.7 (22.5) points, 1.42 vs 1.59 kWh/km.
+    exam legs -2.3 % median (v1 -13.8 %), IQR 14.7 (22.5) points, 1.42 vs 1.59 kWh/km. The 19 t curb mass is a
+    convention, not verified: on 40 dev legs both the logged power and the logged traction force regress to
+    0.67-0.73 x (19 t + 70 kg per passenger) (TripDetective v2.0 NOTEBOOK, 14 Nov 2026). A mass read back from these
+    logs has a level that is not known to better than ~30 %.
 13. Class 8 diesel reference: 85.3 g CO2/ton-mile (v1 85.8), above the MY2021-23 standard of 75.7 as expected without
     Phase 2 packages; Willans map, plausibility only. Class 8 BEV 2.49 kWh/mi (v1 2.51) vs ~1.5-2.2 reported for loaded
     BEVs: the duty (65 mph, 19 t), not the motor (CALIBRATION.md C8).
