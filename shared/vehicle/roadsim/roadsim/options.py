@@ -2,7 +2,7 @@
 
 Every option's DEFAULTS value is the v1 behaviour: options=None, 'roadsim-physics-v1' or a dict without a 'preset'
 key build on physics v1, which stays reproducible exactly (tests/test_roadsim_fingerprint.py). A physics version is a
-named set of option values (PRESETS); the calibration passes fitted the numbers on dev data only. Since 14 Nov 2026
+named set of option values (PRESETS); the calibration passes fitted the numbers on dev data only. Since 13 Nov 2026
 simulate() without an options argument runs DEFAULT_PHYSICS = 'roadsim-physics-v2' (loaded from
 data/calibration_v2.json; decisions in CALIBRATION.md).
 

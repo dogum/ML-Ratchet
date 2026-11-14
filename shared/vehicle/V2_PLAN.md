@@ -66,11 +66,11 @@ forecast, the RoadSim run, TripDetective reading the log back, HybridPilot drivi
 
 ## Decisions log
 
-- **14 Nov 2026 — ZTBus split for the full set (owner's decision).** v1's rule left 2 of 1,409 missions as dev. The
+- **13 Nov 2026 — ZTBus split for the full set (owner's decision).** v1's rule left 2 of 1,409 missions as dev. The
   by-month split (fixed 13 Nov, before any full trace was processed) is now in force: 294 dev missions, 1,115 exam; the
   v1 trace-exam sample missions stay exam. EnergyNet v1's numbers on ZTBus mission totals are re-scored on the 1,115
   exam missions before comparing with v2. Details: data/DATA.md, proc/hd/ztbus_full_splits.json.
-- **14 Nov 2026 — physics v2 frozen and made the default (calibration agent 2).** `simulate()` without options runs
+- **13 Nov 2026 — physics v2 frozen and made the default (calibration agent 2).** `simulate()` without options runs
   `roadsim-physics-v2` (PHYSICS_VERSION); `options='roadsim-physics-v1'` or `None` reproduces v1 exactly (fingerprint
   test). Every RoadSim call under models/ is pinned to v1, so the three released models, their demos and
   tests/golden are unchanged until Phase D rebuilds them. VED CR-Z twins are P1 mild hybrids and are excluded from the

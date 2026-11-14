@@ -81,7 +81,7 @@ def test_ztbus_full_split_and_legs():
     sha = sp.pop("sha256_canonical_content_without_this_field")
     canon = json.dumps(sp, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     assert hashlib.sha256(canon).hexdigest() == sha
-    # by-month split in force since 14 Nov 2026: v1's dev missions stay dev, v1 trace-exam samples stay exam
+    # by-month split in force since 13 Nov 2026: v1's dev missions stay dev, v1 trace-exam samples stay exam
     v1_dev = set(rd.splits()["HD"]["ZTBus"]["dev_missions"])
     dev = {m for m, s in sp["missions"].items() if s == "dev"}
     assert sp["in_force"] == "v2_by_month" and len(sp["missions"]) == 1409 and v1_dev <= dev

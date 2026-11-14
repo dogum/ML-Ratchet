@@ -1,6 +1,6 @@
 # RoadSim: known limits
 
-What the simulator gets wrong, by how much where we measured it, and what to watch. Since 14 Nov 2026 the default
+What the simulator gets wrong, by how much where we measured it, and what to watch. Since 13 Nov 2026 the default
 physics is **roadsim-physics-v2** (calibrated on dev data only: [CALIBRATION.md](CALIBRATION.md)); physics v1 stays
 reproducible with `options='roadsim-physics-v1'`. Numbers are from `shared/vehicle/checks/*.json` (v1: plain names,
 v2: `__roadsim-physics-v2`), computed once after v2 was frozen; held-out / exam data unless stated. Errors on EPA

@@ -8,7 +8,7 @@ Hybrids: test starts at the SOC reached after preconditioning runs; residual net
 BEV: DC battery energy over a warm cycle, divided by an assumed 0.88 wall-to-battery charging efficiency to compare
      with EPA's AC recharge energy (SAE J1634).  HVAC off for FTP/HWFET/US06 (as on the test).
 
-Procedure corrections of 14 Nov 2026 (applied to every physics version; logged in roadsim/CALIBRATION.md):
+Procedure corrections of 13 Nov 2026 (applied to every physics version; logged in roadsim/CALIBRATION.md):
 - 20 F cold FTP (40 CFR 1066.710(c)): heat on, A/C off, outside air ((c)(1)(i)(D)), full automatic climate control
   at 72 F ((c)(2); the D3 cold tests are logged "HVAC ON-AUTO-72F"). Before: HVAC off. The vehicle is soaked 12-36 h at
   -7 C ((e)), so the tyres start at the soak temperature (before: warm tyres).

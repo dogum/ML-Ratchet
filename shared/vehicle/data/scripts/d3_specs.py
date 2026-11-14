@@ -251,10 +251,10 @@ def build_one(name, cat, f, d3):
             # 127 kW (Volt) at 1 Hz, rule: 68 / 79 / 123 kW). Charge power stays RoadSim's 0.6 x discharge.
             trac = sum(m['max_power_kW'] for m in spec['motors'] if m['role'] in ('traction', 'MG2', 'MG1'))
             spec['battery']['max_power_kW'] = round(min(trac / 0.9, 9.0 * c), 1)
-            prov['battery'] += '; max_power_kW derived: min(traction machines / 0.9, 9 C) (plug-in rule, 14 Nov 2026)'
+            prov['battery'] += '; max_power_kW derived: min(traction machines / 0.9, 9 C) (plug-in rule, 13 Nov 2026)'
     if arch.startswith('hev') and re.search(r'\bP[01]\b', f.get('arch_note') or ''):
         # mild hybrids (belt starter-generator P0, crankshaft motor P1): the engine cannot be decoupled, so no electric-only
-        # driving; assist, regen, stop/start and fuel cut only (strategy parameter engine_on_moving, 14 Nov 2026)
+        # driving; assist, regen, stop/start and fuel cut only (strategy parameter engine_on_moving, 13 Nov 2026)
         spec['control'] = {'strategy': 'aecms', 'params': {'engine_on_moving': True}}
         prov['control'] = 'derived: P0/P1 mild hybrid (arch note) -> A-ECMS with engine_on_moving'
     if f.get('hvac_source'):

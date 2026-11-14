@@ -6,7 +6,7 @@ to metered fuel (D3 dynamometer tests) or to EPA results.
     f_label = obd.label_fuel(out, spec, fuel_source)      # per-second fuel [g/s] as VED's label would show it
     cfg = obd.logger_config(arch, rng); log = obd.emulate(out, cfg, rng, spec)   # a full VED-style 1 Hz log
 
-Upstreamed 14 Nov 2026 from the two released models (their own copies stay unchanged so they reproduce):
+Upstreamed 13 Nov 2026 from the two released models (their own copies stay unchanged so they reproduce):
   * label model (maf_fuel): models/energynet/training/wrappers.py. VED's MAF-based fuel estimate still shows the air a
     motoring engine pumps during deceleration fuel cut-off (~0.2-0.3 g/s, not 0). Dev fit by EnergyNet (7 MAF dev cars,
     10,273 deceleration seconds): f_cut = exp(-1.578) D^0.342 (rpm/1000)^0.226 g/s (residual sd 0.29 in log).

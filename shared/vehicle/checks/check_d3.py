@@ -19,7 +19,7 @@ Compared per test (simulated vs measured):
 Medians and IQRs per architecture, temperature class and cycle are reported separately for dev and exam vehicles
 (data/proc/d3/splits.json). The calibration pass may look only at 'dev'; 'exam' is computed for the final report.
 
-Procedure details (14 Nov 2026, v2 calibration; same for every physics version):
+Procedure details (13 Nov 2026, v2 calibration; same for every physics version):
   * cold starts at cold ambient (< 5 C) begin with soaked tyres (tire_warm 0), as the 20 F FTP in epa_procedures (at
     test-cell temperature the dyno coefficients and v1's fitted cold-start friction assume warm tyres); the oil starts
     at the logged dipstick temperature where logged;

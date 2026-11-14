@@ -1,5 +1,5 @@
 {
- "_about": "Hand-entered facts for the Argonne D3 vehicles, used by data/scripts/d3_specs.py to build RoadSim twins. anl.gov refuses scripted requests (HTTP 403), so the D3 vehicle pages could not be read by the build. Test weight and dyno road-load targets come from the D3 test files themselves; engine size, rated power, transmission, axle and N/V ratios come from the EPA test-car tables (data/proc/epa) where the model matches. The motor, battery and the remaining engine/transmission entries below are published manufacturer figures entered by hand (rounded, 13 Nov 2026) and NOT re-checked against the D3 pages; every spec built from them marks those fields 'reported (hand table)'. Entries marked null could not be filled. epa: [make regex, model regex] to find the EPA test-car rows. arch_note: where RoadSim's architecture is an approximation. hvac_source (cabin heater type: ptc = resistive, heat_pump) is given only where the type is not optional on the model; elsewhere RoadSim v1 defaults apply (BEV heat pump, PHEV PTC, hybrids engine heat). 14 Nov 2026 (v2 calibration, agent 1): the conventional dev vehicles were cross-checked against fueleconomy.gov vehicles.csv and the EPA test-car table; each checked entry carries \"verified\" (verified / unverified / CORRECTED per fact). Hybrid, plug-in and BEV entries are not re-checked yet.",
+ "_about": "Hand-entered facts for the Argonne D3 vehicles, used by data/scripts/d3_specs.py to build RoadSim twins. anl.gov refuses scripted requests (HTTP 403), so the D3 vehicle pages could not be read by the build. Test weight and dyno road-load targets come from the D3 test files themselves; engine size, rated power, transmission, axle and N/V ratios come from the EPA test-car tables (data/proc/epa) where the model matches. The motor, battery and the remaining engine/transmission entries below are published manufacturer figures entered by hand (rounded, 13 Nov 2026) and NOT re-checked against the D3 pages; every spec built from them marks those fields 'reported (hand table)'. Entries marked null could not be filled. epa: [make regex, model regex] to find the EPA test-car rows. arch_note: where RoadSim's architecture is an approximation. hvac_source (cabin heater type: ptc = resistive, heat_pump) is given only where the type is not optional on the model; elsewhere RoadSim v1 defaults apply (BEV heat pump, PHEV PTC, hybrids engine heat). 13 Nov 2026 (v2 calibration, agent 1): the conventional dev vehicles were cross-checked against fueleconomy.gov vehicles.csv and the EPA test-car table; each checked entry carries \"verified\" (verified / unverified / CORRECTED per fact). Hybrid, plug-in and BEV entries are not re-checked yet.",
  "vehicles": {
   "2020 Chrysler Pacifica": {
    "class": "van",
@@ -37,7 +37,7 @@
     "engine_L": "verified: 3.6 V6, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy), and the VIN in the D3 TDMS test info",
     "engine_kW": "verified: 308 hp = 230 kW, EPA test-car table (data/proc/epa)",
     "trans": "verified: Automatic 9-spd, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy); EPA test-car table (data/proc/epa)",
-    "idle_stop": "CORRECTED 14 Nov 2026 (was missing = false): startStop Y for every 2019 Blazer in fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy); the D3 tests log engine speed 0 at most stops"
+    "idle_stop": "CORRECTED 13 Nov 2026 (was missing = false): startStop Y for every 2019 Blazer in fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy); the D3 tests log engine speed 0 at most stops"
    },
    "idle_stop": true
   },
@@ -261,7 +261,7 @@
     "engine_L": "verified: 2.0 diesel, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
     "engine_kW": "verified: 140 hp = 104 kW, EPA test-car table (data/proc/epa) (Jetta SportWagen TDI row)",
     "trans": "verified: Automatic (AM-S6) = 6-speed DSG, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)",
-    "turbo": "CORRECTED 14 Nov 2026: turbo true (tCharger T in fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)); the diesel map does not depend on it",
+    "turbo": "CORRECTED 13 Nov 2026: turbo true (tCharger T in fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)); the diesel map does not depend on it",
     "idle_stop": "verified false: startStop N, fueleconomy.gov vehicles.csv (roadsim/refdata/fueleconomy)"
    },
    "turbo": true
@@ -1235,7 +1235,7 @@
     "FORD",
     "C.?MAX ENERGI|C-MAX PHEV"
    ],
-   "hvac_note": "electric (PTC) cabin heat assumed: D3 dev charge-depleting UDDS at -7 C with a warm start uses 3.0-3.4 kWh with the engine on 8-11 % (about +3.5 kW over the warm test), which only an electric heater explains (14 Nov 2026)"
+   "hvac_note": "electric (PTC) cabin heat assumed: D3 dev charge-depleting UDDS at -7 C with a warm start uses 3.0-3.4 kWh with the engine on 8-11 % (about +3.5 kW over the warm test), which only an electric heater explains (13 Nov 2026)"
   },
   "2013 Ford Fusion Energi": {
    "class": "car",
@@ -1268,7 +1268,7 @@
     "FORD",
     "FUSION ENERGI|FUSION PHEV"
    ],
-   "hvac_note": "electric (PTC) cabin heat assumed: D3 dev charge-depleting UDDS at -7 C with a warm start uses 3.0-3.4 kWh with the engine on 8-11 % (about +3.5 kW over the warm test), which only an electric heater explains (14 Nov 2026)"
+   "hvac_note": "electric (PTC) cabin heat assumed: D3 dev charge-depleting UDDS at -7 C with a warm start uses 3.0-3.4 kWh with the engine on 8-11 % (about +3.5 kW over the warm test), which only an electric heater explains (13 Nov 2026)"
   },
   "2013 Chevrolet Volt": {
    "class": "car",

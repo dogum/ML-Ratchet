@@ -8,7 +8,7 @@ epa_vehicles runs first; the checks after it run in parallel (one thread each).
 --options: RoadSim physics options for every check (a preset name such as roadsim-physics-v2, or a JSON dict);
            default physics v1. Passed on through the environment (checks/_opts.py).
 --recalibrate-v1: also re-fit the v1 constants (calibrate_dev.py -> roadsim/data/calibration.json). Off by default
-           since 14 Nov 2026: physics v1 is frozen (tests/test_roadsim_fingerprint.py) and v2 has its own fitted numbers
+           since 13 Nov 2026: physics v1 is frozen (tests/test_roadsim_fingerprint.py) and v2 has its own fitted numbers
            (roadsim/data/calibration_v2.json, fitted by the v2 calibration pass, not by this script).
 """
 import os, sys, subprocess, time, argparse

@@ -1,4 +1,4 @@
-"""RoadSim physics v2, calibration agent 2 (14 Nov 2026): the small options added for the hybrid / plug-in / HVAC / bus
+"""RoadSim physics v2, calibration agent 2 (13 Nov 2026): the small options added for the hybrid / plug-in / HVAC / bus
 calibration, and the default-physics switch. Every option is off in physics v1 (the fingerprint test covers that)."""
 import copy, os, sys
 import numpy as np

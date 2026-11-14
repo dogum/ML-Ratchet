@@ -44,7 +44,7 @@ WARM = dict(engine=85.0, oil=90.0, driveline=70.0, axle=60.0, tire_warm=1.0, cab
 PLUGIN_HW = {
     # battery max_power_kW: min(traction machines / 0.9, 9 C), the plug-in rule of data/scripts/d3_specs.py (RoadSim's
     # 'energy' default of 3 C left the Energi twin at 23 kW and forced its engine on in charge depletion). Machines and
-    # engine power from the same public spec sheets as data/d3_facts.json (added 14 Nov 2026, calibration agent 2).
+    # engine power from the same public spec sheets as data/d3_facts.json (added 13 Nov 2026, calibration agent 2).
     ('phev_series', 1.4): dict(battery=dict(capacity_kWh=16.5, nominal_V=360, soc_window=[0.2, 0.85], max_power_kW=123.0), P=111,
                                engine_kW=63, motors=[('traction', 111, 370), ('generator', 55, None)]),
     ('phev_series', 1.5): dict(battery=dict(capacity_kWh=18.4, nominal_V=360, soc_window=[0.15, 0.9], max_power_kW=123.0), P=111,
@@ -171,7 +171,7 @@ def label_match_phev(spec, ucity, uhwy, ev_city_kWh=None, ev_hwy_kWh=None):
     """plug-ins: class-default road load (k = 1), engine level from the charge-sustaining label. One k scales CdA and
     Crr together; neither label ratio fixes it for the Ford Energi (charge-sustaining 51.4/55 needs k at the 1.8 bound
     with eff_scale 1.31; the electric label 42/34 kWh needs k 1.6 -> +31 % trip energy), so the ratio is not matched.
-    The Volt's electric ratio gives k 0.84. Decided on VED dev, 14 Nov 2026 (CALIBRATION.md, rung H6)."""
+    The Volt's electric ratio gives k 0.84. Decided on VED dev, 13 Nov 2026 (CALIBRATION.md, rung H6)."""
     k = 1.0
     eff = 1.0
     for _ in range(3):

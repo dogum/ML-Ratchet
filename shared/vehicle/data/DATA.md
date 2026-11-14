@@ -352,13 +352,13 @@ Legs: median 15.2 km / 56 min (p10-p90 9.0-63.5 km). Missions last 3-24 h (media
 leg-km: 83 (48%), 33, 72, 46, 32, 31, night routes N1-N4.
 
 **Split** (`proc/hd/ztbus_full_splits.json`; sha256 of canonical JSON (sorted keys, no whitespace, UTF-8) without the sha
-field = `18e0fead…`; written once, then only recomputed and compared). **Changed on 14 Nov 2026, in the open, with the
+field = `18e0fead…`; written once, then only recomputed and compared). **Changed on 13 Nov 2026, in the open, with the
 owner's approval.**
 
 - **v1 rule** (`proc/splits.json` HD.ZTBus, unchanged and still hashed): one seeded traced mission per bus is dev, all
   other missions are exam. Applied to the full set it gives 2 dev missions (5 legs) and 1,407 exam: the simulator could
   calibrate on only 2 bus missions.
-- **In force since 14 Nov 2026: a by-month split**, fixed on 13 Nov before any full-data trace was processed. The unit is
+- **In force since 13 Nov 2026: a by-month split**, fixed on 13 Nov before any full-data trace was processed. The unit is
   the (bus, calendar month) block. Within each (bus, season) stratum, max(1, round(0.2 n)) months are drawn with seed
   20261113, plus the months that hold the two v1 dev missions; every mission takes the side of its month, **except the
   v1 trace-exam sample missions, which stay exam** (one of them, `B208_2021-05-27…`, fell in a dev month and is pinned),

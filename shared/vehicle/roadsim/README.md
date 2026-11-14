@@ -42,7 +42,7 @@ out = simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, 
 | `rng` | seed or `numpy.random.Generator`: varies the driver's PI gains ±30 % (deterministic if None). |
 | `driver` | `{'Kp': 0.5, 'Ki': 0.05, 'a_max', 'a_min'}`. Feed-forward from the road-load model plus PI on the lagged speed error. |
 | `record` | False skips the per-second arrays (ledger and summary only); about 10-20 % faster. |
-| `options` | physics: omitted = `roadsim.PHYSICS_VERSION` (`'roadsim-physics-v2'` since 14 Nov 2026); `'roadsim-physics-v1'` or `None` = physics v1 exactly; a preset name; or a dict of options (`{'preset': 'roadsim-physics-v2', ...}` changes single values of a preset; a dict without `preset` builds on v1). See [Physics versions and options](#physics-versions-and-options). |
+| `options` | physics: omitted = `roadsim.PHYSICS_VERSION` (`'roadsim-physics-v2'` since 13 Nov 2026); `'roadsim-physics-v1'` or `None` = physics v1 exactly; a preset name; or a dict of options (`{'preset': 'roadsim-physics-v2', ...}` changes single values of a preset; a dict without `preset` builds on v1). See [Physics versions and options](#physics-versions-and-options). |
 
 **Returns** a dict. Arrays (float32, length N; quantities over second k→k+1 are stored at index k+1, like a logger's
 rate over the last second; states are instantaneous):

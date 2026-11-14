@@ -111,7 +111,7 @@ def simulate(vehicle_spec, trip_inputs, strategy=None, dt=1.0, init_soc=None, in
     rng          : numpy Generator or seed -> small random driver gain variation (None = deterministic)
     driver       : {'Kp': 1/s, 'Ki': 1/s^2, 'a_max': m/s2, 'a_min': m/s2}
     options      : physics options (roadsim/options.py): a preset name, a dict, or None. Omitted = DEFAULT_PHYSICS
-                   ('roadsim-physics-v2' since 14 Nov 2026); None or 'roadsim-physics-v1' = physics v1 exactly; a dict
+                   ('roadsim-physics-v2' since 13 Nov 2026); None or 'roadsim-physics-v1' = physics v1 exactly; a dict
                    without a 'preset' key applies its values on top of v1
     """
     t_wall = time.perf_counter()

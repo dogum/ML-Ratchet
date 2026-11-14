@@ -8,7 +8,7 @@ numbers live in `roadsim/data/calibration_v2.json` (preset `roadsim-physics-v2`,
 Sign conventions: EPA errors are on fuel economy (+ = the sim burns less than EPA). D3 and VED errors are on fuel or
 energy (+ = the sim uses more). D3 conventional errors are over the recognised schedule phases.
 
-## 14 Nov 2026 — calibration agent 1: harness, procedures, conventional and shared physics
+## 13 Nov 2026 — calibration agent 1: harness, procedures, conventional and shared physics
 
 ### P0 Harness (no physics change)
 
@@ -180,7 +180,7 @@ Ledger stress (600 runs, v2 preset): max closure 5.6e-4 (v1 5.1e-4), none above 
 - Bus heating 2-3x the ZTBus dev standstill power (C8).
 - EPA check-dev Sonata cold FTP went +0.5 -> -6.5 while the pool (n 43) went +7.8 -> +1.4: one car against 43.
 
-## 14 Nov 2026 — calibration agent 2: hybrids, plug-ins, BEVs, HVAC, buses; physics v2 frozen
+## 13 Nov 2026 — calibration agent 2: hybrids, plug-ins, BEVs, HVAC, buses; physics v2 frozen
 
 Same rules: dev data only (D3 dev vehicles, VED dev cars, EPA check-dev vehicles, EPA dev pool, ZTBus dev). The
 held-out report was computed once, after the commit that froze every value below.
