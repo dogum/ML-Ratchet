@@ -330,6 +330,44 @@ class _HybridBase(_ElecBase):
         f = self.eng.fuel_W_vec(w, T) * cold
         return np.where(on, f, 0.0)
 
+    def _o(self, key, default=None):
+        """physics option (roadsim/options.py); objects built outside simulate() have none -> v1 behaviour."""
+        o = getattr(self, 'opt', None)
+        return o.get(key, default) if o else default
+
+    def start_terms(self, start, w_sync, P_batt, p_dis, w_spin=0.0, k0_slip=0.0, dt=1.0):
+        """engine-start energy for the candidates that start a stopped engine this step (option hybrid_start_energy).
+
+        A motor spins the engine up to w_sync (kinetic energy 0.5 J w^2, less what it already has when spinning at
+        w_spin) and turns it against its motoring friction for start_crank_s at about half that speed. With a K0
+        clutch start (P2) the motor runs at shaft speed and the clutch dissipates k0_slip x the kinetic energy too.
+        When the battery cannot supply it on top of the candidate's own power P_batt (limit p_dis), the motor provides
+        the share it can and the engine fires early and accelerates itself on fuel (efficiency start_self_eta, no
+        clutch slip for that share), so a start never becomes infeasible.
+        Returns powers over the step (W): (into the engine from the motor -> engine loss, clutch slip -> transmission
+        loss, battery electrical, extra fuel). The start fuel itself is booked by the strategy (start_W), as in v1."""
+        if not self._o('hybrid_start_energy', False):
+            return 0.0, 0.0, 0.0, 0.0
+        e = self.eng
+        start = np.asarray(start, bool)
+        if not start.any():
+            return 0.0, 0.0, 0.0, 0.0
+        w_sync = np.asarray(w_sync, float)
+        spun = np.clip(1.0 - (w_spin / np.maximum(w_sync, 1.0)) ** 2, 0.0, 1.0)
+        KE = 0.5 * e.J * w_sync ** 2 * spun
+        wm = 0.5 * w_sync
+        E_eng = KE + np.abs(e.tct_curve.vec(wm)) * wm * self._o('start_crank_s', 0.3) * spun
+        E_slip = k0_slip * KE
+        eta = self._o('start_crank_eta', 0.85)
+        need = (E_eng + E_slip) / eta / dt
+        room = np.maximum(p_dis - P_batt, 0.0)
+        phi = np.where(need > 0.0, np.clip(room / np.maximum(need, 1e-9), 0.0, 1.0), 1.0)
+        P_eng = np.where(start, phi * E_eng / dt, 0.0)
+        P_slip = np.where(start, phi * E_slip / dt, 0.0)
+        P_el = (P_eng + P_slip) / eta
+        P_fuel = np.where(start, (1.0 - phi) * E_eng / dt / self._o('start_self_eta', 0.25), 0.0)
+        return P_eng, P_slip, P_el, P_fuel
+
 
 # =============================================================================== series (and EREV)
 class SeriesPT(_HybridBase):
@@ -347,7 +385,8 @@ class SeriesPT(_HybridBase):
         return np.concatenate([[0.0], np.linspace(Pmin, e.P_max * 0.98, n)])
 
     def evaluate(self, T_w, w_w, ctrl, st, env):
-        """ctrl = engine brake power (W); 0 = engine off."""
+        """ctrl = engine brake power (W); 0 = engine off. With the option series_direct_drive, a negative ctrl -P asks
+        for engine power P through the lock-up clutch (engine geared to the wheels, see dd_speed)."""
         e = self.eng; m = self.m; gen = self.gen
         T_w = np.asarray(T_w, float); P_e = np.asarray(ctrl, float)
         T_w, P_e = np.broadcast_arrays(T_w, P_e)
@@ -356,6 +395,10 @@ class SeriesPT(_HybridBase):
         lim = m.t_lim(w_m)
         ok = np.abs(T_m) <= lim + 1e-9
         P_m = m.elec_vec(np.full_like(T_m, w_m), T_m) if w_m > 0 else np.zeros_like(T_m)
+        dd_opt = self._o('series_direct_drive', False)
+        dd = (P_e < -1.0) if dd_opt else np.zeros(P_e.shape, bool)
+        if dd_opt:
+            P_e = np.abs(P_e)
         on = P_e > 1.0
         w_e = np.where(on, e.ool_w.vec(P_e), 0.0)
         T_e = np.where(on, P_e / np.maximum(w_e, 1.0), 0.0)
@@ -364,13 +407,51 @@ class SeriesPT(_HybridBase):
         Tg = -T_e
         ok &= np.abs(Tg) <= gen.t_lim_vec(w_e) + 1e-9
         P_g = np.where(on, gen.elec_vec(w_e, Tg), 0.0)
-        P_batt = P_m + P_g + env['P_aux_el']
-        P_fuel = np.where(on, e.fuel_cold_vec(w_e, T_e, st['T_eng']), 0.0)
-        ok &= (P_batt <= env['p_dis'] + 1e-6) & (P_batt >= -env['p_chg'] - 1e-6)
-        P_mloss = (P_m - T_m * w_m) + np.where(on, P_g - Tg * w_e, 0.0)
         P_fd = T_m * w_m - T_w * w_w
-        return dict(ok=ok, P_fuel=P_fuel, P_batt=P_batt, P_e=P_e, w_e=w_e, T_e=T_e, on=on, P_mot=P_mloss, P_trans=P_fd,
-                    T_w=T_w, T_m=T_m, w_m=np.full_like(T_m, w_m), P_m_el=P_m, T_g=Tg, w_g=w_e, P_g_el=P_g)
+        if dd.any():
+            # lock-up: engine speed fixed by road speed; the traction motor adds or absorbs the difference; the
+            # generator turns with the engine unloaded (freewheel loss only)
+            w_d = self.dd_speed(w_w)
+            eta_d = self._o('series_dd_eta', 0.96)
+            if w_d > 0.0:
+                R = w_d / max(w_w, 1e-9)
+                T_ed = P_e / w_d
+                T_wm = T_w - T_ed * R * eta_d
+                T_md = np.where(T_wm >= 0, T_wm / (self.FD * self.eta_dl), T_wm * self.eta_dl / self.FD)
+                P_md = m.elec_vec(np.full_like(T_md, w_m), T_md)
+                P_gd = gen.elec_vec(np.full_like(T_md, w_d), np.zeros_like(T_md))
+                ok_d = (np.abs(T_md) <= lim + 1e-9) & (T_ed <= e.t_max(w_d) * 1.001)
+                ok = np.where(dd, ok_d, ok)
+                w_e = np.where(dd, w_d, w_e); T_e = np.where(dd, T_ed, T_e)
+                T_m = np.where(dd, T_md, T_m); P_m = np.where(dd, P_md, P_m)
+                Tg = np.where(dd, 0.0, Tg); P_g = np.where(dd, P_gd, P_g)
+                P_fd = np.where(dd, T_ed * w_d * (1.0 - eta_d) + T_md * w_m - T_wm * w_w, P_fd)
+            else:
+                ok = ok & ~dd
+        P_mloss = (P_m - T_m * w_m) + np.where(on, P_g - Tg * w_e, 0.0)
+        P_eng = np.where(dd, T_e * w_e, P_e) if dd_opt else P_e
+        start = on & (not st.get('eng_on', True))
+        P_b0 = P_m + P_g + env['P_aux_el']
+        Ps_e, Ps_slip, Ps_el, Ps_f = self.start_terms(start, self._o('start_crank_rpm', 1000.0) * math.pi / 30, P_b0, env['p_dis'])
+        P_batt = P_b0 + Ps_el
+        P_fuel = np.where(on, e.fuel_cold_vec(w_e, T_e, st['T_eng']), 0.0) + Ps_f
+        ok &= (P_batt <= env['p_dis'] + 1e-6) & (P_batt >= -env['p_chg'] - 1e-6)
+        return dict(ok=ok, P_fuel=P_fuel, P_batt=P_batt, P_e=P_eng - Ps_e, w_e=w_e, T_e=T_e, on=on,
+                    P_mot=P_mloss + (Ps_el - Ps_e - Ps_slip), P_trans=P_fd + Ps_slip,
+                    T_w=T_w, T_m=T_m, w_m=np.full_like(T_m, w_m), P_m_el=P_m, T_g=Tg, w_g=w_e, P_g_el=P_g, dd=dd)
+
+    def dd_speed(self, w_w):
+        """engine speed (rad/s) in direct drive at wheel speed w_w, or 0 outside the lock-up window."""
+        if not self._o('series_direct_drive', False):
+            return 0.0
+        kph = w_w * self.r * 3.6
+        if kph < self._o('series_dd_v_min_kph', 70.0) or kph > self._o('series_dd_v_max_kph', 140.0):
+            return 0.0
+        w = kph * self._o('series_dd_rpm_per_kph', 20.0) * math.pi / 30
+        e = self.eng
+        if w < e.w_min_load or w > e.w_max:
+            return 0.0
+        return w
 
     def max_ctrl(self):
         return self.eng.P_max * 0.98
@@ -420,13 +501,19 @@ class SplitPT(_HybridBase):
         ok &= np.abs(T1) <= mg1.t_lim_vec(np.abs(w_s)) + 1e-9
         ok &= np.abs(T2) <= mg2.t_lim(w2) + 1e-9
         P1 = mg1.elec_vec(w_s, T1); P2 = mg2.elec_vec(np.full_like(T2, w2), T2)
-        P_batt = P1 + P2 + env['P_aux_el']
+        # engine start (option): MG1 spins the engine up from its unfuelled speed (0 at low road speed)
+        start = on & (not st.get('eng_on', True))
+        P_b0 = P1 + P2 + env['P_aux_el']
+        Ps_e, Ps_slip, Ps_el, Ps_f = self.start_terms(start, self._o('start_crank_rpm', 1000.0) * math.pi / 30, P_b0,
+                                                      env['p_dis'], w_spin=w_spin)
+        P_batt = P_b0 + Ps_el
         ok &= (P_batt <= env['p_dis'] + 1e-6) & (P_batt >= -env['p_chg'] - 1e-6)
-        P_fuel = np.where(on, e.fuel_cold_vec(w_e, T_e, st['T_eng']), 0.0)
+        P_fuel = np.where(on, e.fuel_cold_vec(w_e, T_e, st['T_eng']), 0.0) + Ps_f
         P_mloss = (P1 - T1 * w_s) + (P2 - T2 * w2)
         P_fd = T_r * w_r - T_w * w_w
-        return dict(ok=ok, P_fuel=P_fuel, P_batt=P_batt, P_e=T_e * w_e, w_e=w_e, T_e=T_e, on=on, P_mot=P_mloss,
-                    P_trans=P_fd, T_w=T_w, T1=T1, w_s=w_s, T2=T2, w2=np.full_like(T2, w2), P_m_el=P2, P_g_el=P1)
+        return dict(ok=ok, P_fuel=P_fuel, P_batt=P_batt, P_e=T_e * w_e - Ps_e, w_e=w_e, T_e=T_e, on=on,
+                    P_mot=P_mloss + (Ps_el - Ps_e - Ps_slip), P_trans=P_fd + Ps_slip, T_w=T_w, T1=T1, w_s=w_s, T2=T2,
+                    w2=np.full_like(T2, w2), P_m_el=P2, P_g_el=P1)
 
     def max_ctrl(self):
         return self.eng.P_max * 0.98
@@ -483,6 +570,8 @@ class P2PT(_HybridBase):
         J = np.where(on, e.J, 0.0) + self.J_m
         T_in = T_in + J * alpha             # rotating inertia (engine when coupled + motor rotor) supplied by the shaft
         P_J = J * alpha * w_in
+        if self.tc_active(w_in, g, env):
+            return self._evaluate_tc(T_w, w_w, w_o, T_o, T_in, w_in, J, alpha, P_J, on, fr, g, st, env)
         # engine can only couple above its minimum loaded speed; below that it may slip-launch at w_launch
         slip = on & (w_in < e.w_min_load)
         w_e = np.where(on, np.maximum(w_in, e.w_min_load), 0.0)
@@ -494,14 +583,65 @@ class P2PT(_HybridBase):
         ok &= w_in <= m.w_max
         ok &= ~on | (w_e <= e.w_max)
         P_m = m.elec_vec(np.full_like(T_m, w_in), T_m) if w_in > 0 else T_m * 0.0
-        P_batt = P_m + env['P_aux_el']
+        start = on & (not st.get('eng_on', True))
+        P_b0 = P_m + env['P_aux_el']
+        Ps_e, Ps_slip, Ps_el, Ps_f = self.start_terms(start, w_e, P_b0, env['p_dis'], k0_slip=self.k0_slip())
+        P_batt = P_b0 + Ps_el
         ok &= (P_batt <= env['p_dis'] + 1e-6) & (P_batt >= -env['p_chg'] - 1e-6)
-        P_fuel = np.where(on, e.fuel_cold_vec(w_e, T_e, st['T_eng']), 0.0)
+        P_fuel = np.where(on, e.fuel_cold_vec(w_e, T_e, st['T_eng']), 0.0) + Ps_f
         P_slip = np.where(slip, T_e * (w_e - w_in), 0.0)
         P_box = (T_in - J * alpha) * w_in - T_o * w_o
         P_fd = T_o * w_o - T_w * w_w
-        return dict(ok=ok, P_fuel=P_fuel, P_batt=P_batt, P_e=T_e * w_e, w_e=w_e, T_e=T_e, on=on, P_mot=P_m - T_m * w_in + 0.0 * P_J,
-                    P_trans=P_box + P_fd + P_slip + P_J, T_w=T_w, T_m=T_m, w_m=np.full_like(T_m, w_in), gear=g, P_m_el=P_m)
+        return dict(ok=ok, P_fuel=P_fuel, P_batt=P_batt, P_e=T_e * w_e - Ps_e, w_e=w_e, T_e=T_e, on=on,
+                    P_mot=P_m - T_m * w_in + 0.0 * P_J + (Ps_el - Ps_e - Ps_slip),
+                    P_trans=P_box + P_fd + P_slip + P_J + Ps_slip, T_w=T_w, T_m=T_m, w_m=np.full_like(T_m, w_in), gear=g,
+                    P_m_el=P_m)
+
+    def k0_slip(self):
+        return float(self.v.spec.get('engine', {}).get('k0_slip_frac', self._o('p2_k0_slip_frac', 1.0)))
+
+    def tc_active(self, w_in, g, env):
+        """option p2_torque_converter: the converter is open (slipping) in first gear below 1.4x the lock-up speed
+        and in any gear below it, as in ConvPT. Only P2 automatics that have a converter (Vehicle.tc: type 'AT')."""
+        if self.v.tc is None or env.get('stopped') or not self._o('p2_torque_converter', False):
+            return False
+        if not self.v.spec.get('transmission', {}).get('torque_converter', True):
+            return False
+        if g < int(self._o('p2_tc_open_gears', 0)):
+            return True                 # converter held open in the lowest gears (calibration choice)
+        w_lock = max(self.eng.w_min_load, self._o('p2_tc_lock_rpm', 1050.0) * math.pi / 30)
+        return not (w_in >= w_lock and (g >= 1 or w_in > 1.4 * w_lock))
+
+    def _evaluate_tc(self, T_w, w_w, w_o, T_o, T_in, w_in, J, alpha, P_J, on, fr, g, st, env):
+        """open converter between the P2 module (engine + K0 + motor) and the gearbox: pump speed and torque from the
+        K-factor model (TorqueConverter.solve_vec) for traction; regen and coast torque (<= 0) pass locked."""
+        e = self.eng; m = self.m
+        trac = (T_w > 0) & (T_in > 0)
+        w_p, T_p = self.v.tc.solve_vec(w_in, np.where(trac, T_in, 1.0))
+        w_s = np.where(trac, w_p, w_in)              # shaft speed of engine/motor side
+        T_s = np.where(trac, T_p, T_in)
+        P_cpl = T_s * w_s - T_in * w_in               # converter loss (>= 0)
+        slip = on & (w_s < e.w_min_load)
+        w_e = np.where(on, np.maximum(w_s, e.w_min_load), 0.0)
+        Tmax = e.tmax_curve.vec(np.maximum(w_e, 1.0))
+        T_e = np.where(on, fr * Tmax, 0.0)
+        T_m = T_s - T_e
+        ok = np.abs(T_m) <= m.t_lim_vec(w_s) + 1e-9
+        ok &= w_s <= m.w_max
+        ok &= ~on | (w_e <= e.w_max)
+        P_m = m.elec_vec(w_s, T_m)
+        start = on & (not st.get('eng_on', True))
+        P_b0 = P_m + env['P_aux_el']
+        Ps_e, Ps_slip, Ps_el, Ps_f = self.start_terms(start, w_e, P_b0, env['p_dis'], k0_slip=self.k0_slip())
+        P_batt = P_b0 + Ps_el
+        ok &= (P_batt <= env['p_dis'] + 1e-6) & (P_batt >= -env['p_chg'] - 1e-6)
+        P_fuel = np.where(on, e.fuel_cold_vec(w_e, T_e, st['T_eng']), 0.0) + Ps_f
+        P_slip = np.where(slip, T_e * (w_e - w_s), 0.0)
+        P_box = (T_in - J * alpha) * w_in - T_o * w_o
+        P_fd = T_o * w_o - T_w * w_w
+        return dict(ok=ok, P_fuel=P_fuel, P_batt=P_batt, P_e=T_e * w_e - Ps_e, w_e=w_e, T_e=T_e, on=on,
+                    P_mot=P_m - T_m * w_s + (Ps_el - Ps_e - Ps_slip), P_trans=P_box + P_fd + P_slip + P_J + P_cpl + Ps_slip,
+                    T_w=T_w, T_m=T_m, w_m=w_s * np.ones_like(T_m), gear=g, P_m_el=P_m)
 
     def default_fracs(self, n=12):
         return np.concatenate([[0.0], np.linspace(0.15, 1.0, n)])

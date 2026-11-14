@@ -406,6 +406,17 @@ class TorqueConverter:
             w_p = w_t / SR
         return w_p, T_p
 
+    def solve_vec(self, w_t, T_t):
+        """vectorised `solve` for turbine torque T_t > 0 (arrays broadcast); returns (w_pump, T_pump)."""
+        w_t, T_t = np.broadcast_arrays(np.asarray(w_t, float), np.asarray(T_t, float))
+        Tt = np.maximum(T_t, 1e-9)
+        x = w_t * w_t / Tt
+        SR = np.where(x >= self.g_max, 0.97, np.interp(np.minimum(x, self.g_max), self.g, self.sr))
+        TR = np.where(SR < 0.85, 2.0 - SR / 0.85, 1.0)
+        T_p = Tt / TR
+        w_p = np.where(SR < 1e-3, self.K_stall * np.sqrt(T_p), w_t / np.maximum(SR, 1e-3))
+        return w_p, T_p
+
 
 # ---------------------------------------------------------------- cabin / HVAC
 class Cabin:

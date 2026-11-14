@@ -78,7 +78,23 @@ class HybridStrategy(Strategy):
         super().setup(veh, pt, trip, st)
         e = veh.engine
         self.Pe_max = e.P_max
-        self.start_W = e.fuel_W(e.w_idle, 0.0) * 1.5      # start cost ~1.5 s of idle fuel, spread over the start second
+        o = getattr(self, 'opt', None) or {}       # physics options (roadsim/options.py); none -> v1
+        self.o = o
+        if o.get('hybrid_start_energy'):
+            self.start_W = e.fuel_W(e.w_idle, 0.0) * o.get('start_fuel_idle_s', 1.5)
+        else:
+            self.start_W = e.fuel_W(e.w_idle, 0.0) * 1.5      # start cost ~1.5 s of idle fuel, spread over the start second
+        self.start_pen = float(o.get('start_penalty_J', 0.0) or 0.0)
+        if self.name not in ('dp',) or o.get('dp_min_on_off'):
+            if o.get('hybrid_min_on_s') is not None:
+                self.min_on_s = float(o['hybrid_min_on_s'])
+            if o.get('hybrid_min_off_s') is not None:
+                self.min_off_s = float(o['hybrid_min_off_s'])
+        self.hold_off_rule = o.get('hybrid_min_off_s') is not None
+        self.ps_rules = bool(o.get('powersplit_calibration')) and veh.arch in ('hev_powersplit', 'phev_powersplit')
+        self.cold_start = st['T_eng'] < o.get('ps_cat_cold_C', 35.0)
+        self.t_run = 0.0
+        self.heat_hold = False
         self.soc_target = self.p.get('soc_target', self.soc_mid)
         from . import calib
         self.cat_warm_s = self.p.get('cat_warmup_s', calib.get('cat_warmup_s'))
@@ -87,7 +103,46 @@ class HybridStrategy(Strategy):
     def grid(self, ctx):
         if hasattr(self.pt, 'default_fracs'):
             return self.pt.default_fracs(self.p.get('n_ctrl', 12))
-        return self.pt.ctrl_grid(self.p.get('n_ctrl', 14))
+        return self.dd_augment(self.pt.ctrl_grid(self.p.get('n_ctrl', 14)), ctx)
+
+    def dd_augment(self, ctrl, ctx):
+        """series hybrids with the direct-drive option: inside the lock-up window every engine-on power P is also offered
+        as -P (the same power through the lock-up clutch); the strategy's cost picks the mode."""
+        if ctx is None or not self.o.get('series_direct_drive') or not hasattr(self.pt, 'dd_speed'):
+            return ctrl
+        if self.pt.dd_speed(ctx['u'] / self.veh.r) <= 0.0:
+            return ctrl
+        ctrl = np.asarray(ctrl, float)
+        return np.concatenate([ctrl, -ctrl[ctrl > 1.0]])
+
+    def heat_request(self, st, ctx, electric_below=None):
+        """cabin heat makes the engine run (power-split / PHEV rules): with a heat demand above ps_heat_W the engine
+        starts when the coolant is below ps_heat_on_C and runs until it reaches ps_heat_off_C (hysteresis).
+        Cabins heated electrically only ask below `electric_below` C ambient (None = never)."""
+        cab = self.veh.cabin
+        k = min(ctx.get('k', 0), len(self.trip['T_amb']) - 1)
+        Ta = float(self.trip['T_amb'][k])
+        if cab.source != 'engine' and (electric_below is None or Ta >= electric_below):
+            self.heat_hold = False
+            return False
+        Qd = cab.demand(st['T_cab'], Ta, float(self.trip['solar'][k]))
+        if Qd <= self.o.get('ps_heat_W', 1000.0) or st['T_eng'] >= self.o.get('ps_heat_off_C', 70.0):
+            self.heat_hold = False
+        elif st['T_eng'] < self.o.get('ps_heat_on_C', 45.0):
+            self.heat_hold = True
+        return self.heat_hold
+
+    def production_on(self, st, ctx):
+        """Toyota-type production calibration (option powersplit_calibration): engine fuelled above a road speed, held on
+        through warm-up and catalyst light-off after a cold start, and on for a heater request."""
+        o = self.o
+        if ctx.get('moving') and ctx['u'] > o.get('ps_engine_on_kph', 72.0) / 3.6 and ctx['P_dem_mech'] > 0.0:
+            return True
+        if st['T_eng'] < o.get('ps_warmup_C', 40.0):
+            return True
+        if self.cold_start and self.t_run < o.get('ps_cat_hold_s', 40.0):
+            return True
+        return self.heat_request(st, ctx)
 
     def forced_on(self, st, ctx):
         """engine must run: catalyst warm-up after a cold start, cabin heat with a cold coolant, or SOC far below window."""
@@ -97,7 +152,19 @@ class HybridStrategy(Strategy):
             return True
         if st['soc'] < self.soc_lo - 0.02:
             return True
+        o = getattr(self, 'o', None)
+        if o:
+            f = o.get('hybrid_stay_on_P_frac')
+            if f is not None and st['eng_on'] and ctx.get('moving') and ctx['P_dem_mech'] > f * self.Pe_max:
+                return True     # drivability: no engine pull-out while the driver asks for power
+            if self.ps_rules and self.production_on(st, ctx):
+                return True
         return False
+
+    def hold_off(self, st, ctx):
+        """option hybrid_min_off_s for the rule strategies: a stopped engine stays off for the minimum off time."""
+        return (self.hold_off_rule and not st['eng_on'] and st['t_off'] < self.min_off_s and ctx.get('moving')
+                and not self.forced_on(st, ctx))
 
     def chem_power(self, C, st):
         b = self.veh.battery
@@ -117,6 +184,18 @@ class HybridStrategy(Strategy):
     def step_end(self, st, plan, ctx):
         if plan.get('eng_on') and st['T_eng'] < 60.0:
             self.t_cat += ctx['dt']
+        if plan.get('eng_on'):
+            self.t_run += ctx['dt']
+
+    def dd_first(self, ctrl, ctx):
+        """rule strategies with series_direct_drive: in the lock-up window try the engine power through the clutch
+        first (production i-MMD logic: engine drive at cruise), the series path second."""
+        aug = self.dd_augment(ctrl, ctx)
+        return aug[::-1].copy() if len(aug) > len(ctrl) else ctrl
+
+    def first_ok(self, C):
+        ok = np.flatnonzero(C['ok'])
+        return int(ok[0]) if len(ok) else -1
 
 
 class ECMS(HybridStrategy):
@@ -142,7 +221,7 @@ class ECMS(HybridStrategy):
         J = C['P_fuel'] + s * self.chem_power(C, st)
         on = C['on']
         if not st['eng_on']:
-            J = J + np.where(on, self.start_W, 0.0)
+            J = J + np.where(on, self.start_W + self.start_pen / ctx['dt'], 0.0)
         ok = C['ok'].copy()
         if self.forced_on(st, ctx) and (ok & on).any():
             ok &= on
@@ -197,9 +276,41 @@ class PHEVCDCS(AECMS):
         self.soc_target = self.soc_cs
         self.cd = st['soc'] > self.soc_cs + 0.01
 
+    def cd_rules(self):
+        return bool(self.o.get('phev_cd_rules')) and self.cd
+
+    def cd_engine_wanted(self, st, ctx):
+        """option phev_cd_rules, charge-depleting mode. Power-split PHEVs (blended type: small MG2, e.g. Prius Plug-in /
+        Prime) bring the engine in above a power share of MG2 or above a road speed; series PHEVs (EREV, e.g. Volt)
+        stay electric unless the demand is infeasible. Either starts the engine for a heater request only when the cabin
+        has no electric heat, or below phev_heat_engine_below_C (engine-assisted heating)."""
+        o = self.o
+        if self.veh.arch == 'phev_powersplit' and ctx.get('moving'):
+            mg2 = self.veh.motors.get('MG2')
+            if mg2 is not None and ctx['P_dem_mech'] > o.get('phev_cd_P_on_frac', 0.9) * mg2.P_max:
+                return True
+            if ctx['u'] > o.get('phev_cd_v_max_kph', 135.0) / 3.6:
+                return True
+        return self.heat_request(st, ctx, electric_below=o.get('phev_heat_engine_below_C'))
+
+    def forced_on(self, st, ctx):
+        if self.cd_rules():
+            return self.cd_engine_wanted(st, ctx) or st['soc'] < self.soc_lo - 0.02
+        return AECMS.forced_on(self, st, ctx)
+
     def select(self, C, ctrl, st, ctx):
         if self.cd and st['soc'] <= self.soc_cs:
             self.cd = False
+        if self.cd_rules():
+            ok = C['ok']; on = C['on']
+            want = self.forced_on(st, ctx) or (st['eng_on'] and st['t_on'] < self.min_on_s)
+            if not want and (ok & ~on).any():
+                return int(np.argmax(ok & ~on))
+            okon = ok & on if (ok & on).any() else ok
+            if not okon.any():
+                return -1
+            J = C['P_fuel'] + 0.3 * self.chem_power(C, st)
+            return int(np.argmin(np.where(okon, J, np.inf)))
         if self.cd:
             ok = C['ok'] & ~C['on']
             if ok.any() and not ctx.get('need_heat'):
@@ -228,13 +339,15 @@ class SeriesThermostat(HybridStrategy):
         P = max(self.veh.engine.P_best, 0.0)
         need = ctx['P_dem_el'] - 0.9 * ctx['p_dis']      # demand beyond what the battery can deliver
         on = self.on or self.forced_on(st, ctx) or need > 0
+        if on and need <= 0 and self.hold_off(st, ctx):
+            on = False
         if on:
             P = min(max(P, need / 0.85), self.Pe_max * 0.98)
-            return np.array([P])
+            return self.dd_first(np.array([P]), ctx)
         return np.array([0.0])
 
     def select(self, C, ctrl, st, ctx):
-        return 0 if C['ok'][0] else -1
+        return self.first_ok(C)
 
 
 class SeriesPowerFollower(HybridStrategy):
@@ -251,12 +364,14 @@ class SeriesPowerFollower(HybridStrategy):
         else:
             on = P > on_th or st['soc'] < self.soc_lo
         on = on or self.forced_on(st, ctx)
+        if on and self.hold_off(st, ctx):
+            on = False
         if not on:
             return np.array([0.0])
-        return np.array([min(max(P, 0.12 * Pm), 0.98 * Pm)])
+        return self.dd_first(np.array([min(max(P, 0.12 * Pm), 0.98 * Pm)]), ctx)
 
     def select(self, C, ctrl, st, ctx):
-        return 0 if C['ok'][0] else -1
+        return self.first_ok(C)
 
 
 class PowerSplitRule(HybridStrategy):
@@ -276,6 +391,8 @@ class PowerSplitRule(HybridStrategy):
         else:
             on = P > on_th or u > v_ev
         on = (on or self.forced_on(st, ctx)) and ctx['P_dem_mech'] > -1.0
+        if on and self.hold_off(st, ctx):
+            on = False
         if not on:
             return np.array([0.0])
         return np.array([min(max(P, 0.10 * Pm), 0.98 * Pm)])
@@ -302,6 +419,8 @@ class ParallelRule(HybridStrategy):
         else:
             ev = P < ev_P and u < v_ev
         ev = ev and st['soc'] > self.soc_lo + 0.02 and not self.forced_on(st, ctx)
+        if not ev and self.hold_off(st, ctx) and st['soc'] > self.soc_lo + 0.02:
+            ev = True
         if ev:
             return np.array([0.0])
         corr = (self.soc_target - st['soc']) / 0.1 * 0.15
