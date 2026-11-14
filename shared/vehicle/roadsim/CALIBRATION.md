@@ -274,6 +274,13 @@ service 1.82-2.15) and ~9 kW mean heating at 7.5 C. Still open: the PTC loop con
 loop) saturates at stops, so the standstill power stays at the cap although the mean fell. Hybrid bus vs diesel on
 CBD14 +58 -> +55 % (not tuned: no hybrid-bus trace data; the 10-40 % literature is in service).
 
+### H10 ZTBus twin check (new, `checks/check_ztbus.py`; nothing fitted)
+One twin for every ZTBus leg: 18.7 m battery-trolleybus as a RoadSim BEV bus, curb 19,000 kg + 70 kg per passenger
+(leg mean), CdA 6.0 m2, Crr 0.007, 320 kW, 200 kWh, class-default bus accessories and HVAC; the leg's own speed,
+grade and temperature. Net DC energy vs ZTBus elec_kWh per leg. Dev legs (n 1,643, q_label_ok): v1 -14.9 % median
+(IQR -25.5 to -3.9; 1.27 vs 1.56 kWh/km), v2 -3.1 % (IQR -10.2 to +4.7; 1.38 kWh/km); by temperature v2 0-10 C -0.8,
+10-20 C -4.9, 20-25 C -1.1, >= 25 C -3.3 %. The spec was set before any leg was simulated and not changed after.
+
 ## Physics v2 final (frozen before the held-out run)
 
 `roadsim/data/calibration_v2.json` (preset `roadsim-physics-v2`); PHYSICS_VERSION 'roadsim-physics-v2' and

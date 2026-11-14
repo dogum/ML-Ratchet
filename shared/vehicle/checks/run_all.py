@@ -18,7 +18,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 LOGS = os.path.join(os.path.dirname(HERE), 'roadsim', 'logs')
 FIRST = ['epa_vehicles']
 CHECKS = ['check_cycles', 'check_coastdown', 'check_fastsim', 'check_hd', 'check_strategies', 'check_ledger',
-          'check_generator', 'check_d3', 'check_ved_twin', 'check_epa_pool']
+          'check_generator', 'check_d3', 'check_ved_twin', 'check_epa_pool', 'check_ztbus']
 LAST = ['check_speed']        # timing: run alone
 
 
@@ -31,6 +31,8 @@ def run(name):
         env['ROADSIM_OPTIONS'] = OPT
         if name == 'check_d3':
             args += ['--options', OPT]
+    if name == 'scoreboard' and OPT:
+        args += ['--options', OPT]
     tag = '' if not OPT or OPT == 'roadsim-physics-v1' else '__' + (OPT if not OPT.startswith('{') else 'custom')
     with open(os.path.join(LOGS, f'{name}{tag}.log'), 'w', encoding='utf-8') as log:
         r = subprocess.run([sys.executable, f'{name}.py'] + args, cwd=HERE, env=env, stdout=log, stderr=subprocess.STDOUT)
@@ -40,7 +42,7 @@ def run(name):
 
 
 OPT = None
-EXTRA = {'check_d3': ['--split', 'dev']}     # exam/held-out results are computed once, for the final report
+EXTRA = {'check_d3': ['--split', 'dev'], 'check_ztbus': ['--split', 'dev']}   # exam results: final report only
 
 
 def main():
@@ -50,11 +52,11 @@ def main():
     ap.add_argument('--recalibrate-v1', action='store_true')
     ap.add_argument('--options', default=None)
     ap.add_argument('--only', default='')
-    ap.add_argument('--all-splits', action='store_true', help='check_d3 on dev and exam (final report only)')
+    ap.add_argument('--all-splits', action='store_true', help='check_d3 and check_ztbus on dev and exam (final report only)')
     a = ap.parse_args()
     OPT = a.options
     if a.all_splits:
-        EXTRA['check_d3'] = ['--split', 'all']
+        EXTRA['check_d3'] = ['--split', 'all']; EXTRA['check_ztbus'] = ['--split', 'all']
     os.makedirs(LOGS, exist_ok=True)
     if a.only:
         names = a.only.split(',')

@@ -4,7 +4,7 @@ Reads the check results in this folder (written by run_all) and the three models
 scoreboard_<PHYSICS_VERSION>.json. With --compare A B it prints the two side by side.
 
 usage:
-    python scoreboard.py                  # write scoreboard for the current physics version
+    python scoreboard.py [--options NAME] # write scoreboard_<NAME>.json from the check files of that physics (v1 default)
     python scoreboard.py --compare roadsim-physics-v1 roadsim-physics-v2
 """
 import os, sys, json, glob
@@ -67,6 +67,23 @@ def checks():
             p = ((d or {}).get('all') or {}).get('primary_pct')
             if p:
                 out[f'd3_dev.{arch}.primary.median_pct'] = p['median']; out[f'd3_dev.{arch}.primary.iqr_pct'] = p['iqr']
+    c = _load('d3_twin.json')          # --split all (final report): exam vehicles
+    if c:
+        for arch, d in c['summary'].get('exam', {}).items():
+            for g, dd in (d or {}).items():
+                p = (dd or {}).get('primary_pct') if isinstance(dd, dict) else None
+                if p and (g == 'all' or g.startswith('T_') or g.startswith('cycle_')):
+                    out[f'd3_exam.{arch}.{g}.primary.median_pct'] = p['median']; out[f'd3_exam.{arch}.{g}.primary.n'] = p['n']
+                    if g == 'all':
+                        out[f'd3_exam.{arch}.primary.iqr_pct'] = p['iqr']
+    c = _load('ztbus_twin.json') or _load('ztbus_twin__dev.json')
+    if c:
+        for split, d in c['summary'].items():
+            if d.get('all'):
+                out[f'ztbus_{split}.legs.median_pct'] = d['all']['median']
+                out[f'ztbus_{split}.legs.iqr_pct'] = round(d['all']['p75'] - d['all']['p25'], 2)
+                out[f'ztbus_{split}.legs.n'] = d['all']['n']
+                out[f'ztbus_{split}.kWh_per_km_sim_real'] = [d['kWh_per_km']['sim'], d['kWh_per_km']['real']]
     c = _load('ved_twin.json')
     if c:
         for arch, d in c['summary']['by_arch'].items():
@@ -107,8 +124,8 @@ def models():
 
 def write():
     from roadsim import PHYSICS_VERSION
-    name = _opts.name()
-    sb = {'physics_version': name if name != 'roadsim-physics-v1' else PHYSICS_VERSION, 'checks': checks(), 'models': models()}
+    name = _opts.name()                    # the physics the check files were run with (v1 = no --options)
+    sb = {'physics_version': name, 'physics_default': PHYSICS_VERSION, 'checks': checks(), 'models': models()}
     p = os.path.join(HERE, f'scoreboard_{sb["physics_version"]}.json')
     json.dump(sb, open(p, 'w', encoding='utf-8'), indent=1, sort_keys=True)
     print('wrote', os.path.relpath(p, REPO), len(sb['checks']), 'check numbers,', len(sb['models']), 'model numbers')
