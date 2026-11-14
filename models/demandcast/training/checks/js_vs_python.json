@@ -1,0 +1,8 @@
+{
+ "phys_rel": 0.00011074523523746382,
+ "mu_rel": 0.00011016318531109626,
+ "w_abs": 6.636608515703246e-05,
+ "s_abs": 0.00013763724375848163,
+ "phys_hot_rel": 0.002582139721407195,
+ "note": "phys/mu/w/s: neutral sliders, JS vs Python with the same float16 weights; phys_hot: +3 C, humidity x1.1, irradiance x0.8 (Python re-warms its filters over 720 h, JS continues full-series states)"
+}

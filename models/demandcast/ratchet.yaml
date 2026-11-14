@@ -1,0 +1,21 @@
+model: demandcast
+ladders:
+  - name: DemandCast
+    objective: "Mean over demand, wind and solar of skill = 1 - error / physics-alone error on the frozen simulated validation set val_v3 (4,000 region-days)"
+    rule: "Keep a rung if the objective beats the incumbent by more than 0.01 AND the dev gate's mean relative error gets no more than 2% worse"
+    margin: 0.01
+    dev_gate: "30 seeded real days per grid from 2019 and 2021 (each year described by the other year's fit); mean relative change of the demand, wind and solar errors <= +2%"
+    frozen_sets: [val_v2, val_v3]
+    scored_on: val_v3
+    note: "The first rungs were scored on earlier frozen sets when taken (r4 scored 0.408 on val_v2); every rung was re-scored on val_v3 after the simulator changed, and those are the numbers here (training/ratchet.json). Dev calibration steps outside the network: per-grid building fits on 2019/2021, one wind and solar scale per grid, the CAISO and PJM 1 h solar shift, simulator v2 widths matched to dev, the v3 noise fix from the twin test."
+    columns_source: "Dev gate errors (5,760 demand hours, 5,759 wind, 5,040 solar), never the exam"
+    columns: ["Dev demand MAPE (%)", "Dev wind (%)", "Dev solar (%)", "Dev demand 68% coverage"]
+    rungs:
+      - { id: r1_base, change: "Three MLPs (256-256), 39k region-days, simulator v1 (first-guess drift and error widths)", sim: 0.3330, decision: kept, why: "First rung.", metrics: [2.06, 21.39, 15.82, 0.665] }
+      - { id: r2_simv2, change: "Simulator v2: drift, residual noise and wind/solar error widths calibrated so simulated physics errors match dev; half the solar fleets report near full capacity", sim: 0.3385, decision: rejected, why: "Objective 0.3385 vs 0.3330 (needs +0.01); dev errors +10.1% (solar broke on real data: night-time negative EIA output against near-constant simulated features).", metrics: [1.98, 21.46, 21.14, 0.677] }
+      - { id: r3_robust, change: "Rung 2 + robust inputs: negative night output clamped to 0, wind/solar input scales floored at 0.02", sim: 0.3393, decision: rejected, why: "Objective 0.3393 vs 0.3330, +0.006 (needs +0.01); dev errors -2.4%.", metrics: [1.98, 21.35, 15.28, 0.677] }
+      - { id: r4_more, change: "Rung 3 inputs on both simulator banks (v2 + v1, 79k region-days), 384-384", sim: 0.3484, decision: kept, why: "Objective 0.3484 vs 0.3330; dev errors -2.3%.", metrics: [1.98, 21.36, 15.38, 0.737] }
+      - { id: r5_simv3, change: "Simulator v3 (the twin test found residual noise missing in ~60% of simulated hours), 52k region-days, 384-384", sim: 0.3483, decision: rejected, why: "Objective 0.3483 vs 0.3484, no gain; dev errors +0.2%. Its v3 banks were kept for later rungs.", metrics: [1.99, 21.84, 15.01, 0.648] }
+      - { id: r6_all, change: "All four banks (v3 ×2, v2, v1; 131k region-days), 384-384", sim: 0.3558, decision: rejected, why: "Objective 0.3558 vs 0.3484, +0.007 (needs +0.01); dev errors -0.1%.", metrics: [1.95, 21.45, 15.52, 0.691] }
+      - { id: r7_hist, change: "Full 168 h history of real-vs-physics error as extra inputs, 102k v3 region-days, 384-384", sim: 0.3552, decision: rejected, why: "Objective 0.3552 vs 0.3484 (needs +0.01); dev errors +8.3% (gate +2%), demand 2.27% and its 68% coverage fell to 45%.", metrics: [2.27, 22.43, 16.17, 0.451] }
+      - { id: r8_wide, change: "All six banks (v3 ×4, v2, v1; 180k region-days), base features, 512-512 (largest within the 500k-parameter budget)", sim: 0.3617, decision: released, why: "Objective 0.3617 vs 0.3484; dev errors +0.9% (inside the 2% gate). Released as v1.0.", metrics: [2.0, 21.44, 15.6, 0.651] }

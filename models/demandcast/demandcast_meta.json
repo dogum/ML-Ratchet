@@ -1,0 +1,29 @@
+{
+ "ckpt": "r8_wide",
+ "sigma_scale": {
+  "d": 1.1407731771469116,
+  "w": 1.0,
+  "s": 1.3399618864059448
+ },
+ "n_params": {
+  "d": 456240,
+  "w": 371760,
+  "s": 367664
+ },
+ "inputs": {
+  "d": 329,
+  "w": 164,
+  "s": 156
+ },
+ "issue": "10:00 local standard time on D-1; target = 24 h of D in local standard time",
+ "lst_offset_h": {
+  "ERCO": -6,
+  "CISO": -8,
+  "PJM": -5,
+  "MISO": -6,
+  "SWPP": -6,
+  "ISNE": -5,
+  "NYIS": -5,
+  "BPAT": -8
+ }
+}
