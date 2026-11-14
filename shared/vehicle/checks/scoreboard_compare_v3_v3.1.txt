@@ -1,0 +1,63 @@
+
+checks                                                             roadsim-physics-v3     roadsim-physics-v3.1
+d3_dev.hev_all.primary.iqr_pct                                                  12.83                    13.62
+d3_dev.hev_all.primary.median_pct                                               -6.92                    -5.48
+d3_dev.hev_parallel_p2.primary.iqr_pct                                          13.11                    14.37
+d3_dev.hev_parallel_p2.primary.median_pct                                        -5.3                    -3.21
+d3_exam.hev_all.all.primary.median_pct                                          -17.8                   -14.41
+d3_exam.hev_all.primary.iqr_pct                                                 11.19                    14.29
+d3_exam.hev_parallel_p2.T_cold.primary.median_pct                              -16.49                   -11.23
+d3_exam.hev_parallel_p2.T_hot.primary.median_pct                               -21.61                   -17.98
+d3_exam.hev_parallel_p2.T_std.primary.median_pct                               -16.64                   -14.41
+d3_exam.hev_parallel_p2.all.primary.median_pct                                  -18.1                   -15.43
+d3_exam.hev_parallel_p2.cycle_HWFET.primary.median_pct                         -13.91                   -11.41
+d3_exam.hev_parallel_p2.cycle_SC03.primary.median_pct                          -22.58                    -21.0
+d3_exam.hev_parallel_p2.cycle_UDDS.primary.median_pct                           -19.3                   -18.63
+d3_exam.hev_parallel_p2.cycle_US06.primary.median_pct                          -17.22                   -12.65
+d3_exam.hev_parallel_p2.cycle_WLTC.primary.median_pct                           -6.97                    -1.09
+d3_exam.hev_parallel_p2.primary.iqr_pct                                         10.45                    13.95
+hybrids_epa_dev.p2_clutch.COLD.median_pct                                       39.88                    32.11
+hybrids_epa_dev.p2_clutch.FTP.median_pct                                        15.23                     8.87
+hybrids_epa_dev.p2_clutch.HWY.median_pct                                        -0.81                    -6.43
+hybrids_epa_dev.p2_clutch.SC03.median_pct                                       18.36                    12.71
+hybrids_epa_dev.p2_clutch.US06.median_pct                                        9.74                     3.26
+hybrids_epa_dev.p2_converter.FTP.median_pct                                     35.53                    28.94
+hybrids_epa_dev.p2_converter.HWY.median_pct                                       3.7                    -3.19
+hybrids_epa_dev.plugin_p2.FTP.median_pct                                        16.14                    14.56
+hybrids_epa_devx.p2_clutch.COLD.median_pct                                      39.86                    35.98
+hybrids_epa_devx.p2_clutch.FTP.median_pct                                       15.11                     9.41
+hybrids_epa_devx.p2_clutch.HWY.median_pct                                       -0.81                    -6.42
+hybrids_epa_devx.p2_clutch.SC03.median_pct                                      13.38                    10.55
+hybrids_epa_devx.p2_clutch.US06.median_pct                                        6.1                     2.85
+hybrids_epa_devx.p2_converter.FTP.median_pct                                    35.53                    28.94
+hybrids_epa_devx.p2_converter.HWY.median_pct                                      3.7                    -3.19
+hybrids_epa_devx.plugin_p2.FTP.median_pct                                       12.13                    10.63
+hybrids_epa_exam2.mild.FTP.median_pct                                            8.86                    -1.48
+hybrids_epa_exam2.mild.HWY.median_pct                                            11.0                     1.21
+hybrids_epa_exam2.mild.US06.median_pct                                           5.29                    -0.69
+hybrids_epa_exam2.p2_clutch.FTP.median_pct                                      15.44                     12.7
+hybrids_epa_exam2.p2_clutch.HWY.median_pct                                      -2.98                    -4.98
+hybrids_epa_exam2.p2_converter.COLD.median_pct                                   7.91                     3.34
+hybrids_epa_exam2.p2_converter.FTP.median_pct                                   23.24                     21.5
+hybrids_epa_exam2.p2_converter.HWY.median_pct                                    2.17                    -1.65
+hybrids_epa_exam2.p2_converter.SC03.median_pct                                  37.95                    31.98
+hybrids_epa_exam2.p2_converter.US06.median_pct                                  11.22                     4.87
+hybrids_epa_exam2.plugin_p2.FTP.median_pct                                        5.6                     5.08
+hybrids_epa_exam2.plugin_series.COLD.median_pct                                  1.55                     0.57
+hybrids_epa_exam2.plugin_series.HWY.median_pct                                   4.85                     2.43
+hybrids_epa_exam2.plugin_series.SC03.median_pct                                 45.45                    42.67
+hybrids_epa_exam2.plugin_series.US06.median_pct                                 15.33                    13.95
+hybrids_epa_exam3.mild.FTP.median_pct                                           23.18                     8.34
+hybrids_epa_exam3.mild.HWY.median_pct                                            8.14                    -5.34
+speed.bus bev.x_realtime_udds                                                   23597                    22298
+speed.car bev.x_realtime_udds                                                   26384                    26068
+speed.car conv (AT8).x_realtime_udds                                            24039                    23096
+speed.car conv (CVT).x_realtime_udds                                            24818                    24140
+speed.car hev_parallel_p2 aecms.x_realtime_udds                                  3688                     3615
+speed.car hev_powersplit aecms.x_realtime_udds                                   3102                     2900
+speed.car hev_powersplit rule.x_realtime_udds                                    3396                     3186
+speed.car hev_series aecms.x_realtime_udds                                       3332                     3110
+speed.car phev_powersplit cdcs.x_realtime_udds                                   3087                     3050
+speed.class8 diesel.x_realtime_udds                                             20845                    20038
+
+models                                                             roadsim-physics-v3     roadsim-physics-v3.1

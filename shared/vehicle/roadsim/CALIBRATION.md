@@ -784,3 +784,28 @@ metrics: EPA dev Accord HWY -4.5 (= v3), D3 Accord HWFET +1.9 (= v3; +1.6 in som
 **Not the default**: PHYSICS_VERSION stays roadsim-physics-v2. The dev gain is real but narrow: one kept change, reaching
 the P2 and mild hybrids on conventional maps (16 EPA dev records, 2 D3 cars), and one of the two D3 cars got worse.
 Decided and committed before any second-look set was run.
+
+## v3.1 report (computed once, after the freeze commit f44a9ae; nothing changed afterwards)
+
+No clean judge exists (H27-0): every row is a SECOND LOOK at data seen before v3.1 was fitted and judges nothing.
+`checks/v31_report.py` -> `v31_report.json`, `hybrids_epa__exam3|exam2__roadsim-physics-v3.1.json`,
+`run_all.py --options roadsim-physics-v3.1 --all-splits`, `scoreboard_roadsim-physics-v3.1.json`,
+`scoreboard_compare_v3_v3.1.txt`. FE %, + = the sim burns less; D3 energy %, + = the sim uses more.
+- **Mild hybrids**: exam-3 (n 18) FTP +23.2 -> +8.3, HWY +8.1 -> -5.3, median abs 17.1 -> 6.3; exam-2 (n 38) FTP +8.9
+  -> -1.5, HWY +11.0 -> +1.2, US06 +5.3 -> -0.7, median abs 9.8 -> 2.8.
+- **P2 with converter**, exam-2 (n 19): FTP +23.2 -> +21.5, HWY +2.2 -> -1.6, US06 +11.2 -> +4.9 (3), median abs 9.2 ->
+  7.0; exam-3 converter P2s are MY2020+ (unchanged, +14.6).
+- **P2 with a clutch**, exam-2 (n 9): FTP +15.4 -> +12.7, HWY -3.0 -> -5.0, median abs 4.7 -> 5.4 (worse).
+- **Plug-ins**, exam-2: series FTP +19.4 (=), HWY +4.8 -> +2.4, SC03 +45.5 -> +42.7; P2 FTP +5.6 -> +5.1.
+- **D3 exam** (seen at the v2 report): hybrids -17.8 -> -14.4 % (P2 -18.1 -> -15.4; US06 -17.2 -> -12.7, WLTC -7.0 ->
+  -1.1), IQR 11.2 -> 14.3 points.
+- **Unchanged**: every Toyota, Honda e:HEV, Ford and TMED group on exam-2 and exam-3; VED exam-2 twins (no model year:
+  Toyota-type +4.5 %, P2 -0.6 %, plug-ins -22.7 / -20.3 %); generator by class (car -11.2, SUV -4.6, pickup +13.7, van
+  +12.4 %); every conventional, BEV, bus, Class 8, ledger (max 5.6e-4) and coast-down number (identical to v2). Speed:
+  the same as v3 within machine noise (paired UDDS runs: conventional 24,132 vs 24,075 x real time; P2 3,609 vs 3,560).
+
+Verdict: v3.1's one change does what dev said it would where it acts: mild hybrids move from 9-23 % too frugal to
+within 1-8 % on FTP and HWY, converter P2s gain 2 points in the city. The clutch P2s' highway gets 2 points worse. The
+large open errors are untouched: older Toyota engines (exam-3 FTP +31 %, n 3), converter P2s in the city (+15 to +22 %),
+TMED (-10 %), plug-in series SC03 (+43 %), plug-ins on VED roads (-20 to -23 %). v2 stays the default, as decided
+before this report.
