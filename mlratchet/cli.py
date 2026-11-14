@@ -9,6 +9,7 @@
     mlratchet new gridpulse          scaffold a new model from the template
     mlratchet readme --write         regenerate model READMEs from model.yaml + ratchet.yaml
     mlratchet data vehicle           download + rebuild the vehicle platform's real data (resumable)
+    mlratchet data grid              download + rebuild the grid platform's real data (resumable; --from-zip for the release)
 """
 from __future__ import annotations
 
@@ -215,7 +216,7 @@ def cmd_readme(args) -> int:
     return 1 if stale else 0
 
 
-DATA_TARGETS = {"vehicle": ("shared", "vehicle", "data", "build.py")}
+DATA_TARGETS = {"vehicle": ("shared", "vehicle", "data", "build.py"), "grid": ("shared", "grid", "data", "build.py")}
 
 
 def cmd_data(args) -> int:

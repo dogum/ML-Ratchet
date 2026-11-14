@@ -1,0 +1,62 @@
+{
+ "frequency": {
+  "GB_D_pct_per_pct": 0.75,
+  "GB_fitted_on": "GB_20190809T155233 (dev), first nadir only",
+  "ERCO_D_pct_per_pct": 2.5,
+  "ERCO_fitted_on": "5 ERCOT dev events of splits.json (ERCO_20190421T203000, ERCO_20190523T214100, ERCO_20210117T033500, ERCO_20210501T031400, ERCO_20210519T170600)",
+  "ERCO_deadbands": "BAL-001-TRE-1: 0.034 Hz steam/hydro, 0.0166 Hz others (standard, not fitted)",
+  "ERCO_note": "3.75 with the v0 dispatch calibration (generic availability); 2.5 with physics 1.0 dispatch states"
+ },
+ "ercot_dispatch": {
+  "fitted_on": "2019 (dev), 12 sample weeks, LP",
+  "must_run": [
+   "coal_steam"
+  ],
+  "offer_adders": {
+   "coal_steam": -6.62
+  },
+  "scan": [
+   {
+    "adder": 0.0,
+    "COL_sim_TWh": 13.7748795778677,
+    "NG_sim_TWh": 46.61802036180778,
+    "COL_real_TWh": 17.894343000000003,
+    "NG_real_TWh": 42.460971,
+    "COL_err_pct": -23.021037554339387
+   },
+   {
+    "adder": -5.0,
+    "COL_sim_TWh": 16.84964152497419,
+    "NG_sim_TWh": 43.520714716001024,
+    "COL_real_TWh": 17.894343000000003,
+    "NG_real_TWh": 42.460971,
+    "COL_err_pct": -5.838166145724456
+   },
+   {
+    "adder": -10.0,
+    "COL_sim_TWh": 20.0777273699613,
+    "NG_sim_TWh": 40.261498394169905,
+    "COL_real_TWh": 17.894343000000003,
+    "NG_real_TWh": 42.460971,
+    "COL_err_pct": 12.20153413825417
+   },
+   {
+    "adder": -15.0,
+    "COL_sim_TWh": 20.915090491138265,
+    "NG_sim_TWh": 39.414435127821925,
+    "COL_real_TWh": 17.894343000000003,
+    "NG_real_TWh": 42.460971,
+    "COL_err_pct": 16.881019275970413
+   },
+   {
+    "adder": -20.0,
+    "COL_sim_TWh": 21.34752363848828,
+    "NG_sim_TWh": 38.97987595139851,
+    "COL_real_TWh": 17.894343000000003,
+    "NG_real_TWh": 42.460971,
+    "COL_err_pct": 19.297610638670985
+   }
+  ],
+  "note": "coal self-commitment + offer adder stand for captive-mine lignite economics and self-scheduling that public cost data do not show"
+ }
+}

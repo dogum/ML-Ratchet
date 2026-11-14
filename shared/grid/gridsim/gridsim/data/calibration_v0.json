@@ -1,0 +1,46 @@
+{
+ "ercot_dispatch": {
+  "fitted_on": "2019 (dev), 12 sample weeks, LP",
+  "must_run": [
+   "coal_steam"
+  ],
+  "offer_adders": {
+   "coal_steam": -4.63
+  },
+  "scan": [
+   {
+    "adder": 0.0,
+    "COL_sim_TWh": 14.339087781435255,
+    "NG_sim_TWh": 46.06445518517883,
+    "COL_real_TWh": 17.894343000000003,
+    "NG_real_TWh": 42.460971,
+    "COL_err_pct": -19.868039964164915
+   },
+   {
+    "adder": -4.0,
+    "COL_sim_TWh": 17.27596244710875,
+    "NG_sim_TWh": 43.10800482174807,
+    "COL_real_TWh": 17.894343000000003,
+    "NG_real_TWh": 42.460971,
+    "COL_err_pct": -3.4557320874605613
+   },
+   {
+    "adder": -8.0,
+    "COL_sim_TWh": 21.211778605059628,
+    "NG_sim_TWh": 39.15564099992611,
+    "COL_real_TWh": 17.894343000000003,
+    "NG_real_TWh": 42.460971,
+    "COL_err_pct": 18.53901875614894
+   },
+   {
+    "adder": -12.0,
+    "COL_sim_TWh": 23.187217866549876,
+    "NG_sim_TWh": 37.17227159189523,
+    "COL_real_TWh": 17.894343000000003,
+    "NG_real_TWh": 42.460971,
+    "COL_err_pct": 29.578481124173557
+   }
+  ],
+  "note": "coal self-commitment + offer adder stand for captive-mine lignite economics and self-scheduling that public cost data do not show"
+ }
+}
