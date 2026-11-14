@@ -173,6 +173,296 @@ def published_trucks():
     return dev_truck
 
 
-if __name__ == '__main__':
+# ---------------------------------------------------------------- ZTBus, all 1,409 missions (added 13 Nov 2026)
+# `hd.py ztbus_full --zip raw/hd/ztbus/full/ZTBus_compressed.zip [--jobs N]`. Reads every mission CSV straight out of
+# the ETH zip (no extraction) and cuts it into legs exactly as ztbus() does (same leg rule, grade, rho, label), plus
+# two extra arrays (grid_available, door_open) and more leg meta. Writes
+#   proc/hd/ztbus_full/trips/B<bus>/ZTBusFull_<mission>_legNN.npz/.json   (git-ignored, rebuildable)
+#   proc/hd/ztbus_full/legs.parquet, missions.parquet, summary.json       (tracked)
+#   proc/hd/ztbus_full_splits.json                                        (frozen; written once, then only checked)
+# Nothing ztbus() writes is touched.
+FULL = f'{OUT}/ztbus_full'
+FULL_VERSION = 3          # bump to force a rebuild of the per-mission outputs
+SEED_FULL = 20261113
+SPLIT_FULL = f'{OUT}/ztbus_full_splits.json'
+_SEASON = {12: 'winter', 1: 'winter', 2: 'winter', 3: 'spring', 4: 'spring', 5: 'spring',
+           6: 'summer', 7: 'summer', 8: 'summer', 9: 'autumn', 10: 'autumn', 11: 'autumn'}
+
+
+def canonical_sha256(obj):
+    """sha256 of canonical JSON: sorted keys, no whitespace, UTF-8."""
+    return hashlib.sha256(json.dumps(obj, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')).hexdigest()
+
+
+def ztbus_full_split_content(meta_all):
+    """The ZTBus full split, from mission metadata only (no trace, no label). In force: the frozen rule of
+    proc/splits.json (HD.ZTBus): its two dev missions are dev, every other mission is exam. Also recorded, NOT in force:
+    a proposal for a larger dev side, fixed here before any full-data result was computed."""
+    frozen = json.load(open(f'{ROOT}/proc/splits.json'))['HD']['ZTBus']
+    dev0 = list(frozen['dev_missions'])
+    names = sorted(meta_all.name)
+    missions = {n: ('dev' if n in dev0 else 'exam') for n in names}
+    # proposal: unit = (bus, calendar month of the mission start, UTC). Within each (bus, meteorological season)
+    # stratum, max(1, round(0.2 n)) months are drawn with numpy default_rng(20261113), strata and months in sorted
+    # order; the months holding the two frozen dev missions are dev as well.
+    t = pd.to_datetime(meta_all.startTime_iso, utc=True)
+    blk = pd.DataFrame({'name': meta_all.name, 'bus': meta_all.busNumber.astype(int), 'month': t.dt.strftime('%Y-%m'),
+                        'season': t.dt.month.map(_SEASON)})
+    rng = np.random.default_rng(SEED_FULL)
+    dev_blocks = set()
+    for (bus, season), g in sorted(blk.groupby(['bus', 'season']), key=lambda kv: (kv[0][0], kv[0][1])):
+        months = sorted(g.month.unique())
+        k = max(1, int(round(0.2 * len(months))))
+        dev_blocks |= {(bus, m) for m in rng.choice(months, k, replace=False)}
+    dev_blocks |= {(int(r.bus), r.month) for r in blk[blk.name.isin(dev0)].itertuples()}
+    prop = {n: ('dev' if (int(b), m) in dev_blocks else 'exam') for n, b, m in zip(blk.name, blk.bus, blk.month)}
+    prop = {n: prop[n] for n in names}
+    moved = sorted(n for n in names if missions[n] == 'exam' and prop[n] == 'dev')
+    count = lambda d: {s: sum(v == s for v in d.values()) for s in ('dev', 'exam')}
+    return {
+        'version': 1, 'frozen': True, 'created': '2026-11-13', 'dataset': 'ZTBus full (1,409 missions), doi:10.3929/ethz-b-000626723',
+        'unit': 'mission',
+        'in_force': 'frozen_v1',
+        'rule': ('proc/splits.json HD.ZTBus (sha256 d917df78...): "' + frozen['rule'] + '". That rule already covers all '
+                 '1,409 missions, so this file only writes it out per mission; no mission changes side.'),
+        'counts': count(missions),
+        'missions': missions,
+        'proposal_v2_not_in_force': {
+            'status': 'NOT in force. Adopting it moves exam missions of the frozen split to dev; that is a decision for the '
+                      'owner, not for the build. Fixed on 2026-11-13 before any full-data trace was processed.',
+            'seed': SEED_FULL,
+            'rule': 'unit = (bus, calendar month UTC); within each (bus, meteorological season) stratum, max(1, round(0.2 n)) '
+                    'months drawn with numpy default_rng(20261113) (strata sorted by bus then season name, months sorted); '
+                    'months holding the two frozen dev missions are dev too; every mission takes its month\'s side.',
+            'dev_blocks': sorted(f'B{b}_{m}' for b, m in dev_blocks),
+            'counts': count(prop),
+            'exam_missions_that_would_move_to_dev': len(moved),
+            'missions_dev': sorted(n for n in names if prop[n] == 'dev')},
+    }
+
+
+def ztbus_full_split(meta_all):
+    """Write the split file once; afterwards recompute and require equality (never rewrite)."""
+    c = ztbus_full_split_content(meta_all)
+    if os.path.exists(SPLIT_FULL):
+        old = json.load(open(SPLIT_FULL, encoding='utf-8'))
+        sha = old.pop('sha256_canonical_content_without_this_field', None)
+        ok = (sha == canonical_sha256(old)) and old == c
+        if not ok:
+            print('WARNING: ztbus_full_splits.json differs from the recomputed split; the file on disk is used', flush=True)
+        return old, ok
+    out = dict(c); out['sha256_canonical_content_without_this_field'] = canonical_sha256(c)
+    with open(SPLIT_FULL, 'w', encoding='utf-8') as f:
+        json.dump(out, f, indent=1, ensure_ascii=False)
+    return c, True
+
+
+def _mission_legs(name, d, prefix):
+    """ztbus()'s per-mission body (same legs, arrays and label) returning [(tid, arrays, meta)], plus extra meta."""
+    d = d.sort_values('time_unix').drop_duplicates('time_unix')
+    t_abs = d.time_unix.values.astype(float)
+    grid = np.arange(t_abs[0], t_abs[-1] + 1)
+    I = lambda c: np.interp(grid, t_abs[d[c].notna().values], d[c].values[d[c].notna().values].astype(float)) if c in d and d[c].notna().any() else np.full(len(grid), np.nan)
+    v = np.clip(I('odometry_vehicleSpeed'), 0, None)
+    P = I('electric_powerDemand')
+    lat = np.degrees(I('gnss_latitude')); lon = np.degrees(I('gnss_longitude'))
+    alt = I('gnss_altitude'); Tk = I('temperature_ambient'); pax = I('itcs_numberOfPassengers')
+    course = (np.degrees(I('gnss_course')) + 360) % 360
+    F = I('traction_tractionForce')
+    grid_av = np.round(I('status_gridIsAvailable')); door = np.round(I('status_doorIsOpen'))
+    gridok = np.isin(grid, t_abs)
+    # logged (not interpolated) coverage of a signal on the 1 Hz grid
+    have = lambda c: np.isin(grid, t_abs[d[c].notna().values]) if c in d else np.zeros(len(grid), bool)
+    gnss_ok, pax_ok, T_ok = have('gnss_latitude'), have('itcs_numberOfPassengers'), have('temperature_ambient')
+    route = pd.Series((d.itcs_busRoute if 'itcs_busRoute' in d else pd.Series('-', index=d.index)).astype(str).values,
+                      index=d.time_unix.values.astype(float))
+    out = []
+    for k, (a, b) in enumerate(leg_bounds(v)):
+        sl = slice(a, b); vv = v[sl]; n = b - a
+        s = np.r_[0, np.cumsum(0.5 * (vv[1:] + vv[:-1]))]
+        dist = float(s[-1])
+        z = alt[sl]
+        if dist > 200 and np.isfinite(z).all():
+            mv = np.r_[True, np.diff(s) > 0.01]
+            sg = np.arange(0, dist, 5.0)
+            zg = gaussian_filter1d(np.interp(sg, s[mv], z[mv]), 10, mode='nearest')
+            gg = np.clip(np.gradient(zg, sg), -0.12, 0.12)
+            grade = np.interp(s, sg, gg); elev = np.interp(s, sg, zg)
+        else:
+            grade = np.zeros(n); elev = z
+        T = Tk[sl] - 273.15
+        p = 101325 * (1 - 2.25577e-5 * np.nan_to_num(elev, nan=430)) ** 5.25588
+        arr = dict(t=np.arange(n, dtype=float), v=vv, grade=grade, elev=elev, lat=lat[sl], lon=lon[sl], heading=course[sl],
+                   T_amb=T, wind_speed=np.zeros(n), wind_dir=np.zeros(n), rho_air=p / (RD * (T + 273.15)),
+                   surface=np.zeros(n, np.int8), fuel_rate=np.full(n, np.nan), engine_rpm=np.full(n, np.nan),
+                   batt_current=np.full(n, np.nan), batt_voltage=np.full(n, np.nan), soc=np.full(n, np.nan),
+                   aux_power=np.full(n, np.nan), elec_power=P[sl], passengers=pax[sl],
+                   traction_force=F[sl], valid=gridok[sl].astype(np.uint8),
+                   grid_available=grid_av[sl], door_open=door[sl])
+        arr = {kk: (x.astype(np.float32) if kk not in ('surface', 'valid') else x) for kk, x in arr.items()}
+        tid = f'{prefix}_{name}_leg{k:02d}'
+        E = float(np.nansum(P[sl]) / 3.6e6)
+        Pl = P[sl]
+        t0 = pd.Timestamp(grid[a], unit='s', tz='UTC')
+        r = route[(route.index >= grid[a]) & (route.index < grid[b - 1] + 1)]
+        r = r[~r.isin(['-', 'nan', ''])]
+        gl = grid_av[sl]; dl = door[sl]; pl = pax[sl]
+        m = dict(trip_id=tid, vehicle_id=f'ZTBus_B{name[1:4]}', source='ZTBus_full', date=pd.Timestamp(grid[a], unit='s').isoformat() + 'Z',
+                 distance_m=dist, duration_s=float(n), T_amb_mean=float(np.nanmean(T)) if np.isfinite(T).any() else None,
+                 mission=name, leg=k,
+                 elec_kWh=E, kWh_per_km=E / (dist / 1000) if dist > 500 else None,
+                 regen_kWh=float(np.nansum(np.minimum(Pl, 0)) / 3.6e6),
+                 passengers_mean=float(np.nanmean(pl)) if np.isfinite(pl).any() else None,
+                 passengers_max=float(np.nanmax(pl)) if np.isfinite(pl).any() else None,
+                 passengers_frac=float(pax_ok[sl].mean()), T_amb_frac=float(T_ok[sl].mean()),
+                 grid_available_frac=float(np.nanmean(gl)) if np.isfinite(gl).any() else None,
+                 door_open_frac=float(np.nanmean(dl)) if np.isfinite(dl).any() else None,
+                 n_door_openings=int(np.sum(np.diff(np.nan_to_num(dl)) > 0.5)),
+                 v_mean_moving=float(vv[vv > 0.3].mean()) if (vv > 0.3).any() else None,
+                 idle_frac=float((vv < 0.3).mean()),
+                 route=(str(r.mode().iloc[0]) if len(r) else None), routes='|'.join(sorted(set(r))) if len(r) else None,
+                 month=int(t0.month), season=_SEASON[int(t0.month)], hour_utc=int(t0.hour),
+                 gnss_frac=float(gnss_ok[sl].mean()), valid_frac=float(gridok[sl].mean()),
+                 notes=('Measured outputs: elec_power [W] = total electrical power demand of the bus (traction + auxiliaries), '
+                        'regardless of whether it came from the trolley grid or the battery; negative = regeneration. '
+                        'Grade from smoothed GNSS altitude (no lidar DEM for Zurich here). No wind data (set 0). '
+                        'Extras: grid_available (1 = trolley line available), door_open.'),
+                 q_label_ok=bool(dist > 1000 and gridok[sl].mean() > 0.95),
+                 q_route_ok=bool(gnss_ok[sl].mean() >= 0.9))   # grade/elev/lat/lon from >= 90% logged GNSS seconds
+        out.append((tid, arr, m))
+    info = dict(n_seconds=int(len(grid)), n_rows=int(len(t_abs)), missing_s=int(len(grid) - gridok.sum()),
+                dist_trace_km=float(np.nansum(v) / 1000), E_trace_kWh=float(np.nansum(P) / 3.6e6),
+                gnss_frac=float(gnss_ok.mean()), passengers_frac=float(pax_ok.mean()), T_amb_frac=float(T_ok.mean()),
+                grid_available_frac=float(np.nanmean(grid_av)) if np.isfinite(grid_av).any() else None)
+    return out, info
+
+
+def _full_one(job):
+    """Worker: one mission from the zip -> legs on disk + a small result JSON (resume marker)."""
+    import zipfile
+    zpath, member, split = job
+    name = os.path.basename(member)[:-4]
+    bus = name[:4]
+    os.makedirs(f'{FULL}/trips/{bus}', exist_ok=True)
+    done = f'{FULL}/trips/{bus}/{name}.mission.json'
+    if os.path.exists(done):
+        r = json.load(open(done))
+        if r.get('version') == FULL_VERSION and r.get('split') == split:
+            return r
+    with zipfile.ZipFile(zpath) as zf, zf.open(member) as f:
+        d = pd.read_csv(f, low_memory=False)
+    legs, info = _mission_legs(name, d, 'ZTBusFull')
+    metas = []
+    for tid, arr, m in legs:
+        m['split'] = split
+        np.savez_compressed(f'{FULL}/trips/{bus}/{tid}.npz', **arr)
+        m['path'] = f'trips/{bus}/{tid}.npz'
+        mm = {kk: (None if isinstance(x, float) and not np.isfinite(x) else x) for kk, x in m.items()}
+        json.dump(mm, open(f'{FULL}/trips/{bus}/{tid}.json', 'w'), indent=1)
+        metas.append(mm)
+    r = dict(version=FULL_VERSION, mission=name, member=member, split=split, n_legs=len(metas), info=info, legs=metas)
+    json.dump(r, open(done + '.tmp', 'w')); os.replace(done + '.tmp', done)
+    return r
+
+
+def _compare_samples_to_v1(legs):
+    """The 10 sample missions are in the full zip too: their full legs must equal proc/hd/ztbus/ (v1)."""
+    v1 = pd.read_parquet(f'{OUT}/ztbus_legs.parquet')
+    res = {}
+    for mission, g in v1.groupby('mission'):
+        f = legs[legs.mission == mission]
+        if not len(f):
+            res[mission] = 'not in full zip'; continue
+        if len(f) != len(g):
+            res[mission] = f'legs {len(g)} (v1) vs {len(f)} (full)'; continue
+        worst = 0.0
+        for tid in g.trip_id:
+            k = tid.rsplit('_leg', 1)[1]
+            with np.load(f'{OUT}/ztbus/{tid}.npz') as A, np.load(f'{FULL}/trips/{mission[:4]}/ZTBusFull_{mission}_leg{k}.npz') as B:
+                for c in A.files:
+                    a, b = A[c].astype(float), B[c].astype(float)
+                    if a.shape != b.shape:
+                        worst = np.inf; break
+                    m = np.isfinite(a) & np.isfinite(b)
+                    if (np.isfinite(a) != np.isfinite(b)).any(): worst = np.inf
+                    if m.any(): worst = max(worst, float(np.max(np.abs(a[m] - b[m]))))
+        res[mission] = 'identical' if worst == 0 else f'max abs diff {worst:.3g}'
+    return res
+
+
+def ztbus_full(zpath, jobs=8):
+    import zipfile, concurrent.futures as cf, time
+    t0 = time.time()
+    os.makedirs(f'{FULL}/trips', exist_ok=True)
+    gi = f'{FULL}/.gitignore'
+    if not os.path.exists(gi):
+        open(gi, 'w').write('# per-leg arrays: rebuildable with `mlratchet data vehicle --only ztbus_full` (~GB)\ntrips/\n')
+    meta_all = pd.read_csv(f'{ROOT}/raw/hd/ztbus/metaData.csv')
+    split, split_ok = ztbus_full_split(meta_all)
+    with zipfile.ZipFile(zpath) as zf:
+        members = sorted(n for n in zf.namelist() if n.endswith('.csv') and os.path.basename(n) != 'metaData.csv'
+                         and not os.path.basename(n).startswith('.') and '__MACOSX' not in n)
+    names = [os.path.basename(n)[:-4] for n in members]
+    print(f'{len(members)} mission CSVs in the zip; {len(set(names) & set(meta_all.name))} in metaData.csv', flush=True)
+    jobs_ = [(str(zpath), mb, split['missions'].get(os.path.basename(mb)[:-4], 'unassigned')) for mb in members]
+    res, bad = [], []
+    with cf.ProcessPoolExecutor(max(1, int(jobs))) as ex:
+        futs = {ex.submit(_full_one, j): j[1] for j in jobs_}
+        for i, f in enumerate(cf.as_completed(futs), 1):
+            try:
+                res.append(f.result())
+            except Exception as e:
+                bad.append((futs[f], repr(e))); print('FAILED', futs[f], repr(e), flush=True)
+            if i % 100 == 0:
+                print(f'{i}/{len(futs)} missions, {time.time() - t0:.0f} s', flush=True)
+    res.sort(key=lambda r: r['mission'])
+    legs = pd.DataFrame([m for r in res for m in r['legs']])
+    legs.to_parquet(f'{FULL}/legs.parquet', index=False)
+    # mission table: ETH metadata + what the trace says
+    mt = meta_all.copy()
+    mt['bus'] = 'B' + mt.busNumber.astype(str)
+    mt['split'] = mt.name.map(split['missions'])
+    mt['split_proposal_v2'] = np.where(mt.name.isin(split['proposal_v2_not_in_force']['missions_dev']), 'dev', 'exam')
+    mt['kWh'] = mt.energyConsumption / 3.6e6
+    mt['kWh_per_km'] = mt.kWh / (mt.drivenDistance / 1000)
+    mt['T_amb_mean_C'] = mt.temperature_ambient_mean - 273.15
+    st = pd.to_datetime(mt.startTime_iso, utc=True)
+    mt['month'] = st.dt.month; mt['season'] = mt.month.map(_SEASON); mt['year'] = st.dt.year
+    tr = pd.DataFrame([dict(name=r['mission'], traced=True, n_legs=r['n_legs'],
+                            n_legs_label_ok=sum(m['q_label_ok'] for m in r['legs']), **r['info']) for r in res])
+    mt = mt.merge(tr, on='name', how='left')
+    mt['traced'] = mt.traced.fillna(False).astype(bool)
+    mt['E_ratio'] = mt.E_trace_kWh / mt.kWh
+    mt['d_ratio'] = mt.dist_trace_km / (mt.drivenDistance / 1000)
+    mt.to_parquet(f'{FULL}/missions.parquet', index=False)
+    # summary (deterministic: no timings)
+    ok = legs[legs.q_label_ok]
+    smp = _compare_samples_to_v1(legs) if len(legs) else {}
+    summ = dict(
+        missions_in_metadata=int(len(meta_all)), missions_in_zip=len(members), missions_processed=len(res),
+        missions_failed=bad, missions_not_in_zip=sorted(set(meta_all.name) - set(names)),
+        zip_missions_not_in_metadata=sorted(set(names) - set(meta_all.name)),
+        legs=int(len(legs)), legs_label_ok=int(len(ok)),
+        hours=float(legs.duration_s.sum() / 3600) if len(legs) else 0.0, km=float(legs.distance_m.sum() / 1000) if len(legs) else 0.0,
+        legs_by_split=legs.groupby('split').size().to_dict() if len(legs) else {},
+        legs_label_ok_by_split=ok.groupby('split').size().to_dict() if len(ok) else {},
+        missions_by_split=mt.groupby('split').size().to_dict(),
+        split_sha256=split.get('sha256_canonical_content_without_this_field') or canonical_sha256(split),
+        split_sha256_ok=bool(split_ok),
+        trace_vs_meta=dict(E_ratio=mt.E_ratio.describe().round(5).to_dict(), d_ratio=mt.d_ratio.describe().round(5).to_dict()),
+        samples_match_v1=smp)
+    json.dump(summ, open(f'{FULL}/summary.json', 'w'), indent=1, default=str)
+    print(json.dumps({k: v for k, v in summ.items() if k != 'samples_match_v1'}, indent=1, default=str))
+    print('samples vs v1:', smp)
+    print(f'done in {time.time() - t0:.0f} s', flush=True)
+    return summ
+
+
+if __name__ == '__main__' and len(__import__('sys').argv) > 1 and __import__('sys').argv[1] == 'ztbus_full':
+    import argparse
+    _p = argparse.ArgumentParser(); _p.add_argument('cmd'); _p.add_argument('--zip', required=True); _p.add_argument('--jobs', type=int, default=8)
+    _a = _p.parse_args()
+    ztbus_full(_a.zip, _a.jobs)
+elif __name__ == '__main__':
     dev = ztbus(); mersin(); dev_truck = published_trucks()
     json.dump({'ZTBus_dev_missions': dev, 'ICCT_dev_truck': dev_truck, 'Mersin_dev': '2026-02-16..22 (7-day subsample)'}, open(f'{OUT}/hd_dev.json', 'w'))

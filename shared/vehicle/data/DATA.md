@@ -297,3 +297,108 @@ command does not fetch.
 - **VED vehicle mass counted the 136 kg driver load twice** (`mass_kg` already included it and `payload_kg` added it again
   inside roadsim). `mass_kg` is now curb mass only. Phase 2 models were trained or graded before this fix. TripDetective grades
   curb mass and is unaffected. EnergyNet and HybridPilot twins of VED cars ran 136 kg heavy.
+
+## ZTBus full data set: all 1,409 missions (13 Nov 2026)
+
+RoadData v1 had 10 traced ZTBus missions (Zenodo mirror; the ETH host answered HTTP 429 from the cloud sandbox). From
+this machine the ETH Research Collection answered, and the full data set is now built.
+
+```python
+zl = rd.ztbus_full()                         # 7,567 legs, one row each (split, label, passengers, route, season, ...)
+zm = rd.ztbus_full(table='missions')         # 1,409 missions: ETH metaData.csv + trace checks + split
+for meta, arr in rd.load_trips('dev', source='ZTBus_full', label_ok=True, route_ok=True): ...   # 1 Hz legs
+m, a = rd.load_trip('ZTBusFull_B183_2021-10-05_13-53-20_2021-10-05_18-14-53_leg00')
+```
+
+**Source.** F. Widmer, A. Ritter, C. H. Onder, "ZTBus: A Large Dataset of Time-Resolved City Bus Driving Missions",
+Scientific Data 10 (2023), doi:10.1038/s41597-023-02600-6 (cite this paper). Data: ETH Research Collection,
+doi:10.3929/ethz-b-000626723 (hdl:20.500.11850/626723), licence CC BY 4.0. Two VBZ Zurich trolleybuses (HESS lighTram 19
+DC: single-articulated, ~19 m, curb ~19 t, ~160 passengers max, traction battery for a few km off the wire), bus 183
+(864 missions, Apr 2019 - Dec 2022) and bus 208 (545 missions, 2021-2022).
+
+**Download** (`mlratchet data vehicle --only ztbus_full`; files in `raw/hd/ztbus/full/`, git-ignored). The DSpace REST
+API lists the item's files with MD5s (`/server/api/core/bitstreams/<uuid>/content`). Fetched one request at a time,
+resumable, with a back-off of 2, 5, 10, 20, 30, 30 min on HTTP 429 (then recorded as blocked in
+`work/build_state.json`):
+
+| file | bytes | MD5 | used |
+|---|---|---|---|
+| `ZTBus_compressed.zip` | 2,006,877,986 | 65e265fd… (checked) | yes: all 1,409 mission CSVs, deflated |
+| `README.txt` | 15,754 | bf852195… (checked) | column definitions |
+| `ZTBus.zip` | 8,893,495,239 | f71dc952… | no: the same CSVs stored without compression |
+| `metaData.csv` | 272,886 | 7dd57860… | the copy already in `raw/hd/ztbus/` has the same MD5 |
+
+The download took 17 min at ~2 MB/s. The host returned 429 once, during the first look at the item (about 10 API calls
+within a minute). It served the files after a few minutes' pause.
+
+**Processing** (`scripts/hd.py ztbus_full`, 45 s on 15 processes). The CSVs are read straight out of the zip. Each
+mission is cut into legs with the v1 code: legs split at stops > 300 s (a v < 0.3 m/s run), 30 s of the stop kept on each
+side, legs >= 120 s. Arrays and label are as in section 8. Extra arrays: `grid_available` (1 = current collector on the
+overhead line) and `door_open`. Extra leg meta: `regen_kWh`, `passengers_mean/max`, `route` (most frequent ITCS route),
+`grid_available_frac`, `door_open_frac`, `n_door_openings`, `idle_frac`, `month`, `season` (meteorological, UTC month),
+coverage fractions (`gnss_frac`, `passengers_frac`, `T_amb_frac`: share of seconds with a logged value), `q_label_ok`
+(v1 rule: > 1 km and > 95% of seconds logged) and `q_route_ok` (>= 90% logged GNSS seconds, so grade and position are
+real).
+Outputs: `proc/hd/ztbus_full/trips/B183|B208/*.npz/.json` (1.3 GB, git-ignored), `legs.parquet`, `missions.parquet`,
+`summary.json` and `proc/hd/ztbus_full_splits.json` (tracked).
+
+**Checks.** All 1,409 missions in the zip match `metaData.csv`, and none failed. Integrated power / metadata energy:
+1.00001 mean, 1.00011 max. Integrated speed / metadata distance: 1.00004 mean, 1.0001 max. The 10 sample missions give
+the same 83 legs as v1 (`proc/hd/ztbus/`). Seven are bit-identical; three differ by at most 6e-11 (float noise; v1 was
+built on another machine). The v1 HD tables still rebuild unchanged (`verify`).
+
+**Size.** 1,409 missions, 7,567 legs (7,490 `q_label_ok`; the other 77 are <= 1 km), 12,814 h, 207,528 km, 328 MWh net.
+Legs: median 15.2 km / 56 min (p10-p90 9.0-63.5 km). Missions last 3-24 h (median 8.9 h) with 1-31 legs. Routes by
+leg-km: 83 (48%), 33, 72, 46, 32, 31, night routes N1-N4.
+
+**Split** (`proc/hd/ztbus_full_splits.json`; sha256 of canonical JSON (sorted keys, no whitespace, UTF-8) without the sha
+field = `70ddd546…`; written once, then only recomputed and compared). The frozen `proc/splits.json` already covers every
+ZTBus mission. Its rule says: one seeded traced mission per bus is dev, and all other missions are exam (the
+1,409-mission table included). This file writes that rule out per mission, and no mission changes side:
+
+| side | missions | legs | legs `q_label_ok` |
+|---|---|---|---|
+| dev | 2 (`B183_2021-10-05_13-53-20…`, `B208_2022-11-30_04-47-53…`) | 5 | 5 |
+| exam | 1,407 | 7,562 | 7,485 |
+
+So the full set adds almost nothing to dev: **calibration on ZTBus still has 2 missions (5 legs)**. The file also
+records a *proposal, not in force*, fixed before any full trace was processed. Its unit is the (bus, calendar month)
+block. Within each (bus, season) stratum, max(1, round(0.2 n)) months are drawn with seed 20261113, plus the months that
+hold the two frozen dev missions. That gives 14 dev months, 295 dev missions (1,668 legs) and 1,114 exam missions.
+Adopting it would move 293 frozen-exam missions to dev, which the frozen split forbids, so the owner has to decide.
+`missions.parquet` carries it as `split_proposal_v2`. Loaders use only `split`.
+
+**Energy per km** (legs with `q_label_ok`, pooled kWh / km; all splits, descriptive only):
+
+| season | legs | km | kWh/km | median (p10-p90) | mean T_amb |
+|---|---|---|---|---|---|
+| winter (DJF) | 846 | 25,702 | 1.89 | 1.88 (1.53-2.21) | 6.3 degC |
+| spring | 2,062 | 53,299 | 1.58 | 1.55 (1.17-2.02) | 13.8 degC |
+| summer | 2,372 | 62,253 | 1.48 | 1.46 (1.09-1.82) | 23.9 degC |
+| autumn | 2,210 | 66,257 | 1.56 | 1.54 (1.18-1.93) | 14.0 degC |
+
+| mean passengers on leg | 0-10 | 10-20 | 20-40 | 40-60 | 60+ |
+|---|---|---|---|---|---|
+| legs | 2,025 | 3,582 | 1,814 | 67 | 2 |
+| kWh/km (all seasons) | 1.55 | 1.56 | 1.62 | 1.78 | 2.49 |
+| winter / summer kWh/km | 1.80 / 1.37 | 1.89 / 1.47 | 1.93 / 1.55 | 2.20 / 1.71 | - / 2.61 |
+
+By leg mean temperature: 1.98 kWh/km at 0-5 degC, 1.40 at 15-25 degC, and 1.56 above 25 degC (heating and AC both cost
+energy). Bus 183: 1.60, bus 208: 1.55 kWh/km. Regeneration returns 30% of the positive electrical energy. The bus is on
+the overhead line for a median 66% of a leg. Mission level (metadata, all 1,409): winter 1.94, summer 1.48 kWh/km.
+
+**What is missing or odd.**
+- **Passengers are logged only at stops**: 0.9% of seconds (the ITCS count at each served stop). Like v1, the
+  `passengers` array is linearly interpolated between stops, so it ramps where the true count steps. Treat it as a
+  per-stop signal. 29 legs have zero passengers all through (probably empty runs to or from the depot).
+- **No ambient temperature below 0 degC** in 4 winters. The minimum is exactly 273.15 K in 5 missions, and the sensor has
+  1 K resolution and sits behind the front bumper. Cold readings are probably clipped at 0 degC or warm-biased, so
+  winter T_amb is not reliable at the low end.
+- **GNSS gaps**: 418 legs have < 90% logged GNSS (`q_route_ok` False), and one mission has 0.9%. On those legs grade
+  and position come from interpolation or edge-hold.
+- **Net-negative legs exist**: 2 legs with net regeneration, e.g. a 9.2 km leg that descends 223 m. One more is below
+  0.1 kWh/km, and 46 legs are below 0.5 kWh/km. The two negative ones are real downhill runs; check the rest before calling them errors.
+- No battery state (SOC, current) and no split between traction and auxiliary power: `elec_power` is the total demand
+  (line + battery). No vehicle mass beyond "~19 t curb". No wind; grade comes from GNSS altitude (no lidar DEM for
+  Zurich here).
+- Time is UTC. `season` and `month` use the UTC start of the leg (local time is UTC+1/+2).

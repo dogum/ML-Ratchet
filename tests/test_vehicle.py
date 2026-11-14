@@ -65,3 +65,29 @@ def test_rebuilt_ved_dev_trips_load():
         assert np.isfinite(a["T_amb"]).all() and np.isfinite(a["rho_air"]).all()
         assert np.nansum(a["fuel_rate"]) > 0 and meta["fuel_g"] > 0
     assert (VEH / "data" / "proc" / "dem_annarbor_2m.npz").exists()
+
+
+def test_ztbus_full_split_and_legs():
+    """ZTBus full (1,409 missions): the split file is frozen and agrees with splits.json; legs load (skipped without data)."""
+    import pytest
+
+    sf = VEH / "data" / "proc" / "hd" / "ztbus_full_splits.json"
+    if not sf.exists():
+        pytest.skip("ZTBus full not built here (run `mlratchet data vehicle --only ztbus_full`)")
+    import numpy as np
+    import realdata as rd
+
+    sp = json.loads(sf.read_text(encoding="utf-8"))
+    sha = sp.pop("sha256_canonical_content_without_this_field")
+    canon = json.dumps(sp, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    assert hashlib.sha256(canon).hexdigest() == sha
+    frozen_dev = set(rd.splits()["HD"]["ZTBus"]["dev_missions"])
+    assert {m for m, s in sp["missions"].items() if s == "dev"} == frozen_dev and len(sp["missions"]) == 1409
+    legs = rd.ztbus_full()
+    assert set(legs.split) <= {"dev", "exam"} and set(legs[legs.split == "dev"].mission) <= frozen_dev
+    if not (VEH / "data" / "proc" / "hd" / "ztbus_full" / "trips").exists():
+        pytest.skip("ZTBus full leg arrays not built here")
+    for meta, a in rd.load_trips("dev", source="ZTBus_full", label_ok=True, limit=2, seed=0):
+        assert meta["mission"] in frozen_dev and meta["split"] == "dev"
+        assert np.isfinite(a["grade"]).all() and np.isfinite(a["elec_power"][a["valid"] == 1]).all()
+        assert abs(np.nansum(a["elec_power"]) / 3.6e6 - meta["elec_kWh"]) < 1e-3 * max(1.0, abs(meta["elec_kWh"]))

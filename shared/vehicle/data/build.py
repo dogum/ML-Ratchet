@@ -20,6 +20,8 @@ Stages (in order):
   tables     shadow: epa_testcars, fe_labels, cycles, hd, make_splits_all, baselines, qc
   refdata    roadsim/refdata/ from the same raw files, then roadsim/tools/epa_candidates.py; shadow build_cycles and
              build_generator_calib are compared with roadsim/roadsim/data/
+  ztbus_full ZTBus, all 1,409 missions: ZTBus_compressed.zip (2.0 GB) from the ETH Research Collection, one request at
+             a time; scripts/hd.py ztbus_full -> proc/hd/ztbus_full/ (legs + missions tables, frozen split file)
   verify     splits.json sha256, rebuilt-vs-shipped comparison, a dev-trip load
 """
 from __future__ import annotations
@@ -53,7 +55,7 @@ STATE = WORK / 'build_state.json'
 SPLITS_SHA = 'd917df78b099167ceadd7c5cd384a9fd9c45f2e14ca69fa3927c98b9b3233ad9'
 UA = 'mlratchet-data-rebuild/1.0 (+https://github.com/; research data rebuild)'
 PY = sys.executable
-STAGES = ['fetch', 'stage1', 'survey', 'splits_ved', 'dem', 'stage2', 'index', 'tables', 'refdata', 'verify']
+STAGES = ['fetch', 'stage1', 'survey', 'splits_ved', 'dem', 'stage2', 'index', 'tables', 'refdata', 'ztbus_full', 'verify']
 
 # ---------------------------------------------------------------- sources
 VED = 'https://raw.githubusercontent.com/gsoh/VED/master/Data/'
@@ -97,6 +99,14 @@ FASTSIM_JSON = 'https://pypi.org/pypi/fastsim/2.1.5/json'
 FASTSIM_CYCLES = ['wltc_3b.csv', 'longHaulDriveCycle.csv']
 ZTBUS = 'https://zenodo.org/api/records/17470816/files/{f}/content'      # mirror of doi:10.3929/ethz-b-000626723
 MERSIN = 'https://zenodo.org/api/records/22716221/files/mersin_33M_bus_dataset.xlsx/content'
+# ZTBus full data set from the ETH Research Collection (DSpace 7 REST API), item hdl:20.500.11850/626723. Bitstream ids,
+# sizes and MD5s as listed by /server/api/core/bundles/<ORIGINAL>/bitstreams on 2026-11-13. ZTBus.zip (8.89 GB) holds the
+# same CSVs stored without compression; the deflated ZTBus_compressed.zip is the one ETH links to and the one used here.
+ZTBUS_ETH = 'https://www.research-collection.ethz.ch/server/api/core/bitstreams/{u}/content'
+ZTBUS_FULL = {  # local name -> (bitstream uuid, bytes, md5)
+    'README.txt': ('e6220b28-da03-4fb8-9c2a-aac22a41179f', 15754, 'bf852195f7d880ffdcf5ee531a4d7c86'),
+    'ZTBus_compressed.zip': ('e87328e5-6133-4f2f-9074-df8d4fa1de61', 2006877986, '65e265fd282e63b512369ff86fa9cd40')}
+ZTBUS_META_MD5 = '7dd57860fb937d6dadf6facdd3e2d996'      # ETH's metaData.csv (same file as raw/hd/ztbus/metaData.csv?)
 
 
 # ---------------------------------------------------------------- helpers
@@ -476,6 +486,129 @@ def stage_refdata(a, st):
     log('refdata: ready (build_maps.py needs refdata/alpha/, the EPA ALPHA packages, which this build does not fetch)')
 
 
+# ---------------------------------------------------------------- ZTBus full (ETH Research Collection)
+ZTBUS_FULL_RAW = RAW / 'hd' / 'ztbus' / 'full'
+ZTBUS_FULL_BACKOFF = [120, 300, 600, 1200, 1800, 1800]     # s to wait after each HTTP 429 (then: blocked)
+
+
+def md5(p: Path):
+    h = hashlib.md5()
+    with open(p, 'rb') as f:
+        for b in iter(lambda: f.read(1 << 24), b''):
+            h.update(b)
+    return h.hexdigest()
+
+
+def http_get_polite(url, dest: Path, size=None, max_errors=30):
+    """One request at a time, resume from dest.part, honour Retry-After, back off on 429 (ZTBUS_FULL_BACKOFF), raise
+    Blocked when the host keeps refusing. Network errors (resets, timeouts) resume after a short pause."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    part = dest.with_name(dest.name + '.part')
+    n429 = nerr = 0
+    while True:
+        have = part.stat().st_size if part.exists() else 0
+        if size and have == size:
+            os.replace(part, dest); return size
+        hdr = {'User-Agent': UA}
+        if have: hdr['Range'] = f'bytes={have}-'
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=hdr), timeout=300) as r:
+                mode = 'ab' if (have and r.status == 206) else 'wb'
+                if have and mode == 'wb': log(f'  {dest.name}: server ignored Range, restarting')
+                t0, got, last = time.time(), 0, time.time()
+                with open(part, mode) as f:
+                    while True:
+                        b = r.read(1 << 22)
+                        if not b: break
+                        f.write(b); got += len(b)
+                        if time.time() - last > 60:
+                            tot = (have if mode == 'ab' else 0) + got
+                            log(f'  {dest.name}: {tot / 1e6:,.0f} MB' + (f' of {size / 1e6:,.0f}' if size else '') +
+                                f'  ({got / 1e6 / (time.time() - t0):.1f} MB/s)')
+                            last = time.time()
+            if size and part.stat().st_size != size:
+                raise IOError(f'short read: {part.stat().st_size} of {size} bytes')
+            os.replace(part, dest)
+            return dest.stat().st_size
+        except urllib.error.HTTPError as e:
+            if e.code == 416 and have:
+                os.replace(part, dest); return dest.stat().st_size
+            if e.code in (401, 403, 404, 451):
+                raise Blocked(f'HTTP {e.code} {e.reason}')
+            if e.code == 429:
+                if n429 >= len(ZTBUS_FULL_BACKOFF):
+                    raise Blocked(f'HTTP 429 Too Many Requests after {n429} back-offs '
+                                  f'({sum(ZTBUS_FULL_BACKOFF) / 60:.0f} min in total)')
+                ra = e.headers.get('Retry-After') if e.headers else None
+                w = max(ZTBUS_FULL_BACKOFF[n429], int(ra) if ra and ra.isdigit() else 0)
+                n429 += 1
+                log(f'  {dest.name}: HTTP 429 (Retry-After {ra}); waiting {w} s ({n429}/{len(ZTBUS_FULL_BACKOFF)})')
+                time.sleep(w); continue
+            nerr += 1; err = f'HTTP {e.code} {e.reason}'
+        except Exception as e:      # resets, timeouts, short reads: resume
+            nerr += 1; err = repr(e)
+        if nerr > max_errors:
+            raise Blocked(f'failed after {nerr} errors: {err}')
+        log(f'  {dest.name}: {err}; resuming in {min(300, 15 * nerr)} s')
+        time.sleep(min(300, 15 * nerr))
+
+
+def ztbus_full_fetch(st, names=None):
+    """Download the ZTBus full data set from ETH, sequentially, and check the MD5s. Returns True when complete."""
+    ok = True
+    for name, (uid, size, h) in ZTBUS_FULL.items():
+        if names and name not in names:
+            continue
+        dest = ZTBUS_FULL_RAW / name
+        key = f'hd/ztbus/full/{name}'
+        if dest.exists() and dest.stat().st_size == size and st['downloads'].get(key, {}).get('md5_ok'):
+            continue
+        url = ZTBUS_ETH.format(u=uid)
+        try:
+            if not dest.exists():
+                t = time.time(); http_get_polite(url, dest, size)
+                log(f'  ztbus_full {name} {size / 1e6:,.1f} MB in {time.time() - t:,.0f} s')
+            got = md5(dest)
+            if got != h:
+                bad = dest.with_name(dest.name + '.bad-md5'); os.replace(dest, bad)
+                raise Blocked(f'MD5 {got} != {h} (moved to {bad.name})')
+            st['blocked'].pop(key, None)
+            st['downloads'][key] = {'url': url, 'bytes': size, 'md5': h, 'md5_ok': True, 'when': time.strftime('%Y-%m-%d %H:%M')}
+        except Blocked as e:
+            log(f'  BLOCKED ztbus_full {name}: {e}')
+            st['blocked'][key] = {'url': url, 'error': str(e), 'when': time.strftime('%Y-%m-%d %H:%M')}
+            ok = False
+        save_state(st)
+        if not ok:
+            break                      # a refusing host gets no further requests
+        time.sleep(5)
+    meta = RAW / 'hd' / 'ztbus' / 'metaData.csv'
+    st['ztbus_full_metaData_md5_matches_eth'] = meta.exists() and md5(meta) == ZTBUS_META_MD5
+    save_state(st)
+    return ok
+
+
+def stage_ztbus_full(a, st):
+    """ZTBus, all 1,409 missions: fetch from ETH (unless --offline), then scripts/hd.py ztbus_full, which streams every
+    mission CSV out of the zip into proc/hd/ztbus_full/ (trips/ git-ignored; legs/missions tables and the split file
+    tracked). The 10-mission outputs of hd.py (proc/hd/ztbus/) are untouched."""
+    if not a.offline:
+        ztbus_full_fetch(st)
+    z = ZTBUS_FULL_RAW / 'ZTBus_compressed.zip'
+    if not z.exists():
+        log(f'ztbus_full: {z} missing (fetch blocked or --offline); skipped'); return
+    t = time.time()
+    must(run_py([SCRIPTS / 'hd.py', 'ztbus_full', '--zip', z, '--jobs', a.jobs], 'ztbus_full'), 'hd.py ztbus_full')
+    log(f'ztbus_full: hd.py ztbus_full {time.time() - t:.0f} s; log in {LOGS / "ztbus_full.log"}')
+    rep = PROC / 'hd' / 'ztbus_full' / 'summary.json'
+    if rep.exists():
+        r = json.loads(rep.read_text())
+        st['ztbus_full'] = {k: r.get(k) for k in ('missions_in_zip', 'missions_processed', 'legs', 'legs_label_ok',
+                                                    'split_sha256_ok', 'samples_match_v1')}
+        log('ztbus_full: ' + json.dumps(st['ztbus_full']))
+        save_state(st)
+
+
 # ---------------------------------------------------------------- verify
 def _cmp_frames(x, y):
     import numpy as np, pandas as pd
@@ -588,6 +721,8 @@ def stage_verify(a, st):
             for f in sorted((PROC / d).rglob('*')):
                 if f.is_file():
                     r = str(f.relative_to(PROC)).replace('\\', '/')
+                    if r.startswith('hd/ztbus_full'):    # built in place by the ztbus_full stage, not by `tables`
+                        continue
                     files[r] = compare_file(f, sp / r)
         files['splits.json (rebuilt)'] = compare_file(PROC / 'splits.json', sp / 'splits.rebuilt.json')
     rs = VEH / 'roadsim' / 'roadsim' / 'data'

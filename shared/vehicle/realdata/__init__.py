@@ -8,6 +8,7 @@
     epa = rd.epa_testcars(split='dev')                    # one row per EPA test vehicle configuration
     cyc = rd.cycles()                                     # dict name -> (meta, arrays) of dynamometer schedules
     hd = rd.hd_data()                                     # ZTBus legs/missions, Mersin bus trips, ICCT truck results
+    zf = rd.ztbus_full('dev')                             # ZTBus, all 1,409 missions: leg table (arrays: load_trips(source='ZTBus_full'))
     sp = rd.splits()                                      # the frozen split file
 
 Arrays follow the trip contract (1 Hz, SI, float32): t, v, grade, elev, lat, lon, heading, T_amb, wind_speed,
@@ -50,6 +51,8 @@ def load_trip(trip_id_or_path):
             veh = '_'.join(tid.split('_')[:2]); p = f'{PROC}/ved/trips/{veh}/{tid}.npz'
         elif tid.startswith('ZTBus_'):
             p = f'{PROC}/hd/ztbus/{tid}.npz'
+        elif tid.startswith('ZTBusFull_'):
+            p = f'{PROC}/hd/ztbus_full/trips/{tid.split("_")[1]}/{tid}.npz'
         else:
             p = f'{PROC}/cycles/{tid}.npz'
     meta = json.load(open(p[:-4] + '.json'))
@@ -61,15 +64,18 @@ def load_trips(split, arch=None, source='VED', label_ok=None, route_ok=None, veh
     """Iterate (meta, arrays) for trips in a split ('dev' | 'exam' | 'train_noise').
     arch: contract architecture ('conv', 'hev_powersplit', 'hev_parallel_p2', 'phev_series', 'phev_powersplit', 'bev')
           or a VED type ('ICE', 'HEV', 'PHEV', 'EV'). label_ok / route_ok filter on quality flags.
-    source: 'VED' or 'ZTBus'. limit + seed: a fixed random draw (never cherry-pick).
+    source: 'VED', 'ZTBus' (10 traced missions, v1) or 'ZTBus_full' (all 1,409 missions; split from
+            proc/hd/ztbus_full_splits.json, which follows the frozen splits.json). limit + seed: a fixed random draw (never cherry-pick).
     meta_only=True returns the filtered index DataFrame instead of an iterator."""
     if source == 'VED':
         d = ved_index()
     elif source == 'ZTBus':
         d = pd.read_parquet(f'{PROC}/hd/ztbus_legs.parquet')
         d['path'] = 'ztbus/' + d.trip_id + '.npz'; d['architecture'] = 'bev'; d['ved_type'] = 'BUS'
+    elif source == 'ZTBus_full':
+        d = ztbus_full(); d['architecture'] = 'bev'; d['ved_type'] = 'BUS'
     else:
-        raise ValueError('source must be VED or ZTBus (cycles: use cycles(); tables: hd_data())')
+        raise ValueError('source must be VED, ZTBus or ZTBus_full (cycles: use cycles(); tables: hd_data())')
     d = d[d.split == split]
     if arch is not None:
         arch = [arch] if isinstance(arch, str) else list(arch)
@@ -82,7 +88,10 @@ def load_trips(split, arch=None, source='VED', label_ok=None, route_ok=None, veh
         d = d.sample(limit, random_state=seed if seed is not None else 0)
     if meta_only:
         return d
-    base = f'{PROC}/ved' if source == 'VED' else f'{PROC}/hd'
+    base = {'VED': f'{PROC}/ved', 'ZTBus_full': f'{PROC}/hd/ztbus_full'}.get(source, f'{PROC}/hd')
+    if source == 'ZTBus_full' and len(d) and not os.path.exists(f'{base}/{d.path.iloc[0]}'):
+        raise FileNotFoundError(f'{base}/{d.path.iloc[0]}: the ZTBus full leg arrays are not built here '
+                                '(git-ignored, ~GB); run `mlratchet data vehicle --only ztbus_full`')
 
     def gen():
         for r in d.itertuples():
@@ -215,6 +224,24 @@ def hd_data():
             'ztbus_missions': pd.read_parquet(f'{PROC}/hd/ztbus_missions.parquet'),
             'mersin_trips': pd.read_parquet(f'{PROC}/hd/mersin_trips.parquet'),
             'icct_trucks': pd.read_csv(f'{PROC}/hd/published_truck_results.csv')}
+
+
+def ztbus_full(split=None, table='legs', label_ok=None):
+    """ZTBus, all 1,409 missions of the two Zurich trolleybuses (ETH Research Collection, CC BY 4.0).
+    table='legs'     : one row per 1 Hz leg (missions cut at layovers > 5 min, as the v1 ZTBus legs): elec_kWh label,
+                       distance, passengers, T_amb, route, grid/door fractions, season, q_label_ok, split, path.
+                       Arrays: load_trips(split, source='ZTBus_full') or load_trip('ZTBusFull_...').
+    table='missions' : ETH metaData.csv (energy, distance, passengers, T) + trace checks (E_ratio, d_ratio, n_legs), split.
+    table='splits'   : the frozen per-mission split file (dict).
+    split: 'dev' | 'exam' (the frozen split: 2 dev missions, 1,407 exam; see data/DATA.md)."""
+    if table == 'splits':
+        return json.load(open(f'{PROC}/hd/ztbus_full_splits.json', encoding='utf-8'))
+    if table not in ('legs', 'missions'):
+        raise ValueError("table must be 'legs', 'missions' or 'splits'")
+    d = pd.read_parquet(f'{PROC}/hd/ztbus_full/{table}.parquet')
+    if split is not None: d = d[d.split == split]
+    if label_ok is not None and table == 'legs': d = d[d.q_label_ok == label_ok]
+    return d
 
 
 def baselines(table='ved_exam'):
