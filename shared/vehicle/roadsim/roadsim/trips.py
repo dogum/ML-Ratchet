@@ -8,6 +8,7 @@ _CYC = {}
 
 CONTRACT_INPUTS = ['t', 'v', 'grade', 'elev', 'lat', 'lon', 'heading', 'T_amb', 'wind_speed', 'wind_dir', 'rho_air', 'surface']
 CONTRACT_MEASURED = ['fuel_rate', 'engine_rpm', 'batt_current', 'batt_voltage', 'soc', 'aux_power']
+EXTRA_INPUTS = ['solar', 'gap_m', 'wind_shelter']     # optional RoadSim inputs outside the shared contract
 
 
 def cycle(name):
@@ -24,8 +25,11 @@ def list_cycles():
 
 
 def make_trip(v, T_amb=20.0, grade=0.0, wind_speed=0.0, wind_dir=0.0, heading=0.0, elev=0.0, rho_air=None,
-              surface=0, solar=0.0, p_Pa=None):
-    """trip-input dict from a speed trace (array or cycle name); scalars are broadcast."""
+              surface=0, solar=0.0, p_Pa=None, gap_m=None, wind_shelter=None):
+    """trip-input dict from a speed trace (array or cycle name); scalars are broadcast.
+    surface: 0 dry asphalt, 1 concrete, 2 wet, 3 gravel, 4 snow, 5 ice (5 needs the tyre model; v1 treats it as snow).
+    Optional extras read by the v2 dynamics options: gap_m (gap to a lead vehicle, m, NaN = none; `drafting`),
+    wind_shelter (factor on the road-height mean wind, -)."""
     if isinstance(v, str):
         name = v
         v = cycle(name)
@@ -40,6 +44,10 @@ def make_trip(v, T_amb=20.0, grade=0.0, wind_speed=0.0, wind_dir=0.0, heading=0.
         trip['rho_air'] = b(rho_air)
     elif p_Pa is not None:
         trip['rho_air'] = b(p_Pa) / (287.05 * (trip['T_amb'] + 273.15))
+    if gap_m is not None:
+        trip['gap_m'] = b(gap_m)
+    if wind_shelter is not None:
+        trip['wind_shelter'] = b(wind_shelter)
     if np.all(trip['elev'] == trip['elev'][0]) and np.any(trip['grade'] != 0):
         ds = np.concatenate([[0.0], 0.5 * (v[1:] + v[:-1])])
         trip['elev'] = trip['elev'][0] + np.cumsum(ds * trip['grade'])
@@ -57,7 +65,7 @@ def load_trip(path):
 
 def save_trip(path, trip, meta=None):
     base = path[:-4] if path.endswith('.npz') else path
-    np.savez_compressed(base + '.npz', **{k: np.asarray(v, np.float32) for k, v in trip.items() if k in CONTRACT_INPUTS + CONTRACT_MEASURED + ['solar']})
+    np.savez_compressed(base + '.npz', **{k: np.asarray(v, np.float32) for k, v in trip.items() if k in CONTRACT_INPUTS + CONTRACT_MEASURED + EXTRA_INPUTS})
     if meta is not None:
         json.dump(meta, open(base + '.json', 'w'), indent=1)
 
