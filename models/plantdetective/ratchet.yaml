@@ -1,0 +1,20 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json (written by training/ratchet.py).
+model: plantdetective
+ladders:
+  - name: "PlantDetective v1 (13-14 Nov 2026)"
+    objective: "Skill in [0, 1] on the frozen simulated validation set of the current bank version (13% of simulated units, held out by unit): mean of technology accuracy and, per target, max(0, 1 - MAE / MAE of the per-technology median), in the transformed target space"
+    rule: "Keep if the frozen-val skill beats the incumbent by more than 0.01 AND the dev score (the same skill on the 40 dev units, dev years 2019 and 2021, mean over month, quarter and year windows) falls by no more than 0.005. When the simulator (bank version) changes, the incumbent is re-scored on the new frozen set first."
+    margin: 0.01
+    dev_gate: "Dev skill (40 dev units, 2019 + 2021, mean of month / quarter / year windows) may not fall by more than 0.005"
+    frozen_sets: [v1, v2]
+    scored_on: v2
+    note: "R0 and R1 were scored on the v1 frozen set, R2-R4 on v2 (bank v2, dev twin calibration). R1 re-scored on v2: 0.266."
+    columns_source: "training/ratchet.json: frozen-val technology accuracy, dev skill (mean and by window length) and dev technology accuracy (year windows); higher is better"
+    columns: ["Val tech acc", "Dev skill", "Dev month", "Dev quarter", "Dev year", "Dev tech acc"]
+    rungs:
+      - { id: R0, change: "GridSim unit-level MILP units only (3 generated systems x 92 days, train-year inputs), emulator v1", sim: 0.021, decision: kept, why: "first rung (incumbent by definition)", metrics: [0.294, 0.015, 0.019, 0.013, 0.012, 0.167] }
+      - { id: R1, change: "+ self-committed (price-taker DP) and cogeneration units on GridSim and ERCOT train-year price backgrounds", sim: 0.491, decision: kept, why: "val 0.491 vs 0.021 (d=+0.470, margin 0.01); dev 0.117 vs 0.015 (d=+0.102, tol 0.005)", metrics: [0.919, 0.117, 0.099, 0.109, 0.143, 0.800] }
+      - { id: R2, change: "bank v2: dev twin calibration (start/stop trajectories measured on dev starts, trips and aborted starts, offer slope, start-cost multipliers per technology, CHP steam credit, EIA-923 gross ratio from dev unit-years); GridSim units once each. Twin mismatch 0.211 -> 0.128", sim: 0.475, decision: kept, why: "val 0.475 vs 0.266 for R1 re-scored on the v2 set (d=+0.210, margin 0.01); dev 0.200 vs 0.117 (d=+0.083, tol 0.005)", metrics: [0.959, 0.200, 0.122, 0.157, 0.321, 0.867] }
+      - { id: R3, change: "heat-rate skip connection: when an EIA-923 heat rate is given, the network predicts the full-load heat rate as a correction to it", sim: 0.470, decision: rejected, why: "val 0.470 vs 0.475 (d=-0.005, margin 0.01); dev 0.191 vs 0.200 (d=-0.009, tol 0.005)", metrics: [0.957, 0.191, 0.119, 0.158, 0.296, 0.867] }
+      - { id: R4, change: "ensemble of 3 networks (R2 recipe, seeds 0-2): mean of predictions, variance = mean member variance + spread of member means", sim: 0.501, decision: released, why: "val 0.501 vs 0.475 (d=+0.026, margin 0.01); dev 0.215 vs 0.200 (d=+0.015, tol 0.005)", metrics: [0.962, 0.215, 0.134, 0.177, 0.333, 0.867] }
+      - { id: R4-bars, change: "error bars: widen-only factor per output so that at least 68.3% of the dev windows fall within 1 sigma (report.fit_factors; training/sigma_factors.json, factors 1.00-1.90)", decision: kept, why: "calibration on dev only; changes no estimate. Exam year-window coverage of the 68% band afterwards: 48-79% (median about 65%)" }

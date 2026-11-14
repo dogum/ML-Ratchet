@@ -1,0 +1,190 @@
+
+== mode ctx: median error (fractions: abs; others: relative) ==
+   kind  units  tech_acc  pmin_frac  ramp_up  ramp_dn  starts_yr  min_up  med_up  min_dn   hot  warm  cold  hr_full  hr_min    cf
+  month    400     0.856      0.108    0.248    0.253      0.449   0.584   0.422   0.391 0.072 0.097 0.094    0.149   0.172 0.053
+quarter    400     0.872      0.092    0.210    0.223      0.384   0.549   0.357   0.393 0.067 0.089 0.080    0.134   0.152 0.049
+   year    395     0.877      0.068    0.177    0.195      0.310   0.490   0.339   0.335 0.053 0.072 0.060    0.141   0.156 0.038
+ pooled    395     0.922      0.057    0.137    0.144      0.233   0.447   0.263   0.251 0.034 0.042 0.036    0.136   0.145 0.021
+                          0        1       2       3
+kind                  month  quarter    year  pooled
+pmin_frac|b_stats     0.294    0.309   0.327   0.379
+pmin_frac|b_default   0.132    0.132   0.131    0.14
+pmin_frac|b_923         NaN      NaN     NaN     NaN
+pmin_frac|b_dumb       0.08     0.08    0.08    0.08
+ramp_up|b_stats        0.51    0.572   0.542   0.696
+ramp_up|b_default     8.738    8.738   8.567   9.588
+ramp_up|b_923           NaN      NaN     NaN     NaN
+ramp_up|b_dumb        0.355    0.355   0.349   0.389
+ramp_dn|b_stats       0.644    0.733   0.646   1.044
+ramp_dn|b_default     9.615    9.615   9.611  10.288
+ramp_dn|b_923           NaN      NaN     NaN     NaN
+ramp_dn|b_dumb        0.395    0.395   0.394   0.404
+starts_yr|b_stats     0.569    0.433   0.278   0.001
+starts_yr|b_default     NaN      NaN     NaN     NaN
+starts_yr|b_923         NaN      NaN     NaN     NaN
+starts_yr|b_dumb      0.699    0.699   0.699   0.694
+min_up|b_stats        0.475      0.4    0.25     0.0
+min_up|b_default        0.5      0.5     0.5     0.5
+min_up|b_923            NaN      NaN     NaN     NaN
+min_up|b_dumb           1.0      1.0     1.0   0.866
+med_up|b_stats        0.231     0.25   0.182     0.0
+med_up|b_default        NaN      NaN     NaN     NaN
+med_up|b_923            NaN      NaN     NaN     NaN
+med_up|b_dumb        25.679   25.679  25.679  25.679
+min_dn|b_stats        0.625      0.5   0.333     0.0
+min_dn|b_default       0.75     0.75    0.75     0.8
+min_dn|b_923            NaN      NaN     NaN     NaN
+min_dn|b_dumb         0.433    0.433   0.433   0.415
+hot|b_stats           0.093     0.08   0.048   0.002
+hot|b_default           NaN      NaN     NaN     NaN
+hot|b_923               NaN      NaN     NaN     NaN
+hot|b_dumb            0.094    0.094   0.094   0.092
+warm|b_stats          0.159     0.14   0.073   0.002
+warm|b_default          NaN      NaN     NaN     NaN
+warm|b_923              NaN      NaN     NaN     NaN
+warm|b_dumb           0.121    0.121    0.12   0.132
+cold|b_stats          0.102    0.102   0.064     0.0
+cold|b_default          NaN      NaN     NaN     NaN
+cold|b_923              NaN      NaN     NaN     NaN
+cold|b_dumb           0.087    0.087   0.085   0.103
+hr_full|b_stats         NaN      NaN     NaN     NaN
+hr_full|b_default     0.097    0.097   0.096   0.103
+hr_full|b_923         0.165    0.165   0.166   0.141
+hr_full|b_dumb        0.188    0.188   0.188   0.187
+hr_min|b_stats          NaN      NaN     NaN     NaN
+hr_min|b_default      0.122    0.122   0.119   0.133
+hr_min|b_923          0.131    0.131   0.133   0.118
+hr_min|b_dumb         0.345    0.345   0.335   0.404
+cf|b_stats            0.106    0.079   0.038     0.0
+cf|b_default            NaN      NaN     NaN     NaN
+cf|b_923                NaN      NaN     NaN     NaN
+cf|b_dumb             0.177    0.177   0.175    0.18
+
+== mode out: median error (fractions: abs; others: relative) ==
+   kind  units  tech_acc  pmin_frac  ramp_up  ramp_dn  starts_yr  min_up  med_up  min_dn   hot  warm  cold  hr_full  hr_min    cf
+  month    400     0.662      0.114    0.253    0.265      0.457   0.583   0.451   0.402 0.079 0.110 0.105    0.206   0.199 0.061
+quarter    400     0.675      0.096    0.219    0.231      0.394   0.548   0.367   0.368 0.069 0.099 0.088    0.190   0.190 0.056
+   year    395     0.674      0.067    0.206    0.216      0.314   0.491   0.375   0.309 0.054 0.073 0.062    0.215   0.215 0.041
+ pooled    395     0.765      0.054    0.172    0.157      0.208   0.418   0.279   0.208 0.026 0.034 0.037    0.220   0.189 0.024
+                          0        1       2       3
+kind                  month  quarter    year  pooled
+pmin_frac|b_stats     0.294    0.309   0.327   0.379
+pmin_frac|b_default   0.132    0.132   0.131    0.14
+pmin_frac|b_923         NaN      NaN     NaN     NaN
+pmin_frac|b_dumb       0.08     0.08    0.08    0.08
+ramp_up|b_stats        0.51    0.572   0.542   0.696
+ramp_up|b_default     8.738    8.738   8.567   9.588
+ramp_up|b_923           NaN      NaN     NaN     NaN
+ramp_up|b_dumb        0.355    0.355   0.349   0.389
+ramp_dn|b_stats       0.644    0.733   0.646   1.044
+ramp_dn|b_default     9.615    9.615   9.611  10.288
+ramp_dn|b_923           NaN      NaN     NaN     NaN
+ramp_dn|b_dumb        0.395    0.395   0.394   0.404
+starts_yr|b_stats     0.569    0.433   0.278   0.001
+starts_yr|b_default     NaN      NaN     NaN     NaN
+starts_yr|b_923         NaN      NaN     NaN     NaN
+starts_yr|b_dumb      0.699    0.699   0.699   0.694
+min_up|b_stats        0.475      0.4    0.25     0.0
+min_up|b_default        0.5      0.5     0.5     0.5
+min_up|b_923            NaN      NaN     NaN     NaN
+min_up|b_dumb           1.0      1.0     1.0   0.866
+med_up|b_stats        0.231     0.25   0.182     0.0
+med_up|b_default        NaN      NaN     NaN     NaN
+med_up|b_923            NaN      NaN     NaN     NaN
+med_up|b_dumb        25.679   25.679  25.679  25.679
+min_dn|b_stats        0.625      0.5   0.333     0.0
+min_dn|b_default       0.75     0.75    0.75     0.8
+min_dn|b_923            NaN      NaN     NaN     NaN
+min_dn|b_dumb         0.433    0.433   0.433   0.415
+hot|b_stats           0.093     0.08   0.048   0.002
+hot|b_default           NaN      NaN     NaN     NaN
+hot|b_923               NaN      NaN     NaN     NaN
+hot|b_dumb            0.094    0.094   0.094   0.092
+warm|b_stats          0.159     0.14   0.073   0.002
+warm|b_default          NaN      NaN     NaN     NaN
+warm|b_923              NaN      NaN     NaN     NaN
+warm|b_dumb           0.121    0.121    0.12   0.132
+cold|b_stats          0.102    0.102   0.064     0.0
+cold|b_default          NaN      NaN     NaN     NaN
+cold|b_923              NaN      NaN     NaN     NaN
+cold|b_dumb           0.087    0.087   0.085   0.103
+hr_full|b_stats         NaN      NaN     NaN     NaN
+hr_full|b_default     0.097    0.097   0.096   0.103
+hr_full|b_923         0.165    0.165   0.166   0.141
+hr_full|b_dumb        0.188    0.188   0.188   0.187
+hr_min|b_stats          NaN      NaN     NaN     NaN
+hr_min|b_default      0.122    0.122   0.119   0.133
+hr_min|b_923          0.131    0.131   0.133   0.118
+hr_min|b_dumb         0.345    0.345   0.335   0.404
+cf|b_stats            0.106    0.079   0.038     0.0
+cf|b_default            NaN      NaN     NaN     NaN
+cf|b_923                NaN      NaN     NaN     NaN
+cf|b_dumb             0.177    0.177   0.175    0.18
+
+coverage (year windows, ctx): {
+"pmin_frac": {
+"n": 2835,
+"c68": 0.6945326278659611,
+"c95": 0.9111111111111111
+},
+"ramp_up": {
+"n": 2835,
+"c68": 0.6864197530864198,
+"c95": 0.928395061728395
+},
+"ramp_dn": {
+"n": 2835,
+"c68": 0.6137566137566137,
+"c95": 0.9026455026455027
+},
+"starts_yr": {
+"n": 2835,
+"c68": 0.6945326278659611,
+"c95": 0.928042328042328
+},
+"min_up": {
+"n": 2835,
+"c68": 0.4804232804232804,
+"c95": 0.7932980599647266
+},
+"med_up": {
+"n": 2835,
+"c68": 0.7054673721340388,
+"c95": 0.9559082892416225
+},
+"min_dn": {
+"n": 2835,
+"c68": 0.6310405643738977,
+"c95": 0.9329805996472663
+},
+"hot": {
+"n": 2835,
+"c68": 0.6144620811287478,
+"c95": 0.8885361552028219
+},
+"warm": {
+"n": 2835,
+"c68": 0.5495590828924162,
+"c95": 0.8500881834215167
+},
+"cold": {
+"n": 2835,
+"c68": 0.5753086419753086,
+"c95": 0.8659611992945326
+},
+"hr_full": {
+"n": 2699,
+"c68": 0.785846609855502,
+"c95": 0.9766580214894406
+},
+"hr_min": {
+"n": 2699,
+"c68": 0.7562060022230456,
+"c95": 0.9510929974064468
+},
+"cf": {
+"n": 2835,
+"c68": 0.6289241622574956,
+"c95": 0.908641975308642
+}
+}
