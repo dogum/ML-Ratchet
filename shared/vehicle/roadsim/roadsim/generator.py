@@ -49,6 +49,41 @@ def _cal():
     return _CAL
 
 
+_DON = None
+
+
+def _donors():
+    """donor subsets for donor_model='v2' (tools/build_generator_donors_v2.py): row indices of real full-hybrid,
+    plug-in hybrid and minivan records in generator_calib.json."""
+    global _DON
+    if _DON is None:
+        _DON = json.load(open(os.path.join(DATA, 'generator_donors_v2.json')))
+    return _DON
+
+
+def _donor_pool(rng, key, cls, arch, n_rows):
+    """v2 donor rows for this class/architecture, or None for the v1 pool (all records of the class and fuel group).
+    Hybrids draw from real hybrid bodies (efficient cars/SUVs, hybrid pickups) and plug-ins from real plug-in records,
+    falling back to the hybrids when there are fewer than 10. Other gasoline bodies exclude the hybrid and plug-in
+    records (their rated power is the engine's alone). Vans draw a minivan body with probability van_minivan_share
+    (US sales mix), else any van. Returns (rows or None, True when the rows are hybrid/plug-in records)."""
+    D = _donors(); sub = D['subsets'].get(key, {})
+    pool = None
+    if arch.startswith('phev'):
+        pool = sub.get('phev') if len(sub.get('phev', [])) >= 10 else sub.get('hev')
+    elif arch.startswith('hev'):
+        pool = sub.get('hev')
+    if pool is not None and len(pool) < 10:
+        pool = None
+    if pool is not None:
+        return pool, True
+    if arch in ('conv', 'hev_parallel_p2', 'hev_series', 'hev_powersplit', 'phev_series', 'phev_powersplit'):
+        hyb = set(sub.get('hev', [])) | set(sub.get('phev', []))
+        base = sub['minivan'] if (cls == 'van' and sub.get('minivan') and rng.random() < D['van_minivan_share']) else range(n_rows)
+        pool = [i for i in base if i not in hyb] if hyb else (list(base) if cls == 'van' else None)
+    return pool, False
+
+
 def _pick(rng, w):
     k = list(w); p = np.array([w[x] for x in k], float); p /= p.sum()
     return k[int(rng.choice(len(k), p=p))]
@@ -72,7 +107,7 @@ def _engine_map(fuel, P_kW, disp, hybrid, rng):
     return 'gas_na_toyota_a25a' if rng.random() < 0.7 else 'gas_na_mazda_20'
 
 
-def _ld(rng, cls, arch):
+def _ld(rng, cls, arch, donor_model='v1'):
     cal = _cal()
     grp = 'bev' if arch == 'bev' else 'gasoline'
     if arch == 'conv' and cls in ('pickup', 'suv') and rng.random() < 0.06:
@@ -81,10 +116,15 @@ def _ld(rng, cls, arch):
     if key not in cal['testcar'] or len(cal['testcar'][key]['mass_kg']) < 20:
         key = f'suv|{grp}' if f'suv|{grp}' in cal['testcar'] else f'suv|gasoline'
     T = cal['testcar'][key]
-    i = int(rng.integers(len(T['mass_kg'])))
+    pool, hyb_donor = _donor_pool(rng, key, cls, arch, len(T['mass_kg'])) if donor_model == 'v2' else (None, False)
+    if pool is None:
+        i = int(rng.integers(len(T['mass_kg'])))
+    else:
+        i = int(pool[int(rng.integers(len(pool)))])
     row = {k: T[k][i] for k in T}
     mass = row['mass_kg'] * _ln(rng, 0.03)
-    if arch in ('phev_powersplit', 'phev_series'):
+    plug_donor = hyb_donor and i in set(_donors()['subsets'].get(key, {}).get('phev', []))
+    if arch in ('phev_powersplit', 'phev_series') and not plug_donor:
         mass *= 1.08                                    # pack mass relative to the gasoline donor record
     P = row['P_kW'] if row['P_kW'] == row['P_kW'] else 150.0
     P = float(np.clip(P * _ln(rng, 0.06), 60, 600))
@@ -95,6 +135,8 @@ def _ld(rng, cls, arch):
          'Crr_speed_coef': round(float(np.clip(row['Crr_v'], -0.01, 0.02)), 5),
          'wheel_radius_m': round(float({'car': 0.32, 'suv': 0.36, 'pickup': 0.39, 'van': 0.36}[cls] * _ln(rng, 0.03)), 3),
          'generator': {'donor': key, 'donor_row': i, 'donor_year': row.get('year')}}
+    if donor_model == 'v2':
+        s['generator']['donor_model'] = 'v2'
     hyb = arch not in ('conv', 'bev')
     if arch == 'conv':
         fuel = 'diesel' if grp == 'diesel' else 'gasoline'
@@ -118,6 +160,10 @@ def _ld(rng, cls, arch):
         s['aux'] = {'HVAC': {'source': 'heat_pump' if rng.random() < 0.5 else 'ptc'}}
     else:
         Pe = P * float(rng.uniform(0.65, 0.85))
+        if hyb_donor:
+            # a hybrid record's rated power is its engine's (e.g. Camry Hybrid 131 kW engine, 155 kW system)
+            f_eng = Pe / P
+            Pe, P = P, P / f_eng
         s['engine'] = dict(fuel='gasoline', displacement_L=round(min(disp, Pe / 50), 1), max_power_kW=round(Pe, 1),
                            bsfc_map=_engine_map('gasoline', Pe, disp, arch != 'hev_parallel_p2' or rng.random() < 0.5, rng),
                            eff_scale=round(_ln(rng, 0.03), 3))
@@ -197,10 +243,10 @@ def _hd(rng, cls, arch):
     return s
 
 
-def generate_vehicle(rng, cls=None, arch=None, strategy=True):
+def generate_vehicle(rng, cls=None, arch=None, strategy=True, donor_model='v1'):
     cls = cls or _pick(rng, CLASS_W)
     arch = arch or _pick(rng, ARCH_W[cls])
-    s = _ld(rng, cls, arch) if cls in ('car', 'suv', 'pickup', 'van') else _hd(rng, cls, arch)
+    s = _ld(rng, cls, arch, donor_model) if cls in ('car', 'suv', 'pickup', 'van') else _hd(rng, cls, arch)
     if strategy:
         st = _pick(rng, {k: v for k, v in STRAT_W[arch].items() if k in STRATEGIES[arch]})
         s['control'] = {'strategy': st, 'params': {}}
@@ -213,6 +259,13 @@ def generate_vehicle(rng, cls=None, arch=None, strategy=True):
     return s
 
 
-def generate_vehicles(n, seed=0, cls=None, arch=None, strategy=True):
+def generate_vehicles(n, seed=0, cls=None, arch=None, strategy=True, donor_model=None):
+    """donor_model: 'v1' (default, from roadsim.options) or 'v2' (hybrid bodies from real hybrid records, vans mostly
+    from minivans; see _donor_pool)."""
+    if donor_model is None:
+        from .options import DEFAULTS
+        donor_model = DEFAULTS['donor_model']
+    if donor_model not in ('v1', 'v2'):
+        raise ValueError('donor_model must be v1 or v2')
     rng = np.random.default_rng(seed)
-    return [generate_vehicle(rng, cls, arch, strategy) for _ in range(n)]
+    return [generate_vehicle(rng, cls, arch, strategy, donor_model) for _ in range(n)]
