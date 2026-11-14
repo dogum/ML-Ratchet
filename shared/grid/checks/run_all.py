@@ -47,7 +47,8 @@ CHECKS = [
     ('inertia_2022', ['check_ercot_inertia.py', '2022', 'calibrated'], ['ercot_inertia.json'], False, True),
     ('speed', ['check_speed.py'], ['speed.json'], False, False),
 ]
-TIMING_KEYS = ('speed', 'time_s', 'seconds', '_s_per', 'wall', 'elapsed', 'runtime', 'minutes', '.t_', 'per_state')
+TIMING_KEYS = ('speed', 'seconds', 'wall', 'elapsed', 'runtime', 'minutes', 'per_state', 'time_s', 'solve_s', 'build_s')
+TIMING_PREFIX = ('t_gridsim', 't_pypower', 't_pandapower', 't_andes', 't_solve', 't_total', 't_build')
 NOISE = 1e-9   # both values below this: solver round-off (e.g. 2e-14 vs 1e-14 degrees), counted as equal
 
 
@@ -64,7 +65,7 @@ def leaves(x, path=''):
         yield path, float(x)
 
 
-def compare(old, new, rtol=1e-6):
+def compare(old, new, rtol=1e-6, timing_file=False):
     a, b = dict(leaves(old)), dict(leaves(new))
     res = {'numbers': 0, 'equal': 0, 'timings': 0, 'differ': [], 'missing': [], 'new': sorted(set(b) - set(a))[:20]}
     for k, v in a.items():
@@ -77,7 +78,8 @@ def compare(old, new, rtol=1e-6):
                 res['differ'].append([k, v, w])
             continue
         res['numbers'] += 1
-        if any(t in k.lower() for t in TIMING_KEYS) or k.lower().endswith('_s') or k.startswith('t_'):
+        last = k.split('.')[-1].split('[')[0].lower()
+        if timing_file or any(x in k.lower() for x in TIMING_KEYS) or last.startswith(TIMING_PREFIX):
             res['timings'] += 1
             continue
         if not isinstance(w, float):
@@ -124,7 +126,7 @@ def main(argv=None):
         cur = HERE / p.name
         if not cur.exists():
             continue
-        c = compare(json.loads(p.read_text()), json.loads(cur.read_text()))
+        c = compare(json.loads(p.read_text()), json.loads(cur.read_text()), timing_file=p.name == 'speed.json')
         rerun = cur.stat().st_mtime >= t_start or prev.get(p.name, False) or cur.read_bytes() != p.read_bytes()
         c['rerun'] = bool(rerun)
         summary[p.name] = c
