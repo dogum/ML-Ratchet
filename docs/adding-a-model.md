@@ -19,11 +19,11 @@ A good candidate has all three:
 
 ```bash
 pip install -e ".[dev]"
-mlratchet new gridpulse --name GridPulse
-mlratchet validate gridpulse        # tells you what is still TODO
+mlratchet new watershed --name Watershed
+mlratchet validate watershed        # tells you what is still TODO
 ```
 
-This creates `models/gridpulse/` from the template with every file in [the contract](model-contract.md), a
+This creates `models/watershed/` from the template with every file in [the contract](model-contract.md), a
 `training/` folder with stubs for each step, and a checklist README.
 
 ## 2. Physics, then check it
@@ -91,6 +91,7 @@ and a breakdown by stratum. Run it after the ratchet has chosen the release. Cop
 
 ## Compute
 
-Every model so far was built on a shared 2-core, 7 GB cloud sandbox in 1–2 hours of wall time per model. Small is
-enough: one thread, ≤ ~500k parameters (QuakeNet's 1.44 M is the outlier), banks ≤ ~60k examples, ≤ ~30 minutes per
+The first nine models were each built in 1–2 hours of wall time on a shared 2-core, 7 GB cloud machine. The first
+vehicle and grid models were also built on 2 shared cores, three or four builds at a time. The vehicle models' v2
+rebuilds ran on a 16-core machine with an RTX 3080 GPU; nothing in the recipe needs one. Small is enough: one thread, ≤ ~500k parameters (QuakeNet's 1.44 M is the outlier), banks ≤ ~60k examples, ≤ ~30 minutes per
 rung, a resumable checkpoint every ~500 steps.
