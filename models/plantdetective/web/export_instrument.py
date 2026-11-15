@@ -83,13 +83,18 @@ def main():
             "n_params": int(sum(v.size for v in W.values())), "flex": FLEX,
             # exact float64 constants the features compare against (np.linspace edges, not recomputed in JS)
             "loadbins": pdcore.LOADBINS.tolist(), "run_edges": pdcore.RUN_EDGES.tolist(), "zbins": pdcore.ZBINS.tolist(),
-            "ctx_keys": pdcore.CTX_KEYS, "hot_h": pdcore.HOT_H, "warm_h": pdcore.WARM_H, "part_min": pdcore.PART_MIN}
+            "ctx_keys": pdcore.CTX_KEYS, "hot_h": pdcore.HOT_H, "warm_h": pdcore.WARM_H, "part_min": pdcore.PART_MIN,
+            # v1.1 count skips (head, feature, gate), the same for every member: rows of plantdetective.count_offsets
+            "cskip": z["m0_cskip"].tolist() if "m0_cskip" in z.files else []}
     write_pack(OUT / "weights", W, dtype="f16", meta=meta, keep=keep)
 
     # the browser sees float16 layers: reference outputs use the same values
     R = roundtrip(W, "f16")
     det.Ws = [{k: (W if keep.get(f"m{i}_{k}") == "f32" else R)[f"m{i}_{k}"]
                for k in ("mu", "sd", "l0w", "l0b", "l1w", "l1b", "l2w", "l2b", "l3w", "l3b")} for i in range(len(det.Ws))]
+    if meta["cskip"]:
+        for Wi in det.Ws:
+            Wi["cskip"] = np.array(meta["cskip"])
 
     files = sorted(glob.glob(os.path.join(MODEL, "examples", "*.npz")))
     zs = [np.load(f, allow_pickle=False) for f in files]

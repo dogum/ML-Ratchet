@@ -18,6 +18,7 @@ export interface PMeta {
   hot_h: number;
   warm_h: number;
   part_min: number;
+  cskip?: number[][];       // v1.1: [head, feature, gate] rows (plantdetective.count_offsets)
 }
 export interface Ctx {
   pm_ct?: number | null; pm_st?: number | null; pm_ca?: number | null; fuel_coal?: number | null; chp?: number | null;
@@ -307,6 +308,12 @@ export function memberForward(W: Pack<PMeta>, i: number, X: Float32Array) {
     h = o;
   }
   const nr = W.meta.reg.length;
+  // v1.1 count skips: the mean of a run-statistic head is the statistic counted in the window plus the correction.
+  // gate -1 = always, -2 = feature != -1 (no complete run), else a 0/1 flag feature.
+  for (const [j, fi, g] of W.meta.cskip ?? []) {
+    const gate = g === -1 ? 1 : g === -2 ? (X[fi] !== -1 ? 1 : 0) : X[g];
+    h[4 + j] += gate * X[fi];
+  }
   const lg = Array.from(h.slice(0, 4)), mx = Math.max(...lg);
   const e = lg.map((v) => Math.exp(v - mx)), se = e.reduce((a, b) => a + b, 0);
   return {

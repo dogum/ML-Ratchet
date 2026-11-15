@@ -1,7 +1,8 @@
-"""PlantDetective v1.0 -- infer a fossil unit's operating character from its hourly output (numpy only).
+"""PlantDetective v1.1 -- infer a fossil unit's operating character from its hourly output (numpy only).
 
     from plantdetective import Detective
-    det = Detective()                                    # loads plantdetective_weights.npz next to this file
+    det = Detective()                                    # loads plantdetective_weights.npz next to this file (v1.1)
+    det10 = Detective(WEIGHTS_V1_0)                      # the v1.0 release (its published exam numbers)
     r = det.infer(x_MW, t_utc_seconds, price=None, gas=None, context=None)
     r['tech'], r['estimates']['pmin_frac'], r['heat_rate_curve'], r['flex_class']
 
@@ -25,6 +26,7 @@ import numpy as np
 from pdcore import features, context_vector, TECHS, REG, PART_MIN, flex_class
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+WEIGHTS_V1_0 = os.path.join(HERE, 'plantdetective_weights_v1_0.npz')   # v1.0 (no count skips)
 CONTEXT_HELP = dict(pm_ct='1 if a linked generator is a combustion turbine (EIA-860 prime mover CT/GT)',
                     pm_st='1 if a steam turbine (ST)', pm_ca='1 if a combined-cycle steam part (CA) is linked',
                     fuel_coal='1 if coal-fired', chp='1 if EIA-860 marks the generator as combined heat and power',

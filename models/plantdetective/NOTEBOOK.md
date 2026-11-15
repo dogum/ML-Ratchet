@@ -189,3 +189,88 @@ not re-run. The 1.0-built bank v2 remains the training record. A future bank sho
 - `MODEL_CARD.md`: the line after the ratchet table had no blank line before it and rendered as a table row. Fixed.
 - `model.yaml` `next`: "re-run the 395-unit exam in this repository" was removed. It was done (commit d73d2c7, identical
   on all 190 lines; entry above).
+
+## 15 Nov 2026 — v1.1: run statistics as corrections to the counts
+
+**Goal.** Turn the exam losses in model.yaml into wins honestly: show each failure on dev first, fix it, show the dev
+gain, then examine once.
+
+**Setup.** The work folder of the grid-follow-up worktree (banks, cached dev and exam units, the physics-1.1 rebuild in
+`work/p05/`) was copied into this checkout's `work/` (git-ignored). `shared/grid/gridsim/refdata/` (Henry Hub and other
+reference files, git-ignored) was missing here and copied from the same worktree; nothing else under `shared/` changed.
+The frozen set is `set_v2p11`: bank v2 rebuilt with GridSim physics 1.1 by the P0.5 check (`work/p05/v1_1`, 20,136
+windows, 2,700 frozen). The v1.0 release re-scores 0.5008 on it, dev 0.2147 (both as logged on 14 Nov).
+
+**Dev evidence (40 dev units, 2019 + 2021, mode ctx; scratch script, numbers below).** Median error of v1.0 vs the
+statistic counted in the same window (where the window has one):
+
+| target | month: net / count | quarter: net / count | year: net / count |
+|---|---|---|---|
+| starts per year | 0.60 / 0.82 | 0.44 / 0.45 | 0.33 / 0.17 |
+| min up | 0.38 / 0.37 | 0.33 / 0.47 | 0.44 / 0.35 |
+| median run | 0.28 / 0.33 | 0.42 / 0.36 | 0.44 / 0.13 |
+| min down | 0.37 / 0.55 | 0.40 / 0.43 | 0.37 / 0.25 |
+
+So dev shows the exam's failure: from a year of output the count beats the network for all four run statistics. The
+window features already hold each count (feature 87: log1p starts per year; 70/71/72: log median, log 5th percentile
+and its flag for complete runs; 85/86: the same for off spells).
+
+Heat rates on dev (year windows, v1.0): combined cycle +12 % median bias, but the three plants differ. All three are CHP in
+EIA-860. 50815 and 55470 have truths of 10-13 MMBtu/MWh (process steam or gas-turbine-only reporting); 55327 reports the
+whole block (truth 7.0) and the network reads 9.9-10.7. One whole-block plant cannot support a CC-specific fit; none
+was tried. Gas turbines: median
+bias +1 %, error 6.0 % vs 5.1 % for EIA-923 (8 units, 4 with an EIA-923 figure): dev does not show the exam's +15 %
+turbine bias, so it cannot be fixed from dev. Minimum stable load: the dumb baseline is the dev median itself
+(in-sample on dev), so dev cannot show whether the network loses to it.
+
+**Code.** `training/model.py`: `COUNT_SKIPS` and `count_offsets`; `train(..., cskip=True)` adds the counted statistic
+to the mean head of starts per year, min up, median run and min down (gated where the count is undefined) and saves the
+rows as `cskip` in the weights; `np_forward` applies them. `plantdetective.py` gained the same `count_offsets`
+(inference stays numpy-only). `training/ladder_v1_1.py` scores and decides; `training/exam_rows.py` writes the
+model.yaml rows from a grade file; `save_release.py` takes a version.
+
+**Rungs** (rule unchanged: val > incumbent + 0.01, dev not below incumbent − 0.005; `training/ratchet_v1_1.json`):
+
+| rung | change | val (v2p11) | dev (month / quarter / year) | decision |
+|---|---|---|---|---|
+| R4 | v1.0 as released | 0.5008 | 0.2147 (0.134 / 0.177 / 0.333) | incumbent |
+| R5 | R4 recipe retrained on the physics-1.1 bank (seeds 0-2, 40 epochs, about 80 s each) | 0.5142 | 0.2089 (0.129 / 0.168 / 0.329) | rejected: dev −0.006 |
+| R6 | R5 + count skips | 0.5317 | 0.2250 (0.128 / 0.171 / 0.376) | kept, released as v1.1 |
+
+On val, the count skips raise starts per year 0.66 → 0.71, min up 0.39 → 0.47, median run 0.61 → 0.66, min down
+0.32 → 0.36 (skill vs R5). On dev year windows: starts per year 0.57 → 0.75, median run 0.52 → 0.66, min down
+0.29 → 0.35, but min up 0.18 → 0.07; on dev month windows median run fell 0.38 → 0.32.
+
+Error-bar factors refitted on the dev grade of R6 (`exam.py R6_cs dev`; `training/sigma_factors_v1_1.json`, 1.00-2.07).
+The release choice was committed (79fd39c) before the exam ran.
+
+**Exam, run once** (`exam.py R6_cs exam`, 395 units, about 45 min; `training/exam_report_v1_1.txt`). v1.0 re-scored
+from its grade file reproduces `training/exam_report.txt` exactly. Rows, v1.0 → v1.1 (median error):
+- Min stable load pooled 5.7 → 4.7 pt (win); one month 10.8 → 10.1 pt vs dev median 8.0 (loss).
+- Ramp up pooled 13.7 → 14.9 % (win, worse).
+- Starts per year: one month 44.9 → 44.1 % (win); one year 31.0 → 27.6 % vs the count's 27.8 % (loss → win, by 0.2
+  points); pooled 23.3 → 8.5 %.
+- Median run: one month 42.2 → 45.1 % vs 23.1 % (loss, worse); one year 33.9 → 19.4 % vs 18.2 % (loss); pooled
+  26.3 → 9.8 %.
+- Full-load heat rate pooled 13.7 → 11.6 % vs default 10.3 % (loss). Coal 4.4 → 5.0 % vs dev median 5.2 % (win,
+  worse). Gas steam 4.7 → 6.3 % vs dev median 5.8 % (**win → loss**). CC 20.7 → 23.5 % (loss). GT 16.2 → 8.8 % vs
+  EIA-923 6.5 % (loss). Part load 14.5 → 14.5 % (loss).
+- Capacity factor one month 5.3 → 5.4 pt (win).
+- Heat input per unit-year: coal 5.7 → 6.4 % (win), gas steam 10.1 → 11.5 % vs 11.8 % (win, thin), GT 17.3 → 11.3 %
+  (loss), CC 22.5 → 26.5 % (loss).
+- Technology output only 66 / 76.5 % → 61 / 74.7 %; with the prime-mover rule 95 / 96 / 93 % → 95 / 95 / 91 %.
+- Coverage of the 68 % band (year windows) collapsed for the skipped heads: starts 69 → 17 %, min up 48 → 40 %,
+  median run 71 → 33 %, min down 63 → 31 %. The networks learned small corrections with small sigmas from simulated
+  units whose truth spans little more than the window; the dev factors (1.05-1.56 for these heads) were fitted on
+  2-year truths. On the exam the truth spans 8 years.
+
+Wins: 8 → 8 (starts per year from one year gained; gas-steam heat rate lost). The heat-rate changes are not from the
+count skips (they touch only the four run-statistic heads); they come from retraining R6 on the physics-1.1 bank.
+
+**Shipped.** `plantdetective_weights.npz` = v1.1 (R6, 3 members with `cskip`, factors v1.1);
+`plantdetective_weights_v1_0.npz` = v1.0. Golden demo regenerated (`tests/golden/plantdetective.txt`). Live
+instrument re-exported with `cskip` in the pack's meta; `net.ts` applies it. Parity: 18 cases, worst 9.7e-7; float16
+moves the estimates by at most 2.8e-4.
+
+**Next.** Fit the run-statistic error-bar factors against truths that span more than the window. Unit-specific
+heat-rate evidence for combined cycles from sources other than CAMPD.

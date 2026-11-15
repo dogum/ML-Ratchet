@@ -1,35 +1,35 @@
 
 Gregory Power Facility unit 101  (2018-2025)   truth: gas_cc   Detective: gas_cc (100 %), output-only: gas_cc
   quantity                  Detective         68 % interval  CAMPD truth
-  min stable load               0.480      0.337 -    0.627        0.362
-  ramp up p99 (frac/h)          0.216      0.152 -    0.307        0.217
-  starts per year              68.416     39.688 -  117.427       69.333
-  median run (h)               14.231      7.326 -   27.644         13.0
-  heat rate full load          11.937      9.524 -   14.961        6.472
-  heat rate part load          13.598     11.632 -   15.895       12.031
-  capacity factor               0.128      0.075 -    0.210        0.095
+  min stable load               0.488      0.345 -    0.633        0.362
+  ramp up p99 (frac/h)          0.245      0.173 -    0.348        0.217
+  starts per year              79.731     70.596 -   90.032       69.333
+  median run (h)               13.335     11.656 -   15.255         13.0
+  heat rate full load          11.124      9.001 -   13.748        6.472
+  heat rate part load          12.650     10.568 -   15.142       12.031
+  capacity factor               0.136      0.088 -    0.204        0.095
   operated as: cycling (truth cycling)
 
 Sam Seymour unit 3  (2018-2025)   truth: coal_steam   Detective: coal_steam (100 %), output-only: coal_steam
   quantity                  Detective         68 % interval  CAMPD truth
-  min stable load               0.401      0.270 -    0.548         0.43
-  ramp up p99 (frac/h)          0.296      0.243 -    0.361        0.272
-  starts per year               9.874      5.884 -   16.177        4.123
-  median run (h)              469.562    172.787 - 1276.068       1308.5
-  heat rate full load          10.437      8.641 -   12.606       10.823
-  heat rate part load          11.898     10.729 -   13.193       10.484
-  capacity factor               0.675      0.567 -    0.767        0.747
+  min stable load               0.369      0.240 -    0.521         0.43
+  ramp up p99 (frac/h)          0.286      0.230 -    0.354        0.272
+  starts per year               4.917      3.935 -    6.094        4.123
+  median run (h)              848.197    570.444 - 1261.189       1308.5
+  heat rate full load          10.000      8.154 -   12.265       10.823
+  heat rate part load          11.677     10.317 -   13.216       10.484
+  capacity factor               0.693      0.588 -    0.782        0.747
   operated as: baseload (truth baseload)
 
 Decordova unit CT2  (2018-2025)   truth: gas_ct   Detective: gas_ct (100 %), output-only: gas_ct
   quantity                  Detective         68 % interval  CAMPD truth
-  min stable load               0.642      0.481 -    0.776         0.16
-  ramp up p99 (frac/h)          0.225      0.151 -    0.334        0.155
-  starts per year              62.263     33.655 -  114.488       72.082
-  median run (h)                5.866      3.819 -    9.009          3.0
-  heat rate full load          11.653      9.572 -   14.185       12.295
-  heat rate part load          12.624     11.315 -   14.084       12.948
-  capacity factor               0.036      0.022 -    0.058        0.016
+  min stable load               0.625      0.472 -    0.757         0.16
+  ramp up p99 (frac/h)          0.262      0.176 -    0.390        0.155
+  starts per year              64.025     59.033 -   69.432       72.082
+  median run (h)                3.286      2.980 -    3.623          3.0
+  heat rate full load          12.072     10.310 -   14.136       12.295
+  heat rate part load          13.471     11.958 -   15.177       12.948
+  capacity factor               0.031      0.020 -    0.047        0.016
   operated as: peaking (truth peaking)
 
 0.3 s

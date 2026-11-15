@@ -1,4 +1,4 @@
-# PlantDetective v1.0 — model card
+# PlantDetective v1.1 — model card
 
 Part of ML Ratchet ("Trained on physics. Graded on reality."), built on the shared grid platform (GridSim + GridData,
 `shared/grid/`).
@@ -48,20 +48,61 @@ Bank v2: 1,829 simulated units, 20,580 windows (30–365 days), 13 % frozen vali
 Numpy inference (`plantdetective.py`, `pdcore.py`); weights in `plantdetective_weights.npz` (the release's `weights.npz`,
 renamed). The browser runs a float16 copy: estimates within 2.1e-4 of the float32 weights; JS == numpy to 8.8e-7.
 
-## Ratchet (`training/ratchet.json`; keep if frozen-val skill +0.01 and dev gate not worse than −0.005)
+## v1.1 (15 Nov 2026): run statistics as corrections to the counts
+
+v1.1 predicts starts per year, minimum up time, median run and minimum down time as **corrections to the statistic
+counted in the window itself** (the features already hold it: log1p of starts per year, log median and log 5th
+percentile of complete runs and off spells). Where the window has no such count (no complete run, fewer than 3 spells)
+the network predicts the value on its own, as before. Everything else is unchanged. It was trained on bank v2 rebuilt
+with GridSim physics 1.1 (the HANDOFF P0.5 rebuild, frozen set v2p11) and released by the unchanged rule.
+
+Why, on dev first: on the 40 dev units (2019 + 2021), the count in a one-year window beat v1.0 for starts per year
+(17 % vs 33 % median error), median run (13 % vs 44 %), minimum up (35 % vs 44 %) and minimum down (25 % vs 37 %). The
+same failure was in the published exam rows.
+
+| rung | change | frozen val (v2p11) | dev | decision |
+|---|---|---|---|---|
+| R4 | v1.0 as released, re-scored | 0.501 | 0.215 | incumbent |
+| R5 | R4 recipe retrained on the physics-1.1 bank | 0.514 | 0.209 | rejected: dev −0.006 (tol 0.005) |
+| R6 | R5 + count skips | 0.532 | 0.225 | **released as v1.1** (+0.031, dev +0.010) |
+
+Error bars refitted on dev (`training/sigma_factors_v1_1.json`, 1.00–2.07). Log: `training/ratchet_v1_1.json`
+(`training/ladder_v1_1.py`); exam tables: `training/exam_report_v1_1.txt`, rows by `training/exam_rows.py`.
+v1.0's weights are kept as `plantdetective_weights_v1_0.npz` (`Detective(WEIGHTS_V1_0)`).
+
+**v1.1 exam (run once, 15 Nov 2026, the same 395 units; v1.0 in brackets).** Starts per year from one year 27.6 %
+(31.0 %) against 27.8 % for the count: a win by 0.2 points. Starts per year pooled 8.5 % (23.3 %); median run pooled
+9.8 % (26.3 %), one year 19.4 % (33.9 %) against the count's 18.2 %: still a loss, and one month 45.1 % (42.2 %) is worse.
+Minimum stable load pooled 4.7 pt (5.7), one month 10.1 pt (10.8) vs the dev median 8.0. Ramp up pooled 14.9 % (13.7 %).
+Full-load heat rate pooled 11.6 % (13.7 %) vs the technology default 10.3 %; coal 5.0 % (4.4 %), **gas steam 6.3 %
+(4.7 %), now a loss to the dev median 5.8 %**; combined cycle 23.5 % (20.7 %); gas turbine 8.8 % (16.2 %) vs EIA-923
+6.5 %. Part load 14.5 % (14.5 %). Heat input per unit-year: coal 6.4 % (5.7 %), gas steam 11.5 % (10.1 %), turbine 11.3 %
+(17.3 %), combined cycle 26.5 % (22.5 %). Technology from output only 61 % / 74.7 % (66 % / 76.5 %). The heat-rate
+changes do not come from the count skips (they touch only the four run-statistic heads); they come from retraining.
+**The run-statistic error bars are now too narrow**: 17 % (starts), 31 % (min down), 33 % (median run) and 40 % (min up)
+of year windows fall inside the 68 % band (v1.0: 69 %, 63 %, 71 %, 48 %). The dev factors did not catch it: dev truth
+spans 2 years, exam truth 8.
+
+**Combined cycle and gas turbine heat rates (not changed in v1.1).** The 3 dev combined-cycle plants are all CHP in
+EIA-860. Two have truths of 10–13 MMBtu/MWh (process steam or gas-turbine-only reporting); one (55327) reports the whole
+block (truth 7.0, which v1.0 reads as 9.9–10.7). One whole-block plant cannot support a CC-specific fit, so none was
+tried. The 8 dev gas turbines do not show
+the exam's turbine bias (median +1 %; 6.0 % error vs 5.1 % for EIA-923 on the 4 with a figure), so it cannot be fixed from dev.
+
+## Ratchet v1.0 (`training/ratchet.json`; keep if frozen-val skill +0.01 and dev gate not worse than −0.005)
 | rung | change | sim val | dev | decision |
 |---|---|---|---|---|
 | R0 | GridSim unit-level MILP units only | 0.021 | 0.015 | first |
 | R1 | + self-committed and cogeneration units, GridSim and ERCOT-train-year price backgrounds | 0.491 | 0.117 | kept |
 | R2 | bank v2: dev twin calibration (start/stop shapes, trips, offer slope, start costs, CHP steam credit, EIA-923 gross ratio) | 0.475 (R1: 0.266) | 0.200 | kept |
 | R3 | skip connection: heat rate as a correction to EIA-923 | 0.470 | 0.191 | rejected |
-| R4 | 3-network ensemble | 0.501 | 0.215 | kept (final) |
+| R4 | 3-network ensemble | 0.501 | 0.215 | kept (released as v1.0) |
 
 Twin test (40 dev units, 2019+2021, twin vs real pattern mismatch): v1 0.211 → v2 0.128.
 Error bars: widen-only factors per output, fitted on the dev windows so that ≥ 68.3 % fall within 1 σ
 (`training/sigma_factors.json`, 1.00–1.90).
 
-## Exam (407 exam CAMPD units, 395 with enough full-load hours; all years 2018–2025; gross basis; never used for choosing)
+## Exam, v1.0 (407 exam CAMPD units, 395 with enough full-load hours; all years 2018–2025; gross basis; never used for choosing)
 Median error vs the unit's whole-history CAMPD truth (fractions in absolute points, others relative). With context and price:
 
 | quantity | 1 month | 1 year | all years | best baseline (all years) |
@@ -121,7 +162,8 @@ open decision (see `model.yaml` `next`).
 
 ## Files
 `plantdetective.py` (API: `Detective().infer(x, t, price, gas, context)`), `pdcore.py` (features, truth statistics),
-`pipeline.py` (CSV in, JSON report out), `plantdetective_weights.npz` (3-network ensemble + dev-fitted interval factors),
+`pipeline.py` (CSV in, JSON report out), `plantdetective_weights.npz` (v1.1: 3-network ensemble with count skips +
+dev-fitted interval factors), `plantdetective_weights_v1_0.npz` (v1.0),
 `demo.py` and `examples/` (three real exam units, EPA CAMPD 2018–2025, public domain), `training/` (every script used to
 build the banks, train, calibrate, grade and build the page, paths through `training/_paths.py`; `training/pd.js` is the
 lab page's own JavaScript port; `training/checks/` the DP-vs-MILP check), `lab/index.html` (the original page),

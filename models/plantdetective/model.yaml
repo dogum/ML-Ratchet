@@ -1,8 +1,8 @@
 id: plantdetective
 name: PlantDetective
-version: "1.0"
+version: "1.1"
 status: released
-released: 2026-11-14
+released: 2026-11-15
 order: 15
 domain: Power grids
 platform: grid
@@ -17,7 +17,9 @@ summary: >-
   starts per year and their hot/warm/cold shares, capacity factor and an operating-flexibility class, each with a 68%
   and 95% range. Prices and EIA-860/923 facts are optional inputs. It learned only from 1,829 simulated units (GridSim
   systems plus a self-commitment dynamic programme and a CAMPD measurement emulator) and was examined once on 395 real
-  Texas CAMPD units.
+  Texas CAMPD units. v1.1 predicts starts per year, minimum up time, median run and minimum down time as learned
+  corrections to the statistic counted in the window itself; it was retrained on the simulated bank rebuilt with GridSim
+  physics 1.1 and examined once more on the same 395 units.
 
 reads: Hourly unit output in MW (gross, at least 30 days; NaN = missing) with UTC timestamps; optionally the hourly electricity price ($/MWh) and gas price ($/MMBtu), and EIA-860/923 facts (prime mover, CHP flag, nameplate, minimum load, cold-start time, online year, annual heat rate). Several years are read window by window and pooled.
 returns:
@@ -27,6 +29,7 @@ returns:
   - "Starts per year and hot (< 8 h off) / warm (8-48 h) / cold (>= 48 h) shares; minimum up, median run and minimum down time (h)"
   - "Capacity factor and an operating-flexibility class (baseload, load-following, cycling, peaking; a rule on the estimates)"
   - "Every estimate with 68% and 95% ranges, widened by dev-fitted factors"
+  - "v1.1: starts per year, minimum up, median run and minimum down time are the window's own counted statistic plus the network's correction (where the window has one)"
 
 physics:
   summary: >-
@@ -37,22 +40,22 @@ physics:
     and start-up/shut-down limits, forced and planned outages. A measurement emulator turns the schedule into a CAMPD-like
     hourly record and an EIA-923-like annual heat rate.
   simulator:
-    - "GridSim generate_fleet + unit-level MILP dispatch (cluster=False, physics 1.0), 5 generated systems x 92 days, train-input years 2018, 2020, 2022 (12-21 min per system on one CPU)"
+    - "GridSim generate_fleet + unit-level MILP dispatch (cluster=False; physics 1.0, v1.1: 1.1), 5 generated systems x 92 days, train-input years 2018, 2020, 2022 (12-21 min per system on one CPU)"
     - "Self-commitment DP per unit; fuel curve F(P) = P x HR_full x (1 + beta(1/f - 1) + c(f - 1)^2); price backgrounds: GridSim system prices (30%) or real ERCOT day-ahead hub prices of 2018/2020/2022 (70%); cogeneration units run near flat with trips"
     - "CAMPD measurement emulator: partial start and stop hours, warm-up ramps measured on the dev starts (coal: first hour ~1% of capacity, then 2-8%/h), AR(1) load noise, summer gas-turbine derate, trips and aborted starts, CEMS heat-input noise, combined cycles that report only the gas turbine, cogeneration steam fuel"
     - "EIA-923 emulator: linked-generator accounting, CHP fuel allocation, gross/net ratio fitted on dev unit-years"
-    - "Bank v2: 1,829 simulated units, 20,580 windows of 30-365 days, 13% frozen validation by unit"
+    - "Bank v2: 1,829 simulated units, 20,580 windows of 30-365 days, 13% frozen validation by unit. v1.1 trains on bank v2 rebuilt with GridSim physics 1.1 (HANDOFF P0.5; 1,678 usable units, 20,136 windows, frozen set v2p11)"
   checks:
     - "Self-commitment DP vs an independent MILP (scipy / HiGHS) on 20 random 96-hour single-unit cases with ERCOT 2022 prices: max relative profit difference 1.0e-14 (training/checks/check_dp.json; re-run in this repository: 1.0058963487522703e-14, identical)"
     - "Dev twin test, 40 dev units in 2019 and 2021 against their simulated twins: pattern mismatch 0.211 with bank v1, 0.128 with bank v2 (training/twin_v1.json, twin_v2.json)"
     - "GridSim's own physics checks are in shared/grid/checks/"
 noise: "No real labelled unit is a training sample. The CAMPD emulator above supplies the measurement effects, with its start/stop shapes, trip rates, offer slope, start-cost multipliers, CHP steam credit and EIA-923 gross ratio calibrated on the 10 dev plants (dev years 2019 and 2021)."
-network: "Ensemble of 3 MLPs (171 inputs: 170 window features + a net-output flag -> 256 -> 256 -> 128 -> 4 technology logits + 13 means + 13 log sigma; leaky ReLU), 440,797 weights; Gaussian NLL + cross-entropy; variance = mean member variance + spread of member means; windows pooled by summed log-probabilities and precision-weighted means"
+network: "Ensemble of 3 MLPs (171 inputs: 170 window features + a net-output flag -> 256 -> 256 -> 128 -> 4 technology logits + 13 means + 13 log sigma; leaky ReLU), 440,797 weights; Gaussian NLL + cross-entropy; variance = mean member variance + spread of member means; windows pooled by summed log-probabilities and precision-weighted means. v1.1: the means of starts per year, minimum up, median run and minimum down time are the counted statistic of the window plus the network output (count skips), in the transformed target space"
 
 approach:
   real_backdrop: "Real ERCOT day-ahead hub prices and Henry Hub gas of the train-input years (2018, 2020, 2022): 70% of the simulated units commit themselves against them"
   physics_inputs: "On-probability and load level against the market implied heat rate (price / gas, MMBtu/MWh, 12 bins): when a unit runs compared with the fuel it would burn"
-  physics_anchor: false
+  physics_anchor: "v1.1: the run statistics counted in the window (starts per year, minimum up, median run, minimum down) are the backbone; the network outputs a correction to each"
   real_data_roles: [backdrop, calibration, gate, error_bars, exam]
 
 data:
@@ -92,112 +95,115 @@ exam:
     (all years pooled); each reading is scored against the unit's whole-record CAMPD truth. Median errors: fractions in
     absolute points, the rest relative. Mode 'ctx' (output + ERCOT hub price + Henry Hub gas + EIA-860/923 facts) unless
     a row says otherwise. Baselines: simple statistics of the same output, technology defaults (given the true
-    technology), the EIA-923 annual heat rate, and the dev median per true technology. Run once, after the release choice
-    was committed. The exam fed 2023-2025 ERCOT prices as optional context; no choices were made from them.
+    technology), the EIA-923 annual heat rate, and the dev median per true technology. Run once per version, after the
+    release choice was committed. The rows are v1.1's (run once on 15 Nov 2026); each note keeps the v1.0 value. The exam
+    fed 2023-2025 ERCOT prices as optional context; no choices were made from them.
   results:
     - metric: Minimum stable load, all years pooled (395 units)
       better: lower
-      model: 5.7
+      model: 4.7
       unit: pt
       baselines:
         - { name: "Output 1st percentile while running", kind: classical, value: 37.9 }
         - { name: "Technology default (true technology)", kind: classical, value: 14.0 }
         - { name: "Dev median per true technology", kind: dumb, value: 8.0 }
       verdict: win
-      note: "One calendar year: 6.8 pt (2,835 windows)."
+      note: "v1.0: 5.7 pt. One calendar year: 6.0 pt (v1.0: 6.8; 2,835 windows)."
     - metric: Minimum stable load, from one month (11,463 windows)
       better: lower
-      model: 10.8
+      model: 10.1
       unit: pt
       baselines:
         - { name: "Output 1st percentile while running", kind: classical, value: 29.4 }
         - { name: "Technology default (true technology)", kind: classical, value: 13.2 }
         - { name: "Dev median per true technology", kind: dumb, value: 8.0 }
       verdict: loss
-      note: "One quarter: 9.2 pt, also worse than the dev median."
+      note: "v1.0: 10.8 pt. One quarter: 8.9 pt (v1.0: 9.2), also worse than the dev median."
     - metric: Ramp up (99th percentile hourly change), all years pooled
       better: lower
-      model: 13.7
+      model: 14.9
       unit: "%"
       baselines:
         - { name: "Output 99th percentile hourly change", kind: classical, value: 69.6 }
         - { name: "Dev median per true technology", kind: dumb, value: 38.9 }
       verdict: win
-      note: "One year 17.7%, one month 24.8% (dev median 34.9% / 35.5%)."
+      note: "v1.0: 13.7% (v1.1 is worse). One year 20.4% (v1.0: 17.7%), one month 26.4% (v1.0: 24.8%); dev median 34.9% / 35.5%."
     - metric: Starts per year, from one month
       better: lower
-      model: 44.9
+      model: 44.1
       unit: "%"
       baselines:
         - { name: "Starts counted in the month, scaled to a year", kind: classical, value: 56.9 }
         - { name: "Dev median per true technology", kind: dumb, value: 69.9 }
       verdict: win
-      note: "Error on (starts + 1)."
+      note: "Error on (starts + 1). v1.0: 44.9%."
     - metric: Starts per year, from one calendar year
       better: lower
-      model: 31.0
+      model: 27.6
       unit: "%"
       baselines:
         - { name: "Starts counted in the year", kind: classical, value: 27.8 }
         - { name: "Dev median per true technology", kind: dumb, value: 69.9 }
-      verdict: loss
-      note: "All years pooled: 23.3%, but the count over all years is the truth's own definition (0.1%)."
+      verdict: win
+      note: "v1.0: 31.0% (a loss). v1.1 predicts a correction to the count and wins by 0.2 points (27.62% vs 27.80%), a thin margin. All years pooled: 8.5% (v1.0: 23.3%); the count over all years is the truth's own definition (0.1%). The error bars are now far too narrow: 17% of year windows fall inside the 68% band (v1.0: 69%)."
     - metric: Median run length, from one month
       better: lower
-      model: 42.2
+      model: 45.1
       unit: "%"
       baselines:
         - { name: "Median run counted in the month", kind: classical, value: 23.1 }
       verdict: loss
-      note: "One year 33.9% vs 18.2%; plain counts win at every length."
+      note: "v1.0: 42.2% (v1.1 is worse on one month). One quarter 32.3% vs 25.0% (v1.0: 35.7%); one year 19.4% vs 18.2% (v1.0: 33.9%). Plain counts still win at every length."
     - metric: Full-load heat rate, all units, all years pooled
       better: lower
-      model: 13.7
+      model: 11.6
       unit: "%"
       baselines:
         - { name: "Technology default (true technology)", kind: classical, value: 10.3 }
         - { name: "EIA-923 annual heat rate", kind: classical, value: 14.1 }
         - { name: "Dev median per true technology", kind: dumb, value: 18.7 }
       verdict: loss
-      note: "Output only (no prices, no EIA facts): 22.0%."
+      note: "v1.0: 13.7%. Output only (no prices, no EIA facts): 14.1% (v1.0: 22.0%)."
     - metric: Full-load heat rate, coal steam (26 units, all years)
       better: lower
-      model: 4.4
+      model: 5.0
       unit: "%"
       baselines:
         - { name: "EIA-923 annual heat rate", kind: classical, value: 10.3 }
         - { name: "Technology default", kind: classical, value: 7.5 }
         - { name: "Dev median", kind: dumb, value: 5.2 }
       verdict: win
+      note: "v1.0: 4.4% (v1.1 is worse: 5.01% vs 5.18% for the dev median, a thin margin)."
     - metric: Full-load heat rate, gas steam (61 units, all years)
       better: lower
-      model: 4.7
+      model: 6.3
       unit: "%"
       baselines:
         - { name: "EIA-923 annual heat rate", kind: classical, value: 22.2 }
         - { name: "Technology default", kind: classical, value: 11.0 }
         - { name: "Dev median", kind: dumb, value: 5.8 }
-      verdict: win
+      verdict: loss
+      note: "v1.0: 4.7% (a win). v1.1 lost this row: 6.3% vs 5.8% for the dev median. The count skips do not touch the heat-rate heads; the change comes from retraining on the physics-1.1 bank (new windows)."
     - metric: Full-load heat rate, gas combined cycle (154 units, all years)
       better: lower
-      model: 20.7
+      model: 23.5
       unit: "%"
       baselines:
         - { name: "Technology default", kind: classical, value: 7.0 }
         - { name: "EIA-923 annual heat rate", kind: classical, value: 21.8 }
         - { name: "Dev median", kind: dumb, value: 36.7 }
       verdict: loss
-      note: "Biased high: the 3 dev combined cycles were cogeneration or reported only the gas turbine; most exam units report the whole block (~7.3)."
+      note: "v1.0: 20.7%. Biased high. All 3 dev combined-cycle plants are CHP in EIA-860: two have truths of 10-13 MMBtu/MWh (process steam or gas-turbine-only reporting), one (55327) reports the whole block (truth 7.0, read as 9.9-10.7 by the network); most exam units report the whole block (about 7.3). One whole-block dev plant cannot support a CC-specific fit, so none was tried."
     - metric: Full-load heat rate, gas turbine (154 units, all years)
       better: lower
-      model: 16.2
+      model: 8.8
       unit: "%"
       baselines:
         - { name: "EIA-923 annual heat rate", kind: classical, value: 6.5 }
         - { name: "Technology default", kind: classical, value: 12.4 }
         - { name: "Dev median", kind: dumb, value: 18.2 }
       verdict: loss
-      note: "The simulated gas-turbine range sits above the Texas fleet."
+      note: "v1.0: 16.2%. The dev gas turbines did not show the bias (median +1%; 6.0% error vs 5.1% for EIA-923 on 8 dev units), so no turbine-specific change was made. The gain comes from retraining on the physics-1.1 bank."
     - metric: Part-load heat rate, all units, all years pooled
       better: lower
       model: 14.5
@@ -207,82 +213,89 @@ exam:
         - { name: "Technology default (true technology)", kind: classical, value: 13.3 }
         - { name: "Dev median per true technology", kind: dumb, value: 40.4 }
       verdict: loss
+      note: "v1.0: 14.5% (14.53% both)."
     - metric: Capacity factor, from one month
       better: lower
-      model: 5.3
+      model: 5.4
       unit: pt
       baselines:
         - { name: "Capacity factor of the month itself", kind: classical, value: 10.6 }
         - { name: "Dev median per true technology", kind: dumb, value: 17.7 }
       verdict: win
-      note: "All years pooled: 2.1 pt, against 0 for the record's own capacity factor (the truth's definition)."
+      note: "v1.0: 5.3 pt. All years pooled: 1.6 pt (v1.0: 2.1), against 0 for the record's own capacity factor (the truth's definition)."
     - metric: Annual heat input per unit-year, coal steam (178 unit-years)
       better: lower
-      model: 5.7
+      model: 6.4
       unit: "%"
       baselines:
         - { name: "EIA-923 annual heat rate x output", kind: classical, value: 8.8 }
       verdict: win
-      note: "GridData's baseline metric; the model reads that year's window."
+      note: "GridData's baseline metric; the model reads that year's window. v1.0: 5.7%."
     - metric: Annual heat input per unit-year, gas steam (432 unit-years)
       better: lower
-      model: 10.1
+      model: 11.5
       unit: "%"
       baselines:
         - { name: "EIA-923 annual heat rate x output", kind: classical, value: 11.8 }
       verdict: win
+      note: "v1.0: 10.1% (v1.1 is worse: 11.5% vs 11.8%, a thin margin)."
     - metric: Annual heat input per unit-year, gas turbine (680 unit-years)
       better: lower
-      model: 17.3
+      model: 11.3
       unit: "%"
       baselines:
         - { name: "EIA-923 annual heat rate x output", kind: classical, value: 5.1 }
       verdict: loss
+      note: "v1.0: 17.3%."
     - metric: Annual heat input per unit-year, combined cycle (1,209 unit-years)
       better: lower
-      model: 22.5
+      model: 26.5
       unit: "%"
       baselines:
         - { name: "EIA-923 annual heat rate x output", kind: classical, value: 22.0 }
       verdict: loss
-      note: "All 2,499 unit-years: 17.1%; on the 2,255 with an EIA-923 figure 16.1% vs 13.7%."
+      note: "v1.0: 22.5%. All 2,499 unit-years: 16.7% (v1.0: 17.1%); on the 2,255 with an EIA-923 figure 15.2% vs 13.7% (v1.0: 16.1%)."
     - metric: Technology from the output alone (one month / all years pooled)
       better: higher
-      model: "66% / 76.5%"
+      model: "61% / 74.7%"
       baselines: []
       verdict: info
-      note: "With the EIA-860 prime mover (network + rule): 95% from one month, 96% from one year, 93% pooled."
+      note: "v1.0: 66% / 76.5%. With the EIA-860 prime mover (network + rule): 95% from one month, 95% from one year, 91% pooled (v1.0: 95%, 96%, 93%)."
   coverage:
-    - { output: "Min stable load (year windows)", actual: 69 }
-    - { output: "Ramp up", actual: 69 }
-    - { output: "Ramp down", actual: 61 }
-    - { output: "Starts per year", actual: 69 }
-    - { output: "Min up time", actual: 48 }
-    - { output: "Median run", actual: 71 }
-    - { output: "Min down time", actual: 63 }
-    - { output: "Hot-start share", actual: 61 }
-    - { output: "Warm-start share", actual: 55 }
-    - { output: "Cold-start share", actual: 58 }
-    - { output: "Full-load heat rate", actual: 79 }
-    - { output: "Part-load heat rate", actual: 76 }
-    - { output: "Capacity factor", actual: 63 }
+    - { output: "Min stable load (year windows)", actual: 73 }
+    - { output: "Ramp up", actual: 61 }
+    - { output: "Ramp down", actual: 59 }
+    - { output: "Starts per year", actual: 17 }
+    - { output: "Min up time", actual: 40 }
+    - { output: "Median run", actual: 33 }
+    - { output: "Min down time", actual: 31 }
+    - { output: "Hot-start share", actual: 58 }
+    - { output: "Warm-start share", actual: 50 }
+    - { output: "Cold-start share", actual: 53 }
+    - { output: "Full-load heat rate", actual: 81 }
+    - { output: "Part-load heat rate", actual: 79 }
+    - { output: "Capacity factor", actual: 65 }
 
 wins:
-  - "Minimum stable load from all years: 5.7 pt against 8.0 for the dev median and 37.9 for the output's own 1st percentile."
-  - "Ramp limit: 13.7% against 38.9% for the dev median and 69.6% for the output's own 99th percentile."
-  - "Coal and gas-steam heat rate: 4.4% and 4.7% against 10.3% and 22% for the EIA-923 annual figure."
-  - "Short records: from one month, starts per year 44.9% (counting 56.9%) and capacity factor 5.3 pt (10.6 pt)."
-  - "Annual heat input of coal and gas-steam units beats EIA-923 (5.7% vs 8.8%, 10.1% vs 11.8%)."
+  - "Minimum stable load from all years: 4.7 pt (v1.0: 5.7) against 8.0 for the dev median and 37.9 for the output's own 1st percentile."
+  - "Ramp limit: 14.9% (v1.0: 13.7%) against 38.9% for the dev median and 69.6% for the output's own 99th percentile."
+  - "Coal heat rate: 5.0% (v1.0: 4.4%) against 10.3% for the EIA-923 annual figure and 5.2% for the dev median."
+  - "Starts per year: from one month 44.1% (counting 56.9%); from one calendar year 27.6% against 27.8% for the count (v1.0 lost this row at 31.0%; the v1.1 margin is 0.2 points)."
+  - "Short records: from one month, capacity factor 5.4 pt (the month's own 10.6 pt)."
+  - "Annual heat input of coal and gas-steam units beats EIA-923 (6.4% vs 8.8%, 11.5% vs 11.8%)."
 losses:
-  - "Combined-cycle heat rate 20.7%, biased high, against 7.0% for a plain technology default."
-  - "Gas-turbine heat rate 16.2% against 6.5% for EIA-923; turbine heat input 17.3% against 5.1%."
-  - "All units together, full-load heat rate 13.7% loses to the technology default (10.3%) and part load 14.5% to EIA-923 (11.8%)."
-  - "From one month, minimum stable load (10.8 pt) is worse than the dev median (8.0 pt)."
-  - "Starts and run lengths from a year of history: plain counts are better (starts per year 27.8% vs 31.0%, median run 18.2% vs 33.9%); from all years pooled the counts are the truth's own definition."
+  - "Gas-steam heat rate: 6.3% against 5.8% for the dev median. v1.0 won this row (4.7%); retraining on the physics-1.1 bank lost it."
+  - "Combined-cycle heat rate 23.5% (v1.0: 20.7%), biased high, against 7.0% for a plain technology default."
+  - "Gas-turbine heat rate 8.8% (v1.0: 16.2%) against 6.5% for EIA-923; turbine heat input 11.3% (v1.0: 17.3%) against 5.1%."
+  - "All units together, full-load heat rate 11.6% (v1.0: 13.7%) loses to the technology default (10.3%), and part load 14.5% to EIA-923 (11.8%)."
+  - "From one month, minimum stable load (10.1 pt) is worse than the dev median (8.0 pt)."
+  - "Median run: plain counts still win at every window length (one month 45.1% vs 23.1%, one year 19.4% vs 18.2%)."
+  - "v1.1's run-statistic error bars are too narrow on the exam: 17% (starts per year), 33% (median run), 31% (min down) and 40% (min up) of year windows fall inside the 68% band. The dev-fitted factors (1.05-1.56) did not catch it: dev truth covers 2 years, exam truth 8."
 limits:
-  - "Combined-cycle heat rate is biased about +21%: the 3 dev combined cycles (two cogeneration, one reporting only the gas turbine) pulled the simulator toward CT-only reporting and process steam."
-  - "Gas-turbine heat rate is biased about +15%: the simulated turbine range sits above the Texas fleet."
-  - "Minimum up and down times (5th percentile of spells) are noisy targets with the worst coverage (min up: 48% inside the 68% band)."
+  - "Combined-cycle heat rate is biased high (v1.1: 23.5% error): the 3 dev combined cycles are all CHP in EIA-860; two have truths of 10-13 MMBtu/MWh, and on the one that reports the whole block the network reads 9.9-10.7 against a truth of 7.0. Three plants cannot support a CC-specific fit."
+  - "Gas-turbine heat rate: v1.0 was biased about +15% on the exam. The 8 dev gas turbines do not show it (median +1%), so it cannot be fixed from dev; v1.1 reads 8.8% after retraining, still behind EIA-923 (6.5%)."
+  - "Minimum up and down times (5th percentile of spells) are noisy targets. With the count skips, run-statistic error bars are too narrow (17-40% coverage of the 68% band in year windows)."
+  - "The count skips help long windows and pooled records (starts per year from all years 23.3% -> 8.5%, median run 26% -> 9.8%) but not one month (median run 42.2% -> 45.1%)."
   - "Calibrated on 10 dev plants; ERCOT hub prices are used for every unit, including the SPP, MISO and El Paso ones; ramp truth is the observed 99th-percentile change, a lower bound on capability."
   - "The exam fed 2023-2025 ERCOT hub prices (exam years) as optional context at test time; no choices were made from them. Training used only 2018/2020/2022 prices."
   - "Bank v2 was built with GridSim physics 1.0. Its coal, CC, CT and gas-steam outage defaults came from 2024/2025 Texas RE data (exam period). They set the 69 GridSim-dispatched units and the prices behind 37 of 110 self-commitment shards (about 29% of frozen-set windows). Rebuilt with physics 1.1: frozen-set skill of R4 0.492 -> 0.501, R4's lead over a single network +0.025 -> +0.029 (margin 0.01), dev gate unchanged (0.215). No rung decision changes and the release stands."
@@ -290,7 +303,7 @@ limits:
 next:
   - "Re-centre the combined-cycle and gas-turbine heat-rate priors with non-CAMPD evidence (EIA-860 combined-cycle configuration, turbine vintage and model), and make trust in EIA-923 learnable per technology (a skip that passes the dev gate)."
   - "Unit-specific prices (the ERCOT settlement point of the unit's node) and coal delivered prices from EIA-923 fuel receipts."
-  - "Learn the run-statistics heads as corrections to the counted statistics: helps short windows, never worse for long ones."
+  - "Widen the run-statistic error bars honestly: the dev truth covers 2 years, the exam truth 8; fit the factors on dev windows scored against a truth that spans more than the window (for example 2019 windows against 2019+2021)."
   - "Decide on the exam's price context: keep the 2023-2025 ERCOT prices as optional inputs, or restrict the context to pre-exam years and re-score."
   - "Upstream to GridSim: soft history constraints so dispatch(outages='random') stays feasible when an outage starts while a unit is on; the self-commitment DP and CAMPD emulator as a 'unit behaviour' layer."
 help_wanted:
@@ -304,7 +317,7 @@ usage:
   python: |
     import json, numpy as np
     from plantdetective import Detective
-    det = Detective()                                  # 3-network ensemble in plantdetective_weights.npz
+    det = Detective()                                  # v1.1: 3-network ensemble in plantdetective_weights.npz
     z = np.load("examples/6179_3.npz")                 # a real exam coal unit, EPA CAMPD 2018-2025
     meta = json.loads(str(z["meta"]))
     r = det.infer(z["x"].astype(float), z["t"], z["price"], z["gas"], meta["context"])
@@ -312,7 +325,7 @@ usage:
 
 files:
   inference: [plantdetective.py, pdcore.py, pipeline.py]
-  weights: [plantdetective_weights.npz]
+  weights: [plantdetective_weights.npz, plantdetective_weights_v1_0.npz]
   demo: demo.py
   examples: examples/
   card: MODEL_CARD.md
