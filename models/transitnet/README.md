@@ -98,6 +98,10 @@ Exact quadratic limb-darkened occultation, Keplerian (eccentric) orbits, eclipsi
 
 - Matches batman to ≤ 0.94 ppm
 
+## Help wanted
+
+- Limb-darkening tables: VizieR / CDS reset the connection from the shared build machine, so the Claret TESS tables could not be used and limb darkening is a broad prior fitted on the dev planets. With the tables (or a reachable mirror) it could be set per star.
+
 ## Next rungs
 
 - A physical planet-size cap, low-mass stellar companions and R* as an input, against SB1-type false positives.

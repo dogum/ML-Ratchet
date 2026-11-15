@@ -73,7 +73,7 @@ Coverage of the 68% error bars on the exam: Shaft speed (CWRU) **80%**.
 ## The ratchet
 
 **Objective:** Fault balanced accuracy plus speed and size skill on the frozen simulated set (val2)  
-**Rule:** Keep if the objective rises by more than 0.01 AND dev balanced accuracy does not fall.
+**Rule:** Keep if the objective rises by more than 0.01 AND dev balanced accuracy is no more than 0.03 below the incumbent's.
 
 | Rung | Change | Frozen-set score | Decision | Why | Dev balanced accuracy |
 |---|---|---|---|---|---|

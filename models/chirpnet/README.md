@@ -52,7 +52,7 @@ Thirteen real events — five from O1/O2 and eight from O3, the O3 set named in 
 | GW170817 statistic vs loudest background (6.2 h) | **14.4** | Loudest time-slid background (dumb baseline): 5 | ✅ wins |
 | GW170817 chirp mass (detector frame, M☉)<br><sub>5% low with an over-confident interval; rung 2 had been within 1.3%.</sub> | **1.136** | LIGO (published): 1.1975 | ❌ loses |
 | Loud one-detector fakes passed | **17%** | Finder alone (rung 4) (classical): 99.6% | ✅ wins |
-| O3 black-hole events found, within the training range (7 events)<br><sub>Statistics 9.9–14.1. Named in advance; data first reached on 12 Nov 2026 (the cloud sandbox could not reach GWOSC).</sub> | **7 / 7** | Loudest of 29,879 time-slid O3 background windows (dumb baseline): 7.24 | ✅ wins |
+| O3 black-hole events found, within the training range (7 events)<br><sub>Statistics 9.9–14.1. Named in advance; data first reached on 12 Nov 2026 (GWOSC could not be reached from the shared build machine).</sub> | **7 / 7** | Loudest of 29,879 time-slid O3 background windows (dumb baseline): 7.24 | ✅ wins |
 | O3 chirp mass inside ChirpNet's 68% range<br><sub>Within 4% on six events; GW200224_222234 reads 15% low (35.0 vs 41.1).</sub> | **6 / 7** | GWTC-2.1 / GWTC-3 (detector frame) (published): reference | ✅ wins |
 | O3 catalogue medians inside ChirpNet's 90% posterior ranges<br><sub>m1, m2, chirp mass (source frame), effective spin and distance for seven events.</sub> | **35 / 35** | — | ✅ wins |
 | GW190521 (detector-frame chirp mass 98.7, far above the 45 the model trained on)<br><sub>Statistic −0.6. Outside the training range, named in advance anyway.</sub> | **missed** | LIGO/Virgo search (published): found | ❌ loses |
