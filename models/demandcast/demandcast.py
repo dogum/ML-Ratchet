@@ -118,14 +118,16 @@ class DemandCast:
         p = prior_total * np.exp(mu)
         return dict(mw=p, log_sigma=sig, lo95=prior_total * np.exp(mu - 1.96 * sig), hi95=prior_total * np.exp(mu + 1.96 * sig))
 
-    def predict_cf(self, kind, x, prior_cf, night=None, align=True, ba=None):
+    def predict_cf(self, kind, x, prior_cf, night=None, align=True, ba=None, offset=None):
         """kind 'w' or 's'; x [n, 164|156]; prior_cf [n, 24] physics capacity factor. Returns CF mean and sigma.
         align (solar only): read the reporting offset of the solar history from x (solar_offset), put the history back
         on the physics clock, run the network, then move the forecast by the same offset onto the reported clock.
-        ba: the grid (or one per row), for its dev reference offset; None = 0."""
+        ba: the grid (or one per row), for its dev reference offset; None = 0. offset: offsets read beforehand (per
+        row), used instead of reading them from x (the site's instrument stores only the first 156 solar features)."""
         x = np.atleast_2d(x); r = np.zeros(len(x), int)
         if kind == 's' and align:
-            r, _ = solar_offset(x, self.offset_ref(ba, len(x))); x = align_solar_x(x, r)
+            r = np.broadcast_to(np.asarray(offset, int), (len(x),)).copy() if offset is not None else                 solar_offset(x, self.offset_ref(ba, len(x)))[0]
+            x = align_solar_x(x, r)
         mu, sig = _forward(self.W[kind], x, kind, prior_cf)
         mu = np.clip(mu, 0, 1.2); sig = sig * self.sigma_scale[kind]
         if kind == 's' and night is not None:

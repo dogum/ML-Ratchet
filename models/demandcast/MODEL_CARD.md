@@ -1,4 +1,4 @@
-# DemandCast v1.0 model card
+# DemandCast v1.1 model card
 
 Part of ML Ratchet (github.com/dogum/ML-Ratchet): trained on physics, graded on reality. Built on the shared grid
 platform (GridSim + GridData, `shared/grid/`), phase 2.
@@ -21,7 +21,15 @@ time). Covers the 8 focus BAs: ERCO, CISO, PJM, MISO, SWPP, ISNE, NYIS, BPAT.
 ## Outputs
 24 hourly means and sigmas per output. Demand: `MW = prior_MW * exp(mu)`, sigma on the log scale. Wind/solar:
 capacity factor of the fleet online at issue. Sigmas include one widen-only factor per output fitted on dev
-(demand 1.14, wind 1.00, solar 1.34).
+(demand 1.14, wind 1.00, solar 1.37; v1.0 1.34).
+
+**v1.1 (15 Nov 2026), solar only.** EIA-930's solar timestamps move between years, so v1.1 reads the reporting offset of
+the solar history at issue. The 168 h reported-minus-physics error is fitted by least squares on the physics diurnal
+profile p and its slope p' (a lag of r hours gives e ~ (kappa - 1) p - kappa r p'); r_hat = -beta / (1 + alpha), minus
+the grid's dev-year value (`solar_offset_ref` in `demandcast_meta.json`: CISO 0.46 h, the others 0.04-0.19 h), rounded
+to -1, 0 or +1 h (|r_hat| <= 0.5 -> 0). The last 24 h of reported solar are put back on the physics clock, the same r8
+network runs, and its forecast is moved by r onto the reported clock. No learned parameters; only inputs available at
+issue. `predict_cf(..., align=False)` gives v1.0.
 
 ## Physics
 - **Demand: building-stock thermal model** (`training/buildings.py`). Heating need = UA x E[max(T_set - T_eff, 0)] over
@@ -78,6 +86,20 @@ descriptors) mean relative error <= +2 %. Re-scored on each new frozen set when 
 Dev calibration rungs outside the network: building model fitted per BA on 2019/2021; wind/solar scale per BA; CISO and
 PJM EIA-930 solar shifted by 1 h (dev correlation peak); sim v2 widths matched to dev; sim v3 noise fix from the twin test.
 
+**v1.1 ladder (15 Nov 2026), frozen set val_v4** (simulator v4: v3 plus a solar reporting offset of -1 / 0 / +1 h with
+probability 0.15 / 0.70 / 0.15 per region-year; 4,000 region-days, seed 404). Only r8 could be re-scored; earlier
+checkpoints are not in the repository.
+
+| Rung | Change | Objective (val_v4) | Dev demand / wind / solar % | Decision |
+|---|---|---|---|---|
+| r8_wide | v1.0, re-scored | 0.333 (solar skill 0.386) | 2.00 / 21.4 / 15.60 | incumbent |
+| r9a | + reporting offset read at issue, counted from the physics clock | 0.375 (0.513) | 2.00 / 21.4 / 16.11 | replaced by r9b (CISO dev days flipped) |
+| r9b | + offset counted from each grid's dev-year reference | 0.375 (0.513) | 2.00 / 21.4 / 15.68 | **kept = v1.1** (+0.042; dev +0.2 %) |
+
+On val_v4 the offset is read right on 3,886 of 4,000 region-days; solar error on regions reported 1 h early / on time /
+1 h late: v1.0 36.2 / 14.5 / 31.8 %, v1.1 18.4 / 14.7 / 15.8 %. Dev days with the reported solar moved by -1 / 0 / +1 h
+(30 seeded days per grid): v1.0 22.8 / 15.6 / 37.7 %, v1.1 15.6 / 15.7 / 16.4 %, persistence 16.6 %.
+
 ## Exam (2023-2025, never used for choosing)
 Demand MAPE (%), actual weather (an upper bound: grids' own forecasts use forecast weather), all hours where every
 method has a value:
@@ -133,22 +155,24 @@ humidity or radiation forecasts before 2024. Demand MAPE, DemandCast / grid DA:
 Pooled 3.05 % (135,700 h) vs grid DA 3.59 %, persistence 4.91 %, physics alone 5.88 %; same days with actual weather
 2.48 %; bands 71 / 93 %. Wins in 5 of 8 grids, but without CISO and SWPP (flawed published forecasts) it is 2.92 % vs
 the grids' 2.70 %, a loss. Wind 26.7 % vs physics 39.0 %, persistence 42.9 %, climatology 40.6 % (same days with actual
-weather 19.2 %); solar 34.7 % vs physics 39.2 %, persistence 18.9 % (a loss), climatology 41.1 %.
+weather 19.2 %); solar 34.7 % vs physics 39.2 %, persistence 18.9 % (a loss), climatology 41.1 %. v1.1 (run once, 15 Nov
+2026): solar 18.2 % vs persistence 18.9 %, a narrow win (CISO 28.3 %, persistence 10.5 %; PJM 15.1 %, 27.4 %); bands
+72 / 89 %. Demand and wind are unchanged.
 
 Wind and solar, error = sum |error| / sum output (%), actual weather; DemandCast / physics / persistence 24 h / dev-year
-CF climatology (68 / 95 % band coverage):
+CF climatology (68 / 95 % band coverage). Solar: v1.0 as released, then v1.1 (run once, 15 Nov 2026):
 
-| Grid | Wind | Solar |
-|---|---|---|
-| ERCO | 17.8 / 21.6 / 42.9 / 42.2 (78/97) | 10.6 / 20.3 / 20.9 / 27.1 (77/92) |
-| CISO | 32.7 / 40.6 / 42.2 / 43.5 (66/89) | 59.4 / 47.9 / 11.4 / 40.7 (50/72) |
-| PJM | 24.0 / 24.4 / 54.8 / 48.2 (72/95) | 28.1 / 30.8 / 28.0 / 43.3 (58/78) |
-| MISO | 16.0 / 17.1 / 43.4 / 39.0 (74/97) | 10.4 / 57.9 / 22.5 / 64.7 (74/90) |
-| SWPP | 17.2 / 22.6 / 36.5 / 36.0 (77/95) | 41.5 / 41.1 / 29.1 / 47.4 (68/86) |
-| ISNE | 28.3 / 35.0 / 62.6 / 55.2 (72/92) | 16.4 / 39.7 / 39.0 / 52.4 (71/92) |
-| NYIS | 26.4 / 29.1 / 68.9 / 60.7 (72/95) | not reported in EIA-930 |
-| BPAT | 50.1 / 55.4 / 88.4 / 86.5 (57/92) | 51.8 / 21.0 / 30.5 / 34.9 (59/74) |
-| all | 19.2 / 22.7 / 43.5 / 41.4 (71/94) | 29.9 / 36.3 / 19.1 / 39.2 (65/84) |
+| Grid | Wind | Solar v1.0 | Solar v1.1 |
+|---|---|---|---|
+| ERCO | 17.8 / 21.6 / 42.9 / 42.2 (78/97) | 10.6 / 20.3 / 20.9 / 27.1 (77/92) | 10.6 / 20.3 / 20.9 / 27.1 (77/93) |
+| CISO | 32.7 / 40.6 / 42.2 / 43.5 (66/89) | 59.4 / 47.9 / 11.4 / 40.7 (50/72) | 24.9 / 47.9 / 11.4 / 40.7 (64/79) |
+| PJM | 24.0 / 24.4 / 54.8 / 48.2 (72/95) | 28.1 / 30.8 / 28.0 / 43.3 (58/78) | 11.9 / 30.8 / 28.0 / 43.3 (69/88) |
+| MISO | 16.0 / 17.1 / 43.4 / 39.0 (74/97) | 10.4 / 57.9 / 22.5 / 64.7 (74/90) | 10.4 / 57.9 / 22.5 / 64.7 (75/91) |
+| SWPP | 17.2 / 22.6 / 36.5 / 36.0 (77/95) | 41.5 / 41.1 / 29.1 / 47.4 (68/86) | 41.5 / 41.1 / 29.1 / 47.4 (68/86) |
+| ISNE | 28.3 / 35.0 / 62.6 / 55.2 (72/92) | 16.4 / 39.7 / 39.0 / 52.4 (71/92) | 16.5 / 39.7 / 39.0 / 52.4 (72/92) |
+| NYIS | 26.4 / 29.1 / 68.9 / 60.7 (72/95) | not reported in EIA-930 | not reported |
+| BPAT | 50.1 / 55.4 / 88.4 / 86.5 (57/92) | 51.8 / 21.0 / 30.5 / 34.9 (59/74) | 52.0 / 21.0 / 30.5 / 34.9 (59/74) |
+| all | 19.2 / 22.7 / 43.5 / 41.4 (71/94) | 29.9 / 36.3 / 19.1 / 39.2 (65/84) | **16.1** / 36.3 / 19.1 / 39.2 (69/86) |
 
 Extremes (demand MAPE, DemandCast / grid DA): Winter Storm Uri (dev) ERCO 14.5 / 18.6 (DemandCast forecast ~85 GW demand; ERCOT
 served 69 GW under load shed); Winter Storm Elliott (training-input year) PJM 3.05 / 3.78, ERCO 4.18 / 5.54; Texas heat
@@ -162,9 +186,12 @@ and `training/exam_r8_wide.json` / `training/exam_r8_wide_events.json`.
 1. Actual weather is an upper bound; with forecast weather (2024) DemandCast loses to ERCOT, SPP, ISO-NE and BPA's own
    forecasts; over 2024-2025 (second look) to ERCOT, ISO-NE and BPA, and to the 6 grids without CISO and SWPP pooled.
    No forecast-weather grade for 2023 (the archive has no humidity or radiation forecasts before 2024).
-2. Solar fails where EIA-930 timestamps changed: CISO solar led the physics by 1 h in 2019/2021, matched in 2023,
-   lagged by 1 h in 2024-25 (PJM changed in 2025). The dev-calibrated shift is wrong in the exam. Persistence beats DemandCast
-   on solar overall (19 % vs 30 %). BPAT's tiny solar fleet is badly served.
+2. Solar timestamps: CISO solar led the physics by 1 h in 2019/2021, matched in 2023, lagged by 1 h in 2024-25 (PJM
+   changed in 2025). v1.0's fixed dev shift was wrong in the exam (29.9 % vs persistence 19.1 %). v1.1 reads whole-hour
+   offsets from the week before issue (16.1 %), but picks a change up only once that week shows it, and CISO's
+   dev-year profile sits about half an hour off, so CISO days near the boundary flip; CISO solar still loses to
+   persistence (24.9 % vs 11.4 %). BPAT's tiny solar fleet is badly served (52.0 % vs 30.5 %), and so is SWPP (41.5 %
+   vs 29.1 %).
 3. Bands are too narrow on real data (demand 64 / 89 % for 68 / 95 %; CISO 46 / 74).
 4. Wind limited by 50 km reanalysis (BPAT 50 %, CISO 33 %); the network trims physics error by ~15 %.
 5. Needs the last week of metered output; physics alone is ~5 % off (load growth since 2019-21).

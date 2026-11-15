@@ -172,8 +172,9 @@ export async function mount(ctx: InstrumentContext) {
     if (st.hum !== 1) changed.push(`humidity ×${st.hum.toFixed(2)}`);
     if (st.sun !== 1) changed.push(`sunshine ×${st.sun.toFixed(2)}`);
     if (st.wind !== 1) changed.push(`wind ×${st.wind.toFixed(2)}`);
+    const shiftNote = m.soff ? ` The week before issue shows this grid’s solar reported ${m.soff > 0 ? 'an hour late' : 'an hour early'}, so the solar forecast is moved by that hour (v1.1).` : '';
     const solarNote = m.ba === 'CISO' || m.ba === 'PJM' || m.ba === 'BPAT'
-      ? ' Solar here is a known failure: EIA-930’s solar timestamps moved by an hour between the dev and exam years (CAISO, PJM in 2025), and BPA’s fleet is tiny; persistence beats DemandCast on solar overall (19.1 % vs 29.9 %).'
+      ? ` EIA-930’s solar timestamps moved by an hour between the dev and exam years (CAISO, PJM in 2025). v1.1 reads the offset from the week before issue: solar 16.1 % against 19.1 % for persistence overall (v1.0 29.9 %), but CAISO (24.9 % vs 11.4 %) and BPA’s tiny fleet still lose to persistence.${shiftNote}`
       : m.ba === 'NYIS' ? ' NYISO does not report solar in EIA-930.' : '';
     note.innerHTML = changed.length
       ? `<b>Changed: ${changed.join(', ')}.</b> The metered values and the grid’s forecast are for the day as it happened; this is now a different day, so read the change, not the error.`

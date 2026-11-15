@@ -32,7 +32,7 @@ sys.path.insert(0, os.path.join(MODEL, "training"))  # buildings.py (numpy/scipy
 sys.path.insert(0, REPO)
 
 import buildings as B  # noqa: E402
-from demandcast import DemandCast  # noqa: E402
+from demandcast import DemandCast, align_solar_x, solar_offset  # noqa: E402
 
 from mlratchet.webexport import instrument_dir, roundtrip, write_json, write_pack  # noqa: E402
 
@@ -49,6 +49,21 @@ def page_data():
     dec = json.JSONDecoder()
     i = js.index("const DATA = ") + len("const DATA = ")
     return dec.raw_decode(js[i:])[0]
+
+
+def solar_offsets(m, days):
+    """v1.1: the solar reporting offset each page day's 168 h history shows at issue. The page stores only the first 156
+    solar features, so the offset is read in Python from the full feature vector of the same day in the actual-weather
+    exam bank (training/realbank.py exam -> work/data/banks/real_exam.npz) and stored with the day; the browser then
+    aligns the history, runs the network and moves the forecast exactly as demandcast.py does."""
+    B = np.load(os.path.join(MODEL, "work", "data", "banks", "real_exam.npz"))
+    key = {(b, d): i for i, (b, d, f) in enumerate(zip(B["meta_ba"], B["meta_day"], B["meta_fc"])) if f == 0}
+    out = np.zeros(len(days), int)
+    for j, d in enumerate(days):
+        i = key.get((d["ba"], d["day"]))
+        if i is not None and "s" in d:
+            out[j] = solar_offset(np.nan_to_num(B["xs"][i].astype(np.float64)), m.offset_ref(d["ba"], 1))[0][0]
+    return out
 
 
 def f32(a):
@@ -161,9 +176,10 @@ def outputs(m, d, st, prm, MW, MS, p):
     for k, x, pk in (("w", "xw", "pw"), ("s", "xs", "ps")):
         if x not in o:
             continue
-        mu, sg = _forward(m.W[k], o[x][None], k, o[pk][None])
         night = d["night"][None] if k == "s" else None
-        r = m.predict_cf(k, o[x][None], o[pk][None], night=night)
+        xin = o[x][None] if k == "w" else align_solar_x(o[x][None], np.array([d["soff"]]))
+        mu, sg = _forward(m.W[k], xin, k, o[pk][None])
+        r = m.predict_cf(k, o[x][None], o[pk][None], night=night) if k == "w" else             m.predict_cf(k, o[x][None], o[pk][None], night=night, offset=d["soff"])
         vec += list(o[pk]) + list(mu[0]) + list(sg[0]) + list(r["cf"][0]) + list(r["lo95"][0]) + list(r["hi95"][0])
         res[k] = r
     return [float(v) for v in vec], res
@@ -202,7 +218,8 @@ def main():
     calib = json.load(open(os.path.join(MODEL, "calib", "demand_dev.json")))
     assert all(D["params"][ba] == calib[ba]["params"] for ba in D["params"]), "page params = released dev calibration"
     m = DemandCast()
-    assert all(abs(D["sigma_scale"][k] - m.sigma_scale[k]) < 1e-12 for k in "dws")
+    assert all(abs(D["sigma_scale"][k] - m.sigma_scale[k]) < 1e-12 for k in "dw")   # solar re-fitted for v1.1
+    soff = solar_offsets(m, D["days"])
     step_err = check_stepper(D)
     assert step_err < 1e-9, step_err
 
@@ -241,7 +258,7 @@ def main():
             X["stab"][i] = np.array([f32(r) for r in d["s"]["tab"]])
         dd = {k: X["wx"][i, j] for j, k in enumerate(WX)}
         dd.update(sd=float(d["sd"]), xd=X["xd"][i], hasw=hasw, hass=hass, xw=X["xw"][i], wtab=X["wtab"][i], ws=X["ws"][i],
-                  xs=X["xs"][i], stab=X["stab"][i], night=X["night"][i])
+                  xs=X["xs"][i], stab=X["stab"][i], night=X["night"][i], soff=int(soff[i]))
         st, prm = d["st"], D["params"][d["ba"]]
         o = inputs(dd, st, prm, MW, MS, {})
         # neutral controls reproduce the page's stored inputs (rounded there to 1e-5 and to 1 MW)
@@ -256,6 +273,7 @@ def main():
             ape[k] += list(np.abs(v[ok] - y[ok]) / y[ok])
         meta_ex.append(dict(ba=d["ba"], day=d["day"], tag=d["tag"], st=st, sd=float(d["sd"]), hasw=hasw, hass=hass,
                             capw=float(d["w"]["cap"]) if hasw else 0.0, caps=float(d["s"]["cap"]) if hass else 0.0,
+                            soff=int(soff[i]),
                             T_mean=float(np.mean(dd["T"][14:])), T_min=float(np.min(dd["T"][14:])), T_max=float(np.max(dd["T"][14:]))))
         if d["tag"] == "random" and int(d["day"][:4]) in (2023, 2025) and \
                 sum(1 for c in meta_ex if c["ba"] == d["ba"] and c["tag"] == "random" and c["day"][:4] == d["day"][:4]) == 1:

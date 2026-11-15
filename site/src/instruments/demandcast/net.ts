@@ -24,6 +24,7 @@ export interface DDay {
   st: { T30: number; L1: number; L2: number; G: number }; // filter states at issue
   sd: number; // mean physics demand over the input week (feature scale)
   hasw: boolean; hass: boolean; capw: number; caps: number;
+  soff?: number; // v1.1: solar reporting offset (h) the day's 168 h history shows at issue (read in Python)
   T_mean: number; T_min: number; T_max: number;
 }
 
@@ -169,10 +170,21 @@ export function predict(W: Pack<DMeta>, d: Day, p: Perturb = {}): Reading {
       const clr = d.wx.clr[14 + h] / 1000;
       xs[128 + h] = clr > 0.02 ? clip((d.wx.ghi[14 + h] * sun) / 1000 / Math.max(clr, 1e-3), 0, 1.2) : 0;
     }
+    // v1.1 (demandcast.align_solar_x): put the last 24 h of reported solar back on the physics clock
+    const r = d.meta.soff ?? 0;
+    if (r !== 0) {
+      const a = xs.slice(56, 80), kap = xs[55];
+      for (let j = 0; j < 24; j++) {
+        const src = j + r;
+        xs[56 + j] = src >= 0 && src < 24 ? a[src] : kap * xs[80 + j];
+      }
+    }
     const n = forward(W, 's', xs, pt), k = M.sigma_scale.s;
     const night = (h: number) => d.night[h] > 0.5;
-    const cf = n.mu.map((v, h) => (night(h) ? 0 : clip(v, 0, 1.2)));
-    const sg = n.sig.map((v, h) => (night(h) ? M.floor.s : v * k));
+    // ... then move the forecast onto the reported clock: out[h] = in[h - r] (demandcast._shift)
+    const shift = (v: number[], fill: number) => v.map((_, h) => (h - r >= 0 && h - r < 24 ? v[h - r] : fill));
+    const cf = shift(n.mu.map((v, h) => (night(h) ? 0 : clip(v, 0, 1.2))), 0);
+    const sg = shift(n.sig.map((v, h) => (night(h) ? M.floor.s : v * k)), M.floor.s);
     out.s = { prior: pt, mu: n.mu, sig: n.sig, cf, sigma: sg, lo95: cf.map((v, h) => Math.max(v - 1.96 * sg[h], 0)), hi95: cf.map((v, h) => v + 1.96 * sg[h]) };
   }
   return out;

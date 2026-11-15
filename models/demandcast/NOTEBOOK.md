@@ -213,3 +213,66 @@ uses it would be judged on dev.
   the "all" row's same-hour-last-week cell filled (7.95, from `exam_r8_wide.json`); "ours", "us", "we" -> DemandCast.
 - `help_wanted`: the Open-Meteo line now says what was found (fetched in full; no forecasts of humidity, radiation or
   wind before 2024).
+
+## 15 Nov 2026 — v1.1: the solar reporting offset is read at issue
+
+**The loss.** Solar lost to persistence in the exam: 29.9 % vs 19.1 % with actual weather, 34.7 % vs 18.9 % with
+forecast weather (2024-2025). The cause was found after the exam: EIA-930's solar timestamps move between years, and
+v1.0 shifts CISO and PJM by one fixed hour learned on 2019/2021.
+
+**Same failure outside the exam.** GridData's `eia930_solar_qc()` flags (allowed for training-input and dev years): in
+2018-2022, 9 of 35 BA-years with solar are 1 h off (CISO 2018-21, PJM 2018-22), and CISO moved from -1 h (2019, 2021)
+to 0 h in 2022. With the fixed dev shift, v1.0 on CISO 2022 (a training-input year; its solar output was never a
+training sample) is 22.8 % vs 12.7 % for persistence; PJM 2022 13.8 % vs 30.0 %. On the 30 seeded dev gate days per
+grid, moving the reported solar by -1 / 0 / +1 h gives v1.0 22.8 / 15.6 / 37.7 % against persistence 16.6 %.
+`eia930_solar_qc()` itself is not usable at forecast time: each flag is fitted on a whole calendar year, the days after
+issue included.
+
+**Fix (rung r9).** `demandcast.solar_offset` reads the offset from the 168 h before issue only. If the report lags the
+physics by r hours, the reported-minus-physics error is e ~ (kappa - 1) p - kappa r p'; a least-squares fit on the
+physics diurnal profile p and its slope p' (both from the last 24 h, by LST hour) gives r_hat = -beta / (1 + alpha),
+rounded to -1, 0 or +1 h at 0.5. On a synthetic diurnal curve with 10 % noise it reads -0.97 / 0.00 / +0.96 for true
+-1 / 0 / +1 h. The last 24 h of reported solar are put back on the physics clock (the hour outside the history is
+the physics CF times the week's ratio), the r8 network runs unchanged, and its forecast is moved by r. No learned
+parameters; the exam day's own output never enters.
+
+- r9a, counted from the physics clock: on dev it moved 201 of 730 CAISO days by an hour. CAISO's dev-year r_hat has
+  median +0.46 h (after the fixed shift): its reported solar sits about half an hour off the physics, so 0.5 is a coin
+  toss there. Dev solar 15.60 -> 16.11 %.
+- r9b, counted from each grid's dev-year median r_hat (`solar_offset_ref`: CISO 0.46, SWPP 0.19, MISO 0.11, PJM 0.09,
+  ISNE 0.08, ERCO 0.05, BPAT 0.04 h), the clock the fixed dev shift left each grid on. A dev calibration, like the
+  shift itself. Dev solar 15.60 -> 15.68 %, dev gate +0.2 %. On the moved dev days: 15.6 / 15.7 / 16.4 % for -1 / 0 / +1 h. CISO 2022: 15.6 %
+  (persistence 12.7 %, still a loss there).
+
+**Frozen set.** The measurement model changed, so simulator v4 = v3 plus a reporting offset of the simulated solar
+(-1 / 0 / +1 h with probability 0.15 / 0.70 / 0.15, constant per region-year; `sim.py`, `DC_SIM=v4`), and a new frozen
+set val_v4 (`sim.py val_v4 404 100 40`: 4,000 region-days). The r1-r7 checkpoints are not in the repository, so only the
+release r8 is re-scored on it: objective 0.3329 (solar skill 0.386). r9b: 0.3752 (solar skill 0.513), +0.042. The
+offset is read right on 3,886 of 4,000 region-days (true -1 h: 475 / 45 / 0 read -1 / 0 / +1; true 0: 35 / 2,954 / 11;
+true +1 h: 0 / 23 / 457). Solar error on regions reported 1 h early / on time / 1 h late: v1.0 36.2 / 14.5 / 31.8 %,
+r9b 18.4 / 14.7 / 15.8 %. Kept under the rule (+0.01 and dev <= +2 %) and released as v1.1. The solar sigma scale is
+re-fitted on dev: 1.3400 -> 1.3686. Demand and wind are unchanged. The release choice was committed before the exam.
+
+**Work folder rebuilt** (it was empty): `wxprep.py`, `renew.py`, `calib_demand.py dev2019 / dev2021 / train`,
+`calib_renew.py dev2019 / dev2021`, `realbank.py dev / exam`. pvlib was missing from the main venv; installed from the
+project's `grid` extra (pvlib 0.16.1). The re-scored v1.0 reproduces every released number below.
+
+**Exam, run once (`training/rescore_v11.py actual` and `forecast`; v1.0 re-scored on the same rows).**
+
+| Row | v1.0 | v1.1 | Persistence | Physics alone | Verdict |
+|---|---|---|---|---|---|
+| Solar, 7 grids, actual weather (183,858 h) | 29.9 % | **16.1 %** | 19.1 % | 36.3 % | loss -> win |
+| Solar, forecast weather 2024-2025 (119,348 h) | 34.7 % | **18.2 %** | 18.9 % | 39.2 % | loss -> win (by 0.7 points) |
+| Solar bands, daylight, actual weather (68 / 95 %) | 65 / 84 % | 69 / 86 % | | | |
+
+Per grid, actual weather, v1.0 -> v1.1 (persistence): CISO 59.4 -> 24.9 % (11.4 %), PJM 28.1 -> 11.9 % (28.0 %), ERCO
+10.6 -> 10.6 %, MISO 10.4 -> 10.4 %, ISNE 16.4 -> 16.5 %, SWPP 41.5 -> 41.5 % (29.1 %), BPAT 51.8 -> 52.0 % (30.5 %).
+Offsets read at issue: CISO 2023 +1 h on 232 of 365 days, 2024 on 362 of 366, 2025 on 356 of 364; PJM 2025 on 311 of
+364; the other grids 0 on 350-366 days a year. Small changes the wrong way: ISNE +0.1, BPAT +0.2, MISO 2023 +0.1, SWPP
+2023 +0.3 points (a few days read as 1 h off). CISO and BPA solar still lose to persistence, and so does SPP. Every
+demand and wind row is identical to v1.0 (2.38 %, 19.2 %; forecast weather 3.05 %, 26.7 %). Wins in model.yaml: 12 ->
+14 (the two solar rows); no row got a worse verdict.
+
+Golden demo output regenerated: only the CISO solar days change (26.8 % and 51.2 %, were 53.3 % and 82.3 %). The live
+instrument stores the offset each page day's history shows (read in Python from the exam bank's full feature vector)
+and does the same alignment and shift in the browser; parity 2.3e-7.

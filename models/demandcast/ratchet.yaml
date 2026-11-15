@@ -19,3 +19,17 @@ ladders:
       - { id: r6_all, change: "All four banks (v3 ×2, v2, v1; 131k region-days), 384-384", sim: 0.3558, decision: rejected, why: "Objective 0.3558 vs 0.3484, +0.007 (needs +0.01); dev errors -0.1%.", metrics: [1.95, 21.45, 15.52, 0.691] }
       - { id: r7_hist, change: "Full 168 h history of real-vs-physics error as extra inputs, 102k v3 region-days, 384-384", sim: 0.3552, decision: rejected, why: "Objective 0.3552 vs 0.3484 (needs +0.01); dev errors +8.3% (gate +2%), demand 2.27% and its 68% coverage fell to 45%.", metrics: [2.27, 22.43, 16.17, 0.451] }
       - { id: r8_wide, change: "All six banks (v3 ×4, v2, v1; 180k region-days), base features, 512-512 (largest within the 500k-parameter budget)", sim: 0.3617, decision: released, why: "Objective 0.3617 vs 0.3484; dev errors +0.9% (inside the 2% gate). Released as v1.0.", metrics: [2.0, 21.44, 15.6, 0.651] }
+  - name: "DemandCast v1.1 (15 Nov 2026)"
+    objective: "Same objective on the frozen simulated set val_v4 (4,000 region-days, simulator v4, seed 404): v3 plus a solar reporting offset of -1 / 0 / +1 h (15 / 70 / 15 %) per region-year"
+    rule: "Same rule: keep a rung if the objective beats the incumbent by more than 0.01 AND the dev gate's mean relative error gets no more than 2% worse"
+    margin: 0.01
+    dev_gate: "30 seeded real days per grid from 2019 and 2021, as before; mean relative change of the demand, wind and solar errors <= +2%"
+    frozen_sets: [val_v4]
+    scored_on: val_v4
+    note: "The measurement model changed (EIA-930 solar timestamps move between years: in 2018-2022, outside the exam, 9 of 35 BA-years are 1 h off and CAISO moved from -1 h in the dev years to 0 in 2022), so a new frozen set was built. Only the release r8 could be re-scored on it: the r1-r7 checkpoints are not in the repository. Rungs scored from the shipped weights with training/solar_align.py; raw log training/ratchet.json."
+    columns_source: "Dev gate errors (5,760 demand hours, 5,759 wind, 5,040 solar), never the exam"
+    columns: ["Dev demand MAPE (%)", "Dev wind (%)", "Dev solar (%)", "Solar skill on val_v4"]
+    rungs:
+      - { id: r8_wide, change: "The release v1.0 re-scored on val_v4 (fixed dev-year solar shift; no offset read)", sim: 0.3329, decision: kept, why: "Incumbent. On val_v4 its solar error is 14.5% on regions reported on time and 36.2% / 31.8% on regions reported 1 h early / late.", metrics: [2.00, 21.44, 15.60, 0.386] }
+      - { id: r9a, change: "r8 + the solar reporting offset read at issue from the 168 h history (least squares of the reported-minus-physics error on the physics profile and its slope; -1 / 0 / +1 h), history put back on the physics clock, forecast moved by the offset", sim: 0.3752, decision: rejected, why: "Objective 0.3752 vs 0.3329 and dev +1.1% (inside the gate), but on dev it moved 201 of 730 CAISO days by an hour: CAISO's dev-year profile reads +0.46 h from the physics clock. Replaced by its dev-calibrated form r9b before the release choice (same frozen-set score).", metrics: [2.00, 21.44, 16.11, 0.513] }
+      - { id: r9b, change: "r9a with the offset counted from each grid's dev-year reference (median r_hat over 2019 and 2021: CAISO 0.46 h, the others 0.04-0.19 h)", sim: 0.3752, decision: released, why: "Objective 0.3752 vs 0.3329 (+0.042); dev errors +0.2% (solar 15.60 -> 15.68%). On val_v4 the offset is read right on 3,886 of 4,000 region-days. Released as v1.1; solar sigma scale re-fitted on dev (1.34 -> 1.37).", metrics: [2.00, 21.44, 15.68, 0.513] }
