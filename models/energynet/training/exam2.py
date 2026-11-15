@@ -6,6 +6,7 @@ python exam2.py <rung> [--sigma v1|car]
 3. EPA exam families: FTP, HWY, US06, 20 F cold FTP, SC03 vs the dev-fitted log-linear regression and the dev median
 4. Full ZTBus exam (1,115 missions by month): legs and mission totals, v2 and v1 (both on the full traces) vs the dev
    kWh/km x distance baseline; v1's route-proxy number from rescore_v1_ztbus.json; Mersin and ICCT as in v1
+5. (15 Nov 2026) the previous release v2.0 (work/weights_v20, its own error-bar factors) re-scored on the same exam
 -> work/exam2.json, work/data/exam2_<set>.parquet"""
 import _paths as _P  # portable paths (see _paths.py)
 import sys, os, json, argparse
@@ -100,6 +101,13 @@ OUT = {'rung': a.rung, 'sigma_method': a.sigma, 'v2': run_model(v2, bus_spec, 'v
 if v1 is not None:
     S1 = {k: (float(v), 0.0) for k, v in K1.items()}; S1['HD_ZTBus'] = S1.get('HD_ZTBus_leg', (1.0, 0.0))
     OUT['v1_release'] = run_model(v1, False, 'v1', 'v1', S=S1)      # v1 as shipped: its own dev factors
+W20 = os.path.join(_P.WORK, 'weights_v20')          # v2.0 as shipped (15 Nov 2026: re-scored next to v2.1 on the same exam)
+if os.path.isdir(W20) and R0['name'] != 'r13_data3':
+    K20 = json.load(open(os.path.join(W20, 'sigma_factors.json')))
+    m20 = CB.SimScaled(Ensemble(sorted(os.path.join(W20, f) for f in os.listdir(W20) if f.endswith('.npz'))),
+                       {k[4:]: v for k, v in K20.items() if k.startswith('SIM_')})
+    S20 = {k: (tuple(v) if isinstance(v, list) else (float(v), 0.0)) for k, v in K20.items() if not k.startswith('SIM_')}
+    OUT['v20_release'] = run_model(m20, False, 'v1', 'v20', False, S=S20)
 # baselines
 ex = pd.read_parquet(f'{W}/data/exam2_ved_v2.parquet')
 OUT['baselines'] = {'VED': {g: dict(label=mdape(d.b_label, d.y), moves_like=mdape(d.b_vsp, d.y), class_median=mdape(d.b_class, d.y),
@@ -140,8 +148,8 @@ for fuel in ('diesel', 'cng'):
 t = h[(h.set == 'ICCT') & (h.split == 'exam')]; tdv = h[(h.set == 'ICCT') & (h.split == 'dev')].set_index('cycle')
 OUT['baselines']['ICCT'] = mdape(t.cycle.map(tdv.g_per_km) * t.dist_km * EV.LHV, t.y)
 json.dump(OUT, open(f'{W}/exam2.json', 'w'), indent=1)
-print(json.dumps({k: v for k, v in OUT.items() if k != 'v2' and k != 'v1_release'}, indent=1)[:4000])
-for lab in ('v2', 'v1_release'):
+print(json.dumps({k: v for k, v in OUT.items() if k not in ('v2', 'v1_release', 'v20_release')}, indent=1)[:4000])
+for lab in ('v2', 'v20_release', 'v1_release'):
     if lab in OUT:
         r = OUT[lab]
         print(lab, 'VED', {g: (round(v['trip_MdAPE'], 3), round(v['bias'], 3), round(v['cov68'], 2)) for g, v in r['VED'].items()})

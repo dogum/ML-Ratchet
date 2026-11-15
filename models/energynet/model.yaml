@@ -1,8 +1,8 @@
 id: energynet
 name: EnergyNet
-version: "2.0"
+version: "2.1"
 status: released
-released: 2026-11-14
+released: 2026-11-15
 order: 10
 domain: Transportation
 platform: vehicle
@@ -16,7 +16,8 @@ summary: >-
   drag, rolling, braking, accessories and powertrain losses. It covers 7 vehicle classes from cars to Class-8 trucks
   and 7 powertrains. Version 2 learned only from RoadSim physics v2 driven over real Ann Arbor routes and weather
   (86,400 simulated trips), reads the vehicle's model year, and was examined on 25,793 real trips, EPA tests and
-  1,115 full Zurich bus missions.
+  1,115 full Zurich bus missions. Version 2.1 runs the simulated A/C and cold tests under the EPA test conditions,
+  drops idle-stop from the simulated petrol cars and reads two public specs (a hybrid's system, a bus's curb mass).
 
 reads: A route at 1 Hz (speed, grade, temperature, wind, heading, air density, surface) and whatever is known about the vehicle (architecture, class, mass, road load, engine, battery, window-sticker label, start charge, model year); unknown fields are masked.
 returns:
@@ -32,6 +33,7 @@ physics:
   simulator:
     - "2,400 training vehicles from RoadSim's generator (v2 donors), each light-duty one with a model year 2005-2026 and an engine efficiency from an era prior fitted on fueleconomy.gov dev families (a 2005 engine burns 21% more than the same engine in 2021)"
     - "86,400 training trips (three banks of 12 per vehicle): 1,092 unlabelled real VED routes, dynamometer cycles (now with cold starts and the 20 F cold FTP) and synthetic urban/highway/bus/truck drives"
+    - "v2.1: SC03 and 20 F cold-FTP draws under the EPA test conditions (roadsim.epa: 850 W/m2 sun, A/C maximum, cabin soaked to 45 C; heat at 72 F on outside air); generated petrol cars without idle-stop (RoadSim's dev-calibrated twins have none)"
     - Simulated window-sticker labels (FTP-75 and HWFET on a dynamometer spec, EPA 5-cycle formulas)
     - "RoadSim's own measurement layer for OBD MAF fuel labels (roadsim.obd) and v1's plug-in hardware patch, both kept by the v2 ratchet"
   checks:
@@ -88,177 +90,181 @@ exam:
   results:
     - metric: Petrol cars, per trip (14,469 VED trips)
       better: lower
-      model: 8.7
+      model: 8.6
       unit: "%"
       baselines:
         - { name: "MOVES-like", kind: classical, value: 10.3 }
         - { name: "Window label × distance", kind: classical, value: 13.0 }
         - { name: "Class median", kind: dumb, value: 22.8 }
       verdict: win
-      note: "Bias -0.7%. v1.0 re-scored: 9.1%. Car totals 7.5% vs label 8.6%."
+      note: "Bias +0.3%. v2.0: 8.7%; v1.0 re-scored: 9.1%. Car totals 7.4% vs label 8.7%."
     - metric: Hybrids, per trip (8,241 trips, 86 cars)
       better: lower
-      model: 13.5
+      model: 13.4
       unit: "%"
       baselines:
         - { name: "MOVES-like", kind: classical, value: 15.3 }
         - { name: "Window label × distance", kind: classical, value: 16.2 }
         - { name: "Class median", kind: dumb, value: 17.2 }
       verdict: win
-      note: "Bias +3.9% (v1.0: +8.4%, 15.5% re-scored). Car totals 7.5% vs label 8.9%. The 247 trips of P2 hybrids got worse: 17.2% (v1.0: 10.4%)."
+      note: "Bias +3.8%. v2.0: 13.5%; v1.0 re-scored: 15.5% (+8.4%). Car totals 7.2% vs label 8.9%. The 247 trips of P2 hybrids: 18.3% (v2.0 17.2%, v1.0 10.4%)."
     - metric: Plug-in hybrids, per trip (2,916 trips)
       better: lower
-      model: 17.1
+      model: 16.8
       unit: "%"
       baselines:
         - { name: "MOVES-like", kind: classical, value: 41.3 }
         - { name: "Class median", kind: dumb, value: 42.7 }
       verdict: win
-      note: "EnergyNet is given the logged start charge; the baselines are not. v1.0 re-scored: 19.6%."
+      note: "EnergyNet is given the logged start charge; the baselines are not. v2.0: 17.1%; v1.0 re-scored: 19.6%."
     - metric: Electric (2 Nissan Leafs), per trip (167 trips)
       better: lower
-      model: 22.6
+      model: 23.2
       unit: "%"
       baselines:
         - { name: "MOVES-like", kind: classical, value: 19.0 }
         - { name: "Class median", kind: dumb, value: 27.1 }
       verdict: loss
-      note: "Still biased -19.5% (v1.0: -21.6%, 24.5%). The dev Leaf is +2%."
+      note: "Biased -20.3%; worse than v2.0 (22.6%, -19.5%); v1.0 24.5%. The one dev Leaf is +4.6%, so dev cannot show this bias."
     - metric: EPA petrol highway tests (20,426)
       better: lower
-      model: 6.7
+      model: 6.8
       unit: "%"
       baselines:
         - { name: "Log-linear regression (fit on dev)", kind: classical, value: 5.0 }
         - { name: "Dev median", kind: dumb, value: 16.8 }
       verdict: loss
-      note: "Bias 0.0% (v1.0: +15.3%, 15.6%): the model-year input fixed the old-fleet prior."
+      note: "Bias -0.8%. v2.0: 6.7% (0.0%); v1.0: 15.6% (+15.3%)."
     - metric: EPA petrol US06 tests (2,832)
       better: lower
-      model: 5.1
+      model: 5.2
       unit: "%"
       baselines:
         - { name: "Log-linear regression (fit on dev)", kind: classical, value: 6.9 }
         - { name: "Dev median", kind: dumb, value: 17.3 }
       verdict: win
-      note: "v1.0 re-scored: 11.5%."
+      note: "v2.0: 5.1%; v1.0 re-scored: 11.5%."
     - metric: EPA petrol FTP tests (20,065)
       better: lower
-      model: 8.9
+      model: 8.6
       unit: "%"
       baselines:
         - { name: "Log-linear regression (fit on dev)", kind: classical, value: 7.1 }
         - { name: "Dev median", kind: dumb, value: 18.7 }
       verdict: loss
-      note: "Bias -6.5%. v1.0 re-scored: 9.6%."
+      note: "Bias -5.0%. v2.0: 8.9% (-6.5%); v1.0 re-scored: 9.6%."
     - metric: EPA petrol 20 °F cold FTP tests (1,734)
       better: lower
-      model: 9.5
+      model: 8.5
       unit: "%"
       baselines:
         - { name: "Log-linear regression (fit on dev)", kind: classical, value: 9.7 }
         - { name: "Dev median", kind: dumb, value: 24.5 }
       verdict: win
-      note: "New in v2. v1.0 re-scored: 7.5%."
+      note: "Bias -6.1%. v2.0: 9.5%; v1.0 re-scored: 7.5%."
     - metric: EPA petrol SC03 (A/C) tests (1,819)
       better: lower
-      model: 18.9
+      model: 8.6
       unit: "%"
       baselines:
         - { name: "Log-linear regression (fit on dev)", kind: classical, value: 9.3 }
         - { name: "Dev median", kind: dumb, value: 21.7 }
-      verdict: loss
-      note: "Biased -18%. New in v2. v1.0 re-scored: 15.6%."
+      verdict: win
+      note: "Bias -6.2%. v2.0: 18.9% (-18.4%), a loss; v1.0 re-scored: 15.6%. v2.1 simulates the test's sun, A/C setting and hot-soaked cabin."
     - metric: EPA hybrid FTP tests (1,098)
       better: lower
-      model: 10.2
+      model: 8.7
       unit: "%"
       baselines:
         - { name: "Log-linear regression (fit on dev)", kind: classical, value: 16.3 }
         - { name: "Dev median", kind: dumb, value: 49.0 }
       verdict: win
-      note: "Bias -9.9%. v1.0 re-scored: 8.7%."
+      note: "Bias -8.3%. The test car is told its hybrid system (P2 / power-split / series) from the model line. v2.0: 10.2%; v1.0 re-scored: 8.7%."
     - metric: EPA hybrid highway tests (1,156)
       better: lower
-      model: 6.0
+      model: 5.6
       unit: "%"
       baselines:
         - { name: "Log-linear regression (fit on dev)", kind: classical, value: 21.5 }
         - { name: "Dev median", kind: dumb, value: 20.1 }
       verdict: win
-      note: "v1.0 re-scored: 5.9%."
+      note: "v2.0: 6.0%; v1.0 re-scored: 5.9%."
     - metric: EPA BEV city tests (746)
       better: lower
-      model: 8.8
+      model: 9.5
       unit: "%"
       baselines:
         - { name: "Log-linear regression (fit on dev)", kind: classical, value: 9.8 }
         - { name: "Dev median", kind: dumb, value: 19.0 }
       verdict: win
-      note: "v1.0 re-scored: 7.9%."
+      note: "Bias -9.5%; worse than v2.0 (8.8%) and v1.0 (7.9%), still under the regression."
     - metric: ZTBus trolleybus mission totals (1,115 missions)
       better: lower
-      model: 9.5
+      model: 5.6
       unit: "%"
       baselines:
         - { name: "Dev kWh/km (294 dev missions) × distance", kind: classical, value: 10.7 }
       verdict: win
-      note: "Sum of every leg and layover of the mission's full trace; bias -8.9%. v1.0: 14.6% on the same traces, 16.0% with its route proxy."
+      note: "Sum of every leg and layover of the mission's full trace; bias -1.5%. The bus is told its published 19 t curb mass. v2.0: 9.5% (-8.9%); v1.0: 14.6% on the same traces, 16.0% with its route proxy."
     - metric: ZTBus trolleybus legs (5,847)
       better: lower
-      model: 8.6
+      model: 7.0
       unit: "%"
       baselines:
         - { name: "Dev kWh/km × distance", kind: classical, value: 14.0 }
       verdict: win
-      note: "v1.0 re-scored: 12.5%."
+      note: "Bias +0.3%. v2.0: 8.6%; v1.0 re-scored: 12.5%."
     - metric: Mersin diesel bus trips (652)
       better: lower
-      model: 17.0
+      model: 17.2
       unit: "%"
       baselines:
         - { name: "Dev median on the same route", kind: dumb, value: 8.6 }
       verdict: loss
-      note: "Biased -16.7%; worse than v1.0 (14.8%)."
+      note: "Biased -16.7%. v2.0: 17.0%; v1.0: 14.8%. Dev (February, no A/C trip) is -3.1%, so dev does not show this bias. CNG buses: 19.2% (v2.0 18.0%) against 7.1%."
     - metric: ICCT tractor-trailers (2 trucks × 3 cycles)
       better: lower
-      model: 10.0
+      model: 10.7
       unit: "%"
       baselines:
         - { name: "Dev truck on the same cycle", kind: classical, value: 7.0 }
       verdict: loss
-      note: "v1.0: 11.4%."
+      note: "v2.0: 10.0%; v1.0: 11.4%."
   coverage:
-    - { output: "VED all trips (pooled)", actual: 61 }
-    - { output: "VED petrol", actual: 57 }
-    - { output: "VED hybrid", actual: 66 }
-    - { output: "VED electric", actual: 43 }
-    - { output: "VED plug-in", actual: 65 }
-    - { output: "EPA petrol FTP", actual: 65 }
-    - { output: "EPA petrol highway", actual: 76 }
-    - { output: "ZTBus missions", actual: 88 }
+    - { output: "VED all trips (pooled)", actual: 59 }
+    - { output: "VED petrol", actual: 55 }
+    - { output: "VED hybrid", actual: 65 }
+    - { output: "VED electric", actual: 41 }
+    - { output: "VED plug-in", actual: 64 }
+    - { output: "EPA petrol FTP", actual: 64 }
+    - { output: "EPA petrol highway", actual: 75 }
+    - { output: "EPA petrol SC03", actual: 58 }
+    - { output: "ZTBus missions", actual: 91 }
 
 wins:
-  - "Petrol cars: 8.7% per trip against 10.3% for the best classical method; car totals 7.5% against 8.6%."
-  - "Hybrids now win: 13.5% per trip against 15.3% for MOVES-like (v1.0 lost at 15.5%); bias +3.9% (v1.0 +8.4%)."
-  - "Plug-ins: 17.1% against 41% (with the start charge as an input)."
-  - "Zurich trolleybus missions on full traces: 9.5% against 10.7% for the dev kWh/km baseline (v1.0: 16.0%)."
-  - "EPA petrol US06 (5.1% vs 6.9%) and 20 °F cold FTP (9.5% vs 9.7%) beat a regression on the test car's own spec."
+  - "Petrol cars: 8.6% per trip against 10.3% for the best classical method; car totals 7.4% against 8.7%."
+  - "Hybrids: 13.4% per trip against 15.3% for MOVES-like (v1.0 lost at 15.5%)."
+  - "Plug-ins: 16.8% against 41% (with the start charge as an input)."
+  - "Zurich trolleybus missions on full traces: 5.6% against 10.7% for the dev kWh/km baseline (v2.0: 9.5%, v1.0: 16.0%)."
+  - "EPA petrol SC03 (A/C) now wins: 8.6% against 9.3% for a regression on the test car's own spec (v2.0 lost at 18.9%)."
+  - "EPA petrol US06 (5.2% vs 6.9%) and 20 °F cold FTP (8.5% vs 9.7%) beat the same regression."
 losses:
-  - "The two exam Leafs are still 19.5% low and lose to MOVES-like (22.6% vs 19.0%)."
-  - "EPA petrol FTP, highway and SC03 lose to a regression on the test car's own spec. The highway bias is gone (0.0%, v1.0 +15.3%), but the error still loses (6.7% vs 5.0%); SC03 (A/C) is 18% low."
-  - "Diesel and CNG buses (17-18%) and the trucks (10%) lose to the dev median on the same route or cycle; the buses got worse than v1.0."
-  - "P2 hybrids on VED got worse (17.2% vs v1.0's 10.4%), and so did plug-in car totals (20.1% vs 10.1%)."
+  - "The two exam Leafs are 20.3% low and lose to MOVES-like (23.2% vs 19.0%; v2.0 22.6%). The one dev Leaf is +4.6%, so dev cannot show it."
+  - "EPA petrol FTP (8.6% vs 7.1%) and highway (6.8% vs 5.0%) lose to a regression on the test car's own spec."
+  - "Diesel and CNG buses (17.2%, 19.2%) and the trucks (10.7%) lose to the dev median on the same route or cycle, and all three are slightly worse than v2.0."
+  - "P2 hybrids on VED (18.3%, v1.0 10.4%) and plug-in car totals (20.6%, v1.0 10.1%) are worse than v1.0."
 limits:
-  - "Error bars: 61% of VED exam trips inside the 68% band overall, but petrol 57% and the Leafs 43%; ZTBus missions too wide (88%)."
+  - "Error bars: 59% of VED exam trips inside the 68% band overall, petrol 55% and the Leafs 41%; ZTBus missions too wide (91%)."
   - VED fuel is a MAF-based estimate, Ann Arbor 2017–18 only, mostly warm trip fragments.
   - "Hybrid and EV calibration rests on 5 dev hybrids and 1 dev Leaf; RoadSim v2's known hybrid gaps (old Toyota engines, TMED P2, plug-in series) are learned around only where dev data shows them."
   - Heavy duty is thin and partly synthetic (Mersin speed profiles from stops and duration).
+  - "The dev score D2 moves by about 0.005 between two sets of five networks trained on the same data (half the 0.01 margin), mostly through the small heavy-duty terms."
 next:
-  - "EPA hybrids told their hybrid system and the bus told its curb mass (rungs r8, r9: real gains on their dev terms, short of the D2 margin): a dev score weighted per data set would judge such rungs fairly."
   - "Leaf: older BEVs use 10-17% more than their twins (RoadSim LIMITS); a BEV era or battery-age input needs dev BEVs beyond one Leaf."
-  - "Real Mersin speed profiles; A/C on conventional cars and hybrids (SC03 -18%)."
+  - "Buses: real Mersin speed profiles, A/C trips on dev, and a spark-ignition (CNG) heavy-duty engine in the generator."
+  - "EPA petrol city: the network still reads RoadSim's own dev twins 4.5% low on the FTP (0.8% on the highway); the remaining generator difference is not found."
   - "Argonne D3 as a dev and exam set: RoadData now holds it (65 vehicles, 1,661 usable 10 Hz tests, split by vehicle), with more dev hybrids, plug-ins and BEVs than VED's 5 hybrids and 1 Leaf."
+  - "A dev score weighted per data set, or more networks, so a one-group fix is not judged mostly by seed noise in other groups."
 help_wanted:
   - "NREL Fleet DNA truck and bus traces with fuel (nrel.gov times out for scripts): a real exam for trucks, which today rest on 2 ICCT trucks x 3 cycles."
 

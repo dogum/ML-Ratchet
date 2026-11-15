@@ -426,3 +426,39 @@ Not done, and why:
 
 Release choice: r17, 5 networks (`weights/r15_s*.npz`, trained on the r15 banks), error bars by r12's method refitted on
 dev (`sigma_factors.json`: simulation factors per architecture, then the dev factor per group). The exam has not been run.
+
+## 15 Nov 2026 — the exam, once (v2.1)
+
+`training/exam2.py r17_noidle_inputs`, run once after the release-choice commit (`work/exam2.json`, copied to
+`training/exam3.json`; v2.0's run stays in `training/exam2.json`). v2.0 (`work/weights_v20`, its own error-bar factors)
+and v1.0 were re-scored in the same run; v2.0 reproduces its card to the decimal.
+
+| set | v2.1 | v2.0 | best baseline | verdict |
+|---|---|---|---|---|
+| VED petrol trips | **8.6%** (+0.3%) | 8.7% | 10.3% MOVES-like | win |
+| VED hybrid trips | **13.4%** (+3.8%) | 13.5% | 15.3% MOVES-like | win |
+| VED plug-in trips | **16.8%** | 17.1% | 41.3% MOVES-like | win |
+| VED Leaf trips | 23.2% (-20.3%) | 22.6% | **19.0%** MOVES-like | loss |
+| EPA petrol HWY | 6.8% | 6.7% | **5.0%** regression | loss |
+| EPA petrol US06 | **5.2%** | 5.1% | 6.9% | win |
+| EPA petrol FTP | 8.6% (-5.0%) | 8.9% | **7.1%** | loss |
+| EPA petrol 20 F cold FTP | **8.5%** | 9.5% | 9.7% | win |
+| EPA petrol SC03 | **8.6%** (-6.2%) | 18.9% (-18.4%) | 9.3% | **win (was a loss)** |
+| EPA hybrid FTP / HWY | **8.7 / 5.6%** | 10.2 / 6.0% | 16.3 / 21.5% | win |
+| EPA BEV city | **9.5%** | 8.8% | 9.8% | win |
+| ZTBus missions / legs | **5.6 / 7.0%** | 9.5 / 8.6% | 10.7 / 14.0% | win |
+| Mersin diesel | 17.2% | 17.0% | **8.6%** | loss |
+| ICCT | 10.7% | 10.0% | **7.0%** | loss |
+
+Worse than v2.0: Leafs (+0.6 points), petrol HWY and US06 (+0.1), BEV city (+0.7), VED P2 hybrids (17.2 -> 18.3%),
+plug-in car totals (20.1 -> 20.6%), Mersin diesel / CNG (+0.2 / +1.2), ICCT (+0.7). Coverage of the 68% band: VED
+pooled 59% (v2.0 61%), petrol 55%, Leafs 41%; EPA SC03 58% (v2.0 20%); ZTBus missions 91% (too wide).
+
+Of the six exam losses this pass looked at, one flips (SC03, the one dev showed with a twin close to the test). Petrol FTP
+narrowed (8.9 -> 8.6% vs 7.1%), the rest did not move or got slightly worse; dev showed no bias for the Leafs and the
+Mersin diesel buses, and only one dev truck.
+
+Release: `weights/r15_s*.npz`, `sigma_factors.json`, examples' exam predictions rebuilt (`make_examples.py`), demo golden
+regenerated, live instrument re-exported (32 parity cases, worst 1.9e-7). The garage reference
+(`site/public/garage/reference.json`, written by `shared/vehicle/garage/export_garage.py`) still holds v2.0's EnergyNet
+outputs and must be re-exported for the site's garage test to pass.
