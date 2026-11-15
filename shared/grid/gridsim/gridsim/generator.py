@@ -117,12 +117,17 @@ def generate_fleet(seed=0, peak_MW=None, reserve_margin=None, wind_frac=None, so
 
 
 def generate_states(n=1000, seed=0, systems=("ERCO", "GB"), ibr_share=(0.0, 0.85), demand_frac=(0.35, 1.0),
-                    loss=("largest", 0.3, 1.0)):
+                    loss=("largest", 0.3, 1.0), aggregate=False):
     """n random system snapshots ready for frequency_event (vectorised batch).
 
     Each: a random fleet (generate_fleet), a demand level, an instantaneous IBR share; synchronous units committed in
     random merit order until (demand - IBR - imports) + spinning reserve is covered; online units loaded between
-    pmin and pmax.  Returns (states, losses_MW, labels DataFrame)."""
+    pmin and pmax.  Returns (states, losses_MW, labels DataFrame).
+
+    aggregate: False (default, as released). True merges the units of each state per technology (aggregate_units)
+    after the labels are computed: fleets of up to ~1,300 units otherwise pad a batched frequency_event; GridPulse's
+    build measured ~40x faster batches (HANDOFF P0.6). Exact for the linear parts of the governor model; rate limits
+    and per-unit headroom clips act on the group instead of each unit."""
     rng = np.random.default_rng(seed)
     states, losses, labels = [], [], []
     for i in range(n):
@@ -192,4 +197,7 @@ def generate_states(n=1000, seed=0, systems=("ERCO", "GB"), ibr_share=(0.0, 0.85
                            inertia_s_per_demand=E / demand, n_sync_units=len(units), loss_MW=L,
                            governor_headroom_MW=float(P["up"].sum()), ffr_MW=float(sum(f["MW"] for f in ffr)),
                            D=D, deadband_Hz=db, battery_MW=bat_MW, largest_unit_MW=big))
+        if aggregate:
+            from .frequency import aggregate_units
+            st["units"] = aggregate_units(st["units"], by=("tech",), db=db, f0=sysd["f0"])
     return states, losses, pd.DataFrame(labels)
