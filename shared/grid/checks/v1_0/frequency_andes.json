@@ -1,0 +1,18 @@
+{
+ "andes_version": "2.0.0",
+ "disturbance": "200 MW load step at bus 7 (constant-power loads)",
+ "andes": {
+  "nadir_Hz": 59.57707790763455,
+  "t_nadir_s": 2.835099999999961,
+  "f_30s_Hz": 59.82174022773967,
+  "rocof_0_0p5s": -0.2866135834150984
+ },
+ "gridsim": {
+  "nadir_Hz": 59.600714250921335,
+  "t_nadir_s": 2.915,
+  "f_30s_Hz": 59.833301789295945,
+  "rocof_0_0p5s": -0.25437572552121424
+ },
+ "rms_diff_Hz": 0.014837967434088441,
+ "note": "differences come from electrical losses changing with flows, voltage dynamics and the 6th-order machines"
+}

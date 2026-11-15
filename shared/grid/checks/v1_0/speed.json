@@ -1,0 +1,32 @@
+{
+ "machine": "Intel Xeon 2.1 GHz, 1 thread, shared with other jobs (load average ~3 on 2 cores)",
+ "powerflow_ACTIVSg2000": {
+  "ac_nr_s": 0.035922170000048936,
+  "dc_s": 0.004300548667136657,
+  "ptdf_build_s": 0.3637077390012564,
+  "dc_opf_s": 0.6827973439994821
+ },
+ "frequency": {
+  "single_60s_event_dt0.02_h0.01_s": 0.3043557546667823,
+  "batch_events": 95,
+  "batch_60s_s_per_event": 0.0975324747579036
+ },
+ "generator_states_s_per_state": 0.029288388559998567,
+ "dispatch_ercot_week_merit_s": 1.877150004998839,
+ "dispatch_ercot_week_lp_s": 5.0336470659985935,
+ "dispatch_ercot_lp_solve_s_per_day_median": 0.42960309982299805,
+ "dispatch_ercot_week_milp_s": 9.975775588000033,
+ "dispatch_ercot_milp_solve_s_per_day_median": 1.079002857208252,
+ "dispatch_ercot_year_wall_s": {
+  "2022": {
+   "calibrated": 791.6,
+   "obs_nuc": 965.4,
+   "merit": 3.0
+  },
+  "2019": {
+   "calibrated": 766.2,
+   "merit": 2.3,
+   "economic": 1221.8
+  }
+ }
+}

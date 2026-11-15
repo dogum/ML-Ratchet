@@ -55,12 +55,17 @@ IBR_TECHS = {"wind", "solar_pv", "battery"}
 # 3.75 with the earlier dispatch calibration, so it trades off against governor headroom); it stands for all fast
 # response the model lacks (motor load, fast CT/IBR response), textbook load damping is 1-2.  US_EAST/US_WEST: 1.0
 # (textbook, Kundur 1994; not calibrated).
+# ERCOT's effective damping is fitted on the 5 ERCOT dev events with states from the calibrated dispatch, so it belongs
+# to a physics version: read from that version's calibration file (checks/check_frequency_dev_events.py writes it).
+from .fleet import calibration as _calibration
+_ERCO_D = float(_calibration().get("frequency", {}).get("ERCO_D_pct_per_pct", 2.5))
+
 SYSTEMS = {
     # ERCOT: 0.036 Hz governor deadband (BAL-001-TRE-1), UFLS 59.3/58.9/58.5 Hz for 5/10/10 % (ERCOT Nodal Op. Guide 2.6),
     # load resources tripped by UF relays at 59.7 Hz; FFR from batteries at 59.85 Hz.
     # deadbands by technology from BAL-001-TRE-1 (R6): +-0.034 Hz steam/hydro with mechanical governors, +-0.0166 Hz
     # all other generating units (gas turbines, combined cycles, inverter-based)
-    "ERCO": dict(f0=60.0, db=0.0166, D=2.5,
+    "ERCO": dict(f0=60.0, db=0.0166, D=_ERCO_D,
                  db_by_tech={"coal_steam": 0.034, "gas_steam": 0.034, "biomass": 0.034, "oil": 0.034,
                              "nuclear": 0.034, "hydro_res": 0.034, "hydro_ror": 0.034, "pumped": 0.034},
                  ufls=[dict(f_Hz=59.3, frac=0.05, delay_s=0.3), dict(f_Hz=58.9, frac=0.10, delay_s=0.3),

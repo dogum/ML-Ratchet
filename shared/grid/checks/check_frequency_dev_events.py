@@ -110,6 +110,13 @@ for k in ("GB", "ERCO"):
     e = np.array([x["nadir_dev_err_pct"] for x in out[k]])
     out[k + "_summary"] = {"n": len(e), "nadir_dev_err_pct_mean": float(e.mean()), "nadir_dev_err_pct_mae": float(np.abs(e).mean())}
 json.dump(out, open(f"{GRID_CODE}/checks/frequency_dev_events.json", "w"), indent=1, default=float)
+# the fitted ERCOT damping belongs to this physics version: store it in the version's calibration file
+from gridsim.fleet import calibration_path, physics_version
+_cp = calibration_path(); _cal = json.load(open(_cp)) if os.path.exists(_cp) else {}
+_cal.setdefault("frequency", {}).update(ERCO_D_pct_per_pct=out["ERCO_damping_fit"]["D_pct_per_pct"],
+                                        ERCO_fitted_on="5 ERCOT dev events of splits.json, states from the calibrated "
+                                                       f"dispatch of physics {physics_version()}")
+json.dump(_cal, open(_cp, "w"), indent=1)
 try:
     import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
     fig, axs = plt.subplots(1, 4, figsize=(16, 3.6))
