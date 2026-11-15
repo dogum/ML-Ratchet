@@ -85,6 +85,8 @@ def score_rung(rung, frozen):
     dbase = baseline_table(dps, 'dev')
     if rung in ('rolling', 'spread'):
         tf = base[base.strategy == rung]; td = dbase[dbase.strategy == rung]
+    elif rung == 'bb':      # v1.2 reference: the backbone alone (classical)
+        tf = score_strategy(fz, 'bb'); td = score_strategy(dps, 'bb')
     else:
         net = PolicyNet(f'{ROOT}/ckpt/{rung}.npz')
         tf = score_strategy(fz, 'bp', net); td = score_strategy(dps, 'bp', net)

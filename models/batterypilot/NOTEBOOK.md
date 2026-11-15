@@ -235,3 +235,59 @@ own pre-2023 outage rates by technology are still wanted (help_wanted).
   (`training/checks/exam_report.json`) gives 244 in ERCOT and 248 in CAISO (245 is the mean of both, set against
   ERCOT's 300). Both files now say 244 (ERCOT) and 248 (CAISO) vs 300 and 282 for the optimiser. The first notebook
   entry is left as written.
+
+## 15 Nov 2026 — v1.2 attempt: a day-ahead value-curve backbone with a learned residual (not released)
+
+**Goal.** v1.1 loses every pooled exam row to the rolling day-ahead LP. The directions: keep the LP as the backbone
+and let the network supply what it lacks, or train on the CAISO-like family. Decide everything on dev and the v4 frozen
+set with the rule unchanged; examine only a released version.
+
+**Setup.** The work folder of the grid-follow-up worktree (banks, frozen set v4, calibration, checkpoints, dev paths)
+was copied into this checkout's `work/` (git-ignored). Physics 1.1, calibration v1.1, frozen set v4 as for v1.1.
+
+**Dev first.** On the 10 dev node-years (path-mean share of perfect foresight, R2 = v1.1 vs the rolling LP):
+ERCOT 1 h 0.470 vs 0.491 (the LP wins), 2 h 0.566 vs 0.540, 4 h 0.669 vs 0.575; CAISO 1 h 0.774 vs 0.657, 2 h 0.792 vs
+0.785, 4 h 0.836 vs 0.825; CAISO SP15 0.842 vs 0.856 (the LP wins at that node). So dev shows the 1 h loss in ERCOT and
+a loss at SP15, not the pooled CAISO loss of the exam.
+
+**The backbone** (`training/backbone.py`). The rolling LP's plan written as a value curve: at each re-plan (first hour,
+then 14:00 local, as the LP), a backward dynamic programme over the known DA horizon (DA prices as the forecast, the
+battery's wear proxy, 85 % round trip, no value left at the horizon end, as the LP) on a 201-point SOC grid gives the
+marginal value of stored energy at every hour; the offer rule then trades it against the RT price. Same information as
+the LP, but it responds to RT deviations instead of following a fixed schedule. 1.7 s per node-year and duration.
+Alone (reference R5, no network): dev 0.630 (LP 0.593, v1.1 0.638), frozen 0.684 (LP 0.504, v1.1 0.779). It gains in
+2021 (0.51-0.52 vs LP 0.28-0.32 and v1.1 0.37-0.38: it sells into the RT spikes the DA plan did not see) and loses in
+2019 (0.67 vs 0.78-0.79 for the LP and 0.81-0.82 for v1.1) and at 1 h in ERCOT (0.35 vs LP 0.49). 5, 9 or 41 SOC knots give the same dev result
+(0.630 / 0.624 / 0.622), so the 5-knot curve stays.
+
+**Hybrid rungs** (`train.py --hybrid`): the network reads the 135 v1.1 features plus the backbone curve
+(asinh(λ/ps) at the 5 knots) and outputs a residual on it; the last layer starts at zero, so training starts from the
+backbone. Backbone curves for every bank path are cached by `training/bbcache.py` (`work/data/bb/`). Scored with
+`ratchet.py score`, decided by `training/ladder_v1_2.py` (`training/ratchet_v1_2.json`); rule as released (frozen
+> incumbent + 0.01 and dev ≥ incumbent − 0.01); incumbent R2 (v1.1): frozen 0.7792, dev 0.6382.
+
+| rung | change | v4 frozen | dev | decision |
+|---|---|---|---|---|
+| R5 | backbone alone (reference, not a candidate) | 0.6836 | 0.6295 | — |
+| R6 | hybrid, curve kept non-increasing by a running minimum; 80 ERCOT path-years, 1,500 steps | 0.7024 | 0.6614 | rejected: frozen −0.077 |
+| R7 | R6 on 120 ERCOT + 45 CAISO-like path-years, 2,500 steps | — | — | stopped at step 775 (training capture 0.21 vs R3's 0.37 on the same windows); not scored |
+| R8 | R6 with each knot at least 0.01 below the last (the v1.1 floor); 80 ERCOT, 1,500 steps | 0.7769 | 0.6150 | rejected: frozen −0.002, dev −0.023 |
+| R9 | R8 on 120 ERCOT + 45 CAISO-like, 2,500 steps | 0.7869 | 0.6327 | rejected: frozen +0.0077 (margin 0.01) |
+
+R6 and R7 trained badly because the running minimum leaves flat pieces in the curve (the backbone has many), and the
+offer rule's gradient divides by the drop between knots; R8 fixed that with the same 0.01 floor the v1.0/v1.1 softplus
+steps use. Training captures of R8 and R9 then track R2 and R3 step by step on the same windows. R9 scores like R3 on the frozen
+set (0.7869 vs 0.7877) but below it on dev (0.633 vs 0.644). The CAISO-like family helps the hybrid no more than it
+helped the plain network.
+
+**What was learned.** The simulator and the real dev years disagree about the backbone. R6, which stayed close to the
+backbone, is the best policy on real dev so far (0.661 vs v1.1's 0.638; 2021 0.45-0.48 vs 0.37-0.38) and the worst on
+the frozen set (0.702 vs 0.779). R8 and R9, free to move away from it, learn what the simulator rewards and lose the
+dev gain. This is the twin-test gap again (94 % capture on twins of 2019 vs 82 % on real 2019): simulated RT spikes are
+more predictable from DA prices than real ones, so a DA-anchored policy that trades RT deviations looks worse in
+simulation than on real prices. The fix belongs in the simulator (unforecast scarcity), not in the policy, and it must
+be calibrated until the twin gap closes; only then can the frozen set judge the hybrid fairly.
+
+**Outcome.** No rung beat v1.1 by the rule; nothing released, no exam run. v1.1 stays. Code kept in `training/`
+(`backbone.py`, `bbcache.py`, `ladder_v1_2.py`, `--hybrid` and `--min-step` in `train.py`, the hybrid path in
+`model.py`, the `bb` reference in `evaluate.py` and `ratchet.py`); `batterypilot.py` is unchanged.

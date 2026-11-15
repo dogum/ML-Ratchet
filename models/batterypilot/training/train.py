@@ -23,18 +23,33 @@ ROOT = _paths.WORK   # was the sandbox workspace grid/batterypilot
 DUR = (1.0, 2.0, 4.0)
 
 
-def load_bank(pattern):
+def load_bank(pattern, hybrid=False):
     paths = []
     files = sorted(sum([glob.glob(p) for p in pattern.split(',')], []))
     for fn in files:
         z = np.load(fn, allow_pickle=True)
-        paths.append({k: z[k] for k in z.files})
+        p = {k: z[k] for k in z.files}
+        if hybrid:      # v1.2: the cached day-ahead value-curve backbone (bbcache.py)
+            bank = os.path.basename(os.path.dirname(os.path.abspath(fn)))
+            b = np.load(f'{ROOT}/data/bb/{bank}/{os.path.basename(fn)}')
+            for d in DUR:
+                p[f'lam{int(d)}'] = b[f'lam{int(d)}']
+        paths.append(p)
     return paths
 
 
+def bb_features(lam, ps):
+    """Backbone value curve in the network's units: asinh(lambda / price scale) at the SOC knots."""
+    return np.arcsinh(np.asarray(lam, float) / np.asarray(ps, float)[:, None]).astype(np.float32)
+
+
 class Net(nn.Module):
-    def __init__(self, n_in=N_FEAT, hidden=128, depth=2, K=len(SOC_KNOTS)):
+    def __init__(self, n_in=N_FEAT, hidden=128, depth=2, K=len(SOC_KNOTS), hybrid=False, min_step=0.0):
         super().__init__()
+        self.hybrid = hybrid
+        self.min_step = min_step
+        if hybrid:
+            n_in = n_in + K
         layers = []; d = n_in
         for _ in range(depth):
             layers += [nn.Linear(d, hidden), nn.SiLU()]; d = hidden
@@ -42,10 +57,26 @@ class Net(nn.Module):
         self.f = nn.Sequential(*layers)
         self.register_buffer('mu', torch.zeros(n_in)); self.register_buffer('sd', torch.ones(n_in))
         with torch.no_grad():
-            self.f[-1].bias.copy_(torch.tensor([1.5] + [-0.5] * (K - 1)))
+            if hybrid:      # start exactly at the backbone: zero residual
+                self.f[-1].weight.zero_(); self.f[-1].bias.zero_()
+            else:
+                self.f[-1].bias.copy_(torch.tensor([1.5] + [-0.5] * (K - 1)))
 
     def forward(self, X):
         h = self.f((X - self.mu) / self.sd)
+        if self.hybrid:
+            # v1.2: residual on the day-ahead backbone curve (last K inputs), kept decreasing in SOC: each knot at
+            # least min_step below the previous one (min_step 0: non-increasing; flat pieces make the offer rule's
+            # gradient blow up, so the v1.2 runs use 0.01, the same floor as the v1.0/v1.1 softplus steps)
+            u = X[..., -h.shape[-1]:] + h
+            if self.min_step > 0:
+                zs = [u[..., 0]]
+                for k in range(1, u.shape[-1]):
+                    zs.append(torch.minimum(zs[-1] - self.min_step, u[..., k]))
+                z = torch.stack(zs, -1)
+            else:
+                z = torch.cummin(u, dim=-1).values
+            return torch.clamp(z, -12.0, 12.0)
         z0 = h[..., :1]
         steps = nn.functional.softplus(h[..., 1:]) + 0.01
         return torch.clamp(torch.cat([z0, z0 - torch.cumsum(steps, -1)], -1), -12.0, 12.0)
@@ -81,8 +112,8 @@ def rollout(V, rt, cl, E, P, eta_c, eta_d, soc0):
 
 
 class Sampler:
-    def __init__(self, paths, W=336, seed=0):
-        self.paths = paths; self.W = W
+    def __init__(self, paths, W=336, seed=0, hybrid=False):
+        self.paths = paths; self.W = W; self.hybrid = hybrid
         self.rng = np.random.default_rng(seed)
         self.bats = {d: Battery(1.0, d) for d in DUR}
 
@@ -97,6 +128,8 @@ class Sampler:
             t = np.arange(t0, t0 + self.W)
             cl = bat.c_lin(p['T'][t])
             X, ps = build(p, t, d, cl, ps=p['ps'][t])
+            if self.hybrid:
+                X = np.concatenate([X, bb_features(p[f'lam{int(d)}'][t], ps)], 1)
             Xs.append(X); rts.append(p['rt'][t]); cls.append(cl); durs.append(d)
             # normaliser: perfect-foresight value of these days for this battery (precomputed per day, 1/2/4 h)
             dd = p['day'][t]
@@ -113,8 +146,8 @@ def step_loss(net, b, rng, eta_rt=0.85):
     B = b['X'].shape[0]
     z = net(b['X'])
     ps = None
-    # value curves in $: the last-but-two feature is log(ps/30)
-    ps = 30.0 * torch.exp(b['X'][:, :, -1])
+    # value curves in $: feature N_FEAT-1 is log(ps/30)
+    ps = 30.0 * torch.exp(b['X'][:, :, N_FEAT - 1])
     V = torch.sinh(z) * ps[..., None]
     E = b['d'] * 1.0; P = torch.ones(B)
     eta = torch.full((B,), float(np.sqrt(eta_rt)))
@@ -122,7 +155,7 @@ def step_loss(net, b, rng, eta_rt=0.85):
     rev, socT, thr = rollout(V, b['rt'], b['cl'], E, P, eta, eta, soc0)
     term = (socT - soc0) * E * eta * b['val']
     obj = (rev + term) / b['norm']
-    return -obj.mean(), dict(capture=float(obj.mean()), cycles=float((thr / (E * eta)).mean()))
+    return -obj.mean(), dict(capture=float(obj.detach().mean()), cycles=float((thr / (E * eta)).mean()))
 
 
 def standardise(net, sampler, n=48):
@@ -137,6 +170,9 @@ def export(net, fn):
     for i, m in enumerate(lin):
         w[f'W{i}'] = m.weight.detach().numpy().astype(np.float64)
         w[f'b{i}'] = m.bias.detach().numpy().astype(np.float64)
+    if net.hybrid:
+        w['hybrid'] = np.array(1)
+        w['min_step'] = np.array(net.min_step)
     np.savez(fn, **w)
 
 
@@ -147,13 +183,15 @@ def main():
     ap.add_argument('--window', type=int, default=336); ap.add_argument('--hidden', type=int, default=128)
     ap.add_argument('--lr', type=float, default=2e-3); ap.add_argument('--init', default=None)
     ap.add_argument('--seed', type=int, default=0)
+    ap.add_argument('--hybrid', action='store_true', help='v1.2: residual on the day-ahead value-curve backbone')
+    ap.add_argument('--min-step', type=float, default=0.0, help='hybrid: minimum decrease between knots (asinh units)')
     a = ap.parse_args()
     os.makedirs(f'{ROOT}/ckpt', exist_ok=True)
-    paths = load_bank(a.bank)
+    paths = load_bank(a.bank, a.hybrid)
     print('paths', len(paths), flush=True)
     torch.manual_seed(a.seed)
-    net = Net(hidden=a.hidden)
-    sampler = Sampler(paths, W=a.window, seed=a.seed)
+    net = Net(hidden=a.hidden, hybrid=a.hybrid, min_step=a.min_step)
+    sampler = Sampler(paths, W=a.window, seed=a.seed, hybrid=a.hybrid)
     rng = np.random.default_rng(a.seed + 1)
     opt = torch.optim.Adam(net.parameters(), lr=a.lr)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, a.steps, eta_min=a.lr * 0.05)
@@ -177,7 +215,7 @@ def main():
         opt.zero_grad(); loss.backward()
         nn.utils.clip_grad_norm_(net.parameters(), 1.0)
         opt.step(); sched.step()
-        run.append(info['capture'])
+        run.append(float(info['capture']))
         if (step + 1) % 25 == 0:
             hist.append((step + 1, float(np.mean(run)))); print(step + 1, 'capture(window) %.3f' % np.mean(run),
                                                                  'cycles/window %.1f' % info['cycles'],

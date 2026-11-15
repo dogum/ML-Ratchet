@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 from battery import Battery, settle
-from strategies import perfect_foresight, daily_spread, threshold_rule, rolling_da_lp
+from strategies import perfect_foresight, daily_spread, threshold_rule, rolling_da_lp, offer_policy_run
 from model import PolicyNet, run_policy
 
 
@@ -21,6 +21,10 @@ def run_strategy(name, path, bat, net=None, thresholds=None):
         ch, dis = threshold_rule(rt, bat, lo, hi)
     elif name == 'rolling':
         ch, dis = rolling_da_lp(da, hour, day, bat, cl)
+    elif name == 'bb':      # v1.2 reference: the day-ahead value-curve backbone alone, as an offer curve
+        from backbone import value_curves
+        V = value_curves(da, hour, day, cl, bat.d, P=bat.P, eta_rt=bat.eta_rt)
+        ch, dis, _ = offer_policy_run(bat, rt, V, cl)
     elif name == 'bp':
         ch, dis, _, _ = run_policy(net, path, bat, cl)
     else:

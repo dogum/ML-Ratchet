@@ -121,6 +121,24 @@ v1 = GridSim merit-order prices only; v2 = + dev-calibrated ORDC scarcity, cold 
 
 GridSim physics 1.0 took its coal, CC, CT and gas-steam forced and planned outage shares from Texas RE's 2024/2025 assessments (exam-period data). Physics 1.1 uses pre-2023 sources (PJM 2017-2021 class EFORd; Texas RE 2017) and a coal offer adder re-fitted on dev 2019 (-5.73 $/MWh, was -6.62). Everything downstream was redone on 1.1: the scarcity calibration on dev 2019, 2021 and Uri (ORDC mu -4,000 -> 0 MW, sigma 5,000 MW, cold-outage f_max 0.55 -> 0.40), the training banks (120 ERCOT + 45 CAISO-like + 45 sim-v1 path-years) and the frozen set v4 (24 ERCOT + 9 CAISO-like). For reference (not a rung), the v1.0 network scores 0.7778 frozen on v4 and 0.6373 dev. R4 missed the margin by 0.0002 and is rejected as the rule says; R2 is released as v1.1.
 
+### v1.2 attempt — day-ahead value-curve backbone + learned residual (15 Nov 2026, not released)
+
+**Objective:** As v1.1: capture = net revenue / perfect-foresight net revenue (net of wear), summed over the 1, 2 and 4 h batteries of each simulated path-year and averaged over the path-years of the frozen simulated set  
+**Rule:** Unchanged: keep a rung if its frozen capture beats the incumbent's by more than 0.01 AND its dev capture is not more than 0.01 below the incumbent's. Incumbent: v1.1 (R2).
+
+| Rung | Change | Frozen-set score | Decision | Why | v4 frozen | Dev capture |
+|---|---|---|---|---|---|---|
+| R2 | v1.1 as released: MLP value curve, 80 ERCOT path-years, 1,500 steps | 0.779 | ● kept | Incumbent (v1.1). | 0.7792 | 0.6382 |
+| R5 | Reference, not a candidate: the day-ahead value-curve backbone alone, executed by the offer rule (no network) | 0.684 | ○ rejected | A classical reference. Dev 0.630 (LP 0.593): gains in 2021 (0.51-0.52 vs LP 0.28-0.32), loses in 2019 (0.67 vs 0.78-0.79) and with 1 h ERCOT batteries (0.35 vs 0.49). | 0.6836 | 0.6295 |
+| R6 | Hybrid: the network reads the backbone curve too and outputs a residual on it (kept non-increasing by a running minimum; zero at the start); 80 ERCOT path-years, 1,500 steps | 0.702 | ○ rejected | Frozen 0.7024 vs 0.7792 (-0.077); dev 0.661 vs 0.638 (+0.023). Best on dev, worst on the frozen set. Flat pieces of the curve made the offer rule's gradient blow up; training capture fell from 0.33 to 0.26. | 0.7024 | 0.6614 |
+| R7 | R6 on 120 ERCOT + 45 CAISO-like path-years, 2,500 steps | — | ○ rejected | Stopped at step 775: training capture 0.21 vs 0.37 for R3 on the same windows (the R6 flaw). Not scored. | — | — |
+| R8 | R6 with a strictly decreasing curve (each knot at least 0.01 below the last, the v1.1 floor); 80 ERCOT path-years, 1,500 steps | 0.777 | ○ rejected | Frozen 0.7769 vs 0.7792 (-0.002); dev 0.615 vs 0.638 (-0.023, gate failed). | 0.7769 | 0.615 |
+| R9 | R8 on 120 ERCOT + 45 CAISO-like path-years, 2,500 steps | 0.787 | ○ rejected | Frozen 0.7869 vs 0.7792 (+0.0077, below the 0.01 margin); dev 0.633 vs 0.638 (-0.006). About R3's frozen score (0.7877) with a lower dev score (R3 0.644). | 0.7869 | 0.6327 |
+
+<sub>Columns after *Why*: Frozen capture on v4_frozen and dev capture on the real dev node-years (training/ratchet_v1_2.json).</sub>
+
+The backbone (training/backbone.py) is the rolling day-ahead LP's plan written as a value curve: a backward dynamic programme over the known DA horizon (re-planned at 14:00 local, as the LP) gives the marginal value of stored energy at every SOC, and the offer rule trades it against the RT price. Hybrid rungs read the v1.1 features plus that curve and output a residual on it. R5 is a classical reference, not a candidate. No rung beat v1.1 by the rule: nothing released, no exam run. R6 (closest to the backbone) is the best policy on real dev and the worst on the frozen set: the simulator rewards DA-predictable spikes more than real prices do (the twin-test gap). Log: training/ratchet_v1_2.json (training/ladder_v1_2.py).
+
 Raw per-rung logs are in [`training/`](training/).
 
 ## Physics
@@ -153,7 +171,7 @@ Battery: 1 MW grid side, usable energy = P × duration (5-95 % of nameplate), 85
 
 ## Next rungs
 
-- Make simulated real-time spikes less predictable from day-ahead prices (unforecast outage events, 15-minute ramp scarcity), fitted until the dev twin capture matches the real one (91-94 % twin vs 80 % real).
+- Make simulated real-time spikes less predictable from day-ahead prices (unforecast outage events, 15-minute ramp scarcity), fitted until the dev twin capture matches the real one (91-94 % twin vs 80 % real). The v1.2 attempt (15 Nov 2026, not released) shows why this comes first: a hybrid anchored on the day-ahead LP's value curve beat v1.1 on real dev (0.661 vs 0.638) but lost on the simulated frozen set (0.702 vs 0.779), so the frozen set cannot judge it fairly until the simulator stops rewarding DA-predictable spikes.
 - A 1 h specialist or a 15-minute execution head: BatteryPilot loses to the day-ahead optimiser on 1 h batteries and in CAISO.
 - Nodal basis: a West Texas congestion model; a real CAISO import and hydro supply curve; ancillary services.
 - Upstream to GridSim behind flags: the ORDC adder, the cold-outage curve, the gas-turbine ambient derate, the day-ahead price generator and the single-LP perfect-foresight baseline.

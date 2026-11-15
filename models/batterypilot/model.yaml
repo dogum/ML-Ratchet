@@ -211,7 +211,7 @@ limits:
   - "The v1.1 scarcity calibration hit a grid edge again (μ 0 MW, the top of a grid widened once from −2,000 MW). The forced-outage rates of physics 1.1 are PJM class averages (demand-period EFORd), not ERCOT's own pre-2023 rates."
   - "No error bar on the value curve itself; the exam's intervals are on revenue (weekly block bootstrap), so the recipe's coverage step does not apply."
 next:
-  - "Make simulated real-time spikes less predictable from day-ahead prices (unforecast outage events, 15-minute ramp scarcity), fitted until the dev twin capture matches the real one (91-94 % twin vs 80 % real)."
+  - "Make simulated real-time spikes less predictable from day-ahead prices (unforecast outage events, 15-minute ramp scarcity), fitted until the dev twin capture matches the real one (91-94 % twin vs 80 % real). The v1.2 attempt (15 Nov 2026, not released) shows why this comes first: a hybrid anchored on the day-ahead LP's value curve beat v1.1 on real dev (0.661 vs 0.638) but lost on the simulated frozen set (0.702 vs 0.779), so the frozen set cannot judge it fairly until the simulator stops rewarding DA-predictable spikes."
   - "A 1 h specialist or a 15-minute execution head: BatteryPilot loses to the day-ahead optimiser on 1 h batteries and in CAISO."
   - "Nodal basis: a West Texas congestion model; a real CAISO import and hydro supply curve; ancillary services."
   - "Upstream to GridSim behind flags: the ORDC adder, the cold-outage curve, the gas-turbine ambient derate, the day-ahead price generator and the single-LP perfect-foresight baseline."
