@@ -150,11 +150,12 @@ exam:
 wins:
   - "Mass within 127 kg per car (112 kg per trip) against 205 kg for the physics fit and 227 kg for the dev median."
   - "Engine size 0.38 L against 0.60 L for the dev median (v1.0: 0.50 L)."
-  - "Mass now follows the physics: +800 kg moves the estimate +524 kg in simulation (v1.0: +182 kg); the two Leafs read within 120 kg (v1.0: +641 / +278 kg)."
+  - "Mass now follows the physics: +800 kg moves the estimate +524 kg in simulation (v1.0: +182 kg)."
 losses:
   - A simple rule beats it on powertrain type (99.4% vs 97.1%); v2.0 is worse here than v1.0 (98.9%).
   - "Per car, mass is a little worse than v1.0 (127 vs 116 kg), driven by HEVs (181 vs 93 kg); 1σ coverage fell to 56%."
   - "Buses: the dev-median guess (453 kg) beats the bus network (1,204 kg; 752 kg with the dev-fitted level)."
+  - "The two Leafs: 119 / 105 kg off (v1.0: +641 / +278 kg; the V2_PLAN target of 150 kg is met), but the dev-median guess is exact for both, because they sit in its 3,500 lb class."
 limits:
   - "CdA and Crr are still weakly identified: CdA ×1.5 moves the estimate by 3%."
   - "Real cars turn power into acceleration differently from their twins (dev twin b0 ratio 0.83-1.37 per car); the dev Leaf's battery power fits a lighter car (0.83× its twin)."

@@ -1,7 +1,7 @@
 # The ratchet ladders, normalised. Raw logs: training/ratchet.json (v1, physics v1) and training/ratchet_v2.json (v2, physics v2).
 model: hybridpilot
 ladders:
-  - name: v1 — RoadSim physics v1
+  - name: "v1.0 — RoadSim physics v1 (12 Nov 2026)"
     objective: "Frozen skill = 1 − Σ gap(policy) / Σ gap(rule strategies) over strata, gap = 1 − min(% of DP, 1), on a frozen set of 106 trips (36 held-out generated vehicles on held-out routes, synthetic drives and cycles)"
     rule: Keep if the frozen skill beats the incumbent by more than 0.01 AND dev % of DP is no more than 0.2 points worse AND dev charge-holding is no more than 3 points worse.
     margin: 0.01
@@ -15,19 +15,19 @@ ladders:
       - { id: R0, change: "RoadSim adaptive ECMS (the incumbent)", sim: 0.564, decision: kept, why: "Starting incumbent.", metrics: [98.88, "98%", 98.99, "100%"] }
       - { id: R1, change: "Behaviour cloning: s and on/off from the network", sim: 0.592, decision: rejected, why: "Dev charge holding fell to 74%.", metrics: [98.70, "69%", 99.64, "74%"] }
       - { id: R2, change: "DAgger round 1 + SOC feedback (Kp 6)", sim: 0.596, decision: kept, why: "+0.032; dev gate passed.", metrics: [98.88, "94%", 99.20, "99%"] }
-      - { id: R3, change: "On/off by the cost with the learned s (on/off head unused)", sim: 0.702, decision: kept, why: "+0.106; dev gate passed. Released as v1.", metrics: [99.31, "94%", 99.26, "99%"] }
+      - { id: R3, change: "On/off by the cost with the learned s (on/off head unused)", sim: 0.702, decision: kept, why: "+0.106; dev gate passed. Released as v1.0.", metrics: [99.31, "94%", 99.26, "99%"] }
       - { id: R4, change: "R3 + 30 s preview", sim: 0.709, decision: rejected, why: "+0.007, short of the margin.", metrics: [99.34, "94%", 99.26, "99%"] }
       - { id: R5, change: "Policy-search fine-tune of head knobs on 60 training trips", sim: 0.671, decision: rejected, why: "Score fell.", metrics: [99.19, "96%", 99.13, "99%"] }
       - { id: R6, change: "DAgger round 2 (+600 trips driven by R3)", sim: 0.674, decision: rejected, why: "Score fell.", metrics: [99.28, "94%", 99.22, "99%"] }
       - { id: R7, change: "R6 + 30 s preview", sim: 0.677, decision: rejected, why: "Score fell.", metrics: [99.23, "92%", 99.21, "99%"] }
-  - name: v2 — RoadSim physics v2 (calibrated twins)
+  - name: "v2.0 — RoadSim physics v2 (Phase D, 14 Nov 2026; calibrated twins)"
     objective: "Frozen skill = 1 − Σ gap(policy) / Σ gap(rule strategies) over strata, gap = 1 − min(% of DP, 1), on a new frozen set of 106 trips built on physics v2 (36 held-out generated vehicles on held-out routes, synthetic drives and cycles); DP reference with the physics' 8 s / 3 s minimum on/off times"
     rule: Keep if the frozen skill beats the incumbent by more than 0.01 AND dev % of DP is no more than 0.2 points worse AND dev charge-holding is no more than 3 points worse.
     margin: 0.01
     dev_gate: "Dev % of DP ≥ incumbent − 0.2 pt; dev charge-holding ≥ incumbent − 3 pt (76 dev trips: calibrated twins of the 7 VED dev hybrids, 18 dev generated vehicles, full-ZTBus dev legs)"
     frozen_sets: [frozen_106_v2]
     scored_on: frozen_106_v2
-    note: "Physics changed (v1 → v2), so the sets were rebuilt and every v1 decision re-taken from R0. R1–R7 are v1's rungs re-run on v2: all beat A-ECMS on the frozen set by +0.37 to +0.48 but failed the dev charge-holding gate (87–91 % vs 97 %). R8 (A-ECMS's own SOC feedback gains) passed and is released. The ladder was closed before the exam."
+    note: "Physics changed (v1 → v2), so the sets were rebuilt and every v1 decision re-taken from R0. R1–R7 are v1's rungs re-run on v2: all beat A-ECMS on the frozen set by +0.37 to +0.48 but failed the dev charge-holding gate (70–91 % vs 97 %; R1 held 70 %). R8 (A-ECMS's own SOC feedback gains) passed and is released. The ladder was closed before the exam."
     columns_source: Frozen set (% of DP, charge holding), dev set (% of DP, charge holding), frozen engine starts per km
     columns: ["Frozen % of DP", "Frozen holds", "Dev % of DP", "Dev holds", "Frozen starts/km"]
     rungs:

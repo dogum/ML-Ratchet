@@ -73,12 +73,12 @@ Coverage of the 68% error bars on the exam: VED all trips (pooled) **61%**, VED 
 - Hybrids now win: 13.5% per trip against 15.3% for MOVES-like (v1.0 lost at 15.5%); bias +3.9% (v1.0 +8.4%).
 - Plug-ins: 17.1% against 41% (with the start charge as an input).
 - Zurich trolleybus missions on full traces: 9.5% against 10.7% for the dev kWh/km baseline (v1.0: 16.0%).
-- EPA petrol highway bias gone (0.0%, v1.0 +15%); EPA US06 and 20 °F cold FTP beat the regression.
+- EPA petrol US06 (5.1% vs 6.9%) and 20 °F cold FTP (9.5% vs 9.7%) beat a regression on the test car's own spec.
 
 ### Where it loses
 
 - The two exam Leafs are still 19.5% low and lose to MOVES-like (22.6% vs 19.0%).
-- EPA petrol FTP, highway and SC03 lose to a regression on the test car's own spec; SC03 (A/C) is 18% low.
+- EPA petrol FTP, highway and SC03 lose to a regression on the test car's own spec. The highway bias is gone (0.0%, v1.0 +15.3%), but the error still loses (6.7% vs 5.0%); SC03 (A/C) is 18% low.
 - Diesel and CNG buses (17-18%) and the trucks (10%) lose to the dev median on the same route or cycle; the buses got worse than v1.0.
 - P2 hybrids on VED got worse (17.2% vs v1.0's 10.4%), and so did plug-in car totals (20.1% vs 10.1%).
 
@@ -91,7 +91,7 @@ Coverage of the 68% error bars on the exam: VED all trips (pooled) **61%**, VED 
 
 ## The ratchet
 
-### v2 (RoadSim physics v2, Phase D, 14 Nov 2026)
+### v2.0 — RoadSim physics v2 (Phase D, 14 Nov 2026)
 
 **Objective:** Skill = 1 - median |log error| / median |log error| of the class-median guess, on the frozen simulated set val2 (400 unseen generated vehicles x 10 trips on RoadSim physics v2)  
 **Rule:** Keep if the val2 skill beats the incumbent by more than 0.01 AND the dev score D2 (mean of 18 dev median errors: VED 4 fleets, EPA 9 tests, full-ZTBus dev legs and missions, Mersin, ICCT) gets no more than 0.01 worse. A rung that changes the simulated physics is judged on its own physics version of val2, the incumbent re-scored on it. Gate-only rungs (inputs only real data carries) must improve D2 by more than 0.01.
@@ -117,9 +117,9 @@ Coverage of the 68% error bars on the exam: VED all trips (pooled) **61%**, VED 
 
 <sub>Columns after *Why*: Frozen-set median error and the dev score D2 (lower is better).</sub>
 
-Versions of val2: a RoadSim v2 raw, b + OBD label model, c + v1's on-road wrapper, d c + v1's plug-in patch, e b + plug-in patch. Each rung is scored on the version it was judged on.
+Versions of val2: a RoadSim v2 raw, b + OBD label model, c + v1's on-road wrapper, d c + v1's plug-in patch, e b + plug-in patch, f a + plug-in patch (rung v2-r5), eL e with labels from RoadSim's EPA procedure emulation (rung v2-r10, 'e+L'). Each rung is scored on the version it was judged on.
 
-### v1 (RoadSim physics v1, 12 Nov 2026)
+### v1.0 — RoadSim physics v1 (12 Nov 2026)
 
 **Objective:** Skill = 1 − median |log error| / median |log error| of the class-median guess, on the frozen simulated validation set (3,991 examples from 400 unseen vehicles)  
 **Rule:** Keep if the skill beats the incumbent by more than 0.01 AND the dev score D (mean of 15 dev median errors across VED fleets, EPA tests, ZTBus, Mersin and ICCT) gets no more than 0.01 worse.
@@ -157,13 +157,14 @@ The shared RoadSim simulator (shared/vehicle), physics v2 (pinned: roadsim-physi
 
 ## Help wanted
 
-- Argonne D3 10 Hz dynamometer tests (anl.gov answers HTTP 403 to scripts): more dev hybrids, plug-ins and BEVs; needs a browser download.
+- NREL Fleet DNA truck and bus traces with fuel (nrel.gov times out for scripts): a real exam for trucks, which today rest on 2 ICCT trucks x 3 cycles.
 
 ## Next rungs
 
 - EPA hybrids told their hybrid system and the bus told its curb mass (rungs r8, r9: real gains on their dev terms, short of the D2 margin): a dev score weighted per data set would judge such rungs fairly.
 - Leaf: older BEVs use 10-17% more than their twins (RoadSim LIMITS); a BEV era or battery-age input needs dev BEVs beyond one Leaf.
 - Real Mersin speed profiles; A/C on conventional cars and hybrids (SC03 -18%).
+- Argonne D3 as a dev and exam set: RoadData now holds it (65 vehicles, 1,661 usable 10 Hz tests, split by vehicle), with more dev hybrids, plug-ins and BEVs than VED's 5 hybrids and 1 Leaf.
 
 ## Files
 
@@ -186,7 +187,7 @@ The shared RoadSim simulator (shared/vehicle), physics v2 (pinned: roadsim-physi
 | [US EPA test-car lists, drive cycles and ALPHA maps; fueleconomy.gov](https://www.epa.gov/compliance-and-fuel-economy-data/data-cars-used-testing-fuel-economy) | physics (fueleconomy.gov dev families -> model-era prior), dev, exam | Public domain (U.S. Government) |
 | [USGS 3DEP lidar elevation](https://www.usgs.gov/3d-elevation-program) | physics (road grade) | Public domain (U.S. Government) |
 | [Iowa Environmental Mesonet ASOS weather](https://mesonet.agron.iastate.edu/request/download.phtml) | physics (weather) | Free use with credit |
-| [ZTBus — Widmer, Ritter, Onder, Scientific Data 2023 (ETH Zurich), all 1,409 missions](https://www.research-collection.ethz.ch/handle/20.500.11850/626734) | dev (294 missions), exam (1,115 missions) — trolleybuses | CC BY 4.0 |
+| [ZTBus — Widmer, Ritter, Onder, Scientific Data 2023 (ETH Zurich), all 1,409 missions](https://doi.org/10.3929/ethz-b-000626723) | dev (294 missions), exam (1,115 missions) — trolleybuses | CC BY 4.0 |
 | [Mersin bus trips — Abut, Zenodo](https://zenodo.org) | dev, exam (diesel and CNG buses) | CC BY 4.0 |
 | [ICCT 2018 tractor-trailer tests (Rodriguez, Delgado, Muncrief)](https://theicct.org) | dev, exam (trucks) | Cite the report |
 

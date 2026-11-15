@@ -60,13 +60,14 @@ Coverage of the 68% error bars on the exam: Mass, per car **56%**, Mass, per tri
 
 - Mass within 127 kg per car (112 kg per trip) against 205 kg for the physics fit and 227 kg for the dev median.
 - Engine size 0.38 L against 0.60 L for the dev median (v1.0: 0.50 L).
-- Mass now follows the physics: +800 kg moves the estimate +524 kg in simulation (v1.0: +182 kg); the two Leafs read within 120 kg (v1.0: +641 / +278 kg).
+- Mass now follows the physics: +800 kg moves the estimate +524 kg in simulation (v1.0: +182 kg).
 
 ### Where it loses
 
 - A simple rule beats it on powertrain type (99.4% vs 97.1%); v2.0 is worse here than v1.0 (98.9%).
 - Per car, mass is a little worse than v1.0 (127 vs 116 kg), driven by HEVs (181 vs 93 kg); 1σ coverage fell to 56%.
 - Buses: the dev-median guess (453 kg) beats the bus network (1,204 kg; 752 kg with the dev-fitted level).
+- The two Leafs: 119 / 105 kg off (v1.0: +641 / +278 kg; the V2_PLAN target of 150 kg is met), but the dev-median guess is exact for both, because they sit in its 3,500 lb class.
 
 ## Limits
 
@@ -78,7 +79,7 @@ Coverage of the 68% error bars on the exam: Mass, per car **56%**, Mass, per tri
 
 ## The ratchet
 
-### v1.0 — RoadSim physics v1
+### v1.0 — RoadSim physics v1 (12-13 Nov 2026)
 
 **Objective:** Mean simulated skill over architecture, mass, displacement, CdA, Crr, engine-off share, strategy and the ledger, on frozen val_v3 (600 cars × 8 trips)  
 **Rule:** Keep if the skill beats the incumbent by more than 0.01 AND the mean of 4 dev error ratios is at most 1.05 AND dev VED-type accuracy drops by no more than 0.03.
@@ -125,7 +126,7 @@ A network twin test found the generator's fleet far heavier than VED-era cars (2
 
 Every v1.0 decision re-taken from r0 on physics v2, then rescored in order on each new frozen set; no decision changed between sets. The v1.0 dev-twin wrappers (priors v2) now over-correct: physics v2 already carries VED-era engine efficiency (twin fuel/km 0.95× real with the plain generator, 1.07× with the wrappers). Mass response = median change of the pooled estimate when 64 simulated cars (stratified by type) get +800 kg, 8 trips (sweep.py; info, not part of the rule). v1.0 on the same sweep: +182 kg.
 
-### v2.0 bus — city-bus mass (Phase D)
+### v2.0 bus — city-bus mass (Phase D, 14 Nov 2026)
 
 **Objective:** Mean skill over log mass, log CdA and log Crr on a frozen set of 300 simulated electric buses × 6 windows (single window and pooled)  
 **Rule:** Keep if the skill beats the incumbent by more than 0.01 AND the level-corrected dev mass error is at most 5% worse AND the slope of estimated mass on passenger mass drops by no more than 0.1.

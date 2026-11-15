@@ -109,3 +109,17 @@ v2 burns 0.16 points more than the v1 network on the v2 exam, which however fail
   the run differs; the instrument exporter now computes each moment's grid inside a second, identical run.
 - Series hybrids' candidate count varies (direct-drive window); the exporter pads it.
 - The dev gate's charge-holding rule, not the frozen margin, decided every v1 rung on v2.
+
+## 14 Nov 2026 — card corrections after a site audit (no model change)
+
+- **Bus exam row: mixed -> loss.** The row listed only A-ECMS and the rule. Constant-s ECMS, in the same exam table,
+  scores 98.98 % of DP pooled over the 24 bus trips (series 98.60, P2 99.36) against HybridPilot's 97.50 % (96.78 /
+  98.23), holding charge on 100 % of them. ECMS is now listed and the verdict is a loss. The wins line "series buses
+  (+0.70)" now says it is against A-ECMS.
+- **Mild row: win -> mixed.** Constant-s ECMS scores 98.72 % against 98.10 % on the 56 mild-hybrid trips but holds
+  charge on only 43 % of them (HybridPilot 95 %). ECMS is now listed, with that note.
+- **ratchet.yaml:** the v2 note said R1-R7 held charge on 87-91 % of dev trips; R1 held 70 %. Now 70-91 %. Ladder names
+  "v1.0 — ..." / "v2.0 — ...", as EnergyNet and TripDetective.
+- **MODEL_CARD:** it quoted the collection's motto "Graded on reality", but HybridPilot is graded in simulation; it
+  now says so. RoadSim's calibration is credited to the dev-only procedure in CALIBRATION.md.
+- ZTBus link: https://doi.org/10.3929/ethz-b-000626723.
