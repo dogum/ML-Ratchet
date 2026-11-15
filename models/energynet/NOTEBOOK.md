@@ -319,3 +319,57 @@ year, per-member masked inputs and the new error-bar factors).
   that exist. No numpy-vs-torch parity number was logged in `training/`.
 - Ladder names: "v2.0 — RoadSim physics v2 ..." and "v1.0 — RoadSim physics v1 ...", as TripDetective and
   HybridPilot.
+
+## 15 Nov 2026 — improvement pass after v2.0: dev twin reads, rungs r14-r15, the plan for the rest
+
+The v2.0 exam losses were public before this pass, so every change below starts from a failure shown on **dev**.
+
+**EPA twin read on dev** (`training/twin_read_epa.py`, `twin_feed_epa.py`; RoadSim's own twins of 235 dev conventional
+EPA cars, `shared/vehicle/checks/epa_pool__roadsim-physics-v2.json`). Fuel, + = more than the test:
+
+| dev test | network (all dev cars) | network (twin cars) | RoadSim twin | network / twin |
+|---|---|---|---|---|
+| FTP (235 cars) | -3.9% | -3.9% | +1.4% | -6.3% |
+| HWY (235) | +0.4% | +2.8% | +1.4% | +0.3% |
+| US06 (57) | +3.3% | +6.2% | +3.0% | +1.4% |
+| 20 F cold FTP (43) | -9.4% | -9.7% | -2.5% | -6.8% |
+| SC03 (47) | -17.5% | -13.3% | +0.3% | -14.2% |
+
+Where the twin is close and the network is not, the gap is in the generator or the network, not in RoadSim. Fed the
+twins' own simulated runs (bank style, 60 cars), the network reads them 5.5% low on the hot UDDS, 5.1% low on the cold
+UDDS and 0.8% low on the HWFET. Two generator misses found:
+
+1. **SC03 and 20 F cold FTP draws** (bank.py) ran with HVAC on but no sun, the cabin starting at 21 C and RoadSim's
+   default HVAC settings. The test runs at 850 W/m2 with A/C maximum on recirculated air and the cabin soaked to 45 C
+   (roadsim.epa.sc03). `check_dynoproc.py` (30 training vehicles): the old draw missed 12% of a conventional car's SC03
+   fuel (median; hybrids 11%, BEVs 15%); the cold FTP settings change little (+0.4% conventional, +5% BEV).
+2. **Idle-stop.** RoadSim's generator gives 30% of conventional light-duty cars idle-stop at any model year; nothing in
+   the inputs shows it. On RoadSim's dev twins it takes 7.1% off a hot UDDS, 6.1% off a cold one, 0.1% off a HWFET
+   and 10-24% off three VED training routes. RoadSim's conventional calibration ran its dev twins without idle-stop, and
+   those twins match the dev FTP (+1.4%).
+
+**r14** (`dynoproc.py`, `bank_dyno.py`): the 1,359 SC03 / cold-FTP dyno rows of the three training banks (65 in val2)
+re-simulated under the test conditions, same vehicles, trips and start states (checked: the old run reproduces the bank
+row exactly). New frozen-set version val2[g]. Five networks as r13. Physics rung: D2 must improve by more than 0.01.
+
+| D2 term | r13 (v2.0) | r14 |
+|---|---|---|
+| EPA petrol SC03 | 20.5% (bias -17.5%) | **10.2%** (-6.1%) |
+| EPA petrol FTP / cold FTP | 8.8 / 12.4% | 8.8 / 12.3% |
+| ZTBus legs / missions | 9.0 / 9.5% | 8.0 / 7.0% |
+| EPA hybrid FTP / HWY | 18.5 / 13.4% | 19.5 / 15.4% |
+| Mersin diesel / CNG, ICCT | 12.3 / 15.9 / 18.1% | 13.9 / 14.6 / 19.2% |
+| **D2** | **0.1195** | **0.1137 (-0.0058)** |
+
+val2[g] skill 0.669 vs the incumbent's 0.665 on g (0.670 on its own e). **Rejected**: the SC03 term fell by 10 points,
+but D2 needs -0.01. Terms the change cannot touch (ZTBus, Mersin, ICCT, EPA hybrids) moved by 1-3 points between the two
+sets of five networks: a two-network read of r13 alone gave D2 0.1145 against 0.1195 for all five. That seed noise is
+about half the margin.
+
+**Plan, written before r15 is scored:**
+- r15: idle-stop off for the generated conventional cars (`bank_idlestop.py`, rows replayed from the bank's own random
+  draws: `bank_replay.py`; train2b and train2c seeds 102 / 103 recovered by matching their first rows), on top of r14's
+  banks, so it carries r14's change too. val2[h]. Physics rung against the incumbent.
+- r16: gate-only, the incumbent's networks told the EPA hybrids' system and the ZTBus curb mass (r8 + r9).
+- r17 (only if r15 is rejected): r15's networks with r16's inputs, judged as a physics rung against the incumbent.
+- If none passes, nothing is released.

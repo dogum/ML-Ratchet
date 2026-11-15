@@ -5,6 +5,9 @@ Physics (target) versions on val2 (dataset.V2COLS): a = RoadSim v2 raw; b = + Ro
 estimated fuel; c = b + v1's on-road wrapper; d = c + v1's plug-in patch; e = b + the plug-in patch. A rung whose
 version differs from the incumbent's changes the simulated physics: as in v1, the frozen set then becomes the
 candidate's version and the incumbent is re-scored on it (the dev gate is the real judge of such a rung).
+g (15 Nov 2026, rung v2-r14) = e on the banks whose SC03 / 20 F cold-FTP dyno rows run under the EPA test conditions
+(bank_dyno.py: val2d, train2d+train2bd+train2cd); h (rung v2-r15) = g with the generated conventional light-duty cars'
+idle-stop off (bank_idlestop.py: val2di, train2di+train2bdi+train2cdi).
 
 Rule (ratchet.yaml), as changed in the open on 14 Nov 2026 after r4 (NOTEBOOK.md):
   model rungs (same physics version as the incumbent): keep if val2 skill beats the incumbent by more than MARGIN and
@@ -27,7 +30,7 @@ MARGIN, GATE = 0.01, 0.01
 CK = _P.WORK + '/ckpt'
 OUT = _P.WORK + '/ratchet2.json'
 RUNGS = json.load(open(os.path.join(_P.SRC, 'rungs2.json')))
-VERS = ['a', 'b', 'c', 'd', 'e', 'f', 'e+L']
+VERS = ['a', 'b', 'c', 'd', 'e', 'f', 'e+L', 'g', 'h']
 
 
 def load(r):
@@ -51,6 +54,7 @@ def main():
         e['val'] = dict(old.get('val', {}))
         for v in VERS:
             if v.endswith('+L') and not os.path.exists(f'{_P.WORK}/data/bank_val2/.lab_epa'): continue
+            if v in EV.V2BANK and not os.path.isdir(f"{_P.WORK}/data/bank_{EV.V2BANK[v][0]}"): continue
             if v not in e['val']: e['val'][v] = EV.val_score2(m, v)
         for v in (r['version'],) + ((inc['version'],) if inc else ()):
             if v not in e['val']: e['val'][v] = EV.val_score2(m, v)

@@ -220,15 +220,22 @@ def dev_gate(model):
     return res
 
 
+# val2 versions on other banks: g = e on the banks whose SC03 / 20 F cold-FTP dyno rows run under the EPA test
+# conditions (rung v2-r14, bank_dyno.py: val2d, train2d); h = g with the generated conventional cars' idle-stop off
+# (rung v2-r15, bank_idlestop.py: val2di, train2di)
+V2BANK = {'g': ('val2d', 'e'), 'h': ('val2di', 'e')}
+
+
 def val_score2(model, version):
     """Phase D frozen simulated set: val2 (400 unseen generated vehicles x 10 trips on RoadSim physics v2, frozen tiers
     seed 777), targets of physics version `version` (dataset.V2COLS); dumb baseline from the train2 bank."""
-    B, T, X, E = val_set('val2', 'lab_epa' if version.endswith('+L') else 'lab')
+    bank, version = V2BANK.get(version, ('val2', version))
+    B, T, X, E = val_set(bank, 'lab_epa' if version.endswith('+L') else 'lab')
     y = DS.target(B, T, version)
     ok = y > 0.02
     B = {k: v[ok] for k, v in B.items()}; X, E, y = X[ok], E[ok], y[ok]
     p, s, c = model.predict(X, E)
-    r = dumb_rates2(version); k = B['arch'] * 10 + B['cls']
+    r = dumb_rates2(version, 'train2' + bank[4:]); k = B['arch'] * 10 + B['cls']
     pd_ = np.array([r.get(int(g), np.nan) for g in k]) * B['dist']
     pd_ = np.where(np.isfinite(pd_) & (pd_ > 0), pd_, np.nan)
     e_net = np.abs(np.log(p / y)); e_dumb = np.abs(np.log(pd_ / y))
@@ -245,8 +252,8 @@ def val_score2(model, version):
 
 
 @functools.lru_cache(maxsize=8)
-def dumb_rates2(version):
-    B = DS.load_bank('train2'); T = DS.draw_tiers(B, np.random.default_rng(1))
+def dumb_rates2(version, bank='train2'):
+    B = DS.load_bank(bank); T = DS.draw_tiers(B, np.random.default_rng(1))
     y = DS.target(B, T, version); k = B['arch'] * 10 + B['cls']
     ok = (y > 0.02) & (B['dist'] > 100); y, k, dist = y[ok], k[ok], B['dist'][ok]
     return {int(g): float(np.median(y[k == g] / dist[k == g])) for g in np.unique(k)}

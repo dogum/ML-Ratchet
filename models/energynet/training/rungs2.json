@@ -165,5 +165,33 @@
   ],
   "era": true,
   "change": "three times the simulated data (three banks on the same fleet, 86,400 trips), networks and training as r7"
+ },
+ {
+  "name": "r14_dyno",
+  "version": "g",
+  "mode": "corr",
+  "members": [
+   "r14_s0",
+   "r14_s1",
+   "r14_s2",
+   "r14_s3",
+   "r14_s4"
+  ],
+  "era": true,
+  "change": "SC03 and 20 F cold-FTP dynamometer draws run under the EPA test conditions (roadsim.epa: SC03 850 W/m2 sun, A/C maximum on recirculated air at 72 F, cabin soaked to 45 C after a preconditioning drive; cold FTP heat at 72 F on outside air); dev twin read: the network sat 17.5% below the dev SC03 tests while RoadSim's own SC03 twin of 47 dev vehicles is -0.3%; the old bank draw missed 12% of a conventional car's SC03 fuel (median of 13 training vehicles, check_dynoproc.py); physics rung"
+ },
+ {
+  "name": "r15_noidle",
+  "version": "h",
+  "mode": "corr",
+  "members": [
+   "r15_s0",
+   "r15_s1",
+   "r15_s2",
+   "r15_s3",
+   "r15_s4"
+  ],
+  "era": true,
+  "change": "generated conventional light-duty cars without engine idle-stop (RoadSim's generator gave 30% of them idle-stop at any model year, invisible to the network; RoadSim's dev-calibrated twins have none and match the dev FTP within 1.4%); their rows re-simulated on the same trips and start states, labels recomputed; dev twin read: the network put RoadSim's own twins of 60 dev EPA cars 5.5% low on the UDDS and 0.8% low on the HWFET, and the dev FTP 3.9% low while the highway is +0.4%; physics rung, on top of r14's banks"
  }
 ]
