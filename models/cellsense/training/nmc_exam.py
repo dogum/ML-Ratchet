@@ -67,6 +67,8 @@ if __name__ == '__main__':
     dev_rows = RT.real_readings(D.DEV); Pd = RT.run_real(net, dev_rows); qd = np.array([r['q_total'] for r in dev_rows])
     fac = {'q_total': widen_factor(Pd['q_total'] - qd, Pd['q_total_sig'])}
     fd = np.array([1 - r['q_total'] / r['q_ref'] for r in dev_rows]); mref = np.array([r['ref'] for r in dev_rows]); fac['fade'] = widen_factor((Pd['fade'] - fd)[mref], Pd['fade_sig'][mref])
+    if '--factors-only' in sys.argv:         # round 2: the dev-fitted widen factors alone, for the export before the exam is run
+        json.dump(dict(ckpt=ck, factors=fac), open(os.path.join(OUT, f"factors_{ck.replace('.pt', '').replace('|', '_')}.json"), 'w'), indent=1); print('widen factors (dev)', fac); sys.exit()
     dev_med = float(np.median([r['q_total'] for r in D.readings(D.DEV)]))
     rows = RT.real_readings(D.EXAM); P = RT.run_real(net, rows); qt = np.array([r['q_total'] for r in rows]); ref = np.array([r['ref'] for r in rows])
     q_ref = np.array([r['q_ref'] if r['ref'] else np.nan for r in rows])
@@ -94,7 +96,7 @@ if __name__ == '__main__':
                fade_corr=float(np.corrcoef(P['fade'][ref], fe[ref])[0, 1]),
                rows=[dict(cell=r['cell'], diag=r['diag'], depth=r['depth'], ref=r['ref'], q_true=r['q_total'], q_model=float(P['q_total'][i]), q_sig=float(P['q_total_sig'][i] * fac['q_total']),
                           lli=float(P['lli'][i]), lam_ne=float(P['lam_ne'][i]), lam_pe=float(P['lam_pe'][i]), **{k: (None if not np.isfinite(v[i]) else float(v[i])) for k, v in extra.items()}) for i, r in enumerate(rows)])
-    json.dump(out, open(os.path.join(OUT, f"exam_{ck.replace('.pt', '')}.json"), 'w'), indent=1)
+    json.dump(out, open(os.path.join(OUT, f"exam_{ck.replace('.pt', '').replace('|', '_')}.json"), 'w'), indent=1)
     print('widen factors', {k: round(v, 2) for k, v in fac.items()}, 'dev median %.3f Ah' % dev_med)
     for t in T: print({k: (round(v, 1) if isinstance(v, float) else v) for k, v in t.items()})
     print('coverage', {k: round(v, 2) for k, v in cov.items()}); print('per cell partial mAh', {k: round(v, 1) for k, v in cells.items()}); print('fade corr %.3f' % out['fade_corr'])

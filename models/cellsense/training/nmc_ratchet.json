@@ -1608,6 +1608,142 @@
    },
    "decision": "rejected",
    "why": "+0.004 on ocpd, needs more than +0.01."
+  },
+  {
+   "id": "n12",
+   "change": "Ensemble of the four jitter-trained networks n8-n11 (a bundle of rejects: n9-n11 each missed the margin); mean of the members, bar from their variance and spread; with the rule",
+   "ckpt": "n8_ocpj.pt|n9_ocpj2.pt|n10_ocpd.pt|n11_ocpd_mix.pt+endrule",
+   "sim": {
+    "ocpd": 0.7234538562164105
+   },
+   "val": {
+    "ocpd": {
+     "full_ref": {
+      "skills": {
+       "q_total": 0.9770825898186716,
+       "lli": 0.9663296121335135,
+       "lam_ne": 0.8659340995720445,
+       "lam_pe": 0.8582181587735019,
+       "fade": 0.9938417429437947
+      },
+      "objective": 0.9322812406483052
+     },
+     "full": {
+      "skills": {
+       "q_total": 0.9770825898186716,
+       "lli": 0.8011944529221487,
+       "lam_ne": 0.6220931436968304,
+       "lam_pe": 0.5269906053937459
+      },
+      "objective": 0.7318401979578492
+     },
+     "partial_ref": {
+      "skills": {
+       "q_total": 0.7677807528487385,
+       "lli": 0.7911602943263271,
+       "lam_ne": 0.6339486569479271,
+       "lam_pe": 0.7679973157328915,
+       "fade": 0.7716726126772157
+      },
+      "objective": 0.74651192650662
+     },
+     "partial": {
+      "skills": {
+       "q_total": 0.5688124973496949,
+       "lli": 0.564901785292432,
+       "lam_ne": 0.38500163347799443,
+       "lam_pe": 0.41401232289134793
+      },
+      "objective": 0.4831820597528673
+     },
+     "objective": 0.7234538562164105
+    }
+   },
+   "dev": {
+    "q_partial_mAh": 92.53291806889719,
+    "q_full_mAh": 0.0036717696920299417,
+    "q_1.5_ref_mAh": 145.92494158654267,
+    "q_1.5_noref_mAh": 88.70227948408116,
+    "q_2.5_ref_mAh": 44.62062425805372,
+    "q_2.5_noref_mAh": 109.97947494129168,
+    "q_3.5_ref_mAh": 96.08971251824879,
+    "q_3.5_noref_mAh": 70.92315148933673
+   },
+   "exam": {
+    "q_partial_mAh": 112.58169327629128,
+    "q_full_mAh": 0.004551887963034373,
+    "q_1.5_ref_mAh": 137.83058978386092,
+    "q_1.5_noref_mAh": 105.10822931684505,
+    "q_2.5_ref_mAh": 86.18987224579212,
+    "q_2.5_noref_mAh": 131.1424345737602,
+    "q_3.5_ref_mAh": 117.25711341484975,
+    "q_3.5_noref_mAh": 98.29161991343172
+   },
+   "decision": "kept",
+   "why": "+0.010 on the frozen set; dev partial 92.5 vs 126.1 mAh, dev full 0.0 vs 0.0 mAh."
+  },
+  {
+   "id": "n13",
+   "change": "n12, and readings of a cut-short curve pulled toward the dev cells' prior by inverse variance (no reference: their median capacity 4.631 Ah, spread 151 mAh; with one: the reference less their median fade 4.8%, spread 3.3 points); full curves untouched",
+   "ckpt": "n8_ocpj.pt|n9_ocpj2.pt|n10_ocpd.pt|n11_ocpd_mix.pt+endrule+devprior",
+   "sim": {
+    "ocpd": 0.6902116469689887
+   },
+   "val": {
+    "ocpd": {
+     "full_ref": {
+      "skills": {
+       "q_total": 0.9770825898186716,
+       "lli": 0.9663296121335135,
+       "lam_ne": 0.8659340995720445,
+       "lam_pe": 0.8582181587735019,
+       "fade": 0.9938417429437947
+      },
+      "objective": 0.9322812406483052
+     },
+     "full": {
+      "skills": {
+       "q_total": 0.9770825898186716,
+       "lli": 0.8011944529221487,
+       "lam_ne": 0.6220931436968304,
+       "lam_pe": 0.5269906053937459
+      },
+      "objective": 0.7318401979578492
+     },
+     "partial_ref": {
+      "skills": {
+       "q_total": 0.6138348523369747,
+       "lli": 0.7911602943263271,
+       "lam_ne": 0.6339486569479271,
+       "lam_pe": 0.7679973157328915,
+       "fade": 0.607788667882339
+      },
+      "objective": 0.6829459574452919
+     },
+     "partial": {
+      "skills": {
+       "q_total": 0.2912010256362614,
+       "lli": 0.564901785292432,
+       "lam_ne": 0.38500163347799443,
+       "lam_pe": 0.41401232289134793
+      },
+      "objective": 0.41377919182450895
+     },
+     "objective": 0.6902116469689887
+    }
+   },
+   "dev": {
+    "q_partial_mAh": 71.12342253216922,
+    "q_full_mAh": 0.0036717696920299417,
+    "q_1.5_ref_mAh": 51.080496878561135,
+    "q_1.5_noref_mAh": 91.18719787294478,
+    "q_2.5_ref_mAh": 55.76373662659434,
+    "q_2.5_noref_mAh": 89.94054612865982,
+    "q_3.5_ref_mAh": 81.15782348559559,
+    "q_3.5_noref_mAh": 54.68363297691856
+   },
+   "decision": "rejected",
+   "why": "-0.033 on ocpd, needs more than +0.01."
   }
  ]
 }

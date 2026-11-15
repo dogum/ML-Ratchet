@@ -340,6 +340,65 @@ and without the reference ("partial"), and on full curves.
   val_ocpd.npz), `python nmc_ratchet.py rescore ocpd`, `nmc_train.py --name n10_ocpd --banks bank_ocpd_5*.npz`,
   `nmc_ratchet.py add n10 ... n10_ocpd.pt+endrule`.
 
+## 15 Nov 2026 — round 2: cut-short NMC811 readings (n12 ensemble kept, n13 dev-prior pull rejected)
+
+Target: the exam rows where cut-short NMC811 readings lose to guessing the dev median (all six cut-short readings 135 vs
+105 mAh; 3.5 Ah with reference 115 vs 98 and shift-at-cut 84; fade 2.47 vs 1.94 points). Those rows are public, so every
+step below was chosen on the dev cells (W3, W4, W8) and the frozen set only.
+
+**Dev shows the same failure.** n8 (released) on dev, mAh, cut at 1.5 / 2.5 / 3.5 Ah with reference: 195 / 93 / 101;
+without: 180 / 136 / 53; mean 126.1. Guessing the dev median on the same readings (in-sample, so flattering): 96.5 with,
+109.4 without, mean 103.3. So on dev, too, short curves read worse than the median guess.
+
+**Probes (all on dev and val_ocpd; `training/nmc_blend.py`, records `training/nmc_blend_probe_r2.json`,
+`nmc_blend_sim_r2.json`, `nmc_seed_spread_r2.json`).** The pull toward a prior: partial readings only, inverse variance
+between the network (its bar times a widen-only factor fitted on dev partial readings) and the dev prior (no reference:
+median capacity 4.631 Ah, spread 151 mAh = 1.4826 MAD; with reference: reference x (1 - 4.85%), spread 3.29 points of
+the reference). Scored in-sample and leave-one-dev-cell-out (LOCO: prior and factor from the other two cells).
+
+| Probe | Dev partial (mAh) | in-sample pull | LOCO pull | val_ocpd |
+|---|---|---|---|---|
+| dev median guess | 103.3 | | | |
+| n8 (released) | 126.1 | 68.7 | 87.7 | 0.7133 -> 0.6666 with the dev prior, 0.7124 with the frozen set's own prior |
+| n9 | 84.3 | 67.7 | 84.3 | |
+| n10 | 114.4 | 84.8 | 105.0 | |
+| n11 | 91.4 | 72.9 | 92.4 | |
+| ensemble n8-n11 | 92.5 | 71.1 | 89.8 | 0.7235 -> 0.6902 with the dev prior, 0.7220 with the frozen set's own prior |
+| ensemble n8 + n10 | 114.3 | 77.3 | 97.2 | |
+
+- The pull works on dev (n8: 126 -> 88 mAh LOCO; 1.5 Ah with reference 195 -> 70) and costs the frozen set 0.047: the
+  frozen set's cells are drawn up to 2.5x the dev cells' degradation (median fade 11%, capacity 4.32 Ah; dev 4.8%,
+  4.63 Ah), so a pull toward the dev cells is wrong there by design. With the frozen set's own population in place of the
+  dev one the pull is neutral (-0.001): the network is already the posterior under its training prior.
+- Seed spread (rule: measure it when a rung clears the margin by less than twice it). n8's recipe trained again with
+  seeds 1 and 2 (`nmc_train.py --device cuda`, same banks, 5,000 steps): val_ocpd 0.7133 / 0.7034 / 0.7187 (sd 0.0078),
+  dev 126 / 98 / 115 mAh. The ensemble with n8 swapped for each seed: 0.7235 / 0.7248 / 0.7270 (sd 0.0018), dev 92.5 /
+  78.7 / 87.4 mAh.
+
+**Rungs (val_ocpd, margin 0.01, rule unchanged).**
+
+| Rung | Change | val_ocpd | Dev partial / full (mAh) | Decision |
+|---|---|---|---|---|
+| n12 | Ensemble of n8-n11 (a bundle of rejects: n9, n10, n11 each missed the margin); with the rule | 0.7235 | 92.5 / 0 | kept: +0.0102 over n8 |
+| n13 | n12, partial readings pulled toward the dev prior (above) | 0.6902 | 71.1 / 0 | rejected: -0.033 |
+
+- n12 clears the margin by 0.0002, far less than twice the seed spread. The rule keeps it. With n8 swapped for its other
+  two seeds the ensemble clears it by 0.0115 and 0.0137, so the decision holds over the three seeds measured; against
+  one lucky n8 seed (0.7187) it would not. Reported, not hidden.
+- n13 is the change the dev evidence argues for, and the frozen-set rule rejects it. The rule was not changed after
+  seeing this. What it says: on these cells, a short C/20 curve carries less about capacity than the cells' population
+  does, and the frozen set (drawn wide on purpose) cannot reward knowing the population. A rule for dev-population
+  calibration steps would have to be written down before any such rung is scored again.
+- Machine note: `nmc_ratchet.py add` used to print every rung's exam columns as it judged it; it did so once more for
+  n12 (exam partial 112.6 mAh), after the rule had decided. From n13 on it no longer scores the exam (`--with-exam` to
+  restore); the exam is run once per version by `nmc_exam.py`.
+
+**Release choice (before the exam): v1.3 = n12.** Four numpy members (`cellsense_nmc811_weights.npz` with the widen
+factors and the member list in its meta, `cellsense_nmc811_m1..m3.npz`), numpy vs torch 1.4-2.6e-6 per member, reader
+vs torch ensemble 5e-6 Ah on the dev readings. Dev-fitted widen factors: capacity 1.00 (the members' spread already
+covers 68% of dev readings), fade 1.52. LFP rows (lifetime, partial at 0.45 Ah) were not touched: the Severson batch
+files are not on this machine and were not fetched this round.
+
 ## Corrections
 
 - 14 Nov 2026: model.yaml: the partial-discharge loss said 'stopped at 0.6 Ah or below are no better than assuming no fade'. At 0.30 Ah the network beats no-fade (41.8 vs 45.7 mAh), so it now reads 0.45–0.6 Ah (46.5 and 52.0 vs 45.7 mAh); the card's limit says the same. Card: LFP rung 9 is marked released; LFP credits added. No verdict changed.

@@ -51,6 +51,7 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('--name', required=True); ap.add_argument('--banks', nargs='+', required=True); ap.add_argument('--steps', type=int, default=5000)
     ap.add_argument('--bs', type=int, default=256); ap.add_argument('--lr', type=float, default=2e-3); ap.add_argument('--seed', type=int, default=0)
     ap.add_argument('--widths', default='32,48,64,96,128'); ap.add_argument('--threads', type=int, default=4); ap.add_argument('--p_trunc', type=float, default=0.7); ap.add_argument('--smooth', type=float, default=0)
+    ap.add_argument('--device', default='cpu', help="'cuda' to train on the GPU (added 15 Nov 2026; earlier rungs ran on the CPU)")
     ap.add_argument('--target', default='total', help="'total': capacity itself; 'rest': the charge still to come below where the curve stops (q_total - last recorded Q)")
     a = ap.parse_args(); torch.set_num_threads(a.threads); torch.manual_seed(a.seed); rng = np.random.default_rng(a.seed)
     D = load_bank([os.path.join(_P.WORK, 'nmc', b) if not os.path.isabs(b) else b for b in a.banks]); N = len(D['y']); y = D['y'].astype(np.float64)
@@ -58,7 +59,7 @@ if __name__ == '__main__':
     if a.target == 'rest':        # scale of the remaining charge, from one fixed draw of truncations
         r0 = np.random.default_rng(1); j = r0.integers(0, N, 20000); rest = y[j, 0] - NM.q_last(trunc_aug(r0, D['Q1'][j].astype(np.float64), a.p_trunc))
         mu_y[0], sd_y[0] = rest.mean(), rest.std() + 1e-6
-    net = NM.Net(tuple(int(w) for w in a.widths.split(','))); ema = copy.deepcopy(net); opt = torch.optim.AdamW(net.parameters(), a.lr, weight_decay=1e-4)
+    net = NM.Net(tuple(int(w) for w in a.widths.split(','))).to(a.device); ema = copy.deepcopy(net); opt = torch.optim.AdamW(net.parameters(), a.lr, weight_decay=1e-4)
     path = os.path.join(CK, a.name + '.pt'); res = path + '.resume'; start = 1
     if os.path.exists(res):
         r = torch.load(res, weights_only=False); net.load_state_dict(r['net']); ema.load_state_dict(r['ema']); opt.load_state_dict(r['opt']); start = r['step'] + 1
@@ -70,7 +71,7 @@ if __name__ == '__main__':
         i = rng.integers(0, N, a.bs); Q1, Q0 = augment(rng, D['Q1'][i].astype(np.float64), D['Q0'][i].astype(np.float64))
         Q1 = trunc_aug(rng, Q1, a.p_trunc); yi = y[i].copy()
         if a.target == 'rest': yi[:, 0] = yi[:, 0] - NM.q_last(Q1)
-        X = torch.from_numpy(NM.features(Q1, Q0, smooth=a.smooth)); Y = torch.from_numpy(((yi - mu_y) / sd_y).astype(np.float32))
+        X = torch.from_numpy(NM.features(Q1, Q0, smooth=a.smooth)).to(a.device); Y = torch.from_numpy(((yi - mu_y) / sd_y).astype(np.float32)).to(a.device)
         out = net(X); loss = bnll(out[:, :nl], out[:, nl:].clamp(-7, 3), Y)
         opt.zero_grad(); loss.backward(); torch.nn.utils.clip_grad_norm_(net.parameters(), 2.0); opt.step()
         with torch.no_grad():
@@ -78,6 +79,6 @@ if __name__ == '__main__':
             for be, bn in zip(ema.buffers(), net.buffers()): be.copy_(bn)
         if step % 250 == 0: print(json.dumps({'step': step, 'loss': round(float(loss.detach()), 4), 'lr': round(lr, 6), 't': round(time.time() - t0)}), flush=True)
         if step % 500 == 0: torch.save({'net': net.state_dict(), 'ema': ema.state_dict(), 'opt': opt.state_dict(), 'step': step}, res)
-    torch.save({'state': ema.state_dict(), 'mu_y': mu_y.tolist(), 'sd_y': sd_y.tolist(), 'args': vars(a), 'labels': NM.LABELS, 'widths': a.widths, 'smooth': a.smooth, 'target': a.target}, path)
+    torch.save({'state': {k: v.cpu() for k, v in ema.state_dict().items()}, 'mu_y': mu_y.tolist(), 'sd_y': sd_y.tolist(), 'args': vars(a), 'labels': NM.LABELS, 'widths': a.widths, 'smooth': a.smooth, 'target': a.target}, path)
     if os.path.exists(res): os.remove(res)
     print('saved', path, flush=True)

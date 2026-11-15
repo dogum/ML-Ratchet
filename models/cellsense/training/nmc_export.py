@@ -32,6 +32,23 @@ def export(ckpt, factors, out, note=''):
     return err
 
 
+def export_ensemble(ckpt, factors, out, note=''):
+    """v1.3 (15 Nov 2026): 'a.pt|b.pt|...[+endrule]'. The first member goes to `out` with the widen factors and the list of
+    the others in its meta; member i to cellsense_nmc811_m<i>.npz beside it (each file stays under 2 MB). numpy vs torch is
+    checked per member, then the whole reader against nmc_ratchet.predict on the dev cells."""
+    ens = RT.load_net(ckpt); rule = ckpt.endswith('+endrule'); d = os.path.dirname(ckpt); names = ckpt[:-len('+endrule')] if rule else ckpt
+    paths = [os.path.join(d, os.path.basename(p)) for p in names.split('|')]; outs = [out] + [os.path.join(os.path.dirname(out), f'cellsense_nmc811_m{i}.npz') for i in range(1, len(paths))]
+    errs = []
+    for i, (p, o) in enumerate(zip(paths, outs)):
+        errs.append(export(p + ('+endrule' if rule else ''), factors if i == 0 else {}, o, note=f"{note} member {i}: {os.path.basename(p)}"))
+    z = dict(np.load(out)); meta = json.loads(str(z.pop('meta'))); meta['members'] = [os.path.basename(o) for o in outs[1:]]
+    np.savez_compressed(out, meta=json.dumps(meta), **z)
+    import importlib, cellsense, nmc_data as D; importlib.reload(cellsense); cs = cellsense.CellSense(chemistry='nmc811', weights=out)
+    rows = RT.real_readings(D.DEV); P = RT.run_real(ens, rows); got = np.array([cs.diagnose(r['Q1'], r['Q0'], raw=True)['q_total'] for r in rows])
+    e2 = float(np.abs(got - P['q_total']).max()); print('reader vs torch ensemble on the dev readings: max |dq| %.2e Ah' % e2); return max(errs), e2
+
+
 if __name__ == '__main__':
     ex = json.load(open(sys.argv[2])); out = sys.argv[3] if len(sys.argv) > 3 else os.path.join(_P.MODEL, 'cellsense_nmc811_weights.npz')
-    export(sys.argv[1], ex['factors'], out, note=f"rung checkpoint {os.path.basename(sys.argv[1])}")
+    if '|' in sys.argv[1]: export_ensemble(sys.argv[1], ex['factors'], out, note=f"rung checkpoint {os.path.basename(sys.argv[1])}")
+    else: export(sys.argv[1], ex['factors'], out, note=f"rung checkpoint {os.path.basename(sys.argv[1])}")

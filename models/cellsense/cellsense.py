@@ -156,9 +156,20 @@ class CellSenseNMC:
     The degradation modes have no answer key in the data it was examined on: they are the physics model's explanation."""
     def __init__(self, weights=os.path.join(HERE, 'cellsense_nmc811_weights.npz')):
         self.net = CellSenseNet(weights); self.widen = self.net.meta.get('widen', {})
+        # v1.3: an ensemble; the other members sit in their own files next to this one (meta 'members')
+        self.nets = [self.net] + [CellSenseNet(os.path.join(os.path.dirname(os.path.abspath(weights)), f)) for f in self.net.meta.get('members', [])]
+
+    def _ensemble(self, X):
+        """each member reads the curve; capacity and modes are the members' mean, the bar sqrt(mean variance + spread)"""
+        R = [_run(n, X, None) for n in self.nets]
+        if len(R) == 1: return R[0]
+        out = {}
+        for k in self.net.meta['labels']:
+            M = np.stack([r[k] for r in R]); S = np.stack([r[k + '_sig'] for r in R]); out[k] = M.mean(0); out[k + '_sig'] = np.sqrt((S ** 2).mean(0) + M.var(0))
+        return out
 
     def diagnose(self, Q_now, Q_new=None, raw=False):
-        X = features_nmc(Q_now, Q_new, self.net.meta.get('smooth', 0)); r = _run(self.net, X, None)
+        X = features_nmc(Q_now, Q_new, self.net.meta.get('smooth', 0)); r = self._ensemble(X)
         Qn = np.atleast_2d(np.asarray(Q_now, float))
         if self.net.meta.get('target') == 'rest':          # the network gives the charge still to come below where the curve stops
             r['q_total'] = r['q_total'] + np.nanmax(np.where(np.isfinite(Qn), Qn, -np.inf), 1)

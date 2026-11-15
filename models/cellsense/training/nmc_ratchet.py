@@ -28,15 +28,41 @@ SK = ['q_total', 'lli', 'lam_ne', 'lam_pe']
 END_SIG = 0.002      # Ah: a full curve's capacity is read off its end (the cycler's own count); bar for grid interpolation
 
 
+class Ensemble:
+    """round 2 (15 Nov 2026): several checkpoints read the same curve; capacity and modes are the members' mean, the bar is
+    sqrt(mean member variance + the members' spread). Written 'a.pt|b.pt|c.pt[+endrule]'."""
+    def __init__(self, members, rule): self.members, self.endrule = members, rule; self.labels = members[0].labels
+
+
 def load_net(path):
-    """path may end in '+endrule': full curves (reaching 2.5 V) then take their capacity from the curve's end and their
+    """path may be 'a.pt|b.pt|...[+endrule]' (an Ensemble), and may end in '+endrule': full curves (reaching 2.5 V) then take their capacity from the curve's end and their
     fade from the two ends, and only partial curves use the network's capacity"""
+    if path.endswith('+devprior'):    # round 2: partial readings pulled toward the dev cells' prior by inverse variance (nmc_blend.py)
+        import nmc_blend as NB
+        net = load_net(path[:-len('+devprior')]); rows = real_readings(D.DEV); P = run_real(net, rows)
+        net.devprior = (NB.prior_stats(D.DEV), NB.partial_fac(P, rows)); return net
     rule = path.endswith('+endrule'); path = path[:-len('+endrule')] if rule else path
+    if '|' in path:
+        d = os.path.dirname(path); return Ensemble([load_net(os.path.join(d, os.path.basename(p)) + ('+endrule' if rule else '')) for p in path.split('|')], rule)
     ck = torch.load(path, weights_only=False); net = NM.Net(tuple(int(w) for w in ck['widths'].split(',')), n_out=len(ck['labels']))
     net.load_state_dict(ck['state']); net.eval(); net.mu_y, net.sd_y, net.labels = np.array(ck['mu_y']), np.array(ck['sd_y']), list(ck['labels']); net.smooth = ck.get('smooth', 0); net.target = ck.get('target', 'total'); net.endrule = rule; return net
 
 
 def predict(net, Q1, Q0=None, bs=1024):
+    if getattr(net, 'devprior', None):
+        import nmc_blend as NB
+        pri, fac = net.devprior; dp = net.devprior; net.devprior = None
+        try: out = predict(net, Q1, Q0, bs)
+        finally: net.devprior = dp
+        qref = Q0[:, -1] if Q0 is not None else np.full(len(Q1), np.nan); full = np.isfinite(Q1[:, -1])
+        out['q_total'] = NB.blend_arrays(out['q_total'], out['q_total_sig'], fac, qref, full, pri)
+        if Q0 is not None and 'fade' in out: out['fade'] = np.where(full, out['fade'], 1 - out['q_total'] / qref)
+        return out
+    if isinstance(net, Ensemble):
+        Ps = [predict(m, Q1, Q0, bs) for m in net.members]; out = {}
+        for k in net.labels:
+            M = np.stack([p[k] for p in Ps]); S = np.stack([p[k + '_sig'] for p in Ps]); out[k] = M.mean(0); out[k + '_sig'] = np.sqrt((S ** 2).mean(0) + M.var(0))
+        return out
     out = []
     with torch.no_grad():
         for i in range(0, len(Q1), bs): out.append(net(torch.from_numpy(NM.features(Q1[i:i + bs], None if Q0 is None else Q0[i:i + bs], smooth=getattr(net, 'smooth', 0)))).numpy())
@@ -124,10 +150,13 @@ if __name__ == '__main__':
         rid, change, ck = sys.argv[2], sys.argv[3], sys.argv[4]; physics = log['scored_on'] or (sys.argv[5] if len(sys.argv) > 5 else 'textbook')
         if log['scored_on'] is None: log['scored_on'] = physics; log['frozen_sets'] = [physics]
         net = load_net(os.path.join(_P.WORK, 'nmc', 'ckpt', ck)); v = objective(net, physics)
-        rec = dict(id=rid, change=change, ckpt=ck, sim={physics: v['objective']}, val={physics: v}, dev=real_scores(net, D.DEV), exam=real_scores(net, D.EXAM))
+        # round 2 (15 Nov 2026): the exam is scored once per version at the end (nmc_exam.py), no longer at add time
+        # (n12 was the last rung whose exam columns this command printed; it was judged by the rule above, as every rung is)
+        rec = dict(id=rid, change=change, ckpt=ck, sim={physics: v['objective']}, val={physics: v}, dev=real_scores(net, D.DEV))
+        if '--with-exam' in sys.argv: rec['exam'] = real_scores(net, D.EXAM)
         log['rungs'] = [g for g in log['rungs'] if g['id'] != rid] + [rec]; r = save(log); g = r.rungs[-1]
         print(rid, 'objective %.3f' % v['objective'], {n: round(v[n]['objective'], 3) for n in ('full_ref', 'full', 'partial_ref', 'partial')})
-        print('   dev', {k: round(x, 1) for k, x in rec['dev'].items()}); print('   exam (never used)', {k: round(x, 1) for k, x in rec['exam'].items()})
+        print('   dev', {k: round(x, 1) for k, x in rec['dev'].items()})
         print('  ', g.decision.upper(), '-', g.why)
     elif sys.argv[1] == 'rescore':
         physics = sys.argv[2]; old = {g['id']: g.get('decision') for g in log['rungs']}
