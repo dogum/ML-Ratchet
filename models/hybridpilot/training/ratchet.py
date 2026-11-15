@@ -73,7 +73,16 @@ def decide(entry, rungs):
     ok_d = d['pct_dp_mean'] >= di['pct_dp_mean'] - 0.002 and d['cs_rate'] >= di['cs_rate'] - 0.03
     why = f"frozen skill {f:.4f} vs incumbent {inc['rung']} {fi:.4f} ({'+' if f >= fi else ''}{f - fi:.4f}, margin {MARGIN}); " \
           f"dev %DP {100 * d['pct_dp_mean']:.2f} vs {100 * di['pct_dp_mean']:.2f}, dev CS {d['cs_rate']:.3f} vs {di['cs_rate']:.3f}"
-    return bool(ok_f and ok_d), ('KEPT: ' if ok_f and ok_d else 'REJECTED: ') + why
+    keep = ok_f and ok_d
+    if entry.get('rule') == 'v2.2':
+        fr, fri = entry['frozen'], inc['frozen']
+        pooled = lambda e: (e['frozen']['cs_rate'] * e['frozen']['n'] + e['dev']['cs_rate'] * e['dev']['n']) / (e['frozen']['n'] + e['dev']['n'])
+        h, hi = pooled(entry), pooled(inc)
+        ok_h = (h >= hi + HOLD_MARGIN - 1e-9 and fr['cs_rate'] >= fri['cs_rate'] - 1e-9 and d['cs_rate'] >= di['cs_rate'] - 1e-9
+                and f >= fi - MARGIN and d['pct_dp_mean'] >= di['pct_dp_mean'] - 0.002)
+        why += f"; [v2.2 holding path] frozen+dev holding {h:.3f} vs {hi:.3f} (margin {HOLD_MARGIN}): {'passed' if ok_h else 'failed'}"
+        keep = keep or ok_h
+    return bool(keep), ('KEPT: ' if keep else 'REJECTED: ') + why
 
 
 if __name__ == '__main__':
