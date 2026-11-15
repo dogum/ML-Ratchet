@@ -9,6 +9,23 @@ import json, time
 import numpy as np
 
 NREG = 13
+# v1.1 count skips: (head j in REG, feature index, gate) -- the mean of head j is predicted as a correction to the
+# statistic counted in the window itself (pdcore.features), where the window has one: gate -1 = always,
+# -2 = feature != -1 (sentinel for "no complete run"), else the index of a 0/1 flag feature.
+COUNT_SKIPS = ((3, 87, -1),     # starts_yr: log1p(starts counted in the window, per year)
+               (4, 71, 72),     # min_up: log 5th percentile of complete runs (>= 3 runs)
+               (5, 70, -2),     # med_up: log median complete run (>= 1 run)
+               (6, 85, 86))     # min_dn: log 5th percentile of complete off spells (>= 3)
+
+
+def count_offsets(X, skips):
+    """(N, NREG) additive offsets on the mean heads from the counted statistics."""
+    X = np.asarray(X)
+    off = np.zeros((len(X), NREG), np.float32)
+    for j, fi, g in np.asarray(skips, int).reshape(-1, 3):
+        gate = np.ones(len(X)) if g == -1 else (X[:, fi] != -1.0).astype(float) if g == -2 else X[:, g]
+        off[:, j] += gate * X[:, fi]
+    return off
 
 
 def np_forward(W, X):
@@ -20,6 +37,8 @@ def np_forward(W, X):
         if f'l{i + 1}w' in W:
             h = np.maximum(h, 0) + 0.01 * np.minimum(h, 0)   # leaky ReLU
         i += 1
+    if 'cskip' in W:                      # count skips (v1.1): mean += counted statistic of the window
+        h = h.copy(); h[:, 4:4 + NREG] += count_offsets(X, W['cskip'])
     if 'skip' in W:                       # heat-rate skip: mean log HR_full += [EIA-923 present] * log(EIA-923 HR)
         ih, ihas = int(W['skip'][0]), int(W['skip'][1])
         h = h.copy(); h[:, 4 + 10] += X[:, ihas] * (X[:, ih] + np.log(10.0))
@@ -30,7 +49,8 @@ def np_forward(W, X):
     return p, mean, sig
 
 
-def train(set_version, name, epochs=40, hidden=(256, 256, 128), lr=2e-3, seed=0, extra=None, modes=None, skip=False):
+def train(set_version, name, epochs=40, hidden=(256, 256, 128), lr=2e-3, seed=0, extra=None, modes=None, skip=False,
+          cskip=False):
     import torch, torch.nn as nn
     torch.set_num_threads(1); torch.manual_seed(seed)
     z = np.load(f'{DATA}/set_{set_version}.npz')
@@ -46,6 +66,10 @@ def train(set_version, name, epochs=40, hidden=(256, 256, 128), lr=2e-3, seed=0,
     Ct = torch.tensor(C, dtype=torch.long)
     nf = X.shape[1]; ih, ihas = nf - 18 + 13, nf - 18 + 14      # context block starts 18 from the end (pdcore.CTX_KEYS)
     SK = torch.tensor(X[:, ihas] * (X[:, ih] + np.log(10.0)) if skip else np.zeros(len(X)), dtype=torch.float32)
+    OFF = np.zeros((len(X), 4 + 2 * NREG), np.float32)
+    if cskip:
+        OFF[:, 4:4 + NREG] = count_offsets(X, COUNT_SKIPS)
+    OFF = torch.tensor(OFF)
     layers = []; d = X.shape[1]
     for h in hidden:
         layers += [nn.Linear(d, h), nn.LeakyReLU(0.01), nn.Dropout(0.1)]; d = h
@@ -66,12 +90,12 @@ def train(set_version, name, epochs=40, hidden=(256, 256, 128), lr=2e-3, seed=0,
         net.train(); np.random.shuffle(idx_tr); tl = 0
         for b in range(0, len(idx_tr), 256):
             j = idx_tr[b:b + 256]
-            out = net(Xt[j]); out = out + torch.nn.functional.pad(SK[j, None], (14, out.shape[1] - 15))
+            out = net(Xt[j]); out = out + torch.nn.functional.pad(SK[j, None], (14, out.shape[1] - 15)) + OFF[j]
             l = loss_fn(out, Yt[j], Mt[j], Ct[j])
             opt.zero_grad(); l.backward(); opt.step(); sched.step(); tl += l.item() * len(j)
         net.eval()
         with torch.no_grad():
-            ov = net(Xt[idx_va]); ov = ov + torch.nn.functional.pad(SK[idx_va, None], (14, ov.shape[1] - 15))
+            ov = net(Xt[idx_va]); ov = ov + torch.nn.functional.pad(SK[idx_va, None], (14, ov.shape[1] - 15)) + OFF[idx_va]
             lv = loss_fn(ov, Yt[idx_va], Mt[idx_va], Ct[idx_va]).item() if len(idx_va) else 0
         if lv < best[0]:
             best = (lv, {k: v.clone() for k, v in net.state_dict().items()})
@@ -81,6 +105,8 @@ def train(set_version, name, epochs=40, hidden=(256, 256, 128), lr=2e-3, seed=0,
     W = dict(mu=mu.astype(np.float32), sd=sd.astype(np.float32))
     if skip:
         W['skip'] = np.array([ih, ihas])
+    if cskip:
+        W['cskip'] = np.array(COUNT_SKIPS, np.int64)
     lin = [m for m in net if isinstance(m, nn.Linear)]
     for i, m in enumerate(lin):
         W[f'l{i}w'] = m.weight.detach().numpy().astype(np.float32); W[f'l{i}b'] = m.bias.detach().numpy().astype(np.float32)
@@ -88,7 +114,8 @@ def train(set_version, name, epochs=40, hidden=(256, 256, 128), lr=2e-3, seed=0,
     np.savez(f'{DATA}/models/{name}.npz', **W)
     # numpy == torch check
     with torch.no_grad():
-        o = (net(Xt[idx_va[:200]]) + torch.nn.functional.pad(SK[idx_va[:200], None], (14, 4 + 2 * NREG - 15))).numpy()
+        o = (net(Xt[idx_va[:200]]) + torch.nn.functional.pad(SK[idx_va[:200], None], (14, 4 + 2 * NREG - 15))
+             + OFF[idx_va[:200]]).numpy()
     p, m_, s_ = np_forward(W, X[idx_va[:200]])
     print('numpy vs torch max diff', float(np.abs(m_ - o[:, 4:4 + NREG]).max()))
     return W
@@ -102,7 +129,8 @@ if __name__ == '__main__':
     if sys.argv[1] == 'train':
         train(sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) > 4 else 40,
               modes=sys.argv[5].split(',') if len(sys.argv) > 5 and sys.argv[5] != '-' else None,
-              skip='skip' in sys.argv[6:], seed=int(sys.argv[7]) if len(sys.argv) > 7 else 0)
+              skip='skip' in sys.argv[6:6 + 1], seed=int(sys.argv[7]) if len(sys.argv) > 7 else 0,
+              cskip='cskip' in sys.argv[8:])
 
 
 def ens_forward(Ws, X):

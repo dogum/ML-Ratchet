@@ -33,6 +33,17 @@ CONTEXT_HELP = dict(pm_ct='1 if a linked generator is a combustion turbine (EIA-
                     online_year='first operating year', hr923='{year: EIA-923 fuel for electricity / net generation}')
 
 
+def count_offsets(X, skips):
+    """v1.1 count skips: rows (head j in REG, feature index, gate); the mean of head j is the statistic counted in the
+    window (pdcore.features) plus the network's correction.  Gate -1 = always, -2 = feature != -1 (a sentinel for
+    'no complete run'), else the index of a 0/1 flag feature."""
+    off = np.zeros((len(X), len(REG)))
+    for j, fi, g in np.asarray(skips, int).reshape(-1, 3):
+        gate = np.ones(len(X)) if g == -1 else (X[:, fi] != -1.0).astype(float) if g == -2 else X[:, g]
+        off[:, j] += gate * X[:, fi]
+    return off
+
+
 def np_forward(W, X):
     h = (X - W['mu']) / W['sd']
     i = 0
@@ -41,6 +52,8 @@ def np_forward(W, X):
         if f'l{i + 1}w' in W:
             h = np.maximum(h, 0) + 0.01 * np.minimum(h, 0)
         i += 1
+    if 'cskip' in W:
+        h = h.copy(); h[:, 4:4 + len(REG)] += count_offsets(X, W['cskip'])
     lg = h[:, :4]
     p = np.exp(lg - lg.max(1, keepdims=True)); p /= p.sum(1, keepdims=True)
     n = len(REG)
