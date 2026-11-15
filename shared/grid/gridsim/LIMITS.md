@@ -27,9 +27,24 @@ C. **Prices: shape right, scarcity wrong.** Median price $18.6 vs $20.5 (2019) a
    $54 vs $64 in 2022).
 D. **Outages are expected values** (seasonal derates from ERCOT GADS EAF), not the real outage timing. Real refuelling
    of nuclear is supplied as observed output in the checks; in pure-model runs nuclear is derated on average.
-   **Note on data use:** the GADS availability figures come from Texas RE's 2024/2025 reports (published fleet-wide
-   annual statistics, not hourly labels). 2023-2025 are exam years in `splits.json`; a strict Phase 2 should swap
-   them for dev-year statistics if a source is found.
+   **Note on data use:** the GADS availability figures came from Texas RE's 2024/2025 reports (published fleet-wide
+   annual statistics, not hourly labels). 2023-2025 are exam years in `splits.json`, so this was a leak of
+   exam-period information into every dispatch default. **Fixed in physics 1.1 (14 Nov 2026):** forced shares from PJM's
+   2017-2021 class averages (May 2022), planned shares from Texas RE's 2017 assessment (`fleet.OUTAGE_DEFAULTS`);
+   the dev calibration and ERCOT damping were re-fitted. The leaked values matched reality better: with clean
+   defaults the fleet is more available, scarcity is rarer and the held-out 2022 coal error grows. v1.0 -> v1.1:
+
+   | Check (ERCOT, calibrated unless stated) | v1.0 (leaked) | v1.1 (clean) | Real |
+   |---|---|---|---|
+   | Dev-2019 coal offer adder | −6.62 $/MWh | −5.73 $/MWh | — |
+   | ERCOT effective damping (5 dev events) | 2.5 %/% | 2.75 %/% | — |
+   | 2019 coal / gas / CO2 | +5.6 / −2.2 / −1.0 % | +5.9 / −2.2 / −2.7 % | — |
+   | 2022 (held out) coal / gas / CO2 | +27.7 / −11.4 / +1.85 % | +34.4 / −14.0 / +2.51 % | — |
+   | Hours above $200, 2019 / 2022 | 61 / 99 | 23 / 54 | 119 / 238 |
+   | Median price 2022 | $46.6 | $45.0 | $48.0 |
+   | Hours below 150 GW·s, 2019 / 2022 | 127 / 949 | 241 / 1,229 | 79 / 492 |
+   | Days re-solved without history, 2019 / 2022 | 22 / 15 | 16 / 14 | — |
+   | Economic config coal 2019 / 2022 | −42.6 / +23.1 % | −49.1 / +29.1 % | — |
 E. **Inertia from the commitment** matches ERCOT's 2019 minimum (131 vs 134.6 GW s) but not 2022 (76 vs 115 GW s;
    949 vs 492 hours below 150 GW s). At low net load with lower GADS availability the MILP commits fewer synchronous
    units than ERCOT did. ERCOT also commits units for reliability (RUC) and reserves the model does not require.

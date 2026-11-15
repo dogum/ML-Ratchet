@@ -1,4 +1,4 @@
-# GridSim v1 checks, re-run in the repository (14 Nov 2026)
+# GridSim checks: the v1.0 re-run and physics 1.1 (14 Nov 2026)
 
 The JSONs in this folder are the published v1 results, as shipped. `run_all.py` re-runs the checks and compares every
 number with them (relative tolerance 1e-6; solver timings and values below 1e-9 on both sides are not counted). This is
@@ -30,3 +30,22 @@ generic-availability runs (kept as history).
 Data rebuilt from the raw sources and compared with the shipped tables: the ERCOT event table (329 events) and all 33
 network tables are identical; the Henry Hub table byte-identical; the EIA-923 receipts byte-identical; the heat-rate table
 identical in content. The models' exams re-scored on this data are recorded in each model's `NOTEBOOK.md`.
+
+## Physics 1.1 (the outage-rate leak fix)
+
+`checks/v1_0/` keeps the v1.0 JSONs. The JSONs in this folder are now physics 1.1 wherever availability enters:
+`ercot_dispatch_2019.json`, `ercot_dispatch_2022.json` (calibrated, economic and merit re-run), `ercot_inertia.json`,
+`frequency_dev_events.json` (also with the corrected 3 Dec 2019 GB label), and `gridsim/gridsim/data/calibration_v1_1.json`.
+The other checks do not read the outage defaults and are unchanged.
+
+| Check (ERCOT, calibrated unless stated) | v1.0 (leaked) | v1.1 (clean) | Real |
+|---|---|---|---|
+| Dev-2019 coal offer adder | −6.62 $/MWh | −5.73 $/MWh | — |
+| ERCOT effective damping (5 dev events) | 2.5 %/% | 2.75 %/% | — |
+| 2019 coal / gas / CO2 | +5.6 / −2.2 / −1.0 % | +5.9 / −2.2 / −2.7 % | — |
+| 2022 (held out) coal / gas / CO2 | +27.7 / −11.4 / +1.85 % | +34.4 / −14.0 / +2.51 % | — |
+| Hours above $200, 2019 / 2022 | 61 / 99 | 23 / 54 | 119 / 238 |
+| Median price 2022 | $46.6 | $45.0 | $48.0 |
+| Hours below 150 GW·s, 2019 / 2022 | 127 / 949 | 241 / 1,229 | 79 / 492 |
+| Days re-solved without history, 2019 / 2022 | 22 / 15 | 16 / 14 | — |
+| Economic config coal 2019 / 2022 | −42.6 / +23.1 % | −49.1 / +29.1 % | — |
