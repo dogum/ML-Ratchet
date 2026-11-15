@@ -13,6 +13,7 @@ class NumpyNet:
         self.mod = mod
         self.td = mod.TripDetective(os.path.join(folder, 'tripdetective_weights.npz'))
         self.feat = self.td.feat
+        self.offstop = int(getattr(self.td, 'offstop', 0))     # v2.1's engine-stop constraint (applied by evaluate.predict)
         F.FEAT = self.feat
 
     def np_predict(self, inputs, groups):

@@ -18,7 +18,18 @@ def load_net(path):
     feat = int(o.get('feat', 1)); F.FEAT = feat          # inputs built after loading use this network's feature version
     net = TDNet(width=width, feat=feat, phys=int(o.get('phys', 0)), emb=int(o.get('emb', 128)))
     net.load_state_dict(st['net']); net.eval()
+    net.offstop = int(o.get('offstop', 0))            # v2.1: the engine-stop constraint on the outputs (features.OFF_TAU)
     return net.to(DEV)
+
+
+def offstop(P, inputs, groups, on):
+    """apply the engine-stop constraint (features.apply_offstop) to pooled predictions when the network carries it"""
+    if not on: return P
+    groups = np.asarray(groups); cnt = [F.offstop_counts(it[0]) for it in inputs]
+    fires = np.array([F.offstop_fires([cnt[j] for j in np.where(groups == g)[0]]) for g in range(len(P['arch']))])
+    P['arch'], P['strat'] = F.apply_offstop(P['arch'], P['strat'], fires, ARCHS, STRATS)
+    P['offstop'] = fires
+    return P
 
 
 @torch.no_grad()
@@ -26,7 +37,7 @@ def predict(net, inputs, groups, bs=256):
     """inputs: list of (x (NIN, L), mask (L,)); groups: car/pool index per input (ints, contiguous 0..G-1).
     Pools are formed by groups; trips are encoded in batches, then pooled."""
     if hasattr(net, 'np_predict'):                     # a released numpy model (npnet.py)
-        return net.np_predict(inputs, groups)
+        return offstop(net.np_predict(inputs, groups), inputs, groups, getattr(net, 'offstop', 0))
     groups = np.asarray(groups); G = int(groups.max()) + 1
     E = []
     for i in range(0, len(inputs), bs):
@@ -44,9 +55,10 @@ def predict(net, inputs, groups, bs=256):
     mu, ls = net.heads(z, sk)
     led = net.h_led(torch.cat([e, z[g]], 1))
     c = lambda t: t.detach().cpu().numpy()
-    return dict(arch=c(torch.softmax(net.h_arch(z), 1)), strat=c(torch.softmax(net.h_strat(z), 1)),
-                mu=c(mu), sig=c(torch.exp(ls)),
-                led_mu=(c(led[:, :6]) * LED_SCALE), led_sig=(c(torch.exp(led[:, 6:].clamp(-6, 3))) * LED_SCALE))
+    P = dict(arch=c(torch.softmax(net.h_arch(z), 1)), strat=c(torch.softmax(net.h_strat(z), 1)),
+             mu=c(mu), sig=c(torch.exp(ls)),
+             led_mu=(c(led[:, :6]) * LED_SCALE), led_sig=(c(torch.exp(led[:, 6:].clamp(-6, 3))) * LED_SCALE))
+    return offstop(P, inputs, groups, getattr(net, 'offstop', 0))
 
 
 def bank_inputs(bank, idx):

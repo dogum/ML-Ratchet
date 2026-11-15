@@ -11,6 +11,14 @@ ALLOWED = {'pickup': {'conv', 'hev_powersplit', 'hev_parallel_p2', 'phev_series'
            'van': {'conv', 'hev_powersplit', 'phev_powersplit', 'bev'}}
 
 
+def gen_hw():
+    """the generator's hardware keys of the pinned physics (common.PHYSICS): physics v3 and later draw hybrid hardware
+    by the EPA twins' rules (gen_hybrid_hw 'v3', gen_phev_pack_rule); v1 / v2 keep the v1 generator (unchanged)."""
+    from roadsim.options import resolve
+    o = resolve(PHYSICS)
+    return dict(hw=o.get('gen_hybrid_hw', 'v1'), pack_rule=bool(o.get('gen_phev_pack_rule', False)))
+
+
 def _pick(rng, w):
     k = list(w); p = np.array([w[x] for x in k]); p = p / p.sum()
     return k[int(rng.choice(len(k), p=p))]
@@ -22,7 +30,7 @@ def draw_vehicle(rng, cls_w=None, quick=False, prior='v1'):
     while True:
         arch = _pick(rng, ARCH_W)
         cls = _pick(rng, {c: w for c, w in cw.items() if c not in ALLOWED or arch in ALLOWED[c]})
-        s = generate_vehicle(rng, cls, arch)
+        s = generate_vehicle(rng, cls, arch, **gen_hw())
         m = s['mass_kg'] + s['payload_kg']
         if quick: return m
         import priors
@@ -54,7 +62,7 @@ def _library():
             for cls in CLS_W:
                 if cls in ALLOWED and arch not in ALLOWED[cls]: continue
                 for _ in range(60):
-                    _LIB.append(generate_vehicle(rng, cls, arch))
+                    _LIB.append(generate_vehicle(rng, cls, arch, **gen_hw()))
     return _LIB
 
 

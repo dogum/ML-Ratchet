@@ -205,3 +205,39 @@ def scalars(raw, fl):
         out[13] = (r[7] * ok).sum() / 3600 / km * 5
         if mv.sum() >= 10: out[14] = np.percentile(r[7][mv], 90) / 50; out[15] = np.percentile(r[7][mv], 10) / 50
     return out
+
+
+# ---------------- engine-stop constraint (v2.1, 15 Nov 2026) ----------------
+# Physics: a conventional engine is geared to the wheels; it cannot stop while the car moves at more than 5 m/s. So a
+# logged rpm under 100 at v > 5 m/s on more than OFF_TAU of the moving seconds rules out 'conv'. OFF_TAU is set from
+# simulation only: over the 5,814 conventional trips of bank p2_train_v4 (OBD emulator with dropouts and holds) the
+# per-trip share never exceeds 0.033 (99.9th percentile 0.018), so 0.05 never fires on a simulated conventional car.
+OFF_TAU = 0.05
+OFF_MIN_S = 30
+
+
+def offstop_counts(x):
+    """(engine-off moving seconds, moving seconds) of one network input x (nin, Lw); (0, 0) when rpm is not logged.
+    Reads only the input channels (v/15, rpm x valid, valid, in-trip, has_rpm), so the browser computes it the same way."""
+    if x[16, 0] < 0.5: return 0, 0
+    mv = (x[0] > 5.0 / 15.0) & (x[12] > 0.5) & (x[13] > 0.5)
+    return int((mv & (x[8] < 0.1)).sum()), int(mv.sum())
+
+
+def offstop_fires(counts):
+    """counts: list of (k, n) of one pooled group -> True when the engine stopped while moving beyond OFF_TAU"""
+    K = sum(c[0] for c in counts); N = sum(c[1] for c in counts)
+    return N >= OFF_MIN_S and K > OFF_TAU * N
+
+
+CONV_STRATS = ('conv_rule', 'conv_opt', 'conv_stopstart')
+
+
+def apply_offstop(arch, strat, fires, archs, strats):
+    """zero 'conv' (and the conventional strategies) where the constraint fires, renormalise. arch (G, 7), strat (G, 14)"""
+    arch = arch.copy(); strat = strat.copy()
+    ic = archs.index('conv'); isc = [strats.index(k) for k in CONV_STRATS]
+    for g in np.where(fires)[0]:
+        arch[g, ic] = 0.0; arch[g] /= max(arch[g].sum(), 1e-12)
+        strat[g, isc] = 0.0; strat[g] /= max(strat[g].sum(), 1e-12)
+    return arch, strat

@@ -13,7 +13,7 @@ plus CBD14 windows and synthetic stop-and-go. Logged like a trolleybus: total DC
 second, held 1 s, quantised 100 W, no SOC, no fuel, no rpm.
 Real ZTBus legs: elec_power -> the battery channel; truth mass = 19,000 kg + 70 kg x mean passengers of the leg
 (check_ztbus.py convention). Dev missions only for choices; the 1,115 exam missions once, at the end.
-usage: python busbank.py sim <tag> <n_buses> <seed> [K=6] [prior=b1]  |  python busbank.py real dev|exam"""
+usage: python busbank.py sim <tag> <n_buses> <seed> [K=6] [prior=b1]  |  python busbank.py real dev|exam [all]"""
 from common import *
 import copy, time, hashlib
 from roadsim import simulate
@@ -151,10 +151,12 @@ def build_sim(tag, nbus, seed, K=6, prior='b1'):
         print(f'bus chunk {c0 // CHUNK} {time.time() - t0:.0f}s', flush=True)
 
 
-def build_real(split, maxlegs=None, seed=0):
-    """ZTBus legs -> windows. dev: the gate half of the dev missions; exam: every exam leg with a usable label."""
+def build_real(split, maxlegs=None, seed=0, all_legs=False):
+    """ZTBus legs -> windows. dev: the gate half of the dev missions; exam: every exam leg with a usable label.
+    all_legs=True (v2.1, 15 Nov 2026): every leg of those missions, with or without a passenger label (the mission
+    context of the day-relative bus calibration, buscal.py; only labelled legs are ever scored) -> bus_<split>_all.npz"""
     import realdata as rd
-    zl = rd.ztbus_full(); zl = zl[(zl.split == split) & zl.q_label_ok]
+    zl = rd.ztbus_full(); zl = zl[(zl.split == split) & (zl.q_label_ok | all_legs)]
     if split == 'dev':
         zl = zl[zl.mission.map(mission_half) == 'gate']
     if maxlegs and len(zl) > maxlegs:
@@ -173,16 +175,16 @@ def build_real(split, maxlegs=None, seed=0):
             TRIP.append(tid); VID.append(row.vehicle_id)
         pax = float(row.passengers_mean) if np.isfinite(row.passengers_mean) else np.nan
         META.append(dict(trip_id=tid, bus=row.vehicle_id, mission=row.mission, km=float(row.distance_m) / 1000, T=float(row.T_amb_mean),
-                         pax=pax, pax_frac=float(row.passengers_frac), season=row.season, route_ok=bool(row.q_route_ok),
+                         pax=pax, pax_frac=float(row.passengers_frac), season=row.season, route_ok=bool(row.q_route_ok), label_ok=bool(row.q_label_ok),
                          mass_kg=CURB_KG + PAX_KG * pax if np.isfinite(pax) else np.nan))
-    fn = f'{ROOT}/data/bus_{split}.npz'
+    fn = f'{ROOT}/data/bus_{split}{"_all" if all_legs else ""}.npz'
     np.savez(fn, raw=np.concatenate(R), offs=np.array(offs), flags=np.array(FL), trip=np.array(TRIP), vid=np.array(VID),
              meta=np.array(json.dumps(META)))
     print('bus', split, len(META), 'legs', len(TRIP), 'windows', flush=True)
 
 
-def load_real(split):
-    z = np.load(f'{ROOT}/data/bus_{split}.npz')
+def load_real(split, all_legs=False):
+    z = np.load(f'{ROOT}/data/bus_{split}{"_all" if all_legs else ""}.npz')
     return {k: z[k] for k in z.files if k != 'meta'} | {'meta': json.loads(str(z['meta']))}
 
 
@@ -191,4 +193,4 @@ if __name__ == '__main__':
     if a[1] == 'sim':
         build_sim(a[2], int(a[3]), int(a[4]), int(a[5]) if len(a) > 5 else 6, a[6] if len(a) > 6 else 'b1')
     else:
-        build_real(a[2])
+        build_real(a[2], all_legs=len(a) > 3 and a[3] == 'all')

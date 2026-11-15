@@ -40,6 +40,31 @@ def bus_example():
     print('bus example', info)
 
 
+def bus_mission():
+    """v2.1: every leg of the mission (one bus, one day) of bus_example()'s leg (same draw, seed 7), for the day-relative
+    bus reader (TripDetectiveBus.read_mission). Legs without a passenger label are kept as context, truth None."""
+    zl = rd.ztbus_full(); ex = zl[zl.split == 'exam']
+    cand = ex[ex.q_label_ok & ex.q_route_ok].sort_values('trip_id')
+    row = cand.iloc[int(np.random.default_rng(7).integers(len(cand)))]
+    legs = ex[ex.mission == row.mission].sort_values('leg')
+    arrs, metas = {}, []
+    for k, (_, r) in enumerate(legs.iterrows()):
+        m, a = rd.load_trip(r.trip_id)
+        T = np.where(np.isfinite(a['T_amb']), a['T_amb'], np.nanmean(a['T_amb']) if np.isfinite(a['T_amb']).any() else 12.0)
+        rho = np.where(np.isfinite(a['rho_air']) & (a['rho_air'] > 0.5), a['rho_air'], 1.2)
+        for key, x in [('v', np.nan_to_num(a['v'])), ('power_W', np.nan_to_num(a['elec_power'])), ('grade', np.nan_to_num(a['grade'])),
+                       ('T_amb', T), ('rho_air', rho), ('valid', a['valid'])]:
+            arrs[f'leg{k}_{key}'] = np.asarray(x, np.float32)
+        lab = bool(r.q_label_ok) and np.isfinite(r.passengers_mean)
+        metas.append(dict(trip_id=r.trip_id, km=round(float(r.distance_m) / 1000, 2), minutes=round(float(r.duration_s) / 60, 1),
+                          passengers_mean=round(float(r.passengers_mean), 1) if lab else None))
+    info = dict(mission=row.mission, bus=row.vehicle_id, season=row.season, example_leg=row.trip_id, legs=metas,
+                source='ZTBus (Widmer, Ritter, Onder, Scientific Data 2023), CC BY 4.0; processed by RoadData')
+    np.savez_compressed(f'{ROOT}/release/examples/ZTBus_exam_mission.npz', info=np.array(json.dumps(info)), **arrs)
+    print('bus mission', row.mission, len(metas), 'legs')
+
+
 if __name__ == '__main__':
     main()
     bus_example()
+    bus_mission()

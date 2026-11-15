@@ -5,7 +5,7 @@ Truth per leg: 19,000 kg + 70 kg x the leg's mean passenger count. Baselines fit
             the median ratio truth / fit on dev.
 Reports mean / median absolute error, bias, the slope of estimated mass on passenger mass (1 = follows every
 passenger, 0 = ignores them), and the correlation with passengers; by season.
-usage: python busexam.py <bus_ckpt> [tag]"""
+usage: python busexam.py <bus_ckpt> [tag]   |   python busexam.py --cal [ckpt=pb1] [tag=bus_v21]  (v2.1)"""
 from common import *
 import pandas as pd
 import evaluate as E, busbank, busladder as BL, baselines as B
@@ -49,5 +49,44 @@ def run(ckpt, tag='bus_final'):
     return rep
 
 
+
+
+# ---------------- v2.1 (15 Nov 2026): the day-relative calibration (buscal.py), scored once ----------------
+def run_cal(ckpt='pb1', tag='bus_v21'):
+    """The v2.1 bus reading on the exam legs: buscal's map (coefficients fitted on dev gate legs only, work/buscal_<ckpt>.json)
+    applied with the mission context of every exam leg of the mission. Same baselines as run() (fitted on dev only);
+    the v2.0 reading (raw, and with the dev-fitted level) on the same legs for comparison."""
+    import buscal
+    cal = jload(f'{ROOT}/buscal_{ckpt}.json')
+    net = E.load_net(f'{ROOT}/ckpt/{ckpt}.pt')
+    dev = busbank.load_real('dev'); ex_all = busbank.load_real('exam', all_legs=True)
+    dl, dm, ds = BL.real_predict(net, dev); dmeta = {x['trip_id']: x for x in dev['meta']}
+    dtruth = np.array([dmeta[t]['mass_kg'] for t in dl]); med = float(np.nanmedian(dtruth))
+    dlsq = lsq_mass(dev, dl); ok = np.isfinite(dlsq) & np.isfinite(dtruth); scale = float(np.median(dlsq[ok] / dtruth[ok]))
+    level = float(np.median(dtruth[np.isfinite(dtruth)] / dm[np.isfinite(dtruth)]))
+    ctx = buscal.leg_table(net, ex_all)
+    d = ctx[ctx.label_ok & np.isfinite(ctx.truth)].reset_index(drop=True)
+    pred = buscal.apply(d, cal['rung'], np.array(cal['coef']))
+    M = [dict(pax=p, mass_kg=t) for p, t in zip(d.pax, d.truth)]
+    lsq = {t: m for t, m in zip(*[list(x) for x in (d.trip_id, lsq_mass(ex_all, list(d.trip_id)) / scale)])}
+    e = pred - d.truth.values
+    rep = dict(ckpt=ckpt, rung=cal['rung'], coef=cal['coef'], n_legs=len(d), n_missions=int(d.mission.nunique()),
+               legs_alone_in_mission=int((ctx[ctx.label_ok].groupby('mission').size() == 1).sum()),
+               v21=BL.leg_metrics(pred, M), v21_in1s=float(np.mean(np.abs(e) < cal['sigma_kg'])), v21_in2s=float(np.mean(np.abs(e) < 2 * cal['sigma_kg'])),
+               v20_raw=BL.leg_metrics(d.m.values, M), v20_level=BL.leg_metrics(d.m.values * level, M), level=level,
+               classical=BL.leg_metrics(np.array([lsq[t] for t in d.trip_id]), M), dumb=BL.leg_metrics(np.full(len(d), med), M),
+               baseline_fit=dict(dev_median_kg=med, lsq_scale=scale))
+    d['pred'] = pred
+    rep['by_season'] = {k: dict(n=len(g), v21=BL.leg_metrics(g.pred.values, [dict(pax=p, mass_kg=t) for p, t in zip(g.pax, g.truth)]),
+                                dumb_mae=float(np.mean(np.abs(med - g.truth)))) for k, g in d.groupby('season')}
+    rep['by_bus'] = {k: dict(n=len(g), v21_mae=float(np.mean(np.abs(g.pred - g.truth))), dumb_mae=float(np.mean(np.abs(med - g.truth))))
+                     for k, g in d.groupby('bus')}
+    d.to_csv(f'{ROOT}/data/bus_exam_{tag}.csv', index=False)
+    jsave(rep, f'{ROOT}/exam_{tag}.json')
+    print(json.dumps(rep, indent=1, default=str)[:5000])
+    return rep
+
+
 if __name__ == '__main__':
-    run(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else 'bus_final')
+    if sys.argv[1] == "--cal": run_cal(*sys.argv[2:])
+    else: run(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else "bus_final")
