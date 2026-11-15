@@ -46,8 +46,18 @@ def real_region(ba, calib='dev'):
     return g
 
 
+def om_dir():
+    """Open-Meteo previous-runs cache: $DC_OPENMETEO if set, else work/data/openmeteo/ (the release's place) if it
+    exists, else the grid data root's raw/openmeteo/ (`mlratchet data grid --only forecastwx`). Added 14 Nov 2026."""
+    if os.environ.get('DC_OPENMETEO'):
+        return os.environ['DC_OPENMETEO']
+    if os.path.isdir(f'{DATA}/openmeteo'):
+        return f'{DATA}/openmeteo'
+    return os.path.join(GRID, 'data', 'raw', 'openmeteo')
+
+
 def om_series(pid, year, var):
-    f = f'{DATA}/openmeteo/{pid}_{year}.json'
+    f = f'{om_dir()}/{pid}_{year}.json'
     if not os.path.exists(f): return None
     h = json.load(open(f))
     if var not in h or var + '_previous_day1' not in h: return None

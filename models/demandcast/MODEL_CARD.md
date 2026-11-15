@@ -38,7 +38,7 @@ capacity factor of the fleet online at issue. Sigmas include one widen-only fact
   clipping) per weather point x the online MW of each tracking type.
 
 Checks (`training/checks/physics.json`): RC lag vs an ODE solver 3e-7 K; stock-averaged hinge vs 1e6-draw Monte Carlo
-0.0035 K; degree-day limit exact (1,080,000 vs 1,080,000 MWh); specific humidity vs PsychroLib (ASHRAE) 0.3 % (T >= 0 C);
+0.0035 K; degree-day limit exact (1,080,000 vs 1,080,000 MWh); specific humidity vs PsychroLib (ASHRAE) 0.22 % (T >= 0 C);
 COP at rating points 3.26 (8.3 C), 1.94 (-8.3 C), AC 3.5 (35 C); wind table vs GridSim farm curve mean 0.0005 CF.
 Wind/solar physics checked in GridSim phase 1 vs ERCOT (hourly r 0.90 / 0.97-0.98).
 
@@ -92,10 +92,10 @@ method has a value:
 | ISNE | 3.00 | 2.56 | 7.27 | 10.64 | 5.51 | 61 / 88 |
 | NYIS | 1.97 | 2.97 | 5.34 | 8.22 | 5.16 | 68 / 93 |
 | BPAT | 2.10 | 2.00 | 3.69 | 6.42 | 5.58 | 68 / 92 |
-| all | 2.38 | 3.41 | 4.90 | - | 5.02 | 64 / 89 |
+| all | 2.38 | 3.41 | 4.90 | 7.95 | 5.02 | 64 / 89 |
 
 By year and with real **day-ahead forecast weather** (Open-Meteo previous runs, day-1 lead; 2024 only, top population
-points; the archive's rate limit stopped further downloads). Ours / grid DA:
+points; the archive's rate limit stopped further downloads). DemandCast / grid DA:
 
 | Grid | 2023 | 2024 | 2025 | 2024, forecast weather |
 |---|---|---|---|---|
@@ -108,11 +108,34 @@ points; the archive's rate limit stopped further downloads). Ours / grid DA:
 | NYIS | 1.74 / 2.41 | 1.93 / 3.29 | 2.23 / 3.21 | 2.57 / 3.28 |
 | BPAT | 2.08 / 2.04 | 2.23 / 1.97 | 1.99 / 1.99 | 2.44 / 1.92 |
 
-Pooled forecast-weather days: ours 2.92 % vs grid DA 3.20 % (same days with actual weather: 2.44 %); bands 72 / 94 %.
+Pooled forecast-weather days: DemandCast 2.92 % vs grid DA 3.20 % (same days with actual weather: 2.44 %); bands 72 / 94 %.
 Note CISO's published DA forecast is misaligned by 1 h and SWPP's runs 6.5 % high in 2025 (GridData DATA.md), which
-flatters us there.
+flatters DemandCast there.
 
-Wind and solar, error = sum |error| / sum output (%), actual weather; ours / physics / persistence 24 h / dev-year
+**Second look: forecast weather 2024-2025** (run once on 14 Nov 2026 from the shipped weights, after the archive was
+fetched in full; reported next to the released 2024 row, which stays; nothing was chosen from it). Open-Meteo
+previous-runs day-1 forecasts at the shipped fetch list's points (top 4 population, 3 wind, 3 solar per grid; the
+released row's cache held up to 8 population points in 2024). 2023 cannot be graded this way: the archive holds no
+humidity or radiation forecasts before 2024. Demand MAPE, DemandCast / grid DA:
+
+| Grid | 2024 | 2025 | 2024-2025 |
+|---|---|---|---|
+| ERCO | 3.05 / 2.05 | 3.60 / 2.46 | 3.33 / 2.26 |
+| CISO | 3.75 / 7.01 | 4.09 / 8.13 | 3.92 / 7.58 |
+| PJM | 2.91 / 3.57 | 2.52 / 3.44 | 2.71 / 3.50 |
+| MISO | 2.21 / 2.79 | 2.09 / 2.37 | 2.15 / 2.58 |
+| SWPP | 2.80 / 2.22 | 3.10 / 7.68 | 2.96 / 5.01 |
+| ISNE | 3.97 / 2.78 | 4.38 / 2.52 | 4.18 / 2.65 |
+| NYIS | 2.62 / 3.28 | 3.05 / 3.21 | 2.84 / 3.24 |
+| BPAT | 2.42 / 1.92 | 2.24 / 1.99 | 2.33 / 1.96 |
+| all | 2.97 / 3.20 | 3.13 / 3.97 | 3.05 / 3.59 |
+
+Pooled 3.05 % (135,700 h) vs grid DA 3.59 %, persistence 4.91 %, physics alone 5.88 %; same days with actual weather
+2.48 %; bands 71 / 93 %. Wins in 5 of 8 grids, but without CISO and SWPP (flawed published forecasts) it is 2.92 % vs
+the grids' 2.70 %, a loss. Wind 26.7 % vs physics 39.0 %, persistence 42.9 %, climatology 40.6 % (same days with actual
+weather 19.2 %); solar 34.7 % vs physics 39.2 %, persistence 18.9 % (a loss), climatology 41.1 %.
+
+Wind and solar, error = sum |error| / sum output (%), actual weather; DemandCast / physics / persistence 24 h / dev-year
 CF climatology (68 / 95 % band coverage):
 
 | Grid | Wind | Solar |
@@ -127,18 +150,20 @@ CF climatology (68 / 95 % band coverage):
 | BPAT | 50.1 / 55.4 / 88.4 / 86.5 (57/92) | 51.8 / 21.0 / 30.5 / 34.9 (59/74) |
 | all | 19.2 / 22.7 / 43.5 / 41.4 (71/94) | 29.9 / 36.3 / 19.1 / 39.2 (65/84) |
 
-Extremes (demand MAPE, ours / grid DA): Winter Storm Uri (dev) ERCO 14.5 / 18.6 (we forecast ~85 GW demand; ERCOT
+Extremes (demand MAPE, DemandCast / grid DA): Winter Storm Uri (dev) ERCO 14.5 / 18.6 (DemandCast forecast ~85 GW demand; ERCOT
 served 69 GW under load shed); Winter Storm Elliott (training-input year) PJM 3.05 / 3.78, ERCO 4.18 / 5.54; Texas heat
 Aug 2023 ERCO 1.96 / 1.59 (peak 88.5 predicted vs 85.4 GW); Eastern heat dome Jun 2024 PJM 1.98 / 4.50, MISO 1.56 / 4.01;
-Arctic outbreak Jan 2025 PJM 1.83 / 4.17, ISNE 4.78 / 1.27. Error by temperature band is flat at 2.2-2.7 % from
-<-10 C to >35 C (grid DA 2.6-3.9 %). Hottest/coldest 2 % of days per grid and all named periods in `lab/index.html`
+Arctic outbreak Jan 2025 PJM 1.83 / 4.17, ISNE 4.78 / 1.27. Error by temperature band is 2.2-2.7 % from
+-10 C to 35 C (grid DA 2.9-3.9 %); below -10 C (913 h) 3.25 % (grid DA 3.33 %); above 35 C (1,211 h) 2.73 % against
+the grids' 2.55 %, a loss. Hottest/coldest 2 % of days per grid and all named periods in `lab/index.html`
 and `training/exam_r8_wide.json` / `training/exam_r8_wide_events.json`.
 
 ## Limits
 1. Actual weather is an upper bound; with forecast weather (2024) DemandCast loses to ERCOT, SPP, ISO-NE and BPA's own
-   forecasts. Forecast-mode wind/solar barely graded (archive rate-limited).
+   forecasts; over 2024-2025 (second look) to ERCOT, ISO-NE and BPA, and to the 6 grids without CISO and SWPP pooled.
+   No forecast-weather grade for 2023 (the archive has no humidity or radiation forecasts before 2024).
 2. Solar fails where EIA-930 timestamps changed: CISO solar led the physics by 1 h in 2019/2021, matched in 2023,
-   lagged by 1 h in 2024-25 (PJM changed in 2025). The dev-calibrated shift is wrong in the exam. Persistence beats us
+   lagged by 1 h in 2024-25 (PJM changed in 2025). The dev-calibrated shift is wrong in the exam. Persistence beats DemandCast
    on solar overall (19 % vs 30 %). BPAT's tiny solar fleet is badly served.
 3. Bands are too narrow on real data (demand 64 / 89 % for 68 / 95 %; CISO 46 / 74).
 4. Wind limited by 50 km reanalysis (BPAT 50 %, CISO 33 %); the network trims physics error by ~15 %.
@@ -168,9 +193,14 @@ grid phase 1); pvlib (BSD-3); PsychroLib (MIT) for checks.
   compared numbers (pooled and per grid: demand, wind, solar, every baseline, coverage, hours, the dev-fitted sigma
   scales) reproduce to the printed precision, e.g. pooled demand 2.38 % vs grid DA 3.41 %, wind 19.2 %, solar 29.9 %,
   bands 64 / 89 %. The NASA POWER per-point series it needs are not in the GridData v1.0 zip; they come from the data
-  rebuild's `power` stage. The forecast-weather numbers were not re-scored: they need the Open-Meteo cache, which is
-  not shipped. Physics checks 1-3, the COP points and the wind-table check reproduce `training/checks/physics.json`
-  exactly.
+  rebuild's `power` stage. Physics checks 1-3, the COP points and the wind-table check reproduce
+  `training/checks/physics.json` exactly.
+- The forecast-weather numbers were re-scored once the Open-Meteo archive was fetched (`mlratchet data grid --only
+  forecastwx`, 14 Nov 2026, no refusals): with the release's own cache reconstructed (`training/rescore_forecast.py
+  release2024`) all 338 forecast-mode numbers of the 2024 row reproduce to 1e-4 (pooled 2.92 % vs 3.20 %, every grid,
+  wind 31.2 %, solar 35.1 %, coverage, hours). That cache held more points than the shipped fetch list: all 8
+  population points in 6 grids, 5 in NYIS, 4 in BPAT, and one ERCOT wind point; with the shipped list's top 4 the 2024
+  row is 2.99 % vs 3.20 %. The 2024-2025 second look above is `rescore_forecast.py full`.
 - Live instrument: the three networks (float16) on the 112 exam days of the original page (14 per grid), re-running the
   building physics for the 38 h after issue and the tabulated wind/solar physics when temperature, humidity, sunshine
   or wind change. Browser = Python to 2.3e-7 on 80 cases (`site/tests/parity.test.ts`). On those 112 days with the

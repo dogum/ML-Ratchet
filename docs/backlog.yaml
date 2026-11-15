@@ -31,7 +31,7 @@ ideas:
     data_url: https://open-meteo.com/en/docs/previous-runs-api
     exam: DemandCast 2023-2025 with forecast weather against each balancing authority's own day-ahead forecast
     status: checked
-    note: "The cloud sandbox's shared IP got HTTP 429 after a few requests, so only 2024 population points were fetched. A single request from the repository's own machine answered 200 on 14 Nov; fetch it slowly from there (src/fetch_openmeteo.py is resumable)."
+    note: "Fetched 14 Nov 2026 from the build machine (`mlratchet data grid --only forecastwx`): 220 year-requests, 92 MB, no refusals. The released 2024 forecast-weather row reproduces exactly; a second look over 2024-2025 (run once) gives 3.05% vs the grids' 3.59%, but 2.92% vs 2.70% without CAISO and SPP. The archive has humidity, radiation and wind forecasts only from 2024, so 2023 and the dev years stay without real forecast weather. Left: a rung that trains on the 2022 temperature-error library (built), judged on dev."
   - id: subsecond
     name: Sub-second grid frequency
     domain: Power grids
@@ -40,8 +40,8 @@ ideas:
     data: "FNET/GridEye (University of Tennessee) or another PMU archive; NESO publishes 1 s only"
     data_url: https://fnetpublic.utk.edu/
     exam: GB or US events with known inertia
-    status: candidate
-    note: "The FNET site timed out from the cloud sandbox; it answered from the repository's own machine on 14 Nov (the public pages, not yet a data download)."
+    status: blocked
+    note: "Checked 14 Nov 2026 from the repository's machine: fnetpublic.utk.edu offers live displays and three 2011 US sample events (plots and videos) only, no data files and no terms page; event data go to FNET/GridEye Industry Consortium members. Nothing fetched. Needs a PMU archive with a public licence, or a data agreement."
   - id: buildingsim
     name: BuildingSim
     domain: Energy

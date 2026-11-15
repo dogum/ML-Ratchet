@@ -76,6 +76,7 @@ Disk: about 1.7 GB in total (budget 6 GB).
 | MATPOWER test cases (IEEE 9/14/30/39/57/118/300, RTS-GMLC) | case data: see each file header (IEEE cases public; MATPOWER code BSD-3) | R. D. Zimmerman et al., MATPOWER, github.com/MATPOWER/matpower data/*.m |
 | Texas A&M ACTIVSg200/500/2000 (MATPOWER copies) | CC-BY-4.0 | A. B. Birchfield et al., "Grid Structural Characteristics as Validation Criteria for Synthetic Networks", IEEE TPWRS 32(4), 2017 |
 | US Census 2020 Gazetteer places (TX, IL, SC) | US public domain | census.gov Gazetteer files (used to place ACTIVSg buses) |
+| Open-Meteo Previous-Runs API (archived day-ahead forecasts; optional stage `forecastwx`, DemandCast's forecast-weather exam) | CC-BY-4.0; free API for non-commercial use | Open-Meteo.com, previous-runs-api.open-meteo.com/v1/forecast (documented at open-meteo.com/en/docs/previous-runs-api) |
 
 ## 3. EIA-930 (DemandCast, DispatchNet)
 
@@ -397,6 +398,20 @@ MdAPE **20.1%**; dumb dev-median loss 24.5%. (Dev: 9.7% / 7.9% on 5 events.)
 - CAISO OASIS history before 2023-08 (not served). ERCOT ops reports for 21 months not found by search.
 - No public 1 s ERCOT frequency data; NERC FRAA reports on nerc.com returned an HTML page instead of the PDF.
 - nationalgrideso.com (old ESO domain) returned 502; the same reports were taken from ofgem.gov.uk / neso.energy.
+- Open-Meteo Previous-Runs archive (day-ahead forecast weather for DemandCast): the cloud build's shared address got
+  HTTP 429 after 1-25 year-requests per half hour, so the release graded forecast weather on 2024 only. Fetched on
+  14 Nov 2026 from the build machine with the optional stage `forecastwx` (`mlratchet data grid --only forecastwx`):
+  220 year-requests (the release's list of 192: top 4 population, 3 wind, 3 solar points per BA for 2024 and 2025, top
+  4 population points for 2022; plus 28 population points for 2024 that the release's exam cache also held), one at
+  a time 15 s apart, 92 MB in `raw/openmeteo/<pid>_<year>.json`, about 1.5 h, no refusals (no HTTP 429). The
+  archive holds day-1 temperature forecasts from 2022 but humidity, radiation and wind forecasts only from 2024
+  (checked 14 Nov 2026), so 2022-2023 days cannot be graded in DemandCast's forecast mode; 2022 temperature serves
+  the training-input forecast-error library. Refusals, if any, are logged in `work/build_state.json`.
+- FNET/GridEye sub-second frequency (fnetpublic.utk.edu, University of Tennessee), checked 14 Nov 2026: the public
+  site shows live displays (frequency table, gauge, angle and frequency maps, spectrum, time error) and three 2011 US
+  sample events as plots and videos. It offers no data download, no sample data files and no terms or licence page;
+  event data and alert e-mails go to members of the FNET/GridEye Industry Consortium. None of the 470 GB or 329 ERCOT
+  events (2018-2026) has a public sub-second trace. Nothing fetched; no `fnet` stage.
 
 ## 13. Rebuild
 
@@ -418,6 +433,9 @@ python3 -I scripts/ercot_events.py   (after scripts/ercot_ops_fetch.sh; URL list
 python3 -I scripts/ercot_prices.py; scripts/caiso_prices.py; scripts/weather.py points|power|asos|build
 python3 -I scripts/networks.py; scripts/finalize.py; scripts/make_splits.py; scripts/baselines.py demand heatrate battery frequency; scripts/qc.py
 ```
+
+Optional, not part of the v1.0 rebuild: `mlratchet data grid --only forecastwx` (Open-Meteo previous runs for
+DemandCast's forecast-weather exam, section 12; env `ML_RATCHET_FORECASTWX_YEARS`, `ML_RATCHET_FORECASTWX_HOURS`).
 
 `build.py`'s `fetch` stage also downloads what the original build fetched by hand: the PUDL tables, RTS-GMLC
 `gen.csv`, the MATPOWER cases, the Census Gazetteer places, NESO's package lists and the ERCOT reports, and fills

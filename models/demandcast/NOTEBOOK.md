@@ -163,3 +163,53 @@ Two other GridSim citations reach into the exam years and do touch DemandCast's 
 (LBNL Land-Based Wind Market Report, 2023 edition, published Aug 2023) describes turbines installed up to 2022, so it
 carries no exam-period measurement; and the EIA-930 solar timestamp offsets now flagged in GridData
 (`gd.eia930_solar_qc()`) confirm the cause of the solar loss found after the exam (CISO's offset flips sign in 2024).
+
+## 14 Nov 2026 — forecast weather fetched; released 2024 row reproduced; second look 2024-2025
+
+**Fetch.** GridData's build gained an optional stage `forecastwx` (`mlratchet data grid --only forecastwx`) that runs
+`fetch_openmeteo.py`'s request list (same variables, points, years, endpoint `previous-runs-api.open-meteo.com`,
+default model) into `shared/grid/data/raw/openmeteo/<pid>_<year>.json`, one year-request at a time, 15 s apart, waiting
+on HTTP 429 and stopping on a daily limit. From the build machine it answered every request: 220 year-requests, 92 MB,
+about 1.5 h, no HTTP 429. Coverage checked first with two 2-day requests: the archive holds day-1 temperature forecasts
+from 2022 but humidity, radiation and wind forecasts only from 2024, so 2023 rows (and the dev years) cannot be graded
+in forecast mode; that is why the release planned 2024-2025 plus 2022 temperature. `real.py` reads the cache from
+`$DC_OPENMETEO`, else `work/data/openmeteo/`, else the grid data root (new `om_dir()`; nothing else changed).
+
+**Released 2024 row: reproduced.** A first re-score with the shipped list's points (top 4 population points per grid,
+ERCO's 3 wind points) gave the same rows and hours (66,079 demand hours) but not the same numbers: pooled 2.99 % vs
+3.20 % (released 2.92 %), every grid but BPAT worse by 0.05-0.10, ERCO wind 26.7 % (released 31.2 %). A re-fetch of
+one file an hour later was identical to the cache, so the archive is stable. The difference is the release's cache:
+matching the forecast-mode physics-prior error per grid (inputs only, no network) finds one set of points. ERCO with
+all 8 population points gives 6.497 % (released 6.497; top 4: 6.513); NYIS needs the top 4 plus NYIS_pop_0
+(5.29966 vs released 5.29966; no top-k matches); BPAT the top 4; ERCO wind its top point only (31.24 % vs physics
+47.86 %, exact; 2 points 27.5 %, 3 points 26.7 %). That fits an early pass in file order (pid 0-7, grid by grid) that
+the rate limit stopped after NYIS_pop_0, then the top-4 pass. With that cache (`training/rescore_forecast.py
+release2024`; the stage fetches population points 5-8 of the 7 grids for this) all 338 forecast-mode numbers of the
+released 2024 row reproduce to 1e-4 (largest difference: same-days demand 68 % coverage 63.285 vs 63.286 %): pooled
+2.92 % vs 3.20 %, wins CAISO, PJM, MISO, NYISO, losses ERCO 2.98 vs 2.05, SPP, ISO-NE, BPA. No released number changed.
+The points tried to find the cache are a diagnosis of the archive, not of the model; nothing in the model was chosen.
+
+**Second look, forecast weather 2024-2025, run once (`rescore_forecast.py full`).** The shipped fetch list (top 4
+population, 3 wind, 3 solar points per grid, every grid) for both years, same weights, same dev sigma scales (1.14078,
+1.0, 1.33997). Demand 3.05 % on 135,700 hours vs grid DA 3.59 %, persistence 4.91 %, physics alone 5.88 %, bands
+71 / 93 %; same days with actual weather 2.48 %. By year 2.97 / 3.20 (2024; one more day than the released row, since
+2025 files now cover 31 Dec) and 3.13 / 3.97 (2025). Wins CAISO 3.92 vs 7.58, PJM 2.71 vs 3.50, MISO 2.15 vs 2.58, SPP
+2.96 vs 5.01, NYISO 2.84 vs 3.24; loses ERCO 3.33 vs 2.26, ISO-NE 4.18 vs 2.65, BPA 2.33 vs 1.96. The pooled win rests
+on the two grids with flawed published forecasts (CAISO misaligned by 1 h, SPP 6.5 % high in 2025): the other 6 pooled
+give 2.92 % vs 2.70 %, a loss. Wind 26.7 % (131,024 h, all 8 grids) vs physics 39.0 %, persistence 42.9 %, climatology
+40.6 % (actual weather on the same days 19.2 %); solar 34.7 % vs persistence 18.9 %, a loss. Reported next to the
+released row in `model.yaml` and `MODEL_CARD.md`; it chose nothing.
+
+**2022 library.** `make_tfc.py` built `work/data/noise/tfc_2022.npz` (363 days per grid): day-D temperature forecast
+error RMS 1.28 K (MISO) to 2.01 K (CISO), mean bias -0.85 K (PJM) to +1.38 K (CISO). Not used in training; a rung that
+uses it would be judged on dev.
+
+**Card corrections (site honesty audit).** Each was a claim the exam file does not support, or first-person copy:
+- `wins` said the error "stays at 2.2-2.7 % from -10 °C to above 35 °C". Above 35 °C (1,211 h) it is 2.73 % vs the
+  grids' 2.55 %, a loss: moved to `losses`; the win now says -10 to 35 °C (2.2-2.7 % vs 2.9-3.9 %), and names PJM for
+  the cold snap (the same Jan 2025 outbreak in ISO-NE is a loss, 4.78 vs 1.27, already in `losses`).
+- `MODEL_CARD.md`: PsychroLib check 0.3 % -> 0.22 % (`training/checks/physics.json`); "flat at 2.2-2.7 % from < -10 C
+  to > 35 C" -> 2.2-2.7 % from -10 to 35 C, 3.25 % below -10 C (913 h; grids 3.33 %), 2.73 % above 35 C (grids 2.55 %);
+  the "all" row's same-hour-last-week cell filled (7.95, from `exam_r8_wide.json`); "ours", "us", "we" -> DemandCast.
+- `help_wanted`: the Open-Meteo line now says what was found (fetched in full; no forecasts of humidity, radiation or
+  wind before 2024).
