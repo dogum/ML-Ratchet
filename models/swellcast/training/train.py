@@ -3,7 +3,7 @@
 real null windows; injected swells count as positives when their ridge contrast >= 0.3 dex, weaker ones are left out), EMA weights, resumable every 500 steps."""
 import os, sys, json, time, copy, argparse, numpy as np, torch
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import model as M
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); CK = os.path.join(ROOT, 'ckpt/'); BANK = os.path.join(ROOT, 'bank/')
+import _paths as _P; ROOT = _P.WORK; CK = os.path.join(ROOT, 'ckpt/'); BANK = os.path.join(ROOT, 'bank/')
 
 def load(names):
     X = [np.load(BANK + n + '_x.npy', mmap_mode='r') for n in names]; Y = [np.load(BANK + n + '_y.npy') for n in names]

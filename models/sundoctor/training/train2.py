@@ -1,6 +1,6 @@
 """Train SunDoctor on freshly simulated windows (never the same window twice)."""
 import _paths as _P  # portable paths (see _paths.py)
-import sys, time, json, math, argparse, copy, numpy as np, torch, torch.nn.functional as F
+import sys, os, time, json, math, argparse, copy, numpy as np, torch, torch.nn.functional as F
 sys.path.insert(0, _P.SRC)
 from model2 import SunDoctor, REG, SCALE, GLOB, GSCALE
 import simbatch2 as SB
@@ -27,10 +27,10 @@ def nll(mu, ls, y):
     return l * torch.exp(2 * BETA * ls).detach() if BETA > 0 else l
 
 def loss_fn(day, g, Y, Gt, w_step=1.0):
-    n = len(IDX); y = Y[:, IDX] / SC; mu = day[:, :n]; ls = day[:, n:2 * n]
+    n = len(IDX); y = Y[:, IDX] / SC.to(Y.device); mu = day[:, :n]; ls = day[:, n:2 * n]
     l_reg = nll(mu, ls, y).mean()
-    l_step = F.binary_cross_entropy_with_logits(day[:, 2 * n], Y[:, STEP], pos_weight=torch.tensor(8.0))
-    l_g = nll(g[:, :2], g[:, 2:], Gt / GSC).mean()
+    l_step = F.binary_cross_entropy_with_logits(day[:, 2 * n], Y[:, STEP], pos_weight=torch.tensor(8.0, device=Y.device))
+    l_g = nll(g[:, :2], g[:, 2:], Gt / GSC.to(Gt.device)).mean()
     return l_reg + w_step * l_step + 0.5 * l_g, l_reg.item(), l_step.item(), l_g.item()
 
 OLD_CH = [0, 1, 3, 4, 6, 7, 8, 9, 10, 11]          # where v1's 10 input channels sit among v2's 12
@@ -45,30 +45,55 @@ def transplant(net, path):
     dw[18] = src['day.weight'][14]; db[18] = src['day.bias'][14]; own['day.weight'] = dw; own['day.bias'] = db
     net.load_state_dict(own); print('transplanted', n_ok, 'tensors + stem / head maps', flush=True)
 
+def load_npz(net, path):
+    """start from released numpy weights (BatchNorm already folded into the convolutions): copy each folded convolution
+    into the torch module and set its BatchNorm to the identity (weight 1, bias = folded bias, mean 0, var 1 - eps).
+    Train with --freeze_bn so those identity BatchNorms keep their statistics. Added 15 Nov 2026 (rung 9)."""
+    z = np.load(path); t = lambda k: torch.from_numpy(z[k].astype(np.float32))
+    def put(conv, bn, k):
+        with torch.no_grad():
+            conv.weight.copy_(t(k + '_w')); bn.weight.fill_(1.0); bn.bias.copy_(t(k + '_b')); bn.running_mean.zero_(); bn.running_var.fill_(1.0 - bn.eps)
+    put(net.stem[0], net.stem[1], 's')
+    for i, blk in enumerate(net.blocks):
+        for nm, (c, bn) in zip(('c1', 'c2', 'sk'), ((blk.c1, blk.b1), (blk.c2, blk.b2), (blk.sk, blk.bs))): put(c, bn, f'b{i}{nm}')
+    put(net.proj[0], net.proj[1], 'p')
+    for i, tb in enumerate(net.tblocks): put(tb.c1, tb.b1, f't{i}c1'); put(tb.c2, tb.b2, f't{i}c2')
+    with torch.no_grad():
+        net.day.weight.copy_(t('d_w')); net.day.bias.copy_(t('d_b'))
+        net.glob[0].weight.copy_(t('g0_w')); net.glob[0].bias.copy_(t('g0_b')); net.glob[2].weight.copy_(t('g1_w')); net.glob[2].bias.copy_(t('g1_b'))
+    print('loaded folded weights from', path, flush=True)
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--name', required=True); ap.add_argument('--init', default=None); ap.add_argument('--steps', type=int, default=3000)
     ap.add_argument('--bs', type=int, default=64); ap.add_argument('--lr', type=float, default=2e-3); ap.add_argument('--warm', type=int, default=150)
     ap.add_argument('--days', type=int, default=14); ap.add_argument('--seed', type=int, default=0); ap.add_argument('--ema', type=float, default=0.998)
     ap.add_argument('--widths', default='24,32,48,64,96'); ap.add_argument('--tw', type=int, default=128); ap.add_argument('--p_ref', type=float, default=0.65); ap.add_argument('--beta', type=float, default=0.0); ap.add_argument('--realism', type=int, default=0); ap.add_argument('--transplant', default=None); ap.add_argument('--fronts', type=int, default=0)
-    a = ap.parse_args(); torch.set_num_threads(2); torch.manual_seed(a.seed); SB.FRONTS = bool(a.fronts)
+    ap.add_argument('--init_npz', default=None); ap.add_argument('--freeze_bn', type=int, default=0); ap.add_argument('--long_out', type=float, default=0.0); ap.add_argument('--device', default='cpu')
+    a = ap.parse_args(); torch.set_num_threads(2); torch.manual_seed(a.seed); SB.FRONTS = bool(a.fronts); SB.LONG_OUT = a.long_out
     global BETA; BETA = a.beta
     widths = tuple(int(v) for v in a.widths.split(','))
     net = SunDoctor(widths, a.tw)
     if a.init: net.load_state_dict(torch.load(a.init, weights_only=False)['ema'])
+    if a.init_npz: load_npz(net, a.init_npz)
     if a.transplant: transplant(net, a.transplant)
-    elif not a.init:
+    elif not a.init and not a.init_npz:
         with torch.no_grad():
             b = net.day.bias; b.zero_(); b[0] = 0.8 / SCALE[0]; b[2] = 0.9 / SCALE[2]
             net.glob[-1].bias.zero_(); net.glob[-1].bias[0] = 0.91 / GSCALE[0]; net.glob[-1].bias[1] = 0.85 / GSCALE[1]
-    ema = copy.deepcopy(net).eval(); rng = np.random.default_rng(1000 + a.seed)
+    dev = torch.device(a.device); net.to(dev); ema = copy.deepcopy(net).eval(); rng = np.random.default_rng(1000 + a.seed)
+    def set_train():
+        net.train()
+        if a.freeze_bn:
+            for m in net.modules():
+                if isinstance(m, (torch.nn.BatchNorm1d, torch.nn.BatchNorm2d)): m.eval()
     opt = torch.optim.AdamW(net.parameters(), lr=a.lr, weight_decay=1e-4); t0 = time.time(); log = []; acc = np.zeros(5)
     for step in range(1, a.steps + 1):
         lr = a.lr * (step / a.warm if step < a.warm else 0.5 * (1 + math.cos(math.pi * (step - a.warm) / max(1, a.steps - a.warm))) * 0.97 + 0.03)
         for gr in opt.param_groups: gr['lr'] = lr
         X, Y, G, _ = batch(rng, a.bs, a.days, a.p_ref)
-        net.train(); day, g = net(torch.from_numpy(X))
-        loss, lr_, ls_, lg_ = loss_fn(day, g, torch.from_numpy(Y), torch.from_numpy(G))
+        set_train(); day, g = net(torch.from_numpy(X).to(dev))
+        loss, lr_, ls_, lg_ = loss_fn(day, g, torch.from_numpy(Y).to(dev), torch.from_numpy(G).to(dev))
         opt.zero_grad(); loss.backward(); torch.nn.utils.clip_grad_norm_(net.parameters(), 5.0); opt.step()
         with torch.no_grad():
             for pe, pn in zip(ema.parameters(), net.parameters()): pe.mul_(a.ema).add_(pn, alpha=1 - a.ema)
@@ -77,7 +102,8 @@ def main():
         if step % 100 == 0 or step == a.steps:
             rec = {'step': step, 'loss': acc[0] / acc[4], 'reg': acc[1] / acc[4], 'step_bce': acc[2] / acc[4], 'glob': acc[3] / acc[4], 'lr': lr, 't': round(time.time() - t0)}
             log.append(rec); print(json.dumps(rec), flush=True); acc[:] = 0
-    torch.save({'ema': ema.state_dict(), 'widths': widths, 'tw': a.tw, 'days': a.days, 'args': vars(a), 'log': log, 'version': 2}, f'{_P.WORK}/ckpt/{a.name}.pt')
+    os.makedirs(f'{_P.WORK}/ckpt', exist_ok=True)
+    torch.save({'ema': {k: v.cpu() for k, v in ema.state_dict().items()}, 'widths': widths, 'tw': a.tw, 'days': a.days, 'args': vars(a), 'log': log, 'version': 2}, f'{_P.WORK}/ckpt/{a.name}.pt')
     print('saved', a.name, flush=True)
 
 if __name__ == '__main__':

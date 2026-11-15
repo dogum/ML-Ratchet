@@ -36,6 +36,7 @@ def geometry(cz, az, tilt, azr, trk, axis_az, max_ang, gcr, bt=True):
     return np.where(trk, t_tilt, tilt), np.where(trk, t_az, azr), np.where(trk, t_ca, f_ca), th
 
 FRONTS = False     # rung 8: synoptic weather (day-to-day temperature swings and cold fronts arriving with overcast days)
+LONG_OUT = 0.0     # v2.1 physics (15 Nov 2026): share of fortnights with a tripped inverter that stays off until it is reset, 2-14 days
 
 def simulate_batch(rng, B, D=14, home=None, fixed=None):
     f = fixed or {}
@@ -151,6 +152,11 @@ def simulate_batch(rng, B, D=14, home=None, fixed=None):
     p_ideal = P(g_ideal_ns, 10.0); p_track = P(g_ns, 10.0); p_shade = P(g_act, 10.0); p_snow = P(g_act * tsn, 10.0)
     pac = S.pvwatts_inv(S.pvwatts_dc(g_act * tsn, tc, 1.0, K(gamma)) * E0 * lowf(g_act * tsn), 1.0, pac0)
     r = rng.random((B, D)); out = np.zeros((B, D, T)); out[r < 0.03] = 1
+    if LONG_OUT > 0:   # an inverter trips at a random time and stays dark for days until someone resets it (no draws when off)
+        lo_on = rng.random(B) < LONG_OUT; lo_d0 = rng.integers(-6, D, B); lo_len = rng.integers(2, 15, B); lo_t0 = rng.integers(0, T, B); lo_t1 = rng.integers(0, T, B)
+        dd3, tt3 = np.arange(D)[None, :, None], np.arange(T)[None, None]; s_abs = dd3 * T + tt3
+        a0 = (lo_d0 * T + lo_t0)[:, None, None]; a1 = ((lo_d0 + lo_len) * T + lo_t1)[:, None, None]
+        out = np.where(lo_on[:, None, None] & (s_abs >= a0) & (s_abs < a1), 1.0, out)
     part = (r >= 0.03) & (r < 0.08); a = rng.integers(20, 70, (B, D)); ln = rng.integers(2, 30, (B, D))
     out = np.where(part[..., None] & (tt >= a[..., None]) & (tt < (a + ln)[..., None]), 1.0, out)
     curt = np.where((rng.random(B) < 0.08)[:, None] & (rng.random((B, D)) < 0.3), u(0.3, 0.8)[:, None] / dcac[:, None], 10.0)

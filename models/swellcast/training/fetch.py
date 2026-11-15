@@ -4,7 +4,7 @@ store each buoy-year on a fixed hourly x frequency grid:
   C, S (n_hours, NF) r1*cos(alpha1), r1*sin(alpha1), alpha1 = compass direction waves come FROM (NaN = missing)
 Source: https://www.ndbc.noaa.gov/data/historical/{swden,swdir,swr1}/<id>{w,d,j}<year>.txt.gz (NOAA NDBC, public domain)."""
 import os, sys, gzip, io, time, subprocess, numpy as np
-HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE); RAW = os.path.join(ROOT, 'data/ndbc/raw'); OUT = os.path.join(ROOT, 'data/buoy')
+HERE = os.path.dirname(os.path.abspath(__file__)); import _paths as _P; ROOT = _P.WORK; RAW = os.path.join(ROOT, 'data/ndbc/raw'); OUT = os.path.join(ROOT, 'data/buoy')
 FGRID = 0.0325 + 0.005 * np.arange(34)          # 0.0325 ... 0.1975 Hz (native NDBC bins up to 0.0925, interpolated above)
 BUOYS = ['51101', '51001', '51004', '51000', '51002', '51003', '46047', '46028', '46011', '46025', '46086', '46069', '46026', '46042', '46059',
          '46006', '46002', '41047', '41046', '41040', '41010', '41001', '44014', '44008', '44011', '42060', '32012']

@@ -1,7 +1,7 @@
 """Great-circle geometry on a sphere and a 0.1-degree land mask (Natural Earth 1:50m via world-atlas topojson)."""
 import os, json, numpy as np
 R_E = 6371.0e3   # m
-HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
+HERE = os.path.dirname(os.path.abspath(__file__)); import _paths as _P; ROOT = _P.WORK   # data, banks, checkpoints: work/ (see _paths.py)
 
 def dist(lat1, lon1, lat2, lon2):
     """great-circle distance in m (haversine)"""

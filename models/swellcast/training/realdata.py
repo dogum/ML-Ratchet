@@ -4,7 +4,7 @@
 Also builds the per-buoy 3-hourly background store used for injection (data/bg/<buoy>.npz)."""
 import os, glob, numpy as np
 import swellsim as SS
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); BUOY = os.path.join(ROOT, 'data/buoy'); BG = os.path.join(ROOT, 'data/bg')
+import _paths as _P; ROOT = _P.WORK; BUOY = os.path.join(ROOT, 'data/buoy'); BG = os.path.join(ROOT, 'data/bg')
 _cache = {}
 
 def _year(b, y):

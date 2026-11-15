@@ -3,7 +3,7 @@ direction, log storm Hs, detection = 2 AUC - 1 against version-matched null wind
 import os, sys, json, numpy as np, torch
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import model as M, events as EV
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); CK = os.path.join(ROOT, 'ckpt/'); BANK = os.path.join(ROOT, 'bank/')
+import _paths as _P; ROOT = _P.WORK; CK = os.path.join(ROOT, 'ckpt/'); BANK = os.path.join(ROOT, 'bank/')
 VAL = os.environ.get('SWELL_VAL', 'val1')
 SIGF = os.path.join(ROOT, 'sigma_factor.json')
 
