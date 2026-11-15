@@ -53,6 +53,41 @@ Speed: CWRU nominal error 1.36 % → 0.35 % (coverage 80 % at 1σ, 97 % at 2σ, 
 - Paderborn .rar archives read with libarchive-c; MFPT no longer offers downloads (contact-only).
 - 2 shared cores: r2 (6000 steps) took ~1 h wall under contention.
 
+## 15 Nov 2026 — round 2: the CWRU losses checked on dev (nothing trained, nothing released)
+
+Targets: CWRU near sensor (exam 0.39 vs envelope analysis 0.49), base plate (0.50 vs 0.67), and defect size (worse than
+the median guess). The rows are public, so the first question was whether the dev files show the same failures.
+
+- Data: `fetch_cwru.py` re-fetched all 161 CWRU files into `work/data/cwru/` (316 MB as npz). It reads the four data
+  pages from `work/data/pages/`, which had to be saved first (`curl https://engineering.case.edu/bearingdatacenter/<page>`).
+  Paderborn was not fetched (32 archives of about 174 MB; not needed for a CWRU dev check).
+- Dev files recomputed from the seed (`bn_devprobe.cwru_dev_ids`, the CWRU half of `realdata.split`, same draw order):
+  normal 99; faults 235, 171, 121 (de12 OR / IR / B), 262, 177, 227 (de48), 313, 270, 288 (fe12). Background file 98, as
+  recorded. The Paderborn half (K006, KA01, KI03) was not redrawn.
+- `bn_devprobe.py` reads every dev reading with the released numpy module (its dev-fitted temperature and healthy bias)
+  and with the envelope method (threshold fitted on the same readings, as `exam.py` does). Record:
+  `training/bn_devprobe_r2.json`.
+
+| Dev readings | n | Network bal. acc. (correct) | Envelope bal. acc. (correct) |
+|---|---|---|---|
+| near sensor | 11 | 0.67 (7) | 0.67 (7) |
+| far sensor | 11 | 0.67 (7) | 0.92 (10) |
+| base plate | 6 | 0.67 (4) | 0.50 (3) |
+| all | 28 | 0.69 (18) | 0.75 (20) |
+
+- The near-sensor and base-plate losses do not show on dev: a tie on 11 near readings, a network lead on 6 base-plate
+  readings. The far sensor, a network win on the exam, goes the other way on dev. With 6-11 readings per position, one
+  reading moves balanced accuracy by 0.1-0.2. Dev cannot justify a change aimed at those rows, so none was made: no
+  transfer-path rung, no envelope backbone, no hybrid.
+- Defect size does show on dev: on the 9 near-sensor fault readings the network errs by 0.40 dex against 0.11 dex for
+  guessing their median (in-sample). The sizes are 0.18, 0.36 and 0.53 mm; the network reads 0.18-1.84 mm with no order.
+  The inputs are envelope spectra, which carry size only through loudness, and the v2 calibration set loudness 10-25 dB
+  above background regardless of size. The entry/exit pulse pair that does carry size is 0.1-0.35 ms apart at these
+  speeds, one to four samples at 12 kHz. No dev-justified fix within the current inputs; not attempted.
+- Also seen: of the 9 'other bearing' dev readings (a healthy bearing next to a faulty one) the network calls 1 healthy,
+  the known weak spot ("Healthy" in the limits).
+- v1.0 stays; the exam was not run.
+
 ## Corrections
 
 - 14 Nov 2026: ratchet.yaml: the rule said dev balanced accuracy 'does not fall'; training/ratchet.py keeps a rung if it is no more than 0.03 below the incumbent (d >= -0.03), as the card says. The rule text now matches the code. Card: the code credit line now reads 'Code and weights: MIT (ML Ratchet)'. No decision changed.

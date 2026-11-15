@@ -1,0 +1,87 @@
+{
+ "n": 251,
+ "leads": [
+  "D3",
+  "ECG1",
+  "V4",
+  "V5"
+ ],
+ "mlii_records": 0,
+ "net_mae": 18.26507568359375,
+ "classical_mae": 20.217146704477447,
+ "median_mae": 27.330677032470703,
+ "records": {
+  "sel104": {
+   "lead": "V5",
+   "n": 45,
+   "truth_median": 132.0,
+   "net_mae": 19.84467315673828,
+   "classical_mae": 23.95611538362761,
+   "net_bias": 3.664149761199951,
+   "classical_bias": -13.36503398439659
+  },
+  "sel16265": {
+   "lead": "ECG1",
+   "n": 30,
+   "truth_median": 100.0,
+   "net_mae": 7.330394268035889,
+   "classical_mae": 12.780271969923046,
+   "net_bias": 1.0347135066986084,
+   "classical_bias": 9.329295449938204
+  },
+  "sel16272": {
+   "lead": "ECG1",
+   "n": 30,
+   "truth_median": 76.0,
+   "net_mae": 13.05117416381836,
+   "classical_mae": 16.80492923979623,
+   "net_bias": 10.894475936889648,
+   "classical_bias": 15.505534473485538
+  },
+  "sel44": {
+   "lead": "ECG1",
+   "n": 22,
+   "truth_median": 140.0,
+   "net_mae": 32.31325912475586,
+   "classical_mae": 39.60482587520403,
+   "net_bias": -32.31325912475586,
+   "classical_bias": -39.60482587520403
+  },
+  "sel808": {
+   "lead": "ECG1",
+   "n": 30,
+   "truth_median": 102.0,
+   "net_mae": 30.184349060058594,
+   "classical_mae": 34.584455420585336,
+   "net_bias": 30.184349060058594,
+   "classical_bias": 34.584455420585336
+  },
+  "sel811": {
+   "lead": "ECG1",
+   "n": 30,
+   "truth_median": 92.0,
+   "net_mae": 12.222699165344238,
+   "classical_mae": 11.328667700448598,
+   "net_bias": 5.662033557891846,
+   "classical_bias": 5.289976130259472
+  },
+  "sele0107": {
+   "lead": "D3",
+   "n": 34,
+   "truth_median": 100.0,
+   "net_mae": 8.602578163146973,
+   "classical_mae": 7.86642828167571,
+   "net_bias": -4.053372383117676,
+   "classical_bias": -4.781000818304407
+  },
+  "sele0116": {
+   "lead": "V4",
+   "n": 30,
+   "truth_median": 156.0,
+   "net_mae": 26.816192626953125,
+   "classical_mae": 19.758805660217906,
+   "net_bias": -24.981504440307617,
+   "classical_bias": -10.199703928446208
+  }
+ }
+}

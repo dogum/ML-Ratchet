@@ -70,6 +70,24 @@ Note: DS2 macro-F1 fell from r1 to r2; the exam never decided anything, so it is
 - Other agents also run files named `train.py`/`simbank.py`: never kill by name.
 - wfdb from pip reads format 212 and .atr directly; PhysioNet endpoints worked without issue.
 
+## 15 Nov 2026 — round 2: the two losing rows checked on dev (nothing trained, nothing released)
+
+Targets: fusion beats found 3 / 388, and QRS width on the QT database, lead MLII, 18 ms vs classical delineation 15 ms.
+Research and teaching only; not a medical device. The rows are public, so the first question was whether dev shows them.
+
+- Data rebuilt in `work/data/` with `fetch.sh` (mitdb 90 MB, nstdb, svdb 53 MB) and `fetch_qt.sh` (QT database, 105
+  records). `fetch.sh`'s own QT step fails on a fresh machine: it writes into `work/data/qtdb/` before creating it;
+  `fetch_qt.sh` creates it. `wfdb` 4.3.1 was installed into `.venv-train` for `qtbank.py`.
+- QRS width (`qt_devprobe.py`, record `training/qt_devprobe_r2.json`): the 8 dev records (seed 11) are on leads ECG1 (5),
+  V5, V4 and D3; **none is MLII**. On them the network already beats classical delineation, 18.3 vs 20.2 ms (median guess
+  27.3), matching `exam.json`'s dev block. Classical is better on three of the eight (sel811 11.3 vs 12.2 ms, sele0107 7.9
+  vs 8.6, sele0116 19.8 vs 26.8). The exam's loss sits on the 11 MLII exam records; over all 96 exam records the network
+  wins (16.7 vs 19.4). Dev cannot show the MLII loss, so nothing was changed for it.
+- Fusion: the six dev records hold 3 F beats (201: 2, 203: 1); the network reads one as N and two as V. Three beats
+  cannot calibrate a fusion window. The F-rich records (208: 373, 213: 362) are in the held-out DS1 rest and the DS2
+  exam, and using them would change the split. Nothing was changed.
+- v1.0 stays; the exam was not run.
+
 ## Corrections
 
 - 14 Nov 2026: Card: S-beat coupling on dev is 0.56 of the local RR (calib_coupling.json median 0.555), was written 0.55; QRS-width error on QT DB lead MLII is 18 ms (exam.json 17.99), was written 17 ms. The demo now prints 'Research and teaching only. Not a medical device.' first; tests/golden/beatnet.txt was regenerated for that one line. No verdict changed.
