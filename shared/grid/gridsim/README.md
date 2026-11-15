@@ -134,8 +134,8 @@ lab = gs.dispatch(fleet, demand, wind_cf=wcf, solar_cf=scf, cluster=False, outag
 #   each cluster is one unit: lab.p[:, j], lab.su[:, j], lab.fuel_MMBtu[:, j]; truth in lab.cf.clusters[j]
 #   (pmin, pmax, ru, F0/ihr segments, start cost). Add CAMPD-like measurement noise yourself.
 
-# BatteryPilot: price scenarios with the right daily shape (scarcity spikes are NOT realistic, LIMITS 3-4);
-#   better: train on real train-year prices + simulated perturbations, grade on real exam prices.
+# BatteryPilot: price scenarios with the right daily shape (scarcity spikes are NOT realistic, LIMITS C);
+#   physics 1.2 (opt-in) adds the real-time scarcity the day-ahead market cannot see (gridsim.market, below).
 
 # DemandCast: weather -> demand and wind/solar
 p = gs.fit_demand(weather_train, load_train); gs.demand_model(weather, p)
@@ -144,6 +144,28 @@ gs.fleet_profiles(units, weather_by_point, kind='wind')   # per-farm physics, ne
 
 Fleets for other BAs (CISO, PJM, MISO, SWPP, NYIS, ISNE, BPAT) are in `grid/data/proc/fleet/` and run the same way;
 only ERCOT has been checked against reality.
+
+## Physics versions
+
+`$GRIDSIM_PHYSICS` picks the version (read when gridsim is imported; `gridsim.PHYSICS_VERSION`).
+
+| version | what it is |
+|---|---|
+| `1.0` | as released on 14 Nov 2026 (outage defaults from Texas RE's 2024/2025 reports: an exam leak; kept to reproduce) |
+| `1.1` | **the default.** Outage defaults from pre-2023 sources; dispatch and frequency re-calibrated on dev (`data/calibration_v1_1.json`) |
+| `1.2` | opt-in (15 Nov 2026): 1.1 plus real-time scarcity the day-ahead market cannot see (`gridsim.market`, parameters `data/rt_scarcity_v1_2.json`, fitted on the training-input years 2018, 2020, 2022 only). Every other output equals 1.1: same outage defaults, same calibration file, and `market` returns zeros under 1.0 and 1.1 (`checks/rt_scarcity.json`, `identity`) |
+
+```python
+from gridsim import market                        # GRIDSIM_PHYSICS=1.2, or pass version='1.2'
+adder = market.rt_scarcity(times, 'ERCO', seed=3, demand_err=(d - df) / df)   # $/MWh to add to the RT price
+da_premium = market.expected(times, 'ERCO')       # what a risk-neutral day-ahead price adds for it
+```
+
+The process: an unforecast scarcity event starts in an hour with probability r0 x H[local hour] x M[month] x g(z),
+where z is the day-ahead demand-forecast miss in standard units (g = exp(0.55 z), normalised to mean 1); it lasts a
+geometric number of hours (mean 1.97 h); each of its hours adds $100 + X to the RT price, X generalised Pareto
+(xi 0.74, sigma $130, capped at $8,900), adjacent hours tied by a Gaussian copula (rho 0.44). ERCOT only; CAISO has no
+fit (its prices start in Aug 2023). Limits in [LIMITS.md](LIMITS.md) section I.
 
 ## The physics
 
@@ -221,6 +243,7 @@ load damping 0.5-2) with labels (inertia, IBR share, headroom, FFR, loss).
 | `renewables.json` 2019 | ERCOT wind and solar fleets from NASA POWER weather vs EIA-930 | wind bias +5.9 % (dev-scaled +0.0 %), hourly r 0.90, nMAE 19 %; solar bias +19.6 %, hourly r 0.98, nMAE 22 % |
 | `renewables.json` 2022 | ERCOT wind and solar fleets from NASA POWER weather vs EIA-930 | wind bias +7.8 % (dev-scaled +1.9 %), hourly r 0.91, nMAE 20 %; solar bias +3.6 %, hourly r 0.97, nMAE 15 % |
 | `demand.json` | weather-driven ERCOT demand, fit 2018-19, test 2021 (Uri week excluded) and 2022 | MAPE 3.8 % / 4.3 % (bias -3.4 % in 2022); ERCOT's own day-ahead forecast 2.4 / 2.8 % |
+| `rt_scarcity.json` (physics 1.2) | the RT scarcity process alone (200 draws per year, driven by the year's real demand-forecast misses) vs the real HB_HUBAVG RT - DA spread; fit on 2018/2020/2022, checked on dev 2019 and 2021 | hours with RT - DA > $100 per year: sim mean 104-120 vs real 87 / 81 / 165 (train; pooled 111 vs 111) and 108 / 99 (dev 2019 / 2021 without Uri; 224 with Uri); hour-of-day profile corr 0.82-0.95 (train), 0.80 / 0.87 (dev); month profile corr -0.00 to 0.78 (train), 0.07 / 0.35 (dev); start rate in the top fifth of demand-forecast misses 9.9-13.3 vs 2.9-3.3 per 1,000 h in the bottom fifth (real train 2018 / 2020: 12.6 / 13.7 vs 1.7 / 0.6) |
 | `generator.json` | 2,000 generated states and 40 generated fleets vs real ranges | inertia per MW demand p5/p50/p95 2.1/4.6/7.1 s (ERCOT 2019 min 4.6 s, GB 9 Aug 7.2 s); RoCoF at t=0 = formula to 2e-15; UFLS in 13 % (60 Hz) / 5 % (50 Hz) of random events; heat rates inside the ERCOT EIA-923 spread |
 
 Dev calibration (all in `gridsim/data/calibration.json`, fitted on dev data of `splits.json` only): ERCOT coal
@@ -251,7 +274,8 @@ shared with other jobs).
 
 ```
 gridsim/        the package: network.py, fleet.py, dispatch.py, frequency.py, renewables.py, demand.py, generator.py,
-                data/calibration.json (dev-year ERCOT dispatch calibration)
+                market.py (physics 1.2 RT scarcity), data/calibration.json (dev-year ERCOT dispatch calibration;
+                1.1: calibration_v1_1.json), data/rt_scarcity_v1_2.json (train-year fit, checks/fit_rt_scarcity.py)
 refdata/        (git-ignored; `mlratchet data grid` restores it) matpower/ (IEEE + ACTIVSg cases), fuel/ (EIA-923 monthly receipts via PUDL, Henry Hub daily),
                 hr/unit_heat_rates.parquet (EIA-923 fuel and generation per generator, via PUDL)
 tools/          build_heat_rates.py

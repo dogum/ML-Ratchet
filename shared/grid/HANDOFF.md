@@ -97,7 +97,16 @@ From `checks/*.json`; re-run `checks/run_all.sh` after any change.
   `dispatch` (flag). Not done: the new-physics items (Dynamic Containment two-segment droop, year-aware priors, ORDC
   in core, cold-outage curve, GT ambient derate, DA price generator, self-commitment layer, building-stock demand
   model) and two speed tools (single-LP perfect foresight, tabulated farm curves).
-- **Not done:** everything in P1-P3.
+- **P1 scarcity pricing, first part (physics 1.2, opt-in, 15 Nov 2026).** `gridsim.market` draws the real-time
+  scarcity the day-ahead market cannot see (unforecast events: hour, month and demand-forecast-miss structure, geometric
+  duration, generalised Pareto size), fitted on ERCOT 2018/2020/2022 prices only and checked on dev
+  (`checks/rt_scarcity.json`; LIMITS I). Hours with RT - DA > $100: sim 104-120 a year vs real 81-165 (train) and
+  108 / 99 (dev 2019 / 2021 without Uri); hour profile corr 0.80-0.87 on dev; the month profile does not transfer
+  (0.07 / 0.35). Default stays 1.1 and 1.2 changes no other output, so GridPulse, DemandCast and PlantDetective keep
+  their 1.1 pins; BatteryPilot rebuilt its frozen set on 1.2 (its NOTEBOOK). No CAISO fit (no pre-2023 CAISO prices).
+  Not done: the P1 "done when" for hours above $1,000 in the dispatch itself (ORDC in core, unforecast outages in
+  `dispatch`), and year-to-year tightness.
+- **Not done:** everything else in P1-P3.
 
 ## 4. Prioritised work list
 

@@ -64,6 +64,43 @@ G. **Clustering**: similar units share one integer commitment (≤ 50 units per 
    no duct firing; no start-up types (hot/warm/cold). Hydro is a daily energy budget.
 H. **No network in the ERCOT checks**, no imports optimisation (DC ties are fixed at their real values), and storage
    is one aggregate (ERCOT 2019/2022 had little storage; the 2023+ battery fleet is not validated).
+I. **Real-time scarcity the day-ahead market cannot see (physics 1.2, opt-in, 15 Nov 2026).** GridSim prices one
+   market. Real ERCOT spikes mostly come in real time and are not in the day-ahead price: on the training-input years
+   the DA price covers 24-30 % of the RT value of hours above $300/MWh (HB_HUBAVG; 2019 31 %, 2021 without Uri 13 %).
+   BatteryPilot's wrapper had DA prices that covered 44-84 % (median 71 %) in its simulated ERCOT frozen years, so a
+   DA-anchored policy looked worse in simulation than on real prices. `gridsim.market` adds the missing part as a
+   point process on the RT - DA spread (README, "Physics versions"), fitted on ERCOT 2018, 2020 and 2022 prices only
+   (`checks/fit_rt_scarcity.py`: 169 events, 333 event hours) and checked on dev (`checks/rt_scarcity.json`, 200
+   draws a year driven by the year's real demand-forecast misses):
+
+   | ERCOT HB_HUBAVG | 2018 | 2020 | 2022 | 2019 (dev) | 2021 (dev) | 2021 without Uri |
+   |---|---|---|---|---|---|---|
+   | Hours RT - DA > $100, real | 87 | 81 | 165 | 108 | 224 | 99 |
+   | sim mean [5-95 %] | 112 [83-144] | 120 [92-150] | 104 [74-134] | 115 [86-146] | 112 [82-143] | 107 [83-135] |
+   | Hours RT - DA > $1,000, real / sim | 6 / 9.6 | 1 / 10.1 | 23 / 9.0 | 17 / 9.8 | 63 / 9.6 | 7 / 9.5 |
+   | Events, real / sim | 51 / 56 | 44 / 60 | 74 / 52 | 56 / 58 | 75 / 56 | 61 / 54 |
+   | $ of RT - DA in event hours (k$/MW), real / sim | 31 / 52 | 22 / 56 | 95 / 49 | 82 / 54 | 192 / 52 | 36 / 51 |
+   | Hour-of-day profile corr | 0.82 | 0.89 | 0.95 | 0.80 | 0.87 | 0.87 |
+   | Share of event hours 13-20 h local, real / sim | 0.68 / 0.60 | 0.82 / 0.64 | 0.72 / 0.57 | 0.80 / 0.62 | 0.50 / 0.61 | 0.76 / 0.61 |
+   | Month profile corr | -0.00 | 0.78 | 0.39 | 0.07 | 0.26 | 0.35 |
+
+   What it gets wrong: (1) **years differ more than the draws do.** The rate knows the hour, month and forecast miss,
+   not how tight the year's system is: real years range 81-165 hours (dev 2021 with Uri 224) against a draw range of
+   about 75-150, and the $ size ranges 22-192 k$/MW against 49-56 k$/MW on average. A caller that wants year-to-year
+   spread must scale the rate per scenario (`scale=`). (2) **Uri is not in it**: 125 of 2021's 224 hours come from
+   8-24 Feb; cold-weather outages belong to the caller's fleet model (BatteryPilot's cold-outage curve). (3) The
+   **month profile does not transfer** (dev corr 0.07 and 0.35): 169 events spread over 12 months is too few to fix a
+   seasonal shape. The hour profile does transfer (0.80-0.87 on dev), but the smoothing (+0.5 per hour, a [1, 2, 1]
+   kernel) puts too few events in the afternoon (0.57-0.64 of event hours vs real 0.68-0.82). (4) The forecast-miss
+   driver is the demand miss only (EIA-930 has no wind or solar forecasts): beta 0.55 per standard deviation
+   (likelihood-ratio statistic 52.9 on 1 degree of freedom), real start rates 0.6-2.9 vs 8.6-13.7 per 1,000 h in the
+   bottom vs top fifth of misses on the training years (2022 is flat above the bottom fifth). (5) Upward spikes only:
+   RT below DA by more than $50 (60-430 h a year) is left to the caller's noise. (6) The geometric duration (mean 1.97
+   h) has too few 2-hour events (25 % vs 16 % real) and the generalised Pareto (xi 0.74) a slightly heavy mean ($378
+   capped vs $346 real per event hour). (7) **No CAISO fit**: CAISO prices exist only from Aug 2023 (the OASIS history
+   limit), so no training-year prices exist; `market` returns zeros for CISO, and CAISO users stay on 1.1 behaviour.
+   With physics 1.0 or 1.1 `market` returns zeros, and 1.2 leaves every other output unchanged (same outage defaults
+   and calibration file; a merit-order ERCOT week is identical: `rt_scarcity.json`, `identity`).
 
 ## Frequency
 

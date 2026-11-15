@@ -78,11 +78,17 @@ OUTAGE_DEFAULTS = {
     "1.1": {"coal_steam": (0.136, 0.083), "gas_cc": (0.036, 0.083), "gas_ct": (0.058, 0.083),
             "gas_steam": (0.136, 0.083)},
 }
+# 1.2 (15 Nov 2026, opt-in): 1.1 plus real-time scarcity the day-ahead market cannot see (gridsim.market, used only by
+# callers that ask for it). Every outage default, the dispatch and the frequency calibration are 1.1's.
+OUTAGE_DEFAULTS["1.2"] = dict(OUTAGE_DEFAULTS["1.1"])
 
 
 def calibration_path(version=None):
-    """The dev-calibration file of a physics version: data/calibration.json (1.0), data/calibration_v1_1.json (1.1)."""
+    """The dev-calibration file of a physics version: data/calibration.json (1.0), data/calibration_v1_1.json (1.1
+    and 1.2: 1.2 changes no dispatch or frequency value; its RT scarcity parameters are in data/rt_scarcity_v1_2.json)."""
     v = version or physics_version()
+    if v == "1.2":
+        v = "1.1"
     return os.path.join(HERE, "data", "calibration.json" if v == "1.0" else f"calibration_v{v.replace('.', '_')}.json")
 
 
@@ -92,7 +98,7 @@ def calibration(version=None):
 
 
 def physics_version():
-    """The GridSim physics version in use: $GRIDSIM_PHYSICS ("1.0" or "1.1"), default "1.1"."""
+    """The GridSim physics version in use: $GRIDSIM_PHYSICS ("1.0", "1.1" or "1.2"), default "1.1"."""
     v = os.environ.get("GRIDSIM_PHYSICS", "1.1")
     if v not in OUTAGE_DEFAULTS:
         raise ValueError(f"GRIDSIM_PHYSICS={v!r}: known versions {sorted(OUTAGE_DEFAULTS)}")

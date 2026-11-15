@@ -39,6 +39,7 @@ CHECKS = [
     ('renewables', ['check_renewables.py', '2019', '2022'], ['renewables.json'], False, False),
     ('demand', ['check_demand.py'], ['demand.json'], False, False),
     ('generator', ['check_generator.py'], ['generator.json'], False, False),
+    ('rt_scarcity', ['check_rt_scarcity.py'], ['rt_scarcity.json'], False, False),   # physics 1.2 process (any version)
     ('calibrate_ercot', ['calibrate_ercot.py'], [], False, True),
     ('ercot_2019', ['check_ercot_dispatch.py', '2019', 'calibrated', 'merit', 'economic'], ['ercot_dispatch_2019.json'], False, True),
     ('ercot_2022', ['check_ercot_dispatch.py', '2022', 'calibrated', 'merit', 'economic'], ['ercot_dispatch_2022.json'], False, True),
