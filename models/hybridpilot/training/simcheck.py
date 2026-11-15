@@ -132,7 +132,7 @@ def main(split, ckpt=None, params=None, n_per=None, tag=''):
         for rr in pool.imap_unordered(run_trip, [(t, ckpt, params or {}) for t in pick.trip_id], chunksize=2):
             rows += rr
     df = pd.DataFrame(rows)
-    fn = f'{ROOT}/data/simcheck_{split}{tag}'
+    fn = f'{ROOT}/data/simcheck_{split}{tag}{PTAG}'
     df.to_parquet(fn + '.parquet')
     S = summarize(df)
     json.dump(dict(split=split, ckpt=ckpt, params=params, n_trips=int(df.trip.nunique()), physics=PHYS, summary=S,

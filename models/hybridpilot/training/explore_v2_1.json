@@ -1,0 +1,5418 @@
+[
+ {
+  "ckpt": "ckpt/r2_dagger.npz",
+  "variants": [
+   {
+    "name": "R8",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms"
+   },
+   {
+    "name": "Kp12Ki0",
+    "Kp": 12,
+    "Ki": 0,
+    "onoff": "ecms"
+   },
+   {
+    "name": "tau120",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_tau": 120
+   },
+   {
+    "name": "cub6_Kp6",
+    "Kp": 6,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "cubic": 0.6
+   },
+   {
+    "name": "dead03",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03
+   },
+   {
+    "name": "norm3",
+    "Kp": 3,
+    "Ki": 0.005,
+    "onoff": "ecms",
+    "fb_norm": true
+   }
+  ],
+  "filt": null,
+  "table": {
+   "bus (P2)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.000254204837353,
+     "pct_dp_median": 1.0007265689288234,
+     "pct_dp_p10": 0.9954075759619385,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3586272105154036,
+     "chatter_per_km": 1.6399412428357867,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9939813560598599,
+     "pct_dp_median": 0.9976490142013735,
+     "pct_dp_p10": 0.9769835045939399,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3387053590558198,
+     "chatter_per_km": 1.47176860018761,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9694601396341966,
+     "pct_dp_median": 0.9719275163182183,
+     "pct_dp_p10": 0.9489154079715376,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.264029612283305,
+     "chatter_per_km": 1.816617239765924,
+     "extrap_frac": 0.2
+    },
+    "R8": {
+     "n": 10,
+     "pct_dp_mean": 0.9880448400430166,
+     "pct_dp_median": 0.9950203565240066,
+     "pct_dp_p10": 0.9701364024292076,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.272823680228592,
+     "chatter_per_km": 1.3074212115094466,
+     "extrap_frac": 0.4
+    },
+    "Kp12Ki0": {
+     "n": 10,
+     "pct_dp_mean": 0.9915653008514307,
+     "pct_dp_median": 0.9987968048373949,
+     "pct_dp_p10": 0.973613116628346,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.2905462037180007,
+     "chatter_per_km": 1.324808309695248,
+     "extrap_frac": 0.3
+    },
+    "tau120": {
+     "n": 10,
+     "pct_dp_mean": 0.9856575109871806,
+     "pct_dp_median": 0.993175071668369,
+     "pct_dp_p10": 0.9482249900525828,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.2306915986160822,
+     "chatter_per_km": 1.308978226594451,
+     "extrap_frac": 0.4
+    },
+    "cub6_Kp6": {
+     "n": 10,
+     "pct_dp_mean": 0.9935437367569072,
+     "pct_dp_median": 0.9977016714086338,
+     "pct_dp_p10": 0.974308067063572,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.2300188801867336,
+     "chatter_per_km": 1.30421140601538,
+     "extrap_frac": 0.4
+    },
+    "dead03": {
+     "n": 10,
+     "pct_dp_mean": 0.9951535708155242,
+     "pct_dp_median": 0.9989064569069037,
+     "pct_dp_p10": 0.9751724902358033,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.2592809079167515,
+     "chatter_per_km": 1.31882869559627,
+     "extrap_frac": 0.4
+    },
+    "norm3": {
+     "n": 10,
+     "pct_dp_mean": 0.9881608078668433,
+     "pct_dp_median": 0.9949529798795242,
+     "pct_dp_p10": 0.9701364024292076,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.272871625867297,
+     "chatter_per_km": 1.3074378080766904,
+     "extrap_frac": 0.3
+    }
+   },
+   "ALL": {
+    "ecms": {
+     "n": 190,
+     "pct_dp_mean": 0.9884820468320359,
+     "pct_dp_median": 0.9948506858603932,
+     "pct_dp_p10": 0.9561870412222753,
+     "cs_rate": 0.7105263157894737,
+     "starts_per_km": 2.6257189838637958,
+     "chatter_per_km": 1.2513260403129096,
+     "extrap_frac": 0.26842105263157895
+    },
+    "aecms": {
+     "n": 190,
+     "pct_dp_mean": 0.9827330201278812,
+     "pct_dp_median": 0.9891540686281838,
+     "pct_dp_p10": 0.9498917842495034,
+     "cs_rate": 0.9473684210526315,
+     "starts_per_km": 2.6957704964874485,
+     "chatter_per_km": 1.2775941063936196,
+     "extrap_frac": 0.14210526315789473
+    },
+    "rule": {
+     "n": 190,
+     "pct_dp_mean": 0.9682587703121436,
+     "pct_dp_median": 0.9777868468169785,
+     "pct_dp_p10": 0.9227438284030084,
+     "cs_rate": 0.868421052631579,
+     "starts_per_km": 2.6786526637864165,
+     "chatter_per_km": 1.641851500425413,
+     "extrap_frac": 0.20526315789473684
+    },
+    "R8": {
+     "n": 190,
+     "pct_dp_mean": 0.9889469662564122,
+     "pct_dp_median": 0.9969139757021397,
+     "pct_dp_p10": 0.963847892033436,
+     "cs_rate": 0.9315789473684211,
+     "starts_per_km": 2.3679207646829314,
+     "chatter_per_km": 0.9447148490674733,
+     "extrap_frac": 0.17894736842105263
+    },
+    "Kp12Ki0": {
+     "n": 190,
+     "pct_dp_mean": 0.9894566264953853,
+     "pct_dp_median": 0.9974667838463722,
+     "pct_dp_p10": 0.9628548651871499,
+     "cs_rate": 0.9105263157894737,
+     "starts_per_km": 2.374882955580392,
+     "chatter_per_km": 0.9516982115076051,
+     "extrap_frac": 0.1631578947368421
+    },
+    "tau120": {
+     "n": 190,
+     "pct_dp_mean": 0.9863430982644886,
+     "pct_dp_median": 0.9967932421928157,
+     "pct_dp_p10": 0.9500987793314537,
+     "cs_rate": 0.8842105263157894,
+     "starts_per_km": 2.309250136064295,
+     "chatter_per_km": 0.975516740996913,
+     "extrap_frac": 0.24736842105263157
+    },
+    "cub6_Kp6": {
+     "n": 190,
+     "pct_dp_mean": 0.9900527331734511,
+     "pct_dp_median": 0.9983266397507997,
+     "pct_dp_p10": 0.9643755639267376,
+     "cs_rate": 0.9157894736842105,
+     "starts_per_km": 2.356120058135713,
+     "chatter_per_km": 0.9630685400940646,
+     "extrap_frac": 0.18421052631578946
+    },
+    "dead03": {
+     "n": 190,
+     "pct_dp_mean": 0.9903669018006985,
+     "pct_dp_median": 0.998390111653662,
+     "pct_dp_p10": 0.9651198141950593,
+     "cs_rate": 0.9157894736842105,
+     "starts_per_km": 2.3617269781507204,
+     "chatter_per_km": 0.9640680792183937,
+     "extrap_frac": 0.20526315789473684
+    },
+    "norm3": {
+     "n": 190,
+     "pct_dp_mean": 0.9889032130924111,
+     "pct_dp_median": 0.9970602384001466,
+     "pct_dp_p10": 0.9631657316123298,
+     "cs_rate": 0.9157894736842105,
+     "starts_per_km": 2.3625565413019958,
+     "chatter_per_km": 0.943470607906003,
+     "extrap_frac": 0.17894736842105263
+    }
+   },
+   "bus (series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9999515834986751,
+     "pct_dp_median": 1.0015973091923542,
+     "pct_dp_p10": 0.9945781247095171,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.8247305086844245,
+     "chatter_per_km": 0.3569529968550746,
+     "extrap_frac": 0.0
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9914147158071698,
+     "pct_dp_median": 0.9928944356542826,
+     "pct_dp_p10": 0.9781393569157266,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.08930036429928,
+     "chatter_per_km": 0.7902390334821603,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9887457132041606,
+     "pct_dp_median": 0.9876430519589495,
+     "pct_dp_p10": 0.9766659879932298,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.7396209573739596,
+     "chatter_per_km": 2.2265328156974564,
+     "extrap_frac": 0.3
+    },
+    "R8": {
+     "n": 10,
+     "pct_dp_mean": 0.9863173136869472,
+     "pct_dp_median": 0.9928266852107431,
+     "pct_dp_p10": 0.9637386686907924,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.119954207239779,
+     "chatter_per_km": 0.6226629696512783,
+     "extrap_frac": 0.2
+    },
+    "Kp12Ki0": {
+     "n": 10,
+     "pct_dp_mean": 0.9875098047875103,
+     "pct_dp_median": 0.9930596008138641,
+     "pct_dp_p10": 0.9598274706965646,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.1583931525014277,
+     "chatter_per_km": 0.6142119968576512,
+     "extrap_frac": 0.1
+    },
+    "tau120": {
+     "n": 10,
+     "pct_dp_mean": 0.9843539515664006,
+     "pct_dp_median": 0.9910081077785255,
+     "pct_dp_p10": 0.9594711356982317,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.2139165442251256,
+     "chatter_per_km": 0.8218119526982559,
+     "extrap_frac": 0.2
+    },
+    "cub6_Kp6": {
+     "n": 10,
+     "pct_dp_mean": 0.9895671146024736,
+     "pct_dp_median": 0.9969715185142105,
+     "pct_dp_p10": 0.9704738969528219,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.1585856972445088,
+     "chatter_per_km": 0.6878372040779479,
+     "extrap_frac": 0.2
+    },
+    "dead03": {
+     "n": 10,
+     "pct_dp_mean": 0.9924248835140688,
+     "pct_dp_median": 0.9980297875161701,
+     "pct_dp_p10": 0.9729721946079749,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.0632791193995907,
+     "chatter_per_km": 0.5521760055996924,
+     "extrap_frac": 0.3
+    },
+    "norm3": {
+     "n": 10,
+     "pct_dp_mean": 0.9868431741652559,
+     "pct_dp_median": 0.9928266852107431,
+     "pct_dp_p10": 0.9623434271403957,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.10745548330297,
+     "chatter_per_km": 0.5976610843926639,
+     "extrap_frac": 0.2
+    }
+   },
+   "P2 HEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9881280813927743,
+     "pct_dp_median": 0.9916451969118348,
+     "pct_dp_p10": 0.9693689204530275,
+     "cs_rate": 0.3,
+     "starts_per_km": 2.358634584735908,
+     "chatter_per_km": 0.9666415894877127,
+     "extrap_frac": 0.5666666666666667
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9790033800457648,
+     "pct_dp_median": 0.9857707669632721,
+     "pct_dp_p10": 0.9370778275198426,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 2.356415223355974,
+     "chatter_per_km": 0.9532939214898944,
+     "extrap_frac": 0.03333333333333333
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9406792808340624,
+     "pct_dp_median": 0.9417240634570251,
+     "pct_dp_p10": 0.9119020561639574,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4799609999315235,
+     "chatter_per_km": 1.245324547755407,
+     "extrap_frac": 0.13333333333333333
+    },
+    "R8": {
+     "n": 30,
+     "pct_dp_mean": 0.9863088807146867,
+     "pct_dp_median": 0.9927607872637013,
+     "pct_dp_p10": 0.9672990787176783,
+     "cs_rate": 0.9666666666666667,
+     "starts_per_km": 2.3954071634091747,
+     "chatter_per_km": 0.9001278795197296,
+     "extrap_frac": 0.06666666666666667
+    },
+    "Kp12Ki0": {
+     "n": 30,
+     "pct_dp_mean": 0.9870927116857339,
+     "pct_dp_median": 0.9918421229288987,
+     "pct_dp_p10": 0.971023229676962,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4053662379338125,
+     "chatter_per_km": 0.912861395105841,
+     "extrap_frac": 0.03333333333333333
+    },
+    "tau120": {
+     "n": 30,
+     "pct_dp_mean": 0.9824578609532512,
+     "pct_dp_median": 0.9871674724076407,
+     "pct_dp_p10": 0.9354372770256005,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.3169758691093616,
+     "chatter_per_km": 0.988468398771758,
+     "extrap_frac": 0.1
+    },
+    "cub6_Kp6": {
+     "n": 30,
+     "pct_dp_mean": 0.9884842974515071,
+     "pct_dp_median": 0.9944423241049222,
+     "pct_dp_p10": 0.9578357125797329,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.405963278167339,
+     "chatter_per_km": 0.9379454469214645,
+     "extrap_frac": 0.03333333333333333
+    },
+    "dead03": {
+     "n": 30,
+     "pct_dp_mean": 0.9883216426577813,
+     "pct_dp_median": 0.9925283917898048,
+     "pct_dp_p10": 0.9643057709547261,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.3816582154520045,
+     "chatter_per_km": 0.9288222367087545,
+     "extrap_frac": 0.06666666666666667
+    },
+    "norm3": {
+     "n": 30,
+     "pct_dp_mean": 0.9866284786735041,
+     "pct_dp_median": 0.9925087536720945,
+     "pct_dp_p10": 0.9673400652161628,
+     "cs_rate": 0.9666666666666667,
+     "starts_per_km": 2.397829471022819,
+     "chatter_per_km": 0.8938399938224604,
+     "extrap_frac": 0.06666666666666667
+    }
+   },
+   "power-split HEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9792408220588575,
+     "pct_dp_median": 0.9861874785897158,
+     "pct_dp_p10": 0.9488624127137255,
+     "cs_rate": 0.6666666666666666,
+     "starts_per_km": 2.418198641626439,
+     "chatter_per_km": 1.4463306968480303,
+     "extrap_frac": 0.23333333333333334
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.975764919710056,
+     "pct_dp_median": 0.9816736766881642,
+     "pct_dp_p10": 0.9512699434413062,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4102648918111074,
+     "chatter_per_km": 1.3388489096471312,
+     "extrap_frac": 0.1
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9679768103669836,
+     "pct_dp_median": 0.9742713950449717,
+     "pct_dp_p10": 0.9217519954603512,
+     "cs_rate": 0.8,
+     "starts_per_km": 2.5669601400784208,
+     "chatter_per_km": 1.3956367054337258,
+     "extrap_frac": 0.1
+    },
+    "R8": {
+     "n": 30,
+     "pct_dp_mean": 0.9814210981736504,
+     "pct_dp_median": 0.9855946532219158,
+     "pct_dp_p10": 0.963847892033436,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.467358344396187,
+     "chatter_per_km": 1.1677663054884593,
+     "extrap_frac": 0.03333333333333333
+    },
+    "Kp12Ki0": {
+     "n": 30,
+     "pct_dp_mean": 0.9819174792692583,
+     "pct_dp_median": 0.9856748966377384,
+     "pct_dp_p10": 0.964487288164805,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.4811121119867097,
+     "chatter_per_km": 1.1815208044235974,
+     "extrap_frac": 0.03333333333333333
+    },
+    "tau120": {
+     "n": 30,
+     "pct_dp_mean": 0.9796513364102203,
+     "pct_dp_median": 0.9827992138324773,
+     "pct_dp_p10": 0.9525944341190206,
+     "cs_rate": 0.8,
+     "starts_per_km": 2.3782838580150805,
+     "chatter_per_km": 1.2239728391743891,
+     "extrap_frac": 0.23333333333333334
+    },
+    "cub6_Kp6": {
+     "n": 30,
+     "pct_dp_mean": 0.9832347376179473,
+     "pct_dp_median": 0.9902796005268484,
+     "pct_dp_p10": 0.964314537603118,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4371725080270865,
+     "chatter_per_km": 1.184540112970709,
+     "extrap_frac": 0.06666666666666667
+    },
+    "dead03": {
+     "n": 30,
+     "pct_dp_mean": 0.9834483243994946,
+     "pct_dp_median": 0.990134429986136,
+     "pct_dp_p10": 0.9649721818883772,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.445984906230866,
+     "chatter_per_km": 1.1687783877861284,
+     "extrap_frac": 0.13333333333333333
+    },
+    "norm3": {
+     "n": 30,
+     "pct_dp_mean": 0.9811108078386996,
+     "pct_dp_median": 0.9846521397630745,
+     "pct_dp_p10": 0.963760064844142,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.476315917809928,
+     "chatter_per_km": 1.1898923177498058,
+     "extrap_frac": 0.06666666666666667
+    }
+   },
+   "series HEV": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9881213177552208,
+     "pct_dp_median": 0.9920614144200738,
+     "pct_dp_p10": 0.9630913334360037,
+     "cs_rate": 0.3,
+     "starts_per_km": 3.0734003340211737,
+     "chatter_per_km": 1.6581741495283933,
+     "extrap_frac": 0.7
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9864127438386747,
+     "pct_dp_median": 0.9935627377665797,
+     "pct_dp_p10": 0.9603544684470577,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.9353403587041185,
+     "chatter_per_km": 1.3252806496004,
+     "extrap_frac": 0.15
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9527899682210339,
+     "pct_dp_median": 0.957416449787877,
+     "pct_dp_p10": 0.9352562583088497,
+     "cs_rate": 0.7,
+     "starts_per_km": 4.811666578712148,
+     "chatter_per_km": 5.067783810598719,
+     "extrap_frac": 0.05
+    },
+    "R8": {
+     "n": 20,
+     "pct_dp_mean": 0.9927436479617052,
+     "pct_dp_median": 0.9976761616749428,
+     "pct_dp_p10": 0.9734023910893184,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.097528817510623,
+     "chatter_per_km": 1.2247716210981976,
+     "extrap_frac": 0.05
+    },
+    "Kp12Ki0": {
+     "n": 20,
+     "pct_dp_mean": 0.9937288764576048,
+     "pct_dp_median": 0.9980706176214775,
+     "pct_dp_p10": 0.9764860749100753,
+     "cs_rate": 0.85,
+     "starts_per_km": 3.099164563864462,
+     "chatter_per_km": 1.199225858843675,
+     "extrap_frac": 0.05
+    },
+    "tau120": {
+     "n": 20,
+     "pct_dp_mean": 0.9882557194983896,
+     "pct_dp_median": 0.9977663023297754,
+     "pct_dp_p10": 0.9594582488965009,
+     "cs_rate": 0.85,
+     "starts_per_km": 2.8163091251337127,
+     "chatter_per_km": 1.233327112493364,
+     "extrap_frac": 0.2
+    },
+    "cub6_Kp6": {
+     "n": 20,
+     "pct_dp_mean": 0.9951053820848657,
+     "pct_dp_median": 1.0001862148180403,
+     "pct_dp_p10": 0.9750514521850621,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.0305323203934718,
+     "chatter_per_km": 1.2447512789964412,
+     "extrap_frac": 0.1
+    },
+    "dead03": {
+     "n": 20,
+     "pct_dp_mean": 0.9940066540505935,
+     "pct_dp_median": 1.0006696313362988,
+     "pct_dp_p10": 0.9754149555251862,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.1420754811285727,
+     "chatter_per_km": 1.3549528906336248,
+     "extrap_frac": 0.15
+    },
+    "norm3": {
+     "n": 20,
+     "pct_dp_mean": 0.9934911339865697,
+     "pct_dp_median": 0.9980476858153058,
+     "pct_dp_p10": 0.9745197696719757,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.08231947318986,
+     "chatter_per_km": 1.2130332307871448,
+     "extrap_frac": 0.05
+    }
+   },
+   "power-split PHEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9808956071870629,
+     "pct_dp_median": 0.9832694805870215,
+     "pct_dp_p10": 0.943473961973973,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.597750261871396,
+     "chatter_per_km": 1.5513440561366711,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9780528476393712,
+     "pct_dp_median": 0.9650008109415266,
+     "pct_dp_p10": 0.9401328683001349,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.5976933629971963,
+     "chatter_per_km": 1.5583947782061032,
+     "extrap_frac": 0.06666666666666667
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9990346784068213,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9856241393294054,
+     "cs_rate": 1.0,
+     "starts_per_km": 1.3204846640663945,
+     "chatter_per_km": 0.4451832352564116,
+     "extrap_frac": 0.43333333333333335
+    },
+    "R8": {
+     "n": 30,
+     "pct_dp_mean": 1.003418409638636,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965860794396495,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.3250735745306388,
+     "chatter_per_km": 0.39466482751038645,
+     "extrap_frac": 0.3
+    },
+    "Kp12Ki0": {
+     "n": 30,
+     "pct_dp_mean": 1.0029177291363363,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965956103506245,
+     "cs_rate": 0.9,
+     "starts_per_km": 1.320176171083241,
+     "chatter_per_km": 0.39665905740573404,
+     "extrap_frac": 0.3
+    },
+    "tau120": {
+     "n": 30,
+     "pct_dp_mean": 1.0032911824584045,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9885836495519273,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.3277817292994964,
+     "chatter_per_km": 0.4037107346451128,
+     "extrap_frac": 0.3
+    },
+    "cub6_Kp6": {
+     "n": 30,
+     "pct_dp_mean": 1.0027890369853303,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965980764625534,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.3258239732338832,
+     "chatter_per_km": 0.3927810742463801,
+     "extrap_frac": 0.3
+    },
+    "dead03": {
+     "n": 30,
+     "pct_dp_mean": 1.0032391698912089,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965851858854834,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.331783958952107,
+     "chatter_per_km": 0.3906215132777302,
+     "extrap_frac": 0.3
+    },
+    "norm3": {
+     "n": 30,
+     "pct_dp_mean": 1.0029264685627102,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965980764625534,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.325861567142414,
+     "chatter_per_km": 0.39857925203114564,
+     "extrap_frac": 0.3
+    }
+   },
+   "series PHEV (EREV)": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 1.0005308131694428,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9886023049256973,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.7697685021953173,
+     "chatter_per_km": 0.08428386772598552,
+     "extrap_frac": 0.05
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9932580706825608,
+     "pct_dp_median": 0.9997117426019537,
+     "pct_dp_p10": 0.9723703355389539,
+     "cs_rate": 1.0,
+     "starts_per_km": 1.1403231885541565,
+     "chatter_per_km": 0.41322966725983995,
+     "extrap_frac": 0.15
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9927179656188585,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9713609964073552,
+     "cs_rate": 0.8,
+     "starts_per_km": 0.7362779276929026,
+     "chatter_per_km": 0.13574286875194058,
+     "extrap_frac": 0.35
+    },
+    "R8": {
+     "n": 20,
+     "pct_dp_mean": 0.99773128939208,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9888559358976298,
+     "cs_rate": 0.9,
+     "starts_per_km": 0.8326809120180488,
+     "chatter_per_km": 0.1888944108343332,
+     "extrap_frac": 0.35
+    },
+    "Kp12Ki0": {
+     "n": 20,
+     "pct_dp_mean": 0.9973055735901791,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9902967980304239,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8308192223591833,
+     "chatter_per_km": 0.19525015931946946,
+     "extrap_frac": 0.35
+    },
+    "tau120": {
+     "n": 20,
+     "pct_dp_mean": 0.9941500454970598,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9868890696395525,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8120069277277067,
+     "chatter_per_km": 0.21504640031760372,
+     "extrap_frac": 0.35
+    },
+    "cub6_Kp6": {
+     "n": 20,
+     "pct_dp_mean": 0.9952002270543275,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9895382637727766,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8105046413565805,
+     "chatter_per_km": 0.18861426459683905,
+     "extrap_frac": 0.35
+    },
+    "dead03": {
+     "n": 20,
+     "pct_dp_mean": 0.9950117988017247,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9893181736212177,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8106350302869183,
+     "chatter_per_km": 0.21495926049670994,
+     "extrap_frac": 0.35
+    },
+    "norm3": {
+     "n": 20,
+     "pct_dp_mean": 0.9961741840817376,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9896543126667755,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8278340179937501,
+     "chatter_per_km": 0.19361748401800577,
+     "extrap_frac": 0.35
+    }
+   },
+   "truck (P2)": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 0.996462111914423,
+     "pct_dp_median": 0.9983688628699092,
+     "pct_dp_p10": 0.9840386344058254,
+     "cs_rate": 0.8,
+     "starts_per_km": 3.7720069149296194,
+     "chatter_per_km": 1.6337653349234291,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9922759092550246,
+     "pct_dp_median": 0.9942029440842515,
+     "pct_dp_p10": 0.9806107844850204,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.8273794396735306,
+     "chatter_per_km": 1.6803741068021136,
+     "extrap_frac": 0.3
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9578815287270366,
+     "pct_dp_median": 0.9673609027157,
+     "pct_dp_p10": 0.9085869919082555,
+     "cs_rate": 0.85,
+     "starts_per_km": 4.455956791131794,
+     "chatter_per_km": 2.3908951090624395,
+     "extrap_frac": 0.25
+    },
+    "R8": {
+     "n": 20,
+     "pct_dp_mean": 0.9924949938553068,
+     "pct_dp_median": 0.9942470376967731,
+     "pct_dp_p10": 0.9693747365839979,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.786295282039729,
+     "chatter_per_km": 1.5528970016555428,
+     "extrap_frac": 0.4
+    },
+    "Kp12Ki0": {
+     "n": 20,
+     "pct_dp_mean": 0.9930705077293631,
+     "pct_dp_median": 0.9964189106737932,
+     "pct_dp_p10": 0.9733468691420663,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.7950232370394112,
+     "chatter_per_km": 1.5884964836863684,
+     "extrap_frac": 0.3
+    },
+    "tau120": {
+     "n": 20,
+     "pct_dp_mean": 0.9865039175866815,
+     "pct_dp_median": 0.9921030378827018,
+     "pct_dp_p10": 0.9480747009911855,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.750897583742249,
+     "chatter_per_km": 1.4860756892340607,
+     "extrap_frac": 0.45
+    },
+    "cub6_Kp6": {
+     "n": 20,
+     "pct_dp_mean": 0.9927632762762457,
+     "pct_dp_median": 0.9942437890794501,
+     "pct_dp_p10": 0.9795780149918063,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.800082334467038,
+     "chatter_per_km": 1.5764728943836965,
+     "extrap_frac": 0.4
+    },
+    "dead03": {
+     "n": 20,
+     "pct_dp_mean": 0.9933552655619847,
+     "pct_dp_median": 0.9953818842756965,
+     "pct_dp_p10": 0.9826735821436943,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.806112791610146,
+     "chatter_per_km": 1.559204026948814,
+     "extrap_frac": 0.35
+    },
+    "norm3": {
+     "n": 20,
+     "pct_dp_mean": 0.9935221241475476,
+     "pct_dp_median": 0.9948033074854137,
+     "pct_dp_p10": 0.9730722949902213,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.7601700133748324,
+     "chatter_per_km": 1.5309558454673844,
+     "extrap_frac": 0.4
+    }
+   },
+   "truck (PHEV series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.0170707183606549,
+     "pct_dp_median": 1.0073856308777729,
+     "pct_dp_p10": 0.9929169036467153,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.1804461625616423,
+     "chatter_per_km": 0.4320969299704143,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 1.0128291587324691,
+     "pct_dp_median": 1.0058052704536782,
+     "pct_dp_p10": 0.9944541541728973,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.7216328306597166,
+     "chatter_per_km": 0.922038264869004,
+     "extrap_frac": 0.5
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 1.0003731439082466,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9995070317537983,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.6274680815296134,
+     "chatter_per_km": 0.024361223389913263,
+     "extrap_frac": 0.1
+    },
+    "R8": {
+     "n": 10,
+     "pct_dp_mean": 1.0012429425100524,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.5369479398553778,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    },
+    "Kp12Ki0": {
+     "n": 10,
+     "pct_dp_mean": 1.0008973835951764,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.5369479398553778,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    },
+    "tau120": {
+     "n": 10,
+     "pct_dp_mean": 1.00121607181369,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.5369479398553778,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    },
+    "cub6_Kp6": {
+     "n": 10,
+     "pct_dp_mean": 1.0005809459508277,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.5033378670181461,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    },
+    "dead03": {
+     "n": 10,
+     "pct_dp_mean": 1.0002218818404143,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.4865328305995302,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    },
+    "norm3": {
+     "n": 10,
+     "pct_dp_mean": 1.0005809459508277,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.5033378670181461,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    }
+   },
+   "mild P1 (CR-Z type)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9488603655177428,
+     "pct_dp_median": 0.962226289308255,
+     "pct_dp_p10": 0.91724774523204,
+     "cs_rate": 0.5,
+     "starts_per_km": 4.170754844657191,
+     "chatter_per_km": 2.7008078645111517,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9313452620921492,
+     "pct_dp_median": 0.9614916648286007,
+     "pct_dp_p10": 0.9019565525927806,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.170794470890254,
+     "chatter_per_km": 2.7008604475859044,
+     "extrap_frac": 0.0
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9084864052266642,
+     "pct_dp_median": 0.942115349433917,
+     "pct_dp_p10": 0.8689591065024281,
+     "cs_rate": 0.8,
+     "starts_per_km": 4.153261953452329,
+     "chatter_per_km": 2.680390187066716,
+     "extrap_frac": 0.0
+    },
+    "R8": {
+     "n": 10,
+     "pct_dp_mean": 0.9350022346327099,
+     "pct_dp_median": 0.9635276327976178,
+     "pct_dp_p10": 0.904571231856738,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.06424143150714,
+     "chatter_per_km": 2.655823535781918,
+     "extrap_frac": 0.0
+    },
+    "Kp12Ki0": {
+     "n": 10,
+     "pct_dp_mean": 0.935709738349923,
+     "pct_dp_median": 0.9627650669391239,
+     "pct_dp_p10": 0.9046621591957452,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.066911250415245,
+     "chatter_per_km": 2.661305626979579,
+     "extrap_frac": 0.2
+    },
+    "tau120": {
+     "n": 10,
+     "pct_dp_mean": 0.9352708280281223,
+     "pct_dp_median": 0.965781592264052,
+     "pct_dp_p10": 0.8995187300333986,
+     "cs_rate": 0.8,
+     "starts_per_km": 4.06664486004587,
+     "chatter_per_km": 2.6438022671773287,
+     "extrap_frac": 0.2
+    },
+    "cub6_Kp6": {
+     "n": 10,
+     "pct_dp_mean": 0.9376481459901319,
+     "pct_dp_median": 0.9638701529425556,
+     "pct_dp_p10": 0.9089923555130994,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.085220789410052,
+     "chatter_per_km": 2.6979055627168127,
+     "extrap_frac": 0.0
+    },
+    "dead03": {
+     "n": 10,
+     "pct_dp_mean": 0.9393959503692046,
+     "pct_dp_median": 0.9628466939354422,
+     "pct_dp_p10": 0.9102306329388457,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.067791878991607,
+     "chatter_per_km": 2.680518723869905,
+     "extrap_frac": 0.0
+    },
+    "norm3": {
+     "n": 10,
+     "pct_dp_mean": 0.9352039711164295,
+     "pct_dp_median": 0.9636191137061001,
+     "pct_dp_p10": 0.904571231856738,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.06424143150714,
+     "chatter_per_km": 2.655823535781918,
+     "extrap_frac": 0.0
+    }
+   }
+  },
+  "skill": {
+   "R8": 0.5291063125272424,
+   "Kp12Ki0": 0.5569756867401872,
+   "tau120": 0.4550481493091293,
+   "cub6_Kp6": 0.5749172215821488,
+   "dead03": 0.5945222966063066,
+   "norm3": 0.5318907075002511
+  }
+ },
+ {
+  "ckpt": "ckpt/r2_dagger.npz",
+  "variants": [
+   {
+    "name": "dead05",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.05
+   },
+   {
+    "name": "dead03Ki0",
+    "Kp": 12,
+    "Ki": 0,
+    "onoff": "ecms",
+    "fb_dead": 0.03
+   },
+   {
+    "name": "dead03cub",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "cubic": 0.6
+   },
+   {
+    "name": "normdead",
+    "Kp": 4,
+    "Ki": 0.005,
+    "onoff": "ecms",
+    "fb_norm": true,
+    "fb_dead": 0.15
+   },
+   {
+    "name": "d03bus1",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "bus_hev_series": [
+      1,
+      2.6
+     ],
+     "bus_hev_parallel_p2": [
+      1,
+      2.6
+     ]
+    }
+   },
+   {
+    "name": "d03bus05",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "bus_hev_series": [
+      0.5,
+      2.6
+     ],
+     "bus_hev_parallel_p2": [
+      0.5,
+      2.6
+     ]
+    }
+   }
+  ],
+  "filt": null,
+  "table": {
+   "bus (P2)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.000254204837353,
+     "pct_dp_median": 1.0007265689288234,
+     "pct_dp_p10": 0.9954075759619385,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3586272105154036,
+     "chatter_per_km": 1.6399412428357867,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9939813560598599,
+     "pct_dp_median": 0.9976490142013735,
+     "pct_dp_p10": 0.9769835045939399,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3387053590558198,
+     "chatter_per_km": 1.47176860018761,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9694601396341966,
+     "pct_dp_median": 0.9719275163182183,
+     "pct_dp_p10": 0.9489154079715376,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.264029612283305,
+     "chatter_per_km": 1.816617239765924,
+     "extrap_frac": 0.2
+    },
+    "dead05": {
+     "n": 10,
+     "pct_dp_mean": 0.9935945540885369,
+     "pct_dp_median": 0.996747649331664,
+     "pct_dp_p10": 0.9777891445530996,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.2286789895588393,
+     "chatter_per_km": 1.2484500302502441,
+     "extrap_frac": 0.4
+    },
+    "dead03Ki0": {
+     "n": 10,
+     "pct_dp_mean": 0.993493170455927,
+     "pct_dp_median": 0.9978541410903452,
+     "pct_dp_p10": 0.9778548683549634,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.230434335200445,
+     "chatter_per_km": 1.2982574671220202,
+     "extrap_frac": 0.2
+    },
+    "dead03cub": {
+     "n": 10,
+     "pct_dp_mean": 0.9949437747275554,
+     "pct_dp_median": 0.9989018794676325,
+     "pct_dp_p10": 0.9751393849541189,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.276308139473381,
+     "chatter_per_km": 1.3359622260005195,
+     "extrap_frac": 0.4
+    },
+    "normdead": {
+     "n": 10,
+     "pct_dp_mean": 0.9940071833926408,
+     "pct_dp_median": 0.9985703279055327,
+     "pct_dp_p10": 0.9759820925967867,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.261920913064949,
+     "chatter_per_km": 1.3386930284521295,
+     "extrap_frac": 0.3
+    },
+    "d03bus1": {
+     "n": 10,
+     "pct_dp_mean": 0.9984117992642811,
+     "pct_dp_median": 0.9990056357478978,
+     "pct_dp_p10": 0.9840344834618691,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.459437171475796,
+     "chatter_per_km": 1.7367174676654173,
+     "extrap_frac": 0.1
+    },
+    "d03bus05": {
+     "n": 10,
+     "pct_dp_mean": 0.9960807853096856,
+     "pct_dp_median": 1.000768817375743,
+     "pct_dp_p10": 0.9792309548801099,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.248320262163334,
+     "chatter_per_km": 1.2402831389874993,
+     "extrap_frac": 0.3
+    }
+   },
+   "ALL": {
+    "ecms": {
+     "n": 190,
+     "pct_dp_mean": 0.9884820468320359,
+     "pct_dp_median": 0.9948506858603932,
+     "pct_dp_p10": 0.9561870412222753,
+     "cs_rate": 0.7105263157894737,
+     "starts_per_km": 2.6257189838637958,
+     "chatter_per_km": 1.2513260403129096,
+     "extrap_frac": 0.26842105263157895
+    },
+    "aecms": {
+     "n": 190,
+     "pct_dp_mean": 0.9827330201278812,
+     "pct_dp_median": 0.9891540686281838,
+     "pct_dp_p10": 0.9498917842495034,
+     "cs_rate": 0.9473684210526315,
+     "starts_per_km": 2.6957704964874485,
+     "chatter_per_km": 1.2775941063936196,
+     "extrap_frac": 0.14210526315789473
+    },
+    "rule": {
+     "n": 190,
+     "pct_dp_mean": 0.9682587703121436,
+     "pct_dp_median": 0.9777868468169785,
+     "pct_dp_p10": 0.9227438284030084,
+     "cs_rate": 0.868421052631579,
+     "starts_per_km": 2.6786526637864165,
+     "chatter_per_km": 1.641851500425413,
+     "extrap_frac": 0.20526315789473684
+    },
+    "dead05": {
+     "n": 190,
+     "pct_dp_mean": 0.9903331920995356,
+     "pct_dp_median": 0.9980737329369889,
+     "pct_dp_p10": 0.9634932473590716,
+     "cs_rate": 0.9105263157894737,
+     "starts_per_km": 2.3592775181528167,
+     "chatter_per_km": 0.9638207383797973,
+     "extrap_frac": 0.2
+    },
+    "dead03Ki0": {
+     "n": 190,
+     "pct_dp_mean": 0.9910604661168716,
+     "pct_dp_median": 0.9985948716434071,
+     "pct_dp_p10": 0.9688079606445881,
+     "cs_rate": 0.8789473684210526,
+     "starts_per_km": 2.3745009449178878,
+     "chatter_per_km": 0.9757074341682004,
+     "extrap_frac": 0.15789473684210525
+    },
+    "dead03cub": {
+     "n": 190,
+     "pct_dp_mean": 0.9900352319510731,
+     "pct_dp_median": 0.9981846805515349,
+     "pct_dp_p10": 0.9658045771973853,
+     "cs_rate": 0.9157894736842105,
+     "starts_per_km": 2.365861467571544,
+     "chatter_per_km": 0.9632288223410315,
+     "extrap_frac": 0.21052631578947367
+    },
+    "normdead": {
+     "n": 190,
+     "pct_dp_mean": 0.9905943027488793,
+     "pct_dp_median": 0.9977041943359655,
+     "pct_dp_p10": 0.9669973283224867,
+     "cs_rate": 0.9105263157894737,
+     "starts_per_km": 2.3789401479598156,
+     "chatter_per_km": 0.9787753677929337,
+     "extrap_frac": 0.1736842105263158
+    },
+    "d03bus1": {
+     "n": 190,
+     "pct_dp_mean": 0.9909638379834544,
+     "pct_dp_median": 0.9986520288304876,
+     "pct_dp_p10": 0.9662900474848793,
+     "cs_rate": 0.9157894736842105,
+     "starts_per_km": 2.3693589028424125,
+     "chatter_per_km": 0.9959894219569378,
+     "extrap_frac": 0.1736842105263158
+    },
+    "d03bus05": {
+     "n": 190,
+     "pct_dp_mean": 0.9906701253700129,
+     "pct_dp_median": 0.9986466831619647,
+     "pct_dp_p10": 0.9662900474848793,
+     "cs_rate": 0.9157894736842105,
+     "starts_per_km": 2.36157591576038,
+     "chatter_per_km": 0.9687058356055456,
+     "extrap_frac": 0.18947368421052632
+    }
+   },
+   "bus (series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9999515834986751,
+     "pct_dp_median": 1.0015973091923542,
+     "pct_dp_p10": 0.9945781247095171,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.8247305086844245,
+     "chatter_per_km": 0.3569529968550746,
+     "extrap_frac": 0.0
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9914147158071698,
+     "pct_dp_median": 0.9928944356542826,
+     "pct_dp_p10": 0.9781393569157266,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.08930036429928,
+     "chatter_per_km": 0.7902390334821603,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9887457132041606,
+     "pct_dp_median": 0.9876430519589495,
+     "pct_dp_p10": 0.9766659879932298,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.7396209573739596,
+     "chatter_per_km": 2.2265328156974564,
+     "extrap_frac": 0.3
+    },
+    "dead05": {
+     "n": 10,
+     "pct_dp_mean": 0.9934495512492194,
+     "pct_dp_median": 1.0009941773373636,
+     "pct_dp_p10": 0.9742319738192893,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.1097457057788818,
+     "chatter_per_km": 0.6028292582505517,
+     "extrap_frac": 0.3
+    },
+    "dead03Ki0": {
+     "n": 10,
+     "pct_dp_mean": 0.9935151981881539,
+     "pct_dp_median": 0.9949382822098711,
+     "pct_dp_p10": 0.9780051281894104,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.1867617568129267,
+     "chatter_per_km": 0.7288176308625424,
+     "extrap_frac": 0.1
+    },
+    "dead03cub": {
+     "n": 10,
+     "pct_dp_mean": 0.9922627501661484,
+     "pct_dp_median": 0.9978379871084047,
+     "pct_dp_p10": 0.9727656955143896,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.0460638621324945,
+     "chatter_per_km": 0.5391529953164073,
+     "extrap_frac": 0.3
+    },
+    "normdead": {
+     "n": 10,
+     "pct_dp_mean": 0.992908686854188,
+     "pct_dp_median": 0.9967643172787808,
+     "pct_dp_p10": 0.9801724622913773,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.1200154001830382,
+     "chatter_per_km": 0.6177543001734194,
+     "extrap_frac": 0.2
+    },
+    "d03bus1": {
+     "n": 10,
+     "pct_dp_mean": 1.0005084425376742,
+     "pct_dp_median": 0.9998477680029199,
+     "pct_dp_p10": 0.9953199141222205,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.0081294249827035,
+     "chatter_per_km": 0.7407927455628869,
+     "extrap_frac": 0.0
+    },
+    "d03bus05": {
+     "n": 10,
+     "pct_dp_mean": 0.9972589168368785,
+     "pct_dp_median": 0.999008344978846,
+     "pct_dp_p10": 0.985953782261671,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.0713695797365483,
+     "chatter_per_km": 0.7188389335643501,
+     "extrap_frac": 0.1
+    }
+   },
+   "P2 HEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9881280813927743,
+     "pct_dp_median": 0.9916451969118348,
+     "pct_dp_p10": 0.9693689204530275,
+     "cs_rate": 0.3,
+     "starts_per_km": 2.358634584735908,
+     "chatter_per_km": 0.9666415894877127,
+     "extrap_frac": 0.5666666666666667
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9790033800457648,
+     "pct_dp_median": 0.9857707669632721,
+     "pct_dp_p10": 0.9370778275198426,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 2.356415223355974,
+     "chatter_per_km": 0.9532939214898944,
+     "extrap_frac": 0.03333333333333333
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9406792808340624,
+     "pct_dp_median": 0.9417240634570251,
+     "pct_dp_p10": 0.9119020561639574,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4799609999315235,
+     "chatter_per_km": 1.245324547755407,
+     "extrap_frac": 0.13333333333333333
+    },
+    "dead05": {
+     "n": 30,
+     "pct_dp_mean": 0.9872609881785214,
+     "pct_dp_median": 0.9913419770384451,
+     "pct_dp_p10": 0.9669982077091045,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.393206812694382,
+     "chatter_per_km": 0.8936657900701522,
+     "extrap_frac": 0.03333333333333333
+    },
+    "dead03Ki0": {
+     "n": 30,
+     "pct_dp_mean": 0.9887632655673387,
+     "pct_dp_median": 0.9938766767194789,
+     "pct_dp_p10": 0.9703901783503793,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 2.393410978633749,
+     "chatter_per_km": 0.885795462690658,
+     "extrap_frac": 0.03333333333333333
+    },
+    "dead03cub": {
+     "n": 30,
+     "pct_dp_mean": 0.9872830181572795,
+     "pct_dp_median": 0.9924897155073815,
+     "pct_dp_p10": 0.9647553518142532,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4047172273768407,
+     "chatter_per_km": 0.9261261206560815,
+     "extrap_frac": 0.06666666666666667
+    },
+    "normdead": {
+     "n": 30,
+     "pct_dp_mean": 0.9874511629945815,
+     "pct_dp_median": 0.9931941491591525,
+     "pct_dp_p10": 0.9682812699366432,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4191484803420638,
+     "chatter_per_km": 0.9407254256502124,
+     "extrap_frac": 0.03333333333333333
+    },
+    "d03bus1": {
+     "n": 30,
+     "pct_dp_mean": 0.9883216426577813,
+     "pct_dp_median": 0.9925283917898048,
+     "pct_dp_p10": 0.9643057709547261,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.3816582154520045,
+     "chatter_per_km": 0.9288222367087545,
+     "extrap_frac": 0.06666666666666667
+    },
+    "d03bus05": {
+     "n": 30,
+     "pct_dp_mean": 0.9883216426577813,
+     "pct_dp_median": 0.9925283917898048,
+     "pct_dp_p10": 0.9643057709547261,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.3816582154520045,
+     "chatter_per_km": 0.9288222367087545,
+     "extrap_frac": 0.06666666666666667
+    }
+   },
+   "power-split HEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9792408220588575,
+     "pct_dp_median": 0.9861874785897158,
+     "pct_dp_p10": 0.9488624127137255,
+     "cs_rate": 0.6666666666666666,
+     "starts_per_km": 2.418198641626439,
+     "chatter_per_km": 1.4463306968480303,
+     "extrap_frac": 0.23333333333333334
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.975764919710056,
+     "pct_dp_median": 0.9816736766881642,
+     "pct_dp_p10": 0.9512699434413062,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4102648918111074,
+     "chatter_per_km": 1.3388489096471312,
+     "extrap_frac": 0.1
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9679768103669836,
+     "pct_dp_median": 0.9742713950449717,
+     "pct_dp_p10": 0.9217519954603512,
+     "cs_rate": 0.8,
+     "starts_per_km": 2.5669601400784208,
+     "chatter_per_km": 1.3956367054337258,
+     "extrap_frac": 0.1
+    },
+    "dead05": {
+     "n": 30,
+     "pct_dp_mean": 0.9835623305829622,
+     "pct_dp_median": 0.9904825604891128,
+     "pct_dp_p10": 0.9604631109164556,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4509293000754715,
+     "chatter_per_km": 1.193235879844047,
+     "extrap_frac": 0.13333333333333333
+    },
+    "dead03Ki0": {
+     "n": 30,
+     "pct_dp_mean": 0.9832398934162767,
+     "pct_dp_median": 0.9882984430716839,
+     "pct_dp_p10": 0.9633214813517564,
+     "cs_rate": 0.8333333333333334,
+     "starts_per_km": 2.471207597016479,
+     "chatter_per_km": 1.2124300878953598,
+     "extrap_frac": 0.13333333333333333
+    },
+    "dead03cub": {
+     "n": 30,
+     "pct_dp_mean": 0.9831290051361793,
+     "pct_dp_median": 0.9894082573555334,
+     "pct_dp_p10": 0.9646514585746876,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4552046601133,
+     "chatter_per_km": 1.1783174217707189,
+     "extrap_frac": 0.13333333333333333
+    },
+    "normdead": {
+     "n": 30,
+     "pct_dp_mean": 0.9824812812493788,
+     "pct_dp_median": 0.9886620060234261,
+     "pct_dp_p10": 0.9594714517962857,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4785057173468514,
+     "chatter_per_km": 1.1921426673928253,
+     "extrap_frac": 0.06666666666666667
+    },
+    "d03bus1": {
+     "n": 30,
+     "pct_dp_mean": 0.9834483243994946,
+     "pct_dp_median": 0.990134429986136,
+     "pct_dp_p10": 0.9649721818883772,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.445984906230866,
+     "chatter_per_km": 1.1687783877861284,
+     "extrap_frac": 0.13333333333333333
+    },
+    "d03bus05": {
+     "n": 30,
+     "pct_dp_mean": 0.9834483243994946,
+     "pct_dp_median": 0.990134429986136,
+     "pct_dp_p10": 0.9649721818883772,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.445984906230866,
+     "chatter_per_km": 1.1687783877861284,
+     "extrap_frac": 0.13333333333333333
+    }
+   },
+   "series HEV": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9881213177552208,
+     "pct_dp_median": 0.9920614144200738,
+     "pct_dp_p10": 0.9630913334360037,
+     "cs_rate": 0.3,
+     "starts_per_km": 3.0734003340211737,
+     "chatter_per_km": 1.6581741495283933,
+     "extrap_frac": 0.7
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9864127438386747,
+     "pct_dp_median": 0.9935627377665797,
+     "pct_dp_p10": 0.9603544684470577,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.9353403587041185,
+     "chatter_per_km": 1.3252806496004,
+     "extrap_frac": 0.15
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9527899682210339,
+     "pct_dp_median": 0.957416449787877,
+     "pct_dp_p10": 0.9352562583088497,
+     "cs_rate": 0.7,
+     "starts_per_km": 4.811666578712148,
+     "chatter_per_km": 5.067783810598719,
+     "extrap_frac": 0.05
+    },
+    "dead05": {
+     "n": 20,
+     "pct_dp_mean": 0.9943239386809617,
+     "pct_dp_median": 0.9990614742865592,
+     "pct_dp_p10": 0.9767308426156431,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.0919495176237315,
+     "chatter_per_km": 1.3227915987779482,
+     "extrap_frac": 0.15
+    },
+    "dead03Ki0": {
+     "n": 20,
+     "pct_dp_mean": 0.9948002405793165,
+     "pct_dp_median": 1.000584494493466,
+     "pct_dp_p10": 0.9817886231861628,
+     "cs_rate": 0.85,
+     "starts_per_km": 3.1315035796655306,
+     "chatter_per_km": 1.3115000650566813,
+     "extrap_frac": 0.05
+    },
+    "dead03cub": {
+     "n": 20,
+     "pct_dp_mean": 0.9940204461629211,
+     "pct_dp_median": 1.0006918632080866,
+     "pct_dp_p10": 0.977870965874481,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.1367798753182616,
+     "chatter_per_km": 1.3344033312374748,
+     "extrap_frac": 0.15
+    },
+    "normdead": {
+     "n": 20,
+     "pct_dp_mean": 0.9941573699140178,
+     "pct_dp_median": 0.9985088808303717,
+     "pct_dp_p10": 0.9790578585439094,
+     "cs_rate": 0.85,
+     "starts_per_km": 3.1737188326242194,
+     "chatter_per_km": 1.340600419166249,
+     "extrap_frac": 0.1
+    },
+    "d03bus1": {
+     "n": 20,
+     "pct_dp_mean": 0.9940066540505935,
+     "pct_dp_median": 1.0006696313362988,
+     "pct_dp_p10": 0.9754149555251862,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.1420754811285727,
+     "chatter_per_km": 1.3549528906336248,
+     "extrap_frac": 0.15
+    },
+    "d03bus05": {
+     "n": 20,
+     "pct_dp_mean": 0.9940066540505935,
+     "pct_dp_median": 1.0006696313362988,
+     "pct_dp_p10": 0.9754149555251862,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.1420754811285727,
+     "chatter_per_km": 1.3549528906336248,
+     "extrap_frac": 0.15
+    }
+   },
+   "power-split PHEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9808956071870629,
+     "pct_dp_median": 0.9832694805870215,
+     "pct_dp_p10": 0.943473961973973,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.597750261871396,
+     "chatter_per_km": 1.5513440561366711,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9780528476393712,
+     "pct_dp_median": 0.9650008109415266,
+     "pct_dp_p10": 0.9401328683001349,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.5976933629971963,
+     "chatter_per_km": 1.5583947782061032,
+     "extrap_frac": 0.06666666666666667
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9990346784068213,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9856241393294054,
+     "cs_rate": 1.0,
+     "starts_per_km": 1.3204846640663945,
+     "chatter_per_km": 0.4451832352564116,
+     "extrap_frac": 0.43333333333333335
+    },
+    "dead05": {
+     "n": 30,
+     "pct_dp_mean": 1.0035243751505059,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965907068995024,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.331783958952107,
+     "chatter_per_km": 0.3906215132777302,
+     "extrap_frac": 0.3
+    },
+    "dead03Ki0": {
+     "n": 30,
+     "pct_dp_mean": 1.0045211361339401,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965907068995024,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.32037557292523,
+     "chatter_per_km": 0.3791003455252608,
+     "extrap_frac": 0.3
+    },
+    "dead03cub": {
+     "n": 30,
+     "pct_dp_mean": 1.0032391698912089,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965851858854834,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.331783958952107,
+     "chatter_per_km": 0.3906215132777302,
+     "extrap_frac": 0.3
+    },
+    "normdead": {
+     "n": 30,
+     "pct_dp_mean": 1.0048045312347742,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9973532713751443,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.324215962176053,
+     "chatter_per_km": 0.3906215132777302,
+     "extrap_frac": 0.3
+    },
+    "d03bus1": {
+     "n": 30,
+     "pct_dp_mean": 1.0032391698912089,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965851858854834,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.331783958952107,
+     "chatter_per_km": 0.3906215132777302,
+     "extrap_frac": 0.3
+    },
+    "d03bus05": {
+     "n": 30,
+     "pct_dp_mean": 1.0032391698912089,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965851858854834,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.331783958952107,
+     "chatter_per_km": 0.3906215132777302,
+     "extrap_frac": 0.3
+    }
+   },
+   "series PHEV (EREV)": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 1.0005308131694428,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9886023049256973,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.7697685021953173,
+     "chatter_per_km": 0.08428386772598552,
+     "extrap_frac": 0.05
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9932580706825608,
+     "pct_dp_median": 0.9997117426019537,
+     "pct_dp_p10": 0.9723703355389539,
+     "cs_rate": 1.0,
+     "starts_per_km": 1.1403231885541565,
+     "chatter_per_km": 0.41322966725983995,
+     "extrap_frac": 0.15
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9927179656188585,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9713609964073552,
+     "cs_rate": 0.8,
+     "starts_per_km": 0.7362779276929026,
+     "chatter_per_km": 0.13574286875194058,
+     "extrap_frac": 0.35
+    },
+    "dead05": {
+     "n": 20,
+     "pct_dp_mean": 0.9947297634944785,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9888633826748786,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8083880008737829,
+     "chatter_per_km": 0.21107955578211088,
+     "extrap_frac": 0.35
+    },
+    "dead03Ki0": {
+     "n": 20,
+     "pct_dp_mean": 0.99614386882637,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9870467556825656,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8389739247962458,
+     "chatter_per_km": 0.2371329198383172,
+     "extrap_frac": 0.35
+    },
+    "dead03cub": {
+     "n": 20,
+     "pct_dp_mean": 0.9950117988017247,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9893181736212177,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8106350302869183,
+     "chatter_per_km": 0.21495926049670994,
+     "extrap_frac": 0.35
+    },
+    "normdead": {
+     "n": 20,
+     "pct_dp_mean": 0.9971927175620479,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.992805619420002,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.7994258196877718,
+     "chatter_per_km": 0.19836805881183836,
+     "extrap_frac": 0.35
+    },
+    "d03bus1": {
+     "n": 20,
+     "pct_dp_mean": 0.9950117988017247,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9893181736212177,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8106350302869183,
+     "chatter_per_km": 0.21495926049670994,
+     "extrap_frac": 0.35
+    },
+    "d03bus05": {
+     "n": 20,
+     "pct_dp_mean": 0.9950117988017247,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9893181736212177,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8106350302869183,
+     "chatter_per_km": 0.21495926049670994,
+     "extrap_frac": 0.35
+    }
+   },
+   "truck (P2)": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 0.996462111914423,
+     "pct_dp_median": 0.9983688628699092,
+     "pct_dp_p10": 0.9840386344058254,
+     "cs_rate": 0.8,
+     "starts_per_km": 3.7720069149296194,
+     "chatter_per_km": 1.6337653349234291,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9922759092550246,
+     "pct_dp_median": 0.9942029440842515,
+     "pct_dp_p10": 0.9806107844850204,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.8273794396735306,
+     "chatter_per_km": 1.6803741068021136,
+     "extrap_frac": 0.3
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9578815287270366,
+     "pct_dp_median": 0.9673609027157,
+     "pct_dp_p10": 0.9085869919082555,
+     "cs_rate": 0.85,
+     "starts_per_km": 4.455956791131794,
+     "chatter_per_km": 2.3908951090624395,
+     "extrap_frac": 0.25
+    },
+    "dead05": {
+     "n": 20,
+     "pct_dp_mean": 0.9935102305715903,
+     "pct_dp_median": 0.9957680863195079,
+     "pct_dp_p10": 0.98466746800147,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.8029507332526244,
+     "chatter_per_km": 1.6283911495447037,
+     "extrap_frac": 0.35
+    },
+    "dead03Ki0": {
+     "n": 20,
+     "pct_dp_mean": 0.9957848712280324,
+     "pct_dp_median": 0.9980135778875925,
+     "pct_dp_p10": 0.9888230674702259,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.8244163504576187,
+     "chatter_per_km": 1.638937949505553,
+     "extrap_frac": 0.1
+    },
+    "dead03cub": {
+     "n": 20,
+     "pct_dp_mean": 0.9927881448203767,
+     "pct_dp_median": 0.9952390699647229,
+     "pct_dp_p10": 0.982521703315982,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.8023618925488036,
+     "chatter_per_km": 1.5594609996797657,
+     "extrap_frac": 0.4
+    },
+    "normdead": {
+     "n": 20,
+     "pct_dp_mean": 0.9946702756461832,
+     "pct_dp_median": 0.996699889834971,
+     "pct_dp_p10": 0.9867829954744061,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.8171097334856903,
+     "chatter_per_km": 1.6255412894938073,
+     "extrap_frac": 0.3
+    },
+    "d03bus1": {
+     "n": 20,
+     "pct_dp_mean": 0.9933552655619847,
+     "pct_dp_median": 0.9953818842756965,
+     "pct_dp_p10": 0.9826735821436943,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.806112791610146,
+     "chatter_per_km": 1.559204026948814,
+     "extrap_frac": 0.35
+    },
+    "d03bus05": {
+     "n": 20,
+     "pct_dp_mean": 0.9933552655619847,
+     "pct_dp_median": 0.9953818842756965,
+     "pct_dp_p10": 0.9826735821436943,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.806112791610146,
+     "chatter_per_km": 1.559204026948814,
+     "extrap_frac": 0.35
+    }
+   },
+   "truck (PHEV series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.0170707183606549,
+     "pct_dp_median": 1.0073856308777729,
+     "pct_dp_p10": 0.9929169036467153,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.1804461625616423,
+     "chatter_per_km": 0.4320969299704143,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 1.0128291587324691,
+     "pct_dp_median": 1.0058052704536782,
+     "pct_dp_p10": 0.9944541541728973,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.7216328306597166,
+     "chatter_per_km": 0.922038264869004,
+     "extrap_frac": 0.5
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 1.0003731439082466,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9995070317537983,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.6274680815296134,
+     "chatter_per_km": 0.024361223389913263,
+     "extrap_frac": 0.1
+    },
+    "dead05": {
+     "n": 10,
+     "pct_dp_mean": 1.0002218818404143,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.4865328305995302,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    },
+    "dead03Ki0": {
+     "n": 10,
+     "pct_dp_mean": 1.0002218818404143,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.4865328305995302,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    },
+    "dead03cub": {
+     "n": 10,
+     "pct_dp_mean": 1.0002218818404143,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.4865328305995302,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    },
+    "normdead": {
+     "n": 10,
+     "pct_dp_mean": 1.0002218818404143,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.4865328305995302,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    },
+    "d03bus1": {
+     "n": 10,
+     "pct_dp_mean": 1.0002218818404143,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.4865328305995302,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    },
+    "d03bus05": {
+     "n": 10,
+     "pct_dp_mean": 1.0002218818404143,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.4865328305995302,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    }
+   },
+   "mild P1 (CR-Z type)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9488603655177428,
+     "pct_dp_median": 0.962226289308255,
+     "pct_dp_p10": 0.91724774523204,
+     "cs_rate": 0.5,
+     "starts_per_km": 4.170754844657191,
+     "chatter_per_km": 2.7008078645111517,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9313452620921492,
+     "pct_dp_median": 0.9614916648286007,
+     "pct_dp_p10": 0.9019565525927806,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.170794470890254,
+     "chatter_per_km": 2.7008604475859044,
+     "extrap_frac": 0.0
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9084864052266642,
+     "pct_dp_median": 0.942115349433917,
+     "pct_dp_p10": 0.8689591065024281,
+     "cs_rate": 0.8,
+     "starts_per_km": 4.153261953452329,
+     "chatter_per_km": 2.680390187066716,
+     "extrap_frac": 0.0
+    },
+    "dead05": {
+     "n": 10,
+     "pct_dp_mean": 0.9408937154829804,
+     "pct_dp_median": 0.9630644870780707,
+     "pct_dp_p10": 0.9069838446461892,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.066978600300109,
+     "chatter_per_km": 2.661349272322562,
+     "extrap_frac": 0.0
+    },
+    "dead03Ki0": {
+     "n": 10,
+     "pct_dp_mean": 0.9398877591159638,
+     "pct_dp_median": 0.9640708537658598,
+     "pct_dp_p10": 0.9034496652481844,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.067018875261808,
+     "chatter_per_km": 2.661375283468831,
+     "extrap_frac": 0.3
+    },
+    "dead03cub": {
+     "n": 10,
+     "pct_dp_mean": 0.9386466412122216,
+     "pct_dp_median": 0.9627595421683199,
+     "pct_dp_p10": 0.9092002491643412,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.067791916019233,
+     "chatter_per_km": 2.6805187426137027,
+     "extrap_frac": 0.0
+    },
+    "normdead": {
+     "n": 10,
+     "pct_dp_mean": 0.9379023474607626,
+     "pct_dp_median": 0.963304785899352,
+     "pct_dp_p10": 0.9044440372737804,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.085274416198713,
+     "chatter_per_km": 2.697924994926624,
+     "extrap_frac": 0.1
+    },
+    "d03bus1": {
+     "n": 10,
+     "pct_dp_mean": 0.9393959503692046,
+     "pct_dp_median": 0.9628466939354422,
+     "pct_dp_p10": 0.9102306329388457,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.067791878991607,
+     "chatter_per_km": 2.680518723869905,
+     "extrap_frac": 0.0
+    },
+    "d03bus05": {
+     "n": 10,
+     "pct_dp_mean": 0.9393959503692046,
+     "pct_dp_median": 0.9628466939354422,
+     "pct_dp_p10": 0.9102306329388457,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.067791878991607,
+     "chatter_per_km": 2.680518723869905,
+     "extrap_frac": 0.0
+    }
+   }
+  },
+  "skill": {
+   "dead05": 0.5980747103728128,
+   "dead03Ki0": 0.6118130461936416,
+   "dead03cub": 0.5872660155407792,
+   "normdead": 0.5992895639806024,
+   "d03bus1": 0.6258078123726911,
+   "d03bus05": 0.6125224339768436
+  }
+ },
+ {
+  "ckpt": "ckpt/r2_dagger.npz",
+  "variants": [
+   {
+    "name": "d03busT1",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "bus_hev_series": [
+      1,
+      2.3
+     ],
+     "bus_hev_parallel_p2": [
+      1,
+      2.21
+     ]
+    }
+   },
+   {
+    "name": "d03busT05",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "bus_hev_series": [
+      0.5,
+      2.3
+     ],
+     "bus_hev_parallel_p2": [
+      0.5,
+      2.21
+     ]
+    }
+   },
+   {
+    "name": "busT1",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "s_prior": {
+     "bus_hev_series": [
+      1,
+      2.3
+     ],
+     "bus_hev_parallel_p2": [
+      1,
+      2.21
+     ]
+    }
+   }
+  ],
+  "filt": "bus",
+  "table": {
+   "bus (P2)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.000254204837353,
+     "pct_dp_median": 1.0007265689288234,
+     "pct_dp_p10": 0.9954075759619385,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3586272105154036,
+     "chatter_per_km": 1.6399412428357867,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9939813560598599,
+     "pct_dp_median": 0.9976490142013735,
+     "pct_dp_p10": 0.9769835045939399,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3387053590558198,
+     "chatter_per_km": 1.47176860018761,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9694601396341966,
+     "pct_dp_median": 0.9719275163182183,
+     "pct_dp_p10": 0.9489154079715376,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.264029612283305,
+     "chatter_per_km": 1.816617239765924,
+     "extrap_frac": 0.2
+    },
+    "d03busT1": {
+     "n": 10,
+     "pct_dp_mean": 0.9941453788331372,
+     "pct_dp_median": 0.9994965939317219,
+     "pct_dp_p10": 0.9765786729165955,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.2368333021990487,
+     "chatter_per_km": 1.3304653895884582,
+     "extrap_frac": 0.3
+    },
+    "d03busT05": {
+     "n": 10,
+     "pct_dp_mean": 0.9954386079832934,
+     "pct_dp_median": 0.9988211092807782,
+     "pct_dp_p10": 0.9752913444809829,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.299542791256196,
+     "chatter_per_km": 1.3590184237939886,
+     "extrap_frac": 0.4
+    },
+    "busT1": {
+     "n": 10,
+     "pct_dp_mean": 0.991728979044576,
+     "pct_dp_median": 0.9988635127795119,
+     "pct_dp_p10": 0.9719478819127797,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.2969084607476247,
+     "chatter_per_km": 1.3165327010781784,
+     "extrap_frac": 0.3
+    }
+   },
+   "ALL": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 1.000102894168014,
+     "pct_dp_median": 1.0008742800544217,
+     "pct_dp_p10": 0.9949986862593269,
+     "cs_rate": 0.95,
+     "starts_per_km": 3.091678859599914,
+     "chatter_per_km": 0.9984471198454308,
+     "extrap_frac": 0.05
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9926980359335149,
+     "pct_dp_median": 0.9952877650562061,
+     "pct_dp_p10": 0.9781393569157266,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.2140028616775504,
+     "chatter_per_km": 1.1310038168348853,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9791029264191783,
+     "pct_dp_median": 0.9798650591086804,
+     "pct_dp_p10": 0.9544135506596977,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.501825284828633,
+     "chatter_per_km": 2.02157502773169,
+     "extrap_frac": 0.25
+    },
+    "d03busT1": {
+     "n": 20,
+     "pct_dp_mean": 0.9948062103190736,
+     "pct_dp_median": 0.9989776104994834,
+     "pct_dp_p10": 0.9759857269526901,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.205536601431169,
+     "chatter_per_km": 1.0364133240284328,
+     "extrap_frac": 0.2
+    },
+    "d03busT05": {
+     "n": 20,
+     "pct_dp_mean": 0.9947943589619825,
+     "pct_dp_median": 0.9983707810116976,
+     "pct_dp_p10": 0.9750214347446684,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.1958490151271564,
+     "chatter_per_km": 0.9744776918394782,
+     "extrap_frac": 0.2
+    },
+    "busT1": {
+     "n": 20,
+     "pct_dp_mean": 0.9903123973950905,
+     "pct_dp_median": 0.9983472471622961,
+     "pct_dp_p10": 0.9658526712436518,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.227919093376054,
+     "chatter_per_km": 1.010977559293961,
+     "extrap_frac": 0.25
+    }
+   },
+   "bus (series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9999515834986751,
+     "pct_dp_median": 1.0015973091923542,
+     "pct_dp_p10": 0.9945781247095171,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.8247305086844245,
+     "chatter_per_km": 0.3569529968550746,
+     "extrap_frac": 0.0
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9914147158071698,
+     "pct_dp_median": 0.9928944356542826,
+     "pct_dp_p10": 0.9781393569157266,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.08930036429928,
+     "chatter_per_km": 0.7902390334821603,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9887457132041606,
+     "pct_dp_median": 0.9876430519589495,
+     "pct_dp_p10": 0.9766659879932298,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.7396209573739596,
+     "chatter_per_km": 2.2265328156974564,
+     "extrap_frac": 0.3
+    },
+    "d03busT1": {
+     "n": 10,
+     "pct_dp_mean": 0.9954670418050096,
+     "pct_dp_median": 0.9980648175783713,
+     "pct_dp_p10": 0.9759857269526901,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.174239900663288,
+     "chatter_per_km": 0.7423612584684072,
+     "extrap_frac": 0.1
+    },
+    "d03busT05": {
+     "n": 10,
+     "pct_dp_mean": 0.9941501099406714,
+     "pct_dp_median": 0.9982147532624013,
+     "pct_dp_p10": 0.9750214347446684,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.092155238998116,
+     "chatter_per_km": 0.589936959884968,
+     "extrap_frac": 0.0
+    },
+    "busT1": {
+     "n": 10,
+     "pct_dp_mean": 0.9888958157456053,
+     "pct_dp_median": 0.9932211189716451,
+     "pct_dp_p10": 0.9658526712436518,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.1589297260044824,
+     "chatter_per_km": 0.7054224175097437,
+     "extrap_frac": 0.2
+    }
+   }
+  },
+  "skill": {
+   "d03busT1": 0.6862075888781276,
+   "d03busT05": 0.6632104827376846,
+   "busT1": 0.45894829971538675
+  }
+ },
+ {
+  "ckpt": "ckpt/r2_dagger.npz",
+  "variants": [
+   {
+    "name": "s2.4",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "bus_hev_series": [
+      1,
+      2.4
+     ],
+     "bus_hev_parallel_p2": [
+      1,
+      2.4
+     ]
+    }
+   },
+   {
+    "name": "s2.6",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "bus_hev_series": [
+      1,
+      2.6
+     ],
+     "bus_hev_parallel_p2": [
+      1,
+      2.6
+     ]
+    }
+   },
+   {
+    "name": "s2.8",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "bus_hev_series": [
+      1,
+      2.8
+     ],
+     "bus_hev_parallel_p2": [
+      1,
+      2.8
+     ]
+    }
+   },
+   {
+    "name": "s3.0",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "bus_hev_series": [
+      1,
+      3.0
+     ],
+     "bus_hev_parallel_p2": [
+      1,
+      3.0
+     ]
+    }
+   }
+  ],
+  "filt": "bus",
+  "table": {
+   "bus (P2)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.000254204837353,
+     "pct_dp_median": 1.0007265689288234,
+     "pct_dp_p10": 0.9954075759619385,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3586272105154036,
+     "chatter_per_km": 1.6399412428357867,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9939813560598599,
+     "pct_dp_median": 0.9976490142013735,
+     "pct_dp_p10": 0.9769835045939399,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3387053590558198,
+     "chatter_per_km": 1.47176860018761,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9694601396341966,
+     "pct_dp_median": 0.9719275163182183,
+     "pct_dp_p10": 0.9489154079715376,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.264029612283305,
+     "chatter_per_km": 1.816617239765924,
+     "extrap_frac": 0.2
+    },
+    "s2.4": {
+     "n": 10,
+     "pct_dp_mean": 0.9970641817542119,
+     "pct_dp_median": 0.9996786943306272,
+     "pct_dp_p10": 0.979735526228284,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.332279326336649,
+     "chatter_per_km": 1.3701497505296687,
+     "extrap_frac": 0.3
+    },
+    "s2.6": {
+     "n": 10,
+     "pct_dp_mean": 0.9984117992642811,
+     "pct_dp_median": 0.9990056357478978,
+     "pct_dp_p10": 0.9840344834618691,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.459437171475796,
+     "chatter_per_km": 1.7367174676654173,
+     "extrap_frac": 0.1
+    },
+    "s2.8": {
+     "n": 10,
+     "pct_dp_mean": 0.9973760288946816,
+     "pct_dp_median": 0.9984659140293578,
+     "pct_dp_p10": 0.9845612573643701,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.371617242919225,
+     "chatter_per_km": 1.7044475158322068,
+     "extrap_frac": 0.0
+    },
+    "s3.0": {
+     "n": 10,
+     "pct_dp_mean": 0.9980001449303424,
+     "pct_dp_median": 0.9975497644563192,
+     "pct_dp_p10": 0.986764094157077,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.398439904495562,
+     "chatter_per_km": 1.7509680031154389,
+     "extrap_frac": 0.1
+    }
+   },
+   "ALL": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 1.000102894168014,
+     "pct_dp_median": 1.0008742800544217,
+     "pct_dp_p10": 0.9949986862593269,
+     "cs_rate": 0.95,
+     "starts_per_km": 3.091678859599914,
+     "chatter_per_km": 0.9984471198454308,
+     "extrap_frac": 0.05
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9926980359335149,
+     "pct_dp_median": 0.9952877650562061,
+     "pct_dp_p10": 0.9781393569157266,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.2140028616775504,
+     "chatter_per_km": 1.1310038168348853,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9791029264191783,
+     "pct_dp_median": 0.9798650591086804,
+     "pct_dp_p10": 0.9544135506596977,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.501825284828633,
+     "chatter_per_km": 2.02157502773169,
+     "extrap_frac": 0.25
+    },
+    "s2.4": {
+     "n": 20,
+     "pct_dp_mean": 0.9971863187692673,
+     "pct_dp_median": 0.9987360905787521,
+     "pct_dp_p10": 0.9803336275393296,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.2028934731175247,
+     "chatter_per_km": 1.0475430128211773,
+     "extrap_frac": 0.25
+    },
+    "s2.6": {
+     "n": 20,
+     "pct_dp_mean": 0.9994601209009776,
+     "pct_dp_median": 0.9990056357478978,
+     "pct_dp_p10": 0.9879090218783709,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.2337832982292496,
+     "chatter_per_km": 1.238755106614152,
+     "extrap_frac": 0.05
+    },
+    "s2.8": {
+     "n": 20,
+     "pct_dp_mean": 1.0003357931900463,
+     "pct_dp_median": 0.9989589579697802,
+     "pct_dp_p10": 0.9961850326642689,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.150855802417752,
+     "chatter_per_km": 1.1354005186958136,
+     "extrap_frac": 0.05
+    },
+    "s3.0": {
+     "n": 20,
+     "pct_dp_mean": 1.000021781683598,
+     "pct_dp_median": 0.9995279987809089,
+     "pct_dp_p10": 0.993804914942417,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.16090640608822,
+     "chatter_per_km": 1.1384183292998862,
+     "extrap_frac": 0.1
+    }
+   },
+   "bus (series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9999515834986751,
+     "pct_dp_median": 1.0015973091923542,
+     "pct_dp_p10": 0.9945781247095171,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.8247305086844245,
+     "chatter_per_km": 0.3569529968550746,
+     "extrap_frac": 0.0
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9914147158071698,
+     "pct_dp_median": 0.9928944356542826,
+     "pct_dp_p10": 0.9781393569157266,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.08930036429928,
+     "chatter_per_km": 0.7902390334821603,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9887457132041606,
+     "pct_dp_median": 0.9876430519589495,
+     "pct_dp_p10": 0.9766659879932298,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.7396209573739596,
+     "chatter_per_km": 2.2265328156974564,
+     "extrap_frac": 0.3
+    },
+    "s2.4": {
+     "n": 10,
+     "pct_dp_mean": 0.9973084557843224,
+     "pct_dp_median": 0.9985485655158555,
+     "pct_dp_p10": 0.987524575730826,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.0735076198984,
+     "chatter_per_km": 0.7249362751126858,
+     "extrap_frac": 0.2
+    },
+    "s2.6": {
+     "n": 10,
+     "pct_dp_mean": 1.0005084425376742,
+     "pct_dp_median": 0.9998477680029199,
+     "pct_dp_p10": 0.9953199141222205,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.0081294249827035,
+     "chatter_per_km": 0.7407927455628869,
+     "extrap_frac": 0.0
+    },
+    "s2.8": {
+     "n": 10,
+     "pct_dp_mean": 1.0032955574854112,
+     "pct_dp_median": 1.0034307040132209,
+     "pct_dp_p10": 0.9974606898770576,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.9300943619162796,
+     "chatter_per_km": 0.5663535215594206,
+     "extrap_frac": 0.1
+    },
+    "s3.0": {
+     "n": 10,
+     "pct_dp_mean": 1.0020434184368536,
+     "pct_dp_median": 1.0013456489819657,
+     "pct_dp_p10": 0.9946205385753231,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.9233729076808785,
+     "chatter_per_km": 0.5258686554843337,
+     "extrap_frac": 0.1
+    }
+   }
+  },
+  "skill": {
+   "s2.4": 0.7714428585792226,
+   "s2.6": 0.8583036581484154,
+   "s2.8": 0.8857867045031255,
+   "s3.0": 0.8544394925644462
+  }
+ },
+ {
+  "ckpt": "ckpt/r2_dagger.npz",
+  "variants": [
+   {
+    "name": "m2.2",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "mild": [
+      1,
+      2.2
+     ]
+    }
+   },
+   {
+    "name": "m2.5",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "mild": [
+      1,
+      2.5
+     ]
+    }
+   },
+   {
+    "name": "m2.8",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "mild": [
+      1,
+      2.8
+     ]
+    }
+   }
+  ],
+  "filt": "mild",
+  "table": {
+   "mild P1 (CR-Z type)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9488603655177428,
+     "pct_dp_median": 0.962226289308255,
+     "pct_dp_p10": 0.91724774523204,
+     "cs_rate": 0.5,
+     "starts_per_km": 4.170754844657191,
+     "chatter_per_km": 2.7008078645111517,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9313452620921492,
+     "pct_dp_median": 0.9614916648286007,
+     "pct_dp_p10": 0.9019565525927806,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.170794470890254,
+     "chatter_per_km": 2.7008604475859044,
+     "extrap_frac": 0.0
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9084864052266642,
+     "pct_dp_median": 0.942115349433917,
+     "pct_dp_p10": 0.8689591065024281,
+     "cs_rate": 0.8,
+     "starts_per_km": 4.153261953452329,
+     "chatter_per_km": 2.680390187066716,
+     "extrap_frac": 0.0
+    },
+    "m2.2": {
+     "n": 10,
+     "pct_dp_mean": 0.936972633988626,
+     "pct_dp_median": 0.9573690076255559,
+     "pct_dp_p10": 0.9109434185704293,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.064207724927674,
+     "chatter_per_km": 2.6558403635478736,
+     "extrap_frac": 0.1
+    },
+    "m2.5": {
+     "n": 10,
+     "pct_dp_mean": 0.9421662342734969,
+     "pct_dp_median": 0.9657998244796867,
+     "pct_dp_p10": 0.9158767139543091,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.085347922122214,
+     "chatter_per_km": 2.697959806963474,
+     "extrap_frac": 0.1
+    },
+    "m2.8": {
+     "n": 10,
+     "pct_dp_mean": 0.9456379299579029,
+     "pct_dp_median": 0.9696346153352159,
+     "pct_dp_p10": 0.9147362033617633,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.066763693923207,
+     "chatter_per_km": 2.6612252485061783,
+     "extrap_frac": 0.4
+    }
+   },
+   "ALL": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9488603655177428,
+     "pct_dp_median": 0.962226289308255,
+     "pct_dp_p10": 0.91724774523204,
+     "cs_rate": 0.5,
+     "starts_per_km": 4.170754844657191,
+     "chatter_per_km": 2.7008078645111517,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9313452620921492,
+     "pct_dp_median": 0.9614916648286007,
+     "pct_dp_p10": 0.9019565525927806,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.170794470890254,
+     "chatter_per_km": 2.7008604475859044,
+     "extrap_frac": 0.0
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9084864052266642,
+     "pct_dp_median": 0.942115349433917,
+     "pct_dp_p10": 0.8689591065024281,
+     "cs_rate": 0.8,
+     "starts_per_km": 4.153261953452329,
+     "chatter_per_km": 2.680390187066716,
+     "extrap_frac": 0.0
+    },
+    "m2.2": {
+     "n": 10,
+     "pct_dp_mean": 0.936972633988626,
+     "pct_dp_median": 0.9573690076255559,
+     "pct_dp_p10": 0.9109434185704293,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.064207724927674,
+     "chatter_per_km": 2.6558403635478736,
+     "extrap_frac": 0.1
+    },
+    "m2.5": {
+     "n": 10,
+     "pct_dp_mean": 0.9421662342734969,
+     "pct_dp_median": 0.9657998244796867,
+     "pct_dp_p10": 0.9158767139543091,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.085347922122214,
+     "chatter_per_km": 2.697959806963474,
+     "extrap_frac": 0.1
+    },
+    "m2.8": {
+     "n": 10,
+     "pct_dp_mean": 0.9456379299579029,
+     "pct_dp_median": 0.9696346153352159,
+     "pct_dp_p10": 0.9147362033617633,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.066763693923207,
+     "chatter_per_km": 2.6612252485061783,
+     "extrap_frac": 0.4
+    }
+   }
+  },
+  "skill": {
+   "m2.2": 0.3040792116864567,
+   "m2.5": 0.36060001650150586,
+   "m2.8": 0.3984205611934615
+  }
+ },
+ {
+  "ckpt": "ckpt/r2_dagger.npz",
+  "variants": [
+   {
+    "name": "m3.0",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "mild": [
+      1,
+      3.0
+     ]
+    }
+   },
+   {
+    "name": "m3.3",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "mild": [
+      1,
+      3.3
+     ]
+    }
+   },
+   {
+    "name": "m2.8w05",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "mild": [
+      0.5,
+      2.8
+     ]
+    }
+   }
+  ],
+  "filt": "mild",
+  "table": {
+   "mild P1 (CR-Z type)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9488603655177428,
+     "pct_dp_median": 0.962226289308255,
+     "pct_dp_p10": 0.91724774523204,
+     "cs_rate": 0.5,
+     "starts_per_km": 4.170754844657191,
+     "chatter_per_km": 2.7008078645111517,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9313452620921492,
+     "pct_dp_median": 0.9614916648286007,
+     "pct_dp_p10": 0.9019565525927806,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.170794470890254,
+     "chatter_per_km": 2.7008604475859044,
+     "extrap_frac": 0.0
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9084864052266642,
+     "pct_dp_median": 0.942115349433917,
+     "pct_dp_p10": 0.8689591065024281,
+     "cs_rate": 0.8,
+     "starts_per_km": 4.153261953452329,
+     "chatter_per_km": 2.680390187066716,
+     "extrap_frac": 0.0
+    },
+    "m3.0": {
+     "n": 10,
+     "pct_dp_mean": 0.9486253839271457,
+     "pct_dp_median": 0.9734216231343886,
+     "pct_dp_p10": 0.9161164964594962,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.066673037471493,
+     "chatter_per_km": 2.661153646007439,
+     "extrap_frac": 0.3
+    },
+    "m3.3": {
+     "n": 10,
+     "pct_dp_mean": 0.9543189589115426,
+     "pct_dp_median": 0.977329183554911,
+     "pct_dp_p10": 0.920075116189238,
+     "cs_rate": 0.7,
+     "starts_per_km": 4.06662278897881,
+     "chatter_per_km": 2.6611494633855943,
+     "extrap_frac": 0.3
+    },
+    "m2.8w05": {
+     "n": 10,
+     "pct_dp_mean": 0.9422687282207483,
+     "pct_dp_median": 0.9659976126296282,
+     "pct_dp_p10": 0.9129124878353078,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.085202561767138,
+     "chatter_per_km": 2.6978869427771857,
+     "extrap_frac": 0.1
+    }
+   },
+   "ALL": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9488603655177428,
+     "pct_dp_median": 0.962226289308255,
+     "pct_dp_p10": 0.91724774523204,
+     "cs_rate": 0.5,
+     "starts_per_km": 4.170754844657191,
+     "chatter_per_km": 2.7008078645111517,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9313452620921492,
+     "pct_dp_median": 0.9614916648286007,
+     "pct_dp_p10": 0.9019565525927806,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.170794470890254,
+     "chatter_per_km": 2.7008604475859044,
+     "extrap_frac": 0.0
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9084864052266642,
+     "pct_dp_median": 0.942115349433917,
+     "pct_dp_p10": 0.8689591065024281,
+     "cs_rate": 0.8,
+     "starts_per_km": 4.153261953452329,
+     "chatter_per_km": 2.680390187066716,
+     "extrap_frac": 0.0
+    },
+    "m3.0": {
+     "n": 10,
+     "pct_dp_mean": 0.9486253839271457,
+     "pct_dp_median": 0.9734216231343886,
+     "pct_dp_p10": 0.9161164964594962,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.066673037471493,
+     "chatter_per_km": 2.661153646007439,
+     "extrap_frac": 0.3
+    },
+    "m3.3": {
+     "n": 10,
+     "pct_dp_mean": 0.9543189589115426,
+     "pct_dp_median": 0.977329183554911,
+     "pct_dp_p10": 0.920075116189238,
+     "cs_rate": 0.7,
+     "starts_per_km": 4.06662278897881,
+     "chatter_per_km": 2.6611494633855943,
+     "extrap_frac": 0.3
+    },
+    "m2.8w05": {
+     "n": 10,
+     "pct_dp_mean": 0.9422687282207483,
+     "pct_dp_median": 0.9659976126296282,
+     "pct_dp_p10": 0.9129124878353078,
+     "cs_rate": 0.9,
+     "starts_per_km": 4.085202561767138,
+     "chatter_per_km": 2.6978869427771857,
+     "extrap_frac": 0.1
+    }
+   }
+  },
+  "skill": {
+   "m3.0": 0.4312679805893208,
+   "m3.3": 0.4762007476419453,
+   "m2.8w05": 0.3624668161164868
+  }
+ },
+ {
+  "ckpt": "ckpt/r2_dagger.npz",
+  "variants": [
+   {
+    "name": "v2net_d03pri",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "bus_hev_series": [
+      1,
+      2.8
+     ],
+     "bus_hev_parallel_p2": [
+      1,
+      2.6
+     ],
+     "mild": [
+      1,
+      2.8
+     ]
+    }
+   }
+  ],
+  "filt": null,
+  "table": {
+   "bus (P2)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.000254204837353,
+     "pct_dp_median": 1.0007265689288234,
+     "pct_dp_p10": 0.9954075759619385,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3586272105154036,
+     "chatter_per_km": 1.6399412428357867,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9939813560598599,
+     "pct_dp_median": 0.9976490142013735,
+     "pct_dp_p10": 0.9769835045939399,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3387053590558198,
+     "chatter_per_km": 1.47176860018761,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9694601396341966,
+     "pct_dp_median": 0.9719275163182183,
+     "pct_dp_p10": 0.9489154079715376,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.264029612283305,
+     "chatter_per_km": 1.816617239765924,
+     "extrap_frac": 0.2
+    },
+    "v2net_d03pri": {
+     "n": 10,
+     "pct_dp_mean": 0.9984117992642811,
+     "pct_dp_median": 0.9990056357478978,
+     "pct_dp_p10": 0.9840344834618691,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.459437171475796,
+     "chatter_per_km": 1.7367174676654173,
+     "extrap_frac": 0.1
+    }
+   },
+   "ALL": {
+    "ecms": {
+     "n": 190,
+     "pct_dp_mean": 0.9884820468320359,
+     "pct_dp_median": 0.9948506858603932,
+     "pct_dp_p10": 0.9561870412222753,
+     "cs_rate": 0.7105263157894737,
+     "starts_per_km": 2.6257189838637958,
+     "chatter_per_km": 1.2513260403129096,
+     "extrap_frac": 0.26842105263157895
+    },
+    "aecms": {
+     "n": 190,
+     "pct_dp_mean": 0.9827330201278812,
+     "pct_dp_median": 0.9891540686281838,
+     "pct_dp_p10": 0.9498917842495034,
+     "cs_rate": 0.9473684210526315,
+     "starts_per_km": 2.6957704964874485,
+     "chatter_per_km": 1.2775941063936196,
+     "extrap_frac": 0.14210526315789473
+    },
+    "rule": {
+     "n": 190,
+     "pct_dp_mean": 0.9682587703121436,
+     "pct_dp_median": 0.9777868468169785,
+     "pct_dp_p10": 0.9227438284030084,
+     "cs_rate": 0.868421052631579,
+     "starts_per_km": 2.6786526637864165,
+     "chatter_per_km": 1.641851500425413,
+     "extrap_frac": 0.20526315789473684
+    },
+    "v2net_d03pri": {
+     "n": 190,
+     "pct_dp_mean": 0.991439053485372,
+     "pct_dp_median": 0.9989596733421733,
+     "pct_dp_p10": 0.9679716785536101,
+     "cs_rate": 0.9210526315789473,
+     "starts_per_km": 2.365197679256369,
+     "chatter_per_km": 0.9857929640955068,
+     "extrap_frac": 0.2
+    }
+   },
+   "bus (series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9999515834986751,
+     "pct_dp_median": 1.0015973091923542,
+     "pct_dp_p10": 0.9945781247095171,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.8247305086844245,
+     "chatter_per_km": 0.3569529968550746,
+     "extrap_frac": 0.0
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9914147158071698,
+     "pct_dp_median": 0.9928944356542826,
+     "pct_dp_p10": 0.9781393569157266,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.08930036429928,
+     "chatter_per_km": 0.7902390334821603,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9887457132041606,
+     "pct_dp_median": 0.9876430519589495,
+     "pct_dp_p10": 0.9766659879932298,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.7396209573739596,
+     "chatter_per_km": 2.2265328156974564,
+     "extrap_frac": 0.3
+    },
+    "v2net_d03pri": {
+     "n": 10,
+     "pct_dp_mean": 1.0032955574854112,
+     "pct_dp_median": 1.0034307040132209,
+     "pct_dp_p10": 0.9974606898770576,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.9300943619162796,
+     "chatter_per_km": 0.5663535215594206,
+     "extrap_frac": 0.1
+    }
+   },
+   "P2 HEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9881280813927743,
+     "pct_dp_median": 0.9916451969118348,
+     "pct_dp_p10": 0.9693689204530275,
+     "cs_rate": 0.3,
+     "starts_per_km": 2.358634584735908,
+     "chatter_per_km": 0.9666415894877127,
+     "extrap_frac": 0.5666666666666667
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9790033800457648,
+     "pct_dp_median": 0.9857707669632721,
+     "pct_dp_p10": 0.9370778275198426,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 2.356415223355974,
+     "chatter_per_km": 0.9532939214898944,
+     "extrap_frac": 0.03333333333333333
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9406792808340624,
+     "pct_dp_median": 0.9417240634570251,
+     "pct_dp_p10": 0.9119020561639574,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4799609999315235,
+     "chatter_per_km": 1.245324547755407,
+     "extrap_frac": 0.13333333333333333
+    },
+    "v2net_d03pri": {
+     "n": 30,
+     "pct_dp_mean": 0.9883216426577813,
+     "pct_dp_median": 0.9925283917898048,
+     "pct_dp_p10": 0.9643057709547261,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.3816582154520045,
+     "chatter_per_km": 0.9288222367087545,
+     "extrap_frac": 0.06666666666666667
+    }
+   },
+   "power-split HEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9792408220588575,
+     "pct_dp_median": 0.9861874785897158,
+     "pct_dp_p10": 0.9488624127137255,
+     "cs_rate": 0.6666666666666666,
+     "starts_per_km": 2.418198641626439,
+     "chatter_per_km": 1.4463306968480303,
+     "extrap_frac": 0.23333333333333334
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.975764919710056,
+     "pct_dp_median": 0.9816736766881642,
+     "pct_dp_p10": 0.9512699434413062,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4102648918111074,
+     "chatter_per_km": 1.3388489096471312,
+     "extrap_frac": 0.1
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9679768103669836,
+     "pct_dp_median": 0.9742713950449717,
+     "pct_dp_p10": 0.9217519954603512,
+     "cs_rate": 0.8,
+     "starts_per_km": 2.5669601400784208,
+     "chatter_per_km": 1.3956367054337258,
+     "extrap_frac": 0.1
+    },
+    "v2net_d03pri": {
+     "n": 30,
+     "pct_dp_mean": 0.9834483243994946,
+     "pct_dp_median": 0.990134429986136,
+     "pct_dp_p10": 0.9649721818883772,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.445984906230866,
+     "chatter_per_km": 1.1687783877861284,
+     "extrap_frac": 0.13333333333333333
+    }
+   },
+   "series HEV": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9881213177552208,
+     "pct_dp_median": 0.9920614144200738,
+     "pct_dp_p10": 0.9630913334360037,
+     "cs_rate": 0.3,
+     "starts_per_km": 3.0734003340211737,
+     "chatter_per_km": 1.6581741495283933,
+     "extrap_frac": 0.7
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9864127438386747,
+     "pct_dp_median": 0.9935627377665797,
+     "pct_dp_p10": 0.9603544684470577,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.9353403587041185,
+     "chatter_per_km": 1.3252806496004,
+     "extrap_frac": 0.15
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9527899682210339,
+     "pct_dp_median": 0.957416449787877,
+     "pct_dp_p10": 0.9352562583088497,
+     "cs_rate": 0.7,
+     "starts_per_km": 4.811666578712148,
+     "chatter_per_km": 5.067783810598719,
+     "extrap_frac": 0.05
+    },
+    "v2net_d03pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9940066540505935,
+     "pct_dp_median": 1.0006696313362988,
+     "pct_dp_p10": 0.9754149555251862,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.1420754811285727,
+     "chatter_per_km": 1.3549528906336248,
+     "extrap_frac": 0.15
+    }
+   },
+   "power-split PHEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9808956071870629,
+     "pct_dp_median": 0.9832694805870215,
+     "pct_dp_p10": 0.943473961973973,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.597750261871396,
+     "chatter_per_km": 1.5513440561366711,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9780528476393712,
+     "pct_dp_median": 0.9650008109415266,
+     "pct_dp_p10": 0.9401328683001349,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.5976933629971963,
+     "chatter_per_km": 1.5583947782061032,
+     "extrap_frac": 0.06666666666666667
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9990346784068213,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9856241393294054,
+     "cs_rate": 1.0,
+     "starts_per_km": 1.3204846640663945,
+     "chatter_per_km": 0.4451832352564116,
+     "extrap_frac": 0.43333333333333335
+    },
+    "v2net_d03pri": {
+     "n": 30,
+     "pct_dp_mean": 1.0032391698912089,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965851858854834,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.331783958952107,
+     "chatter_per_km": 0.3906215132777302,
+     "extrap_frac": 0.3
+    }
+   },
+   "series PHEV (EREV)": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 1.0005308131694428,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9886023049256973,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.7697685021953173,
+     "chatter_per_km": 0.08428386772598552,
+     "extrap_frac": 0.05
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9932580706825608,
+     "pct_dp_median": 0.9997117426019537,
+     "pct_dp_p10": 0.9723703355389539,
+     "cs_rate": 1.0,
+     "starts_per_km": 1.1403231885541565,
+     "chatter_per_km": 0.41322966725983995,
+     "extrap_frac": 0.15
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9927179656188585,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9713609964073552,
+     "cs_rate": 0.8,
+     "starts_per_km": 0.7362779276929026,
+     "chatter_per_km": 0.13574286875194058,
+     "extrap_frac": 0.35
+    },
+    "v2net_d03pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9950117988017247,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9893181736212177,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8106350302869183,
+     "chatter_per_km": 0.21495926049670994,
+     "extrap_frac": 0.35
+    }
+   },
+   "truck (P2)": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 0.996462111914423,
+     "pct_dp_median": 0.9983688628699092,
+     "pct_dp_p10": 0.9840386344058254,
+     "cs_rate": 0.8,
+     "starts_per_km": 3.7720069149296194,
+     "chatter_per_km": 1.6337653349234291,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9922759092550246,
+     "pct_dp_median": 0.9942029440842515,
+     "pct_dp_p10": 0.9806107844850204,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.8273794396735306,
+     "chatter_per_km": 1.6803741068021136,
+     "extrap_frac": 0.3
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9578815287270366,
+     "pct_dp_median": 0.9673609027157,
+     "pct_dp_p10": 0.9085869919082555,
+     "cs_rate": 0.85,
+     "starts_per_km": 4.455956791131794,
+     "chatter_per_km": 2.3908951090624395,
+     "extrap_frac": 0.25
+    },
+    "v2net_d03pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9933552655619847,
+     "pct_dp_median": 0.9953818842756965,
+     "pct_dp_p10": 0.9826735821436943,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.806112791610146,
+     "chatter_per_km": 1.559204026948814,
+     "extrap_frac": 0.35
+    }
+   },
+   "truck (PHEV series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.0170707183606549,
+     "pct_dp_median": 1.0073856308777729,
+     "pct_dp_p10": 0.9929169036467153,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.1804461625616423,
+     "chatter_per_km": 0.4320969299704143,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 1.0128291587324691,
+     "pct_dp_median": 1.0058052704536782,
+     "pct_dp_p10": 0.9944541541728973,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.7216328306597166,
+     "chatter_per_km": 0.922038264869004,
+     "extrap_frac": 0.5
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 1.0003731439082466,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9995070317537983,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.6274680815296134,
+     "chatter_per_km": 0.024361223389913263,
+     "extrap_frac": 0.1
+    },
+    "v2net_d03pri": {
+     "n": 10,
+     "pct_dp_mean": 1.0002218818404143,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.4865328305995302,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    }
+   },
+   "mild P1 (CR-Z type)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9488603655177428,
+     "pct_dp_median": 0.962226289308255,
+     "pct_dp_p10": 0.91724774523204,
+     "cs_rate": 0.5,
+     "starts_per_km": 4.170754844657191,
+     "chatter_per_km": 2.7008078645111517,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9313452620921492,
+     "pct_dp_median": 0.9614916648286007,
+     "pct_dp_p10": 0.9019565525927806,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.170794470890254,
+     "chatter_per_km": 2.7008604475859044,
+     "extrap_frac": 0.0
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9084864052266642,
+     "pct_dp_median": 0.942115349433917,
+     "pct_dp_p10": 0.8689591065024281,
+     "cs_rate": 0.8,
+     "starts_per_km": 4.153261953452329,
+     "chatter_per_km": 2.680390187066716,
+     "extrap_frac": 0.0
+    },
+    "v2net_d03pri": {
+     "n": 10,
+     "pct_dp_mean": 0.9456379299579029,
+     "pct_dp_median": 0.9696346153352159,
+     "pct_dp_p10": 0.9147362033617633,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.066763693923207,
+     "chatter_per_km": 2.6612252485061783,
+     "extrap_frac": 0.4
+    }
+   }
+  },
+  "skill": {
+   "v2net_d03pri": 0.6483697430739981
+  }
+ },
+ {
+  "ckpt": "ckpt/p31_dagger.npz",
+  "variants": [
+   {
+    "name": "p31_R8rule",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms"
+   },
+   {
+    "name": "p31_d03pri",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "bus_hev_series": [
+      1,
+      2.8
+     ],
+     "bus_hev_parallel_p2": [
+      1,
+      2.6
+     ],
+     "mild": [
+      1,
+      2.8
+     ]
+    }
+   }
+  ],
+  "filt": null,
+  "table": {
+   "bus (P2)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.000254204837353,
+     "pct_dp_median": 1.0007265689288234,
+     "pct_dp_p10": 0.9954075759619385,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3586272105154036,
+     "chatter_per_km": 1.6399412428357867,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9939813560598599,
+     "pct_dp_median": 0.9976490142013735,
+     "pct_dp_p10": 0.9769835045939399,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3387053590558198,
+     "chatter_per_km": 1.47176860018761,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9694601396341966,
+     "pct_dp_median": 0.9719275163182183,
+     "pct_dp_p10": 0.9489154079715376,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.264029612283305,
+     "chatter_per_km": 1.816617239765924,
+     "extrap_frac": 0.2
+    },
+    "p31_R8rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9896732942699984,
+     "pct_dp_median": 0.9985575749048288,
+     "pct_dp_p10": 0.9699649627614255,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.36076339723043,
+     "chatter_per_km": 1.380167122294234,
+     "extrap_frac": 0.3
+    },
+    "p31_d03pri": {
+     "n": 10,
+     "pct_dp_mean": 0.9984117992642811,
+     "pct_dp_median": 0.9990056357478978,
+     "pct_dp_p10": 0.9840344834618691,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.459437171475796,
+     "chatter_per_km": 1.7367174676654173,
+     "extrap_frac": 0.1
+    }
+   },
+   "ALL": {
+    "ecms": {
+     "n": 190,
+     "pct_dp_mean": 0.9884820468320359,
+     "pct_dp_median": 0.9948506858603932,
+     "pct_dp_p10": 0.9561870412222753,
+     "cs_rate": 0.7105263157894737,
+     "starts_per_km": 2.6257189838637958,
+     "chatter_per_km": 1.2513260403129096,
+     "extrap_frac": 0.26842105263157895
+    },
+    "aecms": {
+     "n": 190,
+     "pct_dp_mean": 0.9827330201278812,
+     "pct_dp_median": 0.9891540686281838,
+     "pct_dp_p10": 0.9498917842495034,
+     "cs_rate": 0.9473684210526315,
+     "starts_per_km": 2.6957704964874485,
+     "chatter_per_km": 1.2775941063936196,
+     "extrap_frac": 0.14210526315789473
+    },
+    "rule": {
+     "n": 190,
+     "pct_dp_mean": 0.9682587703121436,
+     "pct_dp_median": 0.9777868468169785,
+     "pct_dp_p10": 0.9227438284030084,
+     "cs_rate": 0.868421052631579,
+     "starts_per_km": 2.6786526637864165,
+     "chatter_per_km": 1.641851500425413,
+     "extrap_frac": 0.20526315789473684
+    },
+    "p31_R8rule": {
+     "n": 190,
+     "pct_dp_mean": 0.9877451054139142,
+     "pct_dp_median": 0.9965489811163895,
+     "pct_dp_p10": 0.9628007635994054,
+     "cs_rate": 0.9631578947368421,
+     "starts_per_km": 2.3937364116282565,
+     "chatter_per_km": 0.9859941769022252,
+     "extrap_frac": 0.14736842105263157
+    },
+    "p31_d03pri": {
+     "n": 190,
+     "pct_dp_mean": 0.9905765751090643,
+     "pct_dp_median": 0.9984507611471782,
+     "pct_dp_p10": 0.9670894792224344,
+     "cs_rate": 0.9421052631578948,
+     "starts_per_km": 2.370580700688291,
+     "chatter_per_km": 0.9833003432416116,
+     "extrap_frac": 0.15263157894736842
+    }
+   },
+   "bus (series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9999515834986751,
+     "pct_dp_median": 1.0015973091923542,
+     "pct_dp_p10": 0.9945781247095171,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.8247305086844245,
+     "chatter_per_km": 0.3569529968550746,
+     "extrap_frac": 0.0
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9914147158071698,
+     "pct_dp_median": 0.9928944356542826,
+     "pct_dp_p10": 0.9781393569157266,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.08930036429928,
+     "chatter_per_km": 0.7902390334821603,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9887457132041606,
+     "pct_dp_median": 0.9876430519589495,
+     "pct_dp_p10": 0.9766659879932298,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.7396209573739596,
+     "chatter_per_km": 2.2265328156974564,
+     "extrap_frac": 0.3
+    },
+    "p31_R8rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9826377265030823,
+     "pct_dp_median": 0.9883758591111896,
+     "pct_dp_p10": 0.9585670554329394,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.1044017058938485,
+     "chatter_per_km": 0.8274793424353172,
+     "extrap_frac": 0.1
+    },
+    "p31_d03pri": {
+     "n": 10,
+     "pct_dp_mean": 1.0032955574854112,
+     "pct_dp_median": 1.0034307040132209,
+     "pct_dp_p10": 0.9974606898770576,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.9300943619162796,
+     "chatter_per_km": 0.5663535215594206,
+     "extrap_frac": 0.1
+    }
+   },
+   "P2 HEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9881280813927743,
+     "pct_dp_median": 0.9916451969118348,
+     "pct_dp_p10": 0.9693689204530275,
+     "cs_rate": 0.3,
+     "starts_per_km": 2.358634584735908,
+     "chatter_per_km": 0.9666415894877127,
+     "extrap_frac": 0.5666666666666667
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9790033800457648,
+     "pct_dp_median": 0.9857707669632721,
+     "pct_dp_p10": 0.9370778275198426,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 2.356415223355974,
+     "chatter_per_km": 0.9532939214898944,
+     "extrap_frac": 0.03333333333333333
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9406792808340624,
+     "pct_dp_median": 0.9417240634570251,
+     "pct_dp_p10": 0.9119020561639574,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4799609999315235,
+     "chatter_per_km": 1.245324547755407,
+     "extrap_frac": 0.13333333333333333
+    },
+    "p31_R8rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9857582711134657,
+     "pct_dp_median": 0.9923874630973668,
+     "pct_dp_p10": 0.9541157674365249,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.3975332230034,
+     "chatter_per_km": 0.8917001681260535,
+     "extrap_frac": 0.0
+    },
+    "p31_d03pri": {
+     "n": 30,
+     "pct_dp_mean": 0.9856953124549789,
+     "pct_dp_median": 0.9932246459545581,
+     "pct_dp_p10": 0.9537573875302497,
+     "cs_rate": 0.9666666666666667,
+     "starts_per_km": 2.426461052424212,
+     "chatter_per_km": 0.885038382406673,
+     "extrap_frac": 0.03333333333333333
+    }
+   },
+   "power-split HEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9792408220588575,
+     "pct_dp_median": 0.9861874785897158,
+     "pct_dp_p10": 0.9488624127137255,
+     "cs_rate": 0.6666666666666666,
+     "starts_per_km": 2.418198641626439,
+     "chatter_per_km": 1.4463306968480303,
+     "extrap_frac": 0.23333333333333334
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.975764919710056,
+     "pct_dp_median": 0.9816736766881642,
+     "pct_dp_p10": 0.9512699434413062,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4102648918111074,
+     "chatter_per_km": 1.3388489096471312,
+     "extrap_frac": 0.1
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9679768103669836,
+     "pct_dp_median": 0.9742713950449717,
+     "pct_dp_p10": 0.9217519954603512,
+     "cs_rate": 0.8,
+     "starts_per_km": 2.5669601400784208,
+     "chatter_per_km": 1.3956367054337258,
+     "extrap_frac": 0.1
+    },
+    "p31_R8rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9817652810006258,
+     "pct_dp_median": 0.9870023708182727,
+     "pct_dp_p10": 0.963681576498244,
+     "cs_rate": 0.9666666666666667,
+     "starts_per_km": 2.479672412627069,
+     "chatter_per_km": 1.198479349144209,
+     "extrap_frac": 0.06666666666666667
+    },
+    "p31_d03pri": {
+     "n": 30,
+     "pct_dp_mean": 0.98322268391721,
+     "pct_dp_median": 0.9918793069725877,
+     "pct_dp_p10": 0.9627561390000615,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.455456268729658,
+     "chatter_per_km": 1.1746591805867435,
+     "extrap_frac": 0.1
+    }
+   },
+   "series HEV": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9881213177552208,
+     "pct_dp_median": 0.9920614144200738,
+     "pct_dp_p10": 0.9630913334360037,
+     "cs_rate": 0.3,
+     "starts_per_km": 3.0734003340211737,
+     "chatter_per_km": 1.6581741495283933,
+     "extrap_frac": 0.7
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9864127438386747,
+     "pct_dp_median": 0.9935627377665797,
+     "pct_dp_p10": 0.9603544684470577,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.9353403587041185,
+     "chatter_per_km": 1.3252806496004,
+     "extrap_frac": 0.15
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9527899682210339,
+     "pct_dp_median": 0.957416449787877,
+     "pct_dp_p10": 0.9352562583088497,
+     "cs_rate": 0.7,
+     "starts_per_km": 4.811666578712148,
+     "chatter_per_km": 5.067783810598719,
+     "extrap_frac": 0.05
+    },
+    "p31_R8rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9922839252134887,
+     "pct_dp_median": 0.9975305613702765,
+     "pct_dp_p10": 0.9726621218157608,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.1772218915334967,
+     "chatter_per_km": 1.3566289876734234,
+     "extrap_frac": 0.05
+    },
+    "p31_d03pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9950158074036732,
+     "pct_dp_median": 0.9999114452880284,
+     "pct_dp_p10": 0.9764138661893731,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.1055699765543774,
+     "chatter_per_km": 1.3482162852128,
+     "extrap_frac": 0.05
+    }
+   },
+   "power-split PHEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9808956071870629,
+     "pct_dp_median": 0.9832694805870215,
+     "pct_dp_p10": 0.943473961973973,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.597750261871396,
+     "chatter_per_km": 1.5513440561366711,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9780528476393712,
+     "pct_dp_median": 0.9650008109415266,
+     "pct_dp_p10": 0.9401328683001349,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.5976933629971963,
+     "chatter_per_km": 1.5583947782061032,
+     "extrap_frac": 0.06666666666666667
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9990346784068213,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9856241393294054,
+     "cs_rate": 1.0,
+     "starts_per_km": 1.3204846640663945,
+     "chatter_per_km": 0.4451832352564116,
+     "extrap_frac": 0.43333333333333335
+    },
+    "p31_R8rule": {
+     "n": 30,
+     "pct_dp_mean": 1.0013769983363154,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9821859401110096,
+     "cs_rate": 1.0,
+     "starts_per_km": 1.3004852036894055,
+     "chatter_per_km": 0.34314802886015056,
+     "extrap_frac": 0.23333333333333334
+    },
+    "p31_d03pri": {
+     "n": 30,
+     "pct_dp_mean": 1.001365810208717,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9879832771415195,
+     "cs_rate": 0.9666666666666667,
+     "starts_per_km": 1.300522797939529,
+     "chatter_per_km": 0.3413030223933934,
+     "extrap_frac": 0.23333333333333334
+    }
+   },
+   "series PHEV (EREV)": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 1.0005308131694428,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9886023049256973,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.7697685021953173,
+     "chatter_per_km": 0.08428386772598552,
+     "extrap_frac": 0.05
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9932580706825608,
+     "pct_dp_median": 0.9997117426019537,
+     "pct_dp_p10": 0.9723703355389539,
+     "cs_rate": 1.0,
+     "starts_per_km": 1.1403231885541565,
+     "chatter_per_km": 0.41322966725983995,
+     "extrap_frac": 0.15
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9927179656188585,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9713609964073552,
+     "cs_rate": 0.8,
+     "starts_per_km": 0.7362779276929026,
+     "chatter_per_km": 0.13574286875194058,
+     "extrap_frac": 0.35
+    },
+    "p31_R8rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9969110449724852,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.990550929878037,
+     "cs_rate": 0.9,
+     "starts_per_km": 0.8636672721487271,
+     "chatter_per_km": 0.23043665178409917,
+     "extrap_frac": 0.3
+    },
+    "p31_d03pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9960329040941494,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9899950350669288,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8465135892852442,
+     "chatter_per_km": 0.23056704071443684,
+     "extrap_frac": 0.3
+    }
+   },
+   "truck (P2)": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 0.996462111914423,
+     "pct_dp_median": 0.9983688628699092,
+     "pct_dp_p10": 0.9840386344058254,
+     "cs_rate": 0.8,
+     "starts_per_km": 3.7720069149296194,
+     "chatter_per_km": 1.6337653349234291,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9922759092550246,
+     "pct_dp_median": 0.9942029440842515,
+     "pct_dp_p10": 0.9806107844850204,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.8273794396735306,
+     "chatter_per_km": 1.6803741068021136,
+     "extrap_frac": 0.3
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9578815287270366,
+     "pct_dp_median": 0.9673609027157,
+     "pct_dp_p10": 0.9085869919082555,
+     "cs_rate": 0.85,
+     "starts_per_km": 4.455956791131794,
+     "chatter_per_km": 2.3908951090624395,
+     "extrap_frac": 0.25
+    },
+    "p31_R8rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9893621207354867,
+     "pct_dp_median": 0.9959807274093957,
+     "pct_dp_p10": 0.9680405005151692,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.806104543341502,
+     "chatter_per_km": 1.6159090669982359,
+     "extrap_frac": 0.35
+    },
+    "p31_d03pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9918010023524827,
+     "pct_dp_median": 0.9951538009364858,
+     "pct_dp_p10": 0.978312795782945,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.7965275885784244,
+     "chatter_per_km": 1.6297201517922666,
+     "extrap_frac": 0.25
+    }
+   },
+   "truck (PHEV series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.0170707183606549,
+     "pct_dp_median": 1.0073856308777729,
+     "pct_dp_p10": 0.9929169036467153,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.1804461625616423,
+     "chatter_per_km": 0.4320969299704143,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 1.0128291587324691,
+     "pct_dp_median": 1.0058052704536782,
+     "pct_dp_p10": 0.9944541541728973,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.7216328306597166,
+     "chatter_per_km": 0.922038264869004,
+     "extrap_frac": 0.5
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 1.0003731439082466,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9995070317537983,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.6274680815296134,
+     "chatter_per_km": 0.024361223389913263,
+     "extrap_frac": 0.1
+    },
+    "p31_R8rule": {
+     "n": 10,
+     "pct_dp_mean": 0.996654253972381,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9832182084890618,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.7036458003390719,
+     "chatter_per_km": 0.1224591310148303,
+     "extrap_frac": 0.0
+    },
+    "p31_d03pri": {
+     "n": 10,
+     "pct_dp_mean": 0.9970587929212973,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9929715419092403,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.5401954196459561,
+     "chatter_per_km": 0.09840157226016723,
+     "extrap_frac": 0.0
+    }
+   },
+   "mild P1 (CR-Z type)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9488603655177428,
+     "pct_dp_median": 0.962226289308255,
+     "pct_dp_p10": 0.91724774523204,
+     "cs_rate": 0.5,
+     "starts_per_km": 4.170754844657191,
+     "chatter_per_km": 2.7008078645111517,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9313452620921492,
+     "pct_dp_median": 0.9614916648286007,
+     "pct_dp_p10": 0.9019565525927806,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.170794470890254,
+     "chatter_per_km": 2.7008604475859044,
+     "extrap_frac": 0.0
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9084864052266642,
+     "pct_dp_median": 0.942115349433917,
+     "pct_dp_p10": 0.8689591065024281,
+     "cs_rate": 0.8,
+     "starts_per_km": 4.153261953452329,
+     "chatter_per_km": 2.680390187066716,
+     "extrap_frac": 0.0
+    },
+    "p31_R8rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9343758949247685,
+     "pct_dp_median": 0.9604810056783237,
+     "pct_dp_p10": 0.9052619699755392,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.085120985466448,
+     "chatter_per_km": 2.697851714095147,
+     "extrap_frac": 0.1
+    },
+    "p31_d03pri": {
+     "n": 10,
+     "pct_dp_mean": 0.9456379299579029,
+     "pct_dp_median": 0.9696346153352159,
+     "pct_dp_p10": 0.9147362033617633,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.066763693923207,
+     "chatter_per_km": 2.6612252485061783,
+     "extrap_frac": 0.4
+    }
+   }
+  },
+  "skill": {
+   "p31_R8rule": 0.5024920555668762,
+   "p31_d03pri": 0.6344857565731095
+  }
+ },
+ {
+  "ckpt": "ckpt/r2_dagger.npz",
+  "variants": [
+   {
+    "name": "hard03pri",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "fb_dead_mode": "hard",
+    "s_prior": {
+     "bus_hev_series": [
+      1,
+      2.8
+     ],
+     "bus_hev_parallel_p2": [
+      1,
+      2.6
+     ],
+     "mild": [
+      1,
+      2.8
+     ]
+    }
+   },
+   {
+    "name": "dead02pri",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "fb_dead": 0.02,
+    "s_prior": {
+     "bus_hev_series": [
+      1,
+      2.8
+     ],
+     "bus_hev_parallel_p2": [
+      1,
+      2.6
+     ],
+     "mild": [
+      1,
+      2.8
+     ]
+    }
+   },
+   {
+    "name": "R8pri",
+    "Kp": 12,
+    "Ki": 0.02,
+    "onoff": "ecms",
+    "s_prior": {
+     "bus_hev_series": [
+      1,
+      2.8
+     ],
+     "bus_hev_parallel_p2": [
+      1,
+      2.6
+     ],
+     "mild": [
+      1,
+      2.8
+     ]
+    }
+   }
+  ],
+  "filt": null,
+  "table": {
+   "bus (P2)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.000254204837353,
+     "pct_dp_median": 1.0007265689288234,
+     "pct_dp_p10": 0.9954075759619385,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3586272105154036,
+     "chatter_per_km": 1.6399412428357867,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9939813560598599,
+     "pct_dp_median": 0.9976490142013735,
+     "pct_dp_p10": 0.9769835045939399,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3387053590558198,
+     "chatter_per_km": 1.47176860018761,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9694601396341966,
+     "pct_dp_median": 0.9719275163182183,
+     "pct_dp_p10": 0.9489154079715376,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.264029612283305,
+     "chatter_per_km": 1.816617239765924,
+     "extrap_frac": 0.2
+    },
+    "hard03pri": {
+     "n": 10,
+     "pct_dp_mean": 0.9947061730242911,
+     "pct_dp_median": 0.9980136719261097,
+     "pct_dp_p10": 0.9787777213368096,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.2881113255045498,
+     "chatter_per_km": 1.4114557072655463,
+     "extrap_frac": 0.0
+    },
+    "dead02pri": {
+     "n": 10,
+     "pct_dp_mean": 0.9985775915704969,
+     "pct_dp_median": 1.0006364064125997,
+     "pct_dp_p10": 0.9820876211994638,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3830984451574864,
+     "chatter_per_km": 1.567302722741793,
+     "extrap_frac": 0.1
+    },
+    "R8pri": {
+     "n": 10,
+     "pct_dp_mean": 0.9950371703279709,
+     "pct_dp_median": 0.998858090459211,
+     "pct_dp_p10": 0.9800602295448628,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3136511142995877,
+     "chatter_per_km": 1.450051313513747,
+     "extrap_frac": 0.1
+    }
+   },
+   "ALL": {
+    "ecms": {
+     "n": 190,
+     "pct_dp_mean": 0.9884820468320359,
+     "pct_dp_median": 0.9948506858603932,
+     "pct_dp_p10": 0.9561870412222753,
+     "cs_rate": 0.7105263157894737,
+     "starts_per_km": 2.6257189838637958,
+     "chatter_per_km": 1.2513260403129096,
+     "extrap_frac": 0.26842105263157895
+    },
+    "aecms": {
+     "n": 190,
+     "pct_dp_mean": 0.9827330201278812,
+     "pct_dp_median": 0.9891540686281838,
+     "pct_dp_p10": 0.9498917842495034,
+     "cs_rate": 0.9473684210526315,
+     "starts_per_km": 2.6957704964874485,
+     "chatter_per_km": 1.2775941063936196,
+     "extrap_frac": 0.14210526315789473
+    },
+    "rule": {
+     "n": 190,
+     "pct_dp_mean": 0.9682587703121436,
+     "pct_dp_median": 0.9777868468169785,
+     "pct_dp_p10": 0.9227438284030084,
+     "cs_rate": 0.868421052631579,
+     "starts_per_km": 2.6786526637864165,
+     "chatter_per_km": 1.641851500425413,
+     "extrap_frac": 0.20526315789473684
+    },
+    "hard03pri": {
+     "n": 190,
+     "pct_dp_mean": 0.9898650995770781,
+     "pct_dp_median": 0.9974092335567842,
+     "pct_dp_p10": 0.9665934065557307,
+     "cs_rate": 0.9263157894736842,
+     "starts_per_km": 2.3808635948928125,
+     "chatter_per_km": 0.9794971646900092,
+     "extrap_frac": 0.14736842105263157
+    },
+    "dead02pri": {
+     "n": 190,
+     "pct_dp_mean": 0.9910726393921382,
+     "pct_dp_median": 0.9988410548563447,
+     "pct_dp_p10": 0.967746815464167,
+     "cs_rate": 0.9210526315789473,
+     "starts_per_km": 2.360433031111764,
+     "chatter_per_km": 0.9747068120670948,
+     "extrap_frac": 0.16842105263157894
+    },
+    "R8pri": {
+     "n": 190,
+     "pct_dp_mean": 0.9901436510614544,
+     "pct_dp_median": 0.9969755164523985,
+     "pct_dp_p10": 0.9659956070768908,
+     "cs_rate": 0.9315789473684211,
+     "starts_per_km": 2.3681982126711425,
+     "chatter_per_km": 0.9647251248108722,
+     "extrap_frac": 0.15789473684210525
+    }
+   },
+   "bus (series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9999515834986751,
+     "pct_dp_median": 1.0015973091923542,
+     "pct_dp_p10": 0.9945781247095171,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.8247305086844245,
+     "chatter_per_km": 0.3569529968550746,
+     "extrap_frac": 0.0
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9914147158071698,
+     "pct_dp_median": 0.9928944356542826,
+     "pct_dp_p10": 0.9781393569157266,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.08930036429928,
+     "chatter_per_km": 0.7902390334821603,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9887457132041606,
+     "pct_dp_median": 0.9876430519589495,
+     "pct_dp_p10": 0.9766659879932298,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.7396209573739596,
+     "chatter_per_km": 2.2265328156974564,
+     "extrap_frac": 0.3
+    },
+    "hard03pri": {
+     "n": 10,
+     "pct_dp_mean": 0.9971604543574377,
+     "pct_dp_median": 0.9966717214193472,
+     "pct_dp_p10": 0.9854502579639935,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.014593345760076,
+     "chatter_per_km": 0.6489069309633122,
+     "extrap_frac": 0.0
+    },
+    "dead02pri": {
+     "n": 10,
+     "pct_dp_mean": 1.0011448306238566,
+     "pct_dp_median": 1.0018789659255358,
+     "pct_dp_p10": 0.993568562009032,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.8821596677013352,
+     "chatter_per_km": 0.5361602180824466,
+     "extrap_frac": 0.0
+    },
+    "R8pri": {
+     "n": 10,
+     "pct_dp_mean": 0.9965440118472702,
+     "pct_dp_median": 0.9966555557973868,
+     "pct_dp_p10": 0.985164657587757,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.0635097838832688,
+     "chatter_per_km": 0.818190605664069,
+     "extrap_frac": 0.0
+    }
+   },
+   "P2 HEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9881280813927743,
+     "pct_dp_median": 0.9916451969118348,
+     "pct_dp_p10": 0.9693689204530275,
+     "cs_rate": 0.3,
+     "starts_per_km": 2.358634584735908,
+     "chatter_per_km": 0.9666415894877127,
+     "extrap_frac": 0.5666666666666667
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9790033800457648,
+     "pct_dp_median": 0.9857707669632721,
+     "pct_dp_p10": 0.9370778275198426,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 2.356415223355974,
+     "chatter_per_km": 0.9532939214898944,
+     "extrap_frac": 0.03333333333333333
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9406792808340624,
+     "pct_dp_median": 0.9417240634570251,
+     "pct_dp_p10": 0.9119020561639574,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4799609999315235,
+     "chatter_per_km": 1.245324547755407,
+     "extrap_frac": 0.13333333333333333
+    },
+    "hard03pri": {
+     "n": 30,
+     "pct_dp_mean": 0.9861702460617201,
+     "pct_dp_median": 0.9911708211764696,
+     "pct_dp_p10": 0.9703218988588698,
+     "cs_rate": 0.9666666666666667,
+     "starts_per_km": 2.396760109691147,
+     "chatter_per_km": 0.9385925855736218,
+     "extrap_frac": 0.03333333333333333
+    },
+    "dead02pri": {
+     "n": 30,
+     "pct_dp_mean": 0.9883011556825113,
+     "pct_dp_median": 0.992778747481428,
+     "pct_dp_p10": 0.9668415906918894,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.387499151505184,
+     "chatter_per_km": 0.921571382161913,
+     "extrap_frac": 0.03333333333333333
+    },
+    "R8pri": {
+     "n": 30,
+     "pct_dp_mean": 0.9863088807146867,
+     "pct_dp_median": 0.9927607872637013,
+     "pct_dp_p10": 0.9672990787176783,
+     "cs_rate": 0.9666666666666667,
+     "starts_per_km": 2.3954071634091747,
+     "chatter_per_km": 0.9001278795197296,
+     "extrap_frac": 0.06666666666666667
+    }
+   },
+   "power-split HEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9792408220588575,
+     "pct_dp_median": 0.9861874785897158,
+     "pct_dp_p10": 0.9488624127137255,
+     "cs_rate": 0.6666666666666666,
+     "starts_per_km": 2.418198641626439,
+     "chatter_per_km": 1.4463306968480303,
+     "extrap_frac": 0.23333333333333334
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.975764919710056,
+     "pct_dp_median": 0.9816736766881642,
+     "pct_dp_p10": 0.9512699434413062,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4102648918111074,
+     "chatter_per_km": 1.3388489096471312,
+     "extrap_frac": 0.1
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9679768103669836,
+     "pct_dp_median": 0.9742713950449717,
+     "pct_dp_p10": 0.9217519954603512,
+     "cs_rate": 0.8,
+     "starts_per_km": 2.5669601400784208,
+     "chatter_per_km": 1.3956367054337258,
+     "extrap_frac": 0.1
+    },
+    "hard03pri": {
+     "n": 30,
+     "pct_dp_mean": 0.9805622144160595,
+     "pct_dp_median": 0.9845254332304909,
+     "pct_dp_p10": 0.9637274283409678,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.50807226506249,
+     "chatter_per_km": 1.184045711555873,
+     "extrap_frac": 0.03333333333333333
+    },
+    "dead02pri": {
+     "n": 30,
+     "pct_dp_mean": 0.982920898095044,
+     "pct_dp_median": 0.9891121228514373,
+     "pct_dp_p10": 0.9646108154242081,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4681141486845872,
+     "chatter_per_km": 1.200951285919157,
+     "extrap_frac": 0.06666666666666667
+    },
+    "R8pri": {
+     "n": 30,
+     "pct_dp_mean": 0.9814210981736504,
+     "pct_dp_median": 0.9855946532219158,
+     "pct_dp_p10": 0.963847892033436,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.467358344396187,
+     "chatter_per_km": 1.1677663054884593,
+     "extrap_frac": 0.03333333333333333
+    }
+   },
+   "series HEV": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9881213177552208,
+     "pct_dp_median": 0.9920614144200738,
+     "pct_dp_p10": 0.9630913334360037,
+     "cs_rate": 0.3,
+     "starts_per_km": 3.0734003340211737,
+     "chatter_per_km": 1.6581741495283933,
+     "extrap_frac": 0.7
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9864127438386747,
+     "pct_dp_median": 0.9935627377665797,
+     "pct_dp_p10": 0.9603544684470577,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.9353403587041185,
+     "chatter_per_km": 1.3252806496004,
+     "extrap_frac": 0.15
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9527899682210339,
+     "pct_dp_median": 0.957416449787877,
+     "pct_dp_p10": 0.9352562583088497,
+     "cs_rate": 0.7,
+     "starts_per_km": 4.811666578712148,
+     "chatter_per_km": 5.067783810598719,
+     "extrap_frac": 0.05
+    },
+    "hard03pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9914246470665367,
+     "pct_dp_median": 0.9979900237107633,
+     "pct_dp_p10": 0.9702319139686402,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.224923910841862,
+     "chatter_per_km": 1.3769155762690677,
+     "extrap_frac": 0.05
+    },
+    "dead02pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9938710131446264,
+     "pct_dp_median": 1.00030412214741,
+     "pct_dp_p10": 0.9751020894479906,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.1069921630948922,
+     "chatter_per_km": 1.2732426942666863,
+     "extrap_frac": 0.1
+    },
+    "R8pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9927436479617052,
+     "pct_dp_median": 0.9976761616749428,
+     "pct_dp_p10": 0.9734023910893184,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.097528817510623,
+     "chatter_per_km": 1.2247716210981976,
+     "extrap_frac": 0.05
+    }
+   },
+   "power-split PHEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9808956071870629,
+     "pct_dp_median": 0.9832694805870215,
+     "pct_dp_p10": 0.943473961973973,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.597750261871396,
+     "chatter_per_km": 1.5513440561366711,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9780528476393712,
+     "pct_dp_median": 0.9650008109415266,
+     "pct_dp_p10": 0.9401328683001349,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.5976933629971963,
+     "chatter_per_km": 1.5583947782061032,
+     "extrap_frac": 0.06666666666666667
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9990346784068213,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9856241393294054,
+     "cs_rate": 1.0,
+     "starts_per_km": 1.3204846640663945,
+     "chatter_per_km": 0.4451832352564116,
+     "extrap_frac": 0.43333333333333335
+    },
+    "hard03pri": {
+     "n": 30,
+     "pct_dp_mean": 1.003776009515857,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965860794396495,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.325111134559174,
+     "chatter_per_km": 0.3886272833823826,
+     "extrap_frac": 0.3
+    },
+    "dead02pri": {
+     "n": 30,
+     "pct_dp_mean": 1.0031676183833687,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965610198004278,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.3279811636098144,
+     "chatter_per_km": 0.3944619025285533,
+     "extrap_frac": 0.3
+    },
+    "R8pri": {
+     "n": 30,
+     "pct_dp_mean": 1.003418409638636,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9965860794396495,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.3250735745306388,
+     "chatter_per_km": 0.39466482751038645,
+     "extrap_frac": 0.3
+    }
+   },
+   "series PHEV (EREV)": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 1.0005308131694428,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9886023049256973,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.7697685021953173,
+     "chatter_per_km": 0.08428386772598552,
+     "extrap_frac": 0.05
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9932580706825608,
+     "pct_dp_median": 0.9997117426019537,
+     "pct_dp_p10": 0.9723703355389539,
+     "cs_rate": 1.0,
+     "starts_per_km": 1.1403231885541565,
+     "chatter_per_km": 0.41322966725983995,
+     "extrap_frac": 0.15
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9927179656188585,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9713609964073552,
+     "cs_rate": 0.8,
+     "starts_per_km": 0.7362779276929026,
+     "chatter_per_km": 0.13574286875194058,
+     "extrap_frac": 0.35
+    },
+    "hard03pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9972514473409518,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9896533282902297,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8207141580897857,
+     "chatter_per_km": 0.22779457830760874,
+     "extrap_frac": 0.35
+    },
+    "dead02pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9948851370547457,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9889072151041602,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8083880008737829,
+     "chatter_per_km": 0.21569743544900785,
+     "extrap_frac": 0.35
+    },
+    "R8pri": {
+     "n": 20,
+     "pct_dp_mean": 0.99773128939208,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9888559358976298,
+     "cs_rate": 0.9,
+     "starts_per_km": 0.8326809120180488,
+     "chatter_per_km": 0.1888944108343332,
+     "extrap_frac": 0.35
+    }
+   },
+   "truck (P2)": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 0.996462111914423,
+     "pct_dp_median": 0.9983688628699092,
+     "pct_dp_p10": 0.9840386344058254,
+     "cs_rate": 0.8,
+     "starts_per_km": 3.7720069149296194,
+     "chatter_per_km": 1.6337653349234291,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9922759092550246,
+     "pct_dp_median": 0.9942029440842515,
+     "pct_dp_p10": 0.9806107844850204,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.8273794396735306,
+     "chatter_per_km": 1.6803741068021136,
+     "extrap_frac": 0.3
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9578815287270366,
+     "pct_dp_median": 0.9673609027157,
+     "pct_dp_p10": 0.9085869919082555,
+     "cs_rate": 0.85,
+     "starts_per_km": 4.455956791131794,
+     "chatter_per_km": 2.3908951090624395,
+     "extrap_frac": 0.25
+    },
+    "hard03pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9937215791024497,
+     "pct_dp_median": 0.9938536362441481,
+     "pct_dp_p10": 0.9706379849019335,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.7904200574233124,
+     "chatter_per_km": 1.533045158191761,
+     "extrap_frac": 0.4
+    },
+    "dead02pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9930255194794857,
+     "pct_dp_median": 0.9953906650506388,
+     "pct_dp_p10": 0.9784321059265395,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.814871597416416,
+     "chatter_per_km": 1.5732006279220203,
+     "extrap_frac": 0.45
+    },
+    "R8pri": {
+     "n": 20,
+     "pct_dp_mean": 0.9924949938553068,
+     "pct_dp_median": 0.9942470376967731,
+     "pct_dp_p10": 0.9693747365839979,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.786295282039729,
+     "chatter_per_km": 1.5528970016555428,
+     "extrap_frac": 0.4
+    }
+   },
+   "truck (PHEV series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.0170707183606549,
+     "pct_dp_median": 1.0073856308777729,
+     "pct_dp_p10": 0.9929169036467153,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.1804461625616423,
+     "chatter_per_km": 0.4320969299704143,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 1.0128291587324691,
+     "pct_dp_median": 1.0058052704536782,
+     "pct_dp_p10": 0.9944541541728973,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.7216328306597166,
+     "chatter_per_km": 0.922038264869004,
+     "extrap_frac": 0.5
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 1.0003731439082466,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9995070317537983,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.6274680815296134,
+     "chatter_per_km": 0.024361223389913263,
+     "extrap_frac": 0.1
+    },
+    "hard03pri": {
+     "n": 10,
+     "pct_dp_mean": 1.0002218818404143,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.4865328305995302,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    },
+    "dead02pri": {
+     "n": 10,
+     "pct_dp_mean": 1.0002218818404143,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.4865328305995302,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    },
+    "R8pri": {
+     "n": 10,
+     "pct_dp_mean": 1.0012429425100524,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.5369479398553778,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    }
+   },
+   "mild P1 (CR-Z type)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9488603655177428,
+     "pct_dp_median": 0.962226289308255,
+     "pct_dp_p10": 0.91724774523204,
+     "cs_rate": 0.5,
+     "starts_per_km": 4.170754844657191,
+     "chatter_per_km": 2.7008078645111517,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9313452620921492,
+     "pct_dp_median": 0.9614916648286007,
+     "pct_dp_p10": 0.9019565525927806,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.170794470890254,
+     "chatter_per_km": 2.7008604475859044,
+     "extrap_frac": 0.0
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9084864052266642,
+     "pct_dp_median": 0.942115349433917,
+     "pct_dp_p10": 0.8689591065024281,
+     "cs_rate": 0.8,
+     "starts_per_km": 4.153261953452329,
+     "chatter_per_km": 2.680390187066716,
+     "extrap_frac": 0.0
+    },
+    "hard03pri": {
+     "n": 10,
+     "pct_dp_mean": 0.9390276257415536,
+     "pct_dp_median": 0.9654254302622196,
+     "pct_dp_p10": 0.9117390212690182,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.08522402045092,
+     "chatter_per_km": 2.697904813201336,
+     "extrap_frac": 0.1
+    },
+    "dead02pri": {
+     "n": 10,
+     "pct_dp_mean": 0.9437034885753729,
+     "pct_dp_median": 0.9682598974425968,
+     "pct_dp_p10": 0.9141344299795842,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.085149733496221,
+     "chatter_per_km": 2.697859950738784,
+     "extrap_frac": 0.1
+    },
+    "R8pri": {
+     "n": 10,
+     "pct_dp_mean": 0.9405202174832382,
+     "pct_dp_median": 0.9667680355492114,
+     "pct_dp_p10": 0.9128181144348779,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.085129932568676,
+     "chatter_per_km": 2.6978610368894076,
+     "extrap_frac": 0.1
+    }
+   }
+  },
+  "skill": {
+   "hard03pri": 0.5906055770600216,
+   "dead02pri": 0.6345728734347365,
+   "R8pri": 0.5964399568151424
+  }
+ },
+ {
+  "ckpt": "ckpt/r2_dagger.npz",
+  "variants": [
+   {
+    "name": "d03priKi04",
+    "Kp": 12,
+    "Ki": 0.04,
+    "onoff": "ecms",
+    "fb_dead": 0.03,
+    "s_prior": {
+     "bus_hev_series": [
+      1,
+      2.8
+     ],
+     "bus_hev_parallel_p2": [
+      1,
+      2.6
+     ],
+     "mild": [
+      1,
+      2.8
+     ]
+    }
+   }
+  ],
+  "filt": null,
+  "table": {
+   "bus (P2)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.000254204837353,
+     "pct_dp_median": 1.0007265689288234,
+     "pct_dp_p10": 0.9954075759619385,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3586272105154036,
+     "chatter_per_km": 1.6399412428357867,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9939813560598599,
+     "pct_dp_median": 0.9976490142013735,
+     "pct_dp_p10": 0.9769835045939399,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3387053590558198,
+     "chatter_per_km": 1.47176860018761,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9694601396341966,
+     "pct_dp_median": 0.9719275163182183,
+     "pct_dp_p10": 0.9489154079715376,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.264029612283305,
+     "chatter_per_km": 1.816617239765924,
+     "extrap_frac": 0.2
+    },
+    "d03priKi04": {
+     "n": 10,
+     "pct_dp_mean": 0.9968857997503143,
+     "pct_dp_median": 0.9985663538225291,
+     "pct_dp_p10": 0.9836310978783844,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.3181327066387767,
+     "chatter_per_km": 1.566483240859276,
+     "extrap_frac": 0.2
+    }
+   },
+   "ALL": {
+    "ecms": {
+     "n": 190,
+     "pct_dp_mean": 0.9884820468320359,
+     "pct_dp_median": 0.9948506858603932,
+     "pct_dp_p10": 0.9561870412222753,
+     "cs_rate": 0.7105263157894737,
+     "starts_per_km": 2.6257189838637958,
+     "chatter_per_km": 1.2513260403129096,
+     "extrap_frac": 0.26842105263157895
+    },
+    "aecms": {
+     "n": 190,
+     "pct_dp_mean": 0.9827330201278812,
+     "pct_dp_median": 0.9891540686281838,
+     "pct_dp_p10": 0.9498917842495034,
+     "cs_rate": 0.9473684210526315,
+     "starts_per_km": 2.6957704964874485,
+     "chatter_per_km": 1.2775941063936196,
+     "extrap_frac": 0.14210526315789473
+    },
+    "rule": {
+     "n": 190,
+     "pct_dp_mean": 0.9682587703121436,
+     "pct_dp_median": 0.9777868468169785,
+     "pct_dp_p10": 0.9227438284030084,
+     "cs_rate": 0.868421052631579,
+     "starts_per_km": 2.6786526637864165,
+     "chatter_per_km": 1.641851500425413,
+     "extrap_frac": 0.20526315789473684
+    },
+    "d03priKi04": {
+     "n": 190,
+     "pct_dp_mean": 0.9898770635398889,
+     "pct_dp_median": 0.9981989000443887,
+     "pct_dp_p10": 0.9650531800235934,
+     "cs_rate": 0.9315789473684211,
+     "starts_per_km": 2.3470231729520323,
+     "chatter_per_km": 0.9793384761724001,
+     "extrap_frac": 0.2
+    }
+   },
+   "bus (series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9999515834986751,
+     "pct_dp_median": 1.0015973091923542,
+     "pct_dp_p10": 0.9945781247095171,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.8247305086844245,
+     "chatter_per_km": 0.3569529968550746,
+     "extrap_frac": 0.0
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9914147158071698,
+     "pct_dp_median": 0.9928944356542826,
+     "pct_dp_p10": 0.9781393569157266,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.08930036429928,
+     "chatter_per_km": 0.7902390334821603,
+     "extrap_frac": 0.2
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9887457132041606,
+     "pct_dp_median": 0.9876430519589495,
+     "pct_dp_p10": 0.9766659879932298,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.7396209573739596,
+     "chatter_per_km": 2.2265328156974564,
+     "extrap_frac": 0.3
+    },
+    "d03priKi04": {
+     "n": 10,
+     "pct_dp_mean": 0.9974056227118939,
+     "pct_dp_median": 0.999741851314663,
+     "pct_dp_p10": 0.9888280549021328,
+     "cs_rate": 1.0,
+     "starts_per_km": 3.0117508365007164,
+     "chatter_per_km": 0.6781851193975875,
+     "extrap_frac": 0.2
+    }
+   },
+   "P2 HEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9881280813927743,
+     "pct_dp_median": 0.9916451969118348,
+     "pct_dp_p10": 0.9693689204530275,
+     "cs_rate": 0.3,
+     "starts_per_km": 2.358634584735908,
+     "chatter_per_km": 0.9666415894877127,
+     "extrap_frac": 0.5666666666666667
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9790033800457648,
+     "pct_dp_median": 0.9857707669632721,
+     "pct_dp_p10": 0.9370778275198426,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 2.356415223355974,
+     "chatter_per_km": 0.9532939214898944,
+     "extrap_frac": 0.03333333333333333
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9406792808340624,
+     "pct_dp_median": 0.9417240634570251,
+     "pct_dp_p10": 0.9119020561639574,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4799609999315235,
+     "chatter_per_km": 1.245324547755407,
+     "extrap_frac": 0.13333333333333333
+    },
+    "d03priKi04": {
+     "n": 30,
+     "pct_dp_mean": 0.9874379125915933,
+     "pct_dp_median": 0.994347899363401,
+     "pct_dp_p10": 0.9644051123964641,
+     "cs_rate": 0.9666666666666667,
+     "starts_per_km": 2.359188592727702,
+     "chatter_per_km": 0.9089585948957183,
+     "extrap_frac": 0.06666666666666667
+    }
+   },
+   "power-split HEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9792408220588575,
+     "pct_dp_median": 0.9861874785897158,
+     "pct_dp_p10": 0.9488624127137255,
+     "cs_rate": 0.6666666666666666,
+     "starts_per_km": 2.418198641626439,
+     "chatter_per_km": 1.4463306968480303,
+     "extrap_frac": 0.23333333333333334
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.975764919710056,
+     "pct_dp_median": 0.9816736766881642,
+     "pct_dp_p10": 0.9512699434413062,
+     "cs_rate": 0.9333333333333333,
+     "starts_per_km": 2.4102648918111074,
+     "chatter_per_km": 1.3388489096471312,
+     "extrap_frac": 0.1
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9679768103669836,
+     "pct_dp_median": 0.9742713950449717,
+     "pct_dp_p10": 0.9217519954603512,
+     "cs_rate": 0.8,
+     "starts_per_km": 2.5669601400784208,
+     "chatter_per_km": 1.3956367054337258,
+     "extrap_frac": 0.1
+    },
+    "d03priKi04": {
+     "n": 30,
+     "pct_dp_mean": 0.982449691448461,
+     "pct_dp_median": 0.9894883462756741,
+     "pct_dp_p10": 0.9609384642588977,
+     "cs_rate": 0.9666666666666667,
+     "starts_per_km": 2.429830533863894,
+     "chatter_per_km": 1.1747450757596531,
+     "extrap_frac": 0.16666666666666666
+    }
+   },
+   "series HEV": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9881213177552208,
+     "pct_dp_median": 0.9920614144200738,
+     "pct_dp_p10": 0.9630913334360037,
+     "cs_rate": 0.3,
+     "starts_per_km": 3.0734003340211737,
+     "chatter_per_km": 1.6581741495283933,
+     "extrap_frac": 0.7
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9864127438386747,
+     "pct_dp_median": 0.9935627377665797,
+     "pct_dp_p10": 0.9603544684470577,
+     "cs_rate": 0.9,
+     "starts_per_km": 2.9353403587041185,
+     "chatter_per_km": 1.3252806496004,
+     "extrap_frac": 0.15
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9527899682210339,
+     "pct_dp_median": 0.957416449787877,
+     "pct_dp_p10": 0.9352562583088497,
+     "cs_rate": 0.7,
+     "starts_per_km": 4.811666578712148,
+     "chatter_per_km": 5.067783810598719,
+     "extrap_frac": 0.05
+    },
+    "d03priKi04": {
+     "n": 20,
+     "pct_dp_mean": 0.9935239041493359,
+     "pct_dp_median": 0.9984317662295714,
+     "pct_dp_p10": 0.9693297729999574,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.0256476072898204,
+     "chatter_per_km": 1.2676261428253097,
+     "extrap_frac": 0.05
+    }
+   },
+   "power-split PHEV": {
+    "ecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9808956071870629,
+     "pct_dp_median": 0.9832694805870215,
+     "pct_dp_p10": 0.943473961973973,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.597750261871396,
+     "chatter_per_km": 1.5513440561366711,
+     "extrap_frac": 0.1
+    },
+    "aecms": {
+     "n": 30,
+     "pct_dp_mean": 0.9780528476393712,
+     "pct_dp_median": 0.9650008109415266,
+     "pct_dp_p10": 0.9401328683001349,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.5976933629971963,
+     "chatter_per_km": 1.5583947782061032,
+     "extrap_frac": 0.06666666666666667
+    },
+    "rule": {
+     "n": 30,
+     "pct_dp_mean": 0.9990346784068213,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9856241393294054,
+     "cs_rate": 1.0,
+     "starts_per_km": 1.3204846640663945,
+     "chatter_per_km": 0.4451832352564116,
+     "extrap_frac": 0.43333333333333335
+    },
+    "d03priKi04": {
+     "n": 30,
+     "pct_dp_mean": 1.002215987798892,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9964986070086101,
+     "cs_rate": 0.8666666666666667,
+     "starts_per_km": 1.331546930733258,
+     "chatter_per_km": 0.39466366790492835,
+     "extrap_frac": 0.3
+    }
+   },
+   "series PHEV (EREV)": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 1.0005308131694428,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9886023049256973,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.7697685021953173,
+     "chatter_per_km": 0.08428386772598552,
+     "extrap_frac": 0.05
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9932580706825608,
+     "pct_dp_median": 0.9997117426019537,
+     "pct_dp_p10": 0.9723703355389539,
+     "cs_rate": 1.0,
+     "starts_per_km": 1.1403231885541565,
+     "chatter_per_km": 0.41322966725983995,
+     "extrap_frac": 0.15
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9927179656188585,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9713609964073552,
+     "cs_rate": 0.8,
+     "starts_per_km": 0.7362779276929026,
+     "chatter_per_km": 0.13574286875194058,
+     "extrap_frac": 0.35
+    },
+    "d03priKi04": {
+     "n": 20,
+     "pct_dp_mean": 0.9935457141066028,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9875229689986375,
+     "cs_rate": 0.85,
+     "starts_per_km": 0.8071968329438169,
+     "chatter_per_km": 0.22130352337567577,
+     "extrap_frac": 0.35
+    }
+   },
+   "truck (P2)": {
+    "ecms": {
+     "n": 20,
+     "pct_dp_mean": 0.996462111914423,
+     "pct_dp_median": 0.9983688628699092,
+     "pct_dp_p10": 0.9840386344058254,
+     "cs_rate": 0.8,
+     "starts_per_km": 3.7720069149296194,
+     "chatter_per_km": 1.6337653349234291,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 20,
+     "pct_dp_mean": 0.9922759092550246,
+     "pct_dp_median": 0.9942029440842515,
+     "pct_dp_p10": 0.9806107844850204,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.8273794396735306,
+     "chatter_per_km": 1.6803741068021136,
+     "extrap_frac": 0.3
+    },
+    "rule": {
+     "n": 20,
+     "pct_dp_mean": 0.9578815287270366,
+     "pct_dp_median": 0.9673609027157,
+     "pct_dp_p10": 0.9085869919082555,
+     "cs_rate": 0.85,
+     "starts_per_km": 4.455956791131794,
+     "chatter_per_km": 2.3908951090624395,
+     "extrap_frac": 0.25
+    },
+    "d03priKi04": {
+     "n": 20,
+     "pct_dp_mean": 0.9894398661661192,
+     "pct_dp_median": 0.9915305676525968,
+     "pct_dp_p10": 0.975890803489862,
+     "cs_rate": 0.9,
+     "starts_per_km": 3.8238569365792814,
+     "chatter_per_km": 1.6045434068899955,
+     "extrap_frac": 0.3
+    }
+   },
+   "truck (PHEV series)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 1.0170707183606549,
+     "pct_dp_median": 1.0073856308777729,
+     "pct_dp_p10": 0.9929169036467153,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.1804461625616423,
+     "chatter_per_km": 0.4320969299704143,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 1.0128291587324691,
+     "pct_dp_median": 1.0058052704536782,
+     "pct_dp_p10": 0.9944541541728973,
+     "cs_rate": 1.0,
+     "starts_per_km": 2.7216328306597166,
+     "chatter_per_km": 0.922038264869004,
+     "extrap_frac": 0.5
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 1.0003731439082466,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9995070317537983,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.6274680815296134,
+     "chatter_per_km": 0.024361223389913263,
+     "extrap_frac": 0.1
+    },
+    "d03priKi04": {
+     "n": 10,
+     "pct_dp_mean": 1.00023731938964,
+     "pct_dp_median": 1.0,
+     "pct_dp_p10": 0.9998561099687128,
+     "cs_rate": 1.0,
+     "starts_per_km": 0.5033378670181461,
+     "chatter_per_km": 0.04287131060747675,
+     "extrap_frac": 0.0
+    }
+   },
+   "mild P1 (CR-Z type)": {
+    "ecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9488603655177428,
+     "pct_dp_median": 0.962226289308255,
+     "pct_dp_p10": 0.91724774523204,
+     "cs_rate": 0.5,
+     "starts_per_km": 4.170754844657191,
+     "chatter_per_km": 2.7008078645111517,
+     "extrap_frac": 0.2
+    },
+    "aecms": {
+     "n": 10,
+     "pct_dp_mean": 0.9313452620921492,
+     "pct_dp_median": 0.9614916648286007,
+     "pct_dp_p10": 0.9019565525927806,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.170794470890254,
+     "chatter_per_km": 2.7008604475859044,
+     "extrap_frac": 0.0
+    },
+    "rule": {
+     "n": 10,
+     "pct_dp_mean": 0.9084864052266642,
+     "pct_dp_median": 0.942115349433917,
+     "pct_dp_p10": 0.8689591065024281,
+     "cs_rate": 0.8,
+     "starts_per_km": 4.153261953452329,
+     "chatter_per_km": 2.680390187066716,
+     "extrap_frac": 0.0
+    },
+    "d03priKi04": {
+     "n": 10,
+     "pct_dp_mean": 0.9438057210450855,
+     "pct_dp_median": 0.9685828386555344,
+     "pct_dp_p10": 0.9151527164468916,
+     "cs_rate": 1.0,
+     "starts_per_km": 4.085117950330583,
+     "chatter_per_km": 2.697843214548402,
+     "extrap_frac": 0.4
+    }
+   }
+  },
+  "skill": {
+   "d03priKi04": 0.6019155910707421
+  }
+ }
+]

@@ -358,6 +358,13 @@ class HybridPilot(HybridStrategy):
         self.guard_k = p.get('guard_k', 0.0)
         self.Kp = p.get('Kp', 0.0)
         self.Ki = p.get('Ki', 0.0); self.I = 0.0      # integral SOC feedback (as A-ECMS: Ki 0.02 1/s, |integral| <= 30)
+        # (15 Nov 2026 options, all off by default = the v2.0 rule)
+        self.fb_norm = bool(p.get('fb_norm', False))   # feedback error in half-windows: e = (ref - SOC) / (window / 2)
+        self.fb_tau = float(p.get('fb_tau', 0.0))      # proportional term on the SOC error low-passed over fb_tau s
+        self.fb_dead = float(p.get('fb_dead', 0.0))    # proportional term only beyond this |e| (half-windows if fb_norm)
+        self.cubic = float(p.get('cubic', 0.0))        # ECMS soft-window factor: s *= 1 - cubic x^3, x = (SOC - mid) / half
+        self.s_prior = p.get('s_prior')                # {arch or 'bus' / 'mild': (weight, s0)}: s <- (1 - w) s + w s0
+        self.ef = None
         self.onoff = p.get('onoff', 'net')
         self.pon_w = p.get('pon_w', 0.0)
         self.min_on_s = p.get('min_on_s', self.min_on_s)
@@ -417,14 +424,32 @@ class HybridPilot(HybridStrategy):
     def student_choice(self, C, st, ctx, x):
         s, p_on = self.policy_out(x)
         s = max(s * self.s_scale + self.s_bias, 0.0)
+        if self.s_prior:
+            w_s0 = self.s_prior.get(self.prior_key())
+            if w_s0:
+                s = (1.0 - w_s0[0]) * s + w_s0[0] * w_s0[1]
+        if self.cubic and not self.phev:
+            b = self.veh.battery
+            z = (st['soc'] - self.soc_mid) / (0.5 * (b.soc_hi - b.soc_lo))
+            s = s * (1.0 - self.cubic * (z ** 3 if abs(z) < 1.5 else math.copysign(3.375, z)))
         if self.dtg:          # distance-to-go plan: feedback both ways around the depletion line
             s = max(s + self.Kp_dtg * (self.soc_ref(ctx) - st['soc']), 0.0)
         elif self.Kp or self.Ki:         # SOC feedback (as in A-ECMS); PHEV only below its CS level
             e = self.soc_ref_cs - st['soc']
             if not self.phev or e > -0.03:
+                if self.fb_norm:
+                    b = self.veh.battery
+                    e = e / (0.5 * (b.soc_hi - b.soc_lo))
                 if self.Ki:
                     self.I = min(max(self.I + e * ctx['dt'], -30.0), 30.0)
-                s = max(s + self.Kp * e + self.Ki * self.I, 0.0)
+                ep = e
+                if self.fb_tau:
+                    a = min(ctx['dt'] / self.fb_tau, 1.0)
+                    self.ef = e if self.ef is None else self.ef + a * (e - self.ef)
+                    ep = self.ef
+                if self.fb_dead:     # 'soft': the band is subtracted; 'hard': full Kp e outside the band, 0 inside
+                    ep = (ep if abs(ep) > self.fb_dead else 0.0) if self.p.get('fb_dead_mode') == 'hard' else                         math.copysign(max(abs(ep) - self.fb_dead, 0.0), ep)
+                s = max(s + self.Kp * ep + self.Ki * self.I, 0.0)
         if self.guard_k:
             b = self.veh.battery
             z = (st['soc'] - self.soc_ref_cs) / (0.5 * (b.soc_hi - b.soc_lo))
@@ -455,6 +480,14 @@ class HybridPilot(HybridStrategy):
         if self.onoff == 'ecms' and self.pon_w:     # the on/off head as a soft prior on the cost
             J = J + np.where(on_c, self.pon_w * (0.5 - p_on) * 0.05 * self.Pe_max, 0.0)
         return int(np.argmin(np.where(sel, J, np.inf))), s, p_on
+
+    def prior_key(self):
+        v = self.veh
+        if self.p.get('engine_on_moving'):
+            return 'mild'
+        if v.cls == 'bus':
+            return 'bus_' + v.arch
+        return v.arch
 
     def platform_mask(self, C, st, ctx):
         """candidates the platform's rules allow (forced on) -- the teacher acts inside them too."""

@@ -18,7 +18,7 @@ import hybridpilot as HP
 RULE = {'hev_powersplit': 'powersplit_rule', 'hev_parallel_p2': 'parallel_rule', 'hev_series': 'series_thermostat',
         'phev_powersplit': 'phev_cdcs', 'phev_series': 'phev_cdcs'}
 WARM = {'engine': 85.0, 'oil': 90.0, 'driveline': 70.0, 'axle': 60.0, 'tire_warm': 1.0, 'cabin': 21.0}
-PHYSICS = 'roadsim-physics-v2'      # pinned: HybridPilot v2 was trained and examined on this RoadSim physics
+PHYSICS = 'roadsim-physics-v3.1'    # pinned: HybridPilot v2.1 was chosen and examined on this RoadSim physics (v2.0: v2)
 
 
 def starts(on):

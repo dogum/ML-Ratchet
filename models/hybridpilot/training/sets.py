@@ -140,11 +140,32 @@ def build_tune():
     return cs
 
 
+def build_probe():
+    """(15 Nov 2026) 190 cases from the TRAINING distribution for exploring decision-rule changes before a rung is
+    logged: the training fleet with the mild P1 class (train_fleet('gen+mild')), training routes, a new seed, 10 cases
+    per stratum (18 class x architecture combos + mild P1). Never dev or exam data; the frozen set stays the judge."""
+    fleet = train_fleet('gen+mild')
+    tr_v, _ = train_noise_partition()
+    ved = ved_routes('train_noise', vehicles=tr_v)
+    def key(sp):
+        return 'mild' if is_mild(sp) else (sp['class'], sp['architecture'])
+    groups = {}
+    for sp in fleet:
+        groups.setdefault(key(sp), []).append(sp)
+    out = []
+    for gi, k in enumerate(sorted(groups, key=str)):
+        cs = train_cases(10, 8800 + gi, role='probe', fleet=groups[k], ved=ved)
+        for c in cs:
+            c['case_id'] = c['case_id'] + '|' + c['spec']['id']
+        out += cs
+    return out
+
+
 def get(name):
     fn = f'{ROOT}/data/set_{name}_{PHYS}.pkl'
     if os.path.exists(fn):
         return pickle.load(open(fn, 'rb'))
-    cases = {'frozen': build_frozen, 'dev': build_dev, 'exam': build_exam, 'tune': build_tune}[name]()
+    cases = {'frozen': build_frozen, 'dev': build_dev, 'exam': build_exam, 'tune': build_tune, 'probe': build_probe}[name]()
     pickle.dump(cases, open(fn, 'wb'))
     return cases
 

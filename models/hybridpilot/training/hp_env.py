@@ -15,9 +15,13 @@ from roadsim.sim import get_vehicle, normalize_trip
 from roadsim.trips import cycle
 from roadsim.options import resolve as _resolve_options
 
-# RoadSim physics every HybridPilot run uses (pinned, so a later default change never moves the model silently)
-PHYS = 'roadsim-physics-v2'
+# RoadSim physics every HybridPilot run uses (pinned, so a later default change never moves the model silently).
+# HP_PHYS selects another pinned preset for a re-score (15 Nov 2026: roadsim-physics-v3.1 tried); every cache, set and
+# log carries the physics in its name (PTAG), so runs on different physics never mix.
+PHYS = os.environ.get('HP_PHYS', 'roadsim-physics-v2')
+PTAG = '' if PHYS == 'roadsim-physics-v2' else '_' + PHYS.replace('roadsim-physics-', 'p')
 DONOR = _resolve_options(PHYS)['donor_model']      # generated hybrids: v2 draws hybrid bodies from real hybrid records
+GEN_OPT = None if PHYS == 'roadsim-physics-v2' else PHYS   # v3+: the generator's hybrid hardware rules (same bodies per seed)
 
 HYBRID_ARCHS = ['hev_powersplit', 'hev_parallel_p2', 'hev_series', 'phev_powersplit', 'phev_series']
 # (class, architecture) mix for generated hybrids: light duty 75 %, heavy duty 25 %
@@ -49,7 +53,7 @@ def gen_fleet(n, role):
     out = []
     for i in range(n):
         cls, arch, _ = COMBOS[int(rng.choice(len(COMBOS), p=p))]
-        s = generate_vehicles(1, seed=int(rng.integers(1 << 30)), cls=cls, arch=arch, donor_model=DONOR)[0]
+        s = generate_vehicles(1, seed=int(rng.integers(1 << 30)), cls=cls, arch=arch, donor_model=DONOR, options=GEN_OPT)[0]
         s['id'] = f'{role}_{i:04d}_{cls}_{arch}'
         out.append(s)
     return out
@@ -61,7 +65,7 @@ def fleet_balanced(role, per_combo):
     out = []
     for cls, arch, _ in COMBOS:
         for j in range(per_combo):
-            s = generate_vehicles(1, seed=int(rng.integers(1 << 30)), cls=cls, arch=arch, donor_model=DONOR)[0]
+            s = generate_vehicles(1, seed=int(rng.integers(1 << 30)), cls=cls, arch=arch, donor_model=DONOR, options=GEN_OPT)[0]
             s['id'] = f'{role}_{cls}_{arch}_{j}'
             out.append(s)
     return out
@@ -125,13 +129,14 @@ def _twin_job(vid):
     return vid, spec
 
 
-def build_twins(vids, workers=5):
+def build_twins(vids, workers=None):
     """calibrated twins for these VED vehicle ids (missing ones only), added to the cache."""
     global _TWINS
     cache = json.load(open(TWIN_CACHE)) if os.path.exists(TWIN_CACHE) else {}
     todo = [v for v in sorted(set(vids)) if v not in cache]
     if todo:
         from multiprocessing import Pool
+        workers = workers or int(os.environ.get('HP_WORKERS', '5'))
         with Pool(min(workers, len(todo))) as pool:
             for vid, spec in pool.imap_unordered(_twin_job, todo):
                 cache[vid] = spec

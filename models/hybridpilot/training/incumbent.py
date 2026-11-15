@@ -5,8 +5,9 @@ usage: incumbent.py ckpt | params ['json to merge'] | name | banks"""
 import sys, os, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import _paths as _P
+from hp_env import PTAG
 
-R = json.load(open(os.path.join(_P.WORK, 'ratchet_v2.json')))
+R = json.load(open(os.path.join(_P.WORK, f'ratchet_v2{PTAG}.json')))
 inc = [r for r in R if r.get('kept')][-1]
 if not inc['ckpt'] or inc['ckpt'] == '-':
     inc = dict(rung='R3 recipe', ckpt='ckpt/r2_dagger.npz', params={'Kp': 6, 'onoff': 'ecms'})

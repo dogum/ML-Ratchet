@@ -1,14 +1,15 @@
-"""HybridPilot v2: a learned, causal hybrid energy-management policy (numpy only), built on RoadSim physics v2.
+"""HybridPilot v2.1: a learned, causal hybrid energy-management policy (numpy only), built on RoadSim physics v3.1.
 
 Each second of traction the controller
   1. builds 66 causal features (vehicle parameters, battery/engine state, recent history of the speed trace,
      optionally the next 1-60 s of speed and grade from navigation, optionally the remaining trip distance),
   2. runs a 2x96 tanh MLP -> an equivalence factor s (fuel joules per battery joule) and P(engine on),
-  3. adds SOC feedback  s <- s + Kp (SOC_ref - SOC) + Ki * integral (plug-ins with a known trip length and dtg: SOC_ref falls
-     linearly with distance to the charge-sustaining level at the trip end),
+  3. buses and mild P1 hybrids: s is replaced by a constant prior (series bus 2.8, P2 bus 2.6, mild 2.8; v2.1),
+     then SOC feedback  s <- s + Kp dz(SOC_ref - SOC) + Ki * integral, dz = the error beyond a +-0.03 dead band (v2.1;
+     plug-ins with a known trip length and dtg: SOC_ref falls linearly with distance to the charge-sustaining level),
   4. picks, among the candidate controls the powertrain can deliver, the one minimising
          P_fuel + s * P_battery,chemical  (+ engine start fuel, + start_pen, when starting from off),
-     with the platform's minimum engine on/off times (RoadSim v2: 8 s / 3 s) and its forced-on rules (catalyst
+     with the platform's minimum engine on/off times (RoadSim v2+: 8 s / 3 s) and its forced-on rules (catalyst
      light-off, warm-up, cabin heat, production speed rules; plug-ins in charge depletion: RoadSim's CD rules).
 
 Use it two ways:
@@ -26,8 +27,12 @@ G = 9.80665
 BINS = [(1, 5), (6, 10), (11, 20), (21, 30), (31, 60)]
 N_FEAT = 66
 # min_on_s / min_off_s None = the simulator's own minimum on / off times (RoadSim v2: 8 s / 3 s)
+# v2.1 (15 Nov 2026, RoadSim physics v3.1): proportional SOC feedback with a +-0.03 dead band, and a constant equivalence
+# factor in place of the network's s for buses and mild P1 hybrids (fitted on training-distribution simulations).
 DEFAULTS = dict(onoff='ecms', Kp=12.0, Ki=0.02, preview_s=0, nav=False, min_on_s=None, min_off_s=None, s_scale=1.0, s_bias=0.0,
-                start_pen=0.0, dtg=False, Kp_dtg=6.0)
+                start_pen=0.0, dtg=False, Kp_dtg=6.0, fb_norm=False, fb_tau=0.0, fb_dead=0.03, fb_dead_mode='soft', cubic=0.0,
+                s_prior={'bus_hev_series': (1.0, 2.8), 'bus_hev_parallel_p2': (1.0, 2.6), 'mild': (1.0, 2.8)})
+V20 = dict(fb_dead=0.0, s_prior=None)       # HybridPilotCore(**V20) / make_roadsim_strategy(**V20): the v2.0 decision rule
 
 
 class MLP:
@@ -151,24 +156,42 @@ class HybridPilotCore:
     def __init__(self, net=None, **params):
         self.net = net or MLP(); self.p = dict(DEFAULTS); self.p.update(params)
         self.I = 0.0          # integral of (SOC_ref - SOC) over the trip, s (|I| <= 30, as RoadSim's A-ECMS)
+        self.ef = None        # low-passed SOC error (fb_tau)
 
-    def equivalence(self, x, soc, soc_ref, phev, plan_ref=None):
-        """plan_ref: the distance-to-go SOC reference (plug-ins with dtg and a known trip length); feedback both ways."""
+    def equivalence(self, x, soc, soc_ref, phev, plan_ref=None, window=None, prior_key=None, dt=1.0):
+        """plan_ref: the distance-to-go SOC reference (plug-ins with dtg and a known trip length); feedback both ways.
+        window: (soc_lo, soc_hi), needed by fb_norm and cubic. prior_key: 'mild' | 'bus_<arch>' | arch, for s_prior."""
+        p = self.p
         s, p_on = self.net.s_pon(x)
-        s = max(s * self.p['s_scale'] + self.p['s_bias'], 0.0)
+        s = max(s * p['s_scale'] + p['s_bias'], 0.0)
+        if p['s_prior'] and prior_key in p['s_prior']:
+            w, s0 = p['s_prior'][prior_key]
+            s = (1.0 - w) * s + w * s0
+        if p['cubic'] and not phev:
+            mid, half = 0.5 * (window[0] + window[1]), 0.5 * (window[1] - window[0])
+            z = (soc - mid) / half
+            s = s * (1.0 - p['cubic'] * (z ** 3 if abs(z) < 1.5 else math.copysign(3.375, z)))
         if plan_ref is not None:
-            return max(s + self.p['Kp_dtg'] * (plan_ref - soc), 0.0), p_on
+            return max(s + p['Kp_dtg'] * (plan_ref - soc), 0.0), p_on
         e = soc_ref - soc
-        if (self.p['Kp'] or self.p['Ki']) and (not phev or e > -0.03):
-            if self.p['Ki']:
-                self.I = min(max(self.I + e, -30.0), 30.0)
-            s = max(s + self.p['Kp'] * e + self.p['Ki'] * self.I, 0.0)
+        if (p['Kp'] or p['Ki']) and (not phev or e > -0.03):
+            if p['fb_norm']:
+                e = e / (0.5 * (window[1] - window[0]))
+            if p['Ki']:
+                self.I = min(max(self.I + e * dt, -30.0), 30.0)
+            ep = e
+            if p['fb_tau']:
+                self.ef = e if self.ef is None else self.ef + min(dt / p['fb_tau'], 1.0) * (e - self.ef)
+                ep = self.ef
+            if p['fb_dead']:         # 'soft': the band is subtracted; 'hard': full Kp e outside the band, 0 inside
+                ep = (ep if abs(ep) > p['fb_dead'] else 0.0) if p['fb_dead_mode'] == 'hard' else                     math.copysign(max(abs(ep) - p['fb_dead'], 0.0), ep)
+            s = max(s + p['Kp'] * ep + p['Ki'] * self.I, 0.0)
         return s, p_on
 
     def decide(self, x, soc, soc_ref, phev, P_fuel, P_chem, on, ok, eng_on, t_on, t_off, start_W, forced_on=False,
-               min_on_s=8.0, min_off_s=3.0, plan_ref=None):
+               min_on_s=8.0, min_off_s=3.0, plan_ref=None, window=None, prior_key=None):
         """P_fuel, P_chem [W], on, ok: arrays over candidate controls. Returns (index or -1, s, p_on)."""
-        s, p_on = self.equivalence(x, soc, soc_ref, phev, plan_ref)
+        s, p_on = self.equivalence(x, soc, soc_ref, phev, plan_ref, window, prior_key)
         if self.p['min_on_s'] is not None: min_on_s = self.p['min_on_s']
         if self.p['min_off_s'] is not None: min_off_s = self.p['min_off_s']
         on = np.asarray(on, bool); ok = np.asarray(ok, bool).copy(); sel = ok.copy()
@@ -213,6 +236,9 @@ def make_roadsim_strategy(**params):
             self.soc0 = st['soc']
             self.dtg = bool(self.core.p['dtg']) and self.phev and bool(self.core.p['nav'])
             self.trace = []
+            self.window = (veh.battery.soc_lo, veh.battery.soc_hi)
+            self.prior_key = ('mild' if self.p.get('engine_on_moving') else
+                              ('bus_' + veh.arch if veh.cls == 'bus' else veh.arch))
 
         def forced_on(self, st, ctx):
             """platform rules; plug-ins in charge depletion follow RoadSim's charge-depleting rules (as phev_cdcs)."""
@@ -243,7 +269,7 @@ def make_roadsim_strategy(**params):
             on = C['on'] & (C['P_fuel'] > 0)
             j, s, p_on = self.core.decide(x, st['soc'], self.ref, self.phev, C['P_fuel'], self.chem_power(C, st), on, C['ok'],
                                           st['eng_on'], st['t_on'], st['t_off'], self.start_W, self.forced_on(st, ctx),
-                                          self.min_on_s, self.min_off_s, self.plan_ref(ctx))
+                                          self.min_on_s, self.min_off_s, self.plan_ref(ctx), self.window, self.prior_key)
             self.trace.append((ctx['k'], s, p_on))
             return j
 

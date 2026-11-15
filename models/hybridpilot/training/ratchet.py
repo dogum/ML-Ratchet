@@ -11,9 +11,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 import evaluate as E
 import sets
-from hp_env import ROOT
+from hp_env import ROOT, PTAG
 
-RJ = f'{ROOT}/ratchet_v2.json'
+RJ = f'{ROOT}/ratchet_v2{PTAG}.json'          # physics v2: ratchet_v2.json; other physics: ratchet_v2_<p...>.json
 MARGIN = 0.01
 
 
@@ -48,7 +48,7 @@ def score(name, ckpt, params, sets_=('frozen', 'dev')):
             pol = baseline_as_pol(base, params['baseline'])
         else:
             pol = E.score_policy(setname, ckpt, params, base=base)
-            pickle.dump(pol, open(f'{ROOT}/data/pol_{name}_{setname}.pkl', 'wb'))
+            pickle.dump(pol, open(f'{ROOT}/data/pol_{name}_{setname}{PTAG}.pkl', 'wb'))
         res[setname] = summarise(base, pol, setname)
     return res
 

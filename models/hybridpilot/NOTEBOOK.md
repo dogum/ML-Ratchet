@@ -123,3 +123,46 @@ v2 burns 0.16 points more than the v1 network on the v2 exam, which however fail
 - **MODEL_CARD:** it quoted the collection's motto "Graded on reality", but HybridPilot is graded in simulation; it
   now says so. RoadSim's calibration is credited to the dev-only procedure in CALIBRATION.md.
 - ZTBus link: https://doi.org/10.3929/ethz-b-000626723.
+
+## 15 Nov 2026 — v2.1: physics v3.1 and a new charge-sustaining rule (release choice, before the exam)
+
+**Physics rung (dev only).** RoadSim's hybrid presets beyond v2 were tried for this hybrid-only model. On VED twins
+v3.1 = v2.1 + v3 hardware rules (VED twins carry no model year, so no era scaling): run-on 2 s into braking, P2 converter
+open in 1st/2nd, generator hybrid hardware v3. Dev sim-vs-real check, HybridPilot v2.0 driving the dev twins
+(`simcheck.py dev`, 84 trips, OBD label model), v2 -> v3.1:
+power-split HEV trip median -4.6 -> -2.4 %, car median -5.5 -> -3.3 %, engine-on gap -9.3 -> -4.4 points, starts/km
+3.67 -> 2.66 (real 2.32); mild P1 +2.9 -> +3.4 %, car median +0.3 -> +0.6 %, engine-on -8.6 -> -2.1 points, starts
+3.57 -> 2.43 (real 1.01); plug-ins unchanged (-2.9 / -7.8 %). Fuel closer or within 0.5 point, engine operation much
+closer: **kept, every HybridPilot run now pins `roadsim-physics-v3.1`** (`hp_env.PHYS`, `HP_PHYS` to re-score on
+another preset; caches and logs carry the physics in their names).
+
+**Re-take (physics changed).** New v3.1 frozen set (same draws and seeds; generated hybrids get the v3 generator
+hardware), dev, tune and a new training-distribution probe set (190 trips, 10 per class incl. mild; `sets.build_probe`).
+R0-R15 re-scored in order with their v2 networks and settings (`v21_ladder0.sh`). Same decisions as on v2: only R8
+(the v2.0 release) is kept. R8 on v3.1: frozen skill 0.662, frozen 99.06 % of DP (holds 90 %), dev 98.94 % (holds 96 %),
+dev skill 0.656. A-ECMS (R0): 0.144, dev 98.14 % (97 %).
+
+**Exploration on the probe set (training distribution; never dev or exam).** Probe skill / probe charge holding, v2.0
+network: R8 rule 0.529 / 93 %; Kp 12 without Ki 0.557 / 91 %; SOC error low-passed 120 s 0.455 / 88 %; ECMS cubic
+window term + Kp 6 0.575 / 92 %; window-normalised Kp 3 0.532 / 92 %; dead band 0.03 0.595 / 92 %, 0.05 0.598 / 91 %,
+0.03 without Ki 0.612 / 88 %, 0.03 + cubic 0.587 / 92 %, normalised with band 0.599 / 91 %, hard band 0.03 (+priors)
+0.591 / 93 %, band 0.02 (+priors) 0.635 / 92 %, band 0.03 + Ki 0.04 (+priors) 0.602 / 93 %. The probe shows the exam's
+bus failure: probe buses, constant-s ECMS 100.0 % of DP vs the R8 rule 98.8 (P2) / 98.6 (series), and A-ECMS (s0 2.6)
+also beats the network there (99.4 / 99.1): the network's s, not only the feedback, is weak on buses. The DP teacher's
+median costate on training buses is 2.21 (P2) / 2.30 (series) (`v21_prior.py`, bank of 800 teacher trips; timed teacher
+the same); used as a prior it gives 99.41 / 99.55. A grid over a constant s0 on the 20 probe buses: 2.4 99.71 / 99.73,
+2.6 99.84 / 100.05, 2.8 99.74 / 100.33, 3.0 99.80 / 100.20 -> P2 bus 2.6, series bus 2.8. Mild (10 probe trips):
+2.2 93.70 % (holds 100 %), 2.5 94.22 (100), 2.8 94.56 (100), 3.0 94.86 (90), 3.3 95.43 (70) -> 2.8, the highest value
+that kept every probe trip within its window. Full probe with band 0.03 + these priors: 0.648 / 92 %.
+
+**Rungs on v3.1 (frozen skill; dev % of DP / dev holds).** R16 dead band 0.03 on the proportional SOC feedback:
+0.689 (+0.027; dev 99.16 / 95 %) kept. R17 + class priors (buses, mild): 0.704 (+0.015; dev 99.28 / 95 %) kept. R18
+re-teach on v3.1 banks (v2.0 recipe, 800 teacher + 600 DAgger trips, `v21_retrain.sh`) with R17's rule: 0.698
+(-0.006; dev 99.13 / 93 %) rejected.
+
+**Release choice: v2.1 = R17** (v2.0 network unchanged, `weights/hybridpilot_v2.npz`; new decision rule; physics
+v3.1). Against v2.0 on the same physics: frozen skill 0.704 vs 0.662, dev 99.28 vs 98.94 % of DP, dev skill 0.802 vs
+0.656 (+0.146, margin 0.01), dev charge holding 94.7 % vs 96.1 % (72 vs 73 of 76 trips; gate: no more than 3 points
+worse). What got worse: charge holding, dev -1.4 points and frozen 90 -> 87 % (two P2 and one series trip end 0.02-0.03
+beyond the allowance; the band leaves end-of-trip drift less corrected). Numpy module == training policy: identical
+fuel and final SOC on 24 dev and frozen trips (`v21_numpy_check.py`). The exam has not been run for v2.1.

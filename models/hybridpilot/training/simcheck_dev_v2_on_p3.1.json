@@ -1,0 +1,190 @@
+{
+ "split": "dev",
+ "ckpt": "ckpt/r2_dagger.npz",
+ "params": {
+  "Kp": 12,
+  "onoff": "ecms",
+  "Ki": 0.02
+ },
+ "n_trips": 84,
+ "physics": "roadsim-physics-v3.1",
+ "summary": {
+  "hev_powersplit": {
+   "aecms": {
+    "n_trips": 36,
+    "n_cars": 3,
+    "trip_median": 0.4395182596693914,
+    "trip_iqr": [
+     -5.048518402516628,
+     20.03493373829083
+    ],
+    "car_median": -0.3610345305197271,
+    "ratio_totals": 1.0679561283620516,
+    "eng_on_pts": -6.470779220779218,
+    "starts_km_sim": 1.9087150562630955,
+    "starts_km_real": 2.32151530972604
+   },
+   "hybridpilot": {
+    "n_trips": 36,
+    "n_cars": 3,
+    "trip_median": -2.359468778744117,
+    "trip_iqr": [
+     -8.235639175364337,
+     16.613698304937614
+    ],
+    "car_median": -3.3482140154154627,
+    "ratio_totals": 1.040063190734854,
+    "eng_on_pts": -4.383089516174351,
+    "starts_km_sim": 2.6568253439213656,
+    "starts_km_real": 2.32151530972604
+   },
+   "rule": {
+    "n_trips": 36,
+    "n_cars": 3,
+    "trip_median": 2.7518794808416236,
+    "trip_iqr": [
+     -3.8771204004854454,
+     18.350637915903917
+    ],
+    "car_median": -0.3561566285048945,
+    "ratio_totals": 1.0968319107447984,
+    "eng_on_pts": -2.4908887019904693,
+    "starts_km_sim": 2.2721420510441828,
+    "starts_km_real": 2.32151530972604
+   }
+  },
+  "mild": {
+   "aecms": {
+    "n_trips": 24,
+    "n_cars": 2,
+    "trip_median": 2.571078765608065,
+    "trip_iqr": [
+     -17.001428658385393,
+     14.274954432847366
+    ],
+    "car_median": -0.5828650541218892,
+    "ratio_totals": 1.0600297497259892,
+    "eng_on_pts": -1.2073272273105784,
+    "starts_km_sim": 2.0936069068247583,
+    "starts_km_real": 1.0076988888620404
+   },
+   "hybridpilot": {
+    "n_trips": 24,
+    "n_cars": 2,
+    "trip_median": 3.403361186645215,
+    "trip_iqr": [
+     -16.52748093840456,
+     14.74196233429726
+    ],
+    "car_median": 0.5730456935807398,
+    "ratio_totals": 1.0653156148979235,
+    "eng_on_pts": -2.1338891550986894,
+    "starts_km_sim": 2.425177157606713,
+    "starts_km_real": 1.0076988888620404
+   },
+   "rule": {
+    "n_trips": 24,
+    "n_cars": 2,
+    "trip_median": 2.77661496508364,
+    "trip_iqr": [
+     -18.14821015122051,
+     11.947425507845654
+    ],
+    "car_median": -0.9582676989178776,
+    "ratio_totals": 1.064367031152119,
+    "eng_on_pts": -1.1656952539550403,
+    "starts_km_sim": 2.0936069068247583,
+    "starts_km_real": 1.0076988888620404
+   }
+  },
+  "phev_powersplit": {
+   "aecms": {
+    "n_trips": 12,
+    "n_cars": 1,
+    "trip_median": 113.31512579689502,
+    "trip_iqr": [
+     32.04749273175438,
+     267.37847171591784
+    ],
+    "car_median": 113.31512579689502,
+    "ratio_totals": 3.267220353673411,
+    "eng_on_pts": 32.56788160469667,
+    "starts_km_sim": 2.232189925352608,
+    "starts_km_real": 0.0
+   },
+   "hybridpilot": {
+    "n_trips": 12,
+    "n_cars": 1,
+    "trip_median": -2.850758812196042,
+    "trip_iqr": [
+     -28.33773080825317,
+     13.54335524883481
+    ],
+    "car_median": -2.850758812196042,
+    "ratio_totals": 0.9666731556987613,
+    "eng_on_pts": 0.0,
+    "starts_km_sim": 0.0,
+    "starts_km_real": 0.0
+   },
+   "rule": {
+    "n_trips": 12,
+    "n_cars": 1,
+    "trip_median": -2.850758812196042,
+    "trip_iqr": [
+     -28.33773080825317,
+     13.54335524883481
+    ],
+    "car_median": -2.850758812196042,
+    "ratio_totals": 1.006956322803135,
+    "eng_on_pts": 0.0,
+    "starts_km_sim": 0.0,
+    "starts_km_real": 0.0
+   }
+  },
+  "phev_series": {
+   "aecms": {
+    "n_trips": 11,
+    "n_cars": 1,
+    "trip_median": -3.6535513671653197,
+    "trip_iqr": [
+     -33.253598304946166,
+     5.066386074734586
+    ],
+    "car_median": -3.6535513671653197,
+    "ratio_totals": 2.0490317129932776,
+    "eng_on_pts": 0.0,
+    "starts_km_sim": 0.0,
+    "starts_km_real": 0.0
+   },
+   "hybridpilot": {
+    "n_trips": 11,
+    "n_cars": 1,
+    "trip_median": -7.808426644540889,
+    "trip_iqr": [
+     -33.253598304946166,
+     -1.1841493986283425
+    ],
+    "car_median": -7.808426644540889,
+    "ratio_totals": 0.8177183161738791,
+    "eng_on_pts": 0.0,
+    "starts_km_sim": 0.0,
+    "starts_km_real": 0.0
+   },
+   "rule": {
+    "n_trips": 11,
+    "n_cars": 1,
+    "trip_median": -7.808426644540889,
+    "trip_iqr": [
+     -33.253598304946166,
+     -1.1841493986283425
+    ],
+    "car_median": -7.808426644540889,
+    "ratio_totals": 0.8177183161738791,
+    "eng_on_pts": 0.0,
+    "starts_km_sim": 0.0,
+    "starts_km_real": 0.0
+   }
+  }
+ },
+ "wall_s": 13.305222988128662
+}
