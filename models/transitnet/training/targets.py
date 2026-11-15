@@ -2,7 +2,7 @@
 2-minute targets with no known signal, whose light curves supply the real noise that simulated transits are injected into."""
 import _paths as _P  # portable paths (see _paths.py)
 import csv, json, random, numpy as np
-from astroquery.mast import Observations
+import catalog
 D = _P.WORK + '/data/'
 tic = lambda s: str(s).replace('TIC', '').strip().split('.')[0]
 f = lambda x: float(x) if x not in ('', None) else np.nan
@@ -25,8 +25,7 @@ if __name__ == '__main__':
     # noise pool: ordinary 2-minute targets, no TOI, no known planet, a few sectors spread over the mission
     rng = random.Random(7); pool = []
     for s in (3, 9, 15, 22, 28, 36, 44, 50, 57, 64):
-        obs = Observations.query_criteria(obs_collection='TESS', dataproduct_type='timeseries', provenance_name='SPOC', t_exptime=[100, 150], sequence_number=s)
-        cand = sorted({(str(r['target_name']), int(r['sequence_number']), str(r['dataURL'])) for r in obs if str(r['dataURL']).endswith('_lc.fits')})
+        cand = sorted(set(catalog.bulk_sector(s)))   # 15 Nov 2026: MAST bulk script instead of the portal query (same products)
         cand = [c for c in cand if c[0] not in toi_tics and c[0] not in pl_tics and c[0] not in jobs]; pick = rng.sample(cand, min(220, len(cand))); pool += pick
         print('sector', s, len(cand), 'candidates, picked', len(pick), flush=True)
     meta = dict(planets=[{k: r[k] for k in r if not k.endswith('reflink')} | {'tic': tic(r['tic_id'])} for r in pl],
