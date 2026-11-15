@@ -36,6 +36,12 @@ CFGS = dict(
             s_sd=(0.08, 0.45), s_drift=0.30),
 )
 CFGS['v3'] = dict(CFGS['v2'], noise_fix=True)
+# v4 (15 Nov 2026): v3 + a reporting offset of the simulated solar series, -1 / 0 / +1 h (reported output leads / is
+# on / lags the sun) with probabilities 0.15 / 0.70 / 0.15. EIA-930's solar timestamps are not stable: in the years
+# outside the exam (2018-2022, GridData's eia930_solar_qc flags) 9 of 35 BA-years with solar are 1 h off (CISO
+# 2018-21, PJM 2018-22), and CISO moved from -1 h (2019, 2021, the dev years DemandCast's fixed shift came from) to
+# 0 h in 2022. The offset is constant over a simulated region-year, like a reporting convention.
+CFGS['v4'] = dict(CFGS['v3'], s_offset=(0.15, 0.70, 0.15))
 CFG = CFGS[os.environ.get('DC_SIM', 'v1')]
 _GROUPS = {}
 TFC = None
@@ -195,6 +201,10 @@ def sim_region(rng):
     g.ys = st * rs
     nom = R.solar_mw(subs, sg, g.scap)
     g.sk = float(g.ys.sum() / max(nom.sum(), 1e-6) * np.exp(rng.normal(0, CFG['s_drift'])))
+    g.s_offset = 0
+    if CFG.get('s_offset'):           # v4: reported[t] = true[t - offset]
+        g.s_offset = int(rng.choice([-1, 0, 1], p=CFG['s_offset']))
+        g.ys = np.roll(g.ys, g.s_offset)
     g.has_solar = True
     g.finalize()
     return g
@@ -237,12 +247,13 @@ def bank(seed, n_regions, days_per=40, p_fc=0.5, out=None):
             if not np.isfinite(s['yd']).all(): continue
             for k in KEYS:
                 acc[k].append(s[k])
-            meta.append((r, g.ba, g.year, int(i0 + g.off), fc is not None))
+            meta.append((r, g.ba, g.year, int(i0 + g.off), fc is not None, g.s_offset))
         if r % 20 == 0:
             print(f'region {r}/{n_regions} samples {len(meta)} {time.time() - t0:.0f}s', flush=True)
     arr = {k: np.stack(v).astype(np.float16 if k.startswith('x') else np.float32) for k, v in acc.items()}
     arr['meta_region'] = np.array([m[0] for m in meta]); arr['meta_fc'] = np.array([m[4] for m in meta])
     arr['meta_ba'] = np.array([m[1] for m in meta]); arr['meta_hour'] = np.array([m[3] for m in meta])
+    arr['meta_soff'] = np.array([m[5] for m in meta])      # solar reporting offset (h), 0 before simulator v4
     if out: np.savez_compressed(out, **arr)
     return arr
 

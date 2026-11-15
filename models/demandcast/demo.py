@@ -10,7 +10,7 @@ E = dict(np.load(os.path.join(HERE, 'examples', 'exam_days.npz')))
 m = DemandCast()
 d = m.predict_demand(E['xd'], E['pd_total'])
 w = m.predict_cf('w', E['xw'], E['pw'])
-s = m.predict_cf('s', E['xs'], E['ps'], night=E['night'])
+s = m.predict_cf('s', E['xs'], E['ps'], night=E['night'], ba=E['ba'])
 
 
 def mape(p, y):

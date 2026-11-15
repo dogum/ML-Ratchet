@@ -33,7 +33,7 @@ def forecast(ba, day, weather='actual'):
         out['wind'] = {k: v * s['capw'] for k, v in m.predict_cf('w', s['xw'][None], s['pw'][None]).items() if k != 'sigma'}
         out['wind_actual'] = s['yw'] * s['capw']
     if 'xs' in s:
-        out['solar'] = {k: v * s['caps'] for k, v in m.predict_cf('s', s['xs'][None], s['ps'][None], s['night'][None]).items() if k != 'sigma'}
+        out['solar'] = {k: v * s['caps'] for k, v in m.predict_cf('s', s['xs'][None], s['ps'][None], s['night'][None], ba=ba).items() if k != 'sigma'}
         out['solar_actual'] = s['ys'] * s['caps']
     return out
 
