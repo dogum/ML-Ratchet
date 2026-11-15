@@ -47,7 +47,7 @@ print(r["detected"], r["D_km"], r["t0"], r["dir"])
 |---|---|---|---|
 | Distance, median error | **38%** | Classical ridge fit f = a(t − t0) (classical): 59%<br>Dev median guess (dumb baseline): 28% | ❌ loses |
 | Storm time, median error | **33 h** | Classical ridge fit (classical): 48 h<br>Dev median guess (dumb baseline): 24 h | ❌ loses |
-| Direction, median error | **19 deg** | Classical ridge fit (classical): 20 deg<br>Dev median guess (dumb baseline): 56 deg | ✅ wins |
+| Direction, median error | **19 deg** | Classical ridge fit (classical): 20 deg<br>Dev median guess (dumb baseline): 56 deg | ➖ tie |
 | Arrivals detected | **63%** | Classical ridge fit (classical): 43% | ✅ wins |
 
 Coverage of the 68% error bars on the exam: Distance **67%**, Time **74%**, Direction **70%**.
@@ -100,6 +100,10 @@ Deep-water dispersion (group speed g/4πf) from a moving, growing and decaying J
 
 - Ridge slope vs g/(4πD) within 1.4% at 1,500 km and 0.1% at 9,000 km; energy received/emitted 1.0003
 - Hurricane Marie 2014 (not in dev or exam): the real ridge at 4 buoys runs parallel to the predicted one
+
+## Help wanted
+
+- Extratropical storm truth: the Open-Meteo archive and marine API hit its daily request limit from the shared build machine's IP, so only tropical cyclones (IBTrACS) are graded. A reachable, documented reanalysis endpoint would add Southern Ocean and North Pacific winter storms.
 
 ## Next rungs
 

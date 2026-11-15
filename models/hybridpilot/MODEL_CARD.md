@@ -3,8 +3,9 @@
 **What it does.** A learned, causal energy-management policy for hybrid vehicles. Every second of traction it decides
 engine on/off and the engine power (series, power-split) or engine torque share (P2 parallel), and with it the battery
 charge/discharge, from the current state, the past of the trip and (optionally) a navigation preview and distance to go.
-It holds charge in HEVs and depletes-then-sustains in plug-ins. Part of ML Ratchet ("Trained on physics. Graded on
-reality."). v2 (14 Nov 2026) is a rebuild on RoadSim physics v2; v1 (12 Nov 2026, physics v1) is summarised at the end.
+It holds charge in HEVs and depletes-then-sustains in plug-ins. Part of ML Ratchet, but unlike most of its models it
+is graded in simulation: real routes, simulated cars (see Grading). v2 (14 Nov 2026) is a rebuild on RoadSim physics
+v2; v1 (12 Nov 2026, physics v1) is summarised at the end.
 
 ## How it decides
 1. 66 causal features: vehicle parameters (architecture, mass, engine and motor W/kg, battery kWh, CdA/mass, Crr,
@@ -25,9 +26,8 @@ reality."). v2 (14 Nov 2026) is a rebuild on RoadSim physics v2; v1 (12 Nov 2026
 RoadSim `roadsim-physics-v2` (pinned in every call; v2.1 not used): forward-facing 1 Hz model, EPA ALPHA engine and
 motor maps, Thevenin battery, eCVT / P2 (torque converter, start energy, brake blending 0.75) / series (direct drive),
 coolant + oil nodes, two-node cabin HVAC, tyre model, on-road extra loads, production hybrid rules. Calibrated on dev
-data only by the RoadSim agents (shared/vehicle/roadsim/CALIBRATION.md); known errors in LIMITS.md. No physics patch was
-made here. Upstream helpers now used instead of model-folder copies: RoadSim's VED twin builder
-(`checks/check_ved_twin.build_twin`) and its OBD label model (`roadsim.obd.label_fuel`).
+data only (shared/vehicle/roadsim/CALIBRATION.md); known errors in LIMITS.md. No physics patch was made here.
+Upstream helpers now used instead of model-folder copies: RoadSim's VED twin builder (`checks/check_ved_twin.build_twin`) and its OBD label model (`roadsim.obd.label_fuel`).
 
 ## Teacher and training
 - DP (Bellman recursion over engine on/off × 121 SOC points on RoadSim's candidate controls, stage tables built with the
@@ -128,7 +128,9 @@ Simulated hybrids start their engine about twice as often as the real cars.
 
 ## Limits
 - Graded in simulation; plug-ins on real roads read 22–31 % low, P2 engine-on share is far below the real cars'.
-- Charge holding 95 % vs A-ECMS 96 %; losses on plug-ins (inside wide intervals) and P2 buses (−0.48 pt).
+- Charge holding 95 % vs A-ECMS 96 %; losses on plug-ins (inside wide intervals) and P2 buses (−0.48 pt) against
+  A-ECMS. Constant-s ECMS beats it on both bus strata (98.98 vs 97.50 % pooled, charge held on every trip) and on mild
+  hybrids (98.72 vs 98.10 %, but charge held on only 43 % of trips).
 - The v1 release burns 0.16 pt less on the v2 exam but fails to hold charge on 11 % of trips.
 - DP reference ignores the production forced-on rules; it assumes a warm engine.
 - Heavy duty: buses on real Zurich routes, trucks on cycles and city routes only.

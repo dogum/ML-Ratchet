@@ -41,6 +41,17 @@ what v1 kept in this folder: an on-road extra load per architecture and the OBD 
   plug-ins (pack power >= 1.2 x motor, resistance / 2.5, MG2 torque x 1.8; rung r5b).
 - Banks: 86,400 training trips (three banks of 12 per vehicle, seeds 101-103), 4,000 frozen validation trips (val2).
 
+## Physics checks
+From RoadSim's own checks (`shared/vehicle/roadsim/LIMITS.md`, physics v2; held-out data):
+- EPA held-out vehicles: conventional FTP +0.4 % / HWFET -1.9 % (n 15), BEV UDDS -0.4 % / HWY -1.8 % (n 8) on fuel
+  economy (+ = the simulator burns less). Known gaps: older Toyota/Lexus hybrids too frugal, TMED P2s 8-10 % too
+  thirsty, plug-ins on VED roads 20-23 % low (Limits below).
+- Energy ledger closes in all 600 stress runs (max 5.6e-4, none over 0.5 %).
+- RoadSim's bus twin on the 5,847 full-ZTBus exam legs: -2.3 % median energy (nothing fitted).
+
+Inference parity: the browser's float16 copy is within 1.3e-4 of float64 numpy, and the JS port equals numpy to
+1.3e-7 (32 cases). No numpy-vs-torch parity number is recorded in `training/`.
+
 ## Ratchet (frozen set val2; margin 0.01; dev score D2)
 Skill = 1 - median |log error| / median |log error| of the class-median guess. D2 = mean of 18 dev MdAPEs (VED 4 fleets;
 EPA conventional FTP / HWY / US06 / 20 F cold FTP / SC03, hybrids FTP / HWY, BEV city / HWY; full-ZTBus dev legs and
@@ -128,5 +139,5 @@ cover 60-75% of VED exam trips — **met pooled (61%)**, not for petrol (57%) or
 ## Data and licences
 VED (Oh, LeBlanc, Peng, IEEE T-ITS 2020; Apache-2.0). US EPA test-car lists, dynamometer schedules, ALPHA maps,
 fueleconomy.gov, USGS 3DEP lidar, IEM ASOS weather, eCFR 40 CFR 1037 (public domain / free use). ZTBus (Widmer, Ritter,
-Onder, Scientific Data 2023, ETH Zurich; CC-BY-4.0). Mersin 33M (Abut, Zenodo; CC-BY-4.0). ICCT 2018 tractor-trailer
+Onder, Scientific Data 2023, ETH Zurich, doi:10.3929/ethz-b-000626723; CC-BY-4.0). Mersin 33M (Abut, Zenodo; CC-BY-4.0). ICCT 2018 tractor-trailer
 tests (Rodriguez, Delgado, Muncrief). Code, weights, docs: MIT (ML Ratchet).

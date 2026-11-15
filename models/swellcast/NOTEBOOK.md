@@ -1,5 +1,5 @@
-> **Lab notebook.** The build notes as recorded during the original work in a cloud sandbox (Oct–Nov 2026), kept
-> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that sandbox: in this repository
+> **Lab notebook.** The build notes as recorded during the original build in a cloud project (Oct–Nov 2026), kept
+> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that build machine: in this repository
 > the code is in `training/` and everything it writes goes to `work/` (see `training/_paths.py`). Page links to
 > claude.ai are the original private copies; the lab now lives at `lab/index.html`.
 
@@ -89,3 +89,7 @@ One ocean buoy, one distant storm: from ten days of NOAA NDBC wave spectra (ener
 - **Container restarts:** three during the build. `train.py` resumes from `ckpt/<name>.resume`, and `simbank.py` resumes per 1,000-sample chunk. `setsid` forks, so read real PIDs from `ps`.
 - **Bank speed:** about 70 s per 1,000 v1 samples alone, 3–4 min per 1,000 under 4-agent load. v3 track sims take about 0.26 s each.
 - **Training speed:** about 0.3 s/step when the machine is quiet, 1 s/step under load.
+
+## Corrections
+
+- 14 Nov 2026: model.yaml: the direction row (19° vs the classical ridge fit's 20°) was a win, while the wins text and the card say it ties. A 1° difference is a tie, so the verdict is now tie (win -> tie). The Open-Meteo block is now listed under help_wanted.

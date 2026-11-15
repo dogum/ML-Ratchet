@@ -1,5 +1,5 @@
-> **Lab notebook.** The build notes as recorded during the original work in a cloud sandbox (Oct–Nov 2026), kept
-> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that sandbox: in this repository
+> **Lab notebook.** The build notes as recorded during the original build in a cloud project (Oct–Nov 2026), kept
+> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that build machine: in this repository
 > the code is in `training/` and everything it writes goes to `work/` (see `training/_paths.py`). Page links to
 > claude.ai are the original private copies; the lab now lives at `lab/index.html`.
 
@@ -108,3 +108,7 @@ Each cell is the median |error| / the fraction of stars within 5% (νmax) or 2% 
 - Gaia: the ESA TAP upload join worked. MAST stpubdata S3 worked for the 978 light curves.
 - The container restarted twice. Training is resumable every 500 steps, and `STATUS.md` holds the resume notes.
 - Other agents run processes named `train.py` and `simbank.py`. Kill only by your own PGID; never `pkill -f`.
+
+## Corrections
+
+- 14 Nov 2026: model.yaml: the wins said it beats the classical pipeline on light curves of 1 year or less, but the 1-year row is a tie (1.68 vs 1.67 %). It now says 90 days and shorter. Card: false alarms are 11–15% (10.8–15.0% by length; was written 12%–15%), and the Parseval ratio is 0.988–0.990 (physics_check.json; was written 0.989-0.988). No verdict changed.

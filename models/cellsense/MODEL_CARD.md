@@ -111,7 +111,7 @@ cycles through life, is no more than 2 points worse.
 | 6 | Early-life physics | rejected | 0.316 | 0.074 | 0.557 | 11.4 | 13.2 | 0.979 | 21.5 | 45.3 | 153.7 |
 | 7 | Early-life physics, whole-life check | kept | 0.375 | 0.074 | 0.676 | 11.4 | 13.2 | 0.979 | 22.4 | 22.4 | 153.7 |
 | 8 | Partial discharges, one network | rejected | 0.625 | 0.574 | 0.676 | 16.6 | 19.9 | 0.967 | 22.4 | 22.4 | 53.1 |
-| 9 | Partial discharges, a specialist | kept | 0.466 | 0.256 | 0.676 | 11.4 | 13.2 | 0.979 | 22.4 | 22.4 | 28.7 |
+| 9 | Partial discharges, a specialist | released | 0.466 | 0.256 | 0.676 | 11.4 | 13.2 | 0.979 | 22.4 | 22.4 | 28.7 |
 
 History, in order: twice the calibration cells' worn-out curves showed something the simulator lacked (slow polarization
 that grows several-fold while the pulse resistance barely moves; then charge that only comes out during the hold), and each
@@ -192,7 +192,15 @@ early total. Assuming no fade at all errs by 45.7 mAh; the full-curve network on
 - The lifetime forecast is useful from cycle 100 but not yet Severson's equal: 22% error on their primary test cells and 13% on the secondary ones, against 9 to 15% for models trained on 41 real cells. How strongly early slow graphite predicts the knee was set on six cells. Late in life it still reads worn cells as healthier than they are and overestimates the cycles left (36% life error in the last quarter).
 - The aging rates were calibrated on six real cells' trajectories, all charged in about 10 minutes. Charging recipes much faster or slower than that rely on the physics alone.
 - Pulse resistance follows the real cells (correlation 0.76) with about 1.2 mΩ error. The model's 30 ms pulse is ohmic plus charge transfer with no double layer, so absolute values carry the calibration's error.
-- Partial discharges from full read well down to about 0.75 Ah (29 mAh capacity error) and no better than assuming no fade at 0.6 Ah and below. Discharges that start partway (cycling between 20% and 80%, say), other cut-off voltages and other rates are untested.
+- Partial discharges from full read well down to about 0.75 Ah (29 mAh capacity error) and no better than assuming no fade at 0.45–0.6 Ah (46.5–52.0 vs 45.7 mAh); at 0.30 Ah it is a little better (41.8 mAh). Discharges that start partway (cycling between 20% and 80%, say), other cut-off voltages and other rates are untested.
+
+## Credits (LFP)
+
+Severson K. A., Attia P. M. et al. (2019), *Data-driven prediction of battery cycle life before capacity degradation*,
+Nature Energy 4, 383-391; data from the Toyota Research Institute, Stanford and MIT at data.matr.io (CC BY 4.0).
+Open-circuit curves: PyBaMM's Prada2013 set (Prada et al. 2013; LFP after Afshar 2017, graphite after Chen 2020).
+PyBaMM (Sulzer et al. 2021, J. Open Res. Softw. 9, 14; BSD-3) for the reference solutions. Aging trends: Attia et al.
+2020. Degradation modes after Dubarry. Code and weights: MIT (ML Ratchet).
 
 ---
 

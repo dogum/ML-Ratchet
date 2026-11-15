@@ -1,5 +1,5 @@
-> **Lab notebook.** The build notes as recorded during the original work in a cloud sandbox (Oct–Nov 2026), kept
-> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that sandbox: in this repository
+> **Lab notebook.** The build notes as recorded during the original build in a cloud project (Oct–Nov 2026), kept
+> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that build machine: in this repository
 > the code is in `training/` and everything it writes goes to `work/` (see `training/_paths.py`). Page links to
 > claude.ai are the original private copies; the lab now lives at `lab/index.html`.
 
@@ -100,3 +100,7 @@ exam's protocol (32 s, 4 kHz, H1 + L1; time-slid background from the same files,
   11.97 (card 12.0; the reversed tapers gave 12.21). Ungated 9.78 is unchanged.
 - No bundled O1/O2 file triggers a gate, so the demo and its golden output are unchanged. In O3 only GW191204's
   H1 file gates (6.61–6.68 s, ~10 s before the merger); re-running `o3_exam.py` changed none of the reported numbers.
+
+## Corrections
+
+- 14 Nov 2026: Card: the rung table's column 'Loud one-detector fakes flagged' was renamed 'passed' (17% is the share of loud one-detector fakes the cascade lets through; rung 4 let 100% through). Rung 9 and neutron-star rung 3 are marked released, not kept. The black-hole chirp-mass range in the limits now reads 5.5–45 M☉, the simulated range (was 'about 6-45'). Network and credits sections added.

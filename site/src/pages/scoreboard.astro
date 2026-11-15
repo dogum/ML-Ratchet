@@ -16,6 +16,7 @@ const coverage = models.flatMap((m) => (m.exam.coverage ?? []).map((c) => ({ m, 
         Each row is one headline metric on real data that chose nothing. A row is a <span class="chip win">win</span> only
         if the model beats <b>every</b> baseline listed — the dumb one included. Otherwise it's a
         <span class="chip loss">loss</span>, even when the classical method lost too.
+        Behind these rows: {s.rungs} rung decisions logged, {s.rejected} of them rejections.
       </p>
       <dl class="totals">
         <div><dt class="kicker">wins</dt><dd class="num w">{s.wins}</dd></div>

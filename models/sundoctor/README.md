@@ -45,9 +45,9 @@ Two real farms, graded against independent answer keys (sibling inverters, the p
 
 | Metric | SunDoctor | Baselines | |
 |---|---|---|---|
-| String failures caught within a day (California) | **55 / 56** | SunDoctor v1, power only (classical): 1 / 56 | ✅ wins |
+| String failures caught within a day (California) | **55 / 56** | SunDoctor v1, with sensor (classical): 54 / 56<br>SunDoctor v1, power only (classical): 1 / 56 | ✅ wins |
 | Dead strings counted right, all inverter-days | **95.9%** | — | ℹ️ |
-| Inverters offline caught | **44 / 49** | SunDoctor v1 (classical): 0 / 49 | ✅ wins |
+| Inverters offline caught | **44 / 49** | SunDoctor v1, with sensor (classical): 47 / 49<br>SunDoctor v1, power only (classical): 0 / 49 | ❌ loses |
 | Snow AUC (Colorado) | **0.98** | — | ✅ wins |
 | Big tracker-loss days (> 10%) flagged | **77%** | SunDoctor v1 (classical): 0% | ✅ wins |
 | Small tracker losses (2–5%) ranked, AUC | **0.5** | Coin flip (dumb baseline): 0.5 | ➖ tie |
@@ -59,6 +59,7 @@ Two real farms, graded against independent answer keys (sibling inverters, the p
 
 ### Where it loses
 
+- Catches 44 of 49 real inverter outages with the sensor; v1 with the sensor caught 47.
 - Small tracker losses (2–5%) can't be ranked (AUC 0.50).
 - Power-only mode over-reports tracker losses (4.7% vs 1.1%) and dust.
 

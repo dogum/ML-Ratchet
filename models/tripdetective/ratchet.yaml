@@ -2,7 +2,7 @@
 # physics v2) and training/ratchet_bus.json (bus ladder).
 model: tripdetective
 ladders:
-  - name: v1.0 — RoadSim physics v1
+  - name: "v1.0 — RoadSim physics v1 (12-13 Nov 2026)"
     objective: "Mean simulated skill over architecture, mass, displacement, CdA, Crr, engine-off share, strategy and the ledger, on frozen val_v3 (600 cars × 8 trips)"
     rule: Keep if the skill beats the incumbent by more than 0.01 AND the mean of 4 dev error ratios is at most 1.05 AND dev VED-type accuracy drops by no more than 0.03.
     margin: 0.01
@@ -20,7 +20,7 @@ ladders:
       - { id: r4, change: "+ 16 classical per-trip estimates", sim: 0.368, decision: rejected, why: "Dev errors +17%.", metrics: ["136 kg", "0.49 L", 0.90] }
       - { id: r5, change: "Classical estimates on the v1 bank", sim: 0.317, decision: kept, why: "+0.012; dev +2%.", metrics: ["139 kg", "0.34 L", 0.91] }
       - { id: r6, change: "v3 mass prior (VED-era fleet) + classical estimates, 2,000 cars", sim: 0.402, decision: kept, why: "+0.085; dev mass error 110 kg (bias −9). Released as v1.0.", metrics: ["110 kg", "0.44 L", 0.92] }
-  - name: v2.0 — RoadSim physics v2 (Phase D, 14 Nov 2026)
+  - name: "v2.0 — RoadSim physics v2 (Phase D, 14 Nov 2026)"
     objective: "Mean simulated skill over architecture, mass, displacement, CdA, Crr, engine-off behaviour, strategy and the ledger (single trip and whole car), on frozen sets rebuilt on physics v2 (600 cars × 8 trips, seed 99)"
     rule: Keep if the skill beats the incumbent by more than 0.01 AND the mean of 4 dev error ratios is at most 1.05 AND dev VED-type accuracy drops by no more than 0.03 (unchanged from v1.0).
     margin: 0.01
@@ -47,7 +47,7 @@ ladders:
       - { id: p2r13, change: "GPU: wider CNN (48-192 channels, 160-d embedding), 8,000 steps", sim: 0.491, decision: rejected, why: "+0.041 in simulation, but dev errors +6%.", metrics: ["142 kg", "0.33 L", 0.91, "+571 kg"] }
       - { id: p2r14, change: "VED logger channel mix again, with the physics head", sim: 0.444, decision: rejected, why: "−0.006.", metrics: ["121 kg", "0.25 L", 0.91, "+503 kg"] }
       - { id: p2r15, change: "BEV cabin heat again, with the physics head", sim: 0.450, decision: rejected, why: "+0.000; dev errors +3%.", metrics: ["128 kg", "0.32 L", 0.90, "+485 kg"] }
-  - name: v2.0 bus — city-bus mass (Phase D)
+  - name: "v2.0 bus — city-bus mass (Phase D, 14 Nov 2026)"
     objective: "Mean skill over log mass, log CdA and log Crr on a frozen set of 300 simulated electric buses × 6 windows (single window and pooled)"
     rule: Keep if the skill beats the incumbent by more than 0.01 AND the level-corrected dev mass error is at most 5% worse AND the slope of estimated mass on passenger mass drops by no more than 0.1.
     margin: 0.01

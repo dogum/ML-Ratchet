@@ -58,7 +58,7 @@ data:
     licence: Apache-2.0
     role: noise (routes), dev, exam (routes)
   - name: ZTBus — Widmer, Ritter, Onder, Scientific Data 10 (2023), ETH Zurich
-    url: https://www.research-collection.ethz.ch/handle/20.500.11850/626723
+    url: https://doi.org/10.3929/ethz-b-000626723
     licence: CC BY 4.0
     role: dev, exam (bus routes)
   - name: US EPA drive cycles and test-car lists; fueleconomy.gov; 40 CFR 1037 heavy-duty cycles; USGS 3DEP lidar; IEM ASOS weather
@@ -109,9 +109,10 @@ exam:
       unit: "%"
       baselines:
         - { name: "Adaptive ECMS", kind: classical, value: 97.51 }
+        - { name: "ECMS (constant s)", kind: classical, value: 98.72 }
         - { name: "Rule-based", kind: classical, value: 94.02 }
-      verdict: win
-      note: "+0.60 [+0.29, +0.83]."
+      verdict: mixed
+      note: "+0.60 [+0.29, +0.83] over A-ECMS. Constant-s ECMS scores higher but holds charge on only 43% of these trips (HybridPilot 95%)."
     - metric: Plug-in hybrids (103 trips), % of DP
       better: higher
       model: 99.27
@@ -127,9 +128,10 @@ exam:
       unit: "%"
       baselines:
         - { name: "Adaptive ECMS", kind: classical, value: 97.39 }
+        - { name: "ECMS (constant s)", kind: classical, value: 98.98 }
         - { name: "Rule-based", kind: classical, value: 96.60 }
-      verdict: mixed
-      note: "Series buses +0.70 [+0.21, +1.29]; P2 buses −0.48 [−0.63, −0.40]."
+      verdict: loss
+      note: "Constant-s ECMS beats it on series buses (98.60 vs 96.78) and P2 buses (99.36 vs 98.23), holding charge on every trip. Against A-ECMS: series buses +0.70 [+0.21, +1.29]; P2 buses −0.48 [−0.63, −0.40]."
     - metric: Charge held within its window (all trips)
       better: higher
       model: 95
@@ -162,12 +164,13 @@ exam:
 
 wins:
   - "Reaches 98.84% of the DP optimum on 430 exam trips against 98.32% for adaptive ECMS (+0.53 points, CI [+0.20, +0.82]), 97.39% for rule-based control and 98.80% for MPC, which sees 15 s of the future."
-  - "Clear gains on power-split hybrids (+0.89 points), P2 (+1.32), series hybrids (+1.04), mild hybrids (+0.60) and series buses (+0.70)."
+  - "Clear gains against A-ECMS on power-split hybrids (+0.89 points), P2 (+1.32), series hybrids (+1.04), mild hybrids (+0.60) and series buses (+0.70)."
   - "Fewer engine starts than A-ECMS (4.0 vs 4.5 per km)."
   - "With HybridPilot driving them, the calibrated twins' fuel is within 3% of logged fuel for exam hybrids (trip median)."
 losses:
   - "Plug-ins: −0.29 points (power-split) and −0.35 (series) against A-ECMS, inside wide intervals."
-  - "P2 buses: −0.48 points."
+  - "Buses: constant-s ECMS reaches 98.98% of DP against 97.50%, holding charge on every bus trip; against A-ECMS, P2 buses −0.48 points."
+  - "Mild hybrids: constant-s ECMS scores 98.72% against 98.10%, though it holds charge on only 43% of those trips."
   - "The v1 release, re-scored on v2, burns 0.16 points less fuel, but fails to hold charge on 11% of trips."
   - "Holds charge on 95% of trips against A-ECMS's 96%."
 limits:

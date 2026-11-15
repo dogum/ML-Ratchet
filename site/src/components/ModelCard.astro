@@ -1,5 +1,5 @@
 ---
-import type { Model } from '../lib/data';
+import { qualifier, type Model } from '../lib/data';
 import { mainLadder } from '../lib/ladder';
 import { url } from '../lib/url';
 import Sparkline from './Sparkline.astro';
@@ -7,6 +7,7 @@ interface Props { m: Model; index: number }
 const { m, index } = Astro.props;
 const lad = mainLadder(m.ladders);
 const marks = m.exam.results.map((r) => r.verdict);
+const qual = qualifier(m);
 ---
 <a class="card reveal" href={url(`models/${m.id}/`)} style={`--c:${m.accent}; transition-delay:${(index % 3) * 70}ms`}>
   <div class="top">
@@ -15,6 +16,7 @@ const marks = m.exam.results.map((r) => r.verdict);
     <span class="badges">
       {m.hasInstrument && <span class="kicker live"><i></i>live</span>}
       {m.status === 'partial' && <span class="kicker partial">exam partly pending</span>}
+      {qual && <span class="kicker qual" title={m.disclaimer}>{qual}</span>}
     </span>
   </div>
   <h3 class="display name">{m.name}</h3>
@@ -48,8 +50,9 @@ const marks = m.exam.results.map((r) => r.verdict);
   .card:hover::before { transform: scaleX(1); }
   .top { display: flex; align-items: baseline; gap: 12px; }
   .idx { font-size: 11px; color: var(--c); }
-  .badges { margin-left: auto; display: flex; gap: 10px; }
+  .badges { margin-left: auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 10px; }
   .partial { color: var(--c); }
+  .qual { color: var(--ink-2); border: 1px solid var(--rule); border-radius: 999px; padding: 1px 7px; }
   .live { display: inline-flex; align-items: center; gap: 5px; color: var(--c); }
   .live i { width: 6px; height: 6px; border-radius: 50%; background: var(--c); box-shadow: 0 0 6px var(--c); }
   .name { font-size: 44px; line-height: 0.95; }

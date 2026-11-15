@@ -1,5 +1,5 @@
-> **Lab notebook.** The build notes as recorded during the original work in a cloud sandbox (Oct–Nov 2026), kept
-> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that sandbox: in this repository
+> **Lab notebook.** The build notes as recorded during the original build in a cloud project (Oct–Nov 2026), kept
+> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that build machine: in this repository
 > the code is in `training/` and everything it writes goes to `work/` (see `training/_paths.py`). Page links to
 > claude.ai are the original private copies; the lab now lives at `lab/index.html`.
 
@@ -52,3 +52,7 @@ Speed: CWRU nominal error 1.36 % → 0.35 % (coverage 80 % at 1σ, 97 % at 2σ, 
 - CWRU normal-baseline files are 48 kHz (not 12 kHz). Some CWRU 48 kHz files are 1.3–2.7 s (mirror-padded).
 - Paderborn .rar archives read with libarchive-c; MFPT no longer offers downloads (contact-only).
 - 2 shared cores: r2 (6000 steps) took ~1 h wall under contention.
+
+## Corrections
+
+- 14 Nov 2026: ratchet.yaml: the rule said dev balanced accuracy 'does not fall'; training/ratchet.py keeps a rung if it is no more than 0.03 below the incumbent (d >= -0.03), as the card says. The rule text now matches the code. Card: the code credit line now reads 'Code and weights: MIT (ML Ratchet)'. No decision changed.

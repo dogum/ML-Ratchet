@@ -56,7 +56,7 @@ Coverage of the 68% error bars on the exam: νmax (4 yr) **72%**, Δν (4 yr) **
 
 ### Where it wins
 
-- On short light curves (≤ 1 year) it beats the classical pipeline, by a lot at 27–90 days.
+- On light curves of 90 days and shorter it beats the classical pipeline, by a lot (νmax 2.2 % vs 3.9 % at 90 days, 3.6 % vs 16 % at 27 days); at 1 year the two tie (1.68 vs 1.67 %).
 - Finds 100% of giants from 27 days against 39.5% for the classical comb test.
 
 ### Where it loses

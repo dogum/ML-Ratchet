@@ -1,5 +1,5 @@
-> **Lab notebook.** The build notes as recorded during the original work in a cloud sandbox (Oct–Nov 2026), kept
-> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that sandbox: in this repository
+> **Lab notebook.** The build notes as recorded during the original build in a cloud project (Oct–Nov 2026), kept
+> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that build machine: in this repository
 > the code is in `training/` and everything it writes goes to `work/` (see `training/_paths.py`). Page links to
 > claude.ai are the original private copies; the lab now lives at `lab/index.html`.
 
@@ -153,3 +153,7 @@ One seismometer, one earthquake: from 41 minutes of three-component ground veloc
   - QLAYERS
   - QSTF
   - QNOISE
+
+## Corrections
+
+- 14 Nov 2026: model.yaml: the magnitude and distance rows said 'median |error|' but are means (training/qnet.py: mw_mae, dist_mae), so they now read 'mean |error|'. The very-deep limit said ratio 0.83; recomputed from the exam data in lab/index.html (284 quakes at 500–700 km, released model) the median predicted/true depth ratio is 0.87, as the card already said, so model.yaml now reads 0.87. The 0.83 in this notebook's 'next rungs' above is not reproduced by that data. No verdict changed.

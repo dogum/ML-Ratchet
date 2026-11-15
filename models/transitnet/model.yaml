@@ -120,6 +120,8 @@ limits:
   - Some real planets score low (TOI-2109 b at 0.00, TOI-1518 b at 0.30).
   - The candidates already passed SPOC vetting, so the false positives are the hard ones.
   - Claret limb-darkening tables were unreachable; the prior comes from dev fits.
+help_wanted:
+  - "Limb-darkening tables: VizieR / CDS reset the connection from the shared build machine, so the Claret TESS tables could not be used and limb darkening is a broad prior fitted on the dev planets. With the tables (or a reachable mirror) it could be set per star."
 next:
   - A physical planet-size cap, low-mass stellar companions and R* as an input, against SB1-type false positives.
   - Difference-image centroids instead of MOM_CENTR.

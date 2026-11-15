@@ -142,3 +142,12 @@ Leafs within 150 kg: met (119, 105 kg). Beat the rule on powertrain type: not me
 **Next.** Powertrain type: the dev-measured VED channel mix (p2r9) fixed the dev cars but gained only +0.001 in
 simulation; the objective weights 7 architectures, not the 4 VED types. A dev twin check of Prius-c-type HEVs under
 physics v2. For buses, a measurement model for the ZTBus power log before the physics head can help.
+
+## 14 Nov 2026 — card corrections after a site audit (no model change)
+
+- **A claim moved from wins to losses.** The wins list said "the two Leafs read within 120 kg", but the Leafs exam
+  row is a loss: 119 / 105 kg against 0 / 0 kg for the dev median, which happens to be their 3,500 lb class. The
+  V2_PLAN target (within 150 kg) is met; the dumb guess is still better. The line now sits in the losses. Verdict
+  unchanged (loss).
+- Ladder names quoted and dated ("v1.0 — RoadSim physics v1 (12-13 Nov 2026)", "v2.0 — ... (Phase D, 14 Nov 2026)"),
+  as EnergyNet and HybridPilot.

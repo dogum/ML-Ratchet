@@ -74,7 +74,7 @@ Coverage of the 68% error bars on the exam: NMC811 capacity (all readings) **61%
 
 - Severson's models, trained on 41 real cells, still forecast lifetime better (13–15% vs 22%).
 - Last quarter of life — worn cells read about 6% too healthy (36% life error).
-- Partial discharges stopped at 0.6 Ah or below are no better than assuming no fade.
+- Partial discharges stopped at 0.45–0.6 Ah are no better than assuming no fade (52.0 and 46.5 vs 45.7 mAh); at 0.30 Ah it beats no-fade, 41.8 vs 45.7 mAh.
 - NMC811: over all cut-short C/20 tests it errs by 135 mAh; always guessing the dev median errs by 105. Worst stopped at 1.5 Ah (169–196 mAh).
 - NMC811: its 68% error bars cover 36–66% of cut-short readings.
 

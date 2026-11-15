@@ -22,17 +22,17 @@ The losses are published too.
 | Model | The question it answers | Real exam | Record vs baselines |
 |---|---|---|---|
 | [**ChirpNet**](models/chirpnet/) | Is there a black-hole or neutron-star merger in this LIGO data, and how heavy was it? | 13 events from O1–O3 + time-slid background | 8 wins · 3 losses |
-| [**SunDoctor**](models/sundoctor/) | Why did this solar array make less power today, and what did each cause cost? | 2 real PV farms, independent answer keys | 4 wins · 0 losses · 1 tie |
+| [**SunDoctor**](models/sundoctor/) | Why did this solar array make less power today, and what did each cause cost? | 2 real PV farms, independent answer keys | 3 wins · 1 loss · 1 tie |
 | [**CellSense**](models/cellsense/) | How worn is this battery cell, why, and how many cycles are left? (LFP, and now NMC811) | 118 LFP cells + 7 NMC811 cells | 3 wins · 4 losses · 2 mixed · 1 tie |
 | [**TransitNet**](models/transitnet/) | Is this dip in a TESS light curve a planet, and how big is it? | 1,196 planets + 832 false positives | 3 wins · 2 losses |
 | [**QuakeNet**](models/quakenet/) | How big, how far, how deep, which way — from one seismometer? | 3,105 one-station records | 4 wins · 1 loss |
 | [**BearingNet**](models/bearingnet/) | Healthy, or an outer-race, inner-race or ball defect? | 2 rigs, one never heard | 3 wins · 3 losses |
-| [**SwellCast**](models/swellcast/) | How far away was the storm whose swell is arriving at this buoy? | 288 hurricane-swell arrivals | 2 wins · 2 losses |
+| [**SwellCast**](models/swellcast/) | How far away was the storm whose swell is arriving at this buoy? | 288 hurricane-swell arrivals | 1 win · 2 losses · 1 tie |
 | [**BeatNet**](models/beatnet/) | Is each heartbeat normal, supraventricular, ventricular or fusion? *(research only)* | MIT-BIH DS2, 49,705 beats | 3 wins · 2 losses |
 | [**StarQuake**](models/starquake/) | How massive and how big is this red giant, from how it rings? | 420 Kepler giants × 5 lengths | 4 wins · 1 loss · 1 tie |
 | [**EnergyNet**](models/energynet/) | How much fuel or electricity will this trip take, and where does it go? | 25,793 VED trips, EPA tests, buses, trucks | 10 wins · 6 losses |
 | [**TripDetective**](models/tripdetective/) | From a trip log alone: what powertrain, how heavy, what engine, how much drag? | 350 real cars + 5,847 Zurich bus legs | 3 wins · 3 losses |
-| [**HybridPilot**](models/hybridpilot/) | How should a hybrid run its engine, second by second? *(graded in simulation)* | 430 real routes, simulated twins | 5 wins · 3 losses · 1 mixed |
+| [**HybridPilot**](models/hybridpilot/) | How should a hybrid run its engine, second by second? *(graded in simulation)* | 430 real routes, simulated twins | 4 wins · 4 losses · 1 mixed |
 | [**GridPulse**](models/gridpulse/) | From the grid frequency after a trip: MW lost, inertia, and how low it will go | 412 real GB trips (NESO 1 s), 292 ERCOT reports | 5 wins · 6 losses |
 | [**BatteryPilot**](models/batterypilot/) | When should a grid battery buy and sell, knowing only what is known before the hour? | 48 real node-years, ERCOT 2023-25 + CAISO 2024-25 | 2 wins · 6 losses |
 | [**PlantDetective**](models/plantdetective/) | What is this power unit, and how flexibly does it run, from its hourly output? | 395 real Texas CAMPD units, 2018-2025 | 8 wins · 9 losses |
@@ -85,7 +85,7 @@ QuakeNet = mlratchet.load("quakenet").QuakeNet     # imports in isolation; model
 6. **One final exam** on real data that chose nothing — beside a classical method and a dumb baseline, with error-bar
    coverage and where it fails.
 
-Read [docs/method.md](docs/method.md) for the why, and [docs/lessons.md](docs/lessons.md) for what the first nine models taught.
+Read [docs/method.md](docs/method.md) for the why, and [docs/lessons.md](docs/lessons.md) for what building them taught.
 
 ## Repository layout
 
@@ -109,23 +109,24 @@ site/                 the website (Astro + TypeScript), built from models/ and d
 shared/vehicle/       a shared platform: RoadSim (whole-vehicle simulator) + RoadData (real trips, frozen splits)
 shared/grid/          a shared platform: GridSim (power-system simulator) + GridData (real grid data, frozen splits;
                       `mlratchet data grid` fetches it)
-tests/                core tests, the contract, the vehicle platform, and every demo against its golden output
+tests/                core tests, the contract, the vehicle and grid platforms, and every demo against its golden output
 ```
 
 ## Add a model
 
 ```bash
 pip install -e ".[dev]"
-mlratchet new gridpulse --name GridPulse
-mlratchet validate gridpulse
+mlratchet new watershed --name Watershed
+mlratchet validate watershed
 ```
 
 Then follow [docs/adding-a-model.md](docs/adding-a-model.md). Building with an AI research agent? Hand it
-[docs/agent-brief.md](docs/agent-brief.md) — the last four models were built by parallel agents from that brief.
-Twelve candidates with physics, data and an exam already lined up are in [the backlog](docs/backlog.md).
+[docs/agent-brief.md](docs/agent-brief.md); BearingNet, SwellCast, BeatNet and StarQuake were built from it.
+Candidates with physics, data and an exam already lined up are in [the backlog](docs/backlog.md).
 
-**Help wanted:** CellSense's other chemistries are waiting on data (ChirpNet's O3 exam, once blocked the same way,
-is now done: 7 of 7 in-range events found). See [docs/roadmap.md](docs/roadmap.md).
+**Help wanted:** data the builds could not reach, listed per model under "help wanted" on the
+[website's backlog page](https://dogum.github.io/ML-Ratchet/backlog/#upgrades) (from each `model.yaml`), and the
+collection-level plans in [docs/roadmap.md](docs/roadmap.md).
 
 ## Licence and data
 

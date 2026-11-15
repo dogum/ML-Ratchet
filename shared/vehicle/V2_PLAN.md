@@ -22,6 +22,11 @@ physics change bumps `PHYSICS_VERSION`, rebuilds the frozen sets and re-takes ev
 2. A training extra (`pip install -e ".[train]"`: torch with CUDA). Inference stays numpy-only.
 3. Freeze the v1 scoreboard: every check, every model's frozen-set skill and exam numbers, in `checks/v1_baseline.json`.
 
+**Done 13 Nov 2026.** `mlratchet data vehicle` (`data/build.py`) rebuilds RoadData from the raw downloads: the splits
+reproduce and all 232 tracked tables and the baselines match. The `[train]` extra exists. The v1 scoreboard is
+`checks/scoreboard_roadsim-physics-v1.json` (not `v1_baseline.json`), with a 171-run v1 fingerprint
+(`tests/golden/roadsim_v1_fingerprint.json`).
+
 ## Phase B — RoadSim physics v2 (each fix calibrated on dev, judged on held-out)
 
 | Gap (v1) | Fix | Done when |
@@ -40,12 +45,24 @@ physics change bumps `PHYSICS_VERSION`, rebuilds the frozen sets and re-takes ev
 
 Kept from v1 and re-run after every change: ledger closure (600 stress runs), EPA held-out checks, FASTSim cross-check.
 
+**Done 13 Nov 2026** (physics v2 frozen and made the default; CALIBRATION.md H0-H10, held-out results in
+roadsim/LIMITS.md). Met: conventional FTP / HWY medians (+0.4 / −1.9 %), e:HEV (HWY −3.8 %), conventional cold and A/C
+(n 2 each), P2 held-out FTP median (−4.0 %), BEVs, ledger. Not met: the conventional IQR (12.1 → 12.4), the P2 spread
+(TMED too thirsty, converter P2s too frugal), plug-in twins, generated hybrids, hybrid bus; power-split EPA cycles got
+worse (FTP +1.0 → −5.1 %). Later hybrid passes v2.1, v3 and v3.1 (14 Nov 2026) are options, not the default (decisions
+log below).
+
 ## Phase C — more real data
 
 - Full ZTBus (1,409 missions, passengers per second): EnergyNet's bus exam, TripDetective's bus mass from passengers.
 - Argonne D3 (10 Hz dyno tests of modern HEVs, PHEVs, BEVs with fuel, current, engine speed, temperature): **needs
   a browser download.** Best calibration data for P2, e:HEV, cold and A/C. Dev and a second exam, split by vehicle.
 - A model-year input for EnergyNet from fueleconomy.gov, so modern cars stop inheriting the old-fleet prior.
+
+**Done 13-14 Nov 2026.** Full ZTBus in RoadData (13 Nov; 1,409 missions, by-month split 294 dev / 1,115 exam). Argonne
+D3 fetched from its public Box folders (13 Nov; the vehicle-to-folder table was read once in a browser): 65 vehicles,
+1,661 usable tests, dev and exam split by vehicle (data/D3.md). EnergyNet's model-year input: rung v2-r7, kept
+(14 Nov). NREL Fleet DNA is still blocked.
 
 ## Phase D — rebuild and re-score the three models on physics v2 (GPU)
 
@@ -58,6 +75,13 @@ Kept from v1 and re-run after every change: ledger closure (600 stress runs), EP
   proxy with minimum on/off times. Target: a clear win over A-ECMS overall, and the simulator–real gap under 8%.
 
 Every rung logged, kept or not; new win/loss tables; instruments re-exported.
+
+**Done 14 Nov 2026.** All three rebuilt on physics v2, every decision re-taken, examined once (each model's NOTEBOOK).
+EnergyNet: hybrids beat MOVES-like (13.5 vs 15.3 %), met; EVs (22.6 vs 19.0 %), not met; 68 % bands cover 61 % pooled,
+met (petrol 57 %, Leafs 43 %: not). TripDetective: +800 kg moves the mass +524 kg, met; Leafs within 150 kg (119 /
+105 kg), met; the rule on powertrain type (97.1 vs 99.4 %), not met. HybridPilot: +0.53 points of DP over A-ECMS
+[+0.20, +0.82], met; simulator-real gap under 8 % for exam hybrids (+0.3 to +2.2 %), met, not for plug-ins (−22 /
+−31 %).
 
 ## Phase E — the garage
 

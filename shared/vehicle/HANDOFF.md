@@ -2,7 +2,8 @@
 
 Written 13 Nov 2026 for the repository integration pass. This is the "make it complete" list for the whole-vehicle work in ML Ratchet
 (github.com/dogum/ML-Ratchet). Read this first, then `VEHICLE_BRIEF.md` (the contract), `roadsim/README.md`,
-`roadsim/LIMITS.md` and `data/DATA.md`.
+`roadsim/LIMITS.md` and `data/DATA.md`. Sections 1-6 are kept as written on 13 Nov; what has been done since is in
+"Status, 14 Nov 2026" below and in [V2_PLAN.md](V2_PLAN.md) (decisions log).
 
 ## 1. What exists
 
@@ -11,9 +12,9 @@ Written 13 Nov 2026 for the repository integration pass. This is the "make it co
 | RoadSim simulator (`roadsim`, numpy/scipy) | `roadsim-roaddata-v1.0.zip` → `roadsim/` | v1, verified (section 3) |
 | Real data loader (`realdata`), frozen splits, baselines | same zip → `realdata/`, `data/` | v1, two bugs fixed 13 Nov |
 | Physics checks and their JSONs | same zip → `checks/` (`run_all.sh`) | pass; numbers in `roadsim/README.md` |
-| EnergyNet (trip energy predictor) | `energynet-v1.0.zip`, page now `models/energynet/lab/` | v1.0 released |
-| TripDetective (infers the car from a log) | `tripdetective-v1.0.zip`, page now `models/tripdetective/lab/` | v1.0 released |
-| HybridPilot (learned hybrid energy management) | `hybridpilot-v1.0.zip`, page now `models/hybridpilot/lab/` | v1.0 released |
+| EnergyNet (trip energy predictor) | `energynet-v1.0.zip`, page now `models/energynet/lab/` | v1.0 released; v2.0 released 14 Nov 2026 (`models/energynet/`, physics v2) |
+| TripDetective (infers the car from a log) | `tripdetective-v1.0.zip`, page now `models/tripdetective/lab/` | v1.0 released; v2.0 released 14 Nov 2026 (`models/tripdetective/`, physics v2) |
+| HybridPilot (learned hybrid energy management) | `hybridpilot-v1.0.zip`, page now `models/hybridpilot/lab/` | v1.0 released; v2.0 released 14 Nov 2026 (`models/hybridpilot/`, physics v2) |
 | Status docs | the cloud project where the vehicle work was built: `roadsim-status.md`, `energynet-status.md`, `tripdetective-status.md`, `hybridpilot-status.md` | current |
 
 - Each model zip has a numpy-only inference module, weights, a demo on real exam data, `MODEL_CARD.md`, and `training/` with every script, including the dev-calibration wrappers listed in section 4.
@@ -68,6 +69,37 @@ These are from `checks/*.json`. Re-run `checks/run_all.sh` after any physics cha
   - US06 +0.2 % (n = 5)
 - **FASTSim 3.1 with the same components:** conventional within 3 %, BEV within 4 %.
 - **Exam numbers per model** are in each status doc and `MODEL_CARD.md`. Record them before changing anything, then re-score.
+
+## Status, 14 Nov 2026
+
+- **P0.1 paths: done.** No `/home/claude` or `/mnt/user-data` in any script; one root (`ML_RATCHET_VEHICLE`, default
+  `shared/vehicle`), and model training scripts find it through `training/_paths.py`.
+- **P0.2 package layout: done**, as `shared/vehicle/roadsim` and `shared/vehicle/realdata` (`pip install -e
+  ".[vehicle]"`), and `models/energynet`, `models/tripdetective`, `models/hybridpilot`, each with `model.yaml` and
+  `ratchet.yaml`; `mlratchet validate` passes for all three.
+- **P0.3 data rebuild: done** as `mlratchet data vehicle` (`data/build.py`, 13 Nov 2026): the frozen splits
+  (d917df78…) reproduce, and all 232 tracked tables and the baselines match the shipped ones.
+- **P0.4 licences: done** (`DATA_LICENSES.md`, vehicle rows, D3's attribution included).
+- **P0.5 wrappers upstream: done in physics v2** (13 Nov 2026): the MAF label model and the OBD logger emulator in
+  `roadsim/obd.py`, on-road loads re-fitted on VED dev twins (`onroad_aux_W`), the Toyota engine-on rule
+  (`ps_engine_on_kph` 45 km/h), plug-in engine heat, P2 converter and start energy, and the D3 plug-in pack-power rule.
+  Two stay in the models: TripDetective's VED-era mass prior (`training/priors.py`) and HybridPilot's matched-SOC
+  grading.
+- **P1 simulator gaps: partly done.** Inside their "done when" on held-out data: Honda e:HEV (HWY −9.5 → −3.8 %),
+  conventional cold (20 °F FTP −5.5 %, n 2) and A/C (SC03 +1.9 %, n 2), the city/highway tilt (FTP +0.4, HWY −1.9 %;
+  the IQR was not halved), P2 FTP median (−4.0 %; the spread is not: TMED too thirsty, converter P2s too frugal), BEV
+  per trip (D3 exam −2.0 %). Open: plug-in twins, hybrid bus, Class 8 BEV, per-engine spread, generated hybrids,
+  older Toyota engines. Numbers: `roadsim/LIMITS.md`.
+- **P1 real data: partly done.** Argonne D3 (65 vehicles, 1,661 usable tests, dev and exam by vehicle) and the full
+  ZTBus set (1,409 missions, by-month split) are in; EnergyNet reads the model year. NREL Fleet DNA is still blocked.
+- **P2 physics: partly done**, as v2 options: 10 Hz sub-steps (off in the preset), a brush tyre model (on), a human
+  driver model, gusts and drafting (off), road-height wind (on), battery aging as an input. Not done: HVAC humidity
+  and preconditioning, heavy-duty AMT and retarder, more architectures beyond the mild P1 twins.
+- **P2 model next steps:** done in the v2.0 rebuilds (14 Nov 2026), each with its ratchet and exam in the model
+  folder; what is still open is in each `model.yaml` under `next`.
+- **P3: done in part.** The garage page (`site/src/pages/garage.astro`, V2_PLAN Phase E) and the three pages on the
+  site (each model's `lab/` and live instrument). MCP tools: not built.
+- The verification baseline of section 3 is physics v1's; v2's held-out numbers are in `roadsim/LIMITS.md`.
 
 ## 4. Prioritised work list
 

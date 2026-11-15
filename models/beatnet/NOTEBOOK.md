@@ -1,5 +1,5 @@
-> **Lab notebook.** The build notes as recorded during the original work in a cloud sandbox (Oct–Nov 2026), kept
-> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that sandbox: in this repository
+> **Lab notebook.** The build notes as recorded during the original build in a cloud project (Oct–Nov 2026), kept
+> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that build machine: in this repository
 > the code is in `training/` and everything it writes goes to `work/` (see `training/_paths.py`). Page links to
 > claude.ai are the original private copies; the lab now lives at `lab/index.html`.
 
@@ -69,3 +69,7 @@ Note: DS2 macro-F1 fell from r1 to r2; the exam never decided anything, so it is
 - `setsid nohup ... &` from a background job forks: `$!` is not the job PID. Find the PID with `ps` before writing `pids/`.
 - Other agents also run files named `train.py`/`simbank.py`: never kill by name.
 - wfdb from pip reads format 212 and .atr directly; PhysioNet endpoints worked without issue.
+
+## Corrections
+
+- 14 Nov 2026: Card: S-beat coupling on dev is 0.56 of the local RR (calib_coupling.json median 0.555), was written 0.55; QRS-width error on QT DB lead MLII is 18 ms (exam.json 17.99), was written 17 ms. The demo now prints 'Research and teaching only. Not a medical device.' first; tests/golden/beatnet.txt was regenerated for that one line. No verdict changed.

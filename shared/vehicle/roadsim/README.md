@@ -5,9 +5,9 @@ gasoline/diesel, hybrid of four kinds, plug-in, battery-electric) over any 1 Hz 
 weather, or a test cycle), second by second, and returns every force, power flow and state, plus an **energy ledger**
 that must balance on every run.
 
-Part of ML Ratchet ("Trained on physics. Graded on reality."), Phase 1 of the vehicle project. Phase 2 trains
-EnergyNet, Detective and Controller on it. Known errors are listed in [LIMITS.md](LIMITS.md); every check is a JSON
-file in `road/checks/` with its numbers.
+Part of ML Ratchet ("Trained on physics. Graded on reality."), the shared simulator of the vehicle platform. EnergyNet,
+TripDetective and HybridPilot are trained on it. Known errors are listed in [LIMITS.md](LIMITS.md); every check is a
+JSON file in `shared/vehicle/checks/` with its numbers.
 
 ## Quick start
 
@@ -87,7 +87,7 @@ default is the v1 behaviour, so v1 is always one name away and reproduces exactl
 
 | name | what it is |
 |---|---|
-| `roadsim-physics-v1` | the Phase 1 simulator (13 Nov 2026); the three released models were trained and scored on it and pin it |
+| `roadsim-physics-v1` | the Phase 1 simulator (13 Nov 2026); the three models' v1.0 releases were trained and scored on it (their v2.0 releases of 14 Nov 2026 pin `roadsim-physics-v2`) |
 | `roadsim-physics-v2` | **the default.** v2 physics calibrated on dev data only, fitted numbers in `roadsim/data/calibration_v2.json` (each with its dev source), decisions and dev numbers in [CALIBRATION.md](CALIBRATION.md), held-out results in [LIMITS.md](LIMITS.md) |
 | `roadsim-physics-v2.1` | v2 plus the hybrid fix pass of 14 Nov 2026 (`roadsim/data/calibration_v2_1.json`): a running engine keeps running for 2 s into a braking event. Hybrid and plug-in runs only; every other run equals v2 (`tests/test_roadsim_v2_fingerprint.py`). Not the default: its dev gain on fuel is not clear (CALIBRATION.md H11-H20; exam-2 results in LIMITS.md) |
 | `roadsim-physics-v3` | v2.1 plus the hardware pass of 14 Nov 2026 (`roadsim/data/calibration_v3.json`): older Toyota / Lexus hybrid engines by model year (`engine_era`: the TNGA map's efficiency x published peak BTE 37 / 38.5 / 40 % over 41 %), the converter held open in 1st and 2nd gear in P2 automatics, and the generator's hybrid hardware and plug-in pack-power rules. Hybrid, plug-in and generated-vehicle runs only; every other run equals v2. Not the default: the dev gain is small and rests on three dev vehicles (CALIBRATION.md H21-H26; exam-3 results in LIMITS.md) |
@@ -230,7 +230,7 @@ after Sciarretta 2004). A-ECMS: s from SOC feedback (Onori, Serrao & Rizzoni 201
 MPC: the same recursion on a 15 s preview with an ECMS terminal value. Rule-based strategies use hysteresis and minimum
 on/off times; hybrids force the engine on for catalyst light-off after a cold start (10 s) and for cabin heat.
 
-## Verification (numbers in `road/checks/*.json`)
+## Verification of physics v1 (numbers in `shared/vehicle/checks/*.json`, plain names; v2 held-out results: [LIMITS.md](LIMITS.md))
 
 | check (file) | what | result |
 |---|---|---|

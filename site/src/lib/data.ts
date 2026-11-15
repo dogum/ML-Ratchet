@@ -24,7 +24,7 @@ export interface Approach {
 export interface Card {
   id: string; name: string; version: string; status: 'released' | 'partial' | 'in-progress' | 'idea';
   released?: string | Date | null; order?: number; domain: string; tags?: string[]; accent: string;
-  tagline: string; question: string; summary: string; disclaimer?: string;
+  tagline: string; question: string; question_short?: string; summary: string; disclaimer?: string;
   reads: string; returns: string[];
   physics: { summary: string; simulator: string[]; checks: string[] };
   noise?: string; network?: string;
@@ -56,6 +56,11 @@ export interface Model extends Card {
 
 const read = <T>(p: string): T => yaml.load(readFileSync(p, 'utf-8')) as T;
 
+/** Ladder names as visitors see them: build-phase labels ("Phase D") are internal to the platform plans and are
+ *  dropped on the site; ratchet.yaml keeps them. "v2.0 — … (Phase D, 14 Nov 2026)" -> "v2.0 — … (14 Nov 2026)". */
+export const displayLadderName = (name: string) =>
+  name.replace(/\bPhase [A-Z],\s*/g, '').replace(/\s*\(Phase [A-Z]\)/g, '').replace(/,\s*Phase [A-Z]\b/g, '');
+
 let cache: Model[] | null = null;
 
 export function getModels(): Model[] {
@@ -74,7 +79,7 @@ export function getModels(): Model[] {
     const rungs = lad.ladders.flatMap((l) => l.rungs);
     out.push({
       ...card,
-      ladders: lad.ladders,
+      ladders: lad.ladders.map((l) => ({ ...l, name: displayLadderName(l.name) })),
       hasLab: existsSync(lab),
       hasInstrument: existsSync(join(REPO_ROOT, 'site', 'public', 'instruments', id, 'reference.json')),
       labBytes: existsSync(lab) ? statSync(lab).size : 0,
@@ -89,6 +94,16 @@ export function getModels(): Model[] {
 }
 
 export const getModel = (id: string) => getModels().find((m) => m.id === id);
+
+/** A short qualifier for a model, the one the README table shows: the "*(…)*" ending of `question_short`
+ *  ("research only", "graded in simulation"), else the first sentence of `disclaimer`, else nothing. */
+export function qualifier(m: Pick<Card, 'question_short' | 'disclaimer'>): string | null {
+  const q = m.question_short?.match(/\*\(([^)]+)\)\*\s*$/);
+  if (q) return q[1];
+  const d = m.disclaimer?.trim();
+  if (!d) return null;
+  return d.split(/(?<=\.)\s/)[0].replace(/\.$/, '');
+}
 
 export function collectionStats() {
   const ms = getModels();
@@ -105,11 +120,15 @@ export function collectionStats() {
   };
 }
 
+/** backlog.yaml `kind`: a new model (the default), a shared simulator, data for existing models, or a method change. */
+export type IdeaKind = 'model' | 'platform' | 'data' | 'method';
 export interface Idea {
-  id: string; name: string; domain: string; question: string; physics: string;
+  id: string; name: string; kind?: IdeaKind; domain: string; question: string; physics: string;
   data: string; data_url: string; exam: string; status: string; note?: string;
 }
 export const getBacklog = (): Idea[] => read<{ ideas: Idea[] }>(join(REPO_ROOT, 'docs', 'backlog.yaml')).ideas;
+/** Only the ideas for new models (no platform, data or method items). */
+export const getModelIdeas = (): Idea[] => getBacklog().filter((i) => (i.kind ?? 'model') === 'model');
 
 // ---- formatting --------------------------------------------------------------------------------
 export function fmt(v: number | string, unit?: string): string {

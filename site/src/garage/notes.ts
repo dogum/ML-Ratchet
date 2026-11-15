@@ -11,7 +11,7 @@ export const COMMON: string[] = [
 export const NOTES: Record<string, Note[]> = {
   sedan: [
     { who: 'RoadSim', text: 'Conventional cars are its best case: held-out EPA FTP +0.4 %, highway −1.9 % (median). But one of ten benchmark maps stands in for each engine, so single cars scatter (FTP IQR 12 points).' },
-    { who: 'EnergyNet', text: 'Petrol cars are a win on real trips (8.7 % per trip). A/C is not: EPA SC03 tests read 18 % low, so expect the 35 °C forecast to under-call the air conditioning.' },
+    { who: 'EnergyNet', text: 'Petrol cars are a win on real trips (8.7 % per trip). A/C is not: EPA SC03 tests (hot, air conditioning on) read 18 % low, so expect the 35 °C forecast to under-call the air conditioning.' },
     { who: 'TripDetective', text: 'Mass within 127 kg per real car; CdA and rolling resistance are weakly identified (CdA × 1.5 moves its estimate by 3 %).' },
   ],
   prius: [

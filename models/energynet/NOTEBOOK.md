@@ -301,3 +301,21 @@ Release: `weights/r13_s*.npz`, `sigma_factors.json` (simulation factors per arch
 `examples/examples.json` rebuilt from today's RoadData (same five trips; VED mass without the double-counted 136 kg; model
 year), demo golden regenerated, live instrument re-exported (parity 32 cases, worst 1.3e-7; the JS port reads the model
 year, per-member masked inputs and the new error-bar factors).
+
+## 14 Nov 2026 — card corrections after a site audit (no model change)
+
+- **A claim moved from wins to losses.** The wins list said "EPA petrol highway bias gone (0.0%, v1.0 +15%)", but
+  the EPA petrol highway exam row is a loss: 6.7 % median error against 5.0 % for the log-linear regression on the
+  test car's own spec. The bias is gone; the error still loses. The wins line now names only the two EPA rows that
+  win (US06 5.1 vs 6.9 %, 20 °F cold FTP 9.5 vs 9.7 %); the highway result sits in the losses. Verdicts unchanged.
+- **Help wanted.** "Argonne D3 ... needs a browser download" was stale: D3 is in RoadData since 13 Nov 2026 (65
+  vehicles, 1,661 usable tests, split by vehicle). Using it as an EnergyNet dev and exam set is now a `next` item;
+  help wanted is NREL Fleet DNA (truck and bus traces, still blocked).
+- **ratchet.yaml** listed val2 versions a-e; rung v2-r5 was judged on val2[f] (a + plug-in patch) and v2-r10 on
+  val2[e+L]. Both added to `frozen_sets` and the note. `training/write_ratchet_yaml.py` still writes the old list.
+- **ZTBus link** in model.yaml pointed at handle 626734, which has no registered DOI; now
+  https://doi.org/10.3929/ethz-b-000626723 (as RoadData's DATA.md).
+- **MODEL_CARD** gained a physics-checks section (RoadSim v2 held-out EPA, ledger, ZTBus twin) and the parity numbers
+  that exist. No numpy-vs-torch parity number was logged in `training/`.
+- Ladder names: "v2.0 — RoadSim physics v2 ..." and "v1.0 — RoadSim physics v1 ...", as TripDetective and
+  HybridPilot.

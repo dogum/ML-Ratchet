@@ -24,10 +24,10 @@ Where the collection goes next, beyond each model's own next rungs (in its `mode
   for the grid platform `gridsim.dispatch`, `gridsim.frequency_event`, `gridpulse.read`, `batterypilot.run`,
   `plantdetective.read`, `demandcast.forecast`. `mlratchet.load()` already imports any model in isolation, which is most of the work.
 - **One design language for the labs.** The interactive pages were each built with their own visual identity.
-  The website now wraps them in one system; porting each lab natively into the site (shared JS network runtime,
-  shared chart components) is the next step.
-- **A shared JS runtime** for in-browser networks: numpy-equivalent conv/GELU/BatchNorm in TypeScript, with parity
-  tests against the Python modules.
+  The website now wraps them in one system, and every model runs live on its page; porting each original lab natively
+  into the site (shared chart components) is the next step.
+- ~~**A shared JS runtime** for in-browser networks.~~ Done 12 Nov 2026: `site/src/lib/nn` (numpy-equivalent layers in
+  TypeScript) runs all 16 instruments, each with parity tests against its Python module (`npm test` in `site/`).
 
 ## The method
 
@@ -37,11 +37,19 @@ Where the collection goes next, beyond each model's own next rungs (in its `mode
 
 ## The vehicle platform
 
-What is left to make it complete is in [shared/vehicle/HANDOFF.md](../shared/vehicle/HANDOFF.md); its status as of
-13 Nov 2026 is in [shared/vehicle/STATUS.md](../shared/vehicle/STATUS.md). In short: move the models' dev-calibrated
-wrappers into RoadSim (a new physics version), rebuild the frozen sets and re-score every rung; a `mlratchet data
-vehicle` command that rebuilds RoadData from the raw downloads; real heavy-duty traces for at least two truck and
-three bus types.
+RoadSim physics v2 (13 Nov 2026) took in the models' dev-calibrated wrappers, `mlratchet data vehicle` rebuilds
+RoadData from the raw downloads, Argonne D3 and the full ZTBus set are in, and the three models were rebuilt on v2 on
+14 Nov 2026; see [vehicle-platform.md](vehicle-platform.md). Status as of 14 Nov 2026:
+[shared/vehicle/V2_PLAN.md](../shared/vehicle/V2_PLAN.md) (decisions log) and
+[shared/vehicle/roadsim/LIMITS.md](../shared/vehicle/roadsim/LIMITS.md). What is open:
+
+1. **Real heavy-duty traces.** NREL Fleet DNA (truck and bus traces with fuel) is still blocked from scripts; heavy
+   duty needs at least two truck and three bus types graded on real traces.
+2. **The hybrid gaps after v3.1.** TMED P2s 8-10 % too thirsty, converter P2s +15 to +28 % too frugal in the city,
+   older Toyota/Lexus hybrids +14 to +44 % on the FTP, plug-ins on VED roads 20-23 % low, hybrid A/C. No clean judge
+   is left for a further hybrid pass: the next one needs new data first.
+3. **Heavy-duty traces into the models:** EnergyNet's trucks and Mersin buses still run on cycles and synthetic speed
+   profiles.
 
 ## The grid platform
 
@@ -57,7 +65,7 @@ GridSim, GridData and four models (GridPulse, BatteryPilot, PlantDetective, Dema
 3. **GridSim v2:** coal/gas commitment, scarcity pricing and low-net-load inertia inside their "done when"; era-aware
    frequency response; one more region (PJM or CAISO) dispatched and calibrated like ERCOT. Then every grid model's
    frozen set rebuilt and every rung re-scored, each with a published win/loss table.
-4. **Data:** a day-ahead forecast-weather archive (Open-Meteo previous runs; rate-limited from the cloud sandbox,
+4. **Data:** a day-ahead forecast-weather archive (Open-Meteo previous runs; rate-limited from the shared cloud build machine,
    reachable from the repository's own machine), sub-second frequency (PMU or FNET/GridEye), CAISO prices before
    2023-08, the 17 missing ERCOT monthly reports, CAMPD for more states than Texas.
 5. **DispatchNet,** a learned dispatcher graded on EIA-930 generation by fuel, real prices and speed, once the coal/gas

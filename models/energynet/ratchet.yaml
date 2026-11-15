@@ -1,14 +1,14 @@
 # The ratchet ladders, normalised. Raw logs: training/ratchet2.json + rungs2.json (Phase D), training/ratchet.json + rungs.json (v1).
 model: energynet
 ladders:
-  - name: "v2 (RoadSim physics v2, Phase D, 14 Nov 2026)"
+  - name: "v2.0 — RoadSim physics v2 (Phase D, 14 Nov 2026)"
     objective: "Skill = 1 - median |log error| / median |log error| of the class-median guess, on the frozen simulated set val2 (400 unseen generated vehicles x 10 trips on RoadSim physics v2)"
     rule: "Keep if the val2 skill beats the incumbent by more than 0.01 AND the dev score D2 (mean of 18 dev median errors: VED 4 fleets, EPA 9 tests, full-ZTBus dev legs and missions, Mersin, ICCT) gets no more than 0.01 worse. A rung that changes the simulated physics is judged on its own physics version of val2, the incumbent re-scored on it. Gate-only rungs (inputs only real data carries) must improve D2 by more than 0.01."
     margin: 0.01
     dev_gate: "D2 (mean of 18 dev MdAPEs) may not rise by more than 0.01"
-    frozen_sets: [val2_a, val2_b, val2_c, val2_d, val2_e]
+    frozen_sets: [val2_a, val2_b, val2_c, val2_d, val2_e, val2_f, val2_eL]
     scored_on: val2
-    note: "Versions of val2: a RoadSim v2 raw, b + OBD label model, c + v1's on-road wrapper, d c + v1's plug-in patch, e b + plug-in patch. Each rung is scored on the version it was judged on."
+    note: "Versions of val2: a RoadSim v2 raw, b + OBD label model, c + v1's on-road wrapper, d c + v1's plug-in patch, e b + plug-in patch, f a + plug-in patch (rung v2-r5), eL e with labels from RoadSim's EPA procedure emulation (rung v2-r10, 'e+L'). Each rung is scored on the version it was judged on."
     columns_source: Frozen-set median error and the dev score D2 (lower is better)
     columns: ["Val2 MdAPE", "Dev D2"]
     rungs:
@@ -28,7 +28,7 @@ ladders:
       - { id: v2-r11b, change: "twice the simulated data only (both banks, 57,600 trips), networks and training as r7", sim: 0.660, decision: rejected, why: "skill +0.009 on val2[e] (0.660 vs 0.651); dev D2 0.1195 vs 0.1260 (-0.0065)", metrics: ["7.9%", 0.1195] }
       - { id: v2-r13, change: "three times the simulated data (three banks on the same fleet, 86,400 trips), networks and training as r7", sim: 0.670, decision: released, why: "skill +0.019 on val2[e] (0.670 vs 0.651); dev D2 0.1195 vs 0.1260 (-0.0065)", metrics: ["7.7%", 0.1195] }
       - { id: v2-r12, change: "error bars: sigma x a per-architecture factor that brings the simulated val2 set to 68% (simulation only), then the dev factor per group", decision: kept, why: "leave-one-car-out on the 16 dev VED cars, mean |held-out coverage - 68%|: 0.064 vs 0.072 with v1 factors alone, 0.074 with a car-level term; no effect on the energy" }
-  - name: "v1 (RoadSim physics v1, 12 Nov 2026)"
+  - name: "v1.0 — RoadSim physics v1 (12 Nov 2026)"
     objective: "Skill = 1 − median |log error| / median |log error| of the class-median guess, on the frozen simulated validation set (3,991 examples from 400 unseen vehicles)"
     rule: Keep if the skill beats the incumbent by more than 0.01 AND the dev score D (mean of 15 dev median errors across VED fleets, EPA tests, ZTBus, Mersin and ICCT) gets no more than 0.01 worse.
     margin: 0.01

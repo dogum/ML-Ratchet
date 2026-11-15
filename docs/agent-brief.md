@@ -1,11 +1,11 @@
 # Brief for an AI research agent building a model in ML Ratchet
 
-Read this fully before starting. It is the recipe as a checklist, adapted from the brief the last four models
-(BearingNet, SwellCast, BeatNet, StarQuake) were built from by parallel agents. The original is in
+Read this fully before starting. It is the recipe as a checklist, adapted from the brief that BearingNet, SwellCast,
+BeatNet and StarQuake were built from. The original is in
 [history/agent-brief-2026-11.md](history/agent-brief-2026-11.md).
 
-You are building one new model for an open-source collection of physics-first ML models. The maintainer enjoys
-learning outside their field and prefers visual output and plain writing. Follow the recipe exactly.
+You are building one new model for an open-source collection of physics-first ML models. Write plainly; prefer
+figures. Follow the recipe exactly.
 
 ## Where you work
 

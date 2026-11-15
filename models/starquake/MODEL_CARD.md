@@ -27,7 +27,7 @@ Apodisation sinc^2(pi nu / 2 nu_Nyq). dnu from M, Teff and numax via the scaling
 Synthesis by inverse FFT on a grid twice the observed span; added to a real quiet-dwarf Kepler light curve (real noise and gaps).
 
 Verification (`training/physics_check.json`): chi^2 statistics mean 1.004, variance 1.001 (expected 1, 1);
-Parseval variance ratio 0.989-0.988; classical recovery on 24 simulated stars: numax 1.40%, dnu 0.58% median error;
+Parseval variance ratio 0.988–0.990; classical recovery on 24 simulated stars: numax 1.40%, dnu 0.58% median error;
 mixed modes 23 found vs 22.2 expected (numax 60, DPi1 75 s);
 scaling relations reproduce Yu et al.'s 16,094 masses and radii (median ratio 1.000, scatter 0.26% / 0.04% from rounding);
 simulated dnu-numax slope 0.764 (Yu catalogue 0.739, Mosser 2012 0.751); the Sun gives 3090 uHz / 135.1 uHz (by construction of the references).
@@ -90,7 +90,7 @@ Yu et al.'s radii 1.063 (8.1%); classical 1.055 (8.7%).
 ## Limits
 - On whole 4-year light curves the classical pipeline is better (0.9% vs 1.5% median νmax error, 0.6% vs 0.9% for Δν). The published answers were made with a similar pipeline on the same data, which favours it. StarQuake's advantage is on short light curves.
 - Δν from short light curves is hard: from 27 days only 23% of stars are within 2% and 46% are off by more than 5% (often by one comb tooth). The error bars do not fully catch these jumps.
-- False alarms: 12%–15% of unscreened quiet dwarfs are called oscillating (spots, eclipses and instrument trouble look like a hump). The classical comb test has fewer false alarms on full light curves (4%) but far more on short pieces.
+- False alarms: 11–15% of unscreened quiet dwarfs are called oscillating (spots, eclipses and instrument trouble look like a hump). The classical comb test has fewer false alarms on full light curves (4%) but far more on short pieces.
 - Masses carry a +3% median offset against Yu et al. (a small νmax bias, cubed). Radii from uncorrected scaling relations sit 8% above Gaia's (Yu et al.'s own: 6%); this is the known scaling-relation offset, not corrected here.
 - Error bars are too narrow on short pieces: within 1 sigma 72% / 78% of stars on whole light curves but 54% / 58% at 27 days (numax / dnu). The widening factor was fitted on dev pooled over lengths; a per-length factor is the obvious fix.
 - The most luminous giants (numax 8-15 uHz) read about 4% high in numax even from 4 years of data; the simulated twins of dev stars show the same bias, so it is the network, not the simulator.

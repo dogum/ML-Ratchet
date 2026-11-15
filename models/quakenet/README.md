@@ -46,8 +46,8 @@ print(r["mw"], r["dist"], r["depth"], r["baz"])
 
 | Metric | QuakeNet | Baselines | |
 |---|---|---|---|
-| Magnitude, median \|error\| | **0.13 Mw** | Ms, dev-calibrated (classical): 0.57 Mw | ✅ wins |
-| Distance, median \|error\| | **5.1 deg** | S−P time (classical): 13 deg | ✅ wins |
+| Magnitude, mean \|error\| | **0.13 Mw** | Ms, dev-calibrated (classical): 0.57 Mw | ✅ wins |
+| Distance, mean \|error\| | **5.1 deg** | S−P time (classical): 13 deg | ✅ wins |
 | Back-azimuth, median \|error\| | **6 deg** | P-wave polarisation (classical): 43.7 deg | ✅ wins |
 | Depth within a factor of 2 | **46%** | Always guess 31 km (dumb baseline): 22% | ✅ wins |
 | Shallow quakes (≤ 70 km), median depth \|error\| | **33 km** | Always guess 31 km (dumb baseline): 21 km | ❌ loses |
@@ -62,7 +62,7 @@ Coverage of the 68% error bars on the exam: Mw **63%**, Distance **66%**, Depth 
 ### Where it loses
 
 - Shallow quakes are read too deep (median ratio 3.7 on the exam); always guessing 31 km beats it there.
-- Very deep quakes (500–700 km) read too shallow (ratio 0.83).
+- Very deep quakes (500–700 km) read too shallow (median ratio 0.87).
 
 ## Limits
 

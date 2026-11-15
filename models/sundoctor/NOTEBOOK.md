@@ -1,5 +1,5 @@
-> **Lab notebook.** The build notes as recorded during the original work in a cloud sandbox (Oct–Nov 2026), kept
-> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that sandbox: in this repository
+> **Lab notebook.** The build notes as recorded during the original build in a cloud project (Oct–Nov 2026), kept
+> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that build machine: in this repository
 > the code is in `training/` and everything it writes goes to `work/` (see `training/_paths.py`). Page links to
 > claude.ai are the original private copies; the lab now lives at `lab/index.html`.
 
@@ -90,3 +90,7 @@
 ## Next project
 - CellSense: battery health from one charge, using PyBaMM physics and the Severson 2019 data.
 - Collection repo / "physics MCP" serving these models: name TBD.
+
+## Corrections
+
+- 14 Nov 2026: model.yaml: the 'Inverters offline caught' row compared v2 (44/49, with the sensor) only with v1 power only (0/49) and was called a win. v1 with the sensor caught 47/49, so the row now lists both v1 baselines and the verdict is loss (win -> loss); a matching line was added to the losses. The string-failure row gained the v1-with-sensor baseline (54/56); it stays a win (55/56). Card: rung 8 is marked released. Network and credits sections added.

@@ -164,14 +164,17 @@ def render_backlog(root) -> str:
     doc = yaml.safe_load((root / "docs" / "backlog.yaml").read_text(encoding="utf-8"))
     L = ["<!-- Generated from docs/backlog.yaml by `mlratchet readme --write`. Edit that, not this file. -->",
          "# The idea backlog\n",
-         "Candidates for the next models. Each has physics to simulate, public real data, and a real exam lined up.",
-         "Data reachability was checked from a cloud sandbox in November 2026 ([data-sources.md](data-sources.md)).",
+         "Candidates for the next models, and the platform, data and method work they need. Each has physics to "
+         "simulate, public real data, and a real exam lined up.",
+         "Data reachability was checked in November 2026 ([data-sources.md](data-sources.md)).",
          "Want to build one? Read [adding-a-model.md](adding-a-model.md) and open an issue first.\n",
          "| Idea | The question | Physics | Real data | Exam | Status |",
          "|---|---|---|---|---|---|"]
     for i in doc["ideas"]:
         note = f"<br><sub>{_cell(i['note'])}</sub>" if i.get("note") else ""
-        L.append(f"| **{i['name']}**<br><sub>{i['domain']}</sub> | {_cell(i['question'])} | {_cell(i['physics'])} | "
+        kind = i.get("kind", "model")
+        tag = f"{i['domain']}" if kind == "model" else f"{i['domain']} · {kind}"
+        L.append(f"| **{i['name']}**<br><sub>{tag}</sub> | {_cell(i['question'])} | {_cell(i['physics'])} | "
                  f"[{_cell(i['data'])}]({i['data_url']}) | {_cell(i['exam'])} | {i['status']}{note} |")
     L.append("\nModel upgrades (the next rungs for existing models) live in each model's `model.yaml` under `next`, "
              "and blocked exams under `help_wanted`. Collection-level plans: [roadmap.md](roadmap.md).")

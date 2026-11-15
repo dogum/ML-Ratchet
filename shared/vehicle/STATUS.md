@@ -123,5 +123,12 @@ Built in two phases by parallel Opus agents from `VEHICLE_BRIEF.md` and `PHASE2_
 3. **Find real heavy-duty trip data** (Fleet DNA needs a browser download; the full ZTBus set from ETH was rate-limited).
 4. **Replace the hard-coded `/home/claude/road` paths.** Add RoadSim to ML Ratchet as a shared module under the three models.
 
+*Since then (14 Nov 2026):* items 1 and 4 are done: the wrappers went into RoadSim physics v2 (13 Nov), the default,
+the three models were rebuilt on it as v2.0 (14 Nov), and the platform is `shared/vehicle/`. Item 2 is done in part:
+cold and A/C on conventional cars are inside ±6 %, the P2 converter and start energy are in, cabin heat is fixed in
+part; the P2 spread and hybrid A/C are open. Item 3 is half done: the full ZTBus set is in, NREL Fleet DNA is still
+blocked. Current status: [HANDOFF.md](HANDOFF.md) ("Status, 14 Nov 2026"),
+[V2_PLAN.md](V2_PLAN.md) and [roadsim/LIMITS.md](roadsim/LIMITS.md).
+
 ## Added 14 Nov 2026
 - **The garage** (V2_PLAN Phase E): site page `garage/` — one vehicle and one real route, RoadSim's run and all three models on it, the networks live in the browser. Exporter `shared/vehicle/garage/export_garage.py`.

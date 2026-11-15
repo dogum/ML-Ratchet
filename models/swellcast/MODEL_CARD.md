@@ -127,4 +127,4 @@ By distance: 1000-2500 km n=133: D 49%, t0 30 h; 2500-5000 km n=114: D 24%, t0 2
 NOAA National Data Buoy Center spectral wave data (public domain). IBTrACS v04r01: Knapp et al. 2010, BAMS 91, 363-376;
 NOAA NCEI (public domain). Coastlines: Natural Earth (public domain). Physics: Munk et al. 1963; Snodgrass et al. 1966;
 Hasselmann et al. 1973; Ardhuin et al. 2009. Open-Meteo archive/marine API was tried but its daily limit was exceeded
-from this shared IP, so it was not used.
+from the shared build machine's IP, so it was not used.

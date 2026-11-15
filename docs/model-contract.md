@@ -33,14 +33,19 @@ Key fields:
 | Field | What |
 |---|---|
 | `id`, `name`, `version`, `status` | `status` is `released`, `partial` (released, part of the exam waits on data), `in-progress` or `idea` |
+| `released`, `order` | Release date (`YYYY-MM-DD`, or null before release); build order, which sets the order in the README table and on the site |
+| `platform` | Optional: the shared platform the model is built on (`vehicle` for shared/vehicle, `grid` for shared/grid) |
 | `domain`, `tags`, `accent` | `accent` is the one colour the site uses for this model |
 | `tagline`, `question`, `summary` | Plain words. The question is the one thing it answers. |
+| `question_short` | Optional: the question in a few words, for the root README table. A trailing `*(…)*` qualifier ("research only", "graded in simulation") also shows as a badge on the site's model cards. |
+| `disclaimer` | Optional: what the model must not be used for, or where its grade comes from. Shown as a warning at the top of the README and the model page; its first sentence is the site badge when `question_short` has none. |
 | `reads`, `returns` | Inputs with units; each output with its error bar |
 | `physics.summary/simulator/checks` | The governing physics, what the simulator includes, and independent checks **with numbers** |
 | `noise`, `network` | Where the noise came from; the architecture |
 | `approach` | Where physics and real data enter, beyond the simulated training set. `real_backdrop`: the real recordings the simulated signals are laid into. `physics_inputs`: physics-derived features or axes the network reads. `physics_anchor`: the physics estimate its output corrects, or the physics-based decision it feeds. Each is a short string, or `false`. `real_data_roles`: any of `backdrop`, `calibration`, `gate`, `error_bars`, `exam` (training labels is never one). Required once a model is released. |
 | `data[]` | Every source with URL, licence and role (truth, noise, dev, exam, physics) |
 | `split.dev`, `split.exam` | Who is in which, and the seed |
+| `exam.short`, `exam.summary` | The exam in a few words (root README table) and in one sentence |
 | `exam.results[]` | One row per headline metric: model value, baselines (`classical`, `dumb`, `published`), and a `verdict` — `win`, `loss`, `tie`, `mixed` or `info` |
 | `exam.coverage[]` | Exam coverage of the nominal 68% bars |
 | `wins`, `losses`, `limits` | Said plainly. Every model loses somewhere; the card says where. |

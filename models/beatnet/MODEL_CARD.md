@@ -14,7 +14,7 @@ It was trained **only on simulated heartbeats**. No real patient's labelled beat
 it answers: how far does a physics simulator that spans patient variation get on the hard inter-patient problem?
 
 ## Inputs and outputs
-- Input: one ECG lead in mV, its sampling rate, and beat positions (R-peaks). If you have no positions, a simple QRS
+- Input: one ECG lead in mV, its sampling rate, and beat positions (R-peaks). Without beat positions, a simple QRS
   detector in `pipeline.py` finds them.
 - Front end (`pipeline.py`, numpy + scipy, identical for simulated and real data): resample to 360 Hz, band-pass 0.5-40 Hz,
   decimate to 180 Hz; per beat a 2.5 s window divided by the local QRS size, the median of its 40 neighbouring beats, and six
@@ -81,7 +81,7 @@ beats the incumbent by more than 0.01 AND, on the six real dev records (MIT-BIH 
 | 2 | r2: dev-calibrated simulator (physics v2: APD +47 ms, weaker electrotonic coupling, PVC gain 1.35, less noise) + AF output | 0.873 | 0.476 | 0.541 | yes | sim macro-F1 0.873 vs 0.829; dev S/V F1 0.476 vs 0.467 |
 | 3 | r3: + second input channel = the record's median neighbour beat (template), physics v2 | 0.860 | 0.465 | 0.530 | no | sim macro-F1 0.860 vs 0.873 (needs +0.01); dev S/V F1 0.465 vs 0.476 |
 | 4 | r4: physics v3 = v2 + dev noise-floor calibration (NSTDB -10 dB + quiet real dev background) + fusion visibility rule | 0.892 | 0.441 | 0.528 | no | sim macro-F1 0.892 vs 0.873; dev S/V F1 0.441 vs 0.476 (dev gate failed) |
-| 5 | r5: physics v4 = v3 + dev-calibrated ectopic coupling (S beats at 0.55 of local RR on dev, 0.78 in v3 sims) | 0.897 | 0.509 | 0.549 | yes | sim macro-F1 0.897 vs 0.873; dev S/V F1 0.509 vs 0.476 |
+| 5 | r5: physics v4 = v3 + dev-calibrated ectopic coupling (S beats at 0.56 of local RR on dev, 0.78 in v3 sims) | 0.897 | 0.509 | 0.549 | yes | sim macro-F1 0.897 vs 0.873; dev S/V F1 0.509 vs 0.476 |
 
 ## Final exam: MIT-BIH Arrhythmia Database, inter-patient DS2 (de Chazal et al. 2004)
 22 records, 49,705 beats (N 44,259, S 1,837, V 3,221, F 388),
@@ -155,9 +155,9 @@ class. Missed beats (1,006 of 49,705) count against sensitivity, false detection
 ## Limits
 - Not a medical device. Research and teaching only; never use it for diagnosis, monitoring or treatment.
 - One lead (modified lead II). It was examined only on MIT-BIH-style Holter records (1975-79 tape, 360 Hz) and SVDB; other devices, leads and populations are untested.
-- It classifies beats you give it. With its own simple QRS detector, 1,006 of 49,705 DS2 beats are missed (837 N, mostly record 228 with its large noise and baseline shifts) and 44 false beats appear.
+- It classifies the beats it is given. With its own simple QRS detector, 1,006 of 49,705 DS2 beats are missed (837 N, mostly record 228 with its large noise and baseline shifts) and 44 false beats appear.
 - No Q class: paced and unclassifiable beats are not predicted (paced records are excluded, as is standard).
-- The QRS width output is a rough number: mean error 17 ms against cardiologists' calipers on the QT database, and its error bar had to be widened 5x on dev to cover 68%.
+- The QRS width output is a rough number: mean error 18 ms against cardiologists' calipers on the QT database (lead MLII; classical delineation 15 ms), and its error bar had to be widened 5x on dev to cover 68%.
 - The simulator is calibrated on only six dev records. Two of its four dev corrections (noise floor, ectopic coupling) are population numbers; per-patient twins were not built.
 - Published inter-patient methods were trained on real DS1 labels; BeatNet never saw a real label. The comparison is context, not a like-for-like contest.
 

@@ -1,5 +1,6 @@
 // Rewrites links between the repo's markdown docs into site routes, so docs/*.md read well on GitHub
-// AND on the site:  method.md -> /method/,  ../models/quakenet -> /models/quakenet/,  other repo files -> GitHub.
+// AND on the site:  method.md -> /method/,  ../models/quakenet -> /models/quakenet/,  other repo files -> GitHub
+// (resolved relative to docs/).
 export const DOC_ROUTES = {
   'method.md': 'method',
   'model-contract.md': 'contract',
@@ -20,6 +21,18 @@ function walk(node, fn) {
   if (node.children) for (const c of node.children) walk(c, fn);
 }
 
+// The docs live in docs/, so a relative link resolves against docs/: '../x' is x at the repo root,
+// './x' and a bare 'x/y' (no ./ or ../) are docs/x and docs/x/y, and '/x' is x at the repo root.
+export function repoPath(path) {
+  if (path.startsWith('/')) return path.slice(1);
+  const parts = ['docs'];
+  for (const seg of path.split('/')) {
+    if (seg === '..') parts.pop();
+    else if (seg !== '.' && seg !== '') parts.push(seg);
+  }
+  return parts.join('/') + (path.endsWith('/') ? '/' : '');
+}
+
 export function rewriteDocLinks({ base = '/' } = {}) {
   const root = base.endsWith('/') ? base : base + '/';
   return (tree) => {
@@ -32,7 +45,7 @@ export function rewriteDocLinks({ base = '/' } = {}) {
       let out;
       if (DOC_ROUTES[file]) out = `${root}${DOC_ROUTES[file]}/`;
       else if (/(^|\/)models\/([a-z0-9-]+)\/?$/.test(path)) out = `${root}models/${path.match(/models\/([a-z0-9-]+)/)[1]}/`;
-      else out = REPO + path.replace(/^(\.\.\/)+/, '').replace(/^\.\//, 'docs/');
+      else out = REPO + repoPath(path);
       node.properties.href = out + (hash ? `#${hash}` : '');
     });
   };

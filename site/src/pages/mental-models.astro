@@ -157,7 +157,7 @@ const toc = [
         <p class="foot faint">
           Generated from the <code>approach</code> block of each <a href={ghFile('docs/model-contract.md')}>model.yaml</a>.
           An empty ring means the card does not claim it. Every model is trained on simulations only.<br />
-          <sup>*</sup> These two columns are judgement calls, read from each model’s inference code and card. Reviewed by the owner: pending.
+          <sup>*</sup> These two columns are judgement calls, read from each model’s inference code and card. Not yet independently reviewed.
         </p>
       </div>
     </div>
@@ -194,6 +194,13 @@ const toc = [
       <p class="kicker">05 · Worked example · RoadSim v2 → v2.1, 14 Nov 2026</p>
       <h2 class="section">The ratchet, <em>applied to a simulator</em></h2>
       <p class="muted">No network was trained in this example. RoadSim, the shared vehicle simulator, went through rungs of its own. Each was fitted on dev data only, and a fresh exam was frozen before any fitting began. RoadSim has moved on since; its current state is on the <a href={url('vehicle/')}>vehicle platform</a> page.</p>
+      <p class="faint small gloss"><b>Terms.</b> FTP and HWFET: the EPA's city and highway test cycles, driven on a
+        dynamometer. Exam-2: RoadSim's second frozen exam set. VED: the Vehicle Energy Dataset, real trips logged in
+        Ann Arbor in 2017–18. D3: Argonne's Downloadable Dynamometer Database. H11–H20: RoadSim's own calibration rungs.
+        P0/P1, P2: where a hybrid's motor sits (on the engine's belt or crankshaft; between the engine and the gearbox).
+        TMED: Hyundai and Kia's P2 hybrid drive. Power-split: the planetary-gear layout Toyota and Ford use. e:HEV:
+        Honda's hybrid, which mostly drives on its motor. CS: charge-sustaining, a plug-in running on a held battery charge
+        like an ordinary hybrid.</p>
     </header>
     <ol class="timeline">
       <li class="frame"><span class="kicker">13 Nov · physics v2</span><h3 class="display">Frozen, made the default</h3><p>The conventional city and highway bias was fixed (held-out FTP +0.4%, HWFET −1.9%). The three released models stayed pinned to v1 until they were rebuilt.</p></li>

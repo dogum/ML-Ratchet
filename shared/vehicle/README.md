@@ -16,9 +16,10 @@ shared/vehicle/
 │   └── proc/splits.json   the frozen dev / exam split — sha256 d917df78…; never change it
 ├── checks/         every physics check and its JSON (run_all.sh)
 ├── garage/         export_garage.py: the RoadSim grid behind the site's garage page (site/public/garage/)
-├── HANDOFF.md      what exists, what's missing, and the prioritised path to v2 — start here to extend it
-├── VEHICLE_BRIEF.md   the shared contract: trip format, vehicle spec, simulator API, energy ledger
-└── PHASE2_BRIEF.md    how the three models were set up
+├── HANDOFF.md      what exists, what's missing (status as of 14 Nov 2026) — start here to extend it
+├── V2_PLAN.md      the v2 plan, each phase marked done, and the decisions log
+├── VEHICLE_BRIEF.md   historical brief (12-13 Nov 2026): trip format, vehicle spec, simulator API, energy ledger
+└── PHASE2_BRIEF.md    historical brief: how the three v1.0 models were set up
 ```
 
 ## Use it
@@ -47,23 +48,30 @@ Without installing, set `ML_RATCHET_VEHICLE` to this folder (or add `shared/vehi
   lidar grade, HVAC. Forward-facing, 1 Hz, with a driver controller tracking the speed trace.
 - **Control strategies:** rule, power-follower, thermostat, P2 assist, Prius-style split, ECMS, A-ECMS, MPC, DP,
   plug-in CD-CS and blended, BEV regen variants — and the learned HybridPilot.
-- **Verified** (`checks/`; re-run after any physics change):
-  - energy ledger closes in all 600 stress runs (max 5e-4)
-  - about 60,000× real time (conventional, BEV) and 5,000× (hybrids), single thread
-  - EPA on 33 held-out vehicles: conventional FTP +5.6% / HWFET −4.3%, power-split hybrids −2.3%, BEV −0.5% / −1.7%
-  - FASTSim 3.1 with matched components: within 3% (conventional), 4% (BEV)
+- **Verified** (`checks/`; re-run after any physics change). Physics v2, the default since 13 Nov 2026, calibrated on
+  dev data only (`roadsim/CALIBRATION.md`); held-out numbers from `roadsim/LIMITS.md`:
+  - energy ledger closes in all 600 stress runs (max 5.6e-4)
+  - about 30,000× real time for conventional cars (29,500-29,900×), 33,400× for BEVs and 4,600-5,900× for hybrids,
+    single thread, UDDS
+  - EPA on 33 held-out vehicles: conventional FTP +0.4% / HWFET −1.9% (n 15), BEV −0.4% / −1.8% (n 8), P2 hybrids
+    FTP −4.0% (n 5), power-split hybrids FTP −5.1% (n 4; v1 +1.0%)
+  - FASTSim 3.1 with matched components, conventional UDDS / HWFET / US06: −1.9 / −1.2 / −6.4%
 - **Real data:** 33,015 Vehicle Energy Dataset trips from Ann Arbor with USGS lidar grades and airport weather
-  (rebuildable, ≈1.2 GB, not shipped); 80,227 EPA tests; fueleconomy.gov labels; 24 drive cycles; heavy duty from
-  ZTBus (Zurich trolleybuses), Mersin (diesel and CNG buses) and ICCT truck tests. Dev and exam vehicles were split once
-  and frozen.
+  (rebuildable, ≈1.2 GB, not shipped); 80,227 EPA tests; fueleconomy.gov labels; 24 drive cycles; Argonne D3, 65
+  vehicles and 1,661 usable 10 Hz dynamometer tests, dev and exam by vehicle (`data/D3.md`); heavy duty from the full
+  ZTBus set (1,409 Zurich trolleybus missions, by-month split), Mersin (diesel and CNG buses) and ICCT truck tests. Dev
+  and exam vehicles were split once and frozen.
 
 ## Known caveats
 
 - VED fuel is estimated from the MAF sensor and fuel trims for 351 of 384 cars, not metered.
 - On 13 Nov 2026 RoadData fixed two bugs (EPA city/highway labels swapped; VED mass double-counted the 136 kg
-  driver); the three v1.0 models were built before the fixes — see each model card.
+  driver). The three v1.0 models were built before the fixes; the v2.0 releases (14 Nov 2026) were rebuilt on the
+  fixed tables — see each model card.
 - Heavy-duty grading is thin (2 trolleybuses, 2 Mersin bus types, 6 truck dyno numbers).
-- `LIMITS.md` lists every measured simulator gap; `HANDOFF.md` section 4 is the work list to close them.
+- `roadsim/LIMITS.md` lists every measured simulator gap; `HANDOFF.md` section 4 is the work list to close them.
+- The model contract is [docs/model-contract.md](../../docs/model-contract.md); `VEHICLE_BRIEF.md` and
+  `PHASE2_BRIEF.md` are the briefs the platform was first built from, kept as written.
 
 ## Licences
 

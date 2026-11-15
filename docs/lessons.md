@@ -38,24 +38,25 @@ mattered.
   absolute k (34% error); predicting the correction to √depth fixed it and removed a 3–5% bias.
 - **Check every catalogue input.** TransitNet: catalogue periods drift; per-sector alignment was needed.
   SunDoctor: the Colorado plant's clock was in Mountain time with daylight saving, and its main irradiance sensor
-  read half the true sunlight for three years.
+  read half the true sunlight for three and a half years (May 2019 to October 2022).
 - **Error bars need their coverage reported.** QuakeNet's depth bars cover 51% of a nominal 68%. StarQuake's cover
   54–58% on 27-day light curves. Those numbers are the next rungs.
 
 ## Working practice
 
 - Long jobs need resumable checkpoints; cloud containers restart (2–3 times per model here).
-- Four agents in parallel on a 2-core sandbox worked: each took 1–2 hours, kept to one thread and small models.
-- Never kill processes by name on a shared machine — another agent's `simbank.py` is not yours.
-- If a data host is blocked, don't route around it. Record it and ask (ChirpNet's O3 exam and CellSense's other
-  chemistries are waiting on exactly that).
+- Four builds in parallel on a shared 2-core machine worked: each took 1–2 hours, kept to one thread and small models.
+- Never kill processes by name on a shared machine — another build's `simbank.py` is not yours.
+- If a data host is blocked, don't route around it. Record it and ask. ChirpNet's O3 exam waited on exactly that: GWOSC
+  could not be reached from the shared build machine, and the exam ran from another connection on 12 Nov 2026 (7 of 7
+  in-range events found). CellSense's other chemistries are still waiting.
 
 ## Big systems (the vehicle platform)
 
 - **Build a shared platform in two phases.** Phase 1: one simulator and one real-data/splits package, built in
   parallel against a written contract. Phase 2: the models in parallel on top. Freeze the shared layers during
   Phase 2, let each model patch in its own wrappers, and upstream the fixes afterwards with a new physics version.
-- **Agents checking each other's data catch real bugs.** EnergyNet found swapped EPA cycle labels and a driver-and-load
+- **Builds checking each other's data catch real bugs.** EnergyNet found swapped EPA cycle labels and a driver-and-load
   mass counted twice (136 kg) in RoadData.
 - **A controller can only be examined in the simulator.** HybridPilot's exam is real routes driven by simulated twins.
   It needs a separate simulator-versus-real check: RoadSim burns about 20% less fuel than real hybrids, a gap far larger
@@ -82,5 +83,5 @@ mattered.
 - **A tie is a result.** BatteryPilot captures 0.667 of perfect hindsight in ERCOT against 0.685 for the classical
   day-ahead optimiser: it wins with 4-hour batteries and loses with 1-hour ones and in CAISO. Its dev twins capture
   91-94% while real 2019 gives 80%, so the simulated price spikes are still too predictable.
-- **Plan archive downloads away from shared IPs.** The forecast-weather archive rate-limited the sandbox's shared
-  address after a few requests, which left DemandCast's realistic forecast-weather exam at one year.
+- **Plan archive downloads away from shared IPs.** The forecast-weather archive rate-limited the shared build
+  machine's address after a few requests, which left DemandCast's realistic forecast-weather exam at one year.
