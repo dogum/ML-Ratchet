@@ -82,7 +82,7 @@ Coverage of the 68% error bars on the exam: Min stable load (year windows) **69%
 - Gas-turbine heat rate 16.2% against 6.5% for EIA-923; turbine heat input 17.3% against 5.1%.
 - All units together, full-load heat rate 13.7% loses to the technology default (10.3%) and part load 14.5% to EIA-923 (11.8%).
 - From one month, minimum stable load (10.8 pt) is worse than the dev median (8.0 pt).
-- Starts and run lengths from a year or more: plain counts are as good or better (they define the truth).
+- Starts and run lengths from a year of history: plain counts are better (starts per year 27.8% vs 31.0%, median run 18.2% vs 33.9%); from all years pooled the counts are the truth's own definition.
 
 ## Limits
 
@@ -91,6 +91,8 @@ Coverage of the 68% error bars on the exam: Min stable load (year windows) **69%
 - Minimum up and down times (5th percentile of spells) are noisy targets with the worst coverage (min up: 48% inside the 68% band).
 - Calibrated on 10 dev plants; ERCOT hub prices are used for every unit, including the SPP, MISO and El Paso ones; ramp truth is the observed 99th-percentile change, a lower bound on capability.
 - The exam fed 2023-2025 ERCOT hub prices (exam years) as optional context at test time; no choices were made from them. Training used only 2018/2020/2022 prices.
+- Bank v2 was built with GridSim physics 1.0. Its coal, CC, CT and gas-steam outage defaults came from 2024/2025 Texas RE data (exam period). They set the 69 GridSim-dispatched units and the prices behind 37 of 110 self-commitment shards (about 29% of frozen-set windows). Rebuilt with physics 1.1: frozen-set skill of R4 0.492 -> 0.501, R4's lead over a single network +0.025 -> +0.029 (margin 0.01), dev gate unchanged (0.215). No rung decision changes and the release stands.
+- Self-committed units' outage ranges (EFOR 2-15%, planned 0-12% by technology) have no recorded source. Real units' EIA-860 facts come from the latest report (up to 2025); limiting them to reports up to 2022 moves the dev gate by 1e-6.
 
 ## The ratchet
 
@@ -108,7 +110,7 @@ Coverage of the 68% error bars on the exam: Min stable load (year windows) **69%
 
 <sub>Columns after *Why*: training/ratchet.json: frozen-val technology accuracy, dev skill (mean and by window length) and dev technology accuracy (year windows); higher is better.</sub>
 
-R0 and R1 were scored on the v1 frozen set, R2-R4 on v2 (bank v2, dev twin calibration). R1 re-scored on v2: 0.266.
+R0 and R1 were scored on the v1 frozen set, R2-R4 on v2 (bank v2, dev twin calibration). R1 re-scored on v2: 0.266. Banks were built with GridSim physics 1.0 (outage defaults from exam-period data). Check of 14 Nov 2026: bank v2 rebuilt under 1.0 and 1.1, R4 frozen-set skill 0.492 -> 0.501, R4 minus a single R2-recipe network +0.025 -> +0.029, dev gate 0.215 both; no decision changes (NOTEBOOK).
 
 Raw per-rung logs are in [`training/`](training/).
 
@@ -118,7 +120,7 @@ Two layers of unit physics on the shared grid platform (shared/grid). GridSim ge
 
 **Simulator**
 
-- GridSim generate_fleet + unit-level MILP dispatch (cluster=False), 5 generated systems x 92 days, train-input years 2018, 2020, 2022 (12-21 min per system on one CPU)
+- GridSim generate_fleet + unit-level MILP dispatch (cluster=False, physics 1.0), 5 generated systems x 92 days, train-input years 2018, 2020, 2022 (12-21 min per system on one CPU)
 - Self-commitment DP per unit; fuel curve F(P) = P x HR_full x (1 + beta(1/f - 1) + c(f - 1)^2); price backgrounds: GridSim system prices (30%) or real ERCOT day-ahead hub prices of 2018/2020/2022 (70%); cogeneration units run near flat with trips
 - CAMPD measurement emulator: partial start and stop hours, warm-up ramps measured on the dev starts (coal: first hour ~1% of capacity, then 2-8%/h), AR(1) load noise, summer gas-turbine derate, trips and aborted starts, CEMS heat-input noise, combined cycles that report only the gas turbine, cogeneration steam fuel
 - EIA-923 emulator: linked-generator accounting, CHP fuel allocation, gross/net ratio fitted on dev unit-years
@@ -143,7 +145,6 @@ Two layers of unit physics on the shared grid platform (shared/grid). GridSim ge
 - Learn the run-statistics heads as corrections to the counted statistics: helps short windows, never worse for long ones.
 - Decide on the exam's price context: keep the 2023-2025 ERCOT prices as optional inputs, or restrict the context to pre-exam years and re-score.
 - Upstream to GridSim: soft history constraints so dispatch(outages='random') stays feasible when an outage starts while a unit is on; the self-commitment DP and CAMPD emulator as a 'unit behaviour' layer.
-- Re-run the 395-unit exam in this repository after rebuilding the CAMPD hourly data (mlratchet data grid --only campd, about 6 GB of downloads).
 
 ## Files
 

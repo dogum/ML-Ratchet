@@ -56,6 +56,7 @@ renamed). The browser runs a float16 copy: estimates within 2.1e-4 of the float3
 | R2 | bank v2: dev twin calibration (start/stop shapes, trips, offer slope, start costs, CHP steam credit, EIA-923 gross ratio) | 0.475 (R1: 0.266) | 0.200 | kept |
 | R3 | skip connection: heat rate as a correction to EIA-923 | 0.470 | 0.191 | rejected |
 | R4 | 3-network ensemble | 0.501 | 0.215 | kept (final) |
+
 Twin test (40 dev units, 2019+2021, twin vs real pattern mismatch): v1 0.211 → v2 0.128.
 Error bars: widen-only factors per output, fitted on the dev windows so that ≥ 68.3 % fall within 1 σ
 (`training/sigma_factors.json`, 1.00–1.90).
@@ -98,11 +99,25 @@ open decision (see `model.yaml` `next`).
 - Combined-cycle heat rate biased +21 %: the 3 dev CC plants (two cogeneration, one gas-turbine-only reporting) pushed the
   simulator's priors toward CT-only reporting and process steam; most exam CC units report the whole block (~7.3).
 - Gas-turbine heat rate biased +15 %: the simulated CT range sits above the Texas fleet; EIA-923 alone is better for CTs.
-- Starts, run lengths and start shares from ≥ 1 year of history: plain counts are as good (they define the truth).
+- Starts and run lengths from ≥ 1 year of history: plain counts are better. One-year windows: starts per year 27.8 %
+  median error for the count vs 31.0 % for the network; median run 18.2 % vs 33.9 % (the count wins at every window
+  length). Start shares are about even (hot 4.8 vs 5.3 pt, warm 7.3 vs 7.2 pt, cold 6.4 vs 6.0 pt). With all years
+  pooled the counts are the truth's own definition.
 - Minimum up/down (5th percentile of spells) are noisy targets; worst coverage.
 - Calibrated on 10 dev plants; ERCOT hub prices used for every unit, including SPP/MISO/El Paso ones.
 - Ramp truth is the observed 99th-percentile hourly change, a lower bound on capability.
 - CAMPD gross load is 0 for some combined-cycle units (South Houston EPN801/803): those units have no truth.
+- Bank v2 was built with GridSim physics 1.0, whose coal, CC, CT and gas-steam outage defaults came from Texas RE's
+  2024/2025 assessments (exam-period data). They set the outages of the 69 GridSim-dispatched units and the GridSim prices
+  behind 37 of 110 self-commitment shards (about 29 % of the frozen-set windows). The bank was rebuilt with physics 1.1
+  (pre-2023 sources). Scarcity hours fell (for example 209 -> 94 hours above $1,000 in one system), the ERCOT-price
+  shards were byte-identical, the frozen-set skill of R4 moved 0.492 -> 0.501, and R4's lead over a single network
+  moved +0.025 -> +0.029 (margin 0.01). The dev gate is unchanged (0.215). No rung decision changes, so the release
+  stands (NOTEBOOK, 14 Nov 2026; `training/checks/outage_physics_1_1.json`).
+- Self-committed units use their own outage ranges (`training/bank_dp.py`: EFOR 2-15 %, planned 0-12 % by technology).
+  No source is recorded for these ranges.
+- Real units' EIA-860 facts come from each generator's latest report (up to report year 2025). For the dev gate,
+  restricting to reports up to 2022 changes 4 dev units' facts and moves the score by 1e-6.
 
 ## Files
 `plantdetective.py` (API: `Detective().infer(x, t, price, gas, context)`), `pdcore.py` (features, truth statistics),
