@@ -70,15 +70,22 @@ The models show where those gaps bite. Physics-trained models win on the physics
 data has reporting quirks, and they also lose on physics they model too simply:
 
 - DemandCast beats the grid operators' own day-ahead demand forecasts in 6 of 8 regions with the weather that actually
-  happened, an upper bound; with archived forecast weather (2024) it wins in only 4 of 8. It loses on solar, because
-  EIA-930 solar timestamps moved by an hour between years.
-- PlantDetective reads coal and gas-steam heat rates far better than EIA-923 but loses on combined cycles: its 3 dev
-  combined-cycle plants were cogeneration or reported only the gas turbine, while most exam units report the whole
-  block, so the dev calibration pushed its combined-cycle heat rates too high.
+  happened, an upper bound; with archived forecast weather (2024) it wins in only 4 of 8. Solar was a loss because
+  EIA-930 solar timestamps moved by an hour between years; v1.1 (15 Nov 2026) reads each grid's reporting offset from
+  the week before issue and now beats persistence (16.1 % against 19.1 % with actual weather, 18.2 % against 18.9 %
+  with forecast weather), though California, BPA and SPP solar still lose to persistence.
+- PlantDetective reads coal heat rates well (5.0 %) but loses on combined cycles: its 3 dev combined-cycle plants were
+  cogeneration or reported only the gas turbine, while most exam units report the whole block, so the dev calibration
+  pushed its combined-cycle heat rates too high. v1.1 (15 Nov 2026) builds its run statistics on plain counts and now
+  wins starts per year from one year, but lost the gas-steam heat-rate win, and its error bars on run statistics are
+  far too narrow on the exam (17-40 % inside the 68 % band).
 - GridPulse's 10 s nadir and 60 s forecasts lose to simply holding the lowest or the current value: the simulator's
-  response after the first seconds (secondary response, market actions) is too simple.
-- BatteryPilot loses to the classical day-ahead optimiser in both markets (ERCOT 0.667 vs 0.685 of perfect hindsight,
-  CAISO 0.642 vs 0.681); it beats it only with 4-hour batteries.
+  response after the first seconds (secondary response, market actions) is too simple. The dev events do not show
+  these failures clearly enough to fix them from dev (15 Nov 2026: three rungs, all rejected).
+- BatteryPilot loses to the classical day-ahead optimiser in both markets (v1.1: ERCOT 0.679 vs 0.685 of perfect
+  hindsight, CAISO 0.614 vs 0.681); it beats it only with 4-hour batteries. A backbone built on the optimiser's plan
+  did best on real dev data but worst on the simulated frozen set, whose price spikes are too easy to foresee; the
+  simulator needs scarcity the day-ahead market cannot see before that can be judged.
 
 ## Using it
 

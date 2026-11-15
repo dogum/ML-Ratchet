@@ -121,24 +121,32 @@ Fixed in v2: Honda's e:HEV on the highway (−9.5 → −3.8 %), the conventiona
 (held-out 20 °F FTP −5.5 %, n 2; D3 exam cold −9.0 → −4.9 %) and A/C (held-out SC03 +11.4 → +1.9 %, n 2), and the
 VED Toyota fuel gap (dev twins −20.3 → −0.9 %).
 
-## How the models did on v2
+## How the models did
 
-All three were rebuilt on physics v2 on 14 Nov 2026 (v2.0), every ratchet decision re-taken, and examined once.
+All three were rebuilt on physics v2 on 14 Nov 2026 (v2.0), every ratchet decision re-taken, and examined once. A
+second pass on 15 Nov 2026 (v2.1) fixed causes first shown on dev data; each v2.1 was examined once, with v2.0
+re-scored on the same exam.
 
-- **EnergyNet** ([card](../models/energynet/MODEL_CARD.md)): petrol cars 8.7 % median error per trip against 10.3 %
-  for a MOVES-like model; hybrids 13.5 % against 15.3 % (v1.0 lost here); plug-ins 17.1 % against 41 %, given the
-  logged start charge; Zurich bus missions 9.5 % against 10.7 %. It loses on the two exam Leafs (22.6 % against
-  19.0 %, still 19.5 % low), on EPA petrol FTP, highway and A/C tests to a regression on the car's own spec (A/C 18 %
-  low), and on Mersin buses and ICCT trucks to a same-route or same-cycle median.
-- **TripDetective** ([card](../models/tripdetective/MODEL_CARD.md)): curb mass within 127 kg per car on 335 real cars
-  (physics fit 205 kg, dev median 227 kg); engine size within 0.38 L (dev median 0.60 L); +800 kg now moves its mass
-  estimate +524 kg in simulation (v1.0 +182 kg). It loses on powertrain type to a simple rule (97.1 % against 99.4 %),
-  on the two Leafs to the dev median (which happens to be their weight class), and on bus mass (1,204 kg against the
-  dev median's 453 kg).
-- **HybridPilot** ([card](../models/hybridpilot/MODEL_CARD.md)), graded in simulation on real routes: 98.84 % of the
-  dynamic-programming optimum on 430 exam trips against 98.32 % for adaptive ECMS and 98.80 % for MPC, which sees 15 s
-  ahead. It loses on plug-ins (99.27 % against 99.59 %), on buses to constant-s ECMS (97.50 % against 98.98 %), and on
-  charge holding (95 % of trips against 96 %).
+- **EnergyNet** v2.1 ([card](../models/energynet/MODEL_CARD.md)): petrol cars 8.6 % median error per trip against
+  10.3 % for a MOVES-like model; hybrids 13.4 % against 15.3 %; plug-ins 16.8 % against 41 %, given the logged start
+  charge; Zurich bus missions 5.6 % against 10.7 %. The EPA A/C test (SC03) went from a loss (18.9 %) to a win (8.6 %
+  against 9.3 %): the training trips now run under the test's own conditions (sun, hot-soaked cabin, A/C at maximum),
+  and simulated petrol cars no longer get an idle-stop that no input shows. It still loses on the two exam Leafs
+  (23.2 % against 19.0 %), on EPA petrol FTP and highway tests to a regression on the car's own spec, and on Mersin
+  buses and ICCT trucks to a same-route or same-cycle median. The release cleared the dev margin by 0.0118 with three
+  bundled changes; seed noise between network sets is about 0.005.
+- **TripDetective** v2.1 ([card](../models/tripdetective/MODEL_CARD.md)): curb mass within 127 kg per car on 335 real
+  cars (physics fit 205 kg, dev median 227 kg); engine size within 0.38 L (dev median 0.60 L). Powertrain type now ties
+  the simple rule (99.4 %; v2.0 97.1 %): if the engine stops while moving on more than 5 % of the moving seconds, the car
+  cannot be conventional. Bus mass per leg went from a loss (1,204 kg) to a narrow win (444 kg against the dev
+  median's 453 kg), read from leg-to-leg changes within a day. It still loses on the two Leafs to the dev median (which
+  happens to be their weight class).
+- **HybridPilot** v2.1 ([card](../models/hybridpilot/MODEL_CARD.md)), graded in simulation on real routes, now on
+  physics v3.1: 98.57 % of the dynamic-programming optimum on 430 exam trips against 98.20 % for adaptive ECMS, but MPC,
+  which sees 15 s ahead, scores 98.67 % and HybridPilot holds charge on 93 % of trips (v2.0 96 %), so the all-trips row
+  is mixed. Most of the drop from v2.0's 98.84 % is the physics: v2.0 itself scores 98.43 % on v3.1. It wins on
+  power-split and P2/series hybrids, and loses on plug-ins (99.25 % against 100.17 % for adaptive ECMS), on buses to
+  constant-s ECMS (97.66 % against 98.89 %) and on charge holding.
 
 ## Using it
 

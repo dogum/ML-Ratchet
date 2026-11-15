@@ -30,20 +30,20 @@ The losses are published too.
 | [**SwellCast**](models/swellcast/) | How far away was the storm whose swell is arriving at this buoy? | 288 hurricane-swell arrivals | 1 win · 2 losses · 1 tie |
 | [**BeatNet**](models/beatnet/) | Is each heartbeat normal, supraventricular, ventricular or fusion? *(research only)* | MIT-BIH DS2, 49,705 beats | 3 wins · 2 losses |
 | [**StarQuake**](models/starquake/) | How massive and how big is this red giant, from how it rings? | 420 Kepler giants × 5 lengths | 4 wins · 1 loss · 1 tie |
-| [**EnergyNet**](models/energynet/) | How much fuel or electricity will this trip take, and where does it go? | 25,793 VED trips, EPA tests, buses, trucks | 10 wins · 6 losses |
-| [**TripDetective**](models/tripdetective/) | From a trip log alone: what powertrain, how heavy, what engine, how much drag? | 350 real cars + 5,847 Zurich bus legs | 3 wins · 3 losses |
-| [**HybridPilot**](models/hybridpilot/) | How should a hybrid run its engine, second by second? *(graded in simulation)* | 430 real routes, simulated twins | 4 wins · 4 losses · 1 mixed |
+| [**EnergyNet**](models/energynet/) | How much fuel or electricity will this trip take, and where does it go? | 25,793 VED trips, EPA tests, buses, trucks | 11 wins · 5 losses |
+| [**TripDetective**](models/tripdetective/) | From a trip log alone: what powertrain, how heavy, what engine, how much drag? | 350 real cars + 5,847 Zurich bus legs | 4 wins · 1 loss · 1 tie |
+| [**HybridPilot**](models/hybridpilot/) | How should a hybrid run its engine, second by second? *(graded in simulation)* | 430 real routes, simulated twins | 3 wins · 3 losses · 3 mixed · 1 tie |
 | [**GridPulse**](models/gridpulse/) | From the grid frequency after a trip: MW lost, inertia, and how low it will go | 412 real GB trips (NESO 1 s), 292 ERCOT reports | 5 wins · 6 losses |
 | [**BatteryPilot**](models/batterypilot/) | When should a grid battery buy and sell, knowing only what is known before the hour? | 48 real node-years, ERCOT 2023-25 + CAISO 2024-25 | 2 wins · 6 losses |
 | [**PlantDetective**](models/plantdetective/) | What is this power unit, and how flexibly does it run, from its hourly output? | 395 real Texas CAMPD units, 2018-2025 | 8 wins · 9 losses |
-| [**DemandCast**](models/demandcast/) | Tomorrow's hourly demand, wind and solar for a US grid? | 2023-25, 8 US grids, 209,340 demand hours | 12 wins · 7 losses · 2 mixed |
+| [**DemandCast**](models/demandcast/) | Tomorrow's hourly demand, wind and solar for a US grid? | 2023-25, 8 US grids, 209,340 demand hours | 14 wins · 5 losses · 2 mixed |
 <!-- collection:end -->
 
 Every model also runs **live in your browser** on the website — the real network, ported to TypeScript and checked
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
 <!-- totals:start (generated) -->
-**0** real labelled examples were used for training. **174** rung decisions are logged, **91** of them rejections.
+**0** real labelled examples were used for training. **223** rung decisions are logged, **124** of them rejections.
 <!-- totals:end -->
 
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself. The three

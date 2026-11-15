@@ -17,7 +17,7 @@ const ref = existsSync(join(dir, 'reference.json')) ? JSON.parse(readFileSync(jo
 const what = [
   ['01', 'The route', 'A real trip: VED in Ann Arbor or a Zurich trolleybus leg. Speed, lidar grade, airport weather, the GPS track.'],
   ['02', 'EnergyNet', 'Forecasts the trip’s energy before it is driven, with a 68 % band, from the route and what an owner knows about the vehicle.'],
-  ['03', 'RoadSim', 'Drives it, second by second (physics v2): power, charge, engine, heating, and the ledger of where every joule went.'],
+  ['03', 'RoadSim', 'Drives it, second by second (physics v3.1): power, charge, engine, heating, and the ledger of where every joule went.'],
   ['04', 'TripDetective', 'Reads the run’s OBD log back: powertrain, mass, drag, rolling resistance, engine size and the trip’s ledger.'],
   ['05', 'HybridPilot', 'Drives the hybrids again, against adaptive ECMS and the dynamic-programming optimum.'],
 ];
@@ -25,7 +25,7 @@ const what = [
 <Base title="The garage" description="Pick a vehicle and a real route: RoadSim drives it, EnergyNet forecasts it, TripDetective reads the log back and HybridPilot races the optimum — three networks running live in your browser."
   keywords={['vehicle simulation', 'energy prediction', 'hybrid energy management', 'system identification', 'RoadSim']}>
   <section class="wrap head">
-    <p class="kicker tick-label">Vehicle platform · RoadSim physics v2 · three networks live</p>
+    <p class="kicker tick-label">Vehicle platform · RoadSim physics v3.1 · three networks live</p>
     <h1 class="display h">The garage.</h1>
     <div class="intro">
       <p class="lead muted">Pick a vehicle and a real route. RoadSim drives the trip; EnergyNet forecast it before it was driven;
@@ -61,7 +61,7 @@ const what = [
     <div class="cols">
       <p>RoadSim is Python, so the simulator runs ahead of time: six vehicles (calibrated twins of four VED exam cars, a
         generated P2 hybrid and the ZTBus trolleybus twin) over five real exam routes, at three air temperatures and two
-        loads, pinned to RoadSim physics v2. For each run the exporter keeps the energy ledger, the traces, the OBD log a
+        loads, pinned to RoadSim physics v3.1 (v2 plus the hybrid fixes; other vehicles run exactly as on v2). For each run the exporter keeps the energy ledger, the traces, the OBD log a
         VED-style logger would have written, and — for the hybrids — HybridPilot’s own inputs at every decision second and
         the rule, adaptive ECMS and DP runs graded the way its exam grades them.</p>
       <p>The networks are the live instruments’ own browser ports, on the same float16 weights. A parity test checks them

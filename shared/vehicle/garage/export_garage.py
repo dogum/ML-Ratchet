@@ -18,7 +18,7 @@ Grid (nothing here is chosen by a result):
             The same changed input goes to RoadSim, EnergyNet (told the new mass) and TripDetective. A third load level
             would have taken the garage past its ~8 MB budget: HybridPilot's inputs at every decision second dominate.
 
-Per cell (vehicle x route x temperature x load), RoadSim physics v2, pinned:
+Per cell (vehicle x route x temperature x load), RoadSim physics v3.1 (v2 plus the hybrid fixes), pinned:
   * the run itself (RoadSim's default controller for the architecture: A-ECMS for the power-split, charge-depleting
     then sustaining for the plug-in; warm start, as the VED fragments are): ledger, summary, display traces (wheel, fuel and battery power, HVAC, SOC, engine on);
   * what a VED-style OBD logger records of it (roadsim.obd.emulate, fixed channel set per powertrain, no dropouts),
@@ -36,6 +36,7 @@ import argparse
 import copy
 import importlib.util
 import json
+import math
 import os
 import sys
 import time
@@ -76,7 +77,7 @@ HPX = _load('garage_hp_export', os.path.join(MODELS, 'hybridpilot', 'web', 'expo
 ZTB = _load('garage_check_ztbus', os.path.join(VEH, 'checks', 'check_ztbus.py'))                      # bus_spec()
 CVT = _load('garage_check_ved_twin', os.path.join(VEH, 'checks', 'check_ved_twin.py'))                # build_twin()
 
-PHYSICS = 'roadsim-physics-v2'
+PHYSICS = 'roadsim-physics-v3.1'   # HybridPilot v2.1's pin; non-hybrid runs are bit-identical to v2
 assert PL.PHYSICS == PHYSICS
 OUT = os.path.join(REPO, 'site', 'public', 'garage')
 INST = os.path.join(REPO, 'site', 'public', 'instruments')
@@ -471,7 +472,7 @@ def main():
              for v in V]
     meta = dict(physics=PHYSICS, temps=TEMPS, loads=LOADS, routes=rmeta, vehicles=vmeta, q=Q, xcol=XCOL, lhv_kJ_g=LHV_KJ_G,
                 td_ledger=TD_LEDGER, policy=dict(HP.DEFAULTS), built='14 Nov 2026',
-                note='RoadSim physics v2 runs precomputed on this grid (Python); EnergyNet, TripDetective and HybridPilot run live.')
+                note='RoadSim physics v3.1 runs precomputed on this grid (Python); EnergyNet, TripDetective and HybridPilot run live.')
     write_pack(os.path.join(out_dir, 'routes'), rt, dtype='f32', keep=keep, meta=meta)
     RW, _ = read_pack(os.path.join(out_dir, 'routes'))
     rtrip = [{k: RW[f'r{i}_{k}'] for k in FIELDS} for i in range(len(routes))]
@@ -604,6 +605,8 @@ def td_outputs(net, raws, fls):
         for s, e in TD.windows(raw.shape[1]):
             I.append(TD.net_input(raw[:, s:e], fl, feat=net.feat))
     h = net.heads([net.encode(*i) for i in I], [i[2] for i in I])
+    if hasattr(net, 'apply_offstop'):   # TripDetective v2.1: engine-stop constraint
+        h = net.apply_offstop(h, I)
     out = [h['arch'], h['strat'], h['mu'], h['sig']]
     for mu, sg in h['led']:
         out += [mu, sg]
@@ -625,7 +628,9 @@ def equiv(net, x, soc, I0, m):
     e = m['ref'] - soc
     if (core.p['Kp'] or core.p['Ki']) and (not m['phev'] or e > -0.03):
         I = min(max(I0 + e, -30.0), 30.0)
-        s = max(s + core.p['Kp'] * e + core.p['Ki'] * I, 0.0)
+        d = core.p.get('fb_dead', 0.0)      # HybridPilot v2.1: soft dead band on the proportional term
+        ep = (e if abs(e) > d else 0.0) if core.p.get('fb_dead_mode') == 'hard' else math.copysign(max(abs(e) - d, 0.0), e)
+        s = max(s + core.p['Kp'] * ep + core.p['Ki'] * I, 0.0)
     return s
 
 

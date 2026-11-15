@@ -1,4 +1,4 @@
-// The garage: pick a vehicle and a real route; RoadSim's run of it (precomputed in Python, physics v2) is shown with its
+// The garage: pick a vehicle and a real route; RoadSim's run of it (precomputed in Python, physics v3.1) is shown with its
 // energy ledger, and the three networks run in the browser on every change: EnergyNet forecasts the trip before it is
 // driven, TripDetective reads the run's OBD log back, HybridPilot's network is re-run over every decision second of its
 // own drive. Truth (RoadSim's run and the vehicle spec) sits next to every reading.
@@ -279,7 +279,7 @@ export async function mountGarage(root: HTMLElement, opts: { base: string; inst:
   grid.append(pE);
 
   // 3. RoadSim
-  const pS = panel('wide', C.sim, '03', 'RoadSim', 'the run: physics v2, second by second', 'precomputed', false);
+  const pS = panel('wide', C.sim, '03', 'RoadSim', 'the run: physics v3.1, second by second', 'precomputed', false);
   const sRead = h('div', { class: 'gar-read' }, 'hover or touch the traces');
   const simBox = h('div', { class: 'gar-scr', 'aria-label': 'Speed, power, charge and engine state over the trip' });
   const sKv = h('div', { class: 'gar-kv' });
