@@ -53,6 +53,12 @@ F. **Carried history sometimes makes a day infeasible.** In 4-11 % of days (15-4
    infeasible and the day was re-solved without the carried minimum up/down and ramp history (`n_days_relaxed`). The
    cause was not isolated: it depends on the carried state and did not reproduce from another start date. Effect:
    minimum up/down times may be broken across those midnights. Fix: soft history constraints with a penalty slack.
+   *14 Nov 2026: done, behind `dispatch(..., soft_history=True)` (off by default).* A penalised slack (10 x VOLL x
+   unit size per unit-hour on min up/down, 10 x VOLL per MW on the first-hour ramp) replaces the re-solve. ERCOT 2022,
+   calibrated, physics 1.1: days re-solved without history 14 -> 0; coal +34.36 -> +34.34 %, gas -14.02 -> -14.01 %,
+   median price $45.04 -> $45.04, CO2 +2.51 -> +2.49 % (`checks/ercot_dispatch_2022.json`, `calibrated_soft`).
+   Random-outage unit-level runs (`checks/check_soft_history.py`, 5 seeds x 5 days) needed no slack and matched the
+   hard runs, so the infeasibility PlantDetective's build met with `outages='random'` did not reproduce there.
 G. **Clustering**: similar units share one integer commitment (≤ 50 units per cluster integer, larger clusters
    continuous); unit-level results need `cluster=False` (slower). Combined cycles are blocks (no 1×1 vs 2×1 modes);
    no duct firing; no start-up types (hot/warm/cold). Hydro is a daily energy budget.

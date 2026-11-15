@@ -46,6 +46,10 @@ CONFIGS = {
     # same, prices from the LP relaxation (the default since the dev-week comparison; 'calibrated' used fixed pricing)
     "calibrated_relaxed": dict(method="milp", fixed="nuclear", must_run=tuple(CAL.get("must_run", ["coal_steam"])),
                                offer_adders=CAL.get("offer_adders", {}), pricing="relaxed"),
+    # 'calibrated' with soft history constraints (HANDOFF P0.6): penalised slack instead of re-solving a day without
+    # its carried history; target: fewer than 0.5 % of days re-solved
+    "calibrated_soft": dict(method="milp", fixed="nuclear", must_run=tuple(CAL.get("must_run", ["coal_steam"])),
+                            offer_adders=CAL.get("offer_adders", {}), soft_history=True),
     "calibrated_lp": dict(method="lp", fixed="nuclear", must_run=tuple(CAL.get("must_run", ["coal_steam"])),
                           offer_adders=CAL.get("offer_adders", {})),
     "merit": dict(method="merit", fixed="nuclear"),
