@@ -27,7 +27,8 @@ from scipy.special import ndtr
 
 import os  # noqa: E402
 import _paths  # noqa: E402  (GRID/gridsim and GRID on sys.path)
-from gridsim.fleet import prepare_fleet, merge_combined_cycles, fuel_prices_daily  # noqa: E402
+from gridsim.fleet import (prepare_fleet, merge_combined_cycles, fuel_prices_daily, calibration,  # noqa: E402
+                           calibration_path, physics_version)
 from gridsim.dispatch import CompiledFleet, availability  # noqa: E402
 
 FLEETS = {'ERCO': os.path.join(_paths.GRID, 'data', 'proc', 'fleet', 'fleet_ERCO.parquet'),
@@ -44,6 +45,17 @@ DEFAULTS = dict(mu=0.0, sigma=2000.0, X=2000.0, voll=9000.0, cap=9000.0, floor=-
                 wind_fc_sd=0.07, solar_fc_sd=0.05, fc_rho=0.97, outage_sd_frac=0.02, markup=0.0,
                 floor_reserve=3000.0, rt_noise_sd=0.0, rt_noise_rho=0.7, floor_share=1.0, ramp_k=0.0,
                 da_sd_scale=1.0)
+
+
+def ercot_dispatch():
+    """GridSim's dev-2019 ERCOT dispatch calibration (coal must-run, coal offer adder) for the active GridSim physics
+    version ($GRIDSIM_PHYSICS; gridsim.fleet.calibration()).  Physics 1.0 gives the released -6.62 $/MWh.  The adder
+    was fitted with the version's own outage defaults, so it must come from the same version; no silent default."""
+    v = physics_version()
+    ed = calibration(v).get('ercot_dispatch') or {}
+    if 'coal_steam' not in ed.get('offer_adders', {}):
+        raise RuntimeError(f'GridSim physics {v}: no ercot_dispatch.offer_adders.coal_steam in {calibration_path(v)}')
+    return v, float(ed['offer_adders']['coal_steam']), list(ed.get('must_run', ['coal_steam']))
 
 
 def load_inputs(ba, year):
@@ -97,8 +109,13 @@ class Engine:
         self.is_ct = np.isin(cf.tech, ['gas_ct', 'gas_ice', 'oil'])
         self.is_cc = cf.tech == 'gas_cc'
         self.is_gas = np.isin(cf.tech, ['gas_cc', 'gas_ct', 'gas_steam', 'gas_ice'])
-        self.must_run = (cf.tech == 'coal_steam') if ba == 'ERCO' else np.zeros(cf.C, bool)   # GridSim calibration
-        self.coal_adder = -6.62 if ba == 'ERCO' else 0.0
+        # GridSim's ERCOT dispatch calibration of the active physics version (was hard-coded: must-run coal, -6.62)
+        # (CISO: no must-run, no adder, as released)
+        self.physics = physics_version()
+        self.must_run = np.zeros(cf.C, bool); self.coal_adder = 0.0
+        if ba == 'ERCO':
+            _, self.coal_adder, must = ercot_dispatch()
+            self.must_run = np.isin(cf.tech, must)
 
     def fuel(self, times, gas_scale=1.0, mode='eia923'):
         cf = self.cf
@@ -115,7 +132,8 @@ class Engine:
 
     def blocks(self, fprice, coal_adder=0.0, carbon=0.0):
         """Block costs (T, C, K+1) and widths per unit (C, K+1): block 0 = pmin at average cost.
-        coal_adder: GridSim's dev-2019 coal offer adder (-6.62 $/MWh for ERCOT, gridsim/data/calibration.json)."""
+        coal_adder: GridSim's dev-2019 coal offer adder for ERCOT (gridsim.fleet.calibration() of the physics
+        version: -6.62 $/MWh in 1.0, data/calibration.json; 1.1 in data/calibration_v1_1.json)."""
         cf = self.cf
         pmin = np.maximum(cf.pmin, 1e-3)
         add = cf.vom + np.where(cf.tech == 'coal_steam', coal_adder, 0.0)

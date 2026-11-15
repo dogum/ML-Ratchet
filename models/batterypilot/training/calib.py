@@ -6,7 +6,7 @@ median |RT-DA|, DA/RT mean, 2 h perfect-foresight value).  Averaged over 2 outag
 Stage B (Feb 2021, Winter Storm Uri): the cold-weather outage curve f_cold(T) so that the simulated reserve falls
 below the ORDC minimum on the same days as the real price sat at the cap.  EIA-930 demand during Uri is served load
 (ERCOT shed up to ~20 GW), so for this one calibration the demand is max(served, ERCOT's day-ahead forecast).
-Writes data/calibration.json.
+Writes data/calibration.json (GridSim physics 1.0) or data/calibration_v1_1.json (physics 1.1, $GRIDSIM_PHYSICS).
 """
 import itertools, json, os, sys, time
 import numpy as np, pandas as pd
@@ -16,7 +16,8 @@ from realdata import node_frame
 from battery import Battery
 from strategies import pf_daily
 
-OUT = os.path.join(_paths.WORK, 'data', 'calibration.json')
+from simbank import calib_file
+OUT = calib_file()   # per GridSim physics version: WORK/data/calibration.json (1.0), calibration_v1_1.json (1.1)
 URI = ('2021-02-08', '2021-02-24')
 
 
@@ -72,6 +73,12 @@ if __name__ == '__main__':
     if True:
         grid = dict(mu=[-4000, -3000, -2000], sigma=[3500, 5000, 6500], rt_noise_sd=[0.1, 0.2], ramp_k=[1.5, 3.0],
                     da_sd_scale=[0.7, 1.0])
+    if 'wide' in sys.argv:
+        # GridSim physics 1.1 (14 Nov 2026): on the grid above the best point sat on the opposite edges (mu -2000,
+        # sigma 6500); this grid contains it and extends both edges, as the release did once
+        grid = dict(mu=[-4000, -3000, -2000, -1000, 0], sigma=[3500, 5000, 6500, 8000, 9500], rt_noise_sd=[0.1, 0.2],
+                    ramp_k=[1.5, 3.0], da_sd_scale=[0.7, 1.0])
+        OUT = OUT.replace('.json', '_wide.json')
     best = (1e9, None)
     for vals in itertools.product(*grid.values()):
         P = dict(base, **dict(zip(grid.keys(), vals)))
@@ -130,5 +137,6 @@ if __name__ == '__main__':
     cal = dict(PA, **bestB[1])
     res['calibrated'] = cal
     res['note'] = 'fitted on dev years 2019 and 2021 (HB_HUBAVG RT/DA) only'
+    res['gridsim_physics'] = eng.physics; res['coal_adder'] = eng.coal_adder
     json.dump(res, open(OUT, 'w'), indent=1, default=float)
     print('done', cal, round(time.time() - t0), flush=True)

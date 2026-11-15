@@ -143,3 +143,95 @@ Float16 weights move the raw knots (asinh of value / price scale) by at most 2.9
 **Not fixed in this pass.** GridSim's outage-rate defaults cite Texas RE's 2024/2025 reliability-assessment aggregates,
 published during the exam years: a possible mild exam leak, noted in the card and in `limits`. The platform plan is to
 replace them with pre-2023 NERC GADS values and re-score.
+
+## 14 Nov 2026 — v1.1: GridSim outage-rate leak removed (HANDOFF P0.5)
+
+**What leaked.** GridSim physics 1.0 filled the forced and planned outage shares of coal, CC, CT and gas-steam units
+from Texas RE's 2024/2025 assessments: exam-period data. GridSim physics 1.1 (commit a4a24d4) takes them from PJM's
+2017-2021 class average EFORd and Texas RE's 2017 assessment (coal 0.15/0.11 → 0.136/0.083, CC 0.08/0.11 →
+0.036/0.083, CT 0.08/0.06 → 0.058/0.083, gas steam 0.13/0.19 → 0.136/0.083). It re-fits the dev-2019 coal offer adder:
+−6.62 → −5.73 $/MWh.
+
+**Where it reached BatteryPilot.** `pricesim.py`: `prepare_fleet` (outage shares), `availability(mode='random')`, and
+GridSim's coal must-run and adder, hard-coded as −6.62. From there: `calib.py` (ORDC μ/σ, RT noise, DA scale, the Uri
+cold-outage curve), `simbank.py` (every bank and frozen set), `twin.py`, every rung trained or scored on simulated
+paths, and the released network. Not reached: battery physics, the dev gate and the exam (real prices only).
+
+**Code.** `pricesim.Engine` now reads the coal must-run and adder from `gridsim.fleet.calibration()` of the active
+`GRIDSIM_PHYSICS` and raises if the key is missing. With 1.0 it gives −6.62. `simbank.calib_file()` picks the scarcity
+calibration of the physics version: 1.0 → the release's `training/checks/calibration.json`; 1.1 →
+`work/data/calibration_v1_1.json`. `simbank.py` gained `--calib`, `--part k/n` (parallel builds, same files) and
+`--prefix`, and stores the physics version, adder and calibration file in each path's meta. `calib.py` writes per
+version and has a `wide` grid. New: `leakcheck.py` (the measurement) and `ladder_v1_1.py` (the v1.1 decisions →
+`training/ratchet_v1_1.json`).
+
+**Reproduction first.** With `GRIDSIM_PHYSICS=1.0` and the release calibration, `leakcheck.py` reproduces the release's
+stage-A loss (3.6695), every dev target statistic, the Uri hours (180, 166; overlap 0.948, 0.915) and the twin
+captures (0.937/0.911 on 2019, 0.681/0.641 on 2021) exactly.
+
+**Measured (dev only).** Physics 1.0 → 1.1, both with the v1.0 calibration:
+- Mean thermal capacity on random outage (ERCOT 2019 fleet, 74.1 GW): 14.8 → 10.8 GW.
+- 2019 twins: hours above $1,000 22.5 → 0 (real 26); above $300 120 → 20 (75); daily-max p90 $212 → $67 ($232);
+  2 h PF value $84.0 → $27.9/kW-yr ($103.3); RT mean $38.6 → $22.8 ($35.8).
+- 2021 (Uri masked): above $300 53.5 → 1 (47); PF $61.1 → $32.9 ($54.4).
+- Calibration loss 3.67 → 21.07. Uri hours above $1,000: 180/166 → 156/149 (real 153).
+- Frozen sets with the same seeds (24 ERCOT + 9 CAISO-like): v1.0 network 0.798 → 0.771; rolling LP 0.516 → 0.421.
+  Dev capture does not move (real prices): 0.6373 and 0.5927.
+
+The v1.0 calibration had soaked up the leaked ~4 GW of extra outages. Without them, its scarcity curve almost never
+binds.
+
+**Recalibrated on dev (physics 1.1).**
+- On the release's grid the best point sat on the opposite edges: μ −2,000, σ 6,500, loss 4.253.
+- Widened once, as in v1.0 (μ −4,000…0, σ 3,500…9,500; it contains the old grid): μ 0 MW, σ 5,000 MW, loss 4.165.
+  Both files are in `work/data/`. μ 0 is a grid edge again.
+- RT noise 0.1, ramp_k 1.5 and DA scale 0.7 are unchanged. Uri: cold f_max 0.40 (was 0.55), T50 −3 °C, w 3 K; 158 and
+  150 hours above $1,000 vs 153 real.
+- 2019 twins now: 32.5 hours above $1,000, PF $75.6.
+- Released v1.0 network on the rebuilt v4 frozen set: 0.778.
+
+**Banks and frozen set (physics 1.1, v1.1 calibration).** Seeds 8101 (ERCOT 120), 8102 (CAISO-like 45), 8103 (sim v1,
+45). The frozen set v4 has 24 ERCOT + 9 CAISO-like paths, seeds 7001/7002, the same seeds as the measurement sets
+m10_frozen and m11rc_frozen. Each path took 13-45 s, 16 builds in parallel.
+
+**v1.1 ladder** (rule as written: frozen > incumbent + 0.01 and dev ≥ incumbent − 0.01; torch CPU, about 0.5 s/step):
+
+| Rung | v4 frozen | Dev | Decision |
+|---|---|---|---|
+| R0 rolling LP | 0.5042 | 0.5927 | incumbent |
+| R1 sim v1, 45 paths, 1,500 steps | 0.6074 | 0.4888 | rejected: dev −0.104 |
+| R2 sim v2, 80 ERCOT paths, 1,500 steps | 0.7792 | 0.6382 | kept (+0.275, dev +0.046) |
+| R3 120 ERCOT + 45 CAISO-like, 2,500 steps | 0.7877 | 0.6437 | rejected: +0.0085 |
+| R4 fine-tune R3, 504 h windows, batch 64, lr 5e-4, 900 steps | 0.7890 | 0.6530 | rejected: +0.0098 |
+
+Two things are not recorded from the sandbox: the release's bank seeds and R4's learning rate. Those above are this
+run's. R4 missed by 0.0002 with a better dev score, and it is rejected as the rule says. No further rung was tried
+after seeing that. R2 is released as v1.1.
+
+**Shipped.** `batterypilot_weights.npz` = v1.1 (R2); `batterypilot_weights_v1_0.npz` = v1.0 (identical to the
+release's R4); `PolicyNet()` loads v1.1, `bp.WEIGHTS_V1_0` names v1.0. The demo now prints the v1.1 numbers, so the
+golden (`tests/golden/batterypilot.txt`) was regenerated. 2 h, $/kW-yr, BatteryPilot v1.0 → v1.1: CAISO SP15 2025
+11.0 → 10.2; ERCOT HB_HOUSTON 2023 93.7 → 93.9; HB_WEST 2024 38.7 → 39.4. The live instrument was re-exported with
+v1.1. Parity: 9 cases, worst relative difference 6.5e-6. Float16 moves z by at most 3.4e-3.
+
+**Exam, second look** (v1.1, run once, 48 node-years, `training/checks/exam_report_v1_1.json`). Mean share of perfect
+hindsight, first look (v1.0) → second look (v1.1):
+- ERCOT: 0.667 → 0.679 (optimiser 0.685). 1 h 0.559 → 0.578; 2 h 0.671 → 0.680; 4 h 0.769 → 0.780 (optimiser 0.742).
+- CAISO: 0.642 → 0.614 (optimiser 0.681). 4 h 0.730 → 0.719 (optimiser 0.723): the CAISO 4 h win becomes a loss.
+- Beats the optimiser in 63 % / 11 % of cases (was 57 % / 19 %); the spread rule in 89 % / 58 % (was 89 % / 81 %).
+
+The pooled verdicts stay losses. CAISO is worse because R2 never saw the CAISO-like family. The model.yaml exam rows
+keep the v1.0 values; the second look is in each row's note.
+
+**Not done.** The CAISO-like family check (hourly medians against Aug-Dec 2023) was not re-run on physics 1.1. ERCOT's
+own pre-2023 outage rates by technology are still wanted (help_wanted).
+
+## 14 Nov 2026 — wording corrected (site-wide honesty audit)
+
+- MODEL_CARD limits said BatteryPilot "roughly ties, does not beat" the day-ahead optimiser. Both pooled rows are losses
+  (ERCOT 0.667 vs 0.685, CAISO 0.642 vs 0.681). It now says it lost to the optimiser: it wins with 4 h batteries and
+  loses with 1 h and in CAISO. model.yaml had no "ties" wording.
+- Cycles a year: model.yaml said 244 in one place and 245 in another, and the card said 245. The exam output
+  (`training/checks/exam_report.json`) gives 244 in ERCOT and 248 in CAISO (245 is the mean of both, set against
+  ERCOT's 300). Both files now say 244 (ERCOT) and 248 (CAISO) vs 300 and 282 for the optimiser. The first notebook
+  entry is left as written.

@@ -1,7 +1,8 @@
-# The ratchet ladder, normalised. Raw log: training/ratchet.json (every rung, its dev scores by node-year, and the re-scores).
+# The ratchet ladders, normalised. Raw logs: training/ratchet.json (v1.0, GridSim physics 1.0: every rung, its dev scores
+# by node-year, and the re-scores) and training/ratchet_v1_1.json (v1.1, GridSim physics 1.1: the leak fix of 14 Nov 2026).
 model: batterypilot
 ladders:
-  - name: BatteryPilot
+  - name: v1.0 — GridSim physics 1.0 (as released)
     objective: "Capture = net revenue / perfect-foresight net revenue (net of wear), summed over the 1, 2 and 4 h batteries of each simulated path-year and averaged over the path-years of the frozen simulated set (each path-year counts the same)"
     rule: "Keep a rung if its frozen capture beats the incumbent's by more than 0.01 AND its capture on the 10 real dev node-years (ERCOT 2019 and 2021 at 4 hubs, CAISO Aug-Dec 2023 at NP15 and SP15; all 3 durations) is not more than 0.01 below the incumbent's. When the simulator changed, a new frozen set was built and every logged rung re-scored and re-decided in order."
     margin: 0.01
@@ -16,4 +17,20 @@ ladders:
       - { id: R1, change: "MLP value-curve policy trained by policy search on sim v1 (GridSim merit-order prices, no scarcity curve, no outage weather, no RT noise); 45 path-years", sim: 0.5926, decision: rejected, why: "Frozen +0.491 but the dev gate failed: dev capture 0.483 vs the incumbent's 0.593 (−0.110). The v1 prices have no scarcity, so the policy cycles on small spreads and is empty when spikes come. Still rejected on v2 (+0.043 frozen, dev −0.110) and v3.", metrics: [0.5926, 0.5326, 0.5696, 0.4828] }
       - { id: R2, change: "Same network and policy search, trained on sim v2 (80 ERCOT path-years from 2018/2020/2022 inputs with dev-calibrated scarcity)", sim: 0.7671, decision: kept, why: "Frozen 0.767 vs R0 0.489 on v2 (+0.278); dev 0.598 vs 0.593 → new incumbent. Re-scored on v3: 0.7465 vs R0 0.4472, still kept.", metrics: ["—", 0.7671, 0.7465, 0.5979] }
       - { id: R3, change: "Train on all 120 ERCOT path-years + 45 CAISO-like path-years (CISO fleet, duck-curve solar, carbon price, $1,000-2,000 caps), 2,500 steps", sim: 0.7489, decision: rejected, why: "Frozen 0.7489 vs R2 0.7465 on v3 (+0.0024, below the 0.01 margin), although dev improved (0.623 vs 0.598).", metrics: ["—", "—", 0.7489, 0.6228] }
-      - { id: R4, change: "Fine-tune R3 on the same 165 path-years with longer windows (21 days), batch 64, lower learning rate (900 steps)", sim: 0.758, decision: released, why: "Frozen 0.7580 vs R2 0.7465 on v3 (+0.0115 > 0.01); dev 0.637 vs 0.598. Released as v1.0.", metrics: ["—", "—", 0.758, 0.6372] }
+      - { id: R4, change: "Fine-tune R3 on the same 165 path-years with longer windows (21 days), batch 64, lower learning rate (900 steps)", sim: 0.758, decision: kept, why: "Frozen 0.7580 vs R2 0.7465 on v3 (+0.0115 > 0.01); dev 0.637 vs 0.598. Released as v1.0 (weights kept as batterypilot_weights_v1_0.npz). Its simulator used GridSim physics 1.0, whose outage defaults leaked exam-period data; replaced by v1.1 (next ladder).", metrics: ["—", "—", 0.758, 0.6372] }
+  - name: v1.1 — GridSim physics 1.1 (leak fix, 14 Nov 2026)
+    objective: "As v1.0: capture = net revenue / perfect-foresight net revenue (net of wear), summed over the 1, 2 and 4 h batteries of each simulated path-year and averaged over the path-years of the frozen simulated set"
+    rule: "Unchanged from v1.0: keep a rung if its frozen capture beats the incumbent's by more than 0.01 AND its capture on the 10 real dev node-years is not more than 0.01 below the incumbent's. Every v1.0 decision re-taken in order, every network retrained."
+    margin: 0.01
+    dev_gate: "Dev capture (10 real dev node-years: ERCOT 2019 and 2021 at 4 hubs, CAISO Aug-Dec 2023 at NP15 and SP15; all 3 durations) may not fall more than 0.01 below the incumbent's"
+    frozen_sets: [v4_frozen]
+    scored_on: v4_frozen
+    note: "GridSim physics 1.0 took its coal, CC, CT and gas-steam forced and planned outage shares from Texas RE's 2024/2025 assessments (exam-period data). Physics 1.1 uses pre-2023 sources (PJM 2017-2021 class EFORd; Texas RE 2017) and a coal offer adder re-fitted on dev 2019 (-5.73 $/MWh, was -6.62). Everything downstream was redone on 1.1: the scarcity calibration on dev 2019, 2021 and Uri (ORDC mu -4,000 -> 0 MW, sigma 5,000 MW, cold-outage f_max 0.55 -> 0.40), the training banks (120 ERCOT + 45 CAISO-like + 45 sim-v1 path-years) and the frozen set v4 (24 ERCOT + 9 CAISO-like). For reference (not a rung), the v1.0 network scores 0.7778 frozen on v4 and 0.6373 dev. R4 missed the margin by 0.0002 and is rejected as the rule says; R2 is released as v1.1."
+    columns_source: Frozen capture on v4_frozen and dev capture on the real dev node-years (training/ratchet_v1_1.json)
+    columns: ["v4 frozen", "Dev capture"]
+    rungs:
+      - { id: R0, change: "Classical rolling-horizon LP on day-ahead prices (re-plans at 14:00, follows the plan)", sim: 0.5042, decision: kept, why: "Starting incumbent.", metrics: [0.5042, 0.5927] }
+      - { id: R1, change: "MLP value-curve policy trained by policy search on sim v1 (GridSim merit-order prices only); 45 path-years, 1,500 steps", sim: 0.6074, decision: rejected, why: "Frozen +0.103 but the dev gate failed: dev 0.489 vs 0.593 (−0.104).", metrics: [0.6074, 0.4888] }
+      - { id: R2, change: "Same network, trained on sim v2 with the v1.1 dev calibration: 80 ERCOT path-years, 1,500 steps", sim: 0.7792, decision: released, why: "Frozen 0.7792 vs R0 0.5042 (+0.275); dev 0.638 vs 0.593 → kept. No later rung beat it by the margin: released as v1.1.", metrics: [0.7792, 0.6382] }
+      - { id: R3, change: "Train on all 120 ERCOT path-years + 45 CAISO-like path-years, 2,500 steps", sim: 0.7877, decision: rejected, why: "Frozen +0.0085 over R2, below the 0.01 margin (dev 0.644 vs 0.638).", metrics: [0.7877, 0.6437] }
+      - { id: R4, change: "Fine-tune R3 on the same 165 path-years with 21-day windows, batch 64, learning rate 5e-4 (900 steps)", sim: 0.789, decision: rejected, why: "Frozen 0.7890 vs R2 0.7792 (+0.0098, 0.0002 short of the 0.01 margin), although dev rose to 0.653 vs 0.638. Rejected as the rule is written.", metrics: [0.789, 0.653] }

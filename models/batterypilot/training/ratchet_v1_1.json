@@ -1,0 +1,637 @@
+{
+ "rule": "The v1.1 ladder (GridSim physics 1.1, leak fix of 14 Nov 2026): re-take the logged decisions in order on the\nv4 frozen set and the real dev gate, with the release's rule unchanged.\n\n    python ladder_v1_1.py      -> training/ratchet_v1_1.json (reads WORK/data/scores/<rung>__v4_frozen.json,\n                                  WORK/data/leak/*.json and the frozen-set scores of the leak measurement)\n\nRule (as released): keep a rung if its frozen capture beats the incumbent's by more than 0.01 AND its dev capture is\nnot more than 0.01 below the incumbent's.  R0 is the starting incumbent.\n",
+ "physics": "GridSim 1.1 (outage defaults from pre-2023 sources; coal adder -5.73 $/MWh)",
+ "calibration": {
+  "floor_share": 0.8,
+  "mu": 0,
+  "sigma": 5000,
+  "rt_noise_sd": 0.1,
+  "ramp_k": 1.5,
+  "da_sd_scale": 0.7,
+  "cold_fmax": 0.4,
+  "cold_T50": -3,
+  "cold_w": 3.0,
+  "cold_tau_h": 36.0
+ },
+ "frozen": "v4_frozen (24 ERCOT + 9 CAISO-like path-years; seeds 7001/7002, the same as the leak measurement sets m10_frozen and m11rc_frozen)",
+ "rungs": [
+  {
+   "rung": "R0",
+   "name": "rolling",
+   "change": "Classical rolling-horizon LP on day-ahead prices (re-plans at 14:00, follows the plan)",
+   "command": null,
+   "frozen": "v4_frozen",
+   "frozen_capture": 0.5042,
+   "dev_capture": 0.5927,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.7017,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8559,
+    "ERCOT:HB_HOUSTON:2019": 0.7848,
+    "ERCOT:HB_HOUSTON:2021": 0.307,
+    "ERCOT:HB_NORTH:2019": 0.7897,
+    "ERCOT:HB_NORTH:2021": 0.3202,
+    "ERCOT:HB_SOUTH:2019": 0.7893,
+    "ERCOT:HB_SOUTH:2021": 0.2797,
+    "ERCOT:HB_WEST:2019": 0.7836,
+    "ERCOT:HB_WEST:2021": 0.315
+   },
+   "dev_by_duration": {
+    "1": 0.4928,
+    "2": 0.547,
+    "4": 0.5676
+   },
+   "frozen_cycles": 156.8,
+   "dev_cycles": 210.1,
+   "kept": true,
+   "why": "starting incumbent"
+  },
+  {
+   "rung": "R1",
+   "name": "r1_v4",
+   "change": "MLP value-curve policy trained by policy search on sim v1 (GridSim merit-order prices, no scarcity curve, no outage weather, no RT noise); 45 path-years (v4_train_v1), 1,500 steps",
+   "command": "train.py r1_v4 v4_train_v1 --steps 1500",
+   "frozen": "v4_frozen",
+   "frozen_capture": 0.6074,
+   "dev_capture": 0.4888,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.6546,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8129,
+    "ERCOT:HB_HOUSTON:2019": 0.6307,
+    "ERCOT:HB_HOUSTON:2021": 0.2407,
+    "ERCOT:HB_NORTH:2019": 0.6235,
+    "ERCOT:HB_NORTH:2021": 0.2324,
+    "ERCOT:HB_SOUTH:2019": 0.6135,
+    "ERCOT:HB_SOUTH:2021": 0.2276,
+    "ERCOT:HB_WEST:2019": 0.6161,
+    "ERCOT:HB_WEST:2021": 0.2366
+   },
+   "dev_by_duration": {
+    "1": 0.227,
+    "2": 0.3723,
+    "4": 0.5602
+   },
+   "frozen_cycles": 205.4,
+   "dev_cycles": 144.3,
+   "kept": false,
+   "vs": "R0",
+   "d_frozen": 0.1032,
+   "d_dev": -0.1039,
+   "why": "frozen 0.6074 vs R0 0.5042 (+0.1032 > 0.01); dev 0.4888 vs 0.5927 (-0.1039, gate failed) -> rejected"
+  },
+  {
+   "rung": "R2",
+   "name": "r2_v4",
+   "change": "Same network and policy search, trained on sim v2 with the v1.1 dev calibration: 80 ERCOT path-years (v4_train_e p0000-p0079), 1,500 steps",
+   "command": "train.py r2_v4 v4_train_e/p00[0-7][0-9] --steps 1500",
+   "frozen": "v4_frozen",
+   "frozen_capture": 0.7792,
+   "dev_capture": 0.6382,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.776,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8423,
+    "ERCOT:HB_HOUSTON:2019": 0.8206,
+    "ERCOT:HB_HOUSTON:2021": 0.3719,
+    "ERCOT:HB_NORTH:2019": 0.8185,
+    "ERCOT:HB_NORTH:2021": 0.3786,
+    "ERCOT:HB_SOUTH:2019": 0.8055,
+    "ERCOT:HB_SOUTH:2021": 0.3753,
+    "ERCOT:HB_WEST:2019": 0.8107,
+    "ERCOT:HB_WEST:2021": 0.3823
+   },
+   "dev_by_duration": {
+    "1": 0.4762,
+    "2": 0.5727,
+    "4": 0.6598
+   },
+   "frozen_cycles": 205.7,
+   "dev_cycles": 154.5,
+   "kept": true,
+   "vs": "R0",
+   "d_frozen": 0.275,
+   "d_dev": 0.0455,
+   "why": "frozen 0.7792 vs R0 0.5042 (+0.2750 > 0.01); dev 0.6382 vs 0.5927 (+0.0455, gate passed) -> kept, new incumbent"
+  },
+  {
+   "rung": "R3",
+   "name": "r3_v4",
+   "change": "Train on all 120 ERCOT path-years + 45 CAISO-like path-years (v4_train_e + v4_train_c), 2,500 steps",
+   "command": "train.py r3_v4 v4_train_e,v4_train_c --steps 2500",
+   "frozen": "v4_frozen",
+   "frozen_capture": 0.7877,
+   "dev_capture": 0.6437,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.781,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8543,
+    "ERCOT:HB_HOUSTON:2019": 0.82,
+    "ERCOT:HB_HOUSTON:2021": 0.3648,
+    "ERCOT:HB_NORTH:2019": 0.817,
+    "ERCOT:HB_NORTH:2021": 0.4036,
+    "ERCOT:HB_SOUTH:2019": 0.8091,
+    "ERCOT:HB_SOUTH:2021": 0.3751,
+    "ERCOT:HB_WEST:2019": 0.805,
+    "ERCOT:HB_WEST:2021": 0.4069
+   },
+   "dev_by_duration": {
+    "1": 0.4737,
+    "2": 0.5888,
+    "4": 0.6605
+   },
+   "frozen_cycles": 206.3,
+   "dev_cycles": 157.5,
+   "kept": false,
+   "vs": "R2",
+   "d_frozen": 0.0085,
+   "d_dev": 0.0055,
+   "why": "frozen 0.7877 vs R2 0.7792 (+0.0085 <= 0.01); dev 0.6437 vs 0.6382 (+0.0055, gate passed) -> rejected"
+  },
+  {
+   "rung": "R4",
+   "name": "r4_v4",
+   "change": "Fine-tune R3 on the same 165 path-years with 21-day windows, batch 64, learning rate 5e-4 (900 steps)",
+   "command": "train.py r4_v4 v4_train_e,v4_train_c --init r3_v4 --steps 900 --window 504 --batch 64 --lr 5e-4",
+   "frozen": "v4_frozen",
+   "frozen_capture": 0.789,
+   "dev_capture": 0.653,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.7788,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8568,
+    "ERCOT:HB_HOUSTON:2019": 0.8247,
+    "ERCOT:HB_HOUSTON:2021": 0.3933,
+    "ERCOT:HB_NORTH:2019": 0.8215,
+    "ERCOT:HB_NORTH:2021": 0.4031,
+    "ERCOT:HB_SOUTH:2019": 0.8126,
+    "ERCOT:HB_SOUTH:2021": 0.4104,
+    "ERCOT:HB_WEST:2019": 0.8128,
+    "ERCOT:HB_WEST:2021": 0.4158
+   },
+   "dev_by_duration": {
+    "1": 0.5032,
+    "2": 0.5927,
+    "4": 0.6695
+   },
+   "frozen_cycles": 206.8,
+   "dev_cycles": 158.7,
+   "kept": false,
+   "vs": "R2",
+   "d_frozen": 0.0098,
+   "d_dev": 0.0148,
+   "why": "frozen 0.7890 vs R2 0.7792 (+0.0098 <= 0.01); dev 0.6530 vs 0.6382 (+0.0148, gate passed) -> rejected"
+  }
+ ],
+ "released": "R2",
+ "reference_released_v1_0_R4_on_v4_frozen": {
+  "frozen_capture": 0.7778,
+  "dev_capture": 0.6373,
+  "frozen_cycles": 204.2,
+  "dev_by_duration": {
+   "1": 0.5026,
+   "2": 0.5711,
+   "4": 0.6501
+  }
+ },
+ "leak_measurement": {
+  "rel_calib_physics1.0": {
+   "physics": "1.0",
+   "coal_adder": -6.62,
+   "calib": "calibration.json",
+   "stageA_loss": 3.669522406318788,
+   "stats": {
+    "2019": {
+     "max_q25": 27.938599844174078,
+     "max_q50": 34.28573246112171,
+     "max_q75": 50.69174748553478,
+     "max_q90": 211.60552936710508,
+     "min_q50": 8.880351501135435,
+     "min_q10": -6.608562964178018,
+     "h100": 276.5,
+     "h300": 120.0,
+     "h1000": 22.5,
+     "rtda": 3.7636664439487895,
+     "damean": 44.765691425227956,
+     "rtmean": 38.581071732381105,
+     "pf": 84.0309662718786
+    },
+    "2021": {
+     "max_q25": 37.085235997406734,
+     "max_q50": 55.363560553285154,
+     "max_q75": 80.23112576714928,
+     "max_q90": 107.41644424465682,
+     "min_q50": 10.386867644919228,
+     "min_q10": -7.1209163741523005,
+     "h100": 166.5,
+     "h300": 53.5,
+     "h1000": 12.0,
+     "rtda": 5.7288771145859165,
+     "damean": 49.16699831735486,
+     "rtmean": 42.41404746907031,
+     "pf": 61.06743504143123
+    }
+   },
+   "real": {
+    "2019": {
+     "max_q25": 28.05500030517578,
+     "max_q50": 39.94874954223633,
+     "max_q75": 103.48375129699707,
+     "max_q90": 232.09124755859375,
+     "min_q50": 13.366250038146973,
+     "min_q10": 1.4175000190734863,
+     "h100": 213.0,
+     "h300": 75.0,
+     "h1000": 26.0,
+     "rtda": 2.946249008178711,
+     "damean": 37.630586775416106,
+     "rtmean": 35.77544332242881,
+     "pf": 103.2951656499277
+    },
+    "2021": {
+     "max_q25": 35.584999084472656,
+     "max_q50": 54.369998931884766,
+     "max_q75": 100.2974967956543,
+     "max_q90": 226.39999389648438,
+     "min_q50": 15.699999809265137,
+     "min_q10": -0.7825000286102295,
+     "h100": 181.0,
+     "h300": 47.0,
+     "h1000": 8.0,
+     "rtda": 5.146248817443848,
+     "damean": 34.00487344071323,
+     "rtmean": 33.505762255540894,
+     "pf": 54.37729966731186
+    }
+   },
+   "uri": {
+    "sim_hours": [
+     180,
+     166
+    ],
+    "overlap": [
+     0.9477124183006536,
+     0.9150326797385621
+    ],
+    "real_hours": 153
+   },
+   "outages": {
+    "seed1": {
+     "mean_MW_out": 14908.688892166072,
+     "fleet_MW": 74134.1858126416
+    },
+    "seed2": {
+     "mean_MW_out": 14646.392305637472,
+     "fleet_MW": 74134.1858126416
+    }
+   },
+   "twin": {
+    "2019_real": {
+     "bp": 216058.5803854301,
+     "pf": 270977.8992442346,
+     "rolling": 214451.15745784604,
+     "capture_bp": 0.7973291585329427,
+     "capture_rolling": 0.791397224851018
+    },
+    "2019_twin1": {
+     "bp": 451427.65622836456,
+     "pf": 481946.3650034223,
+     "rolling": 414966.84851670003,
+     "capture_bp": 0.9366761303929722,
+     "capture_rolling": 0.8610228827304328
+    },
+    "2019_twin2": {
+     "bp": 215772.38321440143,
+     "pf": 237048.7632717176,
+     "rolling": 206323.5255078713,
+     "capture_bp": 0.9102447118320205,
+     "capture_rolling": 0.870384315278509
+    },
+    "2021_real": {
+     "bp": 113601.85675476116,
+     "pf": 295911.9290618976,
+     "rolling": 88783.35538245266,
+     "capture_bp": 0.3839042823143449,
+     "capture_rolling": 0.3000330391002295
+    },
+    "2021_twin1": {
+     "bp": 375811.34108237876,
+     "pf": 551726.2516986895,
+     "rolling": 245891.08004091462,
+     "capture_bp": 0.6811554460664272,
+     "capture_rolling": 0.4456758750990182
+    },
+    "2021_twin2": {
+     "bp": 245394.482433837,
+     "pf": 383018.52968201536,
+     "rolling": 211866.49191723985,
+     "capture_bp": 0.640685667707944,
+     "capture_rolling": 0.5531494575292033
+    }
+   }
+  },
+  "rel_calib_physics1.1": {
+   "physics": "1.1",
+   "coal_adder": -5.73,
+   "calib": "calibration.json",
+   "stageA_loss": 21.06764319849517,
+   "stats": {
+    "2019": {
+     "max_q25": 27.221987770645203,
+     "max_q50": 32.2367499017411,
+     "max_q75": 41.830909226221834,
+     "max_q90": 67.36043188569329,
+     "min_q50": 8.155234122123938,
+     "min_q10": -6.880132225843376,
+     "h100": 91.0,
+     "h300": 19.5,
+     "h1000": 0.0,
+     "rtda": 3.539760602383858,
+     "damean": 23.375994767368322,
+     "rtmean": 22.803348571788113,
+     "pf": 27.92440251684674
+    },
+    "2021": {
+     "max_q25": 36.00557208581205,
+     "max_q50": 52.78413442736347,
+     "max_q75": 72.26881423373621,
+     "max_q90": 99.27133161335917,
+     "min_q50": 8.153107669686126,
+     "min_q10": -7.246395188388481,
+     "h100": 84.0,
+     "h300": 1.0,
+     "h1000": 0.0,
+     "rtda": 5.444841963481753,
+     "damean": 33.98617956297803,
+     "rtmean": 33.47503737485376,
+     "pf": 32.92942534904335
+    }
+   },
+   "real": {
+    "2019": {
+     "max_q25": 28.05500030517578,
+     "max_q50": 39.94874954223633,
+     "max_q75": 103.48375129699707,
+     "max_q90": 232.09124755859375,
+     "min_q50": 13.366250038146973,
+     "min_q10": 1.4175000190734863,
+     "h100": 213.0,
+     "h300": 75.0,
+     "h1000": 26.0,
+     "rtda": 2.946249008178711,
+     "damean": 37.630586775416106,
+     "rtmean": 35.77544332242881,
+     "pf": 103.2951656499277
+    },
+    "2021": {
+     "max_q25": 35.584999084472656,
+     "max_q50": 54.369998931884766,
+     "max_q75": 100.2974967956543,
+     "max_q90": 226.39999389648438,
+     "min_q50": 15.699999809265137,
+     "min_q10": -0.7825000286102295,
+     "h100": 181.0,
+     "h300": 47.0,
+     "h1000": 8.0,
+     "rtda": 5.146248817443848,
+     "damean": 34.00487344071323,
+     "rtmean": 33.505762255540894,
+     "pf": 54.37729966731186
+    }
+   },
+   "uri": {
+    "sim_hours": [
+     156,
+     149
+    ],
+    "overlap": [
+     0.9019607843137255,
+     0.8888888888888888
+    ],
+    "real_hours": 153
+   },
+   "outages": {
+    "seed1": {
+     "mean_MW_out": 10784.654544803769,
+     "fleet_MW": 74134.1858126416
+    },
+    "seed2": {
+     "mean_MW_out": 10746.047059195937,
+     "fleet_MW": 74134.1858126416
+    }
+   },
+   "twin": {
+    "2019_real": {
+     "bp": 216058.5803854301,
+     "pf": 270977.8992442346,
+     "rolling": 214451.15745784604,
+     "capture_bp": 0.7973291585329427,
+     "capture_rolling": 0.791397224851018
+    },
+    "2019_twin1": {
+     "bp": 105463.8284298173,
+     "pf": 115216.03182528281,
+     "rolling": 69509.42730850601,
+     "capture_bp": 0.9153572359595402,
+     "capture_rolling": 0.6032964875401392
+    },
+    "2019_twin2": {
+     "bp": 100974.21224579329,
+     "pf": 113339.8780183918,
+     "rolling": 88987.33864469742,
+     "capture_bp": 0.8908974847264974,
+     "capture_rolling": 0.7851370603227342
+    },
+    "2021_real": {
+     "bp": 113601.85675476116,
+     "pf": 295911.9290618976,
+     "rolling": 88783.35538245266,
+     "capture_bp": 0.3839042823143449,
+     "capture_rolling": 0.3000330391002295
+    },
+    "2021_twin1": {
+     "bp": 256361.6400588879,
+     "pf": 323691.2811191525,
+     "rolling": 160671.54208756803,
+     "capture_bp": 0.791994270505296,
+     "capture_rolling": 0.4963727831409335
+    },
+    "2021_twin2": {
+     "bp": 187769.21823914885,
+     "pf": 326449.60918872274,
+     "rolling": 82265.21588542742,
+     "capture_bp": 0.5751859182977247,
+     "capture_rolling": 0.2519997376926536
+    }
+   }
+  },
+  "v1_1_calib_physics1.1": {
+   "physics": "1.1",
+   "coal_adder": -5.73,
+   "calib": "calibration_v1_1.json",
+   "stageA_loss": 4.164769046652281,
+   "stats": {
+    "2019": {
+     "max_q25": 27.454138004722804,
+     "max_q50": 33.19372701798855,
+     "max_q75": 50.502640513896054,
+     "max_q90": 264.0264975700352,
+     "min_q50": 8.249286940814631,
+     "min_q10": -6.795155301990073,
+     "h100": 279.0,
+     "h300": 139.5,
+     "h1000": 32.5,
+     "rtda": 3.7108222375533506,
+     "damean": 37.008936921557336,
+     "rtmean": 35.6717862341844,
+     "pf": 75.5567148742154
+    },
+    "2021": {
+     "max_q25": 36.03074535008112,
+     "max_q50": 53.07916976754083,
+     "max_q75": 78.76744631150662,
+     "max_q90": 109.09429149967788,
+     "min_q50": 8.326574912504952,
+     "min_q10": -7.246388866105269,
+     "h100": 173.0,
+     "h300": 61.0,
+     "h1000": 5.0,
+     "rtda": 5.545581700551958,
+     "damean": 40.357977853477834,
+     "rtmean": 38.03837869947222,
+     "pf": 47.25038371107058
+    }
+   },
+   "real": {
+    "2019": {
+     "max_q25": 28.05500030517578,
+     "max_q50": 39.94874954223633,
+     "max_q75": 103.48375129699707,
+     "max_q90": 232.09124755859375,
+     "min_q50": 13.366250038146973,
+     "min_q10": 1.4175000190734863,
+     "h100": 213.0,
+     "h300": 75.0,
+     "h1000": 26.0,
+     "rtda": 2.946249008178711,
+     "damean": 37.630586775416106,
+     "rtmean": 35.77544332242881,
+     "pf": 103.2951656499277
+    },
+    "2021": {
+     "max_q25": 35.584999084472656,
+     "max_q50": 54.369998931884766,
+     "max_q75": 100.2974967956543,
+     "max_q90": 226.39999389648438,
+     "min_q50": 15.699999809265137,
+     "min_q10": -0.7825000286102295,
+     "h100": 181.0,
+     "h300": 47.0,
+     "h1000": 8.0,
+     "rtda": 5.146248817443848,
+     "damean": 34.00487344071323,
+     "rtmean": 33.505762255540894,
+     "pf": 54.37729966731186
+    }
+   },
+   "uri": {
+    "sim_hours": [
+     158,
+     150
+    ],
+    "overlap": [
+     0.9019607843137255,
+     0.8888888888888888
+    ],
+    "real_hours": 153
+   },
+   "outages": {
+    "seed1": {
+     "mean_MW_out": 10784.654544803769,
+     "fleet_MW": 74134.1858126416
+    },
+    "seed2": {
+     "mean_MW_out": 10746.047059195937,
+     "fleet_MW": 74134.1858126416
+    }
+   },
+   "twin": {
+    "2019_real": {
+     "bp": 216058.5803854301,
+     "pf": 270977.8992442346,
+     "rolling": 214451.15745784604,
+     "capture_bp": 0.7973291585329427,
+     "capture_rolling": 0.791397224851018
+    },
+    "2019_twin1": {
+     "bp": 248128.22831353435,
+     "pf": 264704.7926073599,
+     "rolling": 238387.840869134,
+     "capture_bp": 0.9373771659721561,
+     "capture_rolling": 0.9005799952505501
+    },
+    "2019_twin2": {
+     "bp": 242117.612796221,
+     "pf": 257015.71562393627,
+     "rolling": 228762.6797716862,
+     "capture_bp": 0.9420342729177149,
+     "capture_rolling": 0.8900727304411621
+    },
+    "2021_real": {
+     "bp": 113601.85675476116,
+     "pf": 295911.9290618976,
+     "rolling": 88783.35538245266,
+     "capture_bp": 0.3839042823143449,
+     "capture_rolling": 0.3000330391002295
+    },
+    "2021_twin1": {
+     "bp": 244475.8120297984,
+     "pf": 347040.6148649488,
+     "rolling": 204629.9194917812,
+     "capture_bp": 0.7044587911560046,
+     "capture_rolling": 0.5896425684106547
+    },
+    "2021_twin2": {
+     "bp": 204352.69440764422,
+     "pf": 340015.8125097775,
+     "rolling": 177370.00114100875,
+     "capture_bp": 0.6010093851201931,
+     "capture_rolling": 0.5216522132655471
+    }
+   }
+  },
+  "frozen": {
+   "m10_frozen": {
+    "rolling": {
+     "frozen_capture": 0.5155,
+     "dev_capture": 0.5927,
+     "frozen_cycles": 155.5
+    },
+    "r4_v3": {
+     "frozen_capture": 0.7978,
+     "dev_capture": 0.6373,
+     "frozen_cycles": 205.8
+    }
+   },
+   "m11rc_frozen": {
+    "rolling": {
+     "frozen_capture": 0.4212,
+     "dev_capture": 0.5927,
+     "frozen_cycles": 141.0
+    },
+    "r4_v3": {
+     "frozen_capture": 0.7706,
+     "dev_capture": 0.6373,
+     "frozen_cycles": 196.3
+    }
+   },
+   "v4_frozen": {
+    "rolling": {
+     "frozen_capture": 0.5042,
+     "dev_capture": 0.5927,
+     "frozen_cycles": 156.8
+    },
+    "r4_v3": {
+     "frozen_capture": 0.7778,
+     "dev_capture": 0.6373,
+     "frozen_cycles": 204.2
+    }
+   }
+  }
+ }
+}
