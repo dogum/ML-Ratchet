@@ -80,6 +80,15 @@ def eia930_bas():
     return json.load(open(f'{PROC}/eia930/quality_summary.json'))
 
 
+def eia930_solar_qc(ba=None):
+    """Solar quality flags per focus BA and year (data/scripts/qc_solar.py -> proc/checks/eia930_solar_qc.json):
+    offset_h (+1 = reported ng_SUN lags the sun by 1 h, -1 = leads; shift by -offset_h to align), the correlations,
+    and the share of night hours with negative reported solar. E.g. CISO leads by 1 h in 2018-21, is aligned in
+    2022-23 and lags by 1 h in 2024-25; PJM leads by 1 h until 2024. Build it with `mlratchet data grid --only baselines`."""
+    d = json.load(open(f'{PROC}/checks/eia930_solar_qc.json'))['bas']
+    return d if ba is None else d[ba]
+
+
 def interchange(ba=None, diba=None, start=None, end=None):
     """Hourly interchange between directly connected BAs (MW, + = export from `ba` to `diba`)."""
     f = []

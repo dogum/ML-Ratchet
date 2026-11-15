@@ -312,6 +312,14 @@ Disk: about 1.7 GB in total (budget 6 GB).
     interconnector rule can count an hour-boundary ramp as a trip (3 Dec 2019 corrected; 6 exam suspects listed in
     section 5).
 11. ERCOT event times have minute resolution before 2023 and are local times.
+12. **EIA-930 solar timestamps move between years** (added 14 Nov 2026; `scripts/qc_solar.py`,
+    `gd.eia930_solar_qc()`): the shift that best aligns reported solar (`ng_SUN`) with the irradiance at the BA's solar
+    points. CISO leads the sun by 1 h in 2018-2021 (correlation 0.88-0.92 unshifted, 0.90-0.93 shifted), is aligned in
+    2022-2023, and lags by 1 h in 2024-2025 (0.86-0.88 vs 0.92-0.94); PJM leads by 1 h through 2024 and is aligned
+    from 2025; the other six focus BAs are aligned in every year (NYIS has no solar column). CISO also reports negative
+    solar at night in 61-97 % of night hours (BPAT 21-60 % since 2020). DemandCast's solar loss is explained by this
+    (its dev fit learned CISO's 2019/2021 offset). A model may use the flags for training-input and dev years; using
+    exam-year flags to choose anything would use exam data.
 
 ## 11. Baselines (exam numbers; `proc/baselines/summary.json`)
 
