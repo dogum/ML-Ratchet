@@ -82,3 +82,30 @@ def test_griddata_reads_the_frozen_dev_sets():
     assert len(gd.events("ERCO", split="dev")) == 5
     d = gd.eia930("ERCO", split="dev")
     assert sorted(set(d.index.year)) == [2019, 2021]
+
+
+def test_per_state_loss_lists_are_read_per_state():
+    """HANDOFF P0.6: a list of per-state loss lists was read as one event list for every state."""
+    from gridsim.frequency import frequency_event, make_system_state
+    mk = lambda: make_system_state([dict(tech="coal_steam", MW=0, pmax_MW=27000, H_s=5, mva=30000,  # noqa: E731
+                                         governor=dict(enabled=False))], load_MW=30000, region="GB", D=1.0, ufls=[])
+    ev = [[(0.0, 500.0)], [(0.0, 800.0), (5.0, 200.0)]]
+    a = frequency_event([mk(), mk()], ev, t_end=10, record=False)
+    one = [frequency_event(mk(), e, t_end=10)["nadir_Hz"] for e in ev]
+    assert [x["nadir_Hz"] for x in a] == pytest.approx(one, abs=1e-9)
+
+
+def test_gb_label_corrections_apply_to_v1_rows_only():
+    import pandas as pd
+    import griddata as gd
+    c = gd.label_corrections()
+    r = c[c.event_id == "GB_20191203T200030"].iloc[0]
+    assert (float(r.old), float(r.new)) == (1787.7, 854.7)
+    d = pd.DataFrame(dict(event_id=["GB_20191203T200030", "GB_X"], loss_MW=[1787.7, 500.0],
+                          loss_source=["v1", "v1"], loss_note=[None, None]))
+    a = gd.apply_label_corrections(d)
+    assert a.loss_MW.tolist() == [854.7, 500.0] and a.loss_MW_v1.tolist() == [1787.7, 500.0]
+    assert a.loss_corrected.tolist() == [True, False]
+    assert gd.apply_label_corrections(a).loss_MW.tolist() == [854.7, 500.0]     # idempotent
+    with pytest.warns(UserWarning):
+        gd.apply_label_corrections(d.assign(loss_MW=[1000.0, 500.0]))           # unexpected value: left alone

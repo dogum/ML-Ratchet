@@ -185,8 +185,13 @@ def _pad_stack(dicts, keys, n):
 
 def _as_events(loss_MW, B):
     """loss_MW: scalar; a list of (t, MW[, area, H_MWs]) tuples; or a length-B list/array with one of those per state."""
+    def is_event(e):     # one (t, MW[, area, H_MWs]) loss: a short sequence of numbers
+        return isinstance(e, (list, tuple, np.ndarray)) and 2 <= len(e) <= 4 and all(np.isscalar(v) for v in e)
+
     def is_event_list(x):
-        return isinstance(x, (list, tuple)) and len(x) > 0 and all(isinstance(e, (list, tuple)) for e in x)
+        # A list of losses, not a list of per-state loss lists. Up to 14 Nov 2026 a per-state list of lists was taken
+        # as ONE event list for every state (GridPulse's build passed an object array to avoid it; HANDOFF P0.6).
+        return isinstance(x, (list, tuple)) and len(x) > 0 and all(is_event(e) for e in x)
 
     def one(x):
         if np.isscalar(x):
