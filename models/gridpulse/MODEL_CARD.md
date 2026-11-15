@@ -37,7 +37,7 @@ deviation from the 60 s pre-event mean. Outputs in `read()`'s dict: `loss_MW(_lo
   - ERCOT: load from EIA-930 train-input years, inertia ≈ 5 s × load (log-sd 0.22); losses 250-2,800 MW; governor
     headroom 1,000-3,500 MW; load resources 500-1,500 MW at 59.7 Hz; FFR 0-750 MW at 59.85 Hz; battery 5 % droop in
     half the states; BAL-001-TRE deadbands; damping median 1.0 %/% (dev-twin refit).
-  - Checks (`training/checks/physics.json`): initial RoCoF of rescaled states = ΔP·f0/2E within 0.1 % (100 GB, 100 ERCOT);
+  - Checks (`training/checks/physics.json`): initial RoCoF of rescaled states = ΔP·f0/2E within 0.10 % (GB) and 0.12 % (ERCOT), 100 states each;
     the DC knee reproduces NESO's curve at 0.1/0.2/0.3/0.5 Hz.
 - Units are aggregated per technology with GridSim's `aggregate_units` (exact for the linear parts).
 - Upstream note: `gridsim.frequency._as_events` treats a plain list of per-state loss lists as one event list; pass an
@@ -69,8 +69,11 @@ AdamW + one-cycle, 120 epochs, re-augmented (phase, noise slice, N, 25 % demand 
   5-99 % (median ~70 %), inertia 0-93 %, MW/Hz 7-38 % (real grids respond less stiffly than the typical sim).
 - Sigma widening (widen-only, 68th percentile of |z| on dev): loss ×1.11, settling ×1.28, others ×1.0.
 
-## Ratchet (frozen set = 1,387 simulated events of physics p2, seed 98; objective = mean skill of MW lost, inertia,
-MW/Hz at 60 s and nadir, settling at 10 s; keep if +0.01 and dev errors no more than 10 % worse)
+## Ratchet
+
+Frozen set: 1,387 simulated events of physics p2, seed 98. Objective: mean skill of MW lost, inertia and MW/Hz at 60 s,
+and the nadir and settling forecasts at 10 s. A rung is kept if it gains more than 0.01 and the dev errors get no more
+than 10 % worse.
 
 | rung | change | score | MW lost | inertia | nadir@10 | dev | decision |
 |---|---|---|---|---|---|---|---|

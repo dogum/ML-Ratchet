@@ -67,7 +67,7 @@ H. **No network in the ERCOT checks**, no imports optimisation (DC ties are fixe
    test. GB dev events not used for fitting (the frozen dev list is 9 Aug, 1 Jul, 11 Jul, 3 Dec 2019): 1 Jul −34 % and
    11 Jul −27 % (too deep, with each event's own inertia and loss but 9 Aug's response-holding mix: their real holdings
    are not in the data). 3 Dec is unusable: GridData's loss estimate (1,788 MW) is about twice what the measured
-   0.29 Hz drop at 333 GVA s implies (~850 MW). The model gave −33 % with B's earlier 855 MW estimate. GB nadirs
+   0.29 Hz drop at 333 GVA s implies (~850 MW). The model gave −33 % with GridData's earlier 855 MW estimate. GB nadirs
    are probably too deep by ~30 % outside the fitted event: GB fast response is stronger than the 9 Aug mix.
    *14 Nov 2026: the 3 Dec label is corrected and the event is usable.* The 1,788 MW was 854.7 MW (Spalding CCGT
    T_SPLN-1, Elexon B1610 output in the half hour before) plus 933 MW read from Elexon FUELINST as an IFA
@@ -86,7 +86,7 @@ H. **No network in the ERCOT checks**, no imports optimisation (DC ties are fixe
 6. **Secondary control and operator actions** are a single first-order MW ramp; there is no AGC with ACE, no reserve
    deployment logic, no market re-dispatch. Results after ~60 s are indicative only.
 7. **Inertia from dispatch** counts committed units × H × MVA (MVA = nameplate / 0.9 where unknown) with H from
-   technology defaults or B's fleet; synchronous condensers and demand-side inertia are not included unless given
+   technology defaults or GridData's fleet; synchronous condensers and demand-side inertia are not included unless given
    as `H_extra_MWs`.
 
 ## Network

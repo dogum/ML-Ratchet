@@ -79,7 +79,7 @@ The second big-system project for ML Ratchet, built like the vehicle project (Ro
   | Classical DA optimiser | 0.685 | 0.681 |
   | Spread rule | 0.561 | 0.589 |
 
-  - Ties the classical optimiser: wins with 4 h batteries, loses with 1 h and in CAISO.
+  - Loses to the classical optimiser in both markets: wins with 4 h batteries, loses with 1 h and in CAISO. *(Corrected 14 Nov 2026: written as "ties" at release; both pooled rows are losses, 0.667 vs 0.685 and 0.642 vs 0.681.)*
   - Sim-to-real gap: dev twins capture 91–94 % vs 80 % on real data.
 - **PlantDetective:**
   - **Wins:**
@@ -89,7 +89,7 @@ The second big-system project for ML Ratchet, built like the vehicle project (Ro
   - **Loses:**
     - combined-cycle heat rate 21 % (biased high) vs default 7 %
     - combustion-turbine heat rate 16 % vs EIA-923 6.5 %
-  - **Ties:** with a year or more of history, start statistics are no better than plain counting.
+  - **Loses:** with a year or more of history, plain counting is better for start statistics (starts per year from one year: 31.0 % vs 27.8 % for the count). *(Corrected 14 Nov 2026: written as a tie at release.)*
 - **DemandCast:**
   - Demand MAPE beats the grid operators' own day-ahead forecasts in 6 of 8 BAs with actual weather (pooled 2.38 vs 3.41 %; an upper bound). With real forecast weather (2024 only) it wins 4 of 8 (2.92 vs 3.20 %).
   - Wind: 19.2 % vs 43.5 % persistence.
@@ -102,7 +102,7 @@ The second big-system project for ML Ratchet, built like the vehicle project (Ro
 
 ## Next
 See `gridsim-handoff.md`:
-1. **P0:** fix paths, package into ML Ratchet, fix the outage-rate leak, upstream each model's fixes.
+1. **P0:** fix paths, package into ML Ratchet, fix the outage-rate leak, upstream each model's fixes. *(14 Nov 2026: paths and packaging done in the repository integration; the leak fix and the upstream fixes are in progress, see HANDOFF.md.)*
 2. **P1:** coal/gas commitment, scarcity pricing, low-net-load inertia, frequency response by era.
 3. **Data still missing:** sub-second frequency, a day-ahead forecast-weather archive, older CAISO prices, CAMPD for more states.
 4. **Not built yet:** DispatchNet.

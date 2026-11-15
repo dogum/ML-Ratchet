@@ -127,3 +127,13 @@ Texas RE's 2024/2025 assessments (data from the exam years). GridSim physics 1.1
 - The ERCOT summary head is trained on the same states.
 
 Nothing is retrained and no number changes.
+
+## 14 Nov 2026 — corrections from a site-wide audit
+
+- The card said the initial RoCoF check holds "within 0.1 %"; `training/checks/physics.json` gives 0.10 % (GB) and
+  0.12 % (ERCOT), so the card now gives both.
+- The Elexon REMIT link pointed at the raw API, which answers HTTP 400 to a browser; it now points at the dataset page.
+- The ratchet heading of the card wrapped onto a second line and rendered as body text; it is a heading again.
+- `help_wanted`: FNET/GridEye was checked from this machine (no public data download; event data go to consortium
+  members), replacing the note that its site had timed out from the build machine.
+No exam number or verdict changes.

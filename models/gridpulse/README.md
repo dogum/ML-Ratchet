@@ -157,7 +157,7 @@ The shared GridSim frequency model (shared/grid/gridsim, Phase 1): an aggregated
 | Source | Used for | Licence / terms |
 |---|---|---|
 | [NESO system frequency data (1 s), system inertia (outturn), historic generation mix](https://www.neso.energy/data-portal) | noise (quiet 1 s slices), physics (GB operating points), dev, exam (events, inertia truth, demand input) | NESO Open Data Licence |
-| [Elexon BMRS REMIT and B1610 metered output (loss labels by GridData)](https://data.elexon.co.uk/bmrs/api/v1/datasets/REMIT) | dev (854 MW metered loss for 3 Dec 2019), exam (loss labels) | Elexon BMRS licence (free use with attribution) |
+| [Elexon BMRS REMIT and B1610 metered output (loss labels by GridData)](https://bmrs.elexon.co.uk/remit) | dev (854 MW metered loss for 3 Dec 2019), exam (loss labels) | Elexon BMRS licence (free use with attribution) |
 | [National Grid ESO, Technical Report on the events of 9 August 2019](https://www.ofgem.gov.uk) | dev (1,131 MW loss label) | Crown / NESO copyright, cited |
 | [ERCOT monthly Operations Reports (frequency events)](https://www.ercot.com) | dev (5 events), exam (292 generation-loss events) | Public ERCOT documents |
 | [EIA-930 Hourly Electric Grid Monitor](https://www.eia.gov/electricity/gridmonitor/) | physics (ERCOT load for the simulated operating points) | Public domain (U.S. Government) |

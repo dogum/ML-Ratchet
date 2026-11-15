@@ -60,7 +60,7 @@ data:
     licence: NESO Open Data Licence
     role: noise (quiet 1 s slices), physics (GB operating points), dev, exam (events, inertia truth, demand input)
   - name: Elexon BMRS REMIT and B1610 metered output (loss labels by GridData)
-    url: https://data.elexon.co.uk/bmrs/api/v1/datasets/REMIT
+    url: https://bmrs.elexon.co.uk/remit
     licence: Elexon BMRS licence (free use with attribution)
     role: dev (854 MW metered loss for 3 Dec 2019), exam (loss labels)
   - name: National Grid ESO, Technical Report on the events of 9 August 2019
