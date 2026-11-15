@@ -1,5 +1,7 @@
 # RoadSim / vehicle project: shared plan (read with /home/claude/AGENT_BRIEF.md)
 
+> Kept as written on 12-13 Nov 2026 in the cloud project where the vehicle work was built. Paths such as `/home/claude/road/...` refer to that project; in this repository the platform is `shared/vehicle/` and the models are `models/energynet`, `models/tripdetective` (called "Detective" here) and `models/hybridpilot` ("Controller"). A historical brief, not the live contract: the model contract is [docs/model-contract.md](../../docs/model-contract.md); RoadSim's current physics and limits are in `roadsim/README.md` and `roadsim/LIMITS.md`.
+
 The collection's next project (repo: github.com/dogum/ML-Ratchet, physics first, graded on reality). It is both a
 physics problem and a systems problem: whole vehicles at subsystem level, every architecture, many hybrid control
 strategies, real roads, real weather, light-duty AND heavy-duty. It is staged:

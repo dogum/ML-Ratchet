@@ -1,5 +1,7 @@
 # Phase 2 brief: three ratchet projects on RoadSim + RoadData
 
+> Kept as written on 12-13 Nov 2026 in the cloud project where the vehicle work was built. Paths such as `/home/claude/road/...` refer to that project; in this repository the platform is `shared/vehicle/` and the models are `models/energynet`, `models/tripdetective` and `models/hybridpilot`. A historical brief, not the live contract: the model contract is [docs/model-contract.md](../../docs/model-contract.md); RoadSim's current physics and limits are in `roadsim/README.md` and `roadsim/LIMITS.md`.
+
 Read first:
 - `/home/claude/AGENT_BRIEF.md`: the recipe, deliverables, shared-machine rules (2 cores now shared by THREE agents).
 - `/home/claude/road/VEHICLE_BRIEF.md`: the contract.

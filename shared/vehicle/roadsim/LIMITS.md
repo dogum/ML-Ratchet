@@ -289,6 +289,9 @@ the FTP (the TNGA-era Atkinson map stands in for 2008-2017 engines), TMED P2s 8-
 
 ## Speed and robustness
 
-27. v2 runs at ~24,000-28,000x real time for conventional/BEV (v1 50,000-55,000x) and ~3,200-3,900x for hybrids (v1
-    3,800-4,800x), single thread, UDDS; generated fleet 5,700x (v1 7,700x); DP on UDDS 1.6 s (v1 0.8 s). Ledger closure
-    over 600 stress runs: max 5.6e-4, none over 0.5 %.
+27. v2 after the speed pass of 14 Nov 2026 (results bit-identical; check_speed on an idle machine), single thread,
+    UDDS: conventional 29,500-29,900x real time, BEV 33,400x, Class 8 25,700x, bus 29,800x, hybrids 4,600-5,900x; DP
+    1.42 s, MPC 1.16 s (v1: conventional/BEV 50,000-55,000x, hybrids 3,800-4,800x, DP 0.8 s). Conventional and BEV
+    are still ~1.7x slower than v1 (the 45,000x target is not met); hybrids are now faster than v1. Before the pass v2
+    ran at ~24,000-28,000x (conventional/BEV) and ~3,200-3,900x (hybrids), generated fleet 5,700x (v1 7,700x; the pass
+    made the fleet x1.4 faster). Ledger closure over 600 stress runs: max 5.6e-4, none over 0.5 %.
