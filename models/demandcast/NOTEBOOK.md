@@ -151,3 +151,15 @@ stand-in for `evaluate.py` (load / predict / sigma_scale on `demandcast.py` and 
 - Not re-scored: the forecast-weather mode (2024: 2.92 % vs 3.20 %, wins in 4 of 8 grids). The Open-Meteo cache is not
   shipped, so `real.Forecasts` finds no archived forecasts and `realbank.py exam` builds actual-weather rows only. The
   named-period numbers (`events.py`) were not re-run. No released number changed.
+
+## 14 Nov 2026 — the GridSim outage-rate leak (HANDOFF P0.5): DemandCast is not exposed
+
+GridSim v1.0's default forced and planned outage shares for coal, combined cycles, gas turbines and gas steam came from
+Texas RE's 2024/2025 assessments (data from the exam years); GridSim physics 1.1 replaces them with pre-2023 sources.
+DemandCast uses GridSim only for weather-to-power physics (`gridsim.renewables`: air density, farm curves) and the demand
+module, never dispatch or the outage shares, so nothing it learned or chose touched them. No number changes.
+
+Two other GridSim citations reach into the exam years and do touch DemandCast's physics: the turbine specific-power trend
+(LBNL Land-Based Wind Market Report, 2023 edition, published Aug 2023) describes turbines installed up to 2022, so it
+carries no exam-period measurement; and the EIA-930 solar timestamp offsets now flagged in GridData
+(`gd.eia930_solar_qc()`) confirm the cause of the solar loss found after the exam (CISO's offset flips sign in 2024).

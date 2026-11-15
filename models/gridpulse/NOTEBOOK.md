@@ -110,3 +110,20 @@ Phase 2 GridSim project in ML Ratchet. From the 1 s grid frequency after a trip:
   112 % -> **97.8 %**. Verdicts unchanged (medium: 25.9 % still beats 26.8 %, 27.1 %, 27.6 %; low: still a loss to
   the RoCoF formula at NESO inertia, 29.3 %). model.yaml and MODEL_CARD.md keep the released baseline and add the
   corrected one, dated.
+
+## 14 Nov 2026 — the GridSim outage-rate leak (HANDOFF P0.5): GridPulse is not exposed
+
+GridSim v1.0's default forced and planned outage shares for coal, combined cycles, gas turbines and gas steam came from
+Texas RE's 2024/2025 assessments (data from the exam years). GridSim physics 1.1 replaces them with pre-2023 sources
+(`shared/grid/gridsim/gridsim/fleet.py`, `OUTAGE_DEFAULTS`). GridPulse never read them:
+
+- Its training states come from `gridsim.generate_states` through `training/gpsim.py`. `generate_fleet` and
+  `generate_states` take only pmin, ramp, minimum up/down and start heat from the technology defaults, never the outage
+  shares, and GridPulse runs no dispatch.
+- The one GridSim number that was fitted with the leaked availability is ERCOT's effective damping (2.5 %/% in v1.0,
+  fitted on the 5 ERCOT dev events with states from the calibrated v1.0 dispatch; 2.75 %/% when re-fitted on v1.1).
+  GridPulse's p0 prior started from it, but every rung (r1-r6) used p1 or p2, whose ERCOT damping (median 1.0 %/%) was
+  re-fitted on GridPulse's own dev twins of `generate_states` states, which do not depend on it.
+- The ERCOT summary head is trained on the same states.
+
+Nothing is retrained and no number changes.
