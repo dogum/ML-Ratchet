@@ -11,6 +11,8 @@ is the model's own net_input() + scalars(), ported; parity cases cover that too.
 
 v2.0 (14 Nov 2026): the simulated lab is rebuilt on RoadSim physics v2 by training/build_lab.py (work/web/lab.json, same
 layout as the page's LAB blob); pass its path. Without it the v1.0 lab (physics v1) from the page is used.
+v2.1 (15 Nov 2026): the engine-stop constraint (tripdetective.apply_offstop) is part of the reading and of the
+reference outputs; net.ts ports it.
 """
 import json
 import os
@@ -83,7 +85,7 @@ def run_net(td, raws, fls):
     for raw, fl in zip(raws, fls):
         for s, e in TD.windows(raw.shape[1]):
             I.append(TD.net_input(raw[:, s:e], fl, feat=td.feat))
-    h = td.heads([td.encode(*i) for i in I], [i[2] for i in I])
+    h = td.apply_offstop(td.heads([td.encode(*i) for i in I], [i[2] for i in I]), I)   # v2.1: engine-stop constraint
     out = [h["arch"], h["strat"], h["mu"], h["sig"]]
     for mu, sg in h["led"]:
         out += [mu, sg]
@@ -215,7 +217,7 @@ def main():
 
 def _reading(td, raws, fls):
     I = [TD.net_input(r, f, feat=td.feat) for r, f in zip(raws, fls)]
-    h = td.heads([td.encode(*i) for i in I], [i[2] for i in I])
+    h = td.apply_offstop(td.heads([td.encode(*i) for i in I], [i[2] for i in I]), I)
     typ = {}
     for a, p in zip(td.meta["archs"], h["arch"]):
         typ[TD.VEDTYPE[a]] = typ.get(TD.VEDTYPE[a], 0) + float(p)

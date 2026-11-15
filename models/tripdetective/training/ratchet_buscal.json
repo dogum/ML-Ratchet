@@ -1,0 +1,144 @@
+[
+ {
+  "rung": "dumb",
+  "note": "Dev-median guess (cross-validated), the reference",
+  "cv": {
+   "mae": 469.0882760965436,
+   "med_ae": 379.4981606780202,
+   "bias": -0.27319224273742293,
+   "r": 0.0075677174635043545,
+   "slope": 7.985891313408215e-05
+  },
+  "skill": 0.0,
+  "accepted": null
+ },
+ {
+  "rung": "raw",
+  "note": "pb1 as shipped (raw reading)",
+  "cv": {
+   "mae": 1127.0565366387152,
+   "med_ae": 1031.4819143327913,
+   "bias": 916.1600104225763,
+   "r": 0.25322141958846744,
+   "slope": 0.4217521980062015
+  },
+  "skill": -1.40265338971455,
+  "accepted": true,
+  "why": "incumbent"
+ },
+ {
+  "rung": "bc1",
+  "note": "Level: the network reading x one dev-fitted factor (v2.0 exam note)",
+  "cv": {
+   "mae": 805.2080366367933,
+   "med_ae": 690.4930187552964,
+   "bias": 2.8185023874648323,
+   "r": 0.25285840872252613,
+   "slope": 0.40326651499745586
+  },
+  "skill": -0.7165383951550144,
+  "accepted": false,
+  "why": "CV skill -0.717 vs -1.403; r 0.25 vs 0.25 (falls)",
+  "vs": "raw",
+  "coef": [
+   0.9569741349068001
+  ]
+ },
+ {
+  "rung": "bc2",
+  "note": "Line: a + b x the network reading",
+  "cv": {
+   "mae": 453.2486256817373,
+   "med_ae": 361.4196407795207,
+   "bias": 54.071012734137184,
+   "r": 0.24234951152360712,
+   "slope": 0.0627008054898262
+  },
+  "skill": 0.033766886153314024,
+  "accepted": false,
+  "why": "CV skill +0.034 vs -1.403; r 0.24 vs 0.25 (falls)",
+  "vs": "raw",
+  "coef": [
+   16974.14426952928,
+   0.1520349808288522
+  ]
+ },
+ {
+  "rung": "bc3",
+  "note": "Day-relative: dev level + b x (reading - the mission-day mean reading)",
+  "cv": {
+   "mae": 434.76240045020734,
+   "med_ae": 352.6722878876426,
+   "bias": 14.096146343636065,
+   "r": 0.3785899020501925,
+   "slope": 0.15095533449746604
+  },
+  "skill": 0.07317572703367159,
+  "accepted": true,
+  "why": "CV skill +0.073 vs -1.403; r 0.38 vs 0.25",
+  "vs": "raw",
+  "coef": [
+   20210.456218045456,
+   0.3388068273007304
+  ]
+ },
+ {
+  "rung": "bc3b",
+  "note": "+ c x the mission-day mean reading (the day's level)",
+  "cv": {
+   "mae": 435.88890053082326,
+   "med_ae": 353.18723039345787,
+   "bias": 9.478408774702984,
+   "r": 0.36440342331462583,
+   "slope": 0.14521424484304174
+  },
+  "skill": 0.07077425989407493,
+  "accepted": false,
+  "why": "CV skill +0.071 vs +0.073 (needs +0.01); r 0.36 vs 0.38 (falls)",
+  "vs": "bc3",
+  "coef": [
+   20284.32140430283,
+   0.338580692860367,
+   -0.0034934369243909136
+  ]
+ },
+ {
+  "rung": "bc4",
+  "note": "+ c x (log b0 - day mean): the road-load fit of the leg, day-relative",
+  "cv": {
+   "mae": 425.9158754462936,
+   "med_ae": 347.82910554883347,
+   "bias": 33.36525760770746,
+   "r": 0.41350657533529317,
+   "slope": 0.1801383865358927
+  },
+  "skill": 0.0920347040209647,
+  "accepted": true,
+  "why": "CV skill +0.092 vs +0.073; r 0.41 vs 0.38",
+  "vs": "bc3",
+  "coef": [
+   20213.30672830739,
+   0.2923270565713298,
+   817.8367539781161
+  ]
+ },
+ {
+  "rung": "bcF",
+  "note": "Force balance probe: day-relative traction-force fit alone (traction force is not a model input)",
+  "cv": {
+   "mae": 457.1452279575038,
+   "med_ae": 395.3779053035614,
+   "bias": 37.72076786852631,
+   "r": 0.24702006913040414,
+   "slope": 0.06983571066662606
+  },
+  "skill": 0.02546012924991925,
+  "accepted": false,
+  "why": "CV skill +0.025 vs +0.092 (needs +0.01); r 0.25 vs 0.41 (falls); probe only (traction force is not an input of the model)",
+  "vs": "bc4",
+  "coef": [
+   20181.99436608655,
+   0.08919967420264457
+  ]
+ }
+]

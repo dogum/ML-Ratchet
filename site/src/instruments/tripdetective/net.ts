@@ -15,7 +15,7 @@ export const VEDTYPE: Record<string, string> = {
 };
 
 export interface TMeta {
-  n_blocks: number; strides: number[]; feat: number; params: number; phys?: number;
+  n_blocks: number; strides: number[]; feat: number; params: number; phys?: number; offstop?: number;
   archs: string[]; strats: string[]; reg: string[]; ledger: string[];
   sigk: { mass_car?: number; disp_car?: number; mass_trip?: number; disp_trip?: number };
 }
@@ -295,7 +295,7 @@ export function encode(W: Pack<TMeta>, raw: Raw, fl: Flags): Float32Array {
   return linear(vgelu(linear(f, t.trip0_w, t.trip0_b)), t.trip1_w, t.trip1_b);
 }
 
-export interface Heads { arch: number[]; strat: number[]; mu: number[]; sig: number[]; led: { mu: number[]; sig: number[] }[]; }
+export interface Heads { arch: number[]; strat: number[]; mu: number[]; sig: number[]; led: { mu: number[]; sig: number[] }[]; offstop?: boolean; }
 
 /** heads(): pool the window embeddings of one car, then architecture, strategy, regressions, per-window ledger. */
 export function heads(W: Pack<TMeta>, E: Float32Array[], PS: Float32Array[] = []): Heads {
@@ -331,17 +331,45 @@ export function flat(h: Heads): number[] {
 
 export interface Trip { raw: Raw; flags: Flags; }
 
+// ---------------- engine-stop constraint (v2.1; tripdetective.py offstop_counts) ----------------
+// A conventional engine is geared to the wheels: it cannot stop while the car moves faster than 5 m/s. If rpm < 100 on
+// more than 5 % of the moving seconds of the pooled windows, 'conv' (and the conventional strategies) is ruled out.
+export const OFF_TAU = 0.05, OFF_MIN_S = 30;
+const CONV_STRATS = ['conv_rule', 'conv_opt', 'conv_stopstart'];
+/** [engine-off moving seconds, moving seconds] of one window, from the same float32 channels as net_input. */
+export function offstopCounts(raw: Raw, fl: Flags): [number, number] {
+  if (fl[2] < 0.5) return [0, 0];
+  const n = Math.min(raw.n, L), v = raw.rows[0], rpm = raw.rows[6], va = raw.rows[10];
+  let k = 0, m = 0;
+  for (let i = 0; i < n; i++) {
+    if (Math.fround(v[i] / 15) > 5 / 15 && va[i] > 0.5) { m++; if (Math.fround(rpm[i] * va[i]) < 0.1) k++; }
+  }
+  return [k, m];
+}
+function applyOffstop(W: Pack<TMeta>, h: Heads, counts: [number, number][]): Heads {
+  const K = counts.reduce((s, c) => s + c[0], 0), N = counts.reduce((s, c) => s + c[1], 0);
+  h.offstop = (W.meta.offstop ?? 0) > 0 && N >= OFF_MIN_S && K > OFF_TAU * N;
+  if (!h.offstop) return h;
+  const M = W.meta, a = h.arch.slice(), st = h.strat.slice();
+  a[M.archs.indexOf('conv')] = 0;
+  for (const k of CONV_STRATS) st[M.strats.indexOf(k)] = 0;
+  const sa = Math.max(a.reduce((x, y) => x + y, 0), 1e-12), ss = Math.max(st.reduce((x, y) => x + y, 0), 1e-12);
+  h.arch = a.map((x) => x / sa); h.strat = st.map((x) => x / ss);
+  return h;
+}
+
 /** Run the network on several trips of one car (every window of every trip pooled), as read_car(). */
 export function run(W: Pack<TMeta>, trips: Trip[]): { h: Heads; tripOf: number[]; len: number[] } {
-  const E: Float32Array[] = [], PS: Float32Array[] = [], tripOf: number[] = [], len: number[] = [];
+  const E: Float32Array[] = [], PS: Float32Array[] = [], tripOf: number[] = [], len: number[] = [], OC: [number, number][] = [];
   trips.forEach((tr, k) => {
     for (const [s, e] of windows(tr.raw.n)) {
       const w = slice(tr.raw, s, e);
       E.push(encode(W, w, tr.flags)); if ((W.meta.phys ?? 0) > 0) PS.push(pstats(w, tr.flags));
+      OC.push(offstopCounts(w, tr.flags));
       tripOf.push(k); len.push(e - s);
     }
   });
-  return { h: heads(W, E, PS), tripOf, len };
+  return { h: applyOffstop(W, heads(W, E, PS), OC), tripOf, len };
 }
 
 export interface Reading {

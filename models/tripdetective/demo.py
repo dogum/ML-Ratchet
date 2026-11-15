@@ -36,11 +36,16 @@ if __name__ == '__main__':
         led = car['ledger_kJ_per_km'][0]
         print('  ledger of trip 1 (kJ/km, simulated-truth-trained, not real-graded):', ', '.join(f"{k} {v[0]:.0f}" for k, v in led.items()))
 
-    # a city bus (v2.0): one ZTBus exam leg read by the bus network; truth convention 19,000 kg + 70 kg per passenger
-    z = np.load(os.path.join(HERE, 'examples', 'ZTBus_exam_leg.npz'))
+    # a city bus (v2.1): every leg of one ZTBus exam bus-day, read together (the reading follows passengers from leg to
+    # leg within a day, not from day to day); truth convention 19,000 kg + 70 kg per passenger
+    z = np.load(os.path.join(HERE, 'examples', 'ZTBus_exam_mission.npz'))
     info = json.loads(str(z['info']))
-    r = TD.TripDetectiveBus().read_leg({k: z[k] for k in z.files if k != 'info'})
-    lo, hi = r['mass_kg_1sigma']
-    print(f"\n{info['bus']} leg, {info['km']} km, {info['passengers_mean']} passengers on average "
-          f"(convention: {19000 + 70 * info['passengers_mean']:.0f} kg)\n  bus mass {r['mass_kg']:.0f} kg (1 sigma {lo:.0f}-{hi:.0f}), "
-          f"{r['n_windows']} windows")
+    legs = [{key[len(f'leg{k}_'):]: z[key] for key in z.files if key.startswith(f'leg{k}_')} for k in range(len(info['legs']))]
+    t0 = time.time()
+    R = TD.TripDetectiveBus().read_mission(legs)
+    print(f"\n{info['bus']}, one day ({info['season']}): {len(legs)} legs read together  [{time.time() - t0:.2f} s]")
+    for m, r in zip(info['legs'], R):
+        pax = m['passengers_mean']
+        truth = '   (no passenger count)' if pax is None else f"   convention {19000 + 70 * pax:6.0f} kg ({pax:4.1f} passengers)"
+        print(f"  {m['km']:6.2f} km {m['minutes']:5.1f} min: bus mass {r['mass_kg']:6.0f} kg (1 sigma +-{r['mass_kg'] - r['mass_kg_1sigma'][0]:.0f}),"
+              f" network alone {r['network_kg']:6.0f} kg{truth}")

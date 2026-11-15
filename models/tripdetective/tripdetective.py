@@ -203,6 +203,26 @@ def phys_features(ps, lam=1e-3):
     return f, lb0 * pos
 
 
+# ---------------- engine-stop constraint (v2.1; same as training/features.py) ----------------
+# A conventional engine is geared to the wheels: it cannot stop while the car moves faster than 5 m/s. If the logged
+# rpm is under 100 rpm on more than 5 % of the moving seconds of the pooled trips, 'conv' is ruled out. The 5 % comes
+# from simulation only (simulated conventional trips never exceed 3.3 % through the OBD logger emulator).
+OFF_TAU, OFF_MIN_S = 0.05, 30
+CONV_STRATS = ('conv_rule', 'conv_opt', 'conv_stopstart')
+
+
+def offstop_counts(x):
+    """(engine-off moving seconds, moving seconds) of one network input; (0, 0) when rpm is not logged"""
+    if x[16, 0] < 0.5: return 0, 0
+    mv = (x[0] > 5.0 / 15.0) & (x[12] > 0.5) & (x[13] > 0.5)
+    return int((mv & (x[8] < 0.1)).sum()), int(mv.sum())
+
+
+def offstop_fires(counts):
+    K = sum(c[0] for c in counts); N = sum(c[1] for c in counts)
+    return N >= OFF_MIN_S and K > OFF_TAU * N
+
+
 # ---------------- network ----------------
 def gelu(x):
     return 0.5 * x * (1 + erf(x / np.sqrt(2)))
@@ -225,6 +245,18 @@ class TripDetective:
         self.meta = json.loads(str(self.W['meta']))
         self.nb = int(self.W['n_blocks'])
         self.sigk = self.meta.get('sigk', {}); self.feat = int(self.meta.get('feat', 1)); self.phys = int(self.meta.get('phys', 0))
+        self.offstop = int(self.meta.get('offstop', 0))
+
+    def apply_offstop(self, h, I):
+        """v2.1: rule out 'conv' (and the conventional strategies) when the engine stopped while moving; h['offstop'] says if it fired"""
+        h['offstop'] = bool(self.offstop and offstop_fires([offstop_counts(i[0]) for i in I]))
+        if h['offstop']:
+            A, S = self.meta['archs'], self.meta['strats']
+            a = h['arch'].copy(); a[A.index('conv')] = 0.0; h['arch'] = a / max(a.sum(), 1e-12)
+            st = h['strat'].copy()
+            for k in CONV_STRATS: st[S.index(k)] = 0.0
+            h['strat'] = st / max(st.sum(), 1e-12)
+        return h
 
     def encode(self, x, m, sc=None):
         W = self.W
@@ -269,7 +301,7 @@ class TripDetective:
         """raws: list of (len(RAW), n) arrays; flags: list of flag vectors -> network units (one pooled car)"""
         I = [net_input(r, np.asarray(f, np.float32), feat=self.feat) for r, f in zip(raws, flags)]
         E = [self.encode(*i) for i in I]
-        h = self.heads(E, [i[2] for i in I])
+        h = self.apply_offstop(self.heads(E, [i[2] for i in I]), I)
         return dict(arch=h['arch'][None], mu=h['mu'][None], sig=h['sig'][None], led_mu=np.stack([l[0] for l in h['led']]))
 
     def read_car(self, trips, fuel_estimated=True):
@@ -282,7 +314,7 @@ class TripDetective:
                 raws.append(raw[:, s:e]); fls.append(np.array([float(fl[k]) for k in FLAGS], np.float32)); tid.append(t)
         I = [net_input(r, f, feat=self.feat) for r, f in zip(raws, fls)]
         E = [self.encode(*i) for i in I]
-        h = self.heads(E, [i[2] for i in I])
+        h = self.apply_offstop(self.heads(E, [i[2] for i in I]), I)
         A = self.meta['archs']; S = self.meta['strats']; mu, sg = h['mu'], h['sig']
         km = self.sigk.get('mass_car' if len(trips) > 1 else 'mass_trip', 1.0)
         kd = self.sigk.get('disp_car' if len(trips) > 1 else 'disp_trip', 1.0)
@@ -306,25 +338,40 @@ class TripDetective:
                     displacement_L_1sigma=(float(d * np.exp(-sg[1] * kd)), float(d * np.exp(sg[1] * kd))),
                     CdA_m2=float(0.75 * np.exp(mu[2])), CdA_1sigma_rel=float(sg[2]), Crr=float(0.008 * np.exp(mu[3])), Crr_1sigma_rel=float(sg[3]),
                     ev_share_moving=float(mu[4]), engine_on_threshold_kW=float(np.expm1(mu[5] + 2)), max_ev_speed_mps=float((mu[6] + 1.5) * 10),
-                    ledger_kJ_per_km=led, n_trips=len(trips), n_windows=len(raws))
+                    ledger_kJ_per_km=led, n_trips=len(trips), n_windows=len(raws), engine_stopped_while_moving=h['offstop'])
 
     def read_trip(self, trip, fuel_estimated=True):
         return self.read_car([trip], fuel_estimated)
 
 
+def log_b0(ps, lam=1e-3):
+    """pooled normal equations -> log of the road-load fit's b0 (kg-equivalent), nan when the fit is not usable"""
+    S = np.zeros((4, 4)); S[IU] = ps[:10]; S = S + S.T - np.diag(np.diag(S))
+    if S[3, 3] * 1024 < 30: return np.nan
+    b = np.linalg.solve(S + lam * np.diag(np.diag(S)) + 1e-9 * np.eye(4), ps[10:14].astype(np.float64))
+    return float(np.log(max(b[0] * YS / XS[0], 50.0)))
+
+
 class TripDetectiveBus:
-    """City-bus mass from a power log (v2.0): a separate network trained only on simulated electric buses (RoadSim class
-    'bus'), shown to it as a scaled car (power / 12, mass / 12). Graded on ZTBus trolleybus legs against 19,000 kg +
-    70 kg per passenger (MODEL_CARD.md: it follows passengers only weakly).
+    """City-bus mass from a power log: a separate network trained only on simulated electric buses (RoadSim class
+    'bus'), shown to it as a scaled car (power / 12, mass / 12), and (v2.1) a day-relative calibration fitted on ZTBus
+    dev legs. Graded on ZTBus trolleybus legs against 19,000 kg + 70 kg per passenger.
+
+    The network's reading of a leg follows the leg-to-leg changes of passengers within one bus-day, not the level from
+    day to day. So v2.1 reads every leg of a bus-day (a mission) together:
+        mass = a + b x (reading - day mean reading) + c x (log b0 - day mean log b0)
+    with a, b, c fitted on the dev legs (b0: the leg's road-load fit; day means weighted by the legs' 1,024 s windows).
+    A leg read alone gets a, the dev level.
 
         bus = TD.TripDetectiveBus()
-        r = bus.read_leg(leg)      # leg: dict of 1 Hz arrays v [m/s], power_W (total DC power, + traction), grade,
-                                   # T_amb, rho_air, optional valid
+        legs = bus.read_mission([leg1, leg2, ...])   # each leg: dict of 1 Hz arrays v [m/s], power_W (total DC power,
+        one = bus.read_leg(leg)                      # + traction), grade, T_amb, rho_air, optional valid
     """
     SCALE = 12.0
 
     def __init__(self, path=None):
         self.td = TripDetective(path or os.path.join(HERE, 'tripdetective_bus_weights.npz'))
+        self.cal = self.td.meta.get('buscal')
 
     def raw(self, a):
         n = len(a['v'])
@@ -334,9 +381,36 @@ class TripDetectiveBus:
         fl = dict(has_fuel=False, fuel_est=False, has_rpm=False, has_batt=True, has_aux=False)
         return raw_from_log(t, fl), np.array([float(fl[k]) for k in FLAGS], np.float32)
 
-    def read_leg(self, leg):
+    def network_leg(self, leg):
+        """the network's own reading of one leg (kg), its log-sigma, the leg's log b0 and its number of windows"""
         raw, fl = self.raw(leg)
-        I = [net_input(raw[:, s:e], fl, feat=self.td.feat) for s, e in windows(raw.shape[1])]
+        W = windows(raw.shape[1])
+        I = [net_input(raw[:, s:e], fl, feat=self.td.feat) for s, e in W]
         h = self.td.heads([self.td.encode(*i) for i in I], [i[2] for i in I])
-        m = 1800 * np.exp(h['mu'][0]) * self.SCALE; s = h['sig'][0] * self.td.sigk.get('mass_bus', 1.0)
-        return dict(mass_kg=float(m), mass_kg_1sigma=(float(m * np.exp(-s)), float(m * np.exp(s))), n_windows=len(I))
+        ps = np.sum([pstats(raw[:, s:e], fl) for s, e in W], 0)
+        return float(1800 * np.exp(h['mu'][0]) * self.SCALE), float(h['sig'][0]), log_b0(ps), len(I)
+
+    def read_mission(self, legs):
+        R = [self.network_leg(l) for l in legs]
+        if self.cal is None:                                   # v2.0: the network's reading, sigma widened on dev
+            out = []
+            for mm, sg, _, nw in R:
+                s = sg * self.td.sigk.get('mass_bus', 1.0)
+                out.append(dict(mass_kg=mm, mass_kg_1sigma=(mm * np.exp(-s), mm * np.exp(s)), network_kg=mm, n_windows=nw))
+            return out
+        m = np.array([r[0] for r in R]); lb = np.array([r[2] for r in R]); w = np.array([r[3] for r in R], float)
+        def day(x):
+            ok = np.isfinite(x)
+            return float(np.sum(x[ok] * w[ok]) / np.sum(w[ok])) if ok.any() else np.nan
+        md, lbd = day(m), day(lb)
+        a, b, c = self.cal['coef']; sk = self.cal['sigma_kg']
+        out = []
+        for mm, sg, l0, nw in R:
+            rel_b0 = l0 - lbd if np.isfinite(l0) and np.isfinite(lbd) else 0.0
+            est = a + b * (mm - md) + c * rel_b0
+            out.append(dict(mass_kg=float(est), mass_kg_1sigma=(float(est - sk), float(est + sk)), network_kg=mm,
+                            n_windows=nw, n_legs_in_day=len(legs)))
+        return out
+
+    def read_leg(self, leg):
+        return self.read_mission([leg])[0]
