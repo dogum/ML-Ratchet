@@ -62,6 +62,9 @@ AdamW + one-cycle, 120 epochs, re-augmented (phase, noise slice, N, 25 % demand 
 - ERCOT twins were 8-29 % too shallow at the Phase 1 damping 2.5 %/% with these random states; 1.0 %/%.
 - GB_20191203T200030: griddata's 1,788 MW (REMIT capacity) is ~2× what its 0.29 Hz drop at 333 GVA·s implies; dev truth
   set to Elexon metered output 854 MW.
+  (14 Nov 2026: the 1,788 MW was not REMIT capacity but 854.7 MW Spalding B1610 output + 933 MW of an IFA
+  hour-boundary ramp that GridData's FUELINST rule read as a trip. GridData now gives 854.7 MW; the twins, gate and
+  widening above already used 854 MW and do not change.)
 - Twin read test (`training/checks/twin_read_r5.json`): percentile of the real reading among 80 twin readings — MW lost
   5-99 % (median ~70 %), inertia 0-93 %, MW/Hz 7-38 % (real grids respond less stiffly than the typical sim).
 - Sigma widening (widen-only, 68th percentile of |z| on dev): loss ×1.11, settling ×1.28, others ×1.0.
@@ -85,8 +88,8 @@ MW/Hz at 60 s and nadir, settling at 10 s; keep if +0.01 and dev errors no more 
 |---|---|---|---|---|
 | inertia vs NESO outturn, N=60 | 410 | 16.4 % MdAPE (N=10: 14.5 %) | constant 230 GVA·s 20.4 %; 7.0 s × demand (dev fit) **15.1 %**; trace only (no demand) 20.3 % | 63 / 89 % |
 | inertia, events with loss label | 148 | 15.3 % | RoCoF formula with label loss 37.4 % | |
-| MW lost, medium labels, N=60 | 86 | **25.9 %** | RoCoF @230 GVA·s 27.1 %; RoCoF @NESO inertia 27.6 %; dev median 32.7 % | 48 / 79 % |
-| MW lost, low labels, N=60 | 64 | 34.8 % | RoCoF @230 35.6 %; RoCoF @NESO **29.3 %**; dev median 112 % | 41 / 66 % |
+| MW lost, medium labels, N=60 | 86 | **25.9 %** | RoCoF @230 GVA·s 27.1 %; RoCoF @NESO inertia 27.6 %; dev median 32.7 % (26.8 % with the corrected dev label, 14 Nov 2026) | 48 / 79 % |
+| MW lost, low labels, N=60 | 64 | 34.8 % | RoCoF @230 35.6 %; RoCoF @NESO **29.3 %**; dev median 112 % (97.8 % corrected, 14 Nov 2026) | 41 / 66 % |
 | nadir forecast at 5 s (nadir later) | 353 | **54 mHz** MAE | lowest value so far 58 mHz | 72 / 92 % |
 | nadir forecast at 10 s (nadir later) | 280 | 37 mHz | lowest value so far **26 mHz** | 59 / 81 % |
 | frequency at 60 s from 10 s | 412 | 59 mHz | value at 10 s held **39 mHz** | 61 / 95 % |

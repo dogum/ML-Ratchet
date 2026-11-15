@@ -94,3 +94,19 @@ Phase 2 GridSim project in ML Ratchet. From the 1 s grid frequency after a trip:
   gets 24.8 %, slightly better than with demand (25.9 %).
 - **Live instrument.** `web/export_instrument.py` exports the network (float16) and real GB exam windows for the site;
   the browser port runs the same forward pass (see `site/src/instruments/gridpulse/`).
+
+## 14 Nov 2026 — dev label of 3 Dec 2019 corrected in GridData (HANDOFF P0.7)
+- **Where 1,788 MW came from.** GridData's v1.0 label for GB_20191203T200030 was 854.7 MW (Spalding CCGT T_SPLN-1,
+  REMIT unplanned "Plant Fault" 870 -> 0 MW from 20:00Z; Elexon B1610 427.35 MWh in SP40 = 854.7 MW) plus 933 MW
+  "interconnector import lost (INTFR)" from FUELINST. FUELINST shows IFA ramping 1,900 -> 204 MW over 19:45-20:10 UTC,
+  an hour-boundary ramp like those at 17:00, 19:00 and 22:00 that evening, not a trip. The card's earlier wording
+  ("REMIT capacity") was wrong about the source; the 854 MW used on dev was right.
+- GridData now applies a cited correction (`shared/grid/data/sources/gb_event_label_corrections.csv`):
+  `gd.events` gives 854.7 MW, with `loss_MW_v1` = 1,787.7.
+- **Dev work:** twins, the dev gate and widening used `evaluate.DEV_LOSS` / `twin_gb.LOSSES` (854 MW) and are unchanged.
+- **Exam re-scored** with `training/rescore_release.py` (release weights, output to a scratch work folder, not
+  `training/checks/exam.json`): every GridPulse number is identical to the release. Only the dumb "dev median loss"
+  baseline moves, because the dev median falls from 1,142 to 1,066 MW: medium labels 32.7 % -> **26.8 %**, low labels
+  112 % -> **97.8 %**. Verdicts unchanged (medium: 25.9 % still beats 26.8 %, 27.1 %, 27.6 %; low: still a loss to
+  the RoCoF formula at NESO inertia, 29.3 %). model.yaml and MODEL_CARD.md keep the released baseline and add the
+  corrected one, dated.

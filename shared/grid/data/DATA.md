@@ -181,6 +181,27 @@ Disk: about 1.7 GB in total (budget 6 GB).
     says 16:00 for a 15:52 trip). Labels remain noisy: implied inertia E = loss f0 / (2 RoCoF) differs from NESO's
     outturn by a median 37% on the exam events (1 s RoCoF smoothing explains part of this).
 - **Exam subsets:** 412 exam events (2018-2025 minus dev), 150 with a loss label (86 medium), 410 with NESO inertia.
+- **Label corrections** (`data/sources/gb_event_label_corrections.csv`, committed; applied by `gd.events` to the
+  shipped v1.0 parquet and by `gb_events.py build` to a rebuild; `loss_MW_v1` keeps the v1.0 label, `loss_corrected`
+  marks the row, `loss_note` gives the reason and source; the v1.0 files are not edited, MANIFEST.json still matches).
+  - GB_20191203T200030 (dev), 14 Nov 2026: **1,787.7 -> 854.7 MW**. The v1.0 label was 854.7 MW from Spalding CCGT
+    (T_SPLN-1: REMIT unplanned "Plant Fault" 870 -> 0 MW from 20:00Z, published 20:07:30Z; B1610 427.35 MWh in
+    settlement period 40, 19:30-20:00 UTC, i.e. 854.7 MW; 7.4 MWh in SP41) plus 933 MW "interconnector import lost
+    (INTFR)". FUELINST shows IFA ramping 1,900 -> 1,751 -> 1,262 -> 809 -> 329 -> 204 MW over 19:45-20:10, the same
+    shape as its hour-boundary ramps at 17:00, 19:00 and 22:00 that evening; the rule compared 1,262 MW (19:55 slot)
+    with 329 MW (20:05 slot). No interconnector REMIT message. The other REMIT match, T_SEEL-1 (Spalding expansion
+    OCGT, 299 MW), was producing -0.5 MW and was already excluded. Physics check: 2 x 333 GVA.s x 0.057 Hz/s / 49.98 Hz
+    = 760 MW from the smoothed 1 s RoCoF (a lower bound). No event-specific NESO report was found. Source: Elexon
+    BMRS REMIT, B1610, FUELINST (data.elexon.co.uk/bmrs/api/v1/datasets), re-queried 14 Nov 2026. Confidence stays
+    *medium*; the splits are unchanged (`make_splits.py` chose this event as one of the three largest medium losses
+    of 2019/2021 using the v1.0 label; the frozen split is kept).
+  - Same failure mode, **not corrected** (exam events; listed for a later check): the FUELINST rule also fires on
+    hour-boundary ramps and on exports that grow (it tests `before - after >= 300` and `after <= 0.3 x before`, which
+    a negative `before` passes). FUELINST shows ramps or reversals, not steps, at GB_20200214T085638 (INTNED 650 ->
+    -511, INTNEM 307 -> -590 MW), GB_20200522T185814 (INTFR export -183 -> -561), GB_20200810T195818 (INTNEM export
+    -439 -> -805), GB_20220625T230149 (INTFR export -581 -> -1,031), GB_20230707T005707 (INTNEM export -252 -> -713),
+    GB_20240828T195646 (INTFR 549 -> -239 over 15 min). Interconnector-only labels of ~1,000 MW that drop in one
+    5-min slot to ~0 look like real trips.
 
 ### ERCOT events
 - From ERCOT's public monthly Operations Reports ("Frequency Events"): 85 of 102 months 2018-01 .. 2026-06 were found
@@ -264,7 +285,7 @@ Disk: about 1.7 GB in total (budget 6 GB).
   steam) - 40 units. exam = every other CAMPD Texas plant (407 units, all years 2018-2025).
 - **Events:** GB dev = 9 Aug 2019 (named) + the three largest medium-confidence losses in the dev years:
   GB_20190701T072734 (Nemo Link import 1,000 MW), GB_20190711T075329 (Peterhead 1,153 MW), GB_20191203T200030
-  (1,788 MW). ERCO dev = 5 seeded events from 2019/2021: ERCO_20190421T203000, ERCO_20190523T214100,
+  (1,788 MW in v1.0; corrected to 854.7 MW, section 5). ERCO dev = 5 seeded events from 2019/2021: ERCO_20190421T203000, ERCO_20190523T214100,
   ERCO_20210117T033500, ERCO_20210501T031400, ERCO_20210519T170600. exam = every other event before 2026 (GB 412,
   ERCO 301); 2026 events = reserve (GB 54, ERCO 23). *Why:* 9 Aug 2019 is the simulator's reference case (GridSim
   reproduces it), so it cannot be an exam item; a handful of large, well-documented dev events is enough to calibrate
@@ -287,7 +308,9 @@ Disk: about 1.7 GB in total (budget 6 GB).
 9. **GB 1 s data smooth RoCoF;** 2018-19 local-time stamps; Dec 2019 ends on the 15th; NESO's inertia dataset updates
    are "temporarily paused" (data to 2026-07-26).
 10. **Event loss labels** (GB) are REMIT-based except 9 Aug 2019: REMIT event times are often rounded or late, and the
-    capacity lost is not always the output lost (B1610 half-hour output is used when available).
+    capacity lost is not always the output lost (B1610 half-hour output is used when available). The FUELINST
+    interconnector rule can count an hour-boundary ramp as a trip (3 Dec 2019 corrected; 6 exam suspects listed in
+    section 5).
 11. ERCOT event times have minute resolution before 2023 and are local times.
 
 ## 11. Baselines (exam numbers; `proc/baselines/summary.json`)
@@ -347,7 +370,12 @@ GB exam events with a loss label (150; 148 with NESO inertia). RoCoF formula dP 
 | RoCoF formula with the event's own NESO outturn inertia (oracle input) | 27.8% | - |
 | E from (label loss, RoCoF) | - | 37.4% |
 | constant E = 230 GVA.s | - | **19.7%** |
-| dumb: dev median loss | 63.4% | - |
+| dumb: dev median loss | 63.4% (52.4% with the corrected dev label) | - |
+
+The table is the v1.0 `summary.json`. With the corrected 3 Dec 2019 dev label (re-run 14 Nov 2026, same script) the
+dev median loss falls from 1,142 to 1,066 MW and only the dumb row moves on the exam (63.4 -> 52.4%); on the 4 dev
+events: RoCoF @230 33.4 -> 30.7%, RoCoF @own inertia 22.8 -> 12.9%, dev median 7.6 -> 7.1%, E from (label, RoCoF)
+vs NESO 28.6 -> 12.7%.
 
 ERCOT exam (292 generation-loss events): loss = k x delta f with k = 4,668 MW/Hz (median over the 5 dev events):
 MdAPE **20.1%**; dumb dev-median loss 24.5%. (Dev: 9.7% / 7.9% on 5 events.)

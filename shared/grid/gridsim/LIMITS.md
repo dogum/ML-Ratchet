@@ -69,6 +69,14 @@ H. **No network in the ERCOT checks**, no imports optimisation (DC ties are fixe
    are not in the data). 3 Dec is unusable: GridData's loss estimate (1,788 MW) is about twice what the measured
    0.29 Hz drop at 333 GVA s implies (~850 MW). The model gave −33 % with B's earlier 855 MW estimate. GB nadirs
    are probably too deep by ~30 % outside the fitted event: GB fast response is stronger than the 9 Aug mix.
+   *14 Nov 2026: the 3 Dec label is corrected and the event is usable.* The 1,788 MW was 854.7 MW (Spalding CCGT
+   T_SPLN-1, Elexon B1610 output in the half hour before) plus 933 MW read from Elexon FUELINST as an IFA
+   interconnector trip; FUELINST shows an hour-boundary ramp (IFA 1,900 → 204 MW over 19:45-20:10 UTC), not a trip.
+   GridData now gives 854.7 MW (`data/sources/gb_event_label_corrections.csv`, applied by `gd.events` and by
+   `check_frequency_dev_events.py`). Re-run of the GB part of that check with physics 1.0 (scratch copy, not
+   `checks/*.json`): 3 Dec nadir error −316 % → **−33 %** (simulated drop 1.21 → 0.39 Hz, measured 0.29 Hz; RMS
+   0-60 s 552 → 70 mHz); GB dev summary (4 events) mean error −94 % → −23 %, MAE 95 % → 24 %. 3 Dec now agrees with
+   1 Jul (−34 %) and 11 Jul (−27 %): GB nadirs are too deep by ~30 % on all three REMIT-labelled dev events.
 4. **Governor and turbine models are generic per technology** (IEEE PES-TR1 typical values): one valve lag, two
    lead-lags, a rate limit and a headroom clip. Missing: gas-turbine output falling with frequency and ambient
    temperature, boiler pressure effects on steam units beyond ~30 s, load controllers that withdraw response

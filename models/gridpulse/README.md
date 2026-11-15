@@ -50,8 +50,8 @@ Real GB events from NESO 1 s frequency (2018-2025) against NESO's outturn inerti
 | GB inertia vs NESO outturn, N = 60 s (410 events)<br><sub>Bias +11 %. The trace alone (no demand input) gets 20.3 %: the skill comes from demand. 2023-25 overestimated by ~30 % (MdAPE 20-31 %).</sub> | **16.4%** | 7.0 s × demand (fit on the 4 dev events) (classical): 15.1%<br>Constant 230 GVA s (dumb baseline): 20.4% | ❌ loses |
 | GB inertia vs NESO outturn, N = 10 s (410 events)<br><sub>Reading the first 10 s only; trace alone 18.9 %.</sub> | **14.5%** | 7.0 s × demand (fit on the 4 dev events) (classical): 15.1%<br>Constant 230 GVA s (dumb baseline): 20.4% | ✅ wins |
 | GB inertia, events with a loss label (148) | **15.3%** | RoCoF formula E = ΔP·f0 / 2 RoCoF with the label loss (classical): 37.4% | ✅ wins |
-| GB MW lost, medium-confidence labels (86)<br><sub>Bias +11 %. Without the demand input: 24.8 %.</sub> | **25.9%** | RoCoF formula at 230 GVA s (classical): 27.1%<br>RoCoF formula at the NESO outturn inertia (classical): 27.6%<br>Dev median loss (dumb baseline): 32.7% | ✅ wins |
-| GB MW lost, low-confidence labels (64) | **34.8%** | RoCoF formula at 230 GVA s (classical): 35.6%<br>RoCoF formula at the NESO outturn inertia (classical): 29.3%<br>Dev median loss (dumb baseline): 112% | ❌ loses |
+| GB MW lost, medium-confidence labels (86)<br><sub>Bias +11 %. Without the demand input: 24.8 %. 14 Nov 2026: GridData corrected dev event 3 Dec 2019 from 1,788 to 854.7 MW; the dev median loss falls from 1,142 to 1,066 MW and this dumb baseline from 32.7 % (as released) to 26.8 %. GridPulse's numbers do not change and it still wins.</sub> | **25.9%** | RoCoF formula at 230 GVA s (classical): 27.1%<br>RoCoF formula at the NESO outturn inertia (classical): 27.6%<br>Dev median loss (dumb baseline): 32.7%<br>Dev median loss, corrected 3 Dec 2019 dev label (14 Nov 2026) (dumb baseline): 26.8% | ✅ wins |
+| GB MW lost, low-confidence labels (64)<br><sub>14 Nov 2026: with the corrected 3 Dec 2019 dev label (854.7 MW) the dev median baseline is 97.8 % (112 % as released). The verdict is unchanged: the RoCoF formula at NESO inertia (29.3 %) still beats GridPulse.</sub> | **34.8%** | RoCoF formula at 230 GVA s (classical): 35.6%<br>RoCoF formula at the NESO outturn inertia (classical): 29.3%<br>Dev median loss (dumb baseline): 112%<br>Dev median loss, corrected 3 Dec 2019 dev label (14 Nov 2026) (dumb baseline): 97.8% | ❌ loses |
 | GB nadir forecast from the first 5 s (353 events whose nadir comes later) | **54 mHz** | Lowest value so far (dumb baseline): 58 mHz | ✅ wins |
 | GB nadir forecast from the first 10 s (280 events whose nadir comes later) | **37 mHz** | Lowest value so far (dumb baseline): 26 mHz | ❌ loses |
 | GB frequency at 60 s, forecast from the first 10 s (412 events) | **59 mHz** | Value at 10 s held (mean of the last 3 s) (dumb baseline): 39 mHz | ❌ loses |
@@ -63,7 +63,7 @@ Coverage of the 68% error bars on the exam: GB inertia, N = 60 s (410) **63%**, 
 
 ### Where it wins
 
-- GB MW lost on medium-confidence labels: 25.9 % against 27.1 % for the RoCoF formula and 32.7 % for the dev median.
+- GB MW lost on medium-confidence labels: 25.9 % against 27.1 % for the RoCoF formula and 32.7 % for the dev median (26.8 % with the dev label corrected on 14 Nov 2026).
 - GB inertia from the first 10 s: 14.5 % against 15.1 % for a dev-fitted 7.0 s × demand rule and 20.4 % for a constant; on the 148 labelled events 15.3 % against 37.4 % for the RoCoF formula.
 - Nadir forecast from the first 5 s: 54 mHz against 58 mHz for the lowest value so far.
 - ERCOT MW lost from report numbers: 15.7 % against 20.1 % for a dev MW/Hz constant, and 24-33 % vs 37-59 % in 2023-2025.
@@ -126,8 +126,8 @@ The shared GridSim frequency model (shared/grid/gridsim, Phase 1): an aggregated
 
 ## Help wanted
 
-- Sub-second GB or ERCOT frequency (PMU, FNET/GridEye): the FNET site timed out from the build sandbox; 1 s NESO data blur the first-second slope that carries inertia.
-- Better GB loss sizes outside 9 Aug 2019: unit-trip MW from a source cleaner than REMIT capacity and interconnector flows (dev event 3 Dec 2019 is labelled 1,788 MW but metered 854 MW).
+- Sub-second GB or ERCOT frequency (PMU, FNET/GridEye): 1 s NESO data blur the first-second slope that carries inertia. Checked 14 Nov 2026: fnetpublic.utk.edu shows live displays (table, gauge, maps) and three 2011 US sample events as plots and videos; it offers no data download and no terms page; event data and alerts go to members of the FNET/GridEye Industry Consortium. None of the 470 GB or 329 ERCOT events (2018-2026) has a public sub-second trace.
+- Better GB loss sizes outside 9 Aug 2019: unit-trip MW from a source cleaner than REMIT capacity and interconnector flows (dev event 3 Dec 2019 was labelled 1,788 MW but metered 854 MW: an IFA hour-boundary ramp was counted as a 933 MW trip; GridData corrected it to 854.7 MW on 14 Nov 2026 and lists six exam events with the same FUELINST failure mode for checking).
 - The 17 missing ERCOT monthly operations reports (2018-2026), which hold more ERCOT events.
 
 ## Next rungs
