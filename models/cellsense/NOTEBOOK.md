@@ -1,5 +1,5 @@
-> **Lab notebook.** The build notes as recorded during the original work in a cloud sandbox (Oct–Nov 2026), kept
-> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that sandbox: in this repository
+> **Lab notebook.** The build notes as recorded during the original build in a cloud project (Oct–Nov 2026), kept
+> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that build machine: in this repository
 > the code is in `training/` and everything it writes goes to `work/` (see `training/_paths.py`). Page links to
 > claude.ai are the original private copies; the lab now lives at `lab/index.html`.
 
@@ -339,3 +339,7 @@ and without the reference ("partial"), and on full curves.
 - Reproduce: `python nmc_ocpjit.py`, then `python nmcbank.py ocpd <seed> 15000 ...` (seeds 51-54; 999 x 3000 ->
   val_ocpd.npz), `python nmc_ratchet.py rescore ocpd`, `nmc_train.py --name n10_ocpd --banks bank_ocpd_5*.npz`,
   `nmc_ratchet.py add n10 ... n10_ocpd.pt+endrule`.
+
+## Corrections
+
+- 14 Nov 2026: model.yaml: the partial-discharge loss said 'stopped at 0.6 Ah or below are no better than assuming no fade'. At 0.30 Ah the network beats no-fade (41.8 vs 45.7 mAh), so it now reads 0.45–0.6 Ah (46.5 and 52.0 vs 45.7 mAh); the card's limit says the same. Card: LFP rung 9 is marked released; LFP credits added. No verdict changed.

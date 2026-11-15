@@ -22,6 +22,19 @@ misalignment, morning dew dropouts and power-only mode were added to the simulat
 input channels (sensor flag, clear-sky expectation) were added to the network; v1's weights were transplanted in and
 training continued on the new simulator. A second real farm (PVDAQ 9068, Colorado trackers) joined the final exam.
 
+## Network
+
+591,455 weights, numpy only (`sundoctor.py`), BatchNorm folded, GELU activations. The input is a 12-channel image,
+14 days × 96 solar-time steps.
+
+- **Within each day:** a 1 × 7 stem (24 channels), then four 2-D residual blocks (32, 48, 64, 96 channels, 3 × 3 kernels)
+  that halve the time-of-day axis and keep the day axis. Mean and max over the time of day leave 192 numbers per day.
+- **Across days:** a 1 × 1 projection to 128 channels, then four residual 1-D blocks along the 14 days (kernel 3,
+  dilations 1, 2, 4 and 1), so each day sees its neighbours.
+- **Heads:** per day, 19 numbers (mean and log σ for `pf`, `soil`, `frac`, `shade`, `clip`, `outage`, `dfrac`, `snow` and
+  `stuck`, plus the step logit behind `step_p`); per window, mean and max over days, a 128-unit layer, and mean and log σ
+  for `eta0` and `ac_limit`.
+
 ## The simulator (all training data)
 
 Vectorized physics in solar time, each block checked against pvlib 0.16:
@@ -57,7 +70,7 @@ Total over both versions: 1,760,000 simulated fortnights.
 |---|---|---|---|---|
 | 1 | Baseline | kept | 1.263 | 29% |
 | 2 | Beta-NLL | kept | 1.678 | 60% |
-| 3 | Polish | kept | 1.748 | 64% |
+| 3 | Polish | kept (released as v1) | 1.748 | 64% |
 | 4 | Longer memory | rejected | 1.753 | 66% |
 | 5 | Realism | rejected | 1.718 | 65% |
 
@@ -71,7 +84,7 @@ rises by more than 0.01. The v1 release, run through v2's inputs (no snow or tra
 | start | v1 release (s3_polish) seen through v2 inputs; no snow or stuck heads | kept | 0.341 | 1.342 | -0.661 | 0.00 / 0.00 | 0.00 / 0.00 | 3% | 0.52 | 0.63 |
 | 6 | v2 | kept | 1.579 | 1.664 | 1.493 | 0.87 / 0.75 | 0.40 / 0.19 | 52% | 0.99 | 0.94 |
 | 7 | Polish | kept | 1.615 | 1.693 | 1.536 | 0.89 / 0.81 | 0.48 / 0.29 | 55% | 0.98 | 0.95 |
-| 8 | Weather fronts | kept | 1.628 | 1.702 | 1.554 | 0.91 / 0.83 | 0.51 / 0.31 | 52% | 0.98 | 0.97 |
+| 8 | Weather fronts | released | 1.628 | 1.702 | 1.554 | 0.91 / 0.83 | 0.51 / 0.31 | 52% | 0.98 | 0.97 |
 
 Real-data numbers are reported, never used to choose. All rungs were re-scored after the Colorado answer keys were
 corrected (decisions unaffected): outages are not graded on cold, dim days, when a dark module may be under snow its
@@ -142,3 +155,12 @@ tracker angles). Answer keys, all from the plant's own instruments:
 - It tells dead strings from dust partly by memory: it compares the system with its own best level over the past year. A string dead from the first day it saw looks like a weaker system, not a broken one.
 - Two real farms, both utility scale. Rooftops, microinverters, bifacial panels and real satellite irradiance are untested. The Colorado answer keys are physics estimates from the plant's own sensors, and its main sunlight sensor was wrong for three and a half years.
 - Colorado is no longer a fully blind test for rung 8: the weather-front change was prompted by rung 6's snow misses there and in the lab on this page. It improved the simulated exam and the Colorado outage calls, but not the snow calls.
+
+## Credits and licences
+
+- Real data: NREL PV Data Acquisition (PVDAQ) systems 2107 and 9068, via the Open Energy Data Initiative
+  (data.openei.org, submission 4568; CC BY 4.0).
+- Physics references: pvlib python (Holmgren, Hansen and Mikofski, J. Open Source Softw. 3, 884, 2018) for the checks;
+  Ineichen and Perez 2002 (clear sky), Erbs et al. 1982 (decomposition), Hay and Davies 1980 (transposition), Faiman 2008
+  (module temperature), PVWatts (Dobos 2014), Anderson and Jensen 2024 (tracker row shading).
+- Code and weights: MIT (ML Ratchet).

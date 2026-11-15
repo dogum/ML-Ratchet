@@ -45,6 +45,22 @@ q1, q2), eclipsing binaries (20%), background binaries (20%), nothing (15%). Cat
 of 1e-7 to 3e-5 of the period (5x the stated error 15% of the time), epoch within 0.15 durations, duration within 15%, binaries
 at half their period 15% of the time. 60,000 training readings; 5,000 frozen for the ratchet.
 
+## The network
+
+321,900 weights, numpy only (`transitnet.py`), BatchNorm folded, GELU activations. `pipeline.py` folds the light curve
+on the candidate's period into four views, each with a channel marking which bins have data:
+
+- **Local** (±2.5 durations around the transit, 201 bins): eight 1-D convolutions (kernel 5; 16, 16, 32, 32, 64 … 64
+  channels) with three max-pools.
+- **Secondary** (±2.5 durations around phase 0.5, 101 bins) and **odd/even** (odd and even transits apart, 101 bins
+  each): six convolutions each, up to 32 channels.
+- **Global** (the whole orbit, 401 bins): eight convolutions, up to 64 channels.
+
+Each branch ends in mean and max pooling; the 384 numbers plus 10 scalars (period, duration, depth scale, noise,
+number of transits and the star's TIC values) go through two 256-unit layers to 12 outputs: four class logits, and for
+Rp/R*, b, a/R* and duration a mean and a log σ. The means are corrections to model-free estimates (Rp/R* from
+√depth, a/R* from the period and duration), not absolute values.
+
 ## The ratchet
 
 Every candidate network was scored on a frozen set of 5,000 simulated readings: half the score for telling planets from everything else (2 AUC - 1), half for the four planet parameters (skill against guessing the median, floored at 0). It was kept only if that rose by more than 0.01 and it did no worse on 40 real dev stars that no exam uses: 20 confirmed planets and 20 false positives (log-loss within 0.05, radius-ratio error within 1 point). When the dev planets showed the simulated limb darkening was wrong, the frozen set was regenerated and every rung re-scored. The exam is reported, never used to choose.
@@ -53,7 +69,7 @@ Every candidate network was scored on a frozen set of 5,000 simulated readings: 
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | Baseline | kept | 0.838 | 0.938 | 1.224 | 5.5% | 0.781 | 5.4% | 0.091 |
 | 2 | Limb darkening from real planets | rejected | 0.735 | 0.922 | 0.856 | 34.0% | 0.760 | 36.6% | 0.104 |
-| 3 | Corrections, not guesses | kept | 0.859 | 0.948 | 0.935 | 3.0% | 0.835 | 3.4% | 0.085 |
+| 3 | Corrections, not guesses | released | 0.859 | 0.948 | 0.935 | 3.0% | 0.835 | 3.4% | 0.085 |
 | 4 | Where the light dims | rejected | 0.861 | 0.951 | 0.981 | 2.9% | 0.832 | 3.6% | 0.086 |
 
 ## Final exam
@@ -80,7 +96,12 @@ published error added):
 | 20 to 100 | 452 | 3.5% | 5.7% | 0.085 | 4.3% | 68% |
 | 100+ | 337 | 1.6% | 4.4% | 0.070 | 4.2% | 66% |
 
-Against a least-squares transit fit on the same folded data (0.8 s per star, fixed limb darkening, no error bars, no vetting):
+"Planets" here counts those with a published Rp/R*: 1,175 of the 1,196 confirmed planets (b is published for 1,086,
+a/R* for 1,084).
+
+Against a least-squares transit fit on the same folded data (0.8 s per star, fixed limb darkening, no error bars, no vetting).
+Here "Planets" counts every confirmed planet in the bin (1,196 in all); each error is still a median over the planets
+with a published value:
 
 | SNR and method | Planets | Rp/R* | b | a/R* |
 |---|---|---|---|---|
@@ -101,9 +122,17 @@ Against a least-squares transit fit on the same folded data (0.8 s per star, fix
 
 - It cannot rule out most false positives from TESS photometry alone: it calls 66% of the exam's false positives planets. Many need ground-based images, spectra or radial velocities; TransitNet's job is to rank them, and its score is best used that way.
 - It knows TESS 2-minute light curves of single stars, orbits under 25 days, and dips the pipeline can fold. Single transits, very long periods, 20-second or 30-minute data, and circumbinary planets are outside what it learned.
-- Limb darkening is a broad prior, set from the dev planets' own fits, not from stellar atmosphere tables (the Claret tables could not be downloaded here). Its error bars include that; very hot or very cool stars may be biased.
+- Limb darkening is a broad prior, set from the dev planets' own fits, not from stellar atmosphere tables (the Claret tables could not be downloaded from the shared build machine). Its error bars include that; very hot or very cool stars may be biased.
 - Published answers are not ground truth either: they come from different papers, bandpasses and dilution corrections. Part of the scatter in the exam is theirs.
 - Impact parameter is the hardest number: 0.09 typical error, worse near grazing. a/R* assumes the orbit's shape is unknown to it; eccentric orbits shift it.
 - Stellar radius comes from the TIC catalogue. Planet sizes in Earth radii carry its error, which TransitNet does not see.
 
-Data: NASA TESS (SPOC light curves via MAST), NASA Exoplanet Archive (pscomppars), ExoFOP TOI list.
+## Credits and licences
+
+- Light curves: NASA TESS mission, SPOC 2-minute light curves from MAST (Space Telescope Science Institute). This work
+  uses data collected by the TESS mission, funded by the NASA Explorer Program.
+- Truth: the NASA Exoplanet Archive composite planet table (pscomppars), operated by Caltech/IPAC under contract with
+  NASA; the ExoFOP TOI list (ExoFOP, Caltech/IPAC) for false positives.
+- Physics check: batman (Kreidberg 2015, PASP 127, 1161); Mandel and Agol 2002; limb-darkening parameters in Kipping's
+  q1, q2 (Kipping 2013).
+- Code and weights: MIT (ML Ratchet).

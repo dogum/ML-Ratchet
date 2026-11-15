@@ -66,14 +66,14 @@ exam:
   short: "3,105 one-station records"
   summary: 3,105 real one-station records.
   results:
-    - metric: Magnitude, median |error|
+    - metric: Magnitude, mean |error|
       better: lower
       model: 0.13
       unit: Mw
       baselines:
         - { name: "Ms, dev-calibrated", kind: classical, value: 0.57 }
       verdict: win
-    - metric: Distance, median |error|
+    - metric: Distance, mean |error|
       better: lower
       model: 5.1
       unit: deg
@@ -112,7 +112,7 @@ wins:
   - "Deep quakes (> 70 km): median depth error 52 km against 136 km for the guess; 82% within a factor of 2."
 losses:
   - Shallow quakes are read too deep (median ratio 3.7 on the exam); always guessing 31 km beats it there.
-  - Very deep quakes (500–700 km) read too shallow (ratio 0.83).
+  - Very deep quakes (500–700 km) read too shallow (median ratio 0.87).
 limits:
   - Distances 25–95° only, magnitudes about 5.5–8, long-period (LH) data.
   - One-station epicentre misses by a median 764 km.

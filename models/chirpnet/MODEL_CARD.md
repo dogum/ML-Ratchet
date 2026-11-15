@@ -12,6 +12,25 @@ ChirpNet v2 is four small networks, all trained only on simulations and tested o
 Finder plus checker together are the released detector, rung 9 (882,399 weights). `chirpnet.py` (numpy and scipy only)
 runs all four. `demo.py` reproduces the numbers below. `training/` holds every script that produced the weights (needs PyTorch and LALSuite).
 
+## Network
+
+All four run in numpy (`chirpnet.py`) with BatchNorm folded into the convolutions and GELU activations. Weight counts
+are from the `.npz` files (background tables and fixed band matrices not counted).
+
+- **Finder** (334,703 weights). A 1-D residual CNN on the two whitened streams (2 × 4096 samples): a stride-4 stem of 24
+  filters (width 32), then five residual stages of 32, 48, 64, 96 and 128 channels (kernels 15, 9, 7, 5 and 3), each
+  halving the length. Mean and max pooling (256 numbers), a 128-unit layer, and 7 outputs: detection score, log chirp
+  mass and its log σ, mass ratio and its log σ, merger time and its log σ.
+- **Coincidence checker** (547,696 weights). The same trunk run on each detector alone. The two feature maps are mixed
+  (H, L, H × L, |H − L|) by a 1 × 1 convolution to 128 channels and one more residual stage, pooled with each
+  detector's own max (512 numbers), then a 128-unit layer and the same 7 outputs; only its score is used.
+- **Posterior flow** (927,096 weights). The finder's trunk embeds the window (256 numbers), joined with 20 noise-spectrum
+  features (ASD at 10 frequencies per detector). A 276 → 256 → 128 context network conditions an 8-layer RealNVP flow
+  over 6 parameters (log ℳ, q, χ_eff, log₁₀ d_L, cos ι, t_c); each coupling layer has two hidden layers of 192.
+- **Neutron-star network** (301,071 weights). A fixed time-frequency front end (64 log bands × 256 frames), then a 2-D
+  residual CNN (stem of 16, stages of 24, 32, 48, 64 and 96 channels), mean and max pooling, a 128-unit layer and 7
+  outputs.
+
 ## 1. Black-hole detector
 
 **Pipeline.** Raw 4096 Hz strain is whitened with its own Welch PSD (4 s Hann segments, median average), band-limited to
@@ -39,7 +58,7 @@ Every candidate was scored on a frozen validation set (20,000 noise windows to s
   proposes and the rung 8 checker confirms. Its veto level (-1.0) was chosen on simulations with a fresh random seed:
   the most sensitive level whose loud-fake rate was at most a quarter of rung 4's.
 
-| Rung | Change | Decision | Found at SNR 8 | Found at SNR 10 | Chirp-mass error (median, SNR ≥ 10) | 68% coverage | Found with glitches | Loud one-detector fakes flagged | Objective |
+| Rung | Change | Decision | Found at SNR 8 | Found at SNR 10 | Chirp-mass error (median, SNR ≥ 10) | 68% coverage | Found with glitches | Loud one-detector fakes passed | Objective |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | Baseline | kept | 30% | 71% | 11.6% | 0.76 | 0% | not measured | 0.199 |
 | 2 | SNR curriculum | kept | 54% | 89% | 5.8% | 0.72 | 0% | not measured | 0.477 |
@@ -50,7 +69,7 @@ Every candidate was scored on a frozen validation set (20,000 noise windows to s
 | 6 | Coincidence training | rejected | 36% | 61% | 5.5% | 0.74 | 41% | 2% | 0.721 |
 | 7 | Loud singles | rejected | 38% | 59% | 5.4% | 0.74 | 42% | 1% | 0.726 |
 | 8 | Two-stream | rejected | 48% | 80% | 5.3% | 0.78 | 52% | 1% | 0.953 |
-| 9 | Cascade | kept | 58% | 90% | 4.9% | 0.72 | 60% | 17% | 1.116 |
+| 9 | Cascade | released | 58% | 90% | 4.9% | 0.72 | 60% | 17% | 1.116 |
 
 ### Final exam: real LIGO data
 
@@ -125,7 +144,7 @@ into the window. Glitches go into 20% of windows. Validation uses 600 held-out w
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | Plain CNN | kept | 1% | 6% | 17% | 77% | 14.9% | -0.286 | 10.8 vs 12.9 | 1.4603 |
 | 2 | Time-frequency front end | kept | 10% | 45% | 94% | 100% | 2.6% | 0.054 | 11.1 vs 5.5 | 1.1823 |
-| 3 | Polish | kept | 14% | 53% | 97% | 100% | 2.2% | 0.093 | 14.4 vs 5.0 | 1.1365 |
+| 3 | Polish | released | 14% | 53% | 97% | 100% | 2.2% | 0.093 | 14.4 vs 5.0 | 1.1365 |
 
 **Final exam: GW170817.** The 2048 s cleaned H1 and L1 data products (LIGO-P1700349) are used. Background comes from
 L1 slid circularly against H1 by 12 shifts of 29-503 s, with windows holding the event in either detector removed:
@@ -139,9 +158,20 @@ with chirp mass **1.1365 M☉** (LIGO: 1.1975 +0.0001/−0.0001, detector frame)
 - **Coincidence is not perfect.** The checker lets about 1 in 6 loud one-detector chirps through in simulation, and
   GW151226's Hanford signal alone still scores above the threshold. The neutron-star model has no checker at all
   (H1 alone 8.2, L1 alone 11.2, both above its background).
-- Aligned spins only; no precession or higher-order modes. The black-hole model covers chirp masses of about 6-45 M☉ (detector frame).
+- Aligned spins only; no precession or higher-order modes. The black-hole model covers chirp masses of 5.5–45 M☉ (detector frame).
 - False-alarm rates are bounded by hours of time slides (2 h for black holes, 6 h for neutron stars).
   They are upper limits, nowhere near the significance of LIGO's production searches.
 - The neutron-star chirp mass is good to about 2% on simulations, versus LIGO's 0.01%, because 16 s windows give up the early
   inspiral. On GW170817 the released rung is 5% low and its 68% interval misses LIGO's value; rung 2 had been within 1.3%.
 - Real events tested come from O1–O3 (2015–2020); untested on O4. Mergers heavier than the training range (GW190521) are missed.
+
+## Credits and licences
+
+- Strain data and event catalogues: the Gravitational Wave Open Science Center (gwosc.org), a service of the LIGO
+  Scientific Collaboration, the Virgo Collaboration and KAGRA (CC BY 4.0). GW170817 cleaned data: LIGO-P1700349.
+- Truth: GWTC-1 (LIGO Scientific and Virgo Collaborations, Phys. Rev. X 9, 031040, 2019) for O1/O2; the latest GWTC-2.1
+  or GWTC-3 version on GWOSC for the O3 events.
+- Waveforms for training: LALSuite (IMRPhenomD, IMRPhenomD_NRTidalv2; GPL-2.0, training only, not a runtime dependency).
+- Method: the posterior network follows DINGO-style neural posterior estimation (Dax et al., Phys. Rev. Lett. 127,
+  241103, 2021) with a RealNVP flow (Dinh et al. 2017).
+- Code and weights: MIT (ML Ratchet).

@@ -114,7 +114,7 @@ exam:
       baselines:
         - { name: "Loudest of 29,879 time-slid O3 background windows", kind: dumb, value: 7.24 }
       verdict: win
-      note: "Statistics 9.9–14.1. Named in advance; data first reached on 12 Nov 2026 (the cloud sandbox could not reach GWOSC)."
+      note: "Statistics 9.9–14.1. Named in advance; data first reached on 12 Nov 2026 (GWOSC could not be reached from the shared build machine)."
     - metric: O3 chirp mass inside ChirpNet's 68% range
       better: higher
       model: "6 / 7"

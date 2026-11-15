@@ -86,7 +86,7 @@ exam:
       baselines:
         - { name: "Classical ridge fit", kind: classical, value: 20 }
         - { name: "Dev median guess", kind: dumb, value: 56 }
-      verdict: win
+      verdict: tie
     - metric: Arrivals detected
       better: higher
       model: 63
@@ -107,6 +107,8 @@ limits:
   - Truth is tropical cyclones only; Southern Ocean and North Pacific winter storms are not graded.
   - One-point truth (peak wind) for a storm that makes swell for days along a track.
   - The calibrated v2/v3 simulators match dev statistics better but alone make real dev readings worse; the cause is not understood.
+help_wanted:
+  - "Extratropical storm truth: the Open-Meteo archive and marine API hit its daily request limit from the shared build machine's IP, so only tropical cyclones (IBTrACS) are graded. A reachable, documented reanalysis endpoint would add Southern Ocean and North Pacific winter storms."
 next:
   - Sliding-window search without the ±36 h centring hint — the honest monitoring task.
   - Track-level truth and loss (the energy-weighted source), or a hybrid swap test like QuakeNet's.

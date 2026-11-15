@@ -1,5 +1,5 @@
-> **Lab notebook.** The build notes as recorded during the original work in a cloud sandbox (Oct–Nov 2026), kept
-> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that sandbox: in this repository
+> **Lab notebook.** The build notes as recorded during the original build in a cloud project (Oct–Nov 2026), kept
+> as written. Paths like `/home/claude/...` and `/mnt/user-data/outputs` refer to that build machine: in this repository
 > the code is in `training/` and everything it writes goes to `work/` (see `training/_paths.py`). Page links to
 > claude.ai are the original private copies; the lab now lives at `lab/index.html`.
 
@@ -101,3 +101,7 @@ Parameters (median error) by SNR:
 - Claret LD tables if a mirror becomes reachable.
 - Single transits.
 - A "find it" step (in-browser BLS).
+
+## Corrections
+
+- 14 Nov 2026: Card: the two signal-to-noise tables count different things: 1,175 planets with a published Rp/R* in the first, all 1,196 confirmed planets per bin in the second. Both now say so. Rung 3 is marked released. Network and credits sections added. The Claret limb-darkening tables are now listed under help_wanted. No verdict changed.
