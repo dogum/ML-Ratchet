@@ -205,6 +205,114 @@ export const REFS: Record<string, Ref[]> = {
   ],
 };
 
+/** A short explainer for one box or arrow label: a one-line definition and, where it fits, an example from this
+ *  repository with real names and numbers. {tokens} are filled by the page from model.yaml / ratchet.yaml. */
+export interface Explainer { d: string; ex?: string }
+
+export const NODE_INFO: Record<string, Explainer> = {
+  phy: { d: 'The governing equations: how waves travel through rock, how a car spends energy.', ex: 'QuakeNet starts from ak135, a standard 1-D model of the Earth, solved at 27 depths × 71 distances.' },
+  sim: { d: 'Code that turns causes into signals by following the equations.', ex: 'RoadSim drives a virtual car second by second over a real speed trace and road grade. Its energy ledger closes in all 600 stress runs.' },
+  sdat: { d: 'Signals the simulator made. Each comes with its true cause attached, so the labels are free.', ex: 'EnergyNet learned from {enTrips} simulated trips.' },
+  net: { d: 'The learned part: weights fitted so a signal maps to its cause.', ex: 'QuakeNet is a 1-D convolutional network with 1.44 M weights.' },
+  out: { d: 'What the model returns for one real record: an answer and an error bar.', ex: 'From one seismometer, QuakeNet gives magnitude, distance, depth and direction, each with its own error bar.' },
+  dev: { d: 'A few real units that check and tune the simulator and gate each rung. They never sit the exam.', ex: 'QuakeNet’s dev set: 74 records from 40 earthquakes.' },
+  noise: { d: 'Real recordings with no answer attached. They can serve as background noise.', ex: 'QuakeNet’s simulated quakes are laid into 1,284 real quiet-time windows from 127 stations.' },
+  train: { d: 'Real records with measured answers, in bulk. Most machine learning trains on these.', ex: 'This repository trains on none. Real labels only gate, grade and fit comparison baselines, such as EnergyNet’s regression fitted on dev.' },
+  exam: { d: 'Real data held back until the end and scored once. It never chooses anything.', ex: 'EnergyNet’s exam: {enExam}.' },
+};
+
+/** Keyed by the arrow label text, since one arrow carries different labels in different approaches. */
+export const EDGE_INFO: Record<string, Explainer> = {
+  'train': { d: 'The network fits its weights to examples.', ex: 'Here the examples are simulated only: {labels} real labelled examples across the collection.' },
+  'real noise': { d: 'Real background recordings mixed under the simulated signals, so the network never relies on ideal noise.', ex: 'QuakeNet: 1,284 quiet windows from real stations.' },
+  'calibrate physics': { d: 'Dev data sets a constant in the simulator, and the change is judged as a rung.', ex: 'QuakeNet’s dev records showed surface waves arriving 6.5% late. Building that in lifted its frozen-set score from {q1} to {q2}.' },
+  'gate each rung': { d: 'A new version is kept only if it beats the incumbent on a frozen simulated set and reads real dev units no worse.', ex: 'QuakeNet: more than +0.01, with dev errors no more than 5% worse.' },
+  'grade once': { d: 'The final exam: scored once, after release, beside classical and simple baselines.', ex: 'QuakeNet’s distance error is {qDist}° against {qDistB}° for the classical S−P method.' },
+  'train too': { d: 'Real labelled examples join the simulated ones in a single training set.', ex: 'The test can then no longer tell how much the physics helped.' },
+  'test': { d: 'A held-out real set scores the finished model.' },
+  'pretrain': { d: 'A first training stage on plentiful simulated data, to learn the broad physics.' },
+  'fine-tune': { d: 'A second, smaller training stage on real labels that adjusts the pretrained weights.', ex: 'Not done here. It is stop 5 of the dial in section 07.' },
+  'physics estimate': { d: 'The physics model’s own answer, used as the starting point.' },
+  'learn the leftover': { d: 'The network is trained only on what the physics got wrong.', ex: 'EnergyNet predicts a correction to a physics energy estimate, though it learns it from simulations.' },
+  'correction': { d: 'The network’s output adjusts the physics estimate instead of replacing it.' },
+  'equation residual in the loss': { d: 'Training penalises how far the network’s output breaks the governing equations at sampled points.' },
+  'sparse measurements': { d: 'A few real readings pin the solution down.' },
+  'very wide parameter ranges': { d: 'Nuisance parameters are drawn far wider than reality, so the real world falls somewhere inside.' },
+  'inputs and outputs': { d: 'Simulator runs, recorded as input–output pairs.' },
+  'learn the forward map': { d: 'The network learns to imitate the simulator, from cause to signal.' },
+  'fast prediction': { d: 'The trained copy answers far faster than the simulator it imitates.' },
+  'fit parameters + discrepancy': { d: 'Real data fits the simulator’s constants plus a statistical term for what the physics misses.' },
+  'prediction': { d: 'The calibrated simulator makes the prediction itself, with an uncertainty.' },
+  'correct the state, live': { d: 'Each new measurement nudges the running model’s state toward reality.' },
+  'forecast': { d: 'The corrected model runs ahead to predict the next interval.' },
+  'train with labels': { d: 'Labelled simulated examples teach the task.' },
+  'align features, no labels': { d: 'Unlabelled real inputs push the network to treat real and simulated inputs alike.' },
+};
+
+// ---- 04 · why a rung was rejected ----------------------------------------------------------------
+export type RejectReason = 'gate' | 'margin' | 'fell' | 'rule';
+export const REJECT_LABEL: Record<RejectReason, string> = {
+  gate: 'Failed the dev gate', margin: 'Short of the margin', fell: 'Score fell', rule: 'Another rule',
+};
+const R_FELL_FIRST = /\(d -0\./i;
+const R_MARGIN = /short of|below the 0\.01|needs? \+0\.0|needs more than|needed \+0\.01|no gain|\+0\.00\d|\(needs/i;
+const R_GATE = /gate|charge holding|but dev|dev errors \+|calibration cells|dev .*mAh|accuracy [−-]|type accuracy fell|guard|dev \+\d/i;
+const R_FELL = /fell|^[−-]0\.|sim −|skill -0|frozen [\d.]+ vs [\d.]+ \(-/i;
+/** Why a rejected rung was rejected. The logged reason decides; the score against the incumbent is the fallback
+ *  (it can mislead where a ladder was re-scored on a new frozen set). */
+export function rejectReason(why: string, delta: number | null, margin: number): RejectReason {
+  const w = why.trim();
+  if (R_FELL_FIRST.test(w)) return 'fell';
+  if (R_GATE.test(w) && !R_MARGIN.test(w) && !(delta !== null && delta <= 0 && R_FELL.test(w))) return 'gate';
+  if (R_MARGIN.test(w)) return 'margin';
+  if (R_FELL.test(w)) return 'fell';
+  if (delta !== null && delta <= 0) return 'fell';
+  return 'rule';
+}
+
+// ---- 08 · neighbours -----------------------------------------------------------------------------
+/** A sample of related projects, each tied to a wiring from section 02. Every line was checked against the project's
+ *  own page on 15 Nov 2026. No funding figures. `open` is set only where that page states a licence or sells it. */
+export interface Neighbour { name: string; who?: string; ap: string; apLabel: string; dir: 'forward' | 'inverse' | 'tools'; open: string; what: string; vs: string; url: string }
+export const NEIGHBOURS: Neighbour[] = [
+  {
+    name: 'The Well', who: 'Polymathic AI', ap: 'surrogate', apLabel: 'Surrogate', dir: 'forward', open: '',
+    what: 'About 15 TB of numerical simulations in 16 datasets, from fluid dynamics and acoustic scattering to biological systems and magneto-hydrodynamics, for training models that speed up simulation work.',
+    vs: 'Runs the physics forward, cause to signal, across many fields at once. The networks here run the other way and are graded on real instrument records.',
+    url: 'https://arxiv.org/abs/2412.00568',
+  },
+  {
+    name: 'PhysicsNeMo', who: 'NVIDIA', ap: 'surrogate', apLabel: 'Surrogate', dir: 'forward', open: 'Apache 2.0',
+    what: 'An open framework for building, training and fine-tuning physics AI models, with recipes for aerodynamics (CFD) and global weather forecasting.',
+    vs: 'A toolkit for making fast forward models on GPUs. It carries no shared protocol for grading a model on real data.',
+    url: 'https://github.com/NVIDIA/physicsnemo',
+  },
+  {
+    name: 'sbi', who: 'sbi-dev', ap: 'repo', apLabel: 'This repository’s pattern', dir: 'inverse', open: 'Apache 2.0',
+    what: 'A Python package (PyTorch) for simulation-based inference: it estimates the posterior over a simulator’s parameters from observed data.',
+    vs: 'The same pattern as this repository, at the level of methods. It ships the algorithms; it ships no finished models for particular instruments.',
+    url: 'https://github.com/sbi-dev/sbi',
+  },
+  {
+    name: 'DINGO', who: 'gravitational-wave inference', ap: 'repo', apLabel: 'This repository’s pattern', dir: 'inverse', open: '',
+    what: 'Gravitational-wave parameter estimation with neural posterior estimation: networks trained on simulated data, then run on real or simulated detector data.',
+    vs: 'The closest single-field match, to ChirpNet. DINGO goes far deeper in gravitational waves than ChirpNet does.',
+    url: 'https://dingo-gw.readthedocs.io/en/latest/sbi.html',
+  },
+  {
+    name: 'SimAI', who: 'Ansys', ap: 'surrogate', apLabel: 'Surrogate', dir: 'forward', open: 'Commercial',
+    what: 'A commercial tool that trains AI models on a company’s own past simulation results, to predict the performance of new designs.',
+    vs: 'Closed, forward surrogates for engineering design, fitted to each customer’s data.',
+    url: 'https://ansys.synopsys.com/products/simai',
+  },
+  {
+    name: 'ToolUniverse', who: 'Zitnik Lab, Harvard Medical School', ap: '', apLabel: 'Tool server', dir: 'tools', open: '',
+    what: 'A Model Context Protocol server that exposes 1000+ scientific tools, such as UniProt, OpenTargets and ChEMBL, to AI agents. Mostly biomedical.',
+    vs: 'A different layer: it packages existing tools for agents instead of building and grading models.',
+    url: 'https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/mcp_support.html',
+  },
+];
+
 // ---- 01 · a common first guess, marked up --------------------------------------------------------
 export type DiffPart = { k: 'ok' | 'ins' | 'del'; t: string };
 export const GUESS_DIFF: DiffPart[] = [

@@ -1,15 +1,17 @@
 ---
 // Section 02: one fixed set of boxes; each approach switches a different set of arrows on.
 // Wide screens get the hand-tuned SVG; phones get the same wiring as a stacked list of lit connections.
-import { NODES, EDGES, REFS, edgeNodes, type Approach } from '../../lib/mental-models';
-interface Props { approaches: Approach[]; start?: string }
-const { approaches, start = 'repo' } = Astro.props;
+// Every box and every lit arrow label opens a short explainer on hover, keyboard focus or tap.
+import { NODES, EDGES, REFS, edgeNodes, type Approach, type Explainer } from '../../lib/mental-models';
+interface Props { approaches: Approach[]; start?: string; nodeInfo: Record<string, Explainer>; edgeInfo: Record<string, Explainer> }
+const { approaches, start = 'repo', nodeInfo, edgeInfo } = Astro.props;
 const first = approaches.slice(0, 2);
 const rest = approaches.slice(2);
 const payload = approaches.map((a) => ({ ...a, refs: REFS[a.key] ?? [] }));
+const info = { node: Object.fromEntries(Object.entries(nodeInfo).map(([k, v]) => [k, { t: NODES[k].t, ...v }])), edge: edgeInfo };
 const kindOf = (id: string) => EDGES[id].k;
 ---
-<div class="wiring" data-wiring data-ap={JSON.stringify(payload)} data-start={start}>
+<div class="wiring" data-wiring data-ap={JSON.stringify(payload)} data-info={JSON.stringify(info)} data-start={start}>
   <div class="chip-row big" role="group" aria-label="Reference wirings">
     {first.map((a) => <button type="button" class="pick big" data-key={a.key} aria-pressed="false">{a.chip}</button>)}
   </div>
@@ -22,20 +24,21 @@ const kindOf = (id: string) => EDGES[id].k;
       <span><i class="sw s"></i>simulated data</span>
       <span><i class="sw r"></i>real data</span>
       <span><i class="sw k"></i>the model's reading</span>
+      <span class="hint">Hover, focus or tap any box or arrow label to see what it means</span>
     </div>
-    <svg class="flow" viewBox="0 0 980 400" role="img" aria-labelledby="flow-title">
-      <title id="flow-title">Data flow for the selected approach. Lit arrows carry data; labels say what for.</title>
+    <svg class="flow" viewBox="0 0 980 400" role="group" aria-labelledby="flow-title">
+      <title id="flow-title">Data flow for the selected approach. Lit arrows carry data; labels say what for. Each box and label explains itself.</title>
       <defs>
         <marker id="mm-ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke" /></marker>
       </defs>
-      <text class="band" x="20" y="268">REAL DATA</text>
+      <text class="band" x="20" y="268" aria-hidden="true">REAL DATA</text>
       <line class="band-line" x1="20" y1="276" x2="960" y2="276" />
-      <g>
+      <g aria-hidden="true">
         {Object.entries(EDGES).map(([id, e]) => <path d={e.d} class={`edge ${e.k}`} data-edge={id} marker-end="url(#mm-ah)" />)}
       </g>
       <g>
         {Object.entries(NODES).map(([id, n]) => (
-          <g class={`node ${n.k}`} data-node={id}>
+          <g class={`node ${n.k}`} data-node={id} data-tip-node={id} tabindex="0" role="button" aria-label={`${n.t}: what it means`}>
             <rect x={n.x} y={n.y} width={n.w} height="56" rx="3" />
             <text x={n.x + n.w / 2} y={n.y + 25} text-anchor="middle">{n.t}</text>
             <text x={n.x + n.w / 2} y={n.y + 42} text-anchor="middle" class="sub">{n.s}</text>
@@ -43,7 +46,7 @@ const kindOf = (id: string) => EDGES[id].k;
         ))}
       </g>
       <g>
-        {Object.entries(EDGES).filter(([, e]) => e.lx).map(([id, e]) => <text class="elabel" data-label={id} x={e.lx} y={e.ly} text-anchor={e.a} />)}
+        {Object.entries(EDGES).filter(([, e]) => e.lx).map(([id, e]) => <text class="elabel" data-label={id} data-tip-edge="" role="button" x={e.lx} y={e.ly} text-anchor={e.a} />)}
       </g>
     </svg>
 
@@ -52,14 +55,20 @@ const kindOf = (id: string) => EDGES[id].k;
         const [a, b] = edgeNodes(id);
         return (
           <li class={`st ${kindOf(id)}`} data-st={id} hidden>
-            <span class={`nb ${NODES[a].k}`}>{NODES[a].t}</span>
+            <button type="button" class={`nb ${NODES[a].k}`} data-tip-node={a}>{NODES[a].t}</button>
             <span class="arr" aria-hidden="true">→</span>
-            <span class={`nb ${NODES[b].k}`}>{id === 'dev_gate' ? 'Network (the gate)' : NODES[b].t}</span>
-            <span class="lbl mono" data-st-label></span>
+            <button type="button" class={`nb ${NODES[b].k}`} data-tip-node={b}>{id === 'dev_gate' ? 'Network (the gate)' : NODES[b].t}</button>
+            <button type="button" class="lbl mono" data-st-label data-tip-edge=""></button>
           </li>
         );
       })}
     </ol>
+
+    <div class="tip" role="tooltip" id="wiring-tip" hidden>
+      <p class="tip-t display"></p>
+      <p class="tip-d"></p>
+      <p class="tip-ex"><span class="kicker">In this repository</span><span class="tip-ex-t"></span></p>
+    </div>
 
     <h3 class="ap-name display" data-f="name"></h3>
     <p class="ap-one" data-f="one"></p>
@@ -77,13 +86,94 @@ const kindOf = (id: string) => EDGES[id].k;
 <script>
   type Ref = { short: string; full: string; url: string };
   type Ap = { key: string; name: string; edges: Record<string, string>; one: string; physics: string; real: string; proves: string; when: string; repo: string; refs: Ref[] };
+  type Ex = { t?: string; d: string; ex?: string };
+  type Info = { node: Record<string, Ex>; edge: Record<string, Ex> };
+
   document.querySelectorAll<HTMLElement>('[data-wiring]').forEach((root) => {
     const aps: Ap[] = JSON.parse(root.dataset.ap!);
+    const info: Info = JSON.parse(root.dataset.info!);
     const by = Object.fromEntries(aps.map((a) => [a.key, a]));
     const picks = [...root.querySelectorAll<HTMLButtonElement>('.pick')];
+    const panel = root.querySelector<HTMLElement>('.panel')!;
+    const tip = root.querySelector<HTMLElement>('.tip')!;
+
+    // ---- explainer popover: hover, keyboard focus and tap all open it ------------------------------------
+    let current: Element | null = null;
+    let pinned = false;
+    const content = (el: Element): Ex | null => {
+      const n = (el as HTMLElement).dataset.tipNode;
+      if (n) return info.node[n] ?? null;
+      const label = (el.textContent ?? '').trim();
+      const e = info.edge[label];
+      return e ? { t: label, ...e } : null;
+    };
+    const hide = () => {
+      if (current) current.removeAttribute('aria-describedby');
+      current = null; pinned = false; tip.hidden = true;
+    };
+    const show = (el: Element, pin = false) => {
+      const c = content(el);
+      if (!c) return;
+      if (current && current !== el) current.removeAttribute('aria-describedby');
+      current = el; pinned = pin;
+      tip.querySelector('.tip-t')!.textContent = c.t ?? '';
+      tip.querySelector('.tip-d')!.textContent = c.d;
+      const ex = tip.querySelector<HTMLElement>('.tip-ex')!;
+      ex.hidden = !c.ex;
+      tip.querySelector('.tip-ex-t')!.textContent = c.ex ?? '';
+      el.setAttribute('aria-describedby', 'wiring-tip');
+      tip.hidden = false;
+      // place it under the box or label, kept inside the panel
+      const pr = panel.getBoundingClientRect(), r = el.getBoundingClientRect();
+      const w = Math.min(320, pr.width - 24);
+      tip.style.width = `${w}px`;
+      let left = r.left - pr.left + r.width / 2 - w / 2;
+      left = Math.max(12, Math.min(left, pr.width - w - 12));
+      let top = r.bottom - pr.top + 8;
+      const th = tip.offsetHeight;
+      if (r.top - pr.top > th + 16 && top + th > pr.height - 8) top = r.top - pr.top - th - 8;
+      tip.style.left = `${left}px`;
+      tip.style.top = `${top}px`;
+    };
+    const usable = (el: Element) => !el.hasAttribute('data-tip-edge') || el.classList.contains('on') || el.tagName === 'BUTTON';
+    root.addEventListener('mouseover', (e) => {
+      const el = (e.target as Element).closest('[data-tip-node], [data-tip-edge]');
+      if (el && root.contains(el) && usable(el) && !pinned) show(el);
+    });
+    root.addEventListener('mouseout', (e) => {
+      const el = (e.target as Element).closest('[data-tip-node], [data-tip-edge]');
+      const to = (e as MouseEvent).relatedTarget as Element | null;
+      if (el && el === current && !pinned && !(to && el.contains(to))) hide();
+    });
+    root.addEventListener('focusin', (e) => {
+      const el = (e.target as Element).closest('[data-tip-node], [data-tip-edge]');
+      if (el && usable(el)) show(el, pinned && el === current);
+    });
+    root.addEventListener('focusout', (e) => {
+      const to = (e as FocusEvent).relatedTarget as Element | null;
+      if (!to || !to.closest('[data-tip-node], [data-tip-edge]')) { if (!pinned) hide(); }
+    });
+    root.addEventListener('click', (e) => {
+      const el = (e.target as Element).closest('[data-tip-node], [data-tip-edge]');
+      if (!el || !usable(el)) return;
+      if (el === current && pinned) hide(); else show(el, true);
+    });
+    root.addEventListener('keydown', (e) => {
+      const el = (e.target as Element).closest('[data-tip-node], [data-tip-edge]');
+      if (e.key === 'Escape') { hide(); return; }
+      if (el && el.tagName !== 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        if (el === current && pinned) hide(); else show(el, true);
+      }
+    });
+    document.addEventListener('click', (e) => { if (!(e.target as Element).closest('[data-tip-node], [data-tip-edge]')) hide(); });
+    addEventListener('resize', () => { if (current) show(current, pinned); });
+
+    // ---- picking an approach ----------------------------------------------------------------------------
     const set = (k: string) => {
       const A = by[k];
       if (!A) return;
+      hide();
       const on = new Set<string>();
       root.querySelectorAll<SVGPathElement>('[data-edge]').forEach((p) => {
         const id = p.dataset.edge!, act = id in A.edges;
@@ -94,12 +184,16 @@ const kindOf = (id: string) => EDGES[id].k;
         const id = t.dataset.label!, txt = A.edges[id] ?? '';
         t.textContent = txt;
         t.classList.toggle('on', !!txt);
+        if (txt && info.edge[txt]) { t.setAttribute('tabindex', '0'); t.setAttribute('aria-label', `${txt}: what it means`); }
+        else { t.removeAttribute('tabindex'); t.removeAttribute('aria-label'); }
       });
       root.querySelectorAll<SVGGElement>('[data-node]').forEach((g) => g.classList.toggle('on', on.has(g.dataset.node!)));
       root.querySelectorAll<HTMLLIElement>('[data-st]').forEach((li) => {
         const id = li.dataset.st!;
         li.hidden = !(id in A.edges);
-        li.querySelector('[data-st-label]')!.textContent = A.edges[id] ?? '';
+        const lbl = li.querySelector<HTMLButtonElement>('[data-st-label]')!;
+        lbl.textContent = A.edges[id] ?? '';
+        lbl.hidden = !A.edges[id];
       });
       for (const f of ['name', 'one', 'physics', 'real', 'proves', 'when', 'repo'] as const) {
         const el = root.querySelector(`[data-f="${f}"]`);
@@ -118,6 +212,7 @@ const kindOf = (id: string) => EDGES[id].k;
       picks.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.key === k)));
     };
     picks.forEach((b) => b.addEventListener('click', () => set(b.dataset.key!)));
+    root.addEventListener('mm-pick', (e) => set((e as CustomEvent<string>).detail));
     set(root.dataset.start!);
   });
 </script>
@@ -134,15 +229,17 @@ const kindOf = (id: string) => EDGES[id].k;
   .pick:hover { border-color: var(--ink); color: var(--ink); }
   .pick[aria-pressed='true'] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 
-  .panel { padding: clamp(14px, 2.5vw, 24px); margin-top: 10px; }
+  .panel { position: relative; padding: clamp(14px, 2.5vw, 24px); margin-top: 10px; }
   .legend-row { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 10.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
   .legend-row span { display: inline-flex; align-items: center; gap: 7px; }
+  .legend-row .hint { margin-left: auto; text-transform: none; letter-spacing: 0; color: var(--ink-2); }
   .sw { width: 18px; height: 0; border-top: 2.5px dashed; display: inline-block; }
   .sw.s { border-color: var(--sim); } .sw.r { border-color: var(--real); } .sw.k { border-color: var(--ink); }
 
   .flow { width: 100%; height: auto; overflow: visible; }
   .band { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; fill: var(--ink-3); }
   .band-line { stroke: var(--rule); stroke-dasharray: 2 4; }
+  .node { cursor: help; outline: none; }
   .node rect { fill: var(--paper-3); stroke: var(--rule); stroke-width: 1.5; transition: fill 0.25s, stroke 0.25s; }
   .node text { fill: var(--ink-3); font-family: var(--sans); font-size: 14px; font-weight: 600; transition: fill 0.25s; }
   .node .sub { font-family: var(--mono); font-size: 10px; font-weight: 400; }
@@ -150,23 +247,45 @@ const kindOf = (id: string) => EDGES[id].k;
   .node:global(.on) text { fill: var(--ink); }
   .node.s:global(.on) rect { stroke: var(--sim); fill: color-mix(in srgb, var(--sim) 12%, var(--paper-3)); }
   .node.r:global(.on) rect { stroke: var(--real); fill: color-mix(in srgb, var(--real) 13%, var(--paper-3)); }
+  .node:hover rect, .node:focus-visible rect { stroke: var(--ink); stroke-width: 2.5; }
+  .node:focus-visible rect { stroke-dasharray: 4 3; }
   .edge { fill: none; stroke: var(--rule); stroke-width: 1.5; stroke-dasharray: 3 5; transition: stroke 0.25s; }
   .edge:global(.on) { stroke-width: 2.5; stroke-dasharray: 7 6; animation: mm-flow 1.1s linear infinite; }
   .edge.s:global(.on) { stroke: var(--sim); } .edge.r:global(.on) { stroke: var(--real); } .edge.k:global(.on) { stroke: var(--ink); }
   @keyframes mm-flow { to { stroke-dashoffset: -13; } }
-  .elabel { font-family: var(--mono); font-size: 11px; fill: var(--ink); paint-order: stroke; stroke: var(--paper-3); stroke-width: 5px; stroke-linejoin: round; opacity: 0; transition: opacity 0.25s; }
-  .elabel:global(.on) { opacity: 1; }
+  .elabel { font-family: var(--mono); font-size: 11px; fill: var(--ink); paint-order: stroke; stroke: var(--paper-3); stroke-width: 5px; stroke-linejoin: round; opacity: 0; transition: opacity 0.25s; outline: none; }
+  .elabel:global(.on) { opacity: 1; cursor: help; }
+  .elabel:global(.on):hover, .elabel:global(.on):focus-visible { fill: var(--accent); }
+
+  .tip {
+    position: absolute; z-index: 5; padding: 12px 14px 12px; border-radius: var(--radius);
+    background: var(--ink); color: var(--paper); box-shadow: var(--shadow); pointer-events: none;
+  }
+  .tip[hidden] { display: none; }
+  .tip p { margin: 0; }
+  .tip-t { font-size: 20px; line-height: 1.05; margin-bottom: 4px !important; }
+  .tip-t:empty { display: none; }
+  .tip-d { font-size: 14px; line-height: 1.45; }
+  .tip-ex { margin-top: 8px !important; padding-top: 8px; border-top: 1px solid color-mix(in srgb, var(--paper) 22%, transparent); font-size: 13.5px; line-height: 1.45; }
+  .tip-ex[hidden] { display: none; }
+  .tip-ex .kicker { display: block; color: color-mix(in srgb, var(--paper) 62%, transparent); margin-bottom: 2px; }
 
   .stack { display: none; list-style: none; margin: 0; padding: 0; }
   .st { display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: 4px 8px; padding: 9px 0; border-bottom: 1px solid var(--rule-2); font-size: 14px; }
   .st[hidden] { display: none; }
-  .nb { justify-self: start; border: 1.5px solid var(--ink-3); border-radius: var(--radius); padding: 2px 7px; font-weight: 600; font-size: 13px; white-space: nowrap; }
+  .nb {
+    justify-self: start; font: inherit; color: var(--ink); cursor: help; background: transparent;
+    border: 1.5px solid var(--ink-3); border-radius: var(--radius); padding: 2px 7px; font-weight: 600; font-size: 13px; white-space: nowrap;
+  }
   .nb.s { border-color: var(--sim); background: color-mix(in srgb, var(--sim) 12%, transparent); }
   .nb.r { border-color: var(--real); background: color-mix(in srgb, var(--real) 13%, transparent); }
   .st .arr { color: var(--ink-3); }
   .st.s .arr { color: var(--sim); } .st.r .arr { color: var(--real); }
-  .st .lbl { grid-column: 1 / -1; color: var(--ink-2); font-size: 11px; }
-  .st .lbl:empty { display: none; }
+  .st .lbl {
+    grid-column: 1 / -1; justify-self: start; font-family: var(--mono); font-size: 11px; color: var(--ink-2); cursor: help;
+    background: none; border: 0; padding: 2px 0; text-decoration: underline dotted; text-underline-offset: 3px;
+  }
+  .st .lbl[hidden] { display: none; }
 
   .ap-name { font-size: clamp(26px, 3vw, 36px); line-height: 1; margin: 20px 0 8px; }
   .ap-one { max-width: 70ch; color: var(--ink-2); }
@@ -183,6 +302,7 @@ const kindOf = (id: string) => EDGES[id].k;
     .flow { display: none; }
     .stack { display: block; }
     .pick.big { font-size: 19px; }
+    .legend-row .hint { margin-left: 0; }
   }
   @media (prefers-reduced-motion: reduce) { .edge:global(.on) { animation: none; } }
 </style>

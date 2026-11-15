@@ -9,7 +9,7 @@ import WiringDiagram from '../components/mental-models/WiringDiagram.astro';
 import Lenses from '../components/mental-models/Lenses.astro';
 import RealDataDial from '../components/mental-models/RealDataDial.astro';
 import Exam2Chart from '../components/mental-models/Exam2Chart.astro';
-import { APPROACHES, GUESS_DIFF, LENSES, STOPS } from '../lib/mental-models';
+import { APPROACHES, GUESS_DIFF, LENSES, STOPS, NODE_INFO, EDGE_INFO, NEIGHBOURS, REJECT_LABEL, rejectReason, type Explainer, type RejectReason } from '../lib/mental-models';
 import { collectionStats, getModels, getModel, ghFile, type ExamRow, type RealDataRole } from '../lib/data';
 import { url } from '../lib/url';
 
@@ -17,6 +17,7 @@ const s = collectionStats();
 const models = getModels();
 const quake = getModel('quakenet')!;
 const qr = (id: string) => quake.ladders[0].rungs.find((r) => r.id === id)?.sim?.toFixed(3) ?? '—';
+const qDistRow = quake.exam.results.find((r) => /^Distance/.test(r.metric));
 
 // EnergyNet's exam rows that carry a regression fitted on real EPA tests: the repo's own black-box baseline
 const energy = getModel('energynet')!;
@@ -37,7 +38,13 @@ const fill = (t: string) => t
   .replace('{petrolLoss}', petrolLoss)
   .replace('{labels}', String(s.realTrainingLabels))
   .replace('{q1}', qr('r1')).replace('{q3}', qr('r3'))
-  .replace('{rejected}', String(s.rejected));
+  .replace('{rejected}', String(s.rejected))
+  .replace('{q2}', qr('r2'))
+  .replace('{qDist}', String(qDistRow?.model ?? '—')).replace('{qDistB}', String(qDistRow?.baselines[0]?.value ?? '—'))
+  .replace('{enTrips}', energy.summary.match(/([\d,]+) simulated trips/)?.[1] ?? 'tens of thousands of')
+  .replace('{enExam}', energy.split.exam.replace(/\.$/, ''));
+const fillInfo = (m: Record<string, Explainer>) => Object.fromEntries(Object.entries(m).map(([k, v]) => [k, { d: fill(v.d), ex: v.ex && fill(v.ex) }]));
+const nodeInfo = fillInfo(NODE_INFO), edgeInfo = fillInfo(EDGE_INFO);
 const approaches = APPROACHES.map((a) => ({ ...a, repo: fill(a.repo) }));
 const lenses = LENSES.map((z) => ({ ...z, evi: fill(z.evi), see: fill(z.see) }));
 const stops = STOPS.map((x) => ({ ...x, gain: fill(x.gain) }));
@@ -47,12 +54,42 @@ const ROLE: Record<RealDataRole, string> = { backdrop: 'noise', calibration: 'ca
 const grey = models.map((m) => ({ id: m.id, name: m.name, accent: m.accent, a: m.approach }));
 const count = (k: 'real_backdrop' | 'physics_inputs' | 'physics_anchor') => grey.filter((g) => g.a?.[k]).length;
 
-const ladders = models.flatMap((m) => m.ladders.map((l, i) => ({ m, l, uid: `mm-${m.id}-${i}`, label: m.ladders.length > 1 && l.name !== m.name ? `${m.name} · ${l.name.replace(/\s*\(.*\)$/, '')}` : m.name })));
+// chip label: the model's name, then the ladder's own name without a repeated model name or a dated note in brackets
+const ladderLabel = (mName: string, lName: string, many: boolean) => {
+  let rest = lName.replace(/\s*\(.*\)$/, '').trim();
+  if (rest.toLowerCase().startsWith(mName.toLowerCase())) rest = rest.slice(mName.length).replace(/^\s*[·—-]?\s*/, '');
+  if (rest.length > 32 && rest.includes(' — ')) rest = rest.split(' — ')[0];
+  return many && rest ? `${mName} · ${rest}` : mName;
+};
+// every rejected rung, with why it was rejected (the logged reason decides; the score delta is the fallback)
+type AnyLadder = (typeof models)[number]['ladders'][number];
+const rejections = (l: AnyLadder) => {
+  let inc: number | null = null;
+  const out: { id: string; why: string; reason: RejectReason; delta: number | null }[] = [];
+  for (const r of l.rungs) {
+    const delta = r.sim !== undefined && inc !== null ? r.sim - inc : null;
+    if (r.decision === 'rejected') out.push({ id: r.id, why: r.why, reason: rejectReason(r.why, delta, l.margin), delta });
+    else if (r.sim !== undefined) inc = r.sim;
+  }
+  return out;
+};
+// R1, R2, R3 -> R1–R3 when the ids are one prefix with consecutive numbers
+const idRange = (ids: string[]) => {
+  const p = ids.map((id) => id.match(/^(.*?)(\d+)$/));
+  if (ids.length > 2 && p.every((x, k) => x && x[1] === p[0]![1] && (k === 0 || +x[2] === +p[k - 1]![2] + 1))) return `${ids[0]}–${ids[ids.length - 1]}`;
+  return ids.join(', ');
+};
+const ladders = models.flatMap((m) => m.ladders.map((l, i) => {
+  const rej = rejections(l);
+  const groups = (['gate', 'margin', 'fell', 'rule'] as RejectReason[]).map((k) => ({ k, rungs: rej.filter((x) => x.reason === k) })).filter((g) => g.rungs.length);
+  const gateUp = rej.filter((x) => x.reason === 'gate' && x.delta !== null && x.delta > l.margin);
+  return { m, l, uid: `mm-${m.id}-${i}`, label: ladderLabel(m.name, l.name, m.ladders.length > 1), groups, gateUp };
+}));
 const startLadder = ladders.findIndex((x) => x.m.id === 'quakenet');
 
 const toc = [
   ['first-guess', 'A first guess'], ['wiring', 'Where data flows'], ['grey-box', 'Physics-informed?'],
-  ['ratchet', 'The ratchet'], ['worked-example', 'Worked example'], ['lenses', 'Eight lenses'], ['real-data', 'Real data, later'], ['many-ways', 'Many ways'],
+  ['ratchet', 'The ratchet'], ['worked-example', 'Worked example'], ['lenses', 'Eight lenses'], ['real-data', 'Real data, later'], ['neighbours', 'Neighbours'], ['many-ways', 'Many ways'],
 ];
 ---
 <Base title="Mental models" description="Where ML Ratchet sits among other ways to combine physics and machine learning: the same boxes wired eleven ways, where physics enters each model, eight lenses, and where the no-real-training-data line could move." keywords={['physics-informed neural networks', 'domain randomization', 'surrogate model', 'Bayesian calibration', 'data assimilation', 'domain adaptation', 'transfer learning', 'grey-box modelling']}>
@@ -106,7 +143,7 @@ const toc = [
       <h2 class="section">Same boxes, <em>different wiring</em></h2>
       <p class="muted">Every physics-plus-ML approach uses the same parts. They differ in which arrows are switched on. Read them as a menu, not a ranking: each fits a different problem, and a model here can borrow one when its evidence points that way. Pick one and watch where <span class="real-t">real data</span> and <span class="sim-t">simulated data</span> go.</p>
     </header>
-    <WiringDiagram approaches={approaches} start="repo" />
+    <WiringDiagram approaches={approaches} start="repo" nodeInfo={nodeInfo} edgeInfo={edgeInfo} />
     <p class="note faint">The nine other approaches are general practice, each with one or two published references; the lines about this repository are read from its files.</p>
   </section>
 
@@ -176,12 +213,33 @@ const toc = [
     <div class="lad-pick" data-ladpick>
       <p class="kicker">One ladder in full</p>
       <div class="chips-row" role="group" aria-label="Choose a ladder">
-        {ladders.map((x, i) => <button type="button" class="lp" data-i={i} aria-pressed={i === startLadder}>{x.label}</button>)}
+        {ladders.map((x, i) => <button type="button" class="lp" data-i={i} aria-pressed={i === startLadder} title={x.l.name}>{x.label}</button>)}
       </div>
       {ladders.map((x, i) => (
         <div class="frame pad lad" data-lad={i} hidden={i !== startLadder}>
           <p class="mono faint lad-meta">{x.l.rungs.length} rungs · {x.l.rungs.filter((r) => r.decision === 'rejected').length} rejected{x.l.scored_on ? ` · scored on ${x.l.scored_on}` : ''}</p>
           <p class="lad-rule">{x.l.rule}</p>
+          {x.groups.length > 0 && (
+            <div class="rej">
+              <p class="kicker">Why each rejected rung was rejected</p>
+              <ul class="rej-list">
+                {x.groups.map((g) => (
+                  <li class={`rg rg-${g.k}`}>
+                    <span class="rg-k">{REJECT_LABEL[g.k]}</span>
+                    {g.rungs.map((r) => <span class="rid-tag num" title={r.why}>{r.id}</span>)}
+                  </li>
+                ))}
+              </ul>
+              {x.gateUp.length > 0 && (
+                <p class="rej-note">
+                  {x.gateUp.length === 1 ? `${x.gateUp[0].id} scored` : `${idRange(x.gateUp.map((r) => r.id))} each scored`} higher than the
+                  incumbent on the frozen simulated set and {x.gateUp.length === 1 ? 'was' : 'were'} still rejected: {x.gateUp.length === 1 ? 'it' : 'each'} read
+                  the real dev units worse than the gate allows. A gain that shows only in simulation does not count. That is the
+                  ratchet working as intended.
+                </p>
+              )}
+            </div>
+          )}
           <LadderChart ladder={x.l} accent={x.m.accent} uid={x.uid} />
         </div>
       ))}
@@ -265,6 +323,34 @@ const toc = [
     </div>
   </section>
 
+  <section class="sec wrap" id="neighbours">
+    <header class="sec-head reveal">
+      <p class="kicker">08 · How it compares</p>
+      <h2 class="section">Neighbours, <em>and where this one differs</em></h2>
+      <p class="muted">A sample of related projects, not a survey. <b class="dir-forward">Forward</b> projects run a simulator’s direction, from cause to signal; <b class="dir-inverse">inverse</b> ones run from a real signal back to its cause, as the models here do. The tag under each name switches the section 02 diagram to that wiring.</p>
+    </header>
+    <ul class="nbrs">
+      {NEIGHBOURS.map((n) => (
+        <li class="frame nbr reveal">
+          <p class="nbr-top">
+            <span class={`dir dir-${n.dir}`}>{n.dir === 'forward' ? 'Forward' : n.dir === 'inverse' ? 'Inverse' : 'Tools for agents'}</span>
+            {n.open && <span class="mono faint lic">{n.open}</span>}
+          </p>
+          <h3 class="display nbr-name"><a href={n.url} rel="noopener">{n.name}</a></h3>
+          {n.who && <p class="mono faint nbr-who">{n.who}</p>}
+          {n.ap ? <a class="ap-tag" href="#wiring" data-pick={n.ap}>{n.apLabel} →</a> : <span class="ap-tag plain">{n.apLabel}</span>}
+          <p class="nbr-what">{n.what}</p>
+          <p class="nbr-vs"><span class="kicker">Next to this repository</span>{n.vs}</p>
+        </li>
+      ))}
+    </ul>
+    <div class="frame pad nbr-sum reveal">
+      <p>Most of the field runs simulators <b>forward</b>: a network learns to give a simulator’s answer faster than the simulator can. The networks here run the other way, from a real instrument record back to its cause, as sbi and DINGO do.</p>
+      <p>What this repository adds is one grading protocol carried across unrelated fields: zero real labels in training, every rung logged, one exam on real data beside classical baselines, and the losses published. Inside its own field, each specialist project goes much further than the matching model here; DINGO next to ChirpNet is the clearest case.</p>
+    </div>
+    <p class="note faint">Each line above was checked against the project’s own page or paper on 15 Nov 2026. Funding and company figures are left out on purpose.</p>
+  </section>
+
   <section class="sec wrap close" id="many-ways">
     <header class="sec-head reveal">
       <p class="kicker">Close</p>
@@ -304,6 +390,10 @@ const toc = [
       lads[i].querySelector('.chart')?.classList.add('in');
     }));
   });
+  // a neighbour's approach tag switches the wiring diagram to that approach
+  document.querySelectorAll<HTMLAnchorElement>('[data-pick]').forEach((a) => a.addEventListener('click', () => {
+    document.querySelector('[data-wiring]')?.dispatchEvent(new CustomEvent('mm-pick', { detail: a.dataset.pick }));
+  }));
   document.querySelectorAll<HTMLElement>('[data-grey]').forEach((root) => {
     const b = root.querySelector<HTMLButtonElement>('[data-grey-toggle]')!;
     b.addEventListener('click', () => {
@@ -383,6 +473,34 @@ const toc = [
   .lp[aria-pressed='true'] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .lad-meta { font-size: 11px; margin: 0 0 4px; }
   .lad-rule { font-size: 15px; color: var(--ink-2); max-width: 90ch; }
+  .rej { margin: 4px 0 18px; padding: 12px 14px; background: var(--paper-2); border-radius: var(--radius); }
+  .rej > .kicker { margin: 0 0 8px; }
+  .rej-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .rg { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 6px; font-size: 13px; }
+  .rg-k { min-width: 150px; font-weight: 600; }
+  .rg-gate .rg-k { color: var(--real); }
+  .rid-tag { font-size: 11px; padding: 1px 7px; border-radius: 99px; border: 1px dashed var(--ink-3); color: var(--ink-2); cursor: help; }
+  .rg-gate .rid-tag { border: 1px solid var(--real); color: var(--real); }
+  .rej-note { margin: 10px 0 0; font-size: 14px; color: var(--ink); max-width: 90ch; }
+
+  .nbrs { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; }
+  .nbr { padding: 16px 18px 18px; display: flex; flex-direction: column; }
+  .nbr p { margin: 0; }
+  .nbr-top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .dir { font-family: var(--mono); font-variation-settings: 'wdth' 87.5; font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .dir-forward { color: var(--sim); } .dir-inverse { color: var(--real); } .dir-tools { color: var(--ink-3); }
+  .lic { font-size: 10.5px; }
+  .nbr-name { font-size: 30px; line-height: 1; margin: 8px 0 2px; }
+  .nbr-name a { text-decoration: none; }
+  .nbr-name a:hover { text-decoration: underline; text-decoration-color: var(--accent); }
+  .nbr-who { font-size: 11px; margin-bottom: 8px !important; }
+  .ap-tag { align-self: flex-start; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.03em; text-decoration: none; color: var(--ink-2); border: 1px solid var(--rule); border-radius: 99px; padding: 2px 9px; margin-bottom: 10px; }
+  a.ap-tag:hover { border-color: var(--ink); color: var(--ink); }
+  .nbr-what { font-size: 15px; }
+  .nbr-vs { margin-top: auto !important; padding-top: 12px; font-size: 14.5px; color: var(--ink-2); }
+  .nbr-vs .kicker { display: block; margin: 0 0 3px; padding-top: 10px; border-top: 1px solid var(--rule-2); }
+  .nbr-sum { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px 36px; }
+  .nbr-sum p { margin: 0; font-size: 17px; }
 
   .timeline { list-style: none; margin: 0 0 18px; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
   .timeline li { padding: 14px 16px; border-top: 3px solid var(--ink); font-size: 15px; }
@@ -415,6 +533,7 @@ const toc = [
     .stats div:nth-child(2) { border-right: 0; }
     .stats div + div:nth-child(3) { padding-left: 0; }
     .stats div:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+    .rg-k { min-width: 0; width: 100%; }
     .toc { top: 60px; }
   }
 </style>
