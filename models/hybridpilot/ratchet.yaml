@@ -1,5 +1,5 @@
-# The ratchet ladders, normalised. Raw logs: training/ratchet.json (v1, physics v1), training/ratchet_v2.json (v2, physics v2)
-# and training/ratchet_v2_1.json (v2.1, physics v3.1).
+# The ratchet ladders, normalised. Raw logs: training/ratchet.json (v1, physics v1), training/ratchet_v2.json (v2, physics v2),
+# training/ratchet_v2_1.json (v2.1, physics v3.1) and training/ratchet_v2_2.json (v2.1 log plus the v2.2 rungs R19-R22, rule v2.2).
 model: hybridpilot
 ladders:
   - name: "v1.0 — RoadSim physics v1 (12 Nov 2026)"
@@ -88,4 +88,8 @@ ladders:
     note: "Why a second path: v2.1 holds charge on 93 % of exam trips against 96 % for v2.0 and 97 % for A-ECMS, and the same drift shows before the exam: v2.1 holds 87 % of frozen trips (A-ECMS 95 %) and 95 % of dev trips (A-ECMS 97 %). The frozen-skill margin measures fuel only, so a rung that fixes holding at no fuel cost could never pass path A. Settings are chosen on training-distribution probe sets (probe, and a new 80-trip mild probe), never on dev or exam. The starting incumbent is v2.1 (R17 of the v2.1 ladder: frozen skill 0.704; frozen + dev holding 164 of 182 trips, 90.1 %)."
     columns_source: Frozen set (% of DP, charge holding), dev set (% of DP, charge holding), frozen engine starts per km
     columns: ["Frozen % of DP", "Frozen holds", "Dev % of DP", "Dev holds", "Frozen starts/km"]
-    rungs: []
+    rungs:
+      - { id: R19, change: "Plug-ins at their CS level: s no lower than the DP median costate of the HEV of the same architecture (power-split 2.42, series 2.70); below CS, SOC feedback Kp 24 without the dead band", sim: 0.712, decision: kept, why: "Path B: frozen + dev holding 90.1 -> 94.0 % (frozen series plug-ins 7 -> 12 of 12, power-split 16 -> 18 of 18); frozen skill +0.008; dev % of DP 99.28 -> 99.30.", metrics: [99.27, "93%", 99.30, "95%", 2.21] }
+      - { id: R20, change: "R19 + mild P1 hybrids without the dead band (s0 2.8 kept)", sim: 0.712, decision: rejected, why: "Frozen has no mild trips (skill +0.000); dev mild holding 9 -> 10 of 12, pooled holding +0.5 points (needs +2); dev % of DP 99.30 -> 99.23.", metrics: [99.27, "93%", 99.23, "96%", 2.21] }
+      - { id: R21, change: "R19 + HEVs (incl. P2 trucks) Kp 18 beyond the dead band", sim: 0.691, decision: rejected, why: "Frozen skill -0.022 (limit -0.01), dev % of DP -0.15 points; holding would rise to 96 % frozen, 96 % dev.", metrics: [99.17, "96%", 99.15, "96%", 2.23] }
+      - { id: R22, change: "R19 + buses: SOC feedback Kp 3 without the integral term around the fixed bus s", sim: 0.774, decision: released, why: "Path A: frozen skill +0.062 (frozen P2 buses 97.40 -> 99.39 % of DP); dev gate passed (99.30 %, holds 95 %). Frozen holding 93.4 -> 90.6 % (buses end 0.68-0.70 like constant-s ECMS). Released as v2.2.", metrics: [99.38, "91%", 99.30, "95%", 2.21] }

@@ -1,12 +1,14 @@
-"""HybridPilot v2.1: a learned, causal hybrid energy-management policy (numpy only), built on RoadSim physics v3.1.
+"""HybridPilot v2.2: a learned, causal hybrid energy-management policy (numpy only), built on RoadSim physics v3.1.
 
 Each second of traction the controller
   1. builds 66 causal features (vehicle parameters, battery/engine state, recent history of the speed trace,
      optionally the next 1-60 s of speed and grade from navigation, optionally the remaining trip distance),
   2. runs a 2x96 tanh MLP -> an equivalence factor s (fuel joules per battery joule) and P(engine on),
-  3. buses and mild P1 hybrids: s is replaced by a constant prior (series bus 2.8, P2 bus 2.6, mild 2.8; v2.1),
-     then SOC feedback  s <- s + Kp dz(SOC_ref - SOC) + Ki * integral, dz = the error beyond a +-0.03 dead band (v2.1;
-     plug-ins with a known trip length and dtg: SOC_ref falls linearly with distance to the charge-sustaining level),
+  3. buses and mild P1 hybrids: s is replaced by a constant prior (series bus 2.8, P2 bus 2.6, mild 2.8; v2.1);
+     plug-ins at their charge-sustaining (CS) level: s no lower than the HEV costate (power-split 2.42, series 2.70; v2.2);
+     then SOC feedback  s <- s + Kp dz(SOC_ref - SOC) + Ki * integral, dz = the error beyond a +-0.03 dead band
+     (Kp 12, Ki 0.02; v2.2: plug-ins below CS Kp 24 without the band, buses Kp 3 and no integral; plug-ins with a known
+     trip length and dtg: SOC_ref falls linearly with distance to the CS level),
   4. picks, among the candidate controls the powertrain can deliver, the one minimising
          P_fuel + s * P_battery,chemical  (+ engine start fuel, + start_pen, when starting from off),
      with the platform's minimum engine on/off times (RoadSim v2+: 8 s / 3 s) and its forced-on rules (catalyst
@@ -29,10 +31,16 @@ N_FEAT = 66
 # min_on_s / min_off_s None = the simulator's own minimum on / off times (RoadSim v2: 8 s / 3 s)
 # v2.1 (15 Nov 2026, RoadSim physics v3.1): proportional SOC feedback with a +-0.03 dead band, and a constant equivalence
 # factor in place of the network's s for buses and mild P1 hybrids (fitted on training-distribution simulations).
+# v2.2 (15 Nov 2026, round 2): per-class feedback (cls_fb: plug-ins below their CS level Kp 24 without the band; buses
+# Kp 3 and no integral term) and, for plug-ins at their CS level, s no lower than the HEV costate (phev_cs_s).
 DEFAULTS = dict(onoff='ecms', Kp=12.0, Ki=0.02, preview_s=0, nav=False, min_on_s=None, min_off_s=None, s_scale=1.0, s_bias=0.0,
                 start_pen=0.0, dtg=False, Kp_dtg=6.0, fb_norm=False, fb_tau=0.0, fb_dead=0.03, fb_dead_mode='soft', cubic=0.0,
-                s_prior={'bus_hev_series': (1.0, 2.8), 'bus_hev_parallel_p2': (1.0, 2.6), 'mild': (1.0, 2.8)})
-V20 = dict(fb_dead=0.0, s_prior=None)       # HybridPilotCore(**V20) / make_roadsim_strategy(**V20): the v2.0 decision rule
+                s_prior={'bus_hev_series': (1.0, 2.8), 'bus_hev_parallel_p2': (1.0, 2.6), 'mild': (1.0, 2.8)},
+                cls_fb={'phev': dict(fb_dead=0.0, Kp=24.0), 'bus_hev_series': dict(Kp=3.0, Ki=0.0),
+                        'bus_hev_parallel_p2': dict(Kp=3.0, Ki=0.0)},
+                phev_cs_s={'phev_powersplit': 2.42, 'phev_series': 2.70})
+V21 = dict(cls_fb=None, phev_cs_s=None)     # HybridPilotCore(**V21) / make_roadsim_strategy(**V21): the v2.1 decision rule
+V20 = dict(fb_dead=0.0, s_prior=None, cls_fb=None, phev_cs_s=None)     # the v2.0 decision rule
 
 
 class MLP:
@@ -167,6 +175,9 @@ class HybridPilotCore:
         if p['s_prior'] and prior_key in p['s_prior']:
             w, s0 = p['s_prior'][prior_key]
             s = (1.0 - w) * s + w * s0
+        cs = (p['phev_cs_s'] or {}).get(prior_key) if phev else None
+        if cs and soc <= soc_ref + 0.03:      # at its CS level a plug-in is an HEV: s no lower than the HEV costate
+            s = max(s, cs)
         if p['cubic'] and not phev:
             mid, half = 0.5 * (window[0] + window[1]), 0.5 * (window[1] - window[0])
             z = (soc - mid) / half
@@ -174,18 +185,21 @@ class HybridPilotCore:
         if plan_ref is not None:
             return max(s + p['Kp_dtg'] * (plan_ref - soc), 0.0), p_on
         e = soc_ref - soc
-        if (p['Kp'] or p['Ki']) and (not phev or e > -0.03):
+        cf = p['cls_fb'] or {}
+        over = cf.get(prior_key) or (cf.get('phev') if phev else None) or {}
+        Kp, Ki, dead = over.get('Kp', p['Kp']), over.get('Ki', p['Ki']), over.get('fb_dead', p['fb_dead'])
+        if (Kp or Ki) and (not phev or e > -0.03):
             if p['fb_norm']:
                 e = e / (0.5 * (window[1] - window[0]))
-            if p['Ki']:
+            if Ki:
                 self.I = min(max(self.I + e * dt, -30.0), 30.0)
             ep = e
             if p['fb_tau']:
                 self.ef = e if self.ef is None else self.ef + min(dt / p['fb_tau'], 1.0) * (e - self.ef)
                 ep = self.ef
-            if p['fb_dead']:         # 'soft': the band is subtracted; 'hard': full Kp e outside the band, 0 inside
-                ep = (ep if abs(ep) > p['fb_dead'] else 0.0) if p['fb_dead_mode'] == 'hard' else                     math.copysign(max(abs(ep) - p['fb_dead'], 0.0), ep)
-            s = max(s + p['Kp'] * ep + p['Ki'] * self.I, 0.0)
+            if dead:                 # 'soft': the band is subtracted; 'hard': full Kp e outside the band, 0 inside
+                ep = (ep if abs(ep) > dead else 0.0) if p['fb_dead_mode'] == 'hard' else math.copysign(max(abs(ep) - dead, 0.0), ep)
+            s = max(s + Kp * ep + Ki * self.I, 0.0)
         return s, p_on
 
     def decide(self, x, soc, soc_ref, phev, P_fuel, P_chem, on, ok, eng_on, t_on, t_off, start_W, forced_on=False,

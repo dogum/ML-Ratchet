@@ -436,6 +436,9 @@ class HybridPilot(HybridStrategy):
             w_s0 = self.s_prior.get(self.prior_key())
             if w_s0:
                 s = (1.0 - w_s0[0]) * s + w_s0[0] * w_s0[1]
+        cs_s = (self.p.get('phev_cs_s') or {}).get(self.veh.arch) if self.phev else None
+        if cs_s and st['soc'] <= self.soc_cs + 0.03:
+            s = max(s, cs_s)     # (round 2 option) at its CS level a plug-in is an HEV: s no lower than the HEV costate
         if self.cubic and not self.phev:
             b = self.veh.battery
             z = (st['soc'] - self.soc_mid) / (0.5 * (b.soc_hi - b.soc_lo))

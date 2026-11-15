@@ -170,6 +170,10 @@ Physics rung first, decided on dev only: HybridPilot v2.0 driving the dev twins 
 
 | Rung | Change | Frozen-set score | Decision | Why | Frozen % of DP | Frozen holds | Dev % of DP | Dev holds | Frozen starts/km |
 |---|---|---|---|---|---|---|---|---|---|
+| R19 | Plug-ins at their CS level: s no lower than the DP median costate of the HEV of the same architecture (power-split 2.42, series 2.70); below CS, SOC feedback Kp 24 without the dead band | 0.712 | ● kept | Path B: frozen + dev holding 90.1 -> 94.0 % (frozen series plug-ins 7 -> 12 of 12, power-split 16 -> 18 of 18); frozen skill +0.008; dev % of DP 99.28 -> 99.30. | 99.27 | 93% | 99.3 | 95% | 2.21 |
+| R20 | R19 + mild P1 hybrids without the dead band (s0 2.8 kept) | 0.712 | ○ rejected | Frozen has no mild trips (skill +0.000); dev mild holding 9 -> 10 of 12, pooled holding +0.5 points (needs +2); dev % of DP 99.30 -> 99.23. | 99.27 | 93% | 99.23 | 96% | 2.21 |
+| R21 | R19 + HEVs (incl. P2 trucks) Kp 18 beyond the dead band | 0.691 | ○ rejected | Frozen skill -0.022 (limit -0.01), dev % of DP -0.15 points; holding would rise to 96 % frozen, 96 % dev. | 99.17 | 96% | 99.15 | 96% | 2.23 |
+| R22 | R19 + buses: SOC feedback Kp 3 without the integral term around the fixed bus s | 0.774 | **◆ released** | Path A: frozen skill +0.062 (frozen P2 buses 97.40 -> 99.39 % of DP); dev gate passed (99.30 %, holds 95 %). Frozen holding 93.4 -> 90.6 % (buses end 0.68-0.70 like constant-s ECMS). Released as v2.2. | 99.38 | 91% | 99.3 | 95% | 2.21 |
 
 <sub>Columns after *Why*: Frozen set (% of DP, charge holding), dev set (% of DP, charge holding), frozen engine starts per km.</sub>
 

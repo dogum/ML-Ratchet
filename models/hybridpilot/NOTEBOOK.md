@@ -192,3 +192,72 @@ plug-ins −20.1 / −30.9 %. Power-split starts 2.42 per km vs 1.94 real (v2.0 
 
 **Next.** A charge-holding term at the window edge or toward the trip end, judged on dev holding; the mild s chosen with
 holding in the objective on more than 10 probe trips; a bus-specific teacher instead of a fixed s.
+
+## 15 Nov 2026 — round 2: charge holding, plug-ins and buses (release choice v2.2, before the exam)
+
+**Round 1's probes.** The 15 Nov v2.1 entry lists about 15 decision-rule variants scored on the 190-trip probe set. They
+were probes, not rungs, and stay that way; none is re-run here except as a named baseline.
+
+**Diagnosis on dev and simulation first.** v2.1 holds charge on 87 % of frozen trips (A-ECMS 95 %) and 95 % of dev trips
+(A-ECMS 97 %). Where it fails:
+- Plug-ins (frozen): series PHEVs hold 7 of 12, power-split 16 of 18 (A-ECMS all). After depletion they sustain 0.02-0.03
+  below their CS level (soc_lo + 0.05) and dip to 0.13-0.16 against a 0.17 limit. The dead band makes it worse: below
+  CS the feedback only starts 0.03 lower. Probe plug-ins show the same (87 / 85 %). Dev plug-ins hold 22 of 22.
+- Mild P1 (dev, 12 trips of two CR-Z-type twins): v2.1 holds 9, v2.0 9, A-ECMS 10. Two kinds of failure.
+  (1) Charge-up on short trips (VED_435_1200, 2.6 km: 0.55 -> 0.68; VED_435_1245: 0.57 -> 0.66). The 0.58 kWh pack
+  takes 5-7 kW of load-point charging at s 2.8 (about 1 % SOC per second); the offset is band + (s0 - s_eq) / Kp =
+  0.03 + about 1.0 / 12, close to the 0.10-0.13 seen. (2) A 400 s stop with the engine off (VED_435_734): 1.6 kW of
+  auxiliaries drain the pack from 0.64 to 0.11-0.16 for every strategy except constant-s ECMS. RoadSim never runs the
+  engine at a stop for P2/P1 architectures (`sim._plan`, stopped branch: series and power-split only), so no controller
+  can fix this; it needs a RoadSim change (noted for the platform).
+- P2 HEVs (dev pickup VED_258_1374, frozen hilly_7 and nycc): the band leaves them 0.12-0.14 below the window middle at
+  the end; v2.0 (no band) held all three.
+- Buses (frozen): constant-s ECMS beats v2.1 on P2 buses, 100.12 vs 97.40 % of DP (nycc 102.7 vs 93.3; a synthetic bus
+  route 98.4 vs 92.9). The Kp 12 feedback pulls s to about 1.8 when the bus starts above the middle and spends charge
+  at well below its value (DP's bus costate is 2.2-2.3).
+
+**Rule v2.2 (committed f8c6981 / ff69488 before R19 was scored).** A second path for rungs aimed at charge holding:
+frozen + dev holding (182 trips) up by 2 points or more, neither set's holding down, frozen skill no more than 0.01
+lower, dev % of DP no more than 0.2 points lower. Path A (frozen skill +0.01 and the dev gate) is unchanged.
+
+**Probes (training distribution only; r2_explore.py; log training/explore_r2.json).** Selection rule for every probe:
+the highest mean % of DP among variants holding at least as many trips as A-ECMS on that probe. % of DP / holds:
+- New mild probe, 80 trips (40 training mild vehicles, training routes, seed 8600; sets.build_probe_mild): v2.1 96.45 /
+  96 %, v2.0 rule 96.18 / 95 %, no band with s0 2.2 96.08 / 96 %, 2.4 96.17 / 98 %, 2.6 96.25 / 98 %, **2.8 96.35 /
+  98 %**, band with s0 2.4 96.19 / 96 %, 2.6 96.31 / 98 %, no band Kp 24 with s0 2.8 96.07 / 98 %, 2.6 96.04 / 98 %;
+  A-ECMS 95.45 / 98 %, ECMS 95.76 / 51 %. The training mild cars barely drift (3 of 80 fail): the probe does not
+  reproduce the dev twins' charge-up.
+- Plug-ins, 60 probe trips: v2.1 100.00 / 88 %; below-CS band off 100.12 / 90 %; band off + Kp 24 100.08 / 95 %;
+  + Kp 48 100.03 / 95 %; Kp 24 + Ki 0.05 100.06 / 95 %; band off + HEV costate floor at CS 100.20 / 97 %; **band off +
+  Kp 24 + costate floor 100.14 / 100 %**; A-ECMS 98.89 / 100 %, ECMS 99.35 / 100 %.
+- HEVs, 100 probe trips (P2, power-split, series, P2 trucks): v2.1 98.90 / 92 %; Ki 0.05 98.71 / 94 %; no band 98.74 /
+  93 %; band 0.02 98.87 / 92 %; Kp 18 98.84 / 94 %; A-ECMS 98.22 / 90 %. By the selection rule nothing beats v2.1 here;
+  Kp 18 was still scored as R21 for its +2 trips of holding.
+- Buses, 20 probe trips (bus feedback, on top of R19): Kp 12 (v2.1) 100.09 / 100 %; Kp 6 100.11 / 100 %; Kp 3 100.15 /
+  100 %; Kp 6 + band 0.05 100.16 / 100 %; no feedback 100.40 / 75 %; **Kp 3 without the integral 100.26 / 100 %**;
+  ECMS 100.01 / 95 %, A-ECMS 99.27 / 100 %.
+
+**Rungs (frozen skill; frozen % of DP / holds; dev % of DP / holds).** Incumbent R17 (v2.1): 0.704; 99.22 / 87 %;
+99.28 / 95 %.
+- R19 plug-ins at CS: s no lower than the HEV costate (DP teacher medians, power-split 2.42, series 2.70; prior_p31r0),
+  below CS Kp 24 without the band: 0.712; 99.27 / 93 %; 99.30 / 95 %. **Kept (path B)**: pooled holding 90.1 -> 94.0 %;
+  frozen series plug-ins 7 -> 12 of 12, power-split 16 -> 18 of 18.
+- R20 R19 + mild without the band: 0.712; 99.27 / 93 %; 99.23 / 96 %. **Rejected**: frozen has no mild trips; dev mild
+  holds 9 -> 10 of 12 (+0.5 points pooled, needs +2) and dev mild % of DP falls 99.21 -> 98.76.
+- R21 R19 + HEV Kp 18: 0.691; 99.17 / 96 %; 99.15 / 96 %. **Rejected**: frozen skill -0.022 (limit -0.01). Holding
+  would reach A-ECMS's level on frozen (96 %), but at a fuel cost.
+- R22 R19 + buses Kp 3 without the integral: 0.774; 99.38 / 91 %; 99.30 / 95 %. **Kept (path A)**: +0.062; frozen P2
+  buses 97.40 -> 99.39 % of DP, series 100.08 -> 100.13. Frozen holding falls 93.4 -> 90.6 %: four frozen bus trips
+  now end 0.68-0.70 (start 0.54-0.60), as constant-s ECMS does; all stay inside the window.
+All rungs are deterministic rule changes on the same network (no training, no seeds), so there is no seed spread.
+
+**Release choice: v2.2 = R22** (v2.0 network unchanged, `weights/hybridpilot_v2.npz`; physics v3.1). Against v2.1:
+frozen skill 0.774 vs 0.704, frozen 99.38 vs 99.22 % of DP, frozen holding 90.6 vs 86.8 %, dev 99.30 vs 99.28 % of
+DP, dev holding 94.7 % for both. Numpy module (`hybridpilot.py`, DEFAULTS = v2.2; `V21` and `V20` give the older
+rules) == training policy: identical fuel and final SOC on 44 dev and frozen trips incl. 22 plug-in and 8 bus trips
+(`r2_numpy_check.py`).
+
+**What did not work / what is left.** The main target, mild charge holding, has no fix: the only dev evidence is 12
+trips, one failure is a RoadSim limit, the training mild cars do not drift, and the frozen set has no mild stratum, so
+no mild rung can pass either path. A frozen mild stratum (a new frozen set) and RoadSim engine-at-stop charging for
+P2/P1 cars are what it needs. The exam has not been run for v2.2.
