@@ -1,4 +1,5 @@
-# The ratchet ladders, normalised. Raw logs: training/ratchet.json (v1, physics v1) and training/ratchet_v2.json (v2, physics v2).
+# The ratchet ladders, normalised. Raw logs: training/ratchet.json (v1, physics v1), training/ratchet_v2.json (v2, physics v2)
+# and training/ratchet_v2_1.json (v2.1, physics v3.1).
 model: hybridpilot
 ladders:
   - name: "v1.0 — RoadSim physics v1 (12 Nov 2026)"
@@ -47,3 +48,33 @@ ladders:
       - { id: R13, change: "Larger network on the GPU: 3 × 256 (~150k parameters), 40 epochs", sim: 0.671, decision: rejected, why: "+0.012 but dev charge holding 93 % (gate 94 %).", metrics: [99.36, "95%", 99.47, "93%", 3.13] }
       - { id: R14, change: "R8 + 30 s preview", sim: 0.667, decision: rejected, why: "+0.007, short of the margin.", metrics: [99.38, "97%", 99.10, "99%", 3.10] }
       - { id: R15, change: "Policy-search re-tune of the head knobs incl. Ki, from R8", sim: 0.682, decision: rejected, why: "+0.022 but dev charge holding 88 %.", metrics: [99.40, "83%", 99.28, "88%", 2.89] }
+  - name: "v2.1 — RoadSim physics v3.1 (15 Nov 2026)"
+    objective: "Frozen skill as v2.0 (share of the rule strategies' gap to DP closed, strata weigh the same) on a frozen set of 106 trips rebuilt on physics v3.1 (same draws and seeds; generated hybrids carry the v3 generator hardware)"
+    rule: Keep if the frozen skill beats the incumbent by more than 0.01 AND dev % of DP is no more than 0.2 points worse AND dev charge-holding is no more than 3 points worse.
+    margin: 0.01
+    dev_gate: "Dev % of DP ≥ incumbent − 0.2 pt; dev charge-holding ≥ incumbent − 3 pt (76 dev trips, rebuilt on v3.1)"
+    frozen_sets: [frozen_106_v3_1]
+    scored_on: frozen_106_v3_1
+    note: "Physics rung first, decided on dev only: HybridPilot v2.0 driving the dev twins on v3.1 vs v2 (84 trips) moved power-split fuel from -4.6 to -2.4 % of the logs, the engine-on gap from -9.3 to -4.4 points and starts from 3.67 to 2.66 per km (real 2.32); mild +2.9 -> +3.4 %; plug-ins unchanged. Physics changed, so R0-R15 were re-scored in order with their v2 networks and settings: the same decisions as on v2 (R8, the v2.0 release, kept). R16-R17 settings were chosen on a 190-trip training-distribution probe set, never on dev or exam. The ladder was closed and the release choice committed (d9fd0fd) before the exam."
+    columns_source: Frozen set (% of DP, charge holding), dev set (% of DP, charge holding), frozen engine starts per km
+    columns: ["Frozen % of DP", "Frozen holds", "Dev % of DP", "Dev holds", "Frozen starts/km"]
+    rungs:
+      - { id: R0, change: "RoadSim adaptive ECMS (the incumbent)", sim: 0.144, decision: kept, why: "Starting incumbent.", metrics: [97.5, "95%", 98.14, "97%", 2.44] }
+      - { id: R1, change: "v2 R1 re-scored: behaviour cloning of DP", sim: 0.692, decision: rejected, why: "+0.548 vs R0; dev charge holding 67 % (gate 94 %).", metrics: [99.08, "61%", 99.21, "67%", 2.21] }
+      - { id: R2, change: "v2 R2 re-scored: DAgger round 1 + SOC feedback Kp 6", sim: 0.644, decision: rejected, why: "+0.500 vs R0; dev charge holding 88 % (gate 94 %).", metrics: [99.03, "77%", 98.94, "88%", 2.22] }
+      - { id: R3, change: "v2 R3 re-scored: on/off by the cost (v1's recipe)", sim: 0.717, decision: rejected, why: "+0.573 vs R0; dev charge holding 88 % (gate 94 %).", metrics: [99.25, "79%", 99.37, "88%", 2.19] }
+      - { id: R4, change: "v2 R4 re-scored: R3 + 30 s preview", sim: 0.725, decision: rejected, why: "+0.581 vs R0; dev charge holding 89 % (gate 94 %).", metrics: [99.32, "83%", 99.11, "89%", 2.19] }
+      - { id: R5, change: "v2 R5 re-scored: policy-search tune of head knobs", sim: 0.738, decision: rejected, why: "+0.595 vs R0; dev charge holding 88 % (gate 94 %).", metrics: [99.29, "82%", 99.55, "88%", 2.16] }
+      - { id: R6, change: "v2 R6 re-scored: DAgger round 2", sim: 0.667, decision: rejected, why: "+0.523 vs R0; dev charge holding 88 % (gate 94 %).", metrics: [99.18, "83%", 99.29, "88%", 2.21] }
+      - { id: R7, change: "v2 R7 re-scored: R6 + 30 s preview", sim: 0.702, decision: rejected, why: "+0.558 vs R0; dev charge holding 91 % (gate 94 %).", metrics: [99.33, "84%", 99.27, "91%", 2.19] }
+      - { id: R8, change: "v2 R8 re-scored (the v2.0 release): R3 + A-ECMS's SOC feedback gains (Kp 12, Ki 0.02)", sim: 0.662, decision: kept, why: "+0.518 vs R0; dev gate passed.", metrics: [99.06, "90%", 98.94, "96%", 2.22] }
+      - { id: R9, change: "v2 R9 re-scored: mild P1 class in training", sim: 0.630, decision: rejected, why: "-0.032 vs R8.", metrics: [98.94, "90%", 98.86, "97%", 2.24] }
+      - { id: R10, change: "v2 R10 re-scored: timed-DP teacher", sim: 0.625, decision: rejected, why: "-0.038 vs R8.", metrics: [98.97, "92%", 98.86, "93%", 2.25] }
+      - { id: R11, change: "v2 R11 re-scored: 20 kJ start cost", sim: 0.553, decision: rejected, why: "-0.109 vs R8.", metrics: [98.67, "88%", 98.83, "95%", 2.05] }
+      - { id: R12, change: "v2 R12 re-scored: distance-to-go plug-in plan", sim: 0.660, decision: rejected, why: "-0.002 vs R8.", metrics: [99.07, "90%", 98.94, "96%", 2.22] }
+      - { id: R13, change: "v2 R13 re-scored: 3 x 256 network", sim: 0.663, decision: rejected, why: "+0.001 vs R8, short of the margin; dev charge holding 92 % (gate 93 %).", metrics: [99.02, "91%", 99.19, "92%", 2.25] }
+      - { id: R14, change: "v2 R14 re-scored: R8 + 30 s preview", sim: 0.651, decision: rejected, why: "-0.011 vs R8.", metrics: [99.07, "93%", 98.85, "99%", 2.24] }
+      - { id: R15, change: "v2 R15 re-scored: policy-search re-tune incl. Ki", sim: 0.662, decision: rejected, why: "+0.000 vs R8, short of the margin; dev charge holding 92 % (gate 93 %).", metrics: [99.12, "82%", 99.13, "92%", 2.12] }
+      - { id: R16, change: "Dead band +-0.03 on the proportional SOC feedback (charge-sustaining term acts on drift, not on short swings)", sim: 0.689, decision: kept, why: "+0.027 vs R8; dev gate passed.", metrics: [99.19, "87%", 99.16, "95%", 2.2] }
+      - { id: R17, change: "R16 + a constant equivalence factor in place of the network's s for buses (series 2.8, P2 2.6) and mild P1 hybrids (2.8), fitted on training-distribution probe simulations", sim: 0.704, decision: released, why: "+0.015 vs R16; dev gate passed. Released as v2.1.", metrics: [99.22, "87%", 99.28, "95%", 2.19] }
+      - { id: R18, change: "Re-teach on physics v3.1 banks (v2.0 recipe: 800 teacher + 600 DAgger trips), R17's rule", sim: 0.698, decision: rejected, why: "-0.006 vs R17.", metrics: [99.22, "88%", 99.13, "93%", 2.18] }

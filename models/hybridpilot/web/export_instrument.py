@@ -336,6 +336,7 @@ def main():
             likely=spec['meta'].get('likely_models', ''), N=N, dist_km=float(ex['distance_km']), T_route=float(np.mean(trip['T_amb'])),
             logged_fuel_g=float(np.nansum(trip['fuel_rate'])), soc0=soc0, mass_kg=float(veh.mass), Pe=float(e.P_max),
             E_kWh=float(b.E_nom / 3.6e6), soc_lo=b.soc_lo, soc_hi=b.soc_hi, ref=float(strat.ref), phev=bool(strat.phev),
+            prior_key=strat.prior_key,
             ctrl=[float(q) for q in ctrl], start_W=float(strat.start_W), cat_warm_s=float(strat.cat_warm_s),
             min_on_s=float(strat.min_on_s), min_off_s=float(strat.min_off_s),
             batt=dict(ocv=[float(q) for q in b.ocv.y], R0_25=b.R0_25, Ea=b.Ea, v_min=b.v_min, v_max=b.v_max,
@@ -348,7 +349,7 @@ def main():
         idx=dict(x_soc=12, soc_frac=13, soc_minus_ref=14, T_eng=18, need_heat=21, cat_pending=22, p_dis=23, p_chg=24,
                  P_dem=29, prev=37, E_avail=65),
         physics=PL.PHYSICS,
-        note='Calibrated RoadSim twins of the VED cars on their real exam routes (physics v2); simulated fuel, not logged fuel.')
+        note=f'Calibrated RoadSim twins of the VED cars on their real exam routes ({PL.PHYSICS[8:]}); simulated fuel, not logged fuel.')
     keepx = {}
     for name in tens:
         if name.endswith(('_on', '_ok', '_onc')):

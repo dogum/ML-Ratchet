@@ -20,10 +20,18 @@ export interface Run { v: string; s: string; fuel_g: number; E_kWh: number; soc_
 export interface Trip {
   id: string; vehicle: string; short: string; arch: string; likely: string; N: number; dist_km: number; T_route: number;
   logged_fuel_g: number; soc0: number; mass_kg: number; Pe: number; E_kWh: number; soc_lo: number; soc_hi: number;
-  ref: number; phev: boolean; ctrl: number[]; start_W: number; cat_warm_s: number; min_on_s: number; min_off_s: number;
+  ref: number; phev: boolean; ctrl: number[];
+  /** v2.1: 'mild' | 'bus_<arch>' | arch, the key of Policy.s_prior */
+  prior_key?: string; start_W: number; cat_warm_s: number; min_on_s: number; min_off_s: number;
   batt: Batt; runs: Run[]; moments: Moment[];
 }
-export interface Policy { Kp: number; Ki: number; s_scale: number; s_bias: number; preview_s: number; nav: boolean; onoff: string; start_pen: number }
+export interface Policy {
+  Kp: number; Ki: number; s_scale: number; s_bias: number; preview_s: number; nav: boolean; onoff: string; start_pen: number;
+  /** v2.1: dead band on the proportional SOC feedback ('soft': the band is subtracted from |e|) */
+  fb_dead?: number; fb_dead_mode?: string;
+  /** v2.1: per-class prior {key: [weight, s0]}: s <- (1 - w) s + w s0 */
+  s_prior?: Record<string, [number, number]> | null;
+}
 export interface HMeta {
   trips: Trip[]; strategies: string[]; temps: number[]; masses: number[]; previews: number[];
   policy: Policy; n_feat: number; bins: [number, number][]; note: string;
@@ -61,14 +69,20 @@ const clamp = (v: number, a: number, b: number) => Math.min(Math.max(v, a), b);
 export const sOf = (y: [number, number]) => Math.exp(clamp(y[0], -5, 3)) - 0.05;
 export const pOn = (y: [number, number]) => 1 / (1 + Math.exp(-clamp(y[1], -30, 30)));
 
-/** HybridPilotCore.equivalence: the network's s, then SOC feedback s <- s + Kp e + Ki I, e = SOC_ref - SOC,
- *  I = clip(I0 + e, -30, 30) (I0: the integral before this second). */
+/** HybridPilotCore.equivalence: the network's s (or, v2.1, a per-class prior), then SOC feedback
+ *  s <- s + Kp dz(e) + Ki I, e = SOC_ref - SOC, dz = the error beyond the dead band, I = clip(I0 + e, -30, 30)
+ *  (I0: the integral before this second). */
 export function equivalence(pol: Policy, trip: Trip, sNet: number, soc: number, I0 = 0): number {
   let s = Math.max(sNet * pol.s_scale + pol.s_bias, 0);
+  const pr = pol.s_prior && trip.prior_key ? pol.s_prior[trip.prior_key] : undefined;
+  if (pr) s = (1 - pr[0]) * s + pr[0] * pr[1];
   const e = trip.ref - soc;
   if ((pol.Kp || pol.Ki) && (!trip.phev || e > -0.03)) {
     const I = pol.Ki ? clamp(I0 + e, -30, 30) : I0;
-    s = Math.max(s + pol.Kp * e + (pol.Ki || 0) * I, 0);
+    let ep = e;
+    const d = pol.fb_dead || 0;
+    if (d) ep = pol.fb_dead_mode === 'hard' ? (Math.abs(ep) > d ? ep : 0) : Math.sign(ep) * Math.max(Math.abs(ep) - d, 0);
+    s = Math.max(s + pol.Kp * ep + (pol.Ki || 0) * I, 0);
   }
   return s;
 }

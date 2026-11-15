@@ -166,3 +166,29 @@ v3.1). Against v2.0 on the same physics: frozen skill 0.704 vs 0.662, dev 99.28 
 worse). What got worse: charge holding, dev -1.4 points and frozen 90 -> 87 % (two P2 and one series trip end 0.02-0.03
 beyond the allowance; the band leaves end-of-trip drift less corrected). Numpy module == training policy: identical
 fuel and final SOC on 24 dev and frozen trips (`v21_numpy_check.py`). The exam has not been run for v2.1.
+
+## 15 Nov 2026 — v2.1 exam (once, after the release choice d9fd0fd)
+
+Exam rebuilt on physics v3.1 (same draws; twins of the 108 exam cars re-calibrated under v3.1; 430 trips scored, as
+v2.0). Every baseline, v2.0 (its network and settings) and the v1 release were re-run on the same physics
+(`v21_exam.sh`). % of DP (charge holding): **v2.1 98.57 (93 %)**, v2.0 98.43 (96 %), v1 98.54 (91 %), A-ECMS 98.20
+(97 %), constant-s ECMS 98.31 (75 %), MPC 15 s 98.67 (95 %), rule 97.00 (92 %).
+v2.1 − A-ECMS +0.37 [−0.18, +0.84]; − ECMS +0.26 [+0.01, +0.52]; − v2.0 +0.14 [+0.06, +0.22]; − v1 +0.03 [−0.12, +0.22].
+By stratum against A-ECMS: power-split +0.59, mild +1.08, P2 +1.42, series +0.88, series bus +0.99, P2 bus +0.30,
+truck P2 +0.01, plug-in power-split −1.08 [−4.66, +2.05], plug-in series −0.72 [−1.78, −0.01]. Buses against ECMS:
+series −1.82, P2 −0.64 (pooled 97.66 vs 98.89; v2.0 on v3.1 97.14). Mild against ECMS −0.21 [−0.53, +0.10].
+Starts/km 3.0 vs A-ECMS 3.2.
+
+**What got worse.** (1) The "all trips" row is no longer a win: on v3.1 MPC (sees 15 s of the future) scores 98.67, above
+v2.1's 98.57 and v2.0's 98.43; the interval against A-ECMS now includes zero. The physics change, not the new rule, took
+most of the margin (v2.0 falls from 98.84 on v2 to 98.43 on v3.1). (2) Charge holding 93 % vs v2.0's 96 % on the same
+exam (A-ECMS 97 %). (3) Mild twins hold charge on 79 % of trips (v2.0 on v3.1: 91 %): the fixed mild s of 2.8 lets them
+drift; the 10 probe trips (100 %) and the dev gate (75 % for both) did not show it. Rows: 3 wins (power-split, P2 +
+series, starts), 3 mixed (all trips, mild, against v2.0), 1 tie (against v1), 3 losses (plug-ins, buses, charge holding).
+
+**Simulator vs real (v2.1 on v3.1, exam trip median).** Power-split +2.2 % (168 trips), mild +2.3 %, P2 +3.4 % (5 trips),
+plug-ins −20.1 / −30.9 %. Power-split starts 2.42 per km vs 1.94 real (v2.0 on v2: 3.65); engine-on gap −2.0 points
+(−7.6). Dev: power-split −7.6 % (v2.0 on v3.1 −2.4 %); still inside the 8 % target, cause not checked.
+
+**Next.** A charge-holding term at the window edge or toward the trip end, judged on dev holding; the mild s chosen with
+holding in the objective on more than 10 probe trips; a bus-specific teacher instead of a fixed s.

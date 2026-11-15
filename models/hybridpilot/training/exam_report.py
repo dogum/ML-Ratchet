@@ -6,7 +6,7 @@ import sys, os, json, pickle
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 import evaluate as E
-from hp_env import ROOT
+from hp_env import ROOT, PTAG
 
 STRATS = ['dp', 'rule', 'ecms', 'aecms', 'mpc', 'phev_cdcs', 'phev_blended', 'series_power_follower']
 
@@ -36,7 +36,7 @@ def main(names):
     for cid, b in base.items():
         if cid in cases and '_meta' in b:
             b['_meta']['group'] = cases[cid].get('group')
-    pols = {n: pickle.load(open(f'{ROOT}/data/pol_exam_{n}.pkl', 'rb')) for n in names}
+    pols = {n: pickle.load(open(f'{ROOT}/data/pol_exam_{n}{PTAG}.pkl', 'rb')) for n in names}
     T = E.table(base, pols, names=STRATS + names)
     # by group (twin vs generated)
     G = {}
@@ -49,6 +49,7 @@ def main(names):
     for s in ['ecms', 'aecms', 'mpc']:
         rep['skill'][s] = E.skill(base, {c: b[s] for c, b in base.items() if s in b})[0]
     rep['boot_vs_aecms'] = {n: {k: boot_diff(base, pols[n], None, k) for k in list(T) + ['twin', 'generated']} for n in names}
+    rep['boot_vs_ecms'] = {n: {k: boot_diff(base, pols[n], None, k, ref='ecms') for k in list(T) + ['twin', 'generated']} for n in names}
     rep['boot_vs_first'] = {n: {k: boot_diff(base, pols[names[0]], None, k, ref=pols[n]) for k in list(T) + ['twin', 'generated']}
                             for n in names[1:]}
     # fixed-factor correction vs matched: mean over HEV cases of (fixed-factor fuel ratio) - (matched pct), per strategy
@@ -70,7 +71,7 @@ def main(names):
     w = sorted(((pols[n0][c]['pct_dp'], c, base[c]['_meta']['kind'], E.stratum(base[c]['_meta']), base[c]['aecms']['pct_dp'] if 'aecms' in base[c] else None)
                 for c in pols[n0] if c in base), key=lambda x: x[0])[:8]
     rep['worst'] = w
-    json.dump(rep, open(f'{ROOT}/data/exam_report.json', 'w'), indent=1, default=float)
+    json.dump(rep, open(f'{ROOT}/data/exam_report{PTAG}.json', 'w'), indent=1, default=float)
     for k in sorted(T):
         print(k.ljust(22), ' | '.join(f"{n} {100 * v['pct_dp_mean']:.2f}/{v['cs_rate']:.2f}/{v['starts_per_km']:.1f}" for n, v in T[k].items()))
     print(json.dumps(rep['skill'], indent=1)); print(json.dumps(rep['boot_vs_aecms'], indent=1)[:3000]); print(rep['fixed_vs_matched'])

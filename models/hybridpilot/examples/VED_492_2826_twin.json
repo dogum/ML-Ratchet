@@ -8,11 +8,12 @@
   "fuel": "gasoline",
   "displacement_L": 1.4,
   "max_power_kW": 63.0,
-  "eff_scale": 0.7834796053200007
+  "eff_scale": 0.7924153858878745
  },
  "transmission": {
   "type": "single"
  },
+ "phev_type": "volt_gen1",
  "battery": {
   "capacity_kWh": 16.5,
   "nominal_V": 360,
@@ -45,9 +46,9 @@
   "likely_models": "2011 Chevrolet Volt; 2012 Chevrolet Volt; 2013 Chevrolet Volt; 2014 Chevrolet Volt; 2015 Chevrolet Volt",
   "label_match": {
    "k": 1.0,
-   "eff": 0.7834796053200007,
-   "city": 50.62939482571202,
-   "hwy": 50.31275197115301,
+   "eff": 0.7924153858878745,
+   "city": 50.34090947409107,
+   "hwy": 50.58654410194277,
    "ucity": 47.6,
    "uhwy": 53.5,
    "k_from": "fixed 1 (plug-in)"

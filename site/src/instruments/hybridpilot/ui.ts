@@ -209,7 +209,7 @@ export async function mount(ctx: InstrumentContext) {
       + `driving the speed, grade and weather VED recorded. `
       + (T.logged_fuel_g >= 1 ? `The real car logged <b>${T.logged_fuel_g.toFixed(0)} g</b> of fuel; the twin under HybridPilot burns <b>${base ? base.fuel_g.toFixed(0) : '—'} g</b> (${(100 * ratio).toFixed(0)}%, starting warm). `
         : `The real car logged no fuel on this trip; the twin under HybridPilot burns <b>${base ? base.fuel_g.toFixed(0) : '—'} g</b>. `)
-      + `With HybridPilot driving the calibrated twins (RoadSim physics v2), exam hybrids read within 3% of the logged fuel (trip median, through the OBD fuel model) but plug-ins 22–31% low, while strategies differ by 0.5–1.5%, so this ranking holds only inside the simulator. `
+      + `With HybridPilot driving the calibrated twins (RoadSim physics v3.1), exam hybrids read within 3.5% of the logged fuel (trip median, through the OBD fuel model) but plug-ins 20–31% low, while strategies differ by 0.5–1.5%, so this ranking holds only inside the simulator. `
       + `Battery kWh: chemical energy taken from the battery (− = charged). * = DP extrapolated; above 100% means DP was not tight.`;
     ui.readout.append(decEl, tblEl, noteEl); // (re-appended: gauges() and probs() add theirs at the end)
   }
