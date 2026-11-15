@@ -76,6 +76,7 @@ Disk: about 1.7 GB in total (budget 6 GB).
 | MATPOWER test cases (IEEE 9/14/30/39/57/118/300, RTS-GMLC) | case data: see each file header (IEEE cases public; MATPOWER code BSD-3) | R. D. Zimmerman et al., MATPOWER, github.com/MATPOWER/matpower data/*.m |
 | Texas A&M ACTIVSg200/500/2000 (MATPOWER copies) | CC-BY-4.0 | A. B. Birchfield et al., "Grid Structural Characteristics as Validation Criteria for Synthetic Networks", IEEE TPWRS 32(4), 2017 |
 | US Census 2020 Gazetteer places (TX, IL, SC) | US public domain | census.gov Gazetteer files (used to place ACTIVSg buses) |
+| Open-Meteo Previous-Runs API (archived day-ahead forecasts; optional stage `forecastwx`, DemandCast's forecast-weather exam) | CC-BY-4.0; free API for non-commercial use | Open-Meteo.com, previous-runs-api.open-meteo.com/v1/forecast (documented at open-meteo.com/en/docs/previous-runs-api) |
 
 ## 3. EIA-930 (DemandCast, DispatchNet)
 
@@ -181,6 +182,27 @@ Disk: about 1.7 GB in total (budget 6 GB).
     says 16:00 for a 15:52 trip). Labels remain noisy: implied inertia E = loss f0 / (2 RoCoF) differs from NESO's
     outturn by a median 37% on the exam events (1 s RoCoF smoothing explains part of this).
 - **Exam subsets:** 412 exam events (2018-2025 minus dev), 150 with a loss label (86 medium), 410 with NESO inertia.
+- **Label corrections** (`data/sources/gb_event_label_corrections.csv`, committed; applied by `gd.events` to the
+  shipped v1.0 parquet and by `gb_events.py build` to a rebuild; `loss_MW_v1` keeps the v1.0 label, `loss_corrected`
+  marks the row, `loss_note` gives the reason and source; the v1.0 files are not edited, MANIFEST.json still matches).
+  - GB_20191203T200030 (dev), 14 Nov 2026: **1,787.7 -> 854.7 MW**. The v1.0 label was 854.7 MW from Spalding CCGT
+    (T_SPLN-1: REMIT unplanned "Plant Fault" 870 -> 0 MW from 20:00Z, published 20:07:30Z; B1610 427.35 MWh in
+    settlement period 40, 19:30-20:00 UTC, i.e. 854.7 MW; 7.4 MWh in SP41) plus 933 MW "interconnector import lost
+    (INTFR)". FUELINST shows IFA ramping 1,900 -> 1,751 -> 1,262 -> 809 -> 329 -> 204 MW over 19:45-20:10, the same
+    shape as its hour-boundary ramps at 17:00, 19:00 and 22:00 that evening; the rule compared 1,262 MW (19:55 slot)
+    with 329 MW (20:05 slot). No interconnector REMIT message. The other REMIT match, T_SEEL-1 (Spalding expansion
+    OCGT, 299 MW), was producing -0.5 MW and was already excluded. Physics check: 2 x 333 GVA.s x 0.057 Hz/s / 49.98 Hz
+    = 760 MW from the smoothed 1 s RoCoF (a lower bound). No event-specific NESO report was found. Source: Elexon
+    BMRS REMIT, B1610, FUELINST (data.elexon.co.uk/bmrs/api/v1/datasets), re-queried 14 Nov 2026. Confidence stays
+    *medium*; the splits are unchanged (`make_splits.py` chose this event as one of the three largest medium losses
+    of 2019/2021 using the v1.0 label; the frozen split is kept).
+  - Same failure mode, **not corrected** (exam events; listed for a later check): the FUELINST rule also fires on
+    hour-boundary ramps and on exports that grow (it tests `before - after >= 300` and `after <= 0.3 x before`, which
+    a negative `before` passes). FUELINST shows ramps or reversals, not steps, at GB_20200214T085638 (INTNED 650 ->
+    -511, INTNEM 307 -> -590 MW), GB_20200522T185814 (INTFR export -183 -> -561), GB_20200810T195818 (INTNEM export
+    -439 -> -805), GB_20220625T230149 (INTFR export -581 -> -1,031), GB_20230707T005707 (INTNEM export -252 -> -713),
+    GB_20240828T195646 (INTFR 549 -> -239 over 15 min). Interconnector-only labels of ~1,000 MW that drop in one
+    5-min slot to ~0 look like real trips.
 
 ### ERCOT events
 - From ERCOT's public monthly Operations Reports ("Frequency Events"): 85 of 102 months 2018-01 .. 2026-06 were found
@@ -264,7 +286,7 @@ Disk: about 1.7 GB in total (budget 6 GB).
   steam) - 40 units. exam = every other CAMPD Texas plant (407 units, all years 2018-2025).
 - **Events:** GB dev = 9 Aug 2019 (named) + the three largest medium-confidence losses in the dev years:
   GB_20190701T072734 (Nemo Link import 1,000 MW), GB_20190711T075329 (Peterhead 1,153 MW), GB_20191203T200030
-  (1,788 MW). ERCO dev = 5 seeded events from 2019/2021: ERCO_20190421T203000, ERCO_20190523T214100,
+  (1,788 MW in v1.0; corrected to 854.7 MW, section 5). ERCO dev = 5 seeded events from 2019/2021: ERCO_20190421T203000, ERCO_20190523T214100,
   ERCO_20210117T033500, ERCO_20210501T031400, ERCO_20210519T170600. exam = every other event before 2026 (GB 412,
   ERCO 301); 2026 events = reserve (GB 54, ERCO 23). *Why:* 9 Aug 2019 is the simulator's reference case (GridSim
   reproduces it), so it cannot be an exam item; a handful of large, well-documented dev events is enough to calibrate
@@ -287,8 +309,18 @@ Disk: about 1.7 GB in total (budget 6 GB).
 9. **GB 1 s data smooth RoCoF;** 2018-19 local-time stamps; Dec 2019 ends on the 15th; NESO's inertia dataset updates
    are "temporarily paused" (data to 2026-07-26).
 10. **Event loss labels** (GB) are REMIT-based except 9 Aug 2019: REMIT event times are often rounded or late, and the
-    capacity lost is not always the output lost (B1610 half-hour output is used when available).
+    capacity lost is not always the output lost (B1610 half-hour output is used when available). The FUELINST
+    interconnector rule can count an hour-boundary ramp as a trip (3 Dec 2019 corrected; 6 exam suspects listed in
+    section 5).
 11. ERCOT event times have minute resolution before 2023 and are local times.
+12. **EIA-930 solar timestamps move between years** (added 14 Nov 2026; `scripts/qc_solar.py`,
+    `gd.eia930_solar_qc()`): the shift that best aligns reported solar (`ng_SUN`) with the irradiance at the BA's solar
+    points. CISO leads the sun by 1 h in 2018-2021 (correlation 0.88-0.92 unshifted, 0.90-0.93 shifted), is aligned in
+    2022-2023, and lags by 1 h in 2024-2025 (0.86-0.88 vs 0.92-0.94); PJM leads by 1 h through 2024 and is aligned
+    from 2025; the other six focus BAs are aligned in every year (NYIS has no solar column). CISO also reports negative
+    solar at night in 61-97 % of night hours (BPAT 21-60 % since 2020). DemandCast's solar loss is explained by this
+    (its dev fit learned CISO's 2019/2021 offset). A model may use the flags for training-input and dev years; using
+    exam-year flags to choose anything would use exam data.
 
 ## 11. Baselines (exam numbers; `proc/baselines/summary.json`)
 
@@ -347,7 +379,12 @@ GB exam events with a loss label (150; 148 with NESO inertia). RoCoF formula dP 
 | RoCoF formula with the event's own NESO outturn inertia (oracle input) | 27.8% | - |
 | E from (label loss, RoCoF) | - | 37.4% |
 | constant E = 230 GVA.s | - | **19.7%** |
-| dumb: dev median loss | 63.4% | - |
+| dumb: dev median loss | 63.4% (52.4% with the corrected dev label) | - |
+
+The table is the v1.0 `summary.json`. With the corrected 3 Dec 2019 dev label (re-run 14 Nov 2026, same script) the
+dev median loss falls from 1,142 to 1,066 MW and only the dumb row moves on the exam (63.4 -> 52.4%); on the 4 dev
+events: RoCoF @230 33.4 -> 30.7%, RoCoF @own inertia 22.8 -> 12.9%, dev median 7.6 -> 7.1%, E from (label, RoCoF)
+vs NESO 28.6 -> 12.7%.
 
 ERCOT exam (292 generation-loss events): loss = k x delta f with k = 4,668 MW/Hz (median over the 5 dev events):
 MdAPE **20.1%**; dumb dev-median loss 24.5%. (Dev: 9.7% / 7.9% on 5 events.)
@@ -361,6 +398,20 @@ MdAPE **20.1%**; dumb dev-median loss 24.5%. (Dev: 9.7% / 7.9% on 5 events.)
 - CAISO OASIS history before 2023-08 (not served). ERCOT ops reports for 21 months not found by search.
 - No public 1 s ERCOT frequency data; NERC FRAA reports on nerc.com returned an HTML page instead of the PDF.
 - nationalgrideso.com (old ESO domain) returned 502; the same reports were taken from ofgem.gov.uk / neso.energy.
+- Open-Meteo Previous-Runs archive (day-ahead forecast weather for DemandCast): the cloud build's shared address got
+  HTTP 429 after 1-25 year-requests per half hour, so the release graded forecast weather on 2024 only. Fetched on
+  14 Nov 2026 from the build machine with the optional stage `forecastwx` (`mlratchet data grid --only forecastwx`):
+  220 year-requests (the release's list of 192: top 4 population, 3 wind, 3 solar points per BA for 2024 and 2025, top
+  4 population points for 2022; plus 28 population points for 2024 that the release's exam cache also held), one at
+  a time 15 s apart, 92 MB in `raw/openmeteo/<pid>_<year>.json`, about 1.5 h, no refusals (no HTTP 429). The
+  archive holds day-1 temperature forecasts from 2022 but humidity, radiation and wind forecasts only from 2024
+  (checked 14 Nov 2026), so 2022-2023 days cannot be graded in DemandCast's forecast mode; 2022 temperature serves
+  the training-input forecast-error library. Refusals, if any, are logged in `work/build_state.json`.
+- FNET/GridEye sub-second frequency (fnetpublic.utk.edu, University of Tennessee), checked 14 Nov 2026: the public
+  site shows live displays (frequency table, gauge, angle and frequency maps, spectrum, time error) and three 2011 US
+  sample events as plots and videos. It offers no data download, no sample data files and no terms or licence page;
+  event data and alert e-mails go to members of the FNET/GridEye Industry Consortium. None of the 470 GB or 329 ERCOT
+  events (2018-2026) has a public sub-second trace. Nothing fetched; no `fnet` stage.
 
 ## 13. Rebuild
 
@@ -382,6 +433,9 @@ python3 -I scripts/ercot_events.py   (after scripts/ercot_ops_fetch.sh; URL list
 python3 -I scripts/ercot_prices.py; scripts/caiso_prices.py; scripts/weather.py points|power|asos|build
 python3 -I scripts/networks.py; scripts/finalize.py; scripts/make_splits.py; scripts/baselines.py demand heatrate battery frequency; scripts/qc.py
 ```
+
+Optional, not part of the v1.0 rebuild: `mlratchet data grid --only forecastwx` (Open-Meteo previous runs for
+DemandCast's forecast-weather exam, section 12; env `ML_RATCHET_FORECASTWX_YEARS`, `ML_RATCHET_FORECASTWX_HOURS`).
 
 `build.py`'s `fetch` stage also downloads what the original build fetched by hand: the PUDL tables, RTS-GMLC
 `gen.csv`, the MATPOWER cases, the Census Gazetteer places, NESO's package lists and the ERCOT reports, and fills

@@ -30,6 +30,14 @@ Stages (in order):
   baselines  scripts/baselines.py demand heatrate battery frequency; qc.py
   verify     every file vs data/MANIFEST.json (sha256), splits content hash, a loader smoke test
 
+Optional stages (not in the default run; ask for them with --only):
+  forecastwx Open-Meteo Previous-Runs archive (day-ahead forecast weather) for DemandCast's forecast-weather mode ->
+             raw/openmeteo/<pid>_<year>.json. The release's request list: top-weighted points (pop 4, wind 3, solar 3
+             per BA), 2024 and 2025 all variables, 2022 population-point temperature, plus the 2024 population points
+             5-8 the release's exam cache also held (7 BAs). One year-request at a time, 15 s apart;
+             HTTP 429 is answered by waiting (minute / hour limits) or stopping (daily limit); every refusal goes to
+             work/build_state.json. Env: ML_RATCHET_FORECASTWX_YEARS=2024,2025,2022 (order), _HOURS=2 (wall-time cap).
+
 The verify stage reports files that differ instead of failing on them: a rebuild from live hosts is not byte-identical
 (EIA revises EIA-930; NESO and ERCOT files are re-issued). Only the split file must match exactly.
 """
@@ -64,6 +72,7 @@ UA = 'mlratchet-data-rebuild/1.0 (research data rebuild)'
 PY = sys.executable
 STAGES = ['fetch', 'eia930', 'campd', 'fleet', 'neso', 'gb_events', 'ercot', 'prices', 'weather', 'networks',
           'finalize', 'splits', 'baselines', 'verify']
+OPTIONAL = ['forecastwx']        # run only when named in --only (not part of the v1.0 rebuild)
 
 # ---------------------------------------------------------------- sources (DATA.md section 2)
 PUDL = 'https://s3.us-west-2.amazonaws.com/pudl.catalyst.coop/stable/{t}.parquet'
@@ -290,6 +299,7 @@ def stage_splits():
 def stage_baselines():
     script('baselines.py', 'demand', 'heatrate', 'battery', 'frequency')
     script('qc.py')
+    script('qc_solar.py')        # EIA-930 solar timestamp offsets and negative night solar (HANDOFF P0.6)
 
 
 def stage_verify() -> int:
@@ -328,7 +338,135 @@ def stage_verify() -> int:
     return 0 if ok_split and not missing else 1
 
 
-FUNCS = {s: globals()[f'stage_{s}'] for s in STAGES}
+# ---------------------------------------------------------------- forecast weather (DATA.md section 12)
+OPENMETEO = 'https://previous-runs-api.open-meteo.com/v1/forecast'
+OM_BAS = ['ERCO', 'CISO', 'PJM', 'MISO', 'SWPP', 'ISNE', 'NYIS', 'BPAT']
+OM_TOPK = {'pop': 4, 'wind': 3, 'solar': 3}          # heaviest-weighted points per kind, as the release fetched
+OM_ORDER = [('pop', 2024), ('wind', 2024), ('solar', 2024), ('pop', 2025), ('wind', 2025), ('solar', 2025),
+            ('pop', 2022)]
+# The release's exam cache also held more 2024 population points than the top 4: all 8 in ERCO, CISO, PJM, MISO, SWPP,
+# ISNE and NYIS_pop_0 in NYIS (an earlier pass in file order, stopped by the rate limit), and only ERCO's top wind point.
+# Found on 14 Nov 2026 by matching the released forecast-mode physics-prior error per BA (ERCO 6.497 % with 8 points,
+# 6.513 % with 4). Points 5-8 of those 7 BAs are fetched (a superset) so the released 2024 row can be reproduced
+# (models/demandcast/training/rescore_forecast.py release2024).
+OM_RELEASE_EXTRA = {('pop', 2024): (4, 8, ['ERCO', 'CISO', 'PJM', 'MISO', 'SWPP', 'ISNE', 'NYIS'])}
+OM_PAUSE = 15.0                                      # s between year-requests (about half the free hourly quota)
+
+
+def om_vars(kind, year):
+    """The release's variable list (models/demandcast/training/fetch_openmeteo.py): before 2024 the archive holds
+    temperature forecasts only, so population points get temperature; from 2024 every variable."""
+    if year <= 2023:
+        return ['temperature_2m', 'temperature_2m_previous_day1'] if kind == 'pop' else []
+    v = {'pop': ['temperature_2m', 'relative_humidity_2m', 'shortwave_radiation'],
+         'wind': ['wind_speed_10m', 'wind_speed_80m', 'temperature_2m'],
+         'solar': ['shortwave_radiation', 'temperature_2m']}[kind]
+    return v + [x + '_previous_day1' for x in v]
+
+
+def om_jobs(years):
+    pts = json.loads((PROC / 'weather' / 'points.json').read_text())
+    jobs, extra = [], []
+    for kind, year in OM_ORDER:
+        if year not in years:
+            continue
+        for ba in OM_BAS:
+            ps = sorted([p for p in pts[ba]['points'] if p['kind'] == kind], key=lambda p: -p['w'])
+            jobs += [(p, year) for p in ps[:OM_TOPK[kind]]]
+            lo, hi, bas = OM_RELEASE_EXTRA.get((kind, year), (0, 0, []))
+            if ba in bas:
+                extra += [(p, year) for p in ps[lo:hi]]
+    jobs += extra
+    jobs.sort(key=lambda j: years.index(j[1]))       # stable: requested year order, release order inside a year
+    return jobs
+
+
+def stage_forecastwx():
+    """Fetch the Open-Meteo Previous-Runs archive gently; resumable by file. Returns the stage record."""
+    import urllib.parse
+    years = [int(y) for y in os.environ.get('ML_RATCHET_FORECASTWX_YEARS', '2024,2025,2022').split(',')]
+    budget = float(os.environ.get('ML_RATCHET_FORECASTWX_HOURS', '2')) * 3600
+    out = RAW / 'openmeteo'
+    out.mkdir(parents=True, exist_ok=True)
+    st = load_state().get('forecastwx', {})
+    refusals = st.get('refusals', [])
+    t0 = time.time()
+    n_ok = n_cached = n_bytes = 0
+    stop = None
+    jobs = om_jobs(years)
+    for i, (p, year) in enumerate(jobs):
+        dest = out / f'{p["pid"]}_{year}.json'
+        if dest.exists() and dest.stat().st_size > 0:
+            n_cached += 1
+            continue
+        if time.time() - t0 > budget:
+            stop = f'wall-time cap ({budget / 3600:.1f} h) reached'
+            break
+        q = dict(latitude=p['lat'], longitude=p['lon'], hourly=','.join(om_vars(p['kind'], year)),
+                 start_date=f'{year}-01-01', end_date=f'{year}-12-31', timezone='GMT', wind_speed_unit='ms')
+        req = urllib.request.Request(OPENMETEO + '?' + urllib.parse.urlencode(q), headers={'User-Agent': UA})
+        waits = 0
+        while True:
+            try:
+                with urllib.request.urlopen(req, timeout=180) as r:
+                    body = r.read()
+                d = json.loads(body)
+                if 'hourly' not in d:
+                    raise ValueError(str(d)[:200])
+                part = dest.with_suffix('.json.part')
+                part.write_text(json.dumps(d['hourly']))
+                part.replace(dest)
+                n_ok += 1
+                n_bytes += dest.stat().st_size
+                log(f'  forecastwx {i + 1}/{len(jobs)} {dest.name} {dest.stat().st_size / 1e6:.2f} MB')
+                break
+            except urllib.error.HTTPError as e:
+                try:
+                    reason = json.loads(e.read()).get('reason', '')
+                except Exception:
+                    reason = ''
+                refusals.append({'time': time.strftime('%Y-%m-%d %H:%M:%S'), 'file': dest.name, 'http': e.code,
+                                 'reason': reason[:200]})
+                log(f'  forecastwx HTTP {e.code} on {dest.name}: {reason}')
+                if e.code != 429 or 'daily' in reason.lower() or waits >= 4:
+                    stop = f'HTTP {e.code}: {reason}'[:200]
+                    break
+                ra = e.headers.get('Retry-After')
+                if ra and ra.isdigit():
+                    wait = int(ra) + 5
+                elif 'minut' in reason.lower():
+                    wait = 75
+                elif 'hour' in reason.lower():
+                    wait = 3600 - time.time() % 3600 + 60      # until the next full hour
+                else:
+                    wait = 900 * (waits + 1)
+                waits += 1
+                log(f'  forecastwx: waiting {wait / 60:.0f} min')
+                time.sleep(wait)
+            except Exception as e:  # timeouts, TLS, DNS, bad body
+                waits += 1
+                if waits >= 3:
+                    refusals.append({'time': time.strftime('%Y-%m-%d %H:%M:%S'), 'file': dest.name, 'http': None,
+                                     'reason': f'{type(e).__name__}: {e}'[:200]})
+                    stop = f'{type(e).__name__} three times'
+                    break
+                time.sleep(60 * waits)
+        if stop:
+            break
+        time.sleep(OM_PAUSE)
+    have = [j for j in jobs if (out / f'{j[0]["pid"]}_{j[1]}.json').exists()]
+    rec = {'years': years, 'requests': len(jobs), 'have': len(have), 'fetched_now': n_ok, 'cached': n_cached,
+           'bytes_now': n_bytes, 'bytes_total': sum((out / f'{j[0]["pid"]}_{j[1]}.json').stat().st_size for j in have),
+           'remaining': [f'{j[0]["pid"]}_{j[1]}' for j in jobs if j not in have], 'refusals': refusals[-50:],
+           'stopped': stop}
+    log(f'forecastwx: {len(have)} of {len(jobs)} year-requests on disk ({rec["bytes_total"] / 1e6:.1f} MB); '
+        f'{n_ok} fetched now; {len(refusals)} refusals logged' + (f'; stopped: {stop}' if stop else ''))
+    if stop:
+        BLOCKED.setdefault('previous-runs-api.open-meteo.com', stop)
+    return rec
+
+
+FUNCS = {s: globals()[f'stage_{s}'] for s in STAGES + OPTIONAL}
 
 
 def main(argv=None) -> int:
@@ -337,7 +475,7 @@ def main(argv=None) -> int:
     ap.add_argument('--from', dest='start', help='start at this stage')
     ap.add_argument('--from-zip', type=Path, help='unpack the v1.0 release zip instead of downloading, then verify')
     ap.add_argument('--offline', action='store_true', help='skip every stage that downloads (fetch eia930 campd neso '
-                    'gb_events prices weather)')
+                    'gb_events prices weather forecastwx)')
     ap.add_argument('--list', action='store_true')
     a = ap.parse_args(argv)
     if a.list:
@@ -352,11 +490,12 @@ def main(argv=None) -> int:
         stages = [s.strip() for s in a.only.split(',')]
         bad = [s for s in stages if s not in FUNCS]
         if bad:
-            ap.error(f'unknown stage(s): {bad}; stages: {STAGES}')
+            ap.error(f'unknown stage(s): {bad}; stages: {STAGES}; optional: {OPTIONAL}')
     elif a.start:
         stages = STAGES[STAGES.index(a.start):]
     if a.offline:
-        stages = [s for s in stages if s not in ('fetch', 'eia930', 'campd', 'neso', 'gb_events', 'prices', 'weather')]
+        stages = [s for s in stages if s not in ('fetch', 'eia930', 'campd', 'neso', 'gb_events', 'prices', 'weather',
+                                                 'forecastwx')]
     st = load_state()
     rc = 0
     for s in stages:
@@ -364,6 +503,8 @@ def main(argv=None) -> int:
         t = time.time()
         r = FUNCS[s]()
         st[s] = {'done': time.strftime('%Y-%m-%d %H:%M'), 'seconds': round(time.time() - t)}
+        if isinstance(r, dict):       # a stage's own record (forecastwx: counts, refusals)
+            st[s].update(r)
         save_state(st)
         if s == 'verify':
             rc = r

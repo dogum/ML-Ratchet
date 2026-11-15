@@ -81,7 +81,23 @@ From `checks/*.json`; re-run `checks/run_all.sh` after any change.
   (MILP noise in the 4th-6th digit). One real difference: the ACTIVSg2000 24 h MILP prices in hours 14-16.
 - **Models re-scored from their shipped weights** on this data: GridPulse, PlantDetective (395 units, on CAMPD rebuilt
   from EPA), DemandCast (actual weather) exactly; BatteryPilot ERCOT exactly, CAISO 0.641 vs 0.642 (price decimals).
-- **Not done:** P0.5 (outage-rate leak), P0.6 (upstream fixes), P0.7 (the 3 Dec 2019 label), and everything in P1-P3.
+- **P0.5 outage-rate leak: fixed (physics 1.1, 14 Nov 2026).** Forced and planned outage shares for coal, CC, CT and
+  gas steam now come from sources published before 2023 (`fleet.OUTAGE_DEFAULTS`; `GRIDSIM_PHYSICS=1.0` reproduces the
+  release). The dev calibration (coal adder −6.62 → −5.73 $/MWh) and ERCOT damping (2.5 → 2.75 %/%) were re-fitted on
+  dev; the checks moved as in `gridsim/LIMITS.md` D (held-out 2022 coal +27.7 → +34.4 %, hours above $200 99 → 54
+  vs 238 real): the leaked values flattered the checks. Models: BatteryPilot used them directly (rebuilt, see its
+  NOTEBOOK); PlantDetective through 69 GridSim units and GridSim prices behind 37 of 110 shards (measured, no
+  decision changes); GridPulse and DemandCast never read them. Other exam-year citations (generator unit sizes and
+  heat-rate medians, an IBR-share bound, a 2023 wind report) move their priors by at most 0.5 % (heat rates) and
+  3 % (sizes) and are left as cited.
+- **P0.7 GB_20191203 label: fixed** (1,788 → 854.7 MW, Elexon-cited correction table; six exam events with the same
+  FUELINST pattern are listed in `data/DATA.md` section 5 for a decision).
+- **P0.6 upstream fixes:** done — per-state loss lists (`_as_events`), EIA-930 solar timestamp flags
+  (`gd.eia930_solar_qc()`), per-technology aggregation in `generate_states` (flag), soft history constraints in
+  `dispatch` (flag). Not done: the new-physics items (Dynamic Containment two-segment droop, year-aware priors, ORDC
+  in core, cold-outage curve, GT ambient derate, DA price generator, self-commitment layer, building-stock demand
+  model) and two speed tools (single-LP perfect foresight, tabulated farm curves).
+- **Not done:** everything in P1-P3.
 
 ## 4. Prioritised work list
 
@@ -109,7 +125,7 @@ Every physics change must:
    - MATPOWER cases including ACTIVSg: BSD / CC-BY per case.
    - RTS-GMLC: BSD-3.
    - Open-Meteo: CC-BY 4.0.
-5. **Possible exam leak to remove.** GridSim's outage-rate defaults cite Texas RE's 2024/2025 reliability-assessment aggregates, published during the exam years. Replace them with pre-2023 NERC GADS values, re-run the checks, and re-score. BatteryPilot's model card notes this; GridPulse and PlantDetective did not use outage rates.
+5. **Possible exam leak to remove.** GridSim's outage-rate defaults cite Texas RE's 2024/2025 reliability-assessment aggregates, published during the exam years. Replace them with pre-2023 NERC GADS values, re-run the checks, and re-score. BatteryPilot's model card notes this; GridPulse and PlantDetective did not use outage rates. *(Corrected 14 Nov 2026: PlantDetective did, through its GridSim-dispatched units and GridSim prices; see the status above and its NOTEBOOK.)*
 6. **Upstream fixes found by the Phase 2 builds.** Add each behind a flag, then re-run the checks.
    - **GridPulse:**
      - `_as_events` mis-handles a list of per-state loss lists (pass an object array).

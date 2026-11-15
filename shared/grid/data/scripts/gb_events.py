@@ -6,7 +6,8 @@ Stages (argv): detect | windows | attribute | build
             -> proc/frequency/GB/events/<event_id>.npz (+ .json meta, contract format: t [s from window start], f [Hz])
  attribute: Elexon REMIT messages (unplanned, event start within +-20 min, >= 100 MW unavailable, published within 6 h)
             and Elexon B1610 metered output of those BM units in the settlement period before the event
- build    : proc/frequency/gb_events.parquet (one row per event) with metrics, loss, inertia and generation mix
+ build    : proc/frequency/gb_events.parquet (one row per event) with metrics, loss, inertia and generation mix;
+            cited label corrections from data/sources/gb_event_label_corrections.csv (loss_MW_v1 = label before them)
 """
 import os as _os
 GRID_CODE = _os.path.abspath(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..', '..'))  # shared/grid
@@ -248,6 +249,11 @@ def build():
         for c, val in v.items():
             a.loc[m, 'loss_MW' if c == 'loss_MW' else ('loss_note' if c == 'note' else c)] = val
         a.loc[m, 'loss_confidence'] = 'high (official report)'
+    # cited label corrections (data/sources/gb_event_label_corrections.csv; the same function griddata.events applies to
+    # the shipped v1.0 file). loss_MW_v1 keeps the label the rules above give.
+    sys.path.insert(0, GRID_CODE)
+    from griddata import apply_label_corrections
+    a = apply_label_corrections(a)
     # inertia (NESO outturn, GVA.s) per settlement period
     ine = pd.read_parquet(f'{RAW}/neso/inertia.parquet')
     ine['date'] = ine['Settlement Date'].astype(str).str[:10]; ine['sp'] = pd.to_numeric(ine['Settlement Period']).astype(int)

@@ -1,0 +1,144 @@
+{
+ "rocof_pure_inertia": {
+  "cases": [
+   {
+    "H_s": 2,
+    "MVA": 20000,
+    "dP_MW": 500,
+    "rocof_sim": -0.3125,
+    "rocof_analytic": -0.3125,
+    "rel_err": 0.0
+   },
+   {
+    "H_s": 4,
+    "MVA": 30000,
+    "dP_MW": 1000,
+    "rocof_sim": -0.2083333333333286,
+    "rocof_analytic": -0.20833333333333334,
+    "rel_err": 2.278177646530821e-14
+   },
+   {
+    "H_s": 6,
+    "MVA": 50000,
+    "dP_MW": 1800,
+    "rocof_sim": -0.15000000000000568,
+    "rocof_analytic": -0.15,
+    "rel_err": 3.7932620008026184e-14
+   },
+   {
+    "H_s": 3,
+    "MVA": 15000,
+    "dP_MW": 1320,
+    "rocof_sim": -0.7333333333333343,
+    "rocof_analytic": -0.7333333333333333,
+    "rel_err": 1.3625464393126922e-15
+   }
+  ],
+  "max_rel_err": 3.7932620008026184e-14
+ },
+ "damping_only": {
+  "df_ss_sim": -0.8333282743123789,
+  "df_ss_analytic": -0.8333333333333334,
+  "df_at_tau_sim": -0.5270739542857044,
+  "df_at_tau_analytic": -0.5267671323571315
+ },
+ "governor_vs_lsim": [
+  {
+   "tech": "gas_ct",
+   "rms_err_Hz": 1.1174737131840422e-06,
+   "nadir_sim_Hz": -0.13341628410221773,
+   "nadir_ref_Hz": -0.13341124809062405,
+   "t_nadir_sim": 1.07,
+   "t_nadir_ref": 1.07,
+   "ss_sim": -0.09933774834436804,
+   "ss_ref": -0.09933774834437083
+  },
+  {
+   "tech": "coal_steam",
+   "rms_err_Hz": 9.075247951968938e-06,
+   "nadir_sim_Hz": -0.23272264261222375,
+   "nadir_ref_Hz": -0.23268036356677177,
+   "t_nadir_sim": 2.13,
+   "t_nadir_ref": 2.13,
+   "ss_sim": -0.09933774834436093,
+   "ss_ref": -0.09933774834436095
+  },
+  {
+   "tech": "hydro_res",
+   "rms_err_Hz": 0.00030368389322206745,
+   "nadir_sim_Hz": -0.7500535003475832,
+   "nadir_ref_Hz": -0.7493282627433696,
+   "t_nadir_sim": 4.37,
+   "t_nadir_ref": 4.37,
+   "ss_sim": -0.09938986110348225,
+   "ss_ref": -0.09938793508960546
+  },
+  {
+   "tech": "gas_cc",
+   "rms_err_Hz": 1.5942769322711686e-06,
+   "nadir_sim_Hz": -0.1708824787623655,
+   "nadir_ref_Hz": -0.17087570365408533,
+   "t_nadir_sim": 1.46,
+   "t_nadir_ref": 1.46,
+   "ss_sim": -0.1045137613976479,
+   "ss_ref": -0.10451372020629375
+  },
+  {
+   "tech": "battery",
+   "rms_err_Hz": 2.8632515602718898e-06,
+   "nadir_sim_Hz": -0.3191489361702011,
+   "nadir_ref_Hz": -0.3191489361702102,
+   "t_nadir_sim": 35.260000000000005,
+   "t_nadir_ref": 37.69,
+   "ss_sim": -0.3191489361702011,
+   "ss_ref": -0.31914893617021
+  }
+ ],
+ "closed_form_nadir": {
+  "zeta": 0.48552356614086783,
+  "wn_rad_s": 2.172268399622846,
+  "nadir_closed_form_Hz": -0.13341125848054872,
+  "t_nadir_closed_form_s": 1.0704,
+  "nadir_sim_by_step": {
+   "0.02": [
+    -0.13346599485601018,
+    1.06
+   ],
+   "0.01": [
+    -0.13343894030838044,
+    1.07
+   ],
+   "0.005": [
+    -0.13342430915326275,
+    1.07
+   ],
+   "0.002": [
+    -0.13341628410221773,
+    1.07
+   ],
+   "0.001": [
+    -0.133413734693697,
+    1.07
+   ]
+  },
+  "err_at_default_h_0.01_mHz": 0.02768182783172146,
+  "err_at_h_0.02_mHz": 0.054736375461467146
+ },
+ "deadband_headroom": {
+  "df_ss_sim": -0.41666666666645824,
+  "df_ss_analytic": -0.4166666666666667,
+  "both_saturated": true,
+  "gov_total_end_MW": 500.0
+ },
+ "two_area": {
+  "df_ss_area0_sim": -0.06613756614728317,
+  "df_ss_area1_sim": -0.06613756612784982,
+  "df_ss_analytic": -0.06613756613756613,
+  "interarea_mode_rad_s_sim_no_gov": 2.802134120174382,
+  "interarea_mode_rad_s_analytic": 2.8024956081989645,
+  "coi_rocof_no_gov_sim": -0.15625,
+  "coi_rocof_analytic": -0.15625
+ },
+ "speed_single_60s_event_s": 0.14680833799866377,
+ "speed_batch_1000_events_60s_s": 0.5241824290005752
+}

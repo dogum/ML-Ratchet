@@ -1,7 +1,8 @@
-"""BatteryPilot v1.0 -- a causal battery-arbitrage policy trained only on simulated grids (numpy/scipy only).
+"""BatteryPilot v1.1 -- a causal battery-arbitrage policy trained only on simulated grids (numpy/scipy only).
 
     import batterypilot as bp
-    net = bp.PolicyNet()                                     # batterypilot_weights.npz next to this file
+    net = bp.PolicyNet()                                     # batterypilot_weights.npz next to this file (v1.1)
+    net_v10 = bp.PolicyNet(bp.WEIGHTS_V1_0)                  # the v1.0 release (its published exam numbers)
     bat = bp.Battery(P=1.0, duration_h=2.0)                 # 1 MW / 2 MWh usable, 85 % round trip
     ch, dis, soc, V = bp.run_policy(net, path, bat, bat.c_lin(path['T']))
     res = bp.settle(bat, path['rt'], ch, dis, 0.0, path['T'])   # gross, degradation, net ($), cycles
@@ -10,6 +11,10 @@
 number), dow, doy.  Every hour the network reads only information available before the hour and returns the
 marginal value of stored energy at 5 state-of-charge knots; the battery then follows that curve as an offer curve
 against the hour's real-time price.  See MODEL_CARD.md.
+
+Weights: batterypilot_weights.npz is v1.1 (rung R2 of the v1.1 ladder, trained on GridSim physics 1.1, whose outage
+defaults come from sources published before the exam years).  batterypilot_weights_v1_0.npz is the v1.0 release
+(rung R4, GridSim physics 1.0), kept so the v1.0 exam numbers stay reproducible.
 """
 from __future__ import annotations
 
@@ -305,10 +310,14 @@ def softplus(x):
     return np.logaddexp(0.0, x)
 
 
+WEIGHTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'batterypilot_weights.npz')            # v1.1
+WEIGHTS_V1_0 = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'batterypilot_weights_v1_0.npz')  # v1.0
+
+
 class PolicyNet:
     def __init__(self, weights=None):
-        if weights is None:            # the released network, next to this file
-            weights = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'batterypilot_weights.npz')
+        if weights is None:            # the current release (v1.1), next to this file
+            weights = WEIGHTS
         w = dict(np.load(weights)) if isinstance(weights, (str, os.PathLike)) else dict(weights)
         self.mu, self.sd = w['x_mu'], w['x_sd']
         self.layers = []

@@ -188,7 +188,9 @@ def frequency():
     ERCO: loss = k x delta_f with k = median(MW loss / delta f) over dev events (a frequency-response characteristic);
       dumb = dev median loss. (No RoCoF in the ERCOT reports.)"""
     res = {}
-    ev = pd.read_parquet(f'{PROC}/frequency/gb_events.parquet')
+    sys.path.insert(0, GRID_CODE)
+    from griddata import apply_label_corrections   # cited label corrections (DATA.md section 5)
+    ev = apply_label_corrections(pd.read_parquet(f'{PROC}/frequency/gb_events.parquet'))
     spg = SP['events'].get('GB', {})
     ev['split'] = np.where(ev.event_id.isin(spg.get('dev', [])), 'dev', np.where(ev.event_id.isin(spg.get('exam', [])), 'exam', None))
     ine = pd.read_parquet(f'{PROC}/frequency/GB/inertia.parquet')

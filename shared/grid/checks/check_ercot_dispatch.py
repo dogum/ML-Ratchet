@@ -12,6 +12,7 @@ GRID_CODE = _os.path.abspath(_os.path.join(_os.path.dirname(_os.path.abspath(__f
 GRID_ROOT = _os.environ.get('ML_RATCHET_GRID') or GRID_CODE   # data/, gridsim/refdata/, checks/out/ live here
 import json, os, sys, time
 sys.path.insert(0, f"{GRID_CODE}/gridsim")
+from gridsim.fleet import calibration_path  # noqa: E402  (data/calibration.json for physics 1.0, calibration_v1_1.json for 1.1)
 import numpy as np
 import pandas as pd
 from gridsim.dispatch import dispatch
@@ -23,7 +24,7 @@ FUELS = ["COL", "NG", "NUC", "WND", "SUN", "WAT", "OTH"]
 
 # calibration constants fitted on the dev year 2019 only (checks/calibrate_ercot.py -> gridsim/data/calibration.json)
 CAL = {}
-calp = f"{GRID_CODE}/gridsim/gridsim/data/calibration.json"
+calp = calibration_path()
 if os.path.exists(calp):
     CAL = json.load(open(calp)).get("ercot_dispatch", {})
 
@@ -45,6 +46,10 @@ CONFIGS = {
     # same, prices from the LP relaxation (the default since the dev-week comparison; 'calibrated' used fixed pricing)
     "calibrated_relaxed": dict(method="milp", fixed="nuclear", must_run=tuple(CAL.get("must_run", ["coal_steam"])),
                                offer_adders=CAL.get("offer_adders", {}), pricing="relaxed"),
+    # 'calibrated' with soft history constraints (HANDOFF P0.6): penalised slack instead of re-solving a day without
+    # its carried history; target: fewer than 0.5 % of days re-solved
+    "calibrated_soft": dict(method="milp", fixed="nuclear", must_run=tuple(CAL.get("must_run", ["coal_steam"])),
+                            offer_adders=CAL.get("offer_adders", {}), soft_history=True),
     "calibrated_lp": dict(method="lp", fixed="nuclear", must_run=tuple(CAL.get("must_run", ["coal_steam"])),
                           offer_adders=CAL.get("offer_adders", {})),
     "merit": dict(method="merit", fixed="nuclear"),

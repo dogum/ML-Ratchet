@@ -1,0 +1,137 @@
+{
+ "physics": "1.1",
+ "rows": [
+  {
+   "seed": 0,
+   "soft": false,
+   "days_relaxed": 0,
+   "failed": false,
+   "slack": {
+    "minupdown_unit_h": 0.0,
+    "ramp_MW": 0.0
+   },
+   "mean_price": 8178.6,
+   "seconds": 0.6
+  },
+  {
+   "seed": 0,
+   "soft": true,
+   "days_relaxed": 0,
+   "failed": false,
+   "slack": {
+    "minupdown_unit_h": 0.0,
+    "ramp_MW": 0.0
+   },
+   "mean_price": 8104.025,
+   "seconds": 0.7
+  },
+  {
+   "seed": 1,
+   "soft": false,
+   "days_relaxed": 0,
+   "failed": false,
+   "slack": {
+    "minupdown_unit_h": 0.0,
+    "ramp_MW": 0.0
+   },
+   "mean_price": 390.866,
+   "seconds": 6.5
+  },
+  {
+   "seed": 1,
+   "soft": true,
+   "days_relaxed": 0,
+   "failed": false,
+   "slack": {
+    "minupdown_unit_h": 0.0,
+    "ramp_MW": 0.0
+   },
+   "mean_price": 390.834,
+   "seconds": 9.7
+  },
+  {
+   "seed": 2,
+   "soft": false,
+   "days_relaxed": 0,
+   "failed": false,
+   "slack": {
+    "minupdown_unit_h": 0.0,
+    "ramp_MW": 0.0
+   },
+   "mean_price": 2303.645,
+   "seconds": 3.7
+  },
+  {
+   "seed": 2,
+   "soft": true,
+   "days_relaxed": 0,
+   "failed": false,
+   "slack": {
+    "minupdown_unit_h": 0.0,
+    "ramp_MW": 0.0
+   },
+   "mean_price": 2303.645,
+   "seconds": 4.8
+  },
+  {
+   "seed": 3,
+   "soft": false,
+   "days_relaxed": 0,
+   "failed": false,
+   "slack": {
+    "minupdown_unit_h": 0.0,
+    "ramp_MW": 0.0
+   },
+   "mean_price": 4422.303,
+   "seconds": 1.0
+  },
+  {
+   "seed": 3,
+   "soft": true,
+   "days_relaxed": 0,
+   "failed": false,
+   "slack": {
+    "minupdown_unit_h": 0.0,
+    "ramp_MW": 0.0
+   },
+   "mean_price": 4422.277,
+   "seconds": 1.2
+  },
+  {
+   "seed": 4,
+   "soft": false,
+   "days_relaxed": 0,
+   "failed": false,
+   "slack": {
+    "minupdown_unit_h": 0.0,
+    "ramp_MW": 0.0
+   },
+   "mean_price": 1341.697,
+   "seconds": 10.6
+  },
+  {
+   "seed": 4,
+   "soft": true,
+   "days_relaxed": 0,
+   "failed": false,
+   "slack": {
+    "minupdown_unit_h": 0.0,
+    "ramp_MW": 0.0
+   },
+   "mean_price": 1341.697,
+   "seconds": 10.2
+  }
+ ],
+ "summary": {
+  "hard": {
+   "days_relaxed": 0,
+   "failures": 0,
+   "runs": 5
+  },
+  "soft": {
+   "days_relaxed": 0,
+   "failures": 0,
+   "runs": 5
+  }
+ }
+}

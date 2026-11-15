@@ -270,7 +270,7 @@ def dispatch(fleet, demand_MW, wind_cf=None, solar_cf=None, prices=None, network
              hydro_MW=None, outages="expected", seed=0, lookahead_h=12, offers=None, voll=9000.0,
              region=None, n_clusters=None, cluster=True, mip_gap=0.005, time_limit=60.0, storage_end="cyclic",
              verbose=False, ordc=None, start_state=None, must_run=("nuclear",), hr_source="eia923",
-             offer_adders=None, pricing="relaxed"):
+             offer_adders=None, pricing="relaxed", soft_history=False):
     """Hourly unit commitment / economic dispatch.
 
     fleet: DataFrame or list of contract generator specs (or a path); filtered to units online in the period.
@@ -288,6 +288,12 @@ def dispatch(fleet, demand_MW, wind_cf=None, solar_cf=None, prices=None, network
     method: 'milp' | 'lp' | 'merit'.  horizon: 'day' (24 h, + lookahead_h) or hours.
     outages: 'expected' (seasonal derates), 'random' (Markov forced + planned outages, `seed`), or 'none'.
     offers: dict tech -> $/MWh offer for wind/solar/hydro (default wind -10, solar -5, hydro 0).
+    soft_history: False (default, as in v1.0/v1.1). True: minimum up/down rows and the first-hour ramp rows from the
+        previous day get a penalised slack (10 x VOLL x the cluster's unit size per unit-hour, 10 x VOLL per MW, so a
+        slack is never cheaper than shedding load and is used only when the day is otherwise infeasible), so a day whose
+        carried history or a
+        random outage starting while a unit is on would be infeasible is solved with the smallest violation instead
+        of being re-solved without history (HANDOFF P0.6; `res.history_slack` reports what was used).
     pricing: 'relaxed' (default; duals of the LP relaxation, an approximation of convex-hull pricing that carries
     commitment costs into prices) or 'fixed' (duals of the LP with the MILP commitment fixed).  On 4 dev weeks of
     ERCOT 2019, 'relaxed' gave price MAE $8.7 vs $12.7/MWh and rank correlation 0.88 vs 0.76.
@@ -398,6 +404,7 @@ def dispatch(fleet, demand_MW, wind_cf=None, solar_cf=None, prices=None, network
     ords = ordc or [(0.3, 250.0), (0.4, 1500.0), (10.0, 5000.0)]   # (fraction of requirement, $/MWh) blocks
     stats = []
     n_relaxed = 0
+    slack_used = dict(minupdown_unit_h=0.0, ramp_MW=0.0)
     for d0 in range(0, N, H):
         for attempt in (0, 1):
           relax = attempt == 1          # second attempt: drop carried history (min up/down, ramp from yesterday)
@@ -479,6 +486,7 @@ def dispatch(fleet, demand_MW, wind_cf=None, solar_cf=None, prices=None, network
           m.rlo[-1] = rhs.ravel(); m.rhi[-1] = rhs.ravel()
           m.coef(rt, u, 1.0); m.coef(rt[:, 1:], u[:, :-1], -1.0); m.coef(rt, su, -1.0); m.coef(rt, sd, 1.0)
           # min up / down (window capped at T); history from previous days on the RHS
+          soft_vars = []
           for kind, Tm, hist, var in (("up", cf.ut, state["su_hist"], su), ("down", cf.dt, state["sd_hist"], sd)):
               cs = np.where((Tm >= 2) & ~cf.must_run)[0]
               for c_ in cs:
@@ -498,6 +506,9 @@ def dispatch(fleet, demand_MW, wind_cf=None, solar_cf=None, prices=None, network
                   else:
                       rows_ = m.rows(T, -np.inf, nav[c_] - histsum)
                       m.coef(rows_[ii], var[c_, jj], 1.0); m.coef(rows_, u[c_], 1.0)
+                  if soft_history:
+                      sl = m.var((T,), 0, np.inf, 10.0 * voll * max(float(cf.pmax[c_]), 1.0))
+                      m.coef(rows_, sl, -1.0); soft_vars.append(("minupdown_unit_h", sl, keep))
           # ramping for slow clusters: p_t - p_{t-1} <= RU (u_t - su_t) + SU su_t ; p_{t-1} - p_t <= RD u_t + SD sd_t
           rampc = np.where((cf.ru < cf.pmax - cf.pmin) & ~cf.must_run)[0]
           if len(rampc):
@@ -521,6 +532,9 @@ def dispatch(fleet, demand_MW, wind_cf=None, solar_cf=None, prices=None, network
                   if p_prev is not None:
                       rhs = np.zeros((nrc, T)); rhs[:, 0] = sgn * p_prev[rampc]
                       m.rhi[-1] = rhs.ravel()
+                      if soft_history:
+                          sl = m.var((nrc,), 0, np.inf, 10.0 * voll)
+                          m.coef(rows_[:, 0], sl, -1.0); soft_vars.append(("ramp_MW", sl, None))
                   else:
                       rhs = np.zeros((nrc, T)); rhs[:, 0] = 1e9
                       m.rhi[-1] = rhs.ravel()
@@ -569,6 +583,10 @@ def dispatch(fleet, demand_MW, wind_cf=None, solar_cf=None, prices=None, network
           info["solve_s"] = time.time() - t_build
           info["n_var"], info["n_row"] = A.shape[1], A.shape[0]
           info["relaxed_history"] = relax
+          if soft_vars and x is not None and len(x):
+              for key, sl, kp in soft_vars:
+                  v = np.asarray(x)[np.asarray(sl)]
+                  slack_used[key] += float(v[:kp].sum() if kp is not None and v.ndim == 1 else v.sum())
           if info.get("status") == "Optimal" or (integ and str(info.get("status")).startswith("Time limit")
                                                  and np.isfinite(info.get("mip_gap", np.inf))):
               break
@@ -615,6 +633,7 @@ def dispatch(fleet, demand_MW, wind_cf=None, solar_cf=None, prices=None, network
                   flush=True)
     res.solver_stats = stats
     res.n_days_relaxed = n_relaxed
+    res.history_slack = slack_used
     res.final_state = state
     res.finish(D, imp, fixed, fixed_MW, wind_av, solar_av, R, fpc[day_idx], time.time() - t0, derate=derate,
                navail=navail)

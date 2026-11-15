@@ -8,7 +8,7 @@ ladders:
     dev_gate: "Dev skill (40 dev units, 2019 + 2021, mean of month / quarter / year windows) may not fall by more than 0.005"
     frozen_sets: [v1, v2]
     scored_on: v2
-    note: "R0 and R1 were scored on the v1 frozen set, R2-R4 on v2 (bank v2, dev twin calibration). R1 re-scored on v2: 0.266."
+    note: "R0 and R1 were scored on the v1 frozen set, R2-R4 on v2 (bank v2, dev twin calibration). R1 re-scored on v2: 0.266. Banks were built with GridSim physics 1.0 (outage defaults from exam-period data). Check of 14 Nov 2026: bank v2 rebuilt under 1.0 and 1.1, R4 frozen-set skill 0.492 -> 0.501, R4 minus a single R2-recipe network +0.025 -> +0.029, dev gate 0.215 both; no decision changes (NOTEBOOK)."
     columns_source: "training/ratchet.json: frozen-val technology accuracy, dev skill (mean and by window length) and dev technology accuracy (year windows); higher is better"
     columns: ["Val tech acc", "Dev skill", "Dev month", "Dev quarter", "Dev year", "Dev tech acc"]
     rungs:

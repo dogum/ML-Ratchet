@@ -61,6 +61,42 @@ TECH_DEFAULTS = {
 }
 _DEF_KEYS = ["pmin_frac", "ramp_frac_per_min", "min_up_h", "min_down_h", "start_heat_MMBtu_per_MW", "hr_full",
              "vom", "fuel", "fuel_cost", "efor", "planned_frac", "H"]
+
+# Outage defaults by physics version (the only columns that differ between versions).
+#   1.0: the table above. Its coal, CC, CT and gas-steam rows come from Texas RE's 2024/2025 assessments (2024-2025
+#        data, published during the exam years 2023-2025 of splits.json): a leak of exam-period information into
+#        every dispatch default (shared/grid/HANDOFF.md P0.5).  Kept so v1.0 results stay reproducible.
+#   1.1: the same four rows from sources published before 2023, describing years before 2023:
+#        forced share = PJM "2017-2021 PJM Generating Unit Class Average Values" (created 20 May 2022), weighted EFORd:
+#        fossil steam 13.593 % (coal and gas steam), combustion turbine 5.777 %, combined cycle 3.629 %;
+#        planned share = Texas RE "2017 Assessment of Reliability Performance" (April 2018), Table 12: ERCOT
+#        fleet scheduled outage factor 8.3 % (unweighted), the same for the four types (no per-type table there).
+#        All other rows are unchanged.  EFORd is a demand-period rate, the 1.0 rows were time shares (1 - EAF - SOF):
+#        the definitions differ slightly; both are used as a time share of capacity.
+OUTAGE_DEFAULTS = {
+    "1.0": {t: (TECH_DEFAULTS[t][9], TECH_DEFAULTS[t][10]) for t in ("coal_steam", "gas_cc", "gas_ct", "gas_steam")},
+    "1.1": {"coal_steam": (0.136, 0.083), "gas_cc": (0.036, 0.083), "gas_ct": (0.058, 0.083),
+            "gas_steam": (0.136, 0.083)},
+}
+
+
+def calibration_path(version=None):
+    """The dev-calibration file of a physics version: data/calibration.json (1.0), data/calibration_v1_1.json (1.1)."""
+    v = version or physics_version()
+    return os.path.join(HERE, "data", "calibration.json" if v == "1.0" else f"calibration_v{v.replace('.', '_')}.json")
+
+
+def calibration(version=None):
+    p = calibration_path(version)
+    return json.load(open(p)) if os.path.exists(p) else {}
+
+
+def physics_version():
+    """The GridSim physics version in use: $GRIDSIM_PHYSICS ("1.0" or "1.1"), default "1.1"."""
+    v = os.environ.get("GRIDSIM_PHYSICS", "1.1")
+    if v not in OUTAGE_DEFAULTS:
+        raise ValueError(f"GRIDSIM_PHYSICS={v!r}: known versions {sorted(OUTAGE_DEFAULTS)}")
+    return v
 # average-heat-rate shape vs load fraction (RTS-GMLC curves, normalised to full load)
 HR_SHAPE = {"coal_steam": [(0.4, 1.089), (0.6, 1.014), (0.8, 0.995), (1.0, 1.0)],
             "gas_steam": [(0.3, 1.12), (0.6, 1.02), (0.8, 0.995), (1.0, 1.0)],
@@ -74,6 +110,8 @@ HR_SHAPE = {"coal_steam": [(0.4, 1.089), (0.6, 1.014), (0.8, 0.995), (1.0, 1.0)]
 
 
 def tech_default(tech, key):
+    if key in ("efor", "planned_frac") and tech in OUTAGE_DEFAULTS[physics_version()]:
+        return OUTAGE_DEFAULTS[physics_version()][tech][0 if key == "efor" else 1]
     row = TECH_DEFAULTS.get(tech, TECH_DEFAULTS["other"])
     return row[_DEF_KEYS.index(key)]
 
@@ -190,7 +228,8 @@ def prepare_fleet(fleet, region=None, start=None, end=None, hr_source="eia923", 
     df["heat_rate_curve"] = hrs
     df["hr_avg_eia923"] = np.nan
     if hr_source == "eia923":
-        yend = pd.Timestamp(end).year if end is not None else 2023
+        # without an end date: the three years up to 2023 in v1.0 (an exam year), up to 2022 in v1.1
+        yend = pd.Timestamp(end).year if end is not None else (2023 if physics_version() == "1.0" else 2022)
         yrs = hr_years or range(yend - 2, yend + 1)
         hr_avg = eia923_heat_rates(df, yrs)
         df["hr_avg_eia923"] = hr_avg

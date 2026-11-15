@@ -60,7 +60,7 @@ data:
     licence: NESO Open Data Licence
     role: noise (quiet 1 s slices), physics (GB operating points), dev, exam (events, inertia truth, demand input)
   - name: Elexon BMRS REMIT and B1610 metered output (loss labels by GridData)
-    url: https://data.elexon.co.uk/bmrs/api/v1/datasets/REMIT
+    url: https://bmrs.elexon.co.uk/remit
     licence: Elexon BMRS licence (free use with attribution)
     role: dev (854 MW metered loss for 3 Dec 2019), exam (loss labels)
   - name: National Grid ESO, Technical Report on the events of 9 August 2019
@@ -121,8 +121,9 @@ exam:
         - { name: "RoCoF formula at 230 GVA s", kind: classical, value: 27.1 }
         - { name: "RoCoF formula at the NESO outturn inertia", kind: classical, value: 27.6 }
         - { name: "Dev median loss", kind: dumb, value: 32.7 }
+        - { name: "Dev median loss, corrected 3 Dec 2019 dev label (14 Nov 2026)", kind: dumb, value: 26.8 }
       verdict: win
-      note: "Bias +11 %. Without the demand input: 24.8 %."
+      note: "Bias +11 %. Without the demand input: 24.8 %. 14 Nov 2026: GridData corrected dev event 3 Dec 2019 from 1,788 to 854.7 MW; the dev median loss falls from 1,142 to 1,066 MW and this dumb baseline from 32.7 % (as released) to 26.8 %. GridPulse's numbers do not change and it still wins."
     - metric: GB MW lost, low-confidence labels (64)
       better: lower
       model: 34.8
@@ -131,7 +132,9 @@ exam:
         - { name: "RoCoF formula at 230 GVA s", kind: classical, value: 35.6 }
         - { name: "RoCoF formula at the NESO outturn inertia", kind: classical, value: 29.3 }
         - { name: "Dev median loss", kind: dumb, value: 112 }
+        - { name: "Dev median loss, corrected 3 Dec 2019 dev label (14 Nov 2026)", kind: dumb, value: 97.8 }
       verdict: loss
+      note: "14 Nov 2026: with the corrected 3 Dec 2019 dev label (854.7 MW) the dev median baseline is 97.8 % (112 % as released). The verdict is unchanged: the RoCoF formula at NESO inertia (29.3 %) still beats GridPulse."
     - metric: GB nadir forecast from the first 5 s (353 events whose nadir comes later)
       better: lower
       model: 54
@@ -190,7 +193,7 @@ exam:
     - { output: "ERCOT inertia (292)", actual: 85 }
 
 wins:
-  - "GB MW lost on medium-confidence labels: 25.9 % against 27.1 % for the RoCoF formula and 32.7 % for the dev median."
+  - "GB MW lost on medium-confidence labels: 25.9 % against 27.1 % for the RoCoF formula and 32.7 % for the dev median (26.8 % with the dev label corrected on 14 Nov 2026)."
   - "GB inertia from the first 10 s: 14.5 % against 15.1 % for a dev-fitted 7.0 s × demand rule and 20.4 % for a constant; on the 148 labelled events 15.3 % against 37.4 % for the RoCoF formula."
   - "Nadir forecast from the first 5 s: 54 mHz against 58 mHz for the lowest value so far."
   - "ERCOT MW lost from report numbers: 15.7 % against 20.1 % for a dev MW/Hz constant, and 24-33 % vs 37-59 % in 2023-2025."
@@ -214,8 +217,8 @@ next:
   - "Rung r6 (30 % of trips ramp out over 0.5-3 s) scored 0.589 on the frozen set but failed the dev gate on inertia; retry once more dev events exist."
   - "Upstream to GridSim behind flags: _as_events with per-state loss lists, per-technology aggregation in generate_states (~40× faster), the Dynamic Containment two-segment droop, ERCOT effective damping ~1.0 %/% for generated states."
 help_wanted:
-  - "Sub-second GB or ERCOT frequency (PMU, FNET/GridEye): the FNET site timed out from the build sandbox; 1 s NESO data blur the first-second slope that carries inertia."
-  - "Better GB loss sizes outside 9 Aug 2019: unit-trip MW from a source cleaner than REMIT capacity and interconnector flows (dev event 3 Dec 2019 is labelled 1,788 MW but metered 854 MW)."
+  - "Sub-second GB or ERCOT frequency (PMU, FNET/GridEye): 1 s NESO data blur the first-second slope that carries inertia. Checked 14 Nov 2026: fnetpublic.utk.edu shows live displays (table, gauge, maps) and three 2011 US sample events as plots and videos; it offers no data download and no terms page; event data and alerts go to members of the FNET/GridEye Industry Consortium. None of the 470 GB or 329 ERCOT events (2018-2026) has a public sub-second trace."
+  - "Better GB loss sizes outside 9 Aug 2019: unit-trip MW from a source cleaner than REMIT capacity and interconnector flows (dev event 3 Dec 2019 was labelled 1,788 MW but metered 854 MW: an IFA hour-boundary ramp was counted as a 933 MW trip; GridData corrected it to 854.7 MW on 14 Nov 2026 and lists six exam events with the same FUELINST failure mode for checking)."
   - "The 17 missing ERCOT monthly operations reports (2018-2026), which hold more ERCOT events."
 
 usage:

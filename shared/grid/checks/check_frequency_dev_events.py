@@ -20,7 +20,9 @@ from check_frequency_events import gb_20190809
 P = f"{GRID_ROOT}/data/proc/"
 splits = json.load(open(P + "splits.json"))["events"]
 out = {"GB": [], "ERCO": []}
-gb = pd.read_parquet(P + "frequency/gb_events.parquet").set_index("event_id")
+sys.path.insert(0, GRID_CODE)
+from griddata import apply_label_corrections   # cited loss-label corrections (3 Dec 2019: 1,788 -> 854.7 MW)
+gb = apply_label_corrections(pd.read_parquet(P + "frequency/gb_events.parquet")).set_index("event_id")
 mix = pd.read_parquet(P + "frequency/GB/genmix.parquet").set_index("time_utc").sort_index()
 traces = {}
 for eid in splits["GB"]["dev"]:
@@ -110,6 +112,13 @@ for k in ("GB", "ERCO"):
     e = np.array([x["nadir_dev_err_pct"] for x in out[k]])
     out[k + "_summary"] = {"n": len(e), "nadir_dev_err_pct_mean": float(e.mean()), "nadir_dev_err_pct_mae": float(np.abs(e).mean())}
 json.dump(out, open(f"{GRID_CODE}/checks/frequency_dev_events.json", "w"), indent=1, default=float)
+# the fitted ERCOT damping belongs to this physics version: store it in the version's calibration file
+from gridsim.fleet import calibration_path, physics_version
+_cp = calibration_path(); _cal = json.load(open(_cp)) if _os.path.exists(_cp) else {}
+_cal.setdefault("frequency", {}).update(ERCO_D_pct_per_pct=out["ERCO_damping_fit"]["D_pct_per_pct"],
+                                        ERCO_fitted_on="5 ERCOT dev events of splits.json, states from the calibrated "
+                                                       f"dispatch of physics {physics_version()}")
+json.dump(_cal, open(_cp, "w"), indent=1)
 try:
     import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
     fig, axs = plt.subplots(1, 4, figsize=(16, 3.6))

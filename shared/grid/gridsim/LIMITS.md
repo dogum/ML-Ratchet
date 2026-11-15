@@ -27,9 +27,24 @@ C. **Prices: shape right, scarcity wrong.** Median price $18.6 vs $20.5 (2019) a
    $54 vs $64 in 2022).
 D. **Outages are expected values** (seasonal derates from ERCOT GADS EAF), not the real outage timing. Real refuelling
    of nuclear is supplied as observed output in the checks; in pure-model runs nuclear is derated on average.
-   **Note on data use:** the GADS availability figures come from Texas RE's 2024/2025 reports (published fleet-wide
-   annual statistics, not hourly labels). 2023-2025 are exam years in `splits.json`; a strict Phase 2 should swap
-   them for dev-year statistics if a source is found.
+   **Note on data use:** the GADS availability figures came from Texas RE's 2024/2025 reports (published fleet-wide
+   annual statistics, not hourly labels). 2023-2025 are exam years in `splits.json`, so this was a leak of
+   exam-period information into every dispatch default. **Fixed in physics 1.1 (14 Nov 2026):** forced shares from PJM's
+   2017-2021 class averages (May 2022), planned shares from Texas RE's 2017 assessment (`fleet.OUTAGE_DEFAULTS`);
+   the dev calibration and ERCOT damping were re-fitted. The leaked values matched reality better: with clean
+   defaults the fleet is more available, scarcity is rarer and the held-out 2022 coal error grows. v1.0 -> v1.1:
+
+   | Check (ERCOT, calibrated unless stated) | v1.0 (leaked) | v1.1 (clean) | Real |
+   |---|---|---|---|
+   | Dev-2019 coal offer adder | −6.62 $/MWh | −5.73 $/MWh | — |
+   | ERCOT effective damping (5 dev events) | 2.5 %/% | 2.75 %/% | — |
+   | 2019 coal / gas / CO2 | +5.6 / −2.2 / −1.0 % | +5.9 / −2.2 / −2.7 % | — |
+   | 2022 (held out) coal / gas / CO2 | +27.7 / −11.4 / +1.85 % | +34.4 / −14.0 / +2.51 % | — |
+   | Hours above $200, 2019 / 2022 | 61 / 99 | 23 / 54 | 119 / 238 |
+   | Median price 2022 | $46.6 | $45.0 | $48.0 |
+   | Hours below 150 GW·s, 2019 / 2022 | 127 / 949 | 241 / 1,229 | 79 / 492 |
+   | Days re-solved without history, 2019 / 2022 | 22 / 15 | 16 / 14 | — |
+   | Economic config coal 2019 / 2022 | −42.6 / +23.1 % | −49.1 / +29.1 % | — |
 E. **Inertia from the commitment** matches ERCOT's 2019 minimum (131 vs 134.6 GW s) but not 2022 (76 vs 115 GW s;
    949 vs 492 hours below 150 GW s). At low net load with lower GADS availability the MILP commits fewer synchronous
    units than ERCOT did. ERCOT also commits units for reliability (RUC) and reserves the model does not require.
@@ -38,6 +53,12 @@ F. **Carried history sometimes makes a day infeasible.** In 4-11 % of days (15-4
    infeasible and the day was re-solved without the carried minimum up/down and ramp history (`n_days_relaxed`). The
    cause was not isolated: it depends on the carried state and did not reproduce from another start date. Effect:
    minimum up/down times may be broken across those midnights. Fix: soft history constraints with a penalty slack.
+   *14 Nov 2026: done, behind `dispatch(..., soft_history=True)` (off by default).* A penalised slack (10 x VOLL x
+   unit size per unit-hour on min up/down, 10 x VOLL per MW on the first-hour ramp) replaces the re-solve. ERCOT 2022,
+   calibrated, physics 1.1: days re-solved without history 14 -> 0; coal +34.36 -> +34.34 %, gas -14.02 -> -14.01 %,
+   median price $45.04 -> $45.04, CO2 +2.51 -> +2.49 % (`checks/ercot_dispatch_2022.json`, `calibrated_soft`).
+   Random-outage unit-level runs (`checks/check_soft_history.py`, 5 seeds x 5 days) needed no slack and matched the
+   hard runs, so the infeasibility PlantDetective's build met with `outages='random'` did not reproduce there.
 G. **Clustering**: similar units share one integer commitment (≤ 50 units per cluster integer, larger clusters
    continuous); unit-level results need `cluster=False` (slower). Combined cycles are blocks (no 1×1 vs 2×1 modes);
    no duct firing; no start-up types (hot/warm/cold). Hydro is a daily energy budget.
@@ -67,8 +88,16 @@ H. **No network in the ERCOT checks**, no imports optimisation (DC ties are fixe
    test. GB dev events not used for fitting (the frozen dev list is 9 Aug, 1 Jul, 11 Jul, 3 Dec 2019): 1 Jul −34 % and
    11 Jul −27 % (too deep, with each event's own inertia and loss but 9 Aug's response-holding mix: their real holdings
    are not in the data). 3 Dec is unusable: GridData's loss estimate (1,788 MW) is about twice what the measured
-   0.29 Hz drop at 333 GVA s implies (~850 MW). The model gave −33 % with B's earlier 855 MW estimate. GB nadirs
+   0.29 Hz drop at 333 GVA s implies (~850 MW). The model gave −33 % with GridData's earlier 855 MW estimate. GB nadirs
    are probably too deep by ~30 % outside the fitted event: GB fast response is stronger than the 9 Aug mix.
+   *14 Nov 2026: the 3 Dec label is corrected and the event is usable.* The 1,788 MW was 854.7 MW (Spalding CCGT
+   T_SPLN-1, Elexon B1610 output in the half hour before) plus 933 MW read from Elexon FUELINST as an IFA
+   interconnector trip; FUELINST shows an hour-boundary ramp (IFA 1,900 → 204 MW over 19:45-20:10 UTC), not a trip.
+   GridData now gives 854.7 MW (`data/sources/gb_event_label_corrections.csv`, applied by `gd.events` and by
+   `check_frequency_dev_events.py`). Re-run of the GB part of that check with physics 1.0 (scratch copy, not
+   `checks/*.json`): 3 Dec nadir error −316 % → **−33 %** (simulated drop 1.21 → 0.39 Hz, measured 0.29 Hz; RMS
+   0-60 s 552 → 70 mHz); GB dev summary (4 events) mean error −94 % → −23 %, MAE 95 % → 24 %. 3 Dec now agrees with
+   1 Jul (−34 %) and 11 Jul (−27 %): GB nadirs are too deep by ~30 % on all three REMIT-labelled dev events.
 4. **Governor and turbine models are generic per technology** (IEEE PES-TR1 typical values): one valve lag, two
    lead-lags, a rate limit and a headroom clip. Missing: gas-turbine output falling with frequency and ambient
    temperature, boiler pressure effects on steam units beyond ~30 s, load controllers that withdraw response
@@ -78,7 +107,7 @@ H. **No network in the ERCOT checks**, no imports optimisation (DC ties are fixe
 6. **Secondary control and operator actions** are a single first-order MW ramp; there is no AGC with ACE, no reserve
    deployment logic, no market re-dispatch. Results after ~60 s are indicative only.
 7. **Inertia from dispatch** counts committed units × H × MVA (MVA = nameplate / 0.9 where unknown) with H from
-   technology defaults or B's fleet; synchronous condensers and demand-side inertia are not included unless given
+   technology defaults or GridData's fleet; synchronous condensers and demand-side inertia are not included unless given
    as `H_extra_MWs`.
 
 ## Network

@@ -1,9 +1,13 @@
-# BatteryPilot v1.0 — model card
+# BatteryPilot v1.1 — model card
 
 **What it does.** A causal dispatch policy for a grid-scale battery doing energy arbitrage. Before each hour it
 returns an offer curve: the marginal value of one stored MWh at 0, 25, 50, 75 and 100 % state of charge. The battery
 sells while the real-time price (after losses and wear) beats that value and buys while the stored MWh is worth more
 than its price. Works for 1, 2 and 4 h batteries; trained for ERCOT (primary) and CAISO (secondary).
+
+**Versions.** v1.0 (released 14 Nov 2026) trained on GridSim physics 1.0, whose outage rates came from exam-period
+reports. v1.1 (same day, the shipped default) is the leak fix: recalibrated and retrained on physics 1.1. The sections
+below describe the recipe and v1.0's numbers; the v1.1 section gives what changed and the second exam look.
 
 **Trained on physics, graded on reality.** No real price path was ever a training sample. Real dev-year prices
 (ERCOT 2019 and 2021, CAISO Aug–Dec 2023) only calibrated the simulator and gated rungs. The exam (ERCOT 2023–2025,
@@ -62,7 +66,7 @@ limits, losses, linear wear) runs inside the loss in torch; each step samples 32
 (1/2/4 h, random start SOC) and maximises revenue + value of energy left − value of energy at the start, each window
 divided by its own 2 h perfect-foresight value. numpy inference == torch; JS port == numpy to 2e-6 (`training/checks/jscheck.json`); the site's live instrument matches numpy on the same float16 weights to 1e-5 (`site/tests/parity.test.ts`).
 
-## Ratchet (frozen score = share of perfect-foresight net revenue on the frozen simulated set, mean over path-years; dev = same on 10 real dev node-years)
+## Ratchet, v1.0 ladder (frozen score = share of perfect-foresight net revenue on the frozen simulated set, mean over path-years; dev = same on 10 real dev node-years)
 Rule: keep a rung if frozen > incumbent + 0.01 and dev ≥ incumbent − 0.01. When the simulator changed, a new frozen set
 was built and every rung re-scored in order (v2: R0 0.489, R1 0.533, R2 0.767; v3: R0 0.447, R1 0.570, R2 0.747).
 
@@ -74,7 +78,7 @@ was built and every rung re-scored in order (v2: R0 0.489, R1 0.533, R2 0.767; v
 | R3 | train on all 120 ERCOT path-years + 45 CAISO-like path-years (CISO fleet, duck-curve solar, carbon price, $1000-2000 caps), 2,500 steps | v3_frozen | 0.749 | 0.623 | rejected: frozen 0.7489 vs incumbent R2 0.7465 (+0.0024, below the 0.01 margin) -> rejected, although dev improved (0.623 vs 0.598) |
 | R4 | fine-tune R3 on the same 165 path-years with longer windows (21 days), batch 64, lower learning rate (900 steps) | v3_frozen | 0.758 | 0.637 | kept: frozen 0.7580 vs incumbent R2 0.7465 (+0.0115 > 0.01); dev 0.637 vs 0.598 -> kept; released |
 
-## Exam (real prices, never used for choosing) — $ per kW-year net of wear, mean over nodes
+## Exam, v1.0 (real prices, never used for choosing) — $ per kW-year net of wear, mean over nodes
 ERCOT: 4 hubs + 8 load zones, 2023–2025. CAISO: NP15, SP15, ZP26, DLAP PG&E/SCE/SDG&E, 2024–2025. 95 % intervals from a
 weekly block bootstrap (2,000 draws, same weeks for all nodes and strategies).
 
@@ -105,7 +109,7 @@ Mean share of perfect hindsight over node-years × durations:
 
 BatteryPilot beats the spread rule in 89 % (ERCOT) / 81 % (CAISO) of node-year-battery cases, the threshold rule in all,
 and the day-ahead optimiser in 57 % / 19 %. By duration (ERCOT): 1 h 0.56 vs 0.63, 2 h 0.67 vs 0.68, 4 h 0.77 vs 0.74.
-It cycles less (about 245 vs 300 cycles a year). Its worst month was never worse than −$0.21/kW (CAISO, December).
+It cycles less (about 244 cycles a year vs 300 for the optimiser in ERCOT, 248 vs 282 in CAISO). Its worst month was never worse than −$0.21/kW (CAISO, December).
 Baselines: perfect foresight = annual LP on RT (upper bound); DA optimiser = rolling LP that re-plans at 14:00 with DA
 prices as the forecast and follows the schedule; spread rule = GridData's (d cheapest DA hours, d dearest later);
 threshold = GridData's (dev-period RT quartiles of the node).
@@ -114,26 +118,107 @@ Error bars are on revenue (bootstrap), not on a predicted quantity, so the cover
 The **real-price variant** (same network trained on real ERCOT 2018/2020/2022 node prices) breaks the physics-only rule
 and is not released; it is reported only to show what the simulator costs or gains.
 
+## v1.1: the outage-rate leak fix (14 Nov 2026)
+
+**What leaked.** GridSim physics 1.0 took the forced and planned outage shares of coal, combined-cycle, combustion-turbine
+and gas-steam units from Texas RE's 2024 and 2025 reliability assessments. Those reports describe exam-period years.
+GridSim physics 1.1 replaces those four rows with sources published before 2023: PJM's 2017-2021 class average EFORd
+(May 2022) for forced outages and Texas RE's 2017 assessment (8.3 % scheduled outage factor) for planned ones. Its coal
+offer adder was re-fitted on dev 2019 (−5.73 $/MWh, was −6.62).
+
+| Forced / planned share | coal | CC | CT | gas steam |
+|---|---|---|---|---|
+| physics 1.0 (Texas RE 2024/2025) | 0.15 / 0.11 | 0.08 / 0.11 | 0.08 / 0.06 | 0.13 / 0.19 |
+| physics 1.1 (PJM 2017-2021, Texas RE 2017) | 0.136 / 0.083 | 0.036 / 0.083 | 0.058 / 0.083 | 0.136 / 0.083 |
+
+**How BatteryPilot touched it.** Every simulated price path: `pricesim.py` builds its thermal stack with GridSim's
+`prepare_fleet` (which fills the outage shares) and `availability(mode='random')`, and used GridSim's coal must-run and
+coal adder (hard-coded −6.62). The dev scarcity calibration (`calib.py`: ORDC μ, σ, RT noise, the Uri cold-outage
+curve), all banks and frozen sets, every rung decision and the released network were built on those outages. Real
+prices never touched them: the dev gate and the exam use real prices only.
+
+**How much it mattered** (dev years only; `training/leakcheck.py`, `training/ratchet_v1_1.json`):
+
+| Dev twins (ERCOT HB_HUBAVG statistics) | physics 1.0, v1.0 calibration | physics 1.1, v1.0 calibration | physics 1.1, v1.1 calibration | real |
+|---|---|---|---|---|
+| thermal MW out on random outage (2019 fleet of 74.1 GW) | 14.8 GW | 10.8 GW | 10.8 GW | — |
+| 2019 hours above $1,000 / $300 / $100 | 22.5 / 120 / 277 | 0 / 20 / 91 | 32.5 / 140 / 279 | 26 / 75 / 213 |
+| 2019 daily max, 90th percentile ($/MWh) | 212 | 67 | 264 | 232 |
+| 2019 2 h perfect-foresight value ($/kW-yr) | 84.0 | 27.9 | 75.6 | 103.3 |
+| 2021 (Uri masked) hours above $300 | 53.5 | 1 | 61 | 47 |
+| 2021 2 h perfect-foresight value ($/kW-yr) | 61.1 | 32.9 | 47.3 | 54.4 |
+| calibration loss (stage A) | 3.67 | 21.07 | 4.17 | — |
+| Uri: hours above $1,000 (2 draws) | 180, 166 | 156, 149 | 158, 150 | 153 |
+
+With the pre-2023 outage rates and the v1.0 calibration, scarcity almost disappears from the dev twins. The v1.0
+calibration had absorbed the extra ~4 GW of leaked outages: refitted on physics 1.1, the ORDC μ moves from −4,000 MW to
+0 MW (σ 5,000 MW, noise and DA scale unchanged; cold-outage f_max 0.55 → 0.40). On the release's own grid the best point
+sat on the opposite edge (μ −2,000, σ 6,500, loss 4.25); the grid was widened once, as in v1.0, and μ 0 is again an edge.
+
+On frozen sets with the same scenario seeds (24 ERCOT + 9 CAISO-like path-years), the v1.0 network captures 0.798 on
+physics 1.0, 0.771 on physics 1.1 with the v1.0 calibration and 0.778 on the rebuilt v4 set (physics 1.1, v1.1
+calibration). The rolling day-ahead LP scores 0.516, 0.421 and 0.504. Dev capture is on real prices and does not move
+(v1.0 network 0.637, LP 0.593).
+
+**What was done.** `pricesim.py` reads GridSim's coal must-run and adder from `gridsim.fleet.calibration()` for the
+active physics version (`GRIDSIM_PHYSICS`; 1.0 gives −6.62 and reproduces the release's calibration numbers, twin test
+and Uri hours exactly). `calib.py` was re-run on dev 2019, 2021 and Uri. The banks were rebuilt on physics 1.1: 120 ERCOT
++ 45 CAISO-like + 45 sim-v1 training path-years and frozen set v4 (24 + 9). Every rung was retrained and re-decided in
+order with the rule unchanged:
+
+| Rung | Change | v4 frozen | Dev capture | Decision |
+|---|---|---|---|---|
+| R0 | rolling day-ahead LP | 0.504 | 0.593 | kept: starting incumbent |
+| R1 | policy search on sim v1, 45 path-years | 0.607 | 0.489 | rejected: dev gate (−0.104) |
+| R2 | sim v2 with the v1.1 calibration, 80 ERCOT path-years | 0.779 | 0.638 | kept; **released as v1.1** |
+| R3 | + all 120 ERCOT and 45 CAISO-like path-years, 2,500 steps | 0.788 | 0.644 | rejected: +0.0085 < 0.01 |
+| R4 | fine-tune R3, 21-day windows, batch 64, lr 5e-4, 900 steps | 0.789 | 0.653 | rejected: +0.0098 < 0.01 |
+
+R4 missed the margin by 0.0002 and is rejected as written; R2 is released. It was trained on ERCOT paths only.
+`batterypilot_weights.npz` is now v1.1 (R2) and `PolicyNet()` loads it. The v1.0 network is kept as
+`batterypilot_weights_v1_0.npz` (`bp.WEIGHTS_V1_0`), so v1.0's exam numbers stay reproducible.
+
+**Exam, second look** (v1.1, run once on the same 48 node-years after the fix; labelled, next to the first; nothing was
+chosen with it). Mean share of perfect hindsight:
+
+| | v1.0 (first look) | v1.1 (second look) | DA optimiser | spread rule |
+|---|---|---|---|---|
+| ERCOT 2023-25, all batteries | 0.667 | 0.679 | 0.685 | 0.561 |
+| ERCOT 1 h / 2 h / 4 h | 0.559 / 0.671 / 0.769 | 0.578 / 0.680 / 0.780 | 0.629 / 0.684 / 0.742 | |
+| CAISO 2024-25, all batteries | 0.642 | 0.614 | 0.681 | 0.589 |
+| CAISO 1 h / 2 h / 4 h | 0.563 / 0.634 / 0.730 | 0.521 / 0.604 / 0.719 | 0.641 / 0.680 / 0.723 | |
+| beats the optimiser (ERCOT / CAISO cases) | 57 % / 19 % | 63 % / 11 % | | |
+| beats the spread rule (ERCOT / CAISO cases) | 89 % / 81 % | 89 % / 58 % | | |
+| cycles a year (ERCOT / CAISO) | 244 / 248 | 256 / 240 | 300 / 282 | |
+
+The verdicts do not change in ERCOT: still a loss on the pooled mean, still a win with 4 h batteries (2024 +$4.2/kW-yr,
+95 % CI [+2.1, +6.1]). CAISO gets worse, and its thin 4 h win becomes a loss (0.719 vs 0.723). v1.1 never trained on
+the CAISO-like family, because the rung that adds it (R3) missed the margin. Full tables: `training/checks/exam_report_v1_1.json`.
+Twin test, v1.1: 94 % on twins of dev 2019 vs 82 % on real 2019; 2021 twins 71-75 % vs 38 % real
+(`training/checks/twin_r2_v4.json`). The sim-to-real gap is as before.
+
 ## Limits
-- Roughly ties, does not beat, the classical day-ahead optimiser; loses with 1 h batteries and in CAISO.
+- Loses to the classical day-ahead optimiser on the pooled mean (ERCOT 0.667 vs 0.685, CAISO 0.642 vs 0.681). It wins
+  only with 4 h batteries (ERCOT 0.769 vs 0.742) and loses with 1 h batteries and in CAISO.
 - Twin test: on simulated twins of dev 2019 it captures 91–94 %, on real 2019 80 %; Uri 2021: 64–68 % vs 38 %.
   Real spikes are less predictable from DA prices than simulated ones.
 - Energy arbitrage only, hourly settlement (mean of 15-min RT), no ancillary services, no 5-min prices, price taker,
   copper-plate simulator (no congestion; nodal differences untrained).
 - CAISO family is hand-set from 5 dev months, more volatile than real CAISO.
 - Calibration hit its grid edges (μ, σ, cold f_max). Simulated DA runs 10–20 % above RT (real 1–5 %).
-- Wear parameters are assumptions; calendar ageing ignored. GridSim's outage rates come from Texas RE 2024/2025
-  published fleet averages (LIMITS D of GridSim): a possible mild leak of exam-period fleet statistics.
-  Not fixed in this release; the platform plan is to replace them with pre-2023 NERC GADS values and re-score.
+- Wear parameters are assumptions; calendar ageing ignored.
+- v1.0 trained on exam-period outage rates (GridSim physics 1.0); fixed in v1.1 (section above). The v1.1 outage rates
+  are PJM class averages, not ERCOT's own pre-2023 rates, and the v1.1 scarcity calibration again ends on a grid edge.
 - Single node-years are sensitive to the last decimals of the prices (a hold-or-trade decision near a tie can flip and
   the state of charge then follows another path): read one node-year as ±2-3 %. Pooled shares move by 0.001 at most.
 
 ## In this repository (14 Nov 2026)
 - Files: `batterypilot.py` (model, battery physics, executor, baselines; numpy + scipy), `batterypilot_weights.npz`
-  (rung R4), `demo.py`, `examples/` (3 real exam node-years), `training/` (every script as run, paths through
+  (v1.1, rung R2 of the v1.1 ladder; the default), `batterypilot_weights_v1_0.npz` (v1.0, rung R4), `demo.py`, `examples/` (3 real exam node-years), `training/` (every script as run, paths through
   `training/_paths.py`; `training/checks/` and `training/ratchet.json` are the release's logs), `lab/` (the original
   page), `web/export_instrument.py` (the site's live instrument).
-- The demo reproduces the release demo line for line. The exam was re-scored from the shipped weights on
+- With the v1.0 weights the demo reproduces the release demo line for line; it now runs the v1.1 default (golden
+  `tests/golden/batterypilot.txt` updated). The v1.0 exam was re-scored from the v1.0 weights on
   `shared/grid/data` with `training/exam.py` + `training/report.py`: every baseline reproduces in all 144
   node-year-battery rows; ERCOT 0.667 (reproduced); CAISO 0.641 vs 0.642 released (close); BatteryPilot rows differ by
   at most $0.29/kW-yr, and one CAISO case flips against the spread rule (beats it in 78 % instead of 81 %). The

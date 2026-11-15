@@ -91,10 +91,12 @@ their `training/_paths.py`.
 ## Known caveats
 
 - ERCOT publishes no 1 s frequency traces: ERCOT events have summary numbers only. GB loss labels are noisy outside
-  9 Aug 2019; dev event GB_20191203T200030 is labelled 1,788 MW but its frequency drop implies about 850 MW.
+  9 Aug 2019. Dev event GB_20191203T200030 was labelled 1,788 MW in v1.0; `gd.events` gives the corrected 854.7 MW
+  (an IFA hour-boundary ramp had been counted as a 933 MW trip; DATA.md section 5).
 - The coal/gas split follows the gas price, unlike reality (coal −43 % to +28 % by year); scarcity prices are too rare.
-- GridSim's outage-rate defaults cite Texas RE 2024/2025 reliability aggregates, published during the exam years: a
-  possible exam leak, listed first in `HANDOFF.md` P0.5 (not yet replaced).
+- Physics 1.0's outage-rate defaults came from Texas RE 2024/2025 reliability aggregates, published during the exam
+  years. Physics 1.1 (the default since 14 Nov 2026) uses pre-2023 sources; the leaked values had flattered the
+  dispatch checks (`gridsim/LIMITS.md` D). `GRIDSIM_PHYSICS=1.0` reproduces the release.
 - CAMPD gross load excludes the steam turbine of many combined-cycle units and is 5-8 % above EIA net generation.
 - EIA-930: demand = generation − interchange fails for CISO, MISO, BPAT and PJM (use the demand column); fuel
   categories changed in 2024-07; CISO's own day-ahead forecast is misaligned by 1 h.

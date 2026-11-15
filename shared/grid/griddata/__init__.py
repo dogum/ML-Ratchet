@@ -10,6 +10,7 @@
     u    = gd.campd_units(split='dev')                    # CAMPD Texas units (+ EIA links, BA, split)
     h    = gd.campd_unit('3470_WAP8', '2019-01-01', '2020-01-01')  # hourly gross load, heat input, CO2, op time
     ev   = gd.events('GB', split='exam')                   # frequency events (GB 1 s based; ERCO from ERCOT reports)
+    lc   = gd.label_corrections()                         # cited GB loss-label corrections (applied by gd.events)
     meta, t, f = gd.event_trace('GB_20190809T155233')     # 1 s trace around one GB event (contract arrays)
     meta, t, f = gd.frequency('GB', '2019-08-09 15:40', '2019-08-09 16:10')
     p    = gd.prices('ERCOT', 'HB_HOUSTON', '2023-01-01', '2024-01-01', kind='rt')
@@ -77,6 +78,15 @@ def eia930(ba, start=None, end=None, split=None, columns=None):
 def eia930_bas():
     """Per-BA coverage and quality summary (all BAs in the EIA-930 files)."""
     return json.load(open(f'{PROC}/eia930/quality_summary.json'))
+
+
+def eia930_solar_qc(ba=None):
+    """Solar quality flags per focus BA and year (data/scripts/qc_solar.py -> proc/checks/eia930_solar_qc.json):
+    offset_h (+1 = reported ng_SUN lags the sun by 1 h, -1 = leads; shift by -offset_h to align), the correlations,
+    and the share of night hours with negative reported solar. E.g. CISO leads by 1 h in 2018-21, is aligned in
+    2022-23 and lags by 1 h in 2024-25; PJM leads by 1 h until 2024. Build it with `mlratchet data grid --only baselines`."""
+    d = json.load(open(f'{PROC}/checks/eia930_solar_qc.json'))['bas']
+    return d if ba is None else d[ba]
 
 
 def interchange(ba=None, diba=None, start=None, end=None):
@@ -155,11 +165,49 @@ def campd_unit(unit_id, start=None, end=None):
 
 
 # ---------------- frequency ----------------
+LABEL_CORRECTIONS = f'{GRID_CODE}/data/sources/gb_event_label_corrections.csv'   # committed with the code
+
+
+def label_corrections():
+    """Cited corrections to GB event loss labels (data/sources/gb_event_label_corrections.csv; DATA.md section 5)."""
+    if not os.path.exists(LABEL_CORRECTIONS): return pd.DataFrame(columns=['event_id', 'column', 'old', 'new', 'source', 'loss_source', 'note'])
+    return pd.read_csv(LABEL_CORRECTIONS, dtype=str, keep_default_na=False)
+
+
+def apply_label_corrections(d):
+    """Apply label_corrections() to a GB events frame (the shipped v1.0 parquet or a rebuild; idempotent).
+    Adds loss_MW_v1 (the v1.0 label, as shipped) and loss_corrected (bool); a corrected row gets the new value,
+    loss_source from the table and the table's note + source in loss_note. A row whose current value is neither the
+    table's old nor new value is left alone with a warning."""
+    import warnings
+    d = d.copy()
+    if 'loss_MW_v1' not in d.columns: d['loss_MW_v1'] = d['loss_MW']
+    if 'loss_corrected' not in d.columns: d['loss_corrected'] = False
+    for c in ('loss_source', 'loss_note'):
+        if c in d.columns: d[c] = d[c].astype(object)
+    for _, r in label_corrections().iterrows():
+        m = (d.event_id == r.event_id).values
+        if not m.any(): continue
+        col, old, new = r['column'], float(r.old), float(r.new)
+        cur = float(d.loc[m, col].iloc[0])
+        if not (abs(cur - old) < 0.05 or abs(cur - new) < 0.05):
+            warnings.warn(f'label correction {r.event_id} {col}: value {cur} is neither {old} (old) nor {new} (new); not applied')
+            continue
+        d.loc[m, col] = new
+        if col == 'loss_MW':
+            d.loc[m, 'loss_MW_v1'] = old
+            if r.loss_source: d.loc[m, 'loss_source'] = r.loss_source
+        d.loc[m, 'loss_note'] = f'{col} corrected {old:g} -> {new:g}. {r.note} Source: {r.source}'
+        d.loc[m, 'loss_corrected'] = True
+    return d
+
+
 def events(region='GB', split=None):
     """Frequency events. GB: detected in NESO 1 s data (largest 10 s fall <= -0.15 Hz), with 1 s metrics (f0, nadir,
     RoCoF), loss label (NESO report, or Elexon REMIT + B1610), NESO outturn inertia and generation mix.
+    GB loss labels pass through apply_label_corrections() (loss_MW_v1 keeps the v1.0 label).
     ERCO: ERCOT monthly Operations Reports (MW loss, delta f, min/max f, load, IRR share, inertia MW*s)."""
-    if region == 'GB': d = pd.read_parquet(f'{PROC}/frequency/gb_events.parquet')
+    if region == 'GB': d = apply_label_corrections(pd.read_parquet(f'{PROC}/frequency/gb_events.parquet'))
     elif region in ('ERCO', 'ERCOT'): d = pd.read_parquet(f'{PROC}/frequency/ercot_events.parquet'); region = 'ERCO'
     else: raise ValueError('region must be GB or ERCO')
     ev = splits()['events'].get(region, {})

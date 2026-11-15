@@ -116,3 +116,76 @@ for the exam step, single thread). The report is identical to `training/exam_rep
 aside): every exam number in `model.yaml` and the card reproduces. The paragraph above saying the exam was not reproduced
 is superseded; it stays as the record of that pass.
 
+
+## 14 Nov 2026 — GridSim outage defaults from the exam years (HANDOFF P0.5): checked, no decision changes
+
+**What leaked.** GridSim v1.0's default forced and planned outage shares for coal, CC, CT and gas steam came from Texas
+RE's 2024/2025 assessments (exam-period data). GridSim physics 1.1 (default since commit a4a24d4) uses pre-2023 sources:
+forced/planned coal 0.15/0.11 -> 0.136/0.083, CC 0.08/0.11 -> 0.036/0.083, CT 0.08/0.06 -> 0.058/0.083, gas steam
+0.13/0.19 -> 0.136/0.083. The handoff said PlantDetective did not use outage rates; it did, in two places.
+
+**How PlantDetective touched them.**
+- `simbank_gs.py` dispatches 5 generated systems (job seeds 0-4) with `dispatch(outages='random')`; `gswrap.py` turns the
+  outages into derates. The outage hours of every unit in those systems follow `tech_default('efor'/'planned_frac')`.
+- That reached bank v2 in two ways. (1) The 69 GridSim-dispatched units (19, 24, 12, 7, 7 per system). (2) The GridSim system price is the
+  price background of 37 of the 110 self-commitment shards (592 units; `bank_dp.shard` draws it with probability 0.3).
+  The price is also a network input for those windows. Bank v2 = 1,760 shard units + 69 GridSim units = 1,829, as
+  logged; the job seeds are not recorded, but seeds 0-4 give exactly this count.
+- Bank v0 (rung R0) was GridSim units only (3 systems); bank v1 (R1) also re-emulated each job's units inside every
+  shard on a GridSim background. Neither bank nor their networks ship, so those were not rebuilt.
+- Not touched: `bank_dp.py`'s own outage ranges for self-committed units (EFOR coal 0.03-0.12, CC 0.02-0.08, CT
+  0.02-0.08, gas steam 0.03-0.15; planned 0-0.10, 0-0.08, 0-0.05, 0-0.12) do not read GridSim. No source is given for
+  them in the code, the card or the build notes, so they cannot be shown to be pre-exam. They are wide uniform priors and
+  are not copies of the v1.0 values: the v1.0 coal, CC and CT forced shares sit at or above their upper ends. The
+  ERCOT-price shards, the twin test (fixed EFOR = planned = 0.04), the dev calibration, the dev gate and the exam do not
+  call GridSim's outage model.
+- Other inputs checked. `generate_fleet` sizes the GridSim units from `generator.SIZE` (EIA-860 2019-2024; the
+  coordinating check found the exam years move its quantiles by at most 3 %). Its heat-rate medians (EIA-923 2017-2023)
+  are overwritten by PlantDetective's own ranges for the four target technologies. `simunits.py` gives "EIA-860 sizes"
+  and "EIA-923 operating heat rates" without years. `prepare_fleet`'s heat-rate window is set from the dispatch dates
+  (train years), not the default. Prices, gas and EIA-930 shapes are train years only (asserted in code).
+  `realdata.context` takes each generator's latest EIA-860 report (up to report year 2025) for real units, including dev
+  units. With reports up to 2022 only, 4 dev units' facts change: 2 minimum loads (130 -> 122 MW, 300 -> 290 MW), and 2
+  CTs that came online in 2024 lose their facts. The dev gate moves from 0.2147030 to 0.2147042.
+
+**How much it mattered.** Bank v2 was rebuilt twice with the release's own scripts (same seeds), once per physics
+version, in `work/p05/` (`training/outage_check.py`; results in `training/checks/outage_physics_1_1.json`). Each
+92-day MILP took 17 s to 10 min here.
+- GridSim prices (mean $/MWh, v1.0 -> v1.1): 29.5 -> 28.1, 81.8 -> 19.0, 26.6 -> 18.2, 285 -> 60, 338 -> 102. Hours
+  above $1,000: 0 -> 0, 19 -> 4, 2 -> 0, 83 -> 22, 209 -> 94. Medians move by at most $1.1/MWh. Fewer outages mean far
+  fewer scarcity hours in 3 of the 5 systems.
+- The 73 ERCOT-price shards are byte-identical under both versions. The 37 GridSim-price shards and the 5 GridSim-unit
+  shards differ. Usable units (ran at least once): 1,710 -> 1,678. Windows: 20,520 -> 20,136. Frozen-set windows:
+  2,712 -> 2,700. Of these, 60 are GridSim units and 720 -> 708 are shard units on GridSim prices (29 % of the frozen
+  set together).
+- Targets (one row per unit): ERCOT-price units identical. GridSim units (50 -> 47): median starts/yr 53.6 -> 59.5, CF
+  0.15 -> 0.19, every target's KS distance <= 0.13. Shard units on GridSim prices (492 -> 463): median starts/yr
+  29.8 -> 23.8, full-load heat rate 11.29 -> 11.29, KS <= 0.13.
+- Input features (standardised mean difference): ERCOT-price windows <= 0.02 sd. GridSim-price windows: mean 0.06 sd,
+  largest 0.67 sd (top load-histogram bin) and 0.46 sd (an implied-heat-rate bin, price / gas).
+- Frozen-set skill of the shipped networks (rebuilt v1.0 set -> v1.1 set): R4 ensemble 0.492 -> 0.501; members (the R2
+  recipe, seeds 0-2) 0.467 -> 0.472, 0.476 -> 0.488, 0.473 -> 0.483. The logged values on the original set were 0.501
+  (R4) and 0.475 (R2). The rebuild differs from the build because of the MILP time limits; it also has 5 fewer usable
+  units.
+- Dev gate (40 real dev units): 0.21470 under both versions, the logged value. It cannot depend on GridSim's outage
+  model.
+
+**Decisions.**
+- R4 vs R2: ensemble minus seed-0 member +0.025 (v1.0) and +0.029 (v1.1), margin 0.01. Ensemble minus the best member
+  +0.016 and +0.013. Kept either way.
+- R3: rejected by the dev gate (-0.009, tolerance 0.005), which is unchanged. On val it needed a +0.015 relative swing.
+  The largest swing between same-recipe networks here is 0.007.
+- R2 vs R1 (+0.210) and R1 vs R0 (+0.470): an order of magnitude beyond any shift seen here.
+
+No rung changes, so the release stands. No bank was rebuilt for training, no network was retrained, and the exam was
+not re-run. The 1.0-built bank v2 remains the training record. A future bank should be built with physics 1.1.
+
+## 14 Nov 2026 — wording corrections (honesty audit)
+
+- `MODEL_CARD.md` limits and `model.yaml` losses said that from a year of history the plain counts are "as good" as the
+  network for starts and run lengths. They are better (`training/exam_report.txt`, mode ctx, year windows): starts per
+  year 27.8 % median error for the count vs 31.0 % for the network; median run 18.2 % vs 33.9 % (the count wins at every
+  window length). Start shares are about even (hot 4.8 vs 5.3 pt, warm 7.3 vs 7.2, cold 6.4 vs 6.0). Reworded to say so.
+- `MODEL_CARD.md`: the line after the ratchet table had no blank line before it and rendered as a table row. Fixed.
+- `model.yaml` `next`: "re-run the 395-unit exam in this repository" was removed. It was done (commit d73d2c7, identical
+  on all 190 lines; entry above).

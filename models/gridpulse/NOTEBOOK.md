@@ -94,3 +94,46 @@ Phase 2 GridSim project in ML Ratchet. From the 1 s grid frequency after a trip:
   gets 24.8 %, slightly better than with demand (25.9 %).
 - **Live instrument.** `web/export_instrument.py` exports the network (float16) and real GB exam windows for the site;
   the browser port runs the same forward pass (see `site/src/instruments/gridpulse/`).
+
+## 14 Nov 2026 — dev label of 3 Dec 2019 corrected in GridData (HANDOFF P0.7)
+- **Where 1,788 MW came from.** GridData's v1.0 label for GB_20191203T200030 was 854.7 MW (Spalding CCGT T_SPLN-1,
+  REMIT unplanned "Plant Fault" 870 -> 0 MW from 20:00Z; Elexon B1610 427.35 MWh in SP40 = 854.7 MW) plus 933 MW
+  "interconnector import lost (INTFR)" from FUELINST. FUELINST shows IFA ramping 1,900 -> 204 MW over 19:45-20:10 UTC,
+  an hour-boundary ramp like those at 17:00, 19:00 and 22:00 that evening, not a trip. The card's earlier wording
+  ("REMIT capacity") was wrong about the source; the 854 MW used on dev was right.
+- GridData now applies a cited correction (`shared/grid/data/sources/gb_event_label_corrections.csv`):
+  `gd.events` gives 854.7 MW, with `loss_MW_v1` = 1,787.7.
+- **Dev work:** twins, the dev gate and widening used `evaluate.DEV_LOSS` / `twin_gb.LOSSES` (854 MW) and are unchanged.
+- **Exam re-scored** with `training/rescore_release.py` (release weights, output to a scratch work folder, not
+  `training/checks/exam.json`): every GridPulse number is identical to the release. Only the dumb "dev median loss"
+  baseline moves, because the dev median falls from 1,142 to 1,066 MW: medium labels 32.7 % -> **26.8 %**, low labels
+  112 % -> **97.8 %**. Verdicts unchanged (medium: 25.9 % still beats 26.8 %, 27.1 %, 27.6 %; low: still a loss to
+  the RoCoF formula at NESO inertia, 29.3 %). model.yaml and MODEL_CARD.md keep the released baseline and add the
+  corrected one, dated.
+
+## 14 Nov 2026 — the GridSim outage-rate leak (HANDOFF P0.5): GridPulse is not exposed
+
+GridSim v1.0's default forced and planned outage shares for coal, combined cycles, gas turbines and gas steam came from
+Texas RE's 2024/2025 assessments (data from the exam years). GridSim physics 1.1 replaces them with pre-2023 sources
+(`shared/grid/gridsim/gridsim/fleet.py`, `OUTAGE_DEFAULTS`). GridPulse never read them:
+
+- Its training states come from `gridsim.generate_states` through `training/gpsim.py`. `generate_fleet` and
+  `generate_states` take only pmin, ramp, minimum up/down and start heat from the technology defaults, never the outage
+  shares, and GridPulse runs no dispatch.
+- The one GridSim number that was fitted with the leaked availability is ERCOT's effective damping (2.5 %/% in v1.0,
+  fitted on the 5 ERCOT dev events with states from the calibrated v1.0 dispatch; 2.75 %/% when re-fitted on v1.1).
+  GridPulse's p0 prior started from it, but every rung (r1-r6) used p1 or p2, whose ERCOT damping (median 1.0 %/%) was
+  re-fitted on GridPulse's own dev twins of `generate_states` states, which do not depend on it.
+- The ERCOT summary head is trained on the same states.
+
+Nothing is retrained and no number changes.
+
+## 14 Nov 2026 — corrections from a site-wide audit
+
+- The card said the initial RoCoF check holds "within 0.1 %"; `training/checks/physics.json` gives 0.10 % (GB) and
+  0.12 % (ERCOT), so the card now gives both.
+- The Elexon REMIT link pointed at the raw API, which answers HTTP 400 to a browser; it now points at the dataset page.
+- The ratchet heading of the card wrapped onto a second line and rendered as body text; it is a heading again.
+- `help_wanted`: FNET/GridEye was checked from this machine (no public data download; event data go to consortium
+  members), replacing the note that its site had timed out from the build machine.
+No exam number or verdict changes.

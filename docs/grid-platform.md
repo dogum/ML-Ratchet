@@ -62,13 +62,23 @@ The simulator's measured gaps are its next rungs, each with a size and a "done w
 - Frequency response is fitted on one 2019 event: unfitted GB events come out about 30 % too deep, and the 2023-2025
   grids, with gigawatts of batteries, are stiffer than the simulator.
 - Only ERCOT is dispatched and calibrated; the other seven regions have data only.
-- A possible exam leak: the default outage rates cite Texas reliability aggregates published during the exam years.
-  They are to be replaced with pre-2023 values before any model is re-trained.
+- An exam leak, now fixed: physics 1.0's default outage rates came from Texas reliability statistics for 2024-2025.
+  Physics 1.1 uses sources published before 2023. The leaked values had made the checks look better: with clean
+  defaults the held-out 2022 coal error grows from +28 % to +34 % and scarcity hours fall further below the real ones.
 
 The models show where those gaps bite. Physics-trained models win on the physics-heavy part and lose where the real
-data has reporting quirks: DemandCast beats the grid operators' own day-ahead demand forecasts but loses on solar
-(timestamp shifts in EIA-930); PlantDetective reads coal and gas-steam heat rates far better than EIA-923 but loses on
-combined cycles (CAMPD reports only the gas turbine's output for many of them).
+data has reporting quirks, and they also lose on physics they model too simply:
+
+- DemandCast beats the grid operators' own day-ahead demand forecasts in 6 of 8 regions with the weather that actually
+  happened, an upper bound; with archived forecast weather (2024) it wins in only 4 of 8. It loses on solar, because
+  EIA-930 solar timestamps moved by an hour between years.
+- PlantDetective reads coal and gas-steam heat rates far better than EIA-923 but loses on combined cycles: its 3 dev
+  combined-cycle plants were cogeneration or reported only the gas turbine, while most exam units report the whole
+  block, so the dev calibration pushed its combined-cycle heat rates too high.
+- GridPulse's 10 s nadir and 60 s forecasts lose to simply holding the lowest or the current value: the simulator's
+  response after the first seconds (secondary response, market actions) is too simple.
+- BatteryPilot loses to the classical day-ahead optimiser in both markets (ERCOT 0.667 vs 0.685 of perfect hindsight,
+  CAISO 0.642 vs 0.681); it beats it only with 4-hour batteries.
 
 ## Using it
 

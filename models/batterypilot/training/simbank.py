@@ -1,6 +1,11 @@
 """Build banks of simulated price path-years (resumable; one npz per path).
 
     python3 simbank.py <bank_name> <n_paths> <seed0> [--ba ERCO] [--years 2018,2020,2022] [--sim v2]
+                       [--calib auto|<file>] [--part k/n] [--prefix p]
+
+GridSim physics comes from $GRIDSIM_PHYSICS (1.1 by default; 1.0 = as released).  --calib auto reads the scarcity
+calibration of that physics version (calib_file()); --part k/n builds only the paths with index % n == k (parallel
+builds of one bank give the same files as one build).
 
 Scenario per path: a training-input year (real inputs, fleet of that year) with random demand growth, wind and
 solar build-out, system storage, gas price level, retirements, ORDC design (X, cap) and jittered dev-calibrated
@@ -9,7 +14,7 @@ scarcity / noise parameters.  Scenarios with absurd scarcity (> 400 h above $100
 import argparse, json, os, sys, time
 import numpy as np
 import _paths  # noqa: E402  (this folder, GridSim and GridData on sys.path; outputs to WORK)
-from pricesim import Engine, load_inputs, fundamentals, prices, DEFAULTS
+from pricesim import Engine, load_inputs, fundamentals, prices, DEFAULTS, physics_version
 from battery import Battery
 from strategies import pf_daily
 from features import rolling_scale, _rollmax
@@ -17,10 +22,20 @@ from features import rolling_scale, _rollmax
 ROOT = _paths.WORK   # was the sandbox workspace grid/batterypilot
 
 
-def calibrated(sim='v2'):
+def calib_file(version=None):
+    """BatteryPilot's dev calibration (calib.py) for a GridSim physics version.  1.0: WORK/data/calibration.json if
+    present, else the release's (training/checks/calibration.json).  1.1: WORK/data/calibration_v1_1.json."""
+    v = version or physics_version()
+    if v == '1.0':
+        fn = f'{ROOT}/data/calibration.json'
+        return fn if os.path.exists(fn) else os.path.join(_paths.SRC, 'checks', 'calibration.json')
+    return f'{ROOT}/data/calibration_v{v.replace(".", "_")}.json'
+
+
+def calibrated(sim='v2', path=None):
     if sim == 'v1':     # GridSim energy prices only: no scarcity curve, no cold outages, no RT noise
         return dict(DEFAULTS, mu=0.0, sigma=1.0, X=-1e9, cold_fmax=0.0, rt_noise_sd=0.0, floor_share=0.8)
-    c = json.load(open(f'{ROOT}/data/calibration.json'))['calibrated']
+    c = json.load(open(path or calib_file()))['calibrated']
     return dict(DEFAULTS, **c)
 
 
@@ -111,17 +126,20 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('bank'); ap.add_argument('n', type=int); ap.add_argument('seed0', type=int)
     ap.add_argument('--ba', default='ERCO'); ap.add_argument('--years', default='2018,2020,2022')
-    ap.add_argument('--sim', default='v2')
+    ap.add_argument('--sim', default='v2'); ap.add_argument('--calib', default='auto')
+    ap.add_argument('--part', default='0/1'); ap.add_argument('--prefix', default='p')
     a = ap.parse_args()
+    k, nparts = (int(x) for x in a.part.split('/'))
+    cfile = None if a.sim == 'v1' else (calib_file() if a.calib == 'auto' else a.calib)
     od = f'{ROOT}/data/banks/{a.bank}'; os.makedirs(od, exist_ok=True)
     years = [int(y) for y in a.years.split(',')]
-    cal = calibrated(a.sim)
+    cal = calibrated(a.sim, cfile)
     inputs = {}
     eng_cache = {}
     t0 = time.time()
     for i in range(a.n):
-        fn = f'{od}/p{i:04d}.npz'
-        if os.path.exists(fn):
+        fn = f'{od}/{a.prefix}{i:04d}.npz'
+        if os.path.exists(fn) or i % nparts != k:
             continue
         rng = np.random.default_rng(a.seed0 * 100003 + i)
         year = years[i % len(years)]
@@ -134,7 +152,9 @@ def main():
             if h1k <= 400 and mean <= 300:
                 break
         out = finish(o)
-        s.update(h1000=h1k, mean_rt=mean, mean_da=float(o.da.mean()), tries=tries,
+        s.update(h1000=h1k, mean_rt=mean, mean_da=float(o.da.mean()), tries=tries, physics=physics_version(),
+                 coal_adder=next(iter(eng_cache.values())).coal_adder,
+                 calib=os.path.basename(cfile) if cfile else 'none',
                  pf2_kWyr=float(out['pf2'].sum() / 1000))
         np.savez(fn + '.tmp.npz', meta=json.dumps(s), **out)
         os.replace(fn + '.tmp.npz', fn)
