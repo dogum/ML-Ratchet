@@ -125,7 +125,7 @@ Every physics change must:
    - MATPOWER cases including ACTIVSg: BSD / CC-BY per case.
    - RTS-GMLC: BSD-3.
    - Open-Meteo: CC-BY 4.0.
-5. **Possible exam leak to remove.** GridSim's outage-rate defaults cite Texas RE's 2024/2025 reliability-assessment aggregates, published during the exam years. Replace them with pre-2023 NERC GADS values, re-run the checks, and re-score. BatteryPilot's model card notes this; GridPulse and PlantDetective did not use outage rates.
+5. **Possible exam leak to remove.** GridSim's outage-rate defaults cite Texas RE's 2024/2025 reliability-assessment aggregates, published during the exam years. Replace them with pre-2023 NERC GADS values, re-run the checks, and re-score. BatteryPilot's model card notes this; GridPulse and PlantDetective did not use outage rates. *(Corrected 14 Nov 2026: PlantDetective did, through its GridSim-dispatched units and GridSim prices; see the status above and its NOTEBOOK.)*
 6. **Upstream fixes found by the Phase 2 builds.** Add each behind a flag, then re-run the checks.
    - **GridPulse:**
      - `_as_events` mis-handles a list of per-state loss lists (pass an object array).
