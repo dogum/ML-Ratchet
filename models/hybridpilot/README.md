@@ -163,6 +163,18 @@ Physics changed (v1 → v2), so the sets were rebuilt and every v1 decision re-t
 
 Physics rung first, decided on dev only: HybridPilot v2.0 driving the dev twins on v3.1 vs v2 (84 trips) moved power-split fuel from -4.6 to -2.4 % of the logs, the engine-on gap from -9.3 to -4.4 points and starts from 3.67 to 2.66 per km (real 2.32); mild +2.9 -> +3.4 %; plug-ins unchanged. Physics changed, so R0-R15 were re-scored in order with their v2 networks and settings: the same decisions as on v2 (R8, the v2.0 release, kept). R16-R17 settings were chosen on a 190-trip training-distribution probe set, never on dev or exam. The ladder was closed and the release choice committed (d9fd0fd) before the exam.
 
+### v2.2 — round 2 on RoadSim physics v3.1 (15 Nov 2026): charge holding
+
+**Objective:** Frozen skill as v2.1 (share of the rule strategies' gap to DP closed, strata weigh the same) on the same frozen set (frozen_106_v3_1), and charge holding (share of trips that hold charge within their window, the exam's holding definition) on the frozen and dev trips together (182 trips)  
+**Rule:** Rule v2.2, fixed before R19 was scored. Keep if (A) the frozen skill beats the incumbent by more than 0.01 AND the dev gate passes (unchanged from v2.1), OR (B) charge holding over the frozen and dev trips together rises by at least 2 points AND neither set's holding falls AND the frozen skill is no more than 0.01 below the incumbent's AND dev % of DP is no more than 0.2 points worse.
+
+| Rung | Change | Frozen-set score | Decision | Why | Frozen % of DP | Frozen holds | Dev % of DP | Dev holds | Frozen starts/km |
+|---|---|---|---|---|---|---|---|---|---|
+
+<sub>Columns after *Why*: Frozen set (% of DP, charge holding), dev set (% of DP, charge holding), frozen engine starts per km.</sub>
+
+Why a second path: v2.1 holds charge on 93 % of exam trips against 96 % for v2.0 and 97 % for A-ECMS, and the same drift shows before the exam: v2.1 holds 87 % of frozen trips (A-ECMS 95 %) and 95 % of dev trips (A-ECMS 97 %). The frozen-skill margin measures fuel only, so a rung that fixes holding at no fuel cost could never pass path A. Settings are chosen on training-distribution probe sets (probe, and a new 80-trip mild probe), never on dev or exam. The starting incumbent is v2.1 (R17 of the v2.1 ladder: frozen skill 0.704; frozen + dev holding 164 of 182 trips, 90.1 %).
+
 Raw per-rung logs are in [`training/`](training/).
 
 ## Physics

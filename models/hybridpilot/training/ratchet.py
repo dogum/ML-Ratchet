@@ -5,6 +5,11 @@ averaged over the vehicle strata (0 = rule, 1 = DP). Kept if
   frozen skill > incumbent + 0.01  AND  dev gate: dev mean %DP >= incumbent - 0.2 pp and dev CS-holding rate >= incumbent - 3 pp.
 usage: ratchet.py NAME CKPT_OR_- 'json params' 'note'
 (physics v2 log: WORK/ratchet_v2.json; v1's raw log stays in training/ratchet.json)
+
+Rule v2.2 (fixed 15 Nov 2026, round 2, before R19 was scored; HP_RULE=v2.2): a rung is also kept on a second path
+aimed at charge holding:  charge holding over the frozen and dev trips together rises by at least 2 points AND
+neither set's holding falls AND frozen skill >= incumbent - 0.01 AND dev %DP >= incumbent - 0.2 pp.
+The first path (frozen skill > incumbent + 0.01 AND the dev gate) is unchanged. Rungs scored before R19 keep v2.1.
 """
 import sys, os, json, time, pickle
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -15,6 +20,8 @@ from hp_env import ROOT, PTAG
 
 RJ = f'{ROOT}/ratchet_v2{PTAG}.json'          # physics v2: ratchet_v2.json; other physics: ratchet_v2_<p...>.json
 MARGIN = 0.01
+RULE = os.environ.get('HP_RULE', 'v2.1')
+HOLD_MARGIN = 0.02      # rule v2.2, second path: pooled frozen + dev charge holding
 
 
 def load():
@@ -73,7 +80,7 @@ if __name__ == '__main__':
     name, ckpt, params, note = sys.argv[1], sys.argv[2], json.loads(sys.argv[3]), sys.argv[4]
     rungs = load()
     t0 = time.time()
-    entry = dict(rung=name, ckpt=ckpt, params=params, note=note, physics=sets.PHYS, **score(name, ckpt, params))
+    entry = dict(rung=name, ckpt=ckpt, params=params, note=note, physics=sets.PHYS, rule=RULE, **score(name, ckpt, params))
     prior = [r for r in rungs if r['rung'] != name]
     kept, why = decide(entry, prior)
     entry['kept'] = kept; entry['decision'] = why; entry['wall_s'] = time.time() - t0

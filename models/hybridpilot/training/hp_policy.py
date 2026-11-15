@@ -365,6 +365,14 @@ class HybridPilot(HybridStrategy):
         self.cubic = float(p.get('cubic', 0.0))        # ECMS soft-window factor: s *= 1 - cubic x^3, x = (SOC - mid) / half
         self.s_prior = p.get('s_prior')                # {arch or 'bus' / 'mild': (weight, s0)}: s <- (1 - w) s + w s0
         self.ef = None
+        # (15 Nov 2026, round 2; off by default) per-class feedback settings: {prior_key() or 'phev': {Kp, Ki, fb_dead}}
+        cp = p.get('cls_fb') or {}
+        if cp:
+            v = veh
+            key = 'mild' if p.get('engine_on_moving') else (('bus_' + v.arch) if v.cls == 'bus' else v.arch)
+            over = cp.get(key) or (cp.get('phev') if v.arch.startswith('phev') else None) or {}
+            self.Kp = over.get('Kp', p.get('Kp', 0.0)); self.Ki = over.get('Ki', p.get('Ki', 0.0))
+            self.fb_dead = float(over.get('fb_dead', self.fb_dead))
         self.onoff = p.get('onoff', 'net')
         self.pon_w = p.get('pon_w', 0.0)
         self.min_on_s = p.get('min_on_s', self.min_on_s)

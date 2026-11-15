@@ -78,3 +78,14 @@ ladders:
       - { id: R16, change: "Dead band +-0.03 on the proportional SOC feedback (charge-sustaining term acts on drift, not on short swings)", sim: 0.689, decision: kept, why: "+0.027 vs R8; dev gate passed.", metrics: [99.19, "87%", 99.16, "95%", 2.2] }
       - { id: R17, change: "R16 + a constant equivalence factor in place of the network's s for buses (series 2.8, P2 2.6) and mild P1 hybrids (2.8), fitted on training-distribution probe simulations", sim: 0.704, decision: released, why: "+0.015 vs R16; dev gate passed. Released as v2.1.", metrics: [99.22, "87%", 99.28, "95%", 2.19] }
       - { id: R18, change: "Re-teach on physics v3.1 banks (v2.0 recipe: 800 teacher + 600 DAgger trips), R17's rule", sim: 0.698, decision: rejected, why: "-0.006 vs R17.", metrics: [99.22, "88%", 99.13, "93%", 2.18] }
+  - name: "v2.2 — round 2 on RoadSim physics v3.1 (15 Nov 2026): charge holding"
+    objective: "Frozen skill as v2.1 (share of the rule strategies' gap to DP closed, strata weigh the same) on the same frozen set (frozen_106_v3_1), and charge holding (share of trips that hold charge within their window, the exam's holding definition) on the frozen and dev trips together (182 trips)"
+    rule: "Rule v2.2, fixed before R19 was scored. Keep if (A) the frozen skill beats the incumbent by more than 0.01 AND the dev gate passes (unchanged from v2.1), OR (B) charge holding over the frozen and dev trips together rises by at least 2 points AND neither set's holding falls AND the frozen skill is no more than 0.01 below the incumbent's AND dev % of DP is no more than 0.2 points worse."
+    margin: 0.01
+    dev_gate: "Dev % of DP ≥ incumbent − 0.2 pt; dev charge-holding ≥ incumbent − 3 pt (path A) or not lower (path B) (76 dev trips)"
+    frozen_sets: [frozen_106_v3_1]
+    scored_on: frozen_106_v3_1
+    note: "Why a second path: v2.1 holds charge on 93 % of exam trips against 96 % for v2.0 and 97 % for A-ECMS, and the same drift shows before the exam: v2.1 holds 87 % of frozen trips (A-ECMS 95 %) and 95 % of dev trips (A-ECMS 97 %). The frozen-skill margin measures fuel only, so a rung that fixes holding at no fuel cost could never pass path A. Settings are chosen on training-distribution probe sets (probe, and a new 80-trip mild probe), never on dev or exam. The starting incumbent is v2.1 (R17 of the v2.1 ladder: frozen skill 0.704; frozen + dev holding 164 of 182 trips, 90.1 %)."
+    columns_source: Frozen set (% of DP, charge holding), dev set (% of DP, charge holding), frozen engine starts per km
+    columns: ["Frozen % of DP", "Frozen holds", "Dev % of DP", "Dev holds", "Frozen starts/km"]
+    rungs: []

@@ -161,11 +161,26 @@ def build_probe():
     return out
 
 
+def build_probe_mild():
+    """(15 Nov 2026, round 2) 80 cases from the TRAINING distribution, mild P1 hybrids only: the 40 mild training
+    vehicles (train_fleet('gen+mild'), mild_variant), training routes, a new seed. The round-1 probe held 10 mild trips,
+    too few to show charge drift; this set is for choosing the mild rule with charge holding in the objective. Never
+    dev or exam data."""
+    fleet = [sp for sp in train_fleet('gen+mild') if is_mild(sp)]
+    tr_v, _ = train_noise_partition()
+    ved = ved_routes('train_noise', vehicles=tr_v)
+    cs = train_cases(80, 8600, role='probe_mild', fleet=fleet, ved=ved)
+    for c in cs:
+        c['case_id'] = c['case_id'] + '|' + c['spec']['id']
+    return cs
+
+
 def get(name):
     fn = f'{ROOT}/data/set_{name}_{PHYS}.pkl'
     if os.path.exists(fn):
         return pickle.load(open(fn, 'rb'))
-    cases = {'frozen': build_frozen, 'dev': build_dev, 'exam': build_exam, 'tune': build_tune, 'probe': build_probe}[name]()
+    cases = {'frozen': build_frozen, 'dev': build_dev, 'exam': build_exam, 'tune': build_tune, 'probe': build_probe,
+             'probe_mild': build_probe_mild}[name]()
     pickle.dump(cases, open(fn, 'wb'))
     return cases
 
