@@ -1,4 +1,4 @@
-# TripDetective v2.0: model card
+# TripDetective v2.1: model card
 
 **What it does.** Reads one or more 1 Hz trip logs of a light-duty vehicle (speed plus whatever an OBD logger has:
 fuel rate, rpm, HV battery current/voltage/SOC, A/C power, with route grade and weather) and infers: architecture
@@ -8,7 +8,8 @@ energy ledger (aero, rolling, grade, friction braking, powertrain losses, auxili
 mass of a city bus from its power log.
 
 **Trained only on simulation (RoadSim physics v2). Graded on 350 real VED cars and 5,847 real ZTBus legs never used
-for choosing anything.** v2.0 was rebuilt on 14 Nov 2026 (Phase D); v1.0 (12 Nov 2026, physics v1) is described at
+for choosing anything.** v2.1 (15 Nov 2026) keeps v2.0's networks and adds an engine-stop
+constraint and a day-relative bus calibration (section below). v2.0 was rebuilt on 14 Nov 2026 (Phase D); v1.0 (12 Nov 2026, physics v1) is described at
 the end and in `NOTEBOOK.md`.
 
 ## Inputs / outputs
@@ -19,7 +20,40 @@ the end and in `NOTEBOOK.md`.
   normal equations of a road-load regression of the source power (15 numbers, see the physics head).
 - Windows of at most 1,024 s; longer trips are split and pooled.
 - Output: see README. Mass is the total moving mass; curb = total - 136 kg (RoadData's convention).
-- Bus: `TripDetectiveBus().read_leg(leg)` with v, total DC power (`power_W`), grade, T_amb, rho_air -> mass with a 1σ range.
+- Bus: `TripDetectiveBus().read_mission(legs)` (v2.1; one bus-day) or `.read_leg(leg)`, each leg with v, total DC power (`power_W`), grade, T_amb, rho_air -> mass with a 1σ range.
+
+## v2.1 (15 Nov 2026): what changed and how it scored
+
+Both changes fix exam losses whose notes were public, so each was first shown on dev, then fixed and judged on dev
+only (NOTEBOOK.md, ratchet.yaml ladders "v2.1").
+
+- **Engine-stop constraint (light duty).** A conventional engine is geared to the wheels and cannot stop while the car
+  moves. If the logged rpm is under 100 at v > 5 m/s on more than 5 % of the pooled moving seconds, 'conv' (and the
+  conventional strategies) is ruled out and the rest renormalised. The 5 % comes from simulation: 5,814 simulated
+  conventional trips through the OBD emulator never exceed 3.3 %. Dev: the 1.5 L hybrids VED_435 / VED_440 stop the
+  engine on 13-14 % of moving seconds, while no simulated HEV goes below 17 %, so the network called VED_435
+  conventional. Dev type per trip 0.910 -> 0.943, per car 15/16 -> 16/16; mass and engine outputs unchanged. The frozen
+  set cannot see it (+0.0002), so the rule for output constraints was changed in the open (ratchet.yaml).
+- **Physics v3.1 frozen set.** p3_val_v7 rebuilds p2_val_v6 on RoadSim physics v3.1; all v2.0 rungs re-scored in order,
+  no decision changed. Retraining on a v3.1 bank (p3r16) gave +0.008 and no dev type gain: rejected. The network is
+  still v2.0's (physics v2).
+- **Bus: day-relative calibration.** On 757 dev gate legs the bus network's day mean does not follow passengers
+  (r 0.05 over 142 bus-days) but its leg-to-leg changes do (r 0.47). v2.1 reads all legs of a bus-day together:
+  mass = 20,213 kg + 0.292 x (reading - day mean) + 818 kg x (log b0 - day mean log b0), b0 = the leg's road-load fit;
+  three numbers fitted on dev, chosen by 5-fold cross-validation over dev missions (CV MAE 426 kg vs 469 kg for the
+  dev median). 1σ = 520 kg. A leg alone reads 20,213 kg.
+
+| exam row (scored once, 15 Nov 2026) | v2.1 | v2.0 (same exam) | classical | dumb | verdict |
+|---|---|---|---|---|---|
+| VED type, per car (350) | 99.4 % (348) | 97.1 % | rule 99.4 % (same 2 misses) | 68.6 % | tie (was loss) |
+| VED type, per trip (10,186) | 94.2 % | 91.5 % | rule 96.7 % | 63.1 % | loss |
+| ZTBus bus mass per leg (5,847), mean abs error | 444 kg | 1,204 kg (752 with dev level) | LSQ 3,547 kg | dev median 453 kg | win (narrow) |
+| curb mass, engine, road load, Leafs, EPA families | unchanged (same networks) | | | | as v2.0 |
+
+Bus detail: correlation with passengers 0.30, slope 0.15 (the map shrinks toward the dev level), bias +161 kg, 1σ
+coverage 66 % (2σ 94 %). By season (v2.1 / dev median): autumn 392 / 431, summer 382 / 402, winter 468 / 485,
+spring 548 / 515 kg (a loss). By bus: B208 374 / 412, B183 478 / 474 kg (a loss). 288 exam legs are alone in their
+bus-day and read the dev level. Fine architecture agreement with RoadData on medium-confidence cars 34 % -> 41 %.
 
 ## Physics and simulator
 RoadSim **physics v2** (`options='roadsim-physics-v2'`, pinned in `training/common.py`): the v1 road loads plus a

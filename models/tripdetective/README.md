@@ -1,11 +1,11 @@
 <!-- Generated from model.yaml and ratchet.yaml by `mlratchet readme --write`. Edit those, not this file. -->
-# TripDetective <sub>v2.0</sub>
+# TripDetective <sub>v2.1</sub>
 
 > **What car was this? Read it from one trip log.**
 
 *From a car's trip log alone, what kind of powertrain is it, how heavy, what engine, how much drag — and where did the energy go?*
 
-TripDetective reads one or more 1 Hz trip logs of a light-duty vehicle — speed plus whatever an OBD logger has — and infers its architecture, total mass, engine size, CdA, rolling resistance, hybrid strategy and each trip's energy ledger, every output with an error bar. It learned only from the RoadSim simulator (physics v2) with an emulated OBD logger, and was graded on 350 real cars it never saw. Version 2.0 adds a physics-regression head: the road-load fit of each trip is pooled over a car's trips and solved, so a heavier car now reads heavier (+524 kg for +800 kg in simulation; v1.0 +182 kg). A separate bus network reads city-bus mass from a power log (ZTBus).
+TripDetective reads one or more 1 Hz trip logs of a light-duty vehicle — speed plus whatever an OBD logger has — and infers its architecture, total mass, engine size, CdA, rolling resistance, hybrid strategy and each trip's energy ledger, every output with an error bar. It learned only from the RoadSim simulator (physics v2) with an emulated OBD logger, and was graded on 350 real cars it never saw. Version 2.0 added a physics-regression head: the road-load fit of each trip is pooled over a car's trips and solved, so a heavier car reads heavier (+524 kg for +800 kg in simulation; v1.0 +182 kg). Version 2.1 adds a physics constraint (an engine that stops while the car moves is not a conventional one), which fixes the small hybrids, and reads a city bus's legs of one day together: the bus network follows passengers from leg to leg, not from day to day (ZTBus).
 
 [Interactive lab](https://dogum.github.io/ML-Ratchet/models/tripdetective/lab/) · [Project page](https://dogum.github.io/ML-Ratchet/models/tripdetective/) · [Model card](MODEL_CARD.md) · [Lab notebook](NOTEBOOK.md) · [The method](https://github.com/dogum/ML-Ratchet/blob/main/docs/method.md)
 
@@ -15,8 +15,8 @@ TripDetective reads one or more 1 Hz trip logs of a light-duty vehicle — speed
 | **Returns** | Architecture (7 layouts) with probabilities<br>Total and curb mass, engine displacement, CdA, Crr — each with a 1σ range<br>Hybrid control strategy and engine-off share<br>Each trip's energy ledger in kJ/km (aero, rolling, grade, friction braking, powertrain losses, accessories) |
 | **Learned from** | The shared RoadSim simulator (shared/vehicle, physics v2, pinned) drives generated cars over real Ann Arbor routes; RoadSim's OBD-logger emulator (roadsim/obd.py, moved there from this model) then polls each signal on its own clock, holds and quantises it, and estimates fuel from MAF the way real loggers do. |
 | **Noise** | Real routes and weather; the emulated logger reproduces real OBD cadences, holds, quantisation and MAF-based fuel estimates |
-| **Network** | 1-D CNN over each trip window (23 channels, incl. a source-power channel) plus 16 classical estimates; trip embeddings pooled across a car's trips together with the road-load regression's normal equations, which are solved per car (physics-regression head: mass = fitted b0 x a learned efficiency correction); heads for architecture, strategy and 7 regressions (Gaussian NLL); 0.40 M parameters. A second, separately trained copy reads buses. |
-| **Physics also enters** | inputs: 16 classical per-trip estimates and the road-load regression's normal equations<br>output: Mass = the fitted road-load coefficient b0 × a learned efficiency correction |
+| **Network** | 1-D CNN over each trip window (23 channels, incl. a source-power channel) plus 16 classical estimates; trip embeddings pooled across a car's trips together with the road-load regression's normal equations, which are solved per car (physics-regression head: mass = fitted b0 x a learned efficiency correction); heads for architecture, strategy and 7 regressions (Gaussian NLL); 0.40 M parameters. v2.1: an engine-stop constraint on the architecture output (rpm < 100 at v > 5 m/s on more than 5 % of moving seconds rules out a conventional car; threshold from simulation). A second, separately trained copy reads buses; v2.1 maps its reading day-relative (3 numbers fitted on ZTBus dev legs). |
+| **Physics also enters** | inputs: 16 classical per-trip estimates and the road-load regression's normal equations<br>output: Mass = the fitted road-load coefficient b0 × a learned efficiency correction; an engine that stops while moving rules out a conventional car |
 | **Real data's jobs** | backdrop, calibration, gate, exam (never training labels) |
 | **Dev set** | 16 VED dev cars — RoadData's frozen split (sha256 d917df78…); 757 ZTBus legs of the dev missions (by-month split, the 'gate' half) |
 | **Exam** | 350 VED exam cars (at most 40 trips each, fixed seed), 25 EPA road-load cars, 150 EPA exam vehicles rebuilt in RoadSim, and 5,847 ZTBus legs of the 1,115 exam missions |
@@ -26,7 +26,7 @@ TripDetective reads one or more 1 Hz trip logs of a light-duty vehicle — speed
 ```bash
 cd models/tripdetective
 pip install numpy scipy
-python demo.py        # about 2 s
+python demo.py        # about 10 s
 ```
 
 or from anywhere in the repo: `mlratchet demo tripdetective`.
@@ -36,37 +36,38 @@ import tripdetective as TD
 td = TD.TripDetective()
 car = td.read_car(trips)            # trips: list of dicts of 1 Hz arrays (see demo.py)
 one = td.read_trip(trips[0])
-bus = TD.TripDetectiveBus().read_leg(leg)   # leg: dict of 1 Hz v, power_W, grade, T_amb, rho_air
+legs = TD.TripDetectiveBus().read_mission(legs)   # one bus-day; each leg: dict of 1 Hz v, power_W, grade, T_amb, rho_air
 ```
 
 ## The exam
 
-Real VED exam cars and ZTBus exam legs; baselines fitted on dev only. v1.0 is re-scored on the same exam with the same code (in each note). Every number here is on real data that never chose anything.
+Real VED exam cars and ZTBus exam legs; baselines fitted on dev only. v2.1 scored once on 15 Nov 2026; v2.0 (and v1.0) re-scored on the same exam with the same code (in each note). Rows without a v2.1 note are unchanged: v2.1 uses v2.0's networks. Every number here is on real data that never chose anything.
 
 | Metric | TripDetective | Baselines | |
 |---|---|---|---|
 | Curb mass per car, median \|error\| (335 cars)<br><sub>v1.0: 116 kg. Per trip v2.0 is a little better (112 vs 114 kg); per car worse, mostly on HEVs (181 vs 93 kg).</sub> | **127 kg** | Physics least-squares fit (classical): 205 kg<br>Dev median (dumb baseline): 227 kg | ✅ wins |
 | Engine displacement per car, median \|error\|<br><sub>v1.0: 0.50 L (bias −0.48 L); v2.0 bias −0.31 L.</sub> | **0.38 L** | Idle-fuel law (classical): 0.64 L<br>Dev median (dumb baseline): 0.6 L | ✅ wins |
 | Road-load force vs EPA target at 40 mph (25 cars)<br><sub>v1.0: 17%. At 20 mph v2.0 is worse (24% vs 16%).</sub> | **19%** | Physics least-squares fit (classical): 35% | ✅ wins |
-| Powertrain type per car (350 cars)<br><sub>v1.0: 98.9%. v2.0 calls 10 of 86 HEVs conventional (8 of them small Prius-c-type cars).</sub> | **97.1%** | Simple rule (classical): 99.4%<br>Majority class (dumb baseline): 68.6% | ❌ loses |
+| Powertrain type per car (350 cars)<br><sub>v2.0: 97.1% (10 of 86 HEVs called conventional, 8 of them small Prius-c-type cars); v1.0: 98.9%. v2.1 misses the same 2 HEVs as the rule (348 of 350). Per trip still behind the rule: 94.2% vs 96.7% (v2.0 91.5%).</sub> | **99.4%** | Simple rule (classical): 99.4%<br>Majority class (dumb baseline): 68.6% | ➖ tie |
 | The two Leafs, curb mass \|error\|<br><sub>v1.0: +641 / +278 kg. Both Leafs sit in the 3,500 lb class, which is also the dev median, so the dumb guess is exact here.</sub> | **119 / 105 kg** | Physics least-squares fit (classical): 173 / 373 kg<br>Dev median (dumb baseline): 0 / 0 kg | ❌ loses |
 | Mass response to +800 kg (64 simulated cars, 8 trips)<br><sub>v1.0 on the same sweep: +182 kg. BEVs +760, PHEVs +679, ICE +448, HEVs +384 kg. CdA ×1.5 still barely registers (×1.03).</sub> | **+524 kg** | — | ℹ️ |
-| Bus mass per ZTBus exam leg, mean \|error\| (5,847 legs)<br><sub>Truth = 19 t + 70 kg per passenger. Reads 1.0 t heavy; with the dev-fitted level, 752 kg. Slope on passenger mass 0.70, correlation 0.35.</sub> | **1204 kg** | Physics least-squares fit (scaled on dev) (classical): 3547 kg<br>Dev median (dumb baseline): 453 kg | ❌ loses |
+| Bus mass per ZTBus exam leg, mean \|error\| (5,847 legs)<br><sub>v2.0: 1,204 kg (752 kg with the dev-fitted level). Truth = 19 t + 70 kg per passenger. v2.1 reads a bus-day's legs together (dev-fitted day-relative map). A narrow win: 2 % below the dev median; correlation with passengers 0.30, slope 0.15; worse than the dev median in spring (548 vs 515 kg) and on bus B183 (478 vs 474 kg); 288 legs alone in their day read the dev level.</sub> | **444 kg** | Physics least-squares fit (scaled on dev) (classical): 3547 kg<br>Dev median (dumb baseline): 453 kg | ✅ wins |
 | EPA exam families rebuilt in RoadSim (150 vehicles, 4 trips), mass vs test weight, MdAPE<br><sub>v1.0 (on physics v1): 7.8%. Road-load force at 60 mph 10.3% (v1.0 9.4%).</sub> | **5%** | — | ℹ️ |
 
-Coverage of the 68% error bars on the exam: Mass, per car **56%**, Mass, per trip **76%**, Engine size, per car **48%**, Bus mass, per leg **68%**.
+Coverage of the 68% error bars on the exam: Mass, per car **56%**, Mass, per trip **76%**, Engine size, per car **48%**, Bus mass, per leg **66%**.
 
 ### Where it wins
 
 - Mass within 127 kg per car (112 kg per trip) against 205 kg for the physics fit and 227 kg for the dev median.
 - Engine size 0.38 L against 0.60 L for the dev median (v1.0: 0.50 L).
 - Mass now follows the physics: +800 kg moves the estimate +524 kg in simulation (v1.0: +182 kg).
+- Bus mass per ZTBus leg 444 kg against 453 kg for the dev median (v2.0: 1,204 kg): a narrow win, from reading a bus-day's legs together.
 
 ### Where it loses
 
-- A simple rule beats it on powertrain type (99.4% vs 97.1%); v2.0 is worse here than v1.0 (98.9%).
+- Powertrain type per car only ties the simple rule (99.4%, the same 2 misses); per trip the rule is still better (96.7% vs 94.2%).
 - Per car, mass is a little worse than v1.0 (127 vs 116 kg), driven by HEVs (181 vs 93 kg); 1σ coverage fell to 56%.
-- Buses: the dev-median guess (453 kg) beats the bus network (1,204 kg; 752 kg with the dev-fitted level).
+- Buses: the network alone follows passengers only within a day; a leg read alone gets the dev level. The win over the dev median is 9 kg, and spring legs and bus B183 lose to it.
 - The two Leafs: 119 / 105 kg off (v1.0: +641 / +278 kg; the V2_PLAN target of 150 kg is met), but the dev-median guess is exact for both, because they sit in its 3,500 lb class.
 
 ## Limits
@@ -140,6 +141,40 @@ Every v1.0 decision re-taken from r0 on physics v2, then rescored in order on ea
 
 Rule changed in the open after pb2 and before any other rung: the first rule gated on the raw error. The truth's level is a convention (19 t curb): on 40 dev legs both the logged power and the logged traction force regress to 0.67-0.73 × (19 t + passengers). pb2 fails under both rules.
 
+### v2.1 — RoadSim physics v3.1 frozen set and the engine-stop constraint (15 Nov 2026)
+
+**Objective:** As v2.0 (mean simulated skill over architecture, mass, displacement, CdA, Crr, engine-off behaviour, strategy and the ledger), on a frozen set rebuilt on RoadSim physics v3.1: p3_val_v7 = p2_val_v6's definition (600 cars x 8 trips, seed 99, prior v6) with physics v3.1 and the v3 generator's hybrid hardware  
+**Rule:** Network rungs: as v2.0 (sim skill beats the incumbent by more than 0.01 AND mean of 4 dev error ratios at most 1.05 AND dev VED-type accuracy drops by no more than 0.03). Output-constraint rungs (no retraining; rule changed in the open after p3r17 was rejected under the network rule): kept if the sim skill does not fall AND the dev error ratio is at most 1.05 AND dev VED-type accuracy per trip rises by more than 0.01.
+
+| Rung | Change | Frozen-set score | Decision | Why | Dev mass error / car | Dev engine error / car | Dev type accuracy / trip | Dev type accuracy / car | Mass response to +800 kg |
+|---|---|---|---|---|---|---|---|---|---|
+| p2r11 | v2.0's release, re-scored on p3_val_v7 (every v2.0 rung re-scored in order; no decision changed) | 0.445 | ● kept | Incumbent. | 133 kg | 0.31 L | 0.91 | 0.938 | +524 kg |
+| p3r16 | p2r11's recipe retrained on a RoadSim physics v3.1 bank (prior v4, 2,000 cars x 8 trips; hybrid run-on, era engines, generator hybrid hardware) | 0.453 | ○ rejected | Sim +0.008 (short of the margin); dev errors +2 %; dev type per trip 0.912 (no gain). | 148 kg | 0.28 L | 0.912 | 0.938 | +516 kg |
+| p3r17 | Engine-stop constraint on p2r11's outputs: logged rpm under 100 at v > 5 m/s on more than 5 % of the pooled moving seconds rules out 'conv' (and the conventional strategies); no retraining | 0.445 | **◆ released** | Network rule: rejected (sim +0.0002). Output-constraint rule (changed in the open): sim does not fall, dev errors +0 %, dev type per trip 0.910 -> 0.943 (+0.033), per car 15/16 -> 16/16. Released as v2.1. | 133 kg | 0.31 L | 0.943 | 1.0 | +524 kg |
+
+<sub>Columns after *Why*: Dev cars (gate inputs) and the identifiability sweep (p2_sweep, physics v2).</sub>
+
+Physics changed (v2 -> v3.1 for the frozen set), so every v2.0 rung was re-scored in order on p3_val_v7 (raw log training/ratchet_v21.json): no decision changed; p2r11 stays the incumbent at 0.445 (0.450 on p2_val_v6). The dev failure first: VED_435 (1.5 L, a Prius-c-type HEV) reads conventional per car and only 53 % of its trips read HEV; VED_440 61 %. The rule's signal is the engine-off share while moving: real small hybrids 0.13-0.14, Prius-type 0.22-0.41, conventional cars 0.000. In simulation no HEV sits below 0.17 (5th percentile 0.197 on physics v2, 0.166 on v3.1), so the network never saw a hybrid like the real small ones. Dev twins on v3.1: the run-on brings the Prius-type twins to within 0.01-0.05 of real, but VED_435's twin still stops its engine 3x as often as the car (0.29 vs 0.09; RoadData lists it as a Prius c or a Honda IMA). The constraint's threshold (5 %) comes from simulation only: over 5,814 simulated conventional trips the share never exceeds 0.033. Its effect on p3_val_v7 is +0.0002, because no simulated hybrid looks conventional; so the frozen set cannot judge it, and the rule for output constraints was changed in the open, after the dev effect was known. Both decisions are logged.
+
+### v2.1 bus — day-relative calibration of the bus reading (15 Nov 2026)
+
+**Objective:** None on the frozen simulated set: no rung changes the network (pb1). Each rung is a map from pb1's reading (and the leg's road-load fit) to bus mass, fitted on ZTBus dev gate legs.  
+**Rule:** Skill = 1 - CV MAE / CV MAE of the dev-median guess (5-fold cross-validation over the 142 dev gate missions; fit on 4/5, score the other 1/5). Keep a rung if its skill beats the incumbent's by more than 0.01 AND its correlation with passengers does not fall. Incumbent at the start: pb1 as shipped (raw reading). Written after the dev-only probes that suggested these maps (training/probe_busdev.py, probe_buscal.py).
+
+| Rung | Change | Frozen-set score | Decision | Why | CV mean abs error | CV median abs error | Correlation with passengers | Slope on passenger mass | CV skill vs dev median |
+|---|---|---|---|---|---|---|---|---|---|
+| pb1-raw | pb1 as shipped in v2.0 (raw reading) | — | ● kept | Incumbent. | 1,127 kg | 1,031 kg | 0.25 | 0.42 | -1.403 |
+| bc1 | Level: the reading x one dev-fitted factor (0.957) | — | ○ rejected | Skill -0.717 (+0.69), but r 0.2529 vs 0.2532 (the guard; a fold quirk). | 805 kg | 690 kg | 0.25 | 0.4 | -0.717 |
+| bc2 | Line: a + b x the reading | — | ○ rejected | Skill +0.034, but r 0.24 vs 0.25 (the guard). | 453 kg | 361 kg | 0.24 | 0.06 | 0.034 |
+| bc3 | Day-relative: dev level + b x (reading - the day's mean reading) | — | ● kept | Skill +0.073 vs -1.403; r 0.38. | 435 kg | 353 kg | 0.38 | 0.15 | 0.073 |
+| bc3b | + c x the day's mean reading (the day's level) | — | ○ rejected | Skill +0.071 (needs +0.083); r falls to 0.36. | 436 kg | 353 kg | 0.36 | 0.15 | 0.071 |
+| bc4 | + c x (log b0 - the day's mean log b0): the leg's road-load fit, day-relative | — | **◆ released** | Skill +0.092 vs +0.073; r 0.41. Released with v2.1 (a 20,213 kg, b 0.292, c 818 kg; 1σ 520 kg from the CV residuals). | 426 kg | 348 kg | 0.41 | 0.18 | 0.092 |
+| bcF | Probe: force balance on the logged traction force (fit of F = m(1.03 a + g grade) + ..., day-relative); traction force is not a model input | — | ○ rejected | Skill +0.025; r 0.25. The force fit scatters ±21 % per leg (the power fit ±18 %). | 457 kg | 395 kg | 0.25 | 0.07 | 0.025 |
+
+<sub>Columns after *Why*: ZTBus dev gate legs, 5-fold cross-validation by mission.</sub>
+
+Why day-relative: on the dev legs pb1's reading does not follow the mission's mean passengers from day to day (r 0.05 over 142 missions) but does follow them from leg to leg within a day (r 0.47, slope 0.65). The 'day' is every leg of the mission (labelled or not, weighted by its 1,024 s windows); a leg alone reads the dev level. bc1 and bc2 were rejected by the correlation guard on a cross-validation quirk (fold-to-fold coefficients move r from 0.253 to 0.253 / 0.242); without the guard both would have been kept and the end point is the same (bc3 and bc4 beat bc2 by more than the margin). The two ZTBus buses read different levels (pb1 1.06 and 1.01 x the truth; the traction-force fit 0.60 and 0.80 x): a per-bus level was probed (CV MAE 432 kg) and not taken, because the identity of a unit is not a physical input. Raw log: training/ratchet_buscal.json; final coefficients training/buscal_pb1.json.
+
 Raw per-rung logs are in [`training/`](training/).
 
 ## Physics
@@ -152,6 +187,7 @@ The shared RoadSim simulator (shared/vehicle, physics v2, pinned) drives generat
 - OBD emulator (roadsim/obd.py, EMU_VERSION 1): per-PID polling cadences measured on dev cars, held values, MAF fuel estimate, dropouts
 - Priors (training/priors.py, v4): the RoadSim generator as is plus a VED-era mass prior (median 1,750 kg total); v1.0's engine-efficiency wrappers now over-correct and were dropped
 - Buses (training/busbank.py): battery-electric city buses of 14-24 t plus 0-110 passengers, driven on ZTBus dev routes
+- v2.1 ladder: frozen set rebuilt on RoadSim physics v3.1 (hybrid run-on, era engines, generator hybrid hardware); retraining on v3.1 was rejected (+0.008)
 
 **Checked against independent references**
 
@@ -161,9 +197,9 @@ The shared RoadSim simulator (shared/vehicle, physics v2, pinned) drives generat
 
 ## Next rungs
 
-- Powertrain type: the VED channel mix (rung p2r9: 16/16 dev cars) gained only +0.001 in simulation; try a type-weighted objective or the rule as an input.
-- Check the small Prius-c-type HEVs on dev twins (engine-on share under physics v2).
-- Buses: a measurement model for the ZTBus power log (why its road-load fit reads 0.7×), then the physics head again.
+- Powertrain per trip: simulated hybrids never stop the engine as little as the small real ones (dev VED_435 twin 0.29 vs 0.09 real on v3.1); a mild-hybrid (Honda IMA) control prior, then retrain.
+- Retrain on physics v3.1 with pooled multi-trip sampling (p3r16 alone: +0.008, short of the margin).
+- Buses: the day-level is still a guess. A measurement model for the ZTBus power log (why its road-load fit reads 0.6-0.8× by bus), then the physics head again.
 
 ## Files
 

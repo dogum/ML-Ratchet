@@ -206,3 +206,14 @@ passengers per leg; the network reads them only relative to its own day.
 unchanged (mass x1.02 per car); numpy == torch 4.6e-6 with the constraint on both sides; browser == Python 1.6e-5
 (58 cases; net.ts ports the constraint). Bus: pb1 + bc4 (meta `buscal`). The light-duty network is still trained on
 physics v2; only the frozen set moved to v3.1.
+
+**Exam (once, after commit c0e5970; v2.0 re-scored with the same code: it reproduces 97.1 %, 127 kg, 0.38 L).**
+`exam.py p3r17.pt v21`, `exam.py p2r11.pt v20_rescore`, `busexam.py --cal pb1 bus_v21`.
+- Type per car 99.4 % (348 / 350; v2.0 97.1 %, rule 99.4 %): the same 2 HEVs as the rule are missed; tie, not a win.
+  Per trip 94.2 % (v2.0 91.5 %, rule 96.7 %): still a loss. HEVs read conventional per trip: 620 -> 349 of 2,997.
+- Every other light-duty row is unchanged (same network): mass 127 kg, engine 0.38 L, road load 24 / 19 / 18 %, Leafs
+  119 / 105 kg (still a loss to the dev median's exact 0 / 0).
+- Bus per leg 444 kg (v2.0 1,204; 752 with the dev level) vs dev median 453 kg and scaled LSQ 3,547 kg: a narrow win
+  (2 %). r 0.30, slope 0.15, bias +161 kg, 1σ coverage 66 %. It loses to the dev median in spring (548 vs 515 kg) and
+  on bus B183 (478 vs 474 kg); 288 exam legs are alone in their day and read the dev level.
+- Nothing got worse on the exam. Not fixed: per-trip type, the Leafs row, the bus day level.
