@@ -4,7 +4,7 @@ import RatchetMachine from '../components/RatchetMachine.astro';
 import Instrument from '../components/Instrument.astro';
 import ModelCard from '../components/ModelCard.astro';
 import LadderChart from '../components/LadderChart.astro';
-import { collectionStats, getBacklog, getModels, getModel, REPO_URL } from '../lib/data';
+import { collectionStats, getModelIdeas, getModels, getModel, REPO_URL } from '../lib/data';
 import { url } from '../lib/url';
 
 const models = getModels();
@@ -12,7 +12,17 @@ const s = collectionStats();
 const quake = getModel('quakenet')!;
 const live = models.filter((m) => m.hasInstrument);
 const first = live.find((m) => m.id === 'quakenet') ?? live[0];
-const ideas = getBacklog().slice(0, 6);
+const modelIdeas = getModelIdeas();
+const ideas = modelIdeas.slice(0, 6);
+const words = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
+const say = (n: number) => words[n] ?? String(n);
+const Say = (n: number) => { const w = say(n); return w[0].toUpperCase() + w.slice(1); };
+const onPlatform = (p: string) => models.filter((m) => m.platform === p).length;
+const platforms = [
+  [onPlatform('vehicle'), 'a shared vehicle simulator'],
+  [onPlatform('grid'), 'a shared grid simulator'],
+].filter(([n]) => n) as [number, string][];
+const platformText = platforms.map(([n, t], k) => `${k ? 'and ' : ''}${say(n)}${k ? '' : ' of them'} on ${t}`).join(' ');
 const losses = models.filter((m) => m.losses?.length).map((m) => ({ m, text: m.losses![0] }));
 const help = models.flatMap((m) => (m.help_wanted ?? []).map((h) => ({ m, h })));
 const steps = [
@@ -80,7 +90,7 @@ const steps = [
   <section class="wrap collection" id="models">
     <div class="sec-head">
       <h2 class="section reveal">The collection</h2>
-      <p class="muted reveal">{s.models} models across {s.domains.length} fields, three of them on a shared vehicle simulator. Each one runs on numpy in seconds, ships its real exam examples, and keeps every rung it ever tried.</p>
+      <p class="muted reveal">{s.models} models across {s.domains.length} fields{platformText && `, ${platformText}`}. Each one runs on numpy in seconds, ships its real exam examples, and keeps every rung it ever tried.</p>
     </div>
     <div class="grid">
       {models.map((m, i) => <ModelCard m={m} index={i} />)}
@@ -164,7 +174,7 @@ const steps = [
       <div>
         <p class="kicker tick-label">Next up</p>
         <h2 class="section reveal">Physics → data →<br /><em>a real exam.</em></h2>
-        <p class="muted reveal">Twelve more problems have physics to simulate, public data, and an exam lined up. Pick one up.</p>
+        <p class="muted reveal">{Say(modelIdeas.length)} more problems have physics to simulate, public data, and an exam lined up. Pick one up.</p>
         <ul class="ideas">
           {ideas.map((i) => (
             <li class="reveal"><b>{i.name}</b> <span class="faint mono">{i.domain}</span><br /><span class="muted">{i.question}</span></li>
@@ -173,7 +183,7 @@ const steps = [
         <a class="more mono" href={url('backlog/')}>The whole backlog →</a>
       </div>
       <div class="help frame">
-        <p class="kicker">Help wanted — exams waiting on data</p>
+        <p class="kicker">Help wanted — data we could not reach</p>
         {help.map(({ m, h }) => (
           <div class="help-item" style={`--c:${m.accent}`}>
             <span class="display hn">{m.name}</span>
@@ -185,7 +195,7 @@ const steps = [
 cd ML-Ratchet && pip install -e .
 mlratchet list
 mlratchet demo quakenet
-mlratchet new gridpulse`}</code></pre>
+mlratchet new watershed --name Watershed`}</code></pre>
         <a class="btn" href={url('contribute/')}>Add a model <span class="arrow">→</span></a>
       </div>
     </div>

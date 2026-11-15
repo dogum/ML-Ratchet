@@ -3,7 +3,7 @@
 import { getCollection, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import { DOC_ROUTES } from '../lib/rehype-doc-links.mjs';
-import { ghFile } from '../lib/data';
+import { getModels, ghFile } from '../lib/data';
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
@@ -21,7 +21,7 @@ const kicker: Record<string, string> = {
   'model-contract': 'One folder, one layout',
   'adding-a-model': 'Contribute',
   'agent-brief': 'For AI research agents',
-  lessons: 'Nine models in',
+  lessons: `${getModels().length} models in`,
   'data-sources': 'Where the data comes from',
   roadmap: 'Where this goes',
   'vehicle-platform': 'A shared simulator',

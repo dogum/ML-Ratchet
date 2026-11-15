@@ -12,6 +12,8 @@ interface Props {
   keywords?: string[];
   /** extra schema.org JSON-LD objects for this page */
   jsonld?: Record<string, unknown>[];
+  /** the 404 page: no canonical URL (there is no /404/ route), and not indexed */
+  notFound?: boolean;
 }
 const {
   title,
@@ -19,6 +21,7 @@ const {
   accent,
   keywords = [],
   jsonld = [],
+  notFound = false,
 } = Astro.props;
 const baseKeywords = ['physics-informed machine learning', 'simulation-based inference', 'scientific machine learning', 'simulation to real', 'sim-to-real', 'model cards', 'uncertainty quantification', 'numpy neural network', 'open source', 'ratchet'];
 const siteLd = {
@@ -35,7 +38,7 @@ const codeLd = {
   codeRepository: REPO_URL,
   programmingLanguage: ['Python', 'TypeScript'],
   license: 'https://opensource.org/licenses/MIT',
-  keywords: [...baseKeywords, 'gravitational waves', 'LIGO', 'seismology', 'earthquake magnitude', 'exoplanets', 'TESS', 'asteroseismology', 'Kepler', 'battery state of health', 'solar PV fault detection', 'bearing fault diagnosis', 'ECG arrhythmia', 'ocean swell'].join(', '),
+  keywords: [...baseKeywords, 'gravitational waves', 'LIGO', 'seismology', 'earthquake magnitude', 'exoplanets', 'TESS', 'asteroseismology', 'Kepler', 'battery state of health', 'solar PV fault detection', 'bearing fault diagnosis', 'ECG arrhythmia', 'ocean swell', 'vehicle energy', 'hybrid vehicle control', 'power grids', 'grid frequency', 'electricity demand forecasting'].join(', '),
 };
 const fullTitle = title ? `${title} · ML Ratchet` : 'ML Ratchet — trained on physics, graded on reality';
 const path = Astro.url.pathname;
@@ -62,14 +65,14 @@ const canonical = new URL(path, Astro.site);
     <meta name="author" content="ML Ratchet contributors" />
     <link rel="sitemap" href={url('sitemap-index.xml')} />
     <script type="application/ld+json" set:html={JSON.stringify([siteLd, codeLd, ...jsonld])} />
-    <link rel="canonical" href={canonical} />
+    {notFound ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
     <meta name="theme-color" content="#f2eee4" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0c0d0b" media="(prefers-color-scheme: dark)" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonical} />
+    {!notFound && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={new URL(url('og.png'), Astro.site)} />
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline>

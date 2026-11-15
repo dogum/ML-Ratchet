@@ -13,8 +13,8 @@ const upgrades = getModels().flatMap((m) => [
     <p class="kicker tick-label">What's next</p>
     <h1 class="display h">Physics → data →<br /><em>a real exam.</em></h1>
     <p class="muted lead">
-      Each idea has three things: governing physics to simulate, a documented public data source (checked from a cloud
-      sandbox in November 2026), and real data to grade on. Want one? Read <a href={url('contribute/')}>adding a model</a>,
+      Each idea has three things: governing physics to simulate, a documented public data source (checked in November
+      2026), and real data to grade on. Most are new models; a few are platform, data or method work the models need. Want one? Read <a href={url('contribute/')}>adding a model</a>,
       then open an issue. Edit the list in <a href={ghFile('docs/backlog.yaml')}><code>docs/backlog.yaml</code></a>.
     </p>
   </section>
@@ -22,7 +22,7 @@ const upgrades = getModels().flatMap((m) => [
     {ideas.map((i, k) => (
       <article class={`idea reveal s-${i.status}`} style={`transition-delay:${(k % 3) * 60}ms`}>
         <div class="it">
-          <span class="kicker">{i.domain}</span>
+          <span class="kicker">{i.domain}{i.kind && i.kind !== 'model' && ` · ${i.kind}`}</span>
           <span class="status mono">{i.status}</span>
         </div>
         <h2 class="display">{i.name}</h2>
@@ -36,7 +36,7 @@ const upgrades = getModels().flatMap((m) => [
       </article>
     ))}
   </section>
-  <section class="wrap up">
+  <section class="wrap up" id="upgrades">
     <h2 class="section">Upgrades to existing models</h2>
     <ul>
       {upgrades.map((u) => (

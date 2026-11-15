@@ -1,6 +1,9 @@
 # The idea backlog: physics -> data -> real exam. docs/backlog.md and the site's /backlog page are generated
-# from this file (mlratchet readme --write). Data reachability was checked from a cloud sandbox in Nov 2026.
+# from this file (mlratchet readme --write). Data reachability was checked in Nov 2026, from a shared cloud build
+# machine and from the repository's own machine.
 # status: candidate | checked (data endpoints answered) | blocked | in-progress
+# kind: model (a new model; the default when absent) | platform (a shared simulator or its calibration)
+#       | data (data for existing models) | method (a change to how models are built)
 ideas:
   - id: dispatchnet
     name: DispatchNet
@@ -14,6 +17,7 @@ ideas:
     note: "Wait for GridSim's coal/gas commitment fix (coal -43 % to +28 % by year today); otherwise the exam grades the simulator's gap, not the dispatcher."
   - id: gridsim-v2
     name: GridSim v2 calibration
+    kind: platform
     domain: Power grids
     question: "Close GridSim's measured gaps, then re-train and re-score all four grid models on the new physics version."
     physics: "Coal must-run and self-commitment (PlantDetective's DP), coal delivered prices from EIA-923 receipts, ORDC scarcity and unforecast outages in the core, synchronous commitment at low net load, era-aware frequency response (Dynamic Containment, batteries), soft history constraints across days, a reduced real-topology ERCOT network"
@@ -24,6 +28,7 @@ ideas:
     note: "First, the possible exam leak: the default outage rates cite Texas RE 2024/2025 aggregates; replace them with pre-2023 values and re-run the checks. Then PJM or CAISO dispatched and calibrated like ERCOT."
   - id: forecastwx
     name: Forecast-weather archive
+    kind: data
     domain: Power grids
     question: "A day-ahead forecast-weather archive for 2022-2025 so DemandCast can be graded as it would be used (today its headline uses actual weather, an upper bound) and trained on real forecast errors."
     physics: Unchanged (DemandCast's building-stock and farm physics)
@@ -31,9 +36,10 @@ ideas:
     data_url: https://open-meteo.com/en/docs/previous-runs-api
     exam: DemandCast 2023-2025 with forecast weather against each balancing authority's own day-ahead forecast
     status: checked
-    note: "The cloud sandbox's shared IP got HTTP 429 after a few requests, so only 2024 population points were fetched. A single request from the repository's own machine answered 200 on 14 Nov; fetch it slowly from there (src/fetch_openmeteo.py is resumable)."
+    note: "The shared cloud build machine's IP got HTTP 429 after a few requests, so only 2024 population points were fetched. A single request from the repository's own machine answered 200 on 14 Nov; fetch it slowly from there (src/fetch_openmeteo.py is resumable)."
   - id: subsecond
     name: Sub-second grid frequency
+    kind: data
     domain: Power grids
     question: "PMU-grade frequency (10-100 samples a second) so GridPulse can read inertia from the first 500 ms instead of from demand."
     physics: GridSim's swing equation already runs at 10 ms
@@ -41,9 +47,10 @@ ideas:
     data_url: https://fnetpublic.utk.edu/
     exam: GB or US events with known inertia
     status: candidate
-    note: "The FNET site timed out from the cloud sandbox; it answered from the repository's own machine on 14 Nov (the public pages, not yet a data download)."
+    note: "The FNET site timed out from the shared cloud build machine; it answered from the repository's own machine on 14 Nov (the public pages, not yet a data download)."
   - id: buildingsim
     name: BuildingSim
+    kind: platform
     domain: Energy
     question: A shared building-energy simulator for load, HVAC fault and retrofit models.
     physics: Building thermal networks and HVAC; EnergyPlus as the reference
@@ -57,8 +64,8 @@ ideas:
     domain: Earth science
     question: How much water will this river carry, from rain, snow and the basin's shape?
     physics: Rainfall-runoff and snowmelt models
-    data: USGS NWIS streamflow, SNOTEL snowpack
-    data_url: https://waterdata.usgs.gov/nwis
+    data: USGS Water Data streamflow (the Water Data APIs; legacy NWIS pages are being retired), SNOTEL snowpack
+    data_url: https://api.waterdata.usgs.gov/
     exam: Real gauged basins held out
     status: checked
     note: The CAMELS download server (gdex) timed out on 13 Nov.
@@ -97,10 +104,10 @@ ideas:
     question: How far did the ground move, and was it an earthquake, slow slip or the seasons?
     physics: Okada dislocations, slow-slip transients, seasonal loading
     data: Nevada Geodetic Laboratory GNSS time series
-    data_url: http://geodesy.unr.edu/
+    data_url: https://geodesy.unr.edu/
     exam: Known earthquakes' offsets; Cascadia slow-slip events
     status: checked
-    note: Landing page answered; tenv3 path to confirm.
+    note: "Use https: on 14 Nov http://geodesy.unr.edu/ redirected to a host that does not answer, while https://geodesy.unr.edu/ answered. tenv3 path to confirm."
   - id: xrdnet
     name: XRDNet
     domain: Materials
@@ -170,6 +177,7 @@ ideas:
     note: Harder to grade on real data than the others.
   - id: realtrain
     name: Real-train ladder
+    kind: method
     domain: Method
     question: "How much does real labelled data add on top of physics? A possible direction, not planned work: a second ladder per model that may also train on a third real split, published beside the simulation-only ladder."
     physics: Unchanged. The simulation-only model stays its own ladder and keeps the zero-real-labels claim.
