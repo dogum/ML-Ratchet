@@ -50,7 +50,7 @@ const qual = qualifier(m);
   .card:hover::before { transform: scaleX(1); }
   .top { display: flex; align-items: baseline; gap: 12px; }
   .idx { font-size: 11px; color: var(--c); }
-  .badges { margin-left: auto; display: flex; gap: 10px; }
+  .badges { margin-left: auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 10px; }
   .partial { color: var(--c); }
   .qual { color: var(--ink-2); border: 1px solid var(--rule); border-radius: 999px; padding: 1px 7px; }
   .live { display: inline-flex; align-items: center; gap: 5px; color: var(--c); }
