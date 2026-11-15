@@ -54,20 +54,22 @@ RoadData from the raw downloads, Argonne D3 and the full ZTBus set are in, and t
 ## The grid platform
 
 GridSim, GridData and four models (GridPulse, BatteryPilot, PlantDetective, DemandCast) came in on 14 Nov 2026; see
-[grid-platform.md](grid-platform.md). What is left is in [shared/grid/HANDOFF.md](../shared/grid/HANDOFF.md), in order:
+[grid-platform.md](grid-platform.md). The first follow-up round (merged 15 Nov 2026) fixed the outage-rate exam leak
+as GridSim physics 1.1, rebuilt BatteryPilot as v1.1, re-scored PlantDetective, corrected the GB 3 Dec 2019 dev label
+(1,788 to 854.7 MW), upstreamed four fixes behind flags and fetched the Open-Meteo forecast-weather archive. Status and
+the full list: [shared/grid/HANDOFF.md](../shared/grid/HANDOFF.md). What is open, in order:
 
-1. **The possible exam leak.** GridSim's default outage rates cite Texas RE 2024/2025 aggregates, published during
-   the exam years. Replace them with pre-2023 NERC GADS values, re-run the checks, re-score.
-2. **Upstream each model's fixes behind a flag** (GridPulse's per-technology aggregation and two-segment Dynamic
-   Containment, BatteryPilot's ORDC adder and cold-outage curve, PlantDetective's self-commitment layer and soft history
-   constraints, DemandCast's building-stock demand model and tabulated farm curves), and fix GridData's 3 Dec 2019 dev
-   label (1,788 MW labelled, about 850 MW implied).
-3. **GridSim v2:** coal/gas commitment, scarcity pricing and low-net-load inertia inside their "done when"; era-aware
-   frequency response; one more region (PJM or CAISO) dispatched and calibrated like ERCOT. Then every grid model's
-   frozen set rebuilt and every rung re-scored, each with a published win/loss table.
-4. **Data:** a day-ahead forecast-weather archive (Open-Meteo previous runs; rate-limited from the shared cloud build machine,
-   reachable from the repository's own machine), sub-second frequency (PMU or FNET/GridEye), CAISO prices before
-   2023-08, the 17 missing ERCOT monthly reports, CAMPD for more states than Texas.
+1. **Six GB exam events** carry the same interconnector-ramp pattern as the corrected dev label. They are listed in
+   `shared/grid/data/DATA.md` section 5; changing exam labels needs a documented decision, not a quiet fix.
+2. **The new-physics upstream items:** Dynamic Containment two-segment droop, year-aware priors, ORDC scarcity
+   pricing in core, the cold-outage curve, gas-turbine ambient derate, a day-ahead price generator, a self-commitment
+   layer and DemandCast's building-stock demand model.
+3. **GridSim v2:** coal/gas commitment (held-out 2022 coal is +34 % on physics 1.1), scarcity pricing (54 hours above
+   $200 against 238 real), low-net-load inertia and era-aware frequency response; one more region dispatched and
+   calibrated like ERCOT. Then every grid model's frozen set rebuilt and every rung re-scored, each with a published
+   win/loss table.
+4. **Data:** sub-second frequency (FNET/GridEye has no public download), CAISO prices before 2023-08, the 17 missing
+   ERCOT monthly reports, CAMPD for more states than Texas.
 5. **DispatchNet,** a learned dispatcher graded on EIA-930 generation by fuel, real prices and speed, once the coal/gas
    gap is closed.
 6. **A control-room page:** one ERCOT day with the demand forecast, the dispatch, a trip and a battery's response
