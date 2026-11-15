@@ -19,3 +19,18 @@ ladders:
       - { id: r5, change: "wider network 512-512-256 (0.44 M parameters), 120 epochs, same data as r4", sim: 0.555, decision: released, why: "score 0.555 vs 0.542; dev errors +3% vs the incumbent. Released as v1.0 (r6 was rejected).", metrics: [0.516, 0.336, 0.918, 0.365, "+3%", "15.0%"] }
       - { id: r6, change: "physics p2: 30 % of trips ramp out over 0.5-3 s (unit runbacks, staged trips; the 11 Jul 2019 dev event falls slower than its label implies); trained on p2 + the second p1 bank (15 % ramps), r5's network", sim: 0.589, decision: rejected, why: "score 0.589 vs 0.555; dev errors +14% vs the incumbent (gate: <= +10%); dev inertia MdAPE 15.0% -> 19.7%", metrics: [0.608, 0.355, 0.920, 0.383, "+14%", "19.7%"] }
       - { id: widen, change: "error bars: widen-only factor = max(1, 68th percentile of |z|) on the dev events (GB net: MW lost, inertia at 60 s, nadir and settling at 10 s; ERCOT summary heads: 5 ERCOT dev events)", decision: kept, why: "MW lost ×1.11, settling ×1.28, inertia, nadir and the ERCOT heads ×1.00 (training/checks/widen.json); no effect on the readings" }
+  - name: "GridPulse v1.0 forecast and inertia rungs (15 Nov 2026)"
+    objective: "Same objective as above, on the rebuilt frozen set p2r (bank val_p2, seed 98, 1,387 events; same scripts and seeds as p2s, not bit-identical: the release scores 0.5593 on p2r vs 0.5553 on p2s)"
+    rule: "Same rule: keep if the objective beats the incumbent by more than 0.01 AND the mean dev error relative to the incumbent is no more than 10 % worse."
+    margin: 0.01
+    dev_gate: "Mean dev error relative to the incumbent may not rise by more than 10 %"
+    frozen_sets: [p2r]
+    scored_on: p2r
+    note: "Post-processing rungs on the shipped network (training/rungs_pp.py). The incumbent is the release (r5) re-scored on p2r; the r1-r6 checkpoints are not in the repository, so the first ladder is not re-scored on p2r. No rung was kept and no new version was released; the exam was not run."
+    columns_source: "Skills on p2r, then the dev gate: mean dev error relative to the incumbent, and the dev error the rung targets"
+    columns: ["Nadir @10 s", "Settling @10 s", "Inertia @60 s", "Dev vs incumbent", "Dev target error"]
+    rungs:
+      - { id: r5_p2r, change: "The release (r5) re-scored on p2r from gridpulse_weights.npz", sim: 0.5593, decision: kept, why: "Incumbent on p2r. Dev numbers reproduce the logged r5 exactly.", metrics: [0.918, 0.365, 0.364, "–", "–"] }
+      - { id: r7_floor, change: "Nadir forecast = min(network nadir, lowest value already seen in 0..N s): the 0-60 s nadir cannot sit above a value the trace has reached (on dev the network breaks this on 1 Jul 2019: -345.6 mHz forecast, -348.4 mHz already seen)", sim: 0.5597, decision: rejected, why: "Score 0.5597 vs 0.5593 (needs +0.01); dev errors -1 % (nadir @10 s 26.7 -> 26.0 mHz). It can never raise an error, but the gain is far below the margin.", metrics: [0.920, 0.365, 0.364, "-1%", "26.0 mHz"] }
+      - { id: r7_held, change: "60 s forecast = value at N held (mean of the last 3 s seen), in place of the network", sim: 0.4863, decision: rejected, why: "Score 0.486 vs 0.559 (60 s skill 0.365 -> 0); dev 60 s error 133.8 -> 141.2 mHz. Neither dev nor simulation shows the exam's 60 s failure.", metrics: [0.918, 0.0, 0.364, "+1%", "141.2 mHz"] }
+      - { id: r7_inertN10, change: "Inertia read from the first 10 s of the trace even when more is available", sim: 0.5510, decision: rejected, why: "Score 0.551 vs 0.559 (inertia skill 0.364 -> 0.322); dev inertia MdAPE 15.0 -> 13.6 % on 4 events. Dev and simulation disagree; 4 dev events cannot outvote the frozen set.", metrics: [0.918, 0.365, 0.322, "-2%", "13.6%"] }

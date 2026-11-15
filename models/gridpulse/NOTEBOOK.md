@@ -137,3 +137,61 @@ Nothing is retrained and no number changes.
 - `help_wanted`: FNET/GridEye was checked from this machine (no public data download; event data go to consortium
   members), replacing the note that its site had timed out from the build machine.
 No exam number or verdict changes.
+
+## 15 Nov 2026 — forecast and inertia rungs on dev; nothing released
+
+The exam losses this pass looked at: the nadir forecast from 10 s (37 mHz vs 26 mHz for the lowest value so far), the
+60 s forecast from 10 s (59 mHz vs 39 mHz for the value at 10 s held), GB inertia at N = 60 s (16.4 % vs 15.1 % for
+7.0 s × demand), GB MW lost on low labels (34.8 % vs 29.3 %), the ERCOT drop forecast (29.5 % vs 23.1 %) and ERCOT
+inertia (11.7 % vs 11.2 %). The rule for this pass: a change is made only if dev (or simulation) shows the same failure.
+
+**Work folder rebuilt.** `work/` was empty. `noise.py` gives the same 56,090 quiet slices (18,522 + 18,880 + 18,688).
+`bank.py val_p2 p2 3000 98 0.6` and `valset.py p2s val_p2 mean` give 1,387 events (1,002 GB, 385 ERCOT), as logged. The
+set is not bit-identical to the sandbox's p2s: the release scores 0.5593 on it against 0.5553 logged (inertia skill
+0.364 vs 0.336; the other four skills within 0.003). The 4 GB dev events reproduce exactly (MW lost 24.61 %, inertia
+15.03 %, nadir 26.7 mHz, 60 s 133.8 mHz). The rebuilt set is called p2r; the release is re-scored on it and is the
+incumbent. The torch checkpoints of r1-r6 are not in the repository, so the earlier rungs are not re-scored on p2r.
+
+**What dev shows (release weights, N = 10 s, the 4 GB dev events, all from 2019).**
+
+| event | nadir true | network | lowest so far | 60 s true | network | held at 10 s |
+|---|---|---|---|---|---|---|
+| 9 Aug 2019 (nadir at 76 s, LFDD) | -948 | -872 | -759 | -907 | -565 | -732 |
+| 1 Jul 2019 (nadir at 6 s) | -348 | -346 | -348 | -172 | -194 | -324 |
+| 11 Jul 2019 (11 s) | -388 | -399 | -386 | -172 | -294 | -384 |
+| 3 Dec 2019 (13 s) | -290 | -306 | -281 | -244 | -194 | -271 |
+
+(mHz from the pre-event mean.)
+- Nadir: network MAE 26.7 mHz vs 50.0 mHz for the lowest value so far (34.7 vs 66.7 on the 3 events whose nadir comes
+  after 10 s). 9 Aug decides that; on the two ordinary late-nadir events (11 Jul, 3 Dec) the lowest value so far is
+  closer (2 and 9 mHz vs 11 and 17 mHz). Dev shows the exam's failure only on those two events. It does show the network
+  breaking a physical bound once: on 1 Jul its nadir (-345.6 mHz) sits above the -348.4 mHz the trace has already
+  reached.
+- 60 s: network MAE 133.8 mHz vs 141.2 mHz for the held value; 2 events each way (held better on 9 Aug and 3 Dec).
+  Dev does not show the exam's 60 s failure. Neither does the frozen set: the held value has skill 0 there (worse than
+  guessing the median), the network 0.365.
+- Inertia: the N = 10 s reading is closer on dev than N = 60 s (13.6 % vs 15.0 % MdAPE); on the frozen set it is worse
+  (inertia skill 0.322 vs 0.364). The 2023-2025 overestimate (~30 %) cannot be seen on dev: all 4 GB dev events are
+  from 2019, and the 7.0 s × demand rule is fitted on the same 4 events.
+- ERCOT (5 dev events, 2019/2021): the summary heads beat the dev-fitted constants on dev, which are in-sample there:
+  drop forecast 4.2 % vs 10.8 % (MW lost ÷ dev MW/Hz), inertia 6.9 % vs 8.5 % (dev s × load). The exam-year drift
+  (drop too deep by 29 %) is not visible in 2019/2021.
+
+**Rungs (`training/rungs_pp.py`, logged in `training/ratchet.json`; frozen set p2r; rule unchanged: +0.01 on the
+objective and dev no more than 10 % worse).**
+
+| rung | change | objective (r5: 0.5593) | dev | decision |
+|---|---|---|---|---|
+| r7_floor | nadir forecast = min(network, lowest value already seen) | 0.5597 (nadir@10 skill 0.918 -> 0.920, nadir@5 0.796 -> 0.797) | nadir 26.7 -> 26.0 mHz; mean -1 % | rejected: +0.0004, needs +0.01 |
+| r7_held | 60 s forecast = value at N held | 0.4863 (60 s skill 0.365 -> 0) | 60 s 133.8 -> 141.2 mHz; +1 % | rejected |
+| r7_inertN10 | inertia read from the first 10 s only | 0.5510 (inertia skill 0.364 -> 0.322) | inertia 15.0 -> 13.6 %; -2 % | rejected |
+
+- The nadir floor cannot raise any error (the 0-60 s nadir is never above a value already seen), but it moves the
+  frozen-set objective by only 0.0004 and the dev nadir by 0.7 mHz. Under the rule it is rejected; it stays the first
+  candidate for a rung that also brings a real gain.
+- A learned residual on the held value was not trained: neither dev nor the frozen set shows the held value doing
+  better than the network, so there is nothing on dev for it to fix.
+- No new version. The exam was not run. Every exam row and verdict stays as released.
+
+Next, if dev ever grows: GB dev events after 2020 (Dynamic Containment era) are what the 60 s and inertia rows need;
+the splits do not allow it now.
