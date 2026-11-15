@@ -5,6 +5,7 @@ import os, sys, json, glob, numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 from beatnet import BeatNet
 net = BeatNet(); C = net.meta['classes']
+print('Research and teaching only. Not a medical device.')
 for f in sorted(glob.glob(os.path.join(HERE, 'examples', '*.npz'))):
     z = np.load(f); m = json.loads(str(z['meta'])); out = net.classify(z['ecg'], m['fs'], z['beats'])
     ref = z['ref']; show = (z['beats'] >= z['show'][0]) & (z['beats'] < z['show'][1]); lab = out['label'][show]; r = ref[show]
