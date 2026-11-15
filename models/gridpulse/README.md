@@ -86,6 +86,8 @@ Coverage of the 68% error bars on the exam: GB inertia, N = 60 s (410) **63%**, 
 
 ## The ratchet
 
+### GridPulse v1.0 (GridSim, 13-14 Nov 2026)
+
 **Objective:** Mean skill on the frozen simulated set p2s (1,387 GridSim events of physics p2, seed 98) over MW lost, inertia and MW/Hz read at 60 s, and the nadir and 60 s settling forecast from 10 s; skill = 1 - MAE / MAE of guessing the median, floored at 0; GB and ERCOT pooled  
 **Rule:** Keep if the objective beats the incumbent by more than 0.01 AND, on the 4 GB dev events, the mean of four errors (MW lost MdAPE, inertia MdAPE, nadir@10 s MAE, settling@10 s MAE), each relative to the incumbent's, is no more than 10 % worse.
 
@@ -102,6 +104,22 @@ Coverage of the 68% error bars on the exam: GB inertia, N = 60 s (410) **63%**, 
 <sub>Columns after *Why*: Skills on the frozen set p2s, then the dev gate: mean dev error relative to the incumbent, and the dev inertia MdAPE.</sub>
 
 r2 changed the measurement model and got the frozen set p1s; r6 changed the physics (p2) and got p2s, on which every rung was re-scored in order. The values here are the p2s re-scores.
+
+### GridPulse v1.0 forecast and inertia rungs (15 Nov 2026)
+
+**Objective:** Same objective as above, on the rebuilt frozen set p2r (bank val_p2, seed 98, 1,387 events; same scripts and seeds as p2s, not bit-identical: the release scores 0.5593 on p2r vs 0.5553 on p2s)  
+**Rule:** Same rule: keep if the objective beats the incumbent by more than 0.01 AND the mean dev error relative to the incumbent is no more than 10 % worse.
+
+| Rung | Change | Frozen-set score | Decision | Why | Nadir @10 s | Settling @10 s | Inertia @60 s | Dev vs incumbent | Dev target error |
+|---|---|---|---|---|---|---|---|---|---|
+| r5_p2r | The release (r5) re-scored on p2r from gridpulse_weights.npz | 0.559 | ● kept | Incumbent on p2r. Dev numbers reproduce the logged r5 exactly. | 0.918 | 0.365 | 0.364 | – | – |
+| r7_floor | Nadir forecast = min(network nadir, lowest value already seen in 0..N s): the 0-60 s nadir cannot sit above a value the trace has reached (on dev the network breaks this on 1 Jul 2019: -345.6 mHz forecast, -348.4 mHz already seen) | 0.560 | ○ rejected | Score 0.5597 vs 0.5593 (needs +0.01); dev errors -1 % (nadir @10 s 26.7 -> 26.0 mHz). It can never raise an error, but the gain is far below the margin. | 0.92 | 0.365 | 0.364 | -1% | 26.0 mHz |
+| r7_held | 60 s forecast = value at N held (mean of the last 3 s seen), in place of the network | 0.486 | ○ rejected | Score 0.486 vs 0.559 (60 s skill 0.365 -> 0); dev 60 s error 133.8 -> 141.2 mHz. Neither dev nor simulation shows the exam's 60 s failure. | 0.918 | 0.0 | 0.364 | +1% | 141.2 mHz |
+| r7_inertN10 | Inertia read from the first 10 s of the trace even when more is available | 0.551 | ○ rejected | Score 0.551 vs 0.559 (inertia skill 0.364 -> 0.322); dev inertia MdAPE 15.0 -> 13.6 % on 4 events. Dev and simulation disagree; 4 dev events cannot outvote the frozen set. | 0.918 | 0.365 | 0.322 | -2% | 13.6% |
+
+<sub>Columns after *Why*: Skills on p2r, then the dev gate: mean dev error relative to the incumbent, and the dev error the rung targets.</sub>
+
+Post-processing rungs on the shipped network (training/rungs_pp.py). The incumbent is the release (r5) re-scored on p2r; the r1-r6 checkpoints are not in the repository, so the first ladder is not re-scored on p2r. No rung was kept and no new version was released; the exam was not run.
 
 Raw per-rung logs are in [`training/`](training/).
 
