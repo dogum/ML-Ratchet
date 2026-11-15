@@ -63,7 +63,8 @@ def sim_factors(model, version):
     """'simdev' step 1 (simulation only): per architecture, the factor that brings the frozen val2 set to 68% inside
     the band (the networks' own sigma is overconfident on simulated trips too)."""
     import evaluate as EV, dataset as DS, features as F
-    B, T, X, E = EV.val_set('val2')
+    bank, version = EV.V2BANK.get(version, ('val2', version))       # val2 versions on their own banks (g, h)
+    B, T, X, E = EV.val_set(bank)
     y = DS.target(B, T, version); ok = y > 0.02
     p, s, c = model.predict(X[ok], E[ok])
     zz = np.abs(np.log(p / y[ok])) / s

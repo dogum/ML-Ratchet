@@ -373,3 +373,56 @@ about half the margin.
 - r16: gate-only, the incumbent's networks told the EPA hybrids' system and the ZTBus curb mass (r8 + r9).
 - r17 (only if r15 is rejected): r15's networks with r16's inputs, judged as a physics rung against the incumbent.
 - If none passes, nothing is released.
+
+## 15 Nov 2026 — r15-r17 and the release choice (before the exam)
+
+| rung | change | val2 version | skill (own version) | D2 | decision |
+|---|---|---|---|---|---|
+| r14 | SC03 / 20 F cold FTP under the EPA test conditions | g | 0.669 | 0.1137 (-0.0058) | rejected |
+| r15 | r14 + generated conventional cars without idle-stop | h | 0.680 | 0.1153 (-0.0042) | rejected |
+| r16 | v2.0's networks + EPA hybrid system + ZTBus curb mass (gate-only) | e | 0.670 | 0.1140 (-0.0055) | rejected |
+| r17 | r15's networks + r16's inputs (physics rung, planned before r15 was scored) | h | 0.680 | **0.1077 (-0.0118)** | **kept, released as v2.1** |
+
+Dev terms, v2.0 (r13) -> r17 (median error, bias):
+
+| dev term | v2.0 | r17 |
+|---|---|---|
+| EPA petrol SC03 | 20.5% (-17.5%) | **9.6%** (-4.1%) |
+| EPA petrol 20 F cold FTP | 12.4% (-9.4%) | 10.9% (-7.7%) |
+| EPA petrol FTP | 8.8% (-3.9%) | 9.3% (-2.6%): worse error, smaller bias |
+| EPA petrol HWY / US06 | 6.6 / 5.7% | 7.0 / 5.3% |
+| EPA hybrid FTP / HWY | 18.5 / 13.4% | 15.7 / 10.0% |
+| EPA BEV city / HWY | 7.9 / 6.1% | 8.9 / 5.9% |
+| VED petrol / hybrid / Leaf / plug-in trips | 7.1 / 13.3 / 13.8 / 16.2% | 6.6 / 12.6 / 14.0 / 16.3% |
+| ZTBus legs / missions | 9.0 / 9.5% | 7.0 / 5.6% |
+| Mersin diesel / CNG | 12.3 / 15.9% | 13.0 / 17.0% |
+| ICCT | 18.1% | 19.0% |
+
+Worse on dev: petrol FTP and HWY (+0.5 and +0.4 points), BEV city (+1.0), Leaf (+0.2), Mersin (+0.7, +1.1), ICCT
+(+0.9). The terms the changes do not touch move by about this much between two sets of five networks (r14 notes), so
+part of the gain and part of the losses are seed noise; the SC03 (-10.9 points), ZTBus (-2.0, -3.9) and EPA hybrid
+(-2.8, -3.4) gains are each larger than that. Twin reads of r17: the network vs RoadSim's own dev EPA twins is SC03
+-0.8% (v2.0 -14.2%), FTP -4.5% (-6.3%), cold FTP -5.0% (-6.8%), HWY -0.8% (+0.3%); VED dev cars vs their twins within
+-1 to +5% (`training/twin_read_epa_r17_noidle_inputs.json`, `twin_read_r17_noidle_inputs.json`).
+
+Inputs at prediction time (r17): an EPA test-car hybrid is told its hybrid system from the model line (P2 / power-split
+/ series; `epa_hybkind.py`, RoadSim's public spec-sheet table) and a ZTBus trolleybus its published 19 t curb mass as a
+reported mass. Both are public specs, known before a trip.
+
+Not done, and why:
+- **Pin `roadsim-physics-v3.1` for hybrids.** EnergyNet's generated specs carry no model year, so v3.1's only change over
+  v3 (engine-era scaling by model year) would not act on them; EnergyNet already scales every generated hybrid engine
+  by its own era prior. What v3 adds for these specs (P2 converter held open in low gears, generator hybrid hardware)
+  would need every hybrid and plug-in row of the banks re-simulated (most of the build time), and no dev group points at
+  it: dev VED hybrids are -0.1% biased, and the dev EPA hybrid errors are mostly P2s called power-splits (r8 / r16).
+- **Leaf (exam -19.5%).** The one dev Leaf is +4.6%: dev does not show the exam bias, so nothing here can fix it.
+- **Mersin diesel (exam -16.7%).** Dev is February only, no A/C trip, bias -3.1%. Dev does show a passenger trend
+  (diesel residual +8% for the third of trips with the fewest boardings, -23% for the third with the most), but
+  boardings are counted over the trip, not known before it, and the generated buses already span 0-6 t of payload.
+  CNG buses (-17% on dev) need a spark-ignition heavy-duty engine that RoadSim's generator does not have.
+- **ICCT trucks.** One dev truck on three cycles (+19%): too few to fit or check anything.
+- **Per-group calibration on dev.** Not tried: the generator fixes above explain the SC03 gap on dev; a fitted factor
+  per test type would be a correction that RoadSim's own twins say is not needed.
+
+Release choice: r17, 5 networks (`weights/r15_s*.npz`, trained on the r15 banks), error bars by r12's method refitted on
+dev (`sigma_factors.json`: simulation factors per architecture, then the dev factor per group). The exam has not been run.

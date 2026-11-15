@@ -193,5 +193,38 @@
   ],
   "era": true,
   "change": "generated conventional light-duty cars without engine idle-stop (RoadSim's generator gave 30% of them idle-stop at any model year, invisible to the network; RoadSim's dev-calibrated twins have none and match the dev FTP within 1.4%); their rows re-simulated on the same trips and start states, labels recomputed; dev twin read: the network put RoadSim's own twins of 60 dev EPA cars 5.5% low on the UDDS and 0.8% low on the HWFET, and the dev FTP 3.9% low while the highway is +0.4%; physics rung, on top of r14's banks"
+ },
+ {
+  "name": "r16_inputs",
+  "version": "e",
+  "mode": "corr",
+  "members": [
+   "r13_s0",
+   "r13_s1",
+   "r13_s2",
+   "r13_s3",
+   "r13_s4"
+  ],
+  "era": true,
+  "gate_only": true,
+  "bus_spec": true,
+  "epa_hyb": true,
+  "change": "the incumbent's networks told two public-spec inputs, each rejected alone on r7: the EPA test-car hybrids' system (r8) and the ZTBus curb mass (r9); gate-only rung"
+ },
+ {
+  "name": "r17_noidle_inputs",
+  "version": "h",
+  "mode": "corr",
+  "members": [
+   "r15_s0",
+   "r15_s1",
+   "r15_s2",
+   "r15_s3",
+   "r15_s4"
+  ],
+  "era": true,
+  "bus_spec": true,
+  "epa_hyb": true,
+  "change": "r15's networks (SC03 / cold-FTP test conditions and no idle-stop) with r16's two public-spec inputs; physics rung against the incumbent (planned before r15 was scored)"
  }
 ]
