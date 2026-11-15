@@ -1,0 +1,322 @@
+{
+ "gb_2019_08_09": {
+  "damping_fit": {
+   "D_pct_per_Hz": 1.5,
+   "grid": [
+    [
+     1.0,
+     48.794582382275664
+    ],
+    [
+     1.1,
+     48.796160083200036
+    ],
+    [
+     1.2,
+     48.79720435038005
+    ],
+    [
+     1.3,
+     49.03148442798272
+    ],
+    [
+     1.4,
+     49.073222828651446
+    ],
+    [
+     1.5,
+     49.11100653483948
+    ],
+    [
+     1.6,
+     49.14533144482045
+    ],
+    [
+     1.7,
+     49.1765767887388
+    ],
+    [
+     1.8,
+     49.205121120483874
+    ],
+    [
+     1.9,
+     49.501983829955975
+    ],
+    [
+     2.0,
+     49.507005457501634
+    ],
+    [
+     2.1,
+     49.51179136599801
+    ],
+    [
+     2.2,
+     49.51641526852818
+    ],
+    [
+     2.3,
+     49.52081513153139
+    ],
+    [
+     2.4,
+     49.52506217537161
+    ],
+    [
+     2.5,
+     49.52889850843044
+    ]
+   ]
+  },
+  "reported": {
+   "nadir1_Hz": 49.1,
+   "t_nadir1_s": 24.5,
+   "t_49p2_recovered_s": 44.5,
+   "t_lfdd_s": 75.9,
+   "lfdd_MW": 931,
+   "rocof_trip_MW": 350,
+   "uf49_trip_MW": 200
+  },
+  "simulated": {
+   "nadir1_Hz": 49.111006393164516,
+   "t_nadir1_s": 24.54,
+   "t_49p2_recovered_s": null,
+   "max_Hz_between_nadir1_and_GT1A": 49.19833584446692,
+   "t_lfdd_s": 75.60000000000001,
+   "lfdd_stages": 1,
+   "min_Hz": 48.794659690095095,
+   "rocof_0_0p5s_Hz_s": -0.054284377496173875,
+   "trips": [
+    {
+     "index": 0,
+     "t_s": 1.16,
+     "MW": 350.0
+    },
+    {
+     "index": 1,
+     "t_s": 69.2,
+     "MW": 200.0
+    }
+   ],
+   "inertia_MWs": 210000.0
+  },
+  "errors": {
+   "nadir1_Hz": 0.01100639316451435,
+   "t_nadir1_s": 0.03999999999999915,
+   "t_lfdd_s": -0.29999999999999716
+  },
+  "sensitivity": [
+   {
+    "D_pct_per_Hz": 1.0,
+    "inertia_GVAs": 190.0,
+    "rocof_delay_s": 0.0,
+    "nadir1_Hz": 48.793149589423756,
+    "t_nadir1_s": 19.8,
+    "lfdd": true,
+    "t_lfdd_s": 19.82,
+    "min_Hz": 48.793149589423756,
+    "n_rocof_trip": 1
+   },
+   {
+    "D_pct_per_Hz": 1.0,
+    "inertia_GVAs": 190.0,
+    "rocof_delay_s": 0.5,
+    "nadir1_Hz": 48.79284696770041,
+    "t_nadir1_s": 19.950000000000003,
+    "lfdd": true,
+    "t_lfdd_s": 19.96,
+    "min_Hz": 48.79284696770041,
+    "n_rocof_trip": 1
+   },
+   {
+    "D_pct_per_Hz": 1.0,
+    "inertia_GVAs": 210.0,
+    "rocof_delay_s": 0.0,
+    "nadir1_Hz": 48.79475199295106,
+    "t_nadir1_s": 23.1,
+    "lfdd": true,
+    "t_lfdd_s": 23.13,
+    "min_Hz": 48.79475199295106,
+    "n_rocof_trip": 1
+   },
+   {
+    "D_pct_per_Hz": 1.0,
+    "inertia_GVAs": 210.0,
+    "rocof_delay_s": 0.5,
+    "nadir1_Hz": 48.794582382275664,
+    "t_nadir1_s": 23.25,
+    "lfdd": true,
+    "t_lfdd_s": 23.27,
+    "min_Hz": 48.794582382275664,
+    "n_rocof_trip": 1
+   },
+   {
+    "D_pct_per_Hz": 1.0,
+    "inertia_GVAs": 230.0,
+    "rocof_delay_s": 0.0,
+    "nadir1_Hz": 49.44891836270816,
+    "t_nadir1_s": 11.75,
+    "lfdd": false,
+    "t_lfdd_s": null,
+    "min_Hz": 49.005787364567,
+    "n_rocof_trip": 0
+   },
+   {
+    "D_pct_per_Hz": 1.0,
+    "inertia_GVAs": 230.0,
+    "rocof_delay_s": 0.5,
+    "nadir1_Hz": 49.44891836270816,
+    "t_nadir1_s": 11.75,
+    "lfdd": false,
+    "t_lfdd_s": null,
+    "min_Hz": 49.005787364567,
+    "n_rocof_trip": 0
+   },
+   {
+    "D_pct_per_Hz": 1.5,
+    "inertia_GVAs": 190.0,
+    "rocof_delay_s": 0.0,
+    "nadir1_Hz": 49.08835401182999,
+    "t_nadir1_s": 23.000000000000004,
+    "lfdd": true,
+    "t_lfdd_s": 73.96000000000001,
+    "min_Hz": 48.79445966520678,
+    "n_rocof_trip": 1
+   },
+   {
+    "D_pct_per_Hz": 1.5,
+    "inertia_GVAs": 190.0,
+    "rocof_delay_s": 0.5,
+    "nadir1_Hz": 49.08857313277149,
+    "t_nadir1_s": 23.15,
+    "lfdd": true,
+    "t_lfdd_s": 73.96000000000001,
+    "min_Hz": 48.79419417544292,
+    "n_rocof_trip": 1
+   },
+   {
+    "D_pct_per_Hz": 1.5,
+    "inertia_GVAs": 210.0,
+    "rocof_delay_s": 0.0,
+    "nadir1_Hz": 49.11089294032713,
+    "t_nadir1_s": 24.4,
+    "lfdd": true,
+    "t_lfdd_s": 75.61,
+    "min_Hz": 48.79473746677753,
+    "n_rocof_trip": 1
+   },
+   {
+    "D_pct_per_Hz": 1.5,
+    "inertia_GVAs": 210.0,
+    "rocof_delay_s": 0.5,
+    "nadir1_Hz": 49.11100653483948,
+    "t_nadir1_s": 24.55,
+    "lfdd": true,
+    "t_lfdd_s": 75.60000000000001,
+    "min_Hz": 48.794659690095095,
+    "n_rocof_trip": 1
+   },
+   {
+    "D_pct_per_Hz": 1.5,
+    "inertia_GVAs": 230.0,
+    "rocof_delay_s": 0.0,
+    "nadir1_Hz": 49.487765764200944,
+    "t_nadir1_s": 9.55,
+    "lfdd": false,
+    "t_lfdd_s": null,
+    "min_Hz": 49.23627098259233,
+    "n_rocof_trip": 0
+   },
+   {
+    "D_pct_per_Hz": 1.5,
+    "inertia_GVAs": 230.0,
+    "rocof_delay_s": 0.5,
+    "nadir1_Hz": 49.487765764200944,
+    "t_nadir1_s": 9.55,
+    "lfdd": false,
+    "t_lfdd_s": null,
+    "min_Hz": 49.23627098259233,
+    "n_rocof_trip": 0
+   },
+   {
+    "D_pct_per_Hz": 2.5,
+    "inertia_GVAs": 190.0,
+    "rocof_delay_s": 0.0,
+    "nadir1_Hz": 49.33837141388691,
+    "t_nadir1_s": 13.8,
+    "lfdd": false,
+    "t_lfdd_s": null,
+    "min_Hz": 49.01640354401404,
+    "n_rocof_trip": 1
+   },
+   {
+    "D_pct_per_Hz": 2.5,
+    "inertia_GVAs": 190.0,
+    "rocof_delay_s": 0.5,
+    "nadir1_Hz": 49.33853456938531,
+    "t_nadir1_s": 13.900000000000002,
+    "lfdd": false,
+    "t_lfdd_s": null,
+    "min_Hz": 49.0164027013803,
+    "n_rocof_trip": 1
+   },
+   {
+    "D_pct_per_Hz": 2.5,
+    "inertia_GVAs": 210.0,
+    "rocof_delay_s": 0.0,
+    "nadir1_Hz": 49.350150379876446,
+    "t_nadir1_s": 14.9,
+    "lfdd": false,
+    "t_lfdd_s": null,
+    "min_Hz": 49.02335321623543,
+    "n_rocof_trip": 1
+   },
+   {
+    "D_pct_per_Hz": 2.5,
+    "inertia_GVAs": 210.0,
+    "rocof_delay_s": 0.5,
+    "nadir1_Hz": 49.52889850843044,
+    "t_nadir1_s": 7.1499999999999995,
+    "lfdd": false,
+    "t_lfdd_s": null,
+    "min_Hz": 49.47191656611221,
+    "n_rocof_trip": 0
+   },
+   {
+    "D_pct_per_Hz": 2.5,
+    "inertia_GVAs": 230.0,
+    "rocof_delay_s": 0.0,
+    "nadir1_Hz": 49.53598879211277,
+    "t_nadir1_s": 7.7,
+    "lfdd": false,
+    "t_lfdd_s": null,
+    "min_Hz": 49.47302297205894,
+    "n_rocof_trip": 0
+   },
+   {
+    "D_pct_per_Hz": 2.5,
+    "inertia_GVAs": 230.0,
+    "rocof_delay_s": 0.5,
+    "nadir1_Hz": 49.53598879211277,
+    "t_nadir1_s": 7.7,
+    "lfdd": false,
+    "t_lfdd_s": null,
+    "min_Hz": 49.47302297205894,
+    "n_rocof_trip": 0
+   }
+  ],
+  "vs_neso_1s": {
+   "file": "/home/claude/grid/data/proc/frequency/GB/events/GB_20190809T155233.npz",
+   "rmse_Hz_0_110s": 0.3054922483441024,
+   "measured": {
+    "f_pre_Hz": 50.0024,
+    "nadir_Hz": 48.787,
+    "t_nadir_s": 75.50999999999999,
+    "rocof_Hz_s": NaN,
+    "delta_nadir_Hz": -1.2154000000000025
+   },
+   "measured_min_Hz": 48.787
+  }
+ }
+}

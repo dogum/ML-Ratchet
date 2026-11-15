@@ -44,6 +44,7 @@ const released = m.released ? new Date(m.released as string).toLocaleDateString(
             <span class={`badge ${m.status}`}>{m.status === 'partial' ? 'exam partly pending' : m.status}</span>
             {released && <span class="badge faint">{released}</span>}
             {m.platform === 'vehicle' && <a class="badge plat" href={url('vehicle/')}>on the vehicle platform →</a>}
+            {m.platform === 'grid' && <a class="badge plat" href={url('grid/')}>on the grid platform →</a>}
           </div>
         </div>
         <p class="display tagline">{m.tagline}</p>

@@ -1,0 +1,108 @@
+{
+ "margin": 0.01,
+ "dev_tol": 0.005,
+ "rungs": [
+  {
+   "rung": "R0",
+   "model": "R0_gs",
+   "set": "v1",
+   "what": "GridSim unit-level MILP units only (3 generated systems x 92 days, train-year inputs), emulator v1",
+   "time": "2026-11-13 23:37",
+   "val": 0.021023302938196552,
+   "val_acc": 0.29432624113475175,
+   "dev": 0.01468253968253968,
+   "dev_by_kind": {
+    "month": 0.01875,
+    "quarter": 0.013392857142857142,
+    "year": 0.011904761904761904
+   },
+   "dev_acc": 0.16666666666666666,
+   "kept": true,
+   "reason": "first rung (incumbent by definition)"
+  },
+  {
+   "rung": "R1",
+   "model": "R1_v1",
+   "set": "v1",
+   "what": "+ self-committed (price-taker DP) and cogeneration units on GridSim and ERCOT train-year price backgrounds",
+   "time": "2026-11-13 23:37",
+   "val": 0.4911182519452309,
+   "val_acc": 0.9193262411347518,
+   "dev": 0.11686468133850703,
+   "dev_by_kind": {
+    "month": 0.0985790525163923,
+    "quarter": 0.10905701546441941,
+    "year": 0.14295797603470936
+   },
+   "dev_acc": 0.8,
+   "incumbent": "R0_gs",
+   "incumbent_val_on_this_set": 0.021023302938196552,
+   "incumbent_dev": 0.01468253968253968,
+   "kept": true,
+   "reason": "val 0.491 vs 0.021 (d=+0.470, margin 0.01); dev 0.117 vs 0.015 (d=+0.102, tol 0.005) -> kept"
+  },
+  {
+   "rung": "R2",
+   "model": "R2_v2",
+   "set": "v2",
+   "what": "bank v2: dev twin calibration (start/stop trajectories measured on dev starts, trips and aborted starts, offer slope, start-cost multipliers per technology, CHP steam credit, EIA-923 gross ratio from dev unit-years); GridSim units once each",
+   "time": "2026-11-14 00:40",
+   "val": 0.47538331738945583,
+   "val_acc": 0.9590773809523809,
+   "dev": 0.19982537655603316,
+   "dev_by_kind": {
+    "month": 0.12157967487970987,
+    "quarter": 0.15721934097153797,
+    "year": 0.3206771138168517
+   },
+   "dev_acc": 0.8666666666666667,
+   "incumbent": "R1_v1",
+   "incumbent_val_on_this_set": 0.2658462437237201,
+   "incumbent_dev": 0.11686468133850703,
+   "kept": true,
+   "reason": "val 0.475 vs 0.266 (d=+0.210, margin 0.01); dev 0.200 vs 0.117 (d=+0.083, tol 0.005) -> kept"
+  },
+  {
+   "rung": "R3",
+   "model": "R3_skip",
+   "set": "v2",
+   "what": "heat-rate skip connection: when an EIA-923 heat rate is given, the network predicts the full-load heat rate as a correction to it (TransitNet trick)",
+   "time": "2026-11-14 00:42",
+   "val": 0.4701680999223878,
+   "val_acc": 0.9572172619047619,
+   "dev": 0.19067572033594526,
+   "dev_by_kind": {
+    "month": 0.11876617868741353,
+    "quarter": 0.157742554800851,
+    "year": 0.29551842751957125
+   },
+   "dev_acc": 0.8666666666666667,
+   "incumbent": "R2_v2",
+   "incumbent_val_on_this_set": 0.47538331738945583,
+   "incumbent_dev": 0.19982537655603316,
+   "kept": false,
+   "reason": "val 0.470 vs 0.475 (d=-0.005, margin 0.01); dev 0.191 vs 0.200 (d=-0.009, tol 0.005) -> rejected"
+  },
+  {
+   "rung": "R4",
+   "model": "R4_ens",
+   "set": "v2",
+   "what": "ensemble of 3 networks (R2 recipe, seeds 0-2): mean of predictions, variance = mean member variance + spread of member means",
+   "time": "2026-11-14 00:43",
+   "val": 0.5010498042414788,
+   "val_acc": 0.9624255952380952,
+   "dev": 0.21470304235579477,
+   "dev_by_kind": {
+    "month": 0.13407366502852666,
+    "quarter": 0.17664176537877038,
+    "year": 0.3333936966600873
+   },
+   "dev_acc": 0.8666666666666667,
+   "incumbent": "R2_v2",
+   "incumbent_val_on_this_set": 0.47538331738945583,
+   "incumbent_dev": 0.19982537655603316,
+   "kept": true,
+   "reason": "val 0.501 vs 0.475 (d=+0.026, margin 0.01); dev 0.215 vs 0.200 (d=+0.015, tol 0.005) -> kept"
+  }
+ ]
+}

@@ -1,0 +1,119 @@
+{
+ "rc_filter_vs_solve_ivp_max_abs_K": 3.214147863417338e-07,
+ "rc_step_vs_closed_form_max_abs_K": 3.552713678800501e-15,
+ "ghinge_vs_monte_carlo_max_abs_K": 0.0034973103224444912,
+ "degree_day_heating_MWh": 1080000.0000059772,
+ "degree_day_formula_MWh": 1080000.0,
+ "specific_humidity_vs_psychrolib_max_rel": 0.0022241139028664875,
+ "latent_factor_K_per_gkg": 0.7458250497017892,
+ "cop_hp_8.3C": 3.2640000000000002,
+ "cop_hp_-8.3C": 1.936,
+ "cop_ac_35C": 3.5,
+ "wind_table_vs_gridsim_mean_abs_cf": 0.0005137490643221029,
+ "wind_table_vs_gridsim_max_abs_cf_away_from_cutout": 0.03840202336826126,
+ "wind_table_vs_gridsim_max_abs_cf_at_25ms_cutout": 0.05332980416677474,
+ "gridsim_renewables_check": {
+  "what": "Wind and solar from weather vs ERCOT EIA-930 hourly output.",
+  "years": {
+   "2019": {
+    "wind": {
+     "raw": {
+      "real_TWh": 76.742068,
+      "sim_TWh": 81.2477149621263,
+      "annual_bias_pct": 5.8711565632115885,
+      "hourly_corr": 0.8970382679802361,
+      "hourly_nMAE_pct": 19.441715461613526,
+      "daily_corr": 0.9541039711968066
+     },
+     "dev_scaled": {
+      "real_TWh": 76.742068,
+      "sim_TWh": 76.742068,
+      "annual_bias_pct": 0.0,
+      "hourly_corr": 0.8970382679802356,
+      "hourly_nMAE_pct": 18.245926751802582,
+      "daily_corr": 0.954103971196807
+     },
+     "scale_from_dev_year": 0.9445443239329671,
+     "capacity_MW_end": 25830.199999999997,
+     "n_units": 155
+    },
+    "solar_pv": {
+     "raw": {
+      "real_TWh": 4.007054,
+      "sim_TWh": 4.794253430531518,
+      "annual_bias_pct": 19.64534120407458,
+      "hourly_corr": 0.9785384573292127,
+      "hourly_nMAE_pct": 21.89045495459292,
+      "daily_corr": 0.9306212805642343
+     },
+     "dev_scaled": {
+      "real_TWh": 4.007054,
+      "sim_TWh": 4.007054000000001,
+      "annual_bias_pct": 2.3242076962663307e-14,
+      "hourly_corr": 0.9785384573292114,
+      "hourly_nMAE_pct": 13.596042008778994,
+      "daily_corr": 0.9306212805642347
+     },
+     "scale_from_dev_year": 0.835803542316234,
+     "capacity_MW_end": 2395.7000000000003,
+     "n_units": 62
+    }
+   },
+   "2022": {
+    "wind": {
+     "raw": {
+      "real_TWh": 107.347878,
+      "sim_TWh": 115.77391657137127,
+      "annual_bias_pct": 7.849282844111061,
+      "hourly_corr": 0.9122471497785911,
+      "hourly_nMAE_pct": 19.711582266627456,
+      "daily_corr": 0.9647012128127129
+     },
+     "dev_scaled": {
+      "real_TWh": 107.347878,
+      "sim_TWh": 109.35359575697761,
+      "annual_bias_pct": 1.8684279506462325,
+      "hourly_corr": 0.9122471497785911,
+      "hourly_nMAE_pct": 17.7379186792883,
+      "daily_corr": 0.9647012128127134
+     },
+     "scale_from_dev_year": 0.9445443239329671,
+     "capacity_MW_end": 35432.0,
+     "n_units": 188
+    },
+    "solar_pv": {
+     "raw": {
+      "real_TWh": 23.666731,
+      "sim_TWh": 24.520008309219197,
+      "annual_bias_pct": 3.605387280648081,
+      "hourly_corr": 0.9650700699859998,
+      "hourly_nMAE_pct": 14.857308371817906,
+      "daily_corr": 0.8743369240017395
+     },
+     "dev_scaled": {
+      "real_TWh": 23.666731,
+      "sim_TWh": 20.493909802468895,
+      "annual_bias_pct": -13.406250307789039,
+      "hourly_corr": 0.9650700699860009,
+      "hourly_nMAE_pct": 23.10474293463509,
+      "daily_corr": 0.8743369240017385
+     },
+     "scale_from_dev_year": 0.835803542316234,
+     "capacity_MW_end": 11354.099999999999,
+     "n_units": 126
+    }
+   }
+  },
+  "farm_curve_cf_rayleigh_no_losses": {
+   "SP220_vmean6.5": 0.41293919377144145,
+   "SP220_vmean7.5": 0.501354697347189,
+   "SP220_vmean8.5": 0.5741724641110748,
+   "SP300_vmean6.5": 0.3503966423268402,
+   "SP300_vmean7.5": 0.4384970404772627,
+   "SP300_vmean8.5": 0.5140340410819625,
+   "SP400_vmean6.5": 0.2943236062941876,
+   "SP400_vmean7.5": 0.3795283062216518,
+   "SP400_vmean8.5": 0.4556428660083221
+  }
+ }
+}

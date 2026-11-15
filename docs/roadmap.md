@@ -20,8 +20,10 @@ Where the collection goes next, beyond each model's own next rungs (in its `mode
 - **A physics MCP server.** Each model becomes one tool that returns its readings *with* error bars and the card's
   limits: `chirpnet.scan`, `sundoctor.diagnose`, `cellsense.health`, `transitnet.read`, `quakenet.read`,
   `bearingnet.diagnose`, `swellcast.read`, `beatnet.classify` (with its not-a-medical-device notice),
-  `starquake.read`, and for the vehicle models `energynet.predict`, `tripdetective.read_car`, `hybridpilot.compare`. `mlratchet.load()` already imports any model in isolation, which is most of the work.
-- **One design language for the labs.** The twelve interactive pages were each built with their own visual identity.
+  `starquake.read`, for the vehicle models `energynet.predict`, `tripdetective.read_car`, `hybridpilot.compare`, and
+  for the grid platform `gridsim.dispatch`, `gridsim.frequency_event`, `gridpulse.read`, `batterypilot.run`,
+  `plantdetective.read`, `demandcast.forecast`. `mlratchet.load()` already imports any model in isolation, which is most of the work.
+- **One design language for the labs.** The interactive pages were each built with their own visual identity.
   The website now wraps them in one system; porting each lab natively into the site (shared JS network runtime,
   shared chart components) is the next step.
 - **A shared JS runtime** for in-browser networks: numpy-equivalent conv/GELU/BatchNorm in TypeScript, with parity
@@ -41,8 +43,31 @@ wrappers into RoadSim (a new physics version), rebuild the frozen sets and re-sc
 vehicle` command that rebuilds RoadData from the raw downloads; real heavy-duty traces for at least two truck and
 three bus types.
 
+## The grid platform
+
+GridSim, GridData and four models (GridPulse, BatteryPilot, PlantDetective, DemandCast) came in on 14 Nov 2026; see
+[grid-platform.md](grid-platform.md). What is left is in [shared/grid/HANDOFF.md](../shared/grid/HANDOFF.md), in order:
+
+1. **The possible exam leak.** GridSim's default outage rates cite Texas RE 2024/2025 aggregates, published during
+   the exam years. Replace them with pre-2023 NERC GADS values, re-run the checks, re-score.
+2. **Upstream each model's fixes behind a flag** (GridPulse's per-technology aggregation and two-segment Dynamic
+   Containment, BatteryPilot's ORDC adder and cold-outage curve, PlantDetective's self-commitment layer and soft history
+   constraints, DemandCast's building-stock demand model and tabulated farm curves), and fix GridData's 3 Dec 2019 dev
+   label (1,788 MW labelled, about 850 MW implied).
+3. **GridSim v2:** coal/gas commitment, scarcity pricing and low-net-load inertia inside their "done when"; era-aware
+   frequency response; one more region (PJM or CAISO) dispatched and calibrated like ERCOT. Then every grid model's
+   frozen set rebuilt and every rung re-scored, each with a published win/loss table.
+4. **Data:** a day-ahead forecast-weather archive (Open-Meteo previous runs; rate-limited from the cloud sandbox,
+   reachable from the repository's own machine), sub-second frequency (PMU or FNET/GridEye), CAISO prices before
+   2023-08, the 17 missing ERCOT monthly reports, CAMPD for more states than Texas.
+5. **DispatchNet,** a learned dispatcher graded on EIA-930 generation by fuel, real prices and speed, once the coal/gas
+   gap is closed.
+6. **A control-room page:** one ERCOT day with the demand forecast, the dispatch, a trip and a battery's response
+   together.
+
 ## New models
 
-Next up is **GridSim**: a shared electric-grid simulator and data package built the same way as the vehicle platform,
-with GridPulse and four other models on top. See [backlog.md](backlog.md) for it and the other candidates with physics,
-data and an exam lined up.
+The power-grid project is in (above). The next big-system candidates are BuildingSim (NREL ResStock/ComStock, Building
+Data Genome 2; DemandCast's building-stock model is a head start), Watershed (USGS NWIS, SNOTEL) and WakeNet (Kelmarsh
+and Penmanshiel SCADA). See [backlog.md](backlog.md) for them and the other candidates with physics, data and an exam
+lined up.

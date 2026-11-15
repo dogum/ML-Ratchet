@@ -1,0 +1,21 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json (written by training/ratchet.py; every rung re-scored on p2s).
+model: gridpulse
+ladders:
+  - name: "GridPulse v1.0 (GridSim, 13-14 Nov 2026)"
+    objective: "Mean skill on the frozen simulated set p2s (1,387 GridSim events of physics p2, seed 98) over MW lost, inertia and MW/Hz read at 60 s, and the nadir and 60 s settling forecast from 10 s; skill = 1 - MAE / MAE of guessing the median, floored at 0; GB and ERCOT pooled"
+    rule: "Keep if the objective beats the incumbent by more than 0.01 AND, on the 4 GB dev events, the mean of four errors (MW lost MdAPE, inertia MdAPE, nadir@10 s MAE, settling@10 s MAE), each relative to the incumbent's, is no more than 10 % worse."
+    margin: 0.01
+    dev_gate: "Mean dev error relative to the incumbent may not rise by more than 10 %"
+    frozen_sets: [p1s, p2s]
+    scored_on: p2s
+    note: "r2 changed the measurement model and got the frozen set p1s; r6 changed the physics (p2) and got p2s, on which every rung was re-scored in order. The values here are the p2s re-scores."
+    columns_source: "Skills on the frozen set p2s, then the dev gate: mean dev error relative to the incumbent, and the dev inertia MdAPE"
+    columns: ["MW lost @60 s", "Inertia @60 s", "Nadir @10 s", "Settling @10 s", "Dev vs incumbent", "Dev inertia"]
+    rungs:
+      - { id: r1, change: "MLP 256-256-128 with Gaussian heads on the -20..+60 s 1 s window, truncated after N s; 13k selected GridSim events (p1 priors: dev-twin calibrated GB response + Dynamic Containment-era services, ERCOT damping refit); NESO 1 s modelled as the mean of the preceding second; real quiet GB noise", sim: 0.476, decision: kept, why: "first rung", metrics: [0.478, 0.169, 0.886, 0.271, "–", "16.6%"] }
+      - { id: r2, change: "measurement model: NESO 1 s values as instantaneous samples, not 1 s means (the dev events' first-second share sat at the 32-68th percentile of simulated events for 'sample' vs 50-92th for 'mean')", sim: 0.478, decision: rejected, why: "score 0.478 vs 0.476 (needs +0.01); dev errors +10% vs the incumbent (1.098, inside the gate)", metrics: [0.475, 0.181, 0.879, 0.271, "+10%", "18.9%"] }
+      - { id: r3, change: "conditioned input: GB/ERCOT transmission demand (NESO generation mix / ERCOT load), dropped 25 % of the time in training so the network also runs without it", sim: 0.524, decision: kept, why: "score 0.524 vs 0.476; dev errors +7% vs the incumbent", metrics: [0.546, 0.298, 0.895, 0.265, "+7%", "15.8%"] }
+      - { id: r4, change: "more data: 2 × 24k GridSim states (p1, seeds 1 + 2, 70 % GB in the second), 80 epochs", sim: 0.542, decision: kept, why: "score 0.542 vs 0.524; dev errors -11% vs the incumbent", metrics: [0.533, 0.322, 0.907, 0.326, "-11%", "14.7%"] }
+      - { id: r5, change: "wider network 512-512-256 (0.44 M parameters), 120 epochs, same data as r4", sim: 0.555, decision: released, why: "score 0.555 vs 0.542; dev errors +3% vs the incumbent. Released as v1.0 (r6 was rejected).", metrics: [0.516, 0.336, 0.918, 0.365, "+3%", "15.0%"] }
+      - { id: r6, change: "physics p2: 30 % of trips ramp out over 0.5-3 s (unit runbacks, staged trips; the 11 Jul 2019 dev event falls slower than its label implies); trained on p2 + the second p1 bank (15 % ramps), r5's network", sim: 0.589, decision: rejected, why: "score 0.589 vs 0.555; dev errors +14% vs the incumbent (gate: <= +10%); dev inertia MdAPE 15.0% -> 19.7%", metrics: [0.608, 0.355, 0.920, 0.383, "+14%", "19.7%"] }
+      - { id: widen, change: "error bars: widen-only factor = max(1, 68th percentile of |z|) on the dev events (GB net: MW lost, inertia at 60 s, nadir and settling at 10 s; ERCOT summary heads: 5 ERCOT dev events)", decision: kept, why: "MW lost ×1.11, settling ×1.28, inertia, nadir and the ERCOT heads ×1.00 (training/checks/widen.json); no effect on the readings" }

@@ -1,0 +1,4266 @@
+{
+"release": "gridsim-griddata-v1.0",
+"frozen": "2026-11-14",
+"note": "sha256 and bytes of every data file shipped in the v1.0 release; `mlratchet data grid --only verify` checks a data root against it",
+"splits_sha256_of_content": "895b4e9ab0b3e78a31916a2de557658f236736661800f0f9665b735314b917eb",
+"n_files": 1064,
+"bytes": 291569361,
+"files": {
+"data/proc/baselines/battery_daily.parquet": [
+"3674f052f4b9e0801763236540ee560b416c6ea6ad2b57ece31a3a56e9fbdd06",
+578476
+],
+"data/proc/baselines/demand_exam_predictions.parquet": [
+"6cb551288c00e1b4fa97bd227d2dd15d51caa18e9ce144a32779ddb581a32e10",
+5530925
+],
+"data/proc/baselines/frequency_events_ercot.parquet": [
+"301a88242ce946a52cccb0db984454176f9e310f34146493bf0d97d75d614a1b",
+36736
+],
+"data/proc/baselines/frequency_events_gb.parquet": [
+"245f133bf0ede40df148a323a29e696e3e52d5bb6c75976b62475473080505b3",
+100848
+],
+"data/proc/baselines/heatrate_unit_years.parquet": [
+"55446340f3394d67479243934f55c04913ba8ac4fd6dac4e775dc62776cb3d8e",
+116195
+],
+"data/proc/baselines/summary.json": [
+"a1e868a818afb8f450969a217328ea017bdf4e93017b479c350cf31f7d6a2a4c",
+27196
+],
+"data/proc/checks/qc_summary.json": [
+"f325da22852150e1dc84ba5c40ac1a8a03ede983cf143f1e94f807fea6dc7988",
+9323
+],
+"data/proc/eia930/ba/BPAT.parquet": [
+"a6bbcea55305b34f18b4d28f9cdd0a0ddcf2f737204575ee5d3be7c1d57a987d",
+3500635
+],
+"data/proc/eia930/ba/CISO.parquet": [
+"19682c9a4cb66bf4c7a3aa1514fbfb10eeba99007e0aad5e37ccce4cf68e6c59",
+4406509
+],
+"data/proc/eia930/ba/ERCO.parquet": [
+"a6685d943750133dd6099161a6bda0e8867a12930efcb0c7a137138ae565a534",
+4649601
+],
+"data/proc/eia930/ba/ISNE.parquet": [
+"d5c8448b7751ed2efe0403e1547bbacbfd1f0c9675104888a9c67b176ce085ef",
+3603834
+],
+"data/proc/eia930/ba/MISO.parquet": [
+"1e4284105e0f39581dac2bf6f216be47c673407e2dcaf203f122ade8fdd44bf5",
+5138270
+],
+"data/proc/eia930/ba/NYIS.parquet": [
+"a5e0eeccd3eb2dc431f28e411f39ad16344f61a67b9fb88daf4bdd8ae93b9c21",
+3507012
+],
+"data/proc/eia930/ba/PJM.parquet": [
+"8c2b238babb1c9aa232abe8ed5ad4bb42dea5d57e93bf839033ce7e5129e60e1",
+5486019
+],
+"data/proc/eia930/ba/SWPP.parquet": [
+"1d7bb1606b4c2b4eb581eea067d6713f62458fc9ef17eee5c06cc75fcd86034e",
+4079084
+],
+"data/proc/eia930/quality_summary.json": [
+"450a6d7014c1e6a8e23d328ca218a4b1b73dbe60cbbeeadf49b9d4d02ea52a99",
+46373
+],
+"data/proc/fleet/defaults.json": [
+"e311b96db4d6b09500b969bcc3d1d8342f54ff2e33952645cdfe09a2628e1ac7",
+9835
+],
+"data/proc/fleet/fleet_BPAT.json": [
+"0d9a2fc1b87692ab5d0f9dc58735ea95d692eb38744af831ee6f7d93761e4831",
+592430
+],
+"data/proc/fleet/fleet_BPAT.parquet": [
+"4b98bc7d1b516ad626126bfdc4183fb41d623edaa58e41cd3c8bbca29591968b",
+64060
+],
+"data/proc/fleet/fleet_CISO.json": [
+"8300950f988f748946f28bae9a7bdfc171c1e83ed6d59c1a1dea3ed44d952791",
+4693025
+],
+"data/proc/fleet/fleet_CISO.parquet": [
+"4184294f9b63f5a0ea86d55a18c39bf605848ad16613f069833441bcd27a8686",
+294083
+],
+"data/proc/fleet/fleet_ERCO.json": [
+"2759528a7575a47445cd9f0338e6246960c68f25dfeb47e7adb01faca362e2c6",
+3870085
+],
+"data/proc/fleet/fleet_ERCO.parquet": [
+"3dc081bf183be5a89db2e492b635c632175a2da281d330f635cb372a6804e89c",
+227533
+],
+"data/proc/fleet/fleet_ISNE.json": [
+"d1312f8bd7ee0176ce94e742eb81bf20cde584ffff39a9d24995ead077816e44",
+3588407
+],
+"data/proc/fleet/fleet_ISNE.parquet": [
+"980e29924382c34b4f2f21e2ddc465ef711a212919e3b26d7128d8a69ea78f7c",
+242345
+],
+"data/proc/fleet/fleet_MISO.json": [
+"e630aca259a3dd70c497be5be986c05ebde7990051d0f61183ff53a4707b89d4",
+8583417
+],
+"data/proc/fleet/fleet_MISO.parquet": [
+"c900963a8485934fabaef273e2ca0068866d77f394f40a55b0213fa6812e62b5",
+511907
+],
+"data/proc/fleet/fleet_NYIS.json": [
+"902088c1b90d0b7e2c7751ff6811dba65f72fe25ea5572b75c1dda5e0110d508",
+3251818
+],
+"data/proc/fleet/fleet_NYIS.parquet": [
+"9e52a8057c955eaba1771f128dc36822d01e6b079c79b73a9f5b827e802d9a0f",
+213892
+],
+"data/proc/fleet/fleet_PJM.json": [
+"de5d25bcf11805af6231a2f084d90cf9b2852e732149acee2b867cd62729f39d",
+7218157
+],
+"data/proc/fleet/fleet_PJM.parquet": [
+"eb7bf93e6e142625f8414353fa1302ab6b475602b2d1490db27005541817c9f9",
+432719
+],
+"data/proc/fleet/fleet_SWPP.json": [
+"478b2ebf915d0eb399db37d378532c33cd78b6aed6a3f01fcc2c9d15c178f9d7",
+2944332
+],
+"data/proc/fleet/fleet_SWPP.parquet": [
+"0aaf83ad451fb069ff1472cdf992e21fa26ceffb254817084b96cdc3099a2c30",
+220923
+],
+"data/proc/frequency/GB/1s/2018-07.json": [
+"9b408fb422bee35ad5474c244524e9edef3a5879f48b13403504958392219040",
+179
+],
+"data/proc/frequency/GB/1s/2018-07.npz": [
+"cbab659d6c1bf2860d6785fc1c405b4f8170b40959a017221fa3c96fc9aaed28",
+1369617
+],
+"data/proc/frequency/GB/1s/2019-08.json": [
+"7551db6c5e1207597c47ca5b4527ba41cae841134d463cc9876de0a18f7c6099",
+176
+],
+"data/proc/frequency/GB/1s/2019-08.npz": [
+"ff9b7a5db622c11d81b054a3c665439cb3c3dada98d089d2c71947c00996ad17",
+2202753
+],
+"data/proc/frequency/GB/1s/2020-07.json": [
+"2244874799c2d93436a24bc11b808fe52e36fed5b3e86375cb1d050679ddaa33",
+176
+],
+"data/proc/frequency/GB/1s/2020-07.npz": [
+"9c15ee2785b8e4d55033e35ee47f44b8ff59f96cfc100bd1c9de4954f0171c98",
+2116227
+],
+"data/proc/frequency/GB/1s/2022-01.json": [
+"b307352fab2f3ae28984c805d532ecaa8dd4ce0f2427ee5a2af9df9933521157",
+176
+],
+"data/proc/frequency/GB/1s/2022-01.npz": [
+"2562164cdf098f4b6049539f9876bdf0a2365e8ce2c45caf828ac011a54a403e",
+2173760
+],
+"data/proc/frequency/GB/events/GB_20180105T105951.json": [
+"d3190874e32fc3e873bde888ba45a8e0f1cea4f0ef8dd77c3d5da4d0de336a12",
+227
+],
+"data/proc/frequency/GB/events/GB_20180105T105951.npz": [
+"75335b0bee885f67aacdf53caa8bab0baae999e641b462e29109afc44764873f",
+2388
+],
+"data/proc/frequency/GB/events/GB_20180108T124636.json": [
+"20a8c5afeeebc6f157acc20eff28ed862bab76729551d6e7276f3c7dd935339d",
+227
+],
+"data/proc/frequency/GB/events/GB_20180108T124636.npz": [
+"abcaadaa6057c02a118e3f5188689298d1adcbd20d2ebd48e8d2d671097742b6",
+2340
+],
+"data/proc/frequency/GB/events/GB_20180115T072512.json": [
+"24302e9df1a45dbdce5c264051115433110460aac56435845340da5b7f29933a",
+227
+],
+"data/proc/frequency/GB/events/GB_20180115T072512.npz": [
+"bebd5c26a7f0a6a6861123e4253fe2b8774788dc013fc8f2c2d7dd7877315047",
+2588
+],
+"data/proc/frequency/GB/events/GB_20180119T075731.json": [
+"2c2fd74902c703b284fb1c3d55668c7a1d6548cb05378d36ada690780c07649d",
+227
+],
+"data/proc/frequency/GB/events/GB_20180119T075731.npz": [
+"854b1633625f089b371a21fd807775a962731b5365372507b9f4e3f90472fe69",
+2310
+],
+"data/proc/frequency/GB/events/GB_20180123T195649.json": [
+"46ee50de39a556e776005e39ceafcdfdefbf32cab8d1502609f195ff84e3f70a",
+227
+],
+"data/proc/frequency/GB/events/GB_20180123T195649.npz": [
+"72b92e3179b0941811a43cd3e6243c247e198911ce5dfa07579544bc4df064c6",
+2202
+],
+"data/proc/frequency/GB/events/GB_20180129T211608.json": [
+"627ca285db046aefcf5b5069b62d08d9addb5b0747086d561a21c2ba1a98e697",
+227
+],
+"data/proc/frequency/GB/events/GB_20180129T211608.npz": [
+"3d891fb64bb5b587697fb6256267f22c6ed37e3dd4750536cdc1cf3f7ce850df",
+2387
+],
+"data/proc/frequency/GB/events/GB_20180601T100245.json": [
+"5f9bd31c1aba397eaf0a1f69ca2ff751c47ae20649ae766335ee636dcb9305d2",
+227
+],
+"data/proc/frequency/GB/events/GB_20180601T100245.npz": [
+"fade6e9d8d8ddf7f85f22a8bff05ca4acb37998cc39e6d1876d3d994aa2cd86e",
+2556
+],
+"data/proc/frequency/GB/events/GB_20180612T050844.json": [
+"f692ab8e14ed7c0e86909407484cf4bd3942746a714f2ec52b69cba92043f36a",
+227
+],
+"data/proc/frequency/GB/events/GB_20180612T050844.npz": [
+"046f69256fc664579b5c10e01a3b437fb2078f9aada795e22b644ec425c2d639",
+2276
+],
+"data/proc/frequency/GB/events/GB_20180619T090053.json": [
+"5f895f070dad6c5fcc537111d75d533a0a1a6adf8aea6896fccfe5694fa51332",
+227
+],
+"data/proc/frequency/GB/events/GB_20180619T090053.npz": [
+"340134940ccf1f4ecc46940848c0689cd61201ec93f8b6a0655b7019e2336795",
+2413
+],
+"data/proc/frequency/GB/events/GB_20180626T005237.json": [
+"1d98d9a9ad4f0b4c6169410971c9ed6361177129855d7c1b10e373a8278540a3",
+227
+],
+"data/proc/frequency/GB/events/GB_20180626T005237.npz": [
+"17937b260d6832544f3ae7c0d4b3946df90099343113e56d533d45d8049c8ddd",
+2336
+],
+"data/proc/frequency/GB/events/GB_20180702T193848.json": [
+"e9b2344c04c6a797d590c777e974750f505190a6b3f36be0d1a900e23bdfc23d",
+227
+],
+"data/proc/frequency/GB/events/GB_20180702T193848.npz": [
+"b7391bdf58699eb88352d6cafa80bcf1901ccfc3db6d59de7d45e3f787bf5a2c",
+2395
+],
+"data/proc/frequency/GB/events/GB_20180704T003235.json": [
+"9798b9ec4bd25e45348ae450e003c6c51eaee3205a5e5e935ca2dc983f42dd43",
+227
+],
+"data/proc/frequency/GB/events/GB_20180704T003235.npz": [
+"c93dccfc24c32548d9f2a5551c744b6cf4badccdc05de3576a7678616915ef19",
+2553
+],
+"data/proc/frequency/GB/events/GB_20180707T182509.json": [
+"6d48070e2ba79c089eaab03222bff31dd13a4ae925a54684ffb261b0b215c50e",
+227
+],
+"data/proc/frequency/GB/events/GB_20180707T182509.npz": [
+"e581dd7bd93d024a098d806e0788dcc0c95c7011d1e5462ea0e340f74c4d5709",
+2422
+],
+"data/proc/frequency/GB/events/GB_20180712T132456.json": [
+"ac10fbae7c069874af1e30ace7e9b674bcb45f5746904abdfba1b26c20f7f657",
+227
+],
+"data/proc/frequency/GB/events/GB_20180712T132456.npz": [
+"6872e7bd01b987f192a0e69c6014c581c3b75bc380356c1905926f8da538949e",
+2493
+],
+"data/proc/frequency/GB/events/GB_20180713T104956.json": [
+"846d99453341c0c1b25d67e24e1d03111d2110d97f1d84980daaea2de5a878d0",
+227
+],
+"data/proc/frequency/GB/events/GB_20180713T104956.npz": [
+"56e9202302aba56fe293b4a245f31ee42bd450c3e29bdc6b85d7efb5936ac627",
+2399
+],
+"data/proc/frequency/GB/events/GB_20180716T210640.json": [
+"f7f60f4fbea8875c870206fdd8aa4d32b2f4b981c79685457730c2c6126b512a",
+227
+],
+"data/proc/frequency/GB/events/GB_20180716T210640.npz": [
+"480ed5a3c936d7e79a5d9b8b729e56661c2ea0608e36f614613c6c3df43de30f",
+2360
+],
+"data/proc/frequency/GB/events/GB_20180727T145758.json": [
+"d0d8154da012420c2c2df0e4cfd61beb6d95e04ef1d06627c649d0e50004c7bc",
+227
+],
+"data/proc/frequency/GB/events/GB_20180727T145758.npz": [
+"af2e6a33cca963fbbcea6482870538774ce26af5430ad0fac768b653dae6dab9",
+2477
+],
+"data/proc/frequency/GB/events/GB_20180727T201149.json": [
+"2ee5d3e02d3e35db873f6359ed2cc5788dda9abbd4fa063f5eb03e7ffaf8553a",
+227
+],
+"data/proc/frequency/GB/events/GB_20180727T201149.npz": [
+"b55e25a44fefbdd014ec4e3f83d05bdcd3a34c979ece6b76538b890cab48a803",
+2354
+],
+"data/proc/frequency/GB/events/GB_20180812T202323.json": [
+"4a84e7ca31a9aae5410809f64197737d705e81b5208ddcd37f0896d67734226c",
+227
+],
+"data/proc/frequency/GB/events/GB_20180812T202323.npz": [
+"97b1400dcb8601fb0f6b77af570867afe5551490e966f8bdd2e7aff416414662",
+2494
+],
+"data/proc/frequency/GB/events/GB_20180821T035839.json": [
+"057ed148bf6da845615d5adc787a27d39a0baad8f78a26272e64f1032d2ff593",
+227
+],
+"data/proc/frequency/GB/events/GB_20180821T035839.npz": [
+"d1dc0a4bf88d8090d5038f768a64a2d845fd29ba7825d61e471e4f6eb7e01940",
+2359
+],
+"data/proc/frequency/GB/events/GB_20180822T200645.json": [
+"60b3d710dae41890c3b9d3ba96eeb70a301d3fc6629f7ab479904d1f0649e5a9",
+227
+],
+"data/proc/frequency/GB/events/GB_20180822T200645.npz": [
+"eac9de8b917668834750a10ee2b9500571cf6ff13cf16bc65634dd61325ddf5f",
+2269
+],
+"data/proc/frequency/GB/events/GB_20180823T083319.json": [
+"13587f093000775ebe9783383f7a3e3de58c23dec1d826b93a0c3f68c707f53c",
+227
+],
+"data/proc/frequency/GB/events/GB_20180823T083319.npz": [
+"595d80afc52e58934a6ad70b0890e4f2dc938f0048bd0d388c6f6cb727302867",
+2304
+],
+"data/proc/frequency/GB/events/GB_20180825T142157.json": [
+"224620fb9672573071f2a4caa2589477d066ea36a517def6c7f052700cec7e75",
+227
+],
+"data/proc/frequency/GB/events/GB_20180825T142157.npz": [
+"28366a4326a2e1a7a39635b6706528d873a537ffc6b268557eebb83aa9f7c257",
+2193
+],
+"data/proc/frequency/GB/events/GB_20180828T105043.json": [
+"1ec4ae4f75b678326e105d21aa5583fe906f150c0557b473432f367674f3fabe",
+227
+],
+"data/proc/frequency/GB/events/GB_20180828T105043.npz": [
+"7e8fb981b2b9dc1a9ae9eefe859236f6b68dc2b35ceba81ed0daa389510777a1",
+2460
+],
+"data/proc/frequency/GB/events/GB_20180916T112554.json": [
+"c095cd3053b2545e77eca779efab79a9e64d509a9357a757791842a91cc87270",
+227
+],
+"data/proc/frequency/GB/events/GB_20180916T112554.npz": [
+"c7d396e6907c64a6d0eff5d08c812bb37727bfee9ec851b88f725a964701f0d1",
+2200
+],
+"data/proc/frequency/GB/events/GB_20180917T061303.json": [
+"6d29249eaf15138945be58202816e350b8ce04fb98a47d49f912b4187cde7bd1",
+227
+],
+"data/proc/frequency/GB/events/GB_20180917T061303.npz": [
+"7e2399498aab30f19139b7c016a33e9257bef00b80038c563ac38bb2da37c9c2",
+2179
+],
+"data/proc/frequency/GB/events/GB_20180921T163815.json": [
+"c6a2f3c06a8ef34e6a66f810ef98020c41c4799e24bd056e8434d7fa2a711c04",
+227
+],
+"data/proc/frequency/GB/events/GB_20180921T163815.npz": [
+"f4c77c5c7c0069e7fb244a96fb46c3784a4a3350567aa31d20bd993a122a0edc",
+2501
+],
+"data/proc/frequency/GB/events/GB_20190103T002959.json": [
+"a705f76c69d076b1048467c27d6d18fee2c54bd92c8944a45a16434d7d44ec9a",
+227
+],
+"data/proc/frequency/GB/events/GB_20190103T002959.npz": [
+"00d5ed90dffb8cbecdeeeea6e74b8a03aac06a708d13127fb959db2bf3468412",
+2199
+],
+"data/proc/frequency/GB/events/GB_20190103T121732.json": [
+"ec8f93ec75cdbe9baadb14043d0e4ddf0e4cf4f0b2d75d7df1e61c26a2868db8",
+227
+],
+"data/proc/frequency/GB/events/GB_20190103T121732.npz": [
+"6f30f5a2658822eac1876d7e285a7a8758a6d03bfbb63df6db05f684fc010009",
+2546
+],
+"data/proc/frequency/GB/events/GB_20190106T002958.json": [
+"c6853eb77166aeab108df80cb2b158c1cbb33eb0574fccdb7c088674c96f73b7",
+227
+],
+"data/proc/frequency/GB/events/GB_20190106T002958.npz": [
+"4ff2a2619f0609ca29067132969962250260f8a998e4004a19d83012c9ee92b6",
+2195
+],
+"data/proc/frequency/GB/events/GB_20190106T005715.json": [
+"6eeb58376e1f256ed89f178da42c2106cbf970451ba3c3f04a883b36fead23a7",
+227
+],
+"data/proc/frequency/GB/events/GB_20190106T005715.npz": [
+"7c9b7444f6286f49201ff04d0a872e13ebc8d70cc26feaf3329a6273614ca131",
+2440
+],
+"data/proc/frequency/GB/events/GB_20190110T173332.json": [
+"bc5ece59202bbdf34f7039250224666d55172ab5cf161707dc5913b8f2c20eba",
+227
+],
+"data/proc/frequency/GB/events/GB_20190110T173332.npz": [
+"1fc73cf8a45a75aea48b6a96edb3c993a8b9f1434884ce310a25e200a90841d4",
+2385
+],
+"data/proc/frequency/GB/events/GB_20190110T190200.json": [
+"01ab8851cd11641b69edad875db2458ff41809acedbeed8bfa2ec117bf175577",
+227
+],
+"data/proc/frequency/GB/events/GB_20190110T190200.npz": [
+"6af14d1311fbcd820df123e8fd1b1a37d1ab382c9f4a90374c0a855f3bb44910",
+2229
+],
+"data/proc/frequency/GB/events/GB_20190111T002958.json": [
+"985dcc6c6a2a6805ccb94cf7c90df0721baf2beb07dba6c4658fd35d5d3db52a",
+227
+],
+"data/proc/frequency/GB/events/GB_20190111T002958.npz": [
+"4a90f2c19ec3db789182587f23d73787355e0e3e7c86c1b59c81dc226d67b5b4",
+2165
+],
+"data/proc/frequency/GB/events/GB_20190203T191655.json": [
+"75f65ba82b53fce7b4db2a4ce07646e045959dd5a0397fd22fd9bb67b226e939",
+227
+],
+"data/proc/frequency/GB/events/GB_20190203T191655.npz": [
+"4b004bc7a488eb728a3362370d4e7d550d6fcf9f4419acc660a3fc010e646d99",
+2335
+],
+"data/proc/frequency/GB/events/GB_20190213T002959.json": [
+"9c202d7aefb10b893064a31a3f1ea2f32b53bfd55f40bc229d739a81ef4e507d",
+227
+],
+"data/proc/frequency/GB/events/GB_20190213T002959.npz": [
+"7054a6d86a21bb46dc2353de2654804400fd82c3c6008bf5fbfa53ebb21dd814",
+2708
+],
+"data/proc/frequency/GB/events/GB_20190214T002958.json": [
+"80c73d77ee8ccfb2518306b0ac14b9c688f54424745e1813307f86193aba834d",
+227
+],
+"data/proc/frequency/GB/events/GB_20190214T002958.npz": [
+"03e4137247ea137c95cb2c13d73d18792ead3830c5138a5968c0cbb31d366785",
+2739
+],
+"data/proc/frequency/GB/events/GB_20190219T002958.json": [
+"c19e6a1fb94b02f00f332320de9508c1f69783a29ef72622a159914d6a7c2ed6",
+227
+],
+"data/proc/frequency/GB/events/GB_20190219T002958.npz": [
+"696c65888ff00af537e4e519c33b7341cd5880393fa1da0334d0b51eaf4924cd",
+2559
+],
+"data/proc/frequency/GB/events/GB_20190220T174621.json": [
+"20fafdd9c0dc611f28d129090a1e63556e14f71b50fcc7782c4d3710759c7205",
+227
+],
+"data/proc/frequency/GB/events/GB_20190220T174621.npz": [
+"a970caa88c64f1a3be4b5754a0aefb93a3755670fbbd4041306c01ffe9bbf426",
+2995
+],
+"data/proc/frequency/GB/events/GB_20190221T065556.json": [
+"6de7f9ddef24358668ec39a0bbf367e0635ca595c318beaa70c884c802dc0431",
+227
+],
+"data/proc/frequency/GB/events/GB_20190221T065556.npz": [
+"ea68170ebf0c57d4fd7519a536c2f9e13f929341092438ae727d8235920bb5fe",
+2976
+],
+"data/proc/frequency/GB/events/GB_20190225T082230.json": [
+"dcf0a2512bfd1a6cba61a607978bd000c6e4132915770b1f74ca1f3abc955546",
+227
+],
+"data/proc/frequency/GB/events/GB_20190225T082230.npz": [
+"01dd8b3d0d2b25b4109ac6a94d1e3c574a3f4d8385cab6cc498195a75975799a",
+2922
+],
+"data/proc/frequency/GB/events/GB_20190313T000000.json": [
+"0a1867e135ab1ebcb2ad0691dc66e51b5832f94e36e7649473cc9626e1c993b7",
+227
+],
+"data/proc/frequency/GB/events/GB_20190313T000000.npz": [
+"484d9aedb5942e8ebc20dcca7220d996f3ec7dd4da130e950b13fba0c8f055f8",
+2259
+],
+"data/proc/frequency/GB/events/GB_20190317T002957.json": [
+"b9bbfd2cdd805bb9d3086711cc427f112f694e298504ac350cde5a31ad1a23fd",
+227
+],
+"data/proc/frequency/GB/events/GB_20190317T002957.npz": [
+"dfffd79422737758e06b9d23e73433a2b57e8087853c0d11c3a3fdb950a970de",
+2904
+],
+"data/proc/frequency/GB/events/GB_20190328T164655.json": [
+"bb2c502c4afc3b3546f845aa77d54d965c24162c8d4430f0f6cc2fca92fdba2e",
+227
+],
+"data/proc/frequency/GB/events/GB_20190328T164655.npz": [
+"95f6b285e7bf000968d917e798b8c0b00b577dbb36bd6f28f04c4bef036336eb",
+3029
+],
+"data/proc/frequency/GB/events/GB_20190330T152228.json": [
+"879e9233aa4722d4b7d5fd40b2f345ab2e7083de6abd8474a021770abf47ce26",
+227
+],
+"data/proc/frequency/GB/events/GB_20190330T152228.npz": [
+"9df2cb1afd2aece32fea3ab14d1b70c2358836fd509e9281c2ab570fa3cbf4e9",
+2867
+],
+"data/proc/frequency/GB/events/GB_20190330T153508.json": [
+"926ed3b7086f6d5b0f87009306e21f3dd5a662a269d89c7c291f4ac7507afdd9",
+227
+],
+"data/proc/frequency/GB/events/GB_20190330T153508.npz": [
+"fa0b32699d46515cc4b01b73492b315126fdf3d8385786fdedcb57c067b93000",
+3134
+],
+"data/proc/frequency/GB/events/GB_20190410T152448.json": [
+"19d128bf406b252641b2757f021d27ef7c58c3f805914c8dee3034b65196b1d5",
+227
+],
+"data/proc/frequency/GB/events/GB_20190410T152448.npz": [
+"d5e033b688d7c66b6e8d7ef653931a2cc5e5addd4073d94931fe9c2f7d7b0aec",
+3091
+],
+"data/proc/frequency/GB/events/GB_20190415T180252.json": [
+"acadf620e570945b60985055978022ca1e694dcb84137cfeea466cf2e669ad73",
+227
+],
+"data/proc/frequency/GB/events/GB_20190415T180252.npz": [
+"79b05d157e3a922135b485b4b43fc17c26727c7c45a5706c589ff4e7ee92eb1c",
+3045
+],
+"data/proc/frequency/GB/events/GB_20190418T131528.json": [
+"17c46804c04f2e0d5da2ac6494b5bf6787a596ddfd926e75735cbd9599de38a5",
+227
+],
+"data/proc/frequency/GB/events/GB_20190418T131528.npz": [
+"309caa7b367a5ba2bad16b66e441daa7883a629e9a81d5b4d1825e4162aff4dd",
+3009
+],
+"data/proc/frequency/GB/events/GB_20190531T141950.json": [
+"370727da9260884e9b9c640485bee619d5f3450879a5c4580397e2af52cd757c",
+227
+],
+"data/proc/frequency/GB/events/GB_20190531T141950.npz": [
+"7fc569b82438a2e981fea8f542573e8a6336a983cf6c9de6006f471b85e74c0e",
+3056
+],
+"data/proc/frequency/GB/events/GB_20190612T124035.json": [
+"d0cc6e80e7c6a2cfc887ef8e11f8737742c9e1d0d412c6fc5b6dbb63f5fbe7c8",
+227
+],
+"data/proc/frequency/GB/events/GB_20190612T124035.npz": [
+"26bf9c8c6e30e4034a2b4c3f3d63c8f7d735796804b2f8e249d71c2db89d6e4f",
+2927
+],
+"data/proc/frequency/GB/events/GB_20190612T174431.json": [
+"7496e3e9c07cced884eae29f6cee1295a38eea50bf04b699fdf9330187ee8ea7",
+227
+],
+"data/proc/frequency/GB/events/GB_20190612T174431.npz": [
+"2c83e68f0c2c7f216585e6f975304acd6a6d245d193c955dbc9a88c4b5639775",
+3211
+],
+"data/proc/frequency/GB/events/GB_20190619T011801.json": [
+"abe1e6bb8ed9b0e82bba04a2f0e32462dc779cfb5c726e8d27273ce42b4fc6da",
+227
+],
+"data/proc/frequency/GB/events/GB_20190619T011801.npz": [
+"e16d56b740b59553b377a3c541ba92c99cad0161efeb5fdf684b5c3597185c63",
+2904
+],
+"data/proc/frequency/GB/events/GB_20190620T002954.json": [
+"1f85cc7ad993d6993d543a659bc20da4cc7e6c2e066fbffa75afb9f9b47e48ec",
+227
+],
+"data/proc/frequency/GB/events/GB_20190620T002954.npz": [
+"5a75cdbc5f276905f0af004b5ce9821ff792d6cb28ff305451bcbf32ef711e46",
+2841
+],
+"data/proc/frequency/GB/events/GB_20190620T145829.json": [
+"945b2684f8a3b9dc3b0e13395ea14ccf0885c6eb9b8a5d92fa4257c22f5c92e7",
+227
+],
+"data/proc/frequency/GB/events/GB_20190620T145829.npz": [
+"91ddc02f569c19ea0e87ea138623355e11b8634fbb265b458c772630b08f5165",
+3256
+],
+"data/proc/frequency/GB/events/GB_20190701T072734.json": [
+"718c3f0e8c551b01d212034f921e3c0b482c1568153813fab0964a86e6752786",
+227
+],
+"data/proc/frequency/GB/events/GB_20190701T072734.npz": [
+"52ea112a40ef605be8c2cfc053f267aedf5ab1fd1e8901b88be42ec7c4e88be4",
+2946
+],
+"data/proc/frequency/GB/events/GB_20190703T061509.json": [
+"2b3890d81b4f4f5bee7c3c9a7ef653c446b46d53b476c6f2ad18b03785310b49",
+227
+],
+"data/proc/frequency/GB/events/GB_20190703T061509.npz": [
+"2172f2ebeca1f7ec94100a495fa27fd263459c4f43fe255ddc5ea14943b7c46c",
+3129
+],
+"data/proc/frequency/GB/events/GB_20190704T092449.json": [
+"f589ff316037e1036cf2f1c35fd85d1c846a1efb4d5e7e4f1cb0c77720e7f11b",
+227
+],
+"data/proc/frequency/GB/events/GB_20190704T092449.npz": [
+"6991f8a32b52baab735d1b9b53b70c9799a43cbfb149174e1cb72beb3ca37ab5",
+2918
+],
+"data/proc/frequency/GB/events/GB_20190704T111609.json": [
+"f295650f96115f9b48fe70daf12ad736c265d5913002b81d088516d229b2106b",
+227
+],
+"data/proc/frequency/GB/events/GB_20190704T111609.npz": [
+"01446466a31d7bbf1bf708a391c2dea8c3f8848101780e9d0730a86c91f7f9cf",
+3120
+],
+"data/proc/frequency/GB/events/GB_20190711T075329.json": [
+"2eb434316368dddfb10fd7b8cc365198164189352317011089955768ad25b497",
+227
+],
+"data/proc/frequency/GB/events/GB_20190711T075329.npz": [
+"bc183a37418ef3150b258dc426f4dab5678baa5c9fabc7e43b1368e31b8567cf",
+3201
+],
+"data/proc/frequency/GB/events/GB_20190714T152015.json": [
+"1fe8cfc242f1b3eab00b51a4277fae6057d62aef2f0927d2e0b4fcde52ceccf3",
+227
+],
+"data/proc/frequency/GB/events/GB_20190714T152015.npz": [
+"cd16ac98cec940a142ef640529a00a77dc9071820c61bcc5b042082922847aa5",
+2922
+],
+"data/proc/frequency/GB/events/GB_20190714T210031.json": [
+"a6b0f10b0ca6e2fc0521c15c50258fdef18a97aae751b646eb5bfc2d0a10d2df",
+227
+],
+"data/proc/frequency/GB/events/GB_20190714T210031.npz": [
+"826a0fc153ff8228ca19d4a4239b4cf112a3fa7b63a98d36aa9eea15a1aef845",
+3093
+],
+"data/proc/frequency/GB/events/GB_20190720T223012.json": [
+"6d60a2043b904414a216bfe79b1fb76c91d242cc6e3ccc79e03c372cb464bad6",
+227
+],
+"data/proc/frequency/GB/events/GB_20190720T223012.npz": [
+"edb5ea7efe5a805b6fb2f8bacaf0ac211234ebc72eda46720e2a76582149cbcc",
+2962
+],
+"data/proc/frequency/GB/events/GB_20190726T112229.json": [
+"0f752728d48a40c34ae1ffe600d5e6834a6b86198fa7b3cb62b45f2b6e0e1928",
+227
+],
+"data/proc/frequency/GB/events/GB_20190726T112229.npz": [
+"89bed6d1be66f8578d9774009d040e49fe0adff8322c817b4c955739a9048039",
+2956
+],
+"data/proc/frequency/GB/events/GB_20190808T162229.json": [
+"80bd16aa657e28ca2605e4e3e4377423799991557caf6196d313bbe512a51e00",
+227
+],
+"data/proc/frequency/GB/events/GB_20190808T162229.npz": [
+"52a0ab363b834884aad396371d668cf591b0876e68a17befbb2779988a646ea2",
+3096
+],
+"data/proc/frequency/GB/events/GB_20190809T155233.json": [
+"ed41d89f204169c30f00af71e53fa15886f9827e7e17566c6905f975a4f5227e",
+227
+],
+"data/proc/frequency/GB/events/GB_20190809T155233.npz": [
+"33ed9b164ef292d217323a0fd952aeb2126480e0db6faed58db0c952e13ee271",
+3462
+],
+"data/proc/frequency/GB/events/GB_20190811T225959.json": [
+"7b4db4a8b408529857cfb19105a9dc2d9a2acff57c42455669b0a34a999aa2e6",
+227
+],
+"data/proc/frequency/GB/events/GB_20190811T225959.npz": [
+"d1426260349d0a20e927be3d33cb7de39582b09ec8857903cf1f915a21c109eb",
+2987
+],
+"data/proc/frequency/GB/events/GB_20190812T080729.json": [
+"7de91538e2a249b7035a4bcdb6677a28326c3b06e5fc00bbe77c0db407b67d39",
+227
+],
+"data/proc/frequency/GB/events/GB_20190812T080729.npz": [
+"37605de57fed283ae83b9ffc068ddd3eb8eddd89afa2bb3c32cc7e28a6578e08",
+2894
+],
+"data/proc/frequency/GB/events/GB_20190812T204211.json": [
+"5118bb2899ad220efd944d36dcc70fc4edf9db0fef9974da9ffc5f1852a5c6fc",
+227
+],
+"data/proc/frequency/GB/events/GB_20190812T204211.npz": [
+"d1c17d48627d3d467348234ae8e6b9a757bd0f8ab1bb35d1ad9af0c509ea4a51",
+2905
+],
+"data/proc/frequency/GB/events/GB_20190813T181303.json": [
+"08fcaccbfc7d67543a5fecb75142a62ceac5eaf96c070347a4b3c93c27e40314",
+227
+],
+"data/proc/frequency/GB/events/GB_20190813T181303.npz": [
+"be3379f77ee131d64691f4f95c0e3c0b375c1dbb35c8d8d7f7eea24e653dffcb",
+2925
+],
+"data/proc/frequency/GB/events/GB_20190830T134738.json": [
+"4ec6f3ce36c351a0248be36e6148c25760151040698c7a9d37edd942aca5e30d",
+227
+],
+"data/proc/frequency/GB/events/GB_20190830T134738.npz": [
+"a1ace4f5ff741863714f61b5a687e949fb12afc31526cd269e4dd11aeb7b675f",
+2976
+],
+"data/proc/frequency/GB/events/GB_20190907T230753.json": [
+"25500f8063e8aad5670538745f0e8fa845564139999cd3b38131dffe400d1fe2",
+227
+],
+"data/proc/frequency/GB/events/GB_20190907T230753.npz": [
+"17cb769f6b964307b0a5abfd5901e7e3678dc4007e49673239dac2f2bfa0610e",
+2682
+],
+"data/proc/frequency/GB/events/GB_20191003T170223.json": [
+"a32bedbf55f9c15c9ce92952f3c65be6985dd55973c19183605d6c6f0ce1d316",
+227
+],
+"data/proc/frequency/GB/events/GB_20191003T170223.npz": [
+"2039dac5dbfe1ed39ce25798a4f644614cd08acb3987862921edacd08eed6965",
+3103
+],
+"data/proc/frequency/GB/events/GB_20191007T154836.json": [
+"4fac8c803eacea27337e29c23a15424831c8d9429ceee58b64d6ce3ca13ff330",
+227
+],
+"data/proc/frequency/GB/events/GB_20191007T154836.npz": [
+"a6a38bc8d2a36160ea07ccda766cddf0609340395434e532c5e0ffd83a026028",
+3098
+],
+"data/proc/frequency/GB/events/GB_20191009T103618.json": [
+"52cd3d751d9565a7025525e5262686d640c78bcef030a446c161814eee464bff",
+227
+],
+"data/proc/frequency/GB/events/GB_20191009T103618.npz": [
+"24ac2e6e9d56b8e590ffe4caa75552dfe7c6415f65f4e3cd202061ed6a884ad5",
+3019
+],
+"data/proc/frequency/GB/events/GB_20191022T183702.json": [
+"5953096e19d735034f2fb0b5e6832beb3bd11d3d346876e8401e8fe5cc5fe2d0",
+227
+],
+"data/proc/frequency/GB/events/GB_20191022T183702.npz": [
+"2f80d6907b01befe0900f8883bb503d7617f9344659621304bc8bf7b4f5db206",
+3090
+],
+"data/proc/frequency/GB/events/GB_20191113T000001.json": [
+"593651d03caf28a32e675232da1b2aa4ea409f819c1baa8ada4c41681f0bdddf",
+227
+],
+"data/proc/frequency/GB/events/GB_20191113T000001.npz": [
+"414ab0ed5e568e1f444bad78b5c342e3ec15c1aff39a902c008c9071482cd03f",
+2422
+],
+"data/proc/frequency/GB/events/GB_20191114T051730.json": [
+"27803a842ecaca53395fc211f1c5000ef027a9e40f6923ae9c394d547d655405",
+227
+],
+"data/proc/frequency/GB/events/GB_20191114T051730.npz": [
+"987cb99c41e7e18f57773337bcc52667f53f372e363ff249bdb4c7b3c0719f15",
+2687
+],
+"data/proc/frequency/GB/events/GB_20191116T133043.json": [
+"56845668bfb6cfb1d6167db9d02f4c1bd0a1db3cf0a108988bf48829fb67b8be",
+227
+],
+"data/proc/frequency/GB/events/GB_20191116T133043.npz": [
+"a38b878a13fb98d34a6d9109b159ec545308c8bd54b28988492ed345c6eec13c",
+2725
+],
+"data/proc/frequency/GB/events/GB_20191203T200030.json": [
+"f45d73cb95d5d28eb654d155903ad7a19a62ac2ba11de961341e9db0a4a76078",
+227
+],
+"data/proc/frequency/GB/events/GB_20191203T200030.npz": [
+"dcd6ed0b762bb4f0c0d29db8822dc209d68e58df603d01a90083e3a14bd99414",
+2981
+],
+"data/proc/frequency/GB/events/GB_20200128T073725.json": [
+"dd140072d85343649768f2df5c3e341a4c62ed1dd8ace345387b74ccee2f0b53",
+227
+],
+"data/proc/frequency/GB/events/GB_20200128T073725.npz": [
+"242d993c8a891ee63a174f9ddc7da8c8bafd71714abbeb65ffb89ec03e20c8d3",
+2969
+],
+"data/proc/frequency/GB/events/GB_20200209T085733.json": [
+"c767a751a848e6e03e8a91932421ae2c9d4430772ce7f7aecde588824f803b20",
+227
+],
+"data/proc/frequency/GB/events/GB_20200209T085733.npz": [
+"3765858a9c4c5df3ec49b80dbbbb6308179167fd5c74eb22856dd72ec84f756c",
+3167
+],
+"data/proc/frequency/GB/events/GB_20200214T085638.json": [
+"ee841efc577348f5021a0f7b0a32c14d0b5e790818c7d422f4d17f034b8773fc",
+227
+],
+"data/proc/frequency/GB/events/GB_20200214T085638.npz": [
+"83570abcc84e472d4dcc5a1adef5e55b7bcb562700506314850548b1aac2627b",
+3071
+],
+"data/proc/frequency/GB/events/GB_20200217T004900.json": [
+"001d9e21c4d0bace59664d0a3f57840e30e680fc4fd8f451ae341fa266b09897",
+227
+],
+"data/proc/frequency/GB/events/GB_20200217T004900.npz": [
+"0d96d42936b911a186903c360256a3b6963b989e1e4a56094a65c1078a8a2959",
+2765
+],
+"data/proc/frequency/GB/events/GB_20200224T133204.json": [
+"85a9a3972e9dba33a447180e598fec7e39eebbb5a901c9a551afd531ffe0111c",
+227
+],
+"data/proc/frequency/GB/events/GB_20200224T133204.npz": [
+"cce619df9224ff574c26361ad632c6420ea3b9a81390bf794008b128fa32c7ae",
+3076
+],
+"data/proc/frequency/GB/events/GB_20200306T235556.json": [
+"3dea13d103ea03563c40af0f244893144a4931a7903fad878bb2a134cd765ce3",
+227
+],
+"data/proc/frequency/GB/events/GB_20200306T235556.npz": [
+"a7eb4f3baf285f928adb0590543afa45c5a6ead8044e6fd811c002c56ce12924",
+2885
+],
+"data/proc/frequency/GB/events/GB_20200307T010552.json": [
+"fc0443f607543639faa1b6db9dc8ebaae6187ad385b962e330bda1a916778da9",
+227
+],
+"data/proc/frequency/GB/events/GB_20200307T010552.npz": [
+"36147c9f50d08c9be71d8d3b780d33e87e3e4597a24f1c4ee89292b6353d2691",
+2798
+],
+"data/proc/frequency/GB/events/GB_20200421T150142.json": [
+"56c01e3feb6097400dc401e566309fa2c3ce8e04fc49febfca09f63820d2ca89",
+227
+],
+"data/proc/frequency/GB/events/GB_20200421T150142.npz": [
+"08ab54b7e277b407000ae2334796d7adf9428100bc6c9d979e0e9e197db44109",
+2810
+],
+"data/proc/frequency/GB/events/GB_20200425T190306.json": [
+"c221824fd7ebf304098ad893f125edd6b97722912fc20622aa8d5c402a9f7135",
+227
+],
+"data/proc/frequency/GB/events/GB_20200425T190306.npz": [
+"b2c64bbcf2c4e346f65e25adbaa33795933fe3df603240decc8c3bb01123e03e",
+3027
+],
+"data/proc/frequency/GB/events/GB_20200430T143256.json": [
+"10747151a0be9585584020059d467f260238a3e89ce22feac2103ea27b7a1ae1",
+227
+],
+"data/proc/frequency/GB/events/GB_20200430T143256.npz": [
+"dead68fd086739ea3a4beff39646bf0a08fa8afbe6cf98b88d2ddaeaffa63c3a",
+2893
+],
+"data/proc/frequency/GB/events/GB_20200501T125443.json": [
+"dafb6cf422ec733b5f533a6d2d7a586145b1adb25731628a272b8670e7fbf4cc",
+227
+],
+"data/proc/frequency/GB/events/GB_20200501T125443.npz": [
+"907a239f020184e6f993727155aec85d523c7094d671ece6519816f97ba4cdb2",
+2834
+],
+"data/proc/frequency/GB/events/GB_20200522T185814.json": [
+"72627609b5a8049b99c968b75b26ecaabf6f96ad6022ddf23eac3d413e80fe1d",
+227
+],
+"data/proc/frequency/GB/events/GB_20200522T185814.npz": [
+"113d15ea974567f332a3714849709ffdea93dd20f5262b98b098a7613b29f167",
+3089
+],
+"data/proc/frequency/GB/events/GB_20200524T210643.json": [
+"0f9c519a9945a3551885342924f09fea2451eab91bf3f6eed47284c6468f5ee9",
+227
+],
+"data/proc/frequency/GB/events/GB_20200524T210643.npz": [
+"cc67ce3f93997ff98e2e56a05be82c6579f48548413a918d960f80285503c438",
+3070
+],
+"data/proc/frequency/GB/events/GB_20200528T041947.json": [
+"3f9461d74a4f6ba992b683c7cd7ad6063a5d4d461c79a0521838037529f911a0",
+227
+],
+"data/proc/frequency/GB/events/GB_20200528T041947.npz": [
+"af35b99e7b3f99ace904b5c29d2b1313af10a68575b166f44ffa483b696ecf2b",
+2744
+],
+"data/proc/frequency/GB/events/GB_20200615T033352.json": [
+"b5a406c03388832e4a326bbf9a0636bb9e0a666f3ebdf63ec1867acbed38c144",
+227
+],
+"data/proc/frequency/GB/events/GB_20200615T033352.npz": [
+"4315f983c545423b10fc891066dbde4e8684d9afefe4f168192db287a5654b9a",
+2890
+],
+"data/proc/frequency/GB/events/GB_20200623T122625.json": [
+"d12539f964f3723799375df5a9838613d789a48bdf951c826be2f4d3de055fe2",
+227
+],
+"data/proc/frequency/GB/events/GB_20200623T122625.npz": [
+"567d0083f2e66260d5a6e2905ee5817df66f3f205829e4148cbd8e02582ba792",
+2971
+],
+"data/proc/frequency/GB/events/GB_20200702T145306.json": [
+"e839382289ab44545ca8a00fd1d99e776dcb9c504e6640cae92e90049e7e5780",
+227
+],
+"data/proc/frequency/GB/events/GB_20200702T145306.npz": [
+"e68ae70d73d9e0eebd66158e85f9998caa5aff34e8572e056fff0bce6e261bab",
+3033
+],
+"data/proc/frequency/GB/events/GB_20200706T123324.json": [
+"2ab713d1ca02e7e2900b89763cf7ef4a74b8696bf19c14c820b5a9703a5de79e",
+227
+],
+"data/proc/frequency/GB/events/GB_20200706T123324.npz": [
+"cf9c55fbd0b456fdcb5c8916727fcd9d133b30b61a7903daceebd213223ff153",
+2940
+],
+"data/proc/frequency/GB/events/GB_20200804T101359.json": [
+"c45955fa9365c92d13593d4896be4158f7fa298f8a3af40443dc4a340996171b",
+227
+],
+"data/proc/frequency/GB/events/GB_20200804T101359.npz": [
+"ce5fa22913f1218c89f757c905d93de730cefde92bd287c1509f47d82e06c166",
+2943
+],
+"data/proc/frequency/GB/events/GB_20200810T195818.json": [
+"111af95c8c469035c17fa59d78911dac7f650846640c7a14f9ed940edf48fb8b",
+227
+],
+"data/proc/frequency/GB/events/GB_20200810T195818.npz": [
+"1fcb0aec0cebe50bd09dac6737bc699c5d544140fc84f1ed073afb9fa3d1fbc7",
+3010
+],
+"data/proc/frequency/GB/events/GB_20200817T095328.json": [
+"ce8fc3495a1e960bdc853247da454a2716b325342446d222e30be6f5b381d139",
+227
+],
+"data/proc/frequency/GB/events/GB_20200817T095328.npz": [
+"11421526d038abfaae5fbe75f059eb4da7a6d42eef4105fec965760d71992f15",
+3047
+],
+"data/proc/frequency/GB/events/GB_20200817T152829.json": [
+"3bef07b9b7d34812ee8bc9d0f2d46cd687c770361b5062e44dc33077b2104dd1",
+227
+],
+"data/proc/frequency/GB/events/GB_20200817T152829.npz": [
+"aff86c3feef5affea4587a8c3117de47e24752d335ba751e8a5c5fb23b171aa7",
+2916
+],
+"data/proc/frequency/GB/events/GB_20200822T003335.json": [
+"bbba4e0bd6618479f506a13a881b388ef3012bbd8e83b96967e435e06e110989",
+227
+],
+"data/proc/frequency/GB/events/GB_20200822T003335.npz": [
+"f726b0023a6961444a70e6d41b7ef3d2e27817fafe925bc98584d94d4c208428",
+2569
+],
+"data/proc/frequency/GB/events/GB_20200822T210102.json": [
+"214da33ea3cb25dc615fd2dbb88043c0ace406651449017797b336f9def13827",
+227
+],
+"data/proc/frequency/GB/events/GB_20200822T210102.npz": [
+"d7f4281c9b001bef5403c69837454f46a2634ebda5ab6c18d88a07746fb9c2c1",
+2869
+],
+"data/proc/frequency/GB/events/GB_20200825T073854.json": [
+"939490492630212ba024b5892a80d215f8ac0e5e1f2a4b4810017263f6820ae9",
+227
+],
+"data/proc/frequency/GB/events/GB_20200825T073854.npz": [
+"7b4782a65d83cbd39ce831e52666a5c8b092a2026dc6ebfac3ff68a7d6b13f50",
+2710
+],
+"data/proc/frequency/GB/events/GB_20200905T131220.json": [
+"cd41698b9e1e845372be7dbf4e468d71ddb6696fc2a2837cbcc3ae4814c364e3",
+227
+],
+"data/proc/frequency/GB/events/GB_20200905T131220.npz": [
+"a5b5b2f302267cb3154f1b2c7f6441c41b3570622ba49dceb77b814e955212e3",
+3079
+],
+"data/proc/frequency/GB/events/GB_20200905T223042.json": [
+"7eec87c2d8b755605d2f427984f67c7cf49fc21ece52b6bc6c132ca7b61be1b8",
+227
+],
+"data/proc/frequency/GB/events/GB_20200905T223042.npz": [
+"ba8c1bd4e18a99d99878f3418fe7b928b0cdff4358bc716ea5c64d2df6db9b57",
+2970
+],
+"data/proc/frequency/GB/events/GB_20200907T070156.json": [
+"350eac341084d481ea1fd8bf6c5600cba716e7b40e3b18a3e5d5aa0053cb3e72",
+227
+],
+"data/proc/frequency/GB/events/GB_20200907T070156.npz": [
+"1a11f0d8bc0643808139ec68698b79a72accc31a96e6b7f06fbd8d148442b69e",
+3071
+],
+"data/proc/frequency/GB/events/GB_20200927T225041.json": [
+"e9a83688e83b494effae44480348227ec8f3510045a7203c4e41beff44e3ba2e",
+227
+],
+"data/proc/frequency/GB/events/GB_20200927T225041.npz": [
+"85a938b627d01aca047a496620f4b8fd2cde5b325e7e3216aae52e7b5fb57bf9",
+2999
+],
+"data/proc/frequency/GB/events/GB_20201002T083010.json": [
+"8d9af2d21aed47c968d3334e7c365c5464ee40d8168bbb2cad83d7f813d1f1dc",
+227
+],
+"data/proc/frequency/GB/events/GB_20201002T083010.npz": [
+"a87cd43af051dee0a89f531f927ca4d77cadb436c49cb760a31a202a449b6023",
+3022
+],
+"data/proc/frequency/GB/events/GB_20201003T080106.json": [
+"0cf0e5be7d67b75863f2a5c90c27cc5f2541c3b6abe597e23d37ea6d036dc999",
+227
+],
+"data/proc/frequency/GB/events/GB_20201003T080106.npz": [
+"6070bf464d906164afc2be62b7efe19ba73689574f318160db20b74c6100409d",
+2797
+],
+"data/proc/frequency/GB/events/GB_20201012T215727.json": [
+"f8f3ef8e199f28c33e072d9e733a8026dc5ff83041b6e4b4f6eaf70a2310737a",
+227
+],
+"data/proc/frequency/GB/events/GB_20201012T215727.npz": [
+"b44f3ab512e8776c019b9893e52d89c34d1334898fa0f9f637cbfd9f63c4c862",
+2781
+],
+"data/proc/frequency/GB/events/GB_20201025T044131.json": [
+"0a5eaed44d5e4e529030bfa827c5de0e4346468dfd811cf9f7943acc50bb4446",
+227
+],
+"data/proc/frequency/GB/events/GB_20201025T044131.npz": [
+"0ce34399e845c262794ef2f506b24000551e058c024f78d7bc9551f7fa0266b5",
+2801
+],
+"data/proc/frequency/GB/events/GB_20201030T111047.json": [
+"c09e45d0a0d44b88f9ed755b9edc9779abe6dc81f9e27376b8294d6268de24b0",
+227
+],
+"data/proc/frequency/GB/events/GB_20201030T111047.npz": [
+"3226b9ac0359fae142c8aee6fa6aaa7d38711e2434d16906887844395d5657f3",
+3107
+],
+"data/proc/frequency/GB/events/GB_20201104T035358.json": [
+"c93d3c12067c7b0a4e72b9c1acf45c48098d03bf8860125b8800369209a227b6",
+227
+],
+"data/proc/frequency/GB/events/GB_20201104T035358.npz": [
+"f4416a0bb2af85e510df6a357ba06234860a589678690d3e0bb8558fa5042b6f",
+2645
+],
+"data/proc/frequency/GB/events/GB_20201220T172524.json": [
+"b148495345072688c5e937139809502f1bf740610fb1e22922de7e2b6c5e875e",
+227
+],
+"data/proc/frequency/GB/events/GB_20201220T172524.npz": [
+"e4bfe6f084a141ae157317a3b521049e5d7652c6ef2083dc1c9843ae8d6a3d02",
+2798
+],
+"data/proc/frequency/GB/events/GB_20201228T041309.json": [
+"dd5d78f56fe27004de1d553fdd8da75434569a6d490c3bd36d474f209efd8615",
+227
+],
+"data/proc/frequency/GB/events/GB_20201228T041309.npz": [
+"3a440954799cc6749c599b8cdd756cea8cf362c30d13fe28a87c006f41c326ae",
+2646
+],
+"data/proc/frequency/GB/events/GB_20201230T002959.json": [
+"6bf883c1d4ff651e752bd88e1daee29c27097c2872ed44179e1e4956a30a958f",
+227
+],
+"data/proc/frequency/GB/events/GB_20201230T002959.npz": [
+"2d10754bcd936f4b2d6ed2fad55fac78ecf5f60a38f217a34b56c17148dfc177",
+2673
+],
+"data/proc/frequency/GB/events/GB_20210106T021949.json": [
+"a412394aaff136d7a3b10066c6c1d6b26229cd0e1ec081d7dcfc615f421e1aa3",
+227
+],
+"data/proc/frequency/GB/events/GB_20210106T021949.npz": [
+"23ab6168b55c60e1c2a03b79e54b9b7faf0ee1a0814d64f73700844036e04f81",
+2797
+],
+"data/proc/frequency/GB/events/GB_20210119T125757.json": [
+"231aef8d911d6ae790b893834f832fa07c0e154d6459badad0b8ae0e28b2643e",
+227
+],
+"data/proc/frequency/GB/events/GB_20210119T125757.npz": [
+"073f51ccde512973e0047b4dabfaae50c2ab9b9217f716a594277f3c1d3eff64",
+2931
+],
+"data/proc/frequency/GB/events/GB_20210120T121605.json": [
+"592aad3f598af1405f3ef846d827cb1ac958300605859e68270353491b410583",
+227
+],
+"data/proc/frequency/GB/events/GB_20210120T121605.npz": [
+"9a36b8260f632cd8898794a6bbb3992857f2fbe4aaa3fb3bf9429b53e18d8715",
+2806
+],
+"data/proc/frequency/GB/events/GB_20210129T060807.json": [
+"f14ea73a48f5436f842972e332209067aa51a736c86b8aeb9128e078b06ffee4",
+227
+],
+"data/proc/frequency/GB/events/GB_20210129T060807.npz": [
+"4f4c3859612084635437a5084ff9a97f59eb3b3e8f687ce51e3eb13252109e20",
+2884
+],
+"data/proc/frequency/GB/events/GB_20210210T203909.json": [
+"e26bc2a6da427f791b1fac67434c840bd07983047ab4a2f6506ac0e2b5183ca8",
+227
+],
+"data/proc/frequency/GB/events/GB_20210210T203909.npz": [
+"8ed3ef3043c80d55f563e68cf6bb4546b5397c506eec12edb3192b0f7b1c86b4",
+2964
+],
+"data/proc/frequency/GB/events/GB_20210210T210040.json": [
+"02180cdfa18f0d2e8714a2f0d0e5ed9a69e2c2b72fcc75c9576a2fb61bdac32f",
+227
+],
+"data/proc/frequency/GB/events/GB_20210210T210040.npz": [
+"15da928ebaa6a0acca74d9f474324494d70d6d4aa87b95aad9aa734747bfd071",
+2878
+],
+"data/proc/frequency/GB/events/GB_20210213T165947.json": [
+"af4ec17f062114763e5ffdb26537738393951bcbbc6820dd67e0a69408b8f9da",
+227
+],
+"data/proc/frequency/GB/events/GB_20210213T165947.npz": [
+"66bed1379f6ce81e29cc3d7d56cc430974bf2035d0129ecbe2d00ea8ad9c12df",
+2940
+],
+"data/proc/frequency/GB/events/GB_20210214T021557.json": [
+"da84c3a276297542f8b015b0903b0ddbd4b762ed2dc330bb68c6f1b4d43e8f32",
+227
+],
+"data/proc/frequency/GB/events/GB_20210214T021557.npz": [
+"ada35c161206643a288e5bdac0b3664356bb0230298cb07094f760d6190a2def",
+2806
+],
+"data/proc/frequency/GB/events/GB_20210225T192642.json": [
+"47e376cd61461ea9e16030038b27adba8ac98a7e7a7110a94d1b7b602a2030ee",
+227
+],
+"data/proc/frequency/GB/events/GB_20210225T192642.npz": [
+"37046427d94c02dad4cfbfc19e7cf2365fff64f089d2546981e6b1e3cc789a10",
+2987
+],
+"data/proc/frequency/GB/events/GB_20210225T224232.json": [
+"fc30a91e3fa0370cb3efb96cbcccc7303e7e27dba18e34eb796a0260e1070de6",
+227
+],
+"data/proc/frequency/GB/events/GB_20210225T224232.npz": [
+"f3d637b4688e62e674a12986c084e903f4960771da9ccf49777e57ca777c39c5",
+2797
+],
+"data/proc/frequency/GB/events/GB_20210301T180411.json": [
+"2ec88bafe7377d2f95b1ab6e7e4c031ffdfc2b84399968b8b8d8cb871a24abc7",
+227
+],
+"data/proc/frequency/GB/events/GB_20210301T180411.npz": [
+"3db47733e58dc091d75872c8584628659163db00ecb550f5b7f742bc43d17a22",
+2992
+],
+"data/proc/frequency/GB/events/GB_20210303T193834.json": [
+"b0415ee35afe53764176a125e420b4f48cf8336c50145c24b13cd05e9139336e",
+227
+],
+"data/proc/frequency/GB/events/GB_20210303T193834.npz": [
+"5d8e4f5c44db3eae29632ffbe891fcfc749eb27cab81afdeee90fb0a96a7c8d1",
+2996
+],
+"data/proc/frequency/GB/events/GB_20210311T053928.json": [
+"39078690ffdfb3d8befe3890dd08f87fed1085730d8c2eb11fee80c05ba71172",
+227
+],
+"data/proc/frequency/GB/events/GB_20210311T053928.npz": [
+"13da6528938991ec244dc83c00f46edf9a4caef2e444b55b98e81d4935687a7c",
+3018
+],
+"data/proc/frequency/GB/events/GB_20210326T064816.json": [
+"9f4e8960ac611c08d2ee615b3605c87250b6828153696bff3207bb60c9b74dd6",
+227
+],
+"data/proc/frequency/GB/events/GB_20210326T064816.npz": [
+"bc9c651c32e3619f9857339182a6d3b8278b71dbe58c9906eee9d2f8b4e7399b",
+2956
+],
+"data/proc/frequency/GB/events/GB_20210404T221338.json": [
+"1123019ff1e3fce712f1a79e72363c27d616440c4875126aa502a526eeb1c4f8",
+227
+],
+"data/proc/frequency/GB/events/GB_20210404T221338.npz": [
+"3f537fb20423a671df201e14768dd2a3ae2fe03b7f94249c229c3a87f1187c22",
+3002
+],
+"data/proc/frequency/GB/events/GB_20210405T014612.json": [
+"51db27ae39ffe7cadaf6e9d7f18d60688c1e305db8c36ccefc76331fe7c5c6df",
+227
+],
+"data/proc/frequency/GB/events/GB_20210405T014612.npz": [
+"2a3e4f1fcaaa90afe8582282d106606ea60357a841f728a0846fddfd972cc810",
+2931
+],
+"data/proc/frequency/GB/events/GB_20210414T164429.json": [
+"05c4c1bde62dc4917e21b2fdebaf1ca0f6bee79879cd9a6bc61e81dde88d1222",
+227
+],
+"data/proc/frequency/GB/events/GB_20210414T164429.npz": [
+"4327c7dcaf08a9c330e9c79484c9f001924028dc2ae77548542ff95af2dae950",
+2904
+],
+"data/proc/frequency/GB/events/GB_20210428T100424.json": [
+"4a12bb5217b39fcc1d4c10f9bee6d1f90a386121d6247e4f6601b06869067a6e",
+227
+],
+"data/proc/frequency/GB/events/GB_20210428T100424.npz": [
+"c8393e5c4ee454ae7009881791a7ed7377a4753519308eb6b2aa1fc0554d0307",
+2415
+],
+"data/proc/frequency/GB/events/GB_20210509T115645.json": [
+"25b458c4b092d4af30f992dd35f026f87de0e40b965e9e1e298d43fa167b1589",
+227
+],
+"data/proc/frequency/GB/events/GB_20210509T115645.npz": [
+"57e179ac1652d29a14f48ef298c32c324f4c5128d478eb73afac6e0524021874",
+2912
+],
+"data/proc/frequency/GB/events/GB_20210514T080043.json": [
+"ec226696b1ebd23f8e449c9352683f4a67556218075d68983dc9542b8eeaa55e",
+227
+],
+"data/proc/frequency/GB/events/GB_20210514T080043.npz": [
+"2fd6c61c0e7ef44fe3692f24829ef45090997c8c326964ec2f8d4e846f3db588",
+2714
+],
+"data/proc/frequency/GB/events/GB_20210519T171553.json": [
+"ff16d29c9908c828ff1e4d65b1a0278f312cb279d5aa099f2fdc75a11a1ee2e0",
+227
+],
+"data/proc/frequency/GB/events/GB_20210519T171553.npz": [
+"017b3f840d31e3bdf674f4280c650a7f9bc961d025fdddbf1655a91e3655a8ab",
+2788
+],
+"data/proc/frequency/GB/events/GB_20210528T014345.json": [
+"49ff375e6f574f27e61f50df2420bbb4dd58a28af011968db11a2b8f541d066c",
+227
+],
+"data/proc/frequency/GB/events/GB_20210528T014345.npz": [
+"9a8e4b3320f2b1ea5d2d8147c939e75206eb76978c0abf9937e0bdc5f617219f",
+2790
+],
+"data/proc/frequency/GB/events/GB_20210529T115540.json": [
+"2035aad124e9776ec448ba5f3cd65cb594f6de8f6cdb68b835b93030e15e0311",
+227
+],
+"data/proc/frequency/GB/events/GB_20210529T115540.npz": [
+"b84e10aac15f46e1e0b81e0120ea14d476e6ead841d20d34f4664d8036b5c540",
+3078
+],
+"data/proc/frequency/GB/events/GB_20210610T095233.json": [
+"00864e3c0a7286dc58370eb31194ced3ada7cc135939140a5d70a1f0042b6aca",
+227
+],
+"data/proc/frequency/GB/events/GB_20210610T095233.npz": [
+"265576fd3bcda7e4526f91aa137bbd8467406e6990ec3090e9cebcbea96c2b2c",
+2957
+],
+"data/proc/frequency/GB/events/GB_20210618T104956.json": [
+"d509dbacce6e2cd61e12d2128c474d0ab5692d30bb6b8195bac34bf59d793852",
+227
+],
+"data/proc/frequency/GB/events/GB_20210618T104956.npz": [
+"5524e22c8ebf50ec9628d0f66d9b0f938d00856bf8ff4c682d136900bcd36df2",
+2998
+],
+"data/proc/frequency/GB/events/GB_20210625T100108.json": [
+"8546afe51c2c3d0bad8cfbfb17fa82034cc01ca6abb030b5915dadda7549cd35",
+227
+],
+"data/proc/frequency/GB/events/GB_20210625T100108.npz": [
+"dc750af2f066ea9f2a09f72de14dca9bc7db323f44b8996d2ef175fec59ca25b",
+2990
+],
+"data/proc/frequency/GB/events/GB_20210707T083622.json": [
+"1c56c99c5e8b62a5f86766ec19c5c3a161af9de6b93a190359323365652f8db2",
+227
+],
+"data/proc/frequency/GB/events/GB_20210707T083622.npz": [
+"674edd5f7f516fa29c233615513f5cf582b3f9ed69e37395446cf3b2d7bf556c",
+2832
+],
+"data/proc/frequency/GB/events/GB_20210715T062324.json": [
+"ad127eb28f80708554f4b9a6432b558b3338da3c08d3a49ae86d6fb674ff7549",
+227
+],
+"data/proc/frequency/GB/events/GB_20210715T062324.npz": [
+"7c9bc878d2b5cde134c8793c834db9f131cb3fe3632881f4bac25f6ca61f0a64",
+2967
+],
+"data/proc/frequency/GB/events/GB_20210720T133354.json": [
+"cb0580fb53a0890df26a3449d3b18a0e24ad2cba97f208f69fd27d183fc451f5",
+227
+],
+"data/proc/frequency/GB/events/GB_20210720T133354.npz": [
+"f4d11a987d108cd90d4e8f5ae434ca8e9b1c85bd8fa6c77b65b9e133b6c936e4",
+3039
+],
+"data/proc/frequency/GB/events/GB_20210721T084058.json": [
+"b0a2c394d4a5ae0d771dc9283249e8bbe412adc02c662f58744be9b254ccc73a",
+227
+],
+"data/proc/frequency/GB/events/GB_20210721T084058.npz": [
+"bdf3d5da489598b9d72ce4dda60e6d20e1be4d66b4103ed6eb4f8ebf94133604",
+2881
+],
+"data/proc/frequency/GB/events/GB_20210722T135753.json": [
+"58d336e50c986c62300179e1d78d8f203b45d421b73dbb6f4e9a3e22d9d64b0f",
+227
+],
+"data/proc/frequency/GB/events/GB_20210722T135753.npz": [
+"27152967d554bafb6caed6ac6a55d911672d13e107c71bb596527e0f92c25fea",
+2956
+],
+"data/proc/frequency/GB/events/GB_20210817T180456.json": [
+"a738bb510a3a8513f4b3f693ca3e19a680b8f2686cf290d111de197b17026586",
+227
+],
+"data/proc/frequency/GB/events/GB_20210817T180456.npz": [
+"e4a50d3d760db61fbd87eb4d8dfcc8b8007c31361a1f3fcc90541d71d8d6e81f",
+2924
+],
+"data/proc/frequency/GB/events/GB_20210819T081426.json": [
+"589366daacfa2d63152a0f6b76df0e828b95c449bb48c0a7dfeee8d9567f5113",
+227
+],
+"data/proc/frequency/GB/events/GB_20210819T081426.npz": [
+"6eb968dc802ee1fb723202f106ad2ac0df47c922a8af6a41fab3e88c960bbf69",
+2878
+],
+"data/proc/frequency/GB/events/GB_20210901T145811.json": [
+"6e38e4cf2014e94c936850ea8cce5ff808cd9341c4decb27d1805ad7dfbdc743",
+227
+],
+"data/proc/frequency/GB/events/GB_20210901T145811.npz": [
+"2f279776882d882f4d528b8b893c008314043deb66abea543e7bda3459b9ba97",
+2881
+],
+"data/proc/frequency/GB/events/GB_20210902T100418.json": [
+"e4796060547cfb5dde178cb47087799881d1430d5c1709756959c8a8a1dcd39a",
+227
+],
+"data/proc/frequency/GB/events/GB_20210902T100418.npz": [
+"909d5b1314115472bb92c91790a4fa48a817100590beb4f6d952b07607952970",
+2700
+],
+"data/proc/frequency/GB/events/GB_20210907T210919.json": [
+"9a26c765c29754c19b987a340b260dc37c57bc76bcbcc710ced4badde74093ab",
+227
+],
+"data/proc/frequency/GB/events/GB_20210907T210919.npz": [
+"0be69841d2b5f25b6826a217806869027e9914a3b6920865b46c9e1900b399bd",
+2897
+],
+"data/proc/frequency/GB/events/GB_20210911T152720.json": [
+"804e1f9ba36fa7ea3f0dc84a2b08ae080ecd14244f43a34e7206a772d3926dc0",
+227
+],
+"data/proc/frequency/GB/events/GB_20210911T152720.npz": [
+"33de5a56417f651169a5343f78813c41929e21e517a9bccbaf0471df486aa3e4",
+2908
+],
+"data/proc/frequency/GB/events/GB_20211007T084100.json": [
+"ef5928f3b2762e66857d399dc46972c2b9bdc013e8dd4d2083522e9d7c2952c2",
+227
+],
+"data/proc/frequency/GB/events/GB_20211007T084100.npz": [
+"9befc21ae6416db3e59537d19be090ed4262e5d0ae9ab89162ca0942e1367ed5",
+2915
+],
+"data/proc/frequency/GB/events/GB_20211016T192722.json": [
+"aa736426e67c170d7f48ece26f8684313509fda24972d8b4dfcb8f1fd5d0eb6c",
+227
+],
+"data/proc/frequency/GB/events/GB_20211016T192722.npz": [
+"ec0ea6d384cfa65ceafa2c52c402547579064a37aa95cca6093854c6453aec67",
+3000
+],
+"data/proc/frequency/GB/events/GB_20211031T180745.json": [
+"cf7e6940126544919d8bceba8c5f704bcfab3c12fb80f03b5b461ea462faa5fb",
+227
+],
+"data/proc/frequency/GB/events/GB_20211031T180745.npz": [
+"bcbf9b86e0752a2d8a275c2dfc1aa34755dbd96651345ab11bcac21c37afb0cb",
+2831
+],
+"data/proc/frequency/GB/events/GB_20211106T190008.json": [
+"5ea8ac2a23c398ba7f5dd8e1f25a59447af9531c9c207e56d51dea5f06be54aa",
+227
+],
+"data/proc/frequency/GB/events/GB_20211106T190008.npz": [
+"1ccec1e91f950b3279af9ccc49275ad15c23b182c76158c9cc247533a9a41966",
+2796
+],
+"data/proc/frequency/GB/events/GB_20211109T172806.json": [
+"3e6d1840ad390866b4c8365912f005b81b23a0971df812778da600d306d39527",
+227
+],
+"data/proc/frequency/GB/events/GB_20211109T172806.npz": [
+"9c028b815c579a6b247532d5fd2a78463168bd4c9b1a391a98fdb9cdf08324f7",
+2986
+],
+"data/proc/frequency/GB/events/GB_20211126T003011.json": [
+"4c2f9ef80110995195485c3393caa8883e8fbd809e04ba43ee9b22f724843c0b",
+227
+],
+"data/proc/frequency/GB/events/GB_20211126T003011.npz": [
+"d41c1998c62ffbf581557d15541fb5f974e62624b5d70ef452b70241aa783aa5",
+2892
+],
+"data/proc/frequency/GB/events/GB_20211127T071432.json": [
+"ebe6e24a64eff136670a6dab926de21a8b75b7670de2f4bb2fcd0c1f8c203e4e",
+227
+],
+"data/proc/frequency/GB/events/GB_20211127T071432.npz": [
+"70522caab94117fd28716d4bacde6c0c4381ae5ea0897cb4e46c1a282bb38b7e",
+2874
+],
+"data/proc/frequency/GB/events/GB_20211128T002959.json": [
+"20470fdb64811e44a0e5a27949a3576b73a755f2339048b928aa68a2f6f7015e",
+227
+],
+"data/proc/frequency/GB/events/GB_20211128T002959.npz": [
+"baa7245ffe3f1ba385934db7c26f0b9c99b06027eb3de86fd8fbc673dff7f7c6",
+2692
+],
+"data/proc/frequency/GB/events/GB_20211201T033250.json": [
+"a5286b500b5b5e210c3a73833169be3d5cbd27933daecd8019bbdf40be3b5563",
+227
+],
+"data/proc/frequency/GB/events/GB_20211201T033250.npz": [
+"9dc0aa62a824219107ef27dca329cca998262b147c1f14a469a7a2bfbf1066ed",
+2833
+],
+"data/proc/frequency/GB/events/GB_20211204T002959.json": [
+"c4dfca5713434a7adb190fe20fcb102c245c7f2759d92e49aba74de8030282f8",
+227
+],
+"data/proc/frequency/GB/events/GB_20211204T002959.npz": [
+"ae2b5dc80c001901df0f79b6600976de36e536d59e4639d9be06a3ba6a9b2d4a",
+2942
+],
+"data/proc/frequency/GB/events/GB_20211206T003000.json": [
+"b718abc127ac788a7062f5c015a71c2cc13b2f9ef6d2cee9ba743ccf0e165414",
+227
+],
+"data/proc/frequency/GB/events/GB_20211206T003000.npz": [
+"fc8e867f7263c12b04fe72bdd9fbadb26dc020e14d470ae8c10f7c9b41c79ee6",
+2681
+],
+"data/proc/frequency/GB/events/GB_20211209T002959.json": [
+"ed7dd944488798ca582405b1556aeef434572ba2f100ad15822082dcc653664c",
+227
+],
+"data/proc/frequency/GB/events/GB_20211209T002959.npz": [
+"40ac924df051d0dce406fbf411270a09ae21b120212143b6775c7abfe45ed9ea",
+2771
+],
+"data/proc/frequency/GB/events/GB_20211216T151811.json": [
+"4d60eedb881c3d33777724a64db82180abf1232d5c6d08ad62057ba34387d02c",
+227
+],
+"data/proc/frequency/GB/events/GB_20211216T151811.npz": [
+"284181f263cf1d548135abe2d84f143d89512f275b6dd92bb8a503106a5686f8",
+2807
+],
+"data/proc/frequency/GB/events/GB_20211216T205035.json": [
+"f9037c7722bc269e4e9ea9da24c83e3803451c5fa880ba62f90ab2c4d92311b6",
+227
+],
+"data/proc/frequency/GB/events/GB_20211216T205035.npz": [
+"4cccd72e8553d51b7a1065328fc7ab3e3f3bbee66d6ef73f9581fad15fc78a9f",
+2812
+],
+"data/proc/frequency/GB/events/GB_20211221T005730.json": [
+"f00c46d1f47f527e830fc79ff17acd2abf4884374ce8975098bf5db89beee96d",
+227
+],
+"data/proc/frequency/GB/events/GB_20211221T005730.npz": [
+"381e92a2bae694688c658da87470dd549095f523191f79cccd291bf92748650c",
+2646
+],
+"data/proc/frequency/GB/events/GB_20211221T085824.json": [
+"a4ef716295fbf3a270fcf21d2a6b9439613d1174235a9ed898a7c8b3c3de4faf",
+227
+],
+"data/proc/frequency/GB/events/GB_20211221T085824.npz": [
+"66ad9a51dc34652ab246ff380d2ea725f1a9957c04039f90b87ef883078ab002",
+2988
+],
+"data/proc/frequency/GB/events/GB_20220109T135727.json": [
+"2e2b17b3ae50a87af214cbc3418d3c07f6b57606234b81a9e91d29989028876f",
+227
+],
+"data/proc/frequency/GB/events/GB_20220109T135727.npz": [
+"86da1a55172fd149fb98c5c059cfc2f5fd899e88cc00c6256a6c804ced258b19",
+2912
+],
+"data/proc/frequency/GB/events/GB_20220111T002959.json": [
+"55c3d20ddd2f5f5139ddee8624f407f40ccdc0ac4503b053b3f0e4ca5eb09eaf",
+227
+],
+"data/proc/frequency/GB/events/GB_20220111T002959.npz": [
+"17c454194e65cef27d1a19e2643f9b87d40957bd8ab3d6209b23c5d0c11d0e03",
+2451
+],
+"data/proc/frequency/GB/events/GB_20220119T002959.json": [
+"5443b0ab2c4e693c2035d1b80d041aa0375cadc31a520b1a524e648e21e406b9",
+227
+],
+"data/proc/frequency/GB/events/GB_20220119T002959.npz": [
+"604ddc49cef4dff52ed2226deb68584c69dc122cf36e17ac270e4c63e5b08382",
+2687
+],
+"data/proc/frequency/GB/events/GB_20220119T065415.json": [
+"a62169f4834d2c3b1dc6a3f1f6a55f4cd0f861d1ed6c0cf1715758f82da8a51d",
+227
+],
+"data/proc/frequency/GB/events/GB_20220119T065415.npz": [
+"d71ecc0504759b13aea6f3c1ced0c0b31096cdab50aca15d40602403800da25b",
+3076
+],
+"data/proc/frequency/GB/events/GB_20220122T003000.json": [
+"5217823d7ad32b1233c25e7f334e147b6fb8ce5d395152198ab34cb148bf7988",
+227
+],
+"data/proc/frequency/GB/events/GB_20220122T003000.npz": [
+"6d0906676dd97a1f6fcb160daf526cd77145c1ba6f47e0b69386f6ad30a49f96",
+2803
+],
+"data/proc/frequency/GB/events/GB_20220127T100548.json": [
+"d3bca0f50486695ec4bb63195514e44fdaae9bd46d8f00ecb7248699822fe85f",
+227
+],
+"data/proc/frequency/GB/events/GB_20220127T100548.npz": [
+"d0f2507e9c9974e477ea8e3b822673edc817adac7a6b13d8c5f87f44e6b66080",
+2978
+],
+"data/proc/frequency/GB/events/GB_20220129T002959.json": [
+"48474a6f79e5b139e46080d224792432e018aeab4261f59729de8aeb9a6b3b2a",
+227
+],
+"data/proc/frequency/GB/events/GB_20220129T002959.npz": [
+"f161e2f58bc5daf9bc3edaaf72ab58d1a3c9ae9a4fda7da971c23e61a3f62bbb",
+2773
+],
+"data/proc/frequency/GB/events/GB_20220201T002959.json": [
+"52644430e231851c371b13f3b76d9c59b9109b317e08bdcea3c54fd4012f43ac",
+227
+],
+"data/proc/frequency/GB/events/GB_20220201T002959.npz": [
+"9cb78c2e306956a1466cc869a8230c3bda37ee26a97856b610289173a179ce08",
+2774
+],
+"data/proc/frequency/GB/events/GB_20220204T003000.json": [
+"558a84b038177a7df49e0bc1ac94f04b83423c08cae3986f7a8e62c93e7cb100",
+227
+],
+"data/proc/frequency/GB/events/GB_20220204T003000.npz": [
+"6434c5c3af43d4a444b1d45f4f07b9cb4fa6df1fe2a176b2ce2fd6ebc5a32197",
+3042
+],
+"data/proc/frequency/GB/events/GB_20220205T023555.json": [
+"4a3b87b4b9f228e8b872a85a62af12fc041d065df3163fee285293bc6bdfe199",
+227
+],
+"data/proc/frequency/GB/events/GB_20220205T023555.npz": [
+"56fcad94d316b67f7b716e76cadf64a4a8d7b29fc65a47c47b9b7ead487c6183",
+2918
+],
+"data/proc/frequency/GB/events/GB_20220211T215957.json": [
+"7ad71d023dc76367c5bb933e5e20ae4a2c428bfdc1d01a4270e8dbfc09c4ec27",
+227
+],
+"data/proc/frequency/GB/events/GB_20220211T215957.npz": [
+"ebd9ae943578a38c6e9d1c9fccf410737b3780514702bd3966f727d66716f3d6",
+2767
+],
+"data/proc/frequency/GB/events/GB_20220213T030141.json": [
+"4e5023de02f94dfc696cbf94091987c1e56b9601bcd13cfc0d22c08c37e9e32b",
+227
+],
+"data/proc/frequency/GB/events/GB_20220213T030141.npz": [
+"16d61ee37bd29fe7fc50ab611e8dd798b5ac00eb0500a5dc9eac39296255b4bb",
+2763
+],
+"data/proc/frequency/GB/events/GB_20220215T002959.json": [
+"5f588474b09f9c6985f1557575603a862eff4e1ec07d2335a1e438a33f091f30",
+227
+],
+"data/proc/frequency/GB/events/GB_20220215T002959.npz": [
+"84e961f8e63daaca26c9b2e635b8b7ddaa2dc8e020aeb1fac78de8cd71a578af",
+2706
+],
+"data/proc/frequency/GB/events/GB_20220218T133452.json": [
+"d590b7ee987867a2e4fde898543aaf2cdce14c73f1a79b7725ea419f8f5c5d36",
+227
+],
+"data/proc/frequency/GB/events/GB_20220218T133452.npz": [
+"813985b347e3eb1b5eb16a6b9c019205c0754bed8ce5ec869e07d0c38f095e9c",
+2997
+],
+"data/proc/frequency/GB/events/GB_20220220T152210.json": [
+"cc8e9db23a654cfc8c16ad8c87b40d47819b726a31177996210bf07e62f835f9",
+227
+],
+"data/proc/frequency/GB/events/GB_20220220T152210.npz": [
+"763f2b6726cf6fe95a8c075b19b3942ec5d66ddf306dfe6ffaee9d89361d28fc",
+2909
+],
+"data/proc/frequency/GB/events/GB_20220220T184456.json": [
+"641316ef83c15311231d865fec8bc3f99a8c564ee7e15b2b56b4b9c967fef5ea",
+227
+],
+"data/proc/frequency/GB/events/GB_20220220T184456.npz": [
+"fa21cfea18bae598a1251f34fa8ffcaadab2e8f115d49155b622914d446e5c3a",
+2876
+],
+"data/proc/frequency/GB/events/GB_20220304T002959.json": [
+"b191d20346641a0d66d5424bdf28728b6d7d62993f36dda1e69eb38ccfe29703",
+227
+],
+"data/proc/frequency/GB/events/GB_20220304T002959.npz": [
+"f391b24c0a2f79a7a16c96d1d5fe2e8123609bc6baf08fb8adec4e93e391f017",
+2555
+],
+"data/proc/frequency/GB/events/GB_20220305T150413.json": [
+"00238b3bb6b0d5b96a766fe1b0ee8a59cebd202b30ae9bd4ad5885b4a0e78b88",
+227
+],
+"data/proc/frequency/GB/events/GB_20220305T150413.npz": [
+"a4a59d59f66221ec066f16b488a7f14822137ba04d53fcf7c901237816333a3c",
+2925
+],
+"data/proc/frequency/GB/events/GB_20220307T120547.json": [
+"7d23382f12e476e224936f459ec29cf3f8682f5035d2be805b13ec31c3b4ecf1",
+227
+],
+"data/proc/frequency/GB/events/GB_20220307T120547.npz": [
+"ec6761ffc10cd2c5cb669564789ea4a9dcd011cbc6caba196646df2a917025fc",
+2832
+],
+"data/proc/frequency/GB/events/GB_20220311T002959.json": [
+"dda7e0742e02bfdbad151dc01b253cc671be392f43ba491c889ed1e588fa9b7d",
+227
+],
+"data/proc/frequency/GB/events/GB_20220311T002959.npz": [
+"823ef87c6a0e167127666ba4879d48e2b0fa4f4dda99f761bddd130b3b94c270",
+2836
+],
+"data/proc/frequency/GB/events/GB_20220322T152713.json": [
+"f9ccd9518ca3235ab0e759ee547cc11d2f42c460aabffd5135de1f1ef141cf8a",
+227
+],
+"data/proc/frequency/GB/events/GB_20220322T152713.npz": [
+"c09fe7af64046496653b63015e937572f496f2af4223796686d2bfd1f8ae4c04",
+2950
+],
+"data/proc/frequency/GB/events/GB_20220323T002959.json": [
+"41ce313f0a72fa5f9af94e7add9c3a1b301aee1614d31e86c75cafe22cd13ad5",
+227
+],
+"data/proc/frequency/GB/events/GB_20220323T002959.npz": [
+"6a2c90be256fbec60db7dbed8164196ca8344abf5d9aa79b8b44a9da9944342f",
+2802
+],
+"data/proc/frequency/GB/events/GB_20220324T175919.json": [
+"6f3609e33facd3ec89d08825a390d8cd3a36dac219e275a0a2b85d1b24010c62",
+227
+],
+"data/proc/frequency/GB/events/GB_20220324T175919.npz": [
+"466b25bc1edfca443ab381be695000657ff6de02b0a4ce881fb1ccdab572e2e6",
+2946
+],
+"data/proc/frequency/GB/events/GB_20220401T223030.json": [
+"62a6c28059d9420813cb378a745237fdd610c0c83d067728b6b1e7161b2a86cd",
+227
+],
+"data/proc/frequency/GB/events/GB_20220401T223030.npz": [
+"00c8687b5538ac23ced8888c8363c99071f810373c193a6bb47482f12982bd5f",
+3151
+],
+"data/proc/frequency/GB/events/GB_20220408T101000.json": [
+"6463d8ea7cd8b31d0b5f91a1a1edc778e271722c5ad927760830c98dd1c8711a",
+227
+],
+"data/proc/frequency/GB/events/GB_20220408T101000.npz": [
+"578955269600258accd3f02886304e0e9936db018383356522fc33e12341b09e",
+2799
+],
+"data/proc/frequency/GB/events/GB_20220418T162506.json": [
+"ccdfff0da102cd0afe1d9153ad7905c2133948cee9feee41b499efef70fcaa21",
+227
+],
+"data/proc/frequency/GB/events/GB_20220418T162506.npz": [
+"14970910956ef89c12f6e1bcc92970993646c8d1b747b3c75a7c3e2d85647742",
+3051
+],
+"data/proc/frequency/GB/events/GB_20220428T081009.json": [
+"5359cabce32488e2bce2731f37fb326f01fbd9d4c4ad32137f8d32f6940364bf",
+227
+],
+"data/proc/frequency/GB/events/GB_20220428T081009.npz": [
+"889c2e110da0a9866ab13fd6547cdfd43fa71dd520241b5ece283caa49f3484e",
+2919
+],
+"data/proc/frequency/GB/events/GB_20220506T230019.json": [
+"97778ba947daf3b24b2f4c436352e47646a6c1e23e9274b1fb1d00bc3fcbfb84",
+227
+],
+"data/proc/frequency/GB/events/GB_20220506T230019.npz": [
+"3cd22d1a6be4a2cf5b3375a766da7f7a3425f311b78d76df20aed53f1fdd2451",
+2895
+],
+"data/proc/frequency/GB/events/GB_20220512T183429.json": [
+"173a9db59e73ead29fe03f0726a426cd30a84e5cca64b5ea1ceb86a3a45b9977",
+227
+],
+"data/proc/frequency/GB/events/GB_20220512T183429.npz": [
+"63eeda8f58dd45114c98efb8df6a1427c35d1d2169c5efc504a81d95f645fc2a",
+2979
+],
+"data/proc/frequency/GB/events/GB_20220519T101410.json": [
+"a11864255526c3a0c6da77c9f7b167aa513a36637769c471dd2199f01a057f46",
+227
+],
+"data/proc/frequency/GB/events/GB_20220519T101410.npz": [
+"83d86214ae2bf98c4057d7ddd17bbbe8a030975d9d2b661d51abbd88d0e7ff64",
+3048
+],
+"data/proc/frequency/GB/events/GB_20220617T125655.json": [
+"5c56d9e67853be5d96956f1ea9e30ecf81e6fe51222e749c3cc43b31b00f52c0",
+227
+],
+"data/proc/frequency/GB/events/GB_20220617T125655.npz": [
+"9f70389139a9311f0d4dac3a95d2335dd37886642b282294f311ac09ba5f0545",
+3053
+],
+"data/proc/frequency/GB/events/GB_20220618T135542.json": [
+"544a47ff9c062a66acfbd99e8a42a56a6a466a157d13edb88e4bc04bc5d7339b",
+227
+],
+"data/proc/frequency/GB/events/GB_20220618T135542.npz": [
+"554cd4a675f23e987f2f5e85a1e4dee208ce19f4a2983dceb844318d06107e0a",
+2940
+],
+"data/proc/frequency/GB/events/GB_20220622T084840.json": [
+"784f9dc4b6e5863575fd0b902b7a253ee626a8e28a95231bd5844a5a16b1f2d6",
+227
+],
+"data/proc/frequency/GB/events/GB_20220622T084840.npz": [
+"f82c0c92e0cec4fb1676103b4e4c30e7ccf563ae234bab24fdf9c8c434b830f5",
+2884
+],
+"data/proc/frequency/GB/events/GB_20220625T230149.json": [
+"15c9e534a7c2696b60089de841f98174f66975414483cf5b0e05ccaff06b1589",
+227
+],
+"data/proc/frequency/GB/events/GB_20220625T230149.npz": [
+"97f60994a1e6274de0f88a47072290ff614c5157a743469b05150e940f8b6e74",
+2857
+],
+"data/proc/frequency/GB/events/GB_20220630T224748.json": [
+"29e327934033191ebcbbdca6d448752f5abccbd3d53beba36606ca5d551a7549",
+227
+],
+"data/proc/frequency/GB/events/GB_20220630T224748.npz": [
+"e3b2174f127b0715972391228ac9b31bfef624b0e6eaf6e22586d06ecb47b9cf",
+2994
+],
+"data/proc/frequency/GB/events/GB_20220711T094650.json": [
+"bff88f40d5d36355eb84bc0996407337d4e0384a532fea9660ea124472f64e7e",
+227
+],
+"data/proc/frequency/GB/events/GB_20220711T094650.npz": [
+"7607af8a801a39fd6b92b6f8c74e27696407c682aefda288d0c1a0397a576a60",
+3034
+],
+"data/proc/frequency/GB/events/GB_20220711T144937.json": [
+"0e9181764d300d3152d84230db78f5ca16f25bfe84390f74fff9f6626bbc1eb7",
+227
+],
+"data/proc/frequency/GB/events/GB_20220711T144937.npz": [
+"541897dff7d7cab50204c3fc154ed0baa755c586b71a789692d8c01215781db1",
+2993
+],
+"data/proc/frequency/GB/events/GB_20220721T010839.json": [
+"b350314951284828778fdc79bd82622bc4ee4b7b427972894c0a695972459d1e",
+227
+],
+"data/proc/frequency/GB/events/GB_20220721T010839.npz": [
+"bc07d118487030fa572afd6b873287fd7aadc6b6f1c05a1cb78dd2858f319b7a",
+2823
+],
+"data/proc/frequency/GB/events/GB_20220810T183259.json": [
+"493b2f423c2e407cafa4dde1a170dddfd1c232f940acc6fc6c43bba77042672b",
+227
+],
+"data/proc/frequency/GB/events/GB_20220810T183259.npz": [
+"1dffec0674c5b282c1b6323f26c86e3665b3f9901de86705aa760f7ca0fe114d",
+2969
+],
+"data/proc/frequency/GB/events/GB_20220830T081959.json": [
+"f2cfba6c175794008de05c9982e51c17de72d5b2e897c0656e774ddcc63d6d6d",
+227
+],
+"data/proc/frequency/GB/events/GB_20220830T081959.npz": [
+"cf7235898e948644c7278934b9d1ff2e307668458c8b2df989bef6aa7190e996",
+2873
+],
+"data/proc/frequency/GB/events/GB_20220901T221903.json": [
+"fd7a6212e93cbdc6df27397dd6b3150cbe7f825a54c4398760309bb2e22242b7",
+227
+],
+"data/proc/frequency/GB/events/GB_20220901T221903.npz": [
+"25e5d5e7d6cfd91979b48cd1ec3920ffddf027a888caa01eed5a0e2e23fc9eb4",
+2940
+],
+"data/proc/frequency/GB/events/GB_20220905T200707.json": [
+"d5247a0e67c1583399eb91d6defd522b1111eee8e35f8d56c1a38f549ddec287",
+227
+],
+"data/proc/frequency/GB/events/GB_20220905T200707.npz": [
+"517102c5f16bef839abb620e8403787d9e7ed9faa86890d8359b48b78e85c975",
+3000
+],
+"data/proc/frequency/GB/events/GB_20220916T182616.json": [
+"93094d18caf4f9e8f237bf2f0b759caabaf3d35b00cfd9e5fe01be81897ba4dc",
+227
+],
+"data/proc/frequency/GB/events/GB_20220916T182616.npz": [
+"c0521b687b941a5054a87b8db290f14ce6408d1e806c03af4bc5aa143c599d99",
+2944
+],
+"data/proc/frequency/GB/events/GB_20221007T155121.json": [
+"ef436ecffdba5f967205bb724e32b14cd6be8782924c2687cb46573f1c87b8e9",
+227
+],
+"data/proc/frequency/GB/events/GB_20221007T155121.npz": [
+"1e2f91ac156c6292d09b7f7b4e4989762aec44e792dd6a7aa2fac72335377ce4",
+2993
+],
+"data/proc/frequency/GB/events/GB_20221019T094036.json": [
+"969a69ae4bdbdfaeff75d984fafa95bc7464acc04b9b2f6b60f4cce8b08f0745",
+227
+],
+"data/proc/frequency/GB/events/GB_20221019T094036.npz": [
+"3e4bdaf57efe4e9cbb963189d27974748cff8bab1b15bb7e1304538883c7014b",
+2494
+],
+"data/proc/frequency/GB/events/GB_20221123T085936.json": [
+"3cefa27cbba4ddb8edf72d9f71b207d5ff6f6b9ba0e4423f2486dd1edb9d2647",
+227
+],
+"data/proc/frequency/GB/events/GB_20221123T085936.npz": [
+"0facbbef7dad6fb8d59e73e6ffed3144eacd5cb170ffbf56ffd91a10b685de55",
+2854
+],
+"data/proc/frequency/GB/events/GB_20221129T121850.json": [
+"84b4dd45ff515d0be7866c40e838e00aa84f19e8eb1ea3735849360ffa5f3858",
+227
+],
+"data/proc/frequency/GB/events/GB_20221129T121850.npz": [
+"0d557e29c6b7b557137628a5d958ccb98eb74692ce2803ca1bf47e4942c7bfe6",
+2907
+],
+"data/proc/frequency/GB/events/GB_20221210T003000.json": [
+"39ebf4a8d9af18ebe764b4aec81b761f6a2ff896682ac35f67265a6c8f45765b",
+227
+],
+"data/proc/frequency/GB/events/GB_20221210T003000.npz": [
+"603e3b93c64bb4af5d907ebd6ddbad8c4b9ec7c18076a3a1d1288475e5864084",
+2712
+],
+"data/proc/frequency/GB/events/GB_20221222T132827.json": [
+"9055386c22d16f704d10dc3a7d9e0c7e609f6bad1d993b2ca52e9f1bcfe123be",
+227
+],
+"data/proc/frequency/GB/events/GB_20221222T132827.npz": [
+"c26e72ef0523bf36f90c28b74771e5d0bd969cf972a6816b107bff6fe7e090cd",
+2973
+],
+"data/proc/frequency/GB/events/GB_20221225T180036.json": [
+"75d639302590a57cf421b7856f2c98dbe49c303abbeac8e5289de7d1112f7fb1",
+227
+],
+"data/proc/frequency/GB/events/GB_20221225T180036.npz": [
+"263e818aac89378fdf9edbee6a96f54f3a613296fb8a99bd71a29a677f2c0733",
+2994
+],
+"data/proc/frequency/GB/events/GB_20230112T161859.json": [
+"467460e898fc34f78bd93c766cc7949253295f75dd2978474d024e8a6a225447",
+227
+],
+"data/proc/frequency/GB/events/GB_20230112T161859.npz": [
+"44a7eb5f64e960a100211060a118d49b41d25dfb0aca6cafbdd686067d67e3f8",
+2855
+],
+"data/proc/frequency/GB/events/GB_20230122T002959.json": [
+"9f2c69f5c1b837145c01e42dcc3eb03e5649a28899a7cfb1552713dcd6709736",
+227
+],
+"data/proc/frequency/GB/events/GB_20230122T002959.npz": [
+"11480cacae149e215e909787c1d5bfbf2bc28481d2959b23d264b2e984d5336a",
+2805
+],
+"data/proc/frequency/GB/events/GB_20230127T204802.json": [
+"4238e70d319eca19811f9bdf01ce967a8337298749c3dbe7a837a6f8474fa0ec",
+227
+],
+"data/proc/frequency/GB/events/GB_20230127T204802.npz": [
+"e9876b5f1c1f4e30ea8112fc9d80ffb0e94f6a30078ba3b91218ac5cf42ff516",
+2947
+],
+"data/proc/frequency/GB/events/GB_20230212T210054.json": [
+"b01d8aac76b58b98ff9f9a3b5efa70dc830bd491e908ea7f5712dd109f956824",
+227
+],
+"data/proc/frequency/GB/events/GB_20230212T210054.npz": [
+"84b9c1e6b0661ce07ef311dece2e201aff10662bbd3b92d87c787bb6f9dc3ca6",
+3077
+],
+"data/proc/frequency/GB/events/GB_20230217T090850.json": [
+"6ebec58fef895e09ba4f2cd2eb318e1effacc33e36ce9327f920c4b994329bc7",
+227
+],
+"data/proc/frequency/GB/events/GB_20230217T090850.npz": [
+"dc8a6f54b13333a43d1145abd5612a85a35425c6dc2252d4ee69326a3fed8275",
+2783
+],
+"data/proc/frequency/GB/events/GB_20230311T133125.json": [
+"2fcaa933171c43cfd704aaf0c537b7b4afafe398582343e198769f6f8f0fcc40",
+227
+],
+"data/proc/frequency/GB/events/GB_20230311T133125.npz": [
+"ef12dbafba976438ca9b24bf5eb0cbd9d4ce45fa4f58429f0aae6c61e6d75966",
+3165
+],
+"data/proc/frequency/GB/events/GB_20230312T145957.json": [
+"79ad5f2393c10391aafeecfd93cde0add80957f9c211e0661e12a12d75098f07",
+227
+],
+"data/proc/frequency/GB/events/GB_20230312T145957.npz": [
+"32cf4217fd49c14c0e0a8cb013be994bcda0c8d35d37d0d9e8048ab6ec1a450b",
+3048
+],
+"data/proc/frequency/GB/events/GB_20230316T141239.json": [
+"b555caed4ab830979be13e917a22bf37df50e5afd90e0251059753172fc5a25f",
+227
+],
+"data/proc/frequency/GB/events/GB_20230316T141239.npz": [
+"87b7cd033bc88bcc64e9dcacf2f6528f4e503c535596b67b3866f7bf1f395f69",
+3042
+],
+"data/proc/frequency/GB/events/GB_20230316T192055.json": [
+"25c52e9936a3b73605124446f9f9a82f2424087b487bcf133c95b647b06da14a",
+227
+],
+"data/proc/frequency/GB/events/GB_20230316T192055.npz": [
+"fc161a6389a9c1dc13d65b58766690460887698148dd625295ebd32d304f2a1c",
+3028
+],
+"data/proc/frequency/GB/events/GB_20230329T092409.json": [
+"62ca14b931bab142a95fb39142a6b4ea2d482d53df23348019d934a2a6cdb6b6",
+227
+],
+"data/proc/frequency/GB/events/GB_20230329T092409.npz": [
+"25364238d20735e482b1fa4ebe93139dc5498fff719677afdc289f4d84641682",
+2880
+],
+"data/proc/frequency/GB/events/GB_20230419T222432.json": [
+"4f756a0bff2131460292b0d3c8d59719848fb2c2b67b6c6bd15c4b5e646c87e6",
+227
+],
+"data/proc/frequency/GB/events/GB_20230419T222432.npz": [
+"a6c79fbdf196a5de1e1c5649cfbbcdd15108bce3eb37ac3f5c31d71ef06685cb",
+2923
+],
+"data/proc/frequency/GB/events/GB_20230424T061909.json": [
+"1641aedeb091a6debd3addd86248b6f55013bd782223272d869b800f28788b49",
+227
+],
+"data/proc/frequency/GB/events/GB_20230424T061909.npz": [
+"8d12734d15a4c0c36eb8f84d0317d8704243fb2146f58022f5d3569f3a5205c4",
+2925
+],
+"data/proc/frequency/GB/events/GB_20230501T233005.json": [
+"520626c39179b68b6293b017bebb08071ee57f01f6fc212e04ac3fa7e096c281",
+227
+],
+"data/proc/frequency/GB/events/GB_20230501T233005.npz": [
+"12e9aab6e111af38cef9e3950b1690e95e6ac457a4bbbd00eabda1dede0e0a47",
+2989
+],
+"data/proc/frequency/GB/events/GB_20230510T235952.json": [
+"f2e0773cfc1a61faf04ecf0b85f883ce0ef18c65d2fb97ff3d295d1d70e67ff4",
+227
+],
+"data/proc/frequency/GB/events/GB_20230510T235952.npz": [
+"8117205f669511f97feb8e5b0a1d62789bd9400beb712451a95b07fd2d1c694d",
+2906
+],
+"data/proc/frequency/GB/events/GB_20230519T055449.json": [
+"cd17b9569ae19fbb31e708d3e9421bf75a82926ee58aff3950daf74a109f7fcc",
+227
+],
+"data/proc/frequency/GB/events/GB_20230519T055449.npz": [
+"9b580b15012381991459f034a23b1b572c601a9103dc9afbe5e5582fb23d6770",
+3065
+],
+"data/proc/frequency/GB/events/GB_20230523T083554.json": [
+"fd24ad5d768c25bc1b3617772705fa00bac43cab25ff98e5c2f95665733ccdb4",
+227
+],
+"data/proc/frequency/GB/events/GB_20230523T083554.npz": [
+"42b83128761dbe188e3c03bc9d07c5c9e84e5088675c926027c954729bf4afc6",
+2839
+],
+"data/proc/frequency/GB/events/GB_20230526T194617.json": [
+"ccb007005ca9a42f7f0bad1d6042ec0b2fb723f426acbcfe6bf99a0274f7becb",
+227
+],
+"data/proc/frequency/GB/events/GB_20230526T194617.npz": [
+"575025cfd21a26cfe451d2c79bc7381083cc68ff14ac599be77ffc8998e0489c",
+2938
+],
+"data/proc/frequency/GB/events/GB_20230604T141750.json": [
+"cb67ff51e1bd2869be85069ae7f4ac4dfed72da3a7085428cca976382b720505",
+227
+],
+"data/proc/frequency/GB/events/GB_20230604T141750.npz": [
+"41ac880fbbf0069a9902b244156ccb292257595f01c46c009a798aa25714a42b",
+2963
+],
+"data/proc/frequency/GB/events/GB_20230607T072551.json": [
+"a2608bb430819c32dbeed1cb9fc48e34ee192b54afa4e2ce0bca7c8f94c973dd",
+227
+],
+"data/proc/frequency/GB/events/GB_20230607T072551.npz": [
+"72c75955cdbeb18c3b28eb6e5234f79d045a58f790c64b95e974aae985b06ea9",
+3094
+],
+"data/proc/frequency/GB/events/GB_20230608T103854.json": [
+"73ee9a12f968082f60bdb6e7781e17e6c19bbaa5d3e406759e64b9e750fee3ef",
+227
+],
+"data/proc/frequency/GB/events/GB_20230608T103854.npz": [
+"b2d48963ecdb31c1571028261e9ee00a1c9534756a340ace19107bb23a37c715",
+2997
+],
+"data/proc/frequency/GB/events/GB_20230610T183052.json": [
+"ff96a57ea87cac232aa06cbf7a835bd19312cd7c7e30f7dfe4a0a674896a6fee",
+227
+],
+"data/proc/frequency/GB/events/GB_20230610T183052.npz": [
+"7570cb21ee47fd852da13a1e70cf47500a10222541e199c3fc67e8bb54e8e121",
+3041
+],
+"data/proc/frequency/GB/events/GB_20230611T164146.json": [
+"3890f24b7981f5d89955a8714e8060b2289f43ed461d82c08e1d060db211322a",
+227
+],
+"data/proc/frequency/GB/events/GB_20230611T164146.npz": [
+"67ad6eccf313d9553656dc7388d4be5b173d93f0cb959de93f4686f9216b7b02",
+3099
+],
+"data/proc/frequency/GB/events/GB_20230612T022924.json": [
+"17cf6a16d28e3ad627b2a6d0a46888f5198e1262468c5e80ac5359cfea10f57c",
+227
+],
+"data/proc/frequency/GB/events/GB_20230612T022924.npz": [
+"5c195b5980f812f67fa2c453aa5224890a78680d00574ed157e12bcc2a60af5f",
+2833
+],
+"data/proc/frequency/GB/events/GB_20230707T005707.json": [
+"5af0818596f896e0a1435189a8a25c2ea11d158040faf523d8ec612bbc34f02e",
+227
+],
+"data/proc/frequency/GB/events/GB_20230707T005707.npz": [
+"0a33b42acefb5adb67b55e670f30110c8b5b3ddd04b0eecda6eb9a3497664102",
+2698
+],
+"data/proc/frequency/GB/events/GB_20230708T205745.json": [
+"91b95106cd816412f8397e4b513b1cdfd91e7a756e7efd8a0a390f2634653b97",
+227
+],
+"data/proc/frequency/GB/events/GB_20230708T205745.npz": [
+"ef3cdbf4c8ab7e26a0eb9cbb787d17b94826f9944e79b3a12bae51311c537867",
+3011
+],
+"data/proc/frequency/GB/events/GB_20230715T121229.json": [
+"73bb9ff8aa29609c1f8e24d8c7bedfd80456f133ea92d4484947132c121f7b53",
+227
+],
+"data/proc/frequency/GB/events/GB_20230715T121229.npz": [
+"7abccc4a5c6005c1f410bb81660798002a93ebbfd2f2c54be3cb6d03e42678c3",
+3054
+],
+"data/proc/frequency/GB/events/GB_20230719T172510.json": [
+"b7c752f575c1e7301129b8368928e006a7220fc96f6f9fc77094632ce453307f",
+227
+],
+"data/proc/frequency/GB/events/GB_20230719T172510.npz": [
+"dd5dc2b6fba956d8cabd6969b60140b409f54187b8d5189ed76f5049b2b3a02f",
+2900
+],
+"data/proc/frequency/GB/events/GB_20230720T033746.json": [
+"5ff1c7cd7f5e0d883caa282d95c7be01ce19d49b681b2ddffb5923c22166fdc9",
+227
+],
+"data/proc/frequency/GB/events/GB_20230720T033746.npz": [
+"5e1b5020965adedaf750548823fe19fa2e84b26a36a18e1e25cd68a71f781c74",
+2876
+],
+"data/proc/frequency/GB/events/GB_20230727T221501.json": [
+"423d8f364b3bb081ff1ffde4bfc656da18875e2074fa6b23a5dbcfaf370d6b34",
+227
+],
+"data/proc/frequency/GB/events/GB_20230727T221501.npz": [
+"234b2df86c1ec6824c96269750b833eacc769b591b1c9145959ab71e3dc82578",
+2825
+],
+"data/proc/frequency/GB/events/GB_20230731T075413.json": [
+"498fc2aec63d71450f10a87b368898d954685d5f51d8a4b0c46db368e58d0019",
+227
+],
+"data/proc/frequency/GB/events/GB_20230731T075413.npz": [
+"6bccf4533e60812372e10f72fe3ed1ec357dfc7d9292ec7726419e16b417966f",
+3082
+],
+"data/proc/frequency/GB/events/GB_20230802T104933.json": [
+"cbecc83667b1d8a19d9804443a9bfea226f0a7c43d30e6659b7b7656f31a16a8",
+227
+],
+"data/proc/frequency/GB/events/GB_20230802T104933.npz": [
+"5c0f47ee5aacbdee247e183f68ca9de379bc16e7670ed732e82ed7cd8b75195c",
+2913
+],
+"data/proc/frequency/GB/events/GB_20230803T105647.json": [
+"6c33db332e81d11156933044c106937b0ce1a8ef4fedd40ba518df2a307ebb3f",
+227
+],
+"data/proc/frequency/GB/events/GB_20230803T105647.npz": [
+"2a51d346c05c1f2fd304f3c3c214924d8f5c94748a0e14a1ec1d4e046e11e7f2",
+2916
+],
+"data/proc/frequency/GB/events/GB_20230823T085621.json": [
+"2cdfcb5aed220030643fdaf639099ec7f109da207c7efe59b8653c8b37c84cd4",
+227
+],
+"data/proc/frequency/GB/events/GB_20230823T085621.npz": [
+"0b6b7395f2dde92e547b856ef3ae4c8588196d43d8804f84c7977bee57646dbc",
+3024
+],
+"data/proc/frequency/GB/events/GB_20230826T113013.json": [
+"bbd5485ea3cc5239d05a4ee08f9dcc71f6a036ead613d21c4e7d496ba619ff40",
+227
+],
+"data/proc/frequency/GB/events/GB_20230826T113013.npz": [
+"869477fe3c3e262f0e90c7a1353ef6f186cbd7704f32c8ca686b9b6c8f304673",
+2980
+],
+"data/proc/frequency/GB/events/GB_20230901T091658.json": [
+"a2e6e2c69ad90dda50f10f8f4e680a04d4e1beb6a46e9a6d375bfd835dd962bd",
+227
+],
+"data/proc/frequency/GB/events/GB_20230901T091658.npz": [
+"caaf519bec9877fd27904cfe345e6eb2d70d32055454873cff552b89fccd1c7a",
+3029
+],
+"data/proc/frequency/GB/events/GB_20230915T065958.json": [
+"bf2e92d1e4bf83ca6caa023da88ed51f51a549176941726cad8b762512ca18ab",
+227
+],
+"data/proc/frequency/GB/events/GB_20230915T065958.npz": [
+"13afeff9f6c5c52658e791790d198294f1146d4668098c9c43fb48a70924b761",
+2948
+],
+"data/proc/frequency/GB/events/GB_20230920T065958.json": [
+"2fd308f9321de859a03f3b7d6949793611f21e7320983c74011e132c4ba2def0",
+227
+],
+"data/proc/frequency/GB/events/GB_20230920T065958.npz": [
+"e69a86f8c3283eb51483b44739d77224b8d401b992eef7e432e84728f086e6e4",
+3110
+],
+"data/proc/frequency/GB/events/GB_20230926T213448.json": [
+"b234672bbb9a8f24dd4c9b28c352bd4e65aeaaa66a8ce6c390432974252991ba",
+227
+],
+"data/proc/frequency/GB/events/GB_20230926T213448.npz": [
+"73c6a5cd5d7abe4979396cb01f0b2dd659e2726d65f70311d5381203e0c3e592",
+2891
+],
+"data/proc/frequency/GB/events/GB_20231011T180934.json": [
+"fea71b6bd0dc31128b7dd46017f4b2d15dbfb1bcf41d684b60b177495ca25c22",
+227
+],
+"data/proc/frequency/GB/events/GB_20231011T180934.npz": [
+"6b8c6002771e72000550a020496cb44967a1677dbcdd6698d6878a1a40369ef2",
+3043
+],
+"data/proc/frequency/GB/events/GB_20231019T000112.json": [
+"e165f667da55909b8aa94d91cffdb2ca97c5ca3482e7a7110a84ce9ca20a6f63",
+227
+],
+"data/proc/frequency/GB/events/GB_20231019T000112.npz": [
+"48db012d7086de27f41b30f0ba1ef2ed745d63ae45148f2fc0da9a773fcfc434",
+2983
+],
+"data/proc/frequency/GB/events/GB_20231019T022909.json": [
+"202d82255d67a05a159e88115698d7350d00939845174e782ee81171d1a5547f",
+227
+],
+"data/proc/frequency/GB/events/GB_20231019T022909.npz": [
+"4d87fbb0a3736cab4585c28b85f798f3fa9cd87011a4b0d440d3f51b02599397",
+2727
+],
+"data/proc/frequency/GB/events/GB_20231019T070000.json": [
+"c87645ac176d00ba0d83b4a24cf00bd059a3208db39850a1c74924efd01db3de",
+227
+],
+"data/proc/frequency/GB/events/GB_20231019T070000.npz": [
+"b33e6507dedc602675a0640c76a97dcc5a2e2e4b37b0638f3880c9ce2e9624ed",
+2889
+],
+"data/proc/frequency/GB/events/GB_20231019T170959.json": [
+"639cb00daba6ffa45eae666d48f72605a86aac98fa21c6754bd69a9662dfdad9",
+227
+],
+"data/proc/frequency/GB/events/GB_20231019T170959.npz": [
+"a5b00e5cadd04e2ba3938ff5006df594914952232425a8886f67c744bf49f4c5",
+2703
+],
+"data/proc/frequency/GB/events/GB_20231020T153548.json": [
+"87f136ce117bc4918d8875417de7d22a94fa81f79b181a23d0cb2298258c39f7",
+227
+],
+"data/proc/frequency/GB/events/GB_20231020T153548.npz": [
+"f5657986e1cec6385032ddfdc038fef1decb95deba532713968dcf144582ae8a",
+2904
+],
+"data/proc/frequency/GB/events/GB_20231022T084934.json": [
+"3e652c6378d01926821f317a56e8edd28a6ebe27adf63428851a5e548a6f09a8",
+227
+],
+"data/proc/frequency/GB/events/GB_20231022T084934.npz": [
+"26876b68c92b7326b65e3b1a31202c13935dd6e88489907a808bc9dbfbd34abd",
+2824
+],
+"data/proc/frequency/GB/events/GB_20231024T111046.json": [
+"eab6d6d8dfcef2fe424518bb68207c16a78186170a735ec5ac2917b5d4219174",
+227
+],
+"data/proc/frequency/GB/events/GB_20231024T111046.npz": [
+"f79395f4552bc31edfd17a5327c749493ac4cf2857ff1fcf98c1d8b4f193c289",
+2861
+],
+"data/proc/frequency/GB/events/GB_20231028T221612.json": [
+"e927d398ab72bfdedb8bdc638a9e8a42d1b4ed0810db5320a0b28c0efe83f7f1",
+227
+],
+"data/proc/frequency/GB/events/GB_20231028T221612.npz": [
+"d35f87c0a6d695e143cefc2acb9314efa4dd6646c58f2c9a068760037f3ea23b",
+2747
+],
+"data/proc/frequency/GB/events/GB_20231103T002959.json": [
+"3f7c008c61248a047ca786590dea0b77acd2534027ff8a62b4d75e612b8eae88",
+227
+],
+"data/proc/frequency/GB/events/GB_20231103T002959.npz": [
+"b75d044ae8be6a4f8c973ff152c0a5dcde04f2c96af54808fd81aa46d4d9d65a",
+2748
+],
+"data/proc/frequency/GB/events/GB_20231104T105000.json": [
+"86901e5b90972ce0557e4c2d81807c9146b1f757c496faccae19fb7e19a352de",
+227
+],
+"data/proc/frequency/GB/events/GB_20231104T105000.npz": [
+"0c46f540a99cf616967b3859a40e62eb6ef421f021101b37809006c3c03fef20",
+2825
+],
+"data/proc/frequency/GB/events/GB_20231110T183019.json": [
+"40b632160c3c51eebe1b68c74d3184ad9866112017c46cf5e9dc27c58c484011",
+227
+],
+"data/proc/frequency/GB/events/GB_20231110T183019.npz": [
+"42b26d1422bab37ea11638dbf77db4096df4e2cd84bc7b6fd8155b077394edc2",
+2831
+],
+"data/proc/frequency/GB/events/GB_20231112T163345.json": [
+"a745a5dbd74bc104e6c5df0a4fabc880179721bfa584fc8fba8a86a1d247fd04",
+227
+],
+"data/proc/frequency/GB/events/GB_20231112T163345.npz": [
+"5e3d1f42f330113c45ee56fc0b270352d14240bcccf4a172b741949010773765",
+3027
+],
+"data/proc/frequency/GB/events/GB_20231114T212551.json": [
+"f23c31a05c32df7090e40dd096ff3db46d2b3411747f18b17c5209dbc47b9a04",
+227
+],
+"data/proc/frequency/GB/events/GB_20231114T212551.npz": [
+"df03fd6801f106f0a447fbfba0fa95781d22cf0c3a9e02f681fa89e35e3425bd",
+2956
+],
+"data/proc/frequency/GB/events/GB_20231206T113532.json": [
+"36d5b460fcbd72f772baac3cd45df52e1c384fde6a1e1eeaceb774b1d5412315",
+227
+],
+"data/proc/frequency/GB/events/GB_20231206T113532.npz": [
+"780f3dc045d536da038f847c4ac86d069d00e2149987f7ad9a648c7f66114c27",
+2944
+],
+"data/proc/frequency/GB/events/GB_20231207T102238.json": [
+"a4eb2f9443c4c2c235bcf5f0a057f641cb680f9cc404ba5c9a38d681aeaa4f01",
+227
+],
+"data/proc/frequency/GB/events/GB_20231207T102238.npz": [
+"86ed4b04dd73739f8c7705adc33b9ca027fb9a7aabf30586076e5c629e4c6d9d",
+2900
+],
+"data/proc/frequency/GB/events/GB_20231212T133052.json": [
+"cb45800e78417356ce4c5858456b7c082bdd8b9dc0ebed1d7deb349cc5c4332f",
+227
+],
+"data/proc/frequency/GB/events/GB_20231212T133052.npz": [
+"826cb940a9dbfa78dc551a5fe2b78202b3e26a1d0a5e5892c87c4606a255cc41",
+3000
+],
+"data/proc/frequency/GB/events/GB_20231215T090607.json": [
+"f1f5bee974c21fee561f6e2cf4de0cf6e8d799e55350d7cad5dac479da937c52",
+227
+],
+"data/proc/frequency/GB/events/GB_20231215T090607.npz": [
+"e138ebf66a90d7eb615a0b2136e01d7c68de38f07cdcd3365af1360b6ecb3d54",
+2923
+],
+"data/proc/frequency/GB/events/GB_20231221T103917.json": [
+"73a56702fc25083cb292b48f4358c88e4a79df255e4dea6ebeb60c75ad5e7e73",
+227
+],
+"data/proc/frequency/GB/events/GB_20231221T103917.npz": [
+"876c3f0e57a04127dd7cb57262344b6a0926c464ba5159c025ed7e490e621c21",
+2923
+],
+"data/proc/frequency/GB/events/GB_20231221T160849.json": [
+"acf0ba6781e8da32f5d90338b76e73fd90f483184f77731acdd2deed70c2988a",
+227
+],
+"data/proc/frequency/GB/events/GB_20231221T160849.npz": [
+"087ef0e194cfe012341db8945f12f0f474af7e9de2b01ff292ddba6776db71f2",
+2975
+],
+"data/proc/frequency/GB/events/GB_20231222T130951.json": [
+"369f5179f102e04201e1dcd1ff19713fd28e74f9106796e3eb323c9e0aec5d54",
+227
+],
+"data/proc/frequency/GB/events/GB_20231222T130951.npz": [
+"e83686e8d4aa33e824e00698ad0b346cfb9c3d20d0e483609256af4811f29385",
+3037
+],
+"data/proc/frequency/GB/events/GB_20231227T230504.json": [
+"06a16448ecc8ddd1e6cafe4226db8d62d2037addc4ec9568cbd412ac90ff2604",
+227
+],
+"data/proc/frequency/GB/events/GB_20231227T230504.npz": [
+"9868040d3db470b8989c4f8a29507bee50acc9e24f713ac5c213ae444837b085",
+2628
+],
+"data/proc/frequency/GB/events/GB_20240102T164650.json": [
+"40a0e9f9e522b87de7e124ae4c557e8027b0be62f1318faab358caa694dd9b37",
+227
+],
+"data/proc/frequency/GB/events/GB_20240102T164650.npz": [
+"46c8786fbe11106ce08ec49f81e4043c76e03fe900605dce2e7956f551cf0f5e",
+2877
+],
+"data/proc/frequency/GB/events/GB_20240106T101455.json": [
+"f56633d74a546aa4b868b1e848472ca99131a213b5416dd06f443bc2ddb1da3c",
+227
+],
+"data/proc/frequency/GB/events/GB_20240106T101455.npz": [
+"43d499aa6a1342ae9a67964070318562886f6ceca3cdf2d1922304bad282c33b",
+2883
+],
+"data/proc/frequency/GB/events/GB_20240115T233443.json": [
+"e96d241053cd4a6da636f639cd108ec0ec07b2a7ba3be4adc8909a56fca8b52a",
+227
+],
+"data/proc/frequency/GB/events/GB_20240115T233443.npz": [
+"d9ef9351190f758d3d737679a7958a815e5ad033b2b0dce571018c7d0e190bd3",
+2880
+],
+"data/proc/frequency/GB/events/GB_20240204T024329.json": [
+"e5749d4e7d3610f8b1faea94b98d066927ced46b61386bdc3c0742e34b027c15",
+227
+],
+"data/proc/frequency/GB/events/GB_20240204T024329.npz": [
+"daed19d082f122e43e76f87943a7b5d78f913c34e06d73675e0f120230c3346a",
+2932
+],
+"data/proc/frequency/GB/events/GB_20240213T190958.json": [
+"3e0d3f095e89e4af73f85653a8a52c1e33027831e1d48474d90c93cb28bf386b",
+227
+],
+"data/proc/frequency/GB/events/GB_20240213T190958.npz": [
+"f5554255529e3dc13dbfd01a5a7092c48317d553a6723dd114055688e3b5c030",
+2928
+],
+"data/proc/frequency/GB/events/GB_20240214T133000.json": [
+"3edbf8463cfb92f3fd535dc4a926b9b2475e5280dc1f8364052a4ecfcd42bd19",
+227
+],
+"data/proc/frequency/GB/events/GB_20240214T133000.npz": [
+"cbd4d01d4a2e69770069447432884adbdd20c059ded309d2ee44fdf9e3783c92",
+3012
+],
+"data/proc/frequency/GB/events/GB_20240301T061156.json": [
+"ee7c5912f32b32a04fa24db616846720bb5a9cba85e6594618eb6054fe3168a7",
+227
+],
+"data/proc/frequency/GB/events/GB_20240301T061156.npz": [
+"ff67990c2dea894c350a68856c676c49c89193ce3beddc85109d73b5075e02a0",
+2950
+],
+"data/proc/frequency/GB/events/GB_20240306T074617.json": [
+"19ac8db5300fbc56e5d7bad4fe96d556fe3e3a0d0b2db2e54dcd9959f367411c",
+227
+],
+"data/proc/frequency/GB/events/GB_20240306T074617.npz": [
+"26940ab1138d387c91716b6c27ea14ec6683b7b5d3ad1ec7a262fa1c83f9c11b",
+2714
+],
+"data/proc/frequency/GB/events/GB_20240311T095611.json": [
+"35ad5fcd9bce08168cbfdf73338b35041b59ffe897da06c1fe8c049f1d5e98ee",
+227
+],
+"data/proc/frequency/GB/events/GB_20240311T095611.npz": [
+"5742e239c149c0ebe53b30b379cb8e21d196a8a3771556ca88434339023fb97f",
+2984
+],
+"data/proc/frequency/GB/events/GB_20240313T153019.json": [
+"3a74daeea484a63b004db03f88af93d9e1a75f4020f5749f11a805b462044aa4",
+227
+],
+"data/proc/frequency/GB/events/GB_20240313T153019.npz": [
+"ebb96bb225a54dd9439f3d4432d8eea51959716dbc2c17c707eab68de0835ded",
+2803
+],
+"data/proc/frequency/GB/events/GB_20240328T102054.json": [
+"2c78d74c0949ac7e450a10ce5e2cbc37b07f6bad06628c07ef89112ccca0a474",
+227
+],
+"data/proc/frequency/GB/events/GB_20240328T102054.npz": [
+"aab80c122343ceb93456b5ad17dc8356b8fa3f583b604f4a995809f435c23cc6",
+2955
+],
+"data/proc/frequency/GB/events/GB_20240329T073410.json": [
+"0328d9d4131a47efd2cc4a6fb03bd3ac62ceba21ba87e73e493abc01940039c7",
+227
+],
+"data/proc/frequency/GB/events/GB_20240329T073410.npz": [
+"d4c1d8e14b6f07b4b65bcb0b9bf842a244cabcacc89f0bea13dfc3b39728ddf5",
+2922
+],
+"data/proc/frequency/GB/events/GB_20240329T112956.json": [
+"94d064be3d50d224d4aba3fbcf1e783c467950e0155af4cdc0890785e96ba7bb",
+227
+],
+"data/proc/frequency/GB/events/GB_20240329T112956.npz": [
+"2e51e9ef344c373bc88246d1823f20f522a71a6a5794cb74ec4f05c8b5759592",
+2998
+],
+"data/proc/frequency/GB/events/GB_20240329T123012.json": [
+"6f21bea4d5c7ee747140bf069c73e995c0552ef2e34781d962ffa71dc85ec56b",
+227
+],
+"data/proc/frequency/GB/events/GB_20240329T123012.npz": [
+"506d8034d9dde3a7155ac4b8848248972dbc260c23f4d465938c76321aba78e3",
+3130
+],
+"data/proc/frequency/GB/events/GB_20240410T223000.json": [
+"569953ac33b04a1d9c239b8554d3935e0ed95d11fd7810922bc23b5928365e75",
+227
+],
+"data/proc/frequency/GB/events/GB_20240410T223000.npz": [
+"36519d6679df624ece09d5887207f61496acaeea9990254a95050f8e603a6d23",
+2909
+],
+"data/proc/frequency/GB/events/GB_20240412T055959.json": [
+"7563dcbfdde54a8ec499a333205d0d9190842869e314385cf9b6535d749b38a2",
+227
+],
+"data/proc/frequency/GB/events/GB_20240412T055959.npz": [
+"d3b1195a1d64d8dd018c115ba4b48d0b5c93a1a00a6c6d452ffdd4d84e429bea",
+2956
+],
+"data/proc/frequency/GB/events/GB_20240503T070000.json": [
+"cb97d6bf7b7dbf76b5ee9048c669b81926ce518836b6a26719028a10aa605f6e",
+227
+],
+"data/proc/frequency/GB/events/GB_20240503T070000.npz": [
+"69238437ebc822b4b1a57733ce4d477bb2a9ecdf71e2e4bc2594f55eec4d7eba",
+3065
+],
+"data/proc/frequency/GB/events/GB_20240508T220741.json": [
+"0a8a86cfa11f6b73385f7019a1cce25d85c27cb24ec225c56b97d6db6a349f4b",
+227
+],
+"data/proc/frequency/GB/events/GB_20240508T220741.npz": [
+"1ca96f07b10078af4388e88ba7e748228ce3342b2c5d3a45d58f2a4c42e032bf",
+2842
+],
+"data/proc/frequency/GB/events/GB_20240512T111833.json": [
+"767b270a0e820b50b92ceca1a3f77c9fcd705dd7cb1100b1a02bf1b6840037e6",
+227
+],
+"data/proc/frequency/GB/events/GB_20240512T111833.npz": [
+"d3f106cb308d0c3b343ac9aa3512f430727c9a74cb2d733f3a9b2609954d0915",
+2924
+],
+"data/proc/frequency/GB/events/GB_20240513T123243.json": [
+"732548dfdd024f862073d5cbf50aaee37052e014aacfef70e46b1961dba7b44d",
+227
+],
+"data/proc/frequency/GB/events/GB_20240513T123243.npz": [
+"c258b7e1bef56110d0a6b11c546c27f7fda46cb2afc33ebbdf0b9fd646389dfe",
+2929
+],
+"data/proc/frequency/GB/events/GB_20240522T081332.json": [
+"b5a9661c3c1bb5c7510a4372eabb7d078f0fe34fe274240e898408d2ff4ec569",
+227
+],
+"data/proc/frequency/GB/events/GB_20240522T081332.npz": [
+"0addaafc898c42a220faaf51a671157e6eb73d484af5bd2bf7302430ca7197ae",
+3046
+],
+"data/proc/frequency/GB/events/GB_20240524T104209.json": [
+"8e3e4fbd733c33100a7a4f13f19dbf30cadbe3b579dbd994e37f903e87c77b37",
+227
+],
+"data/proc/frequency/GB/events/GB_20240524T104209.npz": [
+"a2e4df9659e8026a2772727a957b761eb6cb943b675cd675b98b8a8d838516a6",
+3031
+],
+"data/proc/frequency/GB/events/GB_20240529T212601.json": [
+"56b6b3c43610a1891b25bd5f1bdb83b5e5d1022fb030fdc2ee0301b4168b8689",
+227
+],
+"data/proc/frequency/GB/events/GB_20240529T212601.npz": [
+"79289286f2838657f8543b15d6c521dc081b0106a9a2ab6458d2225b052831ed",
+2924
+],
+"data/proc/frequency/GB/events/GB_20240603T211908.json": [
+"639aa01df8a1e6486867a35ddea5a971172a55bbd04b34b12205f7177b9df023",
+227
+],
+"data/proc/frequency/GB/events/GB_20240603T211908.npz": [
+"2aba3143ae64b3f7097d2a4e905a9812d38f48733b80a636cf1735de16d10b4e",
+2852
+],
+"data/proc/frequency/GB/events/GB_20240605T202355.json": [
+"636bdf3bbc1d9b885215999a9bfc41f9b8dc406e7667d267dcbe673ad46d60dc",
+227
+],
+"data/proc/frequency/GB/events/GB_20240605T202355.npz": [
+"986b44efa02199e05b80aa95a0d79529183f36dece90828a5dfdbc9da13c9ca7",
+2873
+],
+"data/proc/frequency/GB/events/GB_20240611T131409.json": [
+"22758921450211547cde3b2dfc78db7c1a0acff52ed882aef6dec5fc3b223d3f",
+227
+],
+"data/proc/frequency/GB/events/GB_20240611T131409.npz": [
+"ad06ef3dc16f2c08f825a8eb08ea7aba5054cddc7baeaaf66c38b9456beb0b8a",
+2910
+],
+"data/proc/frequency/GB/events/GB_20240615T135114.json": [
+"1ea74598287d305caf1e417ddef5860a3586458519c58393a13fea978a53dfb1",
+227
+],
+"data/proc/frequency/GB/events/GB_20240615T135114.npz": [
+"df7244bb31c8a565e4205c7e5feecf0ed20ce9b7f0841c6abc9445d212ed3525",
+2998
+],
+"data/proc/frequency/GB/events/GB_20240616T191104.json": [
+"faff88f74eb0d1f1cf6bab0135a7cb342d300336442e17db505684ee9c2cef54",
+227
+],
+"data/proc/frequency/GB/events/GB_20240616T191104.npz": [
+"46144a4ac305bddecd501b9fa8088f2933f09cc185b5453a5bc6490ceae0e3da",
+2970
+],
+"data/proc/frequency/GB/events/GB_20240624T060000.json": [
+"5cc2ea8f5a36b0d4fde1b8b646b677c04115ddde906228ef7f6901041a5c4d86",
+227
+],
+"data/proc/frequency/GB/events/GB_20240624T060000.npz": [
+"91a8c859da0e2b79e32f2526ce9891a5445fb4709bfd35d7ab5aa1cd55e10da8",
+2751
+],
+"data/proc/frequency/GB/events/GB_20240624T173129.json": [
+"493a7bcecefa0678d357fbbfb2a7bf36c86ead6d34b405b5643f9e8cfd647fe3",
+227
+],
+"data/proc/frequency/GB/events/GB_20240624T173129.npz": [
+"33a61fdda1d141ac932d4f414448703c5c1e12a448580be6f75728fd3b5a29c1",
+2815
+],
+"data/proc/frequency/GB/events/GB_20240625T060000.json": [
+"753c17ef00ec391b8a200bd6f1e5f5533da9c87248412866c37ff09febb7b063",
+227
+],
+"data/proc/frequency/GB/events/GB_20240625T060000.npz": [
+"d7c65d48085b01eab1a8715192caf53c8e6fc713838314a0f62f83f1938fcbb7",
+2900
+],
+"data/proc/frequency/GB/events/GB_20240625T123707.json": [
+"fd95faf9a5654383f04048fda441d4c90257529657e2fe2b44718a494b4a087c",
+227
+],
+"data/proc/frequency/GB/events/GB_20240625T123707.npz": [
+"60387aadffd51b25af9e823fe71e1ca84bff05f812c65fd502f7ca7ac6c4373a",
+2946
+],
+"data/proc/frequency/GB/events/GB_20240702T060654.json": [
+"e9ac25f0a43c9d3f212cc607fe9e43abc9f9ba952f8f83542730ed1d4916a19a",
+227
+],
+"data/proc/frequency/GB/events/GB_20240702T060654.npz": [
+"2e191530b4b72db5c572f827d306f364814fbca4e9be2aeef2c7f67606a44ff2",
+2954
+],
+"data/proc/frequency/GB/events/GB_20240703T074700.json": [
+"179c29f1d9af5b6cff425435dc3f2b9ce8fdf492d2deed1763662bc093b12b29",
+227
+],
+"data/proc/frequency/GB/events/GB_20240703T074700.npz": [
+"56d9c5cdf4a18f41379ee44c4f2120645bffa50310bb20c1f572ef67e6df03b1",
+2842
+],
+"data/proc/frequency/GB/events/GB_20240705T160553.json": [
+"0cf08d5f2fa03f3953618ec4b27294822e5faf6e22030093c57f8c30ccd0ffd0",
+227
+],
+"data/proc/frequency/GB/events/GB_20240705T160553.npz": [
+"58f16c638291cb495e88e0230b4a5f79ed9b5791e82062134c3bb5420adc281f",
+2795
+],
+"data/proc/frequency/GB/events/GB_20240713T225300.json": [
+"b0fbb2ec4c9b0f86a58e8baaeb0eab18de2a87caeabb7734a6a8db815939f4cd",
+227
+],
+"data/proc/frequency/GB/events/GB_20240713T225300.npz": [
+"9d4c46d01ecce4a6f86b39b6c2b4cedfa6afa6e75872ed6d3a67d7fd8bd34e6c",
+2952
+],
+"data/proc/frequency/GB/events/GB_20240719T080042.json": [
+"e75381c098214ab4ee5e3387ac718d2c711635eee92cffbef75bd6874989ac58",
+227
+],
+"data/proc/frequency/GB/events/GB_20240719T080042.npz": [
+"7957221c55198f63de292bbc952faf61c06f2debfb1e5d02d2b1b4868d853b2c",
+2848
+],
+"data/proc/frequency/GB/events/GB_20240719T152959.json": [
+"99e377222fbc204d96b2d57a4ce8ec4283714fa765151577aebb93658955091c",
+227
+],
+"data/proc/frequency/GB/events/GB_20240719T152959.npz": [
+"ffc19421ecc6912442223dbfd8378c1251f0354fee8438b02d40ec8482e5c0b4",
+2635
+],
+"data/proc/frequency/GB/events/GB_20240722T162358.json": [
+"75f7a7bb0878b5605838d44540a53c235b621d82f247dcc665e60551b39db013",
+227
+],
+"data/proc/frequency/GB/events/GB_20240722T162358.npz": [
+"1952093fd4a48933f1638452dd4a061e5a42010235ac5b4f33b7641ef9e94611",
+2928
+],
+"data/proc/frequency/GB/events/GB_20240723T143000.json": [
+"f63c2165466972e215b22872f58f7b76b7ba34881c6f5f01c768ed7c55237a84",
+227
+],
+"data/proc/frequency/GB/events/GB_20240723T143000.npz": [
+"d85a6d236099b70285474c97c4e0ab7295e28b253750c8b23c860b75344043f4",
+2758
+],
+"data/proc/frequency/GB/events/GB_20240812T144128.json": [
+"bc90ecb5aacb997ee4528d57d4ea8d342c85e7f0b51e3ef255df2a9717cf1742",
+227
+],
+"data/proc/frequency/GB/events/GB_20240812T144128.npz": [
+"a017a2190ab131c15c934930cc95dda995d96a6a9859bc70136429c54000cf8c",
+2940
+],
+"data/proc/frequency/GB/events/GB_20240820T212652.json": [
+"b0a793cfbde9cf419f837892641b8b9f670fb19fe4867e1a966d955def4f1490",
+227
+],
+"data/proc/frequency/GB/events/GB_20240820T212652.npz": [
+"1984d24c45ebbd9c8cc1aae3305de9c6cad6e4af8b9231e39b63d0c800b7951d",
+2919
+],
+"data/proc/frequency/GB/events/GB_20240823T060000.json": [
+"f72d5f5859d33edfb2405674022f3ce1bcf845c1887ed227141b1dd2c15ca19e",
+227
+],
+"data/proc/frequency/GB/events/GB_20240823T060000.npz": [
+"d0829583083b8a27ee6288ed640630f9b0cb453fb75de3718cb32b200297e101",
+2829
+],
+"data/proc/frequency/GB/events/GB_20240824T003000.json": [
+"4ef39b46d922ddfb7a68ab69185d995e5edc035fad1707eea210e57062e19c11",
+227
+],
+"data/proc/frequency/GB/events/GB_20240824T003000.npz": [
+"6ec7ae5c9985ade67f52c8166128fb2457b47158c87478a0bd0c1c47d55d73db",
+2652
+],
+"data/proc/frequency/GB/events/GB_20240826T110000.json": [
+"7181cdec84138b6d7692075105796746cea29dedbf294a00beab1ec7281aa41e",
+227
+],
+"data/proc/frequency/GB/events/GB_20240826T110000.npz": [
+"4edf0d726b9b5e62c3c5ac988ebd3652dbf45ec0bf582c177baf3199cc84cadd",
+2965
+],
+"data/proc/frequency/GB/events/GB_20240828T080206.json": [
+"c403d6a531c7d9dab60ea47405c348fa7250948f1e5c74ae2f911c9d53140f1a",
+227
+],
+"data/proc/frequency/GB/events/GB_20240828T080206.npz": [
+"47b8fed1070e345098fa1fb034e09557447169bae3b4b74c6a4835983dafbd2e",
+3123
+],
+"data/proc/frequency/GB/events/GB_20240828T195646.json": [
+"4f7e9a368d3bfdb00a420bbe30e20456f587b1a66cd54250869ca06b7b836b02",
+227
+],
+"data/proc/frequency/GB/events/GB_20240828T195646.npz": [
+"a3487e69ca241f81bde40471b9a1e0649f4d07c89ac459c27b7b74b2f67645e4",
+2885
+],
+"data/proc/frequency/GB/events/GB_20240828T201601.json": [
+"90c36af71ba30f23ea462e5d6787602295cf0f886a07ad5686f192f165818d55",
+227
+],
+"data/proc/frequency/GB/events/GB_20240828T201601.npz": [
+"0d3c8fc22ac0cd20292320d0667600a22b8de5554e0326954ccf8c1dc3152648",
+2983
+],
+"data/proc/frequency/GB/events/GB_20240905T115400.json": [
+"67c3d5ea54c1cf2a83a77daf31a83b2fd374577b8a8d75a0920358e7ed44321c",
+227
+],
+"data/proc/frequency/GB/events/GB_20240905T115400.npz": [
+"f7b90c58e88c2fd6cea02f2a6901445f8c30ebae568483b5f5b089e594d993eb",
+2830
+],
+"data/proc/frequency/GB/events/GB_20240909T070000.json": [
+"eaeef9b76c5732fb385b0293dd85d8037ef19a6556e56e696192f37a9a58e6ed",
+227
+],
+"data/proc/frequency/GB/events/GB_20240909T070000.npz": [
+"649b1d4e0f60d44dba1dfaff3fb766c3d73295501c57a21c00b545d148c06bb5",
+2754
+],
+"data/proc/frequency/GB/events/GB_20240912T190000.json": [
+"aa4658094796064c2f5a1bec46fcd53d99c4d2e045c4f13ba8eacc0f78646089",
+227
+],
+"data/proc/frequency/GB/events/GB_20240912T190000.npz": [
+"316711c2d5014e02e5b223a62d59ed73fe981f94a271b2747c8ff432dfd41eb8",
+2774
+],
+"data/proc/frequency/GB/events/GB_20240915T190000.json": [
+"837b4f7a35938bbe519e1b039c5f5b7762446f867ed10406fb4c6803c06f40e3",
+227
+],
+"data/proc/frequency/GB/events/GB_20240915T190000.npz": [
+"4d87ddbfa0c4753fbf9be9c41c0517c3370a42a2c5293633f4374d2c71d77509",
+2783
+],
+"data/proc/frequency/GB/events/GB_20240921T090014.json": [
+"da5a825f51f76fedd864fcac1978029a67120415f6e75b10fc469475d2610edd",
+227
+],
+"data/proc/frequency/GB/events/GB_20240921T090014.npz": [
+"261899d82b98cbb37983c3a768b7bcf58671f1633870534cbb6180d4c5187d79",
+2776
+],
+"data/proc/frequency/GB/events/GB_20240923T070158.json": [
+"9b8def1dcc0daf8c4a6459965ab17f96ae13db8fbf934fba5b18220e55145a6e",
+227
+],
+"data/proc/frequency/GB/events/GB_20240923T070158.npz": [
+"21a191f607c956405266199ca2f112a6f7abd76eefe2b5734a04a940bd8b5ff8",
+2841
+],
+"data/proc/frequency/GB/events/GB_20240923T165102.json": [
+"cc53320bc8fdf1b2a0c6509b86c6872ff10f8c580283cb0e93928a6fc09f3cea",
+227
+],
+"data/proc/frequency/GB/events/GB_20240923T165102.npz": [
+"a2303d9a34fea66e6d650db380fa7fd446249042ca58b42ff8561a9486e5ecd9",
+2941
+],
+"data/proc/frequency/GB/events/GB_20240925T102510.json": [
+"ff65c4cf5423c157c9a9a9eb2fce86896b8959b5f6e3ba1d8088774781500a85",
+227
+],
+"data/proc/frequency/GB/events/GB_20240925T102510.npz": [
+"2d54757e1f8da91995a92affeec83b5e1d522e747a9812a11f86ca2fd330d19d",
+2958
+],
+"data/proc/frequency/GB/events/GB_20241008T074757.json": [
+"b6af9cd8d07f5455cd4053d6ee37d75b68f6fd2b1ce9f26cb2d9e365397fff64",
+227
+],
+"data/proc/frequency/GB/events/GB_20241008T074757.npz": [
+"9996183d88e52cb683b73b71752e9427a2afd9bb39cc034f20b7f54e13284b88",
+2972
+],
+"data/proc/frequency/GB/events/GB_20241013T120339.json": [
+"bed09063a9ce5fb481b428659f9854dd2fd1aacc8cf7d1027c5dbad60623dadb",
+227
+],
+"data/proc/frequency/GB/events/GB_20241013T120339.npz": [
+"1ebc481172ff985817bc694908f825b02fe29d7973ec630e204527da25c31416",
+2775
+],
+"data/proc/frequency/GB/events/GB_20241022T070000.json": [
+"f970657899096226fb7dc0eb7e5ed2e284d54fd987bb71642b28ab9b5bf5e24e",
+227
+],
+"data/proc/frequency/GB/events/GB_20241022T070000.npz": [
+"a11ee79fa70ff2a04908e7050df68470e996259c63b4c5cdf2b796120a196d6b",
+2887
+],
+"data/proc/frequency/GB/events/GB_20241025T070000.json": [
+"eacc595f47bb689a6502e6ed435752c0261731ca4424660b94bcc5a7de5587f1",
+227
+],
+"data/proc/frequency/GB/events/GB_20241025T070000.npz": [
+"e7dc5ac188517733d4b747d170a4056b6514072a3d8c9142bcda342767d9283d",
+3046
+],
+"data/proc/frequency/GB/events/GB_20241028T081834.json": [
+"34cfc9f7985d9edc3ff8abb2ca8707cfdea1aef905923c4a8849d3b3e74a4a0d",
+227
+],
+"data/proc/frequency/GB/events/GB_20241028T081834.npz": [
+"ad8e297b1a6764e2f9d6e5e67360c4d7f95474085fc208a57968e1bc9c19ecb9",
+3037
+],
+"data/proc/frequency/GB/events/GB_20241030T173141.json": [
+"d0fcafc08affd7c7f4d3abc8c2a857215c142c834a5913bd2537a554e9e67845",
+227
+],
+"data/proc/frequency/GB/events/GB_20241030T173141.npz": [
+"97b2e16ec70deef64e0a0da1667134ec83172566123388add6cb0c7882902ec1",
+3028
+],
+"data/proc/frequency/GB/events/GB_20241105T075958.json": [
+"46f920ee7a5d9952755bb8707cb4ad1363c6463f8681531e12a31098f02a1864",
+227
+],
+"data/proc/frequency/GB/events/GB_20241105T075958.npz": [
+"18462794813710f4ea558e3b5b991b7b8f19cb7592ba5dc8c42a88d4983656b0",
+2928
+],
+"data/proc/frequency/GB/events/GB_20241109T070000.json": [
+"a3f32ab95b7be9495d435edd9274ca9df8b19484c834fa22a5c3c1e2d9226d2e",
+227
+],
+"data/proc/frequency/GB/events/GB_20241109T070000.npz": [
+"5f453d0ae61bf1b5c69a730f5374f3fa0b3a1cb890cd96d7b2af4dfa2e17644a",
+2830
+],
+"data/proc/frequency/GB/events/GB_20241114T104307.json": [
+"9d4a14dc0304e5534ef58793695e4e598fcc8e3a6749085afc336f4bc82f3507",
+227
+],
+"data/proc/frequency/GB/events/GB_20241114T104307.npz": [
+"301a23966d6a178a1df6fc81d283c3c1e6834e6cf8effc23f98ac374e8f6f803",
+2838
+],
+"data/proc/frequency/GB/events/GB_20241116T184101.json": [
+"ef737a0495ab82d2ed8c948cca0f907a990fc91c5cb1f2b20cd7e5380096659b",
+227
+],
+"data/proc/frequency/GB/events/GB_20241116T184101.npz": [
+"eb0ce5f468a49529c0884eb0aea02ed8580745a567488d053e03ccbf98030467",
+2694
+],
+"data/proc/frequency/GB/events/GB_20241123T213000.json": [
+"28a931a2b10266568e1d05bd127a3bd15a234793e3f52df01713d6da35928466",
+227
+],
+"data/proc/frequency/GB/events/GB_20241123T213000.npz": [
+"bf8f706a8ec0d8a458904b5c607760d13dde58d5a943af9165abc2177129891b",
+2872
+],
+"data/proc/frequency/GB/events/GB_20241201T080000.json": [
+"8b32655b6403d27ea19f31e209b986353854ae6c934872a538692c885890c30a",
+227
+],
+"data/proc/frequency/GB/events/GB_20241201T080000.npz": [
+"b3ea7b93bbce874e94d3198d4edc786ed2cce758c74b0c44ef403747d54fdc24",
+2669
+],
+"data/proc/frequency/GB/events/GB_20241202T155803.json": [
+"607ddbcfa3df9595d1b875e6c24fed7a4085886b70747b8083fffde1052daa16",
+227
+],
+"data/proc/frequency/GB/events/GB_20241202T155803.npz": [
+"80bc66edb955fd7d8fe5d2eb80703ab900cd885bc28e014b843c7766f901daa7",
+2822
+],
+"data/proc/frequency/GB/events/GB_20241205T233000.json": [
+"5a8db6aea28939aabd1bd905417bbd184aef77680f0f0ee7b4cdfb9d407f6e3a",
+227
+],
+"data/proc/frequency/GB/events/GB_20241205T233000.npz": [
+"e54b6ee57ad6d479953e52e8bb77179f9658684c90ad4f7fb8be28d26388df15",
+2783
+],
+"data/proc/frequency/GB/events/GB_20241206T000000.json": [
+"2994ad0744469463f79a5f0f5ff70d9fe7d896e6abba9c4302b39bd5f3659ded",
+227
+],
+"data/proc/frequency/GB/events/GB_20241206T000000.npz": [
+"8839280efe5221fc404309a0d55d0b14d4405bacc8bd8e1b9f6c88e371ae742e",
+2910
+],
+"data/proc/frequency/GB/events/GB_20241211T180000.json": [
+"f8098a2480f142d3d1170f9eaff8a0c1914d3c366877669361a8352c3769dd4e",
+227
+],
+"data/proc/frequency/GB/events/GB_20241211T180000.npz": [
+"150961d1190e91ba6b9de565b459ff6269e18f9f9163287415f30625a832c8d6",
+2948
+],
+"data/proc/frequency/GB/events/GB_20241213T193000.json": [
+"d6b1b4c6a3100b6c5aa5f804f93c835c064d950496254387a5c2c0f5304e659f",
+227
+],
+"data/proc/frequency/GB/events/GB_20241213T193000.npz": [
+"6355bb0ab77f9a3714d06600a81905ac4e6226629e555a2fcd683b0951c40ec4",
+2788
+],
+"data/proc/frequency/GB/events/GB_20241220T113733.json": [
+"025d5ce5580b8c1377e5e8b553cab2097e94df3a7f5e3fa72955af335758633e",
+227
+],
+"data/proc/frequency/GB/events/GB_20241220T113733.npz": [
+"4d6c754d139354528e25dca1d7c328565afb031e2cdea539308aba3f5d9835d8",
+2979
+],
+"data/proc/frequency/GB/events/GB_20241223T000000.json": [
+"e53cc51ebf18cc00ed380a6344cac1b9e76ace25a6c4d8e6ea89f41f979b8dce",
+227
+],
+"data/proc/frequency/GB/events/GB_20241223T000000.npz": [
+"7c01b9f40829f1d1e359aba03607fd84f3d1117b673654b574024f9a8bd118c1",
+3116
+],
+"data/proc/frequency/GB/events/GB_20241223T201128.json": [
+"5c298061a8fb48a056899bff95b49881a6db22496351f5cf1af151d514fe0e2a",
+227
+],
+"data/proc/frequency/GB/events/GB_20241223T201128.npz": [
+"7e1cfd186ca62dad826acef76c9fc70987183625f0a4a426db3a09f35a0f6fbc",
+3134
+],
+"data/proc/frequency/GB/events/GB_20241224T183556.json": [
+"52e45191d7f5ac63bb76b44f81d1f4c152d81952760490a58c25468a6faef06b",
+227
+],
+"data/proc/frequency/GB/events/GB_20241224T183556.npz": [
+"1b9223bb99d842d10956dd76980a28d7e39fb66a4c17be4693a9fc820bf67756",
+2886
+],
+"data/proc/frequency/GB/events/GB_20241228T143000.json": [
+"6ea8909e6b0a1d269f7af4e3c9390d1a150a3eff145ba6bb6554359abe7017a3",
+227
+],
+"data/proc/frequency/GB/events/GB_20241228T143000.npz": [
+"fbb93b1831289aae87dafc973a9e538ec26e6f6ae2df6ffee638d8d5cc25b7ea",
+2838
+],
+"data/proc/frequency/GB/events/GB_20250105T045900.json": [
+"c3bd2edf47cfcef830240d4a11e33cdda4d20d1c00bfabf63ecba96a192cbf6e",
+227
+],
+"data/proc/frequency/GB/events/GB_20250105T045900.npz": [
+"8314958dc43c897c46792291101c909a8de3edbcc1b440e1345dfd3bf7fc1a43",
+2866
+],
+"data/proc/frequency/GB/events/GB_20250113T085957.json": [
+"17b5393c89feff710c36d5f6791f68ae444d87847bc569fe8238e2cc4e621c25",
+227
+],
+"data/proc/frequency/GB/events/GB_20250113T085957.npz": [
+"1829647692a3eaef543c3913a54acdbf37763ed7ab07c0bfdf9fd2ec50df7de1",
+3049
+],
+"data/proc/frequency/GB/events/GB_20250113T191004.json": [
+"426ac094ba62495f755a81162abf719310a384171048b470a2b42e2dec6de8d3",
+227
+],
+"data/proc/frequency/GB/events/GB_20250113T191004.npz": [
+"d43a6017531b1aa4544dbc6e12a761bbe36a928590499c9ad370d77d3baec178",
+3121
+],
+"data/proc/frequency/GB/events/GB_20250115T170220.json": [
+"5e4f73fa85a345cf14b12a11907c9c4a1bb50881268349ac9923baaa1f3d460a",
+227
+],
+"data/proc/frequency/GB/events/GB_20250115T170220.npz": [
+"5ca63060a1880706c95d353be9aef3ba92b9d2b24b96e7b9a99cadbb128740f9",
+2977
+],
+"data/proc/frequency/GB/events/GB_20250119T002959.json": [
+"1f8a3ae3a0866738533f8dfaf595b4134a9e8b7a314c51d98d69e643f3fe9dae",
+227
+],
+"data/proc/frequency/GB/events/GB_20250119T002959.npz": [
+"c21f172598a61e4915e46a1fb95e302fb59e944b0a98a21a310a9d794c97f1e1",
+2935
+],
+"data/proc/frequency/GB/events/GB_20250126T205959.json": [
+"4151b4dd7529e926e7ae95461ef804e5ede7212026bba1944854c6f9ea936b2d",
+227
+],
+"data/proc/frequency/GB/events/GB_20250126T205959.npz": [
+"29eb863ad99d99174e3e01dd2f9b544f775384bc252cee899d90877d74385465",
+2946
+],
+"data/proc/frequency/GB/events/GB_20250127T064148.json": [
+"0c1c89e59e6ce13a420c780c786ab15fde815d5721c88e5f4d14f36f3f34d945",
+227
+],
+"data/proc/frequency/GB/events/GB_20250127T064148.npz": [
+"b9c65a06a0d725c64fcd73d1203d17c7208b8feabd22923e5c9438f07e08e664",
+3142
+],
+"data/proc/frequency/GB/events/GB_20250130T090051.json": [
+"b373f637b7f851c1028d688cd73c3a413998fdacaa732f9bca60c154d5e9d022",
+227
+],
+"data/proc/frequency/GB/events/GB_20250130T090051.npz": [
+"148b870de770ee5ed65c3d76dd4b566787e2105774912c11c5363175d7f12fea",
+2876
+],
+"data/proc/frequency/GB/events/GB_20250202T100000.json": [
+"03bdb0e62141a0fe19018ef8214ff2922b6ab8ead9e5f76d6e24faec84bab381",
+227
+],
+"data/proc/frequency/GB/events/GB_20250202T100000.npz": [
+"976a97117af90e85b0d99d56ece1c160a31eb903ac8ff1087f173474c531b8f9",
+2995
+],
+"data/proc/frequency/GB/events/GB_20250202T115841.json": [
+"b8b1438fce2729b51bcddca25ee346900dc017f9b957477ca22083468b75dc83",
+227
+],
+"data/proc/frequency/GB/events/GB_20250202T115841.npz": [
+"f214f7a2d8dfd57679d46a9d83368afd87498e40a1780999af0897e078b3128f",
+3073
+],
+"data/proc/frequency/GB/events/GB_20250202T142429.json": [
+"96ecb25e69a0ecd13be47e44e4b3bf0edcd4607f843d8ee7dc162112950acfdb",
+227
+],
+"data/proc/frequency/GB/events/GB_20250202T142429.npz": [
+"b572b64ac8e4fe848890466e403f006a6c87505b52bd74b5e71919f5c3c72353",
+3039
+],
+"data/proc/frequency/GB/events/GB_20250202T203000.json": [
+"77dfa050f1b10f1e0afa717f1f66f79f524c710b73aeb886ac95adb593af6080",
+227
+],
+"data/proc/frequency/GB/events/GB_20250202T203000.npz": [
+"d7c52c3ef87f6b31d06075e36e6b24691d716302fa47bed1d33e2379a5ec11da",
+2959
+],
+"data/proc/frequency/GB/events/GB_20250211T010852.json": [
+"a14d0e799f9aeb3389cfa0a76cdf812337fea9fd39e1878a40f2ffbd83bb91c9",
+227
+],
+"data/proc/frequency/GB/events/GB_20250211T010852.npz": [
+"5ae4f65e49bd45d693c57a559951822bb2013003be31cda881849e84f10fa01e",
+2899
+],
+"data/proc/frequency/GB/events/GB_20250219T210029.json": [
+"c5cd69723d7105339c0984217b76cd55939296360b8b024aacedfcb4cb3b2300",
+227
+],
+"data/proc/frequency/GB/events/GB_20250219T210029.npz": [
+"6313cd93cec7d503d68a5bfde08fe9bdb4ba0b95abafd49ccda55615273a3a42",
+2942
+],
+"data/proc/frequency/GB/events/GB_20250302T035210.json": [
+"60fb8be33f75618e462146ce88c0e03390c65717096c42f817b1c413b621cb6f",
+227
+],
+"data/proc/frequency/GB/events/GB_20250302T035210.npz": [
+"d6161c07ccb7f9ca877cc9a570f780042b4536d4bee55831ae2890cd24bf1c80",
+2681
+],
+"data/proc/frequency/GB/events/GB_20250314T085137.json": [
+"14969221b06962c1becfeb35600047afb1bb79d5b9636e6d9023cef4c38172b0",
+227
+],
+"data/proc/frequency/GB/events/GB_20250314T085137.npz": [
+"477846cc36b35aeccfd6b5d1653826e1569aca8191dcb58a78e601c1c960fb14",
+2873
+],
+"data/proc/frequency/GB/events/GB_20250419T193856.json": [
+"de2b5ecde47266e71e1dc11aa99e37f59fba5fc8b4da309cd65ddad30b57f6d9",
+227
+],
+"data/proc/frequency/GB/events/GB_20250419T193856.npz": [
+"2df8d4e7731a1ff607f8c348a4893fd8211994e6e7dfc5ac68502c7c025c0932",
+2548
+],
+"data/proc/frequency/GB/events/GB_20250419T201354.json": [
+"1e0d9a6c2a1056b61e8d6608ee392aaf21c01fc11f74602838f0a87f69a6fa14",
+227
+],
+"data/proc/frequency/GB/events/GB_20250419T201354.npz": [
+"8c9aece3f84365af7848ecc9082e524ad06d2ade0210413f1e50f90819eaf00c",
+2642
+],
+"data/proc/frequency/GB/events/GB_20250423T171455.json": [
+"b5cfcb0b54922575b0669a470f12fa0e26c4619d187d2a2a9bde0fd240910cf3",
+227
+],
+"data/proc/frequency/GB/events/GB_20250423T171455.npz": [
+"a86ab822ef20b4c6b2c789a8c71b75ac3fd137a6e8afd6f43402f56ed7a30848",
+2580
+],
+"data/proc/frequency/GB/events/GB_20250427T030517.json": [
+"629e6f4bf0afe95ba7b7b6b98439d8f47f8ad1368bf1ef4322201f1f280c5910",
+227
+],
+"data/proc/frequency/GB/events/GB_20250427T030517.npz": [
+"52f32803efa708b8d09b4ad78e681ac8f1039740ed1652bfd3d3003d6abb719b",
+2688
+],
+"data/proc/frequency/GB/events/GB_20250429T162503.json": [
+"f22b3cf8352a0295657899c542266eba521d98d0e3dd19da5badb6a318c6dc39",
+227
+],
+"data/proc/frequency/GB/events/GB_20250429T162503.npz": [
+"91b2a0d1ae6148718bb84990ee8ea89a4660ab36beebce38e146ac72b829378f",
+2881
+],
+"data/proc/frequency/GB/events/GB_20250527T100046.json": [
+"5fe2db9cf7cb5631ae8883dfd02cf108b260895d2b13c3a5276e54662692b9f8",
+227
+],
+"data/proc/frequency/GB/events/GB_20250527T100046.npz": [
+"1857a2ffba9f8783e22f02451e648e3a786937aa1de7008466f3c3b1d07b674e",
+2901
+],
+"data/proc/frequency/GB/events/GB_20250529T190000.json": [
+"d09901a58ebbc715d70537b0ddb11326bac81bbda714034c10230384b5808291",
+227
+],
+"data/proc/frequency/GB/events/GB_20250529T190000.npz": [
+"cd8265fbb1967e781fa4016cd8efb17ed81e253fcb30e2192a67496d77e0f853",
+2877
+],
+"data/proc/frequency/GB/events/GB_20250602T215201.json": [
+"1d5ac135e6f6f64055e7e9c7c2affb365a76b0c76084a2ba1c95142d046ee1a4",
+227
+],
+"data/proc/frequency/GB/events/GB_20250602T215201.npz": [
+"12d56e69c6093c7e73c1498eb14c7c30cf904bc9b92e50738ea915d88f0ab1d2",
+2868
+],
+"data/proc/frequency/GB/events/GB_20250603T085553.json": [
+"33af80e90eeaad3f8017611cc2b82d90edc08beddedf8dae055a34d6fd973d3f",
+227
+],
+"data/proc/frequency/GB/events/GB_20250603T085553.npz": [
+"499665108f0c1e197302538c722d6b0a427622bc16f2921aa12d35881b820885",
+2838
+],
+"data/proc/frequency/GB/events/GB_20250603T102527.json": [
+"e55d5d265b943cac5b0572b3418f4222356ef07f6bd255d489640db9fb1e8ea9",
+227
+],
+"data/proc/frequency/GB/events/GB_20250603T102527.npz": [
+"d7d199b0b70dd27be5fbfca8f242e5989ffead6862a888958ae9510947e8a1ae",
+2705
+],
+"data/proc/frequency/GB/events/GB_20250603T123330.json": [
+"6d8b95a37c10f4275fdc7bd0312337d95c2d7234e79abe6f1619519a7d296960",
+227
+],
+"data/proc/frequency/GB/events/GB_20250603T123330.npz": [
+"6a7fd53e6984a89b5653fef6e79f80329ce2c6e4918d307f9f43bd56803deefa",
+2576
+],
+"data/proc/frequency/GB/events/GB_20250603T221534.json": [
+"83747cc9050a5a0a8b3908aed2c31fbe86965a5edfd3eb82a34badb8f746b33e",
+227
+],
+"data/proc/frequency/GB/events/GB_20250603T221534.npz": [
+"b557f63b3634b8f92ba987fa774f28d45bf0077d5d21d3bd56d7eda051d41508",
+2698
+],
+"data/proc/frequency/GB/events/GB_20250606T150342.json": [
+"7c803e7fe24ac1a5b433c843545f7c46be605e41d43e5de6f6de60853f6b39b6",
+227
+],
+"data/proc/frequency/GB/events/GB_20250606T150342.npz": [
+"5153a9c1c9f9505f462d6bf7774f48af42e7ce0e9ef40c4b39a835fe0d8cd713",
+2902
+],
+"data/proc/frequency/GB/events/GB_20250606T164203.json": [
+"33899f81109dfb38101f9ee74eb0e4bfc7c866489babae612236a8a9225d7cf3",
+227
+],
+"data/proc/frequency/GB/events/GB_20250606T164203.npz": [
+"16e454360ae319cc778f0b737adffb93d86dc7ade3b809f320af48ac4d5a284e",
+2813
+],
+"data/proc/frequency/GB/events/GB_20250611T112435.json": [
+"c17b7d211b70869880d7e323831f8e72fe064ad2c8705d361f205fb4b5094927",
+227
+],
+"data/proc/frequency/GB/events/GB_20250611T112435.npz": [
+"726a156fd99ed505165623b7d53060966132a585811390e1c1193c8c83e49f6e",
+2976
+],
+"data/proc/frequency/GB/events/GB_20250613T141739.json": [
+"fc40c85b0525f46837b790967eeb392bf33f589a3838ca82f262191cbaa41ab5",
+227
+],
+"data/proc/frequency/GB/events/GB_20250613T141739.npz": [
+"d690af56c58695957899b61516fb31e85fc04d55abd79e189eeda05fe26f5cef",
+2849
+],
+"data/proc/frequency/GB/events/GB_20250619T134456.json": [
+"0a40d5de620fc21c2ae8fa0935c56d823a26829c2cab0446e3d3ed76d96bd0ef",
+227
+],
+"data/proc/frequency/GB/events/GB_20250619T134456.npz": [
+"9514ad64a5200a9566b96e43cb82d60d60ebd186773de26b01d48003e59e224d",
+3056
+],
+"data/proc/frequency/GB/events/GB_20250709T043910.json": [
+"cf51827871f0ed7f1ac5af2e7f8601b0e7e41599bfc857c7c2daa58e4f547c1e",
+227
+],
+"data/proc/frequency/GB/events/GB_20250709T043910.npz": [
+"1d360e00294748ca5b12a851bbad88e15a53bab31307d071ddf228a84b514922",
+2420
+],
+"data/proc/frequency/GB/events/GB_20250720T142852.json": [
+"79808d18a898d1ce20f895e8cc7cb4e7b6806e77b7630ad4e8d0a96c198e1936",
+227
+],
+"data/proc/frequency/GB/events/GB_20250720T142852.npz": [
+"84e90278610706100aff265e6d6934af0d58faacd9eb6528e6b9ffa104c2f23f",
+2654
+],
+"data/proc/frequency/GB/events/GB_20250725T132448.json": [
+"a001da535a487ef6b984004b17e9137069817ab88f570e4ac5b90b7d729564e2",
+227
+],
+"data/proc/frequency/GB/events/GB_20250725T132448.npz": [
+"900049b4ec55881c29faad3e7013410e475f83d1000ecbddc6fc3e98f9ebc111",
+2828
+],
+"data/proc/frequency/GB/events/GB_20250725T133832.json": [
+"56a3dab24b50bceb12818137b614a34b499cb5bf3d1c859bc11144ef366a9b6d",
+227
+],
+"data/proc/frequency/GB/events/GB_20250725T133832.npz": [
+"57abbf35dc80daa6c78bf92dcd8b1afe3a520899579c4aac6990ce79036eb89b",
+2853
+],
+"data/proc/frequency/GB/events/GB_20250728T120400.json": [
+"f7da35678f0d4998d54480d2ce59a0ba2557f91a7a9eb2de00802b5fd3c72360",
+227
+],
+"data/proc/frequency/GB/events/GB_20250728T120400.npz": [
+"48ffe7a9e4327a96f811f8846a41265c73d1778d129549d4cb020ae4368f437c",
+2647
+],
+"data/proc/frequency/GB/events/GB_20250805T000052.json": [
+"fac12d6bb814780056dc471e9220609b70884907c7d9db815a2b17cdfc521a03",
+227
+],
+"data/proc/frequency/GB/events/GB_20250805T000052.npz": [
+"c4bd8030178f5b390e7d0f8bdbfb0dda35de577f7058c5e108b1ebe4f06dab7a",
+2859
+],
+"data/proc/frequency/GB/events/GB_20250805T120328.json": [
+"ec3f1e57730b50e020ecab8f17b47b9efbfa0ec83180efb605c6eb2c191e70b8",
+227
+],
+"data/proc/frequency/GB/events/GB_20250805T120328.npz": [
+"566a42448f043a966ee8b77839911d60e5c3492c52fbc567707a847304bd94f9",
+2935
+],
+"data/proc/frequency/GB/events/GB_20250805T214549.json": [
+"a88c85d7078119eb7f57b0bf4eec5d831066031bc2c8f34bd7fa57d12016ce29",
+227
+],
+"data/proc/frequency/GB/events/GB_20250805T214549.npz": [
+"b67570b435cab10385d1bb206d94b8c0aa3534bdb856fe115e01d2042bd132c9",
+2695
+],
+"data/proc/frequency/GB/events/GB_20250812T113318.json": [
+"f94caad2793bf015dce5580a94406654ca9c99290a19b361c1aa54415934bb74",
+227
+],
+"data/proc/frequency/GB/events/GB_20250812T113318.npz": [
+"879056e68174d13517d4f9426a10f6852410f5870f865cb8d171b5df3a0bdacf",
+2780
+],
+"data/proc/frequency/GB/events/GB_20250822T111340.json": [
+"30a3d7a71b6f733b0ba0d5b4630b32535df61ac8ad3556a5fe1f85b0b4c4ed59",
+227
+],
+"data/proc/frequency/GB/events/GB_20250822T111340.npz": [
+"2edf340197f43ccb56582eab56addf6cace478db3cf164299bb1fde76fd92c04",
+2588
+],
+"data/proc/frequency/GB/events/GB_20250829T153532.json": [
+"3020e7a376b2e7794efa039b78b5752d35af67e9710532ae2365c4537d364eb8",
+227
+],
+"data/proc/frequency/GB/events/GB_20250829T153532.npz": [
+"e90e903c07488b6d6fb723933753a2779bf3dcf37722a38495fd16c9304cbfeb",
+2794
+],
+"data/proc/frequency/GB/events/GB_20250902T104817.json": [
+"c2a6006e06019b731213ebe5ccbc5a9082b75907e04032c00838a270f676989a",
+227
+],
+"data/proc/frequency/GB/events/GB_20250902T104817.npz": [
+"771bf4fe848a8122e4099f7ea15603ba037b9517cef972ec7923de1292610e8c",
+2907
+],
+"data/proc/frequency/GB/events/GB_20250905T080000.json": [
+"65e6061b9972f4950f447d8c9b9ce82016a5e72ff839cae394ab1214a8b95dcf",
+227
+],
+"data/proc/frequency/GB/events/GB_20250905T080000.npz": [
+"282bcf5537e959cb2033b0f031e31cdce696c727144b55dbcca7b5f6a11c4233",
+2936
+],
+"data/proc/frequency/GB/events/GB_20250905T100004.json": [
+"cb77f50e420befd7c4ea552dbb7529235e224005c3f9643fbf77d0bcb89696fa",
+227
+],
+"data/proc/frequency/GB/events/GB_20250905T100004.npz": [
+"d720843c50470586a5c991714d3d097a4ca4e3be483b322a20a0fbef5461f1f3",
+2884
+],
+"data/proc/frequency/GB/events/GB_20250908T021117.json": [
+"2cd656b9ac45b0cc42b64e435476917f8fdf690004658dd08cbc5ff59121d011",
+227
+],
+"data/proc/frequency/GB/events/GB_20250908T021117.npz": [
+"e0b0175500a863361732335520b2c227f0cee4e9811077c6cc26925319003c7c",
+2790
+],
+"data/proc/frequency/GB/events/GB_20250915T063020.json": [
+"86a543628794d2d1e5fd9c44dad75fb1e2fbeff1ae19a4d31c0addc2f15e96b5",
+227
+],
+"data/proc/frequency/GB/events/GB_20250915T063020.npz": [
+"1ef30b30215c0ef981c3798c83eb013be8f22b80b83e2b1a1b9ab2f8ef91ec62",
+2675
+],
+"data/proc/frequency/GB/events/GB_20250923T102341.json": [
+"2a02eef0ba9d300e1d0949c74aee3a89a483639a9df6bc6a26052b14f784c72e",
+227
+],
+"data/proc/frequency/GB/events/GB_20250923T102341.npz": [
+"be51f4b0172733bce2061cbcc8c8f7d271e4667a426429562f50588a9e19e30f",
+2651
+],
+"data/proc/frequency/GB/events/GB_20251025T201041.json": [
+"27da316852f10c64f8920eaee20304cd2c53b299198a78eeecf55871379c6ef7",
+227
+],
+"data/proc/frequency/GB/events/GB_20251025T201041.npz": [
+"a5eba9110d8e482ae4e855fc4c69f1a904d6e6d46e716a26f7e6f2bc8d4cf162",
+2762
+],
+"data/proc/frequency/GB/events/GB_20251105T091953.json": [
+"718e9b46984ea9f33eb598f9737d3d621de7f6839c0390530fafbf72ede06667",
+227
+],
+"data/proc/frequency/GB/events/GB_20251105T091953.npz": [
+"766bbc5c5726a38ca5f9cdfb2a016e821e5d2463d8be0c82a916a008054eb895",
+2776
+],
+"data/proc/frequency/GB/events/GB_20251106T144543.json": [
+"e6bcc3c89db0b4ded8c601cc32c29aaa413c5ce938ab71b2e1f9954bcf1f7727",
+227
+],
+"data/proc/frequency/GB/events/GB_20251106T144543.npz": [
+"f5765e01d395a3cd6b8e5e83827b7b1e68d5c9c914ff7c449dcd0825144e6f3c",
+2769
+],
+"data/proc/frequency/GB/events/GB_20251108T203000.json": [
+"f05b9baa81b6624c442fb033d51be76d15bcff0c255ea042050d63a829fae715",
+227
+],
+"data/proc/frequency/GB/events/GB_20251108T203000.npz": [
+"e913b3d9501b9db8348f6f9aa06e812ec1ad9644c4da48f3f965cd406bb8dc93",
+2836
+],
+"data/proc/frequency/GB/events/GB_20251117T061935.json": [
+"e6987952d646c5a903e13f86bba7c546d3ede7e611443115af760cfff457c4c7",
+227
+],
+"data/proc/frequency/GB/events/GB_20251117T061935.npz": [
+"51e6fde7b7e8ca2de1dbe6b9459a3fa6ee7fc55c3479d81577734bbe2e8d1718",
+2752
+],
+"data/proc/frequency/GB/events/GB_20251210T144053.json": [
+"f4fb7854388d7e81570169b0b02b59bf93337e8d7ebe75365948763e8508acb5",
+227
+],
+"data/proc/frequency/GB/events/GB_20251210T144053.npz": [
+"c58eda56206244e0526e21545ca4b7233a954fc0e3dc834ec98a032bb3721cc9",
+2589
+],
+"data/proc/frequency/GB/events/GB_20251212T121009.json": [
+"848998fdae2e5c687fd83cd930ed1bb288fa13fc1a85e0c4aef59ebaecb1b152",
+227
+],
+"data/proc/frequency/GB/events/GB_20251212T121009.npz": [
+"fe3e68c805864482849a91b9e7dbf86e15f4e72c33c8fa1918c38bc735faf709",
+2811
+],
+"data/proc/frequency/GB/events/GB_20260106T041920.json": [
+"ef7f347659d20a596076c3cfc3fb4fc60175628337c1c1c6f3c6d9261917cf81",
+227
+],
+"data/proc/frequency/GB/events/GB_20260106T041920.npz": [
+"e1bfbb8362f714b690a4c6c8cfa00b410332d7856f933e33acc5cf0a28077c16",
+2778
+],
+"data/proc/frequency/GB/events/GB_20260129T053000.json": [
+"7f2ee616f0a7e0978299c3ad71565d3268d935a5182228e2c5dd03823cf54014",
+227
+],
+"data/proc/frequency/GB/events/GB_20260129T053000.npz": [
+"d2edc647bebd935bcfef65a94f6f00879748f05eefa2805dbdf96d854ad640ba",
+2844
+],
+"data/proc/frequency/GB/events/GB_20260219T085721.json": [
+"0b3573ea0163d749323df3a5b4332031a6afe6d1481c8057890a30eac0099469",
+227
+],
+"data/proc/frequency/GB/events/GB_20260219T085721.npz": [
+"56a2a4038027049278985d4d368dad15a60f0c2f6a6998a377d9f66bc9ba4e16",
+2918
+],
+"data/proc/frequency/GB/events/GB_20260222T000000.json": [
+"1e33d0dd2b517e08f6e30088cf0a2163ba7fbd237c0569c1514641b1b9a195b4",
+227
+],
+"data/proc/frequency/GB/events/GB_20260222T000000.npz": [
+"4f64ec54e55ee908c216c843d243e6c508cd7b8a08f9aeea88afb9506073bacc",
+2673
+],
+"data/proc/frequency/GB/events/GB_20260222T102328.json": [
+"75044ee7b29702f70a05e1aa07f4c684069906511fff9ede100351ac51cd9381",
+227
+],
+"data/proc/frequency/GB/events/GB_20260222T102328.npz": [
+"5ed7beeb46a565e452954e5f0c7b424d1916351f1c8f33e93cf16b9628ad7757",
+2816
+],
+"data/proc/frequency/GB/events/GB_20260303T080000.json": [
+"e70974bee9a9418b1dab8d79a8dff8ad2c05f7995289ec6aa92287f19a19fdf8",
+227
+],
+"data/proc/frequency/GB/events/GB_20260303T080000.npz": [
+"7124c9135725186c6edc9fa4cdc843d0f431134a5f0377cac9e7f9b16c88ca1c",
+2898
+],
+"data/proc/frequency/GB/events/GB_20260305T095101.json": [
+"340839ec97dd1471ea0e13d5a1e3baa79d70bd6e1dd0f09e1dae1bec7e609a8f",
+227
+],
+"data/proc/frequency/GB/events/GB_20260305T095101.npz": [
+"75f1011db74f0effa233c4da5e0b1a9b1ebcb0b5283ff71bdb3ada758978be2f",
+2843
+],
+"data/proc/frequency/GB/events/GB_20260310T080000.json": [
+"b80f9243c281182bd7e288a407ab9e806c10b446e186fcf8130d6ace61e557b0",
+227
+],
+"data/proc/frequency/GB/events/GB_20260310T080000.npz": [
+"849dd8b5cb8505694bde60213bd38e714361bc0ecb2755895b30b12404320468",
+2873
+],
+"data/proc/frequency/GB/events/GB_20260323T070000.json": [
+"4a54280dba5f5b7f9341660f26fdd9672b30cefc2cd5b2b7cd23c0b0b80a3903",
+227
+],
+"data/proc/frequency/GB/events/GB_20260323T070000.npz": [
+"70ae2e16a75a6df193a50b0f7df7835b344b01c6027651f84114cb06faeb495e",
+2838
+],
+"data/proc/frequency/GB/events/GB_20260420T051317.json": [
+"d909ae603d14fc819a93d64d09194b5151c5eb53f73cb4fc3aa20d438e00d64f",
+227
+],
+"data/proc/frequency/GB/events/GB_20260420T051317.npz": [
+"7e5cd44cdeb360e61b91b98fc4bc219bb43f9d30a183b104302f1f6191016e5c",
+2909
+],
+"data/proc/frequency/GB/events/GB_20260422T171238.json": [
+"800d63402de107f69ac64fbdfe0c808b8a68acf4731b586ede34da0500e5ed8a",
+227
+],
+"data/proc/frequency/GB/events/GB_20260422T171238.npz": [
+"7fd83228473aadd64ccdcf439512007550d3dbebd214529a390e91541faffc1a",
+2807
+],
+"data/proc/frequency/GB/events/GB_20260430T070000.json": [
+"274748ec25e85fc9051abb1cd6c25381bce1d3194395683ff6c229f5d6d200d4",
+227
+],
+"data/proc/frequency/GB/events/GB_20260430T070000.npz": [
+"596535b678b2849d59db61929b100a0a66b8b5e265782c2984b799ebc357c61f",
+2827
+],
+"data/proc/frequency/GB/events/GB_20260430T113000.json": [
+"d26acd92347f6e0878fa33ef3c4ea5a382743b1912d083da6f14c99f7f64cd89",
+227
+],
+"data/proc/frequency/GB/events/GB_20260430T113000.npz": [
+"f3f0ab52d03fbf990fccbed53f35048c8cd9ae1bef21dfc5309c447288d28ca7",
+2525
+],
+"data/proc/frequency/GB/events/GB_20260509T173000.json": [
+"2c0f6579e9ec819b410ce73d669af86542419aed87256a99691434aa28df5573",
+227
+],
+"data/proc/frequency/GB/events/GB_20260509T173000.npz": [
+"4f89f2e5fc6fbbc8a7d9c7b733d65e9e6f0a445f9f81d00cc3f1349581073e88",
+2536
+],
+"data/proc/frequency/GB/events/GB_20260509T182317.json": [
+"fb84b86e410b736a1055e6262cf0fc9d7a25be9471225f0e5abdbc547de3b938",
+227
+],
+"data/proc/frequency/GB/events/GB_20260509T182317.npz": [
+"2bfdd458c545eb1aa5a6b4fd577eb6c91e4406606f39e3791553aae72637569a",
+2721
+],
+"data/proc/frequency/GB/events/GB_20260602T102921.json": [
+"3bfac4c277ddb57ffc562f5345e3267fe8bc9e179a1b3bd394656bb9da5d1de6",
+227
+],
+"data/proc/frequency/GB/events/GB_20260602T102921.npz": [
+"5503d9a27cc86ca7564f4daa35dbb48ad355d940cf7ef0b14d9654489dfd0482",
+2754
+],
+"data/proc/frequency/GB/events/GB_20260612T100233.json": [
+"b76a6a7b95e88b44721ed9bb6602efd4b6bb4db32238e21c2cc6a42271cfc1df",
+227
+],
+"data/proc/frequency/GB/events/GB_20260612T100233.npz": [
+"aa1fd9662f1d1e32ad0944216bc6907e8e1c6558b337464c22c93641fb1b78d1",
+2799
+],
+"data/proc/frequency/GB/events/GB_20260618T145904.json": [
+"21464b9af86f6e502b1b4103b58c2484f547df29c7a893e9de0846c07da1c102",
+227
+],
+"data/proc/frequency/GB/events/GB_20260618T145904.npz": [
+"974d1f42fa3b097f7fdf99fd300daa2a2dc525df98973232be67a293a9e9f270",
+2598
+],
+"data/proc/frequency/GB/events/GB_20260626T090014.json": [
+"efe401bef5dcbc1d409bc50bdb63e1e3da8380bf8299ed7ead9ca315681d6234",
+227
+],
+"data/proc/frequency/GB/events/GB_20260626T090014.npz": [
+"51caa00d9718414c7ea30c2fe9a1ce88791dbb27caea502e56e412eae770f5e1",
+2779
+],
+"data/proc/frequency/GB/events/GB_20260626T190000.json": [
+"59abcba6868e64b8aa541e93aa1e6f4e6b07bd8d875218babd9dea92068349c4",
+227
+],
+"data/proc/frequency/GB/events/GB_20260626T190000.npz": [
+"41de98e88bab86733e44567f97585fe9cfc3cec55023baf4fa955bbf0cc05b18",
+2762
+],
+"data/proc/frequency/GB/events/GB_20260703T163928.json": [
+"b58977ec6a196b632c451663a4855ece23822861376dbcf4690ccac2c9fdd219",
+227
+],
+"data/proc/frequency/GB/events/GB_20260703T163928.npz": [
+"b53dc5dd0c773c1aac3a9557495d5d34d487b2f5ca9e2ad8421c7e130361422f",
+2789
+],
+"data/proc/frequency/GB/events/GB_20260703T170304.json": [
+"5b6400d224831c368af63e766c6a1082c84925153e8d0296051ce8a31a7c659d",
+227
+],
+"data/proc/frequency/GB/events/GB_20260703T170304.npz": [
+"5505a4ac2a205bb2607bb56dde8fa37c0308c53fb4f6d1be46ba18c078bf1761",
+2428
+],
+"data/proc/frequency/GB/events/GB_20260703T172529.json": [
+"95be54047d3aeaaaef5f500604b6093fe8a9c85bafb2b1a22f6489057acf6a22",
+227
+],
+"data/proc/frequency/GB/events/GB_20260703T172529.npz": [
+"cae29364b8acc20471effa371e1b5e0fb9607ff12594c9865cdf74201e504867",
+2547
+],
+"data/proc/frequency/GB/events/GB_20260706T163046.json": [
+"da15123cf16c2d3bf3a361c1ce172e15776865a1fbf208f285ca08da36dd59af",
+227
+],
+"data/proc/frequency/GB/events/GB_20260706T163046.npz": [
+"efa9e9d59d106bf11346ea292ae76c4657097bbb81b554d6dc92462477df9365",
+2986
+],
+"data/proc/frequency/GB/events/GB_20260706T164418.json": [
+"f345fe5bec697b59ea8601ccee2a6353a5878d79c8e775e0491aa9432a93f164",
+227
+],
+"data/proc/frequency/GB/events/GB_20260706T164418.npz": [
+"94f9e3570d1c03c06509258c7522237740e814972cd98fe0088cd18935689a71",
+2875
+],
+"data/proc/frequency/GB/events/GB_20260707T071219.json": [
+"8b1ef074a3f5eb1d11db09402cf704926f6b92eef092784a197da19c9b692967",
+227
+],
+"data/proc/frequency/GB/events/GB_20260707T071219.npz": [
+"991b53d1bc9e5fb5231f31f86ebfd953c389c8861443b6f3f5d514556ef74796",
+2839
+],
+"data/proc/frequency/GB/events/GB_20260707T161341.json": [
+"d4ff535ff078149a96c9838e81818b30faaaff34bcb35c8cbc1f6ccc42af6ed2",
+227
+],
+"data/proc/frequency/GB/events/GB_20260707T161341.npz": [
+"e0627441dfd36658de8fc746277f9d00b9070633067b691842217271995ec7cd",
+2904
+],
+"data/proc/frequency/GB/events/GB_20260709T181302.json": [
+"5ca798c22c7f9494fd98239d0385c742d1c38fef06f246dd1178ebbd86a9595c",
+227
+],
+"data/proc/frequency/GB/events/GB_20260709T181302.npz": [
+"92d21fd6a6552de989027f551b6d17b97cfcd2fcbe17752c50815c2413e0fd62",
+2651
+],
+"data/proc/frequency/GB/events/GB_20260726T083813.json": [
+"d60d45ebd720326eb9d47447f94b6f73dc259fd2fdb7a14e679e6e14a4127780",
+227
+],
+"data/proc/frequency/GB/events/GB_20260726T083813.npz": [
+"029969d38c5ad87c32efbec4bd22f0c80787c4d46c03f81c6829f2595e26796a",
+2658
+],
+"data/proc/frequency/GB/events/GB_20260727T124034.json": [
+"785b0d45a96bcb259eae9885921409e066c63892fe5e76f16aa076dd1f680d22",
+227
+],
+"data/proc/frequency/GB/events/GB_20260727T124034.npz": [
+"b1b117f54bccd3e1bae46ccb0a809b2fd5d4ce8499058cc8bc5d058ac17ae0f4",
+2527
+],
+"data/proc/frequency/GB/events/GB_20260727T132424.json": [
+"ac14a4f1b95cdadad52b4cb3725bcb052adab1584a242f7ce274ce93f44138ec",
+227
+],
+"data/proc/frequency/GB/events/GB_20260727T132424.npz": [
+"7687fcca38e720207a468d4775f416faa5441a827b63ea5d92c82eaaf05b309e",
+2811
+],
+"data/proc/frequency/GB/events/GB_20260729T060000.json": [
+"834af08aa67fd8f534b7b7b9d50b1ef46a962670fb63b1ad7991a3e01a25ee85",
+227
+],
+"data/proc/frequency/GB/events/GB_20260729T060000.npz": [
+"fb1dae3aa7d7bf4a12a89d2c06fd5579aee76040908db287b634f91cfa4a0655",
+2808
+],
+"data/proc/frequency/GB/events/GB_20260802T190000.json": [
+"62d1fdbab0956e176d19744fc16134a96f7551ebf51039e019c2f6ba7af4e8d3",
+227
+],
+"data/proc/frequency/GB/events/GB_20260802T190000.npz": [
+"d8c3a7f014b45ab4251a3b74f4e5a9c0bbfa74b9c4abc5f17221c7b16b156800",
+2752
+],
+"data/proc/frequency/GB/events/GB_20260803T132429.json": [
+"5f58162e2912beb682159ef515375b98583e9912f20f21f2627d780c0b6705ed",
+227
+],
+"data/proc/frequency/GB/events/GB_20260803T132429.npz": [
+"97101839a95dfb99a63284c6e984d41e4097e61a97c59e6952589bbb9aae1f8b",
+2793
+],
+"data/proc/frequency/GB/events/GB_20260810T060000.json": [
+"b7e1a1893bc164caf71c42648405480bcb6116c615c7383fe4c1cab1444e78fa",
+227
+],
+"data/proc/frequency/GB/events/GB_20260810T060000.npz": [
+"7c3fe59cd5bc22b5ecb8eb755150237a48a3c00472d8f9eee798a106af3259d0",
+2941
+],
+"data/proc/frequency/GB/events/GB_20260812T060000.json": [
+"eca75a474ebf4ae768b52840082926b69086369b0cdf94b319db51174ba21456",
+227
+],
+"data/proc/frequency/GB/events/GB_20260812T060000.npz": [
+"53caa363d963ea566cb9033cf025bc3ea3bd0f4d6ffcfd8f9f13a948662430c3",
+2923
+],
+"data/proc/frequency/GB/events/GB_20260819T101711.json": [
+"a841b1d92b008c31b001aba1ff759ee8e0ffe8d22c29d9df87b6f59be81f882a",
+227
+],
+"data/proc/frequency/GB/events/GB_20260819T101711.npz": [
+"c2a77e33c370802eccb20c0e291d56252e47e2e6fbe72c22339a3116e46726df",
+2650
+],
+"data/proc/frequency/GB/events/GB_20260819T222934.json": [
+"33cfab62eb198577b672256dfeb5118f817e8f05c592ef223235762ba6a6aecb",
+227
+],
+"data/proc/frequency/GB/events/GB_20260819T222934.npz": [
+"e856e10a1153d0b684f072b9f706d49f130487c8c68ae9cdb8e511d2c35d185c",
+2647
+],
+"data/proc/frequency/GB/events/GB_20260908T023000.json": [
+"f5babff2281255d2d800b26ce4ef8e9453ced94f52c181e70e16ed06b775b310",
+227
+],
+"data/proc/frequency/GB/events/GB_20260908T023000.npz": [
+"a764d83b2b1a0f5bc1719ef2ee90d286b9e6029d483121124e2dc77ec8ef1440",
+2559
+],
+"data/proc/frequency/GB/events/GB_20260910T060000.json": [
+"772ea29c8a986fcf27de8e09f1d817be1e4f7592ecf0257131290e45f8e9a426",
+227
+],
+"data/proc/frequency/GB/events/GB_20260910T060000.npz": [
+"6a701050ff4993130905dcf72ea93564f329700dac5e3cd93fce70b42c55c46a",
+2551
+],
+"data/proc/frequency/GB/events/GB_20260910T070000.json": [
+"00a6ac4900ed5144029d60633db2d05c08c16b7a943f1210106ade43c9ab7cbd",
+227
+],
+"data/proc/frequency/GB/events/GB_20260910T070000.npz": [
+"ffc886f9000749bbb9d77d10f3bc906918f1f86a180f489ef866399b4202c2f0",
+2744
+],
+"data/proc/frequency/GB/events/GB_20260910T193000.json": [
+"cbd2a8f617d96a7f4ba6d54851c0f5fb96b4bf79e69e976f9a394a3561168655",
+227
+],
+"data/proc/frequency/GB/events/GB_20260910T193000.npz": [
+"c745967b168af8031eeb3fb68126b5745594263ed1fcecb6f48356f853f4a6db",
+2657
+],
+"data/proc/frequency/GB/events/GB_20260914T070000.json": [
+"613125c202f2d8c940bac1eade98fde69331103eb2461bbc0e23a5622a695b99",
+227
+],
+"data/proc/frequency/GB/events/GB_20260914T070000.npz": [
+"f40bf1455c42755f836386614922cd8f028632c62bae33218e2e165658af4d93",
+2861
+],
+"data/proc/frequency/GB/events/GB_20260915T065959.json": [
+"de648f3ccd29d7872008f38c5cf6a6daaa4bccfd1a8121badbdb8b32c6a7adf2",
+227
+],
+"data/proc/frequency/GB/events/GB_20260915T065959.npz": [
+"6884032e22a95abf8b785bdad223e852c1447cf424e769eabbb1b469e1667ca6",
+2996
+],
+"data/proc/frequency/GB/events/GB_20260916T070000.json": [
+"f02b3d84c35d97ab160c10d1d040356b7e196d365739f7e6cce00a1d74cd582d",
+227
+],
+"data/proc/frequency/GB/events/GB_20260916T070000.npz": [
+"1d6b300d64f6dbf61625b2f3add07b7daf4581e0a80cb2d1a07ea812753cbdc2",
+2857
+],
+"data/proc/frequency/GB/events/GB_20260920T150000.json": [
+"eb225ffd50c4eb4e3d2d604539ac54ad2c5c65c4f4eb4a245c9a4a97ca55373a",
+227
+],
+"data/proc/frequency/GB/events/GB_20260920T150000.npz": [
+"74f82d576c0d837a21321f1ca5a8d8dac4bd37c5ffd5d3163b2894cdfb7d02c8",
+3012
+],
+"data/proc/frequency/GB/events/GB_20260930T023000.json": [
+"4fa141086ebb1c09a2fb4d3b9c009e5aac18157d0a9d271e29a6dfe6d090a2a6",
+227
+],
+"data/proc/frequency/GB/events/GB_20260930T023000.npz": [
+"ffd05dd698fe9fa2d0b07f79435bfa94afbcd855205bc5166e70b09660e2c5b8",
+2604
+],
+"data/proc/frequency/GB/events/GB_20261006T070000.json": [
+"59143c1ffe9d9f2b747693c452deebfca372e64b38f485d66b872ec208f3c9d9",
+227
+],
+"data/proc/frequency/GB/events/GB_20261006T070000.npz": [
+"f70d87c8375673e14390778f48a323bc0cbd09186766c94fa382eddd04ed3a88",
+2898
+],
+"data/proc/frequency/GB/events/GB_20261016T080000.json": [
+"05d9915709effa0858fceb2624a0b8d2515b4ce5cfb9f27c5587918b1ae6a482",
+227
+],
+"data/proc/frequency/GB/events/GB_20261016T080000.npz": [
+"3847a15c0bded50a2243fcfa89c884332aa0ceb314ba6ae73a19c907ddda2767",
+2954
+],
+"data/proc/frequency/GB/events/GB_20261025T220000.json": [
+"ba051e24b3b27bbeafea0561af107270bface60f6d6dcfd7c9514d67ae560f3f",
+227
+],
+"data/proc/frequency/GB/events/GB_20261025T220000.npz": [
+"7178bd26ec709f2939f19caa488e9630a5c0c46192852ac12e116ca901bb95b1",
+2758
+],
+"data/proc/frequency/GB/events/GB_20261026T090454.json": [
+"c86f80bafe36cb162f235bf39530b02ccf2e49278f0285ea2bed701930057030",
+227
+],
+"data/proc/frequency/GB/events/GB_20261026T090454.npz": [
+"0a9a4a8238e97f1f4ed96349bf5d815f406ad776431b54cbef1e83e3362dc3c3",
+2831
+],
+"data/proc/frequency/GB/events/GB_20261028T090000.json": [
+"f1f74d5b47a8cdd466f99b0a505327ba967a9120336282d86f5487e8a14c452e",
+227
+],
+"data/proc/frequency/GB/events/GB_20261028T090000.npz": [
+"f17d8114732d3312b9e80da230a4be7714c77198f753f7431b991fdffbc7774a",
+2860
+],
+"data/proc/frequency/GB/events/GB_20261028T111855.json": [
+"56b928c87ad465d2006c094c64b5aa6d9c51010e3f0f55d1782b3ca8afb2071c",
+227
+],
+"data/proc/frequency/GB/events/GB_20261028T111855.npz": [
+"59cbc7266f105256c2279aa3fd97cc1925fa45963551eb818b68bcd4d521464b",
+2827
+],
+"data/proc/frequency/GB/events/GB_20261029T090000.json": [
+"16f4b2781fdd9a45fe8aa68fbb474dcf119167d00c828cca13fcc434a71f9f78",
+227
+],
+"data/proc/frequency/GB/events/GB_20261029T090000.npz": [
+"f16cf60426f825bfadd6f72d419f5f119ee2c570f85e9d977995f5fc576e179e",
+2842
+],
+"data/proc/frequency/GB/genmix.parquet": [
+"f95d88d10ed12ca71d05168bf8f461c113adb624906643e484bdef3991627726",
+8297259
+],
+"data/proc/frequency/GB/inertia.parquet": [
+"4c1ee1f66ffb545811428fb70ff7a6a7f00d054235a2e5bbae0808d3cd90af7a",
+1720299
+],
+"data/proc/frequency/GB/minute_summary.parquet": [
+"b96ead5731373288985a47b952f4787d141ccb915b7f3ddfa46bfbd12f5094c4",
+53073763
+],
+"data/proc/frequency/ercot_events.parquet": [
+"9695901ec3f381c395f95799f21012f2ff739798629bd0f97bc256bb68e119d4",
+35229
+],
+"data/proc/frequency/ercot_events_coverage.json": [
+"b720d8d050074f902932aeeed441ddac4c12e2af503665177b74cbf8a3473dab",
+1673
+],
+"data/proc/frequency/gb_events.parquet": [
+"d2528cafb9535a5c657af4957aa0aa32be2bfb10346fb3024369caa2072e3fc3",
+88545
+],
+"data/proc/networks/case118.json": [
+"11e8aa0429a0bdce056fcb29a5926dab5aab84d18495e902e0d7aae2ce92de72",
+77764
+],
+"data/proc/networks/case118_branch.parquet": [
+"ded45f8ad287d3308ed277fdc41b55829cbc55a787382dccd280274efa522520",
+13388
+],
+"data/proc/networks/case118_bus.parquet": [
+"cd6d4f453e9e031207d2b98ea497aaefcfa54f9a622d537b971e357be13c28d7",
+11995
+],
+"data/proc/networks/case118_gen.parquet": [
+"f070bcd3de7a0a7b1abe6f6460225c4799e87feb34f126286945a1c69942299f",
+7209
+],
+"data/proc/networks/case14.json": [
+"72c03dad98455ba64758ec815561873faa20028f3b16be0c42b7d741af014fb6",
+9094
+],
+"data/proc/networks/case14_branch.parquet": [
+"5696555a48cee91f9be7cf2c1cecd031aa8eee6ca3e914001407a9fddf737ae3",
+8302
+],
+"data/proc/networks/case14_bus.parquet": [
+"5bdc9effad46fefe2c188be77affb520075ad4ce024aadf0ce78949c1bcf32d3",
+8751
+],
+"data/proc/networks/case14_gen.parquet": [
+"36281bc863910a9429520632ec945a2b229f90845af410302d807e291a887f55",
+6270
+],
+"data/proc/networks/case30.json": [
+"3f5dbf3e8a9f9672dbdeca168ff43da9ec7f97b55c56bcd3af19a0c5b9c264ce",
+16527
+],
+"data/proc/networks/case300.json": [
+"4f01d0f99aae759c1003e4f9d9018d5c2e31f4c3ccb03bf338e668296eaf16d3",
+160016
+],
+"data/proc/networks/case300_branch.parquet": [
+"1792690962efafc1b5188863a5b73fa7b6244b3860aaf8d2f021c2638d08dc8b",
+16554
+],
+"data/proc/networks/case300_bus.parquet": [
+"9579394c18a17f00bd4300a5a58360589c42287b5aff6e0ec6d53362b1222381",
+15666
+],
+"data/proc/networks/case300_gen.parquet": [
+"5efa2a3900a67d61a41283081250e17e168cdf871dafacfecad43b798a153f81",
+7995
+],
+"data/proc/networks/case30_branch.parquet": [
+"4372d412884cd11bb0ef3efe812147f053c6c3c39517d9829b7adcfbd7cf75f8",
+8544
+],
+"data/proc/networks/case30_bus.parquet": [
+"b5ee737c7d1103c9cadd194d072556dc612ecc57fc415a4f818899577cf10067",
+8147
+],
+"data/proc/networks/case30_gen.parquet": [
+"94d9e349d7a386a2959bdf9d079b4ee9b2fa6ad9162d21770dd5ea282c03694b",
+6269
+],
+"data/proc/networks/case39.json": [
+"fa43d8d7c70dbd49d9bf1f4599b825481cffbf2e8b06d2194a2342024e633ba7",
+21798
+],
+"data/proc/networks/case39_branch.parquet": [
+"472ae5dcca4fb3e7c08efc8df0d3eeb2b1da6c91dd81d58317484fa8dcff5400",
+9125
+],
+"data/proc/networks/case39_bus.parquet": [
+"b817f9a93bc967e372d0cd428be5af079779e7c450f6e587fd4b063ce89ae908",
+8900
+],
+"data/proc/networks/case39_gen.parquet": [
+"e43b1c63f74df99c2555a347546b44b860f8fbbf73f09834a80c2e488de8d32e",
+6507
+],
+"data/proc/networks/case57.json": [
+"aa40ae9fa1e7b92785cff967d901b9115ffb7a3d5243b5e66d5bf676161cfc1f",
+30899
+],
+"data/proc/networks/case57_branch.parquet": [
+"2872eba67c87b6a06d534677f95f11579653a558e0dad0f3fb7cf9f200b136ed",
+10012
+],
+"data/proc/networks/case57_bus.parquet": [
+"bc9981ce462d52e8b65abf8626e6c52d17261c43a4df4630dc32b96d50048878",
+10113
+],
+"data/proc/networks/case57_gen.parquet": [
+"f319b0470b50236f5783d3046d0ce06b21d65e9bbb23e5b9700ddef331852041",
+6343
+],
+"data/proc/networks/case9.json": [
+"75a17e534622600e7776352b21f7cd52d4420c5d10fda5c600f1e4d6cf3d5001",
+5252
+],
+"data/proc/networks/case9_branch.parquet": [
+"dafdc0e8cd2ce79c0050426ea72ea36593201211e3209859ec142b7cdc346c6f",
+8090
+],
+"data/proc/networks/case9_bus.parquet": [
+"72be9cd50a814d99a86e9586572816e9f5972f7d4127392ec09b49c8c045f9a1",
+7815
+],
+"data/proc/networks/case9_gen.parquet": [
+"c058c3be37cf327cbd402695c2d092818b584aa3f00b8fedf15384b99a15659e",
+6200
+],
+"data/proc/networks/case_ACTIVSg200.json": [
+"4e6ba11560562a6705a58b01b2ccd3afc2e1f688188f220b70760ed75ad210c7",
+117046
+],
+"data/proc/networks/case_ACTIVSg2000.json": [
+"d021110d401dac87d660b7fcc11807417f6d92f0ddc0f030d93d4a0eb5609aa3",
+1342011
+],
+"data/proc/networks/case_ACTIVSg2000_branch.parquet": [
+"7bc3694884659e1dd54bb26a5e3225ae5633d92187489f468a75c759ac4b68c2",
+85953
+],
+"data/proc/networks/case_ACTIVSg2000_bus.parquet": [
+"47a55c17cf0e83e70a7d4498df947f8f9f0d07423cf3d2ac32a5447a7c77c51f",
+103912
+],
+"data/proc/networks/case_ACTIVSg2000_gen.parquet": [
+"840aa34e90135305109d6efdb51236c47c66643a3d94e97c22d710097e52e6f8",
+24180
+],
+"data/proc/networks/case_ACTIVSg200_branch.parquet": [
+"28647e257d282b793aa7852ff66230f0164ffaaa0b5345d868578e1b7ebe5608",
+15652
+],
+"data/proc/networks/case_ACTIVSg200_bus.parquet": [
+"25e79e747d0ae97b355588f1124bf8995530d45ae8958d118bcc3fda9e0129b5",
+18423
+],
+"data/proc/networks/case_ACTIVSg200_gen.parquet": [
+"f7583bf3b9476d90faf3bb363113aca573ef6020860f83fcdb58ab5604f110c9",
+8837
+],
+"data/proc/networks/case_ACTIVSg500.json": [
+"3f4d705a3ee7846947169d021194996295e31a5db6dac12208d33cb1b0e08071",
+278364
+],
+"data/proc/networks/case_ACTIVSg500_branch.parquet": [
+"f50f4ca22567b816ccd3dfc387b84b93af9abb6993ca58e807f87e5be6f6a85a",
+26897
+],
+"data/proc/networks/case_ACTIVSg500_bus.parquet": [
+"8afebe55e4f8ee1d8d3cc1253fd17b987ca162b9481327809b53946b37a5f7d0",
+30655
+],
+"data/proc/networks/case_ACTIVSg500_gen.parquet": [
+"b1537571b352796cac40761403d8c742e441ce345dd4a2e927bb1d1426eeb327",
+10498
+],
+"data/proc/networks/case_RTS_GMLC.json": [
+"3be592e2640ff57b14597cb2f75a335864b2c04877d313d9bcaa08719b9a8610",
+88537
+],
+"data/proc/networks/case_RTS_GMLC_branch.parquet": [
+"9cc9d017e362e60e3cb8990f978601738abfc06292db5b949d2a512152ea6162",
+9585
+],
+"data/proc/networks/case_RTS_GMLC_bus.parquet": [
+"d644095e89a51113cd0d6f2eb85004b0a0b4ec43d85b5a43f9af858775846241",
+10789
+],
+"data/proc/networks/case_RTS_GMLC_gen.parquet": [
+"05d405821210f5ca73151fc5a4dfa312ffd8c9a156b5cdf2e84dbf17d2722a04",
+7749
+],
+"data/proc/networks/index.json": [
+"738500f83a76eb6315c40ab0dd0b3ec2ca729ab64b49192629544a349f7480b3",
+2367
+],
+"data/proc/prices/caiso_dam.parquet": [
+"29cae36d5eb4be542ed63afad0ccf6b23d33784f555883ea3f8e339f343f20e7",
+3758128
+],
+"data/proc/prices/caiso_rtpd.parquet": [
+"720fd6c22cc019d4a2eb3068e7d3bc94ee226516d61e0893ea1dc58968414b2b",
+12916228
+],
+"data/proc/prices/ercot_dam.parquet": [
+"59e7806e4cef6d7703ceae463f44d8a7c5c2b69d660f387acea9aab5a1260008",
+5533846
+],
+"data/proc/prices/ercot_rtm.parquet": [
+"513895281c7f7fe2cf2c273931550f4e8f483162c3a6317373a4acdf6e4e7624",
+38208020
+],
+"data/proc/prices/ercot_rtm_hourly.parquet": [
+"0697d64e88dafd733d2f57ef80dc8f59f5726653afa4139971b3e0897710c200",
+6093180
+],
+"data/proc/splits.json": [
+"f8787bc2aac0ee13cad980fe11e7ec7a75f07cdc3b446e564437d37f119440ef",
+25171
+],
+"data/proc/weather/BPAT.parquet": [
+"85504fb5ccccbb655cd144d5dc4481f13b566a68d2844f50b96ffca666f7c75d",
+6708314
+],
+"data/proc/weather/CISO.parquet": [
+"a1ceebefd5d34214e10675fd01302f6e821f82fb3270903e014f6246c5915cae",
+6663641
+],
+"data/proc/weather/ERCO.parquet": [
+"5e4d021a9dcd459e1b73530cfcd71b1b2773800ca4897594fcf276f97779aea6",
+6709539
+],
+"data/proc/weather/GB.parquet": [
+"ebf84be757872aef57d2640690f71d646b549e58bef09f3f2df564140366edaf",
+4238512
+],
+"data/proc/weather/ISNE.parquet": [
+"cb37ab5600b45f82bd38cc1016ffb6e50a13125cad1fda059339563363fabe18",
+6735590
+],
+"data/proc/weather/MISO.parquet": [
+"847629839dd40f1ef4b111ac949c34786d84d4d53a606efc9e8b717a4d8bed74",
+6770191
+],
+"data/proc/weather/NYIS.parquet": [
+"eee993098c754768b04bdb4aaa967c43408c5aa57fe89b71c9ab043e891ca7ab",
+6723055
+],
+"data/proc/weather/PJM.parquet": [
+"18c624881fbf39d0d78255c7c63ad499694fd0b01bcad3f29682364501956d86",
+6746670
+],
+"data/proc/weather/SWPP.parquet": [
+"cb3cf8aeecbb7936a067eb8d27623d299f5c738feb0d02b3d170a5094e90f916",
+6747353
+],
+"data/proc/weather/asos_choice.json": [
+"1838b9d4bf92163c31600e5f4f36616df01d7e61c12336e199c297fe7dabe23f",
+7842
+],
+"data/proc/weather/points.json": [
+"ecc9d096a346da0f01c480638c7240cfd63470178311ead5a59ad4633987b763",
+22291
+],
+"gridsim/refdata/fuel/RNGWHHDd.xls": [
+"c8aa4eae3731fe80bc31a4c628e32d0012c343be35ed3c0e5c7829f900a95070",
+296448
+],
+"gridsim/refdata/fuel/henry_hub_daily.csv": [
+"c77e73ec1920e43232cd2ee0af5dff0e9802cbc30eab16168e391a92a69d0c96",
+91073
+],
+"gridsim/refdata/fuel/out_eia923__monthly_fuel_receipts_costs.parquet": [
+"da29d945890da65340000c3f6f58009ab1b13dd5ad504baa529838296374fc47",
+9007150
+],
+"gridsim/refdata/hr/unit_heat_rates.parquet": [
+"49c3eab5a70ec02102422a41cba77952f6e13db73df866361149bd36ac40aad8",
+3618570
+],
+"gridsim/refdata/matpower/case118.m": [
+"bc2e6f22b4b9e776572885ee4b50e4f4ab2ee0c5577e9126e86d906f14c4b5f7",
+33696
+],
+"gridsim/refdata/matpower/case14.m": [
+"2ffc4e1b734ae6c5e92dbe68b4e36010ed695a4bbcc4d065c74c4fbc39fcf3c1",
+4597
+],
+"gridsim/refdata/matpower/case30.m": [
+"3d9030311259b553be85d02336b7e1bcb24ec04775bee6671bdb62d18e4e2137",
+4999
+],
+"gridsim/refdata/matpower/case300.m": [
+"69a90280e999ef533d94656e0fbc08311f1347c962dd2753ff2005ff5e3f9ac5",
+66034
+],
+"gridsim/refdata/matpower/case57.m": [
+"2218325a6e8fe6c7b8b28202f523670459268075a6fd41b4959d66f17d47d28b",
+13674
+],
+"gridsim/refdata/matpower/case9.m": [
+"ee50fc7bf9f6019c0f3a3bc94d20978cc667b08f695dc725d00dbd998b358623",
+2235
+],
+"gridsim/refdata/matpower/case_ACTIVSg200.m": [
+"579a07884b01e71a90a6ebf4cb28ef7c4a4f3f93032a9910de0f74903a54dd38",
+56257
+],
+"gridsim/refdata/matpower/case_ACTIVSg2000.m": [
+"8d00618de8fd10bf35a599f59d2deebfecd0d86e28fcff73219ad7c4ebab860b",
+659546
+],
+"gridsim/refdata/matpower_LICENSE": [
+"5d14c09b3e4f2adf62c0373e6320163697aa4603186f8925c07c6b84201e1750",
+2074
+],
+"gridsim/refdata/tamu/activsg200.html": [
+"bab36b8e8d674bc19aa0001a56f81fd14702eac91e2e93686c17248f909fedba",
+55723
+],
+"gridsim/refdata/tamu/activsg2000.html": [
+"d9312bb3a6dd9fca26019283b881cbe943b8e159206cde7bf4f07fc4094890a5",
+56608
+]
+}
+}

@@ -1,7 +1,8 @@
-# Lessons from twelve models
+# Lessons from sixteen models
 
 What building ChirpNet, SunDoctor, CellSense, TransitNet, QuakeNet, BearingNet, SwellCast, BeatNet and StarQuake,
-and then the vehicle platform with EnergyNet, TripDetective and HybridPilot, taught, in rough order of how much it
+then the vehicle platform with EnergyNet, TripDetective and HybridPilot, and the grid platform with GridPulse,
+BatteryPilot, PlantDetective and DemandCast, taught, in rough order of how much it
 mattered.
 
 ## The simulator is the model
@@ -63,3 +64,23 @@ mattered.
   the simulated fleet's mass distribution (median 2,200 kg) to the real one (1,720 kg).
 - **Grade at matched end states.** Correcting hybrid fuel with a fixed battery-energy factor credited ECMS with 105% of
   the optimum; re-solving DP to each strategy's own final charge gave 99.6%.
+
+## Big systems (the grid platform)
+
+- **The two-phase recipe worked a second time.** The two Phase 1 builds cross-checked each other's data: GridSim's
+  twin of a GB dev event showed its 1,788 MW loss label was about twice what the frequency drop implies (metered output:
+  854 MW). The four Phase 2 builds filed concrete upstream fixes, each with a measured effect.
+- **Watch "defaults" for exam-period leaks.** GridSim's outage rates cited Texas reliability aggregates published in
+  2024-2025, inside the exam years. Nothing chose from them, but a default is data too: date-check every one.
+- **Physics wins where the physics is; reporting quirks decide the rest.** DemandCast beats the grid operators' own
+  day-ahead demand forecasts in 6 of 8 regions but loses on solar, because EIA-930 solar timestamps moved by an hour
+  between years. PlantDetective reads coal and gas-steam heat rates at 4.4-4.7% against EIA-923's 10-22%, but loses on
+  combined cycles, where CAMPD reports only the gas turbine's output.
+- **A skill can come from the wrong input.** GridPulse's inertia beats a constant guess (16.4% vs 20.4%) but not a
+  one-line rule from demand fitted on four dev events (15.1%); from the trace alone it is 20.3%. One-second data blur
+  the first-second slope that carries inertia. A dumb baseline built from the context inputs is the one to beat.
+- **A tie is a result.** BatteryPilot captures 0.667 of perfect hindsight in ERCOT against 0.685 for the classical
+  day-ahead optimiser: it wins with 4-hour batteries and loses with 1-hour ones and in CAISO. Its dev twins capture
+  91-94% while real 2019 gives 80%, so the simulated price spikes are still too predictable.
+- **Plan archive downloads away from shared IPs.** The forecast-weather archive rate-limited the sandbox's shared
+  address after a few requests, which left DemandCast's realistic forecast-weather exam at one year.

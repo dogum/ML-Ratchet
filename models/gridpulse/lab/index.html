@@ -1,0 +1,411 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>GridPulse</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=Martian+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a control-room strip chart. Hero = a real trip on the chart with GridPulse reading it; then the lab
+   (sliders drive a live simulation), the real-event explorer, the exam, the ratchet ladder, method and limits.
+   Colours borrow the GB transmission mimic: 400 kV blue for frequency, 275 kV red for the loss, amber for forecasts. */
+:root {
+  --paper: #f3f5f1; --sheet: #fbfcfa; --ink: #16202a; --muted: #5a6670; --rule: #d3dad6; --grid: #e2e8e3;
+  --freq: #1f4fa8; --trip: #c3262e; --cast: #a96a12; --sim: #5d8f8a; --band: #e9efe0; --good: #2d7a48;
+  --display: "Saira Condensed", "Arial Narrow", sans-serif;
+  --body: "Source Sans 3", "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "Martian Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0f1418; --sheet: #161d23; --ink: #e4e9ec; --muted: #93a0a9; --rule: #2a343c; --grid: #1f282f;
+  --freq: #79a6ff; --trip: #ff6f6f; --cast: #f0b44c; --sim: #7fbfb7; --band: #1b2620; --good: #62c48a; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #0f1418; --sheet: #161d23; --ink: #e4e9ec; --muted: #93a0a9; --rule: #2a343c; --grid: #1f282f;
+  --freq: #79a6ff; --trip: #ff6f6f; --cast: #f0b44c; --sim: #7fbfb7; --band: #1b2620; --good: #62c48a; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--paper); color: var(--ink); font: 16px/1.55 var(--body); margin: 0 }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; display: grid; gap: 56px }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: .01em }
+h1 { font-size: clamp(52px, 9vw, 96px); letter-spacing: -.01em }
+h2 { font-size: clamp(30px, 4.4vw, 44px) }
+h3 { font-size: 22px; font-weight: 500 }
+p { margin: 0; max-width: 68ch }
+.eyebrow { font: 500 11px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+.mono { font-family: var(--mono); font-size: 12.5px }
+.muted { color: var(--muted) }
+section { display: grid; gap: 18px; min-width: 0 }
+.lede { font-size: 20px; line-height: 1.45; max-width: 60ch }
+a { color: var(--freq) }
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 32px; align-items: center }
+.hero .meter { font: 500 13px var(--mono); color: var(--muted); display: flex; gap: 18px; flex-wrap: wrap }
+.hero .meter b { color: var(--freq); font-weight: 500 }
+.chartbox { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 10px; min-width: 0 }
+canvas { width: 100%; display: block }
+.cap { font-size: 13.5px; color: var(--muted); margin-top: 6px }
+/* readout */
+.readout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); border-radius: 4px; overflow: hidden }
+.cell { background: var(--sheet); padding: 10px 12px; display: grid; gap: 2px; align-content: start }
+.cell .k { font: 500 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted) }
+.cell .v { font: 700 28px/1.1 var(--display); font-variant-numeric: tabular-nums }
+.cell .v small { font: 500 15px var(--display); color: var(--muted) }
+.cell .t { font: 400 11.5px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums }
+.cell .t.ok { color: var(--good) } .cell .t.miss { color: var(--trip) }
+.cell.cast .v { color: var(--cast) }
+.cell.weak .v { color: var(--muted) }
+/* controls */
+.lab { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 22px; align-items: start }
+.controls { display: grid; gap: 14px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 14px }
+.ctl { display: grid; gap: 4px }
+.ctl label { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; font-weight: 600 }
+.ctl label span { font: 500 12px var(--mono); color: var(--freq); font-variant-numeric: tabular-nums; font-weight: 500 }
+input[type=range] { width: 100%; accent-color: var(--freq) }
+.seg { display: flex; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden }
+.seg button { flex: 1; border: 0; background: transparent; color: var(--ink); padding: 7px 6px; font: 600 13px var(--body); cursor: pointer }
+.seg button[aria-pressed="true"] { background: var(--freq); color: var(--sheet) }
+select, .btn { font: 14px var(--body); color: var(--ink); background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 7px 8px; width: 100% }
+.btn { cursor: pointer; width: auto; font-weight: 600 }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--cast); outline-offset: 2px }
+.nbar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; font: 500 12px var(--mono) }
+.stack { display: grid; gap: 12px; min-width: 0 }
+/* tables */
+.tbl { overflow-x: auto; border: 1px solid var(--rule); border-radius: 4px; background: var(--sheet) }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--grid); vertical-align: top }
+th { font: 500 10.5px var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); background: var(--paper) }
+td.num, th.num { text-align: right; font-family: var(--mono); font-size: 12.5px; white-space: nowrap }
+tr:last-child td { border-bottom: 0 }
+td .best { color: var(--good); font-weight: 600 }
+.pill { display: inline-block; font: 500 10.5px var(--mono); padding: 2px 7px; border-radius: 99px; border: 1px solid currentColor; white-space: nowrap }
+.pill.keep { color: var(--good) } .pill.drop { color: var(--trip) } .pill.dev { color: var(--cast) }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; align-items: start }
+section > *, .stack > *, #exam > * { min-width: 0 }
+#exam { display: grid; gap: 22px }
+.note { border-left: 3px solid var(--cast); padding: 4px 0 4px 12px; font-size: 15px; max-width: 75ch }
+ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 75ch }
+pre { background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 12px; overflow-x: auto; font: 12px/1.6 var(--mono); margin: 0 }
+.evmeta { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 12px var(--mono); color: var(--muted) }
+.evmeta b { color: var(--ink); font-weight: 500 }
+footer { font-size: 13px; color: var(--muted); display: grid; gap: 8px }
+@media (max-width: 860px) { .hero, .lab, .two { grid-template-columns: minmax(0, 1fr) } }
+@media (max-width: 560px) { .readout { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important } }
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="stack">
+    <div class="eyebrow">ML Ratchet · power grid · trained on physics, graded on reality</div>
+    <h1>GridPulse</h1>
+    <p class="lede">When a power station or an interconnector trips, the whole grid's frequency drops at once. GridPulse reads the first seconds of that 1&nbsp;s frequency record and estimates how many MW were lost, how much spinning inertia the grid had, how stiffly it responds, and where the frequency will bottom out and settle.</p>
+    <div class="meter"><span>trained on <b id="h-ntrain">48,000</b> GridSim trips</span><span>real GB noise</span><span>graded on <b>412</b> GB + <b>292</b> ERCOT events</span></div>
+  </div>
+  <div class="chartbox">
+    <canvas id="hero" height="300" aria-label="Frequency on 9 August 2019 with GridPulse reading"></canvas>
+    <div class="cap" id="hero-cap">9 August 2019, 15:52 GB time. NESO 1 s frequency (blue). This is a dev event used for calibration, not part of the exam.</div>
+  </div>
+</header>
+
+<section id="lab-sec">
+  <div class="eyebrow">Lab</div>
+  <h2>Trip a unit and watch GridPulse read it</h2>
+  <p>The browser runs a port of GridSim's frequency model (same numbers as the Python to 1e-14 Hz), adds a slice of real quiet GB frequency noise, samples it once per second like NESO's meter, and feeds the window to the network. Slide <b>N</b> to see what it knows after N seconds.</p>
+  <div class="lab">
+    <div class="controls">
+      <div class="ctl"><label>Grid</label>
+        <div class="seg" role="group" aria-label="Grid"><button id="sys-gb" aria-pressed="true">GB · 50 Hz</button><button id="sys-er" aria-pressed="false">ERCOT · 60 Hz</button></div></div>
+      <div class="ctl"><label for="s-loss">Unit tripped <span id="v-loss"></span></label>
+        <select id="s-loss"></select></div>
+      <div class="ctl"><label for="s-ibr">Wind + solar share <span id="v-ibr"></span></label><input id="s-ibr" type="range" min="0.05" max="0.8" step="0.01" value="0.4"></div>
+      <div class="ctl"><label for="s-E">Inertia <span id="v-E"></span></label><input id="s-E" type="range" min="80" max="420" step="5" value="200"></div>
+      <div class="ctl"><label for="s-ffr">Fast response <span id="v-ffr"></span></label><input id="s-ffr" type="range" min="0" max="2000" step="50" value="1000"></div>
+      <div class="ctl"><label for="s-dem">Demand <span id="v-dem"></span></label><input id="s-dem" type="range" min="16000" max="80000" step="1000" value="30000"></div>
+      <button class="btn" id="b-noise">New noise slice</button>
+      <p class="muted" style="font-size:13px" id="lab-note"></p>
+    </div>
+    <div class="stack">
+      <div class="chartbox"><canvas id="labc" height="320" aria-label="Simulated trip"></canvas>
+        <div class="nbar"><span>N</span><input id="s-N" type="range" min="2" max="60" step="1" value="10" aria-label="Seconds seen"><span id="v-N">10 s</span></div></div>
+      <div class="readout" id="lab-ro"></div>
+      <div class="cap">Amber cells are forecasts of what has not happened yet. "true" is the simulation's own value; MW/Hz is the MW lost over the mean drop 20-52 s after the trip (NERC point B).</div>
+    </div>
+  </div>
+</section>
+
+<section id="ex-sec">
+  <div class="eyebrow">Real events</div>
+  <h2>Every GB event in the exam, read live</h2>
+  <p>NESO's 1 s frequency around each detected event, 2018-2025. Truth: NESO's half-hourly outturn inertia for every event, and a MW-lost label where Elexon data could name the trip (medium or low confidence). The four dev events, 9 August 2019 among them, were used for calibration and are marked.</p>
+  <div class="lab">
+    <div class="controls">
+      <div class="ctl"><label for="ev-filter">Show</label>
+        <select id="ev-filter"><option value="all">all events</option><option value="dev">dev events (calibration)</option><option value="medium">with a medium-confidence loss</option><option value="big">drops deeper than 0.3 Hz</option><option value="y2023">2023-2025</option></select></div>
+      <div class="ctl"><label for="ev-sel">Event</label><select id="ev-sel" size="10"></select></div>
+      <button class="btn" id="ev-rand">Random event</button>
+    </div>
+    <div class="stack">
+      <div class="chartbox"><canvas id="evc" height="300" aria-label="Real event"></canvas>
+        <div class="nbar"><span>N</span><input id="e-N" type="range" min="2" max="60" step="1" value="60" aria-label="Seconds seen"><span id="v-eN">60 s</span></div></div>
+      <div class="evmeta" id="ev-meta"></div>
+      <div class="readout" id="ev-ro"></div>
+    </div>
+  </div>
+</section>
+
+<section id="exam-sec">
+  <div class="eyebrow">Final exam · real data never used for choosing</div>
+  <h2>How it did</h2>
+  <div id="exam"></div>
+</section>
+
+<section id="ratchet-sec">
+  <div class="eyebrow">Ratchet</div>
+  <h2>The ladder of rungs</h2>
+  <p>A rung stays only if it beats the incumbent by more than 0.01 on a frozen set of simulated events (mean skill over MW lost, inertia and MW/Hz at 60 s, nadir and settling forecasts at 10 s) and does not make the four GB dev events more than 10 % worse. Skill is 1 − error / error of guessing the median.</p>
+  <div id="ratchet"></div>
+</section>
+
+<section id="how-sec">
+  <div class="eyebrow">How it was built</div>
+  <h2>Physics, then noise, then a small network</h2>
+  <div class="two" id="how"></div>
+</section>
+
+<section id="lim-sec">
+  <div class="eyebrow">Limits</div>
+  <h2>Where it fails</h2>
+  <ul id="limits"></ul>
+</section>
+
+<section id="use-sec">
+  <div class="eyebrow">Use it</div>
+  <h2>The release</h2>
+  <p>numpy + scipy only. The window is 81 one-second samples, 20 s before the onset to 60 s after, as deviations from the 60 s pre-event mean.</p>
+<pre>from gridpulse import GridPulse
+gp = GridPulse()                                   # loads gridpulse_weights.npz
+r = gp.read(t, f, system='GB', demand_MW=33000, N=10)   # t [s], f [Hz] at 1 s; onset found like NESO events
+r['loss_MW'], r['loss_MW_lo'], r['loss_MW_hi']     # 1-sigma band (dev-widened)
+r['E_GWs'], r['beta_MW_Hz'], r['nadir_Hz'], r['settle_Hz']
+python3 demo.py                                    # six real exam events in a few seconds</pre>
+</section>
+
+<footer id="credits"></footer>
+</div>
+
+<script src="gp.js"></script>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  let M = null, NOISE = null, EV = null, RES = null;
+  const fmt = (x, d = 0) => (x === null || x === undefined || !isFinite(x)) ? '–' : x.toLocaleString('en-GB', { minimumFractionDigits: d, maximumFractionDigits: d });
+
+  // ---------- chart
+  function chart(cv, o) {
+    const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.height / (cv._dpr || 1) || 300;
+    if (!cv._h) cv._h = cv.getAttribute('height') * 1;
+    const h = cv._h; cv.width = W * dpr; cv.height = h * dpr; cv._dpr = dpr; cv.style.height = h + 'px';
+    const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, h);
+    const L = 48, R = 10, T = 12, B = 26, pw = W - L - R, ph = h - T - B;
+    const [x0, x1] = o.xr, [y0, y1] = o.yr;
+    const X = x => L + (x - x0) / (x1 - x0) * pw, Y = y => T + (1 - (y - y0) / (y1 - y0)) * ph;
+    g.font = '10.5px ' + css('--mono'); g.textBaseline = 'middle';
+    if (o.band) { g.fillStyle = css('--band'); g.fillRect(L, Y(o.band[1]), pw, Y(o.band[0]) - Y(o.band[1])); }
+    const step = niceStep((y1 - y0) / 5);
+    g.strokeStyle = css('--grid'); g.lineWidth = 1; g.fillStyle = css('--muted'); g.textAlign = 'right';
+    for (let v = Math.ceil(y0 / step) * step; v <= y1 + 1e-9; v += step) { g.beginPath(); g.moveTo(L, Y(v)); g.lineTo(L + pw, Y(v)); g.stroke(); const lab = v.toFixed(step < 0.1 ? 2 : 1); g.fillText(/^-0\.0+$/.test(lab) ? lab.slice(1) : lab, L - 5, Y(v)); }
+    g.textAlign = 'center'; g.textBaseline = 'top';
+    for (let v = Math.ceil(x0 / 10) * 10; v <= x1; v += 10) { g.beginPath(); g.moveTo(X(v), T); g.lineTo(X(v), T + ph); g.stroke(); g.fillText(v + ' s', X(v), T + ph + 6); }
+    if (o.shadeFrom !== undefined && o.shadeFrom < x1) { g.fillStyle = css('--paper'); g.globalAlpha = 0.72; g.fillRect(X(o.shadeFrom), T, X(x1) - X(o.shadeFrom), ph); g.globalAlpha = 1;
+      g.strokeStyle = css('--cast'); g.setLineDash([3, 3]); g.beginPath(); g.moveTo(X(o.shadeFrom), T); g.lineTo(X(o.shadeFrom), T + ph); g.stroke(); g.setLineDash([]); }
+    for (const b of (o.hbands || [])) { g.fillStyle = b.color; g.globalAlpha = 0.18; g.fillRect(X(b.from), Y(b.hi), X(x1) - X(b.from), Math.max(1, Y(b.lo) - Y(b.hi))); g.globalAlpha = 1;
+      g.strokeStyle = b.color; g.lineWidth = 1.5; g.beginPath(); g.moveTo(X(b.from), Y(b.mid)); g.lineTo(X(x1), Y(b.mid)); g.stroke();
+      g.fillStyle = b.color; g.textAlign = 'right'; g.textBaseline = 'bottom'; g.fillText(b.label, X(x1) - 4, Y(b.hi) - 2); }
+    for (const s of o.series) {
+      g.strokeStyle = s.color; g.lineWidth = s.w || 1.6; g.globalAlpha = s.alpha || 1; g.beginPath(); let on = false;
+      s.x.forEach((xx, i) => { const yy = s.y[i]; if (!isFinite(yy) || xx < x0 || xx > x1) return; on ? g.lineTo(X(xx), Y(yy)) : g.moveTo(X(xx), Y(yy)); on = true; });
+      g.stroke(); if (s.dots) { g.fillStyle = s.color; s.x.forEach((xx, i) => { if (xx >= x0 && xx <= x1 && isFinite(s.y[i])) { g.beginPath(); g.arc(X(xx), Y(s.y[i]), 1.8, 0, 7); g.fill(); } }); }
+      g.globalAlpha = 1;
+    }
+    g.strokeStyle = css('--trip'); g.lineWidth = 1.2; g.beginPath(); g.moveTo(X(0), T); g.lineTo(X(0), T + ph); g.stroke();
+    g.fillStyle = css('--trip'); g.textAlign = 'left'; g.textBaseline = 'top'; g.fillText('trip', X(0) + 4, T + 2);
+    g.fillStyle = css('--muted'); g.textAlign = 'left'; g.fillText(o.ylab || 'Hz', 4, 0);
+  }
+  function niceStep(r) { const p = Math.pow(10, Math.floor(Math.log10(r))), m = r / p; return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p; }
+
+  // ---------- readout panel
+  function cell(k, v, unit, t, cls = '', tcls = '') { return `<div class="cell ${cls}"><div class="k">${k}</div><div class="v">${v}<small> ${unit}</small></div><div class="t ${tcls}">${t}</div></div>`; }
+  function within(x, lo, hi) { return x >= lo && x <= hi; }
+  function panel(el, r, truth, N) {
+    const tl = (x, lo, hi, d, u) => truth && isFinite(x) ? `true ${fmt(x, d)}${u} ${within(x, lo, hi) ? '· inside' : '· outside'}` : '';
+    const tc = (x, lo, hi) => truth && isFinite(x) ? (within(x, lo, hi) ? 'ok' : 'miss') : '';
+    const T = truth || {};
+    const nd = (T.nadir), sd = T.settle;
+    el.innerHTML =
+      cell('MW lost', fmt(r.loss_MW), 'MW', `${fmt(r.loss_MW_lo)}–${fmt(r.loss_MW_hi)} · ${tl(T.loss, r.loss_MW_lo, r.loss_MW_hi, 0, '')}`, '', tc(T.loss, r.loss_MW_lo, r.loss_MW_hi)) +
+      cell('Inertia', fmt(r.E_GWs), 'GW·s', `${fmt(r.E_GWs_lo)}–${fmt(r.E_GWs_hi)} · ${tl(T.E, r.E_GWs_lo, r.E_GWs_hi, 0, '')}`, '', tc(T.E, r.E_GWs_lo, r.E_GWs_hi)) +
+      cell('Response', fmt(r.beta_MW_Hz / 1000, 1), 'GW/Hz', `${fmt(r.beta_MW_Hz_lo / 1000, 1)}–${fmt(r.beta_MW_Hz_hi / 1000, 1)}` + (T.beta ? ` · true ${fmt(T.beta / 1000, 1)}` : ''), '', '') +
+      cell('Nadir', (r.nadir_Hz >= 0 ? '+' : '') + fmt(r.nadir_Hz * 1000), 'mHz', `±${fmt(r.nadir_sig * 1000)} · ` + (isFinite(nd) ? `true ${fmt(nd * 1000)} ${Math.abs(nd - r.nadir_Hz) <= r.nadir_sig ? '· inside' : '· outside'}` : ''), 'cast', isFinite(nd) ? (Math.abs(nd - r.nadir_Hz) <= r.nadir_sig ? 'ok' : 'miss') : '') +
+      cell('At 60 s', (r.settle_Hz >= 0 ? '+' : '') + fmt(r.settle_Hz * 1000), 'mHz', `±${fmt(r.settle_sig * 1000)} · ` + (isFinite(sd) ? `true ${fmt(sd * 1000)} ${Math.abs(sd - r.settle_Hz) <= r.settle_sig ? '· inside' : '· outside'}` : ''), 'cast', isFinite(sd) ? (Math.abs(sd - r.settle_Hz) <= r.settle_sig ? 'ok' : 'miss') : '') +
+      cell('Headroom · FFR', fmt(r.head_MW / 1000, 1) + ' · ' + fmt(Math.max(0, r.ffr_MW) / 1000, 1), 'GW', 'weakly identifiable' + (T.head ? ` · true ${fmt(T.head / 1000, 1)} · ${fmt(T.ffr / 1000, 1)}` : ''), 'weak', '');
+  }
+
+  // ---------- measurement (port of src/measure.py, instantaneous 1 s samples)
+  const PRE = 20, POST = 60, K0 = 66;
+  function measure(t, f, f0, noise, phase) {
+    const dev = f.map(v => v - f0), n = dev.length, out = new Array(140);
+    for (let i = 0; i < 140; i++) out[i] = noise[i];
+    for (let k = 0; k < 74; k++) { const tk = k - 1 + phase; let v = 0;
+      if (tk >= 0) { const j = tk / 0.1, a = Math.floor(j), b = Math.min(a + 1, n - 1); v = a >= n - 1 ? dev[n - 1] : dev[a] + (dev[b] - dev[a]) * (j - a); }
+      out[K0 - 1 + k] += v; }
+    for (let i = K0 - 1 + 74; i < 140; i++) out[i] += dev[n - 1];
+    // onset rule
+    const d1 = out.map((v, i) => i ? v - out[i - 1] : 0); let i0 = K0 - 3;
+    for (let i = K0 - 3; i < K0 + 8; i++) if (d1[i] < d1[i0]) i0 = i;
+    let j = i0; for (let q = 0; q < 10; q++) if (d1[j - 1] <= -0.01 && i0 - j < 10) j--;
+    const t0 = Math.min(Math.max(j - 1, 60), 74);
+    let m = 0; for (let i = t0 - 60; i < t0; i++) m += out[i]; m /= 60;
+    const w = []; for (let i = -PRE; i <= POST; i++) w.push(out[t0 + i] - m);
+    let nadir = Infinity; for (let i = 0; i <= 60; i++) nadir = Math.min(nadir, out[t0 + i] - m);
+    let st = 0; for (let i = 55; i <= 65; i++) st += out[t0 + i] - m; st /= 11;
+    return { w, nadir, settle: st, shift: (t0 - (K0 - 1)) - 1 + phase };
+  }
+
+  // ---------- lab
+  const UNITS = { GB: [['interconnector import', 1000], ['nuclear unit', 1200], ['CCGT block', 450], ['offshore wind farm', 750], ['two CCGT blocks', 900], ['largest infeed (rule)', 1800]],
+                  ERCO: [['CCGT block', 700], ['coal unit', 600], ['nuclear unit', 1350], ['two nuclear units (design loss)', 2750], ['solar fleet ride-through', 1100], ['gas turbine', 250]] };
+  const S = { sys: 'GB', loss: 1000, ibr: 0.4, E: 200, ffr: 1000, dem: 30000, seg: 0, phase: 0.37, N: 10 };
+  function fillUnits() { $('s-loss').innerHTML = UNITS[S.sys].map(([n, mw], i) => `<option value="${mw}">${n} · ${mw.toLocaleString('en-GB')} MW</option>`).join(''); S.loss = UNITS[S.sys][0][1]; }
+  let LAB = null;
+  function runLab() {
+    const st = GP.labState(S.sys, S.loss, S.E, S.ibr, S.ffr, S.dem);
+    const sim = GP.simulate(st, [[0, S.loss]]);
+    const f0 = st.f0, sc = S.sys === 'GB' ? 1 : 1.2;
+    const nz = NOISE[S.seg % NOISE.length].map(v => v / 1000 * sc);
+    const me = measure(sim.t, sim.f, f0, nz, S.phase);
+    // truth: MW/Hz from noise-free point B; headroom from compiled state
+    let pb = 0, c = 0; sim.t.forEach((t, i) => { if (t >= 20 && t <= 52) { pb += sim.f[i] - f0; c++; } }); pb /= c;
+    const head = st.P.up.reduce((a, b) => a + b, 0);
+    LAB = { sim, me, f0, truth: { loss: S.loss, E: S.E, beta: S.loss / Math.max(Math.abs(pb), 0.005), nadir: me.nadir, settle: me.settle, head, ffr: S.sys === 'ERCO' ? S.ffr + 1000 : 0 } };
+    drawLab();
+  }
+  function drawLab() {
+    if (!LAB) return;
+    const { sim, me, f0, truth } = LAB, N = S.N;
+    const r = GP.readout(M, me.w, N, S.sys === 'GB', f0, S.dem);
+    const xs = me.w.map((_, i) => i - PRE);
+    const lo = Math.min(-0.25 * f0 / 50, ...me.w, ...sim.f.map(v => v - f0)) - 0.05, hi = Math.max(0.08, ...me.w) + 0.05;
+    chart($('labc'), { xr: [-PRE, POST], yr: [lo, hi], ylab: 'Δf  Hz', shadeFrom: N,
+      hbands: [{ from: N, mid: r.nadir_Hz, lo: r.nadir_Hz - r.nadir_sig, hi: r.nadir_Hz + r.nadir_sig, color: css('--cast'), label: 'nadir forecast' },
+               { from: Math.max(N, 50), mid: r.settle_Hz, lo: r.settle_Hz - r.settle_sig, hi: r.settle_Hz + r.settle_sig, color: css('--cast'), label: '60 s' }],
+      series: [{ x: sim.t.map(t => t + 0), y: sim.f.map(v => v - f0), color: css('--sim'), w: 1.2, alpha: 0.9 },
+               { x: xs, y: me.w, color: css('--freq'), w: 1.8, dots: true }] });
+    panel($('lab-ro'), r, truth, N);
+    $('v-N').textContent = N + ' s';
+  }
+  function setSys(s) {
+    S.sys = s; $('sys-gb').setAttribute('aria-pressed', s === 'GB'); $('sys-er').setAttribute('aria-pressed', s === 'ERCO');
+    fillUnits(); S.dem = s === 'GB' ? 30000 : 50000; $('s-dem').value = S.dem; S.E = s === 'GB' ? 200 : 250; $('s-E').value = S.E;
+    S.ffr = s === 'GB' ? 1000 : 500; $('s-ffr').value = S.ffr; syncLabels(); runLab();
+  }
+  function syncLabels() {
+    $('v-loss').textContent = S.loss.toLocaleString('en-GB') + ' MW'; $('v-ibr').textContent = Math.round(S.ibr * 100) + ' %';
+    $('v-E').textContent = S.E + (S.sys === 'GB' ? ' GVA·s' : ' GW·s'); $('v-ffr').textContent = S.ffr.toLocaleString('en-GB') + ' MW';
+    $('v-dem').textContent = (S.dem / 1000).toFixed(0) + ' GW';
+    $('lab-note').textContent = S.sys === 'GB' ? 'Fast response here is Dynamic Containment: almost nothing until 0.2 Hz, full output at 0.5 Hz, within a second. Grid code deadband 0.015 Hz; low-frequency demand disconnection from 48.8 Hz.'
+      : 'Fast response here is ERCOT FFR at 59.85 Hz, plus 1,000 MW of load resources that trip at 59.7 Hz. Under-frequency load shedding from 59.3 Hz. ERCOT noise is GB noise scaled to 60 Hz: no public ERCOT 1 s data exist.';
+  }
+
+  // ---------- explorer
+  let LIST = [], CUR = null;
+  function evFilter() {
+    const v = $('ev-filter').value;
+    LIST = EV.filter(e => v === 'all' || (v === 'dev' && e.split === 'dev') || (v === 'medium' && e.tier === 'medium') || (v === 'big' && e.nadir < -0.3) || (v === 'y2023' && e.year >= 2023));
+    $('ev-sel').innerHTML = LIST.map((e, i) => `<option value="${i}">${e.split === 'dev' ? 'DEV · ' : ''}${e.t} · ${fmt(e.nadir * 1000)} mHz${e.loss ? ' · ' + fmt(e.loss) + ' MW' : ''}</option>`).join('');
+    if (LIST.length) { $('ev-sel').selectedIndex = 0; pick(0); }
+  }
+  function pick(i) { CUR = LIST[i]; drawEv(); }
+  function drawEv() {
+    if (!CUR) return; const e = CUR, N = +$('e-N').value;
+    const r = GP.readout(M, e.w, N, true, 50, e.demand);
+    const xs = e.w.map((_, i) => i - PRE);
+    chart($('evc'), { xr: [-PRE, POST], yr: [Math.min(...e.w) - 0.06, Math.max(...e.w) + 0.06], ylab: 'Δf  Hz', shadeFrom: N,
+      hbands: [{ from: N, mid: r.nadir_Hz, lo: r.nadir_Hz - r.nadir_sig, hi: r.nadir_Hz + r.nadir_sig, color: css('--cast'), label: 'nadir forecast' }],
+      series: [{ x: xs, y: e.w, color: css('--freq'), w: 1.8, dots: true }] });
+    panel($('ev-ro'), r, { loss: e.loss, E: e.E, nadir: e.nadir, settle: e.settle }, N);
+    $('v-eN').textContent = N + ' s';
+    $('ev-meta').innerHTML = `<span><b>${e.id}</b></span>${e.split === 'dev' ? '<span class="pill dev">dev · used for calibration</span>' : '<span class="pill keep">exam</span>'}<span>f0 <b>${e.f0.toFixed(3)} Hz</b></span><span>NESO inertia <b>${e.E ? fmt(e.E) + ' GVA·s' : '–'}</b></span><span>loss label <b>${e.loss ? fmt(e.loss) + ' MW (' + e.tier + ')' : 'none'}</b></span><span>demand <b>${e.demand ? fmt(e.demand / 1000, 1) + ' GW' : '–'}</b></span>`;
+  }
+
+  // ---------- hero (9 Aug 2019)
+  function drawHero() {
+    const e = EV.find(x => x.id === 'GB_20190809T155233'); if (!e) return;
+    const r = GP.readout(M, e.w, 10, true, 50, e.demand), xs = e.w.map((_, i) => i - PRE);
+    chart($('hero'), { xr: [-PRE, POST], yr: [-1.05, 0.12], band: [-0.5, 0.5], ylab: 'Δf  Hz', shadeFrom: 10,
+      hbands: [{ from: 10, mid: r.nadir_Hz, lo: r.nadir_Hz - r.nadir_sig, hi: r.nadir_Hz + r.nadir_sig, color: css('--cast'), label: 'nadir forecast at 10 s' }],
+      series: [{ x: xs, y: e.w, color: css('--freq'), w: 2, dots: true }] });
+    $('hero-cap').innerHTML = `9 August 2019, 15:52 UTC: NESO 1 s frequency (blue), shaded band = ±0.5 Hz statutory limits. After 10 s GridPulse reads <b>${fmt(r.loss_MW)} MW</b> lost (ESO report: 1,131 MW at the trip, ~1,480 MW once embedded generation tripped within a second) and <b>${fmt(r.E_GWs)} GVA·s</b> inertia (NESO: ${fmt(e.E)}). A dev event used for calibration, not part of the exam.`;
+  }
+
+  // ---------- results
+  function renderResults() {
+    const X = RES.exam, G = X.GB, ER = X.ERCOT;
+    const b = (v, best) => `<span class="${best ? 'best' : ''}">${fmt(v, 1)} %</span>`;
+    const I = G.inertia, Lm = G.loss.medium || {}, Ll = G.loss.low || {};
+    const F10 = G.forecast.N10_nadir_after_N || {}, F5 = G.forecast.N5_nadir_after_N || {}, F10a = G.forecast.N10_all || {};
+    const minI = Math.min(I.gridpulse_N60.MdAPE, I.baseline_constant_230.MdAPE, I.baseline_k_x_demand.MdAPE);
+    let h = `<div class="tbl"><table><thead><tr><th>GB test (what it measures)</th><th class="num">n</th><th class="num">GridPulse</th><th>baselines (same events)</th><th class="num">1σ / 2σ coverage</th></tr></thead><tbody>`;
+    h += `<tr><td>Inertia vs NESO half-hourly outturn, after 60 s <div class="muted">the cleanest real truth</div></td><td class="num">${I.n}</td><td class="num">${b(I.gridpulse_N60.MdAPE, I.gridpulse_N60.MdAPE <= minI)}</td><td>constant 230 GVA·s: ${b(I.baseline_constant_230.MdAPE, I.baseline_constant_230.MdAPE <= minI)}<br>${fmt(I.baseline_k_x_demand.k_s, 2)} s × demand (dev fit): ${b(I.baseline_k_x_demand.MdAPE, I.baseline_k_x_demand.MdAPE <= minI)}<br>trace only (no demand input): ${b(I.trace_only_N60.MdAPE)}<br>RoCoF formula with the loss label (n=${I.baseline_rocof_with_label_loss.n}): ${b(I.baseline_rocof_with_label_loss.MdAPE)} vs GridPulse ${b(I.baseline_rocof_with_label_loss.gridpulse_same_events)}</td><td class="num">${fmt(I.gridpulse_N60.cov1 * 100)} / ${fmt(I.gridpulse_N60.cov2 * 100)} %</td></tr>`;
+    for (const [nm, Lx] of [['medium', Lm], ['low', Ll]]) if (Lx.n) {
+      const mn = Math.min(Lx.gridpulse_N60, Lx.rocof_assumed_E230, Lx.rocof_true_E, Lx.dumb_dev_median);
+      h += `<tr><td>MW lost, ${nm}-confidence labels, after 60 s <div class="muted">${nm === 'medium' ? 'interconnector drops and REMIT trips with metered output' : 'looser REMIT matches'}</div></td><td class="num">${Lx.n}</td><td class="num">${b(Lx.gridpulse_N60, Lx.gridpulse_N60 <= mn)}</td><td>RoCoF formula, assumed 230 GVA·s: ${b(Lx.rocof_assumed_E230, Lx.rocof_assumed_E230 <= mn)}<br>RoCoF formula, NESO inertia: ${b(Lx.rocof_true_E, Lx.rocof_true_E <= mn)}<br>dev median loss: ${b(Lx.dumb_dev_median, Lx.dumb_dev_median <= mn)}<br>GridPulse after 10 s: ${b(Lx.gridpulse_N10)}</td><td class="num">${fmt(Lx.cov1 * 100)} / ${fmt(Lx.cov2 * 100)} %</td></tr>`;
+    }
+    const fr = (o, nm) => `<tr><td>${nm}</td><td class="num">${o.n}</td><td class="num"><span class="${o.nadir_MAE_mHz <= o.nadir_baseline_minsofar_MAE_mHz ? 'best' : ''}">${fmt(o.nadir_MAE_mHz)} mHz</span></td><td>lowest value seen so far: <span class="${o.nadir_baseline_minsofar_MAE_mHz < o.nadir_MAE_mHz ? 'best' : ''}">${fmt(o.nadir_baseline_minsofar_MAE_mHz)} mHz</span></td><td class="num">${fmt(o.nadir_cov1 * 100)} / ${fmt(o.nadir_cov2 * 100)} %</td></tr>`;
+    h += fr(F5, 'Nadir forecast from the first 5 s, events whose nadir comes later') + fr(F10, 'Nadir forecast from the first 10 s, nadir later than 10 s');
+    h += `<tr><td>Frequency at 60 s (55-65 s mean) from the first 10 s</td><td class="num">${F10a.n}</td><td class="num"><span class="${F10a.settle_MAE_mHz <= F10a.settle_baseline_persist_MAE_mHz ? 'best' : ''}">${fmt(F10a.settle_MAE_mHz)} mHz</span></td><td>value at 10 s held: <span class="${F10a.settle_baseline_persist_MAE_mHz < F10a.settle_MAE_mHz ? 'best' : ''}">${fmt(F10a.settle_baseline_persist_MAE_mHz)} mHz</span></td><td class="num">${fmt(F10a.settle_cov1 * 100)} / ${fmt(F10a.settle_cov2 * 100)} %</td></tr>`;
+    h += `</tbody></table></div><p class="cap">Errors are median absolute percentage errors (MdAPE) or mean absolute errors. Coverage: share of events whose truth lies within the 1σ and 2σ bands (ideal 68 % and 95 %); sigmas were widened once on the dev events, never on the exam.</p>`;
+    const yr = Object.entries(I.by_year).map(([y, o]) => `<tr><td>${y}</td><td class="num">${o.n}</td><td class="num">${fmt(o.median_true)}</td><td class="num">${fmt(o.median_pred)}</td><td class="num">${fmt(o.gridpulse, 1)} %</td><td class="num">${fmt(o.constant, 1)} %</td></tr>`).join('');
+    h += `<div class="two"><div class="stack"><h3>Inertia by year</h3><div class="tbl"><table><thead><tr><th>year</th><th class="num">n</th><th class="num">NESO median</th><th class="num">GP median</th><th class="num">GP error</th><th class="num">230 const.</th></tr></thead><tbody>${yr}</tbody></table></div></div>`;
+    const kE = ER, minL = Math.min(kE.loss.MdAPE, kE.loss.baseline_k_delta_f, kE.loss.baseline_dev_median);
+    h += `<div class="stack"><h3>ERCOT, from the operations reports</h3><div class="tbl"><table><thead><tr><th>test (n = ${kE.n})</th><th class="num">GridPulse-Summary</th><th>baseline</th><th class="num">1σ cov.</th></tr></thead><tbody>
+      <tr><td>MW lost from reported Δf, inertia, load, IBR share</td><td class="num">${b(kE.loss.MdAPE, kE.loss.MdAPE <= minL)}</td><td>ERCOT dev MW/Hz × Δf: ${b(kE.loss.baseline_k_delta_f, kE.loss.baseline_k_delta_f <= minL)}<br>dev median: ${b(kE.loss.baseline_dev_median)}</td><td class="num">${fmt(kE.loss.cov1 * 100)} %</td></tr>
+      <tr><td>Frequency drop forecast from MW lost, inertia, load (tests GridSim itself)</td><td class="num">${b(kE.dfnad.MdAPE, kE.dfnad.MdAPE <= kE.dfnad.baseline_loss_over_k)}</td><td>MW lost ÷ dev MW/Hz: ${b(kE.dfnad.baseline_loss_over_k, kE.dfnad.baseline_loss_over_k < kE.dfnad.MdAPE)}</td><td class="num">${fmt(kE.dfnad.cov1 * 100)} %</td></tr>
+      <tr><td>Inertia from Δf, MW lost, load</td><td class="num">${b(kE.E.MdAPE, kE.E.MdAPE <= Math.min(kE.E.baseline_dev_median, kE.E.baseline_k_x_load))}</td><td>dev median: ${b(kE.E.baseline_dev_median)}<br>dev s × load: ${b(kE.E.baseline_k_x_load, kE.E.baseline_k_x_load < kE.E.MdAPE)}</td><td class="num">${fmt(kE.E.cov1 * 100)} %</td></tr>
+      </tbody></table></div><p class="cap">ERCOT publishes no frequency traces, so the trace network cannot be graded there. These three tests check the simulator's ERCOT physics through a small sim-trained model on the reported summary numbers. ERCOT reports no RoCoF, so inertia-from-RoCoF cannot be tested.</p></div></div>`;
+    h += `<div class="note">${RES.verdict}</div>`;
+    $('exam').innerHTML = h;
+    // ratchet
+    $('ratchet').innerHTML = `<div class="tbl"><table><thead><tr><th>rung</th><th>change</th><th class="num">score</th><th class="num">MW lost</th><th class="num">inertia</th><th class="num">nadir@10 s</th><th class="num">dev change</th><th>decision</th></tr></thead><tbody>` +
+      RES.ratchet.map(r => `<tr><td class="mono">${r.rung}</td><td>${r.note}</td><td class="num">${fmt(r.objective, 3)}</td><td class="num">${fmt(r.skills['loss@60'], 2)}</td><td class="num">${fmt(r.skills['E@60'], 2)}</td><td class="num">${fmt(r.skills['nadir@10'], 2)}</td><td class="num">${r.dev_rel ? (r.dev_rel >= 1 ? '+' : '') + fmt((r.dev_rel - 1) * 100) + ' %' : '–'}</td><td><span class="pill ${r.accepted ? 'keep' : 'drop'}">${r.accepted ? 'kept' : 'rejected'}</span><div class="muted" style="font-size:12.5px">${r.why}</div></td></tr>`).join('') + `</tbody></table></div><p class="cap">${RES.ratchet_note}</p>`;
+    $('how').innerHTML = RES.how.map(([t, x]) => `<div class="stack"><h3>${t}</h3>${x}</div>`).join('');
+    $('limits').innerHTML = RES.limits.map(x => `<li>${x}</li>`).join('');
+    $('credits').innerHTML = RES.credits;
+    $('h-ntrain').textContent = RES.n_train_states;
+  }
+
+  // ---------- wiring
+  function bind() {
+    $('sys-gb').onclick = () => setSys('GB'); $('sys-er').onclick = () => setSys('ERCO');
+    $('s-loss').onchange = e => { S.loss = +e.target.value; syncLabels(); runLab(); };
+    [['s-ibr', 'ibr'], ['s-E', 'E'], ['s-ffr', 'ffr'], ['s-dem', 'dem']].forEach(([id, k]) => $(id).oninput = e => { S[k] = +e.target.value; syncLabels(); runLab(); });
+    $('s-ibr').addEventListener('input', () => { // more wind and solar -> fewer synchronous machines -> less inertia
+      S.E = Math.round(Math.max(80, Math.min(420, (S.sys === 'GB' ? 7.4 : 5.0) * S.dem / 1000 * (1 - S.ibr) / 0.6)) / 5) * 5; $('s-E').value = S.E; syncLabels(); runLab(); });
+    $('s-N').oninput = e => { S.N = +e.target.value; drawLab(); };
+    $('b-noise').onclick = () => { S.seg = (S.seg + 1 + Math.floor(Math.random() * 7)) % NOISE.length; S.phase = Math.random(); runLab(); };
+    $('ev-filter').onchange = evFilter; $('ev-sel').onchange = e => pick(+e.target.value);
+    $('e-N').oninput = drawEv;
+    $('ev-rand').onclick = () => { const i = Math.floor(Math.random() * LIST.length); $('ev-sel').selectedIndex = i; pick(i); };
+    let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { drawHero(); drawLab(); drawEv(); }, 120); });
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { drawHero(); drawLab(); drawEv(); });
+    new MutationObserver(() => { drawHero(); drawLab(); drawEv(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  }
+  Promise.all(['model.json', 'noise.json', 'events.json', 'results.json'].map(u => fetch(u).then(r => r.json()))).then(([m, n, e, r]) => {
+    M = m; NOISE = n; EV = e; RES = r;
+    bind(); fillUnits(); syncLabels(); runLab(); drawHero(); evFilter(); renderResults();
+  }).catch(err => { document.querySelector('.wrap').insertAdjacentHTML('afterbegin', `<p class="note">Could not load the model data (${err}). Reload the page.</p>`); });
+})();
+</script>
+
+</body></html>

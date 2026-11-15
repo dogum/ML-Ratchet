@@ -49,3 +49,14 @@ shared/vehicle/roadsim/refdata/
 shared/vehicle/roadsim/logs/
 # VED exam-2 per-trip twin results (VED exam is the models' exam too: summaries only are tracked, in exam2_report.json and the scoreboards)
 shared/vehicle/checks/ved_twin_exam2__*.json
+
+# Grid platform: rebuildable data (scripts in shared/grid/data/scripts, sources in DATA.md; `mlratchet data grid`).
+# Only the frozen split file and the manifest of shipped hashes are tracked.
+shared/grid/data/raw/
+shared/grid/data/work/
+shared/grid/data/proc/*
+!shared/grid/data/proc/splits.json
+shared/grid/gridsim/refdata/
+shared/grid/checks/out/
+shared/grid/gridsim/logs/
+shared/grid/gridsim/.refenv/

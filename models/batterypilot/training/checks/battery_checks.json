@@ -1,0 +1,48 @@
+{
+ "reproduce_griddata_dev_2019Q1": {
+  "HB_HOUSTON": {
+   "days": 89,
+   "pf_max_abs_diff": 5.684341886080802e-14,
+   "spread_max_abs_diff": 1.1368683772161603e-13,
+   "threshold_max_abs_diff": 1.4210854715202004e-14,
+   "pf_sum": [
+    7837.970291664289,
+    7837.970291664289
+   ]
+  },
+  "HB_WEST": {
+   "days": 89,
+   "pf_max_abs_diff": 1.1368683772161603e-13,
+   "spread_max_abs_diff": 1.6475000083446503,
+   "threshold_max_abs_diff": 7.105427357601002e-15,
+   "pf_sum": [
+    9463.610352485135,
+    9463.610352485133
+   ]
+  }
+ },
+ "rainflow_vs_package": {
+  "n_series": 200,
+  "max_rel_diff_damage": 0.0
+ },
+ "offer_executor_energy_balance_max_err_MWh": 1.1102230246251565e-16,
+ "annual_lp": {
+  "chunked": 61491.70235833013,
+  "single": 61491.70235833012,
+  "rel_gap": -1.1832421831134704e-16,
+  "daily_window": 61423.1459050515,
+  "secs_chunked": 0.04447484016418457,
+  "secs_single": 0.044687509536743164
+ },
+ "rainflow_vs_linear_proxy_summer2019_PF": {
+  "rainflow_deg": 2414.372824665901,
+  "linear_proxy": 2416.2615453077065,
+  "cycles": 58.34851925860698
+ },
+ "c_lin_$per_MWh": {
+  "1h": 25.40894732202558,
+  "2h": 22.45818445323681,
+  "4h": 21.105078808223638
+ },
+ "c_lin_temp_factor_35C_vs_25C": 1.1105247410980092
+}
