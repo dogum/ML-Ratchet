@@ -1,6 +1,6 @@
 id: cellsense
 name: CellSense
-version: "1.2"
+version: "1.3"
 status: partial
 released: 2026-10-31
 order: 3
@@ -15,7 +15,8 @@ summary: >-
   how much lithium and electrode material it has lost, and a forecast of its cycle life. It learned from an
   electrochemical simulator calibrated on six real cells, and was examined on 118 others. A second, separate network
   (v1.2) reads slow C/20 capacity tests of an NMC811 cell (LG M50T), including tests stopped early; there it was
-  calibrated on three real cells and examined on seven, and it mostly loses to guessing the median.
+  calibrated on three real cells and examined on seven, and it mostly loses to guessing the median. Since v1.3 that
+  reader is an ensemble of four networks: cut-short error 135 → 113 mAh, still behind the median guess (105).
 
 reads: "LFP: one 4C discharge curve (capacity vs voltage, plus temperature) of an A123 LFP/graphite 18650 cell, optionally beside a reference curve from when it was new. NMC811: one C/20 discharge from full (capacity vs voltage) of an LG INR21700-M50T, complete or stopped early, optionally beside the cell's first test."
 returns:
@@ -43,7 +44,7 @@ physics:
     - "NMC811 simulator (Chen2020) vs PyBaMM 26.10.1.1 SPM: capacity within 0.0002% and voltage within 0.016 mV at C/20 (0.06% and 0.22 mV at 1C), fresh and with 10% of each degradation mode; vs SPMe at C/20: 0.0005%, 0.06 mV"
     - "NMC811 open-circuit curves corrected on three dev cells: C/20 fit rms 11.9 → 5.1 mV (median per test)"
 noise: "Measurement noise and cell-to-cell scatter in simulation; six real cells calibrate the LFP aging priors, three the NMC811 ones. NMC811 also: cycler gain error, a few mV of voltage offset, per-cell open-circuit-curve jitter."
-network: Three 1-D residual CNNs along the voltage axis for LFP (health, lifetime, partial discharge) and a fourth, smaller one for NMC811; β-NLL error bars
+network: Three 1-D residual CNNs along the voltage axis for LFP (health, lifetime, partial discharge) and, for NMC811, an ensemble of four smaller ones (v1.3); β-NLL error bars
 
 approach:
   real_backdrop: false
@@ -112,7 +113,7 @@ exam:
       verdict: loss
     - metric: NMC811 capacity, test stopped at 2.5 Ah, with reference
       better: lower
-      model: 69
+      model: 86
       unit: mAh
       baselines:
         - { name: "Dev median", kind: dumb, value: 98 }
@@ -120,31 +121,34 @@ exam:
         - { name: "Shift at cut", kind: classical, value: 152 }
         - { name: "Voltage fit, same electrode model", kind: classical, value: 258 }
       verdict: win
+      note: "v1.2: 69."
     - metric: NMC811 capacity, test stopped at 3.5 Ah, no reference
       better: lower
-      model: 94
+      model: 98
       unit: mAh
       baselines:
         - { name: "Dev median", kind: dumb, value: 111 }
         - { name: "Voltage fit, same electrode model", kind: classical, value: 106 }
       verdict: win
+      note: "v1.2: 94."
     - metric: NMC811 capacity, test stopped at 3.5 Ah, with reference
       better: lower
-      model: 115
+      model: 117
       unit: mAh
       baselines:
         - { name: "Dev median", kind: dumb, value: 98 }
         - { name: "Shift at cut", kind: classical, value: 84 }
         - { name: "Voltage fit, same electrode model", kind: classical, value: 125 }
       verdict: loss
+      note: "v1.2: 115."
     - metric: NMC811 capacity, all six cut-short readings
       better: lower
-      model: 135
+      model: 113
       unit: mAh
       baselines:
         - { name: "Dev median", kind: dumb, value: 105 }
       verdict: loss
-      note: Stopped at 1.5 Ah it is worst (169 with reference, 196 without).
+      note: "v1.2: 135. Stopped at 1.5 Ah: 138 with reference, 105 without (v1.2: 169, 196); the median guess 98 and 111."
     - metric: NMC811 capacity, full C/20 curve
       better: lower
       model: 0
@@ -153,30 +157,31 @@ exam:
         - { name: "Coulomb counting (the curve's end)", kind: classical, value: 0 }
         - { name: "Dev median", kind: dumb, value: "98–111" }
       verdict: tie
-      note: The shipped system reads a full curve's capacity off its end; the network alone read them to 46 mAh.
+      note: The shipped system reads a full curve's capacity off its end; the v1.2 network alone read them to 46 mAh.
     - metric: NMC811 fade, cut-short tests with reference
       better: lower
-      model: 2.47
+      model: 2.35
       unit: points
       baselines:
         - { name: "Dev median fade", kind: dumb, value: 1.94 }
         - { name: "Assume no fade", kind: dumb, value: 4.80 }
       verdict: loss
+      note: "v1.2: 2.47."
   coverage:
-    - { output: "NMC811 capacity (all readings)", actual: 61 }
-    - { output: "NMC811 capacity, cut at 1.5 / 2.5 / 3.5 Ah", actual: 48 }
-    - { output: "NMC811 fade", actual: 71 }
+    - { output: "NMC811 capacity (all readings)", actual: 71 }
+    - { output: "NMC811 capacity, cut at 1.5 / 2.5 / 3.5 Ah", actual: 61 }
+    - { output: "NMC811 fade", actual: 67 }
 
 wins:
   - Beats the median guess on lifetime from cycle 100, using no real labelled cells for training.
   - Partial discharges to 0.75 Ah or more read 2–3× better than the no-model baseline.
-  - "NMC811: a C/20 test stopped at 2.5 Ah, read with the cell's first test, gives capacity to 69 mAh (dev median 98, classical 152–258)."
+  - "NMC811: a C/20 test stopped at 2.5 Ah, read with the cell's first test, gives capacity to 86 mAh (dev median 98, classical 152–258; v1.2: 69)."
 losses:
   - Severson's models, trained on 41 real cells, still forecast lifetime better (13–15% vs 22%).
   - Last quarter of life — worn cells read about 6% too healthy (36% life error).
   - Partial discharges stopped at 0.45–0.6 Ah are no better than assuming no fade (52.0 and 46.5 vs 45.7 mAh); at 0.30 Ah it beats no-fade, 41.8 vs 45.7 mAh.
-  - "NMC811: over all cut-short C/20 tests it errs by 135 mAh; always guessing the dev median errs by 105. Worst stopped at 1.5 Ah (169–196 mAh)."
-  - "NMC811: its 68% error bars cover 36–66% of cut-short readings."
+  - "NMC811: over all cut-short C/20 tests it errs by 113 mAh (v1.2: 135); always guessing the dev median errs by 105. Worst stopped at 1.5 Ah with a reference (138 mAh) and at 3.5 Ah with one (117 vs 98; shifting the reference by the gap at the cut gives 84)."
+  - "NMC811: its 68% error bars cover 39–73% of cut-short readings (39% at 3.5 Ah)."
 limits:
   - It knows two cells — A123 APR18650M1A at Severson's protocol (4C to 2.0 V, 30 °C), and LG INR21700-M50T NMC811 at a C/20 capacity test (23 °C).
   - Other chemistries, sizes, rates and temperatures are outside what it learned.
@@ -189,6 +194,7 @@ limits:
 help_wanted:
   - "More chemistries and rates: Sandia NCA / NMC / LFP cycling files (Preger et al. 2020) from BatteryArchive (download by email request), or Zhu et al. 2022 (Zenodo). NMC811 at C/20 is done (Pozzato et al. 2022 on OSF); it needs aged cells far from new and faster discharges."
 next:
+  - "NMC811: on the dev cells a cut-short reading pulled toward their median by inverse variance reads 126 → 88 mAh (each dev cell left out), but the frozen set, whose cells age up to 2.5x further, scores it 0.033 lower, so the rule rejected it (rung n13). Whether such dev-population steps should be judged by a different rule has to be decided before the next one is scored."
   - "NMC811: the jitter is now measured on the dev cells (scale 1.15 ± 0.09, 7.0 mV per coefficient; frozen set val_ocpd), but every jitter-trained network scores 0.713-0.718 on it, so rungs that read the dev cells better (n10: 114 mAh, n11: 91 mAh, vs n8's 126) cannot clear the 0.01 margin. Next: a frozen-set objective that separates them (e.g. more pairs, or scoring the jitter-free twin of each pair), decided before the rungs are re-judged."
   - "NMC811: a two-material negative (graphite + SiOx) with its own silicon loss, for the features near the end of discharge."
   - "NMC811: read the HPPC pulses in the same tests for resistance, and cut-short tests that start below full."
@@ -210,7 +216,7 @@ usage:
 
 files:
   inference: [cellsense.py]
-  weights: [cellsense_weights.npz, cellsense_life_weights.npz, cellsense_partial_weights.npz, cellsense_nmc811_weights.npz]
+  weights: [cellsense_weights.npz, cellsense_life_weights.npz, cellsense_partial_weights.npz, cellsense_nmc811_weights.npz, cellsense_nmc811_m1.npz, cellsense_nmc811_m2.npz, cellsense_nmc811_m3.npz]
   demo: demo.py
   examples: examples/
   card: MODEL_CARD.md

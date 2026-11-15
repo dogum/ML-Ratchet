@@ -399,6 +399,20 @@ vs torch ensemble 5e-6 Ah on the dev readings. Dev-fitted widen factors: capacit
 covers 68% of dev readings), fade 1.52. LFP rows (lifetime, partial at 0.45 Ah) were not touched: the Severson batch
 files are not on this machine and were not fetched this round.
 
+## 15 Nov 2026 — v1.3 exam (n12), run once after the release choice was committed (a86e9f3)
+
+`nmc_exam.py "n8_ocpj.pt|n9_ocpj2.pt|n10_ocpd.pt|n11_ocpd_mix.pt+endrule" ocp`, and the v1.2 reader (n8) re-scored on
+the same run. Capacity error (mAh), v1.3 / v1.2 / dev median: with reference, cut at 1.5 Ah 138 / 169 / 98, 2.5 Ah
+86 / 69 / 98, 3.5 Ah 117 / 115 / 98 (shift at cut 84); without, 105 / 196 / 111, 131 / 164 / 111, 98 / 94 / 111. Full
+curves 0 (end-of-curve rule). All six cut-short readings 112.6 / 135.4 / 104.9: still a loss to the median guess. Fade
+from cut-short curves with a reference 2.35 / 2.47 / 1.94 points: still a loss. Coverage of the 68% bars: capacity 71%
+(v1.2 61%), cut-short 61% (48%), fade 67% (71%). Error by test age 76 / 131 / 150 mAh (v1.2 92 / 162 / 180).
+No row flips. Better: 1.5 Ah without a reference (196 -> 105, now under the median's 111), 2.5 Ah without (164 -> 131),
+1.5 Ah with (169 -> 138), the overall cut-short error and the coverage. Worse: 2.5 Ah with a reference (69 -> 86, still a
+win), 3.5 Ah without (94 -> 98, still a win), 3.5 Ah with (115 -> 117), fade coverage. Records:
+`training/nmc_exam_v1.3.json`, `training/nmc_exam_extra_r2.json`. Demo (`demo_nmc811.py`) reruns; the LFP golden output
+is unchanged.
+
 ## Corrections
 
 - 14 Nov 2026: model.yaml: the partial-discharge loss said 'stopped at 0.6 Ah or below are no better than assuming no fade'. At 0.30 Ah the network beats no-fade (41.8 vs 45.7 mAh), so it now reads 0.45–0.6 Ah (46.5 and 52.0 vs 45.7 mAh); the card's limit says the same. Card: LFP rung 9 is marked released; LFP credits added. No verdict changed.
