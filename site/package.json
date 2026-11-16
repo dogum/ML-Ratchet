@@ -9,7 +9,7 @@
     "build": "npm run labs && astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "test": "node --test --experimental-strip-types tests/parity.test.ts tests/garage.test.ts"
+    "test": "node --test --experimental-strip-types tests/parity.test.ts tests/garage.test.ts tests/model-families.test.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.4",

@@ -1,0 +1,456 @@
+// Content for the "Model families" page (site/src/pages/model-families.astro): which kind of learner fits which
+// problem in the collection, and where a family the collection does not use yet could be tried as a rung.
+// Model facts (name, accent, reads, network, approach, losses, dev gate) are read from model.yaml and ratchet.yaml at
+// build time; backlog questions from docs/backlog.yaml. What lives here is the page's own framing: the families, the fit
+// ratings and their reasons, the lenses, and per-model notes that model.yaml does not carry (traits, weight counts,
+// twin-test findings). Fit ratings are judgement calls: none has been run as a rung. Pure data: no imports, so the
+// browser script and the tests can load it too.
+
+export type Group = 'sig' | 'tab' | 'struct' | 'dist' | 'phys';
+export type FamilyStatus = 'y' | 'p' | 'n';
+
+export const GROUPS: Record<Group, { name: string; v: string }> = {
+  sig: { name: 'Signal readers', v: '--f-sig' },
+  tab: { name: 'Tabular learners', v: '--f-tab' },
+  struct: { name: 'Structure learners', v: '--f-struct' },
+  dist: { name: 'Uncertainty and posteriors', v: '--f-dist' },
+  phys: { name: 'Physics-shaped', v: '--f-phys' },
+};
+
+/** Section 01: learner traits a model has today, and families no model uses. */
+export const TRAITS: { id: string; label: string; g: Group }[] = [
+  { id: 'cnn1d', label: '1-D CNN', g: 'sig' },
+  { id: 'cnn2d', label: '2-D CNN', g: 'sig' },
+  { id: 'mlp', label: 'MLP on features', g: 'tab' },
+  { id: 'ensemble', label: 'Ensemble', g: 'dist' },
+  { id: 'flow', label: 'Flow posterior', g: 'dist' },
+  { id: 'sets', label: 'Set pooling', g: 'struct' },
+  { id: 'anchor', label: 'Physics anchor', g: 'phys' },
+  { id: 'diffsim', label: 'Decides through physics', g: 'phys' },
+];
+export const ABSENT: { id: string; label: string }[] = [
+  { id: 'gbm', label: 'Trees' }, { id: 'attn', label: 'Attention' }, { id: 'ssm', label: 'State-space' },
+  { id: 'gnn', label: 'Graphs' }, { id: 'gp', label: 'GPs' }, { id: 'symbolic', label: 'Formulas' }, { id: 'assim', label: 'Filters' },
+];
+
+export interface ModelNote {
+  /** learner traits (ids from TRAITS) */
+  t: string[];
+  /** numbers stored for inference, and where the count comes from */
+  params?: number; paramsFrom?: string;
+  /** a twin-test finding, quoted or condensed from the model's card, notebook or lessons.md */
+  twin?: string;
+  /** which ladder in ratchet.yaml the proposals here belong to (default: the last ladder with a released rung) */
+  ladder?: number;
+}
+/** Keyed by model id. Weight counts marked "weight files" were counted from the shipped .npz files on 16 Nov 2026. */
+export const MODEL_NOTES: Record<string, ModelNote> = {
+  quakenet: { t: ['cnn1d'], params: 1.44e6, paramsFrom: 'model.yaml' },
+  beatnet: { t: ['cnn1d'], params: 172e3, paramsFrom: 'model.yaml' },
+  bearingnet: { t: ['cnn1d'], params: 438e3, paramsFrom: 'model.yaml', twin: 'Rung 1 read 100% of simulated twins right and 22% of real dev files: real faults were 10–25 dB louder than the textbook prior.' },
+  cellsense: { t: ['cnn1d', 'ensemble'], params: 3455900, paramsFrom: 'weight files: three LFP networks (1.93 M) and four NMC811 networks (1.52 M)', ladder: 0 },
+  chirpnet: { t: ['cnn1d', 'cnn2d', 'flow', 'anchor'], params: 882e3, paramsFrom: 'model.yaml; the finder and coincidence checker only', ladder: 0 },
+  demandcast: { t: ['mlp', 'anchor'], params: 1.196e6, paramsFrom: 'model.yaml: 456k + 372k + 368k' },
+  energynet: { t: ['mlp', 'ensemble', 'anchor'], params: 1021475, paramsFrom: 'weight files: 5 × 204,295', twin: 'The network reads RoadSim’s own dev twins 4.5% low on the FTP and 0.8% low on the highway.' },
+  gridpulse: { t: ['mlp'], params: 0.44e6, paramsFrom: 'model.yaml' },
+  hybridpilot: { t: ['mlp', 'anchor', 'diffsim'], params: 15938, paramsFrom: 'model.yaml' },
+  batterypilot: { t: ['mlp', 'anchor', 'diffsim'], params: 35205, paramsFrom: 'model.yaml', twin: 'Dev twins capture 91–94% of perfect hindsight; real 2019 gives 80%. The simulated price spikes are too predictable.' },
+  plantdetective: { t: ['mlp', 'ensemble', 'anchor'], params: 440797, paramsFrom: 'model.yaml' },
+  starquake: { t: ['cnn1d', 'cnn2d', 'anchor'], params: 412e3, paramsFrom: 'model.yaml' },
+  sundoctor: { t: ['cnn2d'], params: 591e3, paramsFrom: 'model.yaml' },
+  swellcast: { t: ['cnn2d', 'anchor'], params: 296e3, paramsFrom: 'model.yaml' },
+  transitnet: { t: ['cnn1d', 'anchor'], params: 321900, paramsFrom: 'weight files' },
+  tripdetective: { t: ['cnn1d', 'sets', 'anchor'], params: 0.40e6, paramsFrom: 'model.yaml', twin: 'A dev hybrid’s twin stops its engine 0.29 of the time; the real car 0.09.', ladder: 3 },
+};
+
+export interface Family {
+  id: string; name: string; g: Group; st: FamilyStatus;
+  /** 1–3: how easy inference is in numpy, how easy the browser port is, how well it copes with small banks */
+  np: number; web: number; data: number;
+  one: string; physics: string; suits: string; unc: string; extrap: string; risk: string;
+  used: string[]; refs: string[];
+}
+
+export const FAMILIES: Family[] = [
+  { id: 'cnn1d', name: '1-D convolutional network', g: 'sig', st: 'y', np: 3, web: 3, data: 2,
+    one: 'Local patterns that mean the same wherever they occur along one axis, stacked into longer features by depth.',
+    physics: 'Through the axis it reads: fault-aligned log frequency (BearingNet), the voltage axis (CellSense), the folded orbital phase (TransitNet).',
+    suits: 'Fixed-length signals: seismograms, ECG windows, strain, light curves, discharge curves.',
+    unc: 'Output heads: Gaussian or β-NLL, von Mises for angles.',
+    extrap: 'Holds within the signal family; weak for amplitudes, durations or sources outside the bank.',
+    risk: 'The receptive field can miss long-range links. QuakeNet’s 41-minute record holds P, S and surface waves far apart.',
+    used: ['QuakeNet', 'BeatNet', 'BearingNet', 'CellSense', 'ChirpNet', 'TransitNet', 'StarQuake', 'TripDetective'], refs: [] },
+  { id: 'cnn2d', name: '2-D CNN on a physics grid', g: 'sig', st: 'y', np: 3, web: 3, data: 2,
+    one: 'Local 2-D patterns, read the same way anywhere on the grid.',
+    physics: 'The grid is the physics: days × solar time (SunDoctor), frequency × time where swell arrives as a dispersion ridge (SwellCast), autocorrelation in units of Δν (StarQuake).',
+    suits: 'Spectrograms, day × hour maps, comb maps, dynamic spectra.',
+    unc: 'Output heads.',
+    extrap: 'As for 1-D CNNs.',
+    risk: 'Treating every position alike is wrong where an axis has absolute meaning, such as hour of day or frequency. Coordinate channels fix it.',
+    used: ['SunDoctor', 'SwellCast', 'StarQuake', 'ChirpNet'], refs: ['cohen16'] },
+  { id: 'attn', name: 'Attention and transformers', g: 'sig', st: 'n', np: 2, web: 2, data: 1,
+    one: 'Any part of the input can draw on any other part; order comes from position encodings.',
+    physics: 'Tokens can be physical units: seismic phases, heartbeats, hours of a price curve, stations.',
+    suits: 'Long or variable-length records where distant parts must be linked.',
+    unc: 'Output heads.',
+    extrap: 'Weak beyond the training lengths unless the position encoding generalises.',
+    risk: 'Needs more simulations than a CNN (simulations are free here) and can fit simulator quirks. Cost grows with the square of the length.',
+    used: [], refs: ['vaswani17', 'mousavi20'] },
+  { id: 'ssm', name: 'State-space and recurrent models', g: 'sig', st: 'n', np: 2, web: 2, data: 2,
+    one: 'A hidden state updated step by step: long memory at a cost linear in length (LSTM, S4, Mamba).',
+    physics: 'The state can mirror a physical one: stored water, state of charge, ring current.',
+    suits: 'Streaming readings, records of any length, forecasts.',
+    unc: 'Output heads.',
+    extrap: 'Stable within trained regimes; long forecasts can drift.',
+    risk: 'Harder to train. Plain recurrent networks forget; gated or structured state spaces are needed for long records.',
+    used: [], refs: ['hochreiter97', 'gu22', 'gu23', 'kratzert19'] },
+  { id: 'mlp', name: 'MLP on physics features', g: 'tab', st: 'y', np: 3, web: 3, data: 2,
+    one: 'Almost no built-in assumption beyond smoothness. The structure comes from the features.',
+    physics: 'The inputs are physics: road-load work integrals (EnergyNet), building-stock components (DemandCast), implied heat-rate bins (PlantDetective).',
+    suits: 'Tables of 50–350 features.',
+    unc: 'Gaussian NLL heads and ensembles.',
+    extrap: 'A ReLU network continues linearly from the edge of the data, which is right only where the trend is linear.',
+    risk: 'Capacity is rarely the limit here. EnergyNet’s wider networks (0.73 M weights each) lost 0.019 of skill; three times the data gained 0.019.',
+    used: ['EnergyNet', 'DemandCast', 'GridPulse', 'PlantDetective', 'HybridPilot', 'BatteryPilot'], refs: [] },
+  { id: 'gbm', name: 'Gradient-boosted trees', g: 'tab', st: 'n', np: 3, web: 3, data: 3,
+    one: 'Hundreds of shallow trees summed: thresholds on one input at a time, which handle step changes, counts and useless columns well.',
+    physics: 'The same feature tables as the MLPs. Monotone constraints can encode signs the physics knows: more grade, more energy.',
+    suits: 'Tables with mixed scales, counts, missing values and thresholds.',
+    unc: 'Quantile objectives, distributional boosting (NGBoost), ensembles or a conformal wrapper.',
+    extrap: 'Constant beyond the last split, so flat outside the bank. Predicting a correction to physics makes that mild.',
+    risk: 'The output is piecewise constant: wrong for smooth control signals and for anything that needs derivatives.',
+    used: [], refs: ['friedman01', 'chen16', 'ke17', 'prok18', 'grinsztajn22', 'duan20', 'lundberg20'] },
+  { id: 'gp', name: 'Gaussian processes', g: 'tab', st: 'n', np: 2, web: 2, data: 3,
+    one: 'Smooth functions whose correlations are set by a kernel; nearby inputs give similar outputs.',
+    physics: 'The mean function can be the physics estimate. Kernels can encode periodicity, length scales and known noise such as granulation or seasonal loading.',
+    suits: 'Small banks, few inputs, smooth targets, discrepancy terms.',
+    unc: 'Native. The bars widen away from the data.',
+    extrap: 'Falls back to the mean function away from data, with growing error bars.',
+    risk: 'Cost grows as n³; past a few thousand points it needs sparse or inducing-point methods. Weak in high dimensions.',
+    used: [], refs: ['rasmussen06', 'foreman17', 'kennedy01'] },
+  { id: 'tabfm', name: 'Tabular foundation models', g: 'tab', st: 'n', np: 1, web: 1, data: 3,
+    one: 'A transformer pretrained on millions of synthetic datasets from a generic prior. It predicts by reading a context table, with no training step (TabPFN and its successors).',
+    physics: 'None by default. It learns only from synthetic data, as this collection does, but from a generic prior instead of a domain simulator.',
+    suits: 'Small tables, up to roughly ten thousand rows.',
+    unc: 'A native predictive distribution.',
+    extrap: 'Bounded by its prior over functions.',
+    risk: 'Its context would have to be simulated rows, never real labels. It needs PyTorch and large weights, which breaks the numpy-only inference rule: usable as a baseline or a lens, not as a release.',
+    used: [], refs: ['hollmann23', 'hollmann25'] },
+  { id: 'sets', name: 'Sets: DeepSets and Set Transformer', g: 'struct', st: 'p', np: 3, web: 3, data: 2,
+    one: 'The answer does not depend on the order of the items.',
+    physics: 'Items are physical units: trips of one car, windows of one plant, stations of one quake, photometry points of one asteroid.',
+    suits: 'A variable number of interchangeable items.',
+    unc: 'Output heads; pooling can be precision-weighted.',
+    extrap: 'Handles more items than seen in training if the pooling is mean-like.',
+    risk: 'Sum or mean pooling treats every item alike. Attention pooling learns which items carry information.',
+    used: ['TripDetective (pooling with normal equations)'], refs: ['zaheer17', 'lee19', 'komiske19'] },
+  { id: 'gnn', name: 'Graph neural networks', g: 'struct', st: 'n', np: 2, web: 2, data: 2,
+    one: 'Messages pass along edges; one local rule applies everywhere on the graph.',
+    physics: 'Edges are physical links: transmission lines, wakes between turbines, pairs of stations.',
+    suits: 'Networks, meshes, multi-sensor arrays.',
+    unc: 'Output heads.',
+    extrap: 'Carries over to graphs of new sizes if the local rule is right.',
+    risk: 'Deep stacks blur node features together. The graph itself must be right.',
+    used: [], refs: ['battaglia18', 'vandenende20', 'lam23'] },
+  { id: 'operator', name: 'Neural operators', g: 'struct', st: 'n', np: 2, web: 2, data: 1,
+    one: 'Learns a map between functions, independent of grid resolution (FNO, DeepONet).',
+    physics: 'A fast stand-in for a PDE solver: the forward direction, the mirror image of what this collection does.',
+    suits: 'Fields on grids: tsunami propagation, river routing, wave fields.',
+    unc: 'Ensembles or output heads.',
+    extrap: 'Within the family of PDE solutions it was trained on.',
+    risk: 'A surrogate inherits the simulator’s errors. Its best use here may be a faster simulator, and so a bigger bank.',
+    used: [], refs: ['li21', 'lu21'] },
+  { id: 'flow', name: 'Normalizing flows (posterior estimation)', g: 'dist', st: 'p', np: 2, web: 2, data: 1,
+    one: 'An invertible map from a simple distribution to the posterior, conditioned on an encoding of the input.',
+    physics: 'The prior over physical parameters is the simulator’s own prior.',
+    suits: 'Answers that are degenerate or have several modes.',
+    unc: 'A full posterior.',
+    extrap: 'Can be confidently wrong outside the prior; simulation-based calibration checks it.',
+    risk: 'Needs a good encoder and calibration checks. Heavier than a Gaussian head.',
+    used: ['ChirpNet (8-layer RealNVP)'], refs: ['dinh17', 'papamakarios21', 'talts18', 'dax21'] },
+  { id: 'conformal', name: 'Conformal prediction', g: 'dist', st: 'n', np: 3, web: 3, data: 2,
+    one: 'A wrapper that turns any model’s errors into intervals with guaranteed coverage, when calibration and test data are interchangeable.',
+    physics: 'None; it sits on top of any learner.',
+    suits: 'Any output. The Mondrian version keeps one quantile per stratum, such as observing length.',
+    unc: 'Guaranteed coverage on average, under that interchangeability.',
+    extrap: 'Under a sim-to-real shift the guarantee becomes a calibrated widening, not a proof.',
+    risk: 'Here the calibration set is dev: 16 to 400 units, so the quantiles are coarse.',
+    used: [], refs: ['angelopoulos21', 'romano19'] },
+  { id: 'ensemble', name: 'Ensembles and heteroscedastic heads', g: 'dist', st: 'y', np: 3, web: 3, data: 2,
+    one: 'Several independently trained members. Their spread adds the model’s own uncertainty to the predicted noise.',
+    physics: 'None directly.',
+    suits: 'Any learner.',
+    unc: 'Spread plus predicted variance.',
+    extrap: 'Members disagree away from the data, which is a signal in itself.',
+    risk: 'Cost × members. EnergyNet v2-r6 (5 seeds) gained +0.004 and was rejected, short of the margin.',
+    used: ['EnergyNet (5)', 'PlantDetective (3)', 'CellSense NMC811 (4)'], refs: ['lakshminarayanan17', 'seitzer22'] },
+  { id: 'diffusion', name: 'Diffusion and score models', g: 'dist', st: 'n', np: 1, web: 1, data: 1,
+    one: 'Learn to remove noise step by step; sample by running the noise process backwards.',
+    physics: 'Can sample posteriors conditioned on data, or emulate a simulator’s outputs.',
+    suits: 'High-dimensional posteriors and generative noise models.',
+    unc: 'Samples from the posterior.',
+    extrap: 'Weak outside the training distribution.',
+    risk: 'Many network passes per sample: slow in numpy and in a browser. A noise generator trained on real recordings would move a model along the real-data dial on the Mental models page.',
+    used: [], refs: ['ho20'] },
+  { id: 'anchor', name: 'Classical estimate + learned correction', g: 'phys', st: 'y', np: 3, web: 3, data: 3,
+    one: 'The network learns only what a classical or physics estimate misses.',
+    physics: 'The classical estimate is the backbone: √depth, a road-load energy, a counted statistic, a day-ahead plan.',
+    suits: 'Any reading with a model-free estimate.',
+    unc: 'The correction’s head.',
+    extrap: 'Degrades to the classical estimate rather than to nonsense.',
+    risk: 'If the classical estimate is poor, the correction is as large as the answer and buys nothing.',
+    used: ['TransitNet', 'EnergyNet', 'DemandCast', 'PlantDetective', 'TripDetective', 'StarQuake', 'ChirpNet', 'SwellCast', 'BatteryPilot', 'HybridPilot'], refs: ['psichogios92'] },
+  { id: 'symbolic', name: 'Symbolic regression and sparse libraries', g: 'phys', st: 'n', np: 3, web: 3, data: 3,
+    one: 'Short formulas, found by search over operators (PySR) or by a sparse fit over a library of terms (SINDy).',
+    physics: 'The output is a law that can be read, checked and written into the simulator.',
+    suits: 'A few inputs, the gap list, discrepancy terms, compact baselines.',
+    unc: 'Bootstrap over the fit, or none.',
+    extrap: 'Strong when the form is right; risky when the form is only close.',
+    risk: 'The search is expensive and can find spurious forms. A formula still has to pass the frozen set and the dev gate.',
+    used: [], refs: ['brunton16', 'cranmer23', 'udrescu20'] },
+  { id: 'diffsim', name: 'Learning through the physics', g: 'phys', st: 'y', np: 3, web: 3, data: 2,
+    one: 'Train for the outcome of the decision, with the physics executor inside the loss.',
+    physics: 'The executor: battery limits, losses and wear; the powertrain model.',
+    suits: 'Controllers and decisions.',
+    unc: 'Bootstrap over outcomes.',
+    extrap: 'As good as the executor.',
+    risk: 'A controller can be graded only inside the simulator. RoadSim burns about 20% less fuel than real hybrids, more than the 1–3% between strategies.',
+    used: ['BatteryPilot', 'HybridPilot'], refs: ['donti17', 'elmachtoub22'] },
+  { id: 'assim', name: 'Filters and data assimilation', g: 'phys', st: 'n', np: 3, web: 3, data: 3,
+    one: 'A physics model carries a state forward and each new measurement corrects it (Kalman, ensemble and particle filters).',
+    physics: 'All of it: the state equation and the measurement model.',
+    suits: 'Tracking one asset over time: a cell over cycles, a car over trips, a grid through an event.',
+    unc: 'Native: the state covariance.',
+    extrap: 'As good as the model.',
+    risk: 'A different product: tracking, not one cold read. It needs a state-space form and noise models.',
+    used: [], refs: ['kalman60', 'evensen94'] },
+  { id: 'experts', name: 'Gates, stacking and mixtures of experts', g: 'phys', st: 'p', np: 3, web: 3, data: 2,
+    one: 'Different models for different regimes, chosen or weighted by a small gate.',
+    physics: 'The regimes are physical: battery duration, observing length, rig, powertrain.',
+    suits: 'Problems where a classical method and a network fail in different places.',
+    unc: 'A mixture of the experts’ distributions.',
+    extrap: 'Bounded by the experts.',
+    risk: 'The gate must be trained on simulations or fixed in advance. Choosing the expert on dev would turn dev into training data.',
+    used: ['StarQuake (network and SYD blended by observing length)'], refs: ['jacobs91', 'wolpert92'] },
+];
+
+/** Section 06: the opportunity map. s: 3 strong, 2 possible, 1 long shot. inr: already partly in the model. */
+export const COLS = ['gbm', 'ssm', 'sets', 'gnn', 'flow', 'conformal', 'gp', 'symbolic', 'assim', 'experts'] as const;
+export const COL_LABEL: Record<string, string> = { gbm: 'Trees', ssm: 'Sequence', sets: 'Sets', gnn: 'Graphs', flow: 'Flows', conformal: 'Conformal', gp: 'GPs', symbolic: 'Formulas', assim: 'Filters', experts: 'Experts' };
+export interface Cell { m: string; f: string; s: 1 | 2 | 3; inr?: boolean; why: string; gap: string; judge: string; change: string }
+export const CELLS: Cell[] = [
+  // QuakeNet
+  { m: 'quakenet', f: 'gnn', s: 3, why: 'Multi-station reading is on QuakeNet’s own next list: it would turn a one-station locator into a real one. A graph with stations as nodes and their separations on the edges is the standard way to pool several records.', gap: 'Depth from one station: shallow quakes read too deep (median ratio 3.7).', judge: 'A new frozen set of simulated multi-station events; the dev gate on dev events recorded at several stations.', change: 'Graph network over the stations that recorded each event (nodes: per-station CNN embeddings; edges: inter-station distance and azimuth), reading Mw, location and depth jointly' },
+  { m: 'quakenet', f: 'ssm', s: 2, why: 'The twin test put the shallow-depth problem in the surface waves after S. Attention or a long-memory sequence model can link the P, S and surface-wave segments of the 41-minute record directly, as EQTransformer does for phase picking.', gap: 'Shallow quakes (≤ 70 km): 33 km median error against 21 km for always guessing 31 km.', judge: 'Same frozen set (val8) and dev gate; the shallow stratum reported on its own.', change: 'Attention layers over phase-aligned segments of the 41-minute record on top of the existing CNN stem' },
+  { m: 'quakenet', f: 'flow', s: 2, why: 'Depth bars cover 51% of a nominal 68%. Depth can be ambiguous between a shallow and a deeper solution; a flow head can show two modes where one wide Gaussian hides them.', gap: 'Depth 68% bars cover 51% on the exam.', judge: 'Frozen-set skill plus coverage on simulations; dev gate unchanged.', change: 'Conditional normalizing-flow head on log depth and distance in place of the β-NLL Gaussian' },
+  { m: 'quakenet', f: 'conformal', s: 2, why: 'A conformal widening per output, fitted on dev, would address the depth coverage directly. With 74 dev records the quantile is coarse, so strata need enough records each.', gap: 'Depth 68% bars cover 51%.', judge: 'Leave-one-event-out coverage on dev, as EnergyNet’s rung v2-r12 did.', change: 'Split-conformal widening per output on dev residuals (leave-one-event-out), replacing the single widen-only factor' },
+  // BeatNet
+  { m: 'beatnet', f: 'gbm', s: 2, why: 'The classical baseline is a linear discriminant on de Chazal features fitted on simulations (macro-F1 0.447). A boosted forest on the same simulated features is a sharper classical arm, and could also run as a rung.', gap: 'Fusion beats found 3 of 388; left bundle-branch-block beats read as V.', judge: 'Dev mean S/V F1 may not drop by more than 0.02.', change: 'Gradient-boosted trees on de Chazal-style RR and morphology features computed on the simulated beats' },
+  { m: 'beatnet', f: 'ssm', s: 1, why: 'Atrial fibrillation lives in the rhythm over many beats. A recurrent model over beat embeddings would carry it, but AF AUC is already 0.971, so the headroom is small.', gap: 'AF AUC 0.971 against 0.844 for an RR rule: little left to gain.', judge: 'Dev gate unchanged; AF reported on its own.', change: 'Recurrent layer over a sequence of beat embeddings for the AF probability' },
+  // BearingNet
+  { m: 'bearingnet', f: 'experts', s: 3, why: 'BearingNet’s own next list asks for "a hybrid with the envelope method — the two fail on different rigs". The network wins at the CWRU far sensor and on Paderborn; envelope analysis wins at the near sensor and base plate. A gate trained on simulations of each rig type can choose between them.', gap: 'CWRU base plate 0.50 against 0.67 for envelope analysis; near sensor 0.39 against 0.49.', judge: 'Dev balanced accuracy may fall by no more than 0.03, on dev files drawn from several rigs (lessons.md: "a small dev set can be too kind").', change: 'A gate, trained on simulations, that weights the CNN and classical envelope analysis by sensor position and estimated SNR' },
+  { m: 'bearingnet', f: 'gbm', s: 2, why: 'Fault-order amplitudes, kurtosis and band energies form a compact table. A forest on simulated features is a readable second opinion, and TreeSHAP on real units and their twins would show which fault band the simulator gets wrong.', gap: 'Ball faults found only 19% of the time on CWRU.', judge: 'Same frozen set; dev gate unchanged.', change: 'Gradient-boosted trees on envelope-spectrum features at the computed fault orders' },
+  // CellSense
+  { m: 'cellsense', f: 'assim', s: 3, why: 'The real cells (Severson et al.) were cycled to end of life, so a cell is a series of curves, not one. A Kalman or particle filter on the degradation modes, fed by CellSense’s per-curve readings, would track health and forecast life the way a battery system does in service.', gap: 'Lifetime at cycle 100: 22.4% error against 13–15% for Severson’s models trained on 41 real cells.', judge: 'A tracking rung on simulated ageing trajectories; lifetime error on the calibration cells within +2 points.', change: 'Particle filter over lithium, graphite and cathode loss across successive cycles, using the network’s per-curve readings as measurements and the ageing model as the state equation' },
+  { m: 'cellsense', f: 'gp', s: 2, why: 'Lifetime from a few cells is a small, smooth problem. A GP over simulated ageing trajectories, with the physics trajectory as its mean, gives a lifetime with bars that widen for unusual cells.', gap: 'Last quarter of life: worn cells read about 6% too healthy (36% life error).', judge: 'Lifetime error within +2 points on the calibration cells.', change: 'Gaussian process over simulated capacity-fade trajectories with the ageing model as the mean function' },
+  { m: 'cellsense', f: 'symbolic', s: 2, why: 'Severson’s simplest model is a one-feature log-linear law in the variance of ΔQ(V). A symbolic search on simulated cells could find the law the simulator implies, readable and comparable with theirs.', gap: 'Severson’s models still win on lifetime.', judge: 'Same lifetime gate.', change: 'Symbolic regression for cycle life from ΔQ(V) summary statistics on the simulated cells' },
+  { m: 'cellsense', f: 'gbm', s: 1, why: 'Lifetime from summary features of the curve is tabular. A forest is an easy rung but goes flat for cells that age beyond the bank, and the last quarter of life is already the weak spot.', gap: 'Worn cells read too healthy.', judge: 'Same lifetime gate.', change: 'Gradient-boosted trees on curve summary features predicting log cycle life' },
+  // ChirpNet
+  { m: 'chirpnet', f: 'flow', s: 3, inr: true, why: 'Already in: an 8-layer RealNVP returns posterior samples, and every LIGO median falls inside ChirpNet’s 90% range. The open item is a range from a likelihood over spin for the neutron-star matched filter (its next list).', gap: 'GW170817: the matched-filter 68% range is one-sided.', judge: 'Coverage on simulated injections; no real-event gate, by design.', change: 'Extend the posterior flow to the neutron-star branch, replacing the widening factor on the matched-filter range' },
+  { m: 'chirpnet', f: 'ssm', s: 1, why: 'A binary neutron star sweeps through the band for about a minute. A long-memory sequence model over the strain could follow it where a fixed time-frequency image crops, but the matched filter already fixes the value.', gap: 'GW170817: the network alone reads the chirp mass 5% low.', judge: 'Simulated stress tests, as for every ChirpNet rung.', change: 'State-space encoder over the full in-band neutron-star chirp' },
+  // DemandCast
+  { m: 'demandcast', f: 'gbm', s: 3, why: 'Three MLPs read 156 to 329 tabular inputs and predict a log ratio to physics. Boosted trees are a standard tool for load forecasting, and the anchored target keeps flat extrapolation mild. Bank coverage of extreme cold needs checking first.', gap: 'Real forecast weather, 6 grids: 2.92% against the grids’ own 2.70%; ISO-NE’s January 2025 cold snap 4.78% against 1.27%.', judge: 'Mean relative change of dev errors ≤ +2%; extreme-temperature days reported on their own.', change: 'Gradient-boosted trees (distributional: mean and log σ) on the same 329 inputs predicting log(demand / building-stock physics)' },
+  { m: 'demandcast', f: 'conformal', s: 3, why: 'DemandCast’s own next list names "a dev-fitted conformal widening". Its bands hold 64% of truths at a nominal 68%. The dev set, 30 seeded days per grid from two years, is large enough for per-grid quantiles.', gap: '64% inside the 68% band.', judge: 'Coverage on the dev days, each year judged by the other year’s fit.', change: 'Per-grid split-conformal widening of the demand, wind and solar σ on dev residuals' },
+  { m: 'demandcast', f: 'ssm', s: 2, why: 'The past 168 hours are flattened into features. A sequence encoder over the history would read ramps and holiday structure directly, and could output the 24-hour trajectory with correlated errors.', gap: 'Loses to ERCOT, ISO-NE and BPA’s own forecasts with real forecast weather.', judge: 'Same dev gate.', change: 'Sequence encoder over the past 168 h of demand, wind and solar, feeding the existing heads' },
+  { m: 'demandcast', f: 'gnn', s: 1, why: 'The eight grids share weather systems. A graph across grids could pass information between neighbours, but each grid is forecast from its own data, and leakage between grids across the exam years would need care.', gap: 'Per-grid losses.', judge: 'Same dev gate.', change: 'Message passing between neighbouring grids’ weather encodings' },
+  // EnergyNet
+  { m: 'energynet', f: 'gbm', s: 3, why: 'A 151-feature table and a correction target, log(E / E_phys). Capacity is not the limit (wider networks lost 0.019), so a different built-in assumption is the next thing to test. A forest trains in minutes on one CPU core; the ensemble needed a GPU.', gap: 'EPA petrol highway 6.8% against 5.0% for a regression fitted on dev; the network reads its own dev twins 4.5% low on the FTP.', judge: 'val2 skill above the incumbent’s by more than 0.01, and D2 may not rise by more than 0.01.', change: 'Gradient-boosted trees (distributional: mean and log σ) on the same 151 features and the same target log(E / E_phys); numpy tree walker for inference' },
+  { m: 'energynet', f: 'ssm', s: 2, why: 'The 1 Hz route is reduced to work integrals. The FTP twin misread (−4.5% on the network’s own twins) is a learner gap on stop-and-go detail; a sequence encoder over the speed trace could see transients the integrals average away.', gap: 'Twins read 4.5% low on the FTP, 0.8% on the highway.', judge: 'Same frozen set and D2 gate; FTP twins reported on their own.', change: 'A 1-D sequence encoder over the 1 Hz speed and grade trace, concatenated with the work integrals' },
+  { m: 'energynet', f: 'conformal', s: 2, why: 'Rung v2-r12 already fits per-group widening on dev with leave-one-car-out checks. Conformal quantiles per group would drop the Gaussian assumption where trip errors have heavy tails.', gap: 'Mean |held-out coverage − 68%| = 0.064 after v2-r12.', judge: 'Leave-one-car-out coverage on the 16 dev VED cars.', change: 'Per-architecture conformal quantiles on dev residuals, leave-one-car-out' },
+  // GridPulse
+  { m: 'gridpulse', f: 'assim', s: 3, why: 'A frequency event is a state-estimation problem: the swing equation with inertia and lost power as unknown states. A Kalman filter on GridSim’s equation updates both every second, and its nadir forecast sharpens as data arrive.', gap: 'By 10 s the nadir forecast (37 mHz) loses to the lowest value so far (26 mHz).', judge: 'Mean dev error relative to the incumbent may not rise by more than 10%.', change: 'Extended Kalman filter on the swing equation (states: frequency, RoCoF, inertia, MW lost, governor response) run over the first N seconds' },
+  { m: 'gridpulse', f: 'symbolic', s: 2, why: 'The baseline that wins is a one-term law, 7.0 s × demand. A symbolic search on simulated events could find the law GridSim implies from the trace and the context, and show whether the trace adds anything readable.', gap: 'GB inertia at 60 s: 16.4% against 15.1% for the rule; from the trace alone 20.3%.', judge: 'Same dev gate.', change: 'Symbolic regression for inertia from demand, RoCoF and frequency-drop features on simulated events' },
+  { m: 'gridpulse', f: 'gbm', s: 2, why: 'A forest on the context inputs alone is the strong dumb baseline lessons.md calls for, and a forest on trace plus context is a cheap rung. The difference between the two measures how much skill comes from the trace.', gap: 'The skill comes from the demand input.', judge: 'Same dev gate; both forests published.', change: 'Two gradient-boosted forests on simulated events: context inputs only, and trace features plus context' },
+  { m: 'gridpulse', f: 'ssm', s: 2, why: 'The forecasts are made from the first N seconds as they arrive. A recurrent model updates its nadir and 60 s forecasts each second, instead of one network per N.', gap: 'The 60 s forecast (59 mHz) loses to holding the 10 s value (39 mHz).', judge: 'Same dev gate.', change: 'A recurrent forecaster updated every second from the trip' },
+  // HybridPilot
+  { m: 'hybridpilot', f: 'experts', s: 2, why: 'Hand-set rules already split the fleet: buses and mild hybrids use a fixed s, plug-ins a floor. Mild hybrids lose to constant-s ECMS. A gate across architectures, trained on simulations, would make that split learned and judged.', gap: 'Mild hybrids: constant-s ECMS 98.57% against 98.36%; plug-ins −0.91 points against adaptive ECMS.', judge: 'Dev % of DP ≥ incumbent − 0.2 pt; charge-holding ≥ incumbent − 3 pt.', change: 'Mixture of per-architecture s experts with a gate on the vehicle parameters, trained on simulated trips' },
+  { m: 'hybridpilot', f: 'ssm', s: 2, why: 'Charge holding depends on what comes later in the trip. A recurrent policy over trip history and the navigation preview carries that memory; the terminal term using the known trip length on its next list is untried.', gap: 'Holds charge on 93% of trips against 97% for adaptive ECMS.', judge: 'Same dev gate.', change: 'Recurrent policy for s over trip history and the navigation preview' },
+  { m: 'hybridpilot', f: 'gbm', s: 1, why: 'A forest for s would be readable, but a piecewise-constant s jumps at thresholds and can make the engine chatter. Only with smoothing.', gap: 'No clear margin over MPC: 98.69% against 98.67%.', judge: 'Same dev gate, plus an engine-start count.', change: 'Gradient-boosted trees for s with output smoothing' },
+  // BatteryPilot
+  { m: 'batterypilot', f: 'experts', s: 3, why: 'Its own next list asks for "a 1 h specialist": every version loses with 1-hour batteries and in CAISO, while v1.3 wins with 4-hour ones. A gate on duration and market, fixed before the ladder, is a mixture of experts.', gap: '1 h batteries, ERCOT: 54.8% of perfect hindsight against 62.9% for the rolling day-ahead optimiser.', judge: 'Dev capture may not fall more than 0.01, gated per dev year (roadmap: "gate each dev year separately").', change: 'Duration-specific policy experts (1 h, 2 h, 4 h) behind a fixed gate on battery duration and market' },
+  { m: 'batterypilot', f: 'ssm', s: 2, why: 'The input is a 36-hour price curve and 24 hours of history, flattened. A sequence model over hourly tokens could read spike shapes directly, but the twins show the simulated spikes are the bigger gap.', gap: 'Dev twins capture 91–94%, real 2019 80%.', judge: 'Same gate, after the simulator fix the twin test points to.', change: 'Attention over hourly price tokens feeding the value-curve head' },
+  // PlantDetective
+  { m: 'plantdetective', f: 'gbm', s: 3, why: 'A 171-feature table with counts, thresholds and a technology class is the shape trees handle best. Starts, minimum up and down times are step-like statistics that MLPs smooth over.', gap: 'Combined-cycle heat rate 23.5% against 7.0% for a technology default; all units 11.6% against 10.3%.', judge: 'Dev skill may not fall by more than 0.005.', change: 'Gradient-boosted trees (classification + distributional regression) on the same 171 window features' },
+  { m: 'plantdetective', f: 'sets', s: 3, why: 'Several years are read window by window and pooled by summed log-probabilities and precision-weighted means, a fixed rule. A Set Transformer over windows learns which windows are informative (a cold start, a ramp), as TripDetective already pools trips.', gap: 'Minimum stable load: 10.1 pt from one month, 4.7 pt with all years pooled. How windows are pooled carries a lot.', judge: 'Same dev gate; one-month and pooled rows reported.', change: 'Attention pooling over a unit’s window embeddings in place of summed log-probabilities' },
+  { m: 'plantdetective', f: 'conformal', s: 2, why: 'Its next list: "widen the run-statistic error bars honestly". The dev truth covers 2 years and the exam truth 8, so the widening needs a truth that spans more than the window.', gap: 'Run-statistic bars too narrow.', judge: 'Coverage on dev windows scored against a two-year truth.', change: 'Conformal widening of run-statistic bars per window length' },
+  // StarQuake
+  { m: 'starquake', f: 'conformal', s: 3, why: 'Its own next list: "per-length σ widening, fitted on dev". One pooled factor fails across observing lengths. Mondrian conformal is exactly per-stratum widening.', gap: 'Bars cover 54–58% on 27-day curves.', judge: 'Coverage per length stratum on dev.', change: 'Mondrian (per-observing-length) conformal widening of νmax and Δν' },
+  { m: 'starquake', f: 'flow', s: 2, why: 'From 27 days, Δν is often off by one comb tooth: an answer with several modes reported as one Gaussian. A flow would put probability on each tooth.', gap: 'Δν from 27 days within 2% for only 23% of stars.', judge: 'Mean dev error ratio ≤ 1.10.', change: 'Flow head on (νmax, Δν) conditioned on both CNN branches' },
+  { m: 'starquake', f: 'gp', s: 2, why: 'Granulation is a stochastic background with a known power spectrum. A celerite-style GP background fit is a stronger classical arm to blend with.', gap: '4-year curves: classical 0.89% against 1.01% on νmax.', judge: 'Same dev gate.', change: 'GP (celerite) granulation background inside the classical reading that is blended with the network' },
+  { m: 'starquake', f: 'experts', s: 2, inr: true, why: 'Already partly in: v1.1 blends the network and a SYD-style reading by length-dependent weights fitted on simulations. A gate on the comb map’s confidence is the next step.', gap: 'The classical pipeline still wins at 4 years.', judge: 'Same dev gate.', change: 'Gate on comb-map confidence and length, trained on simulations, in place of the fixed length weights' },
+  // SunDoctor
+  { m: 'sundoctor', f: 'ssm', s: 2, why: 'Its next list asks for longer windows plus rain data for soiling. Soiling builds over weeks and resets at rain, which suits a state carried across days.', gap: 'Small tracker losses: AUC 0.47.', judge: 'Frozen set only: SunDoctor has no real dev set.', change: 'A recurrent state across days carrying soiling, fed by daily CNN embeddings and rain' },
+  { m: 'sundoctor', f: 'gbm', s: 1, why: 'Daily loss shares from daily summary features would give a readable second opinion, but the 2-D grid carries the shading geometry.', gap: 'Power-only mode over-reports tracker losses (4.7% against 1.1%).', judge: 'Frozen set only.', change: 'Gradient-boosted trees on daily residual features' },
+  // SwellCast
+  { m: 'swellcast', f: 'gnn', s: 2, why: 'Two-buoy triangulation is on its next list. Buoys as nodes, with great-circle geometry on the edges, would read storm position jointly where one buoy gives only a distance.', gap: 'Distance 29% against 28% for the dev median guess.', judge: 'A frozen set of simulated multi-buoy storms; dev errors no more than 5% worse.', change: 'Graph network over buoys that saw the same swell event' },
+  { m: 'swellcast', f: 'flow', s: 2, why: 'Distance and storm time trade off along the dispersion ridge. A joint posterior shows that ridge; separate Gaussians miss it.', gap: 'Distance bars cover 55% at a nominal 68%.', judge: 'Coverage on simulations plus the dev gate.', change: 'Flow head on (distance, storm time, direction)' },
+  { m: 'swellcast', f: 'conformal', s: 2, why: 'v1.1 tightened the bars, and they then covered 55%. A conformal widening on dev residuals is a direct fix.', gap: '55% coverage.', judge: 'Leave-one-storm-out coverage on dev.', change: 'Split-conformal widening per output on dev storms' },
+  // TransitNet
+  { m: 'transitnet', f: 'flow', s: 2, why: 'Impact parameter b and a/R* are strongly degenerate in a transit shape. A joint flow posterior shows the curved trade-off that separate error bars hide.', gap: 'Least squares wins on a/R* at high SNR (3.7% against 4.2%).', judge: 'Dev log-loss ≤ +0.05 and dev k error ≤ +1 point.', change: 'Flow head on (Rp/R*, b, a/R*) conditioned on the multi-view embedding' },
+  { m: 'transitnet', f: 'gbm', s: 2, why: 'Vetting from scalar diagnostics (odd/even depth difference, secondary depth, centroid shift) is how Kepler’s Robovetter worked, as hand-set rules. A forest on simulated diagnostics is the learned version and a sharp classical arm.', gap: '66% of follow-up false positives are also called planet.', judge: 'Same dev gate.', change: 'Gradient-boosted trees on vetting diagnostics computed from the simulated light curves' },
+  // TripDetective
+  { m: 'tripdetective', f: 'sets', s: 2, inr: true, why: 'Already partly in: trip embeddings are pooled per car with the normal equations. Attention pooling would weight informative trips (hills, hard accelerations) above flat cruising.', gap: 'Per car, mass 127 kg against 116 kg for v1.0; HEVs 181 kg against 93 kg.', judge: 'Mean of 4 dev error ratios ≤ 1.05.', change: 'Attention pooling over trip embeddings before the per-car physics head' },
+  { m: 'tripdetective', f: 'assim', s: 2, why: 'A car’s mass and drag are fixed while trips arrive one by one. Recursive least squares or a Kalman filter on the road-load equation is the classic online estimator, and it suits a car in service.', gap: 'Mass 1σ coverage fell to 56%.', judge: 'Same dev gate, on cars with many trips.', change: 'Recursive least-squares (Kalman) update of road-load coefficients across a car’s trips' },
+  { m: 'tripdetective', f: 'gbm', s: 2, why: 'Powertrain type per car ties a simple rule at 99.4%. A shallow forest on simulated per-trip features is the formal version of that rule, and its splits can be read.', gap: 'Per trip, the rule is better (96.7% against 94.2%).', judge: 'VED-type accuracy on the 16 dev cars.', change: 'Shallow gradient-boosted classifier for powertrain architecture from per-trip features' },
+];
+
+export interface Lens { tag: string; name: string; one: string; see: string; blind: string; ask: string; evi: string }
+export const LENSES: Lens[] = [
+  { tag: 'Inductive bias', name: 'The architecture is a second simulator',
+    one: 'Every learner assumes something about the world before it sees data. The useful assumption is the one the physics makes.',
+    see: 'Why BearingNet’s fault-aligned log-frequency axis, StarQuake’s comb map and TripDetective’s per-car pooling work: each builds a symmetry of the physics into the learner.',
+    blind: 'A wrong symmetry is an error the frozen set cannot see, because the simulator shares it.',
+    ask: 'What stays the same if the input is shifted, reordered, rescaled or relabelled? Does the learner know that?',
+    evi: 'TripDetective solves the road-load normal equations inside the network: the physics regression is part of the architecture.' },
+  { tag: 'Shift', name: 'Where does it extrapolate?',
+    one: 'Each family fails its own way outside the bank: trees go flat, ReLU networks go straight, GPs return to the mean.',
+    see: 'Why the physics anchor matters most for trees and GPs, and why a real case outside the bank needs a learner whose failure is mild.',
+    blind: 'Inside the bank on every input separately is not inside the bank jointly.',
+    ask: 'For each exam row, is the real input inside the simulated bank’s support?',
+    evi: 'ChirpNet misses GW190521, heavier than anything in its training set. DemandCast in ISO-NE’s January 2025 cold snap: 4.78% against the grid’s own 1.27%.' },
+  { tag: 'No labels needed', name: 'Disagreement is a gap detector',
+    one: 'Two different learners trained on the same simulations agree on simulated inputs. Where they disagree on a real one, the simulator probably never covered it.',
+    see: 'A label-free check on every real reading that stays inside the rules: it uses real inputs, never real answers.',
+    blind: 'Agreement is not correctness. Both learners can share the simulator’s error.',
+    ask: 'Which real dev units make a CNN and a tree model disagree most, and are they the units the twin test flags?',
+    evi: 'No model does this yet. EnergyNet’s ensemble spread is a weak version: one family, different seeds.' },
+  { tag: 'Synthetic priors', name: 'A prior can be generic or physical',
+    one: 'TabPFN-style models learn from millions of synthetic datasets drawn from a generic prior. Each model here learns from one domain simulator. Same move, different prior.',
+    see: 'A spectrum: a generic prior over functions, then structural priors such as causal graphs, then a domain simulator such as ak135 or RoadSim.',
+    blind: 'A generic prior knows nothing about surface waves. A domain prior knows only what its author wrote down.',
+    ask: 'How much of this simulator is physics, and how much is a generic prior in disguise, such as wide uniform draws?',
+    evi: 'Domain randomisation, on the Mental models page, is the generic end inside one simulator: SwellCast and StarQuake were released on mixed banks.' },
+  { tag: 'Causal', name: 'The simulator is a causal model',
+    one: 'Every simulated case comes from setting known causes, so counterfactuals cost nothing.',
+    see: 'The question "what if this car weighed 200 kg more?" has a labelled answer, and a learner can be checked against it: the right sign and the right size.',
+    blind: 'The causal graph is only the one the author wrote. Missing arrows are invisible.',
+    ask: 'When one cause is nudged in the simulator, does the learner’s output move the way the physics says it should?',
+    evi: 'TripDetective’s dev mass bias fell from +106 kg to −9 kg by matching the fleet’s mass mix: a change in how causes are drawn, not in the physics.' },
+  { tag: 'Budget', name: 'It must fit in numpy and a browser tab',
+    one: 'Inference is numpy/scipy only and every model runs live on this site. That rules some families in and others out.',
+    see: 'Why forests, small MLPs, sets, graphs and formulas port easily, and tabular foundation models and diffusion samplers do not.',
+    blind: 'It can bias choices toward what is easy to port over what reads best.',
+    ask: 'Can inference be written in numpy in an afternoon and checked against training to 1e-6?',
+    evi: 'DemandCast: numpy equals torch to 3e-7. site/src/lib/nn runs all 16 instruments, each with parity tests.' },
+  { tag: 'Decisions', name: 'Grade the decision, not the forecast',
+    one: 'For a controller, a better forecast can make a worse decision. Train and grade on the outcome.',
+    see: 'Why BatteryPilot puts the battery physics inside its loss and is graded on its share of perfect hindsight.',
+    blind: 'A controller can be graded only in simulation, and the simulator’s gap can exceed the gap between strategies.',
+    ask: 'Is the output a reading or an action? If an action, what is the outcome metric at matched end states?',
+    evi: 'HybridPilot: correcting fuel with a fixed battery factor credited ECMS with 105% of the optimum; re-solving DP to each strategy’s own final charge gave 99.6%.' },
+  { tag: 'Calibration', name: 'Coverage is part of the product',
+    one: 'An error bar is a promise. How often it holds is a number to engineer and report, per stratum.',
+    see: 'Why conformal wrappers, flows and per-stratum widening are learner choices too, not afterthoughts.',
+    blind: 'A coverage fix fitted on a small dev set is itself noisy: 74 records give a coarse 68th percentile.',
+    ask: 'What fraction of exam truths fall inside the 68% bar, in each stratum?',
+    evi: 'At a nominal 68%: QuakeNet depth 51%, GridPulse MW lost 48%, SwellCast distance 55%, StarQuake 54–58% on 27-day curves, DemandCast 64%.' },
+];
+
+/** Section 10: a first learner for each new-model idea in docs/backlog.yaml (keyed by its id). */
+export const BACKLOG_FIT: Record<string, { f: string[]; why: string }> = {
+  wakenet: { f: ['gnn', 'operator'], why: 'Turbines are nodes and wakes are directed edges that turn with the wind. FLORIS is the teacher; a graph network reads a whole farm.' },
+  dispatchnet: { f: ['gnn', 'diffsim'], why: 'The transmission network is a graph, and the task is a decision: train through the dispatch cost, grade on EIA-930 generation and prices.' },
+  watershed: { f: ['ssm', 'assim'], why: 'Rivers store water for weeks. LSTMs are strong on large-sample basin data (Kratzert et al. 2019); a filter on a rainfall-runoff model is the classical partner.' },
+  tsunaminet: { f: ['operator', 'flow'], why: 'A neural operator can stand in for the shallow-water solver to grow the bank; a flow reads the Okada source with its uncertainty.' },
+  buildingsim: { f: ['gbm', 'gp', 'assim'], why: 'Metered building data is tabular and small per building; a thermal RC model with a filter tracks one building over time.' },
+  stormnet: { f: ['ssm', 'assim'], why: 'The Burton equation is a one-state equation driven by the solar wind: a filter on it, or a recurrent model whose state is the ring current.' },
+  gpsquake: { f: ['gp', 'symbolic'], why: 'A GNSS series is seasonal terms plus steps plus transients: a GP with periodic and step kernels, or a sparse library of those terms.' },
+  roomsense: { f: ['cnn1d', 'anchor'], why: 'An impulse response is a 1-D signal; Sabine’s law is the classical estimate to correct.' },
+  spinnet: { f: ['symbolic', 'gbm'], why: 'Drag and Magnus force give the flight equations; a handful of tracked numbers per pitch is a small table.' },
+  spinrock: { f: ['sets', 'flow'], why: 'Sparse, irregular survey points are a set of (time, magnitude, geometry) items, and spin and pole solutions often have several modes.' },
+  spectranet: { f: ['cnn1d', 'anchor'], why: 'A spectrum is a 1-D signal; a non-negative fit to HITRAN line lists is the classical estimate to correct.' },
+  frbnet: { f: ['cnn2d', 'anchor'], why: 'A dynamic spectrum is a 2-D grid with a dispersion sweep; incoherent dedispersion gives the classical DM to correct.' },
+  xrdnet: { f: ['cnn1d', 'sets'], why: 'A pattern is 1-D; the answer is a set of phases, so a set-valued output fits.' },
+  jetnet: { f: ['sets', 'gnn'], why: 'A jet is a set of particles. Energy Flow Networks are deep sets for jets; graph networks over particles are the other standard.' },
+};
+
+/** Section 08: rough sizes for families the collection does not use (estimates, drawn dashed). */
+export const BUDGET_EXTRA: { name: string; n: number; note: string }[] = [
+  { name: 'Tabular foundation model', n: 7e6, note: 'order of magnitude for TabPFN-class weights' },
+  { name: 'GP: 2,000 inducing points, 86 inputs', n: 2000 * 87, note: 'stored points plus weights' },
+  { name: 'Forest: 500 trees, depth 6', n: 500 * 127 * 2, note: '127 nodes × 2 numbers per tree' },
+  { name: 'Symbolic law', n: 10, note: 'a formula with about ten constants' },
+];
+
+/** Section 07: an illustrative TreeSHAP read of a unit and its simulated twin (made-up numbers). */
+export const SHAP_FEATURES = ['Aero work', 'Rolling work', 'Grade work', 'Stop density', 'Ambient temperature', 'Accessory load', 'Mass', 'Model year'];
+export const SHAP_CASES: { name: string; twin: number[]; real: number[]; read: string }[] = [
+  { name: 'Cold-weather commute', twin: [4, 2, 1, 3, 2, 1, 2, 0.5], real: [4, 2.2, 1, 3, 5.5, 3.6, 2, 0.5], read: 'The real trip leans on ambient temperature and accessory load far harder than its twin does. Cabin heat and engine warm-up in the cold are the first suspects: the kind of gap RoadSim’s calibration rungs have chased before (a 250 W base accessory load, oil heat capacity doubled, belt A/C efficiency 0.25).' },
+  { name: 'City hybrid', twin: [1.5, 1.8, 0.5, 6, 1, 1, 2, 1], real: [1.5, 1.8, 0.5, 3, 1, 1, 2, 1], read: 'Stop density drives the twin’s correction twice as hard as the real car’s: the simulated hybrid gains or loses too much at each stop. TripDetective’s twin test found the same family of gap, a dev hybrid’s twin stopping its engine 0.29 of the time against 0.09 for the real car.' },
+  { name: 'Highway, twin agrees', twin: [6, 2.5, 1, 0.5, 1, 0.8, 2, 1], real: [6.2, 2.4, 1.1, 0.5, 1, 0.9, 2, 1], read: 'Twin and real lean on the same features by about the same amounts. If this unit still reads wrong, the gap is in something the model is not given, or in the label.' },
+];
+
+/** References, each resolved on 16 Nov 2026 (DOIs through Crossref, arXiv ids through the arXiv API, other links fetched). */
+export type Ref = [short: string, full: string, url: string];
+export const REFS: Record<string, Ref> = {
+  friedman01: ['Friedman 2001', 'Greedy function approximation: a gradient boosting machine. Annals of Statistics 29(5): 1189–1232.', 'https://doi.org/10.1214/aos/1013203451'],
+  chen16: ['Chen & Guestrin 2016', 'XGBoost: A Scalable Tree Boosting System. KDD 2016.', 'https://doi.org/10.1145/2939672.2939785'],
+  ke17: ['Ke et al. 2017', 'LightGBM: A Highly Efficient Gradient Boosting Decision Tree. NeurIPS 30.', 'https://proceedings.neurips.cc/paper/2017/hash/6449f44a102fde848669bdd9eb6b76fa-Abstract.html'],
+  prok18: ['Prokhorenkova et al. 2018', 'CatBoost: unbiased boosting with categorical features. NeurIPS 31.', 'https://arxiv.org/abs/1706.09516'],
+  grinsztajn22: ['Grinsztajn, Oyallon & Varoquaux 2022', 'Why do tree-based models still outperform deep learning on tabular data? NeurIPS 2022 Datasets and Benchmarks.', 'https://arxiv.org/abs/2207.08815'],
+  duan20: ['Duan et al. 2020', 'NGBoost: Natural Gradient Boosting for Probabilistic Prediction. ICML 2020.', 'https://arxiv.org/abs/1910.03225'],
+  lundberg20: ['Lundberg et al. 2020', 'From local explanations to global understanding with explainable AI for trees. Nature Machine Intelligence 2: 56–67.', 'https://doi.org/10.1038/s42256-019-0138-9'],
+  rasmussen06: ['Rasmussen & Williams 2006', 'Gaussian Processes for Machine Learning. MIT Press.', 'http://gaussianprocess.org/gpml/'],
+  foreman17: ['Foreman-Mackey et al. 2017', 'Fast and scalable Gaussian process modeling with applications to astronomical time series. AJ 154: 220.', 'https://arxiv.org/abs/1703.09710'],
+  kennedy01: ['Kennedy & O’Hagan 2001', 'Bayesian calibration of computer models. J. R. Stat. Soc. B 63(3): 425–464.', 'https://doi.org/10.1111/1467-9868.00294'],
+  hollmann23: ['Hollmann et al. 2023', 'TabPFN: A Transformer That Solves Small Tabular Classification Problems in a Second. ICLR 2023.', 'https://arxiv.org/abs/2207.01848'],
+  hollmann25: ['Hollmann et al. 2025', 'Accurate predictions on small data with a tabular foundation model. Nature 637: 319–326.', 'https://doi.org/10.1038/s41586-024-08328-6'],
+  vaswani17: ['Vaswani et al. 2017', 'Attention Is All You Need. NeurIPS 30.', 'https://arxiv.org/abs/1706.03762'],
+  mousavi20: ['Mousavi et al. 2020', 'Earthquake transformer: an attentive deep-learning model for simultaneous earthquake detection and phase picking. Nature Communications 11: 3952.', 'https://doi.org/10.1038/s41467-020-17591-w'],
+  hochreiter97: ['Hochreiter & Schmidhuber 1997', 'Long Short-Term Memory. Neural Computation 9(8): 1735–1780.', 'https://doi.org/10.1162/neco.1997.9.8.1735'],
+  gu22: ['Gu, Goel & Ré 2022', 'Efficiently Modeling Long Sequences with Structured State Spaces. ICLR 2022.', 'https://arxiv.org/abs/2111.00396'],
+  gu23: ['Gu & Dao 2023', 'Mamba: Linear-Time Sequence Modeling with Selective State Spaces.', 'https://arxiv.org/abs/2312.00752'],
+  kratzert19: ['Kratzert et al. 2019', 'Towards learning universal, regional, and local hydrological behaviors via machine learning applied to large-sample datasets. HESS 23: 5089–5110.', 'https://doi.org/10.5194/hess-23-5089-2019'],
+  zaheer17: ['Zaheer et al. 2017', 'Deep Sets. NeurIPS 30.', 'https://arxiv.org/abs/1703.06114'],
+  lee19: ['Lee et al. 2019', 'Set Transformer: A Framework for Attention-based Permutation-Invariant Neural Networks. ICML 2019.', 'https://arxiv.org/abs/1810.00825'],
+  komiske19: ['Komiske, Metodiev & Thaler 2019', 'Energy Flow Networks: Deep Sets for Particle Jets. JHEP 2019: 121.', 'https://arxiv.org/abs/1810.05165'],
+  battaglia18: ['Battaglia et al. 2018', 'Relational inductive biases, deep learning, and graph networks.', 'https://arxiv.org/abs/1806.01261'],
+  vandenende20: ['van den Ende & Ampuero 2020', 'Automated seismic source characterization using deep graph neural networks. GRL 47.', 'https://doi.org/10.1029/2020GL088690'],
+  lam23: ['Lam et al. 2023', 'Learning skillful medium-range global weather forecasting. Science 382: 1416–1421.', 'https://doi.org/10.1126/science.adi2336'],
+  li21: ['Li et al. 2021', 'Fourier Neural Operator for Parametric Partial Differential Equations. ICLR 2021.', 'https://arxiv.org/abs/2010.08895'],
+  lu21: ['Lu et al. 2021', 'Learning nonlinear operators via DeepONet based on the universal approximation theorem of operators. Nature Machine Intelligence 3: 218–229.', 'https://doi.org/10.1038/s42256-021-00302-5'],
+  dinh17: ['Dinh, Sohl-Dickstein & Bengio 2017', 'Density estimation using Real NVP. ICLR 2017.', 'https://arxiv.org/abs/1605.08803'],
+  papamakarios21: ['Papamakarios et al. 2021', 'Normalizing Flows for Probabilistic Modeling and Inference. JMLR 22(57).', 'https://jmlr.org/papers/v22/19-1028.html'],
+  talts18: ['Talts et al. 2018', 'Validating Bayesian Inference Algorithms with Simulation-Based Calibration.', 'https://arxiv.org/abs/1804.06788'],
+  dax21: ['Dax et al. 2021', 'Real-time gravitational-wave science with neural posterior estimation. PRL 127: 241103.', 'https://arxiv.org/abs/2106.12594'],
+  angelopoulos21: ['Angelopoulos & Bates 2021', 'A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification.', 'https://arxiv.org/abs/2107.07511'],
+  romano19: ['Romano, Patterson & Candès 2019', 'Conformalized Quantile Regression. NeurIPS 32.', 'https://arxiv.org/abs/1905.03222'],
+  lakshminarayanan17: ['Lakshminarayanan, Pritzel & Blundell 2017', 'Simple and Scalable Predictive Uncertainty Estimation using Deep Ensembles. NeurIPS 30.', 'https://arxiv.org/abs/1612.01474'],
+  seitzer22: ['Seitzer et al. 2022', 'On the Pitfalls of Heteroscedastic Uncertainty Estimation with Probabilistic Neural Networks (β-NLL). ICLR 2022.', 'https://arxiv.org/abs/2203.09168'],
+  ho20: ['Ho, Jain & Abbeel 2020', 'Denoising Diffusion Probabilistic Models. NeurIPS 33.', 'https://arxiv.org/abs/2006.11239'],
+  psichogios92: ['Psichogios & Ungar 1992', 'A hybrid neural network–first principles approach to process modeling. AIChE Journal 38(10): 1499–1511.', 'https://doi.org/10.1002/aic.690381003'],
+  brunton16: ['Brunton, Proctor & Kutz 2016', 'Discovering governing equations from data by sparse identification of nonlinear dynamical systems. PNAS 113(15): 3932–3937.', 'https://doi.org/10.1073/pnas.1517384113'],
+  cranmer23: ['Cranmer 2023', 'Interpretable Machine Learning for Science with PySR and SymbolicRegression.jl.', 'https://arxiv.org/abs/2305.01582'],
+  udrescu20: ['Udrescu & Tegmark 2020', 'AI Feynman: A physics-inspired method for symbolic regression. Science Advances 6: eaay2631.', 'https://doi.org/10.1126/sciadv.aay2631'],
+  donti17: ['Donti, Amos & Kolter 2017', 'Task-based End-to-end Model Learning in Stochastic Optimization. NeurIPS 30.', 'https://arxiv.org/abs/1703.04529'],
+  elmachtoub22: ['Elmachtoub & Grigas 2022', 'Smart “Predict, then Optimize”. Management Science 68(1).', 'https://arxiv.org/abs/1710.08005'],
+  kalman60: ['Kalman 1960', 'A New Approach to Linear Filtering and Prediction Problems. J. Basic Eng. 82(1): 35–45.', 'https://doi.org/10.1115/1.3662552'],
+  evensen94: ['Evensen 1994', 'Sequential data assimilation with a nonlinear quasi-geostrophic model using Monte Carlo methods to forecast error statistics. JGR Oceans 99(C5).', 'https://doi.org/10.1029/94JC00572'],
+  jacobs91: ['Jacobs et al. 1991', 'Adaptive Mixtures of Local Experts. Neural Computation 3(1): 79–87.', 'https://doi.org/10.1162/neco.1991.3.1.79'],
+  wolpert92: ['Wolpert 1992', 'Stacked generalization. Neural Networks 5(2): 241–259.', 'https://doi.org/10.1016/S0893-6080(05)80023-1'],
+  cohen16: ['Cohen & Welling 2016', 'Group Equivariant Convolutional Networks. ICML 2016.', 'https://arxiv.org/abs/1602.07576'],
+};
+export const REF_EXTRA: Record<string, Ref[]> = {
+  'Tabular data, generally': [
+    ['Shwartz-Ziv & Armon 2022', 'Tabular data: Deep learning is not all you need. Information Fusion 81: 84–90.', 'https://arxiv.org/abs/2106.03253'],
+    ['Meinshausen 2006', 'Quantile Regression Forests. JMLR 7: 983–999.', 'https://jmlr.org/papers/v7/meinshausen06a.html'],
+  ],
+  'Physics and ML, surveys': [
+    ['Willard et al. 2022', 'Integrating Scientific Knowledge with Machine Learning for Engineering and Environmental Systems. ACM Computing Surveys 55(4).', 'https://arxiv.org/abs/2003.04919'],
+    ['Cranmer, Brehmer & Louppe 2020', 'The frontier of simulation-based inference. PNAS 117(48): 30055–30062.', 'https://doi.org/10.1073/pnas.1912789117'],
+  ],
+  'Precedents named on this page': [
+    ['Severson et al. 2019', 'Data-driven prediction of battery cycle life before capacity degradation. Nature Energy 4: 383–391.', 'https://doi.org/10.1038/s41560-019-0356-8'],
+    ['Shallue & Vanderburg 2018', 'Identifying Exoplanets with Deep Learning: A Five-planet Resonant Chain around Kepler-80 and an Eighth Planet around Kepler-90. AJ 155: 94.', 'https://doi.org/10.3847/1538-3881/aa9e09'],
+  ],
+};

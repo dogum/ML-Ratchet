@@ -99,4 +99,5 @@ doesn't.
 See also: [the model contract](model-contract.md) · [adding a model](adding-a-model.md) · [lessons](lessons.md) ·
 [mental models](https://dogum.github.io/ML-Ratchet/mental-models/): where this method sits among other ways to combine
 physics and ML (fine-tuning, residual learning, PINNs, domain randomisation, surrogates, calibration, data assimilation,
-domain adaptation).
+domain adaptation) · [model families](https://dogum.github.io/ML-Ratchet/model-families/): which kind of learner fits
+which problem, and where trees, sequence models, sets, graphs, flows, GPs, filters and formulas could be tried as rungs.
