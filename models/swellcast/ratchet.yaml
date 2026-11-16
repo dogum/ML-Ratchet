@@ -17,3 +17,21 @@ ladders:
       - { id: r3, change: "v3: 65% of storms follow real IBTrACS 1985–2007 tracks", sim: 0.582, decision: rejected, why: "Dev gate: errors +21%.", metrics: ["46%", "56 h", "24°"] }
       - { id: r4, change: "Mix of v1 + v2 + v3 banks (54k), fine-tuned from rung 1", sim: 0.536, decision: released, why: "+0.150 over rung 1; dev +2%.", metrics: ["37%", "37 h", "22°"] }
       - { id: r5, change: "Rung 4 + 3,000 steps at half the learning rate", sim: 0.545, decision: rejected, why: "+0.009, short of the margin.", metrics: ["43%", "36 h", "19°"] }
+  - name: SwellCast v1.1 — prior on real readings
+    objective: "Dev skill: mean over distance and time of 1 − (median error / median error of the dev-median guess), every number scored leaving each dev storm out"
+    rule: Keep if the dev skill rises by more than 0.01 AND no dev median error (distance, time, direction) gets more than 5% worse.
+    margin: 0.01
+    dev_gate: Dev median errors (distance, time, direction) no more than 5% worse
+    note: >-
+      Added 15 Nov 2026, rule fixed before any of these rungs was scored. The network weights do not change, so the frozen
+      simulated set (val3) cannot judge a prior fitted to real storms. On dev the dev-median guess (left one storm out)
+      beats rung 4 on distance (20% vs 37%) and time (27 h vs 37 h), the same failure as on the exam. Deterministic
+      post-processing, so there is no seed spread; a bootstrap over the 10 dev storms puts rung 7's gain over rung 4
+      above zero in 95% of resamples.
+    columns_source: Real dev set (29 arrivals, 10 storms), median errors, each storm left out of its own prior
+    columns: [Distance, Time, Direction]
+    rungs:
+      - { id: r4, change: "Start: the v1.0 release, network reading alone", decision: kept, why: "Starting point. Dev skill −0.60 (the dev-median guess scores 0).", metrics: ["37%", "37 h", "22°"] }
+      - { id: r6, change: "Distance prior: network log D and a normal prior from the dev arrivals, weighted by their error bars", decision: kept, why: "Dev skill −0.40 vs −0.60; no error worse.", metrics: ["29%", "37 h", "22°"] }
+      - { id: r7, change: "r6 + dispersion prior on time: t0 ≈ −D / c_g(0.06 Hz) ± the window's 36 h centring, weighted against the network's t0", decision: released, why: "Dev skill −0.21 vs −0.40; no error worse.", metrics: ["29%", "27 h", "22°"] }
+      - { id: r8, change: "r7 with the network's distance and time error bars multiplied by factors chosen on the other dev storms", decision: rejected, why: "Dev skill −0.18 vs −0.21, but the distance error got 10% worse (32% vs 29%).", metrics: ["32%", "21 h", "22°"] }

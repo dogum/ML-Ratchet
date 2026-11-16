@@ -93,3 +93,43 @@ One ocean buoy, one distant storm: from ten days of NOAA NDBC wave spectra (ener
 ## Corrections
 
 - 14 Nov 2026: model.yaml: the direction row (19° vs the classical ridge fit's 20°) was a win, while the wins text and the card say it ties. A 1° difference is a tie, so the verdict is now tie (win -> tie). The Open-Meteo block is now listed under help_wanted.
+
+## 15 Nov 2026: v1.1, a prior on real readings (release chosen before the exam)
+
+The exam rows that were not wins: distance (38% vs the dev-median guess 28%), storm time (33 h vs 24 h), direction
+(19° vs the ridge fit's 20°, a tie).
+
+- **Rebuild.** No work/ data was local. `fetch_meta.py` (new) gets the NDBC station table and file lists, IBTrACS
+  v04r01 and the world-atlas land mask; `fetch.py` then took the 457 buoy-years. The training scripts now write to
+  work/ through `_paths.py` (they used the folder above training/).
+- **The split had to be recovered.** Today's IBTrACS gives the same 317 confirmed pairs, but the seed-2026 draw runs
+  over a storm list that has changed, so a plain rebuild drew different dev storms (5 of its 13 confirmed dev storms were
+  v1.0 exam storms). The v1.0 dev arrivals are exactly the confirmed pairs missing from `final.json`'s exam list: 29
+  arrivals from 10 storms (`dev_storms_v1.json`, now read by `events.py`). Check: r4 on them gives 37.4% / 36.9 h /
+  22.1°, the logged dev numbers, and the in-sample dev median is 2,364 km and −48 h as before. The exam keeps its 288
+  arrivals (EP 138, NA 119, WP 29, SP 2). The 8 dev storms without a confirmed arrival could not be recovered; the
+  looser exam sets (visible 649, all pairs 2,124 vs 632 and 2,081 on 6 Nov) may hold some of them.
+- **Dev shows the failure.** With each storm left out of its own median, the dev-median guess gets 20.3% / 27.0 h /
+  19.8° and r4 37.4% / 36.9 h / 22.1°. Cause: the simulations spread distance log-uniformly over 700–11,000 km (label
+  sd 0.33 dex), while real arrivals at these buoys sit in a narrow band (dev sd 0.19 dex). The network has learned the
+  wide prior.
+- **Rungs** (`prior_dev.py`, rule fixed before scoring; `work/prior_dev.json`). The network is unchanged; its
+  calibrated reading is combined with a prior by precision. Every dev number leaves the storm out of its own prior and
+  error-bar factors.
+
+  | Rung | Change | Dev D / t0 / dir | Dev skill | Decision |
+  |---|---|---|---|---|
+  | r4 | v1.0 release | 37.4% / 36.9 h / 22.1° | −0.60 | start |
+  | r6 | distance prior N(3.42, 0.19) in log10 km | 29.1% / 36.9 h / 22.1° | −0.40 | kept |
+  | r7 | + time prior from dispersion: −D / 46.8 km/h, sd 20.8 h from the ±36 h centring | 29.1% / 26.8 h / 22.1° | −0.21 | **released** |
+  | r8 | r7 with sigma multipliers chosen on the other storms (all dev: ×3 distance, ×2 time) | 31.9% / 21.1 h / 22.1° | −0.18 | rejected: distance 10% worse |
+
+  Bootstrap over the 10 storms: r7's gain over r4 is positive in 95% of resamples (5th percentile +0.0005); r6's in 93%.
+- **Still short on dev.** r7 ties the dev-median guess on time (26.8 h vs 27.0 h) and still loses on distance (29% vs
+  20%). The network's distance adds little to the prior at these buoys.
+- **The time prior depends on the window rule.** It assumes the window is centred on the predicted 0.06 Hz arrival
+  (±36 h), which every method gets on this exam. For a window cut any other way, `predict(..., prior=False)` gives the
+  network alone.
+- **Release.** v1.1 = the same weights with the prior in the meta (`make_release_v11.py`): distance prior fitted on
+  all 29 dev arrivals, N(3.417, 0.194) in log10 km; after the blend the dev widen-only factors are 1.00 (distance) and
+  1.59 (time). The exam is scored once, after this entry is committed.

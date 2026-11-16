@@ -123,7 +123,7 @@ if __name__ == '__main__':
     R = {k: v for k, v in R.items() if k in ('logD', 'logD_sig', 't0', 't0_sig', 'dir', 'kappa')}
     # the release as shipped (sigma factors fitted on all of dev) and the in-sample dev-median guess, for reference
     D = np.array([e['D'] / 1e3 for e in ev]); t0 = np.array([e['t0_rel'] for e in ev]); dr = np.array([e['dir'] for e in ev]); hasd = np.array([e['dir_coverage'] > 0.5 for e in ev])
-    eD, et, ea = errors(net.predict(X), D, t0, dr, hasd)
+    eD, et, ea = errors(net.predict(X, prior=False), D, t0, dr, hasd)
     ins = dict(D_med_pct=float(np.median(np.abs(10 ** (np.median(np.log10(D)) - np.log10(D)) - 1) * 100)), t0_med_h=float(np.median(np.abs(np.median(t0) - t0))))
     if '--diagnostic' in sys.argv:      # step 1: does dev show the exam's failure? (r4 and the dev-median guess only)
         V, D_, t0_, dr_, hd_, _ = loso(ev, R); E = {k: errors(V[k], D_, t0_, dr_, hd_) for k in ('r4', 'dumb')}
