@@ -1,0 +1,829 @@
+---
+// Model families: which kind of learner fits which problem in the collection, how to tell whether the learner is the
+// bottleneck, and where families the collection does not use yet could be tried as rungs.
+// Content: src/lib/model-families.ts. Browser side: src/lib/model-families-ui.ts. Model facts come from model.yaml and
+// ratchet.yaml at build time; backlog questions from docs/backlog.yaml.
+import Base from '../layouts/Base.astro';
+import { getModels, getBacklog, type Model, type Ladder } from '../lib/data';
+import { url } from '../lib/url';
+import {
+  GROUPS, TRAITS, ABSENT, MODEL_NOTES, FAMILIES, COLS, COL_LABEL, CELLS, LENSES, BACKLOG_FIT, BUDGET_EXTRA,
+  SHAP_CASES, REFS, REF_EXTRA, type Group,
+} from '../lib/model-families';
+import { GLYPHS } from '../lib/model-families-glyphs';
+
+const all = getModels();
+const ORDER: [string, string[]][] = [
+  ['Signals and records', ['quakenet', 'beatnet', 'bearingnet', 'cellsense', 'chirpnet', 'starquake', 'sundoctor', 'swellcast', 'transitnet']],
+  ['Vehicle platform', ['energynet', 'tripdetective', 'hybridpilot']],
+  ['Grid platform', ['gridpulse', 'batterypilot', 'plantdetective', 'demandcast']],
+];
+const byId = Object.fromEntries(all.map((m) => [m.id, m]));
+const groups = ORDER.map(([label, ids]) => ({ label, models: ids.map((id) => byId[id]).filter((m): m is Model => !!m && !!MODEL_NOTES[m.id]) }));
+const models = groups.flatMap((g) => g.models);
+const missing = all.filter((m) => !MODEL_NOTES[m.id]).map((m) => m.name);
+if (missing.length) throw new Error(`model-families: no MODEL_NOTES entry for ${missing.join(', ')}`);
+
+/** The ladder a proposal would join: the note's choice, else the last ladder with a released rung. */
+const ladderOf = (m: Model): Ladder | undefined => {
+  const n = MODEL_NOTES[m.id];
+  if (n.ladder !== undefined && m.ladders[n.ladder]) return m.ladders[n.ladder];
+  return [...m.ladders].reverse().find((l) => l.rungs.some((r) => r.decision === 'released')) ?? m.ladders[m.ladders.length - 1];
+};
+const physicsLines = (m: Model) => {
+  const a = m.approach, out: [string, string][] = [];
+  if (a?.physics_inputs) out.push(['Inputs', a.physics_inputs]);
+  if (a?.physics_anchor) out.push(['Output', a.physics_anchor]);
+  if (!out.length) out.push(['Training data', a?.real_backdrop ? `Simulations only, laid into real noise: ${a.real_backdrop}` : 'Simulations only']);
+  return out;
+};
+const gcol = (g: Group) => `var(${GROUPS[g].v})`;
+const FAM = Object.fromEntries(FAMILIES.map((f) => [f.id, f]));
+const fcol = (id: string) => gcol(FAM[id].g);
+const cellsOf = (id: string) => CELLS.filter((c) => c.m === id).sort((a, b) => b.s - a.s);
+const cell = (m: string, f: string) => CELLS.find((c) => c.m === m && c.f === f);
+const ideas = CELLS.filter((c) => !c.inr).length;
+const unused = FAMILIES.filter((f) => f.st === 'n').length;
+const fitLabel = (s: number, inr?: boolean) => (inr ? 'partly in' : s === 3 ? 'strong' : s === 2 ? 'possible' : 'long shot');
+
+// browser data: only what the page cannot import from the content module
+const clientData = {
+  models: models.map((m) => {
+    const l = ladderOf(m);
+    return { id: m.id, name: m.name, acc: m.accent, gate: l?.dev_gate ?? 'None stated', scored: l?.scored_on, anchored: !!m.approach?.physics_anchor };
+  }),
+};
+const json = JSON.stringify(clientData).replace(/</g, '\\u003c');
+
+// section 08: the budget chart, drawn at build time
+const fmtN = (n: number) => (n >= 1e6 ? `${(n / 1e6).toFixed(2).replace(/\.?0+$/, '')} M` : n >= 1e4 ? `${Math.round(n / 1e3)}k` : n.toLocaleString('en-US'));
+const escx = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const budget = (() => {
+  const rows = models.filter((m) => MODEL_NOTES[m.id].params).map((m) => ({ name: m.name, n: MODEL_NOTES[m.id].params!, c: m.accent, est: false, note: MODEL_NOTES[m.id].paramsFrom ?? '' }))
+    .sort((a, b) => b.n - a.n);
+  const split = rows.length;
+  const extra = BUDGET_EXTRA.map((e) => ({ name: e.name, n: e.n, c: '', est: true, note: e.note }));
+  const all = [...rows, ...extra];
+  const W = 760, lw = 230, rw = 70, top = 22, rh = 25, H = top + all.length * rh + 64;
+  const lo = 1, hi = 7.3, xs = (n: number) => lw + ((Math.log10(Math.max(n, 10)) - lo) / (hi - lo)) * (W - lw - rw);
+  const axisY = top + all.length * rh + 24;
+  let s = `<text x="${lw}" y="10" class="svg-t">numbers stored for inference (log scale)</text>`;
+  [10, 100, 1e3, 1e4, 1e5, 1e6, 1e7].forEach((t) => { s += `<line x1="${xs(t)}" x2="${xs(t)}" y1="${top - 6}" y2="${axisY}" style="stroke:var(--rule-2)"/><text x="${xs(t)}" y="${axisY + 16}" text-anchor="middle" class="svg-t">${t >= 1e6 ? t / 1e6 + 'M' : t >= 1e3 ? t / 1e3 + 'k' : t}</text>`; });
+  all.forEach((r, i) => {
+    const y = top + i * rh + (i >= split ? 24 : 0);
+    s += `<g><title>${escx(r.name)}: ${r.n.toLocaleString('en-US')}${r.note ? ` (${escx(r.note)})` : ''}</title>`;
+    s += `<text x="${lw - 10}" y="${y + 14}" text-anchor="end" class="svg-t2"${r.est ? ' style="fill:var(--ink-3);font-style:italic"' : ''}>${escx(r.name)}</text>`;
+    s += r.est ? `<rect x="${lw}" y="${y + 4}" width="${Math.max(2, xs(r.n) - lw)}" height="13" style="fill:none;stroke:var(--ink-3);stroke-dasharray:3 3"/>` : `<rect x="${lw}" y="${y + 4}" width="${xs(r.n) - lw}" height="13" style="fill:${r.c};fill-opacity:.85"/>`;
+    s += `<text x="${xs(r.n) + 6}" y="${y + 14}" class="svg-t" style="fill:var(--ink-2)">${fmtN(r.n)}</text></g>`;
+  });
+  s += `<line x1="0" x2="${W}" y1="${top + split * rh + 4}" y2="${top + split * rh + 4}" style="stroke:var(--rule)"/><text x="${lw - 10}" y="${top + split * rh + 19}" text-anchor="end" class="svg-t">rough sizes, other families</text>`;
+  return { svg: s, vb: `0 0 ${W} ${H}` };
+})();
+
+const backlog = getBacklog().filter((i) => BACKLOG_FIT[i.id]).map((i) => ({ ...i, fit: BACKLOG_FIT[i.id] }));
+const blFams = [...new Set(backlog.flatMap((b) => b.fit.f))];
+const famRefs = FAMILIES.filter((f) => f.refs.length);
+
+const CODE = `<span class="k">import</span> json, numpy <span class="k">as</span> np
+
+<span class="k">def</span> load_forest(path):
+    f = json.load(open(path))   <span class="c"># exported once from the training library</span>
+    trees = [{k: np.asarray(v) <span class="k">for</span> k, v <span class="k">in</span> t.items()} <span class="k">for</span> t <span class="k">in</span> f["trees"]]
+    <span class="k">return</span> trees, f["base"]
+
+<span class="k">def</span> predict(trees, base, X):
+    <span class="c"># each tree: feature, threshold, left, right, missing_left, value</span>
+    <span class="c"># one entry per node; leaves have left == -1</span>
+    rows, out = np.arange(len(X)), np.full(len(X), base, float)
+    <span class="k">for</span> t <span class="k">in</span> trees:
+        node = np.zeros(len(X), int)
+        <span class="k">while</span> (live := t["left"][node] &gt;= 0).any():
+            x = X[rows, np.where(live, t["feature"][node], 0)]
+            left = np.where(np.isnan(x), t["missing_left"][node],
+                            x &lt; t["threshold"][node])
+            nxt = np.where(left, t["left"][node], t["right"][node])
+            node = np.where(live, nxt, node)
+        out += t["value"][node]
+    <span class="k">return</span> out`;
+
+const toc: [string, string][] = [
+  ['today', 'Today'], ['triage', 'Is it the learner?'], ['shape', 'Problem shape'], ['families', 'Catalogue'],
+  ['extrapolate', 'Live lab'], ['map', 'Opportunity map'], ['trees', 'Trees'], ['budget', 'Budget'],
+  ['lenses', 'Lenses'], ['backlog', 'Backlog'], ['propose', 'Draft a rung'], ['reading', 'Reading'],
+];
+---
+<Base title="Model families" description="Which kind of learner fits which physics problem in ML Ratchet: the families the sixteen models use today, how to tell whether the learner is the bottleneck, and where trees, sequence models, sets, graphs, flows, Gaussian processes, filters and formulas could each be tried as a rung.">
+  <div class="mf">
+  <section class="hero wrap">
+    <p class="kicker tick-label">Model families · which learner fits which problem</p>
+    <h1 class="display h">Sixteen models, three kinds of network. <em>The problem should pick the learner.</em></h1>
+    <p class="lead muted">
+      Every model here is a convolutional network or an MLP, and ChirpNet adds a normalizing flow. Those fit the
+      problems they were built for. Other problems in the collection have shapes that another family reads more
+      directly: tables suit trees, a car’s trips suit a set learner, a network of stations suits a graph, and one cell
+      tracked over its life suits a filter. This page sets out which learner fits which problem, how to tell whether
+      the learner is the bottleneck at all, and where each family could be tried as a rung.
+    </p>
+    <dl class="stats">
+      <div><dt class="kicker">models</dt><dd class="num">{models.length}</dd></div>
+      <div><dt class="kicker">families compared</dt><dd class="num">{FAMILIES.length}</dd></div>
+      <div><dt class="kicker">of them unused here</dt><dd class="num">{unused}</dd></div>
+      <div><dt class="kicker">rung ideas mapped</dt><dd class="num">{ideas}</dd></div>
+      <div><dt class="kicker">tried as rungs so far</dt><dd class="num real-t">0</dd></div>
+    </dl>
+  </section>
+
+  <nav class="mf-toc" aria-label="On this page">
+    <div class="wrap mf-toc-in">
+      {toc.map(([id, t], i) => <a href={`#${id}`} data-id={id}><span class="num">{String(i + 1).padStart(2, '0')}</span> {t}</a>)}
+    </div>
+  </nav>
+
+  <section class="sec wrap" id="today">
+    <header class="sec-head reveal">
+      <p class="kicker">01 · Inventory</p>
+      <h2 class="section">What the collection uses <em>today</em></h2>
+      <p class="muted">Each row shows a model’s learner traits. The greyed columns on the right are families no model uses yet. Pick a model for its network, where physics enters it and the first loss its card lists: the place a new learner would have to help.</p>
+    </header>
+    <div class="today">
+      <div class="frame table-scroll tm-box">
+        <table class="tm" id="mf-tm">
+          <thead><tr><th></th>{TRAITS.map((t) => <th>{t.label}</th>)}{ABSENT.map((a, i) => <th class={`absent${i === 0 ? ' gap-col' : ''}`}>{a.label}</th>)}</tr></thead>
+          <tbody>
+            {models.map((m) => (
+              <tr data-m={m.id}>
+                <th><button type="button" aria-pressed="false"><span class="acc" style={`background:${m.accent}`}></span><span>{m.name}<br /><span class="dom">{m.domain}</span></span></button></th>
+                {TRAITS.map((t) => <td>{MODEL_NOTES[m.id].t.includes(t.id) && <span class="dot" style={`background:${gcol(t.g)}`} title={t.label}></span>}</td>)}
+                {ABSENT.map((_, i) => <td class={`abs${i === 0 ? ' gap-col' : ''}`}>·</td>)}
+              </tr>
+            ))}
+            <tr class="tot">
+              <th>models using it</th>
+              {TRAITS.map((t) => <td class="num">{models.filter((m) => MODEL_NOTES[m.id].t.includes(t.id)).length}</td>)}
+              {ABSENT.map((_, i) => <td class={`num zero${i === 0 ? ' gap-col' : ''}`}>0</td>)}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="detail-col">
+        {models.map((m, k) => (
+          <aside class="frame mdetail" data-mpanel={m.id} hidden={k !== models.findIndex((x) => x.id === 'energynet')}>
+            <p class="kicker" style={`color:${m.accent}`}>{m.domain} · v{m.version}</p>
+            <h3 class="display"><a href={url(`models/${m.id}/`)}>{m.name}</a></h3>
+            <dl>
+              <dt>Reads</dt><dd>{m.reads}</dd>
+              <dt>Network</dt><dd>{m.network}</dd>
+              {physicsLines(m).map(([k2, v]) => <><dt>Physics: {k2.toLowerCase()}</dt><dd>{v}</dd></>)}
+              {m.losses?.[0] && <><dt>First loss</dt><dd>{m.losses[0]}</dd></>}
+              {MODEL_NOTES[m.id].twin && <><dt>Twin test</dt><dd>{MODEL_NOTES[m.id].twin}</dd></>}
+            </dl>
+            <div class="ideas">
+              <p class="kicker">Ideas on the opportunity map</p>
+              <div class="togs">
+                {cellsOf(m.id).map((c) => <button type="button" class="tog" data-cell={`${c.m}:${c.f}`}><span class="sw" style={`background:${fcol(c.f)}`}></span>{COL_LABEL[c.f]} · {fitLabel(c.s, c.inr)}</button>)}
+              </div>
+            </div>
+          </aside>
+        ))}
+      </div>
+    </div>
+    <p class="legend">
+      {(Object.keys(GROUPS) as Group[]).map((g) => <span><i class="dot" style={`background:${gcol(g)}`}></i>{GROUPS[g].name}</span>)}
+      <span class="faint">· = no model uses this family</span>
+    </p>
+  </section>
+
+  <section class="sec wrap" id="triage">
+    <header class="sec-head reveal">
+      <p class="kicker">02 · Before a new learner</p>
+      <h2 class="section">Is the learner <em>the problem?</em></h2>
+      <p class="muted">The largest gains in the collection came from fixing simulators, not networks. QuakeNet’s frozen-set score went from 0.556 to 0.808 when slower surface waves and a scattering coda were built in. EnergyNet’s wider networks lost 0.019 of skill while three times the simulated data gained 0.019. A new family helps only when the gap is in the learner, or in how the input is shown to it. Four questions find where a gap lives.</p>
+    </header>
+    <div class="frame triage">
+      <div class="trail"><p class="kicker">Answers so far</p><ol id="mf-tr-trail"></ol><button class="btn ghost" id="mf-tr-reset" type="button">Start again</button></div>
+      <div class="stage" id="mf-tr-stage" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="sec wrap" id="shape">
+    <header class="sec-head reveal">
+      <p class="kicker">03 · Problem shape</p>
+      <h2 class="section">From the shape of a problem <em>to candidate learners</em></h2>
+      <p class="muted">A learner’s built-in assumptions should match the structure of the data. Set the input, the kind of answer and the constraints, and the ranking shows the score behind each family. The scores come from rules written into this page: a starting argument, not a verdict. Only the ratchet gives the verdict.</p>
+    </header>
+    <div class="togs presets" id="mf-pk-presets"><span class="kicker">Examples</span></div>
+    <div class="frame picker">
+      <form class="pk-in" id="mf-pk-form"></form>
+      <div class="pk-out" aria-live="polite"><p class="kicker">Ranked for this shape</p><ol class="rank" id="mf-pk-rank"></ol><div class="addons" id="mf-pk-addons"></div></div>
+    </div>
+  </section>
+
+  <section class="sec wrap" id="families">
+    <header class="sec-head reveal">
+      <p class="kicker">04 · Catalogue</p>
+      <h2 class="section">{FAMILIES.length} families, <em>side by side</em></h2>
+      <p class="muted">Each card gives a family’s built-in assumption, where physics can enter it, how it behaves outside its training data, and how hard it is to run under this repository’s rules: inference in numpy and scipy only, and a TypeScript port for the live instrument on this site.</p>
+    </header>
+    <div class="filters">
+      <div class="togs" id="mf-cat-groups" role="group" aria-label="Filter by group">
+        <button type="button" class="tog" data-g="all" aria-pressed="true">All groups</button>
+        {(Object.keys(GROUPS) as Group[]).map((g) => <button type="button" class="tog" data-g={g} aria-pressed="false"><span class="sw" style={`background:${gcol(g)}`}></span>{GROUPS[g].name}</button>)}
+      </div>
+      <div class="togs" id="mf-cat-status" role="group" aria-label="Filter by status">
+        {[['all', 'Any status'], ['y', 'In use'], ['p', 'Partly'], ['n', 'Not yet']].map(([k, l], i) => <button type="button" class="tog" data-s={k} aria-pressed={i === 0}>{l}</button>)}
+      </div>
+    </div>
+    <div class="cat" id="mf-cat">
+      {FAMILIES.map((f) => {
+        const targets = [...new Set(CELLS.filter((c) => c.f === f.id && !c.inr).sort((a, b) => b.s - a.s).map((c) => byId[c.m]?.name).filter(Boolean))];
+        return (
+          <article class="fam" id={`fam-${f.id}`} data-g={f.g} data-s={f.st} style={`--c:${gcol(f.g)}`}>
+            <div class="fam-top">
+              <svg viewBox="0 0 44 44" aria-hidden="true" set:html={GLYPHS[f.id] ?? ''} />
+              <div><p class="grp">{GROUPS[f.g].name} · <span class={`st st-${f.st}`}>{f.st === 'y' ? 'in use' : f.st === 'p' ? 'partly' : 'not yet'}</span></p><h3>{f.name}</h3></div>
+            </div>
+            <p class="one">{f.one}</p>
+            <div class="meters">
+              {([['numpy', f.np], ['browser', f.web], ['small banks', f.data]] as [string, number][]).map(([k, n]) => (
+                <div class="meter"><span class="k">{k}</span><span class="pips" role="img" aria-label={`${k}: ${n} of 3`}>{[1, 2, 3].map((j) => <i class={j <= n ? 'on' : ''}></i>)}</span></div>
+              ))}
+            </div>
+            {f.used.length > 0 ? <p class="used"><b>Here:</b> {f.used.join(', ')}</p> : targets.length > 0 && <p class="used"><b>Candidates:</b> {targets.join(', ')}</p>}
+            <details>
+              <summary>Details</summary>
+              <dl>
+                <div><dt>Where physics enters</dt><dd>{f.physics}</dd></div>
+                <div><dt>Suits</dt><dd>{f.suits}</dd></div>
+                <div><dt>Error bars</dt><dd>{f.unc}</dd></div>
+                <div><dt>Outside the bank</dt><dd>{f.extrap}</dd></div>
+                <div><dt>Risk</dt><dd>{f.risk}</dd></div>
+                {f.used.length > 0 && targets.length > 0 && <div><dt>Also a candidate for</dt><dd>{targets.join(', ')}</dd></div>}
+                {f.refs.length > 0 && <div><dt>Reading</dt><dd>{f.refs.map((k, i) => <>{i > 0 && ' · '}<a href={REFS[k][2]} rel="noopener">{REFS[k][0]}</a></>)}</dd></div>}
+              </dl>
+            </details>
+          </article>
+        );
+      })}
+    </div>
+  </section>
+
+  <section class="sec wrap" id="extrapolate">
+    <header class="sec-head reveal">
+      <p class="kicker">05 · Live lab</p>
+      <h2 class="section">Every learner fails differently <em>outside the bank</em></h2>
+      <p class="muted">A toy problem, computed live in the browser. A simulator gives a labelled bank of cases (blue) over a limited range. The real exam (ochre) covers more ground and carries a sim-to-real gap that can be dialled up. Three learners train on the bank: boosted trees, a small ReLU network and a Gaussian process. A narrow bank shows the trees going flat, the network going straight and the GP falling back to the mean. The physics anchor makes each learner predict only a correction to a physics estimate, as TransitNet, EnergyNet and DemandCast do.</p>
+    </header>
+    <div class="togs presets" id="mf-lab-presets"><span class="kicker">Try</span></div>
+    <div class="frame lab">
+      <div class="lab-plot">
+        <svg id="mf-lab-svg" viewBox="0 0 760 360" role="img" aria-label="Learner predictions against the simulated bank and the real exam points"></svg>
+        <svg id="mf-lab-dis" viewBox="0 0 760 92" role="img" aria-label="Disagreement between the tree model and the network across the input range"></svg>
+      </div>
+      <div class="lab-ctl" id="mf-lab-ctl">
+        <div class="ctl"><label for="mf-lab-lo">Bank starts at <output id="mf-o-lo"></output></label><input id="mf-lab-lo" type="range" min="0" max="9" step="0.1" value="2.5" /></div>
+        <div class="ctl"><label for="mf-lab-hi">Bank ends at <output id="mf-o-hi"></output></label><input id="mf-lab-hi" type="range" min="1" max="10" step="0.1" value="6.5" /></div>
+        <div class="ctl"><label for="mf-lab-noise">Noise σ <output id="mf-o-noise"></output></label><input id="mf-lab-noise" type="range" min="0.05" max="0.8" step="0.05" value="0.25" /></div>
+        <div class="ctl"><label for="mf-lab-gap">Sim-to-real gap <output id="mf-o-gap"></output></label><input id="mf-lab-gap" type="range" min="0" max="1" step="0.05" value="0.3" /></div>
+        <label class="switch"><input type="checkbox" id="mf-lab-anchor" /> Physics anchor: learn a correction to the physics estimate</label>
+        <div class="ctl"><span class="lbl">Learners</span><div class="learners" id="mf-lab-learners"></div></div>
+        <button class="btn ghost" type="button" id="mf-lab-seed">New random bank</button>
+      </div>
+      <div class="lab-read table-scroll"><table class="data rt" id="mf-lab-table"></table></div>
+    </div>
+    <div class="grid2">
+      <p class="verdict"><b>What it shows.</b> Inside the bank all three learners fit about equally well, so a frozen simulated set cannot tell them apart. Outside it they part ways. With the anchor on, every learner falls back to the physics estimate instead of to nonsense. That is why the anchor matters most for trees and GPs, the two families the collection does not use yet.</p>
+      <p class="verdict"><b>The lower strip.</b> How far the trees and the network disagree. It needs no labels: near zero inside the bank, climbing outside it. Run on real inputs, the same disagreement flags readings the simulator probably never covered (lens 3 in section 09).</p>
+    </div>
+  </section>
+
+  <section class="sec wrap" id="map">
+    <header class="sec-head reveal">
+      <p class="kicker">06 · Opportunity map</p>
+      <h2 class="section">Where a new family could <em>earn a rung</em></h2>
+      <p class="muted">Rows are the {models.length} models; columns are families they do not use yet. A larger dot is a stronger fit, and each is tied to a measured gap from the model’s exam, limits or <code>next</code> list. A ring marks a family already partly in that model. A cell gives the reasoning and how the rung would be judged; a column header gives that family across the collection.</p>
+    </header>
+    <div class="togs" id="mf-om-filter">
+      <button type="button" class="tog" data-v="all" aria-pressed="true">All fits</button>
+      <button type="button" class="tog" data-v="strong" aria-pressed="false">Strong fits only</button>
+      <span class="faint key">Dot size: <i style="width:7px;height:7px"></i> long shot · <i style="width:11px;height:11px"></i> possible · <i style="width:16px;height:16px"></i> strong · ring = partly in already</span>
+    </div>
+    <div class="omap">
+      <div class="frame table-scroll om-box">
+        <table class="om" id="mf-om">
+          <thead><tr><th></th>{COLS.map((f) => <th><button type="button" data-col={f} title={FAM[f].name}>{COL_LABEL[f]}</button></th>)}</tr></thead>
+          <tbody>
+            {groups.map((g) => (
+              <>
+                <tr class="sep"><th colspan={COLS.length + 1}>{g.label}</th></tr>
+                {g.models.map((m) => (
+                  <tr>
+                    <th><span><span class="acc" style={`background:${m.accent}`}></span>{m.name}</span></th>
+                    {COLS.map((f) => {
+                      const c = cell(m.id, f);
+                      if (!c) return <td data-f={f}></td>;
+                      const sz = c.s === 3 ? 16 : c.s === 2 ? 11 : 7;
+                      return (
+                        <td data-f={f}>
+                          <button type="button" data-c={`${m.id}:${f}`} data-s={String(c.s)} data-inr={c.inr ? '1' : '0'} aria-pressed="false" aria-label={`${FAM[f].name} for ${m.name}: ${fitLabel(c.s, c.inr)}`}>
+                            <span class={`c${c.inr ? ' in' : ''}`} style={`--c:${fcol(f)};width:${sz}px;height:${sz}px`}></span>
+                          </button>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <aside class="frame cell-d" id="mf-om-detail" aria-live="polite"></aside>
+    </div>
+    <p class="note faint">Every fit is a judgement call read from the model’s own files, not a result. None has been run as a rung.</p>
+  </section>
+
+  <section class="sec wrap" id="trees">
+    <header class="sec-head reveal">
+      <p class="kicker">07 · Spotlight</p>
+      <h2 class="section">Gradient-boosted trees, <em>in depth</em></h2>
+    </header>
+    <div class="grid2">
+      <div class="prose">
+        <p>Six models feed an MLP a table of physics features: 66 inputs for HybridPilot, 86 for GridPulse, 140 for BatteryPilot, 151 for EnergyNet, 171 for PlantDetective and up to 329 for DemandCast. On tables like these, gradient-boosted trees (XGBoost, LightGBM, CatBoost) often match or beat neural networks. They cope with mixed scales, counts and uninformative columns, and train in minutes on one CPU core.</p>
+        <p>Inference stays simple. A trained forest is a few arrays of thresholds and leaf values, so the numpy walk below needs no xgboost import, and the browser port is a short loop. The catch is the one section 05 shows: a forest predicts a constant outside the bank. The collection already has the remedy, which is to predict a correction to a physics estimate rather than the answer itself.</p>
+      </div>
+      <div>
+        <p class="kicker">A tree rung, start to finish</p>
+        <ol class="steps">
+          <li><span><b>The same bank.</b> The same simulated cases, read from <code>work/</code> through <code>training/_paths.py</code>. Nothing new is downloaded.</span></li>
+          <li><span><b>The same features and target.</b> If the incumbent predicts log(E / E_phys), so does the forest.</span></li>
+          <li><span><b>Tuned on simulations only.</b> Depth and early stopping are chosen on a simulated split. Dev chooses nothing.</span></li>
+          <li><span><b>Frozen set.</b> It must beat the incumbent by more than 0.01 of skill.</span></li>
+          <li><span><b>Dev gate.</b> The model’s existing gate, unchanged.</span></li>
+          <li><span><b>Export and port.</b> Trees to JSON, a numpy walker, a parity test against the training library.</span></li>
+          <li><span><b>Logged.</b> Kept or rejected, with the reason, in <code>ratchet.yaml</code>.</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="grid2">
+      <div>
+        <p class="kicker">Inference without the library: a vectorised tree walk</p>
+        <pre class="code" set:html={CODE} />
+        <p class="note faint">About 20 lines of numpy. The same arrays drive a TypeScript loop for the site’s instrument, and <code>npm test</code> checks it against Python like every other network.</p>
+      </div>
+      <div>
+        <p class="kicker">Four ways to get error bars from trees</p>
+        <div class="table-scroll">
+          <table class="data ub">
+            <thead><tr><th>Method</th><th>How</th><th>Cost and catch</th></tr></thead>
+            <tbody>
+              <tr><td>Quantile loss</td><td>Forests for the 16th and 84th percentiles beside the median.</td><td>Three forests. Quantiles can cross and need sorting.</td></tr>
+              <tr><td>Distributional</td><td>NGBoost-style: boost the mean and log σ of a Gaussian together.</td><td>One model, two outputs. Matches the networks’ Gaussian NLL heads.</td></tr>
+              <tr><td>Ensemble spread</td><td>Several forests on bootstraps or seeds; σ includes their spread.</td><td>Cheap. The spread grows away from the data, which is a useful signal.</td></tr>
+              <tr><td>Conformal</td><td>Any of the above, then one widening quantile per output from dev.</td><td>A cousin of <code>mlratchet.calibrate</code>. Coarse on 16 to 74 dev units.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="frame pad shap">
+      <div class="shap-head">
+        <div><p class="kicker illus">Illustration · made-up numbers</p><h3 class="display h3">TreeSHAP turns the twin test into a feature list</h3></div>
+        <div class="togs" id="mf-shap-cases">{SHAP_CASES.map((c, i) => <button type="button" class="tog" data-i={String(i)} aria-pressed={i === 0}>{c.name}</button>)}</div>
+      </div>
+      <p class="muted small">For trees, SHAP attributions are exact and fast. Computed for a real dev unit and for its simulated twin, the features whose attributions differ most point to where the simulator and reality part ways. The roadmap asks for "saliency on real vs twin inputs"; this is that idea with an exact attribution method. The cases show what such a read could look like for an EnergyNet-style trip.</p>
+      <svg id="mf-shap-svg" viewBox="0 0 760 300" role="img" aria-label="Attribution of each feature for a real unit and its simulated twin"></svg>
+      <p class="verdict" id="mf-shap-read"></p>
+    </div>
+    <p class="kicker">Where trees should not go</p>
+    <div class="donts">
+      <div class="dont"><b>Controllers that need smooth outputs</b><span class="muted">HybridPilot’s equivalence factor s sets an ECMS cost every second. A piecewise-constant s jumps at each threshold and can make the engine chatter on and off.</span></div>
+      <div class="dont"><b>Real cases outside the bank</b><span class="muted">ISO-NE’s January 2025 cold snap: DemandCast errs 4.78% against the grid’s own 1.27%. An unanchored forest would be flat there. Anchor first, then check the bank’s coverage of the exam’s weather.</span></div>
+      <div class="dont"><b>Classes with one dev unit</b><span class="muted">EnergyNet’s two exam Leafs are 20.3% low while its one dev Leaf is +4.6%. No learner fixes a class the dev set cannot see.</span></div>
+      <div class="dont"><b>As a quiet real-data model</b><span class="muted">A forest fitted on real labels is a black-box baseline, or the Real-train ladder’s arm. It is labelled as such and never released as a simulation-only rung.</span></div>
+    </div>
+    <p class="verdict"><b>Trees also make strong baselines.</b> GridPulse’s lesson is that "a dumb baseline built from the context inputs is the one to beat". There, a one-line rule (7.0 s × demand, fitted on four dev events) beats the network on GB inertia at 60 s, 15.1% against 16.4%. A small forest fitted on simulated context inputs alone is a sharper version of that baseline, and it shows how much of a model’s skill comes from the signal and how much from the context.</p>
+  </section>
+
+  <section class="sec wrap" id="budget">
+    <header class="sec-head reveal">
+      <p class="kicker">08 · Inference budget</p>
+      <h2 class="section">Everything runs in numpy <em>and in a browser tab</em></h2>
+      <p class="muted">Numbers each model stores for inference, on a log scale, beside rough sizes for families the collection does not use yet. Every model runs live on this site, so a new family has to fit the same budget and pass the same numpy and TypeScript parity checks. Formulas and forests fit easily. Tabular foundation models and diffusion samplers do not.</p>
+    </header>
+    <div class="frame pad"><svg class="budget" viewBox={budget.vb} role="img" aria-label="Numbers stored for inference per model, log scale" set:html={budget.svg} /></div>
+    <p class="note faint">Counts are from each <code>model.yaml</code>, except CellSense (3,455,900: three LFP and four NMC811 networks), EnergyNet (5 × 204,295) and TransitNet (321,900), counted from the shipped weight files on 16 Nov 2026. ChirpNet’s figure covers its finder and coincidence checker only. Dashed rows are estimates for one plausible size of each family, not measured models.</p>
+  </section>
+
+  <section class="sec wrap" id="lenses">
+    <header class="sec-head reveal">
+      <p class="kicker">09 · Ways to choose</p>
+      <h2 class="section">Eight more <em>lenses</em></h2>
+      <p class="muted">The <a href={url('mental-models/#lenses')}>Mental models</a> page has eight lenses for the method itself. These eight are for choosing a learner. Each shows one thing clearly and hides another. The names and framings are this page’s own; the evidence lines come from the repository.</p>
+    </header>
+    <div class="lenses">
+      <div class="lens-list" id="mf-lens-list" role="tablist" aria-label="Lenses" aria-orientation="vertical">
+        {LENSES.map((z, k) => <button type="button" class="lb" role="tab" id={`mf-lens-tab-${k}`} aria-controls={`mf-lens-${k}`} aria-selected={k === 0} tabindex={k === 0 ? 0 : -1} data-k={String(k)}><span class="kicker">{z.tag}</span><b>{z.name}</b></button>)}
+      </div>
+      {LENSES.map((z, k) => (
+        <div class="frame lens-body" role="tabpanel" id={`mf-lens-${k}`} aria-labelledby={`mf-lens-tab-${k}`} data-lens={String(k)} hidden={k !== 0}>
+          <p class="kicker">{z.tag} · lens {k + 1} of {LENSES.length}</p>
+          <h3 class="display">{z.name}</h3>
+          <p class="one">{z.one}</p>
+          <div class="lens-grid">
+            <div><p class="kicker">What it shows</p><p>{z.see}</p></div>
+            <div><p class="kicker">What it hides</p><p>{z.blind}</p></div>
+            <div class="wide"><p class="kicker">The question to ask</p><p class="ask">{z.ask}</p></div>
+          </div>
+          <p class="evi"><b>In this repository:</b> {z.evi}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="sec wrap" id="backlog">
+    <header class="sec-head reveal">
+      <p class="kicker">10 · New models</p>
+      <h2 class="section">The backlog, <em>with a first learner for each</em></h2>
+      <p class="muted">Each idea in the <a href={url('backlog/')}>backlog</a> has a structure that suggests a learner before any code exists. Several point away from CNNs: graphs for wind farms and dispatch, sequence models for rivers, sets for sparse asteroid photometry and particle jets, operators for tsunamis.</p>
+    </header>
+    <div class="togs" id="mf-bl-filter">
+      <button type="button" class="tog" data-f="all" aria-pressed="true">All ideas</button>
+      {blFams.map((f) => <button type="button" class="tog" data-f={f} aria-pressed="false"><span class="sw" style={`background:${fcol(f)}`}></span>{FAM[f].name}</button>)}
+    </div>
+    <div class="bl" id="mf-bl">
+      {backlog.map((b) => (
+        <article class="bli" data-fams={b.fit.f.join(' ')}>
+          <p class="kicker">{b.domain}</p>
+          <h3>{b.name}</h3>
+          <p class="q">{b.question}</p>
+          <div class="tags">{b.fit.f.map((f, i) => <span class="tag" style={`color:${fcol(f)}`}>{i === 0 ? 'first: ' : ''}{FAM[f].name}</span>)}</div>
+          <p class="why">{b.fit.why}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="sec wrap" id="propose">
+    <header class="sec-head reveal">
+      <p class="kicker">11 · Draft a rung</p>
+      <h2 class="section">From an idea <em>to a rung proposal</em></h2>
+      <p class="muted">Any family enters the same way: as a rung on an existing ladder, judged on the same frozen set and dev gate, and logged whether it is kept or rejected. The draft below uses the chosen model’s current dev gate and the line format of its <code>ratchet.yaml</code>. "Draft this rung" in section 06 fills it in.</p>
+    </header>
+    <div class="frame prop">
+      <form class="prop-in" onsubmit="return false">
+        <label for="mf-prop-model">Model<select id="mf-prop-model">{models.map((m) => <option value={m.id}>{m.name}</option>)}</select></label>
+        <label for="mf-prop-fam">Family<select id="mf-prop-fam">{FAMILIES.filter((f) => f.st !== 'y' || f.id === 'ensemble').map((f) => <option value={f.id}>{f.name}</option>)}</select></label>
+        <label for="mf-prop-change">What changes<textarea id="mf-prop-change"></textarea></label>
+      </form>
+      <div class="prop-out">
+        <div class="prop-top"><p class="kicker">Rung line for <span id="mf-prop-file"></span></p><span class="row"><span class="copied mono" id="mf-prop-copied" hidden>Copied</span><button class="btn ghost" type="button" id="mf-prop-copy">Copy</button></span></div>
+        <pre class="code" id="mf-prop-yaml"></pre>
+        <p class="kicker">Before it is judged</p>
+        <ul class="check" id="mf-prop-check"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec wrap" id="reading">
+    <header class="sec-head reveal">
+      <p class="kicker">12 · Reading</p>
+      <h2 class="section">Where each family <em>comes from</em></h2>
+      <p class="muted">One to four references per family, plus surveys and the precedents named above. Each was resolved on 16 Nov 2026: DOIs through Crossref, arXiv ids through the arXiv API, other links fetched.</p>
+    </header>
+    <div class="refs">
+      {famRefs.map((f) => (
+        <section><h3>{f.name}</h3><ul>{f.refs.map((k) => <li><a href={REFS[k][2]} rel="noopener">{REFS[k][0]}</a>. {REFS[k][1]}</li>)}</ul></section>
+      ))}
+      {Object.entries(REF_EXTRA).map(([h, rs]) => (
+        <section><h3>{h}</h3><ul>{rs.map((r) => <li><a href={r[2]} rel="noopener">{r[0]}</a>. {r[1]}</li>)}</ul></section>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap sources">
+    <p class="kicker">Sources and status</p>
+    <p class="faint small">
+      Model names, versions, inputs, networks, where physics enters and each first-listed loss are read at build time from
+      every <code>models/*/model.yaml</code>; dev gates and frozen sets from <code>ratchet.yaml</code>; backlog questions
+      from <code>docs/backlog.yaml</code>. Other numbers quote the model cards, <code>docs/lessons.md</code> and
+      <code>docs/roadmap.md</code>. The family descriptions are general practice, with references. The fit ratings, the
+      picker’s scores, the lens framings and the proposed rungs are this page’s judgement calls: none has been run as a
+      rung, and nothing in the repository commits to them. The TreeSHAP chart uses made-up numbers.
+    </p>
+    <div class="next">
+      <a class="btn" href={url('mental-models/')}>Mental models: where the method sits <span class="arrow">→</span></a>
+      <a class="btn ghost" href={url('method/')}>The method, step by step</a>
+    </div>
+  </section>
+  </div>
+  <script type="application/json" id="mf-data" set:html={json} />
+</Base>
+
+<script>
+  import { init } from '../lib/model-families-ui';
+  init();
+</script>
+
+<style is:global>
+  /* Model families page. Global (not scoped) because the browser module builds part of the page; every rule is
+     under .mf. Family-group colours are page tokens, defined for both themes like the site's own. */
+  :root { --f-sig: #0b6e99; --f-tab: #6b7a12; --f-struct: #7b3fe4; --f-dist: #b4235a; --f-phys: #0f766e; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) { --f-sig: #5cc3f0; --f-tab: #b8cc4a; --f-struct: #b69cff; --f-dist: #ff7aa8; --f-phys: #3cc9b9; } }
+  :root[data-theme='dark'] { --f-sig: #5cc3f0; --f-tab: #b8cc4a; --f-struct: #b69cff; --f-dist: #ff7aa8; --f-phys: #3cc9b9; }
+
+  /* the site sets no global rule for [hidden], and the display rules below would otherwise override it */
+  .mf [hidden] { display: none !important; }
+
+  .mf .hero { padding-top: clamp(40px, 7vw, 90px); }
+  .mf .h { font-size: clamp(42px, 7vw, 100px); line-height: 0.92; letter-spacing: -0.03em; margin: 16px 0 24px; text-wrap: balance; }
+  .mf .h em { color: var(--ink-2); }
+  .mf .lead { max-width: 66ch; font-size: 18px; }
+  .mf .real-t { color: var(--real); }
+  .mf .stats { display: grid; grid-template-columns: repeat(5, 1fr); margin: 28px 0 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
+  .mf .stats div { padding: 14px 16px 16px 0; border-right: 1px solid var(--rule); min-width: 0; }
+  .mf .stats div + div { padding-left: 16px; }
+  .mf .stats div:last-child { border-right: 0; }
+  .mf .stats dd { margin: 6px 0 0; font-size: clamp(28px, 3.4vw, 44px); letter-spacing: -0.03em; }
+  @media (max-width: 720px) { .mf .stats { grid-template-columns: repeat(2, 1fr); } .mf .stats div { border-right: 0; padding-left: 0 !important; border-bottom: 1px solid var(--rule); } }
+
+  .mf-toc { position: sticky; top: 60px; z-index: 20; margin-top: 36px; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); }
+  .mf-toc-in { display: flex; gap: 4px; overflow-x: auto; padding-block: 8px; scrollbar-width: none; }
+  .mf-toc-in::-webkit-scrollbar { display: none; }
+  .mf-toc a { white-space: nowrap; font-family: var(--mono); font-variation-settings: 'wdth' 87.5; font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; color: var(--ink-2); padding: 6px 9px; border: 1px solid transparent; border-radius: var(--radius); }
+  .mf-toc a:hover { color: var(--ink); border-color: var(--rule); }
+  .mf-toc a .num { color: var(--ink-3); }
+  .mf-toc a.on { color: var(--ink); border-color: var(--rule); background: var(--paper-3); }
+  .mf-toc a.on .num { color: var(--accent); }
+
+  .mf .sec { padding-top: clamp(56px, 8vw, 96px); scroll-margin-top: 110px; display: grid; gap: 20px; }
+  .mf .sec > * { min-width: 0; }
+  .mf .sec-head { max-width: 72ch; }
+  .mf .sec-head .section { margin: 10px 0 14px; }
+  .mf .sec-head .section em { color: var(--ink-2); }
+  .mf .sec-head p.muted { margin: 0; }
+  .mf .pad { padding: clamp(16px, 2.5vw, 26px); }
+  .mf .h3 { font-size: clamp(24px, 2.6vw, 32px); line-height: 1.05; }
+  .mf .small { font-size: 14.5px; }
+  .mf .note { font-size: 13px; margin: 0; }
+  .mf .verdict { margin: 0; padding: 10px 14px; border-left: 3px solid var(--ink); background: var(--paper-2); font-size: 15px; }
+  .mf .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; }
+  @media (max-width: 860px) { .mf .grid2 { grid-template-columns: minmax(0, 1fr); } }
+  .mf .prose p { max-width: 68ch; }
+  .mf .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .mf svg { overflow: visible; }
+  .mf .svg-t { fill: var(--ink-3); font-family: var(--mono); font-size: 10px; }
+  .mf .svg-t2 { fill: var(--ink-2); font-family: var(--sans); font-size: 12px; }
+
+  /* toggles (the site's .chip is for verdicts) */
+  .mf .togs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .mf .togs > .kicker { margin-right: 4px; }
+  .mf .tog { font-family: var(--mono); font-variation-settings: 'wdth' 87.5; font-size: 11px; letter-spacing: 0.02em; border: 1px solid var(--rule); background: var(--paper-3); color: var(--ink-2); border-radius: 99px; padding: 5px 10px; cursor: pointer; line-height: 1.25; text-align: left; }
+  .mf .tog:hover { border-color: var(--ink-3); color: var(--ink); }
+  .mf .tog[aria-pressed='true'] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .mf .sw { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+  .mf .sw.sq { border-radius: 2px; }
+  .mf .st { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .mf .st-y { color: var(--win); } .mf .st-p { color: var(--real); } .mf .st-n { color: var(--ink-3); }
+  .mf .key { font-size: 12.5px; margin-left: 8px; display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .mf .key i { display: inline-block; border-radius: 50%; background: var(--ink-3); }
+
+  /* 01 inventory */
+  .mf .today { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 22px; align-items: start; }
+  @media (max-width: 1120px) { .mf .today { grid-template-columns: minmax(0, 1fr); } }
+  .mf .tm-box { padding: 14px 12px 8px; }
+  .mf .tm { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 720px; }
+  .mf .tm th, .mf .tm td { padding: 0; text-align: center; border-bottom: 1px solid var(--rule-2); }
+  .mf .tm thead th { font-family: var(--mono); font-variation-settings: 'wdth' 87.5; font-weight: 400; font-size: 9.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); padding: 0 2px 8px; vertical-align: bottom; line-height: 1.25; max-width: 70px; }
+  .mf .tm thead th.absent { color: color-mix(in srgb, var(--ink-3) 65%, transparent); }
+  .mf .tm tbody th { text-align: left; font-weight: 500; white-space: nowrap; }
+  .mf .tm tbody th button { all: unset; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 7px 10px 7px 4px; }
+  .mf .tm tbody th button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .mf .tm tbody tr[data-m] { cursor: pointer; }
+  .mf .tm tbody tr[data-m]:hover, .mf .tm tbody tr.on { background: var(--paper-2); }
+  .mf .tm .dom { font-family: var(--mono); font-size: 10px; color: var(--ink-3); font-weight: 400; }
+  .mf .tm .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+  .mf .tm .gap-col { border-left: 1px dashed var(--rule); }
+  .mf .tm td.abs { color: var(--rule); font-family: var(--mono); font-size: 11px; }
+  .mf .tm tr.tot th { padding: 8px 4px; font-family: var(--mono); font-size: 10px; font-weight: 400; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
+  .mf .tm tr.tot td { font-size: 12px; padding: 8px 0; }
+  .mf .tm tr.tot td.zero { color: var(--loss); }
+  .mf .acc { display: inline-block; width: 9px; height: 9px; border-radius: 2px; flex: none; }
+  .mf .mdetail { padding: 20px 22px; display: grid; gap: 12px; }
+  .mf .mdetail h3 { font-size: 34px; line-height: 1; }
+  .mf .mdetail h3 a { text-decoration: none; }
+  .mf .mdetail dl { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 8px 14px; margin: 0; font-size: 14px; }
+  .mf .mdetail dt { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); padding-top: 3px; }
+  .mf .mdetail dd { margin: 0; overflow-wrap: anywhere; }
+  .mf .ideas { display: grid; gap: 8px; }
+  .mf .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--ink-2); margin: 0; }
+  .mf .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .mf .legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+
+  /* 02 triage */
+  .mf .triage { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); overflow: hidden; }
+  @media (max-width: 820px) { .mf .triage { grid-template-columns: minmax(0, 1fr); } }
+  .mf .trail { background: var(--paper-2); padding: 20px; display: grid; gap: 12px; align-content: start; border-right: 1px solid var(--rule); }
+  @media (max-width: 820px) { .mf .trail { border-right: 0; border-bottom: 1px solid var(--rule); } }
+  .mf .trail ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; counter-reset: s; }
+  .mf .trail li { counter-increment: s; font-size: 13.5px; display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; color: var(--ink-2); }
+  .mf .trail li::before { content: counter(s); font-family: var(--mono); font-size: 11px; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--rule); display: grid; place-items: center; color: var(--ink-3); }
+  .mf .trail li b { display: block; color: var(--ink); font-weight: 500; }
+  .mf .trail .btn { justify-self: start; }
+  .mf .stage { padding: 24px 26px; display: grid; gap: 14px; align-content: start; min-height: 320px; }
+  .mf .stage .tq { font-family: var(--display); font-size: clamp(26px, 3vw, 34px); line-height: 1.08; margin: 0; }
+  .mf .stage .hint { color: var(--ink-2); font-size: 15px; margin: 0; max-width: 64ch; }
+  .mf .opts { display: flex; flex-wrap: wrap; gap: 10px; }
+  .mf .opt { font: 500 15px/1.25 var(--sans); text-align: left; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); border-radius: var(--radius); padding: 12px 16px; cursor: pointer; max-width: 360px; }
+  .mf .opt:hover { border-color: var(--ink); }
+  .mf .verdict-box { display: grid; gap: 12px; }
+  .mf .verdict-box .vk { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin: 0; }
+  .mf .verdict-box h3 { font-size: clamp(28px, 3.6vw, 40px); line-height: 1; }
+  .mf .ev { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .mf .ev li { font-size: 14px; padding-left: 14px; border-left: 2px solid var(--rule); color: var(--ink-2); }
+  .mf .ev li b { color: var(--ink); font-weight: 600; }
+
+  /* 03 picker */
+  .mf .picker { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); overflow: hidden; }
+  @media (max-width: 920px) { .mf .picker { grid-template-columns: minmax(0, 1fr); } }
+  .mf .pk-in { padding: 22px; display: grid; gap: 18px; align-content: start; border-right: 1px solid var(--rule); background: var(--paper-2); }
+  @media (max-width: 920px) { .mf .pk-in { border-right: 0; border-bottom: 1px solid var(--rule); } }
+  .mf .pk-in fieldset { border: 0; margin: 0; padding: 0; }
+  .mf .pk-in legend { padding: 0; margin-bottom: 8px; }
+  .mf .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+  .mf .seg label { cursor: pointer; position: relative; }
+  .mf .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .mf .seg span { display: inline-block; font-size: 13px; border: 1px solid var(--rule); background: var(--paper-3); border-radius: var(--radius); padding: 7px 10px; color: var(--ink-2); line-height: 1.2; }
+  .mf .seg input:checked + span { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .mf .seg input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mf .seg label:hover span { border-color: var(--ink-3); }
+  .mf .pk-out { padding: 22px; display: grid; gap: 12px; align-content: start; }
+  .mf .rank { display: grid; margin: 0; padding: 0; list-style: none; }
+  .mf .rank > li { display: grid; grid-template-columns: 28px minmax(0, 1fr) 90px; gap: 12px; align-items: start; padding: 12px 0; border-bottom: 1px solid var(--rule-2); }
+  .mf .rank .pos { font-size: 12px; color: var(--ink-3); padding-top: 3px; }
+  .mf .rank h4 { font-size: 16.5px; font-weight: 600; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; margin: 0; }
+  .mf .linkish { all: unset; cursor: pointer; text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 0.2em; }
+  .mf .linkish:hover { text-decoration-color: var(--accent); }
+  .mf .linkish:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mf .rank .why { margin: 6px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--ink-2); display: grid; gap: 2px; }
+  .mf .rank .why .p, .mf .rank .why .m { font-family: var(--mono); font-size: 11px; margin-right: 6px; display: inline-block; min-width: 22px; }
+  .mf .rank .why .p { color: var(--win); } .mf .rank .why .m { color: var(--loss); }
+  .mf .rank .score { font-size: 18px; }
+  .mf .bar { height: 6px; background: var(--rule-2); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+  .mf .bar i { display: block; height: 100%; border-radius: 3px; transition: width 0.35s var(--ease); }
+  .mf .addons { display: grid; gap: 8px; padding-top: 6px; }
+  .mf .addon { font-size: 13.5px; color: var(--ink-2); padding-left: 12px; border-left: 2px solid var(--f-phys); margin: 0; }
+  .mf .addon b { color: var(--ink); font-weight: 600; }
+
+  /* 04 catalogue */
+  .mf .filters { display: flex; flex-wrap: wrap; gap: 12px 24px; }
+  .mf .cat { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 14px; }
+  .mf .fam { display: grid; gap: 10px; padding: 18px 18px 16px; border: 1px solid var(--rule); border-top: 3px solid var(--c); background: var(--paper-3); border-radius: 0 0 var(--radius) var(--radius); align-content: start; scroll-margin-top: 120px; }
+  .mf .fam-top { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; align-items: start; }
+  .mf .fam-top svg { width: 44px; height: 44px; color: var(--c); }
+  .mf .fam h3 { font-size: 18px; font-weight: 600; line-height: 1.2; }
+  .mf .fam .grp { font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--c); margin: 0; }
+  .mf .fam .one { font-size: 14.5px; color: var(--ink-2); margin: 0; }
+  .mf .meters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .mf .meter { display: grid; gap: 3px; }
+  .mf .meter .k { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
+  .mf .pips { display: flex; gap: 3px; }
+  .mf .pips i { width: 100%; height: 5px; border-radius: 2px; background: var(--rule-2); }
+  .mf .pips i.on { background: var(--c); }
+  .mf .fam .used { font-size: 12.5px; color: var(--ink-3); margin: 0; }
+  .mf .fam .used b { color: var(--ink-2); font-weight: 500; }
+  .mf .fam summary { cursor: pointer; font-size: 13px; color: var(--ink-2); }
+  .mf .fam dl { margin: 10px 0 0; display: grid; gap: 8px; font-size: 13.5px; }
+  .mf .fam dt { font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); }
+  .mf .fam dd { margin: 0; color: var(--ink-2); }
+
+  /* 05 lab */
+  .mf .lab { display: grid; grid-template-columns: minmax(0, 1fr) 280px; overflow: hidden; }
+  @media (max-width: 900px) { .mf .lab { grid-template-columns: minmax(0, 1fr); } }
+  .mf .lab-plot { padding: 16px 16px 8px; display: grid; gap: 6px; min-width: 0; }
+  .mf .lab-plot svg { width: 100%; height: auto; }
+  .mf .lab-ctl { padding: 18px; display: grid; gap: 16px; align-content: start; border-left: 1px solid var(--rule); background: var(--paper-2); }
+  @media (max-width: 900px) { .mf .lab-ctl { border-left: 0; border-top: 1px solid var(--rule); } }
+  .mf .ctl { display: grid; gap: 6px; }
+  .mf .ctl label, .mf .ctl .lbl { font-size: 13px; display: flex; justify-content: space-between; gap: 10px; color: var(--ink-2); }
+  .mf .ctl output { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+  .mf input[type='range'] { width: 100%; accent-color: var(--ink); }
+  .mf .switch { display: flex; align-items: center; gap: 10px; font-size: 13.5px; cursor: pointer; }
+  .mf .switch input, .mf .learners input { accent-color: var(--ink); }
+  .mf .learners { display: grid; gap: 6px; }
+  .mf .learners label { display: flex; align-items: center; gap: 8px; font-size: 13.5px; cursor: pointer; }
+  .mf .swatch { width: 18px; height: 3px; border-radius: 2px; display: inline-block; margin-right: 8px; vertical-align: middle; }
+  .mf .lab-read { grid-column: 1 / -1; border-top: 1px solid var(--rule); padding: 4px 16px 8px; }
+  .mf .rt { min-width: 480px; }
+  .mf .rt td.num { font-size: 13px; }
+  .mf .rt .best { color: var(--win); font-weight: 600; }
+
+  /* 06 opportunity map */
+  .mf .omap { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+  @media (max-width: 1000px) { .mf .omap { grid-template-columns: minmax(0, 1fr); } }
+  .mf .om-box { padding: 12px 10px 8px; }
+  .mf .om { border-collapse: collapse; font-size: 13px; min-width: 620px; width: 100%; }
+  .mf .om th, .mf .om td { border-bottom: 1px solid var(--rule-2); padding: 0; text-align: center; }
+  .mf .om thead th { padding: 0 0 8px; vertical-align: bottom; }
+  .mf .om thead th button { all: unset; cursor: pointer; font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); writing-mode: vertical-rl; transform: rotate(180deg); padding: 4px 2px; line-height: 1; }
+  .mf .om thead th button:hover, .mf .om thead th button.on { color: var(--ink); }
+  .mf .om thead th button:focus-visible { outline: 2px solid var(--accent); }
+  .mf .om tbody th { text-align: left; font-weight: 500; white-space: nowrap; padding: 6px 10px 6px 2px; }
+  .mf .om tbody th span { display: inline-flex; align-items: center; gap: 8px; }
+  .mf .om td button { all: unset; cursor: pointer; width: 100%; min-width: 34px; height: 34px; display: grid; place-items: center; }
+  .mf .om td button:hover { background: var(--paper-2); }
+  .mf .om td button.on { background: var(--paper-2); box-shadow: inset 0 0 0 1.5px var(--ink); }
+  .mf .om td button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .mf .om .c { border-radius: 50%; background: var(--c); }
+  .mf .om .c.in { background: transparent; box-shadow: inset 0 0 0 2px var(--c); }
+  .mf .om td.col-on { background: color-mix(in srgb, var(--paper-2) 75%, transparent); }
+  .mf .om tr.sep th { padding-top: 16px; font-family: var(--mono); font-size: 10px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); border-bottom: 1px solid var(--rule); }
+  .mf .cell-d { padding: 20px 22px; display: grid; gap: 12px; position: sticky; top: 120px; }
+  .mf .cell-d h3 { font-size: 30px; line-height: 1.05; }
+  .mf .cell-d .fit { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; margin: 0; }
+  .mf .cell-d p { margin: 0; font-size: 15px; }
+  .mf .cell-d .gapbox { font-size: 14px; background: var(--paper-2); border-radius: var(--radius); padding: 10px 12px; color: var(--ink-2); }
+  .mf .cell-d .gapbox b, .mf .cell-d .judge b { color: var(--ink); }
+  .mf .cell-d .judge { color: var(--ink-2); font-size: 14px; }
+  .mf .cell-d .list { display: grid; gap: 6px; justify-items: start; }
+
+  /* 07 trees */
+  .mf .steps { counter-reset: st; margin: 8px 0 0; padding: 0; list-style: none; }
+  .mf .steps li { counter-increment: st; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--rule-2); font-size: 15px; }
+  .mf .steps li::before { content: counter(st, decimal-leading-zero); font-family: var(--mono); font-size: 12px; color: var(--accent); padding-top: 3px; }
+  .mf pre.code { margin: 8px 0 8px; font-size: 12px; line-height: 1.6; }
+  .mf pre.code .c { color: var(--ink-3); }
+  .mf pre.code .k { color: var(--f-struct); }
+  .mf .ub { min-width: 560px; }
+  .mf .ub td:first-child { font-weight: 600; white-space: nowrap; }
+  .mf .shap { display: grid; gap: 12px; }
+  .mf .shap-head { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end; justify-content: space-between; }
+  .mf .shap .illus { color: var(--accent); }
+  .mf .shap svg { width: 100%; height: auto; }
+  .mf .shap .small { margin: 0; max-width: 80ch; }
+  .mf .donts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 14px; }
+  .mf .dont { padding: 14px 16px; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--paper-3); font-size: 14px; display: grid; gap: 6px; align-content: start; }
+  .mf .dont b { font-weight: 600; }
+
+  /* 08 budget */
+  .mf .budget { width: 100%; height: auto; }
+
+  /* 09 lenses */
+  .mf .lenses { display: grid; grid-template-columns: minmax(220px, 300px) minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 820px) { .mf .lenses { grid-template-columns: minmax(0, 1fr); } }
+  .mf .lens-list { display: grid; gap: 2px; }
+  .mf .lb { all: unset; cursor: pointer; display: grid; gap: 2px; padding: 10px 12px; border-left: 2px solid transparent; }
+  .mf .lb:hover { background: var(--paper-2); }
+  .mf .lb:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .mf .lb[aria-selected='true'] { border-left-color: var(--accent); background: var(--paper-3); }
+  .mf .lb .kicker { font-size: 10px; }
+  .mf .lb b { font-weight: 500; font-size: 15px; }
+  .mf .lens-body { padding: 24px 26px; display: grid; gap: 14px; }
+  .mf .lens-body h3 { font-size: clamp(28px, 3.4vw, 40px); line-height: 1.02; }
+  .mf .lens-body .one { font-size: 19px; color: var(--ink-2); margin: 0; max-width: 60ch; }
+  .mf .lens-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; }
+  @media (max-width: 640px) { .mf .lens-grid { grid-template-columns: minmax(0, 1fr); } }
+  .mf .lens-grid > div { display: grid; gap: 4px; font-size: 14.5px; align-content: start; }
+  .mf .lens-grid .wide { grid-column: 1 / -1; }
+  .mf .lens-grid p { margin: 0; color: var(--ink-2); }
+  .mf .lens-grid .ask { color: var(--ink); font-size: 16px; }
+  .mf .lens-body .evi { font-size: 13.5px; background: var(--paper-2); padding: 10px 12px; border-radius: var(--radius); color: var(--ink-2); margin: 0; }
+  .mf .lens-body .evi b { color: var(--ink); }
+
+  /* 10 backlog */
+  .mf .bl { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: 12px; }
+  .mf .bli { padding: 16px; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--paper-3); display: grid; gap: 8px; align-content: start; }
+  .mf .bli h3 { font-size: 17px; font-weight: 600; }
+  .mf .bli .q { font-size: 14px; color: var(--ink-2); margin: 0; }
+  .mf .bli .why { font-size: 13px; color: var(--ink-3); margin: 0; }
+  .mf .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .mf .tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.03em; border-radius: 99px; padding: 2px 8px; border: 1px solid currentColor; }
+
+  /* 11 drafter */
+  .mf .prop { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); overflow: hidden; }
+  @media (max-width: 900px) { .mf .prop { grid-template-columns: minmax(0, 1fr); } }
+  .mf .prop-in { padding: 20px; display: grid; gap: 14px; align-content: start; background: var(--paper-2); border-right: 1px solid var(--rule); }
+  @media (max-width: 900px) { .mf .prop-in { border-right: 0; border-bottom: 1px solid var(--rule); } }
+  .mf .prop-in label { display: grid; gap: 6px; font-size: 13px; color: var(--ink-2); }
+  .mf select, .mf textarea { font: 14px/1.4 var(--sans); color: var(--ink); background: var(--paper-3); border: 1px solid var(--rule); border-radius: var(--radius); padding: 8px 10px; width: 100%; }
+  .mf textarea { min-height: 120px; resize: vertical; }
+  .mf .prop-out { padding: 20px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+  .mf .prop-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .mf .prop-out pre.code { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+  .mf .check { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 14px; }
+  .mf .check li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; color: var(--ink-2); }
+  .mf .check li::before { content: ''; width: 12px; height: 12px; border: 1.5px solid var(--ink-3); border-radius: 2px; margin-top: 5px; }
+  .mf .copied { font-size: 11px; color: var(--win); }
+
+  /* 12 reading */
+  .mf .refs { columns: 2 340px; column-gap: 32px; font-size: 13.5px; }
+  .mf .refs section { break-inside: avoid; margin-bottom: 18px; }
+  .mf .refs h3 { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 6px; font-weight: 400; }
+  .mf .refs ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+  .mf .refs li { color: var(--ink-2); }
+  .mf .refs a { color: var(--ink); }
+
+  .mf .sources { padding-block: clamp(56px, 8vw, 96px) 24px; display: grid; gap: 12px; }
+  .mf .sources p { max-width: 90ch; margin: 0; }
+  .mf .next { display: flex; flex-wrap: wrap; gap: 10px; }
+</style>
