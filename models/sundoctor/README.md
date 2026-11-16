@@ -1,5 +1,5 @@
 <!-- Generated from model.yaml and ratchet.yaml by `mlratchet readme --write`. Edit those, not this file. -->
-# SunDoctor <sub>v2.0</sub>
+# SunDoctor <sub>v2.1</sub>
 
 > **A day-by-day doctor for solar farms, trained on sunlight physics alone.**
 
@@ -45,22 +45,23 @@ Two real farms, graded against independent answer keys (sibling inverters, the p
 
 | Metric | SunDoctor | Baselines | |
 |---|---|---|---|
-| String failures caught within a day (California) | **55 / 56** | SunDoctor v1, with sensor (classical): 54 / 56<br>SunDoctor v1, power only (classical): 1 / 56 | ✅ wins |
-| Dead strings counted right, all inverter-days | **95.9%** | — | ℹ️ |
-| Inverters offline caught | **44 / 49** | SunDoctor v1, with sensor (classical): 47 / 49<br>SunDoctor v1, power only (classical): 0 / 49 | ❌ loses |
-| Snow AUC (Colorado) | **0.98** | — | ✅ wins |
-| Big tracker-loss days (> 10%) flagged | **77%** | SunDoctor v1 (classical): 0% | ✅ wins |
-| Small tracker losses (2–5%) ranked, AUC | **0.5** | Coin flip (dumb baseline): 0.5 | ➖ tie |
+| String failures caught within a day (California)<br><sub>Unchanged in v2.1 (v2.0: 55 / 56).</sub> | **55 / 56** | SunDoctor v1, with sensor (classical): 54 / 56<br>SunDoctor v1, power only (classical): 1 / 56 | ✅ wins |
+| Dead strings counted right, all inverter-days<br><sub>v2.0: 95.9%.</sub> | **95.7%** | — | ℹ️ |
+| Inverters offline caught<br><sub>v2.1 trains on multi-day inverter trips. v2.0: 44 / 49 (re-scored 44 / 49). Power only: 47 / 49 (v2.0: 39 / 49).</sub> | **48 / 49** | SunDoctor v1, with sensor (classical): 47 / 49<br>SunDoctor v1, power only (classical): 0 / 49 | ✅ wins |
+| Snow AUC (Colorado)<br><sub>Worse than v2.0 (0.98): v2.1 reads more buried-snow days as dark inverters. Power only 0.82 (v2.0: 0.94).</sub> | **0.89** | — | ✅ wins |
+| Big tracker-loss days (> 10%) flagged<br><sub>v2.0: 77%.</sub> | **72%** | SunDoctor v1 (classical): 0% | ✅ wins |
+| Small tracker losses (2–5%) ranked, AUC<br><sub>v2.0: 0.50 (tie). Simulated tracker days rank these losses at AUC 0.79-0.81, so the gap is between the simulator and this farm.</sub> | **0.47** | Coin flip (dumb baseline): 0.5 | ❌ loses |
 
 ### Where it wins
 
-- Catches 55 of 56 real string failures within a day, with the irradiance sensor; 47 of 56 from power alone.
-- Snow and outage AUC 0.98 on a snowy tracker farm it never trained on.
+- Catches 55 of 56 real string failures within a day, with the irradiance sensor; 49 of 56 from power alone.
+- v2.1 catches 48 of 49 real inverter outages with the sensor and 47 of 49 from power alone (v2.0: 44 and 39).
+- Outage AUC 0.999 and snow AUC 0.89 on a snowy tracker farm it never trained on.
 
 ### Where it loses
 
-- Catches 44 of 49 real inverter outages with the sensor; v1 with the sensor caught 47.
-- Small tracker losses (2–5%) can't be ranked (AUC 0.50).
+- Small tracker losses (2–5%) can't be ranked (AUC 0.47, a coin flip scores 0.50).
+- v2.1 is worse than v2.0 on snow (AUC 0.89 vs 0.98) and on big tracker-loss days flagged (72% vs 77%).
 - Power-only mode over-reports tracker losses (4.7% vs 1.1%) and dust.
 
 ## Limits
@@ -98,6 +99,20 @@ Two real farms, graded against independent answer keys (sibling inverters, the p
 
 The answer keys were fixed twice (outages not graded on cold dim days; snow graded per module). Every rung was re-scored; no decision changed.
 
+### v2.1 — multi-day inverter trips
+
+**Objective:** The v2 objective (mean of the with-sensor and no-sensor scores) on a new frozen set of 2,000 fortnights (seed 779) from the v2.1 simulator  
+**Rule:** Keep if the objective rises by more than 0.01.
+
+| Rung | Change | Frozen-set score | Decision | Why | With sensor, fixed | With sensor, all | Power only |
+|---|---|---|---|---|---|---|---|
+| s8 | Start: the v2.0 release scored on the v2.1 frozen set | 1.482 | ● kept | Starting point. | 91/117 | 161/202 | 136/201 |
+| s9 | Multi-day inverter trips in 15% of training fortnights; 4,000 steps from rung 8 at 1.5e-4, BatchNorm frozen | 1.564 | **◆ released** | 1.564 vs 1.482. A second seed scored 1.564 (spread 0.0001). | 113/117 | 196/202 | 191/201 |
+
+<sub>Columns after *Why*: Simulated multi-day trip probe (outage_probe.py), caught / trips.</sub>
+
+Physics v2.1 (15 Nov 2026) adds inverters that trip and stay dark for 2–14 days until reset; v1 and v2 only switched an inverter off for single days. On a simulated probe of such trips (600 fortnights, seed 4242) the v2.0 release caught 91 of 117 with a sensor on fixed mounts and 136 of 201 without a sensor. The physics changed, so the frozen set changed; only rung 8 survives as weights, so earlier rungs could not be re-scored on it. Columns are the outage probe, never used to decide.
+
 Raw per-rung logs are in [`training/`](training/).
 
 ## Physics
@@ -111,6 +126,7 @@ Sun position and clear-sky irradiance, plane-of-array transposition for fixed an
 - Soiling, shading, clipping, outages, dead strings, CdTe thin film
 - Sensor misalignment, dew dropouts, and 40% of fortnights with no sensor at all
 - Weather fronts (rung 8) — cold fronts on overcast days
+- v2.1: inverters that trip and stay dark for 2–14 days until reset (rung 9)
 
 **Checked against independent references**
 

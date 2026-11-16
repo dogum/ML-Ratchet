@@ -1,4 +1,4 @@
-# SunDoctor model card (v2.0, rung 8)
+# SunDoctor model card (v2.1, rung 9)
 
 **What it is.** A 2-D convolutional network (591,455 weights) that reads 14 days x 96 fifteen-minute steps (local *solar*
 time) of one PV system: AC power per kW of DC nameplate, air temperature and, if the site has one, plane-of-array (POA)
@@ -91,6 +91,39 @@ corrected (decisions unaffected): outages are not graded on cold, dim days, when
 neighbours shed; and snow is graded module by module, after rung 6's misses showed the first, fleet-wide key marking
 modules that had already shed their snow as buried.
 
+**v2.1** (15 Nov 2026) changed the physics: an inverter can trip and stay dark for 2–14 days until it is reset (v1 and
+v2 only switched an inverter off for single days). On 600 simulated fortnights with such a trip, the v2.0 release caught
+91 of 117 with a sensor on fixed mounts and 136 of 201 without a sensor. New frozen set: 2,000 fortnights, seed 779,
+v2.1 physics (weather fronts on, 15% of fortnights with a trip); same objective and rule. Only rung 8 survives as
+weights, so the earlier rungs could not be re-scored on it.
+
+| Rung | Change | Decision | Objective | with sensor | power only | Simulated trips caught (sensor fixed / sensor all / power only) |
+|---|---|---|---|---|---|---|
+| 8 | v2.0 release | start | 1.482 | 1.535 | 1.429 | 91/117, 161/202, 136/201 |
+| 9 | trips in 15% of training fortnights; 4,000 steps from rung 8, lr 1.5e-4, BatchNorm frozen | released | 1.564 | 1.633 | 1.495 | 113/117, 196/202, 191/201 |
+
+A second seed of rung 9 scored 1.564 (spread 0.0001). Rung 9's skill gains include snow (0.46 -> 0.77 with a sensor)
+and stuck trackers (0.31 -> 0.48) on the simulated set, where a dark inverter had been read as snow or a stuck row.
+
+### v2.1 exams (scored once, 15 Nov 2026; v2.0 re-scored on the same rebuilt data, reproducing its numbers)
+
+| | v2.1 with sensor | v2.0 with sensor | v2.1 power only | v2.0 power only | v1 with sensor |
+|---|---|---|---|---|---|
+| California: inverter offline caught | **48/49** | 44/49 | 47/49 | 39/49 | 47/49 |
+| California: string failures flagged within a day | 55/56 | 55/56 | 49/56 | 47/56 | 54/56 |
+| California: repairs flagged within a day | 39/47 | 40/47 | 27/47 | 26/47 | 44/47 |
+| California: dead strings counted right, every inverter-day | 95.7% | 95.9% | 94.0% | 94.2% | 94.1% |
+| Colorado: outage AUC / outage days caught | 0.999 / 93% | 0.984 / 87% | 0.996 / 91% | 0.968 / 79% | - |
+| Colorado: snow AUC / module-days flagged | 0.89 / 51% | 0.98 / 55% | 0.82 / 35% | 0.94 / 42% | - |
+| Colorado: snow module-days called outage | 10% | 13% | 8% | 4% | - |
+| Colorado: big tracker-loss days (> 10%) flagged | 72% | 77% | 79% | 86% | 0% |
+| Colorado: small tracker losses (2-5%) ranked, AUC | 0.47 | 0.50 | 0.46 | 0.48 | - |
+
+v2.1 fixes the outage row and costs snow: buried-snow days rank lower on snow because they now look more like a tripped
+inverter. The one outage still missed with the sensor is inverter 3 on 1 Nov 2022 (missed by v2.0 too).
+
+The sections below are the v2.0 exams, kept as recorded.
+
 ## Final exam 1: PVDAQ 2107 (Arbuckle, California), with and without the sensor
 
 24 identical string inverters, each with 6 strings of 20 modules (37.2 kW DC, 30 kW AC), fixed 25 deg tilt facing south,
@@ -151,7 +184,8 @@ tracker angles). Answer keys, all from the plant's own instruments:
 
 - Power only is the weaker mode. On the California farm it counts dead strings right on 52% of the days they are really dead, against 63% with the sensor, and its dust and shading figures are rough: without a sensor, a hazy week and a dusty week look much alike.
 - A panel buried in snow all day makes no power at all, exactly like a tripped inverter. SunDoctor can then only go on the weather, and sometimes calls the buried day an outage; it is surer once the snow starts sliding off. In Colorado it flags 55% of snow module-days with the sensor and 42% without, and calls 13% of them outages (4% without the sensor).
-- Stuck trackers: it flags 77% of the days trackers cost more than 10%, but cannot rank small losses of 2 to 5% (AUC 0.50). Without a sensor it over-reports them (average 4.7% against 1.1% in the key): a cloudy morning can look like panels facing the wrong way.
+- v2.1 traded snow for outages: Colorado snow AUC fell from 0.98 to 0.89 (0.94 to 0.82 without a sensor) while outage AUC rose to 0.999.
+- Stuck trackers: v2.1 flags 72% of the days trackers cost more than 10% (v2.0 77%), but cannot rank small losses of 2 to 5% (AUC 0.47; v2.0 0.50). On simulated trackers the same ranking scores AUC 0.79, so the gap is between the simulator and this farm. Without a sensor it over-reports them (average 4.7% against 1.1% in the key): a cloudy morning can look like panels facing the wrong way.
 - It tells dead strings from dust partly by memory: it compares the system with its own best level over the past year. A string dead from the first day it saw looks like a weaker system, not a broken one.
 - Two real farms, both utility scale. Rooftops, microinverters, bifacial panels and real satellite irradiance are untested. The Colorado answer keys are physics estimates from the plant's own sensors, and its main sunlight sensor was wrong for three and a half years.
 - Colorado is no longer a fully blind test for rung 8: the weather-front change was prompted by rung 6's snow misses there and in the lab on this page. It improved the simulated exam and the Colorado outage calls, but not the snow calls.

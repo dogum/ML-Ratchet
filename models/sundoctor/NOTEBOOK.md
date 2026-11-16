@@ -129,3 +129,27 @@ Two exam rows were not wins: inverters offline caught (44/49 with a sensor, v1 c
   frozen (`train2.py --init_npz --freeze_bn`). A first attempt at lr 7e-4 made the training loss climb from -1.8 to
   -0.9 within 800 steps and was stopped before any scoring; lr 1.5e-4 trained normally.
 - **Release choice:** s9 as v2.1. The real exams are run once, after this entry is committed.
+
+## 15 Nov 2026: v2.1 exams (run once, after the release choice)
+
+`exam_v21.py`, numpy weights for both versions (v2.0 from the previous release file). The rebuilt data reproduce the
+v2.0 numbers exactly (California 55/56, 40/47, 44/49 with a sensor; 47/56, 26/47, 39/49 without; Colorado snow AUC
+0.98, stuck AUC 0.50, big tracker-loss days 77%). The step that wrote `sys2107_solar.npz` was missing from training/;
+it is restored in `realdata.py` (the sibling key gives the same 56 string failures, 47 repairs and 49 offline events).
+
+| | v2.1 sensor | v2.0 sensor | v2.1 power only | v2.0 power only |
+|---|---|---|---|---|
+| Inverter offline caught | 48/49 | 44/49 | 47/49 | 39/49 |
+| String failures within a day | 55/56 | 55/56 | 49/56 | 47/56 |
+| Repairs within a day | 39/47 | 40/47 | 27/47 | 26/47 |
+| Dead strings counted right | 95.7% | 95.9% | 94.0% | 94.2% |
+| Colorado outage AUC | 0.999 | 0.984 | 0.996 | 0.968 |
+| Colorado snow AUC | 0.89 | 0.98 | 0.82 | 0.94 |
+| Big tracker-loss days flagged | 72% | 77% | 79% | 86% |
+| Small tracker losses AUC | 0.47 | 0.50 | 0.46 | 0.48 |
+
+- The outage row flips: 48/49 against v1's 47/49 (loss -> win). Still missed: inverter 3 on 1 Nov 2022.
+- Worse: snow AUC 0.98 -> 0.89 (power only 0.94 -> 0.82), snow module-days flagged 55% -> 51%, big tracker-loss
+  days 77% -> 72%, repairs 40 -> 39, small tracker losses 0.50 -> 0.47 (tie -> loss against a coin flip). A whole-day
+  dark module under snow now looks more like a trip. The simulated set did not show this cost (simulated snow skill rose),
+  so the simulator's buried-snow days are easier to tell from trips than Colorado's.
