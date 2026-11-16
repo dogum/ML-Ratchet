@@ -1,5 +1,5 @@
 <!-- Generated from model.yaml and ratchet.yaml by `mlratchet readme --write`. Edit those, not this file. -->
-# HybridPilot <sub>v2.1</sub>
+# HybridPilot <sub>v2.2</sub>
 
 > **A learned hybrid controller, raced against the dynamic-programming optimum.**
 
@@ -8,7 +8,7 @@
 
 *Second by second, should a hybrid run its engine, and how hard — to use the least fuel the physics allows?*
 
-HybridPilot is a learned, causal energy-management policy for hybrids: every second it decides engine on/off and engine power, holding charge in hybrids and depleting-then-sustaining in plug-ins. It learned by imitating the dynamic-programming (DP) optimum inside the RoadSim simulator. Version 2.1 runs on RoadSim physics v3.1 (chosen on dev: closer engine starts and fuel on the dev twins), with a dead band on its SOC feedback and a fixed equivalence factor for buses and mild hybrids. It was examined on 430 trips — real VED routes driven by calibrated twins of the exam cars, bus legs and cycles — against rule-based control, ECMS, adaptive ECMS and MPC.
+HybridPilot is a learned, causal energy-management policy for hybrids: every second it decides engine on/off and engine power, holding charge in hybrids and depleting-then-sustaining in plug-ins. It learned by imitating the dynamic-programming (DP) optimum inside the RoadSim simulator. Version 2.1 runs on RoadSim physics v3.1 (chosen on dev: closer engine starts and fuel on the dev twins), with a dead band on its SOC feedback and a fixed equivalence factor for buses and mild hybrids. Version 2.2 adds a charge-sustaining rule for plug-ins at their CS level and a weak SOC feedback for buses. It was examined on 430 trips — real VED routes driven by calibrated twins of the exam cars, bus legs and cycles — against rule-based control, ECMS, adaptive ECMS and MPC.
 
 [Interactive lab](https://dogum.github.io/ML-Ratchet/models/hybridpilot/lab/) · [Project page](https://dogum.github.io/ML-Ratchet/models/hybridpilot/) · [Model card](MODEL_CARD.md) · [Lab notebook](NOTEBOOK.md) · [The method](https://github.com/dogum/ML-Ratchet/blob/main/docs/method.md)
 
@@ -18,7 +18,7 @@ HybridPilot is a learned, causal energy-management policy for hybrids: every sec
 | **Returns** | Engine on/off and engine power (series, power-split) or torque share (P2) every second<br>The resulting fuel, battery use and engine starts over the trip, compared against DP and the classical strategies |
 | **Learned from** | The shared RoadSim simulator (shared/vehicle), physics v3.1 pinned (roadsim-physics-v3.1; v2.0 used v2): EPA ALPHA engine and motor maps, Thevenin battery, eCVT / P2 (with torque converter and start energy) / series (with direct drive) powertrains, two-node cabin HVAC, tyre model, production hybrid rules (8 s / 3 s minimum on/off, Toyota-type engine-on speed, warm-up holds, 2 s engine run-on into braking, plug-in charge-depleting rules), the v3 generator hybrid hardware, an energy ledger checked on every run. Teacher: DP over engine on/off × 121 SOC points; reference: DP with the same 8 s / 3 s on/off timers. |
 | **Noise** | Real routes, grades and weather; random start SOC, temperatures from −20 to 36 °C, warm and cold starts |
-| **Network** | MLP 66 → 96 → 96 → 2 (15,938 parameters) predicting the equivalence factor s (buses and mild hybrids use a fixed s of 2.6–2.8 instead); the decision minimises fuel + s × battery power among RoadSim's candidate controls, with A-ECMS-style SOC feedback (Kp 12 beyond a ±0.03 dead band, Ki 0.02) |
+| **Network** | MLP 66 → 96 → 96 → 2 (15,938 parameters) predicting the equivalence factor s (buses and mild hybrids use a fixed s of 2.6–2.8 instead; plug-ins at their CS level use at least the HEV costate, 2.42 power-split / 2.70 series); the decision minimises fuel + s × battery power among RoadSim's candidate controls, with A-ECMS-style SOC feedback (Kp 12 beyond a ±0.03 dead band, Ki 0.02; plug-ins below CS Kp 24 without the band; buses Kp 3, no integral) |
 | **Physics also enters** | inputs: Wheel power demand from RoadSim's road-load model<br>output: Its output, the equivalence factor s, sets an ECMS cost over candidate controls scored by the powertrain model |
 | **Real data's jobs** | backdrop, calibration, gate, exam (never training labels) |
 | **Dev set** | 76 trips — routes of the VED dev cars (calibrated twins of the 7 dev hybrids + 18 dev generated vehicles) and full-ZTBus dev legs (by-month split) |
@@ -43,44 +43,46 @@ for r in compare(spec, trip, init_soc=None, warm=True):
 
 ## The exam
 
-430 exam trips, graded as % of the DP optimum (DP with the same 8 s / 3 s on/off timers) at matched final charge, on RoadSim physics v3.1. Real routes, simulated cars. Every baseline and v2.0 were re-scored on the same physics. Run once, after the release choice was committed. v2.0's numbers (physics v2) are in the notes. Every number here is on real data that never chose anything.
+430 exam trips, graded as % of the DP optimum (DP with the same 8 s / 3 s on/off timers) at matched final charge, on RoadSim physics v3.1. Real routes, simulated cars. Every baseline, v2.1 and v2.0 were re-scored on the same physics. v2.2 was run once, after its release choice was committed (48e9985). Earlier versions' numbers are in the notes. Every number here is on real data that never chose anything.
 
 | Metric | HybridPilot | Baselines | |
 |---|---|---|---|
-| All 430 trips, % of DP optimum<br><sub>Beats every causal baseline: +0.37 points over A-ECMS, 95% CI [−0.18, +0.84] (bootstrap by vehicle); +0.26 [+0.01, +0.52] over constant-s ECMS, which holds charge on only 75% of trips. MPC, which sees 15 s of the future, scores 0.10 higher. Holds charge on 93% of trips (A-ECMS 97%). v2.0: 98.84 on physics v2, a win (MPC 98.80); v2.0 re-scored on v3.1: 98.43.</sub> | **98.57%** | Adaptive ECMS (classical): 98.2%<br>ECMS (constant s) (classical): 98.31%<br>MPC, 15 s of the future (classical): 98.67%<br>Rule-based (classical): 97% | ↔️ mixed |
-| Power-split hybrids (148 trips), % of DP<br><sub>+0.59 points [+0.42, +0.78] over A-ECMS, +0.20 [−0.02, +0.42] over constant-s ECMS. Holds charge on 93% (A-ECMS 97%, rule 93%, ECMS 72%). v2.0: 98.41 on physics v2.</sub> | **97.64%** | Adaptive ECMS (classical): 97.05%<br>ECMS (constant s) (classical): 97.44%<br>Rule-based (classical): 97.44% | ✅ wins |
-| P2 and series hybrids (63 trips), % of DP<br><sub>P2 +1.42 [+0.31, +3.38], series +0.88 [+0.57, +1.18] over A-ECMS. Holds charge on 94% (A-ECMS 92%; constant-s ECMS 59%). v2.0: 99.84 on physics v2.</sub> | **99.63%** | Adaptive ECMS (classical): 98.42%<br>ECMS (constant s) (classical): 99.29%<br>Rule-based (classical): 95.35% | ✅ wins |
-| Mild P1 hybrids, CR-Z-type twins (56 trips), % of DP<br><sub>+1.08 [+0.79, +1.51] over A-ECMS, but holds charge on only 79% of trips (A-ECMS 96%; v2.0 re-scored on v3.1: 91%): the fixed mild s of 2.8 lets the CR-Z twins drift. Constant-s ECMS scores 0.21 higher (CI of the difference [−0.53, +0.10]) and holds charge on 34%. v2.0: 98.10 on physics v2 (holds 95%).</sub> | **98.36%** | Adaptive ECMS (classical): 97.28%<br>ECMS (constant s) (classical): 98.57%<br>Rule-based (classical): 93.45% | ↔️ mixed |
-| Plug-in hybrids (103 trips), % of DP<br><sub>Power-split plug-ins −1.08 [−4.66, +2.05], series plug-ins −0.72 [−1.78, −0.01] against A-ECMS. v2.0: 99.27 on physics v2 (A-ECMS 99.59).</sub> | **99.25%** | Adaptive ECMS (classical): 100.17%<br>Charge-depleting then sustaining (classical): 99.34% | ❌ loses |
-| Hybrid buses (24 trips), % of DP<br><sub>Constant-s ECMS beats it on series buses (98.30 vs 96.48, −1.82 [−4.51, −0.04]) and P2 buses (99.48 vs 98.83, −0.64 [−1.17, −0.36]). The fixed bus s gained 0.52 points over v2.0 on the same exam (97.14). Against A-ECMS: series +0.99 [+0.79, +1.30], P2 +0.30 [+0.14, +0.48]. Charge held on every bus trip. v2.0: 97.50 on physics v2.</sub> | **97.66%** | Adaptive ECMS (classical): 97.01%<br>ECMS (constant s) (classical): 98.89%<br>Rule-based (classical): 96.07% | ❌ loses |
-| Charge held within its window (all trips)<br><sub>v2.0: 95% (A-ECMS 96%) on physics v2; v2.0 re-scored on v3.1: 96%. The dead band and the mild s cost 3 points.</sub> | **93%** | Adaptive ECMS (classical): 97% | ❌ loses |
-| Engine starts per km (all trips)<br><sub>v2.0: 4.0 vs 4.5 on physics v2 (v3.1's 2 s run-on into braking lowers starts for every strategy).</sub> | **3 /km** | Adaptive ECMS (classical): 3.2 /km | ✅ wins |
-| Against v2.0 re-scored on the same exam (v2.0 network and settings on physics v3.1), % of DP<br><sub>+0.14 points [+0.06, +0.22] (mild +0.44, P2 buses +0.75), but holds charge on 93% of trips against v2.0's 96%.</sub> | **98.57%** | HybridPilot v2.0 (published): 98.43% | ↔️ mixed |
-| Against the v1 release re-scored on the same exam (v1 network and settings on physics v3.1), % of DP<br><sub>+0.03 points [−0.12, +0.22]; v1 holds charge on 91% of trips (v2.1 93%). v2.0 on physics v2: 98.84 vs 99.00, a loss.</sub> | **98.57%** | HybridPilot v1 (published): 98.54% | ➖ tie |
-| Simulated vs logged fuel, calibrated twins driven by HybridPilot (exam, trip median)<br><sub>Power-split HEVs +2.2% (168 trips, 56 cars), mild +2.3%, P2 +3.4% (5 trips); plug-in power-split −20.1%, plug-in series −30.9% (fuel + battery energy). Engine starts on power-splits 2.42 per km vs 1.94 real (v2.0 on physics v2: 3.65). Under the 8% target for hybrids, not for plug-ins.</sub> | **+2.2% HEV, −20% / −31% plug-ins** | — | ℹ️ |
+| All 430 trips, % of DP optimum<br><sub>Beats every causal baseline: +0.46 points over A-ECMS, 95% CI [−0.08, +0.95] (bootstrap by vehicle); +0.35 [+0.12, +0.59] over constant-s ECMS, which holds charge on only 75% of trips. MPC, which sees 15 s of the future, scores 0.01 higher. Holds charge on 93% of trips (A-ECMS 97%). v2.1: 98.57 (re-scored 98.55); v2.0 on physics v2 98.84, a win; v2.0 re-scored on v3.1: 98.43.</sub> | **98.66%** | Adaptive ECMS (classical): 98.2%<br>ECMS (constant s) (classical): 98.31%<br>MPC, 15 s of the future (classical): 98.67%<br>Rule-based (classical): 97% | ↔️ mixed |
+| Power-split hybrids (148 trips), % of DP<br><sub>+0.59 points [+0.42, +0.78] over A-ECMS, +0.20 [−0.02, +0.42] over constant-s ECMS. Holds charge on 93% (A-ECMS 97%, rule 93%, ECMS 72%). Same as v2.1 (v2.2 changes only plug-ins and buses). v2.0: 98.41 on physics v2.</sub> | **97.64%** | Adaptive ECMS (classical): 97.05%<br>ECMS (constant s) (classical): 97.44%<br>Rule-based (classical): 97.44% | ✅ wins |
+| P2 and series hybrids (63 trips), % of DP<br><sub>P2 +1.42 [+0.31, +3.38], series +0.88 [+0.57, +1.18] over A-ECMS. Holds charge on 94% (A-ECMS 92%; constant-s ECMS 59%). Same as v2.1. v2.0: 99.84 on physics v2.</sub> | **99.63%** | Adaptive ECMS (classical): 98.42%<br>ECMS (constant s) (classical): 99.29%<br>Rule-based (classical): 95.35% | ✅ wins |
+| Mild P1 hybrids, CR-Z-type twins (56 trips), % of DP<br><sub>+1.08 [+0.79, +1.51] over A-ECMS, but holds charge on only 79% of trips (A-ECMS 96%; v2.0 re-scored on v3.1: 91%). Constant-s ECMS scores 0.21 higher (CI of the difference [−0.53, +0.10]) and holds charge on 34%. Unchanged from v2.1: a mild rule without the dead band was rejected on dev (R20). v2.0: 98.10 on physics v2 (holds 95%).</sub> | **98.36%** | Adaptive ECMS (classical): 97.28%<br>ECMS (constant s) (classical): 98.57%<br>Rule-based (classical): 93.45% | ↔️ mixed |
+| Plug-in hybrids (103 trips), % of DP<br><sub>Power-split plug-ins −1.13 [−4.61, +1.92], series plug-ins −0.73 [−1.78, −0.07] against A-ECMS. The v2.2 CS rule raised plug-in charge holding from 97 to 101 of 103 trips, not their fuel score. v2.1: 99.25 (re-scored 99.18); v2.0: 99.27 on physics v2 (A-ECMS 99.59).</sub> | **99.22%** | Adaptive ECMS (classical): 100.17%<br>Charge-depleting then sustaining (classical): 99.35% | ❌ loses |
+| Hybrid buses (24 trips), % of DP<br><sub>Against constant-s ECMS: series buses 99.36 vs 98.30 (+1.06 [+0.86, +1.23]), P2 buses 99.66 vs 99.48 (+0.18 [−0.02, +0.42]). Against A-ECMS: series +3.87 [+2.00, +7.04], P2 +1.13 [+0.62, +1.47]. The cost: series buses hold charge on 9 of 12 trips (v2.1 12, ECMS 11); P2 buses 12 of 12. v2.1: 97.66, a loss to ECMS; v2.0: 97.50 on physics v2.</sub> | **99.51%** | Adaptive ECMS (classical): 97.01%<br>ECMS (constant s) (classical): 98.89%<br>Rule-based (classical): 96.07% | ✅ wins |
+| Charge held within its window (all trips)<br><sub>399 of 430 trips (A-ECMS 418). v2.1: 398 (93%): v2.2 gains 4 plug-in trips and loses 3 series-bus trips; mild hybrids still 79%. v2.0 on physics v2: 95% (A-ECMS 96%); v2.0 re-scored on v3.1: 96%.</sub> | **93%** | Adaptive ECMS (classical): 97% | ❌ loses |
+| Engine starts per km (all trips)<br><sub>v2.1: 3.0. v2.0: 4.0 vs 4.5 on physics v2 (v3.1's 2 s run-on into braking lowers starts for every strategy).</sub> | **3 /km** | Adaptive ECMS (classical): 3.2 /km | ✅ wins |
+| Against v2.1 re-scored on the same exam, % of DP<br><sub>+0.11 points [+0.01, +0.24] (series buses +2.88, P2 buses +0.83, plug-ins about +0.04; every other trip identical). Charge held on 399 vs 398 trips. v2.1's first exam run gave 98.57: one plug-in trip's result depended on which trips the same worker process had run before; a fresh process gives the re-score's number.</sub> | **98.66%** | HybridPilot v2.1 (published): 98.55% | ✅ wins |
+| Against v2.0 re-scored on the same exam (v2.0 network and settings on physics v3.1), % of DP<br><sub>+0.23 points [+0.10, +0.41] (mild +0.44, buses +1.6 to +3.2), but holds charge on 93% of trips against v2.0's 96%. v2.1: +0.14.</sub> | **98.66%** | HybridPilot v2.0 (published): 98.43% | ↔️ mixed |
+| Against the v1 release re-scored on the same exam (v1 network and settings on physics v3.1), % of DP<br><sub>+0.12 points [−0.03, +0.31]; v1 holds charge on 91% of trips (v2.2 93%). v2.1: +0.03. v2.0 on physics v2: 98.84 vs 99.00, a loss.</sub> | **98.66%** | HybridPilot v1 (published): 98.54% | ➖ tie |
+| Simulated vs logged fuel, calibrated twins driven by HybridPilot (exam, trip median)<br><sub>v2.2, the same as v2.1 on these cars: power-split HEVs +2.2% (168 trips, 56 cars), mild +2.3%, P2 +3.4% (5 trips); plug-in power-split −20.1%, plug-in series −30.9% (fuel + battery energy). Engine starts on power-splits 2.42 per km vs 1.94 real (v2.0 on physics v2: 3.65). Under the 8% target for hybrids, not for plug-ins.</sub> | **+2.2% HEV, −20% / −31% plug-ins** | — | ℹ️ |
 
 ### Where it wins
 
-- Beats every causal baseline on all 430 exam trips: 98.57% of the DP optimum against 98.20% for adaptive ECMS (+0.37 points, CI [−0.18, +0.84]), 98.31% for constant-s ECMS and 97.00% for rule-based control.
-- Clear gains against A-ECMS on power-split hybrids (+0.59 points), P2 (+1.42), series hybrids (+0.88), mild hybrids (+1.08), series buses (+0.99) and P2 buses (+0.30).
+- Beats every causal baseline on all 430 exam trips: 98.66% of the DP optimum against 98.20% for adaptive ECMS (+0.46 points, CI [−0.08, +0.95]), 98.31% for constant-s ECMS and 97.00% for rule-based control.
+- Buses (v2.2): 99.51% of DP against 98.89% for constant-s ECMS and 97.01% for A-ECMS; series buses +1.06 points over ECMS.
+- Clear gains against A-ECMS on power-split hybrids (+0.59 points), P2 (+1.42), series hybrids (+0.88), mild hybrids (+1.08), series buses (+3.87) and P2 buses (+1.13).
 - Fewer engine starts than A-ECMS (3.0 vs 3.2 per km).
 - With HybridPilot driving them, the calibrated twins' fuel is within 3.5% of logged fuel for exam hybrids (trip median), and their engine starts are much closer to the real cars' than on physics v2 (2.4 vs 1.9 per km real; was 3.7).
 
 ### Where it loses
 
-- MPC, which sees 15 s of the future, scores 98.67% against 98.57% overall (v2.0 beat it on physics v2).
-- Plug-ins: −1.08 points (power-split) and −0.72 (series) against A-ECMS.
-- Buses: constant-s ECMS reaches 98.89% of DP against 97.66%, despite the new fixed bus equivalence factor.
-- Holds charge on 93% of trips against A-ECMS's 97% (v2.0 on the same exam: 96%); mild hybrids only 79%.
+- MPC, which sees 15 s of the future, scores 98.67% against 98.66% overall (v2.0 beat it on physics v2).
+- Plug-ins: −1.13 points (power-split) and −0.73 (series) against A-ECMS.
+- Holds charge on 93% of trips against A-ECMS's 97% (v2.0 on the same exam: 96%); mild hybrids only 79%, series buses 75% (v2.2's weak bus feedback).
 - Mild hybrids: constant-s ECMS scores 98.57% against 98.36%, though it holds charge on only 34% of those trips.
 
 ## Limits
 
 - Graded in simulation; plug-ins on real roads read 20–31% low in RoadSim, and simulated power-split hybrids still start their engine more often than the real cars (2.4 vs 1.9 starts per km).
-- For buses and mild hybrids the network's s is not used: a fixed s (series bus 2.8, P2 bus 2.6, mild 2.8, fitted on 30 training-distribution simulations) with SOC feedback, which makes it an adaptive ECMS there.
+- For buses and mild hybrids the network's s is not used: a fixed s (series bus 2.8, P2 bus 2.6, mild 2.8, fitted on 30 training-distribution simulations) with SOC feedback, which makes it an adaptive ECMS there (for buses a weak one, Kp 3).
+- RoadSim never runs the engine of a P2 or P1 hybrid at a stop, so on long stops the auxiliaries drain a mild hybrid's 0.6 kWh pack below its window whatever the controller does (a dev mild trip falls from 0.64 to 0.11–0.16).
 - The policy outputs no uncertainty; intervals are cluster-bootstrap intervals of paired differences.
 - DP ignores RoadSim's forced-on production rules (Toyota-type engine-on above 45 km/h, warm-up holds), so causal strategies cannot reach 100% on those cars.
-- Preview, a timed-DP teacher, a start penalty, a distance-to-go plug-in plan, a larger network and a re-teach on physics v3.1 did not pass the ratchet.
+- Preview, a timed-DP teacher, a start penalty, a distance-to-go plug-in plan, a larger network, a re-teach on physics v3.1, a mild rule without the dead band and a stronger HEV feedback did not pass the ratchet.
 
 ## The ratchet
 
@@ -194,15 +196,15 @@ The shared RoadSim simulator (shared/vehicle), physics v3.1 pinned (roadsim-phys
 
 **Checked against independent references**
 
-- Numpy inference module == training policy: identical fuel and final SOC on 24 frozen and dev trips (v2.1 rule); numpy == torch to 5e-6
+- Numpy inference module == training policy: identical fuel and final SOC on 44 frozen and dev trips incl. 22 plug-in and 8 bus trips (v2.2 rule); numpy == torch to 5e-6
 - Physics v2 → v3.1 decided on dev: HybridPilot v2.0 driving the dev twins, power-split fuel −4.6 → −2.4 % of the logs, engine-on gap −9.3 → −4.4 points, starts 3.67 → 2.66 per km (real 2.32)
-- Simulator vs logged fuel with HybridPilot v2.1 driving the calibrated twins (OBD label model, exam trip median): power-split HEV +2.2 %, mild +2.3 %, P2 +3.4 % (5 trips); plug-in power-split −20 %, plug-in series −31 %
+- Simulator vs logged fuel with HybridPilot v2.2 driving the calibrated twins (OBD label model, exam trip median): power-split HEV +2.2 %, mild +2.3 %, P2 +3.4 % (5 trips); plug-in power-split −20 %, plug-in series −31 %
 - Grading re-solves DP to each strategy's own final SOC (matched SOC); ledger closes to < 0.5 % on every run
 
 ## Next rungs
 
-- Charge holding: the dead band leaves end-of-trip drift less corrected (exam 93% vs 96% for v2.0); an end-of-trip or window-edge term tested on dev, and a mild s chosen with charge holding in the objective.
-- Buses: constant-s ECMS still wins; a bus-specific teacher (long legs, door-stop cycles) instead of a fixed s.
+- Mild charge holding: a frozen mild stratum (the frozen set has none, so no mild rung can pass) and RoadSim engine-at-stop charging for P1/P2 hybrids; then a mild rule judged on it.
+- Charge holding on HEVs: Kp 18 reaches A-ECMS's frozen holding (96%) but costs 0.022 of frozen skill; a terminal term using the known trip length (nav) is untried.
 - A plug-in teacher conditioned on the trip-length uncertainty (nav known or not), and a dedicated plug-in frozen stratum.
 
 ## Files

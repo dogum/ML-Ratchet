@@ -1,4 +1,4 @@
-# HybridPilot v2.1 — model card
+# HybridPilot v2.2 — model card
 
 **What it does.** A learned, causal energy-management policy for hybrid vehicles. Every second of traction it decides
 engine on/off and the engine power (series, power-split) or engine torque share (P2 parallel), and with it the battery
@@ -6,6 +6,7 @@ charge/discharge, from the current state, the past of the trip and (optionally) 
 It holds charge in HEVs and depletes-then-sustains in plug-ins. Part of ML Ratchet, but unlike most of its models it
 is graded in simulation: real routes, simulated cars (see Grading). v2.1 (15 Nov 2026) runs on RoadSim physics v3.1
 with a new charge-sustaining rule and a fixed equivalence factor for buses and mild hybrids; it keeps v2.0's network.
+v2.2 (15 Nov 2026, round 2) changes two rules on top: plug-ins at their CS level, and buses.
 v2.0 (14 Nov 2026, physics v2) and v1 (12 Nov 2026, physics v1) are summarised at the end.
 
 ## How it decides
@@ -16,10 +17,13 @@ v2.0 (14 Nov 2026, physics v2) and v1 (12 Nov 2026, physics v1) are summarised a
    battery energy per km to go).
 2. MLP 66 → 96 → 96 → 2 (tanh), 15,938 parameters → log(s + 0.05) and logit P(engine on).
 3. Buses and mild P1 hybrids (v2.1): s is replaced by a fixed value, series bus 2.8, P2 bus 2.6, mild 2.8 (fitted on 30
-   training-distribution simulations; see Ratchet v2.1). Every other class uses the network's s.
+   training-distribution simulations; see Ratchet v2.1). Every other class uses the network's s. Plug-ins at their
+   charge-sustaining level (SOC ≤ SOC_lo + 0.08, v2.2): s is at least the DP teacher's median costate of the HEV of the
+   same architecture, power-split 2.42, series 2.70 (`training/prior_p31r0.json`, a training bank).
 4. SOC feedback as RoadSim's A-ECMS, with a dead band on the proportional term (v2.1):
    s ← s + 12 dz(SOC_ref − SOC) + 0.02 ∫(SOC_ref − SOC) dt, dz(e) = sign(e) max(|e| − 0.03, 0) (integral clipped at ±30 s;
-   plug-ins only below their charge-sustaining level, SOC_lo + 0.05). v2.0 used dz(e) = e.
+   plug-ins only below their charge-sustaining level, SOC_lo + 0.05). v2.0 used dz(e) = e. v2.2: plug-ins use Kp 24 and
+   no band; buses Kp 3 and no integral term.
 5. Among the candidate controls (RoadSim's grid of 20 engine powers or torque fractions plus engine off; series hybrids
    also the same powers through the direct-drive clutch), choose argmin P_fuel + s · P_battery,chemical (+ start fuel if
    starting), with the platform's rules: minimum on 8 s / off 3 s, forced on for catalyst light-off, warm-up, cabin heat,
@@ -63,6 +67,53 @@ virtual start penalty). For each strategy on each trip DP is re-solved to end at
 **% of DP = 1 − (F_strategy − F_DP(E_strategy)) / F_DP,CS**. DP ignores the forced-on production rules, so causal
 strategies on Toyota-type power-splits cannot reach 100 %. Charge holding: HEV ends no farther from the window middle
 than it started + 15 % of the window and never leaves the window by > 0.02; PHEV never drops > 0.03 below its CS level.
+
+## Ratchet v2.2 (round 2, physics v3.1, 15 Nov 2026)
+Same frozen set, dev gate and network as v2.1. Rule v2.2 was committed before the first new rung was scored: path A as
+before (frozen skill +0.01 and the dev gate); path B for charge holding (frozen + dev holding, 182 trips, up by 2 points
+or more, neither set down, frozen skill no more than 0.01 lower, dev % of DP no more than 0.2 points lower). Settings
+were chosen on training-distribution probes (the 190-trip probe and a new 80-trip mild probe), never on dev or exam:
+the highest % of DP among variants holding at least as many probe trips as A-ECMS. All probes are listed in NOTEBOOK.md.
+
+What dev and the frozen set showed first: plug-ins sustaining 0.02–0.03 below their CS level and dipping under the
+holding limit (frozen series plug-ins hold 7 of 12, A-ECMS 12); P2 buses losing to constant-s ECMS on the frozen set
+(97.40 vs 100.12 % of DP) because Kp 12 pulls s to about 1.8 when a bus starts above the window middle; mild twins
+charging up 0.10–0.13 on short dev trips (the 0.58 kWh pack takes 5–7 kW of load-point charging at s 2.8).
+
+| rung | change | frozen skill | frozen %DP | frozen holds | dev %DP | dev holds | decision |
+|---|---|---|---|---|---|---|---|
+| R17 | v2.1 (incumbent) | 0.704 | 99.22 | 87 % | 99.28 | 95 % | incumbent |
+| R19 | plug-ins: s ≥ HEV costate at CS; below CS Kp 24, no band | 0.712 | 99.27 | 93 % | 99.30 | 95 % | kept (path B: holding 90.1 → 94.0 %) |
+| R20 | R19 + mild without the band | 0.712 | 99.27 | 93 % | 99.23 | 96 % | rejected (+0.5 points holding; no mild in frozen) |
+| R21 | R19 + HEV Kp 18 | 0.691 | 99.17 | 96 % | 99.15 | 96 % | rejected (frozen skill −0.022) |
+| R22 | R19 + buses Kp 3, no integral | 0.774 | 99.38 | 91 % | 99.30 | 95 % | **kept (path A, +0.062), released as v2.2** |
+
+All four are rule changes on the same network: deterministic, no seeds. What got worse with R22: frozen holding
+93.4 → 90.6 % (four bus trips end 0.68–0.70 after starting at 0.54–0.60, as constant-s ECMS does).
+
+## Final exam v2.2 (once, after the release choice was committed: 48e9985)
+Same 430 trips, physics and baseline runs as the v2.1 exam below; v2.1 was re-scored alongside. Cell = mean % of DP
+(charge-holding rate). Only plug-ins and buses differ between v2.1 and v2.2.
+
+| stratum | n | ECMS | A-ECMS | MPC 15 s* | **v2.2** | v2.1 re-scored | v2.2 − A-ECMS | v2.2 − ECMS |
+|---|---|---|---|---|---|---|---|---|
+| all | 430 | 98.31 (75%) | 98.20 (97%) | 98.67 (95%) | **98.66 (93%)** | 98.55 (93%) | +0.46 [−0.08, +0.95] | +0.35 [+0.12, +0.59] |
+| power-split PHEV | 57 | 96.66 (100%) | 99.66 (100%) | 99.81 (100%) | **98.53 (96%)** | 98.45 (93%) | −1.13 [−4.61, +1.92] | +1.87 [+0.63, +3.21] |
+| series PHEV (EREV) | 46 | 100.36 (100%) | 100.80 (100%) | 101.93 (100%) | **100.07 (100%)** | 100.08 (96%) | −0.73 [−1.78, −0.07] | −0.29 [−0.58, −0.01] |
+| bus (series) | 12 | 98.30 (92%) | 95.49 (100%) | 96.51 (100%) | **99.36 (75%)** | 96.48 (100%) | +3.87 [+2.00, +7.04] | +1.06 [+0.86, +1.23] |
+| bus (P2) | 12 | 99.48 (100%) | 98.53 (100%) | 99.41 (100%) | **99.66 (100%)** | 98.83 (100%) | +1.13 [+0.62, +1.47] | +0.18 [−0.02, +0.42] |
+| truck (PHEV series) | 12 | 100.28 (100%) | 99.35 (100%) | 99.77 (100%) | **100.35 (100%)** | 100.41 (100%) | +1.01 [+0.26, +1.89] | +0.07 [−1.10, +1.11] |
+
+Every other stratum is identical to v2.1 (table below). Exam skill: v2.2 0.657, v2.1 re-scored 0.555, v2.0 0.516, v1
+0.587. v2.2 − v2.1: +0.11 [+0.01, +0.24] (series buses +2.88, P2 buses +0.83); − v2.0 +0.23 [+0.10, +0.41]; − v1 +0.12
+[−0.03, +0.31]. Charge held on 399 of 430 trips (v2.1 398, A-ECMS 418): plug-ins +4, series buses −3, mild 44 of 56
+as before. Starts/km 3.0 (A-ECMS 3.2). Rows that flip: buses (loss → win). Still mixed: all trips (MPC 0.01 higher),
+mild. Still losses: plug-ins, charge holding. Raw report: `training/exam_report_v2_2.json`.
+
+Re-scoring v2.1 gave 98.55 % instead of its published 98.57 %: one plug-in trip (a generated SUV plug-in on route
+VED_381_1188) gives 102.9 % or 95.7 % of DP depending on which trips the same worker process ran before it. A fresh
+process gives 95.7 % for both v2.1 and v2.2. Some vehicle state survives between RoadSim runs in one process; this is
+a platform issue, not fixed here.
 
 ## Ratchet v2.1 (physics v3.1, 15 Nov 2026)
 Physics changed (v2 → v3.1, decided on dev: see Physics), so the frozen set (106 trips, same draws and seeds; generated
@@ -128,7 +179,7 @@ What the ladder says: on v2 the network's own s drifts the charge (dev holding 8
 A-ECMS's stronger SOC feedback fixes holding and costs 0.06 of frozen skill against R3. None of the four new ideas from
 V2_PLAN (twins' hardware classes, timed-DP teacher, start cost, distance-to-go plan) beat the margin.
 
-## Final exam v2.1 (once, after the release choice was committed: d9fd0fd)
+## Final exam v2.1 (once, after the release choice was committed: d9fd0fd; superseded by the v2.2 exam above)
 430 trips: 216 real VED exam routes (2 per exam HEV/PHEV car, fixed random draw) driven by RoadSim's calibrated twins of
 those cars, 214 by 54 held-out generated hybrids (3 per combo) on exam routes, full-ZTBus exam legs (buses) and HD
 cycles (Class 8). Same draws as v2.0's exam; **everything in this table is on physics v3.1**, so the twins, generated
@@ -171,7 +222,8 @@ and the dev gate did not show (dev mild holding 75 % for both v2.0 and v2.1).
 ## Simulator vs real logs (report only; nothing tuned on exam)
 Each VED hybrid trip driven by its calibrated twin (warm fragment, logged start SOC), simulated fuel passed through
 RoadSim's OBD label model and compared with VED's logged fuel on valid seconds (plug-ins: fuel + battery energy).
-Trip-median error, % (car median), HybridPilot v2.1 on physics v3.1 (v2.0 on physics v2 in brackets):
+Trip-median error, % (car median), HybridPilot v2.1 on physics v3.1 (v2.0 on physics v2 in brackets). v2.2 gives the
+same exam numbers (`training/simcheck_exam_v2_2.json`: HEVs unchanged, plug-in medians −20.1 / −30.9 %):
 
 | | dev (12 trips per car) | exam (3 trips per car) | engine-on gap, exam (points) | starts/km sim / real, exam |
 |---|---|---|---|---|
@@ -188,10 +240,14 @@ to the real cars' than on physics v2 (power-split 2.4 vs 1.9 per km real, was 3.
 
 ## Limits
 - Graded in simulation; plug-ins on real roads read 20–31 % low, P2 engine-on share is far below the real cars'.
-- Charge holding 93 % vs A-ECMS 97 % (v2.0 on the same exam 96 %); mild twins 79 %.
-- For buses and mild hybrids the network's s is not used: a fixed s with SOC feedback, i.e. an adaptive ECMS with a dead
-  band. Constant-s ECMS still beats it on buses (98.89 vs 97.66 % pooled) and scores 0.21 higher on mild hybrids
-  (holding 34 %). Losses on plug-ins against A-ECMS (wide intervals). MPC with 15 s of preview scores 0.10 higher overall.
+- Charge holding 93 % vs A-ECMS 97 % (v2.0 on the same exam 96 %); mild twins 79 %, series buses 75 % (v2.2).
+- For buses and mild hybrids the network's s is not used: a fixed s with SOC feedback, i.e. an adaptive ECMS (buses: a
+  weak one, Kp 3, which is why it beats constant-s ECMS there only by a little and lets series buses drift). Constant-s
+  ECMS scores 0.21 higher on mild hybrids (holding 34 %). Losses on plug-ins against A-ECMS (wide intervals). MPC with
+  15 s of preview scores 0.01 higher overall.
+- RoadSim never runs a P2 or P1 hybrid's engine at a stop: on a 400 s stop 1.6 kW of auxiliaries drain a mild 0.58 kWh
+  pack from 0.64 to 0.11–0.16 whatever the controller does (dev VED_435_734).
+- The frozen set has no mild stratum, so no mild rule change can pass the ratchet (R20).
 - The released network was trained on physics-v2 banks; a re-teach on v3.1 banks (R18) did not pass the ratchet.
 - DP reference ignores the production forced-on rules; it assumes a warm engine.
 - Heavy duty: buses on real Zurich routes, trucks on cycles and city routes only.
@@ -209,11 +265,12 @@ v1 physics): 99.49 % of DP vs A-ECMS 99.35 % (+0.13 [−0.06, +0.29]), charge he
 exam power-splits. Full v1 card: git history of this file (commit before 14 Nov 2026) and training/ratchet.json.
 
 ## Files
-`hybridpilot.py` (features, MLP, decision with the v2.1 defaults; `V20` restores v2.0's rule, RoadSim adapter),
-`weights/hybridpilot_v2.npz` (the network of v2.0 and v2.1; v1: `hybridpilot_v1.npz`), `pipeline.py` (pins
+`hybridpilot.py` (features, MLP, decision with the v2.2 defaults; `V21` / `V20` restore v2.1's / v2.0's rule, RoadSim
+adapter), `weights/hybridpilot_v2.npz` (the network of v2.0, v2.1 and v2.2; v1: `hybridpilot_v1.npz`), `pipeline.py` (pins
 roadsim-physics-v3.1), `demo.py`, `examples/` (3 VED exam trips + calibrated twin specs on v3.1), `training/` (all
 scripts; `v21_*.sh` / `v21_*.py` ran the v2.1 pass with `HP_PHYS=roadsim-physics-v3.1`, `v2_*.sh` the v2 rebuild; raw
-logs `ratchet_v2_1.json`, `explore_v2_1.json`, `exam_report_v2_1.json`, `simcheck_*_v2_1.json`, and the v2 / v1 logs),
+logs `ratchet_v2_1.json`, `explore_v2_1.json`, `exam_report_v2_1.json`, `simcheck_*_v2_1.json`, and the v2 / v1 logs;
+round 2: `r2_*.sh` / `r2_*.py`, `ratchet_v2_2.json`, `explore_r2.json`, `exam_report_v2_2.json`, `simcheck_exam_v2_2.json`),
 `requirements.txt`.
 
 ## Data and licences

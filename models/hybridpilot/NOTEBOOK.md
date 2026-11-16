@@ -261,3 +261,33 @@ rules) == training policy: identical fuel and final SOC on 44 dev and frozen tri
 trips, one failure is a RoadSim limit, the training mild cars do not drift, and the frozen set has no mild stratum, so
 no mild rung can pass either path. A frozen mild stratum (a new frozen set) and RoadSim engine-at-stop charging for
 P2/P1 cars are what it needs. The exam has not been run for v2.2.
+
+## 15 Nov 2026 — v2.2 exam (once, after the release choice 48e9985)
+
+Same exam set, physics and baseline runs as v2.1 (`r2_exam.sh`); v2.1 re-scored alongside. % of DP (charge holding):
+**v2.2 98.66 (399 of 430, 93 %)**, v2.1 re-scored 98.55 (398), v2.0 98.43 (411), v1 98.54 (393), A-ECMS 98.20 (418),
+constant-s ECMS 98.31 (321), MPC 15 s 98.67 (410), rule 97.00.
+v2.2 − A-ECMS +0.46 [−0.08, +0.95]; − ECMS +0.35 [+0.12, +0.59]; − v2.1 +0.11 [+0.01, +0.24]; − v2.0 +0.23 [+0.10,
++0.41]; − v1 +0.12 [−0.03, +0.31].
+What moved (everything else is identical to v2.1, trip by trip): series buses 96.48 -> 99.36 % (ECMS 98.30; +1.06
+[+0.86, +1.23] over ECMS) but holding 12 -> 9 of 12; P2 buses 98.83 -> 99.66 % (ECMS 99.48; +0.18 [−0.02, +0.42]),
+12 of 12; power-split plug-ins 98.45 -> 98.53 %, holding 53 -> 55 of 57; series plug-ins 100.08 -> 100.07 %, holding
+44 -> 46 of 46; plug-in trucks 100.41 -> 100.35 %.
+Rows: buses flip from loss to win (99.51 vs ECMS 98.89 pooled). All trips stays mixed (MPC 98.67, 0.01 higher). Mild
+stays mixed (unchanged, holds 79 %). Plug-ins stay a loss (99.22 vs A-ECMS 100.17). Charge holding stays a loss (93 vs
+97 %). New row against v2.1 re-scored: a win (+0.11 [+0.01, +0.24], same holding). Against v1: a tie.
+
+**What got worse.** Series buses now hold charge on 9 of 12 exam trips (v2.1 12; ECMS 11), as the frozen set showed
+(R22: frozen holding 93.4 -> 90.6 %). Plug-in trucks −0.06.
+
+**Reproducibility gap found.** The v2.1 re-score differs from v2.1's own exam run on one trip (generated SUV plug-in on
+VED_381_1188: fuel 31.8 g, end SOC 0.455, 102.9 % of DP in the first run; 39.7 g, 0.835, 95.7 % in a fresh process and
+in this run). The result depends on which trips the same worker process simulated before, so some vehicle state
+survives between RoadSim runs. v2.1's published 98.57 % becomes 98.55 % on a clean re-run. Not fixed here (platform).
+
+**Simulator vs real (v2.2, exam).** Unchanged from v2.1: power-split +2.2 %, mild +2.3 %, P2 +3.4 %, plug-ins −20.1 /
+−30.9 % (`training/simcheck_exam_v2_2.json`).
+
+**Live instrument.** Re-exported with the v2.2 rule. The exporter now passes the window and prior key to
+`HybridPilotCore.decide` (it passed neither, so its Python reference ignored per-class rules); parity 96 cases, worst
+5.0e-15. The TS port (`site/src/instruments/hybridpilot/net.ts`) applies `cls_fb` and `phev_cs_s`.

@@ -31,6 +31,10 @@ export interface Policy {
   fb_dead?: number; fb_dead_mode?: string;
   /** v2.1: per-class prior {key: [weight, s0]}: s <- (1 - w) s + w s0 */
   s_prior?: Record<string, [number, number]> | null;
+  /** v2.2: per-class feedback {prior_key or 'phev': {Kp, Ki, fb_dead}} */
+  cls_fb?: Record<string, { Kp?: number; Ki?: number; fb_dead?: number }> | null;
+  /** v2.2: plug-ins at their CS level (SOC <= ref + 0.03): s no lower than this HEV costate, by architecture */
+  phev_cs_s?: Record<string, number> | null;
 }
 export interface HMeta {
   trips: Trip[]; strategies: string[]; temps: number[]; masses: number[]; previews: number[];
@@ -69,20 +73,24 @@ const clamp = (v: number, a: number, b: number) => Math.min(Math.max(v, a), b);
 export const sOf = (y: [number, number]) => Math.exp(clamp(y[0], -5, 3)) - 0.05;
 export const pOn = (y: [number, number]) => 1 / (1 + Math.exp(-clamp(y[1], -30, 30)));
 
-/** HybridPilotCore.equivalence: the network's s (or, v2.1, a per-class prior), then SOC feedback
+/** HybridPilotCore.equivalence: the network's s (or, v2.1, a per-class prior; v2.2, a plug-in floor at CS), then SOC feedback
  *  s <- s + Kp dz(e) + Ki I, e = SOC_ref - SOC, dz = the error beyond the dead band, I = clip(I0 + e, -30, 30)
  *  (I0: the integral before this second). */
 export function equivalence(pol: Policy, trip: Trip, sNet: number, soc: number, I0 = 0): number {
   let s = Math.max(sNet * pol.s_scale + pol.s_bias, 0);
   const pr = pol.s_prior && trip.prior_key ? pol.s_prior[trip.prior_key] : undefined;
   if (pr) s = (1 - pr[0]) * s + pr[0] * pr[1];
+  const cs = trip.phev && pol.phev_cs_s && trip.prior_key ? pol.phev_cs_s[trip.prior_key] : undefined;
+  if (cs && soc <= trip.ref + 0.03) s = Math.max(s, cs);
+  const cf = pol.cls_fb || {};
+  const ov = (trip.prior_key ? cf[trip.prior_key] : undefined) || (trip.phev ? cf.phev : undefined) || {};
+  const Kp = ov.Kp ?? pol.Kp, Ki = ov.Ki ?? pol.Ki, d = ov.fb_dead ?? (pol.fb_dead || 0);
   const e = trip.ref - soc;
-  if ((pol.Kp || pol.Ki) && (!trip.phev || e > -0.03)) {
-    const I = pol.Ki ? clamp(I0 + e, -30, 30) : I0;
+  if ((Kp || Ki) && (!trip.phev || e > -0.03)) {
+    const I = Ki ? clamp(I0 + e, -30, 30) : I0;
     let ep = e;
-    const d = pol.fb_dead || 0;
     if (d) ep = pol.fb_dead_mode === 'hard' ? (Math.abs(ep) > d ? ep : 0) : Math.sign(ep) * Math.max(Math.abs(ep) - d, 0);
-    s = Math.max(s + pol.Kp * ep + (pol.Ki || 0) * I, 0);
+    s = Math.max(s + Kp * ep + (Ki || 0) * I, 0);
   }
   return s;
 }

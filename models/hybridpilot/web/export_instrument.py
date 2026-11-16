@@ -154,7 +154,7 @@ def decide(core, strat, mo, g, soc, d, t, L, cand=None):
     forced = bool(g['FG'][d, t]) or soc < strat.soc_lo - 0.02
     core.I = mo['I0']                    # the integral term's state at the recorded second
     j, s, pon = core.decide(x, soc, strat.ref, strat.phev, PF, chem, ON, ok, st['eng_on'], st['t_on'], st['t_off'],
-                            strat.start_W, forced, strat.min_on_s, strat.min_off_s, None)
+                            strat.start_W, forced, strat.min_on_s, strat.min_off_s, None, strat.window, strat.prior_key)
     return j, s, pon, x
 
 
