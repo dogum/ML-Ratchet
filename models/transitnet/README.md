@@ -81,6 +81,7 @@ Coverage of the 68% error bars on the exam: Rp/R* **70%**, b **79%**, a/R* **71%
 | r2 | Limb-darkening prior from dev planets, plus centroids in the data | 0.735 | ○ rejected | The absolute-k head failed to learn (k error 34%). |
 | r3 | Predict corrections to model-free estimates (k from √depth, a/R* from P and T14), on rung 2 data | 0.859 | **◆ released** | 0.859 vs 0.838; removed a 3–5% k bias seen even on simulations. |
 | r4 | Centroid branch | 0.861 | ○ rejected | +0.002 only, needed +0.01. |
+| r5 | Least-squares polish: a transit fit (limb darkening free) started at the network's reading, combined with it by covariance | 0.841 | ○ rejected | 0.841 vs 0.863 for rung 3, both on val2 rebuilt 15 Nov 2026 (rung 3 scored 0.859 on the original). Worse on every parameter skill; a/R* at SNR 100+ 3.4% vs 3.3%. |
 
 Raw per-rung logs are in [`training/`](training/).
 

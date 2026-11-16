@@ -105,3 +105,33 @@ Parameters (median error) by SNR:
 ## Corrections
 
 - 14 Nov 2026: Card: the two signal-to-noise tables count different things: 1,175 planets with a published Rp/R* in the first, all 1,196 confirmed planets per bin in the second. Both now say so. Rung 3 is marked released. Network and credits sections added. The Claret limb-darkening tables are now listed under help_wanted. No verdict changed.
+
+## 15 Nov 2026: rebuild, rung 5 (least-squares polish) rejected, nothing released
+
+Exam rows that were not wins: a/R* at SNR 100+ (4.2% vs the least-squares fit's 3.7%) and false positives also called
+planet (66%).
+
+- **Rebuild.** No work/ data was local. `fetch_catalogs.py` (new) downloads pscomppars (6,470 rows) and the ExoFOP TOI
+  list (8,175 rows) as of 15 Nov 2026. The MAST portal query in `catalog.py` timed out on 400-star chunks, so the
+  product lists now come from MAST's per-sector bulk download scripts (sectors 1–108; same SPOC 120-s products).
+  `targets.py` uses the same lists for the noise pool. 7,964 light curves downloaded (none failed).
+- **The split is not v1.0's.** The catalogues have changed since 3 Nov, so the rebuilt real set has 1,636 planets, 995
+  FPs and 77 FAs (2,708 readings) and the seed-2026 draw picks different dev stars; TOI-1518 b, a v1.0 exam planet named
+  in the limits, is now in dev. The v1.0 split was never written to the repository and cannot be recovered. Rebuilt
+  exam: 1,612 planets, 975 FPs, 77 FAs. val2 rebuilt with seed 99 on the rebuilt pool: rung 3 scores 0.863 (0.859 on
+  the original).
+- **The a/R* loss does not show on simulation, and barely on dev.** On val2 at SNR 100+ the released network gets a/R*
+  to 3.3% (median, 736 planets) and the least-squares fit to 3.8% (300 drawn at random): the network wins. On dev only 4
+  planets have SNR 100+; the fit wins on 2 (TOI-1518 b 1.7% vs 13.7%, KELT-10 b 0.6% vs 2.4%) and the network on 2. At
+  SNR 50+ (10 planets) the network wins, 2.6% vs 6.0%.
+- **Rung 5, scored anyway because it was defined and committed before these checks** (`polish.py`): a least-squares
+  transit fit with free limb darkening, started at the network's reading, combined with the network by covariance.
+  val2 0.841 vs 0.863: rejected. Worse on every parameter skill (b 0.585 -> 0.495, log a/R* 0.915 -> 0.859); at SNR
+  100+ a/R* 3.4% vs 3.3%. The fit's covariance ignores limb-darkening and red-noise systematics, so it is overconfident
+  and pulls the network off. Dev a/R* got worse too (3.3% -> 8.0%).
+- **False positives: dev shows it, nothing tried.** 12 of 20 dev FPs are called planet (60%), and the simulator already
+  injects eclipsing binaries and diluted background binaries. A physical radius cap is the obvious next rung: with the
+  TIC stellar radius, 3 of those 12 imply a radius over 24 Earth radii (TOI-1191.01 36, TOI-3078.01 29, TOI-4394.01 45),
+  larger than any known planet, while every dev planet is under 20. val2 does not carry the stellar radius, so it would
+  need its own rule; it was not tried.
+- **Outcome:** v1.0 stays the release; no exam was run (no new version).
