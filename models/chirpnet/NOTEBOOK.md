@@ -145,8 +145,10 @@ new bank and a retrained finder; it is left as it is. The two failures that can 
 
 The rule fixed above gives a threshold of 11.5 (10.88 + 0.5, rounded up). Not released: a release must beat the current
 one on dev, and the cost of 11.5 in sensitivity cannot be measured without a simulation bank. What dev does say: at 7.0
-the network's false-alarm rate in O3 is of order one cluster of windows every 2 h, not "below 0.5 per hour", and four of
-the seven in-range O3 exam events (statistics 9.9–12.4) score below the loudest dev background window. The O3 detections
-are therefore less significant than the exam table suggests. Next rungs: ship the O3 dev background so `scan()`
+4 of the 64 dev pieces (each 23 slides of 28 s) produce windows at or above 7.0, so the network's O3 false-alarm rate at
+that threshold is of order 0.4 per hour (4 triggers in 10.6 h), not the "below 0.5 per hour" bound the O1/O2 background
+gives. One of the seven in-range O3 exam events (GW200224_222234, 9.89) scores below the loudest dev background window
+(10.88); the other six (11.1–14.1) score above it. (Corrected 15 Nov 2026, same day: an earlier line here said four of
+seven.) Next rungs: ship the O3 dev background so `scan()`
 reports O3 false-alarm rates from O3 noise (GPS time is known at prediction time), and retrain with O3-like glitches
 next to gates once a waveform bank can be built.
