@@ -91,29 +91,36 @@ charging up 0.10–0.13 on short dev trips (the 0.58 kWh pack takes 5–7 kW of 
 All four are rule changes on the same network: deterministic, no seeds. What got worse with R22: frozen holding
 93.4 → 90.6 % (four bus trips end 0.68–0.70 after starting at 0.54–0.60, as constant-s ECMS does).
 
-## Final exam v2.2 (once, after the release choice was committed: 48e9985)
-Same 430 trips, physics and baseline runs as the v2.1 exam below; v2.1 was re-scored alongside. Cell = mean % of DP
+## Final exam v2.2 (once, after the release choice was committed: 48e9985; scoring corrected the same day)
+Same exam set, physics and baseline runs as the v2.1 exam below; v2.1 was re-scored alongside. Cell = mean % of DP
 (charge-holding rate). Only plug-ins and buses differ between v2.1 and v2.2.
+
+**Correction (15 Nov 2026).** The exam set has 432 cases but 430 trip ids: `build_exam` draws exam routes for each
+generated vehicle with replacement, and two routes were drawn twice for the same vehicle (a P2 car on VED_347_2946,
+start SOC 0.556 and 0.614; a power-split plug-in SUV on VED_381_1188, start SOC 0.90 and 0.49). Results were kept in
+dicts keyed by trip id and filled by parallel workers, so the last one to finish won: two trips were dropped and a
+policy's run could be graded against the other draw's DP and baselines. Every HybridPilot exam score on physics v2 and
+v3.1 had this. Cases are now keyed uniquely (trip id, plus the position in the set for the two repeated ids), scoring
+refuses duplicate keys, the four cases' baselines were run, and every strategy was re-scored on all 432 trips
+(`training/dupfix_exam.sh`). The exam set itself is unchanged. An earlier version of this card blamed RoadSim state
+surviving between runs; that was wrong (RoadSim gives identical results in any order).
 
 | stratum | n | ECMS | A-ECMS | MPC 15 s* | **v2.2** | v2.1 re-scored | v2.2 − A-ECMS | v2.2 − ECMS |
 |---|---|---|---|---|---|---|---|---|
-| all | 430 | 98.31 (75%) | 98.20 (97%) | 98.67 (95%) | **98.66 (93%)** | 98.55 (93%) | +0.46 [−0.08, +0.95] | +0.35 [+0.12, +0.59] |
-| power-split PHEV | 57 | 96.66 (100%) | 99.66 (100%) | 99.81 (100%) | **98.53 (96%)** | 98.45 (93%) | −1.13 [−4.61, +1.92] | +1.87 [+0.63, +3.21] |
+| all | 432 | 98.31 (75%) | 98.20 (97%) | 98.67 (95%) | **98.69 (93%)** | 98.58 (93%) | +0.49 [−0.07, +0.98] | +0.38 [+0.13, +0.64] |
+| P2 HEV | 40 | 99.64 (60%) | 98.29 (90%) | 99.32 (85%) | **99.68 (92%)** | 99.68 (92%) | +1.39 [+0.31, +3.29] | +0.04 [−0.42, +0.51] |
+| power-split PHEV | 58 | 96.64 (100%) | 99.59 (100%) | 99.72 (100%) | **98.68 (97%)** | 98.60 (93%) | −0.91 [−4.51, +2.16] | +2.03 [+0.68, +3.52] |
 | series PHEV (EREV) | 46 | 100.36 (100%) | 100.80 (100%) | 101.93 (100%) | **100.07 (100%)** | 100.08 (96%) | −0.73 [−1.78, −0.07] | −0.29 [−0.58, −0.01] |
 | bus (series) | 12 | 98.30 (92%) | 95.49 (100%) | 96.51 (100%) | **99.36 (75%)** | 96.48 (100%) | +3.87 [+2.00, +7.04] | +1.06 [+0.86, +1.23] |
 | bus (P2) | 12 | 99.48 (100%) | 98.53 (100%) | 99.41 (100%) | **99.66 (100%)** | 98.83 (100%) | +1.13 [+0.62, +1.47] | +0.18 [−0.02, +0.42] |
 | truck (PHEV series) | 12 | 100.28 (100%) | 99.35 (100%) | 99.77 (100%) | **100.35 (100%)** | 100.41 (100%) | +1.01 [+0.26, +1.89] | +0.07 [−1.10, +1.11] |
 
-Every other stratum is identical to v2.1 (table below). Exam skill: v2.2 0.657, v2.1 re-scored 0.555, v2.0 0.516, v1
-0.587. v2.2 − v2.1: +0.11 [+0.01, +0.24] (series buses +2.88, P2 buses +0.83); − v2.0 +0.23 [+0.10, +0.41]; − v1 +0.12
-[−0.03, +0.31]. Charge held on 399 of 430 trips (v2.1 398, A-ECMS 418): plug-ins +4, series buses −3, mild 44 of 56
-as before. Starts/km 3.0 (A-ECMS 3.2). Rows that flip: buses (loss → win). Still mixed: all trips (MPC 0.01 higher),
-mild. Still losses: plug-ins, charge holding. Raw report: `training/exam_report_v2_2.json`.
-
-Re-scoring v2.1 gave 98.55 % instead of its published 98.57 %: one plug-in trip (a generated SUV plug-in on route
-VED_381_1188) gives 102.9 % or 95.7 % of DP depending on which trips the same worker process ran before it. A fresh
-process gives 95.7 % for both v2.1 and v2.2. Some vehicle state survives between RoadSim runs in one process; this is
-a platform issue, not fixed here.
+Every other stratum is as in the v2.1 table below. Against MPC overall: 98.686 vs 98.665, +0.02 [−0.58, +0.54], a tie.
+Exam skill: v2.2 0.660, v2.1 re-scored 0.558, v2.0 0.519, v1 0.589. v2.2 − v2.1: +0.11 [+0.01, +0.24] (series buses
++2.88, P2 buses +0.83); − v2.0 +0.23 [+0.09, +0.41]; − v1 +0.12 [−0.02, +0.31]. Charge held on 401 of 432 trips
+(v2.1 400, A-ECMS 420): plug-ins +4, series buses −3, mild 44 of 56 as before. Starts/km 3.0 (A-ECMS 3.2). Rows that
+flip: buses (loss → win); all trips (mixed → tie with MPC, after the correction). Still mixed: mild. Still losses:
+plug-ins, charge holding. Raw report: `training/exam_report_v2_2.json` (corrected).
 
 ## Ratchet v2.1 (physics v3.1, 15 Nov 2026)
 Physics changed (v2 → v3.1, decided on dev: see Physics), so the frozen set (106 trips, same draws and seeds; generated
@@ -180,6 +187,8 @@ A-ECMS's stronger SOC feedback fixes holding and costs 0.06 of frozen skill agai
 V2_PLAN (twins' hardware classes, timed-DP teacher, start cost, distance-to-go plan) beat the margin.
 
 ## Final exam v2.1 (once, after the release choice was committed: d9fd0fd; superseded by the v2.2 exam above)
+Numbers as published, on 430 trip ids; the correction above moves them slightly (v2.1 all trips 98.57 → 98.58,
+plug-ins 99.25 → 99.26, v2.0 98.43 → 98.45, v1 98.54 → 98.56; corrected values in `training/exam_report_v2_2.json`).
 430 trips: 216 real VED exam routes (2 per exam HEV/PHEV car, fixed random draw) driven by RoadSim's calibrated twins of
 those cars, 214 by 54 held-out generated hybrids (3 per combo) on exam routes, full-ZTBus exam legs (buses) and HD
 cycles (Class 8). Same draws as v2.0's exam; **everything in this table is on physics v3.1**, so the twins, generated
@@ -244,7 +253,7 @@ to the real cars' than on physics v2 (power-split 2.4 vs 1.9 per km real, was 3.
 - For buses and mild hybrids the network's s is not used: a fixed s with SOC feedback, i.e. an adaptive ECMS (buses: a
   weak one, Kp 3, which is why it beats constant-s ECMS there only by a little and lets series buses drift). Constant-s
   ECMS scores 0.21 higher on mild hybrids (holding 34 %). Losses on plug-ins against A-ECMS (wide intervals). MPC with
-  15 s of preview scores 0.01 higher overall.
+  15 s of preview is level overall (98.67 vs 98.69 %).
 - RoadSim never runs a P2 or P1 hybrid's engine at a stop: on a 400 s stop 1.6 kW of auxiliaries drain a mild 0.58 kWh
   pack from 0.64 to 0.11–0.16 whatever the controller does (dev VED_435_734).
 - The frozen set has no mild stratum, so no mild rule change can pass the ratchet (R20).
@@ -254,7 +263,7 @@ to the real cars' than on physics v2 (power-split 2.4 vs 1.9 per km real, was 3.
 
 ## v2.0 (14 Nov 2026, physics v2) in one paragraph
 Same network on RoadSim physics v2, released rung R8 (Kp 12, Ki 0.02, no dead band, network s everywhere). Exam (430
-trips, v2 physics): 98.84 % of DP vs A-ECMS 98.32 % (+0.53 [+0.20, +0.82]), rule 97.39, ECMS 98.53 (holds 74 %), MPC
+trips, v2 physics; corrected 15 Nov 2026 on all 432: 98.86, v1 99.02, `training/exam_report_v2_corrected.json`): 98.84 % of DP vs A-ECMS 98.32 % (+0.53 [+0.20, +0.82]), rule 97.39, ECMS 98.53 (holds 74 %), MPC
 98.80, v1 re-scored 99.00 (holds 89 %); charge held on 95 % (A-ECMS 96 %); power-split +0.89, P2 +1.32, series +1.04,
 mild +0.60 against A-ECMS; plug-ins −0.29 / −0.35, P2 buses −0.48; constant-s ECMS 98.98 vs 97.50 % on buses and 98.72
 vs 98.10 % on mild hybrids. Full report: `training/exam_report_v2.json`.

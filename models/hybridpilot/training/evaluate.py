@@ -35,17 +35,26 @@ def base_path(setname):
 
 def _base_job(c):
     try:
-        return c['case_id'], run_case(c)
+        return sets.case_key(c), run_case(c)
     except Exception as ex:
         import traceback
-        return c['case_id'], {'_fail': repr(ex) + traceback.format_exc()[-600:]}
+        return sets.case_key(c), {'_fail': repr(ex) + traceback.format_exc()[-600:]}
+
+
+def unique_keys(cases):
+    """(15 Nov 2026 correction) results are dicts filled by imap_unordered: two cases with one key would overwrite each
+    other (last finisher wins) and a policy could be graded against the other case's DP. Refuse that."""
+    keys = [sets.case_key(c) for c in cases]
+    if len(set(keys)) != len(keys):
+        raise ValueError(f'duplicate case keys in the set ({len(keys) - len(set(keys))}); use sets.assign_keys')
 
 
 def score_baselines(setname, limit=None, workers=WORKERS):
     cases = sets.get(setname)
+    unique_keys(cases)
     fn = base_path(setname)
     res = pickle.load(open(fn, 'rb')) if os.path.exists(fn) else {}
-    todo = [c for c in cases[:limit] if c['case_id'] not in res]
+    todo = [c for c in cases[:limit] if sets.case_key(c) not in res]
     t0 = time.time()
     with Pool(workers) as pool:
         for i, (cid, r) in enumerate(pool.imap_unordered(_base_job, todo)):
@@ -102,7 +111,7 @@ def _policy_job(job):
     try:
         o = simulate(c['spec'], c['trip'], strategy=st, init_soc=c['soc0'], init_temps=c['temps'], record=True, options=sets.PHYS)
     except Exception as ex:
-        print('policy FAIL', c['case_id'], repr(ex), flush=True); return c['case_id'], None
+        print('policy FAIL', sets.case_key(c), repr(ex), flush=True); return sets.case_key(c), None
     m = metrics(o, b['_meta']['arch'], c['soc0'])
     pts = [dict(p) for p in b['_dp_points']]
     if '_stage' in b and (match is True or (match == 'phev' and b['_meta']['phev'])):
@@ -111,15 +120,17 @@ def _policy_job(job):
                  None if st_[6] is None else st_[6].astype(np.float64))
         add_matched(c, get_vehicle(c['spec']), stage, pts, m['soc_end'])
     grade(m, pts, LHV.get(get_vehicle(c['spec']).fuel, 42.9e3) / 1e3, c['soc0'])
-    return c['case_id'], m
+    return sets.case_key(c), m
 
 
 def score_policy(setname, ckpt, params, base=None, cases=None, match=True, workers=WORKERS):
-    """HybridPilot (checkpoint path + params, see case_params) on a set. Returns {case_id: metrics incl. pct_dp}."""
+    """HybridPilot (checkpoint path + params, see case_params) on a set. Returns {case key: metrics incl. pct_dp}
+    (key = case_id, or case_id#position for a case_id drawn twice; sets.assign_keys)."""
     cases = cases or sets.get(setname)
+    unique_keys(cases)
     base = base or pickle.load(open(base_path(setname), 'rb'))
-    jobs = [(c, base[c['case_id']], ckpt, params, match) for c in cases
-            if base.get(c['case_id']) is not None and '_fail' not in base[c['case_id']]]
+    jobs = [(c, base[sets.case_key(c)], ckpt, params, match) for c in cases
+            if base.get(sets.case_key(c)) is not None and '_fail' not in base[sets.case_key(c)]]
     out = {}
     with Pool(workers) as pool:
         for cid, m in pool.imap_unordered(_policy_job, jobs, chunksize=2):

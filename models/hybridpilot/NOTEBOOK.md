@@ -291,3 +291,35 @@ survives between RoadSim runs. v2.1's published 98.57 % becomes 98.55 % on a cle
 **Live instrument.** Re-exported with the v2.2 rule. The exporter now passes the window and prior key to
 `HybridPilotCore.decide` (it passed neither, so its Python reference ignored per-class rules); parity 96 cases, worst
 5.0e-15. The TS port (`site/src/instruments/hybridpilot/net.ts`) applies `cls_fb` and `phev_cs_s`.
+
+## 15 Nov 2026 — scoring correction: duplicate exam trip ids (no new version)
+
+**The earlier diagnosis was wrong.** The v2.2 exam entry above says some vehicle state survives between RoadSim runs in
+one process. It does not: a separate check ran 432 exam cases forwards and backwards in one process with 0 differences
+(`tests/test_roadsim_isolation.py`). The real cause is in this model's scoring. `sets.build_exam` draws 4 exam routes
+per generated vehicle with replacement, so the exam set holds 432 cases but only 430 case_ids:
+`exam_car_hev_parallel_p2_0|VED_347_2946` (cases 253 and 255, start SOC 0.556 / 0.614) and
+`exam_suv_phev_powersplit_1|VED_381_1188` (cases 328 and 330, start SOC 0.90 / 0.49). `evaluate.score_baselines` and
+`score_policy` filled dicts keyed by case_id from `imap_unordered`, so the last finisher won. Two trips were never
+scored, and a policy's run could be graded against the other draw's DP and baselines. The "102.9 vs 95.7 %" swing on
+VED_381_1188 was this. Every HybridPilot exam score on physics v2 and v3.1 was affected; frozen, dev, tune and probe sets
+have no duplicates.
+
+**Fix (chooses nothing; the exam set is not rebuilt or reordered).** `sets.assign_keys` gives each case a key in
+memory: its case_id, or `case_id#<position>` for a repeated id. `evaluate` keys every result by it and raises on
+duplicate keys. The two ambiguous entries were dropped from both baseline caches, the four cases' baselines (DP, MPC,
+A-ECMS, ECMS, rule, CD-CS) were run, and every exam policy was re-scored on all 432 trips (`dupfix_exam.sh`). The old
+caches are kept in WORK/data/pre_dupfix/.
+
+**Before -> after, physics v3.1 (% of DP).** v2.2 all trips 98.66 -> 98.69 (MPC 98.665: +0.02 [−0.58, +0.54]); v2.2 −
+A-ECMS +0.46 -> +0.49 [−0.07, +0.98], − ECMS +0.35 -> +0.38 [+0.13, +0.64]; v2.1 98.55 (published 98.57) -> 98.58;
+v2.0 98.43 -> 98.45; v1 98.54 -> 98.56; v2.2 − v2.1 +0.11 [+0.01, +0.24] unchanged; − v2.0 +0.23 [+0.09, +0.41]; − v1
++0.12 [−0.02, +0.31]. P2 + series 99.63 (63 trips) -> 99.64 (64), A-ECMS 98.42 -> 98.44. Plug-ins 99.22 (103) -> 99.29
+(104), A-ECMS 100.17 -> 100.13, CD-CS 99.35; power-split plug-ins − A-ECMS −1.13 -> −0.91 [−4.51, +2.16]. Charge held
+399 / 430 -> 401 / 432 (A-ECMS 418 -> 420). Power-split, mild, buses, starts: unchanged.
+**Physics v2 (v2.0's exam).** v2.0 98.84 -> 98.86, v1 99.00 -> 99.02, A-ECMS 98.32, MPC 98.80, P2 + series 99.84 ->
+99.85, plug-ins 99.27 -> 99.33 (A-ECMS 99.59 -> 99.56); power-split, mild, buses unchanged.
+
+**Verdicts.** All trips: v2.2 is now 0.02 above MPC, well inside the interval, so the row moves from mixed to a tie
+(not a win). Every other verdict stands. Simulator-vs-real, golden demo and live instrument are not affected (twins of
+real cars only; no duplicate there).

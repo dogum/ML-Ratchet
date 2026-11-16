@@ -175,14 +175,30 @@ def build_probe_mild():
     return cs
 
 
+def assign_keys(cases):
+    """(15 Nov 2026 correction) a unique scoring key per case, in memory only (the stored set is not changed): the
+    case_id, or for a case_id drawn more than once (build_exam draws routes with replacement: 2 pairs in the exam set)
+    case_id#<position in the set>. Every score dict is keyed by it."""
+    from collections import Counter
+    n = Counter(c['case_id'] for c in cases)
+    for i, c in enumerate(cases):
+        c['key'] = c['case_id'] if n[c['case_id']] == 1 else f"{c['case_id']}#{i}"
+    assert len({c['key'] for c in cases}) == len(cases)
+    return cases
+
+
+def case_key(c):
+    return c.get('key', c['case_id'])
+
+
 def get(name):
     fn = f'{ROOT}/data/set_{name}_{PHYS}.pkl'
     if os.path.exists(fn):
-        return pickle.load(open(fn, 'rb'))
+        return assign_keys(pickle.load(open(fn, 'rb')))
     cases = {'frozen': build_frozen, 'dev': build_dev, 'exam': build_exam, 'tune': build_tune, 'probe': build_probe,
              'probe_mild': build_probe_mild}[name]()
     pickle.dump(cases, open(fn, 'wb'))
-    return cases
+    return assign_keys(cases)
 
 
 if __name__ == '__main__':

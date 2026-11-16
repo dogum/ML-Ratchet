@@ -17,7 +17,7 @@ summary: >-
   dynamic-programming (DP) optimum inside the RoadSim simulator. Version 2.1 runs on RoadSim physics v3.1 (chosen on
   dev: closer engine starts and fuel on the dev twins), with a dead band on its SOC feedback and a fixed equivalence
   factor for buses and mild hybrids. Version 2.2 adds a charge-sustaining rule for plug-ins at their CS level and a
-  weak SOC feedback for buses. It was examined on 430 trips — real VED routes driven by calibrated twins of the
+  weak SOC feedback for buses. It was examined on 432 trips — real VED routes driven by calibrated twins of the
   exam cars, bus legs and cycles — against rule-based control, ECMS, adaptive ECMS and MPC.
 disclaimer: >-
   Graded inside the simulator. With HybridPilot driving the calibrated twins, simulated hybrid fuel is within 3.5 % of
@@ -72,23 +72,23 @@ data:
 
 split:
   dev: 76 trips — routes of the VED dev cars (calibrated twins of the 7 dev hybrids + 18 dev generated vehicles) and full-ZTBus dev legs (by-month split)
-  exam: 430 trips — 216 real VED exam routes driven by calibrated twins of the 108 exam hybrids, 214 by 54 held-out generated hybrids, full-ZTBus exam legs and HD cycles
+  exam: 432 trips — 216 real VED exam routes driven by calibrated twins of the 108 exam hybrids, 216 by 54 held-out generated hybrids, full-ZTBus exam legs and HD cycles
 
 exam:
-  short: "430 real routes, simulated twins"
-  summary: 430 exam trips, graded as % of the DP optimum (DP with the same 8 s / 3 s on/off timers) at matched final charge, on RoadSim physics v3.1. Real routes, simulated cars. Every baseline, v2.1 and v2.0 were re-scored on the same physics. v2.2 was run once, after its release choice was committed (48e9985). Earlier versions' numbers are in the notes.
+  short: "432 real routes, simulated twins"
+  summary: 432 exam trips (430 trip ids, since two routes were drawn twice for the same generated vehicle), graded as % of the DP optimum (DP with the same 8 s / 3 s on/off timers) at matched final charge, on RoadSim physics v3.1. Real routes, simulated cars. Every baseline, v2.1 and v2.0 were re-scored on the same physics. v2.2 was run once, after its release choice was committed (48e9985). Earlier versions' numbers are in the notes.
   results:
-    - metric: All 430 trips, % of DP optimum
+    - metric: All 432 trips, % of DP optimum
       better: higher
-      model: 98.66
+      model: 98.69
       unit: "%"
       baselines:
         - { name: "Adaptive ECMS", kind: classical, value: 98.20 }
         - { name: "ECMS (constant s)", kind: classical, value: 98.31 }
         - { name: "MPC, 15 s of the future", kind: classical, value: 98.67 }
         - { name: "Rule-based", kind: classical, value: 97.00 }
-      verdict: mixed
-      note: "Beats every causal baseline: +0.46 points over A-ECMS, 95% CI [−0.08, +0.95] (bootstrap by vehicle); +0.35 [+0.12, +0.59] over constant-s ECMS, which holds charge on only 75% of trips. MPC, which sees 15 s of the future, scores 0.01 higher. Holds charge on 93% of trips (A-ECMS 97%). v2.1: 98.57 (re-scored 98.55); v2.0 on physics v2 98.84, a win; v2.0 re-scored on v3.1: 98.43."
+      verdict: tie
+      note: "Beats every causal baseline: +0.49 points over A-ECMS, 95% CI [−0.07, +0.98] (bootstrap by vehicle); +0.38 [+0.13, +0.64] over constant-s ECMS, which holds charge on only 75% of trips. Level with MPC, which sees 15 s of the future: 98.686 vs 98.665, +0.02 [−0.58, +0.54], so a tie, not a win. Holds charge on 93% of trips (A-ECMS 97%). Corrected 15 Nov 2026: two duplicate trip ids were graded against each other's baselines; now all 432 trips are scored (was 98.66 on 430, verdict mixed with MPC 0.01 higher). v2.1: 98.58 (published 98.57); v2.0 on physics v2 98.86 (published 98.84), a win; v2.0 re-scored on v3.1: 98.45."
     - metric: Power-split hybrids (148 trips), % of DP
       better: higher
       model: 97.64
@@ -99,16 +99,16 @@ exam:
         - { name: "Rule-based", kind: classical, value: 97.44 }
       verdict: win
       note: "+0.59 points [+0.42, +0.78] over A-ECMS, +0.20 [−0.02, +0.42] over constant-s ECMS. Holds charge on 93% (A-ECMS 97%, rule 93%, ECMS 72%). Same as v2.1 (v2.2 changes only plug-ins and buses). v2.0: 98.41 on physics v2."
-    - metric: P2 and series hybrids (63 trips), % of DP
+    - metric: P2 and series hybrids (64 trips), % of DP
       better: higher
-      model: 99.63
+      model: 99.64
       unit: "%"
       baselines:
-        - { name: "Adaptive ECMS", kind: classical, value: 98.42 }
+        - { name: "Adaptive ECMS", kind: classical, value: 98.44 }
         - { name: "ECMS (constant s)", kind: classical, value: 99.29 }
         - { name: "Rule-based", kind: classical, value: 95.35 }
       verdict: win
-      note: "P2 +1.42 [+0.31, +3.38], series +0.88 [+0.57, +1.18] over A-ECMS. Holds charge on 94% (A-ECMS 92%; constant-s ECMS 59%). Same as v2.1. v2.0: 99.84 on physics v2."
+      note: "P2 +1.39 [+0.31, +3.29], series +0.88 [+0.57, +1.18] over A-ECMS. Holds charge on 94% (A-ECMS 92%; constant-s ECMS 59%). Same as v2.1. Corrected 15 Nov 2026: two duplicate trip ids were graded against each other's baselines; now all 432 trips are scored (was 99.63 on 63 trips, A-ECMS 98.42). v2.0: 99.85 on physics v2 (published 99.84)."
     - metric: Mild P1 hybrids, CR-Z-type twins (56 trips), % of DP
       better: higher
       model: 98.36
@@ -119,15 +119,15 @@ exam:
         - { name: "Rule-based", kind: classical, value: 93.45 }
       verdict: mixed
       note: "+1.08 [+0.79, +1.51] over A-ECMS, but holds charge on only 79% of trips (A-ECMS 96%; v2.0 re-scored on v3.1: 91%). Constant-s ECMS scores 0.21 higher (CI of the difference [−0.53, +0.10]) and holds charge on 34%. Unchanged from v2.1: a mild rule without the dead band was rejected on dev (R20). v2.0: 98.10 on physics v2 (holds 95%)."
-    - metric: Plug-in hybrids (103 trips), % of DP
+    - metric: Plug-in hybrids (104 trips), % of DP
       better: higher
-      model: 99.22
+      model: 99.29
       unit: "%"
       baselines:
-        - { name: "Adaptive ECMS", kind: classical, value: 100.17 }
+        - { name: "Adaptive ECMS", kind: classical, value: 100.13 }
         - { name: "Charge-depleting then sustaining", kind: classical, value: 99.35 }
       verdict: loss
-      note: "Power-split plug-ins −1.13 [−4.61, +1.92], series plug-ins −0.73 [−1.78, −0.07] against A-ECMS. The v2.2 CS rule raised plug-in charge holding from 97 to 101 of 103 trips, not their fuel score. v2.1: 99.25 (re-scored 99.18); v2.0: 99.27 on physics v2 (A-ECMS 99.59)."
+      note: "Power-split plug-ins −0.91 [−4.51, +2.16], series plug-ins −0.73 [−1.78, −0.07] against A-ECMS; the charge-depleting rule 99.35. The v2.2 CS rule raised plug-in charge holding from 98 to 102 of 104 trips, not their fuel score. Corrected 15 Nov 2026: two duplicate trip ids were graded against each other's baselines; now all 432 trips are scored (was 99.22 on 103 trips, A-ECMS 100.17). v2.1: 99.26 (published 99.25); v2.0: 99.33 on physics v2 (published 99.27; A-ECMS 99.56, published 99.59)."
     - metric: Hybrid buses (24 trips), % of DP
       better: higher
       model: 99.51
@@ -145,7 +145,7 @@ exam:
       baselines:
         - { name: "Adaptive ECMS", kind: classical, value: 97 }
       verdict: loss
-      note: "399 of 430 trips (A-ECMS 418). v2.1: 398 (93%): v2.2 gains 4 plug-in trips and loses 3 series-bus trips; mild hybrids still 79%. v2.0 on physics v2: 95% (A-ECMS 96%); v2.0 re-scored on v3.1: 96%."
+      note: "401 of 432 trips (A-ECMS 420). v2.1: 400 (93%): v2.2 gains 4 plug-in trips and loses 3 series-bus trips; mild hybrids still 79%. Corrected 15 Nov 2026: two duplicate trip ids were graded against each other's baselines; now all 432 trips are scored (was 399 of 430; A-ECMS 418). v2.0 on physics v2: 95% (A-ECMS 96%); v2.0 re-scored on v3.1: 96%."
     - metric: Engine starts per km (all trips)
       better: lower
       model: 3.0
@@ -156,28 +156,28 @@ exam:
       note: "v2.1: 3.0. v2.0: 4.0 vs 4.5 on physics v2 (v3.1's 2 s run-on into braking lowers starts for every strategy)."
     - metric: Against v2.1 re-scored on the same exam, % of DP
       better: higher
-      model: 98.66
+      model: 98.69
       unit: "%"
       baselines:
-        - { name: "HybridPilot v2.1", kind: published, value: 98.55 }
+        - { name: "HybridPilot v2.1", kind: published, value: 98.58 }
       verdict: win
-      note: "+0.11 points [+0.01, +0.24] (series buses +2.88, P2 buses +0.83, plug-ins about +0.04; every other trip identical). Charge held on 399 vs 398 trips. v2.1's first exam run gave 98.57: one plug-in trip's result depended on which trips the same worker process had run before; a fresh process gives the re-score's number."
+      note: "+0.11 points [+0.01, +0.24] (series buses +2.88, P2 buses +0.83, plug-ins about +0.04; every other trip identical). Charge held on 401 vs 400 trips. Corrected 15 Nov 2026: two duplicate trip ids were graded against each other's baselines; now all 432 trips are scored (was 98.66 vs 98.55; the gap between v2.1's published 98.57 and that re-score came from the same bug, not from RoadSim)."
     - metric: Against v2.0 re-scored on the same exam (v2.0 network and settings on physics v3.1), % of DP
       better: higher
-      model: 98.66
+      model: 98.69
       unit: "%"
       baselines:
-        - { name: "HybridPilot v2.0", kind: published, value: 98.43 }
+        - { name: "HybridPilot v2.0", kind: published, value: 98.45 }
       verdict: mixed
-      note: "+0.23 points [+0.10, +0.41] (mild +0.44, buses +1.6 to +3.2), but holds charge on 93% of trips against v2.0's 96%. v2.1: +0.14."
+      note: "+0.23 points [+0.09, +0.41] (mild +0.44, buses +1.6 to +3.2), but holds charge on 93% of trips against v2.0's 96%. v2.1: +0.14. Corrected 15 Nov 2026: two duplicate trip ids were graded against each other's baselines; now all 432 trips are scored (was 98.66 vs 98.43)."
     - metric: Against the v1 release re-scored on the same exam (v1 network and settings on physics v3.1), % of DP
       better: higher
-      model: 98.66
+      model: 98.69
       unit: "%"
       baselines:
-        - { name: "HybridPilot v1", kind: published, value: 98.54 }
+        - { name: "HybridPilot v1", kind: published, value: 98.56 }
       verdict: tie
-      note: "+0.12 points [−0.03, +0.31]; v1 holds charge on 91% of trips (v2.2 93%). v2.1: +0.03. v2.0 on physics v2: 98.84 vs 99.00, a loss."
+      note: "+0.12 points [−0.02, +0.31]; v1 holds charge on 91% of trips (v2.2 93%). v2.1: +0.03. v2.0 on physics v2: 98.86 vs 99.02 (published 98.84 vs 99.00), a loss. Corrected 15 Nov 2026: two duplicate trip ids were graded against each other's baselines; now all 432 trips are scored (was 98.66 vs 98.54)."
     - metric: Simulated vs logged fuel, calibrated twins driven by HybridPilot (exam, trip median)
       better: closer
       model: "+2.2% HEV, −20% / −31% plug-ins"
@@ -187,14 +187,14 @@ exam:
   coverage: []
 
 wins:
-  - "Beats every causal baseline on all 430 exam trips: 98.66% of the DP optimum against 98.20% for adaptive ECMS (+0.46 points, CI [−0.08, +0.95]), 98.31% for constant-s ECMS and 97.00% for rule-based control."
+  - "Beats every causal baseline on all 432 exam trips: 98.69% of the DP optimum against 98.20% for adaptive ECMS (+0.49 points, CI [−0.07, +0.98]), 98.31% for constant-s ECMS and 97.00% for rule-based control, and level with MPC, which sees 15 s of the future (98.67%)."
   - "Buses (v2.2): 99.51% of DP against 98.89% for constant-s ECMS and 97.01% for A-ECMS; series buses +1.06 points over ECMS."
   - "Clear gains against A-ECMS on power-split hybrids (+0.59 points), P2 (+1.42), series hybrids (+0.88), mild hybrids (+1.08), series buses (+3.87) and P2 buses (+1.13)."
   - "Fewer engine starts than A-ECMS (3.0 vs 3.2 per km)."
   - "With HybridPilot driving them, the calibrated twins' fuel is within 3.5% of logged fuel for exam hybrids (trip median), and their engine starts are much closer to the real cars' than on physics v2 (2.4 vs 1.9 per km real; was 3.7)."
 losses:
-  - "MPC, which sees 15 s of the future, scores 98.67% against 98.66% overall (v2.0 beat it on physics v2)."
-  - "Plug-ins: −1.13 points (power-split) and −0.73 (series) against A-ECMS."
+  - "No clear margin over MPC, which sees 15 s of the future: 98.69% vs 98.67% overall, +0.02 [−0.58, +0.54]."
+  - "Plug-ins: −0.91 points (power-split) and −0.73 (series) against A-ECMS."
   - "Holds charge on 93% of trips against A-ECMS's 97% (v2.0 on the same exam: 96%); mild hybrids only 79%, series buses 75% (v2.2's weak bus feedback)."
   - "Mild hybrids: constant-s ECMS scores 98.57% against 98.36%, though it holds charge on only 34% of those trips."
 limits:

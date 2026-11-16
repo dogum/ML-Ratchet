@@ -32,7 +32,7 @@ def boot_diff(base, pa, nb, key, ref='aecms', n=2000, seed=0):
 
 def main(names):
     base = pickle.load(open(E.base_path('exam'), 'rb'))
-    cases = {c['case_id']: c for c in __import__('sets').get('exam')}
+    S = __import__('sets'); cases = {S.case_key(c): c for c in S.get('exam')}
     for cid, b in base.items():
         if cid in cases and '_meta' in b:
             b['_meta']['group'] = cases[cid].get('group')
