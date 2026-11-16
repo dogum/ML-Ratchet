@@ -157,3 +157,24 @@ One seismometer, one earthquake: from 41 minutes of three-component ground veloc
 ## Corrections
 
 - 14 Nov 2026: model.yaml: the magnitude and distance rows said 'median |error|' but are means (training/qnet.py: mw_mae, dist_mae), so they now read 'mean |error|'. The very-deep limit said ratio 0.83; recomputed from the exam data in lab/index.html (284 quakes at 500–700 km, released model) the median predicted/true depth ratio is 0.87, as the card already said, so model.yaml now reads 0.87. The 0.83 in this notebook's 'next rungs' above is not reproduced by that data. No verdict changed.
+
+## Improvement pass: rebuild started, no rung tried — 15 Nov 2026
+
+Target: the shallow-depth loss (≤ 70 km: median error 33 km vs 21 km for always guessing 31 km). On dev it shows (shallow
+dev ratio 1.8 at v1.2), so it is a fair target. No rung was tried, for two reasons found while rebuilding the work folder:
+
+- **The dev split cannot be rebuilt.** `realbank.py` draws the 40 dev events from the sorted ids of the records that
+  `fetch.py` happened to download, and `fetch.py` draws its events from the live USGS catalogue. Re-run today
+  (`catalog.py`: 6,417 M5.5+ events 2012–2025, 5,997 with an Mw-type magnitude; 127 IU/II stations), the same seeded draw
+  reaches only 20 of the exam's 1,680 event locations: the catalogue has changed since 5 Nov (new and revised events).
+  The exam itself can be recovered — `lab/index.html` holds all 3,105 exam records with event and station coordinates —
+  but the 74 dev records cannot. Any new dev draw would be a new split, which this pass may not make. A rung needs a
+  dev gate, so none was scored.
+- **Cost.** Every rung means 1,917 Syngine Green's functions, ~5,000 EarthScope downloads, an 80,000-record bank and a
+  1.4 M-parameter network; the scattered shallow-depth cue already defeated five measured physics fixes (v1.2 notes).
+
+Rebuilt in `work/data/` (git-ignored) for the next pass: `events.json`, `stations.json`, the Green's-function grid
+(`gfgrid.py`, Syngine ak135f_2s, ~1.8 s per point), and `catalog_1990_2011.csv` for the world-mix prior. That last file
+was never fetched by any script; `catalog.py prior` now fetches it (USGS M5.4+, 1990–2011, 14,516 events; the original
+magnitude cut was not recorded). Needed before the next QuakeNet rung: a decision on a frozen dev list (for example
+40 events drawn by a fixed seed from 2012–2025 events not in the lab's exam list, written to a committed file).
