@@ -38,3 +38,17 @@ ladders:
       - { id: b1, change: "Plain CNN stretched to 16 s windows at 1024 Hz", sim: -0.286, decision: kept, why: First rung., metrics: ["17%", "14.9%", "10.8 vs 12.9", "1.460"] }
       - { id: b2, change: "Time-frequency front end (0.375 s frames, 64 log bands) + 2-D CNN", sim: 0.054, decision: kept, why: "Objective 0.054 vs −0.286.", metrics: ["94%", "2.6%", "11.1 vs 5.5", "1.182"] }
       - { id: b3, change: "Polish at lower learning rate", sim: 0.093, decision: released, why: "Objective 0.093 vs 0.054.", metrics: ["97%", "2.2%", "14.4 vs 5.0", "1.137"] }
+  - name: O3 release threshold (15 Nov 2026, not released)
+    objective: "False alarms on real O3 dev noise (not exam data): time-slid windows at or above the release threshold"
+    rule: >-
+      Fixed before scoring (NOTEBOOK.md, 15 Nov 2026): if any O3 dev background window scores at or above 7.0, re-set the
+      threshold by the rule that set 7.0 (loudest background + 0.5, rounded up to the next 0.5) over the O1/O2 and O3 dev
+      backgrounds. A release must also beat the current one on dev; the network is unchanged and its sensitivity at a new
+      threshold cannot be measured here (no simulation bank), so that part cannot be shown.
+    margin: 0.01
+    dev_gate: "64 pieces of 32 s real O3 H1 + L1 data at seeded times, > 600 s from every GWOSC O3 event, DATA + CBC_CAT1, no hardware injection; the O3 exam's background protocol (training/o3_dev_background.py)"
+    columns_source: O3 dev background (306,176 time-slid windows, 10.6 h)
+    columns: [Threshold, "Dev windows ≥ threshold", Loudest dev window]
+    rungs:
+      - { id: t1, change: "Released threshold 7.0 (set on O1/O2 time slides), scored on O3 dev noise", decision: kept, why: "The failure shows on dev: 46 of 306,176 windows (10.6 h) at or above 7.0; the loudest 10.9.", metrics: [7.0, 46, 10.88] }
+      - { id: t2, change: "Threshold re-set by the 7.0 rule over O1/O2 + O3 dev background", decision: rejected, why: "The rule gives 11.5 (loudest dev window 10.88 + 0.5). Its cost in sensitivity cannot be measured without a simulation bank, so it cannot be shown to beat 7.0 on dev; nothing released.", metrics: [11.5, 0, 10.88] }

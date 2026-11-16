@@ -104,3 +104,49 @@ exam's protocol (32 s, 4 kHz, H1 + L1; time-slid background from the same files,
 ## Corrections
 
 - 14 Nov 2026: Card: the rung table's column 'Loud one-detector fakes flagged' was renamed 'passed' (17% is the share of loud one-detector fakes the cascade lets through; rung 4 let 100% through). Rung 9 and neutron-star rung 3 are marked released, not kept. The black-hole chirp-mass range in the limits now reads 5.5–45 M☉, the simulated range (was 'about 6-45'). Network and credits sections added.
+
+## Improvement pass, rules fixed before scoring — 15 Nov 2026
+
+The training banks (LALSuite IMRPhenomD and NRTidalv2 waveforms) and checkpoints were never copied into this
+repository, and LALSuite has no Windows build, so no network can be retrained here and the frozen simulated sets
+(`val`, `bns_val`) cannot be rebuilt. GW190521 (detector-frame chirp mass 98.7 vs a training range of 5.5–45) needs a
+new bank and a retrained finder; it is left as it is. The two failures that can be checked on dev without retraining:
+
+1. **O3 background above the O1/O2 threshold.** Dev data: real O3 H1 + L1 strain that is not exam data
+   (`training/o3_dev_background.py`: GWOSC bulk files at seeded times, 32 s pieces, more than 600 s from every
+   O3 event GWOSC lists, DATA + CBC_CAT1, no hardware injection; scored with the O3 exam's background protocol).
+   Rule, fixed now: if any dev window scores at or above 7.0, the release threshold is re-set by the rule that set 7.0
+   (`release_build.py`: loudest background + 0.5, rounded up to the next 0.5), with the background now the O1/O2
+   time slides plus the O3 dev time slides. If no dev window reaches 7.0, the failure does not show on dev and nothing
+   changes. The network is unchanged, so the simulated objective cannot move; the sensitivity cost of a higher
+   threshold cannot be measured on simulations here (no bank) and will be stated as unmeasured.
+2. **GW170817 chirp mass 5% low, interval too narrow.** Dev data: TaylorF2 inspirals with spins and tides injected
+   into real O2 noise that is not exam data (`training/bns_mf_dev.py`: four 2,048 s pieces of GWOSC bulk data at
+   seeded times, more than a day from every O2 event, 120 injections, detector-frame chirp mass 0.9–1.8, SNR 12–35).
+   Candidate: the released network finds the merger, then a TaylorF2 matched filter (`chirpnet.BNSMatchedFilter`,
+   numpy only) refines the chirp mass on the whole inspiral from 25 Hz. Rule, fixed now, in the neutron-star ladder's
+   own units (objective = sensitivity − 2 × median chirp-mass error; detection is unchanged, so the objective moves by
+   2 × the error change): keep if, on the even-numbered injections, the matched filter's median chirp-mass error is
+   lower than the network's by more than 0.005 (0.01 of objective) AND its 68% range, after one widen-only factor
+   fitted on the odd-numbered injections, covers 60–80% of the true values. The failure counts as shown on dev if the
+   network's median error on GW170817-like injections (chirp mass 1.1–1.3) exceeds 2% or its 68% coverage is below 50%.
+
+## O3 dev background: the threshold failure is real, and larger — 15 Nov 2026
+
+`training/o3_dev_background.py score` (64 pieces of 32 s, 8 file pairs: 4 in O3a, 4 in O3b; `logs/o3_dev_background.json`):
+
+- 306,176 time-slid windows, 10.6 h of livetime (the O3 exam's background: 29,879 windows, 1.04 h).
+- 46 windows at or above 7.0. Loudest 10.88; then 10.63, 10.27, 9.92, 9.91, 9.77, 9.48 (the top ten come from a handful
+  of pieces; neighbouring windows overlap by 1.875 s). Quantiles: 99.9% 5.31, 99.99% 7.49.
+- The loudest piece (O3b, GPS 1264024768) has a loud L1 glitch that is gated at 17.3 s; the trigger sits next to it,
+  with a chirp mass of 6.0 (the training range starts at 5.5) and a checker score of −0.78, just above the −1.0 veto.
+  Each detector against white noise scores −2.2 (H1) and −24 (L1): neither view alone looks like a merger.
+- The O1/O2 background (57,760 windows, 2.0 h) never passed 6.2. O3 noise, read by this network, is much rougher.
+
+The rule fixed above gives a threshold of 11.5 (10.88 + 0.5, rounded up). Not released: a release must beat the current
+one on dev, and the cost of 11.5 in sensitivity cannot be measured without a simulation bank. What dev does say: at 7.0
+the network's false-alarm rate in O3 is of order one cluster of windows every 2 h, not "below 0.5 per hour", and four of
+the seven in-range O3 exam events (statistics 9.9–12.4) score below the loudest dev background window. The O3 detections
+are therefore less significant than the exam table suggests. Next rungs: ship the O3 dev background so `scan()`
+reports O3 false-alarm rates from O3 noise (GPS time is known at prediction time), and retrain with O3-like glitches
+next to gates once a waveform bank can be built.
