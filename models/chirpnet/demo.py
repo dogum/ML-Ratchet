@@ -41,6 +41,8 @@ if '--bns' in sys.argv:
     W = chirpnet.whiten_bns(h1), chirpnet.whiten_bns(l1)
     k0 = int((1187008882.43 - 60 - t0) * chirpnet.FSB); k1 = k0 + 120 * chirpnet.FSB
     hits = bns.scan(W[0][k0:k1], W[1][k0:k1], gps_start=t0 + k0 / chirpnet.FSB, whitened=True)
-    for h in hits[:3]:
+    for h in hits[:1]:
         print(f"GW170817 candidate: GPS {h['gps']:.2f}  statistic {h['score']:.1f}  FAR < {h['far_per_hour']:.2f}/h  "
-              f"chirp mass {h['chirp_mass']:.4f} [{h['chirp_mass_68'][0]:.4f}, {h['chirp_mass_68'][1]:.4f}] (LIGO: 1.1975)")
+              f"network chirp mass {h['chirp_mass']:.4f} [{h['chirp_mass_68'][0]:.4f}, {h['chirp_mass_68'][1]:.4f}] (LIGO: 1.1975)")
+        r = bns.refine(h, h1, l1, t0)          # v2.1: matched filter on the raw strain (about a minute)
+        print(f"   matched filter: chirp mass {r['chirp_mass']:.4f} [{r['chirp_mass_68'][0]:.4f}, {r['chirp_mass_68'][1]:.4f}]  network SNR {r['mf_network_snr']:.1f}")

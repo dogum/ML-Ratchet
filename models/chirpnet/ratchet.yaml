@@ -52,3 +52,16 @@ ladders:
     rungs:
       - { id: t1, change: "Released threshold 7.0 (set on O1/O2 time slides), scored on O3 dev noise", decision: kept, why: "The failure shows on dev: 46 of 306,176 windows (10.6 h) at or above 7.0; the loudest 10.9.", metrics: [7.0, 46, 10.88] }
       - { id: t2, change: "Threshold re-set by the 7.0 rule over O1/O2 + O3 dev background", decision: rejected, why: "The rule gives 11.5 (loudest dev window 10.88 + 0.5). Its cost in sensitivity cannot be measured without a simulation bank, so it cannot be shown to beat 7.0 on dev; nothing released.", metrics: [11.5, 0, 10.88] }
+  - name: Neutron-star chirp mass, matched filter (15 Nov 2026)
+    objective: "Neutron-star ladder objective (sensitivity − 2 × median chirp-mass error); detection is unchanged, so only the error term moves. Scored on 120 TaylorF2 injections (spins, tides) in real O2 noise that is not exam data, because bns_val cannot be rebuilt without LALSuite"
+    rule: >-
+      Fixed before scoring (NOTEBOOK.md, 15 Nov 2026): keep if, on the even-numbered injections, the matched filter's median
+      chirp-mass error is lower than the network's by more than 0.005 (0.01 of objective) AND its 68% range, after one
+      widen-only factor fitted on the odd-numbered injections, covers 60–80%.
+    margin: 0.01
+    dev_gate: "68% coverage 60–80% on the check injections"
+    columns_source: Dev injections in real O2 noise (training/bns_mf_dev.py); check half (55 found)
+    columns: [Median chirp-mass error, 68% coverage, Median half-width]
+    rungs:
+      - { id: b3, change: "Released network alone (v2.0), re-scored on the dev injections", decision: kept, why: "Incumbent: 108 of 120 found.", metrics: ["1.78%", "45%", "1.36%"] }
+      - { id: m1, change: "Network finds the merger; a TaylorF2 matched filter (30–1000 Hz, 128 s, profiled over η) refines the chirp mass; range widened ×52.0 (fitted on the odd injections)", decision: released, why: "Error 1.78% → 0.027% (objective +0.035); coverage 73%. The GW170817-specific dev condition (network error > 2% or coverage < 50% at chirp mass 1.1–1.3) was not met: 1.16%, 58%.", metrics: ["0.027%", "73%", "0.10%"] }

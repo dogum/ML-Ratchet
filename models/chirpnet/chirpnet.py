@@ -382,3 +382,92 @@ class ChirpNetBNS:
             hits.append({'gps': float(gps_start + np.median(t_m[grp])), 'score': float(o[k, 0]), 'far_per_hour': far, 'far_is_upper_bound': bound,
                          'chirp_mass': float(np.exp(lmc)), 'chirp_mass_68': [float(np.exp(lmc - sl)), float(np.exp(lmc + sl))], 'mass_ratio': float(np.clip(np.mean(o[grp, 3]), 0.05, 1))})
         return hits
+
+    def refine(self, hit, h1_raw, l1_raw, gps_start, fs=FS_IN):
+        """v2.1: replace a hit's chirp mass by the matched-filter value (BNSMatchedFilter) on the raw strain around it,
+        with the 68% range widened by the factor fitted on simulated injections in real O2 noise. The network's own
+        reading stays in 'chirp_mass_net' and 'chirp_mass_68_net'. h1_raw, l1_raw: raw 4096 Hz strain starting at
+        gps_start, a few minutes of it (the noise spectrum is estimated from all of it)."""
+        mf = BNSMatchedFilter(h1_raw, l1_raw, gps_start, hit['gps'], fs, widen=float(self.meta.get('mf_widen', 1.0))).fit(hit['chirp_mass'])
+        out = dict(hit, chirp_mass_net=hit['chirp_mass'], chirp_mass_68_net=hit['chirp_mass_68'])
+        out.update(chirp_mass=mf['chirp_mass'], chirp_mass_68=mf['chirp_mass_68'], mf_network_snr=mf['network_snr'], mf_eta=mf['eta'])
+        return out
+
+
+# ================================================================== neutron stars, v2.1: matched-filter chirp mass
+# The network finds the merger and reads a rough chirp mass from 16 s of a minute-long chirp. A physics template bank then
+# refines the chirp mass on the whole inspiral: post-Newtonian TaylorF2 waveforms (3.5PN phase, non-spinning, point
+# particles), matched-filtered against the raw strain from 25 Hz to 1000 Hz, the time window set by the network.
+# The 68% range is where the network SNR^2 (maximised over time, phase, amplitude per detector and mass ratio) stays
+# within 1 of its peak, times a widen-only factor fitted on simulated injections in real O2 noise (training/bns_mf_dev.py).
+_EULER = 0.5772156649015329
+
+def taylorf2_phase(f, mc, eta, chi=0.0, lam=0.0):
+    """TaylorF2 GW phase (radians) at frequencies f (Hz) for coalescence at t=0, phase 0. Detector-frame chirp mass mc
+    (solar masses), symmetric mass ratio eta. chi: equal aligned spins (1.5PN spin-orbit term only); lam: Lambda-tilde
+    (5PN and 6PN tidal terms). Templates use chi = lam = 0; the injections in bns_mf_dev.py do not."""
+    M = mc * eta ** -0.6 * G_MSUN_C3; v = (np.pi * M * f) ** (1 / 3); e2 = eta * eta
+    p2 = 3715 / 756 + 55 / 9 * eta
+    p3 = -16 * np.pi + 4 * (113 / 12 + 25 / 4 * eta) * chi          # beta for chi1 = chi2 = chi
+    p4 = 15293365 / 508032 + 27145 / 504 * eta + 3085 / 72 * e2
+    p5 = np.pi * (38645 / 756 - 65 / 9 * eta) * (1 + 3 * np.log(v * 6 ** 0.5))
+    p6 = (11583231236531 / 4694215680 - 640 / 3 * np.pi ** 2 - 6848 / 21 * _EULER - 6848 / 21 * np.log(4 * v)
+          + (-15737765635 / 3048192 + 2255 / 12 * np.pi ** 2) * eta + 76055 / 1728 * e2 - 127825 / 1296 * e2 * eta)
+    p7 = np.pi * (77096675 / 254016 + 378515 / 1512 * eta - 74045 / 756 * e2)
+    tid = -39 / 2 * lam * v ** 10 - 3115 / 64 * lam * v ** 12
+    return -np.pi / 4 + 3 / (128 * eta * v ** 5) * (1 + p2 * v ** 2 + p3 * v ** 3 + p4 * v ** 4 + p5 * v ** 5 + p6 * v ** 6 + p7 * v ** 7 + tid)
+
+def taylorf2(f, mc, eta, chi=0.0, lam=0.0):
+    """Frequency-domain inspiral, amplitude f^-7/6 (arbitrary scale), zero above the ISCO frequency."""
+    M = mc * eta ** -0.6 * G_MSUN_C3; fiso = 1 / (6 ** 1.5 * np.pi * M); h = np.zeros(len(f), complex); m = (f > 0) & (f < fiso)
+    h[m] = f[m] ** (-7 / 6) * np.exp(-1j * taylorf2_phase(f[m], mc, eta, chi, lam)); return h
+
+class BNSMatchedFilter:
+    """Matched-filter chirp mass for a neutron-star candidate. Data: raw 4096 Hz strain of H1 and L1 (several minutes,
+    for the noise spectrum) and the network's merger time. Two views of the same data: a coarse one (60-1000 Hz, 64 s,
+    forgiving to chirp-mass offsets of ~0.2%) to find the peak, a fine one (30-1000 Hz, 128 s, the whole inspiral of a
+    neutron-star pair from 30 Hz) to pin it down and set the range."""
+    F_HI, FS_MF = 1000.0, 2048
+    VIEWS = {'coarse': (60.0, 64), 'fine': (30.0, 128)}
+
+    def __init__(self, h1, l1, gps_start, t_merger_gps, fs=FS_IN, widen=1.0):
+        from scipy.signal.windows import tukey
+        self.widen = widen; self.views = {}
+        x = [np.asarray(v, np.float64) for v in (h1, l1)]; S0 = [psd(v, fs, seg=8.0) for v in x]
+        for name, (flo, seg) in self.VIEWS.items():
+            n = seg * fs; tm = t_merger_gps - gps_start; a = int(round((tm + 4 - seg) * fs)); a = min(max(a, 0), min(len(h1), len(l1)) - n)
+            f = np.fft.rfftfreq(n, 1 / fs); band = (f >= flo) & (f <= self.F_HI); Q = []
+            for v, (fp, pp) in zip(x, S0):
+                D = np.fft.rfft(v[a:a + n] * tukey(n, alpha=0.1)) / fs; S = np.interp(f[band], fp, pp); Q.append((D[band], S))
+            self.views[name] = dict(f=f[band], idx=np.flatnonzero(band), df=f[1] - f[0], n2=seg * self.FS_MF, Q=Q, tm=t_merger_gps - (gps_start + a / fs))
+
+    def snr2(self, mc, eta, view='fine', window=1.0, coinc=0.012):
+        """Network SNR^2 maximised over merger time (within `window` s of the network's), H1-L1 delay (<= `coinc` s),
+        phase and amplitude in each detector."""
+        from scipy.ndimage import maximum_filter1d
+        V = self.views[view]; h = taylorf2(V['f'], mc, eta); rho = []
+        for D, S in V['Q']:
+            q = np.zeros(V['n2'], complex); q[V['idx']] = D * np.conj(h) / S
+            z = np.fft.ifft(q); sig = np.sqrt(4 * V['df'] * np.sum(np.abs(h) ** 2 / S))
+            rho.append(np.abs(z) * 4 * V['df'] * V['n2'] / sig)
+        k0 = int((V['tm'] - window) * self.FS_MF); k1 = int((V['tm'] + window) * self.FS_MF); c = int(coinc * self.FS_MF)
+        L2 = maximum_filter1d(rho[1], 2 * c + 1, mode='wrap')[k0:k1] ** 2
+        return float(np.max(rho[0][k0:k1] ** 2 + L2))
+
+    def fit(self, mc0, span=0.15, etas=(0.25, 0.2475, 0.24, 0.2275, 0.21)):
+        """Search in chirp mass (profiled over eta) around the network's mc0: coarse view in 0.2% steps over +-span,
+        then the fine view in 0.025% and 0.002% steps. Returns mc, 68% range, network SNR."""
+        best = (-1, mc0, 0.25)
+        for m in mc0 * np.exp(np.arange(-span, span + 1e-9, 2e-3)):
+            for e in etas[::2]:
+                s = self.snr2(m, e, 'coarse')
+                if s > best[0]: best = (s, m, e)
+        best = (-1, best[1], best[2]); pts = {}
+        for step, half in ((2.5e-4, 3e-3), (2e-5, 6e-4)):
+            for m in best[1] * np.exp(np.arange(-half, half + 1e-12, step)):
+                s, e = max((self.snr2(m, e), e) for e in etas); pts[float(m)] = s
+                if s > best[0]: best = (s, m, e)
+        grid = np.array(sorted(pts)); prof = np.array([pts[m] for m in grid]); ok = prof >= prof.max() - 1.0
+        lo, hi = grid[ok].min(), grid[ok].max(); mid = best[1]
+        lo, hi = mid * (lo / mid) ** self.widen, mid * (hi / mid) ** self.widen
+        return {'chirp_mass': float(mid), 'chirp_mass_68': [float(lo), float(hi)], 'eta': float(best[2]), 'network_snr': float(np.sqrt(best[0]))}

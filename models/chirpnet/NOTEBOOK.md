@@ -152,3 +152,32 @@ gives. One of the seven in-range O3 exam events (GW200224_222234, 9.89) scores b
 seven.) Next rungs: ship the O3 dev background so `scan()`
 reports O3 false-alarm rates from O3 noise (GPS time is known at prediction time), and retrain with O3-like glitches
 next to gates once a waveform bank can be built.
+
+## Neutron-star chirp mass on dev: v2.1 release choice (before the exam) — 15 Nov 2026
+
+`training/bns_mf_dev.py` (four 2,048 s O2 pieces at GPS 1165131776, 1173495808, 1174196224, 1182793728; 120 injections;
+`logs/bns_mf_dev.json`). The network found 108 of 120 (the 12 misses have network SNR 12.2–17.5, all below 5.5 on the
+statistic). On the 108 found:
+
+| Reader | Median chirp-mass error | 90th percentile | Bias | 68% coverage | Median half-width |
+|---|---|---|---|---|---|
+| Network (v2.0), all 108 | 1.91% | 8.0% | +0.18% | 47% | 1.38% |
+| Matched filter, all 108, raw range | 0.034% | 0.10% | +0.002% | 3% | 0.002% |
+| Network, even-numbered (check) 55 | 1.78% | 7.6% | +0.12% | 45% | 1.36% |
+| Matched filter, check 55, widened ×52.0 | 0.027% | 0.08% | −0.005% | 73% | 0.10% |
+| Network, chirp mass 1.1–1.3 (19) | 1.16% | 5.9% | −0.79% | 58% | 1.35% |
+| Matched filter, chirp mass 1.1–1.3 (19), widened | 0.027% | 0.09% | +0.005% | 58% | 0.05% |
+
+- The matched filter's raw range (where the network SNR² stays within 1 of its peak, profiled over five η values) is
+  far too narrow: the grid of η and the untemplated spins and tides move the peak by more than the statistical width.
+  One widen-only factor, fitted on the 53 odd-numbered injections, is 52.0; on the 55 check injections it gives 73%.
+- Rule (fixed above): the matched filter must cut the median error by more than 0.005 on the check injections (1.78% →
+  0.027%: yes) and its widened 68% range must cover 60–80% (73%: yes). **Kept, released as v2.1.**
+- The second, GW170817-specific condition was **not** met: on the 19 GW170817-like injections (chirp mass 1.1–1.3) the
+  network's median error is 1.16% (the condition asked for more than 2%) and its coverage 58% (the condition asked for
+  less than 50%). The network's 5% miss on GW170817 is therefore not reproduced on dev; what dev does show is a network
+  that is off by more than 7.6% one time in ten and whose 68% bars cover 47%. The release rests on that general dev
+  gain, not on GW170817.
+- Release: `chirpnet.BNSMatchedFilter` and `ChirpNetBNS.refine()` (numpy/scipy only); `chirpnet_bns_weights.npz` keeps
+  the same network and gains `mf_widen` = 52.04 in its meta (`training/release_v21.py`). `demo.py --bns` prints both
+  readings. The black-hole models, the threshold (7.0) and every black-hole output are unchanged.
