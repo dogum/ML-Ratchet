@@ -59,3 +59,10 @@ def sibling_truth(P, G):
         na = np.sum(np.isfinite(am), 1); npm = np.sum(np.isfinite(pm), 1)
     fr[(na < 4) | (npm < 4) | (np.abs(fa - fp) > 0.06)] = np.nan
     return fr, na + npm
+
+if __name__ == '__main__':
+    # 15 Nov 2026: the step that wrote sys2107_solar.npz (read by realexam.load) was not kept; rebuilt from the functions above
+    days, P, G, T, geo = load_2107(); fr, n_used = sibling_truth(P, G)
+    np.savez_compressed(_P.WORK + '/data/sys2107_solar.npz', days=days.values.astype('datetime64[D]').astype(np.int64), P=P.astype(np.float32),
+                        G=G.astype(np.float32), T=T.astype(np.float32), fr=fr.astype(np.float32))
+    print('days', len(days), days[0].date(), days[-1].date(), 'P', P.shape, 'answer-key inverter-days', int(np.isfinite(fr).sum()))
