@@ -163,12 +163,14 @@ da_premium = market.expected(times, 'ERCO', da=da)       # what a risk-neutral d
 
 The process: an unforecast scarcity event starts in an hour with probability r0 x M[month] x g(z) x k(DA), where z
 is the day-ahead demand-forecast miss in standard units (g = exp(0.57 z)) and k = exp(2.28 (rank - 0.5) + 1.32 level)
-reads the DA price's own shape (its rank within the local day, and log of DA over the median of the past week), each
-normalised to mean 1: the DA knows when the system is tight, not by how much. It lasts a geometric number of hours
-(mean 1.97 h); each of its hours adds $100 + X to the RT price, X generalised Pareto (xi 0.74, sigma $130, capped at
-$8,900), adjacent hours tied by a Gaussian copula (rho 0.44). The first 1.2 fit (`market.params('ERCO_first_fit')`)
-used a clock-hour profile instead of k and put too few spikes in the DA's dearest hours (BatteryPilot's twin test
-on dev). ERCOT only; CAISO has no fit (its prices start in Aug 2023). Limits in [LIMITS.md](LIMITS.md) section I.
+reads the DA price's own shape (its rank within the local day, and the log of DA over the median of the past week),
+each normalised to mean 1. It lasts a geometric number of hours (mean 1.97 h); each of its hours adds $100 + X to the
+RT price, X generalised Pareto (xi 0.45, scale $60.7 x exp(1.11 level), capped at $8,900), adjacent hours tied by a
+Gaussian copula (rho 0.44). The DA knows when the system is tight and roughly how tight, not whether the spike comes.
+Two earlier fits stay in the parameter file (`market.params('ERCO_first_fit')`: clock-hour profile, no DA terms;
+`'ERCO_shape_only'`: no size term); BatteryPilot's dev twin test showed both put too little of the spike value in
+the DA's dearest hours. ERCOT only; CAISO has no fit (its prices start in Aug 2023). Limits in
+[LIMITS.md](LIMITS.md) section I.
 
 ## The physics
 
@@ -246,7 +248,7 @@ load damping 0.5-2) with labels (inertia, IBR share, headroom, FFR, loss).
 | `renewables.json` 2019 | ERCOT wind and solar fleets from NASA POWER weather vs EIA-930 | wind bias +5.9 % (dev-scaled +0.0 %), hourly r 0.90, nMAE 19 %; solar bias +19.6 %, hourly r 0.98, nMAE 22 % |
 | `renewables.json` 2022 | ERCOT wind and solar fleets from NASA POWER weather vs EIA-930 | wind bias +7.8 % (dev-scaled +1.9 %), hourly r 0.91, nMAE 20 %; solar bias +3.6 %, hourly r 0.97, nMAE 15 % |
 | `demand.json` | weather-driven ERCOT demand, fit 2018-19, test 2021 (Uri week excluded) and 2022 | MAPE 3.8 % / 4.3 % (bias -3.4 % in 2022); ERCOT's own day-ahead forecast 2.4 / 2.8 % |
-| `rt_scarcity.json` (physics 1.2) | the RT scarcity process alone (200 draws per year, driven by the year's real demand-forecast misses and DA prices) vs the real HB_HUBAVG RT - DA spread; fit on 2018/2020/2022, checked on dev 2019 and 2021 | hours with RT - DA > $100 per year: sim mean 106-125 vs real 87 / 81 / 165 (train) and 117 / 104 vs 108 / 99 (dev 2019 / 2021 without Uri; 224 with Uri); share of event hours in the day's 3 dearest DA hours: sim 0.37-0.41 vs real 0.46-0.58 (train), 0.57-0.67 (dev; first fit 0.20-0.24); hour-of-day profile corr 0.79-0.89 (train), 0.82 / 0.89 (dev); month profile corr 0.23-0.78 (train), 0.94 / 0.72 (dev) |
+| `rt_scarcity.json` (physics 1.2) | the RT scarcity process alone (200 draws per year, driven by the year's real demand-forecast misses and DA prices) vs the real HB_HUBAVG RT - DA spread; fit on 2018/2020/2022, checked on dev 2019 and 2021 | hours with RT - DA > $100 per year: sim mean 106-125 vs real 87 / 81 / 165 (train) and 117 / 104 vs 108 / 99 (dev 2019 / 2021 without Uri; 224 with Uri); share of the spike $ in the day's 3 dearest DA hours: sim 0.50-0.57 vs real 0.53-0.73 (train), 0.57 / 0.51 vs 0.86 / 0.62 (dev; first fit 0.21-0.24); hour-of-day profile corr 0.79-0.89 (train), 0.82 / 0.89 (dev); month profile corr 0.23-0.78 (train), 0.94 / 0.72 (dev) |
 | `generator.json` | 2,000 generated states and 40 generated fleets vs real ranges | inertia per MW demand p5/p50/p95 2.1/4.6/7.1 s (ERCOT 2019 min 4.6 s, GB 9 Aug 7.2 s); RoCoF at t=0 = formula to 2e-15; UFLS in 13 % (60 Hz) / 5 % (50 Hz) of random events; heat rates inside the ERCOT EIA-923 spread |
 
 Dev calibration (all in `gridsim/data/calibration.json`, fitted on dev data of `splits.json` only): ERCOT coal

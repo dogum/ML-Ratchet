@@ -8,7 +8,8 @@ statistics (mean and 5-95 % range of the draws) are set against the real HB_HUBA
   - start rate by quintile of the demand-forecast miss
   - where events fall in the day's DA shape: share of event hours among the day's 3 dearest DA hours
 Each year is drawn with the default fit ("ERCO", driven by the year's real DA prices too) and with the first fit
-("ERCO_first_fit", clock-hour profile, no DA-shape term) for comparison.
+("ERCO_first_fit", clock-hour profile, no DA terms) for comparison; "$ in the dearest 3 DA hours" is the share of the
+RT - DA $ of event hours that falls in each day's 3 dearest DA hours (where a DA-following battery discharges).
 First on the training-input years (2018, 2020, 2022: the fit, in-sample), then on dev (2019, and 2021 with and
 without Winter Storm Uri, 8-24 Feb). Exam years are not read.
 Also checks that physics 1.2 changes nothing else: with 1.1 the process returns zeros; 1.2's outage defaults and
@@ -46,7 +47,9 @@ def year_stats(s, hour, month, e, err_sd, rank):
     for qq in (0.5, 0.9, 0.99):
         out[f'event_spread_q{int(qq * 100)}'] = float(np.quantile(s[ev], qq)) if ev.any() else 0.0
     out['afternoon_share'] = float(ev[np.isin(hour, AFTERNOON)].sum() / max(ev.sum(), 1))
-    out['top3_da_share'] = float(ev[rank >= 20.5 / 23].sum() / max(ev.sum(), 1))
+    top = rank >= 20.5 / 23
+    out['top3_da_share'] = float(ev[top].sum() / max(ev.sum(), 1))
+    out['top3_da_dollar_share'] = float(s[ev & top].sum() / max(s[ev].sum(), 1e-9))
     hp = np.bincount(hour[ev], minlength=24).astype(float)
     mp = np.bincount(month[ev] - 1, minlength=12).astype(float)
     z = e / err_sd
@@ -168,5 +171,8 @@ if __name__ == '__main__':
                   'monthcorr', r['month_profile']['corr'], 'top3', r['real']['top3_da_share'],
                   r['sim']['top3_da_share']['mean'], 'first fit top3',
                   out['first_fit'][part][k]['sim']['top3_da_share']['mean'],
+                  'top3$', round(r['real']['top3_da_dollar_share'], 2), r['sim']['top3_da_dollar_share']['mean'],
+                  out['first_fit'][part][k]['sim']['top3_da_dollar_share']['mean'],
+                  '$k', round(r['real']['sum_event_spread_k']), r['sim']['sum_event_spread_k']['mean'],
                   'first fit hourcorr', out['first_fit'][part][k]['hour_profile']['corr'])
     print(out['identity'])

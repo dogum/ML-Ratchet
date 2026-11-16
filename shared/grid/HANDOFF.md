@@ -98,15 +98,17 @@ From `checks/*.json`; re-run `checks/run_all.sh` after any change.
   in core, cold-outage curve, GT ambient derate, DA price generator, self-commitment layer, building-stock demand
   model) and two speed tools (single-LP perfect foresight, tabulated farm curves).
 - **P1 scarcity pricing, first part (physics 1.2, opt-in, 15 Nov 2026).** `gridsim.market` draws the real-time
-  scarcity the day-ahead market cannot see (unforecast events whose start rate follows the DA price's own shape,
-  month and the demand-forecast miss; geometric duration, generalised Pareto size), fitted on ERCOT 2018/2020/2022
-  prices only and checked on dev (`checks/rt_scarcity.json`; LIMITS I). Hours with RT - DA > $100: sim 106-125 a
-  year vs real 81-165 (train) and 117 / 104 vs 108 / 99 (dev 2019 / 2021 without Uri); hour profile corr 0.82 / 0.89
-  and month profile corr 0.94 / 0.72 on dev. A first fit by clock hour (kept as `ERCO_first_fit`) put too few
-  spikes in the DA's dearest hours; BatteryPilot's dev twin test found it. Default stays 1.1 and 1.2 changes no other output, so GridPulse, DemandCast and PlantDetective keep
-  their 1.1 pins; BatteryPilot rebuilt its frozen set on 1.2 (its NOTEBOOK). No CAISO fit (no pre-2023 CAISO prices).
-  Not done: the P1 "done when" for hours above $1,000 in the dispatch itself (ORDC in core, unforecast outages in
-  `dispatch`), and year-to-year tightness.
+  scarcity the day-ahead market cannot see: unforecast events whose start rate follows the DA price's own shape
+  (rank within the day, level against the past week), the month and the demand-forecast miss, with a geometric
+  duration and a generalised Pareto size that grows with the DA level. Fitted on ERCOT 2018/2020/2022 prices only and
+  checked on dev (`checks/rt_scarcity.json`; LIMITS I). Hours with RT - DA > $100: sim 106-125 a year vs real 81-165
+  (train) and 117 / 104 vs 108 / 99 (dev 2019 / 2021 without Uri); share of the spike $ in the day's 3 dearest DA
+  hours 0.57 / 0.51 vs 0.86 / 0.62 real on dev. Two earlier fits (clock hour; no size term) stay in the parameter
+  file: BatteryPilot's dev twin test showed they put too little spike value where the DA optimiser discharges.
+  Default stays 1.1 and 1.2 changes no other output, so GridPulse, DemandCast and PlantDetective keep their 1.1 pins;
+  BatteryPilot rebuilt its frozen set on 1.2 (its NOTEBOOK). No CAISO fit (no pre-2023 CAISO prices). Not done: the
+  P1 "done when" for hours above $1,000 in the dispatch itself (ORDC in core, unforecast outages in `dispatch`), and
+  year-to-year tightness.
 - **Not done:** everything else in P1-P3.
 
 ## 4. Prioritised work list

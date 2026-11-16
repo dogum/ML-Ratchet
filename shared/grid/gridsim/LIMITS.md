@@ -73,41 +73,47 @@ I. **Real-time scarcity the day-ahead market cannot see (physics 1.2, opt-in, 15
    (`checks/fit_rt_scarcity.py`: 169 events, 333 event hours) and checked on dev (`checks/rt_scarcity.json`, 200
    draws a year driven by the year's real demand-forecast misses and DA prices).
 
-   **Two fits.** The first (`ERCO_first_fit`) placed events by clock hour, month and forecast miss. BatteryPilot's
-   twin test on dev 2019 then showed what it missed: in real 2019 the rolling DA optimiser, discharging in the DA's
-   dearest hours, earned $47.8k/MW from hours with RT - DA > $100; on twins with the first fit only $9.6-11.0k, and
-   its capture fell to 0.46-0.50 against 0.79 real. Real unforecast spikes fall in the hours the DA already marks as
-   tight: on the training years the start rate is 29-33 per 1,000 h in each day's dearest 5 % of hours against 0-0.5
-   in its cheapest quarter. The default fit (`ERCO`) replaces the clock-hour profile by the DA price's rank within
-   the day and its level against the past week (gamma 2.28 and 1.32; AIC 1,712 vs 1,879 for the first fit and 1,745
-   with both, on the training years). The DA knows when the system is tight, not by how much.
+   **Three fits, all on the training years; the third is the default.** (a) `ERCO_first_fit` placed events by clock
+   hour, month and forecast miss. BatteryPilot's twin test on dev 2019 then showed what it missed: in real 2019 the
+   rolling DA optimiser, discharging in the DA's dearest hours, earned $47.8k/MW from hours with RT - DA > $100; on
+   twins with this fit only $9.6-11.0k, and its capture fell to 0.46-0.50 against 0.79 real. Real unforecast spikes
+   fall in the hours the DA already marks as tight: on the training years the start rate is 29-33 per 1,000 h in each
+   day's dearest 5 % of hours against 0-0.5 in its cheapest quarter. (b) `ERCO_shape_only` replaces the clock-hour
+   profile by the DA price's rank within the day and its level against the past week (gamma 2.28 and 1.32; AIC
+   1,712 vs 1,879 for (a) and 1,745 with both). The same twin test still gave the optimiser only $9.3-10.7k: real
+   spikes are also larger on days the DA prices high (mean excess over $100 $117 in the lowest quartile of DA level
+   among event hours, $756 in the highest). (c) `ERCO` adds that size term: the generalised Pareto scale is
+   $60.7 x exp(1.11 level) (xi 0.45; AIC 4,331 vs 4,404 without it). The DA knows when the system is tight and
+   roughly how tight, not whether the spike comes.
 
-   | ERCOT HB_HUBAVG, default fit | 2018 | 2020 | 2022 | 2019 (dev) | 2021 (dev) | 2021 without Uri |
+   | ERCOT HB_HUBAVG, default fit (c) | 2018 | 2020 | 2022 | 2019 (dev) | 2021 (dev) | 2021 without Uri |
    |---|---|---|---|---|---|---|
    | Hours RT - DA > $100, real | 87 | 81 | 165 | 108 | 224 | 99 |
    | sim mean [5-95 %] | 112 [85-140] | 125 [99-155] | 106 [81-133] | 117 [85-148] | 106 [80-136] | 104 [80-132] |
-   | Hours RT - DA > $1,000, real / sim | 6 / 9.6 | 1 / 10.5 | 23 / 9.1 | 17 / 10.1 | 63 / 9.1 | 7 / 9.2 |
+   | Hours RT - DA > $1,000, real / sim | 6 / 6.4 | 1 / 7.9 | 23 / 8.5 | 17 / 11.5 | 63 / 7.1 | 7 / 5.8 |
    | Events, real / sim | 51 / 55 | 44 / 62 | 74 / 52 | 56 / 58 | 75 / 52 | 61 / 52 |
-   | $ of RT - DA in event hours (k$/MW), real / sim | 31 / 52 | 22 / 58 | 95 / 49 | 82 / 54 | 192 / 49 | 36 / 50 |
-   | Share of event hours in the day's 3 dearest DA hours, real / sim (first fit) | 0.56 / 0.39 (0.22) | 0.58 / 0.41 (0.24) | 0.46 / 0.37 (0.20) | 0.67 / 0.41 (0.22) | 0.32 / 0.35 (0.21) | 0.57 / 0.37 (0.22) |
-   | Hour-of-day profile corr | 0.82 | 0.89 | 0.79 | 0.82 | 0.88 | 0.89 |
+   | $ of RT - DA in event hours (k$/MW), real / sim | 31 / 39 | 22 / 47 | 95 / 44 | 82 / 56 | 192 / 41 | 36 / 36 |
+   | Share of that $ in the day's 3 dearest DA hours, real / sim (first fit) | 0.73 / 0.54 (0.23) | 0.66 / 0.56 (0.24) | 0.53 / 0.50 (0.21) | 0.86 / 0.57 (0.21) | 0.18 / 0.45 (0.21) | 0.62 / 0.51 (0.22) |
+   | Share of event hours in those 3 hours, real / sim | 0.56 / 0.39 | 0.58 / 0.41 | 0.46 / 0.37 | 0.67 / 0.41 | 0.32 / 0.35 | 0.57 / 0.37 |
+   | Hour-of-day profile corr (first fit) | 0.82 (0.82) | 0.89 (0.89) | 0.79 (0.95) | 0.82 (0.80) | 0.88 (0.87) | 0.89 (0.87) |
    | Month profile corr | 0.23 | 0.78 | 0.60 | 0.94 | 0.86 | 0.72 |
 
    What it gets wrong: (1) **years differ more than the draws do.** The rate knows the DA shape, month and forecast
    miss, each normalised within the year, not how tight the year is: real years range 81-165 hours (dev 2021 with Uri
-   224) against a draw range of about 80-155, and the $ size ranges 22-192 k$/MW against 49-58 k$/MW. A caller that
+   224) against a draw range of about 80-155, and the $ size ranges 22-192 k$/MW against 36-56 k$/MW. A caller that
    wants year-to-year spread must scale the rate per scenario (`scale=`). (2) **Uri is not in it**: 125 of 2021's 224
    hours come from 8-24 Feb; cold-weather outages belong to the caller's fleet model (BatteryPilot's cold-outage
-   curve). (3) Still too few events in the dearest DA hours (0.37-0.41 of event hours vs 0.46-0.67 real) and in the
-   afternoon (0.53-0.70 vs 0.68-0.82). (4) The forecast-miss driver is the demand miss only (EIA-930 has no wind or
-   solar forecasts): beta 0.57 per standard deviation; real start rates 0.6-2.9 vs 8.6-13.7 per 1,000 h in the bottom
-   vs top fifth of misses on the training years (2022 is flat above the bottom fifth). (5) Upward spikes only: RT
-   below DA by more than $50 (60-430 h a year) is left to the caller's noise. (6) The geometric duration (mean 1.97
-   h) has too many 2-hour events (25 % vs 16 % real) and the generalised Pareto (xi 0.74) a slightly heavy mean ($378
-   capped vs $346 real per event hour). (7) **No CAISO fit**: CAISO prices exist only from Aug 2023 (the OASIS history
-   limit), so no training-year prices exist; `market` returns zeros for CISO, and CAISO users stay on 1.1 behaviour.
-   With physics 1.0 or 1.1 `market` returns zeros, and 1.2 leaves every other output unchanged (same outage defaults
-   and calibration file; a merit-order ERCOT week is identical: `rt_scarcity.json`, `identity`).
+   curve). (3) Still too little of the spike $ in the DA's dearest hours (0.50-0.57 vs 0.53-0.86 real outside Uri)
+   and too few events in the afternoon (0.53-0.70 of event hours vs 0.68-0.82). (4) The forecast-miss driver is the
+   demand miss only (EIA-930 has no wind or solar forecasts): beta 0.57 per standard deviation; real start rates
+   0.6-2.9 vs 8.6-13.7 per 1,000 h in the bottom vs top fifth of misses on the training years (2022 is flat above the
+   bottom fifth). (5) Upward spikes only: RT below DA by more than $50 (60-430 h a year) is left to the caller's
+   noise. (6) The geometric duration (mean 1.97 h) has too many 2-hour events (25 % vs 16 % real); the top 1 % of
+   event hours is too high in 2018 and 2020 ($2,594 and $2,836 vs $2,034 and $969) and too low in 2022 and 2019.
+   (7) **No CAISO fit**: CAISO prices exist only from Aug 2023 (the OASIS history limit), so no training-year prices
+   exist; `market` returns zeros for CISO, and CAISO users stay on 1.1 behaviour. With physics 1.0 or 1.1 `market`
+   returns zeros, and 1.2 leaves every other output unchanged (same outage defaults and calibration file; a
+   merit-order ERCOT week is identical: `rt_scarcity.json`, `identity`).
 
 ## Frequency
 

@@ -51,6 +51,161 @@
    "beta": 0.5711,
    "err_sd": 0.03279,
    "q": 0.5075,
+   "xi": 0.4534,
+   "sigma": 60.67,
+   "rho": 0.438,
+   "x_max": 8900.0,
+   "gamma_rank": 2.2821,
+   "gamma_level": 1.3184,
+   "delta_level": 1.1131,
+   "node": "HB_HUBAVG",
+   "fit": {
+    "n_events": 169,
+    "n_event_hours": 333,
+    "mean_duration_h": 1.97,
+    "max_duration_h": 10,
+    "duration_counts": {
+     "1": 97,
+     "2": 27,
+     "3": 22,
+     "4": 14,
+     "5": 5,
+     "6": 1,
+     "9": 1,
+     "10": 2
+    },
+    "start_counts_by_hour": [
+     3,
+     0,
+     1,
+     0,
+     0,
+     3,
+     18,
+     3,
+     3,
+     2,
+     0,
+     7,
+     12,
+     13,
+     15,
+     14,
+     22,
+     16,
+     10,
+     15,
+     7,
+     2,
+     2,
+     1
+    ],
+    "start_counts_by_month": [
+     12,
+     11,
+     18,
+     12,
+     19,
+     3,
+     16,
+     23,
+     9,
+     22,
+     17,
+     7
+    ],
+    "loglik_beta": -915.3,
+    "loglik_beta0": -941.76,
+    "likelihood_ratio_stat": 52.91,
+    "excess_quantiles": {
+     "0.25": 40.0,
+     "0.5": 120.3,
+     "0.75": 341.3,
+     "0.9": 802.9,
+     "0.99": 3480.6
+    },
+    "excess_mean": 345.5,
+    "n_pairs": 164,
+    "shape_fit": {
+     "variants": {
+      "with_H": {
+       "beta": 0.6404,
+       "gamma_rank": 0.8011,
+       "gamma_level": 1.2588,
+       "loglik": -846.64,
+       "aic": 1745.29
+      },
+      "flat_H": {
+       "beta": 0.5711,
+       "gamma_rank": 2.2821,
+       "gamma_level": 1.3184,
+       "loglik": -853.0,
+       "aic": 1712.0
+      }
+     },
+     "picked": "flat_H",
+     "first_fit": {
+      "loglik": -915.3,
+      "aic": 1878.61
+     }
+    },
+    "size_fit": {
+     "xi": 0.4534,
+     "sigma": 60.67,
+     "delta_level": 1.1131,
+     "loglik": -2162.61,
+     "loglik_no_size_term": -2200.12,
+     "aic": 4331.21,
+     "aic_no_size_term": 4404.25
+    }
+   }
+  },
+  "ERCO_shape_only": {
+   "u": 100.0,
+   "r0": 0.00706791959689511,
+   "H": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "M": [
+    0.7543,
+    0.9257,
+    1.0457,
+    1.08,
+    0.9429,
+    0.7371,
+    1.0286,
+    1.2514,
+    1.1143,
+    1.2343,
+    1.1143,
+    0.7714
+   ],
+   "beta": 0.5711,
+   "err_sd": 0.03279,
+   "q": 0.5075,
    "xi": 0.7374,
    "sigma": 130.272,
    "rho": 0.439,
@@ -148,7 +303,8 @@
       "aic": 1878.61
      }
     }
-   }
+   },
+   "note": "the second 1.2 fit (DA-shape start term, no size term); no bank was built with it"
   },
   "ERCO_first_fit": {
    "u": 100.0,
