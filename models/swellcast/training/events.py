@@ -62,6 +62,10 @@ def build():
         if c['confirmed'] and c['sid'] not in dev_s: conf.setdefault(c['basin'], set()).add(c['sid'])
     for b, k in (('EP', 4), ('NA', 3), ('WP', 2), ('SP', 1)):
         pool = sorted(conf.get(b, [])); dev_s |= set(rng.choice(pool, min(k, len(pool)), replace=False).tolist())
+    # 15 Nov 2026: a rebuild from today's IBTrACS gives the same 317 confirmed pairs but a different seeded draw (the
+    # storm list the draw runs over has changed), so the v1.0 dev storms are read from dev_storms_v1.json instead.
+    frozen = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dev_storms_v1.json')
+    if os.path.exists(frozen): dev_s = set(json.load(open(frozen))['dev_storms'])
     for c in out: c['split'] = 'dev' if c['sid'] in dev_s else 'exam'
     meta = dict(n_candidates=len(C), n_crowded=n_crowd, n_gappy=n_gap, n_kept=len(out), dev_storms=sorted(dev_s))
     json.dump(dict(meta=meta, events=out), open(os.path.join(ROOT, 'data/events.json'), 'w'), indent=0)
