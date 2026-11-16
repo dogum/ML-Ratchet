@@ -24,13 +24,13 @@ export const NOTES: Record<string, Note[]> = {
     { who: 'RoadSim', text: 'A generated car, not a real one. P2 physics is split on fresh data: Hyundai/Kia-type P2s burn 8–10 % too much, converter P2s 26–28 % too little in the city. Launch engine starts are not modelled at 1 Hz.' },
     { who: 'EnergyNet', text: 'The 247 real P2 trips got worse in v2 (18.3 % per trip in v2.1, v1.0 10.4 %).' },
     { who: 'TripDetective', text: 'Hybrids are where its type call and its mass are weakest (see the power-split).' },
-    { who: 'HybridPilot', text: '+1.42 points over A-ECMS on exam P2s, but the interval is wide ([+0.31, +3.38]). Above 100 % of DP means the DP curve was extrapolated to that final charge.' },
+    { who: 'HybridPilot', text: '+1.39 points over A-ECMS on exam P2s, but the interval is wide ([+0.31, +3.29]). Above 100 % of DP means the DP curve was extrapolated to that final charge.' },
   ],
   volt: [
     { who: 'RoadSim', text: 'Plug-ins are its weakest group: series plug-in twins run the engine 7 % of the time against 36 % on the dynamometer, and VED exam plug-ins come out 20–23 % low.' },
     { who: 'EnergyNet', text: 'Plug-ins win on real trips (16.8 %) only because it is told the start charge; plug-in car totals got worse in v2 (20.6 % in v2.1). The start charge here is low (30 %, near charge sustaining).' },
     { who: 'TripDetective', text: 'Reads the battery, fuel-rate and A/C channels a Volt logs; plug-in mass and type were not graded separately.' },
-    { who: 'HybridPilot', text: 'Loses to A-ECMS on exam plug-ins (series −0.72 points [−1.78, −0.01], power-split −1.08 inside a wide interval). Simulated plug-ins on real roads read 20–31 % low in fuel.' },
+    { who: 'HybridPilot', text: 'Loses to A-ECMS on exam plug-ins (series −0.73 points [−1.78, −0.07], power-split −0.91 inside a wide interval). v2.2 keeps s at the hybrid level once a plug-in reaches its charge-sustaining band: charge held on 102 of 104 trips, fuel no better. Simulated plug-ins on real roads read 20–31 % low in fuel.' },
   ],
   leaf: [
     { who: 'RoadSim', text: 'Modern BEVs match the EPA tests (held-out UDDS −0.4 %), but 2012–15 BEVs like this Leaf used 10–17 % more on the dynamometer than their twins.' },

@@ -386,7 +386,7 @@ def run_cell(job):
         res['hp_const'] = [float(q) for q in X[0, :12]]
         res['hp_srec'] = [float(c['s']) for c in cap]           # for the check in main(), not exported
         res['hp_meta'] = dict(ref=float(hp['ref']), phev=bool(veh.arch.startswith('phev')), soc_lo=float(veh.battery.soc_lo),
-                              soc_hi=float(veh.battery.soc_hi))
+                              soc_hi=float(veh.battery.soc_hi), prior_key=hp_prior_key(veh))
     res['wall'] = time.time() - t0
     return res, T
 
@@ -621,16 +621,17 @@ def hp_inputs(P, tag, const):
     return X
 
 
+def hp_prior_key(veh):
+    """HybridPilot's class key, as make_roadsim_strategy sets it: 'mild' | 'bus_<arch>' | arch."""
+    mild = ((getattr(veh, 'control', None) or {}).get('params') or {}).get('engine_on_moving')
+    return 'mild' if mild else ('bus_' + veh.arch if veh.cls == 'bus' else veh.arch)
+
+
 def equiv(net, x, soc, I0, m):
-    sn, _ = net.s_pon(x)
+    """the release's own equivalence factor (HybridPilotCore.equivalence), from the integral before this second."""
     core = HP.HybridPilotCore(net=net)
-    s = max(sn * core.p['s_scale'] + core.p['s_bias'], 0.0)
-    e = m['ref'] - soc
-    if (core.p['Kp'] or core.p['Ki']) and (not m['phev'] or e > -0.03):
-        I = min(max(I0 + e, -30.0), 30.0)
-        d = core.p.get('fb_dead', 0.0)      # HybridPilot v2.1: soft dead band on the proportional term
-        ep = (e if abs(e) > d else 0.0) if core.p.get('fb_dead_mode') == 'hard' else math.copysign(max(abs(e) - d, 0.0), e)
-        s = max(s + core.p['Kp'] * ep + core.p['Ki'] * I, 0.0)
+    core.I = I0
+    s, _ = core.equivalence(x, soc, m['ref'], m['phev'], window=(m['soc_lo'], m['soc_hi']), prior_key=m.get('prior_key'))
     return s
 
 

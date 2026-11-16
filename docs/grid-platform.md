@@ -57,7 +57,12 @@ The simulator's measured gaps are its next rungs, each with a size and a "done w
 [`HANDOFF.md`](https://github.com/dogum/ML-Ratchet/blob/main/shared/grid/HANDOFF.md):
 
 - Coal versus gas follows the gas price, unlike reality: coal is off by −43 % to +28 % depending on the year.
-- Scarcity price spikes are too rare and land in the wrong hours.
+- Scarcity price spikes in the dispatch itself are too rare. Physics 1.2 (opt-in, 15 Nov 2026) adds real-time
+  scarcity that the day-ahead market cannot see, fitted only on ERCOT 2018, 2020 and 2022: hours with real-time above
+  day-ahead by more than $100/MWh now come out about right (dev 2019 / 2021 without Uri: 117 / 104 simulated against
+  108 / 99 real). It misses how tight a year is, has no Uri, spikes only upward, and has no CAISO fit (no CAISO prices
+  before August 2023). On twins of dev 2019 it now under-rates the day-ahead optimiser (55 % of hindsight against 79 %
+  real).
 - Too little inertia at low net load (2022 minimum 76 vs 115 GW·s).
 - Frequency response is fitted on one 2019 event: unfitted GB events come out about 30 % too deep, and the 2023-2025
   grids, with gigawatts of batteries, are stiffer than the simulator.
@@ -82,10 +87,12 @@ data has reporting quirks, and they also lose on physics they model too simply:
 - GridPulse's 10 s nadir and 60 s forecasts lose to simply holding the lowest or the current value: the simulator's
   response after the first seconds (secondary response, market actions) is too simple. The dev events do not show
   these failures clearly enough to fix them from dev (15 Nov 2026: three rungs, all rejected).
-- BatteryPilot loses to the classical day-ahead optimiser in both markets (v1.1: ERCOT 0.679 vs 0.685 of perfect
-  hindsight, CAISO 0.614 vs 0.681); it beats it only with 4-hour batteries. A backbone built on the optimiser's plan
-  did best on real dev data but worst on the simulated frozen set, whose price spikes are too easy to foresee; the
-  simulator needs scarcity the day-ahead market cannot see before that can be judged.
+- BatteryPilot loses to the classical day-ahead optimiser in both markets. v1.3 (15 Nov 2026, physics 1.2, a learned
+  residual on the optimiser's plan) beat v1.1 on dev and on the new frozen set, but on the exam it is worse: ERCOT
+  0.671 of perfect hindsight (v1.1 0.679, optimiser 0.685), CAISO 0.594 (v1.1 0.614, optimiser 0.681). It wins only
+  with 4-hour ERCOT batteries (0.785 against 0.742). Its dev gain came from 2021 (Winter Storm Uri) alone; on dev 2019
+  and CAISO dev it was already worse. The lesson: a dev gate pooled over years can be carried by one extreme year, so
+  gate each year.
 
 ## Using it
 
@@ -103,3 +110,9 @@ from gridsim import dispatch, frequency_event, powerflow, generate_states
 
 Every physics change bumps the GridSim version, rebuilds each grid model's frozen simulated set and re-takes their
 ratchet decisions in order. `splits.json` never changes.
+
+| Physics | Status | What changed |
+|---|---|---|
+| 1.0 | withdrawn | default outage rates came from 2024-2025 statistics (an exam leak) |
+| 1.1 | default | outage rates from sources published before 2023; DemandCast, PlantDetective and GridPulse use it |
+| 1.2 | opt-in (`GRIDSIM_PHYSICS=1.2`) | 1.1 plus real-time scarcity the day-ahead market cannot see; everything else bit-identical to 1.1; BatteryPilot v1.3 uses it |

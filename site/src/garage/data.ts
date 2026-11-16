@@ -29,7 +29,7 @@ export interface Cell {
   ri: number; ti: number; li: number; n: number; strategy: string; E_MJ: number; fuel_g: number; batt_kWh: number; km: number;
   soc_end: number | null; ledger: Ledger; hvac_kJ: number; trace_rms: number; T_cabin_end: number; starts: number; on_share: number;
   flags?: number[]; td_ledger: number[]; mass_true: number;
-  hp?: Record<'dp' | 'hybridpilot' | 'aecms' | 'rule', HPRun>; hp_const?: number[]; hp_meta?: { ref: number; phev: boolean; soc_lo: number; soc_hi: number };
+  hp?: Record<'dp' | 'hybridpilot' | 'aecms' | 'rule', HPRun>; hp_const?: number[]; hp_meta?: { ref: number; phev: boolean; soc_lo: number; soc_hi: number; prior_key?: string };
 }
 export interface VMeta { id: string; cells: Record<string, Cell> }
 
@@ -139,7 +139,7 @@ export interface HPTrace { k: Int32Array; y0: Float64Array; y1: Float64Array; sN
 /** the network over the whole trip: raw outputs, s (equivalence factor) with the SOC feedback, P(engine on) */
 export function hpRun(net: Net, G: GMeta, c: Cell, inp: HPInputs): HPTrace {
   const n = inp.X.length, o: HPTrace = { k: inp.k, y0: new Float64Array(n), y1: new Float64Array(n), sNet: new Float64Array(n), s: new Float64Array(n), pon: new Float64Array(n) };
-  const trip = { ref: c.hp_meta!.ref, phev: c.hp_meta!.phev } as HPTrip;
+  const trip = { ref: c.hp_meta!.ref, phev: c.hp_meta!.phev, prior_key: c.hp_meta!.prior_key } as HPTrip;
   for (let i = 0; i < n; i++) {
     const y = forward(net, inp.X[i]);
     o.y0[i] = y[0]; o.y1[i] = y[1]; o.sNet[i] = sOf(y); o.pon[i] = pOn(y);

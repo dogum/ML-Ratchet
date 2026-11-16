@@ -141,12 +141,15 @@ re-scored on the same exam.
   cannot be conventional. Bus mass per leg went from a loss (1,204 kg) to a narrow win (444 kg against the dev
   median's 453 kg), read from leg-to-leg changes within a day. It still loses on the two Leafs to the dev median (which
   happens to be their weight class).
-- **HybridPilot** v2.1 ([card](../models/hybridpilot/MODEL_CARD.md)), graded in simulation on real routes, now on
-  physics v3.1: 98.57 % of the dynamic-programming optimum on 430 exam trips against 98.20 % for adaptive ECMS, but MPC,
-  which sees 15 s ahead, scores 98.67 % and HybridPilot holds charge on 93 % of trips (v2.0 96 %), so the all-trips row
-  is mixed. Most of the drop from v2.0's 98.84 % is the physics: v2.0 itself scores 98.43 % on v3.1. It wins on
-  power-split and P2/series hybrids, and loses on plug-ins (99.25 % against 100.17 % for adaptive ECMS), on buses to
-  constant-s ECMS (97.66 % against 98.89 %) and on charge holding.
+- **HybridPilot** v2.2 ([card](../models/hybridpilot/MODEL_CARD.md)), graded in simulation on real routes on
+  physics v3.1: 98.69 % of the dynamic-programming optimum on 432 exam trips against 98.20 % for adaptive ECMS and
+  98.67 % for MPC, which sees 15 s ahead: a tie with MPC (+0.02 [−0.58, +0.54]). Buses went from a loss to a win
+  (99.51 % against 98.89 % for constant-s ECMS) with gentler charge feedback. It wins on power-split and P2/series
+  hybrids and loses on plug-ins (99.29 % against 100.13 % for adaptive ECMS) and on charge holding (93 % of trips against
+  97 %). Mild hybrids hold charge on only 79 % of trips; the 12 dev mild trips cannot show why, and RoadSim never
+  charges a mild or P2 hybrid with the engine at a stop. A scoring bug (two exam trips shared an id and were graded
+  against each other's baselines) was found and corrected on 15 Nov 2026; it moved every affected number by 0.03 points
+  or less.
 
 ## Using it
 

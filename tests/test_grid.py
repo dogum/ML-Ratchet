@@ -109,3 +109,22 @@ def test_gb_label_corrections_apply_to_v1_rows_only():
     assert gd.apply_label_corrections(a).loss_MW.tolist() == [854.7, 500.0]     # idempotent
     with pytest.warns(UserWarning):
         gd.apply_label_corrections(d.assign(loss_MW=[1000.0, 500.0]))           # unexpected value: left alone
+
+
+def test_physics_1_2_is_1_1_plus_rt_scarcity_only():
+    """GridSim 1.2 (opt-in) changes nothing but the RT scarcity layer: same calibration, same outage defaults; the
+    scarcity adder is zero under 1.0 and 1.1 and non-negative under 1.2."""
+    import pandas as pd
+    from gridsim import fleet, market
+
+    assert fleet.calibration("1.2") == fleet.calibration("1.1")
+    assert fleet.OUTAGE_DEFAULTS["1.2"] == fleet.OUTAGE_DEFAULTS["1.1"]
+    times = pd.date_range("2019-07-01", periods=24 * 60, freq="h", tz="UTC")
+    for v in ("1.0", "1.1"):
+        assert not market.enabled(v)
+        assert np.all(market.rt_scarcity(times, version=v, seed=3) == 0.0)
+    if market.params("ERCO") is None:
+        pytest.skip("RT scarcity parameter file not present")
+    a = market.rt_scarcity(times, version="1.2", seed=3)
+    assert market.enabled("1.2") and a.min() >= 0.0 and a.max() > 0.0
+    assert np.array_equal(a, market.rt_scarcity(times, version="1.2", seed=3))   # own random stream: reproducible

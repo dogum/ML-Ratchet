@@ -34,6 +34,13 @@ Where the collection goes next, beyond each model's own next rungs (in its `mode
 - **A reusable twin-test harness** in `mlratchet`, since it found the biggest simulator gaps in three projects.
 - **Per-stratum σ widening** (StarQuake showed one pooled factor isn't enough across observing lengths).
 - **Saliency on real vs twin** inputs, to show where a network looks when it misreads real data.
+- **Gate each dev year separately.** BatteryPilot v1.3 passed a dev gate pooled over 2019 and 2021, carried by Winter
+  Storm Uri alone, and lost ground on the exam (15 Nov 2026).
+- **Commit every split as a file.** The 15 Nov 2026 pass could not rebuild TransitNet's v1.0 split or QuakeNet's dev
+  events from today's catalogues (one v1.0 TransitNet exam planet now lands in dev), and SwellCast's dev storms had to
+  be recovered from a results file. Each needs a frozen, committed list before its next rung can be judged.
+- **Unique case keys in every scorer.** HybridPilot's exam held two trips under one id and graded them against each
+  other's baselines (found and corrected 15 Nov 2026); scorers now refuse duplicate keys.
 
 ## The vehicle platform
 
@@ -47,7 +54,9 @@ RoadData from the raw downloads, Argonne D3 and the full ZTBus set are in, and t
    duty needs at least two truck and three bus types graded on real traces.
 2. **The hybrid gaps after v3.1.** TMED P2s 8-10 % too thirsty, converter P2s +15 to +28 % too frugal in the city,
    older Toyota/Lexus hybrids +14 to +44 % on the FTP, plug-ins on VED roads 20-23 % low, hybrid A/C. No clean judge
-   is left for a further hybrid pass: the next one needs new data first.
+   is left for a further hybrid pass: the next one needs new data first. RoadSim also never runs a mild or P2 engine to
+   charge at a stop, which drains packs on long stops; HybridPilot's mild charge holding (79 % of exam trips) cannot be
+   worked on until that is modelled and its frozen set has a mild stratum.
 3. **Heavy-duty traces into the models:** EnergyNet's trucks and Mersin buses still run on cycles and synthetic speed
    profiles.
 
@@ -56,16 +65,19 @@ RoadData from the raw downloads, Argonne D3 and the full ZTBus set are in, and t
 GridSim, GridData and four models (GridPulse, BatteryPilot, PlantDetective, DemandCast) came in on 14 Nov 2026; see
 [grid-platform.md](grid-platform.md). The first follow-up round (merged 15 Nov 2026) fixed the outage-rate exam leak
 as GridSim physics 1.1, rebuilt BatteryPilot as v1.1, re-scored PlantDetective, corrected the GB 3 Dec 2019 dev label
-(1,788 to 854.7 MW), upstreamed four fixes behind flags and fetched the Open-Meteo forecast-weather archive. Status and
-the full list: [shared/grid/HANDOFF.md](../shared/grid/HANDOFF.md). What is open, in order:
+(1,788 to 854.7 MW), upstreamed four fixes behind flags and fetched the Open-Meteo forecast-weather archive. The second
+round (15 Nov 2026) added GridSim physics 1.2, opt-in real-time scarcity the day-ahead market cannot see, and
+BatteryPilot v1.3 on it, which came out worse than v1.1 on the exam. Status and the full list:
+[shared/grid/HANDOFF.md](../shared/grid/HANDOFF.md). What is open, in order:
 
 1. **Six GB exam events** carry the same interconnector-ramp pattern as the corrected dev label. They are listed in
    `shared/grid/data/DATA.md` section 5; changing exam labels needs a documented decision, not a quiet fix.
 2. **The new-physics upstream items:** Dynamic Containment two-segment droop, year-aware priors, ORDC scarcity
    pricing in core, the cold-outage curve, gas-turbine ambient derate, a day-ahead price generator, a self-commitment
    layer and DemandCast's building-stock demand model.
-3. **GridSim v2:** coal/gas commitment (held-out 2022 coal is +34 % on physics 1.1), scarcity pricing (54 hours above
-   $200 against 238 real), low-net-load inertia and era-aware frequency response; one more region dispatched and
+3. **GridSim v2:** coal/gas commitment (held-out 2022 coal is +34 % on physics 1.1), scarcity pricing in the dispatch
+   itself (54 hours above $200 against 238 real; physics 1.2 covers only the real-time layer, needs a CAISO fit and
+   year-to-year tightness, and under-rates the day-ahead optimiser on dev twins), low-net-load inertia and era-aware frequency response; one more region dispatched and
    calibrated like ERCOT. Then every grid model's frozen set rebuilt and every rung re-scored, each with a published
    win/loss table.
 4. **Data:** sub-second frequency (FNET/GridEye has no public download), CAISO prices before 2023-08, the 17 missing

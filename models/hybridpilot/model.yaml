@@ -189,7 +189,7 @@ exam:
 wins:
   - "Beats every causal baseline on all 432 exam trips: 98.69% of the DP optimum against 98.20% for adaptive ECMS (+0.49 points, CI [−0.07, +0.98]), 98.31% for constant-s ECMS and 97.00% for rule-based control, and level with MPC, which sees 15 s of the future (98.67%)."
   - "Buses (v2.2): 99.51% of DP against 98.89% for constant-s ECMS and 97.01% for A-ECMS; series buses +1.06 points over ECMS."
-  - "Clear gains against A-ECMS on power-split hybrids (+0.59 points), P2 (+1.42), series hybrids (+0.88), mild hybrids (+1.08), series buses (+3.87) and P2 buses (+1.13)."
+  - "Clear gains against A-ECMS on power-split hybrids (+0.59 points), P2 (+1.39), series hybrids (+0.88), mild hybrids (+1.08), series buses (+3.87) and P2 buses (+1.13)."
   - "Fewer engine starts than A-ECMS (3.0 vs 3.2 per km)."
   - "With HybridPilot driving them, the calibrated twins' fuel is within 3.5% of logged fuel for exam hybrids (trip median), and their engine starts are much closer to the real cars' than on physics v2 (2.4 vs 1.9 per km real; was 3.7)."
 losses:
