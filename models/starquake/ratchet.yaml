@@ -17,3 +17,19 @@ ladders:
       - { id: r3, change: "Detection output, v2 + 30% non-oscillating, 25k", sim: 0.738, decision: rejected, why: "Dev gate: +32%.", metrics: ["1.65%", "1.32%", "2.61%", "1.80%"] }
       - { id: r4, change: "Warm start from rung 1 + detection, all 40k (v1 + v2 physics)", sim: 0.737, decision: kept, why: "+0.144; dev +8%. The gain came from detection only.", metrics: ["1.28%", "1.16%", "1.71%", "2.05%"] }
       - { id: r5, change: "Rung 4 trained 4,000 more steps", sim: 0.757, decision: released, why: "+0.020; dev −10%.", metrics: ["1.01%", "0.78%", "2.34%", "1.57%"] }
+  - name: v1.1 — classical backbone (15 Nov 2026)
+    objective: Same objective as above, on the new frozen set val3 (5,001 giants + 2,001 non-oscillating, v2 physics, held-out noise_val stars, classical readings stored)
+    rule: Keep if the objective rises by more than 0.01 AND the mean ratio of the four dev median errors to the incumbent's is at most 1.10. Unchanged; fixed in NOTEBOOK.md before val3 was scored.
+    margin: 0.01
+    dev_gate: Mean dev error ratio ≤ 1.10 (whole and 90-day νmax and Δν)
+    frozen_sets: [val3]
+    scored_on: val3
+    note: >-
+      val2 could not be rebuilt (the noise pool was re-drawn from a re-queried DR25 list) and the r1–r4 checkpoints were
+      not kept, so only the released r5 is re-scored on val3. The weights w(T) and k were fitted on 3,000 other simulated
+      readings (noise_train pool), never on real stars.
+    columns_source: Real dev stars, median errors (whole νmax, Δν; 90-day νmax, Δν)
+    columns: [νmax, Δν, νmax 90 d, Δν 90 d]
+    rungs:
+      - { id: r5, change: "Released v1.0 network, re-scored on val3", sim: 0.745, decision: kept, why: "Incumbent on val3.", metrics: ["1.01%", "0.78%", "2.34%", "1.57%"] }
+      - { id: h1, change: "Hybrid: network moved towards the classical SYD-style reading by w(T) per length bin where they agree within 5 network σ (w, k and σ scales fitted on simulations)", sim: 0.788, decision: released, why: "+0.043 on val3 (νmax hits 0.752 → 0.763, Δν hits 0.518 → 0.637, detection unchanged); dev errors −10% vs r5.", metrics: ["0.78%", "0.51%", "2.24%", "1.91%"] }

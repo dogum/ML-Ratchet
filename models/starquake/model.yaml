@@ -145,7 +145,7 @@ usage:
     print(r["numax"], r["dnu"], r["mass"], r["radius"])
 
 files:
-  inference: [starquake.py, pipeline.py]
+  inference: [starquake.py, pipeline.py, classical.py]
   weights: [starquake_weights.npz]
   demo: demo.py
   examples: examples/

@@ -1,4 +1,4 @@
-"""StarQuake v1.0: numax and Delta-nu, with error bars, from a red giant's light curve. numpy + scipy only.
+"""StarQuake v1.1: numax and Delta-nu, with error bars, from a red giant's light curve. numpy + scipy only.
 
     from starquake import StarQuake
     sq = StarQuake()                                   # loads starquake_weights.npz next to this file
@@ -7,10 +7,14 @@
 
 Output: p_osc (probability that solar-like oscillations with numax 5-275 uHz are present; 'detected' if > 0.5),
 numax and dnu with error bars, and mass and radius from the scaling relations if Teff is given.
+v1.1: the network's numax and dnu move towards a classical SYD-style reading (classical.py) by a weight that depends on
+the observing length, where the two agree within 5 network error bars (weights fitted on simulated stars only; see
+MODEL_CARD.md). read_ppm(..., hybrid=False) gives the v1.0 network-only reading.
 Input: a Kepler long-cadence light curve (29.4-min cadence), 27 days to 4 years. Trained only on simulated red giants
 (numax 5-275 uHz) injected into real Kepler light curves of quiet dwarf stars. See MODEL_CARD.md for limits."""
 import os, json, numpy as np
 import pipeline as PL
+import classical as CL
 
 def gelu(x):
     from scipy.special import erf
@@ -64,14 +68,33 @@ def scaling(numax, dnu, teff, e_numax=0.0, e_dnu=0.0, e_teff=0.0):
 class StarQuake:
     def __init__(self, weights=None):
         weights = weights or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'starquake_weights.npz')
-        self.net = Net(weights); self.widen = self.net.meta.get('widen', [1.0, 1.0])
-    def read_ppm(self, flux_ppm, teff=None, e_teff=100.0):
-        """flux_ppm: relative flux in ppm on the regular Kepler long-cadence grid, NaN in gaps."""
+        self.net = Net(weights); m = self.net.meta; self.hyb = m.get('hybrid')
+        self.widen = m.get('widen', [1.0, 1.0]); self.widen_net = m.get('widen_net', self.widen)
+    def combine(self, o, cl, T):
+        """Network outputs o, classical (numax, dnu) cl and observing length T (days) -> ln numax, ln dnu and raw sigmas."""
+        P = self.hyb; b = int(np.clip(np.searchsorted(P['edges_days'][1:], T, side='right'), 0, len(P['edges_days']) - 1)); out = []
+        for j, k in enumerate(('numax', 'dnu')):
+            mu, sg, c = o['ln_' + k], o['sig_' + k], cl[j]; d = np.log(c) - mu if (c is not None and np.isfinite(c) and c > 0) else 0.0
+            d = d if abs(d) <= P[k]['k'] * sg else 0.0; out += [mu + P[k]['w'][b] * d, sg * P[k]['s'][b]]
+        return out
+    def read_ppm(self, flux_ppm, teff=None, e_teff=100.0, hybrid=True):
+        """flux_ppm: relative flux in ppm on the regular Kepler long-cadence grid, NaN in gaps.
+        hybrid=False: the network alone, with its own dev-fitted widening (v1.0)."""
         F1, F2, s, (f, P), T = PL.prepare(np.asarray(flux_ppm, np.float64)); o = self.net.forward(F1, F2, s)
-        nm, dn = float(np.exp(o['ln_numax'])), float(np.exp(o['ln_dnu'])); sn, sd = o['sig_numax'] * self.widen[0], o['sig_dnu'] * self.widen[1]
-        r = dict(detected=bool(o['p_det'] > 0.5), p_osc=o['p_det'], numax=nm, numax_err=nm * sn, dnu=dn, dnu_err=dn * sd, days=T, freq=f, power=P)
+        net = dict(numax=float(np.exp(o['ln_numax'])), dnu=float(np.exp(o['ln_dnu'])))
+        if hybrid and self.hyb:
+            try:
+                c = CL.measure(f, P, F1, F2); cl = (c['numax'], c['dnu'])
+            except Exception:
+                cl = (None, None)
+            l1, s1, l2, s2 = self.combine(o, cl, T); W = self.widen
+        else:
+            cl = (None, None); l1, s1, l2, s2 = o['ln_numax'], o['sig_numax'], o['ln_dnu'], o['sig_dnu']; W = self.widen_net
+        nm, dn = float(np.exp(l1)), float(np.exp(l2)); sn, sd = s1 * W[0], s2 * W[1]
+        r = dict(detected=bool(o['p_det'] > 0.5), p_osc=o['p_det'], numax=nm, numax_err=nm * sn, dnu=dn, dnu_err=dn * sd, days=T, freq=f, power=P,
+                 net_numax=net['numax'], net_dnu=net['dnu'], classical_numax=cl[0], classical_dnu=cl[1])
         if teff: r.update(scaling(nm, dn, teff, nm * sn, dn * sd, e_teff))
         return r
-    def read_kepler(self, files_or_arrays, teff=None, e_teff=100.0):
+    def read_kepler(self, files_or_arrays, teff=None, e_teff=100.0, hybrid=True):
         """files: Kepler *_llc.fits paths (needs astropy) or a dict with arrays cad, flux (PDCSAP), quarter, q."""
-        return self.read_ppm(PL.load_kepler(files_or_arrays), teff, e_teff)
+        return self.read_ppm(PL.load_kepler(files_or_arrays), teff, e_teff, hybrid)

@@ -112,3 +112,56 @@ Each cell is the median |error| / the fraction of stars within 5% (νmax) or 2% 
 ## Corrections
 
 - 14 Nov 2026: model.yaml: the wins said it beats the classical pipeline on light curves of 1 year or less, but the 1-year row is a tie (1.68 vs 1.67 %). It now says 90 days and shorter. Card: false alarms are 11–15% (10.8–15.0% by length; was written 12%–15%), and the Parseval ratio is 0.988–0.990 (physics_check.json; was written 0.989-0.988). No verdict changed.
+
+## Improvement pass, rules fixed before scoring — 15 Nov 2026
+
+The work folder was rebuilt from the scripts: Yu et al. 2018 tables 1 and 2 from the journal's machine-readable files
+(IOP), the DR25 dwarf list re-queried from the NASA Exoplanet Archive (`keplerstellar`, delivery q1_q17_dr25_stellar,
+logg > 4.25, minus every `cumulative` KOI and `q1_q17_dr25_tce` TCE host), light curves from the MAST S3 bucket.
+The exam and dev draws reproduce exactly (the three demo stars are in the exam; the released weights give the
+recorded r5 dev errors 1.01 / 0.78 / 2.34 / 1.57%). The noise pool does not: the original DR25 query was not recorded,
+so the magnitude-matched pool is a different set of quiet dwarfs. The r1–r4 checkpoints were not kept.
+
+**The failure on dev.** On the 18 dev stars' whole light curves the classical pipeline beats the released network:
+νmax 0.78% vs 1.01%, Δν 0.63% vs 0.78% (median errors). At 1 year the network is better on dev (νmax 1.62% vs 1.80%),
+so the 1-year tie on the exam does not show on dev and is not a target. Shorter pieces: the network wins easily.
+
+**Candidate (`training/hybrid.py`).** The classical reading as a backbone where it is trustworthy: the network's ln νmax
+(and ln Δν) moves towards the classical one by a weight w(T) per observing-length bin (< 40, 40–70, 70–150, 150–600,
+≥ 600 days), only where the two agree within k network error bars. w and k are fitted on simulated giants in real
+noise (noise_train pool, v2 physics) and never on real stars. Error bars: the network's, scaled per bin on the same
+simulations; then the usual widen-only factor per output on dev.
+
+**Rule, fixed now.** val2 cannot be rebuilt (different noise pool), so a new frozen set val3 is built once with the same
+recipe (v2 physics, held-out noise_val stars, 40% whole light curves, 25% extra white noise; 5,000 giants + 2,000
+non-oscillating), storing the classical readings. The released r5 is re-scored on val3 and candidates are compared
+with it. Objective, margin and dev gate are unchanged: mean of the νmax-within-5% rate, the Δν-within-2% rate and the
+detection balanced accuracy must rise by more than 0.01, and the mean of the four dev median errors relative to r5 must
+be at most 1.10.
+
+## v1.1 release choice (before the exam) — 15 Nov 2026
+
+Simulated sets (`training/hybrid.py`; release r5 network and classical pipeline on every reading): fit (3,000 giants,
+noise_train pool, seed 11), val3 (5,001 giants, noise_val, seed 12), val3neg (2,001 non-oscillating, seed 13).
+
+On the fit set the network beats the classical pipeline at every length, even on whole light curves (νmax 2.06% vs
+2.66%; Δν 1.42% vs 0.88% for the classical): in simulation the classical νmax reads the hump about 0.7% low, because the
+simulator's νmax is the centre of a Gaussian envelope and the SYD-style smoothed-excess peak is not. Fitted weights
+(seed 11; k = 5 for both outputs): νmax w = 0.30, 0.20, 0.05, 0.25, 0.40 and Δν w = 0.65, 0.10, 0.45, 0.45, 0.70 for
+< 40, 40–70, 70–150, 150–600 and ≥ 600 days.
+
+| Rung | Set | Objective | νmax hit | Δν hit | Detection | Dev (whole νmax, Δν; 90 d νmax, Δν) | Dev ratio | Decision |
+|---|---|---|---|---|---|---|---|---|
+| r5 (v1.0) | val3 | 0.745 | 0.752 | 0.518 | 0.965 | 1.01 / 0.78 / 2.34 / 1.57% | — | incumbent |
+| h1 hybrid | val3 | 0.788 | 0.763 | 0.637 | 0.965 | 0.78 / 0.51 / 2.24 / 1.91% | 0.90 | **released as v1.1** |
+
+- Seed spread: refitting w and k on two more simulated sets (seeds 21, 31) gives val3 objectives 0.788 and 0.786
+  (h1: 0.788). The weights move by up to 0.4 per bin between seeds; the objective does not. The +0.043 gain is far
+  above twice the spread.
+- Dev, all five lengths (median errors, νmax / Δν): whole 1.01 → 0.78 / 0.78 → 0.51%; 1 yr 1.62 → 0.98 / 1.07 → 1.39%;
+  90 d 2.34 → 2.24 / 1.57 → 1.91%; 54 d 2.13 → 2.46 / 2.54 → 2.40%; 27 d 2.59 → 3.24 / 4.44 → 4.23%. Worse on dev:
+  Δν at 1 yr and 90 d, νmax at 54 and 27 d.
+- Error bars: dev widen-only factors for the hybrid are νmax 1.00, Δν 1.71 (v1.0's network: 1.00, 1.43, reproduced).
+- The released weights file keeps the same network; its meta gains the hybrid parameters (`training/release_v11.py`).
+  `starquake.py` now runs `classical.py` (a copy of `training/classical.py` on `pipeline.py`) on every reading;
+  `read_ppm(..., hybrid=False)` gives the v1.0 reading. The numpy release matches `hybrid.py` to 6e-17 on dev.
