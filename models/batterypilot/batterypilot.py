@@ -1,20 +1,22 @@
-"""BatteryPilot v1.1 -- a causal battery-arbitrage policy trained only on simulated grids (numpy/scipy only).
+"""BatteryPilot v1.3 -- a causal battery-arbitrage policy trained only on simulated grids (numpy/scipy only).
 
     import batterypilot as bp
-    net = bp.PolicyNet()                                     # batterypilot_weights.npz next to this file (v1.1)
-    net_v10 = bp.PolicyNet(bp.WEIGHTS_V1_0)                  # the v1.0 release (its published exam numbers)
+    net = bp.PolicyNet()                                     # batterypilot_weights.npz next to this file (v1.3)
+    net_v11 = bp.PolicyNet(bp.WEIGHTS_V1_1)                  # the v1.1 release; bp.WEIGHTS_V1_0 = v1.0
     bat = bp.Battery(P=1.0, duration_h=2.0)                 # 1 MW / 2 MWh usable, 85 % round trip
     ch, dis, soc, V = bp.run_policy(net, path, bat, bat.c_lin(path['T']))
     res = bp.settle(bat, path['rt'], ch, dis, 0.0, path['T'])   # gross, degradation, net ($), cycles
 
 `path` holds hourly arrays: rt, da ($/MWh), df (BA day-ahead demand forecast, MW), T (degC), hour, day (local day
-number), dow, doy.  Every hour the network reads only information available before the hour and returns the
-marginal value of stored energy at 5 state-of-charge knots; the battery then follows that curve as an offer curve
-against the hour's real-time price.  See MODEL_CARD.md.
+number), dow, doy.  Every hour the policy reads only information available before the hour and returns the marginal
+value of stored energy at 5 state-of-charge knots; the battery then follows that curve as an offer curve against the
+hour's real-time price.  v1.3 is a hybrid: a backward dynamic programme over the known day-ahead prices (the rolling
+day-ahead optimiser's plan, `value_curves`) gives a backbone curve, and the network reads it with the 135 features
+and outputs a residual on it.  See MODEL_CARD.md.
 
-Weights: batterypilot_weights.npz is v1.1 (rung R2 of the v1.1 ladder, trained on GridSim physics 1.1, whose outage
-defaults come from sources published before the exam years).  batterypilot_weights_v1_0.npz is the v1.0 release
-(rung R4, GridSim physics 1.0), kept so the v1.0 exam numbers stay reproducible.
+Weights: batterypilot_weights.npz is v1.3 (rung R8 of the v1.3 ladder, trained on GridSim physics 1.2, which adds
+real-time scarcity the day-ahead market cannot see).  batterypilot_weights_v1_1.npz is v1.1 (physics 1.1) and
+batterypilot_weights_v1_0.npz is v1.0 (physics 1.0), kept so their exam numbers stay reproducible.
 """
 from __future__ import annotations
 
@@ -294,6 +296,76 @@ def _rollmax(x, w):
     return np.lib.stride_tricks.sliding_window_view(xp, w + 1).max(1)
 
 
+# ======================================================================= day-ahead backbone (backbone.py, v1.3)
+# The rolling day-ahead LP's plan written as a value curve: a backward dynamic programme over the known DA horizon
+# (DA prices as the forecast, no value left at the horizon end, re-planned at the first hour and at 14:00 local, as
+# the LP) gives the marginal value of stored energy at every state of charge.  Hybrid weights (v1.3) read this curve
+# and output a residual on it.
+
+
+def _cross(lam, y, grid):
+    """SOC up to which the decreasing curve lam (on grid) is >= y (piecewise linear)."""
+    a, b = lam[:-1], lam[1:]
+    frac = np.clip((a - y) / np.maximum(a - b, 1e-12), 0.0, 1.0)
+    frac = np.where(a - b <= 1e-12, (a >= y).astype(float), frac)
+    return float((frac * np.diff(grid)).sum())
+
+
+def backward_pass(price, c_lin, E, P, eta_c, eta_d, N=200, terminal=0.0):
+    """Value curves for a horizon of forecast prices: lam (n+1, N+1), lam[k] = slope of the value-to-go from step k
+    ($ per stored MWh) on the SOC grid; lam[n] = terminal."""
+    n = len(price)
+    grid = np.linspace(0.0, 1.0, N + 1)
+    lam = np.empty((n + 1, N + 1))
+    lam[n] = terminal
+    W = terminal * grid * E
+    up = P * eta_c / E; dn = P / (eta_d * E)
+    for k in range(n - 1, -1, -1):
+        p = price[k]; c = c_lin[k]
+        y_c = p / eta_c; y_d = eta_d * (p - c)
+        nxt = lam[k + 1]
+        s_lo = _cross(nxt, y_c, grid); s_hi = _cross(nxt, y_d, grid)
+        tgt = np.clip(grid, s_lo, max(s_hi, s_lo))
+        tgt = np.clip(tgt, grid - dn, grid + up)
+        tgt = np.clip(tgt, 0.0, 1.0)
+        d = tgt - grid
+        r = np.where(d > 0, -p * d * E / eta_c, (p - c) * (-d) * E * eta_d)
+        Wn = r + np.interp(tgt, grid, W)
+        g = np.gradient(Wn, grid) / E
+        lam[k] = np.minimum.accumulate(g)
+        W = Wn
+    return lam, grid
+
+
+def value_curves(da, local_hour, day_id, c_lin, duration_h, P=1.0, eta_rt=0.85, knots=None, N=200):
+    """Backbone value curves at every hour of a path: (n, K) $ per stored MWh at the SOC knots (causal: at hour t
+    only the DA prices known at t, the rolling LP's publication rule)."""
+    if knots is None:
+        knots = np.array([0.0, 0.25, 0.5, 0.75, 1.0])
+    da = np.asarray(da, float); n = len(da)
+    cl = np.broadcast_to(np.asarray(c_lin, float), (n,)).astype(float)
+    E = P * duration_h; eta = np.sqrt(eta_rt)
+    days = np.asarray(day_id)
+    uniq, first = np.unique(days, return_index=True)
+    order = np.argsort(first); uniq = uniq[order]; first = first[order]
+    ends = np.r_[first[1:], n]
+    day_pos = {d: j for j, d in enumerate(uniq)}
+    replan = [0] + [t for t in range(1, n) if local_hour[t] == PUBLISH_HOUR]
+    out = np.zeros((n, len(knots)))
+    for j, t0 in enumerate(replan):
+        dj = day_pos[days[t0]]
+        known_end = ends[min(dj + 1, len(ends) - 1)] if (t0 > 0 or local_hour[t0] >= PUBLISH_HOUR) else ends[dj]
+        t1 = replan[j + 1] if j + 1 < len(replan) else n
+        p = da[t0:known_end]
+        if np.isnan(p).any():
+            p = np.where(np.isnan(p), np.nanmedian(p) if np.isfinite(p).any() else 0.0, p)
+        lam, grid = backward_pass(p, cl[t0:known_end], E, P, eta, eta, N=N)
+        m = t1 - t0
+        for i in range(min(m, len(p))):
+            out[t0 + i] = np.interp(knots, grid, lam[i + 1])
+    return out
+
+
 # ======================================================================= network (model.py)
 
 
@@ -310,16 +382,19 @@ def softplus(x):
     return np.logaddexp(0.0, x)
 
 
-WEIGHTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'batterypilot_weights.npz')            # v1.1
+WEIGHTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'batterypilot_weights.npz')            # v1.3
+WEIGHTS_V1_1 = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'batterypilot_weights_v1_1.npz')  # v1.1
 WEIGHTS_V1_0 = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'batterypilot_weights_v1_0.npz')  # v1.0
 
 
 class PolicyNet:
     def __init__(self, weights=None):
-        if weights is None:            # the current release (v1.1), next to this file
+        if weights is None:            # the current release (v1.3), next to this file
             weights = WEIGHTS
         w = dict(np.load(weights)) if isinstance(weights, (str, os.PathLike)) else dict(weights)
         self.mu, self.sd = w['x_mu'], w['x_sd']
+        self.hybrid = bool(int(w['hybrid'])) if 'hybrid' in w else False    # v1.3: residual on the DA backbone
+        self.min_step = float(w['min_step']) if 'min_step' in w else 0.0
         self.layers = []
         i = 0
         while f'W{i}' in w:
@@ -332,6 +407,15 @@ class PolicyNet:
             h = h @ W.T + b
             if j < len(self.layers) - 1:
                 h = silu(h)
+        if self.hybrid:
+            # backbone knots (the last K inputs) plus the residual, each knot at least min_step below the last
+            u = X[:, -K:] + h
+            if self.min_step > 0:
+                z = u.copy()
+                for k in range(1, K):
+                    z[:, k] = np.minimum(z[:, k - 1] - self.min_step, u[:, k])
+                return np.clip(z, -12.0, 12.0)
+            return np.clip(np.minimum.accumulate(u, axis=1), -12.0, 12.0)
         z0 = h[:, :1]
         steps = softplus(h[:, 1:]) + 0.01
         return np.clip(np.concatenate([z0, z0 - np.cumsum(steps, 1)], 1), -12.0, 12.0)
@@ -350,6 +434,10 @@ def run_policy(net: PolicyNet, path, bat: Battery, c_lin, soc0=0.0):
     ps = rolling_scale(np.asarray(path['da'], float))
     cl = np.broadcast_to(np.asarray(c_lin, float), (n,)).copy()
     X, ps = build(path, t, bat.d, cl, ps=ps)
+    if net.hybrid:
+        lam = value_curves(np.asarray(path['da'], float), np.asarray(path['hour']), np.asarray(path['day']), cl,
+                           bat.d, P=bat.P, eta_rt=bat.eta_rt)
+        X = np.concatenate([X, np.arcsinh(lam / ps[:, None])], 1).astype(np.float32)
     V = net.values(X, ps)
     rt = np.asarray(path['rt'], float)
     ch = np.zeros(n); dis = np.zeros(n); soc = np.zeros(n + 1); soc[0] = soc0

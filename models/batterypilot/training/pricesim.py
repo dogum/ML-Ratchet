@@ -17,6 +17,8 @@ Wraps GridSim (unmodified) in this folder, as the Phase 2 brief asks.  Per scena
  6. Day-ahead: the same with forecast inputs known the day before (real EIA-930 demand forecast, wind/solar forecast
     errors, outages as known at noon the day before) and the EXPECTED adder under the forecast uncertainty
     (risk-neutral convergence: DA ~ E[RT]).
+ 7. GridSim physics 1.2 only ($GRIDSIM_PHYSICS=1.2; BatteryPilot v1.3): GridSim's real-time scarcity the day-ahead
+    market cannot see (gridsim.market) is added to RT, and its hour/month expectation to DA.  ERCOT only.
 """
 from __future__ import annotations
 
@@ -30,6 +32,7 @@ import _paths  # noqa: E402  (GRID/gridsim and GRID on sys.path)
 from gridsim.fleet import (prepare_fleet, merge_combined_cycles, fuel_prices_daily, calibration,  # noqa: E402
                            calibration_path, physics_version)
 from gridsim.dispatch import CompiledFleet, availability  # noqa: E402
+from gridsim import market  # noqa: E402  (physics 1.2: RT scarcity the DA cannot see; zeros under 1.0 / 1.1)
 
 FLEETS = {'ERCO': os.path.join(_paths.GRID, 'data', 'proc', 'fleet', 'fleet_ERCO.parquet'),
           'CISO': os.path.join(_paths.GRID, 'data', 'proc', 'fleet', 'fleet_CISO.parquet')}
@@ -44,7 +47,7 @@ DEFAULTS = dict(mu=0.0, sigma=2000.0, X=2000.0, voll=9000.0, cap=9000.0, floor=-
                 cold_fmax=0.0, cold_T50=-6.0, cold_w=2.0, cold_tau_h=36.0,
                 wind_fc_sd=0.07, solar_fc_sd=0.05, fc_rho=0.97, outage_sd_frac=0.02, markup=0.0,
                 floor_reserve=3000.0, rt_noise_sd=0.0, rt_noise_rho=0.7, floor_share=1.0, ramp_k=0.0,
-                da_sd_scale=1.0)
+                da_sd_scale=1.0, scar_scale=1.0, scar_fit='ERCO')
 
 
 def ercot_dispatch():
@@ -279,7 +282,8 @@ def fundamentals(eng: Engine, inp: pd.DataFrame, scen: dict, P: dict, seed=0):
                                            P['floor'], P['floor_reserve'], day_id, P['floor_share'])
     Rf = total_f - gen_f + sth_f
     ramp = np.abs(np.diff(np.r_[Ln[0], Ln])) / 1000.0
-    return dict(times=times, lam=lam, R=R, lam_da=lam_f, R_da=Rf, ramp=ramp, d=d, df=df, T=Tamb, day=day_id,
+    return dict(times=times, ba=eng.ba, lam=lam, R=R, lam_da=lam_f, R_da=Rf, ramp=ramp, d=d, df=df, T=Tamb,
+                day=day_id,
                 hour=loc.hour.values, dow=loc.dayofweek.values, month=loc.month.values, doy=loc.dayofyear.values,
                 cold=fc, wind=wind, solar=solar)
 
@@ -322,6 +326,20 @@ def prices(F: dict, P: dict, scen: dict = None, seed=0):
             Rx = Rf[jb][:, None] + smp[None, :]
             ea[jb] = (np.maximum(P['voll'] - lam_f[jb], 0)[:, None] *
                       ordc_lolp(Rx, P['X'], P['mu'], P['sigma'])).mean(1)
+    if market.enabled():
+        # GridSim physics 1.2: unforecast RT scarcity (gridsim.market, fitted on ERCOT 2018/2020/2022 prices; zeros
+        # for CISO), driven by the real day-ahead demand-forecast miss of the input year; the DA prices in only its
+        # hour/month expectation.  Its own random stream: every other draw is as in 1.1.
+        # The default fit ('ERCO') also reads the DA price's own shape (rank within the day, level against the past
+        # week; before this premium); 'ERCO_first_fit' (frozen set v5) did not.
+        ba = F.get('ba', 'ERCO')
+        derr = (F['d'] - F['df']) / np.maximum(F['df'], 1.0)
+        pz = market.params(P['scar_fit']) if ba == 'ERCO' else None
+        da0 = np.clip(lam_f + ea, P['floor'], P['cap'])
+        sc = market.rt_scarcity(F['times'], ba, seed=seed, demand_err=derr, scale=P['scar_scale'], params_=pz,
+                                da=da0)
+        rt = np.clip(rt + sc, P['floor'], P['cap'])
+        ea = ea + market.expected(F['times'], ba, scale=P['scar_scale'], params_=pz, da=da0)
     da = np.clip(lam_f + ea, P['floor'], P['cap'])
     out = pd.DataFrame(dict(rt=rt, da=da, lam=lam, adder=adder, R=R, R_da=Rf, d=F['d'], df=F['df'], T=F['T'],
                             day=F['day'], hour=F['hour'], dow=F['dow'], month=F['month'], doy=F['doy']),

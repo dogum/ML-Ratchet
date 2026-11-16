@@ -1,0 +1,67 @@
+{
+ "policies": [
+  "rolling",
+  "bb",
+  "r1_v4",
+  "r2_v4",
+  "r3_v4",
+  "r4_v4",
+  "r6_hyb",
+  "r8_hyb",
+  "r9_hyb"
+ ],
+ "sets": {
+  "v4_frozen": {
+   "n": 9,
+   "frozen": {
+    "rolling": 0.5042,
+    "bb": 0.6836,
+    "r1_v4": 0.6074,
+    "r2_v4": 0.7792,
+    "r3_v4": 0.7877,
+    "r4_v4": 0.789,
+    "r6_hyb": 0.7024,
+    "r8_hyb": 0.7769,
+    "r9_hyb": 0.7869
+   },
+   "dev": {
+    "rolling": 0.5927,
+    "bb": 0.6295,
+    "r1_v4": 0.4888,
+    "r2_v4": 0.6382,
+    "r3_v4": 0.6437,
+    "r4_v4": 0.653,
+    "r6_hyb": 0.6614,
+    "r8_hyb": 0.615,
+    "r9_hyb": 0.6327
+   },
+   "spearman": 0.683,
+   "concordant_pairs": "28 of 36",
+   "concordant_share": 0.778,
+   "best_frozen": "r4_v4",
+   "best_dev": "r6_hyb",
+   "frozen_rank": [
+    "r4_v4",
+    "r3_v4",
+    "r9_hyb",
+    "r2_v4",
+    "r8_hyb",
+    "r6_hyb",
+    "bb",
+    "r1_v4",
+    "rolling"
+   ],
+   "dev_rank": [
+    "r6_hyb",
+    "r4_v4",
+    "r3_v4",
+    "r2_v4",
+    "r9_hyb",
+    "bb",
+    "r8_hyb",
+    "rolling",
+    "r1_v4"
+   ]
+  }
+ }
+}

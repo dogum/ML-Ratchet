@@ -1,6 +1,6 @@
 """BatteryPilot demo: three real exam node-years (never used in training or for choosing anything).
-Runs BatteryPilot (the shipped v1.1 network, batterypilot_weights.npz) and the baselines for a 1 MW / 2 MWh battery and
-prints $ per kW-year net of wear. The v1.0 network is batterypilot_weights_v1_0.npz.
+Runs BatteryPilot (the shipped v1.3 hybrid network, batterypilot_weights.npz) and the baselines for a 1 MW / 2 MWh
+battery and prints $ per kW-year net of wear. Earlier releases: batterypilot_weights_v1_1.npz, _v1_0.npz.
 
     python3 demo.py            (about 10-20 s; numpy + scipy only)
 """

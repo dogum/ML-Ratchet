@@ -1,0 +1,496 @@
+{
+ "rule": "The v1.3 ladder (GridSim physics 1.2, 15 Nov 2026): a physics change re-takes the ladder.  Every logged decision\nof v1.1 and of the v1.2 attempt is re-taken in order on the new frozen set v6 and the real dev gate, then new rungs.\n\n    python ladder_v1_3.py      -> training/ratchet_v1_3.json (reads WORK/data/scores/<rung>__v6_frozen.json)\n\nPhysics 1.2 adds GridSim's real-time scarcity the day-ahead market cannot see (gridsim.market, default fit, fitted on\nERCOT 2018/2020/2022 prices); BatteryPilot's scarcity calibration was re-fitted on dev with it (calibration_v1_2.json),\nthe banks and the frozen set v6 rebuilt with the v4 seeds.  (A first build on the first GridSim fit, frozen set v5,\nis logged in the NOTEBOOK as probes; the dev twin test sent the process back for two train-year refits.)\nRule unchanged: keep a rung if its frozen capture beats the incumbent's by more than 0.01 AND its dev capture is not\nmore than 0.01 below the incumbent's.  R0 is the starting incumbent.  R5 (the backbone alone) is a classical\nreference, not a candidate.\nRelease (the improvement-pass rule, fixed before this ladder): the last incumbent is released as v1.3 only if its dev\ncapture is above v1.1's (0.6382) and it also beats v1.1 re-scored on the new frozen set by the ladder rule.\nCommands run from training/ with GRIDSIM_PHYSICS=1.2, B=../work/data/banks; each scored by\n`ratchet.py score <name> v6_frozen`.\n",
+ "physics": "GridSim 1.2 (1.1 + gridsim.market RT scarcity)",
+ "calibration": {
+  "floor_share": 0.8,
+  "mu": -1000,
+  "sigma": 3500,
+  "rt_noise_sd": 0.1,
+  "ramp_k": 1.5,
+  "da_sd_scale": 1.0,
+  "cold_fmax": 0.55,
+  "cold_T50": -3,
+  "cold_w": 3.0,
+  "cold_tau_h": 36.0
+ },
+ "frozen": "v6_frozen (24 ERCOT + 9 CAISO-like path-years; seeds 7001/7002 as v4_frozen; GridSim 1.2 default fit)",
+ "rungs": [
+  {
+   "rung": "R0",
+   "name": "rolling",
+   "change": "Classical rolling-horizon LP on day-ahead prices (re-plans at 14:00, follows the plan)",
+   "command": null,
+   "frozen": "v6_frozen",
+   "frozen_capture": 0.3843,
+   "dev_capture": 0.5927,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.7017,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8559,
+    "ERCOT:HB_HOUSTON:2019": 0.7848,
+    "ERCOT:HB_HOUSTON:2021": 0.307,
+    "ERCOT:HB_NORTH:2019": 0.7897,
+    "ERCOT:HB_NORTH:2021": 0.3202,
+    "ERCOT:HB_SOUTH:2019": 0.7893,
+    "ERCOT:HB_SOUTH:2021": 0.2797,
+    "ERCOT:HB_WEST:2019": 0.7836,
+    "ERCOT:HB_WEST:2021": 0.315
+   },
+   "dev_by_duration": {
+    "1": 0.4928,
+    "2": 0.547,
+    "4": 0.5676
+   },
+   "frozen_cycles": 151.1,
+   "dev_cycles": 210.1,
+   "kept": true,
+   "why": "starting incumbent"
+  },
+  {
+   "rung": "R1",
+   "name": "r1_v4",
+   "change": "MLP value-curve policy trained on sim v1 (GridSim merit-order prices only); 45 path-years, 1,500 steps. Its bank has no scarcity of any kind, so physics 1.2 leaves it bit-identical (v4_train_v1) and the v1.1 network is re-scored, not retrained",
+   "command": "train.py r1_v4 v4_train_v1 --steps 1500",
+   "frozen": "v6_frozen",
+   "frozen_capture": 0.6173,
+   "dev_capture": 0.4888,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.6546,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8129,
+    "ERCOT:HB_HOUSTON:2019": 0.6307,
+    "ERCOT:HB_HOUSTON:2021": 0.2407,
+    "ERCOT:HB_NORTH:2019": 0.6235,
+    "ERCOT:HB_NORTH:2021": 0.2324,
+    "ERCOT:HB_SOUTH:2019": 0.6135,
+    "ERCOT:HB_SOUTH:2021": 0.2276,
+    "ERCOT:HB_WEST:2019": 0.6161,
+    "ERCOT:HB_WEST:2021": 0.2366
+   },
+   "dev_by_duration": {
+    "1": 0.227,
+    "2": 0.3723,
+    "4": 0.5602
+   },
+   "frozen_cycles": 208.4,
+   "dev_cycles": 144.3,
+   "kept": false,
+   "vs": "R0",
+   "d_frozen": 0.233,
+   "d_dev": -0.1039,
+   "why": "frozen 0.6173 vs R0 0.3843 (+0.2330 > 0.01); dev 0.4888 vs 0.5927 (-0.1039, gate failed) -> rejected"
+  },
+  {
+   "rung": "R2",
+   "name": "r2_v6",
+   "change": "Same network, trained on sim v2 with physics 1.2 and the v1.3 dev calibration: 80 ERCOT path-years (v6_train_e p0000-p0079), 1,500 steps",
+   "command": "train.py r2_v6 \"$B/v6_train_e/p00[0-7][0-9].npz\" --steps 1500",
+   "frozen": "v6_frozen",
+   "frozen_capture": 0.7546,
+   "dev_capture": 0.6277,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.7492,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8158,
+    "ERCOT:HB_HOUSTON:2019": 0.7703,
+    "ERCOT:HB_HOUSTON:2021": 0.4025,
+    "ERCOT:HB_NORTH:2019": 0.7716,
+    "ERCOT:HB_NORTH:2021": 0.4111,
+    "ERCOT:HB_SOUTH:2019": 0.7604,
+    "ERCOT:HB_SOUTH:2021": 0.4184,
+    "ERCOT:HB_WEST:2019": 0.763,
+    "ERCOT:HB_WEST:2021": 0.4151
+   },
+   "dev_by_duration": {
+    "1": 0.4969,
+    "2": 0.5543,
+    "4": 0.6523
+   },
+   "frozen_cycles": 195.6,
+   "dev_cycles": 140.9,
+   "kept": true,
+   "vs": "R0",
+   "d_frozen": 0.3703,
+   "d_dev": 0.035,
+   "why": "frozen 0.7546 vs R0 0.3843 (+0.3703 > 0.01); dev 0.6277 vs 0.5927 (+0.0350, gate passed) -> kept, new incumbent"
+  },
+  {
+   "rung": "R3",
+   "name": "r3_v6",
+   "change": "Train on all 120 ERCOT + 45 CAISO-like path-years (v6_train_e + v6_train_c), 2,500 steps",
+   "command": "train.py r3_v6 \"$B/v6_train_e/*.npz,$B/v6_train_c/*.npz\" --steps 2500",
+   "frozen": "v6_frozen",
+   "frozen_capture": 0.7685,
+   "dev_capture": 0.5961,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.7546,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8413,
+    "ERCOT:HB_HOUSTON:2019": 0.8013,
+    "ERCOT:HB_HOUSTON:2021": 0.2908,
+    "ERCOT:HB_NORTH:2019": 0.8016,
+    "ERCOT:HB_NORTH:2021": 0.2872,
+    "ERCOT:HB_SOUTH:2019": 0.7952,
+    "ERCOT:HB_SOUTH:2021": 0.3007,
+    "ERCOT:HB_WEST:2019": 0.7961,
+    "ERCOT:HB_WEST:2021": 0.2921
+   },
+   "dev_by_duration": {
+    "1": 0.5067,
+    "2": 0.5226,
+    "4": 0.577
+   },
+   "frozen_cycles": 198.7,
+   "dev_cycles": 145.0,
+   "kept": false,
+   "vs": "R2",
+   "d_frozen": 0.0139,
+   "d_dev": -0.0316,
+   "why": "frozen 0.7685 vs R2 0.7546 (+0.0139 > 0.01); dev 0.5961 vs 0.6277 (-0.0316, gate failed) -> rejected"
+  },
+  {
+   "rung": "R4",
+   "name": "r4_v6",
+   "change": "Fine-tune R3 on the same 165 path-years with 21-day windows, batch 64, learning rate 5e-4 (900 steps)",
+   "command": "train.py r4_v6 \"$B/v6_train_e/*.npz,$B/v6_train_c/*.npz\" --init r3_v6 --steps 900 --window 504 --batch 64 --lr 5e-4",
+   "frozen": "v6_frozen",
+   "frozen_capture": 0.7755,
+   "dev_capture": 0.599,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.759,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8455,
+    "ERCOT:HB_HOUSTON:2019": 0.7988,
+    "ERCOT:HB_HOUSTON:2021": 0.295,
+    "ERCOT:HB_NORTH:2019": 0.8,
+    "ERCOT:HB_NORTH:2021": 0.2956,
+    "ERCOT:HB_SOUTH:2019": 0.7921,
+    "ERCOT:HB_SOUTH:2021": 0.3179,
+    "ERCOT:HB_WEST:2019": 0.7926,
+    "ERCOT:HB_WEST:2021": 0.2934
+   },
+   "dev_by_duration": {
+    "1": 0.4978,
+    "2": 0.5538,
+    "4": 0.5649
+   },
+   "frozen_cycles": 199.5,
+   "dev_cycles": 147.4,
+   "kept": false,
+   "vs": "R2",
+   "d_frozen": 0.0209,
+   "d_dev": -0.0287,
+   "why": "frozen 0.7755 vs R2 0.7546 (+0.0209 > 0.01); dev 0.5990 vs 0.6277 (-0.0287, gate failed) -> rejected"
+  },
+  {
+   "rung": "R5",
+   "name": "bb",
+   "change": "Reference, not a candidate: the day-ahead value-curve backbone alone (backbone.py), executed by the offer rule against the RT price; no network",
+   "command": null,
+   "frozen": "v6_frozen",
+   "frozen_capture": 0.6729,
+   "dev_capture": 0.6295,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.7337,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8306,
+    "ERCOT:HB_HOUSTON:2019": 0.6715,
+    "ERCOT:HB_HOUSTON:2021": 0.5088,
+    "ERCOT:HB_NORTH:2019": 0.668,
+    "ERCOT:HB_NORTH:2021": 0.5181,
+    "ERCOT:HB_SOUTH:2019": 0.6657,
+    "ERCOT:HB_SOUTH:2021": 0.5084,
+    "ERCOT:HB_WEST:2019": 0.6692,
+    "ERCOT:HB_WEST:2021": 0.5212
+   },
+   "dev_by_duration": {
+    "1": 0.3666,
+    "2": 0.5404,
+    "4": 0.7309
+   },
+   "frozen_cycles": 199.5,
+   "dev_cycles": 141.7,
+   "kept": false,
+   "why": "reference only: a classical policy, not a candidate network"
+  },
+  {
+   "rung": "R6",
+   "name": "r6_v6",
+   "change": "Hybrid: the network also reads the backbone curve and outputs a residual on it, kept non-increasing by a running minimum; 80 ERCOT path-years, 1,500 steps",
+   "command": "train.py r6_v6 \"$B/v6_train_e/p00[0-7][0-9].npz\" --steps 1500 --hybrid",
+   "frozen": "v6_frozen",
+   "frozen_capture": 0.7321,
+   "dev_capture": 0.5809,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.7178,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8011,
+    "ERCOT:HB_HOUSTON:2019": 0.7637,
+    "ERCOT:HB_HOUSTON:2021": 0.3104,
+    "ERCOT:HB_NORTH:2019": 0.7642,
+    "ERCOT:HB_NORTH:2021": 0.3069,
+    "ERCOT:HB_SOUTH:2019": 0.7612,
+    "ERCOT:HB_SOUTH:2021": 0.3221,
+    "ERCOT:HB_WEST:2019": 0.7587,
+    "ERCOT:HB_WEST:2021": 0.303
+   },
+   "dev_by_duration": {
+    "1": 0.3951,
+    "2": 0.4937,
+    "4": 0.6235
+   },
+   "frozen_cycles": 197.4,
+   "dev_cycles": 144.6,
+   "kept": false,
+   "vs": "R2",
+   "d_frozen": -0.0225,
+   "d_dev": -0.0468,
+   "why": "frozen 0.7321 vs R2 0.7546 (-0.0225 <= 0.01); dev 0.5809 vs 0.6277 (-0.0468, gate failed) -> rejected"
+  },
+  {
+   "rung": "R8",
+   "name": "r8_v6",
+   "change": "R6 with a strictly decreasing curve (each knot at least 0.01 below the last); 80 ERCOT path-years, 1,500 steps",
+   "command": "train.py r8_v6 \"$B/v6_train_e/p00[0-7][0-9].npz\" --steps 1500 --hybrid --min-step 0.01",
+   "frozen": "v6_frozen",
+   "frozen_capture": 0.7719,
+   "dev_capture": 0.6601,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.7341,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8099,
+    "ERCOT:HB_HOUSTON:2019": 0.7752,
+    "ERCOT:HB_HOUSTON:2021": 0.4835,
+    "ERCOT:HB_NORTH:2019": 0.7752,
+    "ERCOT:HB_NORTH:2021": 0.4939,
+    "ERCOT:HB_SOUTH:2019": 0.7711,
+    "ERCOT:HB_SOUTH:2021": 0.4987,
+    "ERCOT:HB_WEST:2019": 0.7683,
+    "ERCOT:HB_WEST:2021": 0.4913
+   },
+   "dev_by_duration": {
+    "1": 0.4685,
+    "2": 0.6055,
+    "4": 0.7182
+   },
+   "frozen_cycles": 196.2,
+   "dev_cycles": 142.3,
+   "kept": true,
+   "vs": "R2",
+   "d_frozen": 0.0173,
+   "d_dev": 0.0324,
+   "why": "frozen 0.7719 vs R2 0.7546 (+0.0173 > 0.01); dev 0.6601 vs 0.6277 (+0.0324, gate passed) -> kept, new incumbent"
+  },
+  {
+   "rung": "R9",
+   "name": "r9_v6",
+   "change": "R8 on all 120 ERCOT + 45 CAISO-like path-years, 2,500 steps",
+   "command": "train.py r9_v6 \"$B/v6_train_e/*.npz,$B/v6_train_c/*.npz\" --steps 2500 --hybrid --min-step 0.01",
+   "frozen": "v6_frozen",
+   "frozen_capture": 0.7779,
+   "dev_capture": 0.6854,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.759,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8354,
+    "ERCOT:HB_HOUSTON:2019": 0.777,
+    "ERCOT:HB_HOUSTON:2021": 0.5277,
+    "ERCOT:HB_NORTH:2019": 0.778,
+    "ERCOT:HB_NORTH:2021": 0.5396,
+    "ERCOT:HB_SOUTH:2019": 0.7725,
+    "ERCOT:HB_SOUTH:2021": 0.5541,
+    "ERCOT:HB_WEST:2019": 0.7727,
+    "ERCOT:HB_WEST:2021": 0.5375
+   },
+   "dev_by_duration": {
+    "1": 0.4992,
+    "2": 0.6273,
+    "4": 0.7456
+   },
+   "frozen_cycles": 201.0,
+   "dev_cycles": 147.1,
+   "kept": false,
+   "vs": "R8",
+   "d_frozen": 0.006,
+   "d_dev": 0.0253,
+   "why": "frozen 0.7779 vs R8 0.7719 (+0.0060 <= 0.01); dev 0.6854 vs 0.6601 (+0.0253, gate passed) -> rejected"
+  },
+  {
+   "rung": "R10",
+   "name": "r3_v5",
+   "change": "The R3 recipe (all 120 ERCOT + 45 CAISO-like path-years, 2,500 steps) trained on the v5 banks (GridSim 1.2 first fit, superseded). Put on this ladder because its dev score (0.658) was seen in the v5 probes: chosen with dev knowledge, judged by the rule",
+   "command": "train.py r3_v5 \"$B/v5_train_e/*.npz,$B/v5_train_c/*.npz\" --steps 2500",
+   "frozen": "v6_frozen",
+   "frozen_capture": 0.7693,
+   "dev_capture": 0.6579,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.7537,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8454,
+    "ERCOT:HB_HOUSTON:2019": 0.8411,
+    "ERCOT:HB_HOUSTON:2021": 0.4043,
+    "ERCOT:HB_NORTH:2019": 0.8348,
+    "ERCOT:HB_NORTH:2021": 0.4074,
+    "ERCOT:HB_SOUTH:2019": 0.8282,
+    "ERCOT:HB_SOUTH:2021": 0.4218,
+    "ERCOT:HB_WEST:2019": 0.8267,
+    "ERCOT:HB_WEST:2021": 0.4156
+   },
+   "dev_by_duration": {
+    "1": 0.5194,
+    "2": 0.6101,
+    "4": 0.6704
+   },
+   "frozen_cycles": 201.3,
+   "dev_cycles": 148.4,
+   "kept": false,
+   "vs": "R8",
+   "d_frozen": -0.0026,
+   "d_dev": -0.0022,
+   "why": "frozen 0.7693 vs R8 0.7719 (-0.0026 <= 0.01); dev 0.6579 vs 0.6601 (-0.0022, gate passed) -> rejected"
+  },
+  {
+   "rung": "R11",
+   "name": "r11_v6",
+   "change": "R9 fine-tuned with the R4 recipe: 21-day windows, batch 64, learning rate 5e-4, 900 steps, on the same 165 path-years",
+   "command": "train.py r11_v6 \"$B/v6_train_e/*.npz,$B/v6_train_c/*.npz\" --hybrid --min-step 0.01 --init r9_v6 --steps 900 --window 504 --batch 64 --lr 5e-4",
+   "frozen": "v6_frozen",
+   "frozen_capture": 0.7803,
+   "dev_capture": 0.6811,
+   "dev_by_set": {
+    "CAISO:TH_NP15_GEN-APND:2023": 0.7584,
+    "CAISO:TH_SP15_GEN-APND:2023": 0.8339,
+    "ERCOT:HB_HOUSTON:2019": 0.7689,
+    "ERCOT:HB_HOUSTON:2021": 0.5254,
+    "ERCOT:HB_NORTH:2019": 0.7717,
+    "ERCOT:HB_NORTH:2021": 0.5376,
+    "ERCOT:HB_SOUTH:2019": 0.764,
+    "ERCOT:HB_SOUTH:2021": 0.5483,
+    "ERCOT:HB_WEST:2019": 0.7669,
+    "ERCOT:HB_WEST:2021": 0.5355
+   },
+   "dev_by_duration": {
+    "1": 0.5021,
+    "2": 0.6237,
+    "4": 0.7368
+   },
+   "frozen_cycles": 201.0,
+   "dev_cycles": 145.4,
+   "kept": false,
+   "vs": "R8",
+   "d_frozen": 0.0084,
+   "d_dev": 0.021,
+   "why": "frozen 0.7803 vs R8 0.7719 (+0.0084 <= 0.01); dev 0.6811 vs 0.6601 (+0.0210, gate passed) -> rejected"
+  }
+ ],
+ "not_retaken": [
+  {
+   "rung": "R7",
+   "why": "stopped in the v1.2 attempt for a flaw R8 fixed (flat pieces of the running-minimum curve); not re-run"
+  }
+ ],
+ "incumbent": "R8",
+ "released": "R8",
+ "release_check": {
+  "v1_1": {
+   "name": "r2_v4",
+   "frozen_capture": 0.7346,
+   "dev_capture": 0.6382
+  },
+  "d_frozen": 0.0373,
+  "d_dev": 0.0219,
+  "release": true,
+  "why": "R8 frozen 0.7719 vs v1.1 0.7346 (+0.0373); dev 0.6601 vs v1.1 0.6382 (+0.0219) -> release as v1.3"
+ },
+ "seed_spread_R8": {
+  "runs": {
+   "r8_v6": {
+    "frozen": 0.7719,
+    "dev": 0.6601
+   },
+   "r8_v6_s1": {
+    "frozen": 0.7716,
+    "dev": 0.6666
+   },
+   "r8_v6_s2": {
+    "frozen": 0.7667,
+    "dev": 0.6439
+   }
+  },
+  "frozen_mean": 0.7701,
+  "frozen_sd": 0.0029,
+  "dev_mean": 0.6569,
+  "dev_sd": 0.0117,
+  "note": "seed 0 is the released R8; all three clear R2 (0.7546) by more than 0.01 and pass its dev gate"
+ },
+ "probes_v5": {
+  "rolling": {
+   "frozen": 0.3257,
+   "dev": 0.5927
+  },
+  "r1_v4": {
+   "frozen": 0.6406,
+   "dev": 0.4888
+  },
+  "r2_v5": {
+   "frozen": 0.7602,
+   "dev": 0.6227
+  },
+  "r3_v5": {
+   "frozen": 0.7643,
+   "dev": 0.6579
+  },
+  "bb": {
+   "frozen": 0.667,
+   "dev": 0.6295
+  },
+  "r2_v4": {
+   "frozen": 0.7466,
+   "dev": 0.6382
+  },
+  "r3_v4": {
+   "frozen": 0.755,
+   "dev": 0.6437
+  },
+  "r4_v4": {
+   "frozen": 0.7541,
+   "dev": 0.653
+  },
+  "r4_v3": {
+   "frozen": 0.7393,
+   "dev": 0.6373
+  },
+  "r6_hyb": {
+   "frozen": 0.6182,
+   "dev": 0.6614
+  },
+  "r8_hyb": {
+   "frozen": 0.7423,
+   "dev": 0.615
+  },
+  "r9_hyb": {
+   "frozen": 0.7539,
+   "dev": 0.6327
+  }
+ },
+ "v1_1_rungs_rescored_on_v6": {
+  "r2_v4": {
+   "frozen": 0.7346,
+   "dev": 0.6382
+  },
+  "r3_v4": {
+   "frozen": 0.7493,
+   "dev": 0.6437
+  },
+  "r4_v4": {
+   "frozen": 0.7469,
+   "dev": 0.653
+  },
+  "r4_v3": {
+   "frozen": 0.7425,
+   "dev": 0.6373
+  },
+  "r6_hyb": {
+   "frozen": 0.6358,
+   "dev": 0.6614
+  },
+  "r8_hyb": {
+   "frozen": 0.7425,
+   "dev": 0.615
+  },
+  "r9_hyb": {
+   "frozen": 0.7514,
+   "dev": 0.6327
+  }
+ }
+}

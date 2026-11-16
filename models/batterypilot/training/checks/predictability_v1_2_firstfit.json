@@ -1,0 +1,105 @@
+{
+ "physics": "1.2",
+ "calibration": "C:\\Developer\\ML-ratchet\\models\\batterypilot\\work/data/calibration_v1_2.json",
+ "rows": {
+  "2019 real": {
+   "seen300": 0.31,
+   "da_median_in_rt300": 211.3,
+   "sp100": 108,
+   "sp300": 50,
+   "h300": 75,
+   "h1000": 26,
+   "rt_mean": 35.78,
+   "da_mean": 37.63,
+   "pf2_kWyr": 103.3
+  },
+  "2019 twin1": {
+   "seen300": 0.557,
+   "da_median_in_rt300": 155.2,
+   "sp100": 153,
+   "sp300": 62,
+   "h300": 114,
+   "h1000": 26,
+   "rt_mean": 38.55,
+   "da_mean": 41.1,
+   "pf2_kWyr": 94.7
+  },
+  "2019 twin2": {
+   "seen300": 0.504,
+   "da_median_in_rt300": 176.4,
+   "sp100": 120,
+   "sp300": 55,
+   "h300": 101,
+   "h1000": 31,
+   "rt_mean": 38.22,
+   "da_mean": 43.46,
+   "pf2_kWyr": 105.7
+  },
+  "2021 real": {
+   "seen300": 0.824,
+   "da_median_in_rt300": 4072.7,
+   "sp100": 224,
+   "sp300": 141,
+   "h300": 223,
+   "h1000": 161,
+   "rt_mean": 148.17,
+   "da_mean": 145.62,
+   "pf2_kWyr": 102.5
+  },
+  "2021 real without Uri": {
+   "seen300": 0.132,
+   "da_median_in_rt300": 70.4,
+   "sp100": 99,
+   "sp300": 37,
+   "h300": 47,
+   "h1000": 8,
+   "rt_mean": 33.51,
+   "da_mean": 34.0,
+   "pf2_kWyr": 54.4
+  },
+  "2021 twin1": {
+   "seen300": 0.726,
+   "da_median_in_rt300": 5481.2,
+   "sp100": 211,
+   "sp300": 145,
+   "h300": 230,
+   "h1000": 143,
+   "rt_mean": 139.15,
+   "da_mean": 149.61,
+   "pf2_kWyr": 146.7
+  },
+  "2021 twin1 without Uri": {
+   "seen300": 0.25,
+   "da_median_in_rt300": 44.7,
+   "sp100": 85,
+   "sp300": 27,
+   "h300": 43,
+   "h1000": 5,
+   "rt_mean": 37.02,
+   "da_mean": 43.58,
+   "pf2_kWyr": 58.6
+  },
+  "2021 twin2": {
+   "seen300": 0.76,
+   "da_median_in_rt300": 6391.8,
+   "sp100": 204,
+   "sp300": 130,
+   "h300": 206,
+   "h1000": 140,
+   "rt_mean": 136.06,
+   "da_mean": 160.0,
+   "pf2_kWyr": 171.7
+  },
+  "2021 twin2 without Uri": {
+   "seen300": 0.056,
+   "da_median_in_rt300": 49.2,
+   "sp100": 101,
+   "sp300": 41,
+   "h300": 53,
+   "h1000": 15,
+   "rt_mean": 41.59,
+   "da_mean": 41.54,
+   "pf2_kWyr": 90.2
+  }
+ }
+}

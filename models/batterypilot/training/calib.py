@@ -11,7 +11,7 @@ Writes data/calibration.json (GridSim physics 1.0) or data/calibration_v1_1.json
 import itertools, json, os, sys, time
 import numpy as np, pandas as pd
 import _paths  # noqa: E402  (this folder, GridSim and GridData on sys.path; outputs to WORK)
-from pricesim import Engine, load_inputs, fundamentals, prices, DEFAULTS
+from pricesim import Engine, load_inputs, fundamentals, prices, DEFAULTS, physics_version
 from realdata import node_frame
 from battery import Battery
 from strategies import pf_daily
@@ -27,20 +27,35 @@ def target_stats(rt, da, day):
     mx, mn = g.max(), g.min()
     b = Battery(1, 2, degradation=False)
     c, d = pf_daily(rt, day, b)
+    big = rt > 300
     return dict(max_q25=mx.quantile(.25), max_q50=mx.median(), max_q75=mx.quantile(.75), max_q90=mx.quantile(.9),
                 min_q50=mn.median(), min_q10=mn.quantile(.1), h100=(rt > 100).sum(), h300=(rt > 300).sum(),
                 h1000=(rt > 1000).sum(), rtda=np.nanmedian(np.abs(rt - da)), damean=np.nanmean(da),
-                rtmean=np.mean(rt), pf=(rt * (d - c)).sum() / 1000)
+                rtmean=np.mean(rt), pf=(rt * (d - c)).sum() / 1000,
+                # v1.3 (GridSim physics 1.2): how much of the RT spike value the DA sees, and RT - DA spikes
+                seen300=float(np.minimum(da[big], rt[big]).sum() / rt[big].sum()) if big.any() else 0.0,
+                sp100=float((rt - da > 100).sum()))
 
 
 WEIGHTS = dict(max_q25=1, max_q50=2, max_q75=2, max_q90=1, min_q50=1, min_q10=0.5, h100=1, h300=1, h1000=1,
                rtda=1, damean=0.5, rtmean=1, pf=2)
 
 
+# v1.3 (GridSim physics 1.2, 15 Nov 2026, set before any v1.3 rung was scored): the dev twins of physics 1.1 had DA
+# prices that saw 69-80 % of the RT value of hours above $300 (seen300) where the real dev years saw 31 % (2019) and
+# 13 % (2021 without Uri) (training/predictability.py).  Stage A also matches seen300 (squared difference in units
+# of 0.2) and the hours with RT - DA > $100.
+WEIGHTS_V1_3 = dict(WEIGHTS, seen300=2, sp100=1)
+
+
 def loss(s, r):
     l = 0.0
-    for k, w in WEIGHTS.items():
-        c = 5.0 if k.startswith('h') else 2.0
+    W = WEIGHTS_V1_3 if physics_version() == '1.2' else WEIGHTS
+    for k, w in W.items():
+        if k == 'seen300':
+            l += w * ((s[k] - r[k]) / 0.2) ** 2
+            continue
+        c = 5.0 if k.startswith('h') or k.startswith('sp') else 2.0
         l += w * np.log((abs(s[k]) + c) / (abs(r[k]) + c)) ** 2
     return l
 
@@ -79,6 +94,11 @@ if __name__ == '__main__':
         grid = dict(mu=[-4000, -3000, -2000, -1000, 0], sigma=[3500, 5000, 6500, 8000, 9500], rt_noise_sd=[0.1, 0.2],
                     ramp_k=[1.5, 3.0], da_sd_scale=[0.7, 1.0])
         OUT = OUT.replace('.json', '_wide.json')
+    if physics_version() == '1.2':
+        # v1.3: the unforecast process adds RT spikes, so the ORDC part may need to bind less: the grid reaches
+        # mu +3,000 MW (it contains the v1.1 optimum, mu 0 / sigma 5,000); set before running
+        grid = dict(mu=[-2000, -1000, 0, 1000, 2000, 3000], sigma=[3500, 5000, 6500, 8000], rt_noise_sd=[0.1, 0.2],
+                    ramp_k=[1.5, 3.0], da_sd_scale=[0.7, 1.0])
     best = (1e9, None)
     for vals in itertools.product(*grid.values()):
         P = dict(base, **dict(zip(grid.keys(), vals)))

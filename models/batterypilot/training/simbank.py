@@ -34,7 +34,9 @@ def calib_file(version=None):
 
 def calibrated(sim='v2', path=None):
     if sim == 'v1':     # GridSim energy prices only: no scarcity curve, no cold outages, no RT noise
-        return dict(DEFAULTS, mu=0.0, sigma=1.0, X=-1e9, cold_fmax=0.0, rt_noise_sd=0.0, floor_share=0.8)
+        # (and no physics 1.2 RT scarcity: scar_scale 0, so a v1 bank is the same on 1.1 and 1.2)
+        return dict(DEFAULTS, mu=0.0, sigma=1.0, X=-1e9, cold_fmax=0.0, rt_noise_sd=0.0, floor_share=0.8,
+                    scar_scale=0.0)
     c = json.load(open(path or calib_file()))['calibrated']
     return dict(DEFAULTS, **c)
 
@@ -89,6 +91,10 @@ def sample_scenario(rng, ba, year, inp, cal, sim):
         s['ramp_k'] = float(cal['ramp_k'] * rng.uniform(0.5, 1.5))
         s['cold_fmax'] = float(cal.get('cold_fmax', 0.0) * rng.uniform(0.2, 1.2))
     s['seed'] = int(rng.integers(1 << 30))
+    if sim != 'v1' and physics_version() == '1.2':
+        # v1.3: real years differ in unforecast scarcity more than one draw does (GridSim LIMITS I: 81-165 h a year
+        # above $100 RT - DA on the training years): scale the start rate per path
+        s['scar_scale'] = float(rng.uniform(0.6, 1.5))
     return s
 
 
@@ -155,6 +161,7 @@ def main():
         s.update(h1000=h1k, mean_rt=mean, mean_da=float(o.da.mean()), tries=tries, physics=physics_version(),
                  coal_adder=next(iter(eng_cache.values())).coal_adder,
                  calib=os.path.basename(cfile) if cfile else 'none',
+                 **({'scar_fit': cal.get('scar_fit')} if physics_version() == '1.2' else {}),
                  pf2_kWyr=float(out['pf2'].sum() / 1000))
         np.savez(fn + '.tmp.npz', meta=json.dumps(s), **out)
         os.replace(fn + '.tmp.npz', fn)

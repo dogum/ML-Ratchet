@@ -1,0 +1,184 @@
+{
+ "policies": [
+  "rolling",
+  "bb",
+  "r1_v4",
+  "r2_v4",
+  "r3_v4",
+  "r4_v4",
+  "r4_v3",
+  "r6_hyb",
+  "r8_hyb",
+  "r9_hyb"
+ ],
+ "sets": {
+  "v4_frozen": {
+   "n": 10,
+   "frozen": {
+    "rolling": 0.5042,
+    "bb": 0.6836,
+    "r1_v4": 0.6074,
+    "r2_v4": 0.7792,
+    "r3_v4": 0.7877,
+    "r4_v4": 0.789,
+    "r4_v3": 0.7778,
+    "r6_hyb": 0.7024,
+    "r8_hyb": 0.7769,
+    "r9_hyb": 0.7869
+   },
+   "dev": {
+    "rolling": 0.5927,
+    "bb": 0.6295,
+    "r1_v4": 0.4888,
+    "r2_v4": 0.6382,
+    "r3_v4": 0.6437,
+    "r4_v4": 0.653,
+    "r4_v3": 0.6373,
+    "r6_hyb": 0.6614,
+    "r8_hyb": 0.615,
+    "r9_hyb": 0.6327
+   },
+   "spearman": 0.673,
+   "concordant_pairs": "35 of 45",
+   "concordant_share": 0.778,
+   "best_frozen": "r4_v4",
+   "best_dev": "r6_hyb",
+   "frozen_rank": [
+    "r4_v4",
+    "r3_v4",
+    "r9_hyb",
+    "r2_v4",
+    "r4_v3",
+    "r8_hyb",
+    "r6_hyb",
+    "bb",
+    "r1_v4",
+    "rolling"
+   ],
+   "dev_rank": [
+    "r6_hyb",
+    "r4_v4",
+    "r3_v4",
+    "r2_v4",
+    "r4_v3",
+    "r9_hyb",
+    "bb",
+    "r8_hyb",
+    "rolling",
+    "r1_v4"
+   ]
+  },
+  "v5_frozen": {
+   "n": 10,
+   "frozen": {
+    "rolling": 0.3257,
+    "bb": 0.667,
+    "r1_v4": 0.6406,
+    "r2_v4": 0.7466,
+    "r3_v4": 0.755,
+    "r4_v4": 0.7541,
+    "r4_v3": 0.7393,
+    "r6_hyb": 0.6182,
+    "r8_hyb": 0.7423,
+    "r9_hyb": 0.7539
+   },
+   "dev": {
+    "rolling": 0.5927,
+    "bb": 0.6295,
+    "r1_v4": 0.4888,
+    "r2_v4": 0.6382,
+    "r3_v4": 0.6437,
+    "r4_v4": 0.653,
+    "r4_v3": 0.6373,
+    "r6_hyb": 0.6614,
+    "r8_hyb": 0.615,
+    "r9_hyb": 0.6327
+   },
+   "spearman": 0.442,
+   "concordant_pairs": "31 of 45",
+   "concordant_share": 0.689,
+   "best_frozen": "r3_v4",
+   "best_dev": "r6_hyb",
+   "frozen_rank": [
+    "r3_v4",
+    "r4_v4",
+    "r9_hyb",
+    "r2_v4",
+    "r8_hyb",
+    "r4_v3",
+    "bb",
+    "r1_v4",
+    "r6_hyb",
+    "rolling"
+   ],
+   "dev_rank": [
+    "r6_hyb",
+    "r4_v4",
+    "r3_v4",
+    "r2_v4",
+    "r4_v3",
+    "r9_hyb",
+    "bb",
+    "r8_hyb",
+    "rolling",
+    "r1_v4"
+   ]
+  },
+  "v6_frozen": {
+   "n": 10,
+   "frozen": {
+    "rolling": 0.3843,
+    "bb": 0.6729,
+    "r1_v4": 0.6173,
+    "r2_v4": 0.7346,
+    "r3_v4": 0.7493,
+    "r4_v4": 0.7469,
+    "r4_v3": 0.7425,
+    "r6_hyb": 0.6358,
+    "r8_hyb": 0.7425,
+    "r9_hyb": 0.7514
+   },
+   "dev": {
+    "rolling": 0.5927,
+    "bb": 0.6295,
+    "r1_v4": 0.4888,
+    "r2_v4": 0.6382,
+    "r3_v4": 0.6437,
+    "r4_v4": 0.653,
+    "r4_v3": 0.6373,
+    "r6_hyb": 0.6614,
+    "r8_hyb": 0.615,
+    "r9_hyb": 0.6327
+   },
+   "spearman": 0.426,
+   "concordant_pairs": "28 of 45",
+   "concordant_share": 0.622,
+   "best_frozen": "r9_hyb",
+   "best_dev": "r6_hyb",
+   "frozen_rank": [
+    "r9_hyb",
+    "r3_v4",
+    "r4_v4",
+    "r4_v3",
+    "r8_hyb",
+    "r2_v4",
+    "bb",
+    "r6_hyb",
+    "r1_v4",
+    "rolling"
+   ],
+   "dev_rank": [
+    "r6_hyb",
+    "r4_v4",
+    "r3_v4",
+    "r2_v4",
+    "r4_v3",
+    "r9_hyb",
+    "bb",
+    "r8_hyb",
+    "rolling",
+    "r1_v4"
+   ]
+  }
+ }
+}
