@@ -133,3 +133,25 @@ The exam rows that were not wins: distance (38% vs the dev-median guess 28%), st
 - **Release.** v1.1 = the same weights with the prior in the meta (`make_release_v11.py`): distance prior fitted on
   all 29 dev arrivals, N(3.417, 0.194) in log10 km; after the blend the dev widen-only factors are 1.00 (distance) and
   1.59 (time). The exam is scored once, after this entry is committed.
+
+## 15 Nov 2026: v1.1 exam (run once, after the release choice)
+
+`exam_v11.py` on the rebuilt exam windows; v1.0 re-scored on the same windows (numpy inference, `prior=False`). The
+v1.0 numbers reproduce the 6 Nov exam (37.5% / 33.5 h / 19.2°, coverage 67 / 74 / 70%).
+
+| 288 confirmed | Distance | Time | Direction | Coverage D / t0 / dir |
+|---|---|---|---|---|
+| v1.1 | 29.3% | 26.8 h | 19.2° | 55 / 67 / 70% |
+| v1.0 | 37.5% | 33.5 h | 19.2° | 67 / 74 / 70% |
+| Dev median guess | 28.1% | 24.0 h | 55.7° | |
+| Classical ridge fit | 58.8% | 48.1 h | 20.4° | |
+
+- No row flips. Distance and time are still losses to the median guess (by 1.2 points and 2.8 h); direction is still a
+  tie with the ridge fit; detection is unchanged (63%).
+- Worse: distance coverage fell from 67% to 55%. The dev factor after the blend was 1.00 (dev coverage was already
+  69%); on the exam the shrunk error bars are too narrow.
+- Looser sets: visible (649) 42.0% / 30.3 h (v1.0 42.2% / 38.8 h; median guess 38.6% / 30.0 h); all pairs (2,124)
+  44.3% / 34.4 h (v1.0 43.9% / 40.7 h; 41.0% / 33.0 h). The distance prior helps only where arrivals look like dev's.
+- What it says: at these buoys the network's distance reading carries little beyond the climatological distance. The
+  next rung worth trying is a buoy-specific prior from 1985–2007 IBTrACS storm geometry (not dev labels), or a network
+  trained on a realistic distance prior.

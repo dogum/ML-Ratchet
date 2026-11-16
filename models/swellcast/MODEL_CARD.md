@@ -1,4 +1,4 @@
-# SwellCast v1.0 model card
+# SwellCast v1.1 model card
 
 ## What it does
 SwellCast reads ten days of wave spectra from one ocean buoy and answers: is swell from a distant storm arriving near
@@ -19,6 +19,14 @@ from the window centre) and `t0_sig`, `dir` (degrees, direction the swell comes 
 concentration; 1-sigma ~ 57.3/sqrt(kappa) deg), `hs` (storm wave height, m; weak skill), `p_swell` and `detected`
 (score above the threshold that gives 10% false alarms on real quiet 2024 windows). Error bars are already widened by
 the dev-fitted factors (distance x1.19, time x1.45, direction x1.33).
+
+**v1.1 (15 Nov 2026): a prior on distance and time.** The network's calibrated distance and time are combined with a
+prior, each weighted by its error bar (precision weighting). Distance prior: normal in log10 km, mean 3.417 (2,613 km),
+sd 0.194, from the 29 dev arrivals. Time prior from deep-water dispersion: the window is centred on the predicted
+arrival of 0.06 Hz swell, so the storm peak is about D / c_g(0.06 Hz) = D / 46.8 km/h before the window centre, give or
+take the ±36 h centring (sd 20.8 h) and the distance uncertainty. After the blend the error bars get their own dev
+factors (distance x1.00, time x1.59). Direction, storm Hs and detection are the network's alone. The time prior assumes
+that centring rule; `predict(X, prior=False)` returns the v1.0 reading for windows cut any other way.
 
 ## Physics and simulator (training/swellsim.py)
 - Deep-water group speed c_g = g/(4 pi f); a component emitted at t_s from distance D arrives at t_s + D/c_g.
@@ -71,6 +79,35 @@ records of the same buoy. r1's errors on the twins correlate with its real error
 0.65 for time); twin log-D MAE 0.135 vs real 0.200. Shipped rung r4: twin log-D MAE 0.124 vs real 0.207, twin t0 MAE 30 h vs real 45 h. Calibration record:
 calib_v2_record.json (real ridge r1 0.47 vs v1 sims 0.79).
 
+### v1.1 ladder: a prior on real readings (15 Nov 2026)
+The network weights did not change, so the frozen simulated set cannot judge these rungs. Rule (fixed before scoring):
+keep if the dev skill (mean over distance and time of 1 − median error / median error of the dev-median guess, every
+number leaving each dev storm out) rises by more than 0.01 and no dev median error gets more than 5% worse. On dev the
+dev-median guess beat r4 (20.3% / 27.0 h vs 37.4% / 36.9 h), the same failure as the exam.
+
+| Rung | Change | Dev D / t0 / dir | Dev skill | Decision |
+|---|---|---|---|---|
+| r4 | v1.0, network alone | 37.4% / 36.9 h / 22.1° | −0.60 | start |
+| r6 | distance prior | 29.1% / 36.9 h / 22.1° | −0.40 | kept |
+| r7 | + dispersion prior on time | 29.1% / 26.8 h / 22.1° | −0.21 | **released as v1.1** |
+| r8 | r7 with error-bar multipliers chosen on the other dev storms | 31.9% / 21.1 h / 22.1° | −0.18 | rejected: distance 10% worse |
+
+### v1.1 exam (scored once, 15 Nov 2026, v1.0 re-scored on the same windows)
+
+| 288 confirmed arrivals | Distance median | Time median | Direction median | Coverage D / t0 / dir |
+|---|---|---|---|---|
+| v1.1 | 29.3% | 26.8 h | 19.2° | 55% / 67% / 70% |
+| v1.0 (re-scored) | 37.5% | 33.5 h | 19.2° | 67% / 74% / 70% |
+| Dev median guess | 28.1% | 24.0 h | 55.7° | - |
+| Classical ridge fit | 58.8% | 48.1 h | 20.4° | - |
+
+v1.1 is better than v1.0 on distance and time and still loses to the dev-median guess on both. Its distance error bars
+are too narrow on the exam (55% coverage). On the looser sets it gains on time and not on distance: visible (649):
+42.0% / 30.3 h vs v1.0 42.2% / 38.8 h and the median guess 38.6% / 30.0 h; all pairs (2,124): 44.3% / 34.4 h vs
+43.9% / 40.7 h and 41.0% / 33.0 h.
+
+The tables below are the v1.0 exam, kept as recorded.
+
 ## Final exam (real, never used for any choice)
 Dumb baseline = always the dev median (2,364 km, t0 -48 h, direction 171 deg).
 Classical = pick the swell ridge and fit f = a (t - t0), D = g/(4 pi a), direction = energy-weighted buoy direction on the ridge.
@@ -112,10 +149,12 @@ By basin (confirmed exam, network): EP n=138: D 32%, t0 30 h, dir 18 deg; NA n=1
 By distance: 1000-2500 km n=133: D 49%, t0 30 h; 2500-5000 km n=114: D 24%, t0 29 h; 5000-8000 km n=41: D 52%, t0 59 h.
 
 ## Limits (read these)
-- On distance and time the network does NOT beat the dumb median guess on this exam (median distance error
-  38% vs 28%, time 33 h vs 24 h). Most exam pairs sit at similar
+- On distance and time the network does NOT beat the dumb median guess on this exam (v1.1: median distance error
+  29% vs 28%, time 27 h vs 24 h; v1.0: 38% and 33 h). Most exam pairs sit at similar
   distances and the window centring gives every method the arrival time to within +-36 h. It does beat the classical
   ridge fit on distance, time and detection, matches it on direction, and its error bars are calibrated.
+- v1.1's distance prior comes from 29 dev arrivals at these buoys; for other buoys or basins it is the wrong prior.
+  Its distance error bars cover only 55% of exam truths.
 - Fails most on far storms (5,000-8,000 km) and West Pacific typhoons.
 - Truth only for tropical cyclones; winter extratropical storms (most long-period swell at Hawaii/California) are not graded.
 - One-point truth (peak wind) for a storm that makes swell for days along a track.

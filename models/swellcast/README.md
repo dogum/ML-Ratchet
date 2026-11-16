@@ -1,5 +1,5 @@
 <!-- Generated from model.yaml and ratchet.yaml by `mlratchet readme --write`. Edit those, not this file. -->
-# SwellCast <sub>v1.0</sub>
+# SwellCast <sub>v1.1</sub>
 
 > **One buoy hears a storm thousands of kilometres away.**
 
@@ -16,7 +16,7 @@ From ten days of NOAA buoy wave spectra, SwellCast says whether storm swell is a
 | **Learned from** | Deep-water dispersion (group speed g/4πf) from a moving, growing and decaying JONSWAP storm patch, spherical spreading on the great circle, Ardhuin et al. 2009 swell dissipation, directional moments, and the buoy's own estimation noise and quantisation. |
 | **Noise** | Quiet 240-hour windows from 27 NDBC buoys (2008–2025); 25% of each batch is a real null window |
 | **Network** | 2-D CNN over frequency × time (log energy, anomaly, two directional moments, data mask), 4 residual stages, 296k parameters; β-NLL and von Mises heads |
-| **Physics also enters** | only through the simulated training data |
+| **Physics also enters** | output: v1.1: the network reading is combined with a dispersion prior on storm time (t0 ≈ −D / c_g at 0.06 Hz) and a distance prior from the dev arrivals |
 | **Real data's jobs** | backdrop, calibration, gate, exam (never training labels) |
 | **Dev set** | 18 storms (seed 2026), 29 confirmed arrivals |
 | **Exam** | 288 confirmed arrivals (632 visible, 2,081 storm–buoy pairs in all) |
@@ -45,28 +45,34 @@ print(r["detected"], r["D_km"], r["t0"], r["dir"])
 
 | Metric | SwellCast | Baselines | |
 |---|---|---|---|
-| Distance, median error | **38%** | Classical ridge fit f = a(t − t0) (classical): 59%<br>Dev median guess (dumb baseline): 28% | ❌ loses |
-| Storm time, median error | **33 h** | Classical ridge fit (classical): 48 h<br>Dev median guess (dumb baseline): 24 h | ❌ loses |
-| Direction, median error | **19 deg** | Classical ridge fit (classical): 20 deg<br>Dev median guess (dumb baseline): 56 deg | ➖ tie |
+| Distance, median error<br><sub>v1.1 shrinks the network's distance toward a prior from the dev arrivals. v1.0: 38% (re-scored 37.5%). Still 1 point behind the median guess.</sub> | **29%** | Classical ridge fit f = a(t − t0) (classical): 59%<br>Dev median guess (dumb baseline): 28% | ❌ loses |
+| Storm time, median error<br><sub>v1.1 adds a dispersion prior (t0 ≈ −D / c_g at 0.06 Hz, from the window's centring rule). v1.0: 33 h (re-scored 33.5 h).</sub> | **27 h** | Classical ridge fit (classical): 48 h<br>Dev median guess (dumb baseline): 24 h | ❌ loses |
+| Direction, median error<br><sub>Unchanged in v1.1 (19.2° vs 20.4°).</sub> | **19 deg** | Classical ridge fit (classical): 20 deg<br>Dev median guess (dumb baseline): 56 deg | ➖ tie |
 | Arrivals detected | **63%** | Classical ridge fit (classical): 43% | ✅ wins |
 
-Coverage of the 68% error bars on the exam: Distance **67%**, Time **74%**, Direction **70%**.
+Coverage of the 68% error bars on the exam: Distance **55%**, Time **67%**, Direction **70%**.
 
 ### Where it wins
 
-- Beats the classical ridge fit on distance, time and detection; ties it on direction; calibrated error bars.
+- Beats the classical ridge fit on distance, time and detection; ties it on direction.
+- v1.1: combining the network with a distance prior and a dispersion prior on time cut the exam errors from 38% to 29% (distance) and 33 h to 27 h (time).
 
 ### Where it loses
 
-- Doesn't beat the dumb median guess on distance or time — the exam geography is narrow and the window is centred within ±36 h of the arrival.
+- Doesn't beat the dumb median guess on distance (29% vs 28%) or time (27 h vs 24 h) — the exam geography is narrow and the window is centred within ±36 h of the arrival.
+- v1.1's distance error bars are too narrow on the exam: 55% coverage of the nominal 68% (v1.0: 67%).
 
 ## Limits
 
 - Truth is tropical cyclones only; Southern Ocean and North Pacific winter storms are not graded.
 - One-point truth (peak wind) for a storm that makes swell for days along a track.
 - The calibrated v2/v3 simulators match dev statistics better but alone make real dev readings worse; the cause is not understood.
+- v1.1's time prior assumes the window is centred on the predicted 0.06 Hz arrival (±36 h); for other windows use predict(..., prior=False).
+- The distance prior comes from 29 dev arrivals at the same buoys; at other buoys or storm basins it would be wrong.
 
 ## The ratchet
+
+### SwellCast
 
 **Objective:** Mean skill over log distance, storm time, direction, log Hs and detection on the frozen simulated set  
 **Rule:** Keep if the objective rises by more than 0.01 AND dev errors get no more than 5% worse.
@@ -82,6 +88,22 @@ Coverage of the 68% error bars on the exam: Distance **67%**, Time **74%**, Dire
 <sub>Columns after *Why*: Real dev set (18 storms), median errors — the gate's input.</sub>
 
 Calibrated simulators (v2, v3) matched dev statistics better but alone made real dev readings worse. Mixing all three banks fixed it.
+
+### SwellCast v1.1 — prior on real readings
+
+**Objective:** Dev skill: mean over distance and time of 1 − (median error / median error of the dev-median guess), every number scored leaving each dev storm out  
+**Rule:** Keep if the dev skill rises by more than 0.01 AND no dev median error (distance, time, direction) gets more than 5% worse.
+
+| Rung | Change | Frozen-set score | Decision | Why | Distance | Time | Direction |
+|---|---|---|---|---|---|---|---|
+| r4 | Start: the v1.0 release, network reading alone | — | ● kept | Starting point. Dev skill −0.60 (the dev-median guess scores 0). | 37% | 37 h | 22° |
+| r6 | Distance prior: network log D and a normal prior from the dev arrivals, weighted by their error bars | — | ● kept | Dev skill −0.40 vs −0.60; no error worse. | 29% | 37 h | 22° |
+| r7 | r6 + dispersion prior on time: t0 ≈ −D / c_g(0.06 Hz) ± the window's 36 h centring, weighted against the network's t0 | — | **◆ released** | Dev skill −0.21 vs −0.40; no error worse. | 29% | 27 h | 22° |
+| r8 | r7 with the network's distance and time error bars multiplied by factors chosen on the other dev storms | — | ○ rejected | Dev skill −0.18 vs −0.21, but the distance error got 10% worse (32% vs 29%). | 32% | 21 h | 22° |
+
+<sub>Columns after *Why*: Real dev set (29 arrivals, 10 storms), median errors, each storm left out of its own prior.</sub>
+
+Added 15 Nov 2026, rule fixed before any of these rungs was scored. The network weights do not change, so the frozen simulated set (val3) cannot judge a prior fitted to real storms. On dev the dev-median guess (left one storm out) beats rung 4 on distance (20% vs 37%) and time (27 h vs 37 h), the same failure as on the exam. Deterministic post-processing, so there is no seed spread; a bootstrap over the 10 dev storms puts rung 7's gain over rung 4 above zero in 95% of resamples.
 
 Raw per-rung logs are in [`training/`](training/).
 

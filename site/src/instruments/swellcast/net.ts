@@ -7,6 +7,8 @@ export interface SMeta {
   n_blocks: number; n_head: number; mu_y: number[]; sd_y: number[];
   sigma_factor: { logD: number; t0: number; dir: number; loghs: number };
   det_thr: number;
+  /** v1.1: prior the calibrated reading is combined with (swellcast.py apply_prior) */
+  prior?: { logD_mean: number; logD_sd: number; cg06_kmh: number; jitter_h: number; sigma_factor: { logD: number; t0: number } };
 }
 export interface SExample {
   name: string; buoy: string; basin: string; year: number; raw: boolean; place: string;
@@ -95,11 +97,20 @@ export function read(W: Pack<SMeta>, x: Float32Array): { r: Reading; raw: Float3
   const sig = (k: number) => Math.exp(Math.min(3, Math.max(-6, o[3 + k]))) * sd[k] * F[k];
   const kappa = Math.hypot(o[6], o[7]) / (f.dir ?? 1) ** 2;
   const p = 1 / (1 + Math.exp(-o[8]));
-  const logD = val(0), loghs = val(2);
+  let logD = val(0), logD_sig = sig(0), t0 = val(1), t0_sig = sig(1);
+  const loghs = val(2), pr = W.meta.prior;
+  if (pr) {
+    // v1.1: precision-weighted with a distance prior, then a dispersion prior on time (t0 ~ -D / c_g at 0.06 Hz)
+    const wn = 1 / logD_sig ** 2, wp = 1 / pr.logD_sd ** 2;
+    logD = (wn * logD + wp * pr.logD_mean) / (wn + wp); const sD = 1 / Math.sqrt(wn + wp); const D = 10 ** logD;
+    const tw = -D / pr.cg06_kmh, sw2 = pr.jitter_h ** 2 / 3 + (Math.LN10 * D / pr.cg06_kmh * sD) ** 2;
+    const a = 1 / t0_sig ** 2, b = 1 / sw2;
+    t0 = (a * t0 + b * tw) / (a + b); t0_sig = (pr.sigma_factor.t0 ?? 1) / Math.sqrt(a + b); logD_sig = sD * (pr.sigma_factor.logD ?? 1);
+  }
   const r: Reading = {
     p_swell: p, detected: p > (det_thr ?? 0.5),
-    D_km: 10 ** logD, logD, logD_sig: sig(0),
-    t0: val(1), t0_sig: sig(1),
+    D_km: 10 ** logD, logD, logD_sig,
+    t0, t0_sig,
     hs: 10 ** loghs, loghs, loghs_sig: sig(2),
     dir: ((Math.atan2(o[6], o[7]) * 180) / Math.PI + 360) % 360,
     kappa, half: Math.min(180, 57.29577951308232 / Math.sqrt(Math.max(kappa, 1e-3))),

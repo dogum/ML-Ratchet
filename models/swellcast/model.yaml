@@ -1,8 +1,8 @@
 id: swellcast
 name: SwellCast
-version: "1.0"
+version: "1.1"
 status: released
-released: 2026-11-06
+released: 2026-11-15
 order: 7
 domain: Oceanography
 tags: [ocean waves, dispersion, storm location, spectra, uncertainty]
@@ -42,7 +42,7 @@ network: 2-D CNN over frequency × time (log energy, anomaly, two directional mo
 approach:
   real_backdrop: "Quiet 240-hour windows from 27 NDBC buoys"
   physics_inputs: false
-  physics_anchor: false
+  physics_anchor: "v1.1: the network reading is combined with a dispersion prior on storm time (t0 ≈ −D / c_g at 0.06 Hz) and a distance prior from the dev arrivals"
   real_data_roles: [backdrop, calibration, gate, exam]
 
 data:
@@ -65,20 +65,22 @@ exam:
   results:
     - metric: Distance, median error
       better: lower
-      model: 38
+      model: 29
       unit: "%"
       baselines:
         - { name: "Classical ridge fit f = a(t − t0)", kind: classical, value: 59 }
         - { name: "Dev median guess", kind: dumb, value: 28 }
       verdict: loss
+      note: "v1.1 shrinks the network's distance toward a prior from the dev arrivals. v1.0: 38% (re-scored 37.5%). Still 1 point behind the median guess." 
     - metric: Storm time, median error
       better: lower
-      model: 33
+      model: 27
       unit: h
       baselines:
         - { name: "Classical ridge fit", kind: classical, value: 48 }
         - { name: "Dev median guess", kind: dumb, value: 24 }
       verdict: loss
+      note: "v1.1 adds a dispersion prior (t0 ≈ −D / c_g at 0.06 Hz, from the window's centring rule). v1.0: 33 h (re-scored 33.5 h)." 
     - metric: Direction, median error
       better: lower
       model: 19
@@ -87,6 +89,7 @@ exam:
         - { name: "Classical ridge fit", kind: classical, value: 20 }
         - { name: "Dev median guess", kind: dumb, value: 56 }
       verdict: tie
+      note: "Unchanged in v1.1 (19.2° vs 20.4°)." 
     - metric: Arrivals detected
       better: higher
       model: 63
@@ -95,18 +98,22 @@ exam:
         - { name: "Classical ridge fit", kind: classical, value: 43 }
       verdict: win
   coverage:
-    - { output: Distance, actual: 67 }
-    - { output: Time, actual: 74 }
+    - { output: Distance, actual: 55 }
+    - { output: Time, actual: 67 }
     - { output: Direction, actual: 70 }
 
 wins:
-  - Beats the classical ridge fit on distance, time and detection; ties it on direction; calibrated error bars.
+  - Beats the classical ridge fit on distance, time and detection; ties it on direction.
+  - "v1.1: combining the network with a distance prior and a dispersion prior on time cut the exam errors from 38% to 29% (distance) and 33 h to 27 h (time)." 
 losses:
-  - Doesn't beat the dumb median guess on distance or time — the exam geography is narrow and the window is centred within ±36 h of the arrival.
+  - Doesn't beat the dumb median guess on distance (29% vs 28%) or time (27 h vs 24 h) — the exam geography is narrow and the window is centred within ±36 h of the arrival.
+  - "v1.1's distance error bars are too narrow on the exam: 55% coverage of the nominal 68% (v1.0: 67%)." 
 limits:
   - Truth is tropical cyclones only; Southern Ocean and North Pacific winter storms are not graded.
   - One-point truth (peak wind) for a storm that makes swell for days along a track.
   - The calibrated v2/v3 simulators match dev statistics better but alone make real dev readings worse; the cause is not understood.
+  - v1.1's time prior assumes the window is centred on the predicted 0.06 Hz arrival (±36 h); for other windows use predict(..., prior=False).
+  - The distance prior comes from 29 dev arrivals at the same buoys; at other buoys or storm basins it would be wrong.
 help_wanted:
   - "Extratropical storm truth: the Open-Meteo archive and marine API hit its daily request limit from the shared build machine's IP, so only tropical cyclones (IBTrACS) are graded. A reachable, documented reanalysis endpoint would add Southern Ocean and North Pacific winter storms."
 next:
