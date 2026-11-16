@@ -7,12 +7,20 @@ fit on dev afterwards.
 
 An event is a run of hours with RT - DA > u = $100/MWh. Fitted:
   H[24], M[12]   start counts by local hour and month (pooled, +0.5 each, circular [1, 2, 1] smoothing, mean 1)
-  beta           effect of the standardised demand-forecast miss z on the start rate (Bernoulli likelihood, grid)
+  beta           effect of the standardised demand-forecast miss z on the start rate (Bernoulli likelihood)
+  gamma_rank,    effect of the DA price's rank within its local day and of its level against the median of the
+  gamma_level    previous 7 days (gridsim.market.da_shape); second fit only
   r0             base start rate, so that the expected starts equal the observed ones
   q              1 / mean event duration (geometric)
   xi, sigma      generalised Pareto fit of the hourly excess RT - DA - u in event hours (scipy, loc 0)
   rho            lag-1 correlation of the normal scores of that excess inside events (Gaussian copula)
-Writes gridsim/gridsim/data/rt_scarcity_v1_2.json.
+Writes gridsim/gridsim/data/rt_scarcity_v1_2.json with two fits, both on the training-input years only:
+  ERCO_first_fit  H, M, beta (beta on a 0.05 grid). BatteryPilot's twin test on dev 2019 then showed what it misses:
+                  real unforecast spikes fall in the hours the DA already marks as the day's dearest (the rolling DA
+                  optimiser, discharging in those hours, gained $47.8k/MW from hours with RT - DA > $100 in real
+                  2019; on twins with this fit only $9.6-11.0k/MW), while this fit placed them by clock hour only.
+  ERCO            M, beta, gamma_rank, gamma_level (Nelder-Mead), with the hour profile H or without it (H = 1),
+                  whichever has the lower AIC on the training years (H counted as 23 parameters). The default.
 
 usage: python shared/grid/checks/fit_rt_scarcity.py
 """
@@ -22,12 +30,13 @@ import sys
 
 import numpy as np
 import pandas as pd
-from scipy import stats
+from scipy import optimize, stats
 
 GRID_CODE = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 sys.path.insert(0, f"{GRID_CODE}/gridsim")
 sys.path.insert(0, GRID_CODE)
 import griddata as gd  # noqa: E402
+from gridsim.market import da_shape  # noqa: E402
 
 TRAIN = (2018, 2020, 2022)
 U = 100.0
@@ -37,7 +46,8 @@ OUT = os.path.join(GRID_CODE, 'gridsim', 'gridsim', 'data', 'rt_scarcity_v1_2.js
 
 
 def year_frame(year, node=NODE):
-    """Hourly frame (UTC) of one year: rt, da, demand error fraction e = (d - df) / df, local hour and month."""
+    """Hourly frame (UTC) of one year: rt, da, demand error fraction e = (d - df) / df, local hour and month, and the
+    DA shape (rank within the local day, level against the previous 7 days)."""
     s, e = pd.Timestamp(f'{year}-01-01', tz='UTC'), pd.Timestamp(f'{year + 1}-01-01', tz='UTC')
     idx = pd.date_range(s, e, freq='h', inclusive='left')
     rt = gd.prices('ERCOT', node, s, e, kind='rt').price
@@ -56,7 +66,9 @@ def year_frame(year, node=NODE):
     loc = idx.tz_convert('America/Chicago')
     f['hour'] = loc.hour
     f['month'] = loc.month
-    return f.dropna(subset=['rt', 'da'])
+    f = f.dropna(subset=['rt', 'da'])
+    f['rank'], f['level'] = da_shape(f.index, f.da.values, 'ERCO')
+    return f
 
 
 def events(s, u=U):
@@ -74,8 +86,10 @@ def smooth_circ(c):
     return s
 
 
-def fit(frames):
-    hs, ms, starts, eligible, z_all, durs, exc, pairs = [], [], [], [], [], [], [], []
+def fit(frames, shape=False):
+    """shape=False: the first fit (H, M, beta).  shape=True: M, beta, gamma_rank, gamma_level, with the hour profile
+    H or without it (H = 1), whichever has the lower AIC."""
+    hs, ms, starts, eligible, z_all, durs, exc, pairs, rk, lv = [], [], [], [], [], [], [], [], [], []
     for f in frames:
         s = (f.rt - f.da).values
         st, L = events(s)
@@ -87,7 +101,7 @@ def fit(frames):
         # eligible hours: not inside a running event (a start hour is eligible)
         elig = ~act | start
         hs.append(f.hour.values); ms.append(f.month.values); starts.append(start); eligible.append(elig)
-        z_all.append(f.e.values)
+        z_all.append(f.e.values); rk.append(f['rank'].values); lv.append(f['level'].values)
         durs += list(L)
         for a, n in zip(st, L):
             x = s[a:a + n] - U
@@ -95,6 +109,7 @@ def fit(frames):
             pairs += [(x[k], x[k + 1]) for k in range(n - 1)]
     hour = np.concatenate(hs); month = np.concatenate(ms); start = np.concatenate(starts)
     elig = np.concatenate(eligible); e = np.concatenate(z_all)
+    rank = np.concatenate(rk); level = np.concatenate(lv)
     err_sd = float(np.std(e))
     z = np.clip(e / err_sd, -4, 4)
     H = smooth_circ(np.bincount(hour[start], minlength=24))
@@ -117,6 +132,34 @@ def fit(frames):
     beta = float(grid[int(np.argmax(lls))])
     ll0 = loglik(0.0)[0]
     _, r0 = loglik(beta)
+    extra = {}
+    if shape:
+        def nll(th, Hv):
+            b, a, c = th
+            w = Hv[hour] * M[month - 1] * np.exp(b * z + a * (rank - 0.5) + c * level)
+            r = start.sum() / w[elig].sum()
+            pp = np.clip(r * w, 1e-9, 0.9)
+            return -np.sum(np.where(start, np.log(pp), np.log1p(-pp))[elig])
+        variants = {}
+        for name, Hv, k in (('with_H', H, 3 + 23), ('flat_H', np.ones(24), 3)):
+            res = optimize.minimize(lambda th: nll(th, Hv), x0=[beta, 0.0, 0.0], method='Nelder-Mead',
+                                    options=dict(xatol=1e-4, fatol=1e-4, maxiter=4000))
+            variants[name] = dict(beta=round(float(res.x[0]), 4), gamma_rank=round(float(res.x[1]), 4),
+                                  gamma_level=round(float(res.x[2]), 4), loglik=round(float(-res.fun), 2),
+                                  aic=round(float(2 * k + 2 * res.fun), 2))
+        pick = min(variants, key=lambda n: variants[n]['aic'])
+        v = variants[pick]
+        beta = v['beta']
+        if pick == 'flat_H':
+            H = np.ones(24)
+        # r0 for the normalised factors gridsim.market uses (each factor divided by its mean over the series)
+        g = np.exp(beta * z); g = g / g[elig].mean()
+        kf = np.exp(v['gamma_rank'] * (rank - 0.5) + v['gamma_level'] * level); kf = kf / kf.mean()
+        r0 = float(start.sum() / (H[hour] * M[month - 1] * g * kf)[elig].sum())
+        extra = dict(gamma_rank=v['gamma_rank'], gamma_level=v['gamma_level'])
+        shape_info = dict(variants=variants, picked=pick,
+                          first_fit=dict(loglik=round(float(max(lls)), 2),
+                                         aic=round(float(2 * (1 + 23) - 2 * max(lls)), 2)))
     durs = np.asarray(durs)
     q = float(1.0 / durs.mean())
     exc = np.asarray(exc)
@@ -124,30 +167,39 @@ def fit(frames):
     pairs = np.asarray(pairs)
     sc = stats.norm.ppf(np.clip(stats.genpareto.cdf(pairs, xi, scale=sigma), 1e-6, 1 - 1e-6))
     rho = float(np.corrcoef(sc[:, 0], sc[:, 1])[0, 1]) if len(sc) > 2 else 0.0
-    return dict(u=U, r0=float(r0), H=[round(float(v), 4) for v in H], M=[round(float(v), 4) for v in M],
-                beta=beta, err_sd=round(err_sd, 5), q=round(q, 4), xi=round(float(xi), 4),
-                sigma=round(float(sigma), 3), rho=round(rho, 3), x_max=X_MAX), \
-        dict(n_events=int(len(durs)), n_event_hours=int(len(exc)), mean_duration_h=round(float(durs.mean()), 3),
-             max_duration_h=int(durs.max()), duration_counts={int(k): int(v) for k, v in
-                                                            zip(*np.unique(durs, return_counts=True))},
-             start_counts_by_hour=np.bincount(hour[start], minlength=24).tolist(),
-             start_counts_by_month=np.bincount(month[start] - 1, minlength=12).tolist(),
-             loglik_beta=round(float(max(lls)), 2), loglik_beta0=round(float(ll0), 2),
-             likelihood_ratio_stat=round(float(2 * (max(lls) - ll0)), 2),
-             excess_quantiles={str(qq): round(float(np.quantile(exc, qq)), 1) for qq in (0.25, 0.5, 0.75, 0.9, 0.99)},
-             excess_mean=round(float(exc.mean()), 1), n_pairs=int(len(pairs)))
+    p = dict(u=U, r0=float(r0), H=[round(float(v), 4) for v in H], M=[round(float(v), 4) for v in M],
+             beta=beta, err_sd=round(err_sd, 5), q=round(q, 4), xi=round(float(xi), 4),
+             sigma=round(float(sigma), 3), rho=round(rho, 3), x_max=X_MAX, **extra)
+    info = dict(n_events=int(len(durs)), n_event_hours=int(len(exc)), mean_duration_h=round(float(durs.mean()), 3),
+                max_duration_h=int(durs.max()), duration_counts={int(k): int(v) for k, v in
+                                                               zip(*np.unique(durs, return_counts=True))},
+                start_counts_by_hour=np.bincount(hour[start], minlength=24).tolist(),
+                start_counts_by_month=np.bincount(month[start] - 1, minlength=12).tolist(),
+                loglik_beta=round(float(max(lls)), 2), loglik_beta0=round(float(ll0), 2),
+                likelihood_ratio_stat=round(float(2 * (max(lls) - ll0)), 2),
+                excess_quantiles={str(qq): round(float(np.quantile(exc, qq)), 1)
+                                  for qq in (0.25, 0.5, 0.75, 0.9, 0.99)},
+                excess_mean=round(float(exc.mean()), 1), n_pairs=int(len(pairs)))
+    if shape:
+        info['shape_fit'] = shape_info
+    return p, info
 
 
 if __name__ == '__main__':
     frames = [year_frame(y) for y in TRAIN]
-    p, info = fit(frames)
+    p0, info0 = fit(frames, shape=False)
+    p, info = fit(frames, shape=True)
     out = dict(
         version='1.2', fitted='2026-11-15', fitted_on=f'ERCOT {NODE} RT and DA prices and EIA-930 ERCO demand '
         f'forecast errors of the training-input years {list(TRAIN)} only (splits.json); dev and exam prices unused',
         script='shared/grid/checks/fit_rt_scarcity.py',
         note='CAISO has no fit: its prices start in Aug 2023 (OASIS history limit), so no training-year prices '
              'exist. gridsim.market returns zeros for any region without parameters.',
-        regions=dict(ERCO=dict(p, node=NODE, fit=info)))
+        regions=dict(ERCO=dict(p, node=NODE, fit=info),
+                     ERCO_first_fit=dict(p0, node=NODE, fit=info0,
+                                         note='the first 1.2 fit (no DA-shape term, clock-hour profile); '
+                                              'BatteryPilot frozen set v5 was built with it')))
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     json.dump(out, open(OUT, 'w'), indent=1)
-    print(json.dumps(out, indent=1))
+    print(json.dumps({k: p[k] for k in ('r0', 'beta', 'gamma_rank', 'gamma_level')}),
+          json.dumps(info['shape_fit']))

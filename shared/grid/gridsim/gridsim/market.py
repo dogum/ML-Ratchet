@@ -7,9 +7,13 @@ What the DA cannot see are forced outages after it clears, net-load forecast mis
 
 This module draws that part as a marked point process on the hourly RT-minus-DA spread:
 
-* an event starts in hour t with probability  p_t = r0 * H[local hour] * M[month] * g(z_t)  (not while one runs),
-  with g(z) = exp(beta z) / mean(exp(beta z)) and z = (actual - forecast demand) / forecast / err_sd, clipped to
-  +-4: misses of the day-ahead demand forecast make RT scarcity more likely;
+* an event starts in hour t with probability  p_t = r0 * H[local hour] * M[month] * g(z_t) * k_t  (not while one
+  runs), with g(z) = exp(beta z) / mean(exp(beta z)) and z = (actual - forecast demand) / forecast / err_sd, clipped
+  to +-4: misses of the day-ahead demand forecast make RT scarcity more likely;
+  k_t = exp(gamma_rank (rank_t - 0.5) + gamma_level level_t) / its mean: the DA price's own shape, rank_t its rank
+  within the local day (0-1) and level_t = log(DA / median DA of the previous 7 days), clipped to +-2. Unforecast
+  scarcity strikes when the system is already tight: in the hours the DA marks as the day's dearest. The DA knows
+  WHEN the system is tight, not by how much (fit "ERCO"; the first fit "ERCO_first_fit" had no k_t, H instead);
 * it lasts D hours, P(D = d) = q (1 - q)^(d - 1);
 * each of its hours adds u + X $/MWh to the RT price, X ~ generalised Pareto(xi, sigma) (the excess over the
   threshold u), adjacent hours of one event tied by a Gaussian copula with correlation rho.
@@ -42,6 +46,7 @@ PARAMS_FILE = os.path.join(HERE, "data", "rt_scarcity_v1_2.json")
 VERSIONS = ("1.2",)          # physics versions in which the process is on
 TZ = {"ERCO": "America/Chicago", "CISO": "America/Los_Angeles"}
 KEYS = ("u", "r0", "H", "M", "beta", "err_sd", "q", "xi", "sigma", "rho", "x_max")
+OPTIONAL = {"gamma_rank": 0.0, "gamma_level": 0.0}
 
 
 def enabled(version=None):
@@ -50,11 +55,37 @@ def enabled(version=None):
 
 
 def params(region="ERCO"):
-    """The fitted parameters of a region (ERCO only), or None."""
+    """The fitted parameters of a region (ERCO; ERCO_first_fit = the first 1.2 fit, without the DA-shape term), or
+    None."""
     if not os.path.exists(PARAMS_FILE):
         return None
     p = json.load(open(PARAMS_FILE)).get("regions", {}).get(region)
-    return None if p is None else {k: p[k] for k in KEYS}
+    return None if p is None else dict({k: p[k] for k in KEYS}, **{k: p.get(k, v) for k, v in OPTIONAL.items()})
+
+
+def da_shape(times, da, region="ERCO"):
+    """(rank within the local day 0-1, log(DA / median DA of the previous 168 h) clipped to +-2) of a DA series."""
+    t = pd.DatetimeIndex(times)
+    if t.tz is None:
+        t = t.tz_localize("UTC")
+    loc = t.tz_convert(TZ.get(region, "UTC"))
+    x = pd.Series(np.asarray(da, float), index=np.arange(len(t)))
+    day = pd.Series(loc.normalize().tz_localize(None), index=x.index)
+    rank = x.groupby(day.values).rank(pct=True, method="average").values
+    n = x.groupby(day.values).transform("size").values
+    rank = np.where(n > 1, (rank * n - 1) / np.maximum(n - 1, 1), 0.5)
+    med = x.rolling(168, min_periods=24).median().shift(1).bfill().fillna(x.median()).values
+    level = np.clip(np.log(np.maximum(x.values, 1.0) / np.maximum(med, 1.0)), -2.0, 2.0)
+    return rank, level
+
+
+def _shape_factor(times, region, p, da):
+    gr, gl = float(p.get("gamma_rank", 0.0)), float(p.get("gamma_level", 0.0))
+    if da is None or (gr == 0.0 and gl == 0.0):
+        return 1.0
+    rank, level = da_shape(times, da, region)
+    k = np.exp(gr * (rank - 0.5) + gl * level)
+    return k / k.mean()
 
 
 def _local(times, region):
@@ -65,7 +96,7 @@ def _local(times, region):
     return np.asarray(loc.hour), np.asarray(loc.month)
 
 
-def _setup(times, region, p, version, scale):
+def _setup(times, region, p, version, scale, da=None):
     if not enabled(version):
         return None, None
     p = p if p is not None else params(region)
@@ -73,6 +104,7 @@ def _setup(times, region, p, version, scale):
         return None, None
     hour, month = _local(times, region)
     base = float(p["r0"]) * scale * np.asarray(p["H"], float)[hour] * np.asarray(p["M"], float)[month - 1]
+    base = base * _shape_factor(times, region, p, da)
     return p, np.clip(base, 0.0, 0.5)
 
 
@@ -84,19 +116,20 @@ def _mean_excess(p):
 
 
 def rt_scarcity(times, region="ERCO", seed=0, demand_err=None, params_=None, version=None, scale=1.0,
-                return_events=False):
+                return_events=False, da=None):
     """RT-minus-DA scarcity adder [$/MWh] for each hour of `times` (UTC or tz-aware hourly index).
 
     demand_err: (actual - day-ahead forecast) / forecast demand per hour (fraction), or None (z = 0).
     params_: a parameter dict (keys KEYS) instead of the fitted region parameters.
     scale: multiplies the start rate (scenario randomisation).
+    da: the day-ahead price of each hour ($/MWh, before any scarcity premium), for the DA-shape term k_t (None: k = 1).
     version: physics version (default $GRIDSIM_PHYSICS); the adder is zero unless it is 1.2.
     The process has its own random stream (seed), so it never changes a caller's other draws.
     Returns the adder (T,), and with return_events=True also a list of (start index, duration).
     """
     T = len(times)
     out = np.zeros(T)
-    p, base = _setup(times, region, params_, version, scale)
+    p, base = _setup(times, region, params_, version, scale, da)
     if p is None:
         return (out, []) if return_events else out
     rng = np.random.default_rng([int(seed) & 0x7FFFFFFF, 120])
@@ -129,11 +162,11 @@ def rt_scarcity(times, region="ERCO", seed=0, demand_err=None, params_=None, ver
     return (out, events) if return_events else out
 
 
-def expected(times, region="ERCO", params_=None, version=None, scale=1.0):
+def expected(times, region="ERCO", params_=None, version=None, scale=1.0, da=None):
     """Mean adder [$/MWh] per hour without knowledge of the forecast miss (what a risk-neutral DA prices in):
     P(an event is running in hour t) x E[u + min(X, x_max)].  Zero unless physics 1.2."""
     T = len(times)
-    p, base = _setup(times, region, params_, version, scale)
+    p, base = _setup(times, region, params_, version, scale, da)
     if p is None:
         return np.zeros(T)
     q = float(p["q"])
