@@ -1,8 +1,9 @@
 // BatteryPilot live instrument: three real exam node-years (ERCOT 2023 and 2024 hubs, CAISO SP15 2025), never used in
-// training. For the chosen month the browser rebuilds the 135 causal features every hour, runs the network for the
-// value curve, and runs a 1 MW battery against the real RT price with the offer rule; GridData's daily-spread rule
-// runs alongside, and both settle with rainflow wear. Controls change the battery (duration, round-trip efficiency,
-// wear cost), which changes the network's input (the wear cost it is told) and the physics it is graded with.
+// training. For the chosen month the browser rebuilds the 135 causal features (and, for v1.3, the day-ahead backbone
+// curve) every hour, runs the network for the value curve, and runs a 1 MW battery against the real RT price with
+// the offer rule; GridData's daily-spread rule runs alongside, and both settle with rainflow wear. Controls change
+// the battery (duration, round-trip efficiency, wear cost), which changes the network's input (the wear cost it is
+// told) and the physics it is graded with.
 // Perfect hindsight is an LP solved in Python for every slider setting and is labelled as precomputed.
 import type { InstrumentContext } from '../types.ts';
 import { fetchPack } from '../../lib/nn/pack.ts';
@@ -47,7 +48,9 @@ export async function mount(ctx: InstrumentContext) {
   const ui = shell(ctx.root, {
     title: 'BatteryPilot',
     subtitle: 'a 1 MW grid battery on a real exam year of prices, never used in training',
-    params: `MLP 135→128→128→5, ${W.meta.n_params.toLocaleString('en-US')} weights (float16) · matches Python to 1e-5`,
+    params: W.meta.hybrid
+      ? `day-ahead backbone + MLP ${W.t.x_mu.data.length}→128→128→5 residual, ${W.meta.n_params.toLocaleString('en-US')} weights (float16) · matches Python to 1e-5`
+      : `MLP 135→128→128→5, ${W.meta.n_params.toLocaleString('en-US')} weights (float16) · matches Python to 1e-5`,
   });
   const net = makeNet(W);
   const paths: Record<number, Path> = {};

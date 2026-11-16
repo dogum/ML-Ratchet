@@ -1,4 +1,4 @@
-# BatteryPilot v1.1 — model card
+# BatteryPilot v1.3 — model card
 
 **What it does.** A causal dispatch policy for a grid-scale battery doing energy arbitrage. Before each hour it
 returns an offer curve: the marginal value of one stored MWh at 0, 25, 50, 75 and 100 % state of charge. The battery
@@ -6,8 +6,11 @@ sells while the real-time price (after losses and wear) beats that value and buy
 than its price. Works for 1, 2 and 4 h batteries; trained for ERCOT (primary) and CAISO (secondary).
 
 **Versions.** v1.0 (released 14 Nov 2026) trained on GridSim physics 1.0, whose outage rates came from exam-period
-reports. v1.1 (same day, the shipped default) is the leak fix: recalibrated and retrained on physics 1.1. The sections
-below describe the recipe and v1.0's numbers; the v1.1 section gives what changed and the second exam look.
+reports. v1.1 (same day) is the leak fix: recalibrated and retrained on physics 1.1. v1.3 (15 Nov 2026, the shipped
+default) trains on GridSim physics 1.2, which adds real-time scarcity the day-ahead market cannot see, and is a hybrid:
+the rolling day-ahead optimiser's plan as a value curve plus a learned residual. (v1.2 was an attempt that released
+nothing.) The sections below describe the recipe and v1.0's numbers; the v1.1 and v1.3 sections give what changed
+and each exam look. v1.3 did better than v1.1 on dev and worse on the exam.
 
 **Trained on physics, graded on reality.** No real price path was ever a training sample. Real dev-year prices
 (ERCOT 2019 and 2021, CAISO Aug–Dec 2023) only calibrated the simulator and gated rungs. The exam (ERCOT 2023–2025,
@@ -197,9 +200,92 @@ the CAISO-like family, because the rung that adds it (R3) missed the margin. Ful
 Twin test, v1.1: 94 % on twins of dev 2019 vs 82 % on real 2019; 2021 twins 71-75 % vs 38 % real
 (`training/checks/twin_r2_v4.json`). The sim-to-real gap is as before.
 
+## v1.3: GridSim physics 1.2 and the day-ahead backbone (15 Nov 2026)
+
+**Why.** v1.1 lost both pooled exam rows to the rolling day-ahead optimiser. The v1.2 attempt (not released) found
+the cause on dev: a hybrid anchored on the optimiser's plan beat v1.1 on real dev (0.661 vs 0.638) but lost on the
+simulated frozen set (0.702 vs 0.779), because simulated real-time spikes were too easy to see from the day-ahead
+price. Measured on dev (`training/predictability.py`): the real DA price covers 31 % of the RT value of hours above
+$300 in 2019 and 13 % in 2021 without Uri; physics-1.1 twins 69-72 % and 71-80 %.
+
+**Simulator.** GridSim physics 1.2 (`gridsim.market`, opt-in) adds real-time scarcity the day-ahead market cannot see,
+fitted on ERCOT 2018/2020/2022 prices only (shared/grid/gridsim/LIMITS.md I): unforecast events whose start rate
+follows the DA price's rank within the day and its level against the past week, the month and the real demand-forecast
+miss; geometric duration (mean 2 h); a generalised Pareto size that grows with the DA level. It is added to RT and its
+expectation to DA, with the rate scaled ×0.6-1.5 per path, on ERCOT paths only (no CAISO fit). The dev calibration was
+re-fitted with it, now also matching how much of the spike value the DA sees: ORDC μ −1,000 MW, σ 3,500 MW (a grid
+edge), cold f_max 0.55 (a grid edge); Uri 166 and 156 hours above $1,000 vs 153 real. Twins of dev 2019 now have DA
+coverage 60 % (real 31 %) and a 2 h perfect-foresight value of $77-82/kW-yr (real $103). Banks and frozen set v6 were
+rebuilt with the v4 seeds.
+
+GridSim's process took three fits. The first placed events by clock hour; on its twins the rolling optimiser earned
+$9.6-11.0k/MW in hours with RT − DA > $100 against $47.8k in real 2019, because real spikes fall in the DA's dearest
+hours. The second fit added the DA shape; the third added the size term. A first BatteryPilot build on the first fit
+(frozen set v5) is kept as probes in `training/ratchet_v1_3.json`; the ladder is decided on v6.
+
+**Ladder v1.3** (rule unchanged; every v1.1 and v1.2-attempt decision re-taken in order; `training/ratchet_v1_3.json`):
+
+| Rung | Change | v6 frozen | Dev | Decision |
+|---|---|---|---|---|
+| R0 | Rolling day-ahead LP | 0.384 | 0.593 | incumbent |
+| R1 | MLP on sim v1 (re-scored, bank unchanged) | 0.617 | 0.489 | rejected: dev gate |
+| R2 | MLP, 80 ERCOT path-years | 0.755 | 0.628 | kept |
+| R3 | MLP, 120 ERCOT + 45 CAISO-like | 0.769 | 0.596 | rejected: dev gate |
+| R4 | R3 fine-tuned, 21-day windows | 0.776 | 0.599 | rejected: dev gate |
+| R5 | Backbone alone (reference) | 0.673 | 0.630 | — |
+| R6 | Hybrid, running minimum | 0.732 | 0.581 | rejected |
+| R8 | Hybrid, knots ≥ 0.01 apart, 80 ERCOT | 0.772 | 0.660 | **kept, released** |
+| R9 | R8 on 165 path-years | 0.778 | 0.685 | rejected: +0.006 |
+| R10 | R3 recipe on the v5 banks (chosen after seeing its v5 dev score) | 0.769 | 0.658 | rejected |
+| R11 | R9 fine-tuned, 21-day windows | 0.780 | 0.681 | rejected: +0.008 |
+
+R8 cleared the margin by 0.007: seeds 0, 1, 2 give frozen 0.772, 0.772, 0.767 (sd 0.003) and dev 0.660, 0.667, 0.644
+(sd 0.012). v1.1 re-scored on v6: 0.735 frozen, 0.638 dev. R8 beats it on both and is released as v1.3.
+
+**The network.** The backbone (`value_curves`) is the rolling optimiser's plan as a value curve: at the first hour and
+then at 14:00 local, a backward dynamic programme over the known DA prices (85 % round trip, linear wear proxy, no value
+at the horizon end, 201 SOC points) gives the marginal value of stored energy, read at the 5 knots. The MLP reads the 135
+features plus asinh(backbone / price scale) and outputs a residual; each knot is kept at least 0.01 below the one
+before. 140 → 128 → 128 → 5, 35,205 weights; the last layer starts at zero, so training starts from the backbone.
+Numpy in `batterypilot.py` matches the training code exactly; the browser port matches it to 3.3e-6 (float16 weights
+move the knots by at most 5.8e-4).
+
+**Did the simulator fix work?** In part. On twins of dev 2019 BatteryPilot now captures 76-85 % (real 82 %, 94 % on
+1.1 twins) and the backbone 64-78 % (real 67 %), but the rolling optimiser only 55-56 % (real 79 %, 90 % on 1.1 twins):
+the simulator now under-rates following the DA plan. Over each ladder's own rungs the v6 frozen set ranks like dev
+(Spearman 0.77, the same top two: R9 and R11) where v4 did not (0.68; best frozen R4, best dev R6). Over 10 fixed
+policies (the v1.1 and v1.2-attempt networks, the backbone and the LP) it agrees less than v4 (0.43 vs 0.67)
+(`training/checks/agreement_v1_3*.json`).
+
+**Exam, v1.3** (run once after the release choice was committed; v1.1 re-scored on the same run, identical to its
+second look; `training/checks/exam_report_v1_3.json`). Share of perfect hindsight, net of wear:
+
+| | v1.0 | v1.1 | **v1.3** | DA optimiser | Spread | Threshold |
+|---|---|---|---|---|---|---|
+| ERCOT, all | 0.667 | 0.679 | **0.671** | 0.685 | 0.561 | 0.114 |
+| ERCOT 1 h | 0.559 | 0.578 | **0.548** | 0.629 | 0.531 | 0.018 |
+| ERCOT 2 h | 0.671 | 0.680 | **0.681** | 0.684 | 0.570 | 0.109 |
+| ERCOT 4 h | 0.769 | 0.780 | **0.785** | 0.742 | 0.583 | 0.216 |
+| CAISO, all | 0.642 | 0.614 | **0.594** | 0.681 | 0.589 | 0.158 |
+| CAISO 1 h | 0.563 | 0.521 | **0.483** | 0.641 | 0.552 | 0.104 |
+| CAISO 2 h | 0.634 | 0.604 | **0.579** | 0.680 | 0.592 | 0.166 |
+| CAISO 4 h | 0.730 | 0.719 | **0.718** | 0.723 | 0.623 | 0.203 |
+
+v1.3 wins only ERCOT 4 h (2023 +$12.9/kW-yr, CI [+3.9, +24.7]; 2024 +$4.9, [+3.0, +6.6]; 2025 −$0.7, [−5.5, +2.9]).
+It is worse than v1.1 on both pooled rows although it was better on dev. The dev gain came from one year: 2021 (with
+Uri) 0.48-0.50 vs 0.37-0.38, while 2019 fell (0.77-0.78 vs 0.81-0.82) and so did CAISO Aug-Dec 2023 (0.73 / 0.81 vs
+0.78 / 0.84). The pooled dev gate let the Uri year outweigh the others; 2023-25 had no Uri. 1 h batteries and CAISO got
+worse, as they had on 2019 and CAISO dev. About 222 (ERCOT) and 215
+(CAISO) cycles a year vs 301 and 282 for the optimiser.
+
 ## Limits
-- Loses to the classical day-ahead optimiser on the pooled mean (ERCOT 0.667 vs 0.685, CAISO 0.642 vs 0.681). It wins
-  only with 4 h batteries (ERCOT 0.769 vs 0.742) and loses with 1 h batteries and in CAISO.
+- Loses to the classical day-ahead optimiser on the pooled mean in every version (v1.3: ERCOT 0.671 vs 0.685, CAISO
+  0.594 vs 0.681; v1.0: 0.667 and 0.642). It wins only with 4 h ERCOT batteries (v1.3 0.785 vs 0.742) and loses with
+  1 h batteries and in CAISO.
+- v1.3 was chosen on a pooled dev gate that one year (2021, Uri) dominated; it was worse than v1.1 on dev 2019 and on
+  CAISO dev, and is worse on the exam.
+- GridSim physics 1.2 under-rates following the DA plan: on twins of dev 2019 the rolling optimiser captures 55-56 % vs
+  79 % real. The RT scarcity has no CAISO fit.
 - Twin test: on simulated twins of dev 2019 it captures 91–94 %, on real 2019 80 %; Uri 2021: 64–68 % vs 38 %.
   Real spikes are less predictable from DA prices than simulated ones.
 - Energy arbitrage only, hourly settlement (mean of 15-min RT), no ancillary services, no 5-min prices, price taker,

@@ -1,7 +1,7 @@
 example                             perfect  BatteryPilot  DA optimiser   spread   $/kW-yr net of wear
-CAISO_TH_SP15_2025                     18.1          10.2          11.9     10.6   (BP 264 cycles, 1.8s)
-   peak hour 2025-08-22 01:00:00+00:00 UTC: RT $154; value of a stored MWh at 0/50/100% full = $118, $97, $83; SOC before 100%, after 46%
-ERCOT_HB_HOUSTON_2023                 135.5          93.9          91.4     82.4   (BP 243 cycles, 1.9s)
-   peak hour 2023-09-07 00:00:00+00:00 UTC: RT $5118; value of a stored MWh at 0/50/100% full = $25, $23, $22; SOC before 46%, after 0%
-ERCOT_HB_WEST_2024                     51.1          39.4          37.6     30.7   (BP 299 cycles, 1.9s)
-   peak hour 2024-05-09 01:00:00+00:00 UTC: RT $3057; value of a stored MWh at 0/50/100% full = $16, $15, $14; SOC before 46%, after 0%
+CAISO_TH_SP15_2025                     18.1          10.8          11.9     10.6   (BP 231 cycles, 3.0s)
+   peak hour 2025-08-22 01:00:00+00:00 UTC: RT $154; value of a stored MWh at 0/50/100% full = $73, $66, $50; SOC before 46%, after 0%
+ERCOT_HB_HOUSTON_2023                 135.5         101.5          91.4     82.4   (BP 210 cycles, 3.0s)
+   peak hour 2023-09-07 00:00:00+00:00 UTC: RT $5118; value of a stored MWh at 0/50/100% full = $101, $85, $2; SOC before 0%, after 0%
+ERCOT_HB_WEST_2024                     51.1          38.7          37.6     30.7   (BP 251 cycles, 3.0s)
+   peak hour 2024-05-09 01:00:00+00:00 UTC: RT $3057; value of a stored MWh at 0/50/100% full = $88, $62, $22; SOC before 46%, after 0%

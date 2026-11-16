@@ -1,6 +1,7 @@
 // BatteryPilot in the browser: a pure port of models/batterypilot/batterypilot.py — the causal features (build,
-// rolling_scale, _rollmax), the value-curve network (PolicyNet.z_knots / values), the battery (Battery: c_lin and the
-// rainflow wear of degradation_cost), the offer-curve executor (s_star, step_offer) and GridData's daily-spread rule.
+// rolling_scale, _rollmax), the day-ahead backbone (value_curves, v1.3), the value-curve network (PolicyNet.z_knots /
+// values, plain or hybrid), the battery (Battery: c_lin and the rainflow wear of degradation_cost), the offer-curve
+// executor (s_star, step_offer) and GridData's daily-spread rule.
 // No DOM, so site/tests/parity.test.ts can run it in Node.
 import type { Pack } from '../../lib/nn/pack.ts';
 import type { Tensor } from '../../lib/nn/tensor.ts';
@@ -8,6 +9,7 @@ import type { Tensor } from '../../lib/nn/tensor.ts';
 export interface BPMeta {
   n_params: number; knots: number[]; H_DA: number; H_RT: number; H_DF: number; publish_hour: number; n_feat: number;
   layers: number; f16_max_abs_z_diff: number;
+  hybrid?: boolean; min_step?: number;   // v1.3: the network reads the backbone curve and outputs a residual on it
 }
 export interface Annual { bp: number; pf: number; rolling: number; spread: number; bp_cycles: number }
 export interface ExMeta {
@@ -118,6 +120,74 @@ export function features(m: BPMeta, p: Path, t: number, dur: number, cl: number,
   return j;
 }
 
+// ---- the day-ahead backbone (value_curves in batterypilot.py) ------------------------------------------------------
+/** SOC up to which the decreasing curve lam (on the grid) is >= y (piecewise linear). */
+function cross(lam: Float64Array, y: number, dg: number): number {
+  let s = 0;
+  for (let k = 0; k < lam.length - 1; k++) {
+    const a = lam[k], b = lam[k + 1];
+    const f = a - b <= 1e-12 ? (a >= y ? 1 : 0) : Math.min(Math.max((a - y) / Math.max(a - b, 1e-12), 0), 1);
+    s += f * dg;
+  }
+  return s;
+}
+
+/** Linear interpolation on the uniform grid 0..1 (N+1 points), clamped at the ends (np.interp). */
+function interpU(x: number, f: Float64Array): number {
+  const N = f.length - 1;
+  if (x <= 0) return f[0];
+  if (x >= 1) return f[N];
+  const u = x * N, i = Math.min(Math.floor(u), N - 1), w = u - i;
+  return f[i] + w * (f[i + 1] - f[i]);
+}
+
+/** Backbone value curves ($ per stored MWh at the SOC knots) for hours [0, b): a backward dynamic programme over the
+ * DA prices known at each re-plan (the first hour, then 14:00 local), as backward_pass / value_curves. */
+export function backbone(knots: number[], p: Path, bat: Battery, b: number, N = 200): Float64Array {
+  const K = knots.length, out = new Float64Array(b * K), n = p.da.length;
+  const E = bat.P * bat.d, eta = Math.sqrt(bat.eta), up = (bat.P * eta) / E, dn = bat.P / (eta * E), dg = 1 / N;
+  const grid = new Float64Array(N + 1);
+  for (let i = 0; i <= N; i++) grid[i] = i / N;
+  // local days in order of appearance: first index and end of each
+  const first: number[] = [], pos = new Map<number, number>();
+  for (let t = 0; t < n; t++) if (!pos.has(p.day[t])) { pos.set(p.day[t], first.length); first.push(t); }
+  const ends = first.slice(1).concat([n]);
+  const replan = [0];
+  for (let t = 1; t < n; t++) if (p.hour[t] === 14) replan.push(t);
+  let lam: Float64Array[] = [], W = new Float64Array(N + 1), Wn = new Float64Array(N + 1);
+  const tgt = new Float64Array(N + 1), g = new Float64Array(N + 1);
+  for (let j = 0; j < replan.length && replan[j] < b; j++) {
+    const t0 = replan[j], dj = pos.get(p.day[t0])!;
+    const kend = t0 > 0 || p.hour[t0] >= 14 ? ends[Math.min(dj + 1, ends.length - 1)] : ends[dj];
+    const t1 = j + 1 < replan.length ? replan[j + 1] : n, H = kend - t0;
+    lam = Array.from({ length: H + 1 }, () => new Float64Array(N + 1));
+    W.fill(0);
+    for (let k = H - 1; k >= 0; k--) {
+      const pr = p.da[t0 + k], c = bat.clin(p.T[t0 + k]), nxt = lam[k + 1];
+      const slo = cross(nxt, pr / eta, dg), shi = cross(nxt, eta * (pr - c), dg);
+      for (let i = 0; i <= N; i++) {
+        let x = Math.min(Math.max(grid[i], slo), Math.max(shi, slo));
+        x = Math.min(Math.max(x, grid[i] - dn), grid[i] + up);
+        x = Math.min(Math.max(x, 0), 1);
+        tgt[i] = x;
+        const d = x - grid[i];
+        const r = d > 0 ? (-pr * d * E) / eta : (pr - c) * -d * E * eta;
+        Wn[i] = r + interpU(x, W);
+      }
+      g[0] = (Wn[1] - Wn[0]) / dg / E;
+      g[N] = (Wn[N] - Wn[N - 1]) / dg / E;
+      for (let i = 1; i < N; i++) g[i] = (Wn[i + 1] - Wn[i - 1]) / (2 * dg) / E;
+      const L = lam[k];
+      L[0] = g[0];
+      for (let i = 1; i <= N; i++) L[i] = Math.min(L[i - 1], g[i]);
+      const tmp = W; W = Wn; Wn = tmp;
+    }
+    for (let i = 0; i < Math.min(t1 - t0, H) && t0 + i < b; i++)
+      for (let k = 0; k < K; k++) out[(t0 + i) * K + k] = interpU(knots[k], lam[i + 1]);
+  }
+  return out;
+}
+
 // ---- the network (PolicyNet) -------------------------------------------------------------------------------------
 export function makeNet(W: Pack<BPMeta>) {
   const mu = W.t.x_mu.data, sd = W.t.x_sd.data, L = W.meta.layers;
@@ -140,10 +210,19 @@ export function makeNet(W: Pack<BPMeta>) {
       }
       h = o;
     }
-    z[0] = h[0];
-    for (let k = 1; k < K; k++) {
-      const v = h[k], sp = v > 30 ? v : Math.log1p(Math.exp(v));
-      z[k] = z[k - 1] - (sp + 0.01);
+    if (W.meta.hybrid) {
+      // residual on the backbone knots (the last K inputs), each knot at least min_step below the last
+      const ms = W.meta.min_step ?? 0, off = x0.length - K;
+      for (let k = 0; k < K; k++) {
+        const u = x[off + k] + h[k];
+        z[k] = k === 0 ? u : ms > 0 ? Math.min(z[k - 1] - ms, u) : Math.min(z[k - 1], u);
+      }
+    } else {
+      z[0] = h[0];
+      for (let k = 1; k < K; k++) {
+        const v = h[k], sp = v > 30 ? v : Math.log1p(Math.exp(v));
+        z[k] = z[k - 1] - (sp + 0.01);
+      }
     }
     for (let k = 0; k < K; k++) z[k] = Math.min(Math.max(z[k], -12), 12);
     return z;
@@ -174,12 +253,14 @@ export interface Run { z: Float64Array; V: Float64Array; soc: Float64Array; ch: 
 /** BatteryPilot over hours [a, b), starting empty: the network for every hour, then the offer rule against RT. */
 export function runWindow(W: Pack<BPMeta>, p: Path, bat: Battery, a: number, b: number, net = makeNet(W)): Run {
   const K = W.meta.knots.length, n = b - a, knots = W.meta.knots;
-  const x = new Float64Array(W.meta.n_feat), zt = new Float64Array(K);
+  const x = new Float64Array(W.t.x_mu.data.length), zt = new Float64Array(K);
+  const bb = W.meta.hybrid ? backbone(knots, p, bat, b) : null;
   const r: Run = { z: new Float64Array(n * K), V: new Float64Array(n * K), soc: new Float64Array(n + 1), ch: new Float64Array(n), dis: new Float64Array(n), cl: new Float64Array(n) };
   for (let i = 0; i < n; i++) {
     const t = a + i, cl = bat.clin(p.T[t]);
     r.cl[i] = cl;
     features(W.meta, p, t, bat.d, cl, x);
+    if (bb) for (let k = 0; k < K; k++) x[W.meta.n_feat + k] = Math.asinh(bb[t * K + k] / p.ps[t]);
     net(x, zt);
     for (let k = 0; k < K; k++) { r.z[i * K + k] = zt[k]; r.V[i * K + k] = Math.sinh(zt[k]) * p.ps[t]; }
     const [s, c, d] = stepOffer(knots, bat, r.soc[i], r.V.subarray(i * K, i * K + K), p.rt[t], cl);
@@ -268,10 +349,12 @@ export function settle(bat: Battery, p: Path, a: number, ch: ArrayLike<number>, 
 
 /** Parity vector: raw z knots at the given hours, then the state of charge over the window. */
 export function parityVector(W: Pack<BPMeta>, p: Path, bat: Battery, hours: number[], win: [number, number]) {
-  const net = makeNet(W), K = W.meta.knots.length, x = new Float64Array(W.meta.n_feat), z = new Float64Array(K);
+  const net = makeNet(W), K = W.meta.knots.length, x = new Float64Array(W.t.x_mu.data.length), z = new Float64Array(K);
+  const bb = W.meta.hybrid ? backbone(W.meta.knots, p, bat, Math.max(...hours) + 1) : null;
   const out: number[] = [];
   for (const t of hours) {
     features(W.meta, p, t, bat.d, bat.clin(p.T[t]), x);
+    if (bb) for (let k = 0; k < K; k++) x[W.meta.n_feat + k] = Math.asinh(bb[t * K + k] / p.ps[t]);
     net(x, z);
     out.push(...z);
   }

@@ -68,6 +68,9 @@ def values(net, p, bat, cl):
     n = len(p["rt"])
     ps = bp.rolling_scale(p["da"])
     X, ps = bp.build(p, np.arange(n), bat.d, cl, ps=ps)
+    if net.hybrid:      # v1.3: the day-ahead backbone curve, as run_policy appends it
+        lam = bp.value_curves(p["da"], p["hour"], p["day"], cl, bat.d, P=bat.P, eta_rt=bat.eta_rt)
+        X = np.concatenate([X, np.arcsinh(lam / ps[:, None])], 1).astype(np.float32)
     return net.z_knots(X), net.values(X, ps)
 
 
@@ -81,6 +84,7 @@ def main():
     t0 = time.time()
     W = dict(np.load(os.path.join(MODEL, "batterypilot_weights.npz")))
     W16 = roundtrip(W, "f16")
+    W16.update({k: W[k] for k in ("hybrid", "min_step") if k in W})    # flags, not weights: kept exact (meta)
     net, net16 = bp.PolicyNet(W), bp.PolicyNet(W16)
     paths = [load(n) for n in EXAMPLES]
     tensors, meta = {}, []
@@ -151,7 +155,7 @@ def main():
     n_params = int(sum(v.size for k, v in W.items() if k[0] in "Wb"))
     wmeta = dict(n_params=n_params, knots=bp.SOC_KNOTS.tolist(), H_DA=bp.H_DA, H_RT=bp.H_RT, H_DF=bp.H_DF,
                  publish_hour=bp.PUBLISH_HOUR, n_feat=bp.N_FEAT, layers=sum(1 for k in W if k.startswith("W")),
-                 f16_max_abs_z_diff=worst_f16)
+                 f16_max_abs_z_diff=worst_f16, hybrid=bool(net.hybrid), min_step=float(net.min_step))
     write_pack(OUT / "weights", {k: W[k] for k in ["x_mu", "x_sd"] + sorted(k for k in W if k[0] in "Wb")},
                dtype="f16", meta=wmeta)
     keep = {k: ("i32" if k.split("_")[-1] in INT else "f32") for k in tensors}

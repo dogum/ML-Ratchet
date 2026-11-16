@@ -291,3 +291,104 @@ be calibrated until the twin gap closes; only then can the frozen set judge the 
 **Outcome.** No rung beat v1.1 by the rule; nothing released, no exam run. v1.1 stays. Code kept in `training/`
 (`backbone.py`, `bbcache.py`, `ladder_v1_2.py`, `--hybrid` and `--min-step` in `train.py`, the hybrid path in
 `model.py`, the `bb` reference in `evaluate.py` and `ratchet.py`); `batterypilot.py` is unchanged.
+
+## 15 Nov 2026 — v1.3: GridSim physics 1.2 (RT scarcity the DA cannot see) and the hybrid released
+
+**Goal.** The v1.2 attempt showed that the simulator rewarded DA-predictable spikes: the DA-anchored hybrid was best
+on real dev and worst on the frozen set. Fix the simulator (GridSim physics 1.2), rebuild the frozen set, re-take the
+ladder in order, then try rungs. Rule unchanged (frozen > incumbent + 0.01, dev ≥ incumbent − 0.01). Release only if
+the last incumbent beats v1.1 on dev (0.6382) and v1.1 re-scored on the new frozen set by the rule (written into
+`training/ladder_v1_3.py` before the v6 ladder was scored).
+
+**Dev first** (`training/predictability.py`, `training/checks/predictability_v1_1.json`). How much of the RT value of
+hours above $300 does the DA price cover? Real HB_HUBAVG: 2019 31 % (DA median in those hours $211), 2021 without Uri
+13 %. Physics-1.1 twins (calibration v1.1, outage seeds 1, 2): 2019 69-72 % (DA median $518-559), 2021 without Uri
+71-80 %. The training years agree with dev (2018 30 %, 2020 24 %, 2022 27 %). BatteryPilot's v4 frozen ERCOT paths:
+44-84 %, median 71 %.
+
+**GridSim physics 1.2** (`shared/grid/gridsim/gridsim/market.py`, LIMITS I; opt-in, every other output equals 1.1).
+Unforecast scarcity events on the RT − DA spread, fitted on ERCOT 2018/2020/2022 prices only. Three fits, each on the
+training years, each sent back by a dev check:
+1. `ERCO_first_fit`: start rate by clock hour, month and demand-forecast miss (beta 0.55 per sd; likelihood ratio 52.9),
+   geometric duration (mean 1.97 h), GPD size (xi 0.74, sigma $130). Twins of dev 2019 (v1.1 network): DA coverage
+   50-56 %; BatteryPilot 79-86 % (real 82 %), but the rolling optimiser 46-50 % (real 79 %). Breakdown of the
+   optimiser's 2 h year (`work/scratch/diag_rolling.py`): it earned $47.8k/MW in real-2019 hours with RT − DA > $100
+   while discharging, $9.6-11.0k on the twins. Real spikes fall in the hours the DA already marks as the day's dearest
+   (training years: 29-33 starts per 1,000 h in each day's dearest 5 % of hours vs 0-0.5 in its cheapest quarter).
+2. `ERCO_shape_only`: the clock-hour profile replaced by the DA price's rank within the day and level against the past
+   week (gamma 2.28, 1.32; AIC 1,712 vs 1,879). The same breakdown on twins: $9.3-10.7k. Real spikes are also larger on
+   high-DA days (mean excess $117 in the lowest quartile of DA level among event hours, $756 in the highest).
+3. `ERCO` (default): plus GPD scale $60.7 × exp(1.11 level), xi 0.45 (AIC 4,331 vs 4,404). Twins: $9.5-16.2k; share
+   of spike $ in the day's 3 dearest DA hours 0.57 vs 0.86 real (2019). The process was not iterated further.
+Each GridSim fit was followed by a BatteryPilot dev recalibration (`calib.py`, stage A now also matches seen300 and
+hours with RT − DA > $100: `WEIGHTS_V1_3`, set before any v1.3 rung was scored; grid μ −2,000…+3,000 MW). First fit:
+μ 0, σ 3,500, loss 3.99; second: μ 0, σ 3,500, loss 4.05; final: μ −1,000, σ 3,500 (grid edge), loss 5.74, cold
+f_max 0.55 (grid edge), Uri 166 / 156 h above $1,000 (real 153). Final twins of dev 2019: DA coverage 60 % (real 31 %),
+2 h PF value $77-82/kW-yr (real $103); BatteryPilot v1.1 captures 76-85 % (real 82 %), the backbone 64-78 % (real
+67 %), the rolling optimiser 55-56 % (real 79 %) (`training/checks/twin_r2_v4_p1_2*.json`). The twin gap moved from the
+network to the optimiser: 1.1 over-rated following the DA plan (90 % on twins), 1.2 under-rates it.
+
+**Code.** `pricesim.prices` adds `market.rt_scarcity` (seeded on its own stream, driven by the real EIA-930 demand miss
+and the pre-premium DA) to RT and `market.expected` to DA when `GRIDSIM_PHYSICS=1.2`; `scar_scale` (×0.6-1.5 per ERCOT
+path, drawn after the seed so every other scenario value equals v4's) and `scar_fit` are new parameters. With 1.1 a
+frozen path rebuilt today is bit-identical to v4's (checked on p0000). The sim-v1 bank has scar_scale 0 and is
+unchanged, so R1 is re-scored, not retrained. New: `predictability.py`, `agreement.py`, `ladder_v1_3.py`,
+`build_v1_3.sh`; `twin.py` also runs the backbone under 1.2.
+
+**Probes on v5** (the first GridSim fit, `calibration_v1_2_firstfit.json`; superseded, no decision taken on them;
+`ratchet_v1_3.json`, probes_v5). Frozen / dev: rolling 0.326 / 0.593; R1 0.641 / 0.489; r2_v5 0.760 / 0.623; r3_v5
+0.764 / 0.658; backbone 0.667 / 0.630; v1.1-era networks re-scored: r2_v4 0.747, r3_v4 0.755, r4_v4 0.754, v1.0
+0.739, r6_hyb 0.618, r8_hyb 0.742, r9_hyb 0.754. r4_v5 was stopped after 25 steps when the GridSim fit changed.
+
+**Ladder v1.3 on v6** (`training/ratchet_v1_3.json`; frozen set v6 = 24 ERCOT + 9 CAISO-like, seeds 7001/7002):
+
+| Rung | Change | v6 frozen | Dev | Decision |
+|---|---|---|---|---|
+| R0 | rolling LP | 0.3843 | 0.5927 | incumbent |
+| R1 | sim v1 (r1_v4 re-scored) | 0.6173 | 0.4888 | rejected: dev −0.104 |
+| R2 | 80 ERCOT, 1,500 steps | 0.7546 | 0.6277 | kept |
+| R3 | 120 ERCOT + 45 CAISO-like, 2,500 | 0.7685 | 0.5961 | rejected: dev −0.032 |
+| R4 | R3 fine-tuned, 504 h windows | 0.7755 | 0.5990 | rejected: dev −0.029 |
+| R5 | backbone alone (reference) | 0.6729 | 0.6295 | — |
+| R6 | hybrid, running minimum | 0.7321 | 0.5809 | rejected |
+| R8 | hybrid, min step 0.01, 80 ERCOT | 0.7719 | 0.6601 | kept, released as v1.3 |
+| R9 | R8 on 165 path-years, 2,500 | 0.7779 | 0.6854 | rejected: +0.0060 |
+| R10 | r3_v5 (R3 recipe on the v5 banks) | 0.7693 | 0.6579 | rejected |
+| R11 | R9 fine-tuned, R4 recipe | 0.7803 | 0.6811 | rejected: +0.0084 |
+
+R7 (stopped in the v1.2 attempt for a flaw R8 fixed) was not re-run. R10 went on the ladder after its dev score was
+seen among the v5 probes: chosen with dev knowledge, judged by the rule, rejected. R8 cleared the margin by 0.0073, so
+two more seeds were trained: frozen 0.7719 / 0.7716 / 0.7667 (sd 0.003), dev 0.6601 / 0.6666 / 0.6439 (sd 0.012);
+all three clear R2 by more than 0.01. Release check: v1.1 re-scored on v6 0.7346 frozen, 0.6382 dev; R8 +0.037 and
++0.022 → released. No rung after R11 was tried.
+
+**Does the new frozen set agree with dev?** (`training/checks/agreement_v1_3*.json`.) Over each ladder's own rungs:
+v6 Spearman 0.77 (44 of 55 pairs ordered alike), the same top two as dev (R11, R9 frozen; R9, R11 dev); v4 0.68, best
+frozen R4, best dev R6. Over 10 fixed policies (rolling, backbone, R1, the v1.1 and v1.2-attempt networks): v4 0.67,
+v5 0.44, v6 0.43, and R6 (best on dev) is 8th on v6. So the fix helped the frozen set judge networks trained on it,
+and made it worse at ranking the old ones, mostly because it now under-rates DA-following policies (the twin test
+above). Mixed: not the clean agreement hoped for.
+
+**Release.** `batterypilot_weights.npz` = R8 (hybrid, 140 inputs, 35,205 weights); v1.1 kept as
+`batterypilot_weights_v1_1.npz`, v1.0 as `_v1_0.npz`. `batterypilot.py` gained the backbone (`value_curves`, numpy) and
+the hybrid head; on the demo examples it matches the training code exactly. Demo: 2 h, $/kW-yr, v1.1 → v1.3: CAISO SP15
+2025 10.2 → 10.8; ERCOT HB_HOUSTON 2023 93.9 → 101.5; HB_WEST 2024 39.4 → 38.7 (golden regenerated). The instrument
+was re-exported; `net.ts` ports the backbone and the hybrid head; parity 9 cases, worst relative difference 3.3e-6;
+float16 moves the knots by at most 5.8e-4. (Checking the port, the 2 h HB_WEST 2024 demo example was run with R8 and
+v1.1 before the exam: 38.8 vs 39.5 $/kW-yr. It is one of the demo's exam examples; nothing was chosen from it.)
+
+**Exam, run once after the release choice was committed** (`ddecb81`; `training/checks/exam_report_v1_3.json`; v1.1
+re-scored on the same run: identical to its second look). Share of perfect hindsight, v1.0 / v1.1 / v1.3 vs the DA
+optimiser: ERCOT 0.667 / 0.679 / **0.671** vs 0.685; CAISO 0.642 / 0.614 / **0.594** vs 0.681. ERCOT 1 h 0.548
+(0.629), 2 h 0.681 (0.684), 4 h 0.785 (0.742, win; 30 of 36 node-years); CAISO 1 h 0.483 (0.641), 2 h 0.579 (0.680),
+4 h 0.718 (0.723). Cycles 222 / 215 a year vs 301 / 282. Only ERCOT 4 h wins; every other row is a loss, and v1.3 is
+below v1.1 on both pooled rows.
+
+**What was learned.** R8's dev gain over v1.1 came from 2021 alone (0.48-0.50 vs 0.37-0.38: it sells into Uri-scale
+spikes the DA plan missed). On dev 2019 (0.77-0.78 vs 0.81-0.82) and CAISO 2023 (0.73 / 0.81 vs 0.78 / 0.84) it was
+already worse, which is what the exam shows. The pooled dev gate let one extreme year decide. A per-year gate, fixed
+before the next ladder, would have kept v1.1. The simulator change moved the twin gap rather than closing it.
+
+**Not done.** No CAISO fit for the RT scarcity (no CAISO prices before Aug 2023): the CAISO-like family is unchanged.
+The calibration ends on grid edges again (σ, cold f_max). The shape-only GridSim fit's twin run was stopped when the
+parameter file changed under it; its $9.3-10.7k breakdown is from `diag_rolling.py` only.

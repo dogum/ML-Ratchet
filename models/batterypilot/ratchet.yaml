@@ -1,5 +1,6 @@
 # The ratchet ladders, normalised. Raw logs: training/ratchet.json (v1.0, GridSim physics 1.0: every rung, its dev scores
-# by node-year, and the re-scores) and training/ratchet_v1_1.json (v1.1, GridSim physics 1.1: the leak fix of 14 Nov 2026).
+# by node-year, and the re-scores), training/ratchet_v1_1.json (v1.1, GridSim physics 1.1: the leak fix of 14 Nov 2026),
+# training/ratchet_v1_2.json (the v1.2 attempt) and training/ratchet_v1_3.json (v1.3, GridSim physics 1.2).
 model: batterypilot
 ladders:
   - name: v1.0 — GridSim physics 1.0 (as released)
@@ -51,3 +52,25 @@ ladders:
       - { id: R7, change: "R6 on 120 ERCOT + 45 CAISO-like path-years, 2,500 steps", decision: rejected, why: "Stopped at step 775: training capture 0.21 vs 0.37 for R3 on the same windows (the R6 flaw). Not scored.", metrics: ["—", "—"] }
       - { id: R8, change: "R6 with a strictly decreasing curve (each knot at least 0.01 below the last, the v1.1 floor); 80 ERCOT path-years, 1,500 steps", sim: 0.7769, decision: rejected, why: "Frozen 0.7769 vs 0.7792 (-0.002); dev 0.615 vs 0.638 (-0.023, gate failed).", metrics: [0.7769, 0.615] }
       - { id: R9, change: "R8 on 120 ERCOT + 45 CAISO-like path-years, 2,500 steps", sim: 0.7869, decision: rejected, why: "Frozen 0.7869 vs 0.7792 (+0.0077, below the 0.01 margin); dev 0.633 vs 0.638 (-0.006). About R3's frozen score (0.7877) with a lower dev score (R3 0.644).", metrics: [0.7869, 0.6327] }
+  - name: v1.3 — GridSim physics 1.2 (real-time scarcity the day-ahead market cannot see, 15 Nov 2026)
+    objective: "As v1.1: capture = net revenue / perfect-foresight net revenue (net of wear), summed over the 1, 2 and 4 h batteries of each simulated path-year and averaged over the path-years of the frozen simulated set"
+    rule: "Unchanged: keep a rung if its frozen capture beats the incumbent's by more than 0.01 AND its dev capture is not more than 0.01 below the incumbent's. A physics change re-takes the ladder: every v1.1 and v1.2-attempt decision re-taken in order from R0, then new rungs. Release (fixed before the ladder): the last incumbent ships only if its dev capture is above v1.1's (0.6382) and it beats v1.1 re-scored on the new frozen set by the same rule."
+    margin: 0.01
+    dev_gate: "Dev capture (10 real dev node-years: ERCOT 2019 and 2021 at 4 hubs, CAISO Aug-Dec 2023 at NP15 and SP15; all 3 durations) may not fall more than 0.01 below the incumbent's"
+    frozen_sets: [v5_frozen, v6_frozen]
+    scored_on: v6_frozen
+    note: "GridSim physics 1.2 adds gridsim.market: unforecast RT scarcity events fitted on ERCOT 2018/2020/2022 prices (start rate by the DA price's rank and level, month and demand-forecast miss; size grows with the DA level). The dev calibration was re-fitted with it (ORDC mu -1,000 MW, sigma 3,500 MW, a grid edge; it also matches the share of RT spike value the DA sees) and the banks and frozen set rebuilt with the v4 seeds. v5_frozen was built on GridSim's first fit (clock-hour profile); the dev twin test sent that fit back, so the v5 scores are probes (training/ratchet_v1_3.json, probes_v5) and the ladder is decided on v6. ERCOT only: the CAISO-like family is unchanged (no CAISO fit). R8 cleared the margin by 0.007: seeds 0-2 give frozen 0.772 / 0.772 / 0.767 (sd 0.003) and dev 0.660 / 0.667 / 0.644 (sd 0.012). v1.1 re-scored on v6: 0.7346 frozen, 0.6382 dev. Log: training/ratchet_v1_3.json (training/ladder_v1_3.py)."
+    columns_source: Frozen capture on v6_frozen and dev capture on the real dev node-years (training/ratchet_v1_3.json)
+    columns: ["v6 frozen", "Dev capture"]
+    rungs:
+      - { id: R0, change: "Classical rolling-horizon LP on day-ahead prices (re-plans at 14:00, follows the plan)", sim: 0.3843, decision: kept, why: "Starting incumbent.", metrics: [0.3843, 0.5927] }
+      - { id: R1, change: "MLP trained on sim v1 (GridSim merit-order prices only); its bank is unchanged by physics 1.2, so the v1.1 network is re-scored", sim: 0.6173, decision: rejected, why: "Frozen +0.233 but the dev gate failed: 0.489 vs 0.593 (−0.104).", metrics: [0.6173, 0.4888] }
+      - { id: R2, change: "MLP value curve on sim v2 with physics 1.2 and the v1.3 calibration: 80 ERCOT path-years, 1,500 steps", sim: 0.7546, decision: kept, why: "Frozen 0.7546 vs R0 0.3843 (+0.370); dev 0.628 vs 0.593 → kept.", metrics: [0.7546, 0.6277] }
+      - { id: R3, change: "All 120 ERCOT + 45 CAISO-like path-years, 2,500 steps", sim: 0.7685, decision: rejected, why: "Frozen +0.0139 over R2 but the dev gate failed: 0.596 vs 0.628 (−0.032).", metrics: [0.7685, 0.5961] }
+      - { id: R4, change: "Fine-tune R3 with 21-day windows, batch 64, learning rate 5e-4 (900 steps)", sim: 0.7755, decision: rejected, why: "Frozen +0.0209 over R2 but the dev gate failed: 0.599 vs 0.628 (−0.029).", metrics: [0.7755, 0.599] }
+      - { id: R5, change: "Reference, not a candidate: the day-ahead value-curve backbone alone, executed by the offer rule", sim: 0.6729, decision: rejected, why: "A classical reference (dev 0.630).", metrics: [0.6729, 0.6295] }
+      - { id: R6, change: "Hybrid: backbone curve + learned residual, kept non-increasing by a running minimum; 80 ERCOT path-years, 1,500 steps", sim: 0.7321, decision: rejected, why: "Frozen −0.023 vs R2; dev 0.581 vs 0.628 (gate failed).", metrics: [0.7321, 0.5809] }
+      - { id: R8, change: "Hybrid with a strictly decreasing curve (each knot at least 0.01 below the last); 80 ERCOT path-years, 1,500 steps", sim: 0.7719, decision: released, why: "Frozen 0.7719 vs R2 0.7546 (+0.0173); dev 0.660 vs 0.628 → kept. Seeds 0-2: frozen sd 0.003, all three clear R2 by more than 0.01. No later rung beat it by the margin; it beats v1.1 re-scored on v6 (0.7346, dev 0.638): released as v1.3.", metrics: [0.7719, 0.6601] }
+      - { id: R9, change: "R8 on all 120 ERCOT + 45 CAISO-like path-years, 2,500 steps", sim: 0.7779, decision: rejected, why: "Frozen 0.7779 vs R8 0.7719 (+0.0060, below the 0.01 margin), although dev rose to 0.685 (the best dev score so far).", metrics: [0.7779, 0.6854] }
+      - { id: R10, change: "The R3 recipe trained on the superseded v5 banks (GridSim's first fit); put on the ladder after its dev score (0.658) was seen among the v5 probes", sim: 0.7693, decision: rejected, why: "Frozen 0.7693 vs R8 0.7719 (−0.003).", metrics: [0.7693, 0.6579] }
+      - { id: R11, change: "R9 fine-tuned with the R4 recipe (21-day windows, batch 64, learning rate 5e-4, 900 steps)", sim: 0.7803, decision: rejected, why: "Frozen 0.7803 vs R8 0.7719 (+0.0084, below the margin); dev 0.681. No further rung was tried.", metrics: [0.7803, 0.6811] }
