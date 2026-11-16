@@ -94,3 +94,38 @@
 ## Corrections
 
 - 14 Nov 2026: model.yaml: the 'Inverters offline caught' row compared v2 (44/49, with the sensor) only with v1 power only (0/49) and was called a win. v1 with the sensor caught 47/49, so the row now lists both v1 baselines and the verdict is loss (win -> loss); a matching line was added to the losses. The string-failure row gained the v1-with-sensor baseline (54/56); it stays a win (55/56). Card: rung 8 is marked released. Network and credits sections added.
+
+## 15 Nov 2026: v2.1, multi-day inverter trips (release chosen before the exam)
+
+Two exam rows were not wins: inverters offline caught (44/49 with a sensor, v1 caught 47/49) and small tracker losses
+(2–5%) ranked (AUC 0.50). There is no real dev set, so each was checked on simulation first.
+
+- **Rebuild.** No work/ data was local. `fetch_pvdaq.py` (new) downloads the OEDI 2023 Solar Data Prize copies of systems
+  2107 and 9068 for the exam only. The simulator needs no data.
+- **Inverter trips: the simulation shows the failure.** v1 and v2 switch an inverter off for single days only (3% of
+  days, independently), so several dark days in a row almost never occur in training. A tripped inverter usually stays
+  off until someone resets it. `simbatch2.LONG_OUT` (new, off by default so the v2 frozen set is unchanged) makes an
+  inverter trip at a random time and stay dark for 2–14 days. `outage_probe.py` simulates 600 fortnights with such a
+  trip (seed 4242) and scores them with the exam's rule (mean outage share over the first three dark days above 0.5).
+  The v2.0 release caught 91 of 117 with a sensor on fixed mounts (78%), 161 of 202 with a sensor on all mounts, and
+  136 of 201 without a sensor (68%).
+- **Small tracker losses: the simulation does not show the failure.** On simulated tracker days with no outage or snow,
+  the release ranks 2–5% losses against smaller ones with AUC 0.79 (0.92 for any loss over 2%). Real Colorado gives
+  0.50. The gap is between simulation and that farm, and with no real dev set it cannot be worked on without using the
+  exam. Left alone.
+- **New frozen set.** The physics changed, so `val_set_v21` (2,000 fortnights, seed 779, weather fronts on,
+  `LONG_OUT` 0.15) replaces `val_set_v2` for this ladder. Same objective and rule (`ratchet21.py`). The s3–s7
+  checkpoints were not kept, so only rung 8 could be re-scored.
+- **Rungs** (`work/ratchet21.json`):
+
+  | Rung | Change | val_set_v21 | Trip probe: sensor fixed / sensor all / power only | Decision |
+  |---|---|---|---|---|
+  | s8 | v2.0 release, re-scored | 1.482 | 91/117, 161/202, 136/201 | start |
+  | s9 | 15% of training fortnights hold a 2–14 day trip; 4,000 steps from s8, lr 1.5e-4, BatchNorm frozen | 1.564 | 113/117, 196/202, 191/201 | **released** |
+
+  The skill gains in s9 are not only outages: snow (0.46 -> 0.77 with sensor) and stuck trackers (0.31 -> 0.48) rose
+  too, because a dark inverter had been read as buried snow or a stuck row. A second seed scored 1.564 (spread 0.0001).
+- **Training note.** The released weights have BatchNorm folded in, so s9 starts from them with identity BatchNorms held
+  frozen (`train2.py --init_npz --freeze_bn`). A first attempt at lr 7e-4 made the training loss climb from -1.8 to
+  -0.9 within 800 steps and was stopped before any scoring; lr 1.5e-4 trained normally.
+- **Release choice:** s9 as v2.1. The real exams are run once, after this entry is committed.

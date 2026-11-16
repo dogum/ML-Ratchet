@@ -27,3 +27,21 @@ ladders:
       - { id: s6, change: "v2 simulator: trackers, snow, stuck rows, thin film, sensor faults, no-sensor fortnights; v1 weights transplanted", sim: 1.579, decision: kept, why: "1.579 vs 0.341." }
       - { id: s7, change: "Polish: 4,000 more steps at a third of the learning rate", sim: 1.615, decision: kept, why: "1.615 vs 1.579." }
       - { id: s8, change: "Weather fronts: day-to-day temperature swings, cold fronts on overcast days", sim: 1.628, decision: released, why: "1.628 vs 1.615." }
+  - name: v2.1 — multi-day inverter trips
+    objective: The v2 objective (mean of the with-sensor and no-sensor scores) on a new frozen set of 2,000 fortnights (seed 779) from the v2.1 simulator
+    rule: Keep if the objective rises by more than 0.01.
+    margin: 0.01
+    dev_gate: None (no real dev set; the real farms are the exam)
+    frozen_sets: [val_set_v21]
+    scored_on: val_set_v21
+    note: >-
+      Physics v2.1 (15 Nov 2026) adds inverters that trip and stay dark for 2–14 days until reset; v1 and v2 only switched
+      an inverter off for single days. On a simulated probe of such trips (600 fortnights, seed 4242) the v2.0 release
+      caught 91 of 117 with a sensor on fixed mounts and 136 of 201 without a sensor. The physics changed, so the frozen
+      set changed; only rung 8 survives as weights, so earlier rungs could not be re-scored on it. Columns are the outage
+      probe, never used to decide.
+    columns_source: Simulated multi-day trip probe (outage_probe.py), caught / trips
+    columns: ["With sensor, fixed", "With sensor, all", "Power only"]
+    rungs:
+      - { id: s8, change: "Start: the v2.0 release scored on the v2.1 frozen set", sim: 1.482, decision: kept, why: Starting point., metrics: ["91/117", "161/202", "136/201"] }
+      - { id: s9, change: "Multi-day inverter trips in 15% of training fortnights; 4,000 steps from rung 8 at 1.5e-4, BatchNorm frozen", sim: 1.564, decision: released, why: "1.564 vs 1.482. A second seed scored 1.564 (spread 0.0001).", metrics: ["113/117", "196/202", "191/201"] }
