@@ -1,4 +1,4 @@
-# ChirpNet model card (v2.0)
+# ChirpNet model card (v2.1)
 
 ChirpNet v2 is four small networks, all trained only on simulations and tested on real LIGO data:
 
@@ -11,6 +11,12 @@ ChirpNet v2 is four small networks, all trained only on simulations and tested o
 
 Finder plus checker together are the released detector, rung 9 (882,399 weights). `chirpnet.py` (numpy and scipy only)
 runs all four. `demo.py` reproduces the numbers below. `training/` holds every script that produced the weights (needs PyTorch and LALSuite).
+
+**v2.1 (15 Nov 2026).** The networks are unchanged. After the neutron-star network finds a merger, a physics template bank
+refines its chirp mass: `chirpnet.BNSMatchedFilter` matched-filters TaylorF2 inspirals (3.5PN phase, no spin, no tides)
+against the raw strain from 30 to 1000 Hz over 128 s, searching ±15% around the network's reading and profiling over the
+mass ratio (`ChirpNetBNS.refine`, `demo.py --bns`). Chosen on 120 simulated inspirals injected into real O2 noise away
+from every event (section 3). A check of the 7.0 black-hole threshold on 10.6 h of non-exam O3 noise is in section 1.
 
 ## Network
 
@@ -105,6 +111,14 @@ removed: 29,879 windows, 1.04 h, loudest 7.24 (one window above the 7.0 threshol
 GW190521's detector-frame chirp mass (98.7) is more than twice the training range's upper edge (45); it was kept in
 the exam because it was named in advance. Merger times are 24–100 ms from the catalogue's geocentric GPS times.
 
+**O3 dev background (15 Nov 2026).** The same background protocol on 64 pieces of 32 s of real O3 data that are not exam
+data (GWOSC bulk files at seeded times, more than 600 s from every listed O3 event, DATA + CBC_CAT1, no hardware
+injection; `training/o3_dev_background.py`): 306,176 windows over 10.6 h, 46 at or above 7.0, loudest 10.88 (next to a
+gated L1 glitch). O3 noise read by this network is far rougher than O1/O2's (loudest 6.2 in 2.0 h). Re-setting the
+threshold by the rule that set 7.0 would give 11.5; its cost in sensitivity cannot be measured without a waveform bank,
+so the threshold stays 7.0 and the O3 detections should be read as less significant than their O1/O2-based false-alarm
+bounds suggest. One in-range O3 event (GW200224_222234, 9.89) scores below the loudest dev window.
+
 ## 2. Posteriors (DINGO-style neural posterior estimation)
 
 A ChirpNet trunk (started from rung 4) embeds the 2 s window. Each detector's noise spectrum is summarized as its ASD at
@@ -153,6 +167,19 @@ with chirp mass **1.1365 M☉** (LIGO: 1.1975 +0.0001/−0.0001, detector frame)
 +963 ms from LIGO's. The raw Livingston data (LIGO-P1700337) still carries the famous glitch
 1.1 s before merger. With automatic gating it scores 12.0 (ℳ 1.1455); with the glitch left in it scores 9.8. (The first release of `chirpnet.py` had its gate tapers reversed and gave 12.2 here; fixed 12 Nov 2026 to match the training code.)
 
+**v2.1: matched-filter chirp mass.** Dev check (`training/bns_mf_dev.py`, `logs/bns_mf_dev.json`): 120 TaylorF2 inspirals
+with aligned spins (|χ| ≤ 0.05) and tides (Λ̃ 0–1000), detector-frame chirp mass 0.9–1.8, network SNR 12–35, injected
+into four 2,048 s pieces of real O2 noise (seeded GWOSC bulk files, more than a day from every O2 event). The network
+found 108. Median chirp-mass error: network 1.91%, matched filter 0.034%; one in ten network readings is more than 8%
+off; the network's 68% bars cover 47%. The matched filter's raw likelihood range (network SNR² within 1 of its peak)
+is far too narrow because the templates lack spin and tides; one widen-only factor, ×52.0, fitted on the odd-numbered
+injections, gives 73% coverage on the even-numbered ones. At chirp mass 1.1–1.3 the network alone was only 1.2% off
+(58% coverage), so dev did not reproduce GW170817's 5% miss; the matched filter was released for its general gain.
+
+On GW170817 (run once, after the release choice; `training/bns_mf_exam.py`): the network's hit, 1.1365 [1.1285, 1.1444],
+refines to **1.19753 [1.19753, 1.19877]** at network SNR 31.1, against LIGO's 1.1975 ± 0.0001: 0.002% high. The range is
+one-sided (the profile on the fine grid put its lower edge on the estimate) and misses LIGO's median by 0.00003.
+
 ## Limits
 
 - **Coincidence is not perfect.** The checker lets about 1 in 6 loud one-detector chirps through in simulation, and
@@ -161,8 +188,11 @@ with chirp mass **1.1365 M☉** (LIGO: 1.1975 +0.0001/−0.0001, detector frame)
 - Aligned spins only; no precession or higher-order modes. The black-hole model covers chirp masses of 5.5–45 M☉ (detector frame).
 - False-alarm rates are bounded by hours of time slides (2 h for black holes, 6 h for neutron stars).
   They are upper limits, nowhere near the significance of LIGO's production searches.
-- The neutron-star chirp mass is good to about 2% on simulations, versus LIGO's 0.01%, because 16 s windows give up the early
-  inspiral. On GW170817 the released rung is 5% low and its 68% interval misses LIGO's value; rung 2 had been within 1.3%.
+- The neutron-star network's own chirp mass is good to about 2% on simulations, because 16 s windows give up the early
+  inspiral. v2.1's matched filter brings it to about 0.03% on dev injections, but it has no spin or tidal templates,
+  its range comes from a ×52 widening fitted on simulations, it needs minutes of raw strain and takes about a minute.
+- The black-hole threshold (7.0) was set on O1/O2 noise; on non-exam O3 noise 46 windows in 10.6 h reach it (loudest 10.88).
+- No network can be retrained on this machine: the LALSuite waveform banks were not kept and LALSuite has no Windows build.
 - Real events tested come from O1–O3 (2015–2020); untested on O4. Mergers heavier than the training range (GW190521) are missed.
 
 ## Credits and licences

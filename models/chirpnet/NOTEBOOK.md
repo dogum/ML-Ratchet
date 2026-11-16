@@ -181,3 +181,17 @@ statistic). On the 108 found:
 - Release: `chirpnet.BNSMatchedFilter` and `ChirpNetBNS.refine()` (numpy/scipy only); `chirpnet_bns_weights.npz` keeps
   the same network and gains `mf_widen` = 52.04 in its meta (`training/release_v21.py`). `demo.py --bns` prints both
   readings. The black-hole models, the threshold (7.0) and every black-hole output are unchanged.
+
+## v2.1 exam, run once — 15 Nov 2026
+
+After the release choice was committed (f13b4e7), `training/bns_mf_exam.py` ran once on GW170817 (LIGO-P1700349 cleaned
+2,048 s files; `logs/bns_mf_exam.json`):
+
+| | Statistic | Chirp mass (detector frame) | 68% range | vs LIGO 1.1975 | LIGO inside 68% |
+|---|---|---|---|---|---|
+| v2.0 (network alone), re-scored | 14.36 | 1.1365 | [1.1285, 1.1444] | −5.1% | no |
+| v2.1 (matched filter) | 14.36 | 1.19753 | [1.19753, 1.19877] | +0.002% | no, by 0.00003 |
+
+The row flips from loss to win on the value. The range is one-sided: on the fine 2e-5 grid the profile drops by more
+than 1 just below the peak, so the widened lower edge stays on the estimate. Every black-hole row is unchanged: the
+black-hole networks, threshold and code path did not change, and the golden demo still reproduces the O1/O2 readings.

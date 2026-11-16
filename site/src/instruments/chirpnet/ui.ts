@@ -338,7 +338,8 @@ export async function mount(ctx: InstrumentContext) {
         { label: 'Merger time vs LIGO', unit: 's', value: tNet, lo: tNet - r.t_sig, hi: tNet + r.t_sig, truth: 0, truthLabel: 'LIGO', range: [-4, 4], digits: 2 },
       ]);
       const gTxt = S!.gates ? `${S!.gates} gate${S!.gates > 1 ? 's' : ''} applied` : st.gating ? 'nothing to gate' : 'gating off';
-      note.innerHTML = `<b>Released rung scores GW170817 14.4 and reads ℳ 1.1365 M☉</b> (Python, 0.25 s scan): 5% light, its 68% bar misses LIGO's 1.1975. `
+      note.innerHTML = `<b>The network scores GW170817 14.4 and reads ℳ 1.1365 M☉</b> (Python, 0.25 s scan): 5% light, its 68% bar misses LIGO's 1.1975. `
+        + `v2.1 then runs a matched filter on the raw strain (Python only, not in this page): ℳ 1.19753 [1.19753, 1.19877]. `
         + `Raw L1: 12.0 gated, 9.8 ungated. Here: ${gTxt}.`;
     } else {
       casc.innerHTML = `

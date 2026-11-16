@@ -1,8 +1,8 @@
 id: chirpnet
 name: ChirpNet
-version: "2.0"
+version: "2.1"
 status: released
-released: 2026-10-30
+released: 2026-11-15
 order: 1
 domain: Astrophysics
 tags: [gravitational waves, detection, posterior estimation, normalizing flow, time series]
@@ -13,14 +13,15 @@ question_short: "Is there a black-hole or neutron-star merger in this LIGO data,
 summary: >-
   Four small networks trained only on simulated mergers from general relativity. Pointed at real recordings
   from the two LIGO observatories they find the black-hole and neutron-star mergers, weigh them, and give
-  calibrated posterior ranges. Everything runs on plain numpy.
+  calibrated posterior ranges. Since v2.1 a physics template bank (a TaylorF2 matched filter) refines the
+  neutron-star chirp mass after the network finds the merger. Everything runs on plain numpy and scipy.
 
 reads: Whitened strain from LIGO Hanford and Livingston (GWOSC HDF5, 4 kHz).
 returns:
   - Detection statistic and false-alarm rate (upper limit from time slides)
   - Chirp mass ± 68%, mass ratio, merger time
   - Posterior samples of masses, effective spin, distance and inclination (DINGO-style flow)
-  - A separate neutron-star detector and chirp-mass estimate
+  - A separate neutron-star detector; its chirp mass refined by a matched filter (v2.1) with a 68% range
 
 physics:
   summary: >-
@@ -34,20 +35,25 @@ physics:
     - From rung 6, negatives that hold a chirp in one detector only
   checks:
     - Posterior P-P test on 400 held-out injections — largest gaps 0.025–0.06 (chance allows about 0.07)
+    - "Matched filter (v2.1) on 108 found TaylorF2 injections with spins and tides in real O2 noise: median chirp-mass error 0.034% (network alone 1.91%)"
 noise: Simulated Gaussian noise coloured by O1/O2 and design spectra; the exam background is time-slid real LIGO data.
-network: 1-D residual CNN finder + two-stream coincidence checker (882k weights), an 8-layer RealNVP posterior flow, and a 2-D time-frequency CNN for neutron stars
+network: 1-D residual CNN finder + two-stream coincidence checker (882k weights), an 8-layer RealNVP posterior flow, and a 2-D time-frequency CNN for neutron stars, followed (v2.1) by a TaylorF2 matched filter for their chirp mass
 
 approach:
   real_backdrop: false
   physics_inputs: false
-  physics_anchor: false
-  real_data_roles: [exam]
+  physics_anchor: "v2.1: the neutron-star chirp mass is a TaylorF2 matched-filter fit seeded by the network's reading"
+  real_data_roles: [gate, error_bars, exam]
 
 data:
   - name: Gravitational Wave Open Science Center (LIGO/Virgo strain)
     url: https://gwosc.org
     licence: CC BY 4.0
     role: exam
+  - name: GWOSC O2 and O3 bulk strain (4 kHz, 4096 s files away from every catalogued event)
+    url: https://gwosc.org/data/
+    licence: CC BY 4.0
+    role: dev
   - name: GW170817 data products (LIGO-P1700349, LIGO-P1700337)
     url: https://dcc.ligo.org/LIGO-P1700349/public
     licence: CC BY 4.0
@@ -62,7 +68,7 @@ data:
     role: physics
 
 split:
-  dev: None — real events never chose anything; rules were set on simulations and time-slid noise.
+  dev: "None of the real events. Rules were set on simulations and time-slid noise. v2.1: real O2 and O3 noise from times away from every catalogued event (seeded GWOSC bulk files), used for injections and background, never the exam files."
   exam: GW150914, GW151012, GW151226, GW170104 (32 s each) and GW170817 (2,048 s)
 
 exam:
@@ -96,11 +102,11 @@ exam:
       verdict: win
     - metric: GW170817 chirp mass (detector frame, M☉)
       better: closer
-      model: 1.136
+      model: 1.19753
       baselines:
         - { name: "LIGO", kind: published, value: 1.1975 }
-      verdict: loss
-      note: 5% low with an over-confident interval; rung 2 had been within 1.3%.
+      verdict: win
+      note: "v2.1, matched filter after the network: +0.002% from LIGO, 68% range [1.19753, 1.19877] (one-sided: its lower edge sits on the estimate and misses LIGO's median by 0.00003). v2.0 (network alone), re-scored: 1.1365 [1.1285, 1.1444], 5.1% low. On dev injections at chirp mass 1.1–1.3 the network alone was 1.2% off, so dev did not reproduce the 5% miss; the matched filter was chosen on its general dev gain (median error 1.78% → 0.027%)."
     - metric: Loud one-detector fakes passed
       better: lower
       model: 17
@@ -141,7 +147,7 @@ exam:
       baselines:
         - { name: "O1/O2 background (57,760 windows)", kind: dumb, value: "0" }
       verdict: loss
-      note: "The loudest O3 background window scores 7.24 in 1.04 h: O3 noise is a little rougher than the threshold assumed."
+      note: "The loudest O3 background window scores 7.24 in 1.04 h. Dev (10.6 h of non-exam O3 noise, 15 Nov 2026) shows it is worse: 46 windows at or above 7.0, the loudest 10.88. Re-setting the threshold by the same rule would put it at 11.5, a sensitivity cost that cannot be measured without a simulation bank; not released. Unchanged in v2.1."
   coverage: []
 
 wins:
@@ -150,21 +156,23 @@ wins:
   - The cascade cuts loud single-detector fakes from 99.6% to 17%.
   - "Unchanged since O1/O2, it finds all seven in-range O3 events named in advance, and every O3 catalogue median lands inside its 90% posteriors."
 losses:
-  - GW170817 chirp mass 5% low with too narrow an interval.
+  - "GW170817: the network alone reads the chirp mass 5% low with too narrow an interval; v2.1's matched filter fixes the value, but its 68% range is one-sided and misses LIGO's median by 0.00003."
   - GW151226's Hanford signal alone still scores above threshold (so do GW190408's and GW200311's in O3).
   - Misses GW190521, a merger heavier than anything in its training set.
-  - One O3 background window (7.24) clears the 7.0 threshold set on O1/O2 noise.
+  - "One O3 exam background window (7.24) clears the 7.0 threshold set on O1/O2 noise; on 10.6 h of non-exam O3 noise 46 windows do (loudest 10.88)."
 limits:
   - Aligned spins only; no precession or higher modes.
   - False-alarm rates rest on hours of time slides, so they are upper limits.
   - The neutron-star model has no coincidence check yet.
+  - "The neutron-star matched filter has no spin or tidal templates; its 68% range is the raw likelihood range widened ×52 on simulated injections, and it needs minutes of raw strain."
+  - "No network can be retrained on this machine: the LALSuite waveform banks were never kept and LALSuite has no Windows build."
   - Real events tested come from O1–O3 (2015–2020); O4 is untested.
   - "Very heavy mergers (detector-frame chirp mass above ~45) are outside the training range: GW190521 is missed."
 next:
-  - Extend the training bank to heavier mergers (GW190521-like) and re-run the ratchet.
-  - Re-set the threshold with O3 noise in the background (one O3 time-slide window reached 7.24).
+  - Extend the training bank to heavier mergers (GW190521-like) and re-run the ratchet (needs LALSuite on Linux or macOS).
+  - "O3: ship the O3 dev background so scan() reports O3 false-alarm rates from O3 noise, then retrain with O3-like glitches next to gates."
   - A coincidence checker for the neutron-star model.
-  - Longer neutron-star windows to fix the chirp-mass bias.
+  - Spin-aligned templates for the matched filter, and a range from a likelihood over spin instead of a widening factor.
   - Live posterior sampling in the browser.
 
 usage:
