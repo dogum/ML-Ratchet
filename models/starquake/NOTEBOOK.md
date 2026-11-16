@@ -165,3 +165,24 @@ simulator's νmax is the centre of a Gaussian envelope and the SYD-style smoothe
 - The released weights file keeps the same network; its meta gains the hybrid parameters (`training/release_v11.py`).
   `starquake.py` now runs `classical.py` (a copy of `training/classical.py` on `pipeline.py`) on every reading;
   `read_ppm(..., hybrid=False)` gives the v1.0 reading. The numpy release matches `hybrid.py` to 6e-17 on dev.
+
+## v1.1 exam, run once — 15 Nov 2026
+
+After the release choice was committed (c4dd631): the 420 exam light curves fetched again (MAST S3), read once at the
+five lengths by `training/hybrid.py real exam exam` (2,098 readings, the same count as v1.0), scored by `hybrid.py exam`.
+
+| Length | v1.1 νmax | v1.0 νmax (re-scored) | classical | v1.1 Δν | v1.0 Δν | classical Δν |
+|---|---|---|---|---|---|---|
+| 4 yr | 1.01% | 1.49% | 0.89% | 0.65% | 0.89% | 0.64% |
+| 1 yr | 1.41% | 1.67% | 1.67% | 0.81% | 1.02% | 1.05% |
+| 90 d | 2.22% | 2.17% | 3.89% | 1.77% | 2.07% | 3.06% |
+| 54 d | 2.69% | 2.76% | 5.97% | 2.61% | 2.47% | 7.63% |
+| 27 d | 3.44% | 3.61% | 16.05% | 4.29% | 4.60% | 26.80% |
+
+- Rows: 4 yr νmax still a loss (1.01 vs 0.89); 1 yr becomes a win (1.41 vs 1.67; v1.0 tied); 90 d and 27 d stay wins.
+- Radius vs Gaia: 8.04% scatter (v1.0 7.1%, Yu 8.06%, classical 8.67%): from a win to a tie. The ESA Gaia TAP service
+  timed out all evening (`gaia.py`), so the FLAME radii of the same 222 stars were taken from the v1.0 exam data stored
+  in `lab/index.html` (`mr_rows`); v1.0 re-scored from them gives its published 1.076 / 7.1%, so they are the same radii.
+- Coverage (1σ, νmax / Δν): 4 yr 81 / 84% (v1.0 72 / 78%), 27 d 58 / 63% (54 / 58%).
+- Worse: νmax at 90 d (+0.05 points), Δν at 54 d (+0.14 points), the Gaia radius scatter, and over-wide bars on whole
+  light curves.

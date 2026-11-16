@@ -79,8 +79,10 @@ def main():
             s0, n = P[L]; seg = y[s0:s0 + n]
             F1, F2, s, _, T = PL.prepare(seg)
             v = raw_forward(net, F1, F2, s)
-            r = sq.read_ppm(seg, teff=t["teff"], e_teff=t["e_teff"])
+            r = sq.read_ppm(seg, teff=t["teff"], e_teff=t["e_teff"], hybrid=False)        # the network stage, as the browser runs it
             py[str(L)] = {k: float(r[k]) for k in ("numax", "numax_err", "dnu", "dnu_err", "p_osc", "mass", "mass_err", "radius", "radius_err", "days")}
+            r11 = sq.read_ppm(seg, teff=t["teff"], e_teff=t["e_teff"])                      # v1.1: with the classical backbone (Python only)
+            py[str(L)].update({f"v11_{k}": float(r11[k]) for k in ("numax", "numax_err", "dnu", "dnu_err")})
             cases.append({"example": i, "variant": f"{L or 'all'}d", "start": s0, "n": n, "outputs": v.tolist()})
             print(f"  KIC {kic} {L or 'all':>4} d ({T:6.1f} d): numax {r['numax']:7.2f} ± {r['numax_err']:.2f} ({t['numax']}), dnu {r['dnu']:6.3f} ± {r['dnu_err']:.3f} ({t['dnu']}), p {r['p_osc']:.3f}")
         ex.append({"kic": kic, "truth": t, "f1range": [float(F1all.min()), float(F1all.max())], "pieces": {str(L): list(P[L]) for L in LENS}, "python": py})

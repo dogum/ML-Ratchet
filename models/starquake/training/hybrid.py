@@ -179,15 +179,16 @@ def exam(params_path, widen_path):
         print(f"L={l:>4} n={m.sum()} numax  rel {row['release']['numax_med']:.4f} hyb {row['hybrid']['numax_med']:.4f} cl {row['classical']['numax_med']:.4f} dumb {row['dumb']['numax_med']:.3f} | cov rel {row['release']['numax_cov68']:.2f} hyb {row['hybrid']['numax_cov68']:.2f}")
         print(f"              dnu    rel {row['release']['dnu_med']:.4f} hyb {row['hybrid']['dnu_med']:.4f} cl {row['classical']['dnu_med']:.4f} dumb {row['dumb']['dnu_med']:.3f} | cov rel {row['release']['dnu_cov68']:.2f} hyb {row['hybrid']['dnu_cov68']:.2f}")
     # mass and radius, whole light curves, Yu's Teff (exam.py's formulas)
-    Y = json.load(open(_P.WORK + '/data/yu2018.json')); G = json.load(open(_P.WORK + '/data/gaia.json')); m = L == 0; kic = [M[i]['kic'] for i in np.flatnonzero(m)]
+    gp = _P.WORK + '/data/gaia.json'; G = json.load(open(gp)) if os.path.exists(gp) else {}       # gaia.py; empty if the ESA archive could not be reached
+    Y = json.load(open(_P.WORK + '/data/yu2018.json')); m = L == 0; kic = [M[i]['kic'] for i in np.flatnonzero(m)]
     t = np.array([Y[str(k)]['teff'] for k in kic]) / 5777.0; gR = np.array([G.get(str(k), {}).get('R_flame') or np.nan for k in kic], float); g = np.isfinite(gR)
     yR = np.array([Y[str(k)]['R'] for k in kic]); yM = np.array([Y[str(k)]['M'] for k in kic]); ok = np.isfinite(yM); out['mass_radius'] = {'gaia_n': int(g.sum())}
     sc = lambda v: float(1.4826 * np.nanmedian(np.abs(v - np.nanmedian(v))))
     for name in ('release', 'hybrid', 'classical'):
         a, b = np.exp(est[name][0][m]) / 3090.0, np.exp(est[name][1][m]) / 135.1; R = a * b ** -2 * t ** 0.5; Ms = a ** 3 * b ** -4 * t ** 1.5
-        out['mass_radius'][name] = {'R_vs_gaia_ratio': float(np.nanmedian(R[g] / gR[g])), 'R_vs_gaia_scatter': sc(R[g] / gR[g]),
+        out['mass_radius'][name] = {'R_vs_gaia_ratio': float(np.nanmedian(R[g] / gR[g])) if g.any() else None, 'R_vs_gaia_scatter': sc(R[g] / gR[g]) if g.any() else None,
                                     'M_vs_yu_med': float(np.nanmedian(np.abs(Ms[ok] / yM[ok] - 1))), 'R_vs_yu_med': float(np.nanmedian(np.abs(R[ok] / yR[ok] - 1)))}
-    out['mass_radius']['yu'] = {'R_vs_gaia_ratio': float(np.median(yR[g] / gR[g])), 'R_vs_gaia_scatter': sc(yR[g] / gR[g])}
+    out['mass_radius']['yu'] = {'R_vs_gaia_ratio': float(np.median(yR[g] / gR[g])) if g.any() else None, 'R_vs_gaia_scatter': sc(yR[g] / gR[g]) if g.any() else None}
     print(json.dumps(out['mass_radius'], indent=1)); json.dump(out, open(H + 'exam_result.json', 'w'), indent=1); return out
 
 

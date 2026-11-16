@@ -1,4 +1,4 @@
-# StarQuake v1.0 — model card
+# StarQuake v1.1 — model card
 
 ## What it does
 Reads a Kepler long-cadence light curve of a red giant (27 days to 4 years) and returns:
@@ -8,7 +8,7 @@ scaling relations M = (numax/3090)^3 (dnu/135.1)^-4 (Teff/5777)^1.5, R = (numax/
 The solar references (3090 uHz, 135.1 uHz, 5777 K) are those of Yu et al. 2018, so results compare directly with that catalogue.
 (With the IAU 5772 K, solar numax would scale by sqrt(5777/5772), a 0.04% change.)
 
-Released rung: **r5**. numpy/scipy inference (`starquake.py`), BatchNorm folded into convolutions; numpy equals torch to 7e-7; the in-browser JS port equals Python to 1e-6.
+Released: **v1.1** = rung r5's network + a classical backbone (section v1.1). numpy/scipy inference (`starquake.py`), BatchNorm folded into convolutions; numpy equals torch to 7e-7; the in-browser JS port equals Python to 1e-6.
 
 ## Inputs and preprocessing (`pipeline.py`)
 PDCSAP flux, quality-flagged cadences removed, per-quarter median normalisation to ppm, gaps of <= 3 cadences interpolated,
@@ -60,7 +60,45 @@ dev median errors (whole and 90 d; numax and dnu) vs the incumbent is <= 1.10. W
 
 Note: r4's objective gain came from the detection output (its frozen-set dnu hit rate was lower than r1's, 0.482 vs 0.519); r5, the same network trained longer, recovered it (0.530) and cut the dev errors by 10%.
 
-## Exam (420 Kepler red giants, never used for any decision)
+## v1.1: classical backbone (15 Nov 2026)
+The released network did not change. `starquake.py` now also runs the classical SYD-style pipeline (`classical.py`) on
+every reading and moves the network's ln νmax and ln Δν towards the classical values by a weight w(T) that depends on
+the observing length T, wherever the two agree within 5 network error bars (else the classical reading is taken to have
+failed). Weights (`training/hybrid.py`, fitted on 3,000 simulated giants in real noise, never on real stars):
+
+| length bin | < 40 d | 40–70 d | 70–150 d | 150–600 d | ≥ 600 d |
+|---|---|---|---|---|---|
+| w νmax | 0.30 | 0.20 | 0.05 | 0.25 | 0.40 |
+| w Δν | 0.65 | 0.10 | 0.45 | 0.45 | 0.70 |
+
+The error bar is the network's, scaled per bin by the ratio of blended to network median errors on the same
+simulations, then widened on dev (νmax ×1.00, Δν ×1.71). `read_ppm(..., hybrid=False)` gives the v1.0 reading.
+Ratchet (new frozen set val3, since val2 could not be rebuilt): objective 0.745 (r5) → 0.788; dev errors −10%
+(whole νmax 1.01 → 0.78%, Δν 0.78 → 0.51%; 90-day νmax 2.34 → 2.24%, Δν 1.57 → 1.91%). Refitting the weights on two
+other simulated sets gives 0.788 and 0.786.
+
+### Exam, v1.1 (run once, after the release choice)
+Median |ln error| / fraction within 5% (νmax) or 2% (Δν). v1.0 re-scored on the same readings; classical from the same
+spectra. 1σ coverage with the dev-fitted factors and the published error in quadrature.
+
+| length | n | v1.1 νmax | v1.0 νmax | classical νmax | v1.1 Δν | v1.0 Δν | classical Δν | v1.1 cov 1σ (νmax / Δν) |
+|---|---|---|---|---|---|---|---|---|
+| whole (~4 yr) | 420 | 1.01% / 95% | 1.49% / 89% | 0.89% / 91% | 0.65% / 90% | 0.89% / 78% | 0.64% / 84% | 81% / 84% |
+| 365 d | 418 | 1.41% / 92% | 1.67% / 89% | 1.67% / 79% | 0.81% / 79% | 1.02% / 74% | 1.05% / 69% | 78% / 82% |
+| 90 d | 420 | 2.22% / 82% | 2.17% / 82% | 3.89% / 57% | 1.77% / 54% | 2.07% / 48% | 3.06% / 42% | 66% / 67% |
+| 54 d | 420 | 2.69% / 77% | 2.76% / 77% | 5.97% / 46% | 2.61% / 41% | 2.47% / 41% | 7.63% / 28% | 63% / 73% |
+| 27 d | 420 | 3.44% / 64% | 3.61% / 62% | 16.05% / 34% | 4.29% / 24% | 4.60% / 23% | 26.80% / 13% | 58% / 63% |
+
+Dumb baseline (dev median): 77% νmax, 56% Δν. Detection is unchanged (the network's own output).
+Mass and radius, whole light curves: median |difference| vs Yu et al. 4.0% (mass), 1.6% (radius)
+(v1.0 4.5% / 1.9%). Against Gaia DR3 FLAME radii (the same 222 stars as v1.0; the ESA archive
+could not be reached on 15 Nov 2026, so the radii stored in `lab/index.html` were used): R/R_Gaia 1.063, scatter
+8.0% (v1.0 1.076, 7.1%; Yu 1.063, 8.1%; classical 1.055, 8.7%).
+
+What got worse: νmax at 90 days (2.17 → 2.22%), Δν at 54 days (2.47 → 2.61%), the radius scatter against Gaia
+(7.1 → 8.0%, now level with Yu's radii instead of ahead), and 1σ coverage on whole light curves (now 81% / 84%, too wide).
+
+## Exam, v1.0 (420 Kepler red giants, never used for any decision)
 Median |ln error| / fraction within 5% (numax) or 2% (dnu). Coverage: fraction within 1 and 2 sigma, sigma = sqrt(sigma_net^2 + sigma_published^2), widen factors numax x1.00, dnu x1.43 fitted on dev.
 
 | length | n | StarQuake numax | classical numax | dumb | StarQuake dnu | classical dnu | dumb | cov 1-sigma (numax/dnu) | cov 2-sigma |
@@ -88,7 +126,7 @@ median error bars 9.0% / 3.8%. Against Gaia DR3 FLAME radii (222 stars): R/R_Gai
 Yu et al.'s radii 1.063 (8.1%); classical 1.055 (8.7%).
 
 ## Limits
-- On whole 4-year light curves the classical pipeline is better (0.9% vs 1.5% median νmax error, 0.6% vs 0.9% for Δν). The published answers were made with a similar pipeline on the same data, which favours it. StarQuake's advantage is on short light curves.
+- On whole 4-year light curves the classical pipeline is better on the median νmax error (0.89% vs 1.01% for v1.1, 1.49% for v1.0); for Δν v1.1 matches it (0.65% vs 0.64%). The published answers were made with a similar pipeline on the same data, which favours it. StarQuake's advantage is on short light curves.
 - Δν from short light curves is hard: from 27 days only 23% of stars are within 2% and 46% are off by more than 5% (often by one comb tooth). The error bars do not fully catch these jumps.
 - False alarms: 11–15% of unscreened quiet dwarfs are called oscillating (spots, eclipses and instrument trouble look like a hump). The classical comb test has fewer false alarms on full light curves (4%) but far more on short pieces.
 - Masses carry a +3% median offset against Yu et al. (a small νmax bias, cubed). Radii from uncorrected scaling relations sit 8% above Gaia's (Yu et al.'s own: 6%); this is the known scaling-relation offset, not corrected here.

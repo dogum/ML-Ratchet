@@ -5,7 +5,7 @@ import type { Pack } from '../../lib/nn/pack.ts';
 import type { Tensor } from '../../lib/nn/tensor.ts';
 import { NB, NC, NL } from './dsp.ts';
 
-export interface SMeta { n1: number; n2: number; n_head: number; mu_y: number[]; sd_y: number[]; widen?: number[] }
+export interface SMeta { n1: number; n2: number; n_head: number; mu_y: number[]; sd_y: number[]; widen?: number[]; widen_net?: number[] }
 export interface Truth { numax: number; e_numax: number; dnu: number; e_dnu: number; teff: number; e_teff: number; M: number; R: number; kp: number; phase: number }
 export interface Star { kic: string; truth: Truth; f1range: [number, number]; pieces: Record<string, [number, number]>; python: Record<string, Record<string, number>> }
 export interface SExamples { stars: Star[]; dt: number; lens: number[] }
@@ -49,9 +49,10 @@ export function scaling(numax: number, dnu: number, teff: number, eN = 0, eD = 0
 
 export interface Reading { p_osc: number; numax: number; numax_err: number; dnu: number; dnu_err: number; mass: number; mass_err: number; radius: number; radius_err: number }
 
-/** read_ppm()'s post-processing: the raw outputs -> numax, dnu with (widened) error bars, detection, mass and radius. */
+/** read_ppm(..., hybrid=False)'s post-processing: the raw outputs -> numax, dnu with (widened) error bars, detection, mass and radius.
+ *  v1.1 blends in a classical reading in Python; the browser shows the network stage, with the network's own widening. */
 export function interpret(W: Pack<SMeta>, v: Float32Array, teff: number, eTeff: number): Reading {
-  const m = W.meta, wd = m.widen ?? [1, 1];
+  const m = W.meta, wd = m.widen_net ?? m.widen ?? [1, 1];
   const ln = [v[0] * m.sd_y[0] + m.mu_y[0], v[1] * m.sd_y[1] + m.mu_y[1]];
   const sg = [Math.exp(Math.min(3, Math.max(-7, v[2]))) * m.sd_y[0], Math.exp(Math.min(3, Math.max(-7, v[3]))) * m.sd_y[1]];
   const numax = Math.exp(ln[0]), dnu = Math.exp(ln[1]);

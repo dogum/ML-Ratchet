@@ -11,13 +11,14 @@ import { shell, picker, slider, button, scheduler, gauges, probs, canvas, gridLi
 // slider positions, shortest to longest; the value is the exam's piece key (0 = the whole light curve)
 const LENS = [27, 54, 90, 365, 0];
 const LEN_NAME: Record<number, string> = { 27: '27 days', 54: '54 days', 90: '90 days', 365: '1 year', 0: '4 years' };
-// the exam (420 giants, model.yaml): network vs SYD-style classical pipeline
+// the exam (420 giants, model.yaml): v1.1 (network + classical backbone, Python) vs the SYD-style classical pipeline.
+// The browser runs the network stage; v1.1's blend with the classical reading runs in Python only.
 const EXAM: Record<number, string> = {
-  27: 'exam at 27 d: Δν within 4.6% (median) — the classical pipeline 26.8%',
+  27: 'exam at 27 d: Δν within 4.3% (median, v1.1) — the classical pipeline 26.8%',
   54: 'between 27 and 90 days the network beats the classical pipeline by a wide margin',
   90: 'exam at 90 d: νmax within 2.2% (median) — the classical pipeline 3.9%',
-  365: 'exam at 1 yr: νmax within 1.7% — a tie with the classical pipeline (1.7%)',
-  0: 'exam at 4 yr: νmax within 1.5% — the classical pipeline wins here (0.9%)',
+  365: 'exam at 1 yr: νmax within 1.4% (v1.1; the network alone 1.7%) — the classical pipeline 1.7%',
+  0: 'exam at 4 yr: νmax within 1.0% (v1.1; the network alone 1.5%) — the classical pipeline still wins (0.9%)',
 };
 const PIECE: Record<number, string> = { 27: '27-day', 54: '54-day', 90: '90-day', 365: '1-year' };
 const NU = (s: string) => `<span style="text-transform:none">${s}</span>`;
@@ -112,7 +113,8 @@ export async function mount(ctx: InstrumentContext) {
     ]);
     ui.readout.append(h('div', { class: 'ig-foot' }, h('span', {}, `mass and radius by the scaling relations, Teff ${t.teff} ± ${t.e_teff} K`)));
     const py = s.python[String(LENS[st.len])];
-    if (st.noise === 0 && py) ui.readout.append(h('div', { class: 'ig-foot' }, h('span', {}, `numpy on the same piece: νmax ${py.numax.toFixed(2)}, Δν ${py.dnu.toFixed(3)}`)));
+    if (st.noise === 0 && py) ui.readout.append(h('div', { class: 'ig-foot' }, h('span', {}, `numpy on the same piece: νmax ${py.numax.toFixed(2)}, Δν ${py.dnu.toFixed(3)}`
+      + (py.v11_numax ? ` · v1.1 with the classical backbone (Python only): νmax ${py.v11_numax.toFixed(2)}, Δν ${py.v11_dnu.toFixed(3)}` : ''))));
     const day0 = (start * X.meta.dt) / 86400;
     ui.stamp(ms, `pipeline ${Math.round(tPrep)} ms · KIC ${s.kic}, ${LENS[st.len] ? `the exam’s ${PIECE[LENS[st.len]]} piece from day ${Math.round(day0)}` : `${p.T.toFixed(0)} days of Kepler`} · ${(p.s[1] * 100).toFixed(0)}% duty cycle`);
     ui.setBusy(false);
