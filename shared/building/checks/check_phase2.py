@@ -306,7 +306,7 @@ def thermopilot():
     for i in idx:
         row = x.iloc[int(i)]
         seed = int(rng.integers(1 << 30))
-        a, b = TW.recs_twin(row, seed=seed), stock.recs_to_spec(row, seed=seed)
+        a, b = TW.recs_twin(row, seed=seed), stock.recs_to_spec(row, seed=seed, stable=False)
         n += 1
         if a is None or b is None:
             bad += (a is None) != (b is None)

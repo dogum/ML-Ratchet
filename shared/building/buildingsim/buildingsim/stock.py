@@ -584,13 +584,16 @@ def _recs_heat_ok(rs_heat, recs_row):
     return False
 
 
-def recs_to_spec(row, seed=0, with_band=True):
+def recs_to_spec(row, seed=0, with_band=True, stable=True):
     """Twin of a RECS 2020 respondent (bd.recs() row): the nearest ResStock prior dwelling with the same building
     type, climate zone (if > 30 candidates), heating system/fuel and cooling presence, scored by |log area ratio| +
     |vintage gap| / 30 years, one of the 5 best drawn with `seed`; then the respondent's own heated floor area, year
     built (mid of the bin), stories (homes <= 3; apartments 1), occupants and cooling. Returns (spec, band) with
     band = recs_comfort_band(row) (or spec alone if with_band=False); None if the system is not supported or nothing
-    matches."""
+    matches.
+    stable=True (default) ranks tied scores by ResStock bldg_id, so the twin is the same on every machine.
+    stable=False is ThermoPilot v1.0's numpy argsort, whose tie order depends on the numpy build and CPU (many
+    dwellings tie: 68 for RECS_116893), so v1.0's RECS twins cannot be rebuilt exactly elsewhere."""
     from .generator import _load
     rs = _load('resstock_prior.parquet')
     if row['system'] not in RECS_SYSTEMS or row['housing_type'] not in RECS_BT:
@@ -614,7 +617,7 @@ def recs_to_spec(row, seed=0, with_band=True):
     a = cand['in.sqft..ft2'].astype(float).values * FT2
     v = cand['in.vintage'].astype(str).map(RECS_VINT).fillna(1980).values
     score = np.abs(np.log(np.maximum(a, 10) / area)) + np.abs(v - yb) / 30.0
-    top = np.argsort(score)[:5]
+    top = (np.lexsort((cand['bldg_id'].astype('int64').values, score)) if stable else np.argsort(score))[:5]
     r = np.random.default_rng(seed)
     pick = cand.iloc[int(top[r.integers(len(top))])]
     spec = resstock_to_spec(pick, whole_building=False)
