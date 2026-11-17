@@ -14,7 +14,7 @@ import { GLYPHS } from '../lib/model-families-glyphs';
 
 const all = getModels();
 const ORDER: [string, string[]][] = [
-  ['Signals and records', ['quakenet', 'beatnet', 'bearingnet', 'cellsense', 'chirpnet', 'starquake', 'sundoctor', 'swellcast', 'transitnet']],
+  ['Signals, fields and records', ['quakenet', 'beatnet', 'bearingnet', 'cellsense', 'chirpnet', 'starquake', 'sundoctor', 'swellcast', 'transitnet', 'wakenet']],
   ['Vehicle platform', ['energynet', 'tripdetective', 'hybridpilot']],
   ['Grid platform', ['gridpulse', 'batterypilot', 'plantdetective', 'demandcast']],
 ];
@@ -112,17 +112,17 @@ const toc: [string, string][] = [
   ['lenses', 'Lenses'], ['backlog', 'Backlog'], ['propose', 'Draft a rung'], ['reading', 'Reading'],
 ];
 ---
-<Base title="Model families" description="Which kind of learner fits which physics problem in ML Ratchet: the families the sixteen models use today, how to tell whether the learner is the bottleneck, and where trees, sequence models, sets, graphs, flows, Gaussian processes, filters and formulas could each be tried as a rung.">
+<Base title="Model families" description="Which kind of learner fits which physics problem in ML Ratchet: the families the seventeen models use today, how to tell whether the learner is the bottleneck, and where trees, sequence models, sets, graphs, flows, Gaussian processes, filters and formulas could each be tried as a rung.">
   <div class="mf">
   <section class="hero wrap">
     <p class="kicker tick-label">Model families · which learner fits which problem</p>
-    <h1 class="display h">Sixteen models, three kinds of network. <em>The problem should pick the learner.</em></h1>
+    <h1 class="display h">Seventeen models, four kinds of network. <em>The problem should pick the learner.</em></h1>
     <p class="lead muted">
-      Every model here is a convolutional network or an MLP, and ChirpNet adds a normalizing flow. Those fit the
-      problems they were built for. Other problems in the collection have shapes that another family reads more
-      directly: tables suit trees, a car’s trips suit a set learner, a network of stations suits a graph, and one cell
-      tracked over its life suits a filter. This page sets out which learner fits which problem, how to tell whether
-      the learner is the bottleneck at all, and where each family could be tried as a rung.
+      Most models here are convolutional networks or MLPs; ChirpNet adds a normalizing flow, and WakeNet reads a wind
+      farm as a directed graph. Those fit the problems they were built for. Other problems in the collection have shapes
+      that another family reads more directly: tables suit trees, a car’s trips suit a set learner, seismic stations
+      suit a graph, and one cell tracked over its life suits a filter. This page sets out which learner fits which
+      problem, how to tell whether the learner is the bottleneck at all, and where each family could be tried as a rung.
     </p>
     <dl class="stats">
       <div><dt class="kicker">models</dt><dd class="num">{models.length}</dd></div>

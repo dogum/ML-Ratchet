@@ -1,0 +1,191 @@
+model: wakenet
+ladders:
+- name: WakeNet
+  objective: Weighted skill (0.65 waked-turbine power-ratio skill + 0.35 farm wake-loss
+    skill, relative to the unwaked baseline) on the frozen simulated set
+  rule: Keep if the frozen-set objective beats the incumbent by more than 0.01 AND
+    each of H1 (Jan-Jun) waked MAE, H2 (Jul-Dec) waked MAE, and farm wake-loss MAE
+    on the Kelmarsh 2019 dev set rises by at most 5%.
+  margin: 0.01
+  dev_gate: Per-half-year Kelmarsh 2019 dev gate (H1 waked MAE, H2 waked MAE, and
+    farm wake-loss MAE each <= 1.05x incumbent)
+  frozen_sets:
+  - val1
+  - val2
+  - val3
+  - val4
+  scored_on: val3
+  note: 'Every rung was re-scored when the simulator physics changed (val1 -> val2
+    -> val3) and every decision re-taken in order. Rung 3 (3-D Gaussian anchor) fell
+    0.005 short of rung 2 on the 2-D Jensen set val1 (0.740 vs 0.735) and flipped
+    to kept (+0.053) when re-scored on val2. Reference rows, not candidates (17 Nov
+    2026, training/v11_reference.json): textbook FLORIS alone scores 0.512 on val3
+    (dev H1/H2/farm 10.00/10.29/3.19 %); the same physics tuned on 2019 dev scores
+    0.541 (9.18/9.42/2.86 %). The network adds +0.011 over its anchor in simulation
+    but nothing on real dev, where tuned physics alone beats every rung. r9 anchors
+    the network on the tuned physics: +0.002 on val3 over r6 across three seeds (spread
+    0.0004), so it is rejected, and on dev it still trails tuned physics alone (9.44
+    vs 9.31 % waked). Physics v4 (17 Nov 2026) adds a dev-tuned thrust scale and a
+    new frozen set val4 (seed 404). On val4 the incumbent r6 scores 0.5008 and r9
+    0.5028 (training/v4_reference.json); the v1.0 build kept no checkpoints for r1-r5,
+    r7 and r8, so they keep their val3 scores. v4 physics alone: 0.499 on val4, dev
+    9.12 / 9.36 / 2.81 %.'
+  columns_source: Real Kelmarsh 2019 dev set (5,729 snapshots), MAE — the gate's input
+  columns:
+  - H1 waked (%)
+  - H2 waked (%)
+  - Farm wake (%)
+  rungs:
+  - id: r1
+    change: Textbook 2-D Jensen physics in Gaussian noise; node-only MLP (no wake
+      graph)
+    sim: 0.1254
+    dev:
+      waked_mae: 0.1448
+      waked_mae_h1: 0.1425
+      waked_mae_h2: 0.1468
+      farm_mae: 0.0427
+    decision: kept
+    why: First rung.
+    metrics:
+    - 14.25
+    - 14.68
+    - 4.27
+  - id: r2
+    change: Directed graph neural network over (dx/D, dy/D, dz/D, yaw) wake edges,
+      unanchored
+    sim: 0.374
+    dev:
+      waked_mae: 0.1058
+      waked_mae_h1: 0.1039
+      waked_mae_h2: 0.1074
+      farm_mae: 0.0338
+    decision: kept
+    why: +0.249 on the frozen set; dev gate passed.
+    metrics:
+    - 10.39
+    - 10.74
+    - 3.38
+  - id: r3
+    change: 'Physics-anchored EdgeWakeGNN: predicts residual correction to 3-D Gaussian
+      wake anchor'
+    sim: 0.4264
+    dev:
+      waked_mae: 0.1029
+      waked_mae_h1: 0.1012
+      waked_mae_h2: 0.1043
+      farm_mae: 0.0329
+    decision: kept
+    why: +0.052 on the frozen set; dev gate passed.
+    metrics:
+    - 10.12
+    - 10.43
+    - 3.29
+  - id: r4
+    change: 'v2 physics: 3-D Bastankhah Gaussian wakes, yaw deflection, Crespo-Hernandez
+      TI, mixed hub-height shear, and real 2017-18 unwaked backdrop'
+    sim: 0.5174
+    dev:
+      waked_mae: 0.1012
+      waked_mae_h1: 0.0997
+      waked_mae_h2: 0.1025
+      farm_mae: 0.0314
+    decision: kept
+    why: +0.091 on the frozen set; dev gate passed.
+    metrics:
+    - 9.97
+    - 10.25
+    - 3.14
+  - id: r5
+    change: 'Naive meandering: integrate wakes over 100% of raw nacelle wind-vane
+      StdDev (~7.7 deg)'
+    sim: 0.4642
+    dev:
+      waked_mae: 0.1124
+      waked_mae_h1: 0.1109
+      waked_mae_h2: 0.1137
+      farm_mae: 0.033
+    decision: rejected
+    why: -0.053 on val3, needs more than +0.01.
+    metrics:
+    - 11.09
+    - 11.37
+    - 3.3
+  - id: r6
+    change: 'v3 physics calibrated on dev twins: separated meso-scale meandering (0.16-0.36x
+      vane StdDev) and 3-D hill exposure speedup'
+    sim: 0.5522
+    dev:
+      waked_mae: 0.0948
+      waked_mae_h1: 0.0938
+      waked_mae_h2: 0.0956
+      farm_mae: 0.0288
+    decision: released
+    why: +0.035 on the frozen set; dev gate passed.
+    metrics:
+    - 9.38
+    - 9.56
+    - 2.88
+  - id: r7
+    change: Softmax attention over upstream edges in place of additive sigmoid-gated
+      wake superposition
+    sim: 0.5525
+    dev:
+      waked_mae: 0.0951
+      waked_mae_h1: 0.0941
+      waked_mae_h2: 0.096
+      farm_mae: 0.0289
+    decision: rejected
+    why: +0.000 on val3, needs more than +0.01.
+    metrics:
+    - 9.41
+    - 9.6
+    - 2.89
+  - id: r8
+    change: Fine-tune from r6 on mixed v2 + v3 banks (48,000 simulated farms)
+    sim: 0.5428
+    dev:
+      waked_mae: 0.0975
+      waked_mae_h1: 0.0962
+      waked_mae_h2: 0.0985
+      farm_mae: 0.0299
+    decision: rejected
+    why: -0.009 on val3, needs more than +0.01.
+    metrics:
+    - 9.62
+    - 9.85
+    - 2.99
+  - id: r9
+    change: Same EdgeWakeGNN anchored on the physics tuned on 2019 dev (meandering
+      0.25x vane sigma, hill speedup 0.18, terrain-follow 0.80) instead of textbook
+      FLORIS; seeds 106/107/108 score 0.5543/0.5539/0.5542
+    sim: 0.5543
+    dev:
+      waked_mae: 0.0944
+      waked_mae_h1: 0.093
+      waked_mae_h2: 0.0956
+      farm_mae: 0.0286
+    decision: rejected
+    why: +0.002 on val3, needs more than +0.01.
+    metrics:
+    - 9.3
+    - 9.56
+    - 2.86
+  - id: r10
+    change: v4 physics (thrust scale 0.82-0.98 around the dev value 0.90); network
+      anchored on v4-tuned physics; seeds 106/107/108 score 0.5132 / 0.5135 / 0.5131
+      on val4
+    sim: 0.5132
+    dev:
+      waked_mae: 0.095
+      waked_mae_h1: 0.0936
+      waked_mae_h2: 0.0961
+      farm_mae: 0.0289
+    decision: kept
+    why: '+0.012 over r6 re-scored on val4 (0.5008); every dev gate passes. Not released:
+      on real dev it is no better than r6 (9.50 vs 9.48 % waked MAE), and v4 physics
+      alone does better (9.25 %).'
+    metrics:
+    - 9.36
+    - 9.61
+    - 2.89

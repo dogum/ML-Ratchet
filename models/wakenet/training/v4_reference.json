@@ -1,0 +1,16 @@
+{
+  "val4_banks_same_targets": true,
+  "r6_on_val4": 0.5008,
+  "r9_on_val4": 0.5028,
+  "textbook_physics_alone_val4": 0.4445,
+  "tuned_v3_physics_alone_val4": 0.4892,
+  "tuned_v4_physics_alone": {
+    "sim_val4": 0.4992,
+    "dev": {
+      "waked_mae": 0.0925,
+      "waked_mae_h1": 0.0912,
+      "waked_mae_h2": 0.0936,
+      "farm_mae": 0.0281
+    }
+  }
+}

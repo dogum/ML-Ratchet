@@ -112,7 +112,7 @@ export function init() {
     ['Like PlantDetective', 'set', 'point', ['explain', 'strata', 'web']],
     ['Like StarQuake', 'var', 'post', ['strata', 'cover', 'web']],
     ['GridPulse, live', 'var', 'traj', ['stream', 'small', 'web']],
-    ['WakeNet (backlog)', 'graph', 'point', ['small', 'web']],
+    ['Like WakeNet', 'graph', 'point', ['ood', 'web']],
   ];
   const pre = q('#mf-pk-presets');
   pre.insertAdjacentHTML('beforeend', PRE.map((p, i) => `<button type="button" class="tog" data-p="${i}" aria-pressed="false">${p[0]}</button>`).join(''));

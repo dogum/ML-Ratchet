@@ -1,0 +1,43 @@
+{
+  "physics_version": "1.0",
+  "all_passed": true,
+  "checks": [
+    {
+      "name": "Bastankhah-Porte-Agel 3-D Gaussian single-wake grid (3D-15D x -1.5D..1.5D) vs NREL FLORIS 4.7",
+      "reference": "NREL FLORIS 4.7 (gauss velocity + gauss deflection)",
+      "max_velocity_abs_diff_ms": 3.552713678800501e-15,
+      "max_power_rel_diff": 1.5824650129091784e-15,
+      "pass": true
+    },
+    {
+      "name": "Jensen top-hat + Jimenez yaw deflection (-20..+20 deg) vs NREL FLORIS 4.7",
+      "reference": "NREL FLORIS 4.7 (jensen + jimenez)",
+      "max_velocity_abs_diff_ms": 0.0,
+      "max_power_rel_diff": 2.9125856616657563e-16,
+      "pass": true
+    },
+    {
+      "name": "3-turbine Gaussian yaw-steering sweep (-25..+25 deg) + Crespo-Hernandez TI + SOSFS vs NREL FLORIS 4.7",
+      "reference": "NREL FLORIS 4.7 (gauss + gauss + crespo_hernandez + sosfs)",
+      "max_power_rel_diff": 1.878821773490681e-15,
+      "optimal_yaw_deg_floris": 25.0,
+      "optimal_yaw_deg_wakenet": 25.0,
+      "steering_gain_pct": 12.35814889407203,
+      "pass": true
+    },
+    {
+      "name": "14-turbine Penmanshiel layout x 72 wind directions (0..355 deg) vs NREL FLORIS 4.7",
+      "reference": "NREL FLORIS 4.7 (1,008 turbine-direction states)",
+      "correlation": 1.0,
+      "max_power_rel_diff": 7.371688894745601e-15,
+      "pass": true
+    },
+    {
+      "name": "Rotational equivariance (+37.5 deg) and parked-turbine (online=False vs removed) exactness",
+      "reference": "Exact analytical group & actuator-disk invariants",
+      "rotation_max_kw_diff": 9.094947017729282e-13,
+      "offline_removal_max_kw_diff": 9.663381206337363e-13,
+      "pass": true
+    }
+  ]
+}

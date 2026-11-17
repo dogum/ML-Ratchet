@@ -1,0 +1,62 @@
+{
+  "seed": 20261116,
+  "wind_speed_window_ms": [
+    5.0,
+    12.0
+  ],
+  "roles": {
+    "backdrop": {
+      "file": "kelmarsh_backdrop_2016_2018.npz",
+      "farm": "kelmarsh",
+      "n_turbines": 6,
+      "n_snapshots": 15420,
+      "n_waked_turbine_readings": 43761,
+      "n_large_yaw_snapshots": 7298,
+      "n_partial_parked_snapshots": 951,
+      "first_ts": "2017-09-25 06:40:00",
+      "last_ts": "2018-12-29 16:00:00",
+      "ts_sha256": "0a0a30958522ba9c944ef8e8dbc18b6c60a7b844dfbe5469973c26634c1cfbd4"
+    },
+    "dev": {
+      "file": "kelmarsh_dev_2019.npz",
+      "farm": "kelmarsh",
+      "n_turbines": 6,
+      "n_snapshots": 5729,
+      "n_waked_turbine_readings": 16212,
+      "n_large_yaw_snapshots": 2223,
+      "n_partial_parked_snapshots": 183,
+      "first_ts": "2019-01-01 03:50:00",
+      "last_ts": "2019-12-30 16:40:00",
+      "ts_sha256": "e6d87933a8c95c78936a08a5c8a23585df765dc27edecd9ef655efc542fc026f",
+      "strata": {
+        "H1_2019_Jan_Jun": 2691,
+        "H2_2019_Jul_Dec": 3038
+      }
+    },
+    "exam_kelmarsh": {
+      "file": "kelmarsh_exam_2020_2021.npz",
+      "farm": "kelmarsh",
+      "n_turbines": 6,
+      "n_snapshots": 15059,
+      "n_waked_turbine_readings": 39008,
+      "n_large_yaw_snapshots": 5653,
+      "n_partial_parked_snapshots": 2920,
+      "first_ts": "2020-01-02 06:50:00",
+      "last_ts": "2021-12-31 22:30:00",
+      "ts_sha256": "3872f22d99e8c093de0da485deca40c567ba275d33fa2904893ad4f23a7a4798"
+    },
+    "exam_penmanshiel": {
+      "file": "penmanshiel_exam_2019_2020.npz",
+      "farm": "penmanshiel",
+      "n_turbines": 14,
+      "n_snapshots": 8976,
+      "n_waked_turbine_readings": 78327,
+      "n_large_yaw_snapshots": 4814,
+      "n_partial_parked_snapshots": 990,
+      "first_ts": "2019-01-01 00:10:00",
+      "last_ts": "2020-12-31 20:10:00",
+      "ts_sha256": "2b939bb5af63a466c516fc89e4bad13658755add6de950921adf143348177975"
+    }
+  },
+  "split_sha256": "bd1dd01fa361cf2b68e4406d46c6fd12c4849c0b7530192609554c38cae9f856"
+}
