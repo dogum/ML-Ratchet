@@ -45,6 +45,7 @@ const released = m.released ? new Date(m.released as string).toLocaleDateString(
             {released && <span class="badge faint">{released}</span>}
             {m.platform === 'vehicle' && <a class="badge plat" href={url('vehicle/')}>on the vehicle platform →</a>}
             {m.platform === 'grid' && <a class="badge plat" href={url('grid/')}>on the grid platform →</a>}
+            {m.platform === 'building' && <a class="badge plat" href={url('building/')}>on the building platform →</a>}
           </div>
         </div>
         <p class="display tagline">{m.tagline}</p>

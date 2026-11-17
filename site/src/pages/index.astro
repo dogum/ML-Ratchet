@@ -21,8 +21,9 @@ const onPlatform = (p: string) => models.filter((m) => m.platform === p).length;
 const platforms = [
   [onPlatform('vehicle'), 'a shared vehicle simulator'],
   [onPlatform('grid'), 'a shared grid simulator'],
+  [onPlatform('building'), 'a shared building simulator'],
 ].filter(([n]) => n) as [number, string][];
-const platformText = platforms.map(([n, t], k) => `${k ? 'and ' : ''}${say(n)}${k ? '' : ' of them'} on ${t}`).join(' ');
+const platformText = platforms.map(([n, t], k) => `${k === 0 ? '' : k === platforms.length - 1 ? ' and ' : ', '}${say(n)}${k ? '' : ' of them'} on ${t}`).join('');
 const losses = models.filter((m) => m.losses?.length).map((m) => ({ m, text: m.losses![0] }));
 const help = models.flatMap((m) => (m.help_wanted ?? []).map((h) => ({ m, h })));
 const steps = [

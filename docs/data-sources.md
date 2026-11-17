@@ -41,6 +41,13 @@ find another documented source or download it yourself and note it.
 | [ERCOT](https://www.ercot.com/) MIS documents and monthly reports | Prices; frequency events | BatteryPilot, GridPulse | 17 monthly operations reports 2018-2026 not found |
 | [CAISO OASIS](http://oasis.caiso.com/) | LMPs | BatteryPilot | Serves only about 3 years (from 2023-08) |
 | [MATPOWER](https://github.com/MATPOWER/matpower) cases | IEEE and ACTIVSg test grids | GridSim | The Texas A&M download form asks for an email; MATPOWER's copies are the same data |
+| [Building Data Genome 2](https://github.com/buds-lab/building-data-genome-project-2) | 1,636 buildings, 3,053 hourly meters, 2016-17, site weather | Building platform: LoadCast, BuildingDetective, ThermoPilot | CC BY-SA 4.0. Mixed DST/standard timestamps; one site's electricity is daily totals spread hourly; one site's thermal meters 1,000× too large |
+| [EIA RECS 2020 / CBECS 2018](https://www.eia.gov/consumption/) microdata | Home and commercial-building surveys | BuildingDetective, ThermoPilot, BuildingSim's generator | |
+| [OEDI](https://data.openei.org/submissions/4520) ResStock / ComStock | Modelled stock characteristics and hourly profiles | BuildingSim priors and twin checks | The OEDI dataset pages answered "No data found" to a script on 17 Nov 2026; the S3 files were fetched in the build sandbox |
+| LBNL curated fault datasets (RP-1312, FLEXLAB, ORNL, Nesbitt Hall) | 237 AHU/RTU fault runs | FaultFinder | The full datasets sit behind a name/email form at faultdetection.lbl.gov (HTTP 521/522 on 17 Nov 2026) |
+| [WPuQ](https://zenodo.org/records/5642902) (Zenodo), [HUE](https://doi.org/10.7910/DVN/N3HGRN) (Harvard Dataverse) | Heat-pump homes; BC homes | ThermoPilot, BuildingDetective | Dataverse returned an empty body to a script |
+| [OpenEI URDB](https://openei.org/wiki/Utility_Rate_Database) | Utility tariffs | ThermoPilot | |
+| [climate.onebuilding.org](https://climate.onebuilding.org) TMYx | Typical-year weather | BuildingSim training weather | "All Rights Reserved": used, not redistributed |
 
 ## Checked for backlog ideas
 
@@ -65,6 +72,8 @@ EIA, Zenodo.
 | fnetpublic.utk.edu (FNET/GridEye) | Timed out from the cloud build machine; the public pages answered from the repository's own machine on 14 Nov 2026 |
 | NERC reliability reports (nerc.com) | Returned an HTML page instead of the PDF |
 | nationalgrideso.com | 502 (the old ESO domain; the same reports are on neso.energy and ofgem.gov.uk) |
+| github.com (from the claude.ai build sandbox, Nov 2026) | Blocked, so no EnergyPlus binary: BuildingSim has no EnergyPlus reference run |
+| ecobee Donate Your Data, UK Data Service (RHPP, Electrification of Heat), Pecan Street | Gated by application or registration: no real thermostat logs and no UK heat-pump trials yet |
 
 ## Python packages that helped
 

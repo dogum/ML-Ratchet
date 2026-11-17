@@ -61,6 +61,10 @@ export const MODEL_NOTES: Record<string, ModelNote> = {
   swellcast: { t: ['cnn2d', 'anchor'], params: 296e3, paramsFrom: 'model.yaml' },
   transitnet: { t: ['cnn1d', 'anchor'], params: 321900, paramsFrom: 'weight files' },
   tripdetective: { t: ['cnn1d', 'sets', 'anchor'], params: 0.40e6, paramsFrom: 'model.yaml', twin: 'A dev hybrid’s twin stops its engine 0.29 of the time; the real car 0.09.', ladder: 3 },
+  loadcast: { t: ['mlp'], params: 177604, paramsFrom: 'model.yaml', twin: 'Dev twins reproduce the no-history errors building by building (r 0.86 electricity, 0.96 chilled water): they are the simulator’s magnitude errors, not the network’s.' },
+  buildingdetective: { t: ['mlp'], params: 571527, paramsFrom: 'model.yaml: 384,557 + 106,285 + 80,685', twin: 'Real campus district-heat meters stay flat through summer; the first twins were far too seasonal (heating slope 4.38 against 0.81 real) until always-on base loads brought it to 1.00.' },
+  faultfinder: { t: ['cnn1d'], params: 160871, paramsFrom: 'model.yaml', twin: 'Real BMS logs record commands, not actuator positions: FLEXLAB’s heating valve stuck at 100% logs 0%, so the simulator was changed to log commands.' },
+  thermopilot: { t: ['mlp'], params: 276516, paramsFrom: 'model.yaml', twin: 'Twins of 37 real WPuQ heat-pump homes overstate the heating slope 2.7× and run at night while the real homes run flat; ThermoPilot against setback flips in 18 of 37 homes.' },
 };
 
 export interface Family {
@@ -341,7 +345,7 @@ export const LENSES: Lens[] = [
     see: 'Why forests, small MLPs, sets, graphs and formulas port easily, and tabular foundation models and diffusion samplers do not.',
     blind: 'It can bias choices toward what is easy to port over what reads best.',
     ask: 'Can inference be written in numpy in an afternoon and checked against training to 1e-6?',
-    evi: 'DemandCast: numpy equals torch to 3e-7. site/src/lib/nn runs all 16 instruments, each with parity tests.' },
+    evi: 'DemandCast: numpy equals torch to 3e-7. site/src/lib/nn runs all 20 instruments, each with parity tests.' },
   { tag: 'Decisions', name: 'Grade the decision, not the forecast',
     one: 'For a controller, a better forecast can make a worse decision. Train and grade on the outcome.',
     see: 'Why BatteryPilot puts the battery physics inside its loss and is graded on its share of perfect hindsight.',
@@ -362,7 +366,6 @@ export const BACKLOG_FIT: Record<string, { f: string[]; why: string }> = {
   dispatchnet: { f: ['gnn', 'diffsim'], why: 'The transmission network is a graph, and the task is a decision: train through the dispatch cost, grade on EIA-930 generation and prices.' },
   watershed: { f: ['ssm', 'assim'], why: 'Rivers store water for weeks. LSTMs are strong on large-sample basin data (Kratzert et al. 2019); a filter on a rainfall-runoff model is the classical partner.' },
   tsunaminet: { f: ['operator', 'flow'], why: 'A neural operator can stand in for the shallow-water solver to grow the bank; a flow reads the Okada source with its uncertainty.' },
-  buildingsim: { f: ['gbm', 'gp', 'assim'], why: 'Metered building data is tabular and small per building; a thermal RC model with a filter tracks one building over time.' },
   stormnet: { f: ['ssm', 'assim'], why: 'The Burton equation is a one-state equation driven by the solar wind: a filter on it, or a recurrent model whose state is the ring current.' },
   gpsquake: { f: ['gp', 'symbolic'], why: 'A GNSS series is seasonal terms plus steps plus transients: a GP with periodic and step kernels, or a sparse library of those terms.' },
   roomsense: { f: ['cnn1d', 'anchor'], why: 'An impulse response is a 1-D signal; Sabine’s law is the classical estimate to correct.' },
