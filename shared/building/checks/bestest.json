@@ -1,0 +1,354 @@
+{
+ "what": "ASHRAE 140 BESTEST envelope cases (5R1C zone, 1 h step) vs the 1995 reference-program ranges",
+ "weather": "Denver-Stapleton TMY (WBAN 23062), climate.onebuilding.org; local standard time",
+ "mass_params": {
+  "light": [
+   1928073.6,
+   136.96989798822412
+  ],
+  "heavy": [
+   14663040.0,
+   116.11028482676734
+  ]
+ },
+ "cases": {
+  "600": {
+   "heat": {
+    "sim": 5.401,
+    "lo": 4.296,
+    "hi": 5.709,
+    "inside": true,
+    "dev_from_mid_pct": 8.0
+   },
+   "cool": {
+    "sim": 6.848,
+    "lo": 6.137,
+    "hi": 7.964,
+    "inside": true,
+    "dev_from_mid_pct": -2.9
+   },
+   "peak_heat": {
+    "sim": 4.145,
+    "lo": 3.437,
+    "hi": 4.354,
+    "inside": true,
+    "dev_from_mid_pct": 6.4
+   },
+   "peak_cool": {
+    "sim": 6.418,
+    "lo": 5.965,
+    "hi": 6.827,
+    "inside": true,
+    "dev_from_mid_pct": 0.3
+   },
+   "ledger_closure": 7.127287921021019e-09
+  },
+  "610": {
+   "heat": {
+    "sim": 5.427,
+    "lo": 4.355,
+    "hi": 5.786,
+    "inside": true,
+    "dev_from_mid_pct": 7.0
+   },
+   "cool": {
+    "sim": 5.193,
+    "lo": 3.915,
+    "hi": 5.778,
+    "inside": true,
+    "dev_from_mid_pct": 7.2
+   },
+   "ledger_closure": 8.180020519554867e-09
+  },
+  "620": {
+   "heat": {
+    "sim": 5.586,
+    "lo": 4.613,
+    "hi": 5.944,
+    "inside": true,
+    "dev_from_mid_pct": 5.8
+   },
+   "cool": {
+    "sim": 4.254,
+    "lo": 3.417,
+    "hi": 5.004,
+    "inside": true,
+    "dev_from_mid_pct": 1.0
+   },
+   "ledger_closure": 8.456526455254787e-09
+  },
+  "640": {
+   "heat": {
+    "sim": 3.568,
+    "lo": 2.751,
+    "hi": 3.803,
+    "inside": true,
+    "dev_from_mid_pct": 8.9
+   },
+   "cool": {
+    "sim": 6.691,
+    "lo": 5.952,
+    "hi": 7.811,
+    "inside": true,
+    "dev_from_mid_pct": -2.8
+   },
+   "ledger_closure": 6.501855918206898e-09
+  },
+  "650": {
+   "heat": {
+    "sim": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "inside": true,
+    "dev_from_mid_pct": null
+   },
+   "cool": {
+    "sim": 5.68,
+    "lo": 4.816,
+    "hi": 6.545,
+    "inside": true,
+    "dev_from_mid_pct": -0.0
+   },
+   "ledger_closure": 4.376377889131546e-09
+  },
+  "900": {
+   "heat": {
+    "sim": 1.729,
+    "lo": 1.17,
+    "hi": 2.041,
+    "inside": true,
+    "dev_from_mid_pct": 7.7
+   },
+   "cool": {
+    "sim": 2.333,
+    "lo": 2.132,
+    "hi": 3.415,
+    "inside": true,
+    "dev_from_mid_pct": -15.9
+   },
+   "peak_heat": {
+    "sim": 3.616,
+    "lo": 2.85,
+    "hi": 3.797,
+    "inside": true,
+    "dev_from_mid_pct": 8.8
+   },
+   "peak_cool": {
+    "sim": 2.804,
+    "lo": 2.888,
+    "hi": 3.932,
+    "inside": false,
+    "dev_from_mid_pct": -17.8
+   },
+   "ledger_closure": 7.4439719853465076e-09
+  },
+  "910": {
+   "heat": {
+    "sim": 1.988,
+    "lo": 1.512,
+    "hi": 2.282,
+    "inside": true,
+    "dev_from_mid_pct": 4.8
+   },
+   "cool": {
+    "sim": 1.265,
+    "lo": 0.821,
+    "hi": 1.917,
+    "inside": true,
+    "dev_from_mid_pct": -7.6
+   },
+   "ledger_closure": 8.071256214374294e-09
+  },
+  "920": {
+   "heat": {
+    "sim": 4.009,
+    "lo": 3.261,
+    "hi": 4.3,
+    "inside": true,
+    "dev_from_mid_pct": 6.0
+   },
+   "cool": {
+    "sim": 2.446,
+    "lo": 1.84,
+    "hi": 3.578,
+    "inside": true,
+    "dev_from_mid_pct": -9.7
+   },
+   "ledger_closure": 8.401893175989889e-09
+  },
+  "940": {
+   "heat": {
+    "sim": 1.218,
+    "lo": 0.793,
+    "hi": 1.411,
+    "inside": true,
+    "dev_from_mid_pct": 10.5
+   },
+   "cool": {
+    "sim": 2.284,
+    "lo": 2.079,
+    "hi": 3.338,
+    "inside": true,
+    "dev_from_mid_pct": -15.7
+   },
+   "ledger_closure": 7.2728096074236545e-09
+  },
+  "950": {
+   "heat": {
+    "sim": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "inside": true,
+    "dev_from_mid_pct": null
+   },
+   "cool": {
+    "sim": 0.474,
+    "lo": 0.387,
+    "hi": 0.921,
+    "inside": true,
+    "dev_from_mid_pct": -27.6
+   },
+   "ledger_closure": 4.187854174144948e-09
+  },
+  "600FF": {
+   "Tmax": {
+    "sim": 68.634,
+    "lo": 64.9,
+    "hi": 69.5,
+    "inside": true,
+    "dev_from_mid_pct": 2.1
+   },
+   "Tmin": {
+    "sim": -20.426,
+    "lo": -18.8,
+    "hi": -15.6,
+    "inside": false,
+    "dev_from_mid_pct": 18.8
+   },
+   "Tmean": {
+    "sim": 24.943,
+    "lo": 24.2,
+    "hi": 27.4,
+    "inside": true,
+    "dev_from_mid_pct": -3.3
+   },
+   "ledger_closure": 7.694956051638362e-09
+  },
+  "900FF": {
+   "Tmax": {
+    "sim": 42.635,
+    "lo": 41.8,
+    "hi": 46.4,
+    "inside": true,
+    "dev_from_mid_pct": -3.3
+   },
+   "Tmin": {
+    "sim": -5.395,
+    "lo": -6.4,
+    "hi": -1.6,
+    "inside": true,
+    "dev_from_mid_pct": 34.9
+   },
+   "Tmean": {
+    "sim": 24.912,
+    "lo": 24.5,
+    "hi": 27.5,
+    "inside": true,
+    "dev_from_mid_pct": -4.2
+   },
+   "ledger_closure": 7.685475271848283e-09
+  },
+  "650FF": {
+   "Tmax": {
+    "sim": 67.761,
+    "lo": 63.2,
+    "hi": 68.2,
+    "inside": true,
+    "dev_from_mid_pct": 3.1
+   },
+   "Tmin": {
+    "sim": -23.357,
+    "lo": -23.0,
+    "hi": -21.0,
+    "inside": false,
+    "dev_from_mid_pct": 6.2
+   },
+   "Tmean": {
+    "sim": 19.01,
+    "lo": 18.0,
+    "hi": 19.6,
+    "inside": true,
+    "dev_from_mid_pct": 1.1
+   },
+   "ledger_closure": 5.8648080997325005e-09
+  },
+  "950FF": {
+   "Tmax": {
+    "sim": 35.742,
+    "lo": 35.5,
+    "hi": 38.5,
+    "inside": true,
+    "dev_from_mid_pct": -3.4
+   },
+   "Tmin": {
+    "sim": -20.506,
+    "lo": -20.2,
+    "hi": -17.8,
+    "inside": false,
+    "dev_from_mid_pct": 7.9
+   },
+   "Tmean": {
+    "sim": 13.859,
+    "lo": 14.0,
+    "hi": 15.3,
+    "inside": false,
+    "dev_from_mid_pct": -5.4
+   },
+   "ledger_closure": 4.275501652393822e-09
+  }
+ },
+ "inside": 29,
+ "total": 34,
+ "sensitivities": {
+  "900-600 heat": {
+   "sim": -3.672,
+   "ref_mid": -3.397
+  },
+  "900-600 cool": {
+   "sim": -4.515,
+   "ref_mid": -4.277
+  },
+  "640-600 heat": {
+   "sim": -1.833,
+   "ref_mid": -1.725
+  },
+  "620-600 cool": {
+   "sim": -2.594,
+   "ref_mid": -2.84
+  },
+  "610-600 cool": {
+   "sim": -1.655,
+   "ref_mid": -2.204
+  },
+  "920-900 cool": {
+   "sim": 0.113,
+   "ref_mid": -0.065
+  },
+  "910-900 cool": {
+   "sim": -1.068,
+   "ref_mid": -1.405
+  },
+  "940-900 heat": {
+   "sim": -0.511,
+   "ref_mid": -0.503
+  }
+ },
+ "caveats": [
+  "ranges transcribed from secondary literature (ASHRAE 140-2001 informative tables); confirm",
+  "5R1C has one mass node and a fixed 50/50 convective/radiative split of gains (BESTEST: 40/60)",
+  "window angular transmittance from pvlib physical IAM (2 panes), not the BESTEST glazing tables",
+  "case 610/910 overhang modelled as an infinite horizontal projection (no side effects)"
+ ],
+ "generated": "2026-11-16 23:32",
+ "python": "3.13.18"
+}

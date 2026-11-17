@@ -60,3 +60,19 @@ shared/grid/gridsim/refdata/
 shared/grid/checks/out/
 shared/grid/gridsim/logs/
 shared/grid/gridsim/.refenv/
+
+# Building platform: rebuildable data (scripts in shared/building/data/scripts, sources in DATA.md;
+# `mlratchet data building`). Tracked under data/: DATA.md, scripts/, build.py, MANIFEST.json and the frozen
+# proc/splits.json. TMYx/EPW weather and the priors live in buildingsim/refdata/ (not ours to commit; rebuildable).
+shared/building/data/*
+!shared/building/data/DATA.md
+!shared/building/data/scripts/
+!shared/building/data/build.py
+!shared/building/data/MANIFEST.json
+!shared/building/data/proc/
+shared/building/data/proc/*
+!shared/building/data/proc/splits.json
+shared/building/buildingsim/refdata/
+shared/building/buildingsim/.refenv/
+shared/building/buildingsim/tmp/
+shared/building/checks/out/

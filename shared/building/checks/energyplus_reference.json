@@ -1,0 +1,12 @@
+{
+ "what": "EnergyPlus as an independent reference on DOE prototype buildings",
+ "status": "blocked",
+ "findings": [
+  "pip index: no package named energyplus on PyPI (16 Nov 2026)",
+  "openstudio 3.11.0 wheel (79 MB) contains the OpenStudio SDK and the IDF forward translator (openstudio/_openstudioenergyplus.so) but no EnergyPlus simulation engine (no libenergyplusapi / energyplus executable)",
+  "EnergyPlus GitHub releases are blocked from this sandbox (coordinator note)"
+ ],
+ "substitute": "EnergyPlus-based references used instead: ResStock (OpenStudio-HPXML) and ComStock (OpenStudio) twins with identical weather; BESTEST ranges from the ASHRAE 140 reference programs",
+ "generated": "2026-11-16 23:14",
+ "python": "3.13.18"
+}

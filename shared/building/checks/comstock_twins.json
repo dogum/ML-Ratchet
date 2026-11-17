@@ -1,0 +1,334 @@
+{
+ "what": "BuildingSim twins of ComStock 2025 R3 models (simulator vs simulator, NOT reality)",
+ "heldout_seed12": {
+  "what": "BuildingSim twins of ComStock 2025 R3 models (simulator vs simulator, NOT reality)",
+  "n_buildings": 45,
+  "annual_ratio_sim_over_comstock": {
+   "heating": {
+    "n": 41,
+    "median_ratio": 0.7522895912104085,
+    "p25": 0.17039086324405459,
+    "p75": 1.005017027064852,
+    "within_25pct": 0.3902439024390244,
+    "sum_ratio": 0.6149556611287608
+   },
+   "cooling": {
+    "n": 44,
+    "median_ratio": 0.8314188498220463,
+    "p25": 0.6208584692880781,
+    "p75": 0.9895253711419876,
+    "within_25pct": 0.5,
+    "sum_ratio": 0.8661971888262173
+   },
+   "fans": {
+    "n": 45,
+    "median_ratio": 0.7990672232106895,
+    "p25": 0.4610281715365613,
+    "p75": 1.2468219868487278,
+    "within_25pct": 0.28888888888888886,
+    "sum_ratio": 0.7701030783662254
+   },
+   "pumps_rejection": {
+    "n": 9,
+    "median_ratio": 0.43116102827131303,
+    "p25": 0.21023980436577488,
+    "p75": 0.6431889845529932,
+    "within_25pct": 0.1111111111111111,
+    "sum_ratio": 0.8936747578882589
+   },
+   "interior_lighting": {
+    "n": 45,
+    "median_ratio": 1.1296073665343505,
+    "p25": 0.8613311290493028,
+    "p75": 1.3067807388029984,
+    "within_25pct": 0.4888888888888889,
+    "sum_ratio": 1.0159033737926642
+   },
+   "equipment_refrigeration": {
+    "n": 45,
+    "median_ratio": 0.8854037457380559,
+    "p25": 0.47113805066073483,
+    "p75": 1.425458532409902,
+    "within_25pct": 0.26666666666666666,
+    "sum_ratio": 1.3006362603409904
+   },
+   "water_heating": {
+    "n": 34,
+    "median_ratio": 1.073836781912521,
+    "p25": 0.646532578358809,
+    "p75": 1.7819111112367843,
+    "within_25pct": 0.23529411764705882,
+    "sum_ratio": 1.176663682106618
+   },
+   "exterior_lighting": {
+    "n": 45,
+    "median_ratio": 0.8741866608431682,
+    "p25": 0.606855050909476,
+    "p75": 1.366764589473864,
+    "within_25pct": 0.28888888888888886,
+    "sum_ratio": 2.3396982972995612
+   },
+   "electricity": {
+    "n": 45,
+    "median_ratio": 0.8300782928871154,
+    "p25": 0.6189473092671577,
+    "p75": 1.1122501596325403,
+    "within_25pct": 0.4666666666666667,
+    "sum_ratio": 1.0014810802356056
+   },
+   "site": {
+    "n": 45,
+    "median_ratio": 0.862101707495783,
+    "p25": 0.6823232871868217,
+    "p75": 1.1604190148661708,
+    "within_25pct": 0.4888888888888889,
+    "sum_ratio": 0.9687502662178504
+   }
+  },
+  "hourly_correlation_electricity": {
+   "median": 0.8054797846314115
+  },
+  "daily_correlation": {
+   "electricity": 0.8900417199747241,
+   "site": 0.89236359849138
+  },
+  "site_ratio_by_type": {
+   "QuickServiceRestaurant": {
+    "n": 3,
+    "median": 1.3328597874919565
+   },
+   "FullServiceRestaurant": {
+    "n": 3,
+    "median": 0.9106114008642154
+   },
+   "Outpatient": {
+    "n": 3,
+    "median": 0.709871479072315
+   },
+   "LargeHotel": {
+    "n": 3,
+    "median": 0.7025270791659338
+   },
+   "SmallHotel": {
+    "n": 3,
+    "median": 0.6823232871868217
+   },
+   "Warehouse": {
+    "n": 3,
+    "median": 1.1922849592833387
+   },
+   "Grocery": {
+    "n": 3,
+    "median": 0.6934185388348618
+   },
+   "RetailStandalone": {
+    "n": 3,
+    "median": 1.1787263214970183
+   },
+   "SmallOffice": {
+    "n": 3,
+    "median": 1.1616451984331544
+   },
+   "MediumOffice": {
+    "n": 3,
+    "median": 1.0581055406573638
+   },
+   "SecondarySchool": {
+    "n": 3,
+    "median": 0.7134106758399337
+   },
+   "PrimarySchool": {
+    "n": 3,
+    "median": 0.670624336214128
+   },
+   "LargeOffice": {
+    "n": 3,
+    "median": 1.1122501596325403
+   },
+   "RetailStripmall": {
+    "n": 3,
+    "median": 0.4867197705430815
+   },
+   "Hospital": {
+    "n": 3,
+    "median": 1.1604190148661708
+   }
+  },
+  "max_ledger_closure": 4.791433431000559e-09,
+  "notes": [
+   "ComStock envelope U-values are not in the metadata: BuildingSim uses its code-level table for the energy code of construction / last roof replacement",
+   "refrigeration is booked with equipment",
+   "latitude from the state centroid"
+  ]
+ },
+ "calibration_seed11_in_sample": {
+  "what": "BuildingSim twins of ComStock 2025 R3 models (simulator vs simulator, NOT reality)",
+  "n_buildings": 45,
+  "annual_ratio_sim_over_comstock": {
+   "heating": {
+    "n": 42,
+    "median_ratio": 0.7158655939629905,
+    "p25": 0.35905394807153274,
+    "p75": 1.2283675441501323,
+    "within_25pct": 0.23809523809523808,
+    "sum_ratio": 0.5782999419038514
+   },
+   "cooling": {
+    "n": 44,
+    "median_ratio": 0.7766105324070613,
+    "p25": 0.5129120329379565,
+    "p75": 1.0913441710553,
+    "within_25pct": 0.36363636363636365,
+    "sum_ratio": 0.7157754021227404
+   },
+   "fans": {
+    "n": 45,
+    "median_ratio": 0.6120439358062689,
+    "p25": 0.4470412937756279,
+    "p75": 1.3873823276489374,
+    "within_25pct": 0.13333333333333333,
+    "sum_ratio": 0.6744691847591379
+   },
+   "pumps_rejection": {
+    "n": 15,
+    "median_ratio": 0.2826158927493502,
+    "p25": 0.08986411317008128,
+    "p75": 0.6201059560679766,
+    "within_25pct": 0.06666666666666667,
+    "sum_ratio": 0.8431687623989157
+   },
+   "interior_lighting": {
+    "n": 45,
+    "median_ratio": 1.0441417666406378,
+    "p25": 0.8350479453041013,
+    "p75": 1.3414111894344392,
+    "within_25pct": 0.4888888888888889,
+    "sum_ratio": 1.1344568708521956
+   },
+   "equipment_refrigeration": {
+    "n": 45,
+    "median_ratio": 1.133398213726312,
+    "p25": 0.5170421839569046,
+    "p75": 1.577274496830948,
+    "within_25pct": 0.17777777777777778,
+    "sum_ratio": 1.1569341077157462
+   },
+   "water_heating": {
+    "n": 32,
+    "median_ratio": 1.0072147895435337,
+    "p25": 0.6198711024009462,
+    "p75": 1.8473454285129782,
+    "within_25pct": 0.25,
+    "sum_ratio": 1.3059085533665553
+   },
+   "exterior_lighting": {
+    "n": 45,
+    "median_ratio": 1.0646956722639727,
+    "p25": 0.6635444345367807,
+    "p75": 1.522005091704381,
+    "within_25pct": 0.3111111111111111,
+    "sum_ratio": 1.7447479280604632
+   },
+   "electricity": {
+    "n": 45,
+    "median_ratio": 0.8626242496293218,
+    "p25": 0.6328796752198281,
+    "p75": 1.1291233117126322,
+    "within_25pct": 0.5333333333333333,
+    "sum_ratio": 0.9599229743291785
+   },
+   "site": {
+    "n": 45,
+    "median_ratio": 0.7968936910592308,
+    "p25": 0.6507225964043917,
+    "p75": 1.1232145590893647,
+    "within_25pct": 0.4444444444444444,
+    "sum_ratio": 0.8737267527344169
+   }
+  },
+  "hourly_correlation_electricity": {
+   "median": 0.6992958619949392
+  },
+  "daily_correlation": {
+   "electricity": 0.8388471759459796,
+   "site": 0.8693287980601736
+  },
+  "site_ratio_by_type": {
+   "Grocery": {
+    "n": 3,
+    "median": 0.7968936910592308
+   },
+   "QuickServiceRestaurant": {
+    "n": 3,
+    "median": 1.369528704271004
+   },
+   "SmallOffice": {
+    "n": 3,
+    "median": 0.9993743646586676
+   },
+   "Outpatient": {
+    "n": 3,
+    "median": 0.7262752970706096
+   },
+   "Warehouse": {
+    "n": 3,
+    "median": 1.1282900742446056
+   },
+   "SmallHotel": {
+    "n": 3,
+    "median": 1.096935582120408
+   },
+   "SecondarySchool": {
+    "n": 3,
+    "median": 0.6359330717840281
+   },
+   "LargeOffice": {
+    "n": 3,
+    "median": 0.7881644289080412
+   },
+   "RetailStandalone": {
+    "n": 3,
+    "median": 1.1614747725558194
+   },
+   "FullServiceRestaurant": {
+    "n": 3,
+    "median": 0.7503512029072005
+   },
+   "MediumOffice": {
+    "n": 3,
+    "median": 0.8709610307833164
+   },
+   "PrimarySchool": {
+    "n": 3,
+    "median": 0.8483440392267851
+   },
+   "LargeHotel": {
+    "n": 3,
+    "median": 0.5222711337585694
+   },
+   "RetailStripmall": {
+    "n": 3,
+    "median": 0.6542047063360492
+   },
+   "Hospital": {
+    "n": 3,
+    "median": 0.9123951222982041
+   }
+  },
+  "max_ledger_closure": 8.12233085058995e-09,
+  "notes": [
+   "ComStock envelope U-values are not in the metadata: BuildingSim uses its code-level table for the energy code of construction / last roof replacement",
+   "refrigeration is booked with equipment",
+   "latitude from the state centroid"
+  ]
+ },
+ "corrections_made_on_seed11": [
+  "lighting-generation LPD multipliers x0.66",
+  "non-residential DHW volume x0.6",
+  "non-residential exterior lighting x1.8",
+  "night base fractions +0.05 lighting / +0.10 plug"
+ ],
+ "note": "the seed-11 sample motivated the corrections (lighting, DHW, exterior lighting, night base; before them its site ratio was 0.96 median with lighting 1.52x and DHW 1.61x) and is shown re-simulated after them (in-sample); seed 12 is a disjoint draw and is the number to quote",
+ "generated": "2026-11-16 23:30",
+ "python": "3.13.18"
+}

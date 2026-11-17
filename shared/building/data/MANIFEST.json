@@ -1,0 +1,1661 @@
+{
+ "release": "buildingsim-buildingdata-v1.0",
+ "frozen": "2026-11-16",
+ "note": "sha256 and bytes of every data file in the v1.0 release (data/proc, buildingsim/refdata, the per-unit twin results in checks/out); `mlratchet data building --from-zip ...` unpacks and checks against it, `--only verify` checks a data root. Hashed 17 Nov 2026; the release zip (229,871,949 bytes, sha256 c918802d62108204af0e495150c4fe08ecbdcb7401c20cbf3a317df0c47c6e93) is byte-identical to the earlier parts.",
+ "splits_file_sha256": "524aee157fffff7c45f3d119823bb3ccd81e73046bf9f15e8e8af523185fba75",
+ "splits_sha256_field": "7ac15e9f56a1979b0fca9fcb17e8577385901ddef1bab950f22655e5573342d2",
+ "sources": {
+  "buildingsim-buildingdata-v1.0.zip": 408,
+  "or: buildingsim-minusdata.zip + proc/{baselines,eia,faults,tariffs,tmy}.zip": 333,
+  "splits.json": 1
+ },
+ "not_shipped": {
+  "data/proc/stock/": "ResStock/ComStock metadata, samples, hourly profiles, county weather (MODELLED, ~1.2 GB): stage `stock` (stock_meta.py, stock_ts.py)",
+  "data/raw/": "raw downloads: stages fetch, bdg2, weather, faults, tmy",
+  "buildingsim/refdata/stock_weather/": "OEDI AMY2018 county weather: buildingsim/tools/fetch_stock_weather.py",
+  "buildingsim/tmp/res_pick.csv": "the ResStock twin pick list read by check_resstock.py and tools/calibrate_resstock.py; no script in the release writes it"
+ },
+ "excluded": {
+  "data/proc/baselines/load_bdg2.parquet.part": "260489 bytes; a partial write left in baselines.zip, not unpacked"
+ },
+ "n_files": 409,
+ "bytes": 270728258,
+ "files": {
+  "buildingsim/refdata/priors/cbecs_prior.parquet": [
+   "dd0c4802295f4f7afd198dbc79b410f82613b17327726ae75c47a798c508c7bf",
+   454501
+  ],
+  "buildingsim/refdata/priors/comstock_prior.parquet": [
+   "8a6862de4696e75bcc99dbbe0e13c003befd25fc37ef86fe7fbac218aa82ae34",
+   4458989
+  ],
+  "buildingsim/refdata/priors/county_climate_zones.parquet": [
+   "277eab136a92883bf55ebfd1c340c809e81ba333e02df89a2c23d2f90ce388b4",
+   26786
+  ],
+  "buildingsim/refdata/priors/recs_prior.parquet": [
+   "68e26e306b591540b0cbffddba2e7b46bc12d0f215ff3d41396861f1d4bd20b8",
+   1269896
+  ],
+  "buildingsim/refdata/priors/resstock_prior.parquet": [
+   "42deddfb8ac4455fae01fd9bcad57637039debb79d8ef6902d905830bb7c6e29",
+   4069368
+  ],
+  "buildingsim/refdata/weather/bestest/USA_CO_Denver-Stapleton.Intl.AP.724690_TMY.clm": [
+   "81e0a9d3b195b7d246a4f73c42315fc7574c2dcdcdf8df8bcf382d29fa299876",
+   191014
+  ],
+  "buildingsim/refdata/weather/bestest/USA_CO_Denver-Stapleton.Intl.AP.724690_TMY.ddy": [
+   "4d59be0769126c83ced4a43c34459770619fc5b7712c6d4a5503fd139930c8aa",
+   183975
+  ],
+  "buildingsim/refdata/weather/bestest/USA_CO_Denver-Stapleton.Intl.AP.724690_TMY.epw": [
+   "d83da3664fd880202ff3bcfccf2218616382cd3ac1dd684271ce14300841bc25",
+   1708215
+  ],
+  "buildingsim/refdata/weather/bestest/USA_CO_Denver-Stapleton.Intl.AP.724690_TMY.pvsyst": [
+   "7d1a3201d1dee46360d7c2b6445aa0d27d470cf11dcaf079fc2578174c492908",
+   355269
+  ],
+  "buildingsim/refdata/weather/bestest/USA_CO_Denver-Stapleton.Intl.AP.724690_TMY.rain": [
+   "f4fb99ec7d3208b55f57bc8e906ab04168fbfbf56aebfa7d0c61ed311fefa8fc",
+   31
+  ],
+  "buildingsim/refdata/weather/bestest/USA_CO_Denver-Stapleton.Intl.AP.724690_TMY.stat": [
+   "2f42f26ad2a6098a38d337f2e68d3f3b7f6ae56243794e5afe3e334cccf76c42",
+   62917
+  ],
+  "buildingsim/refdata/weather/bestest/USA_CO_Denver-Stapleton.Intl.AP.724690_TMY.wea": [
+   "bd5a9978b3543610b9d9ee0089739dd1129dcbb3fe57c3f6c8ddf351feef29c8",
+   141263
+  ],
+  "buildingsim/refdata/weather/bestest/USA_CO_Denver-Stapleton.Intl.AP.724690_TMY.zip": [
+   "c655575cca6264da2c7518f528bef383bcaa8fc9a21d9ada7cb6dd0a36723a2b",
+   375311
+  ],
+  "buildingsim/refdata/weather/epw/USA_AK_Fairbanks.Intl.AP.702610_TMYx.epw": [
+   "73caf077e1305333c3e4f66255d30b88add585d870caaeec672a0da6a094edb6",
+   1596844
+  ],
+  "buildingsim/refdata/weather/epw/USA_AZ_Phoenix-Sky.Harbor.Intl.AP.722780_TMYx.epw": [
+   "490812d061008f74c2bda7d59322df0e04b84c2d0ba674dab124ae1d2349185d",
+   1596616
+  ],
+  "buildingsim/refdata/weather/epw/USA_CA_Los.Angeles.Intl.AP.722950_TMYx.epw": [
+   "830b420306a81af3262c7b75b99bf0ebb15249bb0097a32e7d40764f430c8d04",
+   1608495
+  ],
+  "buildingsim/refdata/weather/epw/USA_CA_San.Francisco.Intl.AP.724940_TMYx.epw": [
+   "92dc192f33c86c1d4fe3d9dcc46d56220ac4c740f4c7fe96e17fa0cec07bff80",
+   1607099
+  ],
+  "buildingsim/refdata/weather/epw/USA_CO_Boulder.Muni.AP.720533_TMYx.epw": [
+   "7f12d9e82ed3809064b1ed2d7c4b60d47621e60efd419bec578a68b447b2720d",
+   1597262
+  ],
+  "buildingsim/refdata/weather/epw/USA_CO_Denver.Intl.AP.725650_TMYx.epw": [
+   "e407f0a78fc945018a3d61a1535097bacb5309a9b34c7547c377a22b0d423a5a",
+   1592202
+  ],
+  "buildingsim/refdata/weather/epw/USA_FL_Miami.Natl.Hurricane.Center.722020_TMYx.epw": [
+   "beb97bae8babda7197d958836313f4a0baaa68cdbcbef8693b27c78837ce722d",
+   1611648
+  ],
+  "buildingsim/refdata/weather/epw/USA_GA_Atlanta-Hartsfield-Jackson.Intl.AP.722190_TMYx.epw": [
+   "2bdb413968b045d62f06fa2b0e80d4c1b37a76ad2547172751a94a8e41ee78bb",
+   1597787
+  ],
+  "buildingsim/refdata/weather/epw/USA_IL_Chicago.OHare.Intl.AP.725300_TMYx.epw": [
+   "fb9ded5aea1366beed1e0cb790ee08472196c986588776e12e99540aa1105f58",
+   1596771
+  ],
+  "buildingsim/refdata/weather/epw/USA_MD_Baltimore-Washington.Intl-Marshall.AP.724060_TMYx.epw": [
+   "2a91470b4697c042ec1561331271359f44219cb90b349e6ed5ad5d8e4a9574d7",
+   1603879
+  ],
+  "buildingsim/refdata/weather/epw/USA_MN_Duluth.Intl.AP-Duluth.ANGB.727450_TMYx.epw": [
+   "8da0d29ce50eb01237c0591257bed91082bf103ab06a1c135a1b5c64363a41bb",
+   1596477
+  ],
+  "buildingsim/refdata/weather/epw/USA_MN_Minneapolis-St.Paul.Intl.AP.726580_TMYx.epw": [
+   "785d3ebae4ee459b961add2646754487f36361157653e710e361684edaec329e",
+   1596991
+  ],
+  "buildingsim/refdata/weather/epw/USA_MT_Helena.Rgnl.AP.727720_TMYx.epw": [
+   "0dc9ef03948d9478cb87b6cabd43e57d1b78d5e02e96ce50bdddbc2e7f6813ee",
+   1594700
+  ],
+  "buildingsim/refdata/weather/epw/USA_NY_New.York-Kennedy.Intl.AP.744860_TMYx.epw": [
+   "b04212704f47b6f81fbf65c6f22a835200774d062d038a35f549ca7a6b5c8d54",
+   1601777
+  ],
+  "buildingsim/refdata/weather/epw/USA_TX_El.Paso.Intl.AP.722700_TMYx.epw": [
+   "aae327fe678519ccba651aa8c90229b9aed0135bcc250b4d717b8604ae60f516",
+   1593943
+  ],
+  "buildingsim/refdata/weather/epw/USA_TX_Houston-Bush.Intercontinental.AP.722430_TMYx.epw": [
+   "3ab40d2704b00106af840bc29840b5a66035d5410c3a5149dfb99109e3640c5b",
+   1608388
+  ],
+  "buildingsim/refdata/weather/epw/USA_WA_Seattle-Tacoma.Intl.AP.727930_TMYx.epw": [
+   "3351e4b35cc18076dcdde7a27fbd6fcb541539a946e94dd0bbc7279b6e2002d1",
+   1593551
+  ],
+  "checks/out/comstock/100718_HI.json": [
+   "2c706de5b1feb9b85a7d0b04020cc8c29f2a78aeefeaead2f50b8c56789489f7",
+   1745
+  ],
+  "checks/out/comstock/10499_CT.json": [
+   "d8dacf4ef8dfb4dd5116241ddd37d3b8237bb61ce43023889139a135194843fe",
+   1788
+  ],
+  "checks/out/comstock/11940_KS.json": [
+   "4381bce14a92257a5bda89bf671fd84418dbf07075fd84dd3a38b1546d645a2d",
+   1811
+  ],
+  "checks/out/comstock/12718_OH.json": [
+   "678140a8c1fe400133fa44c188dbb86105050fe31c8d16f560a53c491c836f87",
+   1781
+  ],
+  "checks/out/comstock/14449_AK.json": [
+   "441c9d35218256b6d3c848b5c47efcf5783b65f6883b1e9de47ed6d484ab784d",
+   1766
+  ],
+  "checks/out/comstock/15588_AZ.json": [
+   "62df314e9541c915a4b251cb8a34cc2ce6d45f4e49dc1396d4db62661cfb451c",
+   1789
+  ],
+  "checks/out/comstock/16303_CA.json": [
+   "a399e7fd6e000de5c0b04a084f47bba9c6621877e6515f2e101216cb0884c3dc",
+   1800
+  ],
+  "checks/out/comstock/18780_IL.json": [
+   "3c9f7d7d7e24254350910973847e5c6a0ff707fb8f0392c0b05d2b87b88f1efb",
+   1775
+  ],
+  "checks/out/comstock/20138_TX.json": [
+   "3059f8d6703a1b55392e5954778b6e7a032d1cfde0105a5775422a64e1902002",
+   1833
+  ],
+  "checks/out/comstock/20818_AK.json": [
+   "8e678145885f7c9d3a1bdaff8a58ad10f37d7d1487c79b415dde0e088ea73f2c",
+   1776
+  ],
+  "checks/out/comstock/2148_IL.json": [
+   "68549db994d4da8d7074e66e3f77bb988535430190e24d1dbdd2156dba09bc3b",
+   1815
+  ],
+  "checks/out/comstock/23944_ND.json": [
+   "dfe91ffbf5e4eee0eb9ea6d0e6e0eddc8caa71529276ea1cad9780345e12a338",
+   1797
+  ],
+  "checks/out/comstock/24372_AZ.json": [
+   "332eca7bd9d87a4939d004a0fb6e506670678dfad762ace2b59593f52fcd6f52",
+   1806
+  ],
+  "checks/out/comstock/24391_MI.json": [
+   "465f11d13c817b39c3f2f43ede843f5b03ebfe4cc54e06d3bc996e859a984cb7",
+   1847
+  ],
+  "checks/out/comstock/24441_VA.json": [
+   "f9573bb3c1761dd48be3a55b6f0782eebd0456ebe410ad7397f76e394ef7bb2b",
+   1804
+  ],
+  "checks/out/comstock/28194_PA.json": [
+   "ab5c842f5b3f65b894d2767807b6c2865662c02d85f8531e16db9e84170176dd",
+   1812
+  ],
+  "checks/out/comstock/2866_AZ.json": [
+   "ae6b8e43d4151668f45d1e826fd7cf3cfef113b872c10271850ea10ede98499f",
+   1770
+  ],
+  "checks/out/comstock/3257_TN.json": [
+   "8f3cddca24c918d5446e8503497dd48d6548e77c6c13bc6dcc63d6e4b186fbb3",
+   1795
+  ],
+  "checks/out/comstock/3288_FL.json": [
+   "00162f4b13003b65f4b29d5b63953ba0e35bd0eaf0e0360bb124a565a5bc3519",
+   1809
+  ],
+  "checks/out/comstock/3375_CA.json": [
+   "da74164a1fa82f2c600b4a8b78a49c200cd0569b426aca2054d9a4796cf447a5",
+   1762
+  ],
+  "checks/out/comstock/36839_CA.json": [
+   "3611bcf84e46cfaf477c6f7ca5ff39c9332b2589c6e1e26de2986c2940c3fb14",
+   1735
+  ],
+  "checks/out/comstock/37057_OR.json": [
+   "c6834a01c1579c1c4696a5ae8293d0267949e0c2be4ec7ff74a1c1529421a1c1",
+   1774
+  ],
+  "checks/out/comstock/38786_CA.json": [
+   "ce2798808dfb15745ae76cf19c281a33f13403822b9e78492af53bd72e0d0668",
+   1747
+  ],
+  "checks/out/comstock/3886_SC.json": [
+   "a493e750af2fd928c7c8d9251b16f825fd5b99d281540fae3aa88abc2a9a09e2",
+   1775
+  ],
+  "checks/out/comstock/3983_NV.json": [
+   "e85f033adc12a7f6b493b0d1a97462fc28adf926b55a31e57edbe72c50328d92",
+   1776
+  ],
+  "checks/out/comstock/40186_WA.json": [
+   "ce274cfe3920894722e96fc4c2bf763670782e2e990b901ca08798a71c76f11c",
+   1808
+  ],
+  "checks/out/comstock/42315_FL.json": [
+   "e59bd2e96b06a98afe2c1261060fec5f2e10e9e47f3446e92d44b726b97660e7",
+   1806
+  ],
+  "checks/out/comstock/44175_NY.json": [
+   "8bfb39f3e8477ff9ebfbece03b95fa0b9bba957546498fb7ba3657739532cd6d",
+   1796
+  ],
+  "checks/out/comstock/4530_ID.json": [
+   "f5ac13ac6740eb26f738c97f2aee9910bed9c551f130610e4faaa62de185607a",
+   1781
+  ],
+  "checks/out/comstock/46301_AZ.json": [
+   "107988d2837ca3180c8ac6280e0fec46186f3322927f108e05312717220f9ee0",
+   1764
+  ],
+  "checks/out/comstock/46785_NH.json": [
+   "54bc91b5ac7398d96e7e85eb953ea683b268f43aad8d12d866440fffc4c8a104",
+   1821
+  ],
+  "checks/out/comstock/48577_NY.json": [
+   "ccdc9e8b3fddfd415509c3dcf762144a3b598849bcf268173736340427e12852",
+   1785
+  ],
+  "checks/out/comstock/5251_OH.json": [
+   "c02ab5971dfe6e9cf9cf03d91b78eceaca936f85a1f84315bac7e27e9b1b7860",
+   1759
+  ],
+  "checks/out/comstock/58705_CA.json": [
+   "301ea9514c67277f360021f1409b02f76bcee4ccda9ea0055316973a3aab7bc2",
+   1761
+  ],
+  "checks/out/comstock/69228_CO.json": [
+   "2e861df2771a686ec56e1972a654b3f74fafbb310b1349975cffad8828498236",
+   1808
+  ],
+  "checks/out/comstock/70030_GA.json": [
+   "6d4485702eebdc3d8bd5c788e7ef8f7a65259c60f094ed22133425e7dacceb70",
+   1801
+  ],
+  "checks/out/comstock/70295_AK.json": [
+   "76e76b304aacec8006a29d089c1594b723550dd947ccac306a766cde9ad85227",
+   1804
+  ],
+  "checks/out/comstock/80191_WY.json": [
+   "ce266fa4dcf2dc698a9d6cd3b141dca6c9b0e888012b44bdddf99f2952a6444c",
+   1786
+  ],
+  "checks/out/comstock/8988_OH.json": [
+   "b056c086cafe1151ceff940c2269bdb2ac9020f8cd95c46602d3eaf981ed6bc9",
+   1838
+  ],
+  "checks/out/comstock/93873_CA.json": [
+   "2390aefb6ea883e881c42ad1839260e770cfc6af728c65a3f1d6fb33a8d6c2c4",
+   1817
+  ],
+  "checks/out/comstock/94016_CA.json": [
+   "47b9c6f1570edeb746b3f634486f6f3f01c8b480469f1669fb364bd0c1e99b88",
+   1769
+  ],
+  "checks/out/comstock/95251_CO.json": [
+   "1e80bd3281568799e6d0e28892769eed9c923cb4b2606def4a20b22f2eea2089",
+   1799
+  ],
+  "checks/out/comstock/96040_AK.json": [
+   "0422229b0709cfa055991ae42f9cd4ab3fd662ac4158304b35a7440203d9d0b0",
+   1797
+  ],
+  "checks/out/comstock/96470_NH.json": [
+   "dab666e25e94159e8d6b069602f36c869346769ec0fbb1913b92b60103080d20",
+   1834
+  ],
+  "checks/out/comstock/9809_AK.json": [
+   "ae454e4b551bed2d8362244a0c00f255d568109a21ff688481bd0725eb46c74c",
+   1815
+  ],
+  "checks/out/comstock_heldout12/10269_LA.json": [
+   "4a77871efb9335064c9f72d854ac308356b88b0c5e1bf8b64b2e1c4eb004677e",
+   1784
+  ],
+  "checks/out/comstock_heldout12/1056_FL.json": [
+   "2608329c44a5bd299dabec52c6a9ce0088a207062dc71121160b467f84155e75",
+   1806
+  ],
+  "checks/out/comstock_heldout12/12709_OH.json": [
+   "aea8611730e786bd696d2b13edb60722002461a3659975b722af5fceefbc7d27",
+   1790
+  ],
+  "checks/out/comstock_heldout12/18089_MN.json": [
+   "6b4b8bcf06a077fc1cd045be02328989fff8f759266a797aa3a4e6138e0430ad",
+   1790
+  ],
+  "checks/out/comstock_heldout12/18440_FL.json": [
+   "5d8d23fbb4800d74da6134c93d7799db6fe1ebca1f189db0573ec456b40efed0",
+   1786
+  ],
+  "checks/out/comstock_heldout12/18587_CO.json": [
+   "b8236b8392dfb701251f58e2180d03a4bae37186b820730e761ea778cdbc727f",
+   1812
+  ],
+  "checks/out/comstock_heldout12/21051_WA.json": [
+   "31a005e67cddb1909a2cf53807dbba88a1c032008732f4e4c5a8d7ba75583b0c",
+   1759
+  ],
+  "checks/out/comstock_heldout12/2352_NY.json": [
+   "f8256ff5f2d5328c19c0d956d4f5b05cca277cfefd330ab72c1c75a233994951",
+   1763
+  ],
+  "checks/out/comstock_heldout12/23885_SD.json": [
+   "df788ef8aa7d38a13ca8f5a967fc98a7d83537c5cec42309d64060bf09020c0f",
+   1774
+  ],
+  "checks/out/comstock_heldout12/27088_NE.json": [
+   "b3a3bbbaca30eb16e6d3626cead113e3facf344d14d87d8883ebe31057cd1637",
+   1784
+  ],
+  "checks/out/comstock_heldout12/2955_NC.json": [
+   "dd9a28edee6aecc24895420dfdc4e3bdbc443c33342d46917f6ba93e378e7424",
+   1776
+  ],
+  "checks/out/comstock_heldout12/300_VA.json": [
+   "809c3bc0d44c525053d17d4a1d38c1ed49e1a79cb453aec954a749c0e9188fa9",
+   1775
+  ],
+  "checks/out/comstock_heldout12/32281_CA.json": [
+   "5b147a00a160416d5e93dd3ae634fbc3da9683c73f6cec161a2a8f51198924a3",
+   1789
+  ],
+  "checks/out/comstock_heldout12/33415_MN.json": [
+   "3800796bc8d31669dd5b258385c673f6b7b19f18a82a042ef42f032af596756e",
+   1823
+  ],
+  "checks/out/comstock_heldout12/34843_IL.json": [
+   "9bd0c3a6721a6a734059a3f1bca186add8efbe85f085c08e7e70e174cfabf6f5",
+   1794
+  ],
+  "checks/out/comstock_heldout12/37181_FL.json": [
+   "0827b2febd533d1101da2834f21a9133f7ab5f33cd8692ee875956d09aa2e944",
+   1745
+  ],
+  "checks/out/comstock_heldout12/38104_NM.json": [
+   "1f0658b423e6f82663bc29c45924a66a2a0bd90d87c7a55e77ee2228f2513df2",
+   1765
+  ],
+  "checks/out/comstock_heldout12/41323_TN.json": [
+   "36663bbf0ca9b714bc80f537fa71f2bd4c6b608afb6c581e8f728afe8a5f1464",
+   1802
+  ],
+  "checks/out/comstock_heldout12/42283_KY.json": [
+   "4073e713b865c9e6d1dac6798e20a34c83b9c5f3cd02eb87b63da0f0414c77a1",
+   1818
+  ],
+  "checks/out/comstock_heldout12/43671_MA.json": [
+   "3baf2346e549494c9229ca2a143ee7e749cceaf0fadd16ee5bf8746edc89c361",
+   1766
+  ],
+  "checks/out/comstock_heldout12/45798_AZ.json": [
+   "c0fb4ea181fbe025becf0da7432c18e0d777417b05f204ddc06ce1feb30b0902",
+   1795
+  ],
+  "checks/out/comstock_heldout12/46748_CA.json": [
+   "0be321d2250bc6c17dc030a507817e25d0628b93f68a67342e684997f0ff8153",
+   1765
+  ],
+  "checks/out/comstock_heldout12/482_DC.json": [
+   "8b0cf5466ecb37c622d81963e728a74409d2f051c2c27d7c67d302a6a98fd3e6",
+   1774
+  ],
+  "checks/out/comstock_heldout12/48963_AK.json": [
+   "b9931541996c4119b753ad285c291bcbaffb01e8675cfaf3f66913c580d1dee1",
+   1788
+  ],
+  "checks/out/comstock_heldout12/5613_NC.json": [
+   "58de9b98097271927bc38bbf40c34f76567f5408336972eeae245c843e9e1908",
+   1763
+  ],
+  "checks/out/comstock_heldout12/5726_NC.json": [
+   "0f91af021f35364c5ff253bde10e2a56c26a9f07063f6480be9780a87a083630",
+   1812
+  ],
+  "checks/out/comstock_heldout12/58553_MN.json": [
+   "6830b4dddc296fdc79cb22dc67cefa14627b7fcdcc8508f5925532ee17231712",
+   1774
+  ],
+  "checks/out/comstock_heldout12/59684_CA.json": [
+   "fb92adce9fb7f4b1f007376e4ab7a90295d304ce6c80243ba579f915032e23fd",
+   1797
+  ],
+  "checks/out/comstock_heldout12/5_MI.json": [
+   "0643b4d0f8358caa95c66895096e826eea8178e6901c77329a30b5f8e0576143",
+   1777
+  ],
+  "checks/out/comstock_heldout12/63427_CA.json": [
+   "c1edd6c398eac7803ed013ad94136e18fe33b4720b041b96e1d53a9590451a8a",
+   1750
+  ],
+  "checks/out/comstock_heldout12/659_TX.json": [
+   "b657ea1b5fe9e37f7e2c6d869a8f132caa5ea25647c308749791509e2309451e",
+   1785
+  ],
+  "checks/out/comstock_heldout12/7122_FL.json": [
+   "d022e12118d580c7e0c8622102b5e714c6031845f92d2427f69736ee01b9e291",
+   1848
+  ],
+  "checks/out/comstock_heldout12/7126_FL.json": [
+   "eb66c54a794559b39abf28033f4a9ee4dce11d99110e49d21d385086cecc4972",
+   1842
+  ],
+  "checks/out/comstock_heldout12/7140_TN.json": [
+   "e3d31f2b4bd6844acc7eedc8f62d10dd653db84b33966b2e33076875c7ebbdad",
+   1788
+  ],
+  "checks/out/comstock_heldout12/734_OH.json": [
+   "1270ef8c51e50a7168fe308067ce1d870908b7dc4814956219ac386bf85ce049",
+   1796
+  ],
+  "checks/out/comstock_heldout12/75285_MN.json": [
+   "c4c9a6cfa4e534785aeea37eb727e21e9bc03634dbc2e1a0515c849428c64ec0",
+   1805
+  ],
+  "checks/out/comstock_heldout12/75599_TX.json": [
+   "ab2a85075288b0c39c7e766ac189b8e18769e96a0cc812b256763d2d02da8c60",
+   1789
+  ],
+  "checks/out/comstock_heldout12/7920_WI.json": [
+   "dc9d903b40fb5314c748d1798b6d330aa23ead78f85943de446dccad666425b9",
+   1780
+  ],
+  "checks/out/comstock_heldout12/84080_NY.json": [
+   "de7e54fda7a70f0900a30f31ee03a109ede3017ebfee507bf72f9d1a5df51b1e",
+   1841
+  ],
+  "checks/out/comstock_heldout12/88484_AZ.json": [
+   "fa9791894e50234b124ed1b6f64d5cd5be86ff9dc433663b7d2e109bd627c9ce",
+   1765
+  ],
+  "checks/out/comstock_heldout12/8852_FL.json": [
+   "0ccedb03a70d4590c337d43034a3d76cc2171f3f79e4a05eb6cc48f8c976fb84",
+   1765
+  ],
+  "checks/out/comstock_heldout12/8961_FL.json": [
+   "1a767bee6fb5147a254319942118f5bbbf6c20ab28dfd76d250967adacb8f5fa",
+   1769
+  ],
+  "checks/out/comstock_heldout12/89759_AK.json": [
+   "ecb57639e7585d3f1ebedc87bee1f54a344ba78ef017ccc0020a902935418a71",
+   1787
+  ],
+  "checks/out/comstock_heldout12/91126_AK.json": [
+   "072b53d694b65b0a3ea8fcdc8731125c2ed72e89f5d75477aba5c6902ce3f564",
+   1793
+  ],
+  "checks/out/comstock_heldout12/95706_CA.json": [
+   "7d73685838da01afc552e7303e00f357af107121337a574f83425329496ddf4c",
+   1763
+  ],
+  "checks/out/resstock/104634.json": [
+   "959268468d9ce8a82dbb24578adad63c57514293afd98c6cc649bd0b8502f49b",
+   1712
+  ],
+  "checks/out/resstock/109473.json": [
+   "1c3d83b06334c7ae0d7f1b2d0d0199a60d16b69c4260afd7f6abc58efe1e649a",
+   1724
+  ],
+  "checks/out/resstock/111039.json": [
+   "48e4474c32101b75e218000cbfef1ec5552d3c9f080f0ebbc65d752533513e96",
+   1700
+  ],
+  "checks/out/resstock/111973.json": [
+   "22f8013cd08cd536a42b379e2bcf89c42650af4edf175aa10959caecbd86e0f1",
+   1712
+  ],
+  "checks/out/resstock/121080.json": [
+   "03f173670a6e72fa8b8777724200587d959a6544f5bf20dd0c4331bb474178cd",
+   1727
+  ],
+  "checks/out/resstock/122392.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/123244.json": [
+   "4d3b9f20d308360aa59a63cfc65646a1af298ed1ba80cb0d904cec7165f6a65a",
+   1686
+  ],
+  "checks/out/resstock/133135.json": [
+   "a4ac3e2668a371b524fc61434d9701ce0d4ff00e2c939284dbc33a34b2aa0481",
+   1709
+  ],
+  "checks/out/resstock/137335.json": [
+   "983ff5c4325de4402af70a1f9b756ce8af863bd940d1f7f4a45a7267934c169a",
+   1723
+  ],
+  "checks/out/resstock/137743.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/140623.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/140783.json": [
+   "7027b0ad9d9dd201ded62bbf67e83b77ef5d08d4d949a3443130eafbe48c5f98",
+   1685
+  ],
+  "checks/out/resstock/142068.json": [
+   "a414624c6406c775257664529a975e3035cd189b048e866a4cdd389f745574f2",
+   1683
+  ],
+  "checks/out/resstock/142352.json": [
+   "057487be5d65ecfce0c03ef3f7da339aec59c3f0602a631ccb5a784b300924d4",
+   1777
+  ],
+  "checks/out/resstock/143669.json": [
+   "5b7bebf770d9ada01e5a459e1f1fbbc286f59b0d6eaaff95fcf4853f52e2198b",
+   1701
+  ],
+  "checks/out/resstock/14466.json": [
+   "1c909d647137cfc4e4f6537f695283be506b655cb32d662fa6a10816160ca991",
+   1727
+  ],
+  "checks/out/resstock/145476.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/14821.json": [
+   "783d8523e5108fc02f6694419d2ca61eff70bbd266cf6963f5f3ed565272be2a",
+   1748
+  ],
+  "checks/out/resstock/153444.json": [
+   "84885041e0465868d707fbb3340cff3194adb2c895f9c30adc9f2cdf548a2542",
+   1715
+  ],
+  "checks/out/resstock/156108.json": [
+   "a20c25771dbc8efcd706a4b1a04e1dc0957c28016588ce3f531358dad32ec098",
+   1691
+  ],
+  "checks/out/resstock/157182.json": [
+   "6a38df482b5875c35eee2616da8396ef1b52dc66dd0af660fc132449b4ab2deb",
+   1737
+  ],
+  "checks/out/resstock/158453.json": [
+   "9e05355f865bb4bcb3441c3b57422f947125fc9fb5861e78b439d7b4887729d7",
+   1709
+  ],
+  "checks/out/resstock/161503.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/165558.json": [
+   "f8870752c6b3c4702dd0c4f09bf7ce83b93225744ea70feb9f7d7b7e5a0fbd9c",
+   1743
+  ],
+  "checks/out/resstock/167490.json": [
+   "9b7acd3b544e7ad90ee9985a4132a3b72c0a366f905d210a6856fe1acfbff121",
+   1688
+  ],
+  "checks/out/resstock/170760.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/174387.json": [
+   "dfa8bbc07f73fefbd90c344e8852076c98b8732aaccf2c848dd144b5a15a9e57",
+   1738
+  ],
+  "checks/out/resstock/176104.json": [
+   "eeffe896d12ccb42409904dc932d100db47bcb976ba01b2bf24e84254730af42",
+   1756
+  ],
+  "checks/out/resstock/181751.json": [
+   "16e3048f323fe42aa21fec98b0e81a934d97380dc15f914f819f1863e3538876",
+   1684
+  ],
+  "checks/out/resstock/187061.json": [
+   "03be34dfd5e1c0b23d98b8e4324c8ddf570ee51a720156c69968ec5f609b6b48",
+   1694
+  ],
+  "checks/out/resstock/192991.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/193589.json": [
+   "29044804dbb7661f76f90a1d0e5f92b286d4a1e82c9d7d078176e9c6f2291568",
+   1695
+  ],
+  "checks/out/resstock/193949.json": [
+   "a390cd96bb18e76f71e0b2a5ffc303a169c20037a8d124fc4af034ba5d83f347",
+   1717
+  ],
+  "checks/out/resstock/194521.json": [
+   "d4a7bd1b8f578668c33cbc255a7104c882ff2878e9e21ce9941a29013682249d",
+   1739
+  ],
+  "checks/out/resstock/195480.json": [
+   "39cef856def2fd0be71d7bd4c65112f97c381716899f5f48868e4706a46e8d6b",
+   1718
+  ],
+  "checks/out/resstock/195964.json": [
+   "90db53d79eca8d21dafb2337549fd6a1e4cd1c18cf21174e7a753662edc1b351",
+   1685
+  ],
+  "checks/out/resstock/200687.json": [
+   "06588bb74ca21b3996da2919da226d5c5ae4131b223289b0e7904954c32f7894",
+   1629
+  ],
+  "checks/out/resstock/206969.json": [
+   "d07311e3b6ba48b844de91a26ab75d15b733989f51fb4a7e5f4cbbc3998823bc",
+   1685
+  ],
+  "checks/out/resstock/209366.json": [
+   "a253a92cefaef347952ad6d3a5b98971ccbe18219e28b26db68b960284872663",
+   1718
+  ],
+  "checks/out/resstock/209639.json": [
+   "4d5d911020f5c16a136732a23182b880daf6ef8f295174b0b42711b6e3042117",
+   1745
+  ],
+  "checks/out/resstock/210123.json": [
+   "97751df112f8051aa577201b708a755c2df7e66d0be5230826ade7d89e2c7103",
+   1765
+  ],
+  "checks/out/resstock/210396.json": [
+   "25cafb16be112ff7b8af0aca5df2bf7f71b3bb780c215aa58d1366a0a9f77aea",
+   1737
+  ],
+  "checks/out/resstock/211693.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/213830.json": [
+   "f1457230084ad08494168afcfad9a272d9ed9268a07e8bced889345f8b56d032",
+   1737
+  ],
+  "checks/out/resstock/217119.json": [
+   "48b7df5a797ca61d9dbec558991c753af51d2b86ef90679c76d6f1f8aa2773d9",
+   1733
+  ],
+  "checks/out/resstock/217378.json": [
+   "cea8a1bc352b9c446d9ce9b261141f837aa6f567f4a43b7639a9e7e0609eb6a7",
+   1731
+  ],
+  "checks/out/resstock/218417.json": [
+   "aa396ab25466e23e48027c5feb3df0a8ccd140363a97064551533157d1a1a6f7",
+   1706
+  ],
+  "checks/out/resstock/221500.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/225344.json": [
+   "970220c57b7c66e0eff7a810cdaaedc4b12f4c96633bef386fa843c8951c2c80",
+   1697
+  ],
+  "checks/out/resstock/231973.json": [
+   "a688312652ae04977d814a512800309d8c3d5f7fc0a574b377c1309d87925c97",
+   1732
+  ],
+  "checks/out/resstock/232079.json": [
+   "3455400125a1dc03c499dd3b7abc771d8079c85fc3db04034f5845c9ef0d0cea",
+   1742
+  ],
+  "checks/out/resstock/242255.json": [
+   "54332255e35832bcb183a020baadcd2069f0eb2557a41aa5815a61b0be4df594",
+   1743
+  ],
+  "checks/out/resstock/247179.json": [
+   "838554dfb3b29483779f9d7fb347943d5df804ea59461148b401a6e44c4bebd3",
+   1708
+  ],
+  "checks/out/resstock/255964.json": [
+   "ba8db13e9bcee286cdb58eece3b76bf3773c2543da80b53b6dbe2b74373aa16c",
+   1699
+  ],
+  "checks/out/resstock/256634.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/25836.json": [
+   "5b12fb4f44a7878db16be3929e0c68fb34fa6ac5c1825ccc42a3c274d8417347",
+   1714
+  ],
+  "checks/out/resstock/263189.json": [
+   "0e62e691a67ed5e9e735e11ff15d2d98c89a16ecbd64e76b60e858d759acb093",
+   1683
+  ],
+  "checks/out/resstock/264598.json": [
+   "ebc2a140df134bd0b12ad74fdeebe924f186cd9778b55816ed04981b77b2c3f4",
+   1688
+  ],
+  "checks/out/resstock/265651.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/270932.json": [
+   "ae2db71532be9c1fad65b6e98457dd7415524268821124abd97f771b2ba5d0d6",
+   1708
+  ],
+  "checks/out/resstock/274073.json": [
+   "eb97085efe9dafc129c8388f93428fb5f24ee07b242a14bb492d94bcf0be5da2",
+   1708
+  ],
+  "checks/out/resstock/277269.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/278206.json": [
+   "aa30e1e16fdc4e92d0010f4f551b4d08e83339c5b805949a22f25d86992fc8ae",
+   1736
+  ],
+  "checks/out/resstock/280070.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/281539.json": [
+   "ed40129a6c242b83cfdd7a761e173232565f476e9d140dde5b737d3e5c28a517",
+   1723
+  ],
+  "checks/out/resstock/282183.json": [
+   "78ecb4b30859c7c373e1b2ebebaba480679769fa6899aa9159d5838eda385929",
+   1747
+  ],
+  "checks/out/resstock/284628.json": [
+   "2b2621c7c657c6178c47a5370c6747d11611602da90455290c94dc7681306257",
+   1767
+  ],
+  "checks/out/resstock/290474.json": [
+   "0fb35a1a2fab62138e1c9a30116f1b1ffa44c0d310ba057862439abca318a607",
+   1772
+  ],
+  "checks/out/resstock/293394.json": [
+   "84755c1719313bfbb5bfa57bf642e0d21cb8a7211ca6064915d21f29c10954d6",
+   1721
+  ],
+  "checks/out/resstock/294386.json": [
+   "9ff21d4cf0d3825661006589ad3bcc15a273e5f84729a02ed185ba6b35542dca",
+   1692
+  ],
+  "checks/out/resstock/296910.json": [
+   "65ec54584c27d15fdfb7bf546a1b78e3569612262adc2f42f24ee92726493d39",
+   1731
+  ],
+  "checks/out/resstock/299531.json": [
+   "a0ec448a9e80d1f11efb7d77fb241e15838ae6e6236c987df92a58fa861f853a",
+   1703
+  ],
+  "checks/out/resstock/301709.json": [
+   "9d00aa457c265bee03fb539444b6b916097631cb05696c12deb8298ca74c72a9",
+   1690
+  ],
+  "checks/out/resstock/301932.json": [
+   "d2427041ddd9f3f503d66a38d51c100573a374643bef67603d4250ee9c7ef5fe",
+   1688
+  ],
+  "checks/out/resstock/302966.json": [
+   "37a400f938b5f767a2bda36bbdb6c68958078f9fb946c74f5f42d7769a04746a",
+   1712
+  ],
+  "checks/out/resstock/303767.json": [
+   "3697062d4a909728072b42c1d4fbcefe5ac9b86f60899c699919b5e679266221",
+   1739
+  ],
+  "checks/out/resstock/309137.json": [
+   "f7a53e0fc4e9624e0c86b71a004d9bd4d9b1887b9ceee56ebc0d2e986d445e7f",
+   1676
+  ],
+  "checks/out/resstock/310862.json": [
+   "2d8dd611efeac5f39693b2c83f14929c746e85cf559f536478fe3b68d9aaff6d",
+   1766
+  ],
+  "checks/out/resstock/311156.json": [
+   "141394ee3b907b6c1e36b336ad087c8e7d2b4c9a49260a45acc20ac50a8200d0",
+   1738
+  ],
+  "checks/out/resstock/315056.json": [
+   "e281cb00214d5c2c8c2ad9d61477fe5c513a7638ec8833aa2b7dd5544567da14",
+   1740
+  ],
+  "checks/out/resstock/320953.json": [
+   "856d374ce5849f51b0ecf0e33c92b397eb359483e5f35eeee811e2b6f19a4229",
+   1744
+  ],
+  "checks/out/resstock/324214.json": [
+   "d49670bd6b86f039dacf5163f085ac30df49c5011df288f12a41cf29e5344814",
+   1692
+  ],
+  "checks/out/resstock/329795.json": [
+   "f5220b164e496f75d553efc9c6f622246c3e1433a9759b3678d0f49139c3fe01",
+   1726
+  ],
+  "checks/out/resstock/330759.json": [
+   "799f3b2acd74e782d48a5f6d5a2d835fd5dbb56d02799117f1593632eb3835ec",
+   1680
+  ],
+  "checks/out/resstock/331777.json": [
+   "a180f1a336f902c5f0712e6b1ea12564fdd9459d2fa6651061086ddbde8e44f2",
+   1668
+  ],
+  "checks/out/resstock/332860.json": [
+   "5857d7a4589f6d4a5e89fa4e4aed0380eb9d78d2d784a643c44d8700eaf42120",
+   1733
+  ],
+  "checks/out/resstock/335770.json": [
+   "0fe39df24b102577e97eb5a3d535fb17c9dcf6b5a8d896c09c624f1abedb7b8f",
+   1745
+  ],
+  "checks/out/resstock/342934.json": [
+   "7ed1b157f6fa4d4b4ea240b2fb2f9f59eea81e35ed853e7535fd1c4ad3226cc2",
+   1728
+  ],
+  "checks/out/resstock/35106.json": [
+   "0962aec72407fb9f8479f4f51d3f5e98e3d4a3364852f0a29664c19d3db9190d",
+   1735
+  ],
+  "checks/out/resstock/359126.json": [
+   "1afaa8216c18a1db7e4b5b4622e8646a69ab4b2d3ce44d8d37ccf0b2e4eda74c",
+   1760
+  ],
+  "checks/out/resstock/36157.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/362448.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/362472.json": [
+   "bedc604d302083735aeb7d131b3dc8f9b3f4a8bb7ef534419c44e913d48f984d",
+   1734
+  ],
+  "checks/out/resstock/367014.json": [
+   "7f82cdada5e646165e3941a6ec5c7a7ad8fa4ba02a4decfc8147e931855c5dcc",
+   1719
+  ],
+  "checks/out/resstock/373195.json": [
+   "59059ad7b40fb92785122f6915a3467cabd574a98a225bf013eec758344d7e72",
+   1691
+  ],
+  "checks/out/resstock/375499.json": [
+   "9080f65586c565ae37bc57ecabf48ea0c5bedca6781a952d5cfc0aa3ab6be8fa",
+   1704
+  ],
+  "checks/out/resstock/379121.json": [
+   "f55e85f702573636bad259d511ddad998a16bff14ab44e30d0697ef16c4cd9e7",
+   1752
+  ],
+  "checks/out/resstock/383741.json": [
+   "88187c5c34eaaa01a36bee9879e64873467f19c34dbb34acf36a53f3078be144",
+   1684
+  ],
+  "checks/out/resstock/389331.json": [
+   "906e746c86d8046d9e92256f9fbc957aca63e3dc7f0e07d76ba3a0320f7e8710",
+   1748
+  ],
+  "checks/out/resstock/397996.json": [
+   "6543a257009b7708b77488049d2d18bd938852f542e8e4f91bf4b18825b52102",
+   1707
+  ],
+  "checks/out/resstock/398876.json": [
+   "55eac987bd69927b9508c24049dd98e88bc8a0ed4da9204aaf421edd56f6b6ef",
+   1679
+  ],
+  "checks/out/resstock/399460.json": [
+   "2f0274bcfb903d5012f3ed13be09d57ba85229b1b9a8b09f8253a95a2f807ddb",
+   1679
+  ],
+  "checks/out/resstock/400549.json": [
+   "569eba19c8138faaeb92ac9a6f9971e83b9edb80679cee9ce3c26cbdb741572d",
+   1712
+  ],
+  "checks/out/resstock/403876.json": [
+   "ad57283592165b4043f1df1a9958a43499d8e79d845fe91482842454759814b7",
+   1776
+  ],
+  "checks/out/resstock/407946.json": [
+   "dbde1e60af53b7d22fc2a92c883028cbb97bb9e7969d65ab7801d4e39b160854",
+   1716
+  ],
+  "checks/out/resstock/408640.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/413610.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/423631.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/425825.json": [
+   "226e2fef7e2433eef11832e5283c72785cf4917f5231bf7e1f62c9b7f186200a",
+   1703
+  ],
+  "checks/out/resstock/42913.json": [
+   "04615d3109b4bcda7aad808d6656279f29d15153b69595870a7ea11e68df2297",
+   1700
+  ],
+  "checks/out/resstock/432475.json": [
+   "05a070613a35a75e406852646d73a76d136d7068cd7bb43d8a526a62d12eefe2",
+   1732
+  ],
+  "checks/out/resstock/43404.json": [
+   "8fbbb68b73da79973ff6696a94ec286be8cac34f7b6237a090fcc25e949b2e9c",
+   1736
+  ],
+  "checks/out/resstock/436249.json": [
+   "edbb40127f9277203f519db51a4021ee3221c8c59e22045dcb6588164e93a409",
+   1733
+  ],
+  "checks/out/resstock/436806.json": [
+   "d9b0a5b7523f912bc4a00a7b28238019eea129ab7fae364c224b969b6391ac1b",
+   1716
+  ],
+  "checks/out/resstock/437603.json": [
+   "4cf391201760bd2297ab6deb58dafb375557f68c9c9494620be04db75ef2c4a4",
+   1705
+  ],
+  "checks/out/resstock/438442.json": [
+   "e028defd74962a7209d9c2596875dcd495431703e07c22b46493941ec37556af",
+   1733
+  ],
+  "checks/out/resstock/44555.json": [
+   "d7fb27c020c52ff63379b587c2be31ab690105634e1693f2850975f0f630640b",
+   1709
+  ],
+  "checks/out/resstock/449233.json": [
+   "00a821232aba98aacc1622df455d8a5e19501fdc13222d4b7c5c05439496b774",
+   1677
+  ],
+  "checks/out/resstock/453181.json": [
+   "1b4a309af9f5583ee4c77c54e586762cf36cbb5cbbe6f6f372946f59a017619c",
+   1721
+  ],
+  "checks/out/resstock/455797.json": [
+   "b0bb9f4b2a063b6de08e3458dc01d1e07e5156109c0e7a70449598389864aa92",
+   1715
+  ],
+  "checks/out/resstock/459454.json": [
+   "f57b64c46d97b5516d3fd646b2323a6563e95429dd59c5c849059fb19b28ebc3",
+   1711
+  ],
+  "checks/out/resstock/468563.json": [
+   "e1a96c159b2a58c587793d100f0eb0dd293e05652c3f59f49d0aad0f0c1e5dd8",
+   1731
+  ],
+  "checks/out/resstock/469943.json": [
+   "2bae769ec330281d015e7892e2fdcabc3934f32ff963d782c8cc6781e9ab9ca4",
+   1700
+  ],
+  "checks/out/resstock/473429.json": [
+   "a9ae51fd3a21fe42febb69ae4893d88810f88b7eacc0323ac61d994749fb2b29",
+   1775
+  ],
+  "checks/out/resstock/485964.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/488645.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/489176.json": [
+   "69eb56bfaebbb2a6732a90a992a7c40f4ca72d0c84755a46811ae0066957446d",
+   1751
+  ],
+  "checks/out/resstock/489311.json": [
+   "4be948003a95dd43fb8139f08c40444b438090f41ab80f1d09b25da291c6703e",
+   1734
+  ],
+  "checks/out/resstock/491084.json": [
+   "f64062cbf86d1a079675acbe584c2f053f622b4a496a8fb9225cb8fcac170ce1",
+   1679
+  ],
+  "checks/out/resstock/492497.json": [
+   "4058e84a317817c8a725b647a945bbf021aaefa1f4ffb28fc8e54d9df6727135",
+   1758
+  ],
+  "checks/out/resstock/507826.json": [
+   "70f2bb8f4b09efb334c9d9eb492a4b86055fb5be35b7970299c5d0bc5a2e1bc2",
+   1740
+  ],
+  "checks/out/resstock/513167.json": [
+   "b4db5145ed17b775a9b3b46a370acbafbb0f5a30089025751461a723eb41eaf1",
+   1690
+  ],
+  "checks/out/resstock/516628.json": [
+   "6898d3a8b5900b365f0270624afc8e708230f9f586479cf651b542bbc3d765cd",
+   1721
+  ],
+  "checks/out/resstock/528131.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/58138.json": [
+   "f356c890ae35d3769704b37299d4577f1bdc074ac627d297d7aecd72527ff8b2",
+   1706
+  ],
+  "checks/out/resstock/5926.json": [
+   "b6c4091233220fe88be2b7deb202edd2c985e19062085dac59e6a8fcc82b4443",
+   1699
+  ],
+  "checks/out/resstock/64644.json": [
+   "a1cab9c4f7d963eb0a7159e25c7d82f98a43cbf0f7b60dd9c843355c9ed9440d",
+   1727
+  ],
+  "checks/out/resstock/68158.json": [
+   "97f2374333e306d72d585e042804215de425cd5eec6e1465965ea127055bacf2",
+   1737
+  ],
+  "checks/out/resstock/74220.json": [
+   "9e4845a60ed1dde471bfc431f251449641d54683076c67beb269a5a5f4fc0406",
+   1730
+  ],
+  "checks/out/resstock/74248.json": [
+   "9ab95d7455426edcb595798e2bdbfd45ecccc1a52da5dfbccfbcee8e7bd528d1",
+   1713
+  ],
+  "checks/out/resstock/83503.json": [
+   "b150d901ed9fe4088d1dfd9d7c4990c67781404b9c19357c337ab1b15986cc56",
+   1723
+  ],
+  "checks/out/resstock/84290.json": [
+   "92fa5e669baa2ee089505276b87ad62d37478d0d2e1a75e751f004ceb76af53a",
+   1715
+  ],
+  "checks/out/resstock/88954.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/89068.json": [
+   "8514d3085c12793e204a556a3866b5d416c3625210a3f2abbcac32f09070037c",
+   1751
+  ],
+  "checks/out/resstock/89642.json": [
+   "436c09134468876d53483f61f677befbeb3a38a297a0ddb4173102436a99ed4d",
+   1671
+  ],
+  "checks/out/resstock/91566.json": [
+   "beb56bc611d839a29d423c63286c6341bfbe28ee687767a5940870d99c1a97ee",
+   1710
+  ],
+  "checks/out/resstock/95816.json": [
+   "696bedb20961cb47f6554f91fd946a81d8961aac6c5a2da15ff7a6e8abe355e8",
+   21
+  ],
+  "checks/out/resstock/9651.json": [
+   "b51d1ff1451eba79bd3bff7f5092aa55125020e7bff1df1b0a74d001ea715873",
+   1701
+  ],
+  "checks/out/resstock/98429.json": [
+   "3868d38e9be722d6048dcf805e39be0edc1f820577eede449dfe24dc864a7fd5",
+   1721
+  ],
+  "data/proc/baselines/detective_summary.json": [
+   "033e33751012d3979487ecb61345b1a53ae43db4103daabe742cd1c64e6560d9",
+   4473
+  ],
+  "data/proc/baselines/faults_apar.parquet": [
+   "75ae318525ce0598d7c384ab4a06c095a58e799de851278a367c522214182005",
+   20006
+  ],
+  "data/proc/baselines/faults_summary.json": [
+   "6f46a7d75832c1f14bc4a9e9c07f85be88d457cd7d270044b06a19577b369f7f",
+   3286
+  ],
+  "data/proc/baselines/load_bdg2.parquet": [
+   "7739ee52dbe4a64b2088d035cf944304a6c43d55366f187c17570afbf355883e",
+   274928
+  ],
+  "data/proc/baselines/prism_bdg2.parquet": [
+   "347fc8a0df227d0b9c5a631dc18e0fc5dfbc53db22a3d5ee83a58ffa32a29193",
+   163079
+  ],
+  "data/proc/baselines/summary.json": [
+   "537169953de234a0c5cb581d3b5b331f92630246ba634216ddb695a1a447e8f9",
+   40290
+  ],
+  "data/proc/baselines/thermostat.parquet": [
+   "ba3d8f13849396c155e52a9d2f374239513c3dd9fb5ea5202a2d44c78f931e8d",
+   8474
+  ],
+  "data/proc/baselines/thermostat_summary.json": [
+   "98e218c514eca726c1fe248c9f51bde3856a75ead2e294782c99a202e87ef522",
+   12481
+  ],
+  "data/proc/bdg2/buildings.parquet": [
+   "bd675e96abcdc7862461494cb888ceb4688b284f95b750b053966cf3259bef95",
+   74220
+  ],
+  "data/proc/bdg2/dst_votes.csv": [
+   "46198a365dc91cfed0133c39fe54d89cdb466899df83b1987b16d67442a1b1d1",
+   384314
+  ],
+  "data/proc/bdg2/meter_quality.parquet": [
+   "bc279c9d7d98b6af28a2b205dd183ff43bad248f6960a5bf25fb7d356685ff0a",
+   306897
+  ],
+  "data/proc/bdg2/meters/chilledwater.parquet": [
+   "cbfae1a42b9970fb9687a0db5be840084cb9a3299f79ed2400432b84cd5561d8",
+   28426379
+  ],
+  "data/proc/bdg2/meters/chilledwater_flags.parquet": [
+   "90014fc56347937fd8ee908f59685ac698bbc51def8634c00db167500397a60b",
+   809199
+  ],
+  "data/proc/bdg2/meters/chilledwater_info.json": [
+   "745989fb2265ded9d02265852456eaa7c482843048aa12482b62034a58e4fe5e",
+   80509
+  ],
+  "data/proc/bdg2/meters/electricity.parquet": [
+   "0a32a3d271d4c08367577dc370444c1cb88f4ae37be1d89488e31d4d46c347a8",
+   60192857
+  ],
+  "data/proc/bdg2/meters/electricity_flags.parquet": [
+   "03aff37c1a013c0ff06fefd1893b3e5347af769b8a2eef72cdde733aeca963e8",
+   1419046
+  ],
+  "data/proc/bdg2/meters/electricity_info.json": [
+   "91665797bf806999a43a078c3b8a26608acfc36f1e5d40aec27ed7ee6750148f",
+   104039
+  ],
+  "data/proc/bdg2/meters/gas.parquet": [
+   "5e223311de8b8323902204bd153e84feb35758c575a87ee11dac50b7e9b0f534",
+   2896812
+  ],
+  "data/proc/bdg2/meters/gas_flags.parquet": [
+   "852920f1cb301d08e44dbec1d3f6822f7610751b68d786cbdffa816c047ad55d",
+   505776
+  ],
+  "data/proc/bdg2/meters/gas_info.json": [
+   "e17706baaddd0f7a0b5d2920462340a0d38f2cd16553c59bd7dde4cf6f40aad0",
+   23569
+  ],
+  "data/proc/bdg2/meters/hotwater.parquet": [
+   "9ed94137499f28ab935725aebafca44073f210befbfe512662ecb6a238c53da7",
+   6199719
+  ],
+  "data/proc/bdg2/meters/hotwater_flags.parquet": [
+   "4ac6372aad64b0278d06ea83281306177664fa62af2c19c74e46f0d66d400b51",
+   461682
+  ],
+  "data/proc/bdg2/meters/hotwater_info.json": [
+   "a6223404579cac2f6a2fc8a427a03db1dc050884d9a959658b57f1ef6ae5751b",
+   24217
+  ],
+  "data/proc/bdg2/meters/irrigation.parquet": [
+   "56ee6ba6b7a34e24da420e9d976b7aa09c71fc5058f490dcffe64629c37b72cf",
+   303044
+  ],
+  "data/proc/bdg2/meters/irrigation_flags.parquet": [
+   "0898b4cb1bce1949fe0c5c1364ba468b33e1f6ca9115b08db174390447b0e4e8",
+   216693
+  ],
+  "data/proc/bdg2/meters/irrigation_info.json": [
+   "8300ca5a322aebab5febc34860b3c180cf699946f050fd792d7563f11ca3b9a4",
+   2332
+  ],
+  "data/proc/bdg2/meters/solar.parquet": [
+   "6968cf4e8f3b94f5b9a0b338ecfd7be1154776a8ff7996a276c3875f4fa3960d",
+   218481
+  ],
+  "data/proc/bdg2/meters/solar_flags.parquet": [
+   "12c37811850f93c459b8ef787cec8bc39c8af0795cc76dd1203c840a8933c430",
+   153552
+  ],
+  "data/proc/bdg2/meters/solar_info.json": [
+   "d83c82d46111d0a8944bc614de4e37f7e21ec883828256ac24c7f7f883762ec1",
+   639
+  ],
+  "data/proc/bdg2/meters/steam.parquet": [
+   "eabefb4f684ffebeb0a4da4da04f969305656ae9cd7af77d8ec710d84326cb10",
+   13610576
+  ],
+  "data/proc/bdg2/meters/steam_flags.parquet": [
+   "4723b76c75c4d16252bb5a86cca2b0906b46e1ba0e5b9b534313e0f77a473187",
+   667074
+  ],
+  "data/proc/bdg2/meters/steam_info.json": [
+   "e12410c982c3853b08ea2e5c0fef27df2f46c222c4c159e40d6e888bade68c79",
+   46393
+  ],
+  "data/proc/bdg2/meters/water.parquet": [
+   "cc0d7fcc33bc6e7f9100f50af126fcc42c1d6aa1969ac13965c2ede60ca91fdc",
+   1409923
+  ],
+  "data/proc/bdg2/meters/water_flags.parquet": [
+   "f6af6a1a0e4eacccdc918fdf00f67ab39cf1f668e019d4ad9175df1a730611f2",
+   537665
+  ],
+  "data/proc/bdg2/meters/water_info.json": [
+   "52142da7c30e764f5e37eb22ff599126c5fde89b48ed32e371e149ff2b2b0a93",
+   18147
+  ],
+  "data/proc/bdg2/site_points.json": [
+   "21e4bee0f5feee666d400b7903e23ebeeb56a2985b8e48e51dbf051bb97d6f76",
+   7659
+  ],
+  "data/proc/bdg2/site_screen.csv": [
+   "e42e0407036415be35250183bdfccd8157ff0ec8d821300bdbfd6e704fc240f5",
+   10477
+  ],
+  "data/proc/bdg2/specs.json": [
+   "58650c5ff87110123d84e7e446be5c37d80b1feb3db158db0b2c0cf832543520",
+   4975687
+  ],
+  "data/proc/bdg2/weather/Bear.json": [
+   "00d830165af771281b04c162daf48ef880f38015da5d86763ba851542b65783a",
+   1082
+  ],
+  "data/proc/bdg2/weather/Bear.parquet": [
+   "1d790c325fac48fe71b0bd48e7787c1e6aa57764b2ae3ec556bc3223273c1653",
+   581476
+  ],
+  "data/proc/bdg2/weather/Bobcat.json": [
+   "68fbc109ec197aca6616dd46fb949501ca2d667ed8c476340387af08daf3dc31",
+   1087
+  ],
+  "data/proc/bdg2/weather/Bobcat.parquet": [
+   "670b7ff65825756c500a73db5c14072f63d5fc5836074030c7295a4af93aa23e",
+   614534
+  ],
+  "data/proc/bdg2/weather/Bull.json": [
+   "0e309cc55422dfeb3030f9a9f09423ab67f55465c669497af731a180e36851a5",
+   1010
+  ],
+  "data/proc/bdg2/weather/Bull.parquet": [
+   "66cd9b4994b5f67d0498673c410b25b95129b74ccbda1863be048ebfe8969ad7",
+   613392
+  ],
+  "data/proc/bdg2/weather/Cockatoo.json": [
+   "5e838edc84415bfe3c8296288d472adf45ca95967098c8502c1138e7698336f8",
+   1015
+  ],
+  "data/proc/bdg2/weather/Cockatoo.parquet": [
+   "853a2b47e479223630c950f3c0f8748982b9f703787ca1800e262221752c4cef",
+   644073
+  ],
+  "data/proc/bdg2/weather/Crow.json": [
+   "c53e020def490f3d6e500acbc431a6e5a6776d58cbd6985f01c4ea8953a6e47d",
+   906
+  ],
+  "data/proc/bdg2/weather/Crow.parquet": [
+   "8c9c8fd1601016c2a87970697f29519a1a49cb5fd2af7abc03365ff7d8f78427",
+   674949
+  ],
+  "data/proc/bdg2/weather/Eagle.json": [
+   "66cefa44dbf8abca30764f0ac9c021b4e8731f71ce5020261b1d83b60205e0ea",
+   1087
+  ],
+  "data/proc/bdg2/weather/Eagle.parquet": [
+   "bfd26805e1ddecccdacdf951b0d7f73da29f280c5e1a0bb00ff1ae27c767c412",
+   618174
+  ],
+  "data/proc/bdg2/weather/Fox.json": [
+   "729f43df488802773b3f2ba1d19d0428bac563679b0663f5cb6fdba67b6aeaba",
+   1079
+  ],
+  "data/proc/bdg2/weather/Fox.parquet": [
+   "c4f1654a401b7b0bfc5f325494a3543f68a9815bec3e4c8fb65ee80bd0d5e395",
+   619739
+  ],
+  "data/proc/bdg2/weather/Gator.json": [
+   "f6fcea1a650aeb4cd92b455a1e610597573b563d43d344f1e10ef75f299309ba",
+   1068
+  ],
+  "data/proc/bdg2/weather/Gator.parquet": [
+   "be61903b066ae8acefd1d295984aaf898b34773954ecc658684c5ac5fb421c1a",
+   598697
+  ],
+  "data/proc/bdg2/weather/Hog.json": [
+   "4359e0a35a423c4f414521fef56353a1055079269981fc51f8857a833b473dbc",
+   992
+  ],
+  "data/proc/bdg2/weather/Hog.parquet": [
+   "31d0dd0b6b948dd3067bd8a74c9e26b7e57f90fa59fd66961074b52e7f9d5e41",
+   622474
+  ],
+  "data/proc/bdg2/weather/Lamb.json": [
+   "f412130c9feb56f37e67cb002e3b9cd7c2fde209706bd4f82eabe5ebad9e17ee",
+   929
+  ],
+  "data/proc/bdg2/weather/Lamb.parquet": [
+   "246964df1025ec2b04c338898aaa3455bfefa26fa15fc398bd5ebc47865d1238",
+   527810
+  ],
+  "data/proc/bdg2/weather/Moose.json": [
+   "1e54f4c790b49d07f7e9632c42b73dab3752b8b4f0ca518d53da911a90e17f63",
+   908
+  ],
+  "data/proc/bdg2/weather/Moose.parquet": [
+   "8c9c8fd1601016c2a87970697f29519a1a49cb5fd2af7abc03365ff7d8f78427",
+   674949
+  ],
+  "data/proc/bdg2/weather/Mouse.json": [
+   "f754c33b565139ba9afdcf644d3e98293328079ef09f14972df17dc2a771e44c",
+   987
+  ],
+  "data/proc/bdg2/weather/Mouse.parquet": [
+   "aa52b97b37b63e10bb53064ff2e841769d5bb372846781671f68d5489c48d5e3",
+   635548
+  ],
+  "data/proc/bdg2/weather/Panther.json": [
+   "00d7213eaa83eb30933facf0a6e4058fb8e140c0430079efff274b9f22692f9f",
+   928
+  ],
+  "data/proc/bdg2/weather/Panther.parquet": [
+   "be61903b066ae8acefd1d295984aaf898b34773954ecc658684c5ac5fb421c1a",
+   598697
+  ],
+  "data/proc/bdg2/weather/Peacock.json": [
+   "14279da182bfb61ec826569f945d9e37b435d12ac005b910d11cdd7f98c87856",
+   1016
+  ],
+  "data/proc/bdg2/weather/Peacock.parquet": [
+   "a6c5cd801161688e92ce7528878ba4ca839b51233f6f98fa17919afe2d13bfe5",
+   612428
+  ],
+  "data/proc/bdg2/weather/Rat.json": [
+   "ec0fd6c4003f0bf1a7558c74c41c07a68d5a088c976588cd84fcea409ceafaa1",
+   1076
+  ],
+  "data/proc/bdg2/weather/Rat.parquet": [
+   "6c842bc67017cc9c32c2b542073edfb71e3667b836810c462b430afd6a283ac5",
+   619894
+  ],
+  "data/proc/bdg2/weather/Robin.json": [
+   "d84499d7e57bd24030be55a0a736d25c8abf1108ba36cd14377714d32af0d91b",
+   997
+  ],
+  "data/proc/bdg2/weather/Robin.parquet": [
+   "aa52b97b37b63e10bb53064ff2e841769d5bb372846781671f68d5489c48d5e3",
+   635548
+  ],
+  "data/proc/bdg2/weather/Shrew.json": [
+   "b329cf9191e29d96bdff0ee91a4d25f66e22c6f5f2975ad68bf53cc93519ef25",
+   978
+  ],
+  "data/proc/bdg2/weather/Shrew.parquet": [
+   "aa52b97b37b63e10bb53064ff2e841769d5bb372846781671f68d5489c48d5e3",
+   635548
+  ],
+  "data/proc/bdg2/weather/Swan.json": [
+   "b0d06edac769d95b73abda9791d99e734b6a589876c150135494ddc2857ee8cb",
+   1089
+  ],
+  "data/proc/bdg2/weather/Swan.parquet": [
+   "32f635a66e5b92424ca023187fa3fb0b2ce9cd2b4d0cd622644c35a12bdcc637",
+   591557
+  ],
+  "data/proc/bdg2/weather/Wolf.json": [
+   "968a91b17ef31e732e746c96d2c383c47decca28b725386c0a45fc55acfe9576",
+   983
+  ],
+  "data/proc/bdg2/weather/Wolf.parquet": [
+   "3ef35351b894379ac161869752a62f32cbda8a441c95bf537c765d0b5f32c59e",
+   609475
+  ],
+  "data/proc/bdg2/weather/index.json": [
+   "ec509a294cc91f62f518ccc8a4c69ab145032a4bf2069aee958e07f52c20fb58",
+   20136
+  ],
+  "data/proc/eia/cbecs2018.parquet": [
+   "92eff006a4de3076f416060f674523bcbc81393287aad15e87e885699bea0c46",
+   858552
+  ],
+  "data/proc/eia/cbecs2018_full.parquet": [
+   "4235a5c47b24a2ae05e4a09253b8e863ea676986470b7d9cc8bdf4e40ebc175f",
+   4225375
+  ],
+  "data/proc/eia/recs2020.parquet": [
+   "812a53e6699e85f41cbd73a794eed2d031523e7ad5e9ef2c101c0ddf64456e66",
+   2426353
+  ],
+  "data/proc/eia/recs2020_full.parquet": [
+   "0d147241d1cdc4d4bf21c3ffe98d463a104ad8201d503b693ed831ff4ef50ca0",
+   18565962
+  ],
+  "data/proc/faults/channel_map.json": [
+   "6a997dd79588cfe8c16846a1a75bf55830453eee4e1a1ea6ba3947d86bc75db5",
+   4736
+  ],
+  "data/proc/faults/data/ers_rp1312.parquet": [
+   "af6e07667e77fa88318aa2d6bc17a5b91f6e3ff7c7acceb065e5bb833cacd5d6",
+   4180173
+  ],
+  "data/proc/faults/data/ers_rp1312_sim.parquet": [
+   "edc6ffe5f19ddfc6312dff8336fc8053fe9ea2ba172d4c793975b22af6e12db7",
+   2599637
+  ],
+  "data/proc/faults/data/korea_office.parquet": [
+   "96f99f578f224b76bd3a68240d86ba9de987b534b1b6a0f02ef3c1fdcdc29632",
+   713956
+  ],
+  "data/proc/faults/data/lbnl_mzvav1_sim.parquet": [
+   "07d8370b1bc972a632be9df74449034ae5aaab5ef5f96b55948b6f1902df879a",
+   2592350
+  ],
+  "data/proc/faults/data/lbnl_mzvav2_ers_exp.parquet": [
+   "75b94ed28e77fe2dd7e1ac78b8df4becb6856adfc70709b775381d591fb24f8a",
+   308263
+  ],
+  "data/proc/faults/data/lbnl_mzvav2_ers_sim.parquet": [
+   "8f7de7b50c477aef30f633caeca0f8cbf83e28188ab6865dfe1b8da479f0615d",
+   594806
+  ],
+  "data/proc/faults/data/lbnl_rtu_ornl.parquet": [
+   "f1f0aee74828c592b44d134197393b7468024906214f46d6cbf7dc894d58c1aa",
+   587337
+  ],
+  "data/proc/faults/data/lbnl_szcav_flexlab.parquet": [
+   "021fd0f7b443457d071c52e8fdc9eb111a895d32e29129a5a8c273857c61f9c5",
+   357206
+  ],
+  "data/proc/faults/data/lbnl_szvav_flexlab.parquet": [
+   "98b3cac7481416d34d8de56ee1c217ff3b26e3d7a598da660c9d5d517d5f50cb",
+   258720
+  ],
+  "data/proc/faults/data/nesbitt.parquet": [
+   "96f67a6260f43449a6dc7acc439f3149acb10a29bd98cb2b70be0a283342bc6b",
+   451618
+  ],
+  "data/proc/faults/runs.parquet": [
+   "185c1fa1d6ad0990df68f22c1736e7be4f03c26df7b903090446487e055d6066",
+   26992
+  ],
+  "data/proc/faults/taxonomy.json": [
+   "76c53cba2a8090f0f08f8f9a0984b0c7eccae447dc508d2febe36c606983a9f1",
+   1890
+  ],
+  "data/proc/other/catalogue.json": [
+   "71a51ca7882d59fa33a45044ac52011901bfab1b311b0363f1c77c797fff13a3",
+   3654
+  ],
+  "data/proc/other/hue_houses.parquet": [
+   "2e936b74320703643fa74b4a1a9e920a6a096faec345611727075540d4f642a2",
+   9890
+  ],
+  "data/proc/other/hue_meters.parquet": [
+   "03b4531c3ff03d4e9d6756e877c73996a980a0d71bd2af53b3fcaa1757b041d3",
+   2639972
+  ],
+  "data/proc/other/hue_weather.parquet": [
+   "1c838c8d951f2b7ca48a4789ffad42f878dc98e24ebe899d8a90edc84a02e968",
+   1156539
+  ],
+  "data/proc/other/wpuq_60min.parquet": [
+   "e7fb1bf8d60f525cc4b7545d5387abd877252d46d9f9e5851af8bdd087b1aa08",
+   46179165
+  ],
+  "data/proc/other/wpuq_weather_hourly.parquet": [
+   "4a1cb5c28191f482c9f3b8c750be13c2b6f7120abfe2775daeedb1c798374592",
+   666436
+  ],
+  "data/proc/splits.json": [
+   "524aee157fffff7c45f3d119823bb3ccd81e73046bf9f15e8e8af523185fba75",
+   424395
+  ],
+  "data/proc/tariffs/tariffs.json": [
+   "0764848adeba82772e189f4c32894cf4850afa80c1e70c6d20c1eb41a0cb103a",
+   166903
+  ],
+  "data/proc/tmy/Bear.json": [
+   "19fc2855988a3f29792ebc8d3ca20bdbf38bcc5220551e213191660a78464b0e",
+   561
+  ],
+  "data/proc/tmy/Bear.parquet": [
+   "b806fae2046194fe6814c46d7883948cdfbc18803f12ac3a04fab53b69c7a945",
+   172667
+  ],
+  "data/proc/tmy/Bobcat.json": [
+   "d40840e4d105b516655b8117f8412f0a7eb4ac451e7c7a773a858c16b6d891c7",
+   554
+  ],
+  "data/proc/tmy/Bobcat.parquet": [
+   "b1d9a78e00e1375ee19804580c302459d5793582a204930e1519ce106c2ad5cd",
+   186150
+  ],
+  "data/proc/tmy/Bull.json": [
+   "ddffdc3ceeabab2800ab06145b5651661de0586e6315f14b2212146bafa790b5",
+   574
+  ],
+  "data/proc/tmy/Bull.parquet": [
+   "75a526acb89365503077a645e515a203ebbdd64cce410452331b52bfad0f6218",
+   183075
+  ],
+  "data/proc/tmy/Cockatoo.json": [
+   "c42cf2112423d19f1fa513842e943ac8813c2425408732cb4ffe3c4917ca33fc",
+   585
+  ],
+  "data/proc/tmy/Cockatoo.parquet": [
+   "e2bd7199d186bc6a65f7bb318c5e34806a75cb98a31c979251da415002e0185e",
+   186382
+  ],
+  "data/proc/tmy/Crow.json": [
+   "f2713258b9d03ab38d869f8ee11d74eb82bfa7a5689ba70c234e8da27e875187",
+   591
+  ],
+  "data/proc/tmy/Crow.parquet": [
+   "c4d2aad94a7dfa51299a1cc2477f00324bf56d40079f0bd741d3b764166c88f6",
+   189797
+  ],
+  "data/proc/tmy/Eagle.json": [
+   "f60262864f9ef1088ed6727a89256e5c05ed75a1f7c8d4087603977bf9a277cc",
+   565
+  ],
+  "data/proc/tmy/Eagle.parquet": [
+   "10c508efd2d751dfda015ec70043d65c43cbf25947ecd3acad46a7426ecac6c8",
+   186231
+  ],
+  "data/proc/tmy/Fox.json": [
+   "185708d383fb32bf75a6293c3ade570d68ea9862cd8f18c8e3306a4eb0e4c63a",
+   589
+  ],
+  "data/proc/tmy/Fox.parquet": [
+   "e35f868a7f51e6c4203fd695791dd979cd6128d6c6d745e4b7aa417da966eb50",
+   181925
+  ],
+  "data/proc/tmy/Gator.json": [
+   "0690cc6fc6029bc79aadc5fdeab386f5367d35ef0b49d202a96d354a761b872f",
+   556
+  ],
+  "data/proc/tmy/Gator.parquet": [
+   "5d18c4163946d946f0f60cc8165bc218ef96dc82c5f5db2316a2ed4a08a95464",
+   178142
+  ],
+  "data/proc/tmy/Hog.json": [
+   "b81634e495d583b5e20498f523bb59c350203df6df89e7981099c46eac530bbd",
+   593
+  ],
+  "data/proc/tmy/Hog.parquet": [
+   "6876ccd5ade276c60bd6a6218345cc0e9e1e9497c09e0aea7ce0c1e8d54f3d96",
+   186533
+  ],
+  "data/proc/tmy/Lamb.json": [
+   "a8073864160daca8f781b161a1c1ef366c247caa52a6d52cb90049738a093f5f",
+   511
+  ],
+  "data/proc/tmy/Lamb.parquet": [
+   "c60210bdb81ad1688d2c1d5a30c7df078909f7e519986197470089767b6a6510",
+   156621
+  ],
+  "data/proc/tmy/Moose.json": [
+   "d7b0a94be70d0aabc870e4d00d6ebfa189dfedfe22b16efd949992ee18982574",
+   592
+  ],
+  "data/proc/tmy/Moose.parquet": [
+   "c4d2aad94a7dfa51299a1cc2477f00324bf56d40079f0bd741d3b764166c88f6",
+   189797
+  ],
+  "data/proc/tmy/Mouse.json": [
+   "4e0e0336b77d1515108152926f8df4bb190abde2d02aca37e4c72e00c01d88bb",
+   555
+  ],
+  "data/proc/tmy/Mouse.parquet": [
+   "bc19ece05b05f47d93a6f0510b7f0d37824e9bde18827b08267b777dfb013e48",
+   186309
+  ],
+  "data/proc/tmy/Panther.json": [
+   "12b8d0192b191929404c844878af5a3bb077c17f7ca1d6d8ca99b1a6bae45043",
+   558
+  ],
+  "data/proc/tmy/Panther.parquet": [
+   "5d18c4163946d946f0f60cc8165bc218ef96dc82c5f5db2316a2ed4a08a95464",
+   178142
+  ],
+  "data/proc/tmy/Peacock.json": [
+   "df9a9d9d48e93e8b1acacab7201521b1035540cf5a1be47af7772f7c6a735d47",
+   567
+  ],
+  "data/proc/tmy/Peacock.parquet": [
+   "10c508efd2d751dfda015ec70043d65c43cbf25947ecd3acad46a7426ecac6c8",
+   186231
+  ],
+  "data/proc/tmy/Rat.json": [
+   "4e1561dedff3598604cd460f3ba6e6ff25ed2b8371ee01c0b82dcc15dc313193",
+   615
+  ],
+  "data/proc/tmy/Rat.parquet": [
+   "e36176da34d6167827642f5eac6cb841b8d884182cfa73722aa3fa5becb2ae3f",
+   185233
+  ],
+  "data/proc/tmy/Robin.json": [
+   "e0128484104fd2d65e438cc6f834a1666409ce30487d6937e2d3543c02f74a41",
+   555
+  ],
+  "data/proc/tmy/Robin.parquet": [
+   "bc19ece05b05f47d93a6f0510b7f0d37824e9bde18827b08267b777dfb013e48",
+   186309
+  ],
+  "data/proc/tmy/Shrew.json": [
+   "e0e4674a169ee5cc45f2a7117d2038bc5d13fa3ca0a8ba2cb20f304fcaef3cbd",
+   555
+  ],
+  "data/proc/tmy/Shrew.parquet": [
+   "bc19ece05b05f47d93a6f0510b7f0d37824e9bde18827b08267b777dfb013e48",
+   186309
+  ],
+  "data/proc/tmy/Swan.json": [
+   "7b1f1dc04804baae53468d07ad95afe10672813fd15f0e532838b4a016d6cbd2",
+   620
+  ],
+  "data/proc/tmy/Swan.parquet": [
+   "315dee5f69a49855eecb86cc0a159b1edb4a203151c506678724d524203a4bb2",
+   175601
+  ],
+  "data/proc/tmy/Wolf.json": [
+   "1203ce37ac171d8770c3c4794f1656742189924ff73b1c393d61f0dbb29cb43c",
+   533
+  ],
+  "data/proc/tmy/Wolf.parquet": [
+   "cf596451a7d7064b5d4f789241a0f59a311c37e32d31268f768b82413c300c23",
+   182231
+  ]
+ }
+}

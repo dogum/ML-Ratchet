@@ -1,0 +1,87 @@
+{
+ "what": "component checks (psychrometrics, comfort, curves, DX, heat pump, chiller, tower)",
+ "psychrometrics_vs_CoolProp": {
+  "n": 60,
+  "W_max_rel_err": 0.005540378530468621,
+  "Twb_max_abs_err_K": 0.3975934461286408,
+  "Twb_p95_abs_err_K": 0.01825598305007121,
+  "Twb_note": "the max is one point with T_wb ~ 0 C, where the ASHRAE equation switches from the water to the ice branch (two roots); elsewhere <= 0.02 K",
+  "W_note": "CoolProp includes the vapour enhancement factor (~1.004); the ASHRAE ideal-gas W does not",
+  "Tdp_max_abs_err_K": 0.011642648219556406,
+  "enthalpy_diff_max_err_J_kg": 656.18351607566,
+  "v_max_rel_err": 0.0008979257545820549,
+  "scalar_vs_vector_wsat": 6.938893903907228e-17
+ },
+ "pmv_vs_pythermalcomfort": {
+  "n": 60,
+  "pmv_max_abs_err": 0.002503042029682323,
+  "ppd_max_abs_err": 0.136373502632388
+ },
+ "curves_at_rating": {
+  "dx_cool_capft_rated": 0.999839317952,
+  "dx_cool_eirft_rated": 1.000216536,
+  "dx_capfff_1": 1.0,
+  "dx_eirfff_1": 1.0,
+  "hp_heat_capft_8_33": 1.0012123906242705,
+  "hp_heat_eirft_8_33": 1.000718853825864,
+  "hp_heat_capft_minus_8_33": 0.5369180886805296,
+  "ch_capft_rated": 1.002905940052,
+  "ch_eirft_rated": 1.0000048036040001,
+  "ch_eirfplr_1": 1.0,
+  "vav_fan_1": 0.9991,
+  "vs_pump_1": 1.0059,
+  "boiler_plr_1": 1.0
+ },
+ "dx_coil": {
+  "rated_capacity_W": 9998.393179520495,
+  "rated_SHR_target": 0.75,
+  "rated_SHR_sim": 0.7498173562492003,
+  "rated_COP": 3.499242288071982,
+  "leaving_T": 15.264088526478359,
+  "leaving_W": 0.009654470469239966,
+  "dry_coil_SHR_at_low_humidity": 1.0,
+  "capacity_at_46C_outdoor_rel": 0.8800348019562952,
+  "COP_at_46C_rel": 0.7737932492635639
+ },
+ "heat_pump_heating": {
+  "8.33": {
+   "capacity_rel": 1.0012123906242705,
+   "COP": 3.597413985193527,
+   "defrost_load_W": 0.0
+  },
+  "2.0": {
+   "capacity_rel": 0.6156191817269382,
+   "COP": 2.6132852290100277,
+   "defrost_load_W": 29.962025632702847
+  },
+  "-8.33": {
+   "capacity_rel": 0.45004652782099547,
+   "COP": 2.0630036240830196,
+   "defrost_load_W": 89.23198441972323
+  },
+  "-15.0": {
+   "capacity_rel": 0.3108992081973073,
+   "COP": 1.598810938491609,
+   "defrost_load_W": 127.50213205858343
+  },
+  "-20.0": {
+   "capacity_rel": 0.0,
+   "COP": null,
+   "defrost_load_W": 0.0
+  }
+ },
+ "plant": {
+  "chiller_COP_at_rated": 6.004149263399963,
+  "chiller_cond_balance": 2.9103830456733704e-11,
+  "tower_design_leaving_C": 29.490350341796876,
+  "tower_design_target_C": 28.6,
+  "tower_fan_W": 13125.0,
+  "tower_fan_design_W": 13125.0
+ },
+ "references": {
+  "CoolProp": "CoolProp 8.0 HAPropsSI (ASHRAE RP-1485)",
+  "pythermalcomfort": "pythermalcomfort 4.8.1 pmv_ppd_iso (ISO 7730)"
+ },
+ "generated": "2026-11-16 23:32",
+ "python": "3.13.18"
+}
