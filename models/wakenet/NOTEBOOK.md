@@ -116,3 +116,34 @@ Everything below followed the plan in the entry above; nothing was changed after
 - **What it means.** The v1.0 gains over FLORIS came from tuning three physics settings on dev, not from the graph
   network. The network learns corrections that help in simulation and not on real turbines, so the next rung is a twin
   test of those corrections, not a bigger network.
+
+## 2026-11-17 — Dev twin test of the network, and the r10 plan (written before r10 runs)
+
+`training/twin_residuals.py r9` compares, on 2019 dev only, what the network adds to its anchor with what reality
+needed (truth minus the same anchor). Correlation over 16,212 waked readings: **−0.04**. The network's corrections do
+not point where reality's residuals point. Those residuals have structure the inputs carry:
+
+- wind speed: +8 % at 5-9 m/s (truth above the tuned physics), +1.6 % at 9-10.5 m/s, −0.6 to −1 % at 10.5-12 m/s;
+- turbulence intensity (7-10.5 m/s): −3.3 % below 0.09, +0.8 %, +3.1 %, +4.8 % above 0.15;
+- no day/night difference within a wind-speed bin, so atmospheric stability beyond TI is not visible here.
+
+Real wakes recover faster with turbulence and are shallower at low wind than FLORIS's default settings say. In FLORIS
+those are the wake-growth sensitivity to turbulence (`ka`, default 0.38) and the thrust the rotor puts on the flow (the
+manufacturer Ct curve). The simulator never varied either, so the network could not learn them.
+
+**r10 (physics v4).**
+1. Add `ct_scale` (multiplies the manufacturer thrust curve; 1.0 leaves every earlier result unchanged).
+2. Extend the dev grid of `calib_dev.py` with `ka` ∈ {0.38, 0.5, 0.65, 0.8} and `ct_scale` ∈ {1.0, 0.9, 0.8},
+   holding the v3 settings, and pick by the same score (0.65 waked MAE + 0.35 farm MAE). Stride 6 for the grid, stride 2
+   for the chosen setting, as before.
+3. v4 simulator: v3 plus `ka` and `ct_scale` drawn per farm around the dev values (± 25 % and ± 0.08), so the network
+   sees the variation. New frozen set `val4` (seed 404) and training bank `train_v4` (seed 4), anchored on the v4-tuned
+   physics.
+4. Re-score the incumbent r6 (released weights, numpy) and r9 (checkpoint) on `val4`. The v1.0 build did not keep
+   checkpoints for r1-r5, r7 and r8, so they cannot be re-scored; that is noted, not hidden.
+5. r10: the same network on `train_v4`, 3,000 steps, seeds 106 / 107 / 108; same rule (+0.01 on the frozen set, each dev
+   gate ≤ 1.05 × incumbent).
+6. Fair baseline: any v1.1 is compared with FLORIS tuned with the same v4 settings, as well as with the v3 settings.
+   Both exams are now seen, so v1.1's exam numbers are reported as seen, not as a fresh test.
+7. Error bars: widen-only factors per wind-speed bin (5-9, 9-10.5, 10.5-12 m/s) fitted on dev, whatever the rung
+   decision.

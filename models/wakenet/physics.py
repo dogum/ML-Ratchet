@@ -230,6 +230,7 @@ DEFAULT_WAKE_PARAMS = {
     "terrain_follow": 1.0,              # 1.0 = terrain-following streamlines (flat ground equivalent); <1 = partial 3-D terrain wake offset
     "hill_speedup": 0.0,                # linearised topographic speedup gain s_hill * (z_elev - mean_z) / H
     "sigma_wd_deg": 0.0,                # >0 integrates over 10-min wind-direction meandering N(wd, sigma_wd^2)
+    "ct_scale": 1.0,                    # v4 (17 Nov 2026): multiplies the manufacturer thrust curve (1.0 = FLORIS)
 }
 
 
@@ -353,7 +354,7 @@ def _solve_single_direction(
         u_eff_j = u_avg_j * rho_scale * (max(cos_yaw, 0.0) ** (p_yaw / 3.0))
         p_kw_s[j] = float(np.interp(u_eff_j, ws_tab, p_tab, left=0.0, right=0.0))
 
-        ct_raw = float(np.interp(u_avg_j, ws_tab, ct_tab, left=0.0001, right=0.0001))
+        ct_raw = float(np.interp(u_avg_j, ws_tab, ct_tab, left=0.0001, right=0.0001)) * float(cfg.get("ct_scale", 1.0))
         ct_raw = float(np.clip(ct_raw, 0.0001, 0.9999))
         # FLORIS CosineLossTurbine: Ct = Ct_raw * cos(yaw); axial induction a = 0.5 / cos(yaw) * (1 - sqrt(1 - Ct_raw * cos^2(yaw)))
         ct_j = ct_raw * max(cos_yaw, 0.0)
