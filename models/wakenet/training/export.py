@@ -39,7 +39,7 @@ def export_weights():
 
     # Evaluate on Kelmarsh 2019 dev to fit widen-only 68% factors and dev dumb-baseline means
     anchor = ckpt.get("anchor", "textbook")
-    dev = np.load(_P.work("banks", "dev_2019_graphs_tuned.npz" if anchor == "tuned" else "dev_2019_graphs.npz"))
+    dev = np.load(_P.work("banks", {"tuned": "dev_2019_graphs_tuned.npz", "tuned_v4": "dev_2019_graphs_tuned_v4.npz"}.get(anchor, "dev_2019_graphs.npz")))
     n_dev = len(dev["node_x"])
     eta_p = np.zeros_like(dev["eta_true"])
     sig_eta_raw = np.zeros_like(dev["eta_true"])

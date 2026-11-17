@@ -27,6 +27,8 @@ ANCHOR_PARAMS = {
 # v1.1 (17 Nov 2026): the same physics tuned on Kelmarsh 2019 dev (calibrated_v3 in training/dev_calibration.json):
 # meso-scale meandering at 0.25 x the nacelle-vane sigma, linearised hill speedup 0.18, terrain-follow 0.80.
 TUNED_ANCHOR = {"c_meander": 0.25, "hill_speedup": 0.18, "terrain_follow": 0.80, "wind_shear": 0.14}
+# Physics v4 (training/dev_calibration_v4.json): the same plus the dev thrust scale.
+TUNED_V4_ANCHOR = dict(TUNED_ANCHOR, ct_scale=0.90, ka=0.38)
 
 
 def anchor_config(anchor: str | dict | None, sigma_wd_deg: float) -> dict:
@@ -38,12 +40,17 @@ def anchor_config(anchor: str | dict | None, sigma_wd_deg: float) -> dict:
         anchor = os.environ.get("WAKENET_ANCHOR", "textbook")
     if anchor == "textbook":
         return dict(ANCHOR_PARAMS)
-    over = TUNED_ANCHOR if anchor == "tuned" else dict(anchor)
+    over = {"tuned": TUNED_ANCHOR, "tuned_v4": TUNED_V4_ANCHOR}.get(anchor) if isinstance(anchor, str) else dict(anchor)
+    if over is None:
+        raise ValueError(f"unknown anchor {anchor!r}")
     cfg = dict(ANCHOR_PARAMS)
     cfg["wind_shear"] = float(over["wind_shear"])
     cfg["hill_speedup"] = float(over["hill_speedup"])
     cfg["terrain_follow"] = float(over["terrain_follow"])
     cfg["sigma_wd_deg"] = float(over["c_meander"]) * float(sigma_wd_deg)
+    for k in ("ka", "ct_scale"):
+        if k in over:
+            cfg[k] = float(over[k])
     return cfg
 
 

@@ -3,11 +3,49 @@
   "sigma_factor": {
     "waked_eta": 1.0,
     "free_eta": 1.0,
-    "farm_wake": 1.0
+    "farm_wake": 1.0,
+    "by_u": {
+      "edges": [
+        9.0,
+        10.5
+      ],
+      "waked_eta": [
+        1.571,
+        1.1088,
+        1.0
+      ],
+      "free_eta": [
+        1.1165,
+        1.0,
+        1.0
+      ],
+      "farm_wake": [
+        1.4986,
+        1.0,
+        1.0
+      ],
+      "dev_coverage": [
+        {
+          "n_waked": 2260,
+          "before": 47.5,
+          "after": 68.3
+        },
+        {
+          "n_waked": 9063,
+          "before": 63.6,
+          "after": 68.3
+        },
+        {
+          "n_waked": 4889,
+          "before": 88.0,
+          "after": 88.0
+        }
+      ]
+    }
   },
   "rescored": "2026-11-17: tuned-FLORIS and onshore-Jensen baselines, all rows, day-bootstrap intervals",
   "kelmarsh_2020_2021": {
-    "v1.0": {
+    "1.0.1": {
       "farm": "kelmarsh",
       "n_snapshots": 15059,
       "n_waked_readings": 39008,
@@ -231,14 +269,14 @@
         "verdict": "loss"
       },
       "coverage_68_pct": {
-        "waked_turbine_eta": 72.2,
-        "all_online_eta": 78.3,
-        "farm_wake_loss": 77.4
+        "waked_turbine_eta": 77.6,
+        "all_online_eta": 81.2,
+        "farm_wake_loss": 80.2
       }
     }
   },
   "penmanshiel_2019_2020": {
-    "v1.0": {
+    "1.0.1": {
       "farm": "penmanshiel",
       "n_snapshots": 8976,
       "n_waked_readings": 78327,
@@ -462,8 +500,8 @@
         "verdict": "loss"
       },
       "coverage_68_pct": {
-        "waked_turbine_eta": 50.7,
-        "all_online_eta": 57.4,
+        "waked_turbine_eta": 52.3,
+        "all_online_eta": 58.5,
         "farm_wake_loss": 61.5
       }
     }

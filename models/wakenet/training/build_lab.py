@@ -54,7 +54,7 @@ def _exam_table(res: dict, title: str, blurb: str) -> str:
                 lo, hi = x["diff_vs_best_ci95"]
                 v = x["verdict"]
                 rows.append(
-                    f'<tr><td>{farm} {tag} · {lab} <span class="n">(n={x["n"]:,})</span></td>'
+                    f'<tr><td>{farm} {("v" + tag) if tag[:1].isdigit() else tag} · {lab} <span class="n">(n={x["n"]:,})</span></td>'
                     f'<td class="num"><b>{x["wakenet_pct"]:.2f}%</b></td>{cells}'
                     f'<td class="num">{x["diff_vs_best_pct"]:+.2f} [{lo:+.2f}, {hi:+.2f}]</td><td class="{v}">{v}</td></tr>')
     return "".join([
@@ -126,7 +126,7 @@ def main():
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>WakeNet v1.0 — Wind-farm wakes read as a directed graph</title>
+<title>WakeNet v1.0.1 — Wind-farm wakes read as a directed graph</title>
 <style>
   :root {{
     --paper: #f2eee4; --paper-2: #e9e3d6; --paper-3: #fbf9f4;
@@ -264,6 +264,10 @@ function unpack(man, b64) {{
   return {{ meta: man.meta, t }};
 }}
 const W = unpack(D.wMan, D.wB64), X = unpack(D.eMan, D.eB64);
+const sigF = (u, free) => {{ const sf = W.meta.sigma_factor || {{}}, bu = sf.by_u;
+  if (!bu) return free ? (sf.free_eta || 1) : (sf.waked_eta || 1);
+  let k = 0; while (k < bu.edges.length && u >= bu.edges[k]) k++;
+  return free ? bu.free_eta[k] : bu.waked_eta[k]; }};
 const DEG = Math.PI / 180, clip = (v, a, b) => Math.min(b, Math.max(a, v));
 const erf = (x) => {{ const a = Math.abs(x), t = 1/(1+0.3275911*a); return (x<0?-1:1)*(1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-a*a)); }};
 const gelu = (x) => 0.5 * x * (1 + erf(x * 0.7071067811865476));
@@ -363,7 +367,7 @@ function runNet(idx, dWd, steer, swd, tog) {{
     const no=lin(nh,t['node_head2.weight'],t['node_head2.bias']); ls[i]=clip(no[1],-5,-0.2); if(on[i]){{ eu[i]=eA[i]+0.5*Math.tanh(no[0]); if(isFree[i]){{fS+=eu[i];fC++;}} }} }}
   const fm=Math.max(fS/Math.max(fC,1),0.25), eta=Float32Array.from({{length:n}},(_,i)=>on[i]?clip(eu[i]/fm,0,1.35):0);
   let sE=0; for(let i=0;i<n;i++) if(on[i]) sE+=eta[i]; const fLoss = 1 - sE/onC;
-  return {{ m, east, north, turb, wd, yaw, on, isFree, eta, sig: Float32Array.from(ls, v=>Math.exp(v)), eA, fLoss, ct: a0.ct, ti: a0.ti, pTrue: X.t['ptrue_'+idx].data }};
+  return {{ m, east, north, turb, wd, yaw, on, isFree, eta, sig: Float32Array.from(ls, (v,i)=>Math.exp(v)*sigF(m.u_inf_ms, isFree[i])), eA, fLoss, ct: a0.ct, ti: a0.ti, pTrue: X.t['ptrue_'+idx].data }};
 }}
 let st = {{ i: 0, dWd: 0, steer: 0, swd: X.meta[0].sigma_wd_deg, tog: new Set(), sel: 0 }}, hits = [];
 const picksEl = document.getElementById('picks');

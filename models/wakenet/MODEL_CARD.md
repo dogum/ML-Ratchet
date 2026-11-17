@@ -1,4 +1,4 @@
-# WakeNet v1.0 — model card
+# WakeNet v1.0.1 — model card
 
 **What it does.** Given a wind farm's turbine coordinates, tower hub heights, rotor power and thrust curves, online status, mechanical nacelle yaw angles, and the incoming wind measured on its geometrically unwaked front-row turbines, WakeNet predicts how much power every downstream turbine is losing to its neighbours' wakes — per turbine and across the whole farm — each with a calibrated 68% error bar.
 
@@ -72,8 +72,11 @@ Objective: $0.65\,\text{skill}(\eta_{\text{waked}}) + 0.35\,\text{skill}(W_{\tex
 | `r7` | Softmax attention over upstream edges in place of additive sigmoid-gated sum | 0.553 | 9.41% | 9.60% | 2.89% | rejected (+0.000) |
 | `r8` | Fine-tune from `r6` on mixed `v2 + v3` banks (48,000 simulated farms) | 0.543 | 9.62% | 9.85% | 2.99% | rejected (−0.009) |
 | `r9` | Same network anchored on the dev-tuned physics instead of textbook FLORIS (17 Nov 2026; seeds 106/107/108: 0.5543 / 0.5539 / 0.5542) | 0.554 | 9.30% | 9.56% | 2.86% | rejected (+0.002) |
+| `r10` | Physics v4 (thrust scale drawn around the dev value 0.90) and the network anchored on v4-tuned physics; scored on the new frozen set `val4` (seeds 0.5132 / 0.5135 / 0.5131) | 0.513 (`val4`) | 9.36% | 9.61% | 2.89% | kept, not released |
 
-Reference rows, not candidates (`training/v11_reference.json`): textbook FLORIS alone scores 0.512 on `val3` (dev 10.00% / 10.29% / 3.19%); the physics tuned on 2019 dev scores 0.541 (dev **9.18% / 9.42% / 2.86%**). In simulation the network adds +0.011 over its anchor; on real dev the tuned physics alone beats every rung. That gap between simulation and reality is the model's main open problem.
+Reference rows, not candidates (`training/v11_reference.json`): textbook FLORIS alone scores 0.512 on `val3` (dev 10.00% / 10.29% / 3.19%); the physics tuned on 2019 dev scores 0.541 (dev **9.18% / 9.42% / 2.86%**). In simulation the network adds +0.011 over its anchor; on real dev the tuned physics alone beats every rung. That gap between simulation and reality is the model's main open problem. A dev twin test (`training/twin_residuals.py`) shows why: the network's corrections are uncorrelated with what real turbines needed (r = −0.04 over 16,212 dev readings), while the real residuals follow wind speed (+8 % at 5-9 m/s, −1 % near rated) and turbulence. Physics v4 adds the one dev-tuned setting that helps (thrust ×0.90: dev 9.31 → 9.25 %). On its new frozen set `val4` the incumbent r6 re-scores at 0.5008, and r10 clears the rule (+0.012, all dev gates pass) so it is kept; it is not released because on real dev it is no better than r6 (9.50 % against 9.48 %). The v1.0 build kept no checkpoints for r1-r5, r7 and r8, so only r6 and r9 could be re-scored on `val4` (`training/v4_reference.json`).
+
+**v1.0.1 error bars.** The network's own bar is about 11.7 % wide at every wind speed, while its dev error is 14.3 % at 5-9 m/s and 5.7 % at 10.5-12 m/s (dev coverage 47.5 % and 88.0 %). v1.0.1 keeps the network and its predictions and multiplies the bars by widen-only factors per wind-speed bin fitted on dev (`training/calib_sigma.py`): waked turbines ×1.57 below 9 m/s, ×1.11 at 9-10.5 m/s, ×1.00 above; farm wake loss ×1.50 below 9 m/s.
 
 ## Exam
 
@@ -145,14 +148,14 @@ Run once for v1.0 on 16 Nov 2026 (`training/exam_results_2026-11-16.json`: 11 ro
 
 ### Error bars
 
-Share of readings inside the nominal 68% bar:
+Share of readings inside the nominal 68% bar. v1.0.1 changes only the bars (per-wind-speed factors fitted on dev); both exams had been seen before that change.
 
-| set | waked turbines | farm wake loss |
-|---|---|---|
-| Kelmarsh 2020-21 (exam 1) | 72.2% | 77.4% |
-| Kelmarsh 2022-24 (exam 2) | 64.1% | 66.8% |
-| Penmanshiel 2019-20 (exam 1) | 50.7% | 61.5% |
-| Penmanshiel 2021-23 (exam 2) | 41.9% | 48.9% |
+| set | waked turbines v1.0 | waked turbines v1.0.1 | farm wake loss v1.0 | farm wake loss v1.0.1 |
+|---|---|---|---|---|
+| Kelmarsh 2020-21 (exam 1) | 72.2% | 77.6% | 77.4% | 80.2% |
+| Kelmarsh 2022-24 (exam 2) | 64.1% | 70.3% | 66.8% | 70.8% |
+| Penmanshiel 2019-20 (exam 1) | 50.7% | 52.3% | 61.5% | 61.5% |
+| Penmanshiel 2021-23 (exam 2) | 41.9% | 48.9% | 48.9% | 54.3% |
 
 The Jensen baseline uses the onshore wake expansion 0.075. With the offshore value 0.05 that the 16 Nov exam used, Jensen scores 9.95% / 17.90% on exam 1 and 12.29% / 24.10% on exam 2 (all waked turbines, Kelmarsh / Penmanshiel).
 

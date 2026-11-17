@@ -42,7 +42,8 @@ def load_ckpt_model(rung_id: str) -> EdgeWakeGNN:
 def _bank_for(net: EdgeWakeGNN, bank_name: str) -> str:
     """A rung anchored on the dev-tuned physics (v1.1) reads the same farms built with that anchor:
     `<bank>_tuned` has the same seed, targets and labels as `<bank>`; only the anchor features differ."""
-    return f"{bank_name}_tuned" if getattr(net, "anchor", "textbook") == "tuned" else bank_name
+    anc = getattr(net, "anchor", "textbook")
+    return {"tuned": f"{bank_name}_tuned", "tuned_v4": f"{bank_name}_tuned_v4"}.get(anc, bank_name)
 
 
 @torch.no_grad()

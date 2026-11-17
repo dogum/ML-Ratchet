@@ -1,8 +1,8 @@
 id: wakenet
 name: WakeNet
-version: "1.0"
+version: "1.0.1"
 status: released
-released: 2026-11-16
+released: 2026-11-17
 order: 17
 domain: Energy
 tags: [wind energy, wake losses, graph neural network, SCADA, yaw steering, uncertainty, zero-shot transfer]
@@ -86,7 +86,7 @@ split:
     training/split.json (sha256 bd1dd01f…, seed 20261116)
   exam: >-
     Exam 2 (frozen 17 Nov 2026 in training/split_exam2.json before anything was scored on it, never seen
-    by any version): Kelmarsh 2022–2024 (11,750 snapshots, 29,308 waked readings) and Penmanshiel
+    by any version, scored once for v1.0; v1.0.1 changes only the error bars): Kelmarsh 2022–2024 (11,750 snapshots, 29,308 waked readings) and Penmanshiel
     2021–2023 (23,842 snapshots, 208,508 waked readings). Exam 1, run once for v1.0 on 16 Nov 2026 and
     re-scored with more baselines on 17 Nov 2026: Kelmarsh 2020–2021 (15,059 snapshots) and Penmanshiel
     2019–2020 (8,976 snapshots).
@@ -318,10 +318,10 @@ exam:
       verdict: tie
       note: "+0.07 points against Dev mean wake loss, 95% CI [-0.20, +0.36] (bootstrap by day). Exam 1 (Penmanshiel 2019-20, re-scored): 4.75 vs tuned FLORIS 4.82, loss."
   coverage:
-    - { output: "Kelmarsh 2022-24 waked turbines", actual: 64.1 }
-    - { output: "Kelmarsh 2022-24 farm wake loss", actual: 66.8 }
-    - { output: "Penmanshiel 2021-23 waked turbines (unseen farm)", actual: 41.9 }
-    - { output: "Penmanshiel 2021-23 farm wake loss (unseen farm)", actual: 48.9 }
+    - { output: "Kelmarsh 2022-24 waked turbines", actual: 70.3 }
+    - { output: "Kelmarsh 2022-24 farm wake loss", actual: 70.8 }
+    - { output: "Penmanshiel 2021-23 waked turbines (unseen farm)", actual: 48.9 }
+    - { output: "Penmanshiel 2021-23 farm wake loss (unseen farm)", actual: 54.3 }
 
 wins:
   - "Beats textbook NREL FLORIS and Jensen on every row of both exams and both farms: exam 2 Kelmarsh waked turbines 10.96% against 11.77% (FLORIS) and 11.92% (Jensen, k = 0.075); unseen Penmanshiel 19.78% against 21.75% and 21.77%."
@@ -331,12 +331,13 @@ losses:
   - "The network adds nothing over its own physics once that physics is tuned on dev. FLORIS with the three settings from 2019 dev beats WakeNet on 13 of 18 exam-2 rows and ties 4 (exam 1: 17 of 18). The gains over textbook FLORIS came from the dev tuning, not from the graph network. Anchoring the network on the tuned physics (r9) gained only +0.002 in simulation and was rejected."
   - "On the unseen Penmanshiel ridge it loses to constant guesses: directly behind another turbine (25.12% against 20.60% for the dev-mean wake loss), inside 2 or more wakes, below 10 m/s, and on the highest quarter of turbines (22.64% against 19.33% for assuming no wake). Ridge-top speed-up offsets the wakes there."
 limits:
-  - "Error bars are too narrow on years and farms not seen in dev: 68% bars cover 64% of Kelmarsh 2022-24 turbines (72% in 2020-21) and 42% of Penmanshiel 2021-23 turbines (51% in 2019-20)."
+  - "Error bars still too narrow on the unseen ridge farm: v1.0.1's per-wind-speed factors (fitted on dev) lift 68% coverage on Kelmarsh 2022-24 turbines from 64% to 70%, but Penmanshiel 2021-23 only from 42% to 49%, because terrain, not wind speed, drives the misses there. Both exams were seen before this change."
   - "Below-rated active wake regime only (freestream 5.0–12.0 m/s); above rated wind speed pitch control caps all turbines at rated power and wakes cause near-zero power loss."
   - "10-minute nacelle SCADA carries no atmospheric stability (Obukhov length / heat-flux) measurement, so convective daytime mixing and stable nocturnal wakes share one turbulence-conditioned curve."
   - "No digital elevation map or forestry roughness map around the farm perimeter is read — terrain enters only through the elevations at the turbine towers themselves."
 next:
-  - "Close the sim-to-real gap the twin test shows: the network gains +0.011 over its anchor in simulation and loses on real dev, so the simulator's noise or inflow model is teaching it corrections that do not hold on real turbines. Start with a dev twin test of the residuals the network adds."
+  - "Give the simulator physics the anchor does not have, so the network has something real to learn. The dev twin test found the network's corrections uncorrelated with real residuals (r = −0.04); those residuals follow wind speed and turbulence. Tuning FLORIS settings captures little of it (thrust ×0.90: 9.31 → 9.25%), so candidates are wake recovery that depends on turbulence and thrust beyond the Gaussian model, and turbine-to-turbine power-curve scatter."
+  - "A cleaner exam metric for the next fresh exam (Kelmarsh 2025 when published): per-turbine 10-minute power is dominated by ~10% turbulent scatter, so every model sits near a 9% floor. Bin-averaged wake deficit by wind direction, the industry's standard check, would show model differences the noise hides. Fix it before that exam is opened."
   - "Read surrounding 30 m DEM terrain slopes and forest-canopy roughness upwind of each sector (Jackson–Hunt / WAsP linearised flow over real topography) to close Penmanshiel's hilltop bias."
   - "Terrain-relief-conditioned or Mondrian conformal σ widening so error bars widen on steep (>30 m relief) sites and later years."
   - "Active yaw-steering controller rung (WakePilot) trained through the differentiable wake graph and checked against dedicated field yaw-offset campaigns."

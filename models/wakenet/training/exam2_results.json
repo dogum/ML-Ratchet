@@ -2,7 +2,7 @@
   "exam": "exam2",
   "split_sha256": "3543a6af39b8612999544cd08c63b272e5762b6419ac152f5ab0e2f4ec997f24",
   "exam2_kelmarsh": {
-    "1.0": {
+    "1.0.1": {
       "farm": "kelmarsh",
       "n_snapshots": 11750,
       "n_waked_readings": 29308,
@@ -226,14 +226,14 @@
         "verdict": "tie"
       },
       "coverage_68_pct": {
-        "waked_turbine_eta": 64.1,
-        "all_online_eta": 72.3,
-        "farm_wake_loss": 66.8
+        "waked_turbine_eta": 70.3,
+        "all_online_eta": 75.7,
+        "farm_wake_loss": 70.8
       }
     }
   },
   "exam2_penmanshiel": {
-    "1.0": {
+    "1.0.1": {
       "farm": "penmanshiel",
       "n_snapshots": 23842,
       "n_waked_readings": 208508,
@@ -457,9 +457,9 @@
         "verdict": "tie"
       },
       "coverage_68_pct": {
-        "waked_turbine_eta": 41.9,
-        "all_online_eta": 48.8,
-        "farm_wake_loss": 48.9
+        "waked_turbine_eta": 48.9,
+        "all_online_eta": 54.0,
+        "farm_wake_loss": 54.3
       }
     }
   }

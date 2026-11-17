@@ -1,0 +1,175 @@
+{
+  "dev_set": "kelmarsh_dev_2019.npz (5,729 snapshots)",
+  "held_from_v3": {
+    "c_meander": 0.25,
+    "hill_speedup": 0.18,
+    "wind_shear": 0.14,
+    "terrain_follow": 0.8
+  },
+  "calibrated_v4": {
+    "params": {
+      "c_meander": 0.25,
+      "hill_speedup": 0.18,
+      "wind_shear": 0.14,
+      "terrain_follow": 0.8,
+      "ka": 0.38,
+      "ct_scale": 0.9
+    },
+    "metrics": {
+      "ka": 0.38,
+      "ct_scale": 0.9,
+      "waked_mae": 0.09247,
+      "waked_mae_h1": 0.09094,
+      "waked_mae_h2": 0.0938,
+      "direct_wake_mae": 0.10461,
+      "direct_wake_bias": 0.01238,
+      "shoulder_mae": 0.08634,
+      "farm_wake_mae": 0.0282
+    }
+  },
+  "v3_same_stride": {
+    "ka": 0.38,
+    "ct_scale": 1.0,
+    "waked_mae": 0.09313,
+    "waked_mae_h1": 0.09151,
+    "waked_mae_h2": 0.09454,
+    "direct_wake_mae": 0.10493,
+    "direct_wake_bias": -0.01013,
+    "shoulder_mae": 0.08718,
+    "farm_wake_mae": 0.02876
+  },
+  "grid_search": [
+    {
+      "ka": 0.38,
+      "ct_scale": 1.0,
+      "waked_mae": 0.09415,
+      "waked_mae_h1": 0.09305,
+      "waked_mae_h2": 0.09512,
+      "direct_wake_mae": 0.10809,
+      "direct_wake_bias": -0.01202,
+      "shoulder_mae": 0.08712,
+      "farm_wake_mae": 0.02975
+    },
+    {
+      "ka": 0.38,
+      "ct_scale": 0.9,
+      "waked_mae": 0.09323,
+      "waked_mae_h1": 0.09241,
+      "waked_mae_h2": 0.09394,
+      "direct_wake_mae": 0.10708,
+      "direct_wake_bias": 0.01047,
+      "shoulder_mae": 0.08623,
+      "farm_wake_mae": 0.02917
+    },
+    {
+      "ka": 0.38,
+      "ct_scale": 0.8,
+      "waked_mae": 0.09373,
+      "waked_mae_h1": 0.09341,
+      "waked_mae_h2": 0.09402,
+      "direct_wake_mae": 0.10961,
+      "direct_wake_bias": 0.03374,
+      "shoulder_mae": 0.08571,
+      "farm_wake_mae": 0.02928
+    },
+    {
+      "ka": 0.5,
+      "ct_scale": 1.0,
+      "waked_mae": 0.094,
+      "waked_mae_h1": 0.09293,
+      "waked_mae_h2": 0.09494,
+      "direct_wake_mae": 0.10626,
+      "direct_wake_bias": 0.00183,
+      "shoulder_mae": 0.08781,
+      "farm_wake_mae": 0.02942
+    },
+    {
+      "ka": 0.5,
+      "ct_scale": 0.9,
+      "waked_mae": 0.09372,
+      "waked_mae_h1": 0.09302,
+      "waked_mae_h2": 0.09434,
+      "direct_wake_mae": 0.10721,
+      "direct_wake_bias": 0.02173,
+      "shoulder_mae": 0.08691,
+      "farm_wake_mae": 0.02911
+    },
+    {
+      "ka": 0.5,
+      "ct_scale": 0.8,
+      "waked_mae": 0.09462,
+      "waked_mae_h1": 0.09429,
+      "waked_mae_h2": 0.09491,
+      "direct_wake_mae": 0.111,
+      "direct_wake_bias": 0.04272,
+      "shoulder_mae": 0.08635,
+      "farm_wake_mae": 0.02946
+    },
+    {
+      "ka": 0.65,
+      "ct_scale": 1.0,
+      "waked_mae": 0.09461,
+      "waked_mae_h1": 0.09367,
+      "waked_mae_h2": 0.09542,
+      "direct_wake_mae": 0.10651,
+      "direct_wake_bias": 0.01697,
+      "shoulder_mae": 0.0886,
+      "farm_wake_mae": 0.02929
+    },
+    {
+      "ka": 0.65,
+      "ct_scale": 0.9,
+      "waked_mae": 0.09477,
+      "waked_mae_h1": 0.09411,
+      "waked_mae_h2": 0.09536,
+      "direct_wake_mae": 0.10883,
+      "direct_wake_bias": 0.0341,
+      "shoulder_mae": 0.08768,
+      "farm_wake_mae": 0.02928
+    },
+    {
+      "ka": 0.65,
+      "ct_scale": 0.8,
+      "waked_mae": 0.09601,
+      "waked_mae_h1": 0.09557,
+      "waked_mae_h2": 0.0964,
+      "direct_wake_mae": 0.11373,
+      "direct_wake_bias": 0.05263,
+      "shoulder_mae": 0.08706,
+      "farm_wake_mae": 0.02978
+    },
+    {
+      "ka": 0.8,
+      "ct_scale": 1.0,
+      "waked_mae": 0.09572,
+      "waked_mae_h1": 0.09484,
+      "waked_mae_h2": 0.09649,
+      "direct_wake_mae": 0.10852,
+      "direct_wake_bias": 0.03018,
+      "shoulder_mae": 0.08926,
+      "farm_wake_mae": 0.02939
+    },
+    {
+      "ka": 0.8,
+      "ct_scale": 0.9,
+      "waked_mae": 0.09615,
+      "waked_mae_h1": 0.09542,
+      "waked_mae_h2": 0.0968,
+      "direct_wake_mae": 0.11166,
+      "direct_wake_bias": 0.04492,
+      "shoulder_mae": 0.08832,
+      "farm_wake_mae": 0.02959
+    },
+    {
+      "ka": 0.8,
+      "ct_scale": 0.8,
+      "waked_mae": 0.09744,
+      "waked_mae_h1": 0.0969,
+      "waked_mae_h2": 0.09791,
+      "direct_wake_mae": 0.11679,
+      "direct_wake_bias": 0.06134,
+      "shoulder_mae": 0.08766,
+      "farm_wake_mae": 0.03016
+    }
+  ]
+}

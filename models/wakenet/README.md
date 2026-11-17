@@ -1,5 +1,5 @@
 <!-- Generated from model.yaml and ratchet.yaml by `mlratchet readme --write`. Edit those, not this file. -->
-# WakeNet <sub>v1.0</sub>
+# WakeNet <sub>v1.0.1</sub>
 
 > **Who is stealing whose wind across a real farm — read as a directed graph.**
 
@@ -19,7 +19,7 @@ From a wind farm's turbine coordinates, hub heights, rotor power and thrust curv
 | **Physics also enters** | inputs: Wind-rotated pairwise displacements (dx/D, dy/D, dz/D), dimensionless meandering number σ_θ·dx/D, analytical pairwise deficit and overlap, and finite-difference directional sensitivity<br>output: Predicts a residual power-ratio correction on top of a 3-D Bastankhah–Porté-Agel Gaussian wake and Crespo–Hernández turbulence solve |
 | **Real data's jobs** | backdrop, calibration, gate, error bars, exam (never training labels) |
 | **Dev set** | Kelmarsh 2019: 5,729 clean 6-turbine 10-minute snapshots (16,212 waked turbine readings), gated separately on H1 Jan–Jun (2,691 snapshots) and H2 Jul–Dec (3,038 snapshots); frozen in training/split.json (sha256 bd1dd01f…, seed 20261116) |
-| **Exam** | Exam 2 (frozen 17 Nov 2026 in training/split_exam2.json before anything was scored on it, never seen by any version): Kelmarsh 2022–2024 (11,750 snapshots, 29,308 waked readings) and Penmanshiel 2021–2023 (23,842 snapshots, 208,508 waked readings). Exam 1, run once for v1.0 on 16 Nov 2026 and re-scored with more baselines on 17 Nov 2026: Kelmarsh 2020–2021 (15,059 snapshots) and Penmanshiel 2019–2020 (8,976 snapshots). |
+| **Exam** | Exam 2 (frozen 17 Nov 2026 in training/split_exam2.json before anything was scored on it, never seen by any version, scored once for v1.0; v1.0.1 changes only the error bars): Kelmarsh 2022–2024 (11,750 snapshots, 29,308 waked readings) and Penmanshiel 2021–2023 (23,842 snapshots, 208,508 waked readings). Exam 1, run once for v1.0 on 16 Nov 2026 and re-scored with more baselines on 17 Nov 2026: Kelmarsh 2020–2021 (15,059 snapshots) and Penmanshiel 2019–2020 (8,976 snapshots). |
 
 ## Run it
 
@@ -69,7 +69,7 @@ Mean absolute error in each waked turbine's power (as a share of the unwaked fro
 | Penmanshiel 2021-23 (unseen farm), highest quarter of turbines MAE (66,219 readings)<br><sub>+3.31 points against Unwaked guess, 95% CI [+2.92, +3.71] (bootstrap by day). Exam 1 (Penmanshiel 2019-20, re-scored): 15.92 vs tuned FLORIS 14.23, loss.</sub> | **22.64%** | FLORIS tuned on 2019 dev (classical): 21.52%<br>NREL FLORIS 3-D Gaussian (textbook) (classical): 25.49%<br>Jensen Park + Jiménez (k = 0.075) (classical): 26.39%<br>Dev mean wake loss (dumb baseline): 23.1%<br>Unwaked guess (dumb baseline): 19.33% | ❌ loses |
 | Penmanshiel 2021-23 (unseen farm), farm-wide wake loss MAE (23,842 snapshots)<br><sub>+0.07 points against Dev mean wake loss, 95% CI [-0.20, +0.36] (bootstrap by day). Exam 1 (Penmanshiel 2019-20, re-scored): 4.75 vs tuned FLORIS 4.82, loss.</sub> | **7.08%** | FLORIS tuned on 2019 dev (classical): 7.2%<br>NREL FLORIS 3-D Gaussian (textbook) (classical): 7.67%<br>Jensen Park + Jiménez (k = 0.075) (classical): 7.88%<br>Dev mean wake loss (dumb baseline): 7.01%<br>Unwaked guess (dumb baseline): 8.9% | ➖ tie |
 
-Coverage of the 68% error bars on the exam: Kelmarsh 2022-24 waked turbines **64.1%**, Kelmarsh 2022-24 farm wake loss **66.8%**, Penmanshiel 2021-23 waked turbines (unseen farm) **41.9%**, Penmanshiel 2021-23 farm wake loss (unseen farm) **48.9%**.
+Coverage of the 68% error bars on the exam: Kelmarsh 2022-24 waked turbines **70.3%**, Kelmarsh 2022-24 farm wake loss **70.8%**, Penmanshiel 2021-23 waked turbines (unseen farm) **48.9%**, Penmanshiel 2021-23 farm wake loss (unseen farm) **54.3%**.
 
 ### Where it wins
 
@@ -84,7 +84,7 @@ Coverage of the 68% error bars on the exam: Kelmarsh 2022-24 waked turbines **64
 
 ## Limits
 
-- Error bars are too narrow on years and farms not seen in dev: 68% bars cover 64% of Kelmarsh 2022-24 turbines (72% in 2020-21) and 42% of Penmanshiel 2021-23 turbines (51% in 2019-20).
+- Error bars still too narrow on the unseen ridge farm: v1.0.1's per-wind-speed factors (fitted on dev) lift 68% coverage on Kelmarsh 2022-24 turbines from 64% to 70%, but Penmanshiel 2021-23 only from 42% to 49%, because terrain, not wind speed, drives the misses there. Both exams were seen before this change.
 - Below-rated active wake regime only (freestream 5.0–12.0 m/s); above rated wind speed pitch control caps all turbines at rated power and wakes cause near-zero power loss.
 - 10-minute nacelle SCADA carries no atmospheric stability (Obukhov length / heat-flux) measurement, so convective daytime mixing and stable nocturnal wakes share one turbulence-conditioned curve.
 - No digital elevation map or forestry roughness map around the farm perimeter is read — terrain enters only through the elevations at the turbine towers themselves.
@@ -105,10 +105,11 @@ Coverage of the 68% error bars on the exam: Kelmarsh 2022-24 waked turbines **64
 | r7 | Softmax attention over upstream edges in place of additive sigmoid-gated wake superposition | 0.552 | ○ rejected | +0.000 on val3, needs more than +0.01. | 9.41 | 9.6 | 2.89 |
 | r8 | Fine-tune from r6 on mixed v2 + v3 banks (48,000 simulated farms) | 0.543 | ○ rejected | -0.009 on val3, needs more than +0.01. | 9.62 | 9.85 | 2.99 |
 | r9 | Same EdgeWakeGNN anchored on the physics tuned on 2019 dev (meandering 0.25x vane sigma, hill speedup 0.18, terrain-follow 0.80) instead of textbook FLORIS; seeds 106/107/108 score 0.5543/0.5539/0.5542 | 0.554 | ○ rejected | +0.002 on val3, needs more than +0.01. | 9.3 | 9.56 | 2.86 |
+| r10 | v4 physics (thrust scale 0.82-0.98 around the dev value 0.90); network anchored on v4-tuned physics; seeds 106/107/108 score 0.5132 / 0.5135 / 0.5131 on val4 | 0.513 | ● kept | +0.012 over r6 re-scored on val4 (0.5008); every dev gate passes. Not released: on real dev it is no better than r6 (9.50 vs 9.48 % waked MAE), and v4 physics alone does better (9.25 %). | 9.36 | 9.61 | 2.89 |
 
 <sub>Columns after *Why*: Real Kelmarsh 2019 dev set (5,729 snapshots), MAE — the gate's input.</sub>
 
-Every rung was re-scored when the simulator physics changed (val1 -> val2 -> val3) and every decision re-taken in order. Rung 3 (3-D Gaussian anchor) fell 0.005 short of rung 2 on the 2-D Jensen set val1 (0.740 vs 0.735) and flipped to kept (+0.053) when re-scored on val2. Reference rows, not candidates (17 Nov 2026, training/v11_reference.json): textbook FLORIS alone scores 0.512 on val3 (dev H1/H2/farm 10.00/10.29/3.19 %); the same physics tuned on 2019 dev scores 0.541 (9.18/9.42/2.86 %). The network adds +0.011 over its anchor in simulation but nothing on real dev, where tuned physics alone beats every rung. r9 anchors the network on the tuned physics: +0.002 on val3 over r6 across three seeds (spread 0.0004), so it is rejected, and on dev it still trails tuned physics alone (9.44 vs 9.31 % waked).
+Every rung was re-scored when the simulator physics changed (val1 -> val2 -> val3) and every decision re-taken in order. Rung 3 (3-D Gaussian anchor) fell 0.005 short of rung 2 on the 2-D Jensen set val1 (0.740 vs 0.735) and flipped to kept (+0.053) when re-scored on val2. Reference rows, not candidates (17 Nov 2026, training/v11_reference.json): textbook FLORIS alone scores 0.512 on val3 (dev H1/H2/farm 10.00/10.29/3.19 %); the same physics tuned on 2019 dev scores 0.541 (9.18/9.42/2.86 %). The network adds +0.011 over its anchor in simulation but nothing on real dev, where tuned physics alone beats every rung. r9 anchors the network on the tuned physics: +0.002 on val3 over r6 across three seeds (spread 0.0004), so it is rejected, and on dev it still trails tuned physics alone (9.44 vs 9.31 % waked). Physics v4 (17 Nov 2026) adds a dev-tuned thrust scale and a new frozen set val4 (seed 404). On val4 the incumbent r6 scores 0.5008 and r9 0.5028 (training/v4_reference.json); the v1.0 build kept no checkpoints for r1-r5, r7 and r8, so they keep their val3 scores. v4 physics alone: 0.499 on val4, dev 9.12 / 9.36 / 2.81 %.
 
 Raw per-rung logs are in [`training/`](training/).
 
@@ -134,7 +135,8 @@ Sequential 3-D upwind-to-downwind wake propagation on a 3×3 rotor grid: Bastank
 
 ## Next rungs
 
-- Close the sim-to-real gap the twin test shows: the network gains +0.011 over its anchor in simulation and loses on real dev, so the simulator's noise or inflow model is teaching it corrections that do not hold on real turbines. Start with a dev twin test of the residuals the network adds.
+- Give the simulator physics the anchor does not have, so the network has something real to learn. The dev twin test found the network's corrections uncorrelated with real residuals (r = −0.04); those residuals follow wind speed and turbulence. Tuning FLORIS settings captures little of it (thrust ×0.90: 9.31 → 9.25%), so candidates are wake recovery that depends on turbulence and thrust beyond the Gaussian model, and turbine-to-turbine power-curve scatter.
+- A cleaner exam metric for the next fresh exam (Kelmarsh 2025 when published): per-turbine 10-minute power is dominated by ~10% turbulent scatter, so every model sits near a 9% floor. Bin-averaged wake deficit by wind direction, the industry's standard check, would show model differences the noise hides. Fix it before that exam is opened.
 - Read surrounding 30 m DEM terrain slopes and forest-canopy roughness upwind of each sector (Jackson–Hunt / WAsP linearised flow over real topography) to close Penmanshiel's hilltop bias.
 - Terrain-relief-conditioned or Mondrian conformal σ widening so error bars widen on steep (>30 m relief) sites and later years.
 - Active yaw-steering controller rung (WakePilot) trained through the differentiable wake graph and checked against dedicated field yaw-offset campaigns.

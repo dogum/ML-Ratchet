@@ -13,6 +13,7 @@ ladders:
   - val1
   - val2
   - val3
+  - val4
   scored_on: val3
   note: 'Every rung was re-scored when the simulator physics changed (val1 -> val2
     -> val3) and every decision re-taken in order. Rung 3 (3-D Gaussian anchor) fell
@@ -24,7 +25,11 @@ ladders:
     but nothing on real dev, where tuned physics alone beats every rung. r9 anchors
     the network on the tuned physics: +0.002 on val3 over r6 across three seeds (spread
     0.0004), so it is rejected, and on dev it still trails tuned physics alone (9.44
-    vs 9.31 % waked).'
+    vs 9.31 % waked). Physics v4 (17 Nov 2026) adds a dev-tuned thrust scale and a
+    new frozen set val4 (seed 404). On val4 the incumbent r6 scores 0.5008 and r9
+    0.5028 (training/v4_reference.json); the v1.0 build kept no checkpoints for r1-r5,
+    r7 and r8, so they keep their val3 scores. v4 physics alone: 0.499 on val4, dev
+    9.12 / 9.36 / 2.81 %.'
   columns_source: Real Kelmarsh 2019 dev set (5,729 snapshots), MAE — the gate's input
   columns:
   - H1 waked (%)
@@ -166,3 +171,21 @@ ladders:
     - 9.3
     - 9.56
     - 2.86
+  - id: r10
+    change: v4 physics (thrust scale 0.82-0.98 around the dev value 0.90); network
+      anchored on v4-tuned physics; seeds 106/107/108 score 0.5132 / 0.5135 / 0.5131
+      on val4
+    sim: 0.5132
+    dev:
+      waked_mae: 0.095
+      waked_mae_h1: 0.0936
+      waked_mae_h2: 0.0961
+      farm_mae: 0.0289
+    decision: kept
+    why: '+0.012 over r6 re-scored on val4 (0.5008); every dev gate passes. Not released:
+      on real dev it is no better than r6 (9.50 vs 9.48 % waked MAE), and v4 physics
+      alone does better (9.25 %).'
+    metrics:
+    - 9.36
+    - 9.61
+    - 2.89

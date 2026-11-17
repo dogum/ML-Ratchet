@@ -1,51 +1,51 @@
-WakeNet v1.0 — 6 real wind-farm exam snapshots (0 real wake labels in training)
+WakeNet v1.0.1 — 6 real wind-farm exam snapshots (0 real wake labels in training)
 
 [01_kelmarsh_sw_wakes] Kelmarsh SW prevailing pair wakes  (2020-03-10 20:40:00 UTC)
   inflow: U=9.9 m/s from 243 deg  TI=12.4%  sigma_wd=7.4 deg  P_front=1826 kW
   farm wake loss: WakeNet +16.2% +-  4.2%  |  SCADA truth +15.3%
-    KWF6   loss +41.8% +-  9.8% (truth +23.1%)  |  P   1063 +-  179 kW (truth   1404 kW)  yaw=  -8 deg [out]
-    KWF3   loss +29.6% +- 11.9% (truth +30.6%)  |  P   1286 +-  217 kW (truth   1266 kW)  yaw=  -1 deg [in 68%]
-    KWF5   loss +26.1% +- 11.5% (truth +38.2%)  |  P   1350 +-  210 kW (truth   1128 kW)  yaw=  +9 deg [out]
+    KWF6   loss +41.8% +- 10.9% (truth +23.1%)  |  P   1063 +-  198 kW (truth   1404 kW)  yaw=  -8 deg [out]
+    KWF3   loss +29.6% +- 13.2% (truth +30.6%)  |  P   1286 +-  241 kW (truth   1266 kW)  yaw=  -1 deg [in 68%]
+    KWF5   loss +26.1% +- 12.7% (truth +38.2%)  |  P   1350 +-  233 kW (truth   1128 kW)  yaw=  +9 deg [in 68%]
 
 [02_kelmarsh_nw_3row] Kelmarsh NW 3-turbine row (KWF3->KWF5->KWF6)  (2020-02-23 15:30:00 UTC)
   inflow: U=10.0 m/s from 302 deg  TI=14.3%  sigma_wd=10.8 deg  P_front=1818 kW
   farm wake loss: WakeNet +20.4% +-  5.4%  |  SCADA truth +15.7%
-    KWF6   loss +48.3% +-  9.1% (truth +42.7%)  |  P    941 +-  165 kW (truth   1042 kW)  yaw=  -2 deg [in 68%]
-    KWF5   loss +44.1% +-  9.7% (truth +42.7%)  |  P   1016 +-  176 kW (truth   1042 kW)  yaw=  +1 deg [in 68%]
-    KWF4   loss +27.0% +- 11.3% (truth +19.0%)  |  P   1328 +-  206 kW (truth   1472 kW)  yaw=  -8 deg [in 68%]
-    KWF1   loss  +2.8% +- 12.3% (truth -10.3%)  |  P   1767 +-  223 kW (truth   2005 kW)  yaw=  -2 deg [out]
+    KWF6   loss +48.3% +- 10.0% (truth +42.7%)  |  P    941 +-  183 kW (truth   1042 kW)  yaw=  -2 deg [in 68%]
+    KWF5   loss +44.1% +- 10.7% (truth +42.7%)  |  P   1016 +-  195 kW (truth   1042 kW)  yaw=  +1 deg [in 68%]
+    KWF4   loss +27.0% +- 12.6% (truth +19.0%)  |  P   1328 +-  228 kW (truth   1472 kW)  yaw=  -8 deg [in 68%]
+    KWF1   loss  +2.8% +- 13.6% (truth -10.3%)  |  P   1767 +-  248 kW (truth   2005 kW)  yaw=  -2 deg [in 68%]
 
 [03_kelmarsh_yaw_offset] Kelmarsh upstream yaw misalignment (>=10 deg)  (2021-12-29 22:50:00 UTC)
   inflow: U=8.6 m/s from 213 deg  TI=13.8%  sigma_wd=8.4 deg  P_front=1373 kW
-  farm wake loss: WakeNet  +8.5% +-  4.1%  |  SCADA truth  +8.3%
-    KWF3   loss +33.5% +- 10.2% (truth +44.2%)  |  P    912 +-  139 kW (truth    765 kW)  yaw=  -0 deg [out]
-    KWF6   loss +12.1% +- 11.2% (truth +11.0%)  |  P   1207 +-  154 kW (truth   1222 kW)  yaw= +11 deg [in 68%]
-    KWF5   loss  +5.3% +- 11.6% (truth  -5.3%)  |  P   1300 +-  159 kW (truth   1446 kW)  yaw= +14 deg [in 68%]
+  farm wake loss: WakeNet  +8.5% +-  6.1%  |  SCADA truth  +8.3%
+    KWF3   loss +33.5% +- 16.0% (truth +44.2%)  |  P    912 +-  219 kW (truth    765 kW)  yaw=  -0 deg [in 68%]
+    KWF6   loss +12.1% +- 17.7% (truth +11.0%)  |  P   1207 +-  242 kW (truth   1222 kW)  yaw= +11 deg [in 68%]
+    KWF5   loss  +5.3% +- 18.2% (truth  -5.3%)  |  P   1300 +-  249 kW (truth   1446 kW)  yaw= +14 deg [in 68%]
 
 [04_kelmarsh_parked_unit] Kelmarsh 1 turbine parked/offline  (2021-03-14 03:50:00 UTC)
   inflow: U=9.6 m/s from 282 deg  TI=15.1%  sigma_wd=6.6 deg  P_front=1770 kW
   farm wake loss: WakeNet  +4.6% +-  3.4%  |  SCADA truth  +5.9%
-    KWF6   loss +20.7% +- 10.6% (truth +29.0%)  |  P   1403 +-  187 kW (truth   1257 kW)  yaw=  +3 deg [in 68%]
-    KWF4   loss  +2.3% +- 11.7% (truth  +0.7%)  |  P   1728 +-  208 kW (truth   1757 kW)  yaw=  +1 deg [in 68%]
+    KWF6   loss +20.7% +- 11.7% (truth +29.0%)  |  P   1403 +-  207 kW (truth   1257 kW)  yaw=  +3 deg [in 68%]
+    KWF4   loss  +2.3% +- 13.0% (truth  +0.7%)  |  P   1728 +-  230 kW (truth   1757 kW)  yaw=  +1 deg [in 68%]
 
 [05_penmanshiel_sw_14wt] Penmanshiel (unseen 14-turbine farm) SW deep array  (2020-02-18 02:40:00 UTC)
   inflow: U=10.0 m/s from 221 deg  TI=13.0%  sigma_wd=10.2 deg  P_front=1353 kW
   farm wake loss: WakeNet  +2.7% +-  5.1%  |  SCADA truth  +1.1%
-    T08    loss +13.1% +- 11.5% (truth +21.9%)  |  P   1175 +-  156 kW (truth   1056 kW)  yaw=  +1 deg [in 68%]
-    T09    loss +10.3% +- 11.8% (truth +42.1%)  |  P   1213 +-  159 kW (truth    783 kW)  yaw=  -4 deg [out]
-    T04    loss  +6.0% +- 12.0% (truth  -3.5%)  |  P   1272 +-  163 kW (truth   1400 kW)  yaw=  -2 deg [in 68%]
-    T10    loss  +5.2% +- 12.1% (truth  +5.9%)  |  P   1282 +-  164 kW (truth   1273 kW)  yaw=  +1 deg [in 68%]
-    T12    loss  +5.2% +- 13.8% (truth -10.7%)  |  P   1282 +-  186 kW (truth   1498 kW)  yaw=  -0 deg [out]
-    T13    loss  +3.1% +- 15.1% (truth -14.2%)  |  P   1311 +-  205 kW (truth   1544 kW)  yaw=  +1 deg [out]
+    T08    loss +13.1% +- 12.7% (truth +21.9%)  |  P   1175 +-  172 kW (truth   1056 kW)  yaw=  +1 deg [in 68%]
+    T09    loss +10.3% +- 13.0% (truth +42.1%)  |  P   1213 +-  176 kW (truth    783 kW)  yaw=  -4 deg [out]
+    T04    loss  +6.0% +- 13.3% (truth  -3.5%)  |  P   1272 +-  180 kW (truth   1400 kW)  yaw=  -2 deg [in 68%]
+    T10    loss  +5.2% +- 13.5% (truth  +5.9%)  |  P   1282 +-  182 kW (truth   1273 kW)  yaw=  +1 deg [in 68%]
+    T12    loss  +5.2% +- 15.3% (truth -10.7%)  |  P   1282 +-  207 kW (truth   1498 kW)  yaw=  -0 deg [out]
+    T13    loss  +3.1% +- 16.8% (truth -14.2%)  |  P   1311 +-  227 kW (truth   1544 kW)  yaw=  +1 deg [out]
 
 [06_penmanshiel_nw_yaw] Penmanshiel (unseen 14-turbine farm) NW ridge + yaw offset  (2019-01-08 11:10:00 UTC)
   inflow: U=9.5 m/s from 323 deg  TI=10.4%  sigma_wd=8.1 deg  P_front=1396 kW
   farm wake loss: WakeNet +11.2% +-  5.9%  |  SCADA truth  -2.6%
-    T05    loss +32.6% +- 11.9% (truth  +0.3%)  |  P    942 +-  167 kW (truth   1392 kW)  yaw=  +8 deg [out]
-    T07    loss +29.5% +- 13.3% (truth +18.2%)  |  P    984 +-  186 kW (truth   1142 kW)  yaw=  +4 deg [in 68%]
-    T15    loss +23.9% +- 16.3% (truth -45.1%)  |  P   1062 +-  228 kW (truth   2026 kW)  yaw=  -7 deg [out]
-    T10    loss +17.6% +- 13.3% (truth +36.9%)  |  P   1151 +-  185 kW (truth    881 kW)  yaw=  -5 deg [out]
-    T06    loss +17.5% +- 13.0% (truth  +1.4%)  |  P   1151 +-  181 kW (truth   1377 kW)  yaw=  +2 deg [out]
-    T09    loss +16.9% +- 13.3% (truth  +4.3%)  |  P   1160 +-  186 kW (truth   1337 kW)  yaw=  -1 deg [in 68%]
+    T05    loss +32.6% +- 13.2% (truth  +0.3%)  |  P    942 +-  185 kW (truth   1392 kW)  yaw=  +8 deg [out]
+    T07    loss +29.5% +- 14.8% (truth +18.2%)  |  P    984 +-  206 kW (truth   1142 kW)  yaw=  +4 deg [in 68%]
+    T15    loss +23.9% +- 18.1% (truth -45.1%)  |  P   1062 +-  253 kW (truth   2026 kW)  yaw=  -7 deg [out]
+    T10    loss +17.6% +- 14.7% (truth +36.9%)  |  P   1151 +-  205 kW (truth    881 kW)  yaw=  -5 deg [out]
+    T06    loss +17.5% +- 14.4% (truth  +1.4%)  |  P   1151 +-  201 kW (truth   1377 kW)  yaw=  +2 deg [out]
+    T09    loss +16.9% +- 14.7% (truth  +4.3%)  |  P   1160 +-  206 kW (truth   1337 kW)  yaw=  -1 deg [in 68%]
 
-Summary across 6 exam snapshots: waked-rotor MAE 14.0%  |  farm wake MAE 3.7%  |  68% bar coverage 54%  (0.05 s)
+Summary across 6 exam snapshots: waked-rotor MAE 14.0%  |  farm wake MAE 3.7%  |  68% bar coverage 67%  (0.10 s)

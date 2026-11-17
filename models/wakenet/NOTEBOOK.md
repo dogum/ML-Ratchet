@@ -147,3 +147,21 @@ manufacturer Ct curve). The simulator never varied either, so the network could 
    Both exams are now seen, so v1.1's exam numbers are reported as seen, not as a fresh test.
 7. Error bars: widen-only factors per wind-speed bin (5-9, 9-10.5, 10.5-12 m/s) fitted on dev, whatever the rung
    decision.
+
+## 2026-11-17 — r10 result, release choice, and per-wind-speed error bars
+
+- **v4 dev grid** (`dev_calibration_v4.json`): the best setting keeps `ka` at 0.38 and scales the thrust curve by 0.90.
+  Dev waked MAE 9.31 → 9.25 %, farm 2.88 → 2.82 %. The wind-speed and turbulence biases are real, but turbine-to-turbine
+  turbulence (about 10 % of power) dominates every model's error, so the gain is small.
+- **r10 kept, not released.** On the new frozen set `val4` the network scores 0.5132 / 0.5135 / 0.5131 (seeds 106-108)
+  against r6's 0.5008 re-scored there: +0.012, and every dev gate passes, so the rule keeps it. But on real dev it is no
+  better than r6 (9.50 % against 9.48 % waked MAE) and v4 physics alone does better (9.25 %). Releasing it would change
+  what users get without improving it on real turbines, so v1.0's network (r6) stays released. This release choice was
+  made on dev; neither exam was looked at for r10.
+- **Error bars, v1.0.1.** v1.0's bar is about 11.7 % wide at every wind speed, while its dev error is 14.3 % at 5-9 m/s,
+  10.3 % at 9-10.5 m/s and 5.7 % at 10.5-12 m/s; dev coverage was 47.5 %, 63.6 % and 88.0 %. `calib_sigma.py` fits one
+  widen-only factor per bin on dev (never below 1). The network and its point predictions are unchanged; only the bars
+  move. The exams' coverage for v1.0.1 is reported as seen.
+- **v1.0.1 coverage on the (seen) exams** (waked turbines, v1.0 → v1.0.1): Kelmarsh 2020-21 72.2 → 77.6 %, Kelmarsh
+  2022-24 64.1 → 70.3 %, Penmanshiel 2019-20 50.7 → 52.3 %, Penmanshiel 2021-23 41.9 → 48.9 %. Point predictions and
+  every MAE are unchanged. Penmanshiel stays under-covered: terrain, not wind speed, drives its misses.

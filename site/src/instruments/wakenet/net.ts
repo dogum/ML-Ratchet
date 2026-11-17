@@ -22,7 +22,11 @@ export interface WMeta {
   released_rung: string;
   n_params: number;
   arch: { hidden: number; n_layers: number; head_hidden: number; anchored: boolean; use_edges: boolean; agg: string };
-  sigma_factor: { waked_eta: number; free_eta: number; farm_wake: number };
+  sigma_factor: {
+    waked_eta: number; free_eta: number; farm_wake: number;
+    // v1.0.1: widen-only factors per wind-speed bin, fitted on 2019 dev (training/calib_sigma.py)
+    by_u?: { edges: number[]; waked_eta: number[]; free_eta: number[]; farm_wake: number[] };
+  };
   dev_baselines: { mean_waked_eta: number; mean_farm_wake_loss: number };
   turbines: Record<string, TurbineSpec>;
 }
@@ -639,7 +643,13 @@ export function read(
   for (let k = 0; k < fh.length; k++) fh[k] = geluScalar(fh[k]);
   const logSigFarm = clip(linear(fh, t['farm_head2.weight'], t['farm_head2.bias'])[0], -5.5, -0.5);
 
-  const sf = W.meta.sigma_factor;
+  const sf0 = W.meta.sigma_factor;
+  let sf = { waked_eta: sf0.waked_eta, free_eta: sf0.free_eta, farm_wake: sf0.farm_wake };
+  if (sf0.by_u) {
+    let k = 0;
+    while (k < sf0.by_u.edges.length && uInf >= sf0.by_u.edges[k]) k++;
+    sf = { waked_eta: sf0.by_u.waked_eta[k], free_eta: sf0.by_u.free_eta[k], farm_wake: sf0.by_u.farm_wake[k] };
+  }
   const etaSig = new Float32Array(n);
   const wakeLoss = new Float32Array(n);
   const powerKw = new Float32Array(n);

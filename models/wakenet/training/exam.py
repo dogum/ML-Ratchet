@@ -301,8 +301,8 @@ def main():
             "released_rung": net.meta["released_rung"],
             "sigma_factor": net.meta["sigma_factor"],
             "rescored": "2026-11-17: tuned-FLORIS and onshore-Jensen baselines, all rows, day-bootstrap intervals",
-            "kelmarsh_2020_2021": evaluate_farm_exam({"v1.0": net}, "kelmarsh_exam_2020_2021.npz", jobs),
-            "penmanshiel_2019_2020": evaluate_farm_exam({"v1.0": net}, "penmanshiel_exam_2019_2020.npz", jobs),
+            "kelmarsh_2020_2021": evaluate_farm_exam({net.meta["version"]: net}, "kelmarsh_exam_2020_2021.npz", jobs),
+            "penmanshiel_2019_2020": evaluate_farm_exam({net.meta["version"]: net}, "penmanshiel_exam_2019_2020.npz", jobs),
         }
         out_path = os.path.join(HERE, "exam_results.json")
     with open(out_path, "w", encoding="utf-8") as f:

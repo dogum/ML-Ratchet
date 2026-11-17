@@ -21,7 +21,7 @@ import _paths as _P  # noqa: E402
 import physics as WP  # noqa: E402
 import pipeline as PL  # noqa: E402
 
-PHYSICS_VERSION = "v3"
+PHYSICS_VERSION = "v4"
 N_MAX = 16
 
 
@@ -263,6 +263,25 @@ def simulate_one(rng: np.random.Generator, version: str, backdrop: BackdropSampl
             "terrain_follow": float(rng.uniform(0.68, 0.95)),
             "hill_speedup": s_hill,
             "sigma_wd_deg": c_meander * sigma_wd,
+            "air_density": rho,
+            "ref_height": h_ref,
+        }
+    elif version == "v4":
+        # v3 plus a thrust scale drawn around the 2019 dev value (0.90; dev_calibration_v4.json). ka keeps v3's spread,
+        # which already covers the dev choice (0.38).
+        c_meander = float(rng.uniform(0.16, 0.36))
+        s_hill = 0.0 if rng.random() < 0.20 else float(rng.uniform(0.05, 0.24))
+        p_cfg = {
+            "velocity_model": "gauss",
+            "deflection_model": "gauss",
+            "turbulence_model": "crespo_hernandez",
+            "combination_model": "sosfs",
+            "ka": float(np.clip(rng.normal(0.37, 0.045), 0.24, 0.50)),
+            "wind_shear": float(rng.uniform(0.09, 0.21)),
+            "terrain_follow": float(rng.uniform(0.68, 0.95)),
+            "hill_speedup": s_hill,
+            "sigma_wd_deg": c_meander * sigma_wd,
+            "ct_scale": float(rng.uniform(0.82, 0.98)),
             "air_density": rho,
             "ref_height": h_ref,
         }

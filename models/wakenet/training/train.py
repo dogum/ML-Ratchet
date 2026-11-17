@@ -74,7 +74,7 @@ def main():
     ap.add_argument("--agg", default="gated_sum", choices=["gated_sum", "softmax_attn"])
     ap.add_argument("--init-from", default="")
     ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--anchor", default="textbook", choices=["textbook", "tuned"],
+    ap.add_argument("--anchor", default="textbook", choices=["textbook", "tuned", "tuned_v4"],
                     help="Physics anchor the banks were built with (WAKENET_ANCHOR); v1.1 adds 'tuned'")
     args = ap.parse_args()
 

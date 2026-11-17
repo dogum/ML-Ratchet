@@ -51,6 +51,10 @@ def _linear(x: np.ndarray, w: np.ndarray, b: np.ndarray) -> np.ndarray:
     return x @ w.T + b
 
 
+# Wind-speed bins for the per-bin error-bar factors (sigma_factor.by_u; training/calib_sigma.py): <9, 9-10.5, >=10.5 m/s
+U_EDGES = (9.0, 10.5)
+
+
 class WakeNet:
     """Physics-anchored directed Graph Neural Network for wind-farm wake losses (numpy-only)."""
 
@@ -203,6 +207,10 @@ class WakeNet:
         f_eta = float(sf.get("waked_eta", 1.0)) if calibrated else 1.0
         f_free = float(sf.get("free_eta", f_eta)) if calibrated else 1.0
         f_farm = float(sf.get("farm_wake", 1.0)) if calibrated else 1.0
+        by_u = sf.get("by_u")
+        if calibrated and by_u:
+            k = int(np.searchsorted(np.asarray(by_u["edges"], float), float(u_inf), side="right"))
+            f_eta, f_free, f_farm = float(by_u["waked_eta"][k]), float(by_u["free_eta"][k]), float(by_u["farm_wake"][k])
 
         on = g["online"]
         free = g["is_free"]
