@@ -35,7 +35,14 @@ def load_ckpt_model(rung_id: str) -> EdgeWakeGNN:
     net = EdgeWakeGNN(**st["arch"])
     net.load_state_dict(st["ema_state"])
     net.eval()
+    net.anchor = st.get("anchor", "textbook")
     return net
+
+
+def _bank_for(net: EdgeWakeGNN, bank_name: str) -> str:
+    """A rung anchored on the dev-tuned physics (v1.1) reads the same farms built with that anchor:
+    `<bank>_tuned` has the same seed, targets and labels as `<bank>`; only the anchor features differ."""
+    return f"{bank_name}_tuned" if getattr(net, "anchor", "textbook") == "tuned" else bank_name
 
 
 @torch.no_grad()
@@ -60,7 +67,7 @@ def predict_bank(net: EdgeWakeGNN, z: dict, bs: int = 256) -> tuple[np.ndarray, 
 
 def score_frozen(rung_id: str, bank_name: str) -> float:
     net = load_ckpt_model(rung_id)
-    z = np.load(_P.work("banks", f"{bank_name}.npz"))
+    z = np.load(_P.work("banks", f"{_bank_for(net, bank_name)}.npz"))
     eta_p, farm_p = predict_bank(net, z)
 
     on = z["online"]
@@ -82,7 +89,7 @@ def score_frozen(rung_id: str, bank_name: str) -> float:
 
 def score_dev(rung_id: str) -> dict:
     net = load_ckpt_model(rung_id)
-    z = np.load(_P.work("banks", "dev_2019_graphs.npz"))
+    z = np.load(_P.work("banks", f"{_bank_for(net, 'dev_2019_graphs')}.npz"))
     eta_p, farm_p = predict_bank(net, z)
 
     on = z["online"]

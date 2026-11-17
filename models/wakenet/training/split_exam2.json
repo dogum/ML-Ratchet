@@ -1,0 +1,43 @@
+{
+  "frozen": "2026-11-17",
+  "purpose": "WakeNet exam 2: years no version has seen; scored once after the v1.1 decision",
+  "seed": 20261117,
+  "quality_control": "identical to realdata.build_snapshots (5-12 m/s front-row inflow, uncurtailed, online flags)",
+  "roles": {
+    "exam2_kelmarsh": {
+      "file": "kelmarsh_exam2_2022_2024.npz",
+      "farm": "kelmarsh",
+      "n_turbines": 6,
+      "n_snapshots": 11750,
+      "n_waked_turbine_readings": 29308,
+      "n_large_yaw_snapshots": 6377,
+      "n_partial_parked_snapshots": 3775,
+      "first_ts": "2022-01-01 01:50:00",
+      "last_ts": "2024-12-31 14:00:00",
+      "ts_sha256": "afff9674e0850067a3ea2f15faf3f76fff288f06274ce27c964803d6cdf9193d",
+      "years": [
+        2022,
+        2023,
+        2024
+      ]
+    },
+    "exam2_penmanshiel": {
+      "file": "penmanshiel_exam2_2021_2023.npz",
+      "farm": "penmanshiel",
+      "n_turbines": 14,
+      "n_snapshots": 23842,
+      "n_waked_turbine_readings": 208508,
+      "n_large_yaw_snapshots": 17365,
+      "n_partial_parked_snapshots": 6704,
+      "first_ts": "2021-01-01 01:20:00",
+      "last_ts": "2023-12-31 23:40:00",
+      "ts_sha256": "9b5e2be562204c8f1115ce484c009fb2d8ff7d31898a20c39b34409dbb153450",
+      "years": [
+        2021,
+        2022,
+        2023
+      ]
+    }
+  },
+  "split_sha256": "3543a6af39b8612999544cd08c63b272e5762b6419ac152f5ab0e2f4ec997f24"
+}

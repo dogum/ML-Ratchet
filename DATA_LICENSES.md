@@ -26,8 +26,8 @@ instrument noise, the fetch scripts in `models/*/training/` download that noise 
 | StarQuake | [Kepler](https://archive.stsci.edu/missions-and-data/kepler) via MAST | NASA public data; acknowledge Kepler and MAST | Three light curves |
 | StarQuake | Yu et al. 2018, ApJS 236, 42 | Journal tables; cite the paper | Truth values for the examples |
 | StarQuake | [Gaia DR3](https://www.cosmos.esa.int/web/gaia/dr3) (ESA/Gaia/DPAC) | CC BY-SA 3.0 IGO | No |
-| WakeNet | [Kelmarsh Wind Farm Data](https://doi.org/10.5281/zenodo.5841834) (record `16807551`) — Charlie Plumley / Cubico Sustainable Investments | CC BY 4.0 | Four single-timestamp 6-turbine excerpts (`examples/`, instrument, `lab/`) |
-| WakeNet | [Penmanshiel Wind Farm Data](https://doi.org/10.5281/zenodo.5946808) (record `16807304`) — Charlie Plumley / Cubico Sustainable Investments | CC BY 4.0 | Two single-timestamp 14-turbine excerpts (`examples/`, instrument, `lab/`) |
+| WakeNet | [Kelmarsh Wind Farm Data](https://doi.org/10.5281/zenodo.16807551) (2025 version; concept DOI 10.5281/zenodo.5841834) — Charlie Plumley / Cubico Sustainable Investments | CC BY 4.0 | Four single-timestamp 6-turbine excerpts (`examples/`, instrument, `lab/`) |
+| WakeNet | [Penmanshiel Wind Farm Data](https://doi.org/10.5281/zenodo.16807304) (2025 version; concept DOI 10.5281/zenodo.5946808) — Charlie Plumley / Cubico Sustainable Investments | CC BY 4.0 | Two single-timestamp 14-turbine excerpts (`examples/`, instrument, `lab/`) |
 
 
 ### The vehicle platform (`shared/vehicle`) and its models (EnergyNet, TripDetective, HybridPilot)

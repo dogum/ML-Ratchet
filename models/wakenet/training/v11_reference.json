@@ -1,0 +1,42 @@
+{
+  "val3_tuned_same_targets_as_val3": {
+    "online": true,
+    "eta_target": true,
+    "farm_wake_target": true
+  },
+  "v1.0_r6_reproduced": {
+    "sim_val3": 0.5522,
+    "dev": {
+      "waked_mae": 0.0948,
+      "waked_mae_h1": 0.0938,
+      "waked_mae_h2": 0.0956,
+      "farm_mae": 0.0288
+    },
+    "ratchet_yaml": {
+      "sim": 0.5522,
+      "dev": {
+        "waked_mae_h1": 0.0938,
+        "waked_mae_h2": 0.0956,
+        "farm_mae": 0.0288
+      }
+    }
+  },
+  "textbook_physics_alone": {
+    "sim_val3": 0.5118,
+    "dev": {
+      "waked_mae": 0.1015,
+      "waked_mae_h1": 0.1,
+      "waked_mae_h2": 0.1029,
+      "farm_mae": 0.0319
+    }
+  },
+  "tuned_physics_alone": {
+    "sim_val3": 0.5413,
+    "dev": {
+      "waked_mae": 0.0931,
+      "waked_mae_h1": 0.0918,
+      "waked_mae_h2": 0.0942,
+      "farm_mae": 0.0286
+    }
+  }
+}

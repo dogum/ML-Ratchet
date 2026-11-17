@@ -167,7 +167,9 @@ def build_real_graph_cache(proc_npz: str, out_name: str):
 if __name__ == "__main__":
     cmd = sys.argv[1]
     if cmd == "dev_cache":
-        build_real_graph_cache("kelmarsh_dev_2019.npz", "dev_2019_graphs")
+        # WAKENET_ANCHOR=tuned builds the v1.1 anchor features into dev_2019_graphs_tuned
+        sfx = "_tuned" if os.environ.get("WAKENET_ANCHOR") == "tuned" else ""
+        build_real_graph_cache("kelmarsh_dev_2019.npz", f"dev_2019_graphs{sfx}")
     else:
         count = int(sys.argv[2])
         seed = int(sys.argv[3])

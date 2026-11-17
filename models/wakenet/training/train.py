@@ -74,6 +74,8 @@ def main():
     ap.add_argument("--agg", default="gated_sum", choices=["gated_sum", "softmax_attn"])
     ap.add_argument("--init-from", default="")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--anchor", default="textbook", choices=["textbook", "tuned"],
+                    help="Physics anchor the banks were built with (WAKENET_ANCHOR); v1.1 adds 'tuned'")
     args = ap.parse_args()
 
     torch.set_num_threads(int(os.environ.get("WAKE_THREADS", "2")))
@@ -185,6 +187,7 @@ def main():
         "arch": arch,
         "n_params": n_params,
         "banks": args.bank,
+        "anchor": args.anchor,
         "ema_state": ema.state_dict(),
     }
     torch.save(payload, ckpt_path)

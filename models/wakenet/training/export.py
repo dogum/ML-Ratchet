@@ -38,7 +38,8 @@ def export_weights():
     net.eval()
 
     # Evaluate on Kelmarsh 2019 dev to fit widen-only 68% factors and dev dumb-baseline means
-    dev = np.load(_P.work("banks", "dev_2019_graphs.npz"))
+    anchor = ckpt.get("anchor", "textbook")
+    dev = np.load(_P.work("banks", "dev_2019_graphs_tuned.npz" if anchor == "tuned" else "dev_2019_graphs.npz"))
     n_dev = len(dev["node_x"])
     eta_p = np.zeros_like(dev["eta_true"])
     sig_eta_raw = np.zeros_like(dev["eta_true"])
@@ -81,8 +82,9 @@ def export_weights():
 
     meta = {
         "model": "wakenet",
-        "version": "1.0",
+        "version": os.environ.get("WAKENET_VERSION", "1.0"),
         "released_rung": rid,
+        "anchor": anchor,
         "n_params": int(ckpt["n_params"]),
         "arch": ckpt["arch"],
         "physics_version": "v3",

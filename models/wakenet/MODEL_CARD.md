@@ -45,7 +45,7 @@ On the 5,729 Kelmarsh 2019 dev snapshots, the raw $\beta$-NLL simulation bars al
 - **Two simulator discoveries on Kelmarsh 2019 dev (`training/calib_dev.py`, `training/twin.py`):**
   1. **Nacelle wind-vane swirl vs true atmospheric meandering:** raw SCADA 10-minute `Wind direction, StdDev` behind spinning rotor blades has a median of `7.74°`. Feeding 100% of it as atmospheric wind meandering (`r5`) washed out direct wakes (`+5.3%` centerline bias, dev waked MAE degraded from `10.12%` to `11.24%`) and was rejected. Separating meso-scale meandering (`0.16–0.36×` vane $\sigma_\theta$, centred at `0.25×` $\approx 1.9^\circ$) from high-frequency blade-passage vane flutter improved direct-wake accuracy without washing out troughs.
   2. **3-D hill exposure on lower-elevation turbines:** rung `r4` (`v2` flat-terrain 3-D Gaussian) read its own Kelmarsh twins with `0.00%` bias on low-elevation downstream units `KWF5` (`142.9 m`) and `KWF6` (`135.0 m` vs `156.6 m` at `KWF2`), but read real 2019 dev `+2.27%` too high (`10.12%` waked MAE). Adding rolling Gaussian hills with linearised hill speedup (`s_hill ~ U(0.05, 0.24)`) in `v3` (`r6`) closed the `KWF5–KWF6` real dev bias to `-0.47%` and cut dev waked MAE to `9.48%` and farm wake MAE to `2.88%`.
-- **Real backdrop (`training/noise.py`):** 47,610 unwaked front-row rotor readings from Kelmarsh 2017–2018 supply empirical UK inflow tuples and real spatial turbulent power fluctuations (`10.1%` std across unwaked rotors) and nacelle yaw-tracking offsets (`4.9°` std), split chronologically 85% / 15% between training and frozen validation banks. Kelmarsh's 2016 commissioning year was under a `~1,680 kW` grid export setpoint cap, so 0 of 52,416 rows passed the uncurtailed screen (`setpoint >= 2,000 kW`).
+- **Real backdrop (`training/noise.py`):** 47,610 unwaked front-row rotor readings from Kelmarsh 25 Sep 2017 – Dec 2018 supply empirical UK inflow tuples and real spatial turbulent power fluctuations (`10.1%` std across unwaked rotors) and nacelle yaw-tracking offsets (`4.9°` std), split chronologically 85% / 15% between training and frozen validation banks. Kelmarsh's 2016 commissioning year was under a `~1,680 kW` grid export setpoint cap, so 0 of 52,416 rows passed the uncurtailed screen (`setpoint >= 2,000 kW`).
 
 ## Network
 
@@ -112,6 +112,6 @@ Coverage of the nominal 68% error bars on the exam:
 
 ## Data and physics credits
 
-- **Kelmarsh Wind Farm Data:** Charlie Plumley / Cubico Sustainable Investments, Zenodo (`10.5281/zenodo.5841834`, record `16807551`), CC BY 4.0.
-- **Penmanshiel Wind Farm Data:** Charlie Plumley / Cubico Sustainable Investments, Zenodo (`10.5281/zenodo.5946808`, record `16807304`), CC BY 4.0.
+- **Kelmarsh Wind Farm Data:** Charlie Plumley / Cubico Sustainable Investments, Zenodo 2025 version `10.5281/zenodo.16807551` (concept DOI `10.5281/zenodo.5841834`), CC BY 4.0.
+- **Penmanshiel Wind Farm Data:** Charlie Plumley / Cubico Sustainable Investments, Zenodo 2025 version `10.5281/zenodo.16807304` (concept DOI `10.5281/zenodo.5946808`), CC BY 4.0.
 - **Physics references:** Jensen (1983), Risø-M-2411; Katić, Højstrup & Jensen (1986), EWEC; Jiménez, Crespo & Migoya (2010), *Wind Energy* 13; Bastankhah & Porté-Agel (2014), *Renewable Energy* 70; Bastankhah & Porté-Agel (2016), *J. Fluid Mech.* 806; Crespo & Hernández (1996), *J. Wind Eng. Ind. Aerodyn.* 61; Gaumond et al. (2014), *Wind Energy* 17. Verified against NREL `FLORIS` v4.7.

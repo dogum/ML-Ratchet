@@ -192,6 +192,7 @@ class WakeNet:
             east_m, north_m, hub_h_m, turb,
             u_inf=u_inf, wind_dir_deg=wind_dir_deg, ti_inf=ti_inf, sigma_wd_deg=sigma_wd_deg,
             yaw_deg=yaw_deg, online=online, elev_m=elev_m, air_density=air_density,
+            anchor=self.meta.get("anchor", "textbook"),
         )
         raw = self.forward_graph(
             g["node_x"], g["edge_x"], g["edge_mask"],

@@ -2,12 +2,12 @@
 
 Sources (both CC BY 4.0, Charlie Plumley / Cubico Sustainable Investments):
   * Kelmarsh Wind Farm (6 x Senvion MM92, D = 92 m, H = 68.5 / 78.5 m):
-    https://doi.org/10.5281/zenodo.5841834  (latest record 16807551)
+    https://doi.org/10.5281/zenodo.16807551  (the 2025 version used here; concept DOI 10.5281/zenodo.5841834)
   * Penmanshiel Wind Farm (14 x Senvion MM82, D = 82 m, H = 59.0 m):
-    https://doi.org/10.5281/zenodo.5946808  (latest record 16807304)
+    https://doi.org/10.5281/zenodo.16807304  (the 2025 version used here; concept DOI 10.5281/zenodo.5946808)
 
 Roles in WakeNet (frozen before any training or evaluation):
-  * Kelmarsh 2016-2018 : freestream climate prior & real unwaked turbulence/inflow backdrop (zero wake labels)
+  * Kelmarsh 2016-2018 : (2016 ran under a ~1,680 kW export cap, so in practice 25 Sep 2017 - Dec 2018) freestream climate prior & real unwaked turbulence/inflow backdrop (zero wake labels)
   * Kelmarsh 2019      : real dev set (simulator calibration, twin test, per-season dev gate, widen-only sigma)
   * Kelmarsh 2020-2021 : held-out real exam (same farm, unseen years)
   * Penmanshiel 2019-2020 : zero-shot unseen-farm real exam (14 turbines, different rotor/hub/terrain, never in dev or backdrop)

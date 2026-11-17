@@ -20,6 +20,87 @@ INST = Path(ROOT) / "site" / "public" / "instruments" / "wakenet"
 OUT = Path(MODEL) / "lab" / "index.html"
 
 
+NL = chr(10)
+
+ROW_LABEL = {
+    "all_waked": "All waked turbines",
+    "direct_wake": "Direct-wake corridor (dx < 8D, |dy| < 0.65D)",
+    "multi_wake_2plus": "Inside 2 or more wakes",
+    "large_yaw_8deg": "Upstream yaw offset ≥ 8°",
+    "partial_parked": "1-2 turbines parked",
+    "region2_below_10ms": "Wind below 10 m/s",
+    "near_rated_10p5_12ms": "Wind 10.5-12 m/s",
+    "hilltop_turbines": "Highest quarter of turbines",
+    "farm_wake_loss": "Farm-wide wake loss",
+}
+BASE_COLS = [("floris_tuned", "FLORIS tuned on dev"), ("floris_gauss", "FLORIS textbook"),
+             ("jensen075", "Jensen (k 0.075)"), ("dev_mean", "Dev mean"), ("unwaked", "No wake")]
+
+
+def _exam_table(res: dict, title: str, blurb: str) -> str:
+    head = "".join(f'<th class="num">{h}</th>' for _, h in BASE_COLS)
+    rows = []
+    for farm_key, by_tag in res.items():
+        if not (isinstance(by_tag, dict) and by_tag and all(isinstance(v, dict) and "farm" in v for v in by_tag.values())):
+            continue
+        for tag, r in by_tag.items():
+            farm = r["farm"].capitalize()
+            for k, lab in ROW_LABEL.items():
+                x = r[k]
+                best = x["best_baseline"]
+                cells = "".join(
+                    f'<td class="num">{"<b>" if kk == best else ""}{x[kk + "_pct"]:.2f}%{"</b>" if kk == best else ""}</td>'
+                    for kk, _ in BASE_COLS)
+                lo, hi = x["diff_vs_best_ci95"]
+                v = x["verdict"]
+                rows.append(
+                    f'<tr><td>{farm} {tag} · {lab} <span class="n">(n={x["n"]:,})</span></td>'
+                    f'<td class="num"><b>{x["wakenet_pct"]:.2f}%</b></td>{cells}'
+                    f'<td class="num">{x["diff_vs_best_pct"]:+.2f} [{lo:+.2f}, {hi:+.2f}]</td><td class="{v}">{v}</td></tr>')
+    return "".join([
+        f"  <h2>{title}</h2>", NL, f"  <p>{blurb}</p>", NL, "  <table>", NL,
+        f'    <thead><tr><th>Row</th><th class="num">WakeNet</th>{head}',
+        '<th class="num">vs best, 95% CI</th><th>Verdict</th></tr></thead>', NL, "    <tbody>", NL,
+        NL.join("      " + r for r in rows), NL, "    </tbody>", NL, "  </table>",
+    ])
+
+
+def render_exams(exam: dict) -> str:
+    out = [_exam_table(
+        exam, "Exam 1: Kelmarsh 2020-21 and Penmanshiel 2019-20 (seen)",
+        "Run once for v1.0 on 16 Nov 2026, re-scored on 17 Nov 2026 with the FLORIS baseline tuned on the same 2019 dev "
+        "data WakeNet's physics was tuned on, onshore Jensen and 95 % intervals by bootstrap over days. Errors are "
+        "mean absolute error in power as a share of the unwaked front row. Verdict: win if the interval on WakeNet "
+        "minus the best baseline is below zero, loss if above, tie if it spans zero.")]
+    p2 = Path(HERE) / "exam2_results.json"
+    if p2.exists():
+        e2 = json.loads(p2.read_text(encoding="utf-8"))
+        out.append(_exam_table(
+            e2, "Exam 2: Kelmarsh 2022-24 and Penmanshiel 2021-23 (never seen)",
+            "Frozen in split_exam2.json on 17 Nov 2026 before anything was scored on it, and scored once after the v1.1 "
+            "decision. Same rows, baselines and verdict rule as exam 1."))
+    return (NL + NL).join(out)
+
+
+def render_ratchet() -> str:
+    import yaml
+    lad = yaml.safe_load((Path(MODEL) / "ratchet.yaml").read_text(encoding="utf-8"))["ladders"][0]
+    rows = []
+    for r in lad["rungs"]:
+        b = r["decision"] == "released"
+        m = r.get("metrics", [None, None, None])
+        cells = "".join(f'<td class="num">{v:.2f}%</td>' if v is not None else "<td></td>" for v in m)
+        txt = (f'<td>{r["id"]}</td><td>{r["change"]}</td><td class="num">{r["sim"]:.3f}</td>{cells}'
+               f'<td>{r["decision"]}</td>')
+        rows.append(('<tr class="rel">' if b else '<tr>') + txt + '</tr>')
+    return "".join([
+        "  <h2>The ratchet</h2>", NL, "  <p>", lad["rule"], "</p>", NL, "  <table>", NL,
+        '    <thead><tr><th>Rung</th><th>Change</th><th class="num">Frozen val3</th><th class="num">Dev H1</th>',
+        '<th class="num">Dev H2</th><th class="num">Dev farm</th><th>Decision</th></tr></thead>', NL, "    <tbody>", NL,
+        NL.join("      " + r for r in rows), NL, "    </tbody>", NL, "  </table>",
+    ])
+
+
 def main():
     w_man = json.loads((INST / "weights.json").read_text(encoding="utf-8"))
     w_b64 = base64.b64encode((INST / "weights.bin").read_bytes()).decode("ascii")
@@ -27,6 +108,9 @@ def main():
     e_b64 = base64.b64encode((INST / "examples.bin").read_bytes()).decode("ascii")
     exam = json.loads((Path(HERE) / "exam_results.json").read_text(encoding="utf-8"))
     twin = json.loads((Path(HERE) / "twin_report.json").read_text(encoding="utf-8"))
+
+    exam_html = render_exams(exam)
+    ratchet_html = render_ratchet()
 
     payload = json.dumps({
         "wMan": w_man,
@@ -96,6 +180,9 @@ def main():
   .num {{ font-family: var(--mono); text-align: right; }}
   .win {{ color: var(--win); font-family: var(--mono); font-size: 11px; text-transform: uppercase; }}
   .loss {{ color: var(--loss); font-family: var(--mono); font-size: 11px; text-transform: uppercase; }}
+  .tie {{ color: var(--ink-2); font-family: var(--mono); font-size: 11px; text-transform: uppercase; }}
+  tr.rel td {{ font-weight: 600; }}
+  td .n {{ color: var(--ink-3); font-size: 11px; }}
   .stamp {{ margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(235,230,216,.1); font: 11px var(--mono); color: rgba(235,230,216,.5); }}
 </style>
 </head>
@@ -131,39 +218,9 @@ def main():
     <div class="stamp" id="stamp">Loading float16 weights…</div>
   </section>
 
-  <h2>The one-shot real exam (24,035 snapshots · 117,335 waked readings)</h2>
-  <p>Run once after rung r6 was locked. Kelmarsh 2020–21 tests unseen years on the 6-turbine MM92 farm; Penmanshiel 2019–20 tests zero-shot transfer to an unseen 14-turbine MM82 farm on a 48 m Berwickshire coastal ridge.</p>
-  <table>
-    <thead><tr><th>Metric</th><th class="num">WakeNet</th><th class="num">FLORIS 3-D Gauss</th><th class="num">Jensen Park</th><th class="num">Dumb baseline</th><th>Verdict</th></tr></thead>
-    <tbody>
-      <tr><td>Kelmarsh (2020–21), all waked turbines MAE (n=39,008)</td><td class="num"><b>8.85%</b></td><td class="num">9.51%</td><td class="num">9.95%</td><td class="num">13.63% (unwaked)</td><td class="win">win</td></tr>
-      <tr><td>Kelmarsh, direct-wake corridor MAE (n=11,977)</td><td class="num"><b>10.07%</b></td><td class="num">10.75%</td><td class="num">11.63%</td><td class="num">15.30% (dev mean)</td><td class="win">win</td></tr>
-      <tr><td>Kelmarsh, multi-wake overlap (≥2 wakes) MAE (n=2,212)</td><td class="num"><b>8.86%</b></td><td class="num">9.90%</td><td class="num">10.12%</td><td class="num">14.46% (dev mean)</td><td class="win">win</td></tr>
-      <tr><td>Kelmarsh, upstream yaw offset ≥8° MAE (n=5,401)</td><td class="num"><b>9.76%</b></td><td class="num">10.46%</td><td class="num">11.25%</td><td class="num">13.75% (unwaked)</td><td class="win">win</td></tr>
-      <tr><td>Kelmarsh, partial-parked farm MAE (n=6,146)</td><td class="num"><b>9.18%</b></td><td class="num">9.94%</td><td class="num">9.81%</td><td class="num">13.62% (unwaked)</td><td class="win">win</td></tr>
-      <tr><td>Kelmarsh, farm-wide wake loss MAE (n=15,059)</td><td class="num"><b>2.57%</b></td><td class="num">2.80%</td><td class="num">2.99%</td><td class="num">4.44% (dev mean)</td><td class="win">win</td></tr>
-      <tr><td>Penmanshiel (14× MM82, zero-shot), all waked MAE (n=78,327)</td><td class="num"><b>15.01%</b></td><td class="num">16.63%</td><td class="num">17.90%</td><td class="num">15.88% (dev mean)</td><td class="win">win</td></tr>
-      <tr><td>Penmanshiel (zero-shot), upstream yaw ≥8° MAE (n=14,813)</td><td class="num"><b>15.08%</b></td><td class="num">16.75%</td><td class="num">18.05%</td><td class="num">16.27% (unwaked)</td><td class="win">win</td></tr>
-      <tr><td>Penmanshiel (zero-shot), multi-wake interior MAE (n=24,308)</td><td class="num">17.32%</td><td class="num">19.12%</td><td class="num">21.94%</td><td class="num"><b>16.43%</b> (dev mean)</td><td class="loss">loss</td></tr>
-      <tr><td>Penmanshiel (zero-shot), farm-wide wake loss MAE (n=8,976)</td><td class="num">4.75%</td><td class="num">5.16%</td><td class="num">5.82%</td><td class="num"><b>4.55%</b> (dev mean)</td><td class="loss">loss</td></tr>
-    </tbody>
-  </table>
-  <p><b>68% error-bar coverage:</b> Kelmarsh waked turbines <b>72.2%</b>, Kelmarsh farm wake loss <b>77.4%</b>; Penmanshiel waked turbines <b>50.7%</b>, Penmanshiel farm wake loss <b>61.5%</b>. On Penmanshiel's 48 m coastal ridge and adjacent forestry blocks, hilltop wind speedup accelerates ridge-top turbines (T12–T15) well above coastal-slope front-row units, adding terrain variance that gentle farmland hills do not teach.</p>
+{exam_html}
 
-  <h2>The ratchet (8 rungs, re-scored on val3)</h2>
-  <table>
-    <thead><tr><th>Rung</th><th>Change</th><th class="num">Frozen val3</th><th class="num">Dev H1</th><th class="num">Dev H2</th><th class="num">Dev farm</th><th>Decision</th></tr></thead>
-    <tbody>
-      <tr><td>r1</td><td>2-D Jensen in Gaussian noise; node-only MLP (no graph)</td><td class="num">0.125</td><td class="num">14.25%</td><td class="num">14.68%</td><td class="num">4.27%</td><td>kept</td></tr>
-      <tr><td>r2</td><td>Directed GNN over (dx/D, dy/D, dz/D, yaw) edges, unanchored</td><td class="num">0.374</td><td class="num">10.39%</td><td class="num">10.74%</td><td class="num">3.38%</td><td>kept</td></tr>
-      <tr><td>r3</td><td>Physics-anchored EdgeWakeGNN (rejected on val1 by 0.005; kept on val2)</td><td class="num">0.426</td><td class="num">10.12%</td><td class="num">10.43%</td><td class="num">3.29%</td><td>kept</td></tr>
-      <tr><td>r4</td><td>v2 physics: 3-D Bastankhah Gauss + hub-height shear + real 2017–18 backdrop</td><td class="num">0.517</td><td class="num">9.97%</td><td class="num">10.25%</td><td class="num">3.14%</td><td>kept</td></tr>
-      <tr><td>r5</td><td>Naive meandering: smear wakes by 100% of raw nacelle vane StdDev (~7.7°)</td><td class="num">0.464</td><td class="num">11.09%</td><td class="num">11.37%</td><td class="num">3.30%</td><td>rejected</td></tr>
-      <tr><td><b>r6</b></td><td><b>v3 physics (dev twins): meso-scale meandering (0.16–0.36× vane σ) + 3-D hill speedup</b></td><td class="num"><b>0.552</b></td><td class="num"><b>9.38%</b></td><td class="num"><b>9.56%</b></td><td class="num"><b>2.88%</b></td><td><b>released</b></td></tr>
-      <tr><td>r7</td><td>Softmax attention in place of additive sigmoid-gated wake superposition</td><td class="num">0.553</td><td class="num">9.41%</td><td class="num">9.60%</td><td class="num">2.89%</td><td>rejected</td></tr>
-      <tr><td>r8</td><td>Fine-tune on mixed v2 + v3 banks (48,000 simulated farms)</td><td class="num">0.543</td><td class="num">9.62%</td><td class="num">9.85%</td><td class="num">2.99%</td><td>rejected</td></tr>
-    </tbody>
-  </table>
+{ratchet_html}
 
   <h2>Limits &amp; credits</h2>
   <ul>

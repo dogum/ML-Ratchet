@@ -5,6 +5,8 @@ and the browser exporter (web/export_instrument.py).
 """
 from __future__ import annotations
 
+import os
+
 import numpy as np
 
 import physics as WP
@@ -21,6 +23,29 @@ ANCHOR_PARAMS = {
     "sigma_wd_deg": 0.0,
     "n_grid": 3,
 }
+
+# v1.1 (17 Nov 2026): the same physics tuned on Kelmarsh 2019 dev (calibrated_v3 in training/dev_calibration.json):
+# meso-scale meandering at 0.25 x the nacelle-vane sigma, linearised hill speedup 0.18, terrain-follow 0.80.
+TUNED_ANCHOR = {"c_meander": 0.25, "hill_speedup": 0.18, "terrain_follow": 0.80, "wind_shear": 0.14}
+
+
+def anchor_config(anchor: str | dict | None, sigma_wd_deg: float) -> dict:
+    """Physics settings for the anchor: 'textbook' (v1.0), 'tuned' (v1.1) or an explicit override dict.
+
+    None reads $WAKENET_ANCHOR (training scripts only; inference passes the release's own setting).
+    """
+    if anchor is None:
+        anchor = os.environ.get("WAKENET_ANCHOR", "textbook")
+    if anchor == "textbook":
+        return dict(ANCHOR_PARAMS)
+    over = TUNED_ANCHOR if anchor == "tuned" else dict(anchor)
+    cfg = dict(ANCHOR_PARAMS)
+    cfg["wind_shear"] = float(over["wind_shear"])
+    cfg["hill_speedup"] = float(over["hill_speedup"])
+    cfg["terrain_follow"] = float(over["terrain_follow"])
+    cfg["sigma_wd_deg"] = float(over["c_meander"]) * float(sigma_wd_deg)
+    return cfg
+
 
 N_NODE_FEAT = 17
 N_EDGE_FEAT = 12
@@ -49,6 +74,7 @@ def build_graph(
     online: np.ndarray | None = None,
     elev_m: np.ndarray | float = 0.0,
     air_density: float = 1.225,
+    anchor: str | dict | None = None,
 ) -> dict:
     """Build node features (N, 17), edge features (N, N, 12), edge mask (N, N), and physics anchor."""
     east = np.asarray(east_m, dtype=np.float64)
@@ -63,7 +89,7 @@ def build_graph(
 
     is_free = WP.freestream_mask(east, north, D, wind_dir_deg, online=on)
 
-    anc_cfg = dict(ANCHOR_PARAMS, air_density=float(air_density), ref_height=float(np.mean(hub_h[on])) if np.any(on) else float(np.mean(hub_h)))
+    anc_cfg = dict(anchor_config(anchor, sigma_wd_deg), air_density=float(air_density), ref_height=float(np.mean(hub_h[on])) if np.any(on) else float(np.mean(hub_h)))
     anc0 = WP.solve_wake(east, north, hub_h, turbine, u_inf, wind_dir_deg, ti_inf, yaw_deg=yaw, online=on, elev_m=elev, params=anc_cfg)
 
     # Probe directional sensitivity & meandering curvature at +- max(sigma_wd_deg, 2.0)
