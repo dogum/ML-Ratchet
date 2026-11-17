@@ -89,7 +89,10 @@ models use station temperature for loads.
 BDG2 is **CC BY-SA 4.0** (its repository's LICENSE file). Everything derived from it in this repository (the
 example series in `models/*/examples/bdg2/`, the instrument excerpts, the lab pages that embed BDG2 meters or
 weather) is CC BY-SA 4.0, credited to Miller et al. (2020), and carries a `LICENSE-DATA.md` next to it. The code
-stays MIT. The other sources and their terms are in [DATA_LICENSES.md](../DATA_LICENSES.md).
+stays MIT. LoadCast's and BuildingDetective's weights are CC BY-SA 4.0 too: their training simulations were shaped
+by BDG2 dev data (real residual series as noise, calibration and error-bar factors), so they are treated as
+adaptations. FaultFinder's and ThermoPilot's weights used no BDG2 data in training and are MIT. The other sources and
+their terms are in [DATA_LICENSES.md](../DATA_LICENSES.md).
 
 ## What the models found
 

@@ -180,6 +180,9 @@ Error-bar coverage (share of truths inside ±1σ, 68% is ideal), after one widen
   - `training/exam.json`, `training/twintest.json`, `training/ratchet.json` and `training/calibration.json` hold
     numbers computed on BDG2 buildings (scores, twin medians, W2 campus factors), and the weights' error-bar factors
     were fitted partly on the 52 BDG2 dev buildings. These are summary statistics, not meter data; they are credited here.
+  - `weights/` (`annual.npz`, `monthly.npz`, `hourly.npz`, `calibration.json`): trained on simulations calibrated on
+    BDG2 dev buildings, so treated as an adaptation and licensed **CC BY-SA 4.0** (notice: `weights/LICENSE-DATA.md`;
+    decided 17 Nov 2026). The code is MIT.
 - EIA RECS 2020 and CBECS 2018 public microdata (public domain): the 8 survey respondents in `examples/examples.json`.
 - HUE: Makonin, Data in Brief 23 (2019), Harvard Dataverse doi:10.7910/DVN/N3HGRN (CC BY 4.0): the home in
   `examples/examples.npz` / `examples/examples.json` (hourly electricity and the station temperature HUE provides;

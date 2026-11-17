@@ -79,9 +79,12 @@ folders marked with a `LICENSE-DATA.md` notice, apart from the MIT code:
 - `models/*/lab/` where the page embeds BDG2 data,
 - `site/public/instruments/<id>/` where the instrument's excerpts come from BDG2.
 
-The weights were trained on BuildingSim simulations; LoadCast's and BuildingDetective's training banks also used BDG2
-dev buildings for calibration and noise, and the weights contain no BDG2 readings. Whether that makes the weights an
-adaptation under CC BY-SA is not settled here; the weights credit BDG2 in each model card either way.
+**Weights.** All four were trained on BuildingSim simulations only. LoadCast's and BuildingDetective's training banks
+were shaped by BDG2 data: real BDG2 dev residual series added as noise (LoadCast), and calibration and error-bar
+factors fitted on BDG2 dev buildings (both). Those two models' weights are therefore treated as adaptations and are
+**CC BY-SA 4.0** (`models/loadcast/LICENSE-WEIGHTS.md`, `models/buildingdetective/weights/LICENSE-DATA.md`; decided
+17 Nov 2026 on the cautious reading). FaultFinder's and ThermoPilot's weights used no BDG2 data in training
+(ThermoPilot uses BDG2 buildings only in its dev gate) and are MIT like the code.
 
 None of BuildingData's tables are in git (`shared/building/data/`, git-ignored; `splits.json` is tracked). Terms
 checked on the providers' pages on 17 Nov 2026 where a page answered; otherwise as recorded by BuildingData.
