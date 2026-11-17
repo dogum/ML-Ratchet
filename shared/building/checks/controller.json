@@ -1,0 +1,56 @@
+{
+ "what": "controller hook, step-wise API, TOU tariff, demand limiting, PV + battery (Phoenix TMYx, July week, heat-pump house, 15 min)",
+ "tou_precooling": {
+  "default": {
+   "kWh": 529.5618904799167,
+   "cost": 97.89549316000337,
+   "peak_kWh": 104.08504940125266,
+   "max_peak_kW": 4.591189514589036,
+   "degree_h_above_26_op": 0.0,
+   "ledger_closure": 2.6284573543646994e-09
+  },
+  "precool": {
+   "kWh": 522.2509477026399,
+   "cost": 79.67009710774735,
+   "peak_kWh": 51.51510116191082,
+   "max_peak_kW": 3.1068607003323194,
+   "degree_h_above_26_op": 28.549550060361163,
+   "ledger_closure": 2.672805638361647e-09
+  }
+ },
+ "precool_effect": {
+  "peak_kWh_change": -52.56994823934184,
+  "cost_change": -18.225396052256016,
+  "kWh_change": -7.31094277727675
+ },
+ "stepwise_vs_callable_kWh_diff": 0.0,
+ "state_rollback_max_diff_kW": 0.0,
+ "demand_limit_30pct_peak": {
+  "max_peak_kW": 3.3133503593694185,
+  "default_max_peak_kW": 4.591189514589036,
+  "degree_h_above_26": 21.217640821495678
+ },
+ "pv_battery": {
+  "pv_kWh": 215.29557493699235,
+  "import_pv_only": 330.2490726712805,
+  "export_pv_only": 15.982757128356248,
+  "import_pv_battery": 310.694634362939,
+  "export_pv_battery": 4.32009983342141e-15,
+  "battery_ledger": {
+   "charge_in": 15.982757128356239,
+   "discharge_out": 19.554438308341517,
+   "losses": 1.828318820014734,
+   "stored_change": -5.400000000000002,
+   "soc_change_kWh": -5.4,
+   "residual": -1.0658141036401503e-14,
+   "closure_rel": 2.492227960225767e-16
+  },
+  "ledger_closure": 2.6284573543646994e-09
+ },
+ "controller_overhead": {
+  "with_controller_s": 0.06583213806152344,
+  "without_s": 0.05910778045654297
+ },
+ "generated": "2026-11-16 23:32",
+ "python": "3.13.18"
+}

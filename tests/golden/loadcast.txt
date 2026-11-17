@@ -1,0 +1,9 @@
+building / meter                              mode   CV(RMSE)%   NMBE%  cov90 | baselines CV: TOWT  change-point  persist-24h*
+Peacock_lodging_Matthew / electricity         cold        82.9   -81.4   1.00 |  13.8   13.4    9.0
+Peacock_lodging_Matthew / electricity         warm        12.7    -0.7   0.97 |  13.8   13.4    9.0
+Bull_education_Reina / chilledwater           cold       100.5    95.2   1.00 |  23.5   23.3   18.3
+Bull_education_Reina / chilledwater           warm        22.2     3.4   0.98 |  23.5   23.3   18.3
+Cockatoo_education_Minh / steam               cold        82.0    78.2   1.00 |  18.3   18.3   19.7
+Cockatoo_education_Minh / steam               warm        21.4    10.6   1.00 |  18.3   18.3   19.7
+* persistence uses the actual 2017 reading of the day before (a nowcast, not a forecast from 2016).
+done in 1.5 s

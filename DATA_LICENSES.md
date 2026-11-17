@@ -69,6 +69,42 @@ release) into the git-ignored `shared/grid/data/`. Only the four models' `exampl
 | U.S. Census 2020 Gazetteer places | U.S. public domain | No (approximate ACTIVSg bus coordinates) |
 | EIA Henry Hub daily spot price | U.S. public domain | No (`gridsim/refdata/fuel/`) |
 
+### The building platform (`shared/building`) and its models (LoadCast, BuildingDetective, FaultFinder, ThermoPilot)
+
+**BDG2 is share-alike.** Building Data Genome 2 is CC BY-SA 4.0. Every file in this repository that holds BDG2 meter
+readings, BDG2 site weather or BDG2 building metadata is an adaptation and stays CC BY-SA 4.0. Those files sit in
+folders marked with a `LICENSE-DATA.md` notice, apart from the MIT code:
+
+- `models/*/examples/bdg2/` (the demos' BDG2 example series),
+- `models/*/lab/` where the page embeds BDG2 data,
+- `site/public/instruments/<id>/` where the instrument's excerpts come from BDG2.
+
+**Weights.** All four were trained on BuildingSim simulations only. LoadCast's and BuildingDetective's training banks
+were shaped by BDG2 data: real BDG2 dev residual series added as noise (LoadCast), and calibration and error-bar
+factors fitted on BDG2 dev buildings (both). Those two models' weights are therefore treated as adaptations and are
+**CC BY-SA 4.0** (`models/loadcast/LICENSE-WEIGHTS.md`, `models/buildingdetective/weights/LICENSE-DATA.md`; decided
+17 Nov 2026 on the cautious reading). FaultFinder's and ThermoPilot's weights used no BDG2 data in training
+(ThermoPilot uses BDG2 buildings only in its dev gate) and are MIT like the code.
+
+None of BuildingData's tables are in git (`shared/building/data/`, git-ignored; `splits.json` is tracked). Terms
+checked on the providers' pages on 17 Nov 2026 where a page answered; otherwise as recorded by BuildingData.
+
+| Source | Terms | Bundled here |
+|---|---|---|
+| [Building Data Genome 2](https://github.com/buds-lab/building-data-genome-project-2) — Miller, C., et al. (2020), "The Building Data Genome Project 2, energy meter data from the ASHRAE Great Energy Predictor III competition", *Scientific Data* 7, 368, [doi:10.1038/s41597-020-00712-x](https://doi.org/10.1038/s41597-020-00712-x) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) (the repository's LICENSE file, checked 17 Nov 2026). Share alike, credit the paper | Example meters and weather in LoadCast's and BuildingDetective's `examples/bdg2/`, instruments and labs; ThermoPilot's BDG2 site weather (see each folder's `LICENSE-DATA.md`) |
+| U.S. EIA [RECS 2020](https://www.eia.gov/consumption/residential/) and [CBECS 2018](https://www.eia.gov/consumption/commercial/) microdata | U.S. public domain ([EIA copyright and reuse](https://www.eia.gov/about/copyrights_reuse.php)); acknowledge "Source: U.S. Energy Information Administration" | Survey respondents in BuildingDetective's examples; ThermoPilot's twins are built from RECS characteristics |
+| NREL [ResStock and ComStock End-Use Load Profiles](https://data.openei.org/submissions/4520) on OEDI (2025 R1 / R3) | CC BY 4.0 per BuildingData (OEDI's dataset page did not load on 17 Nov 2026; the OEDI site footer says CC BY 4.0 unless noted) | No (generator priors and simulator-vs-simulator checks; rebuilt by `data/scripts`) |
+| LBNL fault detection data synthesis (LBNL FLEXLAB, ORNL Flexible Research Platform RTU, MZVAV-2 at the Iowa Energy Resource Station) — Granderson, Lin et al., figshare [doi:10.6084/m9.figshare.11752740](https://doi.org/10.6084/m9.figshare.11752740) | CC0 (as credited in FaultFinder's release; faultdetection.lbl.gov returned HTTP 521/522 on 17 Nov 2026, so not re-checked) | FaultFinder's FLEXLAB, Iowa ERS and ORNL example days, instrument and lab |
+| ASHRAE RP-1312 (Iowa Energy Resource Station; Wen and Li 2011) and Drexel Nesbitt Hall (Chen 2019) AHU data — Ghalamsiah (2025), figshare [doi:10.6084/m9.figshare.29297999.v3](https://doi.org/10.6084/m9.figshare.29297999.v3) | CC BY 4.0 (as credited in FaultFinder's release); cite the package and ASHRAE RP-1312 | FaultFinder's Nesbitt Hall example day (168 of its 217 exam days), instrument and lab |
+| Korean office AHU trend logs (unlabelled) | CC BY 4.0 (as credited in FaultFinder's release) | No (noise statistics only) |
+| [WPuQ](https://zenodo.org/records/5642902) heat-pump homes — Schlemminger, Ohrdes, Schneider, Knoop (2022), Zenodo, doi:10.5281/zenodo.5642902 | CC BY 4.0 (Zenodo record, checked 17 Nov 2026) | ThermoPilot's reality-check results (summary numbers) |
+| [HUE](https://doi.org/10.7910/DVN/N3HGRN): Hourly Usage of Energy, British Columbia homes — Makonin, Harvard Dataverse | CC BY per BuildingData (the Dataverse page returned an empty response on 17 Nov 2026; check before reuse) | Summary numbers only |
+| [OpenEI Utility Rate Database](https://openei.org/wiki/Utility_Rate_Database) (19 tariffs, bulk CSV) | CC0 (OpenEI, as recorded in BuildingData's DATA.md) | Tariff structures inside ThermoPilot's examples and lab |
+| [TMYx](https://climate.onebuilding.org) typical-year weather — Lawrie, L. K. and Crawley, D. B., "Development of Global Typical Meteorological Years (TMYx)" | The site says "All Rights Reserved" and gives a citation, with no reuse licence. **Not redistributed:** used for simulation in training only | No |
+| [NASA POWER](https://power.larc.nasa.gov/) hourly irradiance | No licence stated; cite the POWER Project | Irradiance inside BDG2-site weather excerpts |
+| [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/) ASOS and NOAA ISD station weather | Public domain; credit appreciated | Station temperatures inside the weather excerpts |
+| ERCOT 2018 real-time prices | ERCOT terms of use (as in the grid section) | No (ThermoPilot's RTP tariff in training) |
+
 Every model card (`models/*/MODEL_CARD.md`) carries the full citation list, including the physics papers.
 
 ## Before redistributing
@@ -76,5 +112,7 @@ Every model card (`models/*/MODEL_CARD.md`) carries the full citation list, incl
 - Some providers ask for a specific citation or acknowledgement sentence; copy it from their page.
 - Paderborn and CWRU publish terms on their own pages rather than a standard licence; read them before reusing the
   excerpts outside this project.
+- BDG2-derived files are CC BY-SA 4.0: anything you build from them and share must carry the same licence and the
+  credit to Miller et al. (2020). The MIT licence of the code does not extend to them.
 - If you add a model, add its rows here, and only bundle data whose terms allow redistribution. Otherwise ship a
   fetch script.

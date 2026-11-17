@@ -1,0 +1,97 @@
+{
+ "what": "wall time per simulated building-year, single thread, shared 2-core Xeon",
+ "target": ">= 1,000x real time for a single-zone building-year at 15 min",
+ "cpu": "model name\t: Intel(R) Xeon(R) Processor @ 2.10GHz",
+ "results": {
+  "house_split_ac_furnace_15min": {
+   "total_s_first": 1.0161852836608887,
+   "total_s_cached_weather": 0.6799478530883789,
+   "loop_s": 0.49852442741394043,
+   "x_realtime_total": 46380027.316449195,
+   "x_realtime_loop": 63258685.564498276
+  },
+  "house_split_ac_furnace_1h": {
+   "total_s_first": 0.2886812686920166,
+   "total_s_cached_weather": 0.18285322189331055,
+   "loop_s": 0.12719464302062988,
+   "x_realtime_total": 172466198.15318498,
+   "x_realtime_loop": 247934969.98835975
+  },
+  "house_heat_pump_15min": {
+   "total_s_first": 1.1175963878631592,
+   "total_s_cached_weather": 0.7121255397796631,
+   "loop_s": 0.5593185424804688,
+   "x_realtime_total": 44284326.62274333,
+   "x_realtime_loop": 56382897.409665674
+  },
+  "house_heat_pump_1h": {
+   "total_s_first": 0.2763991355895996,
+   "total_s_cached_weather": 0.22424578666687012,
+   "loop_s": 0.16943693161010742,
+   "x_realtime_total": 140631404.80248365,
+   "x_realtime_loop": 186122350.66064417
+  },
+  "office_rtu_15min": {
+   "total_s_first": 1.0513806343078613,
+   "total_s_cached_weather": 0.6167428493499756,
+   "loop_s": 0.4591355323791504,
+   "x_realtime_total": 51133142.497294925,
+   "x_realtime_loop": 68685601.0393851
+  },
+  "office_rtu_1h": {
+   "total_s_first": 0.23622560501098633,
+   "total_s_cached_weather": 0.15956735610961914,
+   "loop_s": 0.11322283744812012,
+   "x_realtime_total": 197634408.24535242,
+   "x_realtime_loop": 278530380.5378497
+  },
+  "office_vav_chiller_tower_15min": {
+   "total_s_first": 1.3413774967193604,
+   "total_s_cached_weather": 0.7423241138458252,
+   "loop_s": 0.60408616065979,
+   "x_realtime_total": 42482790.75378356,
+   "x_realtime_loop": 52204473.556480765
+  },
+  "office_vav_chiller_tower_1h": {
+   "total_s_first": 0.28246116638183594,
+   "total_s_cached_weather": 0.21173954010009766,
+   "loop_s": 0.16634273529052734,
+   "x_realtime_total": 148937699.5203243,
+   "x_realtime_loop": 189584474.15765122
+  },
+  "hotel_ptac_15min": {
+   "total_s_first": 0.9638311862945557,
+   "total_s_cached_weather": 0.7109220027923584,
+   "loop_s": 0.5469915866851807,
+   "x_realtime_total": 44359296.6262585,
+   "x_realtime_loop": 57653537.58201486
+  },
+  "hotel_ptac_1h": {
+   "total_s_first": 0.24949932098388672,
+   "total_s_cached_weather": 0.16510415077209473,
+   "loop_s": 0.12147855758666992,
+   "x_realtime_total": 191006706.08536932,
+   "x_realtime_loop": 259601370.20478177
+  },
+  "school_fan_coil_15min": {
+   "total_s_first": 0.8068335056304932,
+   "total_s_cached_weather": 0.3838074207305908,
+   "loop_s": 0.23599910736083984,
+   "x_realtime_total": 82166207.05240697,
+   "x_realtime_loop": 133627624.07309376
+  },
+  "school_fan_coil_1h": {
+   "total_s_first": 0.211700439453125,
+   "total_s_cached_weather": 0.1069033145904541,
+   "loop_s": 0.05856943130493164,
+   "x_realtime_total": 294995530.5016894,
+   "x_realtime_loop": 538437872.7499206
+  },
+  "generated_mixed_15min_mean": {
+   "s_per_building_year": 1.0123352408409119,
+   "x_realtime": 31151735.8358523
+  }
+ },
+ "generated": "2026-11-16 23:27",
+ "python": "3.13.18"
+}

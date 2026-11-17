@@ -1,0 +1,163 @@
+{
+ "hourly": [
+  {
+   "key": "h0",
+   "id": "HUE_2",
+   "tz": "America/Vancouver",
+   "lat": 49.19,
+   "channels": [
+    "elec"
+   ],
+   "truth": {
+    "heat": "fuel",
+    "codes": "IFRHG,FPG,NAC"
+   }
+  }
+ ],
+ "annual": [
+  {
+   "id": "RECS RECS_110489",
+   "kwh": {
+    "elec": 8208.02,
+    "fuel": 14798.2163108627
+   },
+   "hdd": 753.8888888888889,
+   "cdd": 1512.7777777777778,
+   "truth": {
+    "use": "residential_single",
+    "floor_area_m2": 167.22547200000002,
+    "heat": "fuel",
+    "year_range": [
+     1960,
+     1969
+    ]
+   }
+  },
+  {
+   "id": "RECS RECS_108691",
+   "kwh": {
+    "elec": 26774.39,
+    "fuel": 94814.2324072613
+   },
+   "hdd": 3051.111111111111,
+   "cdd": 420.0,
+   "truth": {
+    "use": "residential_single",
+    "floor_area_m2": 232.25760000000002,
+    "heat": "fuel",
+    "year_range": [
+     1990,
+     1999
+    ]
+   }
+  },
+  {
+   "id": "RECS RECS_101536",
+   "kwh": {
+    "elec": 6702.95,
+    "fuel": 61459.9370204107
+   },
+   "hdd": 2182.777777777778,
+   "cdd": 700.5555555555555,
+   "truth": {
+    "use": "residential_single",
+    "floor_area_m2": 195.096384,
+    "heat": "fuel",
+    "year_range": [
+     1990,
+     1999
+    ]
+   }
+  },
+  {
+   "id": "RECS RECS_112271",
+   "kwh": {
+    "elec": 10154.44,
+    "fuel": 38040.7684908243
+   },
+   "hdd": 5886.111111111111,
+   "cdd": 0.5555555555555556,
+   "truth": {
+    "use": "residential_single",
+    "floor_area_m2": 222.967296,
+    "heat": "fuel",
+    "year_range": [
+     2010,
+     2015
+    ]
+   }
+  },
+  {
+   "id": "CBECS CBECS_4818",
+   "kwh": {
+    "elec": 1039486.0,
+    "fuel": 366217.50607701996
+   },
+   "hdd": 2808.3333333333335,
+   "cdd": 873.3333333333333,
+   "truth": {
+    "use": "lodging",
+    "floor_area_m2": 7896.758400000001,
+    "heat": "resistance",
+    "year_range": [
+     1970,
+     1979
+    ]
+   }
+  },
+  {
+   "id": "CBECS CBECS_1238",
+   "kwh": {
+    "elec": 120763.0,
+    "fuel": 180518.00477971
+   },
+   "hdd": 1235.0,
+   "cdd": 408.88888888888886,
+   "truth": {
+    "use": "office",
+    "floor_area_m2": 1138.06224,
+    "heat": "fuel",
+    "year_range": [
+     1980,
+     1989
+    ]
+   }
+  },
+  {
+   "id": "CBECS CBECS_328",
+   "kwh": {
+    "elec": 793589.0,
+    "fuel": 1141749.49828777
+   },
+   "hdd": 3273.333333333333,
+   "cdd": 673.3333333333334,
+   "truth": {
+    "use": "education",
+    "floor_area_m2": 14492.874240000001,
+    "heat": "fuel",
+    "year_range": [
+     1990,
+     1999
+    ]
+   }
+  },
+  {
+   "id": "CBECS CBECS_270",
+   "kwh": {
+    "elec": 2729182.0,
+    "fuel": 2738991.51892489
+   },
+   "hdd": 4945.0,
+   "cdd": 371.1111111111111,
+   "truth": {
+    "use": "warehouse",
+    "floor_area_m2": 45987.0048,
+    "heat": "fuel",
+    "year_range": [
+     1990,
+     1999
+    ]
+   }
+  }
+ ]
+}

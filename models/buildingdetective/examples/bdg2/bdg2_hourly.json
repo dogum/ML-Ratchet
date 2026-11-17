@@ -1,0 +1,66 @@
+{
+ "hourly": [
+  {
+   "key": "b0",
+   "id": "Lamb_education_Bert",
+   "tz": "Europe/London",
+   "lat": 51.49783804108846,
+   "channels": [
+    "elec",
+    "fuel"
+   ],
+   "truth": {
+    "use": "education",
+    "floor_area_m2": 2403.0,
+    "year_built": 1919.0,
+    "meters": [
+     "electricity",
+     "gas"
+    ]
+   }
+  },
+  {
+   "key": "b1",
+   "id": "Eagle_office_Remedios",
+   "tz": "America/New_York",
+   "lat": 40.2768,
+   "channels": [
+    "dcool",
+    "dheat",
+    "elec"
+   ],
+   "truth": {
+    "use": "office",
+    "floor_area_m2": 4781.8,
+    "year_built": NaN,
+    "meters": [
+     "electricity",
+     "chilledwater",
+     "steam",
+     "hotwater"
+    ]
+   }
+  },
+  {
+   "key": "b2",
+   "id": "Peacock_lodging_Sergio",
+   "tz": "America/New_York",
+   "lat": 40.349999999999966,
+   "channels": [
+    "dcool",
+    "dheat",
+    "elec"
+   ],
+   "truth": {
+    "use": "lodging",
+    "floor_area_m2": 10498.0,
+    "year_built": NaN,
+    "meters": [
+     "electricity",
+     "chilledwater",
+     "steam"
+    ]
+   }
+  }
+ ]
+}

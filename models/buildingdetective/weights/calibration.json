@@ -1,0 +1,65 @@
+{
+ "hourly": {
+  "widen": {
+   "logA": 3.015,
+   "year": 2.137,
+   "logUA": 1.036,
+   "logUAm2": 1.298,
+   "logtau": 1.265,
+   "Tb_heat": 1.129,
+   "Tb_cool": 1.243,
+   "logS_heat": 1.068,
+   "logS_cool": 1.115,
+   "base_share": 1.013,
+   "op_hours": 1.042,
+   "weekend": 1.0
+  },
+  "temperature": [
+   10.0,
+   1.0,
+   1.0
+  ]
+ },
+ "monthly": {
+  "widen": {
+   "logA": 1.543,
+   "year": 1.139,
+   "logUA": 1.0,
+   "logUAm2": 1.164,
+   "logtau": 1.146,
+   "Tb_heat": 1.016,
+   "Tb_cool": 1.0,
+   "logS_heat": 1.0,
+   "logS_cool": 1.0,
+   "base_share": 1.0,
+   "op_hours": 1.106,
+   "weekend": 1.0
+  },
+  "temperature": [
+   10.0,
+   1.0,
+   1.0
+  ]
+ },
+ "annual": {
+  "widen": {
+   "logA": 1.079,
+   "year": 1.042,
+   "logUA": 1.0,
+   "logUAm2": 1.09,
+   "logtau": 1.128,
+   "Tb_heat": 1.021,
+   "Tb_cool": 1.0,
+   "logS_heat": 1.0,
+   "logS_cool": 1.045,
+   "base_share": 1.0,
+   "op_hours": 1.078,
+   "weekend": 1.0
+  },
+  "temperature": [
+   7.4,
+   1.9,
+   1.0
+  ]
+ }
+}

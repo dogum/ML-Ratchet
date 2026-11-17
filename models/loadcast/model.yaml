@@ -1,0 +1,231 @@
+id: loadcast
+name: LoadCast
+version: "1.0"
+status: released
+released: 2026-11-17
+order: 18
+domain: Buildings
+platform: building
+tags: [buildings, energy forecasting, building meters, electricity, chilled water, steam, district energy, ASHRAE Guideline 14, uncertainty]
+accent: "#1971c2"
+tagline: Hourly energy per building meter from weather, calendar and metadata, with 90 % bands
+question: How much electricity, chilled water, steam, hot water or gas will this building use each hour next year?
+question_short: "A building's hourly energy per meter for next year"
+summary: >-
+  LoadCast forecasts a non-residential building's hourly energy on one meter (electricity, chilled water, steam, hot
+  water or gas) for any span of hours, from weather, the local calendar and what is known about the building, with a
+  90 % band for every hour. Cold mode reads metadata only (use, floor area, which meters exist, climate); warm mode
+  also reads 2 weeks, 8 weeks or a year of the meter's own history and corrects a time-of-week-and-temperature (TOWT)
+  model fitted on it. It learned only from 1,600 BuildingSim buildings simulated under the real 2016-17 weather of the
+  19 BDG2 sites, with real dev-meter residuals added as noise. It was examined once on 1,502 real BDG2 exam
+  building-meters, forecasting local 2017 from 2016.
+
+reads: "Hourly UTC weather (T_out °C, dewpoint °C, GHI W/m², wind m/s) over the forecast window, the history window and 7 days before each; time zone and latitude (holidays for the US, Canada, UK and Ireland); use type (10 classes), floor area (m²), optional year built, the meter type and which meters the building has, optional HVAC class and operating hours; optionally the meter's own hourly kWh history (warm mode)."
+returns:
+  - Hourly mean load (kW) on the chosen meter for any span of hours
+  - "A 90 % band (lo90, hi90) and sigma for every hour, widened by one dev-fitted factor per mode, history length and meter type (×1.0 to ×7.75; ×30, the cap, for 2-week chilled water and gas); raw bands with calibrated=False"
+
+physics:
+  summary: >-
+    The shared BuildingSim simulator (ML Ratchet building platform, Phase 1): an ISO 13790 5R1C single-zone heat
+    balance with multinode walls, solar gains (pvlib), infiltration, ventilation and moisture; DX, heat-pump, chiller
+    (DOE-2 EIR), boiler and district plants; VAV and unitary air sides; domestic hot water; driven by real weather.
+    LoadCast's wrappers (training/lcsim.py, no edit to the shared package) add country holiday calendars, a BDG2-style
+    spec maker (the meters a building has decide its plant), operating knobs and a per-meter calibration
+    y = a·sim + b·A fitted on the dev buildings.
+  simulator:
+    - "Generator: BuildingSim specs from ComStock / CBECS priors; use mix like BDG2; meter sets drawn from the dev buildings (80 %) or a fixed list; half the floor areas from the dev log-area distribution"
+    - "1,600 buildings at the 19 BDG2 sites under their real 2016-2017 hourly weather; each building draws its knobs and a, b from a dev donor (60 % same use), jittered ×exp(N(0, 0.2))"
+    - "Knobs: HVAC for electricity-only buildings, operating hours (default / extended / 24-7), outdoor air ×1 or ×2.5, VAV minimum flow 0.3 or 0.8 with 12.8 °C supply air"
+    - "Dev calibration on 52 BDG2 dev buildings (2016 only): best knobs 24-7 in 22 of 52, extended hours in 9, outdoor air ×2.5 in 37; median electricity a = 0.43 with b = 6.3 W/m² (real campus electricity is flatter than simulated)"
+    - "Simulated annual energy / real, generic twins → best knobs (dev medians): electricity 0.97 → 0.96, chilled water 0.29 → 0.47, steam 0.29 → 0.87, hot water 0.18 → 0.57, gas 0.14 → 0.14; hourly CV(RMSE) after the a, b fit (in sample, 2016): electricity 62 → 24 %, chilled water 93 → 53 %, steam 113 → 62 %, hot water 171 → 79 %"
+  checks:
+    - "BuildingSim Phase 1: steady conduction vs closed form to 1.8e-9; RC step response within 0.0035 K; degree-day ratio 0.999996; ISO 13786 wall amplitude −1.6 %, lag −0.01 h; every energy ledger closes to 1e-8"
+    - "BESTEST: 29 of 34 values inside the published ranges, all 20 annual heating and cooling values in (ranges transcribed from the literature, not the official ASHRAE 140 tables)"
+    - "Twins: ResStock homes (126) site energy median 1.10× (IQR 0.98-1.26), daily r 0.92; ComStock buildings (45) 0.86× (aggregate 0.97), daily r 0.89"
+    - "Real BDG2 dev twins from metadata alone (median annual sim/real): electricity 0.98 (daily r 0.34), chilled water 0.28, steam 0.29, hot water 0.15 — the campus district-energy gap LoadCast's calibration only partly closes"
+    - "Twin test (dev, R3): median cold CV(RMSE) real vs twin: electricity 62.5 vs 51.8 % (per-building r 0.86), chilled water 101 vs 99 % (r 0.96), steam 104 vs 108 % (r 0.95); warm 22.3 vs 17.8, 43.2 vs 41.7, 61.7 vs 59.9 % (r ≈ 0)"
+    - "numpy == torch to 1.5e-6 on real dev rows; the lab page's JavaScript port == Python to 3e-4 (weather stored at 0.01 °C); the site instrument == numpy to 4e-6 on 25 reference weeks"
+noise: "Real noise from 85 BDG2 dev building-meters with good data in both years: the hourly residual of an in-sample regression (TOWT + 24 h mean temperature + dewpoint + solar), divided by the year mean — occupancy, campus breaks, events, meter quirks. One residual series is added to each simulated meter on the same local calendar dates, with a real 2017/2016 level change (whole year or a step), occasional quantisation and the real gap pattern. The bank holds the dev buildings' 2017 residuals too."
+network: "Two MLPs, cold (64 inputs) and warm (83 inputs): 3 hidden layers of 192 SiLU units, dropout 0.1, Gaussian head (mean, log sigma); 177,604 parameters (cold 86,978, warm 90,626). Inputs per hour: 38 metadata, 10 weather and 16 calendar features; warm adds 19 history features (TOWT and change-point predictions from the history, time-of-week profile, history level and shape statistics). Cold predicts kW / (A × I_ref), warm kW / history mean. Loss: weighted MSE on the mean (weight 1 / ybar², floored) + 0.1 × Gaussian NLL for sigma; AdamW, cosine schedule, 30 epochs of fresh random hours, per-row metadata jitter (log area ±0.1, year ±6, climate ±0.5 K / ±8 %)."
+
+approach:
+  real_backdrop: "Real hourly residuals of 85 BDG2 dev building-meters, added to every simulated meter on the same calendar dates with real level changes and gaps; the simulated buildings run on the 19 BDG2 sites' real 2016-17 weather"
+  physics_inputs: false
+  physics_anchor: false
+  real_data_roles: [backdrop, calibration, gate, error_bars, exam]
+
+data:
+  - name: Building Data Genome 2 (BDG2), Miller et al. 2020, Scientific Data 7:368 (cleaned by BuildingData)
+    url: https://github.com/buds-lab/building-data-genome-project-2
+    licence: CC BY-SA 4.0 (share-alike; examples/bdg2/, lab/ and the instrument data are BDG2-derived)
+    role: dev (52 buildings for calibration, the dev gate and the widening), noise (85 dev building-meters' residuals), exam (1,502 building-meters), physics (site weather and locations)
+  - name: NOAA Integrated Surface Database station weather, as shipped with BDG2
+    url: https://www.ncei.noaa.gov/products/land-based-station/integrated-surface-database
+    licence: Public domain (U.S. Government); redistributed within BDG2 under CC BY-SA 4.0
+    role: physics (simulator weather), dev, exam (forecast inputs)
+  - name: Iowa Environmental Mesonet ASOS archive (weather gap fill, by BuildingData)
+    url: https://mesonet.agron.iastate.edu/request/download.phtml
+    licence: Free use with credit (Iowa State University)
+    role: physics, dev, exam (gap fill)
+  - name: NASA POWER hourly irradiance (by BuildingData)
+    url: https://power.larc.nasa.gov
+    licence: Free use with credit (NASA Langley Research Center POWER Project)
+    role: physics, dev, exam (GHI)
+  - name: NREL ResStock and ComStock (OEDI)
+    url: https://data.openei.org
+    licence: CC BY 4.0 ("Data includes information from the ResStock™ / ComStock™ datasets developed by the National Renewable Energy Laboratory")
+    role: physics (BuildingSim generator priors; twin checks)
+  - name: EIA Commercial Buildings Energy Consumption Survey (CBECS) 2018
+    url: https://www.eia.gov/consumption/commercial/
+    licence: Public domain (U.S. Government)
+    role: physics (BuildingSim generator priors)
+
+split:
+  dev: "BuildingData's frozen split (shared/building/data/proc/splits.json, seed 20261116): 52 BDG2 dev buildings. 2016 for calibration; 85 dev building-meters' 2016 and 2017 residuals in the noise bank; 84 dev building-meters forecasting 2017 from 2016 for the dev gate and the widening factors (only 5 hot water and 2 gas meters)"
+  exam: "Every other BDG2 building-meter with good data in both years (q_ok): 1,502 (856 electricity, 323 chilled water, 225 steam, 72 hot water, 26 gas), forecasting local 2017 with the actual 2017 weather from 2016 history"
+
+exam:
+  short: "1,502 real BDG2 meters, 2017 from 2016"
+  summary: >-
+    Every BDG2 exam building-meter, forecast for local 2017 with the actual 2017 weather, against baselines
+    BuildingData fitted on 2016 (TOWT, a G14 change-point model) and a dumb median guess fitted on dev. Median
+    hourly CV(RMSE) (ASHRAE Guideline 14; LoadCast and the guess use p = 0, the fitted baselines n − p). Run once,
+    after R3 was chosen; the full table (2- and 8-week histories, NMBE, G14 pass rates, daily and monthly totals,
+    nowcasts) is in MODEL_CARD.md.
+  results:
+    - metric: Electricity, a year of history (856 meters), median hourly CV(RMSE)
+      better: lower
+      model: 18.8
+      unit: "%"
+      baselines:
+        - { name: "Change-point model fitted on 2016", kind: classical, value: 19.1 }
+        - { name: "TOWT fitted on 2016", kind: classical, value: 19.6 }
+      verdict: win
+      note: "By 0.3 points; G14 pass rate 70 % vs 71 % (change point) and 70 % (TOWT), so the build notes call it a tie. 90 % band covers 92 % of hours. Persistence of yesterday's real reading (a nowcast, not a forecast from 2016) gets 18.6 %."
+    - metric: Chilled water, a year of history (323 meters), median hourly CV(RMSE)
+      better: lower
+      model: 42.9
+      unit: "%"
+      baselines:
+        - { name: "Change-point model fitted on 2016", kind: classical, value: 42.4 }
+        - { name: "TOWT fitted on 2016", kind: classical, value: 45.7 }
+      verdict: loss
+      note: "Beats TOWT, loses to the change-point model by 0.5 points. 90 % band covers 92 %. Persistence 24 h (nowcast) 40.3 %."
+    - metric: Steam, a year of history (225 meters), median hourly CV(RMSE)
+      better: lower
+      model: 45.5
+      unit: "%"
+      baselines:
+        - { name: "TOWT fitted on 2016", kind: classical, value: 39.8 }
+        - { name: "Change-point model fitted on 2016", kind: classical, value: 40.5 }
+      verdict: loss
+      note: "G14 pass rate 10 % vs 25 % (TOWT). 90 % band covers 88 %."
+    - metric: Hot water, a year of history (72 meters), median hourly CV(RMSE)
+      better: lower
+      model: 94.5
+      unit: "%"
+      baselines:
+        - { name: "Change-point model fitted on 2016", kind: classical, value: 82.6 }
+        - { name: "TOWT fitted on 2016", kind: classical, value: 83.1 }
+      verdict: loss
+      note: "With 8 weeks of history LoadCast gets 86.5 %. 90 % band covers 92 %."
+    - metric: Gas, a year of history (26 meters), median hourly CV(RMSE)
+      better: lower
+      model: 110.5
+      unit: "%"
+      baselines:
+        - { name: "TOWT fitted on 2016", kind: classical, value: 95.7 }
+        - { name: "Change-point model fitted on 2016", kind: classical, value: 95.8 }
+      verdict: loss
+      note: "90 % band covers 73 %. Only 2 gas meters in dev."
+    - metric: Electricity, no history (856 meters), median hourly CV(RMSE)
+      better: lower
+      model: 59.3
+      unit: "%"
+      baselines:
+        - { name: "Median-intensity × median-shape guess per use and meter, fitted on dev", kind: dumb, value: 53.8 }
+      verdict: loss
+      note: "Median NMBE +24 % (forecast too low). 90 % band covers 88 %."
+    - metric: Chilled water, no history (323 meters), median hourly CV(RMSE)
+      better: lower
+      model: 104.1
+      unit: "%"
+      baselines:
+        - { name: "Median-intensity × median-shape guess per use and meter, fitted on dev", kind: dumb, value: 101.6 }
+      verdict: loss
+      note: "Median NMBE +47 % (about half the real load). 90 % band covers 90 %."
+    - metric: Steam, no history (225 meters), median hourly CV(RMSE)
+      better: lower
+      model: 102.8
+      unit: "%"
+      baselines:
+        - { name: "Median-intensity × median-shape guess per use and meter, fitted on dev", kind: dumb, value: 111.6 }
+      verdict: win
+      note: "Still underpredicts: median NMBE +59 %. 90 % band covers 84 %."
+    - metric: Hot water, no history (72 meters), median hourly CV(RMSE)
+      better: lower
+      model: 134.0
+      unit: "%"
+      baselines:
+        - { name: "Median-intensity × median-shape guess per use and meter, fitted on dev", kind: dumb, value: 207.6 }
+      verdict: win
+      note: "Median NMBE +58 %. 90 % band covers 81 %."
+    - metric: Gas, no history (26 meters), median hourly CV(RMSE)
+      better: lower
+      model: 181.5
+      unit: "%"
+      baselines:
+        - { name: "Median-intensity × median-shape guess per use and meter, fitted on dev", kind: dumb, value: 190.4 }
+      verdict: win
+      note: "90 % band covers 74 %."
+
+wins:
+  - "With a year of history, electricity: median CV(RMSE) 18.8 % against 19.1 % for the change-point model and 19.6 % for TOWT, both fitted on the same 2016 year (856 meters); a 0.3-point margin with the same G14 pass rate, 70 %."
+  - "With no history, steam, hot water and gas beat the dev-fitted median guess: 102.8 vs 111.6 %, 134.0 vs 207.6 % and 181.5 vs 190.4 %."
+  - "Its error bars: the 90 % band covers 88-92 % of hours with a year of history on electricity, chilled water, steam and hot water, and 81-90 % with no history on every meter type but gas (74 %)."
+  - "Daily totals with a year of history: electricity 14.1 % against 17.2 % for the change-point model (chilled water 32.4 vs 32.4 %)."
+losses:
+  - "With a year of history, chilled water (42.9 vs 42.4 %), steam (45.5 vs 39.8 %), hot water (94.5 vs 82.6 %) and gas (110.5 vs 95.7 %) lose to the classical models fitted on 2016."
+  - "With no history, electricity (59.3 vs 53.8 %) and chilled water (104.1 vs 101.6 %) lose to a median guess, and thermal meters come out about half the real load (median NMBE +47 % chilled water, +59 % steam)."
+  - "Two weeks of December history cannot forecast summer chilled water: CV 87.3 %, and the dev widening for that case hit its ×30 cap."
+  - "Not a nowcaster: yesterday's real reading (18.6 % on electricity) is as good as any 2016-based forecast."
+limits:
+  - "Non-residential campus buildings at BDG2's 19 sites, trained under their 2016-17 weather; other climates, years and residential buildings are extrapolation."
+  - "BuildingSim is single zone and its campus district energy runs about 3× low; 52 dev buildings' a, b calibration closes only part of that gap, empirically rather than physically."
+  - "The CV²-weighted loss pulls unknown magnitudes low; R4 tried a median-aimed weight and failed both tests."
+  - "The dev set is small: 5 hot water and 2 gas meters. The noise bank holds the dev buildings' 2017 residuals, so dev-gate numbers are a little optimistic (the exam is unaffected)."
+  - "Short-history modes were trained on year-end histories; 2-week and 8-week bands are unusable for chilled water and gas when the history is winter."
+  - "BDG2 timestamps were mixed (local DST vs standard) and are fixed to UTC; Peacock's weather does not match its stated location; four sites were located by temperature matching."
+next:
+  - "Cold magnitude: a median-aimed log-magnitude head plus the shape network, or a/b calibrated by use type with more dev-like buildings (R4's fix improved coverage but not CV)."
+  - "A heating-meter physics rung: seasonal plant shutdowns, steam distribution losses, plants serving several buildings."
+  - "Warm mode trained on 4-12 week histories from every season, falling back to cold when the history is out of season."
+  - "Upstream to BuildingSim behind flags: the US/CA/UK/IE holiday calendars, the BDG2-style spec maker, campus defaults (24/7 in 22 of 52, outdoor air ×2.5, VAV minimum flow), a per-meter district scale and base load, and a bounded-memory mode for long bank runs."
+help_wanted:
+  - "An EnergyPlus binary for a true reference engine: there is no PyPI wheel with an engine and GitHub was blocked in the build sandbox, so BESTEST ranges and ResStock/ComStock twins stand in."
+  - "The official ASHRAE Standard 140 (BESTEST) result tables: BuildingSim's ranges were transcribed from the literature."
+  - "A residential exam: large open smart-meter sets (IDEAL homes, Low Carbon London) are open but were skipped for size."
+  - "More campus thermal meters with plant metadata (which plant serves which building, seasonal shutdowns): the dev set has 5 hot water and 2 gas meters."
+
+usage:
+  install: pip install numpy scipy pandas
+  demo: python demo.py
+  python: |
+    import loadcast as lc
+    m = lc.LoadCast()                       # loadcast_weights.npz next to this file
+    fc = m.forecast(weather, tz='America/New_York', lat=40.3, use='education', area_m2=9000,
+                    meter='chilledwater', meters_present=['electricity', 'chilledwater', 'steam'],
+                    start='2017-01-01', end='2018-01-01',
+                    history=None)           # or a Series of the meter's own hourly kWh (UTC) -> warm mode
+    fc[['kW', 'lo90', 'hi90']]
+
+files:
+  inference: [loadcast.py, pipeline.py]
+  weights: [loadcast_weights.npz]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 2

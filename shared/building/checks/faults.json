@@ -1,0 +1,758 @@
+{
+ "what": "fault signatures (faulted week minus the same week healthy), Chicago TMYx, 15 min",
+ "n_cases": 26,
+ "n_expected_direction_ok": 26,
+ "cases": {
+  "rtu_damper_stuck_closed_summer": {
+   "fault": {
+    "type": "oa_damper_stuck",
+    "position": 0.0
+   },
+   "season": "spring",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": -38.0147,
+    "MAT": 4.0105,
+    "SAT": 0.3011,
+    "ZAT": 0.2411,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": 0.2411,
+    "SAT_true": 0.3011,
+    "hvac_kWh": 823.175,
+    "heat_kWh": 0.0,
+    "cool_kWh": 823.175
+   },
+   "expected": {
+    "OA_damper_pct down": true,
+    "cool_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "oa_damper_stuck:0",
+   "ledger_closure": 2.5652294825052435e-10,
+   "system_lag_share": 0.0
+  },
+  "rtu_damper_stuck_open_winter": {
+   "fault": {
+    "type": "oa_damper_stuck",
+    "position": 1.0
+   },
+   "season": "winter",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 89.7951,
+    "MAT": -20.2533,
+    "SAT": -7.2009,
+    "ZAT": -5.6895,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": -5.6895,
+    "SAT_true": -7.2009,
+    "hvac_kWh": 26616.2868,
+    "heat_kWh": 26022.4934,
+    "cool_kWh": 0.0
+   },
+   "expected": {
+    "OA_damper_pct up": true,
+    "MAT down": true,
+    "heat_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "oa_damper_stuck:1",
+   "ledger_closure": 1.6219137250342083e-10,
+   "system_lag_share": 0.0
+  },
+  "rtu_damper_leak_winter": {
+   "fault": {
+    "type": "oa_damper_leak",
+    "leak": 0.5
+   },
+   "season": "winter",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 39.7951,
+    "MAT": -9.1884,
+    "SAT": -0.5603,
+    "ZAT": -0.4252,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": -0.4252,
+    "SAT_true": -0.5603,
+    "hvac_kWh": 10429.7375,
+    "heat_kWh": 10413.3563,
+    "cool_kWh": 0.0
+   },
+   "expected": {
+    "OA_damper_pct up": true,
+    "heat_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "oa_damper_leak:0.5",
+   "ledger_closure": 1.6552306120520548e-10,
+   "system_lag_share": 0.0
+  },
+  "rtu_economizer_disabled": {
+   "fault": {
+    "type": "economizer_disabled"
+   },
+   "season": "spring",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": -27.6306,
+    "MAT": 2.437,
+    "SAT": 0.0,
+    "ZAT": 0.0,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": 0.0,
+    "SAT_true": 0.0,
+    "hvac_kWh": 556.6652,
+    "heat_kWh": 0.0,
+    "cool_kWh": 556.6652
+   },
+   "expected": {
+    "OA_damper_pct down": true,
+    "cool_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "economizer_disabled",
+   "ledger_closure": 2.557213949000294e-10,
+   "system_lag_share": 0.0
+  },
+  "rtu_econ_high_limit_low": {
+   "fault": {
+    "type": "economizer_high_limit",
+    "high_limit": 10.0
+   },
+   "season": "spring",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": -25.529,
+    "MAT": 2.1159,
+    "SAT": 0.0,
+    "ZAT": 0.0,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": 0.0,
+    "SAT_true": 0.0,
+    "hvac_kWh": 482.7756,
+    "heat_kWh": 0.0,
+    "cool_kWh": 482.7756
+   },
+   "expected": {
+    "OA_damper_pct down": true,
+    "cool_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "economizer_high_limit:10",
+   "ledger_closure": 2.557213949000294e-10,
+   "system_lag_share": 0.0
+  },
+  "rtu_undercharge_30pct": {
+   "fault": {
+    "type": "refrigerant_charge",
+    "charge": -0.3
+   },
+   "season": "summer",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 0.0,
+    "MAT": 0.0044,
+    "SAT": 0.01,
+    "ZAT": 0.0049,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": 0.0049,
+    "SAT_true": 0.01,
+    "hvac_kWh": 215.4945,
+    "heat_kWh": 0.0,
+    "cool_kWh": 197.4111
+   },
+   "expected": {
+    "cool_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "refrigerant_charge:-0.3",
+   "ledger_closure": 2.73159377737755e-10,
+   "system_lag_share": 0.0
+  },
+  "rtu_condenser_fouling": {
+   "fault": {
+    "type": "condenser_fouling",
+    "severity": 0.6
+   },
+   "season": "summer",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 0.0,
+    "MAT": 0.0,
+    "SAT": 0.0,
+    "ZAT": 0.0,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": 0.0,
+    "SAT_true": 0.0,
+    "hvac_kWh": 268.661,
+    "heat_kWh": 0.0,
+    "cool_kWh": 262.2577
+   },
+   "expected": {
+    "cool_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "condenser_fouling:0.6",
+   "ledger_closure": 2.7314998993845734e-10,
+   "system_lag_share": 0.0
+  },
+  "rtu_low_airflow": {
+   "fault": {
+    "type": "low_airflow",
+    "severity": 0.4
+   },
+   "season": "summer",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 0.1208,
+    "MAT": -0.0078,
+    "SAT": -4.4508,
+    "ZAT": 0.0,
+    "supply_flow_m3s": -4.0822,
+    "fan_kW": -1.6655,
+    "T_zone_true": 0.0,
+    "SAT_true": -4.4508,
+    "hvac_kWh": 2.8264,
+    "heat_kWh": 0.0,
+    "cool_kWh": 114.5184
+   },
+   "expected": {
+    "supply_flow_m3s down": true,
+    "SAT down": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "low_airflow:0.4",
+   "ledger_closure": 2.7314998993845734e-10,
+   "system_lag_share": 0.0
+  },
+  "rtu_compressor_stuck_on": {
+   "fault": {
+    "type": "cooling_valve_stuck",
+    "position": 0.6
+   },
+   "season": "spring",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": -27.6306,
+    "MAT": 0.2119,
+    "SAT": -3.4901,
+    "ZAT": -2.483,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": -2.483,
+    "SAT_true": -3.4901,
+    "hvac_kWh": 7189.7659,
+    "heat_kWh": 5413.4291,
+    "cool_kWh": 1776.3368
+   },
+   "expected": {
+    "cool_kWh up": true,
+    "SAT down": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "cooling_valve_stuck:0.6",
+   "ledger_closure": 2.4313252811329575e-10,
+   "system_lag_share": 0.0
+  },
+  "rtu_zone_sensor_bias_+2K_winter": {
+   "fault": {
+    "type": "sensor_bias",
+    "sensor": "T_zone",
+    "bias": 2.0
+   },
+   "season": "winter",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 0.0,
+    "MAT": -1.6348,
+    "SAT": -2.3025,
+    "ZAT": 0.1794,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": -1.8206,
+    "SAT_true": -2.3025,
+    "hvac_kWh": -1062.1718,
+    "heat_kWh": -1047.5126,
+    "cool_kWh": 0.0
+   },
+   "expected": {
+    "T_zone_true down": true,
+    "heat_kWh down": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "sensor_bias:T_zone:+2",
+   "ledger_closure": 1.64896594487424e-10,
+   "system_lag_share": 0.0
+  },
+  "rtu_oat_sensor_bias_-6K": {
+   "fault": {
+    "type": "sensor_bias",
+    "sensor": "T_out",
+    "bias": -6.0
+   },
+   "season": "summer",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 48.5143,
+    "MAT": 0.3393,
+    "SAT": 0.085,
+    "ZAT": 0.0631,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": 0.0631,
+    "SAT_true": 0.085,
+    "hvac_kWh": 685.8463,
+    "heat_kWh": 0.0,
+    "cool_kWh": 681.3039
+   },
+   "expected": {
+    "OA_damper_pct up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "sensor_bias:T_out:-6",
+   "ledger_closure": 2.7332510681352467e-10,
+   "system_lag_share": 0.0
+  },
+  "rtu_schedule_override_hvac_on": {
+   "fault": {
+    "type": "schedule_override",
+    "mode": "hvac_always_on"
+   },
+   "season": "winter",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": -0.0,
+    "MAT": 0.1084,
+    "SAT": -0.7958,
+    "ZAT": 0.1048,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": 0.1048,
+    "SAT_true": -0.7958,
+    "hvac_kWh": 2756.753,
+    "heat_kWh": 1353.4684,
+    "cool_kWh": 0.0
+   },
+   "expected": {
+    "hvac_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "schedule_override:hvac_always_on",
+   "ledger_closure": 1.7774333063883388e-10,
+   "system_lag_share": 0.0
+  },
+  "rtu_setpoint_override": {
+   "fault": {
+    "type": "setpoint_override",
+    "heat": 23.5,
+    "cool": 24.0
+   },
+   "season": "winter",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 0.3796,
+    "MAT": 2.0599,
+    "SAT": 0.6861,
+    "ZAT": 2.3895,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": 2.3895,
+    "SAT_true": 0.6861,
+    "hvac_kWh": 3159.7674,
+    "heat_kWh": 2907.9566,
+    "cool_kWh": 1.099
+   },
+   "expected": {
+    "ZAT up": true,
+    "heat_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "setpoint_override:23.5/24.0",
+   "ledger_closure": 1.643181824726245e-10,
+   "system_lag_share": 0.0
+  },
+  "vav_cooling_valve_leak_winter": {
+   "fault": {
+    "type": "cooling_valve_leak",
+    "leak": 0.3
+   },
+   "season": "winter",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 0.0,
+    "MAT": 0.0,
+    "SAT": -1.4317,
+    "ZAT": 0.0,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": 0.0,
+    "SAT_true": -1.4317,
+    "hvac_kWh": 13132.858,
+    "heat_kWh": 8211.6487,
+    "cool_kWh": 3137.2936
+   },
+   "expected": {
+    "cool_kWh up": true,
+    "heat_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "cooling_valve_leak:0.3",
+   "ledger_closure": 4.768267585981244e-11,
+   "system_lag_share": 0.0413319131961267
+  },
+  "vav_heating_valve_leak_summer": {
+   "fault": {
+    "type": "heating_valve_leak",
+    "leak": 0.3
+   },
+   "season": "summer",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 0.0,
+    "MAT": 0.0,
+    "SAT": 0.0,
+    "ZAT": 0.0,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": 0.0,
+    "SAT_true": 0.0,
+    "hvac_kWh": 13819.2491,
+    "heat_kWh": 12552.6342,
+    "cool_kWh": 1161.4822
+   },
+   "expected": {
+    "heat_kWh up": true,
+    "cool_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "heating_valve_leak:0.3",
+   "ledger_closure": 6.432787886104641e-11,
+   "system_lag_share": 1.8982204712807463e-19
+  },
+  "vav_cooling_valve_stuck": {
+   "fault": {
+    "type": "cooling_valve_stuck",
+    "position": 0.0
+   },
+   "season": "summer",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": -8.5059,
+    "MAT": 17.6805,
+    "SAT": 30.4681,
+    "ZAT": 20.4609,
+    "supply_flow_m3s": 10.3726,
+    "fan_kW": 26.7448,
+    "T_zone_true": 20.4609,
+    "SAT_true": 30.4681,
+    "hvac_kWh": -8191.8851,
+    "heat_kWh": 146.6957,
+    "cool_kWh": -11462.2951
+   },
+   "expected": {
+    "SAT up": true,
+    "ZAT up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "cooling_valve_stuck:0",
+   "ledger_closure": 9.014685996149547e-11,
+   "system_lag_share": 0.006471030054126059
+  },
+  "vav_reheat_valve_leak": {
+   "fault": {
+    "type": "reheat_valve_leak",
+    "leak": 0.4
+   },
+   "season": "summer",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": -5.1221,
+    "MAT": 0.3505,
+    "SAT": 0.0,
+    "ZAT": 0.5931,
+    "supply_flow_m3s": 10.3608,
+    "fan_kW": 26.7113,
+    "T_zone_true": 0.5931,
+    "SAT_true": 0.0,
+    "hvac_kWh": 22955.19,
+    "heat_kWh": 17599.6629,
+    "cool_kWh": 3184.8004
+   },
+   "expected": {
+    "heat_kWh up": true,
+    "cool_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "reheat_valve_leak:0.4",
+   "ledger_closure": 6.471224589612058e-11,
+   "system_lag_share": 1.5227339576541472e-19
+  },
+  "vav_low_airflow": {
+   "fault": {
+    "type": "low_airflow",
+    "severity": 0.4
+   },
+   "season": "summer",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 3.7022,
+    "MAT": 0.816,
+    "SAT": 0.0,
+    "ZAT": 0.8869,
+    "supply_flow_m3s": -4.754,
+    "fan_kW": -10.2263,
+    "T_zone_true": 0.8869,
+    "SAT_true": 0.0,
+    "hvac_kWh": -559.1328,
+    "heat_kWh": 0.0,
+    "cool_kWh": -218.189
+   },
+   "expected": {
+    "T_zone_true up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "low_airflow:0.4",
+   "ledger_closure": 6.494274383232189e-11,
+   "system_lag_share": 5.017643591676424e-19
+  },
+  "vav_sat_offset_-3K": {
+   "fault": {
+    "type": "sat_setpoint_offset",
+    "offset": -3.0
+   },
+   "season": "spring",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 10.6766,
+    "MAT": -1.651,
+    "SAT": -3.0,
+    "ZAT": -0.1924,
+    "supply_flow_m3s": -4.8693,
+    "fan_kW": -8.7427,
+    "T_zone_true": -0.1924,
+    "SAT_true": -3.0,
+    "hvac_kWh": -26.6234,
+    "heat_kWh": -214.4813,
+    "cool_kWh": 504.8613
+   },
+   "expected": {
+    "SAT down": true,
+    "cool_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "sat_setpoint_offset:-3",
+   "ledger_closure": 6.036109429871662e-11,
+   "system_lag_share": 2.383583164686027e-19
+  },
+  "vav_box_stuck_full": {
+   "fault": {
+    "type": "vav_box_stuck",
+    "position": 1.0
+   },
+   "season": "winter",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": -19.9989,
+    "MAT": 4.6818,
+    "SAT": 4.9917,
+    "ZAT": 0.28,
+    "supply_flow_m3s": 23.6863,
+    "fan_kW": 51.9393,
+    "T_zone_true": 0.28,
+    "SAT_true": 4.9917,
+    "hvac_kWh": 222.1716,
+    "heat_kWh": -3407.7278,
+    "cool_kWh": 0.0
+   },
+   "expected": {
+    "fan_kW up": true,
+    "hvac_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "vav_box_stuck:1",
+   "ledger_closure": 4.7596128028880846e-11,
+   "system_lag_share": 0.014869229885364705
+  },
+  "vav_coil_fouling": {
+   "fault": {
+    "type": "coil_fouling",
+    "severity": 0.5
+   },
+   "season": "summer",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 0.0,
+    "MAT": 0.0,
+    "SAT": 0.0,
+    "ZAT": 0.0,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 8.9935,
+    "T_zone_true": 0.0,
+    "SAT_true": 0.0,
+    "hvac_kWh": -1314.3624,
+    "heat_kWh": 0.0,
+    "cool_kWh": -1910.5396
+   },
+   "expected": {
+    "fan_kW up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "coil_fouling:0.5",
+   "ledger_closure": 6.432787886104641e-11,
+   "system_lag_share": 3.112090645560091e-19
+  },
+  "vav_chiller_fouling": {
+   "fault": {
+    "type": "chiller_fouling",
+    "severity": 1.0
+   },
+   "season": "summer",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 0.0,
+    "MAT": 0.0,
+    "SAT": 0.0,
+    "ZAT": 0.0,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": 0.0,
+    "SAT_true": 0.0,
+    "hvac_kWh": 1260.7569,
+    "heat_kWh": 0.0,
+    "cool_kWh": 1256.9238
+   },
+   "expected": {
+    "cool_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "chiller_fouling:1",
+   "ledger_closure": 6.432787886104641e-11,
+   "system_lag_share": 4.382614642805561e-20
+  },
+  "vav_boiler_fouling": {
+   "fault": {
+    "type": "boiler_fouling",
+    "severity": 0.2
+   },
+   "season": "winter",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 0.0,
+    "MAT": 0.0,
+    "SAT": 0.0,
+    "ZAT": 0.0,
+    "supply_flow_m3s": 0.0,
+    "fan_kW": 0.0,
+    "T_zone_true": 0.0,
+    "SAT_true": 0.0,
+    "hvac_kWh": 2860.2839,
+    "heat_kWh": 2860.2839,
+    "cool_kWh": 0.0
+   },
+   "expected": {
+    "heat_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "boiler_fouling:0.2",
+   "ledger_closure": 4.768267585981244e-11,
+   "system_lag_share": 0.007387301288988298
+  },
+  "vav_sat_sensor_bias_+2K": {
+   "fault": {
+    "type": "sensor_bias",
+    "sensor": "T_sup",
+    "bias": 2.0
+   },
+   "season": "summer",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 3.3099,
+    "MAT": 0.1045,
+    "SAT": 0.0,
+    "ZAT": 0.0,
+    "supply_flow_m3s": -4.209,
+    "fan_kW": -9.0266,
+    "T_zone_true": 0.0,
+    "SAT_true": -2.0,
+    "hvac_kWh": -2783.181,
+    "heat_kWh": 0.0,
+    "cool_kWh": -1992.1912
+   },
+   "expected": {
+    "SAT_true down": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "sensor_bias:T_sup:+2",
+   "ledger_closure": 6.432787886104641e-11,
+   "system_lag_share": 1.0944511770548939e-18
+  },
+  "vav_damper_stuck_open_winter": {
+   "fault": {
+    "type": "oa_damper_stuck",
+    "position": 1.0
+   },
+   "season": "winter",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 67.1578,
+    "MAT": -15.2425,
+    "SAT": -1.4108,
+    "ZAT": -0.0355,
+    "supply_flow_m3s": 0.7248,
+    "fan_kW": 1.033,
+    "T_zone_true": -0.0355,
+    "SAT_true": -1.4108,
+    "hvac_kWh": 29262.9741,
+    "heat_kWh": 29300.9867,
+    "cool_kWh": -142.4932
+   },
+   "expected": {
+    "OA_damper_pct up": true,
+    "heat_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "oa_damper_stuck:1",
+   "ledger_closure": 4.768182653770577e-11,
+   "system_lag_share": 0.001407532609768793
+  },
+  "hp_undercharge_winter": {
+   "fault": {
+    "type": "refrigerant_charge",
+    "charge": -0.3
+   },
+   "season": "winter",
+   "signature_faulted_minus_healthy": {
+    "OA_damper_pct": 0.0,
+    "MAT": 0.0,
+    "SAT": -0.9264,
+    "ZAT": 0.0,
+    "supply_flow_m3s": 0.0296,
+    "fan_kW": 0.0314,
+    "T_zone_true": 0.0,
+    "SAT_true": -0.9264,
+    "hvac_kWh": 31.555,
+    "heat_kWh": 26.2842,
+    "cool_kWh": 0.0
+   },
+   "expected": {
+    "heat_kWh up": true
+   },
+   "ok": true,
+   "label_steps": 672,
+   "label_example": "refrigerant_charge:-0.3",
+   "ledger_closure": 1.6547827311433101e-09,
+   "system_lag_share": 0.0
+  }
+ },
+ "max_ledger_closure": 1.6547827311433101e-09,
+ "generated": "2026-11-16 23:23",
+ "python": "3.13.18"
+}

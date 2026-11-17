@@ -1,8 +1,9 @@
-# Lessons from sixteen models
+# Lessons from twenty-one models
 
 What building ChirpNet, SunDoctor, CellSense, TransitNet, QuakeNet, BearingNet, SwellCast, BeatNet and StarQuake,
-then the vehicle platform with EnergyNet, TripDetective and HybridPilot, and the grid platform with GridPulse,
-BatteryPilot, PlantDetective and DemandCast, taught, in rough order of how much it
+then the vehicle platform with EnergyNet, TripDetective and HybridPilot, the grid platform with GridPulse,
+BatteryPilot, PlantDetective and DemandCast, WakeNet, and the building platform with LoadCast, BuildingDetective, FaultFinder
+and ThermoPilot, taught, in rough order of how much it
 mattered.
 
 ## The simulator is the model
@@ -85,3 +86,22 @@ mattered.
   91-94% while real 2019 gives 80%, so the simulated price spikes are still too predictable.
 - **Plan archive downloads away from shared IPs.** The forecast-weather archive rate-limited the shared build
   machine's address after a few requests, which left DemandCast's realistic forecast-weather exam at one year.
+
+## Big systems (the building platform)
+
+- **A twin from metadata alone can be right on one meter and far off on the others.** BuildingSim's twins of the
+  52 BDG2 dev buildings got electricity right on the median (0.98×) but read campus chilled water, steam and hot water
+  about 3× low. The models that leaned on the thermal meters paid for it: LoadCast with no history forecasts them about
+  2× low and loses to a median guess.
+- **Real logs record commands, not positions.** FaultFinder's twin test found a lab valve stuck at 100 % logged as 0 %,
+  and a damper at 100 % mixing only 81-90 % outdoor air. Adding the installed damper curve and larger sensor offsets
+  (rung r4) raised real dev AUC from 0.71 to 0.73, and dev false alarms fell from 45 % (r2) to 36 %; on exam days it
+  still raises 33 %.
+- **A signature the simulator gets wrong does worse than no skill.** BuildingDetective tells heat pumps from
+  resistance heat at AUC 0.94 on simulated homes and 0.40 on real RECS homes: worse than chance, because simulated heat
+  pumps run at night and real ones run flat.
+- **When the exam is simulated, check the order on real data.** ThermoPilot is graded on twins of real homes. On 37 real
+  heat-pump homes its order against a setback schedule flipped in 18 between generic and calibrated twins, so that
+  comparison is not settled by the simulator.
+- **Share-alike data travel with the files.** BDG2 is CC BY-SA 4.0. Its excerpts live in folders marked with their own
+  licence notice, apart from the MIT code, and the instruments and lab pages carry the same notice.

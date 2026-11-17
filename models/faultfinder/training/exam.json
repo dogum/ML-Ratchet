@@ -1,0 +1,1078 @@
+{
+ "model": "r6_wide",
+ "temperature_dev": 4.300000000000001,
+ "n": 217,
+ "all": {
+  "n": 217,
+  "n_fault": 103,
+  "auc": 0.7747402486799523,
+  "accuracy": 0.6866359447004609,
+  "TPR": 0.7281553398058253,
+  "FPR": 0.3508771929824561,
+  "balanced_accuracy": 0.6886390734116846,
+  "recall_at_2pct_FA": 0.20388349514563106,
+  "recall_at_5pct_FA": 0.24271844660194175,
+  "recall_at_10pct_FA": 0.44660194174757284,
+  "auc_90ci": [
+   0.7195525760731606,
+   0.8278508085048304
+  ]
+ },
+ "ahu": {
+  "n": 200,
+  "n_fault": 91,
+  "auc": 0.7795140639177336,
+  "accuracy": 0.695,
+  "TPR": 0.7252747252747253,
+  "FPR": 0.3302752293577982,
+  "balanced_accuracy": 0.6974997479584636,
+  "recall_at_2pct_FA": 0.23076923076923078,
+  "recall_at_5pct_FA": 0.27472527472527475,
+  "recall_at_10pct_FA": 0.4725274725274725,
+  "auc_90ci": [
+   0.721944418564426,
+   0.8337109117297796
+  ]
+ },
+ "rtu": {
+  "n": 17,
+  "n_fault": 12,
+  "auc": 0.65,
+  "accuracy": 0.5882352941176471,
+  "TPR": 0.75,
+  "FPR": 0.8,
+  "balanced_accuracy": 0.475,
+  "recall_at_2pct_FA": 0.4166666666666667,
+  "recall_at_5pct_FA": 0.4166666666666667,
+  "recall_at_10pct_FA": 0.4166666666666667
+ },
+ "by_source": {
+  "Iowa ERS (lab)": {
+   "n": 101,
+   "n_fault": 46,
+   "auc": 0.733596837944664,
+   "accuracy": 0.6534653465346535,
+   "TPR": 0.5652173913043478,
+   "FPR": 0.2727272727272727,
+   "balanced_accuracy": 0.6462450592885375,
+   "recall_at_2pct_FA": 0.13043478260869565,
+   "recall_at_5pct_FA": 0.1956521739130435,
+   "recall_at_10pct_FA": 0.41304347826086957
+  },
+  "LBNL FLEXLAB (lab)": {
+   "n": 23,
+   "n_fault": 19,
+   "auc": 0.9342105263157895,
+   "accuracy": 0.9130434782608695,
+   "TPR": 0.9473684210526315,
+   "FPR": 0.25,
+   "balanced_accuracy": 0.8486842105263157,
+   "recall_at_2pct_FA": 0.8947368421052632,
+   "recall_at_5pct_FA": 0.8947368421052632,
+   "recall_at_10pct_FA": 0.8947368421052632
+  },
+  "Nesbitt Hall (real building)": {
+   "n": 76,
+   "n_fault": 26,
+   "auc": 0.7776923076923077,
+   "accuracy": 0.6842105263157895,
+   "TPR": 0.8461538461538461,
+   "FPR": 0.4,
+   "balanced_accuracy": 0.7230769230769232,
+   "recall_at_2pct_FA": 0.19230769230769232,
+   "recall_at_5pct_FA": 0.23076923076923078,
+   "recall_at_10pct_FA": 0.46153846153846156
+  },
+  "ORNL RTU (lab)": {
+   "n": 17,
+   "n_fault": 12,
+   "auc": 0.65,
+   "accuracy": 0.5882352941176471,
+   "TPR": 0.75,
+   "FPR": 0.8,
+   "balanced_accuracy": 0.475,
+   "recall_at_2pct_FA": 0.4166666666666667,
+   "recall_at_5pct_FA": 0.4166666666666667,
+   "recall_at_10pct_FA": 0.4166666666666667
+  }
+ },
+ "by_dataset": {
+  "ers_rp1312": {
+   "n": 92,
+   "n_fault": 46,
+   "auc": 0.753780718336484,
+   "accuracy": 0.6521739130434783,
+   "TPR": 0.5652173913043478,
+   "FPR": 0.2608695652173913,
+   "balanced_accuracy": 0.6521739130434782,
+   "recall_at_2pct_FA": 0.1956521739130435,
+   "recall_at_5pct_FA": 0.41304347826086957,
+   "recall_at_10pct_FA": 0.45652173913043476
+  },
+  "lbnl_mzvav2_ers_exp": {
+   "n": 9,
+   "n_fault": 0,
+   "auc": NaN,
+   "accuracy": 0.6666666666666666,
+   "TPR": null,
+   "FPR": 0.3333333333333333,
+   "balanced_accuracy": null,
+   "recall_at_2pct_FA": null,
+   "recall_at_5pct_FA": null,
+   "recall_at_10pct_FA": null
+  },
+  "lbnl_rtu_ornl": {
+   "n": 17,
+   "n_fault": 12,
+   "auc": 0.65,
+   "accuracy": 0.5882352941176471,
+   "TPR": 0.75,
+   "FPR": 0.8,
+   "balanced_accuracy": 0.475,
+   "recall_at_2pct_FA": 0.4166666666666667,
+   "recall_at_5pct_FA": 0.4166666666666667,
+   "recall_at_10pct_FA": 0.4166666666666667
+  },
+  "lbnl_szcav_flexlab": {
+   "n": 14,
+   "n_fault": 13,
+   "auc": 1.0,
+   "accuracy": 0.9285714285714286,
+   "TPR": 1.0,
+   "FPR": 1.0,
+   "balanced_accuracy": 0.5,
+   "recall_at_2pct_FA": 1.0,
+   "recall_at_5pct_FA": 1.0,
+   "recall_at_10pct_FA": 1.0
+  },
+  "lbnl_szvav_flexlab": {
+   "n": 9,
+   "n_fault": 6,
+   "auc": 0.8333333333333334,
+   "accuracy": 0.8888888888888888,
+   "TPR": 0.8333333333333334,
+   "FPR": 0.0,
+   "balanced_accuracy": 0.9166666666666667,
+   "recall_at_2pct_FA": 0.8333333333333334,
+   "recall_at_5pct_FA": 0.8333333333333334,
+   "recall_at_10pct_FA": 0.8333333333333334
+  },
+  "nesbitt": {
+   "n": 76,
+   "n_fault": 26,
+   "auc": 0.7776923076923077,
+   "accuracy": 0.6842105263157895,
+   "TPR": 0.8461538461538461,
+   "FPR": 0.4,
+   "balanced_accuracy": 0.7230769230769232,
+   "recall_at_2pct_FA": 0.19230769230769232,
+   "recall_at_5pct_FA": 0.23076923076923078,
+   "recall_at_10pct_FA": 0.46153846153846156
+  }
+ },
+ "by_season": {
+  "summer": {
+   "n": 68,
+   "n_fault": 30,
+   "auc": 0.7491228070175439,
+   "accuracy": 0.6911764705882353,
+   "TPR": 0.7333333333333333,
+   "FPR": 0.34210526315789475,
+   "balanced_accuracy": 0.6956140350877194,
+   "recall_at_2pct_FA": 0.23333333333333334,
+   "recall_at_5pct_FA": 0.3333333333333333,
+   "recall_at_10pct_FA": 0.6
+  },
+  "transition": {
+   "n": 95,
+   "n_fault": 48,
+   "auc": 0.8249113475177305,
+   "accuracy": 0.7052631578947368,
+   "TPR": 0.6875,
+   "FPR": 0.2765957446808511,
+   "balanced_accuracy": 0.7054521276595744,
+   "recall_at_2pct_FA": 0.10416666666666667,
+   "recall_at_5pct_FA": 0.4375,
+   "recall_at_10pct_FA": 0.5416666666666666
+  },
+  "winter": {
+   "n": 54,
+   "n_fault": 25,
+   "auc": 0.7103448275862069,
+   "accuracy": 0.6481481481481481,
+   "TPR": 0.8,
+   "FPR": 0.4827586206896552,
+   "balanced_accuracy": 0.6586206896551724,
+   "recall_at_2pct_FA": 0.04,
+   "recall_at_5pct_FA": 0.04,
+   "recall_at_10pct_FA": 0.08
+  }
+ },
+ "by_severity": {
+  "high": {
+   "n": 45,
+   "detected_at_0p5": 0.7555555555555555,
+   "auc_vs_all_normals": 0.7949317738791423
+  },
+  "low": {
+   "n": 32,
+   "detected_at_0p5": 0.75,
+   "auc_vs_all_normals": 0.7870065789473685
+  },
+  "unspecified": {
+   "n": 26,
+   "detected_at_0p5": 0.6538461538461539,
+   "auc_vs_all_normals": 0.7246963562753036
+  }
+ },
+ "detection_by_fault_type": {
+  "air_filter_blockage": {
+   "n": 2,
+   "detected_at_0p5": 0.5,
+   "mean_p": 0.5818918496370316
+  },
+  "cc_valve_leak": {
+   "n": 3,
+   "detected_at_0p5": 1.0,
+   "mean_p": 0.6598820288976034
+  },
+  "cc_valve_reverse_action": {
+   "n": 1,
+   "detected_at_0p5": 1.0,
+   "mean_p": 0.8572327494621277
+  },
+  "cc_valve_stuck": {
+   "n": 14,
+   "detected_at_0p5": 1.0,
+   "mean_p": 0.7652587081704821
+  },
+  "chiller_off": {
+   "n": 6,
+   "detected_at_0p5": 0.8333333333333334,
+   "mean_p": 0.7095432678858439
+  },
+  "condenser_fouling": {
+   "n": 2,
+   "detected_at_0p5": 0.0,
+   "mean_p": 0.4856891483068466
+  },
+  "control_unstable": {
+   "n": 4,
+   "detected_at_0p5": 0.25,
+   "mean_p": 0.48869743943214417
+  },
+  "ea_damper_leak": {
+   "n": 1,
+   "detected_at_0p5": 1.0,
+   "mean_p": 0.5335860252380371
+  },
+  "ea_damper_stuck": {
+   "n": 5,
+   "detected_at_0p5": 0.4,
+   "mean_p": 0.49526549577713014
+  },
+  "excessive_infiltration": {
+   "n": 1,
+   "detected_at_0p5": 1.0,
+   "mean_p": 0.6621553897857666
+  },
+  "hc_fouling": {
+   "n": 2,
+   "detected_at_0p5": 0.0,
+   "mean_p": 0.4590524286031723
+  },
+  "hc_reduced_capacity": {
+   "n": 3,
+   "detected_at_0p5": 0.3333333333333333,
+   "mean_p": 0.5544053912162781
+  },
+  "hc_valve_leak": {
+   "n": 5,
+   "detected_at_0p5": 0.8,
+   "mean_p": 0.5988193333148957
+  },
+  "hc_valve_stuck": {
+   "n": 4,
+   "detected_at_0p5": 1.0,
+   "mean_p": 0.8791228979825974
+  },
+  "lighting_schedule_fault": {
+   "n": 3,
+   "detected_at_0p5": 1.0,
+   "mean_p": 0.5355534354845682
+  },
+  "oa_damper_leak": {
+   "n": 5,
+   "detected_at_0p5": 0.6,
+   "mean_p": 0.5312303066253662
+  },
+  "oa_damper_stuck": {
+   "n": 14,
+   "detected_at_0p5": 0.9285714285714286,
+   "mean_p": 0.5895869327442986
+  },
+  "return_fan_failure": {
+   "n": 2,
+   "detected_at_0p5": 0.5,
+   "mean_p": 0.5399123579263687
+  },
+  "return_fan_fixed_speed": {
+   "n": 3,
+   "detected_at_0p5": 0.3333333333333333,
+   "mean_p": 0.5042836964130402
+  },
+  "schedule_fault": {
+   "n": 8,
+   "detected_at_0p5": 0.75,
+   "mean_p": 0.5704247914254665
+  },
+  "sensor_bias_T_chw": {
+   "n": 2,
+   "detected_at_0p5": 0.5,
+   "mean_p": 0.47939570248126984
+  },
+  "sensor_bias_T_oa": {
+   "n": 2,
+   "detected_at_0p5": 0.5,
+   "mean_p": 0.5815810710191727
+  },
+  "sensor_bias_T_sa": {
+   "n": 3,
+   "detected_at_0p5": 1.0,
+   "mean_p": 0.5565517743428549
+  },
+  "sensor_bias_T_zone": {
+   "n": 4,
+   "detected_at_0p5": 0.75,
+   "mean_p": 0.5275007337331772
+  },
+  "sensor_bias_dp_chw": {
+   "n": 2,
+   "detected_at_0p5": 1.0,
+   "mean_p": 0.7185164093971252
+  },
+  "supply_duct_leak": {
+   "n": 2,
+   "detected_at_0p5": 0.0,
+   "mean_p": 0.4878139942884445
+  }
+ },
+ "diagnosis": {
+  "n": 66,
+  "top1": 0.19696969696969696,
+  "top3": 0.48484848484848486,
+  "chance_majority": 0.21212121212121213,
+  "majority_class": "oa_damper_stuck",
+  "by_class": {
+   "cc_valve_leak": {
+    "n": 3,
+    "top1": 0.0,
+    "top3": 0.3333333333333333,
+    "predicted": {
+     "cc_valve_stuck": 2,
+     "hc_valve_stuck": 1
+    }
+   },
+   "cc_valve_stuck": {
+    "n": 14,
+    "top1": 0.5,
+    "top3": 0.8571428571428571,
+    "predicted": {
+     "cc_valve_stuck": 7,
+     "vav_box_stuck": 3,
+     "hc_valve_stuck": 3,
+     "sensor_bias_T_ra": 1
+    }
+   },
+   "cooling_capacity": {
+    "n": 2,
+    "top1": 0.0,
+    "top3": 1.0,
+    "predicted": {
+     "low_airflow": 2
+    }
+   },
+   "hc_valve_leak": {
+    "n": 5,
+    "top1": 0.2,
+    "top3": 0.4,
+    "predicted": {
+     "reheat_valve_leak": 3,
+     "hc_valve_leak": 1,
+     "cc_valve_stuck": 1
+    }
+   },
+   "hc_valve_stuck": {
+    "n": 4,
+    "top1": 0.25,
+    "top3": 0.25,
+    "predicted": {
+     "cc_valve_stuck": 3,
+     "hc_valve_stuck": 1
+    }
+   },
+   "low_airflow": {
+    "n": 2,
+    "top1": 0.0,
+    "top3": 0.0,
+    "predicted": {
+     "reheat_valve_leak": 1,
+     "cc_valve_stuck": 1
+    }
+   },
+   "oa_damper_leak": {
+    "n": 5,
+    "top1": 0.0,
+    "top3": 0.0,
+    "predicted": {
+     "economizer": 2,
+     "sensor_bias_T_sa": 1,
+     "cc_valve_stuck": 1,
+     "hc_valve_leak": 1
+    }
+   },
+   "oa_damper_stuck": {
+    "n": 14,
+    "top1": 0.0,
+    "top3": 0.2857142857142857,
+    "predicted": {
+     "reheat_valve_leak": 4,
+     "cc_valve_stuck": 3,
+     "oa_damper_leak": 2,
+     "schedule": 2,
+     "sensor_bias_T_ra": 1,
+     "hc_valve_stuck": 1,
+     "cooling_capacity": 1
+    }
+   },
+   "schedule": {
+    "n": 8,
+    "top1": 0.0,
+    "top3": 0.375,
+    "predicted": {
+     "zone_setpoint": 3,
+     "low_airflow": 2,
+     "cc_valve_stuck": 2,
+     "reheat_valve_leak": 1
+    }
+   },
+   "sensor_bias_T_oa": {
+    "n": 2,
+    "top1": 0.0,
+    "top3": 0.0,
+    "predicted": {
+     "economizer": 1,
+     "cc_valve_stuck": 1
+    }
+   },
+   "sensor_bias_T_sa": {
+    "n": 3,
+    "top1": 0.0,
+    "top3": 1.0,
+    "predicted": {
+     "low_airflow": 2,
+     "cc_valve_stuck": 1
+    }
+   },
+   "zone_setpoint": {
+    "n": 4,
+    "top1": 1.0,
+    "top3": 1.0,
+    "predicted": {
+     "zone_setpoint": 4
+    }
+   }
+  },
+  "by_source": {
+   "Iowa ERS (lab)": {
+    "n": 23,
+    "top1": 0.08695652173913043
+   },
+   "LBNL FLEXLAB (lab)": {
+    "n": 19,
+    "top1": 0.3157894736842105
+   },
+   "Nesbitt Hall (real building)": {
+    "n": 16,
+    "top1": 0.0625
+   },
+   "ORNL RTU (lab)": {
+    "n": 8,
+    "top1": 0.5
+   }
+  },
+  "ece_top1": 0.07238770310174333,
+  "reliability_top1": [
+   {
+    "bin": "0.0-0.2",
+    "n": 59,
+    "mean_p": 0.10664729786626363,
+    "frac_fault": 0.1694915254237288
+   },
+   {
+    "bin": "0.2-0.4",
+    "n": 7,
+    "mean_p": 0.2757458601679121,
+    "frac_fault": 0.42857142857142855
+   }
+  ]
+ },
+ "n_other_excluded_from_diagnosis": 37,
+ "nesbitt": {
+  "detection": {
+   "n": 76,
+   "n_fault": 26,
+   "auc": 0.7776923076923077,
+   "accuracy": 0.6842105263157895,
+   "TPR": 0.8461538461538461,
+   "FPR": 0.4,
+   "balanced_accuracy": 0.7230769230769232,
+   "recall_at_2pct_FA": 0.19230769230769232,
+   "recall_at_5pct_FA": 0.23076923076923078,
+   "recall_at_10pct_FA": 0.46153846153846156
+  },
+  "by_fault_type": {
+   "cc_valve_stuck": {
+    "n": 1,
+    "mean_p": 0.5690999031066895,
+    "detected_at_0p5": 1.0
+   },
+   "chiller_off": {
+    "n": 6,
+    "mean_p": 0.7095432678858439,
+    "detected_at_0p5": 0.8333333333333334
+   },
+   "none": {
+    "n": 50,
+    "mean_p": 0.5027993088960647,
+    "detected_at_0p5": 0.4
+   },
+   "oa_damper_stuck": {
+    "n": 6,
+    "mean_p": 0.6027074952920278,
+    "detected_at_0p5": 1.0
+   },
+   "schedule_fault": {
+    "n": 6,
+    "mean_p": 0.5528408735990524,
+    "detected_at_0p5": 0.6666666666666666
+   },
+   "sensor_bias_T_chw": {
+    "n": 2,
+    "mean_p": 0.47939570248126984,
+    "detected_at_0p5": 0.5
+   },
+   "sensor_bias_T_sa": {
+    "n": 3,
+    "mean_p": 0.5565517743428549,
+    "detected_at_0p5": 1.0
+   },
+   "sensor_bias_dp_chw": {
+    "n": 2,
+    "mean_p": 0.7185164093971252,
+    "detected_at_0p5": 1.0
+   }
+  }
+ },
+ "calibration": {
+  "ece_5bin": 0.1205202247689946,
+  "ece_ahu": 0.13433839842677114,
+  "ece_rtu": 0.1667822722126456,
+  "brier": 0.21637226069368334,
+  "reliability": [
+   {
+    "bin": "0.2-0.4",
+    "n": 1,
+    "mean_p": 0.39938274025917053,
+    "frac_fault": 0.0
+   },
+   {
+    "bin": "0.4-0.6",
+    "n": 164,
+    "mean_p": 0.49432818537078255,
+    "frac_fault": 0.36585365853658536
+   },
+   {
+    "bin": "0.6-0.8",
+    "n": 37,
+    "mean_p": 0.6823767310864216,
+    "frac_fault": 0.7837837837837838
+   },
+   {
+    "bin": "0.8-1.0",
+    "n": 15,
+    "mean_p": 0.8712251543998718,
+    "frac_fault": 0.9333333333333333
+   }
+  ],
+  "brier_uncalibrated": 0.20435205924860433
+ },
+ "baseline_apar": {
+  "ahu_auc": 0.6888799274120375,
+  "rtu_auc": 0.7166666666666667,
+  "ahu_by_dataset": {
+   "ers_rp1312": 0.7438563327032136,
+   "lbnl_mzvav2_ers_exp": NaN,
+   "lbnl_szcav_flexlab": 0.7692307692307693,
+   "lbnl_szvav_flexlab": 0.6666666666666666,
+   "nesbitt": 0.5384615384615384
+  },
+  "all_auc_same_runs": 0.6913643331630046,
+  "recall_at_2pct_FA_ahu": 0.31868131868131866,
+  "by_source": {
+   "Iowa ERS (lab)": 0.7304347826086957,
+   "LBNL FLEXLAB (lab)": 0.6710526315789473,
+   "Nesbitt Hall (real building)": 0.5384615384615384,
+   "ORNL RTU (lab)": 0.7166666666666667
+  },
+  "rule_ahu": {
+   "accuracy": 0.68,
+   "TPR": 0.31868131868131866,
+   "FPR": 0.01834862385321101,
+   "F1": 0.47540983606557374,
+   "balanced_accuracy": 0.6501663474140538
+  },
+  "rule_rtu": {
+   "accuracy": 0.47058823529411764,
+   "TPR": 0.3333333333333333,
+   "FPR": 0.2,
+   "F1": 0.47058823529411764,
+   "balanced_accuracy": 0.5666666666666667
+  },
+  "metrics": {
+   "all": {
+    "n": 217,
+    "n_fault": 103,
+    "auc": 0.6913643331630046,
+    "accuracy": 0.663594470046083,
+    "TPR": 0.32038834951456313,
+    "FPR": 0.02631578947368421,
+    "balanced_accuracy": 0.6470362800204394,
+    "recall_at_2pct_FA": 0.30097087378640774,
+    "recall_at_5pct_FA": 0.3883495145631068,
+    "recall_at_10pct_FA": 0.42718446601941745
+   },
+   "ahu": {
+    "n": 200,
+    "n_fault": 91,
+    "auc": 0.6888799274120375,
+    "accuracy": 0.68,
+    "TPR": 0.31868131868131866,
+    "FPR": 0.01834862385321101,
+    "balanced_accuracy": 0.6501663474140538,
+    "recall_at_2pct_FA": 0.31868131868131866,
+    "recall_at_5pct_FA": 0.4065934065934066,
+    "recall_at_10pct_FA": 0.45054945054945056
+   },
+   "rtu": {
+    "n": 17,
+    "n_fault": 12,
+    "auc": 0.7166666666666667,
+    "accuracy": 0.47058823529411764,
+    "TPR": 0.3333333333333333,
+    "FPR": 0.2,
+    "balanced_accuracy": 0.5666666666666667,
+    "recall_at_2pct_FA": 0.25,
+    "recall_at_5pct_FA": 0.25,
+    "recall_at_10pct_FA": 0.25
+   },
+   "by_source": {
+    "Iowa ERS (lab)": {
+     "n": 101,
+     "n_fault": 46,
+     "auc": 0.7304347826086957,
+     "accuracy": 0.6831683168316832,
+     "TPR": 0.32608695652173914,
+     "FPR": 0.01818181818181818,
+     "balanced_accuracy": 0.6539525691699606,
+     "recall_at_2pct_FA": 0.32608695652173914,
+     "recall_at_5pct_FA": 0.45652173913043476,
+     "recall_at_10pct_FA": 0.5217391304347826
+    },
+    "LBNL FLEXLAB (lab)": {
+     "n": 23,
+     "n_fault": 19,
+     "auc": 0.6710526315789473,
+     "accuracy": 0.6086956521739131,
+     "TPR": 0.5263157894736842,
+     "FPR": 0.0,
+     "balanced_accuracy": 0.763157894736842,
+     "recall_at_2pct_FA": 0.631578947368421,
+     "recall_at_5pct_FA": 0.631578947368421,
+     "recall_at_10pct_FA": 0.631578947368421
+    },
+    "Nesbitt Hall (real building)": {
+     "n": 76,
+     "n_fault": 26,
+     "auc": 0.5384615384615384,
+     "accuracy": 0.6973684210526315,
+     "TPR": 0.15384615384615385,
+     "FPR": 0.02,
+     "balanced_accuracy": 0.5669230769230769,
+     "recall_at_2pct_FA": 0.15384615384615385,
+     "recall_at_5pct_FA": 0.19230769230769232,
+     "recall_at_10pct_FA": 0.23076923076923078
+    },
+    "ORNL RTU (lab)": {
+     "n": 17,
+     "n_fault": 12,
+     "auc": 0.7166666666666667,
+     "accuracy": 0.47058823529411764,
+     "TPR": 0.3333333333333333,
+     "FPR": 0.2,
+     "balanced_accuracy": 0.5666666666666667,
+     "recall_at_2pct_FA": 0.25,
+     "recall_at_5pct_FA": 0.25,
+     "recall_at_10pct_FA": 0.25
+    }
+   }
+  }
+ },
+ "baseline_majority": {
+  "ahu": {
+   "accuracy": 0.545,
+   "TPR": 0.0,
+   "FPR": 0.0,
+   "F1": 0.0,
+   "balanced_accuracy": 0.5
+  },
+  "rtu": {
+   "accuracy": 0.7058823529411765,
+   "TPR": 1.0,
+   "FPR": 1.0,
+   "F1": 0.8275862068965517,
+   "balanced_accuracy": 0.5
+  },
+  "all_accuracy": 0.5253456221198156
+ },
+ "ers_energy_pairs": {
+  "n": 46,
+  "spearman_pred_vs_real": 0.1923527597903176,
+  "median_real_extra": -0.027337622083167694,
+  "median_pred": 0.005082100164145231,
+  "pairs": [
+   {
+    "date": "2007-08-20",
+    "fault": "ea_damper_stuck",
+    "real_extra": 0.04143439769910112,
+    "pred_A": 0.029931705445051193,
+    "pred_B": 0.01878642849624157
+   },
+   {
+    "date": "2007-08-21",
+    "fault": "ea_damper_stuck",
+    "real_extra": -0.026373536471161706,
+    "pred_A": 0.025778133422136307,
+    "pred_B": 0.06562189757823944
+   },
+   {
+    "date": "2007-08-22",
+    "fault": "return_fan_fixed_speed",
+    "real_extra": 0.022361809621348438,
+    "pred_A": 0.21985942125320435,
+    "pred_B": 0.019653167575597763
+   },
+   {
+    "date": "2007-08-23",
+    "fault": "return_fan_failure",
+    "real_extra": -0.005192914109976792,
+    "pred_A": 0.31802114844322205,
+    "pred_B": 0.022063855081796646
+   },
+   {
+    "date": "2007-08-26",
+    "fault": "oa_damper_stuck",
+    "real_extra": 0.018814462341366318,
+    "pred_A": 0.1530417948961258,
+    "pred_B": 0.02743823267519474
+   },
+   {
+    "date": "2007-08-27",
+    "fault": "cc_valve_stuck",
+    "real_extra": -0.6411601582442494,
+    "pred_A": -0.07736057043075562,
+    "pred_B": 0.0150221548974514
+   },
+   {
+    "date": "2007-08-28",
+    "fault": "hc_valve_leak",
+    "real_extra": 0.07754971580511762,
+    "pred_A": 0.1502605825662613,
+    "pred_B": 0.019502315670251846
+   },
+   {
+    "date": "2007-08-29",
+    "fault": "hc_valve_leak",
+    "real_extra": 0.06638602009051763,
+    "pred_A": 0.01331029087305069,
+    "pred_B": 0.021903593093156815
+   },
+   {
+    "date": "2007-08-30",
+    "fault": "hc_valve_leak",
+    "real_extra": 0.039133553245202006,
+    "pred_A": 0.02436545118689537,
+    "pred_B": 0.023579463362693787
+   },
+   {
+    "date": "2007-08-31",
+    "fault": "cc_valve_stuck",
+    "real_extra": -0.00403850217665709,
+    "pred_A": 1.7010143995285034,
+    "pred_B": 0.02298295497894287
+   },
+   {
+    "date": "2007-09-01",
+    "fault": "cc_valve_stuck",
+    "real_extra": -0.7203934173107172,
+    "pred_A": -0.05090474337339401,
+    "pred_B": 0.025454575195908546
+   },
+   {
+    "date": "2007-09-02",
+    "fault": "cc_valve_stuck",
+    "real_extra": 0.034231693519714244,
+    "pred_A": 1.539405107498169,
+    "pred_B": 0.023850422352552414
+   },
+   {
+    "date": "2007-09-03",
+    "fault": "cc_valve_reverse_action",
+    "real_extra": -0.03244166331660915,
+    "pred_A": 2.0636537075042725,
+    "pred_B": 0.02441670000553131
+   },
+   {
+    "date": "2007-09-05",
+    "fault": "oa_damper_leak",
+    "real_extra": 0.013448913887087457,
+    "pred_A": 0.02961377054452896,
+    "pred_B": 0.01939106173813343
+   },
+   {
+    "date": "2007-09-06",
+    "fault": "oa_damper_leak",
+    "real_extra": 0.008337693464978247,
+    "pred_A": 0.026631733402609825,
+    "pred_B": 0.01746239699423313
+   },
+   {
+    "date": "2007-09-07",
+    "fault": "supply_duct_leak",
+    "real_extra": -0.004083804169322742,
+    "pred_A": 0.021489720791578293,
+    "pred_B": 0.0184633806347847
+   },
+   {
+    "date": "2007-09-08",
+    "fault": "supply_duct_leak",
+    "real_extra": -0.045056103543046414,
+    "pred_A": 0.02607954852283001,
+    "pred_B": 0.02526688575744629
+   },
+   {
+    "date": "2008-02-02",
+    "fault": "ea_damper_stuck",
+    "real_extra": -0.0650247141556415,
+    "pred_A": 0.020557668060064316,
+    "pred_B": 0.016975952312350273
+   },
+   {
+    "date": "2008-02-05",
+    "fault": "hc_fouling",
+    "real_extra": -0.3221717742339349,
+    "pred_A": 0.0184463020414114,
+    "pred_B": 0.013522977940738201
+   },
+   {
+    "date": "2008-02-06",
+    "fault": "hc_fouling",
+    "real_extra": -0.15013342432783733,
+    "pred_A": 0.027374668046832085,
+    "pred_B": 0.0389401838183403
+   },
+   {
+    "date": "2008-02-07",
+    "fault": "hc_reduced_capacity",
+    "real_extra": -0.24155105158889933,
+    "pred_A": 0.012281141243875027,
+    "pred_B": 0.06874518096446991
+   },
+   {
+    "date": "2008-02-08",
+    "fault": "hc_reduced_capacity",
+    "real_extra": -0.3467628945493015,
+    "pred_A": 0.02195676974952221,
+    "pred_B": 0.010155185125768185
+   },
+   {
+    "date": "2008-02-09",
+    "fault": "hc_reduced_capacity",
+    "real_extra": -0.4109088516477235,
+    "pred_A": 1.2767605781555176,
+    "pred_B": 0.014954181388020515
+   },
+   {
+    "date": "2008-02-10",
+    "fault": "cc_valve_stuck",
+    "real_extra": -0.6133752032363134,
+    "pred_A": 2.4325172901153564,
+    "pred_B": 0.027283020317554474
+   },
+   {
+    "date": "2008-02-11",
+    "fault": "cc_valve_stuck",
+    "real_extra": -0.1682918148563544,
+    "pred_A": 0.09986765682697296,
+    "pred_B": 0.025416787713766098
+   },
+   {
+    "date": "2008-02-12",
+    "fault": "oa_damper_stuck",
+    "real_extra": -0.7800703394607292,
+    "pred_A": 0.03834792971611023,
+    "pred_B": 0.019104883074760437
+   },
+   {
+    "date": "2008-02-13",
+    "fault": "oa_damper_leak",
+    "real_extra": -0.06811518555647961,
+    "pred_A": 0.033257536590099335,
+    "pred_B": 0.02840200811624527
+   },
+   {
+    "date": "2008-02-15",
+    "fault": "ea_damper_leak",
+    "real_extra": -0.07230423414300598,
+    "pred_A": 0.02652096375823021,
+    "pred_B": 0.016398651525378227
+   },
+   {
+    "date": "2008-05-06",
+    "fault": "cc_valve_stuck",
+    "real_extra": -0.6314534972094038,
+    "pred_A": -0.06406152248382568,
+    "pred_B": 0.023682015016674995
+   },
+   {
+    "date": "2008-05-07",
+    "fault": "oa_damper_stuck",
+    "real_extra": -0.46033705236256667,
+    "pred_A": 0.43099093437194824,
+    "pred_B": 0.025738706812262535
+   },
+   {
+    "date": "2008-05-08",
+    "fault": "oa_damper_stuck",
+    "real_extra": -0.0701477909240244,
+    "pred_A": 0.44087597727775574,
+    "pred_B": 0.021517891436815262
+   },
+   {
+    "date": "2008-05-11",
+    "fault": "ea_damper_stuck",
+    "real_extra": -0.0859308372534956,
+    "pred_A": 0.030062446370720863,
+    "pred_B": 0.027106542140245438
+   },
+   {
+    "date": "2008-05-12",
+    "fault": "return_fan_failure",
+    "real_extra": -0.02073101360053295,
+    "pred_A": 0.021512852981686592,
+    "pred_B": 0.021017877385020256
+   },
+   {
+    "date": "2008-05-13",
+    "fault": "control_unstable",
+    "real_extra": -0.014566622956061488,
+    "pred_A": 0.08539824187755585,
+    "pred_B": 0.10055272281169891
+   },
+   {
+    "date": "2008-05-14",
+    "fault": "control_unstable",
+    "real_extra": 0.06973257698148716,
+    "pred_A": 0.13381312787532806,
+    "pred_B": 0.0396043136715889
+   },
+   {
+    "date": "2008-05-15",
+    "fault": "cc_valve_stuck",
+    "real_extra": 0.41058684593756023,
+    "pred_A": 2.38476824760437,
+    "pred_B": 0.020223330706357956
+   },
+   {
+    "date": "2008-05-16",
+    "fault": "cc_valve_stuck",
+    "real_extra": 0.19373463143824762,
+    "pred_A": 1.380009412765503,
+    "pred_B": 0.04326605424284935
+   },
+   {
+    "date": "2008-05-17",
+    "fault": "control_unstable",
+    "real_extra": -0.022110050262865215,
+    "pred_A": 0.04274054244160652,
+    "pred_B": 0.05310535803437233
+   },
+   {
+    "date": "2008-05-18",
+    "fault": "return_fan_fixed_speed",
+    "real_extra": -0.05274757729554191,
+    "pred_A": 0.0771375447511673,
+    "pred_B": 0.16680824756622314
+   },
+   {
+    "date": "2008-05-19",
+    "fault": "return_fan_fixed_speed",
+    "real_extra": 0.11868270454317886,
+    "pred_A": 0.05197380855679512,
+    "pred_B": 0.1750730574131012
+   },
+   {
+    "date": "2008-05-22",
+    "fault": "air_filter_blockage",
+    "real_extra": -0.07127421055639364,
+    "pred_A": 0.020171664655208588,
+    "pred_B": 0.03174674138426781
+   },
+   {
+    "date": "2008-05-25",
+    "fault": "air_filter_blockage",
+    "real_extra": -0.028301707695173678,
+    "pred_A": 0.42184844613075256,
+    "pred_B": 0.5313905477523804
+   },
+   {
+    "date": "2008-05-27",
+    "fault": "ea_damper_stuck",
+    "real_extra": -0.07576271499294072,
+    "pred_A": 0.030521666631102562,
+    "pred_B": 0.025280790403485298
+   },
+   {
+    "date": "2008-05-29",
+    "fault": "sensor_bias_T_oa",
+    "real_extra": -0.025197798103172447,
+    "pred_A": 0.1035621166229248,
+    "pred_B": 0.12267287075519562
+   },
+   {
+    "date": "2008-05-30",
+    "fault": "sensor_bias_T_oa",
+    "real_extra": 0.10021664683871753,
+    "pred_A": 0.6155966520309448,
+    "pred_B": 0.3222728371620178
+   },
+   {
+    "date": "2008-06-01",
+    "fault": "control_unstable",
+    "real_extra": 0.02892255810055841,
+    "pred_A": 0.04140399768948555,
+    "pred_B": 0.06939420104026794
+   }
+  ]
+ }
+}

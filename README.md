@@ -38,18 +38,23 @@ The losses are published too.
 | [**PlantDetective**](models/plantdetective/) | What is this power unit, and how flexibly does it run, from its hourly output? | 395 real Texas CAMPD units, 2018-2025 | 8 wins · 9 losses |
 | [**DemandCast**](models/demandcast/) | Tomorrow's hourly demand, wind and solar for a US grid? | 2023-25, 8 US grids, 209,340 demand hours | 14 wins · 5 losses · 2 mixed |
 | [**WakeNet**](models/wakenet/) | How much power is each wind turbine losing to its neighbours' wakes? | 35,592 never-seen snapshots · 2 farms | 1 win · 13 losses · 4 ties |
+| [**LoadCast**](models/loadcast/) | A building's hourly energy per meter for next year | 1,502 real BDG2 meters, 2017 from 2016 | 4 wins · 6 losses |
+| [**BuildingDetective**](models/buildingdetective/) | From meters and weather: floor area, systems, envelope, use *(real skill only for systems)* | 1,428 BDG2 buildings, 7,401 RECS homes, 2,558 CBECS buildings, 24 HUE homes | 5 wins · 9 losses · 4 ties |
+| [**FaultFinder**](models/faultfinder/) | From one day of an air handler's trend log: P(fault) and which fault | 217 real lab and building days (Iowa ERS, FLEXLAB, ORNL, Nesbitt Hall) | 11 wins · 12 losses · 1 tie |
+| [**ThermoPilot**](models/thermopilot/) | Which setpoints keep a building comfortable for the lowest bill? *(graded in simulation)* | 187 simulated twin episodes, real weather and tariffs | 0 wins · 6 losses |
 <!-- collection:end -->
 
 Every model also runs **live in your browser** on the website — the real network, ported to TypeScript and checked
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
 <!-- totals:start (generated) -->
-**0** real labelled examples were used for training. **263** rung decisions are logged, **142** of them rejections.
+**0** real labelled examples were used for training. **316** rung decisions are logged, **157** of them rejections.
 <!-- totals:end -->
 
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself. The three
 vehicle models share one simulator and dataset, [the vehicle platform](docs/vehicle-platform.md); the four power-grid
-models share another, [the grid platform](docs/grid-platform.md).
+models share another, [the grid platform](docs/grid-platform.md); and the four building models share a third,
+[the building platform](docs/building-platform.md).
 
 ## Try it
 
@@ -110,6 +115,8 @@ site/                 the website (Astro + TypeScript), built from models/ and d
 shared/vehicle/       a shared platform: RoadSim (whole-vehicle simulator) + RoadData (real trips, frozen splits)
 shared/grid/          a shared platform: GridSim (power-system simulator) + GridData (real grid data, frozen splits;
                       `mlratchet data grid` fetches it)
+shared/building/      a shared platform: BuildingSim (building-energy simulator) + BuildingData (real meters, surveys,
+                      fault runs, frozen splits; `mlratchet data building` fetches it)
 tests/                core tests, the contract, the vehicle and grid platforms, and every demo against its golden output
 ```
 

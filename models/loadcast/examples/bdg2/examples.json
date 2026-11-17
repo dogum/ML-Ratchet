@@ -1,0 +1,68 @@
+[
+ {
+  "building": "Peacock_lodging_Matthew",
+  "meter": "electricity",
+  "site": "Peacock",
+  "tz": "America/New_York",
+  "lat": 40.349999999999966,
+  "use": "lodging",
+  "area_m2": 8686.4,
+  "year_built": null,
+  "meters_present": [
+   "electricity",
+   "chilledwater",
+   "steam"
+  ],
+  "meter_file": "Peacock_lodging_Matthew_electricity.csv.gz",
+  "weather_file": "weather_Peacock.csv.gz",
+  "baselines_2017": {
+   "towt": 13.814037507737774,
+   "g14_changepoint": 13.39006274221705,
+   "persistence_24h": 9.031686453266662
+  }
+ },
+ {
+  "building": "Bull_education_Reina",
+  "meter": "chilledwater",
+  "site": "Bull",
+  "tz": "America/Chicago",
+  "lat": 30.26719999999989,
+  "use": "education",
+  "area_m2": 9434.8,
+  "year_built": null,
+  "meters_present": [
+   "electricity",
+   "chilledwater",
+   "steam"
+  ],
+  "meter_file": "Bull_education_Reina_chilledwater.csv.gz",
+  "weather_file": "weather_Bull.csv.gz",
+  "baselines_2017": {
+   "towt": 23.474737875547156,
+   "g14_changepoint": 23.3091989440397,
+   "persistence_24h": 18.277078223527973
+  }
+ },
+ {
+  "building": "Cockatoo_education_Minh",
+  "meter": "steam",
+  "site": "Cockatoo",
+  "tz": "America/New_York",
+  "lat": 42.45983685925793,
+  "use": "education",
+  "area_m2": 4697.8,
+  "year_built": null,
+  "meters_present": [
+   "electricity",
+   "chilledwater",
+   "steam"
+  ],
+  "meter_file": "Cockatoo_education_Minh_steam.csv.gz",
+  "weather_file": "weather_Cockatoo.csv.gz",
+  "baselines_2017": {
+   "towt": 18.308894324344585,
+   "g14_changepoint": 18.25388033410611,
+   "persistence_24h": 19.666201359670062
+  }
+ }
+]

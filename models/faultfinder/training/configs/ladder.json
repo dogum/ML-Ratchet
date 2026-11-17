@@ -1,0 +1,34 @@
+{
+ "val_versions": [
+  "v1",
+  "v2",
+  "v3",
+  "v4"
+ ],
+ "rungs": [
+  {
+   "name": "r1_gauss",
+   "what": "BuildingSim bank v1 (20 fault types, generic controls) + Gaussian sensor noise + source channel patterns"
+  },
+  {
+   "name": "r2_realnoise",
+   "what": "+ real-noise/quirk model from dev fault-free days (residual library, offsets, fan-off drift)"
+  },
+  {
+   "name": "r3_calib",
+   "what": "+ dev-calibrated bank v3: BMS logs commands not positions (twin test), operator start/stop jitter and off-blocks, schedule-shift faults, 24x7 units, wider VAV-min/SAT priors"
+  },
+  {
+   "name": "r4_damper",
+   "what": "+ dev calibration v4: installed OA-damper characteristic (logged command vs actual outdoor-air fraction) and larger static sensor disagreement (MA stratification, zone vs return)"
+  },
+  {
+   "name": "r5_bothbanks",
+   "what": "train on bank v1 (generic controls) + bank v3 (calibrated) together, noise v4, 50k days"
+  },
+  {
+   "name": "r6_wide",
+   "what": "wider network (64/128 channels, 179k weights) and 10 epochs, bank v3 + noise v4"
+  }
+ ]
+}

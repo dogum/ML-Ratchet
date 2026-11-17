@@ -14,15 +14,16 @@ const live = models.filter((m) => m.hasInstrument);
 const first = live.find((m) => m.id === 'quakenet') ?? live[0];
 const modelIdeas = getModelIdeas();
 const ideas = modelIdeas.slice(0, 6);
-const words = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
+const words = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty', 'twenty-one', 'twenty-two', 'twenty-three', 'twenty-four'];
 const say = (n: number) => words[n] ?? String(n);
 const Say = (n: number) => { const w = say(n); return w[0].toUpperCase() + w.slice(1); };
 const onPlatform = (p: string) => models.filter((m) => m.platform === p).length;
 const platforms = [
   [onPlatform('vehicle'), 'a shared vehicle simulator'],
   [onPlatform('grid'), 'a shared grid simulator'],
+  [onPlatform('building'), 'a shared building simulator'],
 ].filter(([n]) => n) as [number, string][];
-const platformText = platforms.map(([n, t], k) => `${k ? 'and ' : ''}${say(n)}${k ? '' : ' of them'} on ${t}`).join(' ');
+const platformText = platforms.map(([n, t], k) => `${k === 0 ? '' : k === platforms.length - 1 ? ' and ' : ', '}${say(n)}${k ? '' : ' of them'} on ${t}`).join('');
 const losses = models.filter((m) => m.losses?.length).map((m) => ({ m, text: m.losses![0] }));
 const help = models.flatMap((m) => (m.help_wanted ?? []).map((h) => ({ m, h })));
 const steps = [

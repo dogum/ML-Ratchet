@@ -1,0 +1,77 @@
+{
+ "what": "analytic checks of the 5R1C zone: steady conduction, step response, degree-day limit, ledgers",
+ "steady_state_conduction": {
+  "light": {
+   "expected_network_W": 11094.329209337287,
+   "simulated_W": 11094.3292293373,
+   "rel_error_vs_network": 1.8027238826526597e-09,
+   "naive_UA_dT_W": 11918.870006411074,
+   "rel_diff_vs_naive_UA": -0.06917944206374095,
+   "T_surface_minus_T_air_K": -2.692857667418963,
+   "UA_naive_W_K": 397.29566688036914,
+   "UA_network_W_K": 369.8109736445763,
+   "ledger_closure": 9.011181796658111e-10
+  },
+  "heavy": {
+   "expected_network_W": 11094.329209337287,
+   "simulated_W": 11094.329229337229,
+   "rel_error_vs_network": 1.802717488342071e-09,
+   "naive_UA_dT_W": 11918.870006411074,
+   "rel_diff_vs_naive_UA": -0.0691794420637469,
+   "T_surface_minus_T_air_K": -2.6928576674189273,
+   "UA_naive_W_K": 397.29566688036914,
+   "UA_network_W_K": 369.8109736445763,
+   "ledger_closure": 9.008332933180596e-10
+  }
+ },
+ "rc_step_response": {
+  "1h": {
+   "tau_h": 37.25547750793875,
+   "max_abs_err_K": 0.0034661499793751105,
+   "rms_err_K": 0.001358641634152673,
+   "T_at_tau_sim": 6.5900281217642895,
+   "T_at_tau_closed_form": 6.593307561420729,
+   "ledger_closure": 1.3742588056718246e-08
+  },
+  "15min": {
+   "tau_h": 37.25547750793875,
+   "max_abs_err_K": 0.003262104957303613,
+   "rms_err_K": 0.0012955779594289042,
+   "T_at_tau_sim": 6.5558848724179475,
+   "T_at_tau_closed_form": 6.559076975101251,
+   "ledger_closure": 1.3742509137664978e-08
+  }
+ },
+ "degree_day_limit": {
+  "tiny": {
+   "expected_kWh": 26374.38990132877,
+   "simulated_kWh": 26374.2765936341,
+   "ratio": 0.999995703874285,
+   "UA_network_mean": 347.8365921118502,
+   "classic_degree_hour_kWh": 25994.669926714556,
+   "ratio_to_classic": 1.0146032501274203,
+   "balance_point_C": 17.124922765206783,
+   "C_m_kJ_m2K": 0.01,
+   "ledger_closure": 2.729857714649096e-09
+  },
+  "medium": {
+   "expected_kWh": 26374.38990132877,
+   "simulated_kWh": 25169.524578010012,
+   "ratio": 0.9543168457042468,
+   "UA_network_mean": 347.8365921118502,
+   "classic_degree_hour_kWh": 25994.669926714556,
+   "ratio_to_classic": 0.9682571330572447,
+   "balance_point_C": 17.124922765206783,
+   "C_m_kJ_m2K": 165.0,
+   "ledger_closure": 2.77472633402815e-09
+  }
+ },
+ "notes": [
+  "steady state: with the air node controlled, the 5R1C heat loss is UA_network dT, where UA_network = H_ve + 1/(1/H_tr,is + 1/(H_tr,w + H_op)); it is ~7 % below the naive sum of U A because the ISO interior coupling (3.45 W/m2K x 4.5 A_f) keeps surfaces colder than the air",
+  "step response compares the zone air temperature with the closed form at the step mid-point (Crank-Nicolson averages the mass temperature over the step)",
+  "degree-day: expected = sum of hourly steady-state network heating needs (ISO gain split: half the gains land on surface/mass nodes and part leaks out through H_tr,em, so the classic UA x degree-hours below T_set - G/UA is ~1.5 % lower);",
+  "degree-day: with 1 kJ/m2K the zone has no memory and must match; with medium mass (165 kJ/m2K) heating drops because stored gains carry over into colder hours"
+ ],
+ "generated": "2026-11-16 23:32",
+ "python": "3.13.18"
+}

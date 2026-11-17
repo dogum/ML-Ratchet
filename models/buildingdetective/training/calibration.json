@@ -1,0 +1,1219 @@
+{
+ "intensity": {
+  "office": 0.9905691832166055,
+  "warehouse": 0.7788347772805057,
+  "retail": 0.7292949713349939,
+  "residential_multi": 0.615934632888116,
+  "other": 0.7429057869350414,
+  "assembly": 0.6620784525257961,
+  "residential_single": 0.6453917238046647,
+  "food": 0.5443876007122788,
+  "education": 0.549283049096764,
+  "healthcare": 0.5593522006737923,
+  "lab": 0.41983690470803603,
+  "lodging": 1.549059117990416
+ },
+ "campus": {
+  "eff_heat_median": 0.18481490847795473,
+  "eff_chw_median": 0.3293591393583672,
+  "eff_sd": 0.8,
+  "p_campus": 0.3,
+  "n_heat": 21,
+  "n_chw": 24,
+  "note": "eff = sim(eff=1)/real on BDG2 dev twins, 2017; eff_sd = 0.8 x log-sd of all district ratios (part of the spread is metadata error, not plant)"
+ },
+ "intensity_history": [
+  {
+   "iter": 0,
+   "factors": {
+    "office": 1.0989010989010988,
+    "warehouse": 1.0204081632653061,
+    "retail": 0.9009009009009008,
+    "residential_multi": 0.8928571428571428,
+    "other": 0.8547008547008548,
+    "assembly": 0.7936507936507936,
+    "residential_single": 0.7142857142857143,
+    "food": 0.6535947712418301,
+    "education": 0.5524861878453039,
+    "healthcare": 0.5235602094240838,
+    "lab": 0.5,
+    "lodging": 1.5151515151515151
+   },
+   "sim_median": {
+    "office": 183.0856244123096,
+    "education": 130.02578769023143,
+    "lodging": 255.51145290653656,
+    "retail": 235.00696067532675,
+    "healthcare": 192.54654914039065,
+    "assembly": 139.47800981591155,
+    "warehouse": 106.78796282620115,
+    "residential_single": 150.40239771990395,
+    "residential_multi": 168.34137080090375,
+    "food": 799.7373584361314,
+    "lab": 315.1216498270821,
+    "other": 140.82713988365686
+   },
+   "target": {
+    "assembly": 129.37995652324184,
+    "education": 139.83452674507686,
+    "food": 715.7794192202967,
+    "healthcare": 208.12728949979925,
+    "lab": 261.8031411276498,
+    "lodging": 284.7032777398888,
+    "office": 169.47362000263462,
+    "other": 131.09434959770005,
+    "retail": 200.51767701612343,
+    "warehouse": 79.82193047719429,
+    "residential_multi": 122.77210958433247,
+    "residential_single": 136.39509626347495
+   },
+   "ratio": {
+    "office": 1.080319311108498,
+    "education": 0.9298546697788944,
+    "lodging": 0.8974657929297796,
+    "retail": 1.1720012129226396,
+    "healthcare": 0.925138407381106,
+    "assembly": 1.0780495956563079,
+    "warehouse": 1.3378273638309368,
+    "residential_single": 1.1026965179845691,
+    "residential_multi": 1.3711694893152393,
+    "food": 1.1172958274034905,
+    "lab": 1.203658781440805,
+    "other": 1.0742426375799157
+   },
+   "wall_s": 81.16098356246948
+  },
+  {
+   "iter": 1,
+   "factors": {
+    "office": 1.0330394248217907,
+    "warehouse": 0.8084513014750195,
+    "retail": 0.7934774195604329,
+    "residential_multi": 0.6935999682220239,
+    "other": 0.8071090732739539,
+    "assembly": 0.7473404033120585,
+    "residential_single": 0.6605522280315109,
+    "food": 0.5981003102371419,
+    "education": 0.5855842184906781,
+    "healthcare": 0.5571873703512126,
+    "lab": 0.43108934962852347,
+    "lodging": 1.652120579455502
+   },
+   "sim_median": {
+    "office": 160.01106562687852,
+    "education": 149.9633569041677,
+    "lodging": 296.84390635150976,
+    "retail": 259.98928113580735,
+    "healthcare": 221.1604323403932,
+    "assembly": 134.50880702982369,
+    "warehouse": 82.39409791420184,
+    "residential_single": 115.19134196991607,
+    "residential_multi": 145.5355357617258,
+    "food": 823.9077858908706,
+    "lab": 268.6091844463413,
+    "other": 133.28493701885722
+   },
+   "target": {
+    "assembly": 129.37995652324184,
+    "education": 139.83452674507686,
+    "food": 715.7794192202967,
+    "healthcare": 208.12728949979925,
+    "lab": 261.8031411276498,
+    "lodging": 284.7032777398888,
+    "office": 169.47362000263462,
+    "other": 131.09434959770005,
+    "retail": 200.51767701612343,
+    "warehouse": 79.82193047719429,
+    "residential_multi": 122.77210958433247,
+    "residential_single": 136.39509626347495
+   },
+   "ratio": {
+    "office": 0.9441650306660766,
+    "education": 1.0724344008225954,
+    "lodging": 1.04264309391869,
+    "retail": 1.296590330611609,
+    "healthcare": 1.0626210184734401,
+    "assembly": 1.0396417702123784,
+    "warehouse": 1.0322238189634168,
+    "residential_single": 0.8445416670068584,
+    "residential_multi": 1.1854120309120948,
+    "food": 1.1510638106755833,
+    "lab": 1.0259967977823958,
+    "other": 1.0167100064028665
+   },
+   "wall_s": 153.94471955299377
+  },
+  {
+   "iter": 2,
+   "factors": {
+    "office": 1.0816296086250048,
+    "warehouse": 0.7881969743861376,
+    "retail": 0.644603040218628,
+    "residential_multi": 0.6053598314762534,
+    "other": 0.7964794063646607,
+    "assembly": 0.7244551198870017,
+    "residential_single": 0.756154074803412,
+    "food": 0.534434526829601,
+    "education": 0.5537232697226809,
+    "healthcare": 0.5307604360985182,
+    "lab": 0.42232859653220023,
+    "lodging": 1.5978396880144645
+   },
+   "sim_median": {
+    "office": 209.89480417523072,
+    "education": 151.58058440535217,
+    "lodging": 327.3903877056314,
+    "retail": 156.75309014720338,
+    "healthcare": 187.3071262543823,
+    "assembly": 170.91319036048898,
+    "warehouse": 79.55634466488178,
+    "residential_single": 194.37522965766294,
+    "residential_multi": 121.18253009506174,
+    "food": 720.7158281653759,
+    "lab": 260.7782769496622,
+    "other": 160.8437479762198
+   },
+   "target": {
+    "assembly": 129.37995652324184,
+    "education": 139.83452674507686,
+    "food": 715.7794192202967,
+    "healthcare": 208.12728949979925,
+    "lab": 261.8031411276498,
+    "lodging": 284.7032777398888,
+    "office": 169.47362000263462,
+    "other": 131.09434959770005,
+    "retail": 200.51767701612343,
+    "warehouse": 79.82193047719429,
+    "residential_multi": 122.77210958433247,
+    "residential_single": 136.39509626347495
+   },
+   "ratio": {
+    "office": 1.2385101833073944,
+    "education": 1.0839996954521023,
+    "lodging": 1.1499354356037392,
+    "retail": 0.7817420014026943,
+    "healthcare": 0.8999642800545047,
+    "assembly": 1.3210175281654706,
+    "warehouse": 0.9966727713709156,
+    "residential_single": 1.425089574204248,
+    "residential_multi": 0.9870526009966551,
+    "food": 1.0068965505468939,
+    "lab": 0.9960853633246215,
+    "other": 1.2269312023730554
+   },
+   "wall_s": 204.6909544467926
+  }
+ ],
+ "intensity_note": "factor = geometric mean over 3 iterations of f_it * target/sim_median_it (24 buildings per use per iteration, TMYx weather); targets = weighted median site EUI of CBECS/RECS prior+dev",
+ "campus_twins": {
+  "per_meter": {
+   "chilledwater": {
+    "n": 24,
+    "median": 0.3293591393583672,
+    "p25": 0.15537614443222197,
+    "p75": 0.48599498410305575,
+    "log_sd": 0.8669555346956589
+   },
+   "electricity": {
+    "n": 50,
+    "median": 0.7706754535114472,
+    "p25": 0.397843097531446,
+    "p75": 1.6615030247785976,
+    "log_sd": 0.8890150126983893
+   },
+   "gas": {
+    "n": 2,
+    "median": 0.042210450191188034,
+    "p25": 0.042038779933293684,
+    "p75": 0.04238212044908238,
+    "log_sd": 0.008134196309025787
+   },
+   "hotwater": {
+    "n": 8,
+    "median": 0.14672808180101582,
+    "p25": 0.034281611740904105,
+    "p75": 0.30023899400816284,
+    "log_sd": 2.1119894718374908
+   },
+   "steam": {
+    "n": 13,
+    "median": 0.2300377475628997,
+    "p25": 0.1372406859824828,
+    "p75": 0.4226896782087617,
+    "log_sd": 0.9600557090827849
+   }
+  },
+  "rows": [
+   {
+    "building": "Panther_lodging_Alita",
+    "use": "lodging",
+    "meter": "electricity",
+    "system": "ptac",
+    "meters": "electricity,gas,water",
+    "real_kWh": 654886.7916870117,
+    "sim_kWh": 1155358.3782990768,
+    "sim_over_real": 1.7642108421866816
+   },
+   {
+    "building": "Panther_lodging_Alita",
+    "use": "lodging",
+    "meter": "gas",
+    "system": "ptac",
+    "meters": "electricity,gas,water",
+    "real_kWh": 2935716.38671875,
+    "sim_kWh": 122909.95993862097,
+    "sim_over_real": 0.04186710967539934
+   },
+   {
+    "building": "Panther_lodging_Edison",
+    "use": "lodging",
+    "meter": "electricity",
+    "system": "ptac",
+    "meters": "electricity,gas,water",
+    "real_kWh": 894568.2165527344,
+    "sim_kWh": 1257198.9604608496,
+    "sim_over_real": 1.4053695818811134
+   },
+   {
+    "building": "Panther_lodging_Edison",
+    "use": "lodging",
+    "meter": "gas",
+    "system": "ptac",
+    "meters": "electricity,gas,water",
+    "real_kWh": 3141663.270263672,
+    "sim_kWh": 133689.68127459634,
+    "sim_over_real": 0.04255379070697672
+   },
+   {
+    "building": "Robin_lodging_Renea",
+    "use": "lodging",
+    "meter": "electricity",
+    "system": "ptac",
+    "meters": "electricity",
+    "real_kWh": 791294.8928833008,
+    "sim_kWh": 1961708.5084501624,
+    "sim_over_real": 2.4791118028098693
+   },
+   {
+    "building": "Robin_lodging_Elmer",
+    "use": "lodging",
+    "meter": "electricity",
+    "system": "ptac",
+    "meters": "electricity",
+    "real_kWh": 832820.3485107422,
+    "sim_kWh": 1964947.4769229265,
+    "sim_over_real": 2.3593893694320336
+   },
+   {
+    "building": "Fox_education_Kim",
+    "use": "education",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 496115.8351135254,
+    "sim_kWh": 285717.5424635651,
+    "sim_over_real": 0.575908935456948
+   },
+   {
+    "building": "Fox_education_Kim",
+    "use": "education",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 2478731.9311523438,
+    "sim_kWh": 899307.7581249654,
+    "sim_over_real": 0.3628096071312092
+   },
+   {
+    "building": "Fox_education_Kim",
+    "use": "education",
+    "meter": "hotwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 2240362.781982422,
+    "sim_kWh": 45669.469010380584,
+    "sim_over_real": 0.02038485435379765
+   },
+   {
+    "building": "Fox_education_Janina",
+    "use": "education",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity",
+    "real_kWh": 1089648.7756347656,
+    "sim_kWh": 408466.6682823696,
+    "sim_over_real": 0.3748608518780933
+   },
+   {
+    "building": "Fox_education_Janina",
+    "use": "education",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity",
+    "real_kWh": 430802.70080566406,
+    "sim_kWh": 1199910.5813349981,
+    "sim_over_real": 2.7852902943528206
+   },
+   {
+    "building": "Fox_lodging_Angla",
+    "use": "lodging",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 1002599.6173095703,
+    "sim_kWh": 2104708.596751661,
+    "sim_over_real": 2.099251346613865
+   },
+   {
+    "building": "Fox_lodging_Angla",
+    "use": "lodging",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 11497497.861328125,
+    "sim_kWh": 4646703.0712146545,
+    "sim_over_real": 0.40414907028109626
+   },
+   {
+    "building": "Fox_assembly_Gary",
+    "use": "assembly",
+    "meter": "electricity",
+    "system": "vav_chiller_boiler",
+    "meters": "electricity,hotwater",
+    "real_kWh": 824400.998840332,
+    "sim_kWh": 312479.21378678613,
+    "sim_over_real": 0.37903788838968444
+   },
+   {
+    "building": "Fox_office_Bernard",
+    "use": "office",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 1125949.5227050781,
+    "sim_kWh": 505631.82629485347,
+    "sim_over_real": 0.44907148686388715
+   },
+   {
+    "building": "Fox_office_Bernard",
+    "use": "office",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 4053294.345703125,
+    "sim_kWh": 769781.000156839,
+    "sim_over_real": 0.18991490242323003
+   },
+   {
+    "building": "Fox_office_Bernard",
+    "use": "office",
+    "meter": "hotwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 8850333.757324219,
+    "sim_kWh": 14036.867605414189,
+    "sim_over_real": 0.0015860269217302433
+   },
+   {
+    "building": "Fox_office_Gaylord",
+    "use": "office",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 1427462.958984375,
+    "sim_kWh": 2790108.571895097,
+    "sim_over_real": 1.9545926248623853
+   },
+   {
+    "building": "Fox_assembly_Sheldon",
+    "use": "assembly",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 916979.4927978516,
+    "sim_kWh": 760911.6876432721,
+    "sim_over_real": 0.8298022950563577
+   },
+   {
+    "building": "Fox_lodging_Morris",
+    "use": "lodging",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 204633.80584716797,
+    "sim_kWh": 351320.3247831732,
+    "sim_over_real": 1.716824467632484
+   },
+   {
+    "building": "Fox_lodging_Morris",
+    "use": "lodging",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 2217042.035522461,
+    "sim_kWh": 828916.7880696523,
+    "sim_over_real": 0.3738841099033616
+   },
+   {
+    "building": "Fox_lodging_Morris",
+    "use": "lodging",
+    "meter": "hotwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 5882558.679199219,
+    "sim_kWh": 228913.08961014295,
+    "sim_over_real": 0.038913864203272926
+   },
+   {
+    "building": "Rat_public_Sean",
+    "use": "other",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 199205.43891906738,
+    "sim_kWh": 655374.1667427175,
+    "sim_over_real": 3.2899411296143426
+   },
+   {
+    "building": "Rat_education_Marcos",
+    "use": "education",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 2787609.08203125,
+    "sim_kWh": 634068.4174104793,
+    "sim_over_real": 0.22745958947315956
+   },
+   {
+    "building": "Rat_office_Lora",
+    "use": "office",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 3521333.133544922,
+    "sim_kWh": 3164884.7087079887,
+    "sim_over_real": 0.8987745801607538
+   },
+   {
+    "building": "Rat_public_Joann",
+    "use": "other",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 151305.17051696777,
+    "sim_kWh": 60497.48522069319,
+    "sim_over_real": 0.39983752712475107
+   },
+   {
+    "building": "Rat_education_Davis",
+    "use": "education",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 645470.3530883789,
+    "sim_kWh": 612907.7487011518,
+    "sim_over_real": 0.9495521301150007
+   },
+   {
+    "building": "Rat_assembly_Erwin",
+    "use": "assembly",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 148864.44465637207,
+    "sim_kWh": 32148.60024000081,
+    "sim_over_real": 0.21595889007754884
+   },
+   {
+    "building": "Rat_assembly_Horace",
+    "use": "assembly",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 211853.24363708496,
+    "sim_kWh": 57609.06371576249,
+    "sim_over_real": 0.2719291086920984
+   },
+   {
+    "building": "Rat_office_Avis",
+    "use": "office",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 7666481.564941406,
+    "sim_kWh": 6994953.155081131,
+    "sim_over_real": 0.912407223030294
+   },
+   {
+    "building": "Bear_education_Darrell",
+    "use": "education",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 322485.15243530273,
+    "sim_kWh": 306743.7187488867,
+    "sim_over_real": 0.9511871056154312
+   },
+   {
+    "building": "Bear_utility_Sidney",
+    "use": "other",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 454119.6711730957,
+    "sim_kWh": 156705.70187782604,
+    "sim_over_real": 0.3450757847001411
+   },
+   {
+    "building": "Bear_education_Millie",
+    "use": "education",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 29184.940881729126,
+    "sim_kWh": 49840.79737381433,
+    "sim_over_real": 1.7077573525261633
+   },
+   {
+    "building": "Bear_parking_Bruce",
+    "use": "other",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 359988.3009338379,
+    "sim_kWh": 1880919.0144166173,
+    "sim_over_real": 5.224944837199892
+   },
+   {
+    "building": "Peacock_office_Burl",
+    "use": "office",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 499955.3860473633,
+    "sim_kWh": 276521.6760364369,
+    "sim_over_real": 0.5530927033762182
+   },
+   {
+    "building": "Peacock_assembly_Dena",
+    "use": "assembly",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 2082783.7005615234,
+    "sim_kWh": 639502.5098837023,
+    "sim_over_real": 0.3070422097653688
+   },
+   {
+    "building": "Peacock_lodging_Lou",
+    "use": "lodging",
+    "meter": "electricity",
+    "system": "ptac",
+    "meters": "electricity",
+    "real_kWh": 996367.326965332,
+    "sim_kWh": 2504875.5605998575,
+    "sim_over_real": 2.5140081301431647
+   },
+   {
+    "building": "Bull_education_Sebastian",
+    "use": "education",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 336701.0046386719,
+    "sim_kWh": 228401.77301270753,
+    "sim_over_real": 0.6783519201489023
+   },
+   {
+    "building": "Bull_education_Sebastian",
+    "use": "education",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 4124915.7934570312,
+    "sim_kWh": 574796.1868295083,
+    "sim_over_real": 0.1393473747370198
+   },
+   {
+    "building": "Bull_education_Sebastian",
+    "use": "education",
+    "meter": "steam",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 96890.96706390381,
+    "sim_kWh": 40954.811689577225,
+    "sim_over_real": 0.4226896782087617
+   },
+   {
+    "building": "Bull_education_Pamela",
+    "use": "education",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 1585587.2680664062,
+    "sim_kWh": 907134.4273175999,
+    "sim_over_real": 0.5721125828815674
+   },
+   {
+    "building": "Bull_education_Pamela",
+    "use": "education",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 13207801.245117188,
+    "sim_kWh": 2057457.7342538342,
+    "sim_over_real": 0.15577594605418968
+   },
+   {
+    "building": "Bull_education_Pamela",
+    "use": "education",
+    "meter": "steam",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 321957.6690673828,
+    "sim_kWh": 132056.65019377467,
+    "sim_over_real": 0.4101677421640682
+   },
+   {
+    "building": "Bull_assembly_Beau",
+    "use": "assembly",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 4484701.087646484,
+    "sim_kWh": 2948595.887028418,
+    "sim_over_real": 0.6574787994568005
+   },
+   {
+    "building": "Bull_assembly_Beau",
+    "use": "assembly",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 27018500.5078125,
+    "sim_kWh": 5741850.169865466,
+    "sim_over_real": 0.21251550093259944
+   },
+   {
+    "building": "Bull_assembly_Beau",
+    "use": "assembly",
+    "meter": "steam",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 654700.2593994141,
+    "sim_kWh": 263228.42676887696,
+    "sim_over_real": 0.4020594508551871
+   },
+   {
+    "building": "Bull_assembly_Lance",
+    "use": "assembly",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 3905186.7736816406,
+    "sim_kWh": 1551055.3957907332,
+    "sim_over_real": 0.39717828766701097
+   },
+   {
+    "building": "Bull_assembly_Lance",
+    "use": "assembly",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 32075533.447265625,
+    "sim_kWh": 3105423.620754635,
+    "sim_over_real": 0.09681596179406227
+   },
+   {
+    "building": "Bull_assembly_Lance",
+    "use": "assembly",
+    "meter": "steam",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 881459.1604614258,
+    "sim_kWh": 147731.9665665679,
+    "sim_over_real": 0.16759933209978015
+   },
+   {
+    "building": "Bull_office_Chantel",
+    "use": "office",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 1383217.8479003906,
+    "sim_kWh": 1139053.0832322056,
+    "sim_over_real": 0.8234806143957679
+   },
+   {
+    "building": "Bull_office_Chantel",
+    "use": "office",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 10456896.049804688,
+    "sim_kWh": 1591017.7439532375,
+    "sim_over_real": 0.15215009658463177
+   },
+   {
+    "building": "Bull_office_Chantel",
+    "use": "office",
+    "meter": "steam",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 269311.3201904297,
+    "sim_kWh": 39986.673131894764,
+    "sim_over_real": 0.14847750589771064
+   },
+   {
+    "building": "Bull_office_Sally",
+    "use": "office",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity",
+    "real_kWh": 756558.8516235352,
+    "sim_kWh": 910848.6479444237,
+    "sim_over_real": 1.2039362780433946
+   },
+   {
+    "building": "Bull_office_Sally",
+    "use": "office",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity",
+    "real_kWh": 4385239.211425781,
+    "sim_kWh": 1297630.3096377589,
+    "sim_over_real": 0.2959086715855252
+   },
+   {
+    "building": "Hog_office_Nancie",
+    "use": "office",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity",
+    "real_kWh": 562987.7270507812,
+    "sim_kWh": 974470.696841841,
+    "sim_over_real": 1.7308915452679916
+   },
+   {
+    "building": "Hog_office_Nancie",
+    "use": "office",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity",
+    "real_kWh": 1076044.6838378906,
+    "sim_kWh": 465239.9527783322,
+    "sim_over_real": 0.4323611832911783
+   },
+   {
+    "building": "Hog_industrial_Mariah",
+    "use": "other",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 151291.46965026855,
+    "sim_kWh": 89231.34241128566,
+    "sim_over_real": 0.589797578261064
+   },
+   {
+    "building": "Hog_office_Randi",
+    "use": "office",
+    "meter": "electricity",
+    "system": "vav_chiller_boiler",
+    "meters": "electricity,steam",
+    "real_kWh": 769313.088684082,
+    "sim_kWh": 1217733.0783134366,
+    "sim_over_real": 1.5828836090601053
+   },
+   {
+    "building": "Hog_office_Randi",
+    "use": "office",
+    "meter": "steam",
+    "system": "vav_chiller_boiler",
+    "meters": "electricity,steam",
+    "real_kWh": 709426.5335083008,
+    "sim_kWh": 348311.37309314345,
+    "sim_over_real": 0.4909759596538518
+   },
+   {
+    "building": "Hog_industrial_Jay",
+    "use": "other",
+    "meter": "electricity",
+    "system": "vav_chiller_boiler",
+    "meters": "electricity,steam",
+    "real_kWh": 2023566.0150146484,
+    "sim_kWh": 444756.4501360566,
+    "sim_over_real": 0.2197884560404801
+   },
+   {
+    "building": "Hog_industrial_Jay",
+    "use": "other",
+    "meter": "steam",
+    "system": "vav_chiller_boiler",
+    "meters": "electricity,steam",
+    "real_kWh": 2639481.727294922,
+    "sim_kWh": 321158.3450467756,
+    "sim_over_real": 0.12167477490966204
+   },
+   {
+    "building": "Hog_assembly_Jasmine",
+    "use": "assembly",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity",
+    "real_kWh": 747801.7922973633,
+    "sim_kWh": 342415.8931602081,
+    "sim_over_real": 0.45789659330482924
+   },
+   {
+    "building": "Hog_assembly_Jasmine",
+    "use": "assembly",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity",
+    "real_kWh": 182449.26223754883,
+    "sim_kWh": 238197.81799264837,
+    "sim_over_real": 1.3055564877128139
+   },
+   {
+    "building": "Eagle_education_Paul",
+    "use": "education",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 253292.23342895508,
+    "sim_kWh": 181830.9697318224,
+    "sim_over_real": 0.7178702926271264
+   },
+   {
+    "building": "Eagle_education_Paul",
+    "use": "education",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 485186.05224609375,
+    "sim_kWh": 184447.2505513734,
+    "sim_over_real": 0.3801577759655361
+   },
+   {
+    "building": "Eagle_education_Paul",
+    "use": "education",
+    "meter": "hotwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 362257.69912719727,
+    "sim_kWh": 171507.37568008344,
+    "sim_over_real": 0.47344025011284335
+   },
+   {
+    "building": "Eagle_public_Minnie",
+    "use": "other",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 1181751.4819335938,
+    "sim_kWh": 419561.53201366175,
+    "sim_over_real": 0.355033641529411
+   },
+   {
+    "building": "Eagle_public_Minnie",
+    "use": "other",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 1912257.9016113281,
+    "sim_kWh": 294825.6884803652,
+    "sim_over_real": 0.1541767395663189
+   },
+   {
+    "building": "Eagle_public_Minnie",
+    "use": "other",
+    "meter": "hotwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 1001016.3317871094,
+    "sim_kWh": 185002.74174417258,
+    "sim_over_real": 0.18481490847795473
+   },
+   {
+    "building": "Eagle_office_Isidro",
+    "use": "office",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 215393.0630493164,
+    "sim_kWh": 262883.3947467476,
+    "sim_over_real": 1.2204821781403323
+   },
+   {
+    "building": "Eagle_office_Isidro",
+    "use": "office",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 260556.34941101074,
+    "sim_kWh": 188923.90484286452,
+    "sim_over_real": 0.7250788755289526
+   },
+   {
+    "building": "Eagle_office_Isidro",
+    "use": "office",
+    "meter": "hotwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 629039.2712402344,
+    "sim_kWh": 68339.6159498737,
+    "sim_over_real": 0.10864125512407688
+   },
+   {
+    "building": "Eagle_public_Ola",
+    "use": "other",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 1038390.4916381836,
+    "sim_kWh": 544033.3887691739,
+    "sim_over_real": 0.5239198482171162
+   },
+   {
+    "building": "Eagle_public_Ola",
+    "use": "other",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 1516061.8524169922,
+    "sim_kWh": 373101.1394719349,
+    "sim_over_real": 0.24609889027754098
+   },
+   {
+    "building": "Eagle_public_Ola",
+    "use": "other",
+    "meter": "hotwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 935610.1986694336,
+    "sim_kWh": 226890.37762098957,
+    "sim_over_real": 0.2425052419732693
+   },
+   {
+    "building": "Eagle_education_Peter",
+    "use": "education",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 13342909.702148438,
+    "sim_kWh": 1748142.7380057168,
+    "sim_over_real": 0.13101660560021897
+   },
+   {
+    "building": "Eagle_education_Peter",
+    "use": "education",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 20365855.810546875,
+    "sim_kWh": 1534600.3598642051,
+    "sim_over_real": 0.07535162647422265
+   },
+   {
+    "building": "Eagle_education_Peter",
+    "use": "education",
+    "meter": "steam",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 26237964.404296875,
+    "sim_kWh": 1181560.2797490954,
+    "sim_over_real": 0.04503246751701502
+   },
+   {
+    "building": "Eagle_health_Margo",
+    "use": "healthcare",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 515525.418548584,
+    "sim_kWh": 341176.3205004526,
+    "sim_over_real": 0.6618031007297452
+   },
+   {
+    "building": "Eagle_health_Margo",
+    "use": "healthcare",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 884981.686706543,
+    "sim_kWh": 357905.38241516217,
+    "sim_over_real": 0.40442123016930004
+   },
+   {
+    "building": "Eagle_health_Margo",
+    "use": "healthcare",
+    "meter": "hotwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,hotwater",
+    "real_kWh": 91415.13164520264,
+    "sim_kWh": 271828.6317975425,
+    "sim_over_real": 2.9735627669667943
+   },
+   {
+    "building": "Eagle_health_Gregoria",
+    "use": "healthcare",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 8620053.8671875,
+    "sim_kWh": 2513079.0306447335,
+    "sim_over_real": 0.2915386689415998
+   },
+   {
+    "building": "Eagle_health_Gregoria",
+    "use": "healthcare",
+    "meter": "steam",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 7665617.541503906,
+    "sim_kWh": 1763381.3929262115,
+    "sim_over_real": 0.2300377475628997
+   },
+   {
+    "building": "Eagle_lodging_Trina",
+    "use": "lodging",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 558020.3274536133,
+    "sim_kWh": 538317.495968544,
+    "sim_over_real": 0.9646915524117585
+   },
+   {
+    "building": "Eagle_lodging_Trina",
+    "use": "lodging",
+    "meter": "steam",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 725440.2401733398,
+    "sim_kWh": 806683.9285435051,
+    "sim_over_real": 1.1119922550074595
+   },
+   {
+    "building": "Eagle_assembly_Herbert",
+    "use": "assembly",
+    "meter": "electricity",
+    "system": "vav_chiller_boiler",
+    "meters": "electricity,steam",
+    "real_kWh": 594982.4588012695,
+    "sim_kWh": 653614.4099305335,
+    "sim_over_real": 1.0985439995111648
+   },
+   {
+    "building": "Eagle_assembly_Herbert",
+    "use": "assembly",
+    "meter": "steam",
+    "system": "vav_chiller_boiler",
+    "meters": "electricity,steam",
+    "real_kWh": 2051149.9365234375,
+    "sim_kWh": 281501.2243414026,
+    "sim_over_real": 0.1372406859824828
+   },
+   {
+    "building": "Cockatoo_education_Eunice",
+    "use": "education",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 3466122.5170898438,
+    "sim_kWh": 516005.78714553645,
+    "sim_over_real": 0.148871190963779
+   },
+   {
+    "building": "Cockatoo_education_Eunice",
+    "use": "education",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 2861892.374267578,
+    "sim_kWh": 270177.031224774,
+    "sim_over_real": 0.09440502852379916
+   },
+   {
+    "building": "Cockatoo_education_Eunice",
+    "use": "education",
+    "meter": "steam",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 8964246.372070312,
+    "sim_kWh": 517024.6932524979,
+    "sim_over_real": 0.05767631452693885
+   },
+   {
+    "building": "Cockatoo_assembly_Meredith",
+    "use": "assembly",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 656710.3436279297,
+    "sim_kWh": 573777.725676917,
+    "sim_over_real": 0.873715072777962
+   },
+   {
+    "building": "Cockatoo_assembly_Meredith",
+    "use": "assembly",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 511533.0194091797,
+    "sim_kWh": 330908.861851023,
+    "sim_over_real": 0.6468963865386882
+   },
+   {
+    "building": "Cockatoo_assembly_Meredith",
+    "use": "assembly",
+    "meter": "steam",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 847500.1922607422,
+    "sim_kWh": 920494.0380001185,
+    "sim_over_real": 1.0861284120121106
+   },
+   {
+    "building": "Cockatoo_lodging_Ana",
+    "use": "lodging",
+    "meter": "electricity",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 116390.69217681885,
+    "sim_kWh": 196433.67651252996,
+    "sim_over_real": 1.6877094966847617
+   },
+   {
+    "building": "Cockatoo_lodging_Ana",
+    "use": "lodging",
+    "meter": "chilledwater",
+    "system": "district_steam_chw",
+    "meters": "chilledwater,electricity,steam",
+    "real_kWh": 153458.3285522461,
+    "sim_kWh": 126733.44424124331,
+    "sim_over_real": 0.8258492415294092
+   },
+   {
+    "building": "Cockatoo_lodging_Johnathan",
+    "use": "lodging",
+    "meter": "electricity",
+    "system": "vav_chiller_boiler",
+    "meters": "electricity,steam",
+    "real_kWh": 79728.78524780273,
+    "sim_kWh": 469236.46766639483,
+    "sim_over_real": 5.8854084658128745
+   },
+   {
+    "building": "Cockatoo_education_Collin",
+    "use": "education",
+    "meter": "electricity",
+    "system": "packaged_rtu",
+    "meters": "electricity",
+    "real_kWh": 1922281.4556884766,
+    "sim_kWh": 337434.7918104445,
+    "sim_over_real": 0.17553870210415687
+   }
+  ]
+ }
+}

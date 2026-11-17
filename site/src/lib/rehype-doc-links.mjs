@@ -12,6 +12,7 @@ export const DOC_ROUTES = {
   'roadmap.md': 'roadmap',
   'vehicle-platform.md': 'vehicle',
   'grid-platform.md': 'grid',
+  'building-platform.md': 'building',
 };
 
 const REPO = 'https://github.com/dogum/ML-Ratchet/blob/main/';

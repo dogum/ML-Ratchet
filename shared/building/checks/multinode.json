@@ -1,0 +1,138 @@
+{
+ "what": "multi-node zone checks: steady state, ISO 13786 periodic wall, BESTEST",
+ "steady_state": {
+  "expected_W": 11918.870006411074,
+  "simulated_W": 11918.870026410821,
+  "rel_error": 1.6779901655503157e-09,
+  "n_nodes": 23,
+  "ledger_closure": 8.377809091338613e-10
+ },
+ "periodic_wall": {
+  "frequency_domain": {
+   "U": 2.881917878092323,
+   "iso13786_abs": 1.4907379745337095,
+   "iso13786_lag_h": 5.987049566095067,
+   "ladder_abs": 1.4662490941830526,
+   "ladder_lag_h": 5.977577217419299,
+   "abs_rel_err": 0.016427353947508317,
+   "lag_err_h": -0.009472348675767961
+  },
+  "time_domain": {
+   "1h": {
+    "mean_W": 7487.4455672592,
+    "expected_mean_W": 7487.44228214549,
+    "amp_per_m2K": 1.2968241837471912,
+    "expected_amp_per_m2K": 1.4907379745337095,
+    "lag_h": 5.549620119687147,
+    "expected_lag_h": 5.987049566095067,
+    "ledger_closure": 1.2975418985327398e-09
+   },
+   "15min": {
+    "mean_W": 7487.445567261058,
+    "expected_mean_W": 7487.44228214549,
+    "amp_per_m2K": 1.4198743253249708,
+    "expected_amp_per_m2K": 1.4907379745337095,
+    "lag_h": 5.874267974499224,
+    "expected_lag_h": 5.987049566095067,
+    "ledger_closure": 1.2981457756337858e-09
+   }
+  },
+  "note": "lag of the time-domain fit includes half a step of the step-mean convention"
+ },
+ "bestest_multinode": {
+  "600": {
+   "heat": {
+    "sim": 5.341,
+    "lo": 4.296,
+    "hi": 5.709,
+    "inside": true
+   },
+   "cool": {
+    "sim": 7.603,
+    "lo": 6.137,
+    "hi": 7.964,
+    "inside": true
+   },
+   "peak_heat": {
+    "sim": 4.63,
+    "lo": 3.437,
+    "hi": 4.354,
+    "inside": false
+   },
+   "peak_cool": {
+    "sim": 7.347,
+    "lo": 5.965,
+    "hi": 6.827,
+    "inside": false
+   }
+  },
+  "900": {
+   "heat": {
+    "sim": 1.88,
+    "lo": 1.17,
+    "hi": 2.041,
+    "inside": true
+   },
+   "cool": {
+    "sim": 3.328,
+    "lo": 2.132,
+    "hi": 3.415,
+    "inside": true
+   },
+   "peak_heat": {
+    "sim": 4.241,
+    "lo": 2.85,
+    "hi": 3.797,
+    "inside": false
+   },
+   "peak_cool": {
+    "sim": 4.329,
+    "lo": 2.888,
+    "hi": 3.932,
+    "inside": false
+   }
+  },
+  "600FF": {
+   "Tmax": {
+    "sim": 61.383,
+    "lo": 64.9,
+    "hi": 69.5,
+    "inside": false
+   },
+   "Tmin": {
+    "sim": -17.551,
+    "lo": -18.8,
+    "hi": -15.6,
+    "inside": true
+   },
+   "Tmean": {
+    "sim": 25.85,
+    "lo": 24.2,
+    "hi": 27.4,
+    "inside": true
+   }
+  },
+  "900FF": {
+   "Tmax": {
+    "sim": 43.918,
+    "lo": 41.8,
+    "hi": 46.4,
+    "inside": true
+   },
+   "Tmin": {
+    "sim": -4.142,
+    "lo": -6.4,
+    "hi": -1.6,
+    "inside": true
+   },
+   "Tmean": {
+    "sim": 25.879,
+    "lo": 24.5,
+    "hi": 27.5,
+    "inside": true
+   }
+  }
+ },
+ "generated": "2026-11-16 23:33",
+ "python": "3.13.18"
+}

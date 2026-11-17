@@ -1,0 +1,32 @@
+
+LBNL FLEXLAB X3A (Berkeley), SZVAV-AHU, 2017-09-11
+  dataset label: cc valve leak (50%)
+  P(fault) = 0.62  (calibrated on 20 real dev days)
+  Most likely faults (given a fault):
+     0.10  cooling valve stuck
+     0.09  low cooling capacity (fouled coil / condenser, refrigerant charge)
+     0.08  supply-air temperature sensor or setpoint offset
+
+Iowa Energy Resource Station (ERS), AHU-A, 2009-01-19
+  dataset label: no fault
+  P(fault) = 0.59  (calibrated on 20 real dev days)
+  Most likely faults (given a fault):
+     0.07  VAV reheat valve leaking
+     0.07  supply-air temperature sensor or setpoint offset
+     0.07  outdoor-air damper leaking
+
+Nesbitt Hall, Drexel University (Philadelphia), AHU-1, 2018-07-11
+  dataset label: no fault
+  P(fault) = 0.45  (calibrated on 20 real dev days)
+  If it is faulty, the most likely faults would be:
+     0.09  low supply airflow (filter / fan)
+     0.07  supply-air temperature sensor or setpoint offset
+     0.07  low cooling capacity (fouled coil / condenser, refrigerant charge)
+
+ORNL Flexible Research Platform 2 (Oak Ridge), RTU, 2018-01-31
+  dataset label: sensor bias T zone (-4F core)
+  P(fault) = 0.60  (calibrated on 20 real dev days)
+  Most likely faults (given a fault):
+     0.16  zone setpoint / zone sensor offset
+     0.11  return-air temperature sensor offset
+     0.06  VAV box damper stuck

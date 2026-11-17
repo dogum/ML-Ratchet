@@ -1,0 +1,21 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json (written by training/ratchet.py; every rung re-scored on v1-v4, decisions re-taken in order on v4).
+model: faultfinder
+ladders:
+  - name: "FaultFinder v1.0 (BuildingSim, 16-17 Nov 2026)"
+    objective: "Skill on the frozen simulated validation set = 0.5 × detection AUC + 0.5 × diagnosis accuracy (faulted days with a visible effect)"
+    rule: "Keep if the skill on the newest frozen simulated set beats the incumbent by more than 0.01 AND the dev AUC on the 20 real dev days is at least max(0.60, incumbent dev AUC − 0.05)."
+    margin: 0.01
+    dev_gate: "Dev AUC (20 real dev days) >= max(0.60, incumbent dev AUC - 0.05)"
+    frozen_sets: [v1, v2, v3, v4]
+    scored_on: v4
+    note: "Each change of the simulated bank or the noise model got a new frozen validation set (v1 generic bank, v2 real noise, v3 calibrated bank, v4 damper characteristic and larger offsets). Every rung was re-scored on every set, and the keep/reject decisions were re-taken in order on the newest (v4); the earlier decisions on older sets are not in the log. r6's description in ratchet.json says 179k weights; the exported network has 160,871 parameters (160,103 after BatchNorm folding). No exam result was used to choose anything."
+    columns_source: "Skill on the frozen sets v1-v3 (v4 is the score), detection AUC and diagnosis accuracy on v4, then the dev gate: dev AUC and dev false-alarm rate at P = 0.5 (20 real dev days)"
+    columns: ["Skill v1", "Skill v2", "Skill v3", "Sim AUC v4", "Sim diag v4", "Dev AUC", "Dev FPR @0.5"]
+    rungs:
+      - { id: r1_gauss, change: "BuildingSim bank v1 (20 fault types, generic controls) + Gaussian sensor noise + source channel patterns; CNN 48 channels, 8 epochs", sim: 0.415, decision: kept, why: "First rung (incumbent by definition).", metrics: [0.585, 0.499, 0.448, 0.60, 0.23, 0.60, 0.91] }
+      - { id: r2_realnoise, change: "+ real-noise and quirk model from the dev fault-free days (residual library, static offsets, fan-off drift)", sim: 0.454, decision: kept, why: "Skill 0.454 > 0.415 + 0.01 and dev AUC 0.74 passes the gate (>= 0.60).", metrics: [0.575, 0.550, 0.476, 0.66, 0.25, 0.74, 0.45] }
+      - { id: r3_calib, change: "+ dev-calibrated bank v3: the BMS logs commands, not positions (twin test), operator start/stop jitter and off-blocks, schedule-shift faults, 24×7 units, wider VAV-minimum and supply-air setpoint priors", sim: 0.500, decision: kept, why: "Skill 0.500 > 0.454 + 0.01 and dev AUC 0.71 passes the gate (>= 0.69).", metrics: [0.528, 0.510, 0.536, 0.68, 0.31, 0.71, 0.45] }
+      - { id: r4_damper, change: "+ noise v4: installed outdoor-air damper characteristic (logged command vs actual outdoor-air fraction) and larger static sensor disagreement (mixed-air stratification, zone vs return)", sim: 0.511, decision: kept, why: "Skill 0.511 > 0.500 + 0.01 and dev AUC 0.73 passes the gate (>= 0.66).", metrics: [0.505, 0.502, 0.518, 0.71, 0.32, 0.73, 0.36] }
+      - { id: r5_bothbanks, change: "Train on bank v1 (generic controls) + bank v3 (calibrated) together, noise v4, 50k days, 6 epochs", sim: 0.519, decision: rejected, why: "Skill 0.519 not > 0.511 + 0.01 (dev AUC 0.74).", metrics: [0.557, 0.542, 0.528, 0.70, 0.33, 0.74, 0.45] }
+      - { id: r6_wide, change: "Wider network (64/128 channels) and 10 epochs, bank v3 + noise v4", sim: 0.543, decision: released, why: "Skill 0.543 > 0.511 + 0.01 and dev AUC 0.71 passes the gate (>= 0.68). Released as v1.0.", metrics: [0.539, 0.535, 0.556, 0.73, 0.36, 0.71, 0.36] }
+      - { id: calib_T, change: "Calibration: one temperature T >= 1 on the detection log-odds (the same T on the diagnosis logits), fitted by log loss on the 20 dev days (widen-only)", decision: kept, why: "T = 4.3. No effect on ranking (AUC) or the top class; it moves P(fault) toward 0.5. On the exam it over-shrank: Brier 0.216 calibrated vs 0.204 uncalibrated.", metrics: ["–", "–", "–", "–", "–", "–", "–"] }
