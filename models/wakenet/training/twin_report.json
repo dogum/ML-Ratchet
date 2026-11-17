@@ -1,0 +1,35 @@
+{
+  "dev_snapshots": 5729,
+  "r4_on_v2_twins": {
+    "waked_mae": 0.0633,
+    "waked_bias": -0.0004,
+    "low_elev_kwf5_6_bias": -0.0,
+    "short_tower_kwf3_6_bias": -0.0004,
+    "farm_wake_mae": 0.0226,
+    "farm_wake_bias": 0.0002
+  },
+  "r4_on_real_dev": {
+    "waked_mae": 0.1012,
+    "waked_bias": -0.0044,
+    "low_elev_kwf5_6_bias": 0.0227,
+    "short_tower_kwf3_6_bias": 0.0043,
+    "farm_wake_mae": 0.0314,
+    "farm_wake_bias": 0.0022
+  },
+  "r6_on_v3_twins": {
+    "waked_mae": 0.0662,
+    "waked_bias": 0.0014,
+    "low_elev_kwf5_6_bias": 0.0132,
+    "short_tower_kwf3_6_bias": 0.0014,
+    "farm_wake_mae": 0.0235,
+    "farm_wake_bias": -0.0007
+  },
+  "r6_on_real_dev": {
+    "waked_mae": 0.0948,
+    "waked_bias": -0.0137,
+    "low_elev_kwf5_6_bias": -0.0047,
+    "short_tower_kwf3_6_bias": -0.0044,
+    "farm_wake_mae": 0.0288,
+    "farm_wake_bias": 0.0066
+  }
+}

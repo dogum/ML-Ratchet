@@ -1,0 +1,254 @@
+id: wakenet
+name: WakeNet
+version: "1.0"
+status: released
+released: 2026-11-16
+order: 17
+domain: Energy
+tags: [wind energy, wake losses, graph neural network, SCADA, yaw steering, uncertainty, zero-shot transfer]
+accent: "#0284c7"
+tagline: Who is stealing whose wind across a real farm — read as a directed graph.
+question: How much power is each wind turbine losing to its neighbours' wakes?
+question_short: "How much power is each wind turbine losing to its neighbours' wakes?"
+summary: >-
+  From a wind farm's turbine coordinates, hub heights, rotor power and thrust curves, mechanical yaw
+  orientations, online flags, and the upstream wind measured on its unwaked front row, WakeNet predicts
+  every downstream turbine's waked power ratio, power loss (kW and %), rotor-effective wind speed and
+  farm-wide wake loss, each with a 68% error bar. It learned only from 24,000 procedural 5-to-16-turbine
+  simulations laid into real unwaked turbulence from 2017–2018, and was examined once on 24,035 real
+  10-minute SCADA snapshots across two UK wind farms — including an unseen 14-turbine farm in Scotland.
+
+reads: >-
+  Turbine coordinates (East, North, ground elevation in m), hub heights (m), rotor diameter and nominal
+  P(U)/Ct(U) curves, each unit's online flag and mechanical nacelle yaw offset (deg), and upstream
+  freestream wind speed (m/s), wind direction (deg), turbulence intensity, 10-min wind-direction
+  standard deviation (deg), air density (kg/m3) and front-row mean power (kW) measured on the
+  geometrically unwaked front row. Downstream wind speeds, vanes and power meters are never read.
+returns:
+  - Per-turbine waked power ratio P_i / P_front and wake loss (%) ± 68% bar
+  - Per-turbine active power (kW) ± 68% bar and rotor-effective wind speed (m/s)
+  - Farm-wide wake loss (%) and total waked output (MW) ± 68% bar
+
+physics:
+  summary: >-
+    Sequential 3-D upwind-to-downwind wake propagation on a 3×3 rotor grid: Bastankhah & Porté-Agel
+    (2014, 2016) near- and far-wake anisotropic Gaussian velocity deficit and yaw skew deflection,
+    Crespo & Hernández (1996) wake-added turbulence weighted by rotor overlap, sum-of-squares deficit
+    superposition, power-law vertical wind shear across mixed tower heights, and two real-farm effects
+    calibrated on 2019 dev twins: meso-scale wind-direction meandering separated from rotor-induced
+    nacelle-vane flutter, and 3-D hill exposure speedup.
+  simulator:
+    - Procedural 5-to-16-turbine layouts (staggered rows, dart-thrown clusters, curved ridges, perturbed grids; spacing ≥ 2.7 D), never copying Kelmarsh or Penmanshiel coordinates
+    - Senvion MM92 (D = 92 m), Senvion MM82 (D = 82 m) manufacturer curves and 40% parametric IEC Class I–III rotors (D = 74–132 m)
+    - Mixed tower heights (±8–12 m on 35% of farms) and rolling Gaussian hills (4–32 m relief) with partial terrain-following streamlines (0.68–0.95)
+    - Active upstream yaw-steering offsets (±6–22°) on 30% of farms and 1–2 parked turbines (online = False, Ct = 0) on 22%
+    - "v3 physics, calibrated on Kelmarsh 2019 dev: 3-point Gauss–Hermite meandering over 0.16–0.36× nacelle-vane σ_θ (filtering blade-passage swirl) and hill exposure speedup s_hill ~ U(0.05, 0.24)"
+  checks:
+    - "Bastankhah–Porté-Agel 3-D Gaussian single-wake grid (3D–15D × −1.5D..+1.5D) vs NREL FLORIS 4.7: max relative power diff 1.58e-15 (training/physics_check.json)"
+    - "Jensen top-hat + Jiménez yaw deflection (−20°..+20°) vs NREL FLORIS 4.7: max relative power diff 2.91e-16"
+    - "3-turbine Gaussian yaw-steering sweep (−25°..+25°) + Crespo–Hernández TI + SOSFS vs NREL FLORIS 4.7: max relative power diff 1.88e-15 (optimal yaw +25°, +12.36% gain)"
+    - "14-turbine Penmanshiel layout × 72 wind directions (1,008 turbine states) vs NREL FLORIS 4.7: correlation 1.000000, max relative power diff 7.37e-15"
+    - "Exact +37.5° compass rotational equivariance and parked-turbine removal equivalence: < 1e-12 kW"
+
+noise: >-
+  47,610 real unwaked front-row rotor readings from Kelmarsh 2017–2018 (10.1% spatial turbulent power
+  spread, 4.7% spatial wind spread, 4.9° nacelle yaw-tracking jitter, and empirical UK inflow tuples;
+  2016 excluded due to a ~1,680 kW commissioning export cap)
+network: >-
+  EdgeWakeGNN — directed 3-layer edge-conditioned graph neural network (hidden 96, 245,767 parameters)
+  with additive sigmoid-gated wake superposition over upstream-to-downstream edges (dx/D, dy/D, dz/D,
+  dimensionless meandering number σ_θ·dx/D, pairwise deficit, yaw), predicting a residual correction
+  to the steady 3-D Gaussian wake anchor; trained with β-NLL (β = 0.5) + Huber loss on 24,000 v3 farms
+
+approach:
+  real_backdrop: "47,610 unwaked front-row rotor readings and inflow tuples from Kelmarsh 2017–2018"
+  physics_inputs: "Wind-rotated pairwise displacements (dx/D, dy/D, dz/D), dimensionless meandering number σ_θ·dx/D, analytical pairwise deficit and overlap, and finite-difference directional sensitivity"
+  physics_anchor: "Predicts a residual power-ratio correction on top of a 3-D Bastankhah–Porté-Agel Gaussian wake and Crespo–Hernández turbulence solve"
+  real_data_roles: [backdrop, calibration, gate, error_bars, exam]
+
+data:
+  - name: Kelmarsh Wind Farm Open Data — Charlie Plumley / Cubico Sustainable Investments (Zenodo 16807551)
+    url: https://doi.org/10.5281/zenodo.5841834
+    licence: CC BY 4.0
+    role: noise (2017–2018 unwaked front row), dev (2019), exam (2020–2021)
+  - name: Penmanshiel Wind Farm Open Data — Charlie Plumley / Cubico Sustainable Investments (Zenodo 16807304)
+    url: https://doi.org/10.5281/zenodo.5946808
+    licence: CC BY 4.0
+    role: exam (2019–2020, zero-shot unseen 14-turbine MM82 farm)
+
+split:
+  dev: >-
+    Kelmarsh 2019: 5,729 clean 6-turbine 10-minute snapshots (16,212 waked turbine readings), gated
+    separately on H1 Jan–Jun (2,691 snapshots) and H2 Jul–Dec (3,038 snapshots); frozen in
+    training/split.json (sha256 bd1dd01f…, seed 20261116)
+  exam: >-
+    24,035 held-out 10-minute snapshots (117,335 waked turbine readings): Kelmarsh 2020–2021 (15,059
+    snapshots, 39,008 waked readings) plus zero-shot Penmanshiel 2019–2020 (8,976 snapshots, 78,327
+    waked readings across 14 Senvion MM82 turbines never seen in backdrop, priors or dev)
+
+exam:
+  short: "24,035 snapshots · 2 farms (1 unseen)"
+  summary: >-
+    Mean absolute error in waked turbine power (% of unwaked front-row power) and farm-wide wake loss
+    (percentage points of potential farm power), run once on Kelmarsh 2020–2021 and zero-shot on the
+    unseen 14-turbine Penmanshiel farm (2019–2020).
+  results:
+    - metric: Kelmarsh (2020–21), all waked turbines MAE (39,008 readings)
+      better: lower
+      model: 8.85
+      unit: "%"
+      baselines:
+        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 9.51 }
+        - { name: "Jensen Park + Jiménez", kind: classical, value: 9.95 }
+        - { name: "Unwaked guess", kind: dumb, value: 13.63 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 14.00 }
+      verdict: win
+      note: "Bias −1.99%."
+    - metric: Kelmarsh (2020–21), direct-wake corridor MAE (dx < 8D, |dy| < 0.65D; 11,977 readings)
+      better: lower
+      model: 10.07
+      unit: "%"
+      baselines:
+        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 10.75 }
+        - { name: "Jensen Park + Jiménez", kind: classical, value: 11.63 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 15.30 }
+        - { name: "Unwaked guess", kind: dumb, value: 22.17 }
+      verdict: win
+    - metric: Kelmarsh (2020–21), multi-wake overlap (≥ 2 upstream wakes; 2,212 readings)
+      better: lower
+      model: 8.86
+      unit: "%"
+      baselines:
+        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 9.90 }
+        - { name: "Jensen Park + Jiménez", kind: classical, value: 10.12 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 14.46 }
+      verdict: win
+      note: "Mostly the aligned NW/SE 3-turbine row KWF3–KWF5–KWF6."
+    - metric: Kelmarsh (2020–21), upstream yaw offset ≥ 8° MAE (5,401 readings)
+      better: lower
+      model: 9.76
+      unit: "%"
+      baselines:
+        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 10.46 }
+        - { name: "Jensen Park + Jiménez", kind: classical, value: 11.25 }
+        - { name: "Unwaked guess", kind: dumb, value: 13.75 }
+      verdict: win
+    - metric: Kelmarsh (2020–21), partial-parked farm (1–2 units offline; 6,146 readings)
+      better: lower
+      model: 9.18
+      unit: "%"
+      baselines:
+        - { name: "Jensen Park + Jiménez", kind: classical, value: 9.81 }
+        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 9.94 }
+        - { name: "Unwaked guess", kind: dumb, value: 13.62 }
+      verdict: win
+    - metric: Kelmarsh (2020–21), farm-wide wake loss MAE (15,059 snapshots)
+      better: lower
+      model: 2.57
+      unit: "%"
+      baselines:
+        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 2.80 }
+        - { name: "Jensen Park + Jiménez", kind: classical, value: 2.99 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 4.44 }
+        - { name: "Unwaked guess", kind: dumb, value: 4.87 }
+      verdict: win
+    - metric: Penmanshiel (14× MM82, zero-shot), all waked turbines MAE (78,327 readings)
+      better: lower
+      model: 15.01
+      unit: "%"
+      baselines:
+        - { name: "Dev mean wake loss", kind: dumb, value: 15.88 }
+        - { name: "Unwaked guess", kind: dumb, value: 16.00 }
+        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 16.63 }
+        - { name: "Jensen Park + Jiménez", kind: classical, value: 17.90 }
+      verdict: win
+      note: "Unseen 14-turbine farm, different rotor (82 m vs 92 m) and 59 m towers; beats FLORIS by 1.62 points."
+    - metric: Penmanshiel (zero-shot), upstream yaw offset ≥ 8° MAE (14,813 readings)
+      better: lower
+      model: 15.08
+      unit: "%"
+      baselines:
+        - { name: "Unwaked guess", kind: dumb, value: 16.27 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 16.34 }
+        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 16.75 }
+        - { name: "Jensen Park + Jiménez", kind: classical, value: 18.05 }
+      verdict: win
+    - metric: Penmanshiel (zero-shot), multi-wake interior (≥ 2 wakes; 24,308 readings)
+      better: lower
+      model: 17.32
+      unit: "%"
+      baselines:
+        - { name: "Dev mean wake loss", kind: dumb, value: 16.43 }
+        - { name: "Unwaked guess", kind: dumb, value: 16.51 }
+        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 19.12 }
+        - { name: "Jensen Park + Jiménez", kind: classical, value: 21.94 }
+      verdict: loss
+      note: "Beats FLORIS (19.12%) and Jensen (21.94%) by 1.8–4.6 points, but loses to the constant dev-mean guess."
+    - metric: Penmanshiel (zero-shot), hilltop ridge turbines (elev ≥ 219 m; 26,756 readings)
+      better: lower
+      model: 15.92
+      unit: "%"
+      baselines:
+        - { name: "Unwaked guess", kind: dumb, value: 13.19 }
+        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 18.30 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 18.44 }
+        - { name: "Jensen Park + Jiménez", kind: classical, value: 21.08 }
+      verdict: loss
+      note: "Ridge-top acceleration on T12–T15 (219–228 m vs 180–205 m front row) offsets wake deficit; WakeNet reads −9.2% low."
+    - metric: Penmanshiel (zero-shot), farm-wide wake loss MAE (8,976 snapshots)
+      better: lower
+      model: 4.75
+      unit: "%"
+      baselines:
+        - { name: "Dev mean wake loss", kind: dumb, value: 4.55 }
+        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 5.16 }
+        - { name: "Jensen Park + Jiménez", kind: classical, value: 5.82 }
+        - { name: "Unwaked guess", kind: dumb, value: 5.98 }
+      verdict: loss
+      note: "Beats FLORIS (5.16%) and Jensen (5.82%), but loses by 0.20 points to guessing Kelmarsh's 5.34% dev mean."
+  coverage:
+    - { output: "Kelmarsh waked turbines", actual: 72.2 }
+    - { output: "Kelmarsh farm wake loss", actual: 77.4 }
+    - { output: "Penmanshiel waked turbines (zero-shot)", actual: 50.7 }
+    - { output: "Penmanshiel farm wake loss (zero-shot)", actual: 61.5 }
+
+wins:
+  - "Beats NREL FLORIS 3-D Gaussian and Jensen Park on every stratum of both wind farms — including 15.01% vs 16.63% (FLORIS) and 17.90% (Jensen) zero-shot on the unseen 14-turbine Penmanshiel farm."
+  - "Sweeps all six Kelmarsh 2020–21 exam rows: waked MAE 8.85% vs 9.51% (FLORIS), multi-wake 8.86% vs 9.90%, yaw ≥ 8° 9.76% vs 10.46%, and farm wake loss 2.57% vs 2.80%."
+  - "Separating meso-scale wind-direction meandering (~0.25× nacelle-vane σ_θ) from rotor blade-passage vane flutter plus 3-D hill speedup cut Kelmarsh dev waked MAE from 10.12% to 9.48% (naive 1.0× vane meandering degraded it to 11.24% and was rejected)."
+losses:
+  - "On Penmanshiel's 48 m Berwickshire coastal ridge, ridge-top wind acceleration onto hilltop turbines T12–T15 (219–228 m elevation) partially cancels wake losses, so WakeNet loses to the constant dev-mean guess on farm wake loss (4.75% vs 4.55%) and multi-wake interior units (17.32% vs 16.43%), and to the unwaked guess on hilltop turbines (15.92% vs 13.19%), despite beating FLORIS on all three."
+limits:
+  - "Error bars calibrated on Kelmarsh's gentle 21.5 m farmland cover 72.2% (turbines) and 77.4% (farm) on Kelmarsh 2020–21, but drop to 50.7% and 61.5% on Penmanshiel's steep 48 m coastal ridge and adjacent forestry."
+  - "Below-rated active wake regime only (freestream 5.0–12.0 m/s); above rated wind speed pitch control caps all turbines at rated power and wakes cause near-zero power loss."
+  - "10-minute nacelle SCADA carries no atmospheric stability (Obukhov length / heat-flux) measurement, so convective daytime mixing and stable nocturnal wakes share one turbulence-conditioned curve."
+  - "No digital elevation map or forestry roughness map around the farm perimeter is read — terrain enters only through the elevations at the turbine towers themselves."
+next:
+  - "Read surrounding 30 m DEM terrain slopes and forest-canopy roughness upwind of each sector (Jackson–Hunt / WAsP linearised flow over real topography) to close Penmanshiel's −9.2% hilltop ridge bias."
+  - "Terrain-relief-conditioned or Mondrian conformal σ widening so zero-shot error bars widen automatically on steep (>30 m relief) sites."
+  - "Active yaw-steering controller rung (WakePilot) trained through the differentiable wake graph and checked against dedicated field yaw-offset campaigns."
+
+usage:
+  install: pip install numpy
+  demo: python demo.py
+  python: |
+    import json, numpy as np
+    from wakenet import WakeNet
+    net = WakeNet()
+    z = np.load("examples/02_kelmarsh_nw_3row.npz"); m = json.loads(str(z["meta"]))
+    r = net.read(z["east_m"], z["north_m"], z["hub_h_m"], m["turbine_model"],
+                 u_inf=m["u_inf_ms"], wind_dir_deg=m["wind_dir_deg"],
+                 ti_inf=m["ti_inf"], sigma_wd_deg=m["sigma_wd_deg"],
+                 yaw_deg=z["yaw_deg"], online=z["online"], elev_m=z["elev_m"],
+                 air_density=m["air_density"], p_front_kw=m["p_front_kw"])
+    print(f"Farm wake loss: {100*r['farm_wake_loss']:.1f}% +- {100*r['farm_wake_sig']:.1f}%")
+
+files:
+  inference: [wakenet.py, physics.py, pipeline.py]
+  weights: [wakenet_weights.npz]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 1
