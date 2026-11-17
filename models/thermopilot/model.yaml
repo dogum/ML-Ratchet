@@ -18,8 +18,9 @@ summary: >-
   (per 150 m² of floor). It was trained only in BuildingSim, by imitating a perfect-foresight dynamic-programming
   teacher (behaviour cloning, then three DAgger rounds), with a 6 h comfort shield. It was graded once on simulated
   twins of real exam units (48 RECS 2020 homes, 16 BDG2 small commercial buildings, 17 HUE homes, 38 WPuQ heat-pump
-  homes) under their real weather and real tariffs. It always beats a fixed thermostat, but the classical MPC with
-  the same forecast beats it on every exam set, so every exam row is a loss.
+  homes) under their real weather and real tariffs. It always beats a fixed thermostat. The classical MPC with the
+  same house and forecast beats it on every home set; on small commercial buildings with demand charges the two tie
+  (95 % intervals, re-scored as seen on 17 Nov 2026).
 disclaimer: >-
   Graded inside the simulator. There are no real thermostat logs (ecobee's Donate Your Data needs an application), so
   every exam number is BuildingSim with real weather, real tariffs and twin buildings, not a measured saving. On 37 real
@@ -29,7 +30,7 @@ disclaimer: >-
 reads: "Each hour: the indoor air temperature now and over the last 3 hours (°C), the HVAC's own heat output (W) and the meter's electricity (kW) last hour, a 24 h forecast of outdoor temperature (°C) and solar (W/m²), 24 h of energy prices ($/kWh), demand-charge windows, rates and the running monthly peak, the occupant's comfort band for the next 24 h, and a building card: UA (W/K), thermal capacitance (J/K), floor area (m²), heating type, and heat-pump / furnace / AC capacity and COP tables vs outdoor temperature."
 returns:
   - "A heating and a cooling setpoint (°C; ±100 means that side is off) for the hour, after a comfort shield that never lets the zone fall behind the band of the next 6 h (recovery 1 K/h heating, 0.5 K/h cooling)"
-  - "No uncertainty: the policy is deterministic; exam intervals are 90 % bootstrap intervals over units"
+  - "No uncertainty: the policy is deterministic; exam intervals are 95 % bootstrap intervals over units"
 
 physics:
   summary: >-
@@ -103,97 +104,186 @@ split:
   exam: "RECS 2020 exam respondents: 48 homes × January + July 2017, 12 real tariffs in 9 states (4 of 6 drawn per tariff slot, fixed before the exam); BDG2: 16 small offices / schools / shops × January + July 2017, 4 commercial tariffs; HUE: 17 BC homes, 21 episodes; WPuQ: 38 heat-pump homes, January 2019"
 
 exam:
-  short: "187 simulated twin episodes, real weather and tariffs"
+  short: "187 simulated twin episodes, real weather and tariffs (seen)"
   summary: >-
-    Run once with R7 (v1.0) after the release choice, never used for any choice. Twins of real exam units (perturbed
-    true house, noisy forecasts) under their real weather and real tariffs, against a fixed thermostat, the occupant's
-    own setback schedule, an in-band pre-cool rule, a classical MPC with the same noisy forecast, and a
-    perfect-foresight bound. Bill = energy + demand + gas for the month (fixed charges left out). Savings are summed
-    over episodes; 90 % bootstrap intervals over units. Skill = share of the perfect-foresight saving on cost + comfort
-    (0 = fixed thermostat, 1 = perfect foresight). The classical MPC beats ThermoPilot on every set.
+    Taken once with R7 (v1.0) after the release choice, never used for any choice; re-scored on 17 Nov 2026 with the
+    released weights (seen). Twins of real exam units (perturbed true house, noisy forecasts) under their real weather
+    and real tariffs, against a fixed thermostat, the occupant's own setback schedule, standard setback, two pre-cool
+    rules, the in-band pre-cool rule tuned on dev, a classical MPC with the same nominal house and the same noisy
+    forecast, and a perfect-foresight bound. Bill = energy + demand + gas for the month (fixed charges left out),
+    summed over episodes. Skill = share of the perfect-foresight saving on cost + comfort (0 = fixed thermostat, 1 =
+    perfect foresight). Every row gives ThermoPilot minus the best baseline with a 95 % bootstrap interval over units
+    (homes / buildings; 2,000 resamples, seed 20261117); win or loss only when the interval excludes zero. On bill rows
+    a baseline counts only if it keeps comfort within the ratchet's test (K h ≤ fixed + 1), so standard setback and the
+    phase-1 pre-cool rule are listed but not counted. The re-score reproduced WPuQ exactly and BDG2 except the MPC; the
+    RECS twins differ from the v1.0 build's, so the RECS rows moved (v1.0 values in each note). HUE was not re-run.
   results:
-    - metric: RECS exam twins (96 home-months, 12 tariffs), bill saving vs fixed thermostat
+    - metric: RECS exam twins (48 homes, 96 home-months, 12 tariffs), bill saving vs fixed thermostat
       better: higher
-      model: 2.2
+      model: 2.56
       unit: "%"
       baselines:
         - { name: "Fixed thermostat", kind: dumb, value: 0.0 }
-        - { name: "Setback (occupant's own schedule)", kind: dumb, value: 2.2 }
-        - { name: "In-band pre-cool rule", kind: classical, value: 2.4 }
-        - { name: "MPC with forecast", kind: classical, value: 3.5 }
+        - { name: "Setback (occupant's own schedule; 1.8 K h, fails the comfort test)", kind: dumb, value: 3.01 }
+        - { name: "Standard setback −4 / +4 K (835 K h, fails the comfort test)", kind: dumb, value: 9.38 }
+        - { name: "In-band pre-cool rule", kind: classical, value: 3.10 }
+        - { name: "Phase-1 pre-cool rule (69 K h, fails the comfort test)", kind: classical, value: 3.38 }
+        - { name: "Pre-cool rule tuned on dev (4 h, 3 K)", kind: classical, value: 3.07 }
+        - { name: "MPC with forecast (same nominal house)", kind: classical, value: 4.10 }
       verdict: loss
-      note: "ThermoPilot 2.18 % [1.63, 2.78]; setback 2.24 % [1.45, 3.01], so ThermoPilot vs setback is −0.05 % [−0.67, +0.54], level; pre-cool rule 2.42 %; MPC 3.50 % [2.67, 4.35]; perfect foresight 3.63 % [2.89, 4.46]. Standard setback (−4 / +4 K) saves 9.2 % but leaves the band for 832 K h per episode. Setback raised the bill on 2 of 12 tariffs (Duke RT, Rocky Mountain Power TOU). ThermoPilot beats the best rule in 28 % of home-months (MPC 49 %)."
+      note: "Seen re-score. −1.55 points against the MPC, 95% CI [−2.28, −0.93] (bootstrap by home, n = 48). ThermoPilot vs the occupant's setback: −0.46 [−1.73, +0.56], tie. ThermoPilot 2.56 % [1.67, 3.44]; perfect foresight 4.25 %. v1.0 (90 % CI, RECS twins as built then): ThermoPilot 2.18 %, setback 2.24 %, MPC 3.50 %. ThermoPilot beats the best rule in 27 % of home-months (MPC 52 %)."
     - metric: RECS exam twins, skill on cost + comfort (0 = fixed, 1 = perfect foresight)
       better: higher
-      model: 0.33
+      model: 0.24
       baselines:
         - { name: "Fixed thermostat", kind: dumb, value: 0.0 }
-        - { name: "Setback (occupant's own schedule)", kind: dumb, value: -0.55 }
-        - { name: "In-band pre-cool rule", kind: classical, value: 0.15 }
-        - { name: "MPC with forecast", kind: classical, value: 0.84 }
+        - { name: "Setback (occupant's own schedule)", kind: dumb, value: -0.18 }
+        - { name: "Standard setback −4 / +4 K", kind: dumb, value: -362 }
+        - { name: "In-band pre-cool rule", kind: classical, value: 0.28 }
+        - { name: "Phase-1 pre-cool rule", kind: classical, value: -32.2 }
+        - { name: "Pre-cool rule tuned on dev (4 h, 3 K)", kind: classical, value: 0.35 }
+        - { name: "MPC with forecast (same nominal house)", kind: classical, value: 0.84 }
       verdict: loss
-      note: "Beats the fixed thermostat and both rules on the objective it was trained for; the MPC captures 0.84 of the perfect-foresight saving, ThermoPilot 0.33."
+      note: "Seen re-score. −0.60 against the MPC, 95% CI [−0.85, −0.39] (bootstrap by home, n = 48). The dev-tuned pre-cool rule (0.35) also beats ThermoPilot's 0.24 here. v1.0: ThermoPilot 0.33, MPC 0.84."
     - metric: RECS exam twins, kelvin-hours outside the comfort band per episode
       better: lower
-      model: 1.4
+      model: 1.28
       unit: "K h"
       baselines:
-        - { name: "Fixed thermostat", kind: dumb, value: 0.7 }
-        - { name: "Setback (occupant's own schedule)", kind: dumb, value: 2.5 }
-        - { name: "In-band pre-cool rule", kind: classical, value: 1.5 }
-        - { name: "MPC with forecast", kind: classical, value: 0.9 }
+        - { name: "Fixed thermostat", kind: dumb, value: 0.36 }
+        - { name: "Setback (occupant's own schedule)", kind: dumb, value: 1.77 }
+        - { name: "Standard setback −4 / +4 K", kind: dumb, value: 835 }
+        - { name: "In-band pre-cool rule", kind: classical, value: 1.00 }
+        - { name: "Phase-1 pre-cool rule", kind: classical, value: 69.5 }
+        - { name: "Pre-cool rule tuned on dev (4 h, 3 K)", kind: classical, value: 0.88 }
+        - { name: "MPC with forecast (same nominal house)", kind: classical, value: 0.49 }
       verdict: loss
-      note: "ThermoPilot 1.43 K h (0.41 while home); better comfort than setback (2.52) and the pre-cool rule (1.47), worse than fixed (0.71) and MPC (0.89). Mean PPD while home 23.3 % (fixed 22.7 %, MPC 23.7 %)."
-    - metric: BDG2 small commercial twins (32 building-months, 4 tariffs), bill saving vs fixed thermostat
+      note: "Seen re-score. +0.91 K h against the fixed thermostat, 95% CI [+0.20, +2.00] (bootstrap by home, n = 48). Better than setback (1.77), worse than both pre-cool rules in the band and the MPC. Mean PPD while home 23.5 % (fixed 23.0 %, MPC 24.0 %). v1.0: ThermoPilot 1.43, fixed 0.71, setback 2.52."
+    - metric: BDG2 small commercial twins (16 buildings, 32 building-months, 4 demand tariffs), bill saving vs fixed thermostat
       better: higher
-      model: 2.8
+      model: 2.77
       unit: "%"
       baselines:
         - { name: "Fixed thermostat", kind: dumb, value: 0.0 }
-        - { name: "Setback (operating schedule)", kind: dumb, value: 1.2 }
-        - { name: "In-band pre-cool rule", kind: classical, value: -0.3 }
-        - { name: "MPC with forecast", kind: classical, value: 3.1 }
-      verdict: loss
-      note: "ThermoPilot 2.77 % [1.37, 4.17], 0.05 K h per episode; setback 1.18 % [0.45, 2.06], so ThermoPilot beats setback by 1.60 % [0.59, 2.63]; MPC 3.05 % [1.89, 4.38], 0.21 K h; perfect foresight 7.24 %. Closest to the MPC here (demand tariffs: PG&E B-19, OUC GSD, Xcel A15, Pepco GT); skill 0.45 vs MPC 0.47. Setback raised the bill in January (−2.5 %)."
-    - metric: HUE BC home twins (21 episodes), bill saving vs fixed thermostat
+        - { name: "Setback (operating schedule)", kind: dumb, value: 1.18 }
+        - { name: "Standard setback −4 / +4 K", kind: dumb, value: 1.18 }
+        - { name: "In-band pre-cool rule", kind: classical, value: -0.28 }
+        - { name: "Phase-1 pre-cool rule (127 K h, fails the comfort test)", kind: classical, value: 0.20 }
+        - { name: "Pre-cool rule tuned on dev (4 h, 3 K)", kind: classical, value: -0.03 }
+        - { name: "MPC with forecast (same nominal house)", kind: classical, value: 2.69 }
+      verdict: tie
+      note: "Seen re-score. +0.08 points against the MPC, 95% CI [−0.85, +1.09] (bootstrap by building, n = 16). ThermoPilot vs setback: +1.58 [+0.30, +2.81], better. ThermoPilot, the rules and perfect foresight (7.23 %) reproduce v1.0 exactly; the MPC does not (v1.0 3.05 %, now 2.69 %; a one-hour difference can move a monthly demand peak). v1.0 called this row a loss on the point values. Tariffs PG&E B-19, OUC GSD, Xcel A15, Pepco GT."
+    - metric: BDG2 small commercial twins, skill on cost + comfort
+      better: higher
+      model: 0.451
+      baselines:
+        - { name: "Fixed thermostat", kind: dumb, value: 0.0 }
+        - { name: "Setback (operating schedule)", kind: dumb, value: 0.227 }
+        - { name: "In-band pre-cool rule", kind: classical, value: 0.128 }
+        - { name: "Phase-1 pre-cool rule", kind: classical, value: -12.0 }
+        - { name: "Pre-cool rule tuned on dev (4 h, 3 K)", kind: classical, value: 0.161 }
+        - { name: "MPC with forecast (same nominal house)", kind: classical, value: 0.452 }
+      verdict: tie
+      note: "Seen re-score; new row (computed by exam_report.py in v1.0, not shown). −0.00 against the MPC, 95% CI [−0.11, +0.10] (bootstrap by building, n = 16). v1.0: ThermoPilot 0.451, MPC 0.471."
+    - metric: BDG2 small commercial twins, kelvin-hours outside the comfort band per episode
+      better: lower
+      model: 0.05
+      unit: "K h"
+      baselines:
+        - { name: "Fixed thermostat", kind: dumb, value: 0.0 }
+        - { name: "Setback (operating schedule)", kind: dumb, value: 0.0 }
+        - { name: "In-band pre-cool rule", kind: classical, value: 0.0 }
+        - { name: "Pre-cool rule tuned on dev (4 h, 3 K)", kind: classical, value: 0.0 }
+        - { name: "MPC with forecast (same nominal house)", kind: classical, value: 0.21 }
+      verdict: tie
+      note: "Seen re-score; new row. +0.05 K h against the fixed thermostat, 95% CI [0.00, +0.09] (bootstrap by building, n = 16; the interval touches zero). Phase-1 pre-cool rule 127 K h."
+    - metric: HUE BC home twins (17 homes, 21 episodes), bill saving vs fixed thermostat
       better: higher
       model: 4.3
       unit: "%"
       baselines:
         - { name: "Fixed thermostat", kind: dumb, value: 0.0 }
-        - { name: "Setback (occupant's schedule)", kind: dumb, value: 5.9 }
+        - { name: "Setback (occupant's schedule; 3.1 K h)", kind: dumb, value: 5.9 }
+        - { name: "Standard setback −4 / +4 K (675 K h)", kind: dumb, value: 11.0 }
         - { name: "In-band pre-cool rule", kind: classical, value: 5.7 }
-        - { name: "MPC with forecast", kind: classical, value: 5.7 }
+        - { name: "MPC with forecast (same nominal house)", kind: classical, value: 5.7 }
       verdict: loss
-      note: "ThermoPilot 4.29 % [3.92, 4.66], 0.36 K h; setback 5.89 % [5.63, 6.21] but 3.07 K h, so ThermoPilot saves 1.70 % [1.53, 1.89] less than setback with better comfort; MPC 5.75 %, 0.17 K h; perfect foresight 5.78 %. Skill 0.54 vs MPC 0.95 and setback −0.54. Stand-in tariff PG&E E-TOU-C; 17 homes, January (+ July for the 4 with AC), Vancouver 2017."
+      note: "v1.0 values, not re-run on 17 Nov 2026 (the NASA POWER irradiance for Vancouver is not in the repository), so there is no 95 % interval; verdict on the point values. ThermoPilot 4.29 % [3.92, 4.66] (90 %); MPC 5.75 %, 0.17 K h; setback 5.89 % at 3.07 K h; ThermoPilot vs setback −1.70 [−1.89, −1.53] (90 %); perfect foresight 5.78 %. Stand-in tariff PG&E E-TOU-C; January (+ July for the 4 with AC), Vancouver 2017."
+    - metric: HUE BC home twins, skill on cost + comfort
+      better: higher
+      model: 0.54
+      baselines:
+        - { name: "Fixed thermostat", kind: dumb, value: 0.0 }
+        - { name: "Setback (occupant's schedule)", kind: dumb, value: -0.54 }
+        - { name: "In-band pre-cool rule", kind: classical, value: 0.31 }
+        - { name: "MPC with forecast (same nominal house)", kind: classical, value: 0.95 }
+      verdict: loss
+      note: "v1.0 values (exam_r7.json), not re-run; no interval; verdict on the point values. New row."
+    - metric: HUE BC home twins, kelvin-hours outside the comfort band per episode
+      better: lower
+      model: 0.36
+      unit: "K h"
+      baselines:
+        - { name: "Fixed thermostat", kind: dumb, value: 0.14 }
+        - { name: "Setback (occupant's schedule)", kind: dumb, value: 3.07 }
+        - { name: "In-band pre-cool rule", kind: classical, value: 1.34 }
+        - { name: "MPC with forecast (same nominal house)", kind: classical, value: 0.17 }
+      verdict: loss
+      note: "v1.0 values (exam_r7.json), not re-run; no interval; verdict on the point values. New row."
     - metric: WPuQ heat-pump home twins (38 homes, January 2019), bill saving vs fixed thermostat
       better: higher
-      model: 3.1
+      model: 3.13
       unit: "%"
       baselines:
         - { name: "Fixed thermostat", kind: dumb, value: 0.0 }
-        - { name: "Setback", kind: dumb, value: 5.6 }
-        - { name: "In-band pre-cool rule", kind: classical, value: 5.6 }
-        - { name: "MPC with forecast", kind: classical, value: 7.2 }
+        - { name: "Setback", kind: dumb, value: 5.58 }
+        - { name: "Standard setback −4 / +4 K (869 K h, fails the comfort test)", kind: dumb, value: 7.70 }
+        - { name: "In-band pre-cool rule (= setback here)", kind: classical, value: 5.58 }
+        - { name: "Pre-cool rule tuned on dev (= setback here)", kind: classical, value: 5.58 }
+        - { name: "MPC with forecast (same nominal house)", kind: classical, value: 7.16 }
       verdict: loss
-      note: "ThermoPilot 3.13 % [2.35, 3.89]; setback 5.58 % [4.46, 6.45] at 0.01 K h, so ThermoPilot saves 2.59 % [1.77, 3.26] less than setback; MPC 7.16 % [6.77, 7.53]; perfect foresight 7.50 %. Skill 0.35 vs setback 0.65 and MPC 0.95. Generic twins (no building metadata), stand-in tariff Xcel MN TOD."
+      note: "Seen re-score; reproduces v1.0 exactly. −4.03 points against the MPC, 95% CI [−4.66, −3.47] (bootstrap by home, n = 38). ThermoPilot vs setback: −2.45 [−3.16, −1.54], worse. Perfect foresight 7.50 %. Generic twins (no building metadata), stand-in tariff Xcel MN TOD."
+    - metric: WPuQ heat-pump home twins, skill on cost + comfort
+      better: higher
+      model: 0.35
+      baselines:
+        - { name: "Fixed thermostat", kind: dumb, value: 0.0 }
+        - { name: "Setback", kind: dumb, value: 0.65 }
+        - { name: "Standard setback −4 / +4 K", kind: dumb, value: -118 }
+        - { name: "In-band pre-cool rule (= setback here)", kind: classical, value: 0.65 }
+        - { name: "MPC with forecast (same nominal house)", kind: classical, value: 0.95 }
+      verdict: loss
+      note: "Seen re-score; new row. −0.60 against the MPC, 95% CI [−0.68, −0.53] (bootstrap by home, n = 38)."
+    - metric: WPuQ heat-pump home twins, kelvin-hours outside the comfort band per episode
+      better: lower
+      model: 0.00
+      unit: "K h"
+      baselines:
+        - { name: "Fixed thermostat", kind: dumb, value: 0.00 }
+        - { name: "Setback", kind: dumb, value: 0.01 }
+        - { name: "MPC with forecast (same nominal house)", kind: classical, value: 0.01 }
+      verdict: tie
+      note: "Seen re-score; new row. 0.00 against the fixed thermostat, 95% CI [0.00, 0.00] (n = 38): the wide 20.5-26 °C band is never left except by standard setback (869 K h)."
     - metric: "WPuQ reality check (report only): controller order on generic vs envelope-scaled twins, median Kendall tau"
       better: higher
       model: 0.70
       baselines: []
       verdict: info
-      note: "Simulator vs simulator on 37 homes. 'MPC > ThermoPilot > fixed' holds; ThermoPilot vs setback flips in 18 of 37 homes. Saving on cost + comfort vs fixed, generic → scaled twins: perfect foresight 7.0 → 5.3 %, MPC 6.7 → 4.7 %, ThermoPilot 2.5 → 1.0 %, setback 4.5 → −3.2 %."
+      note: "Simulator vs simulator on 37 homes (v1.0; not re-run). 'MPC > ThermoPilot > fixed' holds; ThermoPilot vs setback flips in 18 of 37 homes. Saving on cost + comfort vs fixed, generic → scaled twins: perfect foresight 7.0 → 5.3 %, MPC 6.7 → 4.7 %, ThermoPilot 2.5 → 1.0 %, setback 4.5 → −3.2 %."
   coverage: []
 
 wins:
-  - "Always beats the fixed thermostat on bill: 2.2 % (RECS homes), 2.8 % (BDG2 commercial), 4.3 % (HUE), 3.1 % (WPuQ heat pumps)."
-  - "Better comfort than the occupant's setback schedule: 1.4 vs 2.5 K h per home-month on RECS twins, 0.4 vs 3.1 K h on HUE, for about the same bill on RECS (−0.05 % [−0.67, +0.54])."
-  - "On commercial demand tariffs (BDG2) it is close to the classical MPC (2.8 % vs 3.1 %, skill 0.45 vs 0.47) and beats setback by 1.6 % [0.6, 2.6]."
+  - "Always beats the fixed thermostat on bill: 2.6 % (RECS homes), 2.8 % (BDG2 commercial), 4.3 % (HUE), 3.1 % (WPuQ heat pumps)."
+  - "On commercial demand tariffs (BDG2) it ties the classical MPC (bill +0.08 points [−0.85, +1.09], skill 0.451 vs 0.452) and beats the operating-schedule setback by 1.6 points [0.3, 2.8], with 0.05 K h outside the band."
+  - "Better comfort than the occupant's setback schedule: 1.3 vs 1.8 K h per home-month on RECS twins, 0.4 vs 3.1 K h on HUE."
 losses:
-  - "The classical MPC with the same noisy forecast beats it on every exam set: RECS 3.5 % vs 2.2 %, BDG2 3.1 % vs 2.8 %, HUE 5.7 % vs 4.3 %, WPuQ 7.2 % vs 3.1 %; it captures 0.33–0.54 of the perfect-foresight saving against the MPC's 0.47–0.95."
-  - "On homes it saves no more than the setback schedule (RECS, level) or less (HUE −1.7 %, WPuQ −2.6 %)."
-  - "Worse comfort than a fixed thermostat on RECS twins (1.4 vs 0.7 K h per episode)."
+  - "The classical MPC with the same nominal house and the same noisy forecast beats it on every home set: RECS −1.55 points [−2.28, −0.93], WPuQ −4.03 [−4.66, −3.47], HUE 5.7 % vs 4.3 % (point); skill 0.24-0.54 against the MPC's 0.84-0.95."
+  - "On homes it saves no more than the setback schedule (RECS −0.46 points [−1.73, +0.56], tie) or less (WPuQ −2.45 [−3.16, −1.54]; HUE −1.7, v1.0)."
+  - "The in-band pre-cool rule tuned on dev beats it on RECS skill (0.35 vs 0.24)."
+  - "Worse comfort than a fixed thermostat on RECS twins (1.28 vs 0.36 K h per episode, +0.91 [+0.20, +2.00])."
 limits:
+  - "The 17 Nov 2026 re-score did not reproduce v1.0 on RECS-derived twins: the twin builder here gives different houses (e.g. RECS_116893: UA 287 → 434 W/K, light → medium mass), so the RECS rows and the dev / val ratchet numbers moved (R7 dev skill 0.360 → 0.482, val 0.562 → 0.556). WPuQ reproduced exactly; BDG2 exactly except the MPC (3.05 → 2.69 %). Cause: the twin builder picks among the 5 best ResStock matches with np.argsort, whose order of tied scores (68-way ties) depends on the numpy build and CPU; the BuildingSim edit of 17 Nov (1.0.1) is not the cause (twins identical before and after)."
+  - "The exam MPC reads the true future wind for infiltration (ThermoPilot sees none); with the wind at its monthly mean its dev skill drops 0.815 → 0.787."
   - "Graded in simulation: there are no real thermostat logs (ecobee Donate Your Data needs an application; Pecan Street is paid). Every exam number is BuildingSim with real weather, real tariffs and twin buildings."
   - "WPuQ reality check (37 real heat-pump homes, report only): generic twins overstate the heating slope 2.7× (median; IQR 1.4–5.4) and peak at night while real heat pumps run flat (hourly-profile r = 0.21). The controller order MPC > ThermoPilot > fixed holds (Kendall tau 0.70), but ThermoPilot vs setback flips in 18 of 37 homes, so that comparison cannot be trusted from the simulator. Time-shifting savings are the least certain part."
   - "Hourly ideal thermostat: one zone, no short-cycling or minimum run times, no humidity control; on/off counts are hourly."
@@ -208,7 +298,7 @@ help_wanted:
   - "EnergyPlus as a reference engine: no PyPI wheel with an engine and GitHub was blocked in the build sandbox; install it outside and compare BuildingSim's zone response."
 next:
   - "More DAgger rounds plus a heat-pump-heavy bank (val skill still rose with every round)."
-  - "Make the student a residual on a cheap MPC, or distil the classical MPC's value function."
+  - "Make the student a residual on a cheap MPC (planned in NOTEBOOK.md, 17 Nov 2026): on dev the teacher departs from the MPC in only 4.1 % of hours, while ThermoPilot's corrections correlate only 0.10 / 0.14 (heating / cooling) with the teacher's."
   - "Calibrate residential twins on RECS dev annual energy, then build a new frozen val set and re-score every rung."
   - "A real exam once ecobee access exists."
 

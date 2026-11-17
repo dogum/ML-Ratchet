@@ -19,6 +19,11 @@ ladders:
       it matched only its own process. No exam result was used to choose anything. The R5 change text says 411
       episodes while the model card and R6 say 440 (the logged text is kept). The R6 text says 275k parameters; the
       shipped 298-384-384-36 network has 276,516.
+      Re-scored on 17 Nov 2026 in this repository with the released R7 weights (NOTEBOOK.md): val skill 0.556
+      (logged 0.562; MPC 0.859) and dev skill 0.482 (logged 0.360; MPC 0.815). The RECS respondent twins built here
+      differ from the sandbox's (dev has 11 of them), so the logged rungs below cannot be re-scored like for like; R1-R6
+      weights were not kept. The next rung (a residual on the cheap MPC, planned in NOTEBOOK.md) compares with R7 as
+      re-scored here.
     columns_source: "training/ratchet.json: dev gate numbers (30 episodes), then the val set's fraction of episodes cheaper than fixed"
     columns: ["Dev skill", "Dev K h / episode", "Dev bill saving", "Val beats fixed"]
     rungs:
