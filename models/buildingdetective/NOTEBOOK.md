@@ -198,3 +198,153 @@ balance point from the load shape more than from where the load meets the weathe
 
 **Small things.** `features.py` uses `DatetimeIndex.dayofweek`, which pandas 3 deprecates (Pandas4Warning); it still
 works with the venv's pandas. `verify_js.py` and `buildpage.py` expect the JS port in WORK/web/.
+
+## 17 Nov 2026: integrity pass, the plan (written before anything is re-run)
+
+The v1.0 exam compared the Detective mostly with rules that are given the true use type, or with chance, and called
+three floor-area margins "ties" by eye. This pass re-scores the exam with the released weights and adds fair
+baselines and intervals. **The exam is already seen** (v1.0 took it once): every re-score is labelled "seen", and
+nothing about the model is chosen from it. No new rung. `splits.json` is not touched.
+
+1. **Re-run.** Rebuild the real feature matrices (`realfeats.py` logic: BDG2 dev + exam hourly / monthly / annual /
+   electricity-only, RECS, CBECS, HUE) into `work/feats/real/` from the unpacked platform data, at most 3 processes.
+   Run the real-data parts of `exam.py` (`evaluate.eval_bdg2 / eval_recs / eval_cbecs / eval_hue`, `cbecs_hours`,
+   `bdg2_baselines`, `survey_rules`) with `weights/`. Compare with `training/exam.json`, including the per-unit z
+   lists it kept, and say how close. The simulator rows (frozen validation set, dev twins, ResStock/ComStock) need
+   the 60-shard bank and the stock features, which are not here; they are not re-run (step 6 times what they need).
+2. **Every row exam.py computes goes into model.yaml and MODEL_CARD.md**, including the ones v1.0 left out (for
+   example CBECS heat-pump presence AUC, the electricity-only floor area, the monthly and annual BDG2 rows, HUE monthly).
+3. **Fair baselines, all fitted on dev only (52 BDG2 buildings, 1,848 RECS, 661 CBECS respondents; W1 targets use
+   prior + dev as the simulator did), scored on the same exam rows:**
+   - BDG2 floor area: electricity ÷ dev median EUI of the TRUE use (v1.0's rule; it is given the use, the Detective
+     is not); electricity ÷ dev median EUI of all uses (no truth); a dev-fitted log-log line log A = a + b log kWh
+     (no truth).
+   - RECS / CBECS floor area: energy ÷ dev median EUI by TRUE type × climate (BuildingData's rule, recomputed per
+     unit); energy ÷ W1 target EUI of the TRUE use (the weighted prior + dev median the simulator was tuned to); dev
+     median by TRUE type; a dev-fitted linear model of log area on the same 12 annual features the network gets
+     (no truth).
+   - Heating class (RECS fuel / electric / none; CBECS fuel / electric / district / none): the meter rule, and a
+     dev-fitted multinomial logistic model on the 12 annual features.
+   - RECS heat pump vs resistance: BuildingData's kWh/m²/HDD rule with the TRUE area and its dev threshold
+     (recomputed); the same without area (kWh/HDD, dev threshold); a dev-fitted logistic model on the annual features.
+     Balanced accuracy and AUC. A change-point inversion is not possible on annual totals.
+   - CBECS chiller and heat-pump presence (AUC), primary use, weekly hours, vintage; RECS vintage: dev median / dev
+     median of the TRUE use where v1.0 had it, plus dev-fitted logistic / linear models on the annual features.
+   - BDG2 use: majority; nearest dev centroid of the 168-hour electricity week profile, on the same rows (v1.0 only
+     quoted BuildingData's centroid number on a different set). BDG2 year: dev median; dev median of the same site.
+   - BDG2 chilled-water / steam meter from electricity: a dev site prior (share of dev buildings at the same site
+     with that meter; the site is known from the latitude and weather the Detective also gets) and a dev-fitted
+     logistic model on the electricity PRISM parameters.
+   - HUE (24 homes, no dev split exists): majority; a PRISM change-point inversion of daily electricity: AUC of the
+     heating share (heating slope × HDD at the fitted balance point ÷ annual energy), and "electric heat if that share
+     ≥ 0.20" for accuracy (threshold fixed here, before HUE is read).
+4. **Intervals.** For every real row: 95 % bootstrap interval on Detective minus the best baseline, 2,000 resamples,
+   seed 20261117, resampling the exam unit (building, respondent, home), both scored on the rows both can score.
+   Win if the interval is on the good side of zero, loss if on the bad side, tie if it spans zero. The best baseline
+   is the best point value among those listed (some are given truth; the note then also gives the interval against
+   the best baseline that needs no truth).
+5. **Dev twin test of what the network adds** (dev only): for area, vintage, hours and the heating class, correlate
+   the network's correction to the dev-calibrated rule (network − rule) with what reality needed (truth − rule), on
+   BDG2, RECS and CBECS dev; report where the residuals have structure (use type, climate, housing type).
+6. **Readiness.** One tiny shard (~20 buildings) through `simbank.py` and `featurize.py`, one training epoch into
+   `work/`, timed; extrapolate the 60-shard bank and the frozen set; list blockers.
+7. Update model.yaml (seen labels, intervals in notes, verdicts by the interval rule), MODEL_CARD.md, the ladder
+   note and a results entry here.
+
+## 2026-11-17 — Fresh exam frozen before round-2 rungs: HEAPO (Zurich heat-pump homes)
+
+Written before HEAPO is downloaded. Nothing is scored in this step: no Detective run, no baseline score. Built by
+`training/exam2_heapo.py` into `work/exam2/heapo/` (git-ignored); frozen in `training/split_exam2_heapo.json` (units,
+hashes, rows, baselines, interval rule). Scored once for v1.0 and once for any round-2 release, after the round-2
+release decision.
+
+**Data.** HEAPO, Zenodo 10.5281/zenodo.15056919 v1 (CC BY 4.0, `heapo_data.zip`, 458 MB, md5 2b92b0d5...):
+1,408 heat-pump homes in the canton of Zurich, 15-min and daily smart-meter kWh, Nov 2018 - Mar 2024, 8 weather
+stations, 410 site-visit protocols. Unit-clean: no Swiss home is in training, dev or exam 1.
+
+**Input contract.** `read_hourly(meters, T, GHI, loc, lat)` with `meters={'elec': hourly kW}`; monthly and annual
+modes are derived from the same hourly year (`monthly_from_hourly`; annual kWh with HDD/CDD base 18.33 degC from the
+same T). HEAPO has electricity only (no gas, no district heat), so only `elec` is given. elec = the sum of all of a
+home's 15-min electricity meters (household and, where separate, heat pump); an hour counts only if every quarter-hour
+of every meter is present. T from the home's assigned HEAPO station; GHI from the station if it logs global radiation,
+otherwise clear-sky x 0.6 (pvlib), as `realdata.hue_cases`. tz Europe/Zurich; lat of the station.
+
+**Truth** (protocol only, first visit if several): heated floor area (`Building_FloorAreaHeated_Total`), construction
+year, building type (-> residential_single / residential_multi), heat-pump type (air / ground), emitters (floor
+heating / radiators). The Detective has no air-vs-ground or emitter output: those two are recorded as an output gap
+and not scored.
+
+**Quality control** (BuildingData's BDG2 electricity flags, `build_bdg2.flags_for`: missing, zero, zero runs >= 24 h,
+negative, spikes, flatlines >= 24 h, linear-fill runs >= 12 h, level-shift days; then HUE's window rule): use the most
+complete 365-day window starting on a month boundary; keep the home if it has >= 300 x 24 good hours and < 30
+level-shift days. Drop homes with no protocol, with PV (protocol or survey; the meter reads net import), with floor
+area outside 30-2,000 m2 (area rows) or construction year outside 1800-2024 (year rows). No filter uses energy per
+area, so no rule leans on the truth-to-meter relation the baselines exploit. Every dropped home is counted by reason.
+
+**Split, by home, seed 20261117.** Protocol homes that pass QC: 20 % dev, 80 % exam, stratified by building type x
+heat-pump type (at least one dev home per stratum with >= 3 homes). Dev only fits the baselines.
+
+**Rows** (each for hourly, monthly and annual input): (1) heated floor area, median abs. % error; (2) construction
+year, mean abs. error (yr); (3) single vs multi-family accuracy (the higher of P(residential_single) and
+P(residential_multi)); (4) info, no verdict: share of homes with heat_pump as the top heating class and the median
+P(heat_pump) (every home has one, so no fair baseline exists). Model input: the released `weights/` through
+`Detective.read_hourly / read_monthly_from_hourly / read_annual`.
+
+**Baselines, fitted on the dev homes.** Area: annual elec / dev median kWh/m2 of the TRUE building type (given truth
+the Detective lacks); annual elec / dev median kWh/m2 (no truth); dev-fitted line log A = a + b log kWh; dumb dev median
+area. Year: dev median; dev-fitted line year = a + b log kWh. Type: dev majority.
+
+**Intervals.** 95 % bootstrap over exam homes, 2,000 resamples, seed 20261117, paired, on the model's statistic minus
+the best baseline's (best = better point value on the row). Win / loss if the interval is entirely on one side of
+zero, tie if it spans zero. n homes stated.
+
+## 17 Nov 2026: integrity pass, results
+
+Everything below followed the integrity plan above (written before anything was re-run); nothing was changed after a
+result was seen. Scripts: `training/integrity_feats.py` (real features, 3 processes, 66 s for BDG2 exam),
+`training/integrity.py` (re-score, baselines, intervals, twin test); log `training/integrity.json`. No rung.
+
+- **Reproduction.** RECS, CBECS, HUE, BDG2 annual and every v1.0 baseline (`bdg2_baselines`, `survey_rules`,
+  `cbecs_hours`, majority) match `training/exam.json` to 1e-12, including the per-unit z lists. BDG2 hourly: 24 of
+  1,428 buildings read differently (Lamb, Panther, Wolf, Cockatoo), median area error unchanged at 50.0 %. BDG2
+  monthly: 157 buildings differ; area error 49.6 % (v1.0 49.4 %), use 14.4 % (14.1 %), year 25.3 yr (25.2). Cause:
+  exact ties in the PRISM grid fit broken by floating-point noise; a 1e-12 relative perturbation of the meters moves
+  the PRISM features by up to 0.75 (monthly) and 14.6 (hourly) on the affected buildings.
+- **Baselines recomputed.** BuildingData's floor-area rules per unit give its quoted numbers (RECS 33.1 %, CBECS
+  38.7 %); the TRUE-use BDG2 rule gives 51.5 % on 1,364 buildings as v1.0.
+- **Verdicts (28 real rows): 0 wins, 21 losses, 7 ties** (v1.0: 5 wins, 4 ties, 9 losses on 18 rows). Detective
+  minus the best baseline, 95 % interval:
+  - BDG2 floor area against a dev-fitted line log10 A = 0.73 log10 kWh − 0.49 (40.9 %, no use given): hourly +8.8
+    [+5.9, +11.3], monthly +6.2 [+3.2, +9.5], annual +4.8 [+2.2, +7.3], electricity only +9.8 [+7.3, +12.3]. All
+    losses. Against v1.0's TRUE-use rule: hourly −1.8 [−6.0, +2.0] (tie), monthly −4.4 [−8.5, −0.4] and annual
+    −5.9 [−9.3, −2.5] (wins). So v1.0's ties were a tie and two wins against the weak rule, and losses against a fair one.
+  - BDG2 meters from electricity: a dev site prior gives AUC 0.83; chilled water −0.077 [−0.112, −0.043], steam /
+    hot water −0.130 [−0.165, −0.094]. A dev logistic model on the electricity PRISM statistics ties the network on
+    chilled water (+0.003) and beats it on steam (−0.052).
+  - Survey rows against ridge-regularised linear / logistic models on the same 12 annual features, fitted on dev:
+    RECS heating 87.3 vs 91.9 % (−4.7 [−5.2, −4.1]); CBECS heating 74.7 vs 79.2 % (−4.5 [−5.9, −3.2]); CBECS use
+    16.5 vs 28.4 %; CBECS chiller AUC 0.77 vs 0.80 (−0.036 [−0.052, −0.020]); RECS heat pump vs resistance AUC
+    0.40 vs 0.63; RECS area 33.6 vs 29.6 % (+4.0 [+3.3, +4.7]); RECS vintage 22.1 vs 21.8 yr (+0.3 [+0.1, +0.6]);
+    CBECS hours 44.2 vs 37.4 h. CBECS area: loss against the TRUE type × climate rule (+4.2 [+1.9, +6.3]), tie
+    against the dev linear model (−1.8 [−3.9, +0.1]).
+  - Ties: BDG2 year built monthly (+0.3 [−0.4, +1.1]) and annual (−0.1 [−0.8, +0.6]) against the dev median; CBECS
+    heat-pump presence (−0.031 [−0.069, +0.007]); the four HUE rows (24 homes, 6 electric): hourly accuracy −25
+    [−54, +8], monthly AUC 0.69 vs the PRISM heating share's 0.55, +0.15 [−0.04, +0.36].
+- **Dev twin test.** The network's correction to the dev-calibrated rule against truth minus that rule: RECS area
+  r = 0.60 (n = 1,848), RECS fuel heat 0.60, CBECS area 0.54, CBECS fuel heat 0.56, CBECS hours 0.43, RECS vintage
+  0.22, BDG2 area 0.12 / 0.10 / 0.22 (hourly / monthly / annual, n = 52). The corrections point the right way but are
+  biased and too large: CBECS hours +37 h median (offices +56 h, healthcare −42 h), error 27 → 45 h; BDG2 hourly area
+  median −0.13 log10, education needed +0.15 and got −0.16; RECS apartments in 5+ unit buildings needed +0.09 and got
+  +0.28; CBECS food service needed −0.66 and got −0.17. A dev-fitted model gets the size right, which is why it wins.
+- **Readiness smoke test** (Windows, 2 processes): `simbank.py` with 20 buildings per shard (shards 0 and 900) took
+  24-25 s per shard, no failures; `featurize.py --w3 --once` 14 s then 3 s; `train.py --epochs 1` ran for all three
+  networks (about 20 s each, mostly torch start-up). One full-size epoch: hourly 2.0 s, monthly 0.7 s, annual 1.2 s.
+  Extrapolated: 13,000 buildings (60 shards + frozen 900-904) ≈ 4.5 CPU-hours of simulation, about 1.5 h on 3
+  processes, plus 0.2-1 h of features; 60 epochs ≈ 4 min. Blockers: ResStock/ComStock samples not unpacked
+  (`data/proc/stock`, ~1.2 GB) so the sim-vs-sim rows cannot run; `run_bank.sh` needs bash and `python3`; the
+  rebuilt frozen set must re-score the released weights at 0.813 (hourly) before it judges a rung; training-shard
+  features use time-based seeds, so a rebuilt training set will not match v1.0's bit for bit; copy
+  `training/calibration.json` to `work/models/` first.
+- **What it means.** v1.0's real wins were wins over weak rules. With baselines fitted on the same dev data, the
+  network adds nothing measurable on any real row; its corrections are informative in direction only. The next rung
+  should predict corrections to the dev-fitted baselines rather than raw outputs (model.yaml `next`).
