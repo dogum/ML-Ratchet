@@ -1,8 +1,8 @@
-# Lessons from twenty models
+# Lessons from twenty-one models
 
 What building ChirpNet, SunDoctor, CellSense, TransitNet, QuakeNet, BearingNet, SwellCast, BeatNet and StarQuake,
 then the vehicle platform with EnergyNet, TripDetective and HybridPilot, the grid platform with GridPulse,
-BatteryPilot, PlantDetective and DemandCast, and the building platform with LoadCast, BuildingDetective, FaultFinder
+BatteryPilot, PlantDetective and DemandCast, WakeNet, and the building platform with LoadCast, BuildingDetective, FaultFinder
 and ThermoPilot, taught, in rough order of how much it
 mattered.
 

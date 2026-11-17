@@ -132,6 +132,6 @@ reproduce in the repository; the models' exam numbers are imported from their lo
 
 ## New models
 
-The power-grid and building projects are in (above). The next big-system candidates are Watershed (USGS NWIS,
-SNOTEL) and WakeNet (Kelmarsh and Penmanshiel SCADA). See [backlog.md](backlog.md) for them and the other candidates with physics, data and an exam
-lined up.
+The power-grid and building projects are in (above), and so is WakeNet (Kelmarsh and Penmanshiel SCADA). The next
+big-system candidate is Watershed (USGS NWIS, SNOTEL). See [backlog.md](backlog.md) for it and the other candidates
+with physics, data and an exam lined up.
