@@ -37,13 +37,14 @@ The losses are published too.
 | [**BatteryPilot**](models/batterypilot/) | When should a grid battery buy and sell, knowing only what is known before the hour? | 48 real node-years, ERCOT 2023-25 + CAISO 2024-25 | 1 win · 7 losses |
 | [**PlantDetective**](models/plantdetective/) | What is this power unit, and how flexibly does it run, from its hourly output? | 395 real Texas CAMPD units, 2018-2025 | 8 wins · 9 losses |
 | [**DemandCast**](models/demandcast/) | Tomorrow's hourly demand, wind and solar for a US grid? | 2023-25, 8 US grids, 209,340 demand hours | 14 wins · 5 losses · 2 mixed |
+| [**WakeNet**](models/wakenet/) | How much power is each wind turbine losing to its neighbours' wakes? | 24,035 snapshots · 2 farms (1 unseen) | 8 wins · 3 losses |
 <!-- collection:end -->
 
 Every model also runs **live in your browser** on the website — the real network, ported to TypeScript and checked
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
 <!-- totals:start (generated) -->
-**0** real labelled examples were used for training. **253** rung decisions are logged, **138** of them rejections.
+**0** real labelled examples were used for training. **261** rung decisions are logged, **141** of them rejections.
 <!-- totals:end -->
 
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself. The three

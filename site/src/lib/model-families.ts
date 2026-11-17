@@ -25,12 +25,13 @@ export const TRAITS: { id: string; label: string; g: Group }[] = [
   { id: 'ensemble', label: 'Ensemble', g: 'dist' },
   { id: 'flow', label: 'Flow posterior', g: 'dist' },
   { id: 'sets', label: 'Set pooling', g: 'struct' },
+  { id: 'gnn', label: 'Graphs', g: 'struct' },
   { id: 'anchor', label: 'Physics anchor', g: 'phys' },
   { id: 'diffsim', label: 'Decides through physics', g: 'phys' },
 ];
 export const ABSENT: { id: string; label: string }[] = [
   { id: 'gbm', label: 'Trees' }, { id: 'attn', label: 'Attention' }, { id: 'ssm', label: 'State-space' },
-  { id: 'gnn', label: 'Graphs' }, { id: 'gp', label: 'GPs' }, { id: 'symbolic', label: 'Formulas' }, { id: 'assim', label: 'Filters' },
+  { id: 'gp', label: 'GPs' }, { id: 'symbolic', label: 'Formulas' }, { id: 'assim', label: 'Filters' },
 ];
 
 export interface ModelNote {
@@ -61,6 +62,7 @@ export const MODEL_NOTES: Record<string, ModelNote> = {
   swellcast: { t: ['cnn2d', 'anchor'], params: 296e3, paramsFrom: 'model.yaml' },
   transitnet: { t: ['cnn1d', 'anchor'], params: 321900, paramsFrom: 'weight files' },
   tripdetective: { t: ['cnn1d', 'sets', 'anchor'], params: 0.40e6, paramsFrom: 'model.yaml', twin: 'A dev hybrid’s twin stops its engine 0.29 of the time; the real car 0.09.', ladder: 3 },
+  wakenet: { t: ['gnn', 'anchor'], params: 245767, paramsFrom: 'model.yaml', twin: 'Rung 4 read flat-terrain v2 twins with 0.0% low-elevation bias and real Kelmarsh dev +2.3% high on KWF5–KWF6; adding 3-D hill speedup and separated meandering cut it to −0.5%.' },
 };
 
 export interface Family {
@@ -144,14 +146,14 @@ export const FAMILIES: Family[] = [
     extrap: 'Handles more items than seen in training if the pooling is mean-like.',
     risk: 'Sum or mean pooling treats every item alike. Attention pooling learns which items carry information.',
     used: ['TripDetective (pooling with normal equations)'], refs: ['zaheer17', 'lee19', 'komiske19'] },
-  { id: 'gnn', name: 'Graph neural networks', g: 'struct', st: 'n', np: 2, web: 2, data: 2,
+  { id: 'gnn', name: 'Graph neural networks', g: 'struct', st: 'y', np: 3, web: 3, data: 2,
     one: 'Messages pass along edges; one local rule applies everywhere on the graph.',
     physics: 'Edges are physical links: transmission lines, wakes between turbines, pairs of stations.',
     suits: 'Networks, meshes, multi-sensor arrays.',
     unc: 'Output heads.',
     extrap: 'Carries over to graphs of new sizes if the local rule is right.',
     risk: 'Deep stacks blur node features together. The graph itself must be right.',
-    used: [], refs: ['battaglia18', 'vandenende20', 'lam23'] },
+    used: ['WakeNet (directed wake graph)'], refs: ['battaglia18', 'vandenende20', 'lam23'] },
   { id: 'operator', name: 'Neural operators', g: 'struct', st: 'n', np: 2, web: 2, data: 1,
     one: 'Learns a map between functions, independent of grid resolution (FNO, DeepONet).',
     physics: 'A fast stand-in for a PDE solver: the forward direction, the mirror image of what this collection does.',
@@ -302,6 +304,9 @@ export const CELLS: Cell[] = [
   { m: 'tripdetective', f: 'sets', s: 2, inr: true, why: 'Already partly in: trip embeddings are pooled per car with the normal equations. Attention pooling would weight informative trips (hills, hard accelerations) above flat cruising.', gap: 'Per car, mass 127 kg against 116 kg for v1.0; HEVs 181 kg against 93 kg.', judge: 'Mean of 4 dev error ratios ≤ 1.05.', change: 'Attention pooling over trip embeddings before the per-car physics head' },
   { m: 'tripdetective', f: 'assim', s: 2, why: 'A car’s mass and drag are fixed while trips arrive one by one. Recursive least squares or a Kalman filter on the road-load equation is the classic online estimator, and it suits a car in service.', gap: 'Mass 1σ coverage fell to 56%.', judge: 'Same dev gate, on cars with many trips.', change: 'Recursive least-squares (Kalman) update of road-load coefficients across a car’s trips' },
   { m: 'tripdetective', f: 'gbm', s: 2, why: 'Powertrain type per car ties a simple rule at 99.4%. A shallow forest on simulated per-trip features is the formal version of that rule, and its splits can be read.', gap: 'Per trip, the rule is better (96.7% against 94.2%).', judge: 'VED-type accuracy on the 16 dev cars.', change: 'Shallow gradient-boosted classifier for powertrain architecture from per-trip features' },
+  // WakeNet
+  { m: 'wakenet', f: 'conformal', s: 3, why: 'Bars calibrated on Kelmarsh’s gentle 21.5 m farmland cover 72% on Kelmarsh 2020–21, then fall to 51% zero-shot on Penmanshiel’s 48 m coastal ridge. Mondrian conformal quantiles grouped by relative terrain relief |Δz/D| widen steep-ridge intervals directly.', gap: 'Penmanshiel waked 68% bars cover 50.7%.', judge: 'Per-relief-stratum coverage on simulated hill banks plus the H1/H2 Kelmarsh dev gate.', change: 'Relief-stratified Mondrian conformal widening of per-turbine η_sig' },
+  { m: 'wakenet', f: 'gp', s: 2, why: 'Surrounding coastal ridges and forestry blocks create smooth wind-direction-dependent speedup fields across a farm that tower elevations alone cannot see. A directional spatial GP over simulated WAsP/Jackson–Hunt hill flows captures smooth terrain speedup.', gap: 'Penmanshiel hilltop ridge turbines: 15.92% against 13.19% for unwaked (−9.2% bias).', judge: 'Frozen hill-flow set plus the per-half-year Kelmarsh dev gate.', change: 'Spatial Gaussian-process prior over terrain-induced inflow speedup feeding the wake anchor' },
 ];
 
 export interface Lens { tag: string; name: string; one: string; see: string; blind: string; ask: string; evi: string }
@@ -358,7 +363,6 @@ export const LENSES: Lens[] = [
 
 /** Section 10: a first learner for each new-model idea in docs/backlog.yaml (keyed by its id). */
 export const BACKLOG_FIT: Record<string, { f: string[]; why: string }> = {
-  wakenet: { f: ['gnn', 'operator'], why: 'Turbines are nodes and wakes are directed edges that turn with the wind. FLORIS is the teacher; a graph network reads a whole farm.' },
   dispatchnet: { f: ['gnn', 'diffsim'], why: 'The transmission network is a graph, and the task is a decision: train through the dispatch cost, grade on EIA-930 generation and prices.' },
   watershed: { f: ['ssm', 'assim'], why: 'Rivers store water for weeks. LSTMs are strong on large-sample basin data (Kratzert et al. 2019); a filter on a rainfall-runoff model is the classical partner.' },
   tsunaminet: { f: ['operator', 'flow'], why: 'A neural operator can stand in for the shallow-water solver to grow the bank; a flow reads the Okada source with its uncertainty.' },

@@ -155,16 +155,6 @@ ideas:
     data_url: https://hitran.org/
     exam: Measured gas spectra
     status: checked
-  - id: wakenet
-    name: WakeNet
-    domain: Energy
-    question: How much power is each wind turbine losing to its neighbours' wakes?
-    physics: FLORIS wake models
-    data: Kelmarsh and Penmanshiel SCADA (Zenodo)
-    data_url: https://zenodo.org
-    exam: Real farm SCADA with wake-steering periods
-    status: checked
-    note: Kelmarsh and Penmanshiel SCADA on Zenodo answered on 13 Nov (as the WindFarm idea).
   - id: jetnet
     name: JetNet
     domain: Particle physics
