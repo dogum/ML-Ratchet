@@ -1,0 +1,425 @@
+<title>ThermoPilot</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column (max 1060px) with a wide instrument panel for the lab; charts are hand-drawn SVG. */
+:root {
+  --bg: #f4f6f7; --panel: #ffffff; --ink: #17202a; --muted: #5d6b78; --rule: #d9e0e5;
+  --heat: #d2551d; --cool: #1f6fb8; --band: #dfeee4; --bandline: #7fb08f; --price: #7a6a1f;
+  --tp: #0f8a6c; --mpc: #7b4fc9; --oracle: #17202a; --fixed: #98a3ad; --setback: #c08a1e; --precool: #4aa3c7;
+  --good: #0f8a6c; --bad: #c2412d; --chip: #e9eef1;
+  --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1418; --panel: #161d23; --ink: #e6ecf0; --muted: #94a3af; --rule: #2a343d;
+  --heat: #f07a43; --cool: #5aa6ea; --band: #1c3326; --bandline: #4f8f63; --price: #cdbb5c;
+  --tp: #34c79f; --mpc: #a888ea; --oracle: #e6ecf0; --fixed: #6d7a86; --setback: #e0a93a; --precool: #66bfe0;
+  --good: #34c79f; --bad: #f0745d; --chip: #222b33; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1418; --panel: #161d23; --ink: #e6ecf0; --muted: #94a3af; --rule: #2a343d;
+  --heat: #f07a43; --cool: #5aa6ea; --band: #1c3326; --bandline: #4f8f63; --price: #cdbb5c;
+  --tp: #34c79f; --mpc: #a888ea; --oracle: #e6ecf0; --fixed: #6d7a86; --setback: #e0a93a; --precool: #66bfe0;
+  --good: #34c79f; --bad: #f0745d; --chip: #222b33; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--body); margin: 0 }
+.wrap { max-width: 1060px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px }
+h1, h2, h3 { font-family: var(--display); line-height: 1.12; text-wrap: balance; margin: 0 }
+h1 { font-size: clamp(40px, 7vw, 72px); font-weight: 700; letter-spacing: -0.02em }
+h2 { font-size: clamp(24px, 3.4vw, 34px); font-weight: 700; margin-top: 56px }
+h3 { font-size: 19px; font-weight: 700 }
+p { max-width: 68ch; margin: 10px 0 }
+.lead { font-size: 19px; color: var(--ink); max-width: 62ch }
+.muted { color: var(--muted) }
+.eyebrow { font: 600 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums }
+.hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 32px; align-items: end; padding-top: 12px }
+.dial { width: 100%; max-width: 330px; justify-self: end }
+.keys { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; margin-top: 28px }
+.key { background: var(--panel); padding: 14px 16px }
+.key b { display: block; font: 600 26px/1.1 var(--mono); font-variant-numeric: tabular-nums }
+.key span { font-size: 13px; color: var(--muted) }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; padding: 18px; margin-top: 18px }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end }
+.controls label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .04em; text-transform: uppercase }
+select, input[type=range] { font: 15px var(--body); color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 8px; padding: 6px 8px; min-width: 0; max-width: 100% }
+input[type=range] { padding: 0; accent-color: var(--tp); width: 160px }
+select:focus-visible, input:focus-visible, button:focus-visible { outline: 2px solid var(--tp); outline-offset: 2px }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px }
+.chip { border: 1px solid var(--rule); background: var(--chip); color: var(--ink); border-radius: 999px; padding: 4px 12px 4px 8px; font: 500 14px var(--body); cursor: pointer; display: inline-flex; gap: 6px; align-items: center }
+.chip i { width: 14px; height: 4px; border-radius: 2px; display: inline-block }
+.chip[aria-pressed="false"] { opacity: .45 }
+.chart { width: 100%; overflow-x: auto; margin-top: 8px }
+.chart svg { display: block; width: 100%; min-width: 560px; height: auto }
+.chart text { fill: var(--muted); font: 11px var(--mono) }
+table { border-collapse: collapse; width: 100%; font-size: 14px }
+th, td { padding: 7px 10px; text-align: right; border-bottom: 1px solid var(--rule); white-space: nowrap; font-variant-numeric: tabular-nums }
+th:first-child, td:first-child { text-align: left }
+th { font: 600 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted) }
+.tw { overflow-x: auto }
+tr.tp td { font-weight: 600 }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: 0 }
+.good { color: var(--good) } .bad { color: var(--bad) }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px }
+.ladder { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px }
+.ladder li { display: grid; grid-template-columns: 70px minmax(0, 1fr) 92px; gap: 12px; align-items: baseline; padding: 12px 14px; background: var(--panel); border: 1px solid var(--rule); border-radius: 10px }
+.pill { font: 600 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; padding: 3px 8px; border-radius: 999px; text-align: center }
+.pill.kept { background: color-mix(in srgb, var(--good) 18%, transparent); color: var(--good) }
+.pill.rej { background: color-mix(in srgb, var(--bad) 15%, transparent); color: var(--bad) }
+pre { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; overflow-x: auto; font: 13px/1.5 var(--mono) }
+ul.limits { padding-left: 20px; max-width: 72ch } ul.limits li { margin: 8px 0 }
+.note { font-size: 13px; color: var(--muted) }
+.billrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 12px }
+.bill { border: 1px solid var(--rule); border-radius: 10px; padding: 10px 12px; background: var(--bg) }
+.bill .n { font: 600 22px var(--mono); font-variant-numeric: tabular-nums }
+.bill .s { font-size: 12px; color: var(--muted) }
+@media (max-width: 760px) {
+  .hero { grid-template-columns: 1fr } .dial { justify-self: start; max-width: 240px }
+  .keys { grid-template-columns: repeat(2, minmax(0, 1fr)) } .grid2 { grid-template-columns: 1fr }
+  .ladder li { grid-template-columns: 56px minmax(0, 1fr); } .ladder li .pill { grid-column: 1 }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important } }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div>
+    <div class="eyebrow">ML Ratchet · BuildingSim phase 2 · trained on physics, graded on reality</div>
+    <h1>ThermoPilot</h1>
+    <p class="lead">A learned thermostat for homes and small buildings. Every hour it picks a heating and a cooling setpoint so the bill is low and the rooms stay inside the occupant's comfort band. It learned when to pre-heat and pre-cool by imitating a controller that could see the future, inside a building simulator. It was graded on twins of real homes and buildings under their real weather and real tariffs.</p>
+  </div>
+  <svg class="dial" viewBox="0 0 300 300" role="img" aria-label="Thermostat dial showing the comfort band and the setpoint menu">
+    <circle cx="150" cy="150" r="128" fill="var(--panel)" stroke="var(--rule)" stroke-width="2"/>
+    <g id="dialticks"></g>
+    <path id="dialband" fill="none" stroke="var(--bandline)" stroke-width="14" stroke-linecap="round"/>
+    <text x="150" y="146" text-anchor="middle" style="font: 700 46px var(--display); fill: var(--ink)" id="dialT">21.4°</text>
+    <text x="150" y="176" text-anchor="middle" style="font: 12px var(--mono); fill: var(--muted)" id="dialS">pre-heating · price low</text>
+  </svg>
+</header>
+<div class="keys" id="keys"></div>
+<p class="note" id="keysnote"></p>
+
+<h2>Watch a week</h2>
+<p>Pick a home, a climate, a week and a tariff. Every line is a full BuildingSim run of that controller on the same house, the same real 2017 weather and the same real tariff. The green band is the occupant's comfort band; it widens at night and when nobody is home, using the occupant's own thermostat habits from the RECS survey.</p>
+<div class="panel">
+  <div class="controls">
+    <label for="selHome">Home<select id="selHome"></select></label>
+    <label for="selClim">Climate (real 2017 weather)<select id="selClim"></select></label>
+    <label for="selWeek">Week<select id="selWeek"></select></label>
+    <label for="selTar">Tariff<select id="selTar"></select></label>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="chart" id="chT"></div>
+  <div class="chart" id="chP"></div>
+  <div class="chart" id="chC"></div>
+  <div class="tw"><table id="weekTable"></table></div>
+  <p class="note" id="weekNote"></p>
+</div>
+
+<h2>Try it live</h2>
+<p>The trained network runs in your browser here. The house is the controller's own linear model of the selected home (the exact hourly maps of BuildingSim's 5R1C zone, with the heat-pump, furnace and AC tables), so these numbers are close to, but not the same as, the full simulator above. Change the comfort band, the price peak or the forecast error and watch ThermoPilot re-plan against a fixed thermostat and the occupant's setback schedule.</p>
+<div class="panel">
+  <div class="controls">
+    <label for="rLo">Comfort low <span class="mono" id="vLo"></span><input type="range" id="rLo" min="17" max="23" step="0.5"></label>
+    <label for="rHi">Comfort high <span class="mono" id="vHi"></span><input type="range" id="rHi" min="22" max="28" step="0.5"></label>
+    <label for="rW">Night / away allowance <span class="mono" id="vW"></span><input type="range" id="rW" min="0" max="5" step="0.5"></label>
+    <label for="rP">Price swing <span class="mono" id="vP"></span><input type="range" id="rP" min="0" max="3" step="0.25"></label>
+    <label for="rF">Forecast error <span class="mono" id="vF"></span><input type="range" id="rF" min="0" max="3" step="0.5"></label>
+  </div>
+  <div class="chart" id="lvT"></div>
+  <div class="chart" id="lvP"></div>
+  <div class="billrow" id="lvBills"></div>
+  <p class="note" id="lvNote"></p>
+</div>
+
+<h2>The exam</h2>
+<p>No real thermostat logs were available (ecobee's Donate Your Data needs a research application), so the exam runs in the simulator, made as real as we could: twins of real exam units built from their real characteristics, run under their real weather and real tariffs. Neither the MPC nor ThermoPilot knows the house exactly: the simulated house is a perturbed copy (envelope ±12 %, air leakage ±25 %, thermal mass class, internal loads) of the twin the controllers are given. Nothing here was used for training or for choosing anything.</p>
+<div id="examSets"></div>
+<p class="note">Bill = energy + demand charges + gas for the month; fixed customer charges are left out because no controller changes them. Brackets: 90 % bootstrap interval over units. Comfort: kelvin-hours outside the occupant's band per episode, mean PPD while home (ISO 7730), on/off switches of the HVAC per day. "Perfect foresight" knows the true house, the true weather and the true state and may re-simulate the month (best of the DP with a monthly peak target and the rules); it is a practical bound, not a proven optimum.</p>
+
+<h2>How far can the simulator be trusted?</h2>
+<p>The one place with real heat-pump data is WPuQ: 38 heat-pump homes in Lower Saxony, metered every hour. They have no building metadata, so each home got a generic heat-pump twin. This is a report-only check: nothing in ThermoPilot was tuned on it.</p>
+<div class="grid2">
+  <div class="panel"><h3>Heating slope, real vs twin</h3><div class="chart" id="chW"></div><p class="note" id="wNote1"></p></div>
+  <div class="panel"><h3>January daily shape</h3><div class="chart" id="chW2"></div><p class="note" id="wNote2"></p></div>
+</div>
+<p id="wRank"></p>
+
+<h2>The ratchet</h2>
+<p>A rung is kept only if it beats the incumbent on a frozen simulated validation set (60 episodes) by more than 0.01 skill and passes a dev gate on 30 dev episodes (RECS dev respondents and BDG2 dev buildings, never in the exam). Skill = share of the possible saving captured: 0 is the fixed thermostat, 1 is perfect foresight, both on cost plus comfort penalty.</p>
+<ul class="ladder" id="ladder"></ul>
+
+<h2>How it was built</h2>
+<div class="panel"><div class="chart"><svg viewBox="0 0 980 230" id="pipe" role="img" aria-label="Pipeline from simulator to exam"></svg></div></div>
+<div class="grid2">
+  <div>
+    <h3 style="margin-top:18px">Teacher</h3>
+    <p>A dynamic program over the building's thermal mass temperature (0.25 K grid, 24 h horizon, replanned every hour) that sees the true weather and the true house. It scores 36 setpoint pairs (heating off / band edge / pre-heat +0–3 K, cooling off / band edge / pre-cool −0–3 K) on energy cost, gas, demand-charge increments and λ × kelvin-hours outside the band (λ = $3 per K h per 150 m²). Its model is BuildingSim's own 5R1C step map, so it is exact up to infiltration linearisation. For demand tariffs it re-simulates the month with a peak target (BuildingSim's exact state rollback makes this possible).</p>
+  </div>
+  <div>
+    <h3 style="margin-top:18px">Student</h3>
+    <p>A 298→256→256→36 MLP (152k parameters, numpy at run time). Inputs: indoor temperature and its last 3 hours, its own last HVAC output, 24 h of forecast weather (with realistic forecast error), price, comfort band, heat-pump COP and capacity tables from a building card, demand-charge state. Trained on the teacher's action values (soft targets + expected regret), then on states its own mistakes lead to (DAgger). A comfort shield keeps setpoints within reach of the next 6 hours of the band.</p>
+  </div>
+</div>
+
+<h2>Limits</h2>
+<ul class="limits" id="limits"></ul>
+
+<h2>Use it</h2>
+<pre id="usage"></pre>
+
+<h2>Data and credits</h2>
+<ul class="limits" id="credits"></ul>
+<p class="note">Built for ML Ratchet (github.com/dogum/ML-Ratchet). BuildingSim and BuildingData are the shared phase 1 packages.</p>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>__TPJS__</script>
+<script>
+(function () {
+const D = JSON.parse(document.getElementById('data').textContent);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const NS = 'http://www.w3.org/2000/svg';
+const el = (t, a, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+const fmt = (v, d = 0) => (v === null || v === undefined || isNaN(v)) ? '–' : Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = v => (v >= 0 ? '−' : '+') + fmt(Math.abs(100 * v), 1) + ' %';
+const CN = { fixed: 'Fixed thermostat', setback: 'Setback (occupant schedule)', setback_std: 'Standard setback (−4/+4 K)', precool: 'Pre-cool rule', precool_p1: 'Pre-cool rule, phase 1', mpc_c: 'MPC with forecast', thermopilot: 'ThermoPilot', oracle: 'Perfect foresight' };
+const CC = { fixed: '--fixed', setback: '--setback', setback_std: '--setback', precool: '--precool', precool_p1: '--precool', mpc_c: '--mpc', thermopilot: '--tp', oracle: '--oracle' };
+
+// ---------------------------------------------------------------- dial
+(function dial() {
+  const g = document.getElementById('dialticks');
+  for (let i = 0; i <= 40; i++) { const a = (-220 + i * 6.5) * Math.PI / 180, r1 = 112, r2 = i % 5 ? 104 : 98;
+    el('line', { x1: 150 + r1 * Math.cos(a), y1: 150 + r1 * Math.sin(a), x2: 150 + r2 * Math.cos(a), y2: 150 + r2 * Math.sin(a), stroke: 'var(--muted)', 'stroke-width': i % 5 ? 1 : 2 }, g); }
+  const arc = (a0, a1, r) => { const p = a => [150 + r * Math.cos(a * Math.PI / 180), 150 + r * Math.sin(a * Math.PI / 180)];
+    const [x0, y0] = p(a0), [x1, y1] = p(a1); return `M${x0},${y0} A${r},${r} 0 0 1 ${x1},${y1}`; };
+  const deg = T => -220 + (T - 14) / 16 * 260;
+  document.getElementById('dialband').setAttribute('d', arc(deg(20), deg(24.5), 120));
+  el('circle', { cx: 150 + 120 * Math.cos(deg(21.4) * Math.PI / 180), cy: 150 + 120 * Math.sin(deg(21.4) * Math.PI / 180), r: 9, fill: 'var(--heat)' }, g);
+})();
+
+// ---------------------------------------------------------------- key numbers
+(function keys() {
+  const k = D.keys, box = document.getElementById('keys');
+  for (const [v, s] of k.items) { const d = document.createElement('div'); d.className = 'key'; d.innerHTML = `<b>${v}</b><span>${s}</span>`; box.appendChild(d); }
+  document.getElementById('keysnote').textContent = k.note;
+})();
+
+// ---------------------------------------------------------------- charts
+function lineChart(host, o) {
+  // o: {n, series:[{y, color, w, dash, label}], band:{lo,hi}, ymin, ymax, h, unit, bars:{y,color}, xlabels}
+  host.innerHTML = '';
+  const W = o.W || 960, H = o.h || 220, L = 66, R = 10, T = 10, B = 24;
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': o.aria || 'chart' }, host);
+  const x = i => L + (W - L - R) * i / Math.max(o.n - 1, 1), y = v => T + (H - T - B) * (1 - (v - o.ymin) / (o.ymax - o.ymin));
+  const ticks = o.ticks || 4;
+  for (let i = 0; i <= ticks; i++) { const v = o.ymin + (o.ymax - o.ymin) * i / ticks;
+    el('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: 'var(--rule)', 'stroke-width': 1 }, svg);
+    el('text', { x: L - 6, y: y(v) + 4, 'text-anchor': 'end' }, svg).textContent = fmt(v, o.dec || 0) + (i === ticks ? ' ' + (o.unit || '') : ''); }
+  for (let d = 0; d <= o.n; d += 24) { el('line', { x1: x(d), x2: x(d), y1: T, y2: H - B, stroke: 'var(--rule)', 'stroke-dasharray': '2 3' }, svg);
+    if (o.xlabels && d < o.n) el('text', { x: x(d) + 4, y: H - 8 }, svg).textContent = o.xlabels[d / 24] || ''; }
+  if (o.band) { let p = ''; for (let i = 0; i < o.n; i++) p += (i ? 'L' : 'M') + x(i) + ',' + y(o.band.hi[i]);
+    for (let i = o.n - 1; i >= 0; i--) p += 'L' + x(i) + ',' + y(o.band.lo[i]);
+    el('path', { d: p + 'Z', fill: 'var(--band)', stroke: 'var(--bandline)', 'stroke-width': 0.8 }, svg); }
+  if (o.bars) { const bw = (W - L - R) / o.n; for (let i = 0; i < o.n; i++) { const v = o.bars.y[i]; if (!v) continue;
+    el('rect', { x: x(i) - bw / 2, y: y(Math.max(v, o.ymin)), width: bw, height: Math.max(0.5, y(o.ymin) - y(Math.max(v, o.ymin))), fill: o.bars.color, opacity: 0.85 }, svg); } }
+  for (const s of o.series) { let p = ''; s.y.forEach((v, i) => { const vv = Math.min(Math.max(v, o.ymin), o.ymax); p += (i ? 'L' : 'M') + x(i).toFixed(1) + ',' + y(vv).toFixed(1); });
+    el('path', { d: p, fill: 'none', stroke: s.color, 'stroke-width': s.w || 1.6, 'stroke-dasharray': s.dash || '', 'stroke-linejoin': 'round' }, svg); }
+  if (o.title) el('text', { x: L + 4, y: T + 12, style: 'font-weight:600' }, svg).textContent = o.title;
+  return svg;
+}
+const range = (arrs, pad, minSpan) => { let a = Infinity, b = -Infinity; for (const r of arrs) for (const v of r) { if (v < a) a = v; if (v > b) b = v; }
+  if (b - a < minSpan) { const m = (a + b) / 2; a = m - minSpan / 2; b = m + minSpan / 2; } return [Math.floor(a - pad), Math.ceil(b + pad)]; };
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+// ---------------------------------------------------------------- week explorer
+const L = D.lab, on = { fixed: true, setback: true, precool: false, mpc_c: true, thermopilot: true, oracle: true };
+const sel = id => document.getElementById(id);
+L.homes.forEach((h, i) => sel('selHome').add(new Option(`${h.label} · ${h.area} m²`, i)));
+L.climates.forEach((c, i) => sel('selClim').add(new Option(c[1], i)));
+L.weeks.forEach((w, i) => sel('selWeek').add(new Option(w === 'winter' ? 'Winter (9–15 Jan 2017)' : 'Summer (10–16 Jul 2017)', i)));
+L.tariffs.forEach((t, i) => sel('selTar').add(new Option(t[1], i)));
+sel('selClim').value = 0; sel('selTar').value = 2;
+for (const c of L.controllers) { const b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.id = 'chip_' + c;
+  b.setAttribute('aria-pressed', on[c] ? 'true' : 'false'); b.innerHTML = `<i style="background:var(${CC[c]})"></i>${CN[c]}`;
+  b.onclick = () => { on[c] = !on[c]; b.setAttribute('aria-pressed', on[c]); drawWeek(); }; sel('chips').appendChild(b); }
+function key() { return `${sel('selHome').value}_${sel('selClim').value}_${sel('selWeek').value}_${sel('selTar').value}`; }
+function startDay(w) { return w == 0 ? 0 : 0; }
+function dayLabels(wi) { const d0 = wi == 0 ? 0 : 0; const s = wi == 0 ? ['Mon 9', 'Tue 10', 'Wed 11', 'Thu 12', 'Fri 13', 'Sat 14', 'Sun 15'] : ['Mon 10', 'Tue 11', 'Wed 12', 'Thu 13', 'Fri 14', 'Sat 15', 'Sun 16']; return s; }
+function drawWeek() {
+  const r = L.runs[key()]; if (!r) return;
+  const n = r.T_out.length, act = L.controllers.filter(c => on[c]);
+  const Ts = act.map(c => r.ctrl[c].T);
+  const [a, b] = range([...Ts, r.lo.slice(0, n), r.hi.slice(0, n).map(v => Math.min(v, 32))], 0.5, 6);
+  lineChart(sel('chT'), { n, ymin: a, ymax: b, unit: '°C', dec: 0, band: { lo: r.lo, hi: r.hi }, xlabels: dayLabels(+sel('selWeek').value), title: 'Indoor temperature',
+    series: act.map(c => ({ y: r.ctrl[c].T, color: css(CC[c]), w: c === 'thermopilot' ? 2.4 : 1.4, dash: c === 'oracle' ? '5 3' : '' })), aria: 'Indoor temperature for each controller' });
+  const P = act.map(c => r.ctrl[c].hvac_kW.map((v, i) => v + (r.ctrl[c].gas_kW[i] || 0)));
+  const [pa, pb] = range(P, 0, 1);
+  lineChart(sel('chP'), { n, ymin: 0, ymax: Math.max(pb, 1), unit: 'kW', dec: 1, h: 170, title: 'HVAC power (electric + gas heat)', xlabels: dayLabels(+sel('selWeek').value),
+    series: act.map((c, j) => ({ y: P[j], color: css(CC[c]), w: c === 'thermopilot' ? 2 : 1.2 })), aria: 'HVAC power' });
+  const pr = r.price.slice(0, n); const [qa, qb] = range([pr], 0, 0.05);
+  lineChart(sel('chC'), { n, ymin: Math.min(0, qa), ymax: Math.max(...pr) * 1.1, unit: '$/kWh', dec: 2, h: 110, ticks: 2, title: 'Electricity price' + (r.drate.some(v => v > 0) ? ' (+ demand charge in shaded hours)' : ''),
+    bars: { y: r.drate.map(v => v > 0 ? Math.max(...pr) * 1.05 : 0), color: 'color-mix(in srgb, var(--price) 18%, transparent)' },
+    series: [{ y: pr, color: css('--price'), w: 1.8 }], xlabels: dayLabels(+sel('selWeek').value), aria: 'Electricity price' });
+  const t = sel('weekTable'); const f = r.ctrl.fixed;
+  let h = '<tr><th>Controller</th><th>Bill $</th><th>vs fixed</th><th>Energy $</th><th>Demand $</th><th>Gas $</th><th>kWh</th><th>Peak kW</th><th>Outside band K h</th></tr>';
+  for (const c of L.controllers) { const m = r.ctrl[c], s = (f.bill - m.bill) / f.bill;
+    h += `<tr class="${c === 'thermopilot' ? 'tp' : ''}"><td><span class="sw" style="background:var(${CC[c]})"></span>${CN[c]}</td><td>${fmt(m.bill, 2)}</td><td class="${s > 0.001 ? 'good' : s < -0.001 ? 'bad' : ''}">${Math.abs(s) < 0.0005 ? '0 %' : pct(s)}</td><td>${fmt(m.energy, 2)}</td><td>${fmt(m.demand, 2)}</td><td>${fmt(m.gas, 2)}</td><td>${fmt(m.kWh, 0)}</td><td>${fmt(m.peak, 1)}</td><td>${fmt(m.DH, 1)}</td></tr>`; }
+  t.innerHTML = h;
+  const hm = L.homes[+sel('selHome').value];
+  sel('weekNote').textContent = `${hm.label}: twin of RECS respondent ${hm.id} (${hm.system.replace(/_/g, ' ')}, ${hm.area} m², built ${hm.year}). Comfort band ${fmt(hm.pref.lo, 1)}–${fmt(hm.pref.hi, 1)} °C at home. One week; demand charges are the full monthly rate applied to this week's peak. Kilowatt-hours include the home's other appliances.`;
+  liveSetup();
+}
+['selHome', 'selClim', 'selWeek', 'selTar'].forEach(id => sel(id).onchange = drawWeek);
+
+// ---------------------------------------------------------------- live lab
+const Wt = TP.loadWeights(D.weights);
+function interp(x, xs, ys) { return TP.interp(x, xs, ys); }
+let LV = null;
+function liveSetup() {
+  const hk = `${sel('selHome').value}_${sel('selClim').value}_${sel('selWeek').value}`;
+  LV = { m: L.live[hk], run: L.runs[key()], home: L.homes[+sel('selHome').value] };
+  if (!liveSetup.done) { sel('rLo').value = LV.home.pref.lo.toFixed(1); sel('rHi').value = LV.home.pref.hi.toFixed(1); sel('rW').value = 2; sel('rP').value = 1; sel('rF').value = 1; liveSetup.done = true; }
+  liveRun();
+}
+function noise(n, seed) { let s = seed >>> 0; const r = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+  const z = []; for (let i = 0; i < n; i++) { const u = Math.max(r(), 1e-9), v = r(); z.push(Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v)); } return z; }
+function liveRun() {
+  const m = LV.m, run = LV.run, card = m.card, n = run.T_out.length, N = m.To.length;
+  let lo0 = +sel('rLo').value, hi0 = +sel('rHi').value; if (hi0 < lo0 + 1) hi0 = lo0 + 1;
+  const w = +sel('rW').value, pmul = +sel('rP').value, fe = +sel('rF').value;
+  sel('vLo').textContent = lo0.toFixed(1) + ' °C'; sel('vHi').textContent = hi0.toFixed(1) + ' °C'; sel('vW').textContent = w.toFixed(1) + ' K';
+  sel('vP').textContent = '×' + pmul.toFixed(2); sel('vF').textContent = fe ? '×' + fe.toFixed(1) : 'none';
+  const st = m.state, lo = [], hi = [];
+  for (let i = 0; i < N; i++) { const s = st[i]; lo.push(lo0 - (s > 0 ? w : 0)); hi.push(hi0 + (s === 2 ? w : s === 1 ? w / 2 : 0)); }
+  const pr0 = run.price, pm = pr0.reduce((a, b) => a + b, 0) / pr0.length, price = [];
+  for (let i = 0; i < N; i++) price.push(Math.max(0.005, pm + pmul * (pr0[Math.min(i, n - 1)] - pm)));
+  const cl = a => { const o = []; for (let i = 0; i < N; i++) o.push(a[Math.min(i, n - 1)]); return o; };
+  const ctx = { price, lo, hi, state: st, pref_lo: lo0, pref_hi: hi0, dperiod: cl(run.dperiod), drate: cl(run.drate), frate: cl(run.frate),
+    drem: cl(run.drem), frem: cl(run.frem), hour: m.hour, wd: m.wd.map(v => !!v) };
+  const z = noise(N + 40, 7);
+  const fc = k => { const T = [], G = []; for (let j = 0; j < 24; j++) { const i = Math.min(k + j, N - 1);
+    let e = 0; if (j > 0 && fe > 0) { e = fe * (0.6 + 1.6 * (1 - Math.exp(-j / 24))) * (0.7 * z[(k + j) % (N + 40)] + 0.3 * z[(k + 2 * j + 5) % (N + 40)]); }
+    T.push(m.To[i] + e); G.push(m.G[i]); } return [T, G]; };
+  const hasCool = card.Qs.some(v => v > 0);
+  function sim(ctrl) {
+    let Tm = m.Tm0, Tz = lo0 + 0.5, q = 0, e = 0, bill = 0, gas = 0, DH = 0, kWh = 0; const peaks = {};
+    const outT = [], outP = [];
+    for (let k = 0; k < n; k++) {
+      const [h, c] = ctrl(k, Tz, q, e);
+      const Tb = m.A[k] + m.At[k] * Tm, be = m.Aq, To = m.To[k];
+      const Qmax = interp(To, card.Tg, card.Qmax), Qs = interp(To, card.Tg, card.Qs);
+      const Qhd = Tb < h ? Math.min((h - Tb) / be, Qmax) : 0, Qcd = (Tb > c && Qs > 0) ? Math.min((Tb - c) / be, Qs) : 0;
+      const T = Tb + be * (Qhd - Qcd); Tm = m.C[k] + m.Ct[k] * Tm + m.Cq * (Qhd - Qcd);
+      let P = 0, g = 0, run_h = 0;
+      if (card.kind === 'hp') { const Qh = interp(To, card.Tg, card.Qh), Ph = interp(To, card.Tg, card.Ph); const f = Qh > 0 ? Math.min(Qhd, Qh) / Qh : 0;
+        P = f > 0 ? Ph * f / (0.85 + 0.15 * f) : 0; P += Math.max(Qhd - Qh, 0); run_h = Qhd > Qh ? 1 : f; }
+      else if (card.gas_heat) { g = Qhd / Math.max(interp(To, card.Tg, card.eff), 0.5); run_h = Qmax > 0 ? Qhd / Qmax : 0; }
+      else { P = Qhd; run_h = card.kind === 'baseboard' ? 0 : (Qmax > 0 ? Qhd / Qmax : 0); }
+      const Pc = interp(To, card.Tg, card.Pc), fcl = Qs > 0 ? Qcd / Qs : 0;
+      if (fcl > 0) P += Pc * fcl / (0.85 + 0.15 * fcl);
+      P += card.P_fan * Math.min(run_h + fcl, 1);
+      const el = (m.base[k] + P) / 1000;
+      bill += price[k] * el + D.lab_gas * g / 1000; gas += g / 1000; kWh += P / 1000;
+      if (ctx.drate[k] > 0) { const kk = 'd' + ctx.dperiod[k]; peaks[kk] = Math.max(peaks[kk] || 0, el); }
+      DH += Math.max(lo[k] - T, 0) + (hasCool ? Math.max(T - hi[k], 0) : 0);
+      Tz = T; q = Qhd - Qcd; e = el; outT.push(T); outP.push(P / 1000 + g / 1000);
+    }
+    let dem = 0; for (const kk in peaks) { const i = ctx.dperiod.findIndex((p, j) => 'd' + p === kk && ctx.drate[j] > 0); dem += peaks[kk] * ctx.drate[i]; }
+    return { T: outT, P: outP, bill: bill + dem, DH, kWh, gas };
+  }
+  const pilot = new TP.Pilot(Wt, card, ctx, m.lam, m.base);
+  const res = {
+    fixed: sim(k => [lo0, hi0]),
+    setback: sim(k => [lo[k], hi[k]]),
+    thermopilot: sim((k, Tz, q, e) => { const [T, G] = fc(k); const r = pilot.step(k, Tz, q, e, T, G); return [r[0], r[1]]; })
+  };
+  const keysL = ['fixed', 'setback', 'thermopilot'];
+  const [a, b] = range([...keysL.map(c => res[c].T), lo.slice(0, n), hi.slice(0, n)], 0.5, 6);
+  lineChart(sel('lvT'), { n, ymin: a, ymax: b, unit: '°C', band: { lo, hi }, title: 'Indoor temperature (browser model)', xlabels: dayLabels(+sel('selWeek').value),
+    series: keysL.map(c => ({ y: res[c].T, color: css(CC[c]), w: c === 'thermopilot' ? 2.4 : 1.4 })), aria: 'Live lab indoor temperature' });
+  const [pa, pb] = range(keysL.map(c => res[c].P), 0, 1);
+  lineChart(sel('lvP'), { n, ymin: 0, ymax: Math.max(pb, 1), unit: 'kW', dec: 1, h: 150, title: 'HVAC power', xlabels: dayLabels(+sel('selWeek').value),
+    bars: { y: price.slice(0, n).map(v => v / Math.max(...price) * Math.max(pb, 1) * 0.35), color: 'color-mix(in srgb, var(--price) 22%, transparent)' },
+    series: keysL.map(c => ({ y: res[c].P, color: css(CC[c]), w: c === 'thermopilot' ? 2 : 1.2 })), aria: 'Live lab HVAC power' });
+  const bx = sel('lvBills'); bx.innerHTML = '';
+  for (const c of keysL) { const r = res[c], s = (res.fixed.bill - r.bill) / res.fixed.bill; const d = document.createElement('div'); d.className = 'bill';
+    d.innerHTML = `<div class="s"><span class="sw" style="background:var(${CC[c]})"></span>${CN[c]}</div><div class="n">$${fmt(r.bill, 2)}</div><div class="s">${c === 'fixed' ? 'reference' : pct(s) + ' vs fixed'} · ${fmt(r.DH, 1)} K h outside band</div>`; bx.appendChild(d); }
+  sel('lvNote').textContent = 'Bills include the home\'s other appliances at the same price. Shaded bars show the price. The network sees a noisy 24 h forecast; the house sees the real weather.';
+}
+['rLo', 'rHi', 'rW', 'rP', 'rF'].forEach(id => sel(id).oninput = liveRun);
+
+// ---------------------------------------------------------------- exam
+(function exam() {
+  const host = sel('examSets');
+  const names = { exam_recs: 'RECS exam respondents: twins of real homes (96 home-months, 12 real tariffs in 9 states)', exam_bdg2: 'BDG2 exam buildings: small offices, schools and shops (commercial TOU + demand tariffs)', exam_hue: 'HUE homes, British Columbia (real Vancouver 2017 weather; PG&E E-TOU-C as a stand-in tariff)', exam_wpuq: 'WPuQ heat-pump homes, Germany (real 2019 weather; Xcel MN time-of-day as a stand-in tariff)' };
+  const order = ['fixed', 'setback', 'setback_std', 'precool', 'mpc_c', 'thermopilot', 'oracle'];
+  for (const s of ['exam_recs', 'exam_bdg2', 'exam_hue', 'exam_wpuq']) {
+    const R = D.exam[s]; if (!R) continue;
+    const div = document.createElement('div'); div.className = 'panel';
+    let h = `<h3>${names[s]}</h3><p class="note">${R.n_episodes} episodes, ${R.n_units} units.</p><div class="tw"><table><tr><th>Controller</th><th>Bill vs fixed</th><th>90 % interval</th><th>vs setback</th><th>Outside band K h / episode</th><th>PPD at home %</th><th>Peak kW</th><th>On/off per day</th><th>Skill</th></tr>`;
+    for (const c of order) { const r = R.all[c]; if (!r) continue; const sv = r.bill_saving_vs_fixed;
+      h += `<tr class="${c === 'thermopilot' ? 'tp' : ''}"><td><span class="sw" style="background:var(${CC[c]})"></span>${CN[c]}</td><td class="${sv > 0.001 ? 'good' : sv < -0.001 ? 'bad' : ''}">${c === 'fixed' ? '—' : pct(sv)}</td><td class="muted">${c === 'fixed' ? '' : '[' + pct(r.bill_saving_vs_fixed_ci90[1]) + ', ' + pct(r.bill_saving_vs_fixed_ci90[0]) + ']'}</td><td>${c === 'setback' ? '—' : pct(r.bill_saving_vs_setback)}</td><td>${fmt(r.DH, 1)}</td><td>${fmt(r.ppd_home, 1)}</td><td>${fmt(r.peak_kW, 1)}</td><td>${fmt(r.onoff_per_day, 1)}</td><td>${fmt(r.skill, 2)}</td></tr>`; }
+    h += '</table></div>';
+    if (s === 'exam_recs' && R.by_tariff) h += '<div class="chart" id="tarChart"></div><p class="note"><span class="sw" style="background:var(--setback);border-radius:50%"></span>setback <span class="sw" style="background:var(--mpc);border-radius:50%;margin-left:8px"></span>MPC with forecast <span class="sw" style="background:var(--tp);border-radius:50%;margin-left:8px"></span>ThermoPilot <span class="sw" style="border:1.5px solid var(--oracle);margin-left:8px"></span>perfect foresight. Bill vs the fixed thermostat by tariff (RECS twins, January + July); right is cheaper. Comfort is not in this chart; see the table.</p>';
+    div.innerHTML = h; host.appendChild(div);
+    if (s === 'exam_recs' && R.by_tariff) tariffChart(R.by_tariff);
+  }
+})();
+function tariffChart(bt) {
+  const host = sel('tarChart'); const keys = Object.keys(bt); const cs = ['setback', 'mpc_c', 'thermopilot', 'oracle'];
+  const W = 960, rowH = 26, H = 30 + keys.length * rowH, L = 210, R = 20;
+  let mx = 0.02; for (const k of keys) for (const c of cs) mx = Math.max(mx, Math.abs(bt[k].t[c].bill_saving_vs_fixed));
+  mx = Math.ceil(mx * 100 / 5) * 5 / 100;
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Bill change by tariff' }, host);
+  const x = v => L + (W - L - R) * (v + mx) / (2 * mx);
+  for (let v = -mx; v <= mx + 1e-9; v += mx / 2) { el('line', { x1: x(v), x2: x(v), y1: 14, y2: H - 6, stroke: 'var(--rule)' }, svg);
+    el('text', { x: x(v), y: 10, 'text-anchor': 'middle' }, svg).textContent = Math.abs(v) < 1e-9 ? 'same bill' : fmt(Math.abs(v * 100), 0) + (v > 0 ? ' % lower' : ' % higher'); }
+  keys.forEach((k, i) => { const yy = 30 + i * rowH; const lab = (D.tariffNames[k] || k);
+    el('text', { x: L - 8, y: yy + 4, 'text-anchor': 'end' }, svg).textContent = lab;
+    el('line', { x1: L, x2: W - R, y1: yy, y2: yy, stroke: 'var(--rule)', 'stroke-dasharray': '1 4' }, svg);
+    cs.forEach(c => { const v = bt[k].t[c].bill_saving_vs_fixed; el(c === 'oracle' ? 'rect' : 'circle', c === 'oracle' ? { x: x(v) - 4, y: yy - 4, width: 8, height: 8, fill: 'none', stroke: css(CC[c]), 'stroke-width': 1.5 } : { cx: x(v), cy: yy, r: c === 'thermopilot' ? 6 : 4.5, fill: css(CC[c]), opacity: c === 'thermopilot' ? 1 : 0.85 }, svg); }); });
+}
+
+// ---------------------------------------------------------------- WPuQ
+(function wpuq() {
+  const Wd = D.wpuq; if (!Wd) return;
+  const host = sel('chW'), W = 460, H = 320, L = 46, B = 34, T = 10, R = 10;
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Real vs simulated heating slope' }, host); svg.style.minWidth = '300px';
+  const mx = Math.ceil(Math.max(...Wd.homes.map(h => Math.max(h.real, h.sim))) / 5) * 5;
+  const x = v => L + (W - L - R) * v / mx, y = v => T + (H - T - B) * (1 - v / mx);
+  for (let v = 0; v <= mx; v += 5) { el('line', { x1: x(v), x2: x(v), y1: T, y2: H - B, stroke: 'var(--rule)' }, svg); el('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: 'var(--rule)' }, svg);
+    el('text', { x: x(v), y: H - B + 14, 'text-anchor': 'middle' }, svg).textContent = v; el('text', { x: L - 6, y: y(v) + 4, 'text-anchor': 'end' }, svg).textContent = v; }
+  el('line', { x1: x(0), y1: y(0), x2: x(mx), y2: y(mx), stroke: 'var(--muted)', 'stroke-dasharray': '4 4' }, svg);
+  el('text', { x: (L + W) / 2, y: H - 4, 'text-anchor': 'middle' }, svg).textContent = 'real kWh/day per K colder';
+  el('text', { x: 12, y: (T + H) / 2, transform: `rotate(-90 12 ${(T + H) / 2})`, 'text-anchor': 'middle' }, svg).textContent = 'twin';
+  for (const h of Wd.homes) { el('circle', { cx: x(h.real), cy: y(Math.min(h.sim, mx)), r: 4, fill: css('--heat'), opacity: .8 }, svg); el('circle', { cx: x(h.real), cy: y(h.calib), r: 3.5, fill: 'none', stroke: css('--tp'), 'stroke-width': 1.5 }, svg); }
+  sel('wNote1').innerHTML = `<span class="sw" style="background:var(--heat)"></span>generic twin <span class="sw" style="background:var(--tp);margin-left:10px"></span>envelope-scaled twin (report only). ${Wd.text1}`;
+  const prof = Wd.profiles; const n = 24;
+  lineChart(sel('chW2'), { n, W: 460, ymin: 0.4, ymax: 1.6, dec: 1, unit: '×', h: 320, xlabels: ['midnight'], series: [{ y: prof.real, color: css('--ink'), w: 2.4 }, { y: prof.sim, color: css('--heat'), w: 1.6 }, { y: prof.calib, color: css('--tp'), w: 1.6, dash: '4 3' }], aria: 'January daily shape of heat-pump power (hourly mean / daily mean)' });
+  sel('chW2').querySelector('svg').style.minWidth = '300px';
+  sel('wNote2').innerHTML = `<span class="sw" style="background:var(--ink)"></span>real <span class="sw" style="background:var(--heat);margin-left:10px"></span>generic twin <span class="sw" style="background:var(--tp);margin-left:10px"></span>scaled twin. ${Wd.text2}`;
+  sel('wRank').textContent = Wd.text3;
+})();
+
+// ---------------------------------------------------------------- ladder, pipeline, text
+(function ladder() { const ul = sel('ladder');
+  for (const r of D.ratchet) { const li = document.createElement('li');
+    li.innerHTML = `<span class="mono">${r.tag.toUpperCase()}</span><div><b>${r.change}</b><div class="note">${r.why}</div></div><span class="pill ${r.kept ? 'kept' : 'rej'}">${r.kept ? 'kept' : 'rejected'}</span>`; ul.appendChild(li); } })();
+(function pipe() { const s = sel('pipe');
+  const boxes = [['BuildingSim twins', 'generated homes,', 'RECS prior twins, shops'], ['Real inputs', 'BDG2 + TMYx weather', '19 tariffs, ERCOT RTP'], ['Teacher', 'perfect-foresight DP', 'scores 36 setpoints'], ['Student', 'MLP, 152k params', 'imitation + DAgger'], ['Exam', 'twins of real units', 'real weather, tariffs']];
+  boxes.forEach((b, i) => { const x = 10 + i * 194; el('rect', { x, y: 50, width: 176, height: 120, rx: 10, fill: 'var(--panel)', stroke: i === 3 ? 'var(--tp)' : 'var(--rule)', 'stroke-width': i === 3 ? 2 : 1 }, s);
+    el('text', { x: x + 14, y: 82, style: 'font: 700 16px var(--display); fill: var(--ink)' }, s).textContent = b[0];
+    el('text', { x: x + 14, y: 110 }, s).textContent = b[1]; el('text', { x: x + 14, y: 130 }, s).textContent = b[2];
+    if (i < 4) { el('path', { d: `M${x + 178},110 L${x + 192},110`, stroke: 'var(--muted)', 'stroke-width': 2, fill: 'none' }, s); el('path', { d: `M${x + 186},105 L${x + 192},110 L${x + 186},115`, stroke: 'var(--muted)', 'stroke-width': 2, fill: 'none' }, s); } });
+  el('text', { x: 10, y: 30, style: 'font: 600 12px var(--mono); fill: var(--muted)' }, s).textContent = 'NO REAL LABELLED EXAMPLE IS EVER A TRAINING SAMPLE';
+  el('text', { x: 10, y: 205 }, s).textContent = 'frozen splits (seed 20261116): exam units never feed training, calibration or any choice';
+})();
+sel('limits').innerHTML = D.limits.map(t => `<li>${t}</li>`).join('');
+sel('credits').innerHTML = D.credits.map(t => `<li>${t}</li>`).join('');
+sel('usage').textContent = D.usage;
+drawWeek();
+})();
+</script>

@@ -1,0 +1,188 @@
+{
+ "rules": "Score a policy on the frozen val set and the dev gate; append the rung to ratchet.json.\n\nusage: ratchet.py score TAG                     print val + dev scores of results/{val,dev}/pol_TAG.json\n       ratchet.py rung TAG \"what changed\"       score, decide keep/reject vs the incumbent, log to ratchet.json\n\nskill = sum_e (J_fixed - J_policy)/J_fixed / sum_e (J_fixed - J_oracle)/J_fixed   (0 = fixed thermostat, 1 = perfect foresight)\nJ = control-dependent bill (energy + demand + gas) + lambda x degree-hours outside the occupant band.\nKeep: val skill > incumbent + 0.01 AND dev gate: dev skill > 0, dev skill >= incumbent dev skill - 0.03, and\nmean degree-hours per dev episode <= fixed + 1 K h.\n",
+ "rungs": [
+  {
+   "tag": "r1",
+   "change": "R1: behaviour cloning of the perfect-foresight DP teacher (173 episodes, 127k hours), MLP 298-256-256-36, no shield",
+   "val": {
+    "n": 60,
+    "skill": 0.08447424742156492,
+    "skill_mpc_c": 0.8293087540656988,
+    "bill_saving_vs_fixed": 0.019563960488064858,
+    "DH_pol": 0.9713276231281266,
+    "DH_fixed": 0.03346810270591257,
+    "beats_fixed": 0.7333333333333333,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": -3.021691276489782,
+    "skill_mpc_c": 0.8313880356837814,
+    "bill_saving_vs_fixed": 0.013947911531260737,
+    "DH_pol": 4.978582798974741,
+    "DH_fixed": 0.08401843657715939,
+    "beats_fixed": 0.5666666666666667,
+    "errors": 0
+   },
+   "kept": false,
+   "why": "val skill 0.084 vs incumbent 0.000 (margin 0.01); dev skill -3.022 (incumbent 0.000), dev DH 5.0 vs fixed 0.1 K h -> REJECTED (dev gate failed)"
+  },
+  {
+   "tag": "r2",
+   "change": "R2: R1 weights + anticipatory comfort shield (stay within 1 K/h of every band edge in the next 4 h)",
+   "val": {
+    "n": 60,
+    "skill": 0.37702312042710373,
+    "skill_mpc_c": 0.8293087540656988,
+    "bill_saving_vs_fixed": 0.017779783712837283,
+    "DH_pol": 0.17135339912812136,
+    "DH_fixed": 0.03346810270591257,
+    "beats_fixed": 0.75,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": -0.8102547177412228,
+    "skill_mpc_c": 0.8313880356837814,
+    "bill_saving_vs_fixed": 0.02038536064797203,
+    "DH_pol": 1.5145166728240933,
+    "DH_fixed": 0.08401843657715939,
+    "beats_fixed": 0.6666666666666666,
+    "errors": 0
+   },
+   "kept": false,
+   "why": "val skill 0.377 vs incumbent 0.000 (margin 0.01); dev skill -0.810 (incumbent 0.000), dev DH 1.5 vs fixed 0.1 K h -> REJECTED (dev gate failed)"
+  },
+  {
+   "tag": "r3",
+   "change": "R3: R1 weights + 6 h comfort shield (heating 1 K/h, cooling 0.5 K/h recovery allowance)",
+   "val": {
+    "n": 60,
+    "skill": 0.419380166781701,
+    "skill_mpc_c": 0.8293087540656988,
+    "bill_saving_vs_fixed": 0.017309407953979616,
+    "DH_pol": 0.07544246588579788,
+    "DH_fixed": 0.03346810270591257,
+    "beats_fixed": 0.7833333333333333,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": -0.1906937735694691,
+    "skill_mpc_c": 0.8313880356837814,
+    "bill_saving_vs_fixed": 0.02011637001316191,
+    "DH_pol": 0.6030187224997375,
+    "DH_fixed": 0.08401843657715939,
+    "beats_fixed": 0.6666666666666666,
+    "errors": 0
+   },
+   "kept": false,
+   "why": "val skill 0.419 vs incumbent 0.000 (margin 0.01); dev skill -0.191 (incumbent 0.000), dev DH 0.6 vs fixed 0.1 K h -> REJECTED (dev gate failed)"
+  },
+  {
+   "tag": "r4",
+   "change": "R4: retrain on BC bank + DAgger round 1 (286 episodes, 210k hours; student = R1 + shield, beta 0.3), shield 4",
+   "val": {
+    "n": 60,
+    "skill": 0.5165676218113953,
+    "skill_mpc_c": 0.8293087540656988,
+    "bill_saving_vs_fixed": 0.014180655706398149,
+    "DH_pol": 0.08040450477570331,
+    "DH_fixed": 0.03346810270591257,
+    "beats_fixed": 0.7833333333333333,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": 0.04276933620240101,
+    "skill_mpc_c": 0.8313880356837814,
+    "bill_saving_vs_fixed": 0.020205635399389688,
+    "DH_pol": 0.2765078594340044,
+    "DH_fixed": 0.08401843657715939,
+    "beats_fixed": 0.6666666666666666,
+    "errors": 0
+   },
+   "kept": true,
+   "why": "val skill 0.517 vs incumbent 0.000 (margin 0.01); dev skill 0.043 (incumbent 0.000), dev DH 0.3 vs fixed 0.1 K h -> KEPT"
+  },
+  {
+   "tag": "r5",
+   "change": "R5: retrain on BC + DAgger rounds 1-2 (411 episodes; round 2 student = R4, beta 0.2), shield 4",
+   "val": {
+    "n": 60,
+    "skill": 0.49924597442571583,
+    "skill_mpc_c": 0.8293087540656988,
+    "bill_saving_vs_fixed": 0.012240092459224639,
+    "DH_pol": 0.06865432108627344,
+    "DH_fixed": 0.03346810270591257,
+    "beats_fixed": 0.7666666666666667,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": -0.0678308796093251,
+    "skill_mpc_c": 0.8313880356837814,
+    "bill_saving_vs_fixed": 0.02402890683889536,
+    "DH_pol": 0.5120398152803307,
+    "DH_fixed": 0.08401843657715939,
+    "beats_fixed": 0.6,
+    "errors": 0
+   },
+   "kept": false,
+   "why": "val skill 0.499 vs incumbent 0.517 (margin 0.01); dev skill -0.068 (incumbent 0.043), dev DH 0.5 vs fixed 0.1 K h -> REJECTED (dev gate failed)"
+  },
+  {
+   "tag": "r6",
+   "change": "R6: wider network 298-384-384-36 (275k params), 24 epochs, same 440 episodes, shield 4",
+   "val": {
+    "n": 60,
+    "skill": 0.5502945509344012,
+    "skill_mpc_c": 0.8293087540656988,
+    "bill_saving_vs_fixed": 0.016231099117397618,
+    "DH_pol": 0.08489253116155217,
+    "DH_fixed": 0.03346810270591257,
+    "beats_fixed": 0.7833333333333333,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": 0.20004958638416706,
+    "skill_mpc_c": 0.8313880356837814,
+    "bill_saving_vs_fixed": 0.012596574431817387,
+    "DH_pol": 0.37014814995679507,
+    "DH_fixed": 0.08401843657715939,
+    "beats_fixed": 0.7333333333333333,
+    "errors": 0
+   },
+   "kept": true,
+   "why": "val skill 0.550 vs incumbent 0.517 (margin 0.01); dev skill 0.200 (incumbent 0.043), dev DH 0.4 vs fixed 0.1 K h -> KEPT"
+  },
+  {
+   "tag": "r7",
+   "change": "R7: R6 architecture + DAgger round 3 (533 episodes; round 3 student = R6, beta 0.1), shield 4",
+   "val": {
+    "n": 60,
+    "skill": 0.5618093734356557,
+    "skill_mpc_c": 0.8293087540656988,
+    "bill_saving_vs_fixed": 0.015639410815913024,
+    "DH_pol": 0.14702641138404732,
+    "DH_fixed": 0.03346810270591257,
+    "beats_fixed": 0.7333333333333333,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": 0.3597287225450889,
+    "skill_mpc_c": 0.8313880356837814,
+    "bill_saving_vs_fixed": 0.024649212825633593,
+    "DH_pol": 0.2927127101415519,
+    "DH_fixed": 0.08401843657715939,
+    "beats_fixed": 0.7666666666666667,
+    "errors": 0
+   },
+   "kept": true,
+   "why": "val skill 0.562 vs incumbent 0.550 (margin 0.01); dev skill 0.360 (incumbent 0.200), dev DH 0.3 vs fixed 0.1 K h -> KEPT"
+  }
+ ],
+ "incumbent": "r7"
+}

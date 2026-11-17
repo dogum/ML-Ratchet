@@ -1,0 +1,31 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json (written by training/scripts/ratchet.py).
+model: thermopilot
+ladders:
+  - name: "ThermoPilot v1.0 (BuildingSim v1, 16-17 Nov 2026)"
+    objective: "Skill on the frozen simulated val set (60 episodes): sum over episodes of the relative saving of J vs the fixed thermostat, divided by the same sum for perfect foresight (0 = fixed thermostat, 1 = perfect foresight); J = control-dependent bill (energy + demand + gas) + λ × kelvin-hours outside the occupant's band"
+    rule: "Keep if val skill > incumbent + 0.01 AND the dev gate passes: dev skill > 0, dev skill ≥ incumbent dev skill − 0.03, and mean kelvin-hours per dev episode ≤ fixed thermostat + 1 K h."
+    margin: 0.01
+    dev_gate: "30 dev episodes (11 RECS dev respondents + 4 BDG2 dev buildings × January / July 2017): dev skill > 0 and ≥ incumbent − 0.03; dev K h per episode ≤ fixed + 1 (fixed: 0.08 K h)"
+    frozen_sets: [val]
+    scored_on: val
+    note: >-
+      The starting incumbent is the fixed thermostat (skill 0). Before R1 was scored, the oracle was upgraded to the
+      two-pass demand-peak version (an oracle that only amortised demand charges was worse than a fixed thermostat on
+      commercial demand tariffs) and skill was changed from a ratio of sums (dominated by large commercial bills) to
+      relative savings per episode; every rung below is scored on the same frozen set. Reference: the classical MPC
+      with forecast scores 0.83 on val and 0.83 on dev. Rule notes, said plainly: the RECS exam uses 4 of the 6
+      respondents drawn per tariff slot, a cut made for compute before any exam result existed; and during the build
+      the agent once ran `pkill -f` with its own script name to stop a job, which could have killed other processes —
+      it matched only its own process. No exam result was used to choose anything. The R5 change text says 411
+      episodes while the model card and R6 say 440 (the logged text is kept). The R6 text says 275k parameters; the
+      shipped 298-384-384-36 network has 276,516.
+    columns_source: "training/ratchet.json: dev gate numbers (30 episodes), then the val set's fraction of episodes cheaper than fixed"
+    columns: ["Dev skill", "Dev K h / episode", "Dev bill saving", "Val beats fixed"]
+    rungs:
+      - { id: r1, change: "Behaviour cloning of the perfect-foresight DP teacher (173 episodes, 127k hours), MLP 298-256-256-36, no shield", sim: 0.084, decision: rejected, why: "val skill 0.084 vs incumbent 0.000; dev skill −3.02, dev K h 5.0 vs fixed 0.1: dev gate failed (comfort)", metrics: [-3.022, 4.98, "1.4%", "73%"] }
+      - { id: r2, change: "R1 weights + anticipatory comfort shield (stay within 1 K/h of every band edge in the next 4 h)", sim: 0.377, decision: rejected, why: "val skill 0.377 vs 0.000; dev skill −0.81, dev K h 1.5 vs fixed 0.1: dev gate failed", metrics: [-0.810, 1.51, "2.0%", "75%"] }
+      - { id: r3, change: "R1 weights + 6 h comfort shield (heating 1 K/h, cooling 0.5 K/h recovery allowance)", sim: 0.419, decision: rejected, why: "val skill 0.419 vs 0.000; dev skill −0.19, dev K h 0.6 vs fixed 0.1: dev gate failed (dev skill ≤ 0)", metrics: [-0.191, 0.60, "2.0%", "78%"] }
+      - { id: r4, change: "Retrain on the BC bank + DAgger round 1 (286 episodes, 210k hours; student = R1 + shield, beta 0.3), shield 4", sim: 0.517, decision: kept, why: "val skill 0.517 vs 0.000; dev skill 0.043, dev K h 0.3 vs fixed 0.1: kept", metrics: [0.043, 0.28, "2.0%", "78%"] }
+      - { id: r5, change: "Retrain on BC + DAgger rounds 1-2 (411 episodes; round 2 student = R4, beta 0.2), shield 4", sim: 0.499, decision: rejected, why: "val skill 0.499 vs incumbent 0.517 (needs +0.01); dev skill −0.068 vs 0.043: rejected", metrics: [-0.068, 0.51, "2.4%", "77%"] }
+      - { id: r6, change: "Wider network 298-384-384-36 (275k params), 24 epochs, same 440 episodes, shield 4", sim: 0.550, decision: kept, why: "val skill 0.550 vs 0.517; dev skill 0.200 vs 0.043, dev K h 0.4: kept", metrics: [0.200, 0.37, "1.3%", "78%"] }
+      - { id: r7, change: "R6 architecture + DAgger round 3 (533 episodes, 391k hours; round 3 student = R6, beta 0.1), shield 4", sim: 0.562, decision: released, why: "val skill 0.562 vs 0.550; dev skill 0.360 vs 0.200, dev K h 0.3: kept, released as v1.0 (exam run once afterwards)", metrics: [0.360, 0.29, "2.5%", "73%"] }
