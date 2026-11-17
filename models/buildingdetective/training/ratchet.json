@@ -1,0 +1,4357 @@
+{
+ "rule": "keep if frozen-val skill > incumbent + 0.01 AND real dev composite >= incumbent - 0.02",
+ "skill": "mean over 12 regression targets (R2 clipped at 0) and 3 classifications (balanced accuracy rescaled so chance = 0) on the frozen simulated validation set of the physics version",
+ "incumbent": {
+  "hourly": {
+   "rung": "R9-hourly",
+   "run": "r9_hourly",
+   "val_skill": 0.8125950627085528
+  },
+  "monthly": {
+   "rung": "R9-monthly",
+   "run": "r9_monthly",
+   "val_skill": 0.6559657825749142
+  },
+  "annual": {
+   "rung": "R9-annual",
+   "run": "r9_annual",
+   "val_skill": 0.5412304139375382
+  }
+ },
+ "rungs": [
+  {
+   "name": "R1-hourly",
+   "mode": "hourly",
+   "run": "r1_hourly",
+   "description": "MLP 2x256 GELU, hetero NLL + 3 softmax heads; bank v1 shards 0-11 (2,400 buildings), features f1 (W1+W2, quirks)",
+   "physics": "v1",
+   "val_skill": 0.7033816108260725,
+   "val_per_task": {
+    "logA": 0.9236753582954407,
+    "year": 0.13824337720870972,
+    "logUA": 0.9053052663803101,
+    "logUAm2": 0.6418901681900024,
+    "logtau": 0.6918076276779175,
+    "Tb_heat": 0.7228202819824219,
+    "Tb_cool": 0.7213290929794312,
+    "logS_heat": 0.8401398658752441,
+    "logS_cool": 0.9146310091018677,
+    "base_share": 0.0,
+    "op_hours": 0.8644158840179443,
+    "weekend": 0.9096522331237793,
+    "use": 0.7559561894482094,
+    "heat": 0.7128032564100281,
+    "cool": 0.8080545516997818,
+    "_overall": 0.7033816108260725
+   },
+   "cfg": {
+    "run": "r1_hourly",
+    "mode": "hourly",
+    "tag": "f1",
+    "max_shard": 11,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 4800,
+    "n_val": 2000,
+    "nin": 1199,
+    "n_params": 384557
+   },
+   "dev_gate": 0.19284440771744124,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 44.322709167537056,
+       "within_x2": 0.6923076923076923,
+       "bias_log10": -0.009730682609742303,
+       "cov1": 0.4230769230769231
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.09615384615384616,
+       "macroF1": 0.075
+      },
+      "year": {
+       "n": 20,
+       "MAE": 27.164869359375803,
+       "cov1": 0.45
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7274074074074074,
+      "auc_district_heat": 0.6346153846153846,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 46.51760449455238,
+       "within_x2": 0.6153846153846154,
+       "bias_log10": -0.008456428293543095,
+       "cov1": 0.36538461538461536
+      }
+     }
+    },
+    "recs": null,
+    "cbecs": null
+   },
+   "kept": true,
+   "reason": "first rung for this mode",
+   "time": "2026-11-17 01:23"
+  },
+  {
+   "name": "R1-monthly",
+   "mode": "monthly",
+   "run": "r1_monthly",
+   "description": "MLP 2x256 GELU, hetero NLL + 3 softmax heads; bank v1 shards 0-11 (2,400 buildings), features f1 (W1+W2, quirks)",
+   "physics": "v1",
+   "val_skill": 0.5726635699080906,
+   "val_per_task": {
+    "logA": 0.9201657772064209,
+    "year": 0.09939301013946533,
+    "logUA": 0.8989126086235046,
+    "logUAm2": 0.5665720701217651,
+    "logtau": 0.5994288921356201,
+    "Tb_heat": 0.7029271125793457,
+    "Tb_cool": 0.6900243759155273,
+    "logS_heat": 0.8283722996711731,
+    "logS_cool": 0.9183185696601868,
+    "base_share": 0.0,
+    "op_hours": 0.36095869541168213,
+    "weekend": 0.19698941707611084,
+    "use": 0.43747400413507537,
+    "heat": 0.6480259333468558,
+    "cool": 0.7223907825986263,
+    "_overall": 0.5726635699080906
+   },
+   "cfg": {
+    "run": "r1_monthly",
+    "mode": "monthly",
+    "tag": "f1",
+    "max_shard": 11,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 2400,
+    "n_val": 1000,
+    "nin": 112,
+    "n_params": 106285
+   },
+   "dev_gate": 0.2036471292867877,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 44.322709167537056,
+       "within_x2": 0.6923076923076923,
+       "bias_log10": -0.009730682609742303,
+       "cov1": 0.4230769230769231
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.09615384615384616,
+       "macroF1": 0.075
+      },
+      "year": {
+       "n": 20,
+       "MAE": 27.164869359375803,
+       "cov1": 0.45
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 43.93578236893433,
+       "within_x2": 0.6538461538461539,
+       "bias_log10": 0.04077949457130425,
+       "cov1": 0.4423076923076923
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.11538461538461539,
+       "macroF1": 0.11219336219336219
+      },
+      "year": {
+       "n": 20,
+       "MAE": 30.434335870902466,
+       "cov1": 0.4
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7274074074074074,
+      "auc_district_heat": 0.6346153846153846,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 46.51760449455238,
+       "within_x2": 0.6153846153846154,
+       "bias_log10": -0.008456428293543095,
+       "cov1": 0.36538461538461536
+      }
+     }
+    },
+    "recs": null,
+    "cbecs": null
+   },
+   "kept": true,
+   "reason": "first rung for this mode",
+   "time": "2026-11-17 01:23"
+  },
+  {
+   "name": "R1-annual",
+   "mode": "annual",
+   "run": "r1_annual",
+   "description": "MLP 2x256 GELU, hetero NLL + 3 softmax heads; bank v1 shards 0-11 (2,400 buildings), features f1 (W1+W2, quirks)",
+   "physics": "v1",
+   "val_skill": 0.4898179338887991,
+   "val_per_task": {
+    "logA": 0.9153637886047363,
+    "year": 0.062307655811309814,
+    "logUA": 0.8722567558288574,
+    "logUAm2": 0.5527690052986145,
+    "logtau": 0.5783789157867432,
+    "Tb_heat": 0.5403048396110535,
+    "Tb_cool": 0.5117371082305908,
+    "logS_heat": 0.8148378133773804,
+    "logS_cool": 0.8670030832290649,
+    "base_share": 0.0,
+    "op_hours": 0.3025415539741516,
+    "weekend": 0.09662842750549316,
+    "use": 0.3106213207450435,
+    "heat": 0.51482468716587,
+    "cool": 0.40769405316307816,
+    "_overall": 0.4898179338887991
+   },
+   "cfg": {
+    "run": "r1_annual",
+    "mode": "annual",
+    "tag": "f1",
+    "max_shard": 11,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 4800,
+    "n_val": 2000,
+    "nin": 12,
+    "n_params": 80685
+   },
+   "dev_gate": 0.3255984931787144,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 44.322709167537056,
+       "within_x2": 0.6923076923076923,
+       "bias_log10": -0.009730682609742303,
+       "cov1": 0.4230769230769231
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.09615384615384616,
+       "macroF1": 0.075
+      },
+      "year": {
+       "n": 20,
+       "MAE": 27.164869359375803,
+       "cov1": 0.45
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 43.93578236893433,
+       "within_x2": 0.6538461538461539,
+       "bias_log10": 0.04077949457130425,
+       "cov1": 0.4423076923076923
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.11538461538461539,
+       "macroF1": 0.11219336219336219
+      },
+      "year": {
+       "n": 20,
+       "MAE": 30.434335870902466,
+       "cov1": 0.4
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 37.98856947425917,
+       "within_x2": 0.7115384615384616,
+       "bias_log10": 0.04518324749398972,
+       "cov1": 0.5192307692307693
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1324575807334428
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.506354806058845,
+       "cov1": 0.6
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7274074074074074,
+      "auc_district_heat": 0.6346153846153846,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 46.51760449455238,
+       "within_x2": 0.6153846153846154,
+       "bias_log10": -0.008456428293543095,
+       "cov1": 0.36538461538461536
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 31.82549297119205,
+      "within_x2": 0.8587662337662337,
+      "bias_log10": 0.016940087482301358,
+      "cov1": 0.6812770562770563
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.7863106030793,
+      "cov1": 0.7375541125541125
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8746518105849582
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4241656927671731,
+      "balanced_accuracy": 0.4480067523698221
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": 0.012114978300154011,
+      "spearman_vs_draftiness": -0.02364918076130889,
+      "spearman_vs_vintage": 0.04925161415581753
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.14786283047217,
+      "within_x2": 0.6822995461422088,
+      "bias_log10": -0.007997115322207371,
+      "cov1": 0.5718608169440242
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1800302571860817,
+      "macroF1": 0.16474547624134614
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.296515770930746
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7289433384379785
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7540134877058964
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5697748655913979
+     }
+    }
+   },
+   "kept": true,
+   "reason": "first rung for this mode",
+   "time": "2026-11-17 01:24"
+  },
+  {
+   "name": "rebaseline-v2-hourly",
+   "mode": "hourly",
+   "kind": "rebaseline",
+   "physics": "v2",
+   "incumbent": "R1-hourly",
+   "old_val_skill": 0.7033816108260725,
+   "val_skill": 0.6628183906163497,
+   "val_per_task": {
+    "logA": 0.9072095308547038,
+    "year": 0.09160136082191017,
+    "logUA": 0.8967795010489342,
+    "logUAm2": 0.5683786600096817,
+    "logtau": 0.6239643378536692,
+    "Tb_heat": 0.6994134850113818,
+    "Tb_cool": 0.6877851929294312,
+    "logS_heat": 0.8291681177702622,
+    "logS_cool": 0.9085678324195423,
+    "base_share": 0.0,
+    "op_hours": 0.745273678563185,
+    "weekend": 0.8012078961044112,
+    "use": 0.6905743161639151,
+    "heat": 0.7214361913356065,
+    "cool": 0.7709157583586111,
+    "_overall": 0.6628183906163497
+   },
+   "kept": true,
+   "reason": "physics v2 = W3 always-on base loads (twin test on dev); frozen val rebuilt from the same bank shards 900-904 with W3; incumbents re-scored",
+   "time": "2026-11-17 01:24"
+  },
+  {
+   "name": "rebaseline-v2-monthly",
+   "mode": "monthly",
+   "kind": "rebaseline",
+   "physics": "v2",
+   "incumbent": "R1-monthly",
+   "old_val_skill": 0.5726635699080906,
+   "val_skill": 0.5008526831659698,
+   "val_per_task": {
+    "logA": 0.8905656078586198,
+    "year": 0.006777521604627634,
+    "logUA": 0.8678077056642375,
+    "logUAm2": 0.5109053119276235,
+    "logtau": 0.5485876045209204,
+    "Tb_heat": 0.4917367323003452,
+    "Tb_cool": 0.44175261265751653,
+    "logS_heat": 0.7821486700209532,
+    "logS_cool": 0.8735562523360835,
+    "base_share": 0.0,
+    "op_hours": 0.3040839279824591,
+    "weekend": 0.12437701482216956,
+    "use": 0.38356546743020803,
+    "heat": 0.6271038796713199,
+    "cool": 0.6598219386924639,
+    "_overall": 0.5008526831659698
+   },
+   "kept": true,
+   "reason": "physics v2 = W3 always-on base loads (twin test on dev); frozen val rebuilt from the same bank shards 900-904 with W3; incumbents re-scored",
+   "time": "2026-11-17 01:24"
+  },
+  {
+   "name": "rebaseline-v2-annual",
+   "mode": "annual",
+   "kind": "rebaseline",
+   "physics": "v2",
+   "incumbent": "R1-annual",
+   "old_val_skill": 0.4898179338887991,
+   "val_skill": 0.4827230453662368,
+   "val_per_task": {
+    "logA": 0.8831321396949326,
+    "year": 0.05362757444401689,
+    "logUA": 0.8449607815815947,
+    "logUAm2": 0.530321702547119,
+    "logtau": 0.560459819935641,
+    "Tb_heat": 0.5403132294943322,
+    "Tb_cool": 0.5048439851229967,
+    "logS_heat": 0.8019608113810659,
+    "logS_cool": 0.8449885970332329,
+    "base_share": 0.0,
+    "op_hours": 0.31071098998391244,
+    "weekend": 0.11093775338419587,
+    "use": 0.3141879242776433,
+    "heat": 0.536696100891264,
+    "cool": 0.40370427072160425,
+    "_overall": 0.4827230453662368
+   },
+   "kept": true,
+   "reason": "physics v2 = W3 always-on base loads (twin test on dev); frozen val rebuilt from the same bank shards 900-904 with W3; incumbents re-scored",
+   "time": "2026-11-17 01:24"
+  },
+  {
+   "name": "R2-hourly",
+   "mode": "hourly",
+   "run": "r2_hourly",
+   "description": "physics v2: retrain on f2 (W3 always-on base loads in district heat, chilled water, electricity), shards 0-11",
+   "physics": "v2",
+   "val_skill": 0.6934145600060243,
+   "val_per_task": {
+    "logA": 0.9246807098388672,
+    "year": 0.12282454967498779,
+    "logUA": 0.9107853770256042,
+    "logUAm2": 0.6015960574150085,
+    "logtau": 0.6623197793960571,
+    "Tb_heat": 0.730728805065155,
+    "Tb_cool": 0.7246947288513184,
+    "logS_heat": 0.8361651301383972,
+    "logS_cool": 0.9160628914833069,
+    "base_share": 0.0,
+    "op_hours": 0.8390792608261108,
+    "weekend": 0.888318657875061,
+    "use": 0.7247315765959256,
+    "heat": 0.7171809033165005,
+    "cool": 0.8020499725880658,
+    "_overall": 0.6934145600060243
+   },
+   "cfg": {
+    "run": "r2_hourly",
+    "mode": "hourly",
+    "tag": "f2",
+    "max_shard": 11,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 4800,
+    "n_val": 2000,
+    "nin": 1199,
+    "n_params": 384557
+   },
+   "dev_gate": 0.31973138553363367,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 52.2433805375925,
+       "within_x2": 0.5,
+       "bias_log10": -0.12696299103866382,
+       "cov1": 0.3269230769230769
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.1346153846153846,
+       "macroF1": 0.12777777777777777
+      },
+      "year": {
+       "n": 20,
+       "MAE": 30.83909437177465,
+       "cov1": 0.55
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 43.93578236893433,
+       "within_x2": 0.6538461538461539,
+       "bias_log10": 0.04077949457130425,
+       "cov1": 0.4423076923076923
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.11538461538461539,
+       "macroF1": 0.11219336219336219
+      },
+      "year": {
+       "n": 20,
+       "MAE": 30.434335870902466,
+       "cov1": 0.4
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 37.98856947425917,
+       "within_x2": 0.7115384615384616,
+       "bias_log10": 0.04518324749398972,
+       "cov1": 0.5192307692307693
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1324575807334428
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.506354806058845,
+       "cov1": 0.6
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7333333333333333,
+      "auc_district_heat": 0.6094674556213018,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 51.45205038367931,
+       "within_x2": 0.5384615384615384,
+       "bias_log10": -0.16999537144868593,
+       "cov1": 0.34615384615384615
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 31.82549297119205,
+      "within_x2": 0.8587662337662337,
+      "bias_log10": 0.016940087482301358,
+      "cov1": 0.6812770562770563
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.7863106030793,
+      "cov1": 0.7375541125541125
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8746518105849582
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4241656927671731,
+      "balanced_accuracy": 0.4480067523698221
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": 0.012114978300154011,
+      "spearman_vs_draftiness": -0.02364918076130889,
+      "spearman_vs_vintage": 0.04925161415581753
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.14786283047217,
+      "within_x2": 0.6822995461422088,
+      "bias_log10": -0.007997115322207371,
+      "cov1": 0.5718608169440242
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1800302571860817,
+      "macroF1": 0.16474547624134614
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.296515770930746
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7289433384379785
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7540134877058964
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5697748655913979
+     }
+    }
+   },
+   "kept": true,
+   "reason": "val skill 0.6934 vs incumbent 0.6628 (delta +0.0306, need > 0.01); dev gate 0.3197 vs 0.3256 (ok)",
+   "time": "2026-11-17 01:26"
+  },
+  {
+   "name": "R2-monthly",
+   "mode": "monthly",
+   "run": "r2_monthly",
+   "description": "physics v2: retrain on f2 (W3 always-on base loads in district heat, chilled water, electricity), shards 0-11",
+   "physics": "v2",
+   "val_skill": 0.54725983273719,
+   "val_per_task": {
+    "logA": 0.9138520359992981,
+    "year": 0.07097768783569336,
+    "logUA": 0.8929480314254761,
+    "logUAm2": 0.5265601277351379,
+    "logtau": 0.5658626556396484,
+    "Tb_heat": 0.6532077789306641,
+    "Tb_cool": 0.6368337869644165,
+    "logS_heat": 0.8182798624038696,
+    "logS_cool": 0.9161881804466248,
+    "base_share": 0.0,
+    "op_hours": 0.34273719787597656,
+    "weekend": 0.16891765594482422,
+    "use": 0.40632765280748373,
+    "heat": 0.6280415240328521,
+    "cool": 0.6681633130158855,
+    "_overall": 0.54725983273719
+   },
+   "cfg": {
+    "run": "r2_monthly",
+    "mode": "monthly",
+    "tag": "f2",
+    "max_shard": 11,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 2400,
+    "n_val": 1000,
+    "nin": 112,
+    "n_params": 106285
+   },
+   "dev_gate": 0.32849651723634105,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 52.2433805375925,
+       "within_x2": 0.5,
+       "bias_log10": -0.12696299103866382,
+       "cov1": 0.3269230769230769
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.1346153846153846,
+       "macroF1": 0.12777777777777777
+      },
+      "year": {
+       "n": 20,
+       "MAE": 30.83909437177465,
+       "cov1": 0.55
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 39.14280866276199,
+       "within_x2": 0.7307692307692307,
+       "bias_log10": -0.1094083478692709,
+       "cov1": 0.4807692307692308
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.1428341384863124
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.336068814783253,
+       "cov1": 0.7
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 37.98856947425917,
+       "within_x2": 0.7115384615384616,
+       "bias_log10": 0.04518324749398972,
+       "cov1": 0.5192307692307693
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1324575807334428
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.506354806058845,
+       "cov1": 0.6
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7333333333333333,
+      "auc_district_heat": 0.6094674556213018,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 51.45205038367931,
+       "within_x2": 0.5384615384615384,
+       "bias_log10": -0.16999537144868593,
+       "cov1": 0.34615384615384615
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 31.82549297119205,
+      "within_x2": 0.8587662337662337,
+      "bias_log10": 0.016940087482301358,
+      "cov1": 0.6812770562770563
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.7863106030793,
+      "cov1": 0.7375541125541125
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8746518105849582
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4241656927671731,
+      "balanced_accuracy": 0.4480067523698221
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": 0.012114978300154011,
+      "spearman_vs_draftiness": -0.02364918076130889,
+      "spearman_vs_vintage": 0.04925161415581753
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.14786283047217,
+      "within_x2": 0.6822995461422088,
+      "bias_log10": -0.007997115322207371,
+      "cov1": 0.5718608169440242
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1800302571860817,
+      "macroF1": 0.16474547624134614
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.296515770930746
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7289433384379785
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7540134877058964
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5697748655913979
+     }
+    }
+   },
+   "kept": true,
+   "reason": "val skill 0.5473 vs incumbent 0.5009 (delta +0.0464, need > 0.01); dev gate 0.3285 vs 0.3197 (ok)",
+   "time": "2026-11-17 01:26"
+  },
+  {
+   "name": "R2-annual",
+   "mode": "annual",
+   "run": "r2_annual",
+   "description": "physics v2: retrain on f2 (W3 always-on base loads in district heat, chilled water, electricity), shards 0-11",
+   "physics": "v2",
+   "val_skill": 0.4863426007105236,
+   "val_per_task": {
+    "logA": 0.9025171399116516,
+    "year": 0.06235659122467041,
+    "logUA": 0.8644804954528809,
+    "logUAm2": 0.5322700142860413,
+    "logtau": 0.5672483444213867,
+    "Tb_heat": 0.5446265935897827,
+    "Tb_cool": 0.5093894004821777,
+    "logS_heat": 0.810978353023529,
+    "logS_cool": 0.8515435457229614,
+    "base_share": 0.0,
+    "op_hours": 0.30426692962646484,
+    "weekend": 0.10574191808700562,
+    "use": 0.3320616345557147,
+    "heat": 0.5263580769442358,
+    "cool": 0.3812999733293507,
+    "_overall": 0.4863426007105236
+   },
+   "cfg": {
+    "run": "r2_annual",
+    "mode": "annual",
+    "tag": "f2",
+    "max_shard": 11,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 4800,
+    "n_val": 2000,
+    "nin": 12,
+    "n_params": 80685
+   },
+   "dev_gate": 0.3306118734024221,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 52.2433805375925,
+       "within_x2": 0.5,
+       "bias_log10": -0.12696299103866382,
+       "cov1": 0.3269230769230769
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.1346153846153846,
+       "macroF1": 0.12777777777777777
+      },
+      "year": {
+       "n": 20,
+       "MAE": 30.83909437177465,
+       "cov1": 0.55
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 39.14280866276199,
+       "within_x2": 0.7307692307692307,
+       "bias_log10": -0.1094083478692709,
+       "cov1": 0.4807692307692308
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.1428341384863124
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.336068814783253,
+       "cov1": 0.7
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 38.93706076205753,
+       "within_x2": 0.6730769230769231,
+       "bias_log10": -0.04579669419073329,
+       "cov1": 0.5
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.13914095583787053
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.293182304126525,
+       "cov1": 0.65
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7333333333333333,
+      "auc_district_heat": 0.6094674556213018,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 51.45205038367931,
+       "within_x2": 0.5384615384615384,
+       "bias_log10": -0.16999537144868593,
+       "cov1": 0.34615384615384615
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 30.791604282431084,
+      "within_x2": 0.8701298701298701,
+      "bias_log10": -0.01463396185291943,
+      "cov1": 0.6958874458874459
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.436635818433,
+      "cov1": 0.7337662337662337
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8752089136490251
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4546682249058564,
+      "balanced_accuracy": 0.4653486560186989
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": 0.028001487056416606,
+      "spearman_vs_draftiness": -0.026127175390546962,
+      "spearman_vs_vintage": 0.022476096633288485
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 42.861480121853624,
+      "within_x2": 0.6671709531013615,
+      "bias_log10": -0.10851078342188547,
+      "cov1": 0.5930408472012103
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.17851739788199697,
+      "macroF1": 0.16156783450189324
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.940027872888052
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7274119448698315
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7525662449271903
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.600554435483871
+     }
+    }
+   },
+   "kept": false,
+   "reason": "val skill 0.4863 vs incumbent 0.4827 (delta +0.0036, need > 0.01); dev gate 0.3306 vs 0.3285 (ok)",
+   "time": "2026-11-17 01:27"
+  },
+  {
+   "name": "R3a-hourly",
+   "mode": "hourly",
+   "run": "r3a_hourly",
+   "description": "wider/deeper MLP 3x512, dropout 0.25, wd 1e-3 (lr 2e-3: training diverged at epoch ~15)",
+   "physics": "v2",
+   "val_skill": 0.40912886043734403,
+   "val_per_task": {
+    "logA": 0.47405439615249634,
+    "year": 0.047499001026153564,
+    "logUA": 0.44627654552459717,
+    "logUAm2": 0.3526771068572998,
+    "logtau": 0.4036290645599365,
+    "Tb_heat": 0.37725430727005005,
+    "Tb_cool": 0.4282030463218689,
+    "logS_heat": 0.5136696696281433,
+    "logS_cool": 0.6153169870376587,
+    "base_share": 0.0,
+    "op_hours": 0.5277041792869568,
+    "weekend": 0.48093634843826294,
+    "use": 0.42313487194612387,
+    "heat": 0.44408018885907025,
+    "cool": 0.6024971936515428,
+    "_overall": 0.40912886043734403
+   },
+   "cfg": {
+    "run": "r3a_hourly",
+    "mode": "hourly",
+    "tag": "f2",
+    "max_shard": 11,
+    "hidden": 512,
+    "epochs": 60,
+    "layers": 3,
+    "drop": 0.25,
+    "lr": 0.002,
+    "wd": 0.001,
+    "seed": 0,
+    "n_train": 4800,
+    "n_val": 2000,
+    "nin": 1199,
+    "n_params": 1162797
+   },
+   "dev_gate": 0.3081219344673441,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 74.15302398284906,
+       "within_x2": 0.36538461538461536,
+       "bias_log10": -0.4326478002045693,
+       "cov1": 0.6730769230769231
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.09615384615384616,
+       "macroF1": 0.07078853046594981
+      },
+      "year": {
+       "n": 20,
+       "MAE": 27.31870117752866,
+       "cov1": 0.55
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 39.14280866276199,
+       "within_x2": 0.7307692307692307,
+       "bias_log10": -0.1094083478692709,
+       "cov1": 0.4807692307692308
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.1428341384863124
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.336068814783253,
+       "cov1": 0.7
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 37.98856947425917,
+       "within_x2": 0.7115384615384616,
+       "bias_log10": 0.04518324749398972,
+       "cov1": 0.5192307692307693
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1324575807334428
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.506354806058845,
+       "cov1": 0.6
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.5096296296296297,
+      "auc_district_heat": 0.6183431952662722,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 83.42266601811406,
+       "within_x2": 0.17307692307692307,
+       "bias_log10": -0.7163483069450169,
+       "cov1": 0.5
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 31.82549297119205,
+      "within_x2": 0.8587662337662337,
+      "bias_log10": 0.016940087482301358,
+      "cov1": 0.6812770562770563
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.7863106030793,
+      "cov1": 0.7375541125541125
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8746518105849582
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4241656927671731,
+      "balanced_accuracy": 0.4480067523698221
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": 0.012114978300154011,
+      "spearman_vs_draftiness": -0.02364918076130889,
+      "spearman_vs_vintage": 0.04925161415581753
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.14786283047217,
+      "within_x2": 0.6822995461422088,
+      "bias_log10": -0.007997115322207371,
+      "cov1": 0.5718608169440242
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1800302571860817,
+      "macroF1": 0.16474547624134614
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.296515770930746
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7289433384379785
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7540134877058964
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5697748655913979
+     }
+    }
+   },
+   "kept": false,
+   "reason": "val skill 0.4091 vs incumbent 0.6934 (delta -0.2843, need > 0.01); dev gate 0.3081 vs 0.3285 (FAIL)",
+   "time": "2026-11-17 01:33"
+  },
+  {
+   "name": "R3b-hourly",
+   "mode": "hourly",
+   "run": "r3b_hourly",
+   "description": "MLP 2x256 with dropout 0.3, wd 1e-3, 80 epochs",
+   "physics": "v2",
+   "val_skill": 0.6836148523455636,
+   "val_per_task": {
+    "logA": 0.9121485948562622,
+    "year": 0.13459938764572144,
+    "logUA": 0.8951125144958496,
+    "logUAm2": 0.6077598929405212,
+    "logtau": 0.6594301462173462,
+    "Tb_heat": 0.7276571989059448,
+    "Tb_cool": 0.7203313112258911,
+    "logS_heat": 0.8233966827392578,
+    "logS_cool": 0.9084911346435547,
+    "base_share": 0.0,
+    "op_hours": 0.7865939140319824,
+    "weekend": 0.8583600521087646,
+    "use": 0.7038370774517133,
+    "heat": 0.7180081412127037,
+    "cool": 0.7984967367079429,
+    "_overall": 0.6836148523455636
+   },
+   "cfg": {
+    "run": "r3b_hourly",
+    "mode": "hourly",
+    "tag": "f2",
+    "max_shard": 11,
+    "hidden": 256,
+    "epochs": 80,
+    "layers": 2,
+    "drop": 0.3,
+    "lr": 0.002,
+    "wd": 0.001,
+    "seed": 0,
+    "n_train": 4800,
+    "n_val": 2000,
+    "nin": 1199,
+    "n_params": 384557
+   },
+   "dev_gate": 0.3247422182242854,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 56.983344247264746,
+       "within_x2": 0.4807692307692308,
+       "bias_log10": -0.17646984047317615,
+       "cov1": 0.46153846153846156
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.15644257703081232
+      },
+      "year": {
+       "n": 20,
+       "MAE": 27.784596759877456,
+       "cov1": 0.5
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 39.14280866276199,
+       "within_x2": 0.7307692307692307,
+       "bias_log10": -0.1094083478692709,
+       "cov1": 0.4807692307692308
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.1428341384863124
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.336068814783253,
+       "cov1": 0.7
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 37.98856947425917,
+       "within_x2": 0.7115384615384616,
+       "bias_log10": 0.04518324749398972,
+       "cov1": 0.5192307692307693
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1324575807334428
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.506354806058845,
+       "cov1": 0.6
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.725925925925926,
+      "auc_district_heat": 0.6671597633136095,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 47.37051954797747,
+       "within_x2": 0.6153846153846154,
+       "bias_log10": -0.16426015381134573,
+       "cov1": 0.5384615384615384
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 31.82549297119205,
+      "within_x2": 0.8587662337662337,
+      "bias_log10": 0.016940087482301358,
+      "cov1": 0.6812770562770563
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.7863106030793,
+      "cov1": 0.7375541125541125
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8746518105849582
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4241656927671731,
+      "balanced_accuracy": 0.4480067523698221
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": 0.012114978300154011,
+      "spearman_vs_draftiness": -0.02364918076130889,
+      "spearman_vs_vintage": 0.04925161415581753
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.14786283047217,
+      "within_x2": 0.6822995461422088,
+      "bias_log10": -0.007997115322207371,
+      "cov1": 0.5718608169440242
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1800302571860817,
+      "macroF1": 0.1647454762413461
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.296515770930746
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7289433384379785
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7540134877058964
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5697748655913979
+     }
+    }
+   },
+   "kept": false,
+   "reason": "val skill 0.6836 vs incumbent 0.6934 (delta -0.0098, need > 0.01); dev gate 0.3247 vs 0.3285 (ok)",
+   "time": "2026-11-17 01:33"
+  },
+  {
+   "name": "R3c-hourly",
+   "mode": "hourly",
+   "run": "r3c_hourly",
+   "description": "MLP 3x512, dropout 0.2, wd 1e-3, lr 7e-4 (stable)",
+   "physics": "v2",
+   "val_skill": 0.7046548543285596,
+   "val_per_task": {
+    "logA": 0.9299800992012024,
+    "year": 0.1293015480041504,
+    "logUA": 0.9161863327026367,
+    "logUAm2": 0.6187491416931152,
+    "logtau": 0.6783041954040527,
+    "Tb_heat": 0.7518354654312134,
+    "Tb_cool": 0.7480834722518921,
+    "logS_heat": 0.843451738357544,
+    "logS_cool": 0.917427122592926,
+    "base_share": 0.0,
+    "op_hours": 0.860948383808136,
+    "weekend": 0.9163086414337158,
+    "use": 0.733071737547377,
+    "heat": 0.7293094166560804,
+    "cool": 0.7968655198443519,
+    "_overall": 0.7046548543285596
+   },
+   "cfg": {
+    "run": "r3c_hourly",
+    "mode": "hourly",
+    "tag": "f2",
+    "max_shard": 11,
+    "hidden": 512,
+    "epochs": 60,
+    "layers": 3,
+    "drop": 0.2,
+    "lr": 0.0007,
+    "wd": 0.001,
+    "seed": 0,
+    "n_train": 4800,
+    "n_val": 2000,
+    "nin": 1199,
+    "n_params": 1162797
+   },
+   "dev_gate": 0.3236481975342606,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 54.19465983565277,
+       "within_x2": 0.46153846153846156,
+       "bias_log10": -0.19222848711807838,
+       "cov1": 0.34615384615384615
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.09615384615384616,
+       "macroF1": 0.09994443121378105
+      },
+      "year": {
+       "n": 20,
+       "MAE": 30.160572982621044,
+       "cov1": 0.4
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 39.14280866276199,
+       "within_x2": 0.7307692307692307,
+       "bias_log10": -0.1094083478692709,
+       "cov1": 0.4807692307692308
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.1428341384863124
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.336068814783253,
+       "cov1": 0.7
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 37.98856947425917,
+       "within_x2": 0.7115384615384616,
+       "bias_log10": 0.04518324749398972,
+       "cov1": 0.5192307692307693
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1324575807334428
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.506354806058845,
+       "cov1": 0.6
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7570370370370371,
+      "auc_district_heat": 0.5961538461538461,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 49.43623799194787,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.09962777016981228,
+       "cov1": 0.4230769230769231
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 31.82549297119205,
+      "within_x2": 0.8587662337662337,
+      "bias_log10": 0.016940087482301358,
+      "cov1": 0.6812770562770563
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.7863106030793,
+      "cov1": 0.7375541125541125
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8746518105849582
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4241656927671731,
+      "balanced_accuracy": 0.4480067523698221
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": 0.012114978300154011,
+      "spearman_vs_draftiness": -0.02364918076130889,
+      "spearman_vs_vintage": 0.04925161415581753
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.14786283047217,
+      "within_x2": 0.6822995461422088,
+      "bias_log10": -0.007997115322207371,
+      "cov1": 0.5718608169440242
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1800302571860817,
+      "macroF1": 0.16474547624134614
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.296515770930746
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7289433384379785
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7540134877058964
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5697748655913979
+     }
+    }
+   },
+   "kept": false,
+   "reason": "val skill 0.7047 vs incumbent 0.6934 (delta +0.0112, need > 0.01); dev gate 0.3236 vs 0.3285 (ok) | WITHDRAWN: 1.15M parameters breaks the ~500k size cap of the shared-machine rules; R2-hourly reinstated",
+   "time": "2026-11-17 01:36"
+  },
+  {
+   "name": "R3d-hourly",
+   "mode": "hourly",
+   "run": "r3d_hourly",
+   "description": "MLP 3x288 (525k params, within cap), dropout 0.2, wd 1e-3, lr 7e-4",
+   "physics": "v2",
+   "val_skill": 0.6947782539547084,
+   "val_per_task": {
+    "logA": 0.9249540567398071,
+    "year": 0.13019222021102905,
+    "logUA": 0.9099045395851135,
+    "logUAm2": 0.6147387027740479,
+    "logtau": 0.6689602732658386,
+    "Tb_heat": 0.7508926391601562,
+    "Tb_cool": 0.7454488277435303,
+    "logS_heat": 0.8374195098876953,
+    "logS_cool": 0.9149192571640015,
+    "base_share": 0.0,
+    "op_hours": 0.8410084247589111,
+    "weekend": 0.9024655222892761,
+    "use": 0.7043793531387078,
+    "heat": 0.6930197963147358,
+    "cool": 0.7833706862877748,
+    "_overall": 0.6947782539547084
+   },
+   "cfg": {
+    "run": "r3d_hourly",
+    "mode": "hourly",
+    "tag": "f2",
+    "max_shard": 11,
+    "hidden": 288,
+    "epochs": 60,
+    "layers": 3,
+    "drop": 0.2,
+    "lr": 0.0007,
+    "wd": 0.001,
+    "seed": 0,
+    "n_train": 4800,
+    "n_val": 2000,
+    "nin": 1199,
+    "n_params": 525069
+   },
+   "dev_gate": 0.3198222288040298,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 58.30706995757233,
+       "within_x2": 0.5192307692307693,
+       "bias_log10": -0.0835701394171513,
+       "cov1": 0.38461538461538464
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.11538461538461539,
+       "macroF1": 0.11798941798941798
+      },
+      "year": {
+       "n": 20,
+       "MAE": 27.776563439427754,
+       "cov1": 0.65
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 39.14280866276199,
+       "within_x2": 0.7307692307692307,
+       "bias_log10": -0.1094083478692709,
+       "cov1": 0.4807692307692308
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.1428341384863124
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.336068814783253,
+       "cov1": 0.7
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 37.98856947425917,
+       "within_x2": 0.7115384615384616,
+       "bias_log10": 0.04518324749398972,
+       "cov1": 0.5192307692307693
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1324575807334428
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.506354806058845,
+       "cov1": 0.6
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7214814814814815,
+      "auc_district_heat": 0.5828402366863905,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 52.28964396175711,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.12860110885407527,
+       "cov1": 0.46153846153846156
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 31.82549297119205,
+      "within_x2": 0.8587662337662337,
+      "bias_log10": 0.016940087482301358,
+      "cov1": 0.6812770562770563
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.7863106030793,
+      "cov1": 0.7375541125541125
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8746518105849582
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4241656927671731,
+      "balanced_accuracy": 0.4480067523698221
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": 0.012114978300154011,
+      "spearman_vs_draftiness": -0.02364918076130889,
+      "spearman_vs_vintage": 0.04925161415581753
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.14786283047217,
+      "within_x2": 0.6822995461422088,
+      "bias_log10": -0.007997115322207371,
+      "cov1": 0.5718608169440242
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1800302571860817,
+      "macroF1": 0.1647454762413461
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.296515770930746
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7289433384379785
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7540134877058964
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5697748655913979
+     }
+    }
+   },
+   "kept": false,
+   "reason": "val skill 0.6948 vs incumbent 0.6934 (delta +0.0014, need > 0.01); dev gate 0.3198 vs 0.3285 (ok)",
+   "time": "2026-11-17 01:37"
+  },
+  {
+   "name": "rebaseline-v2-hourly",
+   "mode": "hourly",
+   "kind": "rebaseline",
+   "physics": "v2",
+   "incumbent": "R2-hourly",
+   "old_val_skill": 0.6934145600060243,
+   "val_skill": 0.6934145602947197,
+   "val_per_task": {
+    "logA": 0.9246807400388171,
+    "year": 0.12282454293878065,
+    "logUA": 0.9107853951520464,
+    "logUAm2": 0.6015960734886991,
+    "logtau": 0.6623197328282484,
+    "Tb_heat": 0.73072880360109,
+    "Tb_cool": 0.7246947117806115,
+    "logS_heat": 0.8361651457415156,
+    "logS_cool": 0.9160628874249679,
+    "base_share": 0.0,
+    "op_hours": 0.8390792662979066,
+    "weekend": 0.8883186526276223,
+    "use": 0.7247315765959256,
+    "heat": 0.7171809033165005,
+    "cool": 0.8020499725880658,
+    "_overall": 0.6934145602947197
+   },
+   "kept": true,
+   "reason": "label hygiene: base_share NaN when |value|>1 (3 training buildings had ~0 metered site energy -> -8e12), balance points clipped to [-25,30] C; same frozen val, incumbents re-scored",
+   "time": "2026-11-17 01:38"
+  },
+  {
+   "name": "rebaseline-v2-monthly",
+   "mode": "monthly",
+   "kind": "rebaseline",
+   "physics": "v2",
+   "incumbent": "R2-monthly",
+   "old_val_skill": 0.54725983273719,
+   "val_skill": 0.547259826262987,
+   "val_per_task": {
+    "logA": 0.9138520055337257,
+    "year": 0.07097771213156534,
+    "logUA": 0.8929480551544602,
+    "logUAm2": 0.5265601142775418,
+    "logtau": 0.5658626114937958,
+    "Tb_heat": 0.6532077419524405,
+    "Tb_cool": 0.6368338129872284,
+    "logS_heat": 0.8182798613549789,
+    "logS_cool": 0.9161882010111166,
+    "base_share": 0.0,
+    "op_hours": 0.34273717691279937,
+    "weekend": 0.16891761127893123,
+    "use": 0.40632765280748373,
+    "heat": 0.6280415240328521,
+    "cool": 0.6681633130158855,
+    "_overall": 0.547259826262987
+   },
+   "kept": true,
+   "reason": "label hygiene: base_share NaN when |value|>1 (3 training buildings had ~0 metered site energy -> -8e12), balance points clipped to [-25,30] C; same frozen val, incumbents re-scored",
+   "time": "2026-11-17 01:38"
+  },
+  {
+   "name": "rebaseline-v2-annual",
+   "mode": "annual",
+   "kind": "rebaseline",
+   "physics": "v2",
+   "incumbent": "R1-annual",
+   "old_val_skill": 0.4827230453662368,
+   "val_skill": 0.4827230453662368,
+   "val_per_task": {
+    "logA": 0.8831321396949326,
+    "year": 0.05362757444401689,
+    "logUA": 0.8449607815815947,
+    "logUAm2": 0.530321702547119,
+    "logtau": 0.560459819935641,
+    "Tb_heat": 0.5403132294943322,
+    "Tb_cool": 0.5048439851229967,
+    "logS_heat": 0.8019608113810659,
+    "logS_cool": 0.8449885970332329,
+    "base_share": 0.0,
+    "op_hours": 0.31071098998391244,
+    "weekend": 0.11093775338419587,
+    "use": 0.3141879242776433,
+    "heat": 0.536696100891264,
+    "cool": 0.40370427072160425,
+    "_overall": 0.4827230453662368
+   },
+   "kept": true,
+   "reason": "label hygiene: base_share NaN when |value|>1 (3 training buildings had ~0 metered site energy -> -8e12), balance points clipped to [-25,30] C; same frozen val, incumbents re-scored",
+   "time": "2026-11-17 01:38"
+  },
+  {
+   "name": "R4-hourly",
+   "mode": "hourly",
+   "run": "r4_hourly",
+   "description": "label hygiene (clean_labels), MLP 2x256, f2 shards 0-11",
+   "physics": "v2",
+   "val_skill": 0.7457180617266462,
+   "val_per_task": {
+    "logA": 0.9257240891456604,
+    "year": 0.09252935647964478,
+    "logUA": 0.9123510122299194,
+    "logUAm2": 0.6016181707382202,
+    "logtau": 0.666370689868927,
+    "Tb_heat": 0.7449632883071899,
+    "Tb_cool": 0.7400751113891602,
+    "logS_heat": 0.8439337015151978,
+    "logS_cool": 0.9188311100006104,
+    "base_share": 0.719913125038147,
+    "op_hours": 0.8515745401382446,
+    "weekend": 0.8987066149711609,
+    "use": 0.734637995798862,
+    "heat": 0.7392350465327641,
+    "cool": 0.7953070737459839,
+    "_overall": 0.7457180617266462
+   },
+   "cfg": {
+    "run": "r4_hourly",
+    "mode": "hourly",
+    "tag": "f2",
+    "max_shard": 11,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 4800,
+    "n_val": 2000,
+    "nin": 1199,
+    "n_params": 384557
+   },
+   "dev_gate": 0.33097908527426845,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 46.77662188920093,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.07177135137371371,
+       "cov1": 0.3076923076923077
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.07692307692307693,
+       "macroF1": 0.07254901960784314
+      },
+      "year": {
+       "n": 20,
+       "MAE": 41.286960574546754,
+       "cov1": 0.3
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 39.14280866276199,
+       "within_x2": 0.7307692307692307,
+       "bias_log10": -0.1094083478692709,
+       "cov1": 0.4807692307692308
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.1428341384863124
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.336068814783253,
+       "cov1": 0.7
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 37.98856947425917,
+       "within_x2": 0.7115384615384616,
+       "bias_log10": 0.04518324749398972,
+       "cov1": 0.5192307692307693
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1324575807334428
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.506354806058845,
+       "cov1": 0.6
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7911111111111111,
+      "auc_district_heat": 0.613905325443787,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 52.9482410495415,
+       "within_x2": 0.5384615384615384,
+       "bias_log10": -0.1404891898152747,
+       "cov1": 0.38461538461538464
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 31.82549297119205,
+      "within_x2": 0.8587662337662337,
+      "bias_log10": 0.016940087482301358,
+      "cov1": 0.6812770562770563
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.7863106030793,
+      "cov1": 0.7375541125541125
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8746518105849582
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4241656927671731,
+      "balanced_accuracy": 0.4480067523698221
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": 0.012114978300154011,
+      "spearman_vs_draftiness": -0.02364918076130889,
+      "spearman_vs_vintage": 0.04925161415581753
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.14786283047217,
+      "within_x2": 0.6822995461422088,
+      "bias_log10": -0.007997115322207371,
+      "cov1": 0.5718608169440242
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1800302571860817,
+      "macroF1": 0.1647454762413461
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.296515770930746
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7289433384379785
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7540134877058964
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5697748655913979
+     }
+    }
+   },
+   "kept": true,
+   "reason": "val skill 0.7457 vs incumbent 0.6934 (delta +0.0523, need > 0.01); dev gate 0.3310 vs 0.3285 (ok)",
+   "time": "2026-11-17 01:39"
+  },
+  {
+   "name": "R4-monthly",
+   "mode": "monthly",
+   "run": "r4_monthly",
+   "description": "label hygiene (clean_labels), MLP 2x256, f2 shards 0-11",
+   "physics": "v2",
+   "val_skill": 0.5974381412124823,
+   "val_per_task": {
+    "logA": 0.9168403148651123,
+    "year": 0.061015963554382324,
+    "logUA": 0.8955033421516418,
+    "logUAm2": 0.5218679904937744,
+    "logtau": 0.5563241243362427,
+    "Tb_heat": 0.6583309173583984,
+    "Tb_cool": 0.6460072994232178,
+    "logS_heat": 0.8321482539176941,
+    "logS_cool": 0.9226484894752502,
+    "base_share": 0.6516948938369751,
+    "op_hours": 0.3493954539299011,
+    "weekend": 0.15844225883483887,
+    "use": 0.43051035368761625,
+    "heat": 0.6508352882452481,
+    "cool": 0.7100071740769404,
+    "_overall": 0.5974381412124823
+   },
+   "cfg": {
+    "run": "r4_monthly",
+    "mode": "monthly",
+    "tag": "f2",
+    "max_shard": 11,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 2400,
+    "n_val": 1000,
+    "nin": 112,
+    "n_params": 106285
+   },
+   "dev_gate": 0.32907758893111594,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 46.77662188920093,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.07177135137371371,
+       "cov1": 0.3076923076923077
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.07692307692307693,
+       "macroF1": 0.07254901960784314
+      },
+      "year": {
+       "n": 20,
+       "MAE": 41.286960574546754,
+       "cov1": 0.3
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 43.53821218479498,
+       "within_x2": 0.6730769230769231,
+       "bias_log10": -0.07831948686957713,
+       "cov1": 0.5
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.17307692307692307,
+       "macroF1": 0.18837393543275896
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.43455571620717,
+       "cov1": 0.65
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 37.98856947425917,
+       "within_x2": 0.7115384615384616,
+       "bias_log10": 0.04518324749398972,
+       "cov1": 0.5192307692307693
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1324575807334428
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.506354806058845,
+       "cov1": 0.6
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7911111111111111,
+      "auc_district_heat": 0.613905325443787,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 52.9482410495415,
+       "within_x2": 0.5384615384615384,
+       "bias_log10": -0.1404891898152747,
+       "cov1": 0.38461538461538464
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 31.82549297119205,
+      "within_x2": 0.8587662337662337,
+      "bias_log10": 0.016940087482301358,
+      "cov1": 0.6812770562770563
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.7863106030793,
+      "cov1": 0.7375541125541125
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8746518105849582
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4241656927671731,
+      "balanced_accuracy": 0.4480067523698221
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": 0.012114978300154011,
+      "spearman_vs_draftiness": -0.02364918076130889,
+      "spearman_vs_vintage": 0.04925161415581753
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.14786283047217,
+      "within_x2": 0.6822995461422088,
+      "bias_log10": -0.007997115322207371,
+      "cov1": 0.5718608169440242
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1800302571860817,
+      "macroF1": 0.1647454762413461
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.296515770930746
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7289433384379785
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7540134877058964
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5697748655913979
+     }
+    }
+   },
+   "kept": true,
+   "reason": "val skill 0.5974 vs incumbent 0.5473 (delta +0.0502, need > 0.01); dev gate 0.3291 vs 0.331 (ok)",
+   "time": "2026-11-17 01:39"
+  },
+  {
+   "name": "R4-annual",
+   "mode": "annual",
+   "run": "r4_annual",
+   "description": "label hygiene (clean_labels), MLP 2x256, f2 shards 0-11",
+   "physics": "v2",
+   "val_skill": 0.5172284020831275,
+   "val_per_task": {
+    "logA": 0.9035060405731201,
+    "year": 0.061984896659851074,
+    "logUA": 0.8663414716720581,
+    "logUAm2": 0.5372962355613708,
+    "logtau": 0.5713894367218018,
+    "Tb_heat": 0.5423483848571777,
+    "Tb_cool": 0.5107438564300537,
+    "logS_heat": 0.812981903553009,
+    "logS_cool": 0.8544381856918335,
+    "base_share": 0.4420284032821655,
+    "op_hours": 0.31056272983551025,
+    "weekend": 0.09952747821807861,
+    "use": 0.32419945130303474,
+    "heat": 0.5322950072642878,
+    "cool": 0.38878254962355996,
+    "_overall": 0.5172284020831275
+   },
+   "cfg": {
+    "run": "r4_annual",
+    "mode": "annual",
+    "tag": "f2",
+    "max_shard": 11,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 4800,
+    "n_val": 2000,
+    "nin": 12,
+    "n_params": 80685
+   },
+   "dev_gate": 0.3272488710317782,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 46.77662188920093,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.07177135137371371,
+       "cov1": 0.3076923076923077
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.07692307692307693,
+       "macroF1": 0.07254901960784314
+      },
+      "year": {
+       "n": 20,
+       "MAE": 41.286960574546754,
+       "cov1": 0.3
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 43.53821218479498,
+       "within_x2": 0.6730769230769231,
+       "bias_log10": -0.07831948686957713,
+       "cov1": 0.5
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.17307692307692307,
+       "macroF1": 0.18837393543275896
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.43455571620717,
+       "cov1": 0.65
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 40.61397917765399,
+       "within_x2": 0.6730769230769231,
+       "bias_log10": -0.04187353498527324,
+       "cov1": 0.5192307692307693
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.13809523809523808
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.512175353121584,
+       "cov1": 0.6
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7911111111111111,
+      "auc_district_heat": 0.613905325443787,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 52.9482410495415,
+       "within_x2": 0.5384615384615384,
+       "bias_log10": -0.1404891898152747,
+       "cov1": 0.38461538461538464
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 31.69772903464073,
+      "within_x2": 0.854978354978355,
+      "bias_log10": -0.0032265426870774494,
+      "cov1": 0.6872294372294372
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.924992034301585,
+      "cov1": 0.7164502164502164
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8713091922005571
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.42638618361251784,
+      "balanced_accuracy": 0.4881833528113232
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": 0.0100525200646702,
+      "spearman_vs_draftiness": -0.028953337634203626,
+      "spearman_vs_vintage": 0.036613433229449245
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 43.37927123089753,
+      "within_x2": 0.6686838124054463,
+      "bias_log10": -0.10405840907334962,
+      "cov1": 0.5885022692889561
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1800302571860817,
+      "macroF1": 0.16866812940129666
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.811576466509795
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7289433384379785
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7395112198615421
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5936827956989247
+     }
+    }
+   },
+   "kept": true,
+   "reason": "val skill 0.5172 vs incumbent 0.4827 (delta +0.0345, need > 0.01); dev gate 0.3272 vs 0.3291 (ok)",
+   "time": "2026-11-17 01:40"
+  },
+  {
+   "name": "R5-hourly",
+   "mode": "hourly",
+   "run": "r5_hourly",
+   "description": "more data: f2 shards 0-22 (4,600 buildings), MLP 2x256",
+   "physics": "v2",
+   "val_skill": 0.7833502179293851,
+   "val_per_task": {
+    "logA": 0.9448866248130798,
+    "year": 0.1619817018508911,
+    "logUA": 0.93798828125,
+    "logUAm2": 0.6364880800247192,
+    "logtau": 0.6938595175743103,
+    "Tb_heat": 0.7823717594146729,
+    "Tb_cool": 0.782892107963562,
+    "logS_heat": 0.8734704852104187,
+    "logS_cool": 0.940296471118927,
+    "base_share": 0.7677292823791504,
+    "op_hours": 0.8903364539146423,
+    "weekend": 0.9215748906135559,
+    "use": 0.7946420265594012,
+    "heat": 0.7845709493808123,
+    "cool": 0.837164636872633,
+    "_overall": 0.7833502179293851
+   },
+   "cfg": {
+    "run": "r5_hourly",
+    "mode": "hourly",
+    "tag": "f2",
+    "max_shard": 22,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 9200,
+    "n_val": 2000,
+    "nin": 1199,
+    "n_params": 384557
+   },
+   "dev_gate": 0.3263976183968391,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 50.586018281181346,
+       "within_x2": 0.5769230769230769,
+       "bias_log10": -0.08716576745672189,
+       "cov1": 0.3076923076923077
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.09615384615384616,
+       "macroF1": 0.1215780998389694
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.47723526142197,
+       "cov1": 0.3
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 43.53821218479498,
+       "within_x2": 0.6730769230769231,
+       "bias_log10": -0.07831948686957713,
+       "cov1": 0.5
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.17307692307692307,
+       "macroF1": 0.18837393543275893
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.43455571620717,
+       "cov1": 0.65
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 40.61397917765399,
+       "within_x2": 0.6730769230769231,
+       "bias_log10": -0.04187353498527324,
+       "cov1": 0.5192307692307693
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.13809523809523808
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.512175353121584,
+       "cov1": 0.6
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7481481481481481,
+      "auc_district_heat": 0.5946745562130178,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 45.7465305958588,
+       "within_x2": 0.6346153846153846,
+       "bias_log10": -0.1517904102745693,
+       "cov1": 0.4423076923076923
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 31.69772903464073,
+      "within_x2": 0.854978354978355,
+      "bias_log10": -0.0032265426870774494,
+      "cov1": 0.6872294372294372
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.924992034301585,
+      "cov1": 0.7164502164502164
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8713091922005571
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.42638618361251784,
+      "balanced_accuracy": 0.4881833528113232
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": 0.0100525200646702,
+      "spearman_vs_draftiness": -0.028953337634203626,
+      "spearman_vs_vintage": 0.036613433229449245
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 43.37927123089753,
+      "within_x2": 0.6686838124054463,
+      "bias_log10": -0.10405840907334962,
+      "cov1": 0.5885022692889561
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1800302571860817,
+      "macroF1": 0.16866812940129663
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.811576466509795
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7289433384379785
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7395112198615421
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5936827956989247
+     }
+    }
+   },
+   "kept": true,
+   "reason": "val skill 0.7834 vs incumbent 0.7457 (delta +0.0376, need > 0.01); dev gate 0.3264 vs 0.3272 (ok)",
+   "time": "2026-11-17 02:20"
+  },
+  {
+   "name": "R5-monthly",
+   "mode": "monthly",
+   "run": "r5_monthly",
+   "description": "more data: f2 shards 0-22 (4,600 buildings), MLP 2x256",
+   "physics": "v2",
+   "val_skill": 0.629612900761365,
+   "val_per_task": {
+    "logA": 0.9226611852645874,
+    "year": 0.06793677806854248,
+    "logUA": 0.9076960682868958,
+    "logUAm2": 0.5565672516822815,
+    "logtau": 0.580724835395813,
+    "Tb_heat": 0.6939901113510132,
+    "Tb_cool": 0.6802211403846741,
+    "logS_heat": 0.8521332144737244,
+    "logS_cool": 0.9361366033554077,
+    "base_share": 0.688822865486145,
+    "op_hours": 0.40897446870803833,
+    "weekend": 0.19813507795333862,
+    "use": 0.4899654383866112,
+    "heat": 0.6936662568963949,
+    "cool": 0.7665622157270061,
+    "_overall": 0.629612900761365
+   },
+   "cfg": {
+    "run": "r5_monthly",
+    "mode": "monthly",
+    "tag": "f2",
+    "max_shard": 22,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 4600,
+    "n_val": 1000,
+    "nin": 112,
+    "n_params": 106285
+   },
+   "dev_gate": 0.3183086667761934,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 50.586018281181346,
+       "within_x2": 0.5769230769230769,
+       "bias_log10": -0.08716576745672189,
+       "cov1": 0.3076923076923077
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.09615384615384616,
+       "macroF1": 0.12157809983896939
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.47723526142197,
+       "cov1": 0.3
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 47.50242680517003,
+       "within_x2": 0.6346153846153846,
+       "bias_log10": -0.03457362967154576,
+       "cov1": 0.4423076923076923
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.15295837633298934
+      },
+      "year": {
+       "n": 20,
+       "MAE": 24.92488485190205,
+       "cov1": 0.75
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 40.61397917765399,
+       "within_x2": 0.6730769230769231,
+       "bias_log10": -0.04187353498527324,
+       "cov1": 0.5192307692307693
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.13809523809523808
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.512175353121584,
+       "cov1": 0.6
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7481481481481481,
+      "auc_district_heat": 0.5946745562130178,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 45.7465305958588,
+       "within_x2": 0.6346153846153846,
+       "bias_log10": -0.1517904102745693,
+       "cov1": 0.4423076923076923
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 31.69772903464073,
+      "within_x2": 0.854978354978355,
+      "bias_log10": -0.0032265426870774494,
+      "cov1": 0.6872294372294372
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.924992034301585,
+      "cov1": 0.7164502164502164
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8713091922005571
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.42638618361251784,
+      "balanced_accuracy": 0.4881833528113232
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": 0.0100525200646702,
+      "spearman_vs_draftiness": -0.028953337634203626,
+      "spearman_vs_vintage": 0.036613433229449245
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 43.37927123089753,
+      "within_x2": 0.6686838124054463,
+      "bias_log10": -0.10405840907334962,
+      "cov1": 0.5885022692889561
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1800302571860817,
+      "macroF1": 0.16866812940129663
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.811576466509795
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7289433384379785
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7395112198615421
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5936827956989247
+     }
+    }
+   },
+   "kept": true,
+   "reason": "val skill 0.6296 vs incumbent 0.5974 (delta +0.0322, need > 0.01); dev gate 0.3183 vs 0.3264 (ok)",
+   "time": "2026-11-17 02:21"
+  },
+  {
+   "name": "R5-annual",
+   "mode": "annual",
+   "run": "r5_annual",
+   "description": "more data: f2 shards 0-22 (4,600 buildings), MLP 2x256",
+   "physics": "v2",
+   "val_skill": 0.5298312565949507,
+   "val_per_task": {
+    "logA": 0.9053997993469238,
+    "year": 0.07902997732162476,
+    "logUA": 0.866596519947052,
+    "logUAm2": 0.5423980951309204,
+    "logtau": 0.5725946426391602,
+    "Tb_heat": 0.5557250380516052,
+    "Tb_cool": 0.5258533954620361,
+    "logS_heat": 0.812758207321167,
+    "logS_cool": 0.8582968711853027,
+    "base_share": 0.46494555473327637,
+    "op_hours": 0.3322068452835083,
+    "weekend": 0.13342374563217163,
+    "use": 0.3371033968232965,
+    "heat": 0.5517620346142281,
+    "cool": 0.4093747254319857,
+    "_overall": 0.5298312565949507
+   },
+   "cfg": {
+    "run": "r5_annual",
+    "mode": "annual",
+    "tag": "f2",
+    "max_shard": 22,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 9200,
+    "n_val": 2000,
+    "nin": 12,
+    "n_params": 80685
+   },
+   "dev_gate": 0.3192052100012905,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 50.586018281181346,
+       "within_x2": 0.5769230769230769,
+       "bias_log10": -0.08716576745672189,
+       "cov1": 0.3076923076923077
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.09615384615384616,
+       "macroF1": 0.12157809983896939
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.47723526142197,
+       "cov1": 0.3
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 47.50242680517003,
+       "within_x2": 0.6346153846153846,
+       "bias_log10": -0.03457362967154576,
+       "cov1": 0.4423076923076923
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.15295837633298934
+      },
+      "year": {
+       "n": 20,
+       "MAE": 24.92488485190205,
+       "cov1": 0.75
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 36.78406944972673,
+       "within_x2": 0.6923076923076923,
+       "bias_log10": -0.06351735234377087,
+       "cov1": 0.5384615384615384
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1320450885668277
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.524923893189488,
+       "cov1": 0.65
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7481481481481481,
+      "auc_district_heat": 0.5946745562130178,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 45.7465305958588,
+       "within_x2": 0.6346153846153846,
+       "bias_log10": -0.1517904102745693,
+       "cov1": 0.4423076923076923
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 32.02426909775351,
+      "within_x2": 0.8582251082251082,
+      "bias_log10": 0.014948410894060737,
+      "cov1": 0.6693722943722944
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 22.044640078158103,
+      "cov1": 0.7164502164502164
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8685236768802228
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4314244903259317,
+      "balanced_accuracy": 0.4918841708868978
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": -0.003786810491965188,
+      "spearman_vs_draftiness": -0.04994884468513397,
+      "spearman_vs_vintage": 0.050576966541700345
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.18171356014755,
+      "within_x2": 0.6777609682299546,
+      "bias_log10": -0.07872794428652519,
+      "cov1": 0.5824508320726173
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.16944024205748864,
+      "macroF1": 0.1580395771664926
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.357960602287054
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7166921898928025
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7530287658152304
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5890288978494623
+     }
+    }
+   },
+   "kept": true,
+   "reason": "val skill 0.5298 vs incumbent 0.5172 (delta +0.0126, need > 0.01); dev gate 0.3192 vs 0.3183 (ok)",
+   "time": "2026-11-17 02:22"
+  },
+  {
+   "name": "R6-hourly",
+   "mode": "hourly",
+   "run": "r6_hourly",
+   "description": "MLP 3x288 (525k params), dropout 0.2, wd 1e-3, lr 7e-4, shards 0-22",
+   "physics": "v2",
+   "val_skill": 0.7790064907702333,
+   "val_per_task": {
+    "logA": 0.9403358697891235,
+    "year": 0.17027610540390015,
+    "logUA": 0.9317623972892761,
+    "logUAm2": 0.6426540017127991,
+    "logtau": 0.6912686824798584,
+    "Tb_heat": 0.7825184464454651,
+    "Tb_cool": 0.7799699902534485,
+    "logS_heat": 0.8624316453933716,
+    "logS_cool": 0.9362993240356445,
+    "base_share": 0.7444227933883667,
+    "op_hours": 0.9056006669998169,
+    "weekend": 0.9323790669441223,
+    "use": 0.7828462786584826,
+    "heat": 0.7641238422748287,
+    "cool": 0.8182082504849953,
+    "_overall": 0.7790064907702333
+   },
+   "cfg": {
+    "run": "r6_hourly",
+    "mode": "hourly",
+    "tag": "f2",
+    "max_shard": 22,
+    "hidden": 288,
+    "epochs": 60,
+    "layers": 3,
+    "drop": 0.2,
+    "lr": 0.0007,
+    "wd": 0.001,
+    "seed": 0,
+    "n_train": 9200,
+    "n_val": 2000,
+    "nin": 1199,
+    "n_params": 525069
+   },
+   "dev_gate": 0.32946393335084173,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 44.421367905974265,
+       "within_x2": 0.5384615384615384,
+       "bias_log10": -0.13387716763264068,
+       "cov1": 0.4230769230769231
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.1346153846153846,
+       "macroF1": 0.1488095238095238
+      },
+      "year": {
+       "n": 20,
+       "MAE": 34.72588381467646,
+       "cov1": 0.5
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 47.50242680517003,
+       "within_x2": 0.6346153846153846,
+       "bias_log10": -0.03457362967154576,
+       "cov1": 0.4423076923076923
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.15295837633298934
+      },
+      "year": {
+       "n": 20,
+       "MAE": 24.92488485190205,
+       "cov1": 0.75
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 36.78406944972673,
+       "within_x2": 0.6923076923076923,
+       "bias_log10": -0.06351735234377087,
+       "cov1": 0.5384615384615384
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1320450885668277
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.524923893189488,
+       "cov1": 0.65
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7688888888888888,
+      "auc_district_heat": 0.5798816568047337,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 42.28071854571447,
+       "within_x2": 0.6346153846153846,
+       "bias_log10": -0.10780589274751073,
+       "cov1": 0.5384615384615384
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 32.02426909775351,
+      "within_x2": 0.8582251082251082,
+      "bias_log10": 0.014948410894060737,
+      "cov1": 0.6693722943722944
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 22.044640078158103,
+      "cov1": 0.7164502164502164
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8685236768802228
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4314244903259317,
+      "balanced_accuracy": 0.4918841708868978
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": -0.003786810491965188,
+      "spearman_vs_draftiness": -0.04994884468513397,
+      "spearman_vs_vintage": 0.050576966541700345
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.18171356014755,
+      "within_x2": 0.6777609682299546,
+      "bias_log10": -0.07872794428652519,
+      "cov1": 0.5824508320726173
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.16944024205748864,
+      "macroF1": 0.15803957716649264
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.357960602287054
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7166921898928025
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7530287658152304
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5890288978494623
+     }
+    }
+   },
+   "kept": false,
+   "reason": "val skill 0.7790 vs incumbent 0.7834 (delta -0.0043, need > 0.01); dev gate 0.3295 vs 0.3192 (ok)",
+   "time": "2026-11-17 02:24"
+  },
+  {
+   "name": "R7-hourly",
+   "mode": "hourly",
+   "run": "r7_hourly",
+   "description": "more data: f2 shards 0-39 (8,000 buildings), MLP 2x256",
+   "physics": "v2",
+   "val_skill": 0.8010087333653538,
+   "val_per_task": {
+    "logA": 0.9528619647026062,
+    "year": 0.18391001224517822,
+    "logUA": 0.9460031390190125,
+    "logUAm2": 0.6763543486595154,
+    "logtau": 0.720662534236908,
+    "Tb_heat": 0.7954826354980469,
+    "Tb_cool": 0.7970772981643677,
+    "logS_heat": 0.8893443942070007,
+    "logS_cool": 0.9513760805130005,
+    "base_share": 0.792030930519104,
+    "op_hours": 0.9097867012023926,
+    "weekend": 0.9220354557037354,
+    "use": 0.8341254997378209,
+    "heat": 0.7993291222649795,
+    "cool": 0.8447508838066398,
+    "_overall": 0.8010087333653538
+   },
+   "cfg": {
+    "run": "r7_hourly",
+    "mode": "hourly",
+    "tag": "f2",
+    "max_shard": 39,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 16000,
+    "n_val": 2000,
+    "nin": 1199,
+    "n_params": 384557
+   },
+   "dev_gate": 0.32878491809000304,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 42.4199173912999,
+       "within_x2": 0.5961538461538461,
+       "bias_log10": -0.09232825323004823,
+       "cov1": 0.40384615384615385
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.09615384615384616,
+       "macroF1": 0.10953458306399483
+      },
+      "year": {
+       "n": 20,
+       "MAE": 35.11941971881551,
+       "cov1": 0.3
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 47.50242680517003,
+       "within_x2": 0.6346153846153846,
+       "bias_log10": -0.03457362967154576,
+       "cov1": 0.4423076923076923
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.15295837633298934
+      },
+      "year": {
+       "n": 20,
+       "MAE": 24.92488485190205,
+       "cov1": 0.75
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 36.78406944972673,
+       "within_x2": 0.6923076923076923,
+       "bias_log10": -0.06351735234377087,
+       "cov1": 0.5384615384615384
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1320450885668277
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.524923893189488,
+       "cov1": 0.65
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7451851851851852,
+      "auc_district_heat": 0.6242603550295858,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 47.224079540513344,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.1006676275145788,
+       "cov1": 0.40384615384615385
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 32.02426909775351,
+      "within_x2": 0.8582251082251082,
+      "bias_log10": 0.014948410894060737,
+      "cov1": 0.6693722943722944
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 22.044640078158103,
+      "cov1": 0.7164502164502164
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8685236768802228
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4314244903259317,
+      "balanced_accuracy": 0.4918841708868978
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": -0.003786810491965188,
+      "spearman_vs_draftiness": -0.04994884468513397,
+      "spearman_vs_vintage": 0.050576966541700345
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.18171356014755,
+      "within_x2": 0.6777609682299546,
+      "bias_log10": -0.07872794428652519,
+      "cov1": 0.5824508320726173
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.16944024205748864,
+      "macroF1": 0.15803957716649258
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.357960602287054
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7166921898928025
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7530287658152304
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5890288978494623
+     }
+    }
+   },
+   "kept": true,
+   "reason": "val skill 0.8010 vs incumbent 0.7834 (delta +0.0177, need > 0.01); dev gate 0.3288 vs 0.3192 (ok)",
+   "time": "2026-11-17 03:02"
+  },
+  {
+   "name": "R7-monthly",
+   "mode": "monthly",
+   "run": "r7_monthly",
+   "description": "more data: f2 shards 0-39 (8,000 buildings), MLP 2x256",
+   "physics": "v2",
+   "val_skill": 0.6409690191827991,
+   "val_per_task": {
+    "logA": 0.9291697144508362,
+    "year": 0.08410912752151489,
+    "logUA": 0.9157757759094238,
+    "logUAm2": 0.5683305263519287,
+    "logtau": 0.5968745946884155,
+    "Tb_heat": 0.7058077454566956,
+    "Tb_cool": 0.6982750296592712,
+    "logS_heat": 0.8686604499816895,
+    "logS_cool": 0.9449509382247925,
+    "base_share": 0.7131500840187073,
+    "op_hours": 0.41816097497940063,
+    "weekend": 0.22565454244613647,
+    "use": 0.5159390364659706,
+    "heat": 0.688748818111331,
+    "cool": 0.7409279294758742,
+    "_overall": 0.6409690191827991
+   },
+   "cfg": {
+    "run": "r7_monthly",
+    "mode": "monthly",
+    "tag": "f2",
+    "max_shard": 39,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 8000,
+    "n_val": 1000,
+    "nin": 112,
+    "n_params": 106285
+   },
+   "dev_gate": 0.3288540052589215,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 42.4199173912999,
+       "within_x2": 0.5961538461538461,
+       "bias_log10": -0.09232825323004823,
+       "cov1": 0.40384615384615385
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.09615384615384616,
+       "macroF1": 0.10953458306399483
+      },
+      "year": {
+       "n": 20,
+       "MAE": 35.11941971881551,
+       "cov1": 0.3
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 49.130332465622914,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.06048479049445055,
+       "cov1": 0.36538461538461536
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.17307692307692307,
+       "macroF1": 0.17910477322242027
+      },
+      "year": {
+       "n": 20,
+       "MAE": 24.911936878068854,
+       "cov1": 0.6
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 36.78406944972673,
+       "within_x2": 0.6923076923076923,
+       "bias_log10": -0.06351735234377087,
+       "cov1": 0.5384615384615384
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1320450885668277
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.524923893189488,
+       "cov1": 0.65
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7451851851851852,
+      "auc_district_heat": 0.6242603550295858,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 47.224079540513344,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.1006676275145788,
+       "cov1": 0.40384615384615385
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 32.02426909775351,
+      "within_x2": 0.8582251082251082,
+      "bias_log10": 0.014948410894060737,
+      "cov1": 0.6693722943722944
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 22.044640078158103,
+      "cov1": 0.7164502164502164
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8685236768802228
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4314244903259317,
+      "balanced_accuracy": 0.4918841708868978
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": -0.003786810491965188,
+      "spearman_vs_draftiness": -0.04994884468513397,
+      "spearman_vs_vintage": 0.050576966541700345
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.18171356014755,
+      "within_x2": 0.6777609682299546,
+      "bias_log10": -0.07872794428652519,
+      "cov1": 0.5824508320726173
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.16944024205748864,
+      "macroF1": 0.1580395771664926
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.357960602287054
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7166921898928025
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7530287658152304
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5890288978494623
+     }
+    }
+   },
+   "kept": true,
+   "reason": "val skill 0.6410 vs incumbent 0.6296 (delta +0.0114, need > 0.01); dev gate 0.3289 vs 0.3288 (ok)",
+   "time": "2026-11-17 03:03"
+  },
+  {
+   "name": "R7-annual",
+   "mode": "annual",
+   "run": "r7_annual",
+   "description": "more data: f2 shards 0-39 (8,000 buildings), MLP 2x256",
+   "physics": "v2",
+   "val_skill": 0.5387178276003823,
+   "val_per_task": {
+    "logA": 0.9088353514671326,
+    "year": 0.10171037912368774,
+    "logUA": 0.8705539703369141,
+    "logUAm2": 0.5618503093719482,
+    "logtau": 0.5879514217376709,
+    "Tb_heat": 0.573407769203186,
+    "Tb_cool": 0.5431026220321655,
+    "logS_heat": 0.8195590376853943,
+    "logS_cool": 0.8572783470153809,
+    "base_share": 0.47840940952301025,
+    "op_hours": 0.3468514084815979,
+    "weekend": 0.13861888647079468,
+    "use": 0.3425735062622132,
+    "heat": 0.552425636470156,
+    "cool": 0.39763935882448137,
+    "_overall": 0.5387178276003823
+   },
+   "cfg": {
+    "run": "r7_annual",
+    "mode": "annual",
+    "tag": "f2",
+    "max_shard": 39,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 16000,
+    "n_val": 2000,
+    "nin": 12,
+    "n_params": 80685
+   },
+   "dev_gate": 0.32500815327161015,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 42.4199173912999,
+       "within_x2": 0.5961538461538461,
+       "bias_log10": -0.09232825323004823,
+       "cov1": 0.40384615384615385
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.09615384615384616,
+       "macroF1": 0.10953458306399483
+      },
+      "year": {
+       "n": 20,
+       "MAE": 35.11941971881551,
+       "cov1": 0.3
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 49.130332465622914,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.06048479049445055,
+       "cov1": 0.36538461538461536
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.17307692307692307,
+       "macroF1": 0.17910477322242027
+      },
+      "year": {
+       "n": 20,
+       "MAE": 24.911936878068854,
+       "cov1": 0.6
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 39.30297204059766,
+       "within_x2": 0.6730769230769231,
+       "bias_log10": -0.05331029616428484,
+       "cov1": 0.5384615384615384
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.13489409141583056
+      },
+      "year": {
+       "n": 20,
+       "MAE": 27.01948964259791,
+       "cov1": 0.5
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7451851851851852,
+      "auc_district_heat": 0.6242603550295858,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 47.224079540513344,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.1006676275145788,
+       "cov1": 0.40384615384615385
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 32.61379012584387,
+      "within_x2": 0.8533549783549783,
+      "bias_log10": 0.014300755345841965,
+      "cov1": 0.6520562770562771
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.80197401220514,
+      "cov1": 0.7153679653679653
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8657381615598886
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.41798467731463446,
+      "balanced_accuracy": 0.475808336579665
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": -0.0007719863152787262,
+      "spearman_vs_draftiness": -0.042195887064365084,
+      "spearman_vs_vintage": 0.010097080887669576
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 43.49205675651,
+      "within_x2": 0.6732223903177005,
+      "bias_log10": -0.06628869586219599,
+      "cov1": 0.5748865355521936
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1649016641452345,
+      "macroF1": 0.15524747210148912
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.702105017292507
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7151607963246555
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7472994748149916
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5677251344086022
+     }
+    }
+   },
+   "kept": false,
+   "reason": "val skill 0.5387 vs incumbent 0.5298 (delta +0.0089, need > 0.01); dev gate 0.3250 vs 0.3289 (ok)",
+   "time": "2026-11-17 03:03"
+  },
+  {
+   "name": "R8-hourly",
+   "mode": "hourly",
+   "run": "r8_hourly",
+   "description": "MLP 3x288 (525k params), dropout 0.2, wd 1e-3, lr 7e-4, shards 0-39",
+   "physics": "v2",
+   "val_skill": 0.8024694012035962,
+   "val_per_task": {
+    "logA": 0.9504884481430054,
+    "year": 0.19269436597824097,
+    "logUA": 0.9425843954086304,
+    "logUAm2": 0.6749666333198547,
+    "logtau": 0.7183332443237305,
+    "Tb_heat": 0.8014183044433594,
+    "Tb_cool": 0.7977564930915833,
+    "logS_heat": 0.8800069689750671,
+    "logS_cool": 0.9439177513122559,
+    "base_share": 0.7752647399902344,
+    "op_hours": 0.9272390007972717,
+    "weekend": 0.9439833760261536,
+    "use": 0.8312287590102116,
+    "heat": 0.8097549928314579,
+    "cool": 0.8474035444028857,
+    "_overall": 0.8024694012035962
+   },
+   "cfg": {
+    "run": "r8_hourly",
+    "mode": "hourly",
+    "tag": "f2",
+    "max_shard": 39,
+    "hidden": 288,
+    "epochs": 60,
+    "layers": 3,
+    "drop": 0.2,
+    "lr": 0.0007,
+    "wd": 0.001,
+    "seed": 0,
+    "n_train": 16000,
+    "n_val": 2000,
+    "nin": 1199,
+    "n_params": 525069
+   },
+   "dev_gate": 0.3201822645964178,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 52.71821876698289,
+       "within_x2": 0.5769230769230769,
+       "bias_log10": -0.09267013678478464,
+       "cov1": 0.46153846153846156
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.16563390313390314
+      },
+      "year": {
+       "n": 20,
+       "MAE": 28.93084295573816,
+       "cov1": 0.45
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 49.130332465622914,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.06048479049445055,
+       "cov1": 0.36538461538461536
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.17307692307692307,
+       "macroF1": 0.17910477322242027
+      },
+      "year": {
+       "n": 20,
+       "MAE": 24.911936878068854,
+       "cov1": 0.6
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 36.78406944972673,
+       "within_x2": 0.6923076923076923,
+       "bias_log10": -0.06351735234377087,
+       "cov1": 0.5384615384615384
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1320450885668277
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.524923893189488,
+       "cov1": 0.65
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.7377777777777778,
+      "auc_district_heat": 0.5828402366863905,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 43.498445339150585,
+       "within_x2": 0.6346153846153846,
+       "bias_log10": -0.12346889267997474,
+       "cov1": 0.5769230769230769
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 32.02426909775351,
+      "within_x2": 0.8582251082251082,
+      "bias_log10": 0.014948410894060737,
+      "cov1": 0.6693722943722944
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 22.044640078158103,
+      "cov1": 0.7164502164502164
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8685236768802228
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4314244903259317,
+      "balanced_accuracy": 0.4918841708868978
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": -0.003786810491965188,
+      "spearman_vs_draftiness": -0.04994884468513397,
+      "spearman_vs_vintage": 0.050576966541700345
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.18171356014755,
+      "within_x2": 0.6777609682299546,
+      "bias_log10": -0.07872794428652519,
+      "cov1": 0.5824508320726173
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.16944024205748864,
+      "macroF1": 0.15803957716649258
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.357960602287054
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7166921898928025
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7530287658152304
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5890288978494623
+     }
+    }
+   },
+   "kept": false,
+   "reason": "val skill 0.8025 vs incumbent 0.8010 (delta +0.0015, need > 0.01); dev gate 0.3202 vs 0.3289 (ok)",
+   "time": "2026-11-17 03:05"
+  },
+  {
+   "name": "R9-hourly",
+   "mode": "hourly",
+   "run": "r9_hourly",
+   "description": "more data: f2 shards 0-59 (12,000 buildings, the full bank), MLP 2x256",
+   "physics": "v2",
+   "val_skill": 0.8125950627085528,
+   "val_per_task": {
+    "logA": 0.9566583633422852,
+    "year": 0.19980740547180176,
+    "logUA": 0.9521965384483337,
+    "logUAm2": 0.6888049244880676,
+    "logtau": 0.7344145178794861,
+    "Tb_heat": 0.8088826537132263,
+    "Tb_cool": 0.8066257238388062,
+    "logS_heat": 0.897646427154541,
+    "logS_cool": 0.9560660123825073,
+    "base_share": 0.8019717335700989,
+    "op_hours": 0.9251043200492859,
+    "weekend": 0.9290119409561157,
+    "use": 0.8535278917276662,
+    "heat": 0.8056170808934943,
+    "cool": 0.8725904067125763,
+    "_overall": 0.8125950627085528
+   },
+   "cfg": {
+    "run": "r9_hourly",
+    "mode": "hourly",
+    "tag": "f2",
+    "max_shard": 59,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 24000,
+    "n_val": 2000,
+    "nin": 1199,
+    "n_params": 384557
+   },
+   "dev_gate": 0.31655892235797234,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 50.75008378095269,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.14116449176386148,
+       "cov1": 0.38461538461538464
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.07692307692307693,
+       "macroF1": 0.09154516507457684
+      },
+      "year": {
+       "n": 20,
+       "MAE": 28.38318521027246,
+       "cov1": 0.4
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 49.130332465622914,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.06048479049445055,
+       "cov1": 0.36538461538461536
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.17307692307692307,
+       "macroF1": 0.17910477322242027
+      },
+      "year": {
+       "n": 20,
+       "MAE": 24.911936878068854,
+       "cov1": 0.6
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 36.78406944972673,
+       "within_x2": 0.6923076923076923,
+       "bias_log10": -0.06351735234377087,
+       "cov1": 0.5384615384615384
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1320450885668277
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.524923893189488,
+       "cov1": 0.65
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.6933333333333334,
+      "auc_district_heat": 0.5562130177514792,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 41.99866573923662,
+       "within_x2": 0.6346153846153846,
+       "bias_log10": -0.1273233662470321,
+       "cov1": 0.46153846153846156
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 32.02426909775351,
+      "within_x2": 0.8582251082251082,
+      "bias_log10": 0.014948410894060737,
+      "cov1": 0.6693722943722944
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 22.044640078158103,
+      "cov1": 0.7164502164502164
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8685236768802228
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4314244903259317,
+      "balanced_accuracy": 0.4918841708868978
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": -0.003786810491965188,
+      "spearman_vs_draftiness": -0.04994884468513397,
+      "spearman_vs_vintage": 0.050576966541700345
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.18171356014755,
+      "within_x2": 0.6777609682299546,
+      "bias_log10": -0.07872794428652519,
+      "cov1": 0.5824508320726173
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.16944024205748864,
+      "macroF1": 0.15803957716649258
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.357960602287054
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7166921898928025
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7530287658152304
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5890288978494623
+     }
+    }
+   },
+   "kept": true,
+   "reason": "val skill 0.8126 vs incumbent 0.8010 (delta +0.0116, need > 0.01); dev gate 0.3166 vs 0.3289 (ok)",
+   "time": "2026-11-17 03:41"
+  },
+  {
+   "name": "R9-monthly",
+   "mode": "monthly",
+   "run": "r9_monthly",
+   "description": "more data: f2 shards 0-59 (12,000 buildings, the full bank), MLP 2x256",
+   "physics": "v2",
+   "val_skill": 0.6559657825749142,
+   "val_per_task": {
+    "logA": 0.9349092245101929,
+    "year": 0.10016655921936035,
+    "logUA": 0.9220925569534302,
+    "logUAm2": 0.5811373591423035,
+    "logtau": 0.6123806834220886,
+    "Tb_heat": 0.7333873510360718,
+    "Tb_cool": 0.7198590636253357,
+    "logS_heat": 0.8788415193557739,
+    "logS_cool": 0.9519493579864502,
+    "base_share": 0.7357545495033264,
+    "op_hours": 0.4321634769439697,
+    "weekend": 0.23392724990844727,
+    "use": 0.5435473642668287,
+    "heat": 0.7057337806176563,
+    "cool": 0.7536366421324784,
+    "_overall": 0.6559657825749142
+   },
+   "cfg": {
+    "run": "r9_monthly",
+    "mode": "monthly",
+    "tag": "f2",
+    "max_shard": 59,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 12000,
+    "n_val": 1000,
+    "nin": 112,
+    "n_params": 106285
+   },
+   "dev_gate": 0.3123391307915891,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 50.75008378095269,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.14116449176386148,
+       "cov1": 0.38461538461538464
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.07692307692307693,
+       "macroF1": 0.09154516507457684
+      },
+      "year": {
+       "n": 20,
+       "MAE": 28.38318521027246,
+       "cov1": 0.4
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 50.03433777824367,
+       "within_x2": 0.6153846153846154,
+       "bias_log10": -0.07434031632175153,
+       "cov1": 0.3269230769230769
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.14252645502645503
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.011842746208664,
+       "cov1": 0.55
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 36.78406944972673,
+       "within_x2": 0.6923076923076923,
+       "bias_log10": -0.06351735234377087,
+       "cov1": 0.5384615384615384
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.1320450885668277
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.524923893189488,
+       "cov1": 0.65
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.6933333333333334,
+      "auc_district_heat": 0.5562130177514792,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 41.99866573923662,
+       "within_x2": 0.6346153846153846,
+       "bias_log10": -0.1273233662470321,
+       "cov1": 0.46153846153846156
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 32.02426909775351,
+      "within_x2": 0.8582251082251082,
+      "bias_log10": 0.014948410894060737,
+      "cov1": 0.6693722943722944
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 22.044640078158103,
+      "cov1": 0.7164502164502164
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8685236768802228
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4314244903259317,
+      "balanced_accuracy": 0.4918841708868978
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": -0.003786810491965188,
+      "spearman_vs_draftiness": -0.04994884468513397,
+      "spearman_vs_vintage": 0.050576966541700345
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 44.18171356014755,
+      "within_x2": 0.6777609682299546,
+      "bias_log10": -0.07872794428652519,
+      "cov1": 0.5824508320726173
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.16944024205748864,
+      "macroF1": 0.1580395771664926
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.357960602287054
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7166921898928025
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7530287658152304
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5890288978494623
+     }
+    }
+   },
+   "kept": true,
+   "reason": "val skill 0.6560 vs incumbent 0.6410 (delta +0.0150, need > 0.01); dev gate 0.3123 vs 0.3166 (ok)",
+   "time": "2026-11-17 03:41"
+  },
+  {
+   "name": "R9-annual",
+   "mode": "annual",
+   "run": "r9_annual",
+   "description": "more data: f2 shards 0-59 (12,000 buildings, the full bank), MLP 2x256",
+   "physics": "v2",
+   "val_skill": 0.5412304139375382,
+   "val_per_task": {
+    "logA": 0.9095933437347412,
+    "year": 0.10436415672302246,
+    "logUA": 0.8729600310325623,
+    "logUAm2": 0.5597290396690369,
+    "logtau": 0.5886731147766113,
+    "Tb_heat": 0.5753653645515442,
+    "Tb_cool": 0.5450782775878906,
+    "logS_heat": 0.823306679725647,
+    "logS_cool": 0.858268678188324,
+    "base_share": 0.4897879362106323,
+    "op_hours": 0.3423161506652832,
+    "weekend": 0.1407768726348877,
+    "use": 0.34214869466277575,
+    "heat": 0.5562690279981066,
+    "cool": 0.4098188409020079,
+    "_overall": 0.5412304139375382
+   },
+   "cfg": {
+    "run": "r9_annual",
+    "mode": "annual",
+    "tag": "f2",
+    "max_shard": 59,
+    "hidden": 256,
+    "epochs": 60,
+    "layers": 2,
+    "drop": 0.1,
+    "lr": 0.002,
+    "wd": 0.0001,
+    "seed": 0,
+    "n_train": 24000,
+    "n_val": 2000,
+    "nin": 12,
+    "n_params": 80685
+   },
+   "dev_gate": 0.30605407964980746,
+   "dev": {
+    "bdg2": {
+     "hourly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 50.75008378095269,
+       "within_x2": 0.5576923076923077,
+       "bias_log10": -0.14116449176386148,
+       "cov1": 0.38461538461538464
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.07692307692307693,
+       "macroF1": 0.09154516507457684
+      },
+      "year": {
+       "n": 20,
+       "MAE": 28.38318521027246,
+       "cov1": 0.4
+      }
+     },
+     "monthly": {
+      "area": {
+       "n": 52,
+       "MdAPE": 50.03433777824367,
+       "within_x2": 0.6153846153846154,
+       "bias_log10": -0.07434031632175153,
+       "cov1": 0.3269230769230769
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.15384615384615385,
+       "macroF1": 0.14252645502645503
+      },
+      "year": {
+       "n": 20,
+       "MAE": 26.011842746208664,
+       "cov1": 0.55
+      }
+     },
+     "annual": {
+      "area": {
+       "n": 52,
+       "MdAPE": 40.24646906495333,
+       "within_x2": 0.6538461538461539,
+       "bias_log10": -0.05599220062982213,
+       "cov1": 0.5384615384615384
+      },
+      "use": {
+       "n": 52,
+       "accuracy": 0.19230769230769232,
+       "macroF1": 0.12957157784743992
+      },
+      "year": {
+       "n": 20,
+       "MAE": 25.1111901939405,
+       "cov1": 0.45
+      }
+     },
+     "elec_only": {
+      "n": 52,
+      "auc_district_cooling": 0.6933333333333334,
+      "auc_district_heat": 0.5562130177514792,
+      "n_chw": 25,
+      "n_dheat": 26,
+      "area": {
+       "n": 52,
+       "MdAPE": 41.99866573923662,
+       "within_x2": 0.6346153846153846,
+       "bias_log10": -0.1273233662470321,
+       "cov1": 0.46153846153846156
+      }
+     }
+    },
+    "recs": {
+     "area": {
+      "n": 1848,
+      "MdAPE": 32.91174445675002,
+      "within_x2": 0.8544372294372294,
+      "bias_log10": 0.012063934590494485,
+      "cov1": 0.6655844155844156
+     },
+     "year": {
+      "n": 1848,
+      "MAE": 21.714642161200302,
+      "cov1": 0.7267316017316018
+     },
+     "heat_fuel_vs_electric": {
+      "n": 1795,
+      "accuracy": 0.8690807799442897
+     },
+     "hp_vs_resistance": {
+      "n": 557,
+      "auc": 0.4068302817815868,
+      "balanced_accuracy": 0.44988313206077135
+     },
+     "UAm2_consistency": {
+      "spearman_vs_insulation_poorness": -0.004718615395091895,
+      "spearman_vs_draftiness": -0.04794102481004789,
+      "spearman_vs_vintage": 0.012300353561646223
+     }
+    },
+    "cbecs": {
+     "area": {
+      "n": 661,
+      "MdAPE": 43.37824846054382,
+      "within_x2": 0.6732223903177005,
+      "bias_log10": -0.07504198995818534,
+      "cov1": 0.5809379727685325
+     },
+     "use": {
+      "n": 661,
+      "accuracy": 0.1649016641452345,
+      "macroF1": 0.15321752037632497
+     },
+     "year": {
+      "n": 661,
+      "MAE": 24.624137484103024
+     },
+     "heat_class": {
+      "n": 653,
+      "accuracy": 0.7090352220520674
+     },
+     "chiller": {
+      "n": 614,
+      "auc": 0.7374820959656243
+     },
+     "heat_pump_present": {
+      "n": 616,
+      "auc": 0.5701444892473119
+     }
+    }
+   },
+   "kept": true,
+   "reason": "val skill 0.5412 vs incumbent 0.5298 (delta +0.0114, need > 0.01); dev gate 0.3061 vs 0.3123 (ok)",
+   "time": "2026-11-17 03:41"
+  }
+ ],
+ "gate_incumbent": 0.30605407964980746,
+ "physics": "v2",
+ "frozen_val": "bank v1 shards 900-904 featurized as f2"
+}
