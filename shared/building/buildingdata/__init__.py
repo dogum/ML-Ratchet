@@ -15,7 +15,9 @@
     c   = bd.comstock(); ch = bd.comstock_hourly(); sw = bd.stock_weather('G0800310')
     x   = bd.recs(split='exam'); y = bd.cbecs(split='dev')   # EIA surveys mapped to the spec (+ full=True for all codes)
     runs = bd.faults(split='exam'); ts = bd.fault_data('ers_rp1312', run_id='ERS_20070828_AHU-A')
-    t   = bd.tariffs(); p = bd.tariff_prices('pge_e_tou_c', 2017); b = bd.bill('pge_e_tou_c', load_kW)
+    t   = bd.tariffs(); p = bd.tariff_prices('pge_e_tou_c', 2017, tz='America/Los_Angeles', utc=True)
+    b   = bd.bill('pge_e_tou_c', load_kW)
+    pa  = bd.tariff_arrays('pge_e_tou_c', times_utc, tz); r = bd.rtp_prices(times_utc)   # DST-safe; ERCOT RTP
     wp  = bd.wholesale_prices('ERCOT', 'HB_HOUSTON', '2023-01-01', '2024-01-01')   # via GridData (read-only)
     o   = bd.other('list'); bl = bd.baselines()
 
@@ -268,9 +270,27 @@ def tariffs(key=None):
     return t if key is None else t[key]
 
 
-def tariff_prices(key, year=2017, tz=None):
+def tariff_prices(key, year=2017, tz=None, utc=False):
     """Hourly price frame for a year in LOCAL clock time (tz given -> tz-aware): energy_$per_kWh (tier 1 + adjustment;
-    tiers ignored), energy_period, demand_period (-1 if none)."""
+    tiers ignored), energy_period, demand_period (-1 if none).
+    DST: with tz the frame is correct on every hour (checked for all 19 tariffs, 7 site time zones, 2016-2019). Without
+    tz the index is naive clock time: it has the nonexistent spring hour and one autumn 01:00, so it cannot be
+    tz-localized (pandas raises), and BuildingSim reads a naive index as UTC (prices shifted by the UTC offset).
+    utc=True (opt-in, needs tz): the same prices on the UTC hour-beginning index of the local year, computed per
+    UTC hour from its local month / hour / weekday (ThermoPilot's price builder, tariff_arrays); every hour equals
+    the tz frame's. This is the safe frame for simulate(prices=...)."""
+    if utc:
+        if tz is None:
+            raise ValueError('tariff_prices(utc=True) needs tz')
+        times = pd.date_range(pd.Timestamp(f'{year}-01-01', tz=tz).tz_convert('UTC'),
+                              pd.Timestamp(f'{year + 1}-01-01', tz=tz).tz_convert('UTC'), freq='h', inclusive='left')
+        a = tariff_arrays(key, times, tz)
+        loc = times.tz_convert(tz)
+        E = tariffs(key)['energy']
+        m, h, we = loc.month.values - 1, loc.hour.values, loc.dayofweek.values >= 5
+        per = np.where(we, np.array(E['weekend'])[m, h], np.array(E['weekday'])[m, h])
+        return pd.DataFrame({'energy_$per_kWh': a['price'], 'energy_period': per, 'demand_period': a['dperiod']},
+                            index=times.rename('time_utc'))
     t = tariffs(key)
     idx = pd.date_range(f'{year}-01-01', f'{year + 1}-01-01', freq='h', inclusive='left', tz=tz)
     m, h, we = idx.month - 1, idx.hour, idx.dayofweek >= 5
@@ -310,6 +330,98 @@ def bill(key, load_kW, tz=None):
     days = load_kW.index.normalize().nunique(); months = len(set(zip(load_kW.index.year, load_kW.index.month)))
     fixed = fx * days if (t['fixed']['units'] or '').endswith('day') else fx * months
     return dict(energy=energy, demand=dem, fixed=fixed, total=energy + dem + fixed)
+
+
+def tariff_arrays(tariff, times, tz, rtp=None):
+    """Per-step price arrays for a DatetimeIndex `times` (UTC or tz-aware, any step), DST-safe: every step takes the
+    price of its own local month / hour / weekday; nothing is reindexed. Ported from ThermoPilot
+    (training/tp/env.py price_arrays, v1.0). tariff: a URDB key (tariffs()), a dict {rates, weekday, weekend
+    (12x24 period ids), demand_peak_rate, demand_hours (12x24 bool)}, or 'rtp...' (rtp_prices(times), or `rtp` =
+    an hourly $/kWh Series). Returns dict of numpy arrays: price ($/kWh, tier 1 + adjustment), dperiod (TOU demand
+    period id, -1 none), drate (TOU demand $/kW-month), frate (flat demand $/kW-month)."""
+    loc = times.tz_convert(tz)
+    n = len(times)
+    if isinstance(tariff, str) and tariff.startswith('rtp'):
+        p = rtp_prices(times) if rtp is None else rtp.reindex(times).ffill().bfill().values
+        return dict(price=p, dperiod=np.full(n, -1), drate=np.zeros(n), frate=np.zeros(n))
+    if isinstance(tariff, dict):
+        m, h, we = loc.month.values - 1, loc.hour.values, loc.dayofweek.values >= 5
+        wd, wk = np.array(tariff['weekday']), np.array(tariff['weekend'])
+        per = np.where(we, wk[m, h], wd[m, h])
+        price = np.array(tariff['rates'])[per]
+        dh = np.array(tariff['demand_hours'])[m, h] & ~we
+        drate = np.where(dh, tariff['demand_peak_rate'], 0.0)
+        return dict(price=price, dperiod=np.where(dh, 0, -1), drate=drate, frate=np.zeros(n))
+    t = tariffs(tariff)
+    m, h, we = loc.month.values - 1, loc.hour.values, loc.dayofweek.values >= 5
+    E = t['energy']
+    ewd, ewk = np.array(E['weekday']), np.array(E['weekend'])
+    eper = np.where(we, ewk[m, h], ewd[m, h])
+    erate = np.array([p[0]['rate'] + p[0]['adj'] for p in E['periods']])
+    D_ = t['demand_tou']
+    if D_['periods'] and D_['weekday']:
+        dwd, dwk = np.array(D_['weekday']), np.array(D_['weekend'])
+        dp_ = np.where(we, dwk[m, h], dwd[m, h])
+    else:
+        dp_ = np.full(n, -1)
+    pr = pd.DataFrame({'energy_$per_kWh': erate[eper], 'demand_period': dp_})
+    dper = pr['demand_period'].values.astype(int)
+    DT = t['demand_tou']
+    drate = np.zeros(n)
+    if DT['periods']:
+        rates = np.array([p[0]['rate'] for p in DT['periods']])
+        ok = (dper >= 0) & (dper < len(rates))
+        drate[ok] = rates[dper[ok]]
+    else:
+        dper = np.full(n, -1)
+    frate = np.zeros(n)
+    DF = t['demand_flat']
+    if DF['periods']:
+        mp = DF['month_period']
+        fr = np.array([DF['periods'][int(mp[mo])][0]['rate'] if mp[mo] is not None and int(mp[mo]) < len(DF['periods'])
+                       else 0.0 for mo in range(12)])
+        frate = fr[loc.month.values - 1]
+    return dict(price=pr['energy_$per_kWh'].values.astype(float), dperiod=dper, drate=drate, frate=frate)
+
+
+def bill_arrays(pa, load_kW, months):
+    """(energy $, demand $) of a load on per-step arrays from tariff_arrays (ThermoPilot env.bill_arrays): energy =
+    sum(price x load) (load in kWh per step, i.e. kW at 1 h); demand = per month the max load in each TOU demand
+    period x its rate, plus the monthly max x the flat rate. months: one id per step (e.g. local year * 12 + month)."""
+    e = float(np.sum(pa['price'] * load_kW))
+    dem = 0.0
+    for mo in np.unique(months):
+        sel = months == mo
+        dp = pa['dperiod'][sel]
+        L = load_kW[sel]
+        for p in np.unique(dp[dp >= 0]):
+            s2 = dp == p
+            dem += float(L[s2].max() * pa['drate'][sel][s2][0])
+        if pa['frate'][sel].max() > 0:
+            dem += float(L.max() * pa['frate'][sel][0])
+    return e, dem
+
+
+RTP_ADDER = 0.10      # $/kWh delivery + retail adder on the wholesale price (ThermoPilot's assumption, Griddy-style)
+RTP_SHIFT_DAYS = 728  # weather year Y pairs with ERCOT prices of Y + 2 (104 weeks: weekdays stay aligned)
+
+
+@functools.lru_cache(maxsize=4)
+def _rtp_series(market, node):
+    w = wholesale_prices(market, node)['price']
+    return w[~w.index.duplicated()].sort_index()
+
+
+def rtp_prices(times, market='ERCOT', node='HB_HOUSTON', shift_days=RTP_SHIFT_DAYS, adder=RTP_ADDER,
+               clip=(-0.05, 3.0)):
+    """Real-time retail prices for simulated weather years (ThermoPilot env.rtp_prices, v1.0): real hourly
+    wholesale prices ($/MWh -> $/kWh, clipped) + adder, shifted forward by shift_days so the BDG2 weather years
+    pair with years GridData has (ERCOT starts 2018: 2016 weather -> 2018 prices, 2017 -> 2019). times: UTC
+    DatetimeIndex. Returns a numpy array ($/kWh)."""
+    w = _rtp_series(market, node)
+    t2 = times + pd.Timedelta(days=shift_days)
+    p = w.reindex(t2).interpolate(limit_direction='both').values / 1000.0
+    return np.clip(p, clip[0], clip[1]) + adder
 
 
 def wholesale_prices(market='ERCOT', node='HB_HOUSTON', start=None, end=None, kind='rt'):

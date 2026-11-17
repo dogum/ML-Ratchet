@@ -24,6 +24,29 @@ from .systems import thermostat_solve, REC
 from .zone import (CP_AIR, Zone5R1C, geometry, boundary, window_solar, infiltration_coeffs)
 
 
+OPTIONS = {
+    'holidays': "public-holiday calendar: 'auto' (country from the weather tz) or 'US' / 'CA' / 'UK' / 'IE'; "
+                "absent = v1.0 US calendar (LoadCast wrapper)",
+}
+
+
+def check_options(options):
+    """Opt-in Phase 2 flags that act inside the time loop (README, 'Phase 2 wrappers'). None or {} = v1.0."""
+    opts = dict(options or {})
+    bad = sorted(set(opts) - set(OPTIONS))
+    if bad:
+        raise ValueError(f'unknown options {bad}; known: {sorted(OPTIONS)}')
+    return opts
+
+
+def _prepare_kw(opts, meta):
+    if opts.get('holidays') is None:
+        return {}
+    from .holidays import resolve
+    c = resolve(opts['holidays'], meta.get('tz', 'UTC'))
+    return {} if c is None else dict(holidays=c)
+
+
 def _weather_args(weather, spec):
     if isinstance(weather, str):
         return wxm.read_epw(weather)
@@ -46,8 +69,9 @@ def _weather_args(weather, spec):
 
 class Simulator:
     def __init__(self, spec, weather, start=None, end=None, dt='1h', controller=None, faults=None, prices=None,
-                 init=None, rng=None, warmup_days=7, record_trend=True, sensor_noise=None):
+                 init=None, rng=None, warmup_days=7, record_trend=True, sensor_noise=None, options=None):
         t0 = time.time()
+        self.options = opts = check_options(options)
         df, meta = _weather_args(weather, spec)
         s0 = dict(spec)
         if s0.get('lat') is None:
@@ -55,7 +79,8 @@ class Simulator:
         self.spec = s = fill_spec(s0)
         pv = s.get('pv')
         self.wx = wx = wxm.prepare(df, meta, start, end, dt, orientation=s['geometry']['orientation_deg'],
-                                   pv=[(pv['tilt'], pv['azimuth'])] if pv else None)
+                                   pv=[(pv['tilt'], pv['azimuth'])] if pv else None,
+                                   **_prepare_kw(opts, meta))
         self.n = n = wx['n']
         self.dt = dt_s = wx['dt_s']
         self.times = wx['times']
@@ -735,10 +760,11 @@ def _price_array(prices, times, cal):
 
 
 def simulate(spec, weather, start=None, end=None, dt='1h', controller=None, faults=None, prices=None, init=None,
-             rng=None, warmup_days=7, sensor_noise=None, record_trend=True):
+             rng=None, warmup_days=7, sensor_noise=None, record_trend=True, options=None):
     """Simulate one building. See README for the full contract. Returns a dict (SimResult)."""
     sim = Simulator(spec, weather, start, end, dt, controller=controller, faults=faults, prices=prices, init=init,
-                    rng=rng, warmup_days=warmup_days, sensor_noise=sensor_noise, record_trend=record_trend)
+                    rng=rng, warmup_days=warmup_days, sensor_noise=sensor_noise, record_trend=record_trend,
+                    options=options)
     if sim.prices is not None and sim.bat and sim.bat.get('mode') == 'tou':
         pr = np.asarray(sim.prices)
         sim._p_lo, sim._p_hi = np.percentile(pr, 30), np.percentile(pr, 70)

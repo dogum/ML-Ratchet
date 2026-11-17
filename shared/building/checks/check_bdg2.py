@@ -7,6 +7,9 @@ electric chiller; chilled water only -> district chilled water with district hea
 the use-type default. This is the "generic twin from metadata" level that Phase 2 starts from, so large errors in
 annual totals are expected; the hourly SHAPE (normalised by each series' mean) is the more meaningful comparison.
 Only building-meters with q_ok (agent B's quality flag) are scored. Exam buildings are never touched.
+
+    python checks/check_bdg2.py               # v1.0 generic twins -> bdg2_dev_meters.json
+    python checks/check_bdg2.py w2            # Phase 2 flags on (dev only) -> bdg2_dev_meters__w2.json; see VARIANTS
 """
 import os as _os
 BLDG_CODE = _os.path.abspath(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..'))  # shared/building
@@ -57,7 +60,60 @@ def spec_from_bdg2(s):
     return out
 
 
-def main():
+VARIANTS = {
+    'w2': 'BuildingDetective W1 intensity + W2 campus physics (VAV min 0.45, OA/m2 x1.5 on district buildings, as '
+          'calib_campus.py) at the fitted distribution factors: district_eff 0.185 (heat), district_eff_chw 0.329',
+    'w2w3': 'w2 + W3 flat base loads at their means: district heat phi 0.70, chilled water phi 0.50, electricity '
+            '+0.50 x its mean (no random draws)',
+    'lc': "LoadCast spec_from_meters with CAMPUS_KNOBS (24x7, OA x2.5, VAV min 0.3) and options={'holidays': 'auto'}; "
+          'no meter scaling',
+}
+W3_MEANS = dict(phi_heat=(0.70, 0.0), phi_chw=(0.50, 0.0), elec_base=(0.50, 0.0), p_elec_base=1.0)
+
+
+def variant_run(variant, bid, spec, w, wm, start, end):
+    """One dev twin with the Phase 2 flags of `variant` on (dev only; same spec_from_bdg2 metadata twin)."""
+    from buildingsim import fill_spec, phase2 as P
+    if variant == 'lc':
+        s = P.spec_from_meters(bd.bdg2_spec(bid), [m for m in METERS if m in str(bd.bdg2_spec(bid).get('meters'))],
+                               P.CAMPUS_KNOBS)
+        return simulate(s, (w, wm), start, end, dt='1h', options={'holidays': 'auto'}), None
+    f = fill_spec(spec)
+    P.apply_intensity(f, P.W1_INTENSITY.get(f['primary_use'], 1.0))
+    if f['system'] == 'district_steam_chw' or f['hvac'].get('heat_source') == 'district':
+        f['hvac']['vav_min_frac'] = 0.45
+        f['ventilation']['L_s_m2'] = float(f['ventilation'].get('L_s_m2') or 0.3) * 1.5
+        f['hvac']['district_eff'] = P.W2_CAMPUS['eff_heat_median']
+        f['hvac']['district_eff_chw'] = P.W2_CAMPUS['eff_chw_median']
+    out = simulate(f, (w, wm), start, end, dt='1h')
+    base = None
+    if variant == 'w2w3':
+        ts = out['ts']
+        cols = {'electricity': 'meter_electricity_kW', 'chilled_water': 'meter_chilled_water_kW',
+                'steam': 'meter_steam_kW', 'hot_water': 'meter_hot_water_kW'}
+        x = {k: ts[c].to_numpy(float) for k, c in cols.items() if c in ts}
+        y = P.flat_base_loads(x, np.random.default_rng(0), commercial=not f['primary_use'].startswith('residential'),
+                              params=W3_MEANS)
+        base = {cols[k]: v for k, v in y.items()}
+    return out, base
+
+
+def shape_extra(rv, sv, loc, mtr):
+    """Summer level (Jun-Aug mean / annual mean) and weekday night/day ratio (0-5 h vs 10-16 h local), real and sim:
+    the W3 twin-test statistics."""
+    summer = np.isin(loc.month, [6, 7, 8])
+    wk = loc.dayofweek < 5
+    night = wk & ((loc.hour < 5) | (loc.hour >= 22))
+    dayh = wk & (loc.hour >= 10) & (loc.hour < 16)
+    f = lambda v, m: float(v[m].mean() / max(v.mean(), 1e-9)) if m.any() else None  # noqa: E731
+    g = lambda v: float(v[night].mean() / max(v[dayh].mean(), 1e-9)) if night.any() and dayh.any() else None  # noqa
+    return dict(summer_over_mean_real=f(rv, summer), summer_over_mean_sim=f(sv, summer),
+                night_over_day_real=g(rv), night_over_day_sim=g(sv))
+
+
+def main(variant=None):
+    if variant is not None and variant not in VARIANTS:
+        raise SystemExit(f'variant: one of {sorted(VARIANTS)}')
     meta = bd.bdg2_meta(split='dev')
     rows = []
     wcache = {}
@@ -74,8 +130,12 @@ def main():
         w, wm = wcache[site]
         start = pd.Timestamp('2016-01-01', tz=wm['tz']).tz_convert('UTC')
         end = pd.Timestamp('2017-01-01', tz=wm['tz']).tz_convert('UTC')
+        base = None
         try:
-            out = simulate(spec, (w, wm), start, end, dt='1h')
+            if variant is None:
+                out = simulate(spec, (w, wm), start, end, dt='1h')
+            else:
+                out, base = variant_run(variant, bid, spec, w, wm, start, end)
         except Exception as e:
             print('ERR', bid, e)
             continue
@@ -86,6 +146,8 @@ def main():
             real = bd.bdg2(mtr, building=bid)
             real = real.iloc[:, 0].reindex(ts.index)
             sim = ts[col] if col in ts else None
+            if base is not None and col in base:
+                sim = pd.Series(base[col], index=ts.index)
             if sim is None or real.notna().sum() < 4000 or real.sum() <= 0:
                 continue
             m = real.notna().values
@@ -108,6 +170,8 @@ def main():
                              daily_r=float(np.corrcoef(dr[ok], ds_[ok])[0, 1]) if np.std(ds_[ok]) > 0 else None,
                              daily_vs_T_slope_real=float(np.polyfit(dT[ok], dr[ok] / dr[ok].mean(), 1)[0]),
                              daily_vs_T_slope_sim=float(np.polyfit(dT[ok], ds_[ok] / ds_[ok].mean(), 1)[0])))
+            if variant is not None:
+                rows[-1].update(shape_extra(rv, sv, loc, mtr))
             print(bid, mtr, out['spec']['system'], 'ratio %.2f hourly r %.2f profile r %.2f daily r %.2f' % (
                 rows[-1]['ratio'], rows[-1]['hourly_r_normalised'] or 0, rows[-1]['weekday_profile_r'] or 0,
                 rows[-1]['daily_r'] or 0), flush=True)
@@ -124,6 +188,22 @@ def main():
                          daily_r_median=float(g.daily_r.median()),
                          temp_slope_sign_agreement=float((np.sign(g.daily_vs_T_slope_real) ==
                                                           np.sign(g.daily_vs_T_slope_sim)).mean()))
+        if variant is not None:
+            for k in ('summer_over_mean', 'night_over_day'):
+                for side in ('real', 'sim'):
+                    v = g[f'{k}_{side}'].dropna()
+                    summ[mtr][f'{k}_{side}_median'] = float(v.median()) if len(v) else None
+    if variant is not None:
+        import buildingsim as bs
+        write(f'bdg2_dev_meters__{variant}.json', dict(
+            what=f'BuildingSim dev twins with Phase 2 flags on ({variant}) vs REAL BDG2 meters, 52 dev buildings, 2016',
+            variant=variant, flags=VARIANTS[variant], buildingsim=bs.__version__, physics=bs.PHYSICS_VERSION,
+            split='bldg/data/proc/splits.json bdg2.dev (frozen by agent B); exam buildings untouched',
+            per_meter=summ, buildings=rows,
+            notes=['W1/W2 factors were fitted on these 52 dev buildings (W2 on 2017): the 2016 annual ratios are an '
+                   'in-sample check, not a test', 'summer_over_mean: Jun-Aug mean / annual mean; night_over_day: '
+                   'weekday 22-5 h mean / 10-16 h mean, local time']))
+        return
     write('bdg2_dev_meters.json', dict(
         what='BuildingSim generic twins (metadata only) vs REAL BDG2 meters, 52 dev buildings, 2016, hourly',
         split='bldg/data/proc/splits.json bdg2.dev (frozen by agent B); exam buildings untouched',
@@ -135,4 +215,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1] if len(sys.argv) > 1 else None)

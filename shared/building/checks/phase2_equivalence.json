@@ -1,0 +1,368 @@
+{
+ "what": "Phase 2 wrappers upstreamed into BuildingSim / BuildingData: each port reproduces the model's own wrapper.",
+ "buildingsim": "1.0.1",
+ "physics": "1.0",
+ "loadcast": {
+  "source": {
+   "files": [
+    "models/loadcast/training/lcsim.py",
+    "models/loadcast/training/lc_common.py",
+    "models/loadcast/training/calib.py"
+   ],
+   "commit": "dfafdcf",
+   "unchanged_from_commit": true
+  },
+  "holiday_calendars": {
+   "cases": "4 countries x 2015-2020",
+   "differing": 0
+  },
+  "holiday_simulation": {
+   "case": "Robin (Europe/London) office twin, 14 Mar - 4 Apr 2016, 1 h",
+   "max_abs_diff_vs_model": 0.0,
+   "holiday_days_flag_on": 2,
+   "holiday_days_v1": 0,
+   "electricity_kWh": {
+    "model": 68500.59553483482,
+    "port": 68500.59553483482,
+    "v1_calendar": 71670.14376194593
+   }
+  },
+  "spec_from_meters": {
+   "cases": "1044 (52 dev buildings x calib.grid_for knobs + campus/elec/none)",
+   "differing": 0
+  },
+  "scale_meters": {
+   "max_abs_diff": 0.0,
+   "same_keys": true
+  },
+  "campus_knobs": {
+   "CAMPUS_KNOBS": {
+    "sys": "auto",
+    "sched": "24x7",
+    "oa": 2.5,
+    "vav_min": 0.3,
+    "sat_reset": true
+   },
+   "dev_counts": {
+    "sched": {
+     "default": 21,
+     "extended": 9,
+     "24x7": 22
+    },
+    "oa": {
+     "1.0": 15,
+     "2.5": 37
+    },
+    "sys": {
+     "gas_rtu": 1,
+     "gas_vav": 1,
+     "electric": 5,
+     "district": 12,
+     "auto": 33
+    },
+    "vav_min": {
+     "0.3": 43,
+     "0.8": 9
+    }
+   },
+   "dev_meter_medians": {
+    "electricity": [
+     0.42875098395029027,
+     6.2807771278765
+    ],
+    "chilledwater": [
+     0.9160066568085539,
+     31.448604055625992
+    ],
+    "steam": [
+     0.3608859677040277,
+     3.481664727914508
+    ],
+    "hotwater": [
+     0.40380687911969143,
+     5.9568913872569
+    ],
+    "gas": [
+     0.0,
+     61.89728601556404
+    ]
+   },
+   "DEV_METER_SCALE_equal": true
+  },
+  "wall_s": 1.9271135330200195,
+  "generated": "2026-11-17 17:11",
+  "python": "3.14.9"
+ },
+ "detective": {
+  "source": {
+   "files": [
+    "models/buildingdetective/training/wrappers.py",
+    "models/buildingdetective/training/common.py",
+    "models/buildingdetective/training/simone.py"
+   ],
+   "commit": "dfafdcf",
+   "unchanged_from_commit": true
+  },
+  "constants": {
+   "W1_equal": true,
+   "W2_equal": true,
+   "W3_equal": true
+  },
+  "W1_apply_intensity": {
+   "cases": 24,
+   "differing": 0
+  },
+  "W2_make_campus": {
+   "case": "generated VAV buildings -> campus, Chicago TMYx 1-15 Jul, 1 h",
+   "rows": [
+    {
+     "use": "office",
+     "kind": "both",
+     "kind_port": "both",
+     "district_eff": 0.23302819886113954,
+     "district_eff_chw": 0.41528017222858576,
+     "chw_kWh_model": 164652.96492300296,
+     "chw_kWh_port": 164652.96492300296,
+     "rel_diff_chw": 0.0,
+     "max_abs_diff_meters_kW": 4.547473508864641e-13,
+     "ledger_ok_port": true,
+     "ledger_closure_port": 6.316931073393133e-11
+    },
+    {
+     "use": "education",
+     "kind": "cool",
+     "kind_port": "cool",
+     "district_eff": 0.09822225603658505,
+     "district_eff_chw": 0.17504214340968974,
+     "chw_kWh_model": 380309.9944045793,
+     "chw_kWh_port": 380309.9944045793,
+     "rel_diff_chw": 0.0,
+     "max_abs_diff_meters_kW": 9.094947017729282e-13,
+     "ledger_ok_port": true,
+     "ledger_closure_port": 1.2606869946269112e-10
+    },
+    {
+     "use": "lab",
+     "kind": "heat",
+     "kind_port": "heat",
+     "district_eff": 0.304886125581156,
+     "district_eff_chw": 0.5433383743265207,
+     "chw_kWh_model": 0.0,
+     "chw_kWh_port": 0.0,
+     "rel_diff_chw": 0.0,
+     "max_abs_diff_meters_kW": 0.0,
+     "ledger_ok_port": true,
+     "ledger_closure_port": 1.1798947743890212e-11
+    },
+    {
+     "use": "healthcare",
+     "kind": "both",
+     "kind_port": "both",
+     "district_eff": 0.31040465542479584,
+     "district_eff_chw": 0.5531729610208157,
+     "chw_kWh_model": 491771.96406812326,
+     "chw_kWh_port": 491771.9640681232,
+     "rel_diff_chw": 1.1836311373253503e-16,
+     "max_abs_diff_meters_kW": 5.820766091346741e-11,
+     "ledger_ok_port": true,
+     "ledger_closure_port": 2.382203532268563e-11
+    },
+    {
+     "use": "office",
+     "kind": "cool",
+     "kind_port": "cool",
+     "district_eff": 0.28931476426192143,
+     "district_eff_chw": 0.5155886099542756,
+     "chw_kWh_model": 545290.1803906168,
+     "chw_kWh_port": 545290.1803906166,
+     "rel_diff_chw": 2.134924229582515e-16,
+     "max_abs_diff_meters_kW": 1.1641532182693481e-10,
+     "ledger_ok_port": true,
+     "ledger_closure_port": 1.8376404360804422e-11
+    }
+   ]
+  },
+  "W3_flat_base_loads": {
+   "cases": "20 random meter sets (Detective and BuildingSim channel names)",
+   "max_abs_diff": 0.0
+  },
+  "clean_labels": {
+   "cases": "400 label rows, every 7th base_share = -8e12",
+   "max_abs_diff": 0.0
+  },
+  "wall_s": 3.8247220516204834,
+  "generated": "2026-11-17 17:11",
+  "python": "3.14.9"
+ },
+ "faultfinder": {
+  "source": {
+   "files": [
+    "models/faultfinder/training/simbank.py",
+    "models/faultfinder/training/noise.py",
+    "models/faultfinder/training/common.py"
+   ],
+   "commit": "dfafdcf",
+   "unchanged_from_commit": true
+  },
+  "log_commands": {
+   "case": "Atlanta TMYx 10 Jul, 15 min, fault from midnight",
+   "rows": [
+    {
+     "system": "rtu",
+     "fault": "oa_damper_stuck",
+     "seed": 0,
+     "bins_changed_by_model": 96,
+     "max_abs_diff": 0.0
+    },
+    {
+     "system": "rtu",
+     "fault": "oa_damper_stuck",
+     "seed": 100,
+     "bins_changed_by_model": 96,
+     "max_abs_diff": 0.0
+    },
+    {
+     "system": "vav",
+     "fault": "cooling_valve_stuck",
+     "seed": 1,
+     "bins_changed_by_model": 96,
+     "max_abs_diff": 0.0
+    },
+    {
+     "system": "vav",
+     "fault": "cooling_valve_stuck",
+     "seed": 101,
+     "bins_changed_by_model": 96,
+     "max_abs_diff": 0.0
+    },
+    {
+     "system": "vav",
+     "fault": "heating_valve_stuck",
+     "seed": 2,
+     "bins_changed_by_model": 96,
+     "max_abs_diff": 0.0
+    },
+    {
+     "system": "vav",
+     "fault": "heating_valve_stuck",
+     "seed": 102,
+     "bins_changed_by_model": 0,
+     "max_abs_diff": 0.0
+    },
+    {
+     "system": "vav",
+     "fault": "cooling_valve_leak",
+     "seed": 3,
+     "bins_changed_by_model": 0,
+     "max_abs_diff": 0.0
+    },
+    {
+     "system": "vav",
+     "fault": "cooling_valve_leak",
+     "seed": 103,
+     "bins_changed_by_model": 96,
+     "max_abs_diff": 2.9802322387695312e-08
+    },
+    {
+     "system": "rtu",
+     "fault": "oa_damper_leak",
+     "seed": 4,
+     "bins_changed_by_model": 96,
+     "max_abs_diff": 0.0
+    },
+    {
+     "system": "rtu",
+     "fault": "oa_damper_leak",
+     "seed": 104,
+     "bins_changed_by_model": 96,
+     "max_abs_diff": 0.0
+    },
+    {
+     "system": "vav",
+     "fault": "coil_fouling",
+     "seed": 5,
+     "bins_changed_by_model": 0,
+     "max_abs_diff": 0.0
+    },
+    {
+     "system": "vav",
+     "fault": "coil_fouling",
+     "seed": 105,
+     "bins_changed_by_model": 0,
+     "max_abs_diff": 0.0
+    }
+   ],
+   "max_abs_diff": 2.9802322387695312e-08
+  },
+  "damper_command": {
+   "cases": "50 random days + 20 draws on a simulated RTU day",
+   "max_abs_diff": 0.0,
+   "max_abs_diff_trend": 0.0
+  },
+  "static_offsets": {
+   "cases": "20 draws each, v4 (large) and v3 sizes",
+   "max_abs_diff_large": 3.814697265625e-06,
+   "max_abs_diff_v3": 3.814697265625e-06
+  },
+  "operator_jitter": {
+   "case": "RTU office, Atlanta TMYx 4-11 Mar, 15 min",
+   "rows": [
+    {
+     "seed": 1,
+     "max_abs_diff": 0.0,
+     "fan_hours_jitter": 110.25,
+     "fan_hours_none": 116.75
+    },
+    {
+     "seed": 2,
+     "max_abs_diff": 0.0,
+     "fan_hours_jitter": 120.0,
+     "fan_hours_none": 116.75
+    },
+    {
+     "seed": 3,
+     "max_abs_diff": 0.0,
+     "fan_hours_jitter": 114.25,
+     "fan_hours_none": 116.75
+    }
+   ]
+  },
+  "wall_s": 4.942806005477905,
+  "generated": "2026-11-17 17:12",
+  "python": "3.14.9"
+ },
+ "thermopilot": {
+  "source": {
+   "files": [
+    "models/thermopilot/training/tp/twins.py",
+    "models/thermopilot/training/tp/env.py"
+   ],
+   "commit": "dfafdcf",
+   "unchanged_from_commit": true
+  },
+  "recs_twins": {
+   "cases": "24 RECS dev respondents",
+   "no_twin": 0,
+   "differing": 0
+  },
+  "tariff_arrays": {
+   "cases": "20 tariffs (19 URDB + 1 synthetic), 2017 hourly, America/Chicago",
+   "max_abs_diff": 0.0,
+   "bill_max_abs_diff": 0.0
+  },
+  "tariff_prices_dst": {
+   "cases": "608 frames (19 tariffs x 7 time zones x 2016-2019)",
+   "differing": 0
+  },
+  "rtp_prices": {
+   "case": "ERCOT HB_HOUSTON, 2017 weather hours -> 2019 prices",
+   "max_abs_diff": 0.0,
+   "mean_usd_kWh": 0.13313467800617218
+  },
+  "wall_s": 67.51528763771057,
+  "generated": "2026-11-17 17:13",
+  "python": "3.14.9"
+ },
+ "generated": "2026-11-17 17:13",
+ "python": "3.14.9"
+}

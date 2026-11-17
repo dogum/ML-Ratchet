@@ -2,13 +2,20 @@
 
     from buildingsim import simulate, generate_buildings, list_systems, ledger
     out = simulate(spec, weather, start, end, dt='15min', controller=None, faults=None, prices=None,
-                   init=None, rng=None)
+                   init=None, rng=None, options=None)
+
+Phase 2 wrappers (opt-in, README 'Phase 2 wrappers'): `options={...}` for what acts inside the time loop, the hvac
+field `district_eff_chw`, and the functions of `buildingsim.phase2`. With none of them used the physics is 1.0.
 """
-from .simulate import simulate, Simulator
+from .simulate import simulate, Simulator, OPTIONS
 from .spec import fill_spec, list_systems, USE_TYPES, SYSTEMS
 from .ledger import ledger
-from .weather import read_epw, epw_path, prepare as prepare_weather
+from .weather import read_epw, epw_path, prepare as prepare_weather, set_cache_size as set_weather_cache
 from .faults import FAULT_TYPES
+from . import phase2  # noqa: F401  (opt-in wrappers; importing them changes nothing)
+
+__version__ = '1.0.1'
+PHYSICS_VERSION = '1.0'     # flags off = the verified v1.0 physics; any physics change bumps this (HANDOFF section 4)
 
 
 def generate_buildings(n, seed=0, **kw):
@@ -16,4 +23,9 @@ def generate_buildings(n, seed=0, **kw):
     return _g(n, seed=seed, **kw)
 
 
-__version__ = '1.0'
+def clear_caches():
+    """Drop the prepared-weather cache and the generator's prior tables (bounded-memory mode, with
+    set_weather_cache(n))."""
+    from . import weather, generator
+    weather.clear_cache()
+    generator._CACHE.clear()
