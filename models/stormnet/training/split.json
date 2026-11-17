@@ -1,0 +1,322 @@
+{
+  "protocol": {
+    "history_hours": 36,
+    "horizon_hours": 3,
+    "training_wind_years": [
+      1998,
+      1999,
+      2000,
+      2001,
+      2002,
+      2003,
+      2004
+    ],
+    "frozen_wind_years": [
+      2005
+    ],
+    "dev_years": [
+      2008,
+      2011,
+      2014
+    ],
+    "primary_years": [
+      2016,
+      2017,
+      2018,
+      2019,
+      2020
+    ],
+    "sealed_reserve_years": [
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "split_seed": 1729,
+    "bootstrap_seed": 8675309,
+    "example_seed": 931,
+    "bootstrap_repeats": 2000,
+    "margin": 0.01,
+    "dev_max_ratio": 1.05
+  },
+  "dev_blocks": {
+    "2008": [
+      {
+        "id": "quiet-2008-01-10T00",
+        "kind": "quiet",
+        "start": "2008-01-10T00",
+        "end_exclusive": "2008-01-13T00",
+        "hours": 72,
+        "minimum": -27.0
+      },
+      {
+        "id": "quiet-2008-02-24T00",
+        "kind": "quiet",
+        "start": "2008-02-24T00",
+        "end_exclusive": "2008-02-27T00",
+        "hours": 72,
+        "minimum": -15.0
+      },
+      {
+        "id": "storm-2008-02-27T22",
+        "kind": "storm",
+        "start": "2008-02-27T22",
+        "end_exclusive": "2008-02-29T23",
+        "hours": 49,
+        "minimum": -52.0
+      },
+      {
+        "id": "storm-2008-03-08T04",
+        "kind": "storm",
+        "start": "2008-03-08T04",
+        "end_exclusive": "2008-03-10T10",
+        "hours": 54,
+        "minimum": -86.0
+      },
+      {
+        "id": "storm-2008-03-26T21",
+        "kind": "storm",
+        "start": "2008-03-26T21",
+        "end_exclusive": "2008-03-28T23",
+        "hours": 50,
+        "minimum": -56.0
+      },
+      {
+        "id": "quiet-2008-04-18T23",
+        "kind": "quiet",
+        "start": "2008-04-18T23",
+        "end_exclusive": "2008-04-21T23",
+        "hours": 72,
+        "minimum": -13.0
+      },
+      {
+        "id": "quiet-2008-05-06T23",
+        "kind": "quiet",
+        "start": "2008-05-06T23",
+        "end_exclusive": "2008-05-09T23",
+        "hours": 72,
+        "minimum": -16.0
+      },
+      {
+        "id": "storm-2008-09-03T04",
+        "kind": "storm",
+        "start": "2008-09-03T04",
+        "end_exclusive": "2008-09-05T05",
+        "hours": 49,
+        "minimum": -51.0
+      },
+      {
+        "id": "quiet-2008-09-08T05",
+        "kind": "quiet",
+        "start": "2008-09-08T05",
+        "end_exclusive": "2008-09-11T05",
+        "hours": 72,
+        "minimum": -16.0
+      },
+      {
+        "id": "quiet-2008-09-20T05",
+        "kind": "quiet",
+        "start": "2008-09-20T05",
+        "end_exclusive": "2008-09-23T05",
+        "hours": 72,
+        "minimum": -24.0
+      }
+    ],
+    "2011": [
+      {
+        "id": "quiet-2011-01-16T00",
+        "kind": "quiet",
+        "start": "2011-01-16T00",
+        "end_exclusive": "2011-01-19T00",
+        "hours": 72,
+        "minimum": -13.0
+      },
+      {
+        "id": "quiet-2011-02-06T10",
+        "kind": "quiet",
+        "start": "2011-02-06T10",
+        "end_exclusive": "2011-02-09T10",
+        "hours": 72,
+        "minimum": -35.0
+      },
+      {
+        "id": "storm-2011-03-09T20",
+        "kind": "storm",
+        "start": "2011-03-09T20",
+        "end_exclusive": "2011-03-13T02",
+        "hours": 78,
+        "minimum": -83.0
+      },
+      {
+        "id": "storm-2011-04-05T17",
+        "kind": "storm",
+        "start": "2011-04-05T17",
+        "end_exclusive": "2011-04-07T23",
+        "hours": 54,
+        "minimum": -60.0
+      },
+      {
+        "id": "quiet-2011-05-01T23",
+        "kind": "quiet",
+        "start": "2011-05-01T23",
+        "end_exclusive": "2011-05-04T23",
+        "hours": 72,
+        "minimum": -47.0
+      },
+      {
+        "id": "quiet-2011-06-02T12",
+        "kind": "quiet",
+        "start": "2011-06-02T12",
+        "end_exclusive": "2011-06-05T12",
+        "hours": 72,
+        "minimum": -45.0
+      },
+      {
+        "id": "quiet-2011-07-24T04",
+        "kind": "quiet",
+        "start": "2011-07-24T04",
+        "end_exclusive": "2011-07-27T04",
+        "hours": 72,
+        "minimum": -28.0
+      },
+      {
+        "id": "storm-2011-08-04T22",
+        "kind": "storm",
+        "start": "2011-08-04T22",
+        "end_exclusive": "2011-08-08T16",
+        "hours": 90,
+        "minimum": -115.0
+      },
+      {
+        "id": "storm-2011-09-16T14",
+        "kind": "storm",
+        "start": "2011-09-16T14",
+        "end_exclusive": "2011-09-18T23",
+        "hours": 57,
+        "minimum": -72.0
+      },
+      {
+        "id": "storm-2011-09-25T16",
+        "kind": "storm",
+        "start": "2011-09-25T16",
+        "end_exclusive": "2011-09-30T04",
+        "hours": 108,
+        "minimum": -118.0
+      },
+      {
+        "id": "storm-2011-10-31T12",
+        "kind": "storm",
+        "start": "2011-10-31T12",
+        "end_exclusive": "2011-11-03T17",
+        "hours": 77,
+        "minimum": -66.0
+      },
+      {
+        "id": "quiet-2011-11-18T17",
+        "kind": "quiet",
+        "start": "2011-11-18T17",
+        "end_exclusive": "2011-11-21T17",
+        "hours": 72,
+        "minimum": -19.0
+      }
+    ],
+    "2014": [
+      {
+        "id": "quiet-2014-02-06T00",
+        "kind": "quiet",
+        "start": "2014-02-06T00",
+        "end_exclusive": "2014-02-09T00",
+        "hours": 72,
+        "minimum": -32.0
+      },
+      {
+        "id": "storm-2014-02-17T23",
+        "kind": "storm",
+        "start": "2014-02-17T23",
+        "end_exclusive": "2014-02-25T01",
+        "hours": 170,
+        "minimum": -119.0
+      },
+      {
+        "id": "storm-2014-04-10T23",
+        "kind": "storm",
+        "start": "2014-04-10T23",
+        "end_exclusive": "2014-04-14T10",
+        "hours": 83,
+        "minimum": -87.0
+      },
+      {
+        "id": "quiet-2014-04-20T10",
+        "kind": "quiet",
+        "start": "2014-04-20T10",
+        "end_exclusive": "2014-04-23T10",
+        "hours": 72,
+        "minimum": -32.0
+      },
+      {
+        "id": "quiet-2014-05-04T18",
+        "kind": "quiet",
+        "start": "2014-05-04T18",
+        "end_exclusive": "2014-05-07T18",
+        "hours": 72,
+        "minimum": -31.0
+      },
+      {
+        "id": "quiet-2014-05-16T18",
+        "kind": "quiet",
+        "start": "2014-05-16T18",
+        "end_exclusive": "2014-05-19T18",
+        "hours": 72,
+        "minimum": -7.0
+      },
+      {
+        "id": "quiet-2014-05-31T18",
+        "kind": "quiet",
+        "start": "2014-05-31T18",
+        "end_exclusive": "2014-06-03T18",
+        "hours": 72,
+        "minimum": -10.0
+      },
+      {
+        "id": "storm-2014-08-26T10",
+        "kind": "storm",
+        "start": "2014-08-26T10",
+        "end_exclusive": "2014-08-29T19",
+        "hours": 81,
+        "minimum": -79.0
+      },
+      {
+        "id": "storm-2014-10-19T17",
+        "kind": "storm",
+        "start": "2014-10-19T17",
+        "end_exclusive": "2014-10-21T20",
+        "hours": 51,
+        "minimum": -51.0
+      },
+      {
+        "id": "storm-2014-10-27T00",
+        "kind": "storm",
+        "start": "2014-10-27T00",
+        "end_exclusive": "2014-10-29T03",
+        "hours": 51,
+        "minimum": -57.0
+      },
+      {
+        "id": "quiet-2014-12-02T09",
+        "kind": "quiet",
+        "start": "2014-12-02T09",
+        "end_exclusive": "2014-12-05T09",
+        "hours": 72,
+        "minimum": -30.0
+      },
+      {
+        "id": "storm-2014-12-11T15",
+        "kind": "storm",
+        "start": "2014-12-11T15",
+        "end_exclusive": "2014-12-13T21",
+        "hours": 54,
+        "minimum": -53.0
+      }
+    ]
+  }
+}

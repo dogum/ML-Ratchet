@@ -1,0 +1,71 @@
+model: stormnet
+ladders:
+- name: stormnet
+  objective: Mean MAE skill against persistence on all issues and active targets (Dst
+    ≤ −50 nT)
+  rule: Gain > 0.01 on frozen skill and no dev year's mean error ratio more than 5%
+    worse.
+  margin: 0.01
+  scored_on: val2
+  rungs:
+  - id: r1
+    change: Instantaneous wind and last Dst, single-state teacher
+    sim: 0.10914988547715176
+    dev:
+      '2008': 0.8188309663112356
+      '2011': 0.802945400598776
+      '2014': 0.7825593479834247
+    decision: kept
+    why: First rung.
+    metrics:
+    - 0.8188
+    - 0.8029
+    - 0.7826
+  - id: r2
+    change: 36-hour causal state estimates, same single-state teacher
+    sim: 0.11972801067205685
+    dev:
+      '2008': 0.8341750927026935
+      '2011': 0.7965352614640243
+      '2014': 0.7825316825923851
+    decision: kept
+    why: +0.011 on the frozen set; dev gate passed.
+    metrics:
+    - 0.8342
+    - 0.7965
+    - 0.7825
+  - id: r3
+    change: Dev-calibrated fast and slow teacher with a matched physics anchor
+    sim: 0.13401281415277955
+    dev:
+      '2008': 0.7883306544553829
+      '2011': 0.7933069269978028
+      '2014': 0.7396074453371249
+    decision: released
+    why: +0.014 on the frozen set; dev gate passed.
+    metrics:
+    - 0.7883
+    - 0.7933
+    - 0.7396
+  - id: r4
+    change: Equal mixture of single and two-state simulations
+    sim: 0.12909162805765284
+    dev:
+      '2008': 0.81922141861399
+      '2011': 0.8003325650482429
+      '2014': 0.7651401857818113
+    decision: rejected
+    why: -0.005 on val2, needs more than +0.01.
+    metrics:
+    - 0.8192
+    - 0.8003
+    - 0.7651
+  frozen_sets:
+  - val1
+  - val2
+  dev_gate: 2008, 2011 and 2014 gated separately.
+  columns:
+  - '2008'
+  - '2011'
+  - '2014'
+  columns_source: Dev error ratios to persistence (lower is better)
