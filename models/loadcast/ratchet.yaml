@@ -1,0 +1,32 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json (written by training/rung.py; every rung re-scored
+# and re-decided in order each time the objective definition changed).
+model: loadcast
+ladders:
+  - name: "LoadCast v1.0 (BuildingSim, 17 Nov 2026)"
+    objective: "Mean over meter types (n >= 5) of (cold skill + warm skill) / 2 on the frozen simulated set v1_val (300 BuildingSim buildings of the v1 calibrated physics, seed 99, real dev noise seed 12345; 666 building-meters scored). Cold skill = 1 − median CV(RMSE) / median CV of the set's own median-intensity × median-shape guess; warm skill = 1 − median CV / median CV of TOWT on the same 2016 history."
+    rule: "Keep if the objective beats the incumbent by more than 0.01 AND the dev score (mean of cold and warm median CV(RMSE) over 84 dev building-meters, 2016 → 2017) is no more than 2 % (relative) worse than the incumbent's."
+    margin: 0.01
+    dev_gate: "Dev score (mean of cold and warm median CV over 84 dev building-meters) may not rise by more than 2 % relative"
+    frozen_sets: [v1_val]
+    scored_on: v1_val
+    note: >-
+      Rule note (from the build handoff; no exam result chose anything): the frozen-set objective changed twice before
+      R3 — floored pooled skills, then unfloored pooled skills, then per meter type (pooled medians mixed meter types and
+      could rank a model that is better on every meter as worse) — and every rung was re-scored and re-decided in order
+      each time; the values here are the final definition (training/ratchet.json keeps the pooled values as
+      frozen_history; the floored values were overwritten). R0-R2 are kept under the last two definitions; their
+      decisions under the first are not recorded. The real-noise bank holds the
+      dev buildings' 2017 residuals, so the dev-gate numbers are slightly optimistic; the exam is unaffected. The card
+      gives the frozen set as 650 building-meters; ratchet.json scores 666.
+    columns_source: "Skills on the frozen set v1_val, then dev (84 dev building-meters, 2016 → 2017): median cold and warm CV(RMSE) %, the dev score and its ratio to the incumbent's"
+    columns: ["Cold skill", "Warm skill", "Dev cold CV", "Dev warm CV", "Dev score", "Dev vs incumbent"]
+    rungs:
+      - { id: r0, change: "Generic Phase 1 BuildingSim physics (v0 bank, 800 buildings), real dev noise, two MLPs 3 × 192, 30 epochs", sim: -0.1736, decision: kept, why: "First rung.", metrics: [-0.253, -0.094, 88.6, 31.2, 59.9, "–"] }
+      - { id: r1, change: "Dev-calibrated physics (v1 bank: knobs and meter a, b drawn from the 52 dev fits), 800 buildings, otherwise as R0", sim: -0.1184, decision: kept, why: "Frozen objective −0.118 vs −0.174; dev score 54.9 vs 59.9.", metrics: [-0.187, -0.049, 79.3, 30.5, 54.9, "−8%"] }
+      - { id: r2, change: "R1 + anti-memorisation: per-row jitter of the area, year and climate metadata, dropout 0.1, weight decay 1e-3", sim: -0.0178, decision: kept, why: "Frozen objective −0.018 vs −0.118; dev score 51.9 vs 54.9.", metrics: [-0.071, 0.035, 73.8, 30.0, 51.9, "−6%"] }
+      - { id: obj-unfloored, change: "Re-definition before R3: pooled cold and warm skills no longer floored at 0 (rung.py --redecide); every rung re-decided in order", decision: kept, why: "Definition change, not a model. Re-decided, R0-R2 are kept (pooled objective −0.215, −0.155, −0.067). The floored values and the decisions under them were overwritten and are not in the log.", metrics: ["–", "–", "–", "–", "–", "–"] }
+      - { id: obj-per-meter, change: "Re-definition after R2: skills computed per meter type and averaged (pooled medians mixed meter types); every rung re-scored on v1_val in order (rung.py --rescore)", decision: kept, why: "Definition change, not a model. R0-R2 stayed kept; the values above are re-scores under this definition.", metrics: ["–", "–", "–", "–", "–", "–"] }
+      - { id: r3, change: "R2 on the full calibrated bank (1,600 buildings instead of 800)", sim: 0.0135, decision: released, why: "Frozen objective 0.014 vs −0.018; dev score 49.2 vs 51.9. Released as v1.0 (R4 and R5 were rejected).", metrics: [-0.016, 0.043, 70.6, 27.9, 49.2, "−5%"] }
+      - { id: r4, change: "Cold loss weight 1 / ybar^0.5 instead of 1 / ybar² (aims the unknown magnitude at the median, not about half of it); warm net = R3's", sim: -0.0263, decision: rejected, why: "Frozen objective −0.026 vs 0.014 (needs +0.01); dev score 52.2 vs 49.2 (dev gate failed).", metrics: [-0.095, 0.043, 76.6, 27.9, 52.2, "+6%"] }
+      - { id: r5, change: "Real noise matched by use type (75 % of residual series from a dev building of the same use: campus calendars by use); cold loss weight as R3", sim: 0.0063, decision: rejected, why: "Frozen objective 0.006 vs 0.014 (needs +0.01); dev score 51.7 vs 49.2 (dev gate failed).", metrics: [-0.022, 0.035, 74.5, 28.8, 51.7, "+5%"] }
+      - { id: widen, change: "Error bars: one widen-only factor per mode, history length and meter type: the smallest factor (1.0 to 30, the cap) at which the dev building-meters' mean coverage of the 90 % band, forecasting 2017 from 2016, reaches 90 % (training/exam.py fit_widen; widen_r3.json)", decision: kept, why: "Cold ×2.0 electricity, ×2.9 chilled water, ×7.75 steam, ×1.0 hot water, ×1.5 gas; warm (a year) ×1.0-1.2; 8 weeks ×1.0-1.65; 2 weeks ×1.25-4.0, and ×30 (the cap) for chilled water and gas. No effect on the forecasts.", metrics: ["–", "–", "–", "–", "–", "–"] }
