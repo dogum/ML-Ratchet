@@ -1,0 +1,2731 @@
+{
+ "frozen": "2026-11-17",
+ "purpose": "BuildingDetective exam 2 (HEAPO): Zurich heat-pump homes no version has seen; scored once for v1.0 and once for any round-2 release, after the round-2 release decision",
+ "status": "exam",
+ "source": {
+  "dataset": "HEAPO",
+  "version": "v1 (24 Mar 2025)",
+  "doi": "10.5281/zenodo.15056919",
+  "landing": "https://zenodo.org/records/15056919",
+  "licence": "CC BY 4.0",
+  "citation": "Brudermueller, T. et al. (2025) HEAPO - An Open Dataset for Heat Pump Optimization with Smart Electricity Meter Data and On-Site Inspection Protocols, Zenodo, doi:10.5281/zenodo.15056919",
+  "files": [
+   {
+    "name": "heapo_data.zip",
+    "url": "https://zenodo.org/api/records/15056919/files/heapo_data.zip/content",
+    "size": 458317017,
+    "md5": "2b92b0d52487e1a733c35ee59860450d",
+    "sha256": "9979e1e30be84d249fabd81b3b64e20d1704e96bbe53d6ef22103cad458c4419",
+    "downloaded": "2026-11-17"
+   }
+  ]
+ },
+ "seed": 20261117,
+ "truth": "first protocol per home (Visit_Year, Visit_Date, Report_ID order): Building_FloorAreaHeated_Total (area row if 30-2,000 m2), Building_ConstructionYear (year row if 1800-2024), Building_Type, HeatPump_Installation_Type; values are re-read from reports/protocols.csv at scoring, not stored here",
+ "split": "by home; 20 % dev per (building type x heat-pump type) stratum with >= 3 homes, rest exam; dev only fits the baselines",
+ "n": {
+  "protocol_homes": 214,
+  "kept": 130,
+  "dropped": 84,
+  "dev": 25,
+  "exam": 105,
+  "exam_area_row": 105,
+  "exam_year_row": 100,
+  "exam_single": 99,
+  "exam_multi": 2,
+  "exam_hp_type": {
+   "air-source": 63,
+   "ground-source": 41,
+   "water-source": 1
+  }
+ },
+ "dropped_units": {
+  "100119": "< 300 days of good hours in any 365-day window (0)",
+  "105768": "PV (meter reads net import)",
+  "105900": "< 300 days of good hours in any 365-day window (281)",
+  "107998": "< 300 days of good hours in any 365-day window (0)",
+  "109711": "PV (meter reads net import)",
+  "111901": "< 300 days of good hours in any 365-day window (0)",
+  "112120": "PV (meter reads net import)",
+  "112691": "PV (meter reads net import)",
+  "112810": "PV (meter reads net import)",
+  "113115": "PV (meter reads net import)",
+  "114117": "< 300 days of good hours in any 365-day window (0)",
+  "119701": "< 300 days of good hours in any 365-day window (0)",
+  "120701": "PV (meter reads net import)",
+  "120912": "< 300 days of good hours in any 365-day window (0)",
+  "122671": "< 300 days of good hours in any 365-day window (0)",
+  "190821": "PV (meter reads net import)",
+  "412211": "< 300 days of good hours in any 365-day window (0)",
+  "461222": "PV (meter reads net import)",
+  "468665": "PV (meter reads net import)",
+  "477661": "PV (meter reads net import)",
+  "611629": "PV (meter reads net import)",
+  "674801": "< 300 days of good hours in any 365-day window (0)",
+  "680861": "< 300 days of good hours in any 365-day window (247)",
+  "698310": "PV (meter reads net import)",
+  "698983": "PV (meter reads net import)",
+  "699801": "PV (meter reads net import)",
+  "711368": "only a heat-pump meter (no whole-home meter)",
+  "712718": "PV (meter reads net import)",
+  "728210": "PV (meter reads net import)",
+  "730976": "PV (meter reads net import)",
+  "731027": "PV (meter reads net import)",
+  "731201": "< 300 days of good hours in any 365-day window (276)",
+  "747511": "only a heat-pump meter (no whole-home meter)",
+  "748773": "< 300 days of good hours in any 365-day window (0)",
+  "757271": "< 300 days of good hours in any 365-day window (0)",
+  "758039": "< 300 days of good hours in any 365-day window (0)",
+  "768113": "PV (meter reads net import)",
+  "768498": "only a heat-pump meter (no whole-home meter)",
+  "776736": "PV (meter reads net import)",
+  "779742": "< 300 days of good hours in any 365-day window (0)",
+  "808410": "PV (meter reads net import)",
+  "815461": "PV (meter reads net import)",
+  "816571": "< 300 days of good hours in any 365-day window (0)",
+  "826780": "PV (meter reads net import)",
+  "841211": "PV (meter reads net import)",
+  "861116": "PV (meter reads net import)",
+  "865116": "PV (meter reads net import)",
+  "867211": "< 300 days of good hours in any 365-day window (280)",
+  "876511": "< 300 days of good hours in any 365-day window (200)",
+  "877881": "< 300 days of good hours in any 365-day window (0)",
+  "889410": "only a heat-pump meter (no whole-home meter)",
+  "896968": "PV (meter reads net import)",
+  "897731": "< 300 days of good hours in any 365-day window (0)",
+  "970979": "PV (meter reads net import)",
+  "996610": "only a heat-pump meter (no whole-home meter)",
+  "998988": "PV (meter reads net import)",
+  "1001228": "< 300 days of good hours in any 365-day window (235)",
+  "1015877": "PV (meter reads net import)",
+  "1078861": "PV (meter reads net import)",
+  "1111201": "PV (meter reads net import)",
+  "1141047": "PV (meter reads net import)",
+  "1148611": "PV (meter reads net import)",
+  "1171127": "PV (meter reads net import)",
+  "1178890": "< 300 days of good hours in any 365-day window (0)",
+  "1191127": "PV (meter reads net import)",
+  "1211151": "PV (meter reads net import)",
+  "4710670": "PV (meter reads net import)",
+  "5610182": "< 300 days of good hours in any 365-day window (0)",
+  "6683113": "< 300 days of good hours in any 365-day window (0)",
+  "7048688": "PV (meter reads net import)",
+  "7099511": "< 300 days of good hours in any 365-day window (205)",
+  "7101112": "PV (meter reads net import)",
+  "7211010": "PV (meter reads net import)",
+  "7374981": "PV (meter reads net import)",
+  "7474976": "PV (meter reads net import)",
+  "7646451": "PV (meter reads net import)",
+  "7679818": "PV (meter reads net import)",
+  "8087988": "< 300 days of good hours in any 365-day window (0)",
+  "8399121": "< 300 days of good hours in any 365-day window (206)",
+  "8612210": "PV (meter reads net import)",
+  "8627071": "< 300 days of good hours in any 365-day window (0)",
+  "9073879": "< 300 days of good hours in any 365-day window (0)",
+  "9097838": "PV (meter reads net import)",
+  "9981041": "PV (meter reads net import)"
+ },
+ "dropped_by_reason": {
+  "PV": 49,
+  "short window": 30,
+  "only a heat-pump meter": 5
+ },
+ "input": {
+  "meters": "{'elec': hourly kW}: kWh_received_Total summed over the hour (all four quarter-hours present), bad hours (BDG2 electricity flags) NaN; HEAPO has no fuel / district meters",
+  "T": "hourly mean air temperature of the home's HEAPO station (Weather_ID); gaps <= 12 h interpolated, then filled from the nearest value (as realdata.hue_cases)",
+  "GHI": "clear-sky GHI x 0.6 (pvlib, Ineichen, 47.38 N 8.54 E, at the half hour): the stations log sunshine duration, not irradiance",
+  "loc": "window index converted to Europe/Zurich",
+  "lat": 47.38,
+  "window": "most complete 365-day window starting on a month boundary (UTC), >= 300 days of good hours",
+  "flags": "BDG2 electricity flags (missing, zero, zero runs >= 24 h, negative, spikes, flatlines >= 24 h, linear-fill runs >= 12 h) make an hour bad; the BDG2 level-shift rule is NOT applied (it flags the heating season of heat-pump homes); its day count is reported per home",
+  "monthly": "Detective.read_monthly_from_hourly(meters, T, loc, lat)",
+  "annual": "read_annual({'elec': nanmean(elec_kW) * 8760}, HDD, CDD), HDD/CDD = sum over local days of max(18.33 - Tday, 0) / max(Tday - 18.33, 0) (as realfeats.bdg2)"
+ },
+ "output_gap": "The Detective has no air- vs ground-source output and no emitter output (floor heating / radiators): recorded, not scored. Every home has a heat pump, so the heating class has no negative case.",
+ "rows": [
+  {
+   "id": "area_mdape_<mode>",
+   "modes": [
+    "hourly",
+    "monthly",
+    "annual"
+   ],
+   "metric": "heated floor area, median abs. % error",
+   "better": "lower",
+   "unit_set": "exam homes with area_row"
+  },
+  {
+   "id": "year_mae_<mode>",
+   "modes": [
+    "hourly",
+    "monthly",
+    "annual"
+   ],
+   "metric": "construction year, mean abs. error (yr)",
+   "better": "lower",
+   "unit_set": "exam homes with year_row"
+  },
+  {
+   "id": "type_acc_<mode>",
+   "modes": [
+    "hourly",
+    "monthly",
+    "annual"
+   ],
+   "metric": "single vs multi-family: accuracy of argmax(P(residential_single), P(residential_multi))",
+   "better": "higher",
+   "unit_set": "exam homes with use single or multi",
+   "note": "info only, no verdict: the exam has 2 multi-family homes (< 10)"
+  },
+  {
+   "id": "heatpump_info_<mode>",
+   "modes": [
+    "hourly",
+    "monthly",
+    "annual"
+   ],
+   "metric": "share of exam homes with heat_pump as the top heating class; median P(heat_pump)",
+   "better": "higher",
+   "unit_set": "all exam homes",
+   "note": "info only (every home has a heat pump)"
+  }
+ ],
+ "model_input": "released weights/ through Detective.read_hourly(meters, T, GHI, loc, lat), read_monthly_from_hourly and read_annual, from work/exam2/heapo/proc/<home>.parquet; point estimates are the decoded value (floor_area_m2[0], year_built[0]). A round-2 release is scored the same way with its own weights. No refit on these data.",
+ "baselines": [
+  {
+   "name": "annual elec / dev median kWh per m2 of the TRUE building type",
+   "kind": "classical",
+   "rows": [
+    "area"
+   ],
+   "note": "given the true type, which the Detective is not"
+  },
+  {
+   "name": "annual elec / dev median kWh per m2 (all dev homes)",
+   "kind": "classical",
+   "rows": [
+    "area"
+   ]
+  },
+  {
+   "name": "dev-fitted line log10 A = a + b log10 annual kWh (least squares on dev)",
+   "kind": "classical",
+   "rows": [
+    "area"
+   ]
+  },
+  {
+   "name": "dev median heated floor area",
+   "kind": "dumb",
+   "rows": [
+    "area"
+   ]
+  },
+  {
+   "name": "dev median construction year",
+   "kind": "dumb",
+   "rows": [
+    "year"
+   ]
+  },
+  {
+   "name": "dev-fitted line year = a + b log10 annual kWh",
+   "kind": "classical",
+   "rows": [
+    "year"
+   ]
+  },
+  {
+   "name": "dev majority building type",
+   "kind": "dumb",
+   "rows": [
+    "type"
+   ]
+  }
+ ],
+ "baseline_inputs": "annual kWh = nanmean(elec_kW) * 8760 over the same window the Detective reads; dev rows with area_row / year_row only",
+ "interval": {
+  "method": "95 % percentile bootstrap over exam homes, paired",
+  "resamples": 2000,
+  "seed": 20261117,
+  "statistic": "model metric minus the best baseline's metric on the same resample (best = better point value on the full exam row)",
+  "verdict": "win if entirely on the good side of zero, loss if entirely on the bad side, tie if it spans zero; n homes stated"
+ },
+ "scored_once_for": [
+  "BuildingDetective v1.0",
+  "any round-2 release"
+ ],
+ "units": {
+  "24611": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-09-01 00:00:00+00:00",
+   "good_hours": 7245,
+   "level_shift_days": 190,
+   "weather_id": "sV3mR",
+   "weather_gap_hours_filled": 86,
+   "sha256": "eb3734c393ab0f23abb043ed31a643cf559e1d91bcb55ea4e0c3f8944d34dcff",
+   "truth_source": {
+    "report_id": 209,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "86109": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-02-01 00:00:00+00:00",
+   "good_hours": 8423,
+   "level_shift_days": 73,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "430a1cf1a028aedf8fb68f1823c0382767b06ed396fa857a0f3042feaf74fe90",
+   "truth_source": {
+    "report_id": 258,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "100120": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-09-01 00:00:00+00:00",
+   "good_hours": 8604,
+   "level_shift_days": 98,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "5168cb8a52b411829cc568fe3ff851abead3729ffcd9ed292cc677ada7126059",
+   "truth_source": {
+    "report_id": 381,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "102766": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-06-01 00:00:00+00:00",
+   "good_hours": 8576,
+   "level_shift_days": 64,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "417f0cbe6746068bfa344a9d6b83cd6294f010af70e5cf84751032be6a5eed46",
+   "truth_source": {
+    "report_id": 199,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "103721": {
+   "role": "dev",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-05-01 00:00:00+00:00",
+   "good_hours": 8651,
+   "level_shift_days": 0,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "ed8d7aef6299bdadbeed16c718d4dd77f0a6c4b9e73f8a480ab49cfce2c4ef94",
+   "truth_source": {
+    "report_id": 335,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "104118": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-06-01 00:00:00+00:00",
+   "good_hours": 8517,
+   "level_shift_days": 23,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "2841a71152c3740135ac76af0f0649c5d741f4c8737f60291f8fe02b6f6edf9a",
+   "truth_source": {
+    "report_id": 367,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "105714": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-07-01 00:00:00+00:00",
+   "good_hours": 8562,
+   "level_shift_days": 0,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "63aa04df5090f1d4b0719c1e233da8658f747ab5226015cb876ddeeedaf7d737",
+   "truth_source": {
+    "report_id": 374,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "105807": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-10-01 00:00:00+00:00",
+   "good_hours": 8631,
+   "level_shift_days": 68,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "6ff5fe9555f46e33852f48df6113c0caa8bbabe03a46c9d75df81cd2b61c8b15",
+   "truth_source": {
+    "report_id": 252,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "105898": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-09-01 00:00:00+00:00",
+   "good_hours": 8696,
+   "level_shift_days": 107,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "59736eaf24e5338a2c5a6f73df57dd69358d63e841d0036a04f26cba788e8631",
+   "truth_source": {
+    "report_id": 141,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "106100": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-09-01 00:00:00+00:00",
+   "good_hours": 8504,
+   "level_shift_days": 11,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "bd39aadc706e645dff7e08171ddb2caa12081df48ef72b5064f668e5a220e3b2",
+   "truth_source": {
+    "report_id": 309,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "107114": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-03-01 00:00:00+00:00",
+   "good_hours": 8353,
+   "level_shift_days": 96,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "9d7d0d5ed810bcfde498e970b425b87f7481a9b9972a1847f000febb5fc6085e",
+   "truth_source": {
+    "report_id": 187,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "107461": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2023-01-01 00:00:00+00:00",
+   "good_hours": 7991,
+   "level_shift_days": 137,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "544bd37105c03b2b166b52f0ee13c42eb59373861a2ac27a3731d097b73f7a3a",
+   "truth_source": {
+    "report_id": 308,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "108511": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-04-01 00:00:00+00:00",
+   "good_hours": 8736,
+   "level_shift_days": 0,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "a61268af1ce3e5793365e6c8b4ba0529899dceea381bf5de28003ceb6d1f6cc1",
+   "truth_source": {
+    "report_id": 256,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "108987": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-11-01 00:00:00+00:00",
+   "good_hours": 8259,
+   "level_shift_days": 136,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "fa9f40ef3a97770b3634e4e18a787184e58512dc42d639fd32ab4ab9349a0e28",
+   "truth_source": {
+    "report_id": 301,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "109104": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2023-02-01 00:00:00+00:00",
+   "good_hours": 8550,
+   "level_shift_days": 46,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "1003d0859802c04e6b21d19ed4b90d2b22adb0348bfdc11302eb97d82530d319",
+   "truth_source": {
+    "report_id": 287,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "110119": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-04-01 00:00:00+00:00",
+   "good_hours": 8265,
+   "level_shift_days": 0,
+   "weather_id": "z6I",
+   "weather_gap_hours_filled": 0,
+   "sha256": "d9d61d3fa1353aba298c73d0cf84063c073bd71c9013f2dd335ee5aa110837f5",
+   "truth_source": {
+    "report_id": 198,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "111119": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-10-01 00:00:00+00:00",
+   "good_hours": 8435,
+   "level_shift_days": 30,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "4e06444d58ae69e25898e35c12a734c76d09d28eda49659417a542c89c92697a",
+   "truth_source": {
+    "report_id": 251,
+    "n_reports": 2,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "111710": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-08-01 00:00:00+00:00",
+   "good_hours": 8731,
+   "level_shift_days": 21,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "cb4c2e8926d32f5ccb181fbbeb488c41a6b3adf880965650cdda45dbb62176ec",
+   "truth_source": {
+    "report_id": 219,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "114109": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-08-01 00:00:00+00:00",
+   "good_hours": 8758,
+   "level_shift_days": 59,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "74e6935280b9b22c2381d0a4a6ede87ddcff28c2cd29ed5d04634e1a27a90996",
+   "truth_source": {
+    "report_id": 186,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "114671": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-04-01 00:00:00+00:00",
+   "good_hours": 8634,
+   "level_shift_days": 66,
+   "weather_id": "z6I",
+   "weather_gap_hours_filled": 0,
+   "sha256": "8ff18a43c0ce034aa41ff34e3d51b24631b4fd743d21f9d7778fbd136040b89d",
+   "truth_source": {
+    "report_id": 171,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "114721": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-02-01 00:00:00+00:00",
+   "good_hours": 8656,
+   "level_shift_days": 90,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "cd1c423477ea8d96d9510f0b6eff6a3fb0913082ccb94b281b4532d56b898e9b",
+   "truth_source": {
+    "report_id": 264,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "114798": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-06-01 00:00:00+00:00",
+   "good_hours": 8729,
+   "level_shift_days": 0,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "579c4bfde06d55c6ed7946ed032d2fb1f1765c313f56e1b50cc1ea50ea82bd1f",
+   "truth_source": {
+    "report_id": 269,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "115508": {
+   "role": "dev",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-10-01 00:00:00+00:00",
+   "good_hours": 8669,
+   "level_shift_days": 109,
+   "weather_id": "HbsbG",
+   "weather_gap_hours_filled": 234,
+   "sha256": "3aa9159afc7d1a4d6fd442c242325fdd5a5d75d60c7928699f1301ebe817e812",
+   "truth_source": {
+    "report_id": 236,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "116121": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2020-10-01 00:00:00+00:00",
+   "good_hours": 8760,
+   "level_shift_days": 0,
+   "weather_id": "wDD",
+   "weather_gap_hours_filled": 0,
+   "sha256": "22ce979cadf85b0867c18fee182bc131625d5f51abfd24dbf02e65222367a095",
+   "truth_source": {
+    "report_id": 262,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "118117": {
+   "role": "exam",
+   "stratum": "single family house | water-source",
+   "window_start": "2021-10-01 00:00:00+00:00",
+   "good_hours": 8118,
+   "level_shift_days": 29,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "d744d9eab72748411fa9aa35ce0422821b0f5f7c1c451c0b8ea4128c9fc4b9df",
+   "truth_source": {
+    "report_id": 222,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "water-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "118708": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2023-01-01 00:00:00+00:00",
+   "good_hours": 8546,
+   "level_shift_days": 140,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "efe865ee3e7008470be61f431ae44eebf6767985afeed6dddc618a0876150826",
+   "truth_source": {
+    "report_id": 247,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "119498": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2023-01-01 00:00:00+00:00",
+   "good_hours": 8711,
+   "level_shift_days": 0,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "d6cde700fba6c16ae9e256084ab0a00f395742eea61c02aaffddec872be514bd",
+   "truth_source": {
+    "report_id": 368,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "120741": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2020-12-01 00:00:00+00:00",
+   "good_hours": 8498,
+   "level_shift_days": 113,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "8f577f1b5303b83e8dd78a9685284e3e48ce0569974179f09d40e2b705f68453",
+   "truth_source": {
+    "report_id": 263,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "121728": {
+   "role": "exam",
+   "stratum": "multi family house | ground-source",
+   "window_start": "2020-10-01 00:00:00+00:00",
+   "good_hours": 8565,
+   "level_shift_days": 0,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "a5b6bea0825e948fa791cb8a8853bc5f1f10cbd03df773dac0303dcaaa558461",
+   "truth_source": {
+    "report_id": 268,
+    "n_reports": 1,
+    "building_type": "multi family house",
+    "use": "residential_multi",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "121798": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2023-02-01 00:00:00+00:00",
+   "good_hours": 7952,
+   "level_shift_days": 226,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "763ac855f6cb0c51ec00a733eabd71fbab53e19f23720a80bbb809860baed034",
+   "truth_source": {
+    "report_id": 170,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "121887": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2023-02-01 00:00:00+00:00",
+   "good_hours": 7779,
+   "level_shift_days": 17,
+   "weather_id": "z6I",
+   "weather_gap_hours_filled": 0,
+   "sha256": "46d998b1c66630c9fb1449a6d76fb47d703f52cb804b04347a951133be454364",
+   "truth_source": {
+    "report_id": 337,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "122850": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-10-01 00:00:00+00:00",
+   "good_hours": 8364,
+   "level_shift_days": 53,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "35f42734ceaac54bb3784001b9c1efe40ab290b4200889ed9cb2051f1bba17c7",
+   "truth_source": {
+    "report_id": 293,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "122887": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-10-01 00:00:00+00:00",
+   "good_hours": 8698,
+   "level_shift_days": 0,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "38b4679db9c185f60e65ddbecbdb71d720b13f0b46fbe9b6b2a8637b05b2caec",
+   "truth_source": {
+    "report_id": 350,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "310610": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-12-01 00:00:00+00:00",
+   "good_hours": 8718,
+   "level_shift_days": 46,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "3859953cbd72d22a85a686152d983c0ac55d8ccc46eca8a64c17c8c23f7c0bad",
+   "truth_source": {
+    "report_id": 387,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "417510": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-12-01 00:00:00+00:00",
+   "good_hours": 8555,
+   "level_shift_days": 36,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "eb6206a5921c28657c95a5c96182b0f98c5184a5afacb5de731a3dcf549e34bf",
+   "truth_source": {
+    "report_id": 376,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "461089": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-03-01 00:00:00+00:00",
+   "good_hours": 8663,
+   "level_shift_days": 1,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "45f25234e7ef347a686dad999c370f5194fa97ba7e0782cca1a17417a4382c3d",
+   "truth_source": {
+    "report_id": 184,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "461104": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2023-02-01 00:00:00+00:00",
+   "good_hours": 8123,
+   "level_shift_days": 148,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "0a78aced172fc5699456297ced2d05ea8a1b38130142c8f711e48c33c81c82a7",
+   "truth_source": {
+    "report_id": 294,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "461158": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-06-01 00:00:00+00:00",
+   "good_hours": 8609,
+   "level_shift_days": 0,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "a3b5ee10ef74912e58e878cdad8f43e652abafd276b6b51520684e6537ad4012",
+   "truth_source": {
+    "report_id": 347,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "468185": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-03-01 00:00:00+00:00",
+   "good_hours": 8651,
+   "level_shift_days": 86,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "12c37c670770dfd3f9a02cc96b5adccb56f48a757d6df3e692de6ff6d6149f6d",
+   "truth_source": {
+    "report_id": 179,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "468646": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-07-01 00:00:00+00:00",
+   "good_hours": 8729,
+   "level_shift_days": 0,
+   "weather_id": "z6I",
+   "weather_gap_hours_filled": 0,
+   "sha256": "e0ce7efdc9ed5e3c801bded4cac6620dd7b29bd2808db0e36bf9b23ae15a3e29",
+   "truth_source": {
+    "report_id": 288,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "468980": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-05-01 00:00:00+00:00",
+   "good_hours": 8616,
+   "level_shift_days": 196,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "49eb5d00eaf7edb071bb7f5c2dccf003b7a70e696de24207582993a945fd3d98",
+   "truth_source": {
+    "report_id": 334,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "512280": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-02-01 00:00:00+00:00",
+   "good_hours": 8752,
+   "level_shift_days": 0,
+   "weather_id": "wDD",
+   "weather_gap_hours_filled": 0,
+   "sha256": "5841d9ff5bd4c1aefc15e9249b3976762ad546353de033e9435f42d9dc966277",
+   "truth_source": {
+    "report_id": 274,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "610891": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-09-01 00:00:00+00:00",
+   "good_hours": 8609,
+   "level_shift_days": 0,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "1b5e464edd45175d0121ff362a19a71121e41a8a6c11c6e74773c7ed3d0502b9",
+   "truth_source": {
+    "report_id": 297,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "611797": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-02-01 00:00:00+00:00",
+   "good_hours": 8676,
+   "level_shift_days": 121,
+   "weather_id": "z6I",
+   "weather_gap_hours_filled": 0,
+   "sha256": "a250bf7e02c8310c18ed4af03b22aa21305c724ab1733296eadf58a4d4bc6cfb",
+   "truth_source": {
+    "report_id": 165,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "658466": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-12-01 00:00:00+00:00",
+   "good_hours": 8518,
+   "level_shift_days": 20,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "8e8c5bb38e7198a51692e39fb73a25cce8b73b42c147541a7b498f443d110298",
+   "truth_source": {
+    "report_id": 346,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "661091": {
+   "role": "dev",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-09-01 00:00:00+00:00",
+   "good_hours": 8454,
+   "level_shift_days": 115,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "a49de9910c211325ae2487a4c44c423f9119adf0316d18bc8392562bba8a91a8",
+   "truth_source": {
+    "report_id": 29,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "669010": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-09-01 00:00:00+00:00",
+   "good_hours": 8735,
+   "level_shift_days": 0,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "08b5edefbc67795ed977adce7bb809293fa5697c7d1a6620a517a45bb976a0d2",
+   "truth_source": {
+    "report_id": 340,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "671048": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-10-01 00:00:00+00:00",
+   "good_hours": 8385,
+   "level_shift_days": 83,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "aec3e79718d58fc0aab083d263e803c4c958c743de6db5719705008f18cb04cb",
+   "truth_source": {
+    "report_id": 189,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "671781": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2023-02-01 00:00:00+00:00",
+   "good_hours": 8628,
+   "level_shift_days": 5,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "7788504a637fd7e674f06ab032171798e2271886be6b6826f29f57bd7e2991a0",
+   "truth_source": {
+    "report_id": 291,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": false
+  },
+  "679810": {
+   "role": "exam",
+   "stratum": "other | ground-source",
+   "window_start": "2021-09-01 00:00:00+00:00",
+   "good_hours": 8543,
+   "level_shift_days": 63,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "6aca50cafd71787a520fc577994e292d6d98b11dba12ff386dcf708e90759b63",
+   "truth_source": {
+    "report_id": 325,
+    "n_reports": 1,
+    "building_type": "other",
+    "use": null,
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "700831": {
+   "role": "exam",
+   "stratum": "other | ground-source",
+   "window_start": "2021-12-01 00:00:00+00:00",
+   "good_hours": 8593,
+   "level_shift_days": 0,
+   "weather_id": "ceOxS",
+   "weather_gap_hours_filled": 0,
+   "sha256": "cb9ee0da86c41cb484c544bc52f4940b453e441e1b91473673f9ce0b14ce4a99",
+   "truth_source": {
+    "report_id": 168,
+    "n_reports": 1,
+    "building_type": "other",
+    "use": null,
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "706646": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-09-01 00:00:00+00:00",
+   "good_hours": 7484,
+   "level_shift_days": 3,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "75101b03b3e3ad7131693f0f1cc4c54a8feef0999bece44a7a47ce87bb778794",
+   "truth_source": {
+    "report_id": 137,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "706817": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-05-01 00:00:00+00:00",
+   "good_hours": 8565,
+   "level_shift_days": 0,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "3365678a407bbb079e9da678e50c4a68dfba7a6c546489940395b561fe9eff81",
+   "truth_source": {
+    "report_id": 351,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "716869": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-04-01 00:00:00+00:00",
+   "good_hours": 8582,
+   "level_shift_days": 121,
+   "weather_id": "sV3mR",
+   "weather_gap_hours_filled": 8,
+   "sha256": "e7413845e7d2e3c8bb004008cace2fdb258fddfd371fb1ea8499af4b15450eab",
+   "truth_source": {
+    "report_id": 235,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "721074": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-03-01 00:00:00+00:00",
+   "good_hours": 8640,
+   "level_shift_days": 0,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "2b706ee0ff7727c508d4cf0cdc669c1847023988dadc3d34be5ba9fd456657af",
+   "truth_source": {
+    "report_id": 326,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "721077": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-02-01 00:00:00+00:00",
+   "good_hours": 8695,
+   "level_shift_days": 0,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "4940a589cb72bf12a2c191e26b6c0e04c3797efe116fba7d18731b65611c3222",
+   "truth_source": {
+    "report_id": 345,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "727690": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2023-01-01 00:00:00+00:00",
+   "good_hours": 8570,
+   "level_shift_days": 90,
+   "weather_id": "HbsbG",
+   "weather_gap_hours_filled": 178,
+   "sha256": "e0d4bb74c0a48731f51420e7cb6a95be8f14679581877eec0bb7b5db64199df1",
+   "truth_source": {
+    "report_id": 339,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "751108": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2023-02-01 00:00:00+00:00",
+   "good_hours": 8434,
+   "level_shift_days": 95,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "57e83e41ba1b1f957d4ddf2397417651617ea6a07d6369ef0a3cf46957943d51",
+   "truth_source": {
+    "report_id": 385,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "760117": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-06-01 00:00:00+00:00",
+   "good_hours": 8744,
+   "level_shift_days": 0,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "515d1a2def7b3b5a2a197995612061d05fcf868b72226ed7320eccdeced2fdc1",
+   "truth_source": {
+    "report_id": 333,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "761079": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-03-01 00:00:00+00:00",
+   "good_hours": 8541,
+   "level_shift_days": 114,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "9203d919c939f7c89b720774b3f84b7c46c4f740889af0087049365d216357c0",
+   "truth_source": {
+    "report_id": 182,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "767371": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2023-01-01 00:00:00+00:00",
+   "good_hours": 8572,
+   "level_shift_days": 146,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "cc43a19a042186f0e25c9e3d2dcf8e2de31e62dfecd7f3043f4b8ffa7b72ddb3",
+   "truth_source": {
+    "report_id": 369,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "778721": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-10-01 00:00:00+00:00",
+   "good_hours": 8688,
+   "level_shift_days": 0,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "ad92ee62780017b19c08334c7ab8eb37dafa778b0dc7fd53bfa953752d6bb9e8",
+   "truth_source": {
+    "report_id": 327,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "781007": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2023-02-01 00:00:00+00:00",
+   "good_hours": 8177,
+   "level_shift_days": 21,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "0ec10168886a7e8c6de92abe94828eab99bfe737902fad6801b8f47d091a3ef5",
+   "truth_source": {
+    "report_id": 181,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "781099": {
+   "role": "dev",
+   "stratum": "single family house | ground-source",
+   "window_start": "2020-08-01 00:00:00+00:00",
+   "good_hours": 8710,
+   "level_shift_days": 129,
+   "weather_id": "wDD",
+   "weather_gap_hours_filled": 0,
+   "sha256": "9e647ad96864d1ea60f7bc026dd6520f141e5845f27267a22bc6357bbd28ba80",
+   "truth_source": {
+    "report_id": 237,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "788488": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-09-01 00:00:00+00:00",
+   "good_hours": 8059,
+   "level_shift_days": 149,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "7297ef157ba71da29e34120ad9226d0b552b907e751cfd91b11d7d8cb853b042",
+   "truth_source": {
+    "report_id": 302,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "796869": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-05-01 00:00:00+00:00",
+   "good_hours": 8539,
+   "level_shift_days": 161,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "dd29f45a574f57585848425aca5cd1169b1411a535060956ec5c04a98314bce0",
+   "truth_source": {
+    "report_id": 338,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "801031": {
+   "role": "exam",
+   "stratum": "other | air-source",
+   "window_start": "2022-12-01 00:00:00+00:00",
+   "good_hours": 8676,
+   "level_shift_days": 125,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "9d64c0e4c96e39bf521941a4860976523675ee045caf3391027248d3d79811d0",
+   "truth_source": {
+    "report_id": 365,
+    "n_reports": 1,
+    "building_type": "other",
+    "use": null,
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "808112": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-03-01 00:00:00+00:00",
+   "good_hours": 8728,
+   "level_shift_days": 0,
+   "weather_id": "z6I",
+   "weather_gap_hours_filled": 0,
+   "sha256": "e5b5e89dd8dab98c325d9cebaff979f108b47d76f3ed115942c7022d7ba61914",
+   "truth_source": {
+    "report_id": 282,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "811080": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-05-01 00:00:00+00:00",
+   "good_hours": 8525,
+   "level_shift_days": 156,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "47dd02b331d89b64b6cd451be8cfb197b973269bd5c33aa6d632c8af93eb9cd7",
+   "truth_source": {
+    "report_id": 331,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "816910": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-12-01 00:00:00+00:00",
+   "good_hours": 8527,
+   "level_shift_days": 135,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "49037864345501c7b983cbb16ca51e998bd2f6fb4ca51cbcc685681b5d7f110e",
+   "truth_source": {
+    "report_id": 306,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "821088": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-06-01 00:00:00+00:00",
+   "good_hours": 8738,
+   "level_shift_days": 6,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "bdaff6433a9277267f1640072d8871213b79087e323d935ac3b0f1bd44dc5f61",
+   "truth_source": {
+    "report_id": 336,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "823761": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-10-01 00:00:00+00:00",
+   "good_hours": 8600,
+   "level_shift_days": 21,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "308e45f170ed1b92a9e600c7b5bf312a93e88620079b15b2514ce438e9c5e527",
+   "truth_source": {
+    "report_id": 277,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "858577": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-02-01 00:00:00+00:00",
+   "good_hours": 8409,
+   "level_shift_days": 95,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "27358b9467e3c5d0983e68603d0464c6e6bb29839a98e71db004e5ae9b8bd72a",
+   "truth_source": {
+    "report_id": 298,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "868122": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2020-06-01 00:00:00+00:00",
+   "good_hours": 8624,
+   "level_shift_days": 17,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "6de29a468a199aa1167575dfb07102c73692cff90beeaeb47e4f30f91f8c9f96",
+   "truth_source": {
+    "report_id": 242,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "876790": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2023-01-01 00:00:00+00:00",
+   "good_hours": 8211,
+   "level_shift_days": 8,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "7033a1f9f123913ba0d3dfd3808c54b7c8b26976ddfecfc04bd3e902e7098905",
+   "truth_source": {
+    "report_id": 404,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "881223": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-10-01 00:00:00+00:00",
+   "good_hours": 8540,
+   "level_shift_days": 140,
+   "weather_id": "sV3mR",
+   "weather_gap_hours_filled": 8,
+   "sha256": "9a21ee8863f2119e4b715b787190421d614f2c1ad1d7b5f2e8965cc3e55d9397",
+   "truth_source": {
+    "report_id": 245,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "901187": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-03-01 00:00:00+00:00",
+   "good_hours": 8714,
+   "level_shift_days": 148,
+   "weather_id": "z6I",
+   "weather_gap_hours_filled": 0,
+   "sha256": "7948f60f074b65dd8f12086ac48b8a0da8afd270184f72f5ab932a4ce886b5da",
+   "truth_source": {
+    "report_id": 320,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "971071": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-04-01 00:00:00+00:00",
+   "good_hours": 8731,
+   "level_shift_days": 15,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "8272726797e773b9e6906758a77b12f8bcea0a43e17c33cff81c196c8a753070",
+   "truth_source": {
+    "report_id": 267,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "991118": {
+   "role": "dev",
+   "stratum": "single family house | ground-source",
+   "window_start": "2020-06-01 00:00:00+00:00",
+   "good_hours": 8513,
+   "level_shift_days": 16,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "26a7799af2b05545aab03e3a6b3e23ed9ac9150424e533136445c8f183bc692f",
+   "truth_source": {
+    "report_id": 305,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1019970": {
+   "role": "dev",
+   "stratum": "single family house | ground-source",
+   "window_start": "2020-10-01 00:00:00+00:00",
+   "good_hours": 8611,
+   "level_shift_days": 14,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "d060fa3380210c0f1a2faad41abffce86863b972de93e61863e93d5094163410",
+   "truth_source": {
+    "report_id": 283,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1027273": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-04-01 00:00:00+00:00",
+   "good_hours": 7451,
+   "level_shift_days": 64,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "a76c8f73eef239ec938444d646f51bfb62788fe27cf1bfd70ab5571a7c7ea60a",
+   "truth_source": {
+    "report_id": 220,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1037311": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2020-12-01 00:00:00+00:00",
+   "good_hours": 8477,
+   "level_shift_days": 29,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "dc43607533fe4348933e30d17cd92fea6c4d85deba5c07b6a0a609088d0f2d54",
+   "truth_source": {
+    "report_id": 260,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1037610": {
+   "role": "dev",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-02-01 00:00:00+00:00",
+   "good_hours": 8657,
+   "level_shift_days": 0,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "70956f6c154dded5c13aaf2521b8f030881899785a6184a31f109c25cb645253",
+   "truth_source": {
+    "report_id": 248,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1061168": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-04-01 00:00:00+00:00",
+   "good_hours": 8732,
+   "level_shift_days": 0,
+   "weather_id": "HbsbG",
+   "weather_gap_hours_filled": 50,
+   "sha256": "f648b33f4484c5060ec4bff215daaa7496c932b694a4aede22b4cb592d7361f4",
+   "truth_source": {
+    "report_id": 281,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1071058": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-06-01 00:00:00+00:00",
+   "good_hours": 8694,
+   "level_shift_days": 10,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "ac403e843f75b667b05f87604e1363afb30117dd394b4813ada6a16b37e07168",
+   "truth_source": {
+    "report_id": 322,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1081057": {
+   "role": "dev",
+   "stratum": "single family house | ground-source",
+   "window_start": "2020-12-01 00:00:00+00:00",
+   "good_hours": 8673,
+   "level_shift_days": 0,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "27119c648d691217ef13b94d6089310b71fb5316dc4f3f44c5789449cdf42844",
+   "truth_source": {
+    "report_id": 270,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1091217": {
+   "role": "dev",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-05-01 00:00:00+00:00",
+   "good_hours": 8633,
+   "level_shift_days": 35,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "961b4d1f513bb2205132b689fa8a45400312c91a320170299dcb8bf1655786bb",
+   "truth_source": {
+    "report_id": 323,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1101758": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2020-10-01 00:00:00+00:00",
+   "good_hours": 8589,
+   "level_shift_days": 14,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "71dac1e6acc719d8aa0c29d35b8b5b4a7df641137820911325a9f32cacd9f4cc",
+   "truth_source": {
+    "report_id": 280,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1114639": {
+   "role": "dev",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-07-01 00:00:00+00:00",
+   "good_hours": 8706,
+   "level_shift_days": 51,
+   "weather_id": "z6I",
+   "weather_gap_hours_filled": 0,
+   "sha256": "24cd9ec9c07520112cf42869119cf338616d86b60a6c1d00e0332c3840843713",
+   "truth_source": {
+    "report_id": 290,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1114677": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-03-01 00:00:00+00:00",
+   "good_hours": 8684,
+   "level_shift_days": 93,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "8eeb9246b814d0fa510d1b188b6eb4cbd6550488be6c1d3596200b1fde443831",
+   "truth_source": {
+    "report_id": 164,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1121037": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-05-01 00:00:00+00:00",
+   "good_hours": 8726,
+   "level_shift_days": 13,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "0a4a6bb603753a8e3b2772bc1c7f3544415798e22b7d21d2b74becc36017269b",
+   "truth_source": {
+    "report_id": 174,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1137376": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2019-12-01 00:00:00+00:00",
+   "good_hours": 8633,
+   "level_shift_days": 0,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "565f02b4a996e339e2113ee5f201d7a38f4e3ff192f9b27eb632ec51553f984a",
+   "truth_source": {
+    "report_id": 166,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1159664": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-12-01 00:00:00+00:00",
+   "good_hours": 8677,
+   "level_shift_days": 0,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "60aea8c7d69629bced7e7d733d994b531c57f7e7a7b9ecfd8efdf47690a6dd27",
+   "truth_source": {
+    "report_id": 349,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1191021": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2023-02-01 00:00:00+00:00",
+   "good_hours": 7525,
+   "level_shift_days": 137,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "e46d14617de5e962b23ec7010fa56f9f7b75938c151e1ba70e9d150a1977de5e",
+   "truth_source": {
+    "report_id": 396,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1194992": {
+   "role": "exam",
+   "stratum": "unknown | air-source",
+   "window_start": "2023-01-01 00:00:00+00:00",
+   "good_hours": 8472,
+   "level_shift_days": 0,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "ecc778ca39d830bd70fc645d5dc2fbcd755c3f93f140fde09b2814cfc6dae2f2",
+   "truth_source": {
+    "report_id": 152,
+    "n_reports": 1,
+    "building_type": null,
+    "use": null,
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": false
+  },
+  "1228011": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-05-01 00:00:00+00:00",
+   "good_hours": 8205,
+   "level_shift_days": 143,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "a66bde8f129e6fe97dc79dbb2b6442d6ad8c37bc7c303a5a4937694f83e9dd78",
+   "truth_source": {
+    "report_id": 156,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "1678757": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2020-12-01 00:00:00+00:00",
+   "good_hours": 8697,
+   "level_shift_days": 17,
+   "weather_id": "wDD",
+   "weather_gap_hours_filled": 0,
+   "sha256": "fc49b7ecf9feba1f5eec6327178f0623916babcf46a4ce84659d183097e6f00b",
+   "truth_source": {
+    "report_id": 266,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "2794690": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-02-01 00:00:00+00:00",
+   "good_hours": 8708,
+   "level_shift_days": 65,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "6a05bf9ed28ff25d722cb18c42b4257814a7e168a3de4aa05513137645c113de",
+   "truth_source": {
+    "report_id": 250,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "5011111": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-10-01 00:00:00+00:00",
+   "good_hours": 8724,
+   "level_shift_days": 41,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "2f42c15be8d1fafdca2ebacb7406846dc2a810fa994417044bbe352e799b80cc",
+   "truth_source": {
+    "report_id": 195,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "5661171": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-08-01 00:00:00+00:00",
+   "good_hours": 8284,
+   "level_shift_days": 8,
+   "weather_id": "HbsbG",
+   "weather_gap_hours_filled": 57,
+   "sha256": "5d744f1bee3ea829dc522e1503bae4e3c9cc09c91ccb7c40cafa518c9bf83c19",
+   "truth_source": {
+    "report_id": 197,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "5769106": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-08-01 00:00:00+00:00",
+   "good_hours": 8705,
+   "level_shift_days": 16,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "72de27bbc87e3f0f6671e9a98be69afeb31ae465ad74012726d8ac648a8d85a1",
+   "truth_source": {
+    "report_id": 319,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "5831058": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-02-01 00:00:00+00:00",
+   "good_hours": 8574,
+   "level_shift_days": 147,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "084f4e9f9f8277b192eb44d9334952df9de215bcc8d62cd9610c299fc555ab86",
+   "truth_source": {
+    "report_id": 332,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "5845834": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2022-12-01 00:00:00+00:00",
+   "good_hours": 7626,
+   "level_shift_days": 12,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "6841e75766378b6e2cf10b4283d9c593888f821c99e9088db4016150b5ab5d63",
+   "truth_source": {
+    "report_id": 310,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "6569121": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-10-01 00:00:00+00:00",
+   "good_hours": 8521,
+   "level_shift_days": 54,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "76885900fc51a84aa22fbb53a94f2e38e718e8ea6edfde3b4e6a0f2452082d89",
+   "truth_source": {
+    "report_id": 194,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "6773102": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2020-11-01 00:00:00+00:00",
+   "good_hours": 8629,
+   "level_shift_days": 0,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "4e6410701c0a248fe1d76f2bcdf6242a0c3831379ef379e3dcc6d6adfd3a8038",
+   "truth_source": {
+    "report_id": 233,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "6808461": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2021-05-01 00:00:00+00:00",
+   "good_hours": 8420,
+   "level_shift_days": 11,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "e3f8ea4982dbb9767fdac399ea165e02143912d661e01d7091c8be43c70edc91",
+   "truth_source": {
+    "report_id": 231,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "6810910": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2020-10-01 00:00:00+00:00",
+   "good_hours": 8727,
+   "level_shift_days": 32,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "0d77cf9e57b93c2dead2911028d646be1b124fcddbbaa706c77b0c972e61709e",
+   "truth_source": {
+    "report_id": 229,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "6885841": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2020-09-01 00:00:00+00:00",
+   "good_hours": 8649,
+   "level_shift_days": 44,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "409e3c1af1ccdf6d2af450baeb77c8792962fb27632b46a873e73e0e85dcc97d",
+   "truth_source": {
+    "report_id": 249,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "6901131": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2023-02-01 00:00:00+00:00",
+   "good_hours": 8366,
+   "level_shift_days": 143,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "aa6a3ed08aa2ed74c6e3e277e2dadfe7d0658d208f00211f354174959e3010f4",
+   "truth_source": {
+    "report_id": 362,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "6981151": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-05-01 00:00:00+00:00",
+   "good_hours": 8651,
+   "level_shift_days": 78,
+   "weather_id": "z6I",
+   "weather_gap_hours_filled": 0,
+   "sha256": "5fda72958d7875cfe5b9a43d402e90ceffdf18240fc9319e08aa70302f41e31f",
+   "truth_source": {
+    "report_id": 224,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": false
+  },
+  "7069411": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-11-01 00:00:00+00:00",
+   "good_hours": 8495,
+   "level_shift_days": 67,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "cbd85cf72e367bffb15352f47fcddc17739fb1e0ed38bb2bb20bc961243658aa",
+   "truth_source": {
+    "report_id": 324,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "7086681": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-06-01 00:00:00+00:00",
+   "good_hours": 8457,
+   "level_shift_days": 98,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "2e5970220b64b3d9d57c3d52e6fcd3097a74df0738e2b295c232b190a4112d23",
+   "truth_source": {
+    "report_id": 241,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "7146661": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2023-02-01 00:00:00+00:00",
+   "good_hours": 8216,
+   "level_shift_days": 46,
+   "weather_id": "z6I",
+   "weather_gap_hours_filled": 0,
+   "sha256": "237057dbd17b34d1a5b2dda346221cb13af2268e9f9263a1850b0dcb12af09d7",
+   "truth_source": {
+    "report_id": 403,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "7211189": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2023-02-01 00:00:00+00:00",
+   "good_hours": 8717,
+   "level_shift_days": 6,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "1b7b45f9c67f122b0ac8b00b89aa774c338470306ed363200767cfc698ffae66",
+   "truth_source": {
+    "report_id": 330,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "7411010": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-02-01 00:00:00+00:00",
+   "good_hours": 8623,
+   "level_shift_days": 43,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "9ed47c323fc96d6ad60101917a3e5d2a83f1edd12b4663cfffd0e173122dd032",
+   "truth_source": {
+    "report_id": 273,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "7411491": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-05-01 00:00:00+00:00",
+   "good_hours": 8670,
+   "level_shift_days": 32,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "57b62d4a968fd1d6fe91fa03f906f018561c33cfb8abe0473961e704f35a2632",
+   "truth_source": {
+    "report_id": 321,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "7412010": {
+   "role": "dev",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-02-01 00:00:00+00:00",
+   "good_hours": 8603,
+   "level_shift_days": 4,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "8a6f0b5e9aa604ebc5bfb78c5892e435f3ad152df56fe12b9e167c781a367eb6",
+   "truth_source": {
+    "report_id": 226,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "7610179": {
+   "role": "exam",
+   "stratum": "multi family house | air-source",
+   "window_start": "2021-02-01 00:00:00+00:00",
+   "good_hours": 8203,
+   "level_shift_days": 130,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "64b65073e82a9d056375e06ad919d54d1915d9ea6bd08b629f30d9718ad733b8",
+   "truth_source": {
+    "report_id": 193,
+    "n_reports": 1,
+    "building_type": "multi family house",
+    "use": "residential_multi",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": false
+  },
+  "7710511": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-01-01 00:00:00+00:00",
+   "good_hours": 8696,
+   "level_shift_days": 47,
+   "weather_id": "z6I",
+   "weather_gap_hours_filled": 0,
+   "sha256": "30a2d38f62ba330856e99eb66e37b55911568d3c8c560b60163092b94d900203",
+   "truth_source": {
+    "report_id": 275,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "7747482": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2023-02-01 00:00:00+00:00",
+   "good_hours": 8101,
+   "level_shift_days": 101,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "6197a6ebecb5a4ad658ef3f6ee4e3b892bb500e3b3c760875fe910005ba3309d",
+   "truth_source": {
+    "report_id": 380,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "7771161": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-09-01 00:00:00+00:00",
+   "good_hours": 8724,
+   "level_shift_days": 37,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "c0a65a837fe1db2506f3da4f1508c44a7748e1efedd6cb7ffebe45caa0e19482",
+   "truth_source": {
+    "report_id": 318,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "7984107": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-09-01 00:00:00+00:00",
+   "good_hours": 8062,
+   "level_shift_days": 0,
+   "weather_id": "MqO",
+   "weather_gap_hours_filled": 0,
+   "sha256": "5be6f02c1012bd3cf2a53690fe5c3634c8bf22afddcae7a7b69d2046d7bcdd0c",
+   "truth_source": {
+    "report_id": 343,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "8010411": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-02-01 00:00:00+00:00",
+   "good_hours": 8424,
+   "level_shift_days": 148,
+   "weather_id": "z6I",
+   "weather_gap_hours_filled": 0,
+   "sha256": "ecc6e56196bc5db937816d0dd30c6d73f6be502a0c40eb75860108a8b1982c90",
+   "truth_source": {
+    "report_id": 239,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "8190108": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-03-01 00:00:00+00:00",
+   "good_hours": 8328,
+   "level_shift_days": 19,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "5afc62fe1d2ce24c3c32370341fc64ef85086aecb5f2f46b40388b8684417925",
+   "truth_source": {
+    "report_id": 373,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "8280779": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-06-01 00:00:00+00:00",
+   "good_hours": 8628,
+   "level_shift_days": 160,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "ff44bb0407cb7dc601378670d09ec08fe9cb5b275e03e8aaeb6590eea964926b",
+   "truth_source": {
+    "report_id": 406,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "8773113": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2022-12-01 00:00:00+00:00",
+   "good_hours": 8505,
+   "level_shift_days": 144,
+   "weather_id": "HbsbG",
+   "weather_gap_hours_filled": 178,
+   "sha256": "b8b8790d9cf1fb2b9e5967a636bde9cbce093654f9ab88e2c7c3907cb350dcb2",
+   "truth_source": {
+    "report_id": 388,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "9776611": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-10-01 00:00:00+00:00",
+   "good_hours": 8714,
+   "level_shift_days": 1,
+   "weather_id": "8jB",
+   "weather_gap_hours_filled": 0,
+   "sha256": "ec42313abb1ee532e46c480aeae98301993b4bfedb330e2f32ecce2dda153360",
+   "truth_source": {
+    "report_id": 271,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "9880798": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2020-02-01 00:00:00+00:00",
+   "good_hours": 8208,
+   "level_shift_days": 7,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "631ae95e25327a6a98eff8a58d263237ef2f651e1c6eb75991dfef1588717b40",
+   "truth_source": {
+    "report_id": 177,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  },
+  "9889114": {
+   "role": "exam",
+   "stratum": "single family house | air-source",
+   "window_start": "2021-04-01 00:00:00+00:00",
+   "good_hours": 8653,
+   "level_shift_days": 107,
+   "weather_id": "HbsbG",
+   "weather_gap_hours_filled": 234,
+   "sha256": "f70b8ba7fc4a2e9227808dff6cb8a999a4d9ea15d0e842f494b7b539ee678719",
+   "truth_source": {
+    "report_id": 342,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "air-source"
+   },
+   "area_row": true,
+   "year_row": false
+  },
+  "9889190": {
+   "role": "exam",
+   "stratum": "single family house | ground-source",
+   "window_start": "2020-12-01 00:00:00+00:00",
+   "good_hours": 8608,
+   "level_shift_days": 117,
+   "weather_id": "Hg",
+   "weather_gap_hours_filled": 0,
+   "sha256": "79efff5f064ef399ed446cd48e6fd00e8e46afa4fd9e4cc199e0a0e1a170cd5e",
+   "truth_source": {
+    "report_id": 230,
+    "n_reports": 1,
+    "building_type": "single family house",
+    "use": "residential_single",
+    "hp_type": "ground-source"
+   },
+   "area_row": true,
+   "year_row": true
+  }
+ },
+ "split_sha256": "443961aff0617ef6742c8184ce517b94b8b9ae668c6ecacaed218b1e755f963d"
+}

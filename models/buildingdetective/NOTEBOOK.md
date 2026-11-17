@@ -348,3 +348,22 @@ result was seen. Scripts: `training/integrity_feats.py` (real features, 3 proces
 - **What it means.** v1.0's real wins were wins over weak rules. With baselines fitted on the same dev data, the
   network adds nothing measurable on any real row; its corrections are informative in direction only. The next rung
   should predict corrections to the dev-fitted baselines rather than raw outputs (model.yaml `next`).
+
+## 2026-11-17 — Fresh exam frozen: HEAPO results (nothing scored)
+
+Built by `training/exam2_heapo.py`; no Detective run and no baseline score. `--check` rebuild reproduces the split.
+
+- **Downloaded.** `heapo_data.zip`, 458 MB, md5 matches Zenodo (sha256 `9979e1e3…`).
+- **What the data hold.** 217 of the 410 protocols link to a household with smart-meter data (214 homes; 193
+  protocols have no household). Among the 214: 208 single-family, 2 multi-family, 6 "other"; 131 air-source, 85
+  ground-source, 1 water-source. The weather stations log temperature and sunshine duration, not irradiance, so GHI is
+  clear-sky x 0.6 as planned. Station coordinates are anonymised: lat 47.38 (Zurich) is used.
+- **Two changes after reading QC counts, before any scoring.** (1) The BDG2 level-shift rule flags the heating season
+  itself (median 145 flagged days per home; 72 homes failed the window because of it). It is not applied; its day
+  count is kept per home. (2) The whole-home meter is `kWh_received_Total`; 5 homes with only a heat-pump meter are
+  dropped (the plan's "sum of meters" would have double-counted where Total exists).
+- **Units.** Dropped 84: PV 49, < 300 good days in any 365-day window 30, heat-pump meter only 5. Kept 130: **25 dev,
+  105 exam** (area row 105, year row 100: 5 have no or an implausible year). Exam: 63 air, 41 ground, 1 water source.
+  The single vs multi-family row is info only (2 multi-family exam homes).
+- `split_exam2_heapo.json` sha256 `fda36a6846ec1aaa3ddac7cb0b018dae0bf4d158f26414d5237d67c1f57a9b16` (units block
+  `443961af…`; no readings, floor areas or years stored: truth is re-read from the protocols at scoring).

@@ -106,3 +106,139 @@ What was re-run:
 Waiting on the platform zip: re-running calibration, banks, training and the exam; the BuildingSim checks
 (`shared/building/checks/`); and the exam's 68 % coverage, which `model.yaml` does not list because the exam JSON
 records only the 90 % band's coverage.
+
+## 2026-11-17 — Integrity pass: the plan, written before any re-score runs
+
+The v1.0 exam was taken once in the build session. This pass re-scores it with the released weights; every exam
+number below is therefore **seen**. Nothing is chosen from it, and no new rung is tried. `splits.json` is unchanged.
+On this machine (Windows, 16 cores shared, at most 3 worker processes) BuildingSim runs a 2-year building in about 1 s,
+so simulation is cheap here. Scripts go in `training/`, outputs in `work/` (git-ignored).
+
+1. **Reproduce first.** `training/rescore_seen.py` runs `exam.py`'s pieces with the released `loadcast_weights.npz`
+   (numpy forward, `lcnet.np_forward`) and `widen_r3.json` on the unpacked BDG2 data. It also re-scores the 84 dev
+   building-meters and re-fits the widening on dev. Report the largest difference from `exam_r3.json`,
+   `ratchet.json` (r3 dev) and `widen_r3.json`, row by row. If anything does not reproduce, say so and by how much;
+   the re-score then uses the new numbers.
+2. **Every row `exam.py` computes goes into `model.yaml` and the card.** Per meter type: cold, warm with 2 weeks,
+   8 weeks and a year of history (hourly CV), and daily and monthly totals for cold and a year of history: 8 verdict
+   rows × 5 meter types. NMBE, G14 pass rates, 90 % coverage and the nowcasts (persistence 1 h / 24 h / same hour last
+   week: they read the real 2017 meter) go in the notes and the card, without verdicts.
+3. **Fair baselines, scored on the same building-meters and hours.**
+   - Cold: (a) the dumb median guess as in `exam.py`; (b) **the dev-calibrated BuildingSim twin**: each exam
+     building's BDG2 spec from metadata only, the knobs most often chosen on the 52 dev buildings (`calib.py`, re-run
+     here into `work/data/dev_knobs.json` because the per-building file was not shipped; checked against
+     `calib_summary.json`), with HVAC for electricity-only buildings set the same way from the dev electricity-only
+     buildings, and per meter type the dev median `a, b`; simulated over 2016-2017 with the real weather, scored on
+     local 2017. No exam reading is used. (c) The same twin with `a, b` (and knobs) by use type where dev has ≥ 3
+     buildings, else as (b). (d) A **dev TOWT-shape guess**: the dumb guess's dev median intensity per use and meter,
+     times the median over dev building-meters of a TOWT fitted on each dev meter's 2017 load / its mean (so it
+     answers to the exam building's own weather).
+   - Warm, a year: TOWT and the change-point model (BuildingData, fitted on 2016) and LoadCast's own ridge TOWT on
+     2016 (`towt_lc`, the network's anchor). There is no dev-tuned variant in `exam.py`.
+   - Warm, 8 and 2 weeks: the same ridge TOWT fitted on the same 8 or 2 weeks (the network's anchor), and the cold
+     baselines (a user with 2 weeks can still use them).
+   - Daily and monthly: the hourly baselines above aggregated the same way (`evaluate.daily_monthly`), plus
+     BuildingData's daily and monthly change-point models for the year-of-history rows.
+   The best baseline on a row is the one with the lowest median on the exam; picking it on the exam can only favour
+   the baselines.
+4. **Intervals and verdicts.** 95 % bootstrap interval on median(LoadCast) − median(best baseline) per row: 2,000
+   resamples of the exam building-meters (one per building within a meter type), seed 20261117, paired, building-meters
+   where either is NaN dropped. Win if the interval is below 0, loss if above, tie if it spans 0. n stated per row.
+5. **Dev-gate optimism.** If the smoke test (step 7) says a full rebuild fits in about 2 hours with 3 processes:
+   rebuild the noise bank, the v1 bank (1,600 buildings, seed 2) and the frozen set (300, seed 99), then train the R3
+   recipe twice with the same seeds: arm A with the noise bank as built, arm B with each dev meter's 2017 residuals
+   and gap pattern replaced by its own 2016 ones shifted 364 days (same weekday; the 2017/2016 level ratios are
+   kept). Optimism = dev score(B) − dev score(A), set against the same difference on the (seen) exam; the part the
+   exam does not share is the dev gate's leak. If the rebuild does not fit, report only the cheaper bound: R3's dev
+   numbers against its exam numbers, meter by meter.
+6. **Dev twin test of what the network adds (dev only).** Cold: anchor = twin (b) on each dev building (2017);
+   correlate the network's forecast minus the anchor with truth minus the anchor, hourly, per meter type, and the
+   per-building annual means. Warm (a year): anchor = the ridge TOWT on 2016; the same correlation of the network's
+   correction with what reality needed. Bin the needed residuals by hour of week, month, temperature and holiday to
+   show where they have structure.
+7. **Readiness.** On this machine: the noise bank, a 20-building v1 bank and 1 epoch of cold and warm training into
+   `work/`, timed; extrapolate to 1,600 + 300 buildings and 30 epochs; list what blocks a rung here (shell scripts
+   call `python3` and `nice`, etc.).
+8. Update `model.yaml` (rows, intervals in the notes, verdicts, "seen"), the card, `ratchet.yaml`'s ladder note and a
+   results entry here; `readme --write loadcast`; validate; demo test.
+
+## 2026-11-17 — Fresh exam frozen before round-2 rungs: I-BLEND (IIIT Delhi campus)
+
+Written before I-BLEND is downloaded. Nothing is scored in this step: no LoadCast run, no baseline score. Built by
+`training/exam2_iblend.py` into `work/exam2/iblend/` (git-ignored); frozen in `training/split_exam2_iblend.json`
+(units, hashes, rows, baselines, interval rule). Scored once for v1.0 and once for any round-2 release, after the
+round-2 release decision.
+
+**Data.** I-BLEND energy, figshare 10.6084/m9.figshare.6007637.v1 (CC0, `energy_dataset.zip`, 589 MB, md5
+754d5c85...): 7 campus buildings (academic, lecture, library, facilities, dining, boys' and girls' hostels), 1-min
+electricity, 52 months; semester calendar 6007634 (CC0). Its weather article (6007649) holds four months only, too
+short for LoadCast, so weather is built the way BuildingData built BDG2's: NOAA ISD-Lite for Delhi IGI airport
+(421810-99999) for T_out, dewpoint and wind; gaps <= 6 h interpolated, longer gaps from NASA POWER hourly at the
+campus; GHI from NASA POWER. Unit-clean: no Indian building is in training, dev or exam 1.
+
+**Input contract.** `LoadCast.forecast(weather, tz='Asia/Kolkata', lat, use, area_m2, meter='electricity',
+meters_present=['electricity'], history=None or hourly kWh)`. Gaps: (a) the holiday table covers US/CA/UK/IE only and
+falls back to US holidays for Asia/Kolkata, so Indian holidays and semester breaks are invisible to the model; (b)
+Delhi's climate is outside BDG2's; (c) electricity is the only meter. Use: academic, lecture, library -> education;
+dining -> food; hostels -> lodging; facilities -> other. Floor area from the dataset's building details; a building
+without an area gets no row. Year built: unknown (None).
+
+**Series and quality control** (BuildingData's BDG2 rules, `build_bdg2.flags_for` and `q_ok`): 1-min power -> UTC
+hour-beginning mean kW (= kWh); an hour with < 45 minutes is missing. Electricity flags: missing, zero, zero runs >= 24
+h, negative, spikes, flatlines >= 24 h, linear-fill runs >= 12 h, level-shift days. A local calendar year is ok if
+>= 85 % of its hours are good, it has < 30 level-shift days and its EUI is 10-2,000 kWh/m2. Per building, history =
+local year Y and forecast = Y+1 for the latest consecutive pair where both years are ok and the Y+1 / Y ratio is within
+0.4-2.5 (same calendar days). Only good hours are graded. Every dropped building is listed with its reason.
+
+**Split.** All buildings that pass are exam (7 at most: too few to split). Nothing is fitted on them: the dumb guess
+and the BuildingSim twin come from BDG2 dev, the history baselines from each building's own history year.
+
+**Rows** (electricity; median over buildings): hourly CV(RMSE) for cold, warm with the history year, warm with its last
+8 weeks, warm with its last 2 weeks; daily and monthly totals CV(RMSE) for cold and for warm with the year (8 rows,
+ASHRAE G14, LoadCast and dev guesses p = 0, fitted baselines n - p). NMBE and 90 % coverage in notes, no verdict.
+Model input: released `loadcast_weights.npz` with its shipped widening.
+
+**Baselines** (as the 17 Nov integrity plan defines them, on the same hours). Cold: the dumb dev median-intensity x
+median-shape guess per use (BDG2 dev); the dev-calibrated BuildingSim twin (spec from I-BLEND metadata only, dev knobs
+and dev median a, b), if the twin builder accepts a non-BDG2 spec, otherwise the row says it was not run; the dev
+TOWT-shape guess. Warm, a year: TOWT and change-point models fitted on the history year (BuildingData's code), and
+LoadCast's ridge TOWT (`towt_lc`). Warm, 8 / 2 weeks: the ridge TOWT on the same weeks and the cold baselines. Daily
+and monthly: the hourly baselines aggregated, plus daily / monthly change-point models for the year row.
+
+**Intervals.** 95 % bootstrap over buildings, 2,000 resamples, seed 20261117, paired, on median(LoadCast) minus
+median(best baseline). Win / loss if the interval is entirely on one side of zero, tie if it spans zero. With <= 7
+buildings, most rows will be ties; n is stated.
+
+## 2026-11-17 — Integrity pass: step 5 scaled down (written before the optimism arms run)
+
+The smoke test (step 7) ran: a 20-building v1 bank took 59 s on 1 process (2.9 s per building, generator draws
+included), and 1 epoch of 3,552 rows about 2 s per network. Scaled up, the full R3 recipe (1,600 + 300 buildings,
+30 epochs, about 336,000 rows per epoch, single-threaded torch as `train.py` sets it) needs about 30 min of bank and
+about 95 min per network, so 4 networks on 3 processes is about 3.5-4 hours: more than the 2 hours the plan allowed.
+Instead, a half-scale controlled test with everything else as R3 (jitter 1, dropout 0.1, weight decay 1e-3, K 96):
+a new v1 bank of 800 buildings (seed 2, `v1_half`), 15 epochs, three runs:
+- `oA`: noise bank as built (seed 0);
+- `oB`: the 2016-only noise bank (seed 0);
+- `oA2`: as `oA` with training seed 1, to show how much two retrains differ by chance.
+Each is scored on the 84 dev building-meters (dev score and per meter type) and on the seen exam (cold and a year of
+history). The leak is dev(oB) − dev(oA) minus exam(oB) − exam(oA), read against the oA/oA2 spread. Only the
+difference between arms is the measurement; none of these networks is a candidate.
+
+## 2026-11-17 — Fresh exam frozen: I-BLEND results (nothing scored)
+
+Built by `training/exam2_iblend.py`; no LoadCast run and no baseline score. `--check` rebuild reproduces the split.
+
+- **Downloaded.** `energy_dataset.zip` (589 MB, md5 matches figshare), the semester calendar and the 4-month weather
+  file (not used). NCEI's ISD-Lite path now redirects to an HTML page; the same files come from NOAA's open-data
+  bucket (`noaa-isd-pds`), 2013-2018. NASA POWER hourly 2013-2018.
+- **Weather.** ISD T_out covers 92.7 % of hours, 99.8 % after filling gaps <= 6 h; the rest is NASA POWER (MAE 2.5
+  degC against ISD, bias +0.04 degC). GHI is NASA POWER.
+- **Metadata.** Floor areas from the I-BLEND paper's Table 2 (ft2 -> m2): academic 5,696, lecture 1,630, library
+  2,453, dining 4,663, facilities 908, boys' hostel 6,758, girls' hostel 3,542 m2. Hostels = mains + UPS meters.
+- **Units.** Kept 3, all with history 2016 and forecast 2017: academic, library, facilities. Dropped 4: lecture
+  (meter reads zero most hours: 9-23 % good hours in every year), dining (84 % good in 2016, 82 % in 2015), boys'
+  hostel (48 / 54 / 79 % in 2015-17), girls' hostel (52 / 45 % in 2015-16). The 85 % rule was kept as planned.
+- **What to expect.** Three buildings: a bootstrap over three units cannot separate anything but large gaps, so this
+  exam is a stress check of the climate and holiday gaps, not a ranking.
+- `split_exam2_iblend.json` sha256 `115d4029abf533c0b82af24be03eeb41b984f71479c02bbd767c2c4127fe135a` (units block
+  `0674542c…`; no readings or EUIs stored).

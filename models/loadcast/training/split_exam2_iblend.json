@@ -1,0 +1,480 @@
+{
+ "frozen": "2026-11-17",
+ "purpose": "LoadCast exam 2 (I-BLEND): Delhi campus buildings no version has seen; scored once for v1.0 and once for any round-2 release, after the round-2 release decision",
+ "status": "exam",
+ "source": {
+  "dataset": "I-BLEND",
+  "version": "figshare collection 3893581 v1 (15 Feb 2019)",
+  "doi": "10.6084/m9.figshare.c.3893581.v1",
+  "paper": "Rashid, H. et al. (2019) Sci. Data 6:190015, doi:10.1038/sdata.2019.15",
+  "licence": "CC0 1.0",
+  "weather": "NOAA ISD-Lite 421810-99999 (Delhi IGI; NOAA data, no restrictions) and NASA POWER hourly (public, no registration)",
+  "files": [
+   {
+    "name": "energy_dataset.zip",
+    "url": "https://ndownloader.figshare.com/files/10797959",
+    "doi": "10.6084/m9.figshare.6007637.v1",
+    "licence": "CC0 1.0",
+    "size": 589226996,
+    "md5": "754d5c8549fd4907a7566b3b82c849ca",
+    "sha256": "b5197549bd416c158dfff56a2650b28de991350667a745ef24fadbb4d80c07e9",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "iiitd_calender_schedule.zip",
+    "url": "https://ndownloader.figshare.com/files/10797956",
+    "doi": "10.6084/m9.figshare.6007634.v1",
+    "licence": "CC0 1.0",
+    "size": 8206,
+    "md5": "efdcc0a64ea1e412447c89a251e42a9a",
+    "sha256": "12979df04a6f7ea079b585db80f122c73e9839a7472a50982027df07d6937305",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "weather_comparison.zip",
+    "url": "https://ndownloader.figshare.com/files/12470675",
+    "doi": "10.6084/m9.figshare.6007649.v1",
+    "licence": "CC0 1.0",
+    "size": 47862,
+    "md5": "8be6cdb6ed18413336fd56d91b358a10",
+    "sha256": "7f4243dbf4a4e58d069728b393c681ec4722783159a612428a149c59fc079ffa",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "isd_421810_2013.gz",
+    "url": "https://noaa-isd-pds.s3.amazonaws.com/isd-lite/data/2013/421810-99999-2013.gz",
+    "size": 50315,
+    "sha256": "115dbcc9e6504ed3f2754f903c635130f0ce263e99f3e3c4a848bf252facd21f",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "power_2013.csv",
+    "url": "https://power.larc.nasa.gov/api/temporal/hourly/point?parameters=T2M,T2MDEW,WS10M,ALLSKY_SFC_SW_DWN&community=RE&longitude=77.2732&latitude=28.5459&start=20130101&end=20131231&format=CSV&time-standard=UTC",
+    "size": 299089,
+    "sha256": "4b9dc16724d7418a19f605204dfb558a9c2f35fa666eaab65de02d8162c0e1a2",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "isd_421810_2014.gz",
+    "url": "https://noaa-isd-pds.s3.amazonaws.com/isd-lite/data/2014/421810-99999-2014.gz",
+    "size": 51821,
+    "sha256": "d2b2ac688dd37c7e15410bdb94c0f3a813dddd514da07400abf54250d91f64d1",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "power_2014.csv",
+    "url": "https://power.larc.nasa.gov/api/temporal/hourly/point?parameters=T2M,T2MDEW,WS10M,ALLSKY_SFC_SW_DWN&community=RE&longitude=77.2732&latitude=28.5459&start=20140101&end=20141231&format=CSV&time-standard=UTC",
+    "size": 299670,
+    "sha256": "cad37b2e105e751aa2f8574bbdcac9520fd68b84662e90b88063709e80a4dada",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "isd_421810_2015.gz",
+    "url": "https://noaa-isd-pds.s3.amazonaws.com/isd-lite/data/2015/421810-99999-2015.gz",
+    "size": 53652,
+    "sha256": "847517d848ea087974b69a428b9156fe3950d40963d1d0bd835db5d4d588a50b",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "power_2015.csv",
+    "url": "https://power.larc.nasa.gov/api/temporal/hourly/point?parameters=T2M,T2MDEW,WS10M,ALLSKY_SFC_SW_DWN&community=RE&longitude=77.2732&latitude=28.5459&start=20150101&end=20151231&format=CSV&time-standard=UTC",
+    "size": 299683,
+    "sha256": "e382486c0bb545785980f0827c480a4e3c370a1d2d1a77c22c52194f82ad0c38",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "isd_421810_2016.gz",
+    "url": "https://noaa-isd-pds.s3.amazonaws.com/isd-lite/data/2016/421810-99999-2016.gz",
+    "size": 71256,
+    "sha256": "08d914d681515ccf25f8448ef90d328a6c634b61fb936d686b0e642f15a9d0dd",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "power_2016.csv",
+    "url": "https://power.larc.nasa.gov/api/temporal/hourly/point?parameters=T2M,T2MDEW,WS10M,ALLSKY_SFC_SW_DWN&community=RE&longitude=77.2732&latitude=28.5459&start=20160101&end=20161231&format=CSV&time-standard=UTC",
+    "size": 301464,
+    "sha256": "bfa14040efed68359548dd119aa199dd9828987eca368545211a0c83081b86bd",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "isd_421810_2017.gz",
+    "url": "https://noaa-isd-pds.s3.amazonaws.com/isd-lite/data/2017/421810-99999-2017.gz",
+    "size": 70724,
+    "sha256": "2f3f50941dceddc472400cd389db5ad381ec5195aa4b562ff0a42f74db15fb10",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "power_2017.csv",
+    "url": "https://power.larc.nasa.gov/api/temporal/hourly/point?parameters=T2M,T2MDEW,WS10M,ALLSKY_SFC_SW_DWN&community=RE&longitude=77.2732&latitude=28.5459&start=20170101&end=20171231&format=CSV&time-standard=UTC",
+    "size": 299631,
+    "sha256": "eee354a28df749a64ff16e7d09e52a5901bec74df3c2b13a98461fad37d4ab56",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "isd_421810_2018.gz",
+    "url": "https://noaa-isd-pds.s3.amazonaws.com/isd-lite/data/2018/421810-99999-2018.gz",
+    "size": 70282,
+    "sha256": "5905638e1e9870e14ed05be03421b741662ae9c321931016a279e9283caeeada",
+    "downloaded": "2026-11-17"
+   },
+   {
+    "name": "power_2018.csv",
+    "url": "https://power.larc.nasa.gov/api/temporal/hourly/point?parameters=T2M,T2MDEW,WS10M,ALLSKY_SFC_SW_DWN&community=RE&longitude=77.2732&latitude=28.5459&start=20180101&end=20181231&format=CSV&time-standard=UTC",
+    "size": 300115,
+    "sha256": "e046f6b082eb4fc80ec9b4dab5e5238b3ed2aaf5f5b0a4d728111c01fe32571e",
+    "downloaded": "2026-11-17"
+   }
+  ]
+ },
+ "seed": 20261117,
+ "split": "by building; every building that passes QC is exam (7 at most, too few to split). Nothing is fitted on them: dev guesses and the twin come from BDG2 dev; history baselines from each building's own history year.",
+ "buildings_source": "I-BLEND paper Table 2 (total area, ft2 -> m2); hostels = mains + UPS backup meters",
+ "series": {
+  "meter": "1-min active power (W, all_buildings_power.csv; UNIX time) -> UTC hour-beginning mean kW (= kWh); hours with < 45 minutes missing; a hostel minute counts only if both its meters are present",
+  "duplicate_minutes_dropped": 0,
+  "minutes": {
+   "academic": {
+    "first_minute": "2013-08-09 18:30:00+00:00",
+    "last_minute": "2017-12-31 18:29:00+00:00",
+    "minutes_present": 2269527
+   },
+   "lecture": {
+    "first_minute": "2013-08-09 18:30:00+00:00",
+    "last_minute": "2017-12-31 18:29:00+00:00",
+    "minutes_present": 2269309
+   },
+   "library": {
+    "first_minute": "2013-08-09 18:30:00+00:00",
+    "last_minute": "2017-12-31 18:29:00+00:00",
+    "minutes_present": 1713637
+   },
+   "dining": {
+    "first_minute": "2013-09-23 18:30:00+00:00",
+    "last_minute": "2017-12-31 18:29:00+00:00",
+    "minutes_present": 2013089
+   },
+   "facilities": {
+    "first_minute": "2013-11-14 18:30:00+00:00",
+    "last_minute": "2017-12-31 18:29:00+00:00",
+    "minutes_present": 2048903
+   },
+   "boys_hostel": {
+    "first_minute": "2013-08-09 18:30:00+00:00",
+    "last_minute": "2017-12-31 18:29:00+00:00",
+    "minutes_present": 1664427
+   },
+   "girls_hostel": {
+    "first_minute": "2013-08-09 18:30:00+00:00",
+    "last_minute": "2017-12-31 18:29:00+00:00",
+    "minutes_present": 1648103
+   }
+  }
+ },
+ "qc": {
+  "flags": "BDG2 electricity flags (missing, zero, zero runs >= 24 h, negative, spikes, flatlines >= 24 h, linear-fill runs >= 12 h, level-shift days) on the whole record; bad hours are NaN and not graded",
+  "year_ok": ">= 85% good hours in the local year, < 30 level-shift days, EUI 10-2000 kWh/m2",
+  "pair": "latest consecutive local years (Y, Y+1) both ok with Y+1/Y mean-load ratio on the same days within 0.4-2.5; history = Y, forecast = Y+1"
+ },
+ "weather": {
+  "how": "T_out, dewpoint, wind_speed from NOAA ISD-Lite 421810-99999 (Delhi IGI, 14.8 km from campus); gaps <= 6 h interpolated, longer gaps from NASA POWER hourly (MERRA-2) at the campus; GHI = NASA POWER ALLSKY_SFC_SW_DWN (CERES); hour labels as BuildingData (POWER HR = UTC hour)",
+  "coverage": {
+   "T_out": {
+    "isd": 0.9271046961397679,
+    "isd_or_interp": 0.998286648840892
+   },
+   "dewpoint": {
+    "isd": 0.9269748968095325,
+    "isd_or_interp": 0.998286648840892
+   },
+   "wind_speed": {
+    "isd": 0.9350484151501778,
+    "isd_or_interp": 0.9992731237506814
+   },
+   "nasa_minus_isd_T_bias_C": 0.04,
+   "nasa_vs_isd_T_mae_C": 2.51
+  }
+ },
+ "input": {
+  "call": "LoadCast.forecast(weather, tz='Asia/Kolkata', lat=28.5463, use, area_m2, meter='electricity', meters_present=['electricity'], start/end = the forecast year's local bounds, history = None (cold) | the history year's kWh (warm) | its last 8 or 2 weeks (warm_w8 / warm_w2))",
+  "gaps": [
+   "holiday table covers US/CA/UK/IE only: Asia/Kolkata falls back to US holidays; the I-BLEND semester calendar cannot be given to the model",
+   "Delhi climate (hot, monsoon) is outside BDG2 / BuildingSim training weather",
+   "electricity only; year built unknown (None); hvac and schedule left unknown"
+  ]
+ },
+ "dropped_units": {
+  "lecture": "no consecutive pair of ok local years: 2013: good 0.09, level-shift days 3, EUI ok True; 2014: good 0.18, level-shift days 22, EUI ok True; 2015: good 0.15, level-shift days 58, EUI ok True; 2016: good 0.19, level-shift days 9, EUI ok True; 2017: good 0.23, level-shift days 13, EUI ok True",
+  "dining": "no consecutive pair of ok local years: 2013: good 0.27, level-shift days 0, EUI ok True; 2015: good 0.82, level-shift days 0, EUI ok True; 2016: good 0.84, level-shift days 0, EUI ok True",
+  "boys_hostel": "no consecutive pair of ok local years: 2013: good 0.39, level-shift days 0, EUI ok True; 2015: good 0.48, level-shift days 0, EUI ok True; 2016: good 0.54, level-shift days 0, EUI ok True; 2017: good 0.79, level-shift days 0, EUI ok True",
+  "girls_hostel": "no consecutive pair of ok local years: 2013: good 0.35, level-shift days 0, EUI ok True; 2014: good 0.82, level-shift days 0, EUI ok True; 2015: good 0.52, level-shift days 0, EUI ok True; 2016: good 0.45, level-shift days 0, EUI ok True"
+ },
+ "units": {
+  "academic": {
+   "role": "exam",
+   "paper_name": "Academics",
+   "use": "education",
+   "area_m2": 5695.7,
+   "meters_present": [
+    "electricity"
+   ],
+   "meter": "electricity",
+   "history_year": 2016,
+   "forecast_year": 2017,
+   "history_good_hours": 8767,
+   "forecast_good_hours": 8599,
+   "years": {
+    "2013": {
+     "good_frac": 0.3814,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": false
+    },
+    "2014": {
+     "good_frac": 0.9439,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": true
+    },
+    "2015": {
+     "good_frac": 0.996,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": true
+    },
+    "2016": {
+     "good_frac": 0.9981,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": true
+    },
+    "2017": {
+     "good_frac": 0.9816,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": true,
+     "ratio_to_previous_ok": true
+    }
+   },
+   "sha256": "6cf748dc723fe5437493dd09eda06ae4c00d4675a6a7a4955b1e1c999ab30e6e"
+  },
+  "library": {
+   "role": "exam",
+   "paper_name": "Library",
+   "use": "education",
+   "area_m2": 2452.7,
+   "meters_present": [
+    "electricity"
+   ],
+   "meter": "electricity",
+   "history_year": 2016,
+   "forecast_year": 2017,
+   "history_good_hours": 8253,
+   "forecast_good_hours": 7480,
+   "years": {
+    "2013": {
+     "good_frac": 0.3928,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": false
+    },
+    "2014": {
+     "good_frac": 0.6042,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": false
+    },
+    "2015": {
+     "good_frac": 0.4039,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": false
+    },
+    "2016": {
+     "good_frac": 0.9395,
+     "level_shift_days": 21,
+     "eui_ok": true,
+     "ok": true
+    },
+    "2017": {
+     "good_frac": 0.8539,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": true,
+     "ratio_to_previous_ok": true
+    }
+   },
+   "sha256": "7489f79d22f460f2e0511f31ceb404942b123ee4a39d548a1cf46fd1e60015bc"
+  },
+  "facilities": {
+   "role": "exam",
+   "paper_name": "Facilities",
+   "use": "other",
+   "area_m2": 907.6,
+   "meters_present": [
+    "electricity"
+   ],
+   "meter": "electricity",
+   "history_year": 2016,
+   "forecast_year": 2017,
+   "history_good_hours": 8774,
+   "forecast_good_hours": 8271,
+   "years": {
+    "2013": {
+     "good_frac": 0.1178,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": false
+    },
+    "2014": {
+     "good_frac": 0.9547,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": true
+    },
+    "2015": {
+     "good_frac": 0.8663,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": true
+    },
+    "2016": {
+     "good_frac": 0.9989,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": true
+    },
+    "2017": {
+     "good_frac": 0.9442,
+     "level_shift_days": 0,
+     "eui_ok": true,
+     "ok": true,
+     "ratio_to_previous_ok": true
+    }
+   },
+   "sha256": "1902be763abb2b06258015bbe3834553a49d8819cc30886a7f3a247878811554"
+  }
+ },
+ "rows": [
+  {
+   "id": "cold_hourly",
+   "metric": "electricity hourly CV(RMSE), median over buildings",
+   "better": "lower",
+   "mode": "cold",
+   "unit_set": "exam buildings, good forecast-year hours"
+  },
+  {
+   "id": "warm_year_hourly",
+   "metric": "electricity hourly CV(RMSE), median over buildings",
+   "better": "lower",
+   "mode": "warm_year",
+   "unit_set": "exam buildings, good forecast-year hours"
+  },
+  {
+   "id": "warm_w8_hourly",
+   "metric": "electricity hourly CV(RMSE), median over buildings",
+   "better": "lower",
+   "mode": "warm_w8",
+   "unit_set": "exam buildings, good forecast-year hours"
+  },
+  {
+   "id": "warm_w2_hourly",
+   "metric": "electricity hourly CV(RMSE), median over buildings",
+   "better": "lower",
+   "mode": "warm_w2",
+   "unit_set": "exam buildings, good forecast-year hours"
+  },
+  {
+   "id": "cold_daily",
+   "metric": "electricity daily CV(RMSE), median over buildings",
+   "better": "lower",
+   "mode": "cold",
+   "unit_set": "exam buildings, good forecast-year hours"
+  },
+  {
+   "id": "cold_monthly",
+   "metric": "electricity monthly CV(RMSE), median over buildings",
+   "better": "lower",
+   "mode": "cold",
+   "unit_set": "exam buildings, good forecast-year hours"
+  },
+  {
+   "id": "warm_year_daily",
+   "metric": "electricity daily CV(RMSE), median over buildings",
+   "better": "lower",
+   "mode": "warm_year",
+   "unit_set": "exam buildings, good forecast-year hours"
+  },
+  {
+   "id": "warm_year_monthly",
+   "metric": "electricity monthly CV(RMSE), median over buildings",
+   "better": "lower",
+   "mode": "warm_year",
+   "unit_set": "exam buildings, good forecast-year hours"
+  }
+ ],
+ "metric_notes": "ASHRAE G14 CV(RMSE); LoadCast and dev guesses p = 0, fitted baselines n - p. NMBE and 90 % coverage reported without verdict. Daily and monthly rows on totals of good hours.",
+ "model_input": "released loadcast_weights.npz with its shipped widening, no refit on these data; a round-2 release is scored the same way with its own weights",
+ "baselines": [
+  {
+   "name": "dumb dev median-intensity x median time-of-week shape (BDG2 dev, per use, electricity)",
+   "kind": "dumb",
+   "rows": [
+    "cold_*",
+    "warm_w8_hourly",
+    "warm_w2_hourly"
+   ]
+  },
+  {
+   "name": "dev-calibrated BuildingSim twin (spec from I-BLEND metadata only; dev knobs and dev median a, b)",
+   "kind": "physics",
+   "rows": [
+    "cold_*",
+    "warm_w8_hourly",
+    "warm_w2_hourly"
+   ],
+   "note": "only if the integrity-pass twin builder accepts a non-BDG2 spec; otherwise the row says not run"
+  },
+  {
+   "name": "dev TOWT-shape guess (dev median intensity x median dev TOWT shape)",
+   "kind": "classical",
+   "rows": [
+    "cold_*",
+    "warm_w8_hourly",
+    "warm_w2_hourly"
+   ]
+  },
+  {
+   "name": "TOWT fitted on the history year (BuildingData code)",
+   "kind": "classical",
+   "rows": [
+    "warm_year_*"
+   ]
+  },
+  {
+   "name": "change-point model fitted on the history year (BuildingData G14 code; daily / monthly change-point models for the daily / monthly rows)",
+   "kind": "classical",
+   "rows": [
+    "warm_year_*"
+   ]
+  },
+  {
+   "name": "LoadCast's ridge TOWT on the same history (towt_lc, the network's anchor)",
+   "kind": "classical",
+   "rows": [
+    "warm_*"
+   ]
+  }
+ ],
+ "interval": {
+  "method": "95 % percentile bootstrap over exam buildings, paired",
+  "resamples": 2000,
+  "seed": 20261117,
+  "statistic": "median(LoadCast) minus median(best baseline) on the same resample (best = lowest median on the full exam row)",
+  "verdict": "win if the interval is below zero, loss if above, tie if it spans zero; n stated"
+ },
+ "scored_once_for": [
+  "LoadCast v1.0",
+  "any round-2 release"
+ ],
+ "split_sha256": "0674542c49ef5642234acc4b48555649901220fdaf24816afb53867e9d6de2d4"
+}
