@@ -1,4 +1,10 @@
-# FaultFinder v1.0: model card
+# FaultFinder v1.1: model card
+
+> **v1.1 (17 Nov 2026)** = v1.0's network, frozen, plus 47 input rows that compare the day with the same unit's last
+> 1-3 logged days (r8, below). Without reference days it gives v1.0's log-odds; P(fault) differs only by the dev
+> temperature (4.2 instead of 4.3). **v1.1 raises false alarms on days with a reference (seen exam: AHU 33 → 56 %).**
+> The sections from "Channel mapping" to "Integrity pass" describe v1.0 and keep its exam rows for comparison; v1.1's
+> seen rows are in "Round 2" and in `model.yaml`.
 
 ## What it does
 Reads one local day of an air handler's (AHU) or rooftop unit's (RTU) building-automation trend log and returns:
@@ -233,7 +239,7 @@ filter 50 % (2), condenser fouling 0 % (2), hc fouling 0 % (2), return-fan failu
 50 % (2), CHW pressure sensor 100 % (2), OAT sensor bias 50 % (2), supply duct leak 0 % (2), reverse-acting cc valve,
 EA damper leak and infiltration 100 % (1 each). Healthy days: 35 % flagged.
 
-## Round 2 rungs (17 Nov 2026, not released)
+## Round 2 rungs (17 Nov 2026): r7 and r7b not kept, r8 released as v1.1
 
 Plan fixed in NOTEBOOK.md before bank v5 was built; record in `training/ratchet_r7.json`. Same rule as the ladder,
 judged on a new frozen set v5 (BuildingSim 1.0.1 phase2 wrappers, unit habits fixed per 12-day window, 9,145 samples).
@@ -244,19 +250,47 @@ judged on a new frozen set v5 (BuildingSim 1.0.1 phase2 wrappers, unit habits fi
 | r7b: Platt map on dev instead of T = 4.3 | 0.561 | 0.71 | 1 (leave-one-out) | rejected (skill unchanged by construction) |
 | r7_context: + the unit's last 1-3 days, 3-seed mean | 0.558 | 0.66 | 3-6 by seed | rejected (not > 0.571) |
 | control: r6's network retrained on bank v5 | 0.554 | 0.68 | 6 | information |
+| **r8: v1.0 frozen + reference rows (zero-initialised), 2-seed mean** | **0.572** | 0.71 | 4 | **released as v1.1** (margin +0.0118) |
 
 Reference days help r7 on simulated days that have them (0.563 vs 0.537 with them zeroed), but r7's single-day
 accuracy is below v1.0's. Platt on 20 dev days cuts false alarms but also 2 of 6 detections; its leave-one-out Brier
-(0.258) is worse than the temperature's (0.246). v1.0 stays. The fresh exam was not scored.
+(0.258) is worse than the temperature's (0.246). The fresh exam was not scored.
+
+r8 keeps v1.0's 160,103 weights frozen and trains only the 15,040 first-layer weights of the new rows (AdamW, lr 1e-3
+cosine, 3 epochs, bank v5). Single-day mode matches v1.0 to 1.9e-6; numpy matches torch to 3.8e-6. Seed 1 is v1.1,
+with the widen-only temperature re-fitted on the dev days and their references: T = 4.2. Only 2 of the 20 dev days
+have a reference, so the dev gate could not test the new rows. The release rests on simulation.
+
+**v1.1 on the seen exam (re-scored after the release decision; nothing chosen from it).** References: the same unit's
+exam days from the previous 7 days (most recent 3, labels unread); 153 of 217 days have one. Same baselines and
+interval rule as the integrity pass.
+
+| Row (seen) | v1.0 | v1.1 | v1.1 minus best baseline, 95 % CI | verdict v1.0 → v1.1 |
+|---|---|---|---|---|
+| All units AUC | 0.77 | 0.76 | +0.07 [−0.01, +0.14] | tie → tie |
+| AHU AUC | 0.78 | 0.78 | +0.09 [−0.00, +0.17] | tie → tie |
+| AHU balanced accuracy | 0.70 | 0.65 | −0.03 [−0.11, +0.06] | tie → tie |
+| AHU false alarms at P = 0.5 | 33 % | 56 % | +54 points [+44, +64] | loss → loss |
+| AHU recall at P = 0.5 | 73 % | 86 % | +34 [+22, +46] | win → win |
+| RTU AUC / balanced accuracy | 0.65 / 0.47 | 0.72 / 0.53 | +0.00 [−0.40, +0.44] / −0.18 [−0.55, +0.22] | tie / loss → tie / tie |
+| Iowa ERS AUC / balanced accuracy | 0.73 / 0.65 | 0.66 / 0.55 | −0.07 [−0.20, +0.06] / −0.14 [−0.26, −0.02] | tie / tie → tie / loss |
+| Iowa ERS false alarms | 27 % | 67 % | +67 points [+54, +80] | loss → loss |
+| FLEXLAB AUC | 0.93 | 0.97 | +0.23 [+0.02, +0.48] | tie → win |
+| Nesbitt AUC / false alarms | 0.78 / 40 % | 0.79 / 44 % | +0.08 [−0.03, +0.20] / +42 [+28, +56] | tie / loss → tie / loss |
+| Diagnosis top-1 / top-3 | 20 / 48 % | 18 / 50 % | −3 [−18, +11] / −5 [−21, +11] | tie → tie |
+| ECE / Brier (info) | 0.12 / 0.216 | 0.14 / 0.220 | | |
+
+Cause: on real days with a reference the new rows add a near-constant +0.1 to +0.7 to the detection log-odds (ERS
+healthy days +0.71 on average, faulty +0.45). That is a sim-to-real offset the simulated training could not see.
 
 ## Limits
 1. Diagnosis on real data is about as good as guessing the commonest fault; use the top 3 as a checklist.
-2. 33 % false alarms on healthy AHU days at P = 0.5 (rules: 2 %). On ranking (AUC) and balanced accuracy it is not
+2. 33 % false alarms on healthy AHU days at P = 0.5 (rules: 2 %); v1.1 with reference days 56 % (seen exam). On ranking (AUC) and balanced accuracy it is not
    distinguishable from APAR rules tuned on the same 20 dev days (integrity pass).
 3. Probabilities squashed toward 0.5 by a temperature fitted on 20 days (ranking unaffected).
 4. RTU: worse than a one-line rule on 17 days.
-5. One day at a time; no comparison with the unit's own history (whether false alarms are unit habits is not
-   established on the dev days). Single-zone simulator with ideal controls, no exhaust damper, return fan or duct
+5. History is at most the unit's last 3 days within a week (v1.1), learned on simulated days only; on real days it acts
+   mostly as an upward offset (limit 2). Whether false alarms are unit habits is not established on the dev days. Single-zone simulator with ideal controls, no exhaust damper, return fan or duct
    model.
 6. Small exam: 217 days, 5 facilities; 95 % intervals on model minus baseline are about ±0.09 AUC (AHU) and ±0.4
    (RTU).
@@ -282,6 +316,9 @@ and their sources:
 | `examples/ornl_rtu_lbnl_rtu_ornl_2018-01-31.csv` | LBNL fault detection data synthesis (ORNL FRP2 RTU) | CC0 1.0 |
 | `examples/nesbitt_NES_20180711_AHU-1.csv` | Drexel Nesbitt Hall (Y. Chen, 2019) via N. Ghalamsiah (2025), figshare doi:10.6084/m9.figshare.29297999.v3 | CC BY 4.0 |
 | `examples/labels.json` | the dataset labels of those four days | as above |
+| `examples/references/lbnl_rtu_ornl_2018-01-27.csv`, `..._2018-01-28.csv` (v1.1) | LBNL synthesis (ORNL FRP2 RTU): the RTU example's earlier exam days, labels not shipped | CC0 1.0 |
+| `examples/references/NES_20180709_AHU-1.csv`, `NES_20180710_AHU-1.csv` (v1.1) | Drexel Nesbitt Hall via Ghalamsiah (as above): the Nesbitt example's earlier exam days, labels not shipped | CC BY 4.0 |
+| `site/public/instruments/faultfinder/` reference days (v1.1) | earlier exam days of the instrument's units (the four `examples/references/` files and lab-page exam days) | per day as above |
 | `lab/index.html` | all 217 exam days (ASHRAE RP-1312 ERS and Nesbitt via Ghalamsiah, CC BY 4.0; LBNL synthesis, CC0), rounded to 0.01 degC / 0.001, plus BuildingSim lab days (simulated, with one draw of dev noise) | CC BY 4.0 for the Ghalamsiah days, CC0 for the LBNL days; credits in the page footer |
 | `site/public/instruments/faultfinder/` (the live instrument) | twelve exam days drawn from the four sources (see `web/export_instrument.py`) | per day as above; the instrument shows each day's source |
 

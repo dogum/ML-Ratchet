@@ -1,5 +1,5 @@
 """Export FaultFinder's live instrument for the website: the network in float16, twelve real exam days as raw
-[13, 96] trend-log arrays, and reference outputs for the browser parity test.
+[13, 96] trend-log arrays with their reference days (v1.1), and reference outputs for the browser parity test.
 
     python models/faultfinder/web/export_instrument.py      # writes site/public/instruments/faultfinder/
 
@@ -9,6 +9,11 @@ as the demo reads them, and eight more drawn with seed 20261117 from the 217 exa
 FaultFinder can name and one healthy day. Each day carries its dataset label, the rule baseline's verdict (APAR for
 AHUs, fan-on-while-unoccupied for the RTU, at the dev-tuned threshold, from the page) and its data source and licence.
 No dev day is used. The building platform is not needed.
+
+Reference days (v1.1): for the four example days, examples/references/ (as the demo reads them); for the page days, the
+same dataset and unit's page exam days from the previous 7 days, the most recent 3, by date (labels not read). The
+instrument reads a day with its reference days by default and can switch them off (single-day mode = v1.0's log-odds).
+The controls change only the day being read, never its reference days.
 
 perturb() below is the one definition of what each control does to the input (net.ts mirrors it):
   offset  add a constant (K) to one temperature sensor: a sensor bias
@@ -31,7 +36,7 @@ REPO = os.path.dirname(os.path.dirname(MODEL))
 sys.path.insert(0, MODEL)
 sys.path.insert(0, REPO)
 
-from faultfinder import FaultFinder, RAWC, R, CLASSES, LABELS, featurize, forward, raw_day  # noqa: E402
+from faultfinder import FaultFinder, RAWC, R, CLASSES, LABELS, NF, featurize, forward, raw_day, context  # noqa: E402
 
 from mlratchet.webexport import instrument_dir, roundtrip, write_json, write_pack  # noqa: E402
 
@@ -67,9 +72,13 @@ def perturb(x, nz, p):
     return x
 
 
-def outputs(W, T, x):
-    """Raw network outputs for one day: 19 class logits, 19 parameters, the energy output, then P(fault)."""
-    lo, pa, wa = forward(W, featurize(x)[None].astype(np.float32))
+def outputs(W, T, x, refs=None):
+    """Raw network outputs for one day (refs: its reference raw days, or None for single-day mode): 19 class logits,
+    19 parameters, the energy output, then P(fault)."""
+    f = featurize(x)
+    if W['c1_W'].shape[1] > NF:
+        f = context(f, [featurize(z) for z in (refs or [])][-3:])
+    lo, pa, wa = forward(W, f[None].astype(np.float32))
     f = lo[0, 1:].astype(np.float64)
     m = f.max()
     d = m + np.log(np.exp(f - m).sum()) - float(lo[0, 0])
@@ -94,12 +103,15 @@ def main():
 
     runs = page_runs()
     labels = json.load(open(os.path.join(MODEL, 'examples', 'labels.json')))
-    days = []
+    refsj = json.load(open(os.path.join(MODEL, 'examples', 'references.json')))
+    days, refs = [], {}
     for fn in sorted(labels):
         m = labels[fn]
         r = runs[m['run_id']]
         x = raw_day(pd.read_csv(os.path.join(MODEL, 'examples', fn)))
         days.append((r, x, f'examples/{fn} (release draw, seed 7)'))
+        refs[r['id']] = [(os.path.basename(g)[:-4], raw_day(pd.read_csv(os.path.join(MODEL, 'examples', g))))
+                         for g in refsj.get(fn, [])]
     have = {d[0]['id'] for d in days}
     rng = np.random.default_rng(SEED)
     for src in SOURCES:
@@ -111,6 +123,14 @@ def main():
             x = np.array([[np.nan if v is None else v for v in row] for row in r['x']], np.float32)
             days.append((r, x, f'lab page exam days, seeded draw {SEED} ({kind}, {src})'))
             have.add(r['id'])
+    for r, x, how in days:
+        if r['id'] in refs:
+            continue
+        d0 = pd.Timestamp(r['date'])
+        prev = sorted((q for q in runs.values() if q['ds'] == r['ds'] and q['unit'] == r['unit']
+                       and d0 - pd.Timedelta(days=7) <= pd.Timestamp(q['date']) < d0), key=lambda q: (q['date'], q['id']))
+        refs[r['id']] = [(q['id'], np.array([[np.nan if v is None else v for v in row] for row in q['x']], np.float32))
+                         for q in prev[-3:]]
     order = sorted(range(len(days)), key=lambda i: (SOURCES.index(days[i][0]['src']), days[i][0]['fault'] == 'none', days[i][0]['id']))
     days = [days[i] for i in order]
 
@@ -124,12 +144,18 @@ def main():
         xs[f'x{i}'] = np.asarray(x, np.float32)
         xs[f'n{i}'] = nz
         x32 = xs[f'x{i}']
-        for name, p in variants:
+        rr = refs[r['id']]
+        for j, (_, z) in enumerate(rr):
+            xs[f'r{i}_{j}'] = np.asarray(z, np.float32)
+        rz = [xs[f'r{i}_{j}'] for j in range(len(rr))]
+        for name, p in variants + ([('raw-single', {})] if rr else []):
+            use = name != 'raw-single'
             xp = perturb(x32, nz, p)
-            o = outputs(Wr, T, xp)
-            cases.append({'example': i, 'variant': name, 'p': p, 'outputs': o})
-            f16.append(abs(o[-1] - outputs(W, T, xp)[-1]))
-        py = ff.predict_raw(np.asarray(x32, np.float64)[None])[0]
+            o = outputs(Wr, T, xp, rz if use else None)
+            cases.append({'example': i, 'variant': name, 'p': p, 'refs': bool(use and rr), 'outputs': o})
+            f16.append(abs(o[-1] - outputs(W, T, xp, rz if use else None)[-1]))
+        py = ff.predict_raw(np.asarray(x32, np.float64)[None], [[np.asarray(z, np.float64) for z in rz]])[0]
+        py1 = ff.predict_raw(np.asarray(x32, np.float64)[None])[0]
         diag = r['diag']
         meta.append({
             'id': r['id'], 'source': r['src'], 'facility': FACILITY[r['src']], 'dataset': r['ds'], 'unit': r['unit'],
@@ -137,17 +163,19 @@ def main():
             'diag_class': None if diag in ('none', 'other') else diag, 'simulable': diag != 'other',
             'rule': {'name': r['apar']['rule'], 'flag': r['apar']['flag'], 'score': r['apar']['score'],
                      'threshold': r['apar']['thr'], 'rules_fired': r['apar']['rules']},
-            'page_p': r['py']['p'], 'python_p': py['p_fault'], 'credit': CREDIT[r['ds']], 'drawn': how,
+            'page_p': r['py']['p'], 'python_p': py['p_fault'], 'python_p_single': py1['p_fault'],
+            'refs': [{'id': rid, 'date': runs[rid]['date'] if rid in runs else None} for rid, _ in rr], 'n_refs': len(rr),
+            'credit': CREDIT[r['ds']], 'drawn': how,
             'has': [bool(np.isfinite(x32[k]).any()) for k in range(len(RAWC))],
         })
     write_pack(OUT / 'examples', xs, dtype='f32', meta=meta)
     write_json(OUT / 'reference.json', {'cases': cases, 'tolerance': 2e-3})
     tot = sum(os.path.getsize(OUT / f) for f in os.listdir(OUT))
-    dp = max(abs(m['python_p'] - m['page_p']) for m in meta)
+    dp = max(abs(m['python_p_single'] - m['page_p']) for m in meta)
     print(f'wrote {OUT}: {len(days)} days, {len(cases)} parity cases, {tot / 1e6:.2f} MB total; '
-          f'float16 vs float32 weights: max P(fault) difference {max(f16):.1e}; Python vs the page on these days: {dp:.1e}')
+          f'float16 vs float32 weights: max P(fault) difference {max(f16):.1e}; Python single-day vs the page (v1.0) on these days: {dp:.1e}')
     for m in meta:
-        print(f"  {m['id']:34s} {m['fault']:24s} P {m['python_p']:.3f}  rule {'flag' if m['rule']['flag'] else 'ok'}  ({m['drawn']})")
+        print(f"  {m['id']:34s} {m['fault']:24s} P {m['python_p']:.3f} (single-day {m['python_p_single']:.3f}, {m['n_refs']} refs)  rule {'flag' if m['rule']['flag'] else 'ok'}  ({m['drawn']})")
 
 
 if __name__ == '__main__':

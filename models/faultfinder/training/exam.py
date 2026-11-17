@@ -12,6 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import (ROOT, CLASSES, CI, EXAM2CLASS, load_real_runs, season_of, severity_bucket)  # noqa: E402
 import evaluate as ev  # noqa: E402
 
+EXAM_DIR = f"{ROOT}/exam{os.environ.get('FF_TAG', '')}"     # FF_TAG=_v11 keeps the v1.0 re-score's files
 SOURCE = {'ers_rp1312': 'Iowa ERS (lab)', 'lbnl_mzvav2_ers_exp': 'Iowa ERS (lab)',
           'lbnl_szcav_flexlab': 'LBNL FLEXLAB (lab)', 'lbnl_szvav_flexlab': 'LBNL FLEXLAB (lab)',
           'lbnl_rtu_ornl': 'ORNL RTU (lab)', 'nesbitt': 'Nesbitt Hall (real building)'}
@@ -80,18 +81,30 @@ def ers_energy_proxy(run_ids):
 
 
 def main(name, split='exam'):
-    os.makedirs(f'{ROOT}/exam', exist_ok=True)
+    os.makedirs(EXAM_DIR, exist_ok=True)
     if name.endswith('.npz'):
         model = ev.NpzModel(name)
     else:
         from ratchet import load_model
         model = load_model(name)
+    ctx = isinstance(model, ev.NpzModel) and model.W['c1_W'].shape[1] > 35     # v1.1+: reference days (r8)
     dev = load_real_runs('dev')
-    lo_d, _, _ = ev.run_predict(model, dev)
+    if ctx:
+        import r7
+        dev_r = r7.runs_with_refs(dev)
+        lo_d, _, _ = ev.predict(model, r7.dev_inputs(dev_r))
+    else:
+        lo_d, _, _ = ev.run_predict(model, dev)
     t_dev = np.array([r.fault_type != 'none' for r, _ in dev], float)
     T = fit_temperature(ev.det_logit(lo_d), t_dev)
     runs = load_real_runs(split)
-    lo, pa, wa = ev.run_predict(model, runs)
+    refs = {}
+    if ctx:
+        runs_r = r7.runs_with_refs(runs)
+        lo, pa, wa = ev.predict(model, r7.dev_inputs(runs_r))
+        refs = {rr.run_id: rid for rr, _, _, rid in runs_r}
+    else:
+        lo, pa, wa = ev.run_predict(model, runs)
     d = ev.det_logit(lo)
     p = 1 / (1 + np.exp(-d / T))
     pr = ev.softmax(lo[:, 1:], T)          # same widen-only dev temperature on the diagnosis logits
@@ -105,9 +118,9 @@ def main(name, split='exam'):
                          diag_class=cls if cls is not None else ('other' if r.fault_type != 'none' else 'none'),
                          d=float(d[i]), p=float(p[i]), pred1=CLASSES[top[0]], pred3=[CLASSES[k] for k in top],
                          par_pred=float(pa[i, top[0]]), conf1=float(pr[i, top[0] - 1]), probs=[round(float(q), 4) for q in pr[i]], waste_pred=float(wa[i]), group=r.group,
-                         rtu=r.unit == 'RTU'))
+                         rtu=r.unit == 'RTU', n_ref=len(refs.get(r.run_id, [])), refs=list(refs.get(r.run_id, []))))
     df = pd.DataFrame(rows)
-    df.to_parquet(f'{ROOT}/exam/{split}_runs.parquet', index=False)
+    df.to_parquet(f'{EXAM_DIR}/{split}_runs.parquet', index=False)
     t = df.is_fault.to_numpy()
     res = dict(model=name, temperature_dev=T, n=len(df))
     res['all'] = metrics(df)
@@ -186,7 +199,7 @@ def main(name, split='exam'):
         res['ers_energy_pairs'] = dict(n=len(pp), spearman_pred_vs_real=float(spearmanr(pp.pred_A - pp.pred_B, pp.real_extra)[0]),
                                        median_real_extra=float(pp.real_extra.median()),
                                        median_pred=float((pp.pred_A - pp.pred_B).median()), pairs=pairs)
-    json.dump(res, open(f'{ROOT}/exam/{split}.json', 'w'), indent=1, default=float)
+    json.dump(res, open(f'{EXAM_DIR}/{split}.json', 'w'), indent=1, default=float)
     print(json.dumps({k: v for k, v in res.items() if k in ('all', 'ahu', 'rtu', 'by_source', 'diagnosis', 'calibration', 'temperature_dev')},
                      indent=1, default=float)[:6000])
     return res

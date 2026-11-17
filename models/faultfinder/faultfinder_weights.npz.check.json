@@ -1,1 +1,8 @@
-{"model": "r6_wide", "max_abs_diff": 9.5367431640625e-07}
+{
+ "model": "r8_s1: r6 (v1.0) + 47 reference input rows (training/train8.py, seed 1); only the new first-layer weights trained",
+ "max_abs_diff": 3.814697265625e-06,
+ "single_day_vs_v1_0_logits": 1.9073486328125e-06,
+ "old_weights_unchanged": true,
+ "temperature": 4.2,
+ "temperature_note": "widen-only, fitted on the 20 dev days with their reference days"
+}

@@ -21,7 +21,9 @@ import evaluate as ev  # noqa: E402
 BANKS = f'{ROOT}/data/banks'
 OUT = f'{ROOT}/r7'
 FROZEN5 = f'{ROOT}/data/frozen/val_v5.npz'
-WEIGHTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'faultfinder_weights.npz')
+# r6 = the v1.0 release weights. Since v1.1 (r8) the model folder holds 82-row weights, so r6 is read from a copy:
+#   git show 7e3f51d:models/faultfinder/faultfinder_weights.npz > WORK/models/r6_v1_0.npz
+WEIGHTS = f'{ROOT}/models/r6_v1_0.npz'
 EFF_MIN = 1.0
 P_NONE = 0.3
 FROZEN_SEED = 505
@@ -99,18 +101,23 @@ def build_frozen(n_max=12000):
 
 
 # ------------------------------------------------------------------ dev days with causal references
-def dev_with_refs(max_gap=7):
-    """[(row, x, [ref x ...], [ref run_id ...])]: references are the same dataset and unit's earlier dev days
-    within max_gap days, most recent 3, chosen by date only (labels are not read)."""
-    runs = load_real_runs('dev')
+def runs_with_refs(runs, max_gap=7):
+    """runs [(row, x)] of one split -> [(row, x, [ref x ...], [ref run_id ...])]: references are the same dataset and
+    unit's days of the same list with an earlier date within max_gap days, the most recent 3, chosen by date only
+    (labels are not read)."""
     meta = pd.DataFrame([dict(i=i, ds=r.dataset, unit=r.unit, date=pd.Timestamp(r.date)) for i, (r, _) in enumerate(runs)])
     out = []
     for i, (r, x) in enumerate(runs):
         m = meta[(meta.ds == r.dataset) & (meta.unit == r.unit) & (meta.date < pd.Timestamp(r.date)) &
-                 (meta.date >= pd.Timestamp(r.date) - pd.Timedelta(days=max_gap))].sort_values('date')
+                 (meta.date >= pd.Timestamp(r.date) - pd.Timedelta(days=max_gap))].sort_values(['date', 'i'])
         sel = m.i.to_numpy()[-MAX_REF:]
         out.append((r, x, [runs[j][1] for j in sel], [runs[j][0].run_id for j in sel]))
     return out
+
+
+def dev_with_refs(max_gap=7):
+    """The 20 dev days with their causal references (runs_with_refs on the dev split)."""
+    return runs_with_refs(load_real_runs('dev'), max_gap)
 
 
 def dev_inputs(dev, ctx=True):
@@ -125,6 +132,9 @@ def dev_inputs(dev, ctx=True):
 def load_rung(name):
     if name == 'r6':
         return ev.NpzModel(WEIGHTS), 35
+    if os.path.exists(f'{ROOT}/models/{name}.npz'):          # numpy-format rungs (r8)
+        m = ev.NpzModel(f'{ROOT}/models/{name}.npz')
+        return m, int(m.W['c1_W'].shape[1])
     import torch
     from model import FFNet
     torch.set_num_threads(1)

@@ -464,3 +464,118 @@ varies from 3 to 6 of 11 across seeds of the same rung.
 network without it). A rung that keeps r6's single-day accuracy, for example by fine-tuning r6 with the extra rows
 zero-initialised, would test it more fairly. That is a new plan, not run here. (2) Calibration needs its own rule
 and a larger dev set: 20 days cannot tell a one-parameter map from a two-parameter one.
+
+## 2026-11-17 — r8 plan (r6 + reference rows, zero-initialised), written before it trains
+
+The follow-up the r7 results proposed. r7 gained from reference days but lost single-day accuracy, so r8 starts from
+r6 itself. Same banks (train v5, val v5), same frozen v5 (seed 505, not rebuilt), same 82-row input (`context.py`),
+same reference rule (30 % none, else 1-3 earlier days of the same run within 7 days), same dev references. The banks
+were built with BuildingSim 1.0.1; the platform's later 1.2.0 commit does not touch them.
+
+**Start.** The r6 torch checkpoint is not in the repository, so r8 starts from the released numpy weights
+(`faultfinder_weights.npz`, BatchNorm folded into the convolutions). A torch copy of that network: conv + ReLU
+(no BatchNorm), the same pools, dense 128 + ReLU + dropout 0.2, the three heads. The first convolution is widened from
+35 to 82 input rows; the 47 new rows' weights (64 × 47 × 5 = 15,040) start at zero. At step 0 the output equals r6's
+for every input (checked before training: max difference vs `faultfinder.forward` on frozen v5 inputs).
+
+**What trains.** Only the 15,040 new first-layer weights. Every r6 weight and bias stays frozen. With the extra rows
+zero (no reference), the output is r6's at every step, so single-day mode cannot change. Days with no reference give
+no gradient; the rung learns only from days that have one.
+
+**Optimiser and steps (fixed).** AdamW, learning rate 1e-3 with cosine decay to 0, weight decay 0, batch 256, 3 epochs
+over the 29,283 training samples (115 steps per epoch, 345 steps). Loss as r6's training (class cross-entropy with
+label smoothing 0.02, parameter and waste terms at weight 0.5); dropout stays on as in training. Each epoch redraws
+noise and references as in r7.
+
+**Seeds.** 1 and 2 (they set noise, references, dropout and batch order; the start is the same). If the margin (mean
+r8 skill - r6 skill) is under twice the seed spread, seed 3 runs and the decision uses the 3-seed mean. If kept,
+seed 1 is released, fixed now.
+
+**Rule (unchanged).** Keep if the seed-mean skill on frozen v5 is more than 0.01 above r6's 0.561 and the seed-mean
+dev AUC is at least 0.657. Dev false alarms at P = 0.5 reported. Reported too: skill on frozen days with and without
+a reference (the "without" rows must equal r6's).
+
+**If kept (v1.1).** Export the 82-row weights (MIT), numpy == torch check; `faultfinder.py` takes optional reference
+days (none: single-day mode, r6's numbers); calibration: the widen-only temperature re-fitted on the 20 dev days with
+their references, as v1.0; demo and golden; the seen exam re-scored with references (same dataset and unit, earlier
+exam dates within 7 days, most recent 3, labels unread) through `integrity.py`'s baselines and intervals, labelled
+seen; instrument exporter and `net.ts` updated with parity. The fresh exam is not scored here.
+
+## 2026-11-17 — r8 results: kept, released as v1.1
+
+Everything followed the r8 plan above; nothing was changed after a result was seen. The fresh exam was not scored.
+
+**Checks.** At step 0 the 82-row torch network matched r6's numpy forward on 2,000 frozen inputs to 3.8e-6. After
+training, the exported numpy weights match torch to 3.8e-6 (seed 1) and 5.2e-6 (seed 2), every old weight is
+bit-identical to r6's, and single-day mode (extra rows zero) matches r6 to 1.9e-6. Each seed took about 4 min on one
+process (3 epochs).
+
+| Rung | skill v5 | AUC | diag | skill with ref / without | dev AUC | dev false alarms |
+|---|---|---|---|---|---|---|
+| r6 (incumbent) | 0.561 | 0.743 | 0.378 | 0.560 / 0.561 | 0.707 | 4 of 11 |
+| r8 seed 1 | 0.572 | 0.758 | 0.386 | 0.573 / 0.561 | 0.707 | 4 of 11 |
+| r8 seed 2 | 0.573 | 0.761 | 0.385 | 0.573 / 0.561 | 0.707 | 4 of 11 |
+| **r8, 2-seed mean** | **0.572** | 0.759 | 0.385 | | 0.707 | 4 of 11 |
+
+**Decision: kept.** Mean skill 0.5724 against 0.5605: margin +0.0118, more than 0.01. The seed spread is 0.0006, so
+twice the spread (0.0011) is below the margin and seed 3 did not run. Dev AUC 0.707 passes the 0.657 gate. On dev only
+the two Nesbitt 3 Aug days have a reference. AHU-1 (faulty) moved from log-odds -0.63 to -0.51 and stays below the
+alarm line; AHU-2 (faulty) moved from 2.89 to 3.60. The other 18 dev days are r6's exactly, so dev AUC and false alarms
+are unchanged. The margin clears the bar by 0.0018: this is a small gain, and it comes only from days with a reference.
+
+**Release v1.1 = r8 seed 1** (fixed in the plan). The calibration temperature, re-fitted widen-only on the 20 dev days
+with their references, is T = 4.2 (v1.0: 4.3). Without reference days v1.1 gives v1.0's log-odds; P(fault) differs
+only through T.
+
+## 2026-11-17 — v1.1 release: the seen exam re-scored after the decision
+
+r8 passed the rule fixed before it trained: frozen v5 +0.0118 on a 2-seed mean, dev AUC unchanged. The dev gate cannot
+test the new input, because only 2 of 20 dev days have a reference, so the release rests on simulation evidence.
+The seen exam was re-scored after the decision (`FF_TAG=_v11 python exam.py ../faultfinder_weights.npz`, then
+`FF_TAG=_v11 python integrity.py`; outputs in `work/exam_v11/` and `work/integrity_v11/`). Each exam day's
+references are the same dataset and unit's exam days from the previous 7 days, the most recent 3, chosen by date with
+labels unread; 153 of 217 days have one (ERS 86 of 92, FLEXLAB 21 of 23, ORNL 12 of 17, Nesbitt 30 of 76, MZVAV-2 4 of 9).
+The 64 days without a reference reproduce v1.0's log-odds to 1e-6. Baselines and intervals are the integrity pass's,
+unchanged (same days, same dev-tuned rules, 2,000 resamples, seed 20261117).
+
+| Seen row | v1.0 | v1.1 | v1.1 minus best baseline, 95 % CI (unit-days) | verdict v1.0 → v1.1 |
+|---|---|---|---|---|
+| All units AUC | 0.77 | 0.76 | +0.07 [−0.01, +0.14] | tie → tie |
+| AHU AUC | 0.78 | 0.78 | +0.09 [−0.00, +0.17] | tie → tie |
+| AHU balanced accuracy | 0.70 | 0.65 | −0.03 [−0.11, +0.06] | tie → tie |
+| AHU false alarms at P = 0.5 | 33 % | 56 % | +54 points [+44, +64] | loss → loss |
+| AHU recall at P = 0.5 | 73 % | 86 % | +34 [+22, +46] | win → win |
+| RTU AUC | 0.65 | 0.72 | +0.00 [−0.40, +0.44] | tie → tie |
+| RTU balanced accuracy | 0.47 | 0.53 | −0.18 [−0.55, +0.22] | loss → tie |
+| Iowa ERS AUC | 0.73 | 0.66 | −0.07 [−0.20, +0.06] | tie → tie |
+| Iowa ERS balanced accuracy | 0.65 | 0.55 | −0.14 [−0.26, −0.02] | tie → loss |
+| Iowa ERS false alarms | 27 % | 67 % | +67 points [+54, +80] | loss → loss |
+| FLEXLAB AUC | 0.93 | 0.97 | +0.23 [+0.02, +0.48] | tie → win |
+| Nesbitt AUC | 0.78 | 0.79 | +0.08 [−0.03, +0.20] | tie → tie |
+| Diagnosis top-1 / top-3 | 20 / 48 % | 18 / 50 % | −3 [−18, +11] / −5 [−21, +11] | tie → tie |
+
+Every row is in `model.yaml` (v1.0's value in each note) and v1.0's rows stay in `MODEL_CARD.md`.
+
+**Cause.** On the 153 days with a reference, the new rows shift the detection log-odds up by a near-constant amount:
+mean +0.71 on healthy ERS days and +0.45 on faulty ones, +0.11 / +0.30 at Nesbitt, +0.25 to +0.55 at FLEXLAB. The ORNL
+RTU goes the other way, -0.37 / -0.23. 25 healthy days crossed from below the alarm line to above it, and 12 faulty
+days did too. On simulated days the same rows add +0.012 skill. On real days they act mostly as an offset: a sim-to-real
+gap in what "today minus the unit's recent median" looks like. The 20 dev days could not show it.
+
+**The decision was not changed because of it.** The seen exam does not choose. The fresh Nehasil exam (frozen in
+3d9f949) will judge v1.0 against v1.1 once, after all decisions. A dev-side fix (calibrate the reference-row shift
+on dev days that have references, once more exist) is in `next`. It is not done here.
+
+Twin test on dev with v1.1 (`integrity_v11/integrity.json`): correlation of the network's correction with what the
+truth needed +0.09 (v1.0 +0.07), network right on 13 of 20 days, as v1.0.
+
+**Release files (v1.1).** `faultfinder_weights.npz` = r8 seed 1 with T = 4.2 (MIT, as the code; the v1.0 weights are in
+git at 7e3f51d, and `training/r7.py` reads them from `work/models/r6_v1_0.npz`). The `.check.json` records numpy vs
+torch 3.8e-6 and single-day vs v1.0 1.9e-6. `faultfinder.py` takes optional `ref_days`: `read_day(df, ref_days=[...])`
+or `predict_raw(xs, refs)`. `pipeline.py` takes `--ref`. The demo reads the RTU and Nesbitt examples once alone and
+once with their earlier exam days. Those four files (`examples/references/`, from `training/examples_refs.py`) carry no
+labels. Golden regenerated: the single-day P values move only through T, and two "with earlier days" blocks were
+added. The instrument exporter adds each day's reference days (examples/references, or the lab page's exam days of
+the previous 7 days); 9 of 12 days have some. `net.ts` ports `context()`; the UI has an "Earlier days" switch
+(off = v1.0). Parity: 117 cases including single-day variants, worst relative difference 1.3e-6. The lab page
+(`lab/index.html`) stays v1.0.

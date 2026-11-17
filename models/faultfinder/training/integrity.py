@@ -26,7 +26,8 @@ from features import featurize  # noqa: E402
 import evaluate as ev  # noqa: E402
 import buildingdata as bd  # noqa: E402
 
-OUT = f'{ROOT}/integrity'
+TAG = os.environ.get('FF_TAG', '')                         # FF_TAG=_v11: v1.1 re-score (exam_v11 -> integrity_v11)
+OUT = f'{ROOT}/integrity{TAG}'
 SEED, NB = 20261117, 2000
 WEIGHTS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'faultfinder_weights.npz')
 
@@ -288,7 +289,7 @@ def main():
     S.to_parquet(f'{OUT}/baseline_scores.parquet', index=False)
 
     # ---- 2. exam rows
-    E = pd.read_parquet(f'{ROOT}/exam/exam_runs.parquet')
+    E = pd.read_parquet(f'{ROOT}/exam{TAG}/exam_runs.parquet')
     E = E.merge(S, on=['run_id'], how='left', suffixes=('', '_b'))
     t = E.is_fault.to_numpy()
     rtu = E.rtu.to_numpy()
@@ -399,7 +400,11 @@ def logistic_fit(x, y, l2=1.0):
 
 def net_dev(dev):
     m = ev.NpzModel(WEIGHTS)
-    lo, _, _ = ev.run_predict(m, dev)
+    if m.W['c1_W'].shape[1] > 35:                   # v1.1+: the dev days with their reference days (r8)
+        import r7
+        lo, _, _ = ev.predict(m, r7.dev_inputs(r7.runs_with_refs(dev)))
+    else:
+        lo, _, _ = ev.run_predict(m, dev)
     d = ev.det_logit(lo)
     t = np.array([r.fault_type != 'none' for r, _ in dev], float)
     import exam

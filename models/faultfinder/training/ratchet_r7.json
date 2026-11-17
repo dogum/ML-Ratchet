@@ -36,9 +36,22 @@
   "r6v5_control": {
    "decision": "information only",
    "why": "separates the new bank from the reference days"
+  },
+  "r8": {
+   "decision": "released as v1.1 (seed 1)",
+   "skill_mean": 0.5724,
+   "skill_seeds": [
+    0.5721,
+    0.5727
+   ],
+   "margin": 0.0118,
+   "seed_spread": 0.0006,
+   "dev_auc_mean": 0.7071,
+   "temperature_dev": 4.2,
+   "plan": "NOTEBOOK.md 2026-11-17 \"r8 plan (r6 + reference rows, zero-initialised), written before it trains\""
   }
  },
- "released": "nothing; v1.0 stays",
+ "released": "v1.1 = r8 seed 1 (r7_context, r7b not kept)",
  "scores": {
   "r6": {
    "nf": 35,
@@ -486,6 +499,184 @@
       "NES_20170729_AHU-2_base"
      ]
     }
+   }
+  },
+  "r8_s1": {
+   "nf": 82,
+   "v5": {
+    "skill": 0.5721005201761907,
+    "auc": 0.7580325557851966,
+    "diag_acc": 0.38616848456718494,
+    "recall_2pct": 0.3042469250406127,
+    "waste_mae": 0.2041177600622177
+   },
+   "v5_with_ref": {
+    "skill": 0.5727707070277399,
+    "auc": 0.7521877348421873,
+    "diag_acc": 0.3933536792132926,
+    "recall_2pct": 0.306205493387589,
+    "waste_mae": 0.22748596966266632
+   },
+   "v5_no_ref": {
+    "skill": 0.5608317147613763,
+    "auc": 0.7510751942286349,
+    "diag_acc": 0.37058823529411766,
+    "recall_2pct": 0.29044117647058826,
+    "waste_mae": 0.1641480177640915
+   },
+   "v5_single_day_mode": {
+    "skill": 0.5605486314542378,
+    "auc": 0.7428192401653799,
+    "diag_acc": 0.37827802274309585,
+    "recall_2pct": 0.28776978417266186,
+    "waste_mae": 0.20360568165779114
+   },
+   "v5_with_ref_single_day_mode": {
+    "skill": 0.5598371284191279,
+    "auc": 0.7378499096019047,
+    "diag_acc": 0.3818243472363513,
+    "recall_2pct": 0.28755510342488977,
+    "waste_mae": 0.22667452692985535
+   },
+   "dev": {
+    "dev_auc": 0.7070707070707071,
+    "dev_fa": 4,
+    "dev_n_healthy": 11,
+    "dev_fpr_at_0p5": 0.36363636363636365,
+    "dev_tpr_at_0p5": 0.6666666666666666,
+    "dev_n_with_ref": 2,
+    "dev_d": {
+     "ERS_20070824_AHU-A": 0.258,
+     "ERS_20070824_AHU-B": 0.025,
+     "ERS_20080510_AHU-A": -0.216,
+     "ERS_20080510_AHU-B": 0.021,
+     "ERS_20080203_AHU-A": -0.407,
+     "ERS_20080203_AHU-B": -0.218,
+     "lbnl_mzvav2_ers_exp_2009-05-04": -0.412,
+     "lbnl_szcav_flexlab_2017-03-25": 9.729,
+     "lbnl_szvav_flexlab_2017-09-12": 11.374,
+     "lbnl_szvav_flexlab_2017-09-21": -0.323,
+     "lbnl_rtu_ornl_2017-12-07": 0.148,
+     "lbnl_rtu_ornl_2018-02-04": 0.655,
+     "NES_20170803_AHU-1": -0.513,
+     "NES_20170803_AHU-2": 3.595,
+     "NES_20170811_AHU-1": -0.868,
+     "NES_20170811_AHU-2": 4.826,
+     "NES_20170115_AHU-1_base": -0.198,
+     "NES_20170115_AHU-2_base": -0.068,
+     "NES_20170729_AHU-1_base": -0.929,
+     "NES_20170729_AHU-2_base": 5.619
+    },
+    "dev_refs": {
+     "NES_20170803_AHU-1": [
+      "NES_20170729_AHU-1_base"
+     ],
+     "NES_20170803_AHU-2": [
+      "NES_20170729_AHU-2_base"
+     ]
+    }
+   },
+   "check": {
+    "name": "r8_s1",
+    "seed": 1,
+    "epochs": 3,
+    "lr": 0.001,
+    "bs": 256,
+    "trainable": 15040,
+    "step0_torch82_vs_r6_numpy35": 3.814697265625e-06,
+    "step0_82rows_vs_r6_35rows": 1.9073486328125e-06,
+    "end_torch_vs_numpy": 3.814697265625e-06,
+    "end_single_day_vs_r6": 1.9073486328125e-06,
+    "old_weights_unchanged": true
+   }
+  },
+  "r8_s2": {
+   "nf": 82,
+   "v5": {
+    "skill": 0.572667696308014,
+    "auc": 0.760791414894979,
+    "diag_acc": 0.384543977721049,
+    "recall_2pct": 0.302158273381295,
+    "waste_mae": 0.20437026023864746
+   },
+   "v5_with_ref": {
+    "skill": 0.5733020046195193,
+    "auc": 0.7556240160209986,
+    "diag_acc": 0.39097999321804,
+    "recall_2pct": 0.3068836893862326,
+    "waste_mae": 0.22788605093955994
+   },
+   "v5_no_ref": {
+    "skill": 0.5608317147613763,
+    "auc": 0.7510751942286349,
+    "diag_acc": 0.37058823529411766,
+    "recall_2pct": 0.29044117647058826,
+    "waste_mae": 0.1641480177640915
+   },
+   "v5_single_day_mode": {
+    "skill": 0.5605486314542378,
+    "auc": 0.7428192401653799,
+    "diag_acc": 0.37827802274309585,
+    "recall_2pct": 0.28776978417266186,
+    "waste_mae": 0.20360568165779114
+   },
+   "v5_with_ref_single_day_mode": {
+    "skill": 0.5598371284191279,
+    "auc": 0.7378499096019047,
+    "diag_acc": 0.3818243472363513,
+    "recall_2pct": 0.28755510342488977,
+    "waste_mae": 0.22667452692985535
+   },
+   "dev": {
+    "dev_auc": 0.7070707070707071,
+    "dev_fa": 4,
+    "dev_n_healthy": 11,
+    "dev_fpr_at_0p5": 0.36363636363636365,
+    "dev_tpr_at_0p5": 0.6666666666666666,
+    "dev_n_with_ref": 2,
+    "dev_d": {
+     "ERS_20070824_AHU-A": 0.258,
+     "ERS_20070824_AHU-B": 0.025,
+     "ERS_20080510_AHU-A": -0.216,
+     "ERS_20080510_AHU-B": 0.021,
+     "ERS_20080203_AHU-A": -0.407,
+     "ERS_20080203_AHU-B": -0.218,
+     "lbnl_mzvav2_ers_exp_2009-05-04": -0.412,
+     "lbnl_szcav_flexlab_2017-03-25": 9.729,
+     "lbnl_szvav_flexlab_2017-09-12": 11.374,
+     "lbnl_szvav_flexlab_2017-09-21": -0.323,
+     "lbnl_rtu_ornl_2017-12-07": 0.148,
+     "lbnl_rtu_ornl_2018-02-04": 0.655,
+     "NES_20170803_AHU-1": -0.491,
+     "NES_20170803_AHU-2": 3.722,
+     "NES_20170811_AHU-1": -0.868,
+     "NES_20170811_AHU-2": 4.826,
+     "NES_20170115_AHU-1_base": -0.198,
+     "NES_20170115_AHU-2_base": -0.068,
+     "NES_20170729_AHU-1_base": -0.929,
+     "NES_20170729_AHU-2_base": 5.619
+    },
+    "dev_refs": {
+     "NES_20170803_AHU-1": [
+      "NES_20170729_AHU-1_base"
+     ],
+     "NES_20170803_AHU-2": [
+      "NES_20170729_AHU-2_base"
+     ]
+    }
+   },
+   "check": {
+    "name": "r8_s2",
+    "seed": 2,
+    "epochs": 3,
+    "lr": 0.001,
+    "bs": 256,
+    "trainable": 15040,
+    "step0_torch82_vs_r6_numpy35": 3.814697265625e-06,
+    "step0_82rows_vs_r6_35rows": 1.9073486328125e-06,
+    "end_torch_vs_numpy": 5.245208740234375e-06,
+    "end_single_day_vs_r6": 1.9073486328125e-06,
+    "old_weights_unchanged": true
    }
   }
  },
