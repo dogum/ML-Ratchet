@@ -15,8 +15,11 @@ summary: >-
   orientations, online flags, and the upstream wind measured on its unwaked front row, WakeNet predicts
   every downstream turbine's waked power ratio, power loss (kW and %), rotor-effective wind speed and
   farm-wide wake loss, each with a 68% error bar. It learned only from 24,000 procedural 5-to-16-turbine
-  simulations laid into real unwaked turbulence from Sep 2017 – Dec 2018, and was examined once on 24,035 real
-  10-minute SCADA snapshots across two UK wind farms — including an unseen 14-turbine farm in Scotland.
+  simulations laid into real unwaked turbulence from Sep 2017 – Dec 2018. It was examined on real 10-minute
+  SCADA from two UK wind farms, one never used for anything else: 24,035 snapshots in 2019–2021, then 35,592
+  snapshots from 2021–2024 that no version had seen.
+  It beats textbook FLORIS everywhere, but the same physics tuned on one year of the farm's own data
+  (no network) does as well or better on 17 of 18 rows of a second, never-seen exam.
 
 reads: >-
   Turbine coordinates (East, North, ground elevation in m), hub heights (m), rotor diameter and nominal
@@ -82,150 +85,260 @@ split:
     separately on H1 Jan–Jun (2,691 snapshots) and H2 Jul–Dec (3,038 snapshots); frozen in
     training/split.json (sha256 bd1dd01f…, seed 20261116)
   exam: >-
-    24,035 held-out 10-minute snapshots (117,335 waked turbine readings): Kelmarsh 2020–2021 (15,059
-    snapshots, 39,008 waked readings) plus zero-shot Penmanshiel 2019–2020 (8,976 snapshots, 78,327
-    waked readings across 14 Senvion MM82 turbines never seen in backdrop, priors or dev)
+    Exam 2 (frozen 17 Nov 2026 in training/split_exam2.json before anything was scored on it, never seen
+    by any version): Kelmarsh 2022–2024 (11,750 snapshots, 29,308 waked readings) and Penmanshiel
+    2021–2023 (23,842 snapshots, 208,508 waked readings). Exam 1, run once for v1.0 on 16 Nov 2026 and
+    re-scored with more baselines on 17 Nov 2026: Kelmarsh 2020–2021 (15,059 snapshots) and Penmanshiel
+    2019–2020 (8,976 snapshots).
 
 exam:
-  short: "24,035 snapshots · 2 farms (1 unseen)"
+  short: "35,592 never-seen snapshots · 2 farms"
   summary: >-
-    Mean absolute error in waked turbine power (% of unwaked front-row power) and farm-wide wake loss
-    (percentage points of potential farm power), run once on Kelmarsh 2020–2021 and zero-shot on the
-    unseen 14-turbine Penmanshiel farm (2019–2020).
+    Mean absolute error in each waked turbine's power (as a share of the unwaked front row's power) and
+    in farm-wide wake loss, on exam 2: years no version has seen. The strongest baseline is the same
+    FLORIS physics with the three settings WakeNet's simulator took from 2019 dev (meandering 0.25 ×
+    vane spread, hill speedup 0.18, terrain-follow 0.80). Every row gives WakeNet minus the best baseline
+    with a 95% interval from a bootstrap over days; win or loss only when the interval excludes zero.
+    Each note also gives the re-scored exam 1 result.
   results:
-    - metric: Kelmarsh (2020–21), all waked turbines MAE (39,008 readings)
+    - metric: Kelmarsh 2022-24, all waked turbines MAE (29,308 readings)
       better: lower
-      model: 8.85
+      model: 10.96
       unit: "%"
       baselines:
-        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 9.51 }
-        - { name: "Jensen Park + Jiménez", kind: classical, value: 9.95 }
-        - { name: "Unwaked guess", kind: dumb, value: 13.63 }
-        - { name: "Dev mean wake loss", kind: dumb, value: 14.00 }
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 10.82 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 11.77 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 11.92 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 14.78 }
+        - { name: "Unwaked guess", kind: dumb, value: 14.76 }
+      verdict: loss
+      note: "+0.14 points against FLORIS tuned on 2019 dev, 95% CI [+0.07, +0.21] (bootstrap by day). Exam 1 (Kelmarsh 2020-21, re-scored): 8.85 vs tuned FLORIS 8.64, loss."
+    - metric: Kelmarsh 2022-24, direct-wake corridor (dx < 8D, |dy| < 0.65D) MAE (8,890 readings)
+      better: lower
+      model: 13.15
+      unit: "%"
+      baselines:
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 13.32 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 14.13 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 13.85 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 16.21 }
+        - { name: "Unwaked guess", kind: dumb, value: 21.76 }
       verdict: win
-      note: "Bias −1.99%."
-    - metric: Kelmarsh (2020–21), direct-wake corridor MAE (dx < 8D, |dy| < 0.65D; 11,977 readings)
+      note: "-0.17 points against FLORIS tuned on 2019 dev, 95% CI [-0.26, -0.07] (bootstrap by day). Exam 1 (Kelmarsh 2020-21, re-scored): 10.07 vs tuned FLORIS 10.21, win."
+    - metric: Kelmarsh 2022-24, inside 2 or more wakes MAE (2,236 readings)
       better: lower
-      model: 10.07
+      model: 11.28
       unit: "%"
       baselines:
-        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 10.75 }
-        - { name: "Jensen Park + Jiménez", kind: classical, value: 11.63 }
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 11.19 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 12.65 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 13.72 }
         - { name: "Dev mean wake loss", kind: dumb, value: 15.30 }
-        - { name: "Unwaked guess", kind: dumb, value: 22.17 }
-      verdict: win
-    - metric: Kelmarsh (2020–21), multi-wake overlap (≥ 2 upstream wakes; 2,212 readings)
+        - { name: "Unwaked guess", kind: dumb, value: 19.74 }
+      verdict: tie
+      note: "+0.09 points against FLORIS tuned on 2019 dev, 95% CI [-0.10, +0.28] (bootstrap by day). Exam 1 (Kelmarsh 2020-21, re-scored): 8.86 vs tuned FLORIS 8.60, loss."
+    - metric: Kelmarsh 2022-24, upstream yaw offset ≥ 8° MAE (7,855 readings)
       better: lower
-      model: 8.86
+      model: 13.73
       unit: "%"
       baselines:
-        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 9.90 }
-        - { name: "Jensen Park + Jiménez", kind: classical, value: 10.12 }
-        - { name: "Dev mean wake loss", kind: dumb, value: 14.46 }
-      verdict: win
-      note: "Mostly the aligned NW/SE 3-turbine row KWF3–KWF5–KWF6."
-    - metric: Kelmarsh (2020–21), upstream yaw offset ≥ 8° MAE (5,401 readings)
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 13.78 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 14.46 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 14.55 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 15.08 }
+        - { name: "Unwaked guess", kind: dumb, value: 13.98 }
+      verdict: tie
+      note: "-0.04 points against FLORIS tuned on 2019 dev, 95% CI [-0.21, +0.11] (bootstrap by day). Exam 1 (Kelmarsh 2020-21, re-scored): 9.76 vs tuned FLORIS 9.54, loss."
+    - metric: Kelmarsh 2022-24, 1-2 turbines parked MAE (7,352 readings)
       better: lower
-      model: 9.76
+      model: 12.14
       unit: "%"
       baselines:
-        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 10.46 }
-        - { name: "Jensen Park + Jiménez", kind: classical, value: 11.25 }
-        - { name: "Unwaked guess", kind: dumb, value: 13.75 }
-      verdict: win
-    - metric: Kelmarsh (2020–21), partial-parked farm (1–2 units offline; 6,146 readings)
-      better: lower
-      model: 9.18
-      unit: "%"
-      baselines:
-        - { name: "Jensen Park + Jiménez", kind: classical, value: 9.81 }
-        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 9.94 }
-        - { name: "Unwaked guess", kind: dumb, value: 13.62 }
-      verdict: win
-    - metric: Kelmarsh (2020–21), farm-wide wake loss MAE (15,059 snapshots)
-      better: lower
-      model: 2.57
-      unit: "%"
-      baselines:
-        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 2.80 }
-        - { name: "Jensen Park + Jiménez", kind: classical, value: 2.99 }
-        - { name: "Dev mean wake loss", kind: dumb, value: 4.44 }
-        - { name: "Unwaked guess", kind: dumb, value: 4.87 }
-      verdict: win
-    - metric: Penmanshiel (14× MM82, zero-shot), all waked turbines MAE (78,327 readings)
-      better: lower
-      model: 15.01
-      unit: "%"
-      baselines:
-        - { name: "Dev mean wake loss", kind: dumb, value: 15.88 }
-        - { name: "Unwaked guess", kind: dumb, value: 16.00 }
-        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 16.63 }
-        - { name: "Jensen Park + Jiménez", kind: classical, value: 17.90 }
-      verdict: win
-      note: "Unseen 14-turbine farm, different rotor (82 m vs 92 m) and 59 m towers; beats FLORIS by 1.62 points."
-    - metric: Penmanshiel (zero-shot), upstream yaw offset ≥ 8° MAE (14,813 readings)
-      better: lower
-      model: 15.08
-      unit: "%"
-      baselines:
-        - { name: "Unwaked guess", kind: dumb, value: 16.27 }
-        - { name: "Dev mean wake loss", kind: dumb, value: 16.34 }
-        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 16.75 }
-        - { name: "Jensen Park + Jiménez", kind: classical, value: 18.05 }
-      verdict: win
-    - metric: Penmanshiel (zero-shot), multi-wake interior (≥ 2 wakes; 24,308 readings)
-      better: lower
-      model: 17.32
-      unit: "%"
-      baselines:
-        - { name: "Dev mean wake loss", kind: dumb, value: 16.43 }
-        - { name: "Unwaked guess", kind: dumb, value: 16.51 }
-        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 19.12 }
-        - { name: "Jensen Park + Jiménez", kind: classical, value: 21.94 }
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 11.93 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 13.04 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 12.90 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 15.36 }
+        - { name: "Unwaked guess", kind: dumb, value: 15.40 }
       verdict: loss
-      note: "Beats FLORIS (19.12%) and Jensen (21.94%) by 1.8–4.6 points, but loses to the constant dev-mean guess."
-    - metric: Penmanshiel (zero-shot), hilltop ridge turbines (elev ≥ 219 m; 26,756 readings)
+      note: "+0.21 points against FLORIS tuned on 2019 dev, 95% CI [+0.08, +0.34] (bootstrap by day). Exam 1 (Kelmarsh 2020-21, re-scored): 9.18 vs tuned FLORIS 8.82, loss."
+    - metric: Kelmarsh 2022-24, wind below 10 m/s MAE (16,401 readings)
       better: lower
-      model: 15.92
+      model: 13.73
       unit: "%"
       baselines:
-        - { name: "Unwaked guess", kind: dumb, value: 13.19 }
-        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 18.30 }
-        - { name: "Dev mean wake loss", kind: dumb, value: 18.44 }
-        - { name: "Jensen Park + Jiménez", kind: classical, value: 21.08 }
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 13.52 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 14.83 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 15.16 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 17.63 }
+        - { name: "Unwaked guess", kind: dumb, value: 18.17 }
       verdict: loss
-      note: "Ridge-top acceleration on T12–T15 (219–228 m vs 180–205 m front row) offsets wake deficit; WakeNet reads −9.2% low."
-    - metric: Penmanshiel (zero-shot), farm-wide wake loss MAE (8,976 snapshots)
+      note: "+0.20 points against FLORIS tuned on 2019 dev, 95% CI [+0.11, +0.28] (bootstrap by day). Exam 1 (Kelmarsh 2020-21, re-scored): 11.73 vs tuned FLORIS 11.45, loss."
+    - metric: Kelmarsh 2022-24, wind 10.5-12 m/s MAE (8,220 readings)
       better: lower
-      model: 4.75
+      model: 6.10
       unit: "%"
       baselines:
-        - { name: "Dev mean wake loss", kind: dumb, value: 4.55 }
-        - { name: "NREL FLORIS 3-D Gaussian", kind: classical, value: 5.16 }
-        - { name: "Jensen Park + Jiménez", kind: classical, value: 5.82 }
-        - { name: "Unwaked guess", kind: dumb, value: 5.98 }
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 5.97 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 6.32 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 6.34 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 10.06 }
+        - { name: "Unwaked guess", kind: dumb, value: 8.11 }
       verdict: loss
-      note: "Beats FLORIS (5.16%) and Jensen (5.82%), but loses by 0.20 points to guessing Kelmarsh's 5.34% dev mean."
+      note: "+0.13 points against FLORIS tuned on 2019 dev, 95% CI [+0.03, +0.23] (bootstrap by day). Exam 1 (Kelmarsh 2020-21, re-scored): 5.30 vs tuned FLORIS 5.07, loss."
+    - metric: Kelmarsh 2022-24, highest quarter of turbines MAE (10,607 readings)
+      better: lower
+      model: 12.22
+      unit: "%"
+      baselines:
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 11.87 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 13.33 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 12.66 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 16.21 }
+        - { name: "Unwaked guess", kind: dumb, value: 14.13 }
+      verdict: loss
+      note: "+0.34 points against FLORIS tuned on 2019 dev, 95% CI [+0.20, +0.47] (bootstrap by day). Exam 1 (Kelmarsh 2020-21, re-scored): 9.33 vs tuned FLORIS 8.88, loss."
+    - metric: Kelmarsh 2022-24, farm-wide wake loss MAE (11,750 snapshots)
+      better: lower
+      model: 3.39
+      unit: "%"
+      baselines:
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 3.38 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 3.66 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 3.73 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 4.76 }
+        - { name: "Unwaked guess", kind: dumb, value: 5.32 }
+      verdict: tie
+      note: "+0.01 points against FLORIS tuned on 2019 dev, 95% CI [-0.02, +0.04] (bootstrap by day). Exam 1 (Kelmarsh 2020-21, re-scored): 2.57 vs tuned FLORIS 2.53, loss."
+    - metric: Penmanshiel 2021-23 (unseen farm), all waked turbines MAE (208,508 readings)
+      better: lower
+      model: 19.78
+      unit: "%"
+      baselines:
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 19.50 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 21.75 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 21.77 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 19.92 }
+        - { name: "Unwaked guess", kind: dumb, value: 21.37 }
+      verdict: loss
+      note: "+0.27 points against FLORIS tuned on 2019 dev, 95% CI [+0.19, +0.36] (bootstrap by day). Exam 1 (Penmanshiel 2019-20, re-scored): 15.01 vs tuned FLORIS 14.43, loss."
+    - metric: Penmanshiel 2021-23 (unseen farm), direct-wake corridor (dx < 8D, |dy| < 0.65D) MAE (53,130 readings)
+      better: lower
+      model: 25.12
+      unit: "%"
+      baselines:
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 25.30 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 27.37 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 26.23 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 20.59 }
+        - { name: "Unwaked guess", kind: dumb, value: 23.59 }
+      verdict: loss
+      note: "+4.52 points against Dev mean wake loss, 95% CI [+3.58, +5.46] (bootstrap by day). Exam 1 (Penmanshiel 2019-20, re-scored): 18.58 vs tuned FLORIS 18.20, loss."
+    - metric: Penmanshiel 2021-23 (unseen farm), inside 2 or more wakes MAE (67,650 readings)
+      better: lower
+      model: 22.80
+      unit: "%"
+      baselines:
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 22.49 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 24.97 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 25.73 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 21.11 }
+        - { name: "Unwaked guess", kind: dumb, value: 22.51 }
+      verdict: loss
+      note: "+1.69 points against Dev mean wake loss, 95% CI [+1.16, +2.24] (bootstrap by day). Exam 1 (Penmanshiel 2019-20, re-scored): 17.32 vs tuned FLORIS 16.49, loss."
+    - metric: Penmanshiel 2021-23 (unseen farm), upstream yaw offset ≥ 8° MAE (65,614 readings)
+      better: lower
+      model: 21.56
+      unit: "%"
+      baselines:
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 21.36 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 23.62 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 23.84 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 21.75 }
+        - { name: "Unwaked guess", kind: dumb, value: 23.24 }
+      verdict: loss
+      note: "+0.19 points against FLORIS tuned on 2019 dev, 95% CI [+0.07, +0.31] (bootstrap by day). Exam 1 (Penmanshiel 2019-20, re-scored): 15.08 vs tuned FLORIS 14.41, loss."
+    - metric: Penmanshiel 2021-23 (unseen farm), 1-2 turbines parked MAE (53,770 readings)
+      better: lower
+      model: 19.17
+      unit: "%"
+      baselines:
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 18.92 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 21.17 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 21.43 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 19.25 }
+        - { name: "Unwaked guess", kind: dumb, value: 20.57 }
+      verdict: loss
+      note: "+0.25 points against FLORIS tuned on 2019 dev, 95% CI [+0.07, +0.40] (bootstrap by day). Exam 1 (Penmanshiel 2019-20, re-scored): 15.99 vs tuned FLORIS 15.45, loss."
+    - metric: Penmanshiel 2021-23 (unseen farm), wind below 10 m/s MAE (114,194 readings)
+      better: lower
+      model: 24.19
+      unit: "%"
+      baselines:
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 24.10 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 26.57 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 26.84 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 23.68 }
+        - { name: "Unwaked guess", kind: dumb, value: 25.90 }
+      verdict: loss
+      note: "+0.51 points against Dev mean wake loss, 95% CI [+0.11, +0.94] (bootstrap by day). Exam 1 (Penmanshiel 2019-20, re-scored): 20.85 vs tuned FLORIS 20.29, loss."
+    - metric: Penmanshiel 2021-23 (unseen farm), wind 10.5-12 m/s MAE (68,917 readings)
+      better: lower
+      model: 13.46
+      unit: "%"
+      baselines:
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 12.93 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 14.77 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 14.49 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 14.66 }
+        - { name: "Unwaked guess", kind: dumb, value: 15.03 }
+      verdict: loss
+      note: "+0.54 points against FLORIS tuned on 2019 dev, 95% CI [+0.46, +0.62] (bootstrap by day). Exam 1 (Penmanshiel 2019-20, re-scored): 12.86 vs tuned FLORIS 12.25, loss."
+    - metric: Penmanshiel 2021-23 (unseen farm), highest quarter of turbines MAE (66,219 readings)
+      better: lower
+      model: 22.64
+      unit: "%"
+      baselines:
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 21.52 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 25.49 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 26.39 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 23.10 }
+        - { name: "Unwaked guess", kind: dumb, value: 19.33 }
+      verdict: loss
+      note: "+3.31 points against Unwaked guess, 95% CI [+2.92, +3.71] (bootstrap by day). Exam 1 (Penmanshiel 2019-20, re-scored): 15.92 vs tuned FLORIS 14.23, loss."
+    - metric: Penmanshiel 2021-23 (unseen farm), farm-wide wake loss MAE (23,842 snapshots)
+      better: lower
+      model: 7.08
+      unit: "%"
+      baselines:
+        - { name: "FLORIS tuned on 2019 dev", kind: classical, value: 7.20 }
+        - { name: "NREL FLORIS 3-D Gaussian (textbook)", kind: classical, value: 7.67 }
+        - { name: "Jensen Park + Jiménez (k = 0.075)", kind: classical, value: 7.88 }
+        - { name: "Dev mean wake loss", kind: dumb, value: 7.01 }
+        - { name: "Unwaked guess", kind: dumb, value: 8.90 }
+      verdict: tie
+      note: "+0.07 points against Dev mean wake loss, 95% CI [-0.20, +0.36] (bootstrap by day). Exam 1 (Penmanshiel 2019-20, re-scored): 4.75 vs tuned FLORIS 4.82, loss."
   coverage:
-    - { output: "Kelmarsh waked turbines", actual: 72.2 }
-    - { output: "Kelmarsh farm wake loss", actual: 77.4 }
-    - { output: "Penmanshiel waked turbines (zero-shot)", actual: 50.7 }
-    - { output: "Penmanshiel farm wake loss (zero-shot)", actual: 61.5 }
+    - { output: "Kelmarsh 2022-24 waked turbines", actual: 64.1 }
+    - { output: "Kelmarsh 2022-24 farm wake loss", actual: 66.8 }
+    - { output: "Penmanshiel 2021-23 waked turbines (unseen farm)", actual: 41.9 }
+    - { output: "Penmanshiel 2021-23 farm wake loss (unseen farm)", actual: 48.9 }
 
 wins:
-  - "Beats NREL FLORIS 3-D Gaussian and Jensen Park on every stratum of both wind farms — including 15.01% vs 16.63% (FLORIS) and 17.90% (Jensen) zero-shot on the unseen 14-turbine Penmanshiel farm."
-  - "Sweeps all six Kelmarsh 2020–21 exam rows: waked MAE 8.85% vs 9.51% (FLORIS), multi-wake 8.86% vs 9.90%, yaw ≥ 8° 9.76% vs 10.46%, and farm wake loss 2.57% vs 2.80%."
-  - "Separating meso-scale wind-direction meandering (~0.25× nacelle-vane σ_θ) from rotor blade-passage vane flutter plus 3-D hill speedup cut Kelmarsh dev waked MAE from 10.12% to 9.48% (naive 1.0× vane meandering degraded it to 11.24% and was rejected)."
+  - "Beats textbook NREL FLORIS and Jensen on every row of both exams and both farms: exam 2 Kelmarsh waked turbines 10.96% against 11.77% (FLORIS) and 11.92% (Jensen, k = 0.075); unseen Penmanshiel 19.78% against 21.75% and 21.77%."
+  - "Directly behind another turbine it beats even the dev-tuned physics, on both exams: Kelmarsh 2022-24 13.15% against 13.32%, −0.17 points [−0.26, −0.07]; exam 1 −0.13 [−0.23, −0.04]."
+  - "Separating meso-scale wind-direction meandering (~0.25 × nacelle-vane σ_θ) from blade-passage vane flutter, plus 3-D hill speedup, cut Kelmarsh dev waked MAE from 10.12% to 9.48% (smearing wakes by the full vane spread made it 11.24% and was rejected)."
 losses:
-  - "On Penmanshiel's 48 m Berwickshire coastal ridge, ridge-top wind acceleration onto hilltop turbines T12–T15 (219–228 m elevation) partially cancels wake losses, so WakeNet loses to the constant dev-mean guess on farm wake loss (4.75% vs 4.55%) and multi-wake interior units (17.32% vs 16.43%), and to the unwaked guess on hilltop turbines (15.92% vs 13.19%), despite beating FLORIS on all three."
+  - "The network adds nothing over its own physics once that physics is tuned on dev. FLORIS with the three settings from 2019 dev beats WakeNet on 13 of 18 exam-2 rows and ties 4 (exam 1: 17 of 18). The gains over textbook FLORIS came from the dev tuning, not from the graph network. Anchoring the network on the tuned physics (r9) gained only +0.002 in simulation and was rejected."
+  - "On the unseen Penmanshiel ridge it loses to constant guesses: directly behind another turbine (25.12% against 20.60% for the dev-mean wake loss), inside 2 or more wakes, below 10 m/s, and on the highest quarter of turbines (22.64% against 19.33% for assuming no wake). Ridge-top speed-up offsets the wakes there."
 limits:
-  - "Error bars calibrated on Kelmarsh's gentle 21.5 m farmland cover 72.2% (turbines) and 77.4% (farm) on Kelmarsh 2020–21, but drop to 50.7% and 61.5% on Penmanshiel's steep 48 m coastal ridge and adjacent forestry."
+  - "Error bars are too narrow on years and farms not seen in dev: 68% bars cover 64% of Kelmarsh 2022-24 turbines (72% in 2020-21) and 42% of Penmanshiel 2021-23 turbines (51% in 2019-20)."
   - "Below-rated active wake regime only (freestream 5.0–12.0 m/s); above rated wind speed pitch control caps all turbines at rated power and wakes cause near-zero power loss."
   - "10-minute nacelle SCADA carries no atmospheric stability (Obukhov length / heat-flux) measurement, so convective daytime mixing and stable nocturnal wakes share one turbulence-conditioned curve."
   - "No digital elevation map or forestry roughness map around the farm perimeter is read — terrain enters only through the elevations at the turbine towers themselves."
 next:
-  - "Read surrounding 30 m DEM terrain slopes and forest-canopy roughness upwind of each sector (Jackson–Hunt / WAsP linearised flow over real topography) to close Penmanshiel's −9.2% hilltop ridge bias."
-  - "Terrain-relief-conditioned or Mondrian conformal σ widening so zero-shot error bars widen automatically on steep (>30 m relief) sites."
+  - "Close the sim-to-real gap the twin test shows: the network gains +0.011 over its anchor in simulation and loses on real dev, so the simulator's noise or inflow model is teaching it corrections that do not hold on real turbines. Start with a dev twin test of the residuals the network adds."
+  - "Read surrounding 30 m DEM terrain slopes and forest-canopy roughness upwind of each sector (Jackson–Hunt / WAsP linearised flow over real topography) to close Penmanshiel's hilltop bias."
+  - "Terrain-relief-conditioned or Mondrian conformal σ widening so error bars widen on steep (>30 m relief) sites and later years."
   - "Active yaw-steering controller rung (WakePilot) trained through the differentiable wake graph and checked against dedicated field yaw-offset campaigns."
 
 usage:

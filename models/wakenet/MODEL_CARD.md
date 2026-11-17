@@ -2,7 +2,9 @@
 
 **What it does.** Given a wind farm's turbine coordinates, tower hub heights, rotor power and thrust curves, online status, mechanical nacelle yaw angles, and the incoming wind measured on its geometrically unwaked front-row turbines, WakeNet predicts how much power every downstream turbine is losing to its neighbours' wakes — per turbine and across the whole farm — each with a calibrated 68% error bar.
 
-**How it learned.** Only from procedural physics simulations laid into real unwaked turbulence. Zero real waked power labels were used in training, architecture selection, or calibration.
+**How it learned.** Only from procedural physics simulations laid into real unwaked turbulence. No real waked power reading was ever a training sample. Real 2019 dev readings tuned three simulator settings (meandering, hill speedup, shear), set the error-bar widening, and gated each rung.
+
+**The headline, plainly (17 Nov 2026).** WakeNet beats textbook FLORIS and Jensen on every row of both exams. But the same FLORIS physics, tuned with the three settings from 2019 dev and no network at all, does as well or better on 17 of 18 rows of exam 2 (years no version has seen). The network itself adds nothing measurable on real data yet; only directly behind another turbine does it beat the tuned physics on both exams.
 
 ## Inputs
 
@@ -69,44 +71,96 @@ Objective: $0.65\,\text{skill}(\eta_{\text{waked}}) + 0.35\,\text{skill}(W_{\tex
 | `r6` | `v3` physics (dev twins): meso-scale meandering (`0.16–0.36×` vane $\sigma_\theta$) + 3-D hill speedup | **0.552** | **9.38%** | **9.56%** | **2.88%** | **released** |
 | `r7` | Softmax attention over upstream edges in place of additive sigmoid-gated sum | 0.553 | 9.41% | 9.60% | 2.89% | rejected (+0.000) |
 | `r8` | Fine-tune from `r6` on mixed `v2 + v3` banks (48,000 simulated farms) | 0.543 | 9.62% | 9.85% | 2.99% | rejected (−0.009) |
+| `r9` | Same network anchored on the dev-tuned physics instead of textbook FLORIS (17 Nov 2026; seeds 106/107/108: 0.5543 / 0.5539 / 0.5542) | 0.554 | 9.30% | 9.56% | 2.86% | rejected (+0.002) |
+
+Reference rows, not candidates (`training/v11_reference.json`): textbook FLORIS alone scores 0.512 on `val3` (dev 10.00% / 10.29% / 3.19%); the physics tuned on 2019 dev scores 0.541 (dev **9.18% / 9.42% / 2.86%**). In simulation the network adds +0.011 over its anchor; on real dev the tuned physics alone beats every rung. That gap between simulation and reality is the model's main open problem.
 
 ## Exam
 
-Run once after `r6` was locked (`training/exam_results.json`), on **24,035 held-out 10-minute snapshots (117,335 waked turbine readings)**:
-1. **Kelmarsh 2020–2021:** 15,059 snapshots (39,008 waked readings) on the 6-turbine Senvion MM92 farm ($D = 92\text{ m}$, mixed $68.5 / 78.5\text{ m}$ towers, $21.5\text{ m}$ farmland relief).
-2. **Penmanshiel 2019–2020 (zero-shot unseen farm):** 8,976 snapshots (78,327 waked readings) on a 14-turbine Senvion MM82 farm in Berwickshire, Scotland ($D = 82\text{ m}$, $59\text{ m}$ towers, $48\text{ m}$ coastal ridge relief), never seen in backdrop, priors, calibration, or dev gating.
+Error is the mean absolute error in a turbine's power as a share of the unwaked front row's power (farm row: in farm-wide wake loss). Verdicts come from a 95% interval on WakeNet minus the best baseline, by bootstrap over calendar days (2,000 resamples): win if the interval is below zero, loss if above, tie if it spans zero. The baselines were fixed in `NOTEBOOK.md` before the data were re-read. "FLORIS tuned on dev" is the same physics with the three settings from 2019 dev (`training/dev_calibration.json`), and is the strongest classical baseline.
 
-| exam metric | WakeNet | NREL FLORIS 3-D Gauss | Jensen + Jiménez | Dev mean (dumb) | Unwaked (dumb) | verdict |
-|---|---|---|---|---|---|---|
-| Kelmarsh, all waked turbines MAE ($n = 39,008$) | **8.85%** | 9.51% | 9.95% | 14.00% | 13.63% | **win** |
-| Kelmarsh, direct-wake corridor MAE ($n = 11,977$) | **10.07%** | 10.75% | 11.63% | 15.30% | 22.17% | **win** |
-| Kelmarsh, multi-wake $\ge 2$ overlap MAE ($n = 2,212$) | **8.86%** | 9.90% | 10.12% | 14.46% | 18.63% | **win** |
-| Kelmarsh, upstream yaw $\ge 8^\circ$ MAE ($n = 5,401$) | **9.76%** | 10.46% | 11.25% | 14.71% | 13.75% | **win** |
-| Kelmarsh, partial-parked farm MAE ($n = 6,146$) | **9.18%** | 9.94% | 9.81% | 14.63% | 13.62% | **win** |
-| Kelmarsh, farm-wide wake loss MAE ($n = 15,059$) | **2.57%** | 2.80% | 2.99% | 4.44% | 4.87% | **win** |
-| Penmanshiel (zero-shot), all waked MAE ($n = 78,327$) | **15.01%** | 16.63% | 17.90% | 15.88% | 16.00% | **win** |
-| Penmanshiel (zero-shot), upstream yaw $\ge 8^\circ$ ($n = 14,813$) | **15.08%** | 16.75% | 18.05% | 16.34% | 16.27% | **win** |
-| Penmanshiel (zero-shot), multi-wake $\ge 2$ interior ($n = 24,308$) | 17.32% | 19.12% | 21.94% | **16.43%** | 16.51% | **loss** |
-| Penmanshiel (zero-shot), hilltop ridge turbines ($n = 26,756$) | 15.92% | 18.30% | 21.08% | 18.44% | **13.19%** | **loss** |
-| Penmanshiel (zero-shot), farm-wide wake loss ($n = 8,976$) | 4.75% | 5.16% | 5.82% | **4.55%** | 5.98% | **loss** |
+### Exam 2: years no version has seen (`training/exam2_results.json`)
 
-Additional Wind-Speed Strata (both farms):
-- Kelmarsh cubic Region II ($< 10\text{ m/s}$): WakeNet **11.73%** vs FLORIS 12.78%, Jensen 13.49%, Unwaked 17.96%. Near-rated ($10.5\text{–}12\text{ m/s}$): WakeNet **5.30%** vs FLORIS 5.37%, Jensen 5.48%, Unwaked 7.70%.
-- Penmanshiel near-rated ($10.5\text{–}12\text{ m/s}$, $n = 48,391$, where MM82 is still below its $14\text{ m/s}$ rated knee): WakeNet **12.86%** vs FLORIS 14.16%, Dev mean 14.32%, Unwaked 14.70%. Below $10\text{ m/s}$ ($n = 14,210$): WakeNet 20.85% (bias $-11.6\%$) beats FLORIS (23.09%) and Jensen (25.36%) but loses to Unwaked (18.51%).
+Frozen in `training/split_exam2.json` on 17 Nov 2026 before anything was scored on it; scored once, after r9 was rejected.
 
-Coverage of the nominal 68% error bars on the exam:
+**Kelmarsh 2022-2024** (11,750 snapshots on 400 days; 1 win, 3 tie, 5 loss):
 
-| stratum | 68% bar coverage |
-|---|---|
-| Kelmarsh waked turbines | 72.2% |
-| Kelmarsh farm wake loss | 77.4% |
-| Penmanshiel waked turbines (zero-shot) | 50.7% |
-| Penmanshiel farm wake loss (zero-shot) | 61.5% |
+| row | n | WakeNet | FLORIS tuned on dev | FLORIS textbook | Jensen (k 0.075) | dev mean | no wake | WakeNet − best [95% CI] | verdict |
+|---|---|---|---|---|---|---|---|---|---|
+| all waked turbines | 29,308 | 10.96% | **10.82%** | 11.77% | 11.92% | 14.78% | 14.76% | +0.14 [+0.07, +0.21] | loss |
+| directly behind another (dx < 8D, |dy| < 0.65D) | 8,890 | 13.15% | **13.32%** | 14.13% | 13.85% | 16.21% | 21.76% | -0.17 [-0.26, -0.07] | win |
+| inside ≥ 2 wakes | 2,236 | 11.28% | **11.19%** | 12.65% | 13.72% | 15.30% | 19.74% | +0.09 [-0.10, +0.28] | tie |
+| upstream yaw ≥ 8° | 7,855 | 13.73% | **13.78%** | 14.46% | 14.55% | 15.08% | 13.98% | -0.04 [-0.21, +0.11] | tie |
+| 1-2 turbines parked | 7,352 | 12.14% | **11.93%** | 13.04% | 12.90% | 15.36% | 15.40% | +0.21 [+0.08, +0.34] | loss |
+| wind < 10 m/s | 16,401 | 13.73% | **13.52%** | 14.83% | 15.16% | 17.63% | 18.17% | +0.20 [+0.11, +0.28] | loss |
+| wind 10.5-12 m/s | 8,220 | 6.10% | **5.97%** | 6.32% | 6.34% | 10.06% | 8.11% | +0.13 [+0.03, +0.23] | loss |
+| highest quarter of turbines | 10,607 | 12.22% | **11.87%** | 13.33% | 12.66% | 16.21% | 14.13% | +0.34 [+0.20, +0.47] | loss |
+| farm-wide wake loss | 11,750 | 3.39% | **3.38%** | 3.66% | 3.73% | 4.76% | 5.32% | +0.01 [-0.02, +0.04] | tie |
+
+**Penmanshiel 2021-2023, the farm never used for anything else** (23,842 snapshots on 663 days; WT01-10 has no January 2023; 0 win, 1 tie, 8 loss):
+
+| row | n | WakeNet | FLORIS tuned on dev | FLORIS textbook | Jensen (k 0.075) | dev mean | no wake | WakeNet − best [95% CI] | verdict |
+|---|---|---|---|---|---|---|---|---|---|
+| all waked turbines | 208,508 | 19.78% | **19.50%** | 21.75% | 21.77% | 19.92% | 21.37% | +0.27 [+0.19, +0.36] | loss |
+| directly behind another (dx < 8D, |dy| < 0.65D) | 53,130 | 25.12% | 25.30% | 27.37% | 26.23% | **20.59%** | 23.59% | +4.52 [+3.58, +5.46] | loss |
+| inside ≥ 2 wakes | 67,650 | 22.80% | 22.49% | 24.97% | 25.73% | **21.11%** | 22.51% | +1.69 [+1.16, +2.24] | loss |
+| upstream yaw ≥ 8° | 65,614 | 21.56% | **21.36%** | 23.62% | 23.84% | 21.75% | 23.24% | +0.19 [+0.07, +0.31] | loss |
+| 1-2 turbines parked | 53,770 | 19.17% | **18.92%** | 21.17% | 21.43% | 19.25% | 20.57% | +0.25 [+0.07, +0.40] | loss |
+| wind < 10 m/s | 114,194 | 24.19% | 24.10% | 26.57% | 26.84% | **23.68%** | 25.90% | +0.51 [+0.11, +0.94] | loss |
+| wind 10.5-12 m/s | 68,917 | 13.46% | **12.93%** | 14.77% | 14.49% | 14.66% | 15.03% | +0.54 [+0.46, +0.62] | loss |
+| highest quarter of turbines | 66,219 | 22.64% | 21.52% | 25.49% | 26.39% | 23.10% | **19.33%** | +3.31 [+2.92, +3.71] | loss |
+| farm-wide wake loss | 23,842 | 7.08% | 7.20% | 7.67% | 7.88% | **7.01%** | 8.90% | +0.07 [-0.20, +0.36] | tie |
+
+### Exam 1, re-scored (`training/exam_results.json`)
+
+Run once for v1.0 on 16 Nov 2026 (`training/exam_results_2026-11-16.json`: 11 rows reported, 8 wins and 3 losses, against textbook FLORIS, offshore Jensen and two constant guesses). Re-scored on 17 Nov 2026 with the same weights and data (the processed files reproduce the frozen timestamp hashes); nothing was chosen from it.
+
+**Kelmarsh 2020-2021** (15,059 snapshots; 1 win, 0 tie, 8 loss):
+
+| row | n | WakeNet | FLORIS tuned on dev | FLORIS textbook | Jensen (k 0.075) | dev mean | no wake | WakeNet − best [95% CI] | verdict |
+|---|---|---|---|---|---|---|---|---|---|
+| all waked turbines | 39,008 | 8.85% | **8.64%** | 9.51% | 9.97% | 14.00% | 13.63% | +0.22 [+0.17, +0.27] | loss |
+| directly behind another (dx < 8D, |dy| < 0.65D) | 11,977 | 10.07% | **10.21%** | 10.75% | 11.30% | 15.30% | 22.17% | -0.13 [-0.23, -0.04] | win |
+| inside ≥ 2 wakes | 2,212 | 8.86% | **8.60%** | 9.90% | 11.18% | 14.46% | 18.63% | +0.26 [+0.11, +0.40] | loss |
+| upstream yaw ≥ 8° | 5,401 | 9.76% | **9.54%** | 10.46% | 11.15% | 14.71% | 13.75% | +0.22 [+0.16, +0.30] | loss |
+| 1-2 turbines parked | 6,146 | 9.18% | **8.82%** | 9.94% | 9.94% | 14.63% | 13.62% | +0.35 [+0.24, +0.45] | loss |
+| wind < 10 m/s | 18,897 | 11.73% | **11.45%** | 12.78% | 13.40% | 17.34% | 17.96% | +0.28 [+0.22, +0.34] | loss |
+| wind 10.5-12 m/s | 14,043 | 5.30% | **5.07%** | 5.37% | 5.64% | 9.90% | 7.70% | +0.23 [+0.15, +0.30] | loss |
+| highest quarter of turbines | 13,718 | 9.33% | **8.88%** | 10.34% | 10.02% | 15.08% | 12.84% | +0.45 [+0.36, +0.53] | loss |
+| farm-wide wake loss | 15,059 | 2.57% | **2.53%** | 2.80% | 3.02% | 4.44% | 4.87% | +0.03 [+0.01, +0.06] | loss |
+
+**Penmanshiel 2019-2020** (8,976 snapshots; 0 win, 0 tie, 9 loss):
+
+| row | n | WakeNet | FLORIS tuned on dev | FLORIS textbook | Jensen (k 0.075) | dev mean | no wake | WakeNet − best [95% CI] | verdict |
+|---|---|---|---|---|---|---|---|---|---|
+| all waked turbines | 78,327 | 15.01% | **14.43%** | 16.63% | 16.43% | 15.88% | 16.00% | +0.58 [+0.49, +0.67] | loss |
+| directly behind another (dx < 8D, |dy| < 0.65D) | 20,036 | 18.58% | 18.20% | 20.44% | 19.21% | **15.63%** | 18.59% | +2.95 [+2.07, +3.88] | loss |
+| inside ≥ 2 wakes | 24,308 | 17.32% | 16.49% | 19.12% | 19.32% | **16.43%** | 16.51% | +0.89 [+0.37, +1.48] | loss |
+| upstream yaw ≥ 8° | 14,813 | 15.08% | **14.41%** | 16.75% | 16.62% | 16.34% | 16.27% | +0.67 [+0.56, +0.78] | loss |
+| 1-2 turbines parked | 8,047 | 15.99% | **15.45%** | 17.79% | 17.72% | 16.33% | 16.43% | +0.54 [+0.30, +0.75] | loss |
+| wind < 10 m/s | 14,210 | 20.85% | 20.29% | 23.09% | 22.91% | 19.87% | **18.51%** | +2.35 [+1.53, +3.16] | loss |
+| wind 10.5-12 m/s | 48,391 | 12.86% | **12.25%** | 14.16% | 13.94% | 14.32% | 14.70% | +0.60 [+0.51, +0.69] | loss |
+| highest quarter of turbines | 26,756 | 15.92% | 14.23% | 18.30% | 18.58% | 18.44% | **13.19%** | +2.72 [+2.34, +3.11] | loss |
+| farm-wide wake loss | 8,976 | 4.75% | 4.82% | 5.16% | 5.16% | **4.55%** | 5.98% | +0.20 [+0.02, +0.40] | loss |
+
+### Error bars
+
+Share of readings inside the nominal 68% bar:
+
+| set | waked turbines | farm wake loss |
+|---|---|---|
+| Kelmarsh 2020-21 (exam 1) | 72.2% | 77.4% |
+| Kelmarsh 2022-24 (exam 2) | 64.1% | 66.8% |
+| Penmanshiel 2019-20 (exam 1) | 50.7% | 61.5% |
+| Penmanshiel 2021-23 (exam 2) | 41.9% | 48.9% |
+
+The Jensen baseline uses the onshore wake expansion 0.075. With the offshore value 0.05 that the 16 Nov exam used, Jensen scores 9.95% / 17.90% on exam 1 and 12.29% / 24.10% on exam 2 (all waked turbines, Kelmarsh / Penmanshiel).
 
 ## Limits and known failure modes
 
-- **Complex coastal ridges and forestry (the three Penmanshiel losses).** Penmanshiel climbs 48 m from `T07` (`180.2 m`) to `T15` (`228.2 m`) across forested Berwickshire terrain. Under NW and SW flow, topographic ridge speedup accelerates wind onto hilltop units `T12–T15` so strongly that waked hilltop turbines often generate *more* power than unwaked lower-slope front-row units (`truth = -45%` wake loss on `T15` in demo snapshot 06). WakeNet's tower-elevation feature captures part of this (beating FLORIS by 2.4 points on hilltop units, 15.92% vs 18.30%), but without a surrounding digital elevation map (DEM) and forest-canopy roughness model it still underpredicts hilltop power by `-9.2%` and loses to the dumb baselines on Penmanshiel multi-wake, hilltop, and farm-total rows.
-- **Zero-shot error-bar under-coverage on steep terrain.** Because Kelmarsh 2019 dev has gentle 21.5 m farmland relief, dev residuals needed no widening (`factor = 1.00`, giving 72.2% coverage on Kelmarsh 2020–21). On Penmanshiel's 48 m relief, unmodelled terrain variance drops waked-turbine coverage to 50.7%.
+- **The network adds nothing over tuned physics on real data.** See the headline and the reference rows under Ratchet. On real dev and both exams, FLORIS with three dev-tuned settings matches or beats the network on almost every row.
+- **Complex coastal ridges and forestry (Penmanshiel losses to constant guesses).** Penmanshiel climbs 48 m from `T07` (`180.2 m`) to `T15` (`228.2 m`) across forested Berwickshire terrain. Under NW and SW flow, topographic ridge speedup accelerates wind onto hilltop units `T12–T15` so strongly that waked hilltop turbines often generate *more* power than unwaked lower-slope front-row units (`truth = -45%` wake loss on `T15` in demo snapshot 06). WakeNet's tower-elevation feature captures part of this (beating FLORIS by 2.4 points on hilltop units, 15.92% vs 18.30%), but without a surrounding digital elevation map (DEM) and forest-canopy roughness model it still underpredicts hilltop power by `-9.2%` and loses to the dumb baselines on Penmanshiel multi-wake, hilltop, and farm-total rows.
+- **Zero-shot error-bar under-coverage on steep terrain.** Because Kelmarsh 2019 dev has gentle 21.5 m farmland relief, dev residuals needed no widening (`factor = 1.00`, giving 72.2% coverage on Kelmarsh 2020–21). On Penmanshiel's 48 m relief, unmodelled terrain variance drops waked-turbine coverage to 50.7% (41.9% in 2021-23); Kelmarsh itself falls to 64.1% in 2022-24.
 - **Unobserved atmospheric stability.** Standard nacelle SCADA measures wind speed and vane scatter, not surface heat flux or Obukhov length $L$. Convective afternoon wakes mix out faster and nocturnal stable wakes persist farther than a single $TI$-conditioned curve predicts.
 - **Below-rated regime only ($5\text{–}12\text{ m/s}$).** Above $12.5\text{–}14\text{ m/s}$, pitch regulation holds both front-row and waked turbines near 2,050 kW.
 

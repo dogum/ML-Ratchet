@@ -14,10 +14,17 @@ ladders:
   - val2
   - val3
   scored_on: val3
-  note: >-
-    Every rung was re-scored when the simulator physics changed (val1 -> val2 -> val3) and every
-    decision re-taken in order. Rung 3 (3-D Gaussian anchor) fell 0.005 short of rung 2 on the 2-D
-    Jensen set val1 (0.740 vs 0.735) and flipped to kept (+0.053) when re-scored on val2.
+  note: 'Every rung was re-scored when the simulator physics changed (val1 -> val2
+    -> val3) and every decision re-taken in order. Rung 3 (3-D Gaussian anchor) fell
+    0.005 short of rung 2 on the 2-D Jensen set val1 (0.740 vs 0.735) and flipped
+    to kept (+0.053) when re-scored on val2. Reference rows, not candidates (17 Nov
+    2026, training/v11_reference.json): textbook FLORIS alone scores 0.512 on val3
+    (dev H1/H2/farm 10.00/10.29/3.19 %); the same physics tuned on 2019 dev scores
+    0.541 (9.18/9.42/2.86 %). The network adds +0.011 over its anchor in simulation
+    but nothing on real dev, where tuned physics alone beats every rung. r9 anchors
+    the network on the tuned physics: +0.002 on val3 over r6 across three seeds (spread
+    0.0004), so it is rejected, and on dev it still trails tuned physics alone (9.44
+    vs 9.31 % waked).'
   columns_source: Real Kelmarsh 2019 dev set (5,729 snapshots), MAE — the gate's input
   columns:
   - H1 waked (%)
@@ -143,3 +150,19 @@ ladders:
     - 9.62
     - 9.85
     - 2.99
+  - id: r9
+    change: Same EdgeWakeGNN anchored on the physics tuned on 2019 dev (meandering
+      0.25x vane sigma, hill speedup 0.18, terrain-follow 0.80) instead of textbook
+      FLORIS; seeds 106/107/108 score 0.5543/0.5539/0.5542
+    sim: 0.5543
+    dev:
+      waked_mae: 0.0944
+      waked_mae_h1: 0.093
+      waked_mae_h2: 0.0956
+      farm_mae: 0.0286
+    decision: rejected
+    why: +0.002 on val3, needs more than +0.01.
+    metrics:
+    - 9.3
+    - 9.56
+    - 2.86

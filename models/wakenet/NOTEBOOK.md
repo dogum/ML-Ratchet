@@ -91,3 +91,28 @@ published for Feb-Dec 2023 only; Penmanshiel 2024 has only WT11-15 and is left o
 `realdata.build_snapshots`. Frozen in `split_exam2.json` with timestamp hashes before anything is scored. Same 9 rows,
 same five baselines (tuned FLORIS, FLORIS, Jensen 0.075, dev mean, unwaked), same interval rule. Scored once, for v1.0
 and for v1.1 if it is released, after the v1.1 decision.
+
+## 2026-11-17 — Results: exam 1 re-scored, r9 rejected, exam 2 taken
+
+Everything below followed the plan in the entry above; nothing was changed after a result was seen.
+
+- **Rebuilt data reproduce the frozen split.** All four v1.0 processed sets, rebuilt from the Zenodo 2025 versions,
+  match `split.json`'s timestamp hashes. On the rebuilt `val3` and dev cache, the released weights reproduce
+  `ratchet.yaml` exactly (sim 0.5522; dev 9.38 / 9.56 / 2.88 %). Textbook FLORIS computed in `exam.py` equals v1.0's
+  anchor to 0.0.
+- **Exam 1 re-scored.** WakeNet's own numbers reproduce (Kelmarsh all waked 8.85 %, Penmanshiel 15.01 %). FLORIS tuned on
+  dev scores 8.64 % and 14.43 %. Against it WakeNet loses 17 of 18 rows; it wins only the Kelmarsh direct-wake corridor
+  (10.07 % against 10.21 %, −0.13 [−0.23, −0.04]).
+- **Reference rows** (`v11_reference.json`): textbook physics alone 0.512 on `val3`, tuned physics alone 0.541, r6
+  0.552. The network beats its anchor in simulation and loses to it on real dev (tuned physics alone: 9.31 % waked MAE,
+  2.86 % farm).
+- **r9 rejected.** The same network anchored on the tuned physics scores 0.5543 / 0.5539 / 0.5542 for seeds 106 / 107 /
+  108: +0.002 over r6, against a margin of 0.01. On dev it still trails the tuned physics alone (9.44 % against 9.31 %).
+  No other rung was tried, so v1.0 stays released.
+- **Exam 2 taken once for v1.0** (`exam2_results.json`; `split_exam2.json` sha256 `3543a6af…`, committed before r9 was
+  judged). Kelmarsh 2022-24: 1 win, 3 ties, 5 losses. Penmanshiel 2021-23: 1 tie, 8 losses. The one win is again
+  the direct-wake corridor (13.15 % against 13.32 %, −0.17 [−0.26, −0.07]). WakeNet beats textbook FLORIS and Jensen on
+  every row of both exams. Error bars cover 64 % (Kelmarsh) and 42 % (Penmanshiel) of waked turbines.
+- **What it means.** The v1.0 gains over FLORIS came from tuning three physics settings on dev, not from the graph
+  network. The network learns corrections that help in simulation and not on real turbines, so the next rung is a twin
+  test of those corrections, not a bigger network.
