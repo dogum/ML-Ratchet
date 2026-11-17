@@ -1,0 +1,38 @@
+{
+ "iowa_ers_lbnl_mzvav2_ers_exp_2009-01-19.csv": {
+  "run_id": "lbnl_mzvav2_ers_exp_2009-01-19",
+  "dataset": "lbnl_mzvav2_ers_exp",
+  "facility": "Iowa Energy Resource Station (ERS)",
+  "unit": "AHU-A",
+  "date": "2009-01-19",
+  "fault_type": "none",
+  "severity": null
+ },
+ "flexlab_lbnl_szvav_flexlab_2017-09-11.csv": {
+  "run_id": "lbnl_szvav_flexlab_2017-09-11",
+  "dataset": "lbnl_szvav_flexlab",
+  "facility": "LBNL FLEXLAB X3A (Berkeley)",
+  "unit": "SZVAV-AHU",
+  "date": "2017-09-11",
+  "fault_type": "cc_valve_leak",
+  "severity": "50%"
+ },
+ "ornl_rtu_lbnl_rtu_ornl_2018-01-31.csv": {
+  "run_id": "lbnl_rtu_ornl_2018-01-31",
+  "dataset": "lbnl_rtu_ornl",
+  "facility": "ORNL Flexible Research Platform 2 (Oak Ridge)",
+  "unit": "RTU",
+  "date": "2018-01-31",
+  "fault_type": "sensor_bias_T_zone",
+  "severity": "-4F core"
+ },
+ "nesbitt_NES_20180711_AHU-1.csv": {
+  "run_id": "NES_20180711_AHU-1",
+  "dataset": "nesbitt",
+  "facility": "Nesbitt Hall, Drexel University (Philadelphia)",
+  "unit": "AHU-1",
+  "date": "2018-07-11",
+  "fault_type": "none",
+  "severity": "80"
+ }
+}
