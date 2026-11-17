@@ -101,10 +101,17 @@ def jitter(spec, rng):
 
 
 def generate_buildings(n, seed=0, primary_use=None, climate_zone=None, system=None, mix='balanced',
-                       jitter_values=True):
+                       jitter_values=True, physics=None, intensity=None):
     """n random building specs. primary_use / climate_zone / system: a value or list to restrict to.
     mix='balanced' draws use types uniformly; mix='stock' follows ResStock/ComStock/CBECS weights by count
-    (dominated by houses)."""
+    (dominated by houses).
+    physics: '1.0' ... '1.4' (default $BUILDINGSIM_PHYSICS or '1.0'). At 1.4 each spec is returned filled
+    (fill_spec) with its per-area intensities x the factor of its use type (campus.py, INTENSITY in data/physics.json,
+    fitted on the CBECS / RECS prior split); intensity={use: factor} overrides them (calibration only). The draws
+    are the same at every version: only the intensities differ."""
+    from .campus import resolve, at_least, params
+    phys = resolve({'physics': physics} if physics is not None else None)
+    fac_tab = dict(params().get('INTENSITY') or {}, **(intensity or {})) if at_least(phys, '1.4') else None
     rng = np.random.default_rng(seed)
     uses = [primary_use] if isinstance(primary_use, str) else list(primary_use or USE_TYPES)
     czs = [climate_zone] if isinstance(climate_zone, str) else (list(climate_zone) if climate_zone else None)
@@ -151,6 +158,11 @@ def generate_buildings(n, seed=0, primary_use=None, climate_zone=None, system=No
             spec = jitter(spec, rng)
         spec['id'] = f'gen{seed}_{len(out):05d}'
         spec['weather_hint'] = weather_hint(spec.get('climate_zone') or '4A')
+        if fac_tab is not None:            # physics 1.4: generator intensity by use type
+            from .spec import fill_spec
+            from .phase2 import apply_intensity
+            spec = apply_intensity(fill_spec(spec), float(fac_tab.get(spec['primary_use'], 1.0)))
+            spec['_physics_generator'] = phys
         out.append(spec)
     return out
 

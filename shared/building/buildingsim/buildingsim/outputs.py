@@ -39,6 +39,12 @@ def end_use_arrays(sim):
         'pv_electricity': -sim.pv_W,
         'battery_electricity': np.asarray(sim.r_bat),
     }
+    cp = getattr(sim, 'campus', None)
+    if cp is not None:      # physics 1.1: loop base while a district loop runs (campus.py)
+        if cp['heat']:
+            eu['plant_heating_district'] = cp['base_heat_W']
+        if cp['cool']:
+            eu['plant_cooling_district'] = cp['base_cool_W']
     return eu
 
 
@@ -51,7 +57,7 @@ def meters_from_end_uses(eu, sim):
             m['electricity'] = m['electricity'] + v
         elif k.endswith('_gas'):
             m['gas'] = m['gas'] + v
-        elif k == 'cooling_district':
+        elif k in ('cooling_district', 'plant_cooling_district'):
             m['chilled_water'] = m['chilled_water'] + v
         elif k.endswith('_district'):
             m[dist_heat] = m[dist_heat] + v
@@ -62,6 +68,12 @@ def make_outputs(sim, wall):
     n, dt = sim.n, sim.dt
     dth = dt / 3600.0
     idx = sim.times
+    if getattr(sim, 'hp_home', False) and sim.physics != '1.0' and not getattr(sim, '_stored', False):
+        from .campus import at_least, emitter_store
+        if at_least(sim.physics, '1.3'):     # 1.3: heat-pump electricity through the emitter store
+            sim.system.rec['E_heat_elec'] = emitter_store(sim.system.rec['E_heat_elec'], dt,
+                                                          float(sim._campus_P['tau_e'])).tolist()
+            sim._stored = True
     r = {k: np.asarray(v) for k, v in sim.system.rec.items()}
     T = np.asarray(sim.r_T)
     Ts = np.asarray(sim.r_Ts)
@@ -147,7 +159,7 @@ def make_outputs(sim, wall):
         summary['electricity_cost'] = energy_cost
     final = dict(T_air=sim.T_air, T_mass=sim.zone.theta_m, W_air=sim.W_air, soc=sim.soc)
     return dict(ts=ts, trend=trend, ledger=led, summary=summary, spec=sim.spec, final_state=final,
-                sim=sim)
+                sim=sim, physics=sim.physics)
 
 
 def _jsonable(d):

@@ -55,7 +55,7 @@ out = simulate(spec, weather, start=None, end=None, dt='1h', controller=None, fa
 | `prices` | a number ($/kWh), a Series/DataFrame (`elec` column) on any grid, or a TOU dict `{'base', 'periods': [{'months', 'hours': (h0, h1), 'weekdays_only', 'price'}]}`. |
 | `init` | `{'T_air', 'T_mass', 'W_air', 'soc'}` or a previous `out['final_state']`. Default: a 7-day warm-up on the first week. |
 | `rng` | seed or Generator, for sensor noise. `sensor_noise={'SAT': 0.2, ...}` adds Gaussian noise (K) to trend columns. |
-| `options` | opt-in Phase 2 flags that act inside the time loop (see [Phase 2 wrappers](#phase-2-wrappers-opt-in)). `None` or `{}` = v1.0 exactly. Unknown keys raise. |
+| `options` | opt-in Phase 2 flags that act inside the time loop (see [Phase 2 wrappers](#phase-2-wrappers-opt-in)) and the physics version (`'physics'`, `'seed'`; see [Physics versions](#physics-versions-opt-in)). `None` or `{}` = v1.0 exactly. Unknown keys raise. |
 
 `out` is a dict:
 
@@ -255,6 +255,35 @@ Not ported, and why: ThermoPilot's numba DP kernel and its two-pass demand-peak 
 BuildingSim dependency. They stay in `models/thermopilot/training/tp/` (`dp_fast.py`, `mpc.py`,
 `episode.oracle_floor`); the billing pieces they need (`tariff_arrays`, `bill_arrays`) are in BuildingData.
 
+## Physics versions (opt-in)
+
+Version 1.2.0. `bs.PHYSICS_VERSION` is the default, still `'1.0'`; `bs.PHYSICS_VERSIONS = ('1.0', ..., '1.4')`.
+Select with `simulate(..., options={'physics': '1.1'})` or the environment variable `BUILDINGSIM_PHYSICS` (the option
+wins); `out['physics']` records it. At '1.0' every array is the v1.0 one, bit for bit. The released models were
+trained at 1.0; a model moves to 1.1 or 1.2 only when it rebuilds its frozen simulated sets.
+
+- **1.1, campus and district thermal plants** (`campus.py`; buildings with district heat, district chilled water or
+  district DHW only). Hot-water heating loops run while the 7-day running-mean outdoor temperature is below
+  `T_hw_off`; chilled-water loops while it is above `T_chw_off` (healthcare and lab keep it on); steam runs all year.
+  While a loop runs it carries a constant base (distribution and standby losses, process steam and cooling),
+  `q_steam`, `q_hw`, `q_chw` W per m2 of floor, as the end uses `plant_heating_district` and
+  `plant_cooling_district`, with its own ledger section `district_plant_kWh`. Optional summer reheat `f_rh` (VAV with
+  district heat; fitted to 0). Fitted on the BDG2 dev buildings, 2016 (`tools/calibrate_district.py`,
+  `checks/district_fit.json`).
+- **1.2 = 1.1 + weather-insensitive electricity** (non-residential uses). A share `s_on` of the run's interior
+  lighting and plug energy is flat around the clock (energy-preserving), and a daily activity multiplier (lognormal
+  AR(1), `sigma_d`, `rho_d`, seeded by `options['seed']`, default 0) scales occupancy, lighting and plug. Fitted on
+  the BDG2 dev buildings, 2016 (`tools/calibrate_electricity.py`, `checks/electricity_fit.json`).
+- **1.3 = 1.2 + the heat-pump signature** (residential heat pumps): a heating limit (no space heating above a 24-h
+  mean of 18.75 C), a field COP factor `f_cop` on air-source compressor power (fitted 0.6, the edge of its grid), and
+  an emitter store `tau_e` (fitted to 0 h). `tools/calibrate_heatpump.py`, `checks/heatpump_fit.json`.
+- **1.4 = 1.3 + generator intensity**: `generate_buildings(..., physics='1.4')` returns filled specs whose per-area
+  intensities are multiplied by a factor per use type (`INTENSITY`), fitted on the CBECS / RECS prior split
+  (`tools/calibrate_intensity.py`, `checks/intensity_fit.json`). `simulate()` at 1.4 is the 1.3 physics.
+
+The parameters are in `buildingsim/data/physics.json`; `options={'campus': {...}}` overrides them (calibration only).
+Results, cross-checks and what failed: `checks/REPRODUCED.md` (last section) and `shared/building/NOTEBOOK.md`.
+
 ## The physics
 
 **Weather** (`weather.py`).
@@ -379,9 +408,12 @@ buildingsim/   the package
   curves.py systems.py plant.py sizing.py faults.py             equipment curves, HVAC systems, plant, sizing, faults
   generator.py stock.py data/calibration.json                   generator, ResStock/ComStock/CBECS/RECS mapping
   phase2.py holidays.py                                         opt-in Phase 2 wrappers, country holiday calendars
+  campus.py data/physics.json                                   opt-in physics 1.1 / 1.2 and their dev-fitted parameters
 refdata/       weather/epw (17 TMYx US cities, one per IECC zone), weather/bestest (Denver-Stapleton TMY),
                priors/ (resstock, comstock, cbecs and recs prior tables), stock_weather/ (OEDI AMY2018 counties)
-tools/         build_priors.py, fetch_stock_weather.py, calibrate_resstock.py (scan kept for the record)
+tools/         build_priors.py, fetch_stock_weather.py, calibrate_resstock.py (scan kept for the record),
+               calibrate_district.py (1.1), calibrate_electricity.py (1.2), calibrate_heatpump.py (1.3),
+               calibrate_intensity.py (1.4): dev fits of the opt-in physics versions and their cross-checks
 demo.py        two buildings x two weeks, ledgers, a fault, a controller -> demo_weeks.png
 .refenv/       isolated venv with CoolProp and pythermalcomfort (checks only)
 ../checks/     check_*.py, their JSONs, run_all.sh (re-runs all, ~30 min), out/ per-unit results and logs

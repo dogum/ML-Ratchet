@@ -1,0 +1,314 @@
+{
+ "what": "physics 1.4 generator intensity: factors fitted on the prior split, checked on the dev split",
+ "n_per_use": 30,
+ "fit_seeds": "1000 + i",
+ "check_seeds": "2000 + i",
+ "factors": {
+  "assembly": 0.5189506515349175,
+  "education": 0.5203071356236803,
+  "food": 0.6676777166872144,
+  "healthcare": 0.5124461837321067,
+  "lab": 0.2,
+  "lodging": 1.68066100192972,
+  "office": 0.979964906904531,
+  "other": 0.7552788777763696,
+  "retail": 0.4590223960425948,
+  "warehouse": 0.8713347744103467,
+  "residential_single": 0.4451483707104319,
+  "residential_multi": 0.47650515270355653
+ },
+ "prior_fit_history": [
+  {
+   "iteration": 0,
+   "factors": {
+    "assembly": 1.0,
+    "education": 1.0,
+    "food": 1.0,
+    "healthcare": 1.0,
+    "lab": 1.0,
+    "lodging": 1.0,
+    "office": 1.0,
+    "other": 1.0,
+    "retail": 1.0,
+    "warehouse": 1.0,
+    "residential_single": 1.0,
+    "residential_multi": 1.0
+   },
+   "ratio_to_prior": {
+    "office": 1.011931477574581,
+    "education": 1.4346256692688601,
+    "lodging": 0.6983603501802677,
+    "retail": 1.3554698445355446,
+    "healthcare": 1.4787459604948339,
+    "assembly": 1.4519238437659574,
+    "warehouse": 1.0742495203158622,
+    "residential_single": 1.2808364080793773,
+    "residential_multi": 1.570138944333271,
+    "food": 1.43421011658737,
+    "lab": 3.0256035094620666,
+    "other": 1.1718340928844875
+   }
+  },
+  {
+   "iteration": 1,
+   "factors": {
+    "office": 0.9882092040429669,
+    "education": 0.6970459412660852,
+    "lodging": 1.4319255091470615,
+    "retail": 0.7377515656518737,
+    "healthcare": 0.6762486774032297,
+    "assembly": 0.6887413580909515,
+    "warehouse": 0.9308824263714537,
+    "residential_single": 0.7807398303890398,
+    "residential_multi": 0.6368863109911783,
+    "food": 0.6972479056133345,
+    "lab": 0.33051257273884965,
+    "other": 0.8533631220256485
+   },
+   "ratio_to_prior": {
+    "office": 1.0049218307291878,
+    "education": 1.1753194398934834,
+    "lodging": 0.8951569450507261,
+    "retail": 1.2036347352641539,
+    "healthcare": 1.176206868311257,
+    "assembly": 1.1745803828758636,
+    "warehouse": 1.0349747548154504,
+    "residential_single": 1.1874631348040705,
+    "residential_multi": 1.19311982905065,
+    "food": 1.039444497019022,
+    "lab": 2.117762971937492,
+    "other": 1.0714171351140251
+   }
+  },
+  {
+   "iteration": 2,
+   "factors": {
+    "office": 0.979964906904531,
+    "education": 0.5203071356236803,
+    "lodging": 1.68066100192972,
+    "retail": 0.4590223960425948,
+    "healthcare": 0.5124461837321067,
+    "assembly": 0.5189506515349175,
+    "warehouse": 0.8713347744103467,
+    "residential_single": 0.4451483707104319,
+    "residential_multi": 0.47650515270355653,
+    "food": 0.6676777166872144,
+    "lab": 0.2,
+    "other": 0.7552788777763696
+   },
+   "ratio_to_prior": {
+    "office": 0.9996082821703296,
+    "education": 1.0298794721692057,
+    "lodging": 0.9927684189531977,
+    "retail": 1.0554492429394007,
+    "healthcare": 1.0283734867017795,
+    "assembly": 1.0125759866024582,
+    "warehouse": 1.0013058088876414,
+    "residential_single": 1.017557282495801,
+    "residential_multi": 1.0524885663253756,
+    "food": 0.9989994861650331,
+    "lab": 1.928501957233926,
+    "other": 0.9976343904838326
+   }
+  }
+ ],
+ "dev_check_physics_1_0": {
+  "office": {
+   "sim_median": 178.81449957921384,
+   "n_sim": 30,
+   "survey_median": 161.3730894688699,
+   "n_survey": 133,
+   "ratio": 1.108081280266426,
+   "within_15pct": true
+  },
+  "education": {
+   "sim_median": 209.75259016543305,
+   "n_sim": 30,
+   "survey_median": 205.21533584036442,
+   "n_survey": 93,
+   "ratio": 1.02210972345945,
+   "within_15pct": true
+  },
+  "lodging": {
+   "sim_median": 197.8009501880876,
+   "n_sim": 30,
+   "survey_median": 245.55135305486874,
+   "n_survey": 41,
+   "ratio": 0.8055380177192049,
+   "within_15pct": false
+  },
+  "retail": {
+   "sim_median": 303.3922641292792,
+   "n_sim": 30,
+   "survey_median": 211.95109351056448,
+   "n_survey": 63,
+   "ratio": 1.4314258025479683,
+   "within_15pct": false
+  },
+  "healthcare": {
+   "sim_median": 296.8474041223436,
+   "n_sim": 30,
+   "survey_median": 251.6396005253075,
+   "n_survey": 63,
+   "ratio": 1.17965297792026,
+   "within_15pct": false
+  },
+  "assembly": {
+   "sim_median": 180.39526673084816,
+   "n_sim": 30,
+   "survey_median": 124.96236146804453,
+   "n_survey": 76,
+   "ratio": 1.44359681276493,
+   "within_15pct": false
+  },
+  "warehouse": {
+   "sim_median": 86.57316966452211,
+   "n_sim": 30,
+   "survey_median": 79.10964368667321,
+   "n_survey": 77,
+   "ratio": 1.094344072732895,
+   "within_15pct": true
+  },
+  "residential_single": {
+   "sim_median": 188.0171779902201,
+   "n_sim": 30,
+   "survey_median": 130.88262780078162,
+   "n_survey": 1504,
+   "ratio": 1.4365327251558841,
+   "within_15pct": false
+  },
+  "residential_multi": {
+   "sim_median": 168.6803888947801,
+   "n_sim": 30,
+   "survey_median": 124.54018756981358,
+   "n_survey": 344,
+   "ratio": 1.3544253641036377,
+   "within_15pct": false
+  },
+  "food": {
+   "sim_median": 1225.0672469545887,
+   "n_sim": 30,
+   "survey_median": 711.862933544043,
+   "n_survey": 32,
+   "ratio": 1.7209313608387136,
+   "within_15pct": false
+  },
+  "lab": {
+   "sim_median": 585.7292267415714,
+   "n_sim": 30,
+   "survey_median": 54.714595025015576,
+   "n_survey": 9,
+   "ratio": 10.705173390642393,
+   "within_15pct": false
+  },
+  "other": {
+   "sim_median": 156.03959298065524,
+   "n_sim": 30,
+   "survey_median": 134.39187484220108,
+   "n_survey": 64,
+   "ratio": 1.1610790694294002,
+   "within_15pct": false
+  }
+ },
+ "dev_check": {
+  "office": {
+   "sim_median": 173.88000386490367,
+   "n_sim": 30,
+   "survey_median": 161.3730894688699,
+   "n_survey": 133,
+   "ratio": 1.077503098175774,
+   "within_15pct": true
+  },
+  "education": {
+   "sim_median": 143.48309330001246,
+   "n_sim": 30,
+   "survey_median": 205.21533584036442,
+   "n_survey": 93,
+   "ratio": 0.6991830932734333,
+   "within_15pct": false
+  },
+  "lodging": {
+   "sim_median": 305.7985550476621,
+   "n_sim": 30,
+   "survey_median": 245.55135305486874,
+   "n_survey": 41,
+   "ratio": 1.2453547954155686,
+   "within_15pct": false
+  },
+  "retail": {
+   "sim_median": 217.11932388869087,
+   "n_sim": 30,
+   "survey_median": 211.95109351056448,
+   "n_survey": 63,
+   "ratio": 1.024384070365123,
+   "within_15pct": true
+  },
+  "healthcare": {
+   "sim_median": 202.23254394219467,
+   "n_sim": 30,
+   "survey_median": 251.6396005253075,
+   "n_survey": 63,
+   "ratio": 0.8036594539175326,
+   "within_15pct": false
+  },
+  "assembly": {
+   "sim_median": 137.8477320326243,
+   "n_sim": 30,
+   "survey_median": 124.96236146804453,
+   "n_survey": 76,
+   "ratio": 1.1031140129972241,
+   "within_15pct": true
+  },
+  "warehouse": {
+   "sim_median": 82.34407163551762,
+   "n_sim": 30,
+   "survey_median": 79.10964368667321,
+   "n_survey": 77,
+   "ratio": 1.0408853813279062,
+   "within_15pct": true
+  },
+  "residential_single": {
+   "sim_median": 152.55036576297005,
+   "n_sim": 30,
+   "survey_median": 130.88262780078162,
+   "n_survey": 1504,
+   "ratio": 1.1655509086749787,
+   "within_15pct": false
+  },
+  "residential_multi": {
+   "sim_median": 132.28424789720188,
+   "n_sim": 30,
+   "survey_median": 124.54018756981358,
+   "n_survey": 344,
+   "ratio": 1.0621812161881257,
+   "within_15pct": true
+  },
+  "food": {
+   "sim_median": 722.6119217545222,
+   "n_sim": 30,
+   "survey_median": 711.862933544043,
+   "n_survey": 32,
+   "ratio": 1.0150998004025364,
+   "within_15pct": true
+  },
+  "lab": {
+   "sim_median": 203.33428330064982,
+   "n_sim": 30,
+   "survey_median": 54.714595025015576,
+   "n_survey": 9,
+   "ratio": 3.7162713752644088,
+   "within_15pct": false
+  },
+  "other": {
+   "sim_median": 135.8398830366093,
+   "n_sim": 30,
+   "survey_median": 134.39187484220108,
+   "n_survey": 64,
+   "ratio": 1.0107745218682933,
+   "within_15pct": true
+  }
+ },
+ "all_within_15pct": false,
+ "generated": "2026-11-17 18:21",
+ "python": "3.14.9"
+}

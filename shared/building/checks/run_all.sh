@@ -17,6 +17,12 @@ echo "== check_phase2.py" && nice -n 5 "$PY" check_phase2.py > "$OUT/check_phase
 for v in w2 w2w3 lc; do
   echo "== check_bdg2.py $v" && nice -n 5 "$PY" check_bdg2.py $v > "$OUT/check_bdg2__$v.log" 2>&1 && tail -1 "$OUT/check_bdg2__$v.log"
 done
+# Physics versions 1.1 / 1.2 (opt-in, BuildingSim 1.2.0): dev twins in the fit year and 2017
+for p in 1.0 1.1 1.2; do
+  for y in 2016 2017; do
+    echo "== check_bdg2.py --physics $p --year $y" && nice -n 5 "$PY" check_bdg2.py --physics $p --year $y       > "$OUT/check_bdg2__p${p}_y$y.log" 2>&1 && tail -1 "$OUT/check_bdg2__p${p}_y$y.log"
+  done
+done
 rm -f "$OUT"/resstock/*.json && nice -n 5 "$PY" check_resstock.py > "$OUT/resstock.log" 2>&1 && tail -1 "$OUT/resstock.log"
 rm -rf "$OUT/comstock" "$OUT/comstock_heldout12" && nice -n 5 "$PY" check_comstock.py 11 > "$OUT/comstock_cal.log" 2>&1 && \
   nice -n 5 "$PY" check_comstock.py 12 > "$OUT/comstock_held.log" 2>&1 && tail -1 "$OUT/comstock_held.log"

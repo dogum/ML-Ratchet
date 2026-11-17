@@ -131,3 +131,26 @@ are off in summer (real 0.01; W3 gives 0.70). LoadCast's campus knobs alone get 
 steam and hot water peak at night (night/day 1.8-2.1 against 0.9 real: 24x7 air handlers with x2.5 outdoor air).
 Holidays change nothing here: the only non-US dev buildings are two Robin lodging buildings, and the lodging schedule
 ignores the day type (11 UK holidays in 2016, 0.0 kW difference).
+
+
+## BuildingSim 1.2.0: opt-in physics versions 1.1-1.4 (17 Nov 2026)
+
+`options={'physics': '1.1' ... '1.4'}` or `BUILDINGSIM_PHYSICS` (`buildingsim/campus.py`; README "Physics
+versions"). The default stays 1.0. Plans and results: `../NOTEBOOK.md`, entries of 17 Nov 2026. Fits on dev only
+(BDG2 dev, RECS / CBECS prior and dev, HEAPO dev), parameters in `buildingsim/data/physics.json`.
+
+**Default = v1.0.** Re-run with the final code (no physics option, no variable), then `compare.py`: analytic 53/53,
+multinode 82/84 (the same two 1e-9 residuals), bestest 222/222, faults 544/544, controller 34/34, generator
+1715/1715, bdg2 1233/1236 (the same three near-zero values), `w2` / `w2w3` / `lc` 1595/1595 each, speed 3/3.
+`phase2_equivalence.json` 224/225 with 3 missing: FaultFinder's `noise.py` is being edited by another agent
+(`unchanged_from_commit` false) and ERCOT RTP was skipped (no GridData in this worktree); not physics.
+**Where 1.1-1.4 cannot reach**: analytic, multinode and BESTEST re-run with `BUILDINGSIM_PHYSICS=1.4` give the same
+counts (no district plant, no lighting/plug schedule, no heat pump). ResStock/ComStock twins cannot be re-simulated
+here. Tests: `tests/test_building.py::test_physics_*`.
+
+| Version | Dev check | Fitted | Result | Done when |
+|---|---|---|---|---|
+| 1.1 district plants | `bdg2_dev_meters__p1.1[_y2017].json`, `district_fit.json` | HW lockout 15.6 C, CHW lockout 7.2 C, base steam 3.5 / HW 23.5 / CHW 42.1 W/m2, reheat 0 | annual 0.28 / 0.29 / 0.15 -> leave-one-site-out 1.03 / 3.29 / 8.46 (CHW / steam / HW), daily r 0.85 / 0.70 / 0.62 | CHW yes; steam, HW no |
+| 1.2 electricity | `bdg2_dev_meters__p1.2[_y2017].json`, `electricity_fit.json` | always-on 0.6 (grid edge), daily sd 0.15, lag-1 0.7 | PRISM r2 quartiles 2017 real 0.02 / 0.07 / 0.25, twins 0.05 / 0.28 / 0.58 -> 0.03 / 0.19 / 0.63 | no |
+| 1.3 heat pumps | `heatpump_fit.json` | heating limit 18.75 C, field COP 0.6 (grid edge), emitter store 0 h | RECS dev reader AUC 0.51 -> 0.57 (real-fitted ceiling 0.60); HEAPO dev profile r 0.24 -> 0.21 | no |
+| 1.4 generator intensity | `intensity_fit.json` | 12 factors (0.20-1.68) on the prior split | dev within 15 %: 3 -> 7 of 12 use types | no |

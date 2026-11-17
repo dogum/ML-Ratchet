@@ -154,7 +154,135 @@ def test_phase2_flags_off_is_v1():
                 assert np.array_equal(a["ts"][c].to_numpy(), b["ts"][c].to_numpy(), equal_nan=True), (opts, c)
     with pytest.raises(ValueError):
         bs.simulate(spec, w, "2019-07-01 12:00", "2019-07-02", options={"nope": 1})
-    assert bs.PHYSICS_VERSION == "1.0" and bs.__version__ == "1.0.1"
+    assert bs.PHYSICS_VERSION == "1.0" and bs.__version__ == "1.2.0"
+
+
+def _campus_pair(days=4, tmean=24.0, start="2019-07-01", **kw):
+    w = _synthetic_weather(start, days, tmean, 6.0, tz="America/Chicago")
+    spec = dict(primary_use="office", floor_area_m2=5000, year_built=2000, climate_zone="5A",
+                system="district_steam_chw", hvac=dict(district_heat="hot_water"))
+    return spec, w
+
+
+def test_physics_default_is_v1(monkeypatch):
+    """Physics 1.0 is the default: None, {'physics': '1.0'} and an unset BUILDINGSIM_PHYSICS give the v1.0 arrays bit
+    for bit; the environment variable selects a version and the option overrides it; unknown versions raise."""
+    import buildingsim as bs
+    spec, w = _campus_pair()
+    monkeypatch.delenv("BUILDINGSIM_PHYSICS", raising=False)
+    a = bs.simulate(spec, w, "2019-07-01 12:00", "2019-07-04", dt="1h")
+    assert a["physics"] == "1.0" and "district_plant_kWh" not in a["ledger"]
+    for opts in ({"physics": "1.0"}, {"seed": 5}):
+        b = bs.simulate(spec, w, "2019-07-01 12:00", "2019-07-04", dt="1h", options=opts)
+        for c in a["ts"]:
+            if a["ts"][c].dtype.kind == "f":
+                assert np.array_equal(a["ts"][c].to_numpy(), b["ts"][c].to_numpy(), equal_nan=True), (opts, c)
+    monkeypatch.setenv("BUILDINGSIM_PHYSICS", "1.1")
+    e = bs.simulate(spec, w, "2019-07-01 12:00", "2019-07-04", dt="1h")
+    o = bs.simulate(spec, w, "2019-07-01 12:00", "2019-07-04", dt="1h", options={"physics": "1.0"})
+    assert e["physics"] == "1.1" and o["physics"] == "1.0"
+    assert np.array_equal(o["ts"]["meter_chilled_water_kW"].to_numpy(), a["ts"]["meter_chilled_water_kW"].to_numpy())
+    with pytest.raises(ValueError):
+        bs.simulate(spec, w, "2019-07-01 12:00", "2019-07-02", options={"physics": "2.0"})
+    assert bs.PHYSICS_VERSIONS == ("1.0", "1.1", "1.2", "1.3", "1.4") and bs.PHYSICS_LATEST == "1.4"
+
+
+def test_physics_11_district_plant():
+    """1.1: the loop base is its own end use on the district meters (meter = systems + base, ledgers close), the
+    hot-water loop locks out in warm weather, summer reheat adds heat that the chilled water removes."""
+    import buildingsim as bs
+    C = dict(q_hw=4.0, q_steam=3.0, q_chw=20.0, f_rh=0.0, T_hw_off=15.6, T_chw_off=10.0)
+    spec, w = _campus_pair()
+    v1 = bs.simulate(spec, w, "2019-07-01 12:00", "2019-07-04", dt="1h")
+    warm = bs.simulate(spec, w, "2019-07-01 12:00", "2019-07-04", dt="1h", options={"physics": "1.1", "campus": C})
+    L = bs.ledger(warm)
+    assert L["ok"] and L["district_plant_kWh"]["closure_rel"] < 1e-9
+    ts = warm["ts"]
+    assert np.allclose(ts["plant_cooling_district_kW"], 20.0 * 5000 / 1000)     # 7-day mean > 10 C: loop on
+    assert np.allclose(ts["plant_heating_district_kW"], 0.0)                    # 7-day mean > 15.6 C: loop off
+    assert np.allclose(ts["meter_chilled_water_kW"], v1["ts"]["meter_chilled_water_kW"] + 100.0)
+    rh = bs.simulate(spec, w, "2019-07-01 12:00", "2019-07-04", dt="1h",
+                     options={"physics": "1.1", "campus": dict(C, f_rh=0.5, T_hw_off=None)})
+    assert bs.ledger(rh)["ok"]
+    k_rh, k_w = rh["summary"]["kWh_by_end_use"], warm["summary"]["kWh_by_end_use"]
+    assert k_rh["heating_district"] > k_w["heating_district"] + 1.0              # summer reheat on the heat meter
+    assert k_rh["cooling_district"] > k_w["cooling_district"]                    # removed again by chilled water
+    sc, wc = _campus_pair(tmean=-2.0, start="2019-01-07")
+    cold = bs.simulate(sc, wc, "2019-01-07 12:00", "2019-01-10", dt="1h", options={"physics": "1.1", "campus": C})
+    assert np.allclose(cold["ts"]["plant_heating_district_kW"], 4.0 * 5000 / 1000)
+    assert np.allclose(cold["ts"]["plant_cooling_district_kW"], 0.0)            # chilled-water loop locked out
+    hosp = dict(sc, primary_use="healthcare")
+    h = bs.simulate(hosp, wc, "2019-01-07 12:00", "2019-01-10", dt="1h", options={"physics": "1.1", "campus": C})
+    assert np.allclose(h["ts"]["plant_cooling_district_kW"], 100.0)              # process cooling: never locked out
+
+
+def test_physics_13_heat_pumps():
+    """1.3: the emitter store keeps the heat-pump energy and smooths it, the field COP factor raises air-source
+    electricity, the heating limit stops heating in warm weather; resistance homes are unchanged."""
+    import buildingsim as bs
+    from buildingsim.campus import emitter_store
+    x = np.r_[np.zeros(10), np.ones(5) * 3.0, np.zeros(33)]
+    y = emitter_store(x, 3600.0, 6.0)
+    assert y.sum() == pytest.approx(x.sum(), rel=1e-12) and y.max() < x.max() and np.array_equal(emitter_store(x, 3600.0, 0.0), x)
+    w = _synthetic_weather("2019-01-07", 6, 0.0, 6.0, tz="America/Chicago")
+    hp = dict(primary_use="residential_single", floor_area_m2=150, year_built=2000, climate_zone="5A",
+              system="heat_pump_air")
+    run = lambda spec, wx, o: bs.simulate(spec, wx, "2019-01-07 12:00", "2019-01-12", dt="1h", options=o)  # noqa: E731
+    a = run(hp, w, {"physics": "1.2"})
+    b = run(hp, w, {"physics": "1.3", "campus": dict(tau_e=12.0, f_cop=0.7)})
+    c = run(hp, w, {"physics": "1.3", "campus": dict(tau_e=12.0, f_cop=1.0)})
+    ea, eb, ec = (o["ts"]["heating_electricity_kW"] for o in (a, b, c))
+    assert bs.ledger(b)["ok"] and eb.sum() > 1.2 * ea.sum()
+    assert ec.sum() == pytest.approx(ea.sum(), rel=0.02) and ec.std() < ea.std()
+    warm = _synthetic_weather("2019-07-01", 4, 27.0, 4.0, tz="America/Chicago")
+    h = bs.simulate(hp, warm, "2019-07-01 12:00", "2019-07-04", dt="1h", options={"physics": "1.3"})
+    assert (h["ts"]["heat_sp"] < -50).mean() > 0.9 and h["ts"]["heating_electricity_kW"].sum() < 0.01
+    res = dict(hp, system="baseboard_resistance")
+    r2, r3 = run(res, w, {"physics": "1.2"}), run(res, w, {"physics": "1.3"})
+    assert np.array_equal(r2["ts"]["meter_electricity_kW"].to_numpy(), r3["ts"]["meter_electricity_kW"].to_numpy())
+
+
+def test_physics_14_generator_intensity(monkeypatch):
+    """1.4: same draws, filled specs with intensities x the use factor; the default generator is unchanged."""
+    import buildingsim as bs
+    monkeypatch.delenv("BUILDINGSIM_PHYSICS", raising=False)
+    a = bs.generate_buildings(4, seed=7, primary_use="lab")
+    assert a == bs.generate_buildings(4, seed=7, primary_use="lab", physics="1.3")
+    b = bs.generate_buildings(4, seed=7, primary_use="lab", physics="1.4", intensity={"lab": 0.5})
+    for x, y in zip(a, b):
+        f = bs.fill_spec(x)
+        assert y["internal_gains"]["plug"] == pytest.approx(0.5 * f["internal_gains"]["plug"])
+        assert y["floor_area_m2"] == x["floor_area_m2"] and y["_physics_generator"] == "1.4"
+    monkeypatch.setenv("BUILDINGSIM_PHYSICS", "1.4")
+    assert bs.generate_buildings(1, seed=7, primary_use="lab")[0]["_physics_generator"] == "1.4"
+
+
+def test_physics_12_weather_insensitive_electricity():
+    """1.2: the always-on share keeps the run's lighting and plug energy and raises night/day; the daily activity
+    draws are mean-preserving in expectation, deterministic per seed; homes are unchanged."""
+    import buildingsim as bs
+    from buildingsim.campus import activity
+    spec, w = _campus_pair(days=14)
+    P = dict(s_on=0.4, sigma_d=0.0, rho_d=0.0)
+    a = bs.simulate(spec, w, "2019-07-01 12:00", "2019-07-14", dt="1h", options={"physics": "1.1"})
+    b = bs.simulate(spec, w, "2019-07-01 12:00", "2019-07-14", dt="1h", options={"physics": "1.2", "campus": P})
+    for k in ("interior_lighting_electricity_kW", "interior_equipment_electricity_kW"):
+        ra, rb = a["ts"][k], b["ts"][k]
+        assert rb.sum() == pytest.approx(ra.sum(), rel=0.02)          # preserved over the run incl. warm-up week
+        night = ra.index.tz_convert("America/Chicago").hour < 5
+        assert rb[night].mean() / rb[~night].mean() > ra[night].mean() / ra[~night].mean()
+    cal = dict(doy=np.repeat(np.arange(1, 2001), 24).astype(float))
+    m = activity(cal, 0.2, 0.7, 1)
+    d = m[::24]
+    assert abs(np.log(d).std() - 0.2) < 0.02 and abs(d.mean() - 1.0) < 0.03
+    assert np.corrcoef(np.log(d[1:]), np.log(d[:-1]))[0, 1] == pytest.approx(0.7, abs=0.05)
+    assert np.array_equal(m, activity(cal, 0.2, 0.7, 1)) and not np.array_equal(m, activity(cal, 0.2, 0.7, 2))
+    home = dict(primary_use="residential_single", floor_area_m2=150, year_built=2000, climate_zone="5A",
+                system="heat_pump_air")
+    h1 = bs.simulate(home, w, "2019-07-01 12:00", "2019-07-04", dt="1h", options={"physics": "1.1"})
+    h2 = bs.simulate(home, w, "2019-07-01 12:00", "2019-07-04", dt="1h",
+                     options={"physics": "1.2", "campus": dict(s_on=0.4, sigma_d=0.2, rho_d=0.7)})
+    assert np.array_equal(h1["ts"]["meter_electricity_kW"].to_numpy(), h2["ts"]["meter_electricity_kW"].to_numpy())
 
 
 def test_phase2_country_holidays():

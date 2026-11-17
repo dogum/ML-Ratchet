@@ -1,0 +1,115 @@
+{
+ "what": "physics 1.3 heat-pump signature: RECS dev reader AUC, HEAPO dev profiles",
+ "grid": {
+  "f_cop": [
+   0.6,
+   0.7,
+   0.8,
+   0.9,
+   1.0
+  ],
+  "tau_e": [
+   0.0,
+   3.0,
+   6.0,
+   12.0,
+   24.0
+  ]
+ },
+ "choice": {
+  "f_cop": 0.6,
+  "real_hp_coef_A": 0.06941474042083444,
+  "sim_hp_coef_A": -0.12554256017179316,
+  "tau_e": 0.0,
+  "profile_r_A": 0.39161358218968034
+ },
+ "recs_physics_1_0": {
+  "reader_fold_B": {
+   "real_auc": 0.5123569198751301,
+   "sim_auc": 0.7452523413111343,
+   "n": 248,
+   "n_hp": 124
+  },
+  "reader_all": {
+   "real_auc": 0.5026413015296863,
+   "sim_auc": 0.7305548353642728,
+   "n": 498,
+   "n_hp": 232
+  },
+  "hp_coef_real_B": 0.1059557393007715,
+  "hp_coef_sim_B": -0.23173148576723257,
+  "hp_coef_real_all": 0.0860428542018607,
+  "hp_coef_sim_all": -0.24427452325990634,
+  "n": 498
+ },
+ "recs_physics_1_3": {
+  "reader_fold_B": {
+   "real_auc": 0.5725156087408949,
+   "sim_auc": 0.7012877211238293,
+   "n": 248,
+   "n_hp": 124
+  },
+  "reader_all": {
+   "real_auc": 0.5579303863106041,
+   "sim_auc": 0.6724948146227638,
+   "n": 498,
+   "n_hp": 232
+  },
+  "hp_coef_real_B": 0.1059557393007715,
+  "hp_coef_sim_B": -0.10723493393355156,
+  "hp_coef_real_all": 0.0860428542018607,
+  "hp_coef_sim_all": -0.1152855707086545,
+  "n": 498
+ },
+ "recs_real_fitted_ceiling_cv5": 0.6047446201711174,
+ "heapo_physics_1_0_A": {
+  "n": 13,
+  "profile_r_median": 0.4050897063938953,
+  "slope_ratio_median": 1.9581519394119866,
+  "night_day_real_median": 1.1594077059585586,
+  "night_day_sim_median": 1.2756859349272158,
+  "annual_ratio_median": 1.3927255674602794
+ },
+ "heapo_physics_1_3_A": {
+  "n": 13,
+  "profile_r_median": 0.39161358218968034,
+  "slope_ratio_median": 2.5731278668205726,
+  "night_day_real_median": 1.1594077059585586,
+  "night_day_sim_median": 1.2500210302745616,
+  "annual_ratio_median": 1.622366158783948
+ },
+ "heapo_physics_1_0_B": {
+  "n": 12,
+  "profile_r_median": 0.19222730069281996,
+  "slope_ratio_median": 1.7119726843437975,
+  "night_day_real_median": 1.104428902987161,
+  "night_day_sim_median": 1.2859136816294559,
+  "annual_ratio_median": 1.6174721968390968
+ },
+ "heapo_physics_1_3_B": {
+  "n": 12,
+  "profile_r_median": 0.1936425289512763,
+  "slope_ratio_median": 1.9317994562164404,
+  "night_day_real_median": 1.104428902987161,
+  "night_day_sim_median": 1.2779485843726077,
+  "annual_ratio_median": 1.8712062514649748
+ },
+ "heapo_physics_1_0_all": {
+  "n": 25,
+  "profile_r_median": 0.23746613697685282,
+  "slope_ratio_median": 1.7848453364673478,
+  "night_day_real_median": 1.1551682142933832,
+  "night_day_sim_median": 1.2773080889715778,
+  "annual_ratio_median": 1.5873195751107065
+ },
+ "heapo_physics_1_3_all": {
+  "n": 25,
+  "profile_r_median": 0.21410325229350494,
+  "slope_ratio_median": 2.1784127928067685,
+  "night_day_real_median": 1.1551682142933832,
+  "night_day_sim_median": 1.2676091598394383,
+  "annual_ratio_median": 1.7118415921175034
+ },
+ "generated": "2026-11-17 18:12",
+ "python": "3.14.9"
+}

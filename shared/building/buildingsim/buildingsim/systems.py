@@ -226,6 +226,8 @@ class HPHeating:
     0.90 - 36.45 dW (input), defrost fraction 0.058333, indoor defrost load 0.01 t (7.222 - T_o) Q_r / 1.01667,
     defrost input with a constant EIR of 0.3)."""
 
+    f_cop = 1.0        # physics 1.3: installed / rated COP (campus.field_cop); 1.0 = v1.0 exactly
+
     def __init__(self, Q_rated, COP_rated, speed='single', min_T=-17.8, P=ps.P_ATM):
         self.Qr, self.COPr, self.speed, self.min_T, self.P = Q_rated, COP_rated, speed, min_T, P
 
@@ -244,6 +246,8 @@ class HPHeating:
             P = P * (0.90 - 36.45 * dw)
             Qdef = 0.01 * tf * (7.222 - T_odb) * self.Qr / 1.01667
             P += 0.3 * self.Qr / 1.01667 * tf
+        if self.f_cop != 1.0:
+            P = P / self.f_cop
         return max(Q - Qdef, 0.0), P, Qdef
 
     def part_power(self, P_on, f):
@@ -690,6 +694,10 @@ class VAVSystem(System):
         self.dTf_prev = self.P_fan_d / (self.m_max * CP_AIR)
         self._ctx = None
         self.unmet_steps = 0
+        # physics 1.1 (campus.py): summer reheat of a share f_rh of the minimum airflow, district heat only
+        cp_ = getattr(sim, 'campus', None)
+        self.srh = (cp_['f_rh'], cp_['heat_on_list']) if (cp_ and cp_['f_rh'] > 0 and
+                                                          isinstance(self.heat_plant, District)) else None
 
     def _sat(self, k):
         s = self.sat
@@ -741,6 +749,10 @@ class VAVSystem(System):
         rvl = F.get('reheat_valve_leak', k)
         # a leaking reheat valve heats whatever air passes the box (only while the box has flow)
         c['q_leak'] = q_leak = (rvl or 0.0) * self.c['Q_rh_design'] if (occ or vb is not None) else 0.0
+        if self.srh is not None and occ and self.ahu_mode == 'cooling' and self.srh[1][k] > 0.5:
+            # lightly loaded zones at minimum flow reheated from supply air to the heating setpoint (box heat, as a
+            # leaking reheat valve is booked): metered on the district heat plant, removed again by the cooling coil
+            c['q_leak'] = q_leak = q_leak + self.srh[0] * self.m_min * CP_AIR * max(sim.hsp[k] - T_sa, 0.0)
         if vb is not None and (occ or so in (1, 3)):
             c['base'] = (vb * self.m_max * CP_AIR, T_sa, q_leak)
         elif occ:
