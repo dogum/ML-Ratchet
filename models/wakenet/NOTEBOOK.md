@@ -50,3 +50,44 @@ Build log for WakeNet (`models/wakenet/`), recorded 16 Nov 2026. All raw downloa
 - PyTorch-to-numpy max abs diff: `2.38e-7` (`wakenet.py`). Python-to-TypeScript (`float16` `0.49 MB` pack, 24 cases) max rel diff: `1.88e-7`.
 - **Kelmarsh 2020–21 (15,059 snapshots):** 6 of 6 wins (all waked `8.85%` vs FLORIS `9.51%`, farm wake `2.57%` vs `2.80%`; 68% bar coverage `72.2%` and `77.4%`).
 - **Penmanshiel 2019–20 zero-shot (8,976 snapshots, 14 $\times$ MM82):** Beats FLORIS and Jensen on every stratum (`15.01%` vs `16.63%` FLORIS and `17.90%` Jensen overall; wins overall waked and yaw $\ge 8^\circ$), but loses to constant/unwaked dumb baselines on multi-wake interior (`17.32%` vs `16.43%` dev mean), hilltop turbines (`15.92%` vs `13.19%` unwaked), and farm wake loss (`4.75%` vs `4.55%` dev mean), with 68% bar coverage dropping to `50.7%` / `61.5%` due to steep 48 m Berwickshire coastal ridge + forestry speedups onto hilltop units `T12–T15`.
+
+## 2026-11-17 — Review findings and the plan, written before any data was re-read
+
+A review on 17 Nov 2026 (Claude, for the owner) checked the v1.0 branch. Every repo check passed, and the site
+instrument works. It found three problems:
+
+1. **The strongest classical baseline was missing.** `calib_dev.py` tuned the physics on 2019 dev (meandering
+   0.25 × vane σ_θ, hill speedup 0.18, shear 0.14, terrain-follow 0.80). That tuned physics alone scores 9.31 % waked MAE
+   on dev (stride 2) against WakeNet r6's 9.48 %, and 2.875 % against 2.88 % on farm wake loss. The exam compared
+   WakeNet only with textbook FLORIS, so its Kelmarsh margins may come from the dev tuning, not the graph network.
+2. **The card reported 11 of the 18 rows `exam.py` computed.** All 18: 13 wins, 5 losses. The two left out were
+   both losses: Penmanshiel direct-wake corridor (18.58 % against the dev-mean guess's 15.63 %) and Penmanshiel below
+   10 m/s (20.85 % against 18.51 % for assuming no wake).
+3. **The full-screen lab page crashed** (`man.tensors is not iterable`): it read the pack manifest as a list.
+
+Smaller: no confidence intervals; the Jensen baseline used the offshore wake-expansion value 0.05 (onshore is usually
+0.075); citations pointed at the 2022 Zenodo records, not the 2025 versions the data came from; the backdrop starts
+25 Sep 2017, not 1 Jan.
+
+### Plan (fixed now, before the data are downloaded again)
+
+**Exam 1 re-scored (already seen; nothing is chosen from it).** Same weights, same processed data; the processed
+files must reproduce the `ts_sha256` values in `split.json`, and WakeNet's own numbers must reproduce exactly.
+- Add the baseline "FLORIS tuned on 2019 dev": `calibrated_v3` from `dev_calibration.json`, unchanged.
+- Jensen with the onshore wake expansion 0.075 (the 0.05 result stays in a note).
+- Report all 9 rows on both farms.
+- 95 % intervals on WakeNet minus the best baseline by bootstrap over calendar days (2,000 resamples, seed 20261117).
+  Verdict: win if the interval is below zero, loss if above, tie if it spans zero.
+
+**v1.1 rungs (dev only, same rule as `ratchet.yaml`: +0.01 on `val3` and each dev gate ≤ 1.05 × incumbent).**
+- Reference row, not a candidate: the tuned physics alone, scored on `val3` and dev.
+- r9: the same EdgeWakeGNN, anchored on the dev-tuned physics instead of textbook FLORIS; banks rebuilt with the same
+  seeds as r6 (train seed 3, `val3` seed 303), 3,000 steps, seed 106. Three seeds if the margin is under twice the seed
+  spread. σ factors re-fitted widen-only on dev if it is released.
+- Any further rung gets its own dated entry here before it runs.
+
+**Exam 2 (never seen by any version).** Kelmarsh 2022, 2023, 2024; Penmanshiel 2021, 2022 and 2023 (WT01-10 is
+published for Feb-Dec 2023 only; Penmanshiel 2024 has only WT11-15 and is left out). Same quality control as
+`realdata.build_snapshots`. Frozen in `split_exam2.json` with timestamp hashes before anything is scored. Same 9 rows,
+same five baselines (tuned FLORIS, FLORIS, Jensen 0.075, dev mean, unwaked), same interval rule. Scored once, for v1.0
+and for v1.1 if it is released, after the v1.1 decision.

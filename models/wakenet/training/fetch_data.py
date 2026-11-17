@@ -18,6 +18,7 @@ import concurrent.futures
 import os
 import subprocess
 import sys
+import urllib.parse
 import zipfile
 from pathlib import Path
 
@@ -45,6 +46,24 @@ FILES = [
     (PENMANSHIEL_REC, "Penmanshiel_SCADA_2020_WT11-15_3118.zip"),
 ]
 
+# Second exam (added 17 Nov 2026, frozen in split_exam2.json before any of these files was read):
+# years WakeNet v1.0 never saw. Penmanshiel 2023 WT01-10 is published in four pieces with no January;
+# Penmanshiel 2024 has only WT11-15, so it is left out (WakeNet reads whole farms).
+EXAM2_FILES = [
+    (KELMARSH_REC, "Kelmarsh_SCADA_2022_4457.zip"),
+    (KELMARSH_REC, "Kelmarsh_SCADA_2023_5961.zip"),
+    (KELMARSH_REC, "Kelmarsh_SCADA_2024_5962.zip"),
+    (PENMANSHIEL_REC, "Penmanshiel_SCADA_2021_WT01-10_4460.zip"),
+    (PENMANSHIEL_REC, "Penmanshiel_SCADA_2021_WT11-15_4461.zip"),
+    (PENMANSHIEL_REC, "Penmanshiel_SCADA_2022_WT01-10_4462.zip"),
+    (PENMANSHIEL_REC, "Penmanshiel_SCADA_2022_WT11-15_4463.zip"),
+    (PENMANSHIEL_REC, "Penmanshiel_SCADA_2023_02_WT_01-10_5981.zip"),
+    (PENMANSHIEL_REC, "Penmanshiel_SCADA_2023_03_WT_01-10_5982.zip"),
+    (PENMANSHIEL_REC, "Penmanshiel_SCADA_2023_Q2_WT_01-10_5977.zip"),
+    (PENMANSHIEL_REC, "Penmanshiel_SCADA_2023_Q3 Q4_WT_01-10_5973.zip"),
+    (PENMANSHIEL_REC, "Penmanshiel_SCADA_2023_WT_11-15_5964.zip"),
+]
+
 
 def _valid_file(path: Path) -> bool:
     if not path.exists() or path.stat().st_size == 0:
@@ -64,7 +83,7 @@ def fetch_one(rec: str, fname: str) -> str:
     if _valid_file(dest):
         return f"cached  {fname} ({dest.stat().st_size / 1e6:.1f} MB)"
     tmp = raw_dir / f"{fname}.part"
-    url = f"https://zenodo.org/api/records/{rec}/files/{fname}/content"
+    url = f"https://zenodo.org/api/records/{rec}/files/{urllib.parse.quote(fname)}/content"
     cmd = [
         "curl", "-fSL", "--retry", "4", "--retry-delay", "5",
         "-C", "-", "-o", str(tmp), url,
@@ -79,10 +98,11 @@ def fetch_one(rec: str, fname: str) -> str:
     return f"fetched {fname} ({dest.stat().st_size / 1e6:.1f} MB)"
 
 
-def main(jobs: int = 3) -> int:
-    print(f"Downloading {len(FILES)} Zenodo files to {_P.work('raw')} (jobs={jobs})...", flush=True)
+def main(jobs: int = 3, files=None) -> int:
+    files = FILES if files is None else files
+    print(f"Downloading {len(files)} Zenodo files to {_P.work('raw')} (jobs={jobs})...", flush=True)
     with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as ex:
-        futs = {ex.submit(fetch_one, rec, fn): fn for rec, fn in FILES}
+        futs = {ex.submit(fetch_one, rec, fn): fn for rec, fn in files}
         for fut in concurrent.futures.as_completed(futs):
             fn = futs[fut]
             try:
@@ -97,4 +117,4 @@ def main(jobs: int = 3) -> int:
 
 if __name__ == "__main__":
     j = int(os.environ.get("FETCH_JOBS", "3"))
-    sys.exit(main(j))
+    sys.exit(main(j, EXAM2_FILES if "--exam2" in sys.argv else FILES))

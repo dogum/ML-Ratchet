@@ -198,9 +198,11 @@ function f16ToF32(u16) {{
 }}
 function unpack(man, b64) {{
   const buf = b64ToBuf(b64), t = {{}};
-  for (const e of man.tensors) {{
-    const data = e.dtype === 'f16' ? f16ToF32(new Uint16Array(buf, e.offset, e.length)) : new Float32Array(buf, e.offset, e.length);
-    t[e.name] = {{ data, shape: e.shape }};
+  // mlratchet-pack/1: tensors is a {{name: {{dtype, shape, offset, bytes}}}} map (see site/src/lib/nn/pack.ts)
+  for (const [name, e] of Object.entries(man.tensors)) {{
+    const data = e.dtype === 'f16' ? f16ToF32(new Uint16Array(buf.slice(e.offset, e.offset + e.bytes)))
+                                   : new Float32Array(buf.slice(e.offset, e.offset + e.bytes));
+    t[name] = {{ data, shape: e.shape }};
   }}
   return {{ meta: man.meta, t }};
 }}
