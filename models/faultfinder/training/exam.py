@@ -1,4 +1,5 @@
 """Final exam on the 217 real/experimental exam runs (never used for choosing). Usage: python3 exam.py <model>
+(<model> is a rung name in WORK/models, or a path ending in .npz for the released numpy weights)
 Calibration: one temperature T >= 1 on the detection log-odds, fitted on the 20 dev runs (widen-only).
 Writes exam/exam.json and exam/exam_runs.parquet."""
 import os
@@ -10,7 +11,6 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import (ROOT, CLASSES, CI, EXAM2CLASS, load_real_runs, season_of, severity_bucket)  # noqa: E402
 import evaluate as ev  # noqa: E402
-from ratchet import load_model  # noqa: E402
 
 SOURCE = {'ers_rp1312': 'Iowa ERS (lab)', 'lbnl_mzvav2_ers_exp': 'Iowa ERS (lab)',
           'lbnl_szcav_flexlab': 'LBNL FLEXLAB (lab)', 'lbnl_szvav_flexlab': 'LBNL FLEXLAB (lab)',
@@ -81,7 +81,11 @@ def ers_energy_proxy(run_ids):
 
 def main(name, split='exam'):
     os.makedirs(f'{ROOT}/exam', exist_ok=True)
-    model = load_model(name)
+    if name.endswith('.npz'):
+        model = ev.NpzModel(name)
+    else:
+        from ratchet import load_model
+        model = load_model(name)
     dev = load_real_runs('dev')
     lo_d, _, _ = ev.run_predict(model, dev)
     t_dev = np.array([r.fault_type != 'none' for r, _ in dev], float)

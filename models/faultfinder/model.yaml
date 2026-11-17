@@ -19,7 +19,8 @@ summary: >-
   fault classes, a severity for the top class and the day's extra HVAC energy. It learned only from BuildingSim
   simulations: 38,987 simulated days of random RTU and VAV buildings in 17 US climates, with real sensor noise and
   quirks from 20 real dev days. It was examined once on 217 real lab and building days from four sources (Iowa
-  Energy Resource Station, LBNL FLEXLAB, ORNL's rooftop unit and Drexel's Nesbitt Hall).
+  Energy Resource Station, LBNL FLEXLAB, ORNL's rooftop unit and Drexel's Nesbitt Hall), and re-scored on 17 Nov 2026
+  against rules tuned on the same dev days, with 95 % intervals.
 
 reads: "One local day of an AHU or RTU trend log, 1- to 15-min samples, binned to 96 × 15 min: T_oa, T_ra, T_ma, T_sa, T_sa_sp (or T_sa_sp_cool / T_sa_sp_heat), T_zone (°C); damper_oa, valve_cc, valve_hc, fan_sa_speed (0..1, controller commands as logged); comp1_status / comp2_status for RTUs (0/1); fan_sa_power_kW or a fan current (any unit, scaled by its own daily 95th percentile); fan_sa_status, occ (0/1). Any subset; missing channels are flagged to the network. Temperatures below −45 or above 70 °C, and flatlined temperature sensors, count as missing."
 returns:
@@ -86,241 +87,485 @@ split:
   exam: "Every other gradable run: 217 real or experimental unit-days, 200 AHU days (91 faulty) and 17 RTU days (12 faulty), from Iowa ERS (101), LBNL FLEXLAB (23), ORNL RTU (17) and Nesbitt Hall (76). Run once, after the ladder was closed."
 
 exam:
-  short: "217 real lab and building days (Iowa ERS, FLEXLAB, ORNL, Nesbitt Hall)"
+  short: "217 real lab and building days (Iowa ERS, FLEXLAB, ORNL, Nesbitt Hall), seen"
   summary: >-
-    Detection (P(fault)) and diagnosis on 217 real days, against the APAR rule set (12 rules, after Schein et al.,
-    2006) for AHUs and a one-line rule (fan on while unoccupied) for RTUs, each with a threshold tuned on the dev
-    days, and the majority guess. Run once with the released rung; re-scoring the 217 exam days embedded in the lab
-    page from the shipped weights in the repository gives the same AUCs and diagnosis rates.
+    Detection (P(fault)) and diagnosis on 217 real days. v1.0 took the exam once; the 17 Nov 2026 integrity pass
+    re-scored it from the released weights (FaultFinder's numbers reproduce to 6e-8), so every row is labelled seen
+    and nothing was chosen from it. Baselines: the APAR rule set (12 rules, after Schein et al., 2006) for AHUs and a
+    one-line rule (fan on while unoccupied) for the RTU, with textbook tolerances and a dev threshold as in v1.0, the
+    same rules with tolerances tuned on the 20 dev days (a 54-setting grid), and a mixing-box residual detector fitted on
+    the dev days. Every graded row gives FaultFinder minus the best baseline on that row with a 95 % bootstrap interval
+    (2,000 resamples, seed 20261117) over unit-days, and over facility-days as a check; win or loss only when the
+    unit-day interval excludes zero, and a row the majority guess wins is a loss. The recall-at-fixed-false-alarm rows
+    set thresholds on the exam's own healthy days and are report-only.
   results:
-    - metric: AHU detection AUC (200 days, 91 faulty)
-      better: higher
-      model: 0.78
-      baselines:
-        - { name: "APAR rules (12 rules, dev-tuned)", kind: classical, value: 0.69 }
-      verdict: win
-      note: "90 % interval 0.72-0.83 (bootstrap over facility-days)."
-    - metric: AHU balanced accuracy at P = 0.5
-      better: higher
-      model: 0.70
-      baselines:
-        - { name: "APAR rules at the dev-tuned threshold", kind: classical, value: 0.65 }
-        - { name: "Majority guess (no fault)", kind: dumb, value: 0.50 }
-      verdict: win
-    - metric: AHU false-alarm rate at P = 0.5 (109 healthy days)
-      better: lower
-      model: 33
-      unit: "%"
-      baselines:
-        - { name: "APAR rules at the dev-tuned threshold", kind: classical, value: 2 }
-        - { name: "Majority guess (no fault)", kind: dumb, value: 0 }
-      verdict: loss
-      note: "It catches more faults at 0.5 (73 % against 32 % for the rules) but flags a third of healthy days."
-    - metric: AHU recall at a 2 % false-alarm rate
-      better: higher
-      model: 23
-      unit: "%"
-      baselines:
-        - { name: "APAR rule score", kind: classical, value: 32 }
-      verdict: loss
-      note: "Report only: the threshold for each method is set from the exam's own healthy days, so this is not a deployable operating point."
-    - metric: AHU recall at a 5 % false-alarm rate
-      better: higher
-      model: 27
-      unit: "%"
-      baselines:
-        - { name: "APAR rule score", kind: classical, value: 41 }
-      verdict: loss
-      note: "Report only: thresholds set from the exam's own healthy days."
-    - metric: AHU recall at a 10 % false-alarm rate
-      better: higher
-      model: 47
-      unit: "%"
-      baselines:
-        - { name: "APAR rule score", kind: classical, value: 45 }
-      verdict: win
-      note: "Report only: thresholds set from the exam's own healthy days. A margin of two days out of 91."
-    - metric: RTU detection AUC (17 ORNL days, 12 faulty)
-      better: higher
-      model: 0.65
-      baselines:
-        - { name: "Rule: fan on while unoccupied", kind: classical, value: 0.72 }
-      verdict: loss
-    - metric: RTU balanced accuracy at P = 0.5
-      better: higher
-      model: 0.47
-      baselines:
-        - { name: "Rule: fan on while unoccupied (dev-tuned)", kind: classical, value: 0.57 }
-        - { name: "Majority guess (fault)", kind: dumb, value: 0.50 }
-      verdict: loss
-    - metric: RTU false-alarm rate at P = 0.5 (5 healthy days)
-      better: lower
-      model: 80
-      unit: "%"
-      baselines:
-        - { name: "Rule: fan on while unoccupied (dev-tuned)", kind: classical, value: 20 }
-        - { name: "Majority guess (fault)", kind: dumb, value: 100 }
-      verdict: loss
-    - metric: RTU recall at 2, 5 and 10 % false alarms (with 5 healthy days, all three mean no false alarm)
-      better: higher
-      model: 42
-      unit: "%"
-      baselines:
-        - { name: "Rule: fan on while unoccupied", kind: classical, value: 25 }
-      verdict: win
-      note: "Report only: thresholds set from the exam's own healthy days; 5 of 12 faulty days against 3 of 12."
-    - metric: All units detection AUC (217 days, 103 faulty)
+    - metric: "All units detection AUC (217 days, 103 faulty)"
       better: higher
       model: 0.77
       baselines:
-        - { name: "APAR rules (AHU) and the fan rule (RTU)", kind: classical, value: 0.69 }
-      verdict: win
-      note: "90 % interval 0.72-0.83."
-    - metric: All units balanced accuracy at P = 0.5
+        - { name: "APAR rules (AHU) + fan rule (RTU), textbook tolerances, dev threshold", kind: classical, value: 0.69 }
+        - { name: "APAR rules (AHU) + fan rule (RTU), dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 0.69 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 0.61 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)): +0.08, 95 % CI [−0.00, +0.16] over 217 unit-days; [+0.01, +0.16] over 133 facility-days. The facility-day interval says win. v1.0 called it a win against textbook-tolerance rules without an interval."
+    - metric: "All units balanced accuracy at P = 0.5"
       better: higher
       model: 0.69
       baselines:
-        - { name: "Rules at their dev-tuned thresholds", kind: classical, value: 0.65 }
-        - { name: "Majority guess", kind: dumb, value: 0.50 }
-      verdict: win
-    - metric: All units false-alarm rate at P = 0.5 (114 healthy days)
+        - { name: "APAR rules (AHU) + fan rule (RTU), textbook tolerances, dev threshold", kind: classical, value: 0.65 }
+        - { name: "APAR rules (AHU) + fan rule (RTU), dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 0.69 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 0.63 }
+        - { name: "Majority guess (no fault for AHUs, fault for the RTU)", kind: dumb, value: 0.54 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)): −0.00, 95 % CI [−0.08, +0.08] over 217 unit-days; [−0.07, +0.08] over 133 facility-days. v1.0 called it a win against textbook-tolerance rules without an interval. The mixing-box residual never flags the RTU (no outdoor or mixed-air sensor there)."
+    - metric: "All units false-alarm rate at P = 0.5 (114 healthy days)"
       better: lower
       model: 35
       unit: "%"
       baselines:
-        - { name: "Rules at their dev-tuned thresholds", kind: classical, value: 3 }
+        - { name: "APAR rules (AHU) + fan rule (RTU), textbook tolerances, dev threshold", kind: classical, value: 3 }
+        - { name: "APAR rules (AHU) + fan rule (RTU), dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 18 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 14 }
+        - { name: "Majority guess (no fault for AHUs, fault for the RTU)", kind: dumb, value: 4 }
       verdict: loss
-    - metric: All units recall at a 2 % false-alarm rate
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): +32 points, 95 % CI [+23, +42] over 217 unit-days; [+24, +41] over 133 facility-days. The mixing-box residual never flags the RTU (no outdoor or mixed-air sensor there)."
+    - metric: "All units recall at P = 0.5"
+      better: higher
+      model: 73
+      unit: "%"
+      baselines:
+        - { name: "APAR rules (AHU) + fan rule (RTU), textbook tolerances, dev threshold", kind: classical, value: 32 }
+        - { name: "APAR rules (AHU) + fan rule (RTU), dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 55 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 41 }
+      verdict: win
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)): +17 points, 95 % CI [+5, +29] over 217 unit-days; [+5, +30] over 133 facility-days. The mixing-box residual never flags the RTU (no outdoor or mixed-air sensor there)."
+    - metric: "All units recall at a 2 % false-alarm rate"
       better: higher
       model: 20
       unit: "%"
       baselines:
-        - { name: "Rule scores", kind: classical, value: 30 }
-      verdict: loss
-      note: "Report only: thresholds set from the exam's own healthy days."
-    - metric: All units recall at a 5 % false-alarm rate
+        - { name: "APAR rules (AHU) + fan rule (RTU), textbook tolerances, dev threshold", kind: classical, value: 30 }
+        - { name: "APAR rules (AHU) + fan rule (RTU), dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 30 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 21 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): −10 points, 95 % CI [−29, +14] over 217 unit-days; [−24, +11] over 133 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample). v1.0 called it a loss against textbook-tolerance rules without an interval. The mixing-box residual never flags the RTU (no outdoor or mixed-air sensor there)."
+    - metric: "All units recall at a 5 % false-alarm rate"
       better: higher
       model: 24
       unit: "%"
       baselines:
-        - { name: "Rule scores", kind: classical, value: 39 }
-      verdict: loss
-      note: "Report only: thresholds set from the exam's own healthy days."
-    - metric: All units recall at a 10 % false-alarm rate
+        - { name: "APAR rules (AHU) + fan rule (RTU), textbook tolerances, dev threshold", kind: classical, value: 39 }
+        - { name: "APAR rules (AHU) + fan rule (RTU), dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 38 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 29 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): −15 points, 95 % CI [−24, +14] over 217 unit-days; [−24, +14] over 133 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample). v1.0 called it a loss against textbook-tolerance rules without an interval. The mixing-box residual never flags the RTU (no outdoor or mixed-air sensor there)."
+    - metric: "All units recall at a 10 % false-alarm rate"
       better: higher
       model: 45
       unit: "%"
       baselines:
-        - { name: "Rule scores", kind: classical, value: 43 }
-      verdict: win
-      note: "Report only: thresholds set from the exam's own healthy days."
-    - metric: Nesbitt Hall, a real occupied building, detection AUC (76 days, 26 faulty)
+        - { name: "APAR rules (AHU) + fan rule (RTU), textbook tolerances, dev threshold", kind: classical, value: 43 }
+        - { name: "APAR rules (AHU) + fan rule (RTU), dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 42 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 36 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): +2 points, 95 % CI [−15, +23] over 217 unit-days; [−14, +23] over 133 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample). v1.0 called it a win against textbook-tolerance rules without an interval. The mixing-box residual never flags the RTU (no outdoor or mixed-air sensor there)."
+    - metric: "AHU detection AUC (200 days, 91 faulty)"
       better: higher
       model: 0.78
       baselines:
-        - { name: "APAR rules", kind: classical, value: 0.54 }
-      verdict: win
-    - metric: Nesbitt Hall balanced accuracy at P = 0.5
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 0.69 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 0.69 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 0.64 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)): +0.09, 95 % CI [−0.00, +0.18] over 200 unit-days; [+0.00, +0.17] over 116 facility-days. The facility-day interval says win. v1.0 called it a win against textbook-tolerance rules without an interval."
+    - metric: "AHU balanced accuracy at P = 0.5"
       better: higher
-      model: 0.72
+      model: 0.70
       baselines:
-        - { name: "APAR rules at the dev-tuned threshold", kind: classical, value: 0.57 }
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 0.65 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 0.68 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 0.66 }
         - { name: "Majority guess (no fault)", kind: dumb, value: 0.50 }
-      verdict: win
-    - metric: Nesbitt Hall false-alarm rate at P = 0.5 (50 healthy days)
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)): +0.02, 95 % CI [−0.08, +0.11] over 200 unit-days; [−0.06, +0.11] over 116 facility-days. v1.0 called it a win against textbook-tolerance rules without an interval."
+    - metric: "AHU false-alarm rate at P = 0.5 (109 healthy days)"
       better: lower
-      model: 40
+      model: 33
       unit: "%"
       baselines:
-        - { name: "APAR rules at the dev-tuned threshold", kind: classical, value: 2 }
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 2 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 17 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 15 }
+        - { name: "Majority guess (no fault)", kind: dumb, value: 0 }
       verdict: loss
-    - metric: Nesbitt Hall recall at a 5 % false-alarm rate
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): +31 points, 95 % CI [+23, +41] over 200 unit-days; [+22, +40] over 116 facility-days."
+    - metric: "AHU recall at P = 0.5"
+      better: higher
+      model: 73
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 32 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 52 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 46 }
+      verdict: win
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)): +21 points, 95 % CI [+7, +34] over 200 unit-days; [+7, +35] over 116 facility-days."
+    - metric: "AHU recall at a 2 % false-alarm rate"
       better: higher
       model: 23
       unit: "%"
       baselines:
-        - { name: "APAR rule score", kind: classical, value: 19 }
-      verdict: win
-      note: "Report only: thresholds set from the exam's own healthy days; 6 of 26 faulty days against 5."
-    - metric: LBNL FLEXLAB detection AUC (23 days, 19 faulty)
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 32 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 32 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 24 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): −9 points, 95 % CI [−32, +18] over 200 unit-days; [−22, +15] over 116 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample). v1.0 called it a loss against textbook-tolerance rules without an interval."
+    - metric: "AHU recall at a 5 % false-alarm rate"
       better: higher
-      model: 0.93
+      model: 27
+      unit: "%"
       baselines:
-        - { name: "APAR rules", kind: classical, value: 0.67 }
-      verdict: win
-    - metric: Iowa ERS detection AUC (101 days, 46 faulty)
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 41 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 40 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 33 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): −13 points, 95 % CI [−24, +17] over 200 unit-days; [−23, +15] over 116 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample). v1.0 called it a loss against textbook-tolerance rules without an interval."
+    - metric: "AHU recall at a 10 % false-alarm rate"
+      better: higher
+      model: 47
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 45 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 44 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 40 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): +2 points, 95 % CI [−17, +26] over 200 unit-days; [−16, +25] over 116 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample). v1.0 called it a win against textbook-tolerance rules without an interval."
+    - metric: "RTU (ORNL) detection AUC (17 days, 12 faulty)"
+      better: higher
+      model: 0.65
+      baselines:
+        - { name: "Rule: fan on while unoccupied, released dev threshold", kind: classical, value: 0.72 }
+        - { name: "Rule: fan on while unoccupied, midpoint dev threshold", kind: classical, value: 0.72 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (Rule: fan on while unoccupied, released dev threshold): −0.07, 95 % CI [−0.44, +0.38] over 17 unit-days; [−0.44, +0.38] over 17 facility-days. v1.0 called it a loss against the fan rule without an interval."
+    - metric: "RTU (ORNL) balanced accuracy at P = 0.5"
+      better: higher
+      model: 0.47
+      baselines:
+        - { name: "Rule: fan on while unoccupied, released dev threshold", kind: classical, value: 0.57 }
+        - { name: "Rule: fan on while unoccupied, midpoint dev threshold", kind: classical, value: 0.72 }
+        - { name: "Majority guess (fault)", kind: dumb, value: 0.50 }
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (Rule: fan on while unoccupied, midpoint dev threshold): −0.24, 95 % CI [−0.57, +0.20] over 17 unit-days; [−0.57, +0.20] over 17 facility-days. The interval alone says tie; the majority guess beats the model here, so it is a loss."
+    - metric: "RTU (ORNL) false-alarm rate at P = 0.5 (5 healthy days)"
+      better: lower
+      model: 80
+      unit: "%"
+      baselines:
+        - { name: "Rule: fan on while unoccupied, released dev threshold", kind: classical, value: 20 }
+        - { name: "Rule: fan on while unoccupied, midpoint dev threshold", kind: classical, value: 40 }
+        - { name: "Majority guess (fault)", kind: dumb, value: 100 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (Rule: fan on while unoccupied, released dev threshold): +60 points, 95 % CI [−20, +100] over 17 unit-days; [−20, +100] over 17 facility-days. v1.0 called it a loss against the fan rule without an interval."
+    - metric: "RTU (ORNL) recall at P = 0.5"
+      better: higher
+      model: 75
+      unit: "%"
+      baselines:
+        - { name: "Rule: fan on while unoccupied, released dev threshold", kind: classical, value: 33 }
+        - { name: "Rule: fan on while unoccupied, midpoint dev threshold", kind: classical, value: 83 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (Rule: fan on while unoccupied, midpoint dev threshold): −8 points, 95 % CI [−25, +0] over 17 unit-days; [−25, +0] over 17 facility-days."
+    - metric: "RTU (ORNL) recall at 2, 5 and 10 % false alarms (5 healthy days: all three mean no false alarm)"
+      better: higher
+      model: 42
+      unit: "%"
+      baselines:
+        - { name: "Rule: fan on while unoccupied, released dev threshold", kind: classical, value: 25 }
+        - { name: "Rule: fan on while unoccupied, midpoint dev threshold", kind: classical, value: 25 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (Rule: fan on while unoccupied, released dev threshold): +17 points, 95 % CI [−47, +55] over 17 unit-days; [−47, +55] over 17 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample). v1.0 called it a win against the fan rule without an interval."
+    - metric: "Iowa ERS detection AUC (101 days, 46 faulty)"
       better: higher
       model: 0.73
       baselines:
-        - { name: "APAR rules", kind: classical, value: 0.73 }
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 0.73 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 0.73 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 0.57 }
       verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): +0.00, 95 % CI [−0.12, +0.13] over 101 unit-days; [−0.12, +0.13] over 55 facility-days."
+    - metric: "Iowa ERS balanced accuracy at P = 0.5"
+      better: higher
+      model: 0.65
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 0.65 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 0.70 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 0.60 }
+        - { name: "Majority guess (no fault)", kind: dumb, value: 0.50 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)): −0.05, 95 % CI [−0.18, +0.07] over 101 unit-days; [−0.17, +0.08] over 55 facility-days."
+    - metric: "Iowa ERS false-alarm rate at P = 0.5 (55 healthy days)"
+      better: lower
+      model: 27
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 2 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 24 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 0 }
+        - { name: "Majority guess (no fault)", kind: dumb, value: 0 }
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (Mixing-box residual): +27 points, 95 % CI [+15, +40] over 101 unit-days; [+16, +38] over 55 facility-days."
+    - metric: "Iowa ERS recall at P = 0.5"
+      better: higher
+      model: 57
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 33 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 63 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 20 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)): −7 points, 95 % CI [−26, +12] over 101 unit-days; [−27, +14] over 55 facility-days."
+    - metric: "Iowa ERS recall at a 2 % false-alarm rate"
+      better: higher
+      model: 13
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 33 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 33 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 24 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): −20 points, 95 % CI [−43, +22] over 101 unit-days; [−43, +22] over 55 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample)."
+    - metric: "Iowa ERS recall at a 5 % false-alarm rate"
+      better: higher
+      model: 20
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 46 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 41 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 26 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): −26 points, 95 % CI [−44, +17] over 101 unit-days; [−43, +17] over 55 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample)."
+    - metric: "Iowa ERS recall at a 10 % false-alarm rate"
+      better: higher
+      model: 41
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 52 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 46 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 26 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): −11 points, 95 % CI [−37, +13] over 101 unit-days; [−37, +13] over 55 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample)."
+    - metric: "LBNL FLEXLAB detection AUC (23 days, 19 faulty)"
+      better: higher
+      model: 0.93
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 0.67 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 0.74 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 0.67 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)): +0.19, 95 % CI [−0.03, +0.43] over 23 unit-days; [−0.03, +0.43] over 23 facility-days. v1.0 called it a win against textbook-tolerance rules without an interval."
+    - metric: "LBNL FLEXLAB balanced accuracy at P = 0.5"
+      better: higher
+      model: 0.85
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 0.76 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 0.69 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 0.57 }
+        - { name: "Majority guess (no fault)", kind: dumb, value: 0.50 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): +0.09, 95 % CI [−0.22, +0.29] over 23 unit-days; [−0.22, +0.29] over 23 facility-days."
+    - metric: "LBNL FLEXLAB false-alarm rate at P = 0.5 (4 healthy days)"
+      better: lower
+      model: 25
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 0 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 25 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 75 }
+        - { name: "Majority guess (no fault)", kind: dumb, value: 0 }
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): +25 points, 95 % CI [+0, +82] over 23 unit-days; [+0, +82] over 23 facility-days. The interval alone says tie; the majority guess beats the model here, so it is a loss."
+    - metric: "LBNL FLEXLAB recall at P = 0.5"
+      better: higher
+      model: 95
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 53 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 63 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 89 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (Mixing-box residual): +5 points, 95 % CI [−12, +23] over 23 unit-days; [−12, +23] over 23 facility-days."
+    - metric: "LBNL FLEXLAB recall at 2, 5 and 10 % false alarms (4 healthy days: all three mean no false alarm)"
+      better: higher
+      model: 89
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 63 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 58 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 42 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): +26 points, 95 % CI [+0, +53] over 23 unit-days; [+0, +53] over 23 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample)."
+    - metric: "Nesbitt Hall, a real occupied building, detection AUC (76 days, 26 faulty)"
+      better: higher
+      model: 0.78
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 0.54 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 0.54 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 0.71 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (Mixing-box residual): +0.07, 95 % CI [−0.05, +0.19] over 76 unit-days; [−0.06, +0.22] over 38 facility-days. v1.0 called it a win against textbook-tolerance rules without an interval."
+    - metric: "Nesbitt Hall, a real occupied building, balanced accuracy at P = 0.5"
+      better: higher
+      model: 0.72
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 0.57 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 0.58 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 0.68 }
+        - { name: "Majority guess (no fault)", kind: dumb, value: 0.50 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (Mixing-box residual): +0.05, 95 % CI [−0.08, +0.17] over 76 unit-days; [−0.08, +0.19] over 38 facility-days. v1.0 called it a win against textbook-tolerance rules without an interval."
+    - metric: "Nesbitt Hall, a real occupied building, false-alarm rate at P = 0.5 (50 healthy days)"
+      better: lower
+      model: 40
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 2 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 8 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 26 }
+        - { name: "Majority guess (no fault)", kind: dumb, value: 0 }
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (APAR rules, textbook tolerances, dev threshold): +38 points, 95 % CI [+24, +52] over 76 unit-days; [+25, +51] over 38 facility-days."
+    - metric: "Nesbitt Hall, a real occupied building, recall at P = 0.5"
+      better: higher
+      model: 85
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 15 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 23 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 62 }
+      verdict: win
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (Mixing-box residual): +23 points, 95 % CI [+4, +42] over 76 unit-days; [+6, +46] over 38 facility-days."
+    - metric: "Nesbitt Hall, a real occupied building, recall at a 2 % false-alarm rate"
+      better: higher
+      model: 19
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 15 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 15 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 35 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (Mixing-box residual): −15 points, 95 % CI [−40, +7] over 76 unit-days; [−42, +8] over 38 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample)."
+    - metric: "Nesbitt Hall, a real occupied building, recall at a 5 % false-alarm rate"
+      better: higher
+      model: 23
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 19 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 19 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 35 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (Mixing-box residual): −12 points, 95 % CI [−42, +12] over 76 unit-days; [−41, +14] over 38 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample). v1.0 called it a win against textbook-tolerance rules without an interval."
+    - metric: "Nesbitt Hall, a real occupied building, recall at a 10 % false-alarm rate"
+      better: higher
+      model: 46
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, textbook tolerances, dev threshold", kind: classical, value: 23 }
+        - { name: "APAR rules, dev-tuned tolerances (1.5 K, fan heat 0.5 K, 15 min)", kind: classical, value: 23 }
+        - { name: "Mixing-box residual, dev-fitted", kind: classical, value: 54 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Model minus the best baseline (Mixing-box residual): −8 points, 95 % CI [−36, +23] over 76 unit-days; [−35, +21] over 38 facility-days. Report only: each method's threshold is set from the exam's own healthy days (re-set in every resample)."
     - metric: Diagnosis top-1 accuracy (66 faulty days with a simulable fault)
       better: higher
       model: 20
       unit: "%"
       baselines:
         - { name: "Always the commonest exam class (outdoor-air damper stuck)", kind: dumb, value: 21 }
-      verdict: loss
-      note: "Cooling valve stuck 50 % (14 days) and zone sensor or setpoint 100 % (4) work; outdoor-air damper stuck 0 % (14). By source: ERS 9 %, FLEXLAB 32 %, Nesbitt 6 %, ORNL 50 %."
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). −2 points, 95 % CI [−17, +14] over the 66 days; [−16, +14] over facility-days. v1.0 called it a loss on the point value. Cooling valve stuck 50 % (14 days) and zone sensor or setpoint 100 % (4) work; outdoor-air damper stuck 0 % (14). By source: ERS 9 %, FLEXLAB 32 %, Nesbitt 6 %, ORNL 50 %. The commonest class is read from the exam's own counts, which favours the baseline."
     - metric: Diagnosis top-3 accuracy (66 faulty days)
       better: higher
       model: 48
       unit: "%"
       baselines:
         - { name: "Always the three commonest exam classes (damper stuck, cooling valve stuck, schedule)", kind: dumb, value: 55 }
-      verdict: loss
-      note: "The three-class guess (36 of 66 days) was computed at import from the exam's class counts in training/exam.json; the release reported top-3 without a baseline."
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). −6 points, 95 % CI [−23, +9] over the 66 days; [−24, +13] over facility-days. v1.0 called it a loss on the point value. The three-class guess (36 of 66 days) uses the exam's own class counts."
+    - metric: Diagnosis top-1 and top-3 by class (days)
+      better: higher
+      model: "cc valve stuck 50/86 % (14), zone setpoint 100/100 % (4), hc valve stuck 25/25 % (4), hc valve leak 20/40 % (5), SAT sensor 0/100 % (3), cooling capacity 0/100 % (2), OA damper stuck 0/29 % (14), schedule 0/38 % (8), OA damper leak 0/0 % (5), cc valve leak 0/33 % (3), low airflow 0/0 % (2), OAT sensor 0/0 % (2)"
+      baselines: []
+      verdict: info
+      note: "Seen. Calibration of the top-1 class probability: ECE 0.07."
+    - metric: Accuracy at P = 0.5 (all / AHU / RTU / ERS / FLEXLAB / Nesbitt)
+      better: higher
+      model: "0.69 / 0.70 / 0.59 / 0.65 / 0.91 / 0.68"
+      baselines: []
+      verdict: info
+      note: "Seen. Accuracy depends on each subset's share of faulty days; the balanced-accuracy rows above are the graded ones."
+    - metric: Detection AUC by dataset (ERS RP-1312 / FLEXLAB SZCAV / FLEXLAB SZVAV / Nesbitt / ORNL RTU)
+      better: higher
+      model: "0.75 / 1.00 / 0.83 / 0.78 / 0.65"
+      baselines:
+        - { name: "APAR rules, textbook tolerances (AHU datasets)", kind: classical, value: "0.74 / 0.77 / 0.67 / 0.54 / –" }
+      verdict: info
+      note: "Seen. FLEXLAB SZCAV has 1 healthy day of 14, SZVAV 3 of 9. The 9 MZVAV-2 ERS days are all healthy (no AUC; 3 false alarms at P = 0.5)."
+    - metric: Detection rate at P = 0.5 by exam fault type (faulty days)
+      better: higher
+      model: "cc valve stuck 100 % (14), OA damper stuck 93 % (14), schedule 75 % (8), chiller off 83 % (6), OA damper leak 60 % (5), hc valve leak 80 % (5), EA damper stuck 40 % (5), control unstable 25 % (4), condenser fouling 0 % (2), hc fouling 0 % (2), supply duct leak 0 % (2)"
+      baselines: []
+      verdict: info
+      note: "Seen. All 26 types with their day counts are in MODEL_CARD.md. Healthy days for comparison: 35 % flagged."
     - metric: Calibration error of P(fault), ECE in 5 bins (all / AHU / RTU)
       better: lower
       model: "0.12 / 0.13 / 0.17"
       baselines: []
       verdict: info
-      note: "164 of 217 days fall in P 0.4-0.6 (37 % faulty there); 0.6-0.8: 37 days, 78 % faulty; 0.8-1.0: 15 days, 93 % faulty."
+      note: "Seen. 95 % CI on the all-units ECE 0.06-0.18 (unit-days). 164 of 217 days fall in P 0.4-0.6 (37 % faulty there); 0.6-0.8: 37 days, 78 % faulty; 0.8-1.0: 15 days, 93 % faulty."
     - metric: Brier score of P(fault), all 217 days
       better: lower
       model: 0.216
       baselines: []
       verdict: info
-      note: "The uncalibrated network scores 0.204: the temperature fitted on 20 dev days over-shrinks."
+      note: "Seen. 95 % CI 0.204-0.229. The uncalibrated network scores 0.204; calibrated minus uncalibrated +0.012, CI [−0.005, +0.029], so the over-shrinking by the 20-day temperature is not established either."
     - metric: Detection AUC by season (winter / transition / summer)
       better: higher
       model: "0.71 / 0.83 / 0.75"
       baselines: []
       verdict: info
+      note: "Seen. 54 / 95 / 68 days."
     - metric: Detection AUC by fault severity (high / low / unspecified)
       better: higher
       model: "0.79 / 0.79 / 0.72"
       baselines: []
       verdict: info
+      note: "Seen. Each bucket's faulty days against all 114 healthy days; 45 / 32 / 26 faulty days, detected at P = 0.5: 76 / 75 / 65 %."
     - metric: Extra-HVAC-energy output vs measured, Spearman (46 ERS paired days)
       better: higher
       model: 0.19
       baselines: []
       verdict: info
-      note: "Faulty AHU-A against healthy AHU-B on the same day, air-side energy proxy. Not useful; do not rely on extra_hvac_energy_frac."
-
+      note: "Seen. Faulty AHU-A against healthy AHU-B on the same day, air-side energy proxy. Not useful; do not rely on extra_hvac_energy_frac."
 wins:
-  - "Ranking AHU days by fault risk: AUC 0.78 against 0.69 for the APAR rules on 200 real days."
-  - "Nesbitt Hall, a real occupied building: AUC 0.78 against 0.54 for the rules, balanced accuracy 0.72 against 0.57."
-  - "LBNL FLEXLAB: AUC 0.93 against 0.67."
-  - "At a looser 10 % false-alarm rate it catches 47 % of faulty AHU days against 45 % for the rules (report-only thresholds)."
+  - "Catching faults at P = 0.5: 73 % of faulty AHU days against 52 % for the APAR rules with dev-tuned tolerances (+21 points, 95 % CI [+7, +34]); at Nesbitt Hall, a real occupied building, 85 % against 62 % for a dev-fitted mixing-box residual ([+4, +42]). The price is the false alarms below."
+  - "Ahead on ranking, not established: AHU AUC 0.78 against 0.69 for the dev-tuned rules (+0.09, CI [−0.00, +0.18] over unit-days; [+0.00, +0.18] over facility-days); Nesbitt 0.78 against 0.71; FLEXLAB 0.93 against 0.74. v1.0 called these wins against textbook-tolerance rules without intervals."
 losses:
-  - "False alarms: at P = 0.5 it flags 33 % of healthy AHU days (Nesbitt 40 %) against 2 % for the rules."
-  - "At strict false-alarm rates the rules catch more: 32 % against 23 % at 2 %, 41 % against 27 % at 5 % (AHU, report-only thresholds)."
-  - "Rooftop unit: AUC 0.65 against 0.72 for the one-line rule 'fan on while unoccupied'; balanced accuracy 0.47, below the majority guess."
-  - "Diagnosis: top-1 20 % against 21 % for always naming the commonest fault; top-3 48 % against 55 % for naming the three commonest."
-  - "Iowa ERS: a tie with the rules (0.73 vs 0.73)."
+  - "False alarms: at P = 0.5 it flags 33 % of healthy AHU days (Nesbitt 40 %) against 2 % for the textbook-tolerance rules (+31 points, CI [+23, +41])."
+  - "Balanced accuracy is no better than rules tuned on the same 20 dev days: AHU 0.70 against 0.68 (CI [−0.08, +0.11]), all units 0.69 against 0.69. v1.0's balanced-accuracy wins were against rules with textbook tolerances."
+  - "At Nesbitt Hall the textbook rules were a weak baseline (AUC 0.54): a mixing-box residual fitted on the dev days reaches 0.71 and the dev-tuned rules stay at 0.54; most of v1.0's Nesbitt margin was against the weak one."
+  - "Rooftop unit: balanced accuracy 0.47, below the majority guess; AUC 0.65 against 0.72 for the one-line rule 'fan on while unoccupied' (a tie on 17 days, CI [−0.44, +0.38])."
+  - "Diagnosis: top-1 20 % against 21 % for always naming the commonest fault, top-3 48 % against 55 % for the three commonest. Ties by the interval rule: no evidence of skill beyond the commonest class."
+  - "At strict false-alarm rates the rules catch more on the point values: 32 % against 23 % at 2 %, 41 % against 27 % at 5 % (AHU, report-only thresholds; the intervals span zero)."
 limits:
   - "Diagnosis on real data is about as good as guessing the commonest fault. Use the top three as a checklist, not an answer; outdoor-air damper stuck is never top-1 (0 of 14)."
-  - "Probabilities are squashed toward 0.5 by a temperature fitted on 20 days (T = 4.3); the ranking is unaffected, and the uncalibrated Brier score is better (0.204 vs 0.216)."
-  - "One day at a time: it does not compare a day with the unit's own history, and most real false alarms are unit habits (Nesbitt's AHU runs all night with the chiller off; ORNL's zone sensor reads 1.5 K above return on a normal day)."
+  - "Probabilities are squashed toward 0.5 by a temperature fitted on 20 days (T = 4.3): 164 of 217 exam days fall in 0.4-0.6, and two of the four false alarms on the dev days sit at P = 0.501. The uncalibrated Brier score is lower (0.204 vs 0.216), but the interval on the difference spans zero."
+  - "One day at a time: it does not compare a day with the unit's own history. That most false alarms are unit habits is a hypothesis, not a measurement: on the 11 healthy dev days the nearest day in feature space was the same unit's for 4 of 10, and subtracting the unit's other healthy days' log-odds raised dev false alarms from 3 to 4 of 8."
   - "Single-zone simulator with ideal controls and no exhaust damper, return fan, duct model, chiller-off or chilled-water sensor faults: 13 of the exam's 27 fault types cannot be diagnosed at all."
-  - "Small exam: 217 days from five facilities; the 90 % interval on AHU AUC is about ±0.06. The fixed-false-alarm recall rows set their thresholds on the exam's own healthy days and are report-only."
+  - "Small exam: 217 days from five facilities. The 95 % interval on AHU AUC minus the best baseline is about ±0.09, on the RTU ±0.4. The fixed-false-alarm recall rows set their thresholds on the exam's own healthy days and are report-only."
   - "The energy-waste output is not validated (Spearman 0.19 on 46 paired ERS days)."
 next:
-  - "Multi-day context: compare a day with the unit's own recent days, so unit habits (24×7 operation, a chiller off at night) stop reading as faults."
+  - "Multi-day context (planned in NOTEBOOK.md, 17 Nov 2026): the network also sees a reference built from the unit's last 1-3 logged days; the bank keeps each window's earlier days as references, and the exam supplies only earlier same-unit days, unlabelled. 70 % of exam days have such a day within 7 days (Nesbitt 39 %)."
   - "Simulate the missing air-side and plant faults in BuildingSim (exhaust and return-fan dampers, return fan, duct leak, chiller off, chilled-water sensors) so 13 more exam fault types become diagnosable."
-  - "A two-parameter (Platt) calibration or a larger dev set; one temperature from 20 days over-shrinks."
+  - "A dev-chosen operating threshold and a two-parameter (Platt) calibration, or a larger dev set; one temperature from 20 days piles days onto P = 0.5."
   - "Upstream the FaultFinder wrappers into BuildingSim behind flags (log commands, installed damper characteristic, larger static offsets, operator jitter) and re-run the platform checks."
 help_wanted:
   - "LBNL's full fault-detection datasets sit behind a name-and-e-mail form at faultdetection.lbl.gov. They would add a second real RTU exam and more field data; the owner can fill in the form."

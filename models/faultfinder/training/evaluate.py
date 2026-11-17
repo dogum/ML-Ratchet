@@ -3,7 +3,6 @@ import os
 import sys
 import json
 import numpy as np
-import torch
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import ROOT, CLASSES, NC, load_real_runs  # noqa: E402
@@ -49,15 +48,32 @@ def load_val(version, n_max=12000):
     return out
 
 
-@torch.no_grad()
+class NpzModel:
+    """The released numpy weights (BatchNorm folded) behind the same predict() call as a torch rung."""
+    def __init__(self, path):
+        sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # models/faultfinder
+        import faultfinder as ffr
+        self.forward = ffr.forward
+        self.W = {k: v for k, v in np.load(path).items()}
+
+
 def predict(model, F, bs=512):
-    model.eval()
     P, S, W = [], [], []
-    for i in range(0, len(F), bs):
-        lo, pa, wa = model(torch.as_tensor(np.asarray(F[i:i + bs], np.float32)))
-        P.append(lo.numpy())
-        S.append(pa.numpy())
-        W.append(wa.numpy())
+    if isinstance(model, NpzModel):
+        for i in range(0, len(F), bs):
+            lo, pa, wa = model.forward(model.W, np.asarray(F[i:i + bs], np.float32))
+            P.append(lo)
+            S.append(pa)
+            W.append(wa)
+        return np.concatenate(P), np.concatenate(S), np.concatenate(W)
+    import torch
+    model.eval()
+    with torch.no_grad():
+        for i in range(0, len(F), bs):
+            lo, pa, wa = model(torch.as_tensor(np.asarray(F[i:i + bs], np.float32)))
+            P.append(lo.numpy())
+            S.append(pa.numpy())
+            W.append(wa.numpy())
     return np.concatenate(P), np.concatenate(S), np.concatenate(W)
 
 

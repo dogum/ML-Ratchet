@@ -94,6 +94,9 @@ the 20 dev days: **T = 4.3**. Widen-only rule.
 
 ## Final exam (217 real/experimental days, run once after the ladder was closed)
 
+As released. The integrity pass below re-scores these days (seen) against fair baselines with intervals; its
+verdicts replace the wins and losses implied here.
+
 | Units | Method | days (faulty) | AUC [90 % CI] | bal. acc. | TPR | FPR | recall @2 % FA | @5 % | @10 % | ECE |
 |---|---|---|---|---|---|---|---|---|---|---|
 | AHU | **FaultFinder** | 200 (91) | **0.78** [0.72-0.83] | **0.70** | 73 % | 33 % | 23 % | 27 % | 47 % | 0.13 |
@@ -123,14 +126,124 @@ days, 93 % faulty. Brier 0.216 calibrated vs 0.204 uncalibrated: the 20-day temp
 **Energy output**: on 46 ERS paired days (faulty AHU-A vs healthy AHU-B, air-side energy proxy) Spearman 0.19
 between predicted and measured extra energy: not useful; do not rely on `extra_hvac_energy_frac`.
 
+## Integrity pass (17 Nov 2026): fair baselines and intervals (the exam is seen)
+
+The exam above was taken once by v1.0. On 17 Nov 2026 it was re-scored from the released numpy weights
+(`training/exam.py ../faultfinder_weights.npz`, a numpy path added to `exam.py`): every number in `exam.json`
+reproduces to 6e-8 (float32 rounding), with the same dev temperature T = 4.3. Nothing below was used to choose
+anything; the plan is in `NOTEBOOK.md`, written before the re-score. Script: `training/integrity.py`.
+
+**Baselines, all fitted on the 20 dev days only.**
+- *Rules, textbook*: the v1.0 baseline. APAR with tolerances 1.5 K (temperature), 1.1 K (fan heat), 15-min
+  persistence and the released dev threshold; the RTU's fan-on-while-unoccupied rule. The parameterised copy in
+  `integrity.py` reproduces `faults_apar.parquet` exactly (max difference 0.0 on all 237 dev and exam days).
+- *Rules, dev-tuned*: 54 settings (tolerance 0.75-3 K × fan heat 0.5/1.1/1.7 K × persistence 15/30/60 min) scored by
+  AUC on the 18 AHU dev days (8 faulty). Chosen: 1.5 K, fan heat 0.5 K, 15 min (dev AUC 0.775 against 0.731 for the
+  textbook setting; a single best setting), threshold 0.037 by dev balanced accuracy. RTU: the same fan rule with the
+  midpoint threshold (0.0). The two RTU dev days score the wrong way round (faulty 0.000, healthy 0.002), so neither
+  RTU threshold means much.
+- *Mixing-box residual*: per unit-day, on 15-min bins with the fan on, the largest dev-standardised of (1) the
+  outdoor-air-fraction residual |(MA−RA)/(OA−RA) − f(cmd)| with f(cmd) = 0.88·cmd^1.2 fitted on 416 healthy dev
+  bins, (2) the coils-off residual |SA − MA − 1.05 K|, (3) supply-air tracking |SA − SP|. Threshold 3.84 (dev balanced
+  accuracy 0.68, dev AUC 0.65). For (2) every logged valve must be ≤ 0.02; where one valve is not logged only the other
+  is checked (an implementation detail fixed before scoring). The ORNL RTU logs no outdoor or mixed-air temperature or
+  setpoint, so no residual exists there.
+
+**Every graded row.** FF − best: FaultFinder minus the best of the three baselines on that row (the best is picked on
+the exam, which favours the baselines). 95 % bootstrap, 2,000 resamples, seed 20261117, over unit-days (the verdict)
+and over facility-days (ERS AHU-A/B and Nesbitt AHU-1/2 share a day). A row the dev majority guess wins is a loss
+(on the false-alarm rows, never alarming scores 0 %). RTU rows: the two "rules" columns are the fan rule with the
+released and the midpoint threshold. Rates in percentage points. \* Report only: thresholds re-set on each resample's
+own healthy days.
+
+| Units | Metric | n | FaultFinder | rules, textbook | rules, dev-tuned | mixing box | FF − best [95 % CI, unit-days] | [facility-days] | v1.0 | now |
+|---|---|---|---|---|---|---|---|---|---|---|
+| All units | AUC | 217 | 0.77 | 0.69 | 0.69 | 0.61 | +0.08 [−0.00, +0.16] | [+0.01, +0.16] | win | tie |
+| All units | bal. acc. @0.5 | 217 | 0.69 | 0.65 | 0.69 | 0.63 | −0.00 [−0.08, +0.08] | [−0.07, +0.08] | win | tie |
+| All units | false alarms @0.5 (%) | 217 | 35 | 3 | 18 | 14 | +32 [+23, +42] | [+24, +41] | loss | loss |
+| All units | recall @0.5 (%) | 217 | 73 | 32 | 55 | 41 | +17 [+5, +29] | [+5, +30] | - | win |
+| All units | recall @2 % FA (%)* | 217 | 20 | 30 | 30 | 21 | −10 [−29, +14] | [−24, +11] | loss | tie |
+| All units | recall @5 % FA (%)* | 217 | 24 | 39 | 38 | 29 | −15 [−24, +14] | [−24, +14] | loss | tie |
+| All units | recall @10 % FA (%)* | 217 | 45 | 43 | 42 | 36 | +2 [−15, +23] | [−14, +23] | win | tie |
+| AHU | AUC | 200 | 0.78 | 0.69 | 0.69 | 0.64 | +0.09 [−0.00, +0.18] | [+0.00, +0.17] | win | tie |
+| AHU | bal. acc. @0.5 | 200 | 0.70 | 0.65 | 0.68 | 0.66 | +0.02 [−0.08, +0.11] | [−0.06, +0.11] | win | tie |
+| AHU | false alarms @0.5 (%) | 200 | 33 | 2 | 17 | 15 | +31 [+23, +41] | [+22, +40] | loss | loss |
+| AHU | recall @0.5 (%) | 200 | 73 | 32 | 52 | 46 | +21 [+7, +34] | [+7, +35] | - | win |
+| AHU | recall @2 % FA (%)* | 200 | 23 | 32 | 32 | 24 | −9 [−32, +18] | [−22, +15] | loss | tie |
+| AHU | recall @5 % FA (%)* | 200 | 27 | 41 | 40 | 33 | −13 [−24, +17] | [−23, +15] | loss | tie |
+| AHU | recall @10 % FA (%)* | 200 | 47 | 45 | 44 | 40 | +2 [−17, +26] | [−16, +25] | win | tie |
+| RTU (ORNL) | AUC | 17 | 0.65 | 0.72 | 0.72 | – | −0.07 [−0.44, +0.38] | [−0.44, +0.38] | loss | tie |
+| RTU (ORNL) | bal. acc. @0.5 | 17 | 0.47 | 0.57 | 0.72 | – | −0.24 [−0.57, +0.20] | [−0.57, +0.20] | loss | loss |
+| RTU (ORNL) | false alarms @0.5 (%) | 17 | 80 | 20 | 40 | – | +60 [−20, +100] | [−20, +100] | loss | tie |
+| RTU (ORNL) | recall @0.5 (%) | 17 | 75 | 33 | 83 | – | −8 [−25, +0] | [−25, +0] | - | tie |
+| RTU (ORNL) | recall @2 % FA (%)* | 17 | 42 | 25 | 25 | – | +17 [−47, +55] | [−47, +55] | win | tie |
+| Iowa ERS | AUC | 101 | 0.73 | 0.73 | 0.73 | 0.57 | +0.00 [−0.12, +0.13] | [−0.12, +0.13] | tie | tie |
+| Iowa ERS | bal. acc. @0.5 | 101 | 0.65 | 0.65 | 0.70 | 0.60 | −0.05 [−0.18, +0.07] | [−0.17, +0.08] | - | tie |
+| Iowa ERS | false alarms @0.5 (%) | 101 | 27 | 2 | 24 | 0 | +27 [+15, +40] | [+16, +38] | - | loss |
+| Iowa ERS | recall @0.5 (%) | 101 | 57 | 33 | 63 | 20 | −7 [−26, +12] | [−27, +14] | - | tie |
+| Iowa ERS | recall @2 % FA (%)* | 101 | 13 | 33 | 33 | 24 | −20 [−43, +22] | [−43, +22] | - | tie |
+| Iowa ERS | recall @5 % FA (%)* | 101 | 20 | 46 | 41 | 26 | −26 [−44, +17] | [−43, +17] | - | tie |
+| Iowa ERS | recall @10 % FA (%)* | 101 | 41 | 52 | 46 | 26 | −11 [−37, +13] | [−37, +13] | - | tie |
+| LBNL FLEXLAB | AUC | 23 | 0.93 | 0.67 | 0.74 | 0.67 | +0.19 [−0.03, +0.43] | [−0.03, +0.43] | win | tie |
+| LBNL FLEXLAB | bal. acc. @0.5 | 23 | 0.85 | 0.76 | 0.69 | 0.57 | +0.09 [−0.22, +0.29] | [−0.22, +0.29] | - | tie |
+| LBNL FLEXLAB | false alarms @0.5 (%) | 23 | 25 | 0 | 25 | 75 | +25 [+0, +82] | [+0, +82] | - | loss |
+| LBNL FLEXLAB | recall @0.5 (%) | 23 | 95 | 53 | 63 | 89 | +5 [−12, +23] | [−12, +23] | - | tie |
+| LBNL FLEXLAB | recall @2 % FA (%)* | 23 | 89 | 63 | 58 | 42 | +26 [+0, +53] | [+0, +53] | - | tie |
+| Nesbitt Hall | AUC | 76 | 0.78 | 0.54 | 0.54 | 0.71 | +0.07 [−0.05, +0.19] | [−0.06, +0.22] | win | tie |
+| Nesbitt Hall | bal. acc. @0.5 | 76 | 0.72 | 0.57 | 0.58 | 0.68 | +0.05 [−0.08, +0.17] | [−0.08, +0.19] | win | tie |
+| Nesbitt Hall | false alarms @0.5 (%) | 76 | 40 | 2 | 8 | 26 | +38 [+24, +52] | [+25, +51] | loss | loss |
+| Nesbitt Hall | recall @0.5 (%) | 76 | 85 | 15 | 23 | 62 | +23 [+4, +42] | [+6, +46] | - | win |
+| Nesbitt Hall | recall @2 % FA (%)* | 76 | 19 | 15 | 15 | 35 | −15 [−40, +7] | [−42, +8] | - | tie |
+| Nesbitt Hall | recall @5 % FA (%)* | 76 | 23 | 19 | 19 | 35 | −12 [−42, +12] | [−41, +14] | win | tie |
+| Nesbitt Hall | recall @10 % FA (%)* | 76 | 46 | 23 | 23 | 54 | −8 [−36, +23] | [−35, +21] | - | tie |
+| Diagnosis | top-1 (%) | 66 | 20 | always commonest: 21 | – | – | -2 [−17, +14] | [−16, +14] | loss | tie |
+| Diagnosis | top-3 (%) | 66 | 48 | always commonest: 55 | – | – | -6 [−23, +9] | [−24, +12] | loss | tie |
+
+**Before and after.** None of v1.0's graded wins survives as a win: AHU and all-units AUC are ties by the unit-day
+interval (+0.09 [−0.00, +0.18] and +0.08 [−0.00, +0.16]; the facility-day intervals exclude zero), balanced accuracy
+ties the dev-tuned rules (AHU +0.02 [−0.08, +0.11]), Nesbitt ties a mixing-box residual (AUC 0.78 against 0.71),
+FLEXLAB ties (+0.19 [−0.03, +0.43]) and every fixed-false-alarm row is a tie. Several losses become ties (RTU AUC and
+false alarms, the strict-false-alarm recalls, diagnosis top-1 and top-3). Three new wins: recall at P = 0.5 for all
+units (+17 [+5, +29]), AHUs (+21 [+7, +34]) and Nesbitt (+23 [+4, +42]), the other side of the false-alarm losses.
+What stands: FaultFinder catches more faults at P = 0.5 and raises far more false alarms; on ranking and balanced
+accuracy it is not distinguishable from rules tuned on the same 20 dev days.
+
+**Dev twin test of what the network adds** (20 dev days, no exam data). Anchor: the dev-tuned rule score mapped to a
+probability by a two-parameter logistic fit on dev. The network's correction (P − P_rule) against what the truth
+needed (truth − P_rule): correlation **+0.07**. Dev AUC 0.71 (network) against 0.71 (rule). Right at the operating
+point: network 13 of 20, rule 14 (both 10, network only 3, rule only 4, both wrong 3). The network alone is right on
+Nesbitt AHU-2's two faulty days (chilled-water sensor bias, cooling valve stuck; rule score 0) and the ORNL
+infiltration day; the rule alone is right on ERS AHU-B's healthy 24 Aug 2007 (network P 0.501, on the threshold), the
+ERS exhaust-damper day of 10 May 2008, Nesbitt AHU-1's sensor-bias day and Nesbitt AHU-2's healthy 29 Jul 2017
+(network P 0.79). Mean |truth − P| is 0.42 for the anchor and 0.45 for the network.
+
+**Unit habit, dev only** (for the multi-day rung). Day vectors: mean and standard deviation of each feature row over
+fan-on bins, standardised over the 20 dev days. For the 10 healthy dev days with another day of the same unit, the
+nearest day is the same unit's for 4 (median distance 0.81 to the same unit, 0.82 to other units). The network's
+log-odds on the 8 healthy days of the three units with two or more: 38 % of the variance is between units, 62 %
+within (one Nesbitt AHU-2 day at +5.6 dominates). Subtracting the mean log-odds of the unit's other healthy dev days
+changed dev false alarms from 3 to 4 of 8 and dev AUC on those 13 days from 0.78 to 0.63. On 20 days, "most false
+alarms are unit habits" is not supported; two of the four dev false alarms sit at P = 0.501, a calibration effect.
+
+**Detection rate at P = 0.5 by exam fault type** (faulty days): cc valve stuck 100 % (14), OA damper stuck 93 % (14),
+schedule 75 % (8), chiller off 83 % (6), EA damper stuck 40 % (5), OA damper leak 60 % (5), hc valve leak 80 % (5),
+control unstable 25 % (4), hc valve stuck 100 % (4), zone sensor bias 75 % (4), cc valve leak 100 % (3), hc reduced
+capacity 33 % (3), lighting schedule 100 % (3), return-fan fixed speed 33 % (3), SAT sensor bias 100 % (3), air
+filter 50 % (2), condenser fouling 0 % (2), hc fouling 0 % (2), return-fan failure 50 % (2), CHW temperature sensor
+50 % (2), CHW pressure sensor 100 % (2), OAT sensor bias 50 % (2), supply duct leak 0 % (2), reverse-acting cc valve,
+EA damper leak and infiltration 100 % (1 each). Healthy days: 35 % flagged.
+
 ## Limits
 1. Diagnosis on real data is about as good as guessing the commonest fault; use the top 3 as a checklist.
-2. 33 % false alarms on healthy AHU days at P = 0.5; at strict alarm rates the APAR rules catch more.
+2. 33 % false alarms on healthy AHU days at P = 0.5 (rules: 2 %). On ranking (AUC) and balanced accuracy it is not
+   distinguishable from APAR rules tuned on the same 20 dev days (integrity pass).
 3. Probabilities squashed toward 0.5 by a temperature fitted on 20 days (ranking unaffected).
 4. RTU: worse than a one-line rule on 17 days.
-5. One day at a time; no comparison with the unit's own history. Single-zone simulator with ideal controls, no
-   exhaust damper, return fan or duct model.
-6. Small exam: 217 days, 5 facilities.
+5. One day at a time; no comparison with the unit's own history (whether false alarms are unit habits is not
+   established on the dev days). Single-zone simulator with ideal controls, no exhaust damper, return fan or duct
+   model.
+6. Small exam: 217 days, 5 facilities; 95 % intervals on model minus baseline are about ±0.09 AUC (AHU) and ±0.4
+   (RTU).
 
 ## Data credits and licences
 - ASHRAE RP-1312 ERS and Drexel Nesbitt Hall via N. Ghalamsiah (2025), figshare doi:10.6084/m9.figshare.29297999.v3
