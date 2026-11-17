@@ -116,13 +116,15 @@ Detection (P(fault)) and diagnosis on 217 real days. v1.0 took the exam once; th
 ## Limits
 
 - Diagnosis on real data is about as good as guessing the commonest fault. Use the top three as a checklist, not an answer; outdoor-air damper stuck is never top-1 (0 of 14).
-- Probabilities are squashed toward 0.5 by a temperature fitted on 20 days (T = 4.3): 164 of 217 exam days fall in 0.4-0.6, and two of the four false alarms on the dev days sit at P = 0.501. The uncalibrated Brier score is lower (0.204 vs 0.216), but the interval on the difference spans zero.
-- One day at a time: it does not compare a day with the unit's own history. That most false alarms are unit habits is a hypothesis, not a measurement: on the 11 healthy dev days the nearest day in feature space was the same unit's for 4 of 10, and subtracting the unit's other healthy days' log-odds raised dev false alarms from 3 to 4 of 8.
+- Probabilities are squashed toward 0.5 by a temperature fitted on 20 days (T = 4.3): 164 of 217 exam days fall in 0.4-0.6, and two of the four false alarms on the dev days sit at P = 0.501. The uncalibrated Brier score is lower (0.204 vs 0.216), but the interval on the difference spans zero. A two-parameter (Platt) map fitted on the dev days (r7b, not kept) cut dev false alarms from 4 to 1 of 11 leave-one-out but also cut detections from 6 to 4 of 9, and its leave-one-out Brier score was worse (0.258 vs 0.246).
+- One day at a time: it does not compare a day with the unit's own history. That most false alarms are unit habits is a hypothesis, not a measurement: on the 11 healthy dev days the nearest day in feature space was the same unit's for 4 of 10, and subtracting the unit's other healthy days' log-odds raised dev false alarms from 3 to 4 of 8. A multi-day rung (r7_context, 17 Nov 2026) was tried and not kept: on simulated days with a reference it scored 0.563 against 0.537 with the reference removed, but its 3-seed mean skill on frozen v5 was 0.558 against v1.0's 0.561, and only 2 of the 20 dev days have an earlier same-unit day within 7 days.
 - Single-zone simulator with ideal controls and no exhaust damper, return fan, duct model, chiller-off or chilled-water sensor faults: 13 of the exam's 27 fault types cannot be diagnosed at all.
 - Small exam: 217 days from five facilities. The 95 % interval on AHU AUC minus the best baseline is about ±0.09, on the RTU ±0.4. The fixed-false-alarm recall rows set their thresholds on the exam's own healthy days and are report-only.
 - The energy-waste output is not validated (Spearman 0.19 on 46 paired ERS days).
 
 ## The ratchet
+
+### FaultFinder v1.0 (BuildingSim, 16-17 Nov 2026)
 
 **Objective:** Skill on the frozen simulated validation set = 0.5 × detection AUC + 0.5 × diagnosis accuracy (faulted days with a visible effect)  
 **Rule:** Keep if the skill on the newest frozen simulated set beats the incumbent by more than 0.01 AND the dev AUC on the 20 real dev days is at least max(0.60, incumbent dev AUC − 0.05).
@@ -140,6 +142,22 @@ Detection (P(fault)) and diagnosis on 217 real days. v1.0 took the exam once; th
 <sub>Columns after *Why*: Skill on the frozen sets v1-v3 (v4 is the score), detection AUC and diagnosis accuracy on v4, then the dev gate: dev AUC and dev false-alarm rate at P = 0.5 (20 real dev days).</sub>
 
 Each change of the simulated bank or the noise model got a new frozen validation set (v1 generic bank, v2 real noise, v3 calibrated bank, v4 damper characteristic and larger offsets). Every rung was re-scored on every set, and the keep/reject decisions were re-taken in order on the newest (v4); the earlier decisions on older sets are not in the log. r6's description in ratchet.json says 179k weights; the exported network has 160,871 parameters (160,103 after BatchNorm folding). No exam result was used to choose anything. 17 Nov 2026 integrity pass (NOTEBOOK.md): no new rung; the released numpy weights reproduce the exam to 6e-8; the r1-r6 torch checkpoints are not in the repository, so older rungs cannot be re-scored on a new frozen set without retraining (r6 can, from the numpy weights). A smoke run on Windows rebuilt the pipeline: 0.7 s per simulated 12-day window (about 35 min per 38,987-day bank on one process) and about 2 min per training epoch on one thread.
+
+### r7 attempt: multi-day context and Platt calibration (17 Nov 2026, not released)
+
+**Objective:** As v1.0: skill on the frozen simulated validation set = 0.5 × detection AUC + 0.5 × diagnosis accuracy (faulted days with a visible effect)  
+**Rule:** Unchanged: keep if the skill on frozen v5 beats the incumbent by more than 0.01 AND the dev AUC is at least max(0.60, incumbent dev AUC − 0.05) = 0.657. Incumbent: r6 from the released numpy weights. A rung with several seeds is judged on the seed mean; seed 3 runs if the 2-seed margin is under twice the seed spread.
+
+| Rung | Change | Frozen-set score | Decision | Why | AUC v5 | Diag v5 | Skill with ref | Skill without ref | Dev AUC | Dev false alarms |
+|---|---|---|---|---|---|---|---|---|---|---|
+| r6_wide | v1.0 as released (numpy weights), re-scored on frozen v5 | 0.561 | ● kept | Incumbent. 0.543 on v4. | 0.743 | 0.378 | 0.56 | 0.561 | 0.71 | 4/11 |
+| r7b_platt | r6 with a two-parameter (Platt) map of the detection log-odds fitted on the 20 dev days, instead of T = 4.3 | 0.561 | ○ rejected | A monotone map: skill and dev AUC equal r6's by construction (written in the plan before it ran). On dev, false alarms 4 → 1 of 11 (in-sample and leave-one-out), detections 6 → 4 of 9; leave-one-out Brier 0.258 vs 0.246 for the temperature. | 0.743 | 0.378 | 0.56 | 0.561 | 0.71 | 1/11 |
+| r6v5_control | Information only: r6's 35-row network retrained on bank v5 with noise v5 (seed 1) | 0.554 | ○ rejected | Not a candidate; separates the new bank from the reference days. 0.007 below r6. | 0.74 | 0.369 | 0.556 | 0.55 | 0.68 | 6/11 |
+| r7_context | 82 input rows: today's 35, the per-bin median of the unit's last 1-3 days within 7 days, today minus that median for the 11 temperature and physics rows, and a reference count (single-day mode when none); bank v5, noise v5, r6's training config; 3 seeds | 0.558 | ○ rejected | 3-seed mean 0.558 (seeds 0.564, 0.558, 0.552) not > 0.561 + 0.01; dev AUC mean 0.660 passes the gate only just. References help within the rung (0.563 vs 0.537 with them zeroed), but single-day accuracy is below r6's. | 0.753 | 0.363 | 0.563 | 0.539 | 0.66 | 4.3/11 |
+
+<sub>Columns after *Why*: Frozen v5 (training/ratchet_r7.json): skill, detection AUC, diagnosis accuracy, skill on the 5,771 samples with reference days and on the 3,374 without; dev AUC and dev false alarms at P = 0.5 (11 healthy dev days).</sub>
+
+Plan fixed in NOTEBOOK.md before bank v5 was built. Bank v5: BuildingSim 1.0.1 with its phase2 wrappers (operator jitter, log_commands once per window), window and day ids, 20 % of faults from day 1; noise v5 keeps static offsets (phase2.static_offsets), the damper characteristic (phase2.damper_command), residual day, channel pattern and fan-off blend fixed per window. Train bank 2,998 windows (56,144 rows), validation bank 920 windows; frozen v5 seed 505, 9,145 samples, 63 % with reference days. Checked against the shipped v3 code: same-seed healthy days identical (1,452 days, max difference 0). r1-r5 cannot be re-scored (no checkpoints). Nothing was released; v1.0 stays. The fresh exam was not scored. Log: training/ratchet_r7.json (training/r7.py).
 
 Raw per-rung logs are in [`training/`](training/).
 
@@ -170,10 +188,9 @@ BuildingSim, the collection's building simulator (shared building platform, Phas
 
 ## Next rungs
 
-- Multi-day context (planned in NOTEBOOK.md, 17 Nov 2026): the network also sees a reference built from the unit's last 1-3 logged days; the bank keeps each window's earlier days as references, and the exam supplies only earlier same-unit days, unlabelled. 70 % of exam days have such a day within 7 days (Nesbitt 39 %).
+- Multi-day context, second try: r7_context (17 Nov 2026, not kept) gained 0.026 skill from reference days on simulated data but lost 0.023 in single-day mode against v1.0. Fine-tuning v1.0 with the reference rows zero-initialised would keep single-day accuracy; it needs a dev set with more same-unit runs (2 of 20 dev days have one).
 - Simulate the missing air-side and plant faults in BuildingSim (exhaust and return-fan dampers, return fan, duct leak, chiller off, chilled-water sensors) so 13 more exam fault types become diagnosable.
-- A dev-chosen operating threshold and a two-parameter (Platt) calibration, or a larger dev set; one temperature from 20 days piles days onto P = 0.5.
-- Upstream the FaultFinder wrappers into BuildingSim behind flags (log commands, installed damper characteristic, larger static offsets, operator jitter) and re-run the platform checks.
+- Calibration with its own rule and a larger dev set: on 20 days a Platt map (r7b) and the single temperature cannot be told apart (leave-one-out Brier 0.258 vs 0.246), and the Platt threshold trades 3 false alarms for 2 detections.
 
 ## Files
 

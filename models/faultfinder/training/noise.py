@@ -102,6 +102,27 @@ def fit(out_path):
     return model
 
 
+_P2 = None
+
+
+def _phase2():
+    """buildingsim.phase2 (BuildingSim 1.0.1). The training venv has no pvlib, which the buildingsim package imports;
+    phase2.py's FaultFinder functions need only numpy and pandas, so the same file is loaded on its own there."""
+    global _P2
+    if _P2 is None:
+        try:
+            from buildingsim import phase2 as p2
+        except ImportError:
+            import importlib.util
+            from _paths import BLDG_CODE
+            f = os.path.join(BLDG_CODE, 'buildingsim', 'buildingsim', 'phase2.py')
+            spec = importlib.util.spec_from_file_location('buildingsim_phase2', f)
+            p2 = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(p2)
+        _P2 = p2
+    return _P2
+
+
 class Noise:
     def __init__(self, path, level=1.0, offsets=True, residual=True, patterns=True, fanoff=True, damper_char=False,
                  big_offsets=False):
@@ -166,6 +187,68 @@ class Noise:
             x[RI[c]] = np.clip(x[RI[c]], 0, 1)
         if self.patterns:
             x = self.drop(x, rng, system)
+        return x
+
+    # ---------------------------------------------------------------- noise v5: a unit's habits persist (r7 plan)
+    def window_state(self, rng, system=None):
+        """Noise v5 (2026-11-17 r7 plan): draws kept for every day of one simulated window (one unit): static sensor
+        offsets (buildingsim.phase2.static_offsets, v4 sizes), the damper characteristic (phase2.damper_command, one
+        draw per window via a stored seed), which real residual day each channel uses and its gain, the fan-off
+        blend and supply offset, the channel pattern and the 6 % extra missing channels. Same marginals as v4."""
+        import pandas as pd
+        phase2 = _phase2()
+        st = dict(fan_b=float(rng.uniform(0, 0.3)), fan_sa=float(rng.uniform(-0.5, 1.0)))
+        st['res'] = {c: (int(rng.integers(len(self.lib[c]))), float(rng.uniform(0.5, 1.5))) for c in RES_CH}
+        st['damper_seed'] = int(rng.integers(1 << 31))
+        z = pd.DataFrame({c: [0.0] for c in ('SAT', 'MAT', 'RAT', 'OAT', 'ZAT')})
+        _, off = phase2.static_offsets(z, rng, level=self.level, large=True)
+        st['off'] = {'T_sa': off['SAT'], 'T_ma': off['MAT'], 'T_ra': off['RAT'], 'T_oa': off['OAT'],
+                     'T_zone': off['ZAT']}
+        if system == 'packaged_rtu':
+            pat = 'rtu' if rng.random() < 0.5 else ['full', 'lbnl_ahu', 'nesbitt'][rng.integers(3)]
+        else:
+            pat = ['full', 'full', 'lbnl_ahu', 'nesbitt', 'rtu'][rng.integers(5)] if rng.random() < 0.85 else 'korea'
+        miss = list(PATTERNS[pat])
+        for c in RAW:
+            if c not in ('fan_on',) and rng.random() < 0.06:
+                miss.append(c)
+        st['pat'], st['miss'] = pat, miss
+        st['fan_from_speed'] = bool(rng.random() < 0.1 and pat == 'nesbitt')
+        return st
+
+    def apply_window(self, x, rng, st):
+        """Noise v5 on one simulated day of a window whose state `st` came from window_state. Per day: the
+        residual's circular shift and logger gaps."""
+        phase2 = _phase2()
+        x = x.astype(np.float32).copy()
+        on = x[RI['fan_on']] > 0.5
+        L = self.level
+        if (~on).any():
+            Tra, Toa = x[RI['T_ra']], x[RI['T_oa']]
+            mix = Tra + st['fan_b'] * (Toa - Tra)
+            x[RI['T_ma'], ~on] = mix[~on]
+            x[RI['T_sa'], ~on] = (mix + st['fan_sa'])[~on]
+        for c in RES_CH:
+            k, g = st['res'][c]
+            r = np.roll(self.lib[c][k], rng.integers(NT)) * g * L
+            if c == 'fan_power':
+                p = np.nanpercentile(x[RI[c]], 95)
+                r = r * (p if np.isfinite(p) else 0)
+            x[RI[c], on] += r[on]
+        x[RI['damper_oa']] = phase2.damper_command(x[RI['damper_oa']], np.random.default_rng(st['damper_seed']))
+        for c, v in st['off'].items():
+            x[RI[c]] += np.float32(v)
+        for c in ('damper_oa', 'valve_cc', 'valve_hc', 'fan_speed'):
+            x[RI[c]] = np.clip(x[RI[c]], 0, 1)
+        for c in st['miss']:
+            x[RI[c]] = np.nan
+        if rng.random() < 0.2:      # a gap (logger outage) on a few channels
+            a = rng.integers(NT - 8)
+            w = rng.integers(4, 40)
+            for c in rng.choice(RAW, size=rng.integers(1, 5), replace=False):
+                x[RI[c], a:a + w] = np.nan
+        if st['fan_from_speed']:
+            x[RI['fan_on']] = (np.nan_to_num(x[RI['fan_speed']]) > 0.05).astype(np.float32)
         return x
 
     def drop(self, x, rng, system):

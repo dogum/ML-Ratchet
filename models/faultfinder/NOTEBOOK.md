@@ -398,3 +398,69 @@ baseline was run on either dataset. `--check` rebuilds reproduce both split file
   (units block `31f05ccb…`).
 - **What to expect.** Four AHUs give the bootstrap four distinct units: the intervals will be wide and most rows will
   be ties. APAR can fire only R23 (simultaneous heating and cooling) on these channels.
+
+## 2026-11-17 — r7_context and r7b results: nothing released, v1.0 stays
+
+Everything followed the two plan entries above; nothing was changed after a result was seen. The fresh-exam split
+(`training/split_exam2_nehasil.json`, `split_exam2_wang.json`) was committed (3d9f949) before this decision was
+written. The fresh exam was not scored. Raw scores: `work/r7/` (git-ignored); the record is `training/ratchet_r7.json`.
+Code: `training/simbank5.py`, `noise.py` (`window_state`, `apply_window`), `context.py`, `train7.py`, `r7.py`.
+
+**Bank v5 (BuildingSim 1.0.1, `phase2` wrappers).** Train: 3,000 windows on 3 processes in 11 min; 2 windows failed
+inside BuildingSim (a negative input to a log) and were skipped, as simbank.py does. 2,998 windows, 56,144 rows,
+29,283 training samples (46 % faulty). Validation: 920 windows, 17,244 rows. Frozen v5 (seed 505): 9,145 samples,
+4,309 faulty, 5,771 (63 %) with reference days. It has fewer than v4's 12,000 because the validation bank is smaller.
+
+**Check against v4 (before training).**
+- Paired with the shipped `simbank.py` (calib_v3, same seed 5051, first 300 windows): the 242 windows whose fault
+  starts on day 5 draw the same building, weather, controls and operator jitter. Their 1,452 healthy days are identical
+  (max difference 0.0). 1,573 of 1,694 faulted days are identical; the rest differ only in the logged actuator, where
+  `log_commands` now draws position feedback once per window instead of once per day.
+- Bank statistics, shipped code vs v5 sample rows (300 windows each): 13.0 rows per window both; faulty share 0.54 vs
+  0.60 (expected: 20 % of v5 windows fault from day 1); visible share of faulty days 0.61 vs 0.60; median effect 3.87
+  vs 3.84; fan-on hours on healthy days 19.5 vs 19.6; healthy SAT minus setpoint median 0.0 both, IQR 0-1.64 vs
+  0-1.62 K. Logged actuator on stuck or leaking days moves by 0.01-0.06 (about 100 days each from about 15 windows).
+- Noise v4 vs v5 on the same 2,000 val v5 days: feature-row means within 0.07, SDs within 12 %. The largest gaps are
+  the availability masks (up to 5 points) and the temperature rows that depend on them: v5 draws the channel pattern
+  once per window, so 2,000 days carry only about 900 independent patterns. r6 on those days: skill 0.543 with v4
+  noise, 0.553 with v5 noise. Nothing was tuned on these.
+
+**Scores (frozen v5, 9,145 samples; dev, 20 days, 11 healthy).**
+
+| Rung | skill v5 | AUC | diag | skill with ref / without | dev AUC | dev false alarms |
+|---|---|---|---|---|---|---|
+| r6 (released weights, incumbent) | **0.561** | 0.743 | 0.378 | 0.560 / 0.561 | 0.707 | 4 of 11 |
+| r7b (r6 + Platt on dev) | 0.561 | 0.743 | 0.378 | same as r6 | 0.707 | 1 of 11 (in-sample and leave-one-out) |
+| r6v5 control (35 rows, bank v5) | 0.554 | 0.740 | 0.369 | 0.556 / 0.550 | 0.677 | 6 of 11 |
+| r7_context seed 1 | 0.564 | 0.759 | 0.369 | 0.569 / 0.545 | 0.677 | 6 of 11 |
+| r7_context seed 2 | 0.558 | 0.754 | 0.363 | 0.561 / 0.546 | 0.626 | 4 of 11 |
+| r7_context seed 3 | 0.552 | 0.745 | 0.358 | 0.559 / 0.528 | 0.677 | 3 of 11 |
+| **r7_context, 3-seed mean** | **0.558** | 0.753 | 0.363 | 0.563 / 0.539 | 0.660 | 4.3 of 11 |
+
+r1-r5 were not re-scored: no checkpoints. r6 scores 0.561 on v5 against 0.543 on v4.
+
+**Decisions.**
+- **r7_context: rejected.** Two seeds gave a margin of +0.0006 over r6 with a seed spread of 0.0057; the margin was
+  under twice the spread, so seed 3 ran as planned. The 3-seed mean is 0.558, 0.003 below r6 (seeds 0.552-0.564).
+  The dev AUC mean, 0.660, passes the 0.657 gate only just.
+- **r7b: rejected,** as written before it ran: its frozen skill and dev AUC are r6's. On dev it does what the card
+  hoped. Platt a = 0.302, b = -0.596 moves the alarm threshold from log-odds 0 to 1.97. False alarms drop from 4 to 1
+  of 11, in-sample and leave-one-out; the one left is Nesbitt AHU-2 on 29 Jul (log-odds 5.6). Detections drop from 6
+  to 4 of 9. Brier: temperature 0.224 in-sample, 0.246 leave-one-out; Platt 0.208 in-sample, 0.258 leave-one-out.
+  The two-parameter map overfits 20 days at least as much as the one-parameter one.
+- **Released: nothing.** v1.0 stays; the ladder logs r7b, r7_context and the control.
+
+**What the reference days do.** Within r7, the references help: on the 5,771 frozen days with a reference, r7 scores
+0.563 (3-seed mean) and 0.537 with the references zeroed. Detection AUC there is 0.749-0.762 against r6's 0.738.
+But r7 without references is worse than r6 (0.539 vs 0.561 on days without one), and so is the control (0.554), which
+retrains r6's network on bank v5 alone. Single-day accuracy fell by 0.006 (control) to 0.023 (r7 with its references
+zeroed) against r6. The reference gain roughly cancels that loss, and the 0.01 margin is not met. A second likely cause is the dev split:
+only 2 of 20 dev days have a reference (Nesbitt AHU-1 and AHU-2, 3 Aug 2017, from 29 Jul). The labelled AHU-1 fault
+day moved from log-odds -0.63 (r6) to +0.07, +0.32 and -0.82 across the three seeds; AHU-2 stayed at 2.2-2.9.
+Dev says nothing about unit habits beyond those two days. The dev false-alarm count is driven by single-day mode and
+varies from 3 to 6 of 11 across seeds of the same rung.
+
+**For next round.** (1) The reference input helps on simulated days with a reference (+0.026 skill over the same
+network without it). A rung that keeps r6's single-day accuracy, for example by fine-tuning r6 with the extra rows
+zero-initialised, would test it more fairly. That is a new plan, not run here. (2) Calibration needs its own rule
+and a larger dev set: 20 days cannot tell a one-parameter map from a two-parameter one.

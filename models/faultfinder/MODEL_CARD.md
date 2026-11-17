@@ -233,6 +233,22 @@ filter 50 % (2), condenser fouling 0 % (2), hc fouling 0 % (2), return-fan failu
 50 % (2), CHW pressure sensor 100 % (2), OAT sensor bias 50 % (2), supply duct leak 0 % (2), reverse-acting cc valve,
 EA damper leak and infiltration 100 % (1 each). Healthy days: 35 % flagged.
 
+## Round 2 rungs (17 Nov 2026, not released)
+
+Plan fixed in NOTEBOOK.md before bank v5 was built; record in `training/ratchet_r7.json`. Same rule as the ladder,
+judged on a new frozen set v5 (BuildingSim 1.0.1 phase2 wrappers, unit habits fixed per 12-day window, 9,145 samples).
+
+| Rung | skill v5 | dev AUC | dev false alarms (of 11) | decision |
+|---|---|---|---|---|
+| r6 = v1.0 (released weights) | 0.561 | 0.71 | 4 | incumbent |
+| r7b: Platt map on dev instead of T = 4.3 | 0.561 | 0.71 | 1 (leave-one-out) | rejected (skill unchanged by construction) |
+| r7_context: + the unit's last 1-3 days, 3-seed mean | 0.558 | 0.66 | 3-6 by seed | rejected (not > 0.571) |
+| control: r6's network retrained on bank v5 | 0.554 | 0.68 | 6 | information |
+
+Reference days help r7 on simulated days that have them (0.563 vs 0.537 with them zeroed), but r7's single-day
+accuracy is below v1.0's. Platt on 20 dev days cuts false alarms but also 2 of 6 detections; its leave-one-out Brier
+(0.258) is worse than the temperature's (0.246). v1.0 stays. The fresh exam was not scored.
+
 ## Limits
 1. Diagnosis on real data is about as good as guessing the commonest fault; use the top 3 as a checklist.
 2. 33 % false alarms on healthy AHU days at P = 0.5 (rules: 2 %). On ranking (AUC) and balanced accuracy it is not
