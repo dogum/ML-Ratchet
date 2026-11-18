@@ -136,6 +136,40 @@ district scale and base loads, intensity factors, command logging, an installed 
 builder). Those wrappers live in each model's `training/` and are listed for upstreaming in the
 [roadmap](roadmap.md#the-building-platform).
 
+## Round 2 (17 Nov 2026): fair baselines, new physics, fresh exams
+
+The second pass followed WakeNet's 17 Nov pattern: every plan written in the model's NOTEBOOK before it ran, the
+strongest fair baseline (physics or a simple model tuned on the same dev data the simulator was tuned on), a dev
+twin test of what each network adds, and every row with a 95 % bootstrap interval (win or loss only if the
+interval sits on one side of zero). The v1.0 exams were already seen, so their re-scores are labelled seen. Three
+fresh real exams were frozen and committed before any round-2 decision and scored once afterwards.
+
+| Model | v1.0 as imported | Seen exam, fair baselines + intervals | Round-2 release | Fresh exam (scored once) |
+|---|---|---|---|---|
+| LoadCast | 4 wins, 6 losses | 6 wins, 16 ties, 18 losses | none (r6 physics 1.1, r7, r8 rejected) | I-BLEND, 3 Delhi buildings: 3 wins, 5 ties (with history not worse than TOWT; no history about 2.2x too high) |
+| BuildingDetective | 5 wins, 4 ties, 9 losses | 0 wins, 7 ties, 21 losses | none (r10 kept by the rule, not released: real dev area 50.8 -> 69.0 %) | HEAPO, 105 Zurich homes: 4 losses, 2 ties (the dev median area beats it) |
+| FaultFinder | 11 wins, 1 tie, 12 losses | 4 wins, 30 ties, 6 losses | v1.1: the unit's own earlier days (r8) | Nehasil, 4 AHUs: 2 wins, 1 tie, 1 loss; v1.1 no better than v1.0 |
+| ThermoPilot | 0 wins, 6 losses | v1.1: 2 wins, 3 ties, 4 losses | v1.1: a card MPC behind a 6 h shield (classical; the network kept as a mode) | none (no open thermostat logs) |
+
+What changed the picture:
+
+- **Fair baselines take most wins away.** Rules tuned on FaultFinder's 20 dev days tie it on AUC; linear models fitted
+  on dev beat BuildingDetective on most survey rows (RECS heating 91.9 % vs 87.3 %); the dev-calibrated BuildingSim
+  twin beats LoadCast's no-history forecasts on electricity and chilled water.
+- **The networks' corrections point the right way but are too large** (BuildingDetective, ThermoPilot), or point the
+  wrong way (LoadCast's no-history level moves away from the twin on dev).
+- **Physics 1.1-1.4** (opt-in; the default stays 1.0): district plants fix chilled water (within +-30 % even
+  leave-one-site-out) but steam and hot water do not transfer between campuses; flatter electricity, the heat-pump
+  signature and generator intensity all fall short of their targets on dev. No model adopted a version: LoadCast's
+  physics-1.1 rung failed its dev gate, and BuildingDetective's flipped its area bias.
+- **Reproducibility fixes:** RECS twins now rank tied ResStock matches by `bldg_id` (numpy's unstable sort made
+  v1.0's twins machine-dependent); LoadCast banks are now deterministic; the four models' wrappers are in
+  BuildingSim 1.0.1 behind flags.
+- **Decisions the owner may revisit:** FaultFinder v1.1 was released by its pre-fixed rule although the seen exam
+  showed AHU false alarms 33 -> 56 %; the fresh Nehasil exam then found it no better than v1.0. LoadCast's dev gate
+  compares 3-seed means with v1.0's single selected seed, so a rung needs about 3 points of dev gain to tie its own
+  recipe; changing that is a rule change left to the owner.
+
 ## Using it
 
 ```bash
