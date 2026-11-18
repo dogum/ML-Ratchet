@@ -10,6 +10,7 @@ from mlratchet.calibrate import widen_factor
 from _paths import work
 from noise import PROTOCOL, RESULTS, write_json
 from simbank import load_bank
+from simulator import PHYSICS_VERSION
 from split import dev_cases
 from train import RUNS
 from stormnet import StormNet
@@ -64,7 +65,7 @@ def main():
         residuals.extend(pred["min_dst"] - d["truth"])
         sig.extend(pred["sigma"])
     model.meta["widen_factor"] = widen_factor(residuals, sig)
-    model.meta["physics_version"] = "ring-2" if chosen in ("r3", "r4") else "ring-1"
+    model.meta["physics_version"] = PHYSICS_VERSION[1] if chosen in ("r3", "r4") else PHYSICS_VERSION[0]
     weights = {k: v.astype("float32") for k, v in model.weights.items()}
     release = release_dir / "stormnet_weights.npz"
     np.savez_compressed(release, **weights, meta=json.dumps(model.meta))

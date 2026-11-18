@@ -21,7 +21,7 @@ The driver is the southward motional electric field, E = V max(−Bz, 0) / 1,000
 
 ## Dev and the ratchet
 
-The signed-off protocol predates opening any Dst series. Among whole storms and 72-hour quiet blocks in 2008, 2011 and 2014, seed 1729 chose 34 blocks with 2,408 eligible hourly issues. Storm blocks join Dst ≤ −50 crossings at most 72 hours apart and include 24 hours on either side. Dev sampling roughly spans the within-year storm-depth distribution. No dev, primary or reserve year contributes training wind. Both frozen validation banks have 4,500 synthetic cases driven exclusively by 2005 wind. Each training bank has 17,000 synthetic cases.
+The protocol was committed before opening any Dst series. Among whole storms and 72-hour quiet blocks in 2008, 2011 and 2014, seed 1729 chose 34 blocks with 2,408 eligible hourly issues. Storm blocks join Dst ≤ −50 crossings at most 72 hours apart and include 24 hours on either side. Dev sampling roughly spans the within-year storm-depth distribution. No dev, primary or reserve year contributes training wind. Both frozen validation banks have 4,500 synthetic cases driven exclusively by 2005 wind. Each training bank has 17,000 synthetic cases.
 
 | Rung | Change | Frozen v1 skill | Frozen v2 skill | v2 decision |
 |---|---|---:|---:|---|
