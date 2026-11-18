@@ -1,0 +1,11 @@
+{
+  "history_hours": 36,
+  "horizon_hours": 3,
+  "training_wind_years": [1998, 1999, 2000, 2001, 2002, 2003, 2004],
+  "frozen_wind_years": [2005],
+  "dev_years": [2008, 2011, 2014],
+  "primary_years": [2016, 2017, 2018, 2019, 2020],
+  "sealed_reserve_years": [2022, 2023, 2024, 2025],
+  "split_seed": 1729, "bootstrap_seed": 8675309, "example_seed": 931,
+  "bootstrap_repeats": 2000, "margin": 0.01, "dev_max_ratio": 1.05
+}

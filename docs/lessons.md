@@ -1,10 +1,9 @@
-# Lessons from twenty-one models
+# Lessons from twenty-two models
 
 What building ChirpNet, SunDoctor, CellSense, TransitNet, QuakeNet, BearingNet, SwellCast, BeatNet and StarQuake,
 then the vehicle platform with EnergyNet, TripDetective and HybridPilot, the grid platform with GridPulse,
-BatteryPilot, PlantDetective and DemandCast, WakeNet, and the building platform with LoadCast, BuildingDetective, FaultFinder
-and ThermoPilot, taught, in rough order of how much it
-mattered.
+BatteryPilot, PlantDetective and DemandCast, WakeNet, the building platform with LoadCast, BuildingDetective,
+FaultFinder and ThermoPilot, and StormNet, taught, in rough order of how much it mattered.
 
 ## The simulator is the model
 
@@ -42,6 +41,13 @@ mattered.
   read half the true sunlight for three and a half years (May 2019 to October 2022).
 - **Error bars need their coverage reported.** QuakeNet's depth bars cover 51% of a nominal 68%. StarQuake's cover
   54–58% on 27-day light curves. Those numbers are the next rungs.
+- **Compare with the physics tuned on your own dev data.** WakeNet and StormNet both beat textbook physics and both
+  tie it once its few free settings are fitted on the same dev data their simulators were (17 Nov 2026). WakeNet lost
+  17 of 18 re-scored rows to dev-tuned FLORIS; StormNet ties dev-tuned O'Brien–McPherron on 85 storm blocks at solar
+  maximum. A network trained on its own anchor's physics can only add what the simulator knows and the anchor does
+  not. If the simulator is the anchor plus scatter, expect a tie, and give the simulator something more.
+- **Before blaming the unknown future, test with it.** StormNet's dev forecasts improved only from 4.36 to 4.21 nT
+  when the physics was given the actual next three hours of wind, so a better wind forecast was not the lever.
 
 ## Working practice
 

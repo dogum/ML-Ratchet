@@ -26,11 +26,12 @@ export const TRAITS: { id: string; label: string; g: Group }[] = [
   { id: 'flow', label: 'Flow posterior', g: 'dist' },
   { id: 'sets', label: 'Set pooling', g: 'struct' },
   { id: 'gnn', label: 'Graphs', g: 'struct' },
+  { id: 'ssm', label: 'State-space', g: 'sig' },
   { id: 'anchor', label: 'Physics anchor', g: 'phys' },
   { id: 'diffsim', label: 'Decides through physics', g: 'phys' },
 ];
 export const ABSENT: { id: string; label: string }[] = [
-  { id: 'gbm', label: 'Trees' }, { id: 'attn', label: 'Attention' }, { id: 'ssm', label: 'State-space' },
+  { id: 'gbm', label: 'Trees' }, { id: 'attn', label: 'Attention' },
   { id: 'gp', label: 'GPs' }, { id: 'symbolic', label: 'Formulas' }, { id: 'assim', label: 'Filters' },
 ];
 
@@ -66,6 +67,7 @@ export const MODEL_NOTES: Record<string, ModelNote> = {
   buildingdetective: { t: ['mlp'], params: 571527, paramsFrom: 'model.yaml: 384,557 + 106,285 + 80,685', twin: 'Real campus district-heat meters stay flat through summer; the first twins were far too seasonal (heating slope 4.38 against 0.81 real) until always-on base loads brought it to 1.00.' },
   faultfinder: { t: ['cnn1d'], params: 175143, paramsFrom: 'model.yaml', twin: 'Real BMS logs record commands, not actuator positions: FLEXLAB’s heating valve stuck at 100% logs 0%, so the simulator was changed to log commands.' },
   thermopilot: { t: ['mlp'], params: 276516, paramsFrom: 'model.yaml', twin: 'Twins of 37 real WPuQ heat-pump homes overstate the heating slope 2.7× and run at night while the real homes run flat; ThermoPilot against setback flips in 18 of 37 homes.' },
+  stormnet: { t: ['ssm', 'mlp', 'anchor'], params: 926, paramsFrom: 'model.yaml', twin: 'Signed forecast errors on paired dev twins and recordings correlate at 0.55–0.70 across years. The simulated Dst minima are typically 8–14 nT too negative.' },
   wakenet: { t: ['gnn', 'anchor'], params: 245767, paramsFrom: 'model.yaml', twin: 'Rung 4 read flat-terrain v2 twins with 0.0% low-elevation bias and real Kelmarsh dev +2.3% high on KWF5–KWF6; adding 3-D hill speedup and separated meandering cut it to −0.5%. The same physics tuned on dev, with no network, then beat the network on real dev (9.31% against 9.48% waked MAE) and on 13 of 18 never-seen exam rows: the graph adds +0.011 in simulation and nothing on real turbines yet.' },
 };
 
@@ -102,14 +104,14 @@ export const FAMILIES: Family[] = [
     extrap: 'Weak beyond the training lengths unless the position encoding generalises.',
     risk: 'Needs more simulations than a CNN (simulations are free here) and can fit simulator quirks. Cost grows with the square of the length.',
     used: [], refs: ['vaswani17', 'mousavi20'] },
-  { id: 'ssm', name: 'State-space and recurrent models', g: 'sig', st: 'n', np: 2, web: 2, data: 2,
+  { id: 'ssm', name: 'State-space and recurrent models', g: 'sig', st: 'p', np: 2, web: 2, data: 2,
     one: 'A hidden state updated step by step: long memory at a cost linear in length (LSTM, S4, Mamba).',
     physics: 'The state can mirror a physical one: stored water, state of charge, ring current.',
     suits: 'Streaming readings, records of any length, forecasts.',
     unc: 'Output heads.',
     extrap: 'Stable within trained regimes; long forecasts can drift.',
     risk: 'Harder to train. Plain recurrent networks forget; gated or structured state spaces are needed for long records.',
-    used: [], refs: ['hochreiter97', 'gu22', 'gu23', 'kratzert19'] },
+    used: ['StormNet (physical recurrence with a learned residual readout)'], refs: ['hochreiter97', 'gu22', 'gu23', 'kratzert19'] },
   { id: 'mlp', name: 'MLP on physics features', g: 'tab', st: 'y', np: 3, web: 3, data: 2,
     one: 'Almost no built-in assumption beyond smoothness. The structure comes from the features.',
     physics: 'The inputs are physics: road-load work integrals (EnergyNet), building-stock components (DemandCast), implied heat-rate bins (PlantDetective).',
@@ -370,7 +372,6 @@ export const BACKLOG_FIT: Record<string, { f: string[]; why: string }> = {
   dispatchnet: { f: ['gnn', 'diffsim'], why: 'The transmission network is a graph, and the task is a decision: train through the dispatch cost, grade on EIA-930 generation and prices.' },
   watershed: { f: ['ssm', 'assim'], why: 'Rivers store water for weeks. LSTMs are strong on large-sample basin data (Kratzert et al. 2019); a filter on a rainfall-runoff model is the classical partner.' },
   tsunaminet: { f: ['operator', 'flow'], why: 'A neural operator can stand in for the shallow-water solver to grow the bank; a flow reads the Okada source with its uncertainty.' },
-  stormnet: { f: ['ssm', 'assim'], why: 'The Burton equation is a one-state equation driven by the solar wind: a filter on it, or a recurrent model whose state is the ring current.' },
   gpsquake: { f: ['gp', 'symbolic'], why: 'A GNSS series is seasonal terms plus steps plus transients: a GP with periodic and step kernels, or a sparse library of those terms.' },
   roomsense: { f: ['cnn1d', 'anchor'], why: 'An impulse response is a 1-D signal; Sabine’s law is the classical estimate to correct.' },
   spinnet: { f: ['symbolic', 'gbm'], why: 'Drag and Magnus force give the flight equations; a handful of tracked numbers per pitch is a small table.' },

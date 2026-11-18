@@ -79,15 +79,6 @@ ideas:
     exam: Rooms with measured geometry and RT60
     status: candidate
     note: Impulse-response sets not yet checked.
-  - id: stormnet
-    name: StormNet
-    domain: Space weather
-    question: How strong will this geomagnetic storm get, from the solar wind arriving now?
-    physics: Burton-type ring-current response to the solar wind
-    data: OMNIWeb solar wind; Kyoto Dst; INTERMAGNET / BGS magnetometers
-    data_url: https://omniweb.gsfc.nasa.gov/
-    exam: Real Dst and storm onsets
-    status: checked
   - id: tsunaminet
     name: TsunamiNet
     domain: Geophysics

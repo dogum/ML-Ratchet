@@ -1,0 +1,45 @@
+{
+  "all": {
+    "n": 2408,
+    "mae_forecast": 4.36,
+    "mae_with_true_wind": 4.21,
+    "mean_residual": -1.26
+  },
+  "storm_targets_le_-50": {
+    "n": 318,
+    "mae_forecast": 7.84,
+    "mae_with_true_wind": 7.56,
+    "mean_residual": -3.63
+  },
+  "E_at_issue_<1": {
+    "n": 1885,
+    "mae_forecast": 3.78,
+    "mae_with_true_wind": 3.42,
+    "mean_residual": -1.39
+  },
+  "E_1-3": {
+    "n": 454,
+    "mae_forecast": 5.93,
+    "mae_with_true_wind": 6.55,
+    "mean_residual": -0.78
+  },
+  "E_>=3": {
+    "n": 69,
+    "mae_forecast": 9.94,
+    "mae_with_true_wind": 10.28,
+    "mean_residual": -0.91
+  },
+  "main_phase (Dst fell >10 nT in 3 h)": {
+    "n": 249,
+    "mae_forecast": 6.65,
+    "mae_with_true_wind": 7.34,
+    "mean_residual": -1.07
+  },
+  "recovery (rose >5 nT in 3 h)": {
+    "n": 523,
+    "mae_forecast": 6.07,
+    "mae_with_true_wind": 4.89,
+    "mean_residual": -3.14
+  },
+  "Dst_<-100": null
+}

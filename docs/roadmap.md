@@ -117,6 +117,7 @@ ThermoPilot v1.1, and froze and scored three fresh real exams (Nehasil, HEAPO, I
 
 ## New models
 
-The power-grid and building projects are in (above), and so is WakeNet (Kelmarsh and Penmanshiel SCADA). The next
+The power-grid and building projects are in, along with WakeNet (Kelmarsh and Penmanshiel SCADA) and
+[StormNet](../models/stormnet/) (NASA OMNI solar wind and Kyoto Dst). The next
 big-system candidate is Watershed (USGS NWIS, SNOTEL). See [backlog.md](backlog.md) for it and the other candidates
 with physics, data and an exam lined up.
