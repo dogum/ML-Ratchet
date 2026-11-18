@@ -367,3 +367,157 @@ Built by `training/exam2_heapo.py`; no Detective run and no baseline score. `--c
   The single vs multi-family row is info only (2 multi-family exam homes).
 - `split_exam2_heapo.json` sha256 `fda36a6846ec1aaa3ddac7cb0b018dae0bf4d158f26414d5237d67c1f57a9b16` (units block
   `443961af…`; no readings, floor areas or years stored: truth is re-read from the protocols at scoring).
+
+## 2026-11-17 — Rung r10 plan: adopt BuildingSim physics (written before any bank is simulated)
+
+Physics 1.1-1.4 are measured on dev (`shared/building/NOTEBOOK.md`); none met its own done-when. They count for this
+model only if its own ladder says so. This entry fixes the physics, the frozen set, the rung and the rule before any
+building is simulated. The fresh HEAPO exam (3d9f949) is not scored here and no HEAPO home (dev or exam) is used for
+anything in this rung. `splits.json` is not touched; exam units train and tune nothing.
+
+**Physics chosen: 1.1 + 1.2 + 1.4, without 1.3.** BuildingSim versions are cumulative in `simulate()` (`campus.at_least`:
+1.3 = 1.2 + heat pumps), but 1.4 lives only in `generate_buildings(physics='1.4')` (intensity per use type on the
+generated spec); `simulate()` at 1.4 is 1.3. So the two public flags select what I want without overriding any fitted
+parameter: specs from `generate_buildings(..., physics='1.4')`, simulated with `options={'physics': '1.2', 'seed':
+crc32(spec id)}`. Bank tag `p12`. 1.3 is left out because it made the HEAPO dev profile worse (r 0.24 -> 0.21, annual
+ratio 1.59 -> 1.71) and was not recommended. Caveat: the 1.4 factors were fitted with 1.3 inside the simulation; that
+touches only the heat-pump homes in the residential fit sample, and I use the factors as published (not refitted).
+Physics 1.2 changes only non-residential twins; 1.1 only district-served ones; 1.4 every generated building.
+
+**Wrappers (training/wrappers.py).**
+- W1 intensity: **dropped.** 1.4 is the same mechanism (`phase2.apply_intensity`), refitted on the prior split.
+  Applying both would scale twice.
+- W2 campus: **assignment kept, factors and knobs dropped.** The generator rarely makes district-served buildings;
+  BDG2 is full of them, and no physics version decides which generated building sits on a campus. So 30 % of
+  commercial buildings still get campus district service (kind both / heat / cool, hot water vs steam), drawn with the
+  same rng calls as v1.0 (so the same buildings and weather as bank v1 where the generator draws agree). Dropped: the
+  distribution factors (heat 0.18, chilled water 0.33, meter = delivered / factor) and the operating knobs (VAV minimum
+  0.3-0.6, outdoor air x1-2, economizer, 24 h air handlers). 1.1's loop base was fitted on metadata twins with factor
+  1 and no knobs (`check_bdg2.py --physics`), and it brings the annual district ratio to 1.0 on dev by itself; W2's
+  factor on top would roughly triple chilled water again. Lost: W2's per-building spread (log-sd 0.8); 1.1's base is
+  one value per m2 per loop type, so campus district meters in the bank will be more uniform than BDG2's (real steam
+  base 1.4-81 W/m2 across sites). Recorded as a limit, not fixed here.
+- W3 flat base loads: **dropped.** 1.1's loop base and lockouts and 1.2's always-on share and day-to-day activity
+  replace it, and W3 was wrong for hot-water loops (0.70 of the mean in summer against 0.01 real).
+- Labels: unchanged code. 1.1's loop base is booked as its own end uses (`plant_*_district`), not as heating or
+  cooling, so it counts in `base_share` as non-HVAC energy, as W3's base did.
+
+**Bank and frozen set.** `simbank.py p12`, the same shard ids and seeds as v1: 60 training shards (0-59, 12,000
+buildings) and the new frozen validation set, shards 900-904 (1,000 buildings), built once from fixed seeds and never
+regenerated for a rung. Featurized as `f3` (no `--w3`), 2 hourly and 2 annual meter-quirk draws per building, 1
+monthly; frozen-set quirks are seeded per building (as v1.0). At most 3 processes; a shard is claimed by a lock file.
+If the bank is not done in the time I have, r10 trains on the shards finished, and says how many.
+
+**Re-score of the incumbent.** R9 (the released `weights/`, all three networks) on the f3 frozen set: its skill there
+is the number r10 must beat. R1-R8 cannot be re-scored (no checkpoints shipped); the ladder says so.
+
+**Rung r10.** Retrain hourly, monthly and annual on f3, the same architecture and settings as R9 (MLP 2 x 256 GELU,
+dropout 0.1, AdamW lr 2e-3, wd 1e-4, 60 epochs, OneCycle, seed 0). One run per network, no other variant.
+
+**Rule (the ladder's, per network, in the order hourly, monthly, annual).** Keep if frozen-val skill > R9's f3 skill +
+0.01 AND the real dev composite (`evaluate.dev_gate`, the candidate in place of its network, the others as currently
+kept) is no more than 0.02 below the composite of the last kept set. Starting composite: the v1.0 weights' composite
+recomputed now with today's features (the logged 0.3061 is reported beside it; temperatures and widen factors do not
+move the composite, it reads argmax and means only).
+
+**Also reported (dev only, not part of the rule).**
+- Dev twin test of what the network adds, as in the integrity pass (`training/integrity.py` functions): the
+  network's correction to the dev-calibrated rule against truth minus that rule, for BDG2 area (3 resolutions), RECS
+  and CBECS area, vintage, fuel heat, CBECS hours; Pearson r, median correction vs median needed, MAE of the anchor
+  vs after the network, and the breakdowns the integrity pass named (BDG2 area by use, CBECS hours by use, RECS area
+  by housing type, CBECS area by type). For v1.0 and r10 side by side. The question: does the new physics shrink the
+  bias?
+- The dev-fitted baselines' dev numbers next to the network's: the same classical models as the integrity pass
+  (BDG2 log-log line; ridge on the 12 annual features for RECS/CBECS area, vintage, hours; logistic for heating
+  class, CBECS use, RECS heat pump vs resistance), scored on dev by 5-fold cross-validation (folds by unit, seed
+  20261117), so no baseline is scored on the rows it was fitted on.
+
+**If a network is released (v1.1).** Kept networks replace v1.0's, the others stay. The release steps: rebuild the
+BDG2 dev twins at p12 (`devtwins.py`, same seeds) for the sim-only widen factors, `calibrate.py` (dev only) for widen
+factors and class temperatures; weights CC BY-SA 4.0; numpy inference unchanged in form; demo + golden; model.yaml,
+ladder, card, notebook; the seen exam re-scored for v1.1 with `integrity.py`'s baselines and intervals, labelled seen;
+instrument re-exported, parity test. If nothing is kept, v1.0 stays and the ladder logs r10 and the re-baseline.
+
+## 2026-11-17 — Rung r10 results: hourly kept and released as v1.1; monthly and annual rejected; physics did not fix the bias
+
+Everything followed the plan entry above. Nothing was changed after a result was seen. Two code changes came after
+the plan and before any result: `devtwins.py --p12` applies the 1.4 intensity after the real area, year and floors
+are set (generate_buildings at 1.4 returns a filled spec, so overriding the area afterwards would have left
+area-dependent defaults such as DHW volume and occupants at the generated size), and `integrity.py` takes a weights
+folder. Log: `training/r10.json` (`training/r10.py`); seen re-score `training/integrity_v11.json`.
+
+**Bank.** p12, 60 training shards (12,000 buildings) + frozen shards 900-904 (1,000), 0 simulation failures; 3
+workers (`training/runbank.py`, lock files), 119-131 s per 200-building shard plus 15-24 s of features, 70 min in
+all. Campus share as planned (83 of 280 commercial buildings, 30 %, in the first two frozen shards). Physics 1.1's chilled-water
+base (42 W/m², 368 kWh/m² a year when the loop runs all year) now dominates campus chilled-water meters. Frozen-set
+hashes: `work/frozen_p12_sha256.txt`.
+
+**Re-baseline.** R9 (released weights) on the p12 frozen set: hourly 0.7135, monthly 0.5568, annual 0.4301 (v2 set:
+0.8126 / 0.6560 / 0.5412). The biggest drop is base_share (hourly R² 0.22): 1.1's loop base is booked as non-HVAC
+energy. R1-R8 cannot be re-scored (no checkpoints). v1.0 dev composite recomputed with today's features: 0.3081
+(logged 0.3061; the integrity pass explains the PRISM-tie difference). The chain starts there.
+
+**r10** (MLP 2 x 256, the R9 settings, 60 epochs, seed 0; about 2 min each):
+
+| network | val skill | R9 on p12 | delta | dev composite | floor | decision |
+|---|---|---|---|---|---|---|
+| hourly | 0.8301 | 0.7135 | +0.117 | 0.2903 | 0.2881 | kept |
+| monthly | 0.6736 | 0.5568 | +0.117 | 0.2661 | 0.2703 | rejected (also below v1.0's floor 0.2881) |
+| annual | 0.5513 | 0.4301 | +0.121 | 0.2447 | 0.2703 | rejected (also below 0.2881) |
+
+What moved the composite: BDG2 dev floor area 50.8 -> 69.0 % (hourly), 48.5 -> 67.9 % (monthly), 40.2 -> 71.2 %
+(annual); CBECS dev area 43.4 -> 52.0 % and RECS 32.9 -> 35.0 % (annual). The hourly network passed by 0.002 because
+its area term was already near zero and is clipped there, so a 18-point loss on BDG2 dev area costs the composite
+only what the one term held (0.21 / 12). By the rule it is kept and released. I report that the rule let through a
+network that is worse on the only real dev quantity it reads (area), and propose in model.yaml `next` that each
+composite term be scored against its dev-fitted baseline.
+
+**Dev twin test** (network correction to the dev rule vs what reality needed; v1.0 -> r10): BDG2 area r 0.12 -> 0.03
+(hourly), 0.10 -> -0.01 (monthly), 0.22 -> 0.03 (annual); median correction -0.13 -> +0.10, -0.03 -> +0.14, -0.05 ->
++0.09 log10 (needed: 0); error after the network 0.32 -> 0.37, 0.30 -> 0.39, 0.26 -> 0.37 (anchor alone 0.27). RECS
+area r 0.60 -> 0.60, correction -0.03 -> +0.04; CBECS area r 0.54 -> 0.48, -0.08 -> +0.06; CBECS hours +36.7 h ->
++36.6 h. **The new physics does not shrink the bias the integrity pass found.** It flips the sign of the area bias:
+the networks now read real meters as larger buildings. My reading (not tested): 1.4 lowers generated intensities
+(education x0.52, healthcare x0.51, retail x0.46), fitted to survey medians, while BDG2's campus buildings use more
+energy per m² than those medians; a network trained on the lower intensities divides real energy by too small an EUI.
+
+**Dev-fitted baselines on dev** (5-fold CV): BDG2 area 34.7 % (log-log line) vs network 50.8 (v1.0) / 69.0 (r10)
+hourly and 40.2 / 71.2 annual; RECS area 29.2 vs 32.9 / 35.0; CBECS area 45.2 vs 43.2 / 51.3; RECS heating 91.3 vs
+86.9 / 87.9 %; CBECS heating 77.8 vs 70.9 / 70.4 %; RECS heat pump vs resistance AUC 0.66 vs 0.41 / 0.42; CBECS use
+25.9 vs 16.5 / 15.1 %; CBECS hours 36.5 vs 44.6 / 44.9 h. The baselines still win on dev, as on the exam.
+
+**Release v1.1** = r10 hourly + v1.0 monthly and annual. BDG2 dev twins rebuilt at p12 (`devtwins.py devtwin_p12 4
+--p12`, 208 twins, 0 failures); `calibrate.py` on the hourly network only: floor-area widening x3.43 (v1.0 x3.02),
+year x1.00, use temperature 10. Weights CC BY-SA 4.0 (`weights/LICENSE-DATA.md` unchanged; it covers retrained
+weights). `buildingdetective.py` version 1.1, inference unchanged. Demo and `tests/golden/buildingdetective.txt`
+regenerated (the three BDG2 and the HUE hourly readings changed; e.g. Lamb_education_Bert 1,692 -> 4,390 m², truth
+2,403). Instrument re-exported; parity 60 cases, worst relative difference 1.07e-6.
+
+**Seen exam re-scored for v1.1** (labelled seen; nothing chosen from it): 0 wins, 22 losses, 6 ties (v1.0 21 / 7).
+BDG2 hourly area 50.0 -> 56.6 % (minus the dev line +13.8 [+10.0, +17.4], loss); electricity-only area 51.0 -> 55.1 %
+(+14.1 [+11.0, +17.6], loss); chilled-water AUC 0.751 -> 0.760 (minus the site prior -0.067 [-0.101, -0.034], loss);
+steam AUC 0.697 -> 0.740 (-0.087 [-0.122, -0.052], loss); BDG2 use 11.5 -> 12.8 % (loss); year 28.3 -> 27.6 yr
+(loss); HUE hourly accuracy 50.0 -> 41.7 % (-33.3 [-58.3, -4.2] vs the majority, now a loss), AUC 0.46 -> 0.55 (tie).
+The HEAPO exam was not scored and no HEAPO home was read.
+
+## 2026-11-17 — r10 release choice: hourly kept by the rule, not released; v1.0 stays
+
+The coordinator's decision, following WakeNet's r10 (its NOTEBOOK, 17 Nov 2026): a rung the rule keeps but that is
+no better on real dev is not released, and that choice is made on dev. The v1.1 release in the entry above was undone.
+
+- **Reason, from dev.** BDG2 dev hourly floor-area error went from 50.8 % to 69.0 %, worse than the dev median's
+  64.3 %. The dev composite fell only 0.018, because area is one of twelve terms and its term was already near zero
+  and is clipped there.
+- **Not exam-blind.** The seen exam had already been re-scored with r10 hourly in place (`training/integrity_v11.json`,
+  entry above) before this choice, and it also got worse: BDG2 hourly area 50.0 to 56.6 % (22 losses, 6 ties against
+  v1.0's 21 and 7). So the choice was made knowing an exam result, though the dev evidence alone is enough for it.
+- **The gap this exposes.** The composite gate lets a headline output that is 35 % worse (69.0 / 50.8) pass.
+- **Next round.** Add a per-output dev gate on the headline real outputs (BDG2, RECS and CBECS floor area; RECS and
+  CBECS heating type), each against its dev-fitted baseline, written down before the next rung.
+- **What was restored.** `weights/` (all four files byte-identical to the v1.0 backup), `__version__` 1.0, demo and
+  `tests/golden/buildingdetective.txt`, the instrument (`site/public/instruments/buildingdetective/`, `ui.ts`),
+  model.yaml (integrity-pass rows and returns; r10 added only to `limits` and `next`) and the card's v1.0 numbers.
+  Kept as the record: the r10 ladder rungs (hourly kept, not released; monthly and annual rejected),
+  `training/r10.py`, `r10.json`, `runbank.py`, `integrity_v11.json`, the p12 code paths in `simone.py`, `simbank.py`
+  and `devtwins.py`. The r10 checkpoints and the calibrated r10 hourly network stay in `work/models/` (git-ignored).
+  The next rung's dev floor is v1.0's composite, 0.3081.

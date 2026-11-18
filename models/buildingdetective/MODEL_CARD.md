@@ -2,6 +2,82 @@
 
 Exam re-scored on 17 Nov 2026 with fair dev-fitted baselines and 95 % intervals: 0 wins, 21 losses, 7 ties on the real rows (section below). The exam is seen.
 
+## Round 2 (17 Nov 2026): rung r10, BuildingSim physics 1.1 + 1.2 + 1.4, not released
+
+Plan written before the bank ran (NOTEBOOK.md, 17 Nov 2026); log `training/r10.json` (`training/r10.py`).
+
+- **Physics.** Specs from `generate_buildings(physics='1.4')` (intensity per use, replaces W1), simulated with
+  `options={'physics': '1.2'}` (1.1 district plants + 1.2 weather-insensitive electricity; 1.3 heat pumps left out,
+  it made the HEAPO dev profile worse). W2 keeps only the campus assignment (30 % of commercial buildings, no
+  distribution factor, no operating knobs); W3 dropped. Bank p12: the same 12,000 generated buildings and seeds as
+  v1.0's, 0 failures. New frozen set p12 (shards 900-904), built once.
+- **Re-score of R9 on the new frozen set:** hourly 0.7135, monthly 0.5568,
+  annual 0.4301 (on the v2 set: 0.8126 / 0.6560 / 0.5412). R1-R8 have no checkpoints.
+- **Rule** (frozen-val skill > incumbent + 0.01 and dev composite no more than 0.02 below the last kept set, chained
+  hourly -> monthly -> annual, starting from v1.0's composite recomputed today, 0.3081):
+
+| network | r10 val skill | R9 on p12 | dev composite | floor | decision |
+|---|---|---|---|---|---|
+| hourly | 0.8301 | 0.7135 | 0.2903 | 0.2881 | kept, **not released** |
+| monthly | 0.6736 | 0.5568 | 0.2661 | 0.2703 | rejected |
+| annual | 0.5513 | 0.4301 | 0.2447 | 0.2703 | rejected |
+
+**Not released; v1.0 stays.** The hourly network passed the rule because the composite has twelve terms and the
+BDG2 area term is clipped at zero: its BDG2 dev floor-area error rose from 50.8 % to 69.0 % (worse than the dev
+median, 64.3 %) while the composite fell only 0.018. A rung the rule keeps but that is worse on real dev is not
+released (decided on dev, as WakeNet's r10). The gap this shows: the composite gate lets a 35 % worse headline output
+pass. Next round adds a per-output dev gate on the headline real outputs (area, heating type), written down before
+the rung.
+
+**Dev twin test** (v1.0 / r10 networks; correction to the dev-calibrated rule vs truth minus that rule; the median of
+what was needed is 0 by construction):
+
+| test | n | Pearson r | median correction | MAE anchor | MAE after network |
+|---|---|---|---|---|---|
+| bdg2_area_hourly | 52 | 0.12 / 0.03 | -0.133 / +0.096 | 0.272 | 0.321 / 0.373 |
+| bdg2_area_monthly | 52 | 0.10 / -0.01 | -0.034 / +0.135 | 0.272 | 0.295 / 0.392 |
+| bdg2_area_annual | 52 | 0.22 / 0.03 | -0.047 / +0.092 | 0.272 | 0.260 / 0.368 |
+| recs_area_vs_energy_over_dev_eui | 1848 | 0.60 / 0.60 | -0.026 / +0.040 | 0.189 | 0.169 / 0.175 |
+| cbecs_area_vs_energy_over_dev_eui | 651 | 0.54 / 0.48 | -0.080 / +0.056 | 0.288 | 0.261 / 0.273 |
+| recs_heat_fuel_vs_meter_rule | 1795 | 0.60 / 0.62 | -0.000 / -0.000 | 0.130 | 0.130 / 0.122 |
+| cbecs_hours_vs_true_use_median | 661 | 0.43 / 0.42 | +36.700 / +36.594 | 26.982 | 44.616 / 44.868 |
+
+The new physics does not shrink the bias: the area correction changes sign (now too large instead of too small) and
+its correlation with what was needed falls to about 0 on BDG2; CBECS hours keep their +37 h.
+
+**Dev-fitted baselines on dev** (5-fold cross-validation, folds by unit, seed 20261117; the same classical models as
+the integrity pass):
+
+| dev row | n | CV baseline | v1.0 network | r10 network |
+|---|---|---|---|---|
+| BDG2 area MdAPE, hourly | 52 | 34.658 | 50.750 | 69.047 |
+| BDG2 area MdAPE, annual | 52 | 34.658 | 40.246 | 71.175 |
+| RECS area MdAPE | 1,848 | 29.159 | 32.912 | 35.047 |
+| CBECS area MdAPE | 651 | 45.173 | 43.209 | 51.301 |
+| RECS heating class accuracy | 1,795 | 91.253 | 86.908 | 87.911 |
+| CBECS heating class accuracy | 653 | 77.795 | 70.904 | 70.444 |
+| RECS heat pump vs resistance AUC | 557 | 0.660 | 0.407 | 0.417 |
+| CBECS use accuracy | 661 | 25.870 | 16.490 | 15.129 |
+| CBECS weekly hours MAE (h) | 661 | 36.470 | 44.616 | 44.868 |
+
+**Seen exam, re-scored with r10 hourly in place before the release choice** (record only; `training/integrity_v11.json`;
+only rows the hourly network feeds change; interval = r10-hourly set minus the best baseline, 2,000 resamples of the
+exam unit, seed 20261117). The choice above was therefore not exam-blind, though the dev evidence alone is enough:
+
+| row | n | v1.0 | with r10 hourly | best baseline | minus baseline [95 %] | verdict |
+|---|---|---|---|---|---|---|
+| BDG2 floor area, hourly input | 1,428 | 50.0% | 56.6% | Dev log-log line: log A = -0.49 + 0.73 log kWh | +13.8 [+10.0, +17.4] (n=1,364) | **loss** (v1.0 loss) |
+| BDG2 floor area, electricity only input | 1,375 | 51.0% | 55.1% | Dev log-log line: log A = -0.49 + 0.73 log kWh | +14.1 [+11.0, +17.6] (n=1,364) | **loss** (v1.0 loss) |
+| BDG2 primary use, hourly input | 1,428 | 11.5% | 12.8% | Majority class (education) | -27.6 [-30.8, -24.3] (n=1,428) | **loss** (v1.0 loss) |
+| BDG2 year built, hourly input | 741 | 28.3 yr | 27.6 yr | Dev median (1969) | +2.7 [+1.7, +3.7] (n=741) | **loss** (v1.0 loss) |
+| BDG2 has a chilled-water meter, from electricity alone (ROC AUC) | 1,375 | 0.751 | 0.760 | Dev site prior (share of dev buildings at the same site with one) | -0.067 [-0.101, -0.034] (n=1,375) | **loss** (v1.0 loss) |
+| BDG2 has a steam or hot-water meter, from electricity alone (ROC AUC) | 1,375 | 0.697 | 0.740 | Dev site prior (share of dev buildings at the same site with one) | -0.087 [-0.122, -0.052] (n=1,375) | **loss** (v1.0 loss) |
+| HUE electric main heat, hourly electricity, accuracy | 24 | 50.0% | 41.7% | Majority (not electric) | -33.3 [-58.3, -4.2] (n=24) | **loss** (v1.0 tie) |
+| HUE electric main heat, hourly electricity, ROC AUC | 24 | 0.463 | 0.546 | PRISM heating share of electricity (change-point fit of daily kWh) | +0.000 [-0.200, +0.195] (n=24) | **tie** (v1.0 tie) |
+
+With r10 hourly: 0 wins, 22 losses, 6 ties on the 28 real rows (v1.0: 21 and 7). The fresh HEAPO exam was not scored
+here. Error bars, weights and the instrument are v1.0's.
+
 ## What it does
 Reads a building from its meters and the weather. Outputs, each with a one-sigma error bar or class probabilities:
 floor area, year built, envelope conductance UA (W/K) and UA per floor area, thermal time constant (h), heating and

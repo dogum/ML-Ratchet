@@ -4,7 +4,7 @@ Also the dev twin test of what the network adds. Plan: NOTEBOOK.md, entry of 17 
 
 Reads WORK/feats/real/<split>_<set>.{npz,json} (integrity_feats.py) and weights/. Writes WORK/integrity.json and
 prints a summary. Nothing here is used to choose anything about the model.
-usage: python integrity.py
+usage: python integrity.py [weights_dir=weights/] [out=integrity.json]   (v1.1, 17 Nov 2026: integrity.py weights integrity_v11.json)
 """
 import json
 import os
@@ -583,8 +583,8 @@ def hue_rows(nets, rows):
     return dict(prism_heating_share=dict(zip([l['id'] for l in lx], share.round(4).tolist())))
 
 
-def main():
-    nets = E.load_nets(os.path.join(MODEL, 'weights'))
+def main(wdir=None, out_name='integrity.json'):
+    nets = E.load_nets(wdir or os.path.join(MODEL, 'weights'))
     R, rep = reproduce(nets)
     print('reproduction:', json.dumps(rep, default=str)[:2000], flush=True)
     rows, twin = [], {}
@@ -593,7 +593,7 @@ def main():
     hue = hue_rows(nets, rows)
     out = dict(note='integrity pass 17 Nov 2026; exam SEEN; nothing chosen from it', seed=SEED, n_boot=NB, lam=LAM,
                reproduction=rep, rows=rows, twin=twin, hue=hue, recomputed=E.strip(R))
-    json.dump(out, open(os.path.join(WORK, 'integrity.json'), 'w'), indent=1, default=float)
+    json.dump(out, open(os.path.join(WORK, out_name), 'w'), indent=1, default=float)
     for r in rows:
         vb = r.get('vs_best', {})
         vn = r.get('vs_best_no_truth', {})
@@ -605,4 +605,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(*sys.argv[1:3])

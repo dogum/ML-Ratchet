@@ -4,6 +4,9 @@ Resumable shards of 200 buildings: bank/<tag>/shard_XXXX.npz (+ .json info). Met
 Use mix: 30 % homes (single / multi 50:50), 70 % commercial (10 types, balanced). Shard ids >= 900 are the
 FROZEN simulated validation set of this physics version.
 usage: python3 simbank.py <tag> <shard0> <shard1>
+Tags in PHYSICS use BuildingSim physics versions (rung r10, NOTEBOOK 2026-11-17): 'p12' = generator 1.4 (intensity
+per use; replaces W1) and simulate 1.2 (1.1 district plants + 1.2 electricity), no 1.3; W2 campus assignment only.
+Every other tag is the v1.0 path (physics 1.0 with W1/W2).
 """
 import json
 import os
@@ -19,6 +22,7 @@ from simone import simulate_one, wx_name
 NPER = 200
 NL = 8784
 COM = [u for u in C.USES if not u.startswith('residential')]
+PHYSICS = {'p12': dict(gen='1.4', sim='1.2')}
 
 
 def build_shard(tag, sid):
@@ -31,8 +35,10 @@ def build_shard(tag, sid):
     cal = load_cal()
     rng = np.random.default_rng(10_000 + sid)
     nres = int(round(NPER * 0.3))
-    specs = bs.generate_buildings(nres, seed=20_000 + sid, primary_use=['residential_single', 'residential_multi'])
-    specs += bs.generate_buildings(NPER - nres, seed=30_000 + sid, primary_use=COM)
+    ph = PHYSICS.get(tag, {})
+    specs = bs.generate_buildings(nres, seed=20_000 + sid, primary_use=['residential_single', 'residential_multi'],
+                                  physics=ph.get('gen'))
+    specs += bs.generate_buildings(NPER - nres, seed=30_000 + sid, primary_use=COM, physics=ph.get('gen'))
     rng.shuffle(specs)
     X = np.full((len(specs), 4, NL), np.nan, np.float16)
     S = np.zeros((len(specs), 4))
@@ -44,7 +50,7 @@ def build_shard(tag, sid):
     t0 = time.time()
     for i, s in enumerate(specs):
         try:
-            r = simulate_one(s, rng, cal)
+            r = simulate_one(s, rng, cal, physics=ph.get('sim'))
         except Exception as e:                     # keep going; record the failure
             infos.append(dict(id=s.get('id'), error=repr(e)[:300]))
             K[i] = -1
