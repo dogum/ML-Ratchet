@@ -35,7 +35,7 @@ res['gr4j_vs_airGR'] = {
     'case': 'airGR help example (?RunModel_GR4J): basin L0123001, X1=257.238, X2=1.012, X3=88.235, X4=2.208; '
             'explicit initial stores S=0.3 X1, R=0.5 X3 on 1989-01-01, no warm-up, run to 1999-12-31',
     'n_days': len(ts), 'diffs': d,
-    'published_help_NSE_1990_1999': 0.7988, 'airGR_NSE_this_build': float(open(REF + 'airgr_meta.txt').read().split('help_nse=')[1].split()[0]),
+    'published_help_NSE_1990_1999': 0.7988, 'airGR_NSE_this_build': float(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ref', 'airgr_meta.txt')).read().split('help_nse=')[1].split()[0]),
     'watersim_NSE_1990_1999': nse_ours,
     'max_abs_Q_diff_vs_help_example_mm': float(np.max(np.abs(q9099.values - help_ref['Qsim'].values))),
     'ledger_ok': out['ledger']['ok'],

@@ -120,10 +120,10 @@ ThermoPilot v1.1, and froze and scored three fresh real exams (Nehasil, HEAPO, I
 WaterSim, WaterData and four models (FlowCast, SnowSense, BasinDetective, ReservoirPilot) came in on 18 Nov 2026;
 see [water-platform.md](water-platform.md). Nothing has been re-trained here. What is open, in order:
 
-1. **Intervals and fairer baselines on the existing exams.** The releases ship medians only, so rebuild the time
-   series (`mlratchet data water`) and re-score each released model per unit, with paired bootstrap intervals. Then
-   add the two baselines that could turn a win into a tie: an energy-balance snow model with the dev calibrations'
-   median parameters on the SNOTEL exam, and a reservoir rule tuned on the 15 dev dams.
+1. **Done on import:** every released model re-scored on rebuilt data with paired intervals, and two dev-tuned
+   baselines added. The dev-tuned energy balance ties SnowSense; the dev-tuned reservoir rule loses to ReservoirPilot.
+   Still open: NWIS for FlowCast's recent exam and flood peaks, and a SnowSense rung that beats the tuned physics
+   above 1,500 m (it already does below).
 2. **Independent forcing** (Daymet or NLDAS, backlog `water-forcing`): re-run every exam to separate method skill
    from ERA5-Land's bias. The single biggest gap.
 3. **WaterSim v1.1** (backlog `watersim-v11`): upstream the models' physics wrappers (water-yield prior, gauge noise,

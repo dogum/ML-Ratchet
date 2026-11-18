@@ -97,7 +97,8 @@ class Model:
     def module(self, name: str | None = None):
         """Import one of the model's Python modules in isolation and return it.
 
-        ``name`` defaults to the model id (e.g. ``quakenet`` -> ``models/quakenet/quakenet.py``).
+        ``name`` defaults to the model id (e.g. ``quakenet`` -> ``models/quakenet/quakenet.py``). A package folder
+        works too (``basindetective`` -> ``models/basindetective/basindetective/__init__.py``).
         The model folder is put on ``sys.path`` only while importing; any sibling modules it
         pulls in (``pipeline``, ``transitsim`` ...) are re-registered under a private
         namespace so other models can load their own versions.
@@ -106,12 +107,16 @@ class Model:
         if name in self._modules:
             return self._modules[name]
         file = self.path / f"{name}.py"
+        package = not file.exists() and (self.path / name / "__init__.py").exists()
+        if package:
+            file = self.path / name / "__init__.py"
         if not file.exists():
             raise FileNotFoundError(file)
         before = set(sys.modules)
         sys.path.insert(0, str(self.path))
         try:
-            spec = importlib.util.spec_from_file_location(name, file)
+            spec = importlib.util.spec_from_file_location(
+                name, file, submodule_search_locations=[str(file.parent)] if package else None)
             mod = importlib.util.module_from_spec(spec)
             sys.modules[name] = mod
             spec.loader.exec_module(mod)
@@ -121,7 +126,7 @@ class Model:
             for key in set(sys.modules) - before:
                 m = sys.modules.get(key)
                 origin = getattr(m, "__file__", None) or ""
-                if origin and Path(origin).resolve().parent == self.path.resolve():
+                if origin and self.path.resolve() in Path(origin).resolve().parents[:1 + package]:
                     sys.modules[f"mlratchet_models.{self.id}.{key}"] = sys.modules.pop(key)
         self._modules[name] = mod
         return mod

@@ -43,19 +43,24 @@ The losses are published too.
 | [**FaultFinder**](models/faultfinder/) | From one day of an air handler's trend log: P(fault) and which fault | 217 real lab and building days (Iowa ERS, FLEXLAB, ORNL, Nesbitt Hall), seen | 6 wins · 7 losses · 31 ties |
 | [**ThermoPilot**](models/thermopilot/) | Which setpoints keep a building comfortable for the lowest bill? *(graded in simulation)* | 166 simulated twin episodes, real weather and tariffs (seen; HUE not scored for v1.1) | 2 wins · 4 losses · 3 ties |
 | [**StormNet**](models/stormnet/) | How low will Dst fall in the next three hours? | 76,507 hourly forecasts · 137 storm blocks, two exams | 0 wins · 3 losses · 6 ties |
+| [**FlowCast**](models/flowcast/) | Daily flow of a river with no gauge | 619 real CAMELS-US rivers, WY1990-99 and 2016-23 | 0 wins · 12 losses · 1 tie |
+| [**SnowSense**](models/snowsense/) | Daily snow at a mountain station, from its gauge and thermometer | 621 SNOTEL stations · WY2011-2025 · daily SWE | 0 wins · 10 losses · 3 ties |
+| [**BasinDetective**](models/basindetective/) | A river's flow in an unseen decade, from its own record | 619 real CAMELS-US basins, 1989-99 from 1999-2008 | 4 wins · 1 loss · 17 ties |
+| [**ReservoirPilot**](models/reservoirpilot/) | Today's release from one dam, from what its operator knows | 244 real ResOpsUS dams + 15 CDEC reservoirs, once | 2 wins · 2 losses · 1 mixed · 1 tie |
 <!-- collection:end -->
 
 Every model also runs **live in your browser** on the website — the real network, ported to TypeScript and checked
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
 <!-- totals:start (generated) -->
-**0** real labelled examples were used for training. **342** rung decisions are logged, **170** of them rejections.
+**0** real labelled examples were used for training. **378** rung decisions are logged, **184** of them rejections.
 <!-- totals:end -->
 
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself. The three
 vehicle models share one simulator and dataset, [the vehicle platform](docs/vehicle-platform.md); the four power-grid
-models share another, [the grid platform](docs/grid-platform.md); and the four building models share a third,
-[the building platform](docs/building-platform.md).
+models share another, [the grid platform](docs/grid-platform.md); the four building models share a third,
+[the building platform](docs/building-platform.md); and the four water models share a fourth,
+[the water platform](docs/water-platform.md).
 
 ## Try it
 
@@ -118,15 +123,17 @@ shared/grid/          a shared platform: GridSim (power-system simulator) + Grid
                       `mlratchet data grid` fetches it)
 shared/building/      a shared platform: BuildingSim (building-energy simulator) + BuildingData (real meters, surveys,
                       fault runs, frozen splits; `mlratchet data building` fetches it)
-tests/                core tests, the contract, the vehicle and grid platforms, and every demo against its golden output
+shared/water/         a shared platform: WaterSim (hydrology simulator) + WaterData (CAMELS-US basins, SNOTEL, ResOpsUS
+                      dams, NWM; frozen splits; `mlratchet data water` fetches it)
+tests/                core tests, the contract, the four platforms, and every demo against its golden output
 ```
 
 ## Add a model
 
 ```bash
 pip install -e ".[dev]"
-mlratchet new watershed --name Watershed
-mlratchet validate watershed
+mlratchet new roomsense --name RoomSense
+mlratchet validate roomsense
 ```
 
 Then follow [docs/adding-a-model.md](docs/adding-a-model.md). Building with an AI research agent? Hand it

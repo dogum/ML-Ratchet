@@ -115,10 +115,15 @@ ReservoirPilot, taught, in rough order of how much it mattered.
 
 ## Big systems (the water platform)
 
-- **Simulation training wins where the physics is local and the cost is exact, and ties where real behaviour must
-  be borrowed.** SnowSense (snow at one point, from that point's gauge) beats every weather-only physics baseline run,
-  and ReservoirPilot (one dam's mass balance, a fixed cost) halves a tuned rule's cost. FlowCast loses to plain
-  regionalisation, which borrows real flow from similar gauged basins, and BasinDetective cannot see human regulation.
+- **The fair baseline took the snow win away again.** SnowSense beat WaterSim's default energy balance at 75 % of
+  SNOTEL stations (NSE 0.888 against 0.853). Re-scored on import against the same energy balance with the medians of
+  SnowSense's own dev-station calibrations, it ties (0.888 against 0.895, paired difference −0.007 [−0.018, +0.001])
+  and loses on peak SWE. The network was trained on simulations from that dev-calibrated physics; the physics alone,
+  tuned once on dev, does as well. It is the WakeNet and StormNet lesson a third time.
+- **Simulation training wins where the cost is exact, and ties where real behaviour must be borrowed.**
+  ReservoirPilot (one dam's mass balance, a fixed cost) halves the cost of a rule tuned in the same simulator and beats
+  a rule tuned on the real dev dams too. FlowCast loses to plain regionalisation, which borrows real flow from similar
+  gauged basins, and BasinDetective cannot see human regulation.
 - **The weather input can cap every method at once.** All four water models and all their baselines run on
   ERA5-Land, which under-catches mountain precipitation (50 of 671 basins carry more water out than falls in) and
   drifts about 6 % between decades. Calibrated GR4J reaches a median NSE of 0.47 on it, against about 0.6-0.7 with

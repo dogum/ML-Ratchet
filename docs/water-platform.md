@@ -116,25 +116,30 @@ unpacks them. Details in [DATA_LICENSES.md](../DATA_LICENSES.md).
 
 ## What the models found
 
-Every model was trained only on WaterSim and examined once on real data. Each model's page has the full table, every
-row with its interval method and verdict.
+Every model was trained only on WaterSim and examined once on real data. On import (18 Nov 2026) the released models
+were re-scored on rebuilt data with nothing changed, to get paired bootstrap intervals over units (10,000 resamples,
+seed 20261118): every shipped exam number reproduced. Two fairer baselines were added at the same time, tuned on dev
+only and frozen before scoring: a dev-tuned energy balance for snow and a dev-tuned reservoir rule. Those re-scores
+are labelled seen. Each model's page has the full table, every row with its interval and verdict.
 
 - **FlowCast** (ungauged daily flow, 619 basins): median NSE 0.341 against 0.372 for regionalisation from the dev
-  basins and 0.550 for NWM. It wins against regionalisation at only 34 % of basins: a loss. It ties or wins in arid,
-  regulated and large basins and loses most in snowy (0.40 against 0.56) and humid ones. Peaks run about 46 % low and
-  the 90 % band holds 97 % of days (too wide). Its gauged nowcast mode beats persistence at every lead (NSE 0.569,
-  0.474, 0.426 at 1, 3 and 7 days against 0.475, −0.19, −0.47).
+  basins (paired difference −0.031 [−0.056, −0.014]) and 0.550 for NWM: a loss. It is level with regionalisation in
+  arid, regulated and large basins and loses most in snowy (0.40 against 0.56) and humid ones. Peaks run about 46 %
+  low and the 90 % band holds 97 % of days (too wide). Its gauged nowcast mode beats persistence at every lead (NSE
+  0.569, 0.474, 0.426 at 1, 3 and 7 days against 0.475, −0.19, −0.47), ties NWM at one day and loses to it at three
+  and seven.
 - **SnowSense** (621 SNOTEL stations, WY2011-2025): median NSE 0.888 against 0.853 for the energy-balance model with
-  default parameters, the strongest weather-only baseline run; it beats it at 75 % of stations. The per-station
-  calibrated degree-day model, which reads the station's own snow record, stays ahead (0.925). Peak SWE runs 9 % low.
-  A dev-tuned energy balance was never run on the exam and may close the gap (the WakeNet and StormNet lesson).
+  WaterSim's default parameters, which it beats at 75 % of stations. Against the same energy balance tuned on the dev
+  stations (0.895) it **ties** (−0.007 [−0.018, +0.001]) and loses on peak SWE, which runs 9 % low. It still beats
+  the tuned physics below 1,500 m. The per-station calibrated degree-day model, which reads the station's own snow
+  record, stays ahead (0.925).
 - **BasinDetective** (619 basins): predicts how six flow signatures change from 1999-2008 to 1989-99 about as well as
   calibrated GR4J, with no per-basin fitting: level on five of six changes, behind on mean flow (Spearman 0.76
   against 0.79, paired difference −0.036 [−0.063, −0.008]). Its error bars hold but are too wide (68 % bars cover
   73-83 %). Regulation does not transfer: AUC 0.49 for a reservoir storing over 10 % of
   annual flow, against 0.91 in simulation.
 - **ReservoirPilot** (244 ResOpsUS dams): median cost J 0.0154 against 0.0285 for a classical hedging rule tuned in
-  the same simulator and 0.108 for SOP. **J charges nothing for storage**, and the pilot exploits that: it holds
+  the same simulator (−0.013 [−0.020, −0.007]), 0.0322 for the same rule tuned on the 15 dev dams and 0.108 for SOP. **J charges nothing for storage**, and the pilot exploits that: it holds
   reservoirs at a median 38 % of capacity against SOP's 59 %, and ends at least 20 % of capacity lower on 34 % of
   dams. It loses to SOP on 15 % of dams, mostly large supply reservoirs whose scored decade was drier. On the
   15-reservoir CDEC exam (WY2021-2025) it only ties the tuned rule (better on 8 of 15).
@@ -212,17 +217,15 @@ ladder and card:
 
 ## What is still waiting
 
-- **Intervals.** None of the four releases ships per-unit exam scores, only medians, so no paired bootstrap was
-  possible on import. Rows use the shipped intervals, exact binomial intervals on shipped win fractions, or a stated
-  approximation; the rest say "no interval". A re-score of the released models on rebuilt data would replace them.
-- **Fairer baselines that need the time series:** a dev-tuned energy-balance snow model on the SNOTEL exam, and a
-  reservoir rule tuned on the 15 dev dams. Both could turn a win into a tie.
+- **The recent exam and flood peaks.** The re-scores on import used Caravan (CAMELS-US), SNOTEL, ResOpsUS and CDEC.
+  NWIS was not fetched, so FlowCast's recent exam (WY2016-2023) and instantaneous flood peaks, and BasinDetective's
+  peak-code regulation row, keep their shipped medians with binomial intervals on the shipped win fractions.
 - **Independent forcing** (Daymet or NLDAS) to separate method skill from ERA5-Land bias: the single biggest gap
   (backlog `water-forcing`).
 - **WaterSim v1.1:** the upstream physics in section 4 of the handoff (backlog `watersim-v11`).
-- **Not re-run here:** the dev calibrations, the SNOTEL and speed checks, the GR4J baselines and every model's
-  training (no banks or checkpoints are shipped). The models' exam numbers are imported from their logs; their demos
-  reproduce the released outputs.
+- **Not re-run here:** the dev calibrations, the SNOTEL and speed checks, the GR4J calibrations (BasinDetective's
+  re-score re-made the daily GR4J runs from the shipped parameters) and every model's training (no banks or
+  checkpoints are shipped). The exams were re-scored, not re-trained.
 - **USGS is retiring the legacy NWIS web services** (`waterservices.usgs.gov`) that `fetch_nwis.py` calls, in favour
   of the Water Data APIs (`api.waterdata.usgs.gov`). A rebuild may need that script ported.
 - **Not shipped, rebuildable:** the time series (about 2.9 GB), the R reference environment (`watersim/.refenv`,

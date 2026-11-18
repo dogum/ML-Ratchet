@@ -55,7 +55,8 @@ def test_inference_modules_import_in_isolation():
     loaded = {}
     for m in MODELS:
         for name in m.card["files"]["inference"]:
-            mod = m.module(Path(name).stem)
+            parts = Path(name).parts                      # a package's files load as the package
+            mod = m.module(parts[0] if len(parts) > 1 else Path(name).stem)
             loaded[(m.id, name)] = mod
     # several models ship a pipeline.py; each must be its own module object
     pipes = [mod for (mid, n), mod in loaded.items() if n == "pipeline.py"]
