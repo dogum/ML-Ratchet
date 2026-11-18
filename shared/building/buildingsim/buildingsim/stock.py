@@ -552,3 +552,111 @@ def read_stock_weather_parquet(path, lat, lon, elev=0.0):
           -9: 'America/Anchorage', -10: 'Pacific/Honolulu'}.get(int(off), 'UTC')
     return df, dict(lat=lat, lon=lon, elev=elev, tz=tz, std_offset=off, source='NREL AMY2018 county ' +
                     str(path).split('/')[-1])
+
+
+# ------------------------------------------------------------------------------------------ RECS respondent twins
+# Ported from ThermoPilot (models/thermopilot/training/tp/twins.py: recs_twin, recs_pref, _heat_ok, _f; v1.0).
+# Opt-in: nothing in BuildingSim calls these. Use RECS prior/dev respondents for training; exam respondents only
+# for a final exam (splits.json).
+RECS_SYSTEMS = ('split_ac_furnace', 'heat_pump_air', 'baseboard_resistance', 'packaged_rtu', 'ptac')
+RECS_BT = {'single_detached': 'Single-Family Detached', 'single_attached': 'Single-Family Attached',
+           'apartment_2_4': 'Multi-Family with 2 - 4 Units', 'apartment_5plus': 'Multi-Family with 5+ Units',
+           'mobile_home': 'Mobile Home'}
+RECS_VINT = {'<1940': 1930, '1940s': 1945, '1950s': 1955, '1960s': 1965, '1970s': 1975, '1980s': 1985, '1990s': 1995,
+             '2000s': 2005, '2010s': 2015}
+
+
+def _recs_heat_ok(rs_heat, recs_row):
+    sysm = recs_row['system']
+    fuel = str(recs_row.get('heating_fuel'))
+    if sysm == 'heat_pump_air':
+        return rs_heat == 'Electricity ASHP'
+    if sysm == 'baseboard_resistance':
+        return rs_heat == 'Electricity Baseboard'
+    if sysm == 'split_ac_furnace':
+        if fuel == 'electricity':
+            return rs_heat == 'Electricity Electric Furnace'
+        if fuel == 'propane':
+            return rs_heat == 'Propane Fuel Furnace'
+        if fuel == 'fuel_oil':
+            return rs_heat == 'Fuel Oil Fuel Furnace'
+        return rs_heat == 'Natural Gas Fuel Furnace'
+    return False
+
+
+def recs_to_spec(row, seed=0, with_band=True, stable=True):
+    """Twin of a RECS 2020 respondent (bd.recs() row): the nearest ResStock prior dwelling with the same building
+    type, climate zone (if > 30 candidates), heating system/fuel and cooling presence, scored by |log area ratio| +
+    |vintage gap| / 30 years, one of the 5 best drawn with `seed`; then the respondent's own heated floor area, year
+    built (mid of the bin), stories (homes <= 3; apartments 1), occupants and cooling. Returns (spec, band) with
+    band = recs_comfort_band(row) (or spec alone if with_band=False); None if the system is not supported or nothing
+    matches.
+    stable=True (default) ranks tied scores by ResStock bldg_id, so the twin is the same on every machine.
+    stable=False is ThermoPilot v1.0's numpy argsort, whose tie order depends on the numpy build and CPU (many
+    dwellings tie: 68 for RECS_116893), so v1.0's RECS twins cannot be rebuilt exactly elsewhere."""
+    from .generator import _load
+    rs = _load('resstock_prior.parquet')
+    if row['system'] not in RECS_SYSTEMS or row['housing_type'] not in RECS_BT:
+        return None
+    m = rs['in.geometry_building_type_recs'].astype(str) == RECS_BT[row['housing_type']]
+    cz = str(row['climate_zone'])
+    mcz = rs['in.ashrae_iecc_climate_zone_2004'].astype(str) == cz
+    if (m & mcz).sum() > 30:
+        m &= mcz
+    heat = rs['in.hvac_heating_type_and_fuel'].astype(str)
+    m &= heat.map(lambda h: _recs_heat_ok(h, row))
+    has_cool = str(row['cooling_equipment']) not in ('none', 'nan', 'None', 'evaporative')
+    ct = rs['in.hvac_cooling_type'].astype(str)
+    m &= (ct != 'None') if has_cool else (ct == 'None') | (row['system'] == 'heat_pump_air')
+    m &= rs['in.vacancy_status'].astype(str) != 'Vacant'
+    cand = rs[m.values]
+    if len(cand) == 0:
+        return None
+    area = float(row['heated_area_m2'] if row.get('heated_area_m2') and row['heated_area_m2'] > 10 else row['floor_area_m2'])
+    yb = 0.5 * (float(row['year_built_lo'] or 1970) + float(row['year_built_hi'] or 1990))
+    a = cand['in.sqft..ft2'].astype(float).values * FT2
+    v = cand['in.vintage'].astype(str).map(RECS_VINT).fillna(1980).values
+    score = np.abs(np.log(np.maximum(a, 10) / area)) + np.abs(v - yb) / 30.0
+    top = (np.lexsort((cand['bldg_id'].astype('int64').values, score)) if stable else np.argsort(score))[:5]
+    r = np.random.default_rng(seed)
+    pick = cand.iloc[int(top[r.integers(len(top))])]
+    spec = resstock_to_spec(pick, whole_building=False)
+    if spec['system'] not in RECS_SYSTEMS:
+        return None
+    spec['floor_area_m2'] = area
+    spec['year_built'] = int(yb)
+    if row.get('n_floors') and row['n_floors'] == row['n_floors']:
+        spec['n_floors'] = int(min(max(row['n_floors'], 1), 3)) if not row['housing_type'].startswith('apartment') else 1
+    ig = spec.setdefault('internal_gains', {})
+    if row.get('n_occupants') and row['n_occupants'] == row['n_occupants']:
+        ig['occupants'] = float(row['n_occupants'])
+        ig['plug'] = None
+    spec['hvac'] = dict(spec.get('hvac') or {}, cooling=bool(has_cool or row['system'] == 'heat_pump_air'))
+    spec['id'] = str(row['id'])
+    spec['provenance'] = dict(source='RECS 2020 respondent twin (ResStock prior nearest match)', recs_id=str(row['id']),
+                              resstock_bldg_id=int(pick['bldg_id']))
+    spec.pop('pv', None)
+    spec['pv'] = None
+    return (spec, recs_comfort_band(row)) if with_band else spec
+
+
+def _band_f(x, d):
+    try:
+        x = float(x)
+        return d if not np.isfinite(x) or x < 5 or x > 35 else x
+    except (TypeError, ValueError):
+        return d
+
+
+def recs_comfort_band(row):
+    """Comfort band from the respondent's own thermostat settings (RECS home / night / away, winter and summer):
+    lo = heating at home (20.5 C if missing, clipped 17-23.5), hi = cooling at home (lo + 3 if missing; >= lo + 1.5,
+    <= 28), and the widenings asleep / away (0-6 K) from the night and away settings."""
+    lo = _band_f(row.get('T_heat_home_C'), 20.5)
+    hi = _band_f(row.get('T_cool_home_C'), lo + 3.0)
+    lo = float(np.clip(lo, 17.0, 23.5)); hi = float(np.clip(max(hi, lo + 1.5), lo + 1.5, 28.0))  # noqa: E702
+    wsh = float(np.clip(lo - _band_f(row.get('T_heat_night_C'), lo), 0, 6))
+    wah = float(np.clip(lo - _band_f(row.get('T_heat_away_C'), lo), 0, 6))
+    wsc = float(np.clip(_band_f(row.get('T_cool_night_C'), hi) - hi, 0, 6))
+    wac = float(np.clip(_band_f(row.get('T_cool_away_C'), hi) - hi, 0, 6))
+    return dict(lo=lo, hi=hi, w_sleep_h=wsh, w_away_h=wah, w_sleep_c=wsc, w_away_c=wac)

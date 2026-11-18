@@ -4,7 +4,9 @@ Each dev building gets n twins: a generated building of its use type and climate
 year built (when known) and floors (when known); the system follows its meters (campus district heat and/or
 chilled water as in W2; electricity-only buildings keep the generator's system); real 2017 site weather.
 Features are made exactly as for the bank (same quirk emulator).
-usage: python3 devtwins.py <tag> [n_twins=4]
+usage: python3 devtwins.py <tag> [n_twins=4] [--w3] [--p12]
+--p12: physics of bank p12 (1.4 intensity per use applied after the real area / year / floors are set, simulate 1.2,
+W2 campus assignment only; simbank.PHYSICS).
 """
 import json
 import os
@@ -21,7 +23,7 @@ from wrappers import load_cal
 warnings.filterwarnings('ignore')
 
 
-def main(tag, n=4, w3=False):
+def main(tag, n=4, w3=False, p12=False):
     import buildingsim as bs
     import realdata as R
     cal = load_cal()
@@ -50,8 +52,12 @@ def main(tag, n=4, w3=False):
             else:
                 s['n_floors'] = max(1, int(round(np.sqrt(row.floor_area_m2) / 30)))
             s['climate_zone'] = row.climate_zone
+            if p12:          # generator 1.4 applied after the real area / year / floors are set (as generate_buildings)
+                from buildingsim.campus import params
+                from buildingsim.phase2 import apply_intensity as p2_intensity
+                s = p2_intensity(bs.fill_spec(s), float(params()['INTENSITY'].get(s['primary_use'], 1.0)))
             try:
-                r = simulate_one(s, rng, cal, campus=kind, wx_key=('site', row.site_id, 2017))
+                r = simulate_one(s, rng, cal, campus=kind, wx_key=('site', row.site_id, 2017), physics='1.2' if p12 else None)
             except Exception as e:
                 print('ERR', row.id, e)
                 continue
@@ -83,4 +89,5 @@ def main(tag, n=4, w3=False):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1], int(sys.argv[2]) if len(sys.argv) > 2 else 4, '--w3' in sys.argv)
+    a = [x for x in sys.argv[1:] if not x.startswith('--')]
+    main(a[0], int(a[1]) if len(a) > 1 else 4, '--w3' in sys.argv, '--p12' in sys.argv)

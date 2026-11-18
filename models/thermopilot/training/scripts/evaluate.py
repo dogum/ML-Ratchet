@@ -56,6 +56,8 @@ def run_baselines(ep, which=BASES):
 
 
 def thermopilot(ep, W, c):
+    if 'tau_a' in W:      # R8: residual on the card MPC (tp/card_mpc.py)
+        return P.residual(ep, W, c['pref']['hi'])
     card = F.card_from_model(ep.model, c['pref']['hi'])
     return P.ThermoPilot(W, card, ep.ctx, ep.lam, ep.model.base_W, ep.fc_noisy)
 
@@ -116,13 +118,34 @@ def main():
             res['oracle'] = dict(min([res['oracle_dp']] + [res[k] for k in ('fixed', 'setback', 'precool')], key=lambda d: d['J']))
             json.dump(res, open(f + '.tmp', 'w')); os.replace(f + '.tmp', f)
             print(c['id'], 'oracle %.1f (dp %.1f)' % (res['oracle']['J'], res['oracle_dp']['J']), flush=True)
-    elif cmd == 'policy':
-        W = P.load(sys.argv[3]); tag = sys.argv[4]
-        if len(sys.argv) > 5:
-            W['shield'] = np.array(float(sys.argv[5]))
+    elif cmd == 'anchor':
+        # the card MPC alone (R8 anchor): evaluate.py SET anchor TAG [SHIELD] [I0 I1] -> results/SET/pol_TAG.json
+        tag = sys.argv[3]
+        sh = int(sys.argv[4]) if len(sys.argv) > 4 else 0
+        i0 = int(sys.argv[5]) if len(sys.argv) > 5 else 0
+        i1 = int(sys.argv[6]) if len(sys.argv) > 6 else len(cs)
         out = {}
         t0 = time.time()
-        for c in cs:
+        for c in cs[i0:i1]:
+            try:
+                ep = episode(c)
+                m, _ = ep.run(P.card_mpc(ep, c['pref']['hi'], sh).act)
+                out[c['id']] = clean(m)
+            except Exception as e:
+                out[c['id']] = dict(error=traceback.format_exc()[-600:])
+                print(c['id'], 'ERROR', repr(e)[:200], flush=True)
+        part = '' if (i0, i1) == (0, len(cs)) else f'.part{i0}'
+        json.dump(out, open(os.path.join(od, f'pol_{tag}.json{part}'), 'w'))
+        print(name, tag, len(out), 'cases %.0fs' % (time.time() - t0))
+    elif cmd == 'policy':
+        W = P.load(sys.argv[3]); tag = sys.argv[4]
+        if len(sys.argv) > 5 and sys.argv[5] != '-':
+            W['shield'] = np.array(float(sys.argv[5]))
+        i0 = int(sys.argv[6]) if len(sys.argv) > 6 else 0
+        i1 = int(sys.argv[7]) if len(sys.argv) > 7 else len(cs)
+        out = {}
+        t0 = time.time()
+        for c in cs[i0:i1]:
             try:
                 ep = episode(c)
                 pol = thermopilot(ep, W, c)
@@ -130,8 +153,18 @@ def main():
                 out[c['id']] = clean(m)
             except Exception as e:
                 out[c['id']] = dict(error=repr(e)[:300])
-        json.dump(out, open(os.path.join(od, f'pol_{tag}.json'), 'w'))
+        part = '' if (i0, i1) == (0, len(cs)) else f'.part{i0}'
+        json.dump(out, open(os.path.join(od, f'pol_{tag}.json{part}'), 'w'))
         print(name, tag, len(out), 'cases %.0fs' % (time.time() - t0))
+    elif cmd == 'merge':
+        # evaluate.py SET merge TAG: join pol_TAG.json.part* -> pol_TAG.json
+        import glob
+        tag = sys.argv[3]
+        out = {}
+        for f in sorted(glob.glob(os.path.join(od, f'pol_{tag}.json.part*'))):
+            out.update(json.load(open(f)))
+        json.dump(out, open(os.path.join(od, f'pol_{tag}.json'), 'w'))
+        print(name, tag, len(out), 'merged')
 
 
 if __name__ == '__main__':

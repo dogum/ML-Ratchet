@@ -1,0 +1,3866 @@
+{
+ "frozen": "2026-11-17",
+ "purpose": "FaultFinder exam 2 (Nehasil, CTU Prague): real AHUs no version has seen; scored once for v1.0 and once for any round-2 release, after the round-2 release decision",
+ "status": "exam",
+ "source": {
+  "dataset": "Nehasil, Versatile AHU fault detection - design, field validation and practical application",
+  "version": "Mendeley Data v1 (2 Mar 2021)",
+  "doi": "10.17632/jkw85sm4v4.1",
+  "licence": "CC BY 4.0",
+  "landing": "https://data.mendeley.com/datasets/jkw85sm4v4/1"
+ },
+ "seed": 20261117,
+ "split": "by unit; every AHU that passes QC is exam (no dev part)",
+ "contract_map": {
+  "air_temperature__real_value__supply_air_outlet": "T_sa",
+  "air_temperature__real_value__exahust_air_inlet": "T_ra",
+  "logic__required_value__valve_outdoor_air": "damper_oa",
+  "signal__required_value__heater_valve": "valve_hc",
+  "signal__required_value__chiller_valve": "valve_cc",
+  "signal__required_value__fan_fresh_air": "fan_sa_speed",
+  "logic__real_value__fan_fresh_air": "fan_sa_status"
+ },
+ "not_mapped": {
+  "air_temperature__required_value__exahust_air_inlet": "room/return setpoint, not a supply-air setpoint",
+  "logic__real_value__air_handling_unit": "unit running state, not occupancy"
+ },
+ "input_gap": "No T_oa, T_ma, T_sa_sp, T_zone, fan power or occupancy point exists (100 % outdoor-air units with heat recovery). FaultFinder reads the mapped channels; the missing ones are zero with mask 0. The damper point is an open/closed command, not a modulating position. APAR rules needing T_oa, T_ma or a supply setpoint cannot fire; only R23 (simultaneous heating and cooling) can.",
+ "day_rules": {
+  "unit_day": "AHU x local calendar day (5-min rows, local time as logged)",
+  "fault_day": ">= 12 rows (1 h) labelled with a fault in the file",
+  "normal_day": "no row labelled with a fault",
+  "excluded": "1-11 fault rows; or failing day QC",
+  "labels": "per-row file labels take precedence over the schedule sheet (disagreements listed)",
+  "qc": "temperatures < -45 or > 70 degC -> missing (the induced 150 degC readings become missing); a temperature constant all day -> missing; T_sa in >= 72 of 96 15-min bins; fan on >= 1 h"
+ },
+ "dropped_units": {
+  "AHU2": {
+   "reason": "no gradable day: no T_sa 183",
+   "mapped_channels_with_data": []
+  },
+  "AHU8": {
+   "reason": "no gradable day: no T_sa 183",
+   "mapped_channels_with_data": []
+  }
+ },
+ "schedule_vs_file_disagreements": [],
+ "units": {
+  "AHU1": {
+   "role": "exam",
+   "n_days": 131,
+   "n_fault_days": 15,
+   "n_normal_days": 116,
+   "first": "2019-03-01 00:00:00",
+   "last": "2019-08-30 23:55:00",
+   "channels": [
+    "T_ra",
+    "T_sa",
+    "damper_oa",
+    "valve_cc",
+    "valve_hc",
+    "fan_sa_speed",
+    "fan_sa_status"
+   ],
+   "duplicate_timestamps": 0,
+   "dropped_days": {
+    "fan off all day": 52
+   },
+   "fault_types": {
+    "Dampers are closed during heating regime": 1,
+    "Heating valve is closed during heating regime": 1,
+    "Heating valve is stuck in intermediate position during heating regime": 1,
+    "Zone inlet temperature sensor indicates -20 \u00b0C": 1,
+    "Zone outlet temperature sensor indicates -20 \u00b0 C": 1,
+    "Heat exchanger is closed": 1,
+    "Cooling pump is ON during heating regime": 1,
+    "Quick regimes cycling": 1,
+    "One of fan differential pressure sensor tubes is disconnected": 1,
+    "Heating pump is ON during ventilate regime": 1,
+    "Cooling valve is closed during cooling regime": 1,
+    "Heating valve is ON during ventilate regime": 1,
+    "Zone inlet temperature sensor indicates 150 \u00b0C": 1,
+    "Heating valve is stuck in intermediate position during cooling regime": 1,
+    "Heating valve is open to the maximum level during cooling regime": 1
+   },
+   "sha256": "c1c129c52f436b21f86d62e74f186e3d8225a3a4ad14ade4e91294cf410f9add"
+  },
+  "AHU18": {
+   "role": "exam",
+   "n_days": 128,
+   "n_fault_days": 12,
+   "n_normal_days": 116,
+   "first": "2019-03-01 00:00:00",
+   "last": "2019-08-30 23:55:00",
+   "channels": [
+    "T_ra",
+    "T_sa",
+    "damper_oa",
+    "valve_cc",
+    "valve_hc",
+    "fan_sa_speed",
+    "fan_sa_status"
+   ],
+   "duplicate_timestamps": 0,
+   "dropped_days": {
+    "fan off all day": 55
+   },
+   "fault_types": {
+    "Dampers are closed during heating regime": 1,
+    "Heating valve is closed during heating regime": 1,
+    "Heating valve is stuck in intermediate position during heating regime": 1,
+    "Zone inlet temperature sensor indicates -20 \u00b0C": 1,
+    "Quick regimes cycling": 1,
+    "One of fan differential pressure sensor tubes is disconnected": 1,
+    "Cooling valve is closed during cooling regime": 1,
+    "Heating valve is ON during ventilate regime": 1,
+    "Zone inlet temperature sensor indicates 150 \u00b0C": 1,
+    "Heating valve is stuck in intermediate position during cooling regime": 1,
+    "Heating valve is open to the maximum level during cooling regime": 1,
+    "Zone outlet temperature sensor indicates 150 \u00b0C ": 1
+   },
+   "sha256": "c174bab93d64a6de7f20db793c8d48689c86575c99ccd710e64685ffe23d6da3"
+  },
+  "AHU23": {
+   "role": "exam",
+   "n_days": 139,
+   "n_fault_days": 14,
+   "n_normal_days": 125,
+   "first": "2019-03-01 00:00:00",
+   "last": "2019-08-30 23:55:00",
+   "channels": [
+    "T_ra",
+    "T_sa",
+    "damper_oa",
+    "valve_cc",
+    "valve_hc",
+    "fan_sa_speed",
+    "fan_sa_status"
+   ],
+   "duplicate_timestamps": 0,
+   "dropped_days": {
+    "fan off all day": 44
+   },
+   "fault_types": {
+    "Dampers are closed during heating regime": 1,
+    "Heating valve is closed during heating regime": 1,
+    "Heating valve is stuck in intermediate position during heating regime": 1,
+    "Zone inlet temperature sensor indicates -20 \u00b0C": 1,
+    "Zone outlet temperature sensor indicates -20 \u00b0 C": 1,
+    "Cooling pump is ON during heating regime": 1,
+    "Quick regimes cycling": 1,
+    "One of fan differential pressure sensor tubes is disconnected": 1,
+    "Heating pump is ON during ventilate regime": 1,
+    "Cooling valve is closed during cooling regime": 1,
+    "Heating valve is ON during ventilate regime": 1,
+    "Zone inlet temperature sensor indicates 150 \u00b0C": 1,
+    "Heating valve is stuck in intermediate position during cooling regime": 1,
+    "Zone outlet temperature sensor indicates 150 \u00b0C ": 1
+   },
+   "sha256": "e1fc13221c93b8fd7826171f2d07cda11d958dd9116959d05a72096fadf244f7"
+  },
+  "AHU24": {
+   "role": "exam",
+   "n_days": 115,
+   "n_fault_days": 13,
+   "n_normal_days": 102,
+   "first": "2019-03-01 00:00:00",
+   "last": "2019-08-30 23:55:00",
+   "channels": [
+    "T_ra",
+    "T_sa",
+    "damper_oa",
+    "valve_cc",
+    "valve_hc",
+    "fan_sa_speed",
+    "fan_sa_status"
+   ],
+   "duplicate_timestamps": 0,
+   "dropped_days": {
+    "fan off all day": 68
+   },
+   "fault_types": {
+    "Dampers are closed during heating regime": 1,
+    "Heating valve is closed during heating regime": 1,
+    "Heating valve is stuck in intermediate position during heating regime": 1,
+    "Zone inlet temperature sensor indicates -20 \u00b0C": 1,
+    "Zone outlet temperature sensor indicates -20 \u00b0 C": 1,
+    "Quick regimes cycling": 1,
+    "Both fan differential pressure sensor tubes are disconnected": 1,
+    "Heating pump is ON during ventilate regime": 1,
+    "Cooling valve is closed during cooling regime": 1,
+    "Heating valve is ON during ventilate regime": 1,
+    "Zone inlet temperature sensor indicates 150 \u00b0C": 1,
+    "Heating valve is stuck in intermediate position during cooling regime": 1,
+    "Zone outlet temperature sensor indicates 150 \u00b0C ": 1
+   },
+   "sha256": "09be94739860f3c107449058a752e1b57601bff1a9d7c5388b2bab12698e6dc8"
+  }
+ },
+ "exam_days": [
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-01",
+   "label": "fault",
+   "fault_type": "Dampers are closed during heating regime",
+   "diag_class": "oa_damper_stuck"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-07",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-08",
+   "label": "fault",
+   "fault_type": "Heating valve is closed during heating regime",
+   "diag_class": "hc_valve_stuck"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-11",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-15",
+   "label": "fault",
+   "fault_type": "Heating valve is stuck in intermediate position during heating regime",
+   "diag_class": "hc_valve_stuck"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-21",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-22",
+   "label": "fault",
+   "fault_type": "Zone inlet temperature sensor indicates -20 \u00b0C",
+   "diag_class": "sensor_bias_T_sa"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-03-29",
+   "label": "fault",
+   "fault_type": "Zone outlet temperature sensor indicates -20 \u00b0 C",
+   "diag_class": "sensor_bias_T_ra"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-05",
+   "label": "fault",
+   "fault_type": "Heat exchanger is closed",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-10",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-11",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-12",
+   "label": "fault",
+   "fault_type": "Cooling pump is ON during heating regime",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-17",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-23",
+   "label": "fault",
+   "fault_type": "Quick regimes cycling",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-24",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-04-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-07",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-10",
+   "label": "fault",
+   "fault_type": "One of fan differential pressure sensor tubes is disconnected",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-17",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-21",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-23",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-24",
+   "label": "fault",
+   "fault_type": "Heating pump is ON during ventilate regime",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-05-31",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-07",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-10",
+   "label": "fault",
+   "fault_type": "Cooling valve is closed during cooling regime",
+   "diag_class": "cc_valve_stuck"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-11",
+   "label": "fault",
+   "fault_type": "Heating valve is ON during ventilate regime",
+   "diag_class": "hc_valve_stuck"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-17",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-21",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-24",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-06-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-10",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-11",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-17",
+   "label": "fault",
+   "fault_type": "Zone inlet temperature sensor indicates 150 \u00b0C",
+   "diag_class": "sensor_bias_T_sa"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-23",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-24",
+   "label": "fault",
+   "fault_type": "Heating valve is stuck in intermediate position during cooling regime",
+   "diag_class": "ambiguous"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-07-31",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-07",
+   "label": "fault",
+   "fault_type": "Heating valve is open to the maximum level during cooling regime",
+   "diag_class": "ambiguous"
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-21",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-23",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU1",
+   "date": "2019-08-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-01",
+   "label": "fault",
+   "fault_type": "Dampers are closed during heating regime",
+   "diag_class": "oa_damper_stuck"
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-07",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-08",
+   "label": "fault",
+   "fault_type": "Heating valve is closed during heating regime",
+   "diag_class": "hc_valve_stuck"
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-11",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-15",
+   "label": "fault",
+   "fault_type": "Heating valve is stuck in intermediate position during heating regime",
+   "diag_class": "hc_valve_stuck"
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-21",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-22",
+   "label": "fault",
+   "fault_type": "Zone inlet temperature sensor indicates -20 \u00b0C",
+   "diag_class": "sensor_bias_T_sa"
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-03-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-10",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-11",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-17",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-23",
+   "label": "fault",
+   "fault_type": "Quick regimes cycling",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-24",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-04-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-07",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-10",
+   "label": "fault",
+   "fault_type": "One of fan differential pressure sensor tubes is disconnected",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-17",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-21",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-23",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-24",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-05-31",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-07",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-10",
+   "label": "fault",
+   "fault_type": "Cooling valve is closed during cooling regime",
+   "diag_class": "cc_valve_stuck"
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-11",
+   "label": "fault",
+   "fault_type": "Heating valve is ON during ventilate regime",
+   "diag_class": "hc_valve_stuck"
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-17",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-21",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-24",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-06-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-10",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-11",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-17",
+   "label": "fault",
+   "fault_type": "Zone inlet temperature sensor indicates 150 \u00b0C",
+   "diag_class": "sensor_bias_T_sa"
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-23",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-24",
+   "label": "fault",
+   "fault_type": "Heating valve is stuck in intermediate position during cooling regime",
+   "diag_class": "ambiguous"
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-07-31",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-07",
+   "label": "fault",
+   "fault_type": "Heating valve is open to the maximum level during cooling regime",
+   "diag_class": "ambiguous"
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-21",
+   "label": "fault",
+   "fault_type": "Zone outlet temperature sensor indicates 150 \u00b0C ",
+   "diag_class": "sensor_bias_T_ra"
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-23",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU18",
+   "date": "2019-08-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-01",
+   "label": "fault",
+   "fault_type": "Dampers are closed during heating regime",
+   "diag_class": "oa_damper_stuck"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-08",
+   "label": "fault",
+   "fault_type": "Heating valve is closed during heating regime",
+   "diag_class": "hc_valve_stuck"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-11",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-15",
+   "label": "fault",
+   "fault_type": "Heating valve is stuck in intermediate position during heating regime",
+   "diag_class": "hc_valve_stuck"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-21",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-22",
+   "label": "fault",
+   "fault_type": "Zone inlet temperature sensor indicates -20 \u00b0C",
+   "diag_class": "sensor_bias_T_sa"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-03-29",
+   "label": "fault",
+   "fault_type": "Zone outlet temperature sensor indicates -20 \u00b0 C",
+   "diag_class": "sensor_bias_T_ra"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-10",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-11",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-12",
+   "label": "fault",
+   "fault_type": "Cooling pump is ON during heating regime",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-16",
+   "label": "fault",
+   "fault_type": "Quick regimes cycling",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-17",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-23",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-24",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-04-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-07",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-10",
+   "label": "fault",
+   "fault_type": "One of fan differential pressure sensor tubes is disconnected",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-17",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-21",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-23",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-24",
+   "label": "fault",
+   "fault_type": "Heating pump is ON during ventilate regime",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-05-31",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-07",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-10",
+   "label": "fault",
+   "fault_type": "Cooling valve is closed during cooling regime",
+   "diag_class": "cc_valve_stuck"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-11",
+   "label": "fault",
+   "fault_type": "Heating valve is ON during ventilate regime",
+   "diag_class": "hc_valve_stuck"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-17",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-21",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-24",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-06-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-10",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-11",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-17",
+   "label": "fault",
+   "fault_type": "Zone inlet temperature sensor indicates 150 \u00b0C",
+   "diag_class": "sensor_bias_T_sa"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-23",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-24",
+   "label": "fault",
+   "fault_type": "Heating valve is stuck in intermediate position during cooling regime",
+   "diag_class": "ambiguous"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-07-31",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-07",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-17",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-21",
+   "label": "fault",
+   "fault_type": "Zone outlet temperature sensor indicates 150 \u00b0C ",
+   "diag_class": "sensor_bias_T_ra"
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-23",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-24",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU23",
+   "date": "2019-08-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-03-01",
+   "label": "fault",
+   "fault_type": "Dampers are closed during heating regime",
+   "diag_class": "oa_damper_stuck"
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-03-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-03-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-03-08",
+   "label": "fault",
+   "fault_type": "Heating valve is closed during heating regime",
+   "diag_class": "hc_valve_stuck"
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-03-11",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-03-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-03-15",
+   "label": "fault",
+   "fault_type": "Heating valve is stuck in intermediate position during heating regime",
+   "diag_class": "hc_valve_stuck"
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-03-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-03-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-03-22",
+   "label": "fault",
+   "fault_type": "Zone inlet temperature sensor indicates -20 \u00b0C",
+   "diag_class": "sensor_bias_T_sa"
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-03-29",
+   "label": "fault",
+   "fault_type": "Zone outlet temperature sensor indicates -20 \u00b0 C",
+   "diag_class": "sensor_bias_T_ra"
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-04-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-04-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-04-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-04-23",
+   "label": "fault",
+   "fault_type": "Quick regimes cycling",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-04-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-04-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-04-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-04-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-04-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-04-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-07",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-10",
+   "label": "fault",
+   "fault_type": "Both fan differential pressure sensor tubes are disconnected",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-11",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-17",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-21",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-23",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-24",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-05-31",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-07",
+   "label": "fault",
+   "fault_type": "Heating pump is ON during ventilate regime",
+   "diag_class": "other"
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-10",
+   "label": "fault",
+   "fault_type": "Cooling valve is closed during cooling regime",
+   "diag_class": "cc_valve_stuck"
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-11",
+   "label": "fault",
+   "fault_type": "Heating valve is ON during ventilate regime",
+   "diag_class": "hc_valve_stuck"
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-17",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-21",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-24",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-06-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-03",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-04",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-10",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-11",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-17",
+   "label": "fault",
+   "fault_type": "Zone inlet temperature sensor indicates 150 \u00b0C",
+   "diag_class": "sensor_bias_T_sa"
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-18",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-23",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-24",
+   "label": "fault",
+   "fault_type": "Heating valve is stuck in intermediate position during cooling regime",
+   "diag_class": "ambiguous"
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-07-31",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-01",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-02",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-05",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-06",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-07",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-08",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-09",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-12",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-13",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-14",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-15",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-16",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-19",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-20",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-21",
+   "label": "fault",
+   "fault_type": "Zone outlet temperature sensor indicates 150 \u00b0C ",
+   "diag_class": "sensor_bias_T_ra"
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-22",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-23",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-24",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-25",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-26",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-27",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-28",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-29",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  },
+  {
+   "ahu": "AHU24",
+   "date": "2019-08-30",
+   "label": "normal",
+   "fault_type": "none",
+   "diag_class": null
+  }
+ ],
+ "n": {
+  "ahus": 4,
+  "days": 513,
+  "fault_days": 54,
+  "normal_days": 459,
+  "diagnosable_fault_days": 34
+ },
+ "rows": [
+  {
+   "id": "det_auc",
+   "metric": "AHU-day detection AUC (P(fault) log-odds as the score)",
+   "better": "higher",
+   "unit_set": "all exam_days"
+  },
+  {
+   "id": "bal_acc",
+   "metric": "balanced accuracy at P = 0.5",
+   "better": "higher",
+   "unit_set": "all exam_days"
+  },
+  {
+   "id": "fa_rate",
+   "metric": "false-alarm rate at P = 0.5 on normal days",
+   "better": "lower",
+   "unit_set": "exam_days with label normal"
+  },
+  {
+   "id": "diag_top1",
+   "metric": "diagnosis top-1 accuracy on fault days with a mapped class",
+   "better": "higher",
+   "unit_set": "exam_days with diag_class not in (None, 'other', 'ambiguous')",
+   "note": "info only (no verdict) if n < 10"
+  }
+ ],
+ "model_input": "released faultfinder_weights.npz through FaultFinder.read_day on processed/<AHU>.parquet (contract columns, time_local), one call per exam day; P from the shipped temperature. A round-2 release is scored the same way with its own shipped calibration. No refit on these data.",
+ "baselines": [
+  {
+   "name": "APAR rule set, platform dev threshold",
+   "kind": "classical",
+   "how": "shared/building/data/scripts/baselines.py run_score(day frame, dt_s=300) -> score; fault if score > 0.2322 (faults_summary.json ahu_all threshold_dev, fitted on the platform dev runs)",
+   "rows": [
+    "det_auc (score)",
+    "bal_acc",
+    "fa_rate"
+   ]
+  },
+  {
+   "name": "Majority guess (platform dev majority: no fault)",
+   "kind": "dumb",
+   "rows": [
+    "bal_acc",
+    "fa_rate"
+   ]
+  },
+  {
+   "name": "Majority fault class among diagnosable exam days is NOT used (it would read the exam); chance = 1 / number of FaultFinder classes (18)",
+   "kind": "dumb",
+   "rows": [
+    "diag_top1"
+   ]
+  }
+ ],
+ "interval": {
+  "method": "95 % percentile bootstrap over exam AHUs (all days of a drawn AHU move together)",
+  "resamples": 2000,
+  "seed": 20261117,
+  "statistic": "model metric minus the best baseline metric on the same resample (best = better point value on the full exam)",
+  "verdict": "win if the interval is entirely on the good side of zero, loss if entirely on the bad side, tie if it spans zero; n AHUs and n days stated"
+ },
+ "scored_once_for": [
+  "FaultFinder v1.0",
+  "any round-2 release"
+ ],
+ "split_sha256": "31f05ccbac30d0ab8be2a845c5b9b01c7e50ffbe8770098824d65dd2b7db0006"
+}

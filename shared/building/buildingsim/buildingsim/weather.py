@@ -203,11 +203,13 @@ def sky_temperature(T, Td, cloud, ir_horiz=None):
 SURFACES = ('N', 'E', 'S', 'W')
 
 
-def prepare(weather, meta, start=None, end=None, dt='1h', orientation=0.0, pv=None, albedo=0.2, cache=True):
+def prepare(weather, meta, start=None, end=None, dt='1h', orientation=0.0, pv=None, albedo=0.2, cache=True,
+            holidays=None):
     """Everything the time loop needs from weather, as numpy arrays on the simulation grid.
 
     orientation: azimuth rotation of the building (deg, clockwise): facade 'S' faces 180 + orientation.
     pv: list of (tilt, azimuth) pairs to transpose for PV arrays.
+    holidays: None (v1.0: US calendar), or a country code from holidays.resolve ('CA', 'UK', 'IE'; opt-in).
     Returns dict with times (UTC), local calendar, T_out, W_out, RH, pressure, wind, T_wb, T_sky, T_ground,
     T_mains, solar per surface (beam/diffuse/ground and incidence angle), sun position.
     """
@@ -217,6 +219,8 @@ def prepare(weather, meta, start=None, end=None, dt='1h', orientation=0.0, pv=No
         h = hashlib.md5(np.ascontiguousarray(weather['T_out'].values, dtype=float).tobytes())
         h.update(str((len(weather), weather.index[0], weather.index[-1], tuple(sorted(meta.items())), start, end,
                       dt, orientation, None if pv is None else tuple(map(tuple, pv)), albedo)).encode())
+        if holidays is not None:
+            h.update(str(holidays).encode())
         key = h.hexdigest()
         if key in _CACHE:
             return _CACHE[key]
@@ -279,7 +283,7 @@ def prepare(weather, meta, start=None, end=None, dt='1h', orientation=0.0, pv=No
     # calendar in local civil time
     tz = meta.get('tz', 'UTC')
     loc = times.tz_convert(tz)
-    cal = _calendar(loc)
+    cal = _calendar(loc, holidays)
     # climate summaries from the whole weather frame (not just the run window)
     wd = w['T_out']
     T_ann = float(wd.mean())
@@ -307,13 +311,31 @@ def prepare(weather, meta, start=None, end=None, dt='1h', orientation=0.0, pv=No
                                 np.minimum(w['dewpoint'].values, wd.values), w['pressure'].values),
                                 w['pressure'].values), 99.6))))
     if key is not None:
-        if len(_CACHE) > 24:
-            _CACHE.pop(next(iter(_CACHE)))
-        _CACHE[key] = out
+        if CACHE_SIZE[0] > 0:
+            if len(_CACHE) > CACHE_SIZE[0]:
+                _CACHE.pop(next(iter(_CACHE)))
+            _CACHE[key] = out
     return out
 
 
 _CACHE = {}
+CACHE_SIZE = [24]      # v1.0 keeps up to 25 prepared frames (evicts the oldest past 24); set_cache_size() bounds it
+
+
+def set_cache_size(n=24):
+    """Bounded-memory mode for long bank runs (LoadCast's processes ran out of memory; it restarted them every
+    LC_MAXPARTS parts). n = most prepared weather frames kept beyond the newest (v1.0: 24); 0 = no cache. A frame
+    of one year is 3.0 MB at 1 h and 11.8 MB at 15 min (Chicago TMYx), so the v1.0 cache holds at most ~75 / ~300 MB;
+    the rest of LoadCast's growth was not traced. Returns the old value."""
+    old = CACHE_SIZE[0]
+    CACHE_SIZE[0] = max(int(n), 0)
+    while len(_CACHE) > max(CACHE_SIZE[0], 0) + (1 if CACHE_SIZE[0] > 0 else 0):
+        _CACHE.pop(next(iter(_CACHE)))
+    return old
+
+
+def clear_cache():
+    _CACHE.clear()
 
 
 def _cloud_from_kt(ghi, zen, dni_extra, times):
@@ -342,9 +364,14 @@ def _holidays(d):
     return hol
 
 
-def _calendar(loc):
-    """Local civil calendar: hour (float), daytype 0 weekday / 1 Saturday / 2 Sunday-holiday, doy, month."""
-    hol = _holidays(loc.normalize().tz_localize(None))
+def _calendar(loc, country=None):
+    """Local civil calendar: hour (float), daytype 0 weekday / 1 Saturday / 2 Sunday-holiday, doy, month.
+    country: None = the v1.0 US calendar; 'CA' / 'UK' / 'IE' = buildingsim.holidays (opt-in)."""
+    if country is None:
+        hol = _holidays(loc.normalize().tz_localize(None))
+    else:
+        from .holidays import is_holiday
+        hol = is_holiday(loc.normalize().tz_localize(None), country)
     dtype = np.where(hol | (loc.dayofweek == 6), 2, np.where(loc.dayofweek == 5, 1, 0))
     return dict(hour=(loc.hour + loc.minute / 60.0).values.astype(float), daytype=dtype,
                 doy=loc.dayofyear.values.astype(float), month=loc.month.values, dow=loc.dayofweek.values,

@@ -2,7 +2,8 @@
 card, forecasts, measured indoor temperature / HVAC heat / electricity from the closed-loop BuildingSim run) and the
 setpoints it chose, plus the exam metrics of every controller for those episodes.
 
-usage: export_demo.py WEIGHTS.npz OUT.npz
+usage: export_demo.py WEIGHTS.npz OUT.npz       a network (v1.0; or R8 residual weights)
+       export_demo.py mpc OUT.npz               v1.1: the card MPC behind the 6 h shield (thermopilot_core.pilot)
 """
 import os, sys, json, pickle
 os.environ.setdefault('OMP_NUM_THREADS', '1')
@@ -12,13 +13,16 @@ from _paths import WORK as ROOT   # data/ and results/ live in WORK (was the san
 import numpy as np
 import tp
 from tp import features as F, policy as P
+import thermopilot_core as tpc   # noqa: E402  (on the path through tp.card_mpc)
 from evaluate import load_cases, episode
 
 PICK = [('exam_recs', 'heat_pump_air', 1), ('exam_recs', 'split_ac_furnace', 7), ('exam_bdg2', None, 7)]
 
 
 def main():
-    W = P.load(sys.argv[1]); out = {}
+    mpc = sys.argv[1] == 'mpc'
+    W = None if mpc else P.load(sys.argv[1])
+    out = {}
     meta = []
     for i, (name, sysname, mo) in enumerate(PICK):
         cs = load_cases(name)
@@ -26,8 +30,15 @@ def main():
         cand = [c for c in cs if c['month'] == mo and (sysname is None or c['spec_nom']['system'] == sysname)]
         c = cand[int(r.integers(len(cand)))]
         ep = episode(c)
-        card = F.card_from_model(ep.model, c['pref']['hi'])
-        pol = P.ThermoPilot(W, card, ep.ctx, ep.lam, ep.model.base_W, ep.fc_noisy)
+        if mpc:            # v1.1
+            card = F.full_card(ep.model, ep.ctx, c['pref']['hi'])
+            pol = P.CoreAdapter(tpc.pilot(card, ep.ctx, ep.lam, ep.model.base_W, ep.gas_price), ep.fc_noisy)
+        elif 'tau_a' in W:   # R8: residual on the card MPC (tp/card_mpc.py); the card carries the house map
+            card = F.full_card(ep.model, ep.ctx, c['pref']['hi'])
+            pol = P.residual(ep, W, c['pref']['hi'])
+        else:
+            card = F.card_from_model(ep.model, c['pref']['hi'])
+            pol = P.ThermoPilot(W, card, ep.ctx, ep.lam, ep.model.base_W, ep.fc_noisy)
         rec = dict(T=[], q=[], e=[], fT=[], fG=[], h=[], c=[])
 
         def st(k, obs, info):
@@ -50,10 +61,17 @@ def main():
         base = json.load(open(os.path.join(ROOT, 'results', name, 'base', f'{c["id"]}.json')))
         meta.append(dict(id=c['id'], group=name, system=c['spec_nom']['system'], month=mo, wsrc=c['wsrc'],
                          tariff=c['tariff'], lam=ep.lam, pref_lo=c['pref']['lo'], pref_hi=c['pref']['hi'],
-                         card={k: card[k] for k in ('UA', 'C', 'area', 'kind', 'gas_heat', 'fan_cont', 'res', 'P_fan', 'backup')},
+                         card={k: card[k] for k in ('UA', 'C', 'area', 'kind', 'gas_heat', 'fan_cont', 'res', 'P_fan', 'backup',
+                                                    'map', 'Qheat', 'eff0', 'gx', 'hp_speed', 'cool_speed') if k in card},
+                         gas_price=ep.gas_price,
                          thermopilot=dict(bill=m['bill'], DH=m['DH'], J=m['J']),
                          baselines={k: dict(bill=v['bill'], DH=v['DH'], J=v['J']) for k, v in base.items()
                                     if isinstance(v, dict) and 'bill' in v}))
+        for tag, key in (('card4', 'card_mpc'), ('r7', 'thermopilot_v1.0')):
+            fa = os.path.join(ROOT, 'results', name, f'pol_{tag}.json')
+            if os.path.exists(fa) and c['id'] in json.load(open(fa)):
+                v = json.load(open(fa))[c['id']]
+                meta[-1]['baselines'][key] = dict(bill=v['bill'], DH=v['DH'], J=v['J'])
         print(c['id'], 'TP bill %.1f DH %.1f' % (m['bill'], m['DH']))
     out['meta'] = np.array(json.dumps(meta))
     np.savez_compressed(sys.argv[2], **out)

@@ -10,8 +10,8 @@ tags: [buildings, energy audit, building energy, smart meters, PRISM, change-poi
 accent: "#8f5d00"
 tagline: What kind of building is this, from its meters and the weather?
 question: From a building's energy meters and the local weather, how big, how old, how leaky and how heavy is it, what heats and cools it, and what is it used for?
-question_short: "From meters and weather: floor area, systems, envelope, use *(real skill only for systems)*"
-disclaimer: "Research model, not an energy audit. On real buildings it beats simple rules only for the heating system and for which meters a campus building has; it loses on primary use (11 % right against 40 % for the majority class), has no skill on year built, and envelope UA and time constant have no real truth at all."
+question_short: "From meters and weather: floor area, systems, envelope, use *(no real row beats dev-fitted baselines)*"
+disclaimer: "Research model, not an energy audit. On real buildings it wins no exam row against the strongest classical baselines fitted on the same dev data: 21 losses and 7 ties (re-scored 17 Nov 2026 with 95 % intervals). It beats the simple meter rules for the heating system, but a logistic model fitted on the dev surveys does better; it loses on primary use (11 % right against 40 % for the majority class), has no skill on year built, and envelope UA and time constant have no real truth at all."
 summary: >-
   BuildingDetective reads a building's meters (electricity, on-site fuel, district heat, district chilled water) and
   the outdoor weather at one of three resolutions: a year of hourly data, 12 monthly bills, or one annual total per
@@ -96,201 +96,382 @@ exam:
     answers for RECS and CBECS (annual totals), the heating type of HUE homes. Baselines marked TRUE are given the true
     use type, which the Detective is not. Envelope UA, time constant and balance points have no real truth; their rows
     are simulator-only (held-out BuildingSim buildings, or EnergyPlus ResStock/ComStock meters graded against a
-    BuildingSim twin) and are info. A margin smaller than about one sampling error of the statistic is called a tie.
+    BuildingSim twin) and are info. The real rows were re-scored on 17 Nov 2026 with the released weights (the exam
+    is seen: nothing was chosen from it) against fair baselines fitted on dev only (the 52 BDG2, 1,848 RECS and 661
+    CBECS dev units the simulator was tuned on): dev-fitted lines and logistic models on the same 12 annual numbers the
+    network gets, a dev site prior, a dev week-profile centroid, and a PRISM change-point reading for HUE. Verdict: 95 %
+    bootstrap interval on Detective minus the best baseline (2,000 resamples of buildings, homes or respondents, seed
+    20261117): win if it excludes zero on the good side, loss on the bad side, tie if it spans zero. The best baseline
+    is sometimes given the TRUE use or type; the note then gives the interval against the best one that is not.
+    Simulator rows were not re-run (they need the 60-shard bank).
   results:
-    - metric: BDG2 floor area, median abs. % error, hourly input (1,428)
+    - metric: "BDG2 floor area, hourly input, median abs. % error (1,428 buildings; seen)"
       better: lower
       model: 50.0
       unit: "%"
       baselines:
-        - { name: "Electricity ÷ dev median EUI of the TRUE use, same buildings (1,364)", kind: classical, value: 51.5 }
-        - { name: "Same rule as BuildingData quotes it, on its 1,133 quality-checked meters (a different set)", kind: published, value: 46.4 }
+        - { name: "Electricity ÷ dev median EUI of the TRUE use (given the use; 1,364)", kind: classical, value: 51.5 }
+        - { name: "Electricity ÷ dev median EUI of all uses (1,364)", kind: classical, value: 48.1 }
+        - { name: "Dev-fitted line log10 A = 0.73 log10 kWh − 0.49 (no use given) (1,364)", kind: classical, value: 40.9 }
         - { name: "Dev median floor area", kind: dumb, value: 68.0 }
-      verdict: tie
-      note: "1.5 points ahead of the like-for-like rule, about one sampling error of a median over ~1,400 buildings; the same rule reaches 46.4 % on BuildingData's quality-checked subset, where the Detective was not scored, and per-building errors were not kept for a paired test. A tie, not a win. 58 % within ×2."
-    - metric: BDG2 floor area, median abs. % error, monthly bills (1,428)
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: +8.8 [+5.9, +11.3], 95 % bootstrap over buildings, on its 1,364 (Detective 49.7 there). Against Electricity ÷ dev median EUI of the TRUE use: −1.8 [−6.0, +2.0]; Electricity ÷ dev median EUI of all uses: +1.5 [−2.3, +4.7]. v1.0: tie. v1.0 called this a tie by eye against the TRUE-use rule; that interval spans zero. The dev line beats the TRUE-use rule itself: its slope 0.73 (52 dev buildings) shrinks extreme readings. BuildingData's 46.4 % for the TRUE-use rule is on its 1,133 quality-checked meters, a different set. 58 % within ×2."
+    - metric: "BDG2 floor area, monthly input, median abs. % error (1,428 buildings; seen)"
       better: lower
-      model: 49.4
+      model: 49.6
       unit: "%"
       baselines:
-        - { name: "Electricity ÷ dev median EUI of the TRUE use, same buildings (1,364)", kind: classical, value: 51.5 }
-        - { name: "Same rule as BuildingData quotes it, on its 1,133 quality-checked meters (a different set)", kind: published, value: 46.4 }
+        - { name: "Electricity ÷ dev median EUI of the TRUE use (given the use; 1,364)", kind: classical, value: 51.5 }
+        - { name: "Electricity ÷ dev median EUI of all uses (1,364)", kind: classical, value: 48.1 }
+        - { name: "Dev-fitted line log10 A = 0.73 log10 kWh − 0.49 (no use given) (1,364)", kind: classical, value: 40.9 }
         - { name: "Dev median floor area", kind: dumb, value: 68.0 }
-      verdict: tie
-      note: "2.1 points ahead of the like-for-like rule; tie for the same reasons as the hourly row. 62 % within ×2."
-    - metric: BDG2 floor area, median abs. % error, annual total (1,428)
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: +6.2 [+3.2, +9.5], 95 % bootstrap over buildings, on its 1,364 (Detective 47.1 there). Against Electricity ÷ dev median EUI of the TRUE use: −4.4 [−8.5, −0.4]; Electricity ÷ dev median EUI of all uses: −1.0 [−4.7, +2.0]. v1.0: tie. v1.0 reported 49.4 %: here 157 of 1,428 buildings get different monthly features, because the 12-point PRISM grid fit has exact ties that floating-point noise breaks (numpy 2.5); the hourly reading moves for 24 buildings (median unchanged), the annual for none. 62 % within ×2."
+    - metric: "BDG2 floor area, annual input, median abs. % error (1,428 buildings; seen)"
       better: lower
       model: 48.0
       unit: "%"
       baselines:
-        - { name: "Electricity ÷ dev median EUI of the TRUE use, same buildings (1,364)", kind: classical, value: 51.5 }
-        - { name: "Same rule as BuildingData quotes it, on its 1,133 quality-checked meters (a different set)", kind: published, value: 46.4 }
+        - { name: "Electricity ÷ dev median EUI of the TRUE use (given the use; 1,364)", kind: classical, value: 51.5 }
+        - { name: "Electricity ÷ dev median EUI of all uses (1,364)", kind: classical, value: 48.1 }
+        - { name: "Dev-fitted line log10 A = 0.73 log10 kWh − 0.49 (no use given) (1,364)", kind: classical, value: 40.9 }
         - { name: "Dev median floor area", kind: dumb, value: 68.0 }
-      verdict: tie
-      note: "3.5 points ahead of the like-for-like rule, which is given the true use; still behind the 46.4 % the rule gets on the quality-checked subset. Hourly data read area no better than one annual total. 61 % within ×2."
-    - metric: BDG2 primary use, accuracy, hourly input (1,428)
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: +4.8 [+2.2, +7.3], 95 % bootstrap over buildings, on its 1,364 (Detective 45.6 there). Against Electricity ÷ dev median EUI of the TRUE use: −5.9 [−9.3, −2.5]; Electricity ÷ dev median EUI of all uses: −2.5 [−5.2, −0.2]. v1.0: tie. Hourly data read area no better than one annual total. 61 % within ×2."
+    - metric: "BDG2 floor area, electricity only input, median abs. % error (1,375 buildings; seen)"
+      better: lower
+      model: 51.0
+      unit: "%"
+      baselines:
+        - { name: "Electricity ÷ dev median EUI of the TRUE use (given the use; 1,364)", kind: classical, value: 51.5 }
+        - { name: "Electricity ÷ dev median EUI of all uses (1,364)", kind: classical, value: 48.1 }
+        - { name: "Dev-fitted line log10 A = 0.73 log10 kWh − 0.49 (no use given) (1,364)", kind: classical, value: 40.9 }
+        - { name: "Dev median floor area", kind: dumb, value: 67.6 }
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: +9.8 [+7.3, +12.3], 95 % bootstrap over buildings, on its 1,364 (Detective 50.7 there). Against Electricity ÷ dev median EUI of the TRUE use: −0.8 [−4.7, +3.1]; Electricity ÷ dev median EUI of all uses: +2.6 [−1.0, +5.6]. New row (exam.py computed it; v1.0 left it out)."
+    - metric: "BDG2 primary use, hourly input, accuracy (1,428 buildings; seen)"
       better: higher
       model: 11.5
       unit: "%"
       baselines:
         - { name: "Majority class (education)", kind: dumb, value: 40.4 }
-        - { name: "Weekly-shape nearest centroid (BuildingData, 1,082 buildings)", kind: published, value: 34.4 }
+        - { name: "Nearest dev centroid of the 168-h electricity week profile (1,375)", kind: classical, value: 30.8 }
       verdict: loss
-      note: "Macro-F1 0.10 against 0.06 for the majority class and 0.20 for the centroid. Monthly 14 %, annual 9.5 %. Simulated buildings: 88 %. Use does not transfer to real buildings."
-    - metric: BDG2 year built, mean abs. error, hourly input (741 with a year)
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −28.9 [−32.2, −25.6], 95 % bootstrap over buildings. Against Nearest dev centroid of the 168-h electricity week profile: −19.4 [−22.2, −16.7]. v1.0: loss. Macro-F1: Detective 0.096, majority 0.058, centroid 0.174."
+    - metric: "BDG2 primary use, monthly input, accuracy (1,428 buildings; seen)"
+      better: higher
+      model: 14.4
+      unit: "%"
+      baselines:
+        - { name: "Majority class (education)", kind: dumb, value: 40.4 }
+        - { name: "Nearest dev centroid of the 168-h electricity week profile (1,375)", kind: classical, value: 30.8 }
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −26.0 [−29.2, −22.8], 95 % bootstrap over buildings. Against Nearest dev centroid of the 168-h electricity week profile: −16.1 [−19.1, −13.1]. New row (exam.py computed it; v1.0 left it out). Macro-F1: Detective 0.081, majority 0.058, centroid 0.174. v1.0 reported 14.1 % (PRISM ties)."
+    - metric: "BDG2 primary use, annual input, accuracy (1,428 buildings; seen)"
+      better: higher
+      model: 9.5
+      unit: "%"
+      baselines:
+        - { name: "Majority class (education)", kind: dumb, value: 40.4 }
+        - { name: "Nearest dev centroid of the 168-h electricity week profile (1,375)", kind: classical, value: 30.8 }
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −31.0 [−34.2, −27.7], 95 % bootstrap over buildings. Against Nearest dev centroid of the 168-h electricity week profile: −21.3 [−24.1, −18.4]. New row (exam.py computed it; v1.0 left it out). Macro-F1: Detective 0.043, majority 0.058, centroid 0.174."
+    - metric: "BDG2 year built, hourly input, mean abs. error (741 buildings; seen)"
       better: lower
       model: 28.3
-      unit: yr
+      unit: "yr"
       baselines:
         - { name: "Dev median (1969)", kind: dumb, value: 24.9 }
+        - { name: "Dev median of the same site", kind: dumb, value: 25.5 }
       verdict: loss
-      note: "Monthly 25.2 yr, annual 24.8 yr: no better than the dev median at any resolution."
-    - metric: BDG2 has a chilled-water meter, from electricity alone, ROC AUC (1,375)
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: +3.4 [+2.2, +4.6], 95 % bootstrap over buildings. Against Dev median of the same site: +2.8 [+1.3, +4.5]. v1.0: loss."
+    - metric: "BDG2 year built, monthly input, mean abs. error (741 buildings; seen)"
+      better: lower
+      model: 25.3
+      unit: "yr"
+      baselines:
+        - { name: "Dev median (1969)", kind: dumb, value: 24.9 }
+        - { name: "Dev median of the same site", kind: dumb, value: 25.5 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: +0.3 [−0.4, +1.1], 95 % bootstrap over buildings. Against Dev median of the same site: −0.2 [−1.4, +1.0]. New row (exam.py computed it; v1.0 left it out). v1.0 reported 25.2 yr (PRISM ties, see the monthly area row)."
+    - metric: "BDG2 year built, annual input, mean abs. error (741 buildings; seen)"
+      better: lower
+      model: 24.8
+      unit: "yr"
+      baselines:
+        - { name: "Dev median (1969)", kind: dumb, value: 24.9 }
+        - { name: "Dev median of the same site", kind: dumb, value: 25.5 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −0.1 [−0.8, +0.6], 95 % bootstrap over buildings. Against Dev median of the same site: −0.6 [−1.9, +0.6]. New row (exam.py computed it; v1.0 left it out)."
+    - metric: "BDG2 has a chilled-water meter, from electricity alone (ROC AUC) (1,375 buildings; seen)"
       better: higher
       model: 0.75
       baselines:
+        - { name: "Dev site prior (share of dev buildings at the same site with one)", kind: classical, value: 0.83 }
+        - { name: "Dev-fitted logistic model on the electricity PRISM and load-shape statistics", kind: classical, value: 0.75 }
         - { name: "Chance", kind: dumb, value: 0.50 }
-      verdict: win
-      note: "P(district cooling) of the hourly network given only the electricity meter; 506 of 1,375 have a chilled-water meter. No classical baseline was run."
-    - metric: BDG2 has a steam or hot-water meter, from electricity alone, ROC AUC (1,375)
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −0.077 [−0.112, −0.043], 95 % bootstrap over buildings. Against Dev-fitted logistic model on the electricity PRISM and load-shape statistics: +0.003 [−0.021, +0.028]. v1.0: win. 506 of 1,375 have one. The site prior only knows which campus the building is on, which the Detective also gets through its latitude and weather."
+    - metric: "BDG2 has a steam or hot-water meter, from electricity alone (ROC AUC) (1,375 buildings; seen)"
       better: higher
       model: 0.70
       baselines:
+        - { name: "Dev site prior (share of dev buildings at the same site with one)", kind: classical, value: 0.83 }
+        - { name: "Dev-fitted logistic model on the electricity PRISM and load-shape statistics", kind: classical, value: 0.75 }
         - { name: "Chance", kind: dumb, value: 0.50 }
-      verdict: win
-      note: "P(district heat) from electricity alone; 480 of 1,375 have one. No classical baseline was run."
-    - metric: RECS floor area, median abs. % error, annual energy (7,401 homes)
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −0.130 [−0.165, −0.094], 95 % bootstrap over buildings. Against Dev-fitted logistic model on the electricity PRISM and load-shape statistics: −0.052 [−0.083, −0.021]. v1.0: win. 480 of 1,375 have one. Same site prior as the chilled-water row."
+    - metric: "RECS floor area, annual energy, median abs. % error (7,401 homes; seen)"
       better: lower
       model: 33.6
       unit: "%"
       baselines:
-        - { name: "Energy ÷ dev EUI by TRUE housing type × climate (BuildingData)", kind: classical, value: 33.1 }
-        - { name: "Dev median by TRUE housing type (BuildingData)", kind: dumb, value: 28.8 }
+        - { name: "Energy ÷ dev median EUI by TRUE type × climate (BuildingData rule, recomputed)", kind: classical, value: 33.1 }
+        - { name: "Energy ÷ W1 target EUI of the TRUE use (prior + dev weighted median)", kind: classical, value: 34.6 }
+        - { name: "Dev median by TRUE type", kind: dumb, value: 28.8 }
+        - { name: "Dev-fitted linear model of log area on the 12 annual features", kind: classical, value: 29.6 }
+        - { name: "Energy ÷ dev median EUI of all respondents", kind: classical, value: 34.4 }
       verdict: loss
-      note: "84 % within ×2. Both baselines are given the true housing type."
-    - metric: RECS main heating, fuel vs electric vs none, accuracy (7,194 homes)
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: +4.9 [+4.2, +5.7], 95 % bootstrap over homes. Against the best that needs no truth (Dev-fitted linear model of log area on the 12 annual features): +4.0 [+3.3, +4.7], loss. Against Energy ÷ dev median EUI by TRUE type × climate (BuildingData rule, recomputed): +0.5 [−0.4, +1.5]; Energy ÷ W1 target EUI of the TRUE use (prior + dev weighted median): −1.0 [−2.0, +0.1]; Energy ÷ dev median EUI of all respondents: −0.8 [−1.8, +0.3]. v1.0: loss. 84 % within ×2. The BuildingData rule recomputed per home gives its quoted 33.1 % exactly."
+    - metric: "RECS vintage, annual energy, mean abs. error (7,401 homes; seen)"
+      better: lower
+      model: 22.1
+      unit: "yr"
+      baselines:
+        - { name: "Dev median (1984)", kind: dumb, value: 22.3 }
+        - { name: "Dev-fitted linear model on the 12 annual features", kind: classical, value: 21.8 }
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: +0.3 [+0.1, +0.6], 95 % bootstrap over homes. Against Dev median (1984): −0.2 [−0.4, +0.0]. v1.0: tie."
+    - metric: "RECS main heating, fuel / electric / none, accuracy (7,194 homes; seen)"
       better: higher
       model: 87.3
       unit: "%"
       baselines:
-        - { name: "Rule: any fuel used → fuel", kind: classical, value: 85.3 }
+        - { name: "Rule: fuel used → fuel, district used → district, else electric", kind: classical, value: 85.3 }
+        - { name: "Dev-fitted multinomial logistic model on the 12 annual features", kind: classical, value: 91.9 }
         - { name: "Majority (fuel)", kind: dumb, value: 64.8 }
-      verdict: win
-    - metric: RECS heat pump vs electric resistance, balanced accuracy (2,226 homes)
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −4.7 [−5.2, −4.1], 95 % bootstrap over homes. Against Rule: fuel used → fuel, district used → district, else electric: +2.0 [+1.2, +2.8]; Majority (fuel): +22.5 [+21.5, +23.5]. v1.0: win."
+    - metric: "RECS heat pump vs electric resistance, balanced accuracy (2,226 homes; seen)"
       better: higher
       model: 0.46
       baselines:
-        - { name: "kWh/m²/HDD rule with the TRUE floor area (BuildingData)", kind: classical, value: 0.50 }
+        - { name: "kWh/m²/HDD < dev threshold, TRUE floor area (BuildingData rule, recomputed)", kind: classical, value: 0.50 }
+        - { name: "kWh/HDD < dev threshold (no floor area)", kind: classical, value: 0.49 }
+        - { name: "Dev-fitted logistic model on the 12 annual features", kind: classical, value: 0.58 }
         - { name: "Majority", kind: dumb, value: 0.50 }
       verdict: loss
-      note: "ROC AUC 0.40: worse than chance. In simulation the same task gives AUC 0.94: the simulator's heat-pump signature is not what real homes show."
-    - metric: RECS vintage, mean abs. error to the survey range midpoint (7,401 homes)
-      better: lower
-      model: 22.1
-      unit: yr
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −0.128 [−0.159, −0.100], 95 % bootstrap over homes. Against kWh/m²/HDD < dev threshold, TRUE floor area (BuildingData rule, recomputed): −0.042 [−0.064, −0.023]; kWh/HDD < dev threshold (no floor area): −0.032 [−0.053, −0.012]; Majority: −0.044 [−0.062, −0.027]. v1.0: loss. The Detective is worse than chance; a logistic model fitted on the 1,848 dev homes reads the same 12 numbers at 0.58."
+    - metric: "RECS heat pump vs electric resistance, ROC AUC (2,226 homes; seen)"
+      better: higher
+      model: 0.40
       baselines:
-        - { name: "Dev median (1984)", kind: dumb, value: 22.3 }
-      verdict: tie
-      note: "22.13 vs 22.32 years: 0.2 years, about one sampling error of a mean over 7,401 homes and under 1 % of the error. No real skill on year built."
-    - metric: CBECS floor area, median abs. % error, annual energy (2,558 buildings)
+        - { name: "kWh/m²/HDD, TRUE floor area (low → heat pump)", kind: classical, value: 0.45 }
+        - { name: "kWh/HDD (low → heat pump)", kind: classical, value: 0.38 }
+        - { name: "Dev-fitted logistic model on the 12 annual features", kind: classical, value: 0.63 }
+        - { name: "Chance", kind: dumb, value: 0.50 }
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −0.229 [−0.268, −0.192], 95 % bootstrap over homes. Against kWh/m²/HDD, TRUE floor area (low → heat pump): −0.050 [−0.076, −0.025]; kWh/HDD (low → heat pump): +0.020 [+0.002, +0.037]. New row (exam.py computed it; v1.0 left it out). In simulation the network gets 0.94 on the same task: the simulator heat-pump signature is not what real homes show."
+    - metric: "CBECS floor area, annual energy, median abs. % error (2,558 buildings; seen)"
       better: lower
       model: 43.0
       unit: "%"
       baselines:
-        - { name: "Energy ÷ dev EUI by TRUE type × climate (BuildingData)", kind: classical, value: 38.7 }
-        - { name: "Dev median by TRUE type (BuildingData)", kind: dumb, value: 75.7 }
+        - { name: "Energy ÷ dev median EUI by TRUE type × climate (BuildingData rule, recomputed) (2,525)", kind: classical, value: 38.7 }
+        - { name: "Energy ÷ W1 target EUI of the TRUE use (prior + dev weighted median) (2,525)", kind: classical, value: 51.3 }
+        - { name: "Dev median by TRUE type", kind: dumb, value: 76.5 }
+        - { name: "Dev-fitted linear model of log area on the 12 annual features", kind: classical, value: 44.9 }
+        - { name: "Energy ÷ dev median EUI of all respondents (2,525)", kind: classical, value: 48.7 }
       verdict: loss
-    - metric: CBECS primary use (10 commercial classes), accuracy (2,558)
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: +4.2 [+1.9, +6.3], 95 % bootstrap over buildings, on its 2,525 (Detective 42.8 there). Against the best that needs no truth (Dev-fitted linear model of log area on the 12 annual features): −1.8 [−3.9, +0.1], tie. Against Energy ÷ W1 target EUI of the TRUE use (prior + dev weighted median): −8.5 [−11.5, −5.6]; Dev median by TRUE type: −33.5 [−36.5, −30.5]; Energy ÷ dev median EUI of all respondents: −5.9 [−8.2, −3.9]. v1.0: loss. The BuildingData rule recomputed per building gives its quoted 38.7 %."
+    - metric: "CBECS vintage, annual energy, mean abs. error (2,558 buildings; seen)"
+      better: lower
+      model: 27.0
+      unit: "yr"
+      baselines:
+        - { name: "Dev median (1984)", kind: dumb, value: 26.0 }
+        - { name: "Dev-fitted linear model on the 12 annual features", kind: classical, value: 27.0 }
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: +1.0 [+0.6, +1.5], 95 % bootstrap over buildings. Against Dev-fitted linear model on the 12 annual features: +0.0 [−0.4, +0.4]. v1.0: loss."
+    - metric: "CBECS main heating, fuel / electric / district / none, accuracy (2,513 buildings; seen)"
+      better: higher
+      model: 74.7
+      unit: "%"
+      baselines:
+        - { name: "Rule: fuel used → fuel, district used → district, else electric", kind: classical, value: 68.6 }
+        - { name: "Dev-fitted multinomial logistic model on the 12 annual features", kind: classical, value: 79.2 }
+        - { name: "Majority (fuel)", kind: dumb, value: 55.6 }
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −4.5 [−5.9, −3.2], 95 % bootstrap over buildings. Against Rule: fuel used → fuel, district used → district, else electric: +6.1 [+4.6, +7.6]; Majority (fuel): +19.0 [+17.0, +21.1]. v1.0: win."
+    - metric: "CBECS primary use (10 commercial classes), accuracy (2,558 buildings; seen)"
       better: higher
       model: 16.5
       unit: "%"
       baselines:
         - { name: "Majority class (office)", kind: dumb, value: 20.8 }
+        - { name: "Dev-fitted multinomial logistic model on the 12 annual features", kind: classical, value: 28.4 }
       verdict: loss
-      note: "Macro-F1 0.15 against 0.03 for the majority class."
-    - metric: CBECS heating, fuel / electric / district / none, accuracy (2,513)
-      better: higher
-      model: 74.7
-      unit: "%"
-      baselines:
-        - { name: "Rule: fuel used → fuel, district used → district", kind: classical, value: 68.6 }
-        - { name: "Majority (fuel)", kind: dumb, value: 55.6 }
-      verdict: win
-    - metric: CBECS has a chiller, ROC AUC (2,362)
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −11.9 [−13.9, −9.8], 95 % bootstrap over buildings. Against Majority class (office): −4.3 [−6.5, −2.1]. v1.0: loss. Macro-F1: Detective 0.154, majority 0.034, dev logistic 0.224."
+    - metric: "CBECS has a chiller, ROC AUC (2,362 buildings; seen)"
       better: higher
       model: 0.77
       baselines:
+        - { name: "Dev-fitted logistic model on the 12 annual features", kind: classical, value: 0.80 }
         - { name: "Chance", kind: dumb, value: 0.50 }
-      verdict: win
-    - metric: CBECS weekly operating hours, mean abs. error (2,558)
+      verdict: loss
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −0.036 [−0.052, −0.020], 95 % bootstrap over buildings. v1.0: win."
+    - metric: "CBECS has a heat pump, ROC AUC (2,375 buildings; seen)"
+      better: higher
+      model: 0.59
+      baselines:
+        - { name: "Dev-fitted logistic model on the 12 annual features", kind: classical, value: 0.62 }
+        - { name: "Chance", kind: dumb, value: 0.50 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −0.031 [−0.069, +0.007], 95 % bootstrap over buildings. New row (exam.py computed it; v1.0 left it out)."
+    - metric: "CBECS weekly operating hours, mean abs. error (2,558 buildings; seen)"
       better: lower
       model: 44.2
-      unit: h
+      unit: "h"
       baselines:
         - { name: "Dev median", kind: dumb, value: 41.4 }
-        - { name: "Dev median of the TRUE use", kind: classical, value: 29.7 }
+        - { name: "Dev median of the TRUE use", kind: dumb, value: 29.7 }
+        - { name: "Dev-fitted linear model on the 12 annual features", kind: classical, value: 37.4 }
       verdict: loss
-      note: "From one annual total. Spearman 0.50."
-    - metric: CBECS vintage, mean abs. error (2,558)
-      better: lower
-      model: 27.0
-      unit: yr
-      baselines:
-        - { name: "Dev median (1984)", kind: dumb, value: 26.0 }
-      verdict: loss
-    - metric: HUE electric main heat (baseboard or heat pump) vs not, accuracy, hourly electricity (24 homes)
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: +14.5 [+12.8, +16.4], 95 % bootstrap over buildings. Against the best that needs no truth (Dev-fitted linear model on the 12 annual features): +6.8 [+5.7, +8.0], loss. Against Dev median: +2.8 [+0.8, +5.0]. v1.0: loss. Spearman 0.50."
+    - metric: "HUE electric main heat, hourly electricity, accuracy (24 homes; seen)"
       better: higher
-      model: 50
+      model: 50.0
       unit: "%"
       baselines:
-        - { name: "Majority (not electric)", kind: dumb, value: 75 }
-      verdict: loss
-      note: "ROC AUC 0.46 (6 of 24 homes heat electrically). The monthly network does better on the same homes: 75 % (the majority's score), AUC 0.69."
-    - metric: "Simulator only: envelope UA, MAE in log10, held-out BuildingSim buildings, hourly (2,000)"
+        - { name: "Majority (not electric)", kind: dumb, value: 75.0 }
+        - { name: "PRISM heating share of electricity ≥ 0.20 (threshold fixed before HUE was read)", kind: classical, value: 45.8 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −25.0 [−54.2, +8.3], 95 % bootstrap over homes. Against PRISM heating share of electricity ≥ 0.20 (threshold fixed before HUE was read): +4.2 [−20.8, +29.2]. v1.0: loss. 6 of 24 homes heat electrically, so every HUE interval is wide."
+    - metric: "HUE electric main heat, hourly electricity, ROC AUC (24 homes; seen)"
+      better: higher
+      model: 0.46
+      baselines:
+        - { name: "PRISM heating share of electricity (change-point fit of daily kWh)", kind: classical, value: 0.55 }
+        - { name: "Chance", kind: dumb, value: 0.50 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: −0.083 [−0.295, +0.137], 95 % bootstrap over homes. New row (exam.py computed it; v1.0 left it out)."
+    - metric: "HUE electric main heat, monthly electricity, accuracy (24 homes; seen)"
+      better: higher
+      model: 75.0
+      unit: "%"
+      baselines:
+        - { name: "Majority (not electric)", kind: dumb, value: 75.0 }
+        - { name: "PRISM heating share of electricity ≥ 0.20 (threshold fixed before HUE was read)", kind: classical, value: 45.8 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: +0.0 [−20.8, +25.0], 95 % bootstrap over homes. Against PRISM heating share of electricity ≥ 0.20 (threshold fixed before HUE was read): +29.2 [+12.5, +45.8]. New row (exam.py computed it; v1.0 left it out)."
+    - metric: "HUE electric main heat, monthly electricity, ROC AUC (24 homes; seen)"
+      better: higher
+      model: 0.69
+      baselines:
+        - { name: "PRISM heating share of electricity (change-point fit of daily kWh)", kind: classical, value: 0.55 }
+        - { name: "Chance", kind: dumb, value: 0.50 }
+      verdict: tie
+      note: "Seen (re-scored 17 Nov 2026). Minus the best baseline: +0.148 [−0.042, +0.361], 95 % bootstrap over homes. New row (exam.py computed it; v1.0 left it out). The monthly network ranks the homes better than the change-point reading, but 24 homes cannot tell them apart."
+    - metric: "Simulator only: floor area, MAE in log10, held-out BuildingSim buildings, hourly (2,000 readings of the frozen set)"
+      better: lower
+      model: 0.12
+      baselines:
+        - { name: "Median of the TRUE use type", kind: dumb, value: 0.44 }
+      verdict: info
+      note: "Simulated, exact labels; not reality; not re-run on 17 Nov 2026 (needs the bank). R² 0.96, 1-sigma coverage 99 %. Monthly 0.16, annual 0.18 (median of the true use 0.44). Dev twins (simulated twins of the 52 BDG2 dev buildings): hourly 0.11, monthly 0.15, annual 0.16. Annual floor area from energy with the TRUE use: MdAPE 34.7 %."
+    - metric: "Simulator only: year built, MAE, held-out BuildingSim buildings, hourly (2,000 readings of the frozen set)"
+      better: lower
+      model: 19.2
+      unit: "yr"
+      baselines:
+        - { name: "Median of the TRUE use type", kind: dumb, value: 22.0 }
+      verdict: info
+      note: "Simulated, exact labels; not reality; not re-run on 17 Nov 2026 (needs the bank). R² 0.20, 1-sigma coverage 95 %. Monthly 20.4, annual 20.6 (median of the true use 22.0). Dev twins (simulated twins of the 52 BDG2 dev buildings): hourly 21.7, monthly 22.4, annual 23.4."
+    - metric: "Simulator only: envelope UA, MAE in log10, held-out BuildingSim buildings, hourly (2,000 readings of the frozen set)"
       better: lower
       model: 0.10
       baselines:
-        - { name: "PRISM change-point (fits 95 % of units)", kind: classical, value: 0.85 }
+        - { name: "PRISM change-point (fits 95 %)", kind: classical, value: 0.85 }
         - { name: "Median of the TRUE use type", kind: dumb, value: 0.35 }
       verdict: info
-      note: "Simulated, exact labels; not reality. Coverage of the 1-sigma bar 67 %."
-    - metric: "Simulator only: time constant, MAE in log10, held-out BuildingSim buildings, hourly (2,000)"
+      note: "Simulated, exact labels; not reality; not re-run on 17 Nov 2026 (needs the bank). R² 0.95, 1-sigma coverage 67 %. Monthly 0.13, annual 0.17 (median of the true use 0.35; monthly PRISM 0.86). Dev twins (simulated twins of the 52 BDG2 dev buildings): hourly 0.11, monthly 0.14, annual 0.17."
+    - metric: "Simulator only: UA per floor area, MAE in log10, held-out BuildingSim buildings, hourly (2,000 readings of the frozen set)"
+      better: lower
+      model: 0.11
+      baselines:
+        - { name: "Median of the TRUE use type", kind: dumb, value: 0.17 }
+      verdict: info
+      note: "Simulated, exact labels; not reality; not re-run on 17 Nov 2026 (needs the bank). R² 0.69, 1-sigma coverage 73 %. Monthly 0.13, annual 0.13 (median of the true use 0.17). Dev twins (simulated twins of the 52 BDG2 dev buildings): hourly 0.11, monthly 0.13, annual 0.13."
+    - metric: "Simulator only: time constant, MAE in log10, held-out BuildingSim buildings, hourly (2,000 readings of the frozen set)"
       better: lower
       model: 0.14
       baselines:
         - { name: "Median of the TRUE use type", kind: dumb, value: 0.21 }
       verdict: info
-      note: "Coverage 72 %."
-    - metric: "Simulator only: heating balance point, MAE, held-out BuildingSim buildings, hourly (2,000)"
+      note: "Simulated, exact labels; not reality; not re-run on 17 Nov 2026 (needs the bank). R² 0.73, 1-sigma coverage 72 %. Monthly 0.17, annual 0.18 (median of the true use 0.21). Dev twins (simulated twins of the 52 BDG2 dev buildings): hourly 0.14, monthly 0.17, annual 0.18."
+    - metric: "Simulator only: heating balance point, MAE, held-out BuildingSim buildings, hourly (2,000 readings of the frozen set)"
       better: lower
       model: 2.14
-      unit: K
+      unit: "K"
       baselines:
         - { name: "PRISM change-point (fits 95 %)", kind: classical, value: 6.54 }
         - { name: "Median of the TRUE use type", kind: dumb, value: 3.93 }
       verdict: info
-    - metric: "Simulator only: cooling balance point, MAE, held-out BuildingSim buildings, hourly (2,000)"
+      note: "Simulated, exact labels; not reality; not re-run on 17 Nov 2026 (needs the bank). R² 0.81, 1-sigma coverage 69 %. Monthly 2.75, annual 3.55 (median of the true use 3.93; monthly PRISM 7.05). Dev twins (simulated twins of the 52 BDG2 dev buildings): hourly 2.78, monthly 3.38, annual 4.65."
+    - metric: "Simulator only: cooling balance point, MAE, held-out BuildingSim buildings, hourly (2,000 readings of the frozen set)"
       better: lower
       model: 2.24
-      unit: K
+      unit: "K"
       baselines:
         - { name: "PRISM change-point (fits 93 %)", kind: classical, value: 4.89 }
         - { name: "Median of the TRUE use type", kind: dumb, value: 3.87 }
       verdict: info
-    - metric: "Simulator only: heating energy per kelvin, MAE in log10, held-out BuildingSim buildings, hourly (1,880)"
+      note: "Simulated, exact labels; not reality; not re-run on 17 Nov 2026 (needs the bank). R² 0.81, 1-sigma coverage 72 %. Monthly 2.95, annual 3.82 (median of the true use 3.87; monthly PRISM 5.29). Dev twins (simulated twins of the 52 BDG2 dev buildings): hourly 2.99, monthly 3.45, annual 4.62."
+    - metric: "Simulator only: heating energy per kelvin, MAE in log10, held-out BuildingSim buildings, hourly (1,880 readings of the frozen set)"
       better: lower
       model: 0.14
       baselines:
         - { name: "PRISM change-point (fits 95 %)", kind: classical, value: 0.92 }
         - { name: "Median of the TRUE use type", kind: dumb, value: 0.45 }
       verdict: info
-    - metric: "Simulator only: weekday operating hours, MAE, held-out BuildingSim buildings, hourly (1,400)"
+      note: "Simulated, exact labels; not reality; not re-run on 17 Nov 2026 (needs the bank). R² 0.90, 1-sigma coverage 69 %. Monthly 0.16, annual 0.21 (median of the true use 0.45; monthly PRISM 0.93). Dev twins (simulated twins of the 52 BDG2 dev buildings): hourly 0.19, monthly 0.17, annual 0.21."
+    - metric: "Simulator only: cooling energy per kelvin, MAE in log10, held-out BuildingSim buildings, hourly (1,814 readings of the frozen set)"
+      better: lower
+      model: 0.12
+      baselines:
+        - { name: "PRISM change-point (fits 97 %)", kind: classical, value: 0.23 }
+        - { name: "Median of the TRUE use type", kind: dumb, value: 0.47 }
+      verdict: info
+      note: "Simulated, exact labels; not reality; not re-run on 17 Nov 2026 (needs the bank). R² 0.96, 1-sigma coverage 72 %. Monthly 0.13, annual 0.22 (median of the true use 0.47; monthly PRISM 0.28). Dev twins (simulated twins of the 52 BDG2 dev buildings): hourly 0.16, monthly 0.15, annual 0.31."
+    - metric: "Simulator only: non-HVAC share of site energy, MAE, held-out BuildingSim buildings, hourly (2,000 readings of the frozen set)"
+      better: lower
+      model: 0.07
+      baselines:
+        - { name: "Median of the TRUE use type", kind: dumb, value: 0.14 }
+      verdict: info
+      note: "Simulated, exact labels; not reality; not re-run on 17 Nov 2026 (needs the bank). R² 0.80, 1-sigma coverage 67 %. Monthly 0.08, annual 0.11 (median of the true use 0.14). Dev twins (simulated twins of the 52 BDG2 dev buildings): hourly 0.07, monthly 0.06, annual 0.09."
+    - metric: "Simulator only: weekday operating hours, MAE, held-out BuildingSim buildings, hourly (1,400 readings of the frozen set)"
       better: lower
       model: 0.96
-      unit: h
+      unit: "h"
       baselines:
         - { name: "Median of the TRUE use type", kind: dumb, value: 3.25 }
       verdict: info
+      note: "Simulated, exact labels; not reality; not re-run on 17 Nov 2026 (needs the bank). R² 0.93, 1-sigma coverage 75 %. Monthly 3.73, annual 4.04 (median of the true use 3.25). Dev twins (simulated twins of the 52 BDG2 dev buildings): hourly 1.08, monthly 4.33, annual 4.80."
+    - metric: "Simulator only: weekend/weekday ratio, MAE, held-out BuildingSim buildings, hourly (1,400 readings of the frozen set)"
+      better: lower
+      model: 0.05
+      baselines:
+        - { name: "Median of the TRUE use type", kind: dumb, value: 0.21 }
+      verdict: info
+      note: "Simulated, exact labels; not reality; not re-run on 17 Nov 2026 (needs the bank). R² 0.93, 1-sigma coverage 78 %. Monthly 0.24, annual 0.27 (median of the true use 0.21). Dev twins (simulated twins of the 52 BDG2 dev buildings): hourly 0.06, monthly 0.24, annual 0.27."
+    - metric: "Simulator only: primary use (12 classes), balanced accuracy, held-out BuildingSim buildings, hourly"
+      better: higher
+      model: 0.87
+      baselines:
+        - { name: "Majority", kind: dumb, value: 0.08 }
+      verdict: info
+      note: "Simulated; not re-run. Monthly 0.58, annual 0.40. Dev twins: hourly 0.79, monthly 0.60, annual 0.27."
     - metric: "Simulator only: heating system (5 classes), balanced accuracy, held-out BuildingSim buildings, hourly"
       better: higher
       model: 0.84
@@ -298,13 +479,21 @@ exam:
         - { name: "Rule from which meters exist", kind: classical, value: 0.35 }
         - { name: "Majority", kind: dumb, value: 0.20 }
       verdict: info
+      note: "Simulated; not re-run. Monthly 0.76, annual 0.65. Dev twins: hourly 0.74, monthly 0.72, annual 0.64."
+    - metric: "Simulator only: cooling system (4 classes), balanced accuracy, held-out BuildingSim buildings, hourly"
+      better: higher
+      model: 0.90
+      baselines:
+        - { name: "Majority", kind: dumb, value: 0.25 }
+      verdict: info
+      note: "Simulated; not re-run. Monthly 0.82, annual 0.56. Dev twins: hourly 0.90, monthly 0.91, annual 0.52."
     - metric: "Simulator only: heat pump vs resistance, ROC AUC, held-out BuildingSim buildings, hourly (594)"
       better: higher
       model: 0.94
       baselines:
         - { name: "Chance", kind: dumb, value: 0.50 }
       verdict: info
-      note: "On real RECS homes the same question gives AUC 0.40."
+      note: "Simulated; not re-run. Monthly 0.83, annual 0.65; dev twins (17 units) 0.77 / 0.68 / 0.79. On real RECS homes the same question gives AUC 0.40."
     - metric: "Simulator vs simulator: ResStock homes, envelope UA, MAE in log10 (EnergyPlus meters, truth from a BuildingSim twin; 58)"
       better: lower
       model: 0.29
@@ -312,7 +501,7 @@ exam:
         - { name: "PRISM × nominal efficiency (fits 57)", kind: classical, value: 0.73 }
         - { name: "Sample median", kind: dumb, value: 0.23 }
       verdict: info
-      note: "Two models, not reality. Biased +0.25 log10; coverage 24 %. Monthly input: 0.18."
+      note: "Not re-run on 17 Nov 2026 (the ResStock/ComStock samples are not unpacked here). Two models, not reality. Biased +0.25 log10; coverage 24 %. Monthly input: 0.18."
     - metric: "Simulator vs simulator: ResStock homes, heating balance point, MAE (58)"
       better: lower
       model: 2.8
@@ -335,7 +524,7 @@ exam:
         - { name: "PRISM × nominal efficiency (fits 85)", kind: classical, value: 0.76 }
         - { name: "Sample median", kind: dumb, value: 0.44 }
       verdict: info
-      note: "0.20 on the 85 units PRISM fits. Two models, not reality."
+      note: "Not re-run. 0.20 on the 85 units PRISM fits. Two models, not reality. Every stock output at every resolution is in MODEL_CARD.md."
     - metric: "Simulator vs simulator: ComStock buildings, heating balance point, MAE (90)"
       better: lower
       model: 7.2
@@ -344,19 +533,92 @@ exam:
         - { name: "PRISM (fits 85)", kind: classical, value: 10.4 }
         - { name: "Sample median", kind: dumb, value: 8.6 }
       verdict: info
-      note: "7.0 K on the 85 units PRISM fits."
+      note: "Not re-run. 7.0 K on the 85 units PRISM fits."
     - metric: "Simulator vs simulator: ComStock buildings, heating system accuracy against the stock label (90)"
       better: higher
       model: 72
       unit: "%"
       baselines: []
       verdict: info
-      note: "Cooling system 90 %, primary use 37 %."
+      note: "Not re-run. Cooling system 90 %, primary use 37 %."
+    - metric: "Fresh exam, HEAPO (105 Zurich heat-pump homes): floor area, hourly input, median abs. % error"
+      better: lower
+      model: 35.6
+      unit: "%"
+      baselines:
+        - { name: "Dev median heated floor area (180 m2, 25 dev homes)", kind: dumb, value: 14.6 }
+        - { name: "Dev-fitted line log A = a + b log annual kWh", kind: classical, value: 17.3 }
+        - { name: "Annual elec ÷ dev median kWh/m2 (all dev homes)", kind: classical, value: 25.1 }
+      verdict: loss
+      note: "Fresh exam, scored once on 17 Nov 2026 after the release decision (frozen in 3d9f949). v1.0. Minus the best baseline: +20.9, 95 % CI [+12.5, +30.0], bootstrap over homes (2,000 resamples, seed 20261117). The TRUE-type kWh/m2 baseline could not run as specified (all dev homes are single-family; 22.1 % on the 99 single-family homes). r10, kept but not released, information only: 39.9 %, +25.2 [+18.2, +30.6]."
+    - metric: "Fresh exam, HEAPO (105 homes): floor area, monthly input, median abs. % error"
+      better: lower
+      model: 47.7
+      unit: "%"
+      baselines:
+        - { name: "Dev median heated floor area", kind: dumb, value: 14.6 }
+        - { name: "Dev-fitted line log A = a + b log annual kWh", kind: classical, value: 17.3 }
+        - { name: "Annual elec ÷ dev median kWh/m2 (all dev homes)", kind: classical, value: 25.1 }
+      verdict: loss
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. Minus the best baseline: +33.1, 95 % CI [+27.1, +36.8] over homes. Median predicted / true area 0.53."
+    - metric: "Fresh exam, HEAPO (105 homes): floor area, annual input, median abs. % error"
+      better: lower
+      model: 19.7
+      unit: "%"
+      baselines:
+        - { name: "Dev median heated floor area", kind: dumb, value: 14.6 }
+        - { name: "Dev-fitted line log A = a + b log annual kWh", kind: classical, value: 17.3 }
+        - { name: "Annual elec ÷ dev median kWh/m2 (all dev homes)", kind: classical, value: 25.1 }
+      verdict: tie
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. Minus the best baseline: +5.0, 95 % CI [−0.3, +9.1] over homes."
+    - metric: "Fresh exam, HEAPO (100 homes): year built, hourly input, mean abs. error"
+      better: lower
+      model: 20.9
+      unit: "yr"
+      baselines:
+        - { name: "Dev median construction year (1984)", kind: dumb, value: 13.9 }
+        - { name: "Dev-fitted line year = a + b log annual kWh", kind: classical, value: 14.2 }
+      verdict: loss
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. Minus the best baseline: +7.0, 95 % CI [+4.6, +9.7] over homes. r10, kept but not released, information only: 21.4 yr, +7.5 [+5.2, +9.9]."
+    - metric: "Fresh exam, HEAPO (100 homes): year built, monthly input, mean abs. error"
+      better: lower
+      model: 17.8
+      unit: "yr"
+      baselines:
+        - { name: "Dev median construction year (1984)", kind: dumb, value: 13.9 }
+        - { name: "Dev-fitted line year = a + b log annual kWh", kind: classical, value: 14.2 }
+      verdict: loss
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. Minus the best baseline: +3.9, 95 % CI [+2.4, +5.5] over homes."
+    - metric: "Fresh exam, HEAPO (100 homes): year built, annual input, mean abs. error"
+      better: lower
+      model: 14.0
+      unit: "yr"
+      baselines:
+        - { name: "Dev median construction year (1984)", kind: dumb, value: 13.9 }
+        - { name: "Dev-fitted line year = a + b log annual kWh", kind: classical, value: 14.2 }
+      verdict: tie
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. Minus the best baseline: +0.2, 95 % CI [−0.3, +0.6] over homes."
+    - metric: "Fresh exam, HEAPO (101 homes, 2 multi-family): single vs multi-family accuracy, hourly / monthly / annual"
+      better: higher
+      model: "87 / 96 / 98 %"
+      baselines:
+        - { name: "Dev majority (single-family)", kind: dumb, value: "98 %" }
+      verdict: info
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. Info only by the spec (fewer than 10 multi-family homes). Minus majority: −10.9 [−16.8, −5.0] / −2.0 [−5.0, 0.0] / 0.0 [0.0, 0.0] points. r10, kept but not released, information only: 89 %."
+    - metric: "Fresh exam, HEAPO (105 homes, all with a heat pump): heat pump as top heating class, hourly / monthly / annual"
+      better: higher
+      model: "10 / 32 / 56 %"
+      baselines: []
+      verdict: info
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. No fair baseline (every home has a heat pump). Median P(heat pump) 0.01 / 0.19 / 0.33. r10, kept but not released, information only: 4 %, median P 0.001."
   coverage:
     - { output: "BDG2 floor area, hourly (1,428)", actual: 72 }
     - { output: "BDG2 floor area, monthly (1,428)", actual: 63 }
     - { output: "BDG2 floor area, annual (1,428)", actual: 54 }
     - { output: "BDG2 year built, hourly (741)", actual: 77 }
+    - { output: "BDG2 year built, monthly (741)", actual: 68 }
+    - { output: "BDG2 year built, annual (741)", actual: 65 }
+    - { output: "BDG2 floor area, electricity only (1,375)", actual: 80 }
     - { output: "RECS floor area (7,401)", actual: 69 }
     - { output: "RECS vintage (7,401)", actual: 74 }
     - { output: "CBECS floor area (2,558)", actual: 61 }
@@ -364,25 +626,30 @@ exam:
     - { output: "Simulated time constant, hourly (2,000)", actual: 72 }
 
 wins:
-  - "Heating system from annual totals: 87.3 % right on 7,194 RECS homes (fuel / electric / none) against 85.3 % for 'any fuel used → fuel', and 74.7 % on 2,513 CBECS buildings against 68.6 % for the meter rule."
-  - "Which meters a campus building has, from its electricity alone: ROC AUC 0.75 for a chilled-water meter and 0.70 for a steam or hot-water meter (1,375 BDG2 buildings); a chiller in CBECS from annual totals: AUC 0.77."
+  - "No real exam row is a win against the strongest dev-fitted baseline (re-scored 17 Nov 2026, 95 % intervals): 21 losses, 7 ties."
+  - "Against the simple rules v1.0 used it does win: heating system from annual totals, RECS 87.3 % against 85.3 % for 'any fuel used → fuel' (+2.0 points [+1.2, +2.8]) and CBECS 74.7 % against 68.6 % (+6.1 [+4.6, +7.6]); floor area from monthly or annual BDG2 input against electricity ÷ dev EUI of the TRUE use (−4.4 [−8.5, −0.4] and −5.9 [−9.3, −2.5] points); meters and chillers well above chance (AUC 0.70-0.77)."
   - "In simulation it reads the envelope: UA within 0.10 log10 against 0.85 for PRISM, balance points within 2.1-2.2 K against 4.9-6.5 K."
 losses:
-  - "Primary use does not transfer: 11 % right on BDG2 against 40 % for always guessing education (simulated: 88 %); 16 % on CBECS against 21 % for the majority class."
-  - "Year built has no real skill: BDG2 28 yr (hourly) against 25 yr for the dev median; RECS 22.1 vs 22.3 yr; CBECS 27.0 vs 26.0 yr."
-  - "Heat pump vs resistance fails on real homes: RECS AUC 0.40, HUE hourly AUC 0.46 (50 % right against 75 % for the majority), against 0.94 in simulation."
-  - "Floor area: only level with an energy ÷ intensity rule on BDG2 (48-50 % vs 51.5 %), and behind the rule that knows the true type on RECS (33.6 vs 33.1 %) and CBECS (43.0 vs 38.7 %)."
-  - "Weekly operating hours from one CBECS annual total: 44 h off against 41 h for the dev median."
+  - "A dev-fitted model on the same 12 annual numbers beats it almost everywhere: RECS heating 91.9 % vs 87.3 %, CBECS heating 79.2 % vs 74.7 %, CBECS use 28.4 % vs 16.5 %, CBECS chiller AUC 0.80 vs 0.77, RECS heat pump vs resistance AUC 0.63 vs 0.40, RECS area 29.6 % vs 33.6 %, CBECS hours 37 h vs 44 h. All these intervals exclude zero."
+  - "BDG2 floor area: a two-parameter line fitted on the 52 dev buildings (log10 A = 0.73 log10 kWh − 0.49, no use given) reaches 40.9 % against the Detective's 45.6-49.7 % on the same 1,364 buildings; v1.0's three 'ties' are losses."
+  - "Which meters a campus building has: the share of dev buildings at the same site with that meter gives AUC 0.83 against the Detective's 0.75 (chilled water) and 0.70 (steam / hot water)."
+  - "Primary use does not transfer: 11 % right on BDG2 against 40 % for always guessing education and 31 % for the nearest dev week-profile centroid (simulated: 88 %); 16 % on CBECS against 21 % for the majority class."
+  - "Year built has no real skill: BDG2 28 yr (hourly) against 25 yr for the dev median; RECS 22.1 vs 21.8 yr for a dev-fitted line; CBECS 27.0 vs 26.0 yr."
+  - "Heat pump vs resistance fails on real homes: RECS AUC 0.40, worse than chance, against 0.94 in simulation. HUE (24 homes) cannot separate anything: every interval spans zero."
 limits:
   - "UA, time constant and balance points have no real truth. Against EnergyPlus ResStock homes the hourly UA error is 0.29 log10 with a +0.25 bias, worse than the sample median (0.23)."
+  - "Dev twin test (17 Nov 2026): the network's corrections to the dev-calibrated rules point the right way (correlation with what reality needed 0.50-0.60 for RECS area and heating fuel, 0.43 for CBECS hours, 0.1-0.3 for BDG2 area) but are biased and too large: on CBECS dev the hours correction has median +37 h and raises the error from 27 to 45 h; on BDG2 dev the hourly area correction (median −0.13 log10) makes the error worse than the rule's."
   - "Real BDG2 load shapes still differ from simulated ones: hourly floor area needed error bars 3× wider than the network's own, and hourly input reads area no better than one annual total. Real electricity is less weather-sensitive than the twins (PRISM r² 0.07 vs 0.24)."
   - "Single thermal zone, first-order part load, ideal thermostat within the hour; campus plants are a flat distribution factor plus base load (W2, W3)."
-  - "The real dev gate is small (52 BDG2 buildings plus the survey dev respondents) and noisy; it drifted from 0.331 to 0.306 over the kept rungs."
+  - "The real dev gate is small (52 BDG2 buildings plus the survey dev respondents) and noisy; it drifted from 0.331 to 0.306 over the kept rungs. It also lets a much worse headline output pass: rung r10 (17 Nov 2026) raised BDG2 dev hourly floor-area error from 50.8 % to 69.0 % (worse than the dev median's 64.3 %) and still passed, because area is one of twelve terms."
+  - "Physics 1.1 + 1.2 + 1.4 (rung r10, 17 Nov 2026; not released) did not shrink the dev twin-test bias: the area correction to electricity ÷ dev EUI flipped from −0.13 to +0.10 log10 (hourly; needed 0), its correlation with what was needed fell from 0.12 to 0.03, and CBECS hours stayed at +37 h. Dev-fitted baselines still beat the networks on dev (5-fold CV)."
   - "Use probabilities are flattened on purpose (dev-fitted temperature 10): on real buildings they are close to uninformative."
-  - "When every day of the record lies on one side of the best change-point balance point (a home heated all year, three winter months only), the PRISM fit is degenerate and the release's reading depends on floating-point tie-breaking: numpy and the site's JS port can pick different, equally good fits."
+  - "When every day of the record lies on one side of the best change-point balance point (a home heated all year, three winter months only), the PRISM fit is degenerate and the release's reading depends on floating-point tie-breaking: numpy and the site's JS port can pick different, equally good fits. The monthly 12-point fit has such ties often: re-run here (numpy 2.5), 157 of 1,428 BDG2 buildings get different monthly features and the monthly area error moves from 49.4 % to 49.6 %."
   - "The balance points do not follow the weather the way physics says: with the meters unchanged, shifting the outdoor temperature by ±4 K should move them by ±4 K, but the hourly network moves Lamb_education_Bert's heating balance point by about ±1 K (11.3 / 12.4 / 13.4 °C) and the HUE home's not at all (17.2 / 17.1 / 16.3 °C); the monthly network follows more (5.8 / 10.1 / 13.0 °C). Four exam units, checked in the live instrument on 17 Nov 2026."
-  - "The training bank, frozen set and features need the shared building platform (BuildingSim + BuildingData), which is not in this repository yet; numpy-vs-torch parity of the shipped weights could not be re-checked here (no checkpoints shipped)."
+  - "The simulator rows were not re-run: the training bank is not kept and the ResStock/ComStock samples (data/proc/stock, about 1.2 GB) are not unpacked here. Numpy-vs-torch parity of the shipped weights cannot be checked (no checkpoints shipped)."
 next:
+  - "Add a per-output dev gate on the headline real outputs (BDG2, RECS and CBECS floor area; RECS and CBECS heating type), each against its dev-fitted baseline, written down before the next rung."
+  - "Anchor on the dev-fitted baselines: predict the correction to the dev-fitted line or logistic model instead of the raw output, so the network has to add something real to win (the twin test shows its corrections point the right way but overshoot)."
   - "Physics v3 from the remaining twin gaps: real electricity is much less weather-sensitive than the twins (PRISM r² 0.07 vs 0.24); add a calibrated mix of meters serving unconditioned space or process load."
   - "Heat-pump realism: backup strips, defrost, sizing and ResStock-like controls fitted on RECS and HUE dev, or WPuQ heat-pump homes as a dev set (done when RECS dev heat pump vs resistance AUC > 0.7)."
   - "Domain-adversarial or twin-consistency training on unlabelled real BDG2 2016 meters, plus a dev-fitted population prior for the use classes."
@@ -392,6 +659,7 @@ help_wanted:
   - "UK heat-pump field trials (RHPP, Electrification of Heat) need UK Data Service registration; they would test the heat-pump signature that fails on RECS and HUE."
   - "An EnergyPlus binary for a true reference engine (no PyPI wheel with an engine; GitHub was blocked in the build sandbox) and the official ASHRAE 140 tables for BESTEST."
   - "Any public building set with measured envelope UA or a co-heating test next to its meters: UA and the time constant have no real truth anywhere in the exam."
+  - "A fresh real exam: every set here has now been seen (v1.0 once, the 17 Nov 2026 re-score). A new BDG2-like release, or a utility's metered buildings with floor area and systems, would give one."
 
 usage:
   install: pip install numpy scipy pandas

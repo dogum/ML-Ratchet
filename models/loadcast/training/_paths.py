@@ -29,3 +29,7 @@ BLDG_CODE = os.path.join(REPO, 'shared', 'building')   # code always from the re
 for p in (os.path.join(BLDG_CODE, 'buildingsim'), BLDG_CODE):   # import buildingsim and buildingdata
     if p not in sys.path:
         sys.path.insert(1, p)
+# A frozen copy of the BuildingSim package (the folder that contains buildingsim/) can be put first with
+# $LC_BUILDINGSIM, e.g. while the shared package is being edited (added 17 Nov 2026; data still come from BLDG).
+if os.environ.get('LC_BUILDINGSIM') and os.environ['LC_BUILDINGSIM'] not in sys.path:
+    sys.path.insert(0, os.environ['LC_BUILDINGSIM'])

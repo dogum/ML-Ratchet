@@ -1,5 +1,5 @@
-// ThermoPilot in the browser: a port of models/thermopilot/thermopilot_core.py (features, MLP, 36-pair action menu,
-// 6 h comfort shield), started from the release's training/tp.js, plus the lab page's browser house (BuildingSim's
+// ThermoPilot in the browser: a port of models/thermopilot/thermopilot_core.py (v1.1 card MPC; v1.0 features, MLP,
+// 36-pair action menu, 6 h comfort shield), started from the release's training/tp.js, plus the lab page's browser house (BuildingSim's
 // hourly 5R1C maps of the nominal twin with the heat-pump / furnace / AC tables). No DOM.
 // The Python reference (models/thermopilot/web/export_instrument.py) runs the same closed loop.
 import type { Pack } from '../../lib/nn/pack.ts';
@@ -16,6 +16,7 @@ export interface WMeta { n_params: number; shield: number; layers: number; arch:
 export interface Card {
   UA: number; C: number; area: number; kind: string; gas_heat: boolean; fan_cont: boolean; res: boolean; P_fan: number; backup: number;
   Tg: Float32Array; Qmax: Float32Array; Qh: Float32Array; Ph: Float32Array; eff: Float32Array; Qs: Float32Array; Pc: Float32Array;
+  map?: CardMap; Qheat?: number; eff0?: number;   // v1.1 card fields (the card MPC's house map and heater)
 }
 export interface LiveMeta { Aq: number; Cq: number; Tm0: number; lam: number; gas_price: number; card: Omit<Card, 'Tg' | 'Qmax' | 'Qh' | 'Ph' | 'eff' | 'Qs' | 'Pc'> }
 export interface CtrlResult { bill: number; DH: number; J: number; kWh: number; demand: number }
@@ -179,6 +180,150 @@ export class Pilot {
   }
 }
 
+// ---------------------------------------------------------------------------------------------- v1.1: the card MPC
+// Port of thermopilot_core.CardMPC / CardPilot: a 24 h dynamic programme over the mass temperature (0.25 K grid, the
+// 36 actions, demand charges amortised over the running peak, lambda x K h outside the band) on the card's 12-number
+// linear house map, then the 6 h comfort shield. No learned parameters.
+export interface CardMap { At: number; Aq: number; Ct: number; Cq: number; a: number[]; c: number[] }
+const DX_PLF = [0.85, 0.15, 0.0];
+
+function partPower(Pon: number, f: number) {   // single-speed cycling losses (the browser house's units)
+  return f > 0 ? Pon * f / (DX_PLF[0] + f * DX_PLF[1]) : 0;
+}
+
+export class CardMPC {
+  card: Card; map: CardMap; ctx: Ctx; lam: number; base: ArrayLike<number>; gas: number;
+  tm: number | null = null; prev: [number, number, number] | null = null; peak = new Map<string, number>(); last = -1;
+  constructor(card: Card, map: CardMap, ctx: Ctx, lam: number, base: ArrayLike<number>, gas: number) {
+    this.card = card; this.map = map; this.ctx = ctx; this.lam = lam; this.base = base; this.gas = gas;
+  }
+  mapsAt(To: number, G: number, b: number): [number, number] {
+    const a = this.map.a, c = this.map.c;
+    return [a[0] + a[1] * To + a[2] * G + a[3] * b, c[0] + c[1] * To + c[2] * G + c[3] * b];
+  }
+  observe(k: number, Tz: number, q: number, e: number) {
+    const c = this.ctx;
+    if (k > 0) {
+      const j = k - 1;
+      if (c.dperiod[j] >= 0) { const key = 'd' + c.dperiod[j]; this.peak.set(key, Math.max(this.peak.get(key) || 0, e)); }
+      if (c.frate[j] > 0) this.peak.set('f', Math.max(this.peak.get('f') || 0, e));
+    }
+    if (this.prev === null || this.tm === null) { this.tm = Tz; return; }
+    const [A, C] = this.mapsAt(...this.prev), m = this.map;
+    let tp = Math.abs(m.At) > 1e-3 ? (Tz - A - m.Aq * q) / m.At : this.tm;
+    tp = Math.min(Math.max(tp, -10), 50);
+    this.tm = C + m.Ct * tp + m.Cq * q;
+  }
+  /** Returns [action, the 36 action values ($)]. */
+  values(k: number, Tz: number, q: number, e: number, fcT: ArrayLike<number>, fcG: ArrayLike<number>): [number, Float64Array] {
+    const c = this.ctx, card = this.card, m = this.map, n = c.price.length, NA = 36;
+    this.observe(k, Tz, q, e);
+    const idx: number[] = []; for (let j = 0; j < H; j++) idx.push(Math.min(k + j, n - 1));
+    const base = idx.map((i) => this.base[Math.min(i, this.base.length - 1)]);
+    this.prev = [fcT[0], fcG[0], base[0] / 1000];
+    const lo = idx.map((i) => c.lo[i]), hi = idx.map((i) => c.hi[i]);
+    let nwin = 0, nfl = 0; for (const i of idx) { if (c.drate[i] > 0) nwin++; if (c.frate[i] > 0) nfl++; }
+    nwin = Math.max(nwin, 1); nfl = Math.max(nfl, 1);
+    const tm0 = Math.min(Math.max(this.tm!, -5), 45);
+    const g0 = Math.floor(Math.min(tm0, Math.min(...lo)) - 3);
+    const gmax = Math.max(tm0, Math.max(...hi)) + 3.01;
+    const NG = Math.floor((gmax - g0) / 0.25 - 1e-9) + 1;
+    let V = new Float64Array(NG);
+    const first = new Float64Array(NA);
+    const hsp = new Float64Array(NA), csp = new Float64Array(NA);
+    for (let j = H - 1; j >= 0; j--) {
+      const i = idx[j], To = fcT[j], G = fcG[j];
+      const A = m.a[0] + m.a[1] * To + m.a[2] * G + m.a[3] * base[j] / 1000;
+      const C = m.c[0] + m.c[1] * To + m.c[2] * G + m.c[3] * base[j] / 1000;
+      const Qmax = interp(To, card.Tg, card.Qmax), Qh = interp(To, card.Tg, card.Qh), Ph = interp(To, card.Tg, card.Ph);
+      const Qs = interp(To, card.Tg, card.Qs), Pc = interp(To, card.Tg, card.Pc);
+      const effv = card.eff0!, Qheat = card.Qheat!;
+      for (let a = 0; a < NA; a++) {
+        const [ih, ic] = ACTIONS[a];
+        const dh = DHm[ih], dc = DCm[ic];
+        const hs = dh === null ? -100 : dh === 'edge' ? lo[j] : Math.max(c.pref_lo + dh, lo[j]);
+        let cs = dc === null ? 100 : dc === 'edge' ? hi[j] : Math.min(c.pref_hi + dc, hi[j]);
+        if (cs < hs + 0.5) cs = hs + 0.5;
+        hsp[a] = hs; csp[a] = cs;
+      }
+      const dr = c.drate[i] / (Math.max(1, nwin / 3) * Math.max(c.drem[i], 1));
+      const fr = c.frate[i] / (Math.max(1, nfl / 3) * Math.max(c.frem[i], 1));
+      const pref = c.dperiod[i] >= 0 ? (this.peak.get('d' + c.dperiod[i]) || 0) : 0, fref = this.peak.get('f') || 0;
+      const b = m.Aq, Vn = new Float64Array(NG), npts = j > 0 ? NG : 1;
+      for (let gi = 0; gi < npts; gi++) {
+        const Tm = j > 0 ? g0 + 0.25 * gi : tm0;
+        const Tb = A + m.At * Tm;
+        let best = Infinity;
+        for (let a = 0; a < NA; a++) {
+          const Qhd = Tb < hsp[a] ? Math.min((hsp[a] - Tb) / b, Qmax) : 0;
+          const Qcd = Tb > csp[a] && Qs > 0 ? Math.min((Tb - csp[a]) / b, Qs) : 0;
+          const T = Tb + b * (Qhd - Qcd);
+          const Tm1 = C + m.Ct * Tm + m.Cq * (Qhd - Qcd);
+          let P = 0, gas = 0, runH = 0;
+          if (card.kind === 'hp') {
+            const f = Qh > 0 ? Math.min(Qhd, Qh) / Qh : 0;
+            P = partPower(Ph, f) + Math.max(Qhd - Qh, 0);
+            runH = Qh > 0 ? (Qhd > Qh ? 1 : f) : Qhd > 0 ? 1 : 0;
+          } else if (card.kind === 'furnace') { runH = Qhd / Math.max(Qheat, 1e-9); gas = Qhd / effv; P = 0.004 * Qheat * runH; }
+          else if (card.kind === 'baseboard' && card.gas_heat) { gas = Qhd / effv; P = 0.01 * Qhd; }
+          else if (card.kind === 'baseboard') { P = Qhd; }
+          else { runH = Qhd / Math.max(Qheat, 1e-9); P = Qhd; }
+          const fcl = Qs > 0 ? Qcd / Qs : 0;
+          P += partPower(Pc, fcl);
+          P += card.P_fan * Math.min(Math.max(runH + fcl, 0), 1);
+          const el = (base[j] + P) / 1000;
+          let cost = c.price[i] * el + this.gas * gas / 1000 + this.lam * (Math.max(lo[j] - T, 0) + Math.max(T - hi[j], 0));
+          if (dr > 0) cost += dr * Math.max(el - pref, 0);
+          if (fr > 0) cost += fr * Math.max(el - fref, 0);
+          let pos = (Tm1 - g0) / 0.25;
+          if (pos < 0) pos = 0; if (pos > NG - 1.000001) pos = NG - 1.000001;
+          const i0 = Math.floor(pos), w = pos - i0;
+          const Q = cost + V[i0] * (1 - w) + V[i0 + 1] * w;
+          if (j > 0) { if (Q < best) best = Q; } else first[a] = Q;
+        }
+        if (j > 0) Vn[gi] = best;
+      }
+      if (j > 0) V = Vn;
+    }
+    let a = 0; for (let i = 1; i < NA; i++) if (first[i] < first[a]) a = i;
+    this.last = a;
+    return [a, first];
+  }
+}
+
+export function shieldSp(c: Ctx, k: number, h: number, cs: number, sh: number): [number, number] {
+  if (!sh) return [h, cs];
+  let lo = c.lo[k], hi = c.hi[k]; const n = c.lo.length;
+  if (sh === 2) { const k1 = Math.min(k + 1, n - 1); lo = Math.max(lo, c.lo[k1]); hi = Math.min(hi, c.hi[k1]); }
+  else if (sh >= 4) for (let j = 1; j < 7; j++) {
+    const kj = Math.min(k + j, n - 1);
+    lo = Math.max(lo, c.lo[kj] - SHIELD_RATE * (j - 1)); hi = Math.min(hi, c.hi[kj] + 0.5 * SHIELD_RATE * (j - 1));
+  }
+  else if (sh >= 3) for (let j = 1; j < 5; j++) {
+    const kj = Math.min(k + j, n - 1);
+    lo = Math.max(lo, c.lo[kj] - SHIELD_RATE * (j - 1)); hi = Math.min(hi, c.hi[kj] + SHIELD_RATE * (j - 1));
+  }
+  h = Math.max(h, lo); cs = Math.min(cs, hi); if (cs < h + 0.5) cs = h + 0.5;
+  return [h, cs];
+}
+
+export const SHIELD_MPC = 4;
+
+/** v1.1: the card MPC behind the 6 h comfort shield (thermopilot_core.CardPilot). */
+export class CardPilot {
+  ctx: Ctx; mpc: CardMPC; last = -1; Q: Float64Array | null = null;
+  constructor(card: Card, ctx: Ctx, lam: number, base: ArrayLike<number>, gas: number) {
+    this.ctx = ctx; this.mpc = new CardMPC(card, card.map!, ctx, lam, base, gas);
+  }
+  step(k: number, Tz: number, q: number, e: number, fcT: ArrayLike<number>, fcG: ArrayLike<number>): [number, number] {
+    const [a, Q] = this.mpc.values(k, Tz, q, e, fcT, fcG);
+    this.last = a; this.Q = Q;
+    const c = this.ctx;
+    const [h, cs] = setpoints(c.lo[k], c.hi[k], c.pref_lo, c.pref_hi, ACTIONS[a][0], ACTIONS[a][1]);
+    return shieldSp(c, k, h, cs, SHIELD_MPC);
+  }
+}
+
 // ---------------------------------------------------------------------------------------------- examples
 export interface House {
   A: Float32Array; At: Float32Array; C: Float32Array; Ct: Float32Array; To: Float32Array; G: Float32Array; base: Float32Array;
@@ -275,14 +420,19 @@ export function simulate(house: House, ctx: Ctx, n: number, ctrl: Ctrl): Sim {
 export interface Setting { lamMul: number; fe: number; bias: number }
 
 /** ThermoPilot closed-loop on the browser house; also returns the logits at the requested hours. */
-export function runPilot(net: Net, house: House, ctx: Ctx, z: ArrayLike<number>, s: Setting, n = N_RUN, logHours: number[] = []) {
-  const pilot = new Pilot(net, house.card, ctx, house.lam * s.lamMul, house.base);
+export type Mode = 'mpc' | 'network';
+
+/** ThermoPilot closed-loop on the browser house: v1.1 card MPC (mode 'mpc', logs its 36 action values) or the v1.0
+ *  network (mode 'network', logs its 36 logits) at the requested hours. */
+export function runPilot(net: Net, house: House, ctx: Ctx, z: ArrayLike<number>, s: Setting, n = N_RUN, logHours: number[] = [], mode: Mode = 'mpc') {
+  const lam = house.lam * s.lamMul;
+  const pilot = mode === 'mpc' ? new CardPilot(house.card, ctx, lam, house.base, house.gas) : new Pilot(net, house.card, ctx, lam, house.base);
   const acts = new Int32Array(n), logits: Float64Array[] = [];
   const sim = simulate(house, ctx, n, (k, Tz, q, e) => {
     const [T, G] = forecast(house, z, k, s.fe, s.bias);
     const r = pilot.step(k, Tz, q, e, T, G);
     acts[k] = pilot.last;
-    if (logHours.includes(k)) logits.push(pilot.logits!);
+    if (logHours.includes(k)) logits.push(pilot instanceof CardPilot ? pilot.Q! : pilot.logits!);
     return r;
   });
   return { ...sim, acts, logits };

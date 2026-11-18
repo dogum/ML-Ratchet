@@ -41,7 +41,7 @@ from the isolated venv `buildingsim/.refenv`.
 
 ```python
 out = simulate(spec, weather, start=None, end=None, dt='1h', controller=None, faults=None, prices=None, init=None,
-               rng=None, warmup_days=7, sensor_noise=None, record_trend=True)
+               rng=None, warmup_days=7, sensor_noise=None, record_trend=True, options=None)
 ```
 
 | argument | meaning |
@@ -55,6 +55,7 @@ out = simulate(spec, weather, start=None, end=None, dt='1h', controller=None, fa
 | `prices` | a number ($/kWh), a Series/DataFrame (`elec` column) on any grid, or a TOU dict `{'base', 'periods': [{'months', 'hours': (h0, h1), 'weekdays_only', 'price'}]}`. |
 | `init` | `{'T_air', 'T_mass', 'W_air', 'soc'}` or a previous `out['final_state']`. Default: a 7-day warm-up on the first week. |
 | `rng` | seed or Generator, for sensor noise. `sensor_noise={'SAT': 0.2, ...}` adds Gaussian noise (K) to trend columns. |
+| `options` | opt-in Phase 2 flags that act inside the time loop (see [Phase 2 wrappers](#phase-2-wrappers-opt-in)) and the physics version (`'physics'`, `'seed'`; see [Physics versions](#physics-versions-opt-in)). `None` or `{}` = v1.0 exactly. Unknown keys raise. |
 
 `out` is a dict:
 
@@ -217,6 +218,72 @@ out = sim.finish()                                            # cost, comfort (P
 - **BuildingDetective.** Exact ground-truth labels for UA, τ, systems and schedules on generated buildings. Real labels exist only at survey level (RECS/CBECS annual).
 - **LoadCast.** Supported, but generic twins miss real campus district-meter magnitudes by about 3× (LIMITS). Its simulated pre-training needs dev calibration (the ratchet's job).
 
+## Phase 2 wrappers (opt-in)
+
+Version 1.0.1 (`bs.__version__`). `bs.PHYSICS_VERSION` is still `'1.0'`: with no wrapper used, every check
+reproduces the v1.0 JSONs (`checks/REPRODUCED.md`). The four Phase 2 models had wrapped BuildingSim in their own
+training code; those wrappers are ported here (HANDOFF section 4, P0.4), each a copy of the model's v1.0 code, each
+off by default. `checks/check_phase2.py` shows every port gives the model's own numbers
+(`checks/out/phase2_equivalence.json`), and `check_bdg2.py w2 | w2w3 | lc` runs the 52 BDG2 dev twins with them on.
+
+**One mechanism: opt-in by name.** A v1.0 call never reaches a wrapper. A wrapper is a key of `options=` (only
+what must act inside the time loop), an hvac spec field that is absent unless set, or a function you apply
+(`buildingsim.phase2`, `buildingsim.stock`, `buildingdata`). This follows RoadSim's `options=` (vehicle platform);
+there are no presets yet, because no flag is on in any physics version.
+
+| From | Flag (where) | What it does |
+|---|---|---|
+| LoadCast | `options={'holidays': 'auto'}` (or `'US'`, `'CA'`, `'UK'`, `'IE'`; `holidays.py`) | Public holidays of the site's country (from the weather `tz`: London -> UK, Dublin -> IE, Toronto -> CA); the US keeps the v1.0 calendar. Holidays run Sunday schedules. |
+| LoadCast | `phase2.spec_from_meters(base, meters, knobs)` | BDG2-style twin: the meters a building has decide its plant; knobs `sys`, `sched` ('default' / 'extended' / '24x7'), `oa`, `vav_min`, `sat_reset`, `elec`. |
+| LoadCast | `phase2.CAMPUS_KNOBS` | The dev modes: 24x7 (22 of 52 dev buildings), outdoor air x2.5 (37 of 52), VAV minimum 0.3 with reset (43 of 52). |
+| LoadCast | `phase2.scale_meters(meters_kW, knobs, area)`, `phase2.DEV_METER_SCALE` | y = a x sim + b x A per meter (b in W/m2); dev medians, e.g. chilled water a 0.92, b 31 W/m2. Applied to copies; the ledger is untouched. |
+| LoadCast | `bs.set_weather_cache(n)`, `bs.clear_caches()` | Bounded memory for long bank runs: at most n + 1 prepared weather frames (v1.0: 24 + 1; 0 = none). A year is 3 MB at 1 h, 12 MB at 15 min, so the cache explains at most ~300 MB of LoadCast's out-of-memory kill; the rest was not traced. |
+| Detective | `phase2.apply_intensity(filled_spec, phase2.W1_INTENSITY[use])` | W1: one factor per use type on per-area loads and outdoor air (lab 0.42 ... lodging 1.55), fitted to CBECS/RECS prior + dev. |
+| Detective | `phase2.make_campus(filled_spec, rng, kind)`; hvac field `district_eff_chw` | W2: campus district service with distribution factors around heat 0.185 and chilled water 0.329 (meter = delivered / factor). `district_eff_chw` (absent = `district_eff`) puts the chilled-water factor in the plant, so the ledger still closes. |
+| Detective | `phase2.flat_base_loads(meters, rng)` | W3: moves a share of district energy to a flat base (heat 0.70, chilled water 0.50; annual unchanged) and adds flat electricity (+0.5 x mean, p 0.85). Applied to copies of the meter series. |
+| Detective | `phase2.base_share(out)`, `phase2.clean_labels(y)` | Label hygiene: base_share NaN when site energy is ~0 (was -8e12), else clipped to [-0.2, 1]; balance points clipped to [-25, 30] C. |
+| FaultFinder | `phase2.log_commands(trend_healthy, trend_faulted, fault, rng)` | Trend logs record commands: stuck actuators log the healthy command (valves wound up to 0 / 100 %), leaks log the signal minus the leak; p 0.2 keeps the position. |
+| FaultFinder | `phase2.installed_damper(trend, rng)`, `phase2.damper_command(frac, rng)` | Installed damper characteristic: OA fraction = a + (b - a) cmd^g, so 100 % command mixes 75-100 % outdoor air (dev: 81-90 %). |
+| FaultFinder | `phase2.static_offsets(trend, rng, large=True)` | Static sensor disagreement: sd SAT 0.5 K (tail 1.2), MAT 0.8, RAT 0.4, OAT 0.6, ZAT 0.9 K (v3 sizes with `large=False`). |
+| FaultFinder | `controller=phase2.OperatorJitter(seed, tz)` | Operator start/stop jitter (sd 2 / 3 steps) and 1-3 h off-blocks (p 0.15) through the controller hook. |
+| ThermoPilot | `stock.recs_to_spec(row, seed)`, `stock.recs_comfort_band(row)` | RECS 2020 respondent twin (nearest ResStock prior dwelling, respondent's own area, vintage, stories, occupants) and its comfort band from the respondent's own thermostat settings. |
+| ThermoPilot | `bd.tariff_arrays(tariff, times, tz)`, `bd.bill_arrays`, `bd.tariff_prices(key, year, tz, utc=True)` | DST-safe prices: each step takes its own local month / hour / weekday. `tariff_prices` with `tz` was already right on every hour; without `tz` its naive index cannot be localized and reads as UTC in `simulate(prices=)`. `utc=True` gives the UTC frame. |
+| ThermoPilot | `bd.rtp_prices(times)` | ERCOT HB_HOUSTON real-time prices + 0.10 $/kWh, weather year Y paired with prices of Y + 2 (728 days, weekdays aligned). Needs GridData. |
+
+Not ported, and why: ThermoPilot's numba DP kernel and its two-pass demand-peak oracle are the model's controller
+(its control model of the house, its 36-action menu, its comfort weight), not building physics, and numba is not a
+BuildingSim dependency. They stay in `models/thermopilot/training/tp/` (`dp_fast.py`, `mpc.py`,
+`episode.oracle_floor`); the billing pieces they need (`tariff_arrays`, `bill_arrays`) are in BuildingData.
+
+## Physics versions (opt-in)
+
+Version 1.2.0. `bs.PHYSICS_VERSION` is the default, still `'1.0'`; `bs.PHYSICS_VERSIONS = ('1.0', ..., '1.4')`.
+Select with `simulate(..., options={'physics': '1.1'})` or the environment variable `BUILDINGSIM_PHYSICS` (the option
+wins); `out['physics']` records it. At '1.0' every array is the v1.0 one, bit for bit. The released models were
+trained at 1.0; a model moves to 1.1 or 1.2 only when it rebuilds its frozen simulated sets.
+
+- **1.1, campus and district thermal plants** (`campus.py`; buildings with district heat, district chilled water or
+  district DHW only). Hot-water heating loops run while the 7-day running-mean outdoor temperature is below
+  `T_hw_off`; chilled-water loops while it is above `T_chw_off` (healthcare and lab keep it on); steam runs all year.
+  While a loop runs it carries a constant base (distribution and standby losses, process steam and cooling),
+  `q_steam`, `q_hw`, `q_chw` W per m2 of floor, as the end uses `plant_heating_district` and
+  `plant_cooling_district`, with its own ledger section `district_plant_kWh`. Optional summer reheat `f_rh` (VAV with
+  district heat; fitted to 0). Fitted on the BDG2 dev buildings, 2016 (`tools/calibrate_district.py`,
+  `checks/district_fit.json`).
+- **1.2 = 1.1 + weather-insensitive electricity** (non-residential uses). A share `s_on` of the run's interior
+  lighting and plug energy is flat around the clock (energy-preserving), and a daily activity multiplier (lognormal
+  AR(1), `sigma_d`, `rho_d`, seeded by `options['seed']`, default 0) scales occupancy, lighting and plug. Fitted on
+  the BDG2 dev buildings, 2016 (`tools/calibrate_electricity.py`, `checks/electricity_fit.json`).
+- **1.3 = 1.2 + the heat-pump signature** (residential heat pumps): a heating limit (no space heating above a 24-h
+  mean of 18.75 C), a field COP factor `f_cop` on air-source compressor power (fitted 0.6, the edge of its grid), and
+  an emitter store `tau_e` (fitted to 0 h). `tools/calibrate_heatpump.py`, `checks/heatpump_fit.json`.
+- **1.4 = 1.3 + generator intensity**: `generate_buildings(..., physics='1.4')` returns filled specs whose per-area
+  intensities are multiplied by a factor per use type (`INTENSITY`), fitted on the CBECS / RECS prior split
+  (`tools/calibrate_intensity.py`, `checks/intensity_fit.json`). `simulate()` at 1.4 is the 1.3 physics.
+
+The parameters are in `buildingsim/data/physics.json`; `options={'campus': {...}}` overrides them (calibration only).
+Results, cross-checks and what failed: `checks/REPRODUCED.md` (last section) and `shared/building/NOTEBOOK.md`.
+
 ## The physics
 
 **Weather** (`weather.py`).
@@ -339,10 +406,14 @@ buildingsim/   the package
   weather.py psychro.py comfort.py                              weather + solar (pvlib), psychrometrics, PMV/PPD
   spec.py schedules.py zone.py zone_multinode.py                contract defaults, schedules, 5R1C and multi-node zones
   curves.py systems.py plant.py sizing.py faults.py             equipment curves, HVAC systems, plant, sizing, faults
-  generator.py stock.py data/calibration.json                   generator, ResStock/ComStock/CBECS mapping
+  generator.py stock.py data/calibration.json                   generator, ResStock/ComStock/CBECS/RECS mapping
+  phase2.py holidays.py                                         opt-in Phase 2 wrappers, country holiday calendars
+  campus.py data/physics.json                                   opt-in physics 1.1 / 1.2 and their dev-fitted parameters
 refdata/       weather/epw (17 TMYx US cities, one per IECC zone), weather/bestest (Denver-Stapleton TMY),
                priors/ (resstock, comstock, cbecs and recs prior tables), stock_weather/ (OEDI AMY2018 counties)
-tools/         build_priors.py, fetch_stock_weather.py, calibrate_resstock.py (scan kept for the record)
+tools/         build_priors.py, fetch_stock_weather.py, calibrate_resstock.py (scan kept for the record),
+               calibrate_district.py (1.1), calibrate_electricity.py (1.2), calibrate_heatpump.py (1.3),
+               calibrate_intensity.py (1.4): dev fits of the opt-in physics versions and their cross-checks
 demo.py        two buildings x two weeks, ledgers, a fault, a controller -> demo_weeks.png
 .refenv/       isolated venv with CoolProp and pythermalcomfort (checks only)
 ../checks/     check_*.py, their JSONs, run_all.sh (re-runs all, ~30 min), out/ per-unit results and logs

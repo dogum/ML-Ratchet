@@ -1,0 +1,4975 @@
+{
+ "dev_score": 49.233844282685155,
+ "dev_score_logged": 49.23384388608059,
+ "dev": [
+  [
+   "chilledwater",
+   "cold",
+   "cv_med",
+   101.0308978911554,
+   101.03089782367903
+  ],
+  [
+   "chilledwater",
+   "cold",
+   "nmbe_med",
+   51.84257375041232,
+   51.842574831126676
+  ],
+  [
+   "chilledwater",
+   "cold",
+   "cov_mean",
+   0.7129570630335602,
+   0.7129570630335602
+  ],
+  [
+   "chilledwater",
+   "warm",
+   "cv_med",
+   43.241343503328125,
+   43.241343470946404
+  ],
+  [
+   "chilledwater",
+   "warm",
+   "nmbe_med",
+   4.314664067539471,
+   4.314664032821888
+  ],
+  [
+   "chilledwater",
+   "warm",
+   "cov_mean",
+   0.9060544516813038,
+   0.9060544516813038
+  ],
+  [
+   "chilledwater",
+   "warm_w8",
+   "cv_med",
+   52.75682042508289,
+   52.75682013867724
+  ],
+  [
+   "chilledwater",
+   "warm_w8",
+   "nmbe_med",
+   23.91737754531557,
+   23.917377541467054
+  ],
+  [
+   "chilledwater",
+   "warm_w8",
+   "cov_mean",
+   0.8328394142079233,
+   0.8328394142079233
+  ],
+  [
+   "chilledwater",
+   "warm_w2",
+   "cv_med",
+   64.96660521301587,
+   64.96660526666486
+  ],
+  [
+   "chilledwater",
+   "warm_w2",
+   "nmbe_med",
+   36.14937666386913,
+   36.14937644036818
+  ],
+  [
+   "chilledwater",
+   "warm_w2",
+   "cov_mean",
+   0.657809207792151,
+   0.657809207792151
+  ],
+  [
+   "electricity",
+   "cold",
+   "cv_med",
+   62.49837508415988,
+   62.49837499521702
+  ],
+  [
+   "electricity",
+   "cold",
+   "nmbe_med",
+   23.553260228421333,
+   23.553260253058475
+  ],
+  [
+   "electricity",
+   "cold",
+   "cov_mean",
+   0.7077218949316798,
+   0.7077218949316798
+  ],
+  [
+   "electricity",
+   "warm",
+   "cv_med",
+   22.253479804695548,
+   22.25347987487347
+  ],
+  [
+   "electricity",
+   "warm",
+   "nmbe_med",
+   1.1755563607280284,
+   1.1755563580604684
+  ],
+  [
+   "electricity",
+   "warm",
+   "cov_mean",
+   0.8964160911455026,
+   0.8964160911455026
+  ],
+  [
+   "electricity",
+   "warm_w8",
+   "cv_med",
+   25.616928158164857,
+   25.6169280304422
+  ],
+  [
+   "electricity",
+   "warm_w8",
+   "nmbe_med",
+   -1.1694411048649442,
+   -1.1694410495130771
+  ],
+  [
+   "electricity",
+   "warm_w8",
+   "cov_mean",
+   0.9107444863883876,
+   0.9107444863883876
+  ],
+  [
+   "electricity",
+   "warm_w2",
+   "cv_med",
+   31.705655444913067,
+   31.705655735729668
+  ],
+  [
+   "electricity",
+   "warm_w2",
+   "nmbe_med",
+   5.850212407291676,
+   5.850212070229058
+  ],
+  [
+   "electricity",
+   "warm_w2",
+   "cov_mean",
+   0.8435083294339971,
+   0.8435083294339971
+  ],
+  [
+   "gas",
+   "cold",
+   "cv_med",
+   90.14178742344527,
+   90.14178702840388
+  ],
+  [
+   "gas",
+   "cold",
+   "nmbe_med",
+   14.708134931041748,
+   14.708133483913215
+  ],
+  [
+   "gas",
+   "cold",
+   "cov_mean",
+   0.8157295342602775,
+   0.8157295342602775
+  ],
+  [
+   "gas",
+   "warm",
+   "cv_med",
+   82.17891564969938,
+   82.17891578803714
+  ],
+  [
+   "gas",
+   "warm",
+   "nmbe_med",
+   6.803070494461174,
+   6.803071212834625
+  ],
+  [
+   "gas",
+   "warm",
+   "cov_mean",
+   0.9246175994347628,
+   0.9246175994347628
+  ],
+  [
+   "gas",
+   "warm_w8",
+   "cv_med",
+   84.66191261244333,
+   84.6619128793989
+  ],
+  [
+   "gas",
+   "warm_w8",
+   "nmbe_med",
+   3.057914255530329,
+   3.05791643013316
+  ],
+  [
+   "gas",
+   "warm_w8",
+   "cov_mean",
+   0.9476919728834792,
+   0.9476919728834792
+  ],
+  [
+   "gas",
+   "warm_w2",
+   "cv_med",
+   115.67215682534383,
+   115.67215714455855
+  ],
+  [
+   "gas",
+   "warm_w2",
+   "nmbe_med",
+   73.53098453314098,
+   73.53098506170244
+  ],
+  [
+   "gas",
+   "warm_w2",
+   "cov_mean",
+   0.36264262521515606,
+   0.36264262521515606
+  ],
+  [
+   "hotwater",
+   "cold",
+   "cv_med",
+   100.58374603863093,
+   100.5837457822934
+  ],
+  [
+   "hotwater",
+   "cold",
+   "nmbe_med",
+   33.956345363353854,
+   33.95634745174711
+  ],
+  [
+   "hotwater",
+   "cold",
+   "cov_mean",
+   0.9590259693536515,
+   0.9590259693536515
+  ],
+  [
+   "hotwater",
+   "warm",
+   "cv_med",
+   82.39342056919455,
+   82.3934206994948
+  ],
+  [
+   "hotwater",
+   "warm",
+   "nmbe_med",
+   -38.17660582675295,
+   -38.176605579994664
+  ],
+  [
+   "hotwater",
+   "warm",
+   "cov_mean",
+   0.8784847247454742,
+   0.8784847247454742
+  ],
+  [
+   "hotwater",
+   "warm_w8",
+   "cv_med",
+   71.61934726677971,
+   71.61934764127824
+  ],
+  [
+   "hotwater",
+   "warm_w8",
+   "nmbe_med",
+   6.581851509853589,
+   6.5818513887157755
+  ],
+  [
+   "hotwater",
+   "warm_w8",
+   "cov_mean",
+   0.8258315357214041,
+   0.8258315357214041
+  ],
+  [
+   "hotwater",
+   "warm_w2",
+   "cv_med",
+   95.66521579212902,
+   95.66521611623244
+  ],
+  [
+   "hotwater",
+   "warm_w2",
+   "nmbe_med",
+   16.032323312009677,
+   16.032325053684712
+  ],
+  [
+   "hotwater",
+   "warm_w2",
+   "cov_mean",
+   0.6873449545756148,
+   0.6873449545756148
+  ],
+  [
+   "steam",
+   "cold",
+   "cv_med",
+   103.51806373851318,
+   103.51806335521488
+  ],
+  [
+   "steam",
+   "cold",
+   "nmbe_med",
+   35.39022415228885,
+   35.390223567675235
+  ],
+  [
+   "steam",
+   "cold",
+   "cov_mean",
+   0.7221277234731623,
+   0.7221277234731623
+  ],
+  [
+   "steam",
+   "warm",
+   "cv_med",
+   61.65143593882409,
+   61.65143591119639
+  ],
+  [
+   "steam",
+   "warm",
+   "nmbe_med",
+   17.05795548986735,
+   17.05795550746019
+  ],
+  [
+   "steam",
+   "warm",
+   "cov_mean",
+   0.8566772356137371,
+   0.8566772356137371
+  ],
+  [
+   "steam",
+   "warm_w8",
+   "cv_med",
+   59.554514503966935,
+   59.55451437714076
+  ],
+  [
+   "steam",
+   "warm_w8",
+   "nmbe_med",
+   1.6799181273791202,
+   1.6799179363709118
+  ],
+  [
+   "steam",
+   "warm_w8",
+   "cov_mean",
+   0.9160388561521182,
+   0.9160274223538103
+  ],
+  [
+   "steam",
+   "warm_w2",
+   "cv_med",
+   64.32388033017942,
+   64.32387940233534
+  ],
+  [
+   "steam",
+   "warm_w2",
+   "nmbe_med",
+   13.05514235206575,
+   13.055142249854493
+  ],
+  [
+   "steam",
+   "warm_w2",
+   "cov_mean",
+   0.8557956709698203,
+   0.8557956709698203
+  ]
+ ],
+ "widen": [
+  [
+   "cold_full_chilledwater",
+   2.9,
+   2.9
+  ],
+  [
+   "cold_full_electricity",
+   2.0,
+   2.0
+  ],
+  [
+   "cold_full_gas",
+   1.5,
+   1.5
+  ],
+  [
+   "cold_full_hotwater",
+   1.0,
+   1.0
+  ],
+  [
+   "cold_full_steam",
+   7.75,
+   7.75
+  ],
+  [
+   "warm_full_chilledwater",
+   1.0,
+   1.0
+  ],
+  [
+   "warm_full_electricity",
+   1.05,
+   1.05
+  ],
+  [
+   "warm_full_gas",
+   1.0,
+   1.0
+  ],
+  [
+   "warm_full_hotwater",
+   1.2,
+   1.2
+  ],
+  [
+   "warm_full_steam",
+   1.15,
+   1.15
+  ],
+  [
+   "warm_w8_chilledwater",
+   1.65,
+   1.65
+  ],
+  [
+   "warm_w8_electricity",
+   1.0,
+   1.0
+  ],
+  [
+   "warm_w8_gas",
+   1.0,
+   1.0
+  ],
+  [
+   "warm_w8_hotwater",
+   1.25,
+   1.25
+  ],
+  [
+   "warm_w8_steam",
+   1.0,
+   1.0
+  ],
+  [
+   "warm_w2_chilledwater",
+   30.0,
+   30.0
+  ],
+  [
+   "warm_w2_electricity",
+   1.3,
+   1.3
+  ],
+  [
+   "warm_w2_gas",
+   30.0,
+   30.0
+  ],
+  [
+   "warm_w2_hotwater",
+   4.0,
+   4.0
+  ],
+  [
+   "warm_w2_steam",
+   1.25,
+   1.25
+  ]
+ ],
+ "exam": [
+  [
+   "chilledwater",
+   "LoadCast cold",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold",
+   "cv_med",
+   104.14635780781364,
+   104.14635782985216
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold",
+   "cv_p25",
+   85.03294493274919,
+   85.0329449803309
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold",
+   "cv_p75",
+   139.47630644068056,
+   139.47630560280032
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold",
+   "nmbe_med",
+   46.87395334688931,
+   46.87395358160151
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold",
+   "abs_nmbe_med",
+   75.78140060442628,
+   75.78140060063129
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold",
+   "g14_ok",
+   0.0030959752321981426,
+   0.0030959752321981426
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold",
+   "coverage90_mean",
+   0.9017444826553099,
+   0.9017444826553099
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold",
+   "coverage90_med",
+   1.0,
+   1.0
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016)",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016)",
+   "cv_med",
+   42.88002886634094,
+   42.88002877973918
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016)",
+   "cv_p25",
+   28.2479857034754,
+   28.247985804700043
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016)",
+   "cv_p75",
+   67.13935930222756,
+   67.13935957244573
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016)",
+   "nmbe_med",
+   -0.9534437684544028,
+   -0.9534436081704291
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016)",
+   "abs_nmbe_med",
+   12.816684535948609,
+   12.816684667050234
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016)",
+   "g14_ok",
+   0.19504643962848298,
+   0.19504643962848298
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016)",
+   "coverage90_mean",
+   0.9182939857810092,
+   0.9182939857810092
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016)",
+   "coverage90_med",
+   0.9696553303561205,
+   0.9696553303561205
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 8 weeks)",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 8 weeks)",
+   "cv_med",
+   62.631053080271606,
+   62.63105578492382
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 8 weeks)",
+   "cv_p25",
+   38.59669839557389,
+   38.59669870104071
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 8 weeks)",
+   "cv_p75",
+   110.4362916296038,
+   110.43629117334984
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 8 weeks)",
+   "nmbe_med",
+   18.978304027324075,
+   18.978303124249294
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 8 weeks)",
+   "abs_nmbe_med",
+   25.802062125934075,
+   25.802062378426147
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 8 weeks)",
+   "g14_ok",
+   0.07739938080495357,
+   0.07739938080495357
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 8 weeks)",
+   "coverage90_mean",
+   0.9017313637254499,
+   0.9017313637254499
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 8 weeks)",
+   "coverage90_med",
+   0.9801116538729937,
+   0.9801116538729937
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 2 weeks)",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 2 weeks)",
+   "cv_med",
+   87.2904115862924,
+   87.2904116128784
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 2 weeks)",
+   "cv_p25",
+   50.68184603405598,
+   50.68184604010188
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 2 weeks)",
+   "cv_p75",
+   148.1241958482213,
+   148.1241959434271
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 2 weeks)",
+   "nmbe_med",
+   42.06245215219909,
+   42.06245256338837
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 2 weeks)",
+   "abs_nmbe_med",
+   47.97854662828077,
+   47.97854678659815
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 2 weeks)",
+   "g14_ok",
+   0.030959752321981424,
+   0.030959752321981424
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 2 weeks)",
+   "coverage90_mean",
+   0.9073492217478286,
+   0.9073492217478286
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (last 2 weeks)",
+   "coverage90_med",
+   1.0,
+   1.0
+  ],
+  [
+   "chilledwater",
+   "dumb cold (dev median)",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "dumb cold (dev median)",
+   "cv_med",
+   101.64342513637266,
+   101.64342513637266
+  ],
+  [
+   "chilledwater",
+   "dumb cold (dev median)",
+   "cv_p25",
+   71.93190081789966,
+   71.93190081789966
+  ],
+  [
+   "chilledwater",
+   "dumb cold (dev median)",
+   "cv_p75",
+   284.9413814930974,
+   284.9413814930974
+  ],
+  [
+   "chilledwater",
+   "dumb cold (dev median)",
+   "nmbe_med",
+   4.7382417373937775,
+   4.7382417373937775
+  ],
+  [
+   "chilledwater",
+   "dumb cold (dev median)",
+   "abs_nmbe_med",
+   60.92543604627241,
+   60.92543604627241
+  ],
+  [
+   "chilledwater",
+   "dumb cold (dev median)",
+   "g14_ok",
+   0.0030959752321981426,
+   0.0030959752321981426
+  ],
+  [
+   "chilledwater",
+   "persistence 1 h*",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "persistence 1 h*",
+   "cv_med",
+   18.772820101008147,
+   18.772820101008147
+  ],
+  [
+   "chilledwater",
+   "persistence 1 h*",
+   "cv_p25",
+   11.1276078324899,
+   11.1276078324899
+  ],
+  [
+   "chilledwater",
+   "persistence 1 h*",
+   "cv_p75",
+   36.811851509833915,
+   36.811851509833915
+  ],
+  [
+   "chilledwater",
+   "persistence 1 h*",
+   "nmbe_med",
+   -0.01076206463154773,
+   -0.01076206463154773
+  ],
+  [
+   "chilledwater",
+   "persistence 1 h*",
+   "abs_nmbe_med",
+   0.01887988414663926,
+   0.01887988414663926
+  ],
+  [
+   "chilledwater",
+   "persistence 1 h*",
+   "g14_ok",
+   0.6718266253869969,
+   0.6718266253869969
+  ],
+  [
+   "chilledwater",
+   "persistence 24 h*",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "persistence 24 h*",
+   "cv_med",
+   40.3178870242417,
+   40.3178870242417
+  ],
+  [
+   "chilledwater",
+   "persistence 24 h*",
+   "cv_p25",
+   25.006628015911705,
+   25.006628015911705
+  ],
+  [
+   "chilledwater",
+   "persistence 24 h*",
+   "cv_p75",
+   64.65677443793984,
+   64.65677443793984
+  ],
+  [
+   "chilledwater",
+   "persistence 24 h*",
+   "nmbe_med",
+   -0.06028441974152785,
+   -0.06028441974152785
+  ],
+  [
+   "chilledwater",
+   "persistence 24 h*",
+   "abs_nmbe_med",
+   0.08439280902660014,
+   0.08439280902660014
+  ],
+  [
+   "chilledwater",
+   "persistence 24 h*",
+   "g14_ok",
+   0.34674922600619196,
+   0.34674922600619196
+  ],
+  [
+   "chilledwater",
+   "same hour last week*",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "same hour last week*",
+   "cv_med",
+   51.79832348463532,
+   51.79832348463532
+  ],
+  [
+   "chilledwater",
+   "same hour last week*",
+   "cv_p25",
+   34.91346999015067,
+   34.91346999015067
+  ],
+  [
+   "chilledwater",
+   "same hour last week*",
+   "cv_p75",
+   85.41995112532227,
+   85.41995112532227
+  ],
+  [
+   "chilledwater",
+   "same hour last week*",
+   "nmbe_med",
+   -0.2008285323742143,
+   -0.2008285323742143
+  ],
+  [
+   "chilledwater",
+   "same hour last week*",
+   "abs_nmbe_med",
+   0.4352046416064944,
+   0.4352046416064944
+  ],
+  [
+   "chilledwater",
+   "same hour last week*",
+   "g14_ok",
+   0.13003095975232198,
+   0.13003095975232198
+  ],
+  [
+   "chilledwater",
+   "TOWT (B)",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "TOWT (B)",
+   "cv_med",
+   45.65871142975256,
+   45.65871142975256
+  ],
+  [
+   "chilledwater",
+   "TOWT (B)",
+   "cv_p25",
+   28.154321792955002,
+   28.154321792955002
+  ],
+  [
+   "chilledwater",
+   "TOWT (B)",
+   "cv_p75",
+   74.1732112529092,
+   74.1732112529092
+  ],
+  [
+   "chilledwater",
+   "TOWT (B)",
+   "nmbe_med",
+   -3.072779865280908,
+   -3.072779865280908
+  ],
+  [
+   "chilledwater",
+   "TOWT (B)",
+   "abs_nmbe_med",
+   8.12439147713834,
+   8.12439147713834
+  ],
+  [
+   "chilledwater",
+   "TOWT (B)",
+   "g14_ok",
+   0.22291021671826625,
+   0.22291021671826625
+  ],
+  [
+   "chilledwater",
+   "TOWT (LoadCast ridge)",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "TOWT (LoadCast ridge)",
+   "cv_med",
+   45.220607294816304,
+   45.220607294816304
+  ],
+  [
+   "chilledwater",
+   "TOWT (LoadCast ridge)",
+   "cv_p25",
+   28.928562746055654,
+   28.928562746055654
+  ],
+  [
+   "chilledwater",
+   "TOWT (LoadCast ridge)",
+   "cv_p75",
+   73.26130144454967,
+   73.26130144454967
+  ],
+  [
+   "chilledwater",
+   "TOWT (LoadCast ridge)",
+   "nmbe_med",
+   -4.696355368099565,
+   -4.696355368099565
+  ],
+  [
+   "chilledwater",
+   "TOWT (LoadCast ridge)",
+   "abs_nmbe_med",
+   9.873967554604754,
+   9.873967554604754
+  ],
+  [
+   "chilledwater",
+   "TOWT (LoadCast ridge)",
+   "g14_ok",
+   0.21981424148606812,
+   0.21981424148606812
+  ],
+  [
+   "chilledwater",
+   "change-point hourly",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "change-point hourly",
+   "cv_med",
+   42.358455953063384,
+   42.358455953063384
+  ],
+  [
+   "chilledwater",
+   "change-point hourly",
+   "cv_p25",
+   27.678536879057205,
+   27.678536879057205
+  ],
+  [
+   "chilledwater",
+   "change-point hourly",
+   "cv_p75",
+   64.77390741337902,
+   64.77390741337902
+  ],
+  [
+   "chilledwater",
+   "change-point hourly",
+   "nmbe_med",
+   -3.14735235202837,
+   -3.14735235202837
+  ],
+  [
+   "chilledwater",
+   "change-point hourly",
+   "abs_nmbe_med",
+   8.04872254248774,
+   8.04872254248774
+  ],
+  [
+   "chilledwater",
+   "change-point hourly",
+   "g14_ok",
+   0.24458204334365324,
+   0.24458204334365324
+  ],
+  [
+   "chilledwater",
+   "change-point daily",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "change-point daily",
+   "cv_med",
+   32.426726961031484,
+   32.426726961031484
+  ],
+  [
+   "chilledwater",
+   "change-point daily",
+   "cv_p25",
+   22.032005411475097,
+   22.032005411475097
+  ],
+  [
+   "chilledwater",
+   "change-point daily",
+   "cv_p75",
+   53.26454049419732,
+   53.26454049419732
+  ],
+  [
+   "chilledwater",
+   "change-point daily",
+   "nmbe_med",
+   -2.8800740043600017,
+   -2.8800740043600017
+  ],
+  [
+   "chilledwater",
+   "change-point daily",
+   "abs_nmbe_med",
+   8.075556571813273,
+   8.075556571813273
+  ],
+  [
+   "chilledwater",
+   "change-point daily",
+   "g14_ok",
+   0.33746130030959753,
+   0.33746130030959753
+  ],
+  [
+   "chilledwater",
+   "change-point monthly",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "change-point monthly",
+   "cv_med",
+   21.570740668227938,
+   21.570740668227938
+  ],
+  [
+   "chilledwater",
+   "change-point monthly",
+   "cv_p25",
+   14.673143681819393,
+   14.673143681819393
+  ],
+  [
+   "chilledwater",
+   "change-point monthly",
+   "cv_p75",
+   35.480652838778774,
+   35.480652838778774
+  ],
+  [
+   "chilledwater",
+   "change-point monthly",
+   "nmbe_med",
+   -4.520246515997038,
+   -4.520246515997038
+  ],
+  [
+   "chilledwater",
+   "change-point monthly",
+   "abs_nmbe_med",
+   11.043786489868666,
+   11.043786489868666
+  ],
+  [
+   "chilledwater",
+   "change-point monthly",
+   "g14_ok",
+   0.4148606811145511,
+   0.4148606811145511
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, daily",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, daily",
+   "cv_med",
+   95.46203059655716,
+   95.46203113943335
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, daily",
+   "cv_p25",
+   71.66037222083449,
+   71.66037177221989
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, daily",
+   "cv_p75",
+   118.3355997992364,
+   118.33559980044889
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, daily",
+   "nmbe_med",
+   46.92197712548868,
+   46.921977482473665
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, daily",
+   "abs_nmbe_med",
+   75.90114103060999,
+   75.90114098092185
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, daily",
+   "g14_ok",
+   0.0030959752321981426,
+   0.0030959752321981426
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), daily",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), daily",
+   "cv_med",
+   32.37487123453312,
+   32.3748714568308
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), daily",
+   "cv_p25",
+   21.633238193346838,
+   21.633238099479463
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), daily",
+   "cv_p75",
+   49.327072671658726,
+   49.32707285583931
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), daily",
+   "nmbe_med",
+   -0.7417984343599414,
+   -0.7417980646974954
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), daily",
+   "abs_nmbe_med",
+   12.646033015713819,
+   12.646034436469183
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), daily",
+   "g14_ok",
+   0.2786377708978328,
+   0.2786377708978328
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, monthly",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, monthly",
+   "cv_med",
+   90.77660645803032,
+   90.77660634656341
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, monthly",
+   "cv_p25",
+   65.0338634181672,
+   65.0338629129775
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, monthly",
+   "cv_p75",
+   110.90814682684967,
+   110.90814683776182
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, monthly",
+   "nmbe_med",
+   46.286740117646104,
+   46.28673860591361
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, monthly",
+   "abs_nmbe_med",
+   75.57834678023032,
+   75.57834658071178
+  ],
+  [
+   "chilledwater",
+   "LoadCast cold, monthly",
+   "g14_ok",
+   0.01238390092879257,
+   0.01238390092879257
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), monthly",
+   "n",
+   323,
+   323
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), monthly",
+   "cv_med",
+   22.304714480248464,
+   22.304714480248464
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), monthly",
+   "cv_p25",
+   14.718390884994697,
+   14.718390884994697
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), monthly",
+   "cv_p75",
+   36.8978260623891,
+   36.89782595834276
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), monthly",
+   "nmbe_med",
+   -1.0154042809112807,
+   -1.0154042809112807
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), monthly",
+   "abs_nmbe_med",
+   12.839244381424257,
+   12.839243143439305
+  ],
+  [
+   "chilledwater",
+   "LoadCast warm (2016), monthly",
+   "g14_ok",
+   0.38699690402476783,
+   0.38699690402476783
+  ],
+  [
+   "electricity",
+   "LoadCast cold",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "LoadCast cold",
+   "cv_med",
+   59.28729169021597,
+   59.28729164202311
+  ],
+  [
+   "electricity",
+   "LoadCast cold",
+   "cv_p25",
+   41.443948576074646,
+   41.44394967036058
+  ],
+  [
+   "electricity",
+   "LoadCast cold",
+   "cv_p75",
+   79.80696505365594,
+   79.80696489458387
+  ],
+  [
+   "electricity",
+   "LoadCast cold",
+   "nmbe_med",
+   24.338768281921922,
+   24.338767298510614
+  ],
+  [
+   "electricity",
+   "LoadCast cold",
+   "abs_nmbe_med",
+   48.506546132400956,
+   48.50654594127417
+  ],
+  [
+   "electricity",
+   "LoadCast cold",
+   "g14_ok",
+   0.054906542056074766,
+   0.054906542056074766
+  ],
+  [
+   "electricity",
+   "LoadCast cold",
+   "coverage90_mean",
+   0.8788710498986754,
+   0.878871318468337
+  ],
+  [
+   "electricity",
+   "LoadCast cold",
+   "coverage90_med",
+   1.0,
+   1.0
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016)",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016)",
+   "cv_med",
+   18.82596826479315,
+   18.825968396503136
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016)",
+   "cv_p25",
+   12.89366289694205,
+   12.893662859532999
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016)",
+   "cv_p75",
+   26.742238717869935,
+   26.742238781247934
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016)",
+   "nmbe_med",
+   -0.4834557537016855,
+   -0.483455718988547
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016)",
+   "abs_nmbe_med",
+   4.776412928115915,
+   4.77641294857694
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016)",
+   "g14_ok",
+   0.7032710280373832,
+   0.7032710280373832
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016)",
+   "coverage90_mean",
+   0.9212064349211875,
+   0.9212064349211875
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016)",
+   "coverage90_med",
+   0.9597458912866509,
+   0.9597458912866509
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 8 weeks)",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 8 weeks)",
+   "cv_med",
+   23.84609442651624,
+   23.846093676767808
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 8 weeks)",
+   "cv_p25",
+   16.212500656149427,
+   16.21250065691314
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 8 weeks)",
+   "cv_p75",
+   33.909738779105034,
+   33.909738688852
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 8 weeks)",
+   "nmbe_med",
+   1.544894569595669,
+   1.5448946832274
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 8 weeks)",
+   "abs_nmbe_med",
+   7.229136740335157,
+   7.229136755683832
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 8 weeks)",
+   "g14_ok",
+   0.530373831775701,
+   0.530373831775701
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 8 weeks)",
+   "coverage90_mean",
+   0.9006615275883234,
+   0.9006615275883234
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 8 weeks)",
+   "coverage90_med",
+   0.9491644123546555,
+   0.9491644123546555
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 2 weeks)",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 2 weeks)",
+   "cv_med",
+   30.092194709181946,
+   30.09219467652303
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 2 weeks)",
+   "cv_p25",
+   20.783620294249378,
+   20.783620327543176
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 2 weeks)",
+   "cv_p75",
+   40.804790642219885,
+   40.804790250250896
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 2 weeks)",
+   "nmbe_med",
+   8.248023800661572,
+   8.248023965476808
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 2 weeks)",
+   "abs_nmbe_med",
+   13.048929090888194,
+   13.048929531396507
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 2 weeks)",
+   "g14_ok",
+   0.2932242990654206,
+   0.2932242990654206
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 2 weeks)",
+   "coverage90_mean",
+   0.8935084309145267,
+   0.8935084309145267
+  ],
+  [
+   "electricity",
+   "LoadCast warm (last 2 weeks)",
+   "coverage90_med",
+   0.9600828818369453,
+   0.9600828818369453
+  ],
+  [
+   "electricity",
+   "dumb cold (dev median)",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "dumb cold (dev median)",
+   "cv_med",
+   53.78175863230493,
+   53.78175863230493
+  ],
+  [
+   "electricity",
+   "dumb cold (dev median)",
+   "cv_p25",
+   36.89730919063807,
+   36.89730919063807
+  ],
+  [
+   "electricity",
+   "dumb cold (dev median)",
+   "cv_p75",
+   76.40282406398757,
+   76.40282406398757
+  ],
+  [
+   "electricity",
+   "dumb cold (dev median)",
+   "nmbe_med",
+   11.759226529730562,
+   11.759226529730562
+  ],
+  [
+   "electricity",
+   "dumb cold (dev median)",
+   "abs_nmbe_med",
+   42.403742838930356,
+   42.403742838930356
+  ],
+  [
+   "electricity",
+   "dumb cold (dev median)",
+   "g14_ok",
+   0.06658878504672897,
+   0.06658878504672897
+  ],
+  [
+   "electricity",
+   "persistence 1 h*",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "persistence 1 h*",
+   "cv_med",
+   9.59931595174468,
+   9.59931595174468
+  ],
+  [
+   "electricity",
+   "persistence 1 h*",
+   "cv_p25",
+   6.482606936121439,
+   6.482606936121439
+  ],
+  [
+   "electricity",
+   "persistence 1 h*",
+   "cv_p75",
+   14.202294926630998,
+   14.202294926630998
+  ],
+  [
+   "electricity",
+   "persistence 1 h*",
+   "nmbe_med",
+   -0.00386631303269017,
+   -0.00386631303269017
+  ],
+  [
+   "electricity",
+   "persistence 1 h*",
+   "abs_nmbe_med",
+   0.007099304890716505,
+   0.007099304890716505
+  ],
+  [
+   "electricity",
+   "persistence 1 h*",
+   "g14_ok",
+   0.977803738317757,
+   0.977803738317757
+  ],
+  [
+   "electricity",
+   "persistence 24 h*",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "persistence 24 h*",
+   "cv_med",
+   18.60091170415786,
+   18.60091170415786
+  ],
+  [
+   "electricity",
+   "persistence 24 h*",
+   "cv_p25",
+   12.261643763260942,
+   12.261643763260942
+  ],
+  [
+   "electricity",
+   "persistence 24 h*",
+   "cv_p75",
+   26.406085238794375,
+   26.406085238794375
+  ],
+  [
+   "electricity",
+   "persistence 24 h*",
+   "nmbe_med",
+   0.0006556002575878828,
+   0.0006556002575878828
+  ],
+  [
+   "electricity",
+   "persistence 24 h*",
+   "abs_nmbe_med",
+   0.045376455685737775,
+   0.045376455685737775
+  ],
+  [
+   "electricity",
+   "persistence 24 h*",
+   "g14_ok",
+   0.8049065420560748,
+   0.8049065420560748
+  ],
+  [
+   "electricity",
+   "same hour last week*",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "same hour last week*",
+   "cv_med",
+   19.52128943537651,
+   19.52128943537651
+  ],
+  [
+   "electricity",
+   "same hour last week*",
+   "cv_p25",
+   13.086514956126766,
+   13.086514956126766
+  ],
+  [
+   "electricity",
+   "same hour last week*",
+   "cv_p75",
+   27.257454211041765,
+   27.257454211041765
+  ],
+  [
+   "electricity",
+   "same hour last week*",
+   "nmbe_med",
+   0.005450448316872332,
+   0.005450448316872332
+  ],
+  [
+   "electricity",
+   "same hour last week*",
+   "abs_nmbe_med",
+   0.16994678863921703,
+   0.16994678863921703
+  ],
+  [
+   "electricity",
+   "same hour last week*",
+   "g14_ok",
+   0.8119158878504673,
+   0.8119158878504673
+  ],
+  [
+   "electricity",
+   "TOWT (B)",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "TOWT (B)",
+   "cv_med",
+   19.648425364764787,
+   19.648425364764787
+  ],
+  [
+   "electricity",
+   "TOWT (B)",
+   "cv_p25",
+   13.653894027875136,
+   13.653894027875136
+  ],
+  [
+   "electricity",
+   "TOWT (B)",
+   "cv_p75",
+   27.888657135713423,
+   27.888657135713423
+  ],
+  [
+   "electricity",
+   "TOWT (B)",
+   "nmbe_med",
+   -1.8383082758809435,
+   -1.8383082758809435
+  ],
+  [
+   "electricity",
+   "TOWT (B)",
+   "abs_nmbe_med",
+   4.734355508441913,
+   4.734355508441913
+  ],
+  [
+   "electricity",
+   "TOWT (B)",
+   "g14_ok",
+   0.7032710280373832,
+   0.7032710280373832
+  ],
+  [
+   "electricity",
+   "TOWT (LoadCast ridge)",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "TOWT (LoadCast ridge)",
+   "cv_med",
+   19.45187898192835,
+   19.45187898192835
+  ],
+  [
+   "electricity",
+   "TOWT (LoadCast ridge)",
+   "cv_p25",
+   13.515661712873701,
+   13.515661712873701
+  ],
+  [
+   "electricity",
+   "TOWT (LoadCast ridge)",
+   "cv_p75",
+   27.326475666959904,
+   27.326475666959904
+  ],
+  [
+   "electricity",
+   "TOWT (LoadCast ridge)",
+   "nmbe_med",
+   -1.804201946915824,
+   -1.804201946915824
+  ],
+  [
+   "electricity",
+   "TOWT (LoadCast ridge)",
+   "abs_nmbe_med",
+   4.535169441628273,
+   4.535169441628273
+  ],
+  [
+   "electricity",
+   "TOWT (LoadCast ridge)",
+   "g14_ok",
+   0.7102803738317757,
+   0.7102803738317757
+  ],
+  [
+   "electricity",
+   "change-point hourly",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "change-point hourly",
+   "cv_med",
+   19.08592588438446,
+   19.08592588438446
+  ],
+  [
+   "electricity",
+   "change-point hourly",
+   "cv_p25",
+   13.375383311151532,
+   13.375383311151532
+  ],
+  [
+   "electricity",
+   "change-point hourly",
+   "cv_p75",
+   27.296834100516534,
+   27.296834100516534
+  ],
+  [
+   "electricity",
+   "change-point hourly",
+   "nmbe_med",
+   -1.487522381625205,
+   -1.487522381625205
+  ],
+  [
+   "electricity",
+   "change-point hourly",
+   "abs_nmbe_med",
+   4.557168147633751,
+   4.557168147633751
+  ],
+  [
+   "electricity",
+   "change-point hourly",
+   "g14_ok",
+   0.7114485981308412,
+   0.7114485981308412
+  ],
+  [
+   "electricity",
+   "change-point daily",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "change-point daily",
+   "cv_med",
+   17.170152198075883,
+   17.170152198075883
+  ],
+  [
+   "electricity",
+   "change-point daily",
+   "cv_p25",
+   12.46444672459826,
+   12.46444672459826
+  ],
+  [
+   "electricity",
+   "change-point daily",
+   "cv_p75",
+   25.168903736019654,
+   25.168903736019654
+  ],
+  [
+   "electricity",
+   "change-point daily",
+   "nmbe_med",
+   -1.6768474103857307,
+   -1.6768474103857307
+  ],
+  [
+   "electricity",
+   "change-point daily",
+   "abs_nmbe_med",
+   4.628075955783688,
+   4.628075955783688
+  ],
+  [
+   "electricity",
+   "change-point daily",
+   "g14_ok",
+   0.7535046728971962,
+   0.7535046728971962
+  ],
+  [
+   "electricity",
+   "change-point monthly",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "change-point monthly",
+   "cv_med",
+   10.960981005244442,
+   10.960981005244442
+  ],
+  [
+   "electricity",
+   "change-point monthly",
+   "cv_p25",
+   7.12127658197383,
+   7.12127658197383
+  ],
+  [
+   "electricity",
+   "change-point monthly",
+   "cv_p75",
+   17.69507706531916,
+   17.69507706531916
+  ],
+  [
+   "electricity",
+   "change-point monthly",
+   "nmbe_med",
+   -2.0696556798290784,
+   -2.0696556798290784
+  ],
+  [
+   "electricity",
+   "change-point monthly",
+   "abs_nmbe_med",
+   6.1230017312761245,
+   6.1230017312761245
+  ],
+  [
+   "electricity",
+   "change-point monthly",
+   "g14_ok",
+   0.6717289719626168,
+   0.6717289719626168
+  ],
+  [
+   "electricity",
+   "LoadCast cold, daily",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "LoadCast cold, daily",
+   "cv_med",
+   54.65981428196987,
+   54.659811665823185
+  ],
+  [
+   "electricity",
+   "LoadCast cold, daily",
+   "cv_p25",
+   34.92938695711911,
+   34.929387470930216
+  ],
+  [
+   "electricity",
+   "LoadCast cold, daily",
+   "cv_p75",
+   76.36737250380529,
+   76.36737252797572
+  ],
+  [
+   "electricity",
+   "LoadCast cold, daily",
+   "nmbe_med",
+   24.341804579553056,
+   24.341803586684737
+  ],
+  [
+   "electricity",
+   "LoadCast cold, daily",
+   "abs_nmbe_med",
+   48.40051456539915,
+   48.40051424520558
+  ],
+  [
+   "electricity",
+   "LoadCast cold, daily",
+   "g14_ok",
+   0.0911214953271028,
+   0.0911214953271028
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), daily",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), daily",
+   "cv_med",
+   14.096100552855354,
+   14.096100771686938
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), daily",
+   "cv_p25",
+   9.609809438451393,
+   9.60980928944496
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), daily",
+   "cv_p75",
+   20.7658282800581,
+   20.765828274943516
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), daily",
+   "nmbe_med",
+   -0.4880765810637273,
+   -0.4880765810637273
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), daily",
+   "abs_nmbe_med",
+   4.80810562784716,
+   4.808105703905942
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), daily",
+   "g14_ok",
+   0.7651869158878505,
+   0.7651869158878505
+  ],
+  [
+   "electricity",
+   "LoadCast cold, monthly",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "LoadCast cold, monthly",
+   "cv_med",
+   51.78689564555423,
+   51.78689564555423
+  ],
+  [
+   "electricity",
+   "LoadCast cold, monthly",
+   "cv_p25",
+   30.648772854518544,
+   30.64877252490091
+  ],
+  [
+   "electricity",
+   "LoadCast cold, monthly",
+   "cv_p75",
+   75.0878521546963,
+   75.0878521546963
+  ],
+  [
+   "electricity",
+   "LoadCast cold, monthly",
+   "nmbe_med",
+   24.470472689259637,
+   24.47047227827875
+  ],
+  [
+   "electricity",
+   "LoadCast cold, monthly",
+   "abs_nmbe_med",
+   48.47302324116555,
+   48.47302298104459
+  ],
+  [
+   "electricity",
+   "LoadCast cold, monthly",
+   "g14_ok",
+   0.10046728971962617,
+   0.10046728971962617
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), monthly",
+   "n",
+   856,
+   856
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), monthly",
+   "cv_med",
+   9.506938464060674,
+   9.506938870152787
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), monthly",
+   "cv_p25",
+   6.169909555672089,
+   6.169909555672089
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), monthly",
+   "cv_p75",
+   14.706688805868662,
+   14.706688923454193
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), monthly",
+   "nmbe_med",
+   -0.4401079647435192,
+   -0.4401079647435192
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), monthly",
+   "abs_nmbe_med",
+   4.774571889372924,
+   4.774571889372924
+  ],
+  [
+   "electricity",
+   "LoadCast warm (2016), monthly",
+   "g14_ok",
+   0.7850467289719626,
+   0.7850467289719626
+  ],
+  [
+   "gas",
+   "LoadCast cold",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "LoadCast cold",
+   "cv_med",
+   181.53475675613123,
+   181.53475686258474
+  ],
+  [
+   "gas",
+   "LoadCast cold",
+   "cv_p25",
+   103.93273880231422,
+   103.93273859744436
+  ],
+  [
+   "gas",
+   "LoadCast cold",
+   "cv_p75",
+   479.8640561860067,
+   479.864059823136
+  ],
+  [
+   "gas",
+   "LoadCast cold",
+   "nmbe_med",
+   14.896451774786136,
+   14.896450696618505
+  ],
+  [
+   "gas",
+   "LoadCast cold",
+   "abs_nmbe_med",
+   87.1067553285577,
+   87.10675538990034
+  ],
+  [
+   "gas",
+   "LoadCast cold",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "gas",
+   "LoadCast cold",
+   "coverage90_mean",
+   0.7359442055370355,
+   0.7359442055370355
+  ],
+  [
+   "gas",
+   "LoadCast cold",
+   "coverage90_med",
+   0.9140122434786906,
+   0.9140122434786906
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016)",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016)",
+   "cv_med",
+   110.45194824537651,
+   110.45194757662064
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016)",
+   "cv_p25",
+   78.44139625471004,
+   78.4413965089716
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016)",
+   "cv_p75",
+   131.43121454822708,
+   131.4312139535777
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016)",
+   "nmbe_med",
+   -0.9266365418750727,
+   -0.9266357368213141
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016)",
+   "abs_nmbe_med",
+   21.663614618952423,
+   21.663615052987677
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016)",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016)",
+   "coverage90_mean",
+   0.730401491017463,
+   0.730401491017463
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016)",
+   "coverage90_med",
+   0.7449705010627283,
+   0.7449705010627283
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 8 weeks)",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 8 weeks)",
+   "cv_med",
+   133.09096690217098,
+   133.0909667085517
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 8 weeks)",
+   "cv_p25",
+   91.36925888639836,
+   91.3692586760792
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 8 weeks)",
+   "cv_p75",
+   177.22404633012184,
+   177.22404690197067
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 8 weeks)",
+   "nmbe_med",
+   -30.50301456358585,
+   -30.503014238659027
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 8 weeks)",
+   "abs_nmbe_med",
+   41.91480336759124,
+   41.91480364950213
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 8 weeks)",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 8 weeks)",
+   "coverage90_mean",
+   0.7244726553403322,
+   0.7244726553403322
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 8 weeks)",
+   "coverage90_med",
+   0.7589199110122358,
+   0.7589199110122358
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 2 weeks)",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 2 weeks)",
+   "cv_med",
+   159.88410560555252,
+   159.88410573946712
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 2 weeks)",
+   "cv_p25",
+   99.2105239681965,
+   99.2105240619709
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 2 weeks)",
+   "cv_p75",
+   192.89078214052049,
+   192.89078187714242
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 2 weeks)",
+   "nmbe_med",
+   1.2612173420621255,
+   1.2612174656762116
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 2 weeks)",
+   "abs_nmbe_med",
+   56.109355094614955,
+   56.10935597101276
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 2 weeks)",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 2 weeks)",
+   "coverage90_mean",
+   0.9452672428231625,
+   0.9452672428231625
+  ],
+  [
+   "gas",
+   "LoadCast warm (last 2 weeks)",
+   "coverage90_med",
+   1.0,
+   1.0
+  ],
+  [
+   "gas",
+   "dumb cold (dev median)",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "dumb cold (dev median)",
+   "cv_med",
+   190.43209641472112,
+   190.43209641472112
+  ],
+  [
+   "gas",
+   "dumb cold (dev median)",
+   "cv_p25",
+   105.26082669237456,
+   105.26082669237456
+  ],
+  [
+   "gas",
+   "dumb cold (dev median)",
+   "cv_p75",
+   650.9166757056173,
+   650.9166757056173
+  ],
+  [
+   "gas",
+   "dumb cold (dev median)",
+   "nmbe_med",
+   0.05911863375953463,
+   0.05911863375953463
+  ],
+  [
+   "gas",
+   "dumb cold (dev median)",
+   "abs_nmbe_med",
+   80.2070335544372,
+   80.2070335544372
+  ],
+  [
+   "gas",
+   "dumb cold (dev median)",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "gas",
+   "persistence 1 h*",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "persistence 1 h*",
+   "cv_med",
+   64.30997421103689,
+   64.30997421103689
+  ],
+  [
+   "gas",
+   "persistence 1 h*",
+   "cv_p25",
+   36.87548298838597,
+   36.87548298838597
+  ],
+  [
+   "gas",
+   "persistence 1 h*",
+   "cv_p75",
+   95.59530370755408,
+   95.59530370755408
+  ],
+  [
+   "gas",
+   "persistence 1 h*",
+   "nmbe_med",
+   -0.11309536588899421,
+   -0.11309536588899421
+  ],
+  [
+   "gas",
+   "persistence 1 h*",
+   "abs_nmbe_med",
+   0.11309536588899421,
+   0.11309536588899421
+  ],
+  [
+   "gas",
+   "persistence 1 h*",
+   "g14_ok",
+   0.15384615384615385,
+   0.15384615384615385
+  ],
+  [
+   "gas",
+   "persistence 24 h*",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "persistence 24 h*",
+   "cv_med",
+   87.66520168618456,
+   87.66520168618456
+  ],
+  [
+   "gas",
+   "persistence 24 h*",
+   "cv_p25",
+   54.81078137626294,
+   54.81078137626294
+  ],
+  [
+   "gas",
+   "persistence 24 h*",
+   "cv_p75",
+   127.57376178967858,
+   127.57376178967858
+  ],
+  [
+   "gas",
+   "persistence 24 h*",
+   "nmbe_med",
+   -0.10892552431097827,
+   -0.10892552431097827
+  ],
+  [
+   "gas",
+   "persistence 24 h*",
+   "abs_nmbe_med",
+   0.2991138613801002,
+   0.2991138613801002
+  ],
+  [
+   "gas",
+   "persistence 24 h*",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "gas",
+   "same hour last week*",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "same hour last week*",
+   "cv_med",
+   94.14894627535894,
+   94.14894627535894
+  ],
+  [
+   "gas",
+   "same hour last week*",
+   "cv_p25",
+   69.56921684947254,
+   69.56921684947254
+  ],
+  [
+   "gas",
+   "same hour last week*",
+   "cv_p75",
+   137.52904529175447,
+   137.52904529175447
+  ],
+  [
+   "gas",
+   "same hour last week*",
+   "nmbe_med",
+   0.6705629620335718,
+   0.6705629620335718
+  ],
+  [
+   "gas",
+   "same hour last week*",
+   "abs_nmbe_med",
+   1.8946408155426275,
+   1.8946408155426275
+  ],
+  [
+   "gas",
+   "same hour last week*",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "gas",
+   "TOWT (B)",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "TOWT (B)",
+   "cv_med",
+   95.6546039386095,
+   95.6546039386095
+  ],
+  [
+   "gas",
+   "TOWT (B)",
+   "cv_p25",
+   75.07464916232449,
+   75.07464916232449
+  ],
+  [
+   "gas",
+   "TOWT (B)",
+   "cv_p75",
+   133.3798682686803,
+   133.3798682686803
+  ],
+  [
+   "gas",
+   "TOWT (B)",
+   "nmbe_med",
+   -11.421140250402038,
+   -11.421140250402038
+  ],
+  [
+   "gas",
+   "TOWT (B)",
+   "abs_nmbe_med",
+   15.27957807058902,
+   15.27957807058902
+  ],
+  [
+   "gas",
+   "TOWT (B)",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "gas",
+   "TOWT (LoadCast ridge)",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "TOWT (LoadCast ridge)",
+   "cv_med",
+   94.68601629459783,
+   94.68601629459783
+  ],
+  [
+   "gas",
+   "TOWT (LoadCast ridge)",
+   "cv_p25",
+   73.94500100774123,
+   73.94500100774123
+  ],
+  [
+   "gas",
+   "TOWT (LoadCast ridge)",
+   "cv_p75",
+   131.09192515884882,
+   131.09192515884882
+  ],
+  [
+   "gas",
+   "TOWT (LoadCast ridge)",
+   "nmbe_med",
+   -8.794204325536109,
+   -8.794204325536109
+  ],
+  [
+   "gas",
+   "TOWT (LoadCast ridge)",
+   "abs_nmbe_med",
+   15.559063194384304,
+   15.559063194384304
+  ],
+  [
+   "gas",
+   "TOWT (LoadCast ridge)",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "gas",
+   "change-point hourly",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "change-point hourly",
+   "cv_med",
+   95.79956266237423,
+   95.79956266237423
+  ],
+  [
+   "gas",
+   "change-point hourly",
+   "cv_p25",
+   73.07482428623118,
+   73.07482428623118
+  ],
+  [
+   "gas",
+   "change-point hourly",
+   "cv_p75",
+   120.3553253140804,
+   120.3553253140804
+  ],
+  [
+   "gas",
+   "change-point hourly",
+   "nmbe_med",
+   -10.899927078340603,
+   -10.899927078340603
+  ],
+  [
+   "gas",
+   "change-point hourly",
+   "abs_nmbe_med",
+   15.48028028813368,
+   15.48028028813368
+  ],
+  [
+   "gas",
+   "change-point hourly",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "gas",
+   "change-point daily",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "change-point daily",
+   "cv_med",
+   61.95913732974755,
+   61.95913732974755
+  ],
+  [
+   "gas",
+   "change-point daily",
+   "cv_p25",
+   46.44134926354647,
+   46.44134926354647
+  ],
+  [
+   "gas",
+   "change-point daily",
+   "cv_p75",
+   92.75837919246015,
+   92.75837919246015
+  ],
+  [
+   "gas",
+   "change-point daily",
+   "nmbe_med",
+   -10.47725323063358,
+   -10.47725323063358
+  ],
+  [
+   "gas",
+   "change-point daily",
+   "abs_nmbe_med",
+   14.415869254726385,
+   14.415869254726385
+  ],
+  [
+   "gas",
+   "change-point daily",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "gas",
+   "change-point monthly",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "change-point monthly",
+   "cv_med",
+   41.49263433542134,
+   41.49263433542134
+  ],
+  [
+   "gas",
+   "change-point monthly",
+   "cv_p25",
+   32.08166018292812,
+   32.08166018292812
+  ],
+  [
+   "gas",
+   "change-point monthly",
+   "cv_p75",
+   61.18710650104704,
+   61.18710650104704
+  ],
+  [
+   "gas",
+   "change-point monthly",
+   "nmbe_med",
+   -14.538406284257096,
+   -14.538406284257096
+  ],
+  [
+   "gas",
+   "change-point monthly",
+   "abs_nmbe_med",
+   18.715107719836553,
+   18.715107719836553
+  ],
+  [
+   "gas",
+   "change-point monthly",
+   "g14_ok",
+   0.07692307692307693,
+   0.07692307692307693
+  ],
+  [
+   "gas",
+   "LoadCast cold, daily",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "LoadCast cold, daily",
+   "cv_med",
+   131.80325510200674,
+   131.8032551651886
+  ],
+  [
+   "gas",
+   "LoadCast cold, daily",
+   "cv_p25",
+   90.76725664571038,
+   90.7672567963026
+  ],
+  [
+   "gas",
+   "LoadCast cold, daily",
+   "cv_p75",
+   442.1431177620067,
+   442.1431218765209
+  ],
+  [
+   "gas",
+   "LoadCast cold, daily",
+   "nmbe_med",
+   28.557323728765667,
+   28.55732276624733
+  ],
+  [
+   "gas",
+   "LoadCast cold, daily",
+   "abs_nmbe_med",
+   87.05474017570154,
+   87.05474024298897
+  ],
+  [
+   "gas",
+   "LoadCast cold, daily",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), daily",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), daily",
+   "cv_med",
+   75.5425989590841,
+   75.54259936677792
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), daily",
+   "cv_p25",
+   48.82563199595418,
+   48.825632164450745
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), daily",
+   "cv_p75",
+   98.0434132408858,
+   98.04341336044294
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), daily",
+   "nmbe_med",
+   2.3455151937778815,
+   2.3455161928726787
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), daily",
+   "abs_nmbe_med",
+   22.973375342094158,
+   22.973375860563756
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), daily",
+   "g14_ok",
+   0.038461538461538464,
+   0.038461538461538464
+  ],
+  [
+   "gas",
+   "LoadCast cold, monthly",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "LoadCast cold, monthly",
+   "cv_med",
+   96.46143000657406,
+   96.46143000657406
+  ],
+  [
+   "gas",
+   "LoadCast cold, monthly",
+   "cv_p25",
+   82.81107633840129,
+   82.81107659288058
+  ],
+  [
+   "gas",
+   "LoadCast cold, monthly",
+   "cv_p75",
+   426.9341860667904,
+   426.93419136320813
+  ],
+  [
+   "gas",
+   "LoadCast cold, monthly",
+   "nmbe_med",
+   10.695575956833544,
+   10.69557437306014
+  ],
+  [
+   "gas",
+   "LoadCast cold, monthly",
+   "abs_nmbe_med",
+   87.14293764564638,
+   87.14293771856589
+  ],
+  [
+   "gas",
+   "LoadCast cold, monthly",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), monthly",
+   "n",
+   26,
+   26
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), monthly",
+   "cv_med",
+   44.74540506866952,
+   44.74540506866952
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), monthly",
+   "cv_p25",
+   32.34903795637459,
+   32.349040104435936
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), monthly",
+   "cv_p75",
+   67.44447586204878,
+   67.44447568018425
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), monthly",
+   "nmbe_med",
+   0.32362592892093134,
+   0.3236270897151192
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), monthly",
+   "abs_nmbe_med",
+   20.17439114169163,
+   20.17439114169163
+  ],
+  [
+   "gas",
+   "LoadCast warm (2016), monthly",
+   "g14_ok",
+   0.07692307692307693,
+   0.07692307692307693
+  ],
+  [
+   "hotwater",
+   "LoadCast cold",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "LoadCast cold",
+   "cv_med",
+   133.98037748065906,
+   133.98037696239237
+  ],
+  [
+   "hotwater",
+   "LoadCast cold",
+   "cv_p25",
+   93.00322501730099,
+   93.00322798598084
+  ],
+  [
+   "hotwater",
+   "LoadCast cold",
+   "cv_p75",
+   219.24688625041466,
+   219.24688626580894
+  ],
+  [
+   "hotwater",
+   "LoadCast cold",
+   "nmbe_med",
+   57.538796000201465,
+   57.53879687747762
+  ],
+  [
+   "hotwater",
+   "LoadCast cold",
+   "abs_nmbe_med",
+   90.76065941713743,
+   90.7606597116554
+  ],
+  [
+   "hotwater",
+   "LoadCast cold",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "hotwater",
+   "LoadCast cold",
+   "coverage90_mean",
+   0.8127931100425237,
+   0.8127931100425237
+  ],
+  [
+   "hotwater",
+   "LoadCast cold",
+   "coverage90_med",
+   0.8991086017663601,
+   0.8991086017663601
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016)",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016)",
+   "cv_med",
+   94.51576840707659,
+   94.51576887713594
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016)",
+   "cv_p25",
+   59.687905981010196,
+   59.68790484117231
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016)",
+   "cv_p75",
+   154.0151503725715,
+   154.01515003583478
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016)",
+   "nmbe_med",
+   -1.072807911135609,
+   -1.0728072077514512
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016)",
+   "abs_nmbe_med",
+   31.507324050656898,
+   31.50732402699196
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016)",
+   "g14_ok",
+   0.013888888888888888,
+   0.013888888888888888
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016)",
+   "coverage90_mean",
+   0.9212305827809146,
+   0.9212305827809146
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016)",
+   "coverage90_med",
+   0.9640133132018498,
+   0.9640133132018498
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 8 weeks)",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 8 weeks)",
+   "cv_med",
+   86.51336776279591,
+   86.51336861696551
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 8 weeks)",
+   "cv_p25",
+   54.261065184527496,
+   54.26106539676971
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 8 weeks)",
+   "cv_p75",
+   136.5061643173677,
+   136.50616443697882
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 8 weeks)",
+   "nmbe_med",
+   8.796027304531542,
+   8.796026673879503
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 8 weeks)",
+   "abs_nmbe_med",
+   22.683108278906474,
+   22.683108153595583
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 8 weeks)",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 8 weeks)",
+   "coverage90_mean",
+   0.9049720379084635,
+   0.9049720379084635
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 8 weeks)",
+   "coverage90_med",
+   0.9409894237872626,
+   0.9409894237872626
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 2 weeks)",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 2 weeks)",
+   "cv_med",
+   93.60296420815345,
+   93.60296479662176
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 2 weeks)",
+   "cv_p25",
+   59.92142147566748,
+   59.92142173069123
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 2 weeks)",
+   "cv_p75",
+   171.73511708190784,
+   171.7351163487153
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 2 weeks)",
+   "nmbe_med",
+   8.392898484752255,
+   8.392898183871004
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 2 weeks)",
+   "abs_nmbe_med",
+   32.257340812608675,
+   32.257341337367
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 2 weeks)",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 2 weeks)",
+   "coverage90_mean",
+   0.9767067926163462,
+   0.9767067926163462
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (last 2 weeks)",
+   "coverage90_med",
+   0.9998081307536213,
+   0.9998081307536213
+  ],
+  [
+   "hotwater",
+   "dumb cold (dev median)",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "dumb cold (dev median)",
+   "cv_med",
+   207.56648523201997,
+   207.56648523201997
+  ],
+  [
+   "hotwater",
+   "dumb cold (dev median)",
+   "cv_p25",
+   111.52599475317632,
+   111.52599475317632
+  ],
+  [
+   "hotwater",
+   "dumb cold (dev median)",
+   "cv_p75",
+   324.24362159694687,
+   324.24362159694687
+  ],
+  [
+   "hotwater",
+   "dumb cold (dev median)",
+   "nmbe_med",
+   -42.80238382610875,
+   -42.80238382610875
+  ],
+  [
+   "hotwater",
+   "dumb cold (dev median)",
+   "abs_nmbe_med",
+   83.98598242523346,
+   83.98598242523346
+  ],
+  [
+   "hotwater",
+   "dumb cold (dev median)",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "hotwater",
+   "persistence 1 h*",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "persistence 1 h*",
+   "cv_med",
+   52.770784390534956,
+   52.770784390534956
+  ],
+  [
+   "hotwater",
+   "persistence 1 h*",
+   "cv_p25",
+   33.864527758184785,
+   33.864527758184785
+  ],
+  [
+   "hotwater",
+   "persistence 1 h*",
+   "cv_p75",
+   76.4467157583544,
+   76.4467157583544
+  ],
+  [
+   "hotwater",
+   "persistence 1 h*",
+   "nmbe_med",
+   -0.029451096818454217,
+   -0.029451096818454217
+  ],
+  [
+   "hotwater",
+   "persistence 1 h*",
+   "abs_nmbe_med",
+   0.05489653183292306,
+   0.05489653183292306
+  ],
+  [
+   "hotwater",
+   "persistence 1 h*",
+   "g14_ok",
+   0.20833333333333334,
+   0.20833333333333334
+  ],
+  [
+   "hotwater",
+   "persistence 24 h*",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "persistence 24 h*",
+   "cv_med",
+   69.3973560001065,
+   69.3973560001065
+  ],
+  [
+   "hotwater",
+   "persistence 24 h*",
+   "cv_p25",
+   46.39501998934569,
+   46.39501998934569
+  ],
+  [
+   "hotwater",
+   "persistence 24 h*",
+   "cv_p75",
+   105.61399873164544,
+   105.61399873164544
+  ],
+  [
+   "hotwater",
+   "persistence 24 h*",
+   "nmbe_med",
+   0.1647386783527317,
+   0.1647386783527317
+  ],
+  [
+   "hotwater",
+   "persistence 24 h*",
+   "abs_nmbe_med",
+   0.3014022158887356,
+   0.3014022158887356
+  ],
+  [
+   "hotwater",
+   "persistence 24 h*",
+   "g14_ok",
+   0.05555555555555555,
+   0.05555555555555555
+  ],
+  [
+   "hotwater",
+   "same hour last week*",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "same hour last week*",
+   "cv_med",
+   93.78650696393183,
+   93.78650696393183
+  ],
+  [
+   "hotwater",
+   "same hour last week*",
+   "cv_p25",
+   59.06852308892692,
+   59.06852308892692
+  ],
+  [
+   "hotwater",
+   "same hour last week*",
+   "cv_p75",
+   129.1033304351693,
+   129.1033304351693
+  ],
+  [
+   "hotwater",
+   "same hour last week*",
+   "nmbe_med",
+   0.8080000601413382,
+   0.8080000601413382
+  ],
+  [
+   "hotwater",
+   "same hour last week*",
+   "abs_nmbe_med",
+   2.0062500268192216,
+   2.0062500268192216
+  ],
+  [
+   "hotwater",
+   "same hour last week*",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "hotwater",
+   "TOWT (B)",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "TOWT (B)",
+   "cv_med",
+   83.07789640519327,
+   83.07789640519327
+  ],
+  [
+   "hotwater",
+   "TOWT (B)",
+   "cv_p25",
+   50.172017020092866,
+   50.172017020092866
+  ],
+  [
+   "hotwater",
+   "TOWT (B)",
+   "cv_p75",
+   139.76043527196953,
+   139.76043527196953
+  ],
+  [
+   "hotwater",
+   "TOWT (B)",
+   "nmbe_med",
+   -4.177760374913509,
+   -4.177760374913509
+  ],
+  [
+   "hotwater",
+   "TOWT (B)",
+   "abs_nmbe_med",
+   16.67277328328931,
+   16.67277328328931
+  ],
+  [
+   "hotwater",
+   "TOWT (B)",
+   "g14_ok",
+   0.013888888888888888,
+   0.013888888888888888
+  ],
+  [
+   "hotwater",
+   "TOWT (LoadCast ridge)",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "TOWT (LoadCast ridge)",
+   "cv_med",
+   80.50303933768745,
+   80.50303933768745
+  ],
+  [
+   "hotwater",
+   "TOWT (LoadCast ridge)",
+   "cv_p25",
+   50.87294241943356,
+   50.87294241943356
+  ],
+  [
+   "hotwater",
+   "TOWT (LoadCast ridge)",
+   "cv_p75",
+   136.491236825744,
+   136.491236825744
+  ],
+  [
+   "hotwater",
+   "TOWT (LoadCast ridge)",
+   "nmbe_med",
+   -1.8957176687726314,
+   -1.8957176687726314
+  ],
+  [
+   "hotwater",
+   "TOWT (LoadCast ridge)",
+   "abs_nmbe_med",
+   15.048218925500507,
+   15.048218925500507
+  ],
+  [
+   "hotwater",
+   "TOWT (LoadCast ridge)",
+   "g14_ok",
+   0.013888888888888888,
+   0.013888888888888888
+  ],
+  [
+   "hotwater",
+   "change-point hourly",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "change-point hourly",
+   "cv_med",
+   82.61603658684479,
+   82.61603658684479
+  ],
+  [
+   "hotwater",
+   "change-point hourly",
+   "cv_p25",
+   48.47889237486716,
+   48.47889237486716
+  ],
+  [
+   "hotwater",
+   "change-point hourly",
+   "cv_p75",
+   134.87325039000714,
+   134.87325039000714
+  ],
+  [
+   "hotwater",
+   "change-point hourly",
+   "nmbe_med",
+   -4.789757729497866,
+   -4.789757729497866
+  ],
+  [
+   "hotwater",
+   "change-point hourly",
+   "abs_nmbe_med",
+   15.950751316863226,
+   15.950751316863226
+  ],
+  [
+   "hotwater",
+   "change-point hourly",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "hotwater",
+   "change-point daily",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "change-point daily",
+   "cv_med",
+   59.52617694997318,
+   59.52617694997318
+  ],
+  [
+   "hotwater",
+   "change-point daily",
+   "cv_p25",
+   31.679682651741302,
+   31.679682651741302
+  ],
+  [
+   "hotwater",
+   "change-point daily",
+   "cv_p75",
+   98.39963620793145,
+   98.39963620793145
+  ],
+  [
+   "hotwater",
+   "change-point daily",
+   "nmbe_med",
+   -3.5675177605561,
+   -3.5675177605561
+  ],
+  [
+   "hotwater",
+   "change-point daily",
+   "abs_nmbe_med",
+   15.570980496721068,
+   15.570980496721068
+  ],
+  [
+   "hotwater",
+   "change-point daily",
+   "g14_ok",
+   0.1527777777777778,
+   0.1527777777777778
+  ],
+  [
+   "hotwater",
+   "change-point monthly",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "change-point monthly",
+   "cv_med",
+   49.596946569253475,
+   49.596946569253475
+  ],
+  [
+   "hotwater",
+   "change-point monthly",
+   "cv_p25",
+   25.558847389369134,
+   25.558847389369134
+  ],
+  [
+   "hotwater",
+   "change-point monthly",
+   "cv_p75",
+   85.08059128221588,
+   85.08059128221588
+  ],
+  [
+   "hotwater",
+   "change-point monthly",
+   "nmbe_med",
+   -7.3478096782631805,
+   -7.3478096782631805
+  ],
+  [
+   "hotwater",
+   "change-point monthly",
+   "abs_nmbe_med",
+   23.398269355347075,
+   23.398269355347075
+  ],
+  [
+   "hotwater",
+   "change-point monthly",
+   "g14_ok",
+   0.18055555555555555,
+   0.18055555555555555
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, daily",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, daily",
+   "cv_med",
+   115.51254446733098,
+   115.512542947342
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, daily",
+   "cv_p25",
+   81.48735753998177,
+   81.48735732892989
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, daily",
+   "cv_p75",
+   196.41461510291163,
+   196.41461511249236
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, daily",
+   "nmbe_med",
+   60.109345924568885,
+   60.109346359464695
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, daily",
+   "abs_nmbe_med",
+   89.50357358572228,
+   89.50357613841453
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, daily",
+   "g14_ok",
+   0.027777777777777776,
+   0.027777777777777776
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), daily",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), daily",
+   "cv_med",
+   69.77865161209803,
+   69.77865119889495
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), daily",
+   "cv_p25",
+   44.11257911953011,
+   44.11257923586921
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), daily",
+   "cv_p75",
+   117.58173259682356,
+   117.58172978924127
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), daily",
+   "nmbe_med",
+   1.593666765367907,
+   1.5936672851458973
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), daily",
+   "abs_nmbe_med",
+   30.446223548164014,
+   30.44622374196438
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), daily",
+   "g14_ok",
+   0.05555555555555555,
+   0.05555555555555555
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, monthly",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, monthly",
+   "cv_med",
+   108.85345413759546,
+   108.85345352546696
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, monthly",
+   "cv_p25",
+   76.77614645940403,
+   76.77614628627167
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, monthly",
+   "cv_p75",
+   176.67894153616066,
+   176.67893898968725
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, monthly",
+   "nmbe_med",
+   57.85097998221362,
+   57.850981167740144
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, monthly",
+   "abs_nmbe_med",
+   88.61737232980063,
+   88.61737247663697
+  ],
+  [
+   "hotwater",
+   "LoadCast cold, monthly",
+   "g14_ok",
+   0.027777777777777776,
+   0.027777777777777776
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), monthly",
+   "n",
+   72,
+   72
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), monthly",
+   "cv_med",
+   57.31859228350629,
+   57.31859232995591
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), monthly",
+   "cv_p25",
+   35.309384313842315,
+   35.30938404626064
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), monthly",
+   "cv_p75",
+   90.72169084941106,
+   90.72169090136623
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), monthly",
+   "nmbe_med",
+   -0.9627119776749267,
+   -0.9627110701862638
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), monthly",
+   "abs_nmbe_med",
+   31.899486200236804,
+   31.899486117491882
+  ],
+  [
+   "hotwater",
+   "LoadCast warm (2016), monthly",
+   "g14_ok",
+   0.06944444444444445,
+   0.06944444444444445
+  ],
+  [
+   "steam",
+   "LoadCast cold",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "LoadCast cold",
+   "cv_med",
+   102.81772548457678,
+   102.81772515726375
+  ],
+  [
+   "steam",
+   "LoadCast cold",
+   "cv_p25",
+   85.08696456923752,
+   85.0869643430094
+  ],
+  [
+   "steam",
+   "LoadCast cold",
+   "cv_p75",
+   125.74175686009761,
+   125.74175768365505
+  ],
+  [
+   "steam",
+   "LoadCast cold",
+   "nmbe_med",
+   59.19544484251623,
+   59.195444538507076
+  ],
+  [
+   "steam",
+   "LoadCast cold",
+   "abs_nmbe_med",
+   80.81610272014352,
+   80.81610249451703
+  ],
+  [
+   "steam",
+   "LoadCast cold",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "steam",
+   "LoadCast cold",
+   "coverage90_mean",
+   0.838015160073181,
+   0.838015160073181
+  ],
+  [
+   "steam",
+   "LoadCast cold",
+   "coverage90_med",
+   1.0,
+   1.0
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016)",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016)",
+   "cv_med",
+   45.45530424688906,
+   45.4553045206217
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016)",
+   "cv_p25",
+   33.543100690881005,
+   33.5431007580332
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016)",
+   "cv_p75",
+   71.39867875810828,
+   71.3986780769575
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016)",
+   "nmbe_med",
+   8.772743875938717,
+   8.772744022873582
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016)",
+   "abs_nmbe_med",
+   16.258594288335523,
+   16.25859432318715
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016)",
+   "g14_ok",
+   0.10222222222222223,
+   0.10222222222222223
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016)",
+   "coverage90_mean",
+   0.8828980791809024,
+   0.8828980791809024
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016)",
+   "coverage90_med",
+   0.9721737105600187,
+   0.9721737105600187
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 8 weeks)",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 8 weeks)",
+   "cv_med",
+   49.107335424620366,
+   49.107335380901425
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 8 weeks)",
+   "cv_p25",
+   37.98163289386944,
+   37.98163271631747
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 8 weeks)",
+   "cv_p75",
+   69.5438067646418,
+   69.54380690485253
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 8 weeks)",
+   "nmbe_med",
+   11.423207151758126,
+   11.423207758768472
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 8 weeks)",
+   "abs_nmbe_med",
+   19.357522368277756,
+   19.357522460849275
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 8 weeks)",
+   "g14_ok",
+   0.044444444444444446,
+   0.044444444444444446
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 8 weeks)",
+   "coverage90_mean",
+   0.8476644426601656,
+   0.8476644426601656
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 8 weeks)",
+   "coverage90_med",
+   0.9392609699769053,
+   0.9392609699769053
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 2 weeks)",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 2 weeks)",
+   "cv_med",
+   57.12339306562182,
+   57.12339361857866
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 2 weeks)",
+   "cv_p25",
+   44.247216985895555,
+   44.24721687878213
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 2 weeks)",
+   "cv_p75",
+   79.57018043972694,
+   79.57017961568327
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 2 weeks)",
+   "nmbe_med",
+   20.149312952198684,
+   20.149313916326427
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 2 weeks)",
+   "abs_nmbe_med",
+   25.384757273232086,
+   25.384757291741778
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 2 weeks)",
+   "g14_ok",
+   0.008888888888888889,
+   0.008888888888888889
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 2 weeks)",
+   "coverage90_mean",
+   0.8670622883065461,
+   0.8670622883065461
+  ],
+  [
+   "steam",
+   "LoadCast warm (last 2 weeks)",
+   "coverage90_med",
+   0.9726358661066565,
+   0.9726358661066565
+  ],
+  [
+   "steam",
+   "dumb cold (dev median)",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "dumb cold (dev median)",
+   "cv_med",
+   111.58263068538203,
+   111.58263068538203
+  ],
+  [
+   "steam",
+   "dumb cold (dev median)",
+   "cv_p25",
+   96.62181113134167,
+   96.62181113134167
+  ],
+  [
+   "steam",
+   "dumb cold (dev median)",
+   "cv_p75",
+   136.88003646838513,
+   136.88003646838513
+  ],
+  [
+   "steam",
+   "dumb cold (dev median)",
+   "nmbe_med",
+   62.84913799520065,
+   62.84913799520065
+  ],
+  [
+   "steam",
+   "dumb cold (dev median)",
+   "abs_nmbe_med",
+   85.54576743730976,
+   85.54576743730976
+  ],
+  [
+   "steam",
+   "dumb cold (dev median)",
+   "g14_ok",
+   0.0,
+   0.0
+  ],
+  [
+   "steam",
+   "persistence 1 h*",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "persistence 1 h*",
+   "cv_med",
+   24.868968618285603,
+   24.868968618285603
+  ],
+  [
+   "steam",
+   "persistence 1 h*",
+   "cv_p25",
+   13.87979624064159,
+   13.87979624064159
+  ],
+  [
+   "steam",
+   "persistence 1 h*",
+   "cv_p75",
+   40.38521991683443,
+   40.38521991683443
+  ],
+  [
+   "steam",
+   "persistence 1 h*",
+   "nmbe_med",
+   -0.015675527187422485,
+   -0.015675527187422485
+  ],
+  [
+   "steam",
+   "persistence 1 h*",
+   "abs_nmbe_med",
+   0.033933428072892347,
+   0.033933428072892347
+  ],
+  [
+   "steam",
+   "persistence 1 h*",
+   "g14_ok",
+   0.6044444444444445,
+   0.6044444444444445
+  ],
+  [
+   "steam",
+   "persistence 24 h*",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "persistence 24 h*",
+   "cv_med",
+   41.91539179005829,
+   41.91539179005829
+  ],
+  [
+   "steam",
+   "persistence 24 h*",
+   "cv_p25",
+   28.899917959676706,
+   28.899917959676706
+  ],
+  [
+   "steam",
+   "persistence 24 h*",
+   "cv_p75",
+   60.44779254577958,
+   60.44779254577958
+  ],
+  [
+   "steam",
+   "persistence 24 h*",
+   "nmbe_med",
+   0.28747784445480495,
+   0.28747784445480495
+  ],
+  [
+   "steam",
+   "persistence 24 h*",
+   "abs_nmbe_med",
+   0.31482982600145953,
+   0.31482982600145953
+  ],
+  [
+   "steam",
+   "persistence 24 h*",
+   "g14_ok",
+   0.27111111111111114,
+   0.27111111111111114
+  ],
+  [
+   "steam",
+   "same hour last week*",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "same hour last week*",
+   "cv_med",
+   56.57507450591095,
+   56.57507450591095
+  ],
+  [
+   "steam",
+   "same hour last week*",
+   "cv_p25",
+   43.61230871707063,
+   43.61230871707063
+  ],
+  [
+   "steam",
+   "same hour last week*",
+   "cv_p75",
+   80.30132842004645,
+   80.30132842004645
+  ],
+  [
+   "steam",
+   "same hour last week*",
+   "nmbe_med",
+   1.6515845306631016,
+   1.6515845306631016
+  ],
+  [
+   "steam",
+   "same hour last week*",
+   "abs_nmbe_med",
+   1.7986301362619985,
+   1.7986301362619985
+  ],
+  [
+   "steam",
+   "same hour last week*",
+   "g14_ok",
+   0.07111111111111111,
+   0.07111111111111111
+  ],
+  [
+   "steam",
+   "TOWT (B)",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "TOWT (B)",
+   "cv_med",
+   39.81197677954008,
+   39.81197677954008
+  ],
+  [
+   "steam",
+   "TOWT (B)",
+   "cv_p25",
+   27.075814219712953,
+   27.075814219712953
+  ],
+  [
+   "steam",
+   "TOWT (B)",
+   "cv_p75",
+   65.29033264574512,
+   65.29033264574512
+  ],
+  [
+   "steam",
+   "TOWT (B)",
+   "nmbe_med",
+   -0.2113630688196208,
+   -0.2113630688196208
+  ],
+  [
+   "steam",
+   "TOWT (B)",
+   "abs_nmbe_med",
+   9.64048681317658,
+   9.64048681317658
+  ],
+  [
+   "steam",
+   "TOWT (B)",
+   "g14_ok",
+   0.24888888888888888,
+   0.24888888888888888
+  ],
+  [
+   "steam",
+   "TOWT (LoadCast ridge)",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "TOWT (LoadCast ridge)",
+   "cv_med",
+   41.41755760389399,
+   41.41755760389399
+  ],
+  [
+   "steam",
+   "TOWT (LoadCast ridge)",
+   "cv_p25",
+   27.29259237572282,
+   27.29259237572282
+  ],
+  [
+   "steam",
+   "TOWT (LoadCast ridge)",
+   "cv_p75",
+   66.57855204346625,
+   66.57855204346625
+  ],
+  [
+   "steam",
+   "TOWT (LoadCast ridge)",
+   "nmbe_med",
+   2.044057173622353,
+   2.044057173622353
+  ],
+  [
+   "steam",
+   "TOWT (LoadCast ridge)",
+   "abs_nmbe_med",
+   10.455916094111021,
+   10.455916094111021
+  ],
+  [
+   "steam",
+   "TOWT (LoadCast ridge)",
+   "g14_ok",
+   0.2222222222222222,
+   0.2222222222222222
+  ],
+  [
+   "steam",
+   "change-point hourly",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "change-point hourly",
+   "cv_med",
+   40.45933654353385,
+   40.45933654353385
+  ],
+  [
+   "steam",
+   "change-point hourly",
+   "cv_p25",
+   28.60678357731386,
+   28.60678357731386
+  ],
+  [
+   "steam",
+   "change-point hourly",
+   "cv_p75",
+   63.924698918253064,
+   63.924698918253064
+  ],
+  [
+   "steam",
+   "change-point hourly",
+   "nmbe_med",
+   -0.2876438038129511,
+   -0.2876438038129511
+  ],
+  [
+   "steam",
+   "change-point hourly",
+   "abs_nmbe_med",
+   9.384286292159727,
+   9.384286292159727
+  ],
+  [
+   "steam",
+   "change-point hourly",
+   "g14_ok",
+   0.22666666666666666,
+   0.22666666666666666
+  ],
+  [
+   "steam",
+   "change-point daily",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "change-point daily",
+   "cv_med",
+   30.633035816776925,
+   30.633035816776925
+  ],
+  [
+   "steam",
+   "change-point daily",
+   "cv_p25",
+   20.262675103767666,
+   20.262675103767666
+  ],
+  [
+   "steam",
+   "change-point daily",
+   "cv_p75",
+   47.27380198541777,
+   47.27380198541777
+  ],
+  [
+   "steam",
+   "change-point daily",
+   "nmbe_med",
+   0.17867402692574355,
+   0.17867402692574355
+  ],
+  [
+   "steam",
+   "change-point daily",
+   "abs_nmbe_med",
+   9.607113879821787,
+   9.607113879821787
+  ],
+  [
+   "steam",
+   "change-point daily",
+   "g14_ok",
+   0.37777777777777777,
+   0.37777777777777777
+  ],
+  [
+   "steam",
+   "change-point monthly",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "change-point monthly",
+   "cv_med",
+   24.245969518434165,
+   24.245969518434165
+  ],
+  [
+   "steam",
+   "change-point monthly",
+   "cv_p25",
+   12.820469351353363,
+   12.820469351353363
+  ],
+  [
+   "steam",
+   "change-point monthly",
+   "cv_p75",
+   42.685615578843056,
+   42.685615578843056
+  ],
+  [
+   "steam",
+   "change-point monthly",
+   "nmbe_med",
+   -0.5436765141348042,
+   -0.5436765141348042
+  ],
+  [
+   "steam",
+   "change-point monthly",
+   "abs_nmbe_med",
+   14.046830562170879,
+   14.046830562170879
+  ],
+  [
+   "steam",
+   "change-point monthly",
+   "g14_ok",
+   0.35555555555555557,
+   0.35555555555555557
+  ],
+  [
+   "steam",
+   "LoadCast cold, daily",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "LoadCast cold, daily",
+   "cv_med",
+   96.62082125289747,
+   96.62082121121473
+  ],
+  [
+   "steam",
+   "LoadCast cold, daily",
+   "cv_p25",
+   77.21374982077293,
+   77.2137480070652
+  ],
+  [
+   "steam",
+   "LoadCast cold, daily",
+   "cv_p75",
+   115.6179371159206,
+   115.61793745045381
+  ],
+  [
+   "steam",
+   "LoadCast cold, daily",
+   "nmbe_med",
+   59.15406079291372,
+   59.15406042644529
+  ],
+  [
+   "steam",
+   "LoadCast cold, daily",
+   "abs_nmbe_med",
+   80.79785332081086,
+   80.79785313152303
+  ],
+  [
+   "steam",
+   "LoadCast cold, daily",
+   "g14_ok",
+   0.0044444444444444444,
+   0.0044444444444444444
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), daily",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), daily",
+   "cv_med",
+   35.991642372788284,
+   35.99164247384061
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), daily",
+   "cv_p25",
+   25.66608572467321,
+   25.666086092392494
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), daily",
+   "cv_p75",
+   55.448729807907476,
+   55.448729575853854
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), daily",
+   "nmbe_med",
+   10.009624204859339,
+   10.00962457321656
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), daily",
+   "abs_nmbe_med",
+   16.18751751112609,
+   16.1875175364611
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), daily",
+   "g14_ok",
+   0.18666666666666668,
+   0.18666666666666668
+  ],
+  [
+   "steam",
+   "LoadCast cold, monthly",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "LoadCast cold, monthly",
+   "cv_med",
+   93.19549152692487,
+   93.19549132110623
+  ],
+  [
+   "steam",
+   "LoadCast cold, monthly",
+   "cv_p25",
+   69.77755203470868,
+   69.77755154090471
+  ],
+  [
+   "steam",
+   "LoadCast cold, monthly",
+   "cv_p75",
+   107.8469000361615,
+   107.84690004227075
+  ],
+  [
+   "steam",
+   "LoadCast cold, monthly",
+   "nmbe_med",
+   58.936636586413414,
+   58.936635965517986
+  ],
+  [
+   "steam",
+   "LoadCast cold, monthly",
+   "abs_nmbe_med",
+   81.08731170417438,
+   81.08731151565897
+  ],
+  [
+   "steam",
+   "LoadCast cold, monthly",
+   "g14_ok",
+   0.017777777777777778,
+   0.017777777777777778
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), monthly",
+   "n",
+   225,
+   225
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), monthly",
+   "cv_med",
+   29.17178976931491,
+   29.17178976931491
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), monthly",
+   "cv_p25",
+   19.064997641988686,
+   19.064997641988686
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), monthly",
+   "cv_p75",
+   45.96310258731566,
+   45.96310258731566
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), monthly",
+   "nmbe_med",
+   8.699448438167469,
+   8.699447839417733
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), monthly",
+   "abs_nmbe_med",
+   16.32745383623306,
+   16.32745508416743
+  ],
+  [
+   "steam",
+   "LoadCast warm (2016), monthly",
+   "g14_ok",
+   0.2577777777777778,
+   0.2577777777777778
+  ]
+ ]
+}

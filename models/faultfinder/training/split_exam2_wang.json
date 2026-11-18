@@ -1,0 +1,277 @@
+{
+ "frozen": "2026-11-17",
+ "status": "rejected: not an exam",
+ "source": {
+  "dataset": "Wang et al. 2024, semi-labelled AHU FDD dataset (large office, Gwacheon, South Korea)",
+  "version": "figshare v1",
+  "doi": "10.6084/m9.figshare.25909813.v1",
+  "licence": "CC BY 4.0",
+  "paper": "Data in Brief (2024), PMC11460478"
+ },
+ "reason": [
+  "5436 of 5471 labelled rows (99.4 %) are the same readings (time, T_ra, T_sa, T_sa_sp to 0.01) as BuildingData korea_office (figshare 25932409 v2, Nov 2023 - May 2024), which fitted FaultFinder v1.0 noise statistics; each of the 20 blocks maps to one AHU.",
+  "Only fault rows are published (labels: Fan fault 4246, Sensor fault 1225); no normal rows, so detection AUC, balanced accuracy and false-alarm rate are undefined.",
+  "The record describes Jul-Oct 2023 data; the file holds 2024-01-01 00:00:00 to 2024-01-31 19:00:00."
+ ],
+ "input_gap": "Channels T_ra, T_sa, T_sa_sp, supply fan only (4 of 13; hourly, 24 of 96 bins). No T_oa, T_ma, damper, cooling valve, fan speed or power, occupancy; the valve position is left missing as in the korea_office reader (meaning unclear). FaultFinder can run on it (masks zero the missing channels) but the APAR rules that need T_oa / T_ma / damper cannot fire.",
+ "seed": 20261117,
+ "exam_rows": [],
+ "baselines": [],
+ "units": {
+  "block_00": {
+   "ahu_in_korea_office": "KOR_AHU-101",
+   "n_rows": 241,
+   "first": "2024-01-01 00:00:00",
+   "last": "2024-01-31 10:00:00",
+   "labels": {
+    "Sensor fault": 150,
+    "Fan fault": 91
+   },
+   "rows_matching_korea_office": 237,
+   "rows_matching_same_ahu": 237,
+   "sha256": "94b64a92859169892df548145998147330d92a580024e8b31c213ee34a8ea1e5"
+  },
+  "block_01": {
+   "ahu_in_korea_office": "KOR_AHU-102",
+   "n_rows": 107,
+   "first": "2024-01-02 17:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Sensor fault": 60,
+    "Fan fault": 47
+   },
+   "rows_matching_korea_office": 106,
+   "rows_matching_same_ahu": 106,
+   "sha256": "184149ed7b59875448e631c5e802688ef0b99fa0dead0961cd016c859d57e9a6"
+  },
+  "block_02": {
+   "ahu_in_korea_office": "KOR_AHU-103",
+   "n_rows": 241,
+   "first": "2024-01-02 08:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Sensor fault": 124,
+    "Fan fault": 117
+   },
+   "rows_matching_korea_office": 240,
+   "rows_matching_same_ahu": 240,
+   "sha256": "8c882f6c2173b8d95676c8f14383e46ca532499a32d15cda6742e8938e9cea8e"
+  },
+  "block_03": {
+   "ahu_in_korea_office": "KOR_AHU-104",
+   "n_rows": 223,
+   "first": "2024-01-02 08:00:00",
+   "last": "2024-01-31 13:00:00",
+   "labels": {
+    "Sensor fault": 141,
+    "Fan fault": 82
+   },
+   "rows_matching_korea_office": 223,
+   "rows_matching_same_ahu": 223,
+   "sha256": "8e614616cb213db1903d620904bbc19b6b6037ae4b89f21c9195523574edb599"
+  },
+  "block_04": {
+   "ahu_in_korea_office": "KOR_AHU-105",
+   "n_rows": 234,
+   "first": "2024-01-02 07:00:00",
+   "last": "2024-01-31 13:00:00",
+   "labels": {
+    "Sensor fault": 161,
+    "Fan fault": 73
+   },
+   "rows_matching_korea_office": 233,
+   "rows_matching_same_ahu": 233,
+   "sha256": "2cd0741198397a9f0a356e2dabac39b7912562b1c709b00222a2ba76330d8ee8"
+  },
+  "block_05": {
+   "ahu_in_korea_office": "KOR_AHU-107",
+   "n_rows": 339,
+   "first": "2024-01-01 07:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Fan fault": 187,
+    "Sensor fault": 152
+   },
+   "rows_matching_korea_office": 339,
+   "rows_matching_same_ahu": 339,
+   "sha256": "1efe06c2ae71525527fcc221bc3b10fc3b9b78f7e488e27ce6cf8ee06284a29b"
+  },
+  "block_06": {
+   "ahu_in_korea_office": "KOR_AHU-108",
+   "n_rows": 316,
+   "first": "2024-01-01 07:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Fan fault": 224,
+    "Sensor fault": 92
+   },
+   "rows_matching_korea_office": 316,
+   "rows_matching_same_ahu": 316,
+   "sha256": "4c5b434ece05641d30a7b1abac0d9a64f71e6a0f14f6e0c0f1a5e320982afafa"
+  },
+  "block_07": {
+   "ahu_in_korea_office": "KOR_AHU-109",
+   "n_rows": 182,
+   "first": "2024-01-01 07:00:00",
+   "last": "2024-01-31 14:00:00",
+   "labels": {
+    "Fan fault": 132,
+    "Sensor fault": 50
+   },
+   "rows_matching_korea_office": 181,
+   "rows_matching_same_ahu": 181,
+   "sha256": "7bf8d75046af489d072d6f27541f58e9dec99472229bb4fdb5b93ffc9da5cb29"
+  },
+  "block_08": {
+   "ahu_in_korea_office": "KOR_AHU-110",
+   "n_rows": 292,
+   "first": "2024-01-01 07:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Fan fault": 221,
+    "Sensor fault": 71
+   },
+   "rows_matching_korea_office": 291,
+   "rows_matching_same_ahu": 291,
+   "sha256": "64d99c52d09839037bd7cd0312b6c401f8d5f702c16b5974fbb0ea3766f18c6f"
+  },
+  "block_09": {
+   "ahu_in_korea_office": "KOR_AHU-111",
+   "n_rows": 201,
+   "first": "2024-01-02 10:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Fan fault": 114,
+    "Sensor fault": 87
+   },
+   "rows_matching_korea_office": 200,
+   "rows_matching_same_ahu": 200,
+   "sha256": "b56c22add96835f7c244b568df21a27f8151773958946c880e50e3bfaf56105e"
+  },
+  "block_10": {
+   "ahu_in_korea_office": "KOR_AHU-112",
+   "n_rows": 291,
+   "first": "2024-01-01 07:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Fan fault": 213,
+    "Sensor fault": 78
+   },
+   "rows_matching_korea_office": 290,
+   "rows_matching_same_ahu": 290,
+   "sha256": "c39e38309c55203d98093824f5ef27e1dbc539a3d6fa8e278118ff3fdd59cfcf"
+  },
+  "block_11": {
+   "ahu_in_korea_office": "KOR_AHU-201",
+   "n_rows": 135,
+   "first": "2024-01-12 07:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Fan fault": 129,
+    "Sensor fault": 6
+   },
+   "rows_matching_korea_office": 131,
+   "rows_matching_same_ahu": 131,
+   "sha256": "0c495bc3536b33b671e4e32ebd99dd1cc7c989735de453a64357cc03e555da9a"
+  },
+  "block_12": {
+   "ahu_in_korea_office": "KOR_AHU-202",
+   "n_rows": 69,
+   "first": "2024-01-02 13:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Fan fault": 67,
+    "Sensor fault": 2
+   },
+   "rows_matching_korea_office": 68,
+   "rows_matching_same_ahu": 68,
+   "sha256": "82d3a74c1a7822dc605c53675a243bf3c3df754096cba46364251c9e80b5cbd2"
+  },
+  "block_13": {
+   "ahu_in_korea_office": "KOR_AHU-203",
+   "n_rows": 244,
+   "first": "2024-01-01 08:00:00",
+   "last": "2024-01-31 12:00:00",
+   "labels": {
+    "Fan fault": 193,
+    "Sensor fault": 51
+   },
+   "rows_matching_korea_office": 243,
+   "rows_matching_same_ahu": 243,
+   "sha256": "6d9481b138f7df1223adda11a42965db1d10fa3039c2079cb2ab9e4ae1c11c51"
+  },
+  "block_14": {
+   "ahu_in_korea_office": "KOR_AHU-204",
+   "n_rows": 394,
+   "first": "2024-01-01 07:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Fan fault": 394
+   },
+   "rows_matching_korea_office": 391,
+   "rows_matching_same_ahu": 391,
+   "sha256": "4120b028df90549d50ff93e235b5292a43cd9d2905be5f5b84d9cb58d1ae7e73"
+  },
+  "block_15": {
+   "ahu_in_korea_office": "KOR_AHU-205",
+   "n_rows": 395,
+   "first": "2024-01-01 07:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Fan fault": 395
+   },
+   "rows_matching_korea_office": 392,
+   "rows_matching_same_ahu": 392,
+   "sha256": "fe92fe69134afb1550a997672769304f34dc0b8dba63b24a50f81763eaa31448"
+  },
+  "block_16": {
+   "ahu_in_korea_office": "KOR_AHU-206",
+   "n_rows": 386,
+   "first": "2024-01-01 07:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Fan fault": 386
+   },
+   "rows_matching_korea_office": 383,
+   "rows_matching_same_ahu": 383,
+   "sha256": "322ef6ea5e881347aad970266ddf2a3951c241e46b9f010588ecda35701eac36"
+  },
+  "block_17": {
+   "ahu_in_korea_office": "KOR_AHU-207",
+   "n_rows": 388,
+   "first": "2024-01-01 07:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Fan fault": 388
+   },
+   "rows_matching_korea_office": 385,
+   "rows_matching_same_ahu": 385,
+   "sha256": "6b4a08629f54cb451507bd059de9417324527b09d3dc6da639f9bc31929ef042"
+  },
+  "block_18": {
+   "ahu_in_korea_office": "KOR_AHU-208",
+   "n_rows": 390,
+   "first": "2024-01-01 07:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Fan fault": 390
+   },
+   "rows_matching_korea_office": 387,
+   "rows_matching_same_ahu": 387,
+   "sha256": "748f46dba96a0556affc2454ba8dd25bf5298de0f85da464bc9f76e8846264e5"
+  },
+  "block_19": {
+   "ahu_in_korea_office": "KOR_AHU-209",
+   "n_rows": 403,
+   "first": "2024-01-01 07:00:00",
+   "last": "2024-01-31 19:00:00",
+   "labels": {
+    "Fan fault": 403
+   },
+   "rows_matching_korea_office": 400,
+   "rows_matching_same_ahu": 400,
+   "sha256": "9b06d1cf3d9fb034f7a5ea6ca258b6f7a440e3f2b0b48889103ad1d35eefb432"
+  }
+ },
+ "split_sha256": "18e77765ebf598d4393f4a7223e42cad6e177a2167b522137547077ce0653f18"
+}

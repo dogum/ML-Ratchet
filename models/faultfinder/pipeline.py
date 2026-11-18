@@ -1,5 +1,6 @@
 """Read one day of an air handler's trend log (CSV or parquet with contract column names and a 'time_local' column)
-and print FaultFinder's verdict.  Usage: python pipeline.py trend.csv [YYYY-MM-DD]"""
+and print FaultFinder's verdict.  Usage: python pipeline.py trend.csv [YYYY-MM-DD] [--ref earlier_day.csv ...]
+(--ref: the same unit's earlier days, oldest first, at most 7 days before; the last 3 are used)"""
 import sys
 import pandas as pd
 from faultfinder import FaultFinder
@@ -11,7 +12,9 @@ def read(path):
 
 
 def report(r, top=3):
-    lines = [f"P(fault) = {r['p_fault']:.2f}  (calibrated on 20 real dev days)"]
+    n = r.get('n_reference_days', 0)
+    ref = f", compared with {n} earlier day{'s' if n > 1 else ''} of the unit" if n else ', single-day mode'
+    lines = [f"P(fault) = {r['p_fault']:.2f}  (calibrated on 20 real dev days{ref})"]
     if r['p_fault'] > 0.5:
         lines.append('Most likely faults (given a fault):')
     else:
@@ -23,5 +26,7 @@ def report(r, top=3):
 
 if __name__ == '__main__':
     ff = FaultFinder()
-    df = read(sys.argv[1])
-    print(report(ff.read_day(df, sys.argv[2] if len(sys.argv) > 2 else None)))
+    a = sys.argv[1:]
+    refs = [read(f) for f in a[a.index('--ref') + 1:]] if '--ref' in a else None
+    a = a[:a.index('--ref')] if '--ref' in a else a
+    print(report(ff.read_day(read(a[0]), a[1] if len(a) > 1 else None, ref_days=refs)))

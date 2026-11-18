@@ -1,0 +1,245 @@
+{
+ "note": "R8 round (17 Nov 2026): val/dev scores of every row (ratchet.py score), bank sizes and training runs. Sets frozen again with stable RECS twins.",
+ "rows": {
+  "r7": {
+   "val": {
+    "n": 60,
+    "skill": 0.5611163092830092,
+    "skill_mpc_c": 0.8615703467025103,
+    "bill_saving_vs_fixed": 0.015684568274874966,
+    "DH_pol": 0.14561318318930377,
+    "DH_fixed": 0.04123380242865509,
+    "beats_fixed": 0.7833333333333333,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": 0.4710027217761497,
+    "skill_mpc_c": 0.7648010112544481,
+    "bill_saving_vs_fixed": 0.02538788683091109,
+    "DH_pol": 0.08666053931854616,
+    "DH_fixed": 0.001143426137694803,
+    "beats_fixed": 0.8666666666666667,
+    "errors": 0
+   }
+  },
+  "mpc_c": {
+   "val": {
+    "n": 60,
+    "skill": 0.8615703467025103,
+    "skill_mpc_c": 0.8615703467025103,
+    "bill_saving_vs_fixed": 0.029742372119728855,
+    "DH_pol": 0.17398071446787647,
+    "DH_fixed": 0.04123380242865509,
+    "beats_fixed": 0.8,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": 0.7648010112544481,
+    "skill_mpc_c": 0.7648010112544481,
+    "bill_saving_vs_fixed": 0.040649183549231194,
+    "DH_pol": 0.22160827961305707,
+    "DH_fixed": 0.001143426137694803,
+    "beats_fixed": 0.9,
+    "errors": 0
+   }
+  },
+  "card0": {
+   "val": {
+    "n": 60,
+    "skill": 0.5727313134273041,
+    "skill_mpc_c": 0.8615703467025103,
+    "bill_saving_vs_fixed": 0.028666164767221836,
+    "DH_pol": 1.187154092884301,
+    "DH_fixed": 0.04123380242865509,
+    "beats_fixed": 0.65,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": 0.5720051924410068,
+    "skill_mpc_c": 0.7648010112544481,
+    "bill_saving_vs_fixed": 0.03959264365020643,
+    "DH_pol": 0.9053178713804942,
+    "DH_fixed": 0.001143426137694803,
+    "beats_fixed": 0.7333333333333333,
+    "errors": 0
+   }
+  },
+  "card4": {
+   "val": {
+    "n": 60,
+    "skill": 0.6996476660910963,
+    "skill_mpc_c": 0.8615703467025103,
+    "bill_saving_vs_fixed": 0.02674204202361885,
+    "DH_pol": 0.03147881679060553,
+    "DH_fixed": 0.04123380242865509,
+    "beats_fixed": 0.9333333333333333,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": 0.7202423105712377,
+    "skill_mpc_c": 0.7648010112544481,
+    "bill_saving_vs_fixed": 0.045052048313478754,
+    "DH_pol": 0.0,
+    "DH_fixed": 0.001143426137694803,
+    "beats_fixed": 0.9333333333333333,
+    "errors": 0
+   }
+  },
+  "r8_s0": {
+   "val": {
+    "n": 60,
+    "skill": 0.6697356816116233,
+    "skill_mpc_c": 0.8615703467025103,
+    "bill_saving_vs_fixed": 0.022218968467227485,
+    "DH_pol": 0.07845320756487476,
+    "DH_fixed": 0.04123380242865509,
+    "beats_fixed": 0.8666666666666667,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": 0.7183171901065264,
+    "skill_mpc_c": 0.7648010112544481,
+    "bill_saving_vs_fixed": 0.047931005799242477,
+    "DH_pol": 0.06162219315481015,
+    "DH_fixed": 0.001143426137694803,
+    "beats_fixed": 0.9,
+    "errors": 0
+   }
+  },
+  "r8_s1": {
+   "val": {
+    "n": 60,
+    "skill": 0.6437783198945916,
+    "skill_mpc_c": 0.8615703467025103,
+    "bill_saving_vs_fixed": 0.02184503203353716,
+    "DH_pol": 0.09382107400724422,
+    "DH_fixed": 0.04123380242865509,
+    "beats_fixed": 0.8333333333333334,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": 0.6728629294364658,
+    "skill_mpc_c": 0.7648010112544481,
+    "bill_saving_vs_fixed": 0.0424321983533702,
+    "DH_pol": 0.12420515905577219,
+    "DH_fixed": 0.001143426137694803,
+    "beats_fixed": 0.9,
+    "errors": 0
+   }
+  },
+  "r8_s2": {
+   "val": {
+    "n": 60,
+    "skill": 0.6860300144703367,
+    "skill_mpc_c": 0.8615703467025103,
+    "bill_saving_vs_fixed": 0.025871368522412008,
+    "DH_pol": 0.0362776926677905,
+    "DH_fixed": 0.04123380242865509,
+    "beats_fixed": 0.9,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": 0.7108184741000617,
+    "skill_mpc_c": 0.7648010112544481,
+    "bill_saving_vs_fixed": 0.04840141974336021,
+    "DH_pol": 0.0024946092173121787,
+    "DH_fixed": 0.001143426137694803,
+    "beats_fixed": 0.9,
+    "errors": 0
+   }
+  }
+ },
+ "r8_mean": {
+  "val": 0.6665146719921838,
+  "val_sd": 0.021309213989654918,
+  "dev": 0.7006661978810179,
+  "dev_sd": 0.02436850400796644
+ },
+ "banks": {
+  "r8_0": {
+   "episodes": 212,
+   "skipped": 18,
+   "hours": 155687,
+   "anchor_equals_teacher": 0.9499329943964507,
+   "anchor_zero_regret": 0.9596296744584509
+  },
+  "r8_1": {
+   "episodes": 100,
+   "skipped": 2,
+   "hours": 73273,
+   "anchor_equals_teacher": 0.9585029056048484,
+   "anchor_zero_regret": 0.9674228703232091
+  },
+  "r8_2": {
+   "episodes": 96,
+   "skipped": 6,
+   "hours": 70033,
+   "anchor_equals_teacher": 0.9578060076502624,
+   "anchor_zero_regret": 0.9662937469290621
+  },
+  "r8_3": {
+   "episodes": 99,
+   "skipped": 3,
+   "hours": 72670,
+   "anchor_equals_teacher": 0.9515009662836957,
+   "anchor_zero_regret": 0.9605851063533565
+  }
+ },
+ "training": {
+  "r8_round0.json": {
+   "n": 155687,
+   "episodes": 212,
+   "best_hard_regret": 0.001110939192585647,
+   "np_torch_maxerr": 6.705522537231445e-08,
+   "params": 290340,
+   "wall_s": 119.18139004707336
+  },
+  "r8_round1.json": {
+   "n": 228960,
+   "episodes": 312,
+   "best_hard_regret": 0.00570246297866106,
+   "np_torch_maxerr": 5.960464477539062e-07,
+   "params": 290340,
+   "wall_s": 106.76013374328613
+  },
+  "r8_round2.json": {
+   "n": 298993,
+   "episodes": 408,
+   "best_hard_regret": 0.004440168384462595,
+   "np_torch_maxerr": 1.4901161193847656e-07,
+   "params": 290340,
+   "wall_s": 149.0570547580719
+  },
+  "r8_s0.json": {
+   "n": 371663,
+   "episodes": 507,
+   "best_hard_regret": 0.002825104398652911,
+   "np_torch_maxerr": 7.152557373046875e-07,
+   "params": 290340,
+   "wall_s": 235.05091953277588
+  },
+  "r8_s1.json": {
+   "n": 371663,
+   "episodes": 507,
+   "best_hard_regret": 0.011317742057144642,
+   "np_torch_maxerr": 1.862645149230957e-07,
+   "params": 290340,
+   "wall_s": 234.38630175590515
+  },
+  "r8_s2.json": {
+   "n": 371663,
+   "episodes": 507,
+   "best_hard_regret": 0.004906161688268185,
+   "np_torch_maxerr": 3.5762786865234375e-07,
+   "params": 290340,
+   "wall_s": 234.9068067073822
+  }
+ }
+}

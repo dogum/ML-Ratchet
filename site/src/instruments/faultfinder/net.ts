@@ -1,4 +1,4 @@
-// FaultFinder in the browser: a port of models/faultfinder/faultfinder.py (featurize, forward, predict_raw), started
+// FaultFinder in the browser: a port of models/faultfinder/faultfinder.py (featurize, context, forward, predict_raw), started
 // from the release's training/ffnet.js, and of perturb() in models/faultfinder/web/export_instrument.py (what each
 // control does to the trend log). No DOM.
 import { conv1d, relu_, globalPool, linear, vcat } from '../../lib/nn/ops.ts';
@@ -8,7 +8,7 @@ import type { Tensor } from '../../lib/nn/tensor.ts';
 export const RAWC = ['T_oa', 'T_ra', 'T_ma', 'T_sa', 'T_sa_sp', 'T_zone', 'damper_oa', 'valve_cc', 'valve_hc', 'fan_speed',
   'fan_power', 'fan_on', 'occ'] as const;
 export const R: Record<string, number> = Object.fromEntries(RAWC.map((c, i) => [c, i]));
-export const NT = 96, NF = 35, NC = 19;
+export const NT = 96, NF = 35, NF7 = 82, NC = 19, MAX_REF = 3;
 export const TEMPS = ['T_oa', 'T_ra', 'T_ma', 'T_sa', 'T_zone'];
 
 export interface FMeta { temperature: number; classes: string[]; labels: Record<string, string>; n_params: number; channels: string[] }
@@ -16,7 +16,8 @@ export interface FDay {
   id: string; source: string; facility: string; dataset: string; unit: string; date: string; fault: string;
   severity: string | null; diag_class: string | null; simulable: boolean;
   rule: { name: string; flag: boolean; score: number | null; threshold: number; rules_fired: string[] };
-  page_p: number; python_p: number; credit: string; drawn: string; has: boolean[];
+  page_p: number; python_p: number; python_p_single: number; refs: { id: string; date: string | null }[]; n_refs: number;
+  credit: string; drawn: string; has: boolean[];
 }
 
 /** The instrument's controls (see perturb() in the exporter). */
@@ -101,16 +102,39 @@ export function featurize(x: ArrayLike<number>): Tensor {
   return { data: f, shape: [NF, NT] };
 }
 
+/** faultfinder.context (v1.1): today's 35 rows, the per-bin median of the reference days' rows, today minus that
+ * median for rows 0-10, and n / 3 -> [82, 96]. No reference: rows 35-81 are zero (single-day mode). */
+export function context(ft: Tensor, refs: Tensor[]): Tensor {
+  const o = new Float32Array(NF7 * NT);
+  o.set(ft.data.subarray(0, NF * NT), 0);
+  const n = Math.min(refs.length, MAX_REF), rs = refs.slice(refs.length - n);
+  if (n) {
+    const v = new Array<number>(n);
+    for (let k = 0; k < NF * NT; k++) {
+      for (let j = 0; j < n; j++) v[j] = rs[j].data[k];
+      v.sort((a, b) => a - b);
+      const med = n % 2 ? v[(n - 1) >> 1] : (v[n / 2 - 1] + v[n / 2]) / 2;
+      o[NF * NT + k] = med;
+      if (k < 11 * NT) o[2 * NF * NT + k] = ft.data[k] - Math.fround(med);
+    }
+    o.fill(n / 3, (NF7 - 1) * NT, NF7 * NT);
+  }
+  return { data: o, shape: [NF7, NT] };
+}
+
 function pool2(x: Tensor): Tensor { // max over pairs, odd tail dropped
   const [C, L] = x.shape, L2 = L >> 1, o = new Float32Array(C * L2);
   for (let c = 0; c < C; c++) for (let l = 0; l < L2; l++) o[c * L2 + l] = Math.max(x.data[c * L + 2 * l], x.data[c * L + 2 * l + 1]);
   return { data: o, shape: [C, L2] };
 }
 
-/** faultfinder.forward + the calibrated detection: [19 logits, 19 parameters, energy, P(fault)]. */
-export function forward(W: Pack<FMeta>, x: ArrayLike<number>): Float64Array {
+/** faultfinder.forward + the calibrated detection: [19 logits, 19 parameters, energy, P(fault)].
+ * refs: the unit's earlier raw days (v1.1 weights read the last 3; empty or omitted = single-day mode). */
+export function forward(W: Pack<FMeta>, x: ArrayLike<number>, refs: ArrayLike<number>[] = []): Float64Array {
   const t = W.t;
-  let h = relu_(conv1d(featurize(x), t.c1_W, t.c1_b));
+  const f = featurize(x);
+  const inp = t.c1_W.shape[1] > NF ? context(f, refs.map((r) => featurize(r))) : f;
+  let h = relu_(conv1d(inp, t.c1_W, t.c1_b));
   h = pool2(relu_(conv1d(h, t.c2_W, t.c2_b)));
   h = pool2(relu_(conv1d(h, t.c3_W, t.c3_b)));
   h = relu_(conv1d(h, t.c4_W, t.c4_b));
@@ -131,8 +155,8 @@ export function forward(W: Pack<FMeta>, x: ArrayLike<number>): Float64Array {
 export interface Reading { p: number; diag: { cls: string; label: string; p: number }[]; energy: number; raw: Float64Array }
 
 /** predict_raw for one day: P(fault) and the diagnosis softmax(fault logits / T), sorted. */
-export function read(W: Pack<FMeta>, x: ArrayLike<number>): Reading {
-  const o = forward(W, x), T = W.meta.temperature;
+export function read(W: Pack<FMeta>, x: ArrayLike<number>, refs: ArrayLike<number>[] = []): Reading {
+  const o = forward(W, x, refs), T = W.meta.temperature;
   const z = Array.from(o.subarray(1, NC), (v) => v / T), m = Math.max(...z);
   const e = z.map((v) => Math.exp(v - m)), s = e.reduce((a, b) => a + b, 0);
   const diag = e.map((v, i) => ({ cls: W.meta.classes[i + 1], label: W.meta.labels[W.meta.classes[i + 1]], p: v / s })).sort((a, b) => b.p - a.p);

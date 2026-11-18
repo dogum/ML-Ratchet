@@ -104,6 +104,11 @@ checked on the providers' pages on 17 Nov 2026 where a page answered; otherwise 
 | [NASA POWER](https://power.larc.nasa.gov/) hourly irradiance | No licence stated; cite the POWER Project | Irradiance inside BDG2-site weather excerpts |
 | [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/) ASOS and NOAA ISD station weather | Public domain; credit appreciated | Station temperatures inside the weather excerpts |
 | ERCOT 2018 real-time prices | ERCOT terms of use (as in the grid section) | No (ThermoPilot's RTP tariff in training) |
+| [HEAPO](https://doi.org/10.5281/zenodo.15056919) heat-pump homes, Zurich — Brudermueller et al. (2025), Zenodo | CC BY 4.0 | No: BuildingDetective's fresh exam (round 2); only home IDs, hashes and counts are in `training/split_exam2_heapo.json` |
+| [I-BLEND](https://doi.org/10.6084/m9.figshare.6007637.v1) IIIT Delhi campus energy — Rashid et al. (2019), figshare; floor areas from Sci Data [doi:10.1038/sdata.2019.15](https://doi.org/10.1038/sdata.2019.15) | CC0 1.0 (data); the paper CC BY 4.0 | No: LoadCast's fresh exam (round 2); IDs and hashes only |
+| NOAA ISD-Lite, Delhi IGI (421810-99999) | U.S. government, no restrictions | No (weather for the I-BLEND exam) |
+| [Nehasil AHU fault data](https://doi.org/10.17632/jkw85sm4v4.1), CTU Prague — Mendeley Data | CC BY 4.0 | No: FaultFinder's fresh exam (round 2); IDs, hashes and counts only |
+| [Wang et al. 2024](https://doi.org/10.6084/m9.figshare.25909813.v1) Korean office AHUs — figshare | CC BY 4.0 | No: downloaded and rejected as an exam (it repeats the Korean office data behind v1.0's noise model) |
 
 Every model card (`models/*/MODEL_CARD.md`) carries the full citation list, including the physics papers.
 

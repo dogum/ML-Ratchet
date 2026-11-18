@@ -17,11 +17,25 @@ What the simulator gets wrong, by how much where we measured it, and what to wat
    and hot water, and distribution losses. BuildingSim's defaults (setbacks, economizers, 30 % VAV minimum, code
    outdoor air) describe a well-run building. **LoadCast must calibrate this on dev** (operating hours, minimum
    flow, outdoor air, a distribution-loss factor) before simulated pre-training means anything for district meters.
+
+   **Physics 1.1 (opt-in, 17 Nov 2026)** adds loop operation (hot-water lockout above a 15.6 C 7-day mean, chilled
+   water below 7.2 C) and a loop base while a loop runs (steam 3.5, hot water 23.5, chilled water 42.1 W/m2 of
+   floor), fitted on dev 2016. In sample the annual medians are 1.0 by construction; the 2016 fit scored on 2017
+   gives 0.98 / 0.98 / 0.91 (chilled water / steam / hot water). Leaving one site out, chilled water transfers
+   (median 1.03, daily r 0.85) but steam (3.3x) and hot water (8.5x) do not: per-area steam ranges from 2 W/m2 (Bull)
+   to 81 W/m2 (Eagle), and hot water is metered at only two sites. Summer reheat was fitted to zero. 1.1 lowers the
+   chilled-water daily r from 0.88 to 0.83 (a winter base where the real loop is lower).
 2. **Electricity totals scatter widely** (median ratio 0.98, IQR 0.50–1.42, 30 % within ±25 %), because BDG2 gives
    only use, area and sometimes year. The weekday hourly profile correlates at r 0.64 but the daily series only at
    0.34. In 55 % of buildings the daily-vs-temperature slope has the wrong sign: many campus buildings with district
    cooling have flat electricity, while twins with electric HVAC respond to weather. Gas has only 2 scorable
    buildings (ratio 0.03: their gas is not space heating as the twin assumes).
+
+   **Physics 1.2 (opt-in)** adds an always-on share of lighting and plug energy (0.6, the top of its grid) and a
+   daily activity multiplier (log-sd 0.15, lag-1 0.7). It matches the real night/day (0.69 vs 0.79), weekday swing and
+   day-to-day residual on dev and lowers the median daily PRISM r2 (2017: 0.28 -> 0.19, real 0.07), but the upper
+   tail stays (2017 p75 0.63 vs 0.25 real): twins with electric HVAC cause it, not schedules. Electricity daily r
+   falls 0.34 -> 0.20 because the draws are random.
 3. **Generated buildings vs real surveys** (site EUI medians, generated vs CBECS/RECS prior split):
    - right for offices (0.91), warehouses (0.98), retail (1.11), multi-family (1.12) and other (1.17);
    - too high for single-family houses (1.40), food service (1.53), schools (1.81), healthcare (1.91) and labs (2.0);
@@ -81,6 +95,11 @@ What the simulator gets wrong, by how much where we measured it, and what to wat
 10. **DX and heat-pump part load.** Single-speed units use one cycling-loss curve. Two-stage and variable-speed units
     use assumed curves (variable speed: COP +14 % at half load), not manufacturer data. Latent capacity uses the
     steady bypass-factor model: no moisture re-evaporation on cycling fans, so humid-climate RH is optimistic.
+    Real annual meters do not separate heat pumps from resistance heat the way twins do: on RECS dev, heat-pump homes
+    use 7-11 % more electricity per m2 than resistance homes at the same climate and area; twins use 24 % less (1.0)
+    and 11 % less at physics 1.3 (field COP factor 0.6). A reader fitted on real dev rows reaches only AUC 0.60, so
+    the HANDOFF target (0.7) is not reachable from annual meters. On HEAPO dev (Zurich) twins read 1.6x the annual
+    electricity and 1.8x the heating slope with US defaults; 1.3 makes both worse.
 11. **Fault models are first-order.**
     - Refrigerant charge and condenser fouling follow published trends (Kim & Braun 2012) fitted by eye, not the
       authors' correlations.

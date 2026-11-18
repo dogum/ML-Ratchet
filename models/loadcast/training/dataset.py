@@ -35,7 +35,7 @@ def site_feats(site):
 # ------------------------------------------------------------------ noise
 @functools.lru_cache(maxsize=1)
 def noise_bank():
-    z = np.load(f'{C.ROOT}/data/noise_bank.npz')
+    z = np.load(f'{C.ROOT}/data/' + os.environ.get('LC_NOISE_BANK', 'noise_bank.npz'))   # LC_NOISE_BANK: winrun.py noise y16
     use = C.bd.bdg2_meta(split='dev').set_index('id').primary_use
     return dict(E=z['E'].astype(np.float32), meter=z['meter'], bid=z['bid'], ratio=z['ratio'], gaps=z['gaps'],
                 use=np.array([use.get(b, 'other') for b in z['bid']]))
@@ -163,6 +163,13 @@ def rows(u, idx, mode, variant='full', wx_override=None):
     y = u['y'][idx].astype(np.float64)
     if mode == 'cold':
         return np.concatenate(X, 1).astype(np.float32), np.zeros(len(idx), np.float32), y, 1.0
+    if mode == 'shape':          # round 2, r7: cold load / the unit's own target-year mean (training only; base 1)
+        yb = max(float(np.nanmean(u['y'][u['tidx']])), 0.02)
+        return np.concatenate(X, 1).astype(np.float32), np.ones(len(idx), np.float32), y / yb, yb
+    if mode == 'twin':           # round 2, r8: correction to the dev-calibrated metadata twin (units of A*IREF)
+        tw = np.nan_to_num(u['tw'][idx].astype(np.float64)); twbar = float(np.nanmean(u['tw'][u['tidx']]))
+        X += [tw[:, None], np.full((len(idx), 1), np.log(max(twbar, 0.0) + 0.01))]
+        return np.concatenate(X, 1).astype(np.float32), tw.astype(np.float32), y, 1.0
     h = u['H'][variant]
     T = f['T'] if wx_override is None else wx_override['T']
     Tday = f['Tday'] if wx_override is None else wx_override['Tday']
@@ -175,3 +182,18 @@ def rows(u, idx, mode, variant='full', wx_override=None):
 
 N_COLD = len(C.STATIC_NAMES) + len(C.WX_NAMES) + len(C.CAL_NAMES)
 N_WARM = N_COLD + len(C.HIST_NAMES)
+
+
+def nin(mode):
+    return {'cold': N_COLD, 'shape': N_COLD, 'twin': N_COLD + 2, 'warm': N_WARM}[mode]
+
+
+def attach_bank_twins(units, bank):
+    """Round 2, r8: u['tw'] from data/bank_<bank>/twin_XXXX.npz (r2.py twins), same units as u['y']."""
+    T = {}
+    for fn in sorted(glob.glob(f'{C.ROOT}/data/bank_{bank}/twin_*.npz')):
+        z = np.load(fn); T.update({k: z[k] for k in z.files})
+    for u in units:
+        _, i, m = u['id'].split(':')
+        u['tw'] = T[f'{i}_{m}'].astype(np.float32)
+    return units

@@ -9,8 +9,11 @@ heat-pump / furnace / AC tables); for each tariff it holds the prices and the fu
 (the "truth" the browser model is compared with). BuildingSim itself is Python and is not in the repository yet, so
 weather changes snap between these five real climates.
 
-The browser runs ThermoPilot closed-loop on the linear house, hour by hour: features -> MLP -> setpoints -> comfort
-shield -> house step, against a fixed thermostat and the occupant's own setback schedule. Controls change the input:
+The browser runs ThermoPilot closed-loop on the linear house, hour by hour, in either mode: v1.1 (default) the card
+MPC, a 24 h dynamic programme on the card's 12-number linear house map (fitted here to the example's hourly maps with
+thermopilot_core.fit_map) -> setpoints -> comfort shield -> house step; or v1.0, features -> MLP -> setpoints -> comfort
+shield -> house step. A fixed thermostat and the occupant's own setback schedule run next to it. The full BuildingSim
+runs stored in the lab page are the v1.0 network's (and the other controllers'); there are none for v1.1. Controls change the input:
 climate, week, tariff, the comfort weight lambda the network is told, the random forecast error and a forecast bias.
 
 This file runs the same closed loop in Python with the shipped inference module (thermopilot_core.py) on float16
@@ -147,24 +150,34 @@ def simulate(ex, ctx, n, ctrl, gas_price):
                 kWh=kWh, gas=gas)
 
 
-def run_pilot(W, ex, run, lam_mul=1.0, fe=1.0, bias=0.0, z=None, n=168, price_mul=1.0, log_hours=()):
+def card_map(ex):
+    """The v1.1 card's house map, fitted to the example's hourly maps (the nominal twin's BuildingSim maps)."""
+    N = len(ex['To'])
+    return tp.fit_map(ex['To'], ex['G'], ex['base'], ex['A'], ex['At'], ex['C'], ex['Ct'], np.full(N, ex['Aq']),
+                      np.full(N, ex['Cq']))
+
+
+def run_pilot(W, ex, run, lam_mul=1.0, fe=1.0, bias=0.0, z=None, n=168, price_mul=1.0, log_hours=(), mode='mpc'):
+    """ThermoPilot closed loop on the browser house. Logged at the hours in log_hours: the card MPC's 36 action values
+    ($) for mode='mpc', the network's 36 logits for mode='network'."""
     N = len(ex['To'])
     ctx = ctx_of(ex, run, N, price_mul)
-    pilot = tp.ThermoPilot(W, ex['card'], ctx, float(ex['lam']) * lam_mul, ex['base'])
+    pilot = tp.pilot(ex['card'], ctx, float(ex['lam']) * lam_mul, ex['base'], float(ex['gas_price']), mode=mode, W=W)
     rec, logits, acts = {}, [], []
-    fstep = pilot.feat.step
+    if mode == 'network':
+        fstep = pilot.feat.step
 
-    def feat_step(*a):
-        rec['x'] = fstep(*a)
-        return rec['x']
-    pilot.feat.step = feat_step
+        def feat_step(*a):
+            rec['x'] = fstep(*a)
+            return rec['x']
+        pilot.feat.step = feat_step
 
     def ctrl(k, Tz, q, e):
         T, G = forecast(ex, z, k, fe, bias)
         sp = pilot.step(k, Tz, q, e, T, G)
         acts.append(pilot.last)
         if k in log_hours:
-            logits.append(tp.mlp_forward(W, rec['x'].astype(np.float64)))
+            logits.append(np.array(pilot.Q) if mode == 'mpc' else tp.mlp_forward(W, rec['x'].astype(np.float64)))
         return sp['heat_sp'], sp['cool_sp']
     r = simulate(ex, ctx, n, ctrl, float(ex['gas_price']))
     r['acts'], r['logits'] = np.array(acts), logits
@@ -208,12 +221,17 @@ def main():
                 for k in TABLES + ['Tg']:
                     T[f'K_{k}'][li] = m['card'][k]
                 cs = {k: m['card'][k] for k in ('UA', 'C', 'area', 'kind', 'gas_heat', 'fan_cont', 'res', 'P_fan', 'backup')}
-                live_meta.append(dict(Aq=m['Aq'], Cq=m['Cq'], Tm0=m['Tm0'], lam=m['lam'], gas_price=m['gas_price'], card=cs))
                 # the Python view of this example, on exactly the float32 values the browser reads
                 ex = {k: T[f'L_{k}'][li].astype(np.float64) for k in LIVE}
                 ex.update(Aq=np.float32(m['Aq']).item(), Cq=np.float32(m['Cq']).item(), Tm0=np.float32(m['Tm0']).item(),
                           lam=m['lam'], gas_price=m['gas_price'], pref_lo=homes[hi]['pref']['lo'], pref_hi=homes[hi]['pref']['hi'])
-                ex['card'] = dict(cs, **{k: T[f'K_{k}'][li].astype(np.float64) for k in TABLES + ['Tg']})
+                tabs = {k: T[f'K_{k}'][li].astype(np.float64) for k in TABLES + ['Tg']}
+                # v1.1 card fields: the house map, heater size and efficiency (the browser's units are single speed
+                # and have no constant fan, like the browser house)
+                assert not cs['fan_cont']
+                cs.update(map=card_map(ex), Qheat=float(np.max(tabs['Qmax'])), eff0=float(np.median(tabs['eff'])))
+                live_meta.append(dict(Aq=m['Aq'], Cq=m['Cq'], Tm0=m['Tm0'], lam=m['lam'], gas_price=m['gas_price'], card=cs))
+                ex['card'] = dict(cs, **tabs)
                 exs[li] = ex
                 for ti in range(nT):
                     ri = li * nT + ti
@@ -232,17 +250,25 @@ def main():
     write_pack(OUT / 'examples', T, dtype='f32', meta=meta)
 
     # browser-house vs full BuildingSim at the as-built settings (for the notes and the report)
-    agree = []
+    agree, Jw = [], []
     for li, ex in exs.items():
         for ti in range(nT):
             r = L['runs'][f'{li // (nC * nW)}_{(li // nW) % nC}_{li % nW}_{ti}']
             run = {k: T[f'R_{k}'][li * nT + ti].astype(np.float64) for k in RUN}
-            res, _ = run_pilot(Wr, ex, run, z=z.astype(np.float64))
+            res, ctx = run_pilot(Wr, ex, run, z=z.astype(np.float64), mode='network')
+            r11, _ = run_pilot(Wr, ex, run, z=z.astype(np.float64), mode='mpc')
+            fx = simulate(ex, ctx, 168, lambda k, *a: (ctx['pref_lo'], ctx['pref_hi']), float(ex['gas_price']))
             agree.append((res['bill'], r['ctrl']['thermopilot']['bill']))
+            lam = float(ex['lam'])
+            Jw.append([x['bill'] + lam * x['DH'] for x in (r11, res, fx)])
     a = np.array(agree)
-    print(f'browser house vs full BuildingSim, ThermoPilot bill over {len(a)} runs: median ratio '
+    print(f'browser house vs full BuildingSim, v1.0 network bill over {len(a)} runs: median ratio '
           f'{np.median(a[:, 0] / a[:, 1]):.3f}, IQR {np.percentile(a[:, 0] / a[:, 1], 25):.3f}-'
           f'{np.percentile(a[:, 0] / a[:, 1], 75):.3f}')
+    j = np.array(Jw)
+    print(f'browser house, {len(j)} weeks, J (bill + lambda K h) vs fixed: v1.1 card MPC saves '
+          f'{100 * (1 - j[:, 0].sum() / j[:, 2].sum()):.2f} %, v1.0 network {100 * (1 - j[:, 1].sum() / j[:, 2].sum()):.2f} %; '
+          f'v1.1 lower J in {int(np.sum(j[:, 0] < j[:, 1] - 1e-9))} weeks, higher in {int(np.sum(j[:, 0] > j[:, 1] + 1e-9))}')
 
     # ---- parity cases: closed loop on the browser house (setpoints, temperatures, bill, comfort, logits)
     zz = z.astype(np.float64)
@@ -250,19 +276,19 @@ def main():
     picks = [(0, 4, 1, 0), (0, 0, 0, 2), (1, 2, 0, 1), (1, 3, 1, 4), (2, 1, 0, 3)]
     variants = [('as built', dict()), ('lambda x4, no forecast error', dict(lam_mul=4.0, fe=0.0)),
                 ('forecast +3 K bias, error x2', dict(bias=3.0, fe=2.0)), ('lambda x0.25, bias -3 K', dict(lam_mul=0.25, bias=-3.0))]
-    for hi, ci, wi, ti in picks:
+    for (hi, ci, wi, ti), mode in [(p, md) for md in ('mpc', 'network') for p in picks]:
         li = (hi * nC + ci) * nW + wi
         ri = li * nT + ti
         run = {k: T[f'R_{k}'][ri].astype(np.float64) for k in RUN}
         for vname, kw in variants:
             prm = dict(lam_mul=1.0, fe=1.0, bias=0.0)
             prm.update(kw)
-            res, _ = run_pilot(Wr, exs[li], run, z=zz, log_hours=(5, 77, 150), **prm)
+            res, _ = run_pilot(Wr, exs[li], run, z=zz, log_hours=(5, 77, 150), mode=mode, **prm)
             out = np.concatenate([res['h'], res['c'], res['T'], [res['bill'], res['DH']], *res['logits']])
-            cases.append(dict(example=li, run=ri, variant=vname, lam_mul=prm['lam_mul'], fe=prm['fe'], bias=prm['bias'],
+            cases.append(dict(example=li, run=ri, variant=f'{mode}: {vname}', mode=mode, lam_mul=prm['lam_mul'], fe=prm['fe'], bias=prm['bias'],
                               log_hours=[5, 77, 150], outputs=[float(v) for v in out]))
-            print(f"{homes[hi]['label']:32s} {climates[ci][1]:22s} {weeks[wi]:6s} {tariffs[ti][0]:16s} {vname:32s} "
-                  f"bill ${res['bill']:7.2f}  {res['DH']:5.1f} K h  (full sim ${L['runs'][f'{hi}_{ci}_{wi}_{ti}']['ctrl']['thermopilot']['bill']:.2f})")
+            print(f"{mode:8s} {homes[hi]['label']:32s} {climates[ci][1]:22s} {weeks[wi]:6s} {tariffs[ti][0]:16s} {vname:32s} "
+                  f"bill ${res['bill']:7.2f}  {res['DH']:5.1f} K h  (v1.0 full sim ${L['runs'][f'{hi}_{ci}_{wi}_{ti}']['ctrl']['thermopilot']['bill']:.2f})")
     write_json(OUT / 'reference.json', dict(cases=cases, tolerance=2e-3))
     (OUT / 'LICENSE-DATA.md').write_text(LICENSE, encoding='utf-8')
     tot = sum(f.stat().st_size for f in OUT.iterdir())

@@ -1,0 +1,576 @@
+{
+ "exam": "LoadCast exam 2, I-BLEND (IIIT Delhi campus), scored once on 17 Nov 2026",
+ "spec": "split_exam2_iblend.json",
+ "split_sha256": "0674542c49ef5642234acc4b48555649901220fdaf24816afb53867e9d6de2d4",
+ "n_buildings": 3,
+ "model": "LoadCast v1.0 (released loadcast_weights.npz, shipped widening)",
+ "interval": {
+  "resamples": 2000,
+  "seed": 20261117,
+  "unit": "building",
+  "level": 0.95
+ },
+ "g14_p": "LoadCast, dev guesses, towt_lc and all daily / monthly aggregates of hourly predictions p = 0; BuildingData TOWT (p = 174) and change-point models (p by kind) n - p, as load_one computes",
+ "not_run_as_specified": [
+  "Dev-calibrated BuildingSim twin baseline: not run. The integrity-pass twin builder (rescore_seen._sim_one) takes a BDG2 building id (bdg2_spec) and a BDG2 site's weather (lcsim.simulate_site); it does not accept a non-BDG2 spec."
+ ],
+ "dev_guess": {
+  "n_dev_meters": 47,
+  "keys": {
+   "academic": "education|electricity",
+   "library": "education|electricity",
+   "facilities": "other|electricity"
+  }
+ },
+ "rows": {
+  "cold_hourly": {
+   "n": 3,
+   "model": 125.66196531877804,
+   "model_nmbe": -119.80411753314644,
+   "baselines": {
+    "dumb_hourly": 89.80172084112353,
+    "shape_hourly": 90.76393741212372
+   },
+   "best": "dumb_hourly",
+   "best_nmbe": -79.53861432363988,
+   "diff": 35.86024447765452,
+   "interval": [
+    -33.47927970828405,
+    78.7925393207877
+   ],
+   "verdict": "tie",
+   "per_building": {
+    "academic": {
+     "model": 56.32244113283948,
+     "best": 89.80172084112353
+    },
+    "library": {
+     "model": 180.0394526483575,
+     "best": 176.29057041526016
+    },
+    "facilities": {
+     "model": 125.66196531877804,
+     "best": 46.86942599799035
+    }
+   },
+   "coverage90_mean": 1.0
+  },
+  "warm_year_hourly": {
+   "n": 3,
+   "model": 40.969127309692894,
+   "model_nmbe": 3.8347133754609373,
+   "baselines": {
+    "towt_bd_hourly": 41.547479157786256,
+    "cp_hourly": 40.24037693865433,
+    "towt_lc_hourly": 40.86104500290758
+   },
+   "best": "cp_hourly",
+   "best_nmbe": 2.3566808098517438,
+   "diff": 0.728750371038565,
+   "interval": [
+    -2.217645440577499,
+    0.9759813507630462
+   ],
+   "verdict": "tie",
+   "per_building": {
+    "academic": {
+     "model": 40.969127309692894,
+     "best": 40.24037693865433
+    },
+    "library": {
+     "model": 69.87227492156755,
+     "best": 72.08992036214505
+    },
+    "facilities": {
+     "model": 17.911689404321006,
+     "best": 16.93570805355796
+    }
+   },
+   "coverage90_mean": 0.8402289547979654
+  },
+  "warm_w8_hourly": {
+   "n": 3,
+   "model": 41.12858972600199,
+   "model_nmbe": -4.2036919460631275,
+   "baselines": {
+    "towt_lc_w8_hourly": 46.180777050576346,
+    "dumb_hourly": 89.80172084112353,
+    "shape_hourly": 90.76393741212372
+   },
+   "best": "towt_lc_w8_hourly",
+   "best_nmbe": -10.531347641815888,
+   "diff": -5.052187324574355,
+   "interval": [
+    -5.052187324574355,
+    2.5333361510531063
+   ],
+   "verdict": "tie",
+   "per_building": {
+    "academic": {
+     "model": 41.12858972600199,
+     "best": 46.180777050576346
+    },
+    "library": {
+     "model": 65.15285181410214,
+     "best": 69.19671965676665
+    },
+    "facilities": {
+     "model": 27.450270511630006,
+     "best": 24.9169343605769
+    }
+   },
+   "coverage90_mean": 0.8036409556114209
+  },
+  "warm_w2_hourly": {
+   "n": 3,
+   "model": 43.16471292431274,
+   "model_nmbe": 19.357704974912533,
+   "baselines": {
+    "towt_lc_w2_hourly": 46.669526099402844,
+    "dumb_hourly": 89.80172084112353,
+    "shape_hourly": 90.76393741212372
+   },
+   "best": "towt_lc_w2_hourly",
+   "best_nmbe": 22.93905939140579,
+   "diff": -3.5048131750901064,
+   "interval": [
+    -4.063901741446074,
+    -3.5048131750901064
+   ],
+   "verdict": "win",
+   "per_building": {
+    "academic": {
+     "model": 43.16471292431274,
+     "best": 46.669526099402844
+    },
+    "library": {
+     "model": 66.46110513415587,
+     "best": 70.52500687560195
+    },
+    "facilities": {
+     "model": 31.50861938873126,
+     "best": 35.32730279087359
+    }
+   },
+   "coverage90_mean": 0.843372571306082
+  },
+  "cold_daily": {
+   "n": 3,
+   "model": 120.7304061412004,
+   "model_nmbe": -119.64846006244446,
+   "baselines": {
+    "dumb_daily": 82.49155500060402,
+    "shape_daily": 82.29612259654729
+   },
+   "best": "shape_daily",
+   "best_nmbe": -79.71641460829467,
+   "diff": 38.43428354465311,
+   "interval": [
+    -39.42578330722054,
+    78.55878200168578
+   ],
+   "verdict": "tie",
+   "per_building": {
+    "academic": {
+     "model": 42.87033928932675,
+     "best": 82.29612259654729
+    },
+    "library": {
+     "model": 172.91813297469264,
+     "best": 169.78712941960552
+    },
+    "facilities": {
+     "model": 120.7304061412004,
+     "best": 42.17162413951461
+    }
+   }
+  },
+  "cold_monthly": {
+   "n": 3,
+   "model": 119.6473715231475,
+   "model_nmbe": -119.16004882655395,
+   "baselines": {
+    "dumb_monthly": 80.79517396745987,
+    "shape_monthly": 80.67172942055866
+   },
+   "best": "shape_monthly",
+   "best_nmbe": -79.19874666284021,
+   "diff": 38.975642102588836,
+   "interval": [
+    -41.95186255694623,
+    79.47342825477014
+   ],
+   "verdict": "tie",
+   "per_building": {
+    "academic": {
+     "model": 38.71986686361243,
+     "best": 80.67172942055866
+    },
+    "library": {
+     "model": 170.77946484764337,
+     "best": 166.31997753763562
+    },
+    "facilities": {
+     "model": 119.6473715231475,
+     "best": 40.17394326837735
+    }
+   }
+  },
+  "warm_year_daily": {
+   "n": 3,
+   "model": 17.399291948189607,
+   "model_nmbe": 3.9282994899655135,
+   "baselines": {
+    "towt_bd_daily": 17.860479322004657,
+    "cp_daily": 23.066859325841946,
+    "towt_lc_daily": 17.872168179629966
+   },
+   "best": "towt_bd_daily",
+   "best_nmbe": 2.6020269951919945,
+   "diff": -0.4611873738150507,
+   "interval": [
+    -2.4333151509365365,
+    -0.2864231237563999
+   ],
+   "verdict": "win",
+   "per_building": {
+    "academic": {
+     "model": 17.399291948189607,
+     "best": 17.860479322004657
+    },
+    "library": {
+     "model": 38.75570271038854,
+     "best": 41.18901786132508
+    },
+    "facilities": {
+     "model": 8.833157940802657,
+     "best": 9.119581064559057
+    }
+   }
+  },
+  "warm_year_monthly": {
+   "n": 3,
+   "model": 12.58055177487019,
+   "model_nmbe": 3.899363633278899,
+   "baselines": {
+    "towt_bd_monthly": 13.064310570021059,
+    "cp_monthly": 13.906441858238342,
+    "towt_lc_monthly": 13.040026983838194
+   },
+   "best": "towt_lc_monthly",
+   "best_nmbe": 2.7773975889648352,
+   "diff": -0.459475208968005,
+   "interval": [
+    -1.8745733336428643,
+    -0.40842939743146545
+   ],
+   "verdict": "win",
+   "per_building": {
+    "academic": {
+     "model": 12.58055177487019,
+     "best": 13.040026983838194
+    },
+    "library": {
+     "model": 28.027781047166474,
+     "best": 29.90235438080934
+    },
+    "facilities": {
+     "model": 6.526401356525544,
+     "best": 6.9348307539570095
+    }
+   }
+  }
+ },
+ "buildings": [
+  {
+   "building": "academic",
+   "use": "education",
+   "dumb_key": "education|electricity",
+   "n_good": 8599,
+   "cold_hourly_cv": 56.3224411328,
+   "cold_hourly_nmbe": -36.9880138289,
+   "cold_daily_cv": 42.8703392893,
+   "cold_daily_nmbe": -36.8334801172,
+   "cold_monthly_cv": 38.7198668636,
+   "cold_monthly_nmbe": -36.8004794415,
+   "warm_year_hourly_cv": 40.9691273097,
+   "warm_year_hourly_nmbe": 7.6510779824,
+   "warm_year_daily_cv": 17.3992919482,
+   "warm_year_daily_nmbe": 7.6670421907,
+   "warm_year_monthly_cv": 12.5805517749,
+   "warm_year_monthly_nmbe": 7.8196621035,
+   "towt_lc_hourly_cv": 40.8610450029,
+   "towt_lc_hourly_nmbe": 5.1913947437,
+   "towt_lc_daily_cv": 17.8721681796,
+   "towt_lc_daily_nmbe": 5.2167528015,
+   "towt_lc_monthly_cv": 13.0400269838,
+   "towt_lc_monthly_nmbe": 5.4176897695,
+   "warm_w8_hourly_cv": 41.128589726,
+   "warm_w8_hourly_nmbe": -4.2036919461,
+   "warm_w8_daily_cv": 17.3141719549,
+   "warm_w8_daily_nmbe": -4.0463042571,
+   "warm_w8_monthly_cv": 10.79561828,
+   "warm_w8_monthly_nmbe": -4.1132364045,
+   "towt_lc_w8_hourly_cv": 46.1807770506,
+   "towt_lc_w8_hourly_nmbe": -10.5313476418,
+   "towt_lc_w8_daily_cv": 24.4011327351,
+   "towt_lc_w8_daily_nmbe": -10.2871765109,
+   "towt_lc_w8_monthly_cv": 19.3589339689,
+   "towt_lc_w8_monthly_nmbe": -10.3918557207,
+   "warm_w2_hourly_cv": 43.1647129243,
+   "warm_w2_hourly_nmbe": 14.0145540805,
+   "warm_w2_daily_cv": 24.7471747483,
+   "warm_w2_daily_nmbe": 14.0465301451,
+   "warm_w2_monthly_cv": 19.112636593,
+   "warm_w2_monthly_nmbe": 14.2144496684,
+   "towt_lc_w2_hourly_cv": 46.6695260994,
+   "towt_lc_w2_hourly_nmbe": 14.8018435966,
+   "towt_lc_w2_daily_cv": 26.5922094972,
+   "towt_lc_w2_daily_nmbe": 14.8626168947,
+   "towt_lc_w2_monthly_cv": 20.3638255918,
+   "towt_lc_w2_monthly_nmbe": 15.0205634864,
+   "dumb_hourly_cv": 89.8017208411,
+   "dumb_hourly_nmbe": -79.5386143236,
+   "dumb_daily_cv": 82.4915550006,
+   "dumb_daily_nmbe": -79.5265734563,
+   "dumb_monthly_cv": 80.7951739675,
+   "dumb_monthly_nmbe": -78.9646528062,
+   "shape_hourly_cv": 90.7639374121,
+   "shape_hourly_nmbe": -79.7541395319,
+   "shape_daily_cv": 82.2961225965,
+   "shape_daily_nmbe": -79.7164146083,
+   "shape_monthly_cv": 80.6717294206,
+   "shape_monthly_nmbe": -79.1987466628,
+   "cold_cov90": 1.0,
+   "cold_widen": 2.0,
+   "warm_year_cov90": 0.8011396674,
+   "warm_year_widen": 1.0499999523,
+   "warm_w8_cov90": 0.8859169671,
+   "warm_w8_widen": 1.0,
+   "warm_w2_cov90": 0.8656820561,
+   "warm_w2_widen": 1.2999999523,
+   "cp_kind": "4P",
+   "nowcast_persistence_1h_cv": 17.0007264854,
+   "nowcast_persistence_1h_nmbe": -0.0077923129,
+   "nowcast_persistence_1h_n": 8580,
+   "nowcast_persistence_24h_cv": 34.8854383113,
+   "nowcast_persistence_24h_nmbe": -0.120028315,
+   "nowcast_persistence_24h_n": 8518,
+   "nowcast_same_hour_last_week_cv": 25.0750841427,
+   "nowcast_same_hour_last_week_nmbe": -0.23602176,
+   "nowcast_same_hour_last_week_n": 8439,
+   "towt_bd_hourly_cv": 41.5474791578,
+   "towt_bd_hourly_nmbe": 5.2814837638,
+   "towt_bd_hourly_n": 8599,
+   "cp_hourly_cv": 40.2403769387,
+   "cp_hourly_nmbe": 5.1613207024,
+   "cp_hourly_n": 8599,
+   "cp_daily_cv": 23.0668593258,
+   "cp_daily_nmbe": 5.5448812865,
+   "cp_daily_n": 355,
+   "cp_monthly_cv": 13.9064418582,
+   "cp_monthly_nmbe": 7.9991716775,
+   "cp_monthly_n": 12,
+   "towt_bd_hourly_cv_check": 41.5474791578,
+   "towt_bd_daily_cv": 17.860479322,
+   "towt_bd_daily_nmbe": 5.1923122285,
+   "towt_bd_monthly_cv": 13.06431057,
+   "towt_bd_monthly_nmbe": 5.4018142274
+  },
+  {
+   "building": "library",
+   "use": "education",
+   "dumb_key": "education|electricity",
+   "n_good": 7480,
+   "cold_hourly_cv": 180.0394526484,
+   "cold_hourly_nmbe": -169.35358555,
+   "cold_daily_cv": 172.9181329747,
+   "cold_daily_nmbe": -169.6143793369,
+   "cold_monthly_cv": 170.7794648476,
+   "cold_monthly_nmbe": -169.8799293341,
+   "warm_year_hourly_cv": 69.8722749216,
+   "warm_year_hourly_nmbe": -11.8480949779,
+   "warm_year_daily_cv": 38.7557027104,
+   "warm_year_daily_nmbe": -11.7775687199,
+   "warm_year_monthly_cv": 28.0277810472,
+   "warm_year_monthly_nmbe": -12.1967542042,
+   "towt_lc_hourly_cv": 70.4203459357,
+   "towt_lc_hourly_nmbe": -7.0003726795,
+   "towt_lc_daily_cv": 40.9342023576,
+   "towt_lc_daily_nmbe": -7.0231272508,
+   "towt_lc_monthly_cv": 29.9023543808,
+   "towt_lc_monthly_nmbe": -7.1488821508,
+   "warm_w8_hourly_cv": 65.1528518141,
+   "warm_w8_hourly_nmbe": -12.2826257713,
+   "warm_w8_daily_cv": 35.2818532271,
+   "warm_w8_daily_nmbe": -11.7797115576,
+   "warm_w8_monthly_cv": 22.1404767343,
+   "warm_w8_monthly_nmbe": -12.5940057738,
+   "towt_lc_w8_hourly_cv": 69.1967196568,
+   "towt_lc_w8_hourly_nmbe": -12.8237982379,
+   "towt_lc_w8_daily_cv": 40.1555997063,
+   "towt_lc_w8_daily_nmbe": -12.4486536082,
+   "towt_lc_w8_monthly_cv": 26.920561058,
+   "towt_lc_w8_monthly_nmbe": -12.8791167612,
+   "warm_w2_hourly_cv": 66.4611051342,
+   "warm_w2_hourly_nmbe": 20.7700056001,
+   "warm_w2_daily_cv": 41.2192936439,
+   "warm_w2_daily_nmbe": 20.6534099304,
+   "warm_w2_monthly_cv": 28.1179504586,
+   "warm_w2_monthly_nmbe": 20.7929856452,
+   "towt_lc_w2_hourly_cv": 70.5250068756,
+   "towt_lc_w2_hourly_nmbe": 23.0470694789,
+   "towt_lc_w2_daily_cv": 43.8966912434,
+   "towt_lc_w2_daily_nmbe": 22.8373307511,
+   "towt_lc_w2_monthly_cv": 30.5297177335,
+   "towt_lc_w2_monthly_nmbe": 23.1224170468,
+   "dumb_hourly_cv": 176.2905704153,
+   "dumb_hourly_nmbe": -164.8679788034,
+   "dumb_daily_cv": 169.753801983,
+   "dumb_daily_nmbe": -165.877743524,
+   "dumb_monthly_cv": 166.2398303482,
+   "dumb_monthly_nmbe": -164.5193890571,
+   "shape_hourly_cv": 177.2256947088,
+   "shape_hourly_nmbe": -165.2463327532,
+   "shape_daily_cv": 169.7871294196,
+   "shape_daily_nmbe": -166.2099277565,
+   "shape_monthly_cv": 166.3199775376,
+   "shape_monthly_nmbe": -164.8503656016,
+   "cold_cov90": 1.0,
+   "cold_widen": 2.0,
+   "warm_year_cov90": 0.813368984,
+   "warm_year_widen": 1.0499999523,
+   "warm_w8_cov90": 0.7703208556,
+   "warm_w8_widen": 1.0,
+   "warm_w2_cov90": 0.8173796791,
+   "warm_w2_widen": 1.2999999523,
+   "cp_kind": "3PH",
+   "nowcast_persistence_1h_cv": 27.257835056,
+   "nowcast_persistence_1h_nmbe": -0.3062328961,
+   "nowcast_persistence_1h_n": 7448,
+   "nowcast_persistence_24h_cv": 56.4458679731,
+   "nowcast_persistence_24h_nmbe": -0.7383649646,
+   "nowcast_persistence_24h_n": 7245,
+   "nowcast_same_hour_last_week_cv": 43.8106330495,
+   "nowcast_same_hour_last_week_nmbe": -1.1375819874,
+   "nowcast_same_hour_last_week_n": 6826,
+   "towt_bd_hourly_cv": 71.9523490933,
+   "towt_bd_hourly_nmbe": -7.2636390382,
+   "towt_bd_hourly_n": 7480,
+   "cp_hourly_cv": 72.0899203621,
+   "cp_hourly_nmbe": -6.8302476285,
+   "cp_hourly_n": 7480,
+   "cp_daily_cv": 49.055773174,
+   "cp_daily_nmbe": -6.9667267487,
+   "cp_daily_n": 299,
+   "cp_monthly_cv": 35.0245528312,
+   "cp_monthly_nmbe": -8.9752003301,
+   "cp_monthly_n": 12,
+   "towt_bd_hourly_cv_check": 71.9523490933,
+   "towt_bd_daily_cv": 41.1890178613,
+   "towt_bd_daily_nmbe": -7.1039390143,
+   "towt_bd_monthly_cv": 30.2190412734,
+   "towt_bd_monthly_nmbe": -7.2706364646
+  },
+  {
+   "building": "facilities",
+   "use": "other",
+   "dumb_key": "other|electricity",
+   "n_good": 8271,
+   "cold_hourly_cv": 125.6619653188,
+   "cold_hourly_nmbe": -119.8041175331,
+   "cold_daily_cv": 120.7304061412,
+   "cold_daily_nmbe": -119.6484600624,
+   "cold_monthly_cv": 119.6473715231,
+   "cold_monthly_nmbe": -119.1600488266,
+   "warm_year_hourly_cv": 17.9116894043,
+   "warm_year_hourly_nmbe": 3.8347133755,
+   "warm_year_daily_cv": 8.8331579408,
+   "warm_year_daily_nmbe": 3.92829949,
+   "warm_year_monthly_cv": 6.5264013565,
+   "warm_year_monthly_nmbe": 3.8993636333,
+   "towt_lc_hourly_cv": 18.0504660446,
+   "towt_lc_hourly_nmbe": 2.5520964224,
+   "towt_lc_daily_cv": 9.1127418841,
+   "towt_lc_daily_nmbe": 2.6029821877,
+   "towt_lc_monthly_cv": 6.934830754,
+   "towt_lc_monthly_nmbe": 2.777397589,
+   "warm_w8_hourly_cv": 27.4502705116,
+   "warm_w8_hourly_nmbe": 16.3806631251,
+   "warm_w8_daily_cv": 21.9020767369,
+   "warm_w8_daily_nmbe": 16.4001293144,
+   "warm_w8_monthly_cv": 20.4103658866,
+   "warm_w8_monthly_nmbe": 16.64632744,
+   "towt_lc_w8_hourly_cv": 24.9169343606,
+   "towt_lc_w8_hourly_nmbe": 12.757343332,
+   "towt_lc_w8_daily_cv": 18.158923628,
+   "towt_lc_w8_daily_nmbe": 12.796339002,
+   "towt_lc_w8_monthly_cv": 16.4688396491,
+   "towt_lc_w8_monthly_nmbe": 12.9960079082,
+   "warm_w2_hourly_cv": 31.5086193887,
+   "warm_w2_hourly_nmbe": 19.3577049749,
+   "warm_w2_daily_cv": 27.4234158385,
+   "warm_w2_daily_nmbe": 19.2867365276,
+   "warm_w2_monthly_cv": 26.1917873453,
+   "warm_w2_monthly_nmbe": 19.9018054898,
+   "towt_lc_w2_hourly_cv": 35.3273027909,
+   "towt_lc_w2_hourly_nmbe": 22.9390593914,
+   "towt_lc_w2_daily_cv": 30.6992306531,
+   "towt_lc_w2_daily_nmbe": 22.8678186151,
+   "towt_lc_w2_monthly_cv": 29.2646031355,
+   "towt_lc_w2_monthly_nmbe": 23.4228057887,
+   "dumb_hourly_cv": 46.869425998,
+   "dumb_hourly_nmbe": -38.8743182537,
+   "dumb_daily_cv": 43.8538924078,
+   "dumb_daily_nmbe": -39.0400038293,
+   "dumb_monthly_cv": 41.868146074,
+   "dumb_monthly_nmbe": -37.9771259441,
+   "shape_hourly_cv": 45.8852924853,
+   "shape_hourly_nmbe": -37.7621074186,
+   "shape_daily_cv": 42.1716241395,
+   "shape_daily_nmbe": -37.9111698946,
+   "shape_monthly_cv": 40.1739432684,
+   "shape_monthly_nmbe": -36.9443970074,
+   "cold_cov90": 1.0,
+   "cold_widen": 2.0,
+   "warm_year_cov90": 0.906178213,
+   "warm_year_widen": 1.0499999523,
+   "warm_w8_cov90": 0.7546850441,
+   "warm_w8_widen": 1.0,
+   "warm_w2_cov90": 0.8470559787,
+   "warm_w2_widen": 1.2999999523,
+   "cp_kind": "3PC",
+   "nowcast_persistence_1h_cv": 9.4544846089,
+   "nowcast_persistence_1h_nmbe": -0.007200196,
+   "nowcast_persistence_1h_n": 8237,
+   "nowcast_persistence_24h_cv": 16.4882608147,
+   "nowcast_persistence_24h_nmbe": -0.0434531165,
+   "nowcast_persistence_24h_n": 8181,
+   "nowcast_same_hour_last_week_cv": 16.030613688,
+   "nowcast_same_hour_last_week_nmbe": -0.1765970792,
+   "nowcast_same_hour_last_week_n": 8035,
+   "towt_bd_hourly_cv": 18.2620240596,
+   "towt_bd_hourly_nmbe": 2.6074131937,
+   "towt_bd_hourly_n": 8271,
+   "cp_hourly_cv": 16.9357080536,
+   "cp_hourly_nmbe": 2.3566808099,
+   "cp_hourly_n": 8271,
+   "cp_daily_cv": 9.9251100211,
+   "cp_daily_nmbe": 2.4558914986,
+   "cp_daily_n": 339,
+   "cp_monthly_cv": 7.2457651227,
+   "cp_monthly_nmbe": 3.3644856123,
+   "cp_monthly_n": 12,
+   "towt_bd_hourly_cv_check": 18.2620240596,
+   "towt_bd_daily_cv": 9.1195810646,
+   "towt_bd_daily_nmbe": 2.6020269952,
+   "towt_bd_monthly_cv": 6.9417522168,
+   "towt_bd_monthly_nmbe": 2.7788108456
+  }
+ ],
+ "nowcast_info": {
+  "persistence_1h": 17.000726485409274,
+  "persistence_24h": 34.88543831125894,
+  "same_hour_last_week": 25.075084142743307
+ }
+}

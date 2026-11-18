@@ -185,7 +185,10 @@ def build_system(sim, D):
         min_frac = h['vav_min_frac']
         Q_rh = max(min_frac * m_max * CP_AIR * (35.0 - T_sa), D['Q_heat_zone'] * fh)
         if sysname == 'district_steam_chw':
-            cool_plant = District(Qcc, h['district_eff'], 'chw') if cooling else None
+            # district_eff_chw (opt-in, absent = district_eff): the chilled-water distribution factor apart from
+            # heat's (BuildingDetective W2: campus heat 0.18, chilled water 0.33 on BDG2 dev)
+            eff_c = h['district_eff'] if h.get('district_eff_chw') is None else h['district_eff_chw']
+            cool_plant = District(Qcc, eff_c, 'chw') if cooling else None
             heat_plant = District(Q_ph + Q_rh, h['district_eff'], 'steam')
         else:
             cs = h.get('cooling_source', 'chiller')

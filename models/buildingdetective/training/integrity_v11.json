@@ -1,0 +1,2630 @@
+{
+ "note": "integrity pass 17 Nov 2026; exam SEEN; nothing chosen from it",
+ "seed": 20261117,
+ "n_boot": 2000,
+ "lam": 1.0,
+ "reproduction": {
+  "n_compared": 111,
+  "max_abs_diff": 6.552544781751642,
+  "worst": [
+   "bdg2.hourly.area.MdAPE",
+   56.59481562147288,
+   50.04227083972124
+  ],
+  "missing": [],
+  "lists": 11,
+  "list_max_abs_diff": 46.88464696762643,
+  "old_keys_not_recomputed": []
+ },
+ "rows": [
+  {
+   "row": "BDG2 floor area, hourly input",
+   "stat": "mdape",
+   "better": "lower",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Electricity \u00f7 dev median EUI of the TRUE use",
+     "needs_truth": true,
+     "n": 1364,
+     "value": 51.51295857769593,
+     "model_same_rows": 54.70342261511176,
+     "diff": 3.190464037415829,
+     "lo": -1.181856637714564,
+     "hi": 7.688172887958565,
+     "verdict": "tie"
+    },
+    {
+     "name": "Electricity \u00f7 dev median EUI of all uses",
+     "needs_truth": false,
+     "n": 1364,
+     "value": 48.13246681753133,
+     "model_same_rows": 54.70342261511176,
+     "diff": 6.570955797580432,
+     "lo": 2.4344105474256215,
+     "hi": 10.20257025715912,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev log-log line: log A = -0.49 + 0.73 log kWh",
+     "needs_truth": false,
+     "n": 1364,
+     "value": 40.85780903122021,
+     "model_same_rows": 54.70342261511176,
+     "diff": 13.845613583891556,
+     "lo": 10.020257647521028,
+     "hi": 17.356737285515102,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev median floor area",
+     "needs_truth": false,
+     "n": 1428,
+     "value": 67.95092476844523,
+     "model_same_rows": 56.59481562147288,
+     "diff": -11.35610914697235,
+     "lo": -16.86012818090682,
+     "hi": -6.286585579815255,
+     "verdict": "win"
+    }
+   ],
+   "n": 1428,
+   "model": 56.59481562147288,
+   "vs_best": {
+    "baseline": "Dev log-log line: log A = -0.49 + 0.73 log kWh",
+    "n": 1364,
+    "diff": 13.845613583891556,
+    "lo": 10.020257647521028,
+    "hi": 17.356737285515102,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev log-log line: log A = -0.49 + 0.73 log kWh",
+    "n": 1364,
+    "diff": 13.845613583891556,
+    "lo": 10.020257647521028,
+    "hi": 17.356737285515102,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "BDG2 floor area, monthly input",
+   "stat": "mdape",
+   "better": "lower",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Electricity \u00f7 dev median EUI of the TRUE use",
+     "needs_truth": true,
+     "n": 1364,
+     "value": 51.51295857769593,
+     "model_same_rows": 47.10322761557554,
+     "diff": -4.409730962120392,
+     "lo": -8.49370500985134,
+     "hi": -0.437876802358907,
+     "verdict": "win"
+    },
+    {
+     "name": "Electricity \u00f7 dev median EUI of all uses",
+     "needs_truth": false,
+     "n": 1364,
+     "value": 48.13246681753133,
+     "model_same_rows": 47.10322761557554,
+     "diff": -1.0292392019557894,
+     "lo": -4.706190549814284,
+     "hi": 2.024925666286588,
+     "verdict": "tie"
+    },
+    {
+     "name": "Dev log-log line: log A = -0.49 + 0.73 log kWh",
+     "needs_truth": false,
+     "n": 1364,
+     "value": 40.85780903122021,
+     "model_same_rows": 47.10322761557554,
+     "diff": 6.245418584355335,
+     "lo": 3.2403747679586585,
+     "hi": 9.468997750346555,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev median floor area",
+     "needs_truth": false,
+     "n": 1428,
+     "value": 67.95092476844523,
+     "model_same_rows": 49.628261546957155,
+     "diff": -18.322663221488078,
+     "lo": -23.45949058026742,
+     "hi": -12.825500333463674,
+     "verdict": "win"
+    }
+   ],
+   "n": 1428,
+   "model": 49.628261546957155,
+   "vs_best": {
+    "baseline": "Dev log-log line: log A = -0.49 + 0.73 log kWh",
+    "n": 1364,
+    "diff": 6.245418584355335,
+    "lo": 3.2403747679586585,
+    "hi": 9.468997750346555,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev log-log line: log A = -0.49 + 0.73 log kWh",
+    "n": 1364,
+    "diff": 6.245418584355335,
+    "lo": 3.2403747679586585,
+    "hi": 9.468997750346555,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "BDG2 floor area, annual input",
+   "stat": "mdape",
+   "better": "lower",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Electricity \u00f7 dev median EUI of the TRUE use",
+     "needs_truth": true,
+     "n": 1364,
+     "value": 51.51295857769593,
+     "model_same_rows": 45.639668623848564,
+     "diff": -5.873289953847369,
+     "lo": -9.273233460405047,
+     "hi": -2.4794009481952024,
+     "verdict": "win"
+    },
+    {
+     "name": "Electricity \u00f7 dev median EUI of all uses",
+     "needs_truth": false,
+     "n": 1364,
+     "value": 48.13246681753133,
+     "model_same_rows": 45.639668623848564,
+     "diff": -2.4927981936827663,
+     "lo": -5.191679573137539,
+     "hi": -0.162396724947497,
+     "verdict": "win"
+    },
+    {
+     "name": "Dev log-log line: log A = -0.49 + 0.73 log kWh",
+     "needs_truth": false,
+     "n": 1364,
+     "value": 40.85780903122021,
+     "model_same_rows": 45.639668623848564,
+     "diff": 4.781859592628358,
+     "lo": 2.231546550409549,
+     "hi": 7.271255612627677,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev median floor area",
+     "needs_truth": false,
+     "n": 1428,
+     "value": 67.95092476844523,
+     "model_same_rows": 47.9900641664466,
+     "diff": -19.960860601998633,
+     "lo": -24.417587302612215,
+     "hi": -15.097925813207045,
+     "verdict": "win"
+    }
+   ],
+   "n": 1428,
+   "model": 47.9900641664466,
+   "vs_best": {
+    "baseline": "Dev log-log line: log A = -0.49 + 0.73 log kWh",
+    "n": 1364,
+    "diff": 4.781859592628358,
+    "lo": 2.231546550409549,
+    "hi": 7.271255612627677,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev log-log line: log A = -0.49 + 0.73 log kWh",
+    "n": 1364,
+    "diff": 4.781859592628358,
+    "lo": 2.231546550409549,
+    "hi": 7.271255612627677,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "BDG2 floor area, electricity only input",
+   "stat": "mdape",
+   "better": "lower",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Electricity \u00f7 dev median EUI of the TRUE use",
+     "needs_truth": true,
+     "n": 1364,
+     "value": 51.51295857769593,
+     "model_same_rows": 54.921432236066494,
+     "diff": 3.4084736583705606,
+     "lo": -0.1917862360549989,
+     "hi": 7.268337379135649,
+     "verdict": "tie"
+    },
+    {
+     "name": "Electricity \u00f7 dev median EUI of all uses",
+     "needs_truth": false,
+     "n": 1364,
+     "value": 48.13246681753133,
+     "model_same_rows": 54.921432236066494,
+     "diff": 6.788965418535163,
+     "lo": 3.655968394621216,
+     "hi": 9.960372202320718,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev log-log line: log A = -0.49 + 0.73 log kWh",
+     "needs_truth": false,
+     "n": 1364,
+     "value": 40.85780903122021,
+     "model_same_rows": 54.921432236066494,
+     "diff": 14.063623204846287,
+     "lo": 11.03872905029589,
+     "hi": 17.577364025488727,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev median floor area",
+     "needs_truth": false,
+     "n": 1375,
+     "value": 67.62411917276839,
+     "model_same_rows": 55.06340973450984,
+     "diff": -12.560709438258549,
+     "lo": -17.164015039967502,
+     "hi": -6.612590310961299,
+     "verdict": "win"
+    }
+   ],
+   "n": 1375,
+   "model": 55.06340973450984,
+   "vs_best": {
+    "baseline": "Dev log-log line: log A = -0.49 + 0.73 log kWh",
+    "n": 1364,
+    "diff": 14.063623204846287,
+    "lo": 11.03872905029589,
+    "hi": 17.577364025488727,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev log-log line: log A = -0.49 + 0.73 log kWh",
+    "n": 1364,
+    "diff": 14.063623204846287,
+    "lo": 11.03872905029589,
+    "hi": 17.577364025488727,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "BDG2 primary use, hourly input",
+   "stat": "acc",
+   "better": "higher",
+   "notes": "macro-F1: Detective 0.109, majority 0.058, centroid 0.174",
+   "baselines": [
+    {
+     "name": "Majority class (education)",
+     "needs_truth": false,
+     "n": 1428,
+     "value": 40.406162464986,
+     "model_same_rows": 12.815126050420167,
+     "diff": -27.591036414565828,
+     "lo": -30.812324929971986,
+     "hi": -24.29796918767508,
+     "verdict": "loss"
+    },
+    {
+     "name": "Nearest dev centroid of the 168-h electricity week profile",
+     "needs_truth": false,
+     "n": 1375,
+     "value": 30.763636363636365,
+     "model_same_rows": 12.8,
+     "diff": -17.963636363636365,
+     "lo": -20.72909090909091,
+     "hi": -15.127272727272729,
+     "verdict": "loss"
+    }
+   ],
+   "n": 1428,
+   "model": 12.815126050420167,
+   "vs_best": {
+    "baseline": "Majority class (education)",
+    "n": 1428,
+    "diff": -27.591036414565828,
+    "lo": -30.812324929971986,
+    "hi": -24.29796918767508,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Majority class (education)",
+    "n": 1428,
+    "diff": -27.591036414565828,
+    "lo": -30.812324929971986,
+    "hi": -24.29796918767508,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "BDG2 primary use, monthly input",
+   "stat": "acc",
+   "better": "higher",
+   "notes": "macro-F1: Detective 0.081, majority 0.058, centroid 0.174",
+   "baselines": [
+    {
+     "name": "Majority class (education)",
+     "needs_truth": false,
+     "n": 1428,
+     "value": 40.406162464986,
+     "model_same_rows": 14.425770308123248,
+     "diff": -25.98039215686275,
+     "lo": -29.201680672268907,
+     "hi": -22.82913165266107,
+     "verdict": "loss"
+    },
+    {
+     "name": "Nearest dev centroid of the 168-h electricity week profile",
+     "needs_truth": false,
+     "n": 1375,
+     "value": 30.763636363636365,
+     "model_same_rows": 14.618181818181819,
+     "diff": -16.145454545454548,
+     "lo": -19.129090909090912,
+     "hi": -13.09090909090909,
+     "verdict": "loss"
+    }
+   ],
+   "n": 1428,
+   "model": 14.425770308123248,
+   "vs_best": {
+    "baseline": "Majority class (education)",
+    "n": 1428,
+    "diff": -25.98039215686275,
+    "lo": -29.201680672268907,
+    "hi": -22.82913165266107,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Majority class (education)",
+    "n": 1428,
+    "diff": -25.98039215686275,
+    "lo": -29.201680672268907,
+    "hi": -22.82913165266107,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "BDG2 primary use, annual input",
+   "stat": "acc",
+   "better": "higher",
+   "notes": "macro-F1: Detective 0.043, majority 0.058, centroid 0.174",
+   "baselines": [
+    {
+     "name": "Majority class (education)",
+     "needs_truth": false,
+     "n": 1428,
+     "value": 40.406162464986,
+     "model_same_rows": 9.453781512605042,
+     "diff": -30.952380952380956,
+     "lo": -34.2436974789916,
+     "hi": -27.731092436974787,
+     "verdict": "loss"
+    },
+    {
+     "name": "Nearest dev centroid of the 168-h electricity week profile",
+     "needs_truth": false,
+     "n": 1375,
+     "value": 30.763636363636365,
+     "model_same_rows": 9.454545454545455,
+     "diff": -21.309090909090912,
+     "lo": -24.07272727272727,
+     "hi": -18.4,
+     "verdict": "loss"
+    }
+   ],
+   "n": 1428,
+   "model": 9.453781512605042,
+   "vs_best": {
+    "baseline": "Majority class (education)",
+    "n": 1428,
+    "diff": -30.952380952380956,
+    "lo": -34.2436974789916,
+    "hi": -27.731092436974787,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Majority class (education)",
+    "n": 1428,
+    "diff": -30.952380952380956,
+    "lo": -34.2436974789916,
+    "hi": -27.731092436974787,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "BDG2 year built, hourly input",
+   "stat": "mae",
+   "better": "lower",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Dev median (1969)",
+     "needs_truth": false,
+     "n": 741,
+     "value": 24.941970310391362,
+     "model_same_rows": 27.593743530413143,
+     "diff": 2.6517732200217807,
+     "lo": 1.656913468265703,
+     "hi": 3.7376536976690513,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev median of the same site",
+     "needs_truth": false,
+     "n": 741,
+     "value": 25.489878542510123,
+     "model_same_rows": 27.593743530413143,
+     "diff": 2.1038649879030196,
+     "lo": 0.8007360375771957,
+     "hi": 3.409147166629415,
+     "verdict": "loss"
+    }
+   ],
+   "n": 741,
+   "model": 27.593743530413143,
+   "vs_best": {
+    "baseline": "Dev median (1969)",
+    "n": 741,
+    "diff": 2.6517732200217807,
+    "lo": 1.656913468265703,
+    "hi": 3.7376536976690513,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev median (1969)",
+    "n": 741,
+    "diff": 2.6517732200217807,
+    "lo": 1.656913468265703,
+    "hi": 3.7376536976690513,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "BDG2 year built, monthly input",
+   "stat": "mae",
+   "better": "lower",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Dev median (1969)",
+     "needs_truth": false,
+     "n": 741,
+     "value": 24.941970310391362,
+     "model_same_rows": 25.25581822754552,
+     "diff": 0.3138479171541597,
+     "lo": -0.4027239341051881,
+     "hi": 1.0569296019551737,
+     "verdict": "tie"
+    },
+    {
+     "name": "Dev median of the same site",
+     "needs_truth": false,
+     "n": 741,
+     "value": 25.489878542510123,
+     "model_same_rows": 25.25581822754552,
+     "diff": -0.23406031496460145,
+     "lo": -1.436403971646991,
+     "hi": 1.011897634488608,
+     "verdict": "tie"
+    }
+   ],
+   "n": 741,
+   "model": 25.25581822754552,
+   "vs_best": {
+    "baseline": "Dev median (1969)",
+    "n": 741,
+    "diff": 0.3138479171541597,
+    "lo": -0.4027239341051881,
+    "hi": 1.0569296019551737,
+    "nan_resamples": 0,
+    "verdict": "tie"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev median (1969)",
+    "n": 741,
+    "diff": 0.3138479171541597,
+    "lo": -0.4027239341051881,
+    "hi": 1.0569296019551737,
+    "nan_resamples": 0,
+    "verdict": "tie"
+   }
+  },
+  {
+   "row": "BDG2 year built, annual input",
+   "stat": "mae",
+   "better": "lower",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Dev median (1969)",
+     "needs_truth": false,
+     "n": 741,
+     "value": 24.941970310391362,
+     "model_same_rows": 24.84661106765184,
+     "diff": -0.0953592427395229,
+     "lo": -0.8417324607750353,
+     "hi": 0.6286176003216033,
+     "verdict": "tie"
+    },
+    {
+     "name": "Dev median of the same site",
+     "needs_truth": false,
+     "n": 741,
+     "value": 25.489878542510123,
+     "model_same_rows": 24.84661106765184,
+     "diff": -0.6432674748582841,
+     "lo": -1.8963861519759027,
+     "hi": 0.606566549105562,
+     "verdict": "tie"
+    }
+   ],
+   "n": 741,
+   "model": 24.84661106765184,
+   "vs_best": {
+    "baseline": "Dev median (1969)",
+    "n": 741,
+    "diff": -0.0953592427395229,
+    "lo": -0.8417324607750353,
+    "hi": 0.6286176003216033,
+    "nan_resamples": 0,
+    "verdict": "tie"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev median (1969)",
+    "n": 741,
+    "diff": -0.0953592427395229,
+    "lo": -0.8417324607750353,
+    "hi": 0.6286176003216033,
+    "nan_resamples": 0,
+    "verdict": "tie"
+   }
+  },
+  {
+   "row": "BDG2 has a chilled-water meter, from electricity alone (ROC AUC)",
+   "stat": "auc",
+   "better": "higher",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Dev site prior (share of dev buildings at the same site with one)",
+     "needs_truth": false,
+     "n": 1375,
+     "value": 0.8273809794548275,
+     "model_same_rows": 0.7600758674956903,
+     "diff": -0.06730511195913713,
+     "lo": -0.1013878413807768,
+     "hi": -0.03440099310968327,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev-fitted logistic model on the electricity PRISM and load-shape statistics",
+     "needs_truth": false,
+     "n": 1375,
+     "value": 0.7473767039484756,
+     "model_same_rows": 0.7600758674956903,
+     "diff": 0.012699163547214787,
+     "lo": -0.011937900526302437,
+     "hi": 0.03977217341964032,
+     "verdict": "tie"
+    },
+    {
+     "name": "Chance",
+     "needs_truth": false,
+     "n": 1375,
+     "value": 0.5,
+     "model_same_rows": 0.7600758674956903,
+     "diff": 0.26007586749569034,
+     "lo": 0.23426430953165836,
+     "hi": 0.28635347106100667,
+     "verdict": "win"
+    }
+   ],
+   "n": 1375,
+   "model": 0.7600758674956903,
+   "vs_best": {
+    "baseline": "Dev site prior (share of dev buildings at the same site with one)",
+    "n": 1375,
+    "diff": -0.06730511195913713,
+    "lo": -0.1013878413807768,
+    "hi": -0.03440099310968327,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev site prior (share of dev buildings at the same site with one)",
+    "n": 1375,
+    "diff": -0.06730511195913713,
+    "lo": -0.1013878413807768,
+    "hi": -0.03440099310968327,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "BDG2 has a steam or hot-water meter, from electricity alone (ROC AUC)",
+   "stat": "auc",
+   "better": "higher",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Dev site prior (share of dev buildings at the same site with one)",
+     "needs_truth": false,
+     "n": 1375,
+     "value": 0.8275034916201117,
+     "model_same_rows": 0.740300279329609,
+     "diff": -0.08720321229050276,
+     "lo": -0.12152219860904664,
+     "hi": -0.052308696674711386,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev-fitted logistic model on the electricity PRISM and load-shape statistics",
+     "needs_truth": false,
+     "n": 1375,
+     "value": 0.7493901303538175,
+     "model_same_rows": 0.740300279329609,
+     "diff": -0.009089851024208562,
+     "lo": -0.039072778564668474,
+     "hi": 0.02143493787331806,
+     "verdict": "tie"
+    },
+    {
+     "name": "Chance",
+     "needs_truth": false,
+     "n": 1375,
+     "value": 0.5,
+     "model_same_rows": 0.740300279329609,
+     "diff": 0.24030027932960896,
+     "lo": 0.21184387154309833,
+     "hi": 0.26768599706539936,
+     "verdict": "win"
+    }
+   ],
+   "n": 1375,
+   "model": 0.740300279329609,
+   "vs_best": {
+    "baseline": "Dev site prior (share of dev buildings at the same site with one)",
+    "n": 1375,
+    "diff": -0.08720321229050276,
+    "lo": -0.12152219860904664,
+    "hi": -0.052308696674711386,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev site prior (share of dev buildings at the same site with one)",
+    "n": 1375,
+    "diff": -0.08720321229050276,
+    "lo": -0.12152219860904664,
+    "hi": -0.052308696674711386,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "RECS floor area, annual energy",
+   "stat": "mdape",
+   "better": "lower",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Energy \u00f7 dev median EUI by TRUE type \u00d7 climate (BuildingData rule, recomputed)",
+     "needs_truth": true,
+     "n": 7401,
+     "value": 33.10512260332376,
+     "model_same_rows": 33.62157588410769,
+     "diff": 0.516453280783935,
+     "lo": -0.3954525454013563,
+     "hi": 1.5206870734151114,
+     "verdict": "tie"
+    },
+    {
+     "name": "Energy \u00f7 W1 target EUI of the TRUE use (prior + dev weighted median)",
+     "needs_truth": true,
+     "n": 7401,
+     "value": 34.60546037731425,
+     "model_same_rows": 33.62157588410769,
+     "diff": -0.9838844932065598,
+     "lo": -2.0057722297859377,
+     "hi": 0.09889645988648497,
+     "verdict": "tie"
+    },
+    {
+     "name": "Dev median by TRUE type",
+     "needs_truth": true,
+     "n": 7401,
+     "value": 28.750000000000004,
+     "model_same_rows": 33.62157588410769,
+     "diff": 4.871575884107688,
+     "lo": 4.23588704879214,
+     "hi": 5.673640999202641,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev-fitted linear model of log area on the 12 annual features",
+     "needs_truth": false,
+     "n": 7401,
+     "value": 29.648084318051176,
+     "model_same_rows": 33.62157588410769,
+     "diff": 3.9734915660565164,
+     "lo": 3.2971003143733695,
+     "hi": 4.675040998701954,
+     "verdict": "loss"
+    },
+    {
+     "name": "Energy \u00f7 dev median EUI of all respondents",
+     "needs_truth": false,
+     "n": 7401,
+     "value": 34.38451169747186,
+     "model_same_rows": 33.62157588410769,
+     "diff": -0.7629358133641659,
+     "lo": -1.759704560031222,
+     "hi": 0.3135222566079606,
+     "verdict": "tie"
+    }
+   ],
+   "n": 7401,
+   "model": 33.62157588410769,
+   "vs_best": {
+    "baseline": "Dev median by TRUE type",
+    "n": 7401,
+    "diff": 4.871575884107688,
+    "lo": 4.23588704879214,
+    "hi": 5.673640999202641,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev-fitted linear model of log area on the 12 annual features",
+    "n": 7401,
+    "diff": 3.9734915660565164,
+    "lo": 3.2971003143733695,
+    "hi": 4.675040998701954,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "RECS vintage, annual energy",
+   "stat": "mae",
+   "better": "lower",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Dev median (1984)",
+     "needs_truth": false,
+     "n": 7401,
+     "value": 22.31563302256452,
+     "model_same_rows": 22.125418132197115,
+     "diff": -0.1902148903674039,
+     "lo": -0.41926083096741973,
+     "hi": 0.04450715200728757,
+     "verdict": "tie"
+    },
+    {
+     "name": "Dev-fitted linear model on the 12 annual features",
+     "needs_truth": false,
+     "n": 7401,
+     "value": 21.776962939757556,
+     "model_same_rows": 22.125418132197115,
+     "diff": 0.3484551924395589,
+     "lo": 0.12167589801217327,
+     "hi": 0.5599463693983163,
+     "verdict": "loss"
+    }
+   ],
+   "n": 7401,
+   "model": 22.125418132197115,
+   "vs_best": {
+    "baseline": "Dev-fitted linear model on the 12 annual features",
+    "n": 7401,
+    "diff": 0.3484551924395589,
+    "lo": 0.12167589801217327,
+    "hi": 0.5599463693983163,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev-fitted linear model on the 12 annual features",
+    "n": 7401,
+    "diff": 0.3484551924395589,
+    "lo": 0.12167589801217327,
+    "hi": 0.5599463693983163,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "RECS main heating, fuel / electric / none",
+   "stat": "acc",
+   "better": "higher",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Rule: fuel used \u2192 fuel, district used \u2192 district, else electric",
+     "needs_truth": false,
+     "n": 7194,
+     "value": 85.25159855435085,
+     "model_same_rows": 87.2810675562969,
+     "diff": 2.0294690019460546,
+     "lo": 1.2089936057825852,
+     "hi": 2.836043925493478,
+     "verdict": "win"
+    },
+    {
+     "name": "Dev-fitted multinomial logistic model on the 12 annual features",
+     "needs_truth": false,
+     "n": 7194,
+     "value": 91.93772588268001,
+     "model_same_rows": 87.2810675562969,
+     "diff": -4.656658326383109,
+     "lo": -5.226577703641922,
+     "hi": -4.0589380038921234,
+     "verdict": "loss"
+    },
+    {
+     "name": "Majority (fuel)",
+     "needs_truth": false,
+     "n": 7194,
+     "value": 64.79010286349735,
+     "model_same_rows": 87.2810675562969,
+     "diff": 22.49096469279955,
+     "lo": 21.531832082290805,
+     "hi": 23.547400611620787,
+     "verdict": "win"
+    }
+   ],
+   "n": 7194,
+   "model": 87.2810675562969,
+   "vs_best": {
+    "baseline": "Dev-fitted multinomial logistic model on the 12 annual features",
+    "n": 7194,
+    "diff": -4.656658326383109,
+    "lo": -5.226577703641922,
+    "hi": -4.0589380038921234,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev-fitted multinomial logistic model on the 12 annual features",
+    "n": 7194,
+    "diff": -4.656658326383109,
+    "lo": -5.226577703641922,
+    "hi": -4.0589380038921234,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "RECS heat pump vs electric resistance, balanced accuracy",
+   "stat": "bacc",
+   "better": "higher",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "kWh/m\u00b2/HDD < dev threshold, TRUE floor area (BuildingData rule, recomputed)",
+     "needs_truth": true,
+     "n": 2226,
+     "value": 0.4984271655377081,
+     "model_same_rows": 0.45631828646713596,
+     "diff": -0.04210887907057215,
+     "lo": -0.06381923593233928,
+     "hi": -0.022538936663659234,
+     "verdict": "loss"
+    },
+    {
+     "name": "kWh/HDD < dev threshold (no floor area)",
+     "needs_truth": false,
+     "n": 2226,
+     "value": 0.48792053151990206,
+     "model_same_rows": 0.45631828646713596,
+     "diff": -0.0316022450527661,
+     "lo": -0.05280627942899549,
+     "hi": -0.011565662653871402,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev-fitted logistic model on the 12 annual features",
+     "needs_truth": false,
+     "n": 2226,
+     "value": 0.5845645968353672,
+     "model_same_rows": 0.45631828646713596,
+     "diff": -0.12824631036823125,
+     "lo": -0.1585553753743471,
+     "hi": -0.0999568725298989,
+     "verdict": "loss"
+    },
+    {
+     "name": "Majority",
+     "needs_truth": false,
+     "n": 2226,
+     "value": 0.5,
+     "model_same_rows": 0.45631828646713596,
+     "diff": -0.04368171353286404,
+     "lo": -0.06186523159939886,
+     "hi": -0.026813149037859845,
+     "verdict": "loss"
+    }
+   ],
+   "n": 2226,
+   "model": 0.45631828646713596,
+   "vs_best": {
+    "baseline": "Dev-fitted logistic model on the 12 annual features",
+    "n": 2226,
+    "diff": -0.12824631036823125,
+    "lo": -0.1585553753743471,
+    "hi": -0.0999568725298989,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev-fitted logistic model on the 12 annual features",
+    "n": 2226,
+    "diff": -0.12824631036823125,
+    "lo": -0.1585553753743471,
+    "hi": -0.0999568725298989,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "RECS heat pump vs electric resistance, ROC AUC",
+   "stat": "auc",
+   "better": "higher",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "kWh/m\u00b2/HDD, TRUE floor area (low \u2192 heat pump)",
+     "needs_truth": true,
+     "n": 2226,
+     "value": 0.4543245877859548,
+     "model_same_rows": 0.404024659648936,
+     "diff": -0.05029992813701878,
+     "lo": -0.07623138382884163,
+     "hi": -0.025267609714431982,
+     "verdict": "loss"
+    },
+    {
+     "name": "kWh/HDD (low \u2192 heat pump)",
+     "needs_truth": false,
+     "n": 2226,
+     "value": 0.3841716793314081,
+     "model_same_rows": 0.404024659648936,
+     "diff": 0.019852980317527913,
+     "lo": 0.0019254185782725474,
+     "hi": 0.036683734861598545,
+     "verdict": "win"
+    },
+    {
+     "name": "Dev-fitted logistic model on the 12 annual features",
+     "needs_truth": false,
+     "n": 2226,
+     "value": 0.6331278362588665,
+     "model_same_rows": 0.404024659648936,
+     "diff": -0.22910317660993046,
+     "lo": -0.2683314861336053,
+     "hi": -0.19244254242774314,
+     "verdict": "loss"
+    },
+    {
+     "name": "Chance",
+     "needs_truth": false,
+     "n": 2226,
+     "value": 0.5,
+     "model_same_rows": 0.404024659648936,
+     "diff": -0.09597534035106398,
+     "lo": -0.12001810112969773,
+     "hi": -0.07364864758671039,
+     "verdict": "loss"
+    }
+   ],
+   "n": 2226,
+   "model": 0.404024659648936,
+   "vs_best": {
+    "baseline": "Dev-fitted logistic model on the 12 annual features",
+    "n": 2226,
+    "diff": -0.22910317660993046,
+    "lo": -0.2683314861336053,
+    "hi": -0.19244254242774314,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev-fitted logistic model on the 12 annual features",
+    "n": 2226,
+    "diff": -0.22910317660993046,
+    "lo": -0.2683314861336053,
+    "hi": -0.19244254242774314,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "CBECS floor area, annual energy",
+   "stat": "mdape",
+   "better": "lower",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Energy \u00f7 dev median EUI by TRUE type \u00d7 climate (BuildingData rule, recomputed)",
+     "needs_truth": true,
+     "n": 2525,
+     "value": 38.655392920710035,
+     "model_same_rows": 42.83583249215355,
+     "diff": 4.1804395714435145,
+     "lo": 1.8900710822250666,
+     "hi": 6.29747669646381,
+     "verdict": "loss"
+    },
+    {
+     "name": "Energy \u00f7 W1 target EUI of the TRUE use (prior + dev weighted median)",
+     "needs_truth": true,
+     "n": 2525,
+     "value": 51.34200889288291,
+     "model_same_rows": 42.83583249215355,
+     "diff": -8.506176400729359,
+     "lo": -11.493318738729425,
+     "hi": -5.609610025740669,
+     "verdict": "win"
+    },
+    {
+     "name": "Dev median by TRUE type",
+     "needs_truth": true,
+     "n": 2558,
+     "value": 76.51654411764707,
+     "model_same_rows": 43.02363734564052,
+     "diff": -33.49290677200655,
+     "lo": -36.46356394834091,
+     "hi": -30.524656938401588,
+     "verdict": "win"
+    },
+    {
+     "name": "Dev-fitted linear model of log area on the 12 annual features",
+     "needs_truth": false,
+     "n": 2558,
+     "value": 44.85465330978185,
+     "model_same_rows": 43.02363734564052,
+     "diff": -1.8310159641413293,
+     "lo": -3.901279462299801,
+     "hi": 0.09015594991242032,
+     "verdict": "tie"
+    },
+    {
+     "name": "Energy \u00f7 dev median EUI of all respondents",
+     "needs_truth": false,
+     "n": 2525,
+     "value": 48.710433744905046,
+     "model_same_rows": 42.83583249215355,
+     "diff": -5.874601252751496,
+     "lo": -8.242248174634762,
+     "hi": -3.9252906994750663,
+     "verdict": "win"
+    }
+   ],
+   "n": 2558,
+   "model": 43.02363734564052,
+   "vs_best": {
+    "baseline": "Energy \u00f7 dev median EUI by TRUE type \u00d7 climate (BuildingData rule, recomputed)",
+    "n": 2525,
+    "diff": 4.1804395714435145,
+    "lo": 1.8900710822250666,
+    "hi": 6.29747669646381,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev-fitted linear model of log area on the 12 annual features",
+    "n": 2558,
+    "diff": -1.8310159641413293,
+    "lo": -3.901279462299801,
+    "hi": 0.09015594991242032,
+    "nan_resamples": 0,
+    "verdict": "tie"
+   }
+  },
+  {
+   "row": "CBECS vintage, annual energy",
+   "stat": "mae",
+   "better": "lower",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Dev median (1984)",
+     "needs_truth": false,
+     "n": 2558,
+     "value": 25.997654417513683,
+     "model_same_rows": 27.041833002269097,
+     "diff": 1.0441785847554144,
+     "lo": 0.617489400970918,
+     "hi": 1.5064860006317726,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev-fitted linear model on the 12 annual features",
+     "needs_truth": false,
+     "n": 2558,
+     "value": 27.004303950210254,
+     "model_same_rows": 27.041833002269097,
+     "diff": 0.037529052058843604,
+     "lo": -0.3744854463879772,
+     "hi": 0.4415579703647391,
+     "verdict": "tie"
+    }
+   ],
+   "n": 2558,
+   "model": 27.041833002269097,
+   "vs_best": {
+    "baseline": "Dev median (1984)",
+    "n": 2558,
+    "diff": 1.0441785847554144,
+    "lo": 0.617489400970918,
+    "hi": 1.5064860006317726,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev median (1984)",
+    "n": 2558,
+    "diff": 1.0441785847554144,
+    "lo": 0.617489400970918,
+    "hi": 1.5064860006317726,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "CBECS main heating, fuel / electric / district / none",
+   "stat": "acc",
+   "better": "higher",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Rule: fuel used \u2192 fuel, district used \u2192 district, else electric",
+     "needs_truth": false,
+     "n": 2513,
+     "value": 68.56346995622762,
+     "model_same_rows": 74.65181058495823,
+     "diff": 6.088340628730606,
+     "lo": 4.576203740549147,
+     "hi": 7.560684440907281,
+     "verdict": "win"
+    },
+    {
+     "name": "Dev-fitted multinomial logistic model on the 12 annual features",
+     "needs_truth": false,
+     "n": 2513,
+     "value": 79.18822124950259,
+     "model_same_rows": 74.65181058495823,
+     "diff": -4.536410664544363,
+     "lo": -5.9291683247114975,
+     "hi": -3.2222443294866685,
+     "verdict": "loss"
+    },
+    {
+     "name": "Majority (fuel)",
+     "needs_truth": false,
+     "n": 2513,
+     "value": 55.630720254675694,
+     "model_same_rows": 74.65181058495823,
+     "diff": 19.021090330282533,
+     "lo": 16.991643454039,
+     "hi": 21.051532033426174,
+     "verdict": "win"
+    }
+   ],
+   "n": 2513,
+   "model": 74.65181058495823,
+   "vs_best": {
+    "baseline": "Dev-fitted multinomial logistic model on the 12 annual features",
+    "n": 2513,
+    "diff": -4.536410664544363,
+    "lo": -5.9291683247114975,
+    "hi": -3.2222443294866685,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev-fitted multinomial logistic model on the 12 annual features",
+    "n": 2513,
+    "diff": -4.536410664544363,
+    "lo": -5.9291683247114975,
+    "hi": -3.2222443294866685,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "CBECS primary use (10 commercial classes), accuracy",
+   "stat": "acc",
+   "better": "higher",
+   "notes": "macro-F1: Detective 0.154, majority 0.034, dev logistic 0.224",
+   "baselines": [
+    {
+     "name": "Majority class (office)",
+     "needs_truth": false,
+     "n": 2558,
+     "value": 20.79749804534793,
+     "model_same_rows": 16.458170445660674,
+     "diff": -4.339327599687255,
+     "lo": -6.450351837372946,
+     "hi": -2.1110242376856903,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev-fitted multinomial logistic model on the 12 annual features",
+     "needs_truth": false,
+     "n": 2558,
+     "value": 28.381548084440972,
+     "model_same_rows": 16.458170445660674,
+     "diff": -11.923377638780298,
+     "lo": -13.87900703674746,
+     "hi": -9.773260359655982,
+     "verdict": "loss"
+    }
+   ],
+   "n": 2558,
+   "model": 16.458170445660674,
+   "vs_best": {
+    "baseline": "Dev-fitted multinomial logistic model on the 12 annual features",
+    "n": 2558,
+    "diff": -11.923377638780298,
+    "lo": -13.87900703674746,
+    "hi": -9.773260359655982,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev-fitted multinomial logistic model on the 12 annual features",
+    "n": 2558,
+    "diff": -11.923377638780298,
+    "lo": -13.87900703674746,
+    "hi": -9.773260359655982,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "CBECS has a chiller, ROC AUC",
+   "stat": "auc",
+   "better": "higher",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Dev-fitted logistic model on the 12 annual features",
+     "needs_truth": false,
+     "n": 2362,
+     "value": 0.8036081322713885,
+     "model_same_rows": 0.7675670016946127,
+     "diff": -0.036041130576775826,
+     "lo": -0.05163518568104423,
+     "hi": -0.019638931757391863,
+     "verdict": "loss"
+    },
+    {
+     "name": "Chance",
+     "needs_truth": false,
+     "n": 2362,
+     "value": 0.5,
+     "model_same_rows": 0.7675670016946127,
+     "diff": 0.26756700169461267,
+     "lo": 0.24729201373478915,
+     "hi": 0.2878111834068612,
+     "verdict": "win"
+    }
+   ],
+   "n": 2362,
+   "model": 0.7675670016946127,
+   "vs_best": {
+    "baseline": "Dev-fitted logistic model on the 12 annual features",
+    "n": 2362,
+    "diff": -0.036041130576775826,
+    "lo": -0.05163518568104423,
+    "hi": -0.019638931757391863,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev-fitted logistic model on the 12 annual features",
+    "n": 2362,
+    "diff": -0.036041130576775826,
+    "lo": -0.05163518568104423,
+    "hi": -0.019638931757391863,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "CBECS has a heat pump, ROC AUC",
+   "stat": "auc",
+   "better": "higher",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Dev-fitted logistic model on the 12 annual features",
+     "needs_truth": false,
+     "n": 2375,
+     "value": 0.6172350626997787,
+     "model_same_rows": 0.5865674944676665,
+     "diff": -0.03066756823211214,
+     "lo": -0.0693314503044606,
+     "hi": 0.0068472209430562704,
+     "verdict": "tie"
+    },
+    {
+     "name": "Chance",
+     "needs_truth": false,
+     "n": 2375,
+     "value": 0.5,
+     "model_same_rows": 0.5865674944676665,
+     "diff": 0.08656749446766654,
+     "lo": 0.05783537539767469,
+     "hi": 0.11422101009142044,
+     "verdict": "win"
+    }
+   ],
+   "n": 2375,
+   "model": 0.5865674944676665,
+   "vs_best": {
+    "baseline": "Dev-fitted logistic model on the 12 annual features",
+    "n": 2375,
+    "diff": -0.03066756823211214,
+    "lo": -0.0693314503044606,
+    "hi": 0.0068472209430562704,
+    "nan_resamples": 0,
+    "verdict": "tie"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev-fitted logistic model on the 12 annual features",
+    "n": 2375,
+    "diff": -0.03066756823211214,
+    "lo": -0.0693314503044606,
+    "hi": 0.0068472209430562704,
+    "nan_resamples": 0,
+    "verdict": "tie"
+   }
+  },
+  {
+   "row": "CBECS weekly operating hours, mean abs. error",
+   "stat": "mae",
+   "better": "lower",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Dev median",
+     "needs_truth": false,
+     "n": 2558,
+     "value": 41.423377638780295,
+     "model_same_rows": 44.24748545484222,
+     "diff": 2.8241078160619253,
+     "lo": 0.7875010250077205,
+     "hi": 4.958584345176438,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev median of the TRUE use",
+     "needs_truth": true,
+     "n": 2558,
+     "value": 29.713838936669273,
+     "model_same_rows": 44.24748545484222,
+     "diff": 14.533646518172947,
+     "lo": 12.767821515273921,
+     "hi": 16.35497207386861,
+     "verdict": "loss"
+    },
+    {
+     "name": "Dev-fitted linear model on the 12 annual features",
+     "needs_truth": false,
+     "n": 2558,
+     "value": 37.43576540855727,
+     "model_same_rows": 44.24748545484222,
+     "diff": 6.811720046284947,
+     "lo": 5.705659010821731,
+     "hi": 7.959396444822986,
+     "verdict": "loss"
+    }
+   ],
+   "n": 2558,
+   "model": 44.24748545484222,
+   "vs_best": {
+    "baseline": "Dev median of the TRUE use",
+    "n": 2558,
+    "diff": 14.533646518172947,
+    "lo": 12.767821515273921,
+    "hi": 16.35497207386861,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Dev-fitted linear model on the 12 annual features",
+    "n": 2558,
+    "diff": 6.811720046284947,
+    "lo": 5.705659010821731,
+    "hi": 7.959396444822986,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "HUE electric main heat, hourly electricity, accuracy",
+   "stat": "acc",
+   "better": "higher",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Majority (not electric)",
+     "needs_truth": false,
+     "n": 24,
+     "value": 75.0,
+     "model_same_rows": 41.66666666666667,
+     "diff": -33.33333333333333,
+     "lo": -58.33333333333334,
+     "hi": -4.166666666666664,
+     "verdict": "loss"
+    },
+    {
+     "name": "PRISM heating share of electricity \u2265 0.20 (threshold fixed before HUE was read)",
+     "needs_truth": false,
+     "n": 24,
+     "value": 45.83333333333333,
+     "model_same_rows": 41.66666666666667,
+     "diff": -4.166666666666657,
+     "lo": -29.16666666666667,
+     "hi": 20.833333333333336,
+     "verdict": "tie"
+    }
+   ],
+   "n": 24,
+   "model": 41.66666666666667,
+   "vs_best": {
+    "baseline": "Majority (not electric)",
+    "n": 24,
+    "diff": -33.33333333333333,
+    "lo": -58.33333333333334,
+    "hi": -4.166666666666664,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Majority (not electric)",
+    "n": 24,
+    "diff": -33.33333333333333,
+    "lo": -58.33333333333334,
+    "hi": -4.166666666666664,
+    "nan_resamples": 0,
+    "verdict": "loss"
+   }
+  },
+  {
+   "row": "HUE electric main heat, hourly electricity, ROC AUC",
+   "stat": "auc",
+   "better": "higher",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "PRISM heating share of electricity (change-point fit of daily kWh)",
+     "needs_truth": false,
+     "n": 24,
+     "value": 0.5462962962962963,
+     "model_same_rows": 0.5462962962962963,
+     "diff": 0.0,
+     "lo": -0.2,
+     "hi": 0.194722222222222,
+     "verdict": "tie"
+    },
+    {
+     "name": "Chance",
+     "needs_truth": false,
+     "n": 24,
+     "value": 0.5,
+     "model_same_rows": 0.5462962962962963,
+     "diff": 0.04629629629629628,
+     "lo": -0.32407407407407407,
+     "hi": 0.3992016806722689,
+     "verdict": "tie"
+    }
+   ],
+   "n": 24,
+   "model": 0.5462962962962963,
+   "vs_best": {
+    "baseline": "PRISM heating share of electricity (change-point fit of daily kWh)",
+    "n": 24,
+    "diff": 0.0,
+    "lo": -0.2,
+    "hi": 0.194722222222222,
+    "nan_resamples": 1,
+    "verdict": "tie"
+   },
+   "vs_best_no_truth": {
+    "baseline": "PRISM heating share of electricity (change-point fit of daily kWh)",
+    "n": 24,
+    "diff": 0.0,
+    "lo": -0.2,
+    "hi": 0.194722222222222,
+    "nan_resamples": 1,
+    "verdict": "tie"
+   }
+  },
+  {
+   "row": "HUE electric main heat, monthly electricity, accuracy",
+   "stat": "acc",
+   "better": "higher",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "Majority (not electric)",
+     "needs_truth": false,
+     "n": 24,
+     "value": 75.0,
+     "model_same_rows": 75.0,
+     "diff": 0.0,
+     "lo": -20.833333333333343,
+     "hi": 25.0,
+     "verdict": "tie"
+    },
+    {
+     "name": "PRISM heating share of electricity \u2265 0.20 (threshold fixed before HUE was read)",
+     "needs_truth": false,
+     "n": 24,
+     "value": 45.83333333333333,
+     "model_same_rows": 75.0,
+     "diff": 29.16666666666667,
+     "lo": 12.5,
+     "hi": 45.83333333333334,
+     "verdict": "win"
+    }
+   ],
+   "n": 24,
+   "model": 75.0,
+   "vs_best": {
+    "baseline": "Majority (not electric)",
+    "n": 24,
+    "diff": 0.0,
+    "lo": -20.833333333333343,
+    "hi": 25.0,
+    "nan_resamples": 0,
+    "verdict": "tie"
+   },
+   "vs_best_no_truth": {
+    "baseline": "Majority (not electric)",
+    "n": 24,
+    "diff": 0.0,
+    "lo": -20.833333333333343,
+    "hi": 25.0,
+    "nan_resamples": 0,
+    "verdict": "tie"
+   }
+  },
+  {
+   "row": "HUE electric main heat, monthly electricity, ROC AUC",
+   "stat": "auc",
+   "better": "higher",
+   "notes": "",
+   "baselines": [
+    {
+     "name": "PRISM heating share of electricity (change-point fit of daily kWh)",
+     "needs_truth": false,
+     "n": 24,
+     "value": 0.5462962962962963,
+     "model_same_rows": 0.6944444444444444,
+     "diff": 0.14814814814814814,
+     "lo": -0.04217391304347828,
+     "hi": 0.3611227824463119,
+     "verdict": "tie"
+    },
+    {
+     "name": "Chance",
+     "needs_truth": false,
+     "n": 24,
+     "value": 0.5,
+     "model_same_rows": 0.6944444444444444,
+     "diff": 0.19444444444444442,
+     "lo": -0.10191798941798942,
+     "hi": 0.43181818181818177,
+     "verdict": "tie"
+    }
+   ],
+   "n": 24,
+   "model": 0.6944444444444444,
+   "vs_best": {
+    "baseline": "PRISM heating share of electricity (change-point fit of daily kWh)",
+    "n": 24,
+    "diff": 0.14814814814814814,
+    "lo": -0.04217391304347828,
+    "hi": 0.3611227824463119,
+    "nan_resamples": 1,
+    "verdict": "tie"
+   },
+   "vs_best_no_truth": {
+    "baseline": "PRISM heating share of electricity (change-point fit of daily kWh)",
+    "n": 24,
+    "diff": 0.14814814814814814,
+    "lo": -0.04217391304347828,
+    "hi": 0.3611227824463119,
+    "nan_resamples": 1,
+    "verdict": "tie"
+   }
+  }
+ ],
+ "twin": {
+  "bdg2_area_vs_elec_over_dev_eui": {
+   "hourly": {
+    "n": 52,
+    "pearson": 0.029223546597508167,
+    "spearman": 0.04285836250320157,
+    "median_needed": 3.7292600851834834e-07,
+    "median_correction": 0.09618543133167234,
+    "mae_anchor": 0.2721807403828408,
+    "mae_network": 0.37335188968023003,
+    "use_breakdown": {
+     "assembly": {
+      "n": 10,
+      "median_needed": -0.17324362405059968,
+      "median_correction": 0.11698293733352005
+     },
+     "education": {
+      "n": 12,
+      "median_needed": 0.1511309837233048,
+      "median_correction": 0.039279881086300206
+     },
+     "lodging": {
+      "n": 10,
+      "median_needed": 0.157269469897388,
+      "median_correction": 0.28946517038634134
+     },
+     "office": {
+      "n": 10,
+      "median_needed": -0.017283872189240324,
+      "median_correction": -0.05794743265821389
+     },
+     "other": {
+      "n": 8,
+      "median_needed": -0.127096456878093,
+      "median_correction": 0.06254317844076418
+     }
+    }
+   },
+   "monthly": {
+    "n": 52,
+    "pearson": 0.09909375900779313,
+    "spearman": 0.11986681465038845,
+    "median_needed": 3.7292600851834834e-07,
+    "median_correction": -0.03423324496174818,
+    "mae_anchor": 0.2721807403828408,
+    "mae_network": 0.29470448780369696,
+    "use_breakdown": {
+     "assembly": {
+      "n": 10,
+      "median_needed": -0.17324362405059968,
+      "median_correction": 0.03000664277530518
+     },
+     "education": {
+      "n": 12,
+      "median_needed": 0.1511309837233048,
+      "median_correction": -0.0653344057133034
+     },
+     "lodging": {
+      "n": 10,
+      "median_needed": 0.157269469897388,
+      "median_correction": 0.09145827300239873
+     },
+     "office": {
+      "n": 10,
+      "median_needed": -0.017283872189240324,
+      "median_correction": -0.0872157974151766
+     },
+     "other": {
+      "n": 8,
+      "median_needed": -0.127096456878093,
+      "median_correction": -0.005539282043421245
+     }
+    }
+   },
+   "annual": {
+    "n": 52,
+    "pearson": 0.21662661241309314,
+    "spearman": 0.3121318193460258,
+    "median_needed": 3.7292600851834834e-07,
+    "median_correction": -0.046903893192298485,
+    "mae_anchor": 0.2721807403828408,
+    "mae_network": 0.2603473773810795,
+    "use_breakdown": {
+     "assembly": {
+      "n": 10,
+      "median_needed": -0.17324362405059968,
+      "median_correction": -0.04230426979333113
+     },
+     "education": {
+      "n": 12,
+      "median_needed": 0.1511309837233048,
+      "median_correction": -0.060760997818638085
+     },
+     "lodging": {
+      "n": 10,
+      "median_needed": 0.157269469897388,
+      "median_correction": 0.01076188741789963
+     },
+     "office": {
+      "n": 10,
+      "median_needed": -0.017283872189240324,
+      "median_correction": -0.07110697140677158
+     },
+     "other": {
+      "n": 8,
+      "median_needed": -0.127096456878093,
+      "median_correction": -0.05347076255037431
+     }
+    }
+   }
+  },
+  "recs_area_vs_energy_over_dev_eui": {
+   "n": 1848,
+   "pearson": 0.5961292136783466,
+   "spearman": 0.554576838816875,
+   "median_needed": 5.182891882338225e-08,
+   "median_correction": -0.02624356354536861,
+   "mae_anchor": 0.18903916645807053,
+   "mae_network": 0.16942124536349842,
+   "type_breakdown": {
+    "apartment_2_4": {
+     "n": 100,
+     "median_needed": -0.1110189433957608,
+     "median_correction": 0.07917080579873559
+    },
+    "apartment_5plus": {
+     "n": 244,
+     "median_needed": 0.09381149762843233,
+     "median_correction": 0.27499602861826244
+    },
+    "mobile_home": {
+     "n": 98,
+     "median_needed": -0.13914447244546368,
+     "median_correction": 0.05753463851477769
+    },
+    "single_attached": {
+     "n": 175,
+     "median_needed": 0.013031132139959656,
+     "median_correction": -0.0005277674712655944
+    },
+    "single_detached": {
+     "n": 1231,
+     "median_needed": 0.001297499797213053,
+     "median_correction": -0.07715370413595402
+    }
+   },
+   "climate_breakdown": {
+    "1A": {
+     "n": 25,
+     "median_needed": 0.21036080309791805,
+     "median_correction": 0.27439481182298087
+    },
+    "2A": {
+     "n": 162,
+     "median_needed": 0.12853991356594685,
+     "median_correction": 0.13863911531451611
+    },
+    "2B": {
+     "n": 37,
+     "median_needed": 0.015823647940389485,
+     "median_correction": 0.06108106646822753
+    },
+    "3A": {
+     "n": 202,
+     "median_needed": 0.03563214494107125,
+     "median_correction": 0.044793349299114604
+    },
+    "3B": {
+     "n": 114,
+     "median_needed": 0.06914892030784414,
+     "median_correction": 0.11671797197119482
+    },
+    "3C": {
+     "n": 32,
+     "median_needed": 0.12878530120361042,
+     "median_correction": 0.162890439441302
+    },
+    "4A": {
+     "n": 403,
+     "median_needed": 0.009726510990349269,
+     "median_correction": -0.01236815224390364
+    },
+    "4B": {
+     "n": 16,
+     "median_needed": -0.13024094122108254,
+     "median_correction": -0.06017852796209189
+    },
+    "4C": {
+     "n": 69,
+     "median_needed": 0.052522155070166665,
+     "median_correction": 0.08712382225111748
+    },
+    "5A": {
+     "n": 407,
+     "median_needed": -0.061583075304699975,
+     "median_correction": -0.15654824348337737
+    },
+    "5B": {
+     "n": 111,
+     "median_needed": -0.01957746053285936,
+     "median_correction": -0.1112082872240765
+    },
+    "6A": {
+     "n": 157,
+     "median_needed": -0.07291180799383579,
+     "median_correction": -0.18115545928010235
+    },
+    "6B": {
+     "n": 37,
+     "median_needed": -0.05707299254096476,
+     "median_correction": -0.13256722878565563
+    },
+    "7A": {
+     "n": 35,
+     "median_needed": -0.04960640672441596,
+     "median_correction": -0.15038917037413535
+    },
+    "7AK": {
+     "n": 34,
+     "median_needed": -0.24994895225024194,
+     "median_correction": -0.19928756828214889
+    },
+    "8AK": {
+     "n": 6,
+     "median_needed": -0.35118561818236094,
+     "median_correction": -0.24584288244941233
+    }
+   }
+  },
+  "recs_area_vs_true_type_climate_rule": {
+   "n": 1848,
+   "pearson": 0.5020719960933199,
+   "spearman": 0.4363298180949493,
+   "median_needed": 0.0,
+   "median_correction": -0.0269770459840597,
+   "mae_anchor": 0.1690606172340823,
+   "mae_network": 0.16942124536349842,
+   "type_breakdown": {
+    "apartment_2_4": {
+     "n": 100,
+     "median_needed": 0.0,
+     "median_correction": 0.1532105745600234
+    },
+    "apartment_5plus": {
+     "n": 244,
+     "median_needed": 0.0,
+     "median_correction": 0.1700631671092535
+    },
+    "mobile_home": {
+     "n": 98,
+     "median_needed": 0.0,
+     "median_correction": 0.16459003122630522
+    },
+    "single_attached": {
+     "n": 175,
+     "median_needed": 0.0,
+     "median_correction": -0.0031156895427391085
+    },
+    "single_detached": {
+     "n": 1231,
+     "median_needed": 0.0,
+     "median_correction": -0.07499182041195551
+    }
+   },
+   "climate_breakdown": {
+    "1A": {
+     "n": 25,
+     "median_needed": 0.0,
+     "median_correction": 0.05750165782427796
+    },
+    "2A": {
+     "n": 162,
+     "median_needed": 0.0,
+     "median_correction": 0.011147672749959758
+    },
+    "2B": {
+     "n": 37,
+     "median_needed": 0.0,
+     "median_correction": 0.02234556101429952
+    },
+    "3A": {
+     "n": 202,
+     "median_needed": 0.0,
+     "median_correction": -0.010586090294229633
+    },
+    "3B": {
+     "n": 114,
+     "median_needed": 0.0,
+     "median_correction": 0.04232333740164784
+    },
+    "3C": {
+     "n": 32,
+     "median_needed": 0.0,
+     "median_correction": 0.05744562139823395
+    },
+    "4A": {
+     "n": 403,
+     "median_needed": 0.0,
+     "median_correction": -0.01756776395439852
+    },
+    "4B": {
+     "n": 16,
+     "median_needed": 0.0,
+     "median_correction": 0.1367090402389406
+    },
+    "4C": {
+     "n": 69,
+     "median_needed": 0.0,
+     "median_correction": 0.04710960645980933
+    },
+    "5A": {
+     "n": 407,
+     "median_needed": 0.0,
+     "median_correction": -0.09750211139354903
+    },
+    "5B": {
+     "n": 111,
+     "median_needed": 0.0,
+     "median_correction": -0.10220061859265162
+    },
+    "6A": {
+     "n": 157,
+     "median_needed": 0.0,
+     "median_correction": -0.10705298827793719
+    },
+    "6B": {
+     "n": 37,
+     "median_needed": 0.0,
+     "median_correction": -0.059701855651090874
+    },
+    "7A": {
+     "n": 35,
+     "median_needed": 0.0,
+     "median_correction": -0.09271932710336239
+    },
+    "7AK": {
+     "n": 34,
+     "median_needed": 0.0,
+     "median_correction": 0.07122028011731607
+    },
+    "8AK": {
+     "n": 6,
+     "median_needed": 0.0,
+     "median_correction": 0.09454378952501408
+    }
+   }
+  },
+  "recs_vintage_vs_dev_median": {
+   "n": 1848,
+   "pearson": 0.22001449102455645,
+   "spearman": 0.18396524022242902,
+   "median_needed": 0.0,
+   "median_correction": -4.565988134368467,
+   "mae_anchor": 22.174242424242426,
+   "mae_network": 21.714642161200302
+  },
+  "recs_heat_fuel_vs_meter_rule": {
+   "n": 1795,
+   "pearson": 0.5973173330003648,
+   "spearman": 0.524909682476856,
+   "median_needed": 0.0,
+   "median_correction": -0.00019931543500029125,
+   "mae_anchor": 0.1298050139275766,
+   "mae_network": 0.12983452696280207
+  },
+  "cbecs_area_vs_energy_over_dev_eui": {
+   "n": 651,
+   "pearson": 0.5357567268055041,
+   "spearman": 0.43250676890890627,
+   "median_needed": 0.0,
+   "median_correction": -0.07989146393162816,
+   "mae_anchor": 0.2883363615317267,
+   "mae_network": 0.26122556165757843,
+   "type_breakdown": {
+    "education": {
+     "n": 93,
+     "median_needed": 0.022685250608323937,
+     "median_correction": -0.0702509037681942
+    },
+    "enclosed_mall": {
+     "n": 8,
+     "median_needed": 0.09876684418235948,
+     "median_correction": -0.20442669679481806
+    },
+    "food_sales": {
+     "n": 11,
+     "median_needed": -0.5538395197964214,
+     "median_correction": -0.09696892577353466
+    },
+    "food_service": {
+     "n": 21,
+     "median_needed": -0.6578111669813578,
+     "median_correction": -0.16894284666572368
+    },
+    "inpatient_health": {
+     "n": 28,
+     "median_needed": -0.4265085771052406,
+     "median_correction": -0.307998947730483
+    },
+    "laboratory": {
+     "n": 9,
+     "median_needed": -0.47313483189825156,
+     "median_correction": -0.27160018479607295
+    },
+    "lodging": {
+     "n": 41,
+     "median_needed": -0.08526531257866843,
+     "median_correction": -0.15006099852964372
+    },
+    "nursing": {
+     "n": 14,
+     "median_needed": -0.21627596543417082,
+     "median_correction": -0.049502457898686236
+    },
+    "office": {
+     "n": 133,
+     "median_needed": 0.017213954135272935,
+     "median_correction": -0.07571779935898304
+    },
+    "other": {
+     "n": 9,
+     "median_needed": 0.004017881364899001,
+     "median_correction": 0.15567438356166718
+    },
+    "outpatient_health": {
+     "n": 21,
+     "median_needed": -0.04071774757611646,
+     "median_correction": -0.0034862635083809934
+    },
+    "public_assembly": {
+     "n": 49,
+     "median_needed": -0.0505760874963288,
+     "median_correction": -0.06376758623403056
+    },
+    "public_order_safety": {
+     "n": 11,
+     "median_needed": 0.035962379759251206,
+     "median_correction": -0.19645319374961012
+    },
+    "religious_worship": {
+     "n": 27,
+     "median_needed": 0.20351030262772074,
+     "median_correction": -0.10629110252434693
+    },
+    "retail_other": {
+     "n": 34,
+     "median_needed": -0.02788481928625508,
+     "median_correction": -0.0445308789905261
+    },
+    "service": {
+     "n": 34,
+     "median_needed": 0.19477110670001108,
+     "median_correction": 0.022297815893052464
+    },
+    "strip_mall": {
+     "n": 21,
+     "median_needed": -0.26357967653691006,
+     "median_correction": -0.08426913253158119
+    },
+    "vacant": {
+     "n": 10,
+     "median_needed": 0.6450651941420071,
+     "median_correction": 0.04478545176159554
+    },
+    "warehouse_nonrefrigerated": {
+     "n": 69,
+     "median_needed": 0.4201410459463859,
+     "median_correction": 0.0004540285079182027
+    },
+    "warehouse_refrigerated": {
+     "n": 8,
+     "median_needed": -0.21693591908659782,
+     "median_correction": -0.09723371985763007
+    }
+   },
+   "climate_breakdown": {
+    "cold_or_very_cold": {
+     "n": 42,
+     "median_needed": -0.07885627129260797,
+     "median_correction": -0.11398328945044556
+    },
+    "cool": {
+     "n": 147,
+     "median_needed": -0.0021190581425032384,
+     "median_correction": -0.10704259984157138
+    },
+    "hot_or_very_hot": {
+     "n": 84,
+     "median_needed": 0.03434603481418064,
+     "median_correction": -0.024204339829110744
+    },
+    "mixed_mild": {
+     "n": 154,
+     "median_needed": -0.001374649549265028,
+     "median_correction": -0.06530621008309212
+    },
+    "warm": {
+     "n": 137,
+     "median_needed": 0.09788454947339842,
+     "median_correction": -0.0172220472318787
+    },
+    "withheld": {
+     "n": 87,
+     "median_needed": -0.12455329798742554,
+     "median_correction": -0.20308883079579942
+    }
+   }
+  },
+  "cbecs_area_vs_true_type_climate_rule": {
+   "n": 651,
+   "pearson": 0.28881943396467175,
+   "spearman": 0.23793947039739255,
+   "median_needed": 0.0,
+   "median_correction": -0.06049535642069026,
+   "mae_anchor": 0.19036634373579045,
+   "mae_network": 0.26122556165757843,
+   "type_breakdown": {
+    "education": {
+     "n": 93,
+     "median_needed": 0.0,
+     "median_correction": -0.07339336512353967
+    },
+    "enclosed_mall": {
+     "n": 8,
+     "median_needed": 8.4411492469183e-05,
+     "median_correction": -0.3031091294847088
+    },
+    "food_sales": {
+     "n": 11,
+     "median_needed": 0.0,
+     "median_correction": 0.45687059402288677
+    },
+    "food_service": {
+     "n": 21,
+     "median_needed": 0.0,
+     "median_correction": 0.5689899993454133
+    },
+    "inpatient_health": {
+     "n": 28,
+     "median_needed": 0.0001882302766009758,
+     "median_correction": 0.11869785965135904
+    },
+    "laboratory": {
+     "n": 9,
+     "median_needed": 0.0,
+     "median_correction": 0.18313954902555807
+    },
+    "lodging": {
+     "n": 41,
+     "median_needed": 0.0,
+     "median_correction": -0.08786666207051574
+    },
+    "nursing": {
+     "n": 14,
+     "median_needed": 0.0,
+     "median_correction": 0.12542123788732806
+    },
+    "office": {
+     "n": 133,
+     "median_needed": 0.0,
+     "median_correction": -0.08317724028935558
+    },
+    "other": {
+     "n": 9,
+     "median_needed": 0.0,
+     "median_correction": 0.21317993521654843
+    },
+    "outpatient_health": {
+     "n": 21,
+     "median_needed": 0.0,
+     "median_correction": 0.06998010523173548
+    },
+    "public_assembly": {
+     "n": 49,
+     "median_needed": 0.0,
+     "median_correction": -0.04665630721066982
+    },
+    "public_order_safety": {
+     "n": 11,
+     "median_needed": 0.0,
+     "median_correction": -0.11531216155567492
+    },
+    "religious_worship": {
+     "n": 27,
+     "median_needed": 0.0,
+     "median_correction": -0.2865052690264407
+    },
+    "retail_other": {
+     "n": 34,
+     "median_needed": 0.0,
+     "median_correction": 0.04123670354288311
+    },
+    "service": {
+     "n": 34,
+     "median_needed": 0.0,
+     "median_correction": -0.10760801084559657
+    },
+    "strip_mall": {
+     "n": 21,
+     "median_needed": 0.0,
+     "median_correction": 0.1833870359697194
+    },
+    "vacant": {
+     "n": 10,
+     "median_needed": 0.0,
+     "median_correction": -0.4851581897590018
+    },
+    "warehouse_nonrefrigerated": {
+     "n": 69,
+     "median_needed": 0.0,
+     "median_correction": -0.4488131089158318
+    },
+    "warehouse_refrigerated": {
+     "n": 8,
+     "median_needed": 0.0,
+     "median_correction": 0.07814376566601133
+    }
+   },
+   "climate_breakdown": {
+    "cold_or_very_cold": {
+     "n": 42,
+     "median_needed": 0.0,
+     "median_correction": -0.027685430004548373
+    },
+    "cool": {
+     "n": 147,
+     "median_needed": 0.0,
+     "median_correction": -0.11686044665902529
+    },
+    "hot_or_very_hot": {
+     "n": 84,
+     "median_needed": 0.0,
+     "median_correction": -0.026458437121373635
+    },
+    "mixed_mild": {
+     "n": 154,
+     "median_needed": 0.0,
+     "median_correction": -0.04260295885147647
+    },
+    "warm": {
+     "n": 137,
+     "median_needed": 0.0,
+     "median_correction": -0.07445880851112907
+    },
+    "withheld": {
+     "n": 87,
+     "median_needed": 0.0,
+     "median_correction": -0.059125363369943784
+    }
+   }
+  },
+  "cbecs_vintage_vs_dev_median": {
+   "n": 661,
+   "pearson": 0.17433363347093636,
+   "spearman": 0.17259955319659256,
+   "median_needed": 0.0,
+   "median_correction": -7.2378025579589575,
+   "mae_anchor": 23.37897125567322,
+   "mae_network": 24.624137484103027
+  },
+  "cbecs_heat_fuel_vs_meter_rule": {
+   "n": 653,
+   "pearson": 0.5604796781279628,
+   "spearman": 0.5533732303511115,
+   "median_needed": 0.0,
+   "median_correction": -0.1611116570533333,
+   "mae_anchor": 0.2725880551301684,
+   "mae_network": 0.28329211741291194
+  },
+  "cbecs_hours_vs_true_use_median": {
+   "n": 661,
+   "pearson": 0.42725947165486033,
+   "spearman": 0.3900980928018906,
+   "median_needed": 0.0,
+   "median_correction": 36.69969501659898,
+   "mae_anchor": 26.981845688350983,
+   "mae_network": 44.61585383887546,
+   "use_breakdown": {
+    "assembly": {
+     "n": 76,
+     "median_needed": 0.0,
+     "median_correction": 40.690370832204614
+    },
+    "education": {
+     "n": 93,
+     "median_needed": 0.0,
+     "median_correction": 53.08946785036942
+    },
+    "food": {
+     "n": 32,
+     "median_needed": 0.0,
+     "median_correction": -0.6760280461426547
+    },
+    "healthcare": {
+     "n": 63,
+     "median_needed": 0.0,
+     "median_correction": -42.501016728811194
+    },
+    "lab": {
+     "n": 9,
+     "median_needed": 0.0,
+     "median_correction": 78.6852409879778
+    },
+    "lodging": {
+     "n": 41,
+     "median_needed": 0.0,
+     "median_correction": -32.44678060094623
+    },
+    "office": {
+     "n": 133,
+     "median_needed": 0.0,
+     "median_correction": 55.59634168242182
+    },
+    "other": {
+     "n": 68,
+     "median_needed": 0.0,
+     "median_correction": 27.25516112639246
+    },
+    "retail": {
+     "n": 63,
+     "median_needed": 0.0,
+     "median_correction": 39.91645925673873
+    },
+    "warehouse": {
+     "n": 83,
+     "median_needed": 0.0,
+     "median_correction": 36.97401051722284
+    }
+   }
+  }
+ },
+ "hue": {
+  "prism_heating_share": {
+   "HUE_1": 0.1608,
+   "HUE_2": 0.1018,
+   "HUE_3": 0.103,
+   "HUE_4": 0.4691,
+   "HUE_5": 0.1971,
+   "HUE_6": 0.086,
+   "HUE_8": 0.2061,
+   "HUE_9": 0.2124,
+   "HUE_10": 0.1909,
+   "HUE_11": 0.3024,
+   "HUE_12": 0.0741,
+   "HUE_13": 0.2405,
+   "HUE_14": 0.0,
+   "HUE_15": 0.7571,
+   "HUE_16": 0.3296,
+   "HUE_18": 0.0632,
+   "HUE_19": 0.5092,
+   "HUE_20": 0.2234,
+   "HUE_22": 0.206,
+   "HUE_23": 0.4626,
+   "HUE_24": 0.2699,
+   "HUE_25": 0.3502,
+   "HUE_27": 0.652,
+   "HUE_28": 0.5746
+  }
+ },
+ "recomputed": {
+  "bdg2": {
+   "hourly": {
+    "area": {
+     "n": 1428,
+     "MdAPE": 56.59481562147288,
+     "within_x2": 0.561624649859944,
+     "bias_log10": 0.005994854203494215,
+     "cov1": 0.7542016806722689
+    },
+    "use": {
+     "n": 1428,
+     "accuracy": 0.12815126050420167,
+     "macroF1": 0.10900661027053964
+    },
+    "year": {
+     "n": 741,
+     "MAE": 27.593743530413143,
+     "cov1": 0.5721997300944669
+    }
+   },
+   "monthly": {
+    "area": {
+     "n": 1428,
+     "MdAPE": 49.628261546957155,
+     "within_x2": 0.6190476190476191,
+     "bias_log10": -0.013226241453332399,
+     "cov1": 0.6316526610644257
+    },
+    "use": {
+     "n": 1428,
+     "accuracy": 0.14425770308123248,
+     "macroF1": 0.08146819027645583
+    },
+    "year": {
+     "n": 741,
+     "MAE": 25.25581822754552,
+     "cov1": 0.6761133603238867
+    }
+   },
+   "annual": {
+    "area": {
+     "n": 1428,
+     "MdAPE": 47.9900641664466,
+     "within_x2": 0.6099439775910365,
+     "bias_log10": -0.05196441669891083,
+     "cov1": 0.5413165266106442
+    },
+    "use": {
+     "n": 1428,
+     "accuracy": 0.09453781512605042,
+     "macroF1": 0.043246221288907684
+    },
+    "year": {
+     "n": 741,
+     "MAE": 24.84661106765184,
+     "cov1": 0.6545209176788124
+    }
+   },
+   "elec_only": {
+    "n": 1375,
+    "auc_district_cooling": 0.7600758674956903,
+    "auc_district_heat": 0.740300279329609,
+    "n_chw": 506,
+    "n_dheat": 480,
+    "area": {
+     "n": 1375,
+     "MdAPE": 55.06340973450984,
+     "within_x2": 0.5701818181818182,
+     "bias_log10": 0.0204560287635438,
+     "cov1": 0.8261818181818181
+    }
+   }
+  },
+  "bdg2_baselines": {
+   "area_eui_by_true_use": {
+    "MdAPE": 51.51295857769593,
+    "n": 1364
+   },
+   "area_dumb": {
+    "MdAPE": 67.95092476844523
+   },
+   "use_majority": {
+    "cls": "education",
+    "accuracy": 0.40406162464985995,
+    "macroF1": 0.05755610972568579
+   },
+   "year_dev_median": {
+    "MAE": 24.941970310391362,
+    "n": 741
+   }
+  },
+  "recs": {
+   "area": {
+    "n": 7401,
+    "MdAPE": 33.62157588410769,
+    "within_x2": 0.8390758005674909,
+    "bias_log10": 0.0014346434184702161,
+    "cov1": 0.6913930549925685
+   },
+   "year": {
+    "n": 7401,
+    "MAE": 22.125418132197115,
+    "cov1": 0.7371976759897311
+   },
+   "heat_fuel_vs_electric": {
+    "n": 7194,
+    "accuracy": 0.8728106755629691
+   },
+   "hp_vs_resistance": {
+    "n": 2226,
+    "auc": 0.404024659648936,
+    "balanced_accuracy": 0.45631828646713596
+   },
+   "UAm2_consistency": {
+    "spearman_vs_insulation_poorness": 0.029777118062838316,
+    "spearman_vs_draftiness": -0.035571803265840106,
+    "spearman_vs_vintage": 0.00942950179111987
+   }
+  },
+  "recs_rules": {
+   "n": 7194,
+   "fuel_rule_accuracy": 0.8525159855435085,
+   "majority": "fuel",
+   "majority_accuracy": 0.6479010286349736,
+   "year_dev_median": 1984.5,
+   "year_dev_median_MAE": 22.31563302256452,
+   "area_dev_median_by_true_use_MdAPE": 29.444444444444446,
+   "area_dev_median_MdAPE": 41.17647058823529
+  },
+  "cbecs": {
+   "area": {
+    "n": 2558,
+    "MdAPE": 43.02363734564052,
+    "within_x2": 0.6669272869429241,
+    "bias_log10": -0.08639252917096218,
+    "cov1": 0.6059421422986708
+   },
+   "use": {
+    "n": 2558,
+    "accuracy": 0.16458170445660672,
+    "macroF1": 0.15400191842833827
+   },
+   "year": {
+    "n": 2558,
+    "MAE": 27.041833002269097
+   },
+   "heat_class": {
+    "n": 2513,
+    "accuracy": 0.7465181058495822
+   },
+   "chiller": {
+    "n": 2362,
+    "auc": 0.7675670016946127
+   },
+   "heat_pump_present": {
+    "n": 2375,
+    "auc": 0.5865674944676665
+   }
+  },
+  "cbecs_rules": {
+   "n": 2513,
+   "fuel_rule_accuracy": 0.6856346995622762,
+   "majority": "fuel",
+   "majority_accuracy": 0.5563072025467569,
+   "year_dev_median": 1984.5,
+   "year_dev_median_MAE": 25.997654417513683,
+   "area_dev_median_by_true_use_MdAPE": 76.0002639951521,
+   "area_dev_median_MdAPE": 82.6086956521739
+  },
+  "cbecs_hours": {
+   "n": 2558,
+   "detective_MAE_h": 44.24748545484222,
+   "spearman": 0.49786248897893176,
+   "dev_median_MAE_h": 41.423377638780295,
+   "median_by_true_use_MAE_h": 29.713838936669273
+  },
+  "cbecs_use_majority": {
+   "cls": "office",
+   "accuracy": 0.20797498045347929,
+   "macroF1": 0.034433656957928806
+  },
+  "hue": {
+   "hourly": {
+    "n": 24,
+    "n_electric": 6,
+    "auc_electric_heat": 0.5462962962962963,
+    "accuracy_electric_vs_not": 0.4166666666666667
+   },
+   "monthly": {
+    "n": 24,
+    "n_electric": 6,
+    "auc_electric_heat": 0.6944444444444444,
+    "accuracy_electric_vs_not": 0.75
+   }
+  }
+ }
+}

@@ -40,7 +40,35 @@ def card_from_model(M, hi0=24.0):
     return dict(UA=float(M.UA), C=float(M.C), area=float(M.sim.spec['floor_area_m2']), kind=M.kind,
                 gas_heat=bool(M.kind == 'furnace' or (M.kind == 'baseboard' and M.bb_fuel != 'elec')),
                 fan_cont=bool(M.fan_cont), res=bool(M.res), Tg=Tg, Qmax=Qmax, Qh=Qh, Ph=Ph, eff=eff, Qs=Qs, Pc=Pc,
-                P_fan=float(M.P_fan), backup=float(M.backup))
+                P_fan=float(M.P_fan), backup=float(M.backup),
+                # R8 card fields (the card MPC's plant): heater size, scalar efficiency, outdoor-air conductance of a
+                # constant-volume fan, compressor speeds
+                Qheat=float(M.Qheat), eff0=float(M.eff), gx=float(M.gx), hp_speed=getattr(M, 'hp_speed', 'single'),
+                cool_speed=M.cool_speed)
+
+
+def card_map(M, ctx):
+    """R8 card house: the 12-number linear map of tp.card_mpc.CardMPC, fitted by least squares to the nominal
+    twin's hourly 5R1C one-step maps (tp.mpc.Model.coeffs at the middle of the band, the episode's weather):
+    At, Aq, Ct, Cq are their means; A and C are regressed on [1, T_out, GHI, base load kW]."""
+    n = M.n
+    ia = np.arange(n)
+    lo = ctx['lo'][np.minimum(ia, len(ctx['lo']) - 1)]; hi = ctx['hi'][np.minimum(ia, len(ctx['hi']) - 1)]
+    c = M.coeffs(ia, M.To[ia], M.ghi[ia], 0.5 * (lo + hi))
+    X = np.stack([np.ones(n), M.To[ia], M.ghi[ia], M.base_W[ia] / 1000.0], 1)
+    out = {k: float(np.mean(c[k])) for k in ('At', 'Aq', 'Ct', 'Cq')}
+    # A, C are the maps at T_mass = 0; with At, Ct fixed at their means the regression absorbs the hourly variation
+    for k, kt in (('A', 'At'), ('C', 'Ct')):
+        y = np.asarray(c[k], float) + (np.asarray(c[kt], float) - out[kt]) * 20.0   # re-centre at T_mass = 20 C
+        out[k.lower()] = [float(v) for v in np.linalg.lstsq(X, y, rcond=None)[0]]
+    return out
+
+
+def full_card(M, ctx, hi0):
+    """The R8 building card: the v1.0 card + the card house map."""
+    card = card_from_model(M, hi0)
+    card['map'] = card_map(M, ctx)
+    return card
 
 
 def pref_kW(card, base_W):

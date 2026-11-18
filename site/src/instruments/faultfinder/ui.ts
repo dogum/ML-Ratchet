@@ -3,7 +3,9 @@
 // trend log on every change. Controls change the log the way a fault or a bad sensor would: a constant offset on one
 // temperature sensor, the outdoor-air damper stuck (the mixed-air temperature rewritten from the mixing-box balance
 // while the logged command stays as it was), extra sensor noise, or the mixed-air sensor removed. The dataset's own
-// label is the truth; the rule baseline's verdict on the real day is shown next to it.
+// label is the truth; the rule baseline's verdict on the real day is shown next to it. v1.1 also reads the unit's
+// earlier days (up to 3, within 7 days) when the exam has them; a button switches them off (single-day mode = v1.0).
+// The controls edit only the day being read, never its reference days.
 import type { InstrumentContext } from '../types.ts';
 import { fetchPack } from '../../lib/nn/pack.ts';
 import { read, perturb, R, NT, type FMeta, type FDay, type Perturb, type Reading } from './net.ts';
@@ -44,7 +46,7 @@ export async function mount(ctx: InstrumentContext) {
     subtitle: 'is this air handler faulty today? one real exam day of trend log, never used in training',
     params: `${Math.round(W.meta.n_params / 1000)}k parameters · matches Python to 1e-5`,
   });
-  const st = { i: 0, sensor: 'T_sa', offset: 0, damper: -5, noise: 0, ma: true };
+  const st = { i: 0, sensor: 'T_sa', offset: 0, damper: -5, noise: 0, ma: true, refs: true };
   const base: Record<number, number> = {};
   let view: { r: Reading; x: Float64Array; x0: Float64Array } | null = null;
 
@@ -90,8 +92,10 @@ export async function mount(ctx: InstrumentContext) {
   ui.controls.append(btns);
   const maBtn = ctx.compact ? null : button(btns, 'MA sensor: on', () => { st.ma = !st.ma; sync(); go(); });
   if (maBtn) maBtn.title = 'Remove the mixed-air temperature: the outdoor-air fraction and the mixing-box checks go with it';
+  const refBtn = button(btns, 'Earlier days: on', () => { st.refs = !st.refs; sync(); go(); });
+  refBtn.title = "Compare the day with the same unit's earlier exam days (v1.1); off = single-day mode, v1.0's log-odds";
   button(btns, 'Reset', () => {
-    Object.assign(st, { offset: 0, damper: -5, noise: 0, ma: true });
+    Object.assign(st, { offset: 0, damper: -5, noise: 0, ma: true, refs: true });
     sOff.set(0); sDamp?.set(-5); sNoise?.set(0); sync(); go();
   });
 
@@ -107,6 +111,10 @@ export async function mount(ctx: InstrumentContext) {
       const first = SENSORS.find(([c]) => d.has[R[c]]);
       if (first) { st.sensor = first[0]; sbtns.forEach((x, k) => x.setAttribute('aria-pressed', String(SENSORS[k][0] === st.sensor))); }
     }
+    const nr = d.n_refs;
+    refBtn.disabled = nr === 0;
+    refBtn.textContent = nr === 0 ? 'Earlier days: none' : `Earlier days: ${st.refs ? `on (${nr})` : 'off'}`;
+    refBtn.setAttribute('aria-pressed', String(st.refs && nr > 0));
     if (maBtn) {
       maBtn.disabled = !d.has[R.T_ma];
       maBtn.textContent = `MA sensor: ${st.ma && d.has[R.T_ma] ? 'on' : 'off'}`;
@@ -131,15 +139,16 @@ export async function mount(ctx: InstrumentContext) {
     ui.setBusy(true);
     await new Promise((r) => requestAnimationFrame(r));
     const i = st.i, x0 = Float64Array.from(X.t[`x${i}`].data), nz = X.t[`n${i}`].data;
+    const refs = st.refs ? days[i].refs.map((_, j) => X.t[`r${i}_${j}`].data) : [];
     const t1 = performance.now();
     const x = perturb(x0, nz, control());
-    const r = read(W, x);
+    const r = read(W, x, refs);
     const ms = performance.now() - t1;
-    base[i] ??= read(W, x0).p;
+    base[i] = read(W, x0, refs).p;
     view = { r, x, x0 };
     plot.redraw();
     render(r);
-    ui.stamp(ms, `${days[i].id} · 35 features × 96 bins recomputed`);
+    ui.stamp(ms, `${days[i].id} · ${refs.length ? `82 rows (with ${refs.length} earlier day${refs.length > 1 ? 's' : ''})` : '35 feature rows'} × 96 bins recomputed`);
     ui.setBusy(false);
   }
   const go = scheduler(run, 30);
@@ -165,11 +174,13 @@ export async function mount(ctx: InstrumentContext) {
       const t = r.diag.find((q) => q.cls === d.diag_class);
       if (t) top.push(t);
     }
-    probs(probBox, 'If it is faulty, which fault (calibrated, T = 4.3)', top.map((t) => ({ label: t.label, p: t.p, truth: t.cls === d.diag_class })));
+    probs(probBox, `If it is faulty, which fault (calibrated, T = ${W.meta.temperature.toFixed(1)})`, top.map((t) => ({ label: t.label, p: t.p, truth: t.cls === d.diag_class })));
     const why = d.fault === 'none' ? ''
       : d.simulable ? ` FaultFinder can name this fault (class <b>${d.diag_class?.replace(/_/g, ' ')}</b>).`
         : ' BuildingSim cannot simulate this fault type, so it is graded for detection only.';
-    note.innerHTML = `<b>${d.facility}, ${d.unit}, ${d.date}.</b>${why} On the exam, a third of healthy air-handler days read above 0.5 and probabilities sit near 0.5 (one temperature from 20 dev days squashes them); the ranking is what carries the skill (AUC 0.78 on 200 AHU days, rules 0.69). The rule verdict is for the real day and is not re-run on your edits. Data: ${d.credit}.`;
+    const refNote = d.n_refs === 0 ? ' This day has no earlier exam day of the same unit within 7 days, so v1.1 reads it alone.'
+      : ` Earlier days of the unit: ${d.refs.map((q) => q.date ?? q.id).join(', ')}. With them, v1.1 raised false alarms on the (seen) exam: 56 % of healthy air-handler days read above 0.5, against 33 % for single-day mode (v1.0); switch them off to compare.`;
+    note.innerHTML = `<b>${d.facility}, ${d.unit}, ${d.date}.</b>${why}${refNote} Probabilities sit near 0.5 (one temperature from 20 dev days squashes them); the ranking is what carries the skill (AUC 0.78 on 200 AHU days, rules 0.69). The rule verdict is for the real day and is not re-run on your edits. Data: ${d.credit}.`;
   }
 
   function draw(c: Canvas2D) {

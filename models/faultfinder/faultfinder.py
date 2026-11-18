@@ -1,10 +1,15 @@
-"""FaultFinder v1.0: air-handler / rooftop-unit fault detection and diagnosis from one day of BMS trend log.
-numpy only. Trained only on BuildingSim simulations (see MODEL_CARD.md).
+"""FaultFinder v1.1: air-handler / rooftop-unit fault detection and diagnosis from one day of BMS trend log, optionally
+compared with the same unit's last 1-3 logged days. numpy only. Trained only on BuildingSim simulations (MODEL_CARD.md).
 
     from faultfinder import FaultFinder
     ff = FaultFinder()
-    r = ff.read_day(df)          # df: one local day, 1- to 15-min trend log, contract column names (see CHANNELS)
+    r = ff.read_day(df)                              # one local day, 1- to 15-min trend log, contract column names
+    r = ff.read_day(df, ref_days=[df_jul9, df_jul10]) # with the same unit's earlier days (at most 7 days before; last 3 used)
     r['p_fault'], r['diagnosis'][:3]
+
+Reference days are optional. Without them the network runs in single-day mode and gives v1.0's log-odds exactly (v1.1
+= v1.0 + 47 input rows that are zero without references). Pass only days of the same unit, before the day being read,
+within 7 days; their own fault status is not needed (a reference day may itself be faulty, as in operation).
 
 Input channels (contract names, any subset; missing ones are allowed):
   T_oa T_ra T_ma T_sa (degC), T_sa_sp (or T_sa_sp_cool / T_sa_sp_heat), T_zone, damper_oa valve_cc valve_hc
@@ -21,6 +26,8 @@ RAWC = ['T_oa', 'T_ra', 'T_ma', 'T_sa', 'T_sa_sp', 'T_zone', 'damper_oa', 'valve
 R = {c: i for i, c in enumerate(RAWC)}
 NT = 96
 NF = 35
+NF7 = 82          # v1.1 input: today (35) + reference median (35) + today - median (11) + reference count (1)
+MAX_REF = 3
 CLASSES = ['none', 'oa_damper_stuck', 'oa_damper_leak', 'economizer', 'cc_valve_stuck', 'cc_valve_leak',
            'hc_valve_stuck', 'hc_valve_leak', 'reheat_valve_leak', 'cooling_capacity', 'low_airflow',
            'sensor_bias_T_sa', 'sensor_bias_T_oa', 'sensor_bias_T_ma', 'sensor_bias_T_ra', 'zone_setpoint',
@@ -142,6 +149,21 @@ def featurize(x):
     return f
 
 
+# ------------------------------------------------------------------ reference days (same as training/context.py)
+def context(f_today, f_refs=None):
+    """f_today [35, 96]; f_refs [n, 35, 96] (n = 0..3) or None -> [82, 96]: today's rows, the per-bin median of the
+    reference days' rows, today minus that median for the 6 temperature and 5 physics rows, n / 3. No reference: zeros."""
+    f_today = np.asarray(f_today, np.float32)
+    out = np.zeros((NF7,) + f_today.shape[1:], np.float32)
+    out[:NF] = f_today
+    if f_refs is not None and len(f_refs):
+        m = np.median(np.asarray(f_refs, np.float32), axis=0)
+        out[NF:2 * NF] = m
+        out[2 * NF:2 * NF + 11] = f_today[:11] - m[:11]
+        out[-1] = len(f_refs) / 3.0
+    return out
+
+
 # ------------------------------------------------------------------ network (BatchNorm folded)
 def _conv(x, W, b):
     K = W.shape[2]
@@ -172,11 +194,23 @@ class FaultFinder:
     def __init__(self, weights=os.path.join(HERE, 'faultfinder_weights.npz')):
         self.W = {k: v for k, v in np.load(weights).items()}
         self.T = float(self.W['temperature'])
+        self.nf = int(self.W['c1_W'].shape[1])          # 82 (v1.1, reference days) or 35 (v1.0)
 
-    def predict_raw(self, xs):
-        """xs: [N, 13, 96] raw days -> list of result dicts."""
-        F = np.stack([featurize(x) for x in xs]).astype(np.float32)
-        lo, pa, wa = forward(self.W, F)
+    def inputs(self, xs, refs=None):
+        """xs [N, 13, 96] raw days; refs: None or one list per day of 0-3 raw reference days -> network input."""
+        F = []
+        for i, x in enumerate(xs):
+            f = featurize(x)
+            if self.nf > NF:
+                rr = list(refs[i]) if refs is not None and refs[i] is not None else []
+                f = context(f, [featurize(z) for z in rr[-MAX_REF:]])
+            F.append(f)
+        return np.stack(F).astype(np.float32)
+
+    def predict_raw(self, xs, refs=None):
+        """xs: [N, 13, 96] raw days; refs: optional, one list per day of the unit's earlier raw days (oldest first;
+        the last 3 are used) -> list of result dicts."""
+        lo, pa, wa = forward(self.W, self.inputs(xs, refs))
         f = lo[:, 1:]
         m = f.max(1, keepdims=True)
         d = (m[:, 0] + np.log(np.exp(f - m).sum(1))) - lo[:, 0]          # log-odds of any fault
@@ -187,10 +221,16 @@ class FaultFinder:
         out = []
         for i in range(len(xs)):
             order = np.argsort(-pr[i])
-            out.append(dict(p_fault=float(p[i]), log_odds=float(d[i]),
+            nref = min(len(refs[i]), MAX_REF) if (refs is not None and refs[i] is not None and self.nf > NF) else 0
+            out.append(dict(p_fault=float(p[i]), log_odds=float(d[i]), n_reference_days=nref,
                             diagnosis=[(CLASSES[k + 1], LABELS[CLASSES[k + 1]], float(pr[i, k])) for k in order],
                             parameter=float(pa[i, order[0] + 1]), extra_hvac_energy_frac=float(wa[i])))
         return out
 
-    def read_day(self, df, day=None):
-        return self.predict_raw(raw_day(df, day)[None])[0]
+    def read_day(self, df, day=None, ref_days=None):
+        """df: one day's trend log. ref_days: optional list of the same unit's earlier days, oldest first, each a
+        DataFrame (its first local day is read) or a (DataFrame, day) pair."""
+        refs = None
+        if ref_days:
+            refs = [[raw_day(*r) if isinstance(r, tuple) else raw_day(r) for r in ref_days]]
+        return self.predict_raw(raw_day(df, day)[None], refs)[0]

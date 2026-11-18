@@ -2,6 +2,10 @@
 
 usage: ratchet.py score TAG                     print val + dev scores of results/{val,dev}/pol_TAG.json
        ratchet.py rung TAG "what changed"       score, decide keep/reject vs the incumbent, log to ratchet.json
+       ratchet.py rung TAG "what changed" ANCHOR_TAG
+                                                residual rungs (R8): also requires val skill > ANCHOR_TAG's + 0.01
+       ratchet.py ref TAG "what it is"          log a reference row (never the incumbent)
+       ratchet.py base TAG "what it is"         log TAG as the starting incumbent (re-scored release)
 
 skill = sum_e (J_fixed - J_policy)/J_fixed / sum_e (J_fixed - J_oracle)/J_fixed   (0 = fixed thermostat, 1 = perfect foresight)
 J = control-dependent bill (energy + demand + gas) + lambda x degree-hours outside the occupant band.
@@ -43,7 +47,7 @@ def main():
     cmd, tag = sys.argv[1], sys.argv[2]
     v = score('val', tag); d = score('dev', tag)
     print('val', json.dumps(v)); print('dev', json.dumps(d))
-    if cmd != 'rung':
+    if cmd not in ('rung', 'ref', 'base'):
         return
     f = os.path.join(ROOT, 'ratchet.json')
     R = json.load(open(f)) if os.path.exists(f) else dict(rules=__doc__, rungs=[], incumbent=None)
@@ -55,8 +59,20 @@ def main():
     why = (f"val skill {v['skill']:.3f} vs incumbent {iv:.3f} (margin {MARGIN}); dev skill {d['skill']:.3f} "
            f"(incumbent {idv:.3f}), dev DH {d['DH_pol']:.1f} vs fixed {d['DH_fixed']:.1f} K h -> "
            + ('KEPT' if keep else 'REJECTED' + ('' if gate else ' (dev gate failed)')))
+    if cmd in ('ref', 'base'):
+        keep = cmd == 'base'
+        why = ('reference row, not a candidate' if cmd == 'ref' else 'starting incumbent (the release, re-scored)') +               f": val skill {v['skill']:.3f}, dev skill {d['skill']:.3f}, dev DH {d['DH_pol']:.2f} K h"
+    elif len(sys.argv) > 4:
+        av = score('val', sys.argv[4])['skill']
+        beat = v['skill'] > av + MARGIN
+        why = why.replace('-> KEPT', '-> passes the incumbent rule')
+        why += f"; anchor alone ({sys.argv[4]}) val {av:.3f} -> " + ('beaten' if beat else 'NOT beaten by 0.01')
+        if keep and not beat:
+            keep = False
+            why += ' -> REJECTED (does not beat the anchor alone)'
     R['rungs'] = [r for r in R['rungs'] if r['tag'] != tag]
-    R['rungs'].append(dict(tag=tag, change=sys.argv[3] if len(sys.argv) > 3 else '', val=v, dev=d, kept=keep, why=why))
+    R['rungs'].append(dict(tag=tag, change=sys.argv[3] if len(sys.argv) > 3 else '', val=v, dev=d, kept=keep, why=why,
+                           ref=cmd == 'ref'))
     if keep:
         R['incumbent'] = tag
     json.dump(R, open(f, 'w'), indent=1)

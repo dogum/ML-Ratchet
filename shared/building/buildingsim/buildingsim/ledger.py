@@ -68,6 +68,17 @@ def build_ledger(sim, eu, met):
     hv -= float(np.sum(sim.doas_cool_W / 3.0) * dth / 1000.0)
     eq['electricity_vs_end_uses_rel'] = abs(hv - a['in_elec']) / (abs(hv) + abs(a['in_elec']) + 1e-9)
     out = dict(zone_heat_kWh=zh, zone_moisture_kg=zm, air_side_kWh=air, equipment_kWh=eq, meters_kWh=meters)
+    if getattr(sim, 'campus', None) is not None:
+        # physics 1.1: each district meter = what the building's systems draw + the loop base (losses, process)
+        hk = sim.campus['kind']
+        dp = dict(heat_meter=me_k.get(hk, 0.0), heat_to_building_systems=eu_k.get('heating_district', 0.0) +
+                  eu_k.get('water_systems_district', 0.0), heat_loop_base=eu_k.get('plant_heating_district', 0.0),
+                  chw_meter=me_k.get('chilled_water', 0.0), chw_to_building_systems=eu_k.get('cooling_district', 0.0),
+                  chw_loop_base=eu_k.get('plant_cooling_district', 0.0))
+        dp['residual'] = (dp['heat_meter'] - dp['heat_to_building_systems'] - dp['heat_loop_base'] + dp['chw_meter']
+                          - dp['chw_to_building_systems'] - dp['chw_loop_base'])
+        dp['closure_rel'] = abs(dp['residual']) / (dp['heat_meter'] + dp['chw_meter'] + 1e-12)
+        out['district_plant_kWh'] = dp
     if sim.bat:
         b = dict(charge_in=L['bat_in'] * J2KWH, discharge_out=L['bat_out'] * J2KWH, losses=L['bat_loss'] * J2KWH,
                  stored_change=L['bat_store'] * J2KWH,
@@ -76,7 +87,8 @@ def build_ledger(sim, eu, met):
         out['battery_kWh'] = b
     worst = max(zh['closure_rel'], zm['closure_rel'], air['closure_rel'], air['zone_vs_air_side_rel'],
                 eq['closure_rel'], meters['closure_rel'], eq['electricity_vs_end_uses_rel'],
-                out.get('battery_kWh', {}).get('closure_rel', 0.0))
+                out.get('battery_kWh', {}).get('closure_rel', 0.0),
+                out.get('district_plant_kWh', {}).get('closure_rel', 0.0))
     out['closure_rel'] = worst
     out['ok'] = bool(worst < 1e-6)
     lag = abs(air['return_lag']) + abs(air['supply_lag'])

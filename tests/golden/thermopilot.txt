@@ -1,29 +1,32 @@
 
 RECS_109160_coned_sc1_rate3_1  (heat_pump_air, weather site:Cockatoo, tariff coned_sc1_rate3, month 1)
   numpy replay chose the same setpoints in 744/744 hours
-  fixed        bill $  323.63   outside comfort band    0.0 K h   J $  323.63
-  setback      bill $  323.63   outside comfort band    0.0 K h   J $  323.63
-  precool      bill $  323.63   outside comfort band    0.0 K h   J $  323.63
-  mpc_c        bill $  323.52   outside comfort band    0.1 K h   J $  323.88
-  thermopilot  bill $  325.92   outside comfort band    0.0 K h   J $  325.92
-  oracle       bill $  323.48   outside comfort band    0.0 K h   J $  323.48
+  fixed            bill $  274.96   outside comfort band    0.0 K h   J $  274.96
+  setback          bill $  274.96   outside comfort band    0.0 K h   J $  274.96
+  precool          bill $  274.96   outside comfort band    0.0 K h   J $  274.96
+  mpc_c            bill $  274.74   outside comfort band    0.4 K h   J $  275.81
+  thermopilot_v1.0 bill $  276.61   outside comfort band    0.0 K h   J $  276.61
+  thermopilot_v1.1 bill $  274.68   outside comfort band    0.0 K h   J $  274.68
+  oracle           bill $  274.63   outside comfort band    0.0 K h   J $  274.63
 
 RECS_116893_xcel_mn_a04_tod_7  (split_ac_furnace, weather site:Hog, tariff xcel_mn_a04_tod, month 7)
   numpy replay chose the same setpoints in 744/744 hours
-  fixed        bill $  149.49   outside comfort band    0.0 K h   J $  149.49
-  setback      bill $  140.22   outside comfort band    3.2 K h   J $  150.87
-  precool      bill $  136.74   outside comfort band    2.5 K h   J $  145.19
-  mpc_c        bill $  134.99   outside comfort band    1.3 K h   J $  139.32
-  thermopilot  bill $  140.59   outside comfort band    0.3 K h   J $  141.52
-  oracle       bill $  135.25   outside comfort band    0.3 K h   J $  136.32
+  fixed            bill $  138.05   outside comfort band    0.0 K h   J $  138.05
+  setback          bill $  129.09   outside comfort band    1.3 K h   J $  133.40
+  precool          bill $  126.36   outside comfort band    0.8 K h   J $  129.12
+  mpc_c            bill $  124.97   outside comfort band    0.3 K h   J $  125.83
+  thermopilot_v1.0 bill $  130.67   outside comfort band    0.0 K h   J $  130.67
+  thermopilot_v1.1 bill $  128.61   outside comfort band    0.0 K h   J $  128.61
+  oracle           bill $  125.13   outside comfort band    0.2 K h   J $  125.82
 
 Gator_public_Geraldine_7  (heat_pump_air, weather site:Gator, tariff ouc_gsd_tou, month 7)
   numpy replay chose the same setpoints in 744/744 hours
-  fixed        bill $ 3010.84   outside comfort band    0.0 K h   J $ 3010.84
-  setback      bill $ 2963.61   outside comfort band    0.0 K h   J $ 2963.61
-  precool      bill $ 2925.51   outside comfort band    0.0 K h   J $ 2925.51
-  mpc_c        bill $ 2797.26   outside comfort band    0.0 K h   J $ 2798.05
-  thermopilot  bill $ 2885.13   outside comfort band    0.0 K h   J $ 2885.13
-  oracle       bill $ 2796.98   outside comfort band    0.0 K h   J $ 2796.98
+  fixed            bill $ 3010.84   outside comfort band    0.0 K h   J $ 3010.84
+  setback          bill $ 2963.61   outside comfort band    0.0 K h   J $ 2963.61
+  precool          bill $ 2925.51   outside comfort band    0.0 K h   J $ 2925.51
+  mpc_c            bill $ 2797.12   outside comfort band    0.0 K h   J $ 2797.91
+  thermopilot_v1.0 bill $ 2885.13   outside comfort band    0.0 K h   J $ 2885.13
+  thermopilot_v1.1 bill $ 2806.42   outside comfort band    0.0 K h   J $ 2806.42
+  oracle           bill $ 2796.98   outside comfort band    0.0 K h   J $ 2796.98
 
-0.8 s
+11.4 s

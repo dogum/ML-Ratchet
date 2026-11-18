@@ -106,3 +106,522 @@ Calibration: 164/217 days in P 0.4-0.6 (temperature from 20 days over-shrinks; B
   shared ops; it matches Python to 1.4e-6. Controls: a sensor offset on one temperature, the outdoor-air damper stuck
   (mixed air from the mixing balance, the logged command unchanged), extra sensor noise and removing the mixed-air
   sensor. float16 weights move P(fault) by at most 8.5e-5.
+
+## 2026-11-17 — Integrity pass: the plan, written before anything is re-scored
+
+The building round-2 review asked for the same integrity pass WakeNet had. The exam (217 days) is already seen: v1.0
+took it once. Every number below is labelled "seen", and nothing is chosen from it. No new rung runs in this pass.
+
+**1. Re-score the exam with the released weights.** The released network is `faultfinder_weights.npz` (numpy, BatchNorm
+folded); the torch checkpoint `r6_wide.pt` is not in the repository. `exam.py` gets a numpy path: a model name ending
+in `.npz` runs `faultfinder.forward` instead of torch (and `evaluate.py` imports torch only when it needs it). Then
+`exam.py ../faultfinder_weights.npz` on the unpacked fault data, with the dev temperature re-fitted by the same rule.
+FaultFinder's own numbers must reproduce `training/exam.json`; I report the largest difference. Every row exam.py
+computes goes into `model.yaml` and `MODEL_CARD.md`: graded rows for all units, AHU, RTU and each source (AUC,
+balanced accuracy, false-alarm rate and recall at P = 0.5; report-only recall at 2/5/10 % false alarms), and info rows
+for accuracy, by dataset, season, severity, fault type, diagnosis by class and source, calibration and energy.
+
+**2. Fair baselines, tuned on the 20 dev days only.** The APAR rules ran with textbook tolerances (temperature
+tolerance 1.5 K, supply-fan heat 1.1 K, 15-min persistence); only the score threshold was tuned on dev.
+- *APAR dev-tuned.* A parameterised copy of `shared/building/data/scripts/baselines.py::apar` (checked first: the
+  textbook setting must reproduce `faults_apar.parquet` scores). Grid, 54 settings: temperature tolerance
+  {0.75, 1.0, 1.5, 2.0, 2.5, 3.0} K × fan heat {0.5, 1.1, 1.7} K × persistence {15, 30, 60} min. Chosen by AUC on the
+  18 AHU dev days; ties by dev balanced accuracy, then by closeness to the textbook setting. Threshold: the one with the
+  best dev balanced accuracy among 0 and the midpoints of the dev scores (ties: the lowest, as `baselines.py` does).
+  RTU keeps the fan-on-while-unoccupied rule (no tolerance to tune).
+- *Mixing-box residual detector* (per unit-day, 15-min bins, fan on). Three residuals: (C1) outdoor-air fraction
+  residual, median |(MA−RA)/(OA−RA) − f(cmd)| over bins with |OA−RA| > 3 K, where f(cmd) = a + (b − a)·cmd^g is fitted
+  by least squares on the healthy dev days' bins; (C2) coil-off residual, median |SA − MA − δ| over bins with both
+  valves ≤ 0.02, δ the healthy-dev median; (C3) supply-air tracking, median |SA − SP|. Each needs 4 bins. Each is
+  standardised by the healthy dev days' median and IQR (floors 0.02 and 0.2 K); score = the largest available z.
+  Threshold by dev balanced accuracy on all 20 dev days.
+- Scored on the same 217 rows as FaultFinder. "Best baseline" on a row is the best classical value on that row
+  (textbook APAR at its dev threshold, dev-tuned APAR, mixing-box residual, fan rule for the RTU). Picking the best on
+  the exam favours the baselines, not the model.
+
+**3. Intervals.** For every graded row, model minus best baseline, 95 % bootstrap, 2,000 resamples, seed 20261117,
+resampling unit-days within the row's subset (the exam unit). Also a cluster bootstrap over facility-days (`group`:
+ERS AHU-A and AHU-B, and Nesbitt AHU-1 and AHU-2, share a day). Verdict from the unit-day interval: win if it excludes
+zero on the good side, loss if on the bad side, tie if it spans zero; a row the dumb baseline wins is a loss. Where the
+facility-day interval disagrees, the note says so. The recall-at-fixed-false-alarm rows set thresholds on the exam's own
+healthy days (re-set in every resample) and stay report-only. Diagnosis rows: against always naming the commonest exam
+class (top-1) or the three commonest (top-3), resampling the 66 days. Info rows (calibration, Brier) get an interval on
+the value alone.
+
+**4. Dev twin test of what the network adds** (20 dev days). Anchor = the best dev-tuned rule, turned into a
+probability by a two-parameter logistic fit on dev (AHU: dev-tuned APAR; RTU: fan rule). Correlate the network's
+correction (P_net − P_rule, P_net at T = 4.3) with what reality needed (truth − P_rule). List the days where they
+disagree with the truth.
+
+**5. Unit habit, measured on dev only** (for next round's multi-day rung). Units are dataset + unit name; three dev
+units have two or more healthy days (ERS AHU-B 3, Nesbitt AHU-1 3, Nesbitt AHU-2 2).
+- Day features: mean and standard deviation of each of the 35 network feature rows over fan-on bins, standardised
+  over the 20 dev days. For each healthy day: distance to the nearest other day of the same unit vs the nearest day of
+  another unit.
+- The network's detection log-odds on healthy days: share of variance between units vs within units.
+- Leave-one-out unit offset: subtract the mean log-odds of the unit's other healthy dev days; count false alarms at the
+  dev threshold before and after (diagnostic only, not a rung).
+Then the rung plan goes in the NOTEBOOK as a plan (not run): what the network sees from the unit's recent days, how
+the bank supplies them, and how the exam supplies them causally. Exam metadata (dates per unit, no labels) may be
+counted to size the plan.
+
+**6. Readiness.** On this Windows machine, at most 3 processes: `noise.py` (noise model from dev), `simbank.py` for a
+few windows into `work/`, a one-epoch `train.py` on that bank. Time each and extrapolate two 38,987-day banks and the
+frozen val v4. List blockers.
+
+**7. Paperwork.** `model.yaml` (rows, intervals, verdicts, "seen"), `MODEL_CARD.md`, a ladder note in
+`ratchet.yaml`, a results entry here; `readme --write faultfinder`; validate; demo test.
+
+## 2026-11-17 — Fresh exam frozen before round-2 rungs: Wang 2024 (Korean office) and Nehasil (CTU Prague)
+
+Written before either dataset is downloaded. Nothing is scored in this step: no model, no baseline score. The exam is
+frozen in `training/split_exam2_wang.json` and `training/split_exam2_nehasil.json` (rows, baselines and interval rule
+inside), built by `training/exam2_wang.py` and `training/exam2_nehasil.py` into `work/exam2/` (git-ignored). It is
+scored once for v1.0 and once for any round-2 release, after the round-2 release decision.
+
+**Data.**
+- Wang et al. 2024, figshare 10.6084/m9.figshare.25909813.v1 (CC BY 4.0, `combined_FDD.xls`, 0.8 MB): 20 AHUs of a
+  large office in Gwacheon, hourly BMS, Jul-Oct 2023 per the record, expert labels (normal, fan, sensor, valve fault).
+  **Not unit-clean.** The same 20 AHUs, Nov 2023-May 2024 (figshare 25932409.v2, no labels), set two noise statistics
+  in v1.0 training (start/stop jitter, supply-air tracking tail). Labels were never seen and the months differ, so this
+  is a time-fresh exam on units whose unlabelled operation shaped the noise model. It is labelled that way.
+- Nehasil, CTU Prague, Mendeley 10.17632/jkw85sm4v4.1 (CC BY 4.0): AHU1, AHU2, AHU8, AHU18, AHU23, AHU24 of a real
+  BMS, manually induced faults, `Faults_schedule_and_description.xlsx`. Unit-clean: no Czech data in training or exam 1.
+
+**Input contract.** `faultfinder.py` reads 13 channels per local day in 15-min bins; any may be missing (value 0 and
+mask 0 in the features). Wang has T_ra, T_sa, T_sa_sp, supply fan on/off, a valve position, heating-water supply
+temperatures and heating-pump total: no T_oa, T_ma, damper, cooling valve, fan speed or power, occupancy. Mapping as
+BuildingData's `korea_office` reader: T_ra, T_sa, T_sa_sp (0 = off -> missing), fan_sa_status; the valve stays missing
+(meaning unclear), the rest go to `x_` columns. So FaultFinder sees 4 of 13 channels in 24 of 96 bins (hourly logger);
+the APAR rules that need T_oa, T_ma or the damper cannot fire. Nehasil: points are mapped from the place / quantity /
+type tags only where a tag names a contract channel unambiguously; the map is written into the split file.
+
+**Unit-day labels.** Wang: AHU x local date; fault day if >= 1 hour is labelled a fault, normal day if >= 20 hours are
+labelled normal and none faulty, otherwise excluded (mostly unlabelled). The day's fault type is its most frequent
+fault label. Nehasil: from the fault schedule; fault day if a scheduled fault on that AHU overlaps the local day,
+normal if the AHU has no scheduled fault that day; per-row labels in the files, if present, take precedence and
+disagreements are listed. Days on a fault's start or end date with < 1 h of fault are excluded.
+
+**Day quality control** (as `common.real_raw` / `to_day`): temperatures < -45 or > 70 degC -> missing; a temperature
+constant all day -> missing; T_sa_sp < 1 -> missing; duplicate timestamps keep the first. A day is gradable if T_sa is
+present in >= 75 % of the logger's slots (Wang >= 18 of 24 hours; Nehasil >= 72 of 96 15-min bins) and the fan runs
+>= 1 h (fan status, or T_sa varying when no fan point exists). Every dropped day is counted by reason.
+
+**Split, by unit, seed 20261117.** Wang: 5 dev AHUs, 15 exam AHUs, drawn 25 % from each of two strata (AHUs with any
+fault day / none), at least one per non-empty stratum. Dev only tunes the tracking-rule baseline below. Nehasil: all 6
+AHUs are exam (too few to split); its baselines use the platform dev runs.
+
+**Rows**, per dataset, never pooled: (1) detection AUC over unit-days; (2) balanced accuracy at P = 0.5; (3)
+false-alarm rate at P = 0.5 on normal days; (4) diagnosis top-1 on fault days whose label maps to a FaultFinder class
+(Wang: SAT sensor -> sensor_bias_T_sa, RAT sensor -> sensor_bias_T_ra; fan, pump and unnamed valve faults -> other;
+Nehasil: through `common.EXAM2CLASS` by the schedule's description), info only if n < 10. Model input: the released
+weights through `FaultFinder.read_day` on the contract columns, with the shipped temperature; no refit on these data.
+
+**Baselines.** APAR rule set (`shared/building/data/scripts/baselines.py` `run_score`, 15-min persistence) with the
+platform dev threshold 0.2322 (`faults_summary.json`), unchanged; Wang only, a supply-air tracking rule tuned on the 5
+dev AHUs (score = share of fan-on hours with |T_sa - T_sa_sp| > theta, theta in 0.5-5 K by 0.5, day threshold for best
+dev balanced accuracy; ties to the smaller theta, then the larger threshold); majority guess (Wang dev majority;
+Nehasil platform dev majority, "no fault").
+
+**Intervals.** 95 % bootstrap over exam AHUs (all days of a drawn AHU move together), 2,000 resamples, seed 20261117,
+on model minus the best baseline of the row. Win if the interval is entirely on the good side of zero, loss if on the
+bad side, tie if it spans zero. n AHUs and n days stated. With 6 and 15 AHUs most rows will be ties.
+
+## 2026-11-17 — Integrity pass results: fair baselines, intervals, twin test, unit habit, readiness
+
+Everything below followed the plan in the entry above; nothing was changed after a result was seen, with one
+correction before the final run: the first run scored the RTU's textbook fan rule at the midpoint threshold and let
+the mixing-box residual (which cannot exist on the RTU) win the RTU false-alarm row with "never alarms". The final run
+uses the released RTU threshold for the textbook rule and leaves the residual out of the RTU rows. Outputs:
+`work/exam/` and `work/integrity/` (`rows.json`, `integrity.json`).
+
+- **Re-score reproduces.** `exam.py ../faultfinder_weights.npz` (new numpy path) re-fits T = 4.3 on dev and
+  reproduces every number in `training/exam.json` to 6e-8 (495 numeric fields; float32 rounding). The parameterised
+  APAR copy reproduces `faults_apar.parquet` exactly on all 237 dev and exam days.
+- **Fair baselines.** APAR grid on the 18 AHU dev days: best is tolerance 1.5 K, fan heat 0.5 K, 15 min (dev AUC 0.775
+  against 0.731 textbook), threshold 0.037. Mixing-box residual: damper characteristic 0.88·cmd^1.2 from 416 healthy
+  dev bins, threshold 3.84, dev AUC 0.65. The coils-off residual had only 2 healthy dev days to set its scale.
+  On the exam (seen): AHU AUC textbook 0.69, tuned 0.69, mixing box 0.64; Nesbitt 0.54 / 0.54 / **0.71**; balanced
+  accuracy AHU 0.65 / 0.68 / 0.66; AHU false alarms at the dev threshold 2 / 17 / 15 %.
+- **Verdicts (unit-day intervals).** None of v1.0's wins survives as a win. AHU AUC +0.09 [−0.00, +0.18], all units
+  +0.08 [−0.00, +0.16]: ties (the facility-day intervals [+0.00, +0.17] and [+0.01, +0.16] would say win). Balanced
+  accuracy: AHU +0.02 [−0.08, +0.11], all units −0.00 [−0.08, +0.08]: ties with the dev-tuned rules. Nesbitt AUC +0.07
+  [−0.05, +0.19] against the mixing box: tie. FLEXLAB +0.19 [−0.03, +0.43]: tie. False alarms stay losses (AHU +31
+  points [+23, +41]). RTU balanced accuracy stays a loss (0.47 below the majority guess); RTU AUC, diagnosis top-1
+  (−2 [−17, +14]) and top-3 (−6 [−23, +9]) become ties. New wins: recall at P = 0.5, all units +17 [+5, +29], AHU
+  +21 [+7, +34], Nesbitt +23 [+4, +42]. Every fixed-false-alarm row is a tie (report-only).
+- **Dev twin test.** Correlation of the network's correction to the dev-tuned rule with what the truth needed: +0.07
+  over 20 dev days. Network right 13 of 20 at 0.5, rule 14. The network adds the two Nesbitt AHU-2 faulty days the
+  rules score 0 on; it loses two healthy days sitting at P = 0.501 and a Nesbitt healthy day at 0.79.
+- **Unit habit (dev only).** Nearest day in feature space is the same unit's for 4 of 10 healthy days (median distance
+  0.81 against 0.82 to other units). Healthy-day log-odds: 38 % of variance between units. A leave-one-out unit offset
+  raised dev false alarms from 3 to 4 of 8. So the v1.0 claim that most false alarms are unit habits is a hypothesis
+  the dev days do not support; two of the four dev false alarms are calibration (P = 0.501). The model card and
+  model.yaml now say so.
+- **Readiness (Windows, one process each).** `noise.py` 2 s. `simbank.py` 0.69 s per 12-day window (100 windows in
+  69 s plus 27 s to draw building specs): a 38,987-day bank (about 3,000 windows) takes about 35 min on one process,
+  both training banks plus a ~920-window validation bank about 80 min on one process or about 35 min on three. One
+  epoch of `train.py` (r6 network, 1,013 days) took 4 s (1 s noise + features, 3 s training, one thread): about
+  2 min per epoch on a full bank (about 30,000 days after the effect filter), so r6's 10 epochs take about 20 min.
+  Building frozen val v4 (noise + features) is seconds even at 12,000 days. A full rebuild fits in about an hour.
+- **Blockers found.**
+  1. The worktree's `shared/building/buildingsim` was being edited by another agent (`from . import phase2` failed;
+     `phase2.py` appeared later). The smoke run used the committed BuildingSim exported to a scratch folder. Any
+     BuildingSim physics change needs new frozen sets (HANDOFF section 4).
+  2. `.venv-train` has torch but no pyarrow, so `train.py`'s dev gate (`bd.faults` reads parquet) fails. It ran by
+     appending `.venv`'s site-packages (same Python 3.14.9 and numpy 2.5.4). Fix: install pyarrow in `.venv-train`.
+  3. The r1-r6 torch checkpoints are not in the repository. r6 can be re-scored on any new frozen set through the new
+     numpy path (`evaluate.NpzModel`); r1-r5 cannot without retraining.
+  4. For the multi-day rung: banks do not record the window or the day within it, and `Noise.apply` draws static
+     offsets per day, so a unit's habits do not persist across its days. Both need changing (plan below).
+
+## 2026-11-17 — Plan for the multi-day rung (r7_context), not run
+
+A plan for next round, written now so it is fixed before any bank is built. The dev measurement above did not
+support "most false alarms are unit habits", so this rung is a test of that idea, not a fix known to work.
+
+**What the network sees.** Today's 35 × 96 feature rows as now, plus a reference built from the same unit's most
+recent 1-3 logged days before today (within 7 days): the per-bin median of each feature row over those days, today
+minus that median for the 11 temperature and physics rows, and one row saying how many reference days there are
+(0 = none). 35 + 35 + 11 + 1 = 82 input rows, the same CNN. With no reference the extra rows are zero and the
+network is in single-day mode, so v1.0's use stays covered. No label of a reference day is ever an input.
+
+**How the bank supplies recent days (bank v5, simulator unchanged).**
+- `simbank.py` saves the window id and day index for every row, and keeps every day of both runs (healthy days 1-11,
+  faulted days 5-11), so a reference can be drawn from the same window.
+- The noise model gets a per-window state: the static sensor offsets, the damper characteristic, the residual-library
+  draw and the operating habits (24 × 7, night chiller off, operator jitter) are drawn once per window and kept for
+  its days. Without this the bank has no unit habits to learn.
+- Training samples: for day k, the reference is 1-3 days drawn from days max(1, k − 7)..k − 1 of the same run. A
+  faulted day early in the fault has healthy references (onset); a later one has faulted references (a persistent
+  fault looks like the unit's habit). 20 % of windows start the fault on day 1, so some faults are present in every
+  reference. 30 % of samples get no reference.
+- New frozen set v5 (seed 505) built the same way, and r6 re-scored on it from the numpy weights.
+
+**How the exam supplies them causally.** For each exam unit-day, the reference is the same dataset and unit's days
+with an earlier date, at most 7 days earlier, the most recent 3, chosen by date alone. Their labels are never read
+(a reference day may be faulty, as in deployment). The ERS sister unit on the same day is not used. From the exam
+metadata (dates only): 70 % of exam days have an earlier same-unit day within 7 days and 41 % have three or more;
+ERS RP-1312 86 of 92, FLEXLAB 21 of 23, ORNL 12 of 17, Nesbitt only 30 of 76, MZVAV-2 4 of 9. Results will be
+reported for days with and without a reference.
+
+**Decision.** Same rule as the ladder: keep if skill on v5 beats r6 by more than 0.01 and the dev AUC passes the gate.
+The dev days give only a small check: 12 of the 20 have an earlier same-unit dev day, but within 7 days only
+Nesbitt's two 3 Aug 2017 days (reference 29 Jul) do. The dev gate runs every dev day with whatever reference the rule
+gives and reports how many had one. Any exam result is labelled seen.
+
+## 2026-11-17 — r7 plan fixed before bank v5 is built; r7b added
+
+Written before any v5 bank, frozen set or rung exists. It adds to the plan above; where they differ, this entry holds.
+
+**Rule (fixed now).** A rung is kept if its skill on frozen v5 (0.5 detection AUC + 0.5 diagnosis accuracy on
+visible faults, as the ladder) is more than 0.01 above the incumbent's AND its dev AUC is at least
+max(0.60, incumbent dev AUC - 0.05). The incumbent is r6 from the released numpy weights (dev AUC 0.707, so the gate is
+0.657). Every rung also reports its dev false-alarm rate at P = 0.5 (11 healthy dev days; r6: 4 of 11, two of them at
+P = 0.501). The false-alarm rate is reported, not gated. r1-r5 cannot be re-scored on v5: their checkpoints are not in
+the repository.
+
+**r7b: run it, and it cannot be kept.** r7b replaces the single temperature T = 4.3 with a two-parameter (Platt) map
+P = 1 / (1 + exp(-(a d + b))) on r6's detection log-odds d, fitted by maximum likelihood on the 20 dev days (the card's
+own `next` item). A monotone map changes neither the AUC nor the diagnosis, so r7b's frozen skill equals r6's exactly
+and the rule rejects it. That is written here so it cannot be argued after the result. It is still run, because it
+costs seconds and answers the dev question directly: how many of the 4 dev false alarms does a 2-parameter map remove?
+Reported in-sample and leave-one-out (fit on 19 days, score the 20th), with the Brier score and a, b. If it helps,
+calibration needs its own rule next round; it is not slipped into a release here.
+
+**r7 seeds.** r6's training config (width 64, 10 epochs, lr 2e-3) with seeds 1 and 2. The decision uses the mean
+over seeds (skill and dev AUC). If the margin (mean r7 skill - r6 skill) is under twice the seed spread (|s1 - s2|),
+seed 3 runs and the decision uses the 3-seed mean. If r7 is kept, the released weights are seed 1, fixed now: no
+seed is picked by its score. Information only: (a) r7 scored on frozen v5 with its references removed (single-day
+mode); (b) a control, r6's 35-row network retrained on bank v5 with noise v5 (seed 1), to separate "new bank" from
+"reference days".
+
+**Bank v5 (`training/simbank5.py`, BuildingSim 1.0.1).** simbank.py's buildings, cities, control priors and fault draws
+(calib_v3.json priors), with the dev-calibration wrappers taken from `buildingsim.phase2`: `OperatorJitter` as the
+controller and `log_commands` on the faulted trend frame, from the fault start only. One feedback draw per window
+(v3 drew it per day; a unit either has position feedback or not). The fault starts on day 1 in 20 % of windows,
+otherwise day 5. Every row records window id, day (1-11), run (healthy / faulted) and a sample flag. Kept: healthy days
+1-11 and faulted days from the fault start. Sample rows are v3's: faulted days, healthy days before the fault, and
+healthy days 10-11, so 80 % of windows give v3's class mix; the other healthy days serve only as references. Train bank
+3,000 windows (seed 5050), validation bank 920 windows (seed 5051), on 3 processes.
+
+**Noise v5 (`noise.py`, new `window_state`).** Drawn once per window and kept for all its days: the static sensor
+offsets (`phase2.static_offsets`, v4 sizes), the damper characteristic (`phase2.damper_command`, one draw per
+window), which real residual day each channel uses and its gain, the fan-off blend, the channel pattern and the 6 %
+extra missing channels. Drawn per day: the residual's time shift and logger gaps. Training redraws every window's
+state each epoch.
+
+**Check against v4, before training.** (a) A 300-window bank from the shipped `simbank.py` with calib_v3 (seed 5051,
+BuildingSim 1.0.1) against val v5: rows per window, faulty share, share of visible faults (effect >= 1), median
+effect, fan-on hours, logged actuator signal on stuck and leak days, healthy supply-air minus setpoint. (b) Noise v4
+against noise v5 on the same val v5 days: mean and SD of the 35 feature rows over fan-on bins. The marginals should
+match; v5 should differ only in that offsets repeat within a window. Differences are reported; nothing is tuned on
+them.
+
+**Frozen v5 (seed 505, never regenerated).** From val v5: sample rows with class 0 or effect >= 1, at most 12,000,
+drawn with seed 505. Window states and references are drawn by the training rule: 30 % of samples get none, the rest
+1-3 days drawn from days max(1, k - 7)..k - 1 of the same run (faulted run from the fault start, healthy before). The
+file stores the 82-row input; r6 reads rows 0-34.
+
+**Input (82 rows).** Rows 0-34: today's features. 35-69: per-bin median of the reference days' 35 rows. 70-80: today
+minus that median for rows 0-10 (6 temperatures, 5 physics differences). 81: number of reference days / 3. With no
+reference, rows 35-81 are 0 (single-day mode).
+
+**Dev.** Reference days: same dataset and unit, earlier dev dates within 7 days, the most recent 3, chosen by date;
+their labels are never read. Expected: 2 of 20 dev days have one (Nesbitt AHU-1 and AHU-2, 3 Aug 2017, from 29 Jul).
+The dev result is reported for all 20 days and for those with a reference.
+
+**Order.** No decision is written until a fresh-exam split file (`training/split_exam2_*.json`) is committed. The
+fresh exam is not scored here.
+
+## 2026-11-17 — Fresh exam frozen: results (nothing scored)
+
+Built by `training/exam2_wang.py` and `training/exam2_nehasil.py` (shared helpers in `exam2_common.py`). No model or
+baseline was run on either dataset. `--check` rebuilds reproduce both split files.
+
+- **Wang 2024: downloaded, rejected as an exam.** `combined_FDD.xls` (md5 matches figshare). It holds January 2024
+  only: 5,471 hourly rows in 20 blocks with no AHU name, labelled "Fan fault" (4,246) or "Sensor fault" (1,225). There
+  is no normal row, so AUC, balanced accuracy and false-alarm rate cannot be computed. 5,436 rows (99.4 %) are the
+  same readings (time, T_ra, T_sa, T_sa_sp) as BuildingData's `korea_office`, which fitted v1.0's noise model; each
+  block maps to one AHU (AHU-101 to 112 without 106, AHU-201 to 209). The record's "Jul-Oct 2023" does not match the
+  file. `split_exam2_wang.json` records this with per-block hashes and freezes no rows (sha256 `e1184417…`). The Wang
+  dev split and the tracking-rule baseline of the plan were therefore not built.
+- **Nehasil: downloaded, frozen.** All 8 files match Mendeley's sha256. 5-min logs, 1 Mar - 31 Aug 2019, with a
+  per-row `fault` column that agrees with the schedule sheet on every AHU-day. These are 100 % outdoor-air units with
+  heat recovery: no T_oa, T_ma, supply setpoint, zone temperature or occupancy point. Mapped: T_sa, T_ra, OA damper
+  (open/closed command), heating and cooling valve, supply fan speed and status. AHU2 and AHU8 log only water-side
+  points (no T_sa on any day): dropped. Kept AHU1, AHU18, AHU23, AHU24: **513 gradable days, 54 fault days, 459
+  normal, 34 fault days with a FaultFinder class.** 219 days dropped as "fan off all day" (one of them a fault day on
+  AHU18). Fault days have 1.1-3.4 h of fault. The two "heating valve ... during cooling regime" labels name a
+  different valve than the schedule ("cooling valve"), so they are left out of the diagnosis row.
+  `split_exam2_nehasil.json` sha256 `b84c05f508e92411eb35b40fca15e663211a3c53cbf16bf5e9e7f64ae5ff438e`
+  (units block `31f05ccb…`).
+- **What to expect.** Four AHUs give the bootstrap four distinct units: the intervals will be wide and most rows will
+  be ties. APAR can fire only R23 (simultaneous heating and cooling) on these channels.
+
+## 2026-11-17 — r7_context and r7b results: nothing released, v1.0 stays
+
+Everything followed the two plan entries above; nothing was changed after a result was seen. The fresh-exam split
+(`training/split_exam2_nehasil.json`, `split_exam2_wang.json`) was committed (3d9f949) before this decision was
+written. The fresh exam was not scored. Raw scores: `work/r7/` (git-ignored); the record is `training/ratchet_r7.json`.
+Code: `training/simbank5.py`, `noise.py` (`window_state`, `apply_window`), `context.py`, `train7.py`, `r7.py`.
+
+**Bank v5 (BuildingSim 1.0.1, `phase2` wrappers).** Train: 3,000 windows on 3 processes in 11 min; 2 windows failed
+inside BuildingSim (a negative input to a log) and were skipped, as simbank.py does. 2,998 windows, 56,144 rows,
+29,283 training samples (46 % faulty). Validation: 920 windows, 17,244 rows. Frozen v5 (seed 505): 9,145 samples,
+4,309 faulty, 5,771 (63 %) with reference days. It has fewer than v4's 12,000 because the validation bank is smaller.
+
+**Check against v4 (before training).**
+- Paired with the shipped `simbank.py` (calib_v3, same seed 5051, first 300 windows): the 242 windows whose fault
+  starts on day 5 draw the same building, weather, controls and operator jitter. Their 1,452 healthy days are identical
+  (max difference 0.0). 1,573 of 1,694 faulted days are identical; the rest differ only in the logged actuator, where
+  `log_commands` now draws position feedback once per window instead of once per day.
+- Bank statistics, shipped code vs v5 sample rows (300 windows each): 13.0 rows per window both; faulty share 0.54 vs
+  0.60 (expected: 20 % of v5 windows fault from day 1); visible share of faulty days 0.61 vs 0.60; median effect 3.87
+  vs 3.84; fan-on hours on healthy days 19.5 vs 19.6; healthy SAT minus setpoint median 0.0 both, IQR 0-1.64 vs
+  0-1.62 K. Logged actuator on stuck or leaking days moves by 0.01-0.06 (about 100 days each from about 15 windows).
+- Noise v4 vs v5 on the same 2,000 val v5 days: feature-row means within 0.07, SDs within 12 %. The largest gaps are
+  the availability masks (up to 5 points) and the temperature rows that depend on them: v5 draws the channel pattern
+  once per window, so 2,000 days carry only about 900 independent patterns. r6 on those days: skill 0.543 with v4
+  noise, 0.553 with v5 noise. Nothing was tuned on these.
+
+**Scores (frozen v5, 9,145 samples; dev, 20 days, 11 healthy).**
+
+| Rung | skill v5 | AUC | diag | skill with ref / without | dev AUC | dev false alarms |
+|---|---|---|---|---|---|---|
+| r6 (released weights, incumbent) | **0.561** | 0.743 | 0.378 | 0.560 / 0.561 | 0.707 | 4 of 11 |
+| r7b (r6 + Platt on dev) | 0.561 | 0.743 | 0.378 | same as r6 | 0.707 | 1 of 11 (in-sample and leave-one-out) |
+| r6v5 control (35 rows, bank v5) | 0.554 | 0.740 | 0.369 | 0.556 / 0.550 | 0.677 | 6 of 11 |
+| r7_context seed 1 | 0.564 | 0.759 | 0.369 | 0.569 / 0.545 | 0.677 | 6 of 11 |
+| r7_context seed 2 | 0.558 | 0.754 | 0.363 | 0.561 / 0.546 | 0.626 | 4 of 11 |
+| r7_context seed 3 | 0.552 | 0.745 | 0.358 | 0.559 / 0.528 | 0.677 | 3 of 11 |
+| **r7_context, 3-seed mean** | **0.558** | 0.753 | 0.363 | 0.563 / 0.539 | 0.660 | 4.3 of 11 |
+
+r1-r5 were not re-scored: no checkpoints. r6 scores 0.561 on v5 against 0.543 on v4.
+
+**Decisions.**
+- **r7_context: rejected.** Two seeds gave a margin of +0.0006 over r6 with a seed spread of 0.0057; the margin was
+  under twice the spread, so seed 3 ran as planned. The 3-seed mean is 0.558, 0.003 below r6 (seeds 0.552-0.564).
+  The dev AUC mean, 0.660, passes the 0.657 gate only just.
+- **r7b: rejected,** as written before it ran: its frozen skill and dev AUC are r6's. On dev it does what the card
+  hoped. Platt a = 0.302, b = -0.596 moves the alarm threshold from log-odds 0 to 1.97. False alarms drop from 4 to 1
+  of 11, in-sample and leave-one-out; the one left is Nesbitt AHU-2 on 29 Jul (log-odds 5.6). Detections drop from 6
+  to 4 of 9. Brier: temperature 0.224 in-sample, 0.246 leave-one-out; Platt 0.208 in-sample, 0.258 leave-one-out.
+  The two-parameter map overfits 20 days at least as much as the one-parameter one.
+- **Released: nothing.** v1.0 stays; the ladder logs r7b, r7_context and the control.
+
+**What the reference days do.** Within r7, the references help: on the 5,771 frozen days with a reference, r7 scores
+0.563 (3-seed mean) and 0.537 with the references zeroed. Detection AUC there is 0.749-0.762 against r6's 0.738.
+But r7 without references is worse than r6 (0.539 vs 0.561 on days without one), and so is the control (0.554), which
+retrains r6's network on bank v5 alone. Single-day accuracy fell by 0.006 (control) to 0.023 (r7 with its references
+zeroed) against r6. The reference gain roughly cancels that loss, and the 0.01 margin is not met. A second likely cause is the dev split:
+only 2 of 20 dev days have a reference (Nesbitt AHU-1 and AHU-2, 3 Aug 2017, from 29 Jul). The labelled AHU-1 fault
+day moved from log-odds -0.63 (r6) to +0.07, +0.32 and -0.82 across the three seeds; AHU-2 stayed at 2.2-2.9.
+Dev says nothing about unit habits beyond those two days. The dev false-alarm count is driven by single-day mode and
+varies from 3 to 6 of 11 across seeds of the same rung.
+
+**For next round.** (1) The reference input helps on simulated days with a reference (+0.026 skill over the same
+network without it). A rung that keeps r6's single-day accuracy, for example by fine-tuning r6 with the extra rows
+zero-initialised, would test it more fairly. That is a new plan, not run here. (2) Calibration needs its own rule
+and a larger dev set: 20 days cannot tell a one-parameter map from a two-parameter one.
+
+## 2026-11-17 — r8 plan (r6 + reference rows, zero-initialised), written before it trains
+
+The follow-up the r7 results proposed. r7 gained from reference days but lost single-day accuracy, so r8 starts from
+r6 itself. Same banks (train v5, val v5), same frozen v5 (seed 505, not rebuilt), same 82-row input (`context.py`),
+same reference rule (30 % none, else 1-3 earlier days of the same run within 7 days), same dev references. The banks
+were built with BuildingSim 1.0.1; the platform's later 1.2.0 commit does not touch them.
+
+**Start.** The r6 torch checkpoint is not in the repository, so r8 starts from the released numpy weights
+(`faultfinder_weights.npz`, BatchNorm folded into the convolutions). A torch copy of that network: conv + ReLU
+(no BatchNorm), the same pools, dense 128 + ReLU + dropout 0.2, the three heads. The first convolution is widened from
+35 to 82 input rows; the 47 new rows' weights (64 × 47 × 5 = 15,040) start at zero. At step 0 the output equals r6's
+for every input (checked before training: max difference vs `faultfinder.forward` on frozen v5 inputs).
+
+**What trains.** Only the 15,040 new first-layer weights. Every r6 weight and bias stays frozen. With the extra rows
+zero (no reference), the output is r6's at every step, so single-day mode cannot change. Days with no reference give
+no gradient; the rung learns only from days that have one.
+
+**Optimiser and steps (fixed).** AdamW, learning rate 1e-3 with cosine decay to 0, weight decay 0, batch 256, 3 epochs
+over the 29,283 training samples (115 steps per epoch, 345 steps). Loss as r6's training (class cross-entropy with
+label smoothing 0.02, parameter and waste terms at weight 0.5); dropout stays on as in training. Each epoch redraws
+noise and references as in r7.
+
+**Seeds.** 1 and 2 (they set noise, references, dropout and batch order; the start is the same). If the margin (mean
+r8 skill - r6 skill) is under twice the seed spread, seed 3 runs and the decision uses the 3-seed mean. If kept,
+seed 1 is released, fixed now.
+
+**Rule (unchanged).** Keep if the seed-mean skill on frozen v5 is more than 0.01 above r6's 0.561 and the seed-mean
+dev AUC is at least 0.657. Dev false alarms at P = 0.5 reported. Reported too: skill on frozen days with and without
+a reference (the "without" rows must equal r6's).
+
+**If kept (v1.1).** Export the 82-row weights (MIT), numpy == torch check; `faultfinder.py` takes optional reference
+days (none: single-day mode, r6's numbers); calibration: the widen-only temperature re-fitted on the 20 dev days with
+their references, as v1.0; demo and golden; the seen exam re-scored with references (same dataset and unit, earlier
+exam dates within 7 days, most recent 3, labels unread) through `integrity.py`'s baselines and intervals, labelled
+seen; instrument exporter and `net.ts` updated with parity. The fresh exam is not scored here.
+
+## 2026-11-17 — r8 results: kept, released as v1.1
+
+Everything followed the r8 plan above; nothing was changed after a result was seen. The fresh exam was not scored.
+
+**Checks.** At step 0 the 82-row torch network matched r6's numpy forward on 2,000 frozen inputs to 3.8e-6. After
+training, the exported numpy weights match torch to 3.8e-6 (seed 1) and 5.2e-6 (seed 2), every old weight is
+bit-identical to r6's, and single-day mode (extra rows zero) matches r6 to 1.9e-6. Each seed took about 4 min on one
+process (3 epochs).
+
+| Rung | skill v5 | AUC | diag | skill with ref / without | dev AUC | dev false alarms |
+|---|---|---|---|---|---|---|
+| r6 (incumbent) | 0.561 | 0.743 | 0.378 | 0.560 / 0.561 | 0.707 | 4 of 11 |
+| r8 seed 1 | 0.572 | 0.758 | 0.386 | 0.573 / 0.561 | 0.707 | 4 of 11 |
+| r8 seed 2 | 0.573 | 0.761 | 0.385 | 0.573 / 0.561 | 0.707 | 4 of 11 |
+| **r8, 2-seed mean** | **0.572** | 0.759 | 0.385 | | 0.707 | 4 of 11 |
+
+**Decision: kept.** Mean skill 0.5724 against 0.5605: margin +0.0118, more than 0.01. The seed spread is 0.0006, so
+twice the spread (0.0011) is below the margin and seed 3 did not run. Dev AUC 0.707 passes the 0.657 gate. On dev only
+the two Nesbitt 3 Aug days have a reference. AHU-1 (faulty) moved from log-odds -0.63 to -0.51 and stays below the
+alarm line; AHU-2 (faulty) moved from 2.89 to 3.60. The other 18 dev days are r6's exactly, so dev AUC and false alarms
+are unchanged. The margin clears the bar by 0.0018: this is a small gain, and it comes only from days with a reference.
+
+**Release v1.1 = r8 seed 1** (fixed in the plan). The calibration temperature, re-fitted widen-only on the 20 dev days
+with their references, is T = 4.2 (v1.0: 4.3). Without reference days v1.1 gives v1.0's log-odds; P(fault) differs
+only through T.
+
+## 2026-11-17 — v1.1 release: the seen exam re-scored after the decision
+
+r8 passed the rule fixed before it trained: frozen v5 +0.0118 on a 2-seed mean, dev AUC unchanged. The dev gate cannot
+test the new input, because only 2 of 20 dev days have a reference, so the release rests on simulation evidence.
+The seen exam was re-scored after the decision (`FF_TAG=_v11 python exam.py ../faultfinder_weights.npz`, then
+`FF_TAG=_v11 python integrity.py`; outputs in `work/exam_v11/` and `work/integrity_v11/`). Each exam day's
+references are the same dataset and unit's exam days from the previous 7 days, the most recent 3, chosen by date with
+labels unread; 153 of 217 days have one (ERS 86 of 92, FLEXLAB 21 of 23, ORNL 12 of 17, Nesbitt 30 of 76, MZVAV-2 4 of 9).
+The 64 days without a reference reproduce v1.0's log-odds to 1e-6. Baselines and intervals are the integrity pass's,
+unchanged (same days, same dev-tuned rules, 2,000 resamples, seed 20261117).
+
+| Seen row | v1.0 | v1.1 | v1.1 minus best baseline, 95 % CI (unit-days) | verdict v1.0 → v1.1 |
+|---|---|---|---|---|
+| All units AUC | 0.77 | 0.76 | +0.07 [−0.01, +0.14] | tie → tie |
+| AHU AUC | 0.78 | 0.78 | +0.09 [−0.00, +0.17] | tie → tie |
+| AHU balanced accuracy | 0.70 | 0.65 | −0.03 [−0.11, +0.06] | tie → tie |
+| AHU false alarms at P = 0.5 | 33 % | 56 % | +54 points [+44, +64] | loss → loss |
+| AHU recall at P = 0.5 | 73 % | 86 % | +34 [+22, +46] | win → win |
+| RTU AUC | 0.65 | 0.72 | +0.00 [−0.40, +0.44] | tie → tie |
+| RTU balanced accuracy | 0.47 | 0.53 | −0.18 [−0.55, +0.22] | loss → tie |
+| Iowa ERS AUC | 0.73 | 0.66 | −0.07 [−0.20, +0.06] | tie → tie |
+| Iowa ERS balanced accuracy | 0.65 | 0.55 | −0.14 [−0.26, −0.02] | tie → loss |
+| Iowa ERS false alarms | 27 % | 67 % | +67 points [+54, +80] | loss → loss |
+| FLEXLAB AUC | 0.93 | 0.97 | +0.23 [+0.02, +0.48] | tie → win |
+| Nesbitt AUC | 0.78 | 0.79 | +0.08 [−0.03, +0.20] | tie → tie |
+| Diagnosis top-1 / top-3 | 20 / 48 % | 18 / 50 % | −3 [−18, +11] / −5 [−21, +11] | tie → tie |
+
+Every row is in `model.yaml` (v1.0's value in each note) and v1.0's rows stay in `MODEL_CARD.md`.
+
+**Cause.** On the 153 days with a reference, the new rows shift the detection log-odds up by a near-constant amount:
+mean +0.71 on healthy ERS days and +0.45 on faulty ones, +0.11 / +0.30 at Nesbitt, +0.25 to +0.55 at FLEXLAB. The ORNL
+RTU goes the other way, -0.37 / -0.23. 25 healthy days crossed from below the alarm line to above it, and 12 faulty
+days did too. On simulated days the same rows add +0.012 skill. On real days they act mostly as an offset: a sim-to-real
+gap in what "today minus the unit's recent median" looks like. The 20 dev days could not show it.
+
+**The decision was not changed because of it.** The seen exam does not choose. The fresh Nehasil exam (frozen in
+3d9f949) will judge v1.0 against v1.1 once, after all decisions. A dev-side fix (calibrate the reference-row shift
+on dev days that have references, once more exist) is in `next`. It is not done here.
+
+Twin test on dev with v1.1 (`integrity_v11/integrity.json`): correlation of the network's correction with what the
+truth needed +0.09 (v1.0 +0.07), network right on 13 of 20 days, as v1.0.
+
+**Release files (v1.1).** `faultfinder_weights.npz` = r8 seed 1 with T = 4.2 (MIT, as the code; the v1.0 weights are in
+git at 7e3f51d, and `training/r7.py` reads them from `work/models/r6_v1_0.npz`). The `.check.json` records numpy vs
+torch 3.8e-6 and single-day vs v1.0 1.9e-6. `faultfinder.py` takes optional `ref_days`: `read_day(df, ref_days=[...])`
+or `predict_raw(xs, refs)`. `pipeline.py` takes `--ref`. The demo reads the RTU and Nesbitt examples once alone and
+once with their earlier exam days. Those four files (`examples/references/`, from `training/examples_refs.py`) carry no
+labels. Golden regenerated: the single-day P values move only through T, and two "with earlier days" blocks were
+added. The instrument exporter adds each day's reference days (examples/references, or the lab page's exam days of
+the previous 7 days); 9 of 12 days have some. `net.ts` ports `context()`; the UI has an "Earlier days" switch
+(off = v1.0). Parity: 117 cases including single-day variants, worst relative difference 1.3e-6. The lab page
+(`lab/index.html`) stays v1.0.
+
+## 2026-11-17 — Fresh exam scored once: Nehasil (v1.0 and v1.1)
+
+Scored after every round-2 release decision was committed (v1.1 released). Nothing was changed after a result was
+seen; nothing is chosen from it. Script `training/exam2_nehasil_score.py`, results `training/exam2_nehasil_results.json`,
+per-day scores in `work/exam2/nehasil_scored_days.csv`.
+
+- **Data check.** `exam2_nehasil.py build --check` rebuilt the processed AHU files from the raw downloads: the units
+  block matches the frozen split (sha256 `b84c05f5…`), and the scorer re-checks each AHU's hash before scoring. 4 AHUs,
+  513 days (54 fault, 459 normal), 34 days with a FaultFinder class.
+- **As the spec says.** v1.0 = the reader and weights from git dfafdcf (T = 4.3), single day. v1.1 = the released
+  reader and weights (T = 4.2), with reference days: the same AHU's processed days with an earlier date, at most 7 days
+  before, the most recent 3, by date only; no label read. 509 of 513 days had one (492 had three). The reference pool
+  is the processed file, so days that failed QC (mostly fan off all day) are never references. APAR: `baselines.py`
+  `run_score` at 300 s, fault if score > 0.2322. Bootstrap over the 4 AHUs, 2,000 resamples, seed 20261117.
+- **APAR never fired.** Its score was 0 on all 513 days: only R23 (heating and cooling valves both > 0.1) can fire on
+  these channels, and it never held for 15 minutes. So APAR equals the majority guess here (AUC 0.50, balanced accuracy
+  0.50, 0 % false alarms).
+
+| Row (n) | v1.0 | v1.1 | Best baseline | v1.0 minus best | v1.1 minus best |
+|---|---|---|---|---|---|
+| Detection AUC (513 days) | 0.60 | 0.59 | APAR 0.50 | +0.10 [−0.02, +0.25] tie | +0.09 [−0.03, +0.24] tie |
+| Balanced accuracy at P = 0.5 (513) | 0.62 | 0.59 | APAR / majority 0.50 | +0.12 [+0.03, +0.21] win | +0.09 [+0.00, +0.17] win |
+| False alarms at P = 0.5 (459 normal days) | 46 % | 57 % | APAR / majority 0 % | +46 [+26, +68] loss | +57 [+41, +75] loss |
+| Diagnosis top-1 (34 days) | 21 % | 18 % | chance 5.6 % | +15 [+10, +19] win | +12 [+6, +18] win |
+
+- **What it says.** On new real AHUs of a type the training bank does not have (100 % outdoor air, heat recovery,
+  no T_oa, T_ma or supply setpoint), FaultFinder ranks fault days only a little better than chance and flags about half
+  of the normal days. The balanced-accuracy "win" is a win over a rule set that cannot fire on these channels; it
+  comes with a 46-57 % false-alarm rate. Per AHU, AUC runs from 0.45 (AHU18) to 0.80-0.82 (AHU24). With 4 AHUs the
+  intervals are wide.
+- **v1.0 against v1.1.** v1.1 is not better here: AUC −0.005, balanced accuracy −0.04, false alarms +11 points, top-1
+  −3 points. The reference rows raise P on real days, as the seen exam showed (the offset noted in the v1.1 entry).
+  The median change in log-odds from v1.0 to v1.1 is 0.28. No interval was computed on v1.1 minus v1.0 (the spec
+  does not define one).
+- Detection by fault class (v1.1 at P = 0.5): cooling valve 4 of 4, supply-air sensor 8 of 8, heating valve 11 of 12,
+  return-air sensor 5 of 6, OA damper 2 of 4, "other" 7 of 14.
+
+## 2026-11-17 — Review finding: the Nehasil runtime check over-counted fan hours
+
+A code review of PR #5 found that `exam2_common.day_qc` counted each 5-minute Nehasil row as 15 minutes (the coverage
+bin) of fan runtime, so four fan-on rows passed the one-hour rule. Re-checked with the true 5 minutes, 2 of the 513
+frozen exam days would fail it: AHU24 on 5 and 11 March 2019, both normal days (6 and 11 fan-on rows). They stay in
+the frozen split, which was scored once and is not edited. They count only in the false-alarm rows, at 2 of 459
+normal days. `day_qc` now measures runtime from the rows' own spacing by default. `exam2_nehasil.py` passes the old
+15 minutes explicitly so `--check` still reproduces the frozen split ("rebuild matches frozen split").

@@ -79,3 +79,44 @@ class ThermoPilot:
 def action_sp(ctx, k, a):
     ih, ic = M.ACTIONS[a]
     return M.setpoints(ctx['lo'][k], ctx['hi'][k], float(ctx['pref_lo']), float(ctx['pref_hi']), ih, ic)
+
+
+# ------------------------------------------------------------------------------------------- R8: card MPC + residual
+from . import card_mpc as core   # noqa: E402  (numpy only; extends thermopilot_core, which stays v1.0)
+
+
+class CoreAdapter:
+    """Runs a tp.card_mpc controller (CardMPC or ResidualPilot) as an Episode strategy act(k, obs, info_prev)."""
+
+    def __init__(self, ctrl, forecaster):
+        self.ctrl, self.fc = ctrl, forecaster
+        self.last = None
+
+    def act(self, k, obs, info_prev):
+        q = info_prev['q_hvac_kW'] * 1000.0 if info_prev is not None else 0.0
+        e = info_prev['electricity_kW'] if info_prev is not None else 0.0
+        To, G = self.fc.get(k)
+        sp = self.ctrl.step(k, obs['T_zone'], q, e, To, G)
+        self.last = self.ctrl.last
+        return sp
+
+
+def card_mpc(ep, pref_hi, shield=0):
+    """The anchor alone on an Episode (nominal card, noisy forecast), optionally behind the v1.0 shield."""
+    from .features import full_card
+    card = full_card(ep.model, ep.ctx, pref_hi)
+    m = core.CardMPC(card, ep.ctx, ep.lam, ep.model.base_W, ep.gas_price)
+    if shield:
+        inner = m.step
+        def step(k, *a):
+            sp = inner(k, *a)
+            h, c = core.shield_sp(ep.ctx, k, sp['heat_sp'], sp['cool_sp'], shield)
+            return dict(heat_sp=h, cool_sp=c)
+        m.step = step
+    return CoreAdapter(m, ep.fc_noisy)
+
+
+def residual(ep, W, pref_hi):
+    from .features import full_card
+    card = full_card(ep.model, ep.ctx, pref_hi)
+    return CoreAdapter(core.ResidualPilot(W, card, ep.ctx, ep.lam, ep.model.base_W, ep.gas_price), ep.fc_noisy)

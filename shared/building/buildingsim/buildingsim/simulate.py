@@ -24,6 +24,33 @@ from .systems import thermostat_solve, REC
 from .zone import (CP_AIR, Zone5R1C, geometry, boundary, window_solar, infiltration_coeffs)
 
 
+OPTIONS = {
+    'holidays': "public-holiday calendar: 'auto' (country from the weather tz) or 'US' / 'CA' / 'UK' / 'IE'; "
+                "absent = v1.0 US calendar (LoadCast wrapper)",
+    'physics': "physics version '1.0' (default) / '1.1' (district plants) / '1.2' (1.1 + weather-insensitive "
+               "electricity); absent = $BUILDINGSIM_PHYSICS or '1.0' (campus.py)",
+    'seed': 'seed of the 1.2 daily activity draws (default 0)',
+    'campus': 'overrides of the fitted 1.1/1.2 parameters in data/physics.json (calibration tools only)',
+}
+
+
+def check_options(options):
+    """Opt-in Phase 2 flags that act inside the time loop (README, 'Phase 2 wrappers'). None or {} = v1.0."""
+    opts = dict(options or {})
+    bad = sorted(set(opts) - set(OPTIONS))
+    if bad:
+        raise ValueError(f'unknown options {bad}; known: {sorted(OPTIONS)}')
+    return opts
+
+
+def _prepare_kw(opts, meta):
+    if opts.get('holidays') is None:
+        return {}
+    from .holidays import resolve
+    c = resolve(opts['holidays'], meta.get('tz', 'UTC'))
+    return {} if c is None else dict(holidays=c)
+
+
 def _weather_args(weather, spec):
     if isinstance(weather, str):
         return wxm.read_epw(weather)
@@ -46,8 +73,12 @@ def _weather_args(weather, spec):
 
 class Simulator:
     def __init__(self, spec, weather, start=None, end=None, dt='1h', controller=None, faults=None, prices=None,
-                 init=None, rng=None, warmup_days=7, record_trend=True, sensor_noise=None):
+                 init=None, rng=None, warmup_days=7, record_trend=True, sensor_noise=None, options=None):
         t0 = time.time()
+        self.options = opts = check_options(options)
+        from . import campus as _campus
+        self.physics = _campus.resolve(opts)
+        self.campus = None
         df, meta = _weather_args(weather, spec)
         s0 = dict(spec)
         if s0.get('lat') is None:
@@ -55,7 +86,8 @@ class Simulator:
         self.spec = s = fill_spec(s0)
         pv = s.get('pv')
         self.wx = wx = wxm.prepare(df, meta, start, end, dt, orientation=s['geometry']['orientation_deg'],
-                                   pv=[(pv['tilt'], pv['azimuth'])] if pv else None)
+                                   pv=[(pv['tilt'], pv['azimuth'])] if pv else None,
+                                   **_prepare_kw(opts, meta))
         self.n = n = wx['n']
         self.dt = dt_s = wx['dt_s']
         self.times = wx['times']
@@ -83,9 +115,13 @@ class Simulator:
         if so is not None:
             hv = np.where(np.isin(so, (1, 3)), 1.0, hv)
             light = np.where(np.isin(so, (2, 3)), np.maximum(light, 0.9), light)
+        res = s['primary_use'].startswith('residential')
+        if self.physics != '1.0':
+            self._campus_P = _campus.params(opts.get('campus'))
+            if _campus.at_least(self.physics, '1.2') and not res:
+                sc, light = _campus.electricity(sc, light, wx['cal'], self._campus_P, int(opts.get('seed', 0)))
         self.sched = sc
         self.hvac_sched = hv
-        res = s['primary_use'].startswith('residential')
         self.res = res
         A = geo['A_f']
         ig = s['internal_gains']
@@ -171,6 +207,9 @@ class Simulator:
         self.m_v, self.T_v, self.W_v = m_v.tolist(), T_v.tolist(), W_v.tolist()
         # setpoints
         self._setpoints(s, sc, hv)
+        self.hp_home = res and sysn in ('heat_pump_air', 'heat_pump_ground')
+        if self.physics != '1.0' and _campus.at_least(self.physics, '1.3') and self.hp_home:
+            _campus.heating_limit(self, self._campus_P)        # 1.3: no space heating above the heating limit
         # state
         init = dict(init or {})
         T0 = init.get('T_air', 0.5 * (self.hsp[0] + self.csp[0]) if self.hsp[0] > -50 else 20.0)
@@ -195,9 +234,13 @@ class Simulator:
         self._T_wall = bnd['T_wall'].tolist()
         self._T_roof = bnd['T_roof'].tolist()
         self._T_gnd = bnd['T_ground'].tolist()
-        # system
+        # system (1.1: district loop operation, needed by the VAV summer reheat)
+        if self.physics != '1.0':
+            self.campus = _campus.setup_district(self, self._campus_P)
         self.design = design_loads(self)
         self.system = build_system(self, self.design)
+        if self.physics != '1.0' and _campus.at_least(self.physics, '1.3') and self.hp_home:
+            _campus.field_cop(self, self._campus_P)            # 1.3: installed / rated COP of air-source units
         # PV, battery, prices
         self._pv(s, wx)
         self.bat = s.get('battery')
@@ -735,10 +778,11 @@ def _price_array(prices, times, cal):
 
 
 def simulate(spec, weather, start=None, end=None, dt='1h', controller=None, faults=None, prices=None, init=None,
-             rng=None, warmup_days=7, sensor_noise=None, record_trend=True):
+             rng=None, warmup_days=7, sensor_noise=None, record_trend=True, options=None):
     """Simulate one building. See README for the full contract. Returns a dict (SimResult)."""
     sim = Simulator(spec, weather, start, end, dt, controller=controller, faults=faults, prices=prices, init=init,
-                    rng=rng, warmup_days=warmup_days, sensor_noise=sensor_noise, record_trend=record_trend)
+                    rng=rng, warmup_days=warmup_days, sensor_noise=sensor_noise, record_trend=record_trend,
+                    options=options)
     if sim.prices is not None and sim.bat and sim.bat.get('mode') == 'tou':
         pr = np.asarray(sim.prices)
         sim._p_lo, sim._p_hi = np.percentile(pr, 30), np.percentile(pr, 70)

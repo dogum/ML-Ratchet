@@ -16,6 +16,7 @@ shared/building/
 │   └── proc/splits.json   the frozen splits, seed 20261116, sha256 field 7ac15e9f…; never edit it
 ├── checks/           check_*.py, the shipped v1.0 JSONs, run_all.sh, compare.py, REPRODUCED.md
 ├── HANDOFF.md        what exists and the prioritised work list    STATUS.md   status on 17 Nov 2026
+├── NOTEBOOK.md       dated plans and results after v1.0 (P0.4: the Phase 2 wrappers upstreamed, opt-in)
 └── BUILDING_BRIEF.md, PHASE2_BRIEF.md   the contracts, kept as written
 ```
 
@@ -47,8 +48,13 @@ w = bs.read_epw(bs.epw_path('Chicago'))             # (weather frame, meta); 17 
 out = bs.simulate(dict(primary_use='office', floor_area_m2=5000, climate_zone='5A', system='vav_chiller_boiler'),
                   w, '2019-01-01', '2020-01-01', dt='1h')
 e = bd.bdg2('electricity', split='dev')          # 17,552 h x 52 dev buildings, UTC, bad hours NaN
-bd.site_weather('Hog'); bd.recs(split='dev'); bd.faults(split='exam'); bd.other('hue'); bd.tariff_prices('pge_e_tou_c', 2017)
+bd.site_weather('Hog'); bd.recs(split='dev'); bd.faults(split='exam'); bd.other('hue')
+p = bd.tariff_prices('pge_e_tou_c', 2017, tz='America/Los_Angeles', utc=True)   # UTC frame, safe for prices=
 ```
+
+BuildingSim 1.0.1 adds the four models' Phase 2 wrappers, all opt-in (`options=`, the hvac field
+`district_eff_chw`, `buildingsim.phase2`, `stock.recs_to_spec`, `bd.tariff_arrays` / `bd.rtp_prices`); with none used
+the physics is 1.0 and every check reproduces. Table: [buildingsim/README.md](buildingsim/README.md#phase-2-wrappers-opt-in).
 
 Checks: `checks/run_all.sh` re-runs everything (about 30 min; the twin checks need the stock samples, components a
 CoolProp venv); outputs go to `checks/out/`, never over the shipped JSONs. `python checks/compare.py` compares.

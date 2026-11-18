@@ -1,0 +1,32 @@
+{
+ "q_steam": 3.5223536281568713,
+ "q_hw": 23.46805812850743,
+ "q_chw": 42.060041225502864,
+ "f_rh": 0.0,
+ "T_hw_off": 15.6,
+ "T_chw_off": 7.2,
+ "s_on": 0.6,
+ "sigma_d": 0.15,
+ "rho_d": 0.7,
+ "_district": "physics 1.1 fitted by tools/calibrate_district.py on the BDG2 dev buildings, 2016 (35 building-meters); report checks/district_fit.json",
+ "_electricity": "physics 1.2 fitted by tools/calibrate_electricity.py on the BDG2 dev buildings, 2016 (47 electricity meters); report checks/electricity_fit.json",
+ "tau_e": 0.0,
+ "f_cop": 0.6,
+ "T_limit": 18.75,
+ "INTENSITY": {
+  "assembly": 0.5189506515349175,
+  "education": 0.5203071356236803,
+  "food": 0.6676777166872144,
+  "healthcare": 0.5124461837321067,
+  "lab": 0.2,
+  "lodging": 1.68066100192972,
+  "office": 0.979964906904531,
+  "other": 0.7552788777763696,
+  "retail": 0.4590223960425948,
+  "warehouse": 0.8713347744103467,
+  "residential_single": 0.4451483707104319,
+  "residential_multi": 0.47650515270355653
+ },
+ "_heatpump": "physics 1.3 fitted by tools/calibrate_heatpump.py: f_cop on RECS dev fold A, tau_e on HEAPO dev fold A; T_limit = median of 4 HEAPO dev protocol heating limits; report checks/heatpump_fit.json",
+ "_intensity": "physics 1.4 fitted by tools/calibrate_intensity.py on the CBECS 2018 / RECS 2020 prior split (30 generated buildings per use, seeds 1000+); dev check in checks/intensity_fit.json"
+}

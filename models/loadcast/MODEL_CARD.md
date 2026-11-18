@@ -62,7 +62,7 @@ The two capped factors mean the 2-week band is unusable for chilled water and ga
 
 ## Ratchet
 
-Frozen set: 300 simulated buildings (v1 physics, seed 99, real noise seed 12345), 650 building-meters. Objective = mean over meter types of (cold skill + warm skill)/2, where cold skill = 1 − median CV / median CV of the set's own median-intensity × median-shape guess, and warm skill = 1 − median CV / median CV of TOWT on the same history. Keep a rung only if the objective rises by > 0.01 and the dev score (mean of cold and warm median CV over 84 dev building-meters, 2016 → 2017) is no more than 2 % worse. The objective definition changed twice before R3 (floored pooled skills → unfloored → per meter type); every rung was re-scored each time (`ratchet.json`).
+Frozen set: 300 simulated buildings (v1 physics, seed 99, real noise seed 12345), 650 building-meters. Objective = mean over meter types of (cold skill + warm skill)/2, where cold skill = 1 − median CV / median CV of the set's own median-intensity × median-shape guess, and warm skill = 1 − median CV / median CV of TOWT on the same history. Keep a rung only if the objective rises by > 0.01 and the dev score (mean of cold and warm median CV over 84 dev building-meters, 2016 → 2017) is no more than 2 % worse. The objective definition changed twice before R3 (floored pooled skills → unfloored → per meter type); every rung was re-scored each time (`ratchet.json`). Checked on 17 Nov 2026 (`training/optimism.py`, `optimism_r3.json`): two retrains of the R3 recipe on a rebuilt bank differ by 0.020 in the frozen objective (more than the 0.01 margin) and by 1.8 points in the dev score (the 2 % gate is about 1 point), so single-seed decisions on this ladder are within training noise.
 
 | rung | change | frozen objective | dev score (CV %) | decision |
 |---|---|---|---|---|
@@ -73,39 +73,147 @@ Frozen set: 300 simulated buildings (v1 physics, seed 99, real noise seed 12345)
 | R4 | cold loss weight 1/ybar^0.5 (aim magnitude at the median) | −0.026 | 52.2 | rejected (both tests) |
 | R5 | real noise matched by use type | +0.006 | 51.7 | rejected (both tests) |
 
+**Round 2 (17 Nov 2026, `ratchet.yaml` second ladder, `training/r2.py`, `r2_ladder.json`).** Rebuilt, reproducible
+frozen set `v2_val` (deterministic spec per building); every rung judged on the mean of 3 training seeds against the
+released R3 re-scored there (−0.0081; dev 49.2). r6 (BuildingSim physics 1.1 district plants, calibration re-run):
++0.011 on its own frozen set but dev 52.8, rejected. r7 (median-aimed magnitude head): −0.028, dev 50.4 (gate 50.2),
+rejected. r8 (no-history mode anchored on the dev-calibrated twin): −0.005, dev 53.9, rejected; the twin alone scores
+dev no-history CV 65.4 % against 78.2 % for r8 and 70.6 % for R3. The R3 recipe retrained (3 seeds) scores −0.0076 and
+dev 53.3, so the gate set by R3's selected seed is about 3 points below its own recipe. v1.0 stays.
+
 **Twin test (dev, R3):** each dev building's calibrated twin, given another dev building's real residuals, read by the networks like the real meter. Median CV real vs twin: cold electricity 62.5 vs 51.8 (per-building correlation of log CV r = 0.86), chilled water 101 vs 99 (r = 0.96), steam 104 vs 108 (r = 0.95); warm electricity 22.3 vs 17.8, chilled water 43.2 vs 41.7, steam 61.7 vs 59.9 (r ≈ 0). Cold errors are reproduced building by building (they are magnitude errors); warm errors match in size but not in which building is hard, since the noise is borrowed.
+
+**What the network adds (dev twin test, 17 Nov 2026, `training/twin_anchor.py`, local 2017 on the dev meters).**
+Cold: anchor = the dev-calibrated twin from metadata only (the exam's "calibrated twin"). Median CV anchor → network:
+electricity 53.4 → 62.5 % (47 meters), chilled water 71.1 → 101.0 % (20), heating meters 96.0 → 103.2 % (17); the
+network beats the twin on 43 %, 55 % and 47 % of meters. Its corrections correlate with what reality needed (truth
+minus twin) at r = 0.73, 0.70 and 0.18 hourly, mostly through the level across buildings, but on the median it moves
+the level the wrong way: reality is 13 % above the twin on electricity and 2 % on chilled water; the network goes
+11 % and 55 % below it. What it misses: real campus electricity has a stronger weekday-day / weekend swing than the
+24-7-calibrated twin (+11 % / −8 % of the mean; the network adds about 0), and heating meters peak harder in winter
+(+56 % in February; the network adds +7 %). It does reproduce the chilled-water season the twin gets wrong (July
+needs −68 %, the network gives −52 %). Warm (a year; anchor = its own ridge TOWT): median CV 22.3 → 22.3 % on
+electricity (r = 0.15 hourly), 48.1 → 43.2 % on chilled water (r = 0.50), 65.9 → 64.5 % on heating meters
+(r = 0.32). The warm correction gets holidays right on electricity (−14.6 % needed, −13.7 % given) and little else.
 
 ## Exam (BDG2 exam buildings, forecast local 2017 with actual weather, history = 2016)
 
-1,502 building-meters with q_ok in both years. Median CV(RMSE) % [IQR], median NMBE %, share meeting G14 hourly (CV ≤ 30 %, |NMBE| ≤ 10 %), mean 90 % coverage. LoadCast uses p = 0, BuildingData's fitted baselines n − p. Persistence rows read the real 2017 meter (nowcasts, not forecasts).
+1,502 building-meters with q_ok in both years. Taken once in the build session, after R3 was chosen. **Re-scored on
+17 Nov 2026 (seen; nothing chosen from it)** with the released weights through `training/rescore_seen.py`: every one
+of the 635 statistics in `exam_r3.json` reproduces to 5e-6 (float32 numpy vs torch), the dev gate to 1e-5 and the
+widening factors exactly.
 
-| meter (n) | LoadCast cold | LoadCast warm 2 wk | warm 8 wk | **warm 2016** | median guess | TOWT | change point | persistence 24 h* |
+Median CV(RMSE) %. All scores use p = 0: BuildingData's fitted baselines (n − p in v1.0's table) are converted with
+CV × √((n − p)/n), which lowers its monthly change-point CVs by up to a fifth (electricity 11.0 → 9.3 %). "Best" is
+the baseline with the lowest median on the exam (picking it there can only favour the baselines). Interval: 95 %
+paired bootstrap of median(LoadCast) − median(best) over building-meters, 2,000 resamples, seed 20261117. Win if the
+interval is below zero, loss if above, tie if it spans zero. Four exam buildings at the Bobcat site have no twin
+(BuildingSim stops with `KeyError('kW')` on their specs); twin rows are paired over the rest. NMBE > 0 means the
+forecast is too low.
+
+Baselines. **Calibrated twin:** each exam building's BuildingSim twin from its BDG2 metadata only, with the knobs
+chosen most often on the 52 dev buildings (24-7 operation, outdoor air ×2.5, VAV minimum 0.3, district HVAC for
+electricity-only buildings) and the dev median meter fit `a, b` (`training/twin_knobs.json`), run through 2016-2017
+with the real weather; **by use:** knobs and `a, b` per use type where dev has ≥ 3 buildings. **Median guess:** dev
+median intensity × median time-of-week shape per use and meter. **Dev intensity × TOWT shape:** the same intensity
+times a TOWT shape (median over dev meters) driven by the exam building's weather. **TOWT, change point (BD):**
+BuildingData, fitted on 2016. **Ridge TOWT:** LoadCast's own anchor fitted on the same history (a year, 8 or 2 weeks).
+
+| meter (n) | history | LoadCast | best baseline | LoadCast − best [95 % CI] | verdict (v1.0) | NMBE | G14 pass LoadCast / best | 90 % cover |
 |---|---|---|---|---|---|---|---|---|
-| electricity (856) | 59.3 | 30.1 | 23.8 | **18.8** [12.9–26.7] | 53.8 | 19.6 | 19.1 | 18.6 |
-| chilled water (323) | 104.1 | 87.3 | 62.6 | **42.9** [28.2–67.1] | 101.6 | 45.7 | 42.4 | 40.3 |
-| steam (225) | 102.8 | 57.1 | 49.1 | **45.5** [33.5–71.4] | 111.6 | 39.8 | 40.5 | 41.9 |
-| hot water (72) | 134.0 | 93.6 | 86.5 | **94.5** [59.7–154] | 207.6 | 83.1 | 82.6 | 69.4 |
-| gas (26) | 181.5 | 159.9 | 133.1 | **110.5** [78–131] | 190.4 | 95.7 | 95.8 | 87.7 |
+| electricity (856) | a year | 18.8 | change point (BD) 19.1 | -0.3 [-0.8, +0.1] | **tie** (win) | -0.5 | 70 / 71 % | 0.92 |
+| electricity (856) | 8 weeks | 23.8 | ridge TOWT, same 8 wk 26.2 | -2.4 [-3.3, -1.6] | **win** | +1.5 | 53 / 48 % | 0.90 |
+| electricity (856) | 2 weeks | 30.1 | ridge TOWT, same 2 wk 36.5 | -6.4 [-7.7, -5.2] | **win** | +8.2 | 29 / 22 % | 0.89 |
+| electricity (856) | none | 59.3 | calibrated twin by use 52.4 | +6.8 [+4.7, +9.5] | **loss** (loss) | +24.3 | 5 / 6 % | 0.88 |
+| electricity (856) | a year, daily | 14.1 | ridge TOWT (anchor) 14.5 | -0.4 [-0.9, -0.1] | **win** | -0.5 | – | – |
+| electricity (856) | a year, monthly | 9.5 | change point (BD) 9.3 | +0.2 [-0.1, +0.5] | **tie** | -0.4 | – | – |
+| electricity (856) | none, daily | 54.7 | calibrated twin by use 46.4 | +8.1 [+5.0, +10.7] | **loss** | +24.3 | – | – |
+| electricity (856) | none, monthly | 51.8 | calibrated twin by use 43.5 | +8.2 [+4.9, +11.2] | **loss** | +24.5 | – | – |
+| chilled water (323) | a year | 42.9 | change point (BD) 42.4 | +0.5 [-1.5, +2.9] | **tie** (loss) | -1.0 | 20 / 24 % | 0.92 |
+| chilled water (323) | 8 weeks | 62.6 | ridge TOWT, same 8 wk 68.1 | -5.5 [-9.1, -0.1] | **win** | +19.0 | 8 / 7 % | 0.90 |
+| chilled water (323) | 2 weeks | 87.3 | calibrated twin 85.8 | +1.4 [-8.0, +7.9] | **tie** | +42.1 | 3 / 2 % | 0.91 |
+| chilled water (323) | none | 104.1 | calibrated twin 85.8 | +18.2 [+9.5, +25.1] | **loss** (loss) | +46.9 | 0 / 2 % | 0.90 |
+| chilled water (323) | a year, daily | 32.4 | change point (BD) 32.2 | +0.1 [-2.2, +2.8] | **tie** | -0.7 | – | – |
+| chilled water (323) | a year, monthly | 22.3 | change point (BD) 18.1 | +4.2 [+1.9, +6.1] | **loss** | -1.0 | – | – |
+| chilled water (323) | none, daily | 95.5 | calibrated twin by use 73.9 | +21.5 [+15.4, +27.3] | **loss** | +46.9 | – | – |
+| chilled water (323) | none, monthly | 90.8 | calibrated twin by use 66.8 | +23.9 [+17.5, +29.9] | **loss** | +46.3 | – | – |
+| steam (225) | a year | 45.5 | TOWT (BD) 39.4 | +6.0 [+2.9, +8.2] | **loss** (loss) | +8.8 | 10 / 26 % | 0.88 |
+| steam (225) | 8 weeks | 49.1 | ridge TOWT, same 8 wk 45.6 | +3.6 [-1.3, +6.4] | **tie** | +11.4 | 4 / 22 % | 0.85 |
+| steam (225) | 2 weeks | 57.1 | ridge TOWT, same 2 wk 60.5 | -3.3 [-8.7, +2.9] | **tie** | +20.1 | 1 / 12 % | 0.87 |
+| steam (225) | none | 102.8 | calibrated twin by use 99.7 | +3.1 [-1.1, +6.8] | **tie** (win) | +59.2 | 0 / 0 % | 0.84 |
+| steam (225) | a year, daily | 36.0 | change point (BD) 30.5 | +5.5 [+2.9, +7.5] | **loss** | +10.0 | – | – |
+| steam (225) | a year, monthly | 29.2 | change point (BD) 20.0 | +9.2 [+6.7, +13.2] | **loss** | +8.7 | – | – |
+| steam (225) | none, daily | 96.6 | calibrated twin 92.7 | +3.9 [-1.0, +10.3] | **tie** | +59.2 | – | – |
+| steam (225) | none, monthly | 93.2 | calibrated twin 87.1 | +6.1 [+1.8, +12.2] | **loss** | +58.9 | – | – |
+| hot water (72) | a year | 94.5 | ridge TOWT (anchor) 80.5 | +14.0 [+0.3, +23.9] | **loss** (loss) | -1.1 | 1 / 1 % | 0.92 |
+| hot water (72) | 8 weeks | 86.5 | ridge TOWT, same 8 wk 106.8 | -20.3 [-27.3, -2.1] | **win** | +8.8 | 0 / 0 % | 0.90 |
+| hot water (72) | 2 weeks | 93.6 | calibrated twin 124.4 | -30.8 [-50.1, -10.3] | **win** | +8.4 | 0 / 0 % | 0.98 |
+| hot water (72) | none | 134.0 | calibrated twin 124.4 | +9.6 [-10.6, +28.2] | **tie** (win) | +57.5 | 0 / 0 % | 0.81 |
+| hot water (72) | a year, daily | 69.8 | change point (BD) 59.2 | +10.5 [+0.4, +22.8] | **loss** | +1.6 | – | – |
+| hot water (72) | a year, monthly | 57.3 | ridge TOWT (anchor) 40.8 | +16.5 [+7.3, +27.1] | **loss** | -1.0 | – | – |
+| hot water (72) | none, daily | 115.5 | calibrated twin by use 87.4 | +28.1 [-4.4, +40.5] | **tie** | +60.1 | – | – |
+| hot water (72) | none, monthly | 108.9 | calibrated twin 85.1 | +23.8 [+2.4, +34.0] | **loss** | +57.9 | – | – |
+| gas (26) | a year | 110.5 | TOWT (BD) 94.6 | +15.9 [-4.9, +27.2] | **tie** (loss) | -0.9 | 0 / 0 % | 0.73 |
+| gas (26) | 8 weeks | 133.1 | ridge TOWT, same 8 wk 110.4 | +22.7 [+0.8, +43.8] | **loss** | -30.5 | 0 / 0 % | 0.72 |
+| gas (26) | 2 weeks | 159.9 | ridge TOWT, same 2 wk 131.3 | +28.5 [+4.6, +62.3] | **loss** | +1.3 | 0 / 0 % | 0.95 |
+| gas (26) | none | 181.5 | calibrated twin 179.8 | -10.3 [-65.2, +94.7] | **tie** (win) | +14.9 | 0 / 0 % | 0.74 |
+| gas (26) | a year, daily | 75.5 | change point (BD) 61.7 | +13.8 [-1.0, +28.5] | **tie** | +2.3 | – | – |
+| gas (26) | a year, monthly | 44.7 | change point (BD) 36.2 | +8.6 [+0.8, +21.6] | **loss** | +0.3 | – | – |
+| gas (26) | none, daily | 131.8 | calibrated twin 127.8 | +1.3 [-77.5, +98.9] | **tie** | +28.6 | – | – |
+| gas (26) | none, monthly | 96.5 | calibrated twin 92.5 | +1.3 [-54.9, +67.0] | **tie** | +10.7 | – | – |
 
-| meter | G14 pass: warm 2016 / TOWT / change point | NMBE median: cold / warm 2016 | 90 % coverage: cold / warm 2016 / 8 wk / 2 wk |
-|---|---|---|---|
-| electricity | 70 % / 70 % / 71 % | +24.3 / −0.5 | 0.88 / 0.92 / 0.90 / 0.89 |
-| chilled water | 20 % / 22 % / 24 % | +46.9 / −1.0 | 0.90 / 0.92 / 0.90 / 0.91 |
-| steam | 10 % / 25 % / 23 % | +59.2 / +8.8 | 0.84 / 0.88 / 0.85 / 0.87 |
-| hot water | 1 % / 1 % / 0 % | +57.5 / −1.1 | 0.81 / 0.92 / 0.90 / 0.98 |
-| gas | 0 % / 0 % / 0 % | +14.9 / −0.9 | 0.74 / 0.73 / 0.72 / 0.95 |
+All baselines, hourly (median CV %; persistence rows read the real 2017 meter, so they are nowcasts):
 
-Daily totals (warm 2016 vs change point daily): electricity 14.1 vs 17.2, chilled water 32.4 vs 32.4, steam 36.0 vs 30.6. Monthly: electricity 9.5 vs 11.0, chilled water 22.3 vs 21.6, steam 29.2 vs 24.2.
+| meter | median guess | dev intensity × TOWT shape | calibrated twin | twin by use | TOWT (BD) | change point (BD) | ridge TOWT (anchor) | persistence 1 h* / 24 h* / last week* |
+|---|---|---|---|---|---|---|---|---|
+| electricity | 53.8 | 53.8 | 53.5 | 52.4 | 19.5 | 19.1 | 19.5 | 9.6 / 18.6 / 19.5 |
+| chilled water | 101.6 | 92.4 | 85.8 | 87.5 | 45.2 | 42.4 | 45.2 | 18.8 / 40.3 / 51.8 |
+| steam | 111.6 | 104.9 | 100.2 | 99.7 | 39.4 | 40.5 | 41.4 | 24.9 / 41.9 / 56.6 |
+| hot water | 207.6 | 192.9 | 124.4 | 125.2 | 82.2 | 82.6 | 80.5 | 52.8 / 69.4 / 93.8 |
+| gas | 190.4 | 190.4 | 179.8 | 179.8 | 94.6 | 95.8 | 94.7 | 64.3 / 87.7 / 94.1 |
 
-**Reading it.** With a year of history LoadCast ties the classical models on electricity (slightly lower median CV, same G14 pass rate) and chilled water, and loses on steam, hot water and gas. With no history it is no better than a median-intensity guess and it underpredicts campus thermal meters by about half (positive NMBE = real higher than forecast). Its error bars are its most useful output: 88-92 % coverage of the 90 % band on electricity, chilled water and (warm) hot water.
+**Reading it.** 6 wins, 16 ties, 18 losses. The network earns its keep with short histories: with 2 or 8 weeks it
+beats TOWT fitted on the same weeks on electricity, chilled water (8 weeks) and hot water. With a year of history it
+ties the classical models on electricity and chilled water and loses on steam and hot water; the electricity row that
+v1.0 called a win is a tie (−0.3 points, interval −0.8 to +0.1). With no history the dev-calibrated BuildingSim twin
+alone beats LoadCast on electricity and chilled water and ties it elsewhere, so the v1.0 cold "wins" against the
+median guess came from the calibrated physics, not the network: the network forecasts thermal meters at about half
+the real load (NMBE +47 % chilled water, +59 % steam) where the twin is roughly level. Its error bars stay its most
+useful output: 88-92 % coverage of the 90 % band with a year of history on electricity, chilled water, steam and hot
+water.
+
+## Fresh exam (17 Nov 2026): I-BLEND, 3 Delhi campus buildings no version had seen, scored once
+
+I-BLEND (IIIT Delhi; figshare 10.6084/m9.figshare.6007637, CC0), weather from NOAA ISD-Lite (Delhi IGI) and NASA
+POWER. Three buildings (academic, library, facilities) passed the 85 % good-hours rule; history 2016, forecast 2017,
+electricity only. Frozen in commit 3d9f949 before the round-2 decision and scored once after it, for v1.0 (no round-2
+release; `training/exam2_iblend_score.py`, `exam2_iblend_results.json`). Intervals: 95 % bootstrap over the 3
+buildings (2,000 resamples, seed 20261117) on median(LoadCast) minus median(best baseline).
+
+| Row, median CV(RMSE) | LoadCast v1.0 | Best baseline | Minus best | Verdict |
+|---|---|---|---|---|
+| No history, hourly | 125.7 % | BDG2 dev median guess 89.8 % | +35.9 [−33.5, +78.8] | tie |
+| A year of history, hourly | 41.0 % | change-point (BuildingData) 40.2 % | +0.7 [−2.2, +1.0] | tie |
+| 8 weeks, hourly | 41.1 % | ridge TOWT on the same weeks 46.2 % | −5.1 [−5.1, +2.5] | tie |
+| 2 weeks, hourly | 43.2 % | ridge TOWT on the same weeks 46.7 % | −3.5 [−4.1, −3.5] | win |
+| No history, daily | 120.7 % | dev TOWT-shape guess 82.3 % | +38.4 [−39.4, +78.6] | tie |
+| No history, monthly | 119.6 % | dev TOWT-shape guess 80.7 % | +39.0 [−42.0, +79.5] | tie |
+| A year, daily | 17.4 % | TOWT (BuildingData) 17.9 % | −0.5 [−2.4, −0.3] | win |
+| A year, monthly | 12.6 % | ridge TOWT 13.0 % | −0.5 [−1.9, −0.4] | win |
+
+With no history LoadCast forecasts about 2.2 times the real load (median NMBE −120 %); Delhi's climate and Indian
+holidays are outside what it was trained on. With history it is level with the fitted models and a few points better
+than its anchor on short histories. Three buildings cannot rank models: the "wins" are 0.5-3.5 points and their
+intervals come from resampling three values, so read them as "not worse". The dev-calibrated BuildingSim twin
+baseline was not run: the twin builder takes BDG2 buildings only.
 
 ## Limits
 
-1. Cold forecasts lose to a median guess on electricity and chilled water and underpredict thermal meters ~2×: calibrating on 52 buildings closed only part of the simulator's district-energy gap, and the CV²-weighted loss pulls unknown magnitudes low (R4 tried the fix and failed both tests).
-2. Warm forecasts lose to TOWT on steam, hot water and gas (heating meters with seasonal shutdowns and plants serving several buildings).
-3. Two weeks of winter history cannot forecast summer chilled water (CV 87 %); its dev widening hit the cap of 30.
+1. Cold forecasts lose to the dev-calibrated BuildingSim twin on electricity (59.3 vs 52.4 %) and chilled water (104.1 vs 85.8 %) and tie it on steam, hot water and gas; the network sets thermal meters at about half the real load (the CV²-weighted loss pulls unknown magnitudes low; R4 tried the fix and failed both tests). On dev the network makes the twin's cold forecast worse on every meter type.
+2. With a year of history it ties TOWT and the change-point model on electricity and chilled water and loses on steam (to TOWT) and hot water (to its own ridge TOWT anchor); gas is a tie with 26 meters.
+3. Two weeks of winter history cannot forecast summer chilled water (CV 87 %, no better than the twin with no history); its dev widening hit the cap of 30.
 4. Not a nowcaster: yesterday's real reading is as good as any 2016-based model for electricity.
-5. Dev set is small (only 5 hot water and 2 gas meters); the noise bank holds dev 2017 residuals, so dev-gate numbers are a little optimistic (exam unaffected).
+5. Dev set is small (5 hot water and 2 gas meters). The noise bank holds dev 2017 residuals, but the leak is below the noise: with 2016-only residuals the retrained dev score moved −0.1 points (95 % CI −2.7 to +2.7), against 1.8 points between two training seeds. The released dev score (49.2) is optimistic by about 4 points through selection: two retrains of the R3 recipe score 53.8 and 52.0 on dev, while R3's exam score (52.8) sits between theirs (53.8, 51.2).
 6. Single-zone simulator; no multi-zone reheat; district meters calibrated empirically (a, b), not physically.
 7. Trained on BDG2's 19 sites and their 2016-17 weather; other climates and years are extrapolation. Non-residential only.
 

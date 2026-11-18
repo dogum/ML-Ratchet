@@ -1,0 +1,244 @@
+{
+ "what": "physics 1.2 electricity fit on BDG2 dev (2016) and the r2 test",
+ "grid": {
+  "s_on": [
+   0.0,
+   0.15,
+   0.3,
+   0.45,
+   0.6
+  ],
+  "sigma_d": [
+   0.0,
+   0.05,
+   0.1,
+   0.15,
+   0.2
+  ],
+  "rho_d": [
+   0.5,
+   0.7,
+   0.85
+  ]
+ },
+ "choice": {
+  "fit": [
+   0.6,
+   0.15,
+   0.7
+  ],
+  "objective": 0.01631177068897163,
+  "info": {
+   "night_day_real": 0.7883008718490601,
+   "night_day_sim": 0.6877937919599325,
+   "resid_cv_real": 0.13254662842194914,
+   "resid_cv_sim": 0.13353794210193468,
+   "resid_lag1_real": 0.7067253243322713
+  },
+  "loso": {
+   "Bear": [
+    0.6,
+    0.15,
+    0.7
+   ],
+   "Bull": [
+    0.6,
+    0.15,
+    0.7
+   ],
+   "Cockatoo": [
+    0.6,
+    0.15,
+    0.7
+   ],
+   "Eagle": [
+    0.6,
+    0.15,
+    0.7
+   ],
+   "Fox": [
+    0.6,
+    0.15,
+    0.7
+   ],
+   "Hog": [
+    0.6,
+    0.15,
+    0.7
+   ],
+   "Peacock": [
+    0.6,
+    0.15,
+    0.7
+   ],
+   "Rat": [
+    0.6,
+    0.15,
+    0.7
+   ],
+   "Robin": [
+    0.6,
+    0.15,
+    0.7
+   ]
+  }
+ },
+ "physics_1_1_2016": {
+  "prism_r2": {
+   "n": 47,
+   "ks_stat": 0.1914893617021276,
+   "ks_p": 0.3578951212975654,
+   "real_p25": 0.05181106687056325,
+   "sim_p25": 0.04054015971463093,
+   "real_p50": 0.23691289441529828,
+   "sim_p50": 0.24590725389872392,
+   "real_p75": 0.4524080387377212,
+   "sim_p75": 0.6054892009131518,
+   "quartiles_within_0.05": false,
+   "match": false
+  },
+  "night_day_real_median": 0.7883008718490601,
+  "night_day_sim_median": 0.4127084995962554,
+  "resid_cv_real_median": 0.13254662842194914,
+  "resid_cv_sim_median": 0.09271885245957852,
+  "weekday_effect_real_median": 0.09470961975167269,
+  "weekday_effect_sim_median": 0.25952445762063725,
+  "resid_lag1_real_median": 0.7067253243322713,
+  "resid_lag1_sim_median": 0.10360068327205649,
+  "prism_r2_real_median": 0.23691289441529828,
+  "prism_r2_sim_median": 0.24590725389872392,
+  "annual_ratio_median": 0.9760702180421768
+ },
+ "fit_2016": {
+  "prism_r2": {
+   "n": 47,
+   "ks_stat": 0.1914893617021276,
+   "ks_p": 0.3578951212975654,
+   "real_p25": 0.05181106687056325,
+   "sim_p25": 0.025798035829098953,
+   "real_p50": 0.23691289441529828,
+   "sim_p50": 0.18467015217143679,
+   "real_p75": 0.4524080387377212,
+   "sim_p75": 0.648735352617689,
+   "quartiles_within_0.05": false,
+   "match": false
+  },
+  "night_day_real_median": 0.7883008718490601,
+  "night_day_sim_median": 0.6877937919599325,
+  "resid_cv_real_median": 0.13254662842194914,
+  "resid_cv_sim_median": 0.13353794210193468,
+  "weekday_effect_real_median": 0.09470961975167269,
+  "weekday_effect_sim_median": 0.13703421411898953,
+  "resid_lag1_real_median": 0.7067253243322713,
+  "resid_lag1_sim_median": 0.5848711443924711,
+  "prism_r2_real_median": 0.23691289441529828,
+  "prism_r2_sim_median": 0.18467015217143679,
+  "annual_ratio_median": 0.9566799531650156
+ },
+ "loso_2016": {
+  "prism_r2": {
+   "n": 47,
+   "ks_stat": 0.1914893617021276,
+   "ks_p": 0.3578951212975654,
+   "real_p25": 0.05181106687056325,
+   "sim_p25": 0.025798035829098953,
+   "real_p50": 0.23691289441529828,
+   "sim_p50": 0.18467015217143679,
+   "real_p75": 0.4524080387377212,
+   "sim_p75": 0.648735352617689,
+   "quartiles_within_0.05": false,
+   "match": false
+  },
+  "night_day_real_median": 0.7883008718490601,
+  "night_day_sim_median": 0.6877937919599325,
+  "resid_cv_real_median": 0.13254662842194914,
+  "resid_cv_sim_median": 0.13353794210193468,
+  "weekday_effect_real_median": 0.09470961975167269,
+  "weekday_effect_sim_median": 0.13703421411898953,
+  "resid_lag1_real_median": 0.7067253243322713,
+  "resid_lag1_sim_median": 0.5848711443924711,
+  "prism_r2_real_median": 0.23691289441529828,
+  "prism_r2_sim_median": 0.18467015217143679,
+  "annual_ratio_median": 0.9566799531650156
+ },
+ "physics_1_1_2017": {
+  "prism_r2": {
+   "n": 47,
+   "ks_stat": 0.2765957446808511,
+   "ks_p": 0.054452894761163696,
+   "real_p25": 0.019692987099643622,
+   "sim_p25": 0.050452252236018624,
+   "real_p50": 0.06571010117981113,
+   "sim_p50": 0.2747874596282086,
+   "real_p75": 0.24603168729139602,
+   "sim_p75": 0.5792141917458333,
+   "quartiles_within_0.05": false,
+   "match": false
+  },
+  "night_day_real_median": 0.7862449884414673,
+  "night_day_sim_median": 0.41291418745110386,
+  "resid_cv_real_median": 0.15919596728730392,
+  "resid_cv_sim_median": 0.08933174282143234,
+  "weekday_effect_real_median": 0.1010172526192785,
+  "weekday_effect_sim_median": 0.25857734627118384,
+  "resid_lag1_real_median": 0.7765632128723503,
+  "resid_lag1_sim_median": 0.15821209296079894,
+  "prism_r2_real_median": 0.06571010117981113,
+  "prism_r2_sim_median": 0.2747874596282086,
+  "annual_ratio_median": 0.9519314464236996
+ },
+ "fit_2017": {
+  "prism_r2": {
+   "n": 47,
+   "ks_stat": 0.25531914893617025,
+   "ks_p": 0.09334273945745654,
+   "real_p25": 0.019692987099643622,
+   "sim_p25": 0.03156282999552146,
+   "real_p50": 0.06571010117981113,
+   "sim_p50": 0.18903497058448204,
+   "real_p75": 0.24603168729139602,
+   "sim_p75": 0.6267949695412494,
+   "quartiles_within_0.05": false,
+   "match": false
+  },
+  "night_day_real_median": 0.7862449884414673,
+  "night_day_sim_median": 0.6929555224209434,
+  "resid_cv_real_median": 0.15919596728730392,
+  "resid_cv_sim_median": 0.13396357053865796,
+  "weekday_effect_real_median": 0.1010172526192785,
+  "weekday_effect_sim_median": 0.13761753896750115,
+  "resid_lag1_real_median": 0.7765632128723503,
+  "resid_lag1_sim_median": 0.5906821581849879,
+  "prism_r2_real_median": 0.06571010117981113,
+  "prism_r2_sim_median": 0.18903497058448204,
+  "annual_ratio_median": 0.9641475988851016
+ },
+ "loso_2017": {
+  "prism_r2": {
+   "n": 47,
+   "ks_stat": 0.25531914893617025,
+   "ks_p": 0.09334273945745654,
+   "real_p25": 0.019692987099643622,
+   "sim_p25": 0.03156282999552146,
+   "real_p50": 0.06571010117981113,
+   "sim_p50": 0.18903497058448204,
+   "real_p75": 0.24603168729139602,
+   "sim_p75": 0.6267949695412494,
+   "quartiles_within_0.05": false,
+   "match": false
+  },
+  "night_day_real_median": 0.7862449884414673,
+  "night_day_sim_median": 0.6929555224209434,
+  "resid_cv_real_median": 0.15919596728730392,
+  "resid_cv_sim_median": 0.13396357053865796,
+  "weekday_effect_real_median": 0.1010172526192785,
+  "weekday_effect_sim_median": 0.13761753896750115,
+  "resid_lag1_real_median": 0.7765632128723503,
+  "resid_lag1_sim_median": 0.5906821581849879,
+  "prism_r2_real_median": 0.06571010117981113,
+  "prism_r2_sim_median": 0.18903497058448204,
+  "annual_ratio_median": 0.9641475988851016
+ },
+ "generated": "2026-11-17 17:52",
+ "python": "3.14.9"
+}
