@@ -551,6 +551,38 @@ exam:
       baselines: []
       verdict: info
       note: "Seen. v1.1 (reference days where available; re-scored 17 Nov 2026). Faulty AHU-A against healthy AHU-B on the same day, air-side energy proxy. Not useful; do not rely on extra_hvac_energy_frac. v1.0: 0.19."
+    - metric: "Fresh exam, Nehasil (4 Prague 100 % outdoor-air AHUs, 513 days, 54 faulty): detection AUC"
+      better: higher
+      model: 0.59
+      baselines:
+        - { name: "APAR rules, platform dev threshold (only R23 can fire; it never did)", kind: classical, value: 0.50 }
+      verdict: tie
+      note: "Fresh exam, scored once on 17 Nov 2026 after the release decisions (frozen in 3d9f949). Model = v1.1 with causal reference days (509 of 513 days had one). Minus APAR: +0.09, 95 % CI [−0.03, +0.24], bootstrap over the 4 AHUs (2,000 resamples, seed 20261117). v1.0: 0.60, +0.10 [−0.02, +0.25], tie. Per AHU (v1.1; AHU1 / 18 / 23 / 24): 0.56 / 0.45 / 0.53 / 0.80."
+    - metric: "Fresh exam, Nehasil (4 AHUs, 513 days): balanced accuracy at P = 0.5"
+      better: higher
+      model: 0.59
+      baselines:
+        - { name: "APAR rules, platform dev threshold", kind: classical, value: 0.50 }
+        - { name: "Majority guess (no fault)", kind: dumb, value: 0.50 }
+      verdict: win
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.1 minus the best baseline: +0.09, 95 % CI [+0.00, +0.17] over the 4 AHUs. v1.0: 0.62, +0.12 [+0.03, +0.21], win. A win over rules that cannot fire on these channels; it comes with the false-alarm loss below."
+    - metric: "Fresh exam, Nehasil (459 normal AHU-days): false-alarm rate at P = 0.5"
+      better: lower
+      model: 57
+      unit: "%"
+      baselines:
+        - { name: "APAR rules, platform dev threshold", kind: classical, value: 0 }
+        - { name: "Majority guess (no fault)", kind: dumb, value: 0 }
+      verdict: loss
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.1 minus the best baseline: +57 points, 95 % CI [+41, +75] over the 4 AHUs. v1.0: 46 %, +46 [+26, +68], loss. The reference-day rows raise P on these real days (v1.1, AHU1 / 18 / 23 / 24: 35 / 82 / 58 / 52 %)."
+    - metric: "Fresh exam, Nehasil (34 fault days with a FaultFinder class): diagnosis top-1"
+      better: higher
+      model: 18
+      unit: "%"
+      baselines:
+        - { name: "Chance (1 / 18 classes)", kind: dumb, value: 5.6 }
+      verdict: win
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.1 minus chance: +12 points, 95 % CI [+6, +18] over the 4 AHUs. v1.0: 21 %, +15 [+10, +19], win. Classes: heating valve 12, supply-air sensor 8, return-air sensor 6, OA damper 4, cooling valve 4."
 wins:
   - "Catching faults at P = 0.5 (seen, v1.1): 86 % of faulty AHU days against 52 % for the APAR rules with dev-tuned tolerances (+34 points, 95 % CI [+22, +46]); at Nesbitt Hall, a real occupied building, 88 % against 62 % for a dev-fitted mixing-box residual (+27, [+10, +44]). The price is the false alarms below."
   - "Ranking: FLEXLAB AUC 0.97 against 0.74 (+0.23, CI [+0.02, +0.48], 23 days). AHU AUC 0.78 against 0.69 for the dev-tuned rules (+0.09, CI [−0.00, +0.17]) and Nesbitt 0.79 against 0.71 (+0.08, CI [−0.03, +0.20]) are ahead but not established."

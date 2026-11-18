@@ -524,6 +524,83 @@ exam:
         - { name: "Dev median intensity × dev TOWT shape, monthly", kind: dumb, value: 112.9 }
       verdict: tie
       note: "Seen re-score (17 Nov 2026). +1.3 points against buildingSim twin calibrated on dev (median knobs, a, b), monthly, 95 % CI [-54.9, +67.0] (paired bootstrap over 25 building-meters; paired medians 93.9 vs 92.5). Median NMBE +10.7 %. Not a verdict row in v1.0."
+    - metric: "Fresh exam, I-BLEND (3 IIIT Delhi campus buildings, 2017): electricity, no history, median hourly CV(RMSE)"
+      better: lower
+      model: 125.7
+      unit: "%"
+      baselines:
+        - { name: "Median guess per use, fitted on BDG2 dev", kind: dumb, value: 89.8 }
+        - { name: "BDG2 dev median intensity × dev TOWT shape", kind: dumb, value: 90.8 }
+      verdict: tie
+      note: "Fresh exam, scored once on 17 Nov 2026 after the round-2 decision (frozen in 3d9f949). v1.0. +35.9 points against the median guess, 95 % CI [−33.5, +78.8] (paired bootstrap over 3 buildings, 2,000 resamples, seed 20261117). n = 3 is a stress check, not a ranking. Median NMBE −120 % (forecast about 2.2 × the meter); per building 56 / 180 / 126 % (academic / library / facilities); 90 % band covers 100 % of hours. The dev-calibrated BuildingSim twin baseline was not run: the integrity-pass builder takes BDG2 buildings only."
+    - metric: "Fresh exam, I-BLEND (3 buildings): electricity, a year of history (2016), median hourly CV(RMSE)"
+      better: lower
+      model: 41.0
+      unit: "%"
+      baselines:
+        - { name: "Change-point model fitted on 2016 (BuildingData)", kind: classical, value: 40.2 }
+        - { name: "Ridge TOWT fitted on 2016 (LoadCast's anchor)", kind: classical, value: 40.9 }
+        - { name: "TOWT fitted on 2016 (BuildingData)", kind: classical, value: 41.5 }
+      verdict: tie
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. +0.7 points against the change-point model, 95 % CI [−2.2, +1.0] over 3 buildings. Median NMBE +3.8 %; 90 % band covers 84 % of hours. Nowcasts (read the real 2017 meter): persistence 1 h 17.0, 24 h 34.9, same hour last week 25.1."
+    - metric: "Fresh exam, I-BLEND (3 buildings): electricity, 8 weeks of history, median hourly CV(RMSE)"
+      better: lower
+      model: 41.1
+      unit: "%"
+      baselines:
+        - { name: "Ridge TOWT fitted on the same 8 weeks", kind: classical, value: 46.2 }
+        - { name: "Median guess per use, fitted on BDG2 dev", kind: dumb, value: 89.8 }
+        - { name: "BDG2 dev median intensity × dev TOWT shape", kind: dumb, value: 90.8 }
+      verdict: tie
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. −5.1 points against the ridge TOWT on the same weeks, 95 % CI [−5.1, +2.5] over 3 buildings. Median NMBE −4.2 %; 90 % band covers 80 % of hours."
+    - metric: "Fresh exam, I-BLEND (3 buildings): electricity, 2 weeks of history, median hourly CV(RMSE)"
+      better: lower
+      model: 43.2
+      unit: "%"
+      baselines:
+        - { name: "Ridge TOWT fitted on the same 2 weeks", kind: classical, value: 46.7 }
+        - { name: "Median guess per use, fitted on BDG2 dev", kind: dumb, value: 89.8 }
+        - { name: "BDG2 dev median intensity × dev TOWT shape", kind: dumb, value: 90.8 }
+      verdict: win
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. −3.5 points against the ridge TOWT on the same weeks, 95 % CI [−4.1, −3.5] over 3 buildings (better on all three). With n = 3 the interval only resamples three values: read it as not worse. Median NMBE +19.4 %; 90 % band covers 84 % of hours."
+    - metric: "Fresh exam, I-BLEND (3 buildings): electricity, no history, daily totals, median daily CV(RMSE)"
+      better: lower
+      model: 120.7
+      unit: "%"
+      baselines:
+        - { name: "BDG2 dev median intensity × dev TOWT shape, daily", kind: dumb, value: 82.3 }
+        - { name: "Median guess per use, fitted on BDG2 dev, daily", kind: dumb, value: 82.5 }
+      verdict: tie
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. +38.4 points, 95 % CI [−39.4, +78.6] over 3 buildings. Median NMBE −120 %. Twin baseline not run (BDG2 buildings only)."
+    - metric: "Fresh exam, I-BLEND (3 buildings): electricity, no history, monthly totals, median monthly CV(RMSE)"
+      better: lower
+      model: 119.6
+      unit: "%"
+      baselines:
+        - { name: "BDG2 dev median intensity × dev TOWT shape, monthly", kind: dumb, value: 80.7 }
+        - { name: "Median guess per use, fitted on BDG2 dev, monthly", kind: dumb, value: 80.8 }
+      verdict: tie
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. +39.0 points, 95 % CI [−42.0, +79.5] over 3 buildings. Median NMBE −119 %. Twin baseline not run (BDG2 buildings only)."
+    - metric: "Fresh exam, I-BLEND (3 buildings): electricity, a year of history, daily totals, median daily CV(RMSE)"
+      better: lower
+      model: 17.4
+      unit: "%"
+      baselines:
+        - { name: "TOWT fitted on 2016 (BuildingData), daily", kind: classical, value: 17.9 }
+        - { name: "Ridge TOWT fitted on 2016 (LoadCast's anchor), daily", kind: classical, value: 17.9 }
+        - { name: "Change-point model, daily (BuildingData)", kind: classical, value: 23.1 }
+      verdict: win
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. −0.5 points against BuildingData's TOWT aggregated to days, 95 % CI [−2.4, −0.3] over 3 buildings. With n = 3: read it as not worse. Median NMBE +3.9 %."
+    - metric: "Fresh exam, I-BLEND (3 buildings): electricity, a year of history, monthly totals, median monthly CV(RMSE)"
+      better: lower
+      model: 12.6
+      unit: "%"
+      baselines:
+        - { name: "Ridge TOWT fitted on 2016 (LoadCast's anchor), monthly", kind: classical, value: 13.0 }
+        - { name: "TOWT fitted on 2016 (BuildingData), monthly", kind: classical, value: 13.1 }
+        - { name: "Change-point model, monthly (BuildingData)", kind: classical, value: 13.9 }
+      verdict: win
+      note: "Fresh exam, scored once on 17 Nov 2026. v1.0. −0.5 points against the ridge TOWT aggregated to months, 95 % CI [−1.9, −0.4] over 3 buildings. With n = 3: read it as not worse. Median NMBE +3.9 %."
 
 wins:
   - "With 2 or 8 weeks of history it beats TOWT fitted on the same weeks on electricity (30.1 vs 36.5 % and 23.8 vs 26.2 %, 856 meters), and with 8 weeks on chilled water (62.6 vs 68.1 %) and hot water (86.5 vs 106.8 %); the intervals exclude zero."

@@ -1,0 +1,280 @@
+{
+ "exam": "BuildingDetective exam 2, HEAPO (Zurich heat-pump homes), scored once on 17 Nov 2026",
+ "spec": "split_exam2_heapo.json",
+ "split_sha256": "443961aff0617ef6742c8184ce517b94b8b9ae668c6ecacaed218b1e755f963d",
+ "n_exam": 105,
+ "models": {
+  "v10": "BuildingDetective v1.0 (released weights/)",
+  "r10": "r10 hourly, calibrated (work/models/r10_rel): kept by the ladder rule but not released; information only"
+ },
+ "baselines_fitted_on_dev": {
+  "dev_n": 25,
+  "dev_area_n": 25,
+  "dev_year_n": 25,
+  "dev_median_kwh_per_m2": 56.5674884057971,
+  "dev_median_kwh_per_m2_by_type": {
+   "single family house": 56.5674884057971
+  },
+  "area_line": {
+   "b": 0.331645894040815,
+   "a": 0.935595478215658
+  },
+  "year_line": {
+   "b": -41.443688101310734,
+   "a": 2156.3975945958796
+  },
+  "dev_median_area": 180.0,
+  "dev_median_year": 1984.0,
+  "dev_majority_type": "residential_single"
+ },
+ "interval": {
+  "resamples": 2000,
+  "seed": 20261117,
+  "unit": "home",
+  "level": 0.95
+ },
+ "not_run_as_specified": [
+  "Area baseline \"annual elec / dev median kWh per m2 of the TRUE building type\": all 25 dev homes are single-family, so no dev kWh/m2 exists for the 6 exam homes of other types (multi-family, other, unknown). Where it is defined it equals the all-dev baseline. It is listed for the single-family homes only and not used to choose the best baseline."
+ ],
+ "rows": {
+  "area_mdape_hourly": {
+   "n": 105,
+   "better": "lower",
+   "baselines": {
+    "b_area_eui_all": 25.09483038423499,
+    "b_area_line": 17.266927085694896,
+    "b_area_median": 14.64968152866242
+   },
+   "best_baseline": "b_area_median",
+   "baseline_true_type_single_family_only": {
+    "n": 99,
+    "value": 22.087985124196535
+   },
+   "v10_hourly_area": {
+    "value": 35.59356747686601,
+    "minus_best": 20.943885948203594,
+    "interval": [
+     12.460361765371111,
+     30.035616006439685
+    ],
+    "resamples_used": 2000,
+    "verdict": "loss"
+   },
+   "r10_hourly_area": {
+    "value": 39.862060451354466,
+    "minus_best": 25.212378922692047,
+    "interval": [
+     18.170546654231753,
+     30.56169357212844
+    ],
+    "resamples_used": 2000,
+    "verdict": "loss"
+   }
+  },
+  "year_mae_hourly": {
+   "n": 100,
+   "better": "lower",
+   "baselines": {
+    "b_year_median": 13.86,
+    "b_year_line": 14.17846616481783
+   },
+   "best_baseline": "b_year_median",
+   "v10_hourly_year": {
+    "value": 20.87594458841607,
+    "minus_best": 7.015944588416069,
+    "interval": [
+     4.578290765275443,
+     9.66990158842521
+    ],
+    "resamples_used": 2000,
+    "verdict": "loss"
+   },
+   "r10_hourly_year": {
+    "value": 21.40965871155813,
+    "minus_best": 7.549658711558131,
+    "interval": [
+     5.20554042463724,
+     9.881785058763803
+    ],
+    "resamples_used": 2000,
+    "verdict": "loss"
+   }
+  },
+  "type_acc_hourly": {
+   "n": 101,
+   "better": "higher",
+   "baselines": {
+    "b_type_majority": 0.9801980198019802
+   },
+   "best_baseline": "b_type_majority",
+   "v10_hourly": {
+    "value": 0.8712871287128713,
+    "minus_best": -0.1089108910891089,
+    "interval": [
+     -0.16831683168316836,
+     -0.04950495049504955
+    ],
+    "resamples_used": 2000,
+    "verdict": "info only"
+   },
+   "r10_hourly": {
+    "value": 0.8910891089108911,
+    "minus_best": -0.08910891089108908,
+    "interval": [
+     -0.14851485148514854,
+     -0.03960396039603964
+    ],
+    "resamples_used": 2000,
+    "verdict": "info only"
+   }
+  },
+  "heatpump_info_hourly": {
+   "v10_hourly": {
+    "share_top": 0.09523809523809523,
+    "median_p": 0.0091,
+    "n": 105
+   },
+   "r10_hourly": {
+    "share_top": 0.0380952380952381,
+    "median_p": 0.0014,
+    "n": 105
+   }
+  },
+  "area_mdape_monthly": {
+   "n": 105,
+   "better": "lower",
+   "baselines": {
+    "b_area_eui_all": 25.09483038423499,
+    "b_area_line": 17.266927085694896,
+    "b_area_median": 14.64968152866242
+   },
+   "best_baseline": "b_area_median",
+   "baseline_true_type_single_family_only": {
+    "n": 99,
+    "value": 22.087985124196535
+   },
+   "v10_monthly_area": {
+    "value": 47.74907175341058,
+    "minus_best": 33.09939022474816,
+    "interval": [
+     27.099912517742382,
+     36.79043007091742
+    ],
+    "resamples_used": 2000,
+    "verdict": "loss"
+   }
+  },
+  "year_mae_monthly": {
+   "n": 100,
+   "better": "lower",
+   "baselines": {
+    "b_year_median": 13.86,
+    "b_year_line": 14.17846616481783
+   },
+   "best_baseline": "b_year_median",
+   "v10_monthly_year": {
+    "value": 17.78751061893978,
+    "minus_best": 3.927510618939781,
+    "interval": [
+     2.3591964414421587,
+     5.535643232647581
+    ],
+    "resamples_used": 2000,
+    "verdict": "loss"
+   }
+  },
+  "type_acc_monthly": {
+   "n": 101,
+   "better": "higher",
+   "baselines": {
+    "b_type_majority": 0.9801980198019802
+   },
+   "best_baseline": "b_type_majority",
+   "v10_monthly": {
+    "value": 0.9603960396039604,
+    "minus_best": -0.01980198019801982,
+    "interval": [
+     -0.04950495049504955,
+     0.0
+    ],
+    "resamples_used": 2000,
+    "verdict": "info only"
+   }
+  },
+  "heatpump_info_monthly": {
+   "v10_monthly": {
+    "share_top": 0.3238095238095238,
+    "median_p": 0.1941,
+    "n": 105
+   }
+  },
+  "area_mdape_annual": {
+   "n": 105,
+   "better": "lower",
+   "baselines": {
+    "b_area_eui_all": 25.09483038423499,
+    "b_area_line": 17.266927085694896,
+    "b_area_median": 14.64968152866242
+   },
+   "best_baseline": "b_area_median",
+   "baseline_true_type_single_family_only": {
+    "n": 99,
+    "value": 22.087985124196535
+   },
+   "v10_annual_area": {
+    "value": 19.689672893168712,
+    "minus_best": 5.039991364506292,
+    "interval": [
+     -0.28541434351864226,
+     9.084056094054048
+    ],
+    "resamples_used": 2000,
+    "verdict": "tie"
+   }
+  },
+  "year_mae_annual": {
+   "n": 100,
+   "better": "lower",
+   "baselines": {
+    "b_year_median": 13.86,
+    "b_year_line": 14.17846616481783
+   },
+   "best_baseline": "b_year_median",
+   "v10_annual_year": {
+    "value": 14.01132210563449,
+    "minus_best": 0.15132210563449,
+    "interval": [
+     -0.29697982072790036,
+     0.623347573988445
+    ],
+    "resamples_used": 2000,
+    "verdict": "tie"
+   }
+  },
+  "type_acc_annual": {
+   "n": 101,
+   "better": "higher",
+   "baselines": {
+    "b_type_majority": 0.9801980198019802
+   },
+   "best_baseline": "b_type_majority",
+   "v10_annual": {
+    "value": 0.9801980198019802,
+    "minus_best": 0.0,
+    "interval": [
+     0.0,
+     0.0
+    ],
+    "resamples_used": 2000,
+    "verdict": "info only"
+   }
+  },
+  "heatpump_info_annual": {
+   "v10_annual": {
+    "share_top": 0.5619047619047619,
+    "median_p": 0.3317,
+    "n": 105
+   }
+  }
+ }
+}

@@ -442,3 +442,40 @@ any r7 score existed; the shape networks were fine. Per-seed numbers: `training/
 - **Release:** none. The inference-design question for r8 does not arise. If a twin-anchored mode is released later,
   the numpy module cannot run BuildingSim (inference is numpy/scipy only). It would take the twin series as an input,
   computed separately by a helper that uses BuildingSim. That design waits for the owner's approval.
+
+## 2026-11-17 — Fresh exam scored once: I-BLEND (v1.0)
+
+Scored after the round-2 decision was committed (no round-2 release; v1.0 stays). Nothing was changed after a
+result was seen; nothing is chosen from it. Script `training/exam2_iblend_score.py`, results
+`training/exam2_iblend_results.json` (per-building values included).
+
+- **Data check.** `exam2_iblend.py build --check` rebuilt the three buildings from the raw downloads: the units block
+  matches the frozen split (sha256 `115d4029…`); the scorer re-checks each building's hash before scoring.
+- **As the spec says.** `LoadCast.forecast` with the released weights and shipped widening, tz Asia/Kolkata, lat
+  28.5463, electricity only, history 2016 (a year, its last 8 weeks, its last 2 weeks), forecast local 2017. Dev
+  guesses from the 47 BDG2 dev electricity meters (education and other keys exist). BuildingData TOWT and
+  change-point from `baselines.load_one` (n − p, as its code computes); the ridge TOWT and every daily / monthly
+  aggregate of an hourly prediction p = 0, as exam.py. Bootstrap over the 3 buildings, paired, 2,000 resamples, seed
+  20261117.
+- **Could not run as specified: the dev-calibrated BuildingSim twin.** The integrity-pass builder
+  (`rescore_seen._sim_one`) takes a BDG2 building id and a BDG2 site's weather; it has no entry for a non-BDG2 spec.
+  The spec says the row then states it was not run. The cold rows have two baselines, not three.
+
+| Row (n = 3), median CV(RMSE) | LoadCast v1.0 | Best baseline | Minus best, 95 % CI | Verdict |
+|---|---|---|---|---|
+| Cold, hourly | 125.7 % | dev median guess 89.8 % | +35.9 [−33.5, +78.8] | tie |
+| Warm, a year, hourly | 41.0 % | change-point (BuildingData) 40.2 % | +0.7 [−2.2, +1.0] | tie |
+| Warm, 8 weeks, hourly | 41.1 % | ridge TOWT on the same 8 weeks 46.2 % | −5.1 [−5.1, +2.5] | tie |
+| Warm, 2 weeks, hourly | 43.2 % | ridge TOWT on the same 2 weeks 46.7 % | −3.5 [−4.1, −3.5] | win |
+| Cold, daily | 120.7 % | dev TOWT-shape guess 82.3 % | +38.4 [−39.4, +78.6] | tie |
+| Cold, monthly | 119.6 % | dev TOWT-shape guess 80.7 % | +39.0 [−42.0, +79.5] | tie |
+| Warm, a year, daily | 17.4 % | TOWT (BuildingData), daily 17.9 % | −0.5 [−2.4, −0.3] | win |
+| Warm, a year, monthly | 12.6 % | ridge TOWT, monthly 13.0 % | −0.5 [−1.9, −0.4] | win |
+
+- **What it says.** Cold, LoadCast over-forecasts Delhi's campus by about 2.2 times (median NMBE −120 %; per building
+  CV 56 / 180 / 126 % for academic / library / facilities) and its 90 % band covers every hour because it is that wide.
+  The dev guesses are also poor (90 %) but closer. With history it is level with the fitted models (a year) and a few
+  points better than its own anchor on 2 and 8 weeks. Three buildings cannot rank anything: the three "wins" are
+  differences of 0.5-3.5 points whose intervals come from resampling three values, so they say "not worse", no more.
+  Warm 90 % coverage 84 % (a year), 80 % (8 weeks), 84 % (2 weeks). Nowcasts (info, read the real 2017 meter):
+  persistence 1 h 17 %, 24 h 35 %, same hour last week 25 %.

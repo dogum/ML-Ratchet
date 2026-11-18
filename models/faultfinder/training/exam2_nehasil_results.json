@@ -1,0 +1,260 @@
+{
+ "exam": "FaultFinder exam 2, Nehasil (CTU Prague), scored once on 17 Nov 2026",
+ "split_sha256": "31f05ccbac30d0ab8be2a845c5b9b01c7e50ffbe8770098824d65dd2b7db0006",
+ "spec": "split_exam2_nehasil.json",
+ "n_ahus": 4,
+ "n_days": 513,
+ "n_fault_days": 54,
+ "n_normal_days": 459,
+ "n_diagnosable": 34,
+ "models": {
+  "v10": "FaultFinder v1.0 (git dfafdcf weights and reader, T = 4.3, single day)",
+  "v11": "FaultFinder v1.1 (released weights, T = 4.2, causal reference days)"
+ },
+ "apar_threshold": 0.2322,
+ "threshold_p": 0.5,
+ "interval": {
+  "resamples": 2000,
+  "seed": 20261117,
+  "unit": "AHU",
+  "level": 0.95
+ },
+ "v11_reference_days": {
+  "days_with_reference": 509,
+  "by_count": {
+   "0": 4,
+   "1": 10,
+   "2": 7,
+   "3": 492
+  }
+ },
+ "rows": {
+  "det_auc": {
+   "better": "higher",
+   "baselines": {
+    "apar": 0.5
+   },
+   "best_baseline": "apar",
+   "n_days": 513,
+   "v10": {
+    "value": 0.5993706124425079,
+    "minus_best": 0.09937061244250789,
+    "interval": [
+     -0.017124735729386886,
+     0.2518276933852821
+    ],
+    "verdict": "tie",
+    "resamples_used": 2000
+   },
+   "v11": {
+    "value": 0.5942870975550714,
+    "minus_best": 0.09428709755507136,
+    "interval": [
+     -0.025397227856659932,
+     0.2392926101456907
+    ],
+    "verdict": "tie",
+    "resamples_used": 2000
+   },
+   "by_ahu": {
+    "AHU1": {
+     "v10": 0.5873563218390805,
+     "v11": 0.5580459770114943,
+     "apar": 0.5
+    },
+    "AHU18": {
+     "v10": 0.4619252873563218,
+     "v11": 0.44971264367816094,
+     "apar": 0.5
+    },
+    "AHU23": {
+     "v10": 0.5325714285714286,
+     "v11": 0.5291428571428571,
+     "apar": 0.5
+    },
+    "AHU24": {
+     "v10": 0.8159879336349924,
+     "v11": 0.801659125188537,
+     "apar": 0.5
+    }
+   }
+  },
+  "bal_acc": {
+   "better": "higher",
+   "baselines": {
+    "apar": 0.5,
+    "majority": 0.5
+   },
+   "best_baseline": "apar",
+   "n_days": 513,
+   "v10": {
+    "value": 0.6230936819172113,
+    "minus_best": 0.12309368191721126,
+    "interval": [
+     0.028482082488167748,
+     0.21076478571115875
+    ],
+    "verdict": "win",
+    "resamples_used": 2000
+   },
+   "v11": {
+    "value": 0.5860566448801743,
+    "minus_best": 0.08605664488017428,
+    "interval": [
+     0.002621564482029548,
+     0.17044058276285767
+    ],
+    "verdict": "win",
+    "resamples_used": 2000
+   },
+   "by_ahu": {
+    "AHU1": {
+     "v10": 0.67183908045977,
+     "v11": 0.5899425287356321,
+     "apar": 0.5,
+     "majority": 0.5
+    },
+    "AHU18": {
+     "v10": 0.4870689655172414,
+     "v11": 0.46551724137931033,
+     "apar": 0.5,
+     "majority": 0.5
+    },
+    "AHU23": {
+     "v10": 0.6051428571428572,
+     "v11": 0.6048571428571429,
+     "apar": 0.5,
+     "majority": 0.5
+    },
+    "AHU24": {
+     "v10": 0.7515082956259427,
+     "v11": 0.7017345399698341,
+     "apar": 0.5,
+     "majority": 0.5
+    }
+   }
+  },
+  "fa_rate": {
+   "better": "lower",
+   "baselines": {
+    "apar": 0.0,
+    "majority": 0.0
+   },
+   "best_baseline": "apar",
+   "n_days": 459,
+   "v10": {
+    "value": 0.45751633986928103,
+    "minus_best": 0.45751633986928103,
+    "interval": [
+     0.26146788990825687,
+     0.6777777777777778
+    ],
+    "verdict": "loss",
+    "resamples_used": 2000
+   },
+   "v11": {
+    "value": 0.5686274509803921,
+    "minus_best": 0.5686274509803921,
+    "interval": [
+     0.41226215644820297,
+     0.7511111111111111
+    ],
+    "verdict": "loss",
+    "resamples_used": 2000
+   },
+   "by_ahu": {
+    "AHU1": {
+     "v10": 0.1896551724137931,
+     "v11": 0.35344827586206895,
+     "apar": 0.0,
+     "majority": 0.0
+    },
+    "AHU18": {
+     "v10": 0.7758620689655172,
+     "v11": 0.8189655172413793,
+     "apar": 0.0,
+     "majority": 0.0
+    },
+    "AHU23": {
+     "v10": 0.504,
+     "v11": 0.576,
+     "apar": 0.0,
+     "majority": 0.0
+    },
+    "AHU24": {
+     "v10": 0.3431372549019608,
+     "v11": 0.5196078431372549,
+     "apar": 0.0,
+     "majority": 0.0
+    }
+   }
+  },
+  "diag_top1": {
+   "better": "higher",
+   "baselines": {
+    "chance": 0.05555555555555555
+   },
+   "best_baseline": "chance",
+   "n_days": 34,
+   "v10": {
+    "value": 0.20588235294117646,
+    "minus_best": 0.1503267973856209,
+    "interval": [
+     0.09595959595959597,
+     0.18686868686868688
+    ],
+    "verdict": "win",
+    "resamples_used": 2000
+   },
+   "v11": {
+    "value": 0.17647058823529413,
+    "minus_best": 0.12091503267973858,
+    "interval": [
+     0.06209150326797386,
+     0.17973856209150327
+    ],
+    "verdict": "win",
+    "resamples_used": 2000
+   },
+   "by_ahu": {
+    "AHU1": {
+     "v10": 0.25,
+     "v11": 0.25,
+     "chance": 0.05555555555555555
+    },
+    "AHU18": {
+     "v10": 0.125,
+     "v11": 0.125,
+     "chance": 0.05555555555555555
+    },
+    "AHU23": {
+     "v10": 0.2222222222222222,
+     "v11": 0.2222222222222222,
+     "chance": 0.05555555555555555
+    },
+    "AHU24": {
+     "v10": 0.2222222222222222,
+     "v11": 0.1111111111111111,
+     "chance": 0.05555555555555555
+    }
+   }
+  }
+ },
+ "v11_by_reference": {
+  "with_reference": {
+   "n": 509,
+   "n_fault": 50,
+   "auc": 0.6227450980392157,
+   "fa_rate": 0.5686274509803921
+  },
+  "without_reference": {
+   "n": 4,
+   "n_fault": 4,
+   "auc": NaN,
+   "fa_rate": NaN
+  }
+ },
+ "v10_vs_v11_same_days": {
+  "median_abs_logodds_change": 0.2838320732116699
+ }
+}

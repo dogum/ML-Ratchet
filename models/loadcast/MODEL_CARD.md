@@ -182,6 +182,31 @@ the real load (NMBE +47 % chilled water, +59 % steam) where the twin is roughly 
 useful output: 88-92 % coverage of the 90 % band with a year of history on electricity, chilled water, steam and hot
 water.
 
+## Fresh exam (17 Nov 2026): I-BLEND, 3 Delhi campus buildings no version had seen, scored once
+
+I-BLEND (IIIT Delhi; figshare 10.6084/m9.figshare.6007637, CC0), weather from NOAA ISD-Lite (Delhi IGI) and NASA
+POWER. Three buildings (academic, library, facilities) passed the 85 % good-hours rule; history 2016, forecast 2017,
+electricity only. Frozen in commit 3d9f949 before the round-2 decision and scored once after it, for v1.0 (no round-2
+release; `training/exam2_iblend_score.py`, `exam2_iblend_results.json`). Intervals: 95 % bootstrap over the 3
+buildings (2,000 resamples, seed 20261117) on median(LoadCast) minus median(best baseline).
+
+| Row, median CV(RMSE) | LoadCast v1.0 | Best baseline | Minus best | Verdict |
+|---|---|---|---|---|
+| No history, hourly | 125.7 % | BDG2 dev median guess 89.8 % | +35.9 [−33.5, +78.8] | tie |
+| A year of history, hourly | 41.0 % | change-point (BuildingData) 40.2 % | +0.7 [−2.2, +1.0] | tie |
+| 8 weeks, hourly | 41.1 % | ridge TOWT on the same weeks 46.2 % | −5.1 [−5.1, +2.5] | tie |
+| 2 weeks, hourly | 43.2 % | ridge TOWT on the same weeks 46.7 % | −3.5 [−4.1, −3.5] | win |
+| No history, daily | 120.7 % | dev TOWT-shape guess 82.3 % | +38.4 [−39.4, +78.6] | tie |
+| No history, monthly | 119.6 % | dev TOWT-shape guess 80.7 % | +39.0 [−42.0, +79.5] | tie |
+| A year, daily | 17.4 % | TOWT (BuildingData) 17.9 % | −0.5 [−2.4, −0.3] | win |
+| A year, monthly | 12.6 % | ridge TOWT 13.0 % | −0.5 [−1.9, −0.4] | win |
+
+With no history LoadCast forecasts about 2.2 times the real load (median NMBE −120 %); Delhi's climate and Indian
+holidays are outside what it was trained on. With history it is level with the fitted models and a few points better
+than its anchor on short histories. Three buildings cannot rank models: the "wins" are 0.5-3.5 points and their
+intervals come from resampling three values, so read them as "not worse". The dev-calibrated BuildingSim twin
+baseline was not run: the twin builder takes BDG2 buildings only.
+
 ## Limits
 
 1. Cold forecasts lose to the dev-calibrated BuildingSim twin on electricity (59.3 vs 52.4 %) and chilled water (104.1 vs 85.8 %) and tie it on steam, hot water and gas; the network sets thermal meters at about half the real load (the CV²-weighted loss pulls unknown magnitudes low; R4 tried the fix and failed both tests). On dev the network makes the twin's cold forecast worse on every meter type.

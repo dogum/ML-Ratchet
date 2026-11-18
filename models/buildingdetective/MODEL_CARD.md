@@ -78,6 +78,30 @@ exam unit, seed 20261117). The choice above was therefore not exam-blind, though
 With r10 hourly: 0 wins, 22 losses, 6 ties on the 28 real rows (v1.0: 21 and 7). The fresh HEAPO exam was not scored
 here. Error bars, weights and the instrument are v1.0's.
 
+## Fresh exam (17 Nov 2026): HEAPO, 105 Zurich heat-pump homes no version had seen, scored once
+
+HEAPO (Brudermueller et al., 2025, Zenodo 10.5281/zenodo.15056919, CC BY 4.0): whole-home smart-meter electricity
+and site-visit protocols. 130 homes passed QC; 25 dev homes fit the baselines, 105 are exam. Frozen in commit 3d9f949
+before the round-2 decision and scored once after it (`training/exam2_heapo_score.py`, `exam2_heapo_results.json`).
+v1.0 is the release. r10 hourly (kept, not released) is shown for information only. Intervals: 95 % bootstrap over
+homes (2,000 resamples, seed 20261117), model minus the best baseline.
+
+| Row (n homes) | v1.0 | Best baseline | v1.0 minus best | r10 hourly (info) |
+|---|---|---|---|---|
+| Floor area MdAPE, hourly (105) | 35.6 % | dev median area 14.6 % | +20.9 [+12.5, +30.0] loss | 39.9 % |
+| Floor area MdAPE, monthly (105) | 47.7 % | dev median area 14.6 % | +33.1 [+27.1, +36.8] loss | |
+| Floor area MdAPE, annual (105) | 19.7 % | dev median area 14.6 % | +5.0 [−0.3, +9.1] tie | |
+| Year built MAE, hourly (100) | 20.9 yr | dev median 13.9 yr | +7.0 [+4.6, +9.7] loss | 21.4 yr |
+| Year built MAE, monthly (100) | 17.8 yr | dev median 13.9 yr | +3.9 [+2.4, +5.5] loss | |
+| Year built MAE, annual (100) | 14.0 yr | dev median 13.9 yr | +0.2 [−0.3, +0.6] tie | |
+| Single vs multi-family (101; info) | 87 / 96 / 98 % | majority 98 % | no verdict: 2 multi-family homes | 89 % |
+| Heat pump top heating class (105; info) | 10 / 32 / 56 % | none | every home has one | 4 % |
+
+On these homes the Detective is worse than guessing the dev median from hourly or monthly data and level with it from
+annual totals. It reads the homes as smaller than they are (median predicted / true area 0.79, 0.53, 0.81) and rarely
+calls the heating a heat pump. One baseline could not run as specified: kWh/m2 of the true building type, because all
+25 dev homes are single-family (on the 99 single-family exam homes it gives 22.1 %).
+
 ## What it does
 Reads a building from its meters and the weather. Outputs, each with a one-sigma error bar or class probabilities:
 floor area, year built, envelope conductance UA (W/K) and UA per floor area, thermal time constant (h), heating and

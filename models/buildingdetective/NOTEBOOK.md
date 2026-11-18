@@ -521,3 +521,38 @@ no better on real dev is not released, and that choice is made on dev. The v1.1 
   `training/r10.py`, `r10.json`, `runbank.py`, `integrity_v11.json`, the p12 code paths in `simone.py`, `simbank.py`
   and `devtwins.py`. The r10 checkpoints and the calibrated r10 hourly network stay in `work/models/` (git-ignored).
   The next rung's dev floor is v1.0's composite, 0.3081.
+
+## 2026-11-17 — Fresh exam scored once: HEAPO (v1.0; r10 hourly for information)
+
+Scored after the round-2 release decision was committed (r10 kept, not released; v1.0 stays). Nothing was changed
+after a result was seen; nothing is chosen from it. Script `training/exam2_heapo_score.py`, results
+`training/exam2_heapo_results.json`, per-home values in `work/exam2/heapo_scored_*.csv`.
+
+- **Data check.** `exam2_heapo.py build --check` rebuilt all 130 processed homes: the units block matches the frozen
+  split (sha256 `fda36a68…`); the scorer re-checks each home's hash before scoring.
+- **As the spec says.** v1.0 = released `weights/` through `read_hourly`, `read_monthly_from_hourly`, `read_annual`.
+  r10 = the calibrated r10 hourly network (`work/models/r10_rel`), labelled "kept but not released, information only".
+  Truth re-read from the protocols. Baselines fitted on the 25 dev homes. Bootstrap over exam homes, paired, 2,000
+  resamples, seed 20261117.
+- **One baseline could not run as specified.** "Annual elec / dev median kWh per m2 of the TRUE building type": all 25
+  dev homes are single-family, so there is no dev value for the 6 exam homes of other types. On the 99 single-family
+  homes it equals the all-dev baseline (22.1 % there). It was left out of the best-baseline choice.
+- Dev fits: median 56.6 kWh/m2, median area 180 m2, median year 1984, log A = 0.94 + 0.33 log kWh,
+  year = 2156 − 41.4 log kWh, majority type single-family.
+
+| Row (n homes) | v1.0 | Best baseline | v1.0 minus best | r10 hourly (info) |
+|---|---|---|---|---|
+| Floor area MdAPE, hourly (105) | 35.6 % | dev median area 14.6 % | +20.9 [+12.5, +30.0] loss | 39.9 %, +25.2 [+18.2, +30.6] |
+| Floor area MdAPE, monthly (105) | 47.7 % | dev median area 14.6 % | +33.1 [+27.1, +36.8] loss | |
+| Floor area MdAPE, annual (105) | 19.7 % | dev median area 14.6 % | +5.0 [−0.3, +9.1] tie | |
+| Year built MAE, hourly (100) | 20.9 yr | dev median year 13.9 yr | +7.0 [+4.6, +9.7] loss | 21.4 yr, +7.5 [+5.2, +9.9] |
+| Year built MAE, monthly (100) | 17.8 yr | dev median year 13.9 yr | +3.9 [+2.4, +5.5] loss | |
+| Year built MAE, annual (100) | 14.0 yr | dev median year 13.9 yr | +0.2 [−0.3, +0.6] tie | |
+| Single vs multi-family, info (101) | 87 / 96 / 98 % (h / m / a) | majority 98 % | no verdict (2 multi-family homes) | 89 % |
+| Heat pump as top heating class, info (105) | 10 / 32 / 56 % (h / m / a) | none | median P(heat pump) 0.01 / 0.19 / 0.33 | 4 %, median P 0.001 |
+
+- **What it says.** On Swiss single-family heat-pump homes the Detective does worse than guessing the dev median area
+  and year from hourly or monthly input, and ties it from annual totals. It under-reads area (median predicted / true
+  0.79 hourly, 0.53 monthly, 0.81 annual). Its heating-type output misses the one thing every home has: from hourly
+  data it puts heat pump on top for 10 % of homes. r10 hourly is worse than v1.0 on area and year and on the heat-pump
+  share, which agrees with the dev reason it was not released.

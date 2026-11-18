@@ -579,3 +579,40 @@ added. The instrument exporter adds each day's reference days (examples/referenc
 the previous 7 days); 9 of 12 days have some. `net.ts` ports `context()`; the UI has an "Earlier days" switch
 (off = v1.0). Parity: 117 cases including single-day variants, worst relative difference 1.3e-6. The lab page
 (`lab/index.html`) stays v1.0.
+
+## 2026-11-17 — Fresh exam scored once: Nehasil (v1.0 and v1.1)
+
+Scored after every round-2 release decision was committed (v1.1 released). Nothing was changed after a result was
+seen; nothing is chosen from it. Script `training/exam2_nehasil_score.py`, results `training/exam2_nehasil_results.json`,
+per-day scores in `work/exam2/nehasil_scored_days.csv`.
+
+- **Data check.** `exam2_nehasil.py build --check` rebuilt the processed AHU files from the raw downloads: the units
+  block matches the frozen split (sha256 `b84c05f5…`), and the scorer re-checks each AHU's hash before scoring. 4 AHUs,
+  513 days (54 fault, 459 normal), 34 days with a FaultFinder class.
+- **As the spec says.** v1.0 = the reader and weights from git dfafdcf (T = 4.3), single day. v1.1 = the released
+  reader and weights (T = 4.2), with reference days: the same AHU's processed days with an earlier date, at most 7 days
+  before, the most recent 3, by date only; no label read. 509 of 513 days had one (492 had three). The reference pool
+  is the processed file, so days that failed QC (mostly fan off all day) are never references. APAR: `baselines.py`
+  `run_score` at 300 s, fault if score > 0.2322. Bootstrap over the 4 AHUs, 2,000 resamples, seed 20261117.
+- **APAR never fired.** Its score was 0 on all 513 days: only R23 (heating and cooling valves both > 0.1) can fire on
+  these channels, and it never held for 15 minutes. So APAR equals the majority guess here (AUC 0.50, balanced accuracy
+  0.50, 0 % false alarms).
+
+| Row (n) | v1.0 | v1.1 | Best baseline | v1.0 minus best | v1.1 minus best |
+|---|---|---|---|---|---|
+| Detection AUC (513 days) | 0.60 | 0.59 | APAR 0.50 | +0.10 [−0.02, +0.25] tie | +0.09 [−0.03, +0.24] tie |
+| Balanced accuracy at P = 0.5 (513) | 0.62 | 0.59 | APAR / majority 0.50 | +0.12 [+0.03, +0.21] win | +0.09 [+0.00, +0.17] win |
+| False alarms at P = 0.5 (459 normal days) | 46 % | 57 % | APAR / majority 0 % | +46 [+26, +68] loss | +57 [+41, +75] loss |
+| Diagnosis top-1 (34 days) | 21 % | 18 % | chance 5.6 % | +15 [+10, +19] win | +12 [+6, +18] win |
+
+- **What it says.** On new real AHUs of a type the training bank does not have (100 % outdoor air, heat recovery,
+  no T_oa, T_ma or supply setpoint), FaultFinder ranks fault days only a little better than chance and flags about half
+  of the normal days. The balanced-accuracy "win" is a win over a rule set that cannot fire on these channels; it
+  comes with a 46-57 % false-alarm rate. Per AHU, AUC runs from 0.45 (AHU18) to 0.80-0.82 (AHU24). With 4 AHUs the
+  intervals are wide.
+- **v1.0 against v1.1.** v1.1 is not better here: AUC −0.005, balanced accuracy −0.04, false alarms +11 points, top-1
+  −3 points. The reference rows raise P on real days, as the seen exam showed (the offset noted in the v1.1 entry).
+  The median change in log-odds from v1.0 to v1.1 is 0.28. No interval was computed on v1.1 minus v1.0 (the spec
+  does not define one).
+- Detection by fault class (v1.1 at P = 0.5): cooling valve 4 of 4, supply-air sensor 8 of 8, heating valve 11 of 12,
+  return-air sensor 5 of 6, OA damper 2 of 4, "other" 7 of 14.

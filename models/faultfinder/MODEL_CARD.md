@@ -283,6 +283,27 @@ interval rule as the integrity pass.
 Cause: on real days with a reference the new rows add a near-constant +0.1 to +0.7 to the detection log-odds (ERS
 healthy days +0.71 on average, faulty +0.45). That is a sim-to-real offset the simulated training could not see.
 
+## Fresh exam (17 Nov 2026): Nehasil, 4 real AHUs no version had seen, scored once
+
+Nehasil et al., CTU Prague (Mendeley Data 10.17632/jkw85sm4v4.1, CC BY 4.0): 4 AHUs, 1 Mar - 31 Aug 2019, 513
+gradable days (54 with an induced fault, 459 normal). Frozen in commit 3d9f949 before any round-2 decision and scored
+once after all of them, for v1.0 and v1.1 (`training/exam2_nehasil_score.py`, `exam2_nehasil_results.json`). These are
+100 % outdoor-air units with heat recovery: no T_oa, T_ma, supply setpoint or zone point, so those inputs are masked.
+v1.1 gets the same AHU's previous 1-3 days (within 7 days, by date; labels not read) as references. Intervals: 95 %
+bootstrap over the 4 AHUs (2,000 resamples, seed 20261117), model minus the best baseline.
+
+| Row (n) | v1.0 | v1.1 | Best baseline | v1.0 minus best | v1.1 minus best |
+|---|---|---|---|---|---|
+| Detection AUC (513 days) | 0.60 | 0.59 | APAR 0.50 | +0.10 [−0.02, +0.25] tie | +0.09 [−0.03, +0.24] tie |
+| Balanced accuracy at P = 0.5 | 0.62 | 0.59 | APAR / majority 0.50 | +0.12 [+0.03, +0.21] win | +0.09 [+0.00, +0.17] win |
+| False alarms at P = 0.5 (459 normal days) | 46 % | 57 % | APAR / majority 0 % | +46 [+26, +68] loss | +57 [+41, +75] loss |
+| Diagnosis top-1 (34 days) | 21 % | 18 % | chance 5.6 % | +15 [+10, +19] win | +12 [+6, +18] win |
+
+The APAR rules never fired (only R23 can on these channels), so the balanced-accuracy win is over a rule set that
+says "no fault" every day, and it costs a false alarm on about half of the normal days. Detection is near chance on
+three AHUs and good on one (AUC 0.80 on AHU24). v1.1 is not better than v1.0 here: its reference rows raise P on
+real days, as on the seen exam.
+
 ## Limits
 1. Diagnosis on real data is about as good as guessing the commonest fault; use the top 3 as a checklist.
 2. 33 % false alarms on healthy AHU days at P = 0.5 (rules: 2 %); v1.1 with reference days 56 % (seen exam). On ranking (AUC) and balanced accuracy it is not
