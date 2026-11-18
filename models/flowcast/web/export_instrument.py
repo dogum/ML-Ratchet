@@ -130,6 +130,12 @@ def main():
         if scores is not None:
             s = scores[(scores.basin == e['id']) & (scores.period == 'val')].set_index('method').nse
             decade = {kk: round(float(v), 3) for kk, v in s.items()}
+        rescore = MODEL / 'training/results/rescore_main_2026-11-18.json'   # the released model, re-scored per basin
+        if rescore.exists():
+            rs = json.loads(rescore.read_text(encoding='utf-8'))
+            row = {r[0]: r for r in rs['rows']}.get(e['id'])
+            if row is not None:
+                decade['flowcast'] = round(float(row[rs['columns'].index('nse')]), 3)
         info.append({'id': e['id'], 'name': e['name'], 'stratum': STRATUM.get(e['id'], ''), 'attrs': e['attrs'],
                      'start': e['start'], 'end': e['end'], 'forcing_start': str(F.index[0].date()),
                      'n_target': len(idx), 'lat': sp.get('lat'), 'lon': sp.get('lon'),

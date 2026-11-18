@@ -341,7 +341,7 @@ export function show(ctx: InstrumentContext, wp: Pack<WeightsMeta>, np: Pack<Wei
     pHint.textContent = `ERA5-Land under-catches mountain and Pacific Northwest rain. FlowCast's simulator assumed the true rain here is ERA5 × ${m.toFixed(2)} (p1 prior, scatter ×/÷1.16); the network still reads ERA5.`;
     const d = b.info.decade_nse;
     ctxLine.textContent = d && d.nn_dev !== undefined
-      ? `Exam decade WY1990–99 at this gauge (NSE): regionalisation U-dev ${f2(d.nn_dev)}, GR4J calibrated on the gauge ${f2(d.gr4j)}, NWM v3.0 ${f2(d.nwm)}, persistence ${f2(d.persist1)}. FlowCast's own per-basin decade score was not shipped; its median over 619 exam basins is 0.34 (U-dev 0.37).`
+      ? `Exam decade WY1990–99 at this gauge (NSE): regionalisation U-dev ${f2(d.nn_dev)}, GR4J calibrated on the gauge ${f2(d.gr4j)}, NWM v3.0 ${f2(d.nwm)}, persistence ${f2(d.persist1)}. ${d.flowcast !== undefined ? `FlowCast (released, re-scored 18 Nov 2026) ${f2(d.flowcast)}` : 'FlowCast: not scored'}; medians over 619 exam basins FlowCast 0.34, U-dev 0.37.`
       : '';
     note.textContent = noteText(mod);
     leadS.set(lead);

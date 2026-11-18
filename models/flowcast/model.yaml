@@ -99,12 +99,14 @@ exam:
   summary: >-
     Every exam basin, ungauged: FlowCast never reads the basin's flow. Medians over basins of daily NSE, KGE and
     flow-duration biases (training/results/exam_r1b_exam_cal.json), against WaterData's baselines on the same basins
-    and days. Per-basin FlowCast scores were not shipped, so a paired bootstrap of the medians is not possible yet;
-    where the shipped file gives the share of basins on which FlowCast beats a baseline, the row gives that share
-    with its exact (Clopper-Pearson) 95 % binomial interval, and an interval wholly below 0.5 is a loss. Gauged GR4J
-    and NWM read information an ungauged model does not have; they are listed with persistence on their own rows.
-    Nowcast rows (gauged protocol) come from results/nowcast_summary.json. All forcing is ERA5-Land: see the
-    disclaimer.
+    and days. On 18 Nov 2026 the released weights were re-scored on the main exam (WY1990-99, 619 basins; seen: the
+    exam was already open) and reproduced every claimed median; main-exam rows now carry a paired bootstrap interval
+    on the difference in medians against each baseline (10,000 resamples over basins, seed 20261118;
+    training/results/rescore_main_summary_2026-11-18.json, per-basin scores in rescore_main_2026-11-18.json), win or
+    loss only if it excludes 0. The recent exam (WY2016-23) and the instantaneous flood peaks need NWIS data that was
+    not fetched, so those rows keep the exact (Clopper-Pearson) binomial interval on the shipped win fractions, or
+    none. Gauged GR4J and NWM read information an ungauged model does not have; they are listed with persistence on
+    their own rows. All forcing is ERA5-Land: see the disclaimer.
   results:
     - metric: "Main exam WY1990-99 (619 basins), ungauged, median daily NSE"
       better: higher
@@ -114,7 +116,7 @@ exam:
         - { name: "NN regionalisation, dev donors (U-dev)", kind: classical, value: 0.372 }
         - { name: "Climatology (day-of-year mean)", kind: dumb, value: 0.065 }
       verdict: loss
-      note: "FlowCast's NSE is higher at 211 of 619 basins against U-dev (34.1 %, 95 % CI 30.4-38.0 %, exact binomial) and 202 of 619 against U-k12 (32.6 %, 28.9-36.5 %): loss. Against climatology 499 of 619 (80.6 %, 77.3-83.7 %). NSE < 0 at 14.2 % of basins (U-dev 14.4 %, U-k12 14.1 %). The handoff's 0.341 / 0.372 / 0.385 reproduce."
+      note: "Seen reproduction re-score (18 Nov 2026, training/results/rescore_main_summary_2026-11-18.json): the released weights reproduce the claimed median (0.3412 vs 0.3412; all 619 basins of splits.json camels_us exam). Difference in medians, paired bootstrap over basins of the difference in medians, 10,000 resamples, seed 20261118: vs U-dev −0.031 (95 % CI −0.056 to −0.014), vs U-k12 −0.044 (−0.067 to −0.028): loss; vs climatology +0.276 (+0.251 to +0.294). Cross-check (exact binomial on the share of basins where FlowCast's NSE is higher): U-dev 211/619 = 34.1 % (30.4-38.0 %), U-k12 32.6 % (28.9-36.5 %), climatology 80.6 % (77.3-83.7 %). NSE < 0 at 14.2 % of basins (U-dev 14.4 %, U-k12 14.1 %)."
     - metric: "Main exam WY1990-99, against gauged and operational references, median daily NSE"
       better: higher
       model: 0.341
@@ -123,7 +125,7 @@ exam:
         - { name: "Persistence, 1 day (reads yesterday's observed flow)", kind: dumb, value: 0.475 }
         - { name: "GR4J + snow calibrated per basin on its own gauge", kind: classical, value: 0.473 }
       verdict: loss
-      note: "Different protocols, listed as accepted losses. FlowCast is better at 128 of 600 basins against NWM (21.3 %, 95 % CI 18.1-24.8 %), 121 of 619 against GR4J (19.5 %, 16.5-22.9 %) and 275 of 619 against persistence (44.4 %, 40.5-48.4 %); exact binomial intervals, all wholly below 0.5. On the 600 NWM basins FlowCast's median is 0.345."
+      note: "Different protocols, listed as accepted losses. Seen reproduction re-score (18 Nov 2026, training/results/rescore_main_summary_2026-11-18.json): the released weights reproduce the claimed median. Difference in medians on the basins both have, paired bootstrap over basins of the difference in medians, 10,000 resamples, seed 20261118: vs NWM −0.205 (−0.235 to −0.182; 600 basins, FlowCast 0.345 there), vs persistence −0.134 (−0.182 to −0.087), vs GR4J −0.132 (−0.157 to −0.109). Cross-check (exact binomial, share of basins better): NWM 21.3 % (18.1-24.8 %), GR4J 19.5 % (16.5-22.9 %), persistence 44.4 % (40.5-48.4 %)."
     - metric: "Recent exam WY2016-23 (603 basins), ungauged, median daily NSE"
       better: higher
       model: 0.378
@@ -132,7 +134,7 @@ exam:
         - { name: "NN regionalisation, dev donors (U-dev)", kind: classical, value: 0.433 }
         - { name: "Climatology", kind: dumb, value: 0.053 }
       verdict: loss
-      note: "Better than U-dev at 205 of 603 basins (34.0 %, 95 % CI 30.2-37.9 %) and than U-k12 at 206 (34.2 %, 30.4-38.1 %), exact binomial: loss. Against climatology 498 of 603 (82.6 %, 79.3-85.5 %). NSE < 0 at 12.3 % (U-dev 11.4 %)."
+      note: "Median only: the recent exam needs NWIS daily flow, which was not fetched for the 18 Nov re-score, so it has no paired interval. Better than U-dev at 205 of 603 basins (34.0 %, 95 % CI 30.2-37.9 %) and than U-k12 at 206 (34.2 %, 30.4-38.1 %), exact binomial: loss. Against climatology 498 of 603 (82.6 %, 79.3-85.5 %). NSE < 0 at 12.3 % (U-dev 11.4 %)."
     - metric: "Recent exam WY2016-23, against gauged and operational references, median daily NSE"
       better: higher
       model: 0.378
@@ -141,7 +143,7 @@ exam:
         - { name: "GR4J + snow calibrated per basin", kind: classical, value: 0.517 }
         - { name: "Persistence, 1 day", kind: dumb, value: 0.480 }
       verdict: loss
-      note: "Different protocols, listed as accepted losses. Better than NWM at 93 of 600 basins (15.5 %, 95 % CI 12.7-18.6 %) and GR4J at 121 of 603 (20.1 %, 16.9-23.5 %), both losses; against persistence 289 of 603 (47.9 %, 43.9-52.0 %), a tie on that count although the median is lower."
+      note: "Different protocols, listed as accepted losses; median only (NWIS not fetched for the re-score). Better than NWM at 93 of 600 basins (15.5 %, 95 % CI 12.7-18.6 %) and GR4J at 121 of 603 (20.1 %, 16.9-23.5 %), both losses; against persistence 289 of 603 (47.9 %, 43.9-52.0 %), a tie on that count although the median is lower."
     - metric: "Main exam, median KGE"
       better: higher
       model: 0.367
@@ -150,7 +152,7 @@ exam:
         - { name: "U-dev", kind: classical, value: 0.433 }
         - { name: "Climatology", kind: dumb, value: -0.054 }
       verdict: loss
-      note: "No interval: per-unit scores not shipped; needs the data rebuild (`mlratchet data water`). Verdict from the medians: the gap to U-dev (0.07) and U-k12 (0.10) is large and in the same direction as the paired NSE count. Gauged GR4J 0.602, NWM 0.596, persistence 0.738. Recent exam: 0.397 against U-dev 0.469, U-k12 0.469, GR4J 0.604, NWM 0.802."
+      note: "Seen reproduction re-score (18 Nov 2026, training/results/rescore_main_summary_2026-11-18.json): the released weights reproduce the claimed median (0.3666). Difference in medians, paired bootstrap over basins of the difference in medians, 10,000 resamples, seed 20261118: vs U-dev −0.067 (−0.087 to −0.039), vs U-k12 −0.095 (−0.118 to −0.069): loss. Gauged GR4J 0.602 (−0.235, −0.259 to −0.204), NWM 0.596, persistence 0.738. Recent exam (median only): 0.397 against U-dev 0.469, U-k12 0.469, GR4J 0.604, NWM 0.802."
     - metric: "Main exam, high-flow volume bias FHV (top 2 % of flows), median"
       better: closer
       model: -30.9
@@ -160,7 +162,7 @@ exam:
         - { name: "U-dev", kind: classical, value: -27.3 }
         - { name: "Climatology", kind: dumb, value: -80.7 }
       verdict: loss
-      note: "No interval: per-unit scores not shipped; needs the data rebuild (`mlratchet data water`). 10 points further from 0 than U-k12 (a loss by the median); against U-dev alone (4 points) it would be a tie. GR4J −18.0 %, NWM −13.0 %. Recent: −32.9 % against U-dev −29.1 %, U-k12 −24.7 %. Low-flow bias FLV +59 % against U-dev +34 % (recent +59 % vs +36 %)."
+      note: "Seen reproduction re-score (18 Nov 2026, training/results/rescore_main_summary_2026-11-18.json): the released weights reproduce the claimed median (−30.9 %). Interval on the median ABSOLUTE FHV (closer to 0 is better), paired bootstrap over basins of the difference in medians, 10,000 resamples, seed 20261118: FlowCast 39.1 % against U-dev 34.3 % (+4.8 points, +2.9 to +7.8) and U-k12 31.3 % (+7.7, +5.6 to +11.6): loss against both (the release-time note called U-dev alone a tie from the signed medians). GR4J −18.0 %, NWM −13.0 %. Recent (median only): −32.9 % against U-dev −29.1 %, U-k12 −24.7 %. Low-flow bias FLV +59 % against U-dev +34 % (recent +59 % vs +36 %)."
     - metric: "Main exam, annual daily peaks, median absolute error"
       better: lower
       model: 52.2
@@ -170,7 +172,7 @@ exam:
         - { name: "U-dev", kind: classical, value: 47.3 }
         - { name: "Climatology", kind: dumb, value: 84.5 }
       verdict: loss
-      note: "No interval: per-unit scores not shipped; needs the data rebuild (`mlratchet data water`). Gap 5-7 points against both regionalisations. GR4J 38.0 %, NWM 37.4 %. Recent: 52.7 % against U-dev 47.7 %, U-k12 45.8 %. Peak timing (median days off): 0.85 against 0.82 for both U variants, a tie."
+      note: "Seen reproduction re-score (18 Nov 2026, training/results/rescore_main_summary_2026-11-18.json): the released weights reproduce the claimed median (52.2 %). Difference in medians, paired bootstrap over basins of the difference in medians, 10,000 resamples, seed 20261118: vs U-dev +4.9 points (+2.7 to +6.9), vs U-k12 +6.7 (+4.4 to +9.2): loss. GR4J 38.0 %, NWM 37.4 %. Peak timing (median days off): 0.85 against 0.82 for both U variants, +0.03 (−0.03 to +0.06 vs U-dev; 0.00 to +0.06 vs U-k12): tie. Recent (median only): 52.7 % against U-dev 47.7 %, U-k12 45.8 %."
     - metric: "Flood peaks (USGS annual instantaneous; annual max daily × 1.38), main exam, median absolute error"
       better: lower
       model: 59.8
@@ -180,7 +182,7 @@ exam:
         - { name: "NWM v3.0 daily × 1.38", kind: published, value: 42.4 }
         - { name: "GR4J calibrated × 1.38", kind: classical, value: 46.5 }
       verdict: loss
-      note: "No interval: per-unit scores not shipped; needs the data rebuild (`mlratchet data water`). 6,048 peaks at 607 basins. Median bias −46 % (the mean is smooth); FlowCast's 95 % quantile as the peak estimate: 63.9 % error, +31 % bias. No regionalisation baseline was scored on instantaneous peaks. Recent (4,513 peaks, 580 basins): 59.7 %, bias −49 %, against own-record 43.5 %, GR4J 47.8 %, NWM daily 34.1 % and NWM hourly 30.6 % (bias −2 %). The 1.38 ratio was measured on dev (447 samples)."
+      note: "Not re-scored on 18 Nov: the NWIS annual peak file was not fetched, so this row stays as shipped with no interval (needs `mlratchet data water` with NWIS). 6,048 peaks at 607 basins. Median bias −46 % (the mean is smooth); FlowCast's 95 % quantile as the peak estimate: 63.9 % error, +31 % bias. No regionalisation baseline was scored on instantaneous peaks. Recent (4,513 peaks, 580 basins): 59.7 %, bias −49 %, against own-record 43.5 %, GR4J 47.8 %, NWM daily 34.1 % and NWM hourly 30.6 % (bias −2 %). The 1.38 ratio was measured on dev (447 samples)."
     - metric: "CAMELS-531 subset, main exam, median daily NSE"
       better: higher
       model: 0.357
@@ -189,14 +191,14 @@ exam:
         - { name: "U-k12", kind: classical, value: 0.401 }
         - { name: "Climatology", kind: dumb, value: 0.062 }
       verdict: loss
-      note: "The subset most published CAMELS studies use. No interval for the subset (no paired count shipped for it); the 0.045 gap matches the full set's paired count (34 % of basins). GR4J 0.478, NWM 0.566. Recent: 0.393 against U-dev 0.448, U-k12 0.475."
+      note: "The subset most published CAMELS studies use; 487 of its basins are exam basins. Seen reproduction re-score (18 Nov 2026, training/results/rescore_main_summary_2026-11-18.json): the released weights reproduce the claimed median (0.3571). Difference in medians, paired bootstrap over basins of the difference in medians, 10,000 resamples, seed 20261118: vs U-dev −0.045 (−0.063 to −0.017), vs U-k12 −0.044 (−0.068 to −0.023): loss. GR4J 0.478, NWM 0.566. Recent (median only): 0.393 against U-dev 0.448, U-k12 0.475."
     - metric: "Error bars: share of exam days inside the 90 % band (main, median basin)"
       better: closer
       model: 97.3
       unit: "%"
       baselines: []
       verdict: info
-      note: "Nominal 90 %. Averaged over basins 95.0 %; the 50 % band holds 55.5 %. Recent: 97.5 %, 95.1 %, 55.8 %. Median band width (90 %) is 2.9 × the mean flow: the bands are too wide in most basins and too narrow in some dry ones. Widen-only factors (×1.00, ×1.08 fitted on dev) cannot narrow them."
+      note: "Nominal 90 %. Reproduced on 18 Nov (97.3 %). Averaged over basins 95.0 %; the 50 % band holds 55.5 %. Recent: 97.5 %, 95.1 %, 55.8 %. Median band width (90 %) is 2.9 × the mean flow: the bands are too wide in most basins and too narrow in some dry ones. Widen-only factors (×1.00, ×1.08 fitted on dev) cannot narrow them."
     - metric: "Snowy basins (snow share > 0.3, 118), main exam, median NSE"
       better: higher
       model: 0.40
@@ -205,7 +207,7 @@ exam:
         - { name: "GR4J calibrated (gauged)", kind: classical, value: 0.67 }
         - { name: "NWM v3.0", kind: published, value: 0.57 }
       verdict: info
-      note: "Breakdown, not graded (no paired count per type). The largest gap: −0.16 against U-dev. Recent (115): 0.41 against U-dev 0.56, NWM 0.70, GR4J 0.70. Only 10 of the 52 dev basins are snowy, and no snow rung was tried."
+      note: "Breakdown, not graded. Re-scored 18 Nov, paired vs U-dev (paired bootstrap over basins of the difference in medians, 10,000 resamples, seed 20261118): −0.154 (−0.210 to −0.067), the largest gap. Recent (115, median only): 0.41 against U-dev 0.56, NWM 0.70, GR4J 0.70. Only 10 of the 52 dev basins are snowy, and no snow rung was tried."
     - metric: "Arid basins (aridity > 1, 174), main exam, median NSE"
       better: higher
       model: 0.21
@@ -214,7 +216,7 @@ exam:
         - { name: "GR4J calibrated (gauged)", kind: classical, value: 0.30 }
         - { name: "NWM v3.0", kind: published, value: 0.32 }
       verdict: info
-      note: "Breakdown, not graded. Level with U-dev. Recent (171): 0.19 against U-dev 0.20, NWM 0.48, GR4J 0.29."
+      note: "Breakdown, not graded. Re-scored 18 Nov, paired vs U-dev: +0.009 (−0.040 to +0.033), level. Recent (171, median only): 0.19 against U-dev 0.20, NWM 0.48, GR4J 0.29."
     - metric: "Humid basins (aridity < 0.6, 128), main exam, median NSE"
       better: higher
       model: 0.49
@@ -223,7 +225,7 @@ exam:
         - { name: "GR4J calibrated (gauged)", kind: classical, value: 0.66 }
         - { name: "NWM v3.0", kind: published, value: 0.64 }
       verdict: info
-      note: "Breakdown, not graded. −0.12 against U-dev. Recent (127): 0.49 against U-dev 0.61, NWM 0.72, GR4J 0.69."
+      note: "Breakdown, not graded. Re-scored 18 Nov, paired vs U-dev: −0.124 (−0.166 to −0.086). Recent (127, median only): 0.49 against U-dev 0.61, NWM 0.72, GR4J 0.69."
     - metric: "Regulated basins (regulation mid/high, 37), main exam, median NSE"
       better: higher
       model: 0.30
@@ -232,7 +234,7 @@ exam:
         - { name: "GR4J calibrated (gauged)", kind: classical, value: 0.56 }
         - { name: "NWM v3.0", kind: published, value: 0.46 }
       verdict: info
-      note: "Breakdown, not graded; n = 37 is small. +0.05 against U-dev on the main exam, but −0.08 on the recent exam (35 basins: 0.38 against U-dev 0.46, NWM 0.70, GR4J 0.59)."
+      note: "Breakdown, not graded; n = 37 is small. Re-scored 18 Nov, paired vs U-dev: +0.054 (−0.127 to +0.130), no evidence either way; −0.08 on the recent exam (35 basins, median only: 0.38 against U-dev 0.46, NWM 0.70, GR4J 0.59)."
     - metric: "Large basins (> 2,000 km², 48), main exam, median NSE"
       better: higher
       model: 0.23
@@ -241,7 +243,7 @@ exam:
         - { name: "GR4J calibrated (gauged)", kind: classical, value: 0.38 }
         - { name: "NWM v3.0", kind: published, value: 0.42 }
       verdict: info
-      note: "Breakdown, not graded; n = 48. Recent (48): 0.34 against U-dev 0.32, NWM 0.52, GR4J 0.44."
+      note: "Breakdown, not graded; n = 48. Re-scored 18 Nov, paired vs U-dev: +0.006 (−0.113 to +0.121). Recent (48, median only): 0.34 against U-dev 0.32, NWM 0.52, GR4J 0.44."
     - metric: "Nowcast (gauged), lead 1 day, main exam (619), median NSE"
       better: higher
       model: 0.569
@@ -250,7 +252,7 @@ exam:
         - { name: "Persistence, 1 day", kind: dumb, value: 0.475 }
         - { name: "GR4J calibrated per basin (gauged)", kind: classical, value: 0.473 }
       verdict: tie
-      note: "Beats persistence at 405 of 619 basins (65.4 %, 95 % CI 61.5-69.2 %, exact binomial): a win on that count. No per-basin nowcast scores were shipped, so there is no interval against NWM or GR4J: +0.019 over NWM is too small to call, +0.096 over GR4J is large. Verdict tie (NWM). KGE 0.635 against persistence 0.738 (persistence copies the variance). Dev WY2001-14: 0.633 against persistence 0.549. Hindcast: the target days' weather is the observed one."
+      note: "Seen reproduction re-score (18 Nov 2026, training/results/rescore_main_summary_2026-11-18.json): the released weights reproduce the claimed median (0.5686; persistence 0.4754). Difference in medians, paired bootstrap over basins of the difference in medians, 10,000 resamples, seed 20261118: vs persistence +0.093 (+0.060 to +0.133), vs GR4J +0.095 (+0.073 to +0.122), vs NWM +0.025 (−0.011 to +0.058; 600 basins, nowcast 0.575 there): tie (NWM). Cross-check: beats persistence at 405 of 619 basins (65.4 %, 61.5-69.2 %, exact binomial). KGE 0.635 against persistence 0.738 (persistence copies the variance). Dev WY2001-14: 0.633 against persistence 0.549. Hindcast: the target days' weather is the observed one."
     - metric: "Nowcast (gauged), lead 1 day, recent exam (603), median NSE"
       better: higher
       model: 0.591
@@ -259,7 +261,7 @@ exam:
         - { name: "GR4J calibrated per basin (gauged)", kind: classical, value: 0.517 }
         - { name: "Persistence, 1 day", kind: dumb, value: 0.480 }
       verdict: loss
-      note: "Beats persistence at 400 of 603 basins (66.3 %, 95 % CI 62.4-70.1 %): a win against persistence. Loses to NWM by 0.096 (no interval: per-basin nowcast scores not shipped; the gap is large). KGE 0.652 against persistence 0.740."
+      note: "Median only (NWIS not fetched for the re-score). Beats persistence at 400 of 603 basins (66.3 %, 95 % CI 62.4-70.1 %, exact binomial). Loses to NWM by 0.096 (no interval; the gap is large). KGE 0.652 against persistence 0.740."
     - metric: "Nowcast (gauged), lead 3 days, main exam, median NSE"
       better: higher
       model: 0.474
@@ -268,7 +270,7 @@ exam:
         - { name: "GR4J calibrated per basin (gauged)", kind: classical, value: 0.473 }
         - { name: "Persistence, 3 days", kind: dumb, value: -0.190 }
       verdict: loss
-      note: "Beats persistence at 525 of 619 basins (84.8 %, 95 % CI 81.7-87.6 %). Level with GR4J (+0.001), 0.076 below NWM (no interval; large gap). KGE 0.576 against persistence 0.405. Dev: 0.567 against persistence −0.139. Recent: 0.511 against persistence −0.210 (beats it at 85.2 %, 82.2-88.0 %), NWM 0.687, GR4J 0.517."
+      note: "Seen reproduction re-score (18 Nov 2026, training/results/rescore_main_summary_2026-11-18.json): the released weights reproduce the claimed median (0.4743). Difference in medians, paired bootstrap over basins of the difference in medians, 10,000 resamples, seed 20261118: vs persistence +0.665 (+0.630 to +0.705), vs GR4J +0.001 (−0.016 to +0.027, tie), vs NWM −0.072 (−0.100 to −0.034, loss). Cross-check: beats persistence at 84.8 % of basins (81.7-87.6 %). KGE 0.576 against persistence 0.405. Dev: 0.567 against persistence −0.139. Recent (median only): 0.511 against persistence −0.210 (beats it at 85.2 %, 82.2-88.0 %), NWM 0.687, GR4J 0.517."
     - metric: "Nowcast (gauged), lead 7 days, main exam, median NSE"
       better: higher
       model: 0.426
@@ -277,14 +279,14 @@ exam:
         - { name: "GR4J calibrated per basin (gauged)", kind: classical, value: 0.473 }
         - { name: "Persistence, 7 days", kind: dumb, value: -0.465 }
       verdict: loss
-      note: "Beats persistence at 557 of 619 basins (90.0 %, 95 % CI 87.3-92.2 %). Below GR4J by 0.047 and NWM by 0.124 (no interval). KGE 0.548 against persistence 0.265. Dev: 0.520 against −0.515. Recent: 0.466 against persistence −0.458 (beats it at 88.7 %, 85.9-91.1 %), NWM 0.687, GR4J 0.517."
+      note: "Seen reproduction re-score (18 Nov 2026, training/results/rescore_main_summary_2026-11-18.json): the released weights reproduce the claimed median (0.4264). Difference in medians, paired bootstrap over basins of the difference in medians, 10,000 resamples, seed 20261118: vs persistence +0.892 (+0.859 to +0.923), vs GR4J −0.047 (−0.064 to −0.025), vs NWM −0.121 (−0.147 to −0.090): loss. Cross-check: beats persistence at 90.0 % of basins (87.3-92.2 %). KGE 0.548 against persistence 0.265. Dev: 0.520 against −0.515. Recent (median only): 0.466 against persistence −0.458 (beats it at 88.7 %, 85.9-91.1 %), NWM 0.687, GR4J 0.517."
 
 wins:
   - "Arid basins: level with regionalisation (median NSE 0.21 against 0.20 for U-dev, 174 basins), where flow is a small residual of rain minus evaporation; large basins (0.23 vs 0.22, 48; recent 0.34 vs 0.32). Regulated basins lead on the main exam (0.30 vs 0.25, 37) but trail on the recent one (0.38 vs 0.46). Breakdowns, not graded."
   - "The gauged nowcast beats persistence at every lead on both exams: at 65-66 % of basins at 1 day and 85-90 % at 3 and 7 days (exact binomial intervals all above 61 %); median NSE 0.569 / 0.474 / 0.426 against 0.475 / −0.19 / −0.47 (1990s)."
   - "Its 90 % band is not too narrow: it holds 97 % of exam days at the median basin."
 losses:
-  - "It does not beat classical ungauged regionalisation: median NSE 0.341 against 0.372 (U-dev) and 0.385 (U-k12) on WY1990-99, 0.378 against 0.433 and 0.443 on WY2016-23; FlowCast is better at only 34 % of basins (95 % CI 30-38 %). U-dev borrows GR4J parameters calibrated on real dev gauges, information the network gets only through the simulator."
+  - "It does not beat classical ungauged regionalisation: median NSE 0.341 against 0.372 (U-dev) and 0.385 (U-k12) on WY1990-99, 0.378 against 0.433 and 0.443 on WY2016-23; FlowCast is better at only 34 % of basins (95 % CI 30-38 %), and the paired bootstrap of the 1990s median gap to U-dev is −0.031 (95 % CI −0.056 to −0.014). U-dev borrows GR4J parameters calibrated on real dev gauges, information the network gets only through the simulator."
   - "Snowy and humid basins: −0.16 and −0.12 NSE against U-dev (0.40 vs 0.56, 0.49 vs 0.62)."
   - "Flood peaks run 46 % low (median absolute error 60 % against 42-47 % for the gauged and operational baselines): the mean of a parameter-uncertain prediction is smooth. Flashier physics fixed peaks on dev but cost NSE (rungs r2, r4)."
   - "KGE and high- and low-flow volume: worse than both regionalisations (KGE 0.367 vs 0.433 and 0.462; FHV −31 % vs −27 and −21 %; FLV +59 % vs +34 and +37 %)."
@@ -307,7 +309,7 @@ next:
   - "Narrower bands: a calibration that can also narrow (a rule change) or a log-space quantile head."
   - "Re-run every exam with Daymet or NLDAS forcing to separate method skill from ERA5-Land bias; out-of-domain exams on CAMELS-GB, -CL, -BR and -AUS (attributes already in shared/water)."
 help_wanted:
-  - "Per-basin exam scores: the release shipped only medians and win fractions, so the exam rows carry binomial intervals on win counts instead of paired bootstrap intervals on the medians. Rebuilding the real time series (`mlratchet data water`: a 24.8 GB Caravan stream plus about 385k NWM range requests) and re-scoring the released weights would fix that."
+  - "NWIS daily values and annual peaks (`mlratchet data water`) to re-score the recent exam (WY2016-23) and the flood-peak rows with paired intervals; the main exam was re-scored from Caravan on 18 Nov 2026."
   - "Daymet or NLDAS daily forcing for the CAMELS basins in Caravan's format, to separate method skill from ERA5-Land bias."
 
 usage:

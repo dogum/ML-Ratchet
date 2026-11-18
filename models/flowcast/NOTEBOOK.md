@@ -190,3 +190,40 @@ a paired bootstrap of rung differences over the 800 frozen basins from the shipp
 **Instrument.** The TypeScript port reproduces `flowcast.py` on 54 reference cases (3 basins × 13 ungauged what-ifs
 + 5 nowcast cases) to 5.3e-8 relative, using float16 weights. The f16 rounding is the instrument's only change to the
 network: it moves the daily mean by at most 0.04 % of each basin's peak (0.01 mm/d) against the float32 release.
+
+## 18 Nov 2026: reproduction re-score of the main exam (seen)
+
+Approved by the owner after the import. The exam was opened at release, so this is a **seen** reproduction:
+nothing (weights, widening, decisions) was changed because of it.
+
+- **Data.** Caravan CAMELS-US (all 671 basins) rebuilt by `mlratchet data water` into the git-ignored data root
+  `work/water` (`ML_RATCHET_WATER`). `build.py --only verify`: 1,170 of 1,170 shipped files identical; splits.json
+  file sha256 33f88ca0…, field ed8109e5… both OK. NWIS, NWM time series and the NWIS peak file were not fetched.
+- **Code.** `training/src/rescore_main.py` (new): the released `flowcast.py` on `wd.forcing(b, 1988-10-01,
+  1999-10-01)` and `wd.spec(b)`, window 1989-10-01..1999-09-30, Caravan Q, `waterdata.metrics.summary` plus band
+  coverage, ≥ 365 observed days per basin, exactly as `evalreal.py exam 1.0,1.08` (the torch checkpoint is not
+  shipped; numpy == torch to 1.7e-7). The 619 scored basins were asserted equal to `splits.json` camels_us exam.
+  The nowcast weights were scored as `evalnow.py` does (leads 1/3/7, persistence = obs shifted by the lead).
+  `.venv-train` Python, about 6 min on one core. Intermediates in `work/results/`; committed:
+  `training/results/rescore_main_2026-11-18.json` (per basin: NSE, KGE, FHV, FLV, peak error, timing, coverage,
+  nowcast NSE) and `rescore_main_summary_2026-11-18.json` (medians, intervals, verdicts).
+- **Reproduction.** Every claimed main-exam number reproduces: median NSE 0.34117 (claimed 0.34117), KGE 0.3666,
+  FHV −30.94 %, peak error 52.23 %, timing 0.848 d, 90 % / 50 % coverage 97.3 % / 55.5 %, NSE < 0 14.2 %,
+  CAMELS-531 0.3571, the five strata, the win fractions against all six baselines (identical counts) and the nowcast
+  medians, KGE and wins at 1/3/7 days. Largest gap: FLV 59.11915 vs 59.11918 % (4e-7 relative). Nothing failed to
+  reproduce.
+- **Intervals.** Paired bootstrap over basins of median(FlowCast) − median(baseline) on the basins both have,
+  10,000 resamples, numpy `default_rng(20261118)`; win or loss only if the 95 % interval excludes 0. NSE: vs U-dev
+  −0.031 (−0.056 to −0.014), U-k12 −0.044 (−0.067 to −0.028), GR4J −0.132 (−0.157 to −0.109), NWM −0.205 (−0.235 to
+  −0.182, 600 basins), persistence −0.134 (−0.182 to −0.087), climatology +0.276 (+0.251 to +0.294). KGE vs U-dev
+  −0.067 (−0.087 to −0.039), U-k12 −0.095 (−0.118 to −0.069). Median |FHV| 39.1 % vs U-dev 34.3 % (+4.8, +2.9 to
+  +7.8) and U-k12 31.3 % (+7.7, +5.6 to +11.6): the release-time "tie vs U-dev alone" (from signed medians) is a
+  loss. Daily peak error vs U-dev +4.9 (+2.7 to +6.9), U-k12 +6.7 (+4.4 to +9.2). Peak timing: tie. CAMELS-531 (487
+  exam basins) vs U-dev −0.045 (−0.063 to −0.017). Strata vs U-dev: snow −0.154 (−0.210 to −0.067), humid −0.124
+  (−0.166 to −0.086), arid +0.009, regulated +0.054, large +0.006 (all three intervals span 0). Nowcast vs
+  persistence / GR4J / NWM: lead 1 +0.093 (+0.060 to +0.133) / +0.095 (+0.073 to +0.122) / +0.025 (−0.011 to
+  +0.058); lead 3 +0.665 / +0.001 (−0.016 to +0.027) / −0.072 (−0.100 to −0.034); lead 7 +0.892 / −0.047 (−0.064 to
+  −0.025) / −0.121 (−0.147 to −0.090). Every verdict matches the Clopper-Pearson cross-check made on import; only the
+  FHV row's reasoning changed (it was already a loss).
+- **Not re-scored.** The recent exam (WY2016-23, NWIS flow) and the instantaneous flood peaks (NWIS peak file):
+  their rows stay median-only with the binomial intervals on the shipped win fractions.
