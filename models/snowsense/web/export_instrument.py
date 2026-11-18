@@ -36,9 +36,11 @@ STORM_DAYS = 3                       # "the biggest storm": the wettest 3 consec
 GAP_DAYS = 30                        # a 30-day gauge outage
 GAP_MONTHS = [None, 11, 12, 1, 2, 3, 4, 5]
 LAPSE = -6.5                         # deg C per km, WaterSim's default TLAPSE
-DD_DEFAULT = dict(TT=0.0, TTI=2.0, CFMAX=3.5, SFCF=1.0, CFR=0.05, CWH=0.1)
+# The exam's 'default' physics: WaterSim given only latitude and elevation, so its attribute layer sets these (the same
+# at every station), not the parameter table's defaults. Found on the 18 Nov 2026 re-score (NOTEBOOK.md).
+DD_DEFAULT = dict(TT=-0.3283578852535909, TTI=2.0, CFMAX=3.773835750121784, SFCF=1.0539497518004208, CFR=0.05, CWH=0.1)
 EB_DEFAULT = dict(TT=0.5, TTI=2.0, SFCF=1.0, CWH=0.05, ALB_MAX=0.85, ALB_MIN=0.45, ALB_DECAY=12.0, Z0=0.002,
-                  TURB=1.0, GHEAT=0.173, CANOPY=1.0)
+                  TURB=1.0, GHEAT=0.173, CANOPY=0.5352614285189903)
 RECORDED = dict(warm=0.0, pscale=1.0, dz=0.0, lapse=True, drop=False, gap=0)
 VARIANTS = [RECORDED,
             dict(RECORDED, warm=2.0),

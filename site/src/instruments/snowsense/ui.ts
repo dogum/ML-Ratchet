@@ -241,7 +241,7 @@ export function show(ctx: InstrumentContext, weights: Pack<SnowWeights>, station
     if (what.gap) parts.push('a 30-day gauge outage');
     note.textContent = mod
       ? `What-if: ${parts.join('; ')}. The network and both physics routines reran on this weather. The dotted line is the pillow under the weather that really happened, so no truth is scored.`
-      : `On the 621-station exam SnowSense scored median NSE ${exam.nse.toFixed(3)}; the default energy balance ${exam.eb.toFixed(3)}; a degree-day model calibrated on each station's own snow (it reads ten years of SWE) ${exam.dd_cal.toFixed(3)}.`;
+      : `On the 621-station exam SnowSense scored median NSE ${exam.nse.toFixed(3)}: above WaterSim's default energy balance (${exam.eb.toFixed(3)}), level with the same energy balance tuned on the dev stations (0.895, a tie), and below a degree-day model calibrated on each station's own snow (${exam.dd_cal.toFixed(3)}; it reads ten years of SWE).`;
   }
 
   function run(newStation = false) {

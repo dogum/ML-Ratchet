@@ -166,3 +166,47 @@ rebuilt, paired station by station with SnowSense. Expect the energy-balance win
 Upstream candidates for WaterSim (from the build, unchanged): EB turbulent transfer too strong at points (TURB well
 below 1.0), faster albedo ageing, degree-day TT about +1 C at points, and a perennial-snow guard in the generator.
 GHEAT should not be raised on the strength of the "0.32" figure (see above).
+
+## 18 Nov 2026 — reproduction re-score and dev-tuned physics (seen exam)
+
+Owner-approved, after the import. A reproduction, not a rung: nothing in the model changed on the result.
+
+- **Data.** SNOTEL rebuilt into a git-ignored data root (`ML_RATCHET_WATER`). `shared/water/data/build.py --only verify`:
+  1,170 of 1,170 shipped files identical, 880 SNOTEL station files, splits.json file sha256 33f88ca0... OK and field
+  ed8109e5... OK. The scored stations are the shipped exam's 621 (`evalset.station_set('exam')`), all in
+  splits.json's 772 SNOTEL exam stations, none in its 39 dev stations.
+- **SnowSense reproduces exactly.** `training/rescore_exam.py` runs the released numpy model through the shipped exam
+  path (`evaluate.real_score`, with the missing torch checkpoint loader swapped for `snowsense.py`): NSE 0.888433 (shipped
+  0.888433), RMSE 51.678 mm, peak error 17.492 %, peak bias -8.961 %, melt-out 8.33 d (bias -2.8 d), peak date 3 d,
+  coverage 77.7 / 76.3 / 85.6 % (68 %) and 95.6 / 93.3 / 94.6 % (90 %), 9,071 station-years: every shipped number,
+  to the float rounding between torch and numpy (1e-8 in NSE). No SNOTEL revision changed a scored day.
+- **Baselines reproduce exactly.** WaterSim default energy balance 0.853 and degree-day 0.691 (as shipped). WaterData's
+  `run_baselines_snow.py`, re-run from scratch into `work/`, gives the same 621 exam stations and the same climatology
+  and calibrated-degree-day NSE at every station (largest difference 0.0).
+- **Finding: "defaults" are not the table defaults.** `evalset.physics` passes no parameters and the station spec has
+  only latitude and elevation, so WaterSim adds its attribute-transfer layer: energy balance CANOPY 0.535 (table 1.0),
+  degree-day TT -0.33 C, CFMAX 3.77, SFCF 1.054 (table 0, 3.5, 1.0). Identical at every station. The shipped "default"
+  baselines and the calibrated twins all used this layer. The live instrument's "default" lines use the bare table
+  defaults, so they are not quite the exam baselines (fix proposed in the import report; not changed here).
+- **Dev-tuned baselines (frozen before scoring, `training/devtuned_params.json`).** Energy balance: per-parameter
+  medians of the dev stations' own calibrations, as shipped in `twin_r6.json` (TT 1.061, SFCF 1.049, ALB_MIN 0.516,
+  ALB_DECAY 1.397 d, TURB 0.199, GHEAT 0.060). Degree-day: no per-station medians were shipped, so the dev prior's
+  means (`prior_p4.json`; TT 0.993, TTI 0.825, CFMAX 3.574 geometric, SFCF 1.012 geometric). Everything else from the
+  same default/attribute layer as the calibrations. Run once, continuous WY2011-2025 with a one-year spin-up, on the
+  inputs SnowSense reads.
+- **Result.** Dev-tuned energy balance: NSE 0.895, RMSE 49.7 mm, peak error 16.2 %, bias -4.3 %, melt-out 8.6 d.
+  Dev-tuned degree-day: 0.864, 56.3 mm, 18.2 %, -7.5 %, 9.7 d. Paired bootstrap (10,000 resamples over stations,
+  seed 20261118), SnowSense minus dev-tuned EB: NSE -0.007 [-0.018, +0.001] tie; RMSE +2.0 [-0.7, +4.1] mm tie; peak
+  error +1.3 [+0.3, +2.0] points loss; melt-out MAE -0.3 [-0.8, +0.1] d tie; |peak bias| +4.7 [+3.8, +5.7] loss. The
+  tuned EB has the higher NSE at 55 % of stations. SnowSense beats the dev-tuned degree-day on NSE, RMSE and melt-out.
+  It fails less often than the tuned EB (NSE < 0.5 at 8.4 vs 10.5 %, -2.1 [-3.9, -0.3] points) and is much better
+  below 1,500 m (0.787 vs 0.704); the tuned EB is better at 2,200-2,800 m (0.921 vs 0.902).
+- **Verdicts changed in model.yaml.** NSE and RMSE against weather-only physics: win -> tie. Peak error: win -> loss.
+  Melt-out MAE: tie (now with intervals: better than default EB, tie with tuned EB). Gauged-ceiling rows stay losses,
+  now with bootstrap intervals. The Clopper-Pearson win fractions are kept in the notes as a cross-check.
+- **Lesson.** The same as WakeNet and StormNet: the network learned the physics it was trained on, and on real data
+  it does not beat that physics once the physics is tuned on the same dev data. The next rung should anchor on the
+  tuned energy balance or add processes it lacks, and show the gap on dev first.
+- Files: `training/rescore_exam.py`, `training/rescore_summary.py`, `training/devtuned_params.json`,
+  `training/rescore_exam_stations.csv` (per-station NSE, RMSE, peak error and bias, melt-out error and bias, years
+  scored, for SnowSense and every baseline; no time series), `training/rescore_summary.json`. Intermediates in `work/`.

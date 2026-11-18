@@ -106,35 +106,70 @@ vs twin and -9 % vs real, melt-out -2 d vs twin.
 - By elevation: < 1500 m 0.787 / 0.761 / 0.884; 1500-2200 m 0.897 / 0.877 / 0.918; 2200-2800 m 0.902 / 0.857 / 0.936;
   > 2800 m 0.910 / 0.867 / 0.942.
 
-### Graded rows (ML Ratchet import, 18 Nov 2026)
+### Reproduction re-score and dev-tuned physics (18 Nov 2026, seen exam)
 
-Intervals: the shipped files hold no per-station model scores and the SNOTEL series are not on disk, so the only
-intervals are exact binomial (Clopper-Pearson) 95 % intervals on the shipped station win fractions (n = 621). Per
-station, higher NSE and lower RMSE are the same event (same observed days), so those fractions grade both. Other rows
-have no interval ("per-unit scores not shipped; needs the data rebuild, `mlratchet data water`"); their verdicts come
-from the medians only where the gap is large.
+Run on the rebuilt SNOTEL series (`training/rescore_exam.py`, `training/rescore_summary.py`; per-station scores in
+`training/rescore_exam_stations.csv`, summary in `training/rescore_summary.json`). The released numpy weights, scored
+through the shipped exam path, reproduce the shipped exam exactly on the same 621 stations (NSE 0.888, RMSE 51.7 mm,
+peak error 17.5 %, melt-out 8.3 d, coverage 78 / 76 / 86 %). WaterSim's default baselines re-score to the shipped
+medians, and WaterData's climatology and calibrated degree-day, re-run from scratch, match `snow_scores.parquet` at
+every station (largest NSE difference 0).
 
-| Row | SnowSense | Baselines on the row | Interval / method | Verdict |
-|---|---|---|---|---|
-| NSE, weather-only + climatology | 0.888 | EB default 0.853, DD default 0.691, climatology 0.701 | wins at 74.6 % of stations vs EB [70.9, 77.9], 84.2 % vs climatology [81.1, 87.0] | win (over default physics) |
-| NSE, gauged ceiling | 0.888 | DD calibrated per station 0.925 | wins at 33.8 % [30.1, 37.7] | loss |
-| RMSE mm, weather-only + climatology | 51.7 | 57.2, 80.0, 84.6 | same fractions as NSE | win |
-| RMSE mm, gauged ceiling | 51.7 | 41.2 | 33.8 % [30.1, 37.7] | loss |
-| Peak SWE abs err %, weather-only + climatology | 17.5 | 23.7, 28.5, 28.2 | none (medians, gap 6.2 points) | win |
-| Peak SWE abs err %, gauged ceiling | 17.5 | 12.5 | none | loss |
-| Peak SWE bias % (closer to 0) | -9.0 | -20.0, -26.4, clim +2.1, DD cal -3.6 | none | loss |
-| Melt-out MAE d, weather-only + climatology | 8.3 | 9.1, 21.9, 11.4 | none (0.8 d gap to EB) | tie |
-| Melt-out MAE d, gauged ceiling | 8.3 | 6.1 | none | loss |
-| Melt-out bias d (closer to 0) | -2.8 | -4.7, -21.5, clim +3.5, DD cal -0.3 | none | loss |
-| Stations with NSE < 0.5 | 8.4 % | EB 9.5 %, climatology 17.9 %, DD cal 2.3 % | none | loss (tie vs EB) |
-| Peak date error | 3 d | none shipped | | info |
+Two baselines were added: WaterSim's energy balance and degree-day with **dev-tuned** parameters, frozen in
+`training/devtuned_params.json` before scoring and run once, on the same inputs SnowSense reads. Energy balance:
+the medians of the dev stations' own calibrations (`twin_r6.json`): TT 1.06 C, SFCF 1.05, ALB_MIN 0.52,
+ALB_DECAY 1.40 d, TURB 0.199, GHEAT 0.060 MJ/m2/d. Degree-day: the dev prior's means (`prior_p4.json`; per-station
+medians were not shipped): TT 0.99 C, TTI 0.82 C, CFMAX 3.57 mm/C/d, SFCF 1.01. Every other parameter comes from
+WaterSim's default and attribute-transfer layer, as in the calibrations and the default baselines. They are labelled
+"dev-tuned (added on import, seen exam)": the exam had been seen, but nothing in them was chosen on it.
 
-**Open: the fairest weather-only baseline was never run.** The weather-only physics here uses WaterSim's default
-parameters. The energy balance with the dev-calibrated parameter means (TURB 0.17, ALB_DECAY 2.4 d, GHEAT 0.32 MJ/m2/d;
-`training/prior_p4.json`) is fairer. It needs the SNOTEL series, which are not in the repository, so it has not been
-run. On the dev stations the per-station calibrated EB twin scores 0.917 and the default EB 0.837 (`twin_r6.json`), so
-a single dev-tuned parameter set could land near SnowSense. With WakeNet and StormNet such baselines turned wins into
-ties; read the energy-balance win as a win over default physics until it runs.
+| Method | Protocol | NSE | RMSE mm | Peak abs err % | Peak bias % | Melt-out MAE d | Melt-out bias d |
+|---|---|---|---|---|---|---|---|
+| **SnowSense v1.0** | weather only | 0.888 | 51.7 | 17.5 | -9.0 | 8.3 | -2.8 |
+| Energy balance, dev-tuned | weather only | 0.895 | 49.7 | 16.2 | -4.3 | 8.6 | +0.3 |
+| Degree-day, dev-tuned | weather only | 0.864 | 56.3 | 18.2 | -7.5 | 9.7 | -3.7 |
+| Energy balance, WaterSim defaults | weather only | 0.853 | 57.2 | 23.7 | -20.0 | 9.1 | -4.7 |
+| Degree-day, WaterSim defaults | weather only | 0.691 | 80.0 | 28.5 | -26.4 | 21.9 | -21.5 |
+| Climatology (own 2001-2010 SWE) | reads station SWE | 0.701 | 84.6 | 28.2 | +2.1 | 11.4 | +3.5 |
+| Degree-day calibrated per station | reads station SWE | 0.925 | 41.2 | 12.5 | -3.6 | 6.1 | -0.3 |
+
+Intervals: paired bootstrap over the 621 stations, 10,000 resamples, seed 20261118, 95 % percentile interval of
+SnowSense minus the baseline in the median (for bias rows, in |median bias|; negative is better for SnowSense except
+NSE). A baseline is beaten only if the interval excludes zero; a row is a win only if every baseline on it is beaten,
+a loss if any baseline beats SnowSense.
+
+| Row | SnowSense | Baseline median: difference [95 % interval] | Verdict |
+|---|---|---|---|
+| NSE, weather-only + climatology | 0.888 | EB default 0.853: +0.035 [+0.025, +0.047]; DD default 0.691: +0.197 [+0.174, +0.228]; **EB dev-tuned** 0.895: -0.007 [-0.018, +0.001]; DD dev-tuned 0.864: +0.024 [+0.012, +0.037]; climatology 0.701: +0.187 [+0.166, +0.201] | tie |
+| NSE, gauged ceiling | 0.888 | DD calibrated 0.925: -0.037 [-0.050, -0.026] | loss |
+| RMSE mm, weather-only + climatology | 51.7 | EB default 57.2: -5.5 [-7.8, -3.4]; DD default 80.0: -28.4 [-32.9, -24.1]; **EB dev-tuned** 49.7: +2.0 [-0.7, +4.1]; DD dev-tuned 56.3: -4.6 [-7.1, -2.3]; climatology 84.6: -32.9 [-37.5, -28.7] | tie |
+| RMSE mm, gauged ceiling | 51.7 | DD calibrated 41.2: +10.5 [+7.1, +13.1] | loss |
+| Peak abs err %, weather-only + climatology | 17.5 | EB default 23.7: -6.2 [-7.4, -5.1]; DD default 28.5: -11.0 [-12.5, -9.2]; **EB dev-tuned** 16.2: +1.3 [+0.3, +2.0]; DD dev-tuned 18.2: -0.7 [-1.6, +0.4]; climatology 28.2: -10.7 [-12.2, -8.7] | loss |
+| Peak abs err %, gauged ceiling | 17.5 | DD calibrated 12.5: +5.0 [+4.0, +5.9] | loss |
+| Melt-out MAE d, weather-only + climatology | 8.3 | EB default 9.1: -0.8 [-1.4, -0.2]; DD default 21.9: -13.5 [-15.4, -12.5]; **EB dev-tuned** 8.6: -0.3 [-0.8, +0.1]; DD dev-tuned 9.7: -1.4 [-2.0, -0.7]; climatology 11.4: -3.1 [-3.7, -2.5] | tie |
+| Melt-out MAE d, gauged ceiling | 8.3 | DD calibrated 6.1: +2.2 [+1.6, +2.7] | loss |
+| Peak bias % (abs. median), weather-only + climatology | -9.0 | EB default -20.0: -11.0 [-12.3, -9.8]; DD default -26.4: -17.5 [-19.4, -15.3]; **EB dev-tuned** -4.3: +4.7 [+3.8, +5.7]; DD dev-tuned -7.5: +1.4 [-0.4, +2.4]; climatology 2.1: +6.8 [+4.5, +9.4] | loss |
+| Peak bias % (abs. median), gauged ceiling | -9.0 | DD calibrated -3.6: +5.4 [+3.7, +7.0] | loss |
+| Melt-out bias d (abs. median), weather-only + climatology | -2.8 | EB default -4.7: -1.9 [-2.6, -1.2]; DD default -21.5: -18.7 [-20.2, -17.6]; **EB dev-tuned** 0.3: +2.5 [+1.2, +3.5]; DD dev-tuned -3.7: -0.9 [-1.4, +0.0]; climatology 3.5: -0.7 [-1.7, +0.5] | loss |
+| Melt-out bias d (abs. median), gauged ceiling | -2.8 | DD calibrated -0.3: +2.5 [+1.6, +3.5] | loss |
+| Share with NSE < 0.5 | 8.4 % | EB default 9.5 %: -1.1 [-3.2, +0.8]; EB dev-tuned 10.5 %: -2.1 [-3.9, -0.3]; DD dev-tuned 10.0 %: -1.6 [-3.4, +0.2]; climatology 17.9 %: -9.5 [-12.7, -6.3]; DD calibrated 2.3 %: +6.1 [+3.9, +8.4] | loss |
+
+**What this means.** Against WaterSim with default parameters SnowSense wins clearly, as shipped. Against the same
+energy balance with parameters tuned on the dev stations it ties on NSE (0.888 vs 0.895, -0.007 [-0.018, +0.001]),
+RMSE and melt-out timing, and loses on peak SWE (error 17.5 vs 16.2 %, bias -9.0 vs -4.3 %). The tuned energy balance
+has the higher NSE at 55 % of stations (Clopper-Pearson 41.3-49.3 % for SnowSense). This is the WakeNet and StormNet
+lesson again: dev-tuned physics turns the win into a tie, and the network adds nothing over it on the median.
+SnowSense still fails less often (NSE < 0.5 at 8.4 % vs 10.5 %) and is far better below 1,500 m (0.787 vs 0.704,
++0.083 [+0.041, +0.159]), where the tuned energy balance struggles with thin, wet packs; the tuned physics is better at
+2,200-2,800 m (-0.019 [-0.034, -0.008]). By region the differences to the tuned EB are within their intervals.
+
+Clopper-Pearson win fractions (cross-check, higher NSE): default EB 74.6 % [70.9, 77.9]; default DD 87.3 %
+[84.4, 89.8]; dev-tuned EB 45.2 % [41.3, 49.3]; dev-tuned DD 66.8 % [63.0, 70.5]; climatology 84.2 % [81.1, 87.0];
+calibrated DD 33.8 % [30.1, 37.7].
+
+"WaterSim defaults" are the parameters the exam path resolves for a station given only latitude and elevation:
+WaterSim's table defaults plus its attribute-transfer layer (energy balance CANOPY 0.535 instead of 1.0; degree-day
+TT -0.33 C, CFMAX 3.77, SFCF 1.054), identical at every station.
 
 ## Error bars and coverage
 
@@ -159,6 +194,8 @@ Reported as written in the Watershed handoff (section 6), the parts about SnowSe
 - R6 was initialised from the rejected R5 weights; only the keep decision compares against the incumbent R4.
 - The release demo was run on 3 exam stations before the final exam, for code testing only. Nothing was chosen on it.
 - One training process peaked at about 1.34 GB, above the 1.2 GB sandbox guidance.
+- The dev-tuned baselines and the reproduction re-score (18 Nov 2026) were run on an exam that had been seen; the
+  dev-tuned parameters were frozen from dev data before scoring, and nothing in the model changed on the result.
 - Ratchet noise: on val_p3, R5 would have been kept and R6 rejected; on val_p4 the reverse. Margins of 0.01 are near
   the noise of these frozen sets. The exam columns in the ratchet table were filled in after the ladder finished and
   were never used to choose.

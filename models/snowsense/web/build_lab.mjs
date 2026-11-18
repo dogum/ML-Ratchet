@@ -40,18 +40,24 @@ for (const [pkg, file, family, weight] of [
 const S = await json(join(model, 'training/final_summary.json'));
 const R = await json(join(model, 'training/ratchet.json'));
 const E = await json(join(model, 'training/exam_by_rung.json'));
+const RSall = await json(join(model, 'training/rescore_summary.json'));   // re-score, 18 Nov 2026
+const RS = RSall.medians;
 const row = cells => '<tr>' + cells.map(v => '<td>' + v + '</td>').join('') + '</tr>';
 const f3 = v => v.toFixed(3), f1 = v => v.toFixed(1), sg = v => (v < 0 ? '−' : '+') + Math.abs(v).toFixed(1), pc = v => Math.round(100 * v) + '%';
 const methods = [
-  ['<b>SnowSense v1.0</b>', 'weather only', S.net], ['Energy balance, WaterSim defaults', 'weather only', S.eb_uncal],
+  ['<b>SnowSense v1.0</b>', 'weather only', S.net],
+  ['Energy balance, dev-tuned (added on import, seen exam)', 'weather only', RS.eb_devtuned],
+  ['Degree-day, dev-tuned (added on import, seen exam)', 'weather only', RS.dd_devtuned],
+  ['Energy balance, WaterSim defaults', 'weather only', S.eb_uncal],
   ['Degree-day, WaterSim defaults', 'weather only', S.dd_uncal], ['Climatology (own WY2001-10 SWE)', 'reads station SWE', S.clim],
   ['Degree-day calibrated per station', 'reads station SWE (gauged ceiling)', S.dd_cal],
 ];
 const exam = methods.map(([n, p, m]) => row([n, p, f3(m.nse), f1(m.rmse_mm), f1(m.peak_swe_abs_err_pct), sg(m.peak_swe_bias_pct),
   f1(m.meltout_mae_days), sg(m.meltout_bias_days)])).join('\n');
 const regions = Object.entries(S.by_region).sort((a, b) => b[1].n - a[1].n)
-  .map(([k, v]) => row([k, v.n, f3(v.net), f3(v.eb_uncal), f3(v.dd_cal)])).join('\n');
-const elev = Object.entries(S.by_elev).map(([k, v]) => row([k.replace('-', '–'), v.n, f3(v.net), f3(v.eb_uncal), f3(v.dd_cal)])).join('\n');
+  .map(([k, v]) => row([k, v.n, f3(v.net), f3(v.eb_uncal), f3(RSall.by_region[k].eb_devtuned.median_baseline), f3(v.dd_cal)])).join('\n');
+const elev = Object.entries(S.by_elev).map(([k, v]) => row([k.replace('-', '–'), v.n, f3(v.net), f3(v.eb_uncal),
+  f3(RSall.by_elev[k].eb_devtuned.median_baseline), f3(v.dd_cal)])).join('\n');
 const N = S.net;
 const cover = [['Daily SWE (snow days)', N.cov68_daily, N.cov90_daily], ['Peak SWE (station-years)', N.peak_cov68, N.peak_cov90],
   ['Melt-out date', N.melt_cov68, N.melt_cov90]].map(([n, a, b]) => row([n, pc(a), pc(b)])).join('\n');
