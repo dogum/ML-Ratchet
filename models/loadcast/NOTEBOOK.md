@@ -242,3 +242,98 @@ Built by `training/exam2_iblend.py`; no LoadCast run and no baseline score. `--c
   exam is a stress check of the climate and holiday gaps, not a ranking.
 - `split_exam2_iblend.json` sha256 `115d4029abf533c0b82af24be03eeb41b984f71479c02bbd767c2c4127fe135a` (units block
   `0674542c…`; no readings or EUIs stored).
+
+## 2026-11-17 — Integrity pass: step 5 back to full scale (written before the full arms run)
+
+The smoke-test extrapolation above was wrong: with 37 units, one epoch's 2 s was mostly fixed overhead. On the
+800-building bank an epoch of 164,160 rows takes 6.5 s (cold) to 7 s (warm), so a network of the R3 recipe
+(about 336,000 rows, 30 epochs) takes about 7 minutes, and the 800-building bank took 966 s on 2 processes (2.4 s
+per building per process). A full rebuild fits easily, so step 5 runs as first planned, in addition to the half-scale
+arms (already trained; they are reported too): bank `v1_train` (1,600 buildings, seed 2) and frozen set `v1_val`
+(300, seed 99) rebuilt; `fA` (noise bank as built) and `fB` (2016-only noise bank), R3 recipe (30 epochs, jitter 1,
+dropout 0.1, weight decay 1e-3, K 96, seed 0); `fA2` as `fA` with seed 1. `fA` also checks how closely a rebuild
+reproduces R3 (frozen objective +0.014, dev score 49.2). Scored as the half-scale arms, plus the frozen-set objective.
+
+## 2026-11-17 — Integrity pass: results
+
+Everything below followed the plan and the two step-5 addenda above; nothing was changed after a result was seen.
+Exam numbers are **seen**. Logs: `training/repro_r3.json`, `rescore_seen_r3.json`, `twin_knobs.json`,
+`twin_anchor_r3.json`, `optimism_r3.json`. While this ran, another session was editing `shared/building/buildingsim`
+(its `__init__` stopped importing mid-way), so every simulation here ran on a copy of the committed v1.0 package
+(`$LC_BUILDINGSIM`, new in `_paths.py`); the calibration had already run on the live package and reproduces anyway.
+
+**1. Reproduction.** `calib.py` re-run (52 dev buildings, 3 processes, 103 s): `calib_summary.json` to 1e-9, same
+knob counts. Released weights through the training code (numpy forward): all 635 statistics in `exam_r3.json`
+within 5.3e-6 (float32 numpy vs torch), the 60 dev statistics in `ratchet.json` within 1.1e-5 (dev score 49.2338 vs
+49.2338), widening factors identical.
+
+**2-4. Rows, fair baselines, intervals.** 40 rows (5 meter types × 8). Verdicts by the interval: **6 wins, 16 ties,
+18 losses**. Two things change v1.0's reading:
+- BuildingData's baselines used n − p; converted to p = 0 they drop a little hourly (TOWT 19.6 → 19.5 % electricity)
+  and a lot monthly (change point 11.0 → 9.3 % electricity, 24.2 → 20.0 % steam). I added this conversion after the
+  plan was written and before the bootstrap ran; it only helps the baselines.
+- The dev-calibrated twin (knobs 24-7, outdoor air ×2.5, VAV minimum 0.3, district HVAC for electricity-only
+  buildings; dev median `a, b`) is the strongest cold baseline: electricity 53.5 % (by use 52.4), chilled water 85.8,
+  steam 100.2 (by use 99.7), hot water 124.4, gas 179.8. Four Bobcat buildings have no twin (BuildingSim
+  `KeyError('kW')`); their twin rows are paired over the rest. The dev TOWT-shape guess beats the median guess on
+  chilled water (92.4 vs 101.6) and hot water (192.9 vs 207.6) but is never the best baseline.
+
+| row | v1.0 verdict | new verdict | LoadCast − best [95 % CI] |
+|---|---|---|---|
+| electricity, a year | win | tie | −0.3 [−0.8, +0.1] vs change point |
+| chilled water, a year | loss | tie | +0.5 [−1.5, +2.9] vs change point |
+| steam, a year | loss | loss | +6.0 [+2.9, +8.2] vs TOWT |
+| hot water, a year | loss | loss | +14.0 [+0.3, +23.9] vs ridge TOWT (its anchor) |
+| gas, a year | loss | tie | +15.9 [−4.9, +27.2] vs TOWT (n = 26) |
+| electricity, none | loss | loss | +6.8 [+4.7, +9.5] vs twin by use |
+| chilled water, none | loss | loss | +18.2 [+9.5, +25.1] vs twin |
+| steam, none | win | tie | +3.1 [−1.1, +6.8] vs twin by use |
+| hot water, none | win | tie | +9.6 [−10.6, +28.2] vs twin |
+| gas, none | win | tie | −10.3 [−65.2, +94.7] vs twin (paired, n = 25) |
+
+New rows: wins for 2 and 8 weeks on electricity (−6.4, −2.4), 8 weeks on chilled water (−5.5) and on hot water (2 weeks
+−30.8 against the twin, 8 weeks −20.3), and electricity daily totals with a year (−0.4 [−0.9, −0.1] against its own
+TOWT anchor). Every no-history daily and monthly row is a tie or a loss against the twin; monthly with a year loses on
+chilled water, steam, hot water and gas.
+
+**5. Dev-gate optimism.** Score = mean of cold and warm (a year) median CV %. Arms on the same rebuilt bank:
+
+| | dev A | dev B (2016-only residuals) | dev A2 (seed 1) | exam A | exam B | exam A2 |
+|---|---|---|---|---|---|---|
+| half scale (800 bldg, 15 epochs) | 53.5 | 53.7 | 52.0 | 53.5 | 53.9 | 53.7 |
+| full scale (R3 recipe) | 53.8 | 53.7 | 52.0 | 53.8 | 52.9 | 51.2 |
+
+Full scale, paired bootstrap over building-meters: dev B − A = −0.1 [−2.7, +2.7], exam B − A = −0.9 [−1.8, −0.1];
+dev A2 − A = −1.8 [−5.9, +2.0], exam A2 − A = −2.7 [−3.6, −1.8]. The leak (dev change minus exam change) is +0.8
+points at full scale and −0.2 at half scale, both below the seed spread. The released R3 scores 49.2 on dev and 52.8
+on the exam; its retrains score 53.8 / 53.8 and 52.0 / 51.2. So R3's dev number is optimistic by about 4 points, and
+the cause is selection on a noisy gate, not the 2017 residuals. Frozen objective on the rebuilt `v1_val`: R3 0.004
+(0.014 logged; the rebuilt frozen set is not bit-identical), fA 0.002, fA2 −0.018, fB −0.012: the seed spread (0.020)
+is twice the ladder margin.
+
+**6. Dev twin test.** Cold, anchor = the calibrated twin on each dev building (2017): median CV twin → network
+electricity 53.4 → 62.5 % (47 meters), chilled water 71.1 → 101.0 % (20), heating 96.0 → 103.2 % (17). Correlation of
+the network's correction with truth − twin, hourly: 0.73, 0.70, 0.18 (across buildings, of annual means: 0.75, 0.70,
+0.16; within buildings, median: 0.19, 0.22, 0.12). It shifts the level the wrong way (needed +13 % / +2 % / +12 % of
+the mean; given −11 % / −55 % / −7 %). Structure in truth − twin that the network does not supply: electricity
+weekday 8-18 h +11 %, weekends −8 % (given about 0); heating February +56 % (given +7 %), summer −13 to −23 % (given
+about −4 %). It does follow the chilled-water season the twin gets wrong (July −68 % needed, −52 % given). Warm, anchor
+= its ridge TOWT: 22.3 → 22.3 % electricity (r 0.15), 48.1 → 43.2 % chilled water (r 0.50), 65.9 → 64.5 % heating
+(r 0.32); holidays are the one place it adds what electricity needs (−14.6 % needed, −13.7 % given).
+
+**7. Readiness on this machine (Windows, 3 processes).** Dev calibration 103 s (3 processes). Noise banks under a
+minute. Twins of 1,001 dev and exam buildings × 2 variants: 1,170 s on 2 processes. Banks: 20 buildings 59 s (1
+process, cold start); 800 in 966 s and 1,600 in 1,476 s on 2 processes; frozen 300 in 394 s. Training (single
+torch thread, as `train.py` sets it): 15 epochs on 800 buildings about 2.5 min per network; R3 recipe (3,416 units,
+327,168 rows per epoch, 30 epochs) 241 s cold, 332 s warm. Scoring dev + exam + frozen: about 25 min to prepare the
+units (load from other sessions slowed it), then about 5 min per pair of networks. A full rebuild of R3 (calibration,
+noise, 1,900 buildings, two networks, scoring) is about 1.5 hours on 3 processes. Blockers, all worked around and
+none in the training code: `train_rung.sh` / `queue_a.sh` call `python3` (missing on Windows) and `nice`, and pipe
+through `grep`; `winrun.py` runs the calibration and banks with `multiprocessing` instead. The shared BuildingSim was
+being edited by another session (`$LC_BUILDINGSIM` points at a frozen copy). Banks are not bit-reproducible
+(generator order depends on the process), so a rebuilt frozen set re-scores R3 at 0.004, not 0.014. Single-seed
+decisions are within training noise (step 5).
+
+**8.** `model.yaml` (40 rows with intervals, verdicts, "seen" notes, wins / losses / limits / next), the card's exam,
+ratchet and limits sections, and `ratchet.yaml`'s ladder note are updated; the weights, inference code and demo are
+unchanged (demo test passes).

@@ -1,0 +1,123 @@
+{
+ "base": {
+  "sched": "24x7",
+  "oa": 2.5,
+  "vav_min": 0.3,
+  "sat_reset": true
+ },
+ "sys_elec_only": "district",
+ "ab": {
+  "*|electricity": [
+   0.4287509841551968,
+   6.280777127988755,
+   47
+  ],
+  "assembly|electricity": [
+   0.48804649715060777,
+   7.107789877937035,
+   10
+  ],
+  "other|electricity": [
+   0.14623789750444582,
+   12.093904016128471,
+   8
+  ],
+  "office|electricity": [
+   0.5555594235847569,
+   3.2597060539871383,
+   10
+  ],
+  "lodging|electricity": [
+   0.09907066646877012,
+   6.606065510847221,
+   7
+  ],
+  "education|electricity": [
+   0.5036659455220379,
+   4.904462269065788,
+   11
+  ],
+  "*|chilledwater": [
+   0.9160066572177071,
+   31.448604051235613,
+   20
+  ],
+  "assembly|chilledwater": [
+   0.9204203157373854,
+   35.409768906163436,
+   3
+  ],
+  "office|chilledwater": [
+   1.666295297361922,
+   16.366706115740858,
+   5
+  ],
+  "lodging|chilledwater": [
+   1.1970641123550154,
+   30.51745422524921,
+   3
+  ],
+  "education|chilledwater": [
+   0.8527351922706254,
+   23.707465929075568,
+   6
+  ],
+  "*|steam": [
+   0.3608859675425714,
+   3.481664728045861,
+   10
+  ],
+  "assembly|steam": [
+   0.1389410113386971,
+   3.3411910502050257,
+   3
+  ],
+  "education|steam": [
+   0.21734561597059282,
+   1.6109783946551666,
+   3
+  ],
+  "*|hotwater": [
+   0.4038068787608354,
+   5.95689138915402,
+   7
+  ],
+  "*|gas": [
+   0.0,
+   61.89728601556405,
+   2
+  ]
+ },
+ "by_use": {
+  "assembly": {
+   "sched": "24x7",
+   "oa": 2.5,
+   "vav_min": 0.3,
+   "sat_reset": true
+  },
+  "other": {
+   "sched": "24x7",
+   "oa": 2.5,
+   "vav_min": 0.3,
+   "sat_reset": true
+  },
+  "office": {
+   "sched": "default",
+   "oa": 2.5,
+   "vav_min": 0.3,
+   "sat_reset": true
+  },
+  "lodging": {
+   "sched": "default",
+   "oa": 2.5,
+   "vav_min": 0.3,
+   "sat_reset": true
+  },
+  "education": {
+   "sched": "24x7",
+   "oa": 2.5,
+   "vav_min": 0.3,
+   "sat_reset": true
+  }
+ }
+}

@@ -16,7 +16,14 @@ ladders:
       each time; the values here are the final definition (training/ratchet.json keeps the pooled values as
       frozen_history; the floored values were overwritten). R0-R2 are kept under the last two definitions; their
       decisions under the first are not recorded. The real-noise bank holds the
-      dev buildings' 2017 residuals, so the dev-gate numbers are slightly optimistic; the exam is unaffected. The card
+      dev buildings' 2017 residuals. Measured on 17 Nov 2026 (training/optimism.py, optimism_r3.json): retraining the
+      R3 recipe on a rebuilt bank with each dev series' 2017 residuals replaced by its 2016 ones moved the dev score by
+      −0.1 points (95 % CI −2.7 to +2.7) and the seen exam by −0.9; two training seeds of the unchanged recipe differ by
+      1.8 points on dev and 2.7 on the exam. So that leak is below the noise. The larger optimism is selection: R3's
+      dev score 49.2 against 53.8 and 52.0 for two retrains of its recipe, while its exam score (52.8) sits between
+      theirs (53.8, 51.2). The two retrains also differ by 0.020 in the frozen objective (margin 0.01), and the
+      rebuilt frozen set v1_val scores the released R3 at 0.004 (0.014 logged; banks are not bit-reproducible because
+      the generator hands out specs in process order). Later rungs should be scored over several training seeds. The card
       gives the frozen set as 650 building-meters; ratchet.json scores 666.
     columns_source: "Skills on the frozen set v1_val, then dev (84 dev building-meters, 2016 → 2017): median cold and warm CV(RMSE) %, the dev score and its ratio to the incumbent's"
     columns: ["Cold skill", "Warm skill", "Dev cold CV", "Dev warm CV", "Dev score", "Dev vs incumbent"]

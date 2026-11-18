@@ -35,7 +35,7 @@ def site_feats(site):
 # ------------------------------------------------------------------ noise
 @functools.lru_cache(maxsize=1)
 def noise_bank():
-    z = np.load(f'{C.ROOT}/data/noise_bank.npz')
+    z = np.load(f'{C.ROOT}/data/' + os.environ.get('LC_NOISE_BANK', 'noise_bank.npz'))   # LC_NOISE_BANK: winrun.py noise y16
     use = C.bd.bdg2_meta(split='dev').set_index('id').primary_use
     return dict(E=z['E'].astype(np.float32), meter=z['meter'], bid=z['bid'], ratio=z['ratio'], gaps=z['gaps'],
                 use=np.array([use.get(b, 'other') for b in z['bid']]))
