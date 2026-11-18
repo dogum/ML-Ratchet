@@ -1,0 +1,68 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json (written by training/ratchet.py; every rung re-scored on
+# every frozen set and every decision re-taken in order on the newest, val_p4). Exam columns: training/exam_by_rung.json.
+model: snowsense
+ladders:
+  - name: "SnowSense v1.0 (WaterSim snow, 18 Nov 2026)"
+    objective: "Median per-series NSE of daily SWE (water-year days) on the frozen simulated validation set: 1,600 windows simulated from the weather of six held-out dev stations, one set per physics version (val_p1..val_p4)"
+    rule: "Keep if the rung beats the incumbent by more than 0.01 median NSE on the newest frozen set (val_p4) AND (1 - NSE_dev) <= 1.05 (1 - NSE_dev of the incumbent), dev NSE being the median over 38 dev stations, WY2011-2025."
+    margin: 0.01
+    dev_gate: "Median dev NSE (38 dev SNOTEL stations, WY2011-2025): 1 - NSE may grow by at most 5 % relative"
+    frozen_sets: [val_p1, val_p2, val_p3, val_p4]
+    scored_on: val_p4
+    note: >-
+      Every rung was re-scored on every frozen set; the decisions were re-taken in order on val_p4. val_p3 existed
+      before R2 was decided, so R2 was first decided on it; under the re-take rule everything now stands on val_p4.
+      Near the margin the sets disagree: on val_p3 R5 would have been kept (+0.015 over R4) and R6 rejected (+0.007
+      over R4); on val_p4 R4 itself passes R3 by only 0.002 above the margin. Rule notes (18 Nov 2026, from the build
+      handoff): the dev prior (p3, p4) was fitted on the dev stations' own SWE up to WY2010 and the gate uses the same
+      stations in WY2011-2025, so the gate is partly in-sample; the exam was untouched. R6 was initialised from the
+      rejected R5's weights (only the decision compares against the incumbent R4). The release demo was run on three
+      exam stations before the final exam, to test code only; nothing was chosen on it. One training process peaked at
+      about 1.34 GB, above the 1.2 GB sandbox guidance. The exam columns were filled in once, after the ladder was
+      finished: R4, R5 and R6 lie within 0.005 exam NSE, and R5 and R6 mainly narrowed the bars (daily 68 % coverage
+      84 % -> 78 %).
+    columns_source: "Frozen simulated sets val_p1..val_p3 (val_p4 is `sim`); dev (38 dev stations, WY2011-2025, median NSE, melt-out MAE, 68 % daily coverage); then the real exam (621 stations, WY2011-2025) scored for every rung after the ladder was finished (training/exam_by_rung.json): after-the-fact columns, never used to choose"
+    columns: ["val_p1", "val_p2", "val_p3", "Dev NSE", "Dev melt-out MAE d", "Dev 68% daily cover", "Exam NSE (after)", "Exam melt-out MAE d (after)", "Exam 68% daily cover (after)"]
+    rungs:
+      - id: R1
+        change: "Baseline (physics p1): WaterSim degree-day and energy balance 50/50, parameters uniform over WaterSim's ranges, the network reads the forcing that drives the physics (no measurement error); Gaussian head"
+        sim: 0.7438
+        dev: { nse: 0.728, rmse_mm: 58.2, peak_abs_err_pct: 27.8, peak_bias_pct: -27.8, meltout_mae_days: 12.5 }
+        decision: kept
+        why: "First rung."
+        metrics: [0.715, 0.715, 0.698, 0.728, 12.5, 0.712, 0.734, 11.7, 0.776]
+      - id: R2
+        change: "Physics p2: gauge error between what the snowpack feels and what the network reads (wet-day P x lognormal 0.25, one-day timing slips, T AR(1) 0.6 C + station bias 0.5 C) and injected data gaps; fine-tuned from R1"
+        sim: 0.7693
+        dev: { nse: 0.805, rmse_mm: 55.3, peak_abs_err_pct: 27.8, peak_bias_pct: -26.9, meltout_mae_days: 10.9 }
+        decision: kept
+        why: "val_p4 0.769 > 0.744 + 0.01; dev 0.805 vs 0.728 passes."
+        metrics: [0.728, 0.734, 0.717, 0.805, 10.9, 0.783, 0.765, 12.7, 0.824]
+      - id: R3
+        change: "Physics p3: parameter prior fitted on the dev stations (both routines calibrated on each dev station's own SWE up to WY2010 with wider bounds; multivariate normal x1.3); fine-tuned from R2"
+        sim: 0.8099
+        dev: { nse: 0.880, rmse_mm: 46.6, peak_abs_err_pct: 19.8, peak_bias_pct: -14.0, meltout_mae_days: 12.8 }
+        decision: kept
+        why: "val_p4 0.810 > 0.769 + 0.01; dev 0.880 vs 0.805 passes. Twin test: R1 had read the twins at 0.80 but real at 0.73 with peaks 21 % below the twin; the prior, not the network, was the gap (twin_r1 not shipped)."
+        metrics: [0.725, 0.707, 0.747, 0.880, 12.8, 0.877, 0.854, 14.3, 0.865]
+      - id: R4
+        change: "Quantile head: five quantiles of sqrt(SWE) with a pinball loss instead of a Gaussian, so the many snow-free days stop dragging the median melt-out late (same p3 bank; fine-tuned from R3)"
+        sim: 0.8222
+        dev: { nse: 0.882, rmse_mm: 43.9, peak_abs_err_pct: 19.0, peak_bias_pct: -10.8, meltout_mae_days: 8.0 }
+        decision: kept
+        why: "val_p4 0.822 > 0.810 + 0.01; dev 0.882 vs 0.880 passes. R3 had melted out 10 days after its twins (twin_r3 not shipped)."
+        metrics: [0.735, 0.730, 0.778, 0.882, 8.0, 0.839, 0.886, 8.3, 0.836]
+      - id: R5
+        change: "Physics p4: the dev prior used as fitted (inflation 1.3 -> 1.0), because R4's dev bands were too wide (68 % bands held 84 % of snow days, 93 % of melt-outs) and its peaks 11 % low; new frozen set val_p4; fine-tuned from R4"
+        sim: 0.8306
+        dev: { nse: 0.887, rmse_mm: 42.1, peak_abs_err_pct: 18.2, peak_bias_pct: -10.4, meltout_mae_days: 8.3 }
+        decision: rejected
+        why: "val_p4 0.831 not > 0.822 + 0.01 (dev 0.887 would have passed). On val_p3 it would have been kept (0.793 vs 0.778)."
+        metrics: [0.700, 0.695, 0.793, 0.887, 8.3, 0.758, 0.883, 8.5, 0.772]
+      - id: R6
+        change: "More simulated data: a second p4 bank with a new seed (48,000 windows in all), 6 more epochs, initialised from the rejected R5's weights"
+        sim: 0.8386
+        dev: { nse: 0.888, rmse_mm: 41.2, peak_abs_err_pct: 17.7, peak_bias_pct: -9.5, meltout_mae_days: 8.0 }
+        decision: released
+        why: "val_p4 0.839 > 0.822 + 0.01 over the incumbent R4; dev 0.888 vs 0.882 passes. Released as v1.0. Rule note: initialised from R5, which the ratchet had rejected; on val_p3 it would have fallen short (0.785 vs 0.778)."
+        metrics: [0.726, 0.725, 0.785, 0.888, 8.0, 0.763, 0.888, 8.3, 0.777]
