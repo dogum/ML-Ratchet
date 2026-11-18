@@ -1,7 +1,8 @@
 """Exam rows with 95 % bootstrap intervals on ThermoPilot minus the best baseline (integrity pass, 17 Nov 2026).
 
-usage: intervals.py TAG        reads results/<set>/base/*.json, pol_TAG.json and precool_tuned.json (if present)
-                               -> results/intervals_TAG.json
+usage: intervals.py TAG [ANCHOR_TAG]
+        reads results/<set>/base/*.json, pol_TAG.json and precool_tuned.json (if present) -> results/intervals_TAG.json
+        R8: with ANCHOR_TAG, pol_ANCHOR_TAG.json (the card MPC alone) is one more baseline, 'card_mpc'
 
 Units (homes / buildings) are resampled with their episodes, 2,000 resamples, seed 20261117. Rows per set:
   bill   saving vs fixed thermostat (1 - sum bill / sum fixed bill), higher is better
@@ -20,7 +21,7 @@ import numpy as np
 from ratchet import load_base
 
 SETS = ['exam_recs', 'exam_bdg2', 'exam_hue', 'exam_wpuq', 'dev']
-BASES = ['fixed', 'setback', 'setback_std', 'precool', 'precool_p1', 'precool_tuned', 'mpc_c']
+BASES = ['fixed', 'setback', 'setback_std', 'precool', 'precool_p1', 'precool_tuned', 'mpc_c', 'card_mpc']
 NB, SEED = 2000, 20261117
 
 
@@ -43,6 +44,7 @@ def stats(get, base, ids):
 
 def main():
     tag = sys.argv[1]
+    atag = sys.argv[2] if len(sys.argv) > 2 else None
     R = {}
     for s in SETS:
         base = load_base(s)
@@ -52,13 +54,18 @@ def main():
         pol = json.load(open(f))
         ft = os.path.join(ROOT, 'results', s, 'precool_tuned.json')
         pt = json.load(open(ft))['results'] if os.path.exists(ft) else {}
-        ids = sorted(i for i in base if i in pol and 'error' not in pol[i] and (not pt or i in pt))
+        fa = os.path.join(ROOT, 'results', s, f'pol_{atag}.json') if atag else None
+        cm = json.load(open(fa)) if fa and os.path.exists(fa) else {}
+        ids = sorted(i for i in base if i in pol and 'error' not in pol[i] and (not pt or i in pt)
+                     and (not cm or (i in cm and 'error' not in cm[i])))
 
         def get(i, c):
             if c == 'thermopilot':
                 return pol[i]
             if c == 'precool_tuned':
                 return pt[i]
+            if c == 'card_mpc':
+                return cm[i]
             return base[i][c]
 
         units = sorted(set(base[i]['meta']['unit'] for i in ids))
@@ -86,6 +93,11 @@ def main():
         d = np.array([b['thermopilot']['bill'] - b['setback']['bill'] for b in boots])
         rows['bill_vs_setback'] = dict(diff=pt0['thermopilot']['bill'] - pt0['setback']['bill'],
                                        ci95=[float(np.percentile(d, 2.5)), float(np.percentile(d, 97.5))])
+        if 'card_mpc' in pt0:
+            for m in ('bill', 'skill', 'DH'):
+                d = np.array([b['thermopilot'][m] - b['card_mpc'][m] for b in boots])
+                rows[f'{m}_vs_card_mpc'] = dict(diff=pt0['thermopilot'][m] - pt0['card_mpc'][m],
+                                                ci95=[float(np.percentile(d, 2.5)), float(np.percentile(d, 97.5))])
         ci = {c: {m: [float(np.percentile([b[c][m] for b in boots], q)) for q in (2.5, 97.5)] for m in ('bill', 'skill', 'DH')}
               for c in pt0}
         R[s] = dict(n_episodes=len(ids), n_units=len(units), controllers=pt0, controllers_ci95=ci, rows=rows,

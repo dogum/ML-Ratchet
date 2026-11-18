@@ -307,3 +307,119 @@ Checked on request, because another session edited BuildingSim while the re-scor
   sort with the dwelling id as tie-break) would make twins reproducible from now on, but it would change them again.
   It is left for the next rung, not done in this pass. The same line was ported into BuildingSim 1.0.1
   (`stock.recs_to_spec`, `shared/building/buildingsim/buildingsim/stock.py` line 617) and has the same problem.
+
+## 2026-11-17 — Residual rung (R8): the plan as fixed, written before anything is built or run
+
+This fixes the "residual rung plan" above. Physics stays BuildingSim 1.0 (no physics version was adopted this
+round; `shared/building/NOTEBOOK.md`). No fresh exam exists for ThermoPilot (no open thermostat logs), so every exam
+number below will be a **seen** re-score and nothing is chosen from it. Runs use `.venv-train` (torch, numba, pyarrow)
+with `ML_RATCHET_GRID` pointing at the main checkout's GridData copy (read only), at most 3 worker processes,
+everything written to `work/` through `training/_paths.py`. HUE is out of scope: the NASA POWER file is not fetched,
+and HUE keeps its v1.0 point values without an interval.
+
+1. **Reproducible twins first.** `tp/twins.py` `recs_twin` ranks tied ResStock matches by `bldg_id`
+   (`np.lexsort((bldg_id, score))`, as `stock.recs_to_spec(stable=True)` does since d7d9c91). This changes RECS
+   twins against v1.0 again (training RECS-prior twins, val, dev and the RECS exam). The old val and dev case files
+   and results move to `work/archive_unstable_twins/`; val (60) and dev (30) are frozen again from the same seeds;
+   the 7 baselines are re-run on both. **R7 (the released weights) is re-scored there first; that is the incumbent.**
+2. **The anchor: a card MPC in numpy** (`thermopilot_core.CardMPC`). The same receding-horizon DP as `tp/mpc.py`
+   (0.25 K mass grid, 24 h, hourly replanning, the same 36 actions, the same demand-charge amortisation and running
+   peaks, λ × K h), but its house is a 12-number linear map on the building card, not BuildingSim:
+   T_air = A + At·T_mass + Aq·q, T_mass' = C + Ct·T_mass + Cq·q, with At, Aq, Ct, Cq constant and A, C linear in the
+   forecast outdoor temperature, the forecast irradiance and the expected non-HVAC load. The 12 numbers are fitted by
+   least squares to the nominal twin's hourly 5R1C maps over the episode (the same nominal house the card already
+   comes from; a thermostat could identify them from its own logs). No wind, no indoor humidity (the classical MPC
+   reads both). Plant from the card's tables (+ heat-pump / AC speed, outdoor-air conductance, as card fields).
+   Observer: dead-beat from the measured air temperature through the card map. Check first, on dev: card MPC alone
+   vs the classical MPC. If the card MPC loses more than 0.1 dev skill, the anchor is fixed before any residual is
+   trained (one revision, logged here before it runs). The shield setting of the rung (none or v1.0's 6 h shield)
+   is chosen once on dev with the anchor alone, before training.
+3. **The residual (R8).** Inputs: the 298 v1.0 features + the anchor's 36 action values (minus their minimum,
+   divided by the 24 h price scale S, as the teacher's). Output: 36 logits added to −Q_anchor / (S·τ), τ = 0.1, the
+   same τ as the soft targets. Last layer initialised to zero, so the untrained rung is exactly the anchor. MLP
+   334→384→384→36, same loss (soft-target CE from the teacher's values + expected regret), 24 epochs.
+4. **Banks (new; seeds 20000+, not used before).** Round 0: 230 episode-months where the anchor acts and the teacher
+   labels every hour, with the anchor's values saved. Rounds 1-3: about 100 episode-months each, the residual
+   student acting with the teacher's action executed with probability β = 0.3, 0.2, 0.1 (each round's student is
+   trained on all banks so far, seed 0). About 530 episode-months, as v1.0.
+5. **Rule.** The ladder's rule: val skill > incumbent + 0.01 and the dev gate (dev skill > 0, ≥ incumbent dev − 0.03,
+   dev K h ≤ fixed + 1), plus: **val skill > anchor alone + 0.01**. Reference rows, not candidates: anchor alone,
+   classical MPC, R7. The final rung is trained with 3 seeds on the same banks; if the margin over the binding
+   comparator is under twice the seed spread, the decision is on the 3-seed mean; if kept, the seed with the median
+   val skill is released. Before the decision, the twin test is repeated on the rung (its correction vs the
+   teacher's, both relative to the anchor).
+6. **If released as v1.1:** weights (MIT); `thermopilot_core.py` runs the anchor + residual; demo + golden;
+   model.yaml / ladder / card / notebook. Seen exam re-scored for v1.1 and v1.0 with the same baselines (+ the card
+   MPC) and 95 % intervals as `intervals.py` (2,000 resamples over units, seed 20261117): RECS exam frozen again with
+   the stable twins (baselines re-run), BDG2 and WPuQ as frozen. Instrument: the card MPC runs in the browser on the
+   same linear house, parity checked. **If not released:** v1.0 stays, and the ladder logs the rungs.
+
+## 2026-11-17 — Residual rung (R8): results. Rejected; v1.0 stays
+
+Everything followed the plan above; nothing was changed after a result was seen. Logs: `training/ratchet_r8.json`
+(every row), `training/results/residual_2026-11-17/` (`scores.json`: val / dev of every row, bank sizes, training
+runs; `twin_report_r8.json`). Code: `tp/twins.py` (stable ties), `tp/card_mpc.py` (card MPC + residual pilot, numpy;
+it imports v1.0's features and menu from `thermopilot_core.py`, which is unchanged), `tp/features.py`
+(`card_map`, `full_card`), `tp/policy.py` (adapters), `scripts/bank_r8.py`, and residual options in `train.py`,
+`evaluate.py` (`anchor`, `merge`, index ranges), `ratchet.py` (anchor rule, reference rows), `twin_test.py`
+(`TWIN_ANCHOR=card`) and `intervals.py` (card MPC as a baseline; not used, no release). Setup as run: `.venv-train`'s
+Python with `.venv`'s site-packages appended after its own (BuildingSim needs pvlib, which `.venv-train` lacks), and
+`ML_RATCHET_GRID` at the main checkout's GridData. About 75 min of runs on ≤ 3 processes.
+
+**Stable twins.** Val and dev were frozen again from the same seeds. Same case ids; 19 of val's 28 RECS-twin
+episodes and 22 of dev's 24 RECS episodes (11 of 12 homes) got a different house. The RECS exam list was also frozen
+again (39 of 48 homes change house) and its v1.0-era files moved to `work/archive_unstable_twins/`; nothing was run on
+it. The exam rows in model.yaml stay as re-scored this morning (old tie order).
+
+**Rows on the rebuilt sets** (skill: 0 = fixed thermostat, 1 = perfect foresight; K h per dev episode):
+
+| row | val skill | dev skill | dev K h | role |
+|---|---|---|---|---|
+| R7 (v1.0 weights) | 0.561 | 0.471 | 0.09 | incumbent (old sets: 0.556 / 0.482) |
+| classical MPC with forecast | 0.862 | 0.765 | 0.22 | reference |
+| card MPC alone, no shield | 0.573 | 0.572 | 0.91 | reference |
+| **anchor**: card MPC + 6 h shield | **0.700** | **0.720** | 0.00 | reference (the rule's second bar) |
+| R8 seed 0 | 0.670 | 0.718 | 0.06 | rejected |
+| R8 seed 1 | 0.644 | 0.673 | 0.12 | rejected |
+| R8 seed 2 | 0.686 | 0.711 | 0.00 | rejected |
+| R8 mean (sd) | 0.667 (0.021) | 0.701 (0.024) | | |
+
+**The anchor.** The card house map fits the nominal twin's hourly maps to 0.14-0.19 K (air) and 0.08-0.18 K (mass)
+RMS on three dev episodes checked; a numpy plan takes 3-4 s per episode-month. Without the shield the card MPC
+loses 0.19 dev skill to the classical MPC, mostly comfort (0.91 K h per dev episode: it does not anticipate the band
+tightening after setback). With v1.0's 6 h shield it loses 0.045 (0.720 vs 0.765), inside the plan's 0.1, so the
+anchor was not revised. The shield (on) was chosen on dev by the anchor alone before any training, as planned.
+
+**Banks.** 507 episode-months, 371,663 hours (round 0: 212 episodes with the card MPC acting; DAgger rounds 1-3: 100,
+96, 99; 29 seeds gave no case or an unsupported boiler). The card MPC picks the teacher's action in 95.0-95.9 % of
+hours, and an action with zero teacher regret in 96.0-96.7 %.
+
+**Decision.** R8 beats R7 on every seed (val +0.08 to +0.13, dev +0.20 to +0.25, dev gate passed), but it loses to
+the anchor alone on every seed (3-seed mean 0.667 vs 0.700; the rule needs > 0.710). Rejected. v1.0 stays released.
+The anchor alone would pass this ladder's rule against R7 (val +0.14, dev +0.25), but it was fixed as a reference
+row, not a candidate, so it is not promoted in this round.
+
+**What failed: the residual does not default to "no change".** Dev twin test, seed 0, the anchor driving the house
+(`twin_report_r8.json`, 22,320 hours):
+- The teacher departs from the card MPC in 5.6 % of hours (mean −0.008 K heating, −0.013 K cooling). R8 departs in
+  96.7 % (mean +0.81 K heating, −0.54 K cooling), the same over-correction v1.0 showed against the classical MPC.
+- Correlation of R8 − anchor with teacher − anchor: 0.03 (heating) and 0.13 (cooling); 0.13 and 0.46 in the hours
+  where the teacher departs; same sign in 53 % of those.
+- In the teacher's own action values R8's choices still cost less than the anchor's: $57 vs $69 per episode (nearly
+  all on commercial demand tariffs). The bank hold-out says the same (hard regret 0.0028-0.011 vs the anchor's
+  0.010-0.018). But closed loop, on val, R8 loses: against the anchor it is worse in 17-21 episodes and better in
+  7-12; most of the loss is in commercial demand-tariff episodes (−0.011 to −0.040 skill there).
+- Why the zero-initialised residual moves almost everywhere: the anchor's prior logits −Q/(S·τ) are flat. In the
+  round-0 bank a median 12 of the 36 actions tie exactly at the anchor's minimum and 18 are within 0.5 logit
+  (heating setpoints in July, cooling in January), so a tiny network output decides among them. The teacher is indifferent among ties in its own model, but the card house is
+  not the true house, and the moves are not free there. The bank hold-out regret was lowest after epoch 0-1 and rose
+  with training (seed 0: 0.0028 → 0.0098), so the checkpoints kept are early ones.
+
+**Not done** (no release): the seen exam was not re-scored for any new controller, the demo, golden, weights and
+instrument are unchanged, and HUE stays at v1.0's point values (NASA POWER not fetched).
+
+**Next ideas (not run).** (1) Promote the anchor (card MPC + shield) as its own rung: it needs a plan entry and the
+same rule, and it is numpy-only already (`tp/card_mpc.py`). (2) A residual that cannot move on ties: add the
+correction only where the anchor's top two values differ by more than a set fraction of S, or penalise departures
+from the anchor in the loss in proportion to the anchor's own value gap. (3) Train the residual on the teacher's
+regret measured in the card house's closed loop, not the one-step values.

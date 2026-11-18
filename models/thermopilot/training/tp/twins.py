@@ -80,7 +80,9 @@ def recs_twin(row, seed=0):
     a = cand['in.sqft..ft2'].astype(float).values * stock.FT2
     v = cand['in.vintage'].astype(str).map(VINT).fillna(1980).values
     score = np.abs(np.log(np.maximum(a, 10) / area)) + np.abs(v - yb) / 30.0
-    top = np.argsort(score)[:5]
+    # ties are common (68 dwellings tie for RECS_116893); rank them by ResStock bldg_id so the twin is the same on
+    # every machine (v1.0 used np.argsort, whose tie order depends on the numpy build and CPU)
+    top = np.lexsort((cand['bldg_id'].astype('int64').values, score))[:5]
     r = np.random.default_rng(seed)
     pick = cand.iloc[int(top[r.integers(len(top))])]
     spec = stock.resstock_to_spec(pick, whole_building=False)

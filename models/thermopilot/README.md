@@ -80,6 +80,7 @@ Taken once with R7 (v1.0) after the release choice, never used for any choice; r
 ## Limits
 
 - The 17 Nov 2026 re-score did not reproduce v1.0 on RECS-derived twins: the twin builder here gives different houses (e.g. RECS_116893: UA 287 → 434 W/K, light → medium mass), so the RECS rows and the dev / val ratchet numbers moved (R7 dev skill 0.360 → 0.482, val 0.562 → 0.556). WPuQ reproduced exactly; BDG2 exactly except the MPC (3.05 → 2.69 %). Cause: the twin builder picks among the 5 best ResStock matches with np.argsort, whose order of tied scores (68-way ties) depends on the numpy build and CPU; the BuildingSim edit of 17 Nov (1.0.1) is not the cause (twins identical before and after).
+- Since 17 Nov 2026 the twin builder ranks tied ResStock matches by bldg_id (training/tp/twins.py), so RECS twins rebuild on any machine; the val and dev sets were frozen again with it (R7: val 0.561, dev 0.471). The exam rows above were re-scored before that change, with the old tie order, and were not re-scored again (no release).
 - The exam MPC reads the true future wind for infiltration (ThermoPilot sees none); with the wind at its monthly mean its dev skill drops 0.815 → 0.787.
 - Graded in simulation: there are no real thermostat logs (ecobee Donate Your Data needs an application; Pecan Street is paid). Every exam number is BuildingSim with real weather, real tariffs and twin buildings.
 - WPuQ reality check (37 real heat-pump homes, report only): generic twins overstate the heating slope 2.7× (median; IQR 1.4–5.4) and peak at night while real heat pumps run flat (hourly-profile r = 0.21). The controller order MPC > ThermoPilot > fixed holds (Kendall tau 0.70), but ThermoPilot vs setback flips in 18 of 37 homes, so that comparison cannot be trusted from the simulator. Time-shifting savings are the least certain part.
@@ -90,6 +91,8 @@ Taken once with R7 (v1.0) after the release choice, never used for any choice; r
 - The comfort weight (λ = $3 per K h per 150 m²) was fixed in training; the network sees it only through log(λ / (mean price × size)).
 
 ## The ratchet
+
+### ThermoPilot v1.0 (BuildingSim v1, 16-17 Nov 2026)
 
 **Objective:** Skill on the frozen simulated val set (60 episodes): sum over episodes of the relative saving of J vs the fixed thermostat, divided by the same sum for perfect foresight (0 = fixed thermostat, 1 = perfect foresight); J = control-dependent bill (energy + demand + gas) + λ × kelvin-hours outside the occupant's band  
 **Rule:** Keep if val skill > incumbent + 0.01 AND the dev gate passes: dev skill > 0, dev skill ≥ incumbent dev skill − 0.03, and mean kelvin-hours per dev episode ≤ fixed thermostat + 1 K h.
@@ -107,6 +110,22 @@ Taken once with R7 (v1.0) after the release choice, never used for any choice; r
 <sub>Columns after *Why*: training/ratchet.json: dev gate numbers (30 episodes), then the val set's fraction of episodes cheaper than fixed.</sub>
 
 The starting incumbent is the fixed thermostat (skill 0). Before R1 was scored, the oracle was upgraded to the two-pass demand-peak version (an oracle that only amortised demand charges was worse than a fixed thermostat on commercial demand tariffs) and skill was changed from a ratio of sums (dominated by large commercial bills) to relative savings per episode; every rung below is scored on the same frozen set. Reference: the classical MPC with forecast scores 0.83 on val and 0.83 on dev. Rule notes, said plainly: the RECS exam uses 4 of the 6 respondents drawn per tariff slot, a cut made for compute before any exam result existed; and during the build the agent once ran `pkill -f` with its own script name to stop a job, which could have killed other processes — it matched only its own process. No exam result was used to choose anything. The R5 change text says 411 episodes while the model card and R6 say 440 (the logged text is kept). The R6 text says 275k parameters; the shipped 298-384-384-36 network has 276,516. Re-scored on 17 Nov 2026 in this repository with the released R7 weights (NOTEBOOK.md): val skill 0.556 (logged 0.562; MPC 0.859) and dev skill 0.482 (logged 0.360; MPC 0.815). The RECS respondent twins built here differ from the sandbox's (dev has 11 of them), so the logged rungs below cannot be re-scored like for like; R1-R6 weights were not kept. The next rung (a residual on the cheap MPC, planned in NOTEBOOK.md) compares with R7 as re-scored here.
+
+### Round 2: residual on the card MPC (R8, BuildingSim 1.0, 17 Nov 2026; not released)
+
+**Objective:** The same skill on the frozen simulated val set (60 episodes), frozen again on 17 Nov 2026 with stable RECS twins (tied ResStock matches ranked by bldg_id): 19 of its 28 RECS-twin episodes changed house  
+**Rule:** Keep if val skill > incumbent + 0.01 AND the dev gate passes (dev skill > 0, ≥ incumbent dev skill − 0.03, dev K h per episode ≤ fixed + 1) AND val skill > the anchor alone (card MPC behind the 6 h shield) + 0.01. Three seeds; the decision is on the 3-seed mean.
+
+| Rung | Change | Frozen-set score | Decision | Why | Dev skill | Dev K h / episode | Dev bill saving | Val beats fixed |
+|---|---|---|---|---|---|---|---|---|
+| r7 | R7 = the v1.0 weights, re-scored on val and dev frozen again with stable RECS twins (the starting incumbent) | 0.561 | ● kept | Starting incumbent: val 0.561 (v1.0 build 0.562), dev 0.471 (v1.0 build 0.360), dev K h 0.09 | 0.471 | 0.09 | 2.5% | 78% |
+| r8-s0 | Residual MLP 334-384-384-36 on the card MPC's 36 action values (last layer zero-initialised; logits = −Q/(S·0.1) + MLP), 6 h shield; 507 new episode-months (card MPC acting, then DAgger β 0.3 / 0.2 / 0.1), 371,663 hours; seed 0 | 0.670 | ○ rejected | val 0.670 vs R7 0.561 and dev 0.718 pass the incumbent rule, but the anchor alone scores 0.700 on val: not beaten by 0.01 (3-seed mean 0.667) | 0.718 | 0.06 | 4.8% | 87% |
+| r8-s1 | R8, seed 1 (same banks) | 0.644 | ○ rejected | val 0.644, dev 0.673: passes the incumbent rule, loses to the anchor alone (0.700) | 0.673 | 0.12 | 4.2% | 83% |
+| r8-s2 | R8, seed 2 (same banks) | 0.686 | ○ rejected | val 0.686, dev 0.711: passes the incumbent rule, loses to the anchor alone (0.700) | 0.711 | 0.0 | 4.8% | 90% |
+
+<sub>Columns after *Why*: training/ratchet_r8.json: dev gate numbers (30 episodes), then the val set's fraction of episodes cheaper than fixed.</sub>
+
+Plan fixed in NOTEBOOK.md before anything was built. The incumbent is R7 (the v1.0 weights) re-scored on the rebuilt sets: val 0.561, dev 0.471. Reference rows, not candidates (training/ratchet_r8.json): classical MPC with forecast val 0.862, dev 0.765 (it reads the true wind and indoor humidity); card MPC alone without shield val 0.573, dev 0.572 (dev K h 0.91: it loses 0.19 dev skill to the classical MPC); the anchor, card MPC behind the 6 h shield (shield chosen on dev before training), val 0.700, dev 0.720, dev K h 0.00 (−0.045 dev skill against the classical MPC). R8 beats R7 on every seed but loses to the anchor alone on every seed (3-seed mean val 0.667 vs 0.700), so it is rejected and v1.0 stays. Dev twin test of seed 0 (anchor drives): the teacher departs from the card MPC in 5.6 % of hours, the residual in 96.7 %; correlation with the teacher's departure 0.03 heating / 0.13 cooling (0.13 / 0.46 where the teacher departs). The anchor alone would pass this ladder's rule against R7; it was a reference row, so it is not promoted here.
 
 Raw per-rung logs are in [`training/`](training/).
 
@@ -139,7 +158,7 @@ BuildingSim v1 (shared/building, BuildingData + BuildingSim): ISO 13790 5R1C zon
 ## Next rungs
 
 - More DAgger rounds plus a heat-pump-heavy bank (val skill still rose with every round).
-- Make the student a residual on a cheap MPC (planned in NOTEBOOK.md, 17 Nov 2026): on dev the teacher departs from the MPC in only 4.1 % of hours, while ThermoPilot's corrections correlate only 0.10 / 0.14 (heating / cooling) with the teacher's.
+- Tried 17 Nov 2026 and rejected (rung R8, ratchet.yaml): a residual network on a numpy card MPC beat v1.0 on the rebuilt val set (3-seed mean 0.667 vs 0.561) but lost to the card MPC alone behind the comfort shield (0.700). The zero-initialised residual still moves the setpoints in 97 % of dev hours, where the teacher departs from the card MPC in 6 %. Next: promote the card MPC + shield as its own rung, or a residual that cannot act on near-tied actions.
 - Calibrate residential twins on RECS dev annual energy, then build a new frozen val set and re-score every rung.
 - A real exam once ecobee access exists.
 

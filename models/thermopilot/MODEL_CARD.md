@@ -62,6 +62,12 @@ Classical MPC with forecast for reference: val 0.83, dev 0.83.
 (The oracle was upgraded to the two-pass demand version and the skill to relative savings before R1 was scored;
 every rung above is scored on the same frozen set.)
 
+**Round 2 (17 Nov 2026, not released).** Val and dev were frozen again with reproducible RECS twins (tied ResStock
+matches ranked by bldg_id); there R7 scores val 0.561, dev 0.471. Rung R8, a residual network on a numpy MPC that
+plans on a 12-number linear house map from the building card, beat R7 (3-seed mean val 0.667, dev 0.701) but lost
+to that card MPC alone behind the 6 h shield (val 0.700, dev 0.720), which the rule required it to beat by 0.01. It
+was rejected; v1.0 stays. See `ratchet.yaml` and NOTEBOOK.md.
+
 ## Exam (never used for any choice; taken once with R7, re-scored as seen on 17 Nov 2026)
 Twins of real exam units, perturbed true house, noisy forecasts, real weather, real tariffs. Bill change vs a fixed
 thermostat (positive = cheaper); K h = kelvin-hours outside the band per episode; skill = share of the

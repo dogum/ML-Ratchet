@@ -283,6 +283,7 @@ losses:
   - "Worse comfort than a fixed thermostat on RECS twins (1.28 vs 0.36 K h per episode, +0.91 [+0.20, +2.00])."
 limits:
   - "The 17 Nov 2026 re-score did not reproduce v1.0 on RECS-derived twins: the twin builder here gives different houses (e.g. RECS_116893: UA 287 → 434 W/K, light → medium mass), so the RECS rows and the dev / val ratchet numbers moved (R7 dev skill 0.360 → 0.482, val 0.562 → 0.556). WPuQ reproduced exactly; BDG2 exactly except the MPC (3.05 → 2.69 %). Cause: the twin builder picks among the 5 best ResStock matches with np.argsort, whose order of tied scores (68-way ties) depends on the numpy build and CPU; the BuildingSim edit of 17 Nov (1.0.1) is not the cause (twins identical before and after)."
+  - "Since 17 Nov 2026 the twin builder ranks tied ResStock matches by bldg_id (training/tp/twins.py), so RECS twins rebuild on any machine; the val and dev sets were frozen again with it (R7: val 0.561, dev 0.471). The exam rows above were re-scored before that change, with the old tie order, and were not re-scored again (no release)."
   - "The exam MPC reads the true future wind for infiltration (ThermoPilot sees none); with the wind at its monthly mean its dev skill drops 0.815 → 0.787."
   - "Graded in simulation: there are no real thermostat logs (ecobee Donate Your Data needs an application; Pecan Street is paid). Every exam number is BuildingSim with real weather, real tariffs and twin buildings."
   - "WPuQ reality check (37 real heat-pump homes, report only): generic twins overstate the heating slope 2.7× (median; IQR 1.4–5.4) and peak at night while real heat pumps run flat (hourly-profile r = 0.21). The controller order MPC > ThermoPilot > fixed holds (Kendall tau 0.70), but ThermoPilot vs setback flips in 18 of 37 homes, so that comparison cannot be trusted from the simulator. Time-shifting savings are the least certain part."
@@ -298,7 +299,7 @@ help_wanted:
   - "EnergyPlus as a reference engine: no PyPI wheel with an engine and GitHub was blocked in the build sandbox; install it outside and compare BuildingSim's zone response."
 next:
   - "More DAgger rounds plus a heat-pump-heavy bank (val skill still rose with every round)."
-  - "Make the student a residual on a cheap MPC (planned in NOTEBOOK.md, 17 Nov 2026): on dev the teacher departs from the MPC in only 4.1 % of hours, while ThermoPilot's corrections correlate only 0.10 / 0.14 (heating / cooling) with the teacher's."
+  - "Tried 17 Nov 2026 and rejected (rung R8, ratchet.yaml): a residual network on a numpy card MPC beat v1.0 on the rebuilt val set (3-seed mean 0.667 vs 0.561) but lost to the card MPC alone behind the comfort shield (0.700). The zero-initialised residual still moves the setpoints in 97 % of dev hours, where the teacher departs from the card MPC in 6 %. Next: promote the card MPC + shield as its own rung, or a residual that cannot act on near-tied actions."
   - "Calibrate residential twins on RECS dev annual energy, then build a new frozen val set and re-score every rung."
   - "A real exam once ecobee access exists."
 

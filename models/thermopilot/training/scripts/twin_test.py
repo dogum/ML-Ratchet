@@ -21,7 +21,11 @@ import numpy as np
 from evaluate import load_cases, episode
 from tp import features as F, policy as P
 
-OD = os.path.join(ROOT, 'results', 'dev', 'twin')
+# TWIN_ANCHOR=card (rung R8): the card MPC is the anchor that drives the house and the residual pilot is asked
+# instead of v1.0; per-hour files in results/dev/twin_<tag>/, report in results/dev/twin_report_<tag>.json
+CARD = os.environ.get('TWIN_ANCHOR') == 'card'
+TAG = os.environ.get('TWIN_TAG', 'r8')
+OD = os.path.join(ROOT, 'results', 'dev', f'twin_{TAG}' if CARD else 'twin')
 
 
 def run(c, W):
@@ -30,9 +34,13 @@ def run(c, W):
     if ep.has_demand():
         floor, _ = ep.oracle_floor(fracs=(0.85, 1.0))
     oracle = ep.mpc(oracle=True, peak_floor=floor)
-    mpc = ep.mpc(False)
-    card = F.card_from_model(ep.model, c['pref']['hi'])
-    pil = P.ThermoPilot(W, card, ep.ctx, ep.lam, ep.model.base_W, ep.fc_noisy)
+    if CARD:
+        mpc = P.card_mpc(ep, c['pref']['hi'])
+        pil = P.residual(ep, W, c['pref']['hi'])
+    else:
+        mpc = ep.mpc(False)
+        card = F.card_from_model(ep.model, c['pref']['hi'])
+        pil = P.ThermoPilot(W, card, ep.ctx, ep.lam, ep.model.base_W, ep.fc_noisy)
     L = {k: [] for k in ('k', 'a_m', 'a_p', 'a_t', 'q', 'sp_m', 'sp_p', 'sp_t', 'Tz', 'To')}
 
     def strat(k, obs, info):
@@ -116,7 +124,8 @@ def report():
              by_state={str(s_): block(state == s_) for s_ in np.unique(state)},
              by_episode={meta[j]['id']: dict(regret_mpc=float(rm[ep_of == j].sum()), regret_tp=float(rp[ep_of == j].sum()),
                                              disagree=float(dis[ep_of == j].mean())) for j in range(len(rows))})
-    json.dump(R, open(os.path.join(ROOT, 'results', 'dev', 'twin_report%s.json' % ('' if BAND else '_clip4K')), 'w'), indent=1)
+    rep = ('twin_report_%s.json' % TAG) if CARD else 'twin_report%s.json' % ('' if BAND else '_clip4K')
+    json.dump(R, open(os.path.join(ROOT, 'results', 'dev', rep), 'w'), indent=1)
     print(json.dumps(R['all'], indent=1))
     for k in ('by_month', 'by_kind', 'by_tariff', 'by_building', 'by_hour', 'by_state'):
         for g, b in R[k].items():

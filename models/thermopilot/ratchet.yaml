@@ -34,3 +34,28 @@ ladders:
       - { id: r5, change: "Retrain on BC + DAgger rounds 1-2 (411 episodes; round 2 student = R4, beta 0.2), shield 4", sim: 0.499, decision: rejected, why: "val skill 0.499 vs incumbent 0.517 (needs +0.01); dev skill −0.068 vs 0.043: rejected", metrics: [-0.068, 0.51, "2.4%", "77%"] }
       - { id: r6, change: "Wider network 298-384-384-36 (275k params), 24 epochs, same 440 episodes, shield 4", sim: 0.550, decision: kept, why: "val skill 0.550 vs 0.517; dev skill 0.200 vs 0.043, dev K h 0.4: kept", metrics: [0.200, 0.37, "1.3%", "78%"] }
       - { id: r7, change: "R6 architecture + DAgger round 3 (533 episodes, 391k hours; round 3 student = R6, beta 0.1), shield 4", sim: 0.562, decision: released, why: "val skill 0.562 vs 0.550; dev skill 0.360 vs 0.200, dev K h 0.3: kept, released as v1.0 (exam run once afterwards)", metrics: [0.360, 0.29, "2.5%", "73%"] }
+  - name: "Round 2: residual on the card MPC (R8, BuildingSim 1.0, 17 Nov 2026; not released)"
+    objective: "The same skill on the frozen simulated val set (60 episodes), frozen again on 17 Nov 2026 with stable RECS twins (tied ResStock matches ranked by bldg_id): 19 of its 28 RECS-twin episodes changed house"
+    rule: "Keep if val skill > incumbent + 0.01 AND the dev gate passes (dev skill > 0, ≥ incumbent dev skill − 0.03, dev K h per episode ≤ fixed + 1) AND val skill > the anchor alone (card MPC behind the 6 h shield) + 0.01. Three seeds; the decision is on the 3-seed mean."
+    margin: 0.01
+    dev_gate: "30 dev episodes frozen again with stable twins (11 of the 12 RECS dev homes changed house): dev skill > 0 and ≥ incumbent − 0.03; dev K h per episode ≤ fixed + 1 (fixed: 0.001 K h)"
+    frozen_sets: [val]
+    scored_on: val
+    note: >-
+      Plan fixed in NOTEBOOK.md before anything was built. The incumbent is R7 (the v1.0 weights) re-scored on the
+      rebuilt sets: val 0.561, dev 0.471. Reference rows, not candidates (training/ratchet_r8.json): classical MPC with
+      forecast val 0.862, dev 0.765 (it reads the true wind and indoor humidity); card MPC alone without shield val
+      0.573, dev 0.572 (dev K h 0.91: it loses 0.19 dev skill to the classical MPC); the anchor, card MPC behind the
+      6 h shield (shield chosen on dev before training), val 0.700, dev 0.720, dev K h 0.00 (−0.045 dev skill against
+      the classical MPC). R8 beats R7 on every seed but loses to the anchor alone on every seed (3-seed mean val 0.667
+      vs 0.700), so it is rejected and v1.0 stays. Dev twin test of seed 0 (anchor drives): the teacher departs from
+      the card MPC in 5.6 % of hours, the residual in 96.7 %; correlation with the teacher's departure 0.03 heating /
+      0.13 cooling (0.13 / 0.46 where the teacher departs). The anchor alone would pass this ladder's rule against R7;
+      it was a reference row, so it is not promoted here.
+    columns_source: "training/ratchet_r8.json: dev gate numbers (30 episodes), then the val set's fraction of episodes cheaper than fixed"
+    columns: ["Dev skill", "Dev K h / episode", "Dev bill saving", "Val beats fixed"]
+    rungs:
+      - { id: r7, change: "R7 = the v1.0 weights, re-scored on val and dev frozen again with stable RECS twins (the starting incumbent)", sim: 0.561, decision: kept, why: "Starting incumbent: val 0.561 (v1.0 build 0.562), dev 0.471 (v1.0 build 0.360), dev K h 0.09", metrics: [0.471, 0.09, "2.5%", "78%"] }
+      - { id: r8-s0, change: "Residual MLP 334-384-384-36 on the card MPC's 36 action values (last layer zero-initialised; logits = −Q/(S·0.1) + MLP), 6 h shield; 507 new episode-months (card MPC acting, then DAgger β 0.3 / 0.2 / 0.1), 371,663 hours; seed 0", sim: 0.670, decision: rejected, why: "val 0.670 vs R7 0.561 and dev 0.718 pass the incumbent rule, but the anchor alone scores 0.700 on val: not beaten by 0.01 (3-seed mean 0.667)", metrics: [0.718, 0.06, "4.8%", "87%"] }
+      - { id: r8-s1, change: "R8, seed 1 (same banks)", sim: 0.644, decision: rejected, why: "val 0.644, dev 0.673: passes the incumbent rule, loses to the anchor alone (0.700)", metrics: [0.673, 0.12, "4.2%", "83%"] }
+      - { id: r8-s2, change: "R8, seed 2 (same banks)", sim: 0.686, decision: rejected, why: "val 0.686, dev 0.711: passes the incumbent rule, loses to the anchor alone (0.700)", metrics: [0.711, 0.00, "4.8%", "90%"] }

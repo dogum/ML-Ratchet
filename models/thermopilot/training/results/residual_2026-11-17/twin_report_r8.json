@@ -1,0 +1,585 @@
+{
+ "n_episodes": 30,
+ "all": {
+  "hours": 22320,
+  "teacher_disagrees": 0.056272401433691756,
+  "tp_differs_from_mpc": 0.9666218637992832,
+  "regret_mpc_rel": 1.2647056313638079,
+  "regret_tp_rel": 0.8398939697962866,
+  "corr_heat": 0.031127214522991276,
+  "corr_cool": 0.1257943933709068,
+  "corr_heat_where_teacher_differs": 0.12619145708980609,
+  "corr_cool_where_teacher_differs": 0.4616392541118646,
+  "mean_teacher_minus_mpc": [
+   -0.007765830346475507,
+   -0.01326911589008363
+  ],
+  "mean_tp_minus_mpc": [
+   0.8093015730784547,
+   -0.5399243329350857
+  ],
+  "regret_mpc_per_ep": 69.31884364691096,
+  "regret_tp_per_ep": 57.019050863590856,
+  "tp_moves_same_way": 0.5286624203821656
+ },
+ "by_month": {
+  "1": {
+   "hours": 11160,
+   "teacher_disagrees": 0.03763440860215054,
+   "tp_differs_from_mpc": 0.98584229390681,
+   "regret_mpc_rel": 0.5179993434651089,
+   "regret_tp_rel": 0.34684825765203897,
+   "corr_heat": -0.008465572654499383,
+   "corr_cool": 0.010087026718575103,
+   "corr_heat_where_teacher_differs": -0.02043894791099342,
+   "corr_cool_where_teacher_differs": 0.05030470630859203,
+   "mean_teacher_minus_mpc": [
+    -0.0211768219832736,
+    -0.0016278375149342906
+   ],
+   "mean_tp_minus_mpc": [
+    0.3115740740740741,
+    -0.8501045400238948
+   ],
+   "regret_mpc_per_ep": 18.7667972247685,
+   "regret_tp_per_ep": 12.319364963528278,
+   "tp_moves_same_way": 0.5464285714285714
+  },
+  "7": {
+   "hours": 11160,
+   "teacher_disagrees": 0.07491039426523298,
+   "tp_differs_from_mpc": 0.9474014336917562,
+   "regret_mpc_rel": 0.746706287898699,
+   "regret_tp_rel": 0.4930457121442475,
+   "corr_heat": 0.06396847354546623,
+   "corr_cool": 0.28409067724166814,
+   "corr_heat_where_teacher_differs": 0.23820096001223057,
+   "corr_cool_where_teacher_differs": 0.6179680324863459,
+   "mean_teacher_minus_mpc": [
+    0.00564516129032258,
+    -0.02491039426523297
+   ],
+   "mean_tp_minus_mpc": [
+    1.3070290720828355,
+    -0.22974412584627646
+   ],
+   "regret_mpc_per_ep": 50.55204642214246,
+   "regret_tp_per_ep": 44.69968590006256,
+   "tp_moves_same_way": 0.5197368421052632
+  }
+ },
+ "by_kind": {
+  "baseboard": {
+   "hours": 1488,
+   "teacher_disagrees": 0.016801075268817203,
+   "tp_differs_from_mpc": 1.0,
+   "regret_mpc_rel": 0.007713110978924205,
+   "regret_tp_rel": 0.00042394647328471916,
+   "corr_heat": 0.025570771631187067,
+   "corr_cool": 0.12290141229003747,
+   "corr_heat_where_teacher_differs": 0.7216878364870319,
+   "corr_cool_where_teacher_differs": 0.8127836134660524,
+   "mean_teacher_minus_mpc": [
+    0.0,
+    -0.003360215053763441
+   ],
+   "mean_tp_minus_mpc": [
+    0.30197132616487443,
+    -0.4836469534050179
+   ],
+   "regret_mpc_per_ep": 0.05808221625320271,
+   "regret_tp_per_ep": 0.004503968621411047,
+   "tp_moves_same_way": 0.82
+  },
+  "elec": {
+   "hours": 4464,
+   "teacher_disagrees": 0.061155913978494625,
+   "tp_differs_from_mpc": 0.9603494623655914,
+   "regret_mpc_rel": 0.22670818908398965,
+   "regret_tp_rel": 0.12829443416636618,
+   "corr_heat": -0.0015070786915430557,
+   "corr_cool": 0.15941266521901803,
+   "corr_heat_where_teacher_differs": -0.050141644292244276,
+   "corr_cool_where_teacher_differs": 0.37017774316804386,
+   "mean_teacher_minus_mpc": [
+    0.010528673835125445,
+    0.021729390681003585
+   ],
+   "mean_tp_minus_mpc": [
+    0.5464705296694544,
+    -0.11648745519713262
+   ],
+   "regret_mpc_per_ep": 0.7607569558114184,
+   "regret_tp_per_ep": 0.31006055514086034,
+   "tp_moves_same_way": 0.5164835164835165
+  },
+  "furnace": {
+   "hours": 10416,
+   "teacher_disagrees": 0.04531490015360983,
+   "tp_differs_from_mpc": 0.9584293394777266,
+   "regret_mpc_rel": 0.4998182613365929,
+   "regret_tp_rel": 0.27669950956546974,
+   "corr_heat": 0.036358460961769576,
+   "corr_cool": 0.15484580665770056,
+   "corr_heat_where_teacher_differs": 0.16152894070809287,
+   "corr_cool_where_teacher_differs": 0.5706276372905427,
+   "mean_teacher_minus_mpc": [
+    -0.010304659498207884,
+    0.002528161802355356
+   ],
+   "mean_tp_minus_mpc": [
+    0.6516737071172556,
+    -0.5108753626898788
+   ],
+   "regret_mpc_per_ep": 3.446159715006118,
+   "regret_tp_per_ep": 1.9984287025979968,
+   "tp_moves_same_way": 0.565677966101695
+  },
+  "hp": {
+   "hours": 5952,
+   "teacher_disagrees": 0.08165322580645161,
+   "tp_differs_from_mpc": 0.9773185483870968,
+   "regret_mpc_rel": 0.530466069964301,
+   "regret_tp_rel": 0.43447607959116596,
+   "corr_heat": 0.04365277733273663,
+   "corr_cool": 0.08835103385634674,
+   "corr_heat_where_teacher_differs": 0.14602502573461554,
+   "corr_cool_where_teacher_differs": 0.34680736730095674,
+   "mean_teacher_minus_mpc": [
+    -0.01898521505376344,
+    -0.06964045698924731
+   ],
+   "mean_tp_minus_mpc": [
+    1.409106182795699,
+    -0.9224070340501794
+   ],
+   "regret_mpc_per_ep": 65.05384475984023,
+   "regret_tp_per_ep": 54.70605763723058,
+   "tp_moves_same_way": 0.4845679012345679
+  }
+ },
+ "by_tariff": {
+  "tou_no_demand": {
+   "hours": 13392,
+   "teacher_disagrees": 0.03808243727598566,
+   "tp_differs_from_mpc": 0.9590800477897252,
+   "regret_mpc_rel": 0.47842566392506697,
+   "regret_tp_rel": 0.22598532573572297,
+   "corr_heat": 0.11125279307901868,
+   "corr_cool": 0.1538072447744162,
+   "corr_heat_where_teacher_differs": 0.3391689701048941,
+   "corr_cool_where_teacher_differs": 0.5701670313852203,
+   "mean_teacher_minus_mpc": [
+    0.004239678746847206,
+    -0.0013606796760918583
+   ],
+   "mean_tp_minus_mpc": [
+    0.48156030134076727,
+    -0.4409556285676356
+   ],
+   "regret_mpc_per_ep": 3.4725646293666066,
+   "regret_tp_per_ep": 1.6667951700152293,
+   "tp_moves_same_way": 0.6107843137254902
+  },
+  "demand": {
+   "hours": 7440,
+   "teacher_disagrees": 0.09153225806451613,
+   "tp_differs_from_mpc": 0.9737903225806451,
+   "regret_mpc_rel": 0.7051802466698184,
+   "regret_tp_rel": 0.5625010263606558,
+   "corr_heat": 0.03381303864309762,
+   "corr_cool": 0.10443449795267296,
+   "corr_heat_where_teacher_differs": 0.1147156134971596,
+   "corr_cool_where_teacher_differs": 0.38632362533988746,
+   "mean_teacher_minus_mpc": [
+    -0.009005376344086024,
+    -0.03958333333333333
+   ],
+   "mean_tp_minus_mpc": [
+    1.3741487455197132,
+    -0.7559363799283155
+   ],
+   "regret_mpc_per_ep": 65.47650902646879,
+   "regret_tp_per_ep": 55.013671556545454,
+   "tp_moves_same_way": 0.4647577092511013
+  },
+  "flat": {
+   "hours": 1488,
+   "teacher_disagrees": 0.043682795698924734,
+   "tp_differs_from_mpc": 0.9986559139784946,
+   "regret_mpc_rel": 0.08109972076892263,
+   "regret_tp_rel": 0.051407617699907905,
+   "corr_heat": -0.05375886733884732,
+   "corr_cool": 0.02279411972532512,
+   "corr_heat_where_teacher_differs": -0.15850840310868655,
+   "corr_cool_where_teacher_differs": 0.05845904866838561,
+   "mean_teacher_minus_mpc": [
+    -0.10961768219832735,
+    0.011126045400238949
+   ],
+   "mean_tp_minus_mpc": [
+    0.9347371565113499,
+    -0.3505824372759858
+   ],
+   "regret_mpc_per_ep": 0.3697699910755636,
+   "regret_tp_per_ep": 0.33858413703015533,
+   "tp_moves_same_way": 0.5538461538461539
+  }
+ },
+ "by_building": {
+  "home": {
+   "hours": 17856,
+   "teacher_disagrees": 0.04939516129032258,
+   "tp_differs_from_mpc": 0.965165770609319,
+   "regret_mpc_rel": 0.7506209440110698,
+   "regret_tp_rel": 0.4146876438708311,
+   "corr_heat": 0.027730665131924983,
+   "corr_cool": 0.14867031950872528,
+   "corr_heat_where_teacher_differs": 0.10056342838984157,
+   "corr_cool_where_teacher_differs": 0.531661738373286,
+   "mean_teacher_minus_mpc": [
+    -0.003434886499402628,
+    0.006879106929510158
+   ],
+   "mean_tp_minus_mpc": [
+    0.577207163480685,
+    -0.3799065362405416
+   ],
+   "regret_mpc_per_ep": 4.342771159861973,
+   "regret_tp_per_ep": 2.3663873756811196,
+   "tp_moves_same_way": 0.5640589569160998
+  },
+  "commercial": {
+   "hours": 4464,
+   "teacher_disagrees": 0.08378136200716846,
+   "tp_differs_from_mpc": 0.9724462365591398,
+   "regret_mpc_rel": 0.5140846873527382,
+   "regret_tp_rel": 0.4252063259254555,
+   "corr_heat": 0.050821990738434075,
+   "corr_cool": 0.07758583758068585,
+   "corr_heat_where_teacher_differs": 0.16681727712048805,
+   "corr_cool_where_teacher_differs": 0.31523362508207325,
+   "mean_teacher_minus_mpc": [
+    -0.025089605734767026,
+    -0.09386200716845879
+   ],
+   "mean_tp_minus_mpc": [
+    1.737679211469534,
+    -1.1799955197132617
+   ],
+   "regret_mpc_per_ep": 64.97607248704898,
+   "regret_tp_per_ep": 54.65266348790973,
+   "tp_moves_same_way": 0.4451871657754011
+  }
+ },
+ "by_hour": {
+  "00-05": {
+   "hours": 5580,
+   "teacher_disagrees": 0.06469534050179211,
+   "tp_differs_from_mpc": 0.9629032258064516,
+   "regret_mpc_rel": 0.3690572260149832,
+   "regret_tp_rel": 0.2396064792823583,
+   "corr_heat": 0.033080993811329194,
+   "corr_cool": 0.13858378687379713,
+   "corr_heat_where_teacher_differs": 0.1298598181373485,
+   "corr_cool_where_teacher_differs": 0.48253416025232965,
+   "mean_teacher_minus_mpc": [
+    -0.017702110712863404,
+    -0.006780167264038231
+   ],
+   "mean_tp_minus_mpc": [
+    0.9261847869374752,
+    -0.6738152130625249
+   ],
+   "regret_mpc_per_ep": 18.270652958014317,
+   "regret_tp_per_ep": 17.235831241936644,
+   "tp_moves_same_way": 0.502770083102493
+  },
+  "06-11": {
+   "hours": 5580,
+   "teacher_disagrees": 0.07688172043010753,
+   "tp_differs_from_mpc": 0.9476702508960574,
+   "regret_mpc_rel": 0.32393517516403153,
+   "regret_tp_rel": 0.2584997833019149,
+   "corr_heat": -0.01244352445473569,
+   "corr_cool": 0.17427517745525073,
+   "corr_heat_where_teacher_differs": -0.04296759973929714,
+   "corr_cool_where_teacher_differs": 0.649288205132016,
+   "mean_teacher_minus_mpc": [
+    -0.027857427319792915,
+    -0.016537236160892074
+   ],
+   "mean_tp_minus_mpc": [
+    0.8533950617283951,
+    -0.6122162485065712
+   ],
+   "regret_mpc_per_ep": 28.394134256621026,
+   "regret_tp_per_ep": 22.845676541709796,
+   "tp_moves_same_way": 0.5431235431235432
+  },
+  "12-17": {
+   "hours": 5580,
+   "teacher_disagrees": 0.05949820788530466,
+   "tp_differs_from_mpc": 0.9668458781362007,
+   "regret_mpc_rel": 0.41172781855042134,
+   "regret_tp_rel": 0.2754936971283315,
+   "corr_heat": 0.10872035262233667,
+   "corr_cool": 0.10360140130095902,
+   "corr_heat_where_teacher_differs": 0.3292117336355416,
+   "corr_cool_where_teacher_differs": 0.4227578984932438,
+   "mean_teacher_minus_mpc": [
+    0.01306252489048188,
+    -0.01933492632417363
+   ],
+   "mean_tp_minus_mpc": [
+    0.9264137793707687,
+    -0.6167960971724412
+   ],
+   "regret_mpc_per_ep": 14.690858583991197,
+   "regret_tp_per_ep": 13.922006415770324,
+   "tp_moves_same_way": 0.5045180722891566
+  },
+  "18-23": {
+   "hours": 5580,
+   "teacher_disagrees": 0.024014336917562724,
+   "tp_differs_from_mpc": 0.989068100358423,
+   "regret_mpc_rel": 0.1599854116343718,
+   "regret_tp_rel": 0.06629401008368185,
+   "corr_heat": -0.0018520607568476785,
+   "corr_cool": 0.02776388894962647,
+   "corr_heat_where_teacher_differs": -0.011002307989998314,
+   "corr_cool_where_teacher_differs": 0.0693973113658567,
+   "mean_teacher_minus_mpc": [
+    0.0014336917562724014,
+    -0.010424133811230587
+   ],
+   "mean_tp_minus_mpc": [
+    0.5312126642771805,
+    -0.25686977299880526
+   ],
+   "regret_mpc_per_ep": 7.963197848284423,
+   "regret_tp_per_ep": 3.0155366641740735,
+   "tp_moves_same_way": 0.6119402985074627
+  }
+ },
+ "by_state": {
+  "0": {
+   "hours": 8660,
+   "teacher_disagrees": 0.040646651270207855,
+   "tp_differs_from_mpc": 0.9929561200923788,
+   "regret_mpc_rel": 0.37206760166950803,
+   "regret_tp_rel": 0.20984961534674457,
+   "corr_heat": -0.007740990675779447,
+   "corr_cool": 0.17738228294983138,
+   "corr_heat_where_teacher_differs": -0.04007646239492641,
+   "corr_cool_where_teacher_differs": 0.4982033707846546,
+   "mean_teacher_minus_mpc": [
+    0.005658198614318707,
+    -0.0020015396458814465
+   ],
+   "mean_tp_minus_mpc": [
+    0.3875288683602771,
+    -0.11657685399024893
+   ],
+   "regret_mpc_per_ep": 30.409768196146906,
+   "regret_tp_per_ep": 24.822415792206833,
+   "tp_moves_same_way": 0.5752840909090909
+  },
+  "1": {
+   "hours": 6634,
+   "teacher_disagrees": 0.05622550497437444,
+   "tp_differs_from_mpc": 0.9675911968646367,
+   "regret_mpc_rel": 0.2706210968930845,
+   "regret_tp_rel": 0.16593743424936108,
+   "corr_heat": -0.03659999081945812,
+   "corr_cool": 0.19746691411171813,
+   "corr_heat_where_teacher_differs": -0.10973688204970632,
+   "corr_cool_where_teacher_differs": 0.5250754638351961,
+   "mean_teacher_minus_mpc": [
+    -0.018574347636753422,
+    0.031077278665460756
+   ],
+   "mean_tp_minus_mpc": [
+    0.7360650520885673,
+    -0.2564817606270726
+   ],
+   "regret_mpc_per_ep": 1.4981017437955433,
+   "regret_tp_per_ep": 0.701800949415883,
+   "tp_moves_same_way": 0.5241286863270778
+  },
+  "2": {
+   "hours": 7026,
+   "teacher_disagrees": 0.07557643040136636,
+   "tp_differs_from_mpc": 0.9332479362368347,
+   "regret_mpc_rel": 0.6220169328012153,
+   "regret_tp_rel": 0.4641069202001809,
+   "corr_heat": 0.07323818762814412,
+   "corr_cool": 0.09601682664565277,
+   "corr_heat_where_teacher_differs": 0.2664107541806568,
+   "corr_cool_where_teacher_differs": 0.3890749376132386,
+   "mean_teacher_minus_mpc": [
+    -0.014106335199418035,
+    -0.06902931966979789
+   ],
+   "mean_tp_minus_mpc": [
+    1.398314198058007,
+    -1.329356042635291
+   ],
+   "regret_mpc_per_ep": 37.41097370696851,
+   "regret_tp_per_ep": 31.494834121968122,
+   "tp_moves_same_way": 0.5009416195856874
+  }
+ },
+ "by_episode": {
+  "Bear_utility_Sidney_1": {
+   "regret_mpc": 155.8456583487926,
+   "regret_tp": 136.13578621244181,
+   "disagree": 0.024193548387096774
+  },
+  "Bear_utility_Sidney_7": {
+   "regret_mpc": 1188.3792307208848,
+   "regret_tp": 1074.9046012648068,
+   "disagree": 0.17338709677419356
+  },
+  "Hog_industrial_Mariah_1": {
+   "regret_mpc": 245.55902672048444,
+   "regret_tp": 105.92778755702379,
+   "disagree": 0.11021505376344086
+  },
+  "Hog_industrial_Mariah_7": {
+   "regret_mpc": 41.91408206339128,
+   "regret_tp": 25.895304712283117,
+   "disagree": 0.04973118279569892
+  },
+  "RECS_100462_rmp_ut_sched1_tou_1": {
+   "regret_mpc": 6.068976129889288,
+   "regret_tp": 0.7274122380697428,
+   "disagree": 0.016129032258064516
+  },
+  "RECS_100462_rmp_ut_sched1_tou_7": {
+   "regret_mpc": 5.606718848848219,
+   "regret_tp": 0.34336408563101983,
+   "disagree": 0.056451612903225805
+  },
+  "RECS_100808_coned_sc1_rate3_1": {
+   "regret_mpc": 0.045050119886303364,
+   "regret_tp": 0.0,
+   "disagree": 0.0013440860215053765
+  },
+  "RECS_100808_coned_sc1_rate3_7": {
+   "regret_mpc": 0.359946531222052,
+   "regret_tp": 0.27585481740765605,
+   "disagree": 0.038978494623655914
+  },
+  "RECS_103208_pseg_rs_tou_3p_1": {
+   "regret_mpc": 11.009267001042117,
+   "regret_tp": 0.18320308019729215,
+   "disagree": 0.008064516129032258
+  },
+  "RECS_103208_pseg_rs_tou_3p_7": {
+   "regret_mpc": 4.8804221808119275,
+   "regret_tp": 0.20486659407274566,
+   "disagree": 0.06317204301075269
+  },
+  "RECS_105092_nyseg_sc12_tou_1": {
+   "regret_mpc": 9.094833553038777,
+   "regret_tp": 10.038901557800473,
+   "disagree": 0.056451612903225805
+  },
+  "RECS_105092_nyseg_sc12_tou_7": {
+   "regret_mpc": 1.9982661792281302,
+   "regret_tp": 0.11862255310418668,
+   "disagree": 0.030913978494623656
+  },
+  "RECS_107404_austin_res_tou_1": {
+   "regret_mpc": 3.2064589955316865,
+   "regret_tp": 5.711720196759008,
+   "disagree": 0.026881720430107527
+  },
+  "RECS_107404_austin_res_tou_7": {
+   "regret_mpc": 45.018770097319596,
+   "regret_tp": 41.88607153483149,
+   "disagree": 0.2056451612903226
+  },
+  "RECS_108159_xcel_co_re_tou_1": {
+   "regret_mpc": 0.0,
+   "regret_tp": 0.0,
+   "disagree": 0.0
+  },
+  "RECS_108159_xcel_co_re_tou_7": {
+   "regret_mpc": 5.42686660664934,
+   "regret_tp": 0.35844303636595676,
+   "disagree": 0.06048387096774194
+  },
+  "RECS_108846_duke_fl_rt_1": {
+   "regret_mpc": 7.8501619895215535,
+   "regret_tp": 6.721917456566433,
+   "disagree": 0.08602150537634409
+  },
+  "RECS_108846_duke_fl_rt_7": {
+   "regret_mpc": 4.829766009335531,
+   "regret_tp": 2.5065001228800736,
+   "disagree": 0.1760752688172043
+  },
+  "RECS_114869_xcel_mn_a04_tod_1": {
+   "regret_mpc": 0.2407832005645485,
+   "regret_tp": 0.08209187977149313,
+   "disagree": 0.004032258064516129
+  },
+  "RECS_114869_xcel_mn_a04_tod_7": {
+   "regret_mpc": 1.5016832870315326,
+   "regret_tp": 0.0530271788708383,
+   "disagree": 0.02956989247311828
+  },
+  "RECS_117554_rtp_ercot_1": {
+   "regret_mpc": 5.1633006806877235,
+   "regret_tp": 0.019696938183596302,
+   "disagree": 0.026881720430107527
+  },
+  "RECS_117554_rtp_ercot_7": {
+   "regret_mpc": 0.002263504571274666,
+   "regret_tp": 0.013421363050158952,
+   "disagree": 0.004032258064516129
+  },
+  "RECS_118012_pge_e_tou_c_1": {
+   "regret_mpc": 3.7516296882403157,
+   "regret_tp": 0.009425095286969665,
+   "disagree": 0.030913978494623656
+  },
+  "RECS_118012_pge_e_tou_c_7": {
+   "regret_mpc": 6.9175855184757875,
+   "regret_tp": 0.09497628841335981,
+   "disagree": 0.038978494623655914
+  },
+  "RECS_118057_aps_r3_1": {
+   "regret_mpc": 1.0456436506577016,
+   "regret_tp": 0.34223686114774,
+   "disagree": 0.07258064516129033
+  },
+  "RECS_118057_aps_r3_7": {
+   "regret_mpc": 1.2875245330793166,
+   "regret_tp": 1.259587618477806,
+   "disagree": 0.07795698924731183
+  },
+  "RECS_118240_srp_e26_1": {
+   "regret_mpc": 4.926272407795551,
+   "regret_tp": 0.0020185496376647905,
+   "disagree": 0.041666666666666664
+  },
+  "RECS_118240_srp_e26_7": {
+   "regret_mpc": 0.05094408243092108,
+   "regret_tp": 0.03826222390788292,
+   "disagree": 0.03225806451612903
+  },
+  "Rat_assembly_Erwin_1": {
+   "regret_mpc": 109.19685425692253,
+   "regret_tp": 103.67875128296235,
+   "disagree": 0.05913978494623656
+  },
+  "Rat_assembly_Erwin_7": {
+   "regret_mpc": 208.387322500994,
+   "regret_tp": 193.03767360777388,
+   "disagree": 0.08602150537634409
+  }
+ }
+}
