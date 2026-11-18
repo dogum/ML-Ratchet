@@ -6,7 +6,9 @@ instrument on the model's site page.
 **The headline, with its caveat.** On WaterData's frozen exam of 244 real ResOpsUS dams the pilot's median cost J is
 **0.0154** (90 % interval 0.0097-0.0202), against **0.0285** for a classical flood-pool and hedging rule tuned on the
 same simulator (the fairest baseline available), 0.108 for SOP and 0.183 for the real operators. It beats the tuned
-rule on 63 % of dams (exact 95 % interval 56-69 %). **J charges nothing for stored water, and the pilot uses that:** it
+rule on 63 % of dams (exact 95 % interval 56-69 %). A re-score on the rebuilt data reproduces every number, and the
+paired bootstrap of the median difference excludes zero against every causal baseline, including the same rule tuned on
+the 15 real dev dams (0.0322, added after the exam was seen). **J charges nothing for stored water, and the pilot uses that:** it
 keeps a median 38 % of capacity full where SOP keeps 59 % and the perfect-foresight DP bound 68 %. Read every J below
 next to the storage rows.
 
@@ -127,11 +129,46 @@ capacity (`training/exam_results.json`).
 | historical operations | 0.183 | 0.168 | 0.001 | 0.285 | 55 % | 1.9 | 0.27 | 0.44 | +0.00 |
 | perfect-foresight DP (bound) | 0.0063 | 0.0057 | 0 | 0.030 | 14 % | 0.0 | 0.00 | 0.68 | +0.30 |
 
+### Reproduction re-score and the dev-tuned rule (18 Nov 2026; the exam had already been seen)
+The released weights were re-scored on the rebuilt ResOpsUS and CDEC data (`mlratchet data water`; `build.py --only
+verify` passed, splits sha256 33f88ca0...) through the shipped exam path (`training/final_exam.py`, WaterData's own
+`doy_curve`, `cost`, `simulate`, `dp`), driven by `training/rescore_exam.py`. The dams are exactly WaterData's 244 scored
+exam dams (6 of the 250 have no scorable second half) and its 15 scored CDEC reservoirs (PAR, in the crosswalk, is not
+scorable). **Every median, win fraction and shipped bootstrap interval reproduces to better than 1e-5.** The re-scored
+baselines match WaterData's shipped per-dam table: SOP and rule curve to 1e-12 on all 244 dams; historical differs on
+one dam by 3.1e-5 and DP on one dam by 1.2e-4 (the status doc already noted the historical one).
+
+Added on the seen exam: the same classical rule as c1 (SOP + flood pool + hedging), the same grid and objective as
+c1's simulator tuning (`training/classical.py`), tuned instead on the 15 real dev dams (`training/tune_rule_dev.py`):
+f = 0.75, tau = 3 d, **H = 90 d**, dev median J 0.0369 (the c1 and c2 constants re-score to their logged dev J,
+0.0422 and 0.0475). Frozen in `training/dev_tuned_rule.json`, then scored once: **exam median J 0.0322**, worse than the
+simulator-tuned rule (0.0285). It hedges over 90 days of demand and keeps far more water: mean storage 0.62, end − start
++0.18. A baseline, not a rung. Per-dam scores: `training/rescore_per_dam.csv`; intervals: `training/rescore_exam.json`.
+
 ### Verdicts, with intervals
-Methods: (1) the shipped 90 % bootstrap interval of the median J (dams resampled, 2,000 draws); (2) the exact
-Clopper-Pearson 95 % interval of each shipped paired win fraction (scipy.stats.binomtest; ties count against the
-pilot). Per-dam scores were not shipped, so there are no paired intervals on differences; component rows are judged from
-the median only where the gap is large.
+Methods: (1) a paired bootstrap over dams (10,000 resamples, numpy `default_rng(20261118)`) of median(pilot) −
+median(baseline); a verdict is win or loss only if its 95 % interval excludes zero, else tie; (2) as a cross-check, the
+exact Clopper-Pearson 95 % interval of each paired win fraction (ties count against the pilot); (3) the shipped 90 %
+bootstrap interval of each median.
+
+| row | pilot | baseline | median(pilot) − median(baseline), 95 % paired bootstrap | pilot better on (exact 95 %) | verdict |
+|---|---|---|---|---|---|
+| ResOpsUS 244, J | 0.0154 | sim-tuned rule g4 0.0285 | −0.0131 (−0.0201 to −0.0073) | 62.7 % (56.3-68.8) | |
+| | | sim-tuned rule g1 0.0294 | −0.0140 (−0.0250 to −0.0069) | 60.2 % (53.8-66.4) | |
+| | | dev-tuned rule (added on import, seen exam) 0.0322 | −0.0168 (−0.0257 to −0.0105) | 57.8 % (51.3-64.1) | |
+| | | SOP 0.108 | −0.093 (−0.123 to −0.069) | 84.4 % (79.3-88.7) | |
+| | | rule curve 0.143 | −0.128 (−0.143 to −0.108) | 95.1 % (91.6-97.4) | |
+| | | historical 0.183 | −0.168 (−0.191 to −0.149) | 94.7 % (91.1-97.1) | **win** |
+| | | DP (a bound) 0.0063 | +0.0092 (+0.0035 to +0.0139) | 29.9 % (24.2-36.1) | info |
+| ResOpsUS 244, shortage ratio | 0.066 | SOP 0.010 / g4 rule 0.037 / g1 rule 0.019 / dev rule 0.065 | +0.056 (+0.043 to +0.069) / +0.029 (+0.019 to +0.041) / +0.047 (+0.034 to +0.055) / +0.000 (−0.019 to +0.019) | – | loss |
+| ResOpsUS 244, days/yr > Qmax | 2.9 | SOP 2.2 / historical 1.9 / tuned rules 0 | +0.65 (+0.05 to +1.24) / +1.0 (+0.2 to +1.45) / +2.9 (+2.1 to +3.5) | – | loss |
+| ResOpsUS 244, worst excess / Qmax | 0.040 | tuned rules 0, SOP 0.96, historical 0.27 | not bootstrapped | – | mixed |
+| ResOpsUS 244, mean storage | 0.38 | SOP 0.59 / g4 rule 0.40 / dev rule 0.62 / DP 0.68 / historical 0.44 | −0.21 (−0.31 to −0.16) / −0.02 (−0.04 to +0.01) / −0.23 (−0.26 to −0.20) / −0.30 (−0.34 to −0.26) / −0.06 (−0.12 to +0.00) | – | info (not charged by J) |
+| ResOpsUS 244, end − start | +0.008 | SOP +0.30 / g4 rule +0.009 / dev rule +0.18 | −0.29 (−0.38 to −0.23) / −0.002 (−0.063 to +0.026) / −0.17 (−0.23 to −0.13) | – | info |
+| Mass-balance-OK 151, J | 0.0162 | g4 rule 0.0300 / g1 0.0354 / dev rule 0.0376 / SOP 0.0992 | −0.0138 (−0.0253 to −0.0080) / −0.0192 (−0.0319 to −0.0084) / −0.0214 (−0.0315 to −0.0109) / −0.083 (−0.116 to −0.061) | g4 64.9 % (56.7-72.5), dev 60.3 % (52.0-68.1), SOP 82.8 % (75.8-88.4) | **win** |
+| CDEC 15 (WY2021-2025), J | 0.0193 | g4 and g1 rules 0.0354 / dev rule 0.0291 / SOP 0.0947 | −0.016 (−0.039 to +0.0005) / −0.0098 (−0.0262 to +0.0020) / −0.075 (−0.146 to −0.024) | g4 53 % (27-79), dev 47 % (21-73), SOP 93 % (68-99.8) | **tie** |
+
+Before the re-score (shipped files only: Clopper-Pearson and the shipped 90 % intervals):
 
 | row | pilot | fairest baseline | others | pilot better on (95 % interval) | verdict |
 |---|---|---|---|---|---|
@@ -145,20 +182,24 @@ the median only where the gap is large.
 | CDEC 15 (WY2021-2025), median J | 0.0193 (0.0002-0.0546) | tuned rule g4 0.0354 (0.000-0.0756) | SOP 0.095 (0.054-0.158), rule curve 0.240, historical 0.108 | g4 rule 53 % (27-79), g1 rule 60 % (32-84), SOP 93 % (68-99.8), historical 100 % (78-100) | **tie** |
 | DP bound, 244, median J | 0.0154 | DP 0.0063 (0.0049-0.0082) | – | 29.9 % (24.2-36.1) | info (a bound) |
 
-By main use (median J; no interval): flood control (97 dams) pilot 0.0053, tuned rule 0.0081, SOP 0.186; irrigation
-(88) 0.0186, 0.0345, 0.0517; hydropower (25) 0.0522, 0.0718, 0.108; supply (20) 0.0062, 0.0202, 0.0522; navigation (7)
-0.125, 0.148, 0.155; recreation (4) 0.017, 0.020, 0.691; other (3) 0.052, 0.072, 0.056.
+By main use (median J, pilot / g4 rule / dev rule / SOP; paired bootstrap against the g4 rule): flood control (97
+dams) 0.0053 / 0.0081 / 0.0252 / 0.186, −0.0029 (−0.0121 to +0.0006), level; irrigation (88) 0.0186 / 0.0345 / 0.0338 /
+0.0517, −0.0159 (−0.0280 to −0.0088); hydropower (25) 0.0522 / 0.0718 / 0.0503 / 0.108, −0.0195 (−0.0415 to −0.0048),
+but level with the dev rule; supply (20) 0.0062 / 0.0202 / 0.0127 / 0.0522, −0.0139 (−0.0299 to +0.0019), level.
+Navigation (7) 0.125, 0.148, 0.155 (pilot, g4 rule, SOP); recreation (4) 0.017, 0.020, 0.691; other (3) 0.052, 0.072,
+0.056.
 
-The fairest baseline available is the classical rule tuned on the simulator. A rule tuned on the 15 dev dams would be
-fairer still; it needs the ResOpsUS daily series, which are not on disk. That is an open item, not run.
+The fairest baseline is still the classical rule tuned on the simulator (0.0285): the rule tuned on the real dev dams
+scores worse on the exam (0.0322). Both were beaten on J; neither was beaten on stored water by the pilot.
 
 ## Where it fails / limits
 1. **It exploits what J ignores.** J charges nothing for storage, so the pilot keeps reservoirs lower: median storage
-   38 % of capacity, against SOP's 59 %. The shipped card says that on 34 % of dams it ends the window at least 20 % of
-   capacity lower than it started (SOP: 21 %); the per-dam table behind that was not shipped, so it was not re-checked.
-   On CDEC the median end − start is −0.10.
-2. **It loses to SOP on 15 % of dams** (37 of 244). By the shipped card these are mostly large irrigation or supply
-   reservoirs (median 2.0 years of inflow) in a scored decade drier than the calibration decade (not re-checked).
+   38 % of capacity, against SOP's 59 % and the dev-tuned rule's 62 %. On 34.4 % of dams it ends the window at least
+   20 % of capacity lower than it started (SOP 20.9 %, dev-tuned rule 18.0 %; confirmed by the re-score). On CDEC the
+   median end − start is −0.10.
+2. **It loses to SOP on 15 % of dams** (37 of 244): 24 of them irrigation or supply reservoirs, large (median 2.05
+   years of inflow, against 0.79 for all exam dams), and 86 % of them in a scored decade drier than the calibration
+   decade (73 % of all exam dams). Confirmed by the re-score.
 3. **It rations often and floods slightly more often, by much less.** Release is below demand on a median 67 % of days;
    it goes above Qmax more often than SOP (2.9 against 2.2 days a year) but by far less (median worst excess 4 % of
    Qmax, against 96 %). Under J's squared penalty that is cheaper; downstream it might not be.
@@ -178,6 +219,8 @@ From the Watershed handoff (section 6), as written for this model:
 - Its climatology features use each exam dam's calibration-half inflow, as WaterData's rule curve does.
 - Two void training runs (the optimiser step was missing) were removed and logged.
 - J charges nothing for storage.
+- Added on import (18 Nov 2026), after the exam had been seen: the dev-tuned rule (tuned on the 15 dev dams only, then
+  scored once) and the paired bootstrap intervals. Neither changed the release.
 
 Also from the handoff, for the whole platform: dev data were used both to fit physics and to gate rungs (partly
 in-sample; here the dev dams helped set the generator's g2-g4 ranges and gate every rung); free-window forcing from exam

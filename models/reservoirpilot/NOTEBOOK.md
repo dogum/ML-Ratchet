@@ -168,3 +168,70 @@ into inflow noise), demand ×0.6-1.6. On the recorded decade the live pilot repr
 
 Open: a classical rule tuned on the 15 dev dams (the fairest baseline) and paired per-dam intervals both need the
 ResOpsUS daily series, which are not on disk (`mlratchet data water`); not run.
+
+## 18 Nov 2026: reproduction re-score (seen exam) and the dev-tuned rule
+
+Approved by the owner after the import. A reproduction, not a rung: nothing in the release changed, and nothing was
+chosen from the result. The exam had already been opened in the sandbox, so every number below is on a seen exam.
+
+**Data.** ResOpsUS v2 (678 dams) and CDEC (18 reservoirs) rebuilt into a git-ignored data root (`ML_RATCHET_WATER`).
+`python -I shared/water/data/build.py --only verify`: 1,170 of 1,170 shipped files identical; splits.json file sha256
+33f88ca0... and field ed8109e5... both OK. Scored dams: exactly WaterData's 244 scored exam dams (the 6 other exam dams,
+grand_1254, 338, 468, 508, 827 and 919, have no scorable second half, as in WaterData's table) and its 15 scored CDEC
+reservoirs (PAR is in the crosswalk but not scorable, as in WaterData's table). Dev tasks rebuilt with
+`evaluate.prep('dev')` match WaterData's per-dam table to 1.6e-9, as the status doc said.
+
+**Path.** `training/rescore_exam.py`: `evaluate.prep('exam')` (WaterData's `doy_curve`, `cost`, `simulate`, `dp`
+imported), the sim-tuned rules rebuilt from their logged constants (c1 f 0.75 / tau 3 / H 10, c2 f 0.6 / 3 / 10), then
+the shipped `final_exam.main` on `reservoirpilot_weights.npz`, unchanged. Outputs under `work/exam/`; committed:
+`training/rescore_per_dam.csv` (J and every component per dam and policy, 5 significant digits, no time series) and
+`training/rescore_exam.json`.
+
+**Reproduction.** Every median of the shipped `exam_results.json` (all components, all three splits), every win
+fraction and every shipped 90 % interval reproduces to better than 1e-5; the pilot's median J is 0.015427 (claim
+0.0154), SOP 0.10837 (0.108), rule curve 0.14300 (0.143), historical 0.18326 (0.183), DP 0.006254 (0.0063), sim-tuned
+rule g4 0.02852 (0.0285). Baselines per dam against WaterData's shipped `reservoir_scores.parquet`: SOP max |ΔJ| 1.3e-15
+and rule curve 1.1e-13 on all 244; historical differs on one dam by 3.1e-5 and DP on one dam by 1.2e-4 (all other
+dams < 1e-6). CDEC against `reservoir_recent_scores.parquet`: SOP, rule curve, DP < 1.2e-10, historical one reservoir by
+1.1e-6. So the rebuilt data match the sandbox's.
+
+**The card's failure claims, now checkable, all hold.** The pilot ends ≥ 20 % of capacity lower than it started on
+34.4 % of dams (SOP 20.9 %, sim-tuned g4 rule 33.2 %, dev-tuned rule 18.0 %, historical 6.1 %, DP 0.4 %). It loses to SOP
+on 37 dams: 18 irrigation, 6 supply, 8 flood control, 4 hydropower, 1 recreation; median capacity 2.05 years of inflow
+(all exam dams 0.79); 86 % of them had a scored decade drier than the calibration decade (all exam dams 73 %).
+
+**Dev-tuned rule** (`training/tune_rule_dev.py`, `training/dev_tuned_rule.json`). The same rule as c1, the same grid
+(f 0.4-1.01, tau 3/10/30 d, H 1/10/30/90 d) and objective (median over tasks of mean daily J, first minimum) as
+`classical.py`, on WaterData's 15 dev tasks only. Check first: the c1 and c2 constants re-score to their logged dev J
+(0.0422, 0.04747). Optimum f 0.75, tau 3 d, H 90 d (the grid's largest hedging horizon), dev median J 0.0369 (pilot r8:
+0.0335). Frozen, then scored once on the exam: median J 0.0322 (mass-balance subset 0.0376, CDEC 0.0291), worse than the
+simulator-tuned rule (0.0285); it keeps more water (mean storage 0.62, end − start +0.18) and rations on 11 % of days.
+
+**Paired bootstrap** (10,000 resamples over dams, numpy `default_rng(20261118)`, 95 % percentile interval of
+median(pilot) − median(baseline)):
+
+| split | baseline | ΔJ | 95 % | verdict |
+|---|---|---|---|---|
+| 244 | sim-tuned g4 | −0.0131 | −0.0201 to −0.0073 | win |
+| 244 | sim-tuned g1 | −0.0140 | −0.0250 to −0.0069 | win |
+| 244 | dev-tuned | −0.0168 | −0.0257 to −0.0105 | win |
+| 244 | SOP | −0.093 | −0.123 to −0.069 | win |
+| 244 | rule curve | −0.128 | −0.143 to −0.108 | win |
+| 244 | historical | −0.168 | −0.191 to −0.149 | win |
+| 244 | DP (bound) | +0.0092 | +0.0035 to +0.0139 | loss (info) |
+| 151 | sim-tuned g4 / dev-tuned / SOP | −0.0138 / −0.0214 / −0.083 | −0.0253 to −0.0080 / −0.0315 to −0.0109 / −0.116 to −0.061 | win |
+| 15 CDEC | sim-tuned g4 and g1 | −0.016 | −0.039 to +0.0005 | tie |
+| 15 CDEC | dev-tuned | −0.0098 | −0.0262 to +0.0020 | tie |
+| 15 CDEC | SOP | −0.075 | −0.146 to −0.024 | win |
+
+Components on the 244 dams: shortage ratio worse than SOP (+0.056, +0.043 to +0.069), the g4 rule (+0.029, +0.019 to
++0.041) and the g1 rule, level with the dev-tuned rule (+0.000, −0.019 to +0.019); days above Qmax worse than SOP (+0.65,
++0.05 to +1.24) and every tuned rule (+2.9, +2.1 to +3.5); mean storage lower than SOP (−0.21, −0.31 to −0.16), the
+dev-tuned rule (−0.23) and DP (−0.30), level with the g4 rule (−0.02, −0.04 to +0.01); end − start lower than SOP
+(−0.29) and the dev-tuned rule (−0.17), level with the g4 rule. On the 151-dam subset the days above Qmax against SOP
+are level (+0.37, −0.20 to +0.90). The Clopper-Pearson win-fraction intervals agree (dev-tuned rule: pilot better on
+57.8 %, 51.3-64.1 %) and stay in model.yaml as a cross-check.
+
+What did not reproduce: nothing in the shipped exam log. Not reproduced by design: the shipped page's JS DP (see the
+import entry). Model.yaml, the card and the lab tables now carry the dev-tuned rule and the bootstrap intervals; the
+verdicts are unchanged (244: win; 151: win; CDEC: tie; shortage ratio and days above Qmax: loss; storage rows: info).
