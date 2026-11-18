@@ -1,0 +1,3672 @@
+{
+ "what": "SnowSense fresh exam: SNOTEL exam stations, water year 2026, frozen before any rung",
+ "frozen": "2026-11-18 23:17 UTC",
+ "source": "NRCS SNOTEL Report Generator, fetched 18 Nov 2026 by `mlratchet data water --only snotel`; recent data provisional",
+ "splits_sha256": "33f88ca0225180dcce979eceed26bf5157b92455e13bb7b78e135e9fd4d98c6b",
+ "eligibility": "SNOTEL exam station (splits.json) with WY2026 complete: >= 330 SWE days, >= 300 P and T days",
+ "read_window": [
+  "2025-08-01",
+  "2026-10-01"
+ ],
+ "score_window": [
+  "2025-10-01",
+  "2026-09-30"
+ ],
+ "rule": "Scored once, after the next rung decision is final: that rung, v1.0 and every baseline together. Nothing is chosen on it. If a re-fetch hashes differently, the frozen copy is scored and the change reported.",
+ "n_exam_stations": 772,
+ "n_without_data": 0,
+ "n_frozen": 730,
+ "stations": [
+  {
+   "station_id": "1000_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "3ff5bfb145f425bedc60b32c421054a07f52ad6132e5aa449bc2c8f6e9415229"
+  },
+  {
+   "station_id": "1005_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "d2a6476cc861272848994b86a451f6c828412b7c9a33bdffee5074259d9927e9"
+  },
+  {
+   "station_id": "1006_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "d2bedaf14494b2668d2f23a93407799779fff30fb6a5c92418cc3e46d4e1740e"
+  },
+  {
+   "station_id": "1008_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "b39aabc7f9ad7a47690cc86e0770475b44b4f002753b3cd662881cdccebc7b44"
+  },
+  {
+   "station_id": "1009_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "6a086d3bacaa0a3904f516b04c760f3d200a9208bc94cb27b8bca29898b487a8"
+  },
+  {
+   "station_id": "1010_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "2fe5d4d2a9af1a422c19c0ab60015374ca7258081d18d14d5d55f02f7bd29387"
+  },
+  {
+   "station_id": "1011_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "5650b19201f0b978446ca59145e5e9a82c281946010d2f33aca74cec69b82aa9"
+  },
+  {
+   "station_id": "1013_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "c5c8c79ffcd0170e6f237e8e130deaa5c0e9e9fc1d4dd4cd49b0dcaa62dc79e4"
+  },
+  {
+   "station_id": "1014_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "6e1faa849dd5d59c436325769b4d6057994afba718df94fbc7d2774154710369"
+  },
+  {
+   "station_id": "1015_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "6d8344cf93a9721fae241cda2a0dbd49e36725249f36db25318222f283e453ec"
+  },
+  {
+   "station_id": "1016_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "1cf604420ba7156db4dc046fd40b5debbd63d05242c559430650dc993f77f4bc"
+  },
+  {
+   "station_id": "1017_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "ef8b64e1907789c89cca970708844d6ca007204e66d627fb7fd24aeec8cde19d"
+  },
+  {
+   "station_id": "1030_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "2a99178894f89647a24fe84663f669b489694ede49a7fac43f6a4a414bdec4bb"
+  },
+  {
+   "station_id": "1031_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "f87f5d37947da10e734d4a337e24b1ea56cfb10ec76d48b4312bd03f05186506"
+  },
+  {
+   "station_id": "1032_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "b899fe40cd18249584b378e01b7b9ec8178ab4e2481d29459b09f3cae6391fa5"
+  },
+  {
+   "station_id": "1033_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "7e0853eed8ee41d20a28e110ecbe8f7ac31ceaa886771589fcda80a8684458ab"
+  },
+  {
+   "station_id": "1034_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "acd8f88645ee00ae2ed18e552f801d12d54c6131ee9e1b7b822b95f4352e9259"
+  },
+  {
+   "station_id": "1035_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "d252e268530743180977025c850bce24c06880a2669c16046a5deac013661dce"
+  },
+  {
+   "station_id": "1039_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "a325bcf292bc421808c1a0252fac6a0cbdf74ca31dbc22a14a9fd18aab447cad"
+  },
+  {
+   "station_id": "1040_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "6451c069822d41710a3ed4e1b09e749e7940065136e8494b4d9e342d0239db6e"
+  },
+  {
+   "station_id": "1041_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "4f486efb6c643aa6bf7ff0c6a6eb621c1fba8ceb44fa80c583e6a4975ed3a888"
+  },
+  {
+   "station_id": "1042_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "3ab328d9f211a86a8212cdcc1cd1ff8e1a9e5cc5672ad117f2597afc8ad0fabc"
+  },
+  {
+   "station_id": "1043_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "1478a1c18625e74de2c594129398a2746d49e0bd0aa3a1ed77e58f339de14d0d"
+  },
+  {
+   "station_id": "1044_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "03383ca9b18bb5a244bafa2d91aa6747611478e200af0f5b0d41a25cc2a333d5"
+  },
+  {
+   "station_id": "1045_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "18926a77c5d8a7e2e75dbe0fd04c826c487c67fa498d8fc89d49745f4680bd26"
+  },
+  {
+   "station_id": "1046_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "00a6857c182c5bbdf6b9e10c46d246d3bb9f1fd72454c1a07736145164a881dc"
+  },
+  {
+   "station_id": "1047_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "697c96d12ee3e9c3b12249117f9e699e92f14d8a37e252691b3dc151566abbaf"
+  },
+  {
+   "station_id": "1048_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "9b7437744e0fc19450930679ac22651d1c6d3f234aa1c6488ffb6b24e0c23521"
+  },
+  {
+   "station_id": "1049_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "0b46768cc71019233cd5c61098d32d483cb9aac94632e7ff7c724320983db5a6"
+  },
+  {
+   "station_id": "1050_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "9374000737256b6d841dd38becb6c4b9872cba00b6898c7b53e345d26b354d90"
+  },
+  {
+   "station_id": "1051_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "52d466c7ad60e1d26d39ed0624cfde3af1945c25101d89b20960d6ac962a3fa4"
+  },
+  {
+   "station_id": "1053_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "b9799ee57a92c296ae2bfd54ccb4f4062192dc6b05ff79dc047170a7b835278d"
+  },
+  {
+   "station_id": "1055_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "e3dba662fc0b8c5802ccf5291775013c9f482ff8f3c197241b0ded936857e18c"
+  },
+  {
+   "station_id": "1056_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "4ec4738259cfa509e61241b33b528d18825156ac3ab819aca859df63c14356af"
+  },
+  {
+   "station_id": "1057_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "db2bba8756f431703d4d75ecb64cc79e568d3e3170694a123cabc17f60a3fe49"
+  },
+  {
+   "station_id": "1058_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "903c0207bad94659915fba504cb3728ab4a47c22b341cc3389f342ac74880c07"
+  },
+  {
+   "station_id": "1060_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "8a421a218c831fa544541dd93329a8494905e93c2d6f292856e4721445e69d67"
+  },
+  {
+   "station_id": "1061_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "29b682cd913a4dd6b96c6b47297aa2f2adeceeaf6d8a7027a6242072597c053f"
+  },
+  {
+   "station_id": "1062_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "579ede49592440efb8dcdbca5c2124f898afeb8caad6dd6327acb247eb62033e"
+  },
+  {
+   "station_id": "1065_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "bd90fea7565992262c0e39d8aa3e816d817c079a5faf889ed3c39b5b1d6876d0"
+  },
+  {
+   "station_id": "1066_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "ee3f04878c9c6f82fed0e01b7a0abc1c28346198cc841fa68bf17c6da8ef55d7"
+  },
+  {
+   "station_id": "1067_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "6a53fc3bd507befa99590bc2eacf8fa55fcec2e507dfb56171f5b874d054dd6e"
+  },
+  {
+   "station_id": "1069_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "428776e53ab77fe4c887d3c8622e90ec72cd6d2ac257c00432aeaa3439d41c26"
+  },
+  {
+   "station_id": "1070_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "04e004239a980bca7146f844d0c4197d842e5ff9db5ff5fd250f35740bd2a5f9"
+  },
+  {
+   "station_id": "1073_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "f6e116c6dbf962d5793e16b04e2f26667329c7d82b6ec83431921712ecd3c0c5"
+  },
+  {
+   "station_id": "1077_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "9aaab118131d13904cf8d5c0e9f0475c7efd0faa165c78bfdf64e2772a0dd651"
+  },
+  {
+   "station_id": "1079_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "45dca8e34ee8601170493b86bac769b213a8e51fc1325b156f4ab9f6a522edb1"
+  },
+  {
+   "station_id": "1083_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "5592ce82ce432a74bacea483f66be6c32460006bb1c2035e142cb9cd563480f4"
+  },
+  {
+   "station_id": "1093_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "19b4a806d3d90198a824a921361d66e173a267521c092c0ff6ec697ef900cb8b"
+  },
+  {
+   "station_id": "1096_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "efcb49962d5506119ac1babd7ba09392b6feca6518261150cc365b8f124aa555"
+  },
+  {
+   "station_id": "1097_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "5d974cb2cda3cd8654aa82d3541125ac8fc611712c62f75e5c03f03d1c5f698f"
+  },
+  {
+   "station_id": "1098_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "e77e42e82fa31588c7415155ac7688ad98145208ae2fb01cf2cd3aaf36a9b923"
+  },
+  {
+   "station_id": "1099_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "df44b5d25a979a3b4ae9cffd98df1ef4994e660bfac8b10ab6f4851f27917752"
+  },
+  {
+   "station_id": "1100_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "660b99d96d532ca87c27bd2011621189a2a4ac246302758e60d576b7066c9f28"
+  },
+  {
+   "station_id": "1101_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "b414ebb2c175746957fc378649e4617c3e84d67f3da5bbc9c0f5c40f8e228b52"
+  },
+  {
+   "station_id": "1102_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "35a10fecb6121743c3c0a7a7e3c09299022d9595a74efe96dcb2e2788e626b2e"
+  },
+  {
+   "station_id": "1104_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "342c659724d4b95a940e415fb079e3b45c59ea064cc294dab317299ee62189df"
+  },
+  {
+   "station_id": "1105_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "2603a5af65219eb9b1c96749eb24a4a47b1c4483da75ca849699bd9ff68485f6"
+  },
+  {
+   "station_id": "1107_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "7691732c410e108ebafbad34b4d8bff3fab3a9e1e26595e4530f5a5b993a1207"
+  },
+  {
+   "station_id": "1109_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "1c6898d8099c336b7d1b5e0da0ecc6f1ce32e3b83acf04c77efec4500fa1c5d7"
+  },
+  {
+   "station_id": "1110_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "70d07d9fc79199c3f6703b83850928af28d9f031dac236a15376201d695c590f"
+  },
+  {
+   "station_id": "1111_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "e2e9ce41f63b7bddd5cf90559674c9b7194e580b39525e99d384384e4650a1d9"
+  },
+  {
+   "station_id": "1112_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "264e4afb9b6732c5d4c66630e744fc653870f6bdf33e157b4a0adbfe575eed2e"
+  },
+  {
+   "station_id": "1113_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "bbdaba2c0c4849f6c6f207c657ead58bb5597b14e19ab31d5d842be01f044007"
+  },
+  {
+   "station_id": "1114_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "05a9ea9fc8971ddd8f2df7c4308922ee030ec221f8204798ecbc9b0b1a80a83a"
+  },
+  {
+   "station_id": "1115_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "9ffae9731134c94c1dc18eb9d1b2d287e1640b56f38c26d525b603769d807713"
+  },
+  {
+   "station_id": "1117_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "a960caaa372d4bc060066155a42b083ae89ec35b044e9d481b912e3bc0f7d9a6"
+  },
+  {
+   "station_id": "1118_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "cca4fb539ebfb6c4f0bccaa96c72d6d5da344cb701a47697054c0c0dc088f66d"
+  },
+  {
+   "station_id": "1119_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "d20474a48ca7b1aad1ac2273ca4727ba334602f77a3d49015ce29800bd4d46a5"
+  },
+  {
+   "station_id": "1120_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "f61ef129ff04c51ae2c286f70ec3e24d7047ff865dddd5223404cac28ee011e7"
+  },
+  {
+   "station_id": "1121_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "d7afb6840523e736e8e7292a3638c32a0181392455e4b3d1727aa6a1cc3d0950"
+  },
+  {
+   "station_id": "1122_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "618ac035ce82024d19f44dd3a3d9618bef1c70d743c8993d65c004c2618528a4"
+  },
+  {
+   "station_id": "1123_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "680e1d7d11111547abd66234ac5419677b383f14c4b917c5674803bd26b943b3"
+  },
+  {
+   "station_id": "1124_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "e4cbb79e67ce836a7df60384b1d138788fa8157cd60c62cc93fbcaecaf74247b"
+  },
+  {
+   "station_id": "1125_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "7a29b39369190ad3cfb35cd48ec8d7c39cda544f731ed51a9228b30062c4ab48"
+  },
+  {
+   "station_id": "1127_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "e24936d987071b6967d272af7e714b66963445582cad705434024be3a35e9e22"
+  },
+  {
+   "station_id": "1128_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "b03eb70023160d435435ada3ea7c9bd29b5e48e3ace13ab72a3f94219cd312d0"
+  },
+  {
+   "station_id": "1129_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "88de3d0c43945c29cf3af24c0db2d48c6718dc5c74abd4f05ec64b188edb64cd"
+  },
+  {
+   "station_id": "1130_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "da81a98e6b26e62f23a63fc58fb5784d8fdee11a6173b772c7cdcd834fd34bb9"
+  },
+  {
+   "station_id": "1131_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "ec2319873c0d724b656d4f02409666f2498a06652143644013f1cdaedc9614f6"
+  },
+  {
+   "station_id": "1132_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "60a0d5d7708a80c82a3f6244f1a87b37c06e12d78209804c4911df18719243ea"
+  },
+  {
+   "station_id": "1135_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "9c4a48db7765302e1577f1987ed5e0b9cb80707c789d1179c8bfbb0e5d0564bc"
+  },
+  {
+   "station_id": "1136_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "2037980990905e88e765f9198e416f59ced8789eef853aeafaf199502a925b42"
+  },
+  {
+   "station_id": "1137_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "f77be3fadcdea7880617ecf012589cc97b5629239c84884ba241bb489f55c4d0"
+  },
+  {
+   "station_id": "1138_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "5870851be578c5df4b2ebf844a8b020ee96faff08501f497b7c9cfe59705f218"
+  },
+  {
+   "station_id": "1139_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "029d1da0314b140a7edaf86822e40c57e49a5df80ab524e5a0ca12fafae8afbb"
+  },
+  {
+   "station_id": "1140_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "79dd6d205e80099b12daae32c36e22ac79fcd715f46b06b38dd1aa565674cf5f"
+  },
+  {
+   "station_id": "1141_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "28d3cfa57fc69525d8d21953257b504d18e14b6896ae28c2db67b5efd388fb0c"
+  },
+  {
+   "station_id": "1142_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "a39e0f41cfbd91e80867b58fe8d41017ef0916ed78fbd197aa31ffc891d1a149"
+  },
+  {
+   "station_id": "1143_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "d85f3dfe069cb653d0d66d76eafb7a4218c5811b2322efe843466316310a3f27"
+  },
+  {
+   "station_id": "1144_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "c84a12c66fc0782d8448d650d27b369cd366f1d727f3e983667fc391ed47c887"
+  },
+  {
+   "station_id": "1145_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "df07a1f318baa5012aa6dc0bdda3e741b4b2f29cfe73f6042c6f61cc3a2c59b4"
+  },
+  {
+   "station_id": "1147_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "437518bceca4f63b264822218c1eedd512f2b44d6c53f5b77493d8b0bdd3b2d4"
+  },
+  {
+   "station_id": "1148_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "1de459d7ca04c31ad8d364ad512206d3db83a3c868a2824d1fe9c03517c3ae36"
+  },
+  {
+   "station_id": "1149_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "82f38eec9c1336fb0df40ee0fb3bc006d9418044ad89db696b5ba7c5561fb7a2"
+  },
+  {
+   "station_id": "1150_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "99f2a22d769331e99a457f8492791bb7e9ee4c67585637a6057ab85798b9bb3c"
+  },
+  {
+   "station_id": "1151_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "f9dbcd848ff59bee2e26f9778c38f5dcff04a8ff2185bc524f27693f0a4a5bee"
+  },
+  {
+   "station_id": "1152_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "06bc9d678b1458e23f98cd1d1e00ed7e3e57a95e6a306ed11036fce4bafc9f0e"
+  },
+  {
+   "station_id": "1153_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "e353ebe0ec6edbdb66242614286b2390afc2535e3c6f9c9e588ddc09f882d8f0"
+  },
+  {
+   "station_id": "1154_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "9cf7216f923cb8062eb0935819a6d1d617786551f28d0854fac32ebd59afa135"
+  },
+  {
+   "station_id": "1155_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "9ed7acf80a1f4f6998770fa1175641a2a4db3a3784721136e69e0e66f6b857f6"
+  },
+  {
+   "station_id": "1156_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "b26a96e0f5c9b50cb2ef26ca071e8a0fc52461a8d03bdae577587b2611ee1723"
+  },
+  {
+   "station_id": "1158_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "8d0cbe5e578e6fa0ed02d0f6336e4b2da5d7d98411fc9f49e8c31d31ab009a16"
+  },
+  {
+   "station_id": "1159_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "5ac0fb0fc16ea349e00d8e4d30edcfe725c195c02b7edfeb9bb8e06f65ba6665"
+  },
+  {
+   "station_id": "1160_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "1beea25e20c3ca12a7fcf3f8a41579e122e39eeb1a0ab915eb54119ae8d64ab7"
+  },
+  {
+   "station_id": "1161_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "150ee8bb0f42f238fc2e99cde72d42f8a61e7aa93049e2a33926abe5a940e2ed"
+  },
+  {
+   "station_id": "1162_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "dacae13d59abf1a3068eea94526f0df16df2c5d11b01fd03e03ddaf1eb189b85"
+  },
+  {
+   "station_id": "1163_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "c242e9fa68a7d0fc582408c3d3ad7d85260e513bb11b14007e77ff632364e4c7"
+  },
+  {
+   "station_id": "1166_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "83109c8037b3db6c4caae2ebfa6a93a70587da765a05a141695c382ae035054c"
+  },
+  {
+   "station_id": "1167_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "a1a108a34aa1707b279d448ab5f78dbd8d022bacc46de6283420e1fa00575077"
+  },
+  {
+   "station_id": "1168_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "f8045aef7a4393913bb7cd8a5181c28900c7b020ed1500eafbe3bd36bd812a1d"
+  },
+  {
+   "station_id": "1169_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "b2275953193e3771bf3b74c9fcec70a27e881efcb29069c31bf903fd00914f8f"
+  },
+  {
+   "station_id": "1170_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "ed0c74827102dde1b5c0504114d8027b24131f6c4225b4416bbdc7f6f441e027"
+  },
+  {
+   "station_id": "1171_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "25189bb64b7834ed122121728ad8e279fd07517e2a7be03d2453c1231aa74c62"
+  },
+  {
+   "station_id": "1172_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "f734918e934b1dcef96329de8035f544bdee77a66755fb5bbbb9931f9961ab49"
+  },
+  {
+   "station_id": "1173_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "e2a5f63eb41b0785f786e03cdf58d4b0393271f440715d91002de588b6b4184a"
+  },
+  {
+   "station_id": "1175_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "ebdc55f9c8dbf6b18f3385d16eb1fa3bbcf1b1936cdf2a3c5d37c3be572dc58d"
+  },
+  {
+   "station_id": "1182_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "25bbc1de946ab8a441304f0bfcb07ab73543070d3427df65e85f99ba1d849ae3"
+  },
+  {
+   "station_id": "1184_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "1fc8cc4289cf546371fd80294f9d7e2747ab71b16b637831041d4ae3b6352d0d"
+  },
+  {
+   "station_id": "1185_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "4cffcb09789505a2c3ff5ca61d288e829b2c67c153345632344c5d69a394017e"
+  },
+  {
+   "station_id": "1186_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "7ec5c45cd10733132dcad7cf4359cb61f9df83c4ad6cecc5afb5c85b8f7998fa"
+  },
+  {
+   "station_id": "1187_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "f858d82c49c38f1021d3da9a1837aa9457dbb5bb2bd286f1fa042bc0fdc40476"
+  },
+  {
+   "station_id": "1188_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "e4dd9c0a2e84767bc148c910785f82db20ade1f41cf31de1ddc119e9cffe5d48"
+  },
+  {
+   "station_id": "1189_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "b2f3a0973cca9de8ec1a4d1438c71fce080596fa281bd18602f77a419bccede5"
+  },
+  {
+   "station_id": "1192_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "b7395b21e4477e7f898ef60d8a44c84395643b5dc4e368911dc88f12e2509b69"
+  },
+  {
+   "station_id": "1194_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "118137100f2885eeac25d67fa634a2f8e88e44497521e46a807adb70df9356c1"
+  },
+  {
+   "station_id": "1195_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "15dd0ab6f15b15b1ae5fc2cd338541d0ea76db99017990bb605afe6c5bde4dbb"
+  },
+  {
+   "station_id": "1196_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "f299102696590608b97541b83e5e693317044a47386cc175686e0cd7b4bb16c3"
+  },
+  {
+   "station_id": "1197_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "c968f2030e03ddaa68032f151035af12a11a2567fc886ca05fda40a6df5a5892"
+  },
+  {
+   "station_id": "1212_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "a247355acc22ad2d108ca0f7864d201cc9190db51e1f64afaa69e222ba4684b2"
+  },
+  {
+   "station_id": "1214_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "0f22bbb83e20641aee061514d9a13beea0d56a812731bb2a486fba9e100f57a8"
+  },
+  {
+   "station_id": "1215_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "0fe2e53ba0e50faaa2f1a7e521bc4bb5b4f467af1d6d91865c68bc37c3f66f71"
+  },
+  {
+   "station_id": "1216_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "b7bf9c820032c8634a9ff4827ad7710db1f51d767c740d0d0babad45e86353b0"
+  },
+  {
+   "station_id": "1217_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "c007229a6773633a7220f7bbb8bef7e22dbddd0741fba406146a0471bd74e553"
+  },
+  {
+   "station_id": "1221_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "28b0de676d62bd529b517555a500c6c30282c871f49f8cef535b18cc7d098ac0"
+  },
+  {
+   "station_id": "1222_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "b60ad65b6b7ad87013ed9f974c742788dfc9c39421d01b2efaa57d2910f95c53"
+  },
+  {
+   "station_id": "1223_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "5a64ac0f1679327eb4c6c2d718975eace08a591d5b2d06b8f879ea533ae49234"
+  },
+  {
+   "station_id": "1224_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "92034862c40d03553da042c9bb509513025a89c90ad6e804f9d54fdc14980c8c"
+  },
+  {
+   "station_id": "1225_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "f107de62be8c4438a5e6d21b934263b1ce357a2bf77be1bee770f662cdbc1334"
+  },
+  {
+   "station_id": "1226_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "667ff6810231540089c021fb1ac82474839199213d4d4dafab945445f9ba0b9a"
+  },
+  {
+   "station_id": "1227_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "6e0008977eeae354c85edb3e993f48a190247b8e22787cdeb3f4d4ae7e4a83fb"
+  },
+  {
+   "station_id": "1231_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "1cd36b7d3a537b0e80603fb2f45183619f0a93237f56a6ae6c8f119a3d23c0a0"
+  },
+  {
+   "station_id": "1236_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "1ec4718cb03bfe2b211f39a477aa95e47f072746a839fcba3b6056f6d773a0ec"
+  },
+  {
+   "station_id": "1242_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "3bbf400dd7b166f0634000fe7d506186247b363181f9ca57b9e355c62440559b"
+  },
+  {
+   "station_id": "1243_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "860619cbb197dfc0e8e71fcfa71b7e9de46dae221e49c7d4d79e01a49e532833"
+  },
+  {
+   "station_id": "1244_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "bbf96b5ba95a5955238163ecc58b33ead4977dc06f8e28c32500a1cf2f243e94"
+  },
+  {
+   "station_id": "1247_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "85ad9eae17b5f309d69ba09a09c74c6b30ae15b626ccbd682d1392543d00fa23"
+  },
+  {
+   "station_id": "1248_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "2842f51d50a64d2e685a93e031e5e2c8398ad4703d77317b595da08328a166b2"
+  },
+  {
+   "station_id": "1249_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "7c3230741d84dbba09d95b6842784d9c4d91da511e506c3e5997b80d26f7825f"
+  },
+  {
+   "station_id": "1251_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "6cb444644463be098bae1643e9bdd6e07d7333a83fd371352e4af6f38130c09c"
+  },
+  {
+   "station_id": "1252_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "1dc742daa2d7781a6083ab1ff05fae5c7e1dd27663d05b0c1c95d0e7e6fd3fbb"
+  },
+  {
+   "station_id": "1254_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "565542f568987a9b11c7fa4dedd234e480886ff2a1dfd856fc38635ca097960b"
+  },
+  {
+   "station_id": "1256_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "d3b5d23b34a5c2699322ab89d88d8e9587a3a8dba0861218742bab0bb475298e"
+  },
+  {
+   "station_id": "1257_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "986a28f65597c9a0f903adc1a6b0ba4e910d716e0c194af55ee0929bb694d166"
+  },
+  {
+   "station_id": "1258_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "c435e0ad9c1ebe5855c3a9021269d9f8c62b05050f9345d54080d71b2cda46be"
+  },
+  {
+   "station_id": "1259_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "e397356578b5ed551a543b062c27a9380820fb2c185e0594835abd22d9f7d152"
+  },
+  {
+   "station_id": "1261_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "136f6166b659518802686f5db34018d5a0909d56323dc82e64edf29dc902e3e6"
+  },
+  {
+   "station_id": "1262_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "99b7a2c010af931f81eae042ef7ee45459fe47e0a1d1fe8ee6889da175ca3042"
+  },
+  {
+   "station_id": "1263_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "9870ee3c6a1c477594d37b9a2503a9aa552e146912543a1c56fc6db5903b410a"
+  },
+  {
+   "station_id": "1266_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "d322fe86a2978025d421bf241a55eea1a0d68721039153eaa6120c16a9f86306"
+  },
+  {
+   "station_id": "1267_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "603d8724788c4ab9b482ce88f5b8c3b061fa589a218580475c7f3afa5d50cd85"
+  },
+  {
+   "station_id": "1269_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "f767e160fb2abb083c451b16719bc9e0d68138342a0a2c9af3adc74be3a0df90"
+  },
+  {
+   "station_id": "1271_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "78f8744bca6d38f998dcc555bac5c48171ecdc6a83b7dc5a06d339db17922cc7"
+  },
+  {
+   "station_id": "1275_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "9fd4f76ae7cc6fbbaab2140522c91ca67d91295fa0d4c0a95b3420ffb4ffa409"
+  },
+  {
+   "station_id": "1278_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "6415cbc3b8c3915e23fb822463a2a15e30e6425fc67293c693fb0e0c1b315186"
+  },
+  {
+   "station_id": "1280_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "0370d9fb5744459ea8f06c996d8b2db3195d13ce1ebb2a141bf8ba58c44b62f3"
+  },
+  {
+   "station_id": "2029_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "2233680b3106f611b03f92a9b9ddd7a32b91a87f793a0acc04823e99a8eb1949"
+  },
+  {
+   "station_id": "2170_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "968739f86a8a8432447bf80f54b66fe16c450fa7d6390793c7b21d219ae8419a"
+  },
+  {
+   "station_id": "301_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "0f01c284ba0b5e50b3957ed6fb0673058b2961db9e51ff13df9473e4508057a1"
+  },
+  {
+   "station_id": "303_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "95cf6416ae73452de71ef49ef4188a79873ebf2ee58768c43a02cb6f56ed21d0"
+  },
+  {
+   "station_id": "304_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "703c92f9c010b0ae32b5dfd17f238b14af002d4a956f18c6cab25daaf0c6befb"
+  },
+  {
+   "station_id": "306_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "725326b79d411a6e35828443c1442e048865410dad2d17d61bd9d91a62d74f5a"
+  },
+  {
+   "station_id": "307_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "b99ceee3538a4fcd66851a77acf4c6b6d42b3d8b89d480d32359e9f4d959b15b"
+  },
+  {
+   "station_id": "308_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "9df9a0286d3242b1d23cd77db475361a4f6bbfe6714ef468381626839c79261a"
+  },
+  {
+   "station_id": "309_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "956e6b4ba3523bbb26ededd4cad40b05abdf5b5aa1b93e59d61bf732274991dd"
+  },
+  {
+   "station_id": "310_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "1bab462106ddc628a0b016735adecccd74b711733567d19830a60b30a316df34"
+  },
+  {
+   "station_id": "311_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "612977da2504afe0a1b8bc7a66c5a4a46d4914b3445c017a2b2b777ad24d8fff"
+  },
+  {
+   "station_id": "312_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "d992329ffbab61da8aaf9de84b248629b2d5e4323d82c6cf077cd807c7660593"
+  },
+  {
+   "station_id": "313_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "57399fb921e3af432160864c9744b7ce0f35f738fdcb9b5ef780594507df0cb3"
+  },
+  {
+   "station_id": "314_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "50c2c99034c8f164b4a9f9ce78381f95592578f14dfe6631f4e264e98b7b3f28"
+  },
+  {
+   "station_id": "315_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "8d1f65f5bdd53435688351b58657675bff6fbae08faccc398f564637c75064d0"
+  },
+  {
+   "station_id": "316_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "2d3f0b441bd4a3f1fea45aaf6efa8188fad1958abdb27d6b227beebe1975b000"
+  },
+  {
+   "station_id": "317_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "664cc439f2df72a23c902313829d9d02d0a1406cbf5acc84d555532e709cd099"
+  },
+  {
+   "station_id": "318_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "b52c5de35f381748f2cae94c9c758a0bffdbb71230a87856798358f4842da715"
+  },
+  {
+   "station_id": "319_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "28c49bd5624975d37aaca829d7c4a1173062f14a4cb12a1271450ef8a0b890a0"
+  },
+  {
+   "station_id": "320_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "8001ae63d02694b29e0ca9c918303ffa605ab8247028aaf465a68434f18ede1d"
+  },
+  {
+   "station_id": "321_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "79efb79385f9b057c4ecccb9902371cd27ad93d98ae15be8fd197e44fe77e95d"
+  },
+  {
+   "station_id": "322_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "14877db2ee5bd267e9a14bcca6938bb692cbc974c57030b6b2ce57e9e6300f8c"
+  },
+  {
+   "station_id": "323_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "74c8bf05b13e5c1d98d42fa99cbf096d6a4732c855d67a775c929418fb7061b4"
+  },
+  {
+   "station_id": "324_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "d1eed61eb9c1d68532164b35c6e6f65b4a55b828da42edd56082b5a4942e3497"
+  },
+  {
+   "station_id": "325_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "33f81ff8f6f379b6c1124ed213bacb822bdfa9eeca2fb93ff246bfa954252103"
+  },
+  {
+   "station_id": "326_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "d73cef71bbb4cb8c801c0772e37fc7a955c8a5621af0ef6df079b76229ba8db6"
+  },
+  {
+   "station_id": "327_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "69581da7e998850a26cf47070ebb27219bc4d2c9eb0b7e325cdd57c80df30dd7"
+  },
+  {
+   "station_id": "328_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "a00579e72c8872e06348a6e1ae204f002338928df9fa3fbc4596e3d8acc317d2"
+  },
+  {
+   "station_id": "329_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "f05bbc440c1c353ec18f130cf8265ba4851ee1f128e83286b567ddb76f73dbca"
+  },
+  {
+   "station_id": "330_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "8159dc259459e5d839b20d38a87f6b13eb8775a708600940805fdb50c0a02d1c"
+  },
+  {
+   "station_id": "331_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "6da98613e3b147740a8049abc99c1a3460a6a842eae68c9645d7bcf401d056cb"
+  },
+  {
+   "station_id": "332_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "e47dc3ea8b1fee58d61e0b363343e5c37608e244b64819003b86beffc9a8b97f"
+  },
+  {
+   "station_id": "333_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "e1a62b16fbb66a9f4468c49214befb4b967a7033b995416978638bc286e156b8"
+  },
+  {
+   "station_id": "334_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "8aad762210ef58f3b211e8073b9b26dee192e0ac38edad3e716331f0ff8b096d"
+  },
+  {
+   "station_id": "335_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "304423865f2774b51325264ce86d08f790696999ddec9e54ef4827d8f4cfb63e"
+  },
+  {
+   "station_id": "336_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "266cfdc161f3425ff622939e4a4a47c882143dbcca7c6a58d2203cea830b7adc"
+  },
+  {
+   "station_id": "337_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "7585e852ff52caff81f0171403333ca0eeea46324998f67b25c7b8779d4c1e93"
+  },
+  {
+   "station_id": "338_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "a1953f70990720ad8a55ef93294105b85eae4c07033d5b5301be3ccccb22a86c"
+  },
+  {
+   "station_id": "339_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "85c4872e9f35c91585445239faf5c2935384a3c2f2569b18960b9449e8649d0b"
+  },
+  {
+   "station_id": "340_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "3f33c497dd69f966c2221e270171d3d3861ae45da95f81a055690eea2c5a718f"
+  },
+  {
+   "station_id": "341_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "8346e9d9b5aa498949c3d9e1b0580c6b2baa3ab6622a259b7261349054b22a36"
+  },
+  {
+   "station_id": "342_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "11ee0bc5467a57c6ab195e77ae957fca3b8e4922b8532ce0dd2a26fd855d3bbd"
+  },
+  {
+   "station_id": "343_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "a9751e9f846a908aef732d6a636ca46f8db8c256afb9fc1cf83e9cdcb4c261cc"
+  },
+  {
+   "station_id": "345_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "32c5b7465a9668ac7f55e0004fab2e5b1ebea45cc0d857fb2f0117cd98cd4041"
+  },
+  {
+   "station_id": "346_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "7df607fa3dbcf85b03595471346f47bd23884e8d1831037c7d73a35d650cc273"
+  },
+  {
+   "station_id": "347_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "3ffecdba9eb800929fa69f93aef7fd19998a5bb5cbdc5ee42c8196fe53ed04a3"
+  },
+  {
+   "station_id": "348_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "46b121d5d23c8143cd9b91b86ea702ee4156041ea04b79c09fe3c83f8c715f9a"
+  },
+  {
+   "station_id": "349_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "d2137a13ab85c88132fe414adc954cd7ffcd24613ccf96839c99d653f7e24028"
+  },
+  {
+   "station_id": "350_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "89792a0514711ea3d0d5c7bb8996ed91363ec28618e087588c70eacb4c5177bb"
+  },
+  {
+   "station_id": "351_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "444ced9a542953660fc9342a7de3ef9314143eda7943d104df086de20ebe281c"
+  },
+  {
+   "station_id": "353_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "3dd15d7085b1f514833a3f25cdea1525d9a823600a3dea8951cfa126e7f11ca0"
+  },
+  {
+   "station_id": "354_SD_SNTL",
+   "n_rows": 427,
+   "sha256": "80bda62698c4d2c66a0f94ce6a22557a3489b330949f114ef8a3b6d22c50d765"
+  },
+  {
+   "station_id": "355_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "e7bc45e7c9fa74f79878e1df053034a066a8528465244069bbc3483525ae0437"
+  },
+  {
+   "station_id": "356_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "e27457bfb4767e6172df0c5f6ee5b7e00f917653d760594c725e7804fca8c95f"
+  },
+  {
+   "station_id": "357_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "fa999116cfd5bab7f82961d359acf93b7e4c07edf7cfeef2af7836dd61b42acd"
+  },
+  {
+   "station_id": "358_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "63d8b5a269ebeb2c265f08f645caa77726377377494337c375702ffc522d3ae5"
+  },
+  {
+   "station_id": "359_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "a9f3b5f43ec57a64942b2f5f01cf5170ba4e7a4063aefbc53632fc021ded2f34"
+  },
+  {
+   "station_id": "360_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "77b38fb155c7cdcebaae6916b7c0a48791a5d1712a082806fdef9a6aa57b0d9a"
+  },
+  {
+   "station_id": "361_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "504385c1e44deb24a085d724677360c1eda45a9d3d279baef15ea4d581545d2d"
+  },
+  {
+   "station_id": "362_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "64e86e93ec18d49923d8226da5dc997d23ed0980bfb0268be2f41f466b897c71"
+  },
+  {
+   "station_id": "363_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "9644d55af5ed55d3c2f663d30bb0e8932cf0a48d6122122f5e54d4533e87ebb4"
+  },
+  {
+   "station_id": "364_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "fabddf86224f43e473126e708086298f4496438cbf8b59a84f2eed3333c15485"
+  },
+  {
+   "station_id": "365_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "bd1404c61bb4cfdb80c59d8c899aab86e56d3951a700af7453818305872fac92"
+  },
+  {
+   "station_id": "366_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "eed9e6672d8a18310be2292694f7c61f012ff77c19a96ebd4359268961b877da"
+  },
+  {
+   "station_id": "367_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "94f0d53f3f0532991fd71cdc116c08b5ccda638a9c1b8a69300adfb1e39c8d6d"
+  },
+  {
+   "station_id": "368_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "8cfa9eab5b5d8d9814ce202c293c7adfae54452e2290a9cd8a48375fd55bf0f6"
+  },
+  {
+   "station_id": "369_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "029e68a8a17eace5c0c4f1e4dfe3d51a4b29a7ad6bff6eda52728680437eeb24"
+  },
+  {
+   "station_id": "370_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "30131ec89f77528c67e4648651b9ce747a6aa6885a6220a4ddb8f0dab25760d5"
+  },
+  {
+   "station_id": "371_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "de5d5a4c892c7ff03dc7d099a8460b611a250c02ef96f12784a5e37f54b4a053"
+  },
+  {
+   "station_id": "373_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "86f842204cad3a585c4d6dbe8a27b1ca817626536a81190b9aff5d5ff8c5732c"
+  },
+  {
+   "station_id": "374_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "19b5a34c25716cfc70950dce2412c02de9c27cd492c2be7cdc97df6e028db77e"
+  },
+  {
+   "station_id": "375_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "67eefbc1a1eede6cadbaf8febd5d0f648ddf26432ca1f0d74d69802016dd1e31"
+  },
+  {
+   "station_id": "377_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "3f070a423f1b6ea17546423070befadc115dde025532e3acedcfe01de58558e9"
+  },
+  {
+   "station_id": "378_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "19abb27e974624e7d2d580e902dbe4af1defdfa4d954bef55b7ae1b444fc544b"
+  },
+  {
+   "station_id": "380_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "5c4c1494a92d57d8b17a33595a5b97795f56c75513d79bbcd19520a3216c2ac7"
+  },
+  {
+   "station_id": "381_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "e1bcc7ff27f01ae92032acd577001393c779b1599ba4c4cf19aad38d1ab82e4c"
+  },
+  {
+   "station_id": "382_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "2f91e9622eacd723831cc9aa646fff2f60780870c073df280ad51601abf96ecd"
+  },
+  {
+   "station_id": "383_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "9ef87f286226b60995a60053aa56a750339ab4ed542aefcc58187958899d4258"
+  },
+  {
+   "station_id": "384_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "b2ac92f948e844115cfa59551d9f7d924be939be6565fc396cfce0b16dc05558"
+  },
+  {
+   "station_id": "385_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "2ad020425dcf5a8f391252ba29ceb9f9363e2c3720ccc8714d278867f81b64ec"
+  },
+  {
+   "station_id": "388_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "4e2dc32a5d30073c777e83d5f4336359b7d5f2beb8907c8f3da20ce537151faf"
+  },
+  {
+   "station_id": "389_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "5b0816313550d5d3031c5362b231094d6e213493ee79a06c0059c7625dc3558d"
+  },
+  {
+   "station_id": "390_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "46bbc253dff70fd3119f0302eee182ec64dbcbbe3bb6050dfabf9e6eea23bbe4"
+  },
+  {
+   "station_id": "391_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "0b1fc24f6ec6b39dfe7c908b027eb5ba88d43e92e228bb371f12182b406ea3c0"
+  },
+  {
+   "station_id": "394_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "9d8e0b59ac5245bacd09f4fb1c42f4ac441160129e654e9298e03fa473d99681"
+  },
+  {
+   "station_id": "395_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "7955874cd04d8edebc4840d73b26553b6ddf4809784609833bc6ef91c6c4c34a"
+  },
+  {
+   "station_id": "396_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "9d783ef6e94c8a42dcf639ea6bbca1872fe46313bdcd534f7b4eeb4e769a81fd"
+  },
+  {
+   "station_id": "398_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "0647a53b78435b0773daeeb2a576b4912b452592051d4c4a2ca231de58a57fae"
+  },
+  {
+   "station_id": "401_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "41e6ccebc37dd44767c753f4ddece4b6c705e1e5142ed00d780ab7b5382cecaa"
+  },
+  {
+   "station_id": "402_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "7def1120f32ba772da8ec68b8fc0d98f4c31c7ce159094d72c4c511397d1ea43"
+  },
+  {
+   "station_id": "403_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "087b42e0cc39754690ae1cb68345fbdf71a1777b6211c1ee864127c7e154d0f1"
+  },
+  {
+   "station_id": "405_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "865a76a52398c1caca88a5eea15be2ca5847ea436e249eda2f86b5658e476f6a"
+  },
+  {
+   "station_id": "406_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "2e5070540bfbca9040e9d32b1aa31c2518bb5ab4c89d8127d599daee0b97f4ca"
+  },
+  {
+   "station_id": "407_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "e34d42c04031101405942c3b2eafb7906e5cf0d2b7b104df3320ca447f16cc63"
+  },
+  {
+   "station_id": "408_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "2449e16028c5e051a58e98898e1bcf618be9f93ef6f28ab557c2dd0704653b38"
+  },
+  {
+   "station_id": "409_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "f2ebfc6c0a5a2961ec74077459ecd27f47449e074445381f59ca24cc4b4a0012"
+  },
+  {
+   "station_id": "410_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "f16972474cc5e5c5c34cd36c12fb4d1903f58c6065fee8a35f22c5dd05f9fa57"
+  },
+  {
+   "station_id": "411_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "b91a86bc1a4541380de6af95596e83c8e3c05e3cb9233633b649348f12d353c9"
+  },
+  {
+   "station_id": "412_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "b66f5d9a82279ede587797f31e1ec70b67f3fb958280fbc127108f47a997cf64"
+  },
+  {
+   "station_id": "413_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "b3b91e14b9d4f454a7b6510d7393ceda1190dc424c0d6abf8cce34af73016176"
+  },
+  {
+   "station_id": "414_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "c3f1ea15f8e4a4870301c5bc0348b984cfc46cb287de99fa25ee70dd83f135b1"
+  },
+  {
+   "station_id": "415_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "e492c98f11a8ca95c3c7060310cc3f0538fbcfc1ef053e1b072750729a8a3614"
+  },
+  {
+   "station_id": "416_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "80bbb9b97144e42cee3322fe794626741c58930da03992c014c90e39f406ac2f"
+  },
+  {
+   "station_id": "417_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "d215728febb5343cf44bc9491c91c789d72dc2052f1dd6cb4ec15371c8c5a8ad"
+  },
+  {
+   "station_id": "418_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "17854f64a14fc6948d6c48009e741dc689814f55751ed347f3aa966e556bb973"
+  },
+  {
+   "station_id": "419_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "2cc9bfb3a43789255580df843ad44a37e7b4e394900ce1ec48a2fb79dad64b6c"
+  },
+  {
+   "station_id": "420_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "77484bb007582a61053f284c3c55861c73a778b28b0f40623f2bcb13a8fe489c"
+  },
+  {
+   "station_id": "422_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "3346eb719bbe1e0787337d7bf3f7246282794ff3db7fa440457a88f0493f047f"
+  },
+  {
+   "station_id": "424_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "16465e7ad0301ecbe4b21637c95609d1a7def7d4424f7c7e02fa7aeec625546c"
+  },
+  {
+   "station_id": "428_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "25f1b0d0cb972d894fda1fbf34298e0a76f442e2ff02f01b13b97064b527f420"
+  },
+  {
+   "station_id": "431_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "94bf1ec6f1ab006243019bfea602570d12ee7d46b0565c81a8f8361770850e04"
+  },
+  {
+   "station_id": "432_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "89fc4690434797ca39ac9868fee7f0e5f7620efcfecf33e30884bbb9e50b08b8"
+  },
+  {
+   "station_id": "433_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "258b4da197f9057deb5034c15af49e33e07e54e2bfbd5cf41497c2c3eade9299"
+  },
+  {
+   "station_id": "434_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "5235e59ffacb62bda0fea3e338bada4e21b8f44c9f2c368e2faba4e2a3167b05"
+  },
+  {
+   "station_id": "435_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "b016b87b67db1179327b692ca208a34c27455be30ae95cd4eee97df43fc1657f"
+  },
+  {
+   "station_id": "436_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "2d3f4648ddfcbbd290d8de9dd0876d90e638faccdad1f67605ec02af99984c91"
+  },
+  {
+   "station_id": "437_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "04b1a393ddfcaccc82bb75a0bc0fc7da391f8aa5cf7a7dc07ab63cdfc92e24bc"
+  },
+  {
+   "station_id": "438_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "2fe4c954ae156661b514c07edd21f1f0f6f900da08c5c23e5188e861a130f75e"
+  },
+  {
+   "station_id": "439_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "9aa238aa6e916e35b2771016ffa3447f75bb3543e83e8be1acd0910d8ce335a6"
+  },
+  {
+   "station_id": "440_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "251166ac4d24d8bbaa22d076be222d2f886929ece6ea0fa527093c6d2f1858aa"
+  },
+  {
+   "station_id": "442_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "8cc8a920aa9e0eaca4e48915b41c0ca5e5500c46697fd1bc49cb52d8d0c20b75"
+  },
+  {
+   "station_id": "443_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "b0776eca27e5b97fdaa55bd76349ee2fdb91045e01090cbe0991efd0890564ff"
+  },
+  {
+   "station_id": "444_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "da030d3e8c81978757459115773b543c7a8136ff9977dc1430930c8e0de52d51"
+  },
+  {
+   "station_id": "445_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "b506d429af5a5f16515688f228ad5c6e98e34de8c39ce11cbca709cfd26df8e0"
+  },
+  {
+   "station_id": "446_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "4780499ea515cff0314ac25f6bb5b07969f6ae940f34b18d604e6278fb1fcbb9"
+  },
+  {
+   "station_id": "448_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "1ddbeb8f598aaf521f667ab3bd0551f3665399a530d904e4c8423072bbec2d34"
+  },
+  {
+   "station_id": "449_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "d9d13ffbe856abb38efe086dcb4a28ec1b676f8431b29c78010d61f5539f7ab8"
+  },
+  {
+   "station_id": "450_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "8cd3fb400901ec85de3e923d9743065b1b8bb49a30c31077c5dfc1f516b6c022"
+  },
+  {
+   "station_id": "451_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "9fe824406c0431d277e22e1ec188c57091cc463a836cbff0eeecd12f1f725bbd"
+  },
+  {
+   "station_id": "452_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "525b4cf51748f007769b353c8489d58ee4e6417563a248730d58e9d2606e3b59"
+  },
+  {
+   "station_id": "453_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "aee4e8c5a9a8536063dc247e80284afc75d6ee4868d6cd46d24cffdac3a55f5d"
+  },
+  {
+   "station_id": "454_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "597ad4cd6dbfe2f89bbad9ce467f162a0178a021e24c2fb6011386cb0ab902a8"
+  },
+  {
+   "station_id": "455_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "466f02b42c3241f8fbf56f13c12429abbd92dc92c77fe5b9ba08dc90f3ad6c7b"
+  },
+  {
+   "station_id": "457_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "585104eac8b95aae3020e5df7ed837c7f1c694789fbe77c637ad3122b4ffaafe"
+  },
+  {
+   "station_id": "458_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "8fb18ec4356e14517cfa19b2c683541458de9b36e4e1a70a697af049c7144710"
+  },
+  {
+   "station_id": "460_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "28e7d24b6c33d2643f4140573fd02af3e8fe9a344627254021734c4659eb130a"
+  },
+  {
+   "station_id": "462_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "ee0003702a4deae7bbacba00487814eb50d987295d6a6db2d46b5633737b7c07"
+  },
+  {
+   "station_id": "463_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "d9debae9e92a371da74aa0b73d4667db9ac462d4658f6fc4f2f06f2e04a4033b"
+  },
+  {
+   "station_id": "464_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "672355e3e703cf0cf6ce712590cf203cdd243207c625bf717f2d127c24ddbe2b"
+  },
+  {
+   "station_id": "465_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "b9678cc72c60489b51ef4425695b378c342962c79f69c25e812c8f95c766b497"
+  },
+  {
+   "station_id": "466_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "eca6535d5de5014761f148c6e5937bc2b2c30fdbc89be9a465d17178562dcc02"
+  },
+  {
+   "station_id": "467_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "bcd27e63af69c50d4f5305f9fe33b87169800dbddd7a9a2d638403a4ea970841"
+  },
+  {
+   "station_id": "468_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "559c8aa3c2c753076d9da4483dce061121cfa65b9efcc6b2de5f42d093984404"
+  },
+  {
+   "station_id": "469_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "795b84213df8251fd46d080817ae9bde94ba54c66e4be60018fc7c13ecfea785"
+  },
+  {
+   "station_id": "470_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "1516ee049183054c78a739b1b367f2b9f2fff48e64a4bcd668c665abca9f7317"
+  },
+  {
+   "station_id": "471_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "859e4f17447d436be1e64ca4fecec3b6d236640aafbaff36654b4467eb8417c7"
+  },
+  {
+   "station_id": "472_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "f57926c0f8b20f92ae89a64d34e7a524a2a584d473b8b6e798ab5853b92bd570"
+  },
+  {
+   "station_id": "473_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "f0796d9286c77d5fc7633fbcec0e4ef215a3d9c0980e2ca838d8f921d8dbaa49"
+  },
+  {
+   "station_id": "474_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "718e35cc71eee5db45cc4ca362b8c4ef09a0ee74a722d32914f03eea95340030"
+  },
+  {
+   "station_id": "475_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "a5c5284e518811595c6f79226bf334a81381722879caf29e5ebc5c12b727dcce"
+  },
+  {
+   "station_id": "476_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "544901b50d9471ebf24bbafdfbf6d532266f768de9f8e10c2a89ff503d257186"
+  },
+  {
+   "station_id": "477_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "0aae2cc8cd16735cef55b766eef6a34eedfae008f3241541605f7ff0874000b6"
+  },
+  {
+   "station_id": "479_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "3ea8b39b9ce54c4435e65a7d208e80eb75143faa8bd6ba7c2c78fc8b308ce07a"
+  },
+  {
+   "station_id": "480_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "ac2ddae6849c2881a99bd8e9af452d84331f006e7e196a0d4b17c096d0f2ebe6"
+  },
+  {
+   "station_id": "481_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "274670b916bc5ad2f71b64af3dd7175cd44b51e6fdccc4e891546fc8b0b009d6"
+  },
+  {
+   "station_id": "482_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "14949a6af60b4186c3300d98698eb132f093a3e5f3fdc2c725a04af7246c12b8"
+  },
+  {
+   "station_id": "483_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "c12ee492ab16b70e87e32bc235cdb6cf26857816410088e7a41618c999a26212"
+  },
+  {
+   "station_id": "484_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "e0f809f53a08c9939fb49a84999a2cd4d6fe27ebcbae15b08f6b840d9559f3ff"
+  },
+  {
+   "station_id": "485_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "2591ab5bf8c67b3e67b7d8dc85d968a4255a8af3a44569a53c42dfae1752d4bd"
+  },
+  {
+   "station_id": "486_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "dff25d9e4ab7f52258f99757b47e8e56f7fdf513d6f0f7c6470e0996c3763090"
+  },
+  {
+   "station_id": "487_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "85a7df0e5ed652cc319a44679246b73e65dab7481ffa1c50a6a53c68b80c1ef0"
+  },
+  {
+   "station_id": "488_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "37cc6c2dcb1511b6fa2e06678177dae27943a91bfa3467ae5af9bd5059b1dd26"
+  },
+  {
+   "station_id": "490_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "dbc833104cb3955584f69aae985b044842db27226ecb2453e7cee8ccef3a8775"
+  },
+  {
+   "station_id": "491_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "212015f74318420edde648bd00ac9726c859f7601c15458f4fad22d1b9257386"
+  },
+  {
+   "station_id": "492_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "94a8b39e1ec17a5fe5081e283cb63430cac64a19506d2d48d5c4123bfe42e3c1"
+  },
+  {
+   "station_id": "493_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "69289ca318db14df3bcb81ac92459e6f223217cf391be629951df11e65cfc9b7"
+  },
+  {
+   "station_id": "494_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "a0578e8af59c9f9794a79ab6aa53fe2e8fca7a4de4fe07bbe8de1d4bba88f49f"
+  },
+  {
+   "station_id": "495_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "32c6227c04fcc4ff6ec3f77a1fb81cacf8ca3b80bd7ed030aff8bd6a1efaeb88"
+  },
+  {
+   "station_id": "496_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "2bb296bda5fae987601d3fcd85bfe84f00118ff0bfeda3cd74a7d8c196ab4b48"
+  },
+  {
+   "station_id": "497_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "6b948f75c31331d35165c6f1ae6465f4096b3e4fc8ec78e458a288cf666d880e"
+  },
+  {
+   "station_id": "498_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "a854847999984dd122fa1c72f4a50405e3340ed82dca9c0be97a12d04c7e3320"
+  },
+  {
+   "station_id": "500_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "a9ef9442a7add42b123d3f725a42cd46f65151406d3c6a173debe5ce9247b949"
+  },
+  {
+   "station_id": "501_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "5c5b9adc94bacc309be84f1abaa492da715c38f2fd913d89e463de47772c191c"
+  },
+  {
+   "station_id": "502_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "154030ef3426a5aa1cb4e9ae8a43016c41da37c64faed63a83a6f873072c64a9"
+  },
+  {
+   "station_id": "503_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "bf45a506f33e26e8a69e111dc800f95d4566f800aed9550bf966f11d93c7db15"
+  },
+  {
+   "station_id": "504_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "337627285f3111f273f29f2466ff104c822027cec62324ba08440aaa71b6dea9"
+  },
+  {
+   "station_id": "505_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "db4f667da6fdc67e2afb7525bdeb1f1c35d8b0b36c96edc20ae06bb9e92276a9"
+  },
+  {
+   "station_id": "506_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "71f6e1b8cd40242c47b6f1d13412dc3af25835345209f30b8808c8114a194240"
+  },
+  {
+   "station_id": "507_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "d88b1b38c5516a919835b686f6938deee9bf475a2aafb3afea7220c22369f30b"
+  },
+  {
+   "station_id": "508_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "35913b691424f03fc3db517f6a866179d1ddc3f984d8b45c078c27af1dee1d72"
+  },
+  {
+   "station_id": "509_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "5f5725ff4eb5f1afd9e1827877ad71c8881e17d54af4dd7a0110acb5e16d60c2"
+  },
+  {
+   "station_id": "511_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "058904ce175e715d216c33d9c81b98492dc54452021f999cf370acfaf32841e2"
+  },
+  {
+   "station_id": "513_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "36c85adbd6eee27e42db61fd577fce8828ee07fea52bd7fd1432911e04cd87b4"
+  },
+  {
+   "station_id": "514_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "fee1a2bb3f960d6c71c4277823167dfc45d00e0b57626ad2ce54c9edfd2606a6"
+  },
+  {
+   "station_id": "515_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "1cc04e5744062e19e42531d84211fd4c43fa10435a12d2782e00bc11e5571805"
+  },
+  {
+   "station_id": "516_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "4a1f14df04a9b3209a7947abf0df4917520c4c38c5258c566f26fd84df71549f"
+  },
+  {
+   "station_id": "517_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "44ee76c07e1dfeb9bdc6255f2096f25744a3f352bcc1da17fb2f7780d0750b0f"
+  },
+  {
+   "station_id": "518_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "04f03844d8928b232ee03229d70cc0d097d75311084cfcc4fc75dd616a7055cb"
+  },
+  {
+   "station_id": "520_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "1c258d34a2dd6e03c82cae922f844b51cdb35ac5afd18311bbe1ae86a33f8cf3"
+  },
+  {
+   "station_id": "521_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "47c19dd287bae62a211e6c7c1a283138f8711b515d5a37bfc41d90b02125d2d3"
+  },
+  {
+   "station_id": "522_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "73cd17f1a7465ec87e2e53c098a726d96540edb932e2bbce20e4b7e8167faad8"
+  },
+  {
+   "station_id": "523_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "59764b9f1510a202ef702bb19b744423c448aeba35446448ce5540f6f1c6a479"
+  },
+  {
+   "station_id": "524_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "932099b8ee861bbc641cd6669be365ca3dd9e64d5dc1af6c46e6c47e23a975c6"
+  },
+  {
+   "station_id": "525_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "11f258ff1de8c9311239bb9442b3bcc6846f0a46321de597cf3c912d9827bffa"
+  },
+  {
+   "station_id": "526_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "661a708158aefbf7d9046dcf9d55e434567dee0bc1a98b9337e48af61168392f"
+  },
+  {
+   "station_id": "528_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "7bb5ce8dcc6e96ad7304160bbd940a8b6abdbfc03000a0730b6af45d688735e5"
+  },
+  {
+   "station_id": "529_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "96f309e611230cbd82a27693412086f599eb35b22355e5c07260e29200575381"
+  },
+  {
+   "station_id": "530_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "bfe562d9fffe750484a7e4ffb2eed07a1bf0105795928b68b97a67fbd74ef73b"
+  },
+  {
+   "station_id": "531_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "177f854bed80f9d395a495da938d7ccfbe4c26346616ea6b593d07d78f392559"
+  },
+  {
+   "station_id": "532_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "6129ca13139ba36bbd184881b8be4d075dd50890ee67d5a92e87b885af720955"
+  },
+  {
+   "station_id": "533_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "f7a9c291fe9571b837966512c260f3fc61054121c2bd502ee3ab459e162728fc"
+  },
+  {
+   "station_id": "534_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "ccae8ab8a351bcc67eff31846ec9e2a2ea01f76126f972c596eb8f1ab81b6e42"
+  },
+  {
+   "station_id": "537_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "ac6387057760cb285cd66a83ce3719cd3103701b008294825fe792a961600ef3"
+  },
+  {
+   "station_id": "538_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "b4c0736e0d4ff4f994791000308bb2216ae0b8f22c530f02994411efa84e0eff"
+  },
+  {
+   "station_id": "539_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "6f9016f068dcd0ae3bbcb9c57e9d38a7252d4e6d2bdc3bbd55cbbf9c119db164"
+  },
+  {
+   "station_id": "540_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "ac9d26ca7d36e32d75d022171a49cdd7f0ceae1586ce6db65170b14effc77b9f"
+  },
+  {
+   "station_id": "541_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "6f73c7e8d82b7238723a8a00ca9d43858c8900d6239ebfe1fd582a503e0f47d3"
+  },
+  {
+   "station_id": "542_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "e2c5e45c325120b3701a5b944194eae9fd8159a240e0fdec694ce7b6c5072c56"
+  },
+  {
+   "station_id": "543_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "aae71fb73a68e3c625007ed81a76fd08c588dc462ca2ebe0e2f733f568f46245"
+  },
+  {
+   "station_id": "544_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "f3fc3e1a3a03b8775309ccaee82f1e2d7f0a23eeaee79cac46a47e619ff52dd2"
+  },
+  {
+   "station_id": "545_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "ea30bd9ae4a240af47a6eb8aaccbfab4eb85e1b2c16f78602b92c1f122a5886a"
+  },
+  {
+   "station_id": "546_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "7d7fc0c91ee68dee0e9a276be851635cc47d6d37b820f5bd59a2580632484d6f"
+  },
+  {
+   "station_id": "547_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "d78233dbdba8fc88c69762702980a823706a0d4a8e59a0aa9152ecee2cb21c2a"
+  },
+  {
+   "station_id": "548_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "ee3ae96efcf7ddd39f73058a32041b734f1e5bacd05d4cb5830fd600f33652e9"
+  },
+  {
+   "station_id": "550_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "134476446a99074fbddca3944d043826f84e54a27542a0461e5ec27844f5bc4e"
+  },
+  {
+   "station_id": "551_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "41e58a387ac39ed051096a5c640163c6905a5f28604ecaa5e17b68be620c6611"
+  },
+  {
+   "station_id": "552_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "4409f55aeb14afe5a0a4dbc71ae7d2dccda18f02825917afeb9198a3476293f4"
+  },
+  {
+   "station_id": "553_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "7cfedb67e845b9577168d7b0d31a78ec96081bb21113ef2f7a88cad55cea09a4"
+  },
+  {
+   "station_id": "554_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "f6d34ae2389a8474c92e17ba401f2d8fd3c1e0c6383a61c81bf4538a80bf72d8"
+  },
+  {
+   "station_id": "555_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "ec5dda17fb203746d618525a5149b46b0ffcef236cca318315e22d1e8c9fa4de"
+  },
+  {
+   "station_id": "556_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "466cfaec6035e8d95a58c94000d06a75736b6370bf22be3b6fbc18b097a2b50c"
+  },
+  {
+   "station_id": "557_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "ce0ea96f4c3b886a24345bc46608f773b591f91e1f8a3af8f5724a1d9dd13f38"
+  },
+  {
+   "station_id": "558_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "878cc1dbe5e5f320e1abb6b84030b7f2a3946a66f7e55359e5ba3fbe8d1b29bd"
+  },
+  {
+   "station_id": "559_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "2d054c3ea16fa03bf68ade7c994028d00e20acf8717b6fff4a45bd063b3fa07c"
+  },
+  {
+   "station_id": "561_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "5dfc0c0899934544bf6ac3427a32e9c11d51e19b26799b5219f17baa3bd23e21"
+  },
+  {
+   "station_id": "562_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "3904cc8521d222b8c1fbbe15b7bf3c7720b61235993d5c1f15d5017052f16a2d"
+  },
+  {
+   "station_id": "563_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "82cd078e2b121c30b0e87ae3eff47f42445981f482489162ff5e06881fc0b0a7"
+  },
+  {
+   "station_id": "564_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "6e6f682268375f709aa0ceb2ef2e474cdcec3956c3703db59d3aa819aed34384"
+  },
+  {
+   "station_id": "565_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "fab15723b6aa1e384b8ea5f38b90b69377fffabd09f08dcf694390d90d255d12"
+  },
+  {
+   "station_id": "568_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "b4cfc9257e7b02f9f8a730435d8ce556fdc8668f927453a9a535d41a0119e669"
+  },
+  {
+   "station_id": "569_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "c7a93c427a07cce45f36da62ccae8fce0bb57bea5552da74ce3457fc530792fa"
+  },
+  {
+   "station_id": "571_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "73cb3344e392ab95e92285d1f9eb961fc4b0043eaa1741039f4eec0c3a46693f"
+  },
+  {
+   "station_id": "572_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "7ae72ac19b83619ee0f7424c95218c2316d02143525e0349ce0543a17f67db03"
+  },
+  {
+   "station_id": "574_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "545fe53cd9e073359b8fbea8f01ed9d388b6eb4a020643c88a65a7648cc1c5ce"
+  },
+  {
+   "station_id": "575_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "f7528c8acd8022e2bc0eb07adce738997c23598bd2cb44f269d95c7c16873808"
+  },
+  {
+   "station_id": "576_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "e38ac5d51ca95037be08280e6654f62aa42dcc22be1738d11cd38e20cad8c7db"
+  },
+  {
+   "station_id": "577_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "5239034a36c8825a7911a32c7e6c07cd51a482dcb7d99e72f6a6f0853d6c4a39"
+  },
+  {
+   "station_id": "578_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "2afe513897957d3ad1f657416318119769152363a505ec4da5b367b55ccbd0d6"
+  },
+  {
+   "station_id": "579_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "12ff0de46c5f8b6ea6c1c037f48dcad662b0b08b04dffeecfb844514cd542964"
+  },
+  {
+   "station_id": "580_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "9379662cebe050054962681e8a3ead350586fadc2507079fd38f1f3348f98167"
+  },
+  {
+   "station_id": "582_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "d15a9acb586f7d9b9ec9347e2e898c8d2b445fba6c79caea9bf786656ec4cecc"
+  },
+  {
+   "station_id": "583_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "9ea651f07b02e5f70f0228ca76dd35136d14006d85793199dfec57ac11bd81ef"
+  },
+  {
+   "station_id": "584_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "b02e736cf53869e47ff162ceaa4277a8cfcdadc8a6ac1406b079fde3d8924364"
+  },
+  {
+   "station_id": "585_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "5f1457d938a1b33cffc5772683599995b7d854ce7de49344c9a5b753beb8a318"
+  },
+  {
+   "station_id": "586_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "956b456c8d812dd4001524f06525c194064d95646aed8200acbccecc0623b1a0"
+  },
+  {
+   "station_id": "587_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "d7da86a64308ec7746126fa9cabaf7a267a9502ddb7300c52b8ddc60259d758c"
+  },
+  {
+   "station_id": "588_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "9c093ff95b7236622d3d19cfe236dc71a242a9c11a799dde47330f7aae16953c"
+  },
+  {
+   "station_id": "589_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "456e735d236f9f0e6a3f567e10a35de6b5e8a883b0a63ed2f30759226018d597"
+  },
+  {
+   "station_id": "590_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "084da30b6ba2c78277c1867fb4e6f48c6fb440aebb353dc619803342b346a969"
+  },
+  {
+   "station_id": "592_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "0fab1043710f0ba32e2cc52f7cc23ebd242d363e98c83dbbe8081c5a3fcbfb35"
+  },
+  {
+   "station_id": "593_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "cba447a48732f5057e7a9798ff298769dfdc7af42dddfd077d3cbbe912a47f43"
+  },
+  {
+   "station_id": "594_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "e2ade56499867f12308b3f72d575fba93931f1b424fcae20a916dddedd8e95d7"
+  },
+  {
+   "station_id": "595_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "a9cc04ac5aa901a04f81a8ae1b0ecf386143202ca5a6650150760a8d76105331"
+  },
+  {
+   "station_id": "596_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "b551da450e41219666e64761ba2ce3f4b9b5cfb5c89b70a581c1f93bf38932f2"
+  },
+  {
+   "station_id": "597_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "f07b5d33633451b056355707238cf3bbaaec82aaa9aaed780ecfbb19cbab86ea"
+  },
+  {
+   "station_id": "600_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "10362a1f3bfbb4c806ad6d5885b1de9d5b3eed706b9308b4f1583c97e061fef3"
+  },
+  {
+   "station_id": "601_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "16180bbee49253014b0490f11f96e7bdc33fc10e47fbff78d2e4c9189963c4fa"
+  },
+  {
+   "station_id": "602_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "1beeb3341b9d66607c767bb3d97d0fb0ad4e28ca68dbbdca06b73e5eee2c8455"
+  },
+  {
+   "station_id": "603_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "aeb8a4f11b9f5ae1220cb232017b13ec77e4a1b59ef2a6b7b7d0de19f5d58628"
+  },
+  {
+   "station_id": "605_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "83ca7a795f5d079945f7edc86eebbfc512e3d692c8729aedf5c9c8bb9ae061be"
+  },
+  {
+   "station_id": "606_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "38aa7fecf372320ebc738d11c37c641b2e25e0f0014e888227f863868115a4e5"
+  },
+  {
+   "station_id": "607_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "e11f86dbf3a27c4954935d8f191dbdf91ef7f60de004a0854b246869a82d8f13"
+  },
+  {
+   "station_id": "608_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "359e1e6a298f30a7d8aeae019711f7ad36592bcc789a70c92285755a4393e190"
+  },
+  {
+   "station_id": "609_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "bc0a0745f711c03feba1f56005620af799528a9d707d32dfde21c062a0c787ba"
+  },
+  {
+   "station_id": "610_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "705e51880356d5c23c0d486f51a6fe317d29ec3fdc10ef90ef5ecbbc60857d5a"
+  },
+  {
+   "station_id": "612_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "b944200b65266b5b4abb8d45bca29613f82757b8fdb3dccc3fc401f8be948741"
+  },
+  {
+   "station_id": "613_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "e4e9714a79eb359207e8e44b273f79cee5624b0ef67982981a3f18eb0271f5a0"
+  },
+  {
+   "station_id": "614_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "1ca8c51e26818272108a1e5c742994674b4dec6704b1bcb6b61b3e1094b1b7a8"
+  },
+  {
+   "station_id": "615_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "5092948c7f16dd4cdbaa2196d6ea97d3995207ccdd5470d497c8c428bb3a8a64"
+  },
+  {
+   "station_id": "616_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "62960ccc91ba6e53c6853ca53d8ccc3e49a968f55df8bf2ab5c7e8333cbd60ff"
+  },
+  {
+   "station_id": "617_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "773540e2fab607ca74045e50981e9c9a9474a09215483320a898b6f0d16dd532"
+  },
+  {
+   "station_id": "618_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "c9b2280361ae65843b4c262282e7ab98e2d5f5df76efb910266b5121dac18960"
+  },
+  {
+   "station_id": "619_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "54fb8130457d0f091d8eb54a1d0cdb57c164a9a97375f758d726f24e43fbc60e"
+  },
+  {
+   "station_id": "620_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "42b572e8d914aaa3252d0cfd7b7360f34fd18f30a32967218f8ba6013370782e"
+  },
+  {
+   "station_id": "622_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "eed439fe17aa82f44c2c4523b9af5bebe55dfcd1aa7c1d2b0a409d708b0c3044"
+  },
+  {
+   "station_id": "623_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "b0ff89cdc8e1c998d7796ad7347bb726b3f83675d235a8fde6eac7ee22db8b91"
+  },
+  {
+   "station_id": "624_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "21e9afed258f6e2cb29cd9bec50a0c9935d36c21549fe9f38e5034480176a945"
+  },
+  {
+   "station_id": "625_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "adc4e5d65b670495f70e307b86938f3fdaaaacc06f1521d07e64de1a239adc21"
+  },
+  {
+   "station_id": "626_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "8d3b1da32f9a423689c21f45a55650cbb7351de7f46ef81896a80784735fe276"
+  },
+  {
+   "station_id": "627_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "05f99617fdd0b503aff0590e24ecd8214c638f058afa57f86d52bc5926186639"
+  },
+  {
+   "station_id": "628_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "e02f655988226a116c5f79e09e6e38454f5a8b39e48df5a3afa06d13dc96dd8a"
+  },
+  {
+   "station_id": "629_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "b105a31ec575d9130255acd96d529d933c282d834ac0759833a1732c65073589"
+  },
+  {
+   "station_id": "631_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "8c0b26245911e9b63f123624a00f9224e5e1d92e0766c5e8559e25d6bdc69e7d"
+  },
+  {
+   "station_id": "632_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "eef69e7c30463e9c75ee37f0777fdc204035fc1f2ab4bf0465ff15c55b275a6f"
+  },
+  {
+   "station_id": "633_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "180ad87809ee571439a1ade5e3b09f9eed5002f89ebf2f8b126bd3dac1d2f185"
+  },
+  {
+   "station_id": "634_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "e46425212fbfd3ca9e6b6755a48c48e1ecf4b0a1bd5d5b60f12f29c2361a1e99"
+  },
+  {
+   "station_id": "635_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "4a4a1eb1c5ee2b7fae5266c22c824aae53f4a1145c4395eaee348a51cbc5f5be"
+  },
+  {
+   "station_id": "636_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "e4ef35cdff062d9c171c8f5cc4b286169633bf56c7c8bf8306c260544914556a"
+  },
+  {
+   "station_id": "637_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "c5a20f2ef704e910b2ffdc44df8adb7489c4cf8d0aeddf3e86062e2c59544b50"
+  },
+  {
+   "station_id": "638_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "a544b2d83c57b62286ba05efd010f866affe369e05a354dea2b1f604a08017a7"
+  },
+  {
+   "station_id": "639_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "f544fcd4936d6cfec7512d36e74a1843c90ab5a3c5361440186676adc4e5547a"
+  },
+  {
+   "station_id": "640_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "1bd71ba40feb8e741bfbebf26c656bc79965afd96845dde994fc14eacfdad298"
+  },
+  {
+   "station_id": "642_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "b1f4028ea4dd1776bb8b5d63af026869cf50886ca9c57f58401d76e4840443a5"
+  },
+  {
+   "station_id": "643_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "46e59cf31337cb1c4cc5bcbd7fd66d7d4cc9a1d869acb26388d6fba42d7c1fe7"
+  },
+  {
+   "station_id": "645_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "56142907adb1bcb83b37a4506add27f59d97e17c0dcf4daf55701d77857b93cd"
+  },
+  {
+   "station_id": "646_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "83d0f965734a242cde9e54df102b176e2156320cb3f5abb0d154442c40a05c2e"
+  },
+  {
+   "station_id": "648_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "699c4cc37a08aa8013197256da903cc9fd91b49088d1ff5bd120900a7459ccb9"
+  },
+  {
+   "station_id": "649_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "cdc34cb3a2719ccdfb1068f0744f706505f75d06af44a93c4155d31707cb407f"
+  },
+  {
+   "station_id": "650_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "a48b5c50a11496df5c8837744bd1f8100ad7f7f96430028fcd1d42455c6680d2"
+  },
+  {
+   "station_id": "651_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "ad1de42b44d6ad960b62e644baa4e050dc64ee057c1826029214ee8c3e3de975"
+  },
+  {
+   "station_id": "652_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "dd991c357b49eda838743ffeebdc829d50c2d81f7f30086f45c590beea879514"
+  },
+  {
+   "station_id": "653_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "2bfffdce64db800fa233aa171bc2a30b0bfe78da1e7dbf735d65fb4958edb929"
+  },
+  {
+   "station_id": "654_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "4244a809803d7dfac328f6e041aa8a57c7ff8d1378c405083548622e7826e14e"
+  },
+  {
+   "station_id": "655_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "1c5893bed0a61023045809ca802cc3fddd71ad3bbef57c5d3d0fcc906cd0352e"
+  },
+  {
+   "station_id": "656_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "bd79d65ccfeb834d06a3a4f1717de0011a0869e80062a312609d1e060059fdbb"
+  },
+  {
+   "station_id": "657_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "86726b393bb587a77b074eea218c0867186c37ad598ee860081219c9904835ed"
+  },
+  {
+   "station_id": "658_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "5cf404010b186c5da4b1b40bcb114a92969c73108358bb5c790952322f5e5b37"
+  },
+  {
+   "station_id": "660_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "b293cf432763912337c2e0e849a383409ac057aba07a43d56bd2c572b60d1d5a"
+  },
+  {
+   "station_id": "661_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "7394550dc9a70a8c86453a558091af15db51c2b8ba759a320b7743baa7826cfb"
+  },
+  {
+   "station_id": "662_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "87d4dc027d9455afab5bca3fa882f88991cbe7c21f227c96417f3edcf4073b96"
+  },
+  {
+   "station_id": "663_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "c4dbbda93427cbc9f668f9cdb2b7baeb0d9d87c438327bf96c3bf25b5b8a83d3"
+  },
+  {
+   "station_id": "664_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "e1bd5d3be2623d73b3115b90f91ebdad2d7aa1b3dfb2c37f2e3516f6dd8e181f"
+  },
+  {
+   "station_id": "665_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "3b6af893041d92ba478fcdcde1fa30d2da9950d12fe0edef9a8b722c309e3db2"
+  },
+  {
+   "station_id": "666_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "6bae3aa16eb70d35d382741c7a7d45ab5246b7e3bb30e739119b8edca3cc2457"
+  },
+  {
+   "station_id": "667_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "427f5bc6ce8026b087ab0517ae6915126e1039fe62ee0e8497e07b6afb0e193c"
+  },
+  {
+   "station_id": "668_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "965b487b7e182fed6b4a8e8afcd7de068f5c75fd21da29e0c6cfe16c56a3e352"
+  },
+  {
+   "station_id": "669_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "d598077f5a647af238820710c45bae5a8901e9cde513ca2f7964bee7c062df8b"
+  },
+  {
+   "station_id": "670_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "6f4ec9a0a1e5a0f44d186f957ec61ea08f3c939f8727f97cfbc86cab153fab8b"
+  },
+  {
+   "station_id": "671_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "dd1efd1916118b6ee01c77547dd53fa95e42ad122b68370a7a6d96f68e037874"
+  },
+  {
+   "station_id": "672_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "2b4e49885ce9543d7f6fa7e3471e55e058304f06a1f02610ee3ef08775139a48"
+  },
+  {
+   "station_id": "673_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "7ff1fa647a1f9308d2ddde02733f1850efd4d73513ec8b28ed34d3733df2afbd"
+  },
+  {
+   "station_id": "675_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "b6d5f4f738b7edecb17ac5723ca2a8a88d67c8a1b9acd92b91ef003cb810997a"
+  },
+  {
+   "station_id": "676_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "67cef59770c28fdaee7043938da3c41c08691c9b60f6311a5e34a0cf1b40a792"
+  },
+  {
+   "station_id": "677_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "c0a10b4ed707e36524ff900be4b9391887c0548cf788b210cd92dec76b2a2d5f"
+  },
+  {
+   "station_id": "679_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "c7abfac7c52912c5110fd3d32faae2ee1e50b3e7b8b2aa0798d89f60c34f8c1c"
+  },
+  {
+   "station_id": "680_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "034f11f10e54513e42aeae2c629234923e0443e64e6e85a69276a86e6aa1cdfb"
+  },
+  {
+   "station_id": "681_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "0794f1017b3bb469e06a2adf28408b8d8d290fe5fdeb652170403eeefde8ad67"
+  },
+  {
+   "station_id": "682_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "a4dcc249d5f8fdccca598278036ff1aaaa120649351a0f0f140ca83eabf59f3e"
+  },
+  {
+   "station_id": "684_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "3e3d302ce0df97c5bc248476511717e46820af53bda17548ebef50f2d292f78b"
+  },
+  {
+   "station_id": "686_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "cd0a671fdfb7f2266f1b92514af6d67662df06b5ee2b4db58b4418c9156ddb3d"
+  },
+  {
+   "station_id": "687_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "bede87c6efee0bd2a1fa613d3fc679c360c6cda51163ecd31c7ed8a156ca3b65"
+  },
+  {
+   "station_id": "688_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "accdc2e77371a359b7d54b8a2751507e37dc97e63f1c9a1d72f1f37de9461487"
+  },
+  {
+   "station_id": "689_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "23b04d193b489f4d31db1fb2c2fc611c30f89bef68dde136bce45cbfff9ede56"
+  },
+  {
+   "station_id": "690_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "633569e328359dfc527dbeb17b13612859e5c7a95c72fea02814c4220f229ffa"
+  },
+  {
+   "station_id": "691_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "0d6251af2a2608c69acc250b885f825ea8ef1bd4ec018958631698a55ff1d90b"
+  },
+  {
+   "station_id": "692_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "9321f0a74e418d536a1006272407518ab415aa04858dd2a10fef5ee0aeef317d"
+  },
+  {
+   "station_id": "693_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "f0991ac3984fe86f7070384eb9b3b155a323eb2f76e49d731bb80802f3efa842"
+  },
+  {
+   "station_id": "694_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "8d3de234bbe786dda8ce04e20bef532e1ddb4ed83c36feb9c925e323f69da583"
+  },
+  {
+   "station_id": "695_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "ac03711cba2cf71a1ab5d6a9537faef7fba05c3fb6e5731fbb1008236a3ea154"
+  },
+  {
+   "station_id": "696_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "5d03d67fb1bf1fd8bcc38abc6830d79fb3b375d4d1f59944b669b5bbb0c6db41"
+  },
+  {
+   "station_id": "697_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "f83c7f754725e89635199b036ede0584baee63567b014714a89f1c9cdac39918"
+  },
+  {
+   "station_id": "698_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "d3a6868a2c3ca28a047780a3cff4856df0bb38b6b7a40429149b2ab04b96004a"
+  },
+  {
+   "station_id": "700_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "f5efb982b777174002619ee81e67ea16b996a6c847e74e536855241209fd1f77"
+  },
+  {
+   "station_id": "701_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "dec6caca4c756c587cba11f474f2b6de9a4e7082613a79a1b2f9b198b94da2d0"
+  },
+  {
+   "station_id": "702_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "6604bf69194a1cc0b88cf23f5c99a305e34e23a721c39b9c05fa8d38b6df17bb"
+  },
+  {
+   "station_id": "703_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "9412b7416b0a1634094b4584b07f48dca2faaf649c7133a29621daacaef8eb7f"
+  },
+  {
+   "station_id": "704_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "b091fde92afc9694c3348805a0e697c992d42a0277735cb05bdd93d6c25a9109"
+  },
+  {
+   "station_id": "705_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "b9b722de0d9f8858cf1de79da43ae0854940c1031e0f52db43e4c716d335c943"
+  },
+  {
+   "station_id": "706_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "83d040e3e4b3ed58b508821478f3ddf2d9ecfb8f3633aa01a3685c8a03c0ba25"
+  },
+  {
+   "station_id": "707_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "17bf1bb4d2b94df69a7a7c54723b1dad75ba2215ef4c42c8340c348f22948f2f"
+  },
+  {
+   "station_id": "708_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "be53fbad45965fa5226b63e6ece606d1088c9ce9b4a022685134d6d83dc33346"
+  },
+  {
+   "station_id": "709_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "57d468ed28c36e6043cbe76aa1a094502487f3116caae068af78ef6d308ba4e4"
+  },
+  {
+   "station_id": "710_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "e2db083ddfdd4a4abdfaf465c0e89589832f88bd0c5e0d01d2edb36634c73412"
+  },
+  {
+   "station_id": "711_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "08ceae92f7756cc741725f7ceb3d3c59819a4a602e84284638a4067d9663aaf1"
+  },
+  {
+   "station_id": "712_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "244dbd66eeed105fd6997e5ce9490f7c5c012a0c0c7500911b42491bd4cb4fef"
+  },
+  {
+   "station_id": "713_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "e823782494bdb8de83092fc65bc3fc9dff03a4ab96f88b75690c4c49a85fa0fd"
+  },
+  {
+   "station_id": "714_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "26481b80aecef1cd4cb1d04c647f1c234af3885fd4181a539ad601ff460a6d75"
+  },
+  {
+   "station_id": "716_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "7038469fd2ea51f068316e42c9204c96dc5966a59b9f3667680cbc6dafa3eddb"
+  },
+  {
+   "station_id": "717_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "7f7d47fb3f545e07ba45fb1a5e875b8b7549e3babb0d6e63e0d53e8157cdc291"
+  },
+  {
+   "station_id": "718_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "a24b8cca8f2215b032c45f2b4583de2d931e14b4e1ef02ca6c4419b5edb174f4"
+  },
+  {
+   "station_id": "719_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "f39a49bf68c418adccac0586d40c542e1721dee64cbb570a6023d81f514554eb"
+  },
+  {
+   "station_id": "720_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "0a3ae3c2ebd96aa114d674b97b142459f4feef74baa41d721e6a5e6df5596f61"
+  },
+  {
+   "station_id": "721_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "846dcf8a719cd8440867a353339ff97d48ee5cc4eec37d88d6d23eec7ea0eeac"
+  },
+  {
+   "station_id": "723_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "71af7dc92e7dfc071001f8a7f43c9690eca44d3d777ae357fb465e2668062fc9"
+  },
+  {
+   "station_id": "725_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "37dcfee321e9aeea3526ab9cb89171e1d55352f0f1dac71c9bd5169efc2e0eab"
+  },
+  {
+   "station_id": "726_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "f9d9aba8ae83116e1c217f994bb126a290051d96891733375aa38ef9d628c248"
+  },
+  {
+   "station_id": "727_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "b8e6f37839a8f81d32406b6956dcfdf2ddbec245de7c6fa922a5065059e675dc"
+  },
+  {
+   "station_id": "728_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "74f90692517f69a78ce9d7ed5caafdf061fd4e1b6d730c8e061d177db58b0173"
+  },
+  {
+   "station_id": "729_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "af24522e775d91630d2ccc37298ece14ea6e47beb81262e581a0a7833715437b"
+  },
+  {
+   "station_id": "731_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "4da28571cbda0588fde361a0b3f4c45037a8454fce187f3e66e0ec706408faad"
+  },
+  {
+   "station_id": "732_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "60cbf90276c9d76e01250287f8eff6a3ec08cfe1eef4baad4eb7ac0ffa9ed612"
+  },
+  {
+   "station_id": "733_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "c8cce1b1ca2be41c9e215333f12f3f3c2d6fc263aaeeebff8417b89121e39b38"
+  },
+  {
+   "station_id": "734_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "65fd14b17094ce08c8125bb03ec9ac4b41d67322257b20ccf57056ae35a58cea"
+  },
+  {
+   "station_id": "737_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "9b46397174a3e95e0b467a54cbfc03e49b2fc5fc84d5e4aeb127d8d87e66bdb7"
+  },
+  {
+   "station_id": "738_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "56d0f4bb334105ff16b01e4f735e797df4fef71536f5893485d266f517033934"
+  },
+  {
+   "station_id": "739_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "cee7a201f712d9b1ec4d410bbb946b243812708b1eaf0f62cc22aa7538d2ac86"
+  },
+  {
+   "station_id": "740_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "28a11b0c553065281efb337a0d7752587886050b7ae4311234935b20bffd21f5"
+  },
+  {
+   "station_id": "741_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "349330957f540df8146b4e9755a4a8f7855971ef8a37b861a4f47b01d410af19"
+  },
+  {
+   "station_id": "742_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "514fade1af7847cbde1ab374ee4c6dc78eb6de07ecc774a5e8d1dba5a1baf312"
+  },
+  {
+   "station_id": "743_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "00181b3b77eb6122fd859d6b2a32edc672699320aab9d844498aeda3b473a54d"
+  },
+  {
+   "station_id": "745_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "2a26c419bf971c1d9137b587184a5c8fb496458a4e3ded09c3a31511349e2d39"
+  },
+  {
+   "station_id": "746_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "0d2cdd0a27e38194a71c9501ec30abea36c4267e9492954a3288bcedefeb895c"
+  },
+  {
+   "station_id": "747_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "2573c07c7cd887c2cd2ac489d3eb75e66acf3626094acc95f354de371acd80a0"
+  },
+  {
+   "station_id": "748_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "a6f2f1cc1554923b834f512315f3783671ccd20ac821a949aef51886371caaa6"
+  },
+  {
+   "station_id": "749_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "4afac96fde9a621f9e0b43d4fcef208cfaa637f7728f592e9f3e74a8c5b38fa1"
+  },
+  {
+   "station_id": "750_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "b24b6c176013e40ce34179fb8318b15d481b819b7882177168a58ca60c893531"
+  },
+  {
+   "station_id": "751_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "637215db46dd8783c2fcfd32a4d4c23c11e631e6bea9a85dea706ba4f4f8bf58"
+  },
+  {
+   "station_id": "752_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "efe7a236da743fa5139551b5aacc97c2d3bc21b437541784493927b908ca113e"
+  },
+  {
+   "station_id": "753_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "5c7c5733303dbcc6b9c6059d7768a1fd48b5b98d50fefde343c344de5b14030b"
+  },
+  {
+   "station_id": "754_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "804a4ade4bd8e30aec084251fece682c67853b83e7258572a539af2246660345"
+  },
+  {
+   "station_id": "755_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "33033567e8b3e4f7d1a0b5e3a9586b77fa6d92c27da0d22ef4639f97746ca5a9"
+  },
+  {
+   "station_id": "756_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "4a67a5c8cfbe7d960e574be2b782ea2b3eb1c7c38d3449cd3f954ea82ac28737"
+  },
+  {
+   "station_id": "757_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "3548ba412a9a0fb6ab52cc8d36cfa971436f5d465fc8b72d300cd470eaf85b4a"
+  },
+  {
+   "station_id": "759_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "c114953f5719121ce46cb5144f1e86c81e33a9dea919f38e3629b06412bf14e9"
+  },
+  {
+   "station_id": "760_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "cab812c405e140565dfcbaa575d31270510ee59fc457af64d2d362e2d598e68f"
+  },
+  {
+   "station_id": "761_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "e48e915875c623ee1449e0abdaf721a34b8f733ce1559dfb4d6353c1fc3606a7"
+  },
+  {
+   "station_id": "763_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "5ea3afe61bd5f6ea631c31d525c38a111dc4e9100f03ce445a8e79a2d9f06f0a"
+  },
+  {
+   "station_id": "764_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "12d3b68ce9b43e57f5634485ac862938466d2fb9d86c687f429d9d09263d9103"
+  },
+  {
+   "station_id": "765_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "3224df0f2d364d96f8d45c483f15fcc6c00aa9743dfc63b48543ae76c6a5401e"
+  },
+  {
+   "station_id": "766_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "310537e46b144af3751a059f7b3a2838284e37641e83874e0b6836ac0b06d363"
+  },
+  {
+   "station_id": "767_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "3280697d5df2e6acc3f0dd761dbd456743244401e00c093cc17ad757b2d1e984"
+  },
+  {
+   "station_id": "769_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "a53b5783e5c0cd5ba3c86e1c3c063f2f9e5f6562a43728e6fc8606667963c72b"
+  },
+  {
+   "station_id": "770_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "50125cf911af81a246f55947f5878c040d93e8d455c6b217ec7d52b31fc803ef"
+  },
+  {
+   "station_id": "771_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "77e2bf55a605a987cb1ad005a71d2a359892db0e4d61c9d816db2cc96bd4c29c"
+  },
+  {
+   "station_id": "772_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "4998a7a7f179e3c17c9145477a531b451c12a4c95e3fb53e8ca0796cb5f6cc78"
+  },
+  {
+   "station_id": "773_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "e26dd4279f75857b433ca55aa85ef5d3c698e033f51a30fa6cf395de2cf19b2c"
+  },
+  {
+   "station_id": "774_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "8979e09f1c5e7fac3f50df79e685d02d4f92cb304b7a310235a946a3ef96b0f7"
+  },
+  {
+   "station_id": "775_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "33f3360ef2a03ff30d49d602f53bee72f4ba2a2d51bb588d34b48a96515f595d"
+  },
+  {
+   "station_id": "776_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "d549cda1bf370cba1137d5bc4e526ce36b5a9bee1ab5fcffdd1de084aa134e8e"
+  },
+  {
+   "station_id": "777_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "f01c4cec7345aa5aeb41788a61548e025991f881efa7f40463f5e7b1b30dff98"
+  },
+  {
+   "station_id": "778_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "953d2c0fc2602757e53e69f66dfc10a7f5dda8cab6c1758f461d89781c374b59"
+  },
+  {
+   "station_id": "779_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "4e94dafe93e39d873b3571970bd286434c4e45ff94dfc742309bb97ac9dd9c0d"
+  },
+  {
+   "station_id": "781_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "7ea74eb1decbf35f979787eaa622eee470987f0a8a4f6ba54499d94aee285fe0"
+  },
+  {
+   "station_id": "782_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "0b58b77a64749ba5a75a65301e5610d4919ea652c5168473942b2401c1e4d635"
+  },
+  {
+   "station_id": "783_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "8edc43768617f28dd4cd726281382220151b54e0f96b707ece6b844ee7f5a34e"
+  },
+  {
+   "station_id": "784_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "a2fd6e44e8fd913fcf0dc0c3d3a1dbef0356df93aca355eaeb528eaf68b0d07a"
+  },
+  {
+   "station_id": "786_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "50c1dacf5859963f843a373094b265fd2095db85999371b173be11dce859fe72"
+  },
+  {
+   "station_id": "787_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "2c5554bf48aae39144368b745364ecde17372e2204127fdecdd764d67fd04d54"
+  },
+  {
+   "station_id": "788_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "8f3f200ce2b99ab4c020e07e1d66be93c5b510335178c2893a322da76416a653"
+  },
+  {
+   "station_id": "789_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "19148599dbd6613f683f8b09e21829ed188f5727c40cc6b5788678c8f15ce4f6"
+  },
+  {
+   "station_id": "790_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "1f7c09832721831a66e138a3f883102445a5c380f2731c7e4e06c8f75995c9e2"
+  },
+  {
+   "station_id": "791_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "5aab93513817cec1361ad90e50fbd6339b4f8e24cfce1fafb21cdf5cd9de2071"
+  },
+  {
+   "station_id": "792_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "d617a2af8db2784aeb1c5688672d2f546947af7fde04f8c9f1744fb10375f335"
+  },
+  {
+   "station_id": "793_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "dceb95415f19ae18cfecb41a2de078468e05b8d3476d2bdd7d229d0e0d0e54b1"
+  },
+  {
+   "station_id": "795_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "95a2de7ea609fcbde7161d2b0185c4ae4401e3bac669cbcdaf33079450c20bb2"
+  },
+  {
+   "station_id": "797_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "f74ff4e9530b2a40182f3db49dbefe50e785cfc86febad1139115a3ed71387ab"
+  },
+  {
+   "station_id": "798_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "99b8113d7da6b85819685743b79c08593c4d1426d16f05091ed5f38f204d2205"
+  },
+  {
+   "station_id": "800_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "a6325b7b8c8d0e51d1c9bc02e552168ecf6554c427a597683bacf4e2aa6694d2"
+  },
+  {
+   "station_id": "801_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "0878a2a73fc5414f67d8cb7e4a27aa2829028178b422b9cb794e0e8539690946"
+  },
+  {
+   "station_id": "802_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "98a6a7c4af43f562c7c43c617487b0ec10e07966609970abdee0ca3c5246e9e2"
+  },
+  {
+   "station_id": "804_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "c282997b3575cc097c583dad361ca173ae4d3a478ffabeb79886b9dd1f0036a6"
+  },
+  {
+   "station_id": "805_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "7b8999193f8c1792dc95053811a9b6c8e0acf91c2e88ad993061afe0651a78f7"
+  },
+  {
+   "station_id": "806_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "61b32c5a7ef8c095ddd070d23a4854462cd6310557e3fb9a68676be4564b4544"
+  },
+  {
+   "station_id": "807_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "25f45861e934aa99d0dec2b9d0204cbcb832bb0ea420225194031ebaedff0b1e"
+  },
+  {
+   "station_id": "809_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "338082c0638bb6db9556c978b87704f29a46d5105f751d6542cad59842151270"
+  },
+  {
+   "station_id": "810_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "8af13d31ae32ea76e25c7c37b988a5e7b4eae9c9d87e2c2666b7fef66d97bdfc"
+  },
+  {
+   "station_id": "811_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "07317ac4796764b8753baf582ad9d92442c3c5931fa637863e8f5af3e6551fe9"
+  },
+  {
+   "station_id": "812_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "c0c1de49e8883243543dc8a310a5646e1f83fc393ce9e704f0ab4c54ce399305"
+  },
+  {
+   "station_id": "813_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "5c31390d935b3d761427ea19e9f8d9fa5b3d3e4fede801cbc1defd3b00ae1430"
+  },
+  {
+   "station_id": "814_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "9676317925f576b5d99ffa2752e2646e6fceaf605dd8555a219806cb9e2e79e9"
+  },
+  {
+   "station_id": "815_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "1e70781e7f0fabaf72f356a66fc72332b2d351ecea1c3835d7bb3f5cb04115fd"
+  },
+  {
+   "station_id": "816_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "e038cd26b39f06f34138dc1353865e3cb8b734709ea6141cf8960f21cb9905e3"
+  },
+  {
+   "station_id": "817_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "230fa78f663cf7538aae34ff48374b8983139deaa95e9a9120d2c7d1b37a38c5"
+  },
+  {
+   "station_id": "818_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "9567d39f66b3c3dffdde7aa1b928f5c3ef4c70b773cc7c512ea264ce4471a250"
+  },
+  {
+   "station_id": "819_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "14f20e197cbdcd8954aad28f9f55de35d447a7d95b2d0b92be219ad2016d81e0"
+  },
+  {
+   "station_id": "820_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "a3d11a0f39cdfe5a4975cb7ee40cc3cb71c2a6986771102b2742099ab8cc1705"
+  },
+  {
+   "station_id": "821_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "21a70eb03c0fab5570354649262bc3c8fafb7be7379e687e5921fc26a69b4d36"
+  },
+  {
+   "station_id": "822_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "1077d49e5599bf8b5c2ae7d9cd501ca837abf6632a54ff8c1ebc9d01cd64c38c"
+  },
+  {
+   "station_id": "823_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "9504acab73619880b0374199c16414029ed75d86c79b627e3468020a6bba76f5"
+  },
+  {
+   "station_id": "824_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "6a0c1cc678f75b324d087638db27058467f763a45a5596a3b71e0d7bca47e139"
+  },
+  {
+   "station_id": "825_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "6a7697d0ff9c150e4948504bfe71d4949b236024bf3a95d3f7e70be7509fa4ae"
+  },
+  {
+   "station_id": "826_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "326827409f1b62c3a05fa49210300e16465995c8b5d24bc236899f2cbaccd267"
+  },
+  {
+   "station_id": "827_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "60c2098e62e12acd03a0e0529189d56cebd1717717e3d52502bd3bb6005a6df1"
+  },
+  {
+   "station_id": "828_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "40d0d8c0e0f081f006cc22f79ecb9d7fd2d28d27bd3b4e16b569e31c92bea123"
+  },
+  {
+   "station_id": "829_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "e54f5b25ec69d31778916af69345cb0a375f606aa72e33157404876daea46d8f"
+  },
+  {
+   "station_id": "830_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "6439edd5b7439675acc651e05c354a5bbf01f3e0c7d73a974f329b1408f26843"
+  },
+  {
+   "station_id": "831_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "279dec663e8f3ad5fe17a34ce14ef242340b7082a81445ce53e43042a294fd4a"
+  },
+  {
+   "station_id": "832_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "c79e033859ffd2977e3686d3fc0926a04953aaa90b68133c8e00d9efe9367348"
+  },
+  {
+   "station_id": "833_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "f862551a84e35da258cabf7aa69f63e0c997cebb82711626e0b6fc0a0fae0618"
+  },
+  {
+   "station_id": "835_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "46535d5f231c96cbecaab1ee56f8637b513bb8210a81e02c6ff7362cf2c22daf"
+  },
+  {
+   "station_id": "836_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "ad953e5752b5b341e251fe9b589c3ea25c91c4c7fd83a54afcebcc5a4a272205"
+  },
+  {
+   "station_id": "837_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "1e8220b3152e9de823bc77faaebc6294376dd523553d980e661c67f3c8dc2858"
+  },
+  {
+   "station_id": "838_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "005dac3505c152ab6246b0d72d6122fd4446adec883d2052b0f372634f2a4c9d"
+  },
+  {
+   "station_id": "839_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "40936e4ead3c7db4515d1692413319ac18ad72fa337484c36d616abc19c75926"
+  },
+  {
+   "station_id": "840_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "adca0a09e52aa8b6a5e9f292ae7fe6cbe5f6f07e60abed5049faedaea5d2e958"
+  },
+  {
+   "station_id": "841_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "dcd1af7db3df883b91b28c9e83a5cdd7701dd8f5d362548aa96339e0c64a606f"
+  },
+  {
+   "station_id": "842_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "44d6f164cf9bd632eb7f51e1218341c837c595941550e4417cfb9332692250fd"
+  },
+  {
+   "station_id": "843_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "13e3c0a474f9b5e1d70416560a3f1d468da58d0ba5a81b5044322eac08168106"
+  },
+  {
+   "station_id": "844_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "95622513c39f9d15c2a9fc8f82cc3960f5b39e9a5c7bb06ddc3ad01f519d28f1"
+  },
+  {
+   "station_id": "845_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "e3b7adf49b54c415803c174975399ea07823c51c53fcef6e268003dce9ad9561"
+  },
+  {
+   "station_id": "846_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "f43e3775c7bd78842e2a32aaf8d7b40cef8eec12eebbade8c933414bb1fe6736"
+  },
+  {
+   "station_id": "847_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "9698ba443f9ae902cee33391ab20de8cf7b5ea4f867a502eb1084a50ab1414c7"
+  },
+  {
+   "station_id": "849_NV_SNTL",
+   "n_rows": 427,
+   "sha256": "50b4bea74333719c81538d286721f516300cea494eece076bc14bb8868145828"
+  },
+  {
+   "station_id": "850_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "44c1c3467c39383c126c70d2f14c1dc4760278eb9bcd3a7da1cab189838b2508"
+  },
+  {
+   "station_id": "852_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "8a9a98a5ffa3f82ba848c760587e264dadb2ba4a967074fb5f762709d86d43a8"
+  },
+  {
+   "station_id": "853_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "c3802afc748cedb53314444885f6509059bb678bfb951ff58d7aa66503574c01"
+  },
+  {
+   "station_id": "854_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "4d1ff72adcc3f56faebf95a7ed598bca3dd7babf2886031d1cb055f0d9c6e1b4"
+  },
+  {
+   "station_id": "855_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "29b5d6f541ca4af85b237acc772b3b05b427a4e284e5fce27783b0a6563bca5f"
+  },
+  {
+   "station_id": "857_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "fc84b1567be9a38636f0dba571611888683a489aaf4e076ac649433ab526c28a"
+  },
+  {
+   "station_id": "858_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "42b409445bb74c8f26d0e1dbdd41408b6dfddb34441fa9da7fb45032561ff8d3"
+  },
+  {
+   "station_id": "859_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "c6de12c6b8885be5a086f28c1d82a3244a15719074e7bb3cbd40834329f862ee"
+  },
+  {
+   "station_id": "860_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "67b80bd1ed505f4a3f4b34ab8f23873454933bcaec38d598ffe5d50b3e17780d"
+  },
+  {
+   "station_id": "861_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "87798214809f385d16a189b44acacb391062337418f29683a2a30317267eb56d"
+  },
+  {
+   "station_id": "862_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "4bdb81b055d7e30d17c6b770b96d7412939df4576bf95b851c5d0eaf0fd820c9"
+  },
+  {
+   "station_id": "863_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "41d0992ae80cdc229e59a548fcfd88198f121b12903a8bc6cc12b4cf9d54e802"
+  },
+  {
+   "station_id": "866_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "4a25211eb355755235a480f509334eede472ecac16b7e545aa02b3dd08045f46"
+  },
+  {
+   "station_id": "867_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "21c44890255e1c6309685892f92220e8814899cc7811befb0f1c6461b404e91f"
+  },
+  {
+   "station_id": "868_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "0ea99fed94d98a8e38b9802e8463f2d25ccef9d69e8f5c9f80f2a38a3d30cb38"
+  },
+  {
+   "station_id": "869_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "ad67bde0eadc0e9945d94eed48bc0b8ef5ae4befb937a153f13a9848c9987135"
+  },
+  {
+   "station_id": "870_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "2d4c67b5095d07ddcf0d6c6ee3be1f61e13ea3eb3b4d4a4bf6f453edaf23251a"
+  },
+  {
+   "station_id": "871_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "493e2e9ef4eeed0ac616e09d9bf570c46a1b6b4e1207f9d4031a53eccd1a5887"
+  },
+  {
+   "station_id": "872_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "2def2745da6fc58f7e61d1a6f17d02442d0bb63789f5135ca87c99fea6c97cdd"
+  },
+  {
+   "station_id": "873_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "743db98281b67d0bec543dad82e8429103daeeedb7f6d9480fb7926febee4a70"
+  },
+  {
+   "station_id": "874_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "fd43648cf9cc1c83d2b7002f7ef4e7c5c384d9afbc01b34e0efe7e62b28baefc"
+  },
+  {
+   "station_id": "875_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "b0167bdffde5da6e9c324390038ee396604138567f6cc0f9080991d44effb47b"
+  },
+  {
+   "station_id": "876_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "8a1eec3c18309cd4dabc39b45c126d19726be2aed084e9375bafebfe1d7b66a7"
+  },
+  {
+   "station_id": "877_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "16b1557d50f26ad601c23bbb3d12b3d117b6011713cd423407a9a4a930f9ef78"
+  },
+  {
+   "station_id": "878_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "5649ec60cf9d389e79e4f6b952d0c9f585f2f5aa1f28073f1103bb1afd471e06"
+  },
+  {
+   "station_id": "893_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "dd742ec1434de4daa7615b41c60d26ff96f17b7c2b6155c6c5b2d002f4011aa9"
+  },
+  {
+   "station_id": "896_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "7cb806fd39abd57cf0ef97e7ae49c471164c2bf27134309370634e5bfcdc5e56"
+  },
+  {
+   "station_id": "897_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "98b5099c5ecb3456530ab03ea8ae82aefdd21a16aa1a1f34dfc34025bbae1ec4"
+  },
+  {
+   "station_id": "898_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "fdc7ade29d659cb06ce1322c4060a0041e552adb8d93e2e3b4381807c88d9e4d"
+  },
+  {
+   "station_id": "899_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "ffb3492bbd705b81b1a8c36cf463f642beb07b1ca25b0799d45248e9fc3bee8c"
+  },
+  {
+   "station_id": "901_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "4f9499ff689d3eb8576965fc0ac1a9a3ae3d0afb930f3066a2d0106caa86b9fc"
+  },
+  {
+   "station_id": "902_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "12949ec4a4dc17f12be739e67f9145966ec257f353cc03d6d059d422b129ba30"
+  },
+  {
+   "station_id": "904_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "afedeaa263dc48ceee0f53fc5da2ce07ea0da7b8cc1abce3a882a8ae95bbb505"
+  },
+  {
+   "station_id": "905_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "43121493be9c1a02b79bcafff1d89f9a8c0503bbb8c27e3ec5593d334a5edd6f"
+  },
+  {
+   "station_id": "906_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "81aa611778b3cc81e409ce2f8a9b6b03de9b9bb253299fbd713a4b2924e66b60"
+  },
+  {
+   "station_id": "908_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "5fd87ca5f58631ccafbf526ae67c24182d174fa7429747d29b54422ff4e34b55"
+  },
+  {
+   "station_id": "909_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "d78f059d190afa005755a791c5273bc7988ab9760836d6bd88e6d11da53e30ff"
+  },
+  {
+   "station_id": "910_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "916ce4906654fdf2b66ef97ee59edaa8e858d49435501874d3d5870d7a1fa8c9"
+  },
+  {
+   "station_id": "911_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "9bfd778566f8334014c2480b6a0fc5de4f573df4881e1e3ab200087ca169cc30"
+  },
+  {
+   "station_id": "913_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "bc143fbf868e0703f7510a6c4a4bf43aadb900de3b970b5057bb2b6f3202f1dd"
+  },
+  {
+   "station_id": "916_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "f57163019fc4411e6c946a253ecce9b7d0dbe1abe804dad81b8a49585e2e740c"
+  },
+  {
+   "station_id": "917_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "7f54f7582fb8dfbdf4e9f1ffce512004c59ccf94fcfa36ffa9ae8002e65aaa66"
+  },
+  {
+   "station_id": "918_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "9646b877f4eb5b1c6a14f5b3c8ffb9151b9a9ed104b006a65f61ed58af6e3378"
+  },
+  {
+   "station_id": "920_SD_SNTL",
+   "n_rows": 427,
+   "sha256": "df6b7b24c1f18d7d34898ae0b51ec25692076fdd459f7b782e5de168687bec27"
+  },
+  {
+   "station_id": "921_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "29dcb825050d9df0e3e32d969a26ae09c29f76d7bf6190a2f35c7f5bb8155bdf"
+  },
+  {
+   "station_id": "923_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "c88d19fb794ca0c8780289eacc1df7082f1c439ffb5106bab263d184b8b86ff2"
+  },
+  {
+   "station_id": "924_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "169ded1776143e07a90c7baade10a15b51a0991750593a7276162b17363b26e3"
+  },
+  {
+   "station_id": "925_OR_SNTL",
+   "n_rows": 427,
+   "sha256": "f7f653ceff82ffa770f14971e0e31f8b6ba28eece88b66caa25bda2a362560de"
+  },
+  {
+   "station_id": "926_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "3cd573f236a13c80e410b52df017dce82b4b3b9d8afbfa589ab9029e1dfe5719"
+  },
+  {
+   "station_id": "927_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "8f07de36393b025e471fb2c38750eca1527910a78b002e0a0ef7aa62f94d9cf7"
+  },
+  {
+   "station_id": "928_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "8497d71b8202ff621bbd1e9806afbc06d2913f9c8d62325ac314fef4fd07d2d8"
+  },
+  {
+   "station_id": "929_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "7134603dc277ad031e81dcc765738c5763148fa1bce72ef8935c3a641325aa67"
+  },
+  {
+   "station_id": "930_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "ef5ed50945b9eaedbc24d876ef619cd164297b89829023ecbca9c88cf0662061"
+  },
+  {
+   "station_id": "932_MT_SNTL",
+   "n_rows": 427,
+   "sha256": "e465a59d6266c0931f28d5d897498cb14b987039e013b91a7d23cff558a41236"
+  },
+  {
+   "station_id": "933_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "854359d237c69c369a824d462fca32c301b542550685be91ff0c0b56cbc5e710"
+  },
+  {
+   "station_id": "934_NM_SNTL",
+   "n_rows": 427,
+   "sha256": "b1aa99bfcd831f7415b318177f3c81eb974317d078985d6006ba7f4a13392675"
+  },
+  {
+   "station_id": "936_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "e95501d89e269316a48581d995ea717aae7cceb068cb17805321a3e14710afb7"
+  },
+  {
+   "station_id": "937_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "8e17f7eb41e952ce174d54f111177d4330486c7ada6135c507568cff86fbe1c1"
+  },
+  {
+   "station_id": "938_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "2757c5055d86455af0b0937106f2f5fad7a8c4ebb7401c7dc5e3ce3f33763d5e"
+  },
+  {
+   "station_id": "939_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "54005d1638d7467f645d16557164460da64a8520811868e253fe9d449faacdd5"
+  },
+  {
+   "station_id": "940_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "e22c425b8461e545172f198b22aed577a77a13147251dbd94b6b74007f599e1d"
+  },
+  {
+   "station_id": "941_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "e0ed02f52a0712c9e092846ed5f46e3202f742b5dd35c116d511903f473e3333"
+  },
+  {
+   "station_id": "942_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "574ebf7ca84db5d1c46abd49e4013daa8709d21bfaf5b0f0996765ac9c8934e2"
+  },
+  {
+   "station_id": "943_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "71a4169365585bdeb3e1be8008a02acdc762fe301ea28b1e4be59a6ab0ea32ba"
+  },
+  {
+   "station_id": "944_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "7ce7e557ffbdcaabcbb53b32a53dc1c2c1702ba1d6315aa16fe06a8e83373822"
+  },
+  {
+   "station_id": "948_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "4f98ccead48a2fc3a73773d8a1a5f82f68e43f7e41c4b7c1cae0ff727dc5d2ce"
+  },
+  {
+   "station_id": "949_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "138948c7b86513f2b5f8a8ecb356afeb08f881cec416cbb64b8b2329ee610191"
+  },
+  {
+   "station_id": "950_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "dc49fcaa9c8a10de9d62d2907ff815b3afaeac7107fc13b569057133fd25759a"
+  },
+  {
+   "station_id": "951_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "a97b7e8b8c883d0d21c5b2d602a55de9a651f589c925a916100e4a4acec51181"
+  },
+  {
+   "station_id": "955_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "562743b3339b9fcebbd700760d01eb175b1eb6cbf9dd5d439f21a1f2537c814e"
+  },
+  {
+   "station_id": "959_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "cd5a9ff5fee940157ca89c47386c242854038ccf16cc6d4cff5d571c5f8bd5d8"
+  },
+  {
+   "station_id": "963_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "aeeb65c85ec142359c47a9c455e98b85ffd4a378763928fa86652487d421e749"
+  },
+  {
+   "station_id": "964_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "20b37ee3b9eb672ca5c44e5b1ea1e9110c632b1206bf1dd067f18b714afa0f4c"
+  },
+  {
+   "station_id": "966_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "d0fac18553f757b74b6651c3fee8899b35aac10d1ef40a663c4ecee1ec3c9e25"
+  },
+  {
+   "station_id": "967_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "29fc3c53f681283cdbd4fb14c202a5d19ced669e7383329cc4f76f6dbffee50b"
+  },
+  {
+   "station_id": "969_AZ_SNTL",
+   "n_rows": 427,
+   "sha256": "1b73f08593792dd35d6d3a060657806e4a4ee2e18c7a8c3e4faa94096b37f318"
+  },
+  {
+   "station_id": "970_CO_SNTL",
+   "n_rows": 427,
+   "sha256": "3a2df27877241874cbbdc805fc0cb6fa1c1be54bbe72a9058b43410c96169846"
+  },
+  {
+   "station_id": "971_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "547cde581adfd7b5853b2f9a6339493427b204fa3d2bd5b7d492528e845d9789"
+  },
+  {
+   "station_id": "972_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "9da696d005b0ce57633a4d0eca832bde7aa9eb37fed55ebda9b1b325f9d2a21b"
+  },
+  {
+   "station_id": "974_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "ab263a48b65e5badca1150556fbdb4fd0e73139d04885b3c343b67b1313bed6b"
+  },
+  {
+   "station_id": "975_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "8832b51760dc57b89ddb9a6326ff786a5944abd904a9ae9de8ee3d39d4c0a2a3"
+  },
+  {
+   "station_id": "977_CA_SNTL",
+   "n_rows": 427,
+   "sha256": "3c3898e848ef9a35b674675d57b10614298f8061c454eed75102dfecaed4b970"
+  },
+  {
+   "station_id": "978_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "8580c33e8bedcffb0438ab77900ac30321bb08e3e4ead8604020a9ea5d9776c3"
+  },
+  {
+   "station_id": "979_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "fb1011cca773a3610ccfd402da0d4f18bfbdb36ae21cb9c32ac1d34d1303a4c9"
+  },
+  {
+   "station_id": "982_WY_SNTL",
+   "n_rows": 427,
+   "sha256": "8f4334448b71161d251e94c3f141f619729958be1ab97c5728246c52b0482fed"
+  },
+  {
+   "station_id": "985_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "8c87f079b957e204322324bd0b47ed8a7d7dd468156b34cf659a05ff72694606"
+  },
+  {
+   "station_id": "987_AK_SNTL",
+   "n_rows": 427,
+   "sha256": "044baff85f1c09629bf3d70edd901619f271bfa6150e210f907984ab0d03dea2"
+  },
+  {
+   "station_id": "988_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "d00c05077b40b793231843996f91e2737a88301040e9dee305ec7e7dd6faf891"
+  },
+  {
+   "station_id": "989_ID_SNTL",
+   "n_rows": 427,
+   "sha256": "7ec8e8dbfeeaafee009cacaa645a8014b0564b74fc7c072c123a9d10551fb562"
+  },
+  {
+   "station_id": "992_UT_SNTL",
+   "n_rows": 427,
+   "sha256": "fcec3f6af26c8ef253c223b4e0fc2a97ff3a33934b157120739e2da6ca4ffaf9"
+  },
+  {
+   "station_id": "999_WA_SNTL",
+   "n_rows": 427,
+   "sha256": "0f905cf90c6c8fbeab227fe16b7e9f3059093c4a61d8b6dec1ecb19720337f25"
+  }
+ ],
+ "sha256": "7148033d488e44e3227dfc027692344a0a17d926bf5f5b7c9bf98624a6359a3d"
+}

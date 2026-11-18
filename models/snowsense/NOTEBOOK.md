@@ -210,3 +210,15 @@ Owner-approved, after the import. A reproduction, not a rung: nothing in the mod
 - Files: `training/rescore_exam.py`, `training/rescore_summary.py`, `training/devtuned_params.json`,
   `training/rescore_exam_stations.csv` (per-station NSE, RMSE, peak error and bias, melt-out error and bias, years
   scored, for SnowSense and every baseline; no time series), `training/rescore_summary.json`. Intermediates in `work/`.
+
+## 18 Nov 2026: fresh exam frozen (WY2026), before any rung
+
+The WY2011-2025 exam was opened on import, so the next rung needs an exam nobody has read. Water year 2026
+(1 Oct 2025 - 30 Sep 2026) is complete at most stations and untouched. `training/freeze_exam2_wy2026.py` froze it,
+computing no snow score or statistic: 730 of the 772 SNOTEL exam stations have WY2026 complete by WaterData's rule
+(>= 330 SWE days, >= 300 P and T days). `training/exam2_wy2026.json` lists them with a sha256 of each station's rows
+for 1 Aug 2025 - 1 Oct 2026 (the input window); the frozen rows are in `work/exam2_wy2026.parquet` (git-ignored),
+because SNOTEL's recent data are provisional and may be revised. Rule, written now: scored once, after the next rung's
+decision is final, for that rung, v1.0 and every baseline (default and dev-tuned energy balance and degree-day,
+climatology, the per-station calibrated degree-day) together. The rung the import suggested: have the network
+correct the dev-tuned energy balance, judged against that baseline on the frozen set and the dev gate.
