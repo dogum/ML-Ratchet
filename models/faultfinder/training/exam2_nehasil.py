@@ -125,7 +125,9 @@ def build(check=False):
                 lab, ftype = 'excluded', names.index[0]
             if (nf > 0) != (day in sch_days):
                 disagree.append(dict(ahu=a, date=str(day.date()), file_fault_rows=nf, in_schedule=day in sch_days))
-            ok, why, g2 = X.day_qc(g, SLOTS_NEEDED, SLOT_S)
+            # The frozen split counted each 5-min row as SLOT_S (15 min) of fan runtime; keep that so --check reproduces
+            # it. With the true 5 min, 2 of 513 days (AHU24 5 and 11 Mar 2019, both normal) fall under 1 h (NOTEBOOK).
+            ok, why, g2 = X.day_qc(g, SLOTS_NEEDED, SLOT_S, runtime_s=SLOT_S)
             if lab == 'excluded':
                 ok, why = False, f'fault rows 1-{MIN_FAULT_ROWS - 1} (< 1 h)'
             diag = None

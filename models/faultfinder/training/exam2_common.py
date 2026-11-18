@@ -64,8 +64,9 @@ def clean_channels(d):
     return d
 
 
-def day_qc(g, slots_needed, slot_s):
-    """g: one unit-day of a contract frame (time_local column). Returns (ok, reason, g with flatlined temps NaN)."""
+def day_qc(g, slots_needed, slot_s, runtime_s=None):
+    """g: one unit-day of a contract frame (time_local column). Returns (ok, reason, g with flatlined temps NaN).
+    Fan runtime counts each row as runtime_s seconds; None (the default) uses the rows' own median spacing."""
     g = g.copy()
     for c in TEMPS:
         if c in g:
@@ -80,7 +81,10 @@ def day_qc(g, slots_needed, slot_s):
     n_slots = slot[g['T_sa'].notna().to_numpy()].nunique()
     if n_slots < slots_needed:
         return False, f'T_sa in < {slots_needed} slots', g
-    dt_h = slot_s / 3600.0
+    if runtime_s is None:
+        step = t.sort_values().diff().dt.total_seconds().median()
+        runtime_s = step if np.isfinite(step) and step > 0 else slot_s
+    dt_h = runtime_s / 3600.0
     if 'fan_sa_status' in g and g['fan_sa_status'].notna().any():
         on_h = (g['fan_sa_status'] > 0.5).sum() * dt_h
     elif 'fan_sa_speed' in g and g['fan_sa_speed'].notna().any():

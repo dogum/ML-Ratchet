@@ -616,3 +616,12 @@ per-day scores in `work/exam2/nehasil_scored_days.csv`.
   does not define one).
 - Detection by fault class (v1.1 at P = 0.5): cooling valve 4 of 4, supply-air sensor 8 of 8, heating valve 11 of 12,
   return-air sensor 5 of 6, OA damper 2 of 4, "other" 7 of 14.
+
+## 2026-11-17 — Review finding: the Nehasil runtime check over-counted fan hours
+
+A code review of PR #5 found that `exam2_common.day_qc` counted each 5-minute Nehasil row as 15 minutes (the coverage
+bin) of fan runtime, so four fan-on rows passed the one-hour rule. Re-checked with the true 5 minutes, 2 of the 513
+frozen exam days would fail it: AHU24 on 5 and 11 March 2019, both normal days (6 and 11 fan-on rows). They stay in
+the frozen split, which was scored once and is not edited. They count only in the false-alarm rows, at 2 of 459
+normal days. `day_qc` now measures runtime from the rows' own spacing by default. `exam2_nehasil.py` passes the old
+15 minutes explicitly so `--check` still reproduces the frozen split ("rebuild matches frozen split").

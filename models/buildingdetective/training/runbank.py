@@ -1,5 +1,6 @@
 """Worker for a bank + features run (Windows-safe replacement of run_bank.sh): claims shards with lock files, so any
-number of workers can run side by side. Frozen-set shards (900-904) first, then training shards in order.
+number of workers can run side by side. Frozen-set shards (900-904) first, then training shards in order. Locks are
+released after each shard (17 Nov 2026), so a new feat tag or a failed shard is picked up on the next run.
 usage: python runbank.py <bank_tag> <feat_tag> [first=0] [last=59] [--w3]
 """
 import os
@@ -25,8 +26,11 @@ def main(bank, feat, first=0, last=59, w3=False):
         fn = os.path.join(d, f'shard_{sid:04d}.npz')
         if not claim(fn + '.lock'):
             continue
-        SB.build_shard(bank, sid)
-        FZ.featurize_shard(bank, feat, fn, 2, True, w3)
+        try:  # the lock only keeps parallel workers apart; finished bank and feature files are skipped by their own checks
+            SB.build_shard(bank, sid)
+            FZ.featurize_shard(bank, feat, fn, 2, True, w3)
+        finally:
+            os.remove(fn + '.lock')
 
 
 if __name__ == '__main__':
