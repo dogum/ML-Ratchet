@@ -1,0 +1,228 @@
+{
+  "summary": {
+    "StormNet": {
+      "hits": 12,
+      "storms": 16,
+      "hit_fraction_ci95": [
+        0.5050168346449122,
+        0.8981793250878696
+      ],
+      "median_lead_h_on_hits": 1.0
+    },
+    "Persistence": {
+      "hits": 0,
+      "storms": 16,
+      "hit_fraction_ci95": [
+        0.0,
+        0.19360768053443644
+      ],
+      "median_lead_h_on_hits": null
+    },
+    "Published O'Brien\u2013McPherron": {
+      "hits": 9,
+      "storms": 16,
+      "hit_fraction_ci95": [
+        0.33178556398811904,
+        0.7690134759450764
+      ],
+      "median_lead_h_on_hits": 1.0
+    },
+    "Dev-tuned O'Brien\u2013McPherron": {
+      "hits": 15,
+      "storms": 16,
+      "hit_fraction_ci95": [
+        0.7167126242970108,
+        0.9888806552353575
+      ],
+      "median_lead_h_on_hits": 1.0
+    },
+    "Dev-tuned two-state": {
+      "hits": 15,
+      "storms": 16,
+      "hit_fraction_ci95": [
+        0.7167126242970108,
+        0.9888806552353575
+      ],
+      "median_lead_h_on_hits": 1.0
+    }
+  },
+  "excluded": [],
+  "events": [
+    {
+      "block": "storm-2008-02-27T22",
+      "crossing_hour_end_utc": "2008-02-28T23",
+      "warning_lead_hours": {
+        "StormNet": 1,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 0,
+        "Dev-tuned O'Brien\u2013McPherron": 1,
+        "Dev-tuned two-state": 1
+      }
+    },
+    {
+      "block": "storm-2008-03-08T04",
+      "crossing_hour_end_utc": "2008-03-09T05",
+      "warning_lead_hours": {
+        "StormNet": 0,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 0,
+        "Dev-tuned O'Brien\u2013McPherron": 1,
+        "Dev-tuned two-state": 1
+      }
+    },
+    {
+      "block": "storm-2008-03-26T21",
+      "crossing_hour_end_utc": "2008-03-27T22",
+      "warning_lead_hours": {
+        "StormNet": 3,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 3,
+        "Dev-tuned O'Brien\u2013McPherron": 3,
+        "Dev-tuned two-state": 3
+      }
+    },
+    {
+      "block": "storm-2008-09-03T04",
+      "crossing_hour_end_utc": "2008-09-04T05",
+      "warning_lead_hours": {
+        "StormNet": 1,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 1,
+        "Dev-tuned O'Brien\u2013McPherron": 2,
+        "Dev-tuned two-state": 2
+      }
+    },
+    {
+      "block": "storm-2011-03-09T20",
+      "crossing_hour_end_utc": "2011-03-10T21",
+      "warning_lead_hours": {
+        "StormNet": 1,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 1,
+        "Dev-tuned O'Brien\u2013McPherron": 1,
+        "Dev-tuned two-state": 1
+      }
+    },
+    {
+      "block": "storm-2011-04-05T17",
+      "crossing_hour_end_utc": "2011-04-06T18",
+      "warning_lead_hours": {
+        "StormNet": 1,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 1,
+        "Dev-tuned O'Brien\u2013McPherron": 3,
+        "Dev-tuned two-state": 3
+      }
+    },
+    {
+      "block": "storm-2011-08-04T22",
+      "crossing_hour_end_utc": "2011-08-05T23",
+      "warning_lead_hours": {
+        "StormNet": 1,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 1,
+        "Dev-tuned O'Brien\u2013McPherron": 1,
+        "Dev-tuned two-state": 1
+      }
+    },
+    {
+      "block": "storm-2011-09-16T14",
+      "crossing_hour_end_utc": "2011-09-17T15",
+      "warning_lead_hours": {
+        "StormNet": 1,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 0,
+        "Dev-tuned O'Brien\u2013McPherron": 1,
+        "Dev-tuned two-state": 1
+      }
+    },
+    {
+      "block": "storm-2011-09-25T16",
+      "crossing_hour_end_utc": "2011-09-26T17",
+      "warning_lead_hours": {
+        "StormNet": 0,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 0,
+        "Dev-tuned O'Brien\u2013McPherron": 0,
+        "Dev-tuned two-state": 0
+      }
+    },
+    {
+      "block": "storm-2011-10-31T12",
+      "crossing_hour_end_utc": "2011-11-01T13",
+      "warning_lead_hours": {
+        "StormNet": 2,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 2,
+        "Dev-tuned O'Brien\u2013McPherron": 2,
+        "Dev-tuned two-state": 2
+      }
+    },
+    {
+      "block": "storm-2014-02-17T23",
+      "crossing_hour_end_utc": "2014-02-19T00",
+      "warning_lead_hours": {
+        "StormNet": 1,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 1,
+        "Dev-tuned O'Brien\u2013McPherron": 2,
+        "Dev-tuned two-state": 2
+      }
+    },
+    {
+      "block": "storm-2014-04-10T23",
+      "crossing_hour_end_utc": "2014-04-12T00",
+      "warning_lead_hours": {
+        "StormNet": 0,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 0,
+        "Dev-tuned O'Brien\u2013McPherron": 1,
+        "Dev-tuned two-state": 1
+      }
+    },
+    {
+      "block": "storm-2014-08-26T10",
+      "crossing_hour_end_utc": "2014-08-27T11",
+      "warning_lead_hours": {
+        "StormNet": 2,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 1,
+        "Dev-tuned O'Brien\u2013McPherron": 2,
+        "Dev-tuned two-state": 2
+      }
+    },
+    {
+      "block": "storm-2014-10-19T17",
+      "crossing_hour_end_utc": "2014-10-20T18",
+      "warning_lead_hours": {
+        "StormNet": 1,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 1,
+        "Dev-tuned O'Brien\u2013McPherron": 1,
+        "Dev-tuned two-state": 1
+      }
+    },
+    {
+      "block": "storm-2014-10-27T00",
+      "crossing_hour_end_utc": "2014-10-28T01",
+      "warning_lead_hours": {
+        "StormNet": 1,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 0,
+        "Dev-tuned O'Brien\u2013McPherron": 1,
+        "Dev-tuned two-state": 1
+      }
+    },
+    {
+      "block": "storm-2014-12-11T15",
+      "crossing_hour_end_utc": "2014-12-12T16",
+      "warning_lead_hours": {
+        "StormNet": 0,
+        "Persistence": 0,
+        "Published O'Brien\u2013McPherron": 0,
+        "Dev-tuned O'Brien\u2013McPherron": 3,
+        "Dev-tuned two-state": 3
+      }
+    }
+  ]
+}

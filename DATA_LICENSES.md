@@ -107,6 +107,10 @@ checked on the providers' pages on 17 Nov 2026 where a page answered; otherwise 
 
 Every model card (`models/*/MODEL_CARD.md`) carries the full citation list, including the physics papers.
 
+## StormNet
+
+NASA SPDF OMNIWeb and its contributing instrument teams supply the hourly solar wind. Credit King & Papitashvili (2005). The World Data Center for Geomagnetism, Kyoto, and the contributing observatories supply hourly Dst. Kyoto permits scientific use with acknowledgement and prohibits commercial application of its geomagnetic indices. The four short StormNet excerpts, browser packs and offline lab carry those data terms. Annual source files are downloaded into the model’s ignored work directory. [OMNI documentation](https://omniweb.gsfc.nasa.gov/html/ow_data.html) · [OMNI paper](https://doi.org/10.1029/2004JA010649) · [Dst DOI](https://doi.org/10.17593/14515-74000) · [Kyoto terms](https://wdc.kugi.kyoto-u.ac.jp/wdc/Sec3.html)
+
 ## Before redistributing
 
 - Some providers ask for a specific citation or acknowledgement sentence; copy it from their page.

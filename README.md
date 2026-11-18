@@ -42,13 +42,14 @@ The losses are published too.
 | [**BuildingDetective**](models/buildingdetective/) | From meters and weather: floor area, systems, envelope, use *(real skill only for systems)* | 1,428 BDG2 buildings, 7,401 RECS homes, 2,558 CBECS buildings, 24 HUE homes | 5 wins · 9 losses · 4 ties |
 | [**FaultFinder**](models/faultfinder/) | From one day of an air handler's trend log: P(fault) and which fault | 217 real lab and building days (Iowa ERS, FLEXLAB, ORNL, Nesbitt Hall) | 11 wins · 12 losses · 1 tie |
 | [**ThermoPilot**](models/thermopilot/) | Which setpoints keep a building comfortable for the lowest bill? *(graded in simulation)* | 187 simulated twin episodes, real weather and tariffs | 0 wins · 6 losses |
+| [**StormNet**](models/stormnet/) | How low will Dst fall in the next three hours? | 76,507 hourly forecasts · 137 storm blocks, two exams | 0 wins · 3 losses · 6 ties |
 <!-- collection:end -->
 
 Every model also runs **live in your browser** on the website — the real network, ported to TypeScript and checked
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
 <!-- totals:start (generated) -->
-**0** real labelled examples were used for training. **316** rung decisions are logged, **157** of them rejections.
+**0** real labelled examples were used for training. **321** rung decisions are logged, **159** of them rejections.
 <!-- totals:end -->
 
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself. The three
