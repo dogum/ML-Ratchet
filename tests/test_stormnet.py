@@ -69,17 +69,27 @@ def test_released_batch_and_uncertainty():
         for key in batch:
             np.testing.assert_allclose(batch[key], [r[key] for r in single], atol=1e-9)
         raw = net.predict(z["wind"], z["last_dst"], calibrated=False)
-        np.testing.assert_allclose(batch["sigma"], raw["sigma"] * net.meta["widen_factor"])
+        by = net.meta["widen_by_dst"]  # v1.0.1: one widen-only factor per bin of the last observed Dst
+        factor = np.asarray(by["factors"])[np.searchsorted(by["edges"], z["last_dst"], side="right")]
+        assert min(by["factors"]) >= 1.0
+        np.testing.assert_allclose(batch["sigma"], raw["sigma"] * factor)
         with pytest.raises(ValueError):
             net.predict(z["wind"][0, :-1], z["last_dst"][0])
 
 
 def test_complete_exam_matches_release_and_card():
+    """Exam 1 scored v1.0 (its weights hash is in exam.json; v1.0.1 changed only the bars' metadata).
+    Exam 2, the sealed reserve, scored the current weights once."""
     result = json.loads((MODEL / "training/exam.json").read_text())
+    reserve = json.loads((MODEL / "training/exam_reserve.json").read_text())
     card = yaml.safe_load((MODEL / "model.yaml").read_text())
-    assert result["weights_sha256"] == hashlib.sha256((MODEL / "stormnet_weights.npz").read_bytes()).hexdigest()
-    assert len(card["exam"]["results"]) == len(result["rows"]) == 5
-    for advertised, row in zip(card["exam"]["results"], result["rows"].values()):
+    assert reserve["weights_sha256"] == hashlib.sha256((MODEL / "stormnet_weights.npz").read_bytes()).hexdigest()
+    assert len(card["exam"]["results"]) == len(result["rows"]) + len(reserve["v1.0.1"]) == 10
+    for advertised, row in zip(card["exam"]["results"][5:], reserve["v1.0.1"].values()):
+        assert advertised["verdict"] == row["verdict"]
+        assert advertised["model"] == pytest.approx(row["scores"]["StormNet"], abs=.00051)
+        assert len(advertised["baselines"]) == 4
+    for advertised, row in zip(card["exam"]["results"][:5], result["rows"].values()):
         assert advertised["verdict"] == row["verdict"]
         assert advertised["model"] == pytest.approx(row["scores"]["StormNet"], abs=.00051)
         assert len(advertised["baselines"]) == 4

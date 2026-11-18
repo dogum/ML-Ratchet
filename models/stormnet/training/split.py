@@ -42,10 +42,10 @@ def blocks(dst, time):
     return groups, meta
 
 
-def period(years):
+def period(years, reserve=False):
     if any(b != a + 1 for a, b in zip(years, years[1:])):
         raise ValueError("Build each contiguous period separately")
-    raw = [read_year(y, index=True) for y in years]
+    raw = [read_year(y, index=True, reserve=reserve) for y in years]
     time = np.concatenate([r[0] for r in raw])
     wind = fill_wind(np.concatenate([r[1] for r in raw]))
     dst = np.concatenate([r[2] for r in raw])

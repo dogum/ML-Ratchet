@@ -101,3 +101,28 @@ and unused. Long storms keep more current in the slow reservoir than 36 hours of
   moves only the bars; every point forecast is v1.0's.
 - **Release:** v1.0.1 = r3 with the binned bars. Next, exactly as planned: open the sealed 2022-2025 reserve once
   and score v1.0, v1.0.1 and every baseline on the primary exam's rows, bootstrap and rules.
+
+## 17 November 2026 · exam 2 (the sealed reserve) and the storm replay
+
+The reserve was opened once, after `a36824b`, by `training/exam_reserve.py`: 2022-2025, 35,026 possible issues,
+1,958 excluded for wind gaps, **33,068 scored in 515 blocks, 85 of them storms**; deepest block 9-19 May 2024 (−406 nT).
+
+| Row (v1.0.1) | StormNet | Best competitor | Difference [95 %] | Verdict |
+|---|---:|---|---|---|
+| All hours | 4.356 nT | published O’Brien–McPherron 4.343 | +0.013 [−0.029, +0.055] | tie |
+| ≤ −50 nT | 10.690 | dev-tuned O’Brien–McPherron 10.616 | +0.074 [−0.206, +0.341] | tie |
+| ≤ −100 nT | 23.650 | dev-tuned O’Brien–McPherron 23.086 | +0.564 [−0.151, +1.238] | tie |
+| ≤ −150 nT | 36.158 | dev-tuned O’Brien–McPherron 34.991 | +1.167 [+0.070, +2.161] | loss |
+| Quiet false alarms | 0.615 % | published 0.376 % | +0.238 [+0.178, +0.304] pp | loss |
+
+Persistence: 5.03, 14.20, 30.21 and 44.07 nT on the four MAE rows. Coverage of the 68 % bars, v1.0 → v1.0.1:
+65.3 → 63.2 % (all), 51.5 → 59.9 % (storm), 41.9 → 52.9 % (intense), 41.7 → 50.9 % (extreme).
+
+Reading: with three times as many storm blocks as the primary exam, the verdict is the same. StormNet is far
+better than persistence and better than published physics, and level with physics tuned on the same dev storms. The
+network adds nothing measurable over its anchor on real storms; the same finding as WakeNet's on 17 Nov 2026.
+
+The instrument and lab now replay six whole storms chosen by rule (`training/storm_gallery.py`, by observed minimum
+only): the deepest storm of 2022, 2023, 2024 and 2025, the deepest primary-exam storm (Aug 2018) and one quiet block
+drawn with the example seed. The browser reruns every hourly forecast with all three physics competitors and the
+anchor's fast and slow reservoirs; 120 Python reference cases, including what-if winds, match to 4.5e-15.

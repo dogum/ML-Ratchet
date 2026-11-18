@@ -37,8 +37,8 @@ def read_result(name):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _raw(year):
-    if year in PROTOCOL["sealed_reserve_years"]:
+def _raw(year, reserve=False):
+    if year in PROTOCOL["sealed_reserve_years"] and not reserve:
         raise ValueError("The v1 reserve is sealed.")
     path = Path(work("raw", f"omni2_{year}.dat", mkdir=True))
     if not path.exists():
@@ -51,7 +51,7 @@ def _raw(year):
         os.replace(temp.name, path)
     data = path.read_bytes()
     digest = hashlib.sha256(data).hexdigest()
-    for fname in ("sources_dev.json", "sources_primary.json"):
+    for fname in ("sources_dev.json", "sources_primary.json", "sources_reserve.json"):
         manifest = HERE / fname
         if manifest.exists():
             frozen = json.loads(manifest.read_text()).get(str(year))
@@ -60,12 +60,14 @@ def _raw(year):
     return data, digest
 
 
-def read_year(year, *, index=False):
-    labelled_years = PROTOCOL["dev_years"] + PROTOCOL["primary_years"]
+def read_year(year, *, index=False, reserve=False):
+    """reserve=True opens the sealed 2022-2025 reserve; only exam_reserve.py passes it (17 Nov 2026, after the
+    v1.0.1 decisions were committed)."""
+    labelled_years = PROTOCOL["dev_years"] + PROTOCOL["primary_years"] + (PROTOCOL["sealed_reserve_years"] if reserve else [])
     permitted = labelled_years if index else PROTOCOL["training_wind_years"] + PROTOCOL["frozen_wind_years"]
     if year not in permitted:
         raise ValueError(f"Year {year} outside the requested data role")
-    data, digest = _raw(year)
+    data, digest = _raw(year, reserve=reserve)
     words = (1, 2, 3, *WIND_WORDS, *((41,) if index else ()))
     slices = [slice(EDGES[w - 1], EDGES[w]) for w in words]
     records = np.array([[float(line[key]) for key in slices] for line in io.BytesIO(data)])

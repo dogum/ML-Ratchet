@@ -1,6 +1,8 @@
-# StormNet v1.0
+# StormNet v1.0.1
 
 At the end of a UTC hour, StormNet predicts the lowest of the **next three complete hourly Dst values**, in nanotesla, with a symmetric nominal 68% prediction interval. The primary exam spans 2016–2020. StormNet's mean absolute error was 3.47 nT across 43,439 issues. Published O’Brien–McPherron physics scored 3.45 nT and holding the last index fixed scored 3.79 nT.
+
+**The headline, plainly (17 Nov 2026).** StormNet was then examined a second time on the sealed 2022–2025 reserve, at solar maximum: 33,068 forecasts in 85 storm blocks, including the May 2024 superstorm (−406 nT). It beats holding the last index fixed by a wide margin and beats published physics on every storm row, but it **ties ring-current physics tuned on the same dev storms** and loses on the most extreme hours. The network adds nothing measurable over its own physics anchor. v1.0.1 keeps v1.0's forecasts and widens its error bars by how deep the storm already is.
 
 Dst (disturbance storm time) measures how much the horizontal magnetic field near Earth’s equator changes. A large negative excursion marks an intense geomagnetic storm.
 
@@ -38,9 +40,22 @@ A separate onset check asked whether a warning preceded the first crossing of �
 
 ![Typical minimum Dst and forecast error for the 34 matched dev blocks](dev-twins.png)
 
-## One primary exam
+## v1.1 attempts, all decided on dev before the reserve was opened
 
-The release, all opponents and the scoring program were committed at `6fc38b3` before downloading 2016–2020. Of 43,848 hours, 43,810 admit the required past and future. Wind gaps excluded 371 more, leaving **43,439**. The 2022–2025 reserve remains sealed.
+A dev diagnostic (`training/dev_diagnostic.py`) re-ran the tuned physics with the actual next three hours of wind, which no forecast has. Dev error only fell from 4.36 to 4.21 nT, and rose in main phases (6.65 → 7.34 nT), so the remaining error is the physics and the index's hourly noise, not the unknown wind. Forecasts sat too shallow in recovery (−3.1 nT mean residual).
+
+| Attempt | Dev result | Decision |
+|---|---|---|
+| Physics: assimilate the fast/slow split from the window's observed Dst | storm MAE 11.77 → 11.69 / 8.63 → 8.62 / 6.61 → 6.61 nT; all-issue MAE worse in 2011 and 2014 | rejected |
+| Physics: pressure-dependent injection, γ = 0.106 (Wang, Chao & Lin 2003) | storm MAE 11.77 → 11.33 / 8.63 → 8.57 nT, 2014 worse (6.61 → 6.79) | rejected |
+| R5: readout reading the window's 36 hourly Dst values, 256 random units | val2 0.1283 / 0.1410 / 0.1283 (seeds 103–105, mean 0.1325 against R3's 0.1340); every dev year worse | rejected |
+| Error bars binned by the last observed Dst | dev coverage at Dst ≤ −50 nT 54.6% → 68.1% (factors 1.575 / 1.232 / 1.092) | v1.0.1 |
+
+The plan named electric-field bins for the error bars. On dev those bins were already covered (69%, 64%, 68%), so the bins follow the last observed Dst instead; that change was recorded before the reserve was opened. On Windows the rebuild reproduces the calibration to about 1e-8 but not the banks' bit-level fingerprints; R3 rebuilt there scores exactly 0.1340 on val2.
+
+## Exam 1: the primary exam
+
+The release, all opponents and the scoring program were committed at `6fc38b3` before downloading 2016–2020. Of 43,848 hours, 43,810 admit the required past and future. Wind gaps excluded 371 more, leaving **43,439**. The 2022–2025 reserve stayed sealed until exam 2 below.
 
 | Exam row | Issues / blocks | StormNet | Last Dst | Published O’Brien | Dev-tuned O’Brien | Dev-tuned two-state | Difference vs best, 95% interval | Verdict |
 |---|---:|---:|---:|---:|---:|---:|---|---|
@@ -54,14 +69,30 @@ The bootstrap draws whole blocks 2,000 times, preserving the mix of storm and qu
 
 Dev widened the predicted half-width by 1.1675. Coverage was 71.7% overall (95% block interval 70.9–72.5%), 49.0% at storm strength (44.9–53.4%), 40.4% for intense forecasts (26.5–68.6%) and 42.9% for the seven extreme issues. On quiet targets coverage was 72.1% (71.4–72.9%). The all-hour result is dominated by quiet conditions. [Full exam and weight fingerprint](training/exam.json) · [Annual OMNI file fingerprints](training/sources_primary.json)
 
+## Exam 2: the sealed reserve, 2022–2025
+
+Opened once on 17 Nov 2026 after the v1.0.1 decisions were committed (`a36824b`), with the primary exam's rows, bootstrap seed and rules (`training/exam_reserve.py`). This is solar maximum: 33,068 forecasts in 515 blocks, 85 of them storms; the deepest is the block from 9 May 2024 (−406 nT). In OMNI these years carry Kyoto's provisional or quicklook Dst. Point forecasts are v1.0's; v1.0.1 changes only the bars.
+
+| Exam row | Issues / blocks | StormNet | Last Dst | Published O’Brien | Dev-tuned O’Brien | Dev-tuned two-state | Difference vs best, 95% interval | Verdict |
+|---|---:|---:|---:|---:|---:|---:|---|---|
+| All, MAE (nT) | 33,068 / 515 | 4.356 | 5.030 | 4.343 | 4.582 | 4.654 | +0.013 [-0.029, +0.055] | Tie |
+| Minimum ≤ −50 nT, MAE (nT) | 1,992 / 85 | 10.690 | 14.198 | 11.676 | 10.616 | 10.650 | +0.074 [-0.206, +0.341] | Tie |
+| Minimum ≤ −100 nT, MAE (nT) | 310 / 21 | 23.650 | 30.206 | 26.745 | 23.086 | 23.468 | +0.564 [-0.151, +1.238] | Tie |
+| Minimum ≤ −150 nT, MAE (nT) | 108 / 8 | 36.158 | 44.074 | 41.014 | 34.991 | 35.882 | +1.167 [+0.070, +2.161] | Loss |
+| False alarm on minimum > −50 nT (%) | 31,076 / 515 | 0.615 | 0.460 | 0.376 | 0.875 | 0.917 | +0.238 [+0.178, +0.304] percentage points | Loss |
+
+68% coverage, v1.0 → v1.0.1: all hours 65.3 → 63.2%, storm-strength 51.5 → 59.9%, intense 41.9 → 52.9%, extreme 41.7 → 50.9%. The bars are better where storms are and still too narrow there. [Full reserve exam](training/exam_reserve.json) · [Reserve OMNI fingerprints](training/sources_reserve.json)
+
+The site's instrument replays six whole storms chosen by rule (`training/storm_gallery.py`): the deepest storm of each reserve year, the deepest primary-exam storm and one quiet block drawn by seed. It reruns every hourly forecast and all three physics competitors in the browser.
+
 ## Limits and next experiments
 
 1. Rare, rapidly deepening storms have the largest errors and narrowest effective coverage. The five-year sample contains one independent extreme storm.
 2. The forecast inherits uncertainty about the next three hours of wind. A north-to-south field rotation occurring after issue can drive a storm faster than the causal projection predicts.
 3. One Dst reading constrains the sum of the states. The pressure coefficient reached its search bound, and twin absolute minima were too deep. A time-stamped quicklook stream and independent wind-pressure responses would test the observation model.
 
-The next dev-only experiments are a conditional ensemble of future solar-wind paths and interval calibration by **issue-time** driving intensity. A fresh evaluation can use the sealed reserve after the next decision is fixed.
+The reserve is now spent: the next version has no fresh real exam until 2026 is complete, so its decisions rest on dev and simulation, and any re-score on these years is labelled seen. The dev diagnostic rules out the future-wind ensemble as the main lever (knowing the actual wind helps 0.15 nT). The promising lever is physics the anchor lacks, so the network has something real to learn: a By- or substorm-dependent injection term, or a ring-current asymmetry term fitted on SYM-H, each shown failing on dev first.
 
 ## Data and credit
 
-NASA Space Physics Data Facility, OMNIWeb, and the contributing solar-wind instrument teams supplied the hourly field and plasma measurements. Cite King & Papitashvili (2005). World Data Center for Geomagnetism, Kyoto, M. Nose and colleagues, and the contributing observatories supplied the geomagnetic Dst index. Kyoto permits scientific use with acknowledgement and prohibits commercial application of its geomagnetic indices. Four short primary-exam excerpts drive the offline demo and browser lab. [OMNI source](https://omniweb.gsfc.nasa.gov/html/ow_data.html) · [OMNI paper](https://doi.org/10.1029/2004JA010649) · [Kyoto Dst DOI](https://doi.org/10.17593/14515-74000) · [Provider terms](https://wdc.kugi.kyoto-u.ac.jp/wdc/Sec3.html)
+NASA Space Physics Data Facility, OMNIWeb, and the contributing solar-wind instrument teams supplied the hourly field and plasma measurements. Cite King & Papitashvili (2005). World Data Center for Geomagnetism, Kyoto, M. Nose and colleagues, and the contributing observatories supplied the geomagnetic Dst index. Kyoto permits scientific use with acknowledgement and prohibits commercial application of its geomagnetic indices. Four short primary-exam excerpts drive the offline demo; six whole storms from both exams (`examples/storms.npz`) drive the browser instrument and lab. [OMNI source](https://omniweb.gsfc.nasa.gov/html/ow_data.html) · [OMNI paper](https://doi.org/10.1029/2004JA010649) · [Kyoto Dst DOI](https://doi.org/10.17593/14515-74000) · [Provider terms](https://wdc.kugi.kyoto-u.ac.jp/wdc/Sec3.html)

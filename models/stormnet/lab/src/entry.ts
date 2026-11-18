@@ -1,6 +1,6 @@
 import { parsePack, type PackManifest } from '../../../../site/src/lib/nn/pack.ts';
 import { show } from '../../../../site/src/instruments/stormnet/ui.ts';
-import type { Examples, StormWeights } from '../../../../site/src/instruments/stormnet/net.ts';
+import type { Storms, StormWeights } from '../../../../site/src/instruments/stormnet/net.ts';
 
 function unpack<T>(id: string) {
   const data = JSON.parse(document.getElementById(id)!.textContent!) as { manifest: PackManifest; bytes: string };
@@ -9,7 +9,7 @@ function unpack<T>(id: string) {
 }
 
 const root = document.querySelector<HTMLElement>('#instrument')!;
-show({ root, compact: false, base: '', accent: '#39a88b' }, unpack<StormWeights>('weights'), unpack<Examples>('examples'));
+show({ root, compact: false, base: '', accent: '#39a88b' }, unpack<StormWeights>('weights'), unpack<Storms>('storms'));
 const toggle = document.querySelector<HTMLButtonElement>('#theme')!;
 const dark = () => document.documentElement.dataset.theme
   ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
