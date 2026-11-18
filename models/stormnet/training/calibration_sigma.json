@@ -1,0 +1,44 @@
+{
+  "variable": "last observed Dst (nT); bins <= -50, -50 to -30, > -30",
+  "edges": [
+    -50.0,
+    -30.0
+  ],
+  "bins": [
+    {
+      "n": 229,
+      "single_factor_coverage": 54.6,
+      "factor": 1.5752,
+      "coverage": 68.1
+    },
+    {
+      "n": 479,
+      "single_factor_coverage": 66.4,
+      "factor": 1.2317,
+      "coverage": 68.3
+    },
+    {
+      "n": 1700,
+      "single_factor_coverage": 70.6,
+      "factor": 1.0915,
+      "coverage": 68.2
+    }
+  ],
+  "electric_field_bins_rejected": [
+    {
+      "bin": "E < 1",
+      "n": 1885,
+      "coverage_single_factor": 69.2
+    },
+    {
+      "bin": "E 1-3",
+      "n": 454,
+      "coverage_single_factor": 64.3
+    },
+    {
+      "bin": "E >= 3",
+      "n": 69,
+      "coverage_single_factor": 68.1
+    }
+  ]
+}

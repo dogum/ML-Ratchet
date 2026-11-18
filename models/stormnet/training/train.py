@@ -24,18 +24,18 @@ def solve(h, y, weight):
     return np.linalg.solve(h.T @ hw + np.diag(penalty), hw.T @ y)
 
 
-def train(rid, mode, banks, cal, seed=103, folder="ckpt"):
+def train(rid, mode, banks, cal, seed=103, folder="ckpt", units=48):
     arrays = [load_bank(b) for b in banks]
     data = {k: np.concatenate([a[k] for a in arrays]) for k in arrays[0]}
-    params = cal["double"] if "train2" in banks else PUBLISHED
-    x, anchor = features(data["wind"], data["dst"], mode, params, cal["wind_law"])
+    params = cal["double"] if any(b.startswith("train2") for b in banks) else PUBLISHED
+    x, anchor = features(data["wind"], data["dst"], mode, params, cal["wind_law"], data.get("past_dst"))
     y = data["truth"] - anchor
     # Identical features/initialisation across the three history rungs.
     rng = np.random.default_rng(seed)
     fold = np.arange(len(x)) % 5 != 0
     w = dict(mean=x[fold].mean(axis=0), scale=np.maximum(x[fold].std(axis=0), 1e-3),
-             kernel=rng.normal(0, 1 / np.sqrt(x.shape[1]), (x.shape[1], 48)),
-             bias=rng.uniform(-1, 1, 48))
+             kernel=rng.normal(0, 1 / np.sqrt(x.shape[1]), (x.shape[1], units)),
+             bias=rng.uniform(-1, 1, units))
     h = design(x, w)
     wt = np.ones(fold.sum())
     for _ in range(4):

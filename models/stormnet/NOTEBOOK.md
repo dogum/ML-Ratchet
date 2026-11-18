@@ -81,3 +81,23 @@ and unused. Long storms keep more current in the slow reservoir than 36 hours of
    2022-2025 Dst in OMNI is the provisional or quicklook index; the year files and their index versions are
    recorded.
 5. The lab and instrument are rebuilt around whole-storm replays once exam 2 is scored.
+
+## 17 November 2026 · v1.1 decisions (dev and simulation only; reserve still sealed)
+
+- **Physics ring-3: neither candidate kept** (`training/calibration_v3.json`). Rule fixed above: lower dev MAE on all
+  issues and on storm targets in every dev year.
+  - Assimilated split: storm MAE 11.77 → 11.69 (2008), 8.63 → 8.62 (2011), 6.61 → 6.61 nT (2014); all-issue MAE
+    slightly worse in 2011 and 2014.
+  - Pressure-dependent injection (γ = 0.106): storm MAE 11.77 → 11.33 and 8.63 → 8.57 nT, but 2014 worse (6.61 → 6.79).
+  The physics is near what three dev years can resolve. The baselines and simulator stay ring-2.
+- **r5 rejected** (`training/v11_results.json`). With the window's observed Dst and 256 units, seeds 103 / 104 / 105
+  score 0.1283 / 0.1410 / 0.1283 on val2 (mean 0.1325) against r3's 0.1340, and every dev year is worse. One seed
+  alone would have passed; the seed mean decides, as planned. The rebuilt r3 reproduces the released one exactly on
+  the rebuilt val2 (0.1340) and dev.
+- **v1.0.1 error bars** (`training/calibration_sigma.json`). The plan named electric-field bins, but on dev those bins
+  were already covered (69 %, 64 %, 68 % with the single factor). Issues where the last Dst is already ≤ −50 nT were
+  covered 55 %. The bins therefore follow the last observed Dst: factors 1.575 (≤ −50), 1.232 (−50 to −30) and
+  1.092 (> −30 nT), replacing the single 1.167. This change was decided on dev, before the reserve was opened, and
+  moves only the bars; every point forecast is v1.0's.
+- **Release:** v1.0.1 = r3 with the binned bars. Next, exactly as planned: open the sealed 2022-2025 reserve once
+  and score v1.0, v1.0.1 and every baseline on the primary exam's rows, bootstrap and rules.

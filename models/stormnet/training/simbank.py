@@ -13,7 +13,9 @@ from stormphysics import HISTORY, HORIZON, PUBLISHED, drivers
 WARMUP = 48
 
 
-def make_bank(version, frozen, center):
+def make_bank(version, frozen, center, with_past=False):
+    """with_past (v1.1, 17 Nov 2026) also stores the simulated Dst of the 36-hour window as past_dst. It draws the
+    same random numbers, so its wind, dst and truth equal the plain bank of the same version."""
     seed = (7821 if frozen else 4931) + version
     size = 4500 if frozen else 17000
     years = PROTOCOL["frozen_wind_years" if frozen else "training_wind_years"]
@@ -34,12 +36,14 @@ def make_bank(version, frozen, center):
         trace = simulate(full, center, rng)
         cutoff = WARMUP + HISTORY
         parts.append((full[:, WARMUP:cutoff].astype("float16"), trace[:, cutoff - 1].astype("float32"),
-                      trace[:, cutoff:].min(axis=1).astype("float32")))
-    bank = {key: np.concatenate(col) for key, col in zip(("wind", "dst", "truth"), zip(*parts))}
+                      trace[:, cutoff:].min(axis=1).astype("float32"))
+                     + ((trace[:, WARMUP:cutoff].astype("float32"),) if with_past else ()))
+    keys = ("wind", "dst", "truth") + (("past_dst",) if with_past else ())
+    bank = {key: np.concatenate(col) for key, col in zip(keys, zip(*parts))}
     digest = hashlib.sha256()
     for a in bank.values():
         digest.update(a.astype(a.dtype.newbyteorder("<"), copy=False).tobytes())
-    label = ("val" if frozen else "train") + str(version)
+    label = ("val" if frozen else "train") + str(version) + ("h" if with_past else "")
     file = Path(work("banks", label + ".npz", mkdir=True))
     if file.exists():
         with np.load(file) as z:
