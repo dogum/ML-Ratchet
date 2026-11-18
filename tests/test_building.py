@@ -24,6 +24,7 @@ HAVE_SURVEYS = (DATA_ROOT / "data" / "proc" / "eia" / "recs2020.parquet").exists
 HAVE_EPW = (DATA_ROOT / "buildingsim" / "refdata" / "weather" / "epw").is_dir()
 HAVE_BDG2 = (DATA_ROOT / "data" / "proc" / "bdg2" / "buildings.parquet").exists() and HAVE_SURVEYS
 HAVE_OTHER = (DATA_ROOT / "data" / "proc" / "other" / "catalogue.json").exists()
+HAVE_PRIOR = (DATA_ROOT / "buildingsim" / "refdata" / "priors" / "resstock_prior.parquet").exists()
 
 
 def test_frozen_splits_unchanged():
@@ -242,6 +243,7 @@ def test_physics_13_heat_pumps():
     assert np.array_equal(r2["ts"]["meter_electricity_kW"].to_numpy(), r3["ts"]["meter_electricity_kW"].to_numpy())
 
 
+@pytest.mark.skipif(not HAVE_PRIOR, reason="ResStock prior not present (mlratchet data building --from-zip ...)")
 def test_physics_14_generator_intensity(monkeypatch):
     """1.4: same draws, filled specs with intensities x the use factor; the default generator is unchanged."""
     import buildingsim as bs
@@ -379,9 +381,7 @@ def test_phase2_tariffs_are_dst_safe():
     assert e == pytest.approx(pa["price"].sum()) and dem > 0
 
 
-@pytest.mark.skipif(not (HAVE_SURVEYS and (DATA_ROOT / "buildingsim" / "refdata" / "priors" /
-                                           "resstock_prior.parquet").exists()),
-                    reason="RECS / ResStock prior not present")
+@pytest.mark.skipif(not (HAVE_SURVEYS and HAVE_PRIOR), reason="RECS / ResStock prior not present")
 def test_phase2_recs_respondent_twin():
     import buildingdata as bd
     from buildingsim import stock, fill_spec

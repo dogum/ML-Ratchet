@@ -47,8 +47,9 @@ def calib_all(procs=3):
 
 
 def _bank_parts(args):
-    phys, name, n, seed, parts = args
+    phys, name, n, seed, parts, size = args
     import lc_common as C, bank
+    bank.PART = size  # spawned workers re-import bank with its default; use the parent's part size
     d = f'{C.ROOT}/data/bank_{name}'
     info = bank.dev_info()
     if phys.startswith('v1') and not info[3]: raise SystemExit('need data/dev_knobs.json')
@@ -76,7 +77,7 @@ def bank_all(phys, name, n, seed, procs=3, part=None):
     os.makedirs(f'{C.ROOT}/data/bank_{name}', exist_ok=True)
     nparts = (n + bank.PART - 1) // bank.PART
     t0 = time.time()
-    jobs = [(phys, name, n, seed, list(range(k, nparts, procs))) for k in range(procs)]
+    jobs = [(phys, name, n, seed, list(range(k, nparts, procs)), bank.PART) for k in range(procs)]
     with mp.Pool(procs, maxtasksperchild=1) as p:
         p.map(_bank_parts, jobs)
     print(f'bank {name}: {n} buildings in {time.time() - t0:.0f} s', flush=True)
