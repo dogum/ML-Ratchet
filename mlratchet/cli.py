@@ -6,7 +6,7 @@
     mlratchet demo quakenet          run the demo on real exam examples
     mlratchet scoreboard             wins and losses against baselines, across the collection
     mlratchet validate [id ...]      check folders against the model contract
-    mlratchet new watershed --name Watershed   scaffold a new model from the template
+    mlratchet new roomsense --name RoomSense   scaffold a new model from the template
     mlratchet readme --write         regenerate model READMEs from model.yaml + ratchet.yaml
     mlratchet data vehicle           download + rebuild the vehicle platform's real data (resumable)
     mlratchet data grid              download + rebuild the grid platform's real data (resumable; --from-zip for the release)

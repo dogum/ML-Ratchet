@@ -14,12 +14,16 @@ ROOT = os.path.join(_DATA, 'data').replace(os.sep, '/')
 RAW = f'{ROOT}/raw/snotel'
 RG = 'https://wcc.sc.egov.usda.gov/reportGenerator/view_csv'
 S = requests.Session()
+S.headers['User-Agent'] = 'mlratchet-data-rebuild/1.0 (research data rebuild)'   # generic; no personal details
+STOP = (401, 403, 429, 451)   # blocked or throttled: stop, do not work around it
 
 
 def get(url, tries=6):
     for i in range(tries):
         try:
             r = S.get(url, timeout=(30, 300))
+            if r.status_code in STOP:
+                raise SystemExit(f'HTTP {r.status_code} from NRCS: stopping (blocked or throttled); re-run later')
             r.raise_for_status()
             return r.text
         except Exception as e:
@@ -49,7 +53,7 @@ def main():
         with gzip.open(p + '.tmp', 'wt') as f:
             f.write(t)
         os.replace(p + '.tmp', p)
-        time.sleep(0.5)
+        time.sleep(1.0)   # sequential and polite
         if k % 50 == 0:
             print(k, trip, flush=True)
     print('DONE', flush=True)

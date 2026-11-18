@@ -5,6 +5,7 @@ import io, requests
 class HttpFile(io.RawIOBase):
     def __init__(self, url):
         self.url, self.pos, self.s = url, 0, requests.Session()
+        self.s.headers['User-Agent'] = 'mlratchet-data-rebuild/1.0 (research data rebuild)'
         r = self.s.head(url, allow_redirects=True, timeout=60)
         self.url = r.url
         self.size = int(r.headers['Content-Length'])

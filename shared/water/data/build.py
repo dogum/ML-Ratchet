@@ -166,7 +166,7 @@ def run(args: list, env_extra: dict | None = None) -> int:
     log('  run', ' '.join(str(a) for a in args))
     DATA.mkdir(parents=True, exist_ok=True)
     (DATA / 'logs').mkdir(exist_ok=True)
-    return subprocess.run([PY, '-I', *map(str, args)], env=env, cwd=str(DATA)).returncode
+    return subprocess.run([PY, '-I', '-X', 'utf8', *map(str, args)], env=env, cwd=str(DATA)).returncode   # UTF-8 mode: the scripts write text without an encoding (cp1252 on Windows breaks)
 
 
 def steps(*calls) -> int:
@@ -274,9 +274,9 @@ def stage_reservoirs():
         cars.mkdir(parents=True, exist_ok=True)
         with zipfile.ZipFile(httpzip.HttpFile(files[0]['links']['self'])) as z:
             for n in z.namelist():
-                base = n.rsplit('/', 1)[-1]
-                if base in CARS_MEMBERS and '/attributes/' in '/' + n:
-                    (cars / base).write_bytes(z.read(n))
+                flat = n.replace('/', '__')              # v1.0/attributes/grand.csv -> v1.0__attributes__grand.csv
+                if flat in CARS_MEMBERS:
+                    (cars / flat).write_bytes(z.read(n))
     if not dest.exists():
         return {'missing': str(dest)}
     return steps(('build_reservoirs.py',))

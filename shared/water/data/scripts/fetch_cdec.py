@@ -27,7 +27,10 @@ def main():
                 try:
                     r = requests.get('https://cdec.water.ca.gov/dynamicapp/req/CSVDataServlet',
                                      params={'Stations': sta, 'SensorNums': '15,76,23', 'dur_code': 'D',
-                                             'Start': '1990-01-01', 'End': '2025-12-31'}, timeout=(30, 600))
+                                             'Start': '1990-01-01', 'End': '2025-12-31'}, timeout=(30, 600),
+                                     headers={'User-Agent': 'mlratchet-data-rebuild/1.0 (research data rebuild)'})
+                    if r.status_code in (401, 403, 429, 451):
+                        raise SystemExit(f'HTTP {r.status_code} from CDEC: stopping (blocked or throttled)')
                     r.raise_for_status(); break
                 except Exception as e:
                     print('retry', sta, e, flush=True); time.sleep(15)

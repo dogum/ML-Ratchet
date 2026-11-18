@@ -14,14 +14,17 @@ import { GLYPHS } from '../lib/model-families-glyphs';
 
 const all = getModels();
 const ORDER: [string, string[]][] = [
-  ['Signals, fields and records', ['quakenet', 'beatnet', 'bearingnet', 'cellsense', 'chirpnet', 'starquake', 'sundoctor', 'swellcast', 'transitnet', 'wakenet']],
+  ['Signals, fields and records', ['quakenet', 'beatnet', 'bearingnet', 'cellsense', 'chirpnet', 'starquake', 'sundoctor', 'swellcast', 'transitnet', 'wakenet', 'stormnet']],
   ['Vehicle platform', ['energynet', 'tripdetective', 'hybridpilot']],
   ['Grid platform', ['gridpulse', 'batterypilot', 'plantdetective', 'demandcast']],
   ['Building platform', ['loadcast', 'buildingdetective', 'faultfinder', 'thermopilot']],
+  ['Water platform', ['flowcast', 'snowsense', 'basindetective', 'reservoirpilot']],
 ];
 const byId = Object.fromEntries(all.map((m) => [m.id, m]));
 const groups = ORDER.map(([label, ids]) => ({ label, models: ids.map((id) => byId[id]).filter((m): m is Model => !!m && !!MODEL_NOTES[m.id]) }));
 const models = groups.flatMap((g) => g.models);
+const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty', 'twenty-one', 'twenty-two', 'twenty-three', 'twenty-four', 'twenty-five', 'twenty-six', 'twenty-seven', 'twenty-eight', 'twenty-nine', 'thirty'];
+const Say = (n: number) => { const w = WORDS[n] ?? String(n); return w[0].toUpperCase() + w.slice(1); };
 const missing = all.filter((m) => !MODEL_NOTES[m.id]).map((m) => m.name);
 if (missing.length) throw new Error(`model-families: no MODEL_NOTES entry for ${missing.join(', ')}`);
 
@@ -113,14 +116,15 @@ const toc: [string, string][] = [
   ['lenses', 'Lenses'], ['backlog', 'Backlog'], ['propose', 'Draft a rung'], ['reading', 'Reading'],
 ];
 ---
-<Base title="Model families" description="Which kind of learner fits which physics problem in ML Ratchet: the families the twenty-two models use today, how to tell whether the learner is the bottleneck, and where trees, sequence models, sets, graphs, flows, Gaussian processes, filters and formulas could each be tried as a rung.">
+<Base title="Model families" description="Which kind of learner fits which physics problem in ML Ratchet: the families the models use today, how to tell whether the learner is the bottleneck, and where trees, sequence models, sets, graphs, flows, Gaussian processes, filters and formulas could each be tried as a rung.">
   <div class="mf">
   <section class="hero wrap">
     <p class="kicker tick-label">Model families · which learner fits which problem</p>
-    <h1 class="display h">Twenty-one models, four kinds of network. <em>The problem should pick the learner.</em></h1>
+    <h1 class="display h">{Say(models.length)} models, five kinds of network. <em>The problem should pick the learner.</em></h1>
     <p class="lead muted">
-      Most models here are convolutional networks or MLPs; ChirpNet adds a normalizing flow, and WakeNet reads a wind
-      farm as a directed graph. Those fit the problems they were built for. Other problems in the collection have shapes
+      Most models here are convolutional networks or MLPs; ChirpNet adds a normalizing flow, WakeNet reads a wind
+      farm as a directed graph, and FlowCast and SnowSense carry a recurrent state through months of daily weather.
+      Those fit the problems they were built for. Other problems in the collection have shapes
       that another family reads more directly: tables suit trees, a car’s trips suit a set learner, seismic stations
       suit a graph, and one cell tracked over its life suits a filter. This page sets out which learner fits which
       problem, how to tell whether the learner is the bottleneck at all, and where each family could be tried as a rung.

@@ -59,16 +59,28 @@ ideas:
     exam: "Each gap's 'done when' in the platform HANDOFF (e.g. generic dev twins within ±30 % annual and daily r >= 0.7 on thermal meters; heat pump vs resistance AUC > 0.7 on RECS dev); then every model's frozen set rebuilt and every rung re-scored"
     status: candidate
     note: "BuildingSim v1 and its four models came in on 17 Nov 2026 (docs/building-platform.md). First add the platform release to shared/building and upstream the models' wrappers behind flags."
-  - id: watershed
-    name: Watershed
-    domain: Earth science
-    question: How much water will this river carry, from rain, snow and the basin's shape?
-    physics: Rainfall-runoff and snowmelt models
-    data: USGS Water Data streamflow (the Water Data APIs; legacy NWIS pages are being retired), SNOTEL snowpack
-    data_url: https://api.waterdata.usgs.gov/
-    exam: Real gauged basins held out
-    status: checked
-    note: The CAMELS download server (gdex) timed out on 13 Nov.
+  - id: water-forcing
+    name: Independent forcing for the water exams
+    kind: data
+    domain: Hydrology
+    question: "How much of each water model's exam gap is the method, and how much is ERA5-Land? Re-run every water exam (models and baselines) with Daymet or NLDAS forcing in place of ERA5-Land."
+    physics: "Unchanged WaterSim; the same frozen splits and windows, only the weather input changes"
+    data: "Daymet v4 daily basin means (ORNL DAAC) or the original CAMELS Daymet/Maurer/NLDAS forcing (NCAR GDEX); both timed out from the build sandbox on 18 Nov 2026, not yet tried from the repository's machine"
+    data_url: https://daymet.ornl.gov/
+    exam: "Every FlowCast, SnowSense and BasinDetective exam row re-scored with the new forcing next to the ERA5-Land numbers; literature comparisons become possible only after this"
+    status: candidate
+    note: "ERA5-Land under-catches mountain and Pacific Northwest precipitation (50 of 671 basins have runoff ratio > 1) and drifts about 6 % between decades, which caps every method (docs/water-platform.md)."
+  - id: watersim-v11
+    name: WaterSim v1.1
+    kind: platform
+    domain: Hydrology
+    question: "Fold the physics the four water models found into WaterSim, version the frozen sets, and re-score every rung."
+    physics: "One documented ERA5-Land water-yield prior (FlowCast and BasinDetective fits reconciled); a gauge-noise model fitted on dev (AR(1) rho 0.999, cv 0.02, 3 significant figures in cfs); decadal and year-to-year forcing drift; point-snow defaults (energy-balance TURB and ALB_DECAY from the dev calibrations: prior means 0.17 and 2.4 d, per-station medians 0.20 and 1.4 d; degree-day TT +1 C) and a perennial-snow guard; both flashiness priors; ReservoirPilot's reservoir-task generator; the realdata.random_forcing window fix"
+    data: "Dev splits only (52 CAMELS-US dev basins, 39 SNOTEL dev stations, 15 ResOpsUS dev dams, aux dams for single processes)"
+    data_url: https://zenodo.org/records/15529786
+    exam: "checks/run_all.sh still passes; each upstreamed piece reproduces the model wrapper it replaces; then every water model's frozen set rebuilt and every rung re-scored"
+    status: candidate
+    note: "WaterSim v1 and its four models came in on 18 Nov 2026 (docs/water-platform.md). The list is section 4 of shared/water/HANDOFF.md."
   - id: roomsense
     name: RoomSense
     domain: Acoustics

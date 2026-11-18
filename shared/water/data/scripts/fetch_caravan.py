@@ -41,7 +41,10 @@ class ReconnectingReader(io.RawIOBase):
         for attempt in range(30):
             try:
                 h = {'Range': f'bytes={self.pos}-'} if self.pos else {}
+                h['User-Agent'] = 'mlratchet-data-rebuild/1.0 (research data rebuild)'   # generic; no personal details
                 r = requests.get(self.url, stream=True, headers=h, timeout=(30, 120), allow_redirects=True)
+                if r.status_code in (401, 403, 429, 451):
+                    raise SystemExit(f'HTTP {r.status_code} from Zenodo: stopping (blocked or throttled)')
                 if self.pos and r.status_code != 206:
                     raise IOError(f'range not honoured: {r.status_code}')
                 r.raise_for_status()

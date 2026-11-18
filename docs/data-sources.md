@@ -48,6 +48,12 @@ find another documented source or download it yourself and note it.
 | [WPuQ](https://zenodo.org/records/5642902) (Zenodo), [HUE](https://doi.org/10.7910/DVN/N3HGRN) (Harvard Dataverse) | Heat-pump homes; BC homes | ThermoPilot, BuildingDetective | Dataverse returned an empty body to a script |
 | [OpenEI URDB](https://openei.org/wiki/Utility_Rate_Database) | Utility tariffs | ThermoPilot | |
 | [climate.onebuilding.org](https://climate.onebuilding.org) TMYx | Typical-year weather | BuildingSim training weather | "All Rights Reserved": used, not redistributed |
+| [Caravan v1.6](https://doi.org/10.5281/zenodo.15529786) (Zenodo) | ERA5-Land basin forcing, flow and attributes for CAMELS-US, GB, AUS, CL, BR | Water platform: FlowCast, BasinDetective, WaterSim calibration | One 24.8 GB `Caravan-nc.tar.gz`; `fetch_caravan.py` streams it once and keeps 1.7 GB. CAMELS-AUS members are netCDF4 (the rest netCDF3); the first pass crashed on them at 23.84 GB |
+| [USGS NWIS](https://waterservices.usgs.gov/) daily values, site info, annual peaks | Flow to Nov 2026 for 671 gauges; 48,769 peaks | FlowCast's recent exam and peaks; WaterData's implied-area fix | The legacy `waterservices` endpoints are being retired in favour of `api.waterdata.usgs.gov`; `fetch_nwis.py` still uses the legacy ones |
+| [NOAA NWM v3.0 retrospective](https://registry.opendata.aws/nwm-archive/) (S3) | Simulated flow at 650 CAMELS gauges, 1980-2023 | FlowCast's operational baseline | One HTTP range request per hour (the streamflow chunk starts at byte 162,458 of each CHANOBS file): about 385,000 requests |
+| [NRCS SNOTEL Report Generator](https://wcc.sc.egov.usda.gov/reportGenerator/) | Daily SWE, precipitation, temperature at 934 stations | SnowSense, WaterSim's snow check | SWE and accumulated precipitation are start-of-day; temperatures carry the 2000s sensor-change inhomogeneity |
+| [ResOpsUS v2](https://doi.org/10.5281/zenodo.6612040) (Zenodo) + ResOpsUS+CARS GRanD attributes | Daily storage, inflow, release for 678 US dams | ReservoirPilot | Negative back-calculated inflows at 189 dams; only 171 of 277 close their daily mass balance (corr ≥ 0.9). CARS attribute CSVs read from the remote zip by HTTP range |
+| [California CDEC](https://cdec.water.ca.gov/) | Daily reservoir storage, inflow, outflow, 18 reservoirs | ReservoirPilot's recent exam | |
 
 ## Checked for backlog ideas
 
@@ -74,6 +80,7 @@ EIA, Zenodo.
 | nationalgrideso.com | 502 (the old ESO domain; the same reports are on neso.energy and ofgem.gov.uk) |
 | github.com (from the claude.ai build sandbox, Nov 2026) | Blocked, so no EnergyPlus binary: BuildingSim has no EnergyPlus reference run |
 | ecobee Donate Your Data, UK Data Service (RHPP, Electrification of Heat), Pecan Street | Gated by application or registration: no real thermostat logs and no UK heat-pump trials yet |
+| NCAR GDEX (original CAMELS Daymet/Maurer/NLDAS forcing), Daymet API (ORNL) | Timed out from the claude.ai build sandbox on 13 and 18 Nov 2026, so every water model runs on ERA5-Land. Not yet tried from the repository's own machine |
 
 ## Python packages that helped
 

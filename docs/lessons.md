@@ -1,9 +1,10 @@
-# Lessons from twenty-two models
+# Lessons from twenty-six models
 
 What building ChirpNet, SunDoctor, CellSense, TransitNet, QuakeNet, BearingNet, SwellCast, BeatNet and StarQuake,
 then the vehicle platform with EnergyNet, TripDetective and HybridPilot, the grid platform with GridPulse,
 BatteryPilot, PlantDetective and DemandCast, WakeNet, the building platform with LoadCast, BuildingDetective,
-FaultFinder and ThermoPilot, and StormNet, taught, in rough order of how much it mattered.
+FaultFinder and ThermoPilot, StormNet, and the water platform with FlowCast, SnowSense, BasinDetective and
+ReservoirPilot, taught, in rough order of how much it mattered.
 
 ## The simulator is the model
 
@@ -111,3 +112,31 @@ FaultFinder and ThermoPilot, and StormNet, taught, in rough order of how much it
   comparison is not settled by the simulator.
 - **Share-alike data travel with the files.** BDG2 is CC BY-SA 4.0. Its excerpts live in folders marked with their own
   licence notice, apart from the MIT code, and the instruments and lab pages carry the same notice.
+
+## Big systems (the water platform)
+
+- **Simulation training wins where the physics is local and the cost is exact, and ties where real behaviour must
+  be borrowed.** SnowSense (snow at one point, from that point's gauge) beats every weather-only physics baseline run,
+  and ReservoirPilot (one dam's mass balance, a fixed cost) halves a tuned rule's cost. FlowCast loses to plain
+  regionalisation, which borrows real flow from similar gauged basins, and BasinDetective cannot see human regulation.
+- **The weather input can cap every method at once.** All four water models and all their baselines run on
+  ERA5-Land, which under-catches mountain precipitation (50 of 671 basins carry more water out than falls in) and
+  drifts about 6 % between decades. Calibrated GR4J reaches a median NSE of 0.47 on it, against about 0.6-0.7 with
+  the CAMELS forcing in the literature. Compare only with baselines on the same weather, and say so on every table.
+- **The loss can be the sim-to-real gap.** FlowCast's first rung scaled each basin's error by the spread of its own
+  flow, a standard choice for real data. In simulation that spread depends on the hidden parameters, so wet, flashy
+  draws were down-weighted: the network ran low (dev high-flow bias −51 %) on real basins and on their twins alike.
+  Scaling by an input-derived runoff ratio instead (r0b) raised dev NSE from 0.390 to 0.436.
+- **A metric that ignores a cost gets exploited.** ReservoirPilot halves the cost J of a classical rule tuned in the
+  same simulator, partly by keeping reservoirs low: J charges nothing for storage. It holds a median 38 % of capacity
+  against SOP's 59 % and ends at least 20 % of capacity lower on a third of the dams. Report the storage beside J.
+- **What the simulator draws generically does not transfer.** BasinDetective finds generated reservoirs at AUC 0.91
+  in simulation and real regulated basins at 0.49, chance. The bank's reservoirs were random sizes and policies, not
+  the hydropower peaking and withdrawals real dams show.
+- **Points are not areas.** At SNOTEL points the calibrated snow threshold sits about +1.3 °C above the default; in
+  whole basins it shifts the other way. Default energy-balance snow put point peaks about 20 % low. SnowSense's
+  dev-fitted parameter prior (rung R3) took its dev NSE from 0.805 to 0.880.
+- **A Gaussian mean drags a zero-bounded series late.** SnowSense's Gaussian head melted out 10 days after its own
+  twin, because the mean of many zero-SWE days pulls the curve up; quantile heads fixed it (R4).
+- **Rung decisions near the margin are noise.** FlowCast's r5 gained +0.02 on a 300-basin frozen subset and lost
+  0.006 on the full 800. Size the frozen set for the margin.
