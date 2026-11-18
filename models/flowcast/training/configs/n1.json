@@ -1,0 +1,1 @@
+{"name":"n1","phys":"p1","H":64,"steps":2500,"batch":32,"lr":1e-3,"nextday":false,"nowcast":true,"dropout":0.1,"val_every":500,"weight":"budyko","init_from":"r1b","seed":11,"note":"gauged nowcast mode: r1b + observed flow up to lead (1-7 d) before each day, fine-tuned"}

@@ -1,0 +1,5 @@
+{"version": "p1", "parent": "p0",
+ "note": "p0 + water-yield correction measured on the 52 dev basins (calib_water.py): the basin's true precipitation is ERA5-Land x m, log m = -0.088 + 0.058 elev_km + 0.153 frac_snow + 0.397 log(p_mean/3) + N(0, 0.146); the network still sees ERA5-Land. m > 1 = orographic undercatch (Pacific NW, mountains); m < 1 = losses in dry plains basins",
+ "camels_share": 0.5, "muskingum_share": 0.25,
+ "undercatch": {"a": -0.088, "b_elev": 0.058, "b_snow": 0.153, "b_wet": 0.397, "sd": 0.146, "lo": 0.4, "hi": 2.5},
+ "forcing_error": {}, "obs_noise": {}}

@@ -1,0 +1,1 @@
+{"name":"r5","phys":"p1","H":64,"steps":5000,"batch":32,"lr":1e-3,"nextday":false,"dropout":0.1,"val_every":1000,"weight":"budyko","init_from":"r1b","seed":5,"note":"longer training: r1b fine-tuned 5000 more steps (lr 1e-3 cosine), same physics"}

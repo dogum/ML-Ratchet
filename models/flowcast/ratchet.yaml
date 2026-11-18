@@ -1,0 +1,46 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json (written by training/src/ratchet.py decide; r0 is the
+# base and has no entry there). Re-scores of every rung on every frozen set: training/results/sim_<rung>_<set>.json.
+model: flowcast
+ladders:
+  - name: "FlowCast v1.0, ungauged (WaterSim physics versions p0-p4, 18 Nov 2026)"
+    objective: "Median daily NSE of the mean prediction against the gauge-like target over 800 frozen simulated basins of the rung's physics version (two fixed 365-day scored windows per basin; training/src/train.py sim_eval). One frozen set per physics version: p0 (WaterSim as shipped), p1 (water yield), p2 (flashier runoff), p3 (forcing error), p4 (p3 + p2)."
+    rule: "Keep if the sim median NSE on the frozen set of the rung's physics version beats the incumbent's on that same set by more than 0.01 AND the dev median NSE (52 real dev basins, WY2001-14, ungauged) is at least 95 % of the incumbent's."
+    margin: 0.01
+    dev_gate: "Dev median NSE (52 CAMELS-US dev basins, WY2001-2014, warm-up from 1999-10-01, ungauged) no more than 5 % below the incumbent's"
+    frozen_sets: [p0, p1, p2, p3, p4]
+    scored_on: p1
+    note: >-
+      Each new physics version built a new frozen set, and the incumbent was re-scored on it before deciding (the
+      "vs" numbers in the why column); every rung was also re-scored on every set afterwards (the last five columns).
+      Decisions were not re-taken in order on later sets. On the re-score matrix r1b is the best rung on p1 and p3;
+      r5 beats it on p0 and p2 (0.463, 0.454 vs 0.446) and r4 on p2 and p4. Added on import (18 Nov 2026), from the
+      shipped per-basin sim scores (nse_all): a paired bootstrap of the difference in medians over the 800 frozen
+      basins (2,000 resamples, seed 20261118) gives r0b − r0 on p0 +0.035 (95 % CI +0.009 to +0.060), r1b − r0b on
+      p1 +0.030 (+0.001 to +0.052), r2 − r1b on p2 +0.017 (−0.005 to +0.039), r3 − r1b on p3 −0.010 (−0.026 to
+      +0.016), r4 − r1b on p4 +0.024 (−0.006 to +0.044), r5 − r1b on p1 −0.006 (−0.019 to +0.015), r1 − r0 on p1
+      −0.065 (−0.088 to −0.039). So the margin of 0.01 sits inside the noise: the handoff's rule note says the same
+      (a 300-basin subset said +0.02 for r5, the full 800 −0.006; the subset run is not in the shipped files). Rule
+      note: the four p1 water-yield coefficients were fitted on the same 52 dev basins that gate the rungs (partly
+      in-sample). configs/smoke.json was a 20-step plumbing test, not a rung.
+    columns_source: "Sim: the rung's own frozen set and the incumbent's score on it; dev (52 basins, ungauged): median NSE, KGE, high-flow bias FHV %, median 90 % band coverage; then the median sim NSE of the rung re-scored on every frozen set (results/sim_*)"
+    columns: ["Own set", "Incumbent on it", "Dev NSE", "Dev KGE", "Dev FHV %", "Dev 90% cover", "p0", "p1", "p2", "p3", "p4"]
+    rungs:
+      - { id: r0, change: "Baseline: WaterSim generator as shipped (p0): both attribute priors 50/50, 4 runoff models × 2 snow routines, 25 % Muskingum-Cunge, real ERA5-Land forcing from free windows, default forcing and gauge noise; NSE* loss scaled by the target's own std (Kratzert et al. 2019); LSTM 64, 3,000 steps", sim: 0.441, decision: kept, why: "First rung. Dev NSE 0.390, KGE 0.319, FHV −51 %: the network ran low (twin test: flashiness ratio 0.54 real, 0.51 calibrated twin).", metrics: ["p0", "–", 0.390, 0.319, -50.7, 0.950, 0.441, 0.397, 0.373, 0.331, 0.335] }
+      - { id: r1, change: "p1 physics: dev-measured water-yield correction (true P = ERA5-Land × m, log m = −0.088 + 0.058 elev_km + 0.153 frac_snow + 0.397 log(P/3) + N(0, 0.146)), old loss", sim: 0.332, decision: rejected, why: "Sim 0.332 vs r0's 0.397 on p1 (needs > 0.407) and dev 0.331 vs 0.390 (needs ≥ 0.370): both tests failed. It exposed the loss bias fixed in r0b.", metrics: ["p1", 0.397, 0.331, 0.259, -59.0, 0.952, 0.367, 0.332, 0.321, 0.317, 0.327] }
+      - { id: r0b, change: "Loss fix: per-sample loss scale from inputs only (the Fu runoff ratio of the forcing's aridity) instead of the target's own std, which down-weighted wet, flashy draws and biased the sim-trained ungauged network low", sim: 0.476, decision: kept, why: "Sim 0.476 vs 0.441 on p0; dev NSE 0.436 vs 0.390, KGE 0.32 → 0.44, FHV −51 → −27 %. Share of dev basins with NSE < 0 rose from 7.7 % to 15.4 %.", metrics: ["p0", 0.441, 0.436, 0.442, -26.8, 0.965, 0.476, 0.395, 0.445, 0.321, 0.377] }
+      - { id: r1b, change: "p1 water-yield physics (as r1) with r0b's input-only loss scale", sim: 0.425, decision: released, why: "Sim 0.425 vs r0b's 0.395 on p1; dev 0.425 vs 0.436 (−2.5 %, inside the 5 % gate). Share of dev basins with NSE < 0 fell from 15.4 % to 11.5 %. Released as v1.0.", metrics: ["p1", 0.395, 0.425, 0.424, -32.3, 0.951, 0.446, 0.425, 0.446, 0.335, 0.380] }
+      - { id: r2, change: "p2 flashier runoff: the full dev-calibrated median parameter shift (shrink 1.0, WaterSim ships 0.5) for the four runoff models; simulated Richards-Baker flashiness 0.62× → 1.00× of observed on dev", sim: 0.463, decision: rejected, why: "Sim 0.463 vs r1b's 0.446 on p2 passed; dev NSE 0.380 vs 0.425 (−10.5 %) failed, although dev KGE rose to 0.490, FHV to −16 % and peak error fell 49 → 42 %.", metrics: ["p2", 0.446, 0.380, 0.490, -16.2, 0.944, 0.404, 0.369, 0.463, 0.230, 0.393] }
+      - { id: r3, change: "p3 larger forcing error for the network input: daily P cv 0.4 (was 0.25), bias sd 0.10 (was 0.08), up to 30 % of each day's rain moved to a neighbouring day (calib_noise.py: default noise left a calibrated twin at NSE 0.88 vs its clean run; reality allows 0.56; p3 gives 0.72)", sim: 0.326, decision: rejected, why: "Sim 0.326 vs r1b's 0.335 on p3 failed; dev 0.406 vs 0.425 (−4.4 %) passed.", metrics: ["p3", 0.335, 0.406, 0.430, -38.2, 0.964, 0.443, 0.420, 0.436, 0.326, 0.390] }
+      - { id: r4, change: "p4 = p3 forcing error + p2 flashier runoff (flashiness retried with realistic forcing error)", sim: 0.404, decision: rejected, why: "Sim 0.404 vs r1b's 0.380 on p4 passed; dev NSE 0.378 vs 0.425 (−11 %) failed; dev KGE 0.490, FHV −23 %, peak error 45 %.", metrics: ["p4", 0.380, 0.378, 0.490, -23.4, 0.947, 0.397, 0.377, 0.466, 0.252, 0.404] }
+      - { id: r5, change: "Longer training: r1b fine-tuned for 5,000 more steps (lr 1e-3, cosine, seed 5), same p1 physics", sim: 0.419, decision: rejected, why: "Sim 0.419 vs r1b's 0.425 on p1 failed (paired bootstrap −0.006, 95 % CI −0.019 to +0.015: noise); dev 0.434 passed. A 300-basin validation during training had said +0.02.", metrics: ["p1", 0.425, 0.434, 0.441, -28.2, 0.957, 0.463, 0.419, 0.454, 0.332, 0.393] }
+      - { id: widen, change: "Error bars: one widen-only factor per band, about the median, fitted on the dev predictions of r1b (calib_sigma.py, results/sigma_r1b.json): the smallest factor at which pooled dev coverage reaches the nominal level", decision: kept, why: "50 % band × 1.00 (dev coverage 0.502 raw), 90 % band × 1.08 (0.863 → 0.953). No effect on the mean. r0's factors were 1.08 and 1.08.", metrics: ["–", "–", "–", "–", "–", "–", "–", "–", "–", "–", "–"] }
+  - name: "FlowCast nowcast mode (gauged, optional, 18 Nov 2026)"
+    objective: "None logged. n1 is a single fine-tune of r1b (2,500 steps, lr 1e-3, seed 11, p1 bank) with three extra inputs: the gauge-like flow `lead` days earlier (log scale, in units of mean precipitation), an availability flag (gaps simulated in 30 % of training windows) and lead/7; one network serves leads 1-7."
+    rule: "No frozen-set comparison and no dev gate were applied: there was no incumbent nowcast. Its only real-data check before the exam was the dev score against persistence at leads 1, 3 and 7 (results/nowcast_summary.json, dev)."
+    margin: 0.01
+    dev_gate: "None (dev reported against persistence only)"
+    note: "Bands are the raw pinball quantiles (k_widen 1.0, 1.0): no dev widening was fitted for this mode. No sim score for n1 was shipped."
+    columns_source: "Dev (52 basins, WY2001-14) median NSE: nowcast and persistence at the same lead"
+    columns: ["Dev lead 1", "Persistence 1", "Dev lead 3", "Persistence 3", "Dev lead 7", "Persistence 7"]
+    rungs:
+      - { id: n1, change: "r1b fine-tuned 2,500 steps with the observed flow up to `lead` (1-7) days earlier, an availability flag and lead/7 as inputs (configs/n1.json)", decision: released, why: "Released as the optional gauged nowcast weights (flowcast_nowcast_weights.npz). Dev: beats persistence at every lead.", metrics: [0.633, 0.549, 0.567, -0.139, 0.520, -0.515] }

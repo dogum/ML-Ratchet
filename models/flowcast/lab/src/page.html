@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Run FlowCast, an LSTM trained only on simulated rivers, on real US exam rivers in your browser: change the rain, the temperature or the basin and watch the hydrograph respond.">
+<title>FlowCast v1.0 · ML Ratchet</title><style>@@FONTS@@
+@@TOKENS@@
+@@INSTRUMENT@@
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans)}
+main,header,footer{max-width:1120px;margin:auto;padding-inline:clamp(16px,4vw,52px)}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:65px;border-bottom:1px solid var(--rule)}
+a{color:inherit;text-underline-offset:3px}nav{display:flex;align-items:center;gap:clamp(12px,3vw,29px)}nav a,header>a{text-decoration:none}
+header,button.meta,.label,th,.result{font:11px/1.45 var(--mono);letter-spacing:.035em}button.meta{color:var(--ink);border:1px solid var(--rule);background:transparent;padding:6px 9px;border-radius:3px;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+.hero{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(190px,1fr);align-items:end;gap:32px;padding:clamp(35px,6vw,74px) 0 28px}
+.label{text-transform:uppercase;color:var(--ink-2);margin:0 0 8px}.hero h1,h2,h3{font-family:var(--display);font-weight:400;margin:0}
+h1{font-size:clamp(52px,8.5vw,110px);letter-spacing:-.045em;line-height:.96}h2{font-size:clamp(36px,5vw,62px);line-height:1.05;letter-spacing:-.025em}
+.hero>p{color:var(--ink-2);margin:0;line-height:1.55;max-width:35ch}.instrument{--accent:#1864ab}
+section.evidence{padding:clamp(40px,6vw,76px) 0;border-bottom:1px solid var(--rule)}
+.dek{max-width:70ch;color:var(--ink-2);font-size:17px;line-height:1.55;margin:12px 0 24px}
+.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:13px}
+td,th{padding:9px 8px;text-align:right;border-bottom:1px solid var(--rule-2);white-space:nowrap}th{color:var(--ink-2);font-size:10px;text-transform:uppercase}td:first-child,th:first-child{text-align:left;padding-left:0}
+td:nth-child(2){text-align:left}tr.me td{font-weight:600}
+td b{font-weight:650}.cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(22px,5vw,64px)}.cols h3{font-size:32px}.cols p,footer{color:var(--ink-2);line-height:1.6}
+h3.t{font-size:26px;margin:34px 0 8px}
+footer{padding-block:28px 40px;font-size:13px}footer p{max-width:85ch}.result{color:var(--ink-2);letter-spacing:0;max-width:95ch;line-height:1.6}
+.warn{border-left:3px solid var(--signal);padding:4px 0 4px 14px;max-width:78ch;color:var(--ink-2);line-height:1.6}
+@media(max-width:650px){.hero,.cols{grid-template-columns:1fr;gap:16px}.hero>p{max-width:55ch}header{min-height:52px}nav{gap:10px}nav a{font-size:10px}td,th{padding:8px 5px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><a href="https://dogum.github.io/ML-Ratchet/">ML Ratchet</a><nav aria-label="Lab sections"><a href="#river">River</a><a href="#exam">Exam</a><a href="#nowcast">Nowcast</a><a href="#ratchet">Ratchet</a><button class="meta" type="button" id="theme">Theme</button></nav></header>
+<main>
+<section id="river"><div class="hero"><div><p class="label">FlowCast / Hydrology</p><h1>How much water is in a river nobody measures?</h1></div>
+<p>A 25,000-weight LSTM that learned only from simulated rivers, graded once on 619 real US rivers. Pick one of three real exam rivers and see two years of its observed flow next to FlowCast’s prediction. Change the rain, the temperature or what the network is told about the basin, and it reruns on all 731 days in your browser.</p></div>
+<div id="instrument" class="instrument"></div><noscript>Enable JavaScript to run the network. The exam appears below.</noscript></section>
+
+<section id="exam" class="evidence"><p class="label">Final exam · 619 CAMELS-US rivers · WY1990–99, and 603 rivers WY2016–23 · run once</p><h2>It does not beat regionalisation</h2>
+<p class="dek">Median daily Nash–Sutcliffe efficiency (NSE; 1 is perfect, 0 is no better than the river’s own mean). FlowCast never reads the river’s flow. The classical ungauged method borrows calibrated GR4J parameters from nearby dev gauges and does better overall; the gauged and operational rows read information FlowCast does not have.</p>
+<div class="scroll" tabindex="0" role="region" aria-label="Exam medians by method"><table><thead><tr><th>Method</th><th>Protocol</th><th>NSE 1990s</th><th>KGE</th><th>High-flow bias</th><th>NSE &lt; 0</th><th>NSE 2016–23</th><th>KGE</th><th>FlowCast better at</th></tr></thead><tbody>@@EXAM@@</tbody></table></div>
+<p class="result">“FlowCast better at” is the share of basins where FlowCast’s NSE is higher (1990s). Against U-dev that is 211 of 619 basins (34 %, exact 95 % interval 30–38 %): a loss. Per-basin FlowCast scores were not shipped, so the medians themselves carry no interval yet. CAMELS-531 subset: 0.357 against 0.402 (U-dev).</p>
+<h3 class="t">By basin type (1990s median NSE)</h3>
+<div class="scroll" tabindex="0" role="region" aria-label="Exam by basin type"><table><thead><tr><th>Basin type</th><th>Basins</th><th>FlowCast</th><th>U-dev</th><th>GR4J</th><th>NWM</th><th>2016–23: FlowCast / U-dev / NWM</th></tr></thead><tbody>@@STRATA@@</tbody></table></div>
+<p class="result">It ties or beats regionalisation in arid, regulated and large basins and loses by 0.13–0.16 in snowy and humid ones. Only 10 of the 52 dev basins are snowy, and no snow rung was tried.</p>
+<h3 class="t">Flood peaks (USGS annual instantaneous peaks)</h3>
+<div class="scroll" tabindex="0" role="region" aria-label="Flood peak errors"><table><thead><tr><th>Estimate</th><th>Abs. error 1990s</th><th>Bias 1990s</th><th>Abs. error 2016–23</th><th>Bias 2016–23</th></tr></thead><tbody>@@PEAKS@@</tbody></table></div>
+<p class="result">Daily maxima are scaled by 1.38, the instantaneous-to-daily peak ratio measured on dev. The mean prediction is smooth (a conditional mean under parameter uncertainty), so peaks run 46 % low; the 95 % quantile overshoots by 31 %. Error bars: the 90 % band holds 97 % of days at the median basin (95 % averaged over basins), the 50 % band 56 %. The bands are too wide almost everywhere.</p></section>
+
+<section id="nowcast" class="evidence"><p class="label">Optional gauged mode · same exam · run once</p><h2>Reading the gauge: a nowcast</h2>
+<p class="dek">A fine-tuned copy also reads the river’s observed flow up to <i>lead</i> days before each day. It beats persistence at every lead, but it is a gauged method: compare it with the gauged GR4J (0.473 / 0.517) and with NWM (0.550 / 0.687), which reads no gauge at run time but is calibrated on many of these gauges.</p>
+<div class="scroll" tabindex="0" role="region" aria-label="Nowcast medians"><table><thead><tr><th>Lead</th><th>Dev: nowcast / persistence</th><th>1990s</th><th>Persistence</th><th>Beats persistence</th><th>2016–23</th><th>Persistence</th><th>Beats persistence</th></tr></thead><tbody>@@NOWCAST@@</tbody></table></div>
+<p class="result">At one day it ties NWM in the 1990s (0.569 against 0.550, no interval) and loses to it in 2016–23 (0.591 against 0.687); at 3 and 7 days it loses to NWM in both. KGE at one day is lower than persistence’s (0.635 against 0.738): persistence copies the variance exactly. These are hindcasts: the weather of the target days is the observed one.</p></section>
+
+<section id="ratchet" class="evidence"><p class="label">The ratchet · 800 frozen simulated basins per physics version · 52 real dev basins (WY2001–14)</p><h2>Eight rungs, two kept</h2>
+<p class="dek">A rung is kept if it beats the incumbent by more than 0.01 median NSE on the frozen simulated set of its own physics version and the dev median NSE drops by no more than 5 %. The loss fix (r0b) and the dev-measured water-yield prior (r1b) passed; flashier runoff improved peaks but cost dev NSE twice.</p>
+<div class="scroll" tabindex="0" role="region" aria-label="Rungs"><table><thead><tr><th>Rung</th><th>Change</th><th>Frozen set</th><th>Sim NSE vs incumbent</th><th>Dev NSE</th><th>Dev KGE</th><th>Dev high-flow bias</th><th>Decision</th></tr></thead><tbody>@@LADDER@@</tbody></table></div>
+<h3 class="t">Every rung on every frozen set (median sim NSE)</h3>
+<div class="scroll" tabindex="0" role="region" aria-label="Re-score matrix"><table><thead><tr><th>Rung</th><th>p0 shipped</th><th>p1 water yield</th><th>p2 flashier</th><th>p3 forcing error</th><th>p4 both</th></tr></thead><tbody>@@MATRIX@@</tbody></table></div>
+<p class="result">Bold is the best rung on each set. Differences of about 0.01 are noise: for r5 a 300-basin subset said +0.02 and the full 800 said −0.006.</p>
+<div class="cols" style="margin-top:36px"><div><p class="label">The loss bias</p><h3>Weigh basins by what the network can see</h3><p>The usual NSE* loss divides each basin’s error by the spread of its own flow. In simulation that spread depends on hidden parameters, so wet, flashy draws were down-weighted and the network learned to run low (dev high-flow bias −51 %). Scaling by the Fu runoff ratio of the forcing, which the network can see, fixed it: dev KGE 0.32 → 0.44, high-flow bias −27 %.</p></div>
+<div><p class="label">The water yield</p><h3>ERA5-Land misses rain in the mountains</h3><p>On each dev basin the simulator was run with ERA5-Land rain × m, and m was read where the simulated mean flow matched the gauge. The fit, log m = −0.088 + 0.058 elev(km) + 0.153 snow share + 0.397 log(P/3 mm), runs from 0.53 on the dry plains to 1.71 on the Olympic Peninsula. The simulator’s true rain became ERA5 × m; the network still reads ERA5. It is a regional average: South Prairie Creek (WA), in the river above, comes out 1.76× too wet.</p></div></div></section>
+
+<section class="evidence"><p class="label">Read this before comparing</p>
+<p class="warn">Every method here, FlowCast included, is driven by ERA5-Land through Caravan. ERA5-Land under-catches mountain and Pacific Northwest precipitation (50 basins have a runoff ratio above 1) and drifts about 6 % between decades. That caps every score on this page. Published LSTMs driven by Daymet or NLDAS reach median NSE of about 0.69–0.76 on CAMELS; those numbers are not comparable with these.</p></section>
+</main><footer><p>The three rivers were drawn by a fixed seed within snow, arid and humid strata of the exam basins; none was used for training or for choosing anything. The ungauged network never reads their flow. Rule notes: the four water-yield coefficients were fitted on the same 52 dev basins that gate the rungs (partly in-sample); the climate statics are computed from the forcing of the window being predicted (exam-period forcing, no flow).</p>
+<p>Data: Caravan v1.6 (Kratzert et al. 2023, CC BY 4.0) with CAMELS-US (Newman et al. 2015; Addor et al. 2017) and ERA5-Land (Muñoz-Sabater et al. 2021, Copernicus); USGS NWIS daily values and peaks (public domain); NOAA National Water Model v3.0 retrospective (public domain). Simulator: WaterSim; splits and baselines: WaterData. <a href="https://github.com/dogum/ML-Ratchet/tree/main/models/flowcast">Model and build record</a></p></footer>
+@@PACKS@@
+<script>@@JS@@</script></body></html>

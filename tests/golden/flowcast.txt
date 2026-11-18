@@ -1,0 +1,10 @@
+Ungauged (forcing + attributes only), WY1995-1996:
+camels_01137500  AMMONOOSUC RIVER AT BETHLEHEM JUNCTION, NH    NSE  0.31  90% band holds   98% of days  mean obs 2.45 / pred 2.95 mm/d (x1.20)
+camels_07315700  Mud Creek near Courtney, OK                   NSE  0.39  90% band holds   96% of days  mean obs 0.35 / pred 0.53 mm/d (x1.50)
+camels_12095000  SOUTH PRAIRIE CREEK AT SOUTH PRAIRIE, WA      NSE  0.24  90% band holds  100% of days  mean obs 3.15 / pred 5.55 mm/d (x1.76)
+
+Gauged nowcast (also reads the observed flow up to `lead` days earlier), NSE vs persistence at the same lead.
+The gauge record here starts on the first predicted day, so the first warm-up runs with the gauge flag off.
+camels_01137500  lead 1 d  0.57 /  0.18   lead 3 d  0.53 / -0.21   lead 7 d  0.48 / -0.27
+camels_07315700  lead 1 d  0.60 /  0.59   lead 3 d  0.35 / -0.53   lead 7 d  0.34 / -0.97
+camels_12095000  lead 1 d  0.47 /  0.62   lead 3 d  0.50 / -0.20   lead 7 d  0.40 / -0.73

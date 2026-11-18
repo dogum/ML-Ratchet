@@ -1,0 +1,215 @@
+{
+ "rule": "Ratchet bookkeeping.\n  python3 ratchet.py score <ckpt> <val_ver>     sim score on the frozen set of physics version val_ver (800 basins)\n  python3 ratchet.py decide <rung> <incumbent> <val_ver> \"<change>\"   apply the rule and log it in ratchet.json\nRule: keep if sim median NSE (frozen set val_ver) > incumbent + 0.01 AND dev median NSE >= incumbent x 0.95\n(dev = results/<ckpt>_dev.parquet: 52 dev basins, WY2001-2014, ungauged).",
+ "rungs": [
+  {
+   "rung": "r1",
+   "incumbent": "r0",
+   "frozen_set": "p1",
+   "change": "p1 physics: dev-measured water-yield correction (ERA5-Land undercatch in wet/mountain basins, losses in dry basins), log m = -0.088 + 0.058 elev_km + 0.153 frac_snow + 0.397 log(p/3) + N(0,0.146)",
+   "sim_nse": 0.33176106214523315,
+   "sim_nse_incumbent": 0.3971025347709656,
+   "sim_kge": 0.23928146834650987,
+   "sim_cov90": 0.8292226027397259,
+   "dev": {
+    "nse_median": 0.33146362156758014,
+    "kge_median": 0.2587684029581784,
+    "fhv_median": -59.01418812933341,
+    "cov90_median": 0.9517895560336398,
+    "frac_nse_lt0": 0.057692307692307696,
+    "peak_abs_err_median": 68.05657958984375
+   },
+   "dev_incumbent": {
+    "nse_median": 0.38964448201784574,
+    "kge_median": 0.3187869242003115,
+    "fhv_median": -50.70193592578367,
+    "cov90_median": 0.9495403872481909,
+    "frac_nse_lt0": 0.07692307692307693,
+    "peak_abs_err_median": 62.79542541503906
+   },
+   "sim_ok": false,
+   "dev_ok": false,
+   "kept": false,
+   "time": "2026-11-18 10:47"
+  },
+  {
+   "rung": "r0b",
+   "incumbent": "r0",
+   "frozen_set": "p0",
+   "change": "loss fix: per-sample loss scale from inputs only (Fu runoff ratio of the forcing aridity) instead of the target's own std (Kratzert NSE*), which biased the sim-trained ungauged network low",
+   "sim_nse": 0.47588440775871277,
+   "sim_nse_incumbent": 0.4411814212799072,
+   "sim_kge": 0.4892463660769172,
+   "sim_cov90": 0.8826609589041096,
+   "dev": {
+    "nse_median": 0.4355122886223773,
+    "kge_median": 0.4416992097291859,
+    "fhv_median": -26.833245653357444,
+    "cov90_median": 0.9645822070720741,
+    "frac_nse_lt0": 0.15384615384615385,
+    "peak_abs_err_median": 49.92186737060547
+   },
+   "dev_incumbent": {
+    "nse_median": 0.38964448201784574,
+    "kge_median": 0.3187869242003115,
+    "fhv_median": -50.70193592578367,
+    "cov90_median": 0.9495403872481909,
+    "frac_nse_lt0": 0.07692307692307693,
+    "peak_abs_err_median": 62.79542541503906
+   },
+   "sim_ok": true,
+   "dev_ok": true,
+   "kept": true,
+   "time": "2026-11-18 11:07"
+  },
+  {
+   "rung": "r1b",
+   "incumbent": "r0b",
+   "frozen_set": "p1",
+   "change": "p1 water-yield physics (as r1) with the input-only loss scale",
+   "sim_nse": 0.42499879002571106,
+   "sim_nse_incumbent": 0.3951384425163269,
+   "sim_kge": 0.370043288202048,
+   "sim_cov90": 0.8508219178082191,
+   "dev": {
+    "nse_median": 0.4248383280355081,
+    "kge_median": 0.4244961088481219,
+    "fhv_median": -32.32960039692805,
+    "cov90_median": 0.9505182867201252,
+    "frac_nse_lt0": 0.11538461538461539,
+    "peak_abs_err_median": 49.171085357666016
+   },
+   "dev_incumbent": {
+    "nse_median": 0.4355122886223773,
+    "kge_median": 0.4416992097291859,
+    "fhv_median": -26.833245653357444,
+    "cov90_median": 0.9645822070720741,
+    "frac_nse_lt0": 0.15384615384615385,
+    "peak_abs_err_median": 49.92186737060547
+   },
+   "sim_ok": true,
+   "dev_ok": true,
+   "kept": true,
+   "time": "2026-11-18 11:20"
+  },
+  {
+   "rung": "r2",
+   "incumbent": "r1b",
+   "frozen_set": "p2",
+   "change": "p2 flashier runoff parameters: full dev-calibrated prior shift (shrink 1.0, was 0.5); simulated RB flashiness 0.62x -> 1.00x of observed on dev",
+   "sim_nse": 0.4625702500343323,
+   "sim_nse_incumbent": 0.4460960626602173,
+   "sim_kge": 0.39239064655136113,
+   "sim_cov90": 0.8390393835616439,
+   "dev": {
+    "nse_median": 0.38025178903812346,
+    "kge_median": 0.49007016369201833,
+    "fhv_median": -16.220446688085307,
+    "cov90_median": 0.9440641502053588,
+    "frac_nse_lt0": 0.1346153846153846,
+    "peak_abs_err_median": 42.28425598144531
+   },
+   "dev_incumbent": {
+    "nse_median": 0.4248383280355081,
+    "kge_median": 0.4244961088481219,
+    "fhv_median": -32.32960039692805,
+    "cov90_median": 0.9505182867201252,
+    "frac_nse_lt0": 0.11538461538461539,
+    "peak_abs_err_median": 49.171085357666016
+   },
+   "sim_ok": true,
+   "dev_ok": false,
+   "kept": false,
+   "time": "2026-11-18 11:31"
+  },
+  {
+   "rung": "r3",
+   "incumbent": "r1b",
+   "frozen_set": "p3",
+   "change": "p3 realistic forcing error for the network input: daily P cv 0.4, bias sd 0.10, up to 30% of each day's rain moved to a neighbouring day (calib_noise.py: default noise left a calibrated twin at NSE 0.88 vs its clean run; reality allows 0.56)",
+   "sim_nse": 0.32574671506881714,
+   "sim_nse_incumbent": 0.3353704810142517,
+   "sim_kge": 0.34624925057708733,
+   "sim_cov90": 0.8593356164383562,
+   "dev": {
+    "nse_median": 0.4062611815031922,
+    "kge_median": 0.4299546567256397,
+    "fhv_median": -38.2089120747854,
+    "cov90_median": 0.9636221396440445,
+    "frac_nse_lt0": 0.09615384615384616,
+    "peak_abs_err_median": 51.8135986328125
+   },
+   "dev_incumbent": {
+    "nse_median": 0.4248383280355081,
+    "kge_median": 0.4244961088481219,
+    "fhv_median": -32.32960039692805,
+    "cov90_median": 0.9505182867201252,
+    "frac_nse_lt0": 0.11538461538461539,
+    "peak_abs_err_median": 49.171085357666016
+   },
+   "sim_ok": false,
+   "dev_ok": true,
+   "kept": false,
+   "time": "2026-11-18 12:13"
+  },
+  {
+   "rung": "r4",
+   "incumbent": "r1b",
+   "frozen_set": "p4",
+   "change": "p4 = p3 forcing error + p2 flashier runoff parameters together (flashiness retried with realistic forcing error)",
+   "sim_nse": 0.40362295508384705,
+   "sim_nse_incumbent": 0.37955784797668457,
+   "sim_kge": 0.34878237390406097,
+   "sim_cov90": 0.852416095890411,
+   "dev": {
+    "nse_median": 0.37832301029335264,
+    "kge_median": 0.4903413653479339,
+    "fhv_median": -23.39864808905363,
+    "cov90_median": 0.9470956385683552,
+    "frac_nse_lt0": 0.1346153846153846,
+    "peak_abs_err_median": 45.278554916381836
+   },
+   "dev_incumbent": {
+    "nse_median": 0.4248383280355081,
+    "kge_median": 0.4244961088481219,
+    "fhv_median": -32.32960039692805,
+    "cov90_median": 0.9505182867201252,
+    "frac_nse_lt0": 0.11538461538461539,
+    "peak_abs_err_median": 49.171085357666016
+   },
+   "sim_ok": true,
+   "dev_ok": false,
+   "kept": false,
+   "time": "2026-11-18 12:27"
+  },
+  {
+   "rung": "r5",
+   "incumbent": "r1b",
+   "frozen_set": "p1",
+   "change": "longer training: r1b fine-tuned for 5000 more steps (lr 1e-3, cosine), same p1 physics",
+   "sim_nse": 0.4189240038394928,
+   "sim_nse_incumbent": 0.42499879002571106,
+   "sim_kge": 0.3729589456634728,
+   "sim_cov90": 0.8536078767123289,
+   "dev": {
+    "nse_median": 0.4336588435715281,
+    "kge_median": 0.44121265742869076,
+    "fhv_median": -28.215140557364837,
+    "cov90_median": 0.9567768433405046,
+    "frac_nse_lt0": 0.1346153846153846,
+    "peak_abs_err_median": 49.794803619384766
+   },
+   "dev_incumbent": {
+    "nse_median": 0.4248383280355081,
+    "kge_median": 0.4244961088481219,
+    "fhv_median": -32.32960039692805,
+    "cov90_median": 0.9505182867201252,
+    "frac_nse_lt0": 0.11538461538461539,
+    "peak_abs_err_median": 49.171085357666016
+   },
+   "sim_ok": false,
+   "dev_ok": true,
+   "kept": false,
+   "time": "2026-11-18 12:43"
+  }
+ ]
+}
