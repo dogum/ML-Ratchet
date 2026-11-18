@@ -2,9 +2,9 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 
-from noise import HERE, write_json
+from noise import RESULTS, write_json
 from simulator import simulate
-from physics import PUBLISHED, TWO_STATE
+from stormphysics import PUBLISHED, TWO_STATE
 
 
 def check():
@@ -42,5 +42,5 @@ def check():
 
 if __name__ == "__main__":
     result = check()
-    write_json(HERE / "physics_check.json", result)
+    write_json(RESULTS / "physics_check.json", result)
     print(result)

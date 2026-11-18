@@ -6,9 +6,9 @@ from pathlib import Path
 import numpy as np
 
 from _paths import work
-from noise import HERE, PROTOCOL, wind_period
+from noise import HERE, PROTOCOL, RESULTS, read_result, wind_period, write_json
 from simulator import simulate
-from physics import HISTORY, HORIZON, PUBLISHED, drivers
+from stormphysics import HISTORY, HORIZON, PUBLISHED, drivers
 
 WARMUP = 48
 
@@ -56,8 +56,7 @@ def load_bank(name):
 
 
 if __name__ == "__main__":
-    from noise import write_json
-    cal = json.loads((HERE / "calibration.json").read_text())
+    cal = read_result("calibration.json")
     log = {}
     for version, center in ((1, PUBLISHED), (2, cal["double"])):
         for frozen in (False, True):
@@ -65,5 +64,5 @@ if __name__ == "__main__":
     path = HERE / "banks.json"
     if path.exists() and log != json.loads(path.read_text()):
         raise ValueError("Bank fingerprints differ from release")
-    write_json(path, log)
+    write_json(RESULTS / "banks.json", log)
     print(log)

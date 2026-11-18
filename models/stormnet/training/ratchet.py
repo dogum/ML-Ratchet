@@ -7,8 +7,8 @@ import yaml
 from mlratchet import Ratchet, gates
 from mlratchet.calibrate import widen_factor
 
-from _paths import MODEL, work
-from noise import HERE, PROTOCOL, write_json
+from _paths import work
+from noise import PROTOCOL, RESULTS, write_json
 from simbank import load_bank
 from split import dev_cases
 from train import RUNS
@@ -53,8 +53,10 @@ def main():
                   columns=list(dev), columns_source="Dev error ratios to persistence (lower is better)")
     for entry in ladder["rungs"]:
         entry["metrics"] = [round(entry["dev"][yr], 4) for yr in dev]
-    (Path(MODEL) / "ratchet.yaml").write_text(yaml.safe_dump({"model": "stormnet", "ladders": [ladder]},
-                                                             sort_keys=False, allow_unicode=True))
+    release_dir = Path(work("release"))
+    release_dir.mkdir(parents=True, exist_ok=True)
+    ladder_yaml = yaml.safe_dump({"model": "stormnet", "ladders": [ladder]}, sort_keys=False, allow_unicode=True)
+    (release_dir / "ratchet.yaml").write_text(ladder_yaml, encoding="utf-8")
     model = StormNet(work("ckpt", chosen + ".npz"))
     residuals, sig = [], []
     for d in dev.values():
@@ -64,7 +66,7 @@ def main():
     model.meta["widen_factor"] = widen_factor(residuals, sig)
     model.meta["physics_version"] = "ring-2" if chosen in ("r3", "r4") else "ring-1"
     weights = {k: v.astype("float32") for k, v in model.weights.items()}
-    release = Path(MODEL) / "stormnet_weights.npz"
+    release = release_dir / "stormnet_weights.npz"
     np.savez_compressed(release, **weights, meta=json.dumps(model.meta))
     exported = StormNet(release)
     checks = {}
@@ -74,7 +76,7 @@ def main():
             checks[key] = max(checks.get(key, 0), float(np.max(abs(a[key] - b[key]))))
     if max(checks.values()) > 1e-4:
         raise ValueError(f"Float32 export drift: {checks}")
-    write_json(HERE / "ladder_history.json", dict(original=initial, replay_flips=flips, scores=scores,
+    write_json(RESULTS / "ladder_history.json", dict(original=initial, replay_flips=flips, scores=scores,
                dev=dev_scores, released=chosen, widen_factor=model.meta["widen_factor"],
                parameters=sum(v.size for v in weights.values()), export_max_abs_nT=checks))
     print(ladder, model.meta["widen_factor"], checks)

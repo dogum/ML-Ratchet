@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Replay real geomagnetic storms and run StormNet's three-hour Dst forecast in your browser.">
+<title>StormNet · ML Ratchet</title><style>@@FONTS@@
+@@TOKENS@@
+@@INSTRUMENT@@
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans)}
+main,header,footer{max-width:1120px;margin:auto;padding-inline:clamp(16px,4vw,52px)}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:65px;border-bottom:1px solid var(--rule)}
+a{color:inherit;text-underline-offset:3px}nav{display:flex;align-items:center;gap:clamp(12px,3vw,29px)}nav a,header>a{text-decoration:none}
+header,button.meta,.label,th,.result{font:11px/1.45 var(--mono);letter-spacing:.035em}button.meta{color:var(--ink);border:1px solid var(--rule);background:transparent;padding:6px 9px;border-radius:3px;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+.hero{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(190px,1fr);align-items:end;gap:32px;padding:clamp(35px,6vw,74px) 0 28px}
+.label{text-transform:uppercase;color:var(--ink-2);margin:0 0 8px}.hero h1,h2,h3{font-family:var(--display);font-weight:400;margin:0}
+h1{font-size:clamp(52px,8.5vw,110px);letter-spacing:-.045em;line-height:.96}h2{font-size:clamp(36px,5vw,62px);line-height:1.05;letter-spacing:-.025em}
+.hero>p{color:var(--ink-2);margin:0;line-height:1.55;max-width:35ch}.instrument{--accent:#39a88b}
+section.evidence{padding:clamp(40px,6vw,76px) 0;border-bottom:1px solid var(--rule)}
+.dek{max-width:67ch;color:var(--ink-2);font-size:17px;line-height:1.55;margin:12px 0 24px}
+.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:13px}
+td,th{padding:10px 8px;text-align:right;border-bottom:1px solid var(--rule-2);white-space:nowrap}th{color:var(--ink-2);font-size:10px;text-transform:uppercase}td:first-child,th:first-child{text-align:left;padding-left:0}
+td b{font-weight:650}.cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(22px,5vw,64px)}.cols h3{font-size:32px}.cols p,footer{color:var(--ink-2);line-height:1.6}
+figure{margin:24px 0 0}figure img{width:min(100%,780px);height:auto;border:1px solid var(--rule)}figcaption{font-size:13px;color:var(--ink-2);margin-top:6px;max-width:70ch}
+footer{padding-block:28px 40px;font-size:13px}footer p{max-width:80ch}.result{color:var(--ink-2);letter-spacing:0}
+@media(max-width:650px){.hero,.cols{grid-template-columns:1fr;gap:16px}.hero>p{max-width:55ch}header{min-height:52px}nav{gap:10px}nav a{font-size:10px}td,th{padding:8px 5px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><a href="https://dogum.github.io/ML-Ratchet/">ML Ratchet</a><nav aria-label="Lab sections"><a href="#replay">Replay</a><a href="#exam">Exam</a><a href="#physics">Physics</a><button class="meta" type="button" id="theme">Theme</button></nav></header>
+<main>
+<section id="replay"><div class="hero"><div><p class="label">StormNet / Space weather</p><h1>How deep will the storm go?</h1></div>
+<p>A geomagnetic storm weakens the magnetic field near Earth’s equator. Replay the solar wind hour by hour and see how low StormNet expects the Dst index to fall in the next three hours.</p></div>
+<div id="instrument" class="instrument"></div><noscript>Enable JavaScript to run the network. The full exam appears below.</noscript></section>
+<section id="exam" class="evidence"><p class="label">Held-out recordings · 2016–2020</p><h2>The real exam</h2>
+<p class="dek">Across 43,439 forecasts, StormNet missed by 3.47 nT on average. Published ring-current physics missed by 3.45 nT. The difference lies within the uncertainty of sampling whole storms.</p>
+<div class="scroll" tabindex="0" role="region" aria-label="All exam rows and comparator scores"><table><thead><tr><th>Three-hour target</th><th>Hours / blocks</th><th>StormNet</th><th>Persistence</th><th>Published</th><th>Tuned single</th><th>Tuned double</th><th>Verdict</th></tr></thead><tbody>@@ROWS@@</tbody></table></div>
+<p class="result">Error is in nT. The last row measures false alarms as a percentage. Published and tuned single use O’Brien–McPherron physics.</p>
+<details><summary>Paired intervals and prediction-band coverage</summary><div class="scroll" tabindex="0" role="region" aria-label="Uncertainty by exam row"><table><thead><tr><th>Target</th><th>Model minus best</th><th>95% block interval</th><th>68% band coverage</th><th>95% interval on coverage</th></tr></thead><tbody>@@INTERVALS@@</tbody></table></div>
+<p class="result">2,000 paired draws of whole storm or quiet blocks. False-alarm differences are in percentage points (pp). One extreme storm provides no between-storm interval.</p></details></section>
+<section class="evidence" id="physics"><div class="cols"><div><p class="label">The simulator</p><h3>Two recovery times</h3><p>Southward wind fields inject energy into the ring current. Fast and slow components carry that history forward. Solar-wind pressure also changes the magnetic field measured at Earth. The network learns a correction to this physical forecast from simulated Dst.</p></div><div><p class="label">The ratchet</p><h3>Four rungs, two physics versions</h3><p>Adding wind history failed on the first simulator and passed when all candidates were rescored on the two-state physics. The calibrated R3 cleared the margin and all three real dev years. Mixing in the old simulator was rejected.</p></div></div>
+<figure><img width="1344" height="608" src="data:image/png;base64,@@TWINS@@" alt="Real versus simulated Dst minima and forecast errors for every dev block, grouped by year."><figcaption>Each point is a whole dev block. Matched twins tend to run too deep, even where they reproduce the size of the forecast errors.</figcaption></figure></section>
+</main><footer><p>Research replay using Earth-arrival-aligned solar wind and historical Dst. The 2022–2025 reserve is sealed. The nominal 68% band covered 49% of storm-strength targets in the primary exam.</p>
+<p>NASA SPDF OMNIWeb, contributing solar-wind teams, the World Data Center for Geomagnetism, Kyoto, and its contributing observatories supplied the recordings. Kyoto permits scientific use with acknowledgement and prohibits commercial application of the indices. <a href="https://doi.org/10.17593/14515-74000">Dst DOI</a> · <a href="https://omniweb.gsfc.nasa.gov/html/ow_data.html">OMNI</a> · <a href="https://wdc.kugi.kyoto-u.ac.jp/wdc/Sec3.html">Data terms</a> · <a href="https://github.com/dogum/ML-Ratchet/tree/main/models/stormnet">Model and build record</a></p></footer>
+@@PACKS@@
+<script>@@JS@@</script></body></html>

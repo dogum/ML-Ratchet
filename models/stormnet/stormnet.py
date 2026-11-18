@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 import numpy as np
-from physics import HISTORY, drivers, projected
+from stormphysics import HISTORY, drivers, projected
 
 
 def features(wind, dst, mode, params, law):

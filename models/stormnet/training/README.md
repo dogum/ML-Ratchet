@@ -1,18 +1,24 @@
-# Training: StormNet
+# Reproduce StormNet
 
-Run every script from this folder. Outputs go to `../work/` (git-ignored) or `$ML_RATCHET_WORK/stormnet/`.
+Run from this directory with the ML Ratchet checkout installed in editable mode. NumPy runs the network. SciPy fits the physical opponents and independently checks the simulator. Use one BLAS thread. The reference build used Python 3.13.5, NumPy 2.5.5 and SciPy 1.18.1. All generated training and exam files go in `../work/` or `$ML_RATCHET_WORK/stormnet/`.
 
-| Step | Script | Writes |
-|---|---|---|
-| 1. Physics | `simulator.py` — the forward model | — |
-| 2. Check it | `physics_check.py` — against an independent reference | `physics_check.json` (commit it) |
-| 3. Real noise | `noise.py` — fetch and screen real background recordings | `work/noise/` |
-| 4. Split | `split.py` — dev / exam units by a fixed seed | `split.json` (commit it) |
-| 5. Banks | `simbank.py train1 50000 1` and `simbank.py val1 5000 99` (frozen) | `work/bank/` |
-| 6. Train | `train.py --name r1 --bank train1` (resumable checkpoints) | `work/ckpt/` |
-| 7. Ratchet | `ratchet.py r1 "what changed"` — frozen-set gain AND dev gate | `../ratchet.yaml` (commit it) |
-| 8. Exam | `exam.py r1` — once, at the end, against baselines | `exam.json` (commit it) |
-| 9. Export | `export.py r1` — fold BatchNorm, numpy parity, `.npz` | `../stormnet_weights.npz` |
+```sh
+export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+python physics_check.py
+python check_index.py
+python split.py
+python baselines.py
+python simbank.py
+python train.py
+python ratchet.py
+python twin.py
+python stability.py
+python exam.py
+python onsets.py
+```
 
-Keep the network small (≤ ~500k parameters is usually plenty), banks in float16, and write a resumable
-checkpoint every few hundred steps.
+The split command regenerates the frozen storm and quiet blocks and checks them against the release. The baseline command fits both physical opponents, records source hashes and estimates solar-wind relaxation from training-era wind alone. Training takes the targets in the two simulation banks. Reports go under `work/results/`. The ratchet writes the proposed weights and ladder to `work/release/`. Compare these with `../stormnet_weights.npz` and `../ratchet.yaml`. The seed check is diagnostic. The exam scores the shipped weights and frozen calibration and writes to `work/exam/`. Compare its `exam.json`, `sources_primary.json` and example arrays with the release. The reserve is excluded by the loader. The final onset diagnostic counts first crossings on the original dev blocks.
+
+`sources_dev.json` and `sources_primary.json` pin the exact provider bytes. A changed revision is reported before scoring. `banks.json` pins the array content of each training and validation bank. The raw data can be removed from the work folder and fetched again from the documented NASA endpoint.
+
+From the model directory run `python web/export_instrument.py` to rebuild the site packs and Python references. With the site's npm dependencies installed, `node web/build_lab.mjs` bundles the offline lab. From the site directory run `npm test` for browser parity. The optional dev twin figure uses Matplotlib (`python training/plot_twins.py`).

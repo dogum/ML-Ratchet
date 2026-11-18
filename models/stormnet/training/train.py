@@ -4,9 +4,9 @@ import json
 import numpy as np
 
 from _paths import work
-from noise import HERE
+from noise import read_result
 from simbank import load_bank
-from physics import PUBLISHED
+from stormphysics import PUBLISHED
 from stormnet import design, features
 
 RUNS = (
@@ -52,6 +52,6 @@ def train(rid, mode, banks, cal, seed=103, folder="ckpt"):
 
 
 if __name__ == "__main__":
-    cal = json.loads((HERE / "calibration.json").read_text())
+    cal = read_result("calibration.json")
     for rid, mode, banks, _ in RUNS:
         train(rid, mode, banks, cal)

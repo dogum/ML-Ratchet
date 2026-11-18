@@ -4,7 +4,7 @@ import json
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
 
-from noise import HERE, PROTOCOL, fill_wind, read_year, write_json
+from noise import HERE, PROTOCOL, RESULTS, fill_wind, read_year, write_json
 
 H = PROTOCOL["history_hours"]
 K = PROTOCOL["horizon_hours"]
@@ -103,4 +103,4 @@ if __name__ == "__main__":
     path = HERE / "split.json"
     if path.exists() and doc != json.loads(path.read_text()):
         raise ValueError("Frozen split differs")
-    write_json(path, doc)
+    write_json(RESULTS / "split.json", doc)

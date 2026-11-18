@@ -4,7 +4,7 @@ from urllib.request import urlopen
 
 import numpy as np
 
-from noise import HERE, read_year, write_json
+from noise import RESULTS, read_year, write_json
 
 URL = "https://wdc.kugi.kyoto-u.ac.jp/dst_final/201103/dst1103.for.request"
 
@@ -22,7 +22,7 @@ def main():
     month = index[(time >= np.datetime64("2011-03-01")) & (time < np.datetime64("2011-04-01"))]
     if len(values) != 744 or not np.array_equal(values, month):
         raise ValueError("Final Kyoto Dst differs from OMNI on the hourly UTC grid")
-    write_json(HERE / "index_check.json", dict(url=URL, sha256=hashlib.sha256(data).hexdigest(),
+    write_json(RESULTS / "index_check.json", dict(url=URL, sha256=hashlib.sha256(data).hexdigest(),
                hours=len(values), max_abs_nT=0, source_clock="UTC interval start; issue is interval end"))
 
 

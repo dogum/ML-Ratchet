@@ -1,11 +1,15 @@
 """Dev-fit classical competitors. All scored paths forecast the same next three complete hours."""
+import sys
+
 import numpy as np
 from scipy.optimize import least_squares
 
-from noise import PROTOCOL, read_year, wind_period, wind_law, write_json, HERE
+from _paths import MODEL
+from noise import PROTOCOL, RESULTS, read_year, wind_law, wind_period, write_json
 from split import dev_cases
-from simulator import simulate
-from physics import PUBLISHED, TWO_STATE, drivers, projected
+
+sys.path.insert(0, MODEL)
+from stormphysics import PUBLISHED, drivers, projected
 
 NAMES = ("Persistence", "Published O'Brien–McPherron", "Dev-tuned O'Brien–McPherron", "Dev-tuned two-state")
 
@@ -54,7 +58,7 @@ if __name__ == "__main__":
     hashes.update(val_hash)
     for y in PROTOCOL["dev_years"]:
         hashes[str(y)] = read_year(y, index=True)[3]
-    write_json(HERE / "sources_dev.json", hashes)
+    write_json(RESULTS / "sources_dev.json", hashes)
     dev = dev_cases()
     law = wind_law(wind)
     single, ns = fit(dev, law, False)
@@ -62,5 +66,5 @@ if __name__ == "__main__":
     cal = dict(wind_law=law, single=single, double=double, evaluations=[ns, nd])
     cal["dev_mae_nT"] = {yr: {k: float(np.mean(abs(x - d["truth"]))) for k, x in forecast(d, cal).items()}
                          for yr, d in dev.items()}
-    write_json(HERE / "calibration.json", cal)
+    write_json(RESULTS / "calibration.json", cal)
     print(cal)

@@ -1,12 +1,11 @@
 """Build synthetic index observations along actual solar-wind trajectories."""
 import sys
-from pathlib import Path
 
 import numpy as np
 from _paths import MODEL
 
 sys.path.insert(0, MODEL)
-from physics import drivers, step
+from stormphysics import drivers, step
 
 PHYSICS_VERSION = ("ring-1", "ring-2")
 

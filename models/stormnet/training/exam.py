@@ -55,7 +55,8 @@ def score_row(cases, meta, predictions, sigma, threshold, rng):
     return dict(issues=int(take.sum()), blocks=n, storm_blocks=int((kinds == "storm").sum()),
                 unit="%" if quiet else "nT", scores=dict(zip(predictions, map(float, means[:-1]))),
                 difference=float(means[0] - means[1:-1].min()), difference_ci95=bounds, verdict=verdict,
-                coverage_pct=float(means[-1]), coverage_ci95=np.quantile(boot[:, -1], [.025, .975]).tolist())
+                coverage_pct=float(means[-1]),
+                coverage_ci95=np.quantile(boot[:, -1], [.025, .975]).tolist() if n >= 2 else None)
 
 
 def main():

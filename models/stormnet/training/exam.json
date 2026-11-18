@@ -1,0 +1,130 @@
+{
+  "released": "r3",
+  "weights_sha256": "4ca58aacb745d53108a643b54e33e069cd457db2f640ca62d6b7734894e68e49",
+  "first_issue_utc": "2016-01-02T12",
+  "last_issue_utc": "2020-12-31T21",
+  "eligibility": {
+    "raw_hours": 43848,
+    "possible": 43810,
+    "missing_wind": 371,
+    "missing_index": 0,
+    "valid": 43439
+  },
+  "distinct_storm_blocks": 52,
+  "rows": {
+    "All eligible hours": {
+      "issues": 43439,
+      "blocks": 629,
+      "storm_blocks": 52,
+      "unit": "nT",
+      "scores": {
+        "StormNet": 3.4658684797893438,
+        "Persistence": 3.7888993761366514,
+        "Published O'Brien\u2013McPherron": 3.4473235916079816,
+        "Dev-tuned O'Brien\u2013McPherron": 3.4783799841882743,
+        "Dev-tuned two-state": 3.5160216501272963
+      },
+      "difference": 0.01854488818136213,
+      "difference_ci95": [
+        -0.010988366420314154,
+        0.047977721847263094
+      ],
+      "verdict": "tie",
+      "coverage_pct": 71.70284767144732,
+      "coverage_ci95": [
+        70.94612722488424,
+        72.45808108332518
+      ]
+    },
+    "Storm-strength minimum": {
+      "issues": 811,
+      "blocks": 51,
+      "storm_blocks": 51,
+      "unit": "nT",
+      "scores": {
+        "StormNet": 9.635949695416421,
+        "Persistence": 12.586929716399506,
+        "Published O'Brien\u2013McPherron": 10.479166366445567,
+        "Dev-tuned O'Brien\u2013McPherron": 9.53435241831178,
+        "Dev-tuned two-state": 9.48720447792801
+      },
+      "difference": 0.14874521748841119,
+      "difference_ci95": [
+        -0.22054463038280164,
+        0.5189408477205693
+      ],
+      "verdict": "tie",
+      "coverage_pct": 48.95191122071517,
+      "coverage_ci95": [
+        44.93037189555545,
+        53.397095194603196
+      ]
+    },
+    "Intense minimum": {
+      "issues": 57,
+      "blocks": 5,
+      "storm_blocks": 5,
+      "unit": "nT",
+      "scores": {
+        "StormNet": 17.76346196395883,
+        "Persistence": 23.05263157894737,
+        "Published O'Brien\u2013McPherron": 18.368162707260225,
+        "Dev-tuned O'Brien\u2013McPherron": 17.899449136242627,
+        "Dev-tuned two-state": 18.151625884057697
+      },
+      "difference": -0.13598717228379797,
+      "difference_ci95": [
+        -2.0769348982495224,
+        2.0445605139226846
+      ],
+      "verdict": "tie",
+      "coverage_pct": 40.35087719298246,
+      "coverage_ci95": [
+        26.470588235294116,
+        68.57142857142857
+      ]
+    },
+    "Extreme minimum": {
+      "issues": 7,
+      "blocks": 1,
+      "storm_blocks": 1,
+      "unit": "nT",
+      "scores": {
+        "StormNet": 26.07775303775288,
+        "Persistence": 33.285714285714285,
+        "Published O'Brien\u2013McPherron": 33.096174276686085,
+        "Dev-tuned O'Brien\u2013McPherron": 27.3789274239767,
+        "Dev-tuned two-state": 27.9878233014837
+      },
+      "difference": -1.3011743862238205,
+      "difference_ci95": null,
+      "verdict": "info",
+      "coverage_pct": 42.857142857142854,
+      "coverage_ci95": null
+    },
+    "Quiet false alarms": {
+      "issues": 42628,
+      "blocks": 629,
+      "storm_blocks": 52,
+      "unit": "%",
+      "scores": {
+        "StormNet": 0.29558036971004975,
+        "Persistence": 0.23224171905789623,
+        "Published O'Brien\u2013McPherron": 0.1689030684057427,
+        "Dev-tuned O'Brien\u2013McPherron": 0.37768602796284134,
+        "Dev-tuned two-state": 0.3729942760626818
+      },
+      "difference": 0.12667730130430704,
+      "difference_ci95": [
+        0.07793117964691172,
+        0.1797733986033048
+      ],
+      "verdict": "loss",
+      "coverage_pct": 72.13568546495262,
+      "coverage_ci95": [
+        71.42404711265593,
+        72.87003195666689
+      ]
+    }
+  }
+}

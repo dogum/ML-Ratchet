@@ -14,6 +14,7 @@ import numpy as np
 from _paths import SRC, work
 
 HERE = Path(SRC)
+RESULTS = Path(work("results"))
 PROTOCOL = json.loads((HERE / "protocol.json").read_text())
 URL = "https://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_{year}.dat"
 # Published OMNI2 fixed-width words 1–41. Dst (41) is read only by the labelled loader.
@@ -26,6 +27,14 @@ def write_json(path, value):
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(value, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+
+
+def read_result(name):
+    """Use the current reproduction's report, or the release copy for a stand-alone stage."""
+    path = RESULTS / name
+    if not path.is_file():
+        path = HERE / name
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _raw(year):
