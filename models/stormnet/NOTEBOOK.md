@@ -19,3 +19,23 @@ At the end of a UTC hour, estimate the minimum of the **next three complete hour
 The 34 frozen dev blocks contain 2,408 eligible issues. Pressure coupling hit the 2 nT/√nPa lower search bound in both dev fits. R2 moved from rejected on val1 to kept on val2. R3 cleared R2 by 0.0143 on val2 and passed all three years. The mixed R4 lost 0.0049. Select R3 and its 1.16749 widening factor before opening 2016–2020. A diagnostic at initialisation seeds 104 and 105 will quantify readout seed variation without changing this predeclared release. As an independent clock/column check, compare March 2011 in OMNI with the final hourly series published directly by Kyoto.
 
 Use a paired block bootstrap stratified by storm/quiet designation. In each draw, compare the model with the strongest baseline in that draw. Use a tie for an interval spanning zero and an informational verdict for fewer than five blocks. The quiet row is the false-alarm rate among issues whose next-three-hour minimum is above −50. For replay select one distinct block uniformly in each nonempty severity band (most intense first), then one issue uniformly in that block. Bundle up to six preceding consecutive eligible issues for a time scrub. The observed future is shown only on the original-input replay.
+
+### 17 November 2026 · primary exam and release reproduction
+
+The first plan is in commit `3c8f02b`. Commit `6fc38b3` freezes the R3 weights, comparators, exam code and replay sampling before the primary download. Scoring all eligible 2016–2020 issues left 43,439 of 43,810 possible issues across 629 blocks. Missing wind histories accounted for 371 exclusions.
+
+| Target | Issues / blocks | StormNet | Best comparator | Paired difference and 95% interval |
+|---|---:|---:|---|---|
+| All hours, MAE | 43,439 / 629 | 3.466 nT | Published O’Brien–McPherron, 3.447 nT | +0.019 [−0.011, +0.048] nT |
+| ≤ −50 nT, MAE | 811 / 51 | 9.636 nT | Tuned two-state, 9.487 nT | +0.149 [−0.221, +0.519] nT |
+| ≤ −100 nT, MAE | 57 / 5 | 17.763 nT | Tuned O’Brien–McPherron, 17.899 nT | −0.136 [−2.077, +2.045] nT |
+| ≤ −150 nT, MAE | 7 / 1 | 26.078 nT | Tuned O’Brien–McPherron, 27.379 nT | −1.301 nT, one independent storm |
+| > −50 nT, false alarms | 42,628 / 629 | 0.296% | Published O’Brien–McPherron, 0.169% | +0.127 [+0.078, +0.180] percentage points |
+
+The aggregate 68% band covered 71.7%. Coverage fell to 49.0% on storm-strength and 40.4% on intense targets. Three of the seven extreme targets fell inside the band. One storm cannot measure between-storm variation. The original raw bootstrap returned the same 3/7 coverage on every draw for that row. The release report will encode its coverage interval as missing, the same convention already used for its paired difference. This reporting correction does not change any prediction, score or decision.
+
+Dev twins missed the real absolute Dst level by 8–14 nT even where the error magnitudes matched. The R3 minus R2 gains at seeds 103, 104 and 105 were 0.0143, 0.0048 and 0.0128 on val2. The 0.01 keep margin depends on the seed. The four bundled replays come from the frozen stratified draw. They are interactive examples rather than an additional scorecard.
+
+For the release check, reproduce the archived years from the pinned provider files in a fresh work directory. Compare the learned weights, all four bank fingerprints, the entire exam and the replay arrays. Exercise the same NumPy and browser network on every selected issue at three wind settings. Keep 2022–2025 sealed.
+
+The backlog also asks about storm onsets. Add a descriptive **dev-only** check to distinguish warnings of a new crossing from forecasts issued in storms already underway. Use the unchanged R3 and four opponents. For each already-selected dev storm block, find its first observed hourly Dst ≤ −50 nT following a completed hour above −50. Require all three eligible forecast issues one, two and three hours before the crossing hour ends. Count one hit per storm if any of those minima crosses −50. Record the earliest such lead in hours to the completed Dst observation, a 95% Wilson interval across storms, and any excluded blocks. Keep this retrospective check outside the primary exam and all model decisions.
