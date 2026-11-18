@@ -228,7 +228,7 @@ export function show(ctx: InstrumentContext, weights: Pack<BDMeta>, examples: Pa
     }
     if (w.cv > 0 || w.sig > 0) bits.push('Gauge texture feeds the baseflow and recession features; the hidden properties move more than the changes.');
     if (w.years < 9) bits.push(`Reading only ${w.years} gauged years: features of the record get noisier and the bars should widen.`);
-    if (!touched) bits.push(`Network ${fmtChange('d_logq', mq0)} mean flow; observed ${fmtChange('d_logq', info.observed_change.d_logq)}, GR4J ${fmtChange('d_logq', info.gr4j_change.d_logq)}. On all 619 exam basins it ties calibrated GR4J (ρ 0.76 vs 0.79) without calibrating anything.`);
+    if (!touched) bits.push(`Network ${fmtChange('d_logq', mq0)} mean flow; observed ${fmtChange('d_logq', info.observed_change.d_logq)}, GR4J ${fmtChange('d_logq', info.gr4j_change.d_logq)}. On all 619 exam basins it is level with calibrated GR4J on five of six changes and behind it on mean flow (ρ 0.76 vs 0.79), without calibrating anything.`);
     note.textContent = bits.join(' ');
 
     plot1.redraw();

@@ -166,3 +166,54 @@ The live instrument (site/src/instruments/basindetective/, lab/index.html):
   "regulated" by the exam's definition) lowers p_regulated on three of the four basins (Guadalupe 0.89 -> 0.38, Revais
   Creek 0.41 -> 0.17, Umatilla 0.13 -> 0.11) and raises it on one (Tiffin 0.03 -> 0.13). The network's notion of a reservoir is WaterSim's
   operated reservoirs, not a smooth store.
+
+## 18 Nov 2026: reproduction re-score (seen)
+
+Approved by the owner after the import: re-run the released weights on the exam to replace the unpaired intervals
+with a paired bootstrap. This is reproduction, not a rung: nothing was changed or chosen from the result, and the
+exam had already been taken once (so every number below is seen).
+
+- Data: the Caravan stream wrote all 671 CAMELS-US basins (ERA5-Land forcing + CAMELS Q) to the git-ignored data root
+  `work/water` (ML_RATCHET_WATER). NWIS and NWM were not fetched. `python -I shared/water/data/build.py --only verify`:
+  1,170 of 1,170 shipped files identical, splits.json sha256 33f88ca0... OK, field ed8109e5... OK. The scored basins are
+  exactly splits.json camels_us exam (619; asserted in the script).
+- Code: `training/rescore.py` (new) calls the shipped `realfeats.build('exam')` and `exam.main(weights/basindetective_v1.npz)`
+  unchanged, in `.venv-train` (numba). Three stand-ins, all in the script:
+  1. WaterData's daily GR4J simulations (`proc/baselines/sims/gr4j_gauged.parquet`) were not shipped. Re-made from the
+     shipped calibrated parameters exactly as `run_gr4j.py` writes them (gr4j_snow, 1980-10-01..2023-12-30, float32),
+     under WORK.
+  2. NWIS peaks were not fetched. An empty peaks table stands in, so the peak-code row comes out empty and is not
+     re-scored.
+  3. Neither venv has scikit-learn. A Mann-Whitney AUC stands in for `roc_auc_score` (identical for a binary truth).
+- It reproduces: every number in the shipped exam.json comes back to 1e-9 relative, except the two Budyko-Fu R2 values
+  (0.44741085 vs 0.44741096 and 0.11001094 vs 0.11001095, from the brentq fit of w) and the NWIS row (not scored).
+  The re-made GR4J simulations therefore match the ones the exam used.
+- Committed outputs: `training/exam_per_basin.csv` (619 rows: predicted change and sd, observed change, GR4J
+  model-implied and own-record changes, Budyko-Fu, levels, p_regulated, log storage, dor and the regulated flag, the
+  GR4J misfit and damping scores, snow fraction and aridity; no time series) and `training/exam_rescore.json`
+  (intervals). Intermediates are in `models/basindetective/work/` (git-ignored).
+- Paired bootstrap: 10,000 resamples of the 619 basins with replacement, numpy default_rng(20261118), the same
+  resamples for every row; 95 % percentile intervals of the model minus each baseline. Verdict: loss if any baseline
+  wins with an interval excluding 0, win only if every baseline is beaten that way, else tie.
+- Results, changes (rho, minus GR4J model-implied): mean flow -0.036 [-0.063, -0.008], **loss** (it was a tie with the
+  unpaired interval [-0.081, +0.009]); runoff ratio -0.046 [-0.101, +0.008] tie; BFI -0.029 [-0.111, +0.052] tie; Q5
+  +0.019 [-0.047, +0.087] tie; Q95 -0.013 [-0.045, +0.019] tie; half-flow date +0.065 [+0.005, +0.127] (a win against
+  the model-implied GR4J) but -0.049 [-0.106, +0.007] against GR4J run on its own record: tie. All six median-error rows
+  tie. Against no change, the median error is better on mean flow, runoff ratio, Q95 and half-flow date, and level with
+  it on BFI (+0.0004 [-0.0015, +0.0020]) and Q5 (-0.003 [-0.020, +0.022]).
+- Levels: wins on mean flow, runoff ratio, Q5 and Q95 (both baselines beaten; e.g. Q95 +0.0066 [+0.0015, +0.0125]
+  against GR4J, where the unpaired lower bound was +0.00001); ties on BFI (own value +0.0011 [-0.0014, +0.0042]) and
+  half-flow date (GR4J +0.0038 [-0.0197, +0.0259]).
+- Regulation: AUC 0.485 [0.395, 0.574] (storage > 10 %), 0.532 [0.394, 0.673] (> 50 %), 0.441 [0.357, 0.527] (any).
+  All three are indistinguishable from chance (AUC minus 0.5 includes 0): no skill. All three are ties with GR4J misfit
+  and seasonal damping too.
+- Coverage of the 68 % bars, bootstrap: 81 % [78, 84], 77 % [74, 81], 77 % [73, 80], 78 % [74, 81], 73 % [70, 77],
+  83 % [80, 85]. All are too wide, as before.
+- The import-time Fisher-z / Zou / Hanley-McNeil intervals stay in model.yaml's notes and the card as a cross-check.
+  They were conservative as expected: every paired interval is narrower.
+- Not changed: the weights, the inference code and the released numbers.
+
+Two places outside this folder still describe the import-time verdicts. The coordinator was told; this re-score
+does not edit them:
+- site/src/instruments/basindetective/ui.ts says "it ties calibrated GR4J (ρ 0.76 vs 0.79)".
+- site/src/lib/model-families.ts's gap line says "Ties calibrated GR4J on decade-to-decade change".

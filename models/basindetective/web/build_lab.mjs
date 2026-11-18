@@ -69,34 +69,40 @@ const ex = JSON.parse(await text(join(model, 'training/exam.json')));
 const NICE = { d_logq: 'Mean flow (log ratio)', d_rr: 'Runoff ratio', d_bfi: 'Baseflow index (LH)', d_logq5: 'Low flow Q5 (log ratio)',
   d_logq95: 'High flow Q95 (log ratio)', d_hfd: 'Half-flow date (days)' };
 const G = 'GR4J (gauged, model-implied change)', G2 = 'GR4J (gauged, sim target period minus observed cal)', BU = 'Budyko-Fu (w fitted on cal)';
+// Paired bootstrap intervals from the seen reproduction re-score (training/rescore.py -> exam_rescore.json)
+const rs = JSON.parse(await text(join(model, 'training/exam_rescore.json')));
+const pci = (x, p = 3) => `${sg2(x.value, p)} <small>[${sg2(x.lo, p)}, ${sg2(x.hi, p)}]</small>`;
+const sg2 = (v, p) => (v < 0 ? '−' : '+') + Math.abs(v).toFixed(p);
 const changes = Object.entries(ex.delta).map(([t, d]) => {
-  const m = d.BasinDetective, n = m.n;
-  const base = [G, G2, BU].filter(k => d[k]).map(k => [k, d[k].rho]).sort((a, b) => b[1] - a[1]);
-  const [diff, lo, hi] = zou(m.rho, base[0][1], n);
+  const m = d.BasinDetective, n = m.n, b = rs.changes[t];
   const dg = t === 'd_hfd' ? v => v.toFixed(1) : f3;
-  const cov = k => (100 * m[k]).toFixed(0) + '%';
-  return tr([NICE[t], `<b>${f2(m.rho)}</b> ${ci(fisher(m.rho, n))}`, f2(d[G].rho), `${sg(diff)} <small>[${sg(lo)}, ${sg(hi)}] vs ${base[0][0].startsWith('Budyko') ? 'Budyko' : base[0][0] === G2 ? 'GR4J/own' : 'GR4J'}</small>`,
-    f2(d[G2].rho), d[BU] ? f2(d[BU].rho) : '–', `${dg(m.mae)} / ${dg(d[G].mae)} / ${dg(d['no change (persistence)'].mae)}`,
-    `${cov('cov68')} ${ci(clopper(Math.round(m.cov68 * n), n), v => (100 * v).toFixed(0))} / ${cov('cov95')}`, verdict(lo, hi)]);
+  const cv = rs.coverage[t].cov68;
+  return tr([NICE[t], `<b>${f2(m.rho)}</b>`, f2(d[G].rho), pci(b.rho.vs['GR4J model-implied']), f2(d[G2].rho), d[BU] ? f2(d[BU].rho) : '–',
+    `${dg(m.mae)} / ${dg(d[G].mae)} / ${dg(d['no change (persistence)'].mae)}`,
+    `${(100 * cv.value).toFixed(0)}% <small>[${(100 * cv.lo).toFixed(0)}, ${(100 * cv.hi).toFixed(0)}]</small> / ${(100 * m.cov95).toFixed(0)}%`,
+    `${b.rho.verdict} / ${b.mae.verdict}`]);
 });
 
 const bsum = JSON.parse((await text(join(model, '../../shared/water/data/proc/baselines/detective_summary.json')).catch(() => '{}')).replaceAll('NaN', 'null'));
 const levels = Object.entries(ex.level).map(([lv, L]) => {
-  const m = L.BasinDetective, own = L['own calibration-period value'], gr = L['GR4J sim (gauged)'];
-  const best = own.rho > gr.rho ? own : gr;
-  const [d, lo, hi] = zou(m.rho, best.rho, m.n);
+  const m = L.BasinDetective, own = L['own calibration-period value'], gr = L['GR4J sim (gauged)'], b = rs.levels[lv];
   const knn = bsum[`${lv}/knn_attr`]?.spearman;
-  return tr([lv, `<b>${f3(m.rho)}</b>`, f3(own.rho), f3(gr.rho), knn != null ? f3(knn) : '–', `${sg(d)} <small>[${sg(lo)}, ${sg(hi)}]</small>`, verdict(lo, hi)]);
+  return tr([lv, `<b>${f3(m.rho)}</b>`, f3(own.rho), f3(gr.rho), knn != null ? f3(knn) : '–',
+    `${pci(b.rho.vs['own 1999-2008 value'], 4)} / ${pci(b.rho.vs['GR4J sim (gauged)'], 4)}`, b.rho.verdict]);
 });
 
 const R = ex.regulation;
 const reg = Object.entries(R).filter(([, r]) => 'n_pos' in r).map(([name, r]) => {
-  const np = r.n_pos, nn = ex.n_basins - np;
-  const a = k => `${f2(r[k])} ${ci(hanley(r[k], np, nn))}`;
-  return tr([name, np, '<b>' + a('BasinDetective_auc') + '</b>', a('GR4J misfit (1-NSE_cal)_auc'), a('seasonal damping index_auc'), f2(r.BasinDetective_precision_at_n), 'tie']);
+  const b = rs.regulation[name];
+  if (!b) return tr([name, r.n_pos, `<b>${f2(r.BasinDetective_auc)}</b> <small>shipped; not re-scored</small>`, f2(r['GR4J misfit (1-NSE_cal)_auc']),
+    f2(r['seasonal damping index_auc']), f2(r.BasinDetective_precision_at_n), '–']);
+  return tr([name, r.n_pos, `<b>${f2(b.auc.value)}</b> <small>[${f2(b.auc.lo)}, ${f2(b.auc.hi)}]</small>`,
+    `${f2(r['GR4J misfit (1-NSE_cal)_auc'])} <small>Δ ${sg2(b.vs['GR4J misfit (1-NSE_cal)'].value, 2)} [${sg2(b.vs['GR4J misfit (1-NSE_cal)'].lo, 2)}, ${sg2(b.vs['GR4J misfit (1-NSE_cal)'].hi, 2)}]</small>`,
+    `${f2(r['seasonal damping index_auc'])} <small>Δ ${sg2(b.vs['seasonal damping index'].value, 2)} [${sg2(b.vs['seasonal damping index'].lo, 2)}, ${sg2(b.vs['seasonal damping index'].hi, 2)}]</small>`,
+    f2(r.BasinDetective_precision_at_n), b.verdict + (b.at_chance ? ', at chance' : '')]);
 });
 const ld = R['log10 dor among regulated basins'], cf = R['confusion_p>0.5'];
-const regNote = `AUC intervals: Hanley-McNeil (approximate, unpaired), so every row is a tie; the three HydroATLAS rows include 0.5, chance. `
+const regNote = `AUC intervals: paired bootstrap (seen re-score). All three HydroATLAS rows are indistinguishable from chance (AUC 0.5): no skill. The NWIS row was not re-scored (peaks not fetched). `
   + `Simulated AUC on the frozen set: 0.91. Among the ${ld.n} exam basins with any upstream reservoir, log10 storage / annual flow: ρ ${f2(ld.rho)} ${ci(fisher(ld.rho, ld.n))}, `
   + `median |error| ${f2(ld.mae)}, 68 % coverage ${(100 * ld.cov68).toFixed(0)}% (σ not calibrated: no dev truth). At p > 0.5: ${cf.tp} hits, ${cf.fp} false alarms, ${cf.fn} misses, ${cf.tn} correct rejections.`;
 

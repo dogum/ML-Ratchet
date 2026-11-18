@@ -2,7 +2,8 @@
 
 Imported into ML Ratchet on 18 Nov 2026 from the shipped `basindetective-v1.0` release. The text below is the
 shipped card with paths fixed, the "MAE" columns renamed to what they are (median absolute error), and four sections
-added: the weather-data caveat, the exam with intervals and verdicts, rule notes, and the import check. Nothing was
+added: the weather-data caveat, the exam with intervals and verdicts, rule notes, and the import check; and, the
+same day, a reproduction re-score with paired bootstrap intervals (seen). Nothing was
 re-trained; weights and inference numbers are the release's.
 
 ## The weather-data caveat (read first)
@@ -111,7 +112,56 @@ Re-scores when the physics changed (sim skill / dev composite):
 The dumb baseline (no change) is the last column (median absolute error only; rank correlation undefined). Every
 "MAE" in the shipped files is a median of |error| (`training/exam.py`, `evaluate.py`: `np.median`).
 
-## Exam with intervals and verdicts (added on import)
+## Reproduction re-score (18 Nov 2026, seen)
+
+After the import, the Caravan time series were rebuilt (`mlratchet data water`, CAMELS-US only; NWIS and NWM not
+fetched; `build.py --only verify`: 1,170 of 1,170 shipped files identical, splits.json sha256 33f88ca0..., field
+ed8109e5...). `training/rescore.py` ran the released weights through the shipped exam path (`realfeats.build('exam')`,
+`exam.main`) on exactly the 619 exam basins of splits.json. Nothing was chosen or changed from the result. Two
+stand-ins, both documented in the script: WaterData's daily GR4J simulations were not shipped, so they were re-made
+from the shipped calibrated parameters exactly as `run_gr4j.py` writes them; and evaluate.py's `roc_auc_score` came
+from a Mann-Whitney stand-in because neither environment has scikit-learn (identical for binary truth).
+
+**It reproduces.** Every number in `exam.json` comes back to 1e-9 relative, except the two Budyko-Fu R2 values
+(0.44741085 vs 0.44741096; 0.11001094 vs 0.11001095: the brentq fit of w) and the NWIS peak-code row, which could not be
+scored (peaks not fetched; it keeps the shipped AUC 0.71 and its unpaired interval).
+
+Paired bootstrap over the 619 basins: 10,000 resamples with replacement, `numpy.random.default_rng(20261118)`, the same
+resamples for every row; 95 % percentile intervals of BasinDetective minus each baseline. Per basin: win or loss only if
+the interval excludes 0. Row: loss if any baseline is better that way, win only if every baseline is beaten, else tie.
+Per-basin values: `training/exam_per_basin.csv` (no time series); intervals: `training/exam_rescore.json`.
+
+| Change of | rho | rho minus baseline [95 %] | Verdict | Median abs err | Median abs err minus baseline [95 %] | Verdict |
+|---|---|---|---|---|---|---|
+| mean flow | 0.757 | GR4J: -0.036 [-0.063, -0.008] loss<br>GR4J/own: +0.058 [+0.012, +0.107] win<br>Budyko: -0.011 [-0.037, +0.015] tie | **loss** | 0.0828 | GR4J: -0.0034 [-0.0117, +0.0069] tie<br>GR4J/own: -0.0286 [-0.0391, -0.0173] win<br>no change: -0.1016 [-0.1167, -0.0849] win<br>Budyko: +0.0055 [-0.0034, +0.0132] tie | **tie** |
+| runoff ratio | 0.453 | GR4J: -0.046 [-0.101, +0.008] tie<br>GR4J/own: +0.127 [+0.054, +0.198] win<br>Budyko: -0.013 [-0.062, +0.037] tie | **tie** | 0.0296 | GR4J: -0.0035 [-0.0078, +0.0002] tie<br>GR4J/own: -0.0134 [-0.0183, -0.0097] win<br>no change: -0.0085 [-0.0120, -0.0041] win<br>Budyko: -0.0017 [-0.0053, +0.0017] tie | **tie** |
+| baseflow index | 0.203 | GR4J: -0.029 [-0.111, +0.052] tie<br>GR4J/own: -0.048 [-0.136, +0.038] tie | **tie** | 0.0185 | GR4J: -0.0022 [-0.0047, +0.0006] tie<br>GR4J/own: -0.0469 [-0.0523, -0.0409] win<br>no change: +0.0004 [-0.0015, +0.0020] tie | **tie** |
+| low flow Q5 | 0.440 | GR4J: +0.019 [-0.047, +0.087] tie<br>GR4J/own: +0.484 [+0.382, +0.582] win | **tie** | 0.1263 | GR4J: -0.0371 [-0.0676, -0.0150] win<br>GR4J/own: -0.5081 [-0.5977, -0.4505] win<br>no change: -0.0029 [-0.0199, +0.0219] tie | **tie** |
+| high flow Q95 | 0.709 | GR4J: -0.013 [-0.045, +0.019] tie<br>GR4J/own: +0.036 [-0.021, +0.095] tie | **tie** | 0.1084 | GR4J: -0.0022 [-0.0120, +0.0087] tie<br>GR4J/own: -0.0119 [-0.0224, +0.0036] tie<br>no change: -0.0953 [-0.1183, -0.0726] win | **tie** |
+| half-flow date | 0.630 | GR4J: +0.065 [+0.005, +0.127] win<br>GR4J/own: -0.049 [-0.106, +0.007] tie | **tie** | 5.97 | GR4J: +0.20 [-0.42, +0.94] tie<br>GR4J/own: -0.93 [-1.56, +0.10] tie<br>no change: -2.31 [-2.87, -1.53] win | **tie** |
+
+| Level | rho | rho minus baseline [95 %] | Verdict | Median abs err minus baseline [95 %] | Verdict |
+|---|---|---|---|---|---|
+| q_mean | 0.9823 | own value: +0.0111 [+0.0074, +0.0157] win<br>GR4J sim: +0.0038 [+0.0010, +0.0069] win | **win** | own value: -0.0989 [-0.1163, -0.0741] win<br>GR4J sim: -0.0461 [-0.0582, -0.0307] win | **win** |
+| runoff_ratio | 0.9755 | own value: +0.0038 [+0.0008, +0.0071] win<br>GR4J sim: +0.0101 [+0.0054, +0.0158] win | **win** | own value: -0.0085 [-0.0120, -0.0041] win<br>GR4J sim: -0.0134 [-0.0183, -0.0097] win | **win** |
+| bfi_lh | 0.9790 | own value: +0.0011 [-0.0014, +0.0042] tie<br>GR4J sim: +0.1918 [+0.1580, +0.2294] win | **tie** | own value: +0.0004 [-0.0015, +0.0020] tie<br>GR4J sim: -0.0469 [-0.0523, -0.0409] win | **tie** |
+| q5 | 0.9753 | own value: +0.0046 [+0.0008, +0.0087] win<br>GR4J sim: +0.1974 [+0.1655, +0.2344] win | **win** | own value: -0.0073 [-0.0087, +0.0029] tie<br>GR4J sim: -0.0657 [-0.0767, -0.0556] win | **tie** |
+| q95 | 0.9730 | own value: +0.0096 [+0.0054, +0.0146] win<br>GR4J sim: +0.0066 [+0.0015, +0.0125] win | **win** | own value: -0.2640 [-0.3429, -0.1892] win<br>GR4J sim: -0.0411 [-0.0890, +0.0319] tie | **tie** |
+| hfd_mean | 0.9132 | own value: +0.0431 [+0.0276, +0.0603] win<br>GR4J sim: +0.0038 [-0.0197, +0.0259] tie | **tie** | own value: -2.31 [-2.87, -1.53] win<br>GR4J sim: -0.93 [-1.56, +0.10] tie | **tie** |
+
+| Regulation truth | positives | AUC [95 %] | AUC minus baseline [95 %] | Verdict |
+|---|---|---|---|---|
+| dor>0.1 (mid+high) | 37 | 0.485 [0.395, 0.574] | GR4J misfit (1-NSE_cal): +0.052 [-0.068, +0.176] tie<br>seasonal damping index: +0.016 [-0.105, +0.132] tie<br>chance (AUC 0.5): -0.015 [-0.105, +0.074] tie | **tie** (at chance: no skill) |
+| dor>0.5 (high) | 16 | 0.532 [0.394, 0.673] | GR4J misfit (1-NSE_cal): +0.101 [-0.091, +0.293] tie<br>seasonal damping index: +0.050 [-0.109, +0.201] tie<br>chance (AUC 0.5): +0.032 [-0.106, +0.173] tie | **tie** (at chance: no skill) |
+| dor>0 (any) | 53 | 0.441 [0.357, 0.527] | GR4J misfit (1-NSE_cal): +0.048 [-0.053, +0.147] tie<br>seasonal damping index: -0.064 [-0.180, +0.051] tie<br>chance (AUC 0.5): -0.059 [-0.143, +0.027] tie | **tie** (at chance: no skill) |
+| NWIS peak code 5/6 | 11 | 0.711 (shipped) | not re-scored: NWIS peaks not fetched | – |
+
+Coverage of the 68 % bars (bootstrap): mean flow 81 % [78, 84]; runoff ratio 77 % [74, 81]; baseflow index 77 % [73, 80]; low flow Q5 78 % [74, 81]; high flow Q95 73 % [70, 77]; half-flow date 83 % [80, 85]. The paired intervals are narrower than the import's unpaired Fisher-z /
+Zou ones, and they turn the mean-flow change from a tie into a **loss** to calibrated GR4J (-0.036 [-0.063, -0.008]),
+and four levels (mean flow, runoff ratio, Q5, Q95) into wins. The half-flow-date change beats GR4J's model-implied
+change (+0.065 [+0.005, +0.127]) but not GR4J run against the own record (-0.049 [-0.106, +0.007]): a tie.
+
+## Exam with intervals and verdicts (added on import; unpaired, superseded by the re-score above, kept as a cross-check)
 
 The release ships medians and rank correlations, not per-basin outputs, and the real time series are not in the
 repository, so no paired bootstrap is possible yet. Methods, per row: Spearman rho with a Fisher-z 95 % interval; the
@@ -227,8 +277,8 @@ Frozen simulated set v4 (release model): R2 per output d_logq 0.59, d_rr 0.30, d
   default-noise row there shows q_flat -0.62 and q_rise +1.29 IQR, twin minus real).
 
 ## Limits
-- On the decade-to-decade changes it **ties** calibrated GR4J (rank correlation within 0.05 everywhere; 0.44 vs 0.42 on low
-  flow is a tie too); it does not beat it. Its median error on BFI and Q5 changes is no better than "no change". It needs no per-basin calibration and its error bars hold (too wide on exam: 73-83 % inside the
+- On the decade-to-decade changes it **ties** calibrated GR4J on five of six signatures (0.44 vs 0.42 on low flow is a
+  tie too) and **loses** on mean flow (0.76 vs 0.79, paired interval -0.063 to -0.008); it does not beat it. Its median error on BFI and Q5 changes is no better than "no change". It needs no per-basin calibration and its error bars hold (too wide on exam: 73-83 % inside the
   68 % bars, 95-99 % inside 95 %).
 - **Regulation does not transfer**: sim AUC 0.91, exam AUC 0.49 vs HydroATLAS storage (37 positives), 0.71 vs USGS peak codes
   5/6 (11 positives). log10 storage among regulated basins: rho 0.24, 68 % coverage 28 % (sigma not calibrated: no dev truth).

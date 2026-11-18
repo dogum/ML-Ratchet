@@ -129,8 +129,9 @@ row with its interval method and verdict.
   calibrated degree-day model, which reads the station's own snow record, stays ahead (0.925). Peak SWE runs 9 % low.
   A dev-tuned energy balance was never run on the exam and may close the gap (the WakeNet and StormNet lesson).
 - **BasinDetective** (619 basins): predicts how six flow signatures change from 1999-2008 to 1989-99 about as well as
-  calibrated GR4J (mean flow Spearman 0.76 against 0.79; half-flow date 0.63 against 0.57), with no per-basin fitting
-  and error bars that hold, a little wide. Regulation does not transfer: AUC 0.49 for a reservoir storing over 10 % of
+  calibrated GR4J, with no per-basin fitting: level on five of six changes, behind on mean flow (Spearman 0.76
+  against 0.79, paired difference −0.036 [−0.063, −0.008]). Its error bars hold but are too wide (68 % bars cover
+  73-83 %). Regulation does not transfer: AUC 0.49 for a reservoir storing over 10 % of
   annual flow, against 0.91 in simulation.
 - **ReservoirPilot** (244 ResOpsUS dams): median cost J 0.0154 against 0.0285 for a classical hedging rule tuned in
   the same simulator and 0.108 for SOP. **J charges nothing for storage**, and the pilot exploits that: it holds
