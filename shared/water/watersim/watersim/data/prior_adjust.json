@@ -1,0 +1,228 @@
+{
+ "hbv": {
+  "FC": {
+   "mode": "mult",
+   "factor": 0.7420880850224539,
+   "extra_sigma": 0.7133845703368689
+  },
+  "LP": {
+   "mode": "mult",
+   "factor": 1.0596717954972408,
+   "extra_sigma": 0.49186843410033426
+  },
+  "BETA": {
+   "mode": "mult",
+   "factor": 1.4058970261113175,
+   "extra_sigma": 0.5594911019029472
+  },
+  "PERC": {
+   "mode": "add",
+   "shift": -0.569661905214926,
+   "extra_sigma": 1.4850041205563964
+  },
+  "UZL": {
+   "mode": "add",
+   "shift": -13.829850190376172,
+   "extra_sigma": 27.034945640005887
+  },
+  "K0": {
+   "mode": "mult",
+   "factor": 1.818672534616805,
+   "extra_sigma": 0.45986280995167406
+  },
+  "K1": {
+   "mode": "mult",
+   "factor": 2.8843463353386545,
+   "extra_sigma": 0.7236592265252659
+  },
+  "K2": {
+   "mode": "mult",
+   "factor": 1.8752103625709078,
+   "extra_sigma": 1.0
+  },
+  "MAXBAS": {
+   "mode": "mult",
+   "factor": 0.8889261784082035,
+   "extra_sigma": 0.3275042380835034
+  }
+ },
+ "snow_dd": {
+  "TT": {
+   "mode": "add",
+   "shift": -0.3283578852535909,
+   "extra_sigma": 1.024700078908896
+  },
+  "CFMAX": {
+   "mode": "mult",
+   "factor": 1.1099516912122893,
+   "extra_sigma": 0.555308475246008
+  },
+  "SFCF": {
+   "mode": "add",
+   "shift": 0.05394975180042083,
+   "extra_sigma": 0.24888141592643068
+  }
+ },
+ "gr4j": {
+  "X1": {
+   "mode": "mult",
+   "factor": 0.5864439688200482,
+   "extra_sigma": 0.9437482346393332
+  },
+  "X2": {
+   "mode": "add",
+   "shift": 0.038777900295267786,
+   "extra_sigma": 2.1529990436335553
+  },
+  "X3": {
+   "mode": "mult",
+   "factor": 0.5242252752716524,
+   "extra_sigma": 0.9982061301410957
+  },
+  "X4": {
+   "mode": "mult",
+   "factor": 0.7854065087293134,
+   "extra_sigma": 0.25264722857891064
+  }
+ },
+ "sacsma": {
+  "UZTWM": {
+   "mode": "mult",
+   "factor": 0.8445632808936153,
+   "extra_sigma": 1.0
+  },
+  "UZFWM": {
+   "mode": "mult",
+   "factor": 0.7256904234869307,
+   "extra_sigma": 0.5618455904425967
+  },
+  "UZK": {
+   "mode": "mult",
+   "factor": 1.2484973054787427,
+   "extra_sigma": 0.520254517708037
+  },
+  "PCTIM": {
+   "mode": "add",
+   "shift": 0.009952607135053328,
+   "extra_sigma": 0.033158192875383526
+  },
+  "ADIMP": {
+   "mode": "add",
+   "shift": 0.06349645346165887,
+   "extra_sigma": 0.1223509421897783
+  },
+  "ZPERC": {
+   "mode": "mult",
+   "factor": 0.8940635991762274,
+   "extra_sigma": 1.0
+  },
+  "REXP": {
+   "mode": "mult",
+   "factor": 1.2250204694705509,
+   "extra_sigma": 0.4113978142060198
+  },
+  "LZTWM": {
+   "mode": "mult",
+   "factor": 0.8404912615662197,
+   "extra_sigma": 1.0
+  },
+  "LZFSM": {
+   "mode": "mult",
+   "factor": 1.0329982619500877,
+   "extra_sigma": 1.0
+  },
+  "LZFPM": {
+   "mode": "mult",
+   "factor": 0.40383962048248506,
+   "extra_sigma": 0.939033573483725
+  },
+  "LZSK": {
+   "mode": "mult",
+   "factor": 0.9150829731019824,
+   "extra_sigma": 0.8993585076073239
+  },
+  "LZPK": {
+   "mode": "mult",
+   "factor": 0.9310647615865629,
+   "extra_sigma": 0.9812488756793946
+  },
+  "PFREE": {
+   "mode": "add",
+   "shift": 0.016371002304726726,
+   "extra_sigma": 0.22606034224330845
+  },
+  "UH_SHAPE": {
+   "mode": "mult",
+   "factor": 1.2911702755807022,
+   "extra_sigma": 0.32706528795108125
+  },
+  "UH_SCALE": {
+   "mode": "mult",
+   "factor": 0.5306379478392164,
+   "extra_sigma": 0.6336222225029537
+  }
+ },
+ "vic_lite": {
+  "W1M": {
+   "mode": "mult",
+   "factor": 1.0743684616649256,
+   "extra_sigma": 0.3964789783758371
+  },
+  "B_INF": {
+   "mode": "mult",
+   "factor": 0.6523917063939431,
+   "extra_sigma": 0.6243957296767892
+  },
+  "ROOT1": {
+   "mode": "mult",
+   "factor": 1.0798829260830436,
+   "extra_sigma": 0.44148759498368506
+  },
+  "KSAT": {
+   "mode": "mult",
+   "factor": 0.5951670530765873,
+   "extra_sigma": 1.0
+  },
+  "EXPT": {
+   "mode": "mult",
+   "factor": 1.2394918389053422,
+   "extra_sigma": 0.5770987649678944
+  },
+  "W2M": {
+   "mode": "mult",
+   "factor": 0.5210833637584147,
+   "extra_sigma": 0.8532440783494968
+  },
+  "DSMAX": {
+   "mode": "mult",
+   "factor": 0.8697443732454887,
+   "extra_sigma": 1.0
+  },
+  "DS": {
+   "mode": "mult",
+   "factor": 0.47119096534782007,
+   "extra_sigma": 1.0
+  },
+  "WS": {
+   "mode": "mult",
+   "factor": 0.8392082137714829,
+   "extra_sigma": 0.48564790059853724
+  },
+  "UH_SHAPE": {
+   "mode": "mult",
+   "factor": 1.250415494716931,
+   "extra_sigma": 0.36012735822284525
+  },
+  "UH_SCALE": {
+   "mode": "mult",
+   "factor": 0.6282310463484888,
+   "extra_sigma": 0.7995675750200508
+  }
+ },
+ "_meta": {
+  "what": "Fit the generator's dev-calibrated corrections (recipe step 5: calibrate the simulator on dev only).",
+  "source": "checks/out/dev_calib (52 CAMELS-US dev basins, KGE, calibration window 1999-10..2008-09)",
+  "n_records": 208,
+  "shrink": 0.5
+ }
+}

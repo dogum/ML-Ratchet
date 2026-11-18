@@ -1,0 +1,391 @@
+{
+ "what": "Generator realism: do randomly generated basins produce streamflow signatures that cover the real DEV basins?",
+ "n_real_dev": 52,
+ "n_sim_default": 250,
+ "n_sim_camels_prior": 250,
+ "default_prior_weather_generator": {
+  "runoff_ratio": {
+   "real_q05_q50_q95": [
+    0.0268,
+    0.3683,
+    0.9771
+   ],
+   "sim_q05_q50_q95": [
+    0.0831,
+    0.3803,
+    0.7193
+   ],
+   "real_inside_sim_95pct_range": 0.7692307692307693,
+   "ks_stat": 0.11461538461538456
+  },
+  "q_mean": {
+   "real_q05_q50_q95": [
+    0.0538,
+    1.0461,
+    4.0572
+   ],
+   "sim_q05_q50_q95": [
+    0.1531,
+    1.0591,
+    4.1223
+   ],
+   "real_inside_sim_95pct_range": 0.9038461538461539,
+   "ks_stat": 0.09323076923076923
+  },
+  "baseflow_index": {
+   "real_q05_q50_q95": [
+    0.1383,
+    0.4287,
+    0.6154
+   ],
+   "sim_q05_q50_q95": [
+    0.0642,
+    0.2644,
+    0.5873
+   ],
+   "real_inside_sim_95pct_range": 0.9423076923076923,
+   "ks_stat": 0.40276923076923077
+  },
+  "q5": {
+   "real_q05_q50_q95": [
+    0.0,
+    0.09,
+    0.4475
+   ],
+   "sim_q05_q50_q95": [
+    0.0,
+    0.025,
+    0.5582
+   ],
+   "real_inside_sim_95pct_range": 0.7692307692307693,
+   "ks_stat": 0.3066153846153846
+  },
+  "q95": {
+   "real_q05_q50_q95": [
+    0.1165,
+    3.503,
+    15.1607
+   ],
+   "sim_q05_q50_q95": [
+    0.5378,
+    4.7479,
+    19.3938
+   ],
+   "real_inside_sim_95pct_range": 0.9230769230769231,
+   "ks_stat": 0.1501538461538462
+  },
+  "slope_fdc": {
+   "real_q05_q50_q95": [
+    1.3154,
+    2.8083,
+    5.9652
+   ],
+   "sim_q05_q50_q95": [
+    0.7919,
+    3.6275,
+    13.5973
+   ],
+   "real_inside_sim_95pct_range": 1.0,
+   "ks_stat": 0.2581276595744681
+  },
+  "high_q_freq": {
+   "real_q05_q50_q95": [
+    2.7771,
+    13.9968,
+    69.7619
+   ],
+   "sim_q05_q50_q95": [
+    3.8945,
+    34.4453,
+    121.8633
+   ],
+   "real_inside_sim_95pct_range": 0.9615384615384616,
+   "ks_stat": 0.30538461538461537
+  },
+  "low_q_freq": {
+   "real_q05_q50_q95": [
+    0.0,
+    89.8128,
+    257.8134
+   ],
+   "sim_q05_q50_q95": [
+    0.0,
+    150.2794,
+    286.2258
+   ],
+   "real_inside_sim_95pct_range": 0.9615384615384616,
+   "ks_stat": 0.24523076923076925
+  },
+  "hfd_mean": {
+   "real_q05_q50_q95": [
+    130.95,
+    174.8889,
+    250.4278
+   ],
+   "sim_q05_q50_q95": [
+    117.9222,
+    176.5,
+    242.3667
+   ],
+   "real_inside_sim_95pct_range": 0.9615384615384616,
+   "ks_stat": 0.14446153846153842
+  },
+  "flashiness": {
+   "real_q05_q50_q95": [
+    0.0872,
+    0.3089,
+    0.9524
+   ],
+   "sim_q05_q50_q95": [
+    0.1028,
+    0.3655,
+    1.011
+   ],
+   "real_inside_sim_95pct_range": 0.9038461538461539,
+   "ks_stat": 0.25953846153846155
+  },
+  "frac_snow": {
+   "real_q05_q50_q95": [
+    0.0,
+    0.0311,
+    0.5997
+   ],
+   "sim_q05_q50_q95": [
+    0.0004,
+    0.1873,
+    0.5831
+   ],
+   "real_inside_sim_95pct_range": 0.5,
+   "ks_stat": 0.472
+  },
+  "aridity": {
+   "real_q05_q50_q95": [
+    0.3925,
+    0.8671,
+    1.9746
+   ],
+   "sim_q05_q50_q95": [
+    0.4312,
+    1.1246,
+    2.4872
+   ],
+   "real_inside_sim_95pct_range": 0.9230769230769231,
+   "ks_stat": 0.2770769230769231
+  },
+  "multivariate_nn": {
+   "keys": [
+    "runoff_ratio",
+    "baseflow_index",
+    "slope_fdc",
+    "high_q_freq",
+    "low_q_freq",
+    "flashiness",
+    "q_mean"
+   ],
+   "median_real_to_sim_nn": 0.6429276747190661,
+   "median_sim_to_sim_nn": 0.6803526486966509,
+   "real_with_nn_beyond_sim_95pct": 0.06382978723404255
+  }
+ },
+ "camels_prior_real_forcing": {
+  "runoff_ratio": {
+   "real_q05_q50_q95": [
+    0.0268,
+    0.3683,
+    0.9771
+   ],
+   "sim_q05_q50_q95": [
+    0.0989,
+    0.4034,
+    0.8415
+   ],
+   "real_inside_sim_95pct_range": 0.8653846153846154,
+   "ks_stat": 0.09723076923076923
+  },
+  "q_mean": {
+   "real_q05_q50_q95": [
+    0.0538,
+    1.0461,
+    4.0572
+   ],
+   "sim_q05_q50_q95": [
+    0.1269,
+    1.1409,
+    4.4867
+   ],
+   "real_inside_sim_95pct_range": 0.8653846153846154,
+   "ks_stat": 0.09646153846153849
+  },
+  "baseflow_index": {
+   "real_q05_q50_q95": [
+    0.1383,
+    0.4287,
+    0.6154
+   ],
+   "sim_q05_q50_q95": [
+    0.0615,
+    0.3061,
+    0.6813
+   ],
+   "real_inside_sim_95pct_range": 0.9423076923076923,
+   "ks_stat": 0.3123076923076923
+  },
+  "q5": {
+   "real_q05_q50_q95": [
+    0.0,
+    0.09,
+    0.4475
+   ],
+   "sim_q05_q50_q95": [
+    0.0,
+    0.0393,
+    0.5985
+   ],
+   "real_inside_sim_95pct_range": 0.7692307692307693,
+   "ks_stat": 0.22261538461538455
+  },
+  "q95": {
+   "real_q05_q50_q95": [
+    0.1165,
+    3.503,
+    15.1607
+   ],
+   "sim_q05_q50_q95": [
+    0.4122,
+    4.2325,
+    15.8717
+   ],
+   "real_inside_sim_95pct_range": 0.8846153846153846,
+   "ks_stat": 0.148923076923077
+  },
+  "slope_fdc": {
+   "real_q05_q50_q95": [
+    1.3154,
+    2.8083,
+    5.9652
+   ],
+   "sim_q05_q50_q95": [
+    1.1715,
+    3.8463,
+    10.3408
+   ],
+   "real_inside_sim_95pct_range": 1.0,
+   "ks_stat": 0.28612765957446806
+  },
+  "high_q_freq": {
+   "real_q05_q50_q95": [
+    2.7771,
+    13.9968,
+    69.7619
+   ],
+   "sim_q05_q50_q95": [
+    0.3834,
+    26.4465,
+    105.2427
+   ],
+   "real_inside_sim_95pct_range": 0.9807692307692307,
+   "ks_stat": 0.23738461538461542
+  },
+  "low_q_freq": {
+   "real_q05_q50_q95": [
+    0.0,
+    89.8128,
+    257.8134
+   ],
+   "sim_q05_q50_q95": [
+    0.0,
+    131.4346,
+    259.8791
+   ],
+   "real_inside_sim_95pct_range": 0.9615384615384616,
+   "ks_stat": 0.2026153846153847
+  },
+  "hfd_mean": {
+   "real_q05_q50_q95": [
+    130.95,
+    174.8889,
+    250.4278
+   ],
+   "sim_q05_q50_q95": [
+    113.8938,
+    171.375,
+    262.4056
+   ],
+   "real_inside_sim_95pct_range": 0.9615384615384616,
+   "ks_stat": 0.186
+  },
+  "flashiness": {
+   "real_q05_q50_q95": [
+    0.0872,
+    0.3089,
+    0.9524
+   ],
+   "sim_q05_q50_q95": [
+    0.0983,
+    0.3196,
+    0.9536
+   ],
+   "real_inside_sim_95pct_range": 0.9038461538461539,
+   "ks_stat": 0.18353846153846154
+  },
+  "frac_snow": {
+   "real_q05_q50_q95": [
+    0.0,
+    0.0311,
+    0.5997
+   ],
+   "sim_q05_q50_q95": [
+    0.0,
+    0.0945,
+    0.6581
+   ],
+   "real_inside_sim_95pct_range": 1.0,
+   "ks_stat": 0.452
+  },
+  "aridity": {
+   "real_q05_q50_q95": [
+    0.3925,
+    0.8671,
+    1.9746
+   ],
+   "sim_q05_q50_q95": [
+    0.3453,
+    0.8588,
+    2.1356
+   ],
+   "real_inside_sim_95pct_range": 0.9615384615384616,
+   "ks_stat": 0.11307692307692307
+  },
+  "multivariate_nn": {
+   "keys": [
+    "runoff_ratio",
+    "baseflow_index",
+    "slope_fdc",
+    "high_q_freq",
+    "low_q_freq",
+    "flashiness",
+    "q_mean"
+   ],
+   "median_real_to_sim_nn": 0.5651296988593649,
+   "median_sim_to_sim_nn": 0.6250766139078713,
+   "real_with_nn_beyond_sim_95pct": 0.0425531914893617
+  }
+ },
+ "ledgers_ok": true,
+ "prior_notes": {
+  "area_km2": "lognormal, median 330 km2, sigma(ln) 1.2, clip 5-25000 (CAMELS-US spans 4-25,800 km2, median ~340)",
+  "lat/lon": "uniform over the contiguous US box (25-49 N, 124-68 W) for prior=\"default\"; \"global\" widens to 10-68 N/S",
+  "elev_mean_m": "lognormal, median 550 m, sigma 0.9, clip 10-3600",
+  "relief": "elev range = elev_mean (0.3-1.6) -> 5 equal-area bands",
+  "slope_mean": "lognormal, median 90 m/km, sigma ~0.95, correlated with elevation, clip 2-600 (HydroATLAS slp_dg_sav converted to m/km, as in B's specs: CAMELS-US dev median 118 m/km)",
+  "p_mean": "lognormal, median 2.9 mm/day, sigma 0.45, clip 0.4-10 (CAMELS-US 0.6-8.9)",
+  "climate": "T_ann = 27.5 - 0.0085 lat^2 - 6 z_km (+- 2 C; ~ zonal-mean sea-level temperature); P seasonality amplitude U(-0.6, 0.7)",
+  "forest_frac": "beta, mean rising with p_mean",
+  "soil": "depth U(0.4, 2.0) m; porosity N(0.44, 0.04); max_water_content = depth x porosity x U(0.4, 0.9)",
+  "geology_permeability": "N(-14, 1.2) log10 m2, clip -17..-10.5 (GLHYMPS range); carbonate 20 % of basins",
+  "human": "dams: 30 % of basins; reservoir storage 0.02-1.5 years of mean flow; irrigation in 25 %; urban small"
+ },
+ "wall_s": 67.23852515220642,
+ "generated": "2026-11-18 13:10 UTC",
+ "python": "3.13.18"
+}

@@ -1,0 +1,193 @@
+{
+ "what": "analytic and hand-calculation checks of WaterSim components",
+ "linear_reservoir": {
+  "hbv_lower_box": {
+   "K2_per_day": 0.05,
+   "max_abs_err_vs_discrete_mm": 4.440892098500626e-15,
+   "max_rel_err_storage_vs_continuous_exp(-kt)": 2.3903325926642174e-15,
+   "k_cont_per_day": 0.05129329438755058,
+   "recession_fit_k_daily": 0.95,
+   "expected_k_daily": 0.95,
+   "brutsaert_nieber_b": 1.0000000000000004,
+   "expected_b": 1.0,
+   "ledger_ok": true
+  },
+  "sacsma_primary_baseflow": {
+   "LZPK": 0.01,
+   "max_abs_err_mm": 1.9984014443252818e-15,
+   "note": "UH with shape 1, scale 0.01 d (= no delay); tension stores full so no resupply",
+   "ledger_ok": true
+  }
+ },
+ "unit_hydrograph": {
+  "gamma_step_response_vs_S_curve_max_abs": 6.45483666517066e-13,
+  "convolve_uh_vs_numpy_convolve_max_abs": 5.329070518200751e-15,
+  "nash_cascade_ode_vs_gamma_ordinates_max_abs": 1.7578344335689167e-10,
+  "hbv_triangle_maxbas3": [
+   0.2222222222222222,
+   0.5555555555555556,
+   0.2222222222222222
+  ],
+  "hbv_triangle_hand": [
+   0.2222222222222222,
+   0.5555555555555556,
+   0.2222222222222222
+  ],
+  "hbv_triangle_max_abs": 0.0,
+  "gr4j_uh_sums": [
+   1.0,
+   1.0
+  ]
+ },
+ "muskingum_X0_linear_reservoir": {
+  "K=2.0": {
+   "max_rel_err_vs_exact_ode": 0.001737424000652092,
+   "nse_vs_exact": 0.9999976206764776,
+   "mass_residual_rel": 2.566510347525225e-17
+  },
+  "K=0.5": {
+   "max_rel_err_vs_exact_ode": 0.0005340973561674731,
+   "nse_vs_exact": 0.9999998691065847,
+   "mass_residual_rel": -1.2720964331211984e-16
+  },
+  "K=5.0": {
+   "max_rel_err_vs_exact_ode": 0.0008954367969623084,
+   "nse_vs_exact": 0.9999996103653688,
+   "mass_residual_rel": -1.8300334651918996e-16
+  }
+ },
+ "muskingum_coefficients_K2_X0.2_dt1": {
+  "C0": 0.04761904761904761,
+  "C1": 0.42857142857142855,
+  "C2": 0.5238095238095238,
+  "sum": 1.0,
+  "hand": {
+   "C0": 0.04761904761904761,
+   "C1": 0.42857142857142855,
+   "C2": 0.5238095238095238
+  }
+ },
+ "muskingum_cunge_vs_diffusion_wave": {
+  "case": "wide channel B=50.0 m, S0=0.0005, n=0.035, L=300.0 km, reference Q=200.0 m3/s -> c=2.218 m/s, D=4000 m2/s; Gaussian inflow 50 + 400 exp(-(t-8)^2/(2 1.5^2)) m3/s sampled daily; analytic = Hayami kernel convolution of the same (linearly interpolated) inflow",
+  "peak_analytic": 415.19065746037484,
+  "peak_mc": 415.0412192959377,
+  "peak_rel_err": -0.00035992660661299247,
+  "peak_day_analytic": 10,
+  "peak_day_mc": 10,
+  "nse_mc_vs_analytic": 0.999999758193681,
+  "mass_residual_rel": -4.3653663062923375e-17,
+  "variable_parameter_peak": 434.17649848059466
+ },
+ "kinematic_wave_rising_limb": {
+  "case": "L=20.0 km, B=20.0 m, S0=0.001, n=0.035, uniform lateral inflow to Q_eq=50.0 m3/s from a dry channel; analytic Q(L,t) = (q t / a)^(1/0.6) for t < t_e = 4.09 h",
+  "nse_vs_analytic": 0.9997581436405976,
+  "rel_err_at_half_te": 0.006811972299509472,
+  "equilibrium_rel_err": -1.3322676295501878e-15,
+  "mass_residual_rel": 1.1459756731096774e-15
+ },
+ "degree_day_by_hand": {
+  "steps": "TT=0, TTI=0, CFMAX=3, SFCF=1.1, CFR=0.05, CWH=0.1. d1 P10 T-5: snow 11. d2 T+2: melt 6, hold 0.5, out 5.5. d3 P4 T+1: melt 3, +rain 4, hold 0.2, out 7.3. d4 T-2: refreeze min(0.3, 0.2)=0.2. d5 T+5: melt all 2.2, out 2.2",
+  "hand_SWE": [
+   11.0,
+   5.5,
+   2.2,
+   2.2,
+   0.0
+  ],
+  "sim_SWE": [
+   11.0,
+   5.5,
+   2.2,
+   2.2,
+   0.0
+  ],
+  "hand_outflow": [
+   0.0,
+   5.5,
+   7.3,
+   0.0,
+   2.2
+  ],
+  "sim_outflow": [
+   0.0,
+   5.5,
+   7.3,
+   0.0,
+   2.2
+  ],
+  "max_abs_err": 0.0,
+  "ledger_ok": true
+ },
+ "energy_balance_by_hand": {
+  "case": "ice 100 mm, T=0 C, Rs=20 MJ/m2/d, ea=0.5 kPa, u10=2 m/s, Rso=25, P=90 kPa, default EB parameters",
+  "terms_hand_MJ": {
+   "SW": 3.016544239417418,
+   "LWin": 20.48575832424174,
+   "LWout": 26.748090771640946,
+   "H": 0.0,
+   "LE": -1.2341619957629555,
+   "G": 0.173,
+   "Q": -4.306950203744744
+  },
+  "Q_sim_MJ": -4.306950203744744,
+  "Q_rel_err": 0.0,
+  "melt_sim_mm": 0.0,
+  "melt_hand_mm": 0.0,
+  "sublimation_sim_mm": 0.43533050996929645,
+  "sublimation_hand_mm": 0.43533050996929645,
+  "mass_closure_mm": -6.106226635438361e-15
+ },
+ "pet_fao56": {
+  "example8_Ra_20S_3Sep": {
+   "published": 32.2,
+   "sim": 32.193995875112726,
+   "abs_err": 0.006004124887276419
+  },
+  "example18_Brussels_6Jul": {
+   "published_ET0_mm": 3.9,
+   "sim_ET0_mm": 3.879506166923254,
+   "published_Ra": 41.09,
+   "sim_Ra": 41.08837556354228,
+   "published_Rn": 13.28,
+   "sim_Rn": 13.282620784912385,
+   "inputs": "lat 50.8N, z 100 m, Tmax 21.5, Tmin 12.3, ea 1.409 kPa, u2 2.078 m/s, Rs 22.07 MJ/m2/d (from n = 9.25 h)"
+  },
+  "hargreaves_vs_pm_same_day": 4.058171151565929,
+  "priestley_taylor_same_day": 4.4206792821542775
+ },
+ "reservoir": {
+  "area_vs_dV_dh_max_rel_err": 5.979908507322028e-11,
+  "mass_balance_residual_hm3": 1.4210854715202004e-11,
+  "storage_range_hm3": [
+   249.1044119991073,
+   500.0
+  ],
+  "sop_demand_met_frac": 1.0,
+  "hydropower_hand": {
+   "case": "100 hm3, depth 40 m, release 100 m3/s at constant level",
+   "head_m": 34.681606575244935,
+   "sim_MW": 29.92971318665906,
+   "hand_MW": 29.92971318665906
+  },
+  "weir_steady_state": {
+   "inflow_m3s": 80.0,
+   "spill_after_60d_m3s": 79.99999999999729,
+   "surcharge_m": 1.1150442859985987,
+   "hand_head_m": 1.1726442859986244,
+   "note": "end-of-day level sits one hourly substep of inflow (80 m3/s x 1 h / 5 km2 = 0.058 m) below the head that passes the inflow (explicit hourly weir substeps)"
+  }
+ },
+ "pass": {
+  "linear_reservoir": true,
+  "unit_hydrograph": true,
+  "muskingum_X0": true,
+  "muskingum_cunge": true,
+  "kinematic": true,
+  "degree_day": true,
+  "energy_balance": true,
+  "pet": true,
+  "reservoir": true
+ },
+ "generated": "2026-11-18 13:30 UTC",
+ "python": "3.13.18"
+}

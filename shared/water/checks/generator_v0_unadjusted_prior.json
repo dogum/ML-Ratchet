@@ -1,0 +1,391 @@
+{
+ "what": "Generator realism: do randomly generated basins produce streamflow signatures that cover the real DEV basins?",
+ "n_real_dev": 52,
+ "n_sim_default": 250,
+ "n_sim_camels_prior": 250,
+ "default_prior_weather_generator": {
+  "runoff_ratio": {
+   "real_q05_q50_q95": [
+    0.0268,
+    0.3683,
+    0.9771
+   ],
+   "sim_q05_q50_q95": [
+    0.0785,
+    0.423,
+    0.7473
+   ],
+   "real_inside_sim_95pct_range": 0.7884615384615384,
+   "ks_stat": 0.10661538461538456
+  },
+  "q_mean": {
+   "real_q05_q50_q95": [
+    0.0538,
+    1.0461,
+    4.0572
+   ],
+   "sim_q05_q50_q95": [
+    0.134,
+    1.158,
+    4.3885
+   ],
+   "real_inside_sim_95pct_range": 0.8846153846153846,
+   "ks_stat": 0.12046153846153851
+  },
+  "baseflow_index": {
+   "real_q05_q50_q95": [
+    0.1383,
+    0.4287,
+    0.6154
+   ],
+   "sim_q05_q50_q95": [
+    0.2326,
+    0.4692,
+    0.7369
+   ],
+   "real_inside_sim_95pct_range": 0.8461538461538461,
+   "ks_stat": 0.1876923076923077
+  },
+  "q5": {
+   "real_q05_q50_q95": [
+    0.0,
+    0.09,
+    0.4475
+   ],
+   "sim_q05_q50_q95": [
+    0.0005,
+    0.112,
+    0.7048
+   ],
+   "real_inside_sim_95pct_range": 0.7692307692307693,
+   "ks_stat": 0.20753846153846156
+  },
+  "q95": {
+   "real_q05_q50_q95": [
+    0.1165,
+    3.503,
+    15.1607
+   ],
+   "sim_q05_q50_q95": [
+    0.4541,
+    4.4498,
+    19.4335
+   ],
+   "real_inside_sim_95pct_range": 0.9038461538461539,
+   "ks_stat": 0.144923076923077
+  },
+  "slope_fdc": {
+   "real_q05_q50_q95": [
+    1.3154,
+    2.8083,
+    5.9652
+   ],
+   "sim_q05_q50_q95": [
+    0.4583,
+    2.3968,
+    6.576
+   ],
+   "real_inside_sim_95pct_range": 1.0,
+   "ks_stat": 0.19685106382978723
+  },
+  "high_q_freq": {
+   "real_q05_q50_q95": [
+    2.7771,
+    13.9968,
+    69.7619
+   ],
+   "sim_q05_q50_q95": [
+    0.045,
+    16.4477,
+    82.9386
+   ],
+   "real_inside_sim_95pct_range": 0.9807692307692307,
+   "ks_stat": 0.14553846153846153
+  },
+  "low_q_freq": {
+   "real_q05_q50_q95": [
+    0.0,
+    89.8128,
+    257.8134
+   ],
+   "sim_q05_q50_q95": [
+    0.0,
+    71.0403,
+    229.2536
+   ],
+   "real_inside_sim_95pct_range": 0.9230769230769231,
+   "ks_stat": 0.18384615384615388
+  },
+  "hfd_mean": {
+   "real_q05_q50_q95": [
+    130.95,
+    174.8889,
+    250.4278
+   ],
+   "sim_q05_q50_q95": [
+    143.9389,
+    205.0,
+    264.0833
+   ],
+   "real_inside_sim_95pct_range": 0.9230769230769231,
+   "ks_stat": 0.36907692307692314
+  },
+  "flashiness": {
+   "real_q05_q50_q95": [
+    0.0872,
+    0.3089,
+    0.9524
+   ],
+   "sim_q05_q50_q95": [
+    0.0543,
+    0.144,
+    0.3471
+   ],
+   "real_inside_sim_95pct_range": 0.8076923076923077,
+   "ks_stat": 0.5403076923076923
+  },
+  "frac_snow": {
+   "real_q05_q50_q95": [
+    0.0,
+    0.0311,
+    0.5997
+   ],
+   "sim_q05_q50_q95": [
+    0.0455,
+    0.3217,
+    0.6782
+   ],
+   "real_inside_sim_95pct_range": 0.5,
+   "ks_stat": 0.5
+  },
+  "aridity": {
+   "real_q05_q50_q95": [
+    0.3925,
+    0.8671,
+    1.9746
+   ],
+   "sim_q05_q50_q95": [
+    0.3808,
+    0.9199,
+    2.2696
+   ],
+   "real_inside_sim_95pct_range": 0.9423076923076923,
+   "ks_stat": 0.15784615384615386
+  },
+  "multivariate_nn": {
+   "keys": [
+    "runoff_ratio",
+    "baseflow_index",
+    "slope_fdc",
+    "high_q_freq",
+    "low_q_freq",
+    "flashiness",
+    "q_mean"
+   ],
+   "median_real_to_sim_nn": 1.0322147538185384,
+   "median_sim_to_sim_nn": 0.6580700034201108,
+   "real_with_nn_beyond_sim_95pct": 0.10638297872340426
+  }
+ },
+ "camels_prior_real_forcing": {
+  "runoff_ratio": {
+   "real_q05_q50_q95": [
+    0.0268,
+    0.3683,
+    0.9771
+   ],
+   "sim_q05_q50_q95": [
+    0.1126,
+    0.42,
+    0.7978
+   ],
+   "real_inside_sim_95pct_range": 0.8076923076923077,
+   "ks_stat": 0.11446153846153856
+  },
+  "q_mean": {
+   "real_q05_q50_q95": [
+    0.0538,
+    1.0461,
+    4.0572
+   ],
+   "sim_q05_q50_q95": [
+    0.1928,
+    1.1482,
+    4.5145
+   ],
+   "real_inside_sim_95pct_range": 0.8653846153846154,
+   "ks_stat": 0.10523076923076927
+  },
+  "baseflow_index": {
+   "real_q05_q50_q95": [
+    0.1383,
+    0.4287,
+    0.6154
+   ],
+   "sim_q05_q50_q95": [
+    0.2561,
+    0.5308,
+    0.7631
+   ],
+   "real_inside_sim_95pct_range": 0.8269230769230769,
+   "ks_stat": 0.3323076923076923
+  },
+  "q5": {
+   "real_q05_q50_q95": [
+    0.0,
+    0.09,
+    0.4475
+   ],
+   "sim_q05_q50_q95": [
+    0.0042,
+    0.1818,
+    0.8772
+   ],
+   "real_inside_sim_95pct_range": 0.7692307692307693,
+   "ks_stat": 0.23615384615384616
+  },
+  "q95": {
+   "real_q05_q50_q95": [
+    0.1165,
+    3.503,
+    15.1607
+   ],
+   "sim_q05_q50_q95": [
+    0.5996,
+    3.5931,
+    13.4044
+   ],
+   "real_inside_sim_95pct_range": 0.8269230769230769,
+   "ks_stat": 0.10261538461538464
+  },
+  "slope_fdc": {
+   "real_q05_q50_q95": [
+    1.3154,
+    2.8083,
+    5.9652
+   ],
+   "sim_q05_q50_q95": [
+    0.9238,
+    2.4037,
+    6.1875
+   ],
+   "real_inside_sim_95pct_range": 0.9787234042553191,
+   "ks_stat": 0.20102127659574465
+  },
+  "high_q_freq": {
+   "real_q05_q50_q95": [
+    2.7771,
+    13.9968,
+    69.7619
+   ],
+   "sim_q05_q50_q95": [
+    0.0,
+    6.0005,
+    59.6212
+   ],
+   "real_inside_sim_95pct_range": 0.9423076923076923,
+   "ks_stat": 0.34861538461538466
+  },
+  "low_q_freq": {
+   "real_q05_q50_q95": [
+    0.0,
+    89.8128,
+    257.8134
+   ],
+   "sim_q05_q50_q95": [
+    0.0,
+    38.7192,
+    185.633
+   ],
+   "real_inside_sim_95pct_range": 0.8653846153846154,
+   "ks_stat": 0.2836923076923077
+  },
+  "hfd_mean": {
+   "real_q05_q50_q95": [
+    130.95,
+    174.8889,
+    250.4278
+   ],
+   "sim_q05_q50_q95": [
+    129.1063,
+    184.5417,
+    269.325
+   ],
+   "real_inside_sim_95pct_range": 0.9423076923076923,
+   "ks_stat": 0.15784615384615386
+  },
+  "flashiness": {
+   "real_q05_q50_q95": [
+    0.0872,
+    0.3089,
+    0.9524
+   ],
+   "sim_q05_q50_q95": [
+    0.0497,
+    0.1483,
+    0.4189
+   ],
+   "real_inside_sim_95pct_range": 0.8269230769230769,
+   "ks_stat": 0.5275384615384615
+  },
+  "frac_snow": {
+   "real_q05_q50_q95": [
+    0.0,
+    0.0311,
+    0.5997
+   ],
+   "sim_q05_q50_q95": [
+    0.0001,
+    0.1158,
+    0.6743
+   ],
+   "real_inside_sim_95pct_range": 1.0,
+   "ks_stat": 0.46399999999999997
+  },
+  "aridity": {
+   "real_q05_q50_q95": [
+    0.3925,
+    0.8671,
+    1.9746
+   ],
+   "sim_q05_q50_q95": [
+    0.3277,
+    0.8269,
+    1.8906
+   ],
+   "real_inside_sim_95pct_range": 0.9615384615384616,
+   "ks_stat": 0.1410769230769231
+  },
+  "multivariate_nn": {
+   "keys": [
+    "runoff_ratio",
+    "baseflow_index",
+    "slope_fdc",
+    "high_q_freq",
+    "low_q_freq",
+    "flashiness",
+    "q_mean"
+   ],
+   "median_real_to_sim_nn": 0.92642559712267,
+   "median_sim_to_sim_nn": 0.6175009272572765,
+   "real_with_nn_beyond_sim_95pct": 0.19148936170212766
+  }
+ },
+ "ledgers_ok": true,
+ "prior_notes": {
+  "area_km2": "lognormal, median 330 km2, sigma(ln) 1.2, clip 5-25000 (CAMELS-US spans 4-25,800 km2, median ~340)",
+  "lat/lon": "uniform over the contiguous US box (25-49 N, 124-68 W) for prior=\"default\"; \"global\" widens to 10-68 N/S",
+  "elev_mean_m": "lognormal, median 550 m, sigma 0.9, clip 10-3600",
+  "relief": "elev range = elev_mean (0.3-1.6) -> 5 equal-area bands",
+  "slope_mean": "lognormal, median 90 m/km, sigma ~0.95, correlated with elevation, clip 2-600 (HydroATLAS slp_dg_sav converted to m/km, as in B's specs: CAMELS-US dev median 118 m/km)",
+  "p_mean": "lognormal, median 2.9 mm/day, sigma 0.45, clip 0.4-10 (CAMELS-US 0.6-8.9)",
+  "climate": "T_ann from latitude and elevation lapse (+-2.5 C); seasonality amplitude U(-0.6, 0.7)",
+  "forest_frac": "beta, mean rising with p_mean",
+  "soil": "depth U(0.4, 2.0) m; porosity N(0.44, 0.04); max_water_content = depth x porosity x U(0.4, 0.9)",
+  "geology_permeability": "N(-14, 1.2) log10 m2, clip -17..-10.5 (GLHYMPS range); carbonate 20 % of basins",
+  "human": "dams: 30 % of basins; reservoir storage 0.02-1.5 years of mean flow; irrigation in 25 %; urban small"
+ },
+ "wall_s": 83.10111379623413,
+ "generated": "2026-11-18 12:56 UTC",
+ "python": "3.13.18"
+}

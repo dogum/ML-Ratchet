@@ -1,0 +1,568 @@
+{
+ "what": "Reservoir module on B's DEV reservoirs (ResOpsUS, splits['reservoirs']['dev'], 15 dams; dev time is free):",
+ "n_reservoirs": 15,
+ "summary_median_n": {
+  "replay_end_of_year_err_frac_cap": [
+   0.05215919390320778,
+   15
+  ],
+  "geometry_b": [
+   2.500770423480718,
+   11
+  ],
+  "geometry_r2": [
+   0.9993429945484821,
+   11
+  ],
+  "sop": {
+   "NSE_release": [
+    0.20211413545436974,
+    15
+   ],
+   "NSE_storage": [
+    -4.280070728397946,
+    15
+   ],
+   "KGE_release": [
+    0.34675215263770165,
+    15
+   ]
+  },
+  "rule_curve": {
+   "NSE_release": [
+    0.33230717660720865,
+    15
+   ],
+   "NSE_storage": [
+    0.12914019666827903,
+    15
+   ],
+   "KGE_release": [
+    0.4562291552602753,
+    15
+   ]
+  },
+  "hanasaki": {
+   "NSE_release": [
+    0.26672823345446495,
+    15
+   ],
+   "NSE_storage": [
+    -0.8973508234427181,
+    15
+   ],
+   "KGE_release": [
+    0.46595166674039235,
+    15
+   ]
+  },
+  "inflow_as_release": {
+   "NSE_release": [
+    -0.4896773250588011,
+    15
+   ],
+   "NSE_storage": [
+    null,
+    0
+   ],
+   "KGE_release": [
+    null,
+    0
+   ]
+  }
+ },
+ "reservoirs": [
+  {
+   "res_id": "grand_1078",
+   "name": "Dardanelle Lock and Dam",
+   "main_use": "navi",
+   "cap_hm3": 599.7,
+   "mb_rel_resid_B": 0.05134572461247444,
+   "geometry": {
+    "b": 3.1363797285897896,
+    "H_m": 13.88804039138123,
+    "r2": 0.9999589565898952
+   },
+   "replay_end_of_year_abs_err_frac_cap_median": 0.06387090682983398,
+   "policies": {
+    "sop": {
+     "NSE_release": 0.9319666543662488,
+     "NSE_storage": -966.8182147546046,
+     "KGE_release": 0.9483679602289401
+    },
+    "rule_curve": {
+     "NSE_release": 0.9333266885770406,
+     "NSE_storage": -924.6293024727474,
+     "KGE_release": 0.9497782215518553
+    },
+    "hanasaki": {
+     "NSE_release": 0.9923681470938257,
+     "NSE_storage": -5.834172723832217,
+     "KGE_release": 0.9928441435853406
+    },
+    "inflow_as_release": {
+     "NSE_release": 0.9923349246563129
+    }
+   },
+   "n_days": 9861
+  },
+  {
+   "res_id": "grand_113",
+   "name": "Hyatt Dam",
+   "main_use": "irri",
+   "cap_hm3": 20.0,
+   "mb_rel_resid_B": 0.00720067135989666,
+   "replay_end_of_year_abs_err_frac_cap_median": 0.09379376471042633,
+   "policies": {
+    "sop": {
+     "NSE_release": 0.20211413545436974,
+     "NSE_storage": -0.38745550776126825,
+     "KGE_release": 0.2865529456237913
+    },
+    "rule_curve": {
+     "NSE_release": -0.08422620110925827,
+     "NSE_storage": 0.10810526283923028,
+     "KGE_release": 0.21475394534926373
+    },
+    "hanasaki": {
+     "NSE_release": 0.1167093016115488,
+     "NSE_storage": -0.7929884007232493,
+     "KGE_release": 0.3833874215692539
+    },
+    "inflow_as_release": {
+     "NSE_release": -1.4870467336838193
+    }
+   },
+   "n_days": 7043
+  },
+  {
+   "res_id": "grand_1249",
+   "name": "Hords Creek Dam",
+   "main_use": "recr",
+   "cap_hm3": 60.8,
+   "mb_rel_resid_B": 1.9166624546051025,
+   "geometry": {
+    "b": 4.957424483472047,
+    "H_m": 34.56554510636952,
+    "r2": 0.9998511571453074
+   },
+   "replay_end_of_year_abs_err_frac_cap_median": 0.05215919390320778,
+   "policies": {
+    "sop": {
+     "NSE_release": -3.3649074694017127,
+     "NSE_storage": -466.77441699662603,
+     "KGE_release": -1.3774999548024893
+    },
+    "rule_curve": {
+     "NSE_release": 0.12957984258711275,
+     "NSE_storage": 0.20837352849760615,
+     "KGE_release": -1.6366814477999805
+    },
+    "hanasaki": {
+     "NSE_release": 0.03600545429614799,
+     "NSE_storage": -288.43349148898585,
+     "KGE_release": -1.3087526974054446
+    },
+    "inflow_as_release": {
+     "NSE_release": -7.026448680671679
+    }
+   },
+   "n_days": 26169
+  },
+  {
+   "res_id": "grand_131",
+   "name": "Trinity",
+   "main_use": "irri",
+   "cap_hm3": 3405.5,
+   "mb_rel_resid_B": 0.046605050563812256,
+   "replay_end_of_year_abs_err_frac_cap_median": 0.018014144152402878,
+   "policies": {
+    "sop": {
+     "NSE_release": -0.085421378449412,
+     "NSE_storage": -0.4294052697487345,
+     "KGE_release": 0.26380732753422065
+    },
+    "rule_curve": {
+     "NSE_release": -0.009172268718963483,
+     "NSE_storage": 0.268490109431034,
+     "KGE_release": 0.4562291552602753
+    },
+    "hanasaki": {
+     "NSE_release": -0.2853342452430092,
+     "NSE_storage": 0.12895618678644294,
+     "KGE_release": 0.34739292647295816
+    },
+    "inflow_as_release": {
+     "NSE_release": -3.30225381056602
+    }
+   },
+   "n_days": 19762
+  },
+  {
+   "res_id": "grand_1776",
+   "name": "W. Kerr Scott Dam",
+   "main_use": "supp",
+   "cap_hm3": 377.4,
+   "mb_rel_resid_B": 0.056800272315740585,
+   "geometry": {
+    "b": 2.008508885651374,
+    "H_m": 41.64345569527713,
+    "r2": 0.7940707273756209
+   },
+   "replay_end_of_year_abs_err_frac_cap_median": 0.0002872141485568136,
+   "policies": {
+    "sop": {
+     "NSE_release": -0.06287388367046742,
+     "NSE_storage": -1772.640194754736,
+     "KGE_release": 0.22895114463329846
+    },
+    "rule_curve": {
+     "NSE_release": 0.33230717660720865,
+     "NSE_storage": -17.931615640032337,
+     "KGE_release": 0.35571692294117685
+    },
+    "hanasaki": {
+     "NSE_release": -0.13516839347500964,
+     "NSE_storage": -2769.643199198726,
+     "KGE_release": 0.2844914900054404
+    },
+    "inflow_as_release": {
+     "NSE_release": -0.47084370739408876
+    }
+   },
+   "n_days": 21093
+  },
+  {
+   "res_id": "grand_1851",
+   "name": "Hartwell Dam",
+   "main_use": "elec",
+   "cap_hm3": 4241.6,
+   "mb_rel_resid_B": 0.40623632073402405,
+   "geometry": {
+    "b": 5.999999999999999,
+    "H_m": 87.67983532361632,
+    "r2": 0.9999940680571421
+   },
+   "replay_end_of_year_abs_err_frac_cap_median": 0.007445724681019783,
+   "policies": {
+    "sop": {
+     "NSE_release": -0.0877281887640915,
+     "NSE_storage": -28.615421745514457,
+     "KGE_release": 0.07266174781208756
+    },
+    "rule_curve": {
+     "NSE_release": 0.21539804153617614,
+     "NSE_storage": 0.5255960812035175,
+     "KGE_release": 0.2542999382031156
+    },
+    "hanasaki": {
+     "NSE_release": -0.07084104415418402,
+     "NSE_storage": -6.443771968779784,
+     "KGE_release": 0.16558038331442027
+    },
+    "inflow_as_release": {
+     "NSE_release": -0.8220395160232352
+    }
+   },
+   "n_days": 21226
+  },
+  {
+   "res_id": "grand_382",
+   "name": "Bully Creek",
+   "main_use": "irri",
+   "cap_hm3": 37.0,
+   "mb_rel_resid_B": 0.22129231691360474,
+   "replay_end_of_year_abs_err_frac_cap_median": 0.3300357460975647,
+   "policies": {
+    "sop": {
+     "NSE_release": 0.6229360052893171,
+     "NSE_storage": 0.13440859727995125,
+     "KGE_release": 0.5098703631795878
+    },
+    "rule_curve": {
+     "NSE_release": 0.6495771821913718,
+     "NSE_storage": 0.4495075567938239,
+     "KGE_release": 0.5029102339727713
+    },
+    "hanasaki": {
+     "NSE_release": 0.6842775660664449,
+     "NSE_storage": -0.32422828290895866,
+     "KGE_release": 0.5253336162198878
+    },
+    "inflow_as_release": {
+     "NSE_release": 0.3576790953355352
+    }
+   },
+   "n_days": 12616
+  },
+  {
+   "res_id": "grand_393",
+   "name": "Boysen",
+   "main_use": "fcon",
+   "cap_hm3": 1174.8,
+   "mb_rel_resid_B": 0.04494618996977806,
+   "geometry": {
+    "b": 2.911331565393424,
+    "H_m": 37.65167046271557,
+    "r2": 0.951026833141449
+   },
+   "replay_end_of_year_abs_err_frac_cap_median": 2.2080303097027354e-06,
+   "policies": {
+    "sop": {
+     "NSE_release": 0.16891928378278886,
+     "NSE_storage": -4.280070728397946,
+     "KGE_release": 0.49377484897638346
+    },
+    "rule_curve": {
+     "NSE_release": 0.19421292287293634,
+     "NSE_storage": 0.19133993999346344,
+     "KGE_release": 0.6197112645406547
+    },
+    "hanasaki": {
+     "NSE_release": 0.35567552916905265,
+     "NSE_storage": -0.14099194796429182,
+     "KGE_release": 0.6656995804776559
+    },
+    "inflow_as_release": {
+     "NSE_release": -0.4896773250588011
+    }
+   },
+   "n_days": 25055
+  },
+  {
+   "res_id": "grand_469",
+   "name": "Red Fleet",
+   "main_use": "irri",
+   "cap_hm3": 32.1,
+   "mb_rel_resid_B": 0.05506834387779236,
+   "geometry": {
+    "b": 2.256788410904556,
+    "H_m": 35.59594013873923,
+    "r2": 0.9999425986530669
+   },
+   "replay_end_of_year_abs_err_frac_cap_median": 0.010853631421923637,
+   "policies": {
+    "sop": {
+     "NSE_release": 0.24263668489089596,
+     "NSE_storage": -2.220815198247794,
+     "KGE_release": 0.34675215263770165
+    },
+    "rule_curve": {
+     "NSE_release": 0.4158365671350258,
+     "NSE_storage": 0.114713226266147,
+     "KGE_release": 0.7142056858131713
+    },
+    "hanasaki": {
+     "NSE_release": 0.26672823345446495,
+     "NSE_storage": 0.15071710517071524,
+     "KGE_release": 0.46595166674039235
+    },
+    "inflow_as_release": {
+     "NSE_release": 0.25673055074116924
+    }
+   },
+   "n_days": 11833
+  },
+  {
+   "res_id": "grand_522",
+   "name": "Cheesman",
+   "main_use": "supp",
+   "cap_hm3": 107.6,
+   "mb_rel_resid_B": 0.12938037514686584,
+   "geometry": {
+    "b": 2.500770423480718,
+    "H_m": 71.82934023798194,
+    "r2": 0.9930371496918278
+   },
+   "replay_end_of_year_abs_err_frac_cap_median": 0.00068714190274477,
+   "policies": {
+    "sop": {
+     "NSE_release": 0.4273326851387962,
+     "NSE_storage": -3.2463002759053063,
+     "KGE_release": 0.5058246588958752
+    },
+    "rule_curve": {
+     "NSE_release": 0.628181956027628,
+     "NSE_storage": 0.12914019666827903,
+     "KGE_release": 0.7454345701659931
+    },
+    "hanasaki": {
+     "NSE_release": 0.4074565941820406,
+     "NSE_storage": -0.8973508234427181,
+     "KGE_release": 0.5372639652168616
+    },
+    "inflow_as_release": {
+     "NSE_release": 0.6785491144046796
+    }
+   },
+   "n_days": 23180
+  },
+  {
+   "res_id": "grand_585",
+   "name": "Buchanan Dam",
+   "main_use": "fcon",
+   "cap_hm3": 185.0,
+   "mb_rel_resid_B": 0.11665951460599899,
+   "replay_end_of_year_abs_err_frac_cap_median": 0.04784486070275307,
+   "policies": {
+    "sop": {
+     "NSE_release": 0.24417581384525522,
+     "NSE_storage": 0.6052583152639546,
+     "KGE_release": 0.5119796452868897
+    },
+    "rule_curve": {
+     "NSE_release": 0.2750920489019363,
+     "NSE_storage": 0.3753313882790714,
+     "KGE_release": 0.41563744678397474
+    },
+    "hanasaki": {
+     "NSE_release": 0.34603122450731216,
+     "NSE_storage": 0.5005233578240977,
+     "KGE_release": 0.6495358365968888
+    },
+    "inflow_as_release": {
+     "NSE_release": -0.7170902664796228
+    }
+   },
+   "n_days": 9479
+  },
+  {
+   "res_id": "grand_895",
+   "name": "Gavins Point Dam",
+   "main_use": "fcon",
+   "cap_hm3": 666.1,
+   "mb_rel_resid_B": 0.14716392755508423,
+   "geometry": {
+    "b": 1.9399687586339311,
+    "H_m": 5.336687520216594,
+    "r2": 0.5109813487059177
+   },
+   "replay_end_of_year_abs_err_frac_cap_median": 0.16098609566688538,
+   "policies": {
+    "sop": {
+     "NSE_release": 0.9423299681078132,
+     "NSE_storage": -45.86199861883636,
+     "KGE_release": 0.9699286280996837
+    },
+    "rule_curve": {
+     "NSE_release": 0.9448980367683484,
+     "NSE_storage": -36.388440633845626,
+     "KGE_release": 0.9704534916387721
+    },
+    "hanasaki": {
+     "NSE_release": 0.9728328084649135,
+     "NSE_storage": -3.367141087889279,
+     "KGE_release": 0.9789662253174101
+    },
+    "inflow_as_release": {
+     "NSE_release": 0.9726450864423724
+    }
+   },
+   "n_days": 19394
+  },
+  {
+   "res_id": "grand_920",
+   "name": "Jeffrey Reg Dam",
+   "main_use": "elec",
+   "cap_hm3": 26.0,
+   "mb_rel_resid_B": 1.7569878101348877,
+   "geometry": {
+    "b": 1.3576421126789826,
+    "H_m": 11.311789508784784,
+    "r2": 0.9993429945484821
+   },
+   "replay_end_of_year_abs_err_frac_cap_median": 0.7411154508590698,
+   "policies": {
+    "sop": {
+     "NSE_release": 0.8554035293041852,
+     "NSE_storage": -301.5212421979495,
+     "KGE_release": 0.9082089328103227
+    },
+    "rule_curve": {
+     "NSE_release": 0.8453482914354989,
+     "NSE_storage": -252.38243921619522,
+     "KGE_release": 0.9023993795998376
+    },
+    "hanasaki": {
+     "NSE_release": 0.9790557549827773,
+     "NSE_storage": -325.64989639977887,
+     "KGE_release": 0.978878574453107
+    },
+    "inflow_as_release": {
+     "NSE_release": 0.9789490045180691
+    }
+   },
+   "n_days": 28273
+  },
+  {
+   "res_id": "grand_958",
+   "name": "Bonny",
+   "main_use": "fcon",
+   "cap_hm3": 48.4,
+   "mb_rel_resid_B": 0.03401602804660797,
+   "geometry": {
+    "b": 1.5147527596801846,
+    "H_m": 12.520916346625956,
+    "r2": 0.9947352527896303
+   },
+   "replay_end_of_year_abs_err_frac_cap_median": 0.06677450239658356,
+   "policies": {
+    "sop": {
+     "NSE_release": -8.348912420446474,
+     "NSE_storage": -0.14904644924443078,
+     "KGE_release": -1.218805939446916
+    },
+    "rule_curve": {
+     "NSE_release": 0.1698520149233308,
+     "NSE_storage": 0.1279901777179664,
+     "KGE_release": 0.4312802532612223
+    },
+    "hanasaki": {
+     "NSE_release": -8.332776200377486,
+     "NSE_storage": -0.8145728474838665,
+     "KGE_release": -1.2136907466949478
+    },
+    "inflow_as_release": {
+     "NSE_release": -20.660320328176343
+    }
+   },
+   "n_days": 24928
+  },
+  {
+   "res_id": "grand_982",
+   "name": "Melvern Dam",
+   "main_use": "fcon",
+   "cap_hm3": 447.8,
+   "mb_rel_resid_B": 0.2272823005914688,
+   "geometry": {
+    "b": 3.9413940417697924,
+    "H_m": 31.59082120514903,
+    "r2": 0.9993855281670422
+   },
+   "replay_end_of_year_abs_err_frac_cap_median": 0.06645325571298599,
+   "policies": {
+    "sop": {
+     "NSE_release": -1.3810785450957686,
+     "NSE_storage": -10.581965265954368,
+     "KGE_release": -0.01332016345946374
+    },
+    "rule_curve": {
+     "NSE_release": 0.3453225398888309,
+     "NSE_storage": 0.4429671787902296,
+     "KGE_release": 0.40990306734437887
+    },
+    "hanasaki": {
+     "NSE_release": -1.1941099578804306,
+     "NSE_storage": -9.683941686286548,
+     "KGE_release": -0.0004796008672738328
+    },
+    "inflow_as_release": {
+     "NSE_release": -4.039643465947899
+    }
+   },
+   "n_days": 16162
+  }
+ ],
+ "generated": "2026-11-18 13:21 UTC",
+ "python": "3.13.18"
+}

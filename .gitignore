@@ -76,3 +76,19 @@ shared/building/buildingsim/refdata/
 shared/building/buildingsim/.refenv/
 shared/building/buildingsim/tmp/
 shared/building/checks/out/
+
+# Water platform: rebuildable data (scripts in shared/water/data/scripts, sources in waterdata/DATA.md;
+# `mlratchet data water`). Tracked under data/: scripts/, build.py, MANIFEST.json and the frozen proc/splits.json.
+# checks/ref/*.csv are airGR/TUWmodel example inputs and reference outputs (from GPL R packages; not redistributed).
+shared/water/data/*
+!shared/water/data/scripts/
+!shared/water/data/build.py
+!shared/water/data/MANIFEST.json
+!shared/water/data/proc/
+shared/water/data/proc/*
+!shared/water/data/proc/splits.json
+shared/water/checks/out/
+shared/water/checks/ref/*.csv
+shared/water/watersim/.refenv/
+shared/water/watersim/tmp/
+shared/water/watersim/pids/

@@ -11,6 +11,7 @@
     mlratchet data vehicle           download + rebuild the vehicle platform's real data (resumable)
     mlratchet data grid              download + rebuild the grid platform's real data (resumable; --from-zip for the release)
     mlratchet data building          unpack (--from-zip) or rebuild the building platform's real data, verify vs MANIFEST
+    mlratchet data water             unpack (--from-zip) or rebuild the water platform's real data (Caravan stream 24.8 GB)
 """
 from __future__ import annotations
 
@@ -218,7 +219,8 @@ def cmd_readme(args) -> int:
 
 
 DATA_TARGETS = {"vehicle": ("shared", "vehicle", "data", "build.py"), "grid": ("shared", "grid", "data", "build.py"),
-                "building": ("shared", "building", "data", "build.py")}
+                "building": ("shared", "building", "data", "build.py"),
+                "water": ("shared", "water", "data", "build.py")}
 
 
 def cmd_data(args) -> int:
