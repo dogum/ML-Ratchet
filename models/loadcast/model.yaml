@@ -544,11 +544,11 @@ limits:
   - "Short-history modes were trained on year-end histories; 2-week and 8-week bands are unusable for chilled water and gas when the history is winter."
   - "BDG2 timestamps were mixed (local DST vs standard) and are fixed to UTC; Peacock's weather does not match its stated location; four sites were located by temperature matching."
 next:
-  - "Cold mode on the calibrated twin: anchor the cold network on the dev-calibrated BuildingSim twin (as warm mode is anchored on TOWT) so it can only correct it; on dev and on the seen exam the twin alone beats the network on electricity and chilled water."
+  - "Twin anchor with a median-aimed loss: round 2 tried the twin anchor (r8) and a median-aimed magnitude head (r7) separately and kept neither; r8's CV²-weighted loss pulled the twin's level down again (dev no-history CV 78 % against 65 % for the twin alone), r7 fixed the level (dev 71 %) without the twin. The combination is the next rung; at inference it needs the twin as an input, not BuildingSim inside the numpy module."
   - "Twin physics the residuals point at: a stronger weekday / weekend swing for campus electricity than the 24-7 calibration gives, and a sharper winter peak for heating meters."
   - "A heating-meter physics rung: seasonal plant shutdowns, steam distribution losses, plants serving several buildings."
   - "Warm mode trained on 4-12 week histories from every season, falling back to cold when the history is out of season."
-  - "Ladder hygiene before the next rung: two retrains of the same recipe differ by 0.020 in the frozen objective (margin 0.01) and by 1.8 points in the dev score (gate 2 %, about 1 point), so score each candidate over 3 training seeds."
+  - "The dev gate compares 3-seed means with the released R3's single selected seed (49.2; its own recipe retrained averages 53.3), so no rung of round 2 could pass it without a 3-point real gain; rebase the gate on the control's mean before the next round (a rule change, to be logged as one)."
   - "Upstream to BuildingSim behind flags: the US/CA/UK/IE holiday calendars, the BDG2-style spec maker, campus defaults (24/7 in 22 of 52, outdoor air ×2.5, VAV minimum flow), a per-meter district scale and base load, and a bounded-memory mode for long bank runs."
 help_wanted:
   - "An EnergyPlus binary for a true reference engine: there is no PyPI wheel with an engine and GitHub was blocked in the build sandbox, so BESTEST ranges and ResStock/ComStock twins stand in."

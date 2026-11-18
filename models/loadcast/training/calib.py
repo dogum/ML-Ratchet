@@ -14,7 +14,7 @@ from scipy.optimize import nnls
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import lc_common as C, lcsim as L
 
-OUT = f'{C.ROOT}/data/dev_knobs.json'
+OUT = f"{C.ROOT}/data/{os.environ.get('LC_KNOBS', 'dev_knobs.json')}"   # $LC_KNOBS, e.g. dev_knobs_p11.json
 
 
 def grid_for(meters):

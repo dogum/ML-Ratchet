@@ -2,7 +2,9 @@
 
     nice -n 5 python3 bank.py <phys> <name> <n> <seed>
       phys = v0  Phase 1 generic twins (generator building + meters decide the system, defaults otherwise)
-             v1  + dev-calibrated knobs drawn from the 52 dev fits (data/dev_knobs.json): HVAC for electricity-only
+             v1d as v1, with a deterministic generator spec per building (17 Nov 2026: v1's spec depended on the order
+                 in which a process asked for them, so banks were not reproducible); physics from $BUILDINGSIM_PHYSICS
+             v1  + dev-calibrated knobs drawn from the 52 dev fits (data/dev_knobs.json, or $LC_KNOBS): HVAC for electricity-only
                  buildings, operating schedule, outdoor air, VAV minimum/reheat, meter scale a and base load b
 
 Buildings: use type drawn with BDG2-like weights; ComStock/CBECS-based generator spec at the site's climate zone;
@@ -31,7 +33,8 @@ def dev_info():
     cfgs = [C.meters_of(m) for m in meta.meters]
     la = np.log(meta.floor_area_m2.values)
     cz = {r.site_id: r.climate_zone for r in C.bd.bdg2_meta().drop_duplicates('site_id').itertuples()}
-    kn = json.load(open(f'{C.ROOT}/data/dev_knobs.json')) if os.path.exists(f'{C.ROOT}/data/dev_knobs.json') else {}
+    kf = f"{C.ROOT}/data/{os.environ.get('LC_KNOBS', 'dev_knobs.json')}"
+    kn = json.load(open(kf)) if os.path.exists(kf) else {}
     return cfgs, (la.mean(), la.std()), cz, kn
 
 
@@ -91,6 +94,15 @@ def draw_knobs(rng, use, meters, kn, phys):
 _GEN = {}
 
 
+def gen_spec_det(use, cz, gs):
+    """One generator spec per building from its own seed: independent of process and order (phys v1d)."""
+    try:
+        r = bs.generate_buildings(1, seed=gs, primary_use=use, climate_zone=cz)
+    except Exception:
+        r = []
+    return (r or bs.generate_buildings(1, seed=gs, primary_use=use))[0]
+
+
 def gen_spec(use, cz, gs):
     """Generator specs are drawn 25 at a time per (use, climate zone) (the prior filtering is the slow part)."""
     key = (use, cz)
@@ -110,7 +122,7 @@ def make_one(i, seed, phys, info):
     site = C.SITES[rng.integers(len(C.SITES))]
     cz = czmap[site]
     use = list(USE_P)[rng.choice(len(USE_P), p=np.array(list(USE_P.values())) / sum(USE_P.values()))]
-    spec = gen_spec(use, cz, int(rng.integers(1 << 30)))
+    spec = (gen_spec_det if phys.endswith('d') else gen_spec)(use, cz, int(rng.integers(1 << 30)))
     spec['climate_zone'] = cz
     if rng.random() < 0.5 or not spec.get('floor_area_m2'):
         spec['floor_area_m2'] = float(np.exp(rng.normal(lam, las)))
@@ -132,14 +144,14 @@ def make_one(i, seed, phys, info):
                system=fs['system'], heat_source=fs['hvac'].get('heat_source'), hvac_class=sys_class(fs, meters),
                sched_class=sched_class(fs, knobs), dir=int(rng.integers(2)), yb_shown=bool(rng.random() < 0.5),
                wall_s=time.time() - t0, eui=float(out['summary']['EUI_kWh_m2_yr']),
-               ledger_ok=bool(out['ledger']['ok']))
+               ledger_ok=bool(out['ledger']['ok']), physics=str(out.get('physics', '1.0')))
     return rec, Y
 
 
 def main(phys, name, n, seed):
     d = f'{C.ROOT}/data/bank_{name}'; os.makedirs(d, exist_ok=True)
     info = dev_info()
-    if phys == 'v1' and not info[3]: raise SystemExit('need data/dev_knobs.json')
+    if phys.startswith('v1') and not info[3]: raise SystemExit('need data/dev_knobs.json')
     t0 = time.time(); done_here = 0
     for p0 in range(0, n, PART):
         f = f'{d}/part_{p0 // PART:04d}.npz'

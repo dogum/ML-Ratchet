@@ -11,8 +11,8 @@ Noise variant 'y16' (dev-gate optimism test): writes data/noise_bank_y16.npz, th
 2017 residuals and gaps replaced by its own 2016 ones shifted by 364 days (same weekday). The 2017/2016 level ratios
 are kept. dataset.py reads it when LC_NOISE_BANK=noise_bank_y16.npz.
 
-Note: bank.py's generator cache (_GEN) hands out specs in the order a process asks for them, so a sharded bank is not
-bit-identical to a sequential one (neither was the build's, which restarted every 2 parts).
+Note: with phys v1/v0, bank.py's generator cache (_GEN) hands out specs in the order a process asks for them, so a sharded bank is not
+bit-identical to a sequential one (neither was the build's, which restarted every 2 parts); phys v1d is (17 Nov 2026).
 """
 import sys, os, json, time
 import multiprocessing as mp
@@ -29,7 +29,7 @@ def _calib_shard(args):
         d = real_meta(split=split, **kw)
         return d.iloc[k::n] if split == 'dev' else d
     C.bd.bdg2_meta = meta
-    calib.OUT = f'{C.ROOT}/data/dev_knobs_shard{k}.json'
+    calib.OUT = f"{C.ROOT}/data/{os.environ.get('LC_KNOBS', 'dev_knobs.json')[:-5]}_shard{k}.json"
     calib.main()
     return calib.OUT
 
@@ -42,7 +42,7 @@ def calib_all(procs=3):
         outs = p.map(_calib_shard, [(k, procs) for k in range(procs)])
     res = {}
     for f in outs: res.update(json.load(open(f)))
-    C.jdump(res, f'{C.ROOT}/data/dev_knobs.json')
+    C.jdump(res, f"{C.ROOT}/data/{os.environ.get('LC_KNOBS', 'dev_knobs.json')}")
     print(len(res), 'dev buildings calibrated', round(time.time() - t0), 's', flush=True)
 
 
@@ -51,7 +51,7 @@ def _bank_parts(args):
     import lc_common as C, bank
     d = f'{C.ROOT}/data/bank_{name}'
     info = bank.dev_info()
-    if phys == 'v1' and not info[3]: raise SystemExit('need data/dev_knobs.json')
+    if phys.startswith('v1') and not info[3]: raise SystemExit('need data/dev_knobs.json')
     t0 = time.time()
     for p in parts:
         f = f'{d}/part_{p:04d}.npz'

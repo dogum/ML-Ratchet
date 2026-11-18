@@ -73,6 +73,14 @@ Frozen set: 300 simulated buildings (v1 physics, seed 99, real noise seed 12345)
 | R4 | cold loss weight 1/ybar^0.5 (aim magnitude at the median) | −0.026 | 52.2 | rejected (both tests) |
 | R5 | real noise matched by use type | +0.006 | 51.7 | rejected (both tests) |
 
+**Round 2 (17 Nov 2026, `ratchet.yaml` second ladder, `training/r2.py`, `r2_ladder.json`).** Rebuilt, reproducible
+frozen set `v2_val` (deterministic spec per building); every rung judged on the mean of 3 training seeds against the
+released R3 re-scored there (−0.0081; dev 49.2). r6 (BuildingSim physics 1.1 district plants, calibration re-run):
++0.011 on its own frozen set but dev 52.8, rejected. r7 (median-aimed magnitude head): −0.028, dev 50.4 (gate 50.2),
+rejected. r8 (no-history mode anchored on the dev-calibrated twin): −0.005, dev 53.9, rejected; the twin alone scores
+dev no-history CV 65.4 % against 78.2 % for r8 and 70.6 % for R3. The R3 recipe retrained (3 seeds) scores −0.0076 and
+dev 53.3, so the gate set by R3's selected seed is about 3 points below its own recipe. v1.0 stays.
+
 **Twin test (dev, R3):** each dev building's calibrated twin, given another dev building's real residuals, read by the networks like the real meter. Median CV real vs twin: cold electricity 62.5 vs 51.8 (per-building correlation of log CV r = 0.86), chilled water 101 vs 99 (r = 0.96), steam 104 vs 108 (r = 0.95); warm electricity 22.3 vs 17.8, chilled water 43.2 vs 41.7, steam 61.7 vs 59.9 (r ≈ 0). Cold errors are reproduced building by building (they are magnitude errors); warm errors match in size but not in which building is hard, since the noise is borrowed.
 
 **What the network adds (dev twin test, 17 Nov 2026, `training/twin_anchor.py`, local 2017 on the dev meters).**

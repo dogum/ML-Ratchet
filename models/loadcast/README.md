@@ -113,6 +113,8 @@ Every BDG2 exam building-meter, forecast for local 2017 with the actual 2017 wea
 
 ## The ratchet
 
+### LoadCast v1.0 (BuildingSim, 17 Nov 2026)
+
 **Objective:** Mean over meter types (n >= 5) of (cold skill + warm skill) / 2 on the frozen simulated set v1_val (300 BuildingSim buildings of the v1 calibrated physics, seed 99, real dev noise seed 12345; 666 building-meters scored). Cold skill = 1 − median CV(RMSE) / median CV of the set's own median-intensity × median-shape guess; warm skill = 1 − median CV / median CV of TOWT on the same 2016 history.  
 **Rule:** Keep if the objective beats the incumbent by more than 0.01 AND the dev score (mean of cold and warm median CV(RMSE) over 84 dev building-meters, 2016 → 2017) is no more than 2 % (relative) worse than the incumbent's.
 
@@ -131,6 +133,22 @@ Every BDG2 exam building-meter, forecast for local 2017 with the actual 2017 wea
 <sub>Columns after *Why*: Skills on the frozen set v1_val, then dev (84 dev building-meters, 2016 → 2017): median cold and warm CV(RMSE) %, the dev score and its ratio to the incumbent's.</sub>
 
 Rule note (from the build handoff; no exam result chose anything): the frozen-set objective changed twice before R3 — floored pooled skills, then unfloored pooled skills, then per meter type (pooled medians mixed meter types and could rank a model that is better on every meter as worse) — and every rung was re-scored and re-decided in order each time; the values here are the final definition (training/ratchet.json keeps the pooled values as frozen_history; the floored values were overwritten). R0-R2 are kept under the last two definitions; their decisions under the first are not recorded. The real-noise bank holds the dev buildings' 2017 residuals. Measured on 17 Nov 2026 (training/optimism.py, optimism_r3.json): retraining the R3 recipe on a rebuilt bank with each dev series' 2017 residuals replaced by its 2016 ones moved the dev score by −0.1 points (95 % CI −2.7 to +2.7) and the seen exam by −0.9; two training seeds of the unchanged recipe differ by 1.8 points on dev and 2.7 on the exam. So that leak is below the noise. The larger optimism is selection: R3's dev score 49.2 against 53.8 and 52.0 for two retrains of its recipe, while its exam score (52.8) sits between theirs (53.8, 51.2). The two retrains also differ by 0.020 in the frozen objective (margin 0.01), and the rebuilt frozen set v1_val scores the released R3 at 0.004 (0.014 logged; banks are not bit-reproducible because the generator hands out specs in process order). Later rungs should be scored over several training seeds. The card gives the frozen set as 650 building-meters; ratchet.json scores 666.
+
+### LoadCast round 2 (frozen v2_val, 3-seed means, 17 Nov 2026)
+
+**Objective:** As v1.0 (mean over meter types of (cold skill + warm skill) / 2), on the rebuilt frozen set v2_val: 300 BuildingSim buildings (seed 99, real noise seed 12345, 666 building-meters) with a deterministic spec per building (bank.py phys v1d), built once; v2_val_p11 is the same buildings at BuildingSim physics 1.1, for r6. Each rung is the mean over training seeds 0, 1, 2.  
+**Rule:** Keep if the 3-seed mean objective beats the incumbent (the released R3 weights re-scored on the same frozen set) by more than 0.01 AND the 3-seed mean dev score is no more than 2 % (relative) worse than R3's 49.2.
+
+| Rung | Change | Frozen-set score | Decision | Why | Cold skill | Warm skill | Dev cold CV | Dev warm CV | Dev score | Dev vs incumbent |
+|---|---|---|---|---|---|---|---|---|---|---|
+| r3-v2 | Incumbent: the released v1.0 (R3) weights re-scored on the rebuilt frozen set v2_val (−0.0152 on v2_val_p11) | -0.008 | ● kept | Not a new model: the reference every round-2 rung is judged against. Dev score unchanged (49.2). | -0.018 | 0.002 | 70.6 | 27.9 | 49.2 | – |
+| r6 | Physics 1.1 (BuildingSim district plants): dev calibration re-run at 1.1, bank v2_train_p11 and frozen set v2_val_p11, same network recipe | -0.004 | ○ rejected | On v2_val_p11: −0.0042 (seeds −0.0077, −0.0028, −0.0021) vs R3 −0.0152, +0.011 (passes); dev score 52.8 vs 49.2 (+7 %, dev gate failed). On v2_val: −0.024. | -0.034 | 0.026 | 75.9 | 29.6 | 52.8 | +7% |
+| r7 | No-history magnitude head: forecast = M × shape, M from an MLP on the metadata trained on log annual mean (aims at the median), shape = the cold MLP on load / its own annual mean; warm networks = the control's | -0.028 | ○ rejected | −0.0276 (seeds −0.0305, −0.0290, −0.0235) vs R3 −0.0081 (needs +0.01); dev score 50.4 vs 49.2 (+2.4 %, dev gate failed by 0.2). Dev no-history CV 71.4 vs control 77.2; electricity NMBE −4 to +16 % vs +38 %. | -0.065 | 0.01 | 71.4 | 29.5 | 50.4 | +2.4% |
+| r8 | No-history mode anchored on the dev-calibrated twin (metadata-only BuildingSim twin, dev plurality knobs, dev median a, b): the cold network predicts a correction to the twin's hourly reading; warm networks = the control's | -0.005 | ○ rejected | −0.0047 (seeds +0.0072, −0.0132, −0.0082) vs R3 −0.0081 (needs +0.01); dev score 53.9 vs 49.2 (+9 %, dev gate failed). Dev no-history CV 78.2 against 65.4 for the twin it corrects: the CV²-weighted loss pulls the level down again (chilled water NMBE +66 % vs +2 % for the twin). | -0.019 | 0.01 | 78.2 | 29.5 | 53.9 | +9% |
+
+<sub>Columns after *Why*: 3-seed means: skills on the frozen set of the rung's physics, then dev (84 dev building-meters, 2016 → 2017): median cold and warm CV(RMSE) %, the dev score and its ratio to R3's.</sub>
+
+Plan and results in NOTEBOOK.md (2026-11-17, round 2); per-seed scores in training/r2_ladder.json. Reference rows, not candidates: the R3 recipe retrained on v2_train with seeds 0-2 scores -0.0076 (seeds +0.0035, -0.0151, -0.0113; spread 0.019) and dev 53.3, so the released R3's dev 49.2 is a selected seed and the dev gate (50.2) sits about 3 points below what its own recipe reaches. The dev-calibrated BuildingSim twin alone, as the no-history forecast, has cold skill +0.002 on v2_val (R3 -0.018) and dev no-history median CV 65.4 % (R3 70.6, control 77.2). No rung was kept, so nothing was combined and v1.0 stays released.
 
 Raw per-rung logs are in [`training/`](training/).
 
@@ -166,11 +184,11 @@ The shared BuildingSim simulator (ML Ratchet building platform, Phase 1): an ISO
 
 ## Next rungs
 
-- Cold mode on the calibrated twin: anchor the cold network on the dev-calibrated BuildingSim twin (as warm mode is anchored on TOWT) so it can only correct it; on dev and on the seen exam the twin alone beats the network on electricity and chilled water.
+- Twin anchor with a median-aimed loss: round 2 tried the twin anchor (r8) and a median-aimed magnitude head (r7) separately and kept neither; r8's CV²-weighted loss pulled the twin's level down again (dev no-history CV 78 % against 65 % for the twin alone), r7 fixed the level (dev 71 %) without the twin. The combination is the next rung; at inference it needs the twin as an input, not BuildingSim inside the numpy module.
 - Twin physics the residuals point at: a stronger weekday / weekend swing for campus electricity than the 24-7 calibration gives, and a sharper winter peak for heating meters.
 - A heating-meter physics rung: seasonal plant shutdowns, steam distribution losses, plants serving several buildings.
 - Warm mode trained on 4-12 week histories from every season, falling back to cold when the history is out of season.
-- Ladder hygiene before the next rung: two retrains of the same recipe differ by 0.020 in the frozen objective (margin 0.01) and by 1.8 points in the dev score (gate 2 %, about 1 point), so score each candidate over 3 training seeds.
+- The dev gate compares 3-seed means with the released R3's single selected seed (49.2; its own recipe retrained averages 53.3), so no rung of round 2 could pass it without a 3-point real gain; rebase the gate on the control's mean before the next round (a rule change, to be logged as one).
 - Upstream to BuildingSim behind flags: the US/CA/UK/IE holiday calendars, the BDG2-style spec maker, campus defaults (24/7 in 22 of 52, outdoor air ×2.5, VAV minimum flow), a per-meter district scale and base load, and a bounded-memory mode for long bank runs.
 
 ## Files

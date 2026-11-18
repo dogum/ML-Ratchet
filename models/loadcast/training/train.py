@@ -35,8 +35,8 @@ def epoch_rows(units, mode, K, rng, jitter=0.0, wpow=2.0):
         idx = rng.choice(valid, K)
         v = ['full', 'full', 'w8', 'w2'][rng.integers(4)] if mode == 'warm' else 'full'
         X, b, y, S = D.rows(u, idx, mode, v)
-        ybar = float(np.nanmean(u['y'][valid])) / (S if mode == 'warm' else 1.0)
-        fl = 0.2 if mode == 'cold' else 0.3      # weight 1/ybar^2: each unit contributes ~ its CV^2 (floored)
+        ybar = float(np.nanmean(u['y'][valid])) / (S if mode in ('warm', 'shape') else 1.0)
+        fl = 0.2 if mode in ('cold', 'twin') else 0.3      # weight 1/ybar^2: each unit contributes ~ its CV^2 (floored)
         Xs.append(X); Bs.append(b); Ys.append(y.astype(np.float32)); Ws.append(np.full(K, 1.0 / max(ybar, fl) ** wpow, np.float32))
     X = np.concatenate(Xs)
     if jitter > 0: X = jitter_static(X, rng, jitter)
@@ -52,9 +52,11 @@ def main(run, mode, bank, noise, epochs=10, width=192, depth=3, K=96, seed=0, ji
     for b in banks:                     # 'name@N' = first N buildings of a bank
         nm, _, nb = b.partition('@')
         units += D.load_bank(nm, noise, seed=seed, max_buildings=int(nb) if nb else None)
+    if mode == 'twin':
+        for b in banks: D.attach_bank_twins([u for u in units if u['id'].startswith(b.partition('@')[0] + ':')], b.partition('@')[0])
     for u in units: D.prepare(u, ('full', 'w8', 'w2') if mode == 'warm' else ('full',))
     print(f'{len(units)} units loaded+prepared in {time.time() - t0:.0f} s', flush=True)
-    nin = D.N_COLD if mode == 'cold' else D.N_WARM
+    nin = D.nin(mode)
     net = N.MLP(nin, width, depth, dropout)
     opt = torch.optim.AdamW(net.parameters(), lr=2e-3, weight_decay=wd)
     ep0 = 0; hist = []

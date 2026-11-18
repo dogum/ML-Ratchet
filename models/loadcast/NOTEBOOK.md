@@ -337,3 +337,108 @@ decisions are within training noise (step 5).
 **8.** `model.yaml` (40 rows with intervals, verdicts, "seen" notes, wins / losses / limits / next), the card's exam,
 ratchet and limits sections, and `ratchet.yaml`'s ladder note are updated; the weights, inference code and demo are
 unchanged (demo test passes).
+
+## 2026-11-17 — Round 2 rungs r6-r8: the plan (written before any bank is built)
+
+The integrity pass found that two training seeds of the R3 recipe differ by 0.020 in the frozen objective (twice the
+0.01 margin) and by 1.8 points in the dev score, and that banks were not reproducible. This round fixes the bank, keeps
+the ladder's rule, and judges every rung on a mean over three training seeds. The I-BLEND fresh exam is frozen and is
+not scored in this round. The seen BDG2 exam is scored only if something is released.
+
+**Infrastructure (no rung).**
+- `bank.py` phys `v1d`: the v1 bank with a deterministic spec per building. Each building draws its generator spec
+  with `generate_buildings(1, seed=gs)`, where `gs` is the building's own seeded draw. The spec no longer depends on
+  which process asked first. Checked by building the same 20 buildings on 1 and on 2 processes and comparing every
+  array. The physics version (`BUILDINGSIM_PHYSICS`) is recorded per building.
+- `$LC_KNOBS` names the dev-calibration file that `calib.py` writes and `bank.py` reads (default `dev_knobs.json`).
+- Frozen sets, built once and never regenerated for a rung: `v2_val` (300 buildings, seed 99, physics 1.0, real noise
+  seed 12345) and its physics 1.1 twin `v2_val_p11` (same seed, so the same buildings and draws).
+- Training banks: `v2_train` (1,600 buildings, seed 2, physics 1.0) and `v2_train_p11` (same seed, physics 1.1).
+- **Incumbent:** the released R3 weights re-scored on `v2_val`, and on `v2_val_p11` for r6. Its dev score stays 49.2,
+  since the dev data do not change.
+- **Control (reported, not the rule):** the unchanged R3 recipe retrained on `v2_train` with seeds 0, 1, 2. The
+  released R3's dev score is about 4 points better than retrains of its own recipe (integrity pass). So under the
+  rule as kept, a rung must beat a selected incumbent. The control shows how much of any gap is the recipe.
+
+**Rule (unchanged ladder rule, 3-seed means).** A rung is kept if both hold:
+- the mean over seeds 0, 1, 2 of its frozen objective beats the incumbent's by more than 0.01 on the frozen set of its
+  own physics;
+- the mean of its three dev scores is no more than 2 % (relative) worse than the incumbent's 49.2.
+
+Each seed and the spread (max − min) is reported. If a rung is released, the shipped weights are seed 0, fixed now (no
+pick among seeds). Recipe as R3 (30 epochs, width 192, depth 3, K 96, jitter 1, dropout 0.1, weight decay 1e-3).
+
+**Rungs (each against the incumbent).**
+- **r6, physics 1.1.** The dev calibration is re-run at physics 1.1 (`calib.py` with `BUILDINGSIM_PHYSICS=1.1`, dev
+  2016 only, into `dev_knobs_p11.json`). The meter fit `a, b` fitted at 1.0 would count the new loop base twice. Then
+  `v2_train_p11` and `v2_val_p11` are built and cold and warm are trained (3 seeds each). Judged on `v2_val_p11`; also
+  reported on `v2_val`.
+- **r7, a median-aimed no-history magnitude head.** The cold forecast becomes M × shape:
+  - M = exp(g(metadata)): an MLP on the 38 metadata features, trained on log(target-year mean) of each simulated unit
+    (MSE on the log aims at the median; plus 0.1 × Gaussian NLL for its spread; the same metadata jitter).
+  - shape: the cold MLP trained on the load divided by the unit's own target-year mean (base 1).
+  - σ combines the two: σ = M · sqrt(σ_shape² + (shape · s_logM)²).
+  - The warm networks are the control's (seeds 0, 1, 2); only the no-history mode changes.
+- **r8, the no-history mode anchored on the dev-calibrated twin.**
+  - The cold network reads the cold features plus the twin's hourly reading and the log of its annual mean, and
+    predicts a correction to the twin: μ = twin + f(x), with the head initialised to zero.
+  - The twin is what `twin_anchor.py` used: each building's metadata-only spec (use, area, year built if shown,
+    meters, site), the dev plurality knobs and dev median `a, b` (`twin_knobs.json`), physics 1.0.
+  - For simulated buildings it is simulated from the same metadata the network sees, not from the generator spec that
+    made the truth. For dev and exam buildings it is the stored `twins.npz` ('med').
+  - Warm networks as the control's.
+  - **Reference row (not a candidate):** the twin alone as the no-history forecast: its cold skill on `v2_val` and its
+    dev no-history CV.
+- **Combination.** Only if two or more of r6-r8 are each kept: their combination (3 seeds) is judged by the same rule
+  against the best kept single rung. Otherwise nothing is combined.
+
+**If something is released (v1.1).**
+- Weights stay CC BY-SA 4.0. The numpy inference must reproduce the trained network.
+- r8 would need the twin at inference, which means BuildingSim, not just numpy. I stop and ask before shipping that
+  design.
+- Then: demo + golden, model.yaml, ladder, card, this notebook. The seen exam is re-scored with `rescore_seen.py`'s
+  baselines and intervals (labelled seen), and the instrument is re-exported with parity passing.
+- If nothing is kept, v1.0 stays and `ratchet.yaml` logs the rungs.
+
+Limits: at most 3 processes. The live BuildingSim (1.2.0, committed) is used directly; at the default physics it is
+v1.0 bit for bit.
+
+## 2026-11-17 — Round 2 rungs r6-r8: results (nothing kept; v1.0 stays)
+
+Everything followed the plan entry above, with one fix. The first r7 magnitude heads trained to NaN: units with no
+valid target hours gave log(NaN). They were retrained with `train.py`'s own filter (≥ 200 valid target hours) before
+any r7 score existed; the shape networks were fine. Per-seed numbers: `training/r2_ladder.json`.
+
+- **Infrastructure.** `bank.py` phys `v1d` is reproducible: 20 buildings built on 1 and on 2 processes are identical
+  array for array. Dev calibration at physics 1.1 (`dev_knobs_p11.json`, 109 s): chilled water a 0.92 → 0.74,
+  b 31 → 0 W/m², in-sample CV 52.9 → 50.4 %; hot water 79.0 → 76.6 %; steam and electricity unchanged. Banks:
+  `v2_train` 672 s, `v2_val` 115 s, `v2_train_p11` 582 s, `v2_val_p11` 115 s (3 processes). Bank twins (r8) 462 s.
+  Training: 21 networks in 27 + 5 min on 3 processes.
+- **Incumbent.** Released R3 on `v2_val` −0.0081 (cold skill −0.018, warm +0.002), on `v2_val_p11` −0.0152;
+  dev 49.23, gate 50.22.
+- **Control (R3 recipe, seeds 0/1/2):** +0.0035 / −0.0151 / −0.0113, mean −0.0076, spread 0.019; dev 53.5 / 53.2 /
+  53.3. The seed spread in the dev score is small here (0.3), but the control sits 4.1 points above R3's selected 49.2.
+
+| rung (3-seed mean) | frozen objective (seeds) | vs incumbent | dev score (seeds) | dev gate | decision |
+|---|---|---|---|---|---|
+| r6 physics 1.1, on v2_val_p11 | −0.0042 (−0.0077, −0.0028, −0.0021) | +0.011 | 52.8 (53.9, 52.1, 52.4) | fail (+7 %) | rejected |
+| r7 magnitude head | −0.0276 (−0.0305, −0.0290, −0.0235) | −0.020 | 50.4 (52.2, 50.3, 48.8) | fail (+2.4 %) | rejected |
+| r8 twin anchor | −0.0047 (+0.0072, −0.0132, −0.0082) | +0.003 | 53.9 (54.0, 52.9, 54.7) | fail (+9 %) | rejected |
+
+- r6 on the physics 1.0 frozen set: −0.024. Against the control on `v2_val_p11` (−0.0108) it gains 0.007. Dev
+  no-history CV 75.9 vs control 77.2; the gain is in warm skill on the 1.1 frozen set (+0.026 vs 0.000).
+- r7 moves the no-history level where the plan aimed: dev no-history CV 71.4 vs control 77.2. Dev electricity
+  no-history NMBE is −4 / +2 / +16 % for the three seeds, against +38 % (control seed 0). In simulation its cold skill
+  falls (−0.065 vs −0.025): the median-aimed level costs CV where magnitudes are known to be skewed.
+- r8 starts at the twin and moves away from it. Dev no-history CV is 78.2 against 65.4 for the twin alone; chilled
+  water NMBE is +66 % against +2 % for the twin. The cold loss (weights 1/ȳ², which aim unknown magnitudes at about
+  half) pulls the level back down, as in v1.0. Reference row: the twin alone has cold skill +0.002 on `v2_val`
+  (R3 −0.018) and dev no-history CV 65.4 (R3 70.6).
+- **Combination:** none, since no rung was kept (plan). The natural next rung is r8's anchor with r7's median-aimed
+  level.
+- **The gate:** under the kept rule, a 3-seed mean has to beat R3's single selected seed on dev. The control misses by
+  3.1 points (53.3 vs a gate of 50.2), so no rung could pass without a large real gain. Changing that is a rule change
+  for the owner to decide, not something to do after seeing these numbers.
+- **Release:** none. The inference-design question for r8 does not arise. If a twin-anchored mode is released later,
+  the numpy module cannot run BuildingSim (inference is numpy/scipy only). It would take the twin series as an input,
+  computed separately by a helper that uses BuildingSim. That design waits for the owner's approval.
