@@ -1,7 +1,19 @@
-# ThermoPilot v1.0 model card
+# ThermoPilot v1.1 model card
+
+## What changed in v1.1 (17 Nov 2026)
+The default controller is now classical, with no learned parameters: the **card MPC**, a 24 h dynamic programme over
+the house's mass temperature (0.25 K grid, replanned every hour, the same 36 setpoint pairs; cost = energy + gas +
+demand-charge increments over the running monthly peak + λ × K h outside the band) on a 12-number linear house map
+carried by the building card, behind v1.0's rule-based 6 h comfort shield. The map (air and mass temperature one hour
+ahead, linear in the mass temperature, HVAC heat, outdoor temperature, solar and other load) is least-squares fitted to
+the nominal twin's hourly BuildingSim 5R1C maps (`thermopilot_core.fit_map`); a dead-beat observer tracks the mass
+temperature from the measured air temperature. The v1.0 network stays as `mode='network'` (`thermopilot_v1.npz`, MIT).
+It was chosen by the ladder rule on the frozen val and dev sets, which were rebuilt with reproducible RECS twins
+(val 0.700 vs v1.0's 0.561; dev 0.720 vs 0.471); those numbers were first seen as a reference row while a residual
+network on top of it (R8) was tried and rejected. Precedent: StarQuake v1.1 also released a classical backbone.
 
 ## What it does
-A learned, causal thermostat / heat-pump controller for homes and small commercial buildings. Every hour it picks a
+A causal thermostat / heat-pump controller for homes and small commercial buildings. Every hour it picks a
 heating and a cooling setpoint from a menu of 36 pairs (each side: off, the current comfort-band edge, or the occupied
 band edge shifted by 0–3 K for pre-heating / pre-cooling). Objective: monthly bill (energy + TOU and flat demand
 charges + gas) plus λ × kelvin-hours outside the occupant's comfort band (λ = $3 per K h per 150 m² of floor).
@@ -13,8 +25,9 @@ and COP vs outdoor temperature, defrost, backup strips, furnace / AC capacity.
 - a 24 h weather forecast (outdoor temperature, solar), with lead-time-dependent error in training and exam;
 - tariff: 24 h of energy prices, demand-charge windows and rates, the running monthly peak;
 - the occupant comfort band for the next 24 h (narrower when home, wider asleep / away);
-- a building card: UA, thermal capacitance, floor area, heating type, heat-pump / furnace / AC capacity and COP tables,
-  expected other electric load. In BuildingSim this comes from the nominal twin; the simulated house differs from it.
+- a building card: heating type, heat-pump / furnace / AC capacity and COP tables, fan power, expected other electric
+  load, and (v1.1) the 12-number house map; v1.0 also reads UA, thermal capacitance and floor area. In BuildingSim the
+  card comes from the nominal twin; the simulated house is a perturbed copy of it.
 
 ## Outputs
 `{'heat_sp', 'cool_sp'}` in °C (±100 = that side off), after a comfort shield (setpoints never let the zone fall
@@ -62,13 +75,38 @@ Classical MPC with forecast for reference: val 0.83, dev 0.83.
 (The oracle was upgraded to the two-pass demand version and the skill to relative savings before R1 was scored;
 every rung above is scored on the same frozen set.)
 
-**Round 2 (17 Nov 2026, not released).** Val and dev were frozen again with reproducible RECS twins (tied ResStock
-matches ranked by bldg_id); there R7 scores val 0.561, dev 0.471. Rung R8, a residual network on a numpy MPC that
-plans on a 12-number linear house map from the building card, beat R7 (3-seed mean val 0.667, dev 0.701) but lost
-to that card MPC alone behind the 6 h shield (val 0.700, dev 0.720), which the rule required it to beat by 0.01. It
-was rejected; v1.0 stays. See `ratchet.yaml` and NOTEBOOK.md.
+**Round 2 (17 Nov 2026).** Val and dev were frozen again with reproducible RECS twins (tied ResStock matches ranked
+by bldg_id); there R7 (v1.0) scores val 0.561, dev 0.471; the classical MPC 0.862 / 0.765. R8, a residual network on
+the card MPC, beat R7 (3-seed mean val 0.667, dev 0.701) but lost to the card MPC alone behind the 6 h shield (val
+0.700, dev 0.720) and was rejected: its zero-initialised correction moved the setpoints in 97 % of dev hours, where the
+teacher departs from the card MPC in 6 %. R9, the card MPC + shield itself, passed the rule (+0.139 val, dev gate)
+and is v1.1. Without the shield the card MPC scores 0.573 / 0.572 (0.91 K h per dev episode). See `ratchet.yaml`.
 
-## Exam (never used for any choice; taken once with R7, re-scored as seen on 17 Nov 2026)
+## v1.1 exam (seen; 17 Nov 2026, after the release choice)
+All three sets were seen before (v1.0 took them at release). The RECS list was frozen again with stable twins (same
+respondents; 39 of 48 homes got a different twin), so v1.0 was re-scored there too; BDG2 and WPuQ are as frozen. HUE
+was not run (NASA POWER irradiance not fetched). Brackets: 95 % bootstrap over units, 2,000 resamples, seed 20261117.
+Bill rows count only baselines with K h ≤ fixed + 1. Logs: `training/results/v1.1_exam_2026-11-17/`.
+
+| set (units) | row | v1.1 card MPC | v1.0 network | best baseline | v1.1 − best [95 %] | v1.1 − v1.0 [95 %] |
+|---|---|---|---|---|---|---|
+| RECS (48 homes, 96 ep) | bill saving | 2.77 % | 2.34 % | MPC 3.70 % | −0.93 [−1.30, −0.58]: loss | +0.43 [+0.24, +0.68] |
+| RECS | skill | 0.70 | 0.28 | MPC 0.82 | −0.12 [−0.20, −0.01]: loss | +0.42 [+0.25, +0.64] |
+| RECS | K h / episode | 0.42 | 1.55 | MPC 0.56 | −0.14 [−0.32, +0.03]: tie | −1.13 [−2.19, −0.33] |
+| BDG2 (16 buildings, 32 ep) | bill saving | 4.97 % | 2.77 % | MPC 2.69 % | +2.28 [+1.46, +3.08]: **win** | +2.20 [+1.53, +2.92] |
+| BDG2 | skill | 0.757 | 0.451 | MPC 0.452 | +0.30 [+0.18, +0.46]: **win** | +0.31 [+0.19, +0.46] |
+| BDG2 | K h / episode | 0.00 | 0.05 | fixed 0.00 | 0.00 [0.00, 0.00]: tie | −0.05 [−0.09, 0.00] |
+| WPuQ (38 homes) | bill saving | 5.95 % | 3.13 % | MPC 7.16 % | −1.22 [−1.32, −1.11]: loss | +2.81 [+2.27, +3.42] |
+| WPuQ | skill | 0.79 | 0.35 | MPC 0.95 | −0.16 [−0.18, −0.15]: loss | +0.44 [+0.37, +0.51] |
+| WPuQ | K h / episode | 0.00 | 0.00 | fixed 0.00 | 0.00 [0.00, 0.00]: tie | 0.00 |
+
+v1.1 vs the occupant's setback, bill: RECS +0.49 [−0.28, +1.36] (tie; setback leaves the band 2.52 K h per episode),
+BDG2 +3.79 [+2.85, +4.71], WPuQ +0.37 [−0.36, +1.30] (tie). Other RECS baselines (new list): setback 2.28 %, in-band
+pre-cool 2.54 %, dev-tuned pre-cool 2.56 % (skill 0.32), perfect foresight 3.91 %. Why the card MPC beats the
+classical MPC on BDG2 demand tariffs was not investigated. Reading: v1.1 is better than v1.0 everywhere it was scored;
+on homes the classical MPC (BuildingSim's own hourly maps, true wind and humidity) still beats it.
+
+## v1.0 exam (never used for any choice; taken once with R7, re-scored as seen on the morning of 17 Nov 2026, old RECS list)
 Twins of real exam units, perturbed true house, noisy forecasts, real weather, real tariffs. Bill change vs a fixed
 thermostat (positive = cheaper); K h = kelvin-hours outside the band per episode; skill = share of the
 perfect-foresight saving on cost + comfort. Brackets are 95 % bootstrap intervals over units (homes / buildings;
@@ -153,11 +191,11 @@ comparison cannot be trusted from the simulator. Files: `training/results/wpuq/`
 ## Files (in this repository)
 | file | what |
 |---|---|
-| `thermopilot_core.py` | numpy inference: features, MLP, action menu, comfort shield |
-| `thermopilot_v1.npz` | weights (298-384-384-36 MLP, input normalisation, shield = 4) |
-| `demo.py`, `examples/bdg2/demo_episodes.npz` | replay of 3 exam episodes (numpy only, about 1 s) |
+| `thermopilot_core.py` | numpy inference: `pilot(..., mode='mpc')` v1.1 card MPC + shield (`CardMPC`, `CardPilot`, `fit_map`); `mode='network'` v1.0 features, MLP, action menu, shield |
+| `thermopilot_v1.npz` | v1.0 network weights (298-384-384-36 MLP, input normalisation, shield = 4; MIT); v1.1 has no weights |
+| `demo.py`, `examples/bdg2/demo_episodes.npz` | replay of 3 exam episodes with v1.1 (numpy only, about 12 s), every controller's month incl. v1.0 |
 | `pipeline.py` | run ThermoPilot on a BuildingSim house (needs the building platform in `shared/building/`) |
-| `training/` | all code as run: `tp/` (simulator wrappers, teacher, MPC, features, policy), `scripts/`, `configs/`, `tp.js`, `page_src.html`, `build_page.py`, `_paths.py`; logs `ratchet.json`, `results/exam_r7.json`, `results/wpuq/`; the 17 Nov 2026 integrity pass: `scripts/{intervals,precool_tuned,twin_test,mpc_nowind}.py` and `results/integrity_2026-11-17/` |
+| `training/` | all code as run: `tp/` (simulator wrappers, teacher, MPC, features, policy), `scripts/`, `configs/`, `tp.js`, `page_src.html`, `build_page.py`, `_paths.py`; logs `ratchet.json`, `results/exam_r7.json`, `results/wpuq/`; the 17 Nov 2026 integrity pass: `scripts/{intervals,precool_tuned,twin_test,mpc_nowind}.py` and `results/integrity_2026-11-17/`; round 2 (R8, R9 = v1.1): `tp/card_mpc.py`, `scripts/bank_r8.py`, `ratchet_r8.json`, `results/residual_2026-11-17/`, `results/v1.1_exam_2026-11-17/` |
 | `lab/index.html` | the original page (week explorer, live lab, exam, WPuQ check, ratchet) |
 | `web/export_instrument.py` | writes the site's live instrument from the lab page's data |
 

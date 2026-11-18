@@ -1,13 +1,14 @@
 // ThermoPilot live instrument: twins of three RECS 2020 exam respondents (never used in training), each in five real
-// 2017 climates (BDG2 site weather), a winter and a summer week, under five real tariffs. Every hour the browser
-// builds the 298 features, runs the network, applies the comfort shield and steps the house (BuildingSim's hourly
-// 5R1C maps of the twin with its equipment tables), closed-loop, against a fixed thermostat and the occupant's own
-// setback schedule. The "truth" next to the reading is the full BuildingSim run of the same week (Python, from the lab
-// page). Controls change the input: weather (snaps between the real climates), tariff, the comfort weight the network
+// 2017 climates (BDG2 site weather), a winter and a summer week, under five real tariffs. Every hour the browser runs
+// the chosen controller and steps the house (BuildingSim's hourly 5R1C maps of the twin with its equipment tables),
+// closed-loop, against a fixed thermostat and the occupant's own setback schedule. v1.1 (default) is the card MPC: a
+// 24 h dynamic programme on the card's 12-number house map behind the 6 h comfort shield, no learned parameters. v1.0
+// is the network: 298 features -> MLP -> shield. The full BuildingSim runs (Python, from the lab page) exist for v1.0
+// only; for v1.1 the reference mark is the v1.0 network on the same browser house. Controls change the input: weather (snaps between the real climates), tariff, the comfort weight the network
 // is told, the random forecast error and a forecast bias.
 import type { InstrumentContext } from '../types.ts';
 import { fetchPack } from '../../lib/nn/pack.ts';
-import { ctxOf, fixedCtrl, houseOf, loadNet, N_RUN, runPilot, setbackCtrl, simulate, type Ctx, type House, type Sim, type WMeta, type XMeta } from './net.ts';
+import { ctxOf, fixedCtrl, houseOf, loadNet, N_RUN, runPilot, setbackCtrl, simulate, type Ctx, type House, type Mode, type Sim, type WMeta, type XMeta } from './net.ts';
 import { shell, picker, slider, button, scheduler, gauges, canvas, gridLines, label, h, SCOPE, type Canvas2D } from '../kit.ts';
 
 const STYLE = `
@@ -33,7 +34,8 @@ const START: Record<number, { c: number; w: number; t: number }> = { 0: { c: 4, 
 const money = (v: number) => `$${v.toFixed(2)}`;
 const pct = (v: number) => `${v >= 0 ? '' : '−'}${Math.abs(v).toFixed(1)} %`;
 
-interface View { tp: Sim; fixed: Sim; setback: Sim; ctx: Ctx; house: House; ri: number; ms: number }
+interface View { tp: Sim; mpc: Sim; nn: Sim; fixed: Sim; setback: Sim; ctx: Ctx; house: House; ri: number; ms: number }
+const MODES: [Mode, string][] = [['mpc', 'v1.1 card MPC'], ['network', 'v1.0 network']];
 
 export async function mount(ctx: InstrumentContext) {
   const [Wp, X] = await Promise.all([fetchPack<WMeta>(`${ctx.base}weights`), fetchPack<XMeta>(`${ctx.base}examples`)]);
@@ -42,10 +44,10 @@ export async function mount(ctx: InstrumentContext) {
   const net = loadNet(Wp);
   const ui = shell(ctx.root, {
     title: 'ThermoPilot',
-    subtitle: 'a learned thermostat on twins of real exam homes, real 2017 weather and real tariffs',
-    params: `MLP 298→384→384→36, ${net.nParams.toLocaleString('en-US')} weights (float16) · matches Python to 1e-14`,
+    subtitle: 'a thermostat controller on twins of real exam homes, real 2017 weather and real tariffs',
+    params: `v1.1: card MPC, 24 h DP on a 12-number house map, no learned weights · v1.0: MLP 298→384→384→36, ${net.nParams.toLocaleString('en-US')} weights (float16) · both match Python`,
   });
-  const st = { home: 0, c: START[0].c, w: START[0].w, t: START[0].t, lam: 2, fe: 1, bias: 0 };
+  const st = { home: 0, c: START[0].c, w: START[0].w, t: START[0].t, lam: 2, fe: 1, bias: 0, mode: 0 };
   let view: View | null = null;
 
   picker(ui.picker, M.homes.map((hm, i) => ({
@@ -72,15 +74,16 @@ export async function mount(ctx: InstrumentContext) {
     ui.controls.append(box);
     return { set };
   }
+  seg('Controller', MODES.map((m) => m[1]), st.mode, (i) => { st.mode = i; go(); });
   const segC = seg('Weather: real 2017 hourly, five climates', M.climates.map((c) => c[1].replace(/ \(.*\)/, '')), st.c, (i) => { st.c = i; go(); });
   const segW = seg('Week', ['winter, 9–15 Jan', 'summer, 10–16 Jul'], st.w, (i) => { st.w = i; go(); });
   const segT = seg('Tariff (real rates)', M.tariffs.map((t) => SHORT_T[t[0]] ?? t[1]), st.t, (i) => { st.t = i; go(); });
   let sLam: ReturnType<typeof slider> | null = null, sFe: ReturnType<typeof slider> | null = null, sBias: ReturnType<typeof slider> | null = null;
   if (!ctx.compact) {
     sLam = slider(ui.controls, {
-      label: 'Comfort weight the network is told', min: 0, max: 4, step: 1, value: st.lam,
+      label: 'Comfort weight the controller is told', min: 0, max: 4, step: 1, value: st.lam,
       fmt: (v) => `λ × ${LAMS[v]}${v === 2 ? ' (as trained: $3 per K h per 150 m²)' : ''}`,
-      hint: 'trained at one λ; the network only sees log(λ / (mean price × size)), so this is also how it reads a price change',
+      hint: 'the card MPC prices each kelvin-hour outside the band at λ; the v1.0 network was trained at one λ and only sees log(λ / (mean price × size))',
       onInput: (v) => { st.lam = v; go(); },
     });
     sFe = slider(ui.controls, {
@@ -112,12 +115,15 @@ export async function mount(ctx: InstrumentContext) {
     const li = (st.home * nC + st.c) * nW + st.w, ri = li * nT + st.t;
     const house = houseOf(X, li), c = ctxOf(X, house, ri, M.homes[st.home]);
     const t0 = performance.now();
-    const tp = runPilot(net, house, c, X.t.z.data, { lamMul: LAMS[st.lam], fe: st.fe, bias: st.bias });
+    const s = { lamMul: LAMS[st.lam], fe: st.fe, bias: st.bias };
+    const mpc = runPilot(net, house, c, X.t.z.data, s, N_RUN, [], 'mpc');
+    const nn = runPilot(net, house, c, X.t.z.data, s, N_RUN, [], 'network');
     const ms = performance.now() - t0;
-    view = { tp, fixed: simulate(house, c, N_RUN, fixedCtrl(c)), setback: simulate(house, c, N_RUN, setbackCtrl(c)), ctx: c, house, ri, ms };
+    const tp = MODES[st.mode][0] === 'mpc' ? mpc : nn;
+    view = { tp, mpc, nn, fixed: simulate(house, c, N_RUN, fixedCtrl(c)), setback: simulate(house, c, N_RUN, setbackCtrl(c)), ctx: c, house, ri, ms };
     plot.redraw();
     render();
-    ui.stamp(ms, `${N_RUN} hours: ${N_RUN} network runs + the house, closed loop`);
+    ui.stamp(ms, `${N_RUN} hours × 2 controllers (${N_RUN} 24 h DP plans + ${N_RUN} network runs) + the house, closed loop`);
     ui.setBusy(false);
   }
   const go = scheduler(run, 30);
@@ -126,30 +132,37 @@ export async function mount(ctx: InstrumentContext) {
     if (!view) return;
     const v = view, full = M.runs[v.ri], lam = v.house.lam;
     const sav = (b: number, ref: number) => (100 * (ref - b)) / ref;
-    const liveSave = sav(v.tp.bill, v.fixed.bill), fullSave = sav(full.thermopilot.bill, full.fixed.bill);
-    const lo = Math.min(-2, liveSave, fullSave, sav(full.mpc_c.bill, full.fixed.bill)) - 1;
-    const hi = Math.max(4, liveSave, fullSave, sav(full.oracle.bill, full.fixed.bill)) + 1;
+    const isMpc = MODES[st.mode][0] === 'mpc', name = isMpc ? 'v1.1 card MPC' : 'v1.0 network';
+    // the reference mark: the full BuildingSim run for v1.0; for v1.1 (no full runs) the v1.0 network on this house
+    const refSave = isMpc ? sav(v.nn.bill, v.fixed.bill) : sav(full.thermopilot.bill, full.fixed.bill);
+    const refDH = isMpc ? v.nn.DH : full.thermopilot.DH, refLabel = isMpc ? 'v1.0 network, same browser house' : 'full BuildingSim run';
+    const liveSave = sav(v.tp.bill, v.fixed.bill);
+    const lo = Math.min(-2, liveSave, refSave, sav(full.mpc_c.bill, full.fixed.bill)) - 1;
+    const hi = Math.max(4, liveSave, refSave, sav(full.oracle.bill, full.fixed.bill)) + 1;
     gaugeBox.innerHTML = '';
     gauges(gaugeBox, [
-      { label: 'ThermoPilot: bill saving vs fixed (browser house)', unit: '%', value: liveSave, truth: fullSave, truthLabel: 'full BuildingSim run', range: [lo, hi], digits: 1 },
-      { label: 'ThermoPilot: K h outside the comfort band', unit: 'K h', value: v.tp.DH, truth: full.thermopilot.DH, truthLabel: 'full BuildingSim run', range: [0, Math.max(2, v.tp.DH, full.thermopilot.DH, v.setback.DH) * 1.15], digits: 1 },
+      { label: `ThermoPilot ${name}: bill saving vs fixed (browser house)`, unit: '%', value: liveSave, truth: refSave, truthLabel: refLabel, range: [lo, hi], digits: 1 },
+      { label: `ThermoPilot ${name}: K h outside the comfort band`, unit: 'K h', value: v.tp.DH, truth: refDH, truthLabel: refLabel, range: [0, Math.max(2, v.tp.DH, refDH, v.setback.DH) * 1.15], digits: 1 },
     ]);
     const rows: [string, string, string][] = [
       ['fixed thermostat', money(v.fixed.bill), `${money(full.fixed.bill)}`],
       ["occupant's setback", money(v.setback.bill), `${money(full.setback.bill)}`],
-      ['ThermoPilot', money(v.tp.bill), `${money(full.thermopilot.bill)}`],
+      ['ThermoPilot v1.1 (card MPC)', money(v.mpc.bill), '—'],
+      ['ThermoPilot v1.0 (network)', money(v.nn.bill), `${money(full.thermopilot.bill)}`],
       ['MPC with forecast', '—', `${money(full.mpc_c.bill)}`],
       ['perfect foresight', '—', `${money(full.oracle.bill)}`],
     ];
     kv.innerHTML = `<span class="h">bill for the week (energy + demand + gas)</span><span></span><b>browser</b><b>BuildingSim</b>`
       + rows.map(([a, b, c]) => `<span>${a}</span><b>${b}</b><b>${c}</b>`).join('')
       + `<span class="h">comfort, K h outside the band</span>`
-      + `<span>fixed / setback / ThermoPilot</span><b>${v.fixed.DH.toFixed(1)} / ${v.setback.DH.toFixed(1)} / ${v.tp.DH.toFixed(1)}</b><b>${full.fixed.DH.toFixed(1)} / ${full.setback.DH.toFixed(1)} / ${full.thermopilot.DH.toFixed(1)}</b>`
-      + `<span>J = bill + λ × K h, ThermoPilot (λ $${(lam * LAMS[st.lam]).toFixed(2)})</span><b>${money(v.tp.bill + lam * LAMS[st.lam] * v.tp.DH)}</b><b>${money(full.thermopilot.J)}</b>`;
+      + `<span>fixed / setback / v1.1 / v1.0</span><b>${v.fixed.DH.toFixed(1)} / ${v.setback.DH.toFixed(1)} / ${v.mpc.DH.toFixed(1)} / ${v.nn.DH.toFixed(1)}</b><b>${full.fixed.DH.toFixed(1)} / ${full.setback.DH.toFixed(1)} / — / ${full.thermopilot.DH.toFixed(1)}</b>`
+      + `<span>J = bill + λ × K h, v1.1 / v1.0 (λ $${(lam * LAMS[st.lam]).toFixed(2)})</span><b>${money(v.mpc.bill + lam * LAMS[st.lam] * v.mpc.DH)} / ${money(v.nn.bill + lam * LAMS[st.lam] * v.nn.DH)}</b><b>— / ${money(full.thermopilot.J)}</b>`;
     const asBuilt = st.lam === 2 && st.fe === 1 && st.bias === 0;
     const hm = M.homes[st.home];
     note.innerHTML = `<b>${hm.label}: twin of RECS 2020 exam respondent ${hm.id.replace('RECS_', '#')} (${hm.state}), ${M.climates[st.c][1]} weather, ${M.weeks[st.w]} week.</b> `
-      + `The browser house is the controller's own linear model of the twin, so its bills differ from the full simulator's (ThermoPilot's browser bill is a median 5 % below the full run over the 150 lab weeks; ${pct((100 * (v.tp.bill - full.thermopilot.bill)) / full.thermopilot.bill)} here). `
+      + (isMpc
+        ? 'v1.1 is classical: a 24 h dynamic programme on a 12-number linear map of the house, behind a rule-based comfort shield, with no learned parameters. The browser house is the twin\'s own linear model, so the card MPC plans on almost the house it controls here; in the full simulator its house is a perturbed copy. '
+        : `The browser house is the twin's own linear model, so its bills differ from the full simulator's (the v1.0 network's browser bill is a median 5 % below the full run over the 150 lab weeks; ${pct((100 * (v.nn.bill - full.thermopilot.bill)) / full.thermopilot.bill)} here). `)
       + (asBuilt
         ? 'The grade is simulated: there are no real thermostat logs, and on 37 real WPuQ heat-pump homes the simulator could not settle ThermoPilot against setback (the order flipped in 18).'
         : `Changed input: λ × ${LAMS[st.lam]}, forecast error × ${st.fe}, bias ${st.bias > 0 ? '+' : ''}${st.bias} K. The BuildingSim column stays at the as-built settings.`);
@@ -187,7 +200,7 @@ export async function mount(ctx: InstrumentContext) {
     line(v.fixed.T, yT, FIXED, 1);
     line(v.setback.T, yT, SETBACK, 1.1);
     line(v.tp.T, yT, ctx.accent, 2);
-    label(c, small ? 'indoor °C · band green' : 'indoor °C: ThermoPilot · setback (amber) · fixed (grey) · full BuildingSim ThermoPilot (dashed) · comfort band (green)', L + 4, y1 - 8, SCOPE.text, 'left', 9.5);
+    label(c, small ? 'indoor °C · band green' : `indoor °C: ThermoPilot ${MODES[st.mode][1]} · setback (amber) · fixed (grey) · full BuildingSim v1.0 network (dashed) · comfort band (green)`, L + 4, y1 - 8, SCOPE.text, 'left', 9.5);
     // panel 2: price bars and HVAC power
     let pmax = 0.01, kmax = 0.5;
     for (let k = 0; k < n; k++) { pmax = Math.max(pmax, v.ctx.price[k]); kmax = Math.max(kmax, v.tp.P[k], v.fixed.P[k]); }

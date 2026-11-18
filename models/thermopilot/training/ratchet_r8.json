@@ -83,33 +83,6 @@
    "ref": true
   },
   {
-   "tag": "card4",
-   "change": "Anchor alone: card MPC behind v1.0's 6 h comfort shield (shield chosen on dev: 0.720 vs 0.572 without)",
-   "val": {
-    "n": 60,
-    "skill": 0.6996476660910963,
-    "skill_mpc_c": 0.8615703467025103,
-    "bill_saving_vs_fixed": 0.02674204202361885,
-    "DH_pol": 0.03147881679060553,
-    "DH_fixed": 0.04123380242865509,
-    "beats_fixed": 0.9333333333333333,
-    "errors": 0
-   },
-   "dev": {
-    "n": 30,
-    "skill": 0.7202423105712377,
-    "skill_mpc_c": 0.7648010112544481,
-    "bill_saving_vs_fixed": 0.045052048313478754,
-    "DH_pol": 0.0,
-    "DH_fixed": 0.001143426137694803,
-    "beats_fixed": 0.9333333333333333,
-    "errors": 0
-   },
-   "kept": false,
-   "why": "reference row, not a candidate: val skill 0.700, dev skill 0.720, dev DH 0.00 K h",
-   "ref": true
-  },
-  {
    "tag": "r8_s0",
    "change": "R8 seed 0: residual MLP 334-384-384-36 on the card MPC's 36 action values (last layer zero-initialised), 6 h shield; banks: round 0 with the card MPC acting (212 episodes) + DAgger rounds 1-3 (beta 0.3 / 0.2 / 0.1; 100 + 96 + 99 episodes): 507 episodes, 371,663 hours",
    "val": {
@@ -189,7 +162,34 @@
    "kept": false,
    "why": "val skill 0.686 vs incumbent 0.561 (margin 0.01); dev skill 0.711 (incumbent 0.471), dev DH 0.0 vs fixed 0.0 K h -> passes the incumbent rule; anchor alone (card4) val 0.700 -> NOT beaten by 0.01 -> REJECTED (does not beat the anchor alone)",
    "ref": false
+  },
+  {
+   "tag": "card4",
+   "change": "R9: the card MPC alone behind v1.0's 6 h comfort shield (classical: DP on the card's 12-number linear house map; no learned parameters); unchanged from R8's anchor reference row",
+   "val": {
+    "n": 60,
+    "skill": 0.6996476660910963,
+    "skill_mpc_c": 0.8615703467025103,
+    "bill_saving_vs_fixed": 0.02674204202361885,
+    "DH_pol": 0.03147881679060553,
+    "DH_fixed": 0.04123380242865509,
+    "beats_fixed": 0.9333333333333333,
+    "errors": 0
+   },
+   "dev": {
+    "n": 30,
+    "skill": 0.7202423105712377,
+    "skill_mpc_c": 0.7648010112544481,
+    "bill_saving_vs_fixed": 0.045052048313478754,
+    "DH_pol": 0.0,
+    "DH_fixed": 0.001143426137694803,
+    "beats_fixed": 0.9333333333333333,
+    "errors": 0
+   },
+   "kept": true,
+   "why": "val skill 0.700 vs incumbent 0.561 (margin 0.01); dev skill 0.720 (incumbent 0.471), dev DH 0.0 vs fixed 0.0 K h -> KEPT",
+   "ref": false
   }
  ],
- "incumbent": "r7"
+ "incumbent": "card4"
 }

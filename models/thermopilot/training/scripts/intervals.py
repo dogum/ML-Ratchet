@@ -3,6 +3,9 @@
 usage: intervals.py TAG [ANCHOR_TAG]
         reads results/<set>/base/*.json, pol_TAG.json and precool_tuned.json (if present) -> results/intervals_TAG.json
         R8: with ANCHOR_TAG, pol_ANCHOR_TAG.json (the card MPC alone) is one more baseline, 'card_mpc'
+usage: intervals.py TAG vs:OTHER [OUT_TAG]
+        v1.1: TAG minus OTHER (e.g. card4 vs:r7, v1.1 minus v1.0) on every row, with its interval; OTHER is not a
+        baseline, so the best-baseline rows are those of `intervals.py TAG`. -> results/intervals_OUT_TAG.json
 
 Units (homes / buildings) are resampled with their episodes, 2,000 resamples, seed 20261117. Rows per set:
   bill   saving vs fixed thermostat (1 - sum bill / sum fixed bill), higher is better
@@ -31,7 +34,7 @@ def stats(get, base, ids):
     Jf = np.array([base[i]['fixed']['J'] for i in ids]); Jo = np.array([base[i]['oracle']['J'] for i in ids])
     gap = max(float(np.sum((Jf - Jo) / Jf)), 1e-12)
     out = {}
-    for c in BASES + ['thermopilot', 'oracle']:
+    for c in BASES + ['thermopilot', 'oracle', 'other']:
         try:
             rows = [get(i, c) for i in ids]
         except KeyError:
@@ -45,6 +48,10 @@ def stats(get, base, ids):
 def main():
     tag = sys.argv[1]
     atag = sys.argv[2] if len(sys.argv) > 2 else None
+    vs = None
+    if atag and atag.startswith('vs:'):
+        vs, atag = atag[3:], None
+    out_tag = sys.argv[3] if len(sys.argv) > 3 else tag
     R = {}
     for s in SETS:
         base = load_base(s)
@@ -56,8 +63,13 @@ def main():
         pt = json.load(open(ft))['results'] if os.path.exists(ft) else {}
         fa = os.path.join(ROOT, 'results', s, f'pol_{atag}.json') if atag else None
         cm = json.load(open(fa)) if fa and os.path.exists(fa) else {}
+        fv = os.path.join(ROOT, 'results', s, f'pol_{vs}.json') if vs else None
+        other = json.load(open(fv)) if fv and os.path.exists(fv) else {}
+        if vs and not other:
+            continue
         ids = sorted(i for i in base if i in pol and 'error' not in pol[i] and (not pt or i in pt)
-                     and (not cm or (i in cm and 'error' not in cm[i])))
+                     and (not cm or (i in cm and 'error' not in cm[i]))
+                     and (not other or (i in other and 'error' not in other[i])))
 
         def get(i, c):
             if c == 'thermopilot':
@@ -66,6 +78,8 @@ def main():
                 return pt[i]
             if c == 'card_mpc':
                 return cm[i]
+            if c == 'other':
+                return other[i]
             return base[i][c]
 
         units = sorted(set(base[i]['meta']['unit'] for i in ids))
@@ -93,6 +107,12 @@ def main():
         d = np.array([b['thermopilot']['bill'] - b['setback']['bill'] for b in boots])
         rows['bill_vs_setback'] = dict(diff=pt0['thermopilot']['bill'] - pt0['setback']['bill'],
                                        ci95=[float(np.percentile(d, 2.5)), float(np.percentile(d, 97.5))])
+        if 'other' in pt0:
+            for m in ('bill', 'skill', 'DH'):
+                d = np.array([b['thermopilot'][m] - b['other'][m] for b in boots])
+                lo, hi = np.percentile(d, [2.5, 97.5])
+                rows[f'{m}_vs_{vs}'] = dict(diff=pt0['thermopilot'][m] - pt0['other'][m], ci95=[float(lo), float(hi)],
+                                            model=pt0['thermopilot'][m], other=pt0['other'][m])
         if 'card_mpc' in pt0:
             for m in ('bill', 'skill', 'DH'):
                 d = np.array([b['thermopilot'][m] - b['card_mpc'][m] for b in boots])
@@ -105,7 +125,7 @@ def main():
         print(s, len(ids), 'episodes', len(units), 'units')
         for m, r in rows.items():
             print('  %-16s %s' % (m, json.dumps(r)))
-    json.dump(R, open(os.path.join(ROOT, 'results', f'intervals_{tag}.json'), 'w'), indent=1)
+    json.dump(R, open(os.path.join(ROOT, 'results', f'intervals_{out_tag}.json'), 'w'), indent=1)
 
 
 if __name__ == '__main__':

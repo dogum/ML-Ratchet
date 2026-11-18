@@ -423,3 +423,71 @@ same rule, and it is numpy-only already (`tp/card_mpc.py`). (2) A residual that 
 correction only where the anchor's top two values differ by more than a set fraction of S, or penalise departures
 from the anchor in the loss in proportion to the anchor's own value gap. (3) Train the residual on the teacher's
 regret measured in the card house's closed loop, not the one-step values.
+
+## 2026-11-17 — Rung R9: the anchor alone as a candidate (plan, written before the decision)
+
+R8's results proposed this rung. This entry fixes it before anything is decided or released.
+
+- **What is already seen.** R9 is the card MPC behind v1.0's 6 h shield, exactly the "anchor" reference row of R8's
+  run (`card4`: val 0.700, dev 0.720, dev K h 0.00). Its val and dev numbers were seen there. Nothing about it is
+  changed now: same code, same card map fit, same shield (chosen on dev before R8 trained). The ladder's rule decides
+  on those same frozen sets: keep if val skill > incumbent (R7, 0.561) + 0.01 and the dev gate passes (dev skill > 0,
+  ≥ 0.471 − 0.03, dev K h ≤ fixed + 1). No anchor condition (R9 is the anchor). It is logged as rung R9 in the
+  round-2 ladder.
+- **What kind of model this is.** R9 is a classical, physics-based controller, not a learned one: a dynamic
+  programme on a 12-number linear house map fitted to the building's own 5R1C model, with a rule-based comfort shield
+  (no learned parameters). If it is kept, ThermoPilot v1.1 is a card MPC with a learning-free shield; the v1.0
+  network (R7) stays in the package as `mode='network'` and is no longer the default. Precedent in this repository:
+  StarQuake v1.1 released a classical backbone (an SYD-style reading blended with its network). Here the classical
+  part is the whole default controller, and the card says so.
+- **Exam (seen).** The RECS exam list was frozen again with stable twins (39 of 48 homes changed house; nothing has
+  been run on it). If R9 is released, both R7 and R9 are scored on the new RECS list and on BDG2 and WPuQ as frozen,
+  with `intervals.py`'s baselines (fixed, setback, standard setback, both pre-cool rules, the dev-tuned pre-cool rule,
+  the classical MPC) and 95 % intervals (2,000 resamples over units, seed 20261117), plus R9 − R7 with its interval.
+  All labelled seen; nothing is chosen from them. HUE stays at v1.0's point values (NASA POWER not fetched), and
+  v1.1 is not scored there.
+- **Release (if kept).** `thermopilot_core.py` gains the card MPC and the shield in numpy; R7 stays as
+  `mode='network'` (weights MIT). Demo and golden rebuilt for v1.1; model.yaml version 1.1 with the question,
+  summary, network, approach and disclaimer updated ("graded in simulation" stays); ladder, card, notebook. The
+  instrument runs the card MPC in the browser (selectable against the v1.0 network), with parity checked.
+
+## 2026-11-17 — R9 result: kept and released as v1.1; seen exam; instrument
+
+The plan above was followed; nothing was changed after a result was seen.
+
+**Decision.** `ratchet.py rung card4` on the frozen sets: val 0.700 vs R7 0.561 (+0.139, margin 0.01); dev 0.720 vs
+0.471 (gate ≥ 0.441), dev K h 0.00 vs fixed 0.00 + 1. Kept, released as v1.1. The code moved into
+`thermopilot_core.py` (`CardMPC`, `CardPilot`, `shield_sp`, `fit_map`, `pilot(..., mode='mpc' | 'network')`); a dev
+re-run through the moved code gives the same J to the last digit on two episodes. `tp/card_mpc.py` keeps only R8's
+residual wrapper.
+
+**Seen exam** (`training/results/v1.1_exam_2026-11-17/`; the RECS list frozen again with stable twins, baselines
+re-run on it; the dev-tuned pre-cool setting (4 h, 3 K) is the one tuned on the old dev set, unchanged):
+
+| set | row | v1.1 | v1.0 | best baseline | v1.1 − best [95 %] | v1.1 − v1.0 [95 %] |
+|---|---|---|---|---|---|---|
+| RECS (48) | bill | 2.77 % | 2.34 % | MPC 3.70 % | −0.93 [−1.30, −0.58] loss | +0.43 [+0.24, +0.68] |
+| RECS | skill | 0.70 | 0.28 | MPC 0.82 | −0.12 [−0.20, −0.01] loss | +0.42 [+0.25, +0.64] |
+| RECS | K h | 0.42 | 1.55 | MPC 0.56 | −0.14 [−0.32, +0.03] tie | −1.13 [−2.19, −0.33] |
+| BDG2 (16) | bill | 4.97 % | 2.77 % | MPC 2.69 % | +2.28 [+1.46, +3.08] win | +2.20 [+1.53, +2.92] |
+| BDG2 | skill | 0.757 | 0.451 | MPC 0.452 | +0.30 [+0.18, +0.46] win | +0.31 [+0.19, +0.46] |
+| BDG2 | K h | 0.00 | 0.05 | fixed 0.00 | 0.00 tie | −0.05 [−0.09, 0.00] |
+| WPuQ (38) | bill | 5.95 % | 3.13 % | MPC 7.16 % | −1.22 [−1.32, −1.11] loss | +2.81 [+2.27, +3.42] |
+| WPuQ | skill | 0.79 | 0.35 | MPC 0.95 | −0.16 [−0.18, −0.15] loss | +0.44 [+0.37, +0.51] |
+| WPuQ | K h | 0.00 | 0.00 | fixed 0.00 | 0.00 tie | 0.00 |
+
+v1.0 on the new RECS list: 2.34 % (morning, old list: 2.56 %), skill 0.28 (0.24). BDG2 and WPuQ reproduce the
+morning's v1.0 rows exactly. The BDG2 win over the classical MPC is large and was not investigated; the classical
+MPC's BDG2 result is the one that did not reproduce v1.0's. HUE: not run for either version.
+
+**Demo and golden.** `examples/bdg2/demo_episodes.npz` rebuilt with v1.1 (`export_demo.py mpc`): the same three
+exam episodes (now on the stable twins); the numpy replay chooses the recorded setpoints in 744 / 744 hours each
+(about 11 s). `tests/golden/thermopilot.txt` regenerated.
+
+**Instrument.** `web/export_instrument.py` fits each example's card map from its hourly maps (`fit_map`) and writes
+both modes' reference cases; the browser port (`site/src/instruments/thermopilot/net.ts`: `CardMPC`, `CardPilot`,
+`shieldSp`) matches Python on 40 cases (20 per mode) to 8.5e-15. The UI has a controller switch (v1.1 card MPC
+default, v1.0 network). There are no full BuildingSim runs of v1.1 for the lab weeks (the lab page holds v1.0's), so
+for v1.1 the reference mark is the v1.0 network on the same browser house. On the 150 lab weeks of the browser house
+(which is the twin's own linear model, so the card MPC plans on almost the house it controls) v1.1 saves 6.6 % of J
+against fixed, v1.0 3.7 %; v1.1 is lower in 122 weeks and higher in 9.
