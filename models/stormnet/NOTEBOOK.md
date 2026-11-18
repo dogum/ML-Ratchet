@@ -43,3 +43,41 @@ The backlog also asks about storm onsets. Add a descriptive **dev-only** check t
 All 16 selected dev storms had usable inputs at all three issue times. R3 warned before 12 first crossings (75%, Wilson 95% interval 51–90%). Published physics warned on nine, both tuned opponents on 15, and persistence on zero. Median lead on hits was one hour to the completed observation for all four forecasting methods that warned. The dev result is descriptive because the same blocks calibrated the physics and chose the rung.
 
 A build in a new work directory reproduced the source hashes, four bank fingerprints, dev reports, scientific figure, ladder, release weights and replay files byte for byte. Every scored value and paired difference matched the original primary run. Python and TypeScript agreed on 84 recording/issue/field combinations. The release weight SHA-256 is `4ca58aacb745d53108a643b54e33e069cd457db2f640ca62d6b7734894e68e49`.
+
+## 17 November 2026 · review and the v1.1 plan (written before any v1.1 experiment)
+
+A review for the owner (Claude) rebuilt v1.0 on Windows from the pinned provider files. The calibration
+reproduces to about 1e-8 relative (`single` gain 6.2123453 against 6.2123453), but the bank fingerprints differ at
+bit level, presumably from platform maths libraries; no score that matters moves. The release stays the Linux build.
+
+**Dev diagnostic** (`training/dev_diagnostic.py`, dev only). The dev-tuned two-state forecast misses by 4.36 nT on
+the 2,408 dev issues. Re-running the same physics with the actual next three hours of wind, which no forecast has,
+only reaches 4.21 nT; in main phases it is worse (6.65 → 7.34 nT). So the error is the physics, not the unknown
+wind. Truth sits deeper than the forecast: −1.26 nT overall, −3.63 nT on storm targets, −3.14 nT in recovery.
+The forecast recovers too fast.
+
+One structural reason: the forecast splits the observed current into fast and slow reservoirs using a ratio
+reconstructed from 36 hours of wind alone, while the observed Dst of those same 36 hours is available at issue time
+and unused. Long storms keep more current in the slow reservoir than 36 hours of wind can show.
+
+**Plan, fixed now.** Same split, data roles, protocol, rule (gain > 0.01 on the frozen set and no dev year more than
+5 % worse) and sealed reserve.
+
+1. *Physics ring-3, two candidates, each fitted on exactly the dev blocks:*
+   - a. state assimilation: estimate the fast and slow currents at issue time by least squares against the
+     observed Dst of the previous 36 hours, with the same physics as the forecast, instead of the wind-only ratio;
+   - b. pressure-dependent injection (Wang, Chao & Lin 2003): injection × (P / 3 nPa)^γ, γ fitted on dev
+     (γ = 0 is the current model).
+   Keep a candidate only if it lowers dev MAE on all issues and on storm targets in every dev year. Any kept
+   physics becomes the new **fair classical baseline** as well as the anchor.
+2. *Rungs, judged on new frozen sets built from the kept physics (all earlier rungs re-scored there):*
+   - r5: r3's readout with the past 36 hours of Dst as inputs (trend, assimilated states) and 256 fixed random
+     units instead of 48, trained on banks whose simulated past Dst carries the simulator's own unresolved noise.
+   - Seeds 103 / 104 / 105, judged on the seed mean (R3 showed the 0.01 margin is seed-sensitive).
+3. *Error bars:* widen-only factors per issue-time electric-field bin (< 1, 1-3, ≥ 3 mV/m), fitted on the
+   released rung's dev residuals.
+4. *Exam 2, the sealed reserve 2022-2025 (solar maximum):* opened once, after the v1.1 release decision is
+   committed, for v1.0, v1.1 and every baseline, with the same rows, block bootstrap and rules as the primary exam.
+   2022-2025 Dst in OMNI is the provisional or quicklook index; the year files and their index versions are
+   recorded.
+5. The lab and instrument are rebuilt around whole-storm replays once exam 2 is scored.
