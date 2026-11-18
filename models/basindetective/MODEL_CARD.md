@@ -158,7 +158,9 @@ Per-basin values: `training/exam_per_basin.csv` (no time series); intervals: `tr
 
 Coverage of the 68 % bars (bootstrap): mean flow 81 % [78, 84]; runoff ratio 77 % [74, 81]; baseflow index 77 % [73, 80]; low flow Q5 78 % [74, 81]; high flow Q95 73 % [70, 77]; half-flow date 83 % [80, 85]. The paired intervals are narrower than the import's unpaired Fisher-z /
 Zou ones, and they turn the mean-flow change from a tie into a **loss** to calibrated GR4J (-0.036 [-0.063, -0.008]),
-and four levels (mean flow, runoff ratio, Q5, Q95) into wins. The half-flow-date change beats GR4J's model-implied
+and four levels (mean flow, runoff ratio, Q5, Q95) into wins. Those level wins are kept by the rule but are practically
+equal: the margins are +0.004 to +0.007 Spearman, and most of the level skill comes from the basin's own 1999-2008
+record (0.97-0.98 on its own). The changes are the real test. The half-flow-date change beats GR4J's model-implied
 change (+0.065 [+0.005, +0.127]) but not GR4J run against the own record (-0.049 [-0.106, +0.007]): a tie.
 
 ## Exam with intervals and verdicts (added on import; unpaired, superseded by the re-score above, kept as a cross-check)
