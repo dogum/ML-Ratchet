@@ -1,0 +1,428 @@
+id: basindetective
+name: BasinDetective
+version: "1.0"
+status: released
+released: 2026-11-18
+order: 25
+domain: Hydrology
+platform: water
+tags: [hydrology, streamflow, catchment, signatures, change detection, reservoirs, groundwater, CAMELS-US, ERA5-Land, WaterSim, uncertainty]
+accent: "#2b8a3e"
+tagline: How a river's flow changes in a decade it has not seen, from its own gauge record
+question: Given nine years of a river basin's weather and flow, how do its flow signatures change in another decade, is a reservoir upstream, and what are its hidden stores?
+question_short: "A river's flow in an unseen decade, from its own record"
+disclaimer: >-
+  Research model. On the change between decades it ties a per-basin calibrated GR4J model; its reservoir detector
+  is at chance on real basins (AUC 0.49), and its four hidden properties have no real truth (graded on simulated
+  twins only).
+summary: >-
+  BasinDetective reads a river basin's daily precipitation, temperature and potential evaporation and its gauged
+  streamflow for about nine years, plus the weather of another decade. It says how six flow signatures change in
+  that other decade (mean flow, runoff ratio, baseflow index, low flow Q5, high flow Q95, half-flow date), whether a
+  reservoir holding more than 10 % of the annual flow sits upstream, and four hidden properties (slow-store time
+  constant, groundwater share, soil capacity, precipitation multiplier), each with an error bar. It was trained only
+  on 20,000 WaterSim basins driven by real ERA5-Land weather from non-exam years, and examined once on 619 real
+  CAMELS-US basins, predicting 1989-99 from 1999-2008. It ties calibrated GR4J on all six changes, needs no per-basin
+  calibration, and its bars are too wide; regulation detection did not transfer.
+
+reads: "Daily basin-average precipitation P (mm/day), mean temperature T_mean (°C) and potential evaporation PET (mm/day) for a gauged period of about 9 water years (trained on 9), the gauged streamflow Q (mm/day over the basin; NaN = missing) on the same days, and P, T_mean and PET for the target period (trained on 10 water years). Exam inputs: 1999-10..2008-09 forcing and Caravan Q, and 1989-10..1999-09 forcing."
+returns:
+  - "Change from the gauged to the target decade of six signatures, each mean ± 1 sigma: log ratio of mean flow, runoff ratio, baseflow index (Lyne-Hollick), log ratio of Q5, log ratio of Q95, half-flow date (days); plus the implied target-decade level with its 68 % range"
+  - "p_regulated: probability that upstream reservoir storage exceeds 10 % of the mean annual flow (temperature 1.3, fitted on dev), and log10(storage / annual flow) ± sigma (sigma not calibrated)"
+  - "Four hidden properties ± sigma, no real truth: slow-store recession time constant (days), groundwater share of flow, soil water capacity (mm), true / forcing precipitation in the gauged decade"
+  - "Error bars are widened by one dev-fitted factor per output (×1.00-1.73; Detective.sig_scale); divide by it for the raw ensemble sigma"
+
+physics:
+  summary: >-
+    WaterSim, the shared water platform's simulator (ML Ratchet water platform, Phase 1): four conceptual runoff
+    models (HBV, GR4J, SAC-SMA, VIC-lite), degree-day and energy-balance snow on elevation bands, unit-hydrograph
+    routing, reservoirs with operating policies (SOP, rule curve, Hanasaki) and irrigation, driven by real ERA5-Land
+    forcing from non-exam years or by its stochastic weather generator. BasinDetective's bank generator
+    (training/simbank.py, no edit to the shared package) separates the TRUE forcing that drives the simulator from
+    the SEEN forcing the network reads, and adds a gauge model; physics v2-v4 calibrate both on the dev basins.
+  simulator:
+    - "Bank: 10,000 basins per physics version (shards 0-39) and a frozen set of 1,000 (shards 900-903). 40 % camels prior (dev-basin attributes, jittered) with the donor's own ERA5-Land forcing 1951-1988; 35 % default prior on a random CAMELS basin's 1951-1988 forcing; 25 % stochastic weather. Layout: 1 spin-up year, 10-year target decade (forcing only), 9 gauged years. Random model (4) and snow routine (2) per basin; target-decade climate perturbed in half the basins (P × U(0.88, 1.12), T + U(-1, 1) °C, PET × (1 + 0.025 dT))"
+    - "SEEN vs TRUE forcing: persistent precipitation multiplier, daily error cv 0.25, snow undercatch U(0, 0.1), temperature offset N(0, 0.7 °C); v2: log multiplier ~ N(-0.076 + 0.30 frac_snow, 0.116), fitted on dev (calib_pbias.py); v3: decadal drift, TRUE target-decade P = SEEN / exp(delta), delta ~ N(0.029, 0.038), fitted on dev twins (calib_drift.py); v4: year-to-year error TRUE P × exp(e_y), e_y ~ N(0, 0.10) (calib_annual.py)"
+    - "Gauge model: v1 WaterSim default (AR(1) rho 0.9, cv 0.08, rating revisions, gaps); v2+ fitted on dev twins: AR(1) rho 0.999, cv 0.02, 3 significant figures in cfs (dynamics-feature gap score 5.84 → 4.63, calib_gauge.json)"
+    - "Labels: six signature changes computed with an exact port of WaterData's signature code; slow-store constant, groundwater share and soil capacity from each model's parameters; true / seen precipitation; reservoir storage / natural annual flow"
+  checks:
+    - "WaterSim Phase 1 (shared/water/checks): GR4J vs airGR (independent Fortran in R) 1.0e-7 mm on 4,017 days; HBV snow and soil states vs TUWmodel ≤ 1e-12 mm on 12,053 days (runoff routing differs by design: NSE 0.999); water-balance closure 1.4e-15 relative on 121 runs"
+    - "Signature port features.sigs vs waterdata.signatures: max relative difference 1.3e-6 on 52 dev basins (as shipped; needs the Caravan data to re-run)"
+    - "Twin test on 52 dev basins × 5 dev-calibrated setups (260 twins, training/twin_final.json): change rho on twins 0.33-0.85 vs on real 0.25-0.61; the twins' own change ranks the real change at rho 0.27-0.69 (simulator skill); p_regulated median 0.06 on twins vs 0.21 on real (0.18 on unregulated real basins)"
+    - "Import check (18 Nov 2026, training/import_check.py): every GR4J-vs-own-record and no-change number in exam.json, the level baselines and the four examples' truth re-derive exactly from WaterData's shipped signatures.parquet"
+    - "numpy == torch (float32) < 6e-6 and the shipped page's JS == Python to 2e-7 sigma (as shipped, not re-run). The site instrument re-computes the 150 features and the ensemble in TypeScript: equal to the Python package to 3.5e-15 on 36 cases (4 basins × 9 what-ifs, float16 weights); float16 weights move the outputs by ≤ 3.7e-4 relative"
+noise: "Not real recordings: the gauge noise is a model fitted to real dev records. Dev twins showed real USGS daily values are smoother than WaterSim's default gauge noise (more flat days, fewer rising days); v2 fits an AR(1) multiplicative error (rho 0.999, cv 0.02) plus rounding to 3 significant figures in cfs (0.01 cfs floor) to the dev records' day-to-day features. Forcing error (precipitation multiplier, daily, annual and decadal error, snow undercatch, temperature offset) is laid between the TRUE forcing the simulator runs on and the SEEN forcing the network reads."
+network: "Five MLPs (seeds), each 150 inputs → 2 × 256 GELU (dropout 0.1) → 23 outputs (means and log sigmas of 11 Gaussian targets, one logit for regulation); 110,359 weights each, 551,795 in all. Inputs: 150 engineered features of both decades' climate and their differences, gauged signatures, flow-duration curve, monthly regime, recession, baseflow filters, rain-flow lag correlations, autocorrelation and seasonal damping; robust-standardised (median / IQR of the bank), clipped to ±6. Gaussian NLL + binary cross-entropy, AdamW, one-cycle schedule, 60 epochs on 20,000 basins (banks v3 + v4). Ensemble: mean of means; variance = mean member variance + spread of means; × dev widen factor."
+
+approach:
+  real_backdrop: "Real ERA5-Land daily forcing of CAMELS basins from the free window 1951-1988 drives 75 % of the simulated basins"
+  physics_inputs: "Classical hydrological signatures and filters of the gauged record (Lyne-Hollick and Eckhardt baseflow, recession constants, flow-duration curve, half-flow date) and the climate shift between decades (precipitation, PET, aridity, snow fraction)"
+  physics_anchor: false
+  real_data_roles: [backdrop, calibration, gate, error_bars, exam]
+
+data:
+  - name: Caravan v1.6 (Kratzert et al. 2023, Sci. Data 10, 61) with CAMELS-US streamflow (Newman et al. 2015; Addor et al. 2017) and ERA5-Land forcing (Muñoz-Sabater et al. 2021)
+    url: https://doi.org/10.5281/zenodo.15529786
+    licence: "CC BY 4.0 (Caravan); ERA5-Land under the Copernicus licence (free use with attribution; contains modified Copernicus Climate Change Service information). Examples in examples/ are Caravan excerpts"
+    role: "physics (non-exam forcing 1951-1988 for the bank), dev (52 basins: calibration, gate, widening, twins), exam (619 basins: inputs and truth)"
+  - name: HydroATLAS / BasinATLAS (Linke et al. 2019) with GRanD reservoir volumes (Lehner et al. 2011), via Caravan attributes (dor_frac)
+    url: https://www.hydrosheds.org/hydroatlas
+    licence: "CC BY 4.0"
+    role: "truth (regulation: storage / annual flow), dev, exam"
+  - name: USGS NWIS annual peak flows (peak codes 5 and 6), by WaterData
+    url: https://nwis.waterdata.usgs.gov/usa/nwis/peak
+    licence: "Public domain (U.S. Government)"
+    role: "truth (independent regulation flag), exam"
+  - name: WaterData Phase 1 baselines (GR4J+snow calibrated per basin on 1999-2008, Budyko-Fu, kNN on attributes, signatures.parquet)
+    url: https://github.com/dogum/ML-Ratchet/tree/main/shared/water
+    licence: "MIT (code); derived from the sources above"
+    role: "exam (classical baselines)"
+  - name: WaterSim dev-calibrated parameter sets (shared/water/checks/dev_calibrated_params.json)
+    url: https://github.com/dogum/ML-Ratchet/tree/main/shared/water/checks
+    licence: "MIT"
+    role: "dev (twin test, physics calibration v2-v4)"
+
+split:
+  dev: "WaterData's frozen split (shared/water/data/proc/splits.json, seed 20261118): 52 CAMELS-US dev basins, read 1999-2008 → predict the non-exam window 1980-89. 51 have a usable 1980s record, so the dev gate scores 51 basins (5 regulated). Dev is used for physics calibration (gauge model, precipitation prior, decadal drift, annual error), the ratchet gate, the widen-only factors and the regulation temperature, and 260 dev twins"
+  exam: "All 619 CAMELS-US exam basins: read 1999-10..2008-09 forcing and Caravan Q and 1989-10..1999-09 forcing; truth = the signatures of each basin's own observed 1989-99 flow minus those of 1999-2008, HydroATLAS storage / annual flow, and USGS peak codes 5/6 in water years 1990-2008. Run once with the released model"
+
+exam:
+  short: "619 real CAMELS-US basins, 1989-99 from 1999-2008"
+  summary: >-
+    619 CAMELS-US exam basins, gauged protocol: the network reads 1999-2008 forcing and flow and 1989-99 forcing and
+    predicts the change of six signatures; truth is each basin's own 1989-99 record. Run once (training/exam.json). The
+    fairest classical baseline is GR4J+snow calibrated per basin on the same 1999-2008 flow (WaterData), scored as its
+    model-implied change; also GR4J's simulated 1989-99 minus the observed 1999-2008 value, Budyko-Fu with w fitted
+    on 1999-2008, and no change. No NWM, regionalisation or dev-tuned baseline exists for the change task in the
+    shipped files. Intervals: the per-basin network outputs are not shipped, so no paired bootstrap; rho rows use
+    Fisher-z intervals, and the difference to the best baseline Zou's interval for two independent correlations
+    (conservative: both rhos are on the same basins, so the paired interval is narrower). Result: a tie with
+    calibrated GR4J on all six changes, a tie on five of six levels and a narrow win on Q95, ties on regulation at
+    chance level.
+  results:
+    - metric: "Change of mean flow (log ratio), 619 basins, Spearman rho"
+      better: higher
+      model: 0.757
+      baselines:
+        - { name: "GR4J+snow calibrated per basin on 1999-2008, model-implied change", kind: classical, value: 0.793 }
+        - { name: "Budyko-Fu, w fitted on 1999-2008", kind: classical, value: 0.768 }
+        - { name: "GR4J simulated 1989-99 minus observed 1999-2008", kind: classical, value: 0.698 }
+      verdict: tie
+      note: "Model rho 95 % CI [0.721, 0.789] (Fisher z). Difference to GR4J model-implied -0.036, 95 % CI [-0.081, +0.009] (Zou, independent correlations: conservative). No change has no rank correlation (constant); its median |error| is 0.184."
+    - metric: "Change of runoff ratio, 619 basins, Spearman rho"
+      better: higher
+      model: 0.453
+      baselines:
+        - { name: "GR4J+snow calibrated per basin on 1999-2008, model-implied change", kind: classical, value: 0.499 }
+        - { name: "Budyko-Fu, w fitted on 1999-2008", kind: classical, value: 0.465 }
+        - { name: "GR4J simulated 1989-99 minus observed 1999-2008", kind: classical, value: 0.325 }
+      verdict: tie
+      note: "Model rho 95 % CI [0.388, 0.513]. Difference to GR4J model-implied -0.046, 95 % CI [-0.133, +0.040] (Zou, conservative). Beats GR4J-vs-own-record (+0.127 [+0.033, +0.222]) but not the fairest baseline."
+    - metric: "Change of baseflow index (Lyne-Hollick), 619 basins, Spearman rho"
+      better: higher
+      model: 0.203
+      baselines:
+        - { name: "GR4J simulated 1989-99 minus observed 1999-2008", kind: classical, value: 0.251 }
+        - { name: "GR4J+snow calibrated per basin on 1999-2008, model-implied change", kind: classical, value: 0.232 }
+      verdict: tie
+      note: "Model rho 95 % CI [0.126, 0.277]. Difference to GR4J-vs-own-record -0.048, 95 % CI [-0.154, +0.058]; to GR4J model-implied -0.029 [-0.135, +0.077] (Zou, conservative). Every method is weak here."
+    - metric: "Change of low flow Q5 (log ratio), 619 basins, Spearman rho"
+      better: higher
+      model: 0.440
+      baselines:
+        - { name: "GR4J+snow calibrated per basin on 1999-2008, model-implied change", kind: classical, value: 0.421 }
+        - { name: "GR4J simulated 1989-99 minus observed 1999-2008", kind: classical, value: -0.044 }
+      verdict: tie
+      note: "Model rho 95 % CI [0.374, 0.502]. Difference to GR4J model-implied +0.019, 95 % CI [-0.072, +0.110] (Zou, conservative). The handoff's 0.44 vs 0.42 is right; it is not a win."
+    - metric: "Change of high flow Q95 (log ratio), 619 basins, Spearman rho"
+      better: higher
+      model: 0.709
+      baselines:
+        - { name: "GR4J+snow calibrated per basin on 1999-2008, model-implied change", kind: classical, value: 0.722 }
+        - { name: "GR4J simulated 1989-99 minus observed 1999-2008", kind: classical, value: 0.674 }
+      verdict: tie
+      note: "Model rho 95 % CI [0.668, 0.746]. Difference to GR4J model-implied -0.013, 95 % CI [-0.068, +0.042] (Zou, conservative)."
+    - metric: "Change of half-flow date (days), 619 basins, Spearman rho"
+      better: higher
+      model: 0.630
+      baselines:
+        - { name: "GR4J simulated 1989-99 minus observed 1999-2008", kind: classical, value: 0.679 }
+        - { name: "GR4J+snow calibrated per basin on 1999-2008, model-implied change", kind: classical, value: 0.565 }
+      verdict: tie
+      note: "Model rho 95 % CI [0.580, 0.676]. Difference to GR4J-vs-own-record -0.049, 95 % CI [-0.113, +0.015]; to GR4J model-implied +0.065 [-0.006, +0.138] (Zou, conservative). The handoff's 0.63 vs 0.57 compares with the model-implied GR4J only."
+    - metric: "Change of mean flow (log ratio), median absolute error"
+      better: lower
+      model: 0.083
+      baselines:
+        - { name: "Budyko-Fu, w fitted on 1999-2008", kind: classical, value: 0.077 }
+        - { name: "GR4J+snow calibrated per basin on 1999-2008, model-implied change", kind: classical, value: 0.086 }
+        - { name: "GR4J simulated 1989-99 minus observed 1999-2008", kind: classical, value: 0.111 }
+        - { name: "No change", kind: dumb, value: 0.184 }
+      verdict: tie
+      note: "No interval: per-unit scores not shipped; needs the data rebuild (`mlratchet data water`). The shipped 'MAE' is a median (exam.py: np.median of |error|). Budyko-Fu is 0.006 lower: too small to call without an interval. Far better than no change."
+    - metric: "Change of runoff ratio, median absolute error"
+      better: lower
+      model: 0.0296
+      baselines:
+        - { name: "Budyko-Fu, w fitted on 1999-2008", kind: classical, value: 0.0313 }
+        - { name: "GR4J+snow calibrated per basin on 1999-2008, model-implied change", kind: classical, value: 0.0331 }
+        - { name: "GR4J simulated 1989-99 minus observed 1999-2008", kind: classical, value: 0.0431 }
+        - { name: "No change", kind: dumb, value: 0.0381 }
+      verdict: tie
+      note: "No interval: per-unit scores not shipped; needs the data rebuild (`mlratchet data water`). Lowest median error, but 5 % below Budyko-Fu: too small to call from medians."
+    - metric: "Change of baseflow index, median absolute error"
+      better: lower
+      model: 0.0185
+      baselines:
+        - { name: "No change", kind: dumb, value: 0.0181 }
+        - { name: "GR4J+snow calibrated per basin on 1999-2008, model-implied change", kind: classical, value: 0.0207 }
+        - { name: "GR4J simulated 1989-99 minus observed 1999-2008", kind: classical, value: 0.0654 }
+      verdict: tie
+      note: "No interval: per-unit scores not shipped; needs the data rebuild (`mlratchet data water`). No change is 0.0004 lower: the network does not beat 'no change' on BFI."
+    - metric: "Change of low flow Q5 (log ratio), median absolute error"
+      better: lower
+      model: 0.126
+      baselines:
+        - { name: "No change", kind: dumb, value: 0.129 }
+        - { name: "GR4J+snow calibrated per basin on 1999-2008, model-implied change", kind: classical, value: 0.163 }
+        - { name: "GR4J simulated 1989-99 minus observed 1999-2008", kind: classical, value: 0.634 }
+      verdict: tie
+      note: "No interval: per-unit scores not shipped; needs the data rebuild (`mlratchet data water`). 2 % below no change: too small to call. Clearly below GR4J's 0.163, which the status doc lists as a better MAE."
+    - metric: "Change of high flow Q95 (log ratio), median absolute error"
+      better: lower
+      model: 0.108
+      baselines:
+        - { name: "GR4J+snow calibrated per basin on 1999-2008, model-implied change", kind: classical, value: 0.111 }
+        - { name: "GR4J simulated 1989-99 minus observed 1999-2008", kind: classical, value: 0.120 }
+        - { name: "No change", kind: dumb, value: 0.204 }
+      verdict: tie
+      note: "No interval: per-unit scores not shipped; needs the data rebuild (`mlratchet data water`). 2 % below GR4J: too small to call. Far better than no change."
+    - metric: "Change of half-flow date, median absolute error"
+      better: lower
+      model: 5.97
+      unit: days
+      baselines:
+        - { name: "GR4J+snow calibrated per basin on 1999-2008, model-implied change", kind: classical, value: 5.77 }
+        - { name: "GR4J simulated 1989-99 minus observed 1999-2008", kind: classical, value: 6.90 }
+        - { name: "No change", kind: dumb, value: 8.28 }
+      verdict: tie
+      note: "No interval: per-unit scores not shipped; needs the data rebuild (`mlratchet data water`). GR4J is 0.2 days lower: too small to call."
+    - metric: "Level of 1989-99 mean flow (gauged value + predicted change), Spearman rho"
+      better: higher
+      model: 0.982
+      baselines:
+        - { name: "GR4J sim (gauged)", kind: classical, value: 0.978 }
+        - { name: "kNN on attributes (ungauged, WaterData)", kind: classical, value: 0.803 }
+        - { name: "Own 1999-2008 value", kind: dumb, value: 0.971 }
+      verdict: tie
+      note: "Difference to GR4J +0.004, 95 % CI [-0.001, +0.008]; to own value +0.011 [+0.006, +0.017] (Zou, conservative). Median |error| 0.086 vs 0.132 (GR4J) and 0.185 mm/d (own value)."
+    - metric: "Level of 1989-99 runoff ratio, Spearman rho"
+      better: higher
+      model: 0.976
+      baselines:
+        - { name: "Own 1999-2008 value", kind: dumb, value: 0.972 }
+        - { name: "GR4J sim (gauged)", kind: classical, value: 0.965 }
+        - { name: "kNN on attributes (ungauged, WaterData)", kind: classical, value: 0.781 }
+      verdict: tie
+      note: "Difference to own value +0.004, 95 % CI [-0.002, +0.010]; to GR4J +0.010 [+0.004, +0.017] (Zou, conservative). Budyko-Fu (forcing only) 0.744."
+    - metric: "Level of 1989-99 baseflow index, Spearman rho"
+      better: higher
+      model: 0.979
+      baselines:
+        - { name: "Own 1999-2008 value", kind: dumb, value: 0.978 }
+        - { name: "GR4J sim (gauged)", kind: classical, value: 0.787 }
+        - { name: "kNN on attributes (ungauged, WaterData)", kind: classical, value: 0.547 }
+      verdict: tie
+      note: "Difference to own value +0.001, 95 % CI [-0.004, +0.006] (Zou, conservative); median |error| 0.0185 vs 0.0181 for the own value. The handoff's 'BFI rho 0.98 vs 0.79' is against GR4J only; the record itself ranks the level as well."
+    - metric: "Level of 1989-99 low flow Q5, Spearman rho"
+      better: higher
+      model: 0.975
+      baselines:
+        - { name: "Own 1999-2008 value", kind: dumb, value: 0.971 }
+        - { name: "GR4J sim (gauged)", kind: classical, value: 0.778 }
+        - { name: "kNN on attributes (ungauged, WaterData)", kind: classical, value: 0.663 }
+      verdict: tie
+      note: "Difference to own value +0.005, 95 % CI [-0.001, +0.011] (Zou, conservative). Median |error| 0.013 vs 0.020 mm/d (own value). The handoff's 'Q5 0.975 vs 0.78' is against GR4J only."
+    - metric: "Level of 1989-99 high flow Q95, Spearman rho"
+      better: higher
+      model: 0.973
+      baselines:
+        - { name: "GR4J sim (gauged)", kind: classical, value: 0.966 }
+        - { name: "Own 1999-2008 value", kind: dumb, value: 0.963 }
+        - { name: "kNN on attributes (ungauged, WaterData)", kind: classical, value: 0.744 }
+      verdict: win
+      note: "Difference to GR4J +0.0066, 95 % CI [+0.00001, +0.0135]; to own value +0.010 [+0.003, +0.017] (Zou, conservative). A win by the rule, at its edge. Median |error| 0.40 vs 0.44 (GR4J) and 0.66 mm/d."
+    - metric: "Level of 1989-99 half-flow date, Spearman rho"
+      better: higher
+      model: 0.913
+      baselines:
+        - { name: "GR4J sim (gauged)", kind: classical, value: 0.909 }
+        - { name: "Own 1999-2008 value", kind: dumb, value: 0.870 }
+        - { name: "kNN on attributes (ungauged, WaterData)", kind: classical, value: 0.716 }
+      verdict: tie
+      note: "Difference to GR4J +0.004, 95 % CI [-0.015, +0.023]; to own value +0.043 [+0.020, +0.067] (Zou, conservative). Median |error| 6.0 vs 6.9 (GR4J) and 8.3 days."
+    - metric: "Regulated (HydroATLAS storage > 10 % of annual flow; 37 of 619), AUC"
+      better: higher
+      model: 0.485
+      baselines:
+        - { name: "Seasonal-damping index", kind: classical, value: 0.469 }
+        - { name: "GR4J calibration misfit (1 - NSE)", kind: classical, value: 0.433 }
+        - { name: "Chance", kind: dumb, value: 0.5 }
+      verdict: tie
+      note: "AUC 95 % CI [0.390, 0.580] (Hanley-McNeil from the AUC and class counts; approximate, unpaired): no better than chance. Simulated frozen-set AUC 0.91. Precision in the top 37: 0.05."
+    - metric: "Regulated (storage > 50 % of annual flow; 16 of 619), AUC"
+      better: higher
+      model: 0.532
+      baselines:
+        - { name: "Seasonal-damping index", kind: classical, value: 0.482 }
+        - { name: "GR4J calibration misfit (1 - NSE)", kind: classical, value: 0.431 }
+        - { name: "Chance", kind: dumb, value: 0.5 }
+      verdict: tie
+      note: "AUC 95 % CI [0.386, 0.678] (Hanley-McNeil, approximate). Precision in the top 16: 0.00."
+    - metric: "Any upstream reservoir (storage > 0; 53 of 619), AUC"
+      better: higher
+      model: 0.441
+      baselines:
+        - { name: "Seasonal-damping index", kind: classical, value: 0.506 }
+        - { name: "GR4J calibration misfit (1 - NSE)", kind: classical, value: 0.394 }
+        - { name: "Chance", kind: dumb, value: 0.5 }
+      verdict: tie
+      note: "AUC 95 % CI [0.363, 0.519] (Hanley-McNeil, approximate): at or below chance. Precision in the top 53: 0.08."
+    - metric: "USGS peak code 5/6 in ≥ 1/3 of WY1990-2008 peaks (11 of 619), AUC"
+      better: higher
+      model: 0.711
+      baselines:
+        - { name: "Seasonal-damping index", kind: classical, value: 0.639 }
+        - { name: "GR4J calibration misfit (1 - NSE)", kind: classical, value: 0.608 }
+        - { name: "Chance", kind: dumb, value: 0.5 }
+      verdict: tie
+      note: "AUC 95 % CI [0.538, 0.885] (Hanley-McNeil, approximate): above chance, but its interval overlaps both classical scores [0.429, 0.786] and [0.460, 0.817]. 11 positives. Precision in the top 11: 0.00."
+    - metric: "log10(storage / annual flow) among the 53 basins with any reservoir, Spearman rho"
+      better: higher
+      model: 0.236
+      baselines: []
+      verdict: info
+      note: "95 % CI [-0.037, 0.476] (Fisher z). Median |error| 0.48 (log10 units); 68 % coverage 28 % [17, 42] (exact binomial; sigma not calibrated: no dev truth). Confusion at p > 0.5 against storage > 10 %: 5 hits, 92 false alarms, 32 misses, 490 correct rejections (precision 0.05, recall 0.14)."
+    - metric: "Hidden property on 260 dev twins: slow-store time constant (ln days), Spearman rho"
+      better: higher
+      model: 0.73
+      baselines: []
+      verdict: info
+      note: "No real truth: dev twins only. 95 % CI [0.66, 0.78] (Fisher z, twins of one basin are not independent). R2 0.42, median |error| 0.90 ln units, bias +0.15, 68 % coverage 68 %. On exam basins it ranks with the observed recession constant at rho 0.28."
+    - metric: "Hidden property on 260 dev twins: groundwater share of flow, Spearman rho"
+      better: higher
+      model: 0.79
+      baselines: []
+      verdict: info
+      note: "No real truth: dev twins only. 95 % CI [0.73, 0.83]. R2 0.60, median |error| 0.124, bias -0.024, 68 % coverage 69 %. On exam basins it ranks with the observed BFI at rho 0.80."
+    - metric: "Hidden property on 260 dev twins: soil water capacity (ln mm), Spearman rho"
+      better: higher
+      model: 0.70
+      baselines: []
+      verdict: info
+      note: "No real truth: dev twins only. 95 % CI [0.64, 0.76]. R2 0.51, median |error| 0.39 ln units, bias -0.145, 68 % coverage 71 %."
+    - metric: "Hidden property on 260 dev twins: true / forcing precipitation (ln), median absolute error"
+      better: lower
+      model: 0.054
+      baselines: []
+      verdict: info
+      note: "Every twin has multiplier 1, so no ranking: median |error| 0.054, bias -0.011, 68 % coverage 79 %. On exam basins: rho 0.65 with the gauged runoff ratio; median predicted multiplier 1.16 where the gauged runoff ratio exceeds 1 (42 basins) and 1.04 overall."
+    - metric: "By stratum: snow (frac_snow ≥ 0.15, 210 basins), rho of the six changes (mean flow, RR, BFI, Q5, Q95, half-flow date)"
+      better: higher
+      model: "0.84, 0.50, 0.35, 0.41, 0.80, 0.78"
+      baselines:
+        - { name: "GR4J model-implied", kind: classical, value: "0.82, 0.44, 0.31, 0.46, 0.80, 0.68" }
+      verdict: info
+    - metric: "By stratum: rain (frac_snow < 0.15, 409 basins), rho of the six changes"
+      better: higher
+      model: "0.73, 0.43, 0.13, 0.47, 0.66, 0.57"
+      baselines:
+        - { name: "GR4J model-implied", kind: classical, value: "0.79, 0.53, 0.19, 0.40, 0.68, 0.53" }
+      verdict: info
+    - metric: "By stratum: arid (PET/P > 1, 214 basins), rho of the six changes"
+      better: higher
+      model: "0.67, 0.43, 0.21, 0.38, 0.66, 0.74"
+      baselines:
+        - { name: "GR4J model-implied", kind: classical, value: "0.71, 0.49, 0.11, 0.23, 0.58, 0.44" }
+      verdict: info
+    - metric: "By stratum: humid (PET/P ≤ 1, 405 basins), rho of the six changes"
+      better: higher
+      model: "0.71, 0.46, 0.23, 0.50, 0.61, 0.61"
+      baselines:
+        - { name: "GR4J model-implied", kind: classical, value: "0.79, 0.49, 0.35, 0.51, 0.67, 0.66" }
+      verdict: info
+    - metric: "By stratum: regulated (storage > 10 %, 37 basins), rho of the six changes"
+      better: higher
+      model: "0.68, 0.37, 0.21, 0.32, 0.58, 0.71"
+      baselines:
+        - { name: "GR4J model-implied", kind: classical, value: "0.74, 0.58, 0.22, 0.42, 0.74, 0.64" }
+      verdict: info
+    - metric: "By stratum: gauged runoff ratio > 1 (ERA5-Land undercatch, 42 basins), rho of the six changes"
+      better: higher
+      model: "0.22, 0.11, 0.24, -0.06, 0.24, 0.90"
+      baselines:
+        - { name: "GR4J model-implied", kind: classical, value: "0.21, 0.18, 0.39, 0.08, 0.37, 0.90" }
+      verdict: info
+      note: "Where the forcing misses precipitation, every method fails on the volume changes."
+  coverage:
+    - { output: "Change of mean flow (95 % CI 78-84 %; 95 % bars cover 97 %)", actual: 81.3 }
+    - { output: "Change of runoff ratio (74-81 %; 96 %)", actual: 77.4 }
+    - { output: "Change of baseflow index (73-80 %; 96 %)", actual: 76.6 }
+    - { output: "Change of Q5 (74-81 %; 95 %)", actual: 77.5 }
+    - { output: "Change of Q95 (70-77 %; 96 %)", actual: 73.2 }
+    - { output: "Change of half-flow date (79-86 %; 99 %)", actual: 82.6 }
+    - { output: "log10 storage among 53 regulated basins (sigma not calibrated)", actual: 28.3 }
+
+wins:
+  - "Needs no per-basin calibration and still ties a GR4J model calibrated on each basin's own 1999-2008 flow on all six changes (rho 0.76 vs 0.79 mean flow, 0.44 vs 0.42 Q5, 0.63 vs 0.57 half-flow date), and gives an error bar with every answer."
+  - "Beats 'no change' by a wide margin in median error on mean flow (0.083 vs 0.184), Q95 (0.108 vs 0.204) and half-flow date (6.0 vs 8.3 days)."
+  - "Levels of the 1989-99 signatures: ahead of GR4J on BFI (0.979 vs 0.787) and Q5 (0.975 vs 0.778), and a narrow win on Q95 against every baseline."
+  - "Error bars are never too narrow on the changes: 95 % bars cover 95-99 % of exam basins."
+losses:
+  - "Regulation does not transfer: AUC 0.49 [0.39, 0.58] against HydroATLAS storage > 10 % (37 positives), at chance, against 0.91 on simulated basins; 92 false alarms for 5 hits at p > 0.5. The handoff says this plainly; the status doc's 'BasinDetective AUC 0.53 high' row is also at chance."
+  - "On BFI and Q5 changes its median error is no better than 'no change' (0.0185 vs 0.0181; 0.126 vs 0.129)."
+  - "The 68 % bars are too wide: 73-83 % of exam truths fall inside, and every coverage interval lies above 68 %. The widen-only factors were fitted on the 1980s dev window, which drifted more than the exam decade."
+  - "Where ERA5-Land undercatches (gauged runoff ratio > 1, 42 basins), mean-flow change rho 0.22 (GR4J 0.21)."
+  - "Against its own record it adds little on the levels: BFI 0.979 vs 0.978, Q5 0.975 vs 0.971, runoff ratio 0.976 vs 0.972 (all ties)."
+
+limits:
+  - "Weather data caps every method: the forcing is ERA5-Land, which under-catches mountain and Pacific Northwest precipitation (50 of the 671 CAMELS-US basins have a 1989-99 runoff ratio above 1, 44 in 1999-2008; 42 of the 619 exam basins in the gauged decade) and drifts about 6 % between decades (more precipitation in the 1980s). Literature numbers from Daymet- or NLDAS-forced LSTMs (NSE about 0.69-0.76) are not comparable."
+  - "Gauged mode only: it needs about nine water years of the basin's own daily flow. Trained on 9 gauged and 10 target water years of CAMELS-US / ERA5-Land; other regions, record lengths and forcing products are extrapolation."
+  - "The decadal drift (v3) was measured on dev twins for 1980-89 vs 1999-2008 and scaled linearly to the 9.5-year exam separation; it is one number for all regions."
+  - "Simulated reservoirs follow generic operating policies; CAMELS-US basins are chosen to be minimally impacted, and HydroATLAS upstream volumes can be wrong where a pour point snaps to a larger river. The log-storage sigma is not calibrated."
+  - "Hidden properties have no real truth in this data package; 'slow store' means a different store in each model structure (HBV lower box, GR4J routing store linearised, SAC-SMA lower primary, VIC-lite ARNO baseflow), and the precipitation-multiplier twins all have m = 1."
+  - "Rule notes: dev data were used both to fit physics and to gate rungs (the decadal-drift mean was fitted on the dev basins and gated on the same dev basins: partly in-sample). Free-window forcing from exam basins (1951-1988) was used in the bank, as the brief allows; no exam Q was used for training. The exam was untouched."
+
+next:
+  - "Realistic regulation in the bank: fit reservoir size, position and policy to the 15 ResOpsUS dev dams and the 5 regulated dev basins; add hydropower peaking and withdrawal-dominated operation; check with a twin of each regulated dev basin."
+  - "Measure the forcing drift per region and era on both non-exam windows (1980-89 and 2008-15) instead of one linear scaling; this should also narrow the bars."
+  - "A small 1-D CNN sequence encoder on the daily record next to the features, and an ungauged attribute-only mode."
+  - "After `mlratchet data water`: export the per-basin exam predictions so the rows get paired bootstrap intervals (and the conservative Zou intervals can be replaced), and add NWM v3.0 retrospective signature changes as an operational baseline."
+  - "Real truth for storage and groundwater (GRACE, well records) for the hidden properties."
+help_wanted:
+  - "Per-basin exam outputs: the release ships only medians and rhos, so every interval here is unpaired; rebuilding the Caravan time series (`mlratchet data water`, a 24.8 GB stream) and re-running training/exam.py with the released weights would give paired intervals."
+  - "Real truth for slow-store size, groundwater share and soil capacity on CAMELS-US basins."
+
+usage:
+  install: pip install numpy scipy pandas
+  demo: python demo.py
+  python: |
+    import pandas as pd
+    import basindetective as bd
+    det = bd.load()                                   # weights/basindetective_v1.npz, 5-member ensemble
+    cal = pd.read_csv('examples/camels_14020000_cal.csv', index_col=0, parse_dates=True)
+    tgt = pd.read_csv('examples/camels_14020000_tgt.csv', index_col=0, parse_dates=True)
+    res = bd.predict(det, cal[['P', 'T_mean', 'PET']], cal['Q_mm'].values, tgt)
+    res['changes']['d_logq']                          # {'mean', 'sd', 'unit'}: log ratio of target-decade mean flow
+    res['target_period']['q_mean']                    # calibration value, prediction, 68 % range (mm/day)
+    res['regulation']['p_regulated'], res['hidden']['slow_store_days']
+
+files:
+  inference: [basindetective/__init__.py, basindetective/features.py, basindetective/model.py]
+  weights: [weights/basindetective_v1.npz, weights/basindetective_v1_sigma.json]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 2

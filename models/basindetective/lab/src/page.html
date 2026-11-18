@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Pick a real river basin and run BasinDetective in your browser: how its flow changes in a decade it has not seen, whether a reservoir sits upstream, and what happens when you change the weather or the gauge.">
+<title>BasinDetective v1.0 · ML Ratchet</title><style>@@FONTS@@
+@@TOKENS@@
+@@INSTRUMENT@@
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans)}
+main,header,footer{max-width:1120px;margin:auto;padding-inline:clamp(16px,4vw,52px)}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:65px;border-bottom:1px solid var(--rule)}
+a{color:inherit;text-underline-offset:3px}nav{display:flex;align-items:center;gap:clamp(12px,3vw,29px)}nav a,header>a{text-decoration:none}
+header,button.meta,.label,th,.result{font:11px/1.45 var(--mono);letter-spacing:.035em}button.meta{color:var(--ink);border:1px solid var(--rule);background:transparent;padding:6px 9px;border-radius:3px;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+.hero{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(190px,1fr);align-items:end;gap:32px;padding:clamp(35px,6vw,74px) 0 28px}
+.label{text-transform:uppercase;color:var(--ink-2);margin:0 0 8px}.hero h1,h2,h3{font-family:var(--display);font-weight:400;margin:0}
+h1{font-size:clamp(46px,7.5vw,96px);letter-spacing:-.045em;line-height:.96}h2{font-size:clamp(34px,5vw,58px);line-height:1.05;letter-spacing:-.025em}
+.hero>p{color:var(--ink-2);margin:0;line-height:1.55;max-width:38ch}.instrument{--accent:#2b8a3e}
+section.evidence{padding:clamp(40px,6vw,76px) 0;border-bottom:1px solid var(--rule)}
+.dek{max-width:70ch;color:var(--ink-2);font-size:17px;line-height:1.55;margin:12px 0 24px}
+.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:13px}
+td,th{padding:9px 8px;text-align:right;border-bottom:1px solid var(--rule-2);white-space:nowrap}th{color:var(--ink-2);font-size:10px;text-transform:uppercase}td:first-child,th:first-child{text-align:left;padding-left:0}
+td b{font-weight:650}td small{color:var(--ink-2);font-size:11px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(22px,5vw,64px)}.cols h3{font-size:32px}.cols p,footer{color:var(--ink-2);line-height:1.6}
+details{margin-top:18px}summary{cursor:pointer;color:var(--ink-2);font-size:14px}
+footer{padding-block:28px 40px;font-size:13px}footer p{max-width:84ch}.result{color:var(--ink-2);letter-spacing:0;max-width:96ch;line-height:1.6}
+@media(max-width:650px){.hero,.cols{grid-template-columns:1fr;gap:16px}.hero>p{max-width:55ch}header{min-height:52px}nav{gap:10px}nav a{font-size:10px}td,th{padding:8px 5px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><a href="https://dogum.github.io/ML-Ratchet/">ML Ratchet</a><nav aria-label="Lab sections"><a href="#play">Play</a><a href="#exam">Exam</a><a href="#honest">Honest part</a><a href="#ratchet">Ratchet</a><button class="meta" type="button" id="theme">Theme</button></nav></header>
+<main>
+<section id="play"><div class="hero"><div><p class="label">BasinDetective / Hydrology</p><h1>What does a river’s record say about a decade it has not seen?</h1></div>
+<p>The network reads nine years of a basin’s weather and streamflow, plus the weather of the decade before. It says how six flow signatures changed, whether a reservoir sits upstream, and four hidden properties. Pick a real exam basin, then change the input: a wetter or warmer decade, a reservoir on the river, a coarser gauge. Every change recomputes 150 features and reruns five networks in your browser.</p></div>
+<div id="instrument" class="instrument"></div><noscript>Enable JavaScript to run the network. The full exam appears below.</noscript></section>
+<section id="exam" class="evidence"><p class="label">Exam · 619 CAMELS-US basins · run once</p><h2>It ties calibrated GR4J on every change</h2>
+<p class="dek">Inputs: 1999–2008 forcing and flow, and 1989–99 forcing. Truth: each basin’s own 1989–99 record. The network calibrates nothing per basin; GR4J was calibrated on each basin’s 1999–2008 flow. Rank correlation (ρ) with the observed change, then median absolute error.</p>
+<div class="scroll" tabindex="0" role="region" aria-label="Exam: change of six signatures"><table><thead><tr><th>Change of</th><th>BasinDetective ρ</th><th>GR4J ρ</th><th>Difference</th><th>GR4J vs own record ρ</th><th>Budyko-Fu ρ</th><th>Median |error|: net / GR4J / no change</th><th>Inside 68 % / 95 % bars</th><th>Verdict</th></tr></thead><tbody>@@CHANGES@@</tbody></table></div>
+<p class="result">Intervals are 95 %. ρ: Fisher z. Difference against the best baseline: Zou’s interval for two independent correlations, which is conservative here because both are on the same 619 basins (the paired interval is narrower). The per-basin network outputs are not shipped, so no paired bootstrap yet. Median |error| has no interval; no gap is large enough to call. Coverage: exact binomial. The bars are too wide: every 68 % coverage interval lies above 68 %.</p>
+<details><summary>Levels of the 1989–99 signatures (gauged value + predicted change)</summary><div class="scroll" tabindex="0" role="region" aria-label="Exam: levels"><table><thead><tr><th>Level</th><th>BasinDetective ρ</th><th>Own 1999–2008 value ρ</th><th>GR4J sim ρ</th><th>kNN on attributes ρ (ungauged)</th><th>Difference to best</th><th>Verdict</th></tr></thead><tbody>@@LEVELS@@</tbody></table></div>
+<p class="result">The basin’s own record already ranks these levels at ρ 0.87–0.98. The handoff’s “clearly better than B’s table” holds against GR4J (BFI 0.98 vs 0.79, Q5 0.975 vs 0.78), not against the record itself.</p></details>
+<details><summary>Regulation: is there a reservoir upstream?</summary><div class="scroll" tabindex="0" role="region" aria-label="Exam: regulation"><table><thead><tr><th>Truth</th><th>Positives</th><th>BasinDetective AUC</th><th>GR4J misfit AUC</th><th>Seasonal damping AUC</th><th>Precision in top n</th><th>Verdict</th></tr></thead><tbody>@@REG@@</tbody></table></div>
+<p class="result">@@REGNOTE@@</p></details>
+<details><summary>Hidden properties on 260 dev twins (no real truth)</summary><div class="scroll" tabindex="0" role="region" aria-label="Hidden properties"><table><thead><tr><th>Property</th><th>Spearman ρ</th><th>R²</th><th>Median |error|</th><th>Bias</th><th>Inside 68 %</th></tr></thead><tbody>@@HIDDEN@@</tbody></table></div>
+<p class="result">Twins: each of the 52 dev basins re-simulated with its five dev-calibrated WaterSim setups. Every twin has a precipitation multiplier of 1, so that row measures error, not ranking.</p></details>
+<details><summary>By stratum (ρ of the change, network / GR4J)</summary><div class="scroll" tabindex="0" role="region" aria-label="Strata"><table><thead><tr><th>Stratum</th><th>n</th><th>Mean flow</th><th>Runoff ratio</th><th>BFI</th><th>Q5</th><th>Q95</th><th>Half-flow date</th></tr></thead><tbody>@@STRATA@@</tbody></table></div>
+<p class="result">Where ERA5-Land undercatches precipitation (gauged runoff ratio above 1) every method fails on mean flow.</p></details></section>
+<section id="honest" class="evidence"><div class="cols"><div><p class="label">The honest part</p><h3>What it adds, and what it does not</h3><p>On the change between decades it ties a GR4J model calibrated on each basin, signature by signature, and it is ahead of the plain “no change” answer on mean flow, Q95 and half-flow date. Its median errors on BFI and Q5 are no better than “no change”. What it adds is no per-basin calibration and an error bar on every answer; the bars are too wide (73–83 % of exam truths fall inside the 68 % bars). The weather data caps every method: ERA5-Land under-catches mountain and Pacific Northwest precipitation and drifts about 6 % between decades.</p></div>
+<div><p class="label">Where it fails</p><h3>Reservoirs did not transfer</h3><p>On simulated basins it spots a reservoir at AUC 0.91. On real basins it is at chance: AUC 0.49 against HydroATLAS storage, with 37 regulated basins. Simulated reservoirs follow generic operating rules, CAMELS basins are chosen to be little regulated, and HydroATLAS volumes can belong to a larger river. Try the reservoir slider above: a smooth store does not always raise its alarm.</p></div></div></section>
+<section id="ratchet" class="evidence"><p class="label">The ratchet · WaterSim physics v1 → v4</p><h2>Seven rungs, two rejected</h2>
+<p class="dek">Keep a rung if its skill on the frozen simulated set of the current physics beats the incumbent by more than 0.01 and the real dev composite (51 dev basins with a 1980s record) drops by no more than 0.02. Physics v2–v4 came from dev twins: gauge texture, precipitation bias, decadal drift, year-to-year error.</p>
+<div class="scroll" tabindex="0" role="region" aria-label="Ratchet rungs"><table><thead><tr><th>Rung</th><th>Change</th><th>Physics</th><th>Sim skill (own set)</th><th>Re-scored on val-v4</th><th>Dev composite</th><th>Decision</th></tr></thead><tbody>@@RUNGS@@</tbody></table></div>
+<p class="result">Each gate compares with the current incumbent only, so the released R5’s dev composite (0.451) ended 0.027 below the first rung’s (0.479), more than one gate tolerance. The decadal-drift mean (v3) was fitted on the dev basins and then gated on the same dev basins.</p></section>
+</main><footer><p>Forcing and flow: Caravan v1.6 (Kratzert et al. 2023, CC BY 4.0) with CAMELS-US (Newman et al. 2015; Addor et al. 2017) streamflow and ERA5-Land forcing (Muñoz-Sabater et al. 2021; contains modified Copernicus Climate Change Service information). Regulation truth: HydroATLAS (Linke et al. 2019, CC BY 4.0) with GRanD volumes (Lehner et al. 2011); USGS NWIS peak codes (public domain). The four basins are the release’s examples: one fixed seeded draw per climate stratum plus one regulated basin, never chosen by score. The 1989–99 daily flow is not in the release; only its signatures are.</p>
+<p><a href="https://github.com/dogum/ML-Ratchet/tree/main/models/basindetective">Model and build record</a></p></footer>
+@@PACKS@@
+<script>@@JS@@</script></body></html>

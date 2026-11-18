@@ -1,0 +1,428 @@
+<title>BasinDetective</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a gauge-house field notebook. One reading column; the explorer and lab are two-pane instruments.
+   River blue = the network, silt ochre = what the gauge really measured, slate violet = the classical model. */
+:root {
+  --bg: #edf2f3; --paper: #f8fbfb; --ink: #10232d; --muted: #4c6470; --line: #c8d5d9; --soft: #dfe8eb;
+  --river: #17668f; --river-soft: rgba(23,102,143,.14); --silt: #a9621a; --gr4j: #6a6699; --good: #2c7a4d; --bad: #a83a2e;
+  --f-head: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --f-body: "Source Sans 3", "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0b1419; --paper: #111d24; --ink: #dce7eb; --muted: #93a8b1; --line: #26373f; --soft: #18272f;
+  --river: #5db3df; --river-soft: rgba(93,179,223,.16); --silt: #e2a252; --gr4j: #aaa5dc; --good: #63c08a; --bad: #e77a6c; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0b1419; --paper: #111d24; --ink: #dce7eb; --muted: #93a8b1; --line: #26373f; --soft: #18272f;
+  --river: #5db3df; --river-soft: rgba(93,179,223,.16); --silt: #e2a252; --gr4j: #aaa5dc; --good: #63c08a; --bad: #e77a6c; color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font: 400 17px/1.55 var(--f-body); }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0; }
+section { padding-block: 44px 8px; border-top: 1px solid var(--line); }
+h1, h2, h3 { font-family: var(--f-head); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(42px, 8vw, 76px); line-height: 0.98; font-weight: 700; }
+h2 { font-size: clamp(26px, 4vw, 34px); line-height: 1.1; font-weight: 700; margin-bottom: 10px; }
+h3 { font-size: 19px; font-weight: 500; }
+p { margin: 0 0 12px; max-width: 68ch; }
+.eyebrow { font: 500 12px/1 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.mono, .num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+a { color: var(--river); }
+:focus-visible { outline: 2px solid var(--river); outline-offset: 2px; }
+
+/* hero */
+.hero { padding-block: 40px 28px; display: grid; gap: 22px; }
+.hero .lede { font-size: 20px; line-height: 1.45; max-width: 60ch; }
+.hero-strip { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 14px 14px 8px; }
+.hero-strip canvas { width: 100%; height: 170px; display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; color: var(--muted); }
+.key { display: inline-block; width: 18px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.fact { border-left: 3px solid var(--river); padding: 2px 0 2px 12px; }
+.fact b { display: block; font: 600 26px/1.15 var(--f-mono); font-variant-numeric: tabular-nums; }
+.fact span { font-size: 14px; color: var(--muted); }
+
+/* explorer */
+.instrument { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 20px; margin-top: 16px; }
+@media (max-width: 760px) { .instrument { grid-template-columns: minmax(0, 1fr); } }
+.picker { display: flex; flex-direction: column; gap: 10px; max-height: 620px; overflow-y: auto; padding-right: 4px; }
+@media (max-width: 760px) { .picker { max-height: 220px; } }
+.picker h4 { margin: 6px 0 2px; font: 500 11px/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.picker button { all: unset; cursor: pointer; padding: 6px 8px; border-radius: 3px; font-size: 14px; line-height: 1.25; border: 1px solid transparent; }
+.picker button:hover { background: var(--soft); }
+.picker button[aria-pressed="true"] { border-color: var(--river); background: var(--river-soft); }
+.picker button:focus-visible { outline: 2px solid var(--river); }
+.panel { min-width: 0; display: grid; gap: 14px; }
+.chart { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 10px; }
+.chart canvas { width: 100%; height: 200px; display: block; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; min-width: 0; }
+.card .lab { font-size: 14px; font-weight: 600; }
+.card .sub { font-size: 12.5px; color: var(--muted); line-height: 1.3; }
+.card .val { font: 500 15px/1.3 var(--f-mono); font-variant-numeric: tabular-nums; margin-top: 4px; }
+.card svg { width: 100%; height: 34px; display: block; margin-top: 4px; }
+.meta { font-size: 14px; color: var(--muted); }
+.pill { display: inline-block; font: 500 12px/1 var(--f-mono); padding: 4px 7px; border-radius: 99px; border: 1px solid var(--line); }
+.pill.yes { border-color: var(--silt); color: var(--silt); }
+
+/* lab */
+.sliders { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 14px; }
+.sliders label { display: block; font-weight: 600; font-size: 15px; }
+.sliders output { font-family: var(--f-mono); color: var(--river); }
+input[type=range] { width: 100%; accent-color: var(--river); }
+.btn { font: 600 14px var(--f-body); border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 6px 10px; border-radius: 3px; cursor: pointer; }
+
+/* tables */
+.tbl { overflow-x: auto; margin: 10px 0 14px; }
+table { border-collapse: collapse; font-size: 14.5px; min-width: 560px; width: 100%; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 12px var(--f-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+td.n { font-family: var(--f-mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+tr.best td.n.win { color: var(--river); font-weight: 600; }
+.kept { color: var(--good); font-weight: 600; } .rej { color: var(--bad); font-weight: 600; }
+.barchart { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 12px; overflow-x: auto; }
+.barchart svg { display: block; width: 100%; min-width: 520px; height: auto; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+ol.steps { padding-left: 22px; max-width: 72ch; } ol.steps li { margin-bottom: 10px; }
+pre { background: var(--paper); border: 1px solid var(--line); padding: 12px; border-radius: 4px; overflow-x: auto; font: 13.5px/1.5 var(--f-mono); }
+footer { padding-block: 30px 50px; font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">ML Ratchet · Watershed · project 3 of 4</div>
+  <h1>BasinDetective</h1>
+  <p class="lede">Give it nine years of a river's gauge record and the weather of another decade. It says how that river's
+  flow will differ in the other decade, whether a reservoir sits upstream, and what the basin hides underground, each with
+  an error bar. It was trained only on simulated basins and graded on 619 real ones.</p>
+  <div class="hero-strip" aria-label="Weekly streamflow of one exam basin">
+    <canvas id="hero" width="1000" height="170"></canvas>
+    <div class="legend"><span><i class="key" style="background:var(--river)"></i>gauged decade the network reads (1999–2008)</span>
+    <span><i class="key" style="background:var(--silt)"></i>decade it never sees (1989–1999, the exam)</span><span id="heroName"></span></div>
+  </div>
+  <div class="facts" id="facts"></div>
+</header>
+
+<section id="explore">
+  <div class="eyebrow">Real exam basins</div>
+  <h2>Read a basin</h2>
+  <p>Pick a basin from a fixed random draw of exam basins (seeded, within climate strata, never chosen by score). The network read
+  only the blue decade and the weather of the ochre one. Each card shows its answer (blue, with a 1-sigma bar), what the gauge
+  really recorded (ochre tick) and the calibrated GR4J model (violet tick).</p>
+  <div class="instrument">
+    <nav class="picker" id="picker" aria-label="Exam basins"></nav>
+    <div class="panel">
+      <div><h3 id="bName"></h3><div class="meta" id="bMeta"></div></div>
+      <div class="chart"><canvas id="bChart" width="900" height="200"></canvas></div>
+      <div class="cards" id="bCards"></div>
+      <div class="cards" id="bHidden"></div>
+    </div>
+  </div>
+</section>
+
+<section id="lab">
+  <div class="eyebrow">Lab · the network runs in your browser</div>
+  <h2>Change the other decade's weather</h2>
+  <p>The sliders rescale the unseen decade's precipitation and shift its temperature for the basin selected above, then
+  recompute the features and run the network (5 members) right here. Everything about the gauged decade stays fixed.</p>
+  <div class="sliders">
+    <div><label for="sP">Precipitation × <output id="oP">1.00</output></label><input id="sP" type="range" min="0.8" max="1.2" step="0.01" value="1"></div>
+    <div><label for="sT">Temperature shift <output id="oT">+0.0 °C</output></label><input id="sT" type="range" min="-3" max="3" step="0.1" value="0"></div>
+    <div style="align-self:end"><button class="btn" id="reset" type="button">Reset to the real decade</button></div>
+  </div>
+  <div class="cards" id="labCards" style="margin-top:12px"></div>
+  <p class="muted" id="labNote" style="margin-top:10px"></p>
+</section>
+
+<section id="exam">
+  <div class="eyebrow">Final exam · 619 CAMELS-US basins never used for any choice</div>
+  <h2>How the change in each signature was predicted</h2>
+  <p id="examLede"></p>
+  <div class="barchart"><svg id="rhoChart" viewBox="0 0 900 300" role="img" aria-label="Spearman correlation per target"></svg></div>
+  <div class="tbl"><table id="deltaTbl"></table></div>
+  <h3 style="margin-top:18px">Is there a reservoir upstream?</h3>
+  <p id="regLede"></p>
+  <div class="tbl"><table id="regTbl"></table></div>
+  <h3 style="margin-top:18px">Where it works and where it does not</h3>
+  <div class="tbl"><table id="strataTbl"></table></div>
+</section>
+
+<section id="hidden">
+  <div class="eyebrow">Hidden properties · no real truth, checked on twins</div>
+  <h2>What the basin hides</h2>
+  <p id="hiddenLede"></p>
+  <div class="tbl"><table id="twinTbl"></table></div>
+</section>
+
+<section id="ratchet">
+  <div class="eyebrow">The ratchet</div>
+  <h2>Every rung, kept or not</h2>
+  <p id="ratchetLede"></p>
+  <div class="tbl"><table id="ratchetTbl"></table></div>
+</section>
+
+<section id="built">
+  <div class="eyebrow">How it was built</div>
+  <h2>Trained on physics, graded on reality</h2>
+  <ol class="steps" id="steps"></ol>
+</section>
+
+<section id="limits">
+  <div class="eyebrow">Limits</div>
+  <h2>What it cannot do</h2>
+  <ul id="limitsList" style="max-width:72ch"></ul>
+</section>
+
+<section id="use">
+  <div class="eyebrow">Release</div>
+  <h2>Use it</h2>
+  <p><span class="mono">basindetective-v1.0.zip</span> holds a numpy/scipy inference package, the weights, a demo on four real
+  exam basins, the model card and every training script.</p>
+  <pre>import basindetective as bd
+det = bd.load()
+res = bd.predict(det, cal, q_cal, tgt)   # cal/tgt: daily P, T_mean, PET; q_cal: mm/day
+res['target_period']['q_mean']           # calibration value, prediction, 68 % range
+res['regulation']['p_regulated']</pre>
+</section>
+
+<footer class="wrap" id="credits"></footer>
+</div>
+
+<script>/*DETECTIVE_JS*/</script>
+<script>
+const DATA = /*DATA*/;
+(function () {
+'use strict';
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const $ = (id) => document.getElementById(id);
+const model = BD.loadModel(DATA.model);
+const NAMES = DATA.names;
+const EX = DATA.exam;
+const LABEL = {
+  d_logq: ['Mean flow', 'change in the decade-average flow'],
+  d_rr: ['Runoff ratio', 'share of rain and snow that leaves as streamflow'],
+  d_bfi: ['Baseflow index', 'share of flow from slow storage (Lyne-Hollick)'],
+  d_logq5: ['Low flow (Q5)', 'the flow exceeded 95 % of days'],
+  d_logq95: ['High flow (Q95)', 'the flow exceeded 5 % of days'],
+  d_hfd: ['Half-flow date', 'day of the water year when half the flow has passed']
+};
+const DT = ['d_logq', 'd_rr', 'd_bfi', 'd_logq5', 'd_logq95', 'd_hfd'];
+const PCT = new Set(['d_logq', 'd_logq5', 'd_logq95']);
+function fmtD(t, v) {
+  if (v === null || v === undefined || !isFinite(v)) return '–';
+  if (PCT.has(t)) { const p = (Math.exp(v) - 1) * 100; return (p >= 0 ? '+' : '') + p.toFixed(0) + ' %'; }
+  if (t === 'd_hfd') return (v >= 0 ? '+' : '') + v.toFixed(0) + ' d';
+  return (v >= 0 ? '+' : '') + v.toFixed(3);
+}
+const f2 = (v, d = 2) => (v === null || v === undefined || !isFinite(v)) ? '–' : Number(v).toFixed(d);
+
+// ---------- hero
+function drawSeries(cv, b, opts) {
+  const ctx = cv.getContext('2d');
+  const W = cv.clientWidth, H = cv.clientHeight, dpr = window.devicePixelRatio || 1;
+  cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  const v = b.weekly_logq, n = v.length;
+  const fin = v.filter(x => x !== null);
+  let lo = Math.min(...fin), hi = Math.max(...fin); const pad = (hi - lo) * 0.08 + 0.05; lo -= pad; hi += pad;
+  const t0 = new Date(b.week0 + 'T00:00:00Z').getTime();
+  const split = new Date('1999-10-01T00:00:00Z').getTime();
+  const L = 40, R = 6, T = 8, B = 20;
+  const X = (i) => L + (W - L - R) * i / (n - 1), Y = (y) => T + (H - T - B) * (1 - (y - lo) / (hi - lo));
+  ctx.font = '11px ' + css('--f-mono'); ctx.fillStyle = css('--muted'); ctx.strokeStyle = css('--line'); ctx.lineWidth = 1;
+  const ticks = [];
+  for (let e = -4; e <= 3; e++) for (const m of [1, 3]) ticks.push(Math.log10(m * Math.pow(10, e)));
+  ticks.filter(k => k >= lo && k <= hi).forEach(k => {
+    ctx.beginPath(); ctx.moveTo(L, Y(k)); ctx.lineTo(W - R, Y(k)); ctx.stroke();
+    const v = Math.pow(10, k); ctx.fillText(v >= 1 ? String(Math.round(v)) : String(+v.toPrecision(1)), 2, Y(k) + 4);
+  });
+  const ystep = W < 600 ? 4 : 2;
+  for (let yr = 1990; yr <= 2008; yr += ystep) {
+    const i = (new Date(yr + '-01-01T00:00:00Z').getTime() - t0) / (7 * 864e5);
+    if (i > 0 && i < n) ctx.fillText(String(yr), X(i) - 14, H - 4);
+  }
+  const si = (split - t0) / (7 * 864e5);
+  ctx.strokeStyle = css('--ink'); ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(X(si), T); ctx.lineTo(X(si), H - B); ctx.stroke(); ctx.setLineDash([]);
+  ctx.lineWidth = opts && opts.thin ? 1.1 : 1.4;
+  for (const part of [['--silt', 0, si], ['--river', si, n]]) {
+    ctx.strokeStyle = css(part[0]); ctx.beginPath(); let pen = false;
+    for (let i = Math.max(0, Math.floor(part[1])); i < Math.min(n, Math.ceil(part[2]) + 1); i++) {
+      if (v[i] === null) { pen = false; continue; }
+      if (!pen) { ctx.moveTo(X(i), Y(v[i])); pen = true; } else ctx.lineTo(X(i), Y(v[i]));
+    }
+    ctx.stroke();
+  }
+  ctx.fillStyle = css('--muted'); ctx.fillText('mm/day (log)', L + 4, T + 10);
+}
+
+// ---------- cards
+function intervalSvg(t, mu, sd, truth, gr) {
+  const vals = [mu - 2 * sd, mu + 2 * sd]; if (truth !== null && isFinite(truth)) vals.push(truth); if (gr !== null && isFinite(gr)) vals.push(gr); vals.push(0);
+  let lo = Math.min(...vals), hi = Math.max(...vals); const p = (hi - lo) * 0.08 || 0.01; lo -= p; hi += p;
+  const X = (v) => 6 + 288 * (v - lo) / (hi - lo);
+  let s = `<svg viewBox="0 0 300 34" aria-hidden="true"><line x1="6" x2="294" y1="17" y2="17" stroke="var(--line)"/>`;
+  s += `<line x1="${X(0)}" x2="${X(0)}" y1="8" y2="26" stroke="var(--muted)" stroke-dasharray="2 2"/>`;
+  s += `<rect x="${X(mu - sd)}" y="12" width="${Math.max(X(mu + sd) - X(mu - sd), 1)}" height="10" rx="2" fill="var(--river-soft)" stroke="var(--river)"/>`;
+  s += `<circle cx="${X(mu)}" cy="17" r="4" fill="var(--river)"/>`;
+  if (gr !== null && isFinite(gr)) s += `<line x1="${X(gr)}" x2="${X(gr)}" y1="4" y2="30" stroke="var(--gr4j)" stroke-width="2.5"/>`;
+  if (truth !== null && isFinite(truth)) s += `<line x1="${X(truth)}" x2="${X(truth)}" y1="2" y2="32" stroke="var(--silt)" stroke-width="3"/>`;
+  return s + '</svg>';
+}
+function deltaCards(el, b, pred, showTruth) {
+  el.innerHTML = DT.map(t => {
+    const [mu, sd] = pred[t]; const tr = showTruth ? b.truth[t] : null; const g = showTruth ? b.gr4j[t] : null;
+    return `<div class="card"><div class="lab">${LABEL[t][0]}</div><div class="sub">${LABEL[t][1]}</div>
+      <div class="val"><span style="color:var(--river)">${fmtD(t, mu)}</span> <span class="muted">± ${PCT.has(t) ? (sd * 100).toFixed(0) + ' %' : (t === 'd_hfd' ? sd.toFixed(0) + ' d' : sd.toFixed(3))}</span>
+      ${showTruth ? `· <span style="color:var(--silt)">${fmtD(t, tr)}</span> · <span style="color:var(--gr4j)">${fmtD(t, g)}</span>` : ''}</div>
+      ${intervalSvg(t, mu, sd, tr, g)}</div>`;
+  }).join('');
+}
+function hiddenCards(b, pred) {
+  const pr = pred, pReg = b.p_reg;
+  const regTxt = b.dor > 0 ? `HydroATLAS: reservoirs hold ${(b.dor * 100).toFixed(0)} % of a year's flow` : 'HydroATLAS: no reservoir upstream';
+  const e = (t) => Math.exp(pr[t][0]);
+  $('bHidden').innerHTML = `
+  <div class="card"><div class="lab">Reservoir upstream?</div><div class="sub">regulated = storage above 10 % of the mean annual flow</div>
+    <div class="val"><span style="color:var(--river)">p = ${f2(pReg)}</span> <span class="pill ${b.dor > 0.1 ? 'yes' : ''}">${b.dor > 0.1 ? 'regulated' : 'not regulated'}</span></div><div class="sub" style="margin-top:4px">${regTxt}</div></div>
+  <div class="card"><div class="lab">Slow-store time constant</div><div class="sub">groundwater recession, days (no real truth)</div>
+    <div class="val" style="color:var(--river)">${e('log_kslow').toFixed(0)} d <span class="muted">(×/÷ ${Math.exp(pr.log_kslow[1]).toFixed(1)})</span></div></div>
+  <div class="card"><div class="lab">Groundwater share of flow</div><div class="sub">model-truth slow-store share (no real truth)</div>
+    <div class="val" style="color:var(--river)">${f2(pr.gw_share[0])} <span class="muted">± ${f2(pr.gw_share[1])}</span></div></div>
+  <div class="card"><div class="lab">Soil water capacity</div><div class="sub">mm the soil can hold for plants (no real truth)</div>
+    <div class="val" style="color:var(--river)">${e('log_soilcap').toFixed(0)} mm <span class="muted">(×/÷ ${Math.exp(pr.log_soilcap[1]).toFixed(1)})</span></div></div>
+  <div class="card"><div class="lab">Precipitation the forcing missed</div><div class="sub">true precipitation / ERA5-Land precipitation</div>
+    <div class="val" style="color:var(--river)">× ${e('log_pmult').toFixed(2)} <span class="muted">(×/÷ ${Math.exp(pr.log_pmult[1]).toFixed(2)})</span></div></div>`;
+}
+
+// ---------- explorer + lab state
+let cur = null, tgtCache = {};
+function tgtOf(b) {
+  if (tgtCache[b.id]) return tgtCache[b.id];
+  const P = BD.b64i16(b.tgt_P), T = BD.b64i16(b.tgt_T), E = BD.b64i16(b.tgt_E);
+  const t0 = new Date(b.tgt_start + 'T00:00:00Z'), month = new Int32Array(b.n_tgt), wy = new Int32Array(b.n_tgt);
+  for (let i = 0; i < b.n_tgt; i++) { const d = new Date(t0.getTime() + i * 864e5), m = d.getUTCMonth() + 1; month[i] = m; wy[i] = d.getUTCFullYear() + (m >= 10 ? 1 : 0); }
+  const o = { P: Array.from(P, v => v / 100), T: Array.from(T, v => v / 100), E: Array.from(E, v => v / 100), month, wy };
+  return (tgtCache[b.id] = o);
+}
+function runLab() {
+  const a = +$('sP').value, d = +$('sT').value;
+  $('oP').textContent = a.toFixed(2); $('oT').textContent = (d >= 0 ? '+' : '') + d.toFixed(1) + ' °C';
+  const b = cur, x0 = b.x.map(v => v === null ? NaN : v);
+  const x = BD.targetFeatures(x0, NAMES, b.cal_clim, tgtOf(b), a, d);
+  const r = BD.predict(model, x);
+  deltaCards($('labCards'), b, r, false);
+  const tP = Math.exp(x[NAMES.indexOf('t_logP')]) * 365.25, cP = Math.exp(b.cal_clim.c.logP) * 365.25;
+  $('labNote').textContent = `${b.name}: unseen decade ${tP.toFixed(0)} mm/yr precipitation and ${x[NAMES.indexOf('t_Tmean')].toFixed(1)} °C, against ${cP.toFixed(0)} mm/yr and ${b.cal_clim.c.Tmean.toFixed(1)} °C in the gauged decade. p(regulated) = ${r.p_regulated.toFixed(2)}.`;
+}
+function select(b, btn) {
+  cur = b;
+  document.querySelectorAll('#picker button').forEach(x => x.setAttribute('aria-pressed', x === btn ? 'true' : 'false'));
+  $('bName').textContent = b.name;
+  $('bMeta').innerHTML = `<span class="mono">${b.id.replace('camels_', 'USGS ')}</span> · ${b.stratum} · ${Math.round(b.area_km2).toLocaleString()} km² · mean flow ${f2(b.cal.q_mean)} mm/day · runoff ratio ${f2(b.cal.runoff_ratio)} (gauged decade)`;
+  drawSeries($('bChart'), b);
+  const pred = {}; DATA.model.targets.forEach(t => pred[t] = b.pred[t]);
+  deltaCards($('bCards'), b, pred, true);
+  hiddenCards(b, pred);
+  runLab();
+}
+function buildPicker() {
+  const groups = {};
+  DATA.basins.forEach(b => (groups[b.stratum] = groups[b.stratum] || []).push(b));
+  const nav = $('picker'); let first = null;
+  Object.keys(groups).forEach(g => {
+    const h = document.createElement('h4'); h.textContent = g; nav.appendChild(h);
+    groups[g].forEach(b => {
+      const btn = document.createElement('button'); btn.type = 'button'; btn.textContent = b.name; btn.setAttribute('aria-pressed', 'false');
+      btn.addEventListener('click', () => select(b, btn)); nav.appendChild(btn); if (!first) first = [b, btn];
+    });
+  });
+  select(first[0], first[1]);
+}
+
+// ---------- exam
+function examViews() {
+  const D = EX.delta, G = 'GR4J (gauged, model-implied change)', G2 = 'GR4J (gauged, sim target period minus observed cal)', BU = 'Budyko-Fu (w fitted on cal)';
+  const bd = (t) => D[t].BasinDetective;
+  const best = (t) => Math.max(D[t][G].rho, D[t][G2].rho, (D[t][BU] || {}).rho || -1);
+  // facts
+  const mrho = DT.reduce((s, t) => s + bd(t).rho, 0) / 6, grho = DT.reduce((s, t) => s + best(t), 0) / 6;
+  const reg = EX.regulation['dor>0.1 (mid+high)'];
+  $('facts').innerHTML = `
+   <div class="fact"><b>${f2(mrho)} vs ${f2(grho)}</b><span>mean Spearman ρ over six decade-to-decade changes: BasinDetective vs the best classical answer per target</span></div>
+   <div class="fact"><b>${f2(reg.BasinDetective_auc)} vs ${f2(Math.max(reg['GR4J misfit (1-NSE_cal)_auc'], reg['seasonal damping index_auc']))}</b><span>AUC for "reservoir upstream" (${reg.n_pos} of ${EX.n_basins} exam basins): network vs best classical score</span></div>
+   <div class="fact"><b>${(100 * DT.reduce((s, t) => s + bd(t).cov68, 0) / 6).toFixed(0)} %</b><span>of exam truths inside the 68 % error bars (mean over the six changes)</span></div>
+   <div class="fact"><b>10,000 × 3</b><span>simulated basins per physics version; zero real training labels</span></div>`;
+  // chart
+  const svg = $('rhoChart'); const W = 900, H = 300, L = 46, B = 46, T = 14;
+  const lo = -0.1, hi = 1.0, Y = (v) => T + (H - T - B) * (1 - (v - lo) / (hi - lo));
+  let s = '';
+  for (let v = 0; v <= 1.0001; v += 0.2) s += `<line x1="${L}" x2="${W - 6}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${L - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="12" fill="var(--muted)" font-family="var(--f-mono)">${v.toFixed(1)}</text>`;
+  s += `<line x1="${L}" x2="${W - 6}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--muted)"/>`;
+  const gw = (W - L - 6) / 6, bw = gw / 5;
+  const series = [['BasinDetective', (t) => bd(t).rho, 'var(--river)'], ['GR4J, model change', (t) => D[t][G].rho, 'var(--gr4j)'],
+    ['GR4J vs own record', (t) => D[t][G2].rho, 'var(--muted)'], ['Budyko-Fu', (t) => D[t][BU] ? D[t][BU].rho : null, 'var(--silt)']];
+  DT.forEach((t, i) => {
+    series.forEach((se, k) => {
+      const v = se[1](t); if (v === null || v === undefined) return;
+      const x = L + i * gw + bw * 0.5 + k * bw, y0 = Y(0), y1 = Y(v);
+      s += `<rect x="${x}" y="${Math.min(y0, y1)}" width="${bw * 0.85}" height="${Math.abs(y1 - y0)}" fill="${se[2]}"><title>${se[0]}: ${v.toFixed(2)}</title></rect>`;
+      if (k === 0) s += `<text x="${x + bw * 0.42}" y="${y1 - 5}" text-anchor="middle" font-size="12" fill="var(--ink)" font-family="var(--f-mono)">${v.toFixed(2)}</text>`;
+    });
+    s += `<text x="${L + i * gw + gw / 2}" y="${H - B + 18}" text-anchor="middle" font-size="13" fill="var(--ink)">${LABEL[t][0]}</text>`;
+  });
+  series.forEach((se, k) => { s += `<rect x="${L + 10 + k * 190}" y="${H - 16}" width="12" height="10" fill="${se[2]}"/><text x="${L + 28 + k * 190}" y="${H - 7}" font-size="12.5" fill="var(--muted)">${se[0]}</text>`; });
+  svg.innerHTML = s;
+  // table
+  let tb = '<tr><th>Change of</th><th>BasinDetective ρ</th><th>MAE</th><th>68 % cover</th><th>95 % cover</th><th>GR4J ρ (model / vs record)</th><th>GR4J MAE</th><th>Budyko ρ</th><th>No-change MAE</th></tr>';
+  DT.forEach(t => {
+    const a = bd(t), g = D[t][G], g2 = D[t][G2], bu = D[t][BU];
+    const u = (v) => PCT.has(t) ? f2(v, 3) : (t === 'd_hfd' ? f2(v, 1) : f2(v, 3));
+    tb += `<tr><td>${LABEL[t][0]}</td><td class="n">${f2(a.rho)}</td><td class="n">${u(a.mae)}</td><td class="n">${(100 * a.cov68).toFixed(0)} %</td><td class="n">${(100 * a.cov95).toFixed(0)} %</td><td class="n">${f2(g.rho)} / ${f2(g2.rho)}</td><td class="n">${u(Math.min(g.mae, g2.mae))}</td><td class="n">${bu ? f2(bu.rho) : '–'}</td><td class="n">${u(D[t]['no change (persistence)'].mae)}</td></tr>`;
+  });
+  $('deltaTbl').innerHTML = tb;
+  // regulation
+  let rt = '<tr><th>Truth</th><th>Positives</th><th>BasinDetective AUC</th><th>GR4J misfit AUC</th><th>Seasonal damping AUC</th><th>Precision in top n</th></tr>';
+  Object.entries(EX.regulation).forEach(([k, v]) => {
+    if (!('BasinDetective_auc' in v)) return;
+    rt += `<tr><td>${k}</td><td class="n">${v.n_pos}</td><td class="n">${f2(v.BasinDetective_auc)}</td><td class="n">${f2(v['GR4J misfit (1-NSE_cal)_auc'])}</td><td class="n">${f2(v['seasonal damping index_auc'])}</td><td class="n">${f2(v.BasinDetective_precision_at_n)}</td></tr>`;
+  });
+  $('regTbl').innerHTML = rt;
+  // strata
+  let st = '<tr><th>Stratum</th><th>n</th>' + DT.map(t => `<th>${LABEL[t][0]}<br>net / GR4J</th>`).join('') + '</tr>';
+  Object.entries(EX.strata).forEach(([k, v]) => {
+    st += `<tr><td>${k}</td><td class="n">${v.n}</td>` + DT.map(t => `<td class="n">${f2(v[t].net)} / ${f2(v[t].gr4j)}</td>`).join('') + '</tr>';
+  });
+  $('strataTbl').innerHTML = st;
+}
+function twinView() {
+  const pr = DATA.twin.param_recovery;
+  const nm = { log_kslow: 'Slow-store time constant (ln days)', gw_share: 'Groundwater share of flow', log_soilcap: 'Soil water capacity (ln mm)', log_pmult: 'Precipitation multiplier (ln; twins all 1)' };
+  let t = '<tr><th>Hidden property</th><th>Spearman ρ</th><th>R²</th><th>Median |error|</th><th>Bias</th><th>68 % cover</th></tr>';
+  Object.entries(pr).forEach(([k, v]) => { t += `<tr><td>${nm[k]}</td><td class="n">${v.rho === null ? '–' : f2(v.rho)}</td><td class="n">${k === 'log_pmult' ? '–' : f2(v.r2)}</td><td class="n">${f2(v.median_abs_err, 3)}</td><td class="n">${f2(v.bias, 3)}</td><td class="n">${(100 * v.cov68).toFixed(0)} %</td></tr>`; });
+  $('twinTbl').innerHTML = t;
+  const sim = DATA.ratchet.rungs.filter(r => r.kept).slice(-1)[0];
+}
+function ratchetView() {
+  const R = DATA.ratchet;
+  let t = '<tr><th>Rung</th><th>Change</th><th>Physics</th><th>Sim skill</th><th>Dev composite</th><th>Decision</th></tr>';
+  R.rungs.forEach(r => { t += `<tr><td class="mono">${r.name}</td><td>${r.description}</td><td class="mono">${r.physics}</td><td class="n">${f2(r.sim_skill, 3)}</td><td class="n">${f2(r.dev_composite, 3)}</td><td><span class="${r.kept ? 'kept' : 'rej'}">${r.kept ? 'kept' : 'rejected'}</span><br><span class="muted" style="font-size:12.5px">${r.reason}</span></td></tr>`; });
+  $('ratchetTbl').innerHTML = t;
+}
+/*PROSE*/
+buildPicker();
+examViews(); twinView(); ratchetView();
+const heroB = DATA.basins.find(b => b.stratum.startsWith('snow')) || DATA.basins[0];
+$('heroName').textContent = heroB.name;
+const redraw = () => { drawSeries($('hero'), heroB, { thin: true }); if (cur) drawSeries($('bChart'), cur); };
+redraw();
+window.addEventListener('resize', redraw);
+if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
+new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+['sP', 'sT'].forEach(id => $(id).addEventListener('input', runLab));
+$('reset').addEventListener('click', () => { $('sP').value = 1; $('sT').value = 0; runLab(); });
+})();
+</script>
