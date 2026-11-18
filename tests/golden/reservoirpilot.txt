@@ -1,0 +1,12 @@
+dam         use   J pilot   J rule    J SOP J record    J DP*   mean storage pilot/SOP   end-start pilot/SOP
+grand_1023  fcon   0.0815   0.0995   0.5657   0.2632   0.0013   0.55 / 0.92              +0.30 / +0.72
+grand_148   fcon   0.1166   0.1499   0.1443   0.2872   0.0403   0.20 / 0.25              -0.23 / +0.23
+grand_471   irri   0.0196   0.0254   0.0353   0.0970   0.0002   0.46 / 0.47              +0.35 / +0.58
+grand_470   irri   0.1163   0.2120   0.3119   0.1113   0.0901   0.44 / 0.94              +0.75 / +0.76
+grand_541   elec   0.0868   0.1251   0.1237   0.2203   0.0420   0.18 / 0.22              -0.45 / -0.22
+grand_1112  elec   0.0000   0.0000   1.6388   0.4000   0.0000   0.40 / 0.88              -0.07 / +0.48
+rule = the classical flood-pool + hedging rule tuned on the simulator (rung c2, the exam's fairest baseline).
+* DP = perfect-foresight dynamic programming (knows all future inflow), from WaterData's exam baseline.
+Storage is a fraction of capacity; J does not charge for it.
+Exam medians (244 ResOpsUS dams): pilot 0.0154, tuned rule 0.0285, SOP 0.108, rule curve 0.143, historical 0.183, DP 0.0063.
+Mean storage: pilot 0.38, tuned rule 0.40, SOP 0.59, DP 0.68 of capacity.
