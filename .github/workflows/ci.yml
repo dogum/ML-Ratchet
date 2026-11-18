@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           cache: pip
-      - run: pip install -e ".[dev]"
+      - run: pip install -e ".[dev,building]"   # building: pvlib, pandas and pyarrow, which BuildingSim needs to run its tests
       - name: Every model honours the contract
         run: mlratchet validate
       - name: READMEs are in sync with model.yaml / ratchet.yaml

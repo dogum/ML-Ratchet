@@ -67,9 +67,12 @@ def main():
     if len(np.unique(cases["time"])) != len(cases["time"]):
         raise ValueError("Duplicate primary issue keys")
     reading = model.predict(cases["wind"], cases["dst"])
+    # Exam 1 was scored with v1.0's single widening factor. v1.0.1 changed only the bars (binned by the last Dst),
+    # so reproduce v1.0's bars here; exam_reserve.py reports both versions on exam 2.
+    sigma_v10 = model.predict(cases["wind"], cases["dst"], calibrated=False)["sigma"] * model.meta["widen_factor"]
     predictions = {"StormNet": reading["min_dst"], **forecast(cases, cal)}
     rng = np.random.default_rng(PROTOCOL["bootstrap_seed"])
-    rows = {name: score_row(cases, meta, predictions, reading["sigma"], cut, rng) for name, cut in ROWS}
+    rows = {name: score_row(cases, meta, predictions, sigma_v10, cut, rng) for name, cut in ROWS}
     result = dict(released=model.meta["rung"], weights_sha256=hashlib.sha256(release.read_bytes()).hexdigest(),
                   first_issue_utc=str(cases["time"][0]), last_issue_utc=str(cases["time"][-1]),
                   eligibility=counts, distinct_storm_blocks=sum(m["kind"] == "storm" for m in meta),

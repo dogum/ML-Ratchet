@@ -128,7 +128,8 @@ export function show(ctx: InstrumentContext, weights: Pack<StormWeights>, storms
   });
 
   function stamp(kk: number) {
-    const t = new Date(Date.parse(series.info.start_utc) + kk * 3600000).toISOString();
+    // OMNI rows are stamped at the start of their hour; a forecast that has read hour kk is issued at its end.
+    const t = new Date(Date.parse(series.info.start_utc) + (kk + 1) * 3600000).toISOString();
     return t.slice(5, 10).replace('-', '/') + ' ' + t.slice(11, 16) + ' UTC';
   }
   function reading() {
