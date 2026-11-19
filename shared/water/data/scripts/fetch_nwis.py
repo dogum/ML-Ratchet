@@ -13,6 +13,8 @@ _DATA = os.environ.get('ML_RATCHET_WATER') or _CODE                             
 ROOT = os.path.join(_DATA, 'data').replace(os.sep, '/')
 RAW = f'{ROOT}/raw/nwis'
 S = requests.Session()
+S.headers['User-Agent'] = 'mlratchet-data-rebuild/1.0 (research data rebuild)'   # generic; no personal details
+STOP = (401, 403, 429, 451)   # blocked or throttled: stop, do not work around it
 
 
 def gauges():
@@ -26,6 +28,8 @@ def get(url, params, tries=6):
             r = S.get(url, params=params, timeout=(30, 180))
             if r.status_code == 404:
                 return None
+            if r.status_code in STOP:
+                raise SystemExit(f'HTTP {r.status_code} from USGS: stopping (blocked or throttled); re-run later')
             r.raise_for_status()
             return r.text
         except Exception as e:
@@ -61,7 +65,7 @@ def main():
             t = get('https://waterservices.usgs.gov/nwis/dv/', {'format': 'rdb', 'sites': g, 'parameterCd': '00060',
                                                                 'statCd': '00003', 'startDT': '1980-01-01', 'endDT': end,
                                                                 'siteStatus': 'all'})
-            save(p, t); time.sleep(0.3)
+            save(p, t); time.sleep(1.0)   # sequential and polite
         if k % 25 == 0:
             print('dv', k, g, flush=True)
     for k, g in enumerate(gs):
