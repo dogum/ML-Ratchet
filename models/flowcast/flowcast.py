@@ -170,7 +170,15 @@ class FlowCast:
         daily Series) and lead (1-7): each day then also uses the gauge record up to `lead` days earlier (GAUGED)."""
         idx = pd.date_range(start, end)
         s0 = pd.Timestamp(start) - pd.Timedelta(days=WARM)
-        df = forcing.loc[s0:pd.Timestamp(end) + pd.Timedelta(days=1), DYN].astype(float).interpolate(limit_direction='both')
+        df = forcing.loc[s0:pd.Timestamp(end) + pd.Timedelta(days=1), DYN].astype(float)
+        # the network reads rows by position: the record must start exactly 365 days before `start`, reach `end`,
+        # and have one row per day (missing days are added as rows and interpolated like missing values)
+        if len(df) == 0 or df.index[0].date() > s0.date() or df.index[-1].date() < pd.Timestamp(end).date():
+            raise ValueError('forcing must start 365 days before `start` and cover `end`')
+        days = pd.date_range(df.index[0], df.index[-1], freq='D')
+        if not df.index.equals(days):
+            df = df.reindex(days)
+        df = df.interpolate(limit_direction='both')
         if len(df) < WARM + len(idx):
             raise ValueError('forcing must start 365 days before `start` and cover `end`')
         F = df.values.astype(np.float32)
