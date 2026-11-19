@@ -129,6 +129,25 @@ def test_restart_reproduces_one_continuous_run(routing, tol):
     assert np.max(np.abs(q - full["ts"]["Q"].values)) < tol
 
 
+def test_restart_carries_reservoir_storage():
+    """final_state carries reservoir storage (PR #6 review, 18 Nov 2026): before, a chained run restarted each
+    reservoir at init_frac and missed the continuous run by up to 4.8 mm/day. Capacity and demand are fixed here,
+    because capacity_years and the default demand are derived from each window's mean inflow."""
+    import watersim as ws
+    reg = dict(next(s for s in ws.generate_basins(12, rng=7) if s.get("reservoirs")))
+    reg["reservoirs"] = [dict({k: v for k, v in r.items() if k != "capacity_years"}, capacity_hm3=20.0 + 10 * i,
+                              demand_m3s=1.0, policy="sop") for i, r in enumerate(reg["reservoirs"])]
+    f = ws.generate_weather(reg, "2000-01-01", "2003-12-31", rng=4)
+    kw = dict(model="hbv", snow="degree_day", routing="none", labels=False)
+    full = ws.simulate(reg, f, "2001-01-01", "2003-12-31", **kw)
+    a = ws.simulate(reg, f, "2001-01-01", "2002-06-30", **kw)
+    b = ws.simulate(reg, f, "2002-07-01", "2003-12-31", init=a["final_state"], **kw)
+    assert a["final_state"]["reservoir_storage_hm3"] is not None and b["ledger"]["ok"]
+    for k in ("Q", "res_storage_hm3"):
+        x = np.concatenate([a["ts"][k].values, b["ts"][k].values])
+        assert np.max(np.abs(x - full["ts"][k].values)) < 1e-9, k
+
+
 def test_metrics_match_the_shipped_cost():
     """waterdata.metrics.reservoir cost J is what ReservoirPilot and the baselines are scored with."""
     from waterdata import metrics as M

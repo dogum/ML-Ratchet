@@ -396,7 +396,7 @@ def main(argv=None) -> int:
     if a.offline:
         stages = [s for s in stages if s not in DOWNLOADS]
     st = load_state()
-    rc = 0
+    rc, failed = 0, []
     for s in stages:
         log(f'== {s}')
         t = time.time()
@@ -404,11 +404,16 @@ def main(argv=None) -> int:
         st[s] = {'done': time.strftime('%Y-%m-%d %H:%M'), 'seconds': round(time.time() - t)}
         if isinstance(r, dict):
             st[s].update(r)
+            if r.get('missing'):
+                failed.append(s)
         elif r:
             st[s]['rc'] = r
+            failed.append(s)
+            rc = rc or r                                 # the first failing stage's exit code; later stages still run
         save_state(st)
-        if s == 'verify':
-            rc = r
+    if failed:
+        log('stages that failed or are missing data:', ', '.join(failed))
+        rc = rc or 1
     if BLOCKED:
         log('hosts that failed (record them in help_wanted; do not route around them):')
         for h, why in BLOCKED.items():

@@ -193,7 +193,11 @@ def simulate(spec, forcing, start=None, end=None, model='hbv', params=None, snow
     snow      'degree_day' | 'energy_balance' | 'none'
     routing   'uh' | 'muskingum' | 'kinematic' | 'none' (channel routing after the model's own hillslope UH)
     reservoirs list of reservoir dicts / Reservoir objects (default: spec.get('reservoirs'))
-    init      a previous out['final_state'] (then no spin-up) or {'model': {...}, 'snow_swe_mm': x}
+    init      a previous out['final_state'] (then no spin-up) or {'model': {...}, 'snow_swe_mm': x}. A final_state
+              carries reservoir storage too, so a chained run continues each reservoir where it stopped. The channel
+              routing buffer is not carried (chained runs with routing other than 'none' differ by ~1e-6 mm/day), and
+              reservoir settings derived from the window (capacity_years, the default demand of 0.6 x mean inflow,
+              policies that read the window's mean inflow or history) are recomputed per window
     spinup    warm-up length before `start` ('1y', '2y', '180d', 0); taken from the forcing before `start` when it
               exists, otherwise the first part of the window is run once as a warm-up
     irrigation None (use spec['irrigation_frac']), False, or a dict of irrigation settings
@@ -302,6 +306,7 @@ def simulate(spec, forcing, start=None, end=None, model='hbv', params=None, snow
     res_withdraw_mm = np.zeros(len(q))
     res_store_mm = np.zeros(len(q))
     res_store0_mm = 0.0
+    res_final = None
     if res_list and dt < 1.0 - 1e-9:
         raise NotImplementedError('reservoirs run at a daily step; aggregate the forcing to daily')
     if res_list:
@@ -312,6 +317,12 @@ def simulate(spec, forcing, start=None, end=None, model='hbv', params=None, snow
         q_m3s = mm_day_to_m3s(q, area)
         imean = float(q_m3s.mean())
         objs = [reservoir_from_spec(r, imean) for r in res_list]
+        if init is not None and init.get('reservoir_storage_hm3') is not None:
+            S_prev = [float(v) for v in init['reservoir_storage_hm3']]
+            if len(S_prev) != len(objs):
+                raise ValueError('init final_state has a different number of reservoirs than this run')
+            for r, v in zip(objs, S_prev):
+                r.reset(storage_hm3=v)
         outflow = {}
         captured = np.zeros(len(objs))
         for k, (r, rd) in enumerate(zip(objs, res_list)):
@@ -340,6 +351,7 @@ def simulate(spec, forcing, start=None, end=None, model='hbv', params=None, snow
                 q_out_m3s = q_out_m3s + outflow[k]
         q = q_out_m3s * 86.4 / area
         ts['res_storage_hm3'] = res_store_mm * area / 1000.0
+        res_final = [float(r.S) for r in objs]
         ts['res_release_m3s'] = sum(ro['series']['release_m3s'] for ro in res_out)
         ts['res_spill_m3s'] = sum(ro['series']['spill_m3s'] for ro in res_out)
         ts['res_evap_mm'] = res_evap_mm
@@ -360,7 +372,7 @@ def simulate(spec, forcing, start=None, end=None, model='hbv', params=None, snow
            'bands': {'frac': o.frac.tolist(), 'elev_m': o.elev.tolist()}, 'reservoirs': res_out,
            'dt_days': dt, 'infiltration_capacity_mm_per_step': icap,
            'final_state': {'model_state': s.tolist(), 'snow': snowst.tolist(), 'uhbuf': uhbuf.tolist(),
-                           'uhx': uhx.tolist(),
+                           'uhx': uhx.tolist(), 'reservoir_storage_hm3': res_final,
                            'model': model, 'snow_kind': o.snow, 'date': str(idx[-1].date())},
            'initial_state': {'model_state': s_init.tolist()}}
     if return_bands:

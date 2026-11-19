@@ -65,7 +65,10 @@ numba), and GR4J vs airGR and HBV vs TUWmodel reproduce from the shipped referen
 (`tests/test_water.py`, about 15 s), together with water-balance closure on generated basins for all four runoff
 models. One small finding on import: with channel routing, a run restarted from `final_state` differs from one
 continuous run by about 4e-6 mm/day, because the channel unit-hydrograph buffer is not carried over (the shipped
-restart check uses no channel routing, where it is exact). The dev calibrations, the SNOTEL check and the speed
+restart check uses no channel routing, where it is exact). A second, found in review: `final_state` did not carry
+reservoir storage, so a chained run restarted every reservoir at its initial fill and missed the continuous run by up
+to 4.8 mm/day. It now carries storage, and a chained regulated run with fixed capacity and demand matches exactly.
+Settings derived from the window (`capacity_years`, the default demand) are still recomputed per window. The dev calibrations, the SNOTEL check and the speed
 check were not re-run: they need the time series.
 
 ## WaterData: the real data
@@ -158,7 +161,7 @@ are labelled seen. Each model's page has the full table, every row with its inte
 | Flashiness | the half prior correction leaves simulated flashiness at 0.62x observed; the full correction fixes it but cost FlowCast NSE |
 | Structure | lumped soil and groundwater per basin; no glaciers, wetlands, lakes or karst; daily energy balance only; no floodplains; single reservoirs (no cascades of real operating rules, no minimum flows); no groundwater pumping, urban drainage, water quality or temperature |
 | Hourly | HBV, SAC-SMA and VIC-lite run hourly, but no hourly real dataset is wired up (only NWM hourly 2015-2023) |
-| Restart | channel-routing state is not carried by `final_state` (about 4e-6 mm/day; found on import) |
+| Restart | channel-routing state is not carried by `final_state` (about 4e-6 mm/day; found on import); reservoir storage is, since 18 Nov 2026 |
 | `realdata.random_forcing` | `span*365` days is shorter than `span` years, so a long draw can end a few days inside an exam window; the guard raises `PermissionError` (no exam data leaked), but the arithmetic should be fixed |
 
 Each model wrapped WaterSim with the physics it measured (water-yield multipliers, gauge noise, forcing drift,
