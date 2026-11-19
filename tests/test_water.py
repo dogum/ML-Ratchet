@@ -168,6 +168,27 @@ def test_batch_apis_match_simulate():
         assert np.max(np.abs(m["Q"][i] - one["ts"]["Q"].values)) < 1e-9
 
 
+def test_network_hourly_and_many_dates():
+    """PR #6 review, 18 Nov 2026: simulate_network routed hourly samples as days and counted the outlet volume 24 times
+    over; simulate_many took every basin's rows from the first forcing's dates. The network now carries the time
+    step and closes at hourly steps; simulate_many rejects forcings with different dates."""
+    import pandas as pd
+    import watersim as ws
+    sb = {f"b{i}": dict(x, irrigation_frac=0.0) for i, x in enumerate(ws.generate_basins(2, rng=8, regulation=False))}
+    f = {k: ws.generate_weather(x, "2000-01-01", "2000-12-31", rng=i) for i, (k, x) in enumerate(sb.items())}
+    topo = {"b0": {"down": "b1", "length_km": 40, "slope": 0.002, "width_m": 20}, "b1": {"down": None}}
+
+    def hourly(df):
+        h = df.reindex(pd.date_range(df.index[0], df.index[-1] + pd.Timedelta(hours=23), freq="h", tz=df.index.tz),
+                       method="ffill")
+        h["P"] = h["P"] / 24                                         # amounts per step
+        return h
+    net = ws.simulate_network(sb, {k: hourly(v) for k, v in f.items()}, topo, "2000-03-01")
+    assert net["ledger"]["ok"], net["ledger"]["closure_rel"]
+    with pytest.raises(ValueError, match="different date index"):
+        ws.simulate_many([sb["b0"], sb["b1"]], [f["b0"], f["b1"].iloc[7:]], model="hbv", start="2000-03-01")
+
+
 def test_metrics_match_the_shipped_cost():
     """waterdata.metrics.reservoir cost J is what ReservoirPilot and the baselines are scored with."""
     from waterdata import metrics as M

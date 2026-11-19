@@ -562,6 +562,10 @@ def simulate_many(specs, forcings, model='hbv', snow='degree_day', start=None, e
     """Many basins (each spec with its own params and forcing frame) in one numba call. All forcings must cover
     the same window. Returns dict of (N, T) arrays plus 'index'."""
     preps = [prepare_run(s, f, model, None, snow, pet) for s, f in zip(specs, forcings)]
+    for k, p in enumerate(preps[1:], 1):            # rows are shared, so the dates must be too
+        if not p.df.index.equals(preps[0].df.index):
+            raise ValueError(f'simulate_many: forcing {k} has a different date index from forcing 0; '
+                             'give every basin the same forcing dates (reindex or slice them first)')
     i0, i1 = _window(preps[0].df, start, end)
     dt = preps[0].dt
     nspin = int(round(_spin_days(spinup) / dt))
@@ -609,8 +613,12 @@ def simulate_network(subbasins, forcings, topology, start=None, end=None, model=
     outs = {i: simulate(subbasins[i], forcings[i], start, end, model=model, snow=snow, routing=local_routing, **kw)
             for i in subbasins}
     idx = next(iter(outs.values()))['ts'].index
+    dts = {round(float(o['dt_days']), 9) for o in outs.values()}
+    if len(dts) != 1:
+        raise ValueError(f'simulate_network: sub-basins have different time steps {sorted(dts)} (days)')
+    dt = dts.pop()
     local = {i: o['ts']['Q_m3s'].reindex(idx).values for i, o in outs.items()}
-    at_node, storage, outlet = rt.route_network(local, topology)
+    at_node, storage, outlet = rt.route_network(local, topology, dt_days=dt)
     nodes = pd.DataFrame(at_node, index=idx)
     # network ledger (hm3): sum of sub-basin balances + reach storage change; outlet flow replaces local outflows
     hm3 = 0.0864
@@ -620,7 +628,7 @@ def simulate_network(subbasins, forcings, topology, start=None, end=None, model=
                 o['ledger']['reservoir_evaporation'] + o['ledger']['withdrawals_consumptive'] + o['ledger']['dS_total'])
                * float(o['spec']['area_km2']) / 1000 for o in outs.values())
     reach_dS = sum(float(s[-1]) for s in storage.values()) * hm3
-    q_out = float(nodes[outlet].sum()) * hm3
+    q_out = float(nodes[outlet].sum()) * hm3 * dt      # m3/s samples x step (days); reach storage is in m3/s x days
     closure = P + gain - loss - reach_dS - q_out
     return {'nodes': nodes, 'outlet': outlet, 'subbasins': outs, 'reach_storage': storage,
             'ledger': {'units': 'hm3', 'P_in': P, 'Q_outlet': q_out, 'reach_dS': reach_dS, 'closure_hm3': closure,
