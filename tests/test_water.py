@@ -339,3 +339,19 @@ def test_caravan_forcing_loads():
     bid = wd.basins("camels", split="dev")[0]
     f = wd.forcing(bid, "1999-10-01", "2000-09-30")
     assert {"P", "T_mean", "PET"} <= set(f.columns) and len(f) == 366
+
+
+@pytest.mark.skipif(not HAVE_CARAVAN, reason="Caravan time series not built (mlratchet data water --only caravan)")
+def test_random_forcing_stays_in_the_basin_record():
+    """PR #6 review, 18 Nov 2026: random_forcing drew windows from 1951 for regions whose forcing starts in 1981 and
+    returned short or empty frames. Windows are now clipped to the basin's record; CAMELS-US windows are unchanged."""
+    import waterdata as wd
+    from watersim import realdata as rd
+    gb = wd.basins("camelsgb")[0]
+    for seed in range(20):
+        df, meta, info = rd.random_forcing(seed, years=9, basin_id=gb)
+        assert info["start"] >= "1981-01-01" and len(df) >= 10 * 365
+    us = wd.basins("camels")[0]
+    idx = wd.forcing(us, extras=False).index
+    c0, c1 = str(idx[0].date()), str(idx[-1].date())
+    assert all(c0 <= a and e <= c1 for a, e in rd.free_windows())          # so US draws are as before

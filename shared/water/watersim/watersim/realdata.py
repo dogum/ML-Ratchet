@@ -95,9 +95,14 @@ def random_forcing(rng, years=10, region='camels', basin_id=None, spinup_years=1
     ids = wd.basins(region)
     b = basin_id or ids[int(rng.integers(len(ids)))]
     span = years + spinup_years
-    wins = [(a, e) for a, e in free_windows() if (pd.Timestamp(e) - pd.Timestamp(a)).days >= span * 365]
+    # free windows clipped to this basin's forcing record (CAMELS-US from 1951; the other regions from 1981). For a
+    # record that covers every free window (all CAMELS-US basins) the windows, and so the draws, are unchanged.
+    idx = wd.forcing(b, extras=False).index
+    c0, c1 = str(idx[0].date()), str(idx[-1].date())
+    wins = [(max(a, c0), min(e, c1)) for a, e in free_windows()]
+    wins = [(a, e) for a, e in wins if a <= e and (pd.Timestamp(e) - pd.Timestamp(a)).days >= span * 365]
     if not wins:
-        raise ValueError(f'no non-exam window of {span} years')
+        raise ValueError(f'no non-exam window of {span} years in the forcing record of {b} ({c0}..{c1})')
     w = [(pd.Timestamp(e) - pd.Timestamp(a)).days - span * 365 for a, e in wins]
     k = int(rng.choice(len(wins), p=np.array(w) / max(sum(w), 1) if sum(w) > 0 else None))
     a, e = pd.Timestamp(wins[k][0]), pd.Timestamp(wins[k][1])
@@ -105,5 +110,7 @@ def random_forcing(rng, years=10, region='camels', basin_id=None, spinup_years=1
     s0 = (a + pd.Timedelta(days=off)).normalize()
     s1 = s0 + pd.DateOffset(years=span) - pd.Timedelta(days=1)
     df, meta = nonexam_forcing(b, str(s0.date()), str(s1.date()))
+    if len(df) == 0 or str(df.index[0].date()) > str(s0.date()) or str(df.index[-1].date()) < str(s1.date()):
+        raise ValueError(f'forcing of {b} does not cover {s0.date()}..{s1.date()}')
     return df, meta, {'basin_id': b, 'start': str(s0.date()), 'end': str(s1.date()),
                       'sim_start': str((s0 + pd.DateOffset(years=spinup_years)).date())}
