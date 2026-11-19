@@ -98,8 +98,12 @@ def prepare_run(spec, forcing, model='hbv', params=None, snow='degree_day', pet=
         raise ValueError(f'unknown snow routine {snow!r}')
     df, fmeta, notes = prepare(forcing)
     sp = fill_spec(_merge_meta(spec, fmeta))
-    dt = float(np.median(np.diff(df.index.values).astype('timedelta64[s]').astype(float))) / 86400.0 \
-        if len(df) > 1 else 1.0
+    steps_s = np.diff(df.index.values).astype('timedelta64[s]').astype(float)
+    dt = float(np.median(steps_s)) / 86400.0 if len(df) > 1 else 1.0
+    if len(steps_s) and np.any(np.abs(steps_s - dt * 86400.0) > 1.0):
+        k = int(np.argmax(np.abs(steps_s - dt * 86400.0) > 1.0))
+        raise ValueError(f'forcing index is not evenly spaced: {df.index[k]} -> {df.index[k + 1]} against a step of '
+                         f'{dt * 24:g} h; reindex to a regular index (missing values as NaN) first')
     if abs(dt - 1.0) > 1e-6:
         if 1.0 / dt != round(1.0 / dt):
             raise ValueError(f'time step {dt} days does not divide a day')

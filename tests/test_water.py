@@ -355,3 +355,13 @@ def test_random_forcing_stays_in_the_basin_record():
     idx = wd.forcing(us, extras=False).index
     c0, c1 = str(idx[0].date()), str(idx[-1].date())
     assert all(c0 <= a and e <= c1 for a, e in rd.free_windows())          # so US draws are as before
+
+
+def test_forcing_with_missing_days_is_rejected():
+    """PR #6 review, 18 Nov 2026: a forcing frame with a missing day was run as if it were regular (the engine
+    stepped over the gap). simulate() now refuses an unevenly spaced index; NaN rows on a regular index still run."""
+    import watersim as ws
+    spec = ws.generate_basins(1, rng=3, regulation=False)[0]
+    f = ws.generate_weather(spec, "2000-01-01", "2001-12-31", rng=4)
+    with pytest.raises(ValueError, match="not evenly spaced"):
+        ws.simulate(spec, f.drop(f.index[200]), "2000-06-01", model="hbv", labels=False)
