@@ -50,7 +50,7 @@ physics:
     - "WaterSim Phase 1 (shared/water/checks): GR4J vs airGR (independent Fortran in R) 1.0e-7 mm on 4,017 days; HBV snow and soil states vs TUWmodel ≤ 1e-12 mm on 12,053 days (runoff routing differs by design: NSE 0.999); water-balance closure 1.4e-15 relative on 121 runs"
     - "Signature port features.sigs vs waterdata.signatures: max relative difference 1.3e-6 on 52 dev basins (as shipped; needs the Caravan data to re-run)"
     - "Twin test on 52 dev basins × 5 dev-calibrated setups (260 twins, training/twin_final.json): change rho on twins 0.33-0.85 vs on real 0.25-0.61; the twins' own change ranks the real change at rho 0.27-0.69 (simulator skill); p_regulated median 0.06 on twins vs 0.21 on real (0.18 on unregulated real basins)"
-    - "Reproduction (18 Nov 2026, training/rescore.py, seen): the released weights through the shipped exam path (realfeats.py, exam.py) on the Caravan time series reproduce every number in exam.json to 1e-9 relative, except the two Budyko-Fu R2 values (1e-7) and the NWIS peak-code row (peaks not fetched); WaterData's GR4J daily simulations were re-made from the shipped parameters as run_gr4j.py writes them"
+    - "Reproduction (18 Nov 2026, training/rescore.py, seen): the released weights through the shipped exam path (realfeats.py, exam.py) on the Caravan time series reproduce every number in exam.json to 1e-9 relative, except the two Budyko-Fu R2 values (1e-7); the NWIS peak-code row, re-scored after the NWIS fetch, reproduces too; WaterData's GR4J daily simulations were re-made from the shipped parameters as run_gr4j.py writes them"
     - "Import check (18 Nov 2026, training/import_check.py): every GR4J-vs-own-record and no-change number in exam.json, the level baselines and the four examples' truth re-derive exactly from WaterData's shipped signatures.parquet"
     - "numpy == torch (float32) < 6e-6 and the shipped page's JS == Python to 2e-7 sigma (as shipped, not re-run). The site instrument re-computes the 150 features and the ensemble in TypeScript: equal to the Python package to 3.5e-15 on 36 cases (4 basins × 9 what-ifs, float16 weights); float16 weights move the outputs by ≤ 3.7e-4 relative"
 noise: "Not real recordings: the gauge noise is a model fitted to real dev records. Dev twins showed real USGS daily values are smoother than WaterSim's default gauge noise (more flat days, fewer rising days); v2 fits an AR(1) multiplicative error (rho 0.999, cv 0.02) plus rounding to 3 significant figures in cfs (0.01 cfs floor) to the dev records' day-to-day features. Forcing error (precipitation multiplier, daily, annual and decadal error, snow undercatch, temperature offset) is laid between the TRUE forcing the simulator runs on and the SEEN forcing the network reads."
@@ -103,7 +103,8 @@ exam:
     Fisher-z / Zou intervals of the import stay in each note as a cross-check. Result: on the six changes, a loss on
     mean flow (to GR4J model-implied, -0.036 [-0.063, -0.008]) and five ties; all six median-error rows tie; levels:
     wins on mean flow, runoff ratio, Q5 and Q95, ties on BFI and half-flow date; regulation at chance on all three
-    HydroATLAS truths (the NWIS peak-code row was not re-scored).
+    HydroATLAS truths; against USGS peak codes 5/6 (11 positives) above chance, AUC 0.711 [0.543, 0.863], but level with the
+    classical scores.
   results:
     - metric: "Change of mean flow (log ratio), 619 basins, Spearman rho"
       better: higher
@@ -301,7 +302,7 @@ exam:
         - { name: "GR4J calibration misfit (1 - NSE)", kind: classical, value: 0.608 }
         - { name: "Chance", kind: dumb, value: 0.5 }
       verdict: tie
-      note: "Not re-scored on 18 Nov 2026: USGS NWIS peaks were not fetched, so this row keeps the shipped value and its unpaired interval. AUC 95 % CI [0.538, 0.885] (Hanley-McNeil, approximate): above chance, but its interval overlaps both classical scores [0.429, 0.786] and [0.460, 0.817]. 11 positives. Precision in the top 11: 0.00."
+      note: "Seen re-score (18 Nov 2026, after the NWIS fetch; the released weights through the shipped exam path reproduce this row of exam.json exactly: 11 positives, AUC 0.711, GR4J misfit 0.608, seasonal damping 0.639, precision in the top 11 0.00): paired bootstrap over the 619 basins, 10,000 resamples, seed 20261118 (training/exam_rescore.json). AUC 0.711 [0.543, 0.863]. Above chance: AUC minus 0.5 = +0.211 [+0.043, +0.363]. AUC difference: vs GR4J misfit +0.104 [-0.106, +0.291] tie; vs seasonal damping +0.072 [-0.062, +0.217] tie. 11 positives only. Cross-check at import (unpaired, conservative): AUC 95 % CI [0.538, 0.885] (Hanley-McNeil, approximate); GR4J misfit [0.429, 0.786], seasonal damping [0.460, 0.817]."
     - metric: "log10(storage / annual flow) among the 53 basins with any reservoir, Spearman rho"
       better: higher
       model: 0.236
@@ -385,7 +386,7 @@ wins:
   - "Error bars are never too narrow on the changes: 95 % bars cover 95-99 % of exam basins."
 losses:
   - "Mean-flow change: rho 0.757 against 0.793 for calibrated GR4J's model-implied change, paired difference -0.036 [-0.063, -0.008]: a loss, which the unpaired import interval had called a tie."
-  - "Regulation does not transfer: AUC 0.485 [0.395, 0.574] against HydroATLAS storage > 10 % (37 positives), indistinguishable from chance (0.5), against 0.91 on simulated basins; 92 false alarms for 5 hits at p > 0.5. Storage > 50 % (0.53) and any reservoir (0.44) are at chance too."
+  - "Regulation does not transfer: AUC 0.485 [0.395, 0.574] against HydroATLAS storage > 10 % (37 positives), indistinguishable from chance (0.5), against 0.91 on simulated basins; 92 false alarms for 5 hits at p > 0.5. Storage > 50 % (0.53) and any reservoir (0.44) are at chance too. Against USGS peak codes 5/6 (11 positives) it is above chance, AUC 0.711 [0.543, 0.863], but not better than GR4J misfit or seasonal damping."
   - "On BFI and Q5 changes its median error is no better than 'no change' (0.0185 vs 0.0181; 0.126 vs 0.129; paired intervals include 0)."
   - "The 68 % bars are too wide: 73-83 % of exam truths fall inside, and every coverage interval lies above 68 %. The widen-only factors were fitted on the 1980s dev window, which drifted more than the exam decade."
   - "Where ERA5-Land undercatches (gauged runoff ratio > 1, 42 basins), mean-flow change rho 0.22 (GR4J 0.21)."
@@ -403,10 +404,10 @@ next:
   - "Realistic regulation in the bank: fit reservoir size, position and policy to the 15 ResOpsUS dev dams and the 5 regulated dev basins; add hydropower peaking and withdrawal-dominated operation; check with a twin of each regulated dev basin."
   - "Measure the forcing drift per region and era on both non-exam windows (1980-89 and 2008-15) instead of one linear scaling; this should also narrow the bars."
   - "A small 1-D CNN sequence encoder on the daily record next to the features, and an ungauged attribute-only mode."
-  - "Add NWM v3.0 retrospective signature changes as an operational baseline and re-score the NWIS peak-code regulation row once those data are fetched."
+  - "Add NWM v3.0 retrospective signature changes as an operational baseline."
   - "Real truth for storage and groundwater (GRACE, well records) for the hidden properties."
 help_wanted:
-  - "USGS NWIS annual peaks and the NWM v3.0 retrospective were not fetched for the re-score: the peak-code regulation row keeps its shipped value and unpaired interval, and no NWM baseline exists."
+  - "The NWM v3.0 retrospective was not fetched, so no NWM baseline exists for the change task."
   - "Real truth for slow-store size, groundwater share and soil capacity on CAMELS-US basins."
 
 usage:

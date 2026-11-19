@@ -6,8 +6,10 @@ exam.main(weights/basindetective_v1.npz), with two stand-ins for data that are n
   - WaterData's daily GR4J simulations (proc/baselines/sims/gr4j_gauged.parquet) were not shipped. They are
     re-simulated exactly as data/scripts/run_gr4j.py writes them: waterdata.models.gr4j_snow with each basin's shipped
     calibrated parameters (proc/baselines/gr4j/<id>.json), 1980-10-01..2023-12-30, float32. Written under WORK only.
-  - USGS NWIS annual peaks were not fetched, so peaks.parquet is an empty stand-in: the peak-code regulation row cannot
-    be re-scored (its AUC comes out NaN).
+  - USGS NWIS annual peaks: the data root's proc/nwis/peaks.parquet (built by data/scripts/build_nwis.py) when it exists
+    (fetched later on 18 Nov 2026); without it an empty stand-in, and the peak-code regulation row cannot be re-scored
+    (its AUC comes out NaN). WORK/feats/real_exam.peaks records which one built the cached features; a mismatch
+    rebuilds them.
 Then a paired bootstrap over basins (10,000 resamples, numpy default_rng(20261118), the same resamples for every row)
 of BasinDetective minus each baseline: Spearman rho and median |error| of the six changes and six levels, and the
 regulation AUCs (also against chance, 0.5).
@@ -57,12 +59,15 @@ def stage_baselines():
     return out
 
 
-def stage_nopeaks():
+def stage_peaks():
+    """The real NWIS peaks when the data root has them, else an empty stand-in. Returns (proc root, label)."""
+    if os.path.exists(f'{WATER_PROC}/nwis/peaks.parquet'):
+        return WATER_PROC, 'nwis'
     p = f'{D}/proc_nopeaks/nwis'
     os.makedirs(p, exist_ok=True)
     pd.DataFrame({'gauge_id': pd.Series([], dtype=str), 'wy': pd.Series([], dtype='int64'),
                   'peak_cd': pd.Series([], dtype=str)}).to_parquet(f'{p}/peaks.parquet')
-    return f'{D}/proc_nopeaks'
+    return f'{D}/proc_nopeaks', 'empty stand-in'
 
 
 # ---------------------------------------------------------------------------------------------- statistics
@@ -162,12 +167,15 @@ def main():
     import realfeats
     import exam
     realfeats.B = stage_baselines()
-    realfeats.WATER_PROC = stage_nopeaks()
+    realfeats.WATER_PROC, peaks_src = stage_peaks()
     ids = wd.basins('camels', 'exam')
     split = json.load(open(f'{WATER_PROC}/splits.json'))
     assert sorted(ids) == sorted(split['camels_us']['exam']) and len(ids) == 619
-    if not os.path.exists(f'{D}/feats/real_exam.npz'):
+    mark = f'{D}/feats/real_exam.peaks'
+    cached = open(mark).read().strip() if os.path.exists(mark) else 'empty stand-in'
+    if not os.path.exists(f'{D}/feats/real_exam.npz') or cached != peaks_src:
         realfeats.build('exam')
+        open(mark, 'w').write(peaks_src)
     exam.main(WEIGHTS)                      # -> WORK/exam.json, WORK/feats/exam_pred.parquet
     meta = pd.read_parquet(f'{D}/feats/real_exam_meta.parquet')
     pred = pd.read_parquet(f'{D}/feats/exam_pred.parquet')
@@ -206,6 +214,8 @@ def main():
     pb['p_regulated'] = pred['p_reg']
     pb['mu_log_dor'], pb['sd_log_dor'] = pred['mu_log_dor'], pred['sd_log_dor']
     pb['dor'] = meta['dor']
+    pb['peak_reg_frac'] = meta['peak_reg_frac']
+    pb['reg_peak_code'] = (meta['peak_reg_frac'] >= 1 / 3).astype(int)
     pb['reg_dor_gt_0.1'] = (meta['dor'] > 0.1).astype(int)
     pb['gr4j_nse_cal'] = meta['gr4j_nse_cal']
     pb['seasdamp'] = meta['seasdamp']
@@ -244,7 +254,10 @@ def main():
         res['levels'][lv] = compare(n, idx_all, y, model, bl)
     p, mis, sdx = pb['p_regulated'].values, 1 - pb['gr4j_nse_cal'].values, -pb['seasdamp'].values
     dor = pb['dor'].values
-    for name, y in (('dor>0.1 (mid+high)', dor > 0.1), ('dor>0.5 (high)', dor > 0.5), ('dor>0 (any)', dor > 0)):
+    truths = [('dor>0.1 (mid+high)', dor > 0.1), ('dor>0.5 (high)', dor > 0.5), ('dor>0 (any)', dor > 0)]
+    if peaks_src == 'nwis':
+        truths.append(('NWIS peak code 5/6 in >=1/3 of WY1990-2008 peaks', pb['peak_reg_frac'].values >= 1 / 3))
+    for name, y in truths:
         r = {'n_pos': int(y.sum()), 'auc': boot(idx_all, lambda ix: auc(y[ix], p[ix])), 'vs': {}}
         for bn, s in (('GR4J misfit (1-NSE_cal)', mis), ('seasonal damping index', sdx)):
             d = boot(idx_all, lambda ix: auc(y[ix], p[ix]) - auc(y[ix], s[ix]))
@@ -258,7 +271,9 @@ def main():
         r['verdict'] = row_verdict(r['vs'])
         r['at_chance'] = bool(d['lo'] <= 0 <= d['hi'])
         res['regulation'][name] = r
-    res['regulation']['NWIS peak code 5/6'] = 'not re-scored: USGS NWIS peaks were not fetched'
+    if peaks_src != 'nwis':
+        res['regulation']['NWIS peak code 5/6'] = 'not re-scored: USGS NWIS peaks were not fetched'
+    res['peaks_source'] = peaks_src
     json.dump(res, open(f'{SRC}/exam_rescore.json', 'w', newline='\n'), indent=1, default=float)
     print(f'{len(diffs)} numbers differ from the shipped exam.json')
     for d in diffs[:60]:

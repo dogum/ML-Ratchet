@@ -217,3 +217,26 @@ Two places outside this folder still describe the import-time verdicts. The coor
 does not edit them:
 - site/src/instruments/basindetective/ui.ts says "it ties calibrated GR4J (ρ 0.76 vs 0.79)".
 - site/src/lib/model-families.ts's gap line says "Ties calibrated GR4J on decade-to-decade change".
+
+## 18 Nov 2026: NWIS peak-code row re-scored (seen)
+
+USGS NWIS was fetched later the same day and built into the data root (`work/water/data/proc/nwis/peaks.parquet`:
+48,776 annual peaks at 669 gauges with their qualification codes, from `data/scripts/build_nwis.py`). The earlier
+re-score had used an empty stand-in for the peaks, so the regulation row that uses NWIS peak codes 5/6 as its label
+had kept the shipped value and an unpaired interval. This is reproduction, not a rung: nothing was changed or chosen
+from it.
+
+- `training/rescore.py` now uses the data root's peaks when present (the empty stand-in only when absent). It records
+  which source built the cached exam features (`WORK/feats/real_exam.peaks`) and rebuilds them when the source
+  changes. Same run, same rules: splits.json sha256 33f88ca0... checked by build.py verify earlier the same day, the
+  619 exam basins asserted against splits.json, released weights through the shipped `realfeats.build('exam')` and
+  `exam.main`.
+- It reproduces: 11 positives, AUC 0.7112739 (shipped 0.7112739), GR4J misfit 0.6075 (0.6075), seasonal damping
+  0.6389055023923444 (shipped ...446, 1e-15), precision in the top 11 0.00 (0.00). The only differences left in all of
+  exam.json are the two Budyko-Fu R2 values at 1e-7. Every other row's bootstrap result is identical to the earlier
+  run (same seed, same resamples). `exam_per_basin.csv` gains two columns, `peak_reg_frac` and `reg_peak_code`.
+- Paired bootstrap (10,000 resamples, seed 20261118): AUC 0.711 [0.543, 0.863]. Against chance: +0.211 [+0.043,
+  +0.363], so it is above chance, unlike the three HydroATLAS rows. Against GR4J calibration misfit (0.608): +0.104
+  [-0.106, +0.291], tie. Against seasonal damping (0.639): +0.072 [-0.062, +0.217], tie. Row verdict: **tie**
+  (unchanged). With only 11 positives, the interval is wide.
+- Cross-check: the unpaired Hanley-McNeil interval at import was [0.538, 0.885].

@@ -123,8 +123,9 @@ from the shipped calibrated parameters exactly as `run_gr4j.py` writes them; and
 from a Mann-Whitney stand-in because neither environment has scikit-learn (identical for binary truth).
 
 **It reproduces.** Every number in `exam.json` comes back to 1e-9 relative, except the two Budyko-Fu R2 values
-(0.44741085 vs 0.44741096; 0.11001094 vs 0.11001095: the brentq fit of w) and the NWIS peak-code row, which could not be
-scored (peaks not fetched; it keeps the shipped AUC 0.71 and its unpaired interval).
+(0.44741085 vs 0.44741096; 0.11001094 vs 0.11001095: the brentq fit of w). The NWIS peak-code row could not be scored
+at first (peaks not fetched); after the NWIS fetch the same day it was re-scored with WaterData's built peaks and
+reproduces exactly (11 positives, AUC 0.711, GR4J misfit 0.608, seasonal damping 0.639, precision 0.00).
 
 Paired bootstrap over the 619 basins: 10,000 resamples with replacement, `numpy.random.default_rng(20261118)`, the same
 resamples for every row; 95 % percentile intervals of BasinDetective minus each baseline. Per basin: win or loss only if
@@ -154,7 +155,7 @@ Per-basin values: `training/exam_per_basin.csv` (no time series); intervals: `tr
 | dor>0.1 (mid+high) | 37 | 0.485 [0.395, 0.574] | GR4J misfit (1-NSE_cal): +0.052 [-0.068, +0.176] tie<br>seasonal damping index: +0.016 [-0.105, +0.132] tie<br>chance (AUC 0.5): -0.015 [-0.105, +0.074] tie | **tie** (at chance: no skill) |
 | dor>0.5 (high) | 16 | 0.532 [0.394, 0.673] | GR4J misfit (1-NSE_cal): +0.101 [-0.091, +0.293] tie<br>seasonal damping index: +0.050 [-0.109, +0.201] tie<br>chance (AUC 0.5): +0.032 [-0.106, +0.173] tie | **tie** (at chance: no skill) |
 | dor>0 (any) | 53 | 0.441 [0.357, 0.527] | GR4J misfit (1-NSE_cal): +0.048 [-0.053, +0.147] tie<br>seasonal damping index: -0.064 [-0.180, +0.051] tie<br>chance (AUC 0.5): -0.059 [-0.143, +0.027] tie | **tie** (at chance: no skill) |
-| NWIS peak code 5/6 | 11 | 0.711 (shipped) | not re-scored: NWIS peaks not fetched | – |
+| NWIS peak code 5/6 in >=1/3 of WY1990-2008 peaks | 11 | 0.711 [0.543, 0.863] | GR4J misfit (1-NSE_cal): +0.104 [-0.106, +0.291] tie<br>seasonal damping index: +0.072 [-0.062, +0.217] tie<br>chance (AUC 0.5): +0.211 [+0.043, +0.363] win | **tie** (above chance) |
 
 Coverage of the 68 % bars (bootstrap): mean flow 81 % [78, 84]; runoff ratio 77 % [74, 81]; baseflow index 77 % [73, 80]; low flow Q5 78 % [74, 81]; high flow Q95 73 % [70, 77]; half-flow date 83 % [80, 85]. The paired intervals are narrower than the import's unpaired Fisher-z /
 Zou ones, and they turn the mean-flow change from a tie into a **loss** to calibrated GR4J (-0.036 [-0.063, -0.008]),
@@ -282,8 +283,8 @@ Frozen simulated set v4 (release model): R2 per output d_logq 0.59, d_rr 0.30, d
 - On the decade-to-decade changes it **ties** calibrated GR4J on five of six signatures (0.44 vs 0.42 on low flow is a
   tie too) and **loses** on mean flow (0.76 vs 0.79, paired interval -0.063 to -0.008); it does not beat it. Its median error on BFI and Q5 changes is no better than "no change". It needs no per-basin calibration and its error bars hold (too wide on exam: 73-83 % inside the
   68 % bars, 95-99 % inside 95 %).
-- **Regulation does not transfer**: sim AUC 0.91, exam AUC 0.49 vs HydroATLAS storage (37 positives), 0.71 vs USGS peak codes
-  5/6 (11 positives). log10 storage among regulated basins: rho 0.24, 68 % coverage 28 % (sigma not calibrated: no dev truth).
+- **Regulation does not transfer**: sim AUC 0.91, exam AUC 0.49 vs HydroATLAS storage (37 positives, at chance), 0.71 vs USGS peak codes
+  5/6 (11 positives; paired interval 0.711 [0.543, 0.863]: above chance, level with GR4J misfit and seasonal damping). log10 storage among regulated basins: rho 0.24, 68 % coverage 28 % (sigma not calibrated: no dev truth).
   Simulated reservoirs are generic policies; CAMELS is "minimally impacted"; HydroATLAS upstream volumes can be wrong where the
   pour point snaps to a larger river.
 - The drift (v3) was measured on 1980-89 and scaled to 1989-99 with a linear-drift assumption.

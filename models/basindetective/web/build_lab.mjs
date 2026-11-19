@@ -102,7 +102,7 @@ const reg = Object.entries(R).filter(([, r]) => 'n_pos' in r).map(([name, r]) =>
     f2(r.BasinDetective_precision_at_n), b.verdict + (b.at_chance ? ', at chance' : '')]);
 });
 const ld = R['log10 dor among regulated basins'], cf = R['confusion_p>0.5'];
-const regNote = `AUC intervals: paired bootstrap (seen re-score). All three HydroATLAS rows are indistinguishable from chance (AUC 0.5): no skill. The NWIS row was not re-scored (peaks not fetched). `
+const regNote = `AUC intervals: paired bootstrap (seen re-score). All three HydroATLAS rows are indistinguishable from chance (AUC 0.5): no skill. The NWIS peak-code row (11 positives) is above chance but level with both classical scores. `
   + `Simulated AUC on the frozen set: 0.91. Among the ${ld.n} exam basins with any upstream reservoir, log10 storage / annual flow: ρ ${f2(ld.rho)} ${ci(fisher(ld.rho, ld.n))}, `
   + `median |error| ${f2(ld.mae)}, 68 % coverage ${(100 * ld.cov68).toFixed(0)}% (σ not calibrated: no dev truth). At p > 0.5: ${cf.tp} hits, ${cf.fp} false alarms, ${cf.fn} misses, ${cf.tn} correct rejections.`;
 
