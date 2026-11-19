@@ -117,21 +117,34 @@ def prepare_run(spec, forcing, model='hbv', params=None, snow='degree_day', pet=
     method = pet or sp.get('pet_method') or ('forcing' if 'PET' in df and df['PET'].notna().mean() > 0.9
                                              else 'penman_monteith')
     net = bool(sp.get('srad_is_net') or fmeta.get('srad_is_net'))
-    if abs(dt - 1.0) > 1e-6 and method != 'forcing':
+    wh = float(sp.get('wind_height') or 10.0)
+
+    def _daily_pet_disaggregated(m):
         # sub-daily: daily PET from daily aggregates, spread over the day by solar elevation
         from .pet import disaggregate_daily
         dd = pd.DataFrame({'P': df['P'].resample('D').sum(), 'T_mean': df['T_mean'].resample('D').mean(),
                            'T_min': df['T_mean'].resample('D').min(), 'T_max': df['T_mean'].resample('D').max(),
                            'SRAD': df['SRAD'].resample('D').mean(), 'vp': df['vp'].resample('D').mean(),
                            'wind': df['wind'].resample('D').mean()})
-        pd_, pet_used = compute_pet(dd, lat, zref, method, float(sp.get('wind_height') or 10.0), srad_is_net=net)
-        pet_arr = disaggregate_daily(pd.Series(pd_, index=dd.index), df.index, lat, float(sp.get('lon') or 0.0))
-        pet_used += ' (daily, disaggregated by solar elevation)'
+        pd_, used = compute_pet(dd, lat, zref, m, wh, srad_is_net=net)
+        arr = disaggregate_daily(pd.Series(pd_, index=dd.index), df.index, lat, float(sp.get('lon') or 0.0))
+        return np.asarray(arr, float), used + ' (daily, disaggregated by solar elevation)'
+    if abs(dt - 1.0) > 1e-6 and method != 'forcing':
+        pet_arr, pet_used = _daily_pet_disaggregated(method)
+    elif abs(dt - 1.0) > 1e-6:
+        # per-step forcing PET; gaps (or a missing column) take the disaggregated daily Penman-Monteith, never a
+        # whole day's PET in one step
+        p = df['PET'].values.astype(float) if 'PET' in df else np.full(len(df), np.nan)
+        if np.isfinite(p).all():
+            pet_arr, pet_used = np.maximum(p, 0.0), 'forcing (per-step amounts as given)'
+        else:
+            fill, used = _daily_pet_disaggregated('penman_monteith')
+            if np.isfinite(p).any():
+                pet_arr, pet_used = np.where(np.isfinite(p), np.maximum(p, 0.0), fill), 'forcing+pm_fill: ' + used
+            else:
+                pet_arr, pet_used = fill, used
     else:
-        pet_arr, pet_used = compute_pet(df, lat, zref, method, float(sp.get('wind_height') or 10.0),
-                                        srad_is_net=net)
-        if abs(dt - 1.0) > 1e-6:
-            pet_used += ' (per-step amounts as given)'
+        pet_arr, pet_used = compute_pet(df, lat, zref, method, wh, srad_is_net=net)
     frac, elev = build_bands(sp)
     F, rso = engine_matrix(df, lat, zref, srad_is_net=net)
     o = _Prepared()
@@ -295,7 +308,7 @@ def simulate(spec, forcing, start=None, end=None, model='hbv', params=None, snow
     # ------------------------------------------------------------------ irrigation
     q = q_nat.copy()
     irr_S0 = float((init or {}).get('irrigation_store_mm') or 0.0)
-    irr = _irrigation(sp, irrigation, ts, o.pet[i0:i1], q, S0=irr_S0)
+    irr = _irrigation(sp, irrigation, ts, o.pet[i0:i1], q, S0=irr_S0, dt=dt)
     q = irr['q']
     ts['withdrawal'] = irr['withdrawal']
     ts['return_flow'] = irr['return_flow']
@@ -399,8 +412,9 @@ def _uh_route(x, ordc):
     return y, st[1:], st[0]
 
 
-def _irrigation(sp, irrigation, ts, pet, q, S0=0.0):
-    """S0: return-flow store (mm) carried from a previous window's final_state."""
+def _irrigation(sp, irrigation, ts, pet, q, S0=0.0, dt=1.0):
+    """S0: return-flow store (mm) carried from a previous window's final_state. k_return is per day; at a step of
+    dt days it becomes 1 - (1 - k_return)**dt per step."""
     n = len(q)
     zero = {'q': q, 'withdrawal': np.zeros(n), 'return_flow': np.zeros(n), 'store': np.zeros(n), 'store0': 0.0,
             'consumptive': np.zeros(n)}
@@ -419,9 +433,10 @@ def _irrigation(sp, irrigation, ts, pet, q, S0=0.0):
     ret = np.zeros(n)
     store = np.zeros(n)
     S = float(S0)
+    k = cfg['k_return'] if abs(dt - 1.0) <= 1e-9 else 1.0 - (1.0 - cfg['k_return']) ** dt
     for t in range(n):
         S += cfg['return_frac'] * w[t]
-        r = cfg['k_return'] * S
+        r = k * S
         S -= r
         ret[t] = r
         store[t] = S

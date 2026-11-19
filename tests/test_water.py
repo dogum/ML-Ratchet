@@ -229,6 +229,29 @@ def test_reservoir_evap_none_is_honoured():
     assert off["ledger"]["ok"]
 
 
+def test_subdaily_pet_fill_and_irrigation_recession():
+    """PR #6 review, 18 Nov 2026: at an hourly step, gaps in forcing PET were filled with a whole day's PET per hour,
+    and the irrigation return store receded by k_return per hour instead of per day."""
+    import pandas as pd
+    import watersim as ws
+    from watersim.simulate import prepare_run, _irrigation
+    spec = ws.generate_basins(1, rng=3, regulation=False)[0]
+    f = ws.generate_weather(spec, "2000-01-01", "2000-03-31", rng=4)
+    h = f.reindex(pd.date_range(f.index[0], f.index[-1] + pd.Timedelta(hours=23), freq="h", tz=f.index.tz),
+                  method="ffill")
+    h["P"] = h["P"] / 24
+    pm = prepare_run(spec, h, "hbv", None, "degree_day", "penman_monteith").pet
+    h["PET"] = pm
+    h.iloc[100:110, h.columns.get_loc("PET")] = np.nan
+    o = prepare_run(spec, h, "hbv", None, "degree_day", None)
+    assert o.pet_method.startswith("forcing+pm_fill") and np.allclose(o.pet, pm)
+    n = 48
+    ts = pd.DataFrame({"rain": np.zeros(n), "T_mean": np.full(n, 20.0)})
+    pet = np.r_[2.0, np.zeros(n - 1)]
+    irr = _irrigation({"irrigation_frac": 0.5}, None, ts, pet, np.full(n, 10.0), dt=1 / 24)
+    assert irr["store"][24] / irr["store"][0] == pytest.approx(0.95)
+
+
 def test_network_requires_matching_dates():
     """PR #6 review, 18 Nov 2026: sub-basins that simulated different dates were reindexed onto the first one's,
     putting NaN into the routed flow. simulate_network now refuses them."""
