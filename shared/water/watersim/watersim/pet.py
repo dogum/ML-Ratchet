@@ -176,7 +176,7 @@ def compute_pet(df, lat, z, method='penman_monteith', wind_height=10.0, srad_is_
             p = df['PET'].values.astype(float)
             if np.isfinite(p).all():
                 return np.maximum(p, 0.0), 'forcing'
-            fill, _ = compute_pet(df, lat, z, 'penman_monteith', wind_height)
+            fill, _ = compute_pet(df, lat, z, 'penman_monteith', wind_height, srad_is_net=srad_is_net)
             return np.where(np.isfinite(p), np.maximum(p, 0), fill), 'forcing+pm_fill'
     if method in ('penman_monteith', 'priestley_taylor') and srad is None and vp is None and wind is None:
         method = 'hargreaves'

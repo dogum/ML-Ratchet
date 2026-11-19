@@ -616,6 +616,10 @@ def simulate_network(subbasins, forcings, topology, start=None, end=None, model=
     outs = {i: simulate(subbasins[i], forcings[i], start, end, model=model, snow=snow, routing=local_routing, **kw)
             for i in subbasins}
     idx = next(iter(outs.values()))['ts'].index
+    for i, o in outs.items():                          # routing adds the series day by day: the dates must agree
+        if not o['ts'].index.equals(idx):
+            raise ValueError(f'simulate_network: sub-basin {i!r} simulated different dates from the first sub-basin; '
+                             'give every sub-basin forcing that covers the same window')
     dts = {round(float(o['dt_days']), 9) for o in outs.values()}
     if len(dts) != 1:
         raise ValueError(f'simulate_network: sub-basins have different time steps {sorted(dts)} (days)')

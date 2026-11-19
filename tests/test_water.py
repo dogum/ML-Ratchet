@@ -209,6 +209,24 @@ def test_restart_carries_irrigation_store_and_pet_fills_net_srad_gaps():
     ok, _ = compute_pet(f.iloc[:60], 45.0, 500.0, "penman_monteith", srad_is_net=True)
     assert np.isfinite(pet).all()
     assert np.allclose(np.delete(pet, range(10, 15)), np.delete(ok, range(10, 15)))
+    # a forcing PET with gaps is filled by the same net-aware Penman-Monteith (srad_is_net kept)
+    h = f.iloc[:60].copy()
+    h["PET"] = ok
+    h.iloc[20:25, h.columns.get_loc("PET")] = np.nan
+    filled, tag = compute_pet(h, 45.0, 500.0, "forcing", srad_is_net=True)
+    assert tag == "forcing+pm_fill" and np.allclose(filled, ok)
+
+
+def test_network_requires_matching_dates():
+    """PR #6 review, 18 Nov 2026: sub-basins that simulated different dates were reindexed onto the first one's,
+    putting NaN into the routed flow. simulate_network now refuses them."""
+    import watersim as ws
+    sb = {f"b{i}": x for i, x in enumerate(ws.generate_basins(2, rng=8, regulation=False))}
+    fo = {"b0": ws.generate_weather(sb["b0"], "2000-01-01", "2001-12-31", rng=0),
+          "b1": ws.generate_weather(sb["b1"], "2000-01-01", "2001-06-30", rng=1)}
+    topo = {"b0": {"down": "b1", "length_km": 40, "slope": 0.002, "width_m": 20}, "b1": {"down": None}}
+    with pytest.raises(ValueError, match="different dates"):
+        ws.simulate_network(sb, fo, topo, "2000-06-01")
 
 
 def test_metrics_match_the_shipped_cost():
