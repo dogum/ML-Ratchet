@@ -273,6 +273,15 @@ def test_subdaily_gamma_uh_length_and_net_longwave():
     assert pets[0].sum() > pets[1].sum()
 
 
+def test_sea_level_basin_keeps_zero_elevation():
+    """PR #6 review, 18 Nov 2026: elev_mean_m = 0 without bands became 500 m bands against 0 m forcing, so the
+    lapse rate cooled the basin by about 3 C."""
+    from watersim.spec import build_bands
+    frac, elev = build_bands({"elev_mean_m": 0.0, "area_km2": 100.0})
+    assert np.all(elev == 0.0) and frac.sum() == pytest.approx(1.0)
+    assert np.all(build_bands({"area_km2": 100.0})[1] == 500.0)          # a missing elevation still defaults
+
+
 def test_network_requires_matching_dates():
     """PR #6 review, 18 Nov 2026: sub-basins that simulated different dates were reindexed onto the first one's,
     putting NaN into the routed flow. simulate_network now refuses them."""

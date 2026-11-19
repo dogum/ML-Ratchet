@@ -82,7 +82,8 @@ def build_bands(spec, n=5):
             elev = np.array([r[1] for r in rows], float)
         frac = frac / frac.sum()
         return frac, elev
-    zm = float(spec.get('elev_mean_m') or 500.0)
+    zm = spec.get('elev_mean_m')
+    zm = 500.0 if zm is None else float(zm)       # 0 m (sea level) is a valid elevation; only a missing one is filled
     if spec.get('elev_std_m'):
         from scipy.stats import norm
         q = (np.arange(n) + 0.5) / n
