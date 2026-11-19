@@ -194,7 +194,7 @@ def simulate(spec, forcing, start=None, end=None, model='hbv', params=None, snow
     routing   'uh' | 'muskingum' | 'kinematic' | 'none' (channel routing after the model's own hillslope UH)
     reservoirs list of reservoir dicts / Reservoir objects (default: spec.get('reservoirs'))
     init      a previous out['final_state'] (then no spin-up) or {'model': {...}, 'snow_swe_mm': x}. A final_state
-              carries reservoir storage too, so a chained run continues each reservoir where it stopped. The channel
+              carries reservoir storage and the irrigation return-flow store too, so a chained run continues them. The channel
               routing buffer is not carried (chained runs with routing other than 'none' differ by ~1e-6 mm/day), and
               reservoir settings derived from the window (capacity_years, the default demand of 0.6 x mean inflow,
               policies that read the window's mean inflow or history) are recomputed per window
@@ -294,7 +294,8 @@ def simulate(spec, forcing, start=None, end=None, model='hbv', params=None, snow
     ts['Q_quick_routed'], ts['Q_inter_routed'], ts['Q_base_routed'] = comp_r[:, 0], comp_r[:, 1], comp_r[:, 2]
     # ------------------------------------------------------------------ irrigation
     q = q_nat.copy()
-    irr = _irrigation(sp, irrigation, ts, o.pet[i0:i1], q)
+    irr_S0 = float((init or {}).get('irrigation_store_mm') or 0.0)
+    irr = _irrigation(sp, irrigation, ts, o.pet[i0:i1], q, S0=irr_S0)
     q = irr['q']
     ts['withdrawal'] = irr['withdrawal']
     ts['return_flow'] = irr['return_flow']
@@ -373,6 +374,7 @@ def simulate(spec, forcing, start=None, end=None, model='hbv', params=None, snow
            'dt_days': dt, 'infiltration_capacity_mm_per_step': icap,
            'final_state': {'model_state': s.tolist(), 'snow': snowst.tolist(), 'uhbuf': uhbuf.tolist(),
                            'uhx': uhx.tolist(), 'reservoir_storage_hm3': res_final,
+                           'irrigation_store_mm': float(irr['store'][-1]) if len(irr['store']) else irr['store0'],
                            'model': model, 'snow_kind': o.snow, 'date': str(idx[-1].date())},
            'initial_state': {'model_state': s_init.tolist()}}
     if return_bands:
@@ -397,7 +399,8 @@ def _uh_route(x, ordc):
     return y, st[1:], st[0]
 
 
-def _irrigation(sp, irrigation, ts, pet, q):
+def _irrigation(sp, irrigation, ts, pet, q, S0=0.0):
+    """S0: return-flow store (mm) carried from a previous window's final_state."""
     n = len(q)
     zero = {'q': q, 'withdrawal': np.zeros(n), 'return_flow': np.zeros(n), 'store': np.zeros(n), 'store0': 0.0,
             'consumptive': np.zeros(n)}
@@ -415,7 +418,7 @@ def _irrigation(sp, irrigation, ts, pet, q):
     w = np.minimum(demand, cfg['max_take'] * q)
     ret = np.zeros(n)
     store = np.zeros(n)
-    S = 0.0
+    S = float(S0)
     for t in range(n):
         S += cfg['return_frac'] * w[t]
         r = cfg['k_return'] * S
@@ -423,7 +426,7 @@ def _irrigation(sp, irrigation, ts, pet, q):
         ret[t] = r
         store[t] = S
     qq = q - w + ret
-    return {'q': qq, 'withdrawal': w, 'return_flow': ret, 'store': store, 'store0': 0.0,
+    return {'q': qq, 'withdrawal': w, 'return_flow': ret, 'store': store, 'store0': float(S0),
             'consumptive': (1 - cfg['return_frac']) * w}
 
 

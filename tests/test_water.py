@@ -189,6 +189,28 @@ def test_network_hourly_and_many_dates():
         ws.simulate_many([sb["b0"], sb["b1"]], [f["b0"], f["b1"].iloc[7:]], model="hbv", start="2000-03-01")
 
 
+def test_restart_carries_irrigation_store_and_pet_fills_net_srad_gaps():
+    """PR #6 review, 18 Nov 2026: final_state dropped the irrigation return-flow store, and PET from net shortwave
+    (srad_is_net, no LRAD_net) went NaN on an SRAD gap."""
+    import watersim as ws
+    from watersim.pet import compute_pet
+    spec = dict(ws.generate_basins(1, rng=3, regulation=False)[0], irrigation_frac=0.2)
+    f = ws.generate_weather(spec, "2000-01-01", "2003-12-31", rng=4)
+    kw = dict(model="hbv", snow="degree_day", routing="none", labels=False)
+    full = ws.simulate(spec, f, "2001-01-01", "2003-12-31", **kw)
+    a = ws.simulate(spec, f, "2001-01-01", "2002-06-30", **kw)
+    b = ws.simulate(spec, f, "2002-07-01", "2003-12-31", init=a["final_state"], **kw)
+    assert a["final_state"]["irrigation_store_mm"] > 0 and b["ledger"]["ok"]
+    q = np.concatenate([a["ts"]["Q"].values, b["ts"]["Q"].values])
+    assert np.max(np.abs(q - full["ts"]["Q"].values)) < 1e-9
+    g = f.iloc[:60].copy()
+    g.iloc[10:15, g.columns.get_loc("SRAD")] = np.nan
+    pet, _ = compute_pet(g, 45.0, 500.0, "penman_monteith", srad_is_net=True)
+    ok, _ = compute_pet(f.iloc[:60], 45.0, 500.0, "penman_monteith", srad_is_net=True)
+    assert np.isfinite(pet).all()
+    assert np.allclose(np.delete(pet, range(10, 15)), np.delete(ok, range(10, 15)))
+
+
 def test_metrics_match_the_shipped_cost():
     """waterdata.metrics.reservoir cost J is what ReservoirPilot and the baselines are scored with."""
     from waterdata import metrics as M

@@ -189,6 +189,7 @@ def compute_pet(df, lat, z, method='penman_monteith', wind_height=10.0, srad_is_
             rin = srad / 0.77
             rnl = net_radiation(tmax, tmin, rin, vp, lat, doy, z, albedo=0.0) - rin * W_TO_MJ_DAY
             rn = srad * W_TO_MJ_DAY + rnl
+            rn = np.where(np.isfinite(rn), rn, net_radiation(tmax, tmin, None, vp, lat, doy, z))   # SRAD gaps
         method_tag = method + '(Rn from net radiation)'
     else:
         method_tag = method
