@@ -56,11 +56,13 @@ def gr4j_ordinates(x4, nh=20):
 
 
 def gamma_uh(shape, scale, dt=1.0, tol=1e-6, max_len=120):
-    """Gamma unit hydrograph ordinates (per step dt), truncated where the S-curve reaches 1 - tol; renormalised."""
+    """Gamma unit hydrograph ordinates (per step dt), truncated where the S-curve reaches 1 - tol, or at max_len DAYS
+    (max_len / dt steps); renormalised."""
     shape = max(float(shape), 1e-3)
     scale = max(float(scale), 1e-6)
+    n_max = max(1, int(round(max_len / dt)))
     n = 1
-    while n < max_len and gammainc(shape, n * dt / scale) < 1 - tol:
+    while n < n_max and gammainc(shape, n * dt / scale) < 1 - tol:
         n += 1
     t = np.arange(n + 1) * dt
     o = np.diff(gammainc(shape, t / scale))

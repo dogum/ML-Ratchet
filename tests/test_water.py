@@ -252,6 +252,27 @@ def test_subdaily_pet_fill_and_irrigation_recession():
     assert irr["store"][24] / irr["store"][0] == pytest.approx(0.95)
 
 
+def test_subdaily_gamma_uh_length_and_net_longwave():
+    """PR #6 review, 18 Nov 2026: gamma_uh capped hourly hydrographs at 120 steps (5 days) instead of 120 days, and
+    sub-daily PET dropped the supplied net longwave when aggregating to days."""
+    import pandas as pd
+    import watersim as ws
+    from watersim import routing as rt
+    from watersim.simulate import prepare_run
+    o = rt.gamma_uh(2, 3, dt=1 / 24)
+    assert np.sum(o * (np.arange(len(o)) + 0.5) / 24) == pytest.approx(6.0, rel=1e-3)   # mean = shape x scale
+    assert len(rt.gamma_uh(2, 30)) == 120                                                   # daily cap unchanged
+    spec = dict(ws.generate_basins(1, rng=3, regulation=False)[0], srad_is_net=True)
+    f = ws.generate_weather(spec, "2000-01-01", "2000-02-29", rng=4)
+    h = f.reindex(pd.date_range(f.index[0], f.index[-1] + pd.Timedelta(hours=23), freq="h", tz=f.index.tz),
+                  method="ffill")
+    h["P"] = h["P"] / 24
+    pets = []
+    for lw in (-40.0, -120.0):
+        pets.append(prepare_run(spec, h.assign(LRAD_net=lw), "hbv", None, "degree_day", "penman_monteith").pet)
+    assert pets[0].sum() > pets[1].sum()
+
+
 def test_network_requires_matching_dates():
     """PR #6 review, 18 Nov 2026: sub-basins that simulated different dates were reindexed onto the first one's,
     putting NaN into the routed flow. simulate_network now refuses them."""

@@ -126,6 +126,8 @@ def prepare_run(spec, forcing, model='hbv', params=None, snow='degree_day', pet=
                            'T_min': df['T_mean'].resample('D').min(), 'T_max': df['T_mean'].resample('D').max(),
                            'SRAD': df['SRAD'].resample('D').mean(), 'vp': df['vp'].resample('D').mean(),
                            'wind': df['wind'].resample('D').mean()})
+        if 'LRAD_net' in df:                          # keep supplied net longwave for net-aware PET
+            dd['LRAD_net'] = df['LRAD_net'].resample('D').mean()
         pd_, used = compute_pet(dd, lat, zref, m, wh, srad_is_net=net)
         arr = disaggregate_daily(pd.Series(pd_, index=dd.index), df.index, lat, float(sp.get('lon') or 0.0))
         return np.asarray(arr, float), used + ' (daily, disaggregated by solar elevation)'
