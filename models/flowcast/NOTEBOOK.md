@@ -227,3 +227,40 @@ nothing (weights, widening, decisions) was changed because of it.
   FHV row's reasoning changed (it was already a loss).
 - **Not re-scored.** The recent exam (WY2016-23, NWIS flow) and the instantaneous flood peaks (NWIS peak file):
   their rows stay median-only with the binomial intervals on the shipped win fractions.
+
+## 18 Nov 2026: reproduction re-score of the recent exam and the flood peaks (seen)
+
+Follow-up to the main-exam re-score above, once NWIS was fetched into `work/water` (proc/nwis/daily for 671 gauges,
+coverage.parquet, peaks.parquet with 48,776 peaks at 669 gauges). Seen: nothing changed because of the result.
+This replaces the "not re-scored" item of the previous entry.
+
+- **Splits.** splits.json sha256 33f88ca0225180dcce979eceed26bf5157b92455e13bb7b78e135e9fd4d98c6b (checked again);
+  `exam_ids()` asserts the scored basins are splits.json camels_us exam.
+- **Code.** `training/src/rescore_recent.py` (new, same helpers and bootstrap as `rescore_main.py`): recent window
+  2015-10-01..2023-09-30 with `wd.streamflow(b, 'nwis')` (≥ 365 observed days) as `evalreal.py exam`; the nowcast
+  as `evalnow.py`; flood peaks as `exam_report.py` (NWIS annual instantaneous peaks without codes 5/6/7/C, partial
+  dates or missing values; FlowCast annual max daily, water years with ≥ 330 days, × 1.384; per basin the median
+  |% error| and median % error). Per-basin baseline peak errors from `baselines/peak_scores.parquet`. Committed:
+  `training/results/rescore_recent_2026-11-18.json` (per basin), `rescore_peaks_2026-11-18.json` (per basin, peaks)
+  and `rescore_recent_summary_2026-11-18.json`.
+- **Reproduction.** Every claimed recent number reproduces: 603 basins, median NSE 0.37816 (claimed 0.37816), KGE
+  0.3966, FHV −32.90 %, daily peak error 52.69 %, coverage 97.5 % / 55.8 %, CAMELS-531 0.3926, the five strata, the
+  win counts against all six baselines, and the nowcast at 1/3/7 days (NSE 0.5913 / 0.5110 / 0.4656, persistence,
+  KGE and win shares to 4e-8). Flood peaks: 6,048 peaks at 607 basins (main) and 4,513 at 580 (recent), median
+  absolute error 59.75 % / 59.73 % and bias −45.8 % / −48.5 %, exactly as shipped.
+- **One definition found.** The first pass gave 65.7 % / +38.1 % for the q95 peak estimate against the shipped
+  63.9 % / +31.4 %. Cause: `evalreal.py` stored the RAW pinball quantiles (it widened them only to score coverage),
+  so the shipped q95 peak row is the unwidened q95. Recomputed as q50 + (q95 − q50) / 1.08 it reproduces exactly
+  (63.95 % / +31.36 %, recent 60.93 % / +28.16 %). The card's claim is kept; the released widened q95 is reported
+  beside it (66 % / +38 %, recent 63 % / +35 %).
+- **Intervals** (paired bootstrap over basins of the difference in medians, 10,000 resamples, seed 20261118; win or
+  loss only if the 95 % interval excludes 0). Recent NSE: vs U-dev −0.054 (−0.068 to −0.034), U-k12 −0.064 (−0.094 to
+  −0.046), GR4J −0.139 (−0.159 to −0.120), NWM −0.309 (−0.329 to −0.287), persistence −0.101 (−0.146 to −0.055),
+  climatology +0.325 (+0.307 to +0.341). Recent nowcast vs persistence / GR4J / NWM: lead 1 +0.112 (+0.077 to
+  +0.152) / +0.074 (+0.055 to +0.097) / −0.096 (−0.119 to −0.065); lead 3 +0.721 / −0.006 (−0.027 to +0.010) /
+  −0.176 (−0.201 to −0.152); lead 7 +0.924 / −0.052 (−0.071 to −0.036) / −0.222 (−0.244 to −0.201). Flood peaks,
+  per-basin absolute error, main: vs own-record +17.6 (+14.2 to +20.2), GR4J +13.2 (+10.2 to +15.1), NWM daily
+  +17.2 (+13.3 to +20.4); recent: own-record +16.2 (+13.2 to +19.4), GR4J +11.9 (+9.2 to +14.3), NWM daily +25.7
+  (+22.6 to +27.9), NWM hourly +29.1 (+26.0 to +31.8). Recent breakdowns vs U-dev: snow −0.150 (−0.193 to −0.067),
+  humid −0.123 (−0.155 to −0.084); arid, regulated, large span 0. Every verdict is unchanged (the recent persistence
+  row is a loss on the paired median, a tie on the binomial count).

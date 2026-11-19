@@ -92,7 +92,7 @@ the median (pooled dev coverage 0.50 and 0.95; the 1.08 mostly lowers the bound 
 
 n = 619 (main), 603 (recent); NWM 600 in both. CAMELS-531 subset: 0.357 (U-dev 0.402).
 
-### Verdicts and intervals (main exam re-scored 18 Nov 2026; seen)
+### Verdicts and intervals (both exams and the flood peaks re-scored 18 Nov 2026; seen)
 On 18 Nov 2026 the released weights were re-scored on the main exam (WY1990-99) from the rebuilt Caravan data
 (`training/src/rescore_main.py`; the 619 basins are exactly `splits.json` camels_us exam, whose hashes verified). It
 reproduces every claimed median (NSE 0.34117 vs 0.34117 claimed; KGE, FHV, peaks, coverage, CAMELS-531, strata and the
@@ -101,9 +101,9 @@ fractions against every baseline exactly). The exam had already been opened, so 
 changed because of it. Main-exam intervals: paired bootstrap over basins of the difference in medians (FlowCast −
 baseline) on the basins both have, 10,000 resamples, seed 20261118, using WaterData's per-basin baseline scores
 (`training/results/rescore_main_summary_2026-11-18.json`; per-basin FlowCast scores in
-`rescore_main_2026-11-18.json`). Win or loss only if the 95 % interval excludes 0. The recent exam and the
-instantaneous flood peaks need NWIS data that was not fetched: they keep the exact (Clopper-Pearson) binomial
-interval on the shipped share of basins FlowCast wins, or none.
+`rescore_main_2026-11-18.json`). Win or loss only if the 95 % interval excludes 0. The recent exam (WY2016-23) and the
+instantaneous flood peaks were re-scored the same way from the NWIS data later the same day (`training/src/rescore_recent.py`, `rescore_recent_summary_2026-11-18.json`); they too
+reproduce every claimed median.
 
 | Row | FlowCast | Baseline | Median difference (95 % CI) | Verdict |
 |---|---|---|---|---|
@@ -118,15 +118,27 @@ interval on the shipped share of basins FlowCast wins, or none.
 | Main annual daily peaks, abs. error | 52.2 % | U-dev 47.3 % / U-k12 45.5 % | +4.9 (+2.7 to +6.9) / +6.7 (+4.4 to +9.2) | loss |
 | Main peak timing, days | 0.85 | U-dev 0.82 / U-k12 0.82 | +0.03 (−0.03 to +0.06) / +0.03 (0.00 to +0.06) | tie |
 | CAMELS-531 NSE (487 exam basins) | 0.357 | U-dev 0.402 / U-k12 0.401 | −0.045 (−0.063 to −0.017) / −0.044 (−0.068 to −0.023) | loss |
-| Recent NSE, ungauged (median only) | 0.378 | U-dev 0.433, U-k12 0.443 | better at 34.0 % (30.2-37.9) / 34.2 % (30.4-38.1) of basins | loss |
-| Recent NSE, other protocols (median only) | 0.378 | NWM 0.687, GR4J 0.517, persistence 0.480 | better at 15.5 % (12.7-18.6) / 20.1 % (16.9-23.5) / 47.9 % (43.9-52.0) | loss |
-| Flood peaks (instantaneous), abs. error | 60 % (bias −46 %) | own-record median 42 %, NWM daily 42 %, GR4J 47 % | not re-scored (no NWIS peaks) | loss |
+| Recent NSE, ungauged | 0.378 | U-dev 0.433 | −0.054 (−0.068 to −0.034) | loss |
+| | | U-k12 0.443 | −0.064 (−0.094 to −0.046) | loss |
+| | | climatology 0.053 | +0.325 (+0.307 to +0.341) | win |
+| Recent NSE, other protocols | 0.378 | GR4J (gauged) 0.517 | −0.139 (−0.159 to −0.120) | loss |
+| | 0.378 (600) | NWM 0.687 | −0.309 (−0.329 to −0.287) | loss |
+| | | persistence 0.480 | −0.101 (−0.146 to −0.055) | loss |
+| Recent KGE / median \|FHV\| / daily peak error vs U-dev | 0.397 / 40.1 % / 52.7 % | 0.469 / 35.3 % / 47.7 % | −0.073 (−0.089 to −0.046) / +4.8 (+2.8 to +7.5) / +5.0 (+2.6 to +7.4) | loss |
+| Recent CAMELS-531 NSE (475 exam basins) | 0.393 | U-dev 0.448 / U-k12 0.475 | −0.056 (−0.073 to −0.039) / −0.082 (−0.102 to −0.056) | loss |
+| Flood peaks (instantaneous), main, abs. error | 59.8 % (bias −45.8 %) | own-record median 42.2 % | +17.6 (+14.2 to +20.2) | loss |
+| | | GR4J × 1.38 46.5 % | +13.2 (+10.2 to +15.1) | loss |
+| | | NWM daily × 1.38 42.4 % (588) | +17.2 (+13.3 to +20.4) | loss |
+| Flood peaks, recent, abs. error | 59.7 % (bias −48.5 %) | own-record 43.5 % / GR4J 47.8 % | +16.2 (+13.2 to +19.4) / +11.9 (+9.2 to +14.3) | loss |
+| | | NWM daily 34.1 % / NWM hourly 30.6 % | +25.7 (+22.6 to +27.9) / +29.1 (+26.0 to +31.8) | loss |
 | 90 % band coverage (median basin) | 97.3 % | nominal 90 % | — | info (too wide) |
 
 Cross-check, main exam (exact binomial on the share of basins where FlowCast's NSE is higher): U-dev 34.1 %
 (30.4-38.0), U-k12 32.6 % (28.9-36.5), GR4J 19.5 % (16.5-22.9), NWM 21.3 % (18.1-24.8), persistence 44.4 %
 (40.5-48.4), climatology 80.6 % (77.3-83.7). Both methods give the same verdicts. Against persistence the FHV and
-peak comparisons are degenerate (persistence copies the observed series: 0 by construction).
+peak comparisons are degenerate (persistence copies the observed series: 0 by construction). Recent exam:
+U-dev 34.0 % (30.2-37.9), U-k12 34.2 % (30.4-38.1), GR4J 20.1 % (16.9-23.5), NWM 15.5 % (12.7-18.6), persistence
+47.9 % (43.9-52.0: a tie on that count, a loss on the paired median), climatology 82.6 % (79.3-85.5).
 
 By basin type (main exam, median NSE: FlowCast / U-dev / NWM / GR4J; breakdowns, `info`): snow (frac_snow > 0.3,
 n 118) 0.40 / 0.56 / 0.57 / 0.67; arid (aridity > 1, n 174) 0.21 / 0.20 / 0.32 / 0.30; humid (aridity < 0.6, n 128)
@@ -136,9 +148,12 @@ regulated 0.38 / 0.46 / 0.70 / 0.59; large 0.34 / 0.32 / 0.52 / 0.44. The regula
 the recent exam.
 Paired against U-dev on the main exam (same bootstrap): snow −0.154 (−0.210 to −0.067), arid +0.009 (−0.040 to
 +0.033), humid −0.124 (−0.166 to −0.086), regulated +0.054 (−0.127 to +0.130), large +0.006 (−0.113 to +0.121).
+Recent exam: snow −0.150 (−0.193 to −0.067), arid −0.008 (−0.052 to +0.058), humid −0.123 (−0.155 to −0.084),
+regulated −0.079 (−0.127 to +0.074), large +0.022 (−0.052 to +0.141).
 
 **Flood peaks** (USGS annual instantaneous peaks; annual max daily × 1.38; median abs error / median bias):
-FlowCast mean 60 % / −46 % (main), 60 % / −49 % (recent); FlowCast q95 64 % / +31 % (main), 61 % / +28 % (recent);
+FlowCast mean 60 % / −46 % (main), 60 % / −49 % (recent); FlowCast q95 64 % / +31 % (main), 61 % / +28 % (recent) — the RAW pinball q95 (evalreal.py stored
+unwidened quantiles; the released, widened q95 gives 66 % / +38 % and 63 % / +35 %, re-score 18 Nov);
 baselines (main): own-record median 42 / −14, GR4J 47 / −31, NWM daily 42 / −24; recent: own-record 43 / −8, GR4J
 48 / −32, NWM daily 34 / −12, NWM hourly 31 / −2.
 
@@ -158,7 +173,10 @@ before each day. Gauged protocol, hindcast weather. Medians over 619 (main) and 
 Main-exam re-score (18 Nov, paired bootstrap of the median difference as above): vs persistence +0.093
 (+0.060 to +0.133), +0.665 (+0.630 to +0.705), +0.892 (+0.859 to +0.923) at 1 / 3 / 7 days; vs GR4J +0.095
 (+0.073 to +0.122), +0.001 (−0.016 to +0.027), −0.047 (−0.064 to −0.025); vs NWM (600 basins) +0.025 (−0.011 to
-+0.058), −0.072 (−0.100 to −0.034), −0.121 (−0.147 to −0.090). Recent rows: median only.
++0.058), −0.072 (−0.100 to −0.034), −0.121 (−0.147 to −0.090). Recent exam re-score (NWIS): vs persistence +0.112 (+0.077
+to +0.152), +0.721 (+0.655 to +0.777), +0.924 (+0.869 to +0.961); vs GR4J +0.074 (+0.055 to +0.097), −0.006
+(−0.027 to +0.010), −0.052 (−0.071 to −0.036); vs NWM −0.096 (−0.119 to −0.065), −0.176 (−0.201 to −0.152),
+−0.222 (−0.244 to −0.201).
 It beats persistence clearly at every lead. Against the fair gauged and operational references (GR4J calibrated on
 the gauge: 0.473 main, 0.517 recent; NWM: 0.550, 0.687) it ties NWM at one day in the 1990s and loses otherwise. KGE
 at one day is below persistence's (0.635 vs 0.738 main).
