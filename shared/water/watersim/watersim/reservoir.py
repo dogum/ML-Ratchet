@@ -58,8 +58,8 @@ class Reservoir:
         self.weir_c = weir_coef
         self.turb = turbine_max_m3s
         self.eta = efficiency
-        self.evap_mode = evap
-        self.evap_factor = evap_factor
+        self.evap_mode = evap                         # 'none' (or None/False): no open-water evaporation
+        self.evap_factor = evap_factor                # not applied: the caller's evap_mm is used as given (v1.0)
         self.consumptive_frac = consumptive_frac  # share of withdrawals (demand not returned to the river)
         self.S = self.init_frac * self.C
 
@@ -185,6 +185,8 @@ class Reservoir:
             self.policy = policy
         I = np.asarray(inflow_m3s, float)
         n = len(I)
+        if self.evap_mode in ('none', None, False):
+            evap_mm = np.zeros(n)
         imean = float(np.mean(I)) if n else 0.0
         D = demand_m3s if demand_m3s is not None else self.demand
         if D is None:

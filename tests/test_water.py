@@ -217,6 +217,18 @@ def test_restart_carries_irrigation_store_and_pet_fills_net_srad_gaps():
     assert tag == "forcing+pm_fill" and np.allclose(filled, ok)
 
 
+def test_reservoir_evap_none_is_honoured():
+    """PR #6 review, 18 Nov 2026: a reservoir with evap='none' still lost Penman evaporation in simulate()."""
+    import watersim as ws
+    reg = dict(next(s for s in ws.generate_basins(12, rng=7) if s.get("reservoirs")))
+    f = ws.generate_weather(reg, "2000-01-01", "2001-12-31", rng=4)
+    kw = dict(model="hbv", snow="degree_day", routing="none", labels=False)
+    on = ws.simulate(reg, f, "2001-01-01", **kw)
+    off = ws.simulate(dict(reg, reservoirs=[dict(r, evap="none") for r in reg["reservoirs"]]), f, "2001-01-01", **kw)
+    assert on["ts"]["res_evap_mm"].sum() > 0 and off["ts"]["res_evap_mm"].abs().max() == 0
+    assert off["ledger"]["ok"]
+
+
 def test_network_requires_matching_dates():
     """PR #6 review, 18 Nov 2026: sub-basins that simulated different dates were reindexed onto the first one's,
     putting NaN into the routed flow. simulate_network now refuses them."""
