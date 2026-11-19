@@ -481,6 +481,19 @@ def _ledger(ts, snow0, soil0, gw0, mroute0, ch0, irr0, res0, res_store, res_evap
 
 
 # ---------------------------------------------------------------------------------------------- batch
+def _spin_rows(i0, i1, nspin):
+    """Rows of the forcing a batch run steps through, and how many leading steps to drop: the `nspin` steps before
+    the window when at least 90 % of them exist, otherwise the first steps of the window replayed (cyclic), as
+    simulate() does."""
+    if nspin > 0 and i0 >= int(0.9 * nspin):
+        a = max(i0 - nspin, 0)
+        return np.arange(a, i1), i0 - a
+    if nspin > 0:
+        b = min(i0 + nspin, i1)
+        return np.concatenate([np.arange(i0, b), np.arange(i0, i1)]), b - i0
+    return np.arange(i0, i1), 0
+
+
 def simulate_batch(spec, forcing, params_list, model='hbv', snow='degree_day', start=None, end=None, spinup='1y',
                    outputs=('Q',), pet=None, pet_snow_reduction=True, routing='none', o=None, infiltration_excess=None):
     """Run many parameter sets for one basin (one forcing) in a single numba call.
@@ -492,20 +505,9 @@ def simulate_batch(spec, forcing, params_list, model='hbv', snow='degree_day', s
         o = prepare_run(spec, forcing, model, None, snow, pet)
     i0, i1 = _window(o.df, start, end)
     nspin = int(round(_spin_days(spinup) / o.dt))
-    if i0 >= int(0.9 * nspin) and nspin > 0:
-        a = max(i0 - nspin, 0)
-        sl = slice(a, i1)
-        drop = i0 - a
-        F, petv, rso = o.F[sl], o.pet[sl], o.rso[sl]
-    elif nspin > 0:
-        b = min(i0 + nspin, i1)
-        F = np.concatenate([o.F[i0:b], o.F[i0:i1]])
-        petv = np.concatenate([o.pet[i0:b], o.pet[i0:i1]])
-        rso = np.concatenate([o.rso[i0:b], o.rso[i0:i1]])
-        drop = b - i0
-    else:
-        F, petv, rso, drop = o.F[i0:i1], o.pet[i0:i1], o.rso[i0:i1], 0
-    pms, pss = [], []
+    rows, drop = _spin_rows(i0, i1, nspin)
+    F, petv, rso = o.F[rows], o.pet[rows], o.rso[rows]
+    pms, pss, prs = [], [], []
     mod = MODULES.get(model)
     from .spec import param_table
     names = [r[0] for r in param_table(model, snow) if r[-1] in ('model', 'snow')]
@@ -514,8 +516,10 @@ def simulate_batch(spec, forcing, params_list, model='hbv', snow='degree_day', s
     for p in params_list:
         pm = {**o.pm, **{k: v for k, v in p.items() if k in o.pm}}
         ps = {**o.ps, **{k: v for k, v in p.items() if k in o.ps}}
+        pr = {**o.prp, **{k: v for k, v in p.items() if k in o.prp}}
         pms.append(pm)
         pss.append(ps)
+        prs.append(pr)
     N = len(pms)
     mp = np.array([_model_vec(model, pm) for pm in pms])
     spv = np.array([_snow_vec(o.snow, ps) for ps in pss])
@@ -535,9 +539,15 @@ def simulate_batch(spec, forcing, params_list, model='hbv', snow='degree_day', s
     res = {'Q': Q[:, drop:], 'index': o.df.index[i0:i1]}
     if routing == 'uh':
         ch = channel_for(o.spec, float(o.spec['area_km2']), o.prp)
-        travel_d = ch['length_km'] * 1000.0 / o.prp['CH_VEL'] / 86400.0
-        ordc = rt.gamma_uh(3.0, max(travel_d / 3.0, 1e-3), o.dt)
-        res['Q'] = np.array([_uh_route(qq, ordc)[0] for qq in res['Q']])
+        ords = {}                                        # each member's own CH_VEL (as simulate() would use)
+        routed = []
+        for qq, pr in zip(res['Q'], prs):
+            v = float(pr['CH_VEL'])
+            if v not in ords:
+                travel_d = ch['length_km'] * 1000.0 / v / 86400.0
+                ords[v] = rt.gamma_uh(3.0, max(travel_d / 3.0, 1e-3), o.dt)
+            routed.append(_uh_route(qq, ords[v])[0])
+        res['Q'] = np.array(routed)
     if 'SWE' in outputs:
         res['SWE'] = SWE[:, drop:]
     if 'ET' in outputs:
@@ -555,14 +565,13 @@ def simulate_many(specs, forcings, model='hbv', snow='degree_day', start=None, e
     i0, i1 = _window(preps[0].df, start, end)
     dt = preps[0].dt
     nspin = int(round(_spin_days(spinup) / dt))
-    a = max(i0 - nspin, 0)
-    drop = i0 - a
-    T = i1 - a
+    rows, drop = _spin_rows(i0, i1, nspin)            # same warm-up rule as simulate() and simulate_batch()
+    T = len(rows)
     N = len(preps)
     Bmax = max(len(p.frac) for p in preps)
-    F = np.stack([p.F[a:i1] for p in preps])
-    petv = np.stack([p.pet[a:i1] for p in preps])
-    rso = np.stack([p.rso[a:i1] for p in preps])
+    F = np.stack([p.F[rows] for p in preps])
+    petv = np.stack([p.pet[rows] for p in preps])
+    rso = np.stack([p.rso[rows] for p in preps])
     bf = np.zeros((N, Bmax))
     bdz = np.zeros((N, Bmax))
     bz = np.zeros((N, Bmax))

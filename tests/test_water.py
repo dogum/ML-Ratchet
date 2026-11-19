@@ -148,6 +148,26 @@ def test_restart_carries_reservoir_storage():
         assert np.max(np.abs(x - full["ts"][k].values)) < 1e-9, k
 
 
+def test_batch_apis_match_simulate():
+    """PR #6 review, 18 Nov 2026: simulate_batch routed every member with the spec's CH_VEL, and simulate_many skipped
+    spin-up when the window starts at the forcing start. Both now match simulate() (irrigation off: the batch kernels
+    do not model it)."""
+    import watersim as ws
+    spec = dict(ws.generate_basins(1, rng=3, regulation=False)[0], irrigation_frac=0.0)
+    f = ws.generate_weather(spec, "2000-01-01", "2002-12-31", rng=4)
+    r = ws.simulate_batch(spec, f, [{"CH_VEL": 0.4}, {"CH_VEL": 2.5}], model="hbv", start="2001-01-01", routing="uh")
+    assert np.max(np.abs(r["Q"][0] - r["Q"][1])) > 1e-5
+    for i, v in enumerate((0.4, 2.5)):
+        s = ws.simulate(spec, f, "2001-01-01", model="hbv", routing="uh", params={"CH_VEL": v}, labels=False)
+        assert np.max(np.abs(r["Q"][i] - s["ts"]["Q"].values)) < 1e-9
+    specs = [dict(s, irrigation_frac=0.0) for s in ws.generate_basins(3, rng=5, regulation=False)]
+    fs = [ws.generate_weather(s, "2000-01-01", "2001-12-31", rng=i) for i, s in enumerate(specs)]
+    m = ws.simulate_many(specs, fs, model="hbv")                       # window starts at the forcing start: cyclic
+    for i, (s, fi) in enumerate(zip(specs, fs)):
+        one = ws.simulate(s, fi, model="hbv", routing="none", labels=False)
+        assert np.max(np.abs(m["Q"][i] - one["ts"]["Q"].values)) < 1e-9
+
+
 def test_metrics_match_the_shipped_cost():
     """waterdata.metrics.reservoir cost J is what ReservoirPilot and the baselines are scored with."""
     from waterdata import metrics as M
