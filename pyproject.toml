@@ -30,6 +30,8 @@ building = ["pandas>=2", "pyarrow>=14", "pvlib>=0.11"]   # BuildingSim + Buildin
 building-data = ["pandas>=2", "pyarrow>=14", "pvlib>=0.11", "requests>=2", "fsspec>=2023", "aiohttp>=3", "h5py>=3"]   # `mlratchet data building` (rebuild from raw)
 water = ["pandas>=2", "pyarrow>=14"]   # WaterSim + WaterData (waterdata reads parquet; numba optional: about 100x faster, same numbers)
 water-data = ["pandas>=2", "pyarrow>=14", "requests>=2", "numba>=0.59", "h5py>=3"]   # `mlratchet data water` (rebuild from the sources; GR4J baselines need numba; CAMELS-AUS netCDF4 needs h5py)
+fire = ["pandas>=2", "pyarrow>=14", "shapely>=2", "rasterio>=1.3", "pyproj>=3", "scikit-image>=0.21"]   # FireSim + FireData (firesim needs only numpy/scipy/pandas; numba optional: much faster, same numbers; scikit-image draws perimeters and the ledger growth check; firedata reads parquet, perimeters (shapely) and rasters (rasterio), pyproj for EPSG:5070 and HRRR wind rotation)
+fire-data = ["pandas>=2", "pyarrow>=14", "shapely>=2", "rasterio>=1.3", "pyproj>=3", "scikit-image>=0.21", "requests>=2", "pyogrio>=0.7", "numcodecs>=0.12", "h5py>=3", "openpyxl>=3", "scikit-learn>=1.3"]   # `mlratchet data fire` (rebuild: FEDS/GOFER/FPA-FOD GeoPackages, HRRR-Zarr chunks, gridMET netCDF, Globe-LFMC xlsx, the GBM baselines; firedata.metrics.binary_scores needs scikit-learn)
 train = ["torch>=2.6", "pandas>=2", "pyarrow>=14", "fastsim==3.1.0"]   # training only (GPU: install torch from download.pytorch.org/whl/cu128 first); inference stays numpy
 dev = ["pytest>=8", "jsonschema>=4", "pandas>=2", "h5py>=3", "pyarrow>=14"]
 

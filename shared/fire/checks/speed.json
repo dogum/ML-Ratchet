@@ -1,0 +1,290 @@
+{
+ "threads": {
+  "omp": "1",
+  "numba": "1"
+ },
+ "cases": [
+  {
+   "shape": [
+    500,
+    500
+   ],
+   "res_m": 60.0,
+   "km": 30.0,
+   "hours": 24,
+   "method": "mtt",
+   "spotting": false,
+   "burned_ha": 3694.68,
+   "active_crown_ha": 63.72,
+   "spot_ignitions": 0,
+   "prepare_s": 0.026664843997423304,
+   "kernel_plus_rasters_s": 0.35514627599695814,
+   "full_call_s": 0.46792144700157223,
+   "first_call_s": 0.8845789649967628,
+   "growth_check_ratio": 1.2252514444324476
+  },
+  {
+   "shape": [
+    500,
+    500
+   ],
+   "res_m": 60.0,
+   "km": 30.0,
+   "hours": 24,
+   "method": "mtt",
+   "spotting": true,
+   "burned_ha": 5256.36,
+   "active_crown_ha": 149.76,
+   "spot_ignitions": 178,
+   "prepare_s": 0.021432973000628408,
+   "kernel_plus_rasters_s": 0.49670563000108814,
+   "full_call_s": 0.629796808003448,
+   "first_call_s": 0.8845789649967628,
+   "growth_check_ratio": 1.260202242096812
+  },
+  {
+   "shape": [
+    500,
+    500
+   ],
+   "res_m": 60.0,
+   "km": 30.0,
+   "hours": 24,
+   "method": "level_set",
+   "spotting": false,
+   "burned_ha": 4159.8,
+   "active_crown_ha": 89.64,
+   "spot_ignitions": 0,
+   "prepare_s": 0.02034574400022393,
+   "kernel_plus_rasters_s": 0.7615378299997246,
+   "full_call_s": 0.8630171750010049,
+   "first_call_s": 0.8845789649967628,
+   "growth_check_ratio": 1.3164172140282933
+  },
+  {
+   "shape": [
+    500,
+    500
+   ],
+   "res_m": 60.0,
+   "km": 30.0,
+   "hours": 24,
+   "method": "ca",
+   "spotting": false,
+   "burned_ha": 2873.16,
+   "active_crown_ha": 4.32,
+   "spot_ignitions": 0,
+   "prepare_s": 0.02142611199815292,
+   "kernel_plus_rasters_s": 0.2288606490001257,
+   "full_call_s": 0.31604366100145853,
+   "first_call_s": 0.8845789649967628,
+   "growth_check_ratio": 1.2886179600785754
+  },
+  {
+   "shape": [
+    500,
+    500
+   ],
+   "res_m": 60.0,
+   "batch_n": 40,
+   "batch_total_s": 9.122452052000881,
+   "per_fire_s": 0.22806130130002203,
+   "per_fire_kernel_s_median": 0.20771236099972157,
+   "burned_ha_median": 382.67999999999995,
+   "burned_ha_max": 7616.88
+  },
+  {
+   "shape": [
+    334,
+    334
+   ],
+   "res_m": 90.0,
+   "km": 30.06,
+   "hours": 24,
+   "method": "mtt",
+   "spotting": false,
+   "burned_ha": 214.65,
+   "active_crown_ha": 0.0,
+   "spot_ignitions": 0,
+   "prepare_s": 0.01476491699941107,
+   "kernel_plus_rasters_s": 0.057084645002760226,
+   "full_call_s": 0.09564990400031093,
+   "first_call_s": 0.09659170599843492,
+   "growth_check_ratio": 0.9510208695433511
+  },
+  {
+   "shape": [
+    334,
+    334
+   ],
+   "res_m": 90.0,
+   "km": 30.06,
+   "hours": 24,
+   "method": "mtt",
+   "spotting": true,
+   "burned_ha": 214.65,
+   "active_crown_ha": 0.0,
+   "spot_ignitions": 0,
+   "prepare_s": 0.017219480003404897,
+   "kernel_plus_rasters_s": 0.05909982199955266,
+   "full_call_s": 0.09903072700035409,
+   "first_call_s": 0.09659170599843492,
+   "growth_check_ratio": 0.9510208695433511
+  },
+  {
+   "shape": [
+    334,
+    334
+   ],
+   "res_m": 90.0,
+   "km": 30.06,
+   "hours": 24,
+   "method": "level_set",
+   "spotting": false,
+   "burned_ha": 217.08,
+   "active_crown_ha": 0.0,
+   "spot_ignitions": 0,
+   "prepare_s": 0.014817309001955437,
+   "kernel_plus_rasters_s": 0.0785519960008969,
+   "full_call_s": 0.11820137799804797,
+   "first_call_s": 0.09659170599843492,
+   "growth_check_ratio": 1.060134083744999
+  },
+  {
+   "shape": [
+    334,
+    334
+   ],
+   "res_m": 90.0,
+   "km": 30.06,
+   "hours": 24,
+   "method": "ca",
+   "spotting": false,
+   "burned_ha": 188.73000000000002,
+   "active_crown_ha": 0.0,
+   "spot_ignitions": 0,
+   "prepare_s": 0.015439564998814603,
+   "kernel_plus_rasters_s": 0.05098422199807828,
+   "full_call_s": 0.08889988900045864,
+   "first_call_s": 0.09659170599843492,
+   "growth_check_ratio": 0.8590563647663405
+  },
+  {
+   "shape": [
+    334,
+    334
+   ],
+   "res_m": 90.0,
+   "batch_n": 40,
+   "batch_total_s": 3.62771524100026,
+   "per_fire_s": 0.0906928810250065,
+   "per_fire_kernel_s_median": 0.07077612750072149,
+   "burned_ha_median": 308.61,
+   "burned_ha_max": 3492.72
+  },
+  {
+   "case": "worst",
+   "shape": [
+    500,
+    500
+   ],
+   "res_m": 60.0,
+   "hours": 24,
+   "method": "mtt",
+   "spotting": false,
+   "burned_ha": 34721.64,
+   "burned_frac": 0.385796,
+   "spot_ignitions": 0,
+   "full_call_s": 1.7186962359992322,
+   "cells_per_s": 56117.53722374655,
+   "growth_check_ratio": 1.171540494161771
+  },
+  {
+   "case": "worst",
+   "shape": [
+    500,
+    500
+   ],
+   "res_m": 60.0,
+   "hours": 24,
+   "method": "mtt",
+   "spotting": true,
+   "burned_ha": 37436.4,
+   "burned_frac": 0.41596,
+   "spot_ignitions": 277,
+   "full_call_s": 2.027637502000289,
+   "cells_per_s": 51286.287562452664,
+   "growth_check_ratio": 1.2209679471874793
+  },
+  {
+   "case": "worst",
+   "shape": [
+    334,
+    334
+   ],
+   "res_m": 90.0,
+   "hours": 24,
+   "method": "mtt",
+   "spotting": false,
+   "burned_ha": 31436.100000000002,
+   "burned_frac": 0.3478970203305963,
+   "spot_ignitions": 0,
+   "full_call_s": 1.1072795120016963,
+   "cells_per_s": 35049.86733642421,
+   "growth_check_ratio": 1.2880996882406175
+  },
+  {
+   "case": "worst",
+   "shape": [
+    334,
+    334
+   ],
+   "res_m": 90.0,
+   "hours": 24,
+   "method": "mtt",
+   "spotting": true,
+   "burned_ha": 38012.490000000005,
+   "burned_frac": 0.42067661085015595,
+   "spot_ignitions": 365,
+   "full_call_s": 1.380572336998739,
+   "cells_per_s": 33992.423824759615,
+   "growth_check_ratio": 1.337451632820307
+  }
+ ],
+ "numba": "0.68.1",
+ "summary": {
+  "target": "30 x 30 km at 60-90 m, 24 h, <= ~1-3 s on one core",
+  "full_call_s": {
+   "60m": 0.46792144700157223,
+   "90m": 0.09564990400031093
+  },
+  "kernel_s": {
+   "60m": 0.35514627599695814,
+   "90m": 0.057084645002760226
+  },
+  "prepare_s": {
+   "60m": 0.026664843997423304,
+   "90m": 0.01476491699941107
+  },
+  "batch_per_fire_s": {
+   "60m": 0.22806130130002203,
+   "90m": 0.0906928810250065
+  },
+  "worst_full_call_s": {
+   "60m spot=False": 1.7186962359992322,
+   "60m spot=True": 2.027637502000289,
+   "90m spot=False": 1.1072795120016963,
+   "90m spot=True": 1.380572336998739
+  },
+  "worst_burned_frac": {
+   "60m spot=False": 0.385796,
+   "60m spot=True": 0.41596,
+   "90m spot=False": 0.3478970203305963,
+   "90m spot=True": 0.42067661085015595
+  },
+  "meets_target": true,
+  "total_check_s": 48.25697604800007
+ },
+ "generated": "2026-11-19 04:12 UTC",
+ "python": "3.13.18"
+}

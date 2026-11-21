@@ -92,3 +92,21 @@ shared/water/checks/ref/*.csv
 shared/water/watersim/.refenv/
 shared/water/watersim/tmp/
 shared/water/watersim/pids/
+
+# Fire platform: rebuildable data (scripts in shared/fire/data/scripts, sources in data/DATA.md; `mlratchet data fire`).
+# Tracked under data/: DATA.md, scripts/, build.py, MANIFEST.json and the frozen proc/splits.json.
+# firesim/refdata/ holds the USFS GTR PDFs and their text (39 MB, public domain): unpacked by --from-zip, not committed.
+shared/fire/data/*
+!shared/fire/data/DATA.md
+!shared/fire/data/scripts/
+!shared/fire/data/build.py
+!shared/fire/data/MANIFEST.json
+!shared/fire/data/proc/
+shared/fire/data/proc/*
+!shared/fire/data/proc/splits.json
+shared/fire/checks/out/
+shared/fire/firesim/refdata/
+shared/fire/firesim/demo_out/
+shared/fire/firesim/.refenv/
+shared/fire/firesim/tmp/
+shared/fire/firesim/pids/

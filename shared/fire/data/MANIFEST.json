@@ -1,0 +1,927 @@
+{
+ "source": "firesim-firedata-v1.0.zip (19 Nov 2026)",
+ "n_files": 230,
+ "bytes": 166610425,
+ "files": {
+  "checks/out/analytic_prev.json": [
+   "0fe89e0ce2f78f7deff512ffa1aa282c575afdec54c413065687df2ea135ec75",
+   126596
+  ],
+  "checks/out/crown_prev.json": [
+   "2f678660dde34c38b2713c93bdf9c5111b38190ac8f043cad268315253ba4b60",
+   11980
+  ],
+  "checks/out/fwi_inputs.csv": [
+   "dde91c93039c76241f638febbc59c1faa9496e85a805459582f7c48872a66fd2",
+   12907
+  ],
+  "checks/out/fwi_xclim.csv": [
+   "be66163d4850913e6bffae83f6edfe365ee2de79ecacb71bb463cb1249684fcd",
+   21809
+  ],
+  "checks/out/observe_cache/AR3555809325120171125.json": [
+   "7eb625622e42ae4aed7f08b4fd5ef31e69a903b135238413179880ff24d71a61",
+   23093
+  ],
+  "checks/out/observe_cache/AZ3178211084220170423.json": [
+   "ee3f69b6f85c5bfed5217e33f8481eefe98e6b54e00247aa44356d2647f575c6",
+   64920
+  ],
+  "checks/out/observe_cache/AZ3336510910020210617.json": [
+   "e11db49ae849de6f3bfcce3aaeca0f69d0096afb3664be36052952658ff1fd07",
+   39142
+  ],
+  "checks/out/observe_cache/AZ3358211070120200818.json": [
+   "15a1e31142414810bc0ddb6525173176d4a002a515333c21d0822d6948397200",
+   137289
+  ],
+  "checks/out/observe_cache/AZ3425711025720180727.json": [
+   "ba65d88463b417164290707c3ed72572c3ec0ae45bdda2f91f4141c9eabbd91d",
+   72375
+  ],
+  "checks/out/observe_cache/AZ3467811289020190805.json": [
+   "87716e7dbc929ded3b870c0c05801019be365615991172cf11bdad59a2874c3c",
+   146667
+  ],
+  "checks/out/observe_cache/CA3276011669320200905.json": [
+   "1a6c980c147df14e2c2c4654a00a0189b77fb0b2727d3d7a088d46e5f24772fd",
+   40274
+  ],
+  "checks/out/observe_cache/CA3671811855720200821.json": [
+   "9fb29975ff5e30ddc743d207ba7eeea292653a033af349a1a7d9da4735aa7bcc",
+   220644
+  ],
+  "checks/out/observe_cache/CA3720111927220200905.json": [
+   "3d401138b4101a84dee77390fc329db61e373f08c7587d627532c6774235c7c6",
+   2849742
+  ],
+  "checks/out/observe_cache/CA3726212222320200816.json": [
+   "4ff35c673c946cd3c342911abd601695c453c7a8d89f0ca3e910b86267fa71c6",
+   593116
+  ],
+  "checks/out/observe_cache/CA3906012314020180727.json": [
+   "3a005aff9f3bd63d6588d410e3c17210a5f48f3c79a4235ce987134ee2f5e94e",
+   317657
+  ],
+  "checks/out/observe_cache/CA4102912028120200818.json": [
+   "7588560b11d32f3f4bb53b6dc6d560166c425f8968f1fed2ce34aa8fb6738c11",
+   300026
+  ],
+  "checks/out/observe_cache/CA4150012192920210801.json": [
+   "3df2be37e34fe2bc13fa178a708bab8855607cffc418e8558ddf827fdb5186b2",
+   858498
+  ],
+  "checks/out/observe_cache/CA4186612267020190905.json": [
+   "984585da184a30c752900b5e0d8d32b2f632fafbe80f95d08e5889b064c1b56f",
+   31974
+  ],
+  "checks/out/observe_cache/ID4354111517320200907.json": [
+   "3ad784de0d06ef89d315f143dd773e16b19a6dfea43f493a3050be83f8277b9c",
+   70959
+  ],
+  "checks/out/observe_cache/ID4482311528620180718.json": [
+   "bf0d8fbb36be3e74bb4f650f37ac7e45c80301fbd33be9cc711dfb256bc761ee",
+   232179
+  ],
+  "checks/out/observe_cache/ID4685611616820210707.json": [
+   "2eb3ddb8bab7022edb6f406d95a69820ba3bb84dcda8af76412157359fa02cca",
+   118653
+  ],
+  "checks/out/observe_cache/MT4497811185720180806.json": [
+   "d0c6209d8b51f671759c38a4ef2a6bb9f580288558ccb1a679ba9ff225c94e7a",
+   76667
+  ],
+  "checks/out/observe_cache/MT4515311193120180811.json": [
+   "1720309be845b49583a53e40708015eb57a3f8c81665b713ad673f1ce6f49e4a",
+   44054
+  ],
+  "checks/out/observe_cache/MT4601411227720190816.json": [
+   "927dd3bd1730bb07e42f573d9c33f4e2a3a5f4327e57a581652efcc68bdd1ea2",
+   90952
+  ],
+  "checks/out/observe_cache/MT4647210784420210709.json": [
+   "aa3fe87bfd9e5baee19239f7a3972d681e1bc41f636bd09758733b85769da32f",
+   28686
+  ],
+  "checks/out/observe_cache/MT4699311093320210708.json": [
+   "65a5ed887b5e6005cbb82b39951e67999216ee7fc9a47d8d0f2afb55dacf92c5",
+   183156
+  ],
+  "checks/out/observe_cache/MT4702111269120170715.json": [
+   "fff5f78c5424600b9858520dbe052a3f870a3505cf938de4fde5179b52c0b64a",
+   442935
+  ],
+  "checks/out/observe_cache/NM3572510679220170915.json": [
+   "7880cfb8769c3dc19f0601b9da3e4822d701e26e635428961f013e1306d8bbcf",
+   24347
+  ],
+  "checks/out/observe_cache/NM3690210301720180609.json": [
+   "ada249a7990dbe19c68daf52500734814ce8e85f5374c7472396ff2a815eb7fe",
+   23993
+  ],
+  "checks/out/observe_cache/NV4006311484620180813.json": [
+   "0454dce8bf62d970376ec898434900359c3d8bcd8e4747f97a3a6091b0e2936d",
+   287547
+  ],
+  "checks/out/observe_cache/NV4027311946420170830.json": [
+   "94bbdbebbfbf74dd7aafb3ef751e3866368ab25854a865ef7b720ef57bdce7c7",
+   165128
+  ],
+  "checks/out/observe_cache/OK3470209541820180323.json": [
+   "a6fe276cafdb023f7f9bec4f0011de73c25ed9aabfdc2af15c03449f3895e7d8",
+   32338
+  ],
+  "checks/out/observe_cache/OR4311112241120170811.json": [
+   "640bb4729a214ae4d0d1dabb8235d24791bb76bc6923fc287de07761133ba7ca",
+   112425
+  ],
+  "checks/out/observe_cache/OR4400912217020170804.json": [
+   "d18edd0ed404d4d398df4bf67a385c6cf9ea3df52c0aeea804eed4c5a9e9ee0d",
+   203518
+  ],
+  "checks/out/observe_cache/OR4504912206220200908.json": [
+   "47b48371ce5ad8353d44fc1cdadc7aaa5a34d95dd0704748804eab390f363092",
+   717019
+  ],
+  "checks/out/observe_cache/SC3320907951020190526.json": [
+   "99e1cb0733a8b306d458b6e8b556a46d10066e0fed07bb60bbe127767f59560c",
+   18059
+  ],
+  "checks/out/observe_cache/SD4377610344820171211.json": [
+   "65ce056ae8cfe0ea2a8a7b9f62b65e3123dace057bb912caf396edfdc6de0c93",
+   167421
+  ],
+  "checks/out/observe_cache/TX2722009737020180414.json": [
+   "6dd3f88ac299b6558f429835b4c512d8e53e890cdb91e06b55a8071e14868773",
+   19814
+  ],
+  "checks/out/observe_cache/TX3481010130620180508.json": [
+   "1726b901d48fcd38266fa22f46d6b79b9b9aa8c50cc5503165f7ed56de7007b8",
+   150918
+  ],
+  "checks/out/observe_cache/WA4833211819920200907.json": [
+   "d8493dc853dcfaa7d3abe61a03c801b8f2a285c28c299264994dea7387957873",
+   68204
+  ],
+  "checks/out/observe_cache/WA4879911726120170715.json": [
+   "4ea41246f8208473d761c10b60a62c9f9dafc4ee94db8da7f7ce87516cad3703",
+   270229
+  ],
+  "checks/out/observe_cache/WY4219011071520170804.json": [
+   "b333e77da16c0752bc235a167d0f87697e6ba6e71ff2d8649ec29af537ef5bb5",
+   143214
+  ],
+  "checks/out/observe_cache/WY4437710988020190902.json": [
+   "0c3143852b0b55ff1d4ba07c5f789dabe1d28ec3c1520d99b5888d69357b6d22",
+   92018
+  ],
+  "checks/out/observe_cache/WY4438911082120200822.json": [
+   "3c1a3b80e3ac1244b9e706655543e6038cbbe193a745bbd3f55b5de5557617a3",
+   105134
+  ],
+  "checks/out/precip_missing_fires.txt": [
+   "c8587bdcdc5733b37ac117efaed46768aa37d0a8ce79e06f459a1b1a0a829dfa",
+   308
+  ],
+  "checks/out/pyre_values.json": [
+   "3fd1fccc817ddb75323afd1e525a91d0e0b5aa33a85365b44dec8eab6d456b4d",
+   5589605
+  ],
+  "checks/out/replay/AR3555809325120171125.json": [
+   "8250f16f591e998f8555e72c0e940b34506a4dadf64f9b6b6ad1ea3edbae6da2",
+   5670
+  ],
+  "checks/out/replay/AZ3178211084220170423.json": [
+   "291493cd24a0cc320727f376ee57a05c6d09c778bfd221c76180249ca4129784",
+   11739
+  ],
+  "checks/out/replay/AZ3336510910020210617.json": [
+   "6f893ecd58f6f8f9fb6be9ffaba2f5eba1cbd5f4a044c9e731f19e415ad1afd1",
+   17582
+  ],
+  "checks/out/replay/AZ3358211070120200818.json": [
+   "02d2d4a34f8dc89a78977078d4f4db4d603d98325fabb967f63da87ad7c03fb1",
+   26396
+  ],
+  "checks/out/replay/AZ3425711025720180727.json": [
+   "43a1f5c2101b91295f87e79375596c2b9470068cf661bfc3db2bc40a214b669f",
+   52196
+  ],
+  "checks/out/replay/AZ3467811289020190805.json": [
+   "725e7995c591337a20675d387b63f7a46a75dfe731e3f7c3307c5e107d5e7f99",
+   57844
+  ],
+  "checks/out/replay/CA3276011669320200905.json": [
+   "39a83d2791f43d393c106d42c16825ae6842618c325e72b90fd6bb5e958e2838",
+   8292
+  ],
+  "checks/out/replay/CA3671811855720200821.json": [
+   "2b7563d76307f3c37388c3a28ac1cd6e96ca844c6a3ade10ce39868085fbc63c",
+   108372
+  ],
+  "checks/out/replay/CA3720111927220200905.json": [
+   "5dcb45241426cd647f5a7a7452e1d59a3e5d3b3d2556d3511409d8baa06176ec",
+   119314
+  ],
+  "checks/out/replay/CA3726212222320200816.json": [
+   "3c6cb59bb079dd60fe881aba9d3232e75d9fee629d7f1c88916bff28ae97bf42",
+   42523
+  ],
+  "checks/out/replay/CA3906012314020180727.json": [
+   "50e34a691e4e925ff866b9d182d286ed4704d887499eeeff0a9d57c159803a84",
+   32280
+  ],
+  "checks/out/replay/CA4102912028120200818.json": [
+   "a7e8643c2c7e111e5cf1605943f6adeca55d58c30aa0e704f3bc44197bb7b18f",
+   38625
+  ],
+  "checks/out/replay/CA4150012192920210801.json": [
+   "84a7ec1922cd678f36e5f9e8000bae35e75c5e9726e77f23f2fec78860ab4b25",
+   88960
+  ],
+  "checks/out/replay/CA4186612267020190905.json": [
+   "6d09baffac90987b571a6d0642ccae60861add9082145cccd7ecd002e1cc1c2a",
+   11713
+  ],
+  "checks/out/replay/ID4354111517320200907.json": [
+   "56aa5c8b14908ab21faae46d194fd654a95ec4ab53980f8dcef55141ee6473cf",
+   27987
+  ],
+  "checks/out/replay/ID4482311528620180718.json": [
+   "86eb1cd67f37b1449236f83ce54147ee2a5041c407675d24a3c5503f5e3fdd61",
+   82242
+  ],
+  "checks/out/replay/ID4685611616820210707.json": [
+   "2ebc60cc4d8ee0d42c0b7cf4b5ddeece023d41fc8adebf2cdde89b198c8ab126",
+   88165
+  ],
+  "checks/out/replay/MT4497811185720180806.json": [
+   "ae8957ceff3000e6dcd31a8f82da67c05e86533f33ed2f64e6170f5ce8d6a622",
+   22537
+  ],
+  "checks/out/replay/MT4515311193120180811.json": [
+   "70f847df9de5390c9809d34ae8e99a396e5994fc44205ab1159671ffddd73dfb",
+   11692
+  ],
+  "checks/out/replay/MT4601411227720190816.json": [
+   "6081ada35559dfb54ea29200c18911aa2e80c551b1863c13437be36e52331c8e",
+   47133
+  ],
+  "checks/out/replay/MT4647210784420210709.json": [
+   "0d226d9cd8ab96f245faa181e889f7950858dc0702f174a2e3aa805560871cba",
+   8737
+  ],
+  "checks/out/replay/MT4699311093320210708.json": [
+   "4563067f6b6af9078b637b67c6687303b1bf1790ce27910b17654d335825d402",
+   49401
+  ],
+  "checks/out/replay/MT4702111269120170715.json": [
+   "da9a6bafdff67bd5947a9fb05a7dd10cb1115df2b3e94aac52290683ea05e2cf",
+   90746
+  ],
+  "checks/out/replay/NM3572510679220170915.json": [
+   "32f16ccfc1e5e8106b1369ce5dfb7a9b547889d251c38b20c8ff122394ef6354",
+   7004
+  ],
+  "checks/out/replay/NM3690210301720180609.json": [
+   "ae2819c2e2c89223869fe966f102fbe7f5686a89b6ddbdb4c38588b2836f544e",
+   14209
+  ],
+  "checks/out/replay/NV4006311484620180813.json": [
+   "e16ca5f1fe1fa2281a4e0d748167b2a2faf38be8b3d48f8abb55d16a7492c4a9",
+   66947
+  ],
+  "checks/out/replay/NV4027311946420170830.json": [
+   "92b4f20acdab1770140ab35ca6bdddd4fa515730ad50b863c1021949c7a77c6c",
+   11761
+  ],
+  "checks/out/replay/OK3470209541820180323.json": [
+   "333264bb3ac23dbee8542f9ac3e31e6697ec2b2f71bd2e324c1701a5ef7e7673",
+   11085
+  ],
+  "checks/out/replay/OR4311112241120170811.json": [
+   "41c533feafb03feda3b1bff08dfeb83065ff3532be1c958087e3ec4e18f42a07",
+   56567
+  ],
+  "checks/out/replay/OR4400912217020170804.json": [
+   "bba710683682b9722e34fe597e2faeb7f83f52fbc51dfce50c56eb175c73773b",
+   81511
+  ],
+  "checks/out/replay/OR4504912206220200908.json": [
+   "207f9346f99c2f93fe4056af7238753266994a409c2d4fe489d2b2a55f7fbe7f",
+   26182
+  ],
+  "checks/out/replay/SC3320907951020190526.json": [
+   "97771d85835d5de888753e9ea6f3c3e81a592d99d9143e1a3e423d58bb09468a",
+   8468
+  ],
+  "checks/out/replay/SD4377610344820171211.json": [
+   "a4f45808d336c0685bee0f90b940ff911bc3b2b30ddea219b1d677402db67a52",
+   9219
+  ],
+  "checks/out/replay/TX2722009737020180414.json": [
+   "f1c3a647c9950a0482a400eefae3a6f1d8c375942f3a0a18009e38b74b995779",
+   8717
+  ],
+  "checks/out/replay/TX3481010130620180508.json": [
+   "53abdfa9cd6ef9784144d911b2ef5d14fee21ab2f2676a58a2373685cd98993f",
+   14752
+  ],
+  "checks/out/replay/WA4833211819920200907.json": [
+   "4a85bc35c43adbb72dfd155e200297e1731b2dbfd2083993bac6decd4741d5ba",
+   14609
+  ],
+  "checks/out/replay/WA4879911726120170715.json": [
+   "7df9c35d1940e695a385bdffe2b6f9fc840c31bec822e3d68e7a8dd232f359b1",
+   77439
+  ],
+  "checks/out/replay/WY4219011071520170804.json": [
+   "98f01da7ef4766dc2a95df0f2fa0a2f951e9914f43fc9d0305d622d7dafe4f11",
+   60634
+  ],
+  "checks/out/replay/WY4437710988020190902.json": [
+   "15e73747054c4affb3c8b099a2f19ea45ff4a0f4967955740adbf24a791dbbe0",
+   8809
+  ],
+  "checks/out/replay/WY4438911082120200822.json": [
+   "0bed3620736c13aa28e87477da83f8630839eb88ff0f4731ef0199473b7d7a05",
+   57945
+  ],
+  "checks/out/replay_cal/AR3555809325120171125.json": [
+   "17b460eed303cb615875cf63c77976858ca6c2b579c4534f8443eaf64f0e2944",
+   1703
+  ],
+  "checks/out/replay_cal/AZ3178211084220170423.json": [
+   "83b748604db4c8a20119ea144a4953275a53341a78351a0e2b7302c8f88835e1",
+   3383
+  ],
+  "checks/out/replay_cal/AZ3336510910020210617.json": [
+   "34f9c2f6e84af443dd459891e50a70bf5fc23f5524323d461bc1b1e92096c33f",
+   5000
+  ],
+  "checks/out/replay_cal/AZ3358211070120200818.json": [
+   "755bb270791328acc5d935868689284e5edb6a14455f579f54399082751cd6c0",
+   7551
+  ],
+  "checks/out/replay_cal/AZ3425711025720180727.json": [
+   "e393377b10d5521ee537ed3761d50bf48f8bcb9db4159cf1afb74e91d6912663",
+   5907
+  ],
+  "checks/out/replay_cal/AZ3467811289020190805.json": [
+   "5ecea13a14e37bad1223658517bad458ba5d8c5b93a412066f24ddc4612973df",
+   16095
+  ],
+  "checks/out/replay_cal/CA3276011669320200905.json": [
+   "1f1cf19bac00eb0b274ee730bda8b72f39bfc96d2c1f8e2f8b2f571d4feefdc3",
+   1788
+  ],
+  "checks/out/replay_cal/CA3671811855720200821.json": [
+   "2e69307950b717349b9a203856a7d19458f99ac7da32494794abc7c851c07edb",
+   15789
+  ],
+  "checks/out/replay_cal/CA3726212222320200816.json": [
+   "acc2e47abfc0c78b2639ea7a6b5e658fc6c2b75cd96d2e58282b7901a981725d",
+   11781
+  ],
+  "checks/out/replay_cal/CA3906012314020180727.json": [
+   "31cef22a93e7be781193fac0943604d7ed0fee6735e2f0781110e46d23fcf739",
+   9283
+  ],
+  "checks/out/replay_cal/CA4102912028120200818.json": [
+   "5beee06d246841a9bbfb272ad83263ab3add5cf185433fd693a020cf478f307a",
+   10242
+  ],
+  "checks/out/replay_cal/CA4150012192920210801.json": [
+   "bbb7fd4450ac43263ed4d3c0de939dcd8fe1dff8ffd37d085956ee0e1882f2a7",
+   24390
+  ],
+  "checks/out/replay_cal/CA4186612267020190905.json": [
+   "a590b996a5b3ccc0fee7a79f27af5b27fa1e55f583499fcd2846e4c704c32b25",
+   3304
+  ],
+  "checks/out/replay_cal/ID4354111517320200907.json": [
+   "43ba20df56570305836c2fa6ff7416f2afae18ab9a41a64b4616c26da6d37da2",
+   6651
+  ],
+  "checks/out/replay_cal/ID4482311528620180718.json": [
+   "e665afc673a244433cbc391703b67bf691cc208935989c18de363f360c5c6bcf",
+   23378
+  ],
+  "checks/out/replay_cal/ID4685611616820210707.json": [
+   "0cbb07cd05b8b1bb883af785141256cc1350a102d6c87da95ff80441f4f30496",
+   14993
+  ],
+  "checks/out/replay_cal/MT4497811185720180806.json": [
+   "764caf25dc4b738d3066c5211fb545170498b6f7e07bc986a8087fa31247e463",
+   5871
+  ],
+  "checks/out/replay_cal/MT4515311193120180811.json": [
+   "f0870e717c4a637e22c3d3693fb8933c374e805d4e9aa4be2f458947d6e43863",
+   3387
+  ],
+  "checks/out/replay_cal/MT4601411227720190816.json": [
+   "d307ff3a37b535f555c26c39ece8ba69283c187a80115d12eaf46ece66ee928b",
+   10693
+  ],
+  "checks/out/replay_cal/MT4647210784420210709.json": [
+   "3d8ae501aa117a74fa516647be03358498032ddd3f6ae5f2d989593291d12815",
+   2553
+  ],
+  "checks/out/replay_cal/MT4699311093320210708.json": [
+   "9641e00061853fedd50d9200e1c4f167649396b20cdbc1a1e4ae2d4950ae22db",
+   13272
+  ],
+  "checks/out/replay_cal/MT4702111269120170715.json": [
+   "dceb85eed541ef91af1c9a06105c4b272b30d99eea1d36d95f75dd11db1367c1",
+   24213
+  ],
+  "checks/out/replay_cal/NM3572510679220170915.json": [
+   "5db03b2f6b13026956bedff735f0cd3c9f621f69f3058066fca7481aa9a8dd60",
+   1755
+  ],
+  "checks/out/replay_cal/NM3690210301720180609.json": [
+   "1f139118c6b221b73249a721d9568c08e81000e40a746f83d53c6c40d2a21840",
+   4264
+  ],
+  "checks/out/replay_cal/NV4006311484620180813.json": [
+   "5f01483dc0948c38dcda43a78c326e47b56e6fe1aaf94df46fc855eed5b57690",
+   18475
+  ],
+  "checks/out/replay_cal/NV4027311946420170830.json": [
+   "5a3bb96c406edd7306438e382ee3222b83369364dd4def199a35a2e907396956",
+   3430
+  ],
+  "checks/out/replay_cal/OK3470209541820180323.json": [
+   "d954934536fbfc7da6f3edb1e17b0cb1ad1245675ce08afb49eafd20d1e45041",
+   3394
+  ],
+  "checks/out/replay_cal/OR4311112241120170811.json": [
+   "5332b65eafaca8dede70f1b0def2b7d78f8830975fdf82dfae67dad017bb98a8",
+   15758
+  ],
+  "checks/out/replay_cal/OR4400912217020170804.json": [
+   "71cfc0cce6464cc5fe5006ee81bf79f0a66bdd75ddc3f21a3189ef2fc4db6edb",
+   23314
+  ],
+  "checks/out/replay_cal/OR4504912206220200908.json": [
+   "020671a7c4f9de4433c8eb74428594d1ceb0fb5ed3f2f2c92f6018df19a146cd",
+   7646
+  ],
+  "checks/out/replay_cal/SC3320907951020190526.json": [
+   "bcd216c6a251ed4e3f0e36c2b8d3ea06b52367991901b1dc956da99d262a31ab",
+   2641
+  ],
+  "checks/out/replay_cal/SD4377610344820171211.json": [
+   "61e687395c832c6ae4964bf63acb8fc4122c08526902ead2a9d25229dd9a48fc",
+   2555
+  ],
+  "checks/out/replay_cal/TX2722009737020180414.json": [
+   "ec0c18c2e98afb764e7169cda93af39504c5eebf0a7d5afbc4e1aca93f78d642",
+   2552
+  ],
+  "checks/out/replay_cal/TX3481010130620180508.json": [
+   "bf25e3327b4946c659ea38efa0e435487b9e651287d37bd519f6897f4751fdbe",
+   4294
+  ],
+  "checks/out/replay_cal/WA4833211819920200907.json": [
+   "c29caf2e2dcd6c6f9a69ef89970154a89289715025fe81df839e3512ca7d0cd3",
+   4208
+  ],
+  "checks/out/replay_cal/WA4879911726120170715.json": [
+   "094eebfbdfbb0e97b7cca8e367472f6c120c7ec4ab9082ef85cdfb1a16317c05",
+   19976
+  ],
+  "checks/out/replay_cal/WY4219011071520170804.json": [
+   "6d752c906053ecac032db01aab2abc41588770628e1af6556edbcba38507902b",
+   16586
+  ],
+  "checks/out/replay_cal/WY4437710988020190902.json": [
+   "7315b835029901bf2689d63191621d86ac089a6dc2aab21a42bc3f27db8b081b",
+   2601
+  ],
+  "checks/out/replay_cal/WY4438911082120200822.json": [
+   "69ba4638c0880604f0f6c58f5def30a4b18fc7ef598d3bbf35a21ee55af13ddb",
+   6658
+  ],
+  "data/proc/baselines/fire_days_dev.parquet": [
+   "a050a38fa4c9ae153286d015525e085b7524eec84bc00bcd5328898688db812a",
+   96420
+  ],
+  "data/proc/baselines/fire_days_exam.parquet": [
+   "e66a41bac50d9fea24ad129a7468bbc28f8d96aa468535badc6efc5be34e9005",
+   2619058
+  ],
+  "data/proc/baselines/firesize_exam.json": [
+   "a5abda54d3c7dff979546b77e625ccf6ccbbbf93c0324fafaa24d155dc885d76",
+   10142
+  ],
+  "data/proc/baselines/moisture_exam.json": [
+   "1e39c9723da7f7f1bd6e7204642ed997168e3fa81167d4a9e80cb2fa09e2395f",
+   714
+  ],
+  "data/proc/baselines/replay_subset.json": [
+   "73fcf92d8649c6ff80bfc04fd46e17dbe2b75f3d9062776f0f8905cbdda4e8b2",
+   1912
+  ],
+  "data/proc/baselines/spread_dev.jsonl": [
+   "d3193d949b2b14ffe2202450da5205a4d6df0d9b1251aeef024246a7a4023293",
+   1917956
+  ],
+  "data/proc/baselines/spread_params.json": [
+   "02438e05f247409148d77dd20706b2032a1760e76dd91362bc67edb3d426d288",
+   683
+  ],
+  "data/proc/baselines/spread_summary.json": [
+   "c4d6963be75b7a3b570bed3ab75ca4a00f28b24d8a782eb5bdbd56b85ce6040f",
+   72289
+  ],
+  "data/proc/fires.parquet": [
+   "e46ce036a08a814266cbb24043637cd7925bacfded4a218357e163f269d62ae9",
+   1818786
+  ],
+  "data/proc/firesize_split.parquet": [
+   "8a5c82d010499bd5ed204cd36f028471c88700a7db5d0a7d2575ebbebd9b30b1",
+   3072909
+  ],
+  "data/proc/guard/exam_footprints.parquet": [
+   "fbe2c386439bb49469352aaac61c7e2c6e4742e1c083b2ff2e3304cfebd016f0",
+   22521345
+  ],
+  "data/proc/guard/wsts_tiles.json": [
+   "571a8031a4a57c96fceb66fcaceb83c2bd6845897154084366eac73e6c0574b5",
+   397425
+  ],
+  "data/proc/landfire/fuelgroups.jsonl": [
+   "ad6d9edfb3923b29bca90a83f43e9fceba8e0e845c3db8eaa1bd5e50037b24ca",
+   1755917
+  ],
+  "data/proc/landfire/fuelgroups.parquet": [
+   "90ac20e6023a35c110794a546be1b184e92cf341b45d4b48f96c110674320c30",
+   114452
+  ],
+  "data/proc/landscapes/AR3555809325120171125.npz": [
+   "4867986af78aa142cdb3e180a93ed59ebdc6b8d27d5a70094ade6b5b6d243bd7",
+   124306
+  ],
+  "data/proc/landscapes/AZ3178211084220170423.npz": [
+   "ec85aa1b524a98b40caa8d15f6180921abd14e57ee6da27b824d85bc5dc38f20",
+   1441539
+  ],
+  "data/proc/landscapes/AZ3336510910020210617.npz": [
+   "2f66031202a5e669adb6d22a5b6eb85c61f75c586d083e8bef49369f2bfc0ba2",
+   131684
+  ],
+  "data/proc/landscapes/AZ3358211070120200818.npz": [
+   "bcdf34446e0d3510cd996c16eb5f7cbdecf214ee21815371609f98308dd5afd3",
+   1763208
+  ],
+  "data/proc/landscapes/AZ3425711025720180727.npz": [
+   "5aa3747f58dfb641eb6cac992ec87cb3da91e82b78ae82b776eff2f84f0d7729",
+   213157
+  ],
+  "data/proc/landscapes/AZ3467811289020190805.npz": [
+   "89d15173e537db3049a936e4bace9053536008c595ba020ca1a1c1048533cd37",
+   706147
+  ],
+  "data/proc/landscapes/CA3276011669320200905.npz": [
+   "2994775fc3c63f4dc6897da18e7024af48bdf8adeade7090f420fa73ff220913",
+   469141
+  ],
+  "data/proc/landscapes/CA3671811855720200821.npz": [
+   "444e48cad767e4e0333b6487059d71ce8dfc9dfaed0a47588bd9dea175c23c71",
+   108567
+  ],
+  "data/proc/landscapes/CA3720111927220200905.npz": [
+   "9f9caf3a2e30cd34ebf6c82bdf6420c8f927199f23e1df1f4b8d0e1c86f994a5",
+   12473861
+  ],
+  "data/proc/landscapes/CA3726212222320200816.npz": [
+   "eed625038a6020ba422ba0a8ed4c3410dff32e37e3de4df811224ef0fa36ce59",
+   1559486
+  ],
+  "data/proc/landscapes/CA3906012314020180727.npz": [
+   "e3e7b7f8f81d93f289d72995c677c35de9f31af7e512d7d04162f6d41ee514fa",
+   1340107
+  ],
+  "data/proc/landscapes/CA4102912028120200818.npz": [
+   "1e3817f78c8172ce71153a6be4f4e6baf4e93f05aa0594620dfab7d3e6c09685",
+   1960775
+  ],
+  "data/proc/landscapes/CA4150012192920210801.npz": [
+   "dbb704a50a18f0e4ee021e63c2ad1c03accecf8752ae5a30ecf87f7913702a0d",
+   4840642
+  ],
+  "data/proc/landscapes/CA4186612267020190905.npz": [
+   "bfe041dc921ea33fa830367ca225c760ecf2d11e5052e81fe9e3ccb8b42114a9",
+   112346
+  ],
+  "data/proc/landscapes/ID4354111517320200907.npz": [
+   "f631fd707942f33b9687ac16097228cef3887fa8e070fdff291d6d34f750764f",
+   197720
+  ],
+  "data/proc/landscapes/ID4482311528620180718.npz": [
+   "0eb70cef301c63433eb34a623db5e4927e864aa824f49eafb4d5397d6deb778d",
+   490563
+  ],
+  "data/proc/landscapes/ID4685611616820210707.npz": [
+   "bc2d333bf7f6af23c7ed7b728a13325016722f1c03957bd30f748125715de8b2",
+   110984
+  ],
+  "data/proc/landscapes/MT4497811185720180806.npz": [
+   "52eb913933fd871d3d79aea87e65f2050af5042b8a407a69499a8b91929363b4",
+   267176
+  ],
+  "data/proc/landscapes/MT4515311193120180811.npz": [
+   "3f72363374b860d3df98946d73369956ee204896b731da0dd198e97a2dc8acd7",
+   178895
+  ],
+  "data/proc/landscapes/MT4601411227720190816.npz": [
+   "ffa96c6a02ade5ae738b31aec0187b0bb93e8000ba64bab7453bdc891b77aee0",
+   131138
+  ],
+  "data/proc/landscapes/MT4647210784420210709.npz": [
+   "c789d9f21b363d4db178ba61304cd433ab6969505a3bce147ce7a371fca920d2",
+   140939
+  ],
+  "data/proc/landscapes/MT4699311093320210708.npz": [
+   "06a359964a588d5d148db204aca63376338de9e86a633fc17782e532aa470ae5",
+   240894
+  ],
+  "data/proc/landscapes/MT4702111269120170715.npz": [
+   "2df868beaaeeb89e31d8c7411705b307c39a53deb9c032297bd538c7e4a7922e",
+   591217
+  ],
+  "data/proc/landscapes/NM3572510679220170915.npz": [
+   "6d9212eaf4060fdd5a1d649d181374f69d6bf8838033626bd110433cf123b6cd",
+   96171
+  ],
+  "data/proc/landscapes/NM3690210301720180609.npz": [
+   "0506ed6444abc42de1698c6a9195d97a37dd2f9e8c23aaa8c73fce39cd60b4a1",
+   102900
+  ],
+  "data/proc/landscapes/NV4006311484620180813.npz": [
+   "50834b8b9809b0a476e9b34fffae19834c5c268b7cf1a5db40b6f48d8d5fb83e",
+   581261
+  ],
+  "data/proc/landscapes/NV4027311946420170830.npz": [
+   "2971dfc113e01232a66804ab3a45691e4073a6c4d7eb1bf2bb72fbefeeba9712",
+   1632004
+  ],
+  "data/proc/landscapes/OK3470209541820180323.npz": [
+   "4663b1f3a1455b41acc818c519cc2e3f43368d231ece82ff47d8fda93ca08b21",
+   98962
+  ],
+  "data/proc/landscapes/OR4311112241120170811.npz": [
+   "0e57ec08ea3cbe9ed93e2b4659aae8cebe387117d4263f1c086b44cefc74f284",
+   118245
+  ],
+  "data/proc/landscapes/OR4400912217020170804.npz": [
+   "65b41f7c1f03c9211d74490c92d435faded7c25704b64fc5ef5ef9118ad8bca5",
+   271715
+  ],
+  "data/proc/landscapes/OR4504912206220200908.npz": [
+   "ddbbcad2ea767a143d069c679e4801fb5ca783fde8b73df8900d6095b5c06db7",
+   3567381
+  ],
+  "data/proc/landscapes/SC3320907951020190526.npz": [
+   "b658be1226bbfa0a29b3d462bfb54d503270eca86044ef88f382d53096dfb7a6",
+   77906
+  ],
+  "data/proc/landscapes/SD4377610344820171211.npz": [
+   "7dcb504ab53db221763967231c7f856cdcf22f015b06ef99da44a268f6208b70",
+   1126425
+  ],
+  "data/proc/landscapes/TX2722009737020180414.npz": [
+   "252a5a290ae64087666c2cf1a830cb8e8e8f05cb56ab77066aaa96a0db21c3d9",
+   33448
+  ],
+  "data/proc/landscapes/TX3481010130620180508.npz": [
+   "efe458fb9260999a4054488d88cfaab6a2f16e6c2dbfb973c6f69b54218e5381",
+   1206383
+  ],
+  "data/proc/landscapes/WA4833211819920200907.npz": [
+   "e2690a65edc712ef8538d6b9ae994718c28d3dcc953ee17679cba80d5ae1400d",
+   196140
+  ],
+  "data/proc/landscapes/WA4879911726120170715.npz": [
+   "2ef704c3436514d6eb150152815b341745568a554623938357d5a911ef8d94c7",
+   203383
+  ],
+  "data/proc/landscapes/WY4219011071520170804.npz": [
+   "86be21d5b77a5ad1b9e7997fcdd62d14ffcf7caaf8ce2bf20546ccff8844697b",
+   175013
+  ],
+  "data/proc/landscapes/WY4437710988020190902.npz": [
+   "acdf23d39e3fadea2089513a31c81ab4ff130e692d01da63bcc6fd3ade4bee59",
+   365565
+  ],
+  "data/proc/landscapes/WY4438911082120200822.npz": [
+   "107e289837f29c1b49b915a229c75ae972e0059237bbbbd683699812e218be35",
+   129476
+  ],
+  "data/proc/splits.json": [
+   "70f655969586d73dfbe6af5e5c3c7c1bd11ac96e011451acfe1bc3132d017fd2",
+   613710
+  ],
+  "data/proc/weather/hrrr/AR3555809325120171125.npz": [
+   "97781d758b5762934c888ec4ed1f337ea664aed8a0ebd919111f0c94eaa6c7ce",
+   66551
+  ],
+  "data/proc/weather/hrrr/AZ3178211084220170423.npz": [
+   "541bf0a051ae95016e80e534dadbbbe872c82c1ecdc4f38ad75e63eb6d142f2c",
+   438823
+  ],
+  "data/proc/weather/hrrr/AZ3336510910020210617.npz": [
+   "92360897f0362ee706ad4bb28972327117de1d68b89f9f5d4670af45d02408d2",
+   85982
+  ],
+  "data/proc/weather/hrrr/AZ3358211070120200818.npz": [
+   "2e6c342d860c05970749c0f84965eff7008c3aa9b66d0694ee061b804543c5ab",
+   742007
+  ],
+  "data/proc/weather/hrrr/AZ3425711025720180727.npz": [
+   "fb74ea445e9ab3971c1053bf990f16858a7ca4d63274844a185aee42568d1bba",
+   269243
+  ],
+  "data/proc/weather/hrrr/AZ3467811289020190805.npz": [
+   "d9b3743b0b293a827c9219dea4ae48a2738117f17c22746efee8ef050e052b8d",
+   851681
+  ],
+  "data/proc/weather/hrrr/CA3276011669320200905.npz": [
+   "53d264f7e7f1f581c92e5714fe59689c76e9fda93e6062c34473862b7cd95a6c",
+   149583
+  ],
+  "data/proc/weather/hrrr/CA3671811855720200821.npz": [
+   "2c45764df73d4eb8016198d379aa2cdf323963c3f68e72f4c7c8967489e71a83",
+   314320
+  ],
+  "data/proc/weather/hrrr/CA3720111927220200905.npz": [
+   "3f9e1bda24e49fde93d8dd72a5d95b521eca416244ad1a0f482895df9508f1ff",
+   11550283
+  ],
+  "data/proc/weather/hrrr/CA3726212222320200816.npz": [
+   "1f27427093f7d86e1e84dbcc6bf3b2895ca0546a84d66ab99e7b972655c8b9d3",
+   1454153
+  ],
+  "data/proc/weather/hrrr/CA3906012314020180727.npz": [
+   "47c5d96fbd70259602ac481b35dd5838ee622778ca219cd5fc94fffd361e95ad",
+   621353
+  ],
+  "data/proc/weather/hrrr/CA4102912028120200818.npz": [
+   "7bbc178c455106e7b8c2520e381f3672af159bbcf2babee917ba3c998c5747cc",
+   1939898
+  ],
+  "data/proc/weather/hrrr/CA4150012192920210801.npz": [
+   "8e0c87e1844a2f68adfae556af886d38374b6a433857eb9c63d092453531dc52",
+   6002543
+  ],
+  "data/proc/weather/hrrr/CA4186612267020190905.npz": [
+   "84a3770c3ee6f6de551fd2ff31fe1e37ca964e7f6fbfe284fe0fda156bf05cde",
+   60882
+  ],
+  "data/proc/weather/hrrr/ID4354111517320200907.npz": [
+   "89bd354505b2cd183fa1404c15d230d26eb706783bff78859726a50ed317e79c",
+   131864
+  ],
+  "data/proc/weather/hrrr/ID4482311528620180718.npz": [
+   "5f5ec725f854134d431cf39774cd27c14fb45f13f9385e4b89bc94b5bf435312",
+   705059
+  ],
+  "data/proc/weather/hrrr/ID4685611616820210707.npz": [
+   "8ce73baf9442dfe06d189538c16a2f78aa2b1c12c404010ea2fd1a585d16c789",
+   272698
+  ],
+  "data/proc/weather/hrrr/MT4497811185720180806.npz": [
+   "20c6eba7774c36fd585f9d0705a81e0e1bbdb7b669717f633410657d8206e13c",
+   192074
+  ],
+  "data/proc/weather/hrrr/MT4515311193120180811.npz": [
+   "10f154ba86504f5a58fa66a9068a26b4911d3bccf70fcc9f93310e99d55181e2",
+   88907
+  ],
+  "data/proc/weather/hrrr/MT4601411227720190816.npz": [
+   "a18cc0983c9b3d0c958aee95f638acb5034dddd94d08a08aff29bdd1d4184ece",
+   188311
+  ],
+  "data/proc/weather/hrrr/MT4647210784420210709.npz": [
+   "a9213568ecb1ba1a323b1006302ab66917d33c68f81b5ced4ef46e5e3a3527ea",
+   57894
+  ],
+  "data/proc/weather/hrrr/MT4699311093320210708.npz": [
+   "5a0f9e83e2b33503896bd829a9cbd6f8c568212261b9ab8c9aad3b4ff5a484e3",
+   387089
+  ],
+  "data/proc/weather/hrrr/MT4702111269120170715.npz": [
+   "a7dda2eda89585ad46ccf81891b784c4bd6150595110bb8beb092ead484dd9da",
+   1006325
+  ],
+  "data/proc/weather/hrrr/NM3572510679220170915.npz": [
+   "56402ddcfcb2e1c3c802240d31ee26bcdd96e45d03eb97b05d901bf38dfe99c0",
+   77968
+  ],
+  "data/proc/weather/hrrr/NM3690210301720180609.npz": [
+   "d898ecd49596ad0057af7fee741a14c02cdd23056534d02b70badc110077d5d8",
+   85245
+  ],
+  "data/proc/weather/hrrr/NV4006311484620180813.npz": [
+   "34eb8d18d88cd9b8886d5d0435efcdca1d989693421ab8fe20654c690cfbb3d3",
+   1020448
+  ],
+  "data/proc/weather/hrrr/NV4027311946420170830.npz": [
+   "b551f6e84207a90aab3c160f8e69817852c4f88609957773452763cd82df543a",
+   612218
+  ],
+  "data/proc/weather/hrrr/OK3470209541820180323.npz": [
+   "88033a34ba7dcafd9a85bd22558f67af7e40fbc537132f486166f9b02015fbdd",
+   80334
+  ],
+  "data/proc/weather/hrrr/OR4311112241120170811.npz": [
+   "d35636c32d6d2a046e3d1f84eefc6a7053761ec4747e3d5b69475ffbbf86918b",
+   248860
+  ],
+  "data/proc/weather/hrrr/OR4400912217020170804.npz": [
+   "17585994d6b46c9e234e755c60feb60ada0f116d1648ef00865b7aac7fde1d88",
+   534018
+  ],
+  "data/proc/weather/hrrr/OR4504912206220200908.npz": [
+   "ced8422b818cbf9fd2509a587be506fd0bccf6957c27cd42a6aa9c0fdaf12085",
+   1173927
+  ],
+  "data/proc/weather/hrrr/SC3320907951020190526.npz": [
+   "c4f5f88fc784306451b42bc995e71496163cd34132375778dfb59682199e5017",
+   42986
+  ],
+  "data/proc/weather/hrrr/SD4377610344820171211.npz": [
+   "c2a41f290977f38f588b369dec1f5c0b8a9edca1bea584d9dd50bf39a761c255",
+   345546
+  ],
+  "data/proc/weather/hrrr/TX2722009737020180414.npz": [
+   "e2f3ee144f04a5a34454db5812c58a306bc4e9ca7df29bdb7d766f5dd28eb7c4",
+   85031
+  ],
+  "data/proc/weather/hrrr/TX3481010130620180508.npz": [
+   "6000df992a0543685cee1f973db5b20f8683a6614e1cce9f5dc8b51d283e7a5a",
+   606910
+  ],
+  "data/proc/weather/hrrr/WA4833211819920200907.npz": [
+   "9e53c9d8528ac5ccb544906b1d27b753d48f5576ce106a9915b82373987a57a3",
+   98778
+  ],
+  "data/proc/weather/hrrr/WA4879911726120170715.npz": [
+   "98024719e109f07500ed7541fa44c8e1e705df0840f9f58e1add9593f304d0cc",
+   423188
+  ],
+  "data/proc/weather/hrrr/WY4219011071520170804.npz": [
+   "1c8488d86d66d0b7446259eb4be1510b605519161a61df9f8054798a3734ab74",
+   350861
+  ],
+  "data/proc/weather/hrrr/WY4437710988020190902.npz": [
+   "c59733ae446da9a444b2a6e3048104a668579e3997424b74b565a31f4ced4b50",
+   110310
+  ],
+  "data/proc/weather/hrrr/WY4438911082120200822.npz": [
+   "604523ba5b370ed5c79c047c1235a0d2c6c1002ebe2047863a13d27251c3a767",
+   231760
+  ],
+  "firesim/demo_out/demo.png": [
+   "95fdba0d1780337a567c0ca529e580fc1e91f1ea1065a91e705a9413c52d44f9",
+   744451
+  ],
+  "firesim/demo_out/replay_examples.png": [
+   "4245bb06c19054f0ac2d8ebc9e860e909859afefd345d1e9cdff0896456415cf",
+   94179
+  ],
+  "firesim/refdata/gtr143_pages.txt": [
+   "cb32dc2865f74ab0ac4e2c695cad2eb972e4d3bdf8edf934e992f793c25254ed",
+   337446
+  ],
+  "firesim/refdata/gtr371_pages.txt": [
+   "2072dfa4a9a6e978b8f8202b9b28b704576a4554db697ef860abd2f766513720",
+   251914
+  ],
+  "firesim/refdata/int_gtr143.pdf": [
+   "55ed9e2fcf2890f4fffb8ec813a5bf40c783f4d34402c1efd0ba2c41ac1bcd44",
+   11553532
+  ],
+  "firesim/refdata/int_gtr143.txt": [
+   "77c75047342e0544c38f9a029a642e8097cfde0b127222b0bd9ee39668be087a",
+   502048
+  ],
+  "firesim/refdata/rmrs_gtr153.pdf": [
+   "6afb2ae0bee5fa5c2d9bb85694c352b6cbd0a2fa584c2b38e6e56bd5630e5855",
+   9089066
+  ],
+  "firesim/refdata/rmrs_gtr153.txt": [
+   "70c8130d7061383da94fdccd5ddcfd7df8bd8e7de9a574b6d8afe12049501876",
+   130937
+  ],
+  "firesim/refdata/rmrs_gtr371.pdf": [
+   "911ee8ddf42229b31a8b97445bf055c0cefd4879600fbf18c4454603b3eb5754",
+   17892999
+  ],
+  "firesim/refdata/rmrs_gtr371.txt": [
+   "6a72a8d148eefd23690ac63a2ea3af84b2b44a8d1ab54018fd3a5baa42dfc3ca",
+   421827
+  ]
+ }
+}

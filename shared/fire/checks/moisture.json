@@ -1,0 +1,84 @@
+{
+ "what": "Dead fuel moisture model checks (synthetic); real 10-h sticks in moisture_real.json",
+ "params": {
+  "film": 0.0002,
+  "w_max": 0.45,
+  "rain_capture": 0.3,
+  "absorb": 0.35,
+  "e_act": 38000.0,
+  "nsub": 4,
+  "nnode": 11,
+  "kappa_w": 4.0,
+  "fsp": 0.3,
+  "cap_boost": 0.0
+ },
+ "isotherm": {
+  "a": 0.3529424060436979,
+  "b": 0.05734047605378416,
+  "rmse_pct_points": 0.40653891823806854,
+  "max_abs_pct_points": 1.8848436604603442,
+  "at_21C": {
+   "rh": [
+    10,
+    20,
+    30,
+    50,
+    70,
+    90
+   ],
+   "nelson": [
+    2.352949149007882,
+    4.406583676598891,
+    6.070938222340922,
+    9.236933429091371,
+    13.046735076055333,
+    20.03904427888758
+   ],
+   "simard": [
+    2.7969159999999995,
+    4.3979859999999995,
+    5.9990559999999995,
+    9.591650000000005,
+    12.795070000000003,
+    20.450490000000002
+   ]
+  }
+ },
+ "timelag": {
+  "1h": {
+   "nominal_h": 1,
+   "efold_h": 0.9999968547930657,
+   "rel_err": -3.1452069343407274e-06
+  },
+  "10h": {
+   "nominal_h": 10,
+   "efold_h": 9.999771235793862,
+   "rel_err": -2.2876420613826554e-05
+  },
+  "100h": {
+   "nominal_h": 100,
+   "efold_h": 99.9995323481835,
+   "rel_err": -4.676518165047661e-06
+  }
+ },
+ "diurnal": {
+  "m1h_daily_range_mean": 8.34502259125902,
+  "m10h_daily_range_mean": 3.6688053255201134,
+  "m100h_daily_range_mean": 1.2070839612724136,
+  "m1h_min_lag_after_rh_min_h_median": 0.0,
+  "m1h_noon_mean": 3.4201600728238293,
+  "ffmc_moisture_noon_mean": 12.603512582424448,
+  "corr_m1h_vs_ffmc_moisture": 0.6810873713063718,
+  "note_ffmc": "FFMC describes litter with a ~16-h timelag; its moisture scale is not the 1-h stick",
+  "expected": "1-h range several %, 10-h range smaller, 100-h smallest; 1-h minimum at or shortly after the RH minimum; noon 1-h moisture similar to FFMC-implied moisture"
+ },
+ "rain": {
+  "m10h_before": 6.83707667349933,
+  "m10h_peak": 23.58209479665923,
+  "m1h_peak": 44.558540341225395,
+  "m100h_change": 3.4525655280552012,
+  "m10h_hours_to_half_recovery": 1.0
+ },
+ "generated": "2026-11-18 23:36 UTC",
+ "python": "3.13.18"
+}
