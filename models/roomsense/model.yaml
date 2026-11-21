@@ -1,0 +1,124 @@
+id: roomsense
+name: RoomSense
+version: "1.0"
+status: partial
+released: 2026-11-21
+order: 31
+domain: Acoustics
+tags: [acoustics, audio, inverse problem, uncertainty]
+accent: "#61a6c5"
+tagline: How long does a room ring after a clap?
+question: How much reverberation can one mono clap reveal about a room?
+question_short: How long does a room ring after one clap? *(actual-clap exam pending)*
+summary: >-
+  RoomSense estimates midband reverberation time from a single mono clap and gives an experimental
+  volume estimate. It learned on simulated rooms. The first exam passed synthetic claps through
+  measured responses from three held-out rooms. The accuracy exam on recorded handclaps is pending.
+reads: One mono waveform in full-scale units and its sampling rate in Hz. Include a quiet lead-in and the decay.
+returns:
+  - Reverberation time RT60 in seconds, with a nominal 68% interval.
+  - Experimental volume in cubic metres, with a nominal 68% interval.
+  - Classical band-decay estimate when measurable, along with onset time and prominence.
+physics:
+  summary: Early sound follows image-source reflection paths. Eyring absorption sets a stochastic late decay.
+  simulator:
+    - Rectangular rooms, fractional direct and image-path delays, six frequency-dependent reflecting faces
+    - Three reverberant bands, generated clap pulses, microphone coloration, and independent real backgrounds
+  checks:
+    - First-order path arrival times and pressure reflection match analytic geometry to floating-point precision.
+    - Eyring reverberation time agrees with the closed-form reference within 0.009%.
+    - Classical fitting recovered three known exponential decay times to within 2.0%.
+noise: Twenty recorded ESC-10 clock and rain backgrounds, split by original recording before use.
+network: A 10,040-parameter 1D CNN on early band energy and band decay curves with a classical RT60 anchor.
+approach:
+  real_backdrop: ESC-10 clock and rain audio from a dedicated training pool.
+  physics_inputs: Three octave-band early-energy envelopes, backward integrated energy decays, and T20 fits.
+  physics_anchor: The model predicts a correction to the classical RT60 fit when two or more bands support it.
+  real_data_roles: [backdrop, calibration, gate, error_bars, exam]
+data:
+  - name: University of Surrey RealRoomBRIRs
+    url: https://github.com/IoSR-Surrey/RealRoomBRIRs
+    licence: MIT notice shipped by the provider, reproduced beside the excerpts.
+    role: Measured dev and exam swept responses, geometry and published midband cross-check
+  - name: Kitamura Laboratory impulse response dataset
+    url: https://github.com/kitamura-laboratory/impResDataset
+    licence: Public academic download. Audio redistribution terms unspecified. Metrics only are distributed.
+    role: Measured dev and exam swept responses and dev geometry
+  - name: ESC-10, the attribution-licensed subset of ESC-50
+    url: https://github.com/karolpiczak/ESC-50
+    licence: CC BY or CC0 as attributed in examples/ATTRIBUTION.md and the source credits.
+    role: Disjoint training, simulated validation, dev and exam background clips
+  - name: Lai et al. ClapRIR phone-clap examples
+    url: https://github.com/Akinesia112/ClapRIR
+    licence: Public listening examples. The source lists no separate audio reuse terms. Metrics only are distributed.
+    role: Post-lock input compatibility check, with no paired reverberation references
+split:
+  dev: Surrey C and D and Kitamura open lounge, 38 noisy clips from 19 swept responses.
+  exam: Surrey A and B and Kitamura music room, 38 noisy clips from 19 held-out swept responses.
+exam:
+  short: 38 synthetic claps through measured responses · 3 held-out rooms
+  summary: >-
+    Equal weight per room. A dev median supplies a fallback when an estimator abstains.
+    The T20-only comparison on the four clips with a valid fit is also shown.
+    Volume was scored in two rooms with documented dimensions. Actual-clap accuracy is pending.
+  results:
+    - metric: RT60 MAE across all exam clips
+      better: lower
+      model: 0.1171
+      unit: s
+      baselines:
+        - {name: T20 + tail fit + dev-median fallback, kind: classical, value: 0.3153}
+        - {name: T20 + dev-median fallback, kind: classical, value: 0.4387}
+        - {name: Dev median, kind: dumb, value: 0.4832}
+      verdict: win
+      note: Point estimate over three rooms. The best classical pipeline read 15 of 38 clips before fallback.
+    - metric: RT60 MAE where T20 could read the clip
+      better: lower
+      model: 0.0743
+      unit: s
+      baselines:
+        - {name: T20, kind: classical, value: 0.0225}
+      verdict: loss
+      note: Four clips in three rooms, all at 44 dB peak-to-noise ratio.
+    - metric: Experimental volume MAE on a log scale
+      better: lower
+      model: 0.4237
+      unit: ln(m³)
+      baselines:
+        - {name: Dev-fitted decay-only estimate, kind: classical, value: 0.9872}
+        - {name: Dev median, kind: dumb, value: 0.9872}
+      verdict: info
+      note: Two exam rooms. The decay-only fit selected a zero slope and matched the dev median.
+  coverage:
+    - {output: RT60, actual: 72.8}
+    - {output: Experimental volume, actual: 88.5}
+wins:
+  - Smaller all-clip RT60 error than both classical fallback chains and the dev median in the measured-response exam.
+losses:
+  - Classical T20 was about three times more accurate on its four readable clips.
+  - On the three dev rooms the network averaged 0.213 s error, versus 0.120 s for the dev median.
+limits:
+  - The accuracy test uses measured room responses with synthesized excitations. Real phone and microphone transfer awaits paired references.
+  - The volume check contains only two exam rooms. Reported uncertainty is calibrated on two other rooms.
+  - The input needs a quiet lead-in and a distinct clap. Six published phone demo clips were too tightly cropped for the input window.
+  - Reverberation depends on geometry and absorption. The simulator assumes rectangular rooms with diffuse late decay.
+help_wanted:
+  - ARPEGE's 28 annotated clap and sweep pairs across six rooms. The official audio endpoint returned HTTP 403. The matching protocol and locked scorer are ready in training/.
+next:
+  - Run the frozen actual-clap exam when matched room recordings and reuse terms are available.
+  - Test a front end for tightly cropped inputs against a separately frozen set of paired clap and sweep recordings.
+usage:
+  install: pip install numpy scipy
+  demo: python demo.py
+  python: |
+    from roomsense import RoomSense
+    print(RoomSense().read_file("my-clap.wav"))
+files:
+  inference: [roomsense.py, pipeline.py]
+  weights: [roomsense_weights.npz]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  notebook: NOTEBOOK.md
+demo_seconds: 1
+

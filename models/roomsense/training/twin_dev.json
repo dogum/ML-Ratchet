@@ -1,0 +1,102 @@
+{
+  "metric": "10 log10 energy ratio, 45 to 250 ms over first 45 ms after peak",
+  "geometry": "Measured dimensions and Surrey 1.5 m arc. Approximate receiver and Kitamura positions.",
+  "reference": "Dev sweep-derived midband RT60 used to match Eyring absorption.",
+  "room_gaps_db": {
+    "surrey/D": -3.3946354371475476,
+    "kitamura/openLounge": -2.705695274908636
+  },
+  "median_gap_db": -3.0501653560280917,
+  "v1_density": 0.39,
+  "proposed_density": 0.3159072888185475,
+  "rooms": {
+    "surrey/D": [
+      {
+        "position": "position-00",
+        "rt60_s": 0.9007147052084515,
+        "absorption": 0.1717349416726875,
+        "measured_late_to_early_db": -11.35999209590797,
+        "twin_late_to_early_db": -5.49444451849096
+      },
+      {
+        "position": "position-06",
+        "rt60_s": 0.9198256892396708,
+        "absorption": 0.16848609690476518,
+        "measured_late_to_early_db": -12.442763428014567,
+        "twin_late_to_early_db": -5.238695658663975
+      },
+      {
+        "position": "position-12",
+        "rt60_s": 0.9486422917692191,
+        "absorption": 0.16381261154979912,
+        "measured_late_to_early_db": -11.89094188991513,
+        "twin_late_to_early_db": -5.2523822893435534
+      },
+      {
+        "position": "position-18",
+        "rt60_s": 0.9115874951070051,
+        "absorption": 0.16987143127842802,
+        "measured_late_to_early_db": -8.460855213085452,
+        "twin_late_to_early_db": -5.066219775937904
+      },
+      {
+        "position": "position-24",
+        "rt60_s": 0.9346202803436323,
+        "absorption": 0.16605397629201574,
+        "measured_late_to_early_db": -4.990511953096632,
+        "twin_late_to_early_db": -5.31298535446629
+      },
+      {
+        "position": "position-30",
+        "rt60_s": 0.9566349433646513,
+        "absorption": 0.16256180720126423,
+        "measured_late_to_early_db": -3.4951159540715064,
+        "twin_late_to_early_db": -5.169103669447743
+      },
+      {
+        "position": "position-36",
+        "rt60_s": 0.9476406168454565,
+        "absorption": 0.16397072259047663,
+        "measured_late_to_early_db": -3.104984652799054,
+        "twin_late_to_early_db": -5.262370193702887
+      }
+    ],
+    "kitamura/openLounge": [
+      {
+        "position": "2A",
+        "rt60_s": 0.8861874917218548,
+        "absorption": 0.11823876693268474,
+        "measured_late_to_early_db": -6.323961464534244,
+        "twin_late_to_early_db": -3.618266189625608
+      },
+      {
+        "position": "2B",
+        "rt60_s": 0.9249304225248852,
+        "absorption": 0.1135788587175803,
+        "measured_late_to_early_db": -4.166113746452202,
+        "twin_late_to_early_db": -2.7300664645663018
+      },
+      {
+        "position": "2C",
+        "rt60_s": 0.9272453916465403,
+        "absorption": 0.11331200673195838,
+        "measured_late_to_early_db": -5.108276508712954,
+        "twin_late_to_early_db": -2.1900654348222566
+      },
+      {
+        "position": "3A",
+        "rt60_s": 0.7766351867117816,
+        "absorption": 0.1337520836837019,
+        "measured_late_to_early_db": -2.6638584004597528,
+        "twin_late_to_early_db": -2.125545770733514
+      },
+      {
+        "position": "3B",
+        "rt60_s": 0.9942441934582216,
+        "absorption": 0.10609703562970155,
+        "measured_late_to_early_db": -3.479708457994131,
+        "twin_late_to_early_db": -0.5764041650383289
+      }
+    ]
+  }
+}

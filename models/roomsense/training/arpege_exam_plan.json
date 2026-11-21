@@ -1,0 +1,206 @@
+{
+  "protocol": "arpege-em32-v1",
+  "source_url": "https://zenodo.org/records/20344913",
+  "paper_url": "https://arxiv.org/abs/2610.41543",
+  "annotation_url": "https://raw.githubusercontent.com/jdpascal/ARPEGE/f0bc5baa64b0ba203447d96334824a4278f27090/annotation_ARPEGE.pkl",
+  "annotation_sha256": "103f0c22b3ddd46df1dc041cea137a1cc5d009fd7dd8f0e845fb3701c9fa4677",
+  "channel_zero_based": 0,
+  "rooms": [
+    {
+      "id": "arpege/room1",
+      "envelope_dimensions_m": [
+        3.6,
+        3.8,
+        2.6
+      ],
+      "pairs": [
+        {
+          "position": "pos1",
+          "claps": "ARPEGE_01.2026/room1/pos1/CLAPS/EM32/room1_pos1_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room1/pos1/RIR/EM32/room1_pos1_neutral.wav"
+        },
+        {
+          "position": "pos2",
+          "claps": "ARPEGE_01.2026/room1/pos2/CLAPS/EM32/room1_pos2_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room1/pos2/RIR/EM32/room1_pos2_neutral.wav"
+        },
+        {
+          "position": "pos3",
+          "claps": "ARPEGE_01.2026/room1/pos3/CLAPS/EM32/room1_pos3_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room1/pos3/RIR/EM32/room1_pos3_neutral.wav"
+        }
+      ]
+    },
+    {
+      "id": "arpege/room2",
+      "envelope_dimensions_m": [
+        7.4,
+        5.7,
+        2.6
+      ],
+      "pairs": [
+        {
+          "position": "pos1",
+          "claps": "ARPEGE_01.2026/room2/pos1/CLAPS/EM32/room2_pos1_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room2/pos1/RIR/EM32/room2_pos1_neutral.wav"
+        },
+        {
+          "position": "pos2",
+          "claps": "ARPEGE_01.2026/room2/pos2/CLAPS/EM32/room2_pos2_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room2/pos2/RIR/EM32/room2_pos2_neutral.wav"
+        },
+        {
+          "position": "pos3",
+          "claps": "ARPEGE_01.2026/room2/pos3/CLAPS/EM32/room2_pos3_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room2/pos3/RIR/EM32/room2_pos3_neutral.wav"
+        }
+      ]
+    },
+    {
+      "id": "arpege/room3",
+      "envelope_dimensions_m": [
+        5.4,
+        4.0,
+        2.5
+      ],
+      "pairs": [
+        {
+          "position": "pos1",
+          "claps": "ARPEGE_01.2026/room3/pos1/CLAPS/EM32/room3_pos1_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room3/pos1/RIR/EM32/room3_pos1_neutral.wav"
+        },
+        {
+          "position": "pos2",
+          "claps": "ARPEGE_01.2026/room3/pos2/CLAPS/EM32/room3_pos2_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room3/pos2/RIR/EM32/room3_pos2_neutral.wav"
+        },
+        {
+          "position": "pos3",
+          "claps": "ARPEGE_01.2026/room3/pos3/CLAPS/EM32/room3_pos3_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room3/pos3/RIR/EM32/room3_pos3_neutral.wav"
+        },
+        {
+          "position": "pos6",
+          "claps": "ARPEGE_01.2026/room3/pos6/CLAPS/EM32/room3_pos6_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room3/pos6/RIR/EM32/room3_pos6_front32.wav"
+        },
+        {
+          "position": "pos7",
+          "claps": "ARPEGE_01.2026/room3/pos7/CLAPS/EM32/room3_pos7_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room3/pos7/RIR/EM32/room3_pos7_front32.wav"
+        },
+        {
+          "position": "pos8",
+          "claps": "ARPEGE_01.2026/room3/pos8/CLAPS/EM32/room3_pos8_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room3/pos8/RIR/EM32/room3_pos8_front32.wav"
+        },
+        {
+          "position": "pos9",
+          "claps": "ARPEGE_01.2026/room3/pos9/CLAPS/EM32/room3_pos9_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room3/pos9/RIR/EM32/room3_pos9_front32.wav"
+        }
+      ]
+    },
+    {
+      "id": "arpege/room4",
+      "envelope_dimensions_m": null,
+      "pairs": [
+        {
+          "position": "pos4",
+          "claps": "ARPEGE_01.2026/room4/pos4/CLAPS/EM32/room4_pos4_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room4/pos4/RIR/EM32/room4_pos4_front32.wav"
+        },
+        {
+          "position": "pos5",
+          "claps": "ARPEGE_01.2026/room4/pos5/CLAPS/EM32/room4_pos5_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room4/pos5/RIR/EM32/room4_pos5_front32.wav"
+        },
+        {
+          "position": "pos6",
+          "claps": "ARPEGE_01.2026/room4/pos6/CLAPS/EM32/room4_pos6_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room4/pos6/RIR/EM32/room4_pos6_front32.wav"
+        },
+        {
+          "position": "pos7",
+          "claps": "ARPEGE_01.2026/room4/pos7/CLAPS/EM32/room4_pos7_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room4/pos7/RIR/EM32/room4_pos7_front32.wav"
+        },
+        {
+          "position": "pos8",
+          "claps": "ARPEGE_01.2026/room4/pos8/CLAPS/EM32/room4_pos8_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room4/pos8/RIR/EM32/room4_pos8_front32.wav"
+        },
+        {
+          "position": "pos9",
+          "claps": "ARPEGE_01.2026/room4/pos9/CLAPS/EM32/room4_pos9_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room4/pos9/RIR/EM32/room4_pos9_front32.wav"
+        }
+      ]
+    },
+    {
+      "id": "arpege/room5",
+      "envelope_dimensions_m": [
+        4.1,
+        3.9,
+        2.4
+      ],
+      "pairs": [
+        {
+          "position": "pos1",
+          "claps": "ARPEGE_01.2026/room5/pos1/CLAPS/EM32/room5_pos1_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room5/pos1/RIR/EM32/room5_pos1_neutral.wav"
+        },
+        {
+          "position": "pos2",
+          "claps": "ARPEGE_01.2026/room5/pos2/CLAPS/EM32/room5_pos2_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room5/pos2/RIR/EM32/room5_pos2_neutral.wav"
+        },
+        {
+          "position": "pos3",
+          "claps": "ARPEGE_01.2026/room5/pos3/CLAPS/EM32/room5_pos3_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room5/pos3/RIR/EM32/room5_pos3_neutral.wav"
+        }
+      ]
+    },
+    {
+      "id": "arpege/room6",
+      "envelope_dimensions_m": [
+        3.7,
+        3.8,
+        2.5
+      ],
+      "pairs": [
+        {
+          "position": "pos4",
+          "claps": "ARPEGE_01.2026/room6/pos4/CLAPS/EM32/room6_pos4_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room6/pos4/RIR/EM32/room6_pos4_front32.wav"
+        },
+        {
+          "position": "pos5",
+          "claps": "ARPEGE_01.2026/room6/pos5/CLAPS/EM32/room6_pos5_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room6/pos5/RIR/EM32/room6_pos5_front32.wav"
+        },
+        {
+          "position": "pos6",
+          "claps": "ARPEGE_01.2026/room6/pos6/CLAPS/EM32/room6_pos6_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room6/pos6/RIR/EM32/room6_pos6_front32.wav"
+        },
+        {
+          "position": "pos7",
+          "claps": "ARPEGE_01.2026/room6/pos7/CLAPS/EM32/room6_pos7_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room6/pos7/RIR/EM32/room6_pos7_front32.wav"
+        },
+        {
+          "position": "pos8",
+          "claps": "ARPEGE_01.2026/room6/pos8/CLAPS/EM32/room6_pos8_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room6/pos8/RIR/EM32/room6_pos8_front32.wav"
+        },
+        {
+          "position": "pos9",
+          "claps": "ARPEGE_01.2026/room6/pos9/CLAPS/EM32/room6_pos9_claps.wav",
+          "sweep_response": "ARPEGE_01.2026/room6/pos9/RIR/EM32/room6_pos9_front32.wav"
+        }
+      ]
+    }
+  ]
+}

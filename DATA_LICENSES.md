@@ -35,7 +35,10 @@ instrument noise, the fetch scripts in `models/*/training/` download that noise 
 | AirfoilNet | [UIUC Low-Speed Airfoil Tests](https://m-selig.ae.illinois.edu/uiuc_lsat.html), *Summary of Low-Speed Airfoil Data* vols 1-5 — Selig et al. (1995-2012) | GNU GPL v2 (stated in the volumes) | Four exam runs (`examples/`, with `examples/LICENSE-GPL-DATA.txt`) and the tested polars in `lab/` |
 | AirfoilNet | [UIUC Airfoil Coordinates Database](https://m-selig.ae.illinois.edu/ads/coord_database.html) | No explicit licence; cited | No (CST fits of its shapes in training only) |
 | AirfoilNet | [mfoil](https://pypi.org/project/pymfoil/) (K. J. Fidkowski) solver; [NeuralFoil](https://pypi.org/project/neuralfoil/) 0.3.3 (P. Sharpe) baseline | MIT | mfoil vendored in `training/mfoil.py` with its header; NeuralFoil weights not redistributed |
-
+| RoomSense | [University of Surrey RealRoomBRIRs](https://github.com/IoSR-Surrey/RealRoomBRIRs) — Cal Armstrong, Institute of Sound Recording | MIT notice in the source repository | Four generated claps passed through measured responses in rooms A and B, with the [license and credits](models/roomsense/examples/ATTRIBUTION.md) |
+| RoomSense | [Kitamura Laboratory impulse response measurements](https://github.com/kitamura-laboratory/impResDataset) | Public academic download. Audio redistribution terms unspecified. | Scoring summaries |
+| RoomSense | [ESC-10 environmental audio](https://github.com/karolpiczak/ESC-50#license) — Karol J. Piczak and the original Freesound contributors | ESC-10 is CC BY. The bundled sources have individual CC BY and CC0 terms. | Noise excerpts in four clips, [credited by source](models/roomsense/examples/ATTRIBUTION.md) |
+| RoomSense | [ClapRIR phone examples](https://github.com/Akinesia112/ClapRIR) — Lai et al. | Public listening examples. Audio reuse terms unspecified. | Input acceptance summary |
 
 ### The vehicle platform (`shared/vehicle`) and its models (EnergyNet, TripDetective, HybridPilot)
 
