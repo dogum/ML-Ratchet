@@ -225,7 +225,8 @@ def generate_weather(start, hours=72, climate='west_dry_summer', lat=40.0, lon=-
     h['wind_speed'] = np.where(ev_h, h['wind_speed'] * (0.8 + 0.2 * np.cos(2 * np.pi * (lst - 15) / 24)) / (
         1 + 0.5 * np.cos(2 * np.pi * (lst - 15) / 24)), h['wind_speed']) * gust
     h['cloud'] = np.clip(0.15 + 0.6 * pd.Series(wet, index=days).reindex(dnorm, method='ffill').to_numpy(), 0, 1)
-    h = h[(h.index >= start) & (h.index < start + pd.Timedelta(hours=hours))]
+    # keep the hour that contains a fractional start (PR #7 review, 21 Nov 2026); on-the-hour starts are unchanged
+    h = h[(h.index >= start.floor('h')) & (h.index < start + pd.Timedelta(hours=hours))]
     h = ensure_srad(h, lat, lon)
     h.attrs = dict(lat=lat, lon=lon, climate=c, event_days=[str(d.date()) for d in days[event]],
                    wet_days=[str(d.date()) for d in days[wet]])

@@ -346,6 +346,18 @@ def test_custom_fuels_keep_the_standard_fm10_crown_bundle():
     assert np.array_equal(base["bundle10"], over["bundle10"])
 
 
+def test_generated_weather_covers_a_fractional_start():
+    """PR #7 review, 21 Nov 2026: a start at 18:30 dropped the 18:00 row, and simulate() refused the weather."""
+    import pandas as pd
+    import firesim as fs
+    s = pd.Timestamp("2020-07-01 18:30", tz="UTC")
+    w = fs.generate_weather(s, hours=72, rng=1)
+    assert w.index[0] == s.floor("h")
+    ls = fs.generate_landscape((20, 20), 90.0, kind="parametric", region="great_basin", rng=1)
+    fs.simulate(ls, w, {"rowcol": [(10, 10)]}, s, s + pd.Timedelta(hours=3), rng=1, return_perimeters=False)
+    assert len(fs.generate_weather(s.floor("h"), hours=72, rng=1)) == 72      # on-the-hour starts unchanged
+
+
 def test_u1_setup_is_meaningful(u1):
     """Without a line the fire leaves the ring; a ring of non-burnable fuel holds it (the corner rule works there)."""
     assert u1["no_line"] > 100 and u1["nonburnable"] == 0

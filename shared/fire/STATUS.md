@@ -156,3 +156,6 @@ rung re-scored. Not measured here; the analytic checks (constant weather) cannot
   the row index of the custom table; with `custom_fuels` overriding a fuel numbered 1-10 that row was another fuel
   (FM9 when fuel 1 was overridden). It now always uses FM10 in the default table. Runs without custom fuels are
   unchanged. Test: test_custom_fuels_keep_the_standard_fm10_crown_bundle (fails on the old code).
+- `generate_weather` cut the series at `start`, so a start with minutes (18:30) lost the 18:00 row and `simulate()`
+  refused the weather for its first partial hour. It now keeps the row at `start.floor('h')`; on-the-hour starts are
+  unchanged. Test: test_generated_weather_covers_a_fractional_start.
