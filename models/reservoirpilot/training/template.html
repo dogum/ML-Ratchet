@@ -1,0 +1,331 @@
+<title>ReservoirPilot</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a dam operator's log. Single reading column; full-width "gauge board" explorer; tables in scroll boxes.
+   Colour: lake water for the pilot, concrete neutrals, spillway orange for flood excess, ochre for shortage. */
+:root {
+  --bg: #eef1f0; --panel: #f8faf9; --fg: #16232b; --muted: #55656d; --rule: #c9d2d2;
+  --pilot: #0f6e8c; --sop: #7a858b; --dp: #7a4fa0; --obs: #a0703c; --flood: #d4602a; --short: #b8901c; --water: #8fc3d3;
+  --good: #2f7d4f; --bad: #b2452d;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f171b; --panel: #152127; --fg: #dfe8ea; --muted: #93a4ab; --rule: #2a3a41;
+  --pilot: #4fb3d4; --sop: #8f9aa0; --dp: #b48ee0; --obs: #d39a5d; --flood: #f08050; --short: #d9b544; --water: #2c5f70;
+  --good: #5fbf86; --bad: #ef7a5e; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f171b; --panel: #152127; --fg: #dfe8ea; --muted: #93a4ab; --rule: #2a3a41;
+  --pilot: #4fb3d4; --sop: #8f9aa0; --dp: #b48ee0; --obs: #d39a5d; --flood: #f08050; --short: #d9b544; --water: #2c5f70;
+  --good: #5fbf86; --bad: #ef7a5e; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 16px/1.6 var(--body); margin: 0 }
+.wrap { max-width: 1060px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 }
+.col { max-width: 68ch }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: .01em; text-wrap: balance; line-height: 1.1 }
+h1 { font-size: clamp(3rem, 9vw, 5.6rem); margin: 0; font-weight: 700; letter-spacing: .005em }
+h2 { font-size: 2.1rem; margin: 3.2rem 0 .6rem }
+h3 { font-size: 1.35rem; margin: 1.6rem 0 .4rem }
+p { margin: .6rem 0 }
+.eyebrow { font: 500 .78rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+.mono, .num { font-family: var(--mono); font-variant-numeric: tabular-nums }
+a { color: var(--pilot) }
+/* hero */
+header.hero { padding-block: 2.4rem 1.6rem; display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: end; border-bottom: 2px solid var(--fg) }
+.hero .thesis { font-size: 1.22rem; max-width: 40ch; margin-top: .8rem }
+.gauge { width: 74px; height: 230px; display: block }
+@media (max-width: 640px) { header.hero { grid-template-columns: minmax(0, 1fr) } .gauge { display: none } }
+.figs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin: 1.6rem 0 0; border-top: 1px solid var(--rule) }
+.fig { padding: .9rem .9rem .9rem 0; border-right: 1px solid var(--rule) }
+.fig:last-child { border-right: 0 }
+.fig .v { font: 600 2.3rem/1 var(--display); font-variant-numeric: tabular-nums }
+.fig .l { font-size: .86rem; color: var(--muted); margin-top: .35rem }
+.fig.pilot .v { color: var(--pilot) }
+@media (max-width: 640px) { .figs { grid-template-columns: repeat(2, minmax(0, 1fr)) } .fig:nth-child(2) { border-right: 0 } .fig { padding-left: 0 } }
+/* explorer */
+.board { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 1rem; margin-top: 1rem }
+.chips { display: flex; flex-wrap: wrap; gap: .4rem }
+.chip { font: 500 .8rem var(--mono); border: 1px solid var(--rule); background: var(--bg); color: var(--fg); padding: .32rem .55rem; border-radius: 3px; cursor: pointer }
+.chip[aria-pressed="true"] { background: var(--pilot); border-color: var(--pilot); color: var(--panel) }
+.chip:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--flood); outline-offset: 2px }
+.damhead { display: flex; flex-wrap: wrap; gap: .3rem 1.4rem; align-items: baseline; margin: .9rem 0 .4rem }
+.damhead .name { font: 600 1.6rem var(--display) }
+.damhead .meta { font: .82rem var(--mono); color: var(--muted) }
+.legend { display: flex; flex-wrap: wrap; gap: .4rem 1rem; font-size: .84rem; color: var(--muted); margin: .3rem 0 }
+.legend span::before { content: ""; display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: middle; background: var(--c) }
+.legend span.dash::before { background: repeating-linear-gradient(90deg, var(--c) 0 4px, transparent 4px 7px) }
+canvas { width: 100%; display: block }
+.panelname { font: 500 .74rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: .6rem }
+.ctrl { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .8rem 1.4rem; margin-top: 1rem; padding-top: .9rem; border-top: 1px dashed var(--rule) }
+.ctrl label { font-size: .86rem; display: flex; justify-content: space-between; gap: .5rem }
+.ctrl input[type=range] { width: 100%; accent-color: var(--pilot) }
+.ctrl select, .ctrl button { font: .86rem var(--body); padding: .3rem .5rem; background: var(--bg); color: var(--fg); border: 1px solid var(--rule); border-radius: 3px }
+.scroll { overflow-x: auto; margin: .6rem 0 }
+table { border-collapse: collapse; font-size: .88rem; min-width: 100% }
+th, td { padding: .4rem .6rem; text-align: right; border-bottom: 1px solid var(--rule); white-space: nowrap }
+th:first-child, td:first-child { text-align: left }
+th { font: 500 .74rem var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); vertical-align: bottom }
+td { font-family: var(--mono); font-variant-numeric: tabular-nums }
+tr.me td { color: var(--pilot); font-weight: 500 }
+tr.me td:first-child::before { content: "▸ "; }
+.kept { color: var(--good) } .rej { color: var(--bad) }
+.note { font-size: .86rem; color: var(--muted) }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.6rem }
+@media (max-width: 760px) { .two { grid-template-columns: minmax(0, 1fr) } }
+pre { background: var(--panel); border: 1px solid var(--rule); padding: .8rem; overflow-x: auto; font: .82rem/1.5 var(--mono); border-radius: 4px }
+ul { padding-left: 1.2rem } li { margin: .3rem 0 }
+footer { margin: 3rem 0 2rem; padding-top: 1rem; border-top: 2px solid var(--fg); font-size: .85rem; color: var(--muted) }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important } }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div>
+    <div class="eyebrow">ML Ratchet · Watershed · trained on physics, graded on reality</div>
+    <h1>ReservoirPilot</h1>
+    <p class="thesis">A release policy that only knows what a dam operator knows today. It learned to run reservoirs in a simulator, then ran 244 real US dams it had never seen.</p>
+  </div>
+  <svg class="gauge" viewBox="0 0 74 230" aria-hidden="true" id="gauge"></svg>
+  <div class="figs" id="figs" style="grid-column: 1 / -1"></div>
+</header>
+
+<section class="col">
+  <h2>The job</h2>
+  <p>Every day the operator picks a release, in m³/s. Two things can go wrong. If the release falls short of the day's <b>demand</b> (water supply, irrigation, power), that is a shortage. If it rises above the river's safe <b>channel capacity</b> Qmax, that is flooding downstream. WaterData scores a whole decade with one number:</p>
+  <p class="mono" style="font-size:.95rem">J = mean over days of (shortage / demand)² + 10 × (excess over Qmax / Qmax)²</p>
+  <p>Lower is better. Demand is the day-of-year median release from the first half of each dam's record; Qmax is that half's 99th-percentile release. The second half (up to 10 years) is scored, driven by the dam's real recorded inflow. The policy sees storage, capacity, today's inflow, the recent inflow, the demand calendar and the first half's inflow climatology. It never sees tomorrow's inflow.</p>
+  <p>Three reference operators: <b>SOP</b> releases the demand while water lasts and spills when full. The <b>rule curve</b> steers storage toward its seasonal median. <b>Perfect-foresight DP</b> knows the entire future inflow; it is a near lower bound that no real operator can reach.</p>
+</section>
+
+<h2>Gauge board: one dam, every operator</h2>
+<p class="col">Pick a dam from the exam. The dams are a fixed random draw within each main use (plus the California recent exam), not picked for looks. The pilot runs live in your browser, as does the perfect-foresight DP. Change the dam in the lab below and watch who adapts.</p>
+<div class="board">
+  <div class="chips" id="chips" role="group" aria-label="Exam dams"></div>
+  <div class="damhead"><span class="name" id="damname"></span><span class="meta" id="dammeta"></span></div>
+  <div class="legend">
+    <span style="--c:var(--pilot)">ReservoirPilot</span><span style="--c:var(--sop)">SOP</span>
+    <span class="dash" style="--c:var(--dp)">perfect-foresight DP</span><span style="--c:var(--obs)">what the operators did</span>
+    <span class="dash" style="--c:var(--fg)">demand</span><span style="--c:var(--flood)">Qmax</span>
+  </div>
+  <div class="panelname">Storage, % of capacity</div><canvas id="cS" height="170"></canvas>
+  <div class="panelname">Release, m³/s (log scale)</div><canvas id="cR" height="150"></canvas>
+  <div class="panelname">Inflow, m³/s (log scale) and the pilot's extra-release signal e</div><canvas id="cI" height="110"></canvas>
+  <div class="scroll"><table id="damtab"></table></div>
+  <div class="ctrl">
+    <div><label for="win">Window <span class="mono" id="winv"></span></label><select id="win"></select></div>
+    <div><label for="sI">Inflow × <span class="mono" id="sIv">1.00</span></label><input type="range" id="sI" min="0.5" max="1.5" step="0.05" value="1"></div>
+    <div><label for="sC">Capacity × <span class="mono" id="sCv">1.00</span></label><input type="range" id="sC" min="0.25" max="2" step="0.05" value="1"></div>
+    <div><label for="sN">Gauge noise on inflow <span class="mono" id="sNv">0</span></label><input type="range" id="sN" min="0" max="3" step="0.5" value="0"></div>
+  </div>
+  <p class="note">The lab changes the dam, not the policy: the same network with the same weights. Gauge noise adds day-to-day error to the inflow the way a back-calculated inflow record carries it (storage-gauge error differenced, so volumes do not change); level 1 = 0.2 % of capacity per day. The DP re-solves with perfect knowledge of the changed inflow.</p>
+</div>
+
+<h2>The exam</h2>
+<p class="col">Graded once, with the ratchet closed, on WaterData's frozen exam: 244 scored ResOpsUS dams and 15 California reservoirs from CDEC for water years 2021–2025. Medians over dams. Every column is shown so a low J cannot hide a trick, such as emptying the lake at the end of the window.</p>
+<div class="scroll"><table id="examtab"></table></div>
+<p class="note" id="examnote"></p>
+<div class="two">
+  <div><h3>Dam by dam: pilot vs SOP</h3><canvas id="cScatter" height="320"></canvas><p class="note" id="scatnote"></p></div>
+  <div><h3>By main use (median J)</h3><div class="scroll"><table id="usetab"></table></div><h3>California recent exam (WY2021–25)</h3><div class="scroll"><table id="cdectab"></table></div></div>
+</div>
+
+<h2>Where it loses</h2>
+<div class="col" id="losses"></div>
+
+<h2>The ratchet</h2>
+<p class="col">Each rung had to beat the incumbent on a frozen set of 300 simulated reservoirs by more than 0.01 in S<sub>J</sub> = 1 − median J / median J<sub>SOP</sub>, and stay within 5 % of the incumbent's median J on 15 real dev dams. When the simulator changed (g1 → g4), every rung was re-scored on the new frozen set and every decision re-taken in order.</p>
+<div class="scroll"><table id="ratchettab"></table></div>
+<p class="note" id="ratchetnote"></p>
+
+<section class="col">
+<h2>How it was built</h2>
+<h3>A simulator of reservoirs and rivers</h3>
+<p>Inflows come from WaterSim, the project's verified hydrology simulator: a generated basin, run through one of four runoff models (HBV, GR4J, SAC-SMA, VIC-lite) and one of two snow models, on real ERA5-Land weather from years outside every exam window or on a stochastic weather generator. Each simulated dam gets a random size (0.005 to 40 years of mean inflow) and a simulated historical operator who runs the first ten years. The task is then built from that operator's record exactly the way WaterData builds it from a real one. No exam dam's inflow was ever used for training.</p>
+<h3>Calibrating the simulator on dev dams</h3>
+<div id="genlist"></div>
+<h3>Learning through the simulator</h3>
+<p>The reservoir's mass balance and the cost J are simple and differentiable almost everywhere. So the network was trained by running it inside the simulator for up to 1,000 days at a time and back-propagating the cost through every day's storage (an analytic policy gradient). After the policy's window, SOP takes over for another year, so the storage it leaves behind is valued by what it does for the following year. Behaviour cloning of the perfect-foresight DP was tried first: it copies decisions that only make sense if you know the future, and reached only S<sub>J</sub> 0.25 on the first frozen set. A classical rule with a flood pool and hedging, tuned on the same simulations, was the bar to beat.</p>
+<h3>The network</h3>
+<p>15 inputs → 64 → 64 → 2 (tanh), 5,314 weights. The outputs are two fractions: h, the share of today's demand to release (below 1 means rationing now to save water), and e, an extra release toward 1.25 × (Qmax − demand) to make room before a flood. The dam's mass balance then caps the release by the water stored and spills anything above capacity. Checks: the numpy policy equals B's operating loop to 1e-17 and the training rollout to 5e-7; this page's JavaScript equals Python to 4e-14 (release relative to Qmax).</p>
+</section>
+
+<section class="col">
+<h2>Limits</h2>
+<ul id="limits"></ul>
+</section>
+
+<section class="col">
+<h2>Use it</h2>
+<p>The release is numpy-only. <span class="mono">reservoirpilot-v1.0.zip</span> holds the policy module, the weights, a demo on real exam dams, the model card and every training script.</p>
+<pre>import reservoirpilot as rp
+pol  = rp.Pilot.load('weights.npz')
+task = rp.make_task(first_half_df, scored_df, capacity_hm3)   # daily storage_hm3, inflow_cms, release_cms
+R, S = pol.run(task)                                          # release m3/s, end-of-day storage hm3
+print(rp.cost_components(R, S, task))
+# or day by day:  pol.reset(task); r = pol.act(t, storage_today)</pre>
+</section>
+
+<footer>
+<p><b>Data.</b> ResOpsUS v2 (Steyaert et al. 2022, Sci. Data 9, 34; CC BY 4.0), GRanD capacities (Lehner et al. 2011), California DWR CDEC, Caravan / ERA5-Land forcing (Kratzert et al. 2023; Muñoz-Sabater et al. 2021; CC BY 4.0) via WaterData. Task, splits and baselines: WaterData (Watershed Phase 1). Simulator: WaterSim. Part of ML Ratchet: trained on physics, graded on reality.</p>
+<p id="buildinfo"></p>
+</footer>
+</div>
+
+<script>
+/*ENGINE*/
+</script>
+<script>
+const DATA = /*DATA*/;
+(() => {
+  const $ = id => document.getElementById(id);
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const fmt = (v, d = 3) => v == null || !isFinite(v) ? '–' : (Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(d));
+  // ---------------- hero
+  const H = DATA.headline;
+  $('figs').innerHTML = [
+    ['pilot', H.pilot, 'ReservoirPilot, median J on 244 exam dams'], ['', H.sop, 'SOP (standard operating policy)'],
+    ['', H.hist, 'what the operators actually did'], ['', H.dp, 'perfect-foresight DP (knows the future)']]
+    .map(([c, v, l]) => `<div class="fig ${c}"><div class="v">${v.toFixed(3)}</div><div class="l">${l}</div></div>`).join('');
+  // staff gauge
+  (function gauge() {
+    const g = $('gauge'); let s = '';
+    for (let i = 0; i <= 20; i++) { const y = 10 + i * 10.5, big = i % 5 === 0;
+      s += `<rect x="${big ? 18 : 30}" y="${y}" width="${big ? 34 : 22}" height="${big ? 3 : 2}" fill="var(--fg)"/>`;
+      if (big) s += `<text x="56" y="${y + 4}" font-family="IBM Plex Mono, monospace" font-size="9" fill="var(--muted)">${100 - i * 5}</text>`; }
+    s += `<rect x="12" y="${10 + 0.35 * 210}" width="4" height="${0.65 * 210}" fill="var(--pilot)"/>`;
+    s += `<rect x="12" y="10" width="4" height="${0.15 * 210}" fill="var(--flood)" opacity=".8"/>`;
+    g.innerHTML = s;
+  })();
+  // ---------------- explorer
+  const dams = DATA.dams; let cur = 0, view = null, win = -1;
+  const chips = $('chips');
+  dams.forEach((d, i) => { const b = document.createElement('button'); b.className = 'chip'; b.textContent = d.label;
+    b.setAttribute('aria-pressed', i === 0); b.onclick = () => { cur = i; [...chips.children].forEach((c, j) => c.setAttribute('aria-pressed', j === i)); win = -1; load(); }; chips.appendChild(b); });
+  function rnd(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+  function gauss(r) { let u = 0, v = 0; while (u === 0) u = r(); v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function makeTask(d) {
+    const fI = +$('sI').value, fC = +$('sC').value, nz = +$('sN').value;
+    const cap = d.cap * fC, I = d.I.map(v => v * fI);
+    if (nz > 0) { const r = rnd(7), sd = nz * 0.002 * cap; let e0 = gauss(r) * sd;
+      for (let t = 0; t < I.length; t++) { const e1 = gauss(r) * sd; I[t] += (e1 - e0) / RP.K; e0 = e1; } }
+    return { I, doy: d.doy, Dcurve: d.Dcurve, Icurve: d.Icurve.map(v => v * 1), Qmax: d.Qmax, cap, S0: Math.min(d.S0 * (fC < 1 ? 1 : 1), cap) };
+  }
+  function load() {
+    const d = dams[cur];
+    $('damname').textContent = d.name;
+    $('dammeta').textContent = `${d.state} · main use ${d.use} · capacity ${fmt(d.cap, 0)} hm³ (${fmt(d.capYears, 2)} yr of inflow) · Qmax ${fmt(d.Qmax, 1)} m³/s · ${d.start} → ${d.end}` + (d.cdec ? ` · CDEC ${d.cdec}` : '');
+    const sel = $('win'); sel.innerHTML = '<option value="-1">whole scored window</option>';
+    const years = [...new Set(d.wy)]; years.forEach(y => { const o = document.createElement('option'); o.value = y; o.textContent = 'water year ' + y; sel.appendChild(o); });
+    sel.value = String(win);
+    compute();
+  }
+  let timer = null;
+  function compute() {
+    const d = dams[cur], task = makeTask(d), base = +$('sI').value === 1 && +$('sC').value === 1 && +$('sN').value === 0;
+    const p = RP.run(task, 'pilot', DATA.net), s = RP.run(task, 'sop');
+    const q = RP.dp(task);
+    view = { d, task, p, s, q, base };
+    draw(); table();
+  }
+  function schedule() { $('sIv').textContent = (+$('sI').value).toFixed(2); $('sCv').textContent = (+$('sC').value).toFixed(2); $('sNv').textContent = $('sN').value;
+    clearTimeout(timer); timer = setTimeout(compute, 120); }
+  ['sI', 'sC', 'sN'].forEach(id => $(id).addEventListener('input', schedule));
+  $('win').addEventListener('change', e => { win = +e.target.value; draw(); });
+  function range() { const d = dams[cur]; if (win < 0) return [0, d.I.length]; const a = d.wy.indexOf(win), b = d.wy.lastIndexOf(win) + 1; return [a, b]; }
+  function setup(c) { const dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = +c.getAttribute('height');
+    c.width = w * dpr; c.height = h * dpr; c.style.height = h + 'px'; const x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, w, h); return [x, w, h]; }
+  const PADL = 46, PADR = 8;
+  function axes(x, w, h, ticks, fy, lab) {
+    x.strokeStyle = css('--rule'); x.fillStyle = css('--muted'); x.font = '10px "IBM Plex Mono", monospace'; x.lineWidth = 1;
+    ticks.forEach(v => { const y = fy(v); if (y < 2 || y > h - 2) return; x.beginPath(); x.moveTo(PADL, y); x.lineTo(w - PADR, y); x.stroke(); x.fillText(lab(v), 2, y + 3); });
+  }
+  function line(x, arr, a, b, fx, fy, color, width, dash) {
+    x.strokeStyle = color; x.lineWidth = width; x.setLineDash(dash || []); x.beginPath();
+    const step = Math.max(1, Math.floor((b - a) / 1400));
+    for (let t = a; t < b; t += step) { const X = fx(t), Y = fy(arr[t]); t === a ? x.moveTo(X, Y) : x.lineTo(X, Y); }
+    x.stroke(); x.setLineDash([]);
+  }
+  function logTicks(lo, hi) { const out = []; for (let e = Math.floor(Math.log10(lo)); e <= Math.ceil(Math.log10(hi)); e++) out.push(10 ** e); return out; }
+  function draw() {
+    if (!view) return; const { d, task, p, s, q } = view; const [a, b] = range();
+    const fx = w => t => PADL + (t - a) / Math.max(b - a - 1, 1) * (w - PADL - PADR);
+    // storage
+    let [x, w, h] = setup($('cS')); const cap = task.cap, fyS = v => 6 + (1 - v / cap) * (h - 14), X = fx(w);
+    axes(x, w, h, [0, .25 * cap, .5 * cap, .75 * cap, cap], fyS, v => Math.round(v / cap * 100) + '%');
+    if (view.base) line(x, d.Sobs, a, b, X, fyS, css('--obs'), 1.2);
+    line(x, s.S, a, b, X, fyS, css('--sop'), 1.4); line(x, q.S, a, b, X, fyS, css('--dp'), 1.4, [4, 3]); line(x, p.S, a, b, X, fyS, css('--pilot'), 2);
+    // release
+    [x, w, h] = setup($('cR')); const Xr = fx(w);
+    let lo = Infinity, hi = 0; for (let t = a; t < b; t++) { for (const v of [p.R[t], s.R[t], p.D[t]]) { if (v > 0) { lo = Math.min(lo, v); hi = Math.max(hi, v); } } }
+    hi = Math.max(hi, task.Qmax) * 1.3; lo = Math.max(lo, hi / 3e3);
+    const fyR = v => 6 + (1 - (Math.log10(Math.max(v, lo)) - Math.log10(lo)) / (Math.log10(hi) - Math.log10(lo))) * (h - 14);
+    axes(x, w, h, logTicks(lo, hi), fyR, v => v >= 1 ? v.toFixed(0) : v.toPrecision(1));
+    if (view.base) line(x, d.Robs, a, b, Xr, fyR, css('--obs'), 1);
+    line(x, s.R, a, b, Xr, fyR, css('--sop'), 1.2); line(x, p.R, a, b, Xr, fyR, css('--pilot'), 1.8);
+    line(x, p.D, a, b, Xr, fyR, css('--fg'), 1, [2, 3]);
+    x.strokeStyle = css('--flood'); x.lineWidth = 1.5; x.beginPath(); x.moveTo(PADL, fyR(task.Qmax)); x.lineTo(w - PADR, fyR(task.Qmax)); x.stroke();
+    // inflow + e
+    [x, w, h] = setup($('cI')); const Xi = fx(w); let ilo = Infinity, ihi = 0;
+    for (let t = a; t < b; t++) { const v = task.I[t]; if (v > 0) { ilo = Math.min(ilo, v); ihi = Math.max(ihi, v); } }
+    ihi *= 1.2; ilo = Math.max(ilo, ihi / 1e4);
+    const fyI = v => 4 + (1 - (Math.log10(Math.max(v, ilo)) - Math.log10(ilo)) / (Math.log10(ihi) - Math.log10(ilo))) * (h - 10);
+    x.fillStyle = css('--water'); x.beginPath(); x.moveTo(Xi(a), h);
+    const st = Math.max(1, Math.floor((b - a) / 1400));
+    for (let t = a; t < b; t += st) x.lineTo(Xi(t), fyI(task.I[t])); x.lineTo(Xi(b - 1), h); x.closePath(); x.fill();
+    axes(x, w, h, logTicks(ilo, ihi), fyI, v => v >= 1 ? v.toFixed(0) : v.toPrecision(1));
+    x.fillStyle = css('--flood'); x.globalAlpha = .55;
+    for (let t = a; t < b; t += st) { const e = p.E[t]; if (e > 0.02) { const hh = e * (h - 10); x.fillRect(Xi(t), h - hh, Math.max(1, (w - PADL) / (b - a) * st), hh); } }
+    x.globalAlpha = 1;
+  }
+  function table() {
+    const { d, task, p, s, q, base } = view;
+    const rows = [['ReservoirPilot', RP.components(p.R, p.S, p.D, task.Qmax, task.cap, task.S0), 'me'], ['SOP', RP.components(s.R, s.S, s.D, task.Qmax, task.cap, task.S0)],
+      ['perfect-foresight DP', RP.components(q.R, q.S, q.D, task.Qmax, task.cap, task.S0)]];
+    if (base) rows.push(['what the operators did', RP.components(d.Robs, d.Sobs, p.D, task.Qmax, task.cap, task.S0)]);
+    $('damtab').innerHTML = '<tr><th>operator</th><th>J</th><th>shortage part</th><th>flood part</th><th>shortage ratio</th><th>days/yr above Qmax</th><th>mean storage</th><th>end − start storage</th></tr>' +
+      rows.map(([n, c, k]) => `<tr class="${k || ''}"><td>${n}</td><td>${fmt(c.J, 4)}</td><td>${fmt(c.J_short, 4)}</td><td>${fmt(c.J_flood, 4)}</td><td>${fmt(c.shortage_ratio, 3)}</td><td>${fmt(c.flood_days_per_yr, 1)}</td><td>${Math.round(c.S_mean_frac * 100)}%</td><td>${(c.dS_end * 100).toFixed(0)}%</td></tr>`).join('');
+  }
+  window.addEventListener('resize', () => { clearTimeout(timer); timer = setTimeout(draw, 100); });
+  load();
+  // ---------------- exam tables
+  const E = DATA.exam, cols = [['J', 'J', 4], ['J_short', 'shortage part', 4], ['J_flood', 'flood part', 4], ['shortage_ratio', 'shortage ratio', 3], ['flood_days_per_yr', 'days/yr > Qmax', 1],
+    ['S_mean_frac', 'mean storage', 2], ['S_min_frac', 'min storage', 2], ['S_end_minus_start_frac', 'end − start', 2]];
+  const names = { pilot: 'ReservoirPilot', tuned_rule_g4: 'tuned flood-pool rule (classical, sim-tuned)', sop: 'SOP', rule: 'rule curve', historical: 'historical operations', dp: 'perfect-foresight DP' };
+  function etab(t, order) {
+    return '<tr><th>policy</th><th>n</th>' + cols.map(c => `<th>${c[1]}</th>`).join('') + '</tr>' +
+      order.filter(k => t[k]).map(k => `<tr class="${k === 'pilot' ? 'me' : ''}"><td>${names[k]}</td><td>${t[k].n}</td>` + cols.map(c => `<td>${fmt(t[k][c[0]], c[2])}</td>`).join('') + '</tr>').join('');
+  }
+  const ORD = ['pilot', 'tuned_rule_g4', 'sop', 'rule', 'historical', 'dp'];
+  $('examtab').innerHTML = etab(E.resopsus_exam, ORD);
+  $('cdectab').innerHTML = '<tr><th>policy</th><th>median J</th><th>90% CI</th></tr>' + ORD.filter(k => E.cdec_recent[k]).map(k => `<tr class="${k === 'pilot' ? 'me' : ''}"><td>${names[k]}</td><td>${fmt(E.cdec_recent[k].J, 4)}</td><td>${E.cdec_recent_median_J_90ci[k] ? E.cdec_recent_median_J_90ci[k].map(v => v.toFixed(3)).join('–') : ''}</td></tr>`).join('');
+  $('examnote').innerHTML = DATA.examnote;
+  const U = E.by_main_use, NU = E.n_by_main_use;
+  $('usetab').innerHTML = '<tr><th>main use</th><th>n</th><th>pilot</th><th>SOP</th><th>DP</th></tr>' + Object.keys(U).sort((a, b) => (NU[b] || 0) - (NU[a] || 0)).map(u => `<tr><td>${u}</td><td>${NU[u] || ''}</td><td>${fmt(U[u].pilot, 4)}</td><td>${fmt(U[u].sop, 4)}</td><td>${fmt(U[u].dp, 4)}</td></tr>`).join('');
+  // scatter
+  function scatter() {
+    const [x, w, h] = setup($('cScatter')), P = 40, pts = DATA.scatter, lo = 1e-4, hi = 3;
+    const f = v => Math.log10(Math.min(Math.max(v, lo), hi)), sx = v => P + (f(v) - f(lo)) / (f(hi) - f(lo)) * (w - P - 10), sy = v => h - P + 10 - (f(v) - f(lo)) / (f(hi) - f(lo)) * (h - P - 10);
+    x.strokeStyle = css('--rule'); x.fillStyle = css('--muted'); x.font = '10px "IBM Plex Mono", monospace';
+    [1e-4, 1e-3, 1e-2, 1e-1, 1].forEach(v => { x.beginPath(); x.moveTo(sx(v), sy(lo)); x.lineTo(sx(v), sy(hi)); x.stroke(); x.beginPath(); x.moveTo(sx(lo), sy(v)); x.lineTo(sx(hi), sy(v)); x.stroke();
+      x.fillText(String(v), sx(v) - 8, h - 12); x.fillText(String(v), 2, sy(v) + 3); });
+    x.strokeStyle = css('--fg'); x.setLineDash([3, 3]); x.beginPath(); x.moveTo(sx(lo), sy(lo)); x.lineTo(sx(hi), sy(hi)); x.stroke(); x.setLineDash([]);
+    x.fillText('SOP J →', w - 60, h - 24); x.save(); x.translate(12, 60); x.rotate(-Math.PI / 2); x.fillText('pilot J →', -40, 0); x.restore();
+    pts.forEach(p => { x.fillStyle = p[1] < p[2] ? css('--pilot') : css('--flood'); x.globalAlpha = .75; x.beginPath(); x.arc(sx(p[2]), sy(p[1]), 2.6, 0, 7); x.fill(); });
+    x.globalAlpha = 1;
+  }
+  scatter(); window.addEventListener('resize', () => setTimeout(scatter, 120));
+  $('scatnote').innerHTML = DATA.scatnote;
+  $('losses').innerHTML = DATA.losses;
+  // ratchet
+  $('ratchettab').innerHTML = '<tr><th>rung</th><th>what changed</th><th>S<sub>J</sub> g1</th><th>S<sub>J</sub> g4</th><th>dev J</th><th>decision</th></tr>' +
+    DATA.ratchet.map(r => `<tr><td>${r.id}</td><td style="text-align:left;white-space:normal;min-width:260px;font-family:var(--body)">${r.desc}</td><td>${fmt(r.g1, 3)}</td><td>${fmt(r.g4, 3)}</td><td>${fmt(r.dev, 4)}</td><td class="${r.kept ? 'kept' : 'rej'}" style="text-align:left;white-space:normal;min-width:200px;font-family:var(--body)">${r.kept ? 'kept' : 'rejected'}: ${r.decision}</td></tr>`).join('');
+  $('ratchetnote').innerHTML = DATA.ratchetnote;
+  $('genlist').innerHTML = DATA.genlist;
+  $('limits').innerHTML = DATA.limits.map(l => `<li>${l}</li>`).join('');
+  $('buildinfo').textContent = DATA.buildinfo;
+})();
+</script>

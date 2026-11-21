@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Operate six real US dams with ReservoirPilot, SOP, a tuned rule and perfect-foresight DP in your browser, and change the inflow, capacity, gauge and demand.">
+<title>ReservoirPilot v1.0 · ML Ratchet</title><style>@@FONTS@@
+@@TOKENS@@
+@@INSTRUMENT@@
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans)}
+main,header,footer{max-width:1180px;margin:auto;padding-inline:clamp(16px,4vw,52px)}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:65px;border-bottom:1px solid var(--rule)}
+a{color:inherit;text-underline-offset:3px}nav{display:flex;align-items:center;gap:clamp(12px,3vw,29px)}nav a,header>a{text-decoration:none}
+header,button.meta,.label,th,.result{font:11px/1.45 var(--mono);letter-spacing:.035em}button.meta{color:var(--ink);border:1px solid var(--rule);background:transparent;padding:6px 9px;border-radius:3px;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+.hero{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(190px,1fr);align-items:end;gap:32px;padding:clamp(35px,6vw,74px) 0 28px}
+.label{text-transform:uppercase;color:var(--ink-2);margin:0 0 8px}.hero h1,h2,h3{font-family:var(--display);font-weight:400;margin:0}
+h1{font-size:clamp(46px,7.5vw,96px);letter-spacing:-.045em;line-height:.96}h2{font-size:clamp(34px,5vw,58px);line-height:1.05;letter-spacing:-.025em}
+.hero>p{color:var(--ink-2);margin:0;line-height:1.55;max-width:38ch}.instrument{--accent:#a61e4d}
+section.evidence{padding:clamp(40px,6vw,76px) 0;border-bottom:1px solid var(--rule)}
+.dek{max-width:70ch;color:var(--ink-2);font-size:17px;line-height:1.55;margin:12px 0 24px}
+.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:13px}
+td,th{padding:8px 8px;text-align:right;border-bottom:1px solid var(--rule-2);white-space:nowrap}th{color:var(--ink-2);font-size:10px;text-transform:uppercase}td:first-child,th:first-child{text-align:left;padding-left:0}
+td b{font-weight:650}tr.me td{color:var(--ink);background:color-mix(in srgb,#a61e4d 7%,transparent)}
+.verdicts td{white-space:normal;vertical-align:top}.verdicts td.bl{text-align:left;font-size:12px;color:var(--ink-2);line-height:1.5}.verdicts tr.note td{font-size:12px;color:var(--ink-2);text-align:left;border-bottom:1px solid var(--rule);padding-top:0;line-height:1.5}
+.verdicts td:first-child{max-width:24ch}.verdicts tr:not(.note) td{border-bottom:0}
+.v{font:11px/1 var(--mono);text-transform:uppercase;letter-spacing:.04em}.v.win{color:#2f9e44}.v.loss{color:#e03131}.v.tie,.v.mixed{color:#e8890c}.v.info{color:var(--ink-2)}
+.rungs td{white-space:normal;vertical-align:top;font-size:12px}.rungs td:nth-child(2),.rungs td:last-child{text-align:left;line-height:1.45;min-width:22ch}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(22px,5vw,64px)}.cols h3{font-size:32px}.cols p,footer{color:var(--ink-2);line-height:1.6}
+footer{padding-block:28px 40px;font-size:13px}footer p{max-width:84ch}.result{color:var(--ink-2);letter-spacing:0;max-width:110ch;line-height:1.6}
+details{margin-top:14px}summary{cursor:pointer;font:12px/1.4 var(--mono);color:var(--ink-2)}
+@media(max-width:650px){.hero,.cols{grid-template-columns:1fr;gap:16px}.hero>p{max-width:55ch}header{min-height:52px}nav{gap:10px}nav a{font-size:10px}td,th{padding:7px 5px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><a href="https://dogum.github.io/ML-Ratchet/">ML Ratchet</a><nav aria-label="Lab sections"><a href="#board">Gauge board</a><a href="#exam">Exam</a><a href="#honest">Honest part</a><a href="#ratchet">Ratchet</a><button class="meta" type="button" id="theme">Theme</button></nav></header>
+<main>
+<section id="board"><div class="hero"><div><p class="label">ReservoirPilot / Hydrology</p><h1>How much should the dam release today?</h1></div>
+<p>Pick one of six real US dams from the exam and watch a ten-year decade operated four ways: by ReservoirPilot, by SOP, by a rule tuned on the same simulator, and by a dynamic program that knew all the future inflow. Make the decade drier, add a flood, shrink the reservoir, blur the gauge or raise demand. Every policy re-runs in your browser.</p></div>
+<div id="instrument" class="instrument"></div><noscript>Enable JavaScript to run the policies. The full exam appears below.</noscript>
+<p class="result">The six dams are a fixed random draw within main-use strata (flood control, irrigation, hydropower; two each), not picked by result. Storage is shown as a share of capacity; release and inflow as a share of Qmax, the 99th-percentile release of the calibration decade. On the recorded decade the live pilot reproduces the exam run of the released weights to 3e-6 relative in J (float32 weights; the excerpts store inflow to 6 significant digits).</p></section>
+
+<section id="exam" class="evidence"><p class="label">WaterData's frozen exam · 244 ResOpsUS dams + 15 CDEC reservoirs · run once</p><h2>The exam, every row</h2>
+<p class="dek">Lower J is better. The pilot wins on J against the fairest baseline we have, a flood-pool and hedging rule tuned on the same simulator (0.0154 against 0.0285, better on 63 % of dams, 95 % interval 56-69 %). It does so partly by keeping the reservoir lower: J charges nothing for stored water, and the storage rows say so beside the headline.</p>
+<div class="scroll" tabindex="0" role="region" aria-label="Exam rows from model.yaml"><table class="verdicts"><thead><tr><th>Row</th><th>Pilot</th><th style="text-align:left">Baselines</th><th>Verdict</th></tr></thead><tbody>@@VERDICTS@@</tbody></table></div>
+<p class="result">Intervals: the shipped 90 % bootstrap interval of the median J (dams resampled), and the exact Clopper-Pearson 95 % interval of each shipped win fraction (ties count against the pilot). Per-dam scores were not shipped, so there are no paired intervals on differences; component rows without an interval are judged from the median only where the gap is large.</p>
+<details open><summary>Every component, ResOpsUS exam (244 dams, medians)</summary><div class="scroll" tabindex="0" role="region" aria-label="Every cost component"><table><thead><tr><th>Policy</th><th>J</th><th>Shortage part</th><th>Flood part</th><th>Shortage ratio</th><th>Days short</th><th>Days/yr &gt; Qmax</th><th>Worst excess ÷ Qmax</th><th>Mean storage</th><th>End − start</th><th>Days near empty</th><th>Days full</th></tr></thead><tbody>@@COMPONENTS@@</tbody></table></div></details>
+<details><summary>Every component, mass-balance-consistent subset (151 dams)</summary><div class="scroll" tabindex="0" role="region" aria-label="Every cost component, mass-balance subset"><table><thead><tr><th>Policy</th><th>J</th><th>Shortage part</th><th>Flood part</th><th>Shortage ratio</th><th>Days short</th><th>Days/yr &gt; Qmax</th><th>Worst excess ÷ Qmax</th><th>Mean storage</th><th>End − start</th><th>Days near empty</th><th>Days full</th></tr></thead><tbody>@@COMPONENTS_MB@@</tbody></table></div></details>
+<details><summary>Every component, CDEC recent exam (15 California reservoirs, WY2021-2025)</summary><div class="scroll" tabindex="0" role="region" aria-label="Every cost component, CDEC"><table><thead><tr><th>Policy</th><th>J</th><th>Shortage part</th><th>Flood part</th><th>Shortage ratio</th><th>Days short</th><th>Days/yr &gt; Qmax</th><th>Worst excess ÷ Qmax</th><th>Mean storage</th><th>End − start</th><th>Days near empty</th><th>Days full</th></tr></thead><tbody>@@COMPONENTS_CDEC@@</tbody></table></div></details></section>
+
+<section id="honest" class="evidence"><div class="cols"><div><p class="label">The honest part</p><h3>What J does not charge for</h3><p>J = mean daily (shortage ÷ demand)² + 10 (excess over Qmax ÷ Qmax)². Stored water is free. The pilot learned that: it keeps a median 38 % of capacity where SOP keeps 59 % and the DP bound 68 %, it releases a little less than demand on two days in three, and it goes over Qmax on more days than anyone (2.9 a year) but by only 4 % of Qmax. The shipped card says it ends the decade at least 20 % of capacity lower than it started on a third of the dams; that per-dam number could not be re-checked from the shipped files. A storage-aware objective is the first next rung.</p></div>
+<div><p class="label">Where it fails</p><h3>Drier decades, big supply dams</h3><p>It loses to SOP on 37 of 244 dams. By the shipped card these are mostly large irrigation and supply reservoirs, two years of inflow deep, whose scored decade was drier than the decade their demand and inflow normal came from. Try it above: turn the inflow down to ×0.7 and watch the pilot keep releasing for a normal that no longer arrives. On the 15 recent California reservoirs it only ties the tuned rule (better on 8 of 15).</p></div></div></section>
+
+<section id="ratchet" class="evidence"><p class="label">The ratchet · frozen simulated sets g1 → g4 · 15 real dev dams as the gate</p><h2>Ten rungs, two void runs, one re-scoring</h2>
+<p class="dek">S_J = 1 − median J ÷ median J of SOP on the frozen simulated set; a rung must add more than 0.01 and keep the dev dams within 5 %. When the generator moved to g4 (non-stationary decades, gauge noise, upstream regulation), every rung was re-scored and every decision re-taken in order.</p>
+<div class="scroll" tabindex="0" role="region" aria-label="Every rung"><table class="rungs"><thead><tr><th>Rung</th><th style="text-align:left">Change</th><th>S_J g1</th><th>g2</th><th>g3</th><th>g4</th><th>Dev J</th><th>Decision</th><th style="text-align:left">Why</th></tr></thead><tbody>@@RUNGS@@</tbody></table></div>
+<p class="result">@@LADDER_NOTE@@</p></section>
+</main><footer><p>The six dams come from ResOpsUS v2 (Steyaert, Condon, Turner &amp; Voisin 2022, Scientific Data 9:34; CC BY 4.0) with GRanD attributes (Lehner et al. 2011; CC BY 4.0, via ResOpsUS+CARS). The recent exam uses California DWR's CDEC. Training inflows came from WaterSim driven by ERA5-Land forcing via Caravan (Kratzert et al. 2023; Muñoz-Sabater et al. 2021; CC BY 4.0 and Copernicus licence), which under-catches mountain and Pacific Northwest precipitation; the exam runs on recorded inflow. J and the baselines are WaterData's (Watershed Phase 1). Research benchmark, not an operating tool.</p>
+<p><a href="https://doi.org/10.5281/zenodo.6612040">ResOpsUS</a> · <a href="https://cdec.water.ca.gov">CDEC</a> · <a href="https://github.com/dogum/ML-Ratchet/tree/main/models/reservoirpilot">Model and build record</a></p></footer>
+@@PACKS@@
+<script>@@JS@@</script></body></html>

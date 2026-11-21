@@ -1,0 +1,2957 @@
+{
+ "what": "Snow vs SNOTEL SWE at DEV stations (B's splits['snotel']['dev']), station P and T as forcing (radiation from the",
+ "windows": {
+  "cal": [
+   "2000-10-01",
+   "2010-09-30"
+  ],
+  "val": [
+   "2010-10-01",
+   "2025-09-30"
+  ],
+  "spinup": [
+   "1999-10-01",
+   "2000-09-30"
+  ]
+ },
+ "n_stations": 33,
+ "skipped": {
+  "1068_WA_SNTL": "too little SWE in the windows (1527 calibration days)",
+  "1078_OR_SNTL": "too little SWE in the windows (1556 calibration days)",
+  "1084_OR_SNTL": "too little SWE in the windows (1470 calibration days)",
+  "1134_WY_SNTL": "too little SWE in the windows (58 calibration days)",
+  "1146_UT_SNTL": "too little SWE in the windows (0 calibration days)",
+  "1228_UT_SNTL": "too little SWE in the windows (0 calibration days)"
+ },
+ "n_co_located": 1,
+ "summary_median": {
+  "degree_day": {
+   "default_cal": {
+    "NSE": 0.7110423067107295,
+    "KGE": 0.5987525248030214,
+    "peak_rel_err_median": -0.19890051188205327,
+    "melt_out_abs_err_days_median": 15.0
+   },
+   "default_val": {
+    "NSE": 0.7004926063082291,
+    "KGE": 0.5713443848390156,
+    "peak_rel_err_median": -0.25961953622018175,
+    "melt_out_abs_err_days_median": 18.0
+   },
+   "calibrated_cal": {
+    "NSE": 0.927107935788937,
+    "KGE": 0.9453368371114342,
+    "peak_rel_err_median": -0.007429673060884382,
+    "melt_out_abs_err_days_median": 5.0
+   },
+   "calibrated_val": {
+    "NSE": 0.8915685430201946,
+    "KGE": 0.879810166877467,
+    "peak_rel_err_median": -0.05356414823551487,
+    "melt_out_abs_err_days_median": 6.0
+   }
+  },
+  "energy_balance": {
+   "default_cal": {
+    "NSE": 0.8053425514474344,
+    "KGE": 0.6269257786604123,
+    "peak_rel_err_median": -0.2509606535879011,
+    "melt_out_abs_err_days_median": 9.0
+   },
+   "default_val": {
+    "NSE": 0.8236433560125227,
+    "KGE": 0.6340792336512753,
+    "peak_rel_err_median": -0.22387184390289638,
+    "melt_out_abs_err_days_median": 8.0
+   },
+   "calibrated_cal": {
+    "NSE": 0.9534740094692723,
+    "KGE": 0.961502425385261,
+    "peak_rel_err_median": -0.02029487099315954,
+    "melt_out_abs_err_days_median": 3.5
+   },
+   "calibrated_val": {
+    "NSE": 0.9302678998571383,
+    "KGE": 0.8635177000683241,
+    "peak_rel_err_median": -0.01747351477925612,
+    "melt_out_abs_err_days_median": 5.0
+   }
+  }
+ },
+ "stations": [
+  {
+   "station": "1052_CA_SNTL",
+   "elev_m": 2852.9280000000003,
+   "lat": 38.39747,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.17808057244409126,
+     "KGE": 0.041581605299148894,
+     "peak_rel_err_median": -0.5870125283981483,
+     "melt_out_err_days_median": -27.0,
+     "melt_out_abs_err_days_median": 27.0,
+     "n_years": 7
+    },
+    "default_val": {
+     "NSE": 0.548370795189826,
+     "KGE": 0.21861276046334288,
+     "peak_rel_err_median": -0.4299215499641507,
+     "melt_out_err_days_median": -17.0,
+     "melt_out_abs_err_days_median": 18.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 2.499977596669308,
+     "CFMAX": 4.768933726980494,
+     "SFCF": 1.3999830022879873
+    },
+    "calibrated_cal": {
+     "NSE": 0.8437096316242731,
+     "KGE": 0.851067796503856,
+     "peak_rel_err_median": -0.1255845692478396,
+     "melt_out_err_days_median": 9.0,
+     "melt_out_abs_err_days_median": 10.0,
+     "n_years": 7
+    },
+    "calibrated_val": {
+     "NSE": 0.9129245277494994,
+     "KGE": 0.852652846763676,
+     "peak_rel_err_median": 0.11699446989743088,
+     "melt_out_err_days_median": 13.0,
+     "melt_out_abs_err_days_median": 13.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.5192862080199934,
+     "KGE": 0.298334511814098,
+     "peak_rel_err_median": -0.5086152299868065,
+     "melt_out_err_days_median": -23.0,
+     "melt_out_abs_err_days_median": 23.0,
+     "n_years": 7
+    },
+    "default_val": {
+     "NSE": 0.7232824629355779,
+     "KGE": 0.3914889900727231,
+     "peak_rel_err_median": -0.3977625826704518,
+     "melt_out_err_days_median": -8.0,
+     "melt_out_abs_err_days_median": 8.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 2.403868133633896,
+     "SFCF": 1.3997394716462868,
+     "ALB_MIN": 0.5622164292494478,
+     "ALB_DECAY": 3.0492289137222692,
+     "Z0": 0.00020783943285988072,
+     "TURB": 0.2009583509501144
+    },
+    "calibrated_cal": {
+     "NSE": 0.8660118492056212,
+     "KGE": 0.8084251475656918,
+     "peak_rel_err_median": -0.11337182487352034,
+     "melt_out_err_days_median": 3.0,
+     "melt_out_abs_err_days_median": 10.0,
+     "n_years": 7
+    },
+    "calibrated_val": {
+     "NSE": 0.9250249768170388,
+     "KGE": 0.861565199680326,
+     "peak_rel_err_median": 0.12765807086125683,
+     "melt_out_err_days_median": 15.0,
+     "melt_out_abs_err_days_median": 15.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "1054_UT_SNTL",
+   "elev_m": 2087.88,
+   "lat": 40.992,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.6796095426982673,
+     "KGE": 0.48257998651941714,
+     "peak_rel_err_median": -0.4026657750630186,
+     "melt_out_err_days_median": -15.0,
+     "melt_out_abs_err_days_median": 15.0,
+     "n_years": 7
+    },
+    "default_val": {
+     "NSE": 0.7512979150692978,
+     "KGE": 0.46927139621930025,
+     "peak_rel_err_median": -0.31494675766303365,
+     "melt_out_err_days_median": -20.0,
+     "melt_out_abs_err_days_median": 20.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 2.160874539053271,
+     "CFMAX": 6.585523992449557,
+     "SFCF": 0.9873822447523568
+    },
+    "calibrated_cal": {
+     "NSE": 0.927107935788937,
+     "KGE": 0.9507247912658257,
+     "peak_rel_err_median": -0.06284290636711921,
+     "melt_out_err_days_median": 2.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 7
+    },
+    "calibrated_val": {
+     "NSE": 0.9353910675342569,
+     "KGE": 0.9305690997148781,
+     "peak_rel_err_median": -0.05356414823551487,
+     "melt_out_err_days_median": 1.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.8928559798495594,
+     "KGE": 0.8582579009844746,
+     "peak_rel_err_median": -0.12299603736757754,
+     "melt_out_err_days_median": 6.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 7
+    },
+    "default_val": {
+     "NSE": 0.923912510963368,
+     "KGE": 0.8858364783440134,
+     "peak_rel_err_median": -0.10039363327776252,
+     "melt_out_err_days_median": 8.0,
+     "melt_out_abs_err_days_median": 8.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.7595053104527074,
+     "SFCF": 1.1516908302745303,
+     "ALB_MIN": 0.31226688484927023,
+     "ALB_DECAY": 3.0119531180399117,
+     "Z0": 0.0002771746003770823,
+     "TURB": 0.20207777485263903
+    },
+    "calibrated_cal": {
+     "NSE": 0.9666527651859657,
+     "KGE": 0.9741021288168095,
+     "peak_rel_err_median": 0.007242788936263421,
+     "melt_out_err_days_median": 2.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 7
+    },
+    "calibrated_val": {
+     "NSE": 0.967746550639085,
+     "KGE": 0.9552200381580165,
+     "peak_rel_err_median": 0.01079278517829868,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "1059_CO_SNTL",
+   "elev_m": 3054.096,
+   "lat": 38.16273,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.8401168836089421,
+     "KGE": 0.806105931704029,
+     "peak_rel_err_median": 0.2551491528002707,
+     "melt_out_err_days_median": -1.5,
+     "melt_out_abs_err_days_median": 5.5,
+     "n_years": 6
+    },
+    "default_val": {
+     "NSE": 0.8669011459588936,
+     "KGE": 0.8571379845080203,
+     "peak_rel_err_median": 0.031629259050306176,
+     "melt_out_err_days_median": -9.0,
+     "melt_out_abs_err_days_median": 9.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -0.36254474548382865,
+     "CFMAX": 3.962889438821745,
+     "SFCF": 0.9214724308495634
+    },
+    "calibrated_cal": {
+     "NSE": 0.8887087091327774,
+     "KGE": 0.8811535801466963,
+     "peak_rel_err_median": 0.0680547245299774,
+     "melt_out_err_days_median": -6.0,
+     "melt_out_abs_err_days_median": 10.0,
+     "n_years": 6
+    },
+    "calibrated_val": {
+     "NSE": 0.7986324673762086,
+     "KGE": 0.6649690478539392,
+     "peak_rel_err_median": -0.13597288355908732,
+     "melt_out_err_days_median": -13.0,
+     "melt_out_abs_err_days_median": 13.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.7482329782568844,
+     "KGE": 0.6209931232969501,
+     "peak_rel_err_median": -0.27472403163845094,
+     "melt_out_err_days_median": -5.0,
+     "melt_out_abs_err_days_median": 10.0,
+     "n_years": 6
+    },
+    "default_val": {
+     "NSE": 0.6521680664088716,
+     "KGE": 0.40399190296377074,
+     "peak_rel_err_median": -0.4096833599215273,
+     "melt_out_err_days_median": -16.0,
+     "melt_out_abs_err_days_median": 16.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 2.266424155509865,
+     "SFCF": 1.000056519264605,
+     "ALB_MIN": 0.5241275933545388,
+     "ALB_DECAY": 3.4566545878939254,
+     "Z0": 0.0005298208854468122,
+     "TURB": 0.28977565438629793
+    },
+    "calibrated_cal": {
+     "NSE": 0.8813844261435643,
+     "KGE": 0.8845568964381876,
+     "peak_rel_err_median": 0.031658414159070086,
+     "melt_out_err_days_median": -5.0,
+     "melt_out_abs_err_days_median": 8.5,
+     "n_years": 6
+    },
+    "calibrated_val": {
+     "NSE": 0.8525285031431193,
+     "KGE": 0.7185976752385023,
+     "peak_rel_err_median": -0.08460867681997278,
+     "melt_out_err_days_median": -9.0,
+     "melt_out_abs_err_days_median": 9.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "352_WA_SNTL",
+   "elev_m": 1292.352,
+   "lat": 47.35037,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.8567228307247339,
+     "KGE": 0.8648502052844397,
+     "peak_rel_err_median": -0.017193856112191333,
+     "melt_out_err_days_median": -5.5,
+     "melt_out_abs_err_days_median": 5.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.7004926063082291,
+     "KGE": 0.7897736027327922,
+     "peak_rel_err_median": -0.1697883618354425,
+     "melt_out_err_days_median": -8.0,
+     "melt_out_abs_err_days_median": 11.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 2.1087862761664136,
+     "CFMAX": 7.983564493579708,
+     "SFCF": 0.7542846062226576
+    },
+    "calibrated_cal": {
+     "NSE": 0.9249476499132241,
+     "KGE": 0.9453368371114342,
+     "peak_rel_err_median": 0.019844157982625853,
+     "melt_out_err_days_median": -3.5,
+     "melt_out_abs_err_days_median": 6.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8421956510002577,
+     "KGE": 0.9196698855298281,
+     "peak_rel_err_median": -0.06816109029121595,
+     "melt_out_err_days_median": -4.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.7720642738760779,
+     "KGE": 0.6109777484989576,
+     "peak_rel_err_median": 0.20336880049635128,
+     "melt_out_err_days_median": 9.5,
+     "melt_out_abs_err_days_median": 9.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.5679634168943875,
+     "KGE": 0.4344548823175334,
+     "peak_rel_err_median": 0.3299737410254615,
+     "melt_out_err_days_median": 10.0,
+     "melt_out_abs_err_days_median": 10.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -0.5404791835351557,
+     "SFCF": 0.8603895871967615,
+     "ALB_MIN": 0.30040790028624137,
+     "ALB_DECAY": 13.289857447055729,
+     "Z0": 0.0010138279947934715,
+     "TURB": 0.7964041796904691
+    },
+    "calibrated_cal": {
+     "NSE": 0.9487002242758877,
+     "KGE": 0.961502425385261,
+     "peak_rel_err_median": -0.004255022039710933,
+     "melt_out_err_days_median": -1.5,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8706243717844788,
+     "KGE": 0.9154097752674624,
+     "peak_rel_err_median": -0.01747351477925612,
+     "melt_out_err_days_median": -1.0,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "426_CO_SNTL",
+   "elev_m": 2731.0080000000003,
+   "lat": 40.16749,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.8201837903890945,
+     "KGE": 0.6788871948776927,
+     "peak_rel_err_median": -0.18736313342629157,
+     "melt_out_err_days_median": -14.5,
+     "melt_out_abs_err_days_median": 14.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.6763233244380487,
+     "KGE": 0.5713443848390156,
+     "peak_rel_err_median": -0.2604411119464122,
+     "melt_out_err_days_median": -18.0,
+     "melt_out_abs_err_days_median": 18.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 1.3910891755361057,
+     "CFMAX": 4.202770539671048,
+     "SFCF": 1.0548284760575823
+    },
+    "calibrated_cal": {
+     "NSE": 0.9694150716235164,
+     "KGE": 0.978832128685936,
+     "peak_rel_err_median": -0.0041584408074360965,
+     "melt_out_err_days_median": 0.5,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9134787529089046,
+     "KGE": 0.9156216535971862,
+     "peak_rel_err_median": -0.025107576954425948,
+     "melt_out_err_days_median": -4.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.8770120528082812,
+     "KGE": 0.686071683021479,
+     "peak_rel_err_median": -0.26353829774998294,
+     "melt_out_err_days_median": -3.0,
+     "melt_out_abs_err_days_median": 7.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8832919209263862,
+     "KGE": 0.7357118512770109,
+     "peak_rel_err_median": -0.18825764971839934,
+     "melt_out_err_days_median": -2.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -0.7321388929134542,
+     "SFCF": 1.1412993304162478,
+     "ALB_MIN": 0.5018759051198378,
+     "ALB_DECAY": 3.0129215892928674,
+     "Z0": 0.0003481494295001885,
+     "TURB": 0.44198073190188764
+    },
+    "calibrated_cal": {
+     "NSE": 0.9775327036667778,
+     "KGE": 0.978572785739467,
+     "peak_rel_err_median": -0.0400062582796248,
+     "melt_out_err_days_median": -1.5,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.926199879591631,
+     "KGE": 0.925935066169109,
+     "peak_rel_err_median": -0.00683845823810435,
+     "melt_out_err_days_median": -3.0,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "427_MT_SNTL",
+   "elev_m": 1868.4240000000002,
+   "lat": 46.78936,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.1082645861674908,
+     "KGE": 0.15997228113984563,
+     "peak_rel_err_median": -0.4659229293974002,
+     "melt_out_err_days_median": -38.0,
+     "melt_out_abs_err_days_median": 38.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.22123712335463175,
+     "KGE": 0.17441796234148266,
+     "peak_rel_err_median": -0.5125482397923055,
+     "melt_out_err_days_median": -38.0,
+     "melt_out_abs_err_days_median": 38.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 1.5999226623093161,
+     "CFMAX": 2.443330097676638,
+     "SFCF": 0.9959322320888938
+    },
+    "calibrated_cal": {
+     "NSE": 0.9368123508443499,
+     "KGE": 0.9568834166025538,
+     "peak_rel_err_median": 0.006606379804770721,
+     "melt_out_err_days_median": 5.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8797942027963385,
+     "KGE": 0.9064582336276551,
+     "peak_rel_err_median": -0.06112612508134199,
+     "melt_out_err_days_median": 6.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.8191010859907777,
+     "KGE": 0.6920669483900334,
+     "peak_rel_err_median": -0.2144704456778639,
+     "melt_out_err_days_median": -8.5,
+     "melt_out_abs_err_days_median": 8.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8016238633585839,
+     "KGE": 0.6453786367236052,
+     "peak_rel_err_median": -0.2647344254890474,
+     "melt_out_err_days_median": -14.0,
+     "melt_out_abs_err_days_median": 14.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.8006991656101357,
+     "SFCF": 0.9642437179331853,
+     "ALB_MIN": 0.5431922397948598,
+     "ALB_DECAY": 11.507842244744896,
+     "Z0": 0.0003200887865010184,
+     "TURB": 0.2757890992639296
+    },
+    "calibrated_cal": {
+     "NSE": 0.9726518524121962,
+     "KGE": 0.979064831396009,
+     "peak_rel_err_median": -0.026742563617667567,
+     "melt_out_err_days_median": 1.5,
+     "melt_out_abs_err_days_median": 2.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.968083776129357,
+     "KGE": 0.9565680633016738,
+     "peak_rel_err_median": -0.045177406506523445,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "461_UT_SNTL",
+   "elev_m": 2529.84,
+   "lat": 39.31213,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.7256933894893436,
+     "KGE": 0.5987525248030214,
+     "peak_rel_err_median": -0.2089129310243032,
+     "melt_out_err_days_median": -18.0,
+     "melt_out_abs_err_days_median": 18.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.7791355560863412,
+     "KGE": 0.5895434076938821,
+     "peak_rel_err_median": -0.29322076453492746,
+     "melt_out_err_days_median": -18.0,
+     "melt_out_abs_err_days_median": 18.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -0.8948987686549761,
+     "CFMAX": 1.9641828650045223,
+     "SFCF": 1.147897448567515
+    },
+    "calibrated_cal": {
+     "NSE": 0.7867888536215063,
+     "KGE": 0.7356638898886436,
+     "peak_rel_err_median": -0.11674178645711197,
+     "melt_out_err_days_median": -5.0,
+     "melt_out_abs_err_days_median": 9.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8663399170015049,
+     "KGE": 0.7203338710924023,
+     "peak_rel_err_median": -0.28350620883067995,
+     "melt_out_err_days_median": -7.0,
+     "melt_out_abs_err_days_median": 9.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.7175338220234868,
+     "KGE": 0.5644916771292452,
+     "peak_rel_err_median": -0.3449547537344547,
+     "melt_out_err_days_median": -11.0,
+     "melt_out_abs_err_days_median": 11.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.7956544980536784,
+     "KGE": 0.5357066234252333,
+     "peak_rel_err_median": -0.44542314067998395,
+     "melt_out_err_days_median": -12.0,
+     "melt_out_abs_err_days_median": 12.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -1.486803112002653,
+     "SFCF": 1.1330350913922613,
+     "ALB_MIN": 0.5776029134260452,
+     "ALB_DECAY": 3.2414076664201934,
+     "Z0": 0.0002836738896792069,
+     "TURB": 0.42809601848912365
+    },
+    "calibrated_cal": {
+     "NSE": 0.7883694363374673,
+     "KGE": 0.7326326259412013,
+     "peak_rel_err_median": -0.12324084650493011,
+     "melt_out_err_days_median": -5.0,
+     "melt_out_abs_err_days_median": 7.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9092534274514313,
+     "KGE": 0.699890442644654,
+     "peak_rel_err_median": -0.26527508009279394,
+     "melt_out_err_days_median": -5.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "478_WA_SNTL",
+   "elev_m": 1048.512,
+   "lat": 47.53565,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.9183211885671564,
+     "KGE": 0.8919683539050505,
+     "peak_rel_err_median": -0.002127605440368683,
+     "melt_out_err_days_median": -10.0,
+     "melt_out_abs_err_days_median": 10.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.9084626951450128,
+     "KGE": 0.8227300873707615,
+     "peak_rel_err_median": -0.07764512675291885,
+     "melt_out_err_days_median": -12.0,
+     "melt_out_abs_err_days_median": 12.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.3162089485376294,
+     "CFMAX": 3.666930563109118,
+     "SFCF": 0.8357163445978006
+    },
+    "calibrated_cal": {
+     "NSE": 0.9748665743159909,
+     "KGE": 0.9830450748270905,
+     "peak_rel_err_median": -0.022199625196880957,
+     "melt_out_err_days_median": -2.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9777100458469327,
+     "KGE": 0.96940474522606,
+     "peak_rel_err_median": -0.00881302808204907,
+     "melt_out_err_days_median": -4.0,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.7776552189944634,
+     "KGE": 0.5449782448666853,
+     "peak_rel_err_median": 0.2638205298807156,
+     "melt_out_err_days_median": 7.0,
+     "melt_out_abs_err_days_median": 7.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.7776053840443411,
+     "KGE": 0.5245806727623329,
+     "peak_rel_err_median": 0.33199105085289227,
+     "melt_out_err_days_median": 6.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -0.1517435065985091,
+     "SFCF": 0.9070752354166022,
+     "ALB_MIN": 0.5155505864671809,
+     "ALB_DECAY": 3.56413895978981,
+     "Z0": 0.0013397876627068942,
+     "TURB": 1.5277058844136386
+    },
+    "calibrated_cal": {
+     "NSE": 0.9759432199808966,
+     "KGE": 0.9828070292031781,
+     "peak_rel_err_median": -0.02810535701097384,
+     "melt_out_err_days_median": -1.5,
+     "melt_out_abs_err_days_median": 2.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9761604952340093,
+     "KGE": 0.9758735737789443,
+     "peak_rel_err_median": -0.013761241914982111,
+     "melt_out_err_days_median": -4.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "489_ID_SNTL",
+   "elev_m": 2276.856,
+   "lat": 43.87722,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.8747109950510162,
+     "KGE": 0.7984201520003144,
+     "peak_rel_err_median": -0.01963327721642069,
+     "melt_out_err_days_median": -11.5,
+     "melt_out_abs_err_days_median": 11.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.9400222494562186,
+     "KGE": 0.8613698840619621,
+     "peak_rel_err_median": -0.06674551697964393,
+     "melt_out_err_days_median": -11.0,
+     "melt_out_abs_err_days_median": 11.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.6459667330038226,
+     "CFMAX": 2.9231338934098092,
+     "SFCF": 1.029586406972487
+    },
+    "calibrated_cal": {
+     "NSE": 0.9433347393576742,
+     "KGE": 0.9621206292629542,
+     "peak_rel_err_median": -0.005014584685221538,
+     "melt_out_err_days_median": 3.5,
+     "melt_out_abs_err_days_median": 7.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9632817998812785,
+     "KGE": 0.9261874580376257,
+     "peak_rel_err_median": 0.043035566951256966,
+     "melt_out_err_days_median": 6.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.8288714328354222,
+     "KGE": 0.6269257786604123,
+     "peak_rel_err_median": -0.24424309664068178,
+     "melt_out_err_days_median": -10.0,
+     "melt_out_abs_err_days_median": 10.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.9150157178689287,
+     "KGE": 0.7460704119208681,
+     "peak_rel_err_median": -0.1940611824670912,
+     "melt_out_err_days_median": -8.0,
+     "melt_out_abs_err_days_median": 8.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 1.9919967695519718,
+     "SFCF": 1.0286856558065007,
+     "ALB_MIN": 0.5587735791164664,
+     "ALB_DECAY": 3.0079813268212017,
+     "Z0": 0.00023405365327767148,
+     "TURB": 0.20402353192417977
+    },
+    "calibrated_cal": {
+     "NSE": 0.9703984821048579,
+     "KGE": 0.9828923271649993,
+     "peak_rel_err_median": 0.024481403088975368,
+     "melt_out_err_days_median": -0.5,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9649693960467972,
+     "KGE": 0.9435173619928015,
+     "peak_rel_err_median": 0.018046088180539963,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "510_MT_SNTL",
+   "elev_m": 1533.144,
+   "lat": 48.30754,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.7497738700556107,
+     "KGE": 0.6313782884764484,
+     "peak_rel_err_median": -0.12427654593250596,
+     "melt_out_err_days_median": -14.0,
+     "melt_out_abs_err_days_median": 14.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.7306967347928128,
+     "KGE": 0.6205388630542263,
+     "peak_rel_err_median": -0.18613787305457274,
+     "melt_out_err_days_median": -16.0,
+     "melt_out_abs_err_days_median": 16.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 1.222235466677632,
+     "CFMAX": 3.6690092054459007,
+     "SFCF": 0.9557743527836746
+    },
+    "calibrated_cal": {
+     "NSE": 0.9472720819530721,
+     "KGE": 0.9534031557083315,
+     "peak_rel_err_median": 0.01850713797405962,
+     "melt_out_err_days_median": -0.5,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9375196124433804,
+     "KGE": 0.8903723500472127,
+     "peak_rel_err_median": 0.07011433366053066,
+     "melt_out_err_days_median": 1.0,
+     "melt_out_abs_err_days_median": 2.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.8944844776642136,
+     "KGE": 0.7113433401592952,
+     "peak_rel_err_median": -0.17793269209356957,
+     "melt_out_err_days_median": -3.0,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.9291579659015283,
+     "KGE": 0.8913115387426085,
+     "peak_rel_err_median": -0.08545110881358636,
+     "melt_out_err_days_median": -1.0,
+     "melt_out_abs_err_days_median": 2.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.5029513145443896,
+     "SFCF": 0.9943205801916759,
+     "ALB_MIN": 0.36106821640307724,
+     "ALB_DECAY": 18.21551804539103,
+     "Z0": 0.00045692918883759125,
+     "TURB": 0.2707105536089112
+    },
+    "calibrated_cal": {
+     "NSE": 0.9614424989223708,
+     "KGE": 0.9685471057720946,
+     "peak_rel_err_median": 0.0202771955662785,
+     "melt_out_err_days_median": -0.5,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8972395985495282,
+     "KGE": 0.8009611313356495,
+     "peak_rel_err_median": 0.11854827361122708,
+     "melt_out_err_days_median": 4.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "512_WY_SNTL",
+   "elev_m": 2548.128,
+   "lat": 44.25602,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": -0.06559530414114145,
+     "KGE": -0.07821308147107486,
+     "peak_rel_err_median": -0.536596265106074,
+     "melt_out_err_days_median": -23.5,
+     "melt_out_abs_err_days_median": 23.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": -0.003462830932928762,
+     "KGE": -0.021664894607133833,
+     "peak_rel_err_median": -0.5918708689550439,
+     "melt_out_err_days_median": -24.0,
+     "melt_out_abs_err_days_median": 24.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 2.4997512007312057,
+     "CFMAX": 5.407187182516347,
+     "SFCF": 1.2697909700949452
+    },
+    "calibrated_cal": {
+     "NSE": 0.7903469826795608,
+     "KGE": 0.8360706291428812,
+     "peak_rel_err_median": 0.0357286943452946,
+     "melt_out_err_days_median": 0.5,
+     "melt_out_abs_err_days_median": 1.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8178963821377787,
+     "KGE": 0.8655500486897127,
+     "peak_rel_err_median": 0.03856087867630049,
+     "melt_out_err_days_median": 1.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.10646116202642864,
+     "KGE": 0.014487639168605737,
+     "peak_rel_err_median": -0.5709262721272086,
+     "melt_out_err_days_median": -14.5,
+     "melt_out_abs_err_days_median": 14.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.36918106854974386,
+     "KGE": 0.2018029333489867,
+     "peak_rel_err_median": -0.5478831462074402,
+     "melt_out_err_days_median": -10.0,
+     "melt_out_abs_err_days_median": 10.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -1.4969881835190346,
+     "SFCF": 1.3764574964266336,
+     "ALB_MIN": 0.5739785048298668,
+     "ALB_DECAY": 3.0759237816987914,
+     "Z0": 0.00020763675286752605,
+     "TURB": 0.20310541619723757
+    },
+    "calibrated_cal": {
+     "NSE": 0.9253363636046725,
+     "KGE": 0.9237357635601329,
+     "peak_rel_err_median": 0.07183514060775861,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 2.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9302678998571383,
+     "KGE": 0.928759469673592,
+     "peak_rel_err_median": 0.07510238175030297,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 1.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "519_AZ_SNTL",
+   "elev_m": 2331.7200000000003,
+   "lat": 34.31254,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.4907012294335029,
+     "KGE": 0.297369227454777,
+     "peak_rel_err_median": -0.2092925686751685,
+     "melt_out_err_days_median": -25.0,
+     "melt_out_abs_err_days_median": 25.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.38227155207090036,
+     "KGE": 0.06744759322169835,
+     "peak_rel_err_median": -0.37595834361941616,
+     "melt_out_err_days_median": -47.5,
+     "melt_out_abs_err_days_median": 47.5,
+     "n_years": 12
+    },
+    "params": {
+     "TT": 2.49886143977686,
+     "CFMAX": 4.030765402515669,
+     "SFCF": 0.7936042252271105
+    },
+    "calibrated_cal": {
+     "NSE": 0.7649277181218446,
+     "KGE": 0.7816741829882307,
+     "peak_rel_err_median": -0.15903449088466726,
+     "melt_out_err_days_median": -3.0,
+     "melt_out_abs_err_days_median": 19.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.781454580801687,
+     "KGE": 0.7104158904721021,
+     "peak_rel_err_median": -0.05759844497830796,
+     "melt_out_err_days_median": -14.5,
+     "melt_out_abs_err_days_median": 22.0,
+     "n_years": 12
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.7854418848073436,
+     "KGE": 0.7752149304056731,
+     "peak_rel_err_median": -0.1183490794640033,
+     "melt_out_err_days_median": -6.0,
+     "melt_out_abs_err_days_median": 19.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.7366045444161571,
+     "KGE": 0.5318669449380464,
+     "peak_rel_err_median": -0.25973560892050246,
+     "melt_out_err_days_median": -29.5,
+     "melt_out_abs_err_days_median": 29.5,
+     "n_years": 12
+    },
+    "params": {
+     "TT": 0.18171583319902274,
+     "SFCF": 0.8907226668059678,
+     "ALB_MIN": 0.4196441569818192,
+     "ALB_DECAY": 20.144233233957976,
+     "Z0": 0.00025972608362442433,
+     "TURB": 0.2029927778939132
+    },
+    "calibrated_cal": {
+     "NSE": 0.8076261762939483,
+     "KGE": 0.7937491088308943,
+     "peak_rel_err_median": -0.10326514773117751,
+     "melt_out_err_days_median": -0.5,
+     "melt_out_abs_err_days_median": 6.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.7945002455319603,
+     "KGE": 0.6037260514002504,
+     "peak_rel_err_median": -0.2681457108650702,
+     "melt_out_err_days_median": -21.0,
+     "melt_out_abs_err_days_median": 21.0,
+     "n_years": 12
+    }
+   }
+  },
+  {
+   "station": "527_NV_SNTL",
+   "elev_m": 2490.2160000000003,
+   "lat": 40.94168,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.38993145910158133,
+     "KGE": 0.269108997374212,
+     "peak_rel_err_median": -0.5021755817459748,
+     "melt_out_err_days_median": -41.0,
+     "melt_out_abs_err_days_median": 41.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.06749747444633458,
+     "KGE": -0.04714512845868679,
+     "peak_rel_err_median": -0.5381497519290601,
+     "melt_out_err_days_median": -34.5,
+     "melt_out_abs_err_days_median": 34.5,
+     "n_years": 10
+    },
+    "params": {
+     "TT": 2.4997354513314605,
+     "CFMAX": 3.9383050428186817,
+     "SFCF": 0.9762548487854573
+    },
+    "calibrated_cal": {
+     "NSE": 0.8755934133220219,
+     "KGE": 0.8898044251404686,
+     "peak_rel_err_median": 0.06999824486474943,
+     "melt_out_err_days_median": 7.5,
+     "melt_out_abs_err_days_median": 9.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8487906932228512,
+     "KGE": 0.8899083002741378,
+     "peak_rel_err_median": 0.03412981334525675,
+     "melt_out_err_days_median": 3.0,
+     "melt_out_abs_err_days_median": 6.5,
+     "n_years": 10
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.8768863861687627,
+     "KGE": 0.7774233828288417,
+     "peak_rel_err_median": -0.09722420579798513,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.572915508121599,
+     "KGE": 0.6133627556273139,
+     "peak_rel_err_median": -0.17644753289964737,
+     "melt_out_err_days_median": -2.0,
+     "melt_out_abs_err_days_median": 7.0,
+     "n_years": 10
+    },
+    "params": {
+     "TT": 2.4931943991283307,
+     "SFCF": 1.0943380669716996,
+     "ALB_MIN": 0.4716732851315545,
+     "ALB_DECAY": 4.544515775703067,
+     "Z0": 0.00042785074086810755,
+     "TURB": 1.2870565777737935
+    },
+    "calibrated_cal": {
+     "NSE": 0.9176013533210435,
+     "KGE": 0.9143786248839328,
+     "peak_rel_err_median": 0.09319525605750109,
+     "melt_out_err_days_median": 4.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.7483816007279578,
+     "KGE": 0.8539619271530428,
+     "peak_rel_err_median": -0.003005927793255269,
+     "melt_out_err_days_median": 0.5,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 10
+    }
+   }
+  },
+  {
+   "station": "560_WY_SNTL",
+   "elev_m": 2919.984,
+   "lat": 43.86067,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.768987971559181,
+     "KGE": 0.6202593590406111,
+     "peak_rel_err_median": -0.14591249652262467,
+     "melt_out_err_days_median": -4.5,
+     "melt_out_abs_err_days_median": 4.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8575070434539874,
+     "KGE": 0.7254269577045822,
+     "peak_rel_err_median": -0.13430686959201898,
+     "melt_out_err_days_median": -6.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 1.1893301469585205,
+     "CFMAX": 5.166842643798381,
+     "SFCF": 1.0547201623167015
+    },
+    "calibrated_cal": {
+     "NSE": 0.9436178610713496,
+     "KGE": 0.9272879623414908,
+     "peak_rel_err_median": 0.06921126211790578,
+     "melt_out_err_days_median": 1.0,
+     "melt_out_abs_err_days_median": 1.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9702309081322786,
+     "KGE": 0.965049541071995,
+     "peak_rel_err_median": 0.017407941560145274,
+     "melt_out_err_days_median": 2.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.8053425514474344,
+     "KGE": 0.5955114600690254,
+     "peak_rel_err_median": -0.2585907407810332,
+     "melt_out_err_days_median": -1.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.90721424670387,
+     "KGE": 0.7345666510221582,
+     "peak_rel_err_median": -0.1794752017209466,
+     "melt_out_err_days_median": 1.0,
+     "melt_out_abs_err_days_median": 2.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -0.7182477401127471,
+     "SFCF": 1.2594499888067552,
+     "ALB_MIN": 0.5359776515511007,
+     "ALB_DECAY": 3.139133880056135,
+     "Z0": 0.0002962785265963885,
+     "TURB": 0.9828610399971665
+    },
+    "calibrated_cal": {
+     "NSE": 0.9526710367196832,
+     "KGE": 0.9427305802028928,
+     "peak_rel_err_median": -0.043815469875814,
+     "melt_out_err_days_median": 2.5,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9370514137646784,
+     "KGE": 0.8773524657494496,
+     "peak_rel_err_median": 0.04731031440776198,
+     "melt_out_err_days_median": 4.0,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "573_NV_SNTL",
+   "elev_m": 2036.064,
+   "lat": 41.77637,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.477097505694709,
+     "KGE": 0.3147701578837674,
+     "peak_rel_err_median": -0.545291047649987,
+     "melt_out_err_days_median": -21.5,
+     "melt_out_abs_err_days_median": 21.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.23623229021873726,
+     "KGE": 0.04186976780393181,
+     "peak_rel_err_median": -0.5757524907847782,
+     "melt_out_err_days_median": -24.0,
+     "melt_out_abs_err_days_median": 24.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 2.4252897640778963,
+     "CFMAX": 4.166024646418855,
+     "SFCF": 0.930274844519463
+    },
+    "calibrated_cal": {
+     "NSE": 0.9026084078661705,
+     "KGE": 0.9248774045623751,
+     "peak_rel_err_median": -0.07596352139162792,
+     "melt_out_err_days_median": 7.0,
+     "melt_out_abs_err_days_median": 10.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9150224374236116,
+     "KGE": 0.9381084726440774,
+     "peak_rel_err_median": -0.09148309431912202,
+     "melt_out_err_days_median": 3.0,
+     "melt_out_abs_err_days_median": 9.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.8182646256127843,
+     "KGE": 0.6341401512518294,
+     "peak_rel_err_median": -0.33190514342666355,
+     "melt_out_err_days_median": -4.0,
+     "melt_out_abs_err_days_median": 9.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8501917142514128,
+     "KGE": 0.6340792336512753,
+     "peak_rel_err_median": -0.2830206203988359,
+     "melt_out_err_days_median": -4.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.07433742839525626,
+     "SFCF": 1.1269780583415006,
+     "ALB_MIN": 0.486011666116702,
+     "ALB_DECAY": 3.078921470380576,
+     "Z0": 0.00027864799123400496,
+     "TURB": 0.21929159610969876
+    },
+    "calibrated_cal": {
+     "NSE": 0.9534740094692723,
+     "KGE": 0.965948995184059,
+     "peak_rel_err_median": -0.019178361344061114,
+     "melt_out_err_days_median": 2.5,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9504897023208431,
+     "KGE": 0.9222736051540139,
+     "peak_rel_err_median": -0.08818295862738007,
+     "melt_out_err_days_median": 2.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "644_WA_SNTL",
+   "elev_m": 1667.256,
+   "lat": 48.36166,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.5287639244649116,
+     "KGE": 0.4036086262597469,
+     "peak_rel_err_median": -0.3538922754270734,
+     "melt_out_err_days_median": -25.5,
+     "melt_out_abs_err_days_median": 25.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.22039017029707852,
+     "KGE": 0.11528616672613601,
+     "peak_rel_err_median": -0.5640701481921717,
+     "melt_out_err_days_median": -33.0,
+     "melt_out_abs_err_days_median": 33.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 1.305725500645627,
+     "CFMAX": 2.5570786194571973,
+     "SFCF": 1.0723685376656817
+    },
+    "calibrated_cal": {
+     "NSE": 0.9370375146330012,
+     "KGE": 0.949443601419953,
+     "peak_rel_err_median": -0.04177943431620049,
+     "melt_out_err_days_median": -0.5,
+     "melt_out_abs_err_days_median": 5.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8915685430201946,
+     "KGE": 0.7779288740337604,
+     "peak_rel_err_median": -0.1588392318050762,
+     "melt_out_err_days_median": -4.0,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.8194892137174947,
+     "KGE": 0.6177279672025393,
+     "peak_rel_err_median": -0.2509606535879011,
+     "melt_out_err_days_median": -12.0,
+     "melt_out_abs_err_days_median": 12.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.679131552325716,
+     "KGE": 0.47831884901430644,
+     "peak_rel_err_median": -0.3399884401852004,
+     "melt_out_err_days_median": -18.0,
+     "melt_out_abs_err_days_median": 18.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.8386552479049478,
+     "SFCF": 1.1107637412231008,
+     "ALB_MIN": 0.5872341457342782,
+     "ALB_DECAY": 3.10808015221882,
+     "Z0": 0.00025849698215371197,
+     "TURB": 0.21524083223580046
+    },
+    "calibrated_cal": {
+     "NSE": 0.9666122472653832,
+     "KGE": 0.9739782020751098,
+     "peak_rel_err_median": -0.02029487099315954,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 4.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9238629039454818,
+     "KGE": 0.8345549608926037,
+     "peak_rel_err_median": -0.15327731200751638,
+     "melt_out_err_days_median": -5.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "647_OR_SNTL",
+   "elev_m": 1755.6480000000001,
+   "lat": 45.27173,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.4530160170599993,
+     "KGE": 0.46593554245134705,
+     "peak_rel_err_median": -0.35159466091026703,
+     "melt_out_err_days_median": -22.5,
+     "melt_out_abs_err_days_median": 22.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.21749061829681204,
+     "KGE": 0.18038265328635905,
+     "peak_rel_err_median": -0.5183745044870656,
+     "melt_out_err_days_median": -34.0,
+     "melt_out_abs_err_days_median": 34.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 2.324231009321066,
+     "CFMAX": 6.274276908955193,
+     "SFCF": 0.8442087888981089
+    },
+    "calibrated_cal": {
+     "NSE": 0.8936395634319947,
+     "KGE": 0.9261321030419596,
+     "peak_rel_err_median": -0.053611798298989016,
+     "melt_out_err_days_median": -2.5,
+     "melt_out_abs_err_days_median": 4.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8864699515722213,
+     "KGE": 0.785238057667008,
+     "peak_rel_err_median": -0.14012907891060855,
+     "melt_out_err_days_median": -9.0,
+     "melt_out_abs_err_days_median": 9.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.8277978889925389,
+     "KGE": 0.893268676246092,
+     "peak_rel_err_median": -0.09397430229441234,
+     "melt_out_err_days_median": -1.5,
+     "melt_out_abs_err_days_median": 8.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8482752234186868,
+     "KGE": 0.7099421818929372,
+     "peak_rel_err_median": -0.18608312459648227,
+     "melt_out_err_days_median": -6.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 2.496049315358321,
+     "SFCF": 0.874047303819663,
+     "ALB_MIN": 0.4204576908837639,
+     "ALB_DECAY": 3.003857337600937,
+     "Z0": 0.00023248470973476708,
+     "TURB": 0.2000192067892926
+    },
+    "calibrated_cal": {
+     "NSE": 0.937516742981188,
+     "KGE": 0.9445313987150931,
+     "peak_rel_err_median": -0.0605359589637887,
+     "melt_out_err_days_median": -3.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9308606120508794,
+     "KGE": 0.8439684188042942,
+     "peak_rel_err_median": -0.10500592925591384,
+     "melt_out_err_days_median": -2.0,
+     "melt_out_abs_err_days_median": 2.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "722_MT_SNTL",
+   "elev_m": 2426.208,
+   "lat": 46.35613,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.3449310142399077,
+     "KGE": 0.3356734778916558,
+     "peak_rel_err_median": -0.3477499941543434,
+     "melt_out_err_days_median": -33.0,
+     "melt_out_abs_err_days_median": 33.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.49152786403484683,
+     "KGE": 0.423633706023403,
+     "peak_rel_err_median": -0.3603782042155102,
+     "melt_out_err_days_median": -23.0,
+     "melt_out_abs_err_days_median": 23.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.518814041042643,
+     "CFMAX": 2.433475981566077,
+     "SFCF": 1.2446174137949502
+    },
+    "calibrated_cal": {
+     "NSE": 0.9622391654994846,
+     "KGE": 0.9476136283314311,
+     "peak_rel_err_median": 0.007932098148632234,
+     "melt_out_err_days_median": 2.0,
+     "melt_out_abs_err_days_median": 3.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9579659989776945,
+     "KGE": 0.9624867081886503,
+     "peak_rel_err_median": 0.03421980680543615,
+     "melt_out_err_days_median": 3.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.6871262467189884,
+     "KGE": 0.5172759122369565,
+     "peak_rel_err_median": -0.28688862888298927,
+     "melt_out_err_days_median": -12.0,
+     "melt_out_abs_err_days_median": 12.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.7139702374879362,
+     "KGE": 0.5165500824486342,
+     "peak_rel_err_median": -0.285607037345259,
+     "melt_out_err_days_median": -11.0,
+     "melt_out_abs_err_days_median": 11.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.562693467113069,
+     "SFCF": 1.180607298624922,
+     "ALB_MIN": 0.5616852774679963,
+     "ALB_DECAY": 6.707037355887412,
+     "Z0": 0.0006083754060366695,
+     "TURB": 0.26960475849045223
+    },
+    "calibrated_cal": {
+     "NSE": 0.9771914595741997,
+     "KGE": 0.9672297615750716,
+     "peak_rel_err_median": 0.02205575936212516,
+     "melt_out_err_days_median": 2.5,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9750113434805306,
+     "KGE": 0.9761660382454018,
+     "peak_rel_err_median": -0.006631279404175659,
+     "melt_out_err_days_median": 1.0,
+     "melt_out_abs_err_days_median": 2.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "730_WY_SNTL",
+   "elev_m": 2325.6240000000003,
+   "lat": 42.5075,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.7187068769534173,
+     "KGE": 0.6871769871102352,
+     "peak_rel_err_median": -0.06126486408430322,
+     "melt_out_err_days_median": -25.0,
+     "melt_out_abs_err_days_median": 25.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.7035163421806562,
+     "KGE": 0.6277699680384371,
+     "peak_rel_err_median": -0.19220591728699346,
+     "melt_out_err_days_median": -19.0,
+     "melt_out_abs_err_days_median": 19.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.26247393107000505,
+     "CFMAX": 1.9690536715147986,
+     "SFCF": 1.0418395433230534
+    },
+    "calibrated_cal": {
+     "NSE": 0.9666770305777529,
+     "KGE": 0.9777756680393256,
+     "peak_rel_err_median": -0.00021462718751103643,
+     "melt_out_err_days_median": 3.5,
+     "melt_out_abs_err_days_median": 4.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9491173446094766,
+     "KGE": 0.9210957206591219,
+     "peak_rel_err_median": -0.06505673946837329,
+     "melt_out_err_days_median": 1.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.8814270968358625,
+     "KGE": 0.7357025544179208,
+     "peak_rel_err_median": -0.16074371722850606,
+     "melt_out_err_days_median": -8.0,
+     "melt_out_abs_err_days_median": 8.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.858097549015252,
+     "KGE": 0.6856834856480298,
+     "peak_rel_err_median": -0.18291192720942195,
+     "melt_out_err_days_median": -8.0,
+     "melt_out_abs_err_days_median": 8.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -0.9288284255264518,
+     "SFCF": 1.0415502640689231,
+     "ALB_MIN": 0.5298797613361022,
+     "ALB_DECAY": 20.93413217740635,
+     "Z0": 0.0002645885442380076,
+     "TURB": 0.2074117088226409
+    },
+    "calibrated_cal": {
+     "NSE": 0.9833175149549203,
+     "KGE": 0.9771637626120351,
+     "peak_rel_err_median": -0.022458147226757312,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 0.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9573444601781369,
+     "KGE": 0.923297089179466,
+     "peak_rel_err_median": -0.030387897571534987,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "762_CO_SNTL",
+   "elev_m": 3523.4880000000003,
+   "lat": 37.99076,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.8894328303242142,
+     "KGE": 0.750407826705469,
+     "peak_rel_err_median": -0.13764565129407552,
+     "melt_out_err_days_median": -4.0,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8962654935018923,
+     "KGE": 0.7725078646728749,
+     "peak_rel_err_median": -0.1402853015871221,
+     "melt_out_err_days_median": -1.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.6471544631364861,
+     "CFMAX": 4.618926897180819,
+     "SFCF": 1.131837177154453
+    },
+    "calibrated_cal": {
+     "NSE": 0.9553166016365827,
+     "KGE": 0.9522142041866823,
+     "peak_rel_err_median": -0.013241866044794659,
+     "melt_out_err_days_median": 1.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9057600390083494,
+     "KGE": 0.9399028750833595,
+     "peak_rel_err_median": -0.028391611985397983,
+     "melt_out_err_days_median": 3.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.8263072096348428,
+     "KGE": 0.607732036799584,
+     "peak_rel_err_median": -0.29282132031212926,
+     "melt_out_err_days_median": -1.5,
+     "melt_out_abs_err_days_median": 2.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8000634836494503,
+     "KGE": 0.6070019167466562,
+     "peak_rel_err_median": -0.2656645939038454,
+     "melt_out_err_days_median": 2.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -0.5938620349991907,
+     "SFCF": 1.2554571740358278,
+     "ALB_MIN": 0.4994068071411659,
+     "ALB_DECAY": 4.121415991185596,
+     "Z0": 0.0004682203779129454,
+     "TURB": 0.3384761957543241
+    },
+    "calibrated_cal": {
+     "NSE": 0.9674957026035291,
+     "KGE": 0.9570605975969358,
+     "peak_rel_err_median": -0.013209477268623723,
+     "melt_out_err_days_median": 2.5,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9025915839583275,
+     "KGE": 0.9348715805839682,
+     "peak_rel_err_median": 0.023098987909044442,
+     "melt_out_err_days_median": 4.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "780_CO_SNTL",
+   "elev_m": 3249.168,
+   "lat": 37.69883,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.9338100629210938,
+     "KGE": 0.9049636379987352,
+     "peak_rel_err_median": 0.10754321594752526,
+     "melt_out_err_days_median": 3.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.9340173963414464,
+     "KGE": 0.9530711756900528,
+     "peak_rel_err_median": 0.017237143434929283,
+     "melt_out_err_days_median": -1.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 1.0039567771266817,
+     "CFMAX": 6.49114493560438,
+     "SFCF": 0.9399075369178755
+    },
+    "calibrated_cal": {
+     "NSE": 0.9594629617733363,
+     "KGE": 0.9728177055703638,
+     "peak_rel_err_median": -0.007360508338254335,
+     "melt_out_err_days_median": -1.5,
+     "melt_out_abs_err_days_median": 5.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9162064223852149,
+     "KGE": 0.8517272140325052,
+     "peak_rel_err_median": -0.041445182262794415,
+     "melt_out_err_days_median": -4.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.924974606593626,
+     "KGE": 0.9361064233702254,
+     "peak_rel_err_median": 0.011941145955296373,
+     "melt_out_err_days_median": 9.5,
+     "melt_out_abs_err_days_median": 9.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.9099852238337574,
+     "KGE": 0.9479889483213789,
+     "peak_rel_err_median": -0.02819909107210611,
+     "melt_out_err_days_median": 4.0,
+     "melt_out_abs_err_days_median": 9.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 2.1867110531478278,
+     "SFCF": 1.0213319039179465,
+     "ALB_MIN": 0.3232148962547856,
+     "ALB_DECAY": 3.0314183066060276,
+     "Z0": 0.0017862850623487122,
+     "TURB": 0.681238094723599
+    },
+    "calibrated_cal": {
+     "NSE": 0.9854317781464301,
+     "KGE": 0.9889685410325931,
+     "peak_rel_err_median": 0.010688373043651557,
+     "melt_out_err_days_median": -1.5,
+     "melt_out_abs_err_days_median": 3.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9354812964978302,
+     "KGE": 0.8424741251891555,
+     "peak_rel_err_median": -0.0672812203076513,
+     "melt_out_err_days_median": -6.0,
+     "melt_out_abs_err_days_median": 8.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "803_ID_SNTL",
+   "elev_m": 1697.736,
+   "lat": 47.55545,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.8804152591275153,
+     "KGE": 0.8664906787682636,
+     "peak_rel_err_median": 0.08228487871441499,
+     "melt_out_err_days_median": -8.5,
+     "melt_out_abs_err_days_median": 8.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.7924094600668541,
+     "KGE": 0.7424446468118013,
+     "peak_rel_err_median": -0.18440319358756763,
+     "melt_out_err_days_median": -20.0,
+     "melt_out_abs_err_days_median": 20.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 1.0121932069108777,
+     "CFMAX": 3.000189795777353,
+     "SFCF": 0.7840868294271465
+    },
+    "calibrated_cal": {
+     "NSE": 0.9783847237607749,
+     "KGE": 0.9830145085261761,
+     "peak_rel_err_median": -0.007429673060884382,
+     "melt_out_err_days_median": -1.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8939620624988173,
+     "KGE": 0.7805323200516835,
+     "peak_rel_err_median": -0.12727938903951883,
+     "melt_out_err_days_median": -6.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.8130634400385701,
+     "KGE": 0.5855077474865009,
+     "peak_rel_err_median": 0.30951593633013763,
+     "melt_out_err_days_median": 5.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.9242866367902315,
+     "KGE": 0.8748778664463579,
+     "peak_rel_err_median": 0.016116855163853878,
+     "melt_out_err_days_median": -2.0,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.7872308887314272,
+     "SFCF": 0.8047575381560808,
+     "ALB_MIN": 0.502292986018311,
+     "ALB_DECAY": 3.3528435630824736,
+     "Z0": 0.0004555860391841491,
+     "TURB": 0.7397148868416403
+    },
+    "calibrated_cal": {
+     "NSE": 0.9830604237377362,
+     "KGE": 0.9871621846810885,
+     "peak_rel_err_median": 0.041274180733506846,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 1.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9081297087098992,
+     "KGE": 0.7951348524860479,
+     "peak_rel_err_median": -0.1625047468988083,
+     "melt_out_err_days_median": -6.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "895_ID_SNTL",
+   "elev_m": 1923.288,
+   "lat": 43.7685,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.8304159006118985,
+     "KGE": 0.7404848824924205,
+     "peak_rel_err_median": -0.05219635440796995,
+     "melt_out_err_days_median": -20.5,
+     "melt_out_abs_err_days_median": 20.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8342328721850738,
+     "KGE": 0.7587053910110998,
+     "peak_rel_err_median": -0.1052917757601515,
+     "melt_out_err_days_median": -16.0,
+     "melt_out_abs_err_days_median": 16.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.020832442711358645,
+     "CFMAX": 2.0161048933066024,
+     "SFCF": 1.053107672780155
+    },
+    "calibrated_cal": {
+     "NSE": 0.9713503768770049,
+     "KGE": 0.9777690604161969,
+     "peak_rel_err_median": 0.00024195078385593199,
+     "melt_out_err_days_median": 2.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.970679007381214,
+     "KGE": 0.9739758790706672,
+     "peak_rel_err_median": 0.011406459511969986,
+     "melt_out_err_days_median": 2.0,
+     "melt_out_abs_err_days_median": 2.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.862155806562314,
+     "KGE": 0.6870906800486314,
+     "peak_rel_err_median": -0.21570062841793394,
+     "melt_out_err_days_median": -14.5,
+     "melt_out_abs_err_days_median": 14.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.909198436997129,
+     "KGE": 0.7267757186608987,
+     "peak_rel_err_median": -0.22387184390289638,
+     "melt_out_err_days_median": -7.0,
+     "melt_out_abs_err_days_median": 7.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -0.31623602546789886,
+     "SFCF": 1.0721118451061873,
+     "ALB_MIN": 0.5587808233721177,
+     "ALB_DECAY": 21.72867107137336,
+     "Z0": 0.0006612258602137492,
+     "TURB": 0.2068141928275951
+    },
+    "calibrated_cal": {
+     "NSE": 0.9843496053148524,
+     "KGE": 0.9844661996465545,
+     "peak_rel_err_median": -0.01575481232619039,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 2.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9545409440872679,
+     "KGE": 0.9088029442851782,
+     "peak_rel_err_median": -0.0035688572869519374,
+     "melt_out_err_days_median": 4.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "903_MT_SNTL",
+   "elev_m": 2142.744,
+   "lat": 46.84234,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.48270347197880115,
+     "KGE": 0.41898435442684534,
+     "peak_rel_err_median": -0.379939724054193,
+     "melt_out_err_days_median": -23.0,
+     "melt_out_abs_err_days_median": 23.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.5755279409775391,
+     "KGE": 0.4734384276363457,
+     "peak_rel_err_median": -0.2928939974509037,
+     "melt_out_err_days_median": -25.0,
+     "melt_out_abs_err_days_median": 25.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 2.2466111866000924,
+     "CFMAX": 3.712379107959713,
+     "SFCF": 1.1089720350949768
+    },
+    "calibrated_cal": {
+     "NSE": 0.9742625095694684,
+     "KGE": 0.9796203747687701,
+     "peak_rel_err_median": -0.009757472514176618,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 2.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9644279810452858,
+     "KGE": 0.9810895026642114,
+     "peak_rel_err_median": 0.0020024837726625878,
+     "melt_out_err_days_median": -1.0,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.7829581528338544,
+     "KGE": 0.5784932757975856,
+     "peak_rel_err_median": -0.2648805805176561,
+     "melt_out_err_days_median": -10.5,
+     "melt_out_abs_err_days_median": 10.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8284583838355789,
+     "KGE": 0.6300006408130547,
+     "peak_rel_err_median": -0.2694719287739463,
+     "melt_out_err_days_median": -10.0,
+     "melt_out_abs_err_days_median": 10.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -1.3360335092539577,
+     "SFCF": 1.2395541209208432,
+     "ALB_MIN": 0.5888581966904373,
+     "ALB_DECAY": 7.811236639331889,
+     "Z0": 0.0002539061191036619,
+     "TURB": 0.7124060687137417
+    },
+    "calibrated_cal": {
+     "NSE": 0.9754992464123011,
+     "KGE": 0.9807304597837205,
+     "peak_rel_err_median": 0.0008659192834820171,
+     "melt_out_err_days_median": 0.5,
+     "melt_out_abs_err_days_median": 3.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9783949613096499,
+     "KGE": 0.9633078428060904,
+     "peak_rel_err_median": 0.022836814861126747,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 2.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "907_UT_SNTL",
+   "elev_m": 2709.672,
+   "lat": 37.52217,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.05835844601743034,
+     "KGE": -0.09596653729966209,
+     "peak_rel_err_median": -1.0,
+     "melt_out_err_days_median": -184.0,
+     "melt_out_abs_err_days_median": 184.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.5577267314252153,
+     "KGE": 0.2604993212580916,
+     "peak_rel_err_median": -0.437511286011872,
+     "melt_out_err_days_median": -29.0,
+     "melt_out_abs_err_days_median": 29.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 2.4999987040363427,
+     "CFMAX": 7.936140441051592,
+     "SFCF": 1.2189672607626645
+    },
+    "calibrated_cal": {
+     "NSE": 0.15951454717324198,
+     "KGE": 0.1473970113521772,
+     "peak_rel_err_median": -0.998797443940237,
+     "melt_out_err_days_median": -91.5,
+     "melt_out_abs_err_days_median": 163.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8761742148697065,
+     "KGE": 0.8669844810215872,
+     "peak_rel_err_median": -0.13694363361860587,
+     "melt_out_err_days_median": -5.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.11631173794672822,
+     "KGE": -0.025751449350683853,
+     "peak_rel_err_median": -1.0,
+     "melt_out_err_days_median": -184.0,
+     "melt_out_abs_err_days_median": 184.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.7578239368643105,
+     "KGE": 0.45035319901936455,
+     "peak_rel_err_median": -0.47533364832948966,
+     "melt_out_err_days_median": -17.0,
+     "melt_out_abs_err_days_median": 17.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.2105781911175424,
+     "SFCF": 1.2683861269161192,
+     "ALB_MIN": 0.46989876315176227,
+     "ALB_DECAY": 3.0147146493839196,
+     "Z0": 0.0005570120470074519,
+     "TURB": 0.20214031508734195
+    },
+    "calibrated_cal": {
+     "NSE": 0.16051276118497426,
+     "KGE": 0.15166589838253475,
+     "peak_rel_err_median": -1.0,
+     "melt_out_err_days_median": -184.0,
+     "melt_out_abs_err_days_median": 184.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9070885179241194,
+     "KGE": 0.8476617581513692,
+     "peak_rel_err_median": -0.21588637807955147,
+     "melt_out_err_days_median": -11.0,
+     "melt_out_abs_err_days_median": 11.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "914_CO_SNTL",
+   "elev_m": 2941.32,
+   "lat": 37.85192,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.7563262350879049,
+     "KGE": 0.6052382000125729,
+     "peak_rel_err_median": -0.19890051188205327,
+     "melt_out_err_days_median": -4.5,
+     "melt_out_abs_err_days_median": 4.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.572022973546237,
+     "KGE": 0.43742874874900706,
+     "peak_rel_err_median": -0.29190818988106826,
+     "melt_out_err_days_median": -9.5,
+     "melt_out_abs_err_days_median": 9.5,
+     "n_years": 14
+    },
+    "params": {
+     "TT": 2.4328870561843834,
+     "CFMAX": 7.999685760737935,
+     "SFCF": 0.831198873129497
+    },
+    "calibrated_cal": {
+     "NSE": 0.8587283812289742,
+     "KGE": 0.8521122209262642,
+     "peak_rel_err_median": -0.14623825946674354,
+     "melt_out_err_days_median": -1.0,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.7096553429101071,
+     "KGE": 0.6305087283576593,
+     "peak_rel_err_median": -0.14080583689951692,
+     "melt_out_err_days_median": -2.5,
+     "melt_out_abs_err_days_median": 8.0,
+     "n_years": 14
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.6273057532873776,
+     "KGE": 0.7083724685442379,
+     "peak_rel_err_median": -0.27998077104620656,
+     "melt_out_err_days_median": -1.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.7173662566777227,
+     "KGE": 0.515838596464762,
+     "peak_rel_err_median": -0.2688568948857929,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 14
+    },
+    "params": {
+     "TT": -1.4918364478295658,
+     "SFCF": 1.1166873840692833,
+     "ALB_MIN": 0.350177884905339,
+     "ALB_DECAY": 12.158159485616707,
+     "Z0": 0.0005987927316093793,
+     "TURB": 0.6867421130279706
+    },
+    "calibrated_cal": {
+     "NSE": 0.8429316479658433,
+     "KGE": 0.8289945908613398,
+     "peak_rel_err_median": -0.06514440865031139,
+     "melt_out_err_days_median": -0.5,
+     "melt_out_abs_err_days_median": 2.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.7734982207550134,
+     "KGE": 0.7796942044198738,
+     "peak_rel_err_median": -0.07936676167823513,
+     "melt_out_err_days_median": 0.5,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 14
+    }
+   }
+  },
+  {
+   "station": "915_ID_SNTL",
+   "elev_m": 2627.376,
+   "lat": 44.84618,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.3980758080773408,
+     "KGE": 0.3450698715895617,
+     "peak_rel_err_median": -0.31580793764829096,
+     "melt_out_err_days_median": -13.0,
+     "melt_out_abs_err_days_median": 13.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.5616132431358739,
+     "KGE": 0.5027616059201175,
+     "peak_rel_err_median": -0.25961953622018175,
+     "melt_out_err_days_median": -19.5,
+     "melt_out_abs_err_days_median": 19.5,
+     "n_years": 14
+    },
+    "params": {
+     "TT": 2.2617818415037645,
+     "CFMAX": 3.750480014636123,
+     "SFCF": 1.0089983585094495
+    },
+    "calibrated_cal": {
+     "NSE": 0.880765974376425,
+     "KGE": 0.9139395452818087,
+     "peak_rel_err_median": -0.006914188988154257,
+     "melt_out_err_days_median": 2.5,
+     "melt_out_abs_err_days_median": 2.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8782827026278232,
+     "KGE": 0.879810166877467,
+     "peak_rel_err_median": 0.05077987051443651,
+     "melt_out_err_days_median": 9.0,
+     "melt_out_abs_err_days_median": 9.0,
+     "n_years": 14
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.6895107001516381,
+     "KGE": 0.5360379886095282,
+     "peak_rel_err_median": -0.2526896534206525,
+     "melt_out_err_days_median": -5.5,
+     "melt_out_abs_err_days_median": 7.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.872701386645274,
+     "KGE": 0.7131630426089786,
+     "peak_rel_err_median": -0.2008493401760075,
+     "melt_out_err_days_median": -1.5,
+     "melt_out_abs_err_days_median": 3.5,
+     "n_years": 14
+    },
+    "params": {
+     "TT": 0.9708876371623463,
+     "SFCF": 1.033061877394502,
+     "ALB_MIN": 0.5979085930007744,
+     "ALB_DECAY": 3.6006658650193084,
+     "Z0": 0.00047186747010793283,
+     "TURB": 0.21613991992495285
+    },
+    "calibrated_cal": {
+     "NSE": 0.9417646870698912,
+     "KGE": 0.9542781604676808,
+     "peak_rel_err_median": -0.038308160227798586,
+     "melt_out_err_days_median": 3.0,
+     "melt_out_abs_err_days_median": 3.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9183373600174379,
+     "KGE": 0.8518701674749367,
+     "peak_rel_err_median": 0.032128706259952934,
+     "melt_out_err_days_median": 9.0,
+     "melt_out_abs_err_days_median": 9.0,
+     "n_years": 14
+    }
+   }
+  },
+  {
+   "station": "922_NM_SNTL",
+   "elev_m": 3499.1040000000003,
+   "lat": 35.77154,
+   "co_located_with_dev_basin": true,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.8911753124195165,
+     "KGE": 0.8675955096804693,
+     "peak_rel_err_median": -0.004179318922058355,
+     "melt_out_err_days_median": -11.5,
+     "melt_out_abs_err_days_median": 11.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8090094893290773,
+     "KGE": 0.7407187817694671,
+     "peak_rel_err_median": -0.07095452855033947,
+     "melt_out_err_days_median": -12.0,
+     "melt_out_abs_err_days_median": 15.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.4049929761897211,
+     "CFMAX": 2.642812691736176,
+     "SFCF": 0.9773925626791291
+    },
+    "calibrated_cal": {
+     "NSE": 0.961872738753173,
+     "KGE": 0.971637101847356,
+     "peak_rel_err_median": 0.053889215586072244,
+     "melt_out_err_days_median": -0.5,
+     "melt_out_abs_err_days_median": 2.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9291625245574598,
+     "KGE": 0.9288585201792261,
+     "peak_rel_err_median": -0.04799026524287554,
+     "melt_out_err_days_median": 2.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.9191998022035363,
+     "KGE": 0.8002280389485079,
+     "peak_rel_err_median": -0.14032928815028728,
+     "melt_out_err_days_median": -12.5,
+     "melt_out_abs_err_days_median": 12.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8890930226036359,
+     "KGE": 0.7672492334035257,
+     "peak_rel_err_median": -0.14711793190318606,
+     "melt_out_err_days_median": -6.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -1.4328614058408222,
+     "SFCF": 1.0741587545527118,
+     "ALB_MIN": 0.5102766526314944,
+     "ALB_DECAY": 20.87004504047262,
+     "Z0": 0.00037514998060906945,
+     "TURB": 0.659801057070919
+    },
+    "calibrated_cal": {
+     "NSE": 0.9808739421586804,
+     "KGE": 0.9753227388924288,
+     "peak_rel_err_median": -0.00039089734237398796,
+     "melt_out_err_days_median": -3.0,
+     "melt_out_abs_err_days_median": 3.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9370960110487732,
+     "KGE": 0.9670347255036288,
+     "peak_rel_err_median": -0.0021908632596292455,
+     "melt_out_err_days_median": 1.0,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "935_CO_SNTL",
+   "elev_m": 3361.944,
+   "lat": 39.57096,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": -7.4359800786032935,
+     "KGE": -1.3147244377320764,
+     "peak_rel_err_median": 0.15320718352814786,
+     "melt_out_err_days_median": -7.0,
+     "melt_out_abs_err_days_median": 7.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8075469980273188,
+     "KGE": 0.8733462564184832,
+     "peak_rel_err_median": 0.09257431587861273,
+     "melt_out_err_days_median": -11.0,
+     "melt_out_abs_err_days_median": 11.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 2.499969760621892,
+     "CFMAX": 7.6924630933991285,
+     "SFCF": 0.7000018489339874
+    },
+    "calibrated_cal": {
+     "NSE": -2.283811502952948,
+     "KGE": -0.20327481076385956,
+     "peak_rel_err_median": -0.14294069514514718,
+     "melt_out_err_days_median": -5.0,
+     "melt_out_abs_err_days_median": 7.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8413814726829932,
+     "KGE": 0.7318347845190537,
+     "peak_rel_err_median": -0.09919340262111709,
+     "melt_out_err_days_median": -12.0,
+     "melt_out_abs_err_days_median": 12.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.7580452890914324,
+     "KGE": 0.8475901160920865,
+     "peak_rel_err_median": -0.019411652023717987,
+     "melt_out_err_days_median": -1.0,
+     "melt_out_abs_err_days_median": 1.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.9197794089500656,
+     "KGE": 0.8909990182429284,
+     "peak_rel_err_median": 0.12172427683961948,
+     "melt_out_err_days_median": -2.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": 0.9411832515122169,
+     "SFCF": 0.8661429831000623,
+     "ALB_MIN": 0.4876048576690597,
+     "ALB_DECAY": 12.174737043355632,
+     "Z0": 0.00025671251575213634,
+     "TURB": 0.20255509210125366
+    },
+    "calibrated_cal": {
+     "NSE": 0.9101789187466706,
+     "KGE": 0.9529818295839382,
+     "peak_rel_err_median": -0.04220659528877914,
+     "melt_out_err_days_median": 1.0,
+     "melt_out_abs_err_days_median": 1.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.936011668377648,
+     "KGE": 0.9299575687129957,
+     "peak_rel_err_median": 0.09102290942992444,
+     "melt_out_err_days_median": 1.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "945_OR_SNTL",
+   "elev_m": 1487.424,
+   "lat": 42.2062,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.22918891936650687,
+     "KGE": -0.025886490111770577,
+     "peak_rel_err_median": -0.48614763521357623,
+     "melt_out_err_days_median": -48.0,
+     "melt_out_abs_err_days_median": 48.0,
+     "n_years": 7
+    },
+    "default_val": {
+     "NSE": 0.09822789972277512,
+     "KGE": -0.1959118923058487,
+     "peak_rel_err_median": -0.5606586488916535,
+     "melt_out_err_days_median": -33.0,
+     "melt_out_abs_err_days_median": 36.0,
+     "n_years": 9
+    },
+    "params": {
+     "TT": 1.2762690745344147,
+     "CFMAX": 3.2530140126252807,
+     "SFCF": 0.9143615513773242
+    },
+    "calibrated_cal": {
+     "NSE": 0.7882019295351164,
+     "KGE": 0.7565570433741927,
+     "peak_rel_err_median": -0.10615677187290833,
+     "melt_out_err_days_median": 1.0,
+     "melt_out_abs_err_days_median": 11.0,
+     "n_years": 7
+    },
+    "calibrated_val": {
+     "NSE": 0.7637291524337377,
+     "KGE": 0.5788264318278127,
+     "peak_rel_err_median": -0.09927242965114928,
+     "melt_out_err_days_median": -8.0,
+     "melt_out_abs_err_days_median": 8.0,
+     "n_years": 9
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.7552062867434886,
+     "KGE": 0.5198150550890621,
+     "peak_rel_err_median": -0.2678508117915658,
+     "melt_out_err_days_median": -23.0,
+     "melt_out_abs_err_days_median": 23.0,
+     "n_years": 7
+    },
+    "default_val": {
+     "NSE": 0.4445936189355486,
+     "KGE": 0.14572278308318276,
+     "peak_rel_err_median": -0.42826661816566797,
+     "melt_out_err_days_median": -23.0,
+     "melt_out_abs_err_days_median": 23.0,
+     "n_years": 9
+    },
+    "params": {
+     "TT": -0.5856524876537555,
+     "SFCF": 1.3012824635746365,
+     "ALB_MIN": 0.39029673771375334,
+     "ALB_DECAY": 21.295975742430688,
+     "Z0": 0.004295805967110069,
+     "TURB": 0.8719246685250992
+    },
+    "calibrated_cal": {
+     "NSE": 0.8078620599504743,
+     "KGE": 0.7519119961417378,
+     "peak_rel_err_median": -0.16483148571442524,
+     "melt_out_err_days_median": -18.0,
+     "melt_out_abs_err_days_median": 18.0,
+     "n_years": 7
+    },
+    "calibrated_val": {
+     "NSE": 0.4058314873725254,
+     "KGE": 0.17466017461489625,
+     "peak_rel_err_median": -0.36988061150184093,
+     "melt_out_err_days_median": -14.0,
+     "melt_out_abs_err_days_median": 14.0,
+     "n_years": 9
+    }
+   }
+  },
+  {
+   "station": "952_AK_SNTL",
+   "elev_m": 850.392,
+   "lat": 65.09852,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.7800923836640001,
+     "KGE": 0.7552444707368685,
+     "peak_rel_err_median": -0.004772620804544093,
+     "melt_out_err_days_median": -6.5,
+     "melt_out_abs_err_days_median": 6.5,
+     "n_years": 8
+    },
+    "default_val": {
+     "NSE": -1.0437904925506714,
+     "KGE": 0.16501747407433498,
+     "peak_rel_err_median": -0.047420773567071174,
+     "melt_out_err_days_median": -1.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 4
+    },
+    "params": {
+     "TT": 0.16714381930898714,
+     "CFMAX": 2.0050825034946516,
+     "SFCF": 1.0226185266956418
+    },
+    "calibrated_cal": {
+     "NSE": 0.9474839576906019,
+     "KGE": 0.9657553052602835,
+     "peak_rel_err_median": 0.008713420311746342,
+     "melt_out_err_days_median": 5.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 8
+    },
+    "calibrated_val": {
+     "NSE": -1.0610480583185908,
+     "KGE": 0.16566049360283397,
+     "peak_rel_err_median": -0.016757816696216864,
+     "melt_out_err_days_median": 3.5,
+     "melt_out_abs_err_days_median": 13.5,
+     "n_years": 4
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.880125832426172,
+     "KGE": 0.7078370253398536,
+     "peak_rel_err_median": -0.22871827647965315,
+     "melt_out_err_days_median": -3.5,
+     "melt_out_abs_err_days_median": 3.5,
+     "n_years": 8
+    },
+    "default_val": {
+     "NSE": -0.4643591221030936,
+     "KGE": 0.21214442308684844,
+     "peak_rel_err_median": -0.1915150034035804,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 6.5,
+     "n_years": 4
+    },
+    "params": {
+     "TT": -0.4461437960132164,
+     "SFCF": 1.0420728255068956,
+     "ALB_MIN": 0.5377459389884798,
+     "ALB_DECAY": 4.857055131393643,
+     "Z0": 0.0005638853748399497,
+     "TURB": 0.3885078404201031
+    },
+    "calibrated_cal": {
+     "NSE": 0.981096690407872,
+     "KGE": 0.9887128871362768,
+     "peak_rel_err_median": -0.01769494617310713,
+     "melt_out_err_days_median": 0.5,
+     "melt_out_abs_err_days_median": 2.0,
+     "n_years": 8
+    },
+    "calibrated_val": {
+     "NSE": -0.7630265562925114,
+     "KGE": 0.21626864542951996,
+     "peak_rel_err_median": -0.0217246842089143,
+     "melt_out_err_days_median": 0.5,
+     "melt_out_abs_err_days_median": 10.0,
+     "n_years": 4
+    }
+   }
+  },
+  {
+   "station": "958_AK_SNTL",
+   "elev_m": 326.136,
+   "lat": 67.25333,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": 0.7110423067107295,
+     "KGE": 0.8533320598537656,
+     "peak_rel_err_median": -0.09485698811539287,
+     "melt_out_err_days_median": -6.5,
+     "melt_out_abs_err_days_median": 7.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8779602413135862,
+     "KGE": 0.7887263746405853,
+     "peak_rel_err_median": -0.10414271096964264,
+     "melt_out_err_days_median": -10.0,
+     "melt_out_abs_err_days_median": 10.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -1.6866260676502942,
+     "CFMAX": 1.0003397969537435,
+     "SFCF": 0.9786008335906833
+    },
+    "calibrated_cal": {
+     "NSE": 0.8283767285672281,
+     "KGE": 0.8845881290961617,
+     "peak_rel_err_median": -0.1534836120759854,
+     "melt_out_err_days_median": 3.5,
+     "melt_out_abs_err_days_median": 3.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8661134154818577,
+     "KGE": 0.6765554282167805,
+     "peak_rel_err_median": -0.21795941215592382,
+     "melt_out_err_days_median": 2.0,
+     "melt_out_abs_err_days_median": 2.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": 0.5402103784693877,
+     "KGE": 0.6363578999470321,
+     "peak_rel_err_median": -0.2656065754440452,
+     "melt_out_err_days_median": -6.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8236433560125227,
+     "KGE": 0.6581196525397276,
+     "peak_rel_err_median": -0.24694131446310927,
+     "melt_out_err_days_median": -10.0,
+     "melt_out_abs_err_days_median": 10.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -1.2483711058561278,
+     "SFCF": 0.9736050927871163,
+     "ALB_MIN": 0.5409344824487885,
+     "ALB_DECAY": 27.140558064953893,
+     "Z0": 0.00020713275634243498,
+     "TURB": 0.2011141905390307
+    },
+    "calibrated_cal": {
+     "NSE": 0.8829947542271687,
+     "KGE": 0.9127644861614482,
+     "peak_rel_err_median": -0.11835742976781552,
+     "melt_out_err_days_median": 0.0,
+     "melt_out_abs_err_days_median": 1.0,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9331126196687456,
+     "KGE": 0.7802134497555425,
+     "peak_rel_err_median": -0.1807908913766175,
+     "melt_out_err_days_median": -1.0,
+     "melt_out_abs_err_days_median": 1.0,
+     "n_years": 15
+    }
+   }
+  },
+  {
+   "station": "983_UT_SNTL",
+   "elev_m": 3051.0480000000002,
+   "lat": 37.9725,
+   "co_located_with_dev_basin": false,
+   "degree_day": {
+    "default_cal": {
+     "NSE": -0.13475867600697322,
+     "KGE": 0.004482542346112783,
+     "peak_rel_err_median": -0.992037221642838,
+     "melt_out_err_days_median": -107.0,
+     "melt_out_abs_err_days_median": 163.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.9567638622666949,
+     "KGE": 0.8893613152621285,
+     "peak_rel_err_median": -0.07144930758124564,
+     "melt_out_err_days_median": 2.0,
+     "melt_out_abs_err_days_median": 4.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -0.33230435530896907,
+     "CFMAX": 6.19143919091003,
+     "SFCF": 1.0815674165504716
+    },
+    "calibrated_cal": {
+     "NSE": -0.12124398655880175,
+     "KGE": -0.024651758383399835,
+     "peak_rel_err_median": -0.9918403193473218,
+     "melt_out_err_days_median": -115.5,
+     "melt_out_abs_err_days_median": 163.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.8726341859096753,
+     "KGE": 0.7565932720472164,
+     "peak_rel_err_median": -0.09200440391081426,
+     "melt_out_err_days_median": -14.0,
+     "melt_out_abs_err_days_median": 14.0,
+     "n_years": 15
+    }
+   },
+   "energy_balance": {
+    "default_cal": {
+     "NSE": -0.15017912553092616,
+     "KGE": -0.07312712025708712,
+     "peak_rel_err_median": -0.9942938969067194,
+     "melt_out_err_days_median": -94.0,
+     "melt_out_abs_err_days_median": 162.5,
+     "n_years": 10
+    },
+    "default_val": {
+     "NSE": 0.8627405158454624,
+     "KGE": 0.7572624645152609,
+     "peak_rel_err_median": -0.2429111710908327,
+     "melt_out_err_days_median": 6.0,
+     "melt_out_abs_err_days_median": 6.0,
+     "n_years": 15
+    },
+    "params": {
+     "TT": -0.6109407427651936,
+     "SFCF": 1.1355347907607134,
+     "ALB_MIN": 0.3999484927499437,
+     "ALB_DECAY": 3.0055676767978317,
+     "Z0": 0.0009630662401747162,
+     "TURB": 0.38690400148255333
+    },
+    "calibrated_cal": {
+     "NSE": -0.11510572303593825,
+     "KGE": -0.019685651230561207,
+     "peak_rel_err_median": -1.0,
+     "melt_out_err_days_median": -202.5,
+     "melt_out_abs_err_days_median": 202.5,
+     "n_years": 10
+    },
+    "calibrated_val": {
+     "NSE": 0.9457563871400565,
+     "KGE": 0.8635177000683241,
+     "peak_rel_err_median": -0.036641171154577795,
+     "melt_out_err_days_median": -5.0,
+     "melt_out_abs_err_days_median": 5.0,
+     "n_years": 15
+    }
+   }
+  }
+ ],
+ "wall_s": 72.26256322860718,
+ "generated": "2026-11-18 13:38 UTC",
+ "python": "3.13.18"
+}

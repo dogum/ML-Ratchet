@@ -115,9 +115,31 @@ ThermoPilot v1.1, and froze and scored three fresh real exams (Nehasil, HEAPO, I
 5. **A building audit page:** upload a year of meter data; BuildingDetective reads the building, LoadCast forecasts
    next year and ThermoPilot estimates savings on the user's tariff.
 
+## The water platform
+
+WaterSim, WaterData and four models (FlowCast, SnowSense, BasinDetective, ReservoirPilot) came in on 18 Nov 2026;
+see [water-platform.md](water-platform.md). Nothing has been re-trained here. What is open, in order:
+
+1. **Done on import:** every released model re-scored on rebuilt data with paired intervals, and two dev-tuned
+   baselines added. The dev-tuned energy balance ties SnowSense; the dev-tuned reservoir rule loses to ReservoirPilot.
+   Still open: NWIS for FlowCast's recent exam and flood peaks, and a SnowSense rung that beats the tuned physics
+   above 1,500 m (it already does below).
+2. **Independent forcing** (Daymet or NLDAS, backlog `water-forcing`): re-run every exam to separate method skill
+   from ERA5-Land's bias. The single biggest gap.
+3. **WaterSim v1.1** (backlog `watersim-v11`): upstream the models' physics wrappers (water-yield prior, gauge noise,
+   forcing drift, point-snow defaults, the reservoir-task generator, the `random_forcing` window fix), version the
+   frozen sets and re-score every rung.
+4. **Model rungs named by the build:** FlowCast a snow rung driven by twins on the snowy dev basins, then
+   out-of-domain exams on CAMELS-GB, CL, BR and AUS; SnowSense a wind- or exposure-dependent snowfall under-catch prior
+   for its −9 % peak bias; BasinDetective realistic reservoirs fitted to the ResOpsUS dev dams, then a sequence
+   encoder; ReservoirPilot a storage-aware objective (to show the price of holding reservoirs low), then MPC with
+   FlowCast's nowcast as the inflow forecast.
+5. **Coupling and new tracks:** SnowSense feeding FlowCast in snow basins; an hourly flash-flood track (NWIS
+   instantaneous values plus hourly forcing); real truth for storage and groundwater (GRACE, well records) so
+   BasinDetective's hidden properties can be graded on real basins.
+
 ## New models
 
-The power-grid and building projects are in, along with WakeNet (Kelmarsh and Penmanshiel SCADA) and
-[StormNet](../models/stormnet/) (NASA OMNI solar wind and Kyoto Dst). The next
-big-system candidate is Watershed (USGS NWIS, SNOTEL). See [backlog.md](backlog.md) for it and the other candidates
-with physics, data and an exam lined up.
+The power-grid, building and water projects are in, along with WakeNet (Kelmarsh and Penmanshiel SCADA) and
+[StormNet](../models/stormnet/) (NASA OMNI solar wind and Kyoto Dst). See [backlog.md](backlog.md) for the next
+candidates with physics, data and an exam lined up.

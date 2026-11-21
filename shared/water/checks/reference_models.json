@@ -1,0 +1,114 @@
+{
+ "what": "WaterSim GR4J vs airGR and HBV vs TUWmodel (independent Fortran codes run in R)",
+ "gr4j_vs_airGR": {
+  "case": "airGR help example (?RunModel_GR4J): basin L0123001, X1=257.238, X2=1.012, X3=88.235, X4=2.208; explicit initial stores S=0.3 X1, R=0.5 X3 on 1989-01-01, no warm-up, run to 1999-12-31",
+  "n_days": 4017,
+  "diffs": {
+   "Q_vs_Qsim": {
+    "max_abs_diff_mm": 1.0091765068054315e-07,
+    "rel_to_mean": 5.8144497029869145e-08
+   },
+   "soil_vs_Prod": {
+    "max_abs_diff_mm": 7.673861546209082e-13,
+    "rel_to_mean": 4.72485684953465e-15
+   },
+   "groundwater_vs_Rout": {
+    "max_abs_diff_mm": 5.43710029887734e-07,
+    "rel_to_mean": 1.1364007961017598e-08
+   },
+   "ET_soil_vs_AE": {
+    "max_abs_diff_mm": 1.7985612998927536e-14,
+    "rel_to_mean": 1.2116480819657927e-14
+   },
+   "exchange_vs_Exch2": {
+    "max_abs_diff_mm": 2.138083121661083e-08,
+    "rel_to_mean": 8.055783730411618e-08
+   }
+  },
+  "published_help_NSE_1990_1999": 0.7988,
+  "airGR_NSE_this_build": 0.798822,
+  "watersim_NSE_1990_1999": 0.7988220786258262,
+  "max_abs_Q_diff_vs_help_example_mm": 1.0091765068054315e-07,
+  "ledger_ok": true,
+  "pass": true
+ },
+ "hbv_vs_TUWmodel": {
+  "case": "TUWmodel help example, lumped Vils (198 km2, Austria) 1976-2008, parameters of ?TUWmodel with the melt threshold Tm set to (Tr+Ts)/2 = 1 C (HBV-light has one threshold), routing off (bmax=1) or fixed (bmax=10)",
+  "tuw_params": {
+   "SCF": 1.02,
+   "DDF": 1.7,
+   "Tr": 2.0,
+   "Ts": 0.0,
+   "Tm": 1.0,
+   "LPrat": 0.934,
+   "FC": 121,
+   "BETA": 2.52,
+   "k0": 0.473,
+   "k1": 9.06,
+   "k2": 142,
+   "lsuz": 50.1,
+   "cperc": 2.38
+  },
+  "watersim_params": {
+   "TT": 1.0,
+   "TTI": 2.0,
+   "CFMAX": 1.7,
+   "SFCF": 1.02,
+   "CFR": 0.0,
+   "CWH": 0.0,
+   "TLAPSE": -6.5,
+   "PGRAD": 0.0,
+   "FC": 121.0,
+   "LP": 0.934,
+   "BETA": 2.52,
+   "PERC": 2.38,
+   "UZL": 50.1,
+   "K0": 0.2552517376368775,
+   "K1": 0.09884084032826952,
+   "K2": 0.006992834401692935,
+   "MAXBAS": 1.0
+  },
+  "n_days": 12053,
+  "snow_and_soil_routines": {
+   "SWE_vs_swe": {
+    "max_abs_diff_mm": 9.947598300641403e-13,
+    "mean_ref": 85.7702134331792
+   },
+   "soil_vs_moist": {
+    "max_abs_diff_mm": 5.400124791776761e-13,
+    "mean_ref": 105.98136391249676
+   },
+   "ET_soil_vs_eta": {
+    "max_abs_diff_mm": 1.021405182655144e-14,
+    "mean_ref": 1.37362294195895
+   },
+   "rain_vs_rain": {
+    "max_abs_diff_mm": 1.5631940186722204e-13,
+    "mean_ref": 3.6307707821633484
+   },
+   "melt_vs_melt": {
+    "max_abs_diff_mm": 4.169997680492088e-13,
+    "mean_ref": 1.2318286942536314
+   },
+   "snowfall_vs_snow_x_SCF": {
+    "max_abs_diff_mm": 1.5276668818842154e-13
+   }
+  },
+  "note_response": "The response routines differ by design: TUWmodel releases (S/k) exp(-1/k) per day and lets part of the percolation reach the lower-box outflow on the same day, in a different order; HBV-light (WaterSim) uses an explicit daily step (PERC, then Q0, Q1, Q2). WaterSim is given K = exp(-1/k)/k (the same daily release share). The triangular weights also differ (TUW: discrete half-day midpoints). So total runoff is compared by NSE/KGE/volume, not to round-off.",
+  "runoff_no_routing": {
+   "NSE_ours_vs_tuw": 0.9990379364150713,
+   "KGE": 0.9959965695448048,
+   "volume_ratio": 1.0000095955614188
+  },
+  "runoff_maxbas10": {
+   "NSE_ours_vs_tuw": 0.999785645260564,
+   "KGE": 0.9994991839889744,
+   "volume_ratio": 1.0000099059748055
+  },
+  "ledger_ok": true,
+  "pass": true
+ },
+ "hbv_light_published_example": "not reproduced: HBV-light (Seibert & Vis 2012) is a Windows GUI program with no published numeric test series we could download; TUWmodel (an independent HBV code with published example data) stands in",
+ "generated": "2026-11-18 13:30 UTC",
+ "python": "3.13.18"
+}

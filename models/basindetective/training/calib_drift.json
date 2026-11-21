@@ -1,0 +1,1470 @@
+{
+ "summary": {
+  "dev_median_delta_19y": 0.057130809288978755,
+  "dev_robust_sd_19y": 0.07636197636543465,
+  "median_elasticity": 2.021264762749386,
+  "n_basins": 51,
+  "scale_to_bank": 0.5,
+  "mu": 0.028565404644489378,
+  "sd": 0.038180988182717326,
+  "share_basins_delta_pos": 0.7843137254901961
+ },
+ "rows": [
+  {
+   "basin": "camels_01169000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": -0.012239794685231842,
+   "elasticity": 1.4987891880223048,
+   "real_d_logq": -0.15181682284311104
+  },
+  {
+   "basin": "camels_01169000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": -0.012042883052738929,
+   "elasticity": 1.4934798034695196,
+   "real_d_logq": -0.15181682284311104
+  },
+  {
+   "basin": "camels_01169000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": -0.013089483062723173,
+   "elasticity": 1.5992789216477876,
+   "real_d_logq": -0.15181682284311104
+  },
+  {
+   "basin": "camels_01169000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": -0.01318519158566156,
+   "elasticity": 1.4787076737039506,
+   "real_d_logq": -0.15181682284311104
+  },
+  {
+   "basin": "camels_01181000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": -0.017065122964029844,
+   "elasticity": 1.5788882680629623,
+   "real_d_logq": -0.17194390404009563
+  },
+  {
+   "basin": "camels_01181000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": -0.01150059095159206,
+   "elasticity": 1.5402910077922594,
+   "real_d_logq": -0.17194390404009563
+  },
+  {
+   "basin": "camels_01181000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": -0.010171581432595223,
+   "elasticity": 1.714253820345858,
+   "real_d_logq": -0.17194390404009563
+  },
+  {
+   "basin": "camels_01181000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": -0.01304211429388702,
+   "elasticity": 1.6661787829288799,
+   "real_d_logq": -0.17194390404009563
+  },
+  {
+   "basin": "camels_01365000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.00846448215185891,
+   "elasticity": 1.2797804330878748,
+   "real_d_logq": -0.21017038168254465
+  },
+  {
+   "basin": "camels_01365000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.01632323320147,
+   "elasticity": 1.392781688318293,
+   "real_d_logq": -0.21017038168254465
+  },
+  {
+   "basin": "camels_01365000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 1.3784636049507526e-05,
+   "elasticity": 1.316051206463712,
+   "real_d_logq": -0.21017038168254465
+  },
+  {
+   "basin": "camels_01365000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.02454981521624955,
+   "elasticity": 1.3590531816646378,
+   "real_d_logq": -0.21017038168254465
+  },
+  {
+   "basin": "camels_01510000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": -0.03617072367817664,
+   "elasticity": 1.7072889783906642,
+   "real_d_logq": -0.3248737951037835
+  },
+  {
+   "basin": "camels_01510000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": -0.047106859134512846,
+   "elasticity": 1.6202768179374272,
+   "real_d_logq": -0.3248737951037835
+  },
+  {
+   "basin": "camels_01510000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": -0.043393220489987616,
+   "elasticity": 1.8272644641207008,
+   "real_d_logq": -0.3248737951037835
+  },
+  {
+   "basin": "camels_01510000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": -0.0542158913321904,
+   "elasticity": 1.7074388628165194,
+   "real_d_logq": -0.3248737951037835
+  },
+  {
+   "basin": "camels_01548500",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": -0.12127552639586459,
+   "elasticity": 2.2442397129373752,
+   "real_d_logq": -0.13044541508146806
+  },
+  {
+   "basin": "camels_01548500",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": -0.0860403214202412,
+   "elasticity": 1.8198957884479299,
+   "real_d_logq": -0.13044541508146806
+  },
+  {
+   "basin": "camels_01548500",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": -0.11010032171983897,
+   "elasticity": 2.1918582789993644,
+   "real_d_logq": -0.13044541508146806
+  },
+  {
+   "basin": "camels_01548500",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": -0.11717043885071998,
+   "elasticity": 2.1454131904051787,
+   "real_d_logq": -0.13044541508146806
+  },
+  {
+   "basin": "camels_01605500",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.19445061639190964,
+   "elasticity": 2.5507076327117018,
+   "real_d_logq": -0.031998489925846495
+  },
+  {
+   "basin": "camels_01605500",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.1858401771869954,
+   "elasticity": 2.0010237604647054,
+   "real_d_logq": -0.031998489925846495
+  },
+  {
+   "basin": "camels_01605500",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.19425101910913598,
+   "elasticity": 2.6585170589223495,
+   "real_d_logq": -0.031998489925846495
+  },
+  {
+   "basin": "camels_01605500",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.182512540088275,
+   "elasticity": 2.5703836574453445,
+   "real_d_logq": -0.031998489925846495
+  },
+  {
+   "basin": "camels_01664000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.15879079317272932,
+   "elasticity": 2.111037847644073,
+   "real_d_logq": -0.06072724485349463
+  },
+  {
+   "basin": "camels_01664000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.15556398408907396,
+   "elasticity": 2.058371405537298,
+   "real_d_logq": -0.06072724485349463
+  },
+  {
+   "basin": "camels_01664000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.15499802750681133,
+   "elasticity": 2.1975243584014916,
+   "real_d_logq": -0.06072724485349463
+  },
+  {
+   "basin": "camels_01664000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.13467650150839044,
+   "elasticity": 2.3935083384739273,
+   "real_d_logq": -0.06072724485349463
+  },
+  {
+   "basin": "camels_02017500",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.23930984107647157,
+   "elasticity": 2.160163928497586,
+   "real_d_logq": 0.0896185420949665
+  },
+  {
+   "basin": "camels_02017500",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.24113802803372358,
+   "elasticity": 1.9500839465807323,
+   "real_d_logq": 0.0896185420949665
+  },
+  {
+   "basin": "camels_02017500",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.24211955078623607,
+   "elasticity": 2.3127023935560636,
+   "real_d_logq": 0.0896185420949665
+  },
+  {
+   "basin": "camels_02017500",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.2257233058181028,
+   "elasticity": 2.4651205684652404,
+   "real_d_logq": 0.0896185420949665
+  },
+  {
+   "basin": "camels_02055100",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.19729632896972352,
+   "elasticity": 2.304716475232016,
+   "real_d_logq": 0.03936637862969681
+  },
+  {
+   "basin": "camels_02055100",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.20142294409035477,
+   "elasticity": 2.129809644019378,
+   "real_d_logq": 0.03936637862969681
+  },
+  {
+   "basin": "camels_02055100",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.20438505426022802,
+   "elasticity": 2.4591281736399924,
+   "real_d_logq": 0.03936637862969681
+  },
+  {
+   "basin": "camels_02055100",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.20491466797494223,
+   "elasticity": 2.5346843899464124,
+   "real_d_logq": 0.03936637862969681
+  },
+  {
+   "basin": "camels_02108000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.2041437047959308,
+   "elasticity": 2.3079411749943004,
+   "real_d_logq": -0.14384144382544103
+  },
+  {
+   "basin": "camels_02108000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.1831187066686767,
+   "elasticity": 2.2324114103819857,
+   "real_d_logq": -0.14384144382544103
+  },
+  {
+   "basin": "camels_02108000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.1853772844561713,
+   "elasticity": 2.7383779973960287,
+   "real_d_logq": -0.14384144382544103
+  },
+  {
+   "basin": "camels_02108000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.1830232628605053,
+   "elasticity": 2.5889213211925797,
+   "real_d_logq": -0.14384144382544103
+  },
+  {
+   "basin": "camels_02137727",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.20227654540550366,
+   "elasticity": 1.7575384441195623,
+   "real_d_logq": 0.10562396410323133
+  },
+  {
+   "basin": "camels_02137727",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.18350559251869608,
+   "elasticity": 1.7117727185864389,
+   "real_d_logq": 0.10562396410323133
+  },
+  {
+   "basin": "camels_02137727",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.20596136236051743,
+   "elasticity": 1.842278327027158,
+   "real_d_logq": 0.10562396410323133
+  },
+  {
+   "basin": "camels_02137727",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.20968080049238624,
+   "elasticity": 1.854405996599885,
+   "real_d_logq": 0.10562396410323133
+  },
+  {
+   "basin": "camels_02143000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.250876301725573,
+   "elasticity": 1.8149407790027627,
+   "real_d_logq": 0.24418422819683094
+  },
+  {
+   "basin": "camels_02143000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.2168569858708252,
+   "elasticity": 1.7025183340274421,
+   "real_d_logq": 0.24418422819683094
+  },
+  {
+   "basin": "camels_02143000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.24895744468635922,
+   "elasticity": 1.8838235094537348,
+   "real_d_logq": 0.24418422819683094
+  },
+  {
+   "basin": "camels_02143000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.27679225261666085,
+   "elasticity": 2.0405618405003976,
+   "real_d_logq": 0.24418422819683094
+  },
+  {
+   "basin": "camels_02212600",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.23189729374472529,
+   "elasticity": 3.100776187089847,
+   "real_d_logq": 0.2072156923045942
+  },
+  {
+   "basin": "camels_02212600",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.19386761050591345,
+   "elasticity": 2.720675707180607,
+   "real_d_logq": 0.2072156923045942
+  },
+  {
+   "basin": "camels_02212600",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.2808498599011892,
+   "elasticity": 3.6727129164807164,
+   "real_d_logq": 0.2072156923045942
+  },
+  {
+   "basin": "camels_02212600",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.21620015705236423,
+   "elasticity": 2.730085388460527,
+   "real_d_logq": 0.2072156923045942
+  },
+  {
+   "basin": "camels_02297155",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.12913909728898865,
+   "elasticity": 3.1297714522971107,
+   "real_d_logq": -0.004908838076134958
+  },
+  {
+   "basin": "camels_02297155",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.09096170220879762,
+   "elasticity": 3.0829668999869297,
+   "real_d_logq": -0.004908838076134958
+  },
+  {
+   "basin": "camels_02297155",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.13143532613774045,
+   "elasticity": 3.4910997891061504,
+   "real_d_logq": -0.004908838076134958
+  },
+  {
+   "basin": "camels_02297155",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.11197875394337514,
+   "elasticity": 3.1109145051765235,
+   "real_d_logq": -0.004908838076134958
+  },
+  {
+   "basin": "camels_02408540",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.09956980973427643,
+   "elasticity": 2.0347043647986838,
+   "real_d_logq": 0.17373624393177997
+  },
+  {
+   "basin": "camels_02408540",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.09703723251385957,
+   "elasticity": 2.096919611062981,
+   "real_d_logq": 0.17373624393177997
+  },
+  {
+   "basin": "camels_02408540",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.09662334190771033,
+   "elasticity": 2.077597947621926,
+   "real_d_logq": 0.17373624393177997
+  },
+  {
+   "basin": "camels_02408540",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.12010452233951555,
+   "elasticity": 2.326853397955725,
+   "real_d_logq": 0.17373624393177997
+  },
+  {
+   "basin": "camels_02472000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.1661476852092218,
+   "elasticity": 2.1477374233596045,
+   "real_d_logq": 0.17175856654407107
+  },
+  {
+   "basin": "camels_02472000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.13709371225555633,
+   "elasticity": 2.0361458084513364,
+   "real_d_logq": 0.17175856654407107
+  },
+  {
+   "basin": "camels_02472000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.16497364995963715,
+   "elasticity": 2.275811884518225,
+   "real_d_logq": 0.17175856654407107
+  },
+  {
+   "basin": "camels_02472000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.1874192507205377,
+   "elasticity": 2.5184905562631634,
+   "real_d_logq": 0.17175856654407107
+  },
+  {
+   "basin": "camels_03164000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.19167714682987752,
+   "elasticity": 1.9613063993239026,
+   "real_d_logq": 0.08436570960454781
+  },
+  {
+   "basin": "camels_03164000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.18783443928803356,
+   "elasticity": 2.094670072233085,
+   "real_d_logq": 0.08436570960454781
+  },
+  {
+   "basin": "camels_03164000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.20796968576281039,
+   "elasticity": 2.075725751492546,
+   "real_d_logq": 0.08436570960454781
+  },
+  {
+   "basin": "camels_03164000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.22134691082236385,
+   "elasticity": 1.9027179181683496,
+   "real_d_logq": 0.08436570960454781
+  },
+  {
+   "basin": "camels_03182500",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.11035417238244116,
+   "elasticity": 2.0154105650320018,
+   "real_d_logq": -0.035785998712103195
+  },
+  {
+   "basin": "camels_03182500",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.1110374516174466,
+   "elasticity": 1.7504221811006615,
+   "real_d_logq": -0.035785998712103195
+  },
+  {
+   "basin": "camels_03182500",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.11262982934671872,
+   "elasticity": 1.9695919927915344,
+   "real_d_logq": -0.035785998712103195
+  },
+  {
+   "basin": "camels_03182500",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.10759401863702678,
+   "elasticity": 2.023382235861569,
+   "real_d_logq": -0.035785998712103195
+  },
+  {
+   "basin": "camels_03384450",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.08661544990287223,
+   "elasticity": 1.929742077322743,
+   "real_d_logq": 0.005317805638163087
+  },
+  {
+   "basin": "camels_03384450",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.09200661102619034,
+   "elasticity": 1.773208070777702,
+   "real_d_logq": 0.005317805638163087
+  },
+  {
+   "basin": "camels_03384450",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.10894614101668953,
+   "elasticity": 1.9121605120959184,
+   "real_d_logq": 0.005317805638163087
+  },
+  {
+   "basin": "camels_03384450",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.12697691107292025,
+   "elasticity": 1.9317036314491725,
+   "real_d_logq": 0.005317805638163087
+  },
+  {
+   "basin": "camels_03574500",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.07723911216951651,
+   "elasticity": 1.8776347293000506,
+   "real_d_logq": 0.10713965499993527
+  },
+  {
+   "basin": "camels_03574500",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.05643037215863422,
+   "elasticity": 1.7482483693912354,
+   "real_d_logq": 0.10713965499993527
+  },
+  {
+   "basin": "camels_03574500",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.07181357058325383,
+   "elasticity": 1.9739388522590033,
+   "real_d_logq": 0.10713965499993527
+  },
+  {
+   "basin": "camels_03574500",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.06950304166375659,
+   "elasticity": 2.0405353291028607,
+   "real_d_logq": 0.10713965499993527
+  },
+  {
+   "basin": "camels_04122200",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.1329429702159901,
+   "elasticity": 1.9516509870949306,
+   "real_d_logq": 0.15631130031242038
+  },
+  {
+   "basin": "camels_04122200",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.1155609620704991,
+   "elasticity": 2.2376313118082845,
+   "real_d_logq": 0.15631130031242038
+  },
+  {
+   "basin": "camels_04122200",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.1367842934016439,
+   "elasticity": 2.0871021714371096,
+   "real_d_logq": 0.15631130031242038
+  },
+  {
+   "basin": "camels_04122200",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.15086434464207046,
+   "elasticity": 1.929437905812939,
+   "real_d_logq": 0.15631130031242038
+  },
+  {
+   "basin": "camels_04296000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": -0.05893520879927938,
+   "elasticity": 1.9519328481356446,
+   "real_d_logq": -0.2778168106188
+  },
+  {
+   "basin": "camels_04296000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": -0.06863033340011293,
+   "elasticity": 1.6750657145223606,
+   "real_d_logq": -0.2778168106188
+  },
+  {
+   "basin": "camels_04296000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": -0.057778292917068264,
+   "elasticity": 1.803307898693638,
+   "real_d_logq": -0.2778168106188
+  },
+  {
+   "basin": "camels_04296000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": -0.06567237848076324,
+   "elasticity": 1.8612703768780126,
+   "real_d_logq": -0.2778168106188
+  },
+  {
+   "basin": "camels_05056000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": -0.31252196028547985,
+   "elasticity": 4.832543162927889,
+   "real_d_logq": -0.3277749893950963
+  },
+  {
+   "basin": "camels_05056000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": -0.38817523304934953,
+   "elasticity": 3.8761327918139843,
+   "real_d_logq": -0.3277749893950963
+  },
+  {
+   "basin": "camels_05056000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": -0.2682284509871624,
+   "elasticity": 2.382411898286052,
+   "real_d_logq": -0.3277749893950963
+  },
+  {
+   "basin": "camels_05056000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": -0.45509156094782677,
+   "elasticity": 1.6922317040527801,
+   "real_d_logq": -0.3277749893950963
+  },
+  {
+   "basin": "camels_05458000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.28272338978497624,
+   "elasticity": 2.1217083116312323,
+   "real_d_logq": -0.10101409656978044
+  },
+  {
+   "basin": "camels_05458000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.19873032485706713,
+   "elasticity": 2.011168795059472,
+   "real_d_logq": -0.10101409656978044
+  },
+  {
+   "basin": "camels_05458000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.2705606842779092,
+   "elasticity": 2.3868101249928078,
+   "real_d_logq": -0.10101409656978044
+  },
+  {
+   "basin": "camels_05458000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.2863284342697614,
+   "elasticity": 2.4039453336843577,
+   "real_d_logq": -0.10101409656978044
+  },
+  {
+   "basin": "camels_05593900",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.26220979707522835,
+   "elasticity": 2.046175184346561,
+   "real_d_logq": -0.1203008689114089
+  },
+  {
+   "basin": "camels_05593900",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.2037379361634944,
+   "elasticity": 1.9059198578264214,
+   "real_d_logq": -0.1203008689114089
+  },
+  {
+   "basin": "camels_05593900",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.29985803267582944,
+   "elasticity": 2.2578510570777834,
+   "real_d_logq": -0.1203008689114089
+  },
+  {
+   "basin": "camels_05593900",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.3004979670349888,
+   "elasticity": 2.5012926093546737,
+   "real_d_logq": -0.1203008689114089
+  },
+  {
+   "basin": "camels_06280300",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.3511204289665932,
+   "elasticity": 1.6976174405365376,
+   "real_d_logq": 0.2001429880884762
+  },
+  {
+   "basin": "camels_06280300",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.3645233966689273,
+   "elasticity": 1.7386045587567656,
+   "real_d_logq": 0.2001429880884762
+  },
+  {
+   "basin": "camels_06280300",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.26145131167543884,
+   "elasticity": 1.436401228840917,
+   "real_d_logq": 0.2001429880884762
+  },
+  {
+   "basin": "camels_06280300",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.32403862083743884,
+   "elasticity": 1.6526543399862004,
+   "real_d_logq": 0.2001429880884762
+  },
+  {
+   "basin": "camels_06339500",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 1.1492084309569215,
+   "elasticity": 4.321659556230744,
+   "real_d_logq": 0.6901764700307451
+  },
+  {
+   "basin": "camels_06339500",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.8373487564005004,
+   "elasticity": 3.257088212435466,
+   "real_d_logq": 0.6901764700307451
+  },
+  {
+   "basin": "camels_06339500",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.753433911405855,
+   "elasticity": 2.598390566219444,
+   "real_d_logq": 0.6901764700307451
+  },
+  {
+   "basin": "camels_06339500",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 1.0965173251525715,
+   "elasticity": 6.937765443735517,
+   "real_d_logq": 0.6901764700307451
+  },
+  {
+   "basin": "camels_06404000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 1.2733922701236298,
+   "elasticity": 5.499727560117435,
+   "real_d_logq": 0.08995209275977123
+  },
+  {
+   "basin": "camels_06404000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.88439946133816,
+   "elasticity": 3.735640366263324,
+   "real_d_logq": 0.08995209275977123
+  },
+  {
+   "basin": "camels_06404000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 1.268621858189022,
+   "elasticity": 6.909246862928478,
+   "real_d_logq": 0.08995209275977123
+  },
+  {
+   "basin": "camels_06404000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 1.4974155330405527,
+   "elasticity": 5.539567435782737,
+   "real_d_logq": 0.08995209275977123
+  },
+  {
+   "basin": "camels_06622700",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.3332446049324868,
+   "elasticity": 1.3280291057296123,
+   "real_d_logq": 0.24195419681246513
+  },
+  {
+   "basin": "camels_06622700",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.30797285167047656,
+   "elasticity": 1.2887715808600608,
+   "real_d_logq": 0.24195419681246513
+  },
+  {
+   "basin": "camels_06622700",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.3306139134452615,
+   "elasticity": 1.3022261161917952,
+   "real_d_logq": 0.24195419681246513
+  },
+  {
+   "basin": "camels_06622700",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.3592084697361684,
+   "elasticity": 1.3792216800527737,
+   "real_d_logq": 0.24195419681246513
+  },
+  {
+   "basin": "camels_06885500",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.7281012373898277,
+   "elasticity": 3.048544407894238,
+   "real_d_logq": 0.4519474378883742
+  },
+  {
+   "basin": "camels_06885500",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.4875918593257923,
+   "elasticity": 2.734160303195968,
+   "real_d_logq": 0.4519474378883742
+  },
+  {
+   "basin": "camels_06885500",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.7588457372868812,
+   "elasticity": 3.2171512108710107,
+   "real_d_logq": 0.4519474378883742
+  },
+  {
+   "basin": "camels_06885500",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.7426299100857172,
+   "elasticity": 3.2765516816743565,
+   "real_d_logq": 0.4519474378883742
+  },
+  {
+   "basin": "camels_07067000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.3627029091335453,
+   "elasticity": 2.0136729302879255,
+   "real_d_logq": 0.28752724466052787
+  },
+  {
+   "basin": "camels_07067000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.34807790500185254,
+   "elasticity": 2.0451564854725857,
+   "real_d_logq": 0.28752724466052787
+  },
+  {
+   "basin": "camels_07067000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.35836573808118016,
+   "elasticity": 2.086477443708826,
+   "real_d_logq": 0.28752724466052787
+  },
+  {
+   "basin": "camels_07067000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.3000891404259774,
+   "elasticity": 1.8700055420899608,
+   "real_d_logq": 0.28752724466052787
+  },
+  {
+   "basin": "camels_07149000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.6848252366100016,
+   "elasticity": 3.0023448830941835,
+   "real_d_logq": 0.22852602359235719
+  },
+  {
+   "basin": "camels_07149000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.9791201711880675,
+   "elasticity": 3.8848960844829827,
+   "real_d_logq": 0.22852602359235719
+  },
+  {
+   "basin": "camels_07149000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.7611577892017181,
+   "elasticity": 3.4508104070516277,
+   "real_d_logq": 0.22852602359235719
+  },
+  {
+   "basin": "camels_07149000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 1.0640768090772146,
+   "elasticity": 4.322862997884878,
+   "real_d_logq": 0.22852602359235719
+  },
+  {
+   "basin": "camels_07375000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.13667425357821936,
+   "elasticity": 2.220325876112063,
+   "real_d_logq": 0.17580554394417441
+  },
+  {
+   "basin": "camels_07375000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.10590993001893428,
+   "elasticity": 2.1413190492350775,
+   "real_d_logq": 0.17580554394417441
+  },
+  {
+   "basin": "camels_07375000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.1415208839034222,
+   "elasticity": 2.540613442885854,
+   "real_d_logq": 0.17580554394417441
+  },
+  {
+   "basin": "camels_07375000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.19521386962461162,
+   "elasticity": 2.7777656327811573,
+   "real_d_logq": 0.17580554394417441
+  },
+  {
+   "basin": "camels_08066300",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.06325088506561491,
+   "elasticity": 2.7937850799092114,
+   "real_d_logq": 0.17354335826159767
+  },
+  {
+   "basin": "camels_08066300",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.017079048983490747,
+   "elasticity": 2.3741002528541233,
+   "real_d_logq": 0.17354335826159767
+  },
+  {
+   "basin": "camels_08066300",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.025050400056983613,
+   "elasticity": 4.129122649934249,
+   "real_d_logq": 0.17354335826159767
+  },
+  {
+   "basin": "camels_08066300",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.04014671047383808,
+   "elasticity": 3.6261158774942435,
+   "real_d_logq": 0.17354335826159767
+  },
+  {
+   "basin": "camels_08164000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": -0.16919459801025738,
+   "elasticity": 3.182781989643547,
+   "real_d_logq": -0.3292192439040761
+  },
+  {
+   "basin": "camels_08164000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": -0.13067896860006367,
+   "elasticity": 2.48031401235171,
+   "real_d_logq": -0.3292192439040761
+  },
+  {
+   "basin": "camels_08164000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": -0.09218161885323539,
+   "elasticity": 3.038644264443283,
+   "real_d_logq": -0.3292192439040761
+  },
+  {
+   "basin": "camels_08164000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": -0.10786567392048663,
+   "elasticity": 2.8260941595877718,
+   "real_d_logq": -0.3292192439040761
+  },
+  {
+   "basin": "camels_08190500",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.5170179509947741,
+   "elasticity": 5.222867796442507,
+   "real_d_logq": 0.04155932995462619
+  },
+  {
+   "basin": "camels_08190500",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.17612759843365744,
+   "elasticity": 4.019520130083265,
+   "real_d_logq": 0.04155932995462619
+  },
+  {
+   "basin": "camels_08190500",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.23217971746575117,
+   "elasticity": 4.489525858217731,
+   "real_d_logq": 0.04155932995462619
+  },
+  {
+   "basin": "camels_08190500",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.039436006556805125,
+   "elasticity": 2.5926404991842533,
+   "real_d_logq": 0.04155932995462619
+  },
+  {
+   "basin": "camels_08202700",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": -0.30431868611713675,
+   "elasticity": 6.238077880823116,
+   "real_d_logq": -0.35127435813987873
+  },
+  {
+   "basin": "camels_08202700",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": -0.263656284915712,
+   "elasticity": 4.457849242788368,
+   "real_d_logq": -0.35127435813987873
+  },
+  {
+   "basin": "camels_08202700",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": -0.17745031660700672,
+   "elasticity": 9.380811414184933,
+   "real_d_logq": -0.35127435813987873
+  },
+  {
+   "basin": "camels_08202700",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": -0.7124715367810719,
+   "elasticity": 3.178761519742075,
+   "real_d_logq": -0.35127435813987873
+  },
+  {
+   "basin": "camels_08377900",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 1.248585496429854,
+   "elasticity": 2.390646894585,
+   "real_d_logq": 0.2821475853682821
+  },
+  {
+   "basin": "camels_08377900",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.977912614361206,
+   "elasticity": 2.24098478342202,
+   "real_d_logq": 0.2821475853682821
+  },
+  {
+   "basin": "camels_08377900",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 1.298329038348399,
+   "elasticity": 2.383259009822094,
+   "real_d_logq": 0.2821475853682821
+  },
+  {
+   "basin": "camels_08377900",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 1.2186561296175842,
+   "elasticity": 2.390697444591723,
+   "real_d_logq": 0.2821475853682821
+  },
+  {
+   "basin": "camels_09035800",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.46915482625521276,
+   "elasticity": 1.5456101871807926,
+   "real_d_logq": 0.3514597724807368
+  },
+  {
+   "basin": "camels_09035800",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.44917475710189547,
+   "elasticity": 1.553829431669056,
+   "real_d_logq": 0.3514597724807368
+  },
+  {
+   "basin": "camels_09035800",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.40686854997097543,
+   "elasticity": 1.4414330496567078,
+   "real_d_logq": 0.3514597724807368
+  },
+  {
+   "basin": "camels_09035800",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.4552501083302101,
+   "elasticity": 1.5171131465103005,
+   "real_d_logq": 0.3514597724807368
+  },
+  {
+   "basin": "camels_09484600",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": NaN,
+   "elasticity": NaN,
+   "real_d_logq": NaN
+  },
+  {
+   "basin": "camels_09484600",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": NaN,
+   "elasticity": NaN,
+   "real_d_logq": NaN
+  },
+  {
+   "basin": "camels_09484600",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": NaN,
+   "elasticity": NaN,
+   "real_d_logq": NaN
+  },
+  {
+   "basin": "camels_09484600",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": NaN,
+   "elasticity": NaN,
+   "real_d_logq": NaN
+  },
+  {
+   "basin": "camels_10234500",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.9764786308765437,
+   "elasticity": 1.858961999853671,
+   "real_d_logq": 0.4884418659391843
+  },
+  {
+   "basin": "camels_10234500",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 1.247985319693531,
+   "elasticity": 2.2180542144785798,
+   "real_d_logq": 0.4884418659391843
+  },
+  {
+   "basin": "camels_10234500",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.7819458417581364,
+   "elasticity": 2.023027034455137,
+   "real_d_logq": 0.4884418659391843
+  },
+  {
+   "basin": "camels_10234500",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.8972034742725695,
+   "elasticity": 1.9286324310590175,
+   "real_d_logq": 0.4884418659391843
+  },
+  {
+   "basin": "camels_11141280",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.12842968177412473,
+   "elasticity": 1.8739420006231755,
+   "real_d_logq": 0.34162670431728936
+  },
+  {
+   "basin": "camels_11141280",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.07939119012547136,
+   "elasticity": 2.0423418763154233,
+   "real_d_logq": 0.34162670431728936
+  },
+  {
+   "basin": "camels_11141280",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.1456753200687375,
+   "elasticity": 2.017214986911553,
+   "real_d_logq": 0.34162670431728936
+  },
+  {
+   "basin": "camels_11141280",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.13310444432962742,
+   "elasticity": 2.0195024910436343,
+   "real_d_logq": 0.34162670431728936
+  },
+  {
+   "basin": "camels_11237500",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.2189443192138376,
+   "elasticity": 1.721891135859368,
+   "real_d_logq": 0.10774253590042049
+  },
+  {
+   "basin": "camels_11237500",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.22717668703203586,
+   "elasticity": 1.5947203293470036,
+   "real_d_logq": 0.10774253590042049
+  },
+  {
+   "basin": "camels_11237500",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.25870845909592266,
+   "elasticity": 1.7299552844908972,
+   "real_d_logq": 0.10774253590042049
+  },
+  {
+   "basin": "camels_11237500",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.24662390733777506,
+   "elasticity": 1.7118088935960996,
+   "real_d_logq": 0.10774253590042049
+  },
+  {
+   "basin": "camels_11299600",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.0670304936053947,
+   "elasticity": 2.3355059816375765,
+   "real_d_logq": -0.059123785578035215
+  },
+  {
+   "basin": "camels_11299600",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": -0.024277253126173792,
+   "elasticity": 2.1244733562026252,
+   "real_d_logq": -0.059123785578035215
+  },
+  {
+   "basin": "camels_11299600",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": -0.023544155694007474,
+   "elasticity": 2.7359454057168,
+   "real_d_logq": -0.059123785578035215
+  },
+  {
+   "basin": "camels_11299600",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": -0.06383645222152756,
+   "elasticity": 2.882953503509893,
+   "real_d_logq": -0.059123785578035215
+  },
+  {
+   "basin": "camels_11528700",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.1793460239703043,
+   "elasticity": 1.5976050212540005,
+   "real_d_logq": 0.17961135379038545
+  },
+  {
+   "basin": "camels_11528700",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.18041688944648793,
+   "elasticity": 1.4723192233167892,
+   "real_d_logq": 0.17961135379038545
+  },
+  {
+   "basin": "camels_11528700",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.19377504374701515,
+   "elasticity": 1.6804637578187809,
+   "real_d_logq": 0.17961135379038545
+  },
+  {
+   "basin": "camels_11528700",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.1955491000873255,
+   "elasticity": 1.6173481435167547,
+   "real_d_logq": 0.17961135379038545
+  },
+  {
+   "basin": "camels_12041200",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": -0.035679397138153934,
+   "elasticity": 1.103429355081793,
+   "real_d_logq": -0.037463838918562864
+  },
+  {
+   "basin": "camels_12041200",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": -0.025379455183621502,
+   "elasticity": 0.7204399287416852,
+   "real_d_logq": -0.037463838918562864
+  },
+  {
+   "basin": "camels_12041200",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": -0.03328788967934848,
+   "elasticity": 1.0892756024929673,
+   "real_d_logq": -0.037463838918562864
+  },
+  {
+   "basin": "camels_12041200",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": -0.030826331270597862,
+   "elasticity": 1.0283352400783885,
+   "real_d_logq": -0.037463838918562864
+  },
+  {
+   "basin": "camels_12447390",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.1515862012757649,
+   "elasticity": 1.9491993431026782,
+   "real_d_logq": -0.09141211064751861
+  },
+  {
+   "basin": "camels_12447390",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.09545719104303307,
+   "elasticity": 1.6545908257113897,
+   "real_d_logq": -0.09141211064751861
+  },
+  {
+   "basin": "camels_12447390",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.13797318875917453,
+   "elasticity": 1.8555085417655832,
+   "real_d_logq": -0.09141211064751861
+  },
+  {
+   "basin": "camels_12447390",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.1528688468270593,
+   "elasticity": 1.938686759756999,
+   "real_d_logq": -0.09141211064751861
+  },
+  {
+   "basin": "camels_12451000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.0544858188470978,
+   "elasticity": 1.2496240080673138,
+   "real_d_logq": -0.0280678619128778
+  },
+  {
+   "basin": "camels_12451000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.030595249042252748,
+   "elasticity": 1.162509501379545,
+   "real_d_logq": -0.0280678619128778
+  },
+  {
+   "basin": "camels_12451000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.05467297684817818,
+   "elasticity": 1.2729513061952802,
+   "real_d_logq": -0.0280678619128778
+  },
+  {
+   "basin": "camels_12451000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.05569135517107915,
+   "elasticity": 1.279842097486319,
+   "real_d_logq": -0.0280678619128778
+  },
+  {
+   "basin": "camels_13240000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.15725740935408428,
+   "elasticity": 1.1950761104058272,
+   "real_d_logq": 0.11986717512753464
+  },
+  {
+   "basin": "camels_13240000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.20023131634833813,
+   "elasticity": 1.3500875701353465,
+   "real_d_logq": 0.11986717512753464
+  },
+  {
+   "basin": "camels_13240000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.15245055973562438,
+   "elasticity": 1.210763713315568,
+   "real_d_logq": 0.11986717512753464
+  },
+  {
+   "basin": "camels_13240000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.17402134274413816,
+   "elasticity": 1.1728930709998453,
+   "real_d_logq": 0.11986717512753464
+  },
+  {
+   "basin": "camels_14185000",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": 0.007744425942751931,
+   "elasticity": 1.2605789407164436,
+   "real_d_logq": 0.05685829137672882
+  },
+  {
+   "basin": "camels_14185000",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": 0.00585427836522423,
+   "elasticity": 1.2438678883294552,
+   "real_d_logq": 0.05685829137672882
+  },
+  {
+   "basin": "camels_14185000",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": 0.005828874623991176,
+   "elasticity": 1.2731427720609356,
+   "real_d_logq": 0.05685829137672882
+  },
+  {
+   "basin": "camels_14185000",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": 0.014897114126209976,
+   "elasticity": 1.246513819665196,
+   "real_d_logq": 0.05685829137672882
+  },
+  {
+   "basin": "camels_14185900",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": -0.01236680866231632,
+   "elasticity": 1.1108981595147571,
+   "real_d_logq": 0.04079535177240179
+  },
+  {
+   "basin": "camels_14185900",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": -0.010135170675249494,
+   "elasticity": 1.0407585122744734,
+   "real_d_logq": 0.04079535177240179
+  },
+  {
+   "basin": "camels_14185900",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": -0.013340712011576494,
+   "elasticity": 1.095500260692528,
+   "real_d_logq": 0.04079535177240179
+  },
+  {
+   "basin": "camels_14185900",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": -0.003979094087017243,
+   "elasticity": 1.0331728758622671,
+   "real_d_logq": 0.04079535177240179
+  },
+  {
+   "basin": "camels_14306340",
+   "pair": "hbv+degree_day",
+   "twin_d_logq": -0.08789948614176257,
+   "elasticity": 1.1514348776745442,
+   "real_d_logq": -0.011656545461667056
+  },
+  {
+   "basin": "camels_14306340",
+   "pair": "gr4j+degree_day",
+   "twin_d_logq": -0.08182621181965666,
+   "elasticity": 1.087816741116594,
+   "real_d_logq": -0.011656545461667056
+  },
+  {
+   "basin": "camels_14306340",
+   "pair": "sacsma+degree_day",
+   "twin_d_logq": -0.07068975580362102,
+   "elasticity": 1.1239817064719593,
+   "real_d_logq": -0.011656545461667056
+  },
+  {
+   "basin": "camels_14306340",
+   "pair": "vic_lite+degree_day",
+   "twin_d_logq": -0.06806304703098798,
+   "elasticity": 1.1030203747132883,
+   "real_d_logq": -0.011656545461667056
+  }
+ ]
+}

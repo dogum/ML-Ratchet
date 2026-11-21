@@ -1,0 +1,31 @@
+{
+ "what": "log Budyko-required precipitation multiplier, calibration period",
+ "groups": {
+  "rain": {
+   "n_sim": 550,
+   "n_real": 33,
+   "median_sim": 0.028081275027821012,
+   "median_real": -0.03428941431549956,
+   "sd_sim": 0.18804285520456418,
+   "sd_real": 0.0987858385768047,
+   "mean_fsnow_real": 0.04527099430561066
+  },
+  "snow": {
+   "n_sim": 449,
+   "n_real": 19,
+   "median_sim": 0.13233045281779043,
+   "median_real": 0.16743125126004735,
+   "sd_sim": 0.20804505962476103,
+   "sd_real": 0.23927140368358096,
+   "mean_fsnow_real": 0.3709215521812439
+  }
+ },
+ "v2_prior": {
+  "mu0": -0.07592089235014444,
+  "mu_snow": 0.2993131300662537,
+  "sd": 0.1156893637860473,
+  "snow_extra": 0.1,
+  "tsd": 0.7
+ },
+ "sim_estimator_vs_true_rho": 0.34409552411269245
+}

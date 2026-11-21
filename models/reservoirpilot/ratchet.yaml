@@ -1,0 +1,43 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json (written by training/ratchet.py; when the generator
+# moved from g1 to g4 every rung was re-scored on the g4 frozen set and every decision re-taken in order).
+model: reservoirpilot
+ladders:
+  - name: "ReservoirPilot v1.0 (WaterSim inflow + simulated operators, 18 Nov 2026)"
+    objective: "S_J = 1 − median J(policy) / median J(SOP) on the frozen simulated set of the current generator version (300 tasks per version, seeds 9000+; WaterData's cost J and mass balance, the whole scored window from the task's start storage). Final generator g4; the g1-g3 columns are re-scores on the earlier frozen sets."
+    rule: "Keep if S_J on the frozen set beats the incumbent's by more than 0.01 AND the median J on the 15 real dev dams is at most 1.05 × the incumbent's (the first rung: at most SOP's dev median, 0.0964). Checkpoints are chosen on a separate simulated selection set (200 tasks per version, seeds 7000+), never on the frozen set or real data."
+    margin: 0.01
+    dev_gate: "Median J on the 15 ResOpsUS dev dams at most 5 % above the incumbent's"
+    frozen_sets: [val_g1, val_g2, val_g3, val_g4]
+    scored_on: val_g4
+    note: >-
+      Generator rungs (the physics axis): g1 WaterSim inflow and a random simulated historical operator; g2 adds
+      back-calculated inflow noise (e_t − e_t−1)/K, e ~ N(0, σ·cap), which gives negative-inflow days as in ResOpsUS
+      (dev and aux median 2 %, up to 35 %); g3 adds an upstream regulating reservoir on 30 % of tasks and gross data
+      spikes on 10 %; g4 makes the halves non-stationary (scored-decade inflow × exp(N(0, 0.3))). g2-g4 ranges were set
+      from the 15 dev dams and the aux dams with complete records (6 complete, inflow ratios on 29); the exam was never
+      read. When the frozen set switched from g1 to g4, every rung was re-scored and every decision re-taken in order;
+      the decisions below are the re-taken ones, with the g1 decision in the last column. r3 and r4 were kept on g1 and
+      are rejected on g4, so r5 (r4 fine-tuned on g4) was judged against r2. Not rungs, logged in training/ratchet.json
+      notes: a first objective with a hard end-storage penalty (1000 × deficit / cap) inside one-year windows punished
+      natural seasonal drawdown and was replaced by a differentiable 365-day SOP tail; two first DPO runs (free-form
+      head, then rule head) never applied the optimiser step (train.py lacked opt.step()), so their weights never moved;
+      they were removed and re-run (the rows void-1 and void-2 below). The DPO free-form rung r3 was first run as "r1"
+      (runs/r1_dpo_hd_g1; the twin test file keeps that name). r5's margin over r2 (+0.011) is barely above the 0.01
+      rule. Every rung, the final one included, ends the simulated windows with less water than it started with
+      (median end − start on frozen g4: −0.23 of capacity for r8) and the ratchet never charged for it, because J does
+      not.
+    columns_source: "S_J on the four frozen simulated sets (re-scores; g4 decides), then the 15 dev dams: median J, its change against the incumbent at the time of the g4 decision, and the decision taken originally on g1"
+    columns: ["S_J g1", "S_J g2", "S_J g3", "S_J g4", "Dev median J", "Dev vs incumbent", "On g1"]
+    rungs:
+      - { id: void-1, change: "DPO through the differentiable simulator, free-form head (first attempt)", decision: rejected, why: "Void: train.py had no opt.step(), so the weights never moved and the flat validation curve meant nothing. Removed from the log and re-run (r3 is the free-form re-run).", metrics: ["–", "–", "–", "–", "–", "–", "void"] }
+      - { id: void-2, change: "DPO, rule head (first attempt)", decision: rejected, why: "Void for the same missing optimiser step. Removed from the log and re-run (r2 is the rule-head re-run).", metrics: ["–", "–", "–", "–", "–", "–", "void"] }
+      - { id: r1b, change: "Behaviour cloning of WaterData's perfect-foresight DP on 400 simulated g1 tasks (DP release along DP's own storage path), free-form h/e head, 11 base features", sim: 0.0888, decision: kept, why: "First rung: S_J 0.089 > 0.01 over SOP on g4; dev 0.0960 ≤ SOP's 0.0964. Cloning a policy that knows the future taught little: the network cannot see what DP saw.", metrics: [0.247, 0.047, 0.164, 0.089, 0.0960, "−0.4 % vs SOP", kept] }
+      - { id: c1, change: "Classical rule, no network: SOP + flood pool (draw down toward f × cap at up to Qmax over tau days) + linear hedging over H days of demand; f = 0.75, tau = 3 d, H = 10 d grid-tuned on 200 simulated g1 tasks (training/classical.py)", sim: 0.6225, decision: kept, why: "S_J 0.623 vs 0.089 (+0.534); dev 0.0422 vs 0.0960. The sim-tuned classical rule beats cloned DP by a wide margin.", metrics: [0.845, 0.566, 0.770, 0.623, 0.0422, "−56 %", kept] }
+      - { id: r2, change: "DPO: back-propagate J through the differentiable mass balance (torch BPTT); the network sets c1's three parameters (f, tau, H) every day, initialised at the tuned constants; base features, g1 bank, 1,200 iterations", sim: 0.7561, decision: kept, why: "S_J 0.756 vs 0.623 (+0.134); dev 0.0409 vs 0.0422 (−3 %).", metrics: [0.862, 0.649, 0.770, 0.756, 0.0409, "−3.1 %", kept] }
+      - { id: r3, change: "DPO, free-form head: R = h·D + 1.25·e·(Qmax − D)+, two sigmoids; base features, g1 bank, 1,200 iterations", sim: 0.6589, decision: rejected, why: "On g4: S_J 0.659 vs r2's 0.756 (fails); dev 0.0361 (passes). Kept on g1 (0.876 vs 0.862), rejected when re-taken on g4.", metrics: [0.876, 0.518, 0.683, 0.659, 0.0361, "−11.8 %", kept] }
+      - { id: r4, change: "r3 + calibration-half inflow climatology features (next 30 and 90 days, expected overflow): 15 inputs; g1 bank, 1,200 iterations, checkpoint on the selection set", sim: 0.7037, decision: rejected, why: "On g4: S_J 0.704 vs r2's 0.756 (fails); dev 0.0367 (passes). Kept on g1 (0.896 vs 0.876), rejected when re-taken on g4.", metrics: [0.896, 0.599, 0.717, 0.704, 0.0367, "−10.2 %", kept] }
+      - { id: c2, change: "c1 re-tuned on the g4 generator: f = 0.6, tau = 3 d, H = 10 d (no network)", sim: 0.7167, decision: rejected, why: "S_J 0.717 vs r2's 0.756 (fails); dev 0.0475 vs 0.0409 (+16 %, fails). It is still the exam's fairest baseline: the tuned classical rule.", metrics: [0.794, 0.561, 0.735, 0.717, 0.0475, "+16.1 %", "–"] }
+      - { id: r5, change: "Generator g4 (back-calculated inflow noise, upstream regulation, data spikes, non-stationary halves): r4 fine-tuned on the g4 bank, 1,200 iterations, checkpoint on the g4 selection set", sim: 0.7674, decision: kept, why: "S_J 0.767 vs r2's 0.756 (+0.011, just above the margin); dev 0.0363 vs 0.0409 (−11 %).", metrics: [0.843, 0.679, 0.811, 0.767, 0.0363, "−11.1 %", "–"] }
+      - { id: r6, change: "Rule head + climatology features, trained from scratch on g4", decision: rejected, why: "Diverged and stopped at 470 of 1,200 iterations: gradient norm 1e53 through the rule head's 1/tau term; batch median J rose from 0.000 to 0.09-0.15. No checkpoint scored.", metrics: ["–", "–", "–", "–", "–", "–", "–"] }
+      - { id: r7, change: "r5 continued with 540-day policy windows (+ 365-day SOP tail), lr 1e-3, 1,000 iterations, g4 bank", sim: 0.8281, decision: kept, why: "S_J 0.828 vs 0.767 (+0.061); dev 0.0332 vs 0.0363 (−9 %).", metrics: [0.878, 0.757, 0.850, 0.828, 0.0332, "−8.6 %", "–"] }
+      - { id: r8, change: "r7 continued with 1,000-day policy windows, lr 7e-4, 600 iterations (checkpoint 400 chosen on the g4 selection set)", sim: 0.8460, decision: released, why: "S_J 0.846 vs 0.828 (+0.018); dev 0.0335 vs 0.0332 (+0.8 %, within 5 %). The ratchet was closed before the exam; released as v1.0.", metrics: [0.872, 0.753, 0.852, 0.846, 0.0335, "+0.8 %", "–"] }

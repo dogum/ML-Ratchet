@@ -1,0 +1,5 @@
+{"version": "p3", "parent": "p1",
+ "note": "p1 + larger ERA5-Land forcing error for the network input: daily P lognormal cv 0.4 (was 0.25), basin P bias sd 0.10 (was 0.08), and up to 30% of each day's rain moved to the previous/next day (timing). calib_noise.py: a dev basin's calibrated GR4J driven by the default noisy forcing still matches its clean run at NSE 0.88, while the same model reaches only 0.56 against real flow; with this setting 0.72, leaving room for structure and gauge error",
+ "camels_share": 0.5, "muskingum_share": 0.25,
+ "undercatch": {"a": -0.088, "b_elev": 0.058, "b_snow": 0.153, "b_wet": 0.397, "sd": 0.146, "lo": 0.4, "hi": 2.5},
+ "forcing_error": {"p_day_cv": 0.4, "p_bias_sd": 0.1}, "p_jitter": 0.3, "obs_noise": {}}

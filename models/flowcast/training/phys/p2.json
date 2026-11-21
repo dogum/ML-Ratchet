@@ -1,0 +1,5 @@
+{"version": "p2", "parent": "p1",
+ "note": "p1 + flashier runoff parameters: apply the FULL dev-calibrated median parameter shift (shrink_total 1.0) instead of WaterSim's shipped half (0.5), for the four runoff models (snow parameters unchanged). calib_flash.py: with 0.5 the simulated Richards-Baker flashiness is 0.62x the observed on dev (median log ratio -0.48); with 1.0 it is 1.00x (-0.001); top-2% flow share -0.29 -> -0.09",
+ "camels_share": 0.5, "muskingum_share": 0.25, "shrink_total": 1.0,
+ "undercatch": {"a": -0.088, "b_elev": 0.058, "b_snow": 0.153, "b_wet": 0.397, "sd": 0.146, "lo": 0.4, "hi": 2.5},
+ "forcing_error": {}, "obs_noise": {}}

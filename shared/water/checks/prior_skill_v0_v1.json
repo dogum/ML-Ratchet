@@ -1,0 +1,105 @@
+{
+ "what": "Skill of the attribute-prior parameters (no calibration) on the dev basins, before and after the dev-fitted",
+ "periods": {
+  "cal": [
+   "1999-10-01",
+   "2008-09-30"
+  ],
+  "val_late": [
+   "2008-10-01",
+   "2014-09-30"
+  ]
+ },
+ "models": {
+  "hbv": {
+   "v0_unadjusted": {
+    "cal": {
+     "median_NSE": 0.29289371638319167,
+     "median_KGE": 0.28825606005454
+    },
+    "val_late": {
+     "median_NSE": 0.30772523210275876,
+     "median_KGE": 0.3272750201032478
+    }
+   },
+   "v1_adjusted": {
+    "cal": {
+     "median_NSE": 0.014541102136840567,
+     "median_KGE": 0.4744139470479679
+    },
+    "val_late": {
+     "median_NSE": -0.13013677097438803,
+     "median_KGE": 0.3737857134596161
+    }
+   }
+  },
+  "gr4j": {
+   "v0_unadjusted": {
+    "cal": {
+     "median_NSE": 0.3320382989744757,
+     "median_KGE": 0.33638514831003263
+    },
+    "val_late": {
+     "median_NSE": 0.3517565900065846,
+     "median_KGE": 0.3762257409787522
+    }
+   },
+   "v1_adjusted": {
+    "cal": {
+     "median_NSE": 0.26640927581929136,
+     "median_KGE": 0.5243874558831456
+    },
+    "val_late": {
+     "median_NSE": 0.03939981218312133,
+     "median_KGE": 0.4235770578087104
+    }
+   }
+  },
+  "sacsma": {
+   "v0_unadjusted": {
+    "cal": {
+     "median_NSE": 0.30872232675928146,
+     "median_KGE": 0.3463175116108733
+    },
+    "val_late": {
+     "median_NSE": 0.3507244515781299,
+     "median_KGE": 0.3627442399744524
+    }
+   },
+   "v1_adjusted": {
+    "cal": {
+     "median_NSE": 0.22420308579279385,
+     "median_KGE": 0.4962312208821957
+    },
+    "val_late": {
+     "median_NSE": 0.09838328961865211,
+     "median_KGE": 0.41486806078454946
+    }
+   }
+  },
+  "vic_lite": {
+   "v0_unadjusted": {
+    "cal": {
+     "median_NSE": 0.31689535691725146,
+     "median_KGE": 0.3405147234843291
+    },
+    "val_late": {
+     "median_NSE": 0.3200845425674381,
+     "median_KGE": 0.27658395479795345
+    }
+   },
+   "v1_adjusted": {
+    "cal": {
+     "median_NSE": 0.34380202212709604,
+     "median_KGE": 0.5217947703590058
+    },
+    "val_late": {
+     "median_NSE": 0.26020704151065116,
+     "median_KGE": 0.48462682948024266
+    }
+   }
+  }
+ },
+ "generated": "2026-11-18 13:09 UTC",
+ "python": "3.13.18"
+}

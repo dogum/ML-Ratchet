@@ -6,11 +6,12 @@
     mlratchet demo quakenet          run the demo on real exam examples
     mlratchet scoreboard             wins and losses against baselines, across the collection
     mlratchet validate [id ...]      check folders against the model contract
-    mlratchet new watershed --name Watershed   scaffold a new model from the template
+    mlratchet new roomsense --name RoomSense   scaffold a new model from the template
     mlratchet readme --write         regenerate model READMEs from model.yaml + ratchet.yaml
     mlratchet data vehicle           download + rebuild the vehicle platform's real data (resumable)
     mlratchet data grid              download + rebuild the grid platform's real data (resumable; --from-zip for the release)
     mlratchet data building          unpack (--from-zip) or rebuild the building platform's real data, verify vs MANIFEST
+    mlratchet data water             unpack (--from-zip) or rebuild the water platform's real data (Caravan stream 24.8 GB)
 """
 from __future__ import annotations
 
@@ -218,7 +219,8 @@ def cmd_readme(args) -> int:
 
 
 DATA_TARGETS = {"vehicle": ("shared", "vehicle", "data", "build.py"), "grid": ("shared", "grid", "data", "build.py"),
-                "building": ("shared", "building", "data", "build.py")}
+                "building": ("shared", "building", "data", "build.py"),
+                "water": ("shared", "water", "data", "build.py")}
 
 
 def cmd_data(args) -> int:

@@ -1,0 +1,685 @@
+{
+ "rule": "Primary sim metric:  S_J = 1 - median(J_policy) / median(J_SOP)  on the frozen set (B's J, B's mass balance,\n                     full scored window from the task's start storage). Kept if S_J > incumbent + 0.01.\nDev gate:            median J on the 15 dev dams <= 1.05 x the incumbent's (first rung: <= SOP's dev median).",
+ "gen": "g4",
+ "rungs": [
+  {
+   "id": "r1b_bc_dp",
+   "weights": "runs/r1b_bc_base_g1/weights.npz",
+   "desc": "Behaviour cloning of perfect-foresight DP on 400 simulated g1 tasks, free-form head, base features",
+   "sim": {
+    "g1": {
+     "S_J": 0.24703660336283173,
+     "J_median": 0.04501968640722359,
+     "J_sop_median": 0.0597900065372199,
+     "J_dp_median": 0.0021769251901923277,
+     "gap_closed_median": 0.07706631847031384,
+     "dS_end_median": 0.024102175266656346,
+     "shortage_ratio_median": 0.009190094585272627,
+     "flood_days_median": 2.248598757212137
+    },
+    "g2": {
+     "S_J": 0.047047066260185844,
+     "J_median": 0.05048903660618371,
+     "J_sop_median": 0.052981668683302244,
+     "J_dp_median": 0.004408077092625397,
+     "gap_closed_median": 0.07235494934002068,
+     "dS_end_median": 0.01492445111198936,
+     "shortage_ratio_median": 0.014290179166760245,
+     "flood_days_median": 2.25599059589774
+    },
+    "g3": {
+     "S_J": 0.1635649475934322,
+     "J_median": 0.04802710746414783,
+     "J_sop_median": 0.05741881252580887,
+     "J_dp_median": 0.002552609017219737,
+     "gap_closed_median": 0.0883545169985272,
+     "dS_end_median": 0.02842823330464831,
+     "shortage_ratio_median": 0.011097946554045293,
+     "flood_days_median": 2.074323420603301
+    },
+    "g4": {
+     "S_J": 0.08878033007055564,
+     "J_median": 0.09590972414055791,
+     "J_sop_median": 0.10525422936489529,
+     "J_dp_median": 0.006917463305454549,
+     "gap_closed_median": 0.04850238273840655,
+     "dS_end_median": 0.06923463199943138,
+     "shortage_ratio_median": 0.011833908702658404,
+     "flood_days_median": 1.729903989947244
+    }
+   },
+   "dev": {
+    "J_median": 0.09598559774828387,
+    "J_sop_median": 0.0963952720356241,
+    "J_per_dam": {
+     "grand_1078": 0.18336,
+     "grand_113": 0.05675,
+     "grand_1249": 0.0,
+     "grand_131": 0.06503,
+     "grand_1776": 0.09599,
+     "grand_1851": 0.02921,
+     "grand_382": 0.02456,
+     "grand_393": 0.16694,
+     "grand_469": 0.01571,
+     "grand_522": 0.04197,
+     "grand_585": 0.1235,
+     "grand_895": 0.11528,
+     "grand_920": 0.2944,
+     "grand_958": 0.11441,
+     "grand_982": 0.9594
+    },
+    "shortage_ratio_median": 0.07338524860828613,
+    "flood_days_median": 1.5045152091254754,
+    "dS_end_median": -0.19269231649545523
+   },
+   "kept": true,
+   "decision": "vs SOP on frozen g4: sim pass, dev gate pass",
+   "decision_on_g1_at_the_time": "kept vs SOP"
+  },
+  {
+   "id": "c1_tuned_sop",
+   "weights": "runs/tuned_sop_g1/weights.npz",
+   "desc": "Classical rule, no network: SOP + flood pool (draw down to f*cap at up to Qmax) + linear hedging; f=0.75, tau=3 d, H=10 d grid-tuned on 200 simulated g1 tasks",
+   "sim": {
+    "g1": {
+     "S_J": 0.8453493513059469,
+     "J_median": 0.009246563296402737,
+     "J_sop_median": 0.0597900065372199,
+     "J_dp_median": 0.0021769251901923277,
+     "gap_closed_median": 0.4547930814088343,
+     "dS_end_median": -0.10783655291618313,
+     "shortage_ratio_median": 0.0,
+     "flood_days_median": 0.0
+    },
+    "g2": {
+     "S_J": 0.5658141517179904,
+     "J_median": 0.023003890760655968,
+     "J_sop_median": 0.052981668683302244,
+     "J_dp_median": 0.004408077092625397,
+     "gap_closed_median": 0.38025268519005373,
+     "dS_end_median": -0.11550417220647614,
+     "shortage_ratio_median": 0.0,
+     "flood_days_median": 0.0
+    },
+    "g3": {
+     "S_J": 0.7702904330514777,
+     "J_median": 0.013189650560001945,
+     "J_sop_median": 0.05741881252580887,
+     "J_dp_median": 0.002552609017219737,
+     "gap_closed_median": 0.47178402109759926,
+     "dS_end_median": -0.07315908087590922,
+     "shortage_ratio_median": 0.00026770175582084603,
+     "flood_days_median": 0.0
+    },
+    "g4": {
+     "S_J": 0.6225134629810672,
+     "J_median": 0.03973205454955078,
+     "J_sop_median": 0.10525422936489529,
+     "J_dp_median": 0.006917463305454549,
+     "gap_closed_median": 0.41200305947585886,
+     "dS_end_median": -0.030733406140551662,
+     "shortage_ratio_median": 0.0,
+     "flood_days_median": 0.0
+    }
+   },
+   "dev": {
+    "J_median": 0.04220199702172155,
+    "J_sop_median": 0.0963952720356241,
+    "J_per_dam": {
+     "grand_1078": 0.2027,
+     "grand_113": 0.0,
+     "grand_1249": 0.0,
+     "grand_131": 0.0,
+     "grand_1776": 0.09667,
+     "grand_1851": 0.0439,
+     "grand_382": 0.02815,
+     "grand_393": 0.14986,
+     "grand_469": 0.0306,
+     "grand_522": 0.0422,
+     "grand_585": 0.02687,
+     "grand_895": 0.10859,
+     "grand_920": 0.29101,
+     "grand_958": 0.13558,
+     "grand_982": 0.0
+    },
+    "shortage_ratio_median": 0.09197666009519591,
+    "flood_days_median": 0.0,
+    "dS_end_median": -0.2654674721014266
+   },
+   "kept": true,
+   "decision": "vs r1b_bc_dp on frozen g4: sim pass, dev gate pass",
+   "decision_on_g1_at_the_time": "kept vs r1b"
+  },
+  {
+   "id": "r2_rule_base",
+   "weights": "runs/r2_rule_base_g1/weights.npz",
+   "desc": "DPO through the differentiable simulator; the network sets the classical rule's 3 parameters (flood pool f, drawdown tau, hedging H) every day, initialised at the tuned constants; base features; g1 bank; 1200 it",
+   "sim": {
+    "g1": {
+     "S_J": 0.8615220477157011,
+     "J_median": 0.008279597672339059,
+     "J_sop_median": 0.0597900065372199,
+     "J_dp_median": 0.0021769251901923277,
+     "gap_closed_median": 0.6750997762682244,
+     "dS_end_median": -0.22697862578270095,
+     "shortage_ratio_median": 0.015588498028453392,
+     "flood_days_median": 0.0
+    },
+    "g2": {
+     "S_J": 0.6493432485474637,
+     "J_median": 0.018578379827021336,
+     "J_sop_median": 0.052981668683302244,
+     "J_dp_median": 0.004408077092625397,
+     "gap_closed_median": 0.5369618588170022,
+     "dS_end_median": -0.21235734951516425,
+     "shortage_ratio_median": 0.02320772960307414,
+     "flood_days_median": 0.0
+    },
+    "g3": {
+     "S_J": 0.7703679819770508,
+     "J_median": 0.01318519779278288,
+     "J_sop_median": 0.05741881252580887,
+     "J_dp_median": 0.002552609017219737,
+     "gap_closed_median": 0.5897450841922638,
+     "dS_end_median": -0.21486223648180625,
+     "shortage_ratio_median": 0.02044551680237982,
+     "flood_days_median": 0.0
+    },
+    "g4": {
+     "S_J": 0.7560960599536614,
+     "J_median": 0.025671921248639,
+     "J_sop_median": 0.10525422936489529,
+     "J_dp_median": 0.006917463305454549,
+     "gap_closed_median": 0.6081730754003464,
+     "dS_end_median": -0.1762661904469258,
+     "shortage_ratio_median": 0.0217394026029981,
+     "flood_days_median": 0.0
+    }
+   },
+   "dev": {
+    "J_median": 0.0408906376122297,
+    "J_sop_median": 0.0963952720356241,
+    "J_per_dam": {
+     "grand_1078": 0.19058,
+     "grand_113": 0.0,
+     "grand_1249": 0.0,
+     "grand_131": 0.00273,
+     "grand_1776": 0.10252,
+     "grand_1851": 0.08083,
+     "grand_382": 0.02619,
+     "grand_393": 0.14971,
+     "grand_469": 0.039,
+     "grand_522": 0.04089,
+     "grand_585": 0.01514,
+     "grand_895": 0.11267,
+     "grand_920": 0.28736,
+     "grand_958": 0.21329,
+     "grand_982": 0.0
+    },
+    "shortage_ratio_median": 0.12607162025660754,
+    "flood_days_median": 0.0,
+    "dS_end_median": -0.3016848572513862
+   },
+   "kept": true,
+   "decision": "vs c1_tuned_sop on frozen g4: sim pass, dev gate pass",
+   "decision_on_g1_at_the_time": "kept vs c1"
+  },
+  {
+   "id": "r3_dpo_hd",
+   "weights": "runs/r1_dpo_hd_g1/weights.npz",
+   "desc": "DPO through the differentiable simulator, free-form head (hedge fraction h of demand, extra release e up to 1.25 Qmax), base features, g1 bank, 1200 it",
+   "sim": {
+    "g1": {
+     "S_J": 0.876273283548443,
+     "J_median": 0.007397621185467345,
+     "J_sop_median": 0.0597900065372199,
+     "J_dp_median": 0.0021769251901923277,
+     "gap_closed_median": 0.7098916280765226,
+     "dS_end_median": -0.2769616950608258,
+     "shortage_ratio_median": 0.0468096801216857,
+     "flood_days_median": 4.468528170270012
+    },
+    "g2": {
+     "S_J": 0.5178346832199177,
+     "J_median": 0.025545923064221793,
+     "J_sop_median": 0.052981668683302244,
+     "J_dp_median": 0.004408077092625397,
+     "gap_closed_median": 0.6011149550193927,
+     "dS_end_median": -0.26202558189106523,
+     "shortage_ratio_median": 0.06906051583261684,
+     "flood_days_median": 3.939552845528455
+    },
+    "g3": {
+     "S_J": 0.682505676527231,
+     "J_median": 0.018230147037491443,
+     "J_sop_median": 0.05741881252580887,
+     "J_dp_median": 0.002552609017219737,
+     "gap_closed_median": 0.6266940258919327,
+     "dS_end_median": -0.25770044662107394,
+     "shortage_ratio_median": 0.06385557644197898,
+     "flood_days_median": 3.597181291620636
+    },
+    "g4": {
+     "S_J": 0.6588945954605598,
+     "J_median": 0.03590278648699963,
+     "J_sop_median": 0.10525422936489529,
+     "J_dp_median": 0.006917463305454549,
+     "gap_closed_median": 0.5753898701056335,
+     "dS_end_median": -0.20701599783108354,
+     "shortage_ratio_median": 0.07053636800041221,
+     "flood_days_median": 3.0550231481481482
+    }
+   },
+   "dev": {
+    "J_median": 0.03605983942502647,
+    "J_sop_median": 0.0963952720356241,
+    "J_per_dam": {
+     "grand_1078": 0.181,
+     "grand_113": 0.00024,
+     "grand_1249": 0.0,
+     "grand_131": 0.0086,
+     "grand_1776": 0.10136,
+     "grand_1851": 0.07311,
+     "grand_382": 0.01651,
+     "grand_393": 0.14832,
+     "grand_469": 0.03246,
+     "grand_522": 0.03606,
+     "grand_585": 0.02718,
+     "grand_895": 0.10258,
+     "grand_920": 0.27987,
+     "grand_958": 0.18553,
+     "grand_982": 4e-05
+    },
+    "shortage_ratio_median": 0.12567782198187535,
+    "flood_days_median": 0.39994525047905827,
+    "dS_end_median": -0.28059082427669335
+   },
+   "kept": false,
+   "decision": "vs r2_rule_base on frozen g4: sim FAIL, dev gate pass",
+   "decision_on_g1_at_the_time": "kept vs r2"
+  },
+  {
+   "id": "r4_hd_clim",
+   "weights": "runs/r4_hd_clim_g1/weights.npz",
+   "desc": "r3 + calibration-half inflow climatology features (next 30/90-day inflow, expected overflow), g1 bank, 1200 it, checkpoint chosen on the selection set",
+   "sim": {
+    "g1": {
+     "S_J": 0.896201251818931,
+     "J_median": 0.00620612783230136,
+     "J_sop_median": 0.0597900065372199,
+     "J_dp_median": 0.0021769251901923277,
+     "gap_closed_median": 0.7215341851658987,
+     "dS_end_median": -0.26675548290711426,
+     "shortage_ratio_median": 0.04453542385105027,
+     "flood_days_median": 4.90976196313477
+    },
+    "g2": {
+     "S_J": 0.5989766701656973,
+     "J_median": 0.021246885195555662,
+     "J_sop_median": 0.052981668683302244,
+     "J_dp_median": 0.004408077092625397,
+     "gap_closed_median": 0.6954062218213359,
+     "dS_end_median": -0.25659027689193487,
+     "shortage_ratio_median": 0.0646938137462032,
+     "flood_days_median": 4.370449842189178
+    },
+    "g3": {
+     "S_J": 0.7169322118689647,
+     "J_median": 0.0162534162587913,
+     "J_sop_median": 0.05741881252580887,
+     "J_dp_median": 0.002552609017219737,
+     "gap_closed_median": 0.7403235290836299,
+     "dS_end_median": -0.2698319966746052,
+     "shortage_ratio_median": 0.0587936050481527,
+     "flood_days_median": 4.486068792911915
+    },
+    "g4": {
+     "S_J": 0.7037306537689951,
+     "J_median": 0.031183601721985754,
+     "J_sop_median": 0.10525422936489529,
+     "J_dp_median": 0.006917463305454549,
+     "gap_closed_median": 0.6434594183123933,
+     "dS_end_median": -0.23461247671378022,
+     "shortage_ratio_median": 0.060622729286805704,
+     "flood_days_median": 3.9860588414040468
+    }
+   },
+   "dev": {
+    "J_median": 0.03673786545297686,
+    "J_sop_median": 0.0963952720356241,
+    "J_per_dam": {
+     "grand_1078": 0.18476,
+     "grand_113": 0.00046,
+     "grand_1249": 0.0,
+     "grand_131": 0.00234,
+     "grand_1776": 0.10185,
+     "grand_1851": 0.0736,
+     "grand_382": 0.01315,
+     "grand_393": 0.14877,
+     "grand_469": 0.02656,
+     "grand_522": 0.03674,
+     "grand_585": 0.00821,
+     "grand_895": 0.10743,
+     "grand_920": 0.28479,
+     "grand_958": 0.18468,
+     "grand_982": 2e-05
+    },
+    "shortage_ratio_median": 0.1288035547350413,
+    "flood_days_median": 0.7998905009581165,
+    "dS_end_median": -0.33561525121870495
+   },
+   "kept": false,
+   "decision": "vs r2_rule_base on frozen g4: sim FAIL, dev gate pass",
+   "decision_on_g1_at_the_time": "kept vs r3"
+  },
+  {
+   "id": "c2_tuned_sop_g4",
+   "weights": "runs/tuned_sop_g4/weights.npz",
+   "desc": "Classical rule re-tuned on the g4 generator (f=0.6, tau=3 d, H=10 d), no network",
+   "sim": {
+    "g1": {
+     "S_J": 0.7939931124583026,
+     "J_median": 0.012317153152830409,
+     "J_sop_median": 0.0597900065372199,
+     "J_dp_median": 0.0021769251901923277,
+     "gap_closed_median": 0.4977534115536312,
+     "dS_end_median": -0.23503605428857466,
+     "shortage_ratio_median": 9.909770418030542e-05,
+     "flood_days_median": 0.0
+    },
+    "g2": {
+     "S_J": 0.5606932084207594,
+     "J_median": 0.023275206881775833,
+     "J_sop_median": 0.052981668683302244,
+     "J_dp_median": 0.004408077092625397,
+     "gap_closed_median": 0.39764153872813235,
+     "dS_end_median": -0.23532117996605667,
+     "shortage_ratio_median": 0.012474882660322125,
+     "flood_days_median": 0.0
+    },
+    "g3": {
+     "S_J": 0.7347839627297346,
+     "J_median": 0.015228389922859308,
+     "J_sop_median": 0.05741881252580887,
+     "J_dp_median": 0.002552609017219737,
+     "gap_closed_median": 0.5602898279480953,
+     "dS_end_median": -0.1913459531695899,
+     "shortage_ratio_median": 0.01144038529726783,
+     "flood_days_median": 0.0
+    },
+    "g4": {
+     "S_J": 0.7166591448327002,
+     "J_median": 0.029822823358224552,
+     "J_sop_median": 0.10525422936489529,
+     "J_dp_median": 0.006917463305454549,
+     "gap_closed_median": 0.42751098226747886,
+     "dS_end_median": -0.15918230477716627,
+     "shortage_ratio_median": 0.005770819728008095,
+     "flood_days_median": 0.0
+    }
+   },
+   "dev": {
+    "J_median": 0.047465296679753764,
+    "J_sop_median": 0.0963952720356241,
+    "J_per_dam": {
+     "grand_1078": 0.20711,
+     "grand_113": 0.0,
+     "grand_1249": 0.0,
+     "grand_131": 0.0,
+     "grand_1776": 0.10441,
+     "grand_1851": 0.06559,
+     "grand_382": 0.04747,
+     "grand_393": 0.15072,
+     "grand_469": 0.04441,
+     "grand_522": 0.04477,
+     "grand_585": 0.0212,
+     "grand_895": 0.11089,
+     "grand_920": 0.29161,
+     "grand_958": 0.1638,
+     "grand_982": 0.0
+    },
+    "shortage_ratio_median": 0.11223416929842309,
+    "flood_days_median": 0.0,
+    "dS_end_median": -0.31308740525602413
+   },
+   "kept": false,
+   "decision": "vs r2_rule_base on frozen g4: sim FAIL, dev gate FAIL"
+  },
+  {
+   "id": "r5_hd_clim_g4",
+   "weights": "runs/r5_hd_clim_g4/weights.npz",
+   "desc": "Generator rung g4 (back-calculated inflow noise, upstream regulation, data spikes, non-stationary halves): r4 fine-tuned on the g4 bank, 1200 it, checkpoint on the g4 selection set",
+   "sim": {
+    "g1": {
+     "S_J": 0.8426877038157503,
+     "J_median": 0.00940570321724136,
+     "J_sop_median": 0.0597900065372199,
+     "J_dp_median": 0.0021769251901923277,
+     "gap_closed_median": 0.6911472803401371,
+     "dS_end_median": -0.3076310159579879,
+     "shortage_ratio_median": 0.055406799883929825,
+     "flood_days_median": 10.143800663936215
+    },
+    "g2": {
+     "S_J": 0.6788038820360115,
+     "J_median": 0.017017506304330902,
+     "J_sop_median": 0.052981668683302244,
+     "J_dp_median": 0.004408077092625397,
+     "gap_closed_median": 0.6773330517301159,
+     "dS_end_median": -0.32071518174628577,
+     "shortage_ratio_median": 0.06185052069497939,
+     "flood_days_median": 8.82948576399611
+    },
+    "g3": {
+     "S_J": 0.8106128157498563,
+     "J_median": 0.010874387227249822,
+     "J_sop_median": 0.05741881252580887,
+     "J_dp_median": 0.002552609017219737,
+     "gap_closed_median": 0.711101905239136,
+     "dS_end_median": -0.31833692521893386,
+     "shortage_ratio_median": 0.05985094461424141,
+     "flood_days_median": 7.977869389011172
+    },
+    "g4": {
+     "S_J": 0.7674368542565654,
+     "J_median": 0.024478254683901038,
+     "J_sop_median": 0.10525422936489529,
+     "J_dp_median": 0.006917463305454549,
+     "gap_closed_median": 0.689185426279696,
+     "dS_end_median": -0.28074800608501277,
+     "shortage_ratio_median": 0.05644843955880226,
+     "flood_days_median": 8.955494606418862
+    }
+   },
+   "dev": {
+    "J_median": 0.03633987324064601,
+    "J_sop_median": 0.0963952720356241,
+    "J_per_dam": {
+     "grand_1078": 0.18517,
+     "grand_113": 0.00033,
+     "grand_1249": 1e-05,
+     "grand_131": 0.01412,
+     "grand_1776": 0.09991,
+     "grand_1851": 0.07235,
+     "grand_382": 0.01964,
+     "grand_393": 0.14768,
+     "grand_469": 0.03344,
+     "grand_522": 0.03634,
+     "grand_585": 0.01838,
+     "grand_895": 0.10717,
+     "grand_920": 0.28659,
+     "grand_958": 0.16441,
+     "grand_982": 0.00013
+    },
+    "shortage_ratio_median": 0.13388344341885822,
+    "flood_days_median": 2.8996030659731726,
+    "dS_end_median": -0.32202522220028
+   },
+   "kept": true,
+   "decision": "vs r2_rule_base on frozen g4: sim pass, dev gate pass"
+  },
+  {
+   "id": "r6_rule_clim_g4",
+   "desc": "Rule head + climatology features trained from scratch on g4",
+   "sim": {},
+   "dev": {},
+   "kept": false,
+   "decision": "stopped at 470/1200 it: diverged (gradient norm 1e53 through the rule head's 1/tau term, batch median J rose from 0.000 to 0.09-0.15); no checkpoint scored"
+  },
+  {
+   "id": "r7_hd_clim_g4_long",
+   "weights": "runs/r7_hd_clim_g4_long/weights.npz",
+   "desc": "r5 continued with 540-day policy windows (+365-day SOP tail), lr 1e-3, 1000 it, g4 bank",
+   "sim": {
+    "g1": {
+     "S_J": 0.8781834565738997,
+     "J_median": 0.007283411927788068,
+     "J_sop_median": 0.0597900065372199,
+     "J_dp_median": 0.0021769251901923277,
+     "gap_closed_median": 0.7384313474952076,
+     "dS_end_median": -0.2796667516599741,
+     "shortage_ratio_median": 0.05627001534291573,
+     "flood_days_median": 7.179714869348391
+    },
+    "g2": {
+     "S_J": 0.7571852535861807,
+     "J_median": 0.012864730445917023,
+     "J_sop_median": 0.052981668683302244,
+     "J_dp_median": 0.004408077092625397,
+     "gap_closed_median": 0.7147901342544771,
+     "dS_end_median": -0.28980781913176856,
+     "shortage_ratio_median": 0.059227776341926164,
+     "flood_days_median": 5.819520106737331
+    },
+    "g3": {
+     "S_J": 0.8498378046175683,
+     "J_median": 0.008622134945127726,
+     "J_sop_median": 0.05741881252580887,
+     "J_dp_median": 0.002552609017219737,
+     "gap_closed_median": 0.7426864374521318,
+     "dS_end_median": -0.27965831014810977,
+     "shortage_ratio_median": 0.05554522026440982,
+     "flood_days_median": 5.6945346128700045
+    },
+    "g4": {
+     "S_J": 0.828121633261417,
+     "J_median": 0.018090925035566405,
+     "J_sop_median": 0.10525422936489529,
+     "J_dp_median": 0.006917463305454549,
+     "gap_closed_median": 0.7259141320435659,
+     "dS_end_median": -0.24677775219610368,
+     "shortage_ratio_median": 0.05558524729013904,
+     "flood_days_median": 5.887965160597346
+    }
+   },
+   "dev": {
+    "J_median": 0.033197982232688696,
+    "J_sop_median": 0.0963952720356241,
+    "J_per_dam": {
+     "grand_1078": 0.1854,
+     "grand_113": 0.00038,
+     "grand_1249": 0.0,
+     "grand_131": 0.00348,
+     "grand_1776": 0.09577,
+     "grand_1851": 0.05938,
+     "grand_382": 0.01542,
+     "grand_393": 0.14089,
+     "grand_469": 0.02562,
+     "grand_522": 0.0332,
+     "grand_585": 0.00622,
+     "grand_895": 0.10802,
+     "grand_920": 0.28855,
+     "grand_958": 0.14857,
+     "grand_982": 2e-05
+    },
+    "shortage_ratio_median": 0.13330802051237556,
+    "flood_days_median": 0.5999178757185875,
+    "dS_end_median": -0.32653479971468785
+   },
+   "kept": true,
+   "decision": "vs r5_hd_clim_g4 on frozen g4: sim pass, dev gate pass"
+  },
+  {
+   "id": "r8_hd_clim_g4_xl",
+   "weights": "runs/r8_hd_clim_g4_xl/weights.npz",
+   "desc": "r7 continued with 1000-day policy windows, lr 7e-4, 600 it (checkpoint 400 chosen on the selection set)",
+   "sim": {
+    "g1": {
+     "S_J": 0.8724865860909689,
+     "J_median": 0.007624027851204201,
+     "J_sop_median": 0.0597900065372199,
+     "J_dp_median": 0.0021769251901923277,
+     "gap_closed_median": 0.7363737663548968,
+     "dS_end_median": -0.26886204270884273,
+     "shortage_ratio_median": 0.05707163668063009,
+     "flood_days_median": 7.586054905291142
+    },
+    "g2": {
+     "S_J": 0.7533137581913697,
+     "J_median": 0.013069848732233831,
+     "J_sop_median": 0.052981668683302244,
+     "J_dp_median": 0.004408077092625397,
+     "gap_closed_median": 0.7156278382238637,
+     "dS_end_median": -0.273392836846129,
+     "shortage_ratio_median": 0.05793541730921106,
+     "flood_days_median": 6.074383818434216
+    },
+    "g3": {
+     "S_J": 0.851760565097188,
+     "J_median": 0.00851173232161641,
+     "J_sop_median": 0.05741881252580887,
+     "J_dp_median": 0.002552609017219737,
+     "gap_closed_median": 0.7249030831235596,
+     "dS_end_median": -0.26875511275214836,
+     "shortage_ratio_median": 0.05460030578871726,
+     "flood_days_median": 5.868430550509589
+    },
+    "g4": {
+     "S_J": 0.8459882377038891,
+     "J_median": 0.016210389353606587,
+     "J_sop_median": 0.10525422936489529,
+     "J_dp_median": 0.006917463305454549,
+     "gap_closed_median": 0.7564384084031616,
+     "dS_end_median": -0.23328255345637894,
+     "shortage_ratio_median": 0.056690409664898994,
+     "flood_days_median": 6.405250420409789
+    }
+   },
+   "dev": {
+    "J_median": 0.03347061007940025,
+    "J_sop_median": 0.0963952720356241,
+    "J_per_dam": {
+     "grand_1078": 0.18571,
+     "grand_113": 0.00045,
+     "grand_1249": 0.0,
+     "grand_131": 0.00188,
+     "grand_1776": 0.09606,
+     "grand_1851": 0.05691,
+     "grand_382": 0.01619,
+     "grand_393": 0.14118,
+     "grand_469": 0.02605,
+     "grand_522": 0.03347,
+     "grand_585": 0.00497,
+     "grand_895": 0.10904,
+     "grand_920": 0.2899,
+     "grand_958": 0.14922,
+     "grand_982": 5e-05
+    },
+    "shortage_ratio_median": 0.13615543115161136,
+    "flood_days_median": 0.5999178757185875,
+    "dS_end_median": -0.35052934168040495
+   },
+   "kept": true,
+   "decision": "vs r7_hd_clim_g4_long on frozen g4: sim pass, dev gate pass"
+  }
+ ],
+ "notes": [
+  "First DPO attempts (free-form head; then rule head) were void: train.py was missing opt.step(), so weights never moved. Removed; re-run below.",
+  "Before that, a DP-style hard terminal rule (1000 x deficit/cap) inside 1-year windows punished natural seasonal drawdown; replaced by a differentiable 365-day SOP continuation tail."
+ ],
+ "history": [
+  "frozen set switched to g4; all rungs re-scored and decisions re-taken in order"
+ ],
+ "closed": "ratchet closed before the exam; final = r8_hd_clim_g4_xl",
+ "final": "r8_hd_clim_g4_xl"
+}

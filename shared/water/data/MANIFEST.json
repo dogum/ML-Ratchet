@@ -1,0 +1,4687 @@
+{
+ "source": "watersim-waterdata-v1.0.zip (18 Nov 2026)",
+ "n_files": 1170,
+ "bytes": 21010638,
+ "files": {
+  "checks/out/dev_calib/camels_01169000_gr4j_degree_day.json": [
+   "2fd352cc851ea73ad9a08d22bc83ea692e0c7b6710beeba1038f534f3015a1cd",
+   1825
+  ],
+  "checks/out/dev_calib/camels_01169000_hbv_degree_day.json": [
+   "7e2cbf9bae92c5a95eb901d7c90c95f456ed8c89c68773448d094316c2d411c3",
+   1934
+  ],
+  "checks/out/dev_calib/camels_01169000_hbv_energy_balance.json": [
+   "f37dc4d9d1dbf0bcf96a0f7a42a328040ddf1f1502a9848a411c71409fcb9598",
+   2058
+  ],
+  "checks/out/dev_calib/camels_01169000_sacsma_degree_day.json": [
+   "2de8c0451e90625dd6651cd4f77681436574377402cc8af9b418c99aa4c3891a",
+   2131
+  ],
+  "checks/out/dev_calib/camels_01169000_vic_lite_degree_day.json": [
+   "e9bb6271d3e100a323135500dc3d67b73f9e9454e28dcd8b720092ead34524f7",
+   2019
+  ],
+  "checks/out/dev_calib/camels_01181000_gr4j_degree_day.json": [
+   "7254793942003fb6067e88c46d204c5298c81bde619022101620a3989026911f",
+   1784
+  ],
+  "checks/out/dev_calib/camels_01181000_hbv_degree_day.json": [
+   "4c1a32d72be6661ef5e786a1d075fcb720fa6dfdba66ca52312d21f7dce91f64",
+   1923
+  ],
+  "checks/out/dev_calib/camels_01181000_hbv_energy_balance.json": [
+   "133eaa3ceff892256c790bd2028edc6a4de23bf1d7fac8f7cd72fd218b6e292d",
+   2012
+  ],
+  "checks/out/dev_calib/camels_01181000_sacsma_degree_day.json": [
+   "e5ef1264e19c85569a5173862a2e9fffdeade856e8b553b5b64a87155af7683a",
+   2111
+  ],
+  "checks/out/dev_calib/camels_01181000_vic_lite_degree_day.json": [
+   "4c0dd7d187a8233115554e915987d0a6c37c86fc96b3e9ba04410a161225cc83",
+   1998
+  ],
+  "checks/out/dev_calib/camels_01365000_gr4j_degree_day.json": [
+   "e03a8de2e398a8d4383571279ee45f5ca74106cda73d717a51339f1d54320e41",
+   1804
+  ],
+  "checks/out/dev_calib/camels_01365000_hbv_degree_day.json": [
+   "90887bb661868ca88ac96055845f5ce93a75997a729495d1d0b4fac89f67ea6d",
+   1948
+  ],
+  "checks/out/dev_calib/camels_01365000_hbv_energy_balance.json": [
+   "81a2530d0b19d7e91cc1aa328217c34b41e8907a1898e40e117fe7b8a408e4fe",
+   2027
+  ],
+  "checks/out/dev_calib/camels_01365000_sacsma_degree_day.json": [
+   "d995b8c834dcd51f99f78b118e9ec5d439202e57fce31a7b327f50c7260fe215",
+   2152
+  ],
+  "checks/out/dev_calib/camels_01365000_vic_lite_degree_day.json": [
+   "c0f7318682b801b37f495a238853205fb8d5b4e1e982280982117b0841eda0e9",
+   2030
+  ],
+  "checks/out/dev_calib/camels_01510000_gr4j_degree_day.json": [
+   "855de71c825272ee4783ddcc7341601894dd9263dd2868e88449bff769e3f162",
+   1804
+  ],
+  "checks/out/dev_calib/camels_01510000_hbv_degree_day.json": [
+   "014596e83318129270183895aee2e32d41be7752937e3ecd64bfdf045a096488",
+   1943
+  ],
+  "checks/out/dev_calib/camels_01510000_hbv_energy_balance.json": [
+   "fd7b2371dd269d829e03c7fdd7516e92c43639abebd26db496e55d1c14ffef70",
+   2046
+  ],
+  "checks/out/dev_calib/camels_01510000_sacsma_degree_day.json": [
+   "c98a5e76d02d2bec94fa23848205f0b3ebcc1ba4d459e923a79b0894d8a8f460",
+   2150
+  ],
+  "checks/out/dev_calib/camels_01510000_vic_lite_degree_day.json": [
+   "6882efbd93e78f4ac4c73d100223e6b6ac232ab4a3061743a43368fc399baa6f",
+   2016
+  ],
+  "checks/out/dev_calib/camels_01548500_gr4j_degree_day.json": [
+   "16ffb9539872ee9dcc550afaeace9adf87a2400757076b01e91dee427061f5ea",
+   1819
+  ],
+  "checks/out/dev_calib/camels_01548500_hbv_degree_day.json": [
+   "8b818870df040e5aefb08500af2c7ec62b009a81f23fc07e50cf9404072235f4",
+   1962
+  ],
+  "checks/out/dev_calib/camels_01548500_hbv_energy_balance.json": [
+   "2392f65d601d846760625747b4c1ad4677b2a31f75b9a83e799fca44a583ea34",
+   2061
+  ],
+  "checks/out/dev_calib/camels_01548500_sacsma_degree_day.json": [
+   "8c1a1fc2a2f55240853c627ac9110b15d1e1b34b218f45ab4fa4ad71b288240b",
+   2161
+  ],
+  "checks/out/dev_calib/camels_01548500_vic_lite_degree_day.json": [
+   "a1a576b39bd36fdc217f07179e0039ddbdb2a9e90312d2749b1affd9db9d3ffb",
+   2037
+  ],
+  "checks/out/dev_calib/camels_01605500_gr4j_degree_day.json": [
+   "cd64c8e07033375bde2e67f8896f27464f7870cc9e420b250a832712a0cb784f",
+   1809
+  ],
+  "checks/out/dev_calib/camels_01605500_hbv_degree_day.json": [
+   "f04294bdb8252f65c90937746039bcb879b67a4e8865549917d9e8bc340f7326",
+   1950
+  ],
+  "checks/out/dev_calib/camels_01605500_hbv_energy_balance.json": [
+   "72e5a8c4ce6b182a0c8b334f6f02328015ab9490fb647b5b174f436dddbe515a",
+   2041
+  ],
+  "checks/out/dev_calib/camels_01605500_sacsma_degree_day.json": [
+   "b4a9b5f18d99cf92f2c198c0b33d8ad8a86664fa8b74d160c095dbc071b59169",
+   2168
+  ],
+  "checks/out/dev_calib/camels_01605500_vic_lite_degree_day.json": [
+   "a229c810a06437d898110a9349847b5b658b445a2c1dad86ee44b018dc783d6a",
+   2020
+  ],
+  "checks/out/dev_calib/camels_01664000_gr4j_degree_day.json": [
+   "1bcf84218a083e8c618757b1d67a2f54b3a7012a637fae23a121568d04bcedfd",
+   1822
+  ],
+  "checks/out/dev_calib/camels_01664000_hbv_degree_day.json": [
+   "7074e29dc87f9125b2fa390592d74580b518d54236d9d55ad60612afc1f259a9",
+   1960
+  ],
+  "checks/out/dev_calib/camels_01664000_hbv_energy_balance.json": [
+   "55db88776a8fd8050032940d3aff391078699657e3abcc1e3617613fab573f89",
+   2038
+  ],
+  "checks/out/dev_calib/camels_01664000_sacsma_degree_day.json": [
+   "dea3de271103fcf63bdc6343c2431019f16dcd420d02d0816bf31240d64576e1",
+   2145
+  ],
+  "checks/out/dev_calib/camels_01664000_vic_lite_degree_day.json": [
+   "8d5ae8e62df2d2b3bfcea22ed07974e67ce05ef9fe857a919451b0d99fb6865b",
+   2026
+  ],
+  "checks/out/dev_calib/camels_02017500_gr4j_degree_day.json": [
+   "e524b490183ab11c05b2da29318628427fc11130c92755d9b8e2b801377c1391",
+   1810
+  ],
+  "checks/out/dev_calib/camels_02017500_hbv_degree_day.json": [
+   "09738eb453c8955c9976d181de26df214a5341721fcf86896ee64d031cc90a9f",
+   1950
+  ],
+  "checks/out/dev_calib/camels_02017500_hbv_energy_balance.json": [
+   "ab9c14ccb1c1aa05b036a7ea0aab75ff710c14b685d11ef944165d4bed11f37f",
+   2041
+  ],
+  "checks/out/dev_calib/camels_02017500_sacsma_degree_day.json": [
+   "b5c442463851ab5e164d5dda030b07d9f513ee8a4553ec35cab56085ddc307e5",
+   2158
+  ],
+  "checks/out/dev_calib/camels_02017500_vic_lite_degree_day.json": [
+   "b5df33049ff6b36cd235990a1e3688b3e8f6df150127acddbf6f12bb0d1904ba",
+   2040
+  ],
+  "checks/out/dev_calib/camels_02055100_gr4j_degree_day.json": [
+   "a6339f402c8d103f773faab3b0d1e744ed195973682bec0114c7d5dda9bc16e4",
+   1822
+  ],
+  "checks/out/dev_calib/camels_02055100_hbv_degree_day.json": [
+   "06895e23b5adc14d3e07a59842e77eddcba90606973f3d3b6e10ab55828b356a",
+   1944
+  ],
+  "checks/out/dev_calib/camels_02055100_hbv_energy_balance.json": [
+   "c99a2f4875d054dfcb65d6d7e1eb162860febdd88d62fbc33c4ea8573eabce36",
+   2040
+  ],
+  "checks/out/dev_calib/camels_02055100_sacsma_degree_day.json": [
+   "1bd3baa3c3267fbbd17d402030dc052a991015915b37e165b96474a2250ee204",
+   2154
+  ],
+  "checks/out/dev_calib/camels_02055100_vic_lite_degree_day.json": [
+   "feb32eb034fcb1e538c282d778fdc3e602a93081c2dd2a7222d50f4bb2fabb45",
+   2025
+  ],
+  "checks/out/dev_calib/camels_02108000_gr4j_degree_day.json": [
+   "1105cda9af2996004dc936a886dcf02ccc41166d6de088887292e047654057c1",
+   1811
+  ],
+  "checks/out/dev_calib/camels_02108000_hbv_degree_day.json": [
+   "741ca9a3947e6a3c6829fd6d2e66c3646f6ee7f7e548bc29d7acd3fa79914d1a",
+   1951
+  ],
+  "checks/out/dev_calib/camels_02108000_hbv_energy_balance.json": [
+   "dd397bab41f435c20d09fa523b2c98a2a5a6700d224affbf19273f192a13a3db",
+   2049
+  ],
+  "checks/out/dev_calib/camels_02108000_sacsma_degree_day.json": [
+   "35e7fc616bdebba1f5ca1941bbe542c81857cfc642ec58e234f713d20f2ac5e8",
+   2152
+  ],
+  "checks/out/dev_calib/camels_02108000_vic_lite_degree_day.json": [
+   "c17692c95d2171a5d120c64bbdbc5c683e64d0c1ee9c48200b68e00a6604712a",
+   2022
+  ],
+  "checks/out/dev_calib/camels_02137727_gr4j_degree_day.json": [
+   "cf0a8afa756452c52e364094bbd233fcda1e0fbf8ce44b4a63c1a52e920a972c",
+   1829
+  ],
+  "checks/out/dev_calib/camels_02137727_hbv_degree_day.json": [
+   "3c16595da69961a3a415edda6f52b9c92289ade4d78cbc56b75b38fe266fc4fc",
+   1959
+  ],
+  "checks/out/dev_calib/camels_02137727_hbv_energy_balance.json": [
+   "02043285a00a70e3daf3c080150c9956703c3859e30da248f352edb531d9d5c6",
+   2055
+  ],
+  "checks/out/dev_calib/camels_02137727_sacsma_degree_day.json": [
+   "f3a9a02eacd08d3deb859c004387b9b4d00db721bc7d4ff389a5d3828e19dae6",
+   2160
+  ],
+  "checks/out/dev_calib/camels_02137727_vic_lite_degree_day.json": [
+   "f6525bf9ac5f90d5b44dfc3c4b4b23ccec7495a9756cc0b9ee55a34cf65dba54",
+   2040
+  ],
+  "checks/out/dev_calib/camels_02143000_gr4j_degree_day.json": [
+   "6596a591e6854db8c41b95e8e14b8920f0629438d857a09ed8ba9c8c305821f2",
+   1818
+  ],
+  "checks/out/dev_calib/camels_02143000_hbv_degree_day.json": [
+   "4d3c99f04c56b8ffe5e316b94928489725bdaa7804150c750b9a4977c62fd468",
+   1947
+  ],
+  "checks/out/dev_calib/camels_02143000_hbv_energy_balance.json": [
+   "5b88c47d9361b4de063929aa536f3474f8221ff351328bdef3ea492e3197fe2d",
+   2041
+  ],
+  "checks/out/dev_calib/camels_02143000_sacsma_degree_day.json": [
+   "686d76dfc1cf09d44087345e344475f1e5807c37dab4e52e3b09a03d4a5a3d5b",
+   2165
+  ],
+  "checks/out/dev_calib/camels_02143000_vic_lite_degree_day.json": [
+   "abf02c739b34402d48f7dc97923092e006d44b0ea1b0d7cd732008c48b58cf54",
+   2006
+  ],
+  "checks/out/dev_calib/camels_02212600_gr4j_degree_day.json": [
+   "4d3dad1d62b0e1b673f193118c7d533e4e34c042115400eededfc7b45cc657ab",
+   1808
+  ],
+  "checks/out/dev_calib/camels_02212600_hbv_degree_day.json": [
+   "ca27596eb9441907685289b8544d04ed9d805becf7e540f1ac2518e40fc7bf5f",
+   1956
+  ],
+  "checks/out/dev_calib/camels_02212600_hbv_energy_balance.json": [
+   "13fc3ba43184f8258280a416e627d45a2b5dbea3c71aac46d2789b4799e26b5b",
+   2054
+  ],
+  "checks/out/dev_calib/camels_02212600_sacsma_degree_day.json": [
+   "1271d012cf8fb88678eac4dd450990b4e56730d3a12779cb0709c3ae57d907ba",
+   2141
+  ],
+  "checks/out/dev_calib/camels_02212600_vic_lite_degree_day.json": [
+   "bfeb0ed11700f2f0cac9f1780769f8d864319c60459feb39f3e93c7efa29d86d",
+   2023
+  ],
+  "checks/out/dev_calib/camels_02297155_gr4j_degree_day.json": [
+   "f72fa67f2589a4273ae16fa7d071b37bc478eba417a242e9763d60c6a1693b66",
+   1799
+  ],
+  "checks/out/dev_calib/camels_02297155_hbv_degree_day.json": [
+   "1b3e9e1871e575e4d3d3011109a5e6c299d106284f8df0d43c3fa743f28ec058",
+   1950
+  ],
+  "checks/out/dev_calib/camels_02297155_hbv_energy_balance.json": [
+   "7df11617f90e20ba7769e372580a7526450abf329176510a244550c90be208ba",
+   2041
+  ],
+  "checks/out/dev_calib/camels_02297155_sacsma_degree_day.json": [
+   "f32a66ea141f71059fed19c5024ce7e16bfc45bb5ce4d70fdfedd519b5097a37",
+   2146
+  ],
+  "checks/out/dev_calib/camels_02297155_vic_lite_degree_day.json": [
+   "819edb3de2d0c4c15401640a8e1160b08846384d8701504d32cb782f9e025813",
+   2020
+  ],
+  "checks/out/dev_calib/camels_02408540_gr4j_degree_day.json": [
+   "853e86de932ad6a0c3e892477522f72447f6d608f72c14b6d3549447f92f54d1",
+   1812
+  ],
+  "checks/out/dev_calib/camels_02408540_hbv_degree_day.json": [
+   "ac92e5f521ce98ef1140d7b39ec8d2edf7ae062e2ccd6e0b349a294e55350819",
+   1940
+  ],
+  "checks/out/dev_calib/camels_02408540_hbv_energy_balance.json": [
+   "c62568e28bec543ce41f6e6f71d3e8f113833d9137948578c4a6f312889a9b32",
+   2029
+  ],
+  "checks/out/dev_calib/camels_02408540_sacsma_degree_day.json": [
+   "48ecf58bb52ed9cfc9b6e2c501ca5ae877334cc9f1159bbd53f518b702cf1006",
+   2144
+  ],
+  "checks/out/dev_calib/camels_02408540_vic_lite_degree_day.json": [
+   "51d739c648430770e95a5a0a79fe4866855b2bc2e1cb12e773dab611bb2a371a",
+   2028
+  ],
+  "checks/out/dev_calib/camels_02472000_gr4j_degree_day.json": [
+   "cfe12ea00036beb2951360adb448408b84232899562b06a874a773c95f4f8e40",
+   1793
+  ],
+  "checks/out/dev_calib/camels_02472000_hbv_degree_day.json": [
+   "eda545372cc9f0965d91af09c636d9c18cc784a8b6493911dc3751f8f7a0a14d",
+   1962
+  ],
+  "checks/out/dev_calib/camels_02472000_hbv_energy_balance.json": [
+   "db78c85c05645fa95588615126a6adf7440b280d247918232bd7f99c908af833",
+   2055
+  ],
+  "checks/out/dev_calib/camels_02472000_sacsma_degree_day.json": [
+   "b68ed9be084842beca9dd920bb56baf6921dbc8c078a3870c9dbe00cac47af1c",
+   2120
+  ],
+  "checks/out/dev_calib/camels_02472000_vic_lite_degree_day.json": [
+   "cc7c292edeba651b8434ece07d8696aa0ebd6f0df696906e476577952a115cf5",
+   2038
+  ],
+  "checks/out/dev_calib/camels_03164000_gr4j_degree_day.json": [
+   "44a780abd331ca7e53dc05bbb53f9fbdd3d181eb342f51171b527cb80801d340",
+   1823
+  ],
+  "checks/out/dev_calib/camels_03164000_hbv_degree_day.json": [
+   "30ed8a754df462acdffbe670506b84283a7a486cde6447c4252ed396e1d8f738",
+   1971
+  ],
+  "checks/out/dev_calib/camels_03164000_hbv_energy_balance.json": [
+   "4c02283b2bb83f935c2f024eaf92a7cb8055e0fcab1fbf7ef86e72126f0a5d1e",
+   2059
+  ],
+  "checks/out/dev_calib/camels_03164000_sacsma_degree_day.json": [
+   "096a12c2c9efe81c155df57a7a67634153a3af6bb7db45ae1e542a2f6e662ae0",
+   2160
+  ],
+  "checks/out/dev_calib/camels_03164000_vic_lite_degree_day.json": [
+   "188c3172173f38a5ebfeed15f335afa00039a193e2f9da89eae6f56a17cddded",
+   2042
+  ],
+  "checks/out/dev_calib/camels_03182500_gr4j_degree_day.json": [
+   "8ab281c53d960ca0050791f128c5c638cc2bc7297db9b4f6bdbd27d56f8288a3",
+   1817
+  ],
+  "checks/out/dev_calib/camels_03182500_hbv_degree_day.json": [
+   "f0cfadf72e08ecef1e04b242865a2bfabcb36a7e567eb60ad9d6ef08618a7f10",
+   1957
+  ],
+  "checks/out/dev_calib/camels_03182500_hbv_energy_balance.json": [
+   "2971855b5d7c1a4b2a53cebee6f15dfb09bdb2fdb4d2b6de4ea25262fc67ad50",
+   2065
+  ],
+  "checks/out/dev_calib/camels_03182500_sacsma_degree_day.json": [
+   "1c43207fd5616913ea5041118befe6e3c168ce2fb940bcd6bc4e92bd31bb0840",
+   2155
+  ],
+  "checks/out/dev_calib/camels_03182500_vic_lite_degree_day.json": [
+   "03a7fec5fcc73443ce18791c7179a5af0cfe75a6a7a4cfbf9672ee318b1f2bc2",
+   2032
+  ],
+  "checks/out/dev_calib/camels_03384450_gr4j_degree_day.json": [
+   "9187afb90727f00bf9dab9a1bbf84e3c6a9f39e5ace2e4ccd6293fa90c0a18aa",
+   1802
+  ],
+  "checks/out/dev_calib/camels_03384450_hbv_degree_day.json": [
+   "4c702b4bb5de6fb48e38c1a7b556706ab08d1cc8ad72a317e5160097ec71d9f6",
+   1941
+  ],
+  "checks/out/dev_calib/camels_03384450_hbv_energy_balance.json": [
+   "59cc04bc5c64c76994c019388bdb0b2096b723af3eb952fb4c0ad6e19ddaf7cf",
+   2019
+  ],
+  "checks/out/dev_calib/camels_03384450_sacsma_degree_day.json": [
+   "107e099ff9acdd79f18608cfdc2fe212d177b374160aeefc14477f9de5dc00fe",
+   2159
+  ],
+  "checks/out/dev_calib/camels_03384450_vic_lite_degree_day.json": [
+   "c262e7dd4f5ae0a6be256f8350fb62bff5019c56956e55e32de3346ab4cb5c7d",
+   2013
+  ],
+  "checks/out/dev_calib/camels_03574500_gr4j_degree_day.json": [
+   "be7b6df30f7ad1d64210a95cdf956345696b99fb8ae092b5c0ab0ab310aeece8",
+   1785
+  ],
+  "checks/out/dev_calib/camels_03574500_hbv_degree_day.json": [
+   "926d3dccb7d29b0d3897e812fc630b56828ecd0b02166612a2f7c6131fadec35",
+   1939
+  ],
+  "checks/out/dev_calib/camels_03574500_hbv_energy_balance.json": [
+   "f22dee303d95c68f56bfa7c4f05fb013f1d069c0478ae22d2bdd341e2265e3bc",
+   2034
+  ],
+  "checks/out/dev_calib/camels_03574500_sacsma_degree_day.json": [
+   "d09899de69292a6873543c893f3df244a0fbd50ebdfc3fcd7abf55cd36dfe948",
+   2143
+  ],
+  "checks/out/dev_calib/camels_03574500_vic_lite_degree_day.json": [
+   "64563e0933e55d67e4663924f95cc32256e86def65e68037bac016e6742ed274",
+   2014
+  ],
+  "checks/out/dev_calib/camels_04122200_gr4j_degree_day.json": [
+   "4c6a5698e3d3394361f200bd92906bf21939e834ac826ff64f7ae4cab638e945",
+   1795
+  ],
+  "checks/out/dev_calib/camels_04122200_hbv_degree_day.json": [
+   "f8f586a8641bd10f9693a281ad554216a5b23e1217fa0c3c2352d61806d49133",
+   1952
+  ],
+  "checks/out/dev_calib/camels_04122200_hbv_energy_balance.json": [
+   "797a1266ae7bcde0c5b89ba8eede65bc402108e0b420c7bb32ffd74d754bab13",
+   2026
+  ],
+  "checks/out/dev_calib/camels_04122200_sacsma_degree_day.json": [
+   "bfacc57498fa2218fb78b4b54663ddadb4c2fd65528a048167dde03652a4921a",
+   2152
+  ],
+  "checks/out/dev_calib/camels_04122200_vic_lite_degree_day.json": [
+   "6827802a4c026b06fd507617942ee8f84bf6a517366a20412d0e9c1de0b6729a",
+   2026
+  ],
+  "checks/out/dev_calib/camels_04296000_gr4j_degree_day.json": [
+   "139b5a19fdf09913d5d3fc119b34301721b7619dd93b232aa644015926fcbaae",
+   1804
+  ],
+  "checks/out/dev_calib/camels_04296000_hbv_degree_day.json": [
+   "eb89327fcca00a18a137ab3f2a1262487d0c59149a4eb58bec3054066f7cb7b9",
+   1921
+  ],
+  "checks/out/dev_calib/camels_04296000_hbv_energy_balance.json": [
+   "4b576cd6dd36ad2fc1592f55d5d2021692d72b8645e5b5abe3539ac8a155e231",
+   2020
+  ],
+  "checks/out/dev_calib/camels_04296000_sacsma_degree_day.json": [
+   "ff1f35ea708fe10457c5239c0e96c3b46388e2ecde280af715bd489a6c22cd7b",
+   2095
+  ],
+  "checks/out/dev_calib/camels_04296000_vic_lite_degree_day.json": [
+   "d12c36235aa641125e1145fe4b9caca1a49e66c5138f0db40e511f3c4cf35081",
+   2005
+  ],
+  "checks/out/dev_calib/camels_05056000_gr4j_degree_day.json": [
+   "408c738b0a9b0063250fb35b6ea61e0d77258dabba580d842565c1baa35bd635",
+   1789
+  ],
+  "checks/out/dev_calib/camels_05056000_hbv_degree_day.json": [
+   "6d1ff566efaeaa41665db20cf3b688ec0c6924ea765dff1cf288ff87c7512900",
+   1948
+  ],
+  "checks/out/dev_calib/camels_05056000_hbv_energy_balance.json": [
+   "01ed8e7c58c52cb3482cff31e146840761d34931fb9067715d50ea7c65e64185",
+   2018
+  ],
+  "checks/out/dev_calib/camels_05056000_sacsma_degree_day.json": [
+   "26fc689e0254ac02c53e447f6c78e380cb1a55e65dfb9c3c459c71fd941f01e9",
+   2135
+  ],
+  "checks/out/dev_calib/camels_05056000_vic_lite_degree_day.json": [
+   "dc6fac90f773be003d547e360b79d026ca0d43a7d7f37f5aee2d4bca7a1ee3fc",
+   2007
+  ],
+  "checks/out/dev_calib/camels_05458000_gr4j_degree_day.json": [
+   "e7dbdbd7b6b58a8edce63fbd6559554b59157976633ea0822cc36ff823d0f039",
+   1808
+  ],
+  "checks/out/dev_calib/camels_05458000_hbv_degree_day.json": [
+   "c2983e226756e8da19165e3f429659d6c43856aa311b6a13b9e1450dcfc7d9ee",
+   1945
+  ],
+  "checks/out/dev_calib/camels_05458000_hbv_energy_balance.json": [
+   "9bfcac32b310fa170cf82fe64aad8ca3a83efa60b8c0a2691af65156de91a774",
+   2020
+  ],
+  "checks/out/dev_calib/camels_05458000_sacsma_degree_day.json": [
+   "d69d26acb2a85295695a9a08514e2e7ddc8b73837445f75a612efeb25bd6fc6b",
+   2131
+  ],
+  "checks/out/dev_calib/camels_05458000_vic_lite_degree_day.json": [
+   "44062e4b05f380a4f8a5340a2c746d816abe20412b97cb259d4131c37e64e769",
+   2013
+  ],
+  "checks/out/dev_calib/camels_05593900_gr4j_degree_day.json": [
+   "07307aba06c40f33ef0b01ed0079b982347e9e5df39ed67572519e6e38b3a45d",
+   1788
+  ],
+  "checks/out/dev_calib/camels_05593900_hbv_degree_day.json": [
+   "f77153bfed3f1baf0d999f903fe853953b95645ee827faf096f3c3abe18898fc",
+   1956
+  ],
+  "checks/out/dev_calib/camels_05593900_hbv_energy_balance.json": [
+   "d55f7a19f45317dbb5186c6ef30b94b31b76c131168b04236d2d2510b920d7fb",
+   2048
+  ],
+  "checks/out/dev_calib/camels_05593900_sacsma_degree_day.json": [
+   "86600f389272d3d4c41f15857f72ab74b62f33b57d8280b8e58ec05e069c12d9",
+   2138
+  ],
+  "checks/out/dev_calib/camels_05593900_vic_lite_degree_day.json": [
+   "0ae199696fbbbf979dc859ba21537baede5fd5108a963ec0a9f1c4685a27c63e",
+   2029
+  ],
+  "checks/out/dev_calib/camels_06280300_gr4j_degree_day.json": [
+   "6e9c63964290185971d4949da1526ac89c52852d1e8752026b1aac9759059abe",
+   1796
+  ],
+  "checks/out/dev_calib/camels_06280300_hbv_degree_day.json": [
+   "e07558ffb3e392ea65d44fa3f659828ef3476974077bd0bb25d725c8182d5d65",
+   1933
+  ],
+  "checks/out/dev_calib/camels_06280300_hbv_energy_balance.json": [
+   "dbf74a9f23748ad9513ad2b6fb90dd4ce632660528e97b6a4c89dcb03c203550",
+   2033
+  ],
+  "checks/out/dev_calib/camels_06280300_sacsma_degree_day.json": [
+   "1cbe9b08e2d032d3102a5fc3aabe6978224cabaad61bc58ff661ba187447b2a9",
+   2124
+  ],
+  "checks/out/dev_calib/camels_06280300_vic_lite_degree_day.json": [
+   "15107bc756fac64418cc04204df76fa518df541f582a734b417335429d964ec3",
+   2000
+  ],
+  "checks/out/dev_calib/camels_06339500_gr4j_degree_day.json": [
+   "9c9f0222aad8381e0e152f8739a9ae05b038996def8792ce907f669b41390a24",
+   1760
+  ],
+  "checks/out/dev_calib/camels_06339500_hbv_degree_day.json": [
+   "cb159c6aa785cea918092f4bd187d55374835019a4265e8d1cf0a1c322cc660d",
+   1891
+  ],
+  "checks/out/dev_calib/camels_06339500_hbv_energy_balance.json": [
+   "8c3ddc39d34dbce48f956933914ff1cca43bc37f2b4241a2d4d2fc19b87c284c",
+   1999
+  ],
+  "checks/out/dev_calib/camels_06339500_sacsma_degree_day.json": [
+   "0ef2ab2a02781e4c8827b1f97ddc328f2c781bd2003a64f44509ec5f153e7e28",
+   2100
+  ],
+  "checks/out/dev_calib/camels_06339500_vic_lite_degree_day.json": [
+   "2c31de51646616d1d3e293f620ef5f14a77007f4714d2c9e314a4daf82e53dce",
+   1977
+  ],
+  "checks/out/dev_calib/camels_06404000_gr4j_degree_day.json": [
+   "18c2d6c73e23403e403bbe623b6eb21f38a71009866e196f36f0ee9c26496034",
+   1824
+  ],
+  "checks/out/dev_calib/camels_06404000_hbv_degree_day.json": [
+   "ae9bdcd06f0fea214a5b9b142230a50b9d3e8899cc3c7d69610d8fbc520d72fd",
+   1943
+  ],
+  "checks/out/dev_calib/camels_06404000_hbv_energy_balance.json": [
+   "780921f2d28c49e29ad427381923d1dce669d066196e1e31c785b75051858624",
+   2040
+  ],
+  "checks/out/dev_calib/camels_06404000_sacsma_degree_day.json": [
+   "a2aee4435081761f8844a315781ce59439274ae0143d1e5aa57429d54017eade",
+   2136
+  ],
+  "checks/out/dev_calib/camels_06404000_vic_lite_degree_day.json": [
+   "37dd12203ffd283ba1687ef8054fdefc4f7ee0e38fde49567a67c84f8b95cb5e",
+   2016
+  ],
+  "checks/out/dev_calib/camels_06622700_gr4j_degree_day.json": [
+   "d0feb0a2f2a04038fcc2fa886961a14b9a4d753fede823b17c4e43af288efa7b",
+   1797
+  ],
+  "checks/out/dev_calib/camels_06622700_hbv_degree_day.json": [
+   "258752d9753d5f226aacbb906e059156f84a68e4608ec09f89f7d8a57de8f5ac",
+   1921
+  ],
+  "checks/out/dev_calib/camels_06622700_hbv_energy_balance.json": [
+   "d324c992831f863d85fada61b025d5b3d8d421ba17f58fa7db37fdcb83e8fafc",
+   2019
+  ],
+  "checks/out/dev_calib/camels_06622700_sacsma_degree_day.json": [
+   "f3dddb8e904e5a2735a370e4aa531c4ce3ca9a19c8b4b5c49da44a75264d31c3",
+   2132
+  ],
+  "checks/out/dev_calib/camels_06622700_vic_lite_degree_day.json": [
+   "afbcd9a3e29fecac2519811eff5b37c6399ae1d35ae0fce0bea08f1de443a446",
+   2007
+  ],
+  "checks/out/dev_calib/camels_06885500_gr4j_degree_day.json": [
+   "ea3cc4eed264375d416430875df7c69208ba84c99672ec7f226c63b93f15be68",
+   1826
+  ],
+  "checks/out/dev_calib/camels_06885500_hbv_degree_day.json": [
+   "fb2dd0e191209a4b86b945d95e5efa7c7647e3aaed680f4c3652c6be57bb6a3a",
+   1956
+  ],
+  "checks/out/dev_calib/camels_06885500_hbv_energy_balance.json": [
+   "93d3aa025ec5f16cd0e860126dfc60f47aabfe9d536050449f38ba474eb068c4",
+   2067
+  ],
+  "checks/out/dev_calib/camels_06885500_sacsma_degree_day.json": [
+   "3cd1fd73e9e1d1f133c9449b8400ef943fc56fd02066bcd47af5a81402ee650d",
+   2165
+  ],
+  "checks/out/dev_calib/camels_06885500_vic_lite_degree_day.json": [
+   "2ac49bfd8148d40d8475b5a114296515798738c986f6d1df011fc5d620d51bf9",
+   2044
+  ],
+  "checks/out/dev_calib/camels_07067000_gr4j_degree_day.json": [
+   "a0e33a441bdb8f6a6de04eff0bbf539c072cbdb86e41db5dce626f90cdf3c364",
+   1827
+  ],
+  "checks/out/dev_calib/camels_07067000_hbv_degree_day.json": [
+   "f9b1061b1fe6849f881efb6d53685df9e539401d3c70e4c79e70214e92f606de",
+   1966
+  ],
+  "checks/out/dev_calib/camels_07067000_hbv_energy_balance.json": [
+   "e5c76336c73f548293f737134e74eb4475c0e20894719c18d543000e82467334",
+   2058
+  ],
+  "checks/out/dev_calib/camels_07067000_sacsma_degree_day.json": [
+   "a582ab66bb7056c294c9228332574b8db2dcd25fa7dc703e2ee0a43c7b3e9b2b",
+   2162
+  ],
+  "checks/out/dev_calib/camels_07067000_vic_lite_degree_day.json": [
+   "13644df125d54ef29b3bf607ba84713e6c69e0649ed6334ffb2263a18774da38",
+   2033
+  ],
+  "checks/out/dev_calib/camels_07149000_gr4j_degree_day.json": [
+   "e7f361e861aaca568a905e99dcadd6431a53ea9790404f82bfc4e28aebb052f5",
+   1768
+  ],
+  "checks/out/dev_calib/camels_07149000_hbv_degree_day.json": [
+   "6494b0d1f153de54a4ec456ea03e065a4fbeb05c5e33f80ad406fd7e22f48790",
+   1914
+  ],
+  "checks/out/dev_calib/camels_07149000_hbv_energy_balance.json": [
+   "e784412edd8f5cdde61c8ef60cfaf47c243842e5089bc4ffb5e055d818a1eb61",
+   2005
+  ],
+  "checks/out/dev_calib/camels_07149000_sacsma_degree_day.json": [
+   "b7094e1483e85963eba63fdf9309ad7c8d01e13c270760fdfc72af7b391a2f5e",
+   2113
+  ],
+  "checks/out/dev_calib/camels_07149000_vic_lite_degree_day.json": [
+   "3beb85377cf6d403f42a6066ccff8abd04fb927d1864334f714f08e8fb883b8c",
+   1991
+  ],
+  "checks/out/dev_calib/camels_07375000_gr4j_degree_day.json": [
+   "1d75860033dd1cf59fd72f21bc6589351b715dbe6743ae77d8cfcf31c7ffb034",
+   1803
+  ],
+  "checks/out/dev_calib/camels_07375000_hbv_degree_day.json": [
+   "fb33d55ace11767cf126454b6199d36d12cf5d43d24e2422eca52d8104f416c8",
+   1940
+  ],
+  "checks/out/dev_calib/camels_07375000_hbv_energy_balance.json": [
+   "f272b0a1f71cc4d76ead6bc0db3cba9ce8054af2502cc0f8dea5bbb821a19fd1",
+   2014
+  ],
+  "checks/out/dev_calib/camels_07375000_sacsma_degree_day.json": [
+   "d4c1fae8f8e16c007fec98b3105c72ff6c9a439331fbef83bafcdbe450354545",
+   2118
+  ],
+  "checks/out/dev_calib/camels_07375000_vic_lite_degree_day.json": [
+   "c689506d30f53c2cfb39e9f4949ed61595aaeb4bbaa01668817d630375f63088",
+   2010
+  ],
+  "checks/out/dev_calib/camels_08066300_gr4j_degree_day.json": [
+   "a5afe745d5cd561ce33bd0c4c664c5b7f8ad5084068cc13dfcaab12ffbc4c6fb",
+   1811
+  ],
+  "checks/out/dev_calib/camels_08066300_hbv_degree_day.json": [
+   "10b15cfb4c6e2ce26613df7ff6bb868d84b092824bf3ff95092b4a036c8762a4",
+   1930
+  ],
+  "checks/out/dev_calib/camels_08066300_hbv_energy_balance.json": [
+   "dccc624f8130513baa4ecd7beed3ef158f198ab75ba592c50f528d3907a5ad96",
+   2030
+  ],
+  "checks/out/dev_calib/camels_08066300_sacsma_degree_day.json": [
+   "c6d9698c23410e94c161a629726b8a32d200b7c460656bfb694878234fe48e60",
+   2158
+  ],
+  "checks/out/dev_calib/camels_08066300_vic_lite_degree_day.json": [
+   "c095c1c1eeb1adc6b5275b8bdfd5751bf3fb510c0991e49eac71cb8452df0187",
+   1994
+  ],
+  "checks/out/dev_calib/camels_08164000_gr4j_degree_day.json": [
+   "5aed660a3ad858e2dca1434c50236aea5ce97a0611550ae9d4d5dc02cd4ab6f2",
+   1806
+  ],
+  "checks/out/dev_calib/camels_08164000_hbv_degree_day.json": [
+   "635f23cb1d809baf6d694c131ab6d54b2213880c23571dbb4bccb956d0cd7001",
+   1951
+  ],
+  "checks/out/dev_calib/camels_08164000_hbv_energy_balance.json": [
+   "b8e3e501b66b2777ab9e3ee06e80e976c7a358265a898fef5bc8795031721724",
+   2035
+  ],
+  "checks/out/dev_calib/camels_08164000_sacsma_degree_day.json": [
+   "b8eaba76172bf29cec1aa9f35d049a453ffbca8b4e3aa6414d3534851ac6073c",
+   2131
+  ],
+  "checks/out/dev_calib/camels_08164000_vic_lite_degree_day.json": [
+   "8509cf5621ca372e9a28f3d5edf90e669ef7313e219508fa904134f059e17553",
+   2016
+  ],
+  "checks/out/dev_calib/camels_08190500_gr4j_degree_day.json": [
+   "90cda6ca8b894f3b9efcb1ffaa7858831907718343b554a37478007359fac3a2",
+   1742
+  ],
+  "checks/out/dev_calib/camels_08190500_hbv_degree_day.json": [
+   "9a41cd165aaee58d898b5f018d4b5ebf48dadc3a5643a6274959bc05deef4e5e",
+   1901
+  ],
+  "checks/out/dev_calib/camels_08190500_hbv_energy_balance.json": [
+   "a27f9f82a26b62a40d7fc371a39d0929f500cb059cb36ae4bfa971fdc5ed290a",
+   2006
+  ],
+  "checks/out/dev_calib/camels_08190500_sacsma_degree_day.json": [
+   "6e92c8631eae58a29df6d54e67831a7648a32ddb04eb122ff9e9d89ace76d8e7",
+   2093
+  ],
+  "checks/out/dev_calib/camels_08190500_vic_lite_degree_day.json": [
+   "81bab8fc762dbb31a71c1b0898a4e1a398f4998bc95c0ce5e1d4f604b9e905d0",
+   1982
+  ],
+  "checks/out/dev_calib/camels_08202700_gr4j_degree_day.json": [
+   "58300df663ff213026f8dd964d7d7f5607060acfd76548cdb3d6c14ec3c8a5eb",
+   1761
+  ],
+  "checks/out/dev_calib/camels_08202700_hbv_degree_day.json": [
+   "f4085f4a9ddfb2c9b0e436d474f310c8f1b1f5ef2cae93d4803286f7f16ba4c3",
+   1908
+  ],
+  "checks/out/dev_calib/camels_08202700_hbv_energy_balance.json": [
+   "0e6ae6cda89129359dd64171298f4233afbbc1713a0aed2cc373acc5b21f29a3",
+   2008
+  ],
+  "checks/out/dev_calib/camels_08202700_sacsma_degree_day.json": [
+   "13e48d4ca003e6beb48ee4205c6298223defc7bca32fe2deabd2f8af555ed52c",
+   2090
+  ],
+  "checks/out/dev_calib/camels_08202700_vic_lite_degree_day.json": [
+   "c4fbd969ed8bbae06b31848a85e0ec8cca182e4fb48660f873ea94b617cedc5b",
+   1965
+  ],
+  "checks/out/dev_calib/camels_08377900_gr4j_degree_day.json": [
+   "d321a66ba86e0ac0ad3cc42ae6316e3951c5be2fd1656b7c734491a29188d41b",
+   1793
+  ],
+  "checks/out/dev_calib/camels_08377900_hbv_degree_day.json": [
+   "b6ea12c5adc68e6e5d8b79809bf175f8f99ab9a6f9d55e8f40c16798e032a0b5",
+   1923
+  ],
+  "checks/out/dev_calib/camels_08377900_hbv_energy_balance.json": [
+   "80969d891c0a5e52896d75e47d96577f85146e8fddf9eeaa27ccdce365cc1ebe",
+   2039
+  ],
+  "checks/out/dev_calib/camels_08377900_sacsma_degree_day.json": [
+   "2c23656acad8cf9474beb8f133beab0577469910156f23e46e9cff9150871e8e",
+   2116
+  ],
+  "checks/out/dev_calib/camels_08377900_vic_lite_degree_day.json": [
+   "d63ec0503540ff6bd32e2391589487d78416da026ae031b64aacdc60bf40b3ee",
+   2027
+  ],
+  "checks/out/dev_calib/camels_09035800_gr4j_degree_day.json": [
+   "d543c715e4094ba599cefdb81a1f804b372a4c2042760808fb9024c7e5a651cf",
+   1769
+  ],
+  "checks/out/dev_calib/camels_09035800_hbv_degree_day.json": [
+   "d3c1a71cbf6455704767db485958d6b95b7bb833ed1b029c53dd22031fe50f9e",
+   1910
+  ],
+  "checks/out/dev_calib/camels_09035800_hbv_energy_balance.json": [
+   "e638805785871e8c9bd2a8edc9fa4d36714e481d0fda39effcbb12222e43e973",
+   2006
+  ],
+  "checks/out/dev_calib/camels_09035800_sacsma_degree_day.json": [
+   "4acd2968ec0ce6ba03ddc70c5e2458c5c14d9b376132b18ed49c0a3a858837d2",
+   2103
+  ],
+  "checks/out/dev_calib/camels_09035800_vic_lite_degree_day.json": [
+   "46c051e42c9a4c244418fb21dbece2de1d078e5e54b279de61d3a4e08bd896dd",
+   1986
+  ],
+  "checks/out/dev_calib/camels_09484600_gr4j_degree_day.json": [
+   "db91119068ec115135ea0e99057a0e269505ef365f66538a3d028757f05a7ef6",
+   1398
+  ],
+  "checks/out/dev_calib/camels_09484600_hbv_degree_day.json": [
+   "7b567d30c25241d2e588eca1ec1c46e2046296c45b7b7ec95875bd01f114bd0a",
+   1559
+  ],
+  "checks/out/dev_calib/camels_09484600_hbv_energy_balance.json": [
+   "40b04562d466b07cccaa9398633f713ffd216cccc1f0c21dc0198e9d1203f7a7",
+   1658
+  ],
+  "checks/out/dev_calib/camels_09484600_sacsma_degree_day.json": [
+   "4b8797ae7951711994906f59d893576379cbcfbc01fa8b714388c4f4180c1d32",
+   1776
+  ],
+  "checks/out/dev_calib/camels_09484600_vic_lite_degree_day.json": [
+   "76408bf2bdc8cb6dc888076cf6ce93bf5c2dacacfdebe109dee7aa6b3dca5583",
+   1611
+  ],
+  "checks/out/dev_calib/camels_10234500_gr4j_degree_day.json": [
+   "290016c0c3bee563b53b04375540b3924d5918f53b181d2435377082f825a043",
+   1812
+  ],
+  "checks/out/dev_calib/camels_10234500_hbv_degree_day.json": [
+   "806d8a238decda0325f775be52d7431f0c5aadab023b68ca0a07105c9e8b5c08",
+   1945
+  ],
+  "checks/out/dev_calib/camels_10234500_hbv_energy_balance.json": [
+   "2baf99bb10ced409de0586e2880e9fdfcc290ecec4cee8b415a7ad273bed967c",
+   2063
+  ],
+  "checks/out/dev_calib/camels_10234500_sacsma_degree_day.json": [
+   "4e3e3760571655ee7913089af0dc728259a4e83d51a645cf1cf7f3d43ec05d8d",
+   2136
+  ],
+  "checks/out/dev_calib/camels_10234500_vic_lite_degree_day.json": [
+   "c406d925903d27f923b04aea162d15790f9e8b6b08e6202ae90365cde23544dd",
+   2016
+  ],
+  "checks/out/dev_calib/camels_11141280_gr4j_degree_day.json": [
+   "549e9518e9a92a5c0ea4f0dbe0d99810c45d7588050e6d33607d62f51828ec74",
+   1795
+  ],
+  "checks/out/dev_calib/camels_11141280_hbv_degree_day.json": [
+   "e57346753c2664ebd900fd4866d5907e60c852c4598871f7e3c9a86f21632b43",
+   1937
+  ],
+  "checks/out/dev_calib/camels_11141280_hbv_energy_balance.json": [
+   "c46701d00e3380a8f75447648e8cdfd7d32d51c86d479dbf5252a3508c00a0f4",
+   2037
+  ],
+  "checks/out/dev_calib/camels_11141280_sacsma_degree_day.json": [
+   "b387ddf93681106b538bcdebb691d121b4320c81a8245e7fb0271c22bc4b213a",
+   2147
+  ],
+  "checks/out/dev_calib/camels_11141280_vic_lite_degree_day.json": [
+   "d35a23f401bca85a7cabcba9ce362726cea993cb7f374f759d0b841caebda02a",
+   2019
+  ],
+  "checks/out/dev_calib/camels_11237500_gr4j_degree_day.json": [
+   "5c55854872511bfba6f59d1079aac586de3fff618b4218933f8ba223beef9b5f",
+   1777
+  ],
+  "checks/out/dev_calib/camels_11237500_hbv_degree_day.json": [
+   "61a2c85a8d3de08d4ceb491c93127ee8caf559e93a915c64a47ff2609b4d24f2",
+   1915
+  ],
+  "checks/out/dev_calib/camels_11237500_hbv_energy_balance.json": [
+   "0bbc7a5b05635f5b29ac6ff9fbbb5f5e14e6fcc850a8015f62191ec73be26e68",
+   2006
+  ],
+  "checks/out/dev_calib/camels_11237500_sacsma_degree_day.json": [
+   "d121a7b1fe93d17993da9c6a57d35cdd025acc4b1b3f6db4bb8eb72fbc4ff321",
+   2094
+  ],
+  "checks/out/dev_calib/camels_11237500_vic_lite_degree_day.json": [
+   "1a27ec26afc6d73818775b51f15091025910bb58237fd39d140996735d251a0e",
+   1985
+  ],
+  "checks/out/dev_calib/camels_11299600_gr4j_degree_day.json": [
+   "b10881fbcd836494778c59f7502874307f8fa2c599ed1fd58ef2bad96da50911",
+   1735
+  ],
+  "checks/out/dev_calib/camels_11299600_hbv_degree_day.json": [
+   "21318245c3753b5933a6852d4aa8a24d4a26a30c78d54c27f39f90ff678f8494",
+   1890
+  ],
+  "checks/out/dev_calib/camels_11299600_hbv_energy_balance.json": [
+   "afd92e4bbff7f6862bb3aef4578aef676f08914ff757915edaf641f73c7265e3",
+   1978
+  ],
+  "checks/out/dev_calib/camels_11299600_sacsma_degree_day.json": [
+   "84c61c9e12ecdc945e9fe79aff0f8f21d1e7d24610d00c13f30125c707a2be21",
+   2066
+  ],
+  "checks/out/dev_calib/camels_11299600_vic_lite_degree_day.json": [
+   "687731bbd53e413a7e4ddb9ded9855b3f0771d564c8cc25dbaece4be4b55fe89",
+   1971
+  ],
+  "checks/out/dev_calib/camels_11528700_gr4j_degree_day.json": [
+   "ee27014ba284cfa054e48dcb7cdcc611fc6b70dd28b88a081d7837db80c7300f",
+   1823
+  ],
+  "checks/out/dev_calib/camels_11528700_hbv_degree_day.json": [
+   "ec502dc36c5e47fad3c9b8ef91a8ff537bec080b5252f312a95c98106e9aae25",
+   1964
+  ],
+  "checks/out/dev_calib/camels_11528700_hbv_energy_balance.json": [
+   "6d152054fcd2e5b893dbdaceaa6c78678aec9be2f2abadd24ce658f6bed31067",
+   2019
+  ],
+  "checks/out/dev_calib/camels_11528700_sacsma_degree_day.json": [
+   "e89c1c85bd364bfa3b7b33ee84e9e7535a6aa4b8c5d860a75e0a94d5fecb87e5",
+   2131
+  ],
+  "checks/out/dev_calib/camels_11528700_vic_lite_degree_day.json": [
+   "b1613da9a1187356ab9df4da069fe4301a9dc9d89dd6ae7275dcb49cbb4c9590",
+   2030
+  ],
+  "checks/out/dev_calib/camels_12041200_gr4j_degree_day.json": [
+   "7faac0a2d6e54de543d960387f10d92883a8d945e59d5ec8940df31d5810912c",
+   1824
+  ],
+  "checks/out/dev_calib/camels_12041200_hbv_degree_day.json": [
+   "9ab90c2078020d99daf6e3d552ac1ef21f749b2b162b54dc87703f3d6765f370",
+   1968
+  ],
+  "checks/out/dev_calib/camels_12041200_hbv_energy_balance.json": [
+   "3f16831ed07f6aa80425495e6866dec0706ff440c630301e8089c03ea819f1c0",
+   2050
+  ],
+  "checks/out/dev_calib/camels_12041200_sacsma_degree_day.json": [
+   "8ceaef1cb46af9d953a6686909f5094fd1e0a444e9a4fa7e5886445a40095e0c",
+   2161
+  ],
+  "checks/out/dev_calib/camels_12041200_vic_lite_degree_day.json": [
+   "a0d06b123158d345ccaa9d9ff3858d5113caaaef423988e6de28cfecfc610476",
+   2036
+  ],
+  "checks/out/dev_calib/camels_12447390_gr4j_degree_day.json": [
+   "da75f1661907601a95a313e79a5625cb6eb23cfe6d08b91eb4d350a305eebb32",
+   1802
+  ],
+  "checks/out/dev_calib/camels_12447390_hbv_degree_day.json": [
+   "651edc8ae962ff51659ba673b8f757649b220d35dcb1f8961abe99b31b44daa8",
+   1942
+  ],
+  "checks/out/dev_calib/camels_12447390_hbv_energy_balance.json": [
+   "d8df2df04fd95d18a391a9b00570f2d53557032479ffb66274ee8d3c45151045",
+   2050
+  ],
+  "checks/out/dev_calib/camels_12447390_sacsma_degree_day.json": [
+   "23ab4152aa85eea5b7e2dd75db42b533dc4b0d73d8ea671254001ae2359d978a",
+   2108
+  ],
+  "checks/out/dev_calib/camels_12447390_vic_lite_degree_day.json": [
+   "582024d95883d3e3ece8d4826e187380916c74e22daf28e7a9568298d7adbc8d",
+   2020
+  ],
+  "checks/out/dev_calib/camels_12451000_gr4j_degree_day.json": [
+   "9970221a8865b6cb684953b566ff7b5912eb6e83365482256f94b04dadc1e43c",
+   1803
+  ],
+  "checks/out/dev_calib/camels_12451000_hbv_degree_day.json": [
+   "6e56438b5bb8a0dd8dd2d5f1ceacaed24cc25df71e9663ca4298b58a9dadf0b5",
+   1944
+  ],
+  "checks/out/dev_calib/camels_12451000_hbv_energy_balance.json": [
+   "4b2a45e09851fc8208b714b2846e036b011fb073f79b2ef563899e588854126d",
+   2057
+  ],
+  "checks/out/dev_calib/camels_12451000_sacsma_degree_day.json": [
+   "3adbcdcc208190fd7c1e0e8a5702edbd0148ed63a00e60e34c26a6ff215c44a5",
+   2131
+  ],
+  "checks/out/dev_calib/camels_12451000_vic_lite_degree_day.json": [
+   "180b95ea5da9868091533ae61e338c20b82e677ca6c196e7c8b3cdc2f20a8697",
+   2014
+  ],
+  "checks/out/dev_calib/camels_13240000_gr4j_degree_day.json": [
+   "95d244037496889e2d6e54e56759dbe70c0f0be5f6a7a283b874f987ba31a307",
+   1762
+  ],
+  "checks/out/dev_calib/camels_13240000_hbv_degree_day.json": [
+   "298ed8e5826795111d94292615c51e21af0c432853bf42d89e1904e4a35bc47d",
+   1947
+  ],
+  "checks/out/dev_calib/camels_13240000_hbv_energy_balance.json": [
+   "028bc67fd1bd8822a6a2a3a7806bcf3c2cbca07b700f318dc3edf85fc5b220ca",
+   2070
+  ],
+  "checks/out/dev_calib/camels_13240000_sacsma_degree_day.json": [
+   "1cacaf8352402f86694315db73f4016dcf4193cd32aa0a38f2fa6c734406749d",
+   2139
+  ],
+  "checks/out/dev_calib/camels_13240000_vic_lite_degree_day.json": [
+   "16208a780f75125c039b2e865568f1e8a4f2b6204ac034d5c08a4d2ae7a65166",
+   2009
+  ],
+  "checks/out/dev_calib/camels_14185000_gr4j_degree_day.json": [
+   "189133b2ec9e5087a0910e7a77a9803514e429d06e8cdd372b89236896466003",
+   1811
+  ],
+  "checks/out/dev_calib/camels_14185000_hbv_degree_day.json": [
+   "eb0381f8f01625e9cdb6b730aaf4faf998b7de8ff1ccf6c6376dd2bcd580e7ed",
+   1957
+  ],
+  "checks/out/dev_calib/camels_14185000_hbv_energy_balance.json": [
+   "5620ee9115d3d49e2470466685f739a00d5a92a45d339155e2b8e096e6f50d37",
+   2044
+  ],
+  "checks/out/dev_calib/camels_14185000_sacsma_degree_day.json": [
+   "ea2651f41e4a550d50fa73e68839b71e295c9c3c024df5e0b7287ad1e5e5d969",
+   2156
+  ],
+  "checks/out/dev_calib/camels_14185000_vic_lite_degree_day.json": [
+   "d985ccba87a518600bfe420ed29b92388aa52ac2f8522ab5237bb240e54fb04a",
+   2025
+  ],
+  "checks/out/dev_calib/camels_14185900_gr4j_degree_day.json": [
+   "af5028b795ab9fc3530e4ec7c386a9613104a49d26cd613fddc821172b77455b",
+   1795
+  ],
+  "checks/out/dev_calib/camels_14185900_hbv_degree_day.json": [
+   "2cf4397dfde1a161de9165668b896510ab6f48ed9a04e88b074924389b5c9aa3",
+   1943
+  ],
+  "checks/out/dev_calib/camels_14185900_hbv_energy_balance.json": [
+   "24c817ec59e3106bb355d2fb85f643a0b4f0cb48cfce56d1513e9d456ce61f79",
+   2055
+  ],
+  "checks/out/dev_calib/camels_14185900_sacsma_degree_day.json": [
+   "646e4a1a14bfcc34ba3ced0c040874ca11a1395d69ab262f3194a3396e61bfac",
+   2158
+  ],
+  "checks/out/dev_calib/camels_14185900_vic_lite_degree_day.json": [
+   "e39bb8b12cb720505a2e653d7f19a2862cc522ea028894414296395775fc1222",
+   2007
+  ],
+  "checks/out/dev_calib/camels_14306340_gr4j_degree_day.json": [
+   "3bd21ea1b5f0bca50765b6dcd8f98548453b0598b7ec37915feebf74699565d4",
+   1799
+  ],
+  "checks/out/dev_calib/camels_14306340_hbv_degree_day.json": [
+   "26d188f5d0264407b2f0ec583d7b59bdcbcf7c80918bb79b919169fb87c92478",
+   1938
+  ],
+  "checks/out/dev_calib/camels_14306340_hbv_energy_balance.json": [
+   "16d35d830bfbae0121dfa32263e9244be03cf3bedfc581618ceeedfccde66002",
+   2043
+  ],
+  "checks/out/dev_calib/camels_14306340_sacsma_degree_day.json": [
+   "853214ce966e3eb545c9bf8eedb6ba503eeaeb07515ef10b90f74d20f02bcac5",
+   2155
+  ],
+  "checks/out/dev_calib/camels_14306340_vic_lite_degree_day.json": [
+   "d05384e8b1f8638a93aeeeb39fa51f2d972bb93e9d5b533f3946a3b6889a2e35",
+   2027
+  ],
+  "checks/out/dev_calib_nse/camels_01169000_gr4j_degree_day.json": [
+   "41b37e49a0f0f1c94bd3940eeb61a58d9cecca3328b8092cc89c4b689d883aa1",
+   1789
+  ],
+  "checks/out/dev_calib_nse/camels_01169000_hbv_degree_day.json": [
+   "624316151e2a438f5fdce3bbc365ff13b521ba7b55203a7cc59431d64afc9d94",
+   1965
+  ],
+  "checks/out/dev_calib_nse/camels_01169000_sacsma_degree_day.json": [
+   "b79bf48f9d4e2195c2aa18dbd936c80637219efdd9646bfd9ac8ea275dba6d2f",
+   2146
+  ],
+  "checks/out/dev_calib_nse/camels_01169000_vic_lite_degree_day.json": [
+   "c7db63bb8a151c0f0cb8cf4041010498c8b55169cfeb2cc0c0498806ce1fce21",
+   2021
+  ],
+  "checks/out/dev_calib_nse/camels_01181000_gr4j_degree_day.json": [
+   "2572fe2385c4a62730e2406cce00c7acd56587166c79132164e42f295beb67da",
+   1778
+  ],
+  "checks/out/dev_calib_nse/camels_01181000_hbv_degree_day.json": [
+   "de1143cb5b7f450ad5fc3830fdbf99b2a95e0c10e5231ce1b42f9e1f0edbfc6b",
+   1918
+  ],
+  "checks/out/dev_calib_nse/camels_01181000_sacsma_degree_day.json": [
+   "de51c0d0a9f57e9882642aaa6b75653c28588c10b2dd814fe250535cffa0da9d",
+   2115
+  ],
+  "checks/out/dev_calib_nse/camels_01181000_vic_lite_degree_day.json": [
+   "1ed51eac773dbf095f7a3d90d1f40c27c368794c6fd686a8699849f03850d735",
+   1999
+  ],
+  "checks/out/dev_calib_nse/camels_01365000_gr4j_degree_day.json": [
+   "1125c72646e07a5c9078d3a288e9ce6ea2518aca2d7a2d4457a4f4bdfadc3b56",
+   1803
+  ],
+  "checks/out/dev_calib_nse/camels_01365000_hbv_degree_day.json": [
+   "31bbbc1cd3c0b35361cecb074e2a042ce9e728919b67e825438583b1dc2b25e0",
+   1951
+  ],
+  "checks/out/dev_calib_nse/camels_01365000_sacsma_degree_day.json": [
+   "960f75eb0c82575db746dd629016e3473c28b8726905df8473e35c5da731f2ea",
+   2154
+  ],
+  "checks/out/dev_calib_nse/camels_01365000_vic_lite_degree_day.json": [
+   "8a09745abde09d6d94b7937f012f2ad31e4d60ccf5bca7c9f2d2a7308de9dbc5",
+   2018
+  ],
+  "checks/out/dev_calib_nse/camels_01510000_gr4j_degree_day.json": [
+   "bb923ab64574680efda374e88bffda3851ba3088de76efecb74cc3b07af4d42e",
+   1805
+  ],
+  "checks/out/dev_calib_nse/camels_01510000_hbv_degree_day.json": [
+   "ecdca12a4aefa34f7d9790267fe487cf44f004071129ca19b3aafdf2c463bcb7",
+   1947
+  ],
+  "checks/out/dev_calib_nse/camels_01510000_sacsma_degree_day.json": [
+   "991351c96e1f32171d769d4d32869e7a64a867e4c5b8457ad98285181c4c0d13",
+   2138
+  ],
+  "checks/out/dev_calib_nse/camels_01510000_vic_lite_degree_day.json": [
+   "aa7c63dbc2ba48bbd365b13b7f71d9ed779f5ae0c8a843c219c3633828137bd4",
+   2019
+  ],
+  "checks/out/dev_calib_nse/camels_01548500_gr4j_degree_day.json": [
+   "b3ee3d437accad58fdd6689ec9d863772883881967404a1186a71b15536a5975",
+   1789
+  ],
+  "checks/out/dev_calib_nse/camels_01548500_hbv_degree_day.json": [
+   "e9bcdfb6e791da7b82596fd0b8d2738f0ff09ac9231836dd6eb8fe0cc842064e",
+   1972
+  ],
+  "checks/out/dev_calib_nse/camels_01548500_sacsma_degree_day.json": [
+   "3e8a8ecba9d1d9f955ea7eabda259a1529b0921d90af284d14818bb9d1a24df5",
+   2162
+  ],
+  "checks/out/dev_calib_nse/camels_01548500_vic_lite_degree_day.json": [
+   "287df68d5c49645e5b0ec49891a16313e6374d967de0c8c25ddf006e4a869efe",
+   2034
+  ],
+  "checks/out/dev_calib_nse/camels_01605500_gr4j_degree_day.json": [
+   "b91cc8762c7409f520ebcfdbe14fdd19c063a151b0b4c56cf7e6a5bdf0a9d878",
+   1828
+  ],
+  "checks/out/dev_calib_nse/camels_01605500_hbv_degree_day.json": [
+   "5d030f875591267061bc0af1a97f0d6b86755fa403733f6949d4866214fe6372",
+   1965
+  ],
+  "checks/out/dev_calib_nse/camels_01605500_sacsma_degree_day.json": [
+   "84e178a28b0bec5c6532654e499708580b6be7986681f7e8cfd10251a3c6b52a",
+   2160
+  ],
+  "checks/out/dev_calib_nse/camels_01605500_vic_lite_degree_day.json": [
+   "0ec58504526947d9716050d3946e69a936facc3d024afbf6e4de30e4df36a527",
+   2021
+  ],
+  "checks/out/dev_calib_nse/camels_01664000_gr4j_degree_day.json": [
+   "c5d261687908da2652af676033c74d42caee66447f2afe9dbfbf6bf45c0126fa",
+   1818
+  ],
+  "checks/out/dev_calib_nse/camels_01664000_hbv_degree_day.json": [
+   "36c1c79c48e947fbd9ffd5ceceaaa5c0408a444ae7c183b47becc506a38b55cc",
+   1958
+  ],
+  "checks/out/dev_calib_nse/camels_01664000_sacsma_degree_day.json": [
+   "fac44416733ddca6cf6a398eece1e71155db21916f7cd61f3ccdec73f73280d8",
+   2123
+  ],
+  "checks/out/dev_calib_nse/camels_01664000_vic_lite_degree_day.json": [
+   "678dd3b4543f5ed85fc03d95025aa6b1cdd9c2039379e94b260a4a6ef9a903bd",
+   1998
+  ],
+  "checks/out/dev_calib_nse/camels_02017500_gr4j_degree_day.json": [
+   "73592a23207f5267d7c6c9ad7bd54bbe061e950e45964719d8503d3babebfc2d",
+   1819
+  ],
+  "checks/out/dev_calib_nse/camels_02017500_hbv_degree_day.json": [
+   "187fc2099b506a12c4dbafdbee34f0889be2d6c5ba3c90ac6931d4f16680f5cc",
+   1951
+  ],
+  "checks/out/dev_calib_nse/camels_02017500_sacsma_degree_day.json": [
+   "7869aa7651e3f1d967f80ae6aadf94774b2a1f1c64cbe6aac0d59b929d94513a",
+   2139
+  ],
+  "checks/out/dev_calib_nse/camels_02017500_vic_lite_degree_day.json": [
+   "a897dd9aabe0a354574cf6032ae850d9ada3f702cdfd0dfc8258e35527ae50b1",
+   2033
+  ],
+  "checks/out/dev_calib_nse/camels_02055100_gr4j_degree_day.json": [
+   "56ce7bcfa868ba8278e34bac21c1d32c4cc73785d55750073a0e4d5331eb3334",
+   1820
+  ],
+  "checks/out/dev_calib_nse/camels_02055100_hbv_degree_day.json": [
+   "f4935b5ac196a2cc91e7941c18b76e82cca786a6994abde64f012a8930e1520f",
+   1967
+  ],
+  "checks/out/dev_calib_nse/camels_02055100_sacsma_degree_day.json": [
+   "2cac9800dbef3ef6b2776e8ec01000162f88c1068a34f2dde0a02fea7a904990",
+   2164
+  ],
+  "checks/out/dev_calib_nse/camels_02055100_vic_lite_degree_day.json": [
+   "e9092ddc0d80d49972a9e3a058a58fa8fc7b5e6ba3c50758f7ee40eb274cad9b",
+   2022
+  ],
+  "checks/out/dev_calib_nse/camels_02108000_gr4j_degree_day.json": [
+   "4b81351008a4d84b3a80803184474393c98d672a156e50ee0ba25d351f711ce3",
+   1811
+  ],
+  "checks/out/dev_calib_nse/camels_02108000_hbv_degree_day.json": [
+   "0ecdc4dfadc58c04bb0482fd6ab8a7d4b468a5469697d3d712e7c10a9b9f873b",
+   1945
+  ],
+  "checks/out/dev_calib_nse/camels_02108000_sacsma_degree_day.json": [
+   "d3450bd5311b457766ff6a0798eb788cf505acf31a640f5670f6d4be3210b61f",
+   2129
+  ],
+  "checks/out/dev_calib_nse/camels_02108000_vic_lite_degree_day.json": [
+   "fb0f93240b0494fbfbb40f651e1ad371a150ca6da89ba585022e20660c02d9df",
+   2021
+  ],
+  "checks/out/dev_calib_nse/camels_02137727_gr4j_degree_day.json": [
+   "1281563ebd0b8c86282e6c97f80a2bcb510fcaa5f824ead1930325349b933695",
+   1815
+  ],
+  "checks/out/dev_calib_nse/camels_02137727_hbv_degree_day.json": [
+   "ee3b13b510011fff5ae97cf331b9320d6c24e6b5f961796a416f7fabcd225866",
+   1946
+  ],
+  "checks/out/dev_calib_nse/camels_02137727_sacsma_degree_day.json": [
+   "bb5b41145c9c5daa161d87e0e15d6bb77f6dba7dec5fd9c4b7c572be610f7210",
+   2156
+  ],
+  "checks/out/dev_calib_nse/camels_02137727_vic_lite_degree_day.json": [
+   "2e06dac7bdeea92cac6420a5354c501ae5102a7cef602d2f50af7855d48c0b24",
+   2029
+  ],
+  "checks/out/dev_calib_nse/camels_02143000_gr4j_degree_day.json": [
+   "5373b3a094aa399ff07b0be3ddfbbf650b193172f6ad3811f6c80151e3c881aa",
+   1837
+  ],
+  "checks/out/dev_calib_nse/camels_02143000_hbv_degree_day.json": [
+   "11aca60b8b191cb54e7a84c6f3b678607f06cc2c3f7648c48794e951558e0d83",
+   1939
+  ],
+  "checks/out/dev_calib_nse/camels_02143000_sacsma_degree_day.json": [
+   "5a414a2bbfb51b412722013a54c273c10f6c435bb28fc52be5c709f1ed174193",
+   2162
+  ],
+  "checks/out/dev_calib_nse/camels_02143000_vic_lite_degree_day.json": [
+   "fa4dc7059e1f02a35dc9d53bbc53c5b2ff6bdcd94b1acfd277198eca688d4118",
+   2029
+  ],
+  "checks/out/dev_calib_nse/camels_02212600_gr4j_degree_day.json": [
+   "b407e6e515e15742d640807310fb4262c36a19f85949f9f9794363f5f4549ca8",
+   1820
+  ],
+  "checks/out/dev_calib_nse/camels_02212600_hbv_degree_day.json": [
+   "dab85520eb9692bde1f3e65eeaec0bd4a6b589cd1589176a1aaaf76ec638c34f",
+   1967
+  ],
+  "checks/out/dev_calib_nse/camels_02212600_sacsma_degree_day.json": [
+   "ef323873c9c3b53d346086dd58e645b9d6e7ed92c60a4090597383c2879e4da0",
+   2160
+  ],
+  "checks/out/dev_calib_nse/camels_02212600_vic_lite_degree_day.json": [
+   "e4f594e871f866cf615af9478a0c28bbc4a65d7937f198bd5c3280fa77767ac5",
+   2041
+  ],
+  "checks/out/dev_calib_nse/camels_02297155_gr4j_degree_day.json": [
+   "f051c229ccca00227708d5a97f9dc38d2be35837e1ff035bf895a856dd6b190f",
+   1791
+  ],
+  "checks/out/dev_calib_nse/camels_02297155_hbv_degree_day.json": [
+   "ce15c101e1f655c99f48fa2f8119634c7901b5326b39265f99b9e18ff70f5d11",
+   1952
+  ],
+  "checks/out/dev_calib_nse/camels_02297155_sacsma_degree_day.json": [
+   "3c86ee72347dc69f3fe328e7f9d78656a76843ec2247d12b30f0c3f698701aa6",
+   2148
+  ],
+  "checks/out/dev_calib_nse/camels_02297155_vic_lite_degree_day.json": [
+   "0806dd9e72fb500af8b9223b28afa89b98034bd591fd5960f1782a57b21890fe",
+   2008
+  ],
+  "checks/out/dev_calib_nse/camels_02408540_gr4j_degree_day.json": [
+   "fcd0cd1711bd472deadce0c83ab385185d2f87ef581635e5175b2131dc0ac342",
+   1808
+  ],
+  "checks/out/dev_calib_nse/camels_02408540_hbv_degree_day.json": [
+   "4884f2f8a61e030180392aa678986f86f8883aec3aff8dc18365e6e42a24d470",
+   1940
+  ],
+  "checks/out/dev_calib_nse/camels_02408540_sacsma_degree_day.json": [
+   "ee73ae11d051a91ffa5eecfefcf6c68246e173456a666d3d3c3538c4f853badf",
+   2142
+  ],
+  "checks/out/dev_calib_nse/camels_02408540_vic_lite_degree_day.json": [
+   "aef4c760068da69a6e924acfd84cd519ce8bad895f06743c0418020b9b601f14",
+   2021
+  ],
+  "checks/out/dev_calib_nse/camels_02472000_gr4j_degree_day.json": [
+   "6b6b299d7c412de4a2dcfeae5ef3fc8c99ce19589e670bc1c22e6f75dabb814b",
+   1832
+  ],
+  "checks/out/dev_calib_nse/camels_02472000_hbv_degree_day.json": [
+   "6429cfc39b4421d3f19a615db60b0cad3fe6954bdb2b5cd68bdd5604079885b8",
+   1961
+  ],
+  "checks/out/dev_calib_nse/camels_02472000_sacsma_degree_day.json": [
+   "3acc890fd018f2bcfdb994749251b81e021e17c726bbabca95be8192bd5fbc44",
+   2164
+  ],
+  "checks/out/dev_calib_nse/camels_02472000_vic_lite_degree_day.json": [
+   "b6c3d5d6cba31e5fef781bde3ba81249c546a3bc148956df7d104dcbebc81c31",
+   2038
+  ],
+  "checks/out/dev_calib_nse/camels_03164000_gr4j_degree_day.json": [
+   "a2f5d40ffd5337f0fdaf8ab4605be68280be4bdde33519b1ee6ed4d8d0b383da",
+   1830
+  ],
+  "checks/out/dev_calib_nse/camels_03164000_hbv_degree_day.json": [
+   "5268729fac338561020f4a114840a48ecec4d46784011f46c9944fc52255858a",
+   1945
+  ],
+  "checks/out/dev_calib_nse/camels_03164000_sacsma_degree_day.json": [
+   "7070c550caf9edc63d6a0c41f9a571029f8ae8d98f816bdd755acca06896b7cf",
+   2162
+  ],
+  "checks/out/dev_calib_nse/camels_03164000_vic_lite_degree_day.json": [
+   "7f811f0e25c8736200551c95d1d92488410eee5458fc9d04ddcc82ad3ea0b53f",
+   2040
+  ],
+  "checks/out/dev_calib_nse/camels_03182500_gr4j_degree_day.json": [
+   "ee6e53473b02547ccc87560b0eb505000f6d4db543afa2fc4a549723f4e7858f",
+   1806
+  ],
+  "checks/out/dev_calib_nse/camels_03182500_hbv_degree_day.json": [
+   "8b3c52357ab78e8f865665c9a021a4b01eefb026d81d3808feabd4639c077987",
+   1963
+  ],
+  "checks/out/dev_calib_nse/camels_03182500_sacsma_degree_day.json": [
+   "0673f17576d1cdabad8b209bee93aefe4a0e52ad53a07e0397b5b57de0d7e9e7",
+   2162
+  ],
+  "checks/out/dev_calib_nse/camels_03182500_vic_lite_degree_day.json": [
+   "29bb3d6e6502042ad6d849559377dafc366b29e515f95c6c692dab82a1dd3952",
+   2032
+  ],
+  "checks/out/dev_calib_nse/camels_03384450_gr4j_degree_day.json": [
+   "dde8052c29d66dfed2ec1ca3e0c58bdbec3593a2804f5eb48e68f8918b667bb3",
+   1799
+  ],
+  "checks/out/dev_calib_nse/camels_03384450_hbv_degree_day.json": [
+   "dd440fe4034799417bbf21df65e8cd186fa7a4642a9a2f4c07165ddc391379b3",
+   1925
+  ],
+  "checks/out/dev_calib_nse/camels_03384450_sacsma_degree_day.json": [
+   "9805fcd62f5cb36559b0db137cc809fba0ea247ef94758bf06058bf9a8eb3ef9",
+   2151
+  ],
+  "checks/out/dev_calib_nse/camels_03384450_vic_lite_degree_day.json": [
+   "de31e428a5495c3e927075647f09058ad073479adef99c9c902fb44cdf5b7d21",
+   2011
+  ],
+  "checks/out/dev_calib_nse/camels_03574500_gr4j_degree_day.json": [
+   "b41d03493075c5bfe7f1c1462ff243d297385a09e650555ba485850758931819",
+   1779
+  ],
+  "checks/out/dev_calib_nse/camels_03574500_hbv_degree_day.json": [
+   "e96bf8072f8dd7c98ffa093afb36beada254cc3af8405d6206d3f396de213da2",
+   1917
+  ],
+  "checks/out/dev_calib_nse/camels_03574500_sacsma_degree_day.json": [
+   "52d68e7f66112edb77c915935bd8c5fac9c1b89c1c34b9b17465f57a85cb960f",
+   2118
+  ],
+  "checks/out/dev_calib_nse/camels_03574500_vic_lite_degree_day.json": [
+   "ff12ca6bdd38a4399883b3861ecd346ba9bbcbfcf14293994b93e20afdae6798",
+   2016
+  ],
+  "checks/out/dev_calib_nse/camels_04122200_gr4j_degree_day.json": [
+   "bc727acd146fd5770058833e9be83d02eebdf65a70672a19e72e3deafa811c9f",
+   1802
+  ],
+  "checks/out/dev_calib_nse/camels_04122200_hbv_degree_day.json": [
+   "b8580dbcb0658cb4bf6813d7be3f3bb3be5f92cac30b9d5227ec090cf975e937",
+   1951
+  ],
+  "checks/out/dev_calib_nse/camels_04122200_sacsma_degree_day.json": [
+   "de077c159fb8297f2c3f0f1343fae3f2aad65c1a6b80c76a002212b8d5639dd5",
+   2137
+  ],
+  "checks/out/dev_calib_nse/camels_04122200_vic_lite_degree_day.json": [
+   "13c48f2a743a45a6f3c25962ca36926bf0679c8dcd2b7bdff39035e48a63127b",
+   2026
+  ],
+  "checks/out/dev_calib_nse/camels_04296000_gr4j_degree_day.json": [
+   "df11d16d7e97531ae6370c85e9e58a52ce3a43fbb94d74d3bc7c38c789032ae7",
+   1783
+  ],
+  "checks/out/dev_calib_nse/camels_04296000_hbv_degree_day.json": [
+   "ceacb2c85a7a8d57f3cf0f9645dc0d96257dbc66188a8afa3678129165c3e9ae",
+   1945
+  ],
+  "checks/out/dev_calib_nse/camels_04296000_sacsma_degree_day.json": [
+   "cb67eaacfa73a880aaba5ce44bfc09d820351c5bc928d0d7477dafef712406a9",
+   2106
+  ],
+  "checks/out/dev_calib_nse/camels_04296000_vic_lite_degree_day.json": [
+   "e7854c751d9e3a71a14b44c3c031ca3d49f3241a85d7eebd035795f67879b9de",
+   1990
+  ],
+  "checks/out/dev_calib_nse/camels_05056000_gr4j_degree_day.json": [
+   "fbab8dc250b7314829b68cf28b38b9da0303a52eebb04e55a01a23542fbd3e6d",
+   1779
+  ],
+  "checks/out/dev_calib_nse/camels_05056000_hbv_degree_day.json": [
+   "0e3c9fe9a5bbb6c9dfa33cce1ba9ee5fb8ad81e717d9a966342d605f94431cf7",
+   1951
+  ],
+  "checks/out/dev_calib_nse/camels_05056000_sacsma_degree_day.json": [
+   "1b90cad53c32667a0099ae9abd4e880e394df4cf930fe5069c81176b10dcb8c4",
+   2136
+  ],
+  "checks/out/dev_calib_nse/camels_05056000_vic_lite_degree_day.json": [
+   "22d25c3bc1909bad3ab3bb81f6f94cf3ef6d80f2738a16742dbb030f88836cf5",
+   2035
+  ],
+  "checks/out/dev_calib_nse/camels_05458000_gr4j_degree_day.json": [
+   "6aa309c3612fadad7404e322deefff598b88b6fc5930924a566360453377fd93",
+   1797
+  ],
+  "checks/out/dev_calib_nse/camels_05458000_hbv_degree_day.json": [
+   "d01683cbff3bef3761fa76d3e8dc1fca48d598e9c1356c0bb774ec51ff569453",
+   1941
+  ],
+  "checks/out/dev_calib_nse/camels_05458000_sacsma_degree_day.json": [
+   "241007e13a4962eeb0c7d71b92a4238dc16c45d2cd2d2e0dbb1cd30108cde4f6",
+   2102
+  ],
+  "checks/out/dev_calib_nse/camels_05458000_vic_lite_degree_day.json": [
+   "d9ecb1d72f170a7fd7fceaccd79c51ab4d70c2e6c2db5945ae18978325efa9ee",
+   2010
+  ],
+  "checks/out/dev_calib_nse/camels_05593900_gr4j_degree_day.json": [
+   "39b58b3e3b46dd200688a4bc997054d6e799b89886daa4471503145a005b25ef",
+   1801
+  ],
+  "checks/out/dev_calib_nse/camels_05593900_hbv_degree_day.json": [
+   "fc2dac6db806f4cbe80c43625bc2ee3dc929e0729657ee63e682214525fbd855",
+   1937
+  ],
+  "checks/out/dev_calib_nse/camels_05593900_sacsma_degree_day.json": [
+   "cfc365eed60e8c94626abdd0feca44b5440be204e5ded6ece34af7826db401ac",
+   2144
+  ],
+  "checks/out/dev_calib_nse/camels_05593900_vic_lite_degree_day.json": [
+   "79975c888c582f7bce24f722cb09d7134ee4e7bb1a1fb82816334fecbf094e5f",
+   2028
+  ],
+  "checks/out/dev_calib_nse/camels_06280300_gr4j_degree_day.json": [
+   "98df03ba207a35c90bba016f362891a213806b1633714cc4bba98b421cc91098",
+   1796
+  ],
+  "checks/out/dev_calib_nse/camels_06280300_hbv_degree_day.json": [
+   "f5fde0db587fc769215e4d247601466abfe64cbcb6f9ac45f85f27249c0169e7",
+   1923
+  ],
+  "checks/out/dev_calib_nse/camels_06280300_sacsma_degree_day.json": [
+   "1f12155146f1a1123ad8e840db9791667f25db3175281b4a279420a54a6c808e",
+   2134
+  ],
+  "checks/out/dev_calib_nse/camels_06280300_vic_lite_degree_day.json": [
+   "ada54ab91da13430842b7f2b699fafdbcbba299147144789671137a1581c8502",
+   2008
+  ],
+  "checks/out/dev_calib_nse/camels_06339500_gr4j_degree_day.json": [
+   "b3c283799638057427e8be0bc645c2206b7b91bd431677a1fa3debabe5eda9e0",
+   1762
+  ],
+  "checks/out/dev_calib_nse/camels_06339500_hbv_degree_day.json": [
+   "22eb827a6e97cd0f2c26cf5166a1e5f5986a02366021aefbe76eec81ee03b752",
+   1898
+  ],
+  "checks/out/dev_calib_nse/camels_06339500_sacsma_degree_day.json": [
+   "2f08da9048b265c83e14a9076a9a72de80b2b9a256ebca04fd00924f5a829b55",
+   2108
+  ],
+  "checks/out/dev_calib_nse/camels_06339500_vic_lite_degree_day.json": [
+   "9634ea6202c25ccea33485851f1b49a3dccb05a1f6a48e325a3255e4237bfa20",
+   1980
+  ],
+  "checks/out/dev_calib_nse/camels_06404000_gr4j_degree_day.json": [
+   "bd1adc8c71e666a5f9a1dd8575b1b8e9cc3a80999df1a99ca2a051fa0fdd97b1",
+   1807
+  ],
+  "checks/out/dev_calib_nse/camels_06404000_hbv_degree_day.json": [
+   "91d443c5b4e56ac2523c9aa281ee07ad37e4ffa75bb06c8988ae84933e692524",
+   1943
+  ],
+  "checks/out/dev_calib_nse/camels_06404000_sacsma_degree_day.json": [
+   "59c0f156577def4d304debc865a53b101a355e13f200640d1d2e28508d5d6144",
+   2169
+  ],
+  "checks/out/dev_calib_nse/camels_06404000_vic_lite_degree_day.json": [
+   "35bceb06afcc31da5b7f8ccccd6d0c64f7befeaeec72625ec55710ff52cf3489",
+   2002
+  ],
+  "checks/out/dev_calib_nse/camels_06622700_gr4j_degree_day.json": [
+   "3d1e20d807cf98d388e45689232e3662f25aee409bfd8239e545a4a3f0df411a",
+   1801
+  ],
+  "checks/out/dev_calib_nse/camels_06622700_hbv_degree_day.json": [
+   "003212caf5fdde6d1d57b8458880b40a6fe1bb3e73abcc76ae9727ea7f06cb60",
+   1929
+  ],
+  "checks/out/dev_calib_nse/camels_06622700_sacsma_degree_day.json": [
+   "b1e295a367679c8d02487038b736d81ea8ff179807954fba0103fcccbc29df0f",
+   2121
+  ],
+  "checks/out/dev_calib_nse/camels_06622700_vic_lite_degree_day.json": [
+   "d26c26ab350110429d01b0ff9444088ae912aaf7b996dfaf91a79c2c717cf6a4",
+   1986
+  ],
+  "checks/out/dev_calib_nse/camels_06885500_gr4j_degree_day.json": [
+   "24ed3310bcdbdb08895df5b29671995e3c5189f682e2ff4bb7f65c4cd2e6ddfb",
+   1809
+  ],
+  "checks/out/dev_calib_nse/camels_06885500_hbv_degree_day.json": [
+   "2c26eecb5e4aa2dbfa7855d7239ca8a33b46ab43d6acefc520eda7f791b72084",
+   1970
+  ],
+  "checks/out/dev_calib_nse/camels_06885500_sacsma_degree_day.json": [
+   "75c7f2b4558732a7908f762bbb768e7db1cc3e71233a02b6190e8e1228cf1c78",
+   2165
+  ],
+  "checks/out/dev_calib_nse/camels_06885500_vic_lite_degree_day.json": [
+   "23621734d79d958d8f277f9bc1446ceba7369196be78d2db41cd993cf0e56943",
+   2031
+  ],
+  "checks/out/dev_calib_nse/camels_07067000_gr4j_degree_day.json": [
+   "b68bfc7a0edc2c5d4405c7917b7d6e719636cc8e4b2c723396bd19fcf1b0cb5b",
+   1828
+  ],
+  "checks/out/dev_calib_nse/camels_07067000_hbv_degree_day.json": [
+   "da079ffb5cb5b19cd87b2489d1f490069e6f2a164ba8721127bfb6ec388fb368",
+   1968
+  ],
+  "checks/out/dev_calib_nse/camels_07067000_sacsma_degree_day.json": [
+   "60a41bbde5f6bdbec8a6e334ed3b19cbdbbd1a27c36fb41c16ca06048eabdacc",
+   2167
+  ],
+  "checks/out/dev_calib_nse/camels_07067000_vic_lite_degree_day.json": [
+   "6963bb0fc8ba7a533be6170e963399d1359a338b89743be2b5239636a5ed4f04",
+   2025
+  ],
+  "checks/out/dev_calib_nse/camels_07149000_gr4j_degree_day.json": [
+   "d72c4cd763619ad2e1acc82fcad434218a8245a738e7c49f422b9abf17c17cae",
+   1770
+  ],
+  "checks/out/dev_calib_nse/camels_07149000_hbv_degree_day.json": [
+   "12f810aed5589ae36b4ee0ff6ae78b9df070452511c592693554e5e22ae36e2e",
+   1920
+  ],
+  "checks/out/dev_calib_nse/camels_07149000_sacsma_degree_day.json": [
+   "070e8f96c97f736aa64f2c10b2b592e686a29f2619dd124892ce17a8267b8398",
+   2110
+  ],
+  "checks/out/dev_calib_nse/camels_07149000_vic_lite_degree_day.json": [
+   "8b3a4c0d62488e2b4acb17f30c9d294ff5bd071ec2899989a3356ae0560502bb",
+   1974
+  ],
+  "checks/out/dev_calib_nse/camels_07375000_gr4j_degree_day.json": [
+   "fc62ff0213d21bdb71a92ab1d5af395a4289c07fa7236144343e909b2e0e3d33",
+   1785
+  ],
+  "checks/out/dev_calib_nse/camels_07375000_hbv_degree_day.json": [
+   "8b2a41370976d5489d6d627f21f3204c7d4e5a1a9fbf0ae8bdce7e4be3b6eee8",
+   1912
+  ],
+  "checks/out/dev_calib_nse/camels_07375000_sacsma_degree_day.json": [
+   "b77b3709e6fff646e0cc6e6b16a6acf7c3036434a6388f1fce07b0684f13fe91",
+   2138
+  ],
+  "checks/out/dev_calib_nse/camels_07375000_vic_lite_degree_day.json": [
+   "d23462dd8e2892bc3ee4768b1d158a740f19bf9594a5f6552bf69b628fd638dc",
+   2007
+  ],
+  "checks/out/dev_calib_nse/camels_08066300_gr4j_degree_day.json": [
+   "0671d3908930c4594c2f07efaed367523cabb1ba37836be1f15e201e4cb04b6b",
+   1809
+  ],
+  "checks/out/dev_calib_nse/camels_08066300_hbv_degree_day.json": [
+   "6596cd89c0c2a4d74fec92ecc62dd53aedcde746dfc41435bf8e87887f8ee994",
+   1951
+  ],
+  "checks/out/dev_calib_nse/camels_08066300_sacsma_degree_day.json": [
+   "423684871ea20d23b88d1541be610e566c7eb6a8c1ee014368c080e8ac12e68b",
+   2135
+  ],
+  "checks/out/dev_calib_nse/camels_08066300_vic_lite_degree_day.json": [
+   "b1654a3d6d16522c97f2e6b559ef38d12d0e15624a76972b15d98c3df79ab325",
+   2029
+  ],
+  "checks/out/dev_calib_nse/camels_08164000_gr4j_degree_day.json": [
+   "c72ee02030548c2fdac32c6489254a00b50fad1337cb24585c3c1e072e338a2f",
+   1808
+  ],
+  "checks/out/dev_calib_nse/camels_08164000_hbv_degree_day.json": [
+   "fb09a9ff6a35129d9a32760aca0bba1f791336266948d0eece4c5d667d22bb7a",
+   1938
+  ],
+  "checks/out/dev_calib_nse/camels_08164000_sacsma_degree_day.json": [
+   "ad89a94ca29be0f9e22c568346c3ccbce10efc91fdf9580208cb19359d5c2fc0",
+   2142
+  ],
+  "checks/out/dev_calib_nse/camels_08164000_vic_lite_degree_day.json": [
+   "6cc9b8f239cb0c868188a830a7eb5b5183e772a1ef3d46c32b919929e0ef71ac",
+   2008
+  ],
+  "checks/out/dev_calib_nse/camels_08190500_gr4j_degree_day.json": [
+   "6bce32e9f551544581f1010fcdb6a044fe5dba394b00b485ecf339d3c94639f2",
+   1759
+  ],
+  "checks/out/dev_calib_nse/camels_08190500_hbv_degree_day.json": [
+   "05988a932bb4ae3dbba3c672c0388d4e2de438b94be9ad564278a24160eee4ec",
+   1918
+  ],
+  "checks/out/dev_calib_nse/camels_08190500_sacsma_degree_day.json": [
+   "138200d71820f4facc39e0bfe92094ebda64e505cf7d98b6f08c8b13b2f868fb",
+   2104
+  ],
+  "checks/out/dev_calib_nse/camels_08190500_vic_lite_degree_day.json": [
+   "dc23e29013e321610745605ed42aa80a1a03762fbe0425d222a590948f7e82bc",
+   1982
+  ],
+  "checks/out/dev_calib_nse/camels_08202700_gr4j_degree_day.json": [
+   "50122499cffd53175a3151707e2083cf821ae2ae3e719e180ea79ce79d7f5d54",
+   1770
+  ],
+  "checks/out/dev_calib_nse/camels_08202700_hbv_degree_day.json": [
+   "bf4ee1ab9fc70dab848f8f5955cd2cb8623a31ac966a477f42f4842af7f28e7a",
+   1881
+  ],
+  "checks/out/dev_calib_nse/camels_08202700_sacsma_degree_day.json": [
+   "935c1722e1af62b54707526a3e456c880a122611283a791ee6ca2dd0611e73ca",
+   2107
+  ],
+  "checks/out/dev_calib_nse/camels_08202700_vic_lite_degree_day.json": [
+   "ff50357fc801a7cc367bd226613fd066de02ebf456b33922b8f82f894164cfbd",
+   1955
+  ],
+  "checks/out/dev_calib_nse/camels_08377900_gr4j_degree_day.json": [
+   "d91836c4424a020168c79e9ea7c7f50e7077f653710bc2d34bb928428419be74",
+   1791
+  ],
+  "checks/out/dev_calib_nse/camels_08377900_hbv_degree_day.json": [
+   "ef4d7d349bcbf66c171827e655b878db8dfadd0ea02dd409d309b285d285fb33",
+   1931
+  ],
+  "checks/out/dev_calib_nse/camels_08377900_sacsma_degree_day.json": [
+   "70bce09d09a6b2699d9bd86ed308f055a3598d54d3f9e69fb63ecda493a2ff1b",
+   2145
+  ],
+  "checks/out/dev_calib_nse/camels_08377900_vic_lite_degree_day.json": [
+   "989330a3f80581d3448a112777fe3286e3e9783db45b1206a1644b8d437d031b",
+   2022
+  ],
+  "checks/out/dev_calib_nse/camels_09035800_gr4j_degree_day.json": [
+   "16b03fb0c6ffb6438b09bc4ef7c5f819b8263e261a78f414052237a804c402b6",
+   1777
+  ],
+  "checks/out/dev_calib_nse/camels_09035800_hbv_degree_day.json": [
+   "d0c2900a0cf7794e90754cf0cd5b9f85fe1fd5b2bbdaceccfd11a6e844aadaa0",
+   1926
+  ],
+  "checks/out/dev_calib_nse/camels_09035800_sacsma_degree_day.json": [
+   "85eef56592fbf8459e2c447ea013327fba50ed1f8078ba039522c20b31f62e81",
+   2106
+  ],
+  "checks/out/dev_calib_nse/camels_09035800_vic_lite_degree_day.json": [
+   "33b18d06992109ce4dc0df4373a33965df29e97d870d9ef18ecb9627c7380967",
+   1980
+  ],
+  "checks/out/dev_calib_nse/camels_09484600_gr4j_degree_day.json": [
+   "ce4b5dbb5e4960e7ce539d5b9b0a7ee7bb89d9feeefaaf4e9d1bd23ed069e55d",
+   1436
+  ],
+  "checks/out/dev_calib_nse/camels_09484600_hbv_degree_day.json": [
+   "6de46cdbc494a5ea9dc86add77b60426c8f7c62ce295b9b6f272f3b80fa04e0f",
+   1565
+  ],
+  "checks/out/dev_calib_nse/camels_09484600_sacsma_degree_day.json": [
+   "ee202b52ae3777c31d06e26ec79b3d42ec71b7a6a4cd40ffa21896f0651c56e3",
+   1741
+  ],
+  "checks/out/dev_calib_nse/camels_09484600_vic_lite_degree_day.json": [
+   "f02902970d6cbb6319f56273c93acb8237bb0048603cb2fa332910cb3d45eae1",
+   1631
+  ],
+  "checks/out/dev_calib_nse/camels_10234500_gr4j_degree_day.json": [
+   "2ed4b78185ebed15537a534e2fbadff633204c6e33c85b27e867f87780c20ef7",
+   1823
+  ],
+  "checks/out/dev_calib_nse/camels_10234500_hbv_degree_day.json": [
+   "5c7066061d9dbcaed4624dade30447296491c6dd0df96d324e52bedb468cc072",
+   1969
+  ],
+  "checks/out/dev_calib_nse/camels_10234500_sacsma_degree_day.json": [
+   "fb51f775cb8392e32415763fac5857da8339c89722ae172de0f805eac774ad5d",
+   2155
+  ],
+  "checks/out/dev_calib_nse/camels_10234500_vic_lite_degree_day.json": [
+   "856a9a268cfefb141be33d6ad6ad280365dcc5d831f2516227879b5666efaaff",
+   2029
+  ],
+  "checks/out/dev_calib_nse/camels_11141280_gr4j_degree_day.json": [
+   "2eeca880c5ab5f1dac4a1c90a8ae352c690fe77eaad14aa75a072d5859b91e4f",
+   1811
+  ],
+  "checks/out/dev_calib_nse/camels_11141280_hbv_degree_day.json": [
+   "57949c978e92f414b6c687d321fc05ad7291aaa444a177c4b4d12bbe5747bd72",
+   1941
+  ],
+  "checks/out/dev_calib_nse/camels_11141280_sacsma_degree_day.json": [
+   "e6d6808688b64c28925658315a766473194a5bfe12c4f6298ebe9f6a3e2c7fd7",
+   2156
+  ],
+  "checks/out/dev_calib_nse/camels_11141280_vic_lite_degree_day.json": [
+   "9282db82a0f176a01d107a01e6ac6505cbe8192c476c19f3038098221a92d8c4",
+   2026
+  ],
+  "checks/out/dev_calib_nse/camels_11237500_gr4j_degree_day.json": [
+   "917b4e34c38e0ddf84b1faacc2f4b09e4f61809d0846cd51cab41074275324d4",
+   1772
+  ],
+  "checks/out/dev_calib_nse/camels_11237500_hbv_degree_day.json": [
+   "767fa96e3cb9bf79664b3c08129e12b1d803894b019f63505fec39b93943fe6d",
+   1913
+  ],
+  "checks/out/dev_calib_nse/camels_11237500_sacsma_degree_day.json": [
+   "d3b083472572bb4b91f16e5f0b66ec5f08ffae6957d0d31a8508d83271d8abf4",
+   2111
+  ],
+  "checks/out/dev_calib_nse/camels_11237500_vic_lite_degree_day.json": [
+   "647868ff80ebaea6ef8e19e8298440e4dc748fd68d2716c342b15f24afdcf6e5",
+   1992
+  ],
+  "checks/out/dev_calib_nse/camels_11299600_gr4j_degree_day.json": [
+   "d884905ea0e61ab945747ffd6cb8e682dd3e0bc517cc1589f2c6e336fae29213",
+   1732
+  ],
+  "checks/out/dev_calib_nse/camels_11299600_hbv_degree_day.json": [
+   "1476bce48655eff17585d861871b3b263973d6616c80447dc44a29e709750db8",
+   1894
+  ],
+  "checks/out/dev_calib_nse/camels_11299600_sacsma_degree_day.json": [
+   "777765c8867ec917583661a81736fe71579cb20c143a658e6b0ba34c14e8bec9",
+   2082
+  ],
+  "checks/out/dev_calib_nse/camels_11299600_vic_lite_degree_day.json": [
+   "4ba3fe98f146d8d920ed3892338aa999ed55af40f984d16b7266b1018ae02038",
+   1962
+  ],
+  "checks/out/dev_calib_nse/camels_11528700_gr4j_degree_day.json": [
+   "1324949535ce9f7448638db3b290aa5997e4e241c471f51f234410108552e2d1",
+   1821
+  ],
+  "checks/out/dev_calib_nse/camels_11528700_hbv_degree_day.json": [
+   "6b27d48ec175d5c05f5dee2731a353f7c5ae17f36c3f2c5b5761d0817f0fc2a5",
+   1946
+  ],
+  "checks/out/dev_calib_nse/camels_11528700_sacsma_degree_day.json": [
+   "5afa5314de7e4cccfd732d5555e00fb9b6a62dc5ceb2f3a0ed16e69c9c5584d5",
+   2160
+  ],
+  "checks/out/dev_calib_nse/camels_11528700_vic_lite_degree_day.json": [
+   "9e0387c2f56cddb5ecce25e0faaea7d54fd6de1fa7f8012567182ab8c8fe1a22",
+   2027
+  ],
+  "checks/out/dev_calib_nse/camels_12041200_gr4j_degree_day.json": [
+   "d1eea258cf13c0e6b0038e98e30ee034b33c02c90b1a22d3cc3b72acc0312f98",
+   1816
+  ],
+  "checks/out/dev_calib_nse/camels_12041200_hbv_degree_day.json": [
+   "0e7b70563d189afbd530bf8a711d2621d2daebf857f23b69ba5622d871509e6c",
+   1955
+  ],
+  "checks/out/dev_calib_nse/camels_12041200_sacsma_degree_day.json": [
+   "37ab99d8850e967062d8220a14692b68e676fff1c929da5231db71521818941c",
+   2149
+  ],
+  "checks/out/dev_calib_nse/camels_12041200_vic_lite_degree_day.json": [
+   "1cc2f5d31cf90dbdf5af98334cc6867fb0c823ed3f3f3812774e180ef083ecaf",
+   2028
+  ],
+  "checks/out/dev_calib_nse/camels_12447390_gr4j_degree_day.json": [
+   "8fe079ba8f0fd208e10c936e3140cff82c710bd15ea33ac042c2a8039fbc3492",
+   1801
+  ],
+  "checks/out/dev_calib_nse/camels_12447390_hbv_degree_day.json": [
+   "fecf0f3fbb5a5221e867dfde839d9fe4534ca792fa10046d173d1826ff46f91d",
+   1932
+  ],
+  "checks/out/dev_calib_nse/camels_12447390_sacsma_degree_day.json": [
+   "ae6a5e657b05706fc12eba53ebbfd0f1420b8dba04adb8a6e74a5752d9254d42",
+   2145
+  ],
+  "checks/out/dev_calib_nse/camels_12447390_vic_lite_degree_day.json": [
+   "3744768437c4d72a03c38120b7f59e51a7aba84b1cd39f6ec2940539b1c4cbf4",
+   2021
+  ],
+  "checks/out/dev_calib_nse/camels_12451000_gr4j_degree_day.json": [
+   "37be4ba20d6691eb74fc1dfc6fc4adfdeb2297d76c6fef92d2e7de28ada52577",
+   1810
+  ],
+  "checks/out/dev_calib_nse/camels_12451000_hbv_degree_day.json": [
+   "65129e98d42832b8e90b3e7c6aaa6eb16389049aec5b6c22b7933da91af8e3e1",
+   1964
+  ],
+  "checks/out/dev_calib_nse/camels_12451000_sacsma_degree_day.json": [
+   "0411f296b33615992e839a8ad697c9b668c0af54d8785c1be225a19754b1730c",
+   2134
+  ],
+  "checks/out/dev_calib_nse/camels_12451000_vic_lite_degree_day.json": [
+   "0a80976d08b56a8bc043b23fbb2c689fac82536c8a37d3dbddb08fda0eddfa8a",
+   2023
+  ],
+  "checks/out/dev_calib_nse/camels_13240000_gr4j_degree_day.json": [
+   "ec22a8cdf95f01c774052f36ea3271da5756bb300e9b92c14c0b0f01b637325b",
+   1799
+  ],
+  "checks/out/dev_calib_nse/camels_13240000_hbv_degree_day.json": [
+   "ef1152a4e7a8d5fb0b69000d6fc57efb1533838b403280ceefa40e44ca5615a4",
+   1929
+  ],
+  "checks/out/dev_calib_nse/camels_13240000_sacsma_degree_day.json": [
+   "d971aa354544e71d70be6b94f787e9ec3a76bd49f7ebdc344ea10aa174fb2bff",
+   2147
+  ],
+  "checks/out/dev_calib_nse/camels_13240000_vic_lite_degree_day.json": [
+   "c3ea731b7747d9cbf3221d8263004c98922f34ee0bc9899214cc432113aa46a5",
+   1988
+  ],
+  "checks/out/dev_calib_nse/camels_14185000_gr4j_degree_day.json": [
+   "1ce4997ca01e4d9396ed2b4993da9a1d874a43ffed20397ade7145e81f1d2796",
+   1809
+  ],
+  "checks/out/dev_calib_nse/camels_14185000_hbv_degree_day.json": [
+   "4ac65246b6de20a45b8938b494d7fb7b0d501e8a4d2b6ca896bc3cead61a7d94",
+   1956
+  ],
+  "checks/out/dev_calib_nse/camels_14185000_sacsma_degree_day.json": [
+   "a4283285902503bbc6d094e1dc3498ac7af5f36dc44395f8664bc7ee51b7d351",
+   2148
+  ],
+  "checks/out/dev_calib_nse/camels_14185000_vic_lite_degree_day.json": [
+   "b4f32910ab2b907288bfc4c36d0426227116708a76e0836bd2b28b52d7b7c6b3",
+   2023
+  ],
+  "checks/out/dev_calib_nse/camels_14185900_gr4j_degree_day.json": [
+   "a35dfcd5febc808c6a2ca5659f56565f145e500e27efdc6426b626b1d1a617dd",
+   1807
+  ],
+  "checks/out/dev_calib_nse/camels_14185900_hbv_degree_day.json": [
+   "548aa21584a1894972067146a023c0c0567a874e3f0d3cb4dabc99f39f21d36c",
+   1954
+  ],
+  "checks/out/dev_calib_nse/camels_14185900_sacsma_degree_day.json": [
+   "2817a14cc37d618b2323e5d1b969c91e60f0a0bf3c357c23e5920a59712f2951",
+   2130
+  ],
+  "checks/out/dev_calib_nse/camels_14185900_vic_lite_degree_day.json": [
+   "f73c794593e41079268fde3a1ed2f010ed2460f16c8597d769b01a70009aaf55",
+   2028
+  ],
+  "checks/out/dev_calib_nse/camels_14306340_gr4j_degree_day.json": [
+   "9f282780990554851f1906da838bebf20e0e4001392725b6a5503e0931075867",
+   1807
+  ],
+  "checks/out/dev_calib_nse/camels_14306340_hbv_degree_day.json": [
+   "09e00660259ce749c69a93d267f2e2687873171b7690d6f1bfa044072cdc6424",
+   1954
+  ],
+  "checks/out/dev_calib_nse/camels_14306340_sacsma_degree_day.json": [
+   "d169febe9b96fe7ce0bfd41cd7e44408fa72bfae8fd4235570e6d9c2153e67ef",
+   2143
+  ],
+  "checks/out/dev_calib_nse/camels_14306340_vic_lite_degree_day.json": [
+   "cb8c8573366f671ec91e8b7706b2a3c2a3584feae55b69aef4fdfab90867d30d",
+   2016
+  ],
+  "checks/ref/airgr_L0123001_inputs.csv": [
+   "abf889392299a59f65e71688dbe2cf85f3fad27b227eaa2bf6af5e8c427be574",
+   279804
+  ],
+  "checks/ref/airgr_gr4j_explicit.csv": [
+   "31eafb2d66be1ae09eac5e360b3e4b54943cd0e860bcf8f566a2ccf1cb6790cc",
+   428946
+  ],
+  "checks/ref/airgr_gr4j_help_example.csv": [
+   "c3c8661548377c34e802052bb10d9e5113aaae9fbf2a4c1c6b03d99a595799ed",
+   110553
+  ],
+  "checks/ref/tuw_vils.csv": [
+   "ea8d043c42431ea2ae264203ffbafdbe4a156175a4b44bb286ea76a4d91ab8fc",
+   2591904
+  ],
+  "checks/ref/tuw_vils_matched.csv": [
+   "fbe5c3284f3290e94300c811454bc122b59ec9240ce629b418e70e7253c8afca",
+   2592550
+  ],
+  "data/proc/attributes/camels.parquet": [
+   "16ede232b870fd35a5b65394a0ce2e21f55de0f705c8c8efb350e62e2ef70382",
+   1092171
+  ],
+  "data/proc/attributes/camels_implied_area.csv": [
+   "9aba737e7989488fa74f80f7676392fc03564d0f4a8f53582fa4811fe13e8ff6",
+   39232
+  ],
+  "data/proc/attributes/camelsaus.parquet": [
+   "bc8bde59af280d98a8a0055b8063f6410816a5afa9965bf04913af7a9b525b95",
+   905611
+  ],
+  "data/proc/attributes/camelsbr.parquet": [
+   "fe0e62db71d8cdc1a6680a22b39e4d5e184b2ff752b8801727c45f1017611870",
+   1333339
+  ],
+  "data/proc/attributes/camelscl.parquet": [
+   "6149dfe2eb3fea20062085e1755e5e0e129d8a5bc60369d3e5b66ca706691325",
+   868711
+  ],
+  "data/proc/attributes/camelsgb.parquet": [
+   "7480546b491d9b99b4f769aedeec04e0654ccea967eba925f77fe7f7b52d8b23",
+   942966
+  ],
+  "data/proc/baselines/check_caravan_vs_nwis.csv": [
+   "e4b22d3e6ffe29031eb3fb1e4e3d817558834ba03793134e8ed696cd2ad7535a",
+   26776
+  ],
+  "data/proc/baselines/checks.json": [
+   "d634512d59365dfc93bad91e81935bb1fdd5ad974a9a2202888a58b2ada6831f",
+   708
+  ],
+  "data/proc/baselines/detective_summary.json": [
+   "2d7104e3bf1b888bd93fe774f400e598b3927d446ad9f24d38f7e40c308e3594",
+   7390
+  ],
+  "data/proc/baselines/flow_scores.parquet": [
+   "67ff72148b854eff7a9b02aec73c684ce9f6e724ab97cb3058e34c5ef72f9236",
+   654010
+  ],
+  "data/proc/baselines/flow_summary.json": [
+   "0295c962c6b26647f7bbb9da561a02b4d60e87eaaadcfc7e502bba3935ed5834",
+   5197
+  ],
+  "data/proc/baselines/gr4j/camels_01013500.json": [
+   "047ef0d66ebc05b03905fee5e46ea6c1c66dfda973c1b50df2dbcb47901371d9",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01022500.json": [
+   "483f278bfb92043e43447480308c1bdbb28611eab5dd8f6e9cb5359969aea6bb",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01030500.json": [
+   "757390d9a234113051ed254281223c79296e8d9753c5a6524b0e5f174985b669",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01031500.json": [
+   "f85b285e7dd847515a8746a94eca31b0a512b12999a700738ba1879fd4862296",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01047000.json": [
+   "f4a01654e39dc5a8a09345ccfc99e6ddd0878a3f75ea87b2c59424f8e00f73e1",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01052500.json": [
+   "9988de8c4d8a37d23e73dc6a520986e023fe6d0eea2bcc7c53df1a46499a8973",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01054200.json": [
+   "d7de18a6eb2f9f8e1ce48759be9d7c034b7475b40480d765aafe4217df3355d3",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01055000.json": [
+   "0c1c99d0b56e166947b84025bd4c923850cc56d2628e3f30eea5bbc593ba98da",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_01057000.json": [
+   "b8300052956916229bbe77a603950e72e9313267c9194991b0b8531767f57546",
+   266
+  ],
+  "data/proc/baselines/gr4j/camels_01073000.json": [
+   "24d5260c40688ffa1dcda7769fa5a7698c124abc6012cf94f1580e4765f6cfa7",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01078000.json": [
+   "c5fbe65a4753441ccae027f9c27ddffb50432194b647e845ebc96b5dfa85dbbf",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01118300.json": [
+   "115d01f3cef44f29ed1cd8a53ac0b27f3b7149b38cf26782fab8156e2c5fd014",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01121000.json": [
+   "c9c1da0891f692ebc75a0b7be374d10edcca7b00ff93ac84ffc0530ed69d4179",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01123000.json": [
+   "db9f9adcd544411b589af15582288bb8cf6acb0895c8f75e52e1b5b56483b2a0",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01134500.json": [
+   "74a62120d491cd9c7c8ef2c02e7dfe967a301e87ea311567f6cbb1306c4f411d",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_01137500.json": [
+   "40dd6e15d3c184739eb8d24ad4d87ebf7fbc35194b6d6ff71ac9fd16fbef4da7",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01139000.json": [
+   "9e3ce70134645590755cd0dd87ba18888f3c6022aab5ac88228cc22be7c4b0e1",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01139800.json": [
+   "0d065c85d1bb30fbd5f51522ccb6c0b07dca9a710845a12f31d32d737d601ddb",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_01142500.json": [
+   "1012bd978f045f3dbfcc106228f6d53fbd7d5ee640ee984463d5fa26d9b78d78",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01144000.json": [
+   "0c4dfaf3fa2909950ef0f0e793dc24885f988979e6ef245bda1507e35233cc3f",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01162500.json": [
+   "f564660d9725c820bc2fca6df7b0e0a80fee47a21f62106e589e76618e59cd8a",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01169000.json": [
+   "408ba2cf6004b5e7e1c65238bdc5199683cf69799aa709e128cbfd86fd5f8f9f",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01170100.json": [
+   "8caf4b2e1afda4b8524b8d2d53765697c92809982b3af04ae28a1cdee63930d1",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01181000.json": [
+   "dd185b442a4a554df15bb114abdab946e8e4a850cda47cfc8b8fb59b8b403c05",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01187300.json": [
+   "fbce68bab57a0b8d98ac2dae0a71471a8a9fdffdcffac2a587fc0a62801d7fd9",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01195100.json": [
+   "2b5fc58d85e235a9d57578eac52cee67d377d2d579e85151dbcd3e0afaa4ebcd",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01333000.json": [
+   "38d7827d687bf3946143288a964878e723e38b48a6d0575fe4e81414853193f9",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01350000.json": [
+   "5bc04de8529dd836f7c90bdc5fe4d209b1c01998532ec9ed6351df14270f4115",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01350080.json": [
+   "8af13e0ac35ea11c7cc6a9fec0d198cd68b507f9c89daa167db2d7960f84375c",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01350140.json": [
+   "f4a742cb743b76b417df9070d43369b439f8e0b7948ecb75acec30ea96da2035",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01365000.json": [
+   "a2774e23c44ebf43c98782ca68451a186ce2e63a94d4abbaff3e05d1f930350e",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01411300.json": [
+   "f090f4e97e599d0312a84568d728d9ce9dc07ddc882fab4290c489d91ce72d21",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01413500.json": [
+   "702b8ac6afd227942c4714de0a836449bd4e064338b3c25e85c1a8fccfb0eecd",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01414500.json": [
+   "6067462f513477d8047bcc0dfc8541e10773e182acbfd79b9cf73a2765abc553",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01415000.json": [
+   "4815d2a76ab5241928812250cff8156c785c35c767aeea128857770dc2331b75",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_01423000.json": [
+   "3c412e6c47ad0dbdd42724ca2b3912b1d6f2eca248c487704cfcffb6dacac6aa",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01434025.json": [
+   "50a99ff024b80e5482ad980b506470c16d8f401f0435b8610e4f13f2c90dfc70",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_01435000.json": [
+   "d8ee07acf8901851d05318863040642ce89750be8ad8cf93ee6d13ae401ab40c",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01439500.json": [
+   "f36373bc903c0119ee67b89afdd588e6b173c6a0937d6ae5cd82844a58ed63d9",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01440000.json": [
+   "6971a829a5ca5b979f3c97f4c7490d8404378c8d65eea92a843e1aff647ac727",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01440400.json": [
+   "0100781710c689e0e81eacd6e49b03bf7708b67add367e46a32726db45b4fe59",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01451800.json": [
+   "0a60237413ca033bf076fef8114bf48a48edbe56935f13a1ee719466bb5666f4",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01466500.json": [
+   "a8d71adfa77e1c1ae083ed4065df0ad0ad80a05eb89b7ae65ddd0d025d4145ba",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01484100.json": [
+   "e54eab48e8b411924dc4976b0da5b6952110c985dc11df997f8bedc9465b9f93",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_01485500.json": [
+   "4dc81a8723f77af84c1210bb300e1704ce913bdc4e098a3a706cc6273eaa2004",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01486000.json": [
+   "ea5ed0b61e78df6d17131e926e47d5a968d2af6fef4abb04f2e2549e90ba31fb",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01487000.json": [
+   "6d9168ac7a1e9621a503f3bacd85fdc0db0541644af11db9b8ebfeba32514b7a",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_01491000.json": [
+   "c66325eac19fc1dbe871131d545a2a4d302098bf69c072644c897d77609cf2fc",
+   266
+  ],
+  "data/proc/baselines/gr4j/camels_01510000.json": [
+   "95497cb2ec26efcd6f3554c9155212a9ceb83384ecfe07778f5af56a9c54761b",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01516500.json": [
+   "7fd775d1b8a0f803217b5ad96a7ec35409c57a21ce868afeb7e6200451ba7364",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01518862.json": [
+   "38476a9673239d9cf45a144071578edf3d56ec29089b1ea34f2ef0428cbb4331",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01532000.json": [
+   "2fea573975aa0fb6eefa75ff6561e2b087297614c36d829ce5e7a50848c08149",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01539000.json": [
+   "005598163541bb7bcb57657651cb9d77bbbdadc84633fcc3ad3c441fa29238f2",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01542810.json": [
+   "f675704ebab5120d08b023f37b7838b1953b4661960b66e9a091ec52e926e95a",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01543000.json": [
+   "616b9e04bcfb5de0014540f063a98766469adf4955d5b72c03e33e2e3e18c17b",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01543500.json": [
+   "73f36372e4a147ca173d0821a7c83d8479b2d081af68b3bb93466c0750487ebb",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01544500.json": [
+   "8688dff481e87f0932aa147776685120044dae3a19bea7d47559ea10994522c0",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01545600.json": [
+   "48ded6df5990b18f196cf56279440a6a9749a361279a7c7f79e8b0e3c058b05d",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_01547700.json": [
+   "37ea284551498cec378143bdf5cae3ecad2fdc0ff311768695dd0db09d5d4ea9",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01548500.json": [
+   "e3f30f4fafa0c94acf6eaa837c0b3647f835dbb8ff5d648a2164c0d2411012fe",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01549500.json": [
+   "96beaaf5f078848f8fdd1f9437f53a287f2fb8f6db35d800fe771ea39cb71179",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01550000.json": [
+   "636a518fe27ee3753982c7912dc542e6f490b737261ce549dc4c93cf02b9e45d",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01552000.json": [
+   "1e248498548ae6b6f1e0740b8edeca2b055d9da1ab6832cf544ff40eaf977e5b",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01552500.json": [
+   "fdc58d2462f4b874315828d0e36a79a9d1d7c9e3e943deb04ae7532dd03c8e9d",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_01557500.json": [
+   "abaefa943ae7d365124ecf946c7fa6d431d20442c1b0a31771c9866365bf6249",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01567500.json": [
+   "0c7851614455afe6a086cc55ed5d2912f3159aa6a08ddf2385293933b284ef17",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01568000.json": [
+   "d769b9fadc5be69f3d614024196641c7f1056aab5e1b2488c0c00afe811962a6",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01580000.json": [
+   "c3a375bcc35b33f3c324c4813cc87d1dbde9cffeb4a6c35fce388a2132133bf2",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_01583500.json": [
+   "0e83a601f35213aeccac8070726abc41eb884863ebdcf8be63ad33d7b161cb40",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01586610.json": [
+   "146754c12b13997a8922d8e54a015b65f7e8e6457cfb492f0eff46658e583b58",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01591400.json": [
+   "458fc8f1a01185d708d9cc1bdf6b09b26aa99e9e10247b3532996691f2f56e49",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01594950.json": [
+   "2b6859562d4233b8a0616b746de4c6ad23002758dc53ec54e44fcb65252e08aa",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01596500.json": [
+   "ecfe2ffd890f7eb04dac9c9d246a31a67a0e730f20d510b6abd2c66f1911973a",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01605500.json": [
+   "dc211280a344c6fa68f820ca2eb22f58baf10ddf872881f747b7a0fdd9b2d4fd",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01606500.json": [
+   "30d894dc14240ec046baa239e8bde732a6a8546d2fa31284e3c35df7f672f5b0",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01613050.json": [
+   "5c00c04eb18510bcab7614cb6e1fa43690c7ab85fd3a8554db246ed1d1333fe4",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_01620500.json": [
+   "0537f95e5584543ba37958022be36569ecb8682a0d1242bfac1408d439345f2d",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_01632000.json": [
+   "05ccddb88bfbd4564a9ea01a4950d96ab77b8dc2fc5243c2de44da4f9cd90c67",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01632900.json": [
+   "77f7d96e4a8cdb73158a30562d2f26cc02e95b10e67bda8248eed8e5d9f83fd0",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01634500.json": [
+   "41af262b194d3589f62974ed834349ac94883e023ac9435ca7070531231f0ed1",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01638480.json": [
+   "ced2b39f9e77b2a15117b2a704ff3dfc59a57cf69b9bce51651af893b4b88a02",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01639500.json": [
+   "7b6344ebc2cee7e3754baf9f6272eb7346f1e8a638f5ad539cba7d1591634016",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01644000.json": [
+   "a652496eca5132f6020ccc424bd1d06c3cf8728ea7864330aed002053717015f",
+   265
+  ],
+  "data/proc/baselines/gr4j/camels_01658500.json": [
+   "ded8eb1c797ef89109470015c3c60c9b6c1a783b1d9910935f48c9f73c89217c",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_01664000.json": [
+   "4b75ed557298f4a05427bcfee07a254569d185a58ec23f7a625863fcbf77269c",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_01666500.json": [
+   "53443f80f2bec88b391740948a0c89113d4e8fe7f9ba8e908ef898e6d45253a9",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_01667500.json": [
+   "95f88e6eef0e1a487bb9dec1a1204c48573c1329450b283493f77cfd3e28558c",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_01669000.json": [
+   "4761aadfffddd1497e3d600e59fa50ee9407e8c1180da0fd6073d11dfe84ed49",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_01669520.json": [
+   "4bb98cc030b74fa8f60e732cb9b7e86b3098d516e03e4682c6adab6405f72fc6",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02011400.json": [
+   "660d8ead62759047e2c51eaacbcee8728332ac1a59dd63687606b343482930e7",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_02011460.json": [
+   "1e536a4727f4ef63abb6380110e5151727bf0bef3e711eac6a1597c61597733f",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02013000.json": [
+   "8d0581c0f408c8cf919b01aabcf56e02854dae3e8d1703458c52a24c5c9a2ec3",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_02014000.json": [
+   "9e3b6d9a334010092d328df7f2c68afc31dbcceeac00f329f7fe846c5317fb96",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02015700.json": [
+   "37a20d18a506d3e235dd5f947738a3a66bb340a1fb8411c02ffca9a650f5b693",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02016000.json": [
+   "9d95ebf2786bd2e927435c5404d06b9aa39a9641f0ba88d12b15103002ce9bd9",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02017500.json": [
+   "ea75022c636d7674f19b9c210ccd4adf0da46267d61c4c08c110d97a95c36fb6",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02018000.json": [
+   "88761cee0e4d65a84d4f8f74b7c8d51aee46877e1b663f95ba4d4d558bdc8d05",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_02027000.json": [
+   "287ec46b45c42308937966caa0ac042008264c60c09383c738a59225dc141931",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02027500.json": [
+   "add3dc58bd0f583ba8e61b0398a59d73a6397ca7ae4ae0fe61216dcc38df1791",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02028500.json": [
+   "2f0a79d327ba7059e584b41fa6d7ae1c73899c61cce91668fdb9ed8a54c480ec",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02038850.json": [
+   "eb47ca237d1848b505f7dd083ca9e6d60754dcc052ac1e41f5cf83951917e0b1",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02046000.json": [
+   "7282bcf40b30a3c97bd1e7bb8c877f1305d34854185c1bd4cff5a37efd681412",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02051000.json": [
+   "01636e5d2d2096f3cb45fda301392baa7103759e95c078a28f0062cbebf9fcf0",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_02051500.json": [
+   "ed924f1849b90d6dba33e557757052eb4542063485c45b6b1c8a116c4a036588",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_02053200.json": [
+   "7050919fc299afe486a61627e8b5147a642ec983df4ea02be54170f020956fc3",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_02053800.json": [
+   "69734d1038cb90bd815cd8b245c888c6ba990b462562964c398d8721e2f2d0bd",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02055100.json": [
+   "d4413e6e141e3b225a718ee250ed2f52e4317e0d6310e6c752437ef1c5aae325",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02056900.json": [
+   "f71772c14bc8b65dc0966e3e56acb438eb6db45ebc09be9282087315cba6d333",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_02059500.json": [
+   "efc87203fcf4fa530b3513ac51723cccbb0bb48bcf3112fab788146f48c8236f",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_02064000.json": [
+   "897d11ab81cfc194050e5615e3753eb09a806ebd4f6eeeddc1963a247de2d308",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_02065500.json": [
+   "d47973385004640e000051799429298301d8d5e567408b334f23c66365c069f8",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02069700.json": [
+   "45b91a0ac3ac3a93f0fc62af2b8452d077483e3bd7903c62e91e5b18eb31c6f8",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_02070000.json": [
+   "069ca2aac2711b86d38ef062337ad34aa909bf316d306e715544c33c765d3e22",
+   275
+  ],
+  "data/proc/baselines/gr4j/camels_02074500.json": [
+   "71a16ca428dbc02f78bb91e619f08be265416c069a3a5588169d63bae3c4cecf",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02077200.json": [
+   "d975fcd7bfd0356904e909204ca0c2c873bf9572615ba0926448743283d52483",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02081500.json": [
+   "0db564c73e150bc1268dd5bef5d80f64d4e16f78082cdeb4a3ad60eedb910a77",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_02082950.json": [
+   "b11c0dada1ded848b46a02492d60b9a5010ecb10f3131c63f2b33d49d5314f20",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02092500.json": [
+   "d15673efea59781b93e24efcce6edfce3bba762ac8b63b5dc17eec13c8b8ef05",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02096846.json": [
+   "d97639d0fc3477b76c719796b26336a5c1f59ce301ca9ed1c97fe482e4c16c9b",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02102908.json": [
+   "53c4aa6fa9e380291e86a258db0e16bbad3a28327281c855dd4fba4b1c0370e6",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02108000.json": [
+   "a17b784fa0244ae707d6dca34e0199817081f59a3d70063ff12fe26ab3756539",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02111180.json": [
+   "35db28546673feb1374db3a4d5b17e5ac953ca43cde73f5dc1d09b4ecc0cbd56",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02111500.json": [
+   "28410bc9fc67c199831b9e7a605fe0f6ed3ea830f9f40ea79b43ae636141f028",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02112120.json": [
+   "da024291e1e27d5dd9d77b862554dbde23e52098e738a3026cba401336866ed1",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02112360.json": [
+   "f3ead2fb8bf928b9fd74f1bf016df36008cdb875a5508dbe3a63e04a0b39b8f9",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_02118500.json": [
+   "ed410cf0502e8c2f15506cadfc6f7a4f78089e59f6db3f3cb5587b0eb9583738",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02125000.json": [
+   "91ce8f9641a272ee2fb39aa891fa0401bbec689a4245fdf1e0e061207727cab8",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02128000.json": [
+   "bb8fb56d9a3c35458505b1e2924e32c7130f8e83420d496598c1f1455f33b1e1",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_02137727.json": [
+   "938ce04fa82ec0c6bf16eec0162a0c08167e9fa8577df7ef96c6531d43fe671a",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02140991.json": [
+   "1b4d12aa28e1575e6c6062548a99b2a401cbceb678913da2c01c33acf6e93c27",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02143000.json": [
+   "a3f6e387b348bb79af6d90e1ce2d8850ea5190dfd905695bde9339e75bbb4fd5",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02143040.json": [
+   "1035785b2a9473511b9dbaa3c6dcde768fe5e34c726292df1e53af50b2e1ff4f",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_02149000.json": [
+   "2278cb10f8623881e6cdeb59b5b0231b3eac8a2ab580d7ebba2c1160087cfb10",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02152100.json": [
+   "4ec6e1caab70f631e294707d7f33358c205a84d8c71f94a37ceac31f4141011b",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_02177000.json": [
+   "71b11cc7d103fa52c1547e561d1a88495fa87f86d67e14bc903f51ec5ceaa6ce",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02178400.json": [
+   "d385d953b7ef8cf04113b876f04c07dc9745af07bf012a9b5e8b52a239409950",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02193340.json": [
+   "58345a82758e0c75bf9c5e49923da0a371a9ed69b441457bb3a2d5315d3122fe",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02196000.json": [
+   "81b9b668b2e8195eb1dcb478afb5ec0c4762d5972496f69f472f3803e59e825f",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_02198100.json": [
+   "3a574f982ce6b4fd63a9503c8e11831fbaeed61a9164b14ee3be856d7a90e32e",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02202600.json": [
+   "4184c18bea807e1f0e04ea7cb0f924567d1dc37410e413213fbf40143be07db6",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_02212600.json": [
+   "37c170676a2404ca6a87735280612e7e72c136661af70fe3e21da00c5660be2f",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02215100.json": [
+   "d090e8c176baac6f46eb27c3da4fdd9315b58887c1f037d056036cfb6232d41d",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02216180.json": [
+   "8a57363b879569cdce016c41c9de3be35b633b2fc1a7c7e74ae27a43c4a0b6db",
+   264
+  ],
+  "data/proc/baselines/gr4j/camels_02221525.json": [
+   "bf33a8c78016847535ed8d4eb985df6274bcc99b658d93081725b81aee618b1a",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02231000.json": [
+   "f2d9a4a1040b81a4312ecfbb2c4feacc2560cb0a421300041d54f628514dc00e",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02231342.json": [
+   "afe2c63c35aa37e5b1250ca3c6aa6763037c4db7dbb8a76fefa678aac7304411",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02235200.json": [
+   "0a324baacb913d43fbdc3ccd6aabce3eb05a6e0d6bda859071ce97e06859388c",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02245500.json": [
+   "559970f6eae25d7c1df7cad198756280eab2ea6b71c1f91e9bed96354538fb09",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02246000.json": [
+   "eadbf89d94c6ef23caa7f3caf16a541c080c942157e6f81394bddd5442148de2",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_02296500.json": [
+   "c630321cf948e1cf3dcaac1e76642d01185ed4e0e74d7e73ae71dfb1e8cc1c48",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_02297155.json": [
+   "77f58aa732291fe9b4b9c088880fc20d37e27c5fb558ad66aa3a72fc039edc32",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_02297310.json": [
+   "0f5e0d265e88149c734c543c0430fc7e41d4b755b4cc4033db960df95019f606",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_02298123.json": [
+   "ef77d05f3d4bca4cbaf35bead7ce9c8a87a23134c68a2131b9a2cb50b290a251",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_02298608.json": [
+   "7afbcb799ac7d8ba81ab64a8cf58f60c6be410119d36879c153ef781a3dbcafd",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02299950.json": [
+   "8dcf5c66424d6b86139413a5747460ca588e901c2ba0bc7dcacbe574b7723ec6",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_02300700.json": [
+   "5a318a242ea674f95915a95cf0061b74f6862149b409865432ec73d4ad4ba18c",
+   265
+  ],
+  "data/proc/baselines/gr4j/camels_02310947.json": [
+   "c65d7b0af407950d1e14ecd303fbda6f536d96ef5f01f75d97570630930dc9b9",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02312200.json": [
+   "517d30a5e40976f8e2a2237c107aa000a4f4e9a60cc17747bd40d0c1a6223530",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_02314500.json": [
+   "91d20ea12ffe66f350d184ffb9d11b57511f1021ee6d8a1fdf0211c14b189dee",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02315500.json": [
+   "dc17c3bbb655e03f46599c861abd30cb409f0e66d61059eb3759e7440bc8dee8",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02324400.json": [
+   "80f7a70880bf4a16b80cae4e1926d49022e388dc7a00e94827ab672cde5b836e",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_02327100.json": [
+   "527d4eecdd0618ea39b8c4943f4b900f50f92c7fac7eacf89baec27ae59ca91b",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_02342933.json": [
+   "8e33807e95cb1c14324d5a9b61feb450d8c0da3a5f2e900cbfb24d4c01b88147",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02349900.json": [
+   "db1180a5c78b7e967bc5988b137be89ae908179f749508e8b09f84d078f5deb9",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02350900.json": [
+   "a3caf7d6469e208937ee66f5e6b01bed6dc4db6bba06c1d7ffdefa0ff890f977",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_02361000.json": [
+   "72600c5bba44e4d3fdfb0ab93ca443b4dcaeff606c889056109b8be072b2e446",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_02363000.json": [
+   "74503f45f2f6fff8a23060b2a5493c5e160946777bdbab9114f6c6dbc8d29a2a",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02369800.json": [
+   "61d55a24c97bcf94c826ae00c582f4c3f83798f273b6b06771b6d319f9180002",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_02371500.json": [
+   "968810a0cb75439c169245330066e93e50031f2c1d7991389fccf1fc0178844f",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02372250.json": [
+   "8fcf9df5fa36e654ddd901c9236c543293cb7610d40ec7ae0f0b0ff61d75474b",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02374500.json": [
+   "2a340e4a5e494e7ac81c5fea11c5a99e0a40065979b2f98b3f994be124e14301",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_02381600.json": [
+   "4fceb528fc64fdb7c6fa150980812fe99e2388d5db34872e64563797431ca902",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_02384540.json": [
+   "136dc7f02efc8b77fc5f76648d5ee12cfbd345cded004a0b0f6f458d9ff57083",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_02395120.json": [
+   "bed8ad422b59381c8d732a5c3403fb4857e406e2422a4a27734daaf9ce204ef8",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02408540.json": [
+   "7a0da604f40c24afbc4f87b28521e65afb7b3d4dc2b73e31e8099dcb50960e4a",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_02415000.json": [
+   "c42e567e917733e26da725097c95b24314781ddbf6b277ea546cf40315b2faa1",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_02422500.json": [
+   "33e57ed26fd6a40f26e80fa7e7336a9c93fc80226a1f510b9d2124d10c849ffb",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_02427250.json": [
+   "7c107866fd822caad67e674a1abe7d75dd40778475010848364c2245a22f644d",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02430085.json": [
+   "9c912b61a3c6ca018a0c709402f69b49583ece5fb9008bddd537bb71f9457d94",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02430615.json": [
+   "6f8790c9bca7d3781b158afda41ae4730270fa383f40ef846818f09b7660f4f8",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_02450250.json": [
+   "09e7e2160b2c5a2c9c7e92140e2beaf2206b0765d241f22b6f37a2e38ddd4f06",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_02464000.json": [
+   "4fca79b4a36b63f125bda05800ec09c3c3826cbe6df293d90dfc64abb950cf22",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02464146.json": [
+   "e8c73c3cd92859a6d0d9cd9693a33ba06f14009f73166565eff8bd0cd64cd500",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_02464360.json": [
+   "009d8a390766d7b60c8aac26593371a9e67881162468e4c1624e88c48c2ada64",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02465493.json": [
+   "af54d10467a2059dd537d1f34e09d8cb0a298f573691dc83af9f34df2655e6cb",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02469800.json": [
+   "4b2df8c5d9ceab40dcb3a47fdf1b93eb7e6cf489600bf59360089ce405d8a25d",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02472000.json": [
+   "05342c6b0074c1b4a31b0feca6ff771f3335a8890ada9296099fc8e1b22078f3",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02472500.json": [
+   "0ae02ec3fd93c53a6292eacebe966d43c00a9be5d76db0898decb79771efe526",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_02479155.json": [
+   "f4d81dabb45bbabd79b2c11bc44eb50b288759e5a7e57a6eac7b14215e181004",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_02479300.json": [
+   "5821ad021a7c3229dcb8dfe56724a2b78f9c001f94fdfbfb0cf48d9918181531",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_02479560.json": [
+   "982daf10d7bccee555dfd3a1fc0e9cf292c1ae23c386e1ae94486c4096d1b7c9",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02481000.json": [
+   "7f9cc8b1b5928bdc0f749992d757d7f718c8a3c78d8e73897e44bb8e4dca95d6",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_02481510.json": [
+   "4145b2a81fe5d380b0fd3bed63f2d8ccb240fdffa700a6e4874342379320e427",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03010655.json": [
+   "bf0815a75d34b652b8e351c4d8547c26394ca061d172568576496cf7d518423f",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03011800.json": [
+   "0aa010a528960ae548f3721326560bd82429aea7162e9dd878c76a5ac6a52db6",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_03015500.json": [
+   "30811a604ce6c2a95382657df1294e35da7ab2ca0b64cce6f22e21606f5d8194",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_03021350.json": [
+   "4090e04b450b7535629e823e7317e876c6afdcf737ec343d6e55f22092a24773",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_03026500.json": [
+   "3a42e519657eb3d9839c4a67c743c0f8b3dc130dd010fe07ce22169d707a7d9c",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03028000.json": [
+   "5f051efc0f249f708837834304c5a4362874086cb1f7daddb2bcc74406c292ad",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03049000.json": [
+   "4e433510ea929ab0a9020d31edef26c1ce5558a580849f894132945fbbef6fd2",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03049800.json": [
+   "98180f90edf9d7b0d4b58c4ff2b6872bdaa502f469c6439984c07a96412c9561",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03050000.json": [
+   "08bdafdc1e021e2df6d6e38e2b6dfa73bc4c00436e19b2dc606ecb676105ce16",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03066000.json": [
+   "3459388da8bf6e6d34c512fc4de571d83a90c34285f66f6d466a25c98edd4bfd",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_03069500.json": [
+   "0bd7a9eadda21faee94d65e24a036dee7cd49a962320a1167f7a864b93bb2276",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03070500.json": [
+   "b56bbd99e1bd5a0c29aeb39ee77b4fbbfb5db3d8f537e14cf1d29c0ced0a609f",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_03076600.json": [
+   "0ac98930c064e3fae4e0cd813557d44e6ea56819d7fc86d230cae050c44d3490",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_03078000.json": [
+   "9dc504c1f491def3f3f3e9b677d5b80e1d77ec92c4e58a3d0dc94aa0b793acd0",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03140000.json": [
+   "bbc12f6167a0eb55e97fdb9d09bdb972663c2571cc012667749e54438ae8f027",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03144000.json": [
+   "c34a52e8088d2b21907a70bf8511382734ebed6569e77843233557da71c471a5",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03159540.json": [
+   "1e7ee69bc2ee68edafbab56653cd3001803039e9ffdfc54359b662e68e713c81",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_03161000.json": [
+   "85e3a5f7e15528343fcd5b346c4d67dc1c13b1cb2cc5332642a924380decc90a",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03164000.json": [
+   "a1c43ec97d82270ef8f9aa596c016e67a0aef3bfe60bf99e7d0c0f9003475454",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03165000.json": [
+   "40cb9a002a86558e4543f7e0d7d42d3d9e73c88d26ac77ae643835371a411e23",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03170000.json": [
+   "5a54b11cc9fd4af932cb047abf09bc7d43b8252e503bb08a533d9cd5a6916b26",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_03173000.json": [
+   "aa90ecf33ca7d4b9052f5b4f31eab3e7087d523d7fadbd28313a9b0711a59919",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03180500.json": [
+   "015cf745cf6c3964c37b76facc09d816644cb707b30baffaeab4063da7b1796b",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03182500.json": [
+   "d74a76210052c4838d53cfeb634b59f0d15d2339bd419878652403c2aeb53b8c",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03186500.json": [
+   "b6cb251d565259ab50fc0c0f2818976d013d5a0e7d7de64b28b630448f66ab36",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03187500.json": [
+   "df2c476ecfe10b9f03b32952df7299b90540d9dd574a9306d9dc4d5ea9aa2f42",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03213700.json": [
+   "d456b04118de460461f116f635fb03ec268bdc9c8ba45f71c9dfe2338eed2c0d",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_03237280.json": [
+   "9c28e66a3a34bcd2d6aa4e76312c8ea3288d77ab70e4806f88e77ddf8ed06f8d",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_03237500.json": [
+   "cc8f0a66dc7204405e8c046e2c1946081b942446f23253df559f53682c73dd6d",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_03238500.json": [
+   "cbe0a74433efc865fff44c07a4ad3a80e6bc60c2946627aefb8a31cd037cc70f",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_03241500.json": [
+   "2097bf3ed2732f2becf8cbdbea6a381f4e505c2e82c147b3cd608c05fcbcd960",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03280700.json": [
+   "9ec95db5d18e0b9eac28fcc4a3d63e6b2c7aa625e2d431bdc7095703f1f35885",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_03281100.json": [
+   "e627d30ac33f3bdd9c760d0ee468b8ef06882324bd57c0fdca8e3d67894ac436",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03281500.json": [
+   "f1e15b36a8c9184abf56a26a1e5b186c2ebc0b6723b43a8e719a92053b6539a5",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03285000.json": [
+   "75107a08fc2e9688bbf9921ce950a48b6ba54542e3a87e7580cb1a480c07e143",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03291780.json": [
+   "d016c899997cc721188ec83323943c3e4a881a0c27a7812e87409d888f92f89a",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03300400.json": [
+   "afe50db7e3099da77d777077e5bf063e829fef87b6893f9613fabfa0d42f60ab",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_03338780.json": [
+   "79360cc44321914bbc3675b2eb0ca7e179aa4c2f307991304b4431df6467eafe",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03340800.json": [
+   "c3d5fa0abe260da2cf7857ca2831207bc72bf3f7285db94ce85d8743d5fe12e1",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_03346000.json": [
+   "6f5bf4291d9feaeffaee918bd2801baa0e818a45b3f574296cb81244d3cd5562",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_03357350.json": [
+   "13f735e71a0fef9057ca841e917a8eb98a4ad83f9aa3ddb69c0aaf5b2c9c2585",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_03364500.json": [
+   "8f8679ada11dd232f6bb63193bbb269913c838a623f1fd5b4aa8df9c7dfe6084",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_03366500.json": [
+   "fcbc68b2658e29123b8e4b65d4ab47c4cccd595ffd27dda09d991947cb63f2d2",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_03368000.json": [
+   "c4939b314df81e085782f416badd01a3ccd4b7e924415a91a01b278bcd65cdde",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03384450.json": [
+   "5d58f414703a8ffe95b3323462e0d814b5aa43e1b4da0ce2da0ece5d919a2b32",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_03439000.json": [
+   "a68b7ff6aa2982e8ce591b81718f12b716dcd55389171874aff81a1bd630a43f",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_03450000.json": [
+   "5eb9c9214a3ede504904e43758c0adbedf477f70c66f160a9ab2fbfbedfbef38",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_03455500.json": [
+   "dace20c7d37841f57f63f0978c2b35a160a42eb5bb01de1640e8b631acb2e720",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_03456500.json": [
+   "e05b992db9a8f60ada12400da2ebd294ff960f76ca79086d194abf5f5775b93f",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03460000.json": [
+   "a82f5d469a6b213d61522fdaf0a6dd0da8a86e79e3cdc031f79751453e99a9e9",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_03463300.json": [
+   "b2cb3a46cb885c3c1d6d6103e34cd5703441a8de9d113db68e34d9cfccec2b4f",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03471500.json": [
+   "f7d3e88082835fd390cfe1db11d581246057458f3b3aae484162c15e3909555c",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_03473000.json": [
+   "a8fa8f70c796ae85e98f4015f0f9ed2d94d4d70ce13c7e6e936a4dadea3f0395",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03479000.json": [
+   "790dfac3daf8637155f55ec395142d72cafcc4361f4caf4e9a56989b7c786097",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03488000.json": [
+   "5a3e417d8a936431a964298811d73db8a9f8f9b9bf89004fd3e5fbb5582adef9",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_03498500.json": [
+   "a08907297ff04d5cc17dd0c0fdf58075e00621a659e89bc7ef27314c48947839",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_03500000.json": [
+   "c355ddc26b8d92ecb4567a8b9b24f6c0217bba9fbf51f5c35adb3da4fc8c6f6a",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_03500240.json": [
+   "261f3ec6e58ed59f348ec9153310fe8316dc262ab24ee6b93e6bf66abf09d718",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03504000.json": [
+   "b106b27b348a48e4b2da1a7908f40cea24b54dc0dac200e8e3f5224e25e96b4b",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_03574500.json": [
+   "1963222be3776b7b84a6ccb79bfe1273d24dc16c1a956e26e6b2e78be424c402",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_03592718.json": [
+   "d900d88fc2464c7d7e1e368ec869833694560bce0daa31efe6590518094e7528",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_03604000.json": [
+   "9cef5e319ed6f3b8e253c5a54629e57f75497270fca480fd38cd71d21e7bf156",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_04015330.json": [
+   "ed9938d3640ca434d7e71a742ed4c25ae6f7ec6972713a4c95a8b3c46d571f7f",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_04024430.json": [
+   "bddb269754ba72bd4bd391e99008c60440ddb126e3b00145b5cef13738fbdf71",
+   275
+  ],
+  "data/proc/baselines/gr4j/camels_04027000.json": [
+   "224a251aeace4a0c1b6dd7ce8262fe98592037b8acdcac4ad9698d2a2db81b0d",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_04040500.json": [
+   "21f73ab988e1094f6519080f7d9e6f3c7bf173680c10ab3d63dbe77181b53f7a",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_04043050.json": [
+   "c21f99d1e3bffafc61f488a3376e6f0c6eaae0a4467e86a1e622a543946af9c8",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_04045500.json": [
+   "ce47c3c3a32dcf4a98bc3ffadda75fcfc57b8abd8e3a4d588b2eadb38e6a0630",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_04056500.json": [
+   "b230c8dca2b66bf7c91ce93b369cea2d7e5c1b3130d2783437721f0b6f8e61d0",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_04057510.json": [
+   "aa05cddd8bc9bd212e306203c9accb24cbc5359519524f9a5a803e2bfa7e513c",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_04057800.json": [
+   "b8bb197c0a037ee8c62f3287bb2129bdeb734d4d2f6f38bd5ab4c789d8c9e1c9",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_04059500.json": [
+   "f37acdd699aa7cc75eeca86dac10fd0bd748fe83e7bb72c2dbe1d65408b43eb2",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_04063700.json": [
+   "7ab00a077d0c472a0d1cca812c0b3fb60ad48cfb05eacce47289acd3891cd19d",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_04074950.json": [
+   "7b7a57c30e1fa039d23bdc8b51d27320274f01fd984c7747010dab96c887e707",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_04105700.json": [
+   "ddfcd01b4c997b186cf329adee3b001ad7307d5c751f6682d230a84dedce1211",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_04115265.json": [
+   "15533bd97d281c4a2176827b7d43559acf41a6cecc131b7818aa158f7d69d47e",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_04122200.json": [
+   "3e51a74d77b5a979500bbccc81f6070726d5ad74d138e1381fd77e5442b2f6bf",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_04122500.json": [
+   "8f1b918c15738210ad1eacc27d14735e8a012ecce49fb731b74d1727bffce964",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_04124000.json": [
+   "6eef55c9041295d150a0e9e2f433c354fdbf1e79bd2bc79287ff417ce72a9845",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_04127918.json": [
+   "c2370f6da2be07a7246c3e798bdc3ba6e87f14bc72827ba0cc68207b37d68d53",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_04127997.json": [
+   "86ac97080d18c930ba39e5362012739fa02cf48653e593f267557a0050d506c9",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_04161580.json": [
+   "de6d7de54139913857efa74eb8f7ca1d69698c33fa05495c36fef6c13618518b",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_04185000.json": [
+   "d6185282a49f9df4c66d5098bd4949f42ecdf089cf1293bcbd58394a00f22f31",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_04196800.json": [
+   "cb4762956a029bf9013db97ee56d2af5195edd6aa5c32c3117df99d108c156a6",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_04197100.json": [
+   "cc4426c2fac811ae1eed7bbd4361cbbc9a69cc224f55ef88b4bb3eab8e7c1847",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_04197170.json": [
+   "d911c561d720a6f972be28f9cb4aa546d09825693ba47bcd6fe9d186f1e9f6e5",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_04213000.json": [
+   "f55ffe62aa2bf74d86f35d6a0b6fdcd9f227a1c309d94d28d58ae0df48b32eca",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_04213075.json": [
+   "1e6269e341e54f78f3a90626ba3ff4e4a36663e14b27678b3cb24e3c509b8a84",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_04216418.json": [
+   "1ff9262ab5cd8bf522cd920f268fbc531d9e65760fcaae5dec0589d22d2739e9",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_04221000.json": [
+   "306498730ee99091d0096ff35514dd5f2aee019d91287f5b4a3f475cc4288525",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_04224775.json": [
+   "140fa0c2d80dd29ba5b8cdb928f45fcc4ded0f2851f575f347636ed7a79ea4f2",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_04233000.json": [
+   "e05fae7bc1ca6dc5c03a7e9342bed7f89a9bccb3aaf321bf3c7d340f9d9eb0e2",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_04256000.json": [
+   "0735597d0a33598ee5477d201dd3762aa0ed2bb8c014654f47082350d4089503",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_04296000.json": [
+   "eb33b7929bb6227fc7026e262877df03a85e6d006ac2382a8bdff9605f90831c",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_05056000.json": [
+   "313e6869d75242f85e2f78300e5d097e655f5da333e4f17bc23e6b9539a0f159",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_05057000.json": [
+   "1b7ff7e17619c6634b713ff19dfc686d07ccdf5716ce786420ba131908d8144a",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_05057200.json": [
+   "cdfbaafd0265cf9c38feda626115342b60d3a82ea4a49344ecc005cc815bf416",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_05062500.json": [
+   "26d9be1b77c9caf083e2acf3704e466fe860bdd7d91f28af7d0a4ac897e8c00f",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_05087500.json": [
+   "0842855575169b2a6dd4d321f0c5256ea6af873a35ade87053ae8f3e87a77bde",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_05120500.json": [
+   "19272354e89f4e32ec692e7954305eed6a7f25eb0432304ee609dc876a7c8c15",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_05123400.json": [
+   "ebd4d7468c2a2bd45520ac8fd95cc1399f341debb77ad03613d69b3856a51a30",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_05129115.json": [
+   "61bb52d21ecdca4a7774897d1efd575aec7cefc0ed8403b1e806664014e93d4f",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_05131500.json": [
+   "3e65c4c7417ac7aef343f086dfd079d28266968a08dbc3550a73a3c2a7b499e1",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_05291000.json": [
+   "a0810313b0d3628ed11d657b9a2f931676d85c295d6fb996c2f60a28a114be23",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_05362000.json": [
+   "7b13dd8e0882f596e6ecba6214ee37a0e05e0a3045967162e3f846b092b58cda",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_05393500.json": [
+   "0364d2c7399cd1112d594392d6308440778cccbeba3852f77bb6a19d19226402",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_05399500.json": [
+   "a9dc32d7a96c44eb4fb2aef6a49bd5d1f00d002bba171f955c1107105d687cf0",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_05408000.json": [
+   "0f17b11b043b17ef035ff89ef72f2800e5715c301a0eb086cbd09e7f0387445c",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_05412500.json": [
+   "028f22f5f9797eae5e25fae2a037c5cd32f70bb92e13f269bf6a7accdd96fb54",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_05413500.json": [
+   "2c06e9ff3e16169d9bfda221660ab381b3b71d355d28f5a433f00399c61efbdb",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_05414000.json": [
+   "11fda058e382f945d0f027b1488bcd78bd9d2996ea9ae9f92ab298fd9d85ca51",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_05444000.json": [
+   "a936a37a5ee7fb81fff7e75fbe8759cc132a93654b0f6833d3c319b9f4bf431a",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_05454000.json": [
+   "efee6a0107b05c617ead0a75ba5d17cef018aa6c6e09aecb70101acbc7c0d47d",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_05458000.json": [
+   "7083587e57c05f7e65e40a9f3e90b4c763d7e44207901ef4e543451fdcf5e0fe",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_05466500.json": [
+   "416153ec8ae0ec10b2549feb6447cb9e27b0a4e1b655c8284c4cf7aef03c8cbe",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_05487980.json": [
+   "a86c8ef0fba3209ccbd7e48d11a30e4d4dd25e9ebbe2018619a8c3456eb7181a",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_05488200.json": [
+   "91b2615181a971e250ed425ff9d7a9f536010194492bd8d6c5a96ef822a7c4ca",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_05489000.json": [
+   "3a58841e98e2e0ef1703678f0b631d897b08de573f9f3ab991885aabd544cedd",
+   266
+  ],
+  "data/proc/baselines/gr4j/camels_05495000.json": [
+   "511deeea2f0c012e13939104cbcdc79c9cc3a7d5c5d1f52e21a10c77d4bdfd9d",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_05495500.json": [
+   "e7b035bf5835a3358f91c516292e9eabea27728ad75688da4f63dc8c494e7109",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_05501000.json": [
+   "a56588ad5dada7e564f34d99890e829c4e5c21b8f086437897065aa49c6694d2",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_05503800.json": [
+   "a34a63f594bb2d6684b20d151e679f919ce54da04ee0ad3d064d7a36f9564da8",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_05507600.json": [
+   "b5fdcef197867923bf1dc511688a71fa1c7b71f7a4238ed47a883e3db204ddb1",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_05508805.json": [
+   "32fdd7df316602713fc771ca016469463083b715c071d5d71f0788a7778b36fe",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_05514500.json": [
+   "9528f2a6385e42abe4e3d0d307f253497579b4d9b11236deaba7c8db5aaf4845",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_05525500.json": [
+   "ee1d3c0687e2b5f29ad2c6b98340b41c676dc15a89d3a72f653f8cde9c047123",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_05556500.json": [
+   "96e6655febaf1af3d5ba0a45e93b9d7edaedaf5fc381f18a081eb815ba824663",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_05584500.json": [
+   "166fae0ee2a6cd6e8d05f1b190b05b5b9f6bccd9709417258d43beb757f0b8fe",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_05585000.json": [
+   "66e48f1aee38e7100d4c6d33b402e1aa2b8ec611a2db2be0943112e2b152e91e",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_05591550.json": [
+   "bbacf18309a9e954ea58df8f5bf06426ee54877b09dbf5b27bb4c604d3d576b1",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_05592050.json": [
+   "a0f1b17d976989e590458e15b871536dfb98a03560a70fc06b51d23934c2ef49",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_05592575.json": [
+   "ab4fade32278794fc103f7eea235024656c312320ee38bc88109bfb9e5b736c3",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_05593575.json": [
+   "766ddbee42e5cd229692ca886c62be8b79a844c99d70b4b853a37592a559a996",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_05593900.json": [
+   "3a23a75023e6f1382c982fea18d233401ea91dc381101acce0c110053388a400",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_05595730.json": [
+   "f5e43dfe55ffb06ffddcc86e27fe7e078523c0e65425f7a45dcf812f0fabb45b",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_06037500.json": [
+   "643b3dd859d52fab8e010a142d919692d4d6a2043e5b522ad7bc71f7493537c6",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_06043500.json": [
+   "fc43194d568886174200328966a87bce31090c54a506bab32c667de13cb848e0",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_06154410.json": [
+   "ef4c38c20b45f31d5f3c4f9379e2a17e32ec0cf897c6882567689ed266f27885",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06188000.json": [
+   "587341c0e29e891844023d46daec9e0229b57a38d9d06dbf4f88ea5e197858e0",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_06191500.json": [
+   "7682114486db62aa7e9d47e8157287f5bf986c049ac7a4231269ecd225c4127f",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06221400.json": [
+   "ab87e8faf4109067428dc53f92cac0fda8a54872729feab3636dbe95d480b0fb",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06224000.json": [
+   "ec894745fc786aac97d9fdba634f79ef9a930d6518a557d4d427dad48eb24b00",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06278300.json": [
+   "fa57c5b154fb20e75a72705e584dea1522a436d7544e10dc79c74a6d3ab63652",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_06280300.json": [
+   "30150d91156672c49d1fed23c4a19c5238c91e32167b93c4a8f5eaed4daeddbd",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06289000.json": [
+   "db2e93351020df69b690f06e48ba14d218e8d004fa0c0ebbd1288b38bdf4e650",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06291500.json": [
+   "d196120463e1722244298221cc36f18802b1ce25b2050e116f75ef58342cdc0d",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_06311000.json": [
+   "c756f5eb470ec3104b742a51c6db034814334c8c1d78b33ea8455f1f489384a9",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06332515.json": [
+   "7870c2debfe54efb0b0ddcb2bb6bd983c35d8dbe96d0af988cbde2cf315ab984",
+   265
+  ],
+  "data/proc/baselines/gr4j/camels_06339100.json": [
+   "6e002b10f8ba171e2c5a8c191801cd6c37080ef85f93bb052386d97e76cb072c",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_06339500.json": [
+   "6bdd5addd9b40b09d3339f9d1bf413e337bf1dd49a48437bada4f17d070440eb",
+   275
+  ],
+  "data/proc/baselines/gr4j/camels_06344600.json": [
+   "e5e8c286fac1970526f7d3d9e7024f1bcf00489a53d475b6650d212515232bef",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_06350000.json": [
+   "55898893c88d986bcd43e5c34d3560d9ad690369b2219227372dd0b728a15c02",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06352000.json": [
+   "fe4d09ca9a7c8ec185960bd84fa3c9069acab9132049489644307386e386d902",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06353000.json": [
+   "3942e01542425db8a8901ea5e95fcf789f367fb8accbb9642efd239ab9724cc2",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06354000.json": [
+   "4380088cf7283cce5af55785f386a43bbd7080d4114f37dbf4050bd01e9db15d",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06360500.json": [
+   "9bb48b42660a867e5492b58f876e931d905e355b1385b63ef0a75ff46148ff92",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06404000.json": [
+   "5c750133262a6539b9fa55af082ecb0e65681b5f928c5fdb15e58c75991cde5d",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06406000.json": [
+   "1e9a98f35d10462367f1957caa5d57bb7a3d054fd63655ca95274850ee06b6bb",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06408700.json": [
+   "2ad6ba2f4067a49e18dc5c75e8b5cda0b2e9e97f534cbc85276d7f0b48943fed",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06409000.json": [
+   "18b166851f639067016ded2b14daff31ad4c0d863c838098de5a4ea85be7187d",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_06431500.json": [
+   "34df4808f545e9b41b6619077596bac2827fa56326ad8fcae843c6fa54e68d6a",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06440200.json": [
+   "6bd3d2f3befe032fb30099bb0ed75803b7631c1ec4f4c620686df410823e98d7",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_06441500.json": [
+   "ebf635e44f6c64ca3a1b458086e54cffb31d2c2b5042dc96561b7a67cb4f714b",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06447000.json": [
+   "c1d7e2e2df82c91e00fd01c5247f8d74a35b151b19ebefc4ad0e086984865be8",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06447500.json": [
+   "0fe502242d38e0b7242f47d52a97c2d8eb232d850aaef4f65833db54c88ca687",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_06450500.json": [
+   "cde61af2041e20f251726e9c77c5917d8e0028d725d92852171843d225276bd1",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06452000.json": [
+   "fd191e7090a1fc4f0f252fb6b6cb4405044b659a5d1a9766f0244714de80402c",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_06453600.json": [
+   "31b37b5134b5ed2c3c5febadc7ead1c255f249a20d5d9e50bebc804eabfdc606",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_06464500.json": [
+   "231a5dd893b128c100f49b8b98c2b8014a4680238c73064b5ba89c00fa3c7964",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_06468170.json": [
+   "f29fee8afeddb229559c2a21cf89cdfd68a4192fc58f44599617ffbd2b1abb35",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_06468250.json": [
+   "65bb814064dacfb47af75549f43fc15db75ded06a07a59b13c7fea5b0779fccd",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_06470800.json": [
+   "4ba159b02a1bae838b8468803cbf3a3f869d8b58f0e23d0c43eed200bd0de2c0",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_06477500.json": [
+   "e54d1d3b9a2fff7fb85dc64ea38053de324228858f469dcb3501952c12a67d5b",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06479215.json": [
+   "b929d995041e679faa014ab6e21491421e7a29da198775490cd69cc3f0b47df3",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06479438.json": [
+   "8ab90ec7326e3af0681ebf1a2e24a8c86f5b785ffbb79fcec5d5951aa1e5c292",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06601000.json": [
+   "d607eeba6edf0ceda3a7d70c0c9bca106ee804981150a242d8ee3f70efc085aa",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_06614800.json": [
+   "73638ae61c2fd5b9135f15dee204f32ceeb8a84fbed39dafc63917035f15e731",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06622700.json": [
+   "c8102d88384a53b9d881ab40fdbf4017ff56ce233e9d3e3cf54ac7a9738bb3db",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06623800.json": [
+   "72f90a1293374a6208fd5f2fab76169004e41cd17b872ad70439d5f6925e7765",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06632400.json": [
+   "d3e8e4acb201cba35fdd2c832e12feb01694ae74fc4cf25bcd9f5f284592b8e1",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_06746095.json": [
+   "4938ec8564effa5bdb12da6e353b0bac47dd8d0a65da94245252f66550b1a807",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_06784000.json": [
+   "33fb646d3185d1352e2649b027f4f2e0b23093f540888090b566d4d2f0fc796f",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06803510.json": [
+   "7ef1e693639fe07b1c9ec18da42e2c5ec7460cf305062e0802b1082b5d81f267",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_06803530.json": [
+   "00fc4909b1be733e6e747b06aa5a2b7c629bce881d81247e76a2006d6d54dbae",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06814000.json": [
+   "fcb924f41bb78e7d6713c11122d241a753bea8a1d780274354e2a0c9085d68da",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_06847900.json": [
+   "3b0767b87a03d6a61c86c5bf49fb6ae906bc372ad3bf995735618e717e7894bf",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06853800.json": [
+   "e393c89a32697769cb4633ecbc45ec6d580174a5afc72910490e89343e0dcf12",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_06876700.json": [
+   "534a692d2b83dcff1a76d5c5f224e044816ad60f7a0a6a92ad1d654a11a1d236",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06878000.json": [
+   "b77d13fd77c2f0041fe7d1ddc51edc84c7bfefd5496e2b56331c2496eceb5b6d",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_06879650.json": [
+   "92116be91fa8cfddcf4177ec73fcbad9e836d724baaa6d0a1b5c684b91a7e65a",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_06885500.json": [
+   "f740488a02a9be52c9288a95d83d8dc4d9d2aaf501c26388a089d9b0242148f5",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_06888500.json": [
+   "cf24fb29f4847c98174e71ad992600e0cb9a4392504fb58fcbdf03e069840756",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_06889200.json": [
+   "51b33b37b5c7fb3ac2eb995b4d5776e1ebb2aa7ec2de635aa800d8cb87dae53e",
+   275
+  ],
+  "data/proc/baselines/gr4j/camels_06889500.json": [
+   "52312fe23b05eab6b6c601332ef42005932d2912d8c4884faa6c092ab9d37720",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_06892000.json": [
+   "f1d41d9584b5e7865ce0cb28c2cc34b4d1fdffd5642dabf46f5df8e7ce2b32b5",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_06903400.json": [
+   "47a6143a72bc49b876dc50f0b97c694b9e9db52f1d8415ced4f2aec39d06a8d1",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_06906800.json": [
+   "089cf752c546f114db1ed64976bbf681a128760f22a5de240c7e055c8ac5eaeb",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_06910800.json": [
+   "32406d9d745ecc07f76f3edcab1d0e9202c3d08da915411018c5f0d0f962946f",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_06911900.json": [
+   "459126292d8449000e13671671fd3eb26f6a23af6f53f50eee2628215e3d4dd0",
+   275
+  ],
+  "data/proc/baselines/gr4j/camels_06917000.json": [
+   "85a54858b575fc318b4aa054762ab0cbb333b3d7f20e2bd4963e98a006356c24",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_06918460.json": [
+   "f8c4eb687964540c8bece3cf351c65afa31eab5454b01ae1c5ab65e5665ed46a",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_06919500.json": [
+   "a0214e140db2dec1a8bf5af5d33c33ff87dd495d9f201af89afc08a4e672e543",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_06921070.json": [
+   "6299c734dcde39064550cf1f9b1dc6d8fff67eff231251e3e5cb0f538aa59302",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_06921200.json": [
+   "423cbe45620294bd0b4a44cdf0168d1deab2ce029dbf07ea5d4462f90e28873f",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_06934000.json": [
+   "4f7bf681bc10cebb0df7b4dfa661ea12179aee7cfffcbbf9cceabb49807cfb4c",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_07014500.json": [
+   "d876bd16cba2dab010ad44a9ed7c3281617f61debfe1c836a0cf34754888a92a",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_07056000.json": [
+   "23ac00cc7accfd22f5d9e626b19cde0784d8049c6881e91da23a8c4f1e3dde35",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_07057500.json": [
+   "3b986f82807cf9835328c975b5c3c191b66fd165d6ba281f274bd3e880656846",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_07060710.json": [
+   "bc60eec86bdaba00207318ab3f20132bd6f5b658ae017f65ed3fcafa4d4ff728",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_07066000.json": [
+   "7b0ffb29c321447e190586957d348d3daaeafacbd5fe7b2962d5b40efb7e1df5",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_07067000.json": [
+   "1fc927760fd5aef64baefc0fb3c1dfdb0fd0c96c478f5087435be23f008ee8cb",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_07068000.json": [
+   "2cfd917f7305e963ff2a6ebb4efaa914916b8a3c64a73d75c5792b1da146f6c9",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_07071500.json": [
+   "bbe0dcd65af00c5fd42096e15353d0815bf8c47027ed260d7e8a219938d5a1b6",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_07083000.json": [
+   "e10f42f3cb06eb6f2998956429a7dd4f8bcf8cda68981198958b0cc558dabe22",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_07142300.json": [
+   "14216503984e8bca42a974b32e385458b240d4bdd264dedfea7b67d3bc44ff25",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_07145700.json": [
+   "a9264d84f227d457ca3dc4339b5e97b5a3910a7b85a63c713b6862505001f5df",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_07148400.json": [
+   "a68f180b16a909b8f1d7f5653cd03878271ea299f6c35de7acc8b3c080459d81",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_07149000.json": [
+   "723509decb6e221b9f0f8d947abc61ed4b755f31d40a57b646605c7af9f9a5fb",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_07151500.json": [
+   "72fc5a62b3528ca15232fd0ee966df01d9008c43de289ae21b2d1dcc0e6d413e",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_07167500.json": [
+   "c206cfc5262b080110f4bf06a784ee796b494c4eb6d99234164121c8ece5718e",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_07180500.json": [
+   "ce3283df7b883e6be6d8e1392c25e32d9df65a4c2da1c3db45063b230e632aca",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_07184000.json": [
+   "4099aee74fb44ca5c09d8e3731d63a25a1f68fdab802f658fa08dd7a9163e045",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_07195800.json": [
+   "c1498778276a650659d731891dca1d5088618aad863bb04310319750c780a862",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_07196900.json": [
+   "205c79962cf5048e5dd48697449cdbf4230e6832dcec0e346e8ada6ea6dbc7c2",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_07197000.json": [
+   "09de163062bbd48b8afb3a1ae20b47fd19800fe2f978fa55e5f80283ed4acc93",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_07208500.json": [
+   "e1dbd7111e05f3bbc2b90a508567afdee5936e96128ddf56025c5d7c01e084bf",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_07226500.json": [
+   "f747852739c8361b1a0c7ceb10aedbc4bd1ec5a99604b98c7da9eea88490aa38",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_07261000.json": [
+   "e771430a0f6dd00ef167caa41d9ea5a1d6da4962dba19d0300e104786ce0bfad",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_07263295.json": [
+   "2a11ff4c84ca0042a8e2d32c3884dc9d56ab6521c895ad4a01f67a2acf9e9ad2",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_07290650.json": [
+   "f9790aee5941654974792108ad61ee6b866786295e250bb9a76d6eaa160c3c5b",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_07291000.json": [
+   "5739231ac96d15f94e84f8b67924bd69b234398d79eb432df6ef23c8040d81de",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_07292500.json": [
+   "fe75b4959be2bb505cdbe22e009d76b026b0a556c291dc9d351089f921f39840",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_07295000.json": [
+   "78ea71aadb70f688b4e6e8075cad8a7a790a5d42163a18b2674998bb868cba20",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_07299670.json": [
+   "4259531613d09da6530336a8e64d6c28957a77127ea9d16ff688ed97baf27afc",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_07301410.json": [
+   "7588fe5df2f5bc6cb7d4649a0b340d29dcbe3d5c62ae644e2c09ed33ceb00aa8",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_07301500.json": [
+   "b88f5dd77ae43ad8426ad1f978c977cbedb33668b5759e0213c633f206da797f",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_07315200.json": [
+   "c62ec723c1014b429b7907e183972c407caed9f991b9df73e6cf108cea04c2f9",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_07315700.json": [
+   "1772e0ac08be53439226a6b47342b9c3ba7abbd1be754edd6a6f741f93194a1f",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_07335700.json": [
+   "550883f5e2ca9e7ea7b1936259fee9983c85e0b47648f0af3e6fd37303c7ba5e",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_07340300.json": [
+   "4da90137dbc71b3ae41102ea795500332e38681d93db0c9d5c553e8af734dd8d",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_07346045.json": [
+   "71af0bce6f3c1d3e31473ac3f74d0300251f2fd15823ba240505e756b8e4c009",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_07359610.json": [
+   "2c2ec8a74b31b87c391522312dabad954144066ed9f420db2b776b86e8923fa1",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_07362100.json": [
+   "1adbd7830399c98ef82c68ed4e49ee5eed0cfe16b25a08a7c1f240f1fc62aec1",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_07362587.json": [
+   "a818e5d0aa9b6c8196a66bcdaca697ebf93c866714d3edebb064ebb588dbc75a",
+   265
+  ],
+  "data/proc/baselines/gr4j/camels_07373000.json": [
+   "5e50c45f708738aecd668e1286e7813b934d8aa372e8d970dc939130a5da8f75",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_07375000.json": [
+   "297c98405d40cba1d2c0712b42a310e001ec7819537d01b4888b9a84bfaa695a",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_07376000.json": [
+   "8b218130f1f8a00dbb076a0f4aab290ca907fa2da995d43cf891c6278923527f",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_08013000.json": [
+   "5a1f95df3e2219ff04eeccfb6ac15250f9d72e73515c09620dd6ba857446824c",
+   266
+  ],
+  "data/proc/baselines/gr4j/camels_08014500.json": [
+   "6d2181b799a67a71d473488cd25b63e53e26802d7f6cca186e2cac43d10e539d",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_08023080.json": [
+   "63c9abf1be78c5dbce1bf168f938b2fc800b291f36bb65f990c631cc114d74e2",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_08025500.json": [
+   "8a59627a021501bb72d63780d1f3866f286838b6d3028c9d0de40e4c2c84ce10",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_08029500.json": [
+   "aa2912708ded220a3cdee06ccb953a77e199a57b4ce95c9f2b302a48bf0b09bf",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_08050800.json": [
+   "800fa27fcbb22ff8cbf5dd9e4e3020c91917de1b23778f461565751159e56e71",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_08066200.json": [
+   "bd9428e6d07f160d0b38881e001f554f10c57b329ab6d86536bf3c619e83178a",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_08066300.json": [
+   "b91cb43600bb8c3891b0991bb8dbcf484eb90781d664545e29fe45cb380bf490",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_08070000.json": [
+   "d4b88c85a200e353c8c0d6414d4a81b822dd6d49b12e70e41e04819f8ea0995c",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_08070200.json": [
+   "7d695ecd71d83cafb64502bbe8994cf90d5fa725dee2be240a831d1a208ad2a5",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_08079600.json": [
+   "a94225d70b08c2cb5875cb712368908ee67664b4ff2df5b6c17bd70f704d8ee1",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_08082700.json": [
+   "fc006aaeb00e18565e93010e942c8b7c2aff3388b251429d67bdfc28765c140a",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_08086212.json": [
+   "18594544a9fdc11c23252105e2bf7e9e7d91ddb1d37be98db84d2cd8728dd2a6",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_08086290.json": [
+   "693196af001aca7f14880d0baac2e043804ca8dae116cd61b366a884ca68e049",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_08101000.json": [
+   "86565c3dc040d041d38337abb0eadee8263f0d487fc4c0de93b83edb5d1ef22e",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_08103900.json": [
+   "d32bac7eaff3710ae9aab471469b6b1b0c35c7dec98c048dcd52cc868038d161",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_08104900.json": [
+   "3e8bb9e083317dc2c4f3e6ddbf9d4ff50633c5999a0a2bf2dd437f8949549bc8",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_08109700.json": [
+   "3a9caf355e119f38fae7ef2e292997b6823ce3df5ac629c79b04582f2dc58fd1",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_08150800.json": [
+   "bb2dfec07dada56ead1700c165b59fe34c96e645b9d727befc9295eee0aefc1d",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_08155200.json": [
+   "6c16dedb790ecaea8df796ff49b5f5158e1943c545317b0f30c6b572e1fcfe6d",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_08158700.json": [
+   "a2e31ea928dc9a6a12e2d2793613f677c75f6ebb08e0346334e2a406c3f31353",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_08158810.json": [
+   "4ae795c3109806653af977f8c3002b540e198691466472e68a0a087cca20c245",
+   266
+  ],
+  "data/proc/baselines/gr4j/camels_08164000.json": [
+   "cc28a5edf9edec4a436513a322d57fb4cbca3f972e9c36ae864a35b2dbec9dea",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_08164300.json": [
+   "01b02e4cd920f74c20aa1c825b072d9bee7256a13bc5c0bcf04564d3f64c6aa4",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_08164600.json": [
+   "2fe7f266d569bca808b3f4b7e8cee447a1bdba664827964e55512be1aef093d7",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_08165300.json": [
+   "9383d51c1e178fc9bdc084a52cb8225cd8343a7feae31c4df88f978aa7a62026",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_08171300.json": [
+   "77baa83926a8dec87d898cf067ef512bb1e6b0d8a785270d8a311685e59a4d42",
+   266
+  ],
+  "data/proc/baselines/gr4j/camels_08175000.json": [
+   "4186676be9df11b32a31c3ab3eea1bdd66f8f2fdaee24a965c5653d838d1795e",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_08176900.json": [
+   "7971d9598d95c6760821a8d3131a5f42e98f62f238775358dc303e866d84cd17",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_08178880.json": [
+   "23536cbc02969ee6d7c637e83321d9f330d447592805a0be1eaf8325fa74cc01",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_08189500.json": [
+   "b4526671d5b5e6fb49772de787e3cb536c0de5e4aafef03d8e2a92856bb49423",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_08190000.json": [
+   "333f69289da4c3c64a6d60fa5c09f12ff7a9bf41bbd9b3217054ebdc77e7a178",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_08190500.json": [
+   "8e47e6d53fa43abc498b324bc5ece02b311d654019e6e7b143325767e40be331",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_08194200.json": [
+   "d36d36dbc77ad4339bfd544e8e7578fa637c4f657529b8efb229da6c82f8778c",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_08195000.json": [
+   "3096420a792bbbec83dcb7dcd85d198f2cfdd0ba62066cc977cb1b86c68ba151",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_08196000.json": [
+   "5337355d977abb66b0b24213d2be8ea70e202f3ffd5506e33aa320d34d986de2",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_08198500.json": [
+   "7da17dca5520604786345b7346aa9ee9880b84c4c7a9cf8e801dd335baaea1f6",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_08200000.json": [
+   "bc4c30b48408e12b36955cee531efaf761bf6329d8e7d6fcd657bb66d86c830c",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_08202700.json": [
+   "42b70f95fd830a0365c616b04cac2632f4abb341f66c41bb00a412fb69fc5e5e",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_08267500.json": [
+   "34b2808b4c77a17bbe7a1adaf7ecaeb5cd63df7c09bbaa1ed4797fb0321599f5",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_08269000.json": [
+   "22093ca2950ba8417bf7b263c888bf851aabfafb709a58969dab7417d2fc10e4",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_08271000.json": [
+   "8f2d48a565377bdf740343dc57c1633fe0f1eb52dca80b733298d9bf53a30d8a",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_08324000.json": [
+   "54dcdf589dc16440d43393a12c989b39ae741b33bd2adf29cedf1efce8128113",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_08377900.json": [
+   "1f955b6d7a715e1bbd15c61625a8b66444b596fe25ff779ccea3197cfd63e93d",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_08378500.json": [
+   "ab66a6b9118597be8d20725cb9e0f3c83fb29729d38457bc841b68258ccaf431",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_08380500.json": [
+   "d13bc23eaa433469cab349e9fc4c3094deadb02fbb21a904ac25825fcbe4d74a",
+   274
+  ],
+  "data/proc/baselines/gr4j/camels_09034900.json": [
+   "bbab9cdba64c3adeb5b8d9ac76d9959cf99ae692fe1ab0673b909b7af9d5c65c",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_09035800.json": [
+   "da42e9196e5b713a5b3c432e07ba086efc3a14c78cbb055a58160ad5ee9b6fc9",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_09035900.json": [
+   "6f0885e4e115c8cae63ec30e51145a0dab65aee4e48e17a3146b40102ba191aa",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_09047700.json": [
+   "2463407caade533f88c2b6ba0d4706c946699986d16e1970a164703d939c0db9",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_09065500.json": [
+   "5e564a38d36351e5797a02d357093112f63697e9774863beb3788c3d99eb1a3d",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_09066000.json": [
+   "c65b14c7b8e288e5d119fba256369070e2302d14942b5166ed538b25f1507d38",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_09066200.json": [
+   "ffda53cf359c67efc18b478f5b9f3927de76955a77e942356bb79e1845294d05",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_09066300.json": [
+   "b4a72b2ee31af8d9935829033b951048aec4274d3998fe55d2de46641e89bcd5",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_09081600.json": [
+   "652e560367883e7b4e59978b5ee7f68e6185412e42a0f8df310c94f5582b55aa",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_09107000.json": [
+   "85afc02524bb0391e172f6acaa84807a2c97db3a4fd0ac91693f72ab27c62b8a",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_09210500.json": [
+   "7e1d8f2db4816fb7791c5fc7743af7f63b85deb1ebb7d8248ac67c816d2d60bd",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_09223000.json": [
+   "1bf4d37ca1ab681912c31f2ac9417046e4d52296dfdb337650c0b5882a831f5c",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_09306242.json": [
+   "9564df0a18d497249486e0a274f9d8a1b324e023d70a23d66f8866040f163e73",
+   265
+  ],
+  "data/proc/baselines/gr4j/camels_09312600.json": [
+   "66bda804558d5563cd9d25ed3caa0e3058711ee2ae7a3470cd76863a87c23948",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_09352900.json": [
+   "bb68a18a9d085b5e1209cf33340249a9cc4e41fef1ad813f332973c41fee718e",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_09378170.json": [
+   "22759c361745aed2fc760b1bc7642c77fb638acb9011172a3074c5a0614f74aa",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_09378630.json": [
+   "86b043cb31f0bba2ac71fe99865a83ca4251837116725cf856b80adb1f7807d9",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_09386900.json": [
+   "b8f094a5835bb809a5b5abd2be8137b45d401a017257587a7412a1e0d1778e07",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_09404450.json": [
+   "ee441cf76f83d67290122c403469a5cb568146fab603f1eea34f29ffb13442bc",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_09430500.json": [
+   "35687bbbe2732eb7dc796862d0124105a7a62b446f037b789c9653da23d44199",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_09430600.json": [
+   "897aaf8d39337c6b255dc2a26f2772db82ade5945afedbdd43c84924cc178b87",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_09447800.json": [
+   "080786bd831bf43dbdff6b0520e0148264954dcde1f82f501626158c22adf9ef",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_09480000.json": [
+   "91b72e05b09a2751e19d5360c0877cbe8e758cbac0ef4a7971fb62750af2acff",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_09484000.json": [
+   "b5b429361651e06e9532124a80b9ad97e6fa6c4db35ed2809e9255cb58198cd1",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_09484600.json": [
+   "6acd2e2276b4d49589473e0b23482488670ebd6e283d8428abce57b5558c19a9",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_09492400.json": [
+   "4ed11ad98b665328072c82e836fd471753bea6c0c67a57667aff705cb51ae0c8",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_09494000.json": [
+   "fbe35017cc16e8c600dc3d0ace6e17d8889986fc07737d13576d76e6d7992779",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_09497800.json": [
+   "da5cad7e07632b8b026a46e03ce7498f6e7c5aa6f1953b0c02418c0f9c1ffc6a",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_09497980.json": [
+   "a1068ef3f029a78fbe4ecb5767c21064857303ed0b4cd55e405064e3b5d42ed9",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_09505200.json": [
+   "a100f4d2edbfaed38969ffdfe9cc544f0ae010f0659e90f66a75c880811f2adc",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_09505350.json": [
+   "501e9e87f947fe3f6e59135959bd9a2c97f20a2d11470c1ca2cf2d59f8a71c8e",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_09505800.json": [
+   "a0d31317b14320b1e47e1f2ae877299c2f512b58311782d0f292c658300a48b5",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_09508300.json": [
+   "1bec3f4b46b2c1f4f620026d4a54d6ea496f3755327f76799d6265bb8f671537",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_09510200.json": [
+   "12818e5dfc58ae5d1851c05143d55590f83a033cda3e3a5d4e667cfac285b5b9",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_09512280.json": [
+   "c8ffbb4779f8197043c905447b024c07e59e2b74f46f7647c8564487e9ea3a5d",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_09513780.json": [
+   "1170db34471f5afb554e6784160481a7235cfee52e5ef7797b1c2d19cc970e72",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_10023000.json": [
+   "bc49343858524da257791e4e1f13c22f3d9374922f5680d058ba8c116466efc5",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_10166430.json": [
+   "557571378fbcab0b4ea9c259dd4e779254463af2fde098c673a3169fe8473197",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_10172700.json": [
+   "710ca5aa5e3523334475a9a6bf1db5a337a8c349f8ce51e90c54dfda74e92d9f",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_10172800.json": [
+   "61e0ea6ecfbb90ddce7511ef816d038b444c1359c293d1a329e3a46cd4c54b15",
+   266
+  ],
+  "data/proc/baselines/gr4j/camels_10173450.json": [
+   "a2d03b3f7200b8b01f19d2dad26dbe6d2ef9c1b4a1962e955b0ea198ab3472a4",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_10205030.json": [
+   "9e7733111917d4969c2c10a7a5c103c713e50e5f129b10f0d787e9ac4b73fe46",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_10234500.json": [
+   "b65251c8daadb3cb515d8f133af2a8bfcad8b0a52f036f68fd3de4a5c64c03dc",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_10242000.json": [
+   "bff5c885d50e9d08251fcfc8283e78deecfdf28f9c0fd3919cf6f978b56bc8a0",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_10244950.json": [
+   "08d31f3c38d6c4f5012e4ec91c4031c5c227328dec87afff9ff249f1225018ca",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_10249300.json": [
+   "809d8844ede987f1d1e7f44f8f55dd00fa9ff4e764e91a0f39717d8463fd41ac",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_10258000.json": [
+   "69b8b80b574db64c9dc924ef7bc13bd4a4dd45602de098ae69b68293b186520a",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_10258500.json": [
+   "81b8439c388db5a70e7625286f528f2b5d82ba0886b2d09a6aa5e2aaa82c2d12",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_10259000.json": [
+   "17d1c1bdc4e4970f135a97e4fb9186720b9dd670033d08e4831c0f9e908565ba",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_10259200.json": [
+   "8847522067875e3db76ff0c4bce647649b7d36931d3de21f0716a736e46c0816",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_10263500.json": [
+   "083b4f3beb0f8462db2dfb22f5236dbb51aba2cd9700a3000e80655392bc3fde",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_10310500.json": [
+   "06321262426c9dd759eff0998e7965623b4dc03587e223796e4a748aa853333d",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_10316500.json": [
+   "6f9b0b1b62f018e6346fbc6ef71b1a49a7ef31a385a181910b84d57ad5d350f4",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_10329500.json": [
+   "d164f7c9d79e7dcad9653a75c70087138cd4b7d384106c555763911279661c32",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_10336645.json": [
+   "198c8ea8b50ee80cae61e78c5082bb2264365c8a8a254ece209bef52c03b1e9b",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_10336660.json": [
+   "36b092e381586033738407eb3494497c70a902b876280eefe85f91f37aaf6a13",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_10336740.json": [
+   "8938d4046e191f52f18e5242a6a62db44fa44a6e60152484cd084ae370be6e2e",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_10343500.json": [
+   "524ebed89b13ed43a60502b75ed11efd61172b69536a499b4cd0748dc66fa96f",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_10348850.json": [
+   "2c90673b9e64e3a1ae9e19a8ad4af20fcf6e149971df024052798c6e148d707b",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_10396000.json": [
+   "d3e5eb8009b917cd9cd0f1c07c29eccaf7bec010c9e73e694fac0e8fe0fe24b3",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_11098000.json": [
+   "eecec31454d1a282552eeb7aafe9caa05be478c24879952f6ff26f33cb68634a",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_11124500.json": [
+   "61898bd4da4428eff56663d0d912cc52be7f44da600963fb50d1d746ed7da161",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_11141280.json": [
+   "52cd4fab9376303a7fab073a87117878214cf2cf030cf4ffd72c1aea4bceb2f4",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_11143000.json": [
+   "e318ae1a902b37cb0ff527ce554e6b7342dbaa8f17d393e79f9fed43029a8604",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_11148900.json": [
+   "e08893397c4e446ca225c49f715786ce159533464d1c20a78eef51e75d49b1e5",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_11151300.json": [
+   "520339cca3ea5b94e21d9fa4d0e4235e50fd384ed57554a7edbd6c7f6f796efa",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_11162500.json": [
+   "6aac670237d38acb7f899215811204458a1dc0df2b8646b805746b8c2568146a",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_11176400.json": [
+   "c49a46f9b69a8d44b49df812690bb8235bfac1788b1f8b9e8e534836db32761b",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_11180500.json": [
+   "ee4e6deda0dd8304c8bf00aaf083815b033e6bf441322f77f688acbba6db6c62",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_11180960.json": [
+   "fe1b9284828c2844e9c8f9c52d4ce8973c7574ce8eca38f8660c0f5dad0e7c34",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_11224500.json": [
+   "9ab887f235f8c34cd078c44abd81d1e8cca644f3253ae010dfdbfaff00a9f907",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_11230500.json": [
+   "5b66bfc486124444a7d8c75f48bd0b20fcffffe01d6d4ea601285b0ad259328c",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_11237500.json": [
+   "739dc65854bbfc00dfc2a67879f72eaa42e449007ae4ee02f87beb7242160749",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_11253310.json": [
+   "b62752c231c9355e1f8acc2eab8651ed2553bf814f5a870ae41a57a5d15cfe6a",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_11264500.json": [
+   "b3da00433c28976c0b19b3a1b323d7bc9c360a3ee26c6c4900ba110b74ef75ec",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_11266500.json": [
+   "fbef53671acc07c6ad7964385cba4ba7aff47d3e386beb04494e906e5be341e6",
+   265
+  ],
+  "data/proc/baselines/gr4j/camels_11274500.json": [
+   "914905dafd243cd55b445a829dffeb21075fbcfa59348793c8a4126b5cd18ba7",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_11274630.json": [
+   "d133c286a413039371be73af26eb320e0067466af28b8b70b4d0dd17225531e1",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_11284400.json": [
+   "e132ab303c588f7c374d7f4e4df328bae1c5545c660a1327661a58a43af25ad4",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_11299600.json": [
+   "45b5d8618bb39e76390bf172ef4f8c64b7e49e7e4608a5b6bee6e323ff609901",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_11381500.json": [
+   "765d9a6d700969e65ebb433a6fefa9dbfb49d367ea3813333a14d1a3b11b35e8",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_11383500.json": [
+   "812b177a1f972b720143fe99a8994809e824a29b035bef5d6ea4bfc8acb3898d",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_11451100.json": [
+   "f48712e4e37ea7f0d10b651aa15f55dc362037b6afd4ef5f7a381de86a54fbb7",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_11468500.json": [
+   "6ac946b71a626233ad28b3879f96338de25a1c3e578e28ab0ffa5be67cca5009",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_11473900.json": [
+   "9679b3b9bf3b0eee7fb6f683270411fd12fad2e2bcdf54aa2348b325ba1f9476",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_11475560.json": [
+   "cae25ef8aa17bbde8111cca38adce867218bbdddc0337b14b69b862390781f44",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_11476600.json": [
+   "947f37e20057ca736fabd54455208eb1c575a3df4a793944a374c85fb0292a26",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_11478500.json": [
+   "1e6cd3d55fedf7845db00419115d2e56f5c5eb5b69a8ccc97581ba7bdee5bbec",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_11480390.json": [
+   "7cd898cf0902cee67bf4a3c4016580b63c94dc0f43db4b956d0fa92a5f068451",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_11481200.json": [
+   "5e24ed88765d4cc979a7957476322336ccc9ce2959e8aa7d9a2b2db89bc7480b",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_11482500.json": [
+   "95bc940f22750eb7fee68b41deabb2eff8703e7a3d5a59f2e96a922dccd9a6a7",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_11522500.json": [
+   "3e744d8f49c35491c5d718b71522214e6b5da256e8c4cb28b261055b0983a0ac",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_11523200.json": [
+   "a4b86b5d70e75719735f30ed7776e4911ab3d66feba441c6efe059c73fed6e3c",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_11528700.json": [
+   "49c55ffbfc5856ff9f0454c4cd988669524ed672e1ead6db760b7c334f9e71f5",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_11532500.json": [
+   "bdbba0add69c6ca0dd8611ab937ec444daa8ec62d6bac7d35bb45122717cb278",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_12010000.json": [
+   "2993bb8ca09ee868e5caa9d6063b5c776ddefd3258af122d24a2503023d3caef",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_12013500.json": [
+   "1c0095c16050ccf4ee70500ee5815ecaa7f16a99acd19a12aa3f1fe28e222845",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_12020000.json": [
+   "18a1035f47fa80d12bb8b1e50cb53595403aa3cd17f25ac06a392171172e5104",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12025000.json": [
+   "a8f8b76f961f022159871b2cf9fa47ca85276039760dc40c1435107b1ffff5a6",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12025700.json": [
+   "cef1f3976400620038736e8ebbb46f110abce3f599ae0fb3b55f663330dcabd3",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12035000.json": [
+   "24bc7375a999015fce144dd6cea6a84527a7b88feb43240035539bc00de03f86",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_12040500.json": [
+   "3b1f6d85f77387c2e44efde68011609b58e559fae2aeb3921710170119c9a9a4",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_12041200.json": [
+   "5252dc3b8f9843626c1dd37827341acc619ce5808102f69637c1b6e3b47be5bf",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12043000.json": [
+   "a8a11bf8deda43db7b21945e1c9f8cfbf92e5a05bd1a7d71b75f6f5aa18a4149",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_12048000.json": [
+   "9f7b8e7827151de8b3ced6b0c664a70909519370fe345f2d12ee55a18b85b0d9",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_12054000.json": [
+   "0e78f06abd68bf774f4118811b859835c69b88a0376ae4fb27ee3a9b78f46e56",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12056500.json": [
+   "43c6a1bac7d7ffa09f01eae8216848bed6feed50a100894e30051d3006fa8f75",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_12073500.json": [
+   "f5c137b4d9677a328519154ca879e10b08aeca30c55eb7ee16fe4d2f531acc4e",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12082500.json": [
+   "557f8f82cbde93cd023d715fb11a8ba7ea2576445602e052df57c69a08a70c60",
+   272
+  ],
+  "data/proc/baselines/gr4j/camels_12092000.json": [
+   "0bac7bb06eabb0301df781548609c9773627a6dd5eadf039fa6ed18ab0db4e71",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12095000.json": [
+   "3069b42f21a2a4a9465cfe3b4f3931f8b686bd524e0cc7e77d551e0f0a21f5b5",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_12114500.json": [
+   "481849b4843d28ab9d4cd7c20efc4d29364009f2d7dbea4092430f936f023c64",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_12115000.json": [
+   "ffed48dd9888219a04d4f652e56496a4ad4e23da8903f2db80768713e377db9c",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12115500.json": [
+   "32df2b270a82fcd090e3de784cb77ab92bc740e545e8b5da6abc7cd043ea5295",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12117000.json": [
+   "b0cd94ce941727ba0ed59648660a33c404f2425c47a6ac69a8edcd0e43303207",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_12141300.json": [
+   "00dccce6bd3cd71d1b5741290fa7198d2f531f6b8434ca0b290ec382e9585719",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12143600.json": [
+   "67ce7751053cd64c524e9c54ac3e035804c15964d20e67124e84e337111b52a6",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_12144000.json": [
+   "36848a37dfbdd6642283d9d6f215da63d76b7372cd0758ca8235a0f680a32aed",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_12145500.json": [
+   "fadd0a79da73f2f8ec8523f5da13fde86836630a2d82ceb75b66fb882a8b3db6",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12147500.json": [
+   "43611c1ad4794c7f1d95595548ba6e073fe36a160b3b72832a301d7b1ed8fe0e",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_12147600.json": [
+   "7766b89f2f85f443223cf835b2b39e1da2bb66a9ebb273d85df7b3feeb5e3ae3",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_12167000.json": [
+   "2d5e287950aa0da3cb0d018ee54fe1de3af7f8e88b45ab69bec0122deb6ae0a0",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12175500.json": [
+   "2ca7af728aeff4308f9d5f42f6a96e8f2175d4bb4b7d8aa721871387e7be738d",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_12178100.json": [
+   "ead4d162c7b30e9dc266221c97c767c2240f93343fefae2f8808c1b04d8dce0e",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_12186000.json": [
+   "991fb98760287bb2466aca21fb071bc7a2b4c481c2937b7c129f5ef5c97186c9",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12189500.json": [
+   "a2bade60df8ebc2abedf2a535fda4b1565683c45b11ee20fec949f2a16c18155",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12358500.json": [
+   "4616df2c6c70b6505c27e1937bd9771ebe6ee2b21572e5c9d7869ebc19c6cf77",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12374250.json": [
+   "601b0b658ba3165dceb3179aae8c1d3d0bba278fffaf16db085188ba17c66f40",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_12375900.json": [
+   "ef6c53636aa8d111b04f3af4d9ca9de7b51a4d5a9e345f6a2fa3064ec9b93f55",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_12377150.json": [
+   "16bb45f5ec1603c17c1db2c7709c2c66ec0e751401565637e9cbccaca0293c78",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_12381400.json": [
+   "dbed71c77cb65145ac5d596328d6b61d36ba52e5cc42271db1ae406745305ad6",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_12383500.json": [
+   "6399f18a2bad1c69ff619209ee8690c437fdc747f95172b441fdeebf91c9f25b",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_12388400.json": [
+   "de34420fd464f5c3dff7cab1a3a386a52500fe4eee0767181a00399dc8ace0d0",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_12390700.json": [
+   "68228d8030853faf4382e7f378a53c191bd5f6d9371c63fa004b4d92e4015ddf",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_12411000.json": [
+   "30042f50d04979588ee43da8996b168cdb1f17a349b20e1fc9c304b0b31769fb",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_12414500.json": [
+   "e085945c9578d095f4379d01f8b79166048d171da0084de528db393f82bf1974",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_12447390.json": [
+   "f71e10f631aeb3b7060ff6833750ad11a5655ac3f628a512c65a70762a17e64c",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_12451000.json": [
+   "c683c2d866a521438bb3c6b68489a925c52fec1231eecf1059dd8c96d749c90a",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_12488500.json": [
+   "efc97b8c9c656a26694323e232f496ec9250f857c3d297131905e73668e7bcb7",
+   266
+  ],
+  "data/proc/baselines/gr4j/camels_13011500.json": [
+   "b831414b0e64e29f1d7831e585ffac236fc3ed4486c5b2d24300f6bcfdae5144",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_13011900.json": [
+   "e52ba1b0e58772d618203e366c50c360dfc23622e442c23b2ebb13d33e51d256",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_13018300.json": [
+   "4d855f7b6c71c6cc2d297f030dded40ce8fae4e153f217ba7e04bf56af602710",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_13023000.json": [
+   "5d5fe52fb3b7f05e749184fb1bfe28eef8e55e0ebab5f0a4eb6b2aa26b38f32b",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_13083000.json": [
+   "bbc5b3eded4d900c149ac3a19dfde4ecdc5c8101cfb3f4548c7cc1ecd602eb5f",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_13161500.json": [
+   "2c3b71a796cb36b0c8ad7c9fe8cd9cb80bab90c3ef2b4be466a48f1507c7203f",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_13235000.json": [
+   "8ecd324bc394702df799e6fd8819e9f1126606abf89bc85c7765d1304db9a8af",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_13240000.json": [
+   "9886ebcff8a3b4972eb76eb461a39cec265ef2c54fb2034e3aa1ddc3847b1295",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_13310700.json": [
+   "e980e5772efa9a5037f22ba5be1e68a6ff180164cffd96b804c0bddd312efc9b",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_13313000.json": [
+   "434fa92448121bac4ea40a307b695db81c28042162d7e3ccc530793c0dd07cff",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_13331500.json": [
+   "a8e8b388c0a23fb60541b1be858115e87dea66f5c10045ae758699f428764eee",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_13337000.json": [
+   "3d153e50a5ad726a1f646ce83551c3268fb765f0d4810ee55ba49c2ea7120ff7",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_13338500.json": [
+   "b6c87ea3c0b35f93e3948c2b783e82ef28be537a994db2644ec7432166b0a8f1",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_13340000.json": [
+   "9608fbcbdaf4fee4a6cfc0f8e05f3340ea9fb440efe78a9e2efabf343c28d2ef",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_13340600.json": [
+   "f665c4db740e8a3c240c52348a7d97c928f6d47e39ea2d65b0eaa1add2cc80ed",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_14020000.json": [
+   "41cff018737e50f0141d2448d2f381cce7ae7acd1636081cc94b741108914ac1",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_14092750.json": [
+   "15723e4ba6954a65e3afff57a5c735c057d86b4a203ae50390a6a1ab8ff68b17",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_14096850.json": [
+   "3a49640f2c3181ed75e12d4ecc3e6827a9d1956c63aa7a04b4710dc298fd43c2",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_14137000.json": [
+   "f12ecf04231d85d2136ac8c471c8b5a80338728169eb2fa2f09ecfdecb7b6a03",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_14138800.json": [
+   "7ac0e0aba207b247bc6ad1691770f9b7d65185cf393d3c39923b24a697b98b36",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_14138870.json": [
+   "d8589e734bc7fab4a7d0977ff5fd1059cc647c8b4566e17c9251337b93e4a470",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_14138900.json": [
+   "3b0abba8770c84f2180d1227e74ceed162f8d4a2b594e857a95fd36ab8fd0934",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_14139800.json": [
+   "e324457f4346350803e03822fac5e5082d7400880e2f17318edb6587fcc39af9",
+   267
+  ],
+  "data/proc/baselines/gr4j/camels_14141500.json": [
+   "438588d6bb1c84eba48c1c727e648e898a21117ed45e2e35bc2cfcab5a78a860",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_14154500.json": [
+   "bc387fda0a81e6470aefbcaaaeb9740e1a2e6a30879171f16d0e61884a0c2aeb",
+   273
+  ],
+  "data/proc/baselines/gr4j/camels_14158500.json": [
+   "14700d986a6714f1501f4ff7772f47e5be3ab407a0e16ff8b730464be83325dc",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_14158790.json": [
+   "e531b04b8e708e75c9088176f8fa929fcc8bd4886dbc1d7a0b259ef4624cca0f",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_14166500.json": [
+   "8c0ec70d3e61a98b7a7e66c1d2490216a5fe224419074d9229ad516ad864c6ac",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_14182500.json": [
+   "7aced464679fc02033100a59b4138d80261e5e1d9d0033e3ecce47a02e8d6340",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_14185000.json": [
+   "9041a796ea7dbea837a5e29350f015b208ee269c971e2808764a683dd3b37c77",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_14185900.json": [
+   "1383fb2ef98090d4dee3022d534c61bd3494dfcd954f6ef200fe37df23b4b2c1",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_14187000.json": [
+   "b46ee2baed1cfb6a21c777e5faeb71479ea990a45eda6765be1343290243021c",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_14216500.json": [
+   "b3e375ae9588bfdfc1341fdadb800562a5bcdd333d798885c8b641339ff5719d",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_14222500.json": [
+   "d7845fd6e6dbb0529f29b82cefe3a060bface3844ef7cbf3697663b6b0eb5d71",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_14236200.json": [
+   "b30459c6a0165fe4171c390237e56b9a06e4f9b5b7ea5b1277fc4a1c0ed339c3",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_14301000.json": [
+   "892d8d9f079e91c1a60c4e02133781698a188608d4744cb905127100eea5095c",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_14303200.json": [
+   "ad5048b7edad7227553dd2bd768b23a9f302f4f2d90e4ef7a168385339586b80",
+   269
+  ],
+  "data/proc/baselines/gr4j/camels_14305500.json": [
+   "60056980ba1ff7015857ba0bd9c4b4258b1faf800889bc1a722e868b989d5197",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_14306340.json": [
+   "cf658bd4a8e3baf677e734d198e12d3d51c020b8541531b1fb71f7e617c1eb0f",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_14306500.json": [
+   "ccf66f478e8bb51972d30383451092e0a04904ee31d6b3c00bf13c54dd434ba9",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_14308990.json": [
+   "ffaeba988b9235594ad7f20a405dad124427aa0c97ed816558203f79949bf96f",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_14309500.json": [
+   "b9067d748e9d0799ce2e9422398c86ebc23fb7ee6670a928550f828151f00f2b",
+   266
+  ],
+  "data/proc/baselines/gr4j/camels_14316700.json": [
+   "0c467a740bc1ee2fa20719598960e0d033b800a7bfbc49719ecad45e01e73b77",
+   271
+  ],
+  "data/proc/baselines/gr4j/camels_14325000.json": [
+   "5f8b924a6e442ae4153135371075b1f740190d37f6c37a025500910357eac30c",
+   270
+  ],
+  "data/proc/baselines/gr4j/camels_14362250.json": [
+   "2201c23685e1615f49297bd520b86f9d7ad220679963187e848d77bfaff10a5a",
+   268
+  ],
+  "data/proc/baselines/gr4j/camels_14400000.json": [
+   "ff0cead95437ec3cc2a74af81cc0f581338ab001055d32503c0f84a38349c96e",
+   267
+  ],
+  "data/proc/baselines/peak_scores.parquet": [
+   "afbc4ba2c55341c887189b8d43b92b63ec40d319e800bff8892708cc6d27dafa",
+   624133
+  ],
+  "data/proc/baselines/peak_summary.json": [
+   "f0c9dd98d9803473593a829b05f3906b1a06e94ed20e48f0a8263e643db3e92f",
+   1425
+  ],
+  "data/proc/baselines/reservoir_recent_scores.parquet": [
+   "d78e6427fe3f6279cb046e83d09578bf53c2bbe6ab8fcd12e4e443412526a0a5",
+   6990
+  ],
+  "data/proc/baselines/reservoir_scores.parquet": [
+   "e0b6ba038b8b1696329bafcde2349739e95dedb1dd1c28c75a43e71bbe03b890",
+   58132
+  ],
+  "data/proc/baselines/reservoir_summary.json": [
+   "3b5c78922aea68e81694cd05c613bdcdbb3d7dca0751dad4ed28ab984ceedae1",
+   1091
+  ],
+  "data/proc/baselines/signatures.parquet": [
+   "03645a4035c52c78e6d0c00e87d7a6d48ef8352c351db03a32abd9bef28b4144",
+   261403
+  ],
+  "data/proc/baselines/snow_scores.parquet": [
+   "27f876088d68b0308fcbb7fea79e5114f5b20fac17f3bc20811e9f7ab366b0f9",
+   104567
+  ],
+  "data/proc/baselines/snow_summary.json": [
+   "56be083d18de28a604013d0f1db74514558749089d88d31f20351fb1c31c378a",
+   488
+  ],
+  "data/proc/baselines/summary.json": [
+   "662d9c242b467531f5b55a7bfb5c824f56bb74d438144a10eadf920254dc3c08",
+   19578
+  ],
+  "data/proc/specs/camels_specs.json": [
+   "874ff9869cdea31ac102c2b05490820e4b5422c082ea6fbe6ad6bbc8f7dab58e",
+   1547987
+  ],
+  "data/proc/specs/camelsaus_specs.json": [
+   "5ce58d3cac28b8800537005e4a14558a8e31600be1f3181f40fad07befd2462c",
+   1152722
+  ],
+  "data/proc/specs/camelsbr_specs.json": [
+   "1caa64c5ff04a56e1036407585e0ce6cf282aa6f5b4e3e25220a055bb1506693",
+   1747012
+  ],
+  "data/proc/specs/camelscl_specs.json": [
+   "eac9bbe13ac2e147428c59c79e019f91a9da9b7b18c350c8ea2977e05c250442",
+   1018084
+  ],
+  "data/proc/specs/camelsgb_specs.json": [
+   "6bc374b33a3ba42e908e90d42e7f3a3a579778b6592d1b3ac7d46283ff30863a",
+   1344414
+  ],
+  "data/proc/splits.json": [
+   "33f88ca0225180dcce979eceed26bf5157b92455e13bb7b78e135e9fd4d98c6b",
+   138197
+  ]
+ }
+}

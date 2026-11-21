@@ -19,11 +19,11 @@ A good candidate has all three:
 
 ```bash
 pip install -e ".[dev]"
-mlratchet new watershed --name Watershed
-mlratchet validate watershed        # tells you what is still TODO
+mlratchet new roomsense --name RoomSense
+mlratchet validate roomsense        # tells you what is still TODO
 ```
 
-This creates `models/watershed/` from the template with every file in [the contract](model-contract.md), a
+This creates `models/roomsense/` from the template with every file in [the contract](model-contract.md), a
 `training/` folder with stubs for each step, and a checklist README.
 
 ## 2. Physics, then check it

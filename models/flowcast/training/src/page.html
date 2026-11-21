@@ -1,0 +1,344 @@
+<title>FlowCast</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a gauge-house logbook. One wide column of hydrographs; tables and the ladder set like a field sheet. */
+:root{
+  --bg:#f3f6f6; --panel:#ffffff; --ink:#132026; --muted:#566a72; --rule:#d5dfe2;
+  --river:#16648f; --band:#9fc6db; --band2:#cfe3ec; --obs:#1b1b1b; --udev:#8a6fb0; --nwm:#c97a12; --gr4j:#5f8f4e;
+  --good:#2d7d4f; --bad:#b4442d; --chip:#e7eff1;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif; --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-data:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c161a; --panel:#122027; --ink:#e3ecee; --muted:#93a8af; --rule:#24363d;
+  --river:#5fb3df; --band:#1f5672; --band2:#173a4a; --obs:#f1f4f4; --udev:#b59ad8; --nwm:#e8a24a; --gr4j:#8fbf7b;
+  --good:#5cc08a; --bad:#e2775f; --chip:#1a2c33; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c161a; --panel:#122027; --ink:#e3ecee; --muted:#93a8af; --rule:#24363d;
+  --river:#5fb3df; --band:#1f5672; --band2:#173a4a; --obs:#f1f4f4; --udev:#b59ad8; --nwm:#e8a24a; --gr4j:#8fbf7b;
+  --good:#5cc08a; --bad:#e2775f; --chip:#1a2c33; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--f-body);margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-0.01em}
+h1{font-size:clamp(44px,8vw,84px);font-weight:800;line-height:.95}
+h2{font-size:clamp(24px,3.4vw,32px);font-weight:700}
+h3{font-size:17px;font-weight:700}
+p{margin:0;max-width:68ch}
+.eyebrow{font:600 12px/1 var(--f-data);text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.lede{font-size:18px;color:var(--ink);max-width:60ch}
+.muted{color:var(--muted)}
+section{display:flex;flex-direction:column;gap:16px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.stat{background:var(--panel);padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.stat b{font:600 26px/1.1 var(--f-data);font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--rule);padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+select,button,input[type=range]{font:inherit}
+select{background:var(--panel);color:var(--ink);border:1px solid var(--rule);padding:6px 8px;max-width:100%}
+.chip{font:500 12.5px/1 var(--f-body);background:var(--chip);color:var(--ink);border:1px solid var(--rule);padding:7px 10px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip[aria-pressed="false"]{opacity:.5}
+.chip i{width:14px;height:3px;display:inline-block}
+.chip:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--river);outline-offset:2px}
+svg{display:block;width:100%;height:auto}
+svg text{fill:var(--muted);font:11px var(--f-data)}
+.chartbox{position:relative;min-width:0}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--rule);padding:6px 8px;font:12px/1.4 var(--f-data);white-space:nowrap}
+.metrics{display:flex;flex-wrap:wrap;gap:6px 18px;font:13px var(--f-data);font-variant-numeric:tabular-nums}
+.metrics em{font-style:normal;color:var(--muted)}
+.lab{display:grid;grid-template-columns:minmax(0,280px) minmax(0,1fr);gap:18px}
+@media (max-width:760px){.lab{grid-template-columns:minmax(0,1fr)}}
+.sl{display:flex;flex-direction:column;gap:2px}
+.sl label{display:flex;justify-content:space-between;font-size:13px}
+.sl label b{font:600 12.5px var(--f-data)}
+input[type=range]{width:100%;accent-color:var(--river)}
+.tbl{overflow-x:auto;border:1px solid var(--rule);background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--rule);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal;min-width:9em}
+th{font:600 11.5px var(--f-data);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+tr.us td{font-weight:600}
+tr.us td:first-child{color:var(--river)}
+.pill{font:600 11px var(--f-data);padding:2px 7px;border:1px solid currentColor;text-transform:uppercase;letter-spacing:.06em}
+.kept{color:var(--good)} .rej{color:var(--bad)}
+.ladder{display:flex;flex-direction:column;gap:0;border-left:2px solid var(--rule)}
+.rung{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:4px 14px;padding:10px 0 12px 14px;position:relative;border-bottom:1px dashed var(--rule)}
+.rung:before{content:"";position:absolute;left:-7px;top:16px;width:12px;height:12px;background:var(--bg);border:2px solid var(--rule)}
+.rung.k:before{background:var(--river);border-color:var(--river)}
+.rung .nm{font:600 14px var(--f-data)}
+.rung .ch{min-width:0}
+.rung .nums{font:12.5px var(--f-data);color:var(--muted);text-align:right}
+@media (max-width:560px){.rung{grid-template-columns:56px minmax(0,1fr)}.rung .nums{grid-column:2;text-align:left}}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:18px}
+.cols>div{display:flex;flex-direction:column;gap:8px;min-width:0}
+ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;max-width:70ch}
+code,pre{font:13px var(--f-data)}
+pre{background:var(--panel);border:1px solid var(--rule);padding:12px;overflow-x:auto;margin:0}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--muted);align-items:center}
+.ramp{width:160px;height:10px}
+footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--rule);padding-top:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">ML Ratchet · Watershed · project 1 of 4</div>
+  <h1>FlowCast</h1>
+  <p class="lede">Daily river flow for a basin that has never had a gauge. A small network read only weather and a map's worth of basin facts, learned from a hydrology simulator, and was then graded once on 619 real US rivers it had never seen.</p>
+  <div class="stats" id="heroStats"></div>
+  <div class="panel">
+    <div class="row" style="justify-content:space-between"><h3 id="heroName"></h3><span class="eyebrow" id="heroTag"></span></div>
+    <div class="chartbox" id="heroChart"></div>
+    <div class="legend"><span><i style="display:inline-block;width:14px;height:8px;background:var(--band)"></i> 90 % band</span><span style="color:var(--river)">— FlowCast</span><span style="color:var(--obs)">— USGS gauge (not seen by the network)</span></div>
+  </div>
+</header>
+
+<section id="explore">
+  <div class="eyebrow">Real exam basins</div>
+  <h2>Explore sixteen rivers</h2>
+  <p class="muted">Four basins per climate type (snowy, arid, humid, in between), drawn at random with a fixed seed from the 619 exam basins. Water years 1995–1996, inside the main exam decade. The network runs in your browser from the forcing and attributes below; the gauge record is only drawn for comparison.</p>
+  <div class="panel">
+    <div class="row"><label for="pick" class="eyebrow">Basin</label><select id="pick"></select>
+      <button class="chip" id="logBtn" aria-pressed="false">log scale</button></div>
+    <div class="row" id="toggles"></div>
+    <div class="chartbox" id="exChart"></div>
+    <div class="metrics" id="exMetrics"></div>
+  </div>
+</section>
+
+<section id="lab">
+  <div class="eyebrow">Lab</div>
+  <h2>Change the basin, watch the river</h2>
+  <p class="muted">Move a slider and the network reruns on the same two years. This shows what it learned from the simulator: wetter weather, warmer winters, steeper slopes or a big reservoir upstream. It is a what-if on one basin, not a forecast.</p>
+  <div class="lab">
+    <div class="panel" id="sliders"></div>
+    <div class="panel"><div class="chartbox" id="labChart"></div><div class="metrics" id="labMetrics"></div></div>
+  </div>
+</section>
+
+<section id="exam">
+  <div class="eyebrow">Final exam · run once</div>
+  <h2>Graded against the baselines</h2>
+  <p class="muted" id="examNote"></p>
+  <div class="tbl"><table id="examTbl"></table></div>
+  <div class="cols">
+    <div><h3>Flood peaks</h3><div class="tbl"><table id="peakTbl"></table></div><p class="muted" style="font-size:13px">Annual instantaneous USGS peaks vs annual maximum daily flow × 1.38 (B's dev ratio of instantaneous to daily peaks), median over basins of the per-basin median error. Cells are absolute error / bias, in %.</p></div>
+    <div><h3>With a gauge: nowcast mode</h3><div class="tbl"><table id="nowTbl"></table></div><p class="muted" style="font-size:13px">An optional variant that also reads the basin's own observed flow up to 1, 3 or 7 days before each day (gauged protocol), scored once on the same exam. Weather of the target days is known (a hindcast).</p></div>
+    <div><h3>Where it works</h3><div class="tbl"><table id="strataTbl"></table></div><p class="muted" style="font-size:13px">Median NSE by basin type, main exam.</p></div>
+  </div>
+</section>
+
+<section id="map">
+  <div class="eyebrow">619 exam basins</div>
+  <h2>Every river, one dot</h2>
+  <div class="panel">
+    <div class="row" id="mapModes"></div>
+    <div class="chartbox" id="mapChart"></div>
+    <div class="legend" id="mapLegend"></div>
+  </div>
+</section>
+
+<section id="ratchet">
+  <div class="eyebrow">Ratchet</div>
+  <h2>How it got here</h2>
+  <p class="muted">A rung is kept only if it beats the incumbent by more than 0.01 median NSE on a frozen set of simulated basins and loses no more than 5 % median NSE on the 52 real dev basins (water years 2001–2014, never part of the exam). When the physics changed, the frozen set was rebuilt and both models scored on it.</p>
+  <div class="ladder" id="ladder"></div>
+</section>
+
+<section id="how">
+  <div class="eyebrow">Recipe</div>
+  <h2>How it was built</h2>
+  <div class="cols" id="howCols"></div>
+</section>
+
+<section id="limits">
+  <h2>Limits</h2>
+  <ul id="limitsList"></ul>
+</section>
+
+<section id="use">
+  <h2>Use it</h2>
+  <p class="muted">The release is numpy-only: <code>flowcast-v1.0.zip</code> with <code>flowcast.py</code>, the weights, <code>demo.py</code> on three exam basins, <code>pipeline.py</code>, the model card and every training script.</p>
+  <pre>import flowcast as fc
+m = fc.FlowCast()
+out = m.predict(forcing_df, attrs, start='1995-10-01', end='1996-09-30')
+out[['Q', 'q05', 'q50', 'q95']]          # mm/day, and Q_m3s</pre>
+</section>
+
+<footer id="credits"></footer>
+</div>
+
+<script id="d-data" type="application/json">%%DATA%%</script>
+<script id="d-w" type="application/json">%%WEIGHTS%%</script>
+<script id="d-s" type="application/json">%%SUMMARY%%</script>
+<script>%%FCNET%%</script>
+<script>
+(() => {
+const D = JSON.parse(document.getElementById('d-data').textContent);
+const N = FCNet.load(JSON.parse(document.getElementById('d-w').textContent));
+const S = JSON.parse(document.getElementById('d-s').textContent);
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const f2 = (x, d = 2) => (x == null || !isFinite(x) ? '–' : (+x).toFixed(d));
+const el = (t, a = {}, h = '') => { const e = document.createElement(t); for (const k in a) e.setAttribute(k, a[k]); e.innerHTML = h; return e; };
+const NS = 'http://www.w3.org/2000/svg';
+function nse(o, s) { let mo = 0, n = 0; for (let i = 0; i < o.length; i++) if (o[i] != null && s[i] != null && isFinite(s[i])) { mo += o[i]; n++; }
+  if (n < 30) return null; mo /= n; let a = 0, b = 0; for (let i = 0; i < o.length; i++) if (o[i] != null && s[i] != null && isFinite(s[i])) { a += (s[i] - o[i]) ** 2; b += (o[i] - mo) ** 2; } return 1 - a / b; }
+function cover(o, q) { let c = 0, n = 0; for (let i = 0; i < o.length; i++) if (o[i] != null) { n++; if (o[i] >= q[i][0] && o[i] <= q[i][4]) c++; } return n ? c / n : null; }
+const T0 = new Date(Date.UTC(1994, 9, 1));
+const dayDate = (i) => new Date(T0.getTime() + i * 864e5);
+
+// ---------- hydrograph chart
+function hydro(box, ser, opts = {}) {
+  const narrow = box.clientWidth > 0 && box.clientWidth < 600, W = narrow ? 520 : (opts.W || 1000), H = opts.h || 300, L = 44, R = 10, Tp = 10, B = 26, n = ser.n, log = !!opts.log;
+  const vals = [];
+  for (const s of ser.lines) if (s.on !== false) for (const v of s.y) if (v != null && isFinite(v)) vals.push(v);
+  if (ser.band) for (const r of ser.band) vals.push(r[4]);
+  let ymax = Math.max(...vals.filter((v) => isFinite(v)), 0.1); ymax = ymax * 1.05;
+  const ymin = log ? 0.01 : 0;
+  const ty = (v) => { v = Math.max(v, ymin); return log ? Tp + (H - Tp - B) * (1 - (Math.log10(v) - Math.log10(ymin)) / (Math.log10(ymax) - Math.log10(ymin))) : Tp + (H - Tp - B) * (1 - v / ymax); };
+  const tx = (i) => L + (W - L - R) * i / (n - 1);
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.label || 'hydrograph'}">`;
+  // grid + y ticks
+  const ticks = log ? [0.01, 0.1, 1, 10, 100].filter((v) => v <= ymax) : (() => { const st = Math.pow(10, Math.floor(Math.log10(ymax / 4))); const m = [1, 2, 5].find((k) => ymax / (k * st) <= 6) || 10; const out = []; for (let v = 0; v <= ymax; v += m * st) out.push(+v.toFixed(6)); return out; })();
+  for (const v of ticks) { const y = ty(v); g += `<line x1="${L}" x2="${W - R}" y1="${y}" y2="${y}" stroke="${css('--rule')}" stroke-width="1"/><text x="${L - 6}" y="${y + 4}" text-anchor="end">${v}</text>`; }
+  // month ticks
+  for (let i = 0; i < n; i++) { const d = dayDate(i); if (d.getUTCDate() === 1 && [0, 3, 6, 9].includes(d.getUTCMonth())) { const x = tx(i);
+    g += `<line x1="${x}" x2="${x}" y1="${H - B}" y2="${H - B + 4}" stroke="${css('--muted')}"/><text x="${x + 3}" y="${H - 8}">${['Jan', '', '', 'Apr', '', '', 'Jul', '', '', 'Oct'][d.getUTCMonth()]} ${String(d.getUTCFullYear()).slice(2)}</text>`; } }
+  if (ser.band) { let up = '', dn = '';
+    for (let i = 0; i < n; i++) up += `${i ? 'L' : 'M'}${tx(i).toFixed(1)},${ty(ser.band[i][4]).toFixed(1)}`;
+    for (let i = n - 1; i >= 0; i--) dn += `L${tx(i).toFixed(1)},${ty(ser.band[i][0]).toFixed(1)}`;
+    g += `<path d="${up}${dn}Z" fill="${css('--band')}" fill-opacity="0.55" stroke="none"/>`; }
+  for (const s of ser.lines) { if (s.on === false) continue; let p = '', pen = false;
+    for (let i = 0; i < n; i++) { const v = s.y[i]; if (v == null || !isFinite(v)) { pen = false; continue; } p += `${pen ? 'L' : 'M'}${tx(i).toFixed(1)},${ty(v).toFixed(1)}`; pen = true; }
+    g += `<path d="${p}" fill="none" stroke="${css(s.c)}" stroke-width="${s.w || 1.2}" stroke-linejoin="round"/>`; }
+  g += `<text x="${L}" y="${Tp + 2}" dy="-1" text-anchor="start">mm/day</text><line id="cur" x1="0" x2="0" y1="${Tp}" y2="${H - B}" stroke="${css('--muted')}" stroke-dasharray="3 3" visibility="hidden"/></svg>`;
+  box.innerHTML = g;
+  const svg = box.querySelector('svg'), cur = svg.querySelector('#cur'), tip = el('div', { class: 'tip', hidden: '' }); box.appendChild(tip);
+  svg.addEventListener('pointermove', (ev) => { const r = svg.getBoundingClientRect(); const x = (ev.clientX - r.left) / r.width * W;
+    const i = Math.round((x - L) / (W - L - R) * (n - 1)); if (i < 0 || i >= n) return; cur.setAttribute('x1', tx(i)); cur.setAttribute('x2', tx(i)); cur.setAttribute('visibility', 'visible');
+    let h = dayDate(i).toISOString().slice(0, 10); for (const s of ser.lines) if (s.on !== false) h += `<br><span style="color:${css(s.c)}">${s.name}</span> ${f2(s.y[i])}`;
+    if (ser.band) h += `<br>90 % band ${f2(ser.band[i][0])}–${f2(ser.band[i][4])}`; tip.innerHTML = h; tip.hidden = false;
+    const px = (ev.clientX - r.left); tip.style.left = Math.min(px + 12, r.width - 170) + 'px'; tip.style.top = '8px'; });
+  svg.addEventListener('pointerleave', () => { tip.hidden = true; cur.setAttribute('visibility', 'hidden'); });
+}
+
+const nT = 731;
+const runEx = (e, attrs, F) => FCNet.predict(N, F || e.F, e.doy, attrs || e.attrs, nT);
+const cache = {};
+const pred = (i) => (cache[i] || (cache[i] = runEx(D.examples[i])));
+
+// ---------- hero
+const fl = S.exam.flow;
+const heroStats = [
+  [f2(fl['val/flowcast'].nse), 'FlowCast median NSE, main exam 1989–99 (ungauged)'],
+  [f2(fl['val/nn_dev'].nse), 'Classical ungauged regionalisation (U-dev), same exam'],
+  [f2(fl['val/nwm'].nse), 'NOAA National Water Model v3.0, calibrated on many of these gauges'],
+  [Math.round(100 * fl['val/flowcast'].cov90) + ' %', 'of days inside the 90 % band (median basin)']];
+document.getElementById('heroStats').innerHTML = heroStats.map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
+const hi = D.examples.findIndex((e) => e.stratum === 'snow');
+function drawHero() { const e = D.examples[hi], p = pred(hi);
+  document.getElementById('heroName').textContent = e.name; document.getElementById('heroTag').textContent = `${e.id} · ${Math.round(e.area_km2)} km² · WY1995–96`;
+  hydro(document.getElementById('heroChart'), { n: nT, band: p.q, lines: [{ name: 'gauge', y: e.obs, c: '--obs', w: 1.1 }, { name: 'FlowCast', y: p.mean, c: '--river', w: 1.6 }] }, { h: 260 }); }
+
+// ---------- explorer
+const pick = document.getElementById('pick');
+D.examples.forEach((e, i) => pick.appendChild(el('option', { value: i }, `${e.stratum} · ${e.name}`)));
+const tog = { nn_dev: true, nwm: true, gr4j: false }; let logScale = false;
+const TL = { nn_dev: ['U-dev regionalisation', '--udev'], nwm: ['NWM v3.0', '--nwm'], gr4j: ['GR4J, calibrated on this gauge', '--gr4j'] };
+const tg = document.getElementById('toggles');
+for (const k in TL) { const b = el('button', { class: 'chip', 'aria-pressed': String(tog[k]) }, `<i style="background:var(${TL[k][1]})"></i>${TL[k][0]}`);
+  b.onclick = () => { tog[k] = !tog[k]; b.setAttribute('aria-pressed', String(tog[k])); drawEx(); }; tg.appendChild(b); }
+document.getElementById('logBtn').onclick = (ev) => { logScale = !logScale; ev.currentTarget.setAttribute('aria-pressed', String(logScale)); drawEx(); };
+function drawEx() { const i = +pick.value, e = D.examples[i], p = pred(i);
+  const lines = [{ name: 'gauge', y: e.obs, c: '--obs', w: 1.1 }];
+  for (const k in TL) if (e[k]) lines.push({ name: TL[k][0], y: e[k], c: TL[k][1], on: tog[k], w: 1 });
+  lines.push({ name: 'FlowCast', y: p.mean, c: '--river', w: 1.6 });
+  hydro(document.getElementById('exChart'), { n: nT, band: p.q, lines }, { log: logScale });
+  const m = [`<span><em>WY95–96 NSE</em> FlowCast ${f2(nse(e.obs, p.mean))}</span>`];
+  for (const k in TL) if (e[k]) m.push(`<span><em>${TL[k][0].split(',')[0]}</em> ${f2(nse(e.obs, e[k]))}</span>`);
+  m.push(`<span><em>90 % band holds</em> ${Math.round(100 * cover(e.obs, p.q))} % of days</span>`);
+  m.push(`<span><em>decade NSE</em> FlowCast ${f2(e.nse_val_decade.flowcast)} · U-dev ${f2(e.nse_val_decade.nn_dev)} · NWM ${f2(e.nse_val_decade.nwm)}</span>`);
+  document.getElementById('exMetrics').innerHTML = m.join(''); }
+pick.onchange = () => { drawEx(); resetLab(); };
+
+// ---------- lab
+const SL = [['pmul', 'Rain and snow ×', 0.6, 1.4, 0.05, 1], ['tsh', 'Air temperature shift (°C)', -3, 3, 0.5, 0],
+  ['forest', 'Forest fraction', 0, 1, 0.05, null], ['slope', 'Slope ×', 0.25, 4, 0.25, 1], ['ksat', 'Soil conductivity ×', 0.25, 4, 0.25, 1],
+  ['res', 'Reservoir storage (years of flow)', 0, 1.5, 0.05, null]];
+const sv = {}; const sbox = document.getElementById('sliders');
+for (const [k, lab, lo, hi_, st] of SL) { const d = el('div', { class: 'sl' }, `<label for="s-${k}">${lab}<b id="v-${k}"></b></label><input type="range" id="s-${k}" min="${lo}" max="${hi_}" step="${st}">`);
+  sbox.appendChild(d); d.querySelector('input').addEventListener('input', (ev) => { sv[k] = +ev.target.value; document.getElementById('v-' + k).textContent = sv[k]; schedule(); }); }
+const rb = el('button', { class: 'chip' }, 'Reset to the real basin'); rb.onclick = resetLab; sbox.appendChild(rb);
+let tmr = null; const schedule = () => { clearTimeout(tmr); tmr = setTimeout(drawLab, 120); };
+function resetLab() { const e = D.examples[+pick.value];
+  const init = { pmul: 1, tsh: 0, forest: e.attrs.forest_frac, slope: 1, ksat: 1, res: Math.min(e.attrs.reservoir_storage_frac, 1.5) };
+  for (const k in init) { sv[k] = +(+init[k]).toFixed(2); document.getElementById('s-' + k).value = sv[k]; document.getElementById('v-' + k).textContent = sv[k]; } drawLab(); }
+function drawLab() { const i = +pick.value, e = D.examples[i], base = pred(i);
+  const F = e.F.map((r) => { const t = sv.tsh, es = (T) => 0.6108 * Math.exp(17.27 * T / (T + 237.3));
+    return [r[0] * sv.pmul, r[1], r[2] + t, r[3] + t, r[4] + t, r[5], r[6] * es(r[3] + t) / es(r[3]), r[7]]; });
+  const a = Object.assign({}, e.attrs, { forest_frac: sv.forest, slope_mkm: e.attrs.slope_mkm * sv.slope, ksat_cmh: e.attrs.ksat_cmh * sv.ksat, reservoir_storage_frac: sv.res });
+  const p = runEx(e, a, F);
+  hydro(document.getElementById('labChart'), { n: nT, band: p.q, lines: [{ name: 'real basin', y: base.mean, c: '--muted', w: 1 }, { name: 'what-if', y: p.mean, c: '--river', w: 1.6 }] }, { W: 640, h: 300, label: 'what-if hydrograph' });
+  const sum = (x) => x.reduce((s, v) => s + v, 0);
+  const pin = e.F.slice(365, 365 + nT).reduce((s, r) => s + r[0], 0) * sv.pmul;
+  document.getElementById('labMetrics').innerHTML = `<span><em>runoff ratio</em> ${f2(sum(p.mean) / pin)} (real basin ${f2(sum(base.mean) / (pin / sv.pmul))})</span><span><em>peak day</em> ${f2(Math.max(...p.mean), 1)} mm/d (was ${f2(Math.max(...base.mean), 1)})</span><span><em>driest 10 % of days</em> ${f2(p.mean.slice().sort((x, y) => x - y)[Math.floor(nT * 0.1)])} mm/d</span>`; }
+
+// ---------- exam tables
+const rowsDef = [['flowcast', 'FlowCast (this, ungauged)', 'ungauged', true], ['nn_dev', 'NN regionalisation, dev donors (U-dev)', 'ungauged'], ['nn_k12', 'NN regionalisation, 12-fold (U-k12)', 'ungauged'],
+  ['gr4j', 'GR4J + snow, calibrated per basin', 'gauged'], ['nwm', 'NOAA NWM v3.0 retrospective', 'operational'], ['persist1', 'Persistence, 1-day lead', 'gauged forecast'], ['clim', 'Climatology (own day-of-year mean)', 'gauged']];
+let th = '<tr><th>Method</th><th>Protocol</th><th>NSE main</th><th>KGE main</th><th>FHV %</th><th>NSE&lt;0</th><th>NSE recent</th><th>KGE recent</th></tr>';
+for (const [k, lab, prot, us] of rowsDef) { const v = fl['val/' + k], r = fl['recent/' + k]; if (!v) continue;
+  th += `<tr class="${us ? 'us' : ''}"><td>${lab}</td><td>${prot}</td><td>${f2(v.nse)}</td><td>${f2(v.kge)}</td><td>${f2(v.fhv, 0)}</td><td>${Math.round(100 * v.frac_nse_lt0)} %</td><td>${r ? f2(r.nse) : '–'}</td><td>${r ? f2(r.kge) : '–'}</td></tr>`; }
+document.getElementById('examTbl').innerHTML = th;
+document.getElementById('examNote').innerHTML = S.examNote;
+const pk = S.exam.peaks, pb = pk.baselines_B;
+let pt = '<tr><th>Method</th><th>1990–99</th><th>2016–23</th></tr>';
+const prow = (lab, a, b, us) => `<tr class="${us ? 'us' : ''}"><td>${lab}</td><td>${a ? f2(a.median_abs_pct_err, 0) + ' / ' + f2(a.median_bias_pct, 0) : '–'}</td><td>${b ? f2(b.median_abs_pct_err, 0) + ' / ' + f2(b.median_bias_pct, 0) : '–'}</td></tr>`;
+pt += prow('FlowCast mean × 1.38', pk['val/mean'], pk['recent/mean'], true) + prow('FlowCast 95 % quantile × 1.38', pk['val/q95'], pk['recent/q95'], true)
+  + prow('Own calibration-years median (gauged)', pb['val/cal_median'], pb['recent/cal_median']) + prow('GR4J × 1.38 (gauged)', pb['val/gr4j_ratio'], pb['recent/gr4j_ratio'])
+  + prow('NWM daily × 1.38', pb['val/nwm_ratio'], pb['recent/nwm_ratio']) + prow('NWM hourly maximum', null, pb['recent/nwm_hourly']);
+document.getElementById('peakTbl').innerHTML = pt;
+let st = '<tr><th>Basins</th><th>n</th><th>FlowCast</th><th>U-dev</th><th>NWM</th><th>GR4J</th></tr>';
+for (const k in S.exam.strata) if (k.startsWith('val/')) { const r = S.exam.strata[k]; st += `<tr><td>${k.slice(4)}</td><td>${r.n}</td><td><b>${f2(r.flowcast)}</b></td><td>${f2(r.nn_dev)}</td><td>${f2(r.nwm)}</td><td>${f2(r.gr4j)}</td></tr>`; }
+document.getElementById('strataTbl').innerHTML = st;
+if (S.nowcast) { const E = S.nowcast.exam; let nt = '<tr><th>Lead</th><th>NSE 1990–99</th><th>persistence</th><th>NSE 2016–23</th><th>persistence</th></tr>';
+  for (const L of [1, 3, 7]) { const a = E['val/' + L], b = E['recent/' + L]; nt += `<tr><td>${L} day${L > 1 ? 's' : ''}</td><td><b>${f2(a.nse)}</b></td><td>${f2(a.nse_persist)}</td><td><b>${f2(b.nse)}</b></td><td>${f2(b.nse_persist)}</td></tr>`; }
+  nt += `<tr><td>NWM v3.0</td><td>${f2(fl['val/nwm'].nse)}</td><td></td><td>${f2(fl['recent/nwm'].nse)}</td><td></td></tr>`;
+  document.getElementById('nowTbl').innerHTML = nt; }
+
+// ---------- map
+const modes = [['fc', 'FlowCast NSE'], ['dU', 'FlowCast − U-dev'], ['dN', 'FlowCast − NWM']]; let mode = 'fc';
+const mm = document.getElementById('mapModes');
+for (const [k, lab] of modes) { const b = el('button', { class: 'chip', 'aria-pressed': String(k === mode) }, lab); b.onclick = () => { mode = k; [...mm.children].forEach((c) => c.setAttribute('aria-pressed', 'false')); b.setAttribute('aria-pressed', 'true'); drawMap(); }; mm.appendChild(b); }
+function colr(v, diverge) { if (v == null) return css('--rule');
+  if (!diverge) { const t = Math.max(0, Math.min(1, (v + 0.2) / 1.1)); return `hsl(${20 + t * 180},${55 + 10 * t}%,${48 - 8 * t}%)`; }
+  const t = Math.max(-1, Math.min(1, v / 0.4)); return t >= 0 ? `hsl(200,65%,${62 - 30 * t}%)` : `hsl(18,65%,${62 + 30 * t}%)`; }
+function drawMap() { const W = 1000, H = 560, x = (lon) => 20 + (lon + 125) / 58 * (W - 40), y = (lat) => 20 + (50 - lat) / 26 * (H - 40);
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="map of exam basins">`;
+  for (const r of D.map) { let v = r.fc, dv = false; if (mode === 'dU') { v = r.nn_dev == null ? null : r.fc - r.nn_dev; dv = true; } if (mode === 'dN') { v = r.nwm == null ? null : r.fc - r.nwm; dv = true; }
+    g += `<circle cx="${x(r.lon).toFixed(1)}" cy="${y(r.lat).toFixed(1)}" r="5.2" fill="${colr(v, dv)}" fill-opacity="0.9" stroke="${css('--panel')}" stroke-width="0.8"><title>${r.id}: FlowCast ${f2(r.fc)}, U-dev ${f2(r.nn_dev)}, NWM ${f2(r.nwm)}</title></circle>`; }
+  box_map.innerHTML = g + '</svg>';
+  const lg = document.getElementById('mapLegend');
+  if (mode === 'fc') lg.innerHTML = `<span>NSE</span><span style="color:${colr(-0.2)}">● ≤ −0.2</span><span style="color:${colr(0.35)}">● 0.35</span><span style="color:${colr(0.9)}">● ≥ 0.9</span>`;
+  else { const n = D.map.filter((r) => r[mode === 'dU' ? 'nn_dev' : 'nwm'] != null), w = n.filter((r) => r.fc > r[mode === 'dU' ? 'nn_dev' : 'nwm']).length;
+    lg.innerHTML = `<span style="color:${colr(0.4, 1)}">● FlowCast better</span><span style="color:${colr(-0.4, 1)}">● worse</span><span>FlowCast wins at ${w} of ${n.length} basins</span>`; } }
+const box_map = document.getElementById('mapChart');
+
+// ---------- ladder, recipe, limits, credits
+document.getElementById('ladder').innerHTML = S.rungs.map((r) => `<div class="rung ${r.kept ? 'k' : ''}"><div class="nm">${r.rung}</div><div class="ch">${r.change}</div>
+  <div class="nums">sim ${f2(r.sim)} vs ${f2(r.sim_inc)} · dev ${f2(r.dev)} <span class="pill ${r.kept ? 'kept' : 'rej'}">${r.kept ? 'kept' : 'rejected'}</span></div></div>`).join('');
+document.getElementById('howCols').innerHTML = S.how.map(([h, t]) => `<div><h3>${h}</h3><p>${t}</p></div>`).join('');
+document.getElementById('limitsList').innerHTML = S.limits.map((t) => `<li>${t}</li>`).join('');
+document.getElementById('credits').innerHTML = S.credits;
+
+function drawAll() { drawHero(); drawEx(); drawLab(); drawMap(); }
+pick.value = String(Math.max(0, D.examples.findIndex((e) => e.stratum === 'humid')));
+resetLab(); drawHero(); drawEx(); drawMap();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawAll);
+new MutationObserver(drawAll).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+</script>

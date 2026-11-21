@@ -110,6 +110,35 @@ checked on the providers' pages on 17 Nov 2026 where a page answered; otherwise 
 | [Nehasil AHU fault data](https://doi.org/10.17632/jkw85sm4v4.1), CTU Prague — Mendeley Data | CC BY 4.0 | No: FaultFinder's fresh exam (round 2); IDs, hashes and counts only |
 | [Wang et al. 2024](https://doi.org/10.6084/m9.figshare.25909813.v1) Korean office AHUs — figshare | CC BY 4.0 | No: downloaded and rejected as an exam (it repeats the Korean office data behind v1.0's noise model) |
 
+### The water platform (`shared/water`) and its models (FlowCast, SnowSense, BasinDetective, ReservoirPilot)
+
+**No share-alike source.** Every source below is public domain or attribution-only (CC BY 4.0, OGL v3, the
+Copernicus terms), so the example excerpts, instrument packs and labs carry attribution, not a share-alike licence,
+and all four models' weights are MIT like the code (checked 18 Nov 2026 against the licences recorded in WaterData's
+`DATA.md` and Caravan's `licenses/` folder). The excerpts are listed in each model's `examples/` README.
+
+None of WaterData's tables are in git (`shared/water/data/`, git-ignored; `splits.json` is tracked): `mlratchet data
+water` unpacks the release or rebuilds from the sources. The airGR and TUWmodel reference inputs and outputs that
+WaterSim's checks compare against (`shared/water/checks/ref/*.csv`) come from the examples of GPL-licensed R
+packages; they are not redistributed here (git-ignored, unpacked from the release).
+
+| Source | Terms | Bundled here |
+|---|---|---|
+| [Caravan v1.6](https://doi.org/10.5281/zenodo.15529786) — Kratzert, F., et al. (2023), "Caravan - A global community dataset for large-sample hydrology", *Scientific Data* 10, 61, [doi:10.1038/s41597-023-01975-w](https://doi.org/10.1038/s41597-023-01975-w) | CC BY 4.0; cite Caravan and each national dataset below | ERA5-Land forcing and CAMELS flow excerpts in FlowCast's and BasinDetective's `examples/`, instruments and labs |
+| CAMELS (US) streamflow and attributes inside Caravan — Newman, A., et al. (2015), HESS 19, 209-223, [doi:10.5194/hess-19-209-2015](https://doi.org/10.5194/hess-19-209-2015); Addor, N., et al. (2017), HESS 21, 5293-5313, [doi:10.5194/hess-21-5293-2017](https://doi.org/10.5194/hess-21-5293-2017) | CC BY 4.0 (as distributed in Caravan) | Flow excerpts for 7 exam basins (above) |
+| CAMELS-GB inside Caravan — Coxon, G., et al. (2020), ESSD 12, 2459 | Open Government Licence v3 (attribution) | No (out-of-domain exam basins, unused so far) |
+| CAMELS-AUS v2, CAMELS-CL, CAMELS-BR inside Caravan — Fowler et al. (2021, 2024); Alvarez-Garreton et al. (2018), HESS 22, 5817; Chagas et al. (2020), ESSD 12, 2075 | CC BY 4.0 | No (out-of-domain exam basins, unused so far) |
+| ERA5-Land (all water forcing, via Caravan) — Muñoz-Sabater, J., et al. (2021), ESSD 13, 4349, [doi:10.5194/essd-13-4349-2021](https://doi.org/10.5194/essd-13-4349-2021); Copernicus Climate Change Service | Copernicus terms: free use with attribution ("Contains modified Copernicus Climate Change Service information") | Inside the Caravan excerpts |
+| HydroATLAS / BasinATLAS attributes (via Caravan) — Linke, S., et al. (2019), *Scientific Data* 6, 283 | CC BY 4.0 | Static attributes inside FlowCast's examples; the upstream reservoir storage behind BasinDetective's regulation truth |
+| [USGS NWIS](https://waterdata.usgs.gov/) daily values, site information and annual peaks | U.S. public domain; acknowledge the U.S. Geological Survey | Flow excerpts (recent exam) where an example uses NWIS |
+| [NOAA National Water Model v3.0 retrospective](https://registry.opendata.aws/nwm-archive/) (AWS Open Data, s3://noaa-nwm-retrospective-3-0-pds) | U.S. public domain (NOAA Open Data Dissemination) | No (a baseline; rebuilt by `mlratchet data water --only nwm`) |
+| [NRCS SNOTEL](https://www.nrcs.usda.gov/wps/portal/wcc/home/) daily SWE, precipitation and temperature (Report Generator) | U.S. public domain; acknowledge USDA NRCS National Water and Climate Center | Three exam stations' records in SnowSense's `examples/`, instrument and lab |
+| [ResOpsUS v2](https://doi.org/10.5281/zenodo.6612040) — Steyaert, J., Condon, L., Turner, S., Voisin, N. (2022), "ResOpsUS, a dataset of historical reservoir operations in the contiguous United States", *Scientific Data* 9, 34 | CC BY 4.0; cite the paper | Six exam dams' inflow, storage and release in ReservoirPilot's `examples/`, instrument and lab |
+| GRanD v1.3 attributes (via ResOpsUS+CARS, [doi:10.5281/zenodo.15978041](https://doi.org/10.5281/zenodo.15978041)) — Lehner, B., et al. (2011), *Front. Ecol. Environ.* 9, 494 | CC BY 4.0 | Dam capacity and main use inside ReservoirPilot's examples (BasinDetective's regulation truth uses HydroATLAS's GRanD-derived reservoir volume) |
+| [California CDEC](https://cdec.water.ca.gov/) daily reservoir storage, inflow and outflow (California Department of Water Resources) | Public data of the State of California; no licence text found; credit DWR CDEC | No (ReservoirPilot's recent-exam scores only) |
+| CAMELS-531 basin list — neuralhydrology repository (Kratzert et al.) | BSD-3-Clause (repository) | No (a list of IDs) |
+| airGR 1.7.9 (Coron et al. 2017) and TUWmodel 1.1-1 (Parajka et al. 2007) example data and outputs | GPL (the R packages) | No (`checks/ref/*.csv`, git-ignored) |
+
 Every model card (`models/*/MODEL_CARD.md`) carries the full citation list, including the physics papers.
 
 ## StormNet

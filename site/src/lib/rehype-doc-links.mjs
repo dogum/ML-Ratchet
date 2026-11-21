@@ -13,6 +13,7 @@ export const DOC_ROUTES = {
   'vehicle-platform.md': 'vehicle',
   'grid-platform.md': 'grid',
   'building-platform.md': 'building',
+  'water-platform.md': 'water',
 };
 
 const REPO = 'https://github.com/dogum/ML-Ratchet/blob/main/';

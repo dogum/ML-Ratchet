@@ -1,0 +1,71 @@
+[
+ {
+  "id": "camels_01137500",
+  "name": "AMMONOOSUC RIVER AT BETHLEHEM JUNCTION, NH",
+  "attrs": {
+   "area_km2": 226.78,
+   "elev_mean_m": 739.5983,
+   "elev_range_m": 1335.3477,
+   "slope_mkm": 189.3798,
+   "forest_frac": 0.9756,
+   "soil_porosity": 0.4177,
+   "ksat_cmh": 3.3171,
+   "carbonate_frac": 0.0,
+   "reservoir_storage_frac": 0.0,
+   "irrigation_frac": 0.0,
+   "urban_frac": 0.0,
+   "elev_min_m": 390.3581,
+   "elev_max_m": 1725.7058
+  },
+  "start": "1994-10-01",
+  "end": "1996-09-30",
+  "forcing_csv": "camels_01137500_forcing.csv",
+  "obs_csv": "camels_01137500_obs.csv"
+ },
+ {
+  "id": "camels_07315700",
+  "name": "Mud Creek near Courtney, OK",
+  "attrs": {
+   "area_km2": 1485.8472,
+   "elev_mean_m": 289.3791,
+   "elev_range_m": 84.3247,
+   "slope_mkm": 17.7179,
+   "forest_frac": 0.0112,
+   "soil_porosity": 0.4412,
+   "ksat_cmh": 1.4718,
+   "carbonate_frac": 0.0,
+   "reservoir_storage_frac": 0.0,
+   "irrigation_frac": 0.0,
+   "urban_frac": 0.0,
+   "elev_min_m": 256.9771,
+   "elev_max_m": 341.3018
+  },
+  "start": "1994-10-01",
+  "end": "1996-09-30",
+  "forcing_csv": "camels_07315700_forcing.csv",
+  "obs_csv": "camels_07315700_obs.csv"
+ },
+ {
+  "id": "camels_12095000",
+  "name": "SOUTH PRAIRIE CREEK AT SOUTH PRAIRIE, WA",
+  "attrs": {
+   "area_km2": 205.823,
+   "elev_mean_m": 594.6782,
+   "elev_range_m": 1535.1441,
+   "slope_mkm": 196.9422,
+   "forest_frac": 0.8743,
+   "soil_porosity": 0.4349,
+   "ksat_cmh": 2.2302,
+   "carbonate_frac": 0.0,
+   "reservoir_storage_frac": 0.0,
+   "irrigation_frac": 0.0027,
+   "urban_frac": 0.0557,
+   "elev_min_m": 96.3561,
+   "elev_max_m": 1631.5002
+  },
+  "start": "1994-10-01",
+  "end": "1996-09-30",
+  "forcing_csv": "camels_12095000_forcing.csv",
+  "obs_csv": "camels_12095000_obs.csv"
+ }
+]

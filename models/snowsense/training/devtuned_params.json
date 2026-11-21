@@ -1,0 +1,21 @@
+{
+ "what": "Dev-tuned WaterSim snow parameters for the SnowSense exam baselines, frozen on 18 Nov 2026 before the exam was re-scored (added on import, seen exam). Run once by rescore_exam.py; not changed after.",
+ "energy_balance": {
+  "TT": 1.0614604996881019,
+  "SFCF": 1.0485472404386902,
+  "ALB_MIN": 0.5155480496521225,
+  "ALB_DECAY": 1.3969946378306701,
+  "TURB": 0.1986390265521227,
+  "GHEAT": 0.060245900028670946
+ },
+ "energy_balance_source": "Per-parameter medians over the dev stations' own SnowSense calibrations (calib_prior.py, WY<=2010 SWE, DE fits), as shipped in twin_r6.json 'median' (eb_TT .. eb_GHEAT; 38-station twin table). These are the calibrated parameters of the twins the released network was checked against.",
+ "degree_day": {
+  "TT": 0.9928226123847332,
+  "TTI": 0.8246633805676595,
+  "CFMAX": 3.5735744150620974,
+  "SFCF": 1.0117598448253973
+ },
+ "degree_day_source": "Per-station degree-day medians were not shipped (calib_dev.json is missing), so these are the dev-fitted prior's means back-transformed (prior_p4.json: TT, TTI arithmetic means; CFMAX, SFCF geometric means, i.e. exp of the log-space mean) over the 36 dev calibrations with NSE > 0.5. For a roughly symmetric (log-)distribution they approximate the medians.",
+ "not_set": "Every other parameter (EB: TTI, CWH, ALB_MAX, Z0, CANOPY; DD: CFR, CWH) comes from WaterSim's default + attribute-transfer layer exactly as in the calibrations, the twins and the exam's default baselines (evalset.physics with spec lat/elev only), e.g. CANOPY 0.535, TTI 2.0.",
+ "inputs": "The station's own P, T_mean, T_min, T_max after SnowSense's gap handling (common.load_station), Hargreaves radiation, one band at the station, continuous run WY2011-2025 with a one-year spin-up from WY2010: the same path as the shipped default baselines (evalset.physics)."
+}

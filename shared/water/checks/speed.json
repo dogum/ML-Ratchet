@@ -1,0 +1,103 @@
+{
+ "what": "wall time, single thread",
+ "cpu": "model name\t: Intel(R) Xeon(R) Processor @ 2.10GHz",
+ "target": ">= 10,000x real time (a basin-decade in well under 1 s)",
+ "single": {
+  "hbv_degree_day": {
+   "simulate_10y_s": 0.05121176699958596,
+   "simulate_10y_no_labels_s": 0.011363700999936555,
+   "core_s_per_basin_year": 8.12280416842744e-05,
+   "n_bands": 5,
+   "x_realtime_simulate": 6162177532.412646,
+   "x_realtime_core": 388506226983.3041
+  },
+  "hbv_energy_balance": {
+   "simulate_10y_s": 0.049899634000212245,
+   "simulate_10y_no_labels_s": 0.014160487000481226,
+   "core_s_per_basin_year": 0.000192674208316627,
+   "n_bands": 5,
+   "x_realtime_simulate": 6324214722.670265,
+   "x_realtime_core": 163787360413.80536
+  },
+  "gr4j_degree_day": {
+   "simulate_10y_s": 0.06659714200031885,
+   "simulate_10y_no_labels_s": 0.014469981000729604,
+   "core_s_per_basin_year": 0.0001461112083234184,
+   "n_bands": 5,
+   "x_realtime_simulate": 4738581724.700575,
+   "x_realtime_core": 215983430443.9327
+  },
+  "gr4j_energy_balance": {
+   "simulate_10y_s": 0.06536770599996089,
+   "simulate_10y_no_labels_s": 0.01245478200053185,
+   "core_s_per_basin_year": 0.0002085587500459951,
+   "n_bands": 5,
+   "x_realtime_simulate": 4827704983.255628,
+   "x_realtime_core": 151312759560.74896
+  },
+  "sacsma_degree_day": {
+   "simulate_10y_s": 0.04688499700023385,
+   "simulate_10y_no_labels_s": 0.011824092000097153,
+   "core_s_per_basin_year": 0.00016129366667883005,
+   "n_bands": 5,
+   "x_realtime_simulate": 6730852515.537667,
+   "x_realtime_core": 195653063445.06314
+  },
+  "sacsma_energy_balance": {
+   "simulate_10y_s": 0.05113623099987308,
+   "simulate_10y_no_labels_s": 0.013245895999716595,
+   "core_s_per_basin_year": 0.0002618395416599621,
+   "n_bands": 5,
+   "x_realtime_simulate": 6171280006.94426,
+   "x_realtime_core": 120522667431.88191
+  },
+  "vic_lite_degree_day": {
+   "simulate_10y_s": 0.05160333099956915,
+   "simulate_10y_no_labels_s": 0.01342944800035184,
+   "core_s_per_basin_year": 0.00014706858333587056,
+   "n_bands": 5,
+   "x_realtime_simulate": 6115419177.158056,
+   "x_realtime_core": 214577439206.91586
+  },
+  "vic_lite_energy_balance": {
+   "simulate_10y_s": 0.05029259499951877,
+   "simulate_10y_no_labels_s": 0.014736410000296019,
+   "core_s_per_basin_year": 0.00027148941664260445,
+   "n_bands": 5,
+   "x_realtime_simulate": 6274800495.0434475,
+   "x_realtime_core": 116238785254.53987
+  }
+ },
+ "batch": {
+  "hbv_1000_paramsets_10y": {
+   "wall_s": 1.221772062999662,
+   "ms_per_basin_decade": 1.221772062999662,
+   "x_realtime": 284123045953.20905
+  },
+  "gr4j_1000_paramsets_10y": {
+   "wall_s": 1.5252242070000648,
+   "ms_per_basin_decade": 1.5252242070000648,
+   "x_realtime": 227595128904.2092
+  },
+  "sacsma_1000_paramsets_10y": {
+   "wall_s": 3.8619390889998613,
+   "ms_per_basin_decade": 3.8619390889998613,
+   "x_realtime": 89885829890.15974
+  },
+  "vic_lite_1000_paramsets_10y": {
+   "wall_s": 3.098890043999745,
+   "ms_per_basin_decade": 3.098890043999745,
+   "x_realtime": 112018688972.8923
+  },
+  "hbv_200_basins_10y_simulate_many": {
+   "wall_s": 1.2329262040002504,
+   "ms_per_basin_decade": 6.164631020001252
+  },
+  "hbv_50_basins_full_simulate_with_reservoirs_muskingum": {
+   "wall_s": 6.087175090000528,
+   "ms_per_basin_decade": 121.74350180001056
+  }
+ },
+ "generated": "2026-11-18 13:30 UTC",
+ "python": "3.13.18"
+}
