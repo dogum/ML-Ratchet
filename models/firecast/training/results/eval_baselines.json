@@ -1,0 +1,72 @@
+{
+ "dev": {
+  "persist": {
+   "n_fire_days": 535,
+   "n_fires": 40,
+   "ap_median": 0.0037865748709122204,
+   "ap_mean": 0.013327514975962742,
+   "f1_median": 0.0,
+   "f1_mean": 0.0,
+   "dice_total_median": 0.9769918235405971,
+   "dice_total_mean": 0.8974771229514273,
+   "dice_new_median": 0.0,
+   "dice_new_mean": 0.0,
+   "log10_area_ratio_median": -2.155336037465062,
+   "log10_area_ratio_mean": -2.156653848589397,
+   "abs_area_err_km2_median": 1.1502,
+   "ap_mean_of_fires": 0.019718373240064656,
+   "f1_mean_of_fires": 0.0
+  },
+  "clim": {
+   "n_fire_days": 535,
+   "n_fires": 40,
+   "ap_median": 0.12351627750649966,
+   "ap_mean": 0.1845525058487853,
+   "f1_median": 0.0,
+   "f1_mean": 0.016708210490493692,
+   "dice_total_median": 0.9769533445756042,
+   "dice_total_mean": 0.8968414095030132,
+   "dice_new_median": 0.0,
+   "dice_new_mean": 0.016708210490493692,
+   "log10_area_ratio_median": -1.8976270912904414,
+   "log10_area_ratio_mean": -1.7419880155075673,
+   "abs_area_err_km2_median": 1.2230999999999999,
+   "ap_mean_of_fires": 0.2206170538416643,
+   "f1_mean_of_fires": 0.005827358285634425
+  },
+  "grow_prev": {
+   "n_fire_days": 535,
+   "n_fires": 40,
+   "ap_median": 0.1123251080121883,
+   "ap_mean": 0.1711844115166883,
+   "f1_median": 0.0348245379051701,
+   "f1_mean": 0.11986952340563325,
+   "dice_total_median": 0.9431524547803618,
+   "dice_total_mean": 0.8659496565452133,
+   "dice_new_median": 0.0348245379051701,
+   "dice_new_mean": 0.11986952340563325,
+   "log10_area_ratio_median": -0.3010299956639812,
+   "log10_area_ratio_mean": -0.5779596364525091,
+   "abs_area_err_km2_median": 1.7171999999999998,
+   "ap_mean_of_fires": 0.20834309702460702,
+   "f1_mean_of_fires": 0.1231654477117589
+  },
+  "fl_prev": {
+   "n_fire_days": 535,
+   "n_fires": 40,
+   "ap_median": 0.21508774925037602,
+   "ap_mean": 0.25207336483488896,
+   "f1_median": 0.15577020843924758,
+   "f1_mean": 0.1815796162652854,
+   "dice_total_median": 0.9621451104100947,
+   "dice_total_mean": 0.885067674876567,
+   "dice_new_median": 0.15577020843924758,
+   "dice_new_mean": 0.1815796162652854,
+   "log10_area_ratio_median": -0.40301953420131265,
+   "log10_area_ratio_mean": -0.48920950010644443,
+   "abs_area_err_km2_median": 1.0206,
+   "ap_mean_of_fires": 0.26951183718500865,
+   "f1_mean_of_fires": 0.17835952808937264
+  }
+ }
+}

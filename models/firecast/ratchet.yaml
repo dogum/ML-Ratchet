@@ -1,0 +1,30 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json (written by training/src/ratchet.py decide; r0 is the
+# base). Per-rung scores on the frozen sets and on dev: training/results/eval_<rung>.json.
+model: firecast
+ladders:
+  - name: "FireCast v1.0 (FireSim physics versions p0 and p1, 17-19 Nov 2026)"
+    objective: "Mean AP over the growth fire-days of a frozen simulated set, exam mode F (fire + gridMET, no LANDFIRE): newly burned 90 m cells within 10 km of the burned area, ranked by the network's raw probability (training/src/evaluate.py). One frozen set per physics version: p0 (FireSim as wrapped by simbank.py: 113 fires, 495 fire-days) and p1 (p0 + the fire-age ROS factor: 149 fires, 562 fire-days)."
+    rule: "Keep if the sim mean AP (mode F) on the current frozen set beats the incumbent's on that same set by more than 0.01 AND the dev mean AP (mode F, 40 real dev fires, 535 growth fire-days) is at least 95 % of the incumbent's."
+    margin: 0.01
+    dev_gate: "Dev mean AP (mode F; 40 FEDS-MTBS dev fires, 535 growth fire-days, scored like the exam) no more than 5 % below the incumbent's"
+    frozen_sets: [p0, p1]
+    scored_on: p1
+    note: >-
+      The p1 frozen set was built when the p1 physics arrived, and the incumbent r0 was re-scored on it before r1 was
+      decided (0.573; on its own p0 set r0 scored 0.599). r1, r2 and r3 were scored on p1 only: no rung after r0 has
+      a p0 score in the shipped files, although ratchet.py's docstring says both sets are re-scored. All decisions
+      sit within 0.014 AP of each other on p1, and the card calls margins of ±0.01 noise-level (only three trained
+      rungs fit on 2 shared cores); no interval on a rung difference can be computed from the shipped files (they
+      hold means, not per-fire-day scores). r1 was the best rung on dev F and was rejected on the sim margin
+      (+0.009); r3 was better on sim and dev than r2 and was rejected on the margin (+0.001). Dev data fed physics
+      calibration (the FEDS emulator, the weather operator, the p1 fire-age factor from the p0 twin test) and gates
+      every rung, so the gate is partly in-sample. configs/smoke.json was a 2-step plumbing test, not a rung.
+      Calibration (widen-only temperature T ≥ 1 and offset b, then the yes/no threshold) was fitted on the 535 dev
+      fire-days after r2 was chosen; the AP columns are rank-based and do not change with it.
+    columns_source: "Sim: the rung's frozen set, its mean AP in mode L (with LANDFIRE) and its mean F1 at 0.5 on that set; dev (40 fires, 535 growth fire-days): mean AP in modes F and L, mean F1 at 0.5 (uncalibrated) in modes F and L, median log10 new-area ratio and median total-area Dice in mode F (training/ratchet.json, eval_*.json)"
+    columns: ["Set", "Incumbent on it", "Sim AP L", "Sim F1 @0.5", "Dev AP", "Dev AP L", "Dev F1 @0.5", "Dev F1 L", "Dev log10 area", "Dev Dice total"]
+    rungs:
+      - { id: r0, change: "Base: p0 bank (668 fires, 2,710 fire-days: 2-8-day FireSim fires on real LANDFIRE landscapes with real HRRR weather, randomised ROS factor, night slow-down, containment, spotting, observed through firesim.observe and the dev-fitted FEDS emulator), U-Net 374k weights, 1,800 steps × 12 crops of 128 cells, lr 2e-3, landscape dropout 0.5", sim: 0.599, decision: kept, why: "First rung (base). Sim AP 0.599 on p0; re-scored on p1 0.573. Dev AP 0.303 against the best real baseline's 0.252 (fl_prev, dev).", metrics: ["p0", "–", 0.606, 0.359, 0.303, 0.291, 0.158, 0.168, -0.60, 0.971] }
+      - { id: r1, change: "p1 physics: a fire-age ROS factor fitted to the p0 dev twin test (×2.6 on the first day down to ×0.55 after day 10; the p0 first-day boost folded in), init r0, 1,200 steps on the p1 bank (415 fires), lr 1e-3", sim: 0.582, decision: rejected, why: "Sim 0.582 vs r0's 0.573 on p1 (+0.009, needs > +0.01): failed. Dev 0.325 vs 0.303 (×1.074) passed; the best dev AP of all four rungs.", metrics: ["p1", 0.573, 0.593, 0.354, 0.325, 0.310, 0.176, 0.169, -0.48, 0.971] }
+      - { id: r2, change: "init r0, 1,200 steps on the p0 + p1 banks together (1,083 fires, 4,402 fire-days), lr 1e-3", sim: 0.587, decision: released, why: "Sim 0.587 vs r0's 0.573 on p1 (+0.014) passed; dev 0.316 vs 0.303 (×1.046) passed. Released as v1.0, with the dev calibration T 1.44, b −1.23, threshold 0.10 (training/results/cal_r2_F.json).", metrics: ["p1", 0.573, 0.596, 0.370, 0.316, 0.308, 0.181, 0.176, -0.43, 0.970] }
+      - { id: r3, change: "Longer training: init r2, +1,000 steps on the p0 + p1 banks, lr 5e-4", sim: 0.588, decision: rejected, why: "Sim 0.588 vs r2's 0.587 on p1 (+0.001, needs > +0.01): failed. Dev 0.327 vs 0.316 (×1.034) passed.", metrics: ["p1", 0.587, 0.598, 0.375, 0.327, 0.314, 0.188, 0.175, -0.42, 0.970] }
