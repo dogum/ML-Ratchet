@@ -55,11 +55,12 @@ def _rowcol_from_xy(ls, x, y):
 
 
 def parse_ignition(ign, ls, start):
-    """Returns (cells (flat indices), times (h since start), burned_mask or None)."""
+    """Returns (cells (flat indices), times (h since start), mask_time or None). mask_time: for cells inside a mask or
+    polygon ignition, the hour (since start) it ignites; +inf elsewhere."""
     ny, nx = ls.shape
     items = ign if isinstance(ign, list) else [ign]
     cells, times = [], []
-    mask_all = np.zeros((ny, nx), bool)
+    mask_t = np.full((ny, nx), np.inf)
     for it in items:
         if isinstance(it, np.ndarray) and it.dtype == bool:
             it = {'mask': it}
@@ -95,7 +96,7 @@ def parse_ignition(ign, ls, start):
             it = dict(it, mask=inside | it.get('mask', np.zeros((ny, nx), bool)))
         if 'mask' in it:
             m = np.asarray(it['mask'], bool)
-            mask_all |= m
+            mask_t[m] = np.minimum(mask_t[m], th)
             from scipy.ndimage import binary_erosion
             edge = m & ~binary_erosion(m, structure=np.ones((3, 3)), border_value=0)
             r, c = np.nonzero(edge)
@@ -104,7 +105,7 @@ def parse_ignition(ign, ls, start):
             if 0 <= r < ny and 0 <= c < nx:
                 cells.append(r * nx + c)
                 times.append(th)
-    return np.array(cells, np.int64), np.array(times, float), (mask_all if mask_all.any() else None)
+    return np.array(cells, np.int64), np.array(times, float), (mask_t if np.isfinite(mask_t).any() else None)
 
 
 def _zone_weather(weather, ls):
@@ -270,7 +271,7 @@ def simulate(landscape, weather, ignition, start, end, dt='1h', spread='rotherme
     ny, nx = ls.shape
     offset_h = (pr['start'] - pr['t0']) / pd.Timedelta(hours=1)     # simulation clock starts at `start`
     t_end = (pr['end'] - pr['start']) / pd.Timedelta(hours=1)
-    cells, times, burned0 = parse_ignition(ignition, ls, pr['start'])
+    cells, times, mask_t = parse_ignition(ignition, ls, pr['start'])
     stn = _st.build(nst)
     crown_mode = 0 if crown in (None, 'none', False) else (2 if P['crown_spread'] == 'cruz2005' else 1)
     wl = {'none': R.WL_NONE, 'rothermel': R.WL_ROTHERMEL, 'andrews2013': R.WL_ANDREWS}[P['wind_limit']]
@@ -299,10 +300,12 @@ def simulate(landscape, weather, ignition, start, end, dt='1h', spread='rotherme
         raise RuntimeError('heap overflow in the MTT solver (please report)')
     arr = arr.reshape(ny, nx) - offset_h
     arr[~np.isfinite(arr)] = np.nan
-    if burned0 is not None:
-        # The whole ignition mask is burned at the start (parse_ignition seeds only its edge, so the kernel would
-        # otherwise give the interior positive arrival times). PR #7 review, 21 Nov 2026.
-        arr[burned0] = np.minimum(np.nan_to_num(arr[burned0], nan=0.0), 0.0)
+    if mask_t is not None:
+        # Every cell of a mask or polygon ignition burns at that ignition's time (parse_ignition seeds only the edge,
+        # so the kernel would otherwise give the interior later arrival times); ignitions after the end leave their
+        # cells as the kernel set them. PR #7 review, 21 Nov 2026.
+        m = mask_t <= t_end
+        arr[m] = np.fmin(arr[m], mask_t[m])
     res = _postprocess(arr, ftype.reshape(ny, nx), cfb.reshape(ny, nx), rosd.reshape(ny, nx),
                        roshead.reshape(ny, nx), hpa.reshape(ny, nx), cfl.reshape(ny, nx), ls.res)
     rasters = dict(arrival_time=arr, **res, phi_w=phiw.reshape(ny, nx), phi_s=phis.reshape(ny, nx),

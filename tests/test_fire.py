@@ -296,6 +296,13 @@ def test_mask_ignition_interior_is_burned_at_start():
                     return_perimeters=False)["rasters"]["arrival_time"]
     assert np.all(a[m] <= 0.0)
     assert np.isfinite(a[~m]).any()
+    # a scheduled mask ignition keeps its time; one scheduled after the end does not burn
+    late = fs.simulate(ls, w, {"mask": m, "time": 3.0}, start, start + pd.Timedelta(hours=6), rng=1,
+                       return_perimeters=False)["rasters"]["arrival_time"]
+    assert np.allclose(late[m], 3.0)
+    after = fs.simulate(ls, w, {"mask": m, "time": 10.0}, start, start + pd.Timedelta(hours=6), rng=1,
+                        return_perimeters=False)["rasters"]["arrival_time"]
+    assert np.isnan(after[m]).all()
 
 
 def test_hourly_from_daily_keeps_every_hour_at_half_hour_offsets():

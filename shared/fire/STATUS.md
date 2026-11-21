@@ -142,3 +142,13 @@ integrated time. Simplex is on by default (`method='mtt'`), so this touches ordi
 the dev replays. Like U1 it is a physics change: the fix (integrate the simplex path through the hourly forcing, or
 reject updates that leave the current step) belongs in physics p2 with U1, with every frozen set rebuilt and every
 rung re-scored. Not measured here; the analytic checks (constant weather) cannot see it.
+
+## 2026-11-21 — PR #7 review: scheduled mask ignitions; U10, generated weather flags on UTC dates (not fixed)
+
+- The interior fix above set every mask cell to 0, even for a mask or polygon ignition with a later `time`.
+  `parse_ignition` now returns each mask cell's ignition hour, and the interior takes that hour (cells of an
+  ignition after the end are left as the kernel set them). Masks at time 0, the replay case, are unchanged.
+- U10: `generate_weather` maps its daily event and wet-day flags to hours by UTC date, but `hourly_from_daily` lays
+  each local solar day out in UTC, so at lon = -120 the last 8 hours of a local day take the next day's flags (wind
+  persistence, direction swing, cloud). Not fixed: it changes the default weather generator that every simulated
+  bank was drawn from, so it goes with U1 and U9 into the next physics version.
