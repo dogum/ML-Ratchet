@@ -129,7 +129,10 @@ def hourly_from_daily(daily, lat, lon, t_peak_lst=15.0, wind_amp=0.45, rh_from='
             t_utc = pd.Timestamp(day) + pd.Timedelta(hours=h - off)
             rows.append((t_utc, T, rh, max(u, 0.0), float(wd.iloc[i]), p))
     out = pd.DataFrame(rows, columns=['time', 'T', 'RH', 'wind_speed', 'wind_dir', 'precip']).set_index('time')
-    out.index = pd.DatetimeIndex(out.index).tz_localize('UTC').round('h')
+    # Round to the hour with ties going up: for longitudes whose solar offset ends in half an hour (lon = -112.5),
+    # pandas' round-half-to-even sent alternate hours onto the same timestamp and the dedup below dropped half the
+    # series (PR #7 review, 21 Nov 2026). Other longitudes are unchanged.
+    out.index = (pd.DatetimeIndex(out.index).tz_localize('UTC').round('s') + pd.Timedelta(seconds=1)).round('h')
     out = out[~out.index.duplicated()]
     if 'srad' in d:
         cs = clear_sky_ghi(out.index, lat, lon)

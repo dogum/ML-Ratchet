@@ -235,22 +235,33 @@ def random_weather(start=None, hours=72, rng=None, fire_ids=None, spinup_h=72, m
         ix = int(rng.integers(0, g['lat'].shape[1]))
         hx, hy = _hrrr_xy(W)
         x, y = float(hx[iy, ix]), float(hy[iy, ix])
-        t = pd.DatetimeIndex(np.asarray(g['time']).astype('datetime64[ns]'))[k0:k0 + need]
+        tall = pd.DatetimeIndex(np.asarray(g['time']).astype('datetime64[ns]'))
+        # With `start`, the shift is whole days (keeps the real diurnal phase), so the requested window can begin up to
+        # 23 h before or after the sampled one: read a day either side and trim after shifting (PR #7 review, 21 Nov
+        # 2026; before, the series could end up to 23 h short of the requested horizon).
+        a, b = (k0, k0 + need) if start is None else (max(k0 - 24, 0), min(k0 + need + 24, nt))
+        t = tall[a:b]
         try:
             fd.guard.check_weather((x - 1500, y - 1500, x + 1500, y + 1500), t[0], t[-1])
         except fd.guard.ExamLeakError:
             continue
-        df = pd.DataFrame({k: np.asarray(g[k])[k0:k0 + need, iy, ix] for k in
+        df = pd.DataFrame({k: np.asarray(g[k])[a:b, iy, ix] for k in
                            ('T', 'RH', 'wind_speed', 'wind_dir', 'precip', 'srad', 'cloud', 'gust') if k in g}, index=t)
         if df[['T', 'RH', 'wind_speed', 'wind_dir']].isna().mean().max() > 0.05:
             continue
         w = _contract(df, grid_convergence_deg(x, y))
-        real_t0 = w.index[0]
+        real_t0 = w.index[k0 - a]
         if start is not None:
             s = pd.Timestamp(start)
             s = s.tz_localize('UTC') if s.tz is None else s
-            shift = (s - pd.Timedelta(hours=spinup_h)).normalize() - real_t0.normalize()
+            s0 = s - pd.Timedelta(hours=spinup_h)
+            shift = s0.normalize() - real_t0.normalize()
             w.index = w.index + shift
+            before = w.index[w.index <= s0]
+            if len(before) == 0 or w.index[-1] < s0 + pd.Timedelta(hours=need):
+                continue
+            w = w[(w.index >= before[-1]) & (w.index <= s0 + pd.Timedelta(hours=need))]
+            real_t0 = w.index[0] - shift
         w.attrs.update(source_fire=fid, hrrr_cell=(iy, ix), real_start=str(real_t0), lonlat=lonlat_of(x, y),
                        generator='real', spinup_h=spinup_h)
         return w

@@ -121,3 +121,14 @@ a later interior arrival cannot make an outside cell earlier. What changes: the 
 counts burned cells by arrival time inside the initial mask (early area series, early perimeters). Replays and
 FirePilot scenarios that score only new burn outside the mask are not affected. The shipped results were not
 re-run. Test: tests/test_fire.py::test_mask_ignition_interior_is_burned_at_start.
+
+## 2026-11-21 — PR #7 review: two weather generator fixes
+
+- `hourly_from_daily` rounded UTC times to the hour with pandas' round-half-to-even. At longitudes whose solar
+  offset ends in half an hour (lon = -112.5, -97.5) every time fell on :30, alternate hours merged, and the dedup
+  dropped half the series (48 of 96 hours). Ties now round up; other longitudes give identical output.
+- `realdata.random_weather(start=...)` shifts the real window by whole days to keep its diurnal phase, so the result
+  could start after the spin-up start or end short of the horizon (one case: started 19:00 for an 18:00 request).
+  It now reads a day either side, shifts, and trims to the requested window; without `start` nothing changes.
+Training banks built with the old code are not re-built here. Tests: tests/test_fire.py
+(test_hourly_from_daily_keeps_every_hour_at_half_hour_offsets, test_real_weather_covers_the_requested_window).

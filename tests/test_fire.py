@@ -298,6 +298,30 @@ def test_mask_ignition_interior_is_burned_at_start():
     assert np.isfinite(a[~m]).any()
 
 
+def test_hourly_from_daily_keeps_every_hour_at_half_hour_offsets():
+    """PR #7 review, 21 Nov 2026: at lon = -112.5 every UTC time fell on :30 and round-half-to-even merged alternate
+    hours, so half the series was dropped."""
+    import pandas as pd
+    from firesim import weather as W
+    d = pd.DataFrame({"tmmx": [30.0] * 4, "tmmn": [12.0] * 4, "rmin": [15.0] * 4, "rmax": [60.0] * 4, "vs": [4.0] * 4,
+                      "th": [250.0] * 4, "pr": [0.0] * 4}, index=pd.date_range("2021-08-01", periods=4, freq="D"))
+    for lon in (-112.5, -110.0, -97.5):
+        h = W.hourly_from_daily(d, 40.0, lon)
+        assert len(h) == 96 and (pd.Series(h.index).diff().dropna() == pd.Timedelta(hours=1)).all(), lon
+
+
+@pytest.mark.skipif(not (HAVE_SHAPELY and HAVE_TABLES), reason="needs firedata (shapely) and the dev HRRR packages")
+def test_real_weather_covers_the_requested_window():
+    """PR #7 review, 21 Nov 2026: with `start`, a whole-day shift could leave the series starting after the spin-up
+    start or ending before the horizon."""
+    import pandas as pd
+    from firesim import realdata as R
+    s = pd.Timestamp("2020-08-10 18:00", tz="UTC")
+    for seed in range(4):
+        w = R.random_weather(start=s, hours=72, rng=seed)
+        assert w.index[0] <= s - pd.Timedelta(hours=72) and w.index[-1] >= s + pd.Timedelta(hours=72), seed
+
+
 def test_u1_setup_is_meaningful(u1):
     """Without a line the fire leaves the ring; a ring of non-burnable fuel holds it (the corner rule works there)."""
     assert u1["no_line"] > 100 and u1["nonburnable"] == 0
