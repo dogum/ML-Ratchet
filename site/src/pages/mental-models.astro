@@ -321,6 +321,26 @@ const toc = [
         <p class="verdict">The difference between the two columns becomes a measurement in its own right: how much reality adds on top of physics, per fleet and per cycle.</p>
       </div>
     </div>
+    <div class="frame pad pw reveal" id="prior-wars">
+      <p class="kicker">Measured · method experiment C1 · 18–19 Nov 2026</p>
+      <h3 class="display h3">Prior Wars: the simulator against a generic prior</h3>
+      <p class="small">TabPFN-v2 also learned only from synthetic data, but from random tables, not from physics, and it predicts by reading rows in context. On six of the collection’s real exams it was set against each released model (P, 0 real labels). Each model’s protocol was pre-registered and hashed before its exam was predicted, and each exam was scored once.</p>
+      <ul class="ticks">
+        <li><b>Given each model’s real dev rows, TabPFN wins on 3, ties on 2 and loses on 1.</b> It wins on BuildingDetective RECS and BDG2 and on PlantDetective, ties on GridPulse and EnergyNet, and loses on BasinDetective.</li>
+        <li><b>With 0 real labels, P is the best arm on 5 of 6.</b> Given 1,024 of P’s own simulated rows instead of dev rows, TabPFN loses to P on 4 exams.</li>
+        <li><b>The labels TabPFN needs to reach P:</b> about 20 on BDG2 and 40 on RECS and PlantDetective. EnergyNet takes its whole capped dev set (1,152 trips). On GridPulse (8 dev rows) and BasinDetective (52 basins) it never gets there.</li>
+      </ul>
+      <ul class="ticks wait">
+        <li><b>Not a fair fight, by design.</b> TabPFN sees k real labels and P sees none. The result says what the dev gate’s labels are worth as training context, not which method is better in general.</li>
+        <li><b>The TabPFN arms are a lower bound.</b> TabPFN-v2, not 2.5 or later; n_estimators = 2, one CPU core, contexts of at most 1,024–2,560 rows. P for PlantDetective and EnergyNet is their v1.0 release.</li>
+      </ul>
+      <div class="next">
+        <a class="btn" href={url('experiments/prior-wars/')}>The Prior Wars page <span class="arrow">→</span></a>
+        <a class="btn ghost" href={ghFile('docs/experiments/prior-wars.md')}>Write-up</a>
+        <a class="btn ghost" href={ghFile('experiments/priorwars/README.md')}>Pre-registration and scripts</a>
+      </div>
+      <p class="note faint">Built with PriorLabs-TabPFN. TabPFN-v2 weights: Prior Labs License 1.1 (Apache 2.0 plus an attribution clause); not redistributed here.</p>
+    </div>
   </section>
 
   <section class="sec wrap" id="neighbours">
@@ -371,7 +391,8 @@ const toc = [
       Counts and EnergyNet’s exam numbers are read at build time. Section 02’s other approaches are general practice, with
       references. Section 06’s lens names are this page’s framing. Section 07’s stops 3 to 6, its signals and its recipe are
       possible directions; nothing in the repository commits to them. Reading RoadSim’s 700 W on-road term as a discrepancy
-      term is an interpretation of CALIBRATION.md rung C6.
+      term is an interpretation of CALIBRATION.md rung C6. Section 07’s Prior Wars counts come from
+      <code>experiments/priorwars/results.json</code>; <code>tests/test_priorwars.py</code> checks them.
     </p>
     <div class="next">
       <a class="btn" href={url('method/')}>The method, step by step <span class="arrow">→</span></a>
@@ -525,6 +546,8 @@ const toc = [
   .sources { padding-top: 70px; }
   .sources p.small { max-width: 90ch; margin-top: 8px; }
   .next { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .pw { margin-top: 18px; scroll-margin-top: 84px; }
+  .pw .ticks.wait { margin-top: 14px; }
 
   @media (max-width: 960px) {
     .grid2 { grid-template-columns: minmax(0, 1fr); }

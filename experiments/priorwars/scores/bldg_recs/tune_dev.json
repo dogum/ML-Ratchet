@@ -1,0 +1,99 @@
+{
+ "n_dev": 1848,
+ "grid": {
+  "raw": {
+   "headline": 31.29350651511037,
+   "reps": [
+    {
+     "scores": {
+      "floor area": {
+       "mape": 28.506080927766277
+      },
+      "heating fuel vs electric": {
+       "acc": 91.36490250696379
+      },
+      "vintage": {
+       "mae": 20.60537653545882
+      }
+     },
+     "headline": 31.429410789598755
+    },
+    {
+     "scores": {
+      "floor area": {
+       "mape": 28.771146493686405
+      },
+      "heating fuel vs electric": {
+       "acc": 91.08635097493037
+      },
+      "vintage": {
+       "mae": 20.700924221271748
+      }
+     },
+     "headline": 31.157602240621983
+    }
+   ]
+  },
+  "norm": {
+   "headline": 31.35844854715306,
+   "reps": [
+    {
+     "scores": {
+      "floor area": {
+       "mape": 28.548021830698023
+      },
+      "heating fuel vs electric": {
+       "acc": 91.30919220055709
+      },
+      "vintage": {
+       "mae": 20.681194955973012
+      }
+     },
+     "headline": 31.380585184929537
+    },
+    {
+     "scores": {
+      "floor area": {
+       "mape": 28.803699301023993
+      },
+      "heating fuel vs electric": {
+       "acc": 91.47632311977716
+      },
+      "vintage": {
+       "mae": 20.73503877656526
+      }
+     },
+     "headline": 31.336311909376583
+    }
+   ]
+  }
+ },
+ "rule": "choose prep with the higher dev-CV headline; raw (TabPFN default) unless norm wins by > 0.01",
+ "P_on_dev": {
+  "floor area": {
+   "mape": 32.91174445675002
+  },
+  "heating fuel vs electric": {
+   "acc": 86.90807799442896
+  },
+  "vintage": {
+   "mae": 21.714642161200302
+  }
+ },
+ "P_on_dev_headline": 26.99816676883947,
+ "C_dev_cv": {
+  "scores": {
+   "floor area": {
+    "mape": 29.21619069911786
+   },
+   "heating fuel vs electric": {
+    "acc": 91.03064066852367
+   },
+   "vintage": {
+    "mae": 21.098184113437966
+   }
+  },
+  "headline": 30.907224984702907
+ },
+ "chosen_prep": "norm"
+}

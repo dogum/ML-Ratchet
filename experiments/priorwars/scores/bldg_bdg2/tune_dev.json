@@ -1,0 +1,99 @@
+{
+ "n_dev": 52,
+ "grid": {
+  "raw": {
+   "headline": -3.8492756285380327,
+   "reps": [
+    {
+     "scores": {
+      "floor area": {
+       "mape": 33.8769523354653
+      },
+      "primary use": {
+       "acc": 28.846153846153843
+      },
+      "year built": {
+       "mae": 28.19715819067851
+      }
+     },
+     "headline": -2.515399244655727
+    },
+    {
+     "scores": {
+      "floor area": {
+       "mape": 41.13553479407145
+      },
+      "primary use": {
+       "acc": 30.76923076923077
+      },
+      "year built": {
+       "mae": 27.010592628844584
+      }
+     },
+     "headline": -5.183152012420338
+    }
+   ]
+  },
+  "norm": {
+   "headline": -5.783984606361855,
+   "reps": [
+    {
+     "scores": {
+      "floor area": {
+       "mape": 36.33452547225329
+      },
+      "primary use": {
+       "acc": 26.923076923076923
+      },
+      "year built": {
+       "mae": 28.04809744637047
+      }
+     },
+     "headline": -4.705724274588183
+    },
+    {
+     "scores": {
+      "floor area": {
+       "mape": 40.64756679934798
+      },
+      "primary use": {
+       "acc": 26.923076923076923
+      },
+      "year built": {
+       "mae": 25.06864855979229
+      }
+     },
+     "headline": -6.862244938135527
+    }
+   ]
+  }
+ },
+ "rule": "choose prep with the higher dev-CV headline; raw (TabPFN default) unless norm wins by > 0.01",
+ "P_on_dev": {
+  "floor area": {
+   "mape": 50.03433777824364
+  },
+  "primary use": {
+   "acc": 15.384615384615385
+  },
+  "year built": {
+   "mae": 26.011842746208664
+  }
+ },
+ "P_on_dev_headline": -17.324861196814126,
+ "C_dev_cv": {
+  "scores": {
+   "floor area": {
+    "mape": 63.792164120662264
+   },
+   "primary use": {
+    "acc": 32.69230769230769
+   },
+   "year built": {
+    "mae": 28.299735685826523
+   }
+  },
+  "headline": -15.549928214177285
+ },
+ "chosen_prep": "raw"
+}

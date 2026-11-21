@@ -1,0 +1,95 @@
+23:39:50 P on dev headline 5.6352
+23:42:47 G-dev CV prep=raw headline 12.9242
+23:45:53 G-dev CV prep=norm headline 13.3013
+23:45:53 tune_dev chosen prep norm
+23:51:45   sim raw@1024 pmin_frac 348s
+23:58:11   sim raw@1024 ramp_up 386s
+00:03:35   sim raw@1024 starts_yr 324s
+00:09:50   sim raw@1024 hr_full 375s
+00:13:45   sim raw@1024 tech 235s
+00:13:45 G-sim raw@1024 headline 17.9283 (P on simval 13.3864)
+00:19:15   sim norm@1024 pmin_frac 330s
+00:25:08   sim norm@1024 ramp_up 354s
+00:30:21   sim norm@1024 starts_yr 312s
+00:36:28   sim norm@1024 hr_full 367s
+00:40:26   sim norm@1024 tech 238s
+00:40:26 G-sim norm@1024 headline 17.9623 (P on simval 13.3864)
+00:40:26 tune_sim chosen norm@1024
+01:00:32 contexts: G-dev 60 of 60 real rows; G-sim 1024 sim rows; G-sim+dev 964 sim + 60 real (R_max 1024)
+01:01:01 exam_predict G-dev pmin_frac 29s
+01:11:12 exam_predict G-sim pmin_frac 612s
+01:21:24 exam_predict G-sim+dev pmin_frac 612s
+01:21:50 exam_predict G-dev ramp_up 26s
+01:33:33 exam_predict G-sim ramp_up 704s
+01:45:33 exam_predict G-sim+dev ramp_up 720s
+01:46:07 exam_predict G-dev starts_yr 34s
+01:57:45 exam_predict G-sim starts_yr 698s
+02:07:50 exam_predict G-sim+dev starts_yr 605s
+02:08:14 exam_predict G-dev hr_full 24s
+02:19:54 exam_predict G-sim hr_full 700s
+02:31:13 exam_predict G-sim+dev hr_full 679s
+02:31:31 exam_predict G-dev tech 18s
+02:38:26 exam_predict G-sim tech 415s
+02:45:25 exam_predict G-sim+dev tech 419s
+02:45:47 exam_predict LC_k5_r0 pmin_frac 22s
+02:46:08 exam_predict LC_k5_r0 ramp_up 21s
+02:46:29 exam_predict LC_k5_r0 starts_yr 21s
+02:46:50 exam_predict LC_k5_r0 hr_full 21s
+02:47:06 exam_predict LC_k5_r0 tech 16s
+02:47:28 exam_predict LC_k5_r1 pmin_frac 22s
+02:47:51 exam_predict LC_k5_r1 ramp_up 23s
+02:48:13 exam_predict LC_k5_r1 starts_yr 22s
+02:48:34 exam_predict LC_k5_r1 hr_full 21s
+02:48:50 exam_predict LC_k5_r1 tech 16s
+02:49:10 exam_predict LC_k5_r2 pmin_frac 21s
+02:49:31 exam_predict LC_k5_r2 ramp_up 21s
+02:49:52 exam_predict LC_k5_r2 starts_yr 21s
+02:50:13 exam_predict LC_k5_r2 hr_full 21s
+02:50:29 exam_predict LC_k5_r2 tech 16s
+02:50:52 exam_predict LC_k10_r0 pmin_frac 23s
+02:51:15 exam_predict LC_k10_r0 ramp_up 23s
+02:51:37 exam_predict LC_k10_r0 starts_yr 22s
+02:52:01 exam_predict LC_k10_r0 hr_full 24s
+02:52:18 exam_predict LC_k10_r0 tech 17s
+02:52:38 exam_predict LC_k10_r1 pmin_frac 20s
+02:52:59 exam_predict LC_k10_r1 ramp_up 21s
+02:53:20 exam_predict LC_k10_r1 starts_yr 21s
+02:53:41 exam_predict LC_k10_r1 hr_full 21s
+02:53:57 exam_predict LC_k10_r1 tech 16s
+02:54:17 exam_predict LC_k10_r2 pmin_frac 21s
+02:54:38 exam_predict LC_k10_r2 ramp_up 21s
+02:55:00 exam_predict LC_k10_r2 starts_yr 22s
+02:55:21 exam_predict LC_k10_r2 hr_full 21s
+02:55:38 exam_predict LC_k10_r2 tech 16s
+02:56:02 exam_predict LC_k20_r0 pmin_frac 24s
+02:56:23 exam_predict LC_k20_r0 ramp_up 21s
+02:56:43 exam_predict LC_k20_r0 starts_yr 20s
+02:57:04 exam_predict LC_k20_r0 hr_full 21s
+02:57:20 exam_predict LC_k20_r0 tech 16s
+02:57:44 exam_predict LC_k20_r1 pmin_frac 23s
+02:58:06 exam_predict LC_k20_r1 ramp_up 22s
+02:58:28 exam_predict LC_k20_r1 starts_yr 22s
+02:58:51 exam_predict LC_k20_r1 hr_full 23s
+02:59:08 exam_predict LC_k20_r1 tech 17s
+02:59:32 exam_predict LC_k20_r2 pmin_frac 24s
+02:59:56 exam_predict LC_k20_r2 ramp_up 24s
+03:00:20 exam_predict LC_k20_r2 starts_yr 23s
+03:00:42 exam_predict LC_k20_r2 hr_full 23s
+03:00:59 exam_predict LC_k20_r2 tech 17s
+03:01:24 exam_predict LC_k40_r0 pmin_frac 24s
+03:01:47 exam_predict LC_k40_r0 ramp_up 23s
+03:02:11 exam_predict LC_k40_r0 starts_yr 24s
+03:02:34 exam_predict LC_k40_r0 hr_full 23s
+03:02:51 exam_predict LC_k40_r0 tech 17s
+03:03:15 exam_predict LC_k40_r1 pmin_frac 24s
+03:03:40 exam_predict LC_k40_r1 ramp_up 25s
+03:04:04 exam_predict LC_k40_r1 starts_yr 24s
+03:04:28 exam_predict LC_k40_r1 hr_full 24s
+03:04:46 exam_predict LC_k40_r1 tech 18s
+03:05:09 exam_predict LC_k40_r2 pmin_frac 24s
+03:05:32 exam_predict LC_k40_r2 ramp_up 23s
+03:05:56 exam_predict LC_k40_r2 starts_yr 24s
+03:06:22 exam_predict LC_k40_r2 hr_full 26s
+03:06:40 exam_predict LC_k40_r2 tech 18s
+03:06:40 exam_predict done
+03:06:43 scored: P -1.843, G-dev 4.026, G-sim -5.168, G-sim+dev 1.996

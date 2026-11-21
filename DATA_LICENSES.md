@@ -139,11 +139,43 @@ packages; they are not redistributed here (git-ignored, unpacked from the releas
 | CAMELS-531 basin list — neuralhydrology repository (Kratzert et al.) | BSD-3-Clause (repository) | No (a list of IDs) |
 | airGR 1.7.9 (Coron et al. 2017) and TUWmodel 1.1-1 (Parajka et al. 2007) example data and outputs | GPL (the R packages) | No (`checks/ref/*.csv`, git-ignored) |
 
+### The fire platform (`shared/fire`) and its models (FireCast, FireSize, FireDetective, FirePilot)
+
+**No share-alike source.** Every source below is public domain, CC0 or CC BY 4.0, so the example excerpts,
+instrument packs and labs carry attribution, not a share-alike licence, and all four models' weights are MIT like the
+code (checked 21 Nov 2026 against the licences recorded in FireData's `data/DATA.md` and the build scripts' headers).
+The excerpts are listed in each model's `examples/` README.
+
+None of FireData's tables are in git (`shared/fire/data/`, git-ignored; `proc/splits.json` is tracked): `mlratchet data
+fire` unpacks the release or rebuilds from the sources. The US Forest Service reports FireSim's published-table check
+reads (GTR-143, GTR-153 and GTR-371, as PDFs and text extracts in `shared/fire/firesim/refdata/`) are public domain but
+are not redistributed here: download them from the Forest Service Treesearch pages.
+
+| Source | Terms | Bundled here |
+|---|---|---|
+| [FEDS-MTBS](https://zenodo.org/records/20187963) (Zenodo 20187963): 12-hourly fire perimeters, active fire lines and VIIRS pixels for 7,739 MTBS fires, 2012-2024 — FEDS method of Chen, Y., et al. (2022), *Scientific Data* 9, 249 | CC BY 4.0; cite the dataset and the FEDS paper | Exam fire-day excerpts (burned masks, fire lines, VIIRS pixels) in FireCast's, FireDetective's and FirePilot's `examples/`, instruments and labs |
+| VIIRS S-NPP 375 m active fire (NASA LANCE / [FIRMS](https://firms.modaps.eosdis.nasa.gov/)), as carried inside FEDS-MTBS | NASA open data; acknowledge LANCE/FIRMS | Inside the FEDS excerpts. The FIRMS archive itself was not used |
+| [MTBS](https://www.mtbs.gov/) final perimeters, ignition dates and burn severity (USGS and USDA Forest Service) | U.S. public domain | Inside the FEDS excerpts; FireDetective's severity truth (MTBS severity read through LANDFIRE Annual Disturbance) |
+| [GOFER-Combined](https://zenodo.org/records/14642378) (Zenodo 14642378): hourly GOES perimeters for 28 California fires, 2019-2021 — Liu et al. | CC BY 4.0 | No (truth-quality check on 4 dev fires; 24 exam fires unused so far) |
+| [WildfireSpreadTS](https://zenodo.org/records/8006177) (Zenodo 8006177) — Gerard, S., Zhao, Y., Sullivan, J. (2023), NeurIPS Datasets and Benchmarks | CC BY 4.0 | No (benchmark context; split-matched, not scored by a model yet) |
+| [FPA-FOD 6th edition](https://doi.org/10.2737/RDS-2013-0009.6) — Short, K. C. (2022), *Spatial wildfire occurrence data for the United States, 1992-2020*, USDA Forest Service Research Data Archive | U.S. public data; cite Short (2022) | Eight exam ignitions' records and features in FireSize's `examples/`; exam ignitions in its instrument and lab |
+| [Globe-LFMC 2.0](https://doi.org/10.6084/m9.figshare.25413790) (figshare) — Yebra, M., et al. (2024), *Scientific Data* 11, 332 | CC0 | No raw samples; FireDetective's live-moisture truth and scores (FireDetective's card cites the 2019 Globe-LFMC paper as CC BY) |
+| [LANDFIRE](https://landfire.gov/) fuel models (FBFM40), canopy layers, elevation, slope and aspect, via the LFPS service (LF2016 Remap, LF2020, LF2022, LF2023) | U.S. public domain (USGS and USDA Forest Service) | Landscape crops in FireDetective's `examples/`; landscape summaries in FireSize's; fields derived from them in FirePilot's |
+| [HRRR](https://registry.opendata.aws/noaa-hrrr-pds/) analyses (NOAA), read through the University of Utah MesoWest `hrrrzarr` archive on AWS Open Data | U.S. public data (NOAA Open Data Dissemination) | No raw series; FirePilot's examples hold simulated arrival times computed from it |
+| [gridMET](https://www.climatologylab.org/gridmet.html) daily weather and NFDRS indices — Abatzoglou, J. T. (2013), *Int. J. Climatol.* 33, 121-131 | U.S. public domain | Daily weather in FireCast's, FireSize's and FireDetective's `examples/` |
+| US Forest Service General Technical Reports: Andrews (2018) RMRS-GTR-371, Rothermel (1983) INT-GTR-143, Scott & Burgan (2005) RMRS-GTR-153 | U.S. public domain | No (`firesim/refdata/`, git-ignored); the check's results are in `checks/published_examples.json` |
+
 Every model card (`models/*/MODEL_CARD.md`) carries the full citation list, including the physics papers.
 
 ## StormNet
 
 NASA SPDF OMNIWeb and its contributing instrument teams supply the hourly solar wind. Credit King & Papitashvili (2005). The World Data Center for Geomagnetism, Kyoto, and the contributing observatories supply hourly Dst. Kyoto permits scientific use with acknowledgement and prohibits commercial application of its geomagnetic indices. The four short StormNet excerpts, browser packs and offline lab carry those data terms. Annual source files are downloaded into the model’s ignored work directory. [OMNI documentation](https://omniweb.gsfc.nasa.gov/html/ow_data.html) · [OMNI paper](https://doi.org/10.1029/2004JA010649) · [Dst DOI](https://doi.org/10.17593/14515-74000) · [Kyoto terms](https://wdc.kugi.kyoto-u.ac.jp/wdc/Sec3.html)
+
+## Prior Wars (method experiment, experiments/priorwars)
+
+- Built with PriorLabs-TabPFN. TabPFN-v2 weights (Prior Labs License 1.1: Apache 2.0 plus an attribution clause)
+  were used to produce the results and are not redistributed here; `tabpfn` 10.2.0 code is Apache-2.0.
+- The exam rows it scores come from the models' own data, under the licences listed above for each model.
 
 ## Before redistributing
 

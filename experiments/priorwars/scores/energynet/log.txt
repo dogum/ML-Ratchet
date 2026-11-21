@@ -1,0 +1,36 @@
+03:06:49 P on dev headline -13.5604
+03:23:20 G-dev CV prep=raw headline -14.8783
+03:39:25 G-dev CV prep=norm headline -14.1385
+03:39:25 tune_dev chosen prep norm
+04:00:10   sim raw@1024 lr 182s
+04:00:10 G-sim raw@1024 headline -14.6829 (P on simval -14.2441)
+04:03:09   sim norm@1024 lr 179s
+04:03:09 G-sim norm@1024 headline -15.0614 (P on simval -14.2441)
+04:03:09 tune_sim chosen raw@1024
+04:03:18 contexts: G-dev 1152 of 1496 real rows; G-sim 1024 sim rows; G-sim+dev 256 sim + 896 real (R_max 1152)
+04:25:51 exam_predict G-dev lr 1353s
+04:40:15 exam_predict G-sim lr 864s
+05:07:45 exam_predict G-sim+dev lr 1650s
+05:08:58 exam_predict LC_k5_r0 lr 73s
+05:10:06 exam_predict LC_k5_r1 lr 68s
+05:11:11 exam_predict LC_k5_r2 lr 65s
+05:12:29 exam_predict LC_k10_r0 lr 77s
+05:13:40 exam_predict LC_k10_r1 lr 72s
+05:14:52 exam_predict LC_k10_r2 lr 72s
+05:16:14 exam_predict LC_k20_r0 lr 82s
+05:17:32 exam_predict LC_k20_r1 lr 78s
+05:18:52 exam_predict LC_k20_r2 lr 80s
+05:20:23 exam_predict LC_k40_r0 lr 91s
+05:21:53 exam_predict LC_k40_r1 lr 90s
+05:23:22 exam_predict LC_k40_r2 lr 89s
+05:24:50 exam_predict LC_k80_r0 lr 88s
+05:26:22 exam_predict LC_k80_r1 lr 91s
+05:27:51 exam_predict LC_k80_r2 lr 89s
+05:29:27 exam_predict LC_k160_r0 lr 96s
+05:31:07 exam_predict LC_k160_r1 lr 100s
+05:32:48 exam_predict LC_k160_r2 lr 101s
+05:35:01 exam_predict LC_k320_r0 lr 133s
+05:37:14 exam_predict LC_k320_r1 lr 133s
+05:39:23 exam_predict LC_k320_r2 lr 129s
+05:39:23 exam_predict done
+05:39:40 scored: P -14.369, G-dev -13.219, G-sim -17.754, G-sim+dev -13.806, label fuel economy (classical) -25.801, VSP MOVES-like (classical) -24.345, class median (dumb) -29.238, physics estimate alone -21.528

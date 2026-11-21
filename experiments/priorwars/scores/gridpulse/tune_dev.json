@@ -1,0 +1,130 @@
+{
+ "n_dev": 8,
+ "grid": {
+  "raw": {
+   "headline": -26.73740884371388,
+   "reps": [
+    {
+     "scores": {
+      "inertia N=10": {
+       "mape": 35.32454508822909
+      },
+      "inertia N=60": {
+       "mape": 34.957822280126855
+      },
+      "MW lost medium N=60": {
+       "mape": 11.030372491445561
+      },
+      "MW lost medium N=10": {
+       "mape": 10.390286262176888
+      },
+      "MW lost low N=60": {
+       "mape": NaN
+      },
+      "MW lost low N=10": {
+       "mape": NaN
+      }
+     },
+     "headline": -27.104246619933836
+    },
+    {
+     "scores": {
+      "inertia N=10": {
+       "mape": 33.62614178064683
+      },
+      "inertia N=60": {
+       "mape": 34.48764578284595
+      },
+      "MW lost medium N=60": {
+       "mape": 10.997925638988972
+      },
+      "MW lost medium N=10": {
+       "mape": 9.361557498379538
+      },
+      "MW lost low N=60": {
+       "mape": NaN
+      },
+      "MW lost low N=10": {
+       "mape": NaN
+      }
+     },
+     "headline": -26.370571067493923
+    }
+   ]
+  },
+  "norm": {
+   "headline": -26.588932345748212,
+   "reps": [
+    {
+     "scores": {
+      "inertia N=10": {
+       "mape": 34.69473652469402
+      },
+      "inertia N=60": {
+       "mape": 33.5439030431466
+      },
+      "MW lost medium N=60": {
+       "mape": 10.965123088299217
+      },
+      "MW lost medium N=10": {
+       "mape": 10.729979559283514
+      },
+      "MW lost low N=60": {
+       "mape": NaN
+      },
+      "MW lost low N=10": {
+       "mape": NaN
+      }
+     },
+     "headline": -26.40125421871328
+    },
+    {
+     "scores": {
+      "inertia N=10": {
+       "mape": 34.23847530076364
+      },
+      "inertia N=60": {
+       "mape": 34.946672850883786
+      },
+      "MW lost medium N=60": {
+       "mape": 11.144683266702007
+      },
+      "MW lost medium N=10": {
+       "mape": 9.449059533650951
+      },
+      "MW lost low N=60": {
+       "mape": NaN
+      },
+      "MW lost low N=10": {
+       "mape": NaN
+      }
+     },
+     "headline": -26.776610472783144
+    }
+   ]
+  }
+ },
+ "rule": "choose prep with the higher dev-CV headline; raw (TabPFN default) unless norm wins by > 0.01",
+ "P_on_dev": {
+  "inertia N=10": {
+   "mape": 13.564645846532386
+  },
+  "inertia N=60": {
+   "mape": 15.027944385114722
+  },
+  "MW lost medium N=60": {
+   "mape": 24.60529845049416
+  },
+  "MW lost medium N=10": {
+   "mape": 21.463813361859398
+  },
+  "MW lost low N=60": {
+   "mape": NaN
+  },
+  "MW lost low N=10": {
+   "mape": NaN
+  }
+ },
+ "P_on_dev_headline": -17.732629560713757,
+ "chosen_prep": "norm"
+}

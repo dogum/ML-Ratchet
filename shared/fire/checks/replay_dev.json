@@ -1,0 +1,239 @@
+{
+ "what": "Dev-fire next-day replays (FEDS PM-to-PM) with FireSim: uncalibrated and dev-calibrated (per-fuel-group ROS factors). Metrics from firedata.metrics (B's exam definitions); growth days only.",
+ "n_fires": 40,
+ "n_fire_days": 546,
+ "n_growth_days": 470,
+ "uncalibrated": {
+  "det": {
+   "n_fire_days": 470,
+   "n_fires": 40,
+   "ap_median": 0.10465226796488417,
+   "ap_mean": 0.15612042147399285,
+   "f1_median": 0.1079960201678142,
+   "f1_mean": 0.15316290199819135,
+   "dice_total_median": 0.7095772099239233,
+   "dice_total_mean": 0.6795234476235087,
+   "dice_new_median": 0.1079960201678142,
+   "dice_new_mean": 0.15316290199819135,
+   "log10_area_ratio_median": 1.078407840055117,
+   "log10_area_ratio_mean": 1.158742561750715,
+   "abs_area_err_km2_median": 17.119349999999997
+  },
+  "ens": {
+   "n_fire_days": 470,
+   "n_fires": 40,
+   "ap_median": 0.08588472306497819,
+   "ap_mean": 0.13426499368896472,
+   "f1_median": 0.10653867469429674,
+   "f1_mean": 0.15002295463001625,
+   "dice_total_median": 0.6999518896123136,
+   "dice_total_mean": 0.667814276853884,
+   "dice_new_median": 0.10653867469429674,
+   "dice_new_mean": 0.15002295463001625,
+   "log10_area_ratio_median": 1.129266958661792,
+   "log10_area_ratio_mean": 1.1910553799186365,
+   "abs_area_err_km2_median": 18.48825
+  }
+ },
+ "calibrated_in_sample": {
+  "det": {
+   "n_fire_days": 431,
+   "n_fires": 39,
+   "ap_median": 0.08555712450286027,
+   "ap_mean": 0.13820808241452362,
+   "f1_median": 0.1568144903282965,
+   "f1_mean": 0.1921073355102517,
+   "dice_total_median": 0.8481764206955047,
+   "dice_total_mean": 0.7948012953778901,
+   "dice_new_median": 0.1568144903282965,
+   "dice_new_mean": 0.1921073355102517,
+   "log10_area_ratio_median": 0.6368220975871743,
+   "log10_area_ratio_mean": 0.7472632037460267,
+   "abs_area_err_km2_median": 4.4064
+  },
+  "ens": {
+   "n_fire_days": 431,
+   "n_fires": 39,
+   "ap_median": 0.1031122399906789,
+   "ap_mean": 0.15380187115662577,
+   "f1_median": 0.1598317560462671,
+   "f1_mean": 0.1938826441879929,
+   "dice_total_median": 0.8370986920332937,
+   "dice_total_mean": 0.7847369597442817,
+   "dice_new_median": 0.1598317560462671,
+   "dice_new_mean": 0.1938826441879929,
+   "log10_area_ratio_median": 0.701954857885481,
+   "log10_area_ratio_mean": 0.7975714691845556,
+   "abs_area_err_km2_median": 5.0301
+  }
+ },
+ "calibration": {
+  "default": 0.5,
+  "factors": {
+   "GR": 0.5,
+   "GS": 0.35,
+   "SH": 0.35,
+   "TL": 1.0,
+   "TU": 0.35
+  },
+  "factor_first_day": 0.7,
+  "n_days": {
+   "GR": 21,
+   "GS": 80,
+   "SH": 31,
+   "TL": 141,
+   "TU": 158,
+   "first_day": 38
+  },
+  "area_matching_factor_all": 0.2,
+  "lofo": {
+   "n_fire_days": 431,
+   "f1_mean": 0.18443058187620856,
+   "f1_median": 0.14952787478980728,
+   "dice_total_median": 0.843963963963964,
+   "ap_mean": 0.13837070847594957,
+   "log10_area_ratio_median": 0.7076417296827268
+  },
+  "fitted_on": {
+   "n_fires": 39,
+   "n_growth_days": 431,
+   "split": "dev only",
+   "objective": "mean F1 of new burned cells (firedata.metrics.nextday)",
+   "fires": [
+    "AR3555809325120171125",
+    "AZ3178211084220170423",
+    "AZ3336510910020210617",
+    "AZ3358211070120200818",
+    "AZ3425711025720180727",
+    "AZ3467811289020190805",
+    "CA3276011669320200905",
+    "CA3671811855720200821",
+    "CA3726212222320200816",
+    "CA3906012314020180727",
+    "CA4102912028120200818",
+    "CA4150012192920210801",
+    "CA4186612267020190905",
+    "ID4354111517320200907",
+    "ID4482311528620180718",
+    "ID4685611616820210707",
+    "MT4497811185720180806",
+    "MT4515311193120180811",
+    "MT4601411227720190816",
+    "MT4647210784420210709",
+    "MT4699311093320210708",
+    "MT4702111269120170715",
+    "NM3572510679220170915",
+    "NM3690210301720180609",
+    "NV4006311484620180813",
+    "NV4027311946420170830",
+    "OK3470209541820180323",
+    "OR4311112241120170811",
+    "OR4400912217020170804",
+    "OR4504912206220200908",
+    "SC3320907951020190526",
+    "SD4377610344820171211",
+    "TX2722009737020180414",
+    "TX3481010130620180508",
+    "WA4833211819920200907",
+    "WA4879911726120170715",
+    "WY4219011071520170804",
+    "WY4437710988020190902",
+    "WY4438911082120200822"
+   ],
+   "held_out": [
+    "CA3720111927220200905 (Creek 2020): its sweep was still running (60 fire-days, ~2 min each); scored out-of-sample in replay_dev.json"
+   ]
+  }
+ },
+ "persistence": {
+  "f1": 0.0,
+  "dice_total_median": 0.9669959117435946,
+  "note": "no growth predicted: F1 = 0, AP undefined (constant score)"
+ },
+ "by_group": {
+  "GR": {
+   "n": 21,
+   "uncal_f1_mean": 0.14511925757228078,
+   "cal_f1_mean": 0.1627529260626222,
+   "uncal_log10_area_ratio_median": 1.0542489392072663
+  },
+  "GS": {
+   "n": 80,
+   "uncal_f1_mean": 0.11347267457476859,
+   "cal_f1_mean": 0.16846781253452012,
+   "uncal_log10_area_ratio_median": 1.2913935486460835
+  },
+  "SH": {
+   "n": 31,
+   "uncal_f1_mean": 0.0914692393197804,
+   "cal_f1_mean": 0.13507361540330753,
+   "uncal_log10_area_ratio_median": 1.3615854832770984
+  },
+  "TL": {
+   "n": 180,
+   "uncal_f1_mean": 0.1963607331178635,
+   "cal_f1_mean": 0.22810927753715418,
+   "uncal_log10_area_ratio_median": 0.7953536357616705
+  },
+  "TU": {
+   "n": 158,
+   "uncal_f1_mean": 0.13722004546849315,
+   "cal_f1_mean": 0.18704009458607937,
+   "uncal_log10_area_ratio_median": 1.2724698441428752
+  }
+ },
+ "held_out_fires": {
+  "CA3720111927220200905": {
+   "n_growth_days": 39,
+   "calibrated_det_via_sweep": {
+    "n_fire_days": 39,
+    "n_fires": 1,
+    "ap_median": 0.08544639649505392,
+    "ap_mean": 0.10092563564598046,
+    "f1_median": 0.09908518474515861,
+    "f1_mean": 0.1462068911405288,
+    "dice_total_median": 0.9373394078783528,
+    "dice_total_mean": 0.9202915297293267,
+    "dice_new_median": 0.09908518474515861,
+    "dice_new_mean": 0.1462068911405288,
+    "log10_area_ratio_median": 1.0836910554130126,
+    "log10_area_ratio_mean": 0.9446864531220208,
+    "abs_area_err_km2_median": 158.1606
+   },
+   "uncalibrated_det": {
+    "n_fire_days": 39,
+    "n_fires": 1,
+    "ap_median": 0.08544639649505392,
+    "ap_mean": 0.1019739368561275,
+    "f1_median": 0.09908518474515861,
+    "f1_mean": 0.14813472165371733,
+    "dice_total_median": 0.9373394078783528,
+    "dice_total_mean": 0.9213662720234986,
+    "dice_new_median": 0.09908518474515861,
+    "dice_new_mean": 0.14813472165371733,
+    "log10_area_ratio_median": 1.0836910554130126,
+    "log10_area_ratio_mean": 0.9500765396536668,
+    "abs_area_err_km2_median": 158.1606
+   },
+   "uncalibrated_ens": {
+    "n_fire_days": 39,
+    "n_fires": 1,
+    "ap_median": 0.07215457406340774,
+    "ap_mean": 0.10115372740121123,
+    "f1_median": 0.10438413361169102,
+    "f1_mean": 0.1475091511555271,
+    "dice_total_median": 0.9357639369337866,
+    "dice_total_mean": 0.917949333004828,
+    "dice_new_median": 0.10438413361169102,
+    "dice_new_mean": 0.1475091511555271,
+    "log10_area_ratio_median": 1.1164195687447012,
+    "log10_area_ratio_mean": 0.9785427877856956,
+    "abs_area_err_km2_median": 163.8468
+   }
+  }
+ },
+ "wall_s_median": 4.699906287999966,
+ "crown_frac_new_mean": 0.3635695918509628,
+ "generated": "2026-11-19 04:12 UTC",
+ "python": "3.13.18"
+}

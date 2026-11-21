@@ -1,0 +1,6709 @@
+{
+ "experiment": "Prior Wars (ML Ratchet method experiment C1)",
+ "rows": [
+  {
+   "model": "gridpulse",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "inertia N=10",
+   "metric": "mape",
+   "value": 14.53677508983814,
+   "ci95": [
+    12.87407050886418,
+    16.55292922842105
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "gridpulse",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "inertia N=60",
+   "metric": "mape",
+   "value": 16.443835556483773,
+   "ci95": [
+    14.142655228644987,
+    19.573943834074818
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "gridpulse",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "MW lost medium N=60",
+   "metric": "mape",
+   "value": 25.914537949591253,
+   "ci95": [
+    23.801362708578015,
+    31.531353926277617
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "gridpulse",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "MW lost medium N=10",
+   "metric": "mape",
+   "value": 30.84883497256763,
+   "ci95": [
+    25.271308690615047,
+    33.99495831155365
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "gridpulse",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "MW lost low N=60",
+   "metric": "mape",
+   "value": 34.77744042615078,
+   "ci95": [
+    24.492606903088106,
+    50.34429175797794
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "gridpulse",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "MW lost low N=10",
+   "metric": "mape",
+   "value": 38.39720430239595,
+   "ci95": [
+    29.67473104149202,
+    51.887427938635724
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "gridpulse",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -18.965049531971058,
+   "ci95": [
+    -21.83807461806774,
+    -17.373296155976753
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "inertia N=10",
+   "metric": "mape",
+   "value": 20.380004721572238,
+   "ci95": [
+    18.086268462739604,
+    23.332064495688112
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 5.843229631734099,
+   "diff_vs_P_ci95": [
+    3.775932176557678,
+    8.770414198484797
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "inertia N=60",
+   "metric": "mape",
+   "value": 20.475428973187565,
+   "ci95": [
+    18.1018157441143,
+    23.69925810519992
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 4.031593416703792,
+   "diff_vs_P_ci95": [
+    0.7684283154548351,
+    7.1303693895736595
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "MW lost medium N=60",
+   "metric": "mape",
+   "value": 19.430537699156872,
+   "ci95": [
+    12.893273737500571,
+    29.73625237318746
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -6.484000250434381,
+   "diff_vs_P_ci95": [
+    -16.04638721000655,
+    3.718937682033149
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "MW lost medium N=10",
+   "metric": "mape",
+   "value": 19.427326321662125,
+   "ci95": [
+    12.932267279431079,
+    29.744607746740055
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -11.421508650905505,
+   "diff_vs_P_ci95": [
+    -19.063761094003198,
+    -0.7987105643495163
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "MW lost low N=60",
+   "metric": "mape",
+   "value": 75.72365757382387,
+   "ci95": [
+    47.39079932314396,
+    118.25487730017473
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 40.94621714767309,
+   "diff_vs_P_ci95": [
+    12.768777102931866,
+    80.72697957872678
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "MW lost low N=10",
+   "metric": "mape",
+   "value": 75.24078558599328,
+   "ci95": [
+    47.37722429990896,
+    118.95887799166775
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 36.84358128359733,
+   "diff_vs_P_ci95": [
+    9.383696067878322,
+    77.44941046313103
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -20.095323797972224,
+   "ci95": [
+    -24.166126715242495,
+    -17.511360122207336
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -1.130274266001166,
+   "diff_vs_P_ci95": [
+    -4.733321538356888,
+    2.3809652035198674
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "inertia N=10",
+   "metric": "mape",
+   "value": 17.286599631072168,
+   "ci95": [
+    15.20081476863615,
+    19.99286844263852
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 2.7498245412340285,
+   "diff_vs_P_ci95": [
+    0.8637434513135906,
+    4.859898292441049
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "inertia N=60",
+   "metric": "mape",
+   "value": 17.73345655967456,
+   "ci95": [
+    15.412031877053941,
+    21.567788042418005
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.2896210031907884,
+   "diff_vs_P_ci95": [
+    -1.19767219838962,
+    4.026030667897933
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "MW lost medium N=60",
+   "metric": "mape",
+   "value": 29.559578118611817,
+   "ci95": [
+    26.002300580959343,
+    36.122099825494956
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 3.6450401690205645,
+   "diff_vs_P_ci95": [
+    -1.654577443228149,
+    7.899546456037603
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "MW lost medium N=10",
+   "metric": "mape",
+   "value": 31.057684075205245,
+   "ci95": [
+    27.32079524800995,
+    37.02775925127319
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.2088491026376147,
+   "diff_vs_P_ci95": [
+    -3.295234798434218,
+    5.430294898180991
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "MW lost low N=60",
+   "metric": "mape",
+   "value": 40.29592937095834,
+   "ci95": [
+    26.380250992657896,
+    50.12120279242427
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 5.518488944807558,
+   "diff_vs_P_ci95": [
+    -6.680247960443467,
+    12.331304460714117
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "MW lost low N=10",
+   "metric": "mape",
+   "value": 40.148409299205326,
+   "ci95": [
+    25.64575369042973,
+    52.24275455163756
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.7512049968093777,
+   "diff_vs_P_ci95": [
+    -9.253387548626083,
+    11.313403570342267
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -21.52654476978618,
+   "ci95": [
+    -24.5070882539062,
+    -19.62224261371228
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -2.561495237815123,
+   "diff_vs_P_ci95": [
+    -4.658562787356974,
+    -0.47512914646608867
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "inertia N=10",
+   "metric": "mape",
+   "value": 17.2100485132792,
+   "ci95": [
+    14.512571679294275,
+    21.28509502665697
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 2.673273423441062,
+   "diff_vs_P_ci95": [
+    0.43310523573862986,
+    5.469083419566986
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "inertia N=60",
+   "metric": "mape",
+   "value": 17.868182689399227,
+   "ci95": [
+    15.261029441002469,
+    21.229621104582076
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.4243471329154538,
+   "diff_vs_P_ci95": [
+    -1.223551315387782,
+    3.818880925543618
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "MW lost medium N=60",
+   "metric": "mape",
+   "value": 27.482404267034035,
+   "ci95": [
+    25.57530275902024,
+    33.57196321107584
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.5678663174427818,
+   "diff_vs_P_ci95": [
+    -3.5349838226314443,
+    6.541585376472805
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "MW lost medium N=10",
+   "metric": "mape",
+   "value": 28.62132781333162,
+   "ci95": [
+    27.04252513919705,
+    34.118396007956726
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -2.2275071592360085,
+   "diff_vs_P_ci95": [
+    -4.181362177425494,
+    3.3368594616575615
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "MW lost low N=60",
+   "metric": "mape",
+   "value": 35.08802209792338,
+   "ci95": [
+    24.861081552829983,
+    45.4208897407796
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.31058167177259577,
+   "diff_vs_P_ci95": [
+    -9.851461278608662,
+    7.080450051147972
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "MW lost low N=10",
+   "metric": "mape",
+   "value": 35.917602662340165,
+   "ci95": [
+    25.988531650692114,
+    49.78145460967616
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -2.479601640055783,
+   "diff_vs_P_ci95": [
+    -9.517687526134756,
+    6.416921943429644
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 8,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -20.85354515657082,
+   "ci95": [
+    -23.975667640487426,
+    -19.02973938445683
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -1.8884956245997628,
+   "diff_vs_P_ci95": [
+    -4.119981561969593,
+    0.20879419079307657
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "constant 230 GW s / dev-median loss (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "inertia N=10",
+   "metric": "mape",
+   "value": 20.418848167539387,
+   "ci95": [
+    18.867422734285526,
+    22.818791946308718
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 5.882073077701248,
+   "diff_vs_P_ci95": [
+    3.9288552311094715,
+    8.204209556655155
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "constant 230 GW s / dev-median loss (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "inertia N=60",
+   "metric": "mape",
+   "value": 20.418848167539387,
+   "ci95": [
+    18.867422734285526,
+    22.818791946308718
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 3.9750126110556145,
+   "diff_vs_P_ci95": [
+    0.8525341153948356,
+    6.578142779666335
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "constant 230 GW s / dev-median loss (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "MW lost medium N=60",
+   "metric": "mape",
+   "value": 32.685967098611876,
+   "ci95": [
+    20.0127593223429,
+    46.68447755442815
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 6.771429149020623,
+   "diff_vs_P_ci95": [
+    -6.313227926189857,
+    19.92054394791945
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "constant 230 GW s / dev-median loss (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "MW lost medium N=10",
+   "metric": "mape",
+   "value": 32.685967098611876,
+   "ci95": [
+    20.0127593223429,
+    46.68447755442815
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.8371321260442457,
+   "diff_vs_P_ci95": [
+    -10.499557023530903,
+    17.59152065885207
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "constant 230 GW s / dev-median loss (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "MW lost low N=60",
+   "metric": "mape",
+   "value": 111.97301589970152,
+   "ci95": [
+    78.63866876484072,
+    163.98797965788245
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 77.19557547355075,
+   "diff_vs_P_ci95": [
+    45.66559485180767,
+    127.41847635135497
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "constant 230 GW s / dev-median loss (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "MW lost low N=10",
+   "metric": "mape",
+   "value": 111.97301589970152,
+   "ci95": [
+    78.63866876484072,
+    163.98797965788245
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 73.57581159730557,
+   "diff_vs_P_ci95": [
+    41.601442510950136,
+    124.28788675933298
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "constant 230 GW s / dev-median loss (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -24.507887811230216,
+   "ci95": [
+    -29.608401875708935,
+    -20.35799054373531
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -5.542838279259158,
+   "diff_vs_P_ci95": [
+    -10.30093984502955,
+    -0.8567539880457783
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "k x demand / RoCoF with 230 GW s (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "inertia N=10",
+   "metric": "mape",
+   "value": 15.07061731514031,
+   "ci95": [
+    13.166454867416263,
+    17.476290662271833
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.5338422253021715,
+   "diff_vs_P_ci95": [
+    -1.0617153521044183,
+    2.8960914291767232
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "k x demand / RoCoF with 230 GW s (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "inertia N=60",
+   "metric": "mape",
+   "value": 15.07061731514031,
+   "ci95": [
+    13.166454867416263,
+    17.476290662271833
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -1.3732182413434622,
+   "diff_vs_P_ci95": [
+    -4.260516693287653,
+    1.1737835425216725
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "k x demand / RoCoF with 230 GW s (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "MW lost medium N=60",
+   "metric": "mape",
+   "value": 27.219265224084875,
+   "ci95": [
+    22.565130260518128,
+    34.6146146146165
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.3047272744936222,
+   "diff_vs_P_ci95": [
+    -5.89365078779439,
+    7.971266754528881
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "k x demand / RoCoF with 230 GW s (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "MW lost medium N=10",
+   "metric": "mape",
+   "value": 27.219265224084875,
+   "ci95": [
+    22.565130260518128,
+    34.6146146146165
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -3.629569748482755,
+   "diff_vs_P_ci95": [
+    -8.74441821969885,
+    3.6193707533037376
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "k x demand / RoCoF with 230 GW s (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "MW lost low N=60",
+   "metric": "mape",
+   "value": 35.57161515763241,
+   "ci95": [
+    27.938983117234372,
+    38.2777669741768
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.7941747314816254,
+   "diff_vs_P_ci95": [
+    -15.063107914687441,
+    10.822307204513898
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "k x demand / RoCoF with 230 GW s (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "MW lost low N=10",
+   "metric": "mape",
+   "value": 35.57161515763241,
+   "ci95": [
+    27.938983117234372,
+    38.2777669741768
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -2.8255891447635406,
+   "diff_vs_P_ci95": [
+    -15.078342673648674,
+    5.780631500165373
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "gridpulse",
+   "arm": "k x demand / RoCoF with 230 GW s (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -19.120166618121832,
+   "ci95": [
+    -22.092102929864424,
+    -17.166772288988867
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.15511708615077424,
+   "diff_vs_P_ci95": [
+    -2.7812956712996804,
+    2.580219532039446
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_logq",
+   "metric": "rho",
+   "value": 0.7568837223186626,
+   "ci95": [
+    0.7072038816139848,
+    0.7960231441825941
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_logq",
+   "metric": "mdae",
+   "value": 0.08281463054448729,
+   "ci95": [
+    0.0746569620995412,
+    0.08963201409542548
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_rr",
+   "metric": "rho",
+   "value": 0.4525392531218584,
+   "ci95": [
+    0.3773623183070705,
+    0.5127805998762826
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_rr",
+   "metric": "mdae",
+   "value": 0.029624902334032907,
+   "ci95": [
+    0.026308098068396603,
+    0.03268767738700563
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_bfi",
+   "metric": "rho",
+   "value": 0.20304062754399646,
+   "ci95": [
+    0.12893414379652512,
+    0.27516436497093766
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_bfi",
+   "metric": "mdae",
+   "value": 0.018460675581517975,
+   "ci95": [
+    0.016750723041033165,
+    0.01969376896877793
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_logq5",
+   "metric": "rho",
+   "value": 0.44017014374008145,
+   "ci95": [
+    0.35946812050853744,
+    0.510079263153587
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_logq5",
+   "metric": "mdae",
+   "value": 0.12634942124497364,
+   "ci95": [
+    0.1106030247544219,
+    0.14953682606757523
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_logq95",
+   "metric": "rho",
+   "value": 0.7093224816455987,
+   "ci95": [
+    0.6529280064798304,
+    0.7536035492749993
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_logq95",
+   "metric": "mdae",
+   "value": 0.10839541056351754,
+   "ci95": [
+    0.09972833477175003,
+    0.11857649679417631
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_hfd",
+   "metric": "rho",
+   "value": 0.6304200233369786,
+   "ci95": [
+    0.5732597358582066,
+    0.6819336801766689
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_hfd",
+   "metric": "mdae",
+   "value": 5.968295760787758,
+   "ci95": [
+    5.645173261028456,
+    6.5875996756970565
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "reg",
+   "metric": "auc",
+   "value": 0.48504690257267574,
+   "ci95": [
+    0.3936523071206756,
+    0.5740283125561049
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "basindetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": 0.4517814366932183,
+   "ci95": [
+    0.4081391146106289,
+    0.4897236189333492
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_logq",
+   "metric": "rho",
+   "value": 0.6894592219348971,
+   "ci95": [
+    0.6374636945504277,
+    0.7409686338664946
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.06742450038376557,
+   "diff_vs_P_ci95": [
+    -0.10587444540373628,
+    -0.026958557045308938
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_logq",
+   "metric": "mdae",
+   "value": 0.12256602082128279,
+   "ci95": [
+    0.11310237620268213,
+    0.13424994874404858
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.0397513902767955,
+   "diff_vs_P_ci95": [
+    0.02937560302823086,
+    0.05163522910680138
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_rr",
+   "metric": "rho",
+   "value": 0.4361072054327242,
+   "ci95": [
+    0.3676449849189361,
+    0.5024958955773104
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.0164320476891342,
+   "diff_vs_P_ci95": [
+    -0.09288952628910346,
+    0.0696536836121943
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_rr",
+   "metric": "mdae",
+   "value": 0.041062129593437066,
+   "ci95": [
+    0.037250324899541803,
+    0.044812550578406836
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.011437227259404159,
+   "diff_vs_P_ci95": [
+    0.007711200705239546,
+    0.015641733567807417
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_bfi",
+   "metric": "rho",
+   "value": 0.14588854759527986,
+   "ci95": [
+    0.06649314269297833,
+    0.22884996087540327
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.0571520799487166,
+   "diff_vs_P_ci95": [
+    -0.1485628522128142,
+    0.03831010889537969
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_bfi",
+   "metric": "mdae",
+   "value": 0.020243357062914778,
+   "ci95": [
+    0.018891492740264942,
+    0.021925964026530652
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.0017826814813968021,
+   "diff_vs_P_ci95": [
+    0.0005070617627242442,
+    0.003522220486539756
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_logq5",
+   "metric": "rho",
+   "value": 0.42698990396581993,
+   "ci95": [
+    0.35177126691530824,
+    0.49687753446906424
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.013180239774261526,
+   "diff_vs_P_ci95": [
+    -0.08690210524399758,
+    0.061059844435352256
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_logq5",
+   "metric": "mdae",
+   "value": 0.12705584831292624,
+   "ci95": [
+    0.11695904167738556,
+    0.13757051872435505
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.0007064270679525975,
+   "diff_vs_P_ci95": [
+    -0.017672592106451297,
+    0.01612656542866194
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_logq95",
+   "metric": "rho",
+   "value": 0.5209270026930674,
+   "ci95": [
+    0.45735699299437255,
+    0.587275521661211
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.1883954789525314,
+   "diff_vs_P_ci95": [
+    -0.240655205590015,
+    -0.12802791431047048
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_logq95",
+   "metric": "mdae",
+   "value": 0.1598136379162396,
+   "ci95": [
+    0.1451789586776046,
+    0.17580366203049333
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.05141822735272206,
+   "diff_vs_P_ci95": [
+    0.035610497156732875,
+    0.06695456446229095
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_hfd",
+   "metric": "rho",
+   "value": 0.37459052383547714,
+   "ci95": [
+    0.29404913387485754,
+    0.4486134796358304
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.2558294995015014,
+   "diff_vs_P_ci95": [
+    -0.3438554008268992,
+    -0.16792024620891416
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_hfd",
+   "metric": "mdae",
+   "value": 6.994046994944771,
+   "ci95": [
+    6.239131129929859,
+    7.885092691535478
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.0257512341570134,
+   "diff_vs_P_ci95": [
+    0.155636963176118,
+    1.8798186429502926
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "reg",
+   "metric": "auc",
+   "value": 0.487833194018761,
+   "ci95": [
+    0.38591212568887145,
+    0.5913645589074189
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.002786291446085276,
+   "diff_vs_P_ci95": [
+    -0.09958912594660282,
+    0.1047527796339607
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": 0.36708982764211256,
+   "ci95": [
+    0.32666535921164014,
+    0.41180848351795885
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.08469160905110573,
+   "diff_vs_P_ci95": [
+    -0.12392268939817098,
+    -0.04184834854674776
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_logq",
+   "metric": "rho",
+   "value": 0.716947867077973,
+   "ci95": [
+    0.6621603550024407,
+    0.7639420976451234
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.039935855240689655,
+   "diff_vs_P_ci95": [
+    -0.07029833546035569,
+    -0.011960457292910485
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_logq",
+   "metric": "mdae",
+   "value": 0.07328904569657438,
+   "ci95": [
+    0.06629872728702585,
+    0.08165926115529443
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.00952558484791291,
+   "diff_vs_P_ci95": [
+    -0.015581099489178197,
+    -0.0017801782096585797
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_rr",
+   "metric": "rho",
+   "value": 0.44496078102998937,
+   "ci95": [
+    0.36883785827393334,
+    0.5106495296420718
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.007578472091869015,
+   "diff_vs_P_ci95": [
+    -0.0499709162915013,
+    0.038691340216901175
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_rr",
+   "metric": "mdae",
+   "value": 0.02718781305076462,
+   "ci95": [
+    0.024750064659665488,
+    0.03036064945796986
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.0024370892832682872,
+   "diff_vs_P_ci95": [
+    -0.005023661140251878,
+    0.00018010953607054602
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_bfi",
+   "metric": "rho",
+   "value": 0.2076448025694333,
+   "ci95": [
+    0.13154341344418896,
+    0.27971579486250175
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.004604175025436835,
+   "diff_vs_P_ci95": [
+    -0.07238176016467449,
+    0.07950262788198936
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_bfi",
+   "metric": "mdae",
+   "value": 0.017090068911767224,
+   "ci95": [
+    0.015664155933518477,
+    0.018872263696744072
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.0013706066697507513,
+   "diff_vs_P_ci95": [
+    -0.0027023807034453878,
+    0.000509952595195678
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_logq5",
+   "metric": "rho",
+   "value": 0.427585403304021,
+   "ci95": [
+    0.34524000629487817,
+    0.49608183207433765
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.012584740436060449,
+   "diff_vs_P_ci95": [
+    -0.059676512253999385,
+    0.034833199017234646
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_logq5",
+   "metric": "mdae",
+   "value": 0.12355240838690412,
+   "ci95": [
+    0.10267465903343276,
+    0.15010101949382576
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.0027970128580695197,
+   "diff_vs_P_ci95": [
+    -0.0233691841113608,
+    0.014605411061249962
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_logq95",
+   "metric": "rho",
+   "value": 0.6847655038973011,
+   "ci95": [
+    0.6293971418973485,
+    0.7294866132784692
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.02455697774829768,
+   "diff_vs_P_ci95": [
+    -0.06552346160474974,
+    0.013491577198882158
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_logq95",
+   "metric": "mdae",
+   "value": 0.09944601816419357,
+   "ci95": [
+    0.092502508583962,
+    0.1118259199971785
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.008949392399323963,
+   "diff_vs_P_ci95": [
+    -0.018442599464219424,
+    0.0006946843947699873
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_hfd",
+   "metric": "rho",
+   "value": 0.5599422534904318,
+   "ci95": [
+    0.49229648672568704,
+    0.6237142963131308
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.07047776984654675,
+   "diff_vs_P_ci95": [
+    -0.11059747834027599,
+    -0.02959615687858205
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "d_hfd",
+   "metric": "mdae",
+   "value": 6.459085583371247,
+   "ci95": [
+    5.874361794917103,
+    7.350308041313995
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.4907898225834897,
+   "diff_vs_P_ci95": [
+    -0.00694473762838994,
+    1.1844360918453463
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "reg",
+   "metric": "auc",
+   "value": 0.5162998049595988,
+   "ci95": [
+    0.4312535268718016,
+    0.6034114586887847
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.031252902386923076,
+   "diff_vs_P_ci95": [
+    -0.02541936020731004,
+    0.10002331435173724
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": 0.43920660304119247,
+   "ci95": [
+    0.3999739452556079,
+    0.4772902003016092
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.01257483365202583,
+   "diff_vs_P_ci95": [
+    -0.037048000473235136,
+    0.013228667153206699
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_logq",
+   "metric": "rho",
+   "value": 0.7345658693011318,
+   "ci95": [
+    0.6821846184394768,
+    0.7791684473229508
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.022317853017530864,
+   "diff_vs_P_ci95": [
+    -0.047682873194156095,
+    0.0013662669778402416
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_logq",
+   "metric": "mdae",
+   "value": 0.07755122639826546,
+   "ci95": [
+    0.06670861291530068,
+    0.08372951419973916
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.005263404146221826,
+   "diff_vs_P_ci95": [
+    -0.014009001396299597,
+    0.0013853328239456033
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_rr",
+   "metric": "rho",
+   "value": 0.45160794488347145,
+   "ci95": [
+    0.3750603617899832,
+    0.5156076960274176
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.0009313082383869409,
+   "diff_vs_P_ci95": [
+    -0.0430039862785554,
+    0.044472925967368154
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_rr",
+   "metric": "mdae",
+   "value": 0.02909384258500898,
+   "ci95": [
+    0.025603496463589313,
+    0.03232945460841774
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.0005310597490239266,
+   "diff_vs_P_ci95": [
+    -0.003511371542904885,
+    0.0022825113303772057
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_bfi",
+   "metric": "rho",
+   "value": 0.2430222209629607,
+   "ci95": [
+    0.16779847701844666,
+    0.3154375269192589
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.039981593418964234,
+   "diff_vs_P_ci95": [
+    -0.0451494430711131,
+    0.11977261806932703
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_bfi",
+   "metric": "mdae",
+   "value": 0.016883347386795634,
+   "ci95": [
+    0.01518630848158312,
+    0.018433269997536802
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.0015773281947223418,
+   "diff_vs_P_ci95": [
+    -0.0029989951782147255,
+    -4.617283825256051e-05
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_logq5",
+   "metric": "rho",
+   "value": 0.502836609730849,
+   "ci95": [
+    0.4244674826445214,
+    0.5627651244651034
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.06266646599076753,
+   "diff_vs_P_ci95": [
+    0.013962386260069308,
+    0.11137230651058319
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_logq5",
+   "metric": "mdae",
+   "value": 0.12087950845191509,
+   "ci95": [
+    0.1069777979971879,
+    0.13962839539949012
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.005469912793058557,
+   "diff_vs_P_ci95": [
+    -0.023403296469682672,
+    0.009224559120697532
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_logq95",
+   "metric": "rho",
+   "value": 0.6147269363372846,
+   "ci95": [
+    0.5478510270757286,
+    0.6754173053358362
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.09459554530831416,
+   "diff_vs_P_ci95": [
+    -0.14950183494930225,
+    -0.04610978974136537
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_logq95",
+   "metric": "mdae",
+   "value": 0.10764899690630739,
+   "ci95": [
+    0.09904280937181323,
+    0.11796979598655088
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.0007464136572101487,
+   "diff_vs_P_ci95": [
+    -0.010315633284336708,
+    0.009740262765372846
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_hfd",
+   "metric": "rho",
+   "value": 0.5803171319777699,
+   "ci95": [
+    0.5156473008656144,
+    0.6383349257400093
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.050102891359208646,
+   "diff_vs_P_ci95": [
+    -0.09040773490643217,
+    -0.011550864363772315
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "d_hfd",
+   "metric": "mdae",
+   "value": 6.494560634869705,
+   "ci95": [
+    6.0353973193734305,
+    7.076800378194049
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.5262648740819476,
+   "diff_vs_P_ci95": [
+    0.008837688453972975,
+    0.9628136360397145
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "reg",
+   "metric": "auc",
+   "value": 0.5003018482399926,
+   "ci95": [
+    0.40049622357542336,
+    0.6014965555350801
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.015254945667316833,
+   "diff_vs_P_ci95": [
+    -0.06302932956562862,
+    0.09645611946862524
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": 0.44681148709620755,
+   "ci95": [
+    0.4048292117651393,
+    0.48763612568221754
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.004969949597010748,
+   "diff_vs_P_ci95": [
+    -0.035135328558390244,
+    0.024606047695743725
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_logq",
+   "metric": "rho",
+   "value": 0.7928016000267144,
+   "ci95": [
+    0.7490817533576748,
+    0.830025152531547
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.03591787770805177,
+   "diff_vs_P_ci95": [
+    0.009903919229992304,
+    0.061339045371480085
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_logq",
+   "metric": "mdae",
+   "value": 0.08618314457677634,
+   "ci95": [
+    0.07678427671758548,
+    0.09277298734787814
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.0033685140322890494,
+   "diff_vs_P_ci95": [
+    -0.007169641305048969,
+    0.011998373254529132
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_rr",
+   "metric": "rho",
+   "value": 0.49875854238902045,
+   "ci95": [
+    0.43346884400219443,
+    0.5554895853901406
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.04621928926716207,
+   "diff_vs_P_ci95": [
+    -0.0062033974342226746,
+    0.10164903203239438
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_rr",
+   "metric": "mdae",
+   "value": 0.03309532394082232,
+   "ci95": [
+    0.02987106464713729,
+    0.03662688651950463
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.0034704216067894117,
+   "diff_vs_P_ci95": [
+    -0.0002903584030154032,
+    0.007499624573609857
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_bfi",
+   "metric": "rho",
+   "value": 0.23244501426029376,
+   "ci95": [
+    0.15167017173368635,
+    0.30578448213631537
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.029404386716297304,
+   "diff_vs_P_ci95": [
+    -0.051279883017178195,
+    0.11118980308222083
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_bfi",
+   "metric": "mdae",
+   "value": 0.02066509646748138,
+   "ci95": [
+    0.017969059352578753,
+    0.02305240879209955
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.0022044208859634054,
+   "diff_vs_P_ci95": [
+    -0.00042928061432898404,
+    0.004649786706502419
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_logq5",
+   "metric": "rho",
+   "value": 0.42077523382321635,
+   "ci95": [
+    0.34911311059148475,
+    0.49098105741528075
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.0193949099168651,
+   "diff_vs_P_ci95": [
+    -0.08503623425580643,
+    0.05096627210141554
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_logq5",
+   "metric": "mdae",
+   "value": 0.163434312064775,
+   "ci95": [
+    0.1504978442108426,
+    0.1939893729281572
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.03708489081980135,
+   "diff_vs_P_ci95": [
+    0.014736129970245372,
+    0.06317002326422208
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_logq95",
+   "metric": "rho",
+   "value": 0.7223180708706644,
+   "ci95": [
+    0.6737174584368132,
+    0.7638537996037423
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.012995589225065607,
+   "diff_vs_P_ci95": [
+    -0.01657558913023305,
+    0.04781559706465116
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_logq95",
+   "metric": "mdae",
+   "value": 0.11056033402257603,
+   "ci95": [
+    0.10191013610564592,
+    0.12080549117247492
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.0021649234590584987,
+   "diff_vs_P_ci95": [
+    -0.008953788574573114,
+    0.01203217799269158
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_hfd",
+   "metric": "rho",
+   "value": 0.5650226881714181,
+   "ci95": [
+    0.49258777193821834,
+    0.6230748576587443
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.06539733516556046,
+   "diff_vs_P_ci95": [
+    -0.13109249296890554,
+    -0.0005408444348396509
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_hfd",
+   "metric": "mdae",
+   "value": 5.7666666666666515,
+   "ci95": [
+    5.2222222222222285,
+    6.411111111111126
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.20162909412110608,
+   "diff_vs_P_ci95": [
+    -0.947949395006815,
+    0.4404778190780173
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "reg",
+   "metric": "auc",
+   "value": 0.4334076344385623,
+   "ci95": [
+    0.33926618084703053,
+    0.5268920759911698
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.05163926813411346,
+   "diff_vs_P_ci95": [
+    -0.1739081385730846,
+    0.07274110737710238
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "GR4J model-implied (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": 0.44270520263120744,
+   "ci95": [
+    0.4039166942022712,
+    0.47838506813652887
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.009076234062010857,
+   "diff_vs_P_ci95": [
+    -0.049668517335942554,
+    0.032707435146574225
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_logq",
+   "metric": "rho",
+   "value": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.7568837223186626,
+   "diff_vs_P_ci95": [
+    -0.7960231441825941,
+    -0.7072038816139848
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_logq",
+   "metric": "mdae",
+   "value": 0.1843705579729538,
+   "ci95": [
+    0.16752132575897788,
+    0.20037022229005386
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.1015559274284665,
+   "diff_vs_P_ci95": [
+    0.08464059130029063,
+    0.11581554195138956
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_rr",
+   "metric": "rho",
+   "value": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.4525392531218584,
+   "diff_vs_P_ci95": [
+    -0.5127805998762826,
+    -0.3773623183070705
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_rr",
+   "metric": "mdae",
+   "value": 0.038079221096613144,
+   "ci95": [
+    0.03318320217601484,
+    0.04082824489095202
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.008454318762580237,
+   "diff_vs_P_ci95": [
+    0.0036716171258131913,
+    0.011891778609958808
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_bfi",
+   "metric": "rho",
+   "value": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.20304062754399646,
+   "diff_vs_P_ci95": [
+    -0.2751643649709377,
+    -0.12893414379652515
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_bfi",
+   "metric": "mdae",
+   "value": 0.018058753375743558,
+   "ci95": [
+    0.0163453483601302,
+    0.020091537384379497
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.00040192220577441734,
+   "diff_vs_P_ci95": [
+    -0.0019514412634906162,
+    0.0014562686670160493
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_logq5",
+   "metric": "rho",
+   "value": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.44017014374008145,
+   "diff_vs_P_ci95": [
+    -0.510079263153587,
+    -0.35946812050853744
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_logq5",
+   "metric": "mdae",
+   "value": 0.12921170569492446,
+   "ci95": [
+    0.10008343510352624,
+    0.15415064825098757
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.0028622844499508193,
+   "diff_vs_P_ci95": [
+    -0.02213543800079055,
+    0.01989251469331921
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_logq95",
+   "metric": "rho",
+   "value": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.7093224816455987,
+   "diff_vs_P_ci95": [
+    -0.7536035492749993,
+    -0.6529280064798304
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_logq95",
+   "metric": "mdae",
+   "value": 0.20365519046032654,
+   "ci95": [
+    0.18548814917750428,
+    0.22778395171436816
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.095259779896809,
+   "diff_vs_P_ci95": [
+    0.07306646479950879,
+    0.118206685274192
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_hfd",
+   "metric": "rho",
+   "value": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.6304200233369786,
+   "diff_vs_P_ci95": [
+    -0.6819336801766689,
+    -0.5732597358582066
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "d_hfd",
+   "metric": "mdae",
+   "value": 8.277777777777771,
+   "ci95": [
+    7.544444444444451,
+    8.90277777777778
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 2.309482016990014,
+   "diff_vs_P_ci95": [
+    1.564993594798016,
+    2.816780504324741
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "reg",
+   "metric": "auc",
+   "value": 0.5,
+   "ci95": [
+    0.5,
+    0.5
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.014953097427324258,
+   "diff_vs_P_ci95": [
+    -0.07402831255610491,
+    0.10634769287932437
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "basindetective",
+   "arm": "no change (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.4517814366932183,
+   "diff_vs_P_ci95": [
+    -0.4897236189333492,
+    -0.4081391146106289
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "floor area",
+   "metric": "mape",
+   "value": 33.621575884107735,
+   "ci95": [
+    33.051675750269375,
+    34.36166188730159
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "heating fuel vs electric",
+   "metric": "acc",
+   "value": 87.2810675562969,
+   "ci95": [
+    86.51351489872744,
+    87.99784175926398
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "vintage",
+   "metric": "mae",
+   "value": 22.125418132197115,
+   "ci95": [
+    21.73332565806006,
+    22.479886049205703
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": 26.829745836094585,
+   "ci95": [
+    26.234879917672615,
+    27.300721276276906
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 1848,
+   "item": "floor area",
+   "metric": "mape",
+   "value": 27.8623959451412,
+   "ci95": [
+    27.249082682072753,
+    28.67497124400268
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -5.759179938966536,
+   "diff_vs_P_ci95": [
+    -6.432539747653756,
+    -5.114178189333195
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 1848,
+   "item": "heating fuel vs electric",
+   "metric": "acc",
+   "value": 92.10453155407285,
+   "ci95": [
+    91.4913468306604,
+    92.71444148214464
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 4.823463997775946,
+   "diff_vs_P_ci95": [
+    4.203534190812901,
+    5.422422085529508
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 1848,
+   "item": "vintage",
+   "metric": "mae",
+   "value": 21.32468021176416,
+   "ci95": [
+    20.97469665653597,
+    21.681108874291702
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.8007379204329546,
+   "diff_vs_P_ci95": [
+    -1.0145046609053998,
+    -0.600439523394924
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 1848,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": 32.121067804465824,
+   "ci95": [
+    31.613508144411906,
+    32.53104321712361
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 5.291321968371239,
+   "diff_vs_P_ci95": [
+    4.841559739713172,
+    5.791839990357048
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "floor area",
+   "metric": "mape",
+   "value": 34.026925753779224,
+   "ci95": [
+    32.9707167399321,
+    34.73745239656622
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.40534986967148967,
+   "diff_vs_P_ci95": [
+    -0.29260742367617426,
+    0.7793160371911134
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "heating fuel vs electric",
+   "metric": "acc",
+   "value": 88.55991103697527,
+   "ci95": [
+    87.85637397034823,
+    89.24988207253682
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 1.2788434806783613,
+   "diff_vs_P_ci95": [
+    0.8603567114524712,
+    1.724383690090115
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "vintage",
+   "metric": "mae",
+   "value": 22.141324070780268,
+   "ci95": [
+    21.752664723926245,
+    22.51520619286306
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.01590593858315259,
+   "diff_vs_P_ci95": [
+    -0.13263344244003247,
+    0.16425063573046692
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": 27.26649264159802,
+   "ci95": [
+    26.754136262025103,
+    27.923741211503724
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.4367468055034358,
+   "diff_vs_P_ci95": [
+    0.15991157654699134,
+    0.8511626618649577
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 1848,
+   "item": "floor area",
+   "metric": "mape",
+   "value": 28.03455913819604,
+   "ci95": [
+    27.082797906910738,
+    28.639027285484918
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -5.5870167459116935,
+   "diff_vs_P_ci95": [
+    -6.483188831415294,
+    -5.030349426735343
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 1848,
+   "item": "heating fuel vs electric",
+   "metric": "acc",
+   "value": 91.82652210175146,
+   "ci95": [
+    91.18342372409957,
+    92.44247625049873
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 4.545454545454561,
+   "diff_vs_P_ci95": [
+    3.932652359464952,
+    5.160315902281348
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 1848,
+   "item": "vintage",
+   "metric": "mae",
+   "value": 21.457805236743265,
+   "ci95": [
+    21.099506221059173,
+    21.808183056816123
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.6676128954538498,
+   "diff_vs_P_ci95": [
+    -0.8702197583648184,
+    -0.46508878066340215
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 1848,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": 31.89598148177771,
+   "ci95": [
+    31.43028329269791,
+    32.46920331324857
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 5.0662356456831255,
+   "diff_vs_P_ci95": [
+    4.666266581338254,
+    5.65768055597262
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "C-dev",
+   "kind": "arm",
+   "real_labels": 1848,
+   "item": "floor area",
+   "metric": "mape",
+   "value": 29.690694545977326,
+   "ci95": [
+    28.973014101250588,
+    30.40539742965304
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -3.9308813381304084,
+   "diff_vs_P_ci95": [
+    -4.655747344658692,
+    -3.3426597176888664
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "C-dev",
+   "kind": "arm",
+   "real_labels": 1848,
+   "item": "heating fuel vs electric",
+   "metric": "acc",
+   "value": 91.93772588268001,
+   "ci95": [
+    91.31206876678833,
+    92.54036144968602
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 4.656658326383109,
+   "diff_vs_P_ci95": [
+    4.004324266543752,
+    5.266119685611422
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "C-dev",
+   "kind": "arm",
+   "real_labels": 1848,
+   "item": "vintage",
+   "metric": "mae",
+   "value": 21.765361276151836,
+   "ci95": [
+    21.40954475583373,
+    22.133262261585923
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.36005685604527926,
+   "diff_vs_P_ci95": [
+    -0.5906218781428523,
+    -0.15383751292510559
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_recs",
+   "arm": "C-dev",
+   "kind": "arm",
+   "real_labels": 1848,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": 31.123515668351345,
+   "ci95": [
+    30.646174644888816,
+    31.601575072229505
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 4.293769832256761,
+   "diff_vs_P_ci95": [
+    3.8734564944498056,
+    4.843205428429752
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "floor area",
+   "metric": "mape",
+   "value": 49.3521760282966,
+   "ci95": [
+    46.488253103140366,
+    53.2305050215278
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "primary use",
+   "metric": "acc",
+   "value": 14.07563025210084,
+   "ci95": [
+    12.324929971988796,
+    15.896358543417366
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "year built",
+   "metric": "mae",
+   "value": 25.216363311545898,
+   "ci95": [
+    23.905917518001058,
+    26.56356965906706
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -17.63827288809788,
+   "ci95": [
+    -19.75440725652022,
+    -15.97518821042268
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "floor area",
+   "metric": "mape",
+   "value": 38.432361637166004,
+   "ci95": [
+    36.30772946797686,
+    40.04490104550254
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -10.919814391130593,
+   "diff_vs_P_ci95": [
+    -14.762174342764308,
+    -8.163503878045816
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "primary use",
+   "metric": "acc",
+   "value": 28.501400560224088,
+   "ci95": [
+    26.120448179271712,
+    30.81232492997199
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 14.425770308123248,
+   "diff_vs_P_ci95": [
+    11.484593837535016,
+    17.29866946778711
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "year built",
+   "metric": "mae",
+   "value": 26.51618951512294,
+   "ci95": [
+    25.188070456748978,
+    27.783645504012917
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.299826203577041,
+   "diff_vs_P_ci95": [
+    0.3444899124251825,
+    2.2181305726402725
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -4.965480538470958,
+   "ci95": [
+    -6.453945964305781,
+    -3.37190964233525
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 12.672792349626922,
+   "diff_vs_P_ci95": [
+    10.608685071940787,
+    15.156097373266835
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "floor area",
+   "metric": "mape",
+   "value": 47.72457237059141,
+   "ci95": [
+    44.5318179800408,
+    49.65928638210999
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -1.627603657705187,
+   "diff_vs_P_ci95": [
+    -4.892231932305115,
+    0.9712766854677943
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "primary use",
+   "metric": "acc",
+   "value": 6.932773109243698,
+   "ci95": [
+    5.740546218487395,
+    8.193277310924369
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -7.142857142857142,
+   "diff_vs_P_ci95": [
+    -9.105392156862745,
+    -5.4604341736694675
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "year built",
+   "metric": "mae",
+   "value": 25.76987937119706,
+   "ci95": [
+    24.38478875856452,
+    27.333294842627154
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.5535160596511624,
+   "diff_vs_P_ci95": [
+    -0.17191614052208193,
+    1.268132243591791
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -20.395899630673856,
+   "ci95": [
+    -21.6168004023217,
+    -18.66174663050677
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -2.757626742575976,
+   "diff_vs_P_ci95": [
+    -4.345549204545362,
+    -0.91571577143045
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "floor area",
+   "metric": "mape",
+   "value": 42.94716289583599,
+   "ci95": [
+    40.06834006966625,
+    45.079040008074564
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -6.40501313246061,
+   "diff_vs_P_ci95": [
+    -10.020794873958232,
+    -3.6296425915284733
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "primary use",
+   "metric": "acc",
+   "value": 26.820728291316527,
+   "ci95": [
+    24.71813725490196,
+    29.20168067226891
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 12.745098039215687,
+   "diff_vs_P_ci95": [
+    10.014005602240896,
+    15.407913165266109
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "year built",
+   "metric": "mae",
+   "value": 25.707814708679376,
+   "ci95": [
+    24.31978628625694,
+    27.22107543442592
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.49145139713347774,
+   "diff_vs_P_ci95": [
+    -0.17144871301300402,
+    1.1500982752438516
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -8.06321730225973,
+   "ci95": [
+    -9.591187983637255,
+    -6.185973562389487
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 9.57505558583815,
+   "diff_vs_P_ci95": [
+    7.649651279148475,
+    11.7021819990474
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "C-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "floor area",
+   "metric": "mape",
+   "value": 70.39989947075125,
+   "ci95": [
+    64.82448192758092,
+    75.94703845200966
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 21.047723442454654,
+   "diff_vs_P_ci95": [
+    14.645548378585872,
+    26.43375983084985
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "C-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "primary use",
+   "metric": "acc",
+   "value": 28.0812324929972,
+   "ci95": [
+    25.630252100840334,
+    30.393907563025206
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 14.005602240896359,
+   "diff_vs_P_ci95": [
+    10.994397759103643,
+    16.87675070028011
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "C-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "year built",
+   "metric": "mae",
+   "value": 36.2500384916987,
+   "ci95": [
+    34.164054220065964,
+    38.380697138274996
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 11.033675180152805,
+   "diff_vs_P_ci95": [
+    9.148096173848392,
+    12.918626940028817
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "bldg_bdg2",
+   "arm": "C-dev",
+   "kind": "arm",
+   "real_labels": 52,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -21.159333488877024,
+   "ci95": [
+    -24.30758032430095,
+    -17.85907825699243
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -3.521060600779144,
+   "diff_vs_P_ci95": [
+    -6.598460541091372,
+    0.1357340249893326
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "min stable load",
+   "metric": "mae_med",
+   "value": 6.856699650765499,
+   "ci95": [
+    6.016214504379093,
+    7.506325392036384
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "plantdetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "ramp up p99",
+   "metric": "mape",
+   "value": 20.753533791550318,
+   "ci95": [
+    19.341427148179953,
+    22.13340971098905
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "plantdetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "starts per year",
+   "metric": "mape",
+   "value": 28.946785171084326,
+   "ci95": [
+    26.84387237923623,
+    32.16310110710142
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "plantdetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "full-load heat rate",
+   "metric": "mape",
+   "value": 21.290168481173893,
+   "ci95": [
+    19.307600331437836,
+    23.91141326652278
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "plantdetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "technology",
+   "metric": "acc",
+   "value": 68.62996158770807,
+   "ci95": [
+    64.44991447491537,
+    72.4143457117595
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "plantdetective",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -1.8434451013731945,
+   "ci95": [
+    -2.991039008654744,
+    -0.8779726243347707
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 60,
+   "item": "min stable load",
+   "metric": "mae_med",
+   "value": 4.252038756424099,
+   "ci95": [
+    3.816543562236634,
+    4.929724513080529
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -2.6046608943414,
+   "diff_vs_P_ci95": [
+    -3.3313909843259184,
+    -1.6524751447562815
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 60,
+   "item": "ramp up p99",
+   "metric": "mape",
+   "value": 15.886477098657744,
+   "ci95": [
+    14.036334862318888,
+    17.487199568260888
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -4.867056692892573,
+   "diff_vs_P_ci95": [
+    -6.660767736811584,
+    -3.1154096889107734
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 60,
+   "item": "starts per year",
+   "metric": "mape",
+   "value": 26.38056160539287,
+   "ci95": [
+    24.226367251502907,
+    28.501457110124974
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -2.5662235656914554,
+   "diff_vs_P_ci95": [
+    -5.938845539582029,
+    0.05545635345730878
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 60,
+   "item": "full-load heat rate",
+   "metric": "mape",
+   "value": 9.789213475138112,
+   "ci95": [
+    8.20089965214364,
+    11.224988640531649
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -11.500955006035781,
+   "diff_vs_P_ci95": [
+    -14.056760696414484,
+    -9.386339338564886
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 60,
+   "item": "technology",
+   "metric": "acc",
+   "value": 76.4404609475032,
+   "ci95": [
+    72.8304824015614,
+    80.31014418049077
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 7.810499359795131,
+   "diff_vs_P_ci95": [
+    4.475560422403173,
+    11.540920716112526
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 60,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": 4.026434002378075,
+   "ci95": [
+    3.0339943289211013,
+    5.0667782208215995
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 5.869879103751269,
+   "diff_vs_P_ci95": [
+    4.930783224283315,
+    7.113183904553551
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "min stable load",
+   "metric": "mae_med",
+   "value": 4.414114033907559,
+   "ci95": [
+    3.785797950751344,
+    5.016451090278917
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -2.44258561685794,
+   "diff_vs_P_ci95": [
+    -3.086065262083624,
+    -1.7856007704970684
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "ramp up p99",
+   "metric": "mape",
+   "value": 14.602977233530922,
+   "ci95": [
+    13.278823797661074,
+    16.135976658198242
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -6.150556558019396,
+   "diff_vs_P_ci95": [
+    -7.4870580100906965,
+    -4.5804878697296685
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "starts per year",
+   "metric": "mape",
+   "value": 29.378493949324813,
+   "ci95": [
+    26.49191665814557,
+    31.009390652655583
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.4317087782404876,
+   "diff_vs_P_ci95": [
+    -2.8177787496535838,
+    2.2151075858699625
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "full-load heat rate",
+   "metric": "mape",
+   "value": 24.690953567245227,
+   "ci95": [
+    20.821977893130878,
+    29.64165948106106
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 3.400785086071334,
+   "diff_vs_P_ci95": [
+    0.8743740560187667,
+    6.942616701917715
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "technology",
+   "metric": "acc",
+   "value": 47.247119078104994,
+   "ci95": [
+    42.96584790169561,
+    51.79498714652957
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -21.382842509603073,
+   "diff_vs_P_ci95": [
+    -25.766027344864252,
+    -16.83463075952029
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -5.1678839411807065,
+   "ci95": [
+    -6.8488569512317765,
+    -3.7950847003628025
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -3.324438839807512,
+   "diff_vs_P_ci95": [
+    -4.524742678232473,
+    -1.9585766916855076
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 60,
+   "item": "min stable load",
+   "metric": "mae_med",
+   "value": 3.5583832121500123,
+   "ci95": [
+    3.117397245085172,
+    3.991591883376188
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -3.298316438615487,
+   "diff_vs_P_ci95": [
+    -3.941916590836032,
+    -2.4778032257142146
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 60,
+   "item": "ramp up p99",
+   "metric": "mape",
+   "value": 14.526483494353288,
+   "ci95": [
+    12.722765632972866,
+    15.99890439096307
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -6.22705029719703,
+   "diff_vs_P_ci95": [
+    -8.027755183343354,
+    -4.53339231845714
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 60,
+   "item": "starts per year",
+   "metric": "mape",
+   "value": 25.04132422053124,
+   "ci95": [
+    23.17122486505837,
+    27.321152095844713
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -3.905460950553085,
+   "diff_vs_P_ci95": [
+    -6.77519717891627,
+    -1.452607518725925
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 60,
+   "item": "full-load heat rate",
+   "metric": "mape",
+   "value": 15.141623995102997,
+   "ci95": [
+    12.983483699957194,
+    17.868797376102698
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -6.148544486070897,
+   "diff_vs_P_ci95": [
+    -8.045168097612919,
+    -4.607990127194121
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 60,
+   "item": "technology",
+   "metric": "acc",
+   "value": 68.24583866837388,
+   "ci95": [
+    64.31139408187789,
+    72.1083389765876
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.38412291933418885,
+   "diff_vs_P_ci95": [
+    -3.954081632653058,
+    3.4483861010671157
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "plantdetective",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 60,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": 1.9956047492472677,
+   "ci95": [
+    0.8827612875351162,
+    3.12897750890072
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 3.8390498506204622,
+   "diff_vs_P_ci95": [
+    2.9579909656006365,
+    4.895850114035866
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "energynet",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "ICE",
+   "metric": "mape",
+   "value": 9.021731229410124,
+   "ci95": [
+    8.328111715376812,
+    9.863102486862724
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "energynet",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "HEV",
+   "metric": "mape",
+   "value": 16.767438725862657,
+   "ci95": [
+    15.062247875391554,
+    19.041401965554854
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "energynet",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "PHEV",
+   "metric": "mape",
+   "value": 17.317917706164433,
+   "ci95": [
+    12.23492721469035,
+    23.346167836359996
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "energynet",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "EV",
+   "metric": "mape",
+   "value": 22.50579932661977,
+   "ci95": [
+    19.666263908532393,
+    22.50579932661977
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "energynet",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "all trips",
+   "metric": "mape",
+   "value": 10.876436947027859,
+   "ci95": [
+    10.061999257104667,
+    11.631871598369136
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "energynet",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "log ratio",
+   "metric": "rho",
+   "value": 0.6210395360727506,
+   "ci95": [
+    0.5793979609402771,
+    0.6588661809492674
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "energynet",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "log ratio",
+   "metric": "mdae",
+   "value": 0.10893936739629295,
+   "ci95": [
+    0.10040319270816649,
+    0.1162637237963925
+   ],
+   "higher_is_better": false
+  },
+  {
+   "model": "energynet",
+   "arm": "P",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -14.369029220479073,
+   "ci95": [
+    -16.567559201582533,
+    -12.517088620352096
+   ],
+   "higher_is_better": true
+  },
+  {
+   "model": "energynet",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "ICE",
+   "metric": "mape",
+   "value": 9.986291792188911,
+   "ci95": [
+    9.021264963770587,
+    10.879538064310008
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.9645605627787877,
+   "diff_vs_P_ci95": [
+    0.01561414240413221,
+    1.770967118030011
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "HEV",
+   "metric": "mape",
+   "value": 12.33313697101428,
+   "ci95": [
+    11.25285927922007,
+    13.817357242713241
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -4.434301754848377,
+   "diff_vs_P_ci95": [
+    -6.303199084285996,
+    -2.9075790752075124
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "PHEV",
+   "metric": "mape",
+   "value": 17.337598034515477,
+   "ci95": [
+    13.280631421484756,
+    23.30056265529466
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.019680328351043386,
+   "diff_vs_P_ci95": [
+    -3.0693698789530743,
+    3.986309079190032
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "EV",
+   "metric": "mape",
+   "value": 17.442520997214928,
+   "ci95": [
+    17.391796656709285,
+    18.774769991132338
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -5.063278329404842,
+   "diff_vs_P_ci95": [
+    -5.063278329404842,
+    -2.2744672518231077
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "all trips",
+   "metric": "mape",
+   "value": 10.868314256627658,
+   "ci95": [
+    10.078913036702918,
+    11.645564273594832
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.008122690400201193,
+   "diff_vs_P_ci95": [
+    -0.8437275766240903,
+    0.8774872742757619
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "log ratio",
+   "metric": "rho",
+   "value": 0.6477794840663127,
+   "ci95": [
+    0.610252080468054,
+    0.6830517897875108
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.026739947993562052,
+   "diff_vs_P_ci95": [
+    -0.0068039056672183264,
+    0.06639305508579796
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "log ratio",
+   "metric": "mdae",
+   "value": 0.10897454229982356,
+   "ci95": [
+    0.101773868605508,
+    0.11733675689380274
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 3.517490353061037e-05,
+   "diff_vs_P_ci95": [
+    -0.007241108255235706,
+    0.009307475856628049
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -13.21900893257289,
+   "ci95": [
+    -15.297211512993869,
+    -11.8261732909848
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 1.150020287906182,
+   "diff_vs_P_ci95": [
+    -0.19621484671317496,
+    2.505539742158399
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "ICE",
+   "metric": "mape",
+   "value": 9.067138517042737,
+   "ci95": [
+    8.480076796589705,
+    9.637804897615672
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.0454072876326137,
+   "diff_vs_P_ci95": [
+    -0.5218968809046104,
+    0.4617941888969739
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "HEV",
+   "metric": "mape",
+   "value": 17.89598400142572,
+   "ci95": [
+    16.23182100327217,
+    19.877393140639374
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.128545275563063,
+   "diff_vs_P_ci95": [
+    -0.430338929675874,
+    2.505489472188593
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "PHEV",
+   "metric": "mape",
+   "value": 26.297542194286844,
+   "ci95": [
+    21.734381673672537,
+    35.635965292421616
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 8.979624488122411,
+   "diff_vs_P_ci95": [
+    3.7331944905979872,
+    16.77997999094728
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "EV",
+   "metric": "mape",
+   "value": 23.72089177079492,
+   "ci95": [
+    21.632454027979055,
+    24.545019861362967
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.215092444175152,
+   "diff_vs_P_ci95": [
+    -0.8733452986407144,
+    4.8787559528305735
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "all trips",
+   "metric": "mape",
+   "value": 11.146452894278255,
+   "ci95": [
+    10.26508468967367,
+    12.057656848982562
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.27001594725039624,
+   "diff_vs_P_ci95": [
+    -0.3106138615251775,
+    0.819724089140383
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "log ratio",
+   "metric": "rho",
+   "value": 0.5927466890428804,
+   "ci95": [
+    0.5493392908215574,
+    0.6333314737437732
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.028292847029870227,
+   "diff_vs_P_ci95": [
+    -0.05681329648335923,
+    -8.311824503132781e-06
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "log ratio",
+   "metric": "mdae",
+   "value": 0.11065529363541908,
+   "ci95": [
+    0.10277315862697632,
+    0.11930420927346727
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.0017159262391261282,
+   "diff_vs_P_ci95": [
+    -0.0030767488929029736,
+    0.008486622226794267
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim",
+   "kind": "arm",
+   "real_labels": 0,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -17.753554904251768,
+   "ci95": [
+    -20.817712303948188,
+    -16.024630962452953
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -3.3845256837726954,
+   "diff_vs_P_ci95": [
+    -6.150012158535754,
+    -1.498905897444865
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "ICE",
+   "metric": "mape",
+   "value": 9.450971837522673,
+   "ci95": [
+    8.716759383465648,
+    10.400418851918728
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.4292406081125488,
+   "diff_vs_P_ci95": [
+    -0.34897835518189724,
+    1.221428029452837
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "HEV",
+   "metric": "mape",
+   "value": 13.295586987982844,
+   "ci95": [
+    11.630387319172074,
+    14.720604904297934
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -3.4718517378798133,
+   "diff_vs_P_ci95": [
+    -5.520105768322415,
+    -2.1583846411828476
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "PHEV",
+   "metric": "mape",
+   "value": 18.672867757653464,
+   "ci95": [
+    13.883694859876295,
+    23.56374771321954
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.3549500514890305,
+   "diff_vs_P_ci95": [
+    -2.287628530473569,
+    4.336644617936683
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "EV",
+   "metric": "mape",
+   "value": 18.57079553678419,
+   "ci95": [
+    15.120312768914701,
+    19.076633793558432
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -3.93500378983558,
+   "diff_vs_P_ci95": [
+    -4.545951139617692,
+    -3.4291655330613366
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "all trips",
+   "metric": "mape",
+   "value": 10.588969213395183,
+   "ci95": [
+    9.86971217922072,
+    11.453133644374994
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.28746773363267586,
+   "diff_vs_P_ci95": [
+    -1.002458668083756,
+    0.4577972817757463
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "log ratio",
+   "metric": "rho",
+   "value": 0.6859750410107612,
+   "ci95": [
+    0.649095019831313,
+    0.7208060092339531
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.06493550493801059,
+   "diff_vs_P_ci95": [
+    0.036023481792976125,
+    0.0969316231348331
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "log ratio",
+   "metric": "mdae",
+   "value": 0.10739604257138022,
+   "ci95": [
+    0.09875505170998035,
+    0.11496818345061614
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.001543324824912734,
+   "diff_vs_P_ci95": [
+    -0.009091780858131029,
+    0.006030935033820664
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "G-sim+dev",
+   "kind": "arm",
+   "real_labels": 1152,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -13.80647552771966,
+   "ci95": [
+    -15.640678634986418,
+    -11.978619672170762
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": 0.5625536927594119,
+   "diff_vs_P_ci95": [
+    -0.5092877789269287,
+    2.0296411347207526
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "label fuel economy (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "ICE",
+   "metric": "mape",
+   "value": 12.423810042444291,
+   "ci95": [
+    11.425053555296891,
+    13.403475049176382
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 3.4020788130341675,
+   "diff_vs_P_ci95": [
+    2.3789897460517,
+    4.283366395676335
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "label fuel economy (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "HEV",
+   "metric": "mape",
+   "value": 17.5438671274001,
+   "ci95": [
+    15.990777457673937,
+    18.877762405467912
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.7764284015374443,
+   "diff_vs_P_ci95": [
+    -1.474654928308138,
+    2.539365764475825
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "label fuel economy (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "PHEV",
+   "metric": "mape",
+   "value": 47.434372135210424,
+   "ci95": [
+    40.37299820669396,
+    56.470656618467075
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 30.11645442904599,
+   "diff_vs_P_ci95": [
+    21.056586827418776,
+    40.96081530131127
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "label fuel economy (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "EV",
+   "metric": "mape",
+   "value": 14.046384737547735,
+   "ci95": [
+    14.046384737547735,
+    18.70594215624951
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -8.459414589072034,
+   "diff_vs_P_ci95": [
+    -8.459414589072034,
+    -0.9603217522828835
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "energynet",
+   "arm": "label fuel economy (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "all trips",
+   "metric": "mape",
+   "value": 14.619546631796338,
+   "ci95": [
+    13.721087741100808,
+    15.668095882932928
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 3.743109684768479,
+   "diff_vs_P_ci95": [
+    2.7968577538184154,
+    4.727180778765589
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "label fuel economy (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "log ratio",
+   "metric": "rho",
+   "value": 0.48280995355986317,
+   "ci95": [
+    0.43850594111844016,
+    0.5241395879832896
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.13822958251288747,
+   "diff_vs_P_ci95": [
+    -0.18086542027265853,
+    -0.09396621637056059
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "label fuel economy (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "log ratio",
+   "metric": "mdae",
+   "value": 0.14747375243390057,
+   "ci95": [
+    0.13744209594889772,
+    0.15685985145460762
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.038534385037607616,
+   "diff_vs_P_ci95": [
+    0.02840921522105916,
+    0.04832216732147696
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "label fuel economy (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -25.80068310168494,
+   "ci95": [
+    -28.646329358820612,
+    -23.29759293847114
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -11.431653881205866,
+   "diff_vs_P_ci95": [
+    -15.17695560557986,
+    -8.252517917078535
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "VSP MOVES-like (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "ICE",
+   "metric": "mape",
+   "value": 10.604606850137339,
+   "ci95": [
+    9.69706385532838,
+    11.50344481010892
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.582875620727215,
+   "diff_vs_P_ci95": [
+    0.7730282208944755,
+    2.296454966288099
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "VSP MOVES-like (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "HEV",
+   "metric": "mape",
+   "value": 16.182050725840224,
+   "ci95": [
+    14.538293158210902,
+    17.543074893696005
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -0.5853880000224336,
+   "diff_vs_P_ci95": [
+    -2.658164432966618,
+    1.0323499226674477
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "VSP MOVES-like (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "PHEV",
+   "metric": "mape",
+   "value": 46.24924875187687,
+   "ci95": [
+    40.11416361086973,
+    49.7772556179016
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 28.931331045712437,
+   "diff_vs_P_ci95": [
+    23.28343856043322,
+    33.230676595251694
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "VSP MOVES-like (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "EV",
+   "metric": "mape",
+   "value": 12.934159812244856,
+   "ci95": [
+    7.278566698526396,
+    16.998670419581284
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -9.571639514374914,
+   "diff_vs_P_ci95": [
+    -15.227232628093372,
+    -2.667593488951109
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "energynet",
+   "arm": "VSP MOVES-like (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "all trips",
+   "metric": "mape",
+   "value": 12.766230261356846,
+   "ci95": [
+    11.664027620246596,
+    13.736233762490402
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.889793314328987,
+   "diff_vs_P_ci95": [
+    0.9485158687009225,
+    2.6663424052226588
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "VSP MOVES-like (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "log ratio",
+   "metric": "rho",
+   "value": 0.5630869893299385,
+   "ci95": [
+    0.5148174436770284,
+    0.6082587806970005
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.05795254674281214,
+   "diff_vs_P_ci95": [
+    -0.09377074296528645,
+    -0.020351103592595825
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "VSP MOVES-like (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "log ratio",
+   "metric": "mdae",
+   "value": 0.12698851048685644,
+   "ci95": [
+    0.11657226660764926,
+    0.1380855827015189
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.01804914309056349,
+   "diff_vs_P_ci95": [
+    0.009984910984308603,
+    0.027899735946333368
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "VSP MOVES-like (classical)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -24.345302109284813,
+   "ci95": [
+    -25.69777417521412,
+    -22.165820438560548
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -9.97627288880574,
+   "diff_vs_P_ci95": [
+    -11.507070404744917,
+    -7.868660001356032
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "class median (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "ICE",
+   "metric": "mape",
+   "value": 23.873718196593643,
+   "ci95": [
+    21.405170087239572,
+    25.87456124719698
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 14.85198696718352,
+   "diff_vs_P_ci95": [
+    12.204075556593676,
+    16.834563899011936
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "class median (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "HEV",
+   "metric": "mape",
+   "value": 18.231641322248908,
+   "ci95": [
+    16.48565491373603,
+    19.873485886313514
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 1.4642025963862508,
+   "diff_vs_P_ci95": [
+    -1.171278432956922,
+    3.74793936773277
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "class median (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "PHEV",
+   "metric": "mape",
+   "value": 45.6090203645469,
+   "ci95": [
+    36.16422379323321,
+    54.131397452975705
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 28.291102658382467,
+   "diff_vs_P_ci95": [
+    19.02867341232469,
+    36.40350390220338
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "class median (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "EV",
+   "metric": "mape",
+   "value": 16.495237651325105,
+   "ci95": [
+    13.987026081332818,
+    17.582799291101498
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -6.010561675294664,
+   "diff_vs_P_ci95": [
+    -8.518773245286951,
+    -2.083464617430895
+   ],
+   "verdict_vs_P": "win"
+  },
+  {
+   "model": "energynet",
+   "arm": "class median (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "all trips",
+   "metric": "mape",
+   "value": 22.75510390661932,
+   "ci95": [
+    21.09344438704497,
+    24.623620523381092
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 11.87866695959146,
+   "diff_vs_P_ci95": [
+    10.122568353531147,
+    13.850724934174265
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "class median (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "log ratio",
+   "metric": "rho",
+   "value": 0.1581620469656312,
+   "ci95": [
+    0.10061386127577042,
+    0.21348214421657158
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.46287748910711946,
+   "diff_vs_P_ci95": [
+    -0.5230876451389043,
+    -0.39996365075351087
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "class median (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "log ratio",
+   "metric": "mdae",
+   "value": 0.24076914947389372,
+   "ci95": [
+    0.22168855435091522,
+    0.2656514231728444
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.13182978207760077,
+   "diff_vs_P_ci95": [
+    0.11235322561228787,
+    0.15804764963252854
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "class median (dumb)",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -29.238126627796486,
+   "ci95": [
+    -32.03414745246057,
+    -25.709547935470486
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -14.869097407317414,
+   "diff_vs_P_ci95": [
+    -17.655226741945622,
+    -11.45236154223434
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "physics estimate alone",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "ICE",
+   "metric": "mape",
+   "value": 29.040191194841107,
+   "ci95": [
+    27.54377034123443,
+    30.474817290336546
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 20.018459965430985,
+   "diff_vs_P_ci95": [
+    18.476073413558353,
+    21.48528394749804
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "physics estimate alone",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "HEV",
+   "metric": "mape",
+   "value": 15.505553071632901,
+   "ci95": [
+    13.987830935894971,
+    17.369536598102776
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -1.261885654229756,
+   "diff_vs_P_ci95": [
+    -4.041909441648951,
+    1.363908320414537
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "physics estimate alone",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "PHEV",
+   "metric": "mape",
+   "value": 20.036782855725324,
+   "ci95": [
+    16.02581900146322,
+    27.549366920488744
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 2.718865149560891,
+   "diff_vs_P_ci95": [
+    -1.4493972849302725,
+    8.184129582451055
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "physics estimate alone",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "EV",
+   "metric": "mape",
+   "value": 12.187036096747534,
+   "ci95": [
+    8.742046865658136,
+    25.15816584184244
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": -10.318763229872236,
+   "diff_vs_P_ci95": [
+    -13.763752460961634,
+    5.4919019333100465
+   ],
+   "verdict_vs_P": "tie"
+  },
+  {
+   "model": "energynet",
+   "arm": "physics estimate alone",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "all trips",
+   "metric": "mape",
+   "value": 25.50270609024256,
+   "ci95": [
+    23.745287102370423,
+    27.04629347653256
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 14.626269143214703,
+   "diff_vs_P_ci95": [
+    12.571306106108487,
+    16.35277592595482
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "physics estimate alone",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "log ratio",
+   "metric": "rho",
+   "value": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -0.6210395360727506,
+   "diff_vs_P_ci95": [
+    -0.6588661809492674,
+    -0.5793979609402772
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "physics estimate alone",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "log ratio",
+   "metric": "mdae",
+   "value": 0.2896610737469246,
+   "ci95": [
+    0.2661972765291495,
+    0.31042556975602514
+   ],
+   "higher_is_better": false,
+   "diff_vs_P": 0.18072170635063167,
+   "diff_vs_P_ci95": [
+    0.15689405073385912,
+    0.20371367411569397
+   ],
+   "verdict_vs_P": "loss"
+  },
+  {
+   "model": "energynet",
+   "arm": "physics estimate alone",
+   "kind": "card baseline",
+   "real_labels": null,
+   "item": "_headline",
+   "metric": "headline (higher is better)",
+   "value": -21.52750904073311,
+   "ci95": [
+    -24.061142436225317,
+    -20.06446258857842
+   ],
+   "higher_is_better": true,
+   "diff_vs_P": -7.158479820254039,
+   "diff_vs_P_ci95": [
+    -9.299549776838012,
+    -5.487815409406225
+   ],
+   "verdict_vs_P": "loss"
+  }
+ ],
+ "contrasts": [
+  {
+   "model": "gridpulse",
+   "contrast": "C1",
+   "arm": "G-dev",
+   "vs": "P",
+   "desc": "P vs G-dev (simulator, 0 labels, vs generic prior + k dev labels)",
+   "headline_diff": -1.130274266001166,
+   "ci95": [
+    -4.733321538356888,
+    2.3809652035198674
+   ],
+   "verdict_for_arm": "tie",
+   "per_item": {
+    "inertia N=10": {
+     "metric": "mape",
+     "diff_skill": -5.843229631734099,
+     "ci95": [
+      -8.770414198484799,
+      -3.775932176557678
+     ],
+     "verdict": "loss"
+    },
+    "inertia N=60": {
+     "metric": "mape",
+     "diff_skill": -4.031593416703792,
+     "ci95": [
+      -7.13036938957366,
+      -0.7684283154548353
+     ],
+     "verdict": "loss"
+    },
+    "MW lost medium N=60": {
+     "metric": "mape",
+     "diff_skill": 6.484000250434381,
+     "ci95": [
+      -3.7189376820331503,
+      16.04638721000655
+     ],
+     "verdict": "tie"
+    },
+    "MW lost medium N=10": {
+     "metric": "mape",
+     "diff_skill": 11.421508650905505,
+     "ci95": [
+      0.7987105643495163,
+      19.063761094003198
+     ],
+     "verdict": "win"
+    },
+    "MW lost low N=60": {
+     "metric": "mape",
+     "diff_skill": -40.94621714767309,
+     "ci95": [
+      -80.72697957872678,
+      -12.76877710293187
+     ],
+     "verdict": "loss"
+    },
+    "MW lost low N=10": {
+     "metric": "mape",
+     "diff_skill": -36.84358128359733,
+     "ci95": [
+      -77.44941046313104,
+      -9.383696067878324
+     ],
+     "verdict": "loss"
+    }
+   }
+  },
+  {
+   "model": "gridpulse",
+   "contrast": "C2",
+   "arm": "G-sim",
+   "vs": "P",
+   "desc": "P vs G-sim (same simulated data: purpose-built net vs generic in-context learner)",
+   "headline_diff": -2.561495237815123,
+   "ci95": [
+    -4.658562787356974,
+    -0.47512914646608867
+   ],
+   "verdict_for_arm": "loss",
+   "per_item": {
+    "inertia N=10": {
+     "metric": "mape",
+     "diff_skill": -2.7498245412340285,
+     "ci95": [
+      -4.85989829244105,
+      -0.8637434513135908
+     ],
+     "verdict": "loss"
+    },
+    "inertia N=60": {
+     "metric": "mape",
+     "diff_skill": -1.2896210031907884,
+     "ci95": [
+      -4.026030667897934,
+      1.1976721983896195
+     ],
+     "verdict": "tie"
+    },
+    "MW lost medium N=60": {
+     "metric": "mape",
+     "diff_skill": -3.6450401690205645,
+     "ci95": [
+      -7.899546456037603,
+      1.654577443228149
+     ],
+     "verdict": "tie"
+    },
+    "MW lost medium N=10": {
+     "metric": "mape",
+     "diff_skill": -0.2088491026376147,
+     "ci95": [
+      -5.430294898180993,
+      3.295234798434216
+     ],
+     "verdict": "tie"
+    },
+    "MW lost low N=60": {
+     "metric": "mape",
+     "diff_skill": -5.518488944807558,
+     "ci95": [
+      -12.33130446071412,
+      6.680247960443467
+     ],
+     "verdict": "tie"
+    },
+    "MW lost low N=10": {
+     "metric": "mape",
+     "diff_skill": -1.7512049968093777,
+     "ci95": [
+      -11.313403570342269,
+      9.253387548626083
+     ],
+     "verdict": "tie"
+    }
+   }
+  },
+  {
+   "model": "gridpulse",
+   "contrast": "C3",
+   "arm": "G-sim+dev",
+   "vs": "G-dev",
+   "desc": "G-sim+dev vs G-dev (does the simulator, as data, add to the real labels?)",
+   "headline_diff": -0.7582213585985969,
+   "ci95": [
+    -4.4417515638930025,
+    2.7759032435518893
+   ],
+   "verdict_for_arm": "tie",
+   "per_item": {
+    "inertia N=10": {
+     "metric": "mape",
+     "diff_skill": 3.169956208293037,
+     "ci95": [
+      0.5021058639452605,
+      5.91288775340061
+     ],
+     "verdict": "win"
+    },
+    "inertia N=60": {
+     "metric": "mape",
+     "diff_skill": 2.6072462837883386,
+     "ci95": [
+      -0.13587781434975765,
+      5.430935318689588
+     ],
+     "verdict": "tie"
+    },
+    "MW lost medium N=60": {
+     "metric": "mape",
+     "diff_skill": -8.051866567877163,
+     "ci95": [
+      -17.549654770800686,
+      2.208856895606427
+     ],
+     "verdict": "tie"
+    },
+    "MW lost medium N=10": {
+     "metric": "mape",
+     "diff_skill": -9.194001491669496,
+     "ci95": [
+      -18.216809452084973,
+      0.9658073134519256
+     ],
+     "verdict": "tie"
+    },
+    "MW lost low N=60": {
+     "metric": "mape",
+     "diff_skill": 40.63563547590049,
+     "ci95": [
+      12.67283515638815,
+      81.28008921086793
+     ],
+     "verdict": "win"
+    },
+    "MW lost low N=10": {
+     "metric": "mape",
+     "diff_skill": 39.323182923653114,
+     "ci95": [
+      11.941290771248552,
+      79.60880262925512
+     ],
+     "verdict": "win"
+    }
+   }
+  },
+  {
+   "model": "gridpulse",
+   "contrast": "C4",
+   "arm": "G-sim+dev",
+   "vs": "P",
+   "desc": "G-sim+dev vs P",
+   "headline_diff": -1.8884956245997628,
+   "ci95": [
+    -4.119981561969593,
+    0.20879419079307657
+   ],
+   "verdict_for_arm": "tie",
+   "per_item": {
+    "inertia N=10": {
+     "metric": "mape",
+     "diff_skill": -2.673273423441062,
+     "ci95": [
+      -5.469083419566988,
+      -0.4331052357386301
+     ],
+     "verdict": "loss"
+    },
+    "inertia N=60": {
+     "metric": "mape",
+     "diff_skill": -1.4243471329154538,
+     "ci95": [
+      -3.8188809255436182,
+      1.223551315387782
+     ],
+     "verdict": "tie"
+    },
+    "MW lost medium N=60": {
+     "metric": "mape",
+     "diff_skill": -1.5678663174427818,
+     "ci95": [
+      -6.541585376472807,
+      3.5349838226314434
+     ],
+     "verdict": "tie"
+    },
+    "MW lost medium N=10": {
+     "metric": "mape",
+     "diff_skill": 2.2275071592360085,
+     "ci95": [
+      -3.3368594616575624,
+      4.181362177425494
+     ],
+     "verdict": "tie"
+    },
+    "MW lost low N=60": {
+     "metric": "mape",
+     "diff_skill": -0.31058167177259577,
+     "ci95": [
+      -7.080450051147973,
+      9.85146127860866
+     ],
+     "verdict": "tie"
+    },
+    "MW lost low N=10": {
+     "metric": "mape",
+     "diff_skill": 2.479601640055783,
+     "ci95": [
+      -6.416921943429661,
+      9.517687526134756
+     ],
+     "verdict": "tie"
+    }
+   }
+  },
+  {
+   "model": "basindetective",
+   "contrast": "C1",
+   "arm": "G-dev",
+   "vs": "P",
+   "desc": "P vs G-dev (simulator, 0 labels, vs generic prior + k dev labels)",
+   "headline_diff": -0.08469160905110573,
+   "ci95": [
+    -0.12392268939817098,
+    -0.04184834854674776
+   ],
+   "verdict_for_arm": "loss",
+   "per_item": {
+    "d_logq": {
+     "metric": "rho",
+     "diff_skill": -0.06742450038376557,
+     "ci95": [
+      -0.10587444540373628,
+      -0.026958557045308938
+     ],
+     "verdict": "loss"
+    },
+    "d_rr": {
+     "metric": "rho",
+     "diff_skill": -0.0164320476891342,
+     "ci95": [
+      -0.09288952628910346,
+      0.0696536836121943
+     ],
+     "verdict": "tie"
+    },
+    "d_bfi": {
+     "metric": "rho",
+     "diff_skill": -0.0571520799487166,
+     "ci95": [
+      -0.1485628522128142,
+      0.03831010889537969
+     ],
+     "verdict": "tie"
+    },
+    "d_logq5": {
+     "metric": "rho",
+     "diff_skill": -0.013180239774261526,
+     "ci95": [
+      -0.08690210524399758,
+      0.061059844435352256
+     ],
+     "verdict": "tie"
+    },
+    "d_logq95": {
+     "metric": "rho",
+     "diff_skill": -0.1883954789525314,
+     "ci95": [
+      -0.240655205590015,
+      -0.12802791431047048
+     ],
+     "verdict": "loss"
+    },
+    "d_hfd": {
+     "metric": "rho",
+     "diff_skill": -0.2558294995015014,
+     "ci95": [
+      -0.3438554008268992,
+      -0.16792024620891416
+     ],
+     "verdict": "loss"
+    },
+    "reg": {
+     "metric": "auc",
+     "diff_skill": 0.002786291446085276,
+     "ci95": [
+      -0.09958912594660282,
+      0.1047527796339607
+     ],
+     "verdict": "tie"
+    }
+   }
+  },
+  {
+   "model": "basindetective",
+   "contrast": "C2",
+   "arm": "G-sim",
+   "vs": "P",
+   "desc": "P vs G-sim (same simulated data: purpose-built net vs generic in-context learner)",
+   "headline_diff": -0.01257483365202583,
+   "ci95": [
+    -0.037048000473235136,
+    0.013228667153206699
+   ],
+   "verdict_for_arm": "tie",
+   "per_item": {
+    "d_logq": {
+     "metric": "rho",
+     "diff_skill": -0.039935855240689655,
+     "ci95": [
+      -0.07029833546035569,
+      -0.011960457292910485
+     ],
+     "verdict": "loss"
+    },
+    "d_rr": {
+     "metric": "rho",
+     "diff_skill": -0.007578472091869015,
+     "ci95": [
+      -0.0499709162915013,
+      0.038691340216901175
+     ],
+     "verdict": "tie"
+    },
+    "d_bfi": {
+     "metric": "rho",
+     "diff_skill": 0.004604175025436835,
+     "ci95": [
+      -0.07238176016467449,
+      0.07950262788198936
+     ],
+     "verdict": "tie"
+    },
+    "d_logq5": {
+     "metric": "rho",
+     "diff_skill": -0.012584740436060449,
+     "ci95": [
+      -0.059676512253999385,
+      0.034833199017234646
+     ],
+     "verdict": "tie"
+    },
+    "d_logq95": {
+     "metric": "rho",
+     "diff_skill": -0.02455697774829768,
+     "ci95": [
+      -0.06552346160474974,
+      0.013491577198882158
+     ],
+     "verdict": "tie"
+    },
+    "d_hfd": {
+     "metric": "rho",
+     "diff_skill": -0.07047776984654675,
+     "ci95": [
+      -0.11059747834027599,
+      -0.02959615687858205
+     ],
+     "verdict": "loss"
+    },
+    "reg": {
+     "metric": "auc",
+     "diff_skill": 0.031252902386923076,
+     "ci95": [
+      -0.02541936020731004,
+      0.10002331435173724
+     ],
+     "verdict": "tie"
+    }
+   }
+  },
+  {
+   "model": "basindetective",
+   "contrast": "C3",
+   "arm": "G-sim+dev",
+   "vs": "G-dev",
+   "desc": "G-sim+dev vs G-dev (does the simulator, as data, add to the real labels?)",
+   "headline_diff": 0.07972165945409498,
+   "ci95": [
+    0.0438932450689307,
+    0.11157100914485606
+   ],
+   "verdict_for_arm": "win",
+   "per_item": {
+    "d_logq": {
+     "metric": "rho",
+     "diff_skill": 0.04510664736623471,
+     "ci95": [
+      0.00922270741370737,
+      0.07865113001183824
+     ],
+     "verdict": "win"
+    },
+    "d_rr": {
+     "metric": "rho",
+     "diff_skill": 0.015500739450747258,
+     "ci95": [
+      -0.063068947663382,
+      0.08548996046423174
+     ],
+     "verdict": "tie"
+    },
+    "d_bfi": {
+     "metric": "rho",
+     "diff_skill": 0.09713367336768083,
+     "ci95": [
+      0.015614587170734294,
+      0.18109355453184361
+     ],
+     "verdict": "win"
+    },
+    "d_logq5": {
+     "metric": "rho",
+     "diff_skill": 0.07584670576502905,
+     "ci95": [
+      0.0030966972646890604,
+      0.14131769590773935
+     ],
+     "verdict": "win"
+    },
+    "d_logq95": {
+     "metric": "rho",
+     "diff_skill": 0.09379993364421724,
+     "ci95": [
+      0.03480310092226163,
+      0.14573898860754755
+     ],
+     "verdict": "win"
+    },
+    "d_hfd": {
+     "metric": "rho",
+     "diff_skill": 0.20572660814229277,
+     "ci95": [
+      0.12230889995196487,
+      0.2926321699362105
+     ],
+     "verdict": "win"
+    },
+    "reg": {
+     "metric": "auc",
+     "diff_skill": 0.012468654221231557,
+     "ci95": [
+      -0.07103525657780967,
+      0.09426559483897182
+     ],
+     "verdict": "tie"
+    }
+   }
+  },
+  {
+   "model": "basindetective",
+   "contrast": "C4",
+   "arm": "G-sim+dev",
+   "vs": "P",
+   "desc": "G-sim+dev vs P",
+   "headline_diff": -0.004969949597010748,
+   "ci95": [
+    -0.035135328558390244,
+    0.024606047695743725
+   ],
+   "verdict_for_arm": "tie",
+   "per_item": {
+    "d_logq": {
+     "metric": "rho",
+     "diff_skill": -0.022317853017530864,
+     "ci95": [
+      -0.047682873194156095,
+      0.0013662669778402416
+     ],
+     "verdict": "tie"
+    },
+    "d_rr": {
+     "metric": "rho",
+     "diff_skill": -0.0009313082383869409,
+     "ci95": [
+      -0.0430039862785554,
+      0.044472925967368154
+     ],
+     "verdict": "tie"
+    },
+    "d_bfi": {
+     "metric": "rho",
+     "diff_skill": 0.039981593418964234,
+     "ci95": [
+      -0.0451494430711131,
+      0.11977261806932703
+     ],
+     "verdict": "tie"
+    },
+    "d_logq5": {
+     "metric": "rho",
+     "diff_skill": 0.06266646599076753,
+     "ci95": [
+      0.013962386260069308,
+      0.11137230651058319
+     ],
+     "verdict": "win"
+    },
+    "d_logq95": {
+     "metric": "rho",
+     "diff_skill": -0.09459554530831416,
+     "ci95": [
+      -0.14950183494930225,
+      -0.04610978974136537
+     ],
+     "verdict": "loss"
+    },
+    "d_hfd": {
+     "metric": "rho",
+     "diff_skill": -0.050102891359208646,
+     "ci95": [
+      -0.09040773490643217,
+      -0.011550864363772315
+     ],
+     "verdict": "loss"
+    },
+    "reg": {
+     "metric": "auc",
+     "diff_skill": 0.015254945667316833,
+     "ci95": [
+      -0.06302932956562862,
+      0.09645611946862524
+     ],
+     "verdict": "tie"
+    }
+   }
+  },
+  {
+   "model": "bldg_recs",
+   "contrast": "C1",
+   "arm": "G-dev",
+   "vs": "P",
+   "desc": "P vs G-dev (simulator, 0 labels, vs generic prior + k dev labels)",
+   "headline_diff": 5.291321968371239,
+   "ci95": [
+    4.841559739713172,
+    5.791839990357048
+   ],
+   "verdict_for_arm": "win",
+   "per_item": {
+    "floor area": {
+     "metric": "mape",
+     "diff_skill": 5.759179938966536,
+     "ci95": [
+      5.114178189333194,
+      6.432539747653755
+     ],
+     "verdict": "win"
+    },
+    "heating fuel vs electric": {
+     "metric": "acc",
+     "diff_skill": 4.823463997775946,
+     "ci95": [
+      4.203534190812901,
+      5.422422085529508
+     ],
+     "verdict": "win"
+    },
+    "vintage": {
+     "metric": "mae",
+     "diff_skill": 0.8007379204329546,
+     "ci95": [
+      0.6004395233949239,
+      1.0145046609053998
+     ],
+     "verdict": "win"
+    }
+   }
+  },
+  {
+   "model": "bldg_recs",
+   "contrast": "C2",
+   "arm": "G-sim",
+   "vs": "P",
+   "desc": "P vs G-sim (same simulated data: purpose-built net vs generic in-context learner)",
+   "headline_diff": 0.4367468055034358,
+   "ci95": [
+    0.15991157654699134,
+    0.8511626618649577
+   ],
+   "verdict_for_arm": "win",
+   "per_item": {
+    "floor area": {
+     "metric": "mape",
+     "diff_skill": -0.40534986967148967,
+     "ci95": [
+      -0.7793160371911135,
+      0.29260742367617426
+     ],
+     "verdict": "tie"
+    },
+    "heating fuel vs electric": {
+     "metric": "acc",
+     "diff_skill": 1.2788434806783613,
+     "ci95": [
+      0.8603567114524712,
+      1.724383690090115
+     ],
+     "verdict": "win"
+    },
+    "vintage": {
+     "metric": "mae",
+     "diff_skill": -0.01590593858315259,
+     "ci95": [
+      -0.16425063573046694,
+      0.13263344244003245
+     ],
+     "verdict": "tie"
+    }
+   }
+  },
+  {
+   "model": "bldg_recs",
+   "contrast": "C3",
+   "arm": "G-sim+dev",
+   "vs": "G-dev",
+   "desc": "G-sim+dev vs G-dev (does the simulator, as data, add to the real labels?)",
+   "headline_diff": -0.22508632268811368,
+   "ci95": [
+    -0.34994650716371345,
+    0.03545900774641264
+   ],
+   "verdict_for_arm": "tie",
+   "per_item": {
+    "floor area": {
+     "metric": "mape",
+     "diff_skill": -0.17216319305484262,
+     "ci95": [
+      -0.361312206844347,
+      0.2714454762379486
+     ],
+     "verdict": "tie"
+    },
+    "heating fuel vs electric": {
+     "metric": "acc",
+     "diff_skill": -0.27800945232138474,
+     "ci95": [
+      -0.4852602720528701,
+      -0.08330874666077115
+     ],
+     "verdict": "loss"
+    },
+    "vintage": {
+     "metric": "mae",
+     "diff_skill": -0.13312502497910472,
+     "ci95": [
+      -0.1995048617190946,
+      -0.06197822512423801
+     ],
+     "verdict": "loss"
+    }
+   }
+  },
+  {
+   "model": "bldg_recs",
+   "contrast": "C4",
+   "arm": "G-sim+dev",
+   "vs": "P",
+   "desc": "G-sim+dev vs P",
+   "headline_diff": 5.0662356456831255,
+   "ci95": [
+    4.666266581338254,
+    5.65768055597262
+   ],
+   "verdict_for_arm": "win",
+   "per_item": {
+    "floor area": {
+     "metric": "mape",
+     "diff_skill": 5.5870167459116935,
+     "ci95": [
+      5.030349426735343,
+      6.483188831415294
+     ],
+     "verdict": "win"
+    },
+    "heating fuel vs electric": {
+     "metric": "acc",
+     "diff_skill": 4.545454545454561,
+     "ci95": [
+      3.932652359464952,
+      5.160315902281348
+     ],
+     "verdict": "win"
+    },
+    "vintage": {
+     "metric": "mae",
+     "diff_skill": 0.6676128954538498,
+     "ci95": [
+      0.4650887806634021,
+      0.8702197583648184
+     ],
+     "verdict": "win"
+    }
+   }
+  },
+  {
+   "model": "bldg_bdg2",
+   "contrast": "C1",
+   "arm": "G-dev",
+   "vs": "P",
+   "desc": "P vs G-dev (simulator, 0 labels, vs generic prior + k dev labels)",
+   "headline_diff": 12.672792349626922,
+   "ci95": [
+    10.608685071940787,
+    15.156097373266835
+   ],
+   "verdict_for_arm": "win",
+   "per_item": {
+    "floor area": {
+     "metric": "mape",
+     "diff_skill": 10.919814391130593,
+     "ci95": [
+      8.163503878045816,
+      14.762174342764308
+     ],
+     "verdict": "win"
+    },
+    "primary use": {
+     "metric": "acc",
+     "diff_skill": 14.425770308123248,
+     "ci95": [
+      11.484593837535016,
+      17.29866946778711
+     ],
+     "verdict": "win"
+    },
+    "year built": {
+     "metric": "mae",
+     "diff_skill": -1.299826203577041,
+     "ci95": [
+      -2.2181305726402725,
+      -0.34448991242518257
+     ],
+     "verdict": "loss"
+    }
+   }
+  },
+  {
+   "model": "bldg_bdg2",
+   "contrast": "C2",
+   "arm": "G-sim",
+   "vs": "P",
+   "desc": "P vs G-sim (same simulated data: purpose-built net vs generic in-context learner)",
+   "headline_diff": -2.757626742575976,
+   "ci95": [
+    -4.345549204545362,
+    -0.91571577143045
+   ],
+   "verdict_for_arm": "loss",
+   "per_item": {
+    "floor area": {
+     "metric": "mape",
+     "diff_skill": 1.627603657705187,
+     "ci95": [
+      -0.9712766854677947,
+      4.892231932305114
+     ],
+     "verdict": "tie"
+    },
+    "primary use": {
+     "metric": "acc",
+     "diff_skill": -7.142857142857142,
+     "ci95": [
+      -9.105392156862745,
+      -5.4604341736694675
+     ],
+     "verdict": "loss"
+    },
+    "year built": {
+     "metric": "mae",
+     "diff_skill": -0.5535160596511624,
+     "ci95": [
+      -1.268132243591791,
+      0.17191614052208193
+     ],
+     "verdict": "tie"
+    }
+   }
+  },
+  {
+   "model": "bldg_bdg2",
+   "contrast": "C3",
+   "arm": "G-sim+dev",
+   "vs": "G-dev",
+   "desc": "G-sim+dev vs G-dev (does the simulator, as data, add to the real labels?)",
+   "headline_diff": -3.097736763788772,
+   "ci95": [
+    -4.618738055324713,
+    -1.3842397586910067
+   ],
+   "verdict_for_arm": "loss",
+   "per_item": {
+    "floor area": {
+     "metric": "mape",
+     "diff_skill": -4.5148012586699835,
+     "ci95": [
+      -6.631091441708191,
+      -2.078356160405864
+     ],
+     "verdict": "loss"
+    },
+    "primary use": {
+     "metric": "acc",
+     "diff_skill": -1.6806722689075606,
+     "ci95": [
+      -4.131652661064422,
+      0.6320028011204513
+     ],
+     "verdict": "tie"
+    },
+    "year built": {
+     "metric": "mae",
+     "diff_skill": 0.8083748064435632,
+     "ci95": [
+      -0.15224875018187703,
+      1.7768244940733855
+     ],
+     "verdict": "tie"
+    }
+   }
+  },
+  {
+   "model": "bldg_bdg2",
+   "contrast": "C4",
+   "arm": "G-sim+dev",
+   "vs": "P",
+   "desc": "G-sim+dev vs P",
+   "headline_diff": 9.57505558583815,
+   "ci95": [
+    7.649651279148475,
+    11.7021819990474
+   ],
+   "verdict_for_arm": "win",
+   "per_item": {
+    "floor area": {
+     "metric": "mape",
+     "diff_skill": 6.40501313246061,
+     "ci95": [
+      3.629642591528473,
+      10.02079487395823
+     ],
+     "verdict": "win"
+    },
+    "primary use": {
+     "metric": "acc",
+     "diff_skill": 12.745098039215687,
+     "ci95": [
+      10.014005602240896,
+      15.407913165266109
+     ],
+     "verdict": "win"
+    },
+    "year built": {
+     "metric": "mae",
+     "diff_skill": -0.49145139713347774,
+     "ci95": [
+      -1.1500982752438518,
+      0.17144871301300388
+     ],
+     "verdict": "tie"
+    }
+   }
+  },
+  {
+   "model": "plantdetective",
+   "contrast": "C1",
+   "arm": "G-dev",
+   "vs": "P",
+   "desc": "P vs G-dev (simulator, 0 labels, vs generic prior + k dev labels)",
+   "headline_diff": 5.869879103751269,
+   "ci95": [
+    4.930783224283315,
+    7.113183904553551
+   ],
+   "verdict_for_arm": "win",
+   "per_item": {
+    "min stable load": {
+     "metric": "mae_med",
+     "diff_skill": 2.6046608943414,
+     "ci95": [
+      1.6524751447562813,
+      3.3313909843259184
+     ],
+     "verdict": "win"
+    },
+    "ramp up p99": {
+     "metric": "mape",
+     "diff_skill": 4.867056692892573,
+     "ci95": [
+      3.115409688910773,
+      6.660767736811583
+     ],
+     "verdict": "win"
+    },
+    "starts per year": {
+     "metric": "mape",
+     "diff_skill": 2.5662235656914554,
+     "ci95": [
+      -0.055456353457308795,
+      5.938845539582029
+     ],
+     "verdict": "tie"
+    },
+    "full-load heat rate": {
+     "metric": "mape",
+     "diff_skill": 11.500955006035781,
+     "ci95": [
+      9.386339338564886,
+      14.056760696414482
+     ],
+     "verdict": "win"
+    },
+    "technology": {
+     "metric": "acc",
+     "diff_skill": 7.810499359795131,
+     "ci95": [
+      4.475560422403173,
+      11.540920716112526
+     ],
+     "verdict": "win"
+    }
+   }
+  },
+  {
+   "model": "plantdetective",
+   "contrast": "C2",
+   "arm": "G-sim",
+   "vs": "P",
+   "desc": "P vs G-sim (same simulated data: purpose-built net vs generic in-context learner)",
+   "headline_diff": -3.324438839807512,
+   "ci95": [
+    -4.524742678232473,
+    -1.9585766916855076
+   ],
+   "verdict_for_arm": "loss",
+   "per_item": {
+    "min stable load": {
+     "metric": "mae_med",
+     "diff_skill": 2.44258561685794,
+     "ci95": [
+      1.7856007704970682,
+      3.086065262083624
+     ],
+     "verdict": "win"
+    },
+    "ramp up p99": {
+     "metric": "mape",
+     "diff_skill": 6.150556558019396,
+     "ci95": [
+      4.580487869729668,
+      7.487058010090696
+     ],
+     "verdict": "win"
+    },
+    "starts per year": {
+     "metric": "mape",
+     "diff_skill": -0.4317087782404876,
+     "ci95": [
+      -2.215107585869963,
+      2.817778749653582
+     ],
+     "verdict": "tie"
+    },
+    "full-load heat rate": {
+     "metric": "mape",
+     "diff_skill": -3.400785086071334,
+     "ci95": [
+      -6.942616701917716,
+      -0.8743740560187672
+     ],
+     "verdict": "loss"
+    },
+    "technology": {
+     "metric": "acc",
+     "diff_skill": -21.382842509603073,
+     "ci95": [
+      -25.766027344864252,
+      -16.83463075952029
+     ],
+     "verdict": "loss"
+    }
+   }
+  },
+  {
+   "model": "plantdetective",
+   "contrast": "C3",
+   "arm": "G-sim+dev",
+   "vs": "G-dev",
+   "desc": "G-sim+dev vs G-dev (does the simulator, as data, add to the real labels?)",
+   "headline_diff": -2.0308292531308068,
+   "ci95": [
+    -3.0026354161399187,
+    -1.0897880756499054
+   ],
+   "verdict_for_arm": "loss",
+   "per_item": {
+    "min stable load": {
+     "metric": "mae_med",
+     "diff_skill": 0.6936555442740868,
+     "ci95": [
+      0.302920130597121,
+      1.228110911967734
+     ],
+     "verdict": "win"
+    },
+    "ramp up p99": {
+     "metric": "mape",
+     "diff_skill": 1.3599936043044565,
+     "ci95": [
+      -0.056849742900330166,
+      2.899193304085185
+     ],
+     "verdict": "tie"
+    },
+    "starts per year": {
+     "metric": "mape",
+     "diff_skill": 1.3392373848616295,
+     "ci95": [
+      -0.6197172972280769,
+      3.0915470456023497
+     ],
+     "verdict": "tie"
+    },
+    "full-load heat rate": {
+     "metric": "mape",
+     "diff_skill": -5.352410519964884,
+     "ci95": [
+      -7.964578245450089,
+      -3.2047398356011465
+     ],
+     "verdict": "loss"
+    },
+    "technology": {
+     "metric": "acc",
+     "diff_skill": -8.19462227912932,
+     "ci95": [
+      -11.549696337926033,
+      -5.0998111326793
+     ],
+     "verdict": "loss"
+    }
+   }
+  },
+  {
+   "model": "plantdetective",
+   "contrast": "C4",
+   "arm": "G-sim+dev",
+   "vs": "P",
+   "desc": "G-sim+dev vs P",
+   "headline_diff": 3.8390498506204622,
+   "ci95": [
+    2.9579909656006365,
+    4.895850114035866
+   ],
+   "verdict_for_arm": "win",
+   "per_item": {
+    "min stable load": {
+     "metric": "mae_med",
+     "diff_skill": 3.298316438615487,
+     "ci95": [
+      2.477803225714214,
+      3.941916590836032
+     ],
+     "verdict": "win"
+    },
+    "ramp up p99": {
+     "metric": "mape",
+     "diff_skill": 6.22705029719703,
+     "ci95": [
+      4.533392318457139,
+      8.027755183343352
+     ],
+     "verdict": "win"
+    },
+    "starts per year": {
+     "metric": "mape",
+     "diff_skill": 3.905460950553085,
+     "ci95": [
+      1.4526075187259246,
+      6.775197178916269
+     ],
+     "verdict": "win"
+    },
+    "full-load heat rate": {
+     "metric": "mape",
+     "diff_skill": 6.148544486070897,
+     "ci95": [
+      4.60799012719412,
+      8.045168097612917
+     ],
+     "verdict": "win"
+    },
+    "technology": {
+     "metric": "acc",
+     "diff_skill": -0.38412291933418885,
+     "ci95": [
+      -3.954081632653058,
+      3.4483861010671157
+     ],
+     "verdict": "tie"
+    }
+   }
+  },
+  {
+   "model": "energynet",
+   "contrast": "C1",
+   "arm": "G-dev",
+   "vs": "P",
+   "desc": "P vs G-dev (simulator, 0 labels, vs generic prior + k dev labels)",
+   "headline_diff": 1.150020287906182,
+   "ci95": [
+    -0.19621484671317496,
+    2.505539742158399
+   ],
+   "verdict_for_arm": "tie",
+   "per_item": {
+    "ICE": {
+     "metric": "mape",
+     "diff_skill": -0.9645605627787877,
+     "ci95": [
+      -1.7709671180300113,
+      -0.015614142404132463
+     ],
+     "verdict": "loss"
+    },
+    "HEV": {
+     "metric": "mape",
+     "diff_skill": 4.434301754848377,
+     "ci95": [
+      2.907579075207512,
+      6.303199084285996
+     ],
+     "verdict": "win"
+    },
+    "PHEV": {
+     "metric": "mape",
+     "diff_skill": -0.019680328351043386,
+     "ci95": [
+      -3.986309079190033,
+      3.0693698789530743
+     ],
+     "verdict": "tie"
+    },
+    "EV": {
+     "metric": "mape",
+     "diff_skill": 5.063278329404842,
+     "ci95": [
+      2.2744672518231077,
+      5.063278329404842
+     ],
+     "verdict": "win"
+    },
+    "all trips": {
+     "metric": "mape",
+     "diff_skill": 0.008122690400201193,
+     "ci95": [
+      -0.877487274275762,
+      0.8437275766240903
+     ],
+     "verdict": "tie"
+    },
+    "log ratio": {
+     "metric": "rho",
+     "diff_skill": 0.026739947993562052,
+     "ci95": [
+      -0.0068039056672183264,
+      0.06639305508579796
+     ],
+     "verdict": "tie"
+    }
+   }
+  },
+  {
+   "model": "energynet",
+   "contrast": "C2",
+   "arm": "G-sim",
+   "vs": "P",
+   "desc": "P vs G-sim (same simulated data: purpose-built net vs generic in-context learner)",
+   "headline_diff": -3.3845256837726954,
+   "ci95": [
+    -6.150012158535754,
+    -1.498905897444865
+   ],
+   "verdict_for_arm": "loss",
+   "per_item": {
+    "ICE": {
+     "metric": "mape",
+     "diff_skill": -0.0454072876326137,
+     "ci95": [
+      -0.461794188896974,
+      0.5218968809046104
+     ],
+     "verdict": "tie"
+    },
+    "HEV": {
+     "metric": "mape",
+     "diff_skill": -1.128545275563063,
+     "ci95": [
+      -2.505489472188593,
+      0.4303389296758739
+     ],
+     "verdict": "tie"
+    },
+    "PHEV": {
+     "metric": "mape",
+     "diff_skill": -8.979624488122411,
+     "ci95": [
+      -16.77997999094728,
+      -3.7331944905979895
+     ],
+     "verdict": "loss"
+    },
+    "EV": {
+     "metric": "mape",
+     "diff_skill": -1.215092444175152,
+     "ci95": [
+      -4.8787559528305735,
+      0.8733452986407144
+     ],
+     "verdict": "tie"
+    },
+    "all trips": {
+     "metric": "mape",
+     "diff_skill": -0.27001594725039624,
+     "ci95": [
+      -0.8197240891403835,
+      0.3106138615251774
+     ],
+     "verdict": "tie"
+    },
+    "log ratio": {
+     "metric": "rho",
+     "diff_skill": -0.028292847029870227,
+     "ci95": [
+      -0.05681329648335923,
+      -8.311824503132781e-06
+     ],
+     "verdict": "loss"
+    }
+   }
+  },
+  {
+   "model": "energynet",
+   "contrast": "C3",
+   "arm": "G-sim+dev",
+   "vs": "G-dev",
+   "desc": "G-sim+dev vs G-dev (does the simulator, as data, add to the real labels?)",
+   "headline_diff": -0.5874665951467701,
+   "ci95": [
+    -1.3728805108990483,
+    0.6153989578830402
+   ],
+   "verdict_for_arm": "tie",
+   "per_item": {
+    "ICE": {
+     "metric": "mape",
+     "diff_skill": 0.5353199546662388,
+     "ci95": [
+      -0.06786233748854542,
+      0.9433695832220906
+     ],
+     "verdict": "tie"
+    },
+    "HEV": {
+     "metric": "mape",
+     "diff_skill": -0.9624500169685639,
+     "ci95": [
+      -1.691601312444178,
+      0.11825587528376227
+     ],
+     "verdict": "tie"
+    },
+    "PHEV": {
+     "metric": "mape",
+     "diff_skill": -1.335269723137987,
+     "ci95": [
+      -3.87028012735918,
+      1.8777721745304161
+     ],
+     "verdict": "tie"
+    },
+    "EV": {
+     "metric": "mape",
+     "diff_skill": -1.1282745395692615,
+     "ci95": [
+      -1.1282745395692615,
+      2.2714838877945844
+     ],
+     "verdict": "tie"
+    },
+    "all trips": {
+     "metric": "mape",
+     "diff_skill": 0.27934504323247467,
+     "ci95": [
+      -0.19264111529823294,
+      0.6807989360813543
+     ],
+     "verdict": "tie"
+    },
+    "log ratio": {
+     "metric": "rho",
+     "diff_skill": 0.03819555694444854,
+     "ci95": [
+      0.021096693746475752,
+      0.05662994890076021
+     ],
+     "verdict": "win"
+    }
+   }
+  },
+  {
+   "model": "energynet",
+   "contrast": "C4",
+   "arm": "G-sim+dev",
+   "vs": "P",
+   "desc": "G-sim+dev vs P",
+   "headline_diff": 0.5625536927594119,
+   "ci95": [
+    -0.5092877789269287,
+    2.0296411347207526
+   ],
+   "verdict_for_arm": "tie",
+   "per_item": {
+    "ICE": {
+     "metric": "mape",
+     "diff_skill": -0.4292406081125488,
+     "ci95": [
+      -1.221428029452837,
+      0.3489783551818971
+     ],
+     "verdict": "tie"
+    },
+    "HEV": {
+     "metric": "mape",
+     "diff_skill": 3.4718517378798133,
+     "ci95": [
+      2.1583846411828476,
+      5.520105768322414
+     ],
+     "verdict": "win"
+    },
+    "PHEV": {
+     "metric": "mape",
+     "diff_skill": -1.3549500514890305,
+     "ci95": [
+      -4.336644617936683,
+      2.287628530473569
+     ],
+     "verdict": "tie"
+    },
+    "EV": {
+     "metric": "mape",
+     "diff_skill": 3.93500378983558,
+     "ci95": [
+      3.4291655330613366,
+      4.545951139617692
+     ],
+     "verdict": "win"
+    },
+    "all trips": {
+     "metric": "mape",
+     "diff_skill": 0.28746773363267586,
+     "ci95": [
+      -0.4577972817757464,
+      1.002458668083756
+     ],
+     "verdict": "tie"
+    },
+    "log ratio": {
+     "metric": "rho",
+     "diff_skill": 0.06493550493801059,
+     "ci95": [
+      0.036023481792976125,
+      0.0969316231348331
+     ],
+     "verdict": "win"
+    }
+   }
+  }
+ ],
+ "lc": [
+  {
+   "model": "gridpulse",
+   "k": 8,
+   "headline_mean": -20.095323797972224,
+   "headline_sd_over_3_subsets": 0.0,
+   "is_full_dev": true,
+   "P_headline": -18.965049531971058
+  },
+  {
+   "model": "basindetective",
+   "k": 5,
+   "headline_mean": 0.10521275524579791,
+   "headline_sd_over_3_subsets": 0.07454900780599638,
+   "is_full_dev": false,
+   "P_headline": 0.4517814366932183
+  },
+  {
+   "model": "basindetective",
+   "k": 10,
+   "headline_mean": 0.18322851955231126,
+   "headline_sd_over_3_subsets": 0.07127399085843861,
+   "is_full_dev": false,
+   "P_headline": 0.4517814366932183
+  },
+  {
+   "model": "basindetective",
+   "k": 20,
+   "headline_mean": 0.26907215707244664,
+   "headline_sd_over_3_subsets": 0.02007420364155304,
+   "is_full_dev": false,
+   "P_headline": 0.4517814366932183
+  },
+  {
+   "model": "basindetective",
+   "k": 40,
+   "headline_mean": 0.3386157208253185,
+   "headline_sd_over_3_subsets": 0.007577381730651992,
+   "is_full_dev": false,
+   "P_headline": 0.4517814366932183
+  },
+  {
+   "model": "basindetective",
+   "k": 52,
+   "headline_mean": 0.36708982764211256,
+   "headline_sd_over_3_subsets": 0.0,
+   "is_full_dev": true,
+   "P_headline": 0.4517814366932183
+  },
+  {
+   "model": "bldg_recs",
+   "k": 5,
+   "headline_mean": 18.810996793911418,
+   "headline_sd_over_3_subsets": 5.4630730998390336,
+   "is_full_dev": false,
+   "P_headline": 26.829745836094585
+  },
+  {
+   "model": "bldg_recs",
+   "k": 10,
+   "headline_mean": 19.833521151459262,
+   "headline_sd_over_3_subsets": 4.5648833341410535,
+   "is_full_dev": false,
+   "P_headline": 26.829745836094585
+  },
+  {
+   "model": "bldg_recs",
+   "k": 20,
+   "headline_mean": 26.460552452612603,
+   "headline_sd_over_3_subsets": 1.4821699116355997,
+   "is_full_dev": false,
+   "P_headline": 26.829745836094585
+  },
+  {
+   "model": "bldg_recs",
+   "k": 40,
+   "headline_mean": 28.266601391569043,
+   "headline_sd_over_3_subsets": 0.8400747024752829,
+   "is_full_dev": false,
+   "P_headline": 26.829745836094585
+  },
+  {
+   "model": "bldg_recs",
+   "k": 80,
+   "headline_mean": 28.933170925910343,
+   "headline_sd_over_3_subsets": 0.3704813371065781,
+   "is_full_dev": false,
+   "P_headline": 26.829745836094585
+  },
+  {
+   "model": "bldg_recs",
+   "k": 160,
+   "headline_mean": 30.027391859775474,
+   "headline_sd_over_3_subsets": 0.05989439700963894,
+   "is_full_dev": false,
+   "P_headline": 26.829745836094585
+  },
+  {
+   "model": "bldg_recs",
+   "k": 320,
+   "headline_mean": 31.209800082556296,
+   "headline_sd_over_3_subsets": 0.14159398321203756,
+   "is_full_dev": false,
+   "P_headline": 26.829745836094585
+  },
+  {
+   "model": "bldg_recs",
+   "k": 1848,
+   "headline_mean": 32.121067804465824,
+   "headline_sd_over_3_subsets": 0.0,
+   "is_full_dev": true,
+   "P_headline": 26.829745836094585
+  },
+  {
+   "model": "bldg_bdg2",
+   "k": 5,
+   "headline_mean": -32.83614909245666,
+   "headline_sd_over_3_subsets": 14.86780600732444,
+   "is_full_dev": false,
+   "P_headline": -17.63827288809788
+  },
+  {
+   "model": "bldg_bdg2",
+   "k": 10,
+   "headline_mean": -27.7178233051589,
+   "headline_sd_over_3_subsets": 14.41348066355233,
+   "is_full_dev": false,
+   "P_headline": -17.63827288809788
+  },
+  {
+   "model": "bldg_bdg2",
+   "k": 20,
+   "headline_mean": -4.836810346790228,
+   "headline_sd_over_3_subsets": 2.9523711007184645,
+   "is_full_dev": false,
+   "P_headline": -17.63827288809788
+  },
+  {
+   "model": "bldg_bdg2",
+   "k": 40,
+   "headline_mean": -8.603151167084883,
+   "headline_sd_over_3_subsets": 2.1742083337871008,
+   "is_full_dev": false,
+   "P_headline": -17.63827288809788
+  },
+  {
+   "model": "bldg_bdg2",
+   "k": 52,
+   "headline_mean": -4.965480538470958,
+   "headline_sd_over_3_subsets": 0.0,
+   "is_full_dev": true,
+   "P_headline": -17.63827288809788
+  },
+  {
+   "model": "plantdetective",
+   "k": 5,
+   "headline_mean": -16.302447506454993,
+   "headline_sd_over_3_subsets": 8.748611231495577,
+   "is_full_dev": false,
+   "P_headline": -1.8434451013731945
+  },
+  {
+   "model": "plantdetective",
+   "k": 10,
+   "headline_mean": -5.258313487187398,
+   "headline_sd_over_3_subsets": 2.5917956304578214,
+   "is_full_dev": false,
+   "P_headline": -1.8434451013731945
+  },
+  {
+   "model": "plantdetective",
+   "k": 20,
+   "headline_mean": -1.8601898497299019,
+   "headline_sd_over_3_subsets": 1.4266490500439735,
+   "is_full_dev": false,
+   "P_headline": -1.8434451013731945
+  },
+  {
+   "model": "plantdetective",
+   "k": 40,
+   "headline_mean": 3.9737233729203716,
+   "headline_sd_over_3_subsets": 0.15204668177549518,
+   "is_full_dev": false,
+   "P_headline": -1.8434451013731945
+  },
+  {
+   "model": "plantdetective",
+   "k": 60,
+   "headline_mean": 4.026434002378075,
+   "headline_sd_over_3_subsets": 0.0,
+   "is_full_dev": true,
+   "P_headline": -1.8434451013731945
+  },
+  {
+   "model": "energynet",
+   "k": 5,
+   "headline_mean": -20.578360407664487,
+   "headline_sd_over_3_subsets": 2.1387135011382066,
+   "is_full_dev": false,
+   "P_headline": -14.369029220479073
+  },
+  {
+   "model": "energynet",
+   "k": 10,
+   "headline_mean": -21.083033877316755,
+   "headline_sd_over_3_subsets": 4.455667686309447,
+   "is_full_dev": false,
+   "P_headline": -14.369029220479073
+  },
+  {
+   "model": "energynet",
+   "k": 20,
+   "headline_mean": -19.128130707859096,
+   "headline_sd_over_3_subsets": 1.0817675768053405,
+   "is_full_dev": false,
+   "P_headline": -14.369029220479073
+  },
+  {
+   "model": "energynet",
+   "k": 40,
+   "headline_mean": -17.77888254282843,
+   "headline_sd_over_3_subsets": 1.831421558642911,
+   "is_full_dev": false,
+   "P_headline": -14.369029220479073
+  },
+  {
+   "model": "energynet",
+   "k": 80,
+   "headline_mean": -16.144889201429137,
+   "headline_sd_over_3_subsets": 0.846930766685282,
+   "is_full_dev": false,
+   "P_headline": -14.369029220479073
+  },
+  {
+   "model": "energynet",
+   "k": 160,
+   "headline_mean": -15.303456575708843,
+   "headline_sd_over_3_subsets": 0.08383022379688049,
+   "is_full_dev": false,
+   "P_headline": -14.369029220479073
+  },
+  {
+   "model": "energynet",
+   "k": 320,
+   "headline_mean": -14.589197872845839,
+   "headline_sd_over_3_subsets": 1.1449138324965709,
+   "is_full_dev": false,
+   "P_headline": -14.369029220479073
+  },
+  {
+   "model": "energynet",
+   "k": 1152,
+   "headline_mean": -13.21900893257289,
+   "headline_sd_over_3_subsets": 0.0,
+   "is_full_dev": true,
+   "P_headline": -14.369029220479073
+  }
+ ],
+ "models": {
+  "gridpulse": {
+   "title": "GridPulse",
+   "headline": "mean of MdAPE (%) over GB inertia at N=60 s, inertia at N=10 s and MW lost (medium-confidence labels, N=60) (negated)",
+   "n_exam_rows": 824,
+   "n_units": 412,
+   "unit": "exam unit",
+   "n_dev": 8,
+   "k_in_g_dev_context": 8,
+   "n_features": 86,
+   "g_dev_prep": "norm",
+   "g_sim_prep": "norm",
+   "g_sim_ctx": 1024,
+   "scored": "2026-11-18 20:03:46",
+   "k_star": "> 8"
+  },
+  "basindetective": {
+   "title": "BasinDetective",
+   "headline": "mean over the 6 change targets of Spearman rho and (2 AUC - 1) for regulated (= the model's dev composite)",
+   "n_exam_rows": 619,
+   "n_units": 619,
+   "unit": "basin",
+   "n_dev": 52,
+   "k_in_g_dev_context": 52,
+   "n_features": 150,
+   "g_dev_prep": "raw",
+   "g_sim_prep": "raw",
+   "g_sim_ctx": 1024,
+   "scored": "2026-11-18 22:18:39",
+   "k_star": "> 52"
+  },
+  "bldg_recs": {
+   "title": "BuildingDetective (RECS, annual)",
+   "headline": "mean of floor-area MdAPE (%, negated) and heating-group accuracy (%); vintage MAE reported, not in the headline",
+   "n_exam_rows": 7401,
+   "n_units": 7401,
+   "unit": "exam unit",
+   "n_dev": 1848,
+   "k_in_g_dev_context": 1848,
+   "n_features": 12,
+   "g_dev_prep": "norm",
+   "g_sim_prep": "raw",
+   "g_sim_ctx": 1024,
+   "scored": "2026-11-18 23:11:57",
+   "k_star": "40"
+  },
+  "bldg_bdg2": {
+   "title": "BuildingDetective (BDG2, monthly)",
+   "headline": "mean of floor-area MdAPE (%, negated) and primary-use accuracy (%); year built reported, not in the headline",
+   "n_exam_rows": 1428,
+   "n_units": 1428,
+   "unit": "exam unit",
+   "n_dev": 52,
+   "k_in_g_dev_context": 52,
+   "n_features": 112,
+   "g_dev_prep": "raw",
+   "g_sim_prep": "norm",
+   "g_sim_ctx": 1024,
+   "scored": "2026-11-19 01:00:25",
+   "k_star": "20"
+  },
+  "plantdetective": {
+   "title": "PlantDetective",
+   "headline": "mean over min stable load (median abs error, points of pmax), ramp-up p99, starts per year and full-load heat rate (median relative error, %; starts as |(p+1)/(t+1) - 1|, as the card) - all negated - and technology accuracy (%)",
+   "n_exam_rows": 781,
+   "n_units": 395,
+   "unit": "unit",
+   "n_dev": 60,
+   "k_in_g_dev_context": 60,
+   "n_features": 171,
+   "g_dev_prep": "norm",
+   "g_sim_prep": "norm",
+   "g_sim_ctx": 1024,
+   "scored": "2026-11-19 03:06:42",
+   "k_star": "40"
+  },
+  "energynet": {
+   "title": "EnergyNet",
+   "headline": "mean of the per-trip MdAPE (%) over the ICE, HEV and PHEV exam groups (negated: higher is better); EV (2 Leafs) reported, not in the headline",
+   "n_exam_rows": 2549,
+   "n_units": 350,
+   "unit": "exam unit",
+   "n_dev": 1496,
+   "k_in_g_dev_context": 1152,
+   "n_features": 149,
+   "g_dev_prep": "norm",
+   "g_sim_prep": "raw",
+   "g_sim_ctx": 1024,
+   "scored": "2026-11-19 05:39:28",
+   "k_star": "1152"
+  }
+ },
+ "verdict": {
+  "C1_P_wins": 1,
+  "C1_P_losses": 3,
+  "C1_ties": 2,
+  "n_models": 6,
+  "sentence": "the generic prior beats the domain simulator",
+  "C2": {
+   "win": 1,
+   "tie": 1,
+   "loss": 4
+  },
+  "C3": {
+   "win": 1,
+   "tie": 3,
+   "loss": 2
+  },
+  "C4": {
+   "win": 3,
+   "tie": 3,
+   "loss": 0
+  }
+ },
+ "where_wins": {
+  "gridpulse": {
+   "best": "P",
+   "best_0_labels": "P",
+   "best_k_labels": "G-dev",
+   "items_best": {
+    "P": 3,
+    "G-dev": 2,
+    "G-sim": 0,
+    "G-sim+dev": 1
+   }
+  },
+  "basindetective": {
+   "best": "P",
+   "best_0_labels": "P",
+   "best_k_labels": "G-sim+dev",
+   "items_best": {
+    "P": 4,
+    "G-dev": 0,
+    "G-sim": 1,
+    "G-sim+dev": 2
+   }
+  },
+  "bldg_recs": {
+   "best": "G-dev",
+   "best_0_labels": "G-sim",
+   "best_k_labels": "G-dev",
+   "items_best": {
+    "P": 0,
+    "G-dev": 3,
+    "G-sim": 0,
+    "G-sim+dev": 0
+   }
+  },
+  "bldg_bdg2": {
+   "best": "G-dev",
+   "best_0_labels": "P",
+   "best_k_labels": "G-dev",
+   "items_best": {
+    "P": 1,
+    "G-dev": 2,
+    "G-sim": 0,
+    "G-sim+dev": 0
+   }
+  },
+  "plantdetective": {
+   "best": "G-dev",
+   "best_0_labels": "P",
+   "best_k_labels": "G-dev",
+   "items_best": {
+    "P": 0,
+    "G-dev": 2,
+    "G-sim": 0,
+    "G-sim+dev": 3
+   }
+  },
+  "energynet": {
+   "best": "G-dev",
+   "best_0_labels": "P",
+   "best_k_labels": "G-dev",
+   "items_best": {
+    "P": 2,
+    "G-dev": 2,
+    "G-sim": 0,
+    "G-sim+dev": 2
+   }
+  }
+ }
+}

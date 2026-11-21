@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Prior Wars, ML Ratchet method experiment C1: the released simulation-trained models against TabPFN-v2, a generic synthetic prior, on six real exams. Built with PriorLabs-TabPFN.">
+<title>Prior Wars · ML Ratchet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column (~68ch) that widens to a 2-up grid for the per-model plots; bout-card scoreboard up top. */
+:root {
+  --bg: #f4f6f7; --surface: #ffffff; --ink: #142026; --muted: #5a6a72; --rule: #d5dde1;
+  --phys: #11708a;      /* the physics prior: P, the released simulation-trained model */
+  --gen: #c46a12;       /* the generic prior given real labels: G-dev */
+  --gsim: #6b5aa6;      /* simulator rows, generic learner: G-sim */
+  --mix: #4f7d32;       /* both: G-sim+dev */
+  --base: #8a979d;      /* card baselines */
+  --win: #1f7a4a; --loss: #b23a2e; --tie: #7a868c;
+  --chip-bg: #eaeff1;
+  --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1518; --surface: #152025; --ink: #e3eaed; --muted: #93a3aa; --rule: #2a3a41;
+  --phys: #4fb6d1; --gen: #f0a04b; --gsim: #a998e6; --mix: #8cc069; --base: #74838a;
+  --win: #5cc48a; --loss: #f07a6c; --tie: #93a0a6; --chip-bg: #1d2b31; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0e1518; --surface: #152025; --ink: #e3eaed; --muted: #93a3aa; --rule: #2a3a41;
+  --phys: #4fb6d1; --gen: #f0a04b; --gsim: #a998e6; --mix: #8cc069; --base: #74838a;
+  --win: #5cc48a; --loss: #f07a6c; --tie: #93a0a6; --chip-bg: #1d2b31; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px }
+.wrap { max-width: 1060px; margin: 0 auto }
+.col { max-width: 70ch }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0 }
+h1 { font-size: clamp(48px, 9vw, 96px); font-stretch: 70%; font-weight: 800; letter-spacing: -0.01em; line-height: .95 }
+h2 { font-size: 28px; font-stretch: 80%; font-weight: 700; margin-top: 56px; margin-bottom: 8px }
+h3 { font-size: 19px; font-stretch: 90%; font-weight: 700 }
+p { margin: 8px 0 }
+.eyebrow { font: 500 12px/1.4 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted) }
+header.hero { padding-block: 48px 8px; display: grid; gap: 16px }
+.lede { font-size: 18px; max-width: 62ch }
+.verdict { font-family: var(--f-display); font-stretch: 85%; font-size: clamp(22px, 3.4vw, 30px); font-weight: 650; line-height: 1.2; max-width: 30ch }
+.tally { display: flex; flex-wrap: wrap; gap: 8px 24px; font: 500 14px var(--f-mono); color: var(--muted) }
+.tally b { font-size: 28px; font-family: var(--f-display); font-stretch: 80%; display: block; color: var(--ink) }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); margin: 12px 0 }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; background: var(--c); vertical-align: -1px }
+.scroll { overflow-x: auto; -webkit-overflow-scrolling: touch }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; font-size: 13.5px }
+th, td { text-align: right; padding: 7px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap }
+th:first-child, td:first-child { text-align: left }
+th { font: 500 11.5px var(--f-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); vertical-align: bottom }
+td.num { font-family: var(--f-mono); font-size: 13px }
+.board td.model { font-family: var(--f-display); font-stretch: 90%; font-weight: 650; font-size: 15px }
+.chip { display: inline-block; font: 500 11.5px var(--f-mono); padding: 2px 8px; border-radius: 999px; background: var(--chip-bg); color: var(--tie) }
+.chip.win { color: var(--win) } .chip.loss { color: var(--loss) }
+.chip.win::before { content: "▲ " } .chip.loss::before { content: "▼ " } .chip.tie::before { content: "● " }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr)); gap: 20px }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px; min-width: 0 }
+.panel .sub { font-size: 12.5px; color: var(--muted) }
+svg text { fill: var(--muted); font: 11px var(--f-mono) }
+svg .lab { fill: var(--ink); font: 500 12px var(--f-body) }
+details { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 16px; margin: 10px 0 }
+summary { cursor: pointer; font-family: var(--f-display); font-stretch: 90%; font-weight: 650; font-size: 16px }
+summary:focus-visible, a:focus-visible { outline: 2px solid var(--phys); outline-offset: 2px }
+.armname { font-weight: 600 }
+.arm-P { color: var(--phys) } .arm-G-dev { color: var(--gen) } .arm-G-sim { color: var(--gsim) } .arm-G-sim\+dev { color: var(--mix) } .arm-C-dev, .arm-base { color: var(--base) }
+.ci { color: var(--muted); font-size: 11.5px }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; margin: 12px 0 }
+.card { border-top: 3px solid var(--c); background: var(--surface); padding: 12px 14px; border-radius: 0 0 6px 6px }
+.card b { font-family: var(--f-display); font-stretch: 85%; font-size: 17px; display: block }
+.card p { font-size: 13.5px; color: var(--muted); margin: 4px 0 0 }
+ul { padding-left: 20px } li { margin: 4px 0 }
+code { font: 13px var(--f-mono); background: var(--chip-bg); padding: 1px 5px; border-radius: 3px }
+.foot { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--muted) }
+.built { font: 600 13px var(--f-mono); color: var(--ink) }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">ML Ratchet · method experiment C1 · 18 Nov 2026</div>
+  <h1>Prior Wars</h1>
+  <p class="lede">Every ML Ratchet model learns only from a physics simulator. TabPFN also learned only from synthetic data, but from a generic prior over random causal models, and it predicts by reading a table in context. This experiment asks which prior does better on the collection's real exams, and how many real labels the generic prior needs to catch up.</p>
+  <p class="verdict" id="verdict"></p>
+  <p class="lede" id="verdict2"></p>
+  <div class="tally" id="tally"></div>
+</header>
+
+<section>
+  <h2>The arms</h2>
+  <div class="cards">
+    <div class="card" style="--c: var(--phys)"><b class="arm-P">P · physics prior</b><p>The released simulation-trained model, rerun from its shipped weights. It has seen 0 real labels.</p></div>
+    <div class="card" style="--c: var(--gen)"><b class="arm-G-dev">G-dev · generic prior + k labels</b><p>TabPFN-v2 with the model's real dev rows in context. It has seen k real labels, so its protocol differs from P's.</p></div>
+    <div class="card" style="--c: var(--gsim)"><b class="arm-G-sim">G-sim · simulator as data</b><p>TabPFN-v2 with 1,024 simulated rows from the model's own training bank in context. It has seen 0 real labels.</p></div>
+    <div class="card" style="--c: var(--mix)"><b class="arm-G-sim+dev">G-sim+dev · both</b><p>The simulated rows plus every dev row in one context, with an <code>is_real</code> flag column.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Scoreboard</h2>
+  <p class="col">Each model is scored on its own exam rows with its own headline (errors are negated, so higher is better). Verdicts use a 95 % paired bootstrap over the exam's units. A verdict is a win or a loss only when the interval of the difference excludes zero.</p>
+  <div class="scroll"><table class="board" id="board"></table></div>
+</section>
+
+<section>
+  <h2>Each arm against the physics model</h2>
+  <p class="col">Headline difference from P, with its 95 % bootstrap interval. Right of zero means the arm beat the released model. Each panel has its own scale because the headlines are in different units.</p>
+  <div class="legend"><span style="--c: var(--gen)">G-dev</span><span style="--c: var(--gsim)">G-sim</span><span style="--c: var(--mix)">G-sim+dev</span><span style="--c: var(--base)">C-dev</span></div>
+  <div class="grid2" id="forest"></div>
+</section>
+
+<section>
+  <h2>How many real labels does the generic prior need?</h2>
+  <p class="col">The G-dev headline with k randomly drawn dev rows in context, averaged over 3 draws (the bar spans ±1 SD); the last point is the full dev set. The dashed line is P with 0 real labels. k* is the smallest k whose mean reaches P.</p>
+  <div class="grid2" id="lc"></div>
+</section>
+
+<section>
+  <h2>Per-model detail</h2>
+  <p class="col">Every scored item, with the model card's own baselines rebuilt on the same rows. The primary metric is shown and the interval sits under each value.</p>
+  <div id="detail"></div>
+</section>
+
+<section class="col">
+  <h2>What this shows, and what it does not</h2>
+  <ul id="caveats"></ul>
+</section>
+
+<section class="col">
+  <h2>Protocol</h2>
+  <ul>
+    <li>The protocol was pre-registered in <code>PREREG.md</code> before any exam row was scored. Each model's section is hashed into <code>prereg_log.json</code> before its exam predictions, and the scoring code refuses to run if that hash has changed. The exam is scored once and chooses nothing.</li>
+    <li>Settings were chosen without the exam. G-dev preprocessing (raw or normalised) came from 5-fold cross-validation inside dev. G-sim preprocessing came from 400 rows of the model's frozen simulated validation set.</li>
+    <li>TabPFN-v2 ran on one CPU core with n_estimators = 2, under a 2 GiB memory cap on a machine shared with two other agents. Context rows are capped at R_max(F) by feature count, and G-sim uses 1,024 rows. These limits are fixed in amendments A1-A3. The result is a lower bound on what TabPFN can do.</li>
+    <li>Two exams were subsampled once with a fixed seed: EnergyNet (8 trips per car) and PlantDetective (2 year-windows per unit). P is scored on the same rows.</li>
+  </ul>
+</section>
+
+<footer class="foot col">
+  <p class="built">Built with PriorLabs-TabPFN</p>
+  <p>TabPFN-v2 weights: Prior Labs License 1.1 (Apache 2.0 plus an attribution clause). <code>tabpfn</code> 10.2.0 code: Apache-2.0. TabPFN 2.5, 3 and 3.5 were not used because their weights need an account and a non-commercial licence acceptance. Hollmann et al., <i>Nature</i> 2025. ML Ratchet: github.com/dogum/ML-Ratchet.</p>
+</footer>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+const ARMC = {'P': 'var(--phys)', 'G-dev': 'var(--gen)', 'G-sim': 'var(--gsim)', 'G-sim+dev': 'var(--mix)', 'C-dev': 'var(--base)'};
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const f = (v, n) => (v == null || !isFinite(v)) ? '–' : (Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(n));
+const nd = m => ['rho', 'auc', 'r2', 'mdae'].includes(m) ? 3 : 1;
+const chip = (v, txt) => `<span class="chip ${v}">${esc(txt || v)}</span>`;
+const flip = v => v === 'win' ? 'loss' : v === 'loss' ? 'win' : 'tie';
+const armCls = a => ARMC[a] ? 'arm-' + a : 'arm-base';
+
+// ---- verdict
+(() => {
+  const v = D.verdict, n = v.n_models;
+  const s = v.sentence === 'split' ? 'Split decision.' : (v.sentence[0].toUpperCase() + v.sentence.slice(1) + '.');
+  const ww = D.where_wins || {}, n0 = Object.values(ww).filter(w => w.best_0_labels === 'P').length;
+  document.getElementById('verdict').textContent =
+    `Given the dev labels, TabPFN beat the physics model on ${v.C1_P_losses} of ${n} real exams, tied on ${v.C1_ties} and lost on ${v.C1_P_wins}.`;
+  document.getElementById('verdict2').textContent =
+    `With zero real labels, the physics model is still the best arm on ${n0} of ${n}. A simulator is worth tens of real labels here, not hundreds.`;
+  const c2 = v.C2, c3 = v.C3;
+  document.getElementById('tally').innerHTML = [
+    [`${v.C1_P_wins} · ${v.C1_ties} · ${v.C1_P_losses}`, 'C1 P vs G-dev (P win · tie · loss)'],
+    [`${c2.loss} · ${c2.tie} · ${c2.win}`, 'C2 P vs G-sim (P win · tie · loss)'],
+    [`${c3.win} · ${c3.tie} · ${c3.loss}`, 'C3 adding sim rows to dev (help · tie · hurt)'],
+  ].map(([a, b]) => `<div><b>${a}</b>${b}</div>`).join('');
+})();
+
+// ---- scoreboard
+(() => {
+  const h = a => { const r = a && a.headline; return r ? `${f(r[0], 3)}` : '–'; };
+  let html = '<thead><tr><th>Model</th><th>Exam rows · units</th><th>Dev k</th><th class="arm-P">P</th><th class="arm-G-dev">G-dev</th><th class="arm-G-sim">G-sim</th><th class="arm-G-sim+dev">G-sim+dev</th><th>C1 · P vs G-dev</th><th>C2 · P vs G-sim</th><th>C3 · sim rows add?</th><th>k*</th></tr></thead><tbody>';
+  for (const m of D.models) {
+    const T = Object.fromEntries(m.table.map(t => [t.arm, t]));
+    const c = m.con;
+    html += `<tr><td class="model">${esc(m.title)}</td><td class="num">${m.rows.toLocaleString()} · ${m.units.toLocaleString()}</td><td class="num">${m.lc.length ? m.lc[m.lc.length - 1].k : m.dev}</td>` +
+      ['P', 'G-dev', 'G-sim', 'G-sim+dev'].map(a => `<td class="num">${h(T[a])}</td>`).join('') +
+      `<td>${c.C1 ? chip(flip(c.C1.v), 'P ' + flip(c.C1.v)) : '–'}</td><td>${c.C2 ? chip(flip(c.C2.v), 'P ' + flip(c.C2.v)) : '–'}</td>` +
+      `<td>${c.C3 ? chip(c.C3.v, c.C3.v === 'win' ? 'helps' : c.C3.v === 'loss' ? 'hurts' : 'tie') : '–'}</td><td class="num">${esc(m.kstar)}</td></tr>`;
+  }
+  document.getElementById('board').innerHTML = html + '</tbody>';
+})();
+
+// ---- forest plots (difference vs P)
+(() => {
+  const host = document.getElementById('forest');
+  for (const m of D.models) {
+    const P = m.table.find(t => t.arm === 'P').headline[0];
+    const rows = [];
+    for (const [cid, arm] of [['C1', 'G-dev'], ['C2', 'G-sim'], ['C4', 'G-sim+dev']]) {
+      if (m.con[cid]) rows.push({arm, d: m.con[cid].d, lo: m.con[cid].ci[0], hi: m.con[cid].ci[1], v: m.con[cid].v});
+    }
+    const cd = m.table.find(t => t.arm === 'C-dev');
+    if (cd && cd.headline) rows.push({arm: 'C-dev', d: cd.headline[0] - P, lo: null, hi: null, v: null});
+    let lo = Math.min(0, ...rows.map(r => r.lo ?? r.d)), hi = Math.max(0, ...rows.map(r => r.hi ?? r.d));
+    const pad = (hi - lo) * 0.08 || 1; lo -= pad; hi += pad;
+    const W = 480, L = 92, R = 16, rh = 30, H = rows.length * rh + 34;
+    const x = v => L + (v - lo) / (hi - lo) * (W - L - R);
+    const ticks = niceTicks(lo, hi, 5);
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(m.title)}: headline difference from P">`;
+    for (const t of ticks) s += `<line x1="${x(t)}" x2="${x(t)}" y1="6" y2="${H - 22}" stroke="var(--rule)" stroke-width="1"/><text x="${x(t)}" y="${H - 6}" text-anchor="middle">${fmtTick(t)}</text>`;
+    s += `<line x1="${x(0)}" x2="${x(0)}" y1="2" y2="${H - 22}" stroke="var(--phys)" stroke-width="1.5"/>`;
+    rows.forEach((r, i) => {
+      const y = 18 + i * rh;
+      s += `<text class="lab" x="0" y="${y + 4}">${esc(r.arm)}</text>`;
+      if (r.lo != null) s += `<line x1="${x(r.lo)}" x2="${x(r.hi)}" y1="${y}" y2="${y}" stroke="${ARMC[r.arm]}" stroke-width="3" stroke-linecap="round" opacity=".55"/>`;
+      s += `<circle cx="${x(r.d)}" cy="${y}" r="5.5" fill="${ARMC[r.arm]}" stroke="var(--surface)" stroke-width="1.5"/>`;
+    });
+    s += '</svg>';
+    host.insertAdjacentHTML('beforeend', `<div class="panel"><h3>${esc(m.title)}</h3><div class="sub">P headline ${f(P, 3)} · line at zero = P</div>${s}</div>`);
+  }
+})();
+
+// ---- learning curves
+(() => {
+  const host = document.getElementById('lc');
+  for (const m of D.models) {
+    const P = m.table.find(t => t.arm === 'P').headline[0];
+    const pts = m.lc;
+    if (!pts.length) continue;
+    const W = 480, H = 220, L = 52, R = 14, T = 12, B = 34;
+    const ks = pts.map(p => p.k);
+    const k0 = Math.min(...ks) / 1.5, k1 = Math.max(...ks) * 1.5;
+    const ys = pts.flatMap(p => [p.h - p.sd, p.h + p.sd]).concat([P]);
+    let y0 = Math.min(...ys), y1 = Math.max(...ys); const pad = (y1 - y0) * 0.1 || 1; y0 -= pad; y1 += pad;
+    const x = k => L + Math.log(k / k0) / Math.log(k1 / k0) * (W - L - R);
+    const y = v => T + (y1 - v) / (y1 - y0) * (H - T - B);
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(m.title)} learning curve">`;
+    for (const t of niceTicks(y0, y1, 4)) s += `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--rule)"/><text x="${L - 6}" y="${y(t) + 4}" text-anchor="end">${fmtTick(t)}</text>`;
+    for (const k of ks) s += `<text x="${x(k)}" y="${H - 14}" text-anchor="middle">${k}</text>`;
+    s += `<text x="${(L + W - R) / 2}" y="${H - 1}" text-anchor="middle">k real dev labels (log scale)</text>`;
+    s += `<line x1="${L}" x2="${W - R}" y1="${y(P)}" y2="${y(P)}" stroke="var(--phys)" stroke-width="2" stroke-dasharray="6 4"/><text x="${W - R}" y="${y(P) - 6}" text-anchor="end" style="fill: var(--phys)">P, 0 labels</text>`;
+    s += `<polyline fill="none" stroke="var(--gen)" stroke-width="2" points="${pts.map(p => `${x(p.k)},${y(p.h)}`).join(' ')}"/>`;
+    for (const p of pts) {
+      if (p.sd) s += `<line x1="${x(p.k)}" x2="${x(p.k)}" y1="${y(p.h - p.sd)}" y2="${y(p.h + p.sd)}" stroke="var(--gen)" stroke-width="2" opacity=".5"/>`;
+      s += `<circle cx="${x(p.k)}" cy="${y(p.h)}" r="${p.all ? 5.5 : 4}" fill="${p.all ? 'var(--surface)' : 'var(--gen)'}" stroke="var(--gen)" stroke-width="2"/>`;
+    }
+    s += '</svg>';
+    host.insertAdjacentHTML('beforeend', `<div class="panel"><h3>${esc(m.title)}</h3><div class="sub">k* = ${esc(m.kstar)} · open circle = full dev set</div>${s}</div>`);
+  }
+})();
+
+// ---- per-model detail
+(() => {
+  const host = document.getElementById('detail');
+  for (const m of D.models) {
+    let t = `<thead><tr><th>Arm</th><th>Real labels</th>${m.items.map(i => `<th>${esc(i)}<br>${esc(m.metrics[i])}</th>`).join('')}<th>Headline</th></tr></thead><tbody>`;
+    for (const r of m.table) {
+      t += `<tr><td class="armname ${armCls(r.arm)}">${esc(r.arm)}</td><td class="num">${r.labels ?? '–'}</td>` +
+        m.items.map(i => { const c = r.cells[i]; if (!c) return '<td class="num">–</td>';
+          const n = nd(m.metrics[i]);
+          return `<td class="num">${f(c[0], n)}<br><span class="ci">${f(c[1], n)}–${f(c[2], n)}</span></td>`; }).join('') +
+        `<td class="num">${r.headline ? `${f(r.headline[0], 3)}<br><span class="ci">${f(r.headline[1], 3)}–${f(r.headline[2], 3)}</span>` : '–'}</td></tr>`;
+    }
+    t += '</tbody>';
+    host.insertAdjacentHTML('beforeend', `<details><summary>${esc(m.title)}</summary><p class="sub">${esc(m.headline)}. Exam: ${m.rows.toLocaleString()} rows over ${m.units.toLocaleString()} units; dev ${m.dev.toLocaleString()} rows.${m.note ? ' ' + esc(m.note) : ''}</p><div class="scroll"><table>${t}</table></div></details>`);
+  }
+  const cav = (D.notes && D.notes._caveats) || [];
+  document.getElementById('caveats').innerHTML = cav.map(c => `<li>${esc(c)}</li>`).join('');
+})();
+
+function niceTicks(lo, hi, n) {
+  const span = hi - lo, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const step = [1, 2, 2.5, 5, 10].map(s => s * mag).find(s => span / s <= n) || 10 * mag;
+  const out = []; for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(+v.toFixed(10));
+  return out;
+}
+function fmtTick(v) { const a = Math.abs(v); return a === 0 ? '0' : a < 0.1 ? v.toFixed(3) : a < 10 ? v.toFixed(2).replace(/\.?0+$/, '') : v.toFixed(0); }
+</script>

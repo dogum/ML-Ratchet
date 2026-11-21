@@ -1,0 +1,65 @@
+21:22:44 P on dev headline -17.3249
+21:23:25 G-dev CV prep=raw headline -3.8493
+21:24:06 G-dev CV prep=norm headline -5.7840
+21:24:06 C-dev CV -15.549928214177285
+21:24:06 tune_dev chosen prep raw
+21:25:26   sim raw@1024 logA 72s
+21:26:35   sim raw@1024 year 69s
+21:27:21   sim raw@1024 use 46s
+21:27:21 G-sim raw@1024 headline 15.0248 (P on simval 19.3870)
+21:28:26   sim norm@1024 logA 65s
+21:29:31   sim norm@1024 year 65s
+21:30:16   sim norm@1024 use 45s
+21:30:16 G-sim norm@1024 headline 15.1446 (P on simval 19.3870)
+21:30:16 tune_sim chosen norm@1024
+22:38:03 contexts: G-dev 52 of 52 real rows; G-sim 1024 sim rows; G-sim+dev 1024 sim + 52 real (R_max 1600)
+22:39:14 exam_predict G-dev logA 70s
+23:12:03 contexts: G-dev 52 of 52 real rows; G-sim 1024 sim rows; G-sim+dev 1024 sim + 52 real (R_max 1600)
+23:15:52 exam_predict G-sim logA 229s
+23:21:35 exam_predict G-sim+dev logA 343s
+23:22:22 exam_predict G-dev year 47s
+23:26:22 exam_predict G-sim year 241s
+23:32:15 exam_predict G-sim+dev year 353s
+23:32:51 exam_predict G-dev use 35s
+23:35:22 exam_predict G-sim use 151s
+23:39:09 exam_predict G-sim+dev use 227s
+23:39:45 exam_predict LC_k5_r0 logA 36s
+00:40:29 contexts: G-dev 52 of 52 real rows; G-sim 1024 sim rows; G-sim+dev 1024 sim + 52 real (R_max 1600)
+00:40:29 exam_predict LC_k5_r0 year 0s
+00:41:04 exam_predict LC_k5_r0 use 35s
+00:41:42 exam_predict LC_k5_r1 logA 38s
+00:42:01 exam_predict LC_k5_r1 year 18s
+00:42:32 exam_predict LC_k5_r1 use 32s
+00:43:09 exam_predict LC_k5_r2 logA 37s
+00:43:43 exam_predict LC_k5_r2 year 34s
+00:44:09 exam_predict LC_k5_r2 use 26s
+00:44:44 exam_predict LC_k10_r0 logA 35s
+00:45:16 exam_predict LC_k10_r0 year 32s
+00:45:42 exam_predict LC_k10_r0 use 26s
+00:46:16 exam_predict LC_k10_r1 logA 35s
+00:46:41 exam_predict LC_k10_r1 year 25s
+00:47:07 exam_predict LC_k10_r1 use 26s
+00:47:50 exam_predict LC_k10_r2 logA 43s
+00:48:29 exam_predict LC_k10_r2 year 38s
+00:49:03 exam_predict LC_k10_r2 use 34s
+00:49:38 exam_predict LC_k20_r0 logA 35s
+00:50:15 exam_predict LC_k20_r0 year 37s
+00:50:41 exam_predict LC_k20_r0 use 27s
+00:51:28 exam_predict LC_k20_r1 logA 46s
+00:52:10 exam_predict LC_k20_r1 year 42s
+00:52:42 exam_predict LC_k20_r1 use 32s
+00:53:16 exam_predict LC_k20_r2 logA 34s
+00:53:47 exam_predict LC_k20_r2 year 31s
+00:54:13 exam_predict LC_k20_r2 use 26s
+00:54:57 exam_predict LC_k40_r0 logA 44s
+00:55:37 exam_predict LC_k40_r0 year 40s
+00:56:11 exam_predict LC_k40_r0 use 35s
+00:56:54 exam_predict LC_k40_r1 logA 43s
+00:57:38 exam_predict LC_k40_r1 year 43s
+00:58:15 exam_predict LC_k40_r1 use 37s
+00:59:02 exam_predict LC_k40_r2 logA 47s
+00:59:47 exam_predict LC_k40_r2 year 45s
+01:00:21 exam_predict LC_k40_r2 use 35s
+01:00:22 exam_predict C-dev _all 1s
+01:00:22 exam_predict done
+01:00:26 scored: P -17.638, G-dev -4.965, G-sim -20.396, G-sim+dev -8.063, C-dev -21.159

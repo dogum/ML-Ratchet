@@ -1,0 +1,51 @@
+{
+ "grid": {
+  "raw@1024": {
+   "scores": {
+    "floor area": {
+     "mape": 34.581893188198634
+    },
+    "heating fuel vs electric": {
+     "acc": 86.25
+    },
+    "vintage": {
+     "mae": 21.780981570514896
+    }
+   },
+   "headline": 25.834053405900683
+  },
+  "norm@1024": {
+   "scores": {
+    "floor area": {
+     "mape": 34.83668980204968
+    },
+    "heating fuel vs electric": {
+     "acc": 86.25
+    },
+    "vintage": {
+     "mae": 21.67063344999253
+    }
+   },
+   "headline": 25.70665509897516
+  }
+ },
+ "n_pool": 24000,
+ "n_val_used": 400,
+ "rule": "prep chosen at ctx 1024 (raw unless norm wins by > 0.01); ctx 2048 kept only if it beats ctx 1024 by > 0.01 headline skill on the frozen simulated set",
+ "P_on_simval": {
+  "floor area": {
+   "mape": 31.567708038507103
+  },
+  "heating fuel vs electric": {
+   "acc": 86.0
+  },
+  "vintage": {
+   "mae": 21.130571946474785
+  }
+ },
+ "P_on_simval_headline": 27.216145980746447,
+ "chosen_prep": "raw",
+ "r_max": 2560,
+ "ctx_note": "ctx 2048 not tried (Amendment A3: dropped for every model for CPU cost; R_max = 2560 rows for 12 features)",
+ "chosen_ctx": 1024
+}

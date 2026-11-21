@@ -1,0 +1,99 @@
+[
+ {
+  "rung": "r0",
+  "change": "FireSim as shipped (v0: agriculture and urban never burn); literature suppression",
+  "frozen": "v0|lit",
+  "cfg": {
+   "physics": "v0",
+   "theta": "lit",
+   "feats": "base",
+   "n_ign": 4800
+  }
+ },
+ {
+  "rung": "r1",
+  "change": "Suppression model calibrated on dev twins (v0): response time, line rate, escalation, perimeter share, ROS centre, access/slope terms",
+  "frozen": "v0|v0acc",
+  "cfg": {
+   "physics": "v0",
+   "theta": "v0acc",
+   "feats": "base",
+   "n_ign": 4800
+  }
+ },
+ {
+  "rung": "r2",
+  "change": "Physics v1: agriculture burns as GR1, NB ignition cell moved to nearest burnable <= 180 m; recalibrated",
+  "frozen": "v1|v1acc",
+  "cfg": {
+   "physics": "v1",
+   "theta": "v1acc",
+   "feats": "base",
+   "n_ign": 4800
+  }
+ },
+ {
+  "rung": "r3",
+  "change": "Regional IA response offsets + per-fuel-group ROS centres, calibrated on dev twins",
+  "frozen": "v1|v1reg",
+  "cfg": {
+   "physics": "v1",
+   "theta": "v1reg",
+   "feats": "base",
+   "n_ign": 4800
+  }
+ },
+ {
+  "rung": "r3b",
+  "change": "Regional reporting floors (share of fires booked at >= 1 acre) instead of regional response offsets; escape term in the dev fit",
+  "frozen": "v1|v1rep",
+  "cfg": {
+   "physics": "v1",
+   "theta": "v1rep",
+   "feats": "base",
+   "n_ign": 4800
+  }
+ },
+ {
+  "rung": "r4",
+  "change": "r2 + physics features (Rothermel ROS of the LANDFIRE fuels around the ignition, afternoon weather)",
+  "frozen": "v1|v1acc",
+  "cfg": {
+   "physics": "v1",
+   "theta": "v1acc",
+   "feats": "phys",
+   "n_ign": 4800
+  }
+ },
+ {
+  "rung": "r5",
+  "change": "Two-mode initial attack (caught at arrival vs line race) with federal line-rate term + reporting floors, recalibrated",
+  "frozen": "v1|v1rep2",
+  "cfg": {
+   "physics": "v1",
+   "theta": "v1rep2",
+   "feats": "base",
+   "n_ign": 4800
+  }
+ },
+ {
+  "rung": "r6",
+  "change": "r5 trained on the full bank (8,500 simulated ignitions instead of 4,800)",
+  "frozen": "v1|v1rep2",
+  "cfg": {
+   "physics": "v1",
+   "theta": "v1rep2",
+   "feats": "base"
+  }
+ },
+ {
+  "rung": "r7",
+  "change": "r6 + physics features (Rothermel ROS of the fuels around the ignition)",
+  "frozen": "v1|v1rep2",
+  "cfg": {
+   "physics": "v1",
+   "theta": "v1rep2",
+   "feats": "phys"
+  }
+ }
+]

@@ -1,0 +1,22 @@
+{
+ "hero_note": "All outcomes are simulated in FireSim on real inputs. The real fires were fought by real crews, and the planner was never tested against that.",
+ "exam_text": "The exam was run once, after the ratchet was closed. Each of the 48 fires got a seeded hidden error: the true spread rate is off by a log-normal factor, and the forecast wind is off in speed and direction. Every method planned on the same forecast and was scored in the same truth world. The forecast search (MPC) runs 29 FireSim simulations on the forecast. The perfect-foresight bound runs about 44 simulations in the truth world, so no planner can be expected to reach it.",
+ "fid_text": "We ran the planning world's physics from each fire's first detection with no line and no hidden error, and compared it with the observed FEDS perimeters. The size of the growth is about right by 48 to 72 h: the median simulated new area is 1.1 times the observed. The shape is only partly right: F1 on newly burned cells is about 0.34. The real fires were also fought, so a FirePilot win means a win in this simulator, not on the ground.",
+ "steps": [
+  "<b>Physics.</b> FireSim from Phase 1 (Rothermel surface spread, Van Wagner crown fire, minimum-travel-time spread on real LANDFIRE fuels and HRRR weather). FirePilot wraps it and does not edit it. Lines block spread from the moment they are built, unless the fire reaches them with flames above 2.4 m (the NWCG hauling-chart limit).",
+  "<b>Calibrated on dev fires.</b> Using the dev-calibrated spread factors raised the 72 h Dice on 40 dev fires from 0.29 to 0.45 and cut the over-prediction of new area from 3.9 times to 1.5 times. Every rung was scored with this physics.",
+  "<b>A leak found and fixed.</b> FireSim checks diagonal corners only against permanent non-fuel. A 4-connected timed line therefore leaks: a closed ring built at t = 0 let 3,551 of 3,972 outside cells burn, while the same ring as non-fuel held. FirePilot builds 8-connected lines, which hold. This is passed upstream as a FireSim fix.",
+  "<b>Simulated training only.</b> We built 297 scenarios on the landscapes and weather of 28 dev fires, plus synthetic ones. Each scenario had a fire grown to an afternoon detection, a random crew budget, a hidden spread-rate error and forecast wind errors. 10 plans per scenario were scored in the truth world.",
+  "<b>Value network.</b> 31 features describe the forecast and how a plan meets it: line built before the fire arrives, line overrun, the area behind the line, and two connectivity proxies. A 6,338-weight network predicts the share of growth stopped. The planner scores 205 candidates, refines around the best twice, and picks the top one, in about 3 s on one core.",
+  "<b>Ratchet.</b> Five rungs were tried. Each was scored on 160 frozen simulated scenarios and gated on 12 real dev fires at two budgets. Only the first value network was kept. A bigger bank, a 4-seed ensemble and an on-policy round did not add 0.01.",
+  "<b>Exam once.</b> 48 real exam fires, two budgets, against five classical plans, a forecast-world search and a perfect-foresight bound."
+ ],
+ "limits": [
+  "Simulated outcomes only. The simulator matches real 72 h growth in size but not well in shape (F1 about 0.34), and real fires were fought.",
+  "One line, two crews, one decision at detection. There is no re-planning, no aircraft, no spotting and no values at risk.",
+  "Large fires are hard. Above about 160 ha detected, FirePilot stops 20 % of the growth at 300 m/h, against 33 % for the perfect-foresight bound.",
+  "The network's error bars are honest but wide: 90 % coverage is 0.98 to 1.00. It is optimistic about its own pick by 0.07 to 0.11.",
+  "The domain is the stored landscape window. On 45 of 48 fires the 15 km crop reaches its edge, so growth beyond it is cut off for every method alike.",
+  "FirePilot beats the 29-simulation forecast search on the mean, but on only 46 % of fires."
+ ]
+}

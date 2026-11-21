@@ -1,0 +1,115 @@
+{
+ "n_dev": 60,
+ "grid": {
+  "raw": {
+   "headline": 12.924192352679231,
+   "reps": [
+    {
+     "scores": {
+      "min stable load": {
+       "mae_med": 2.967798144251601
+      },
+      "ramp up p99": {
+       "mape": 10.366002920991443
+      },
+      "starts per year": {
+       "mape": 11.688187960195485
+      },
+      "full-load heat rate": {
+       "mape": 2.7532341895668195
+      },
+      "technology": {
+       "acc": 93.33333333333333
+      }
+     },
+     "headline": 13.111622023665598
+    },
+    {
+     "scores": {
+      "min stable load": {
+       "mae_med": 3.317330713660091
+      },
+      "ramp up p99": {
+       "mape": 10.013644353324622
+      },
+      "starts per year": {
+       "mape": 13.155223950782919
+      },
+      "full-load heat rate": {
+       "mape": 3.163320907101381
+      },
+      "technology": {
+       "acc": 93.33333333333333
+      }
+     },
+     "headline": 12.736762681692863
+    }
+   ]
+  },
+  "norm": {
+   "headline": 13.30134897968574,
+   "reps": [
+    {
+     "scores": {
+      "min stable load": {
+       "mae_med": 3.0934589272229047
+      },
+      "ramp up p99": {
+       "mape": 10.383611471541387
+      },
+      "starts per year": {
+       "mape": 11.518973281870034
+      },
+      "full-load heat rate": {
+       "mape": 2.8077687411917323
+      },
+      "technology": {
+       "acc": 96.66666666666667
+      }
+     },
+     "headline": 13.77257084896812
+    },
+    {
+     "scores": {
+      "min stable load": {
+       "mae_med": 3.337497524081847
+      },
+      "ramp up p99": {
+       "mape": 9.70626698282703
+      },
+      "starts per year": {
+       "mape": 12.84365220027751
+      },
+      "full-load heat rate": {
+       "mape": 3.2952810741301466
+      },
+      "technology": {
+       "acc": 93.33333333333333
+      }
+     },
+     "headline": 12.830127110403359
+    }
+   ]
+  }
+ },
+ "rule": "choose prep with the higher dev-CV headline; raw (TabPFN default) unless norm wins by > 0.01",
+ "P_on_dev": {
+  "min stable load": {
+   "mae_med": 3.2899058480357555
+  },
+  "ramp up p99": {
+   "mape": 14.159058220257952
+  },
+  "starts per year": {
+   "mape": 32.93212564060389
+  },
+  "full-load heat rate": {
+   "mape": 8.109579788644117
+  },
+  "technology": {
+   "acc": 86.66666666666667
+  }
+ },
+ "P_on_dev_headline": 5.635199433824989,
+ "chosen_prep": "norm"
+}

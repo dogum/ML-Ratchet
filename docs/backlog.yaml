@@ -1,7 +1,8 @@
 # The idea backlog: physics -> data -> real exam. docs/backlog.md and the site's /backlog page are generated
 # from this file (mlratchet readme --write). Data reachability was checked in Nov 2026, from a shared cloud build
 # machine and from the repository's own machine.
-# status: candidate | checked (data endpoints answered) | blocked | in-progress
+# status: candidate | checked (data endpoints answered) | blocked | in-progress | done (a first run finished; the note
+#         says what it found and what is next). Built models and platforms leave the backlog.
 # kind: model (a new model; the default when absent) | platform (a shared simulator or its calibration)
 #       | data (data for existing models) | method (a change to how models are built)
 ideas:
@@ -81,6 +82,50 @@ ideas:
     exam: "checks/run_all.sh still passes; each upstreamed piece reproduces the model wrapper it replaces; then every water model's frozen set rebuilt and every rung re-scored"
     status: candidate
     note: "WaterSim v1 and its four models came in on 18 Nov 2026 (docs/water-platform.md). The list is section 4 of shared/water/HANDOFF.md."
+  - id: firesim-p2
+    name: FireSim physics p2
+    kind: platform
+    domain: Wildfire
+    question: "Fix the diagonal line leak (U1), add fire persistence, fold the physics the four fire models found into FireSim, then rebuild the frozen sets and re-score every rung."
+    physics: "The U1 corner rule (a side cell already blocked by a timed line also blocks the diagonal step); one persistence module (burnout, stalls, night fine-fuel recovery, FireCast's fire-age ROS factor, FireDetective's wind-sensitive WAF); agriculture fuel (LANDFIRE 93 burns, e.g. as GR1 by season) and ignition relocation to the nearest burnable cell within 180 m; a sub-cell analytic ellipse under 0.81 ha; FireSize's containment race; one FEDS perimeter emulator in firesim.observe; memory-bounded replay ensembles; larger replay windows (U2)"
+    data: "Dev splits only (40 dev fires, 2,859 prescribed fires for calibration, 8,913 dev ignitions)"
+    data_url: https://zenodo.org/records/20187963
+    exam: "The shipped checks still pass (436/436 published values, ellipse, fuel break); a closed 4-connected line ring leaks 0 cells (today 3,551 of 3,972); dev twins grow on about half of half-days (today 91 % against 50 % real); then every fire model's frozen set rebuilt and every rung re-scored"
+    status: candidate
+    note: "FireSim v1 and its four models came in on 21 Nov 2026 (docs/fire-platform.md). The list is section 4 of shared/fire/HANDOFF.md; U1 and persistence first, since they touch all four models."
+  - id: fire-data
+    name: Fire data the models are missing
+    kind: data
+    domain: Wildfire
+    question: "Real dead-fuel moisture, suppression records and per-fire burn severity, so FireSim's moisture, suppression and severity can be checked against real data instead of proxies."
+    physics: "Unchanged FireSim"
+    data: "FEMS dead-fuel stick moisture (the National Fuel Moisture Database moved there), ICS-209 incident reports, MTBS per-fire severity mosaics, larger LANDFIRE and HRRR windows for the 48 replay fires"
+    data_url: https://fems.fs2c.usda.gov/
+    exam: "Nelson dead moisture against real 10-h sticks at dev sites (today only against gridMET NFDRS: 2.4 points drier); FireSize's containment race against ICS-209 on dev fires; FireDetective's severity truth from the per-fire mosaics; replays no longer cut at the window edge (45 of 48 today)"
+    status: candidate
+    note: "No documented public FEMS download was found on 18 Nov 2026 (wfas.net/nfmd returns 404); the MTBS mosaics go through an e-mail queue. Record refusals in help_wanted; don't route around them."
+  - id: spaceweather-chain
+    name: Sun-to-grid space weather
+    kind: platform
+    domain: Space physics
+    question: "From the solar wind at L1 to currents induced in power lines: how strong will the ground magnetic disturbance be, where, and what will it do to the grid?"
+    physics: "Solar-wind propagation L1 to bow shock, Burton/O'Brien-McPherron ring current, empirical magnetosphere-ionosphere coupling, ground dB/dt from a layered-Earth impedance (plane-wave method), geomagnetically induced currents on a GridSim network"
+    data: "OMNI / CDAWeb solar wind, Kyoto Dst, INTERMAGNET / BGS ground magnetometers"
+    data_url: https://cdaweb.gsfc.nasa.gov/
+    exam: "Held-out storms: Dst, local dB/dt and, where public, measured GIC"
+    status: checked
+    note: "Brainstorm 18 Nov 2026. It would make StormNet (0 wins, 3 losses, 6 ties) part of a platform, and is the first link between two platforms (to GridSim)."
+  - id: coast-ocean
+    name: Coast & Ocean
+    kind: platform
+    domain: Earth science
+    question: "How high will the water get at this tide gauge, from tides, surge and waves?"
+    physics: "Harmonic tides, 2-D shallow-water storm surge (wind stress and inverse barometer), wave transformation and setup at the shore"
+    data: "NOAA CO-OPS tide gauges, NDBC buoys (SwellCast's source), storm tracks"
+    data_url: https://api.tidesandcurrents.noaa.gov/api/prod/
+    exam: "Held-out storms and gauges: surge peak and timing beside a harmonic-plus-inverse-barometer baseline"
+    status: checked
+    note: "Brainstorm 18 Nov 2026; builds on SwellCast."
   - id: roomsense
     name: RoomSense
     domain: Acoustics
@@ -100,7 +145,7 @@ ideas:
     data_url: https://nctr.pmel.noaa.gov/Dart/
     exam: Real tsunamis against USGS finite-fault sources
     status: checked
-    note: Landing page answered; file path still to confirm.
+    note: "Landing page answered; file path still to confirm. A learner-family project: a neural operator stands in for the shallow-water solver to grow the bank, and a normalizing flow reads the Okada source with its uncertainty. NOAA NGDC tsunami event search answered on 18 Nov 2026."
   - id: gpsquake
     name: GPSQuake
     domain: Geophysics
@@ -110,7 +155,7 @@ ideas:
     data_url: https://geodesy.unr.edu/
     exam: Known earthquakes' offsets; Cascadia slow-slip events
     status: checked
-    note: "Use https: on 14 Nov http://geodesy.unr.edu/ redirected to a host that does not answer, while https://geodesy.unr.edu/ answered. tenv3 path to confirm."
+    note: "Use https: on 14 Nov http://geodesy.unr.edu/ redirected to a host that does not answer, while https://geodesy.unr.edu/ answered (again on 18 Nov 2026). tenv3 path to confirm. A learner-family project: a Gaussian process with periodic and step kernels, or a sparse library of seasonal, step and transient terms."
   - id: xrdnet
     name: XRDNet
     domain: Materials
@@ -168,6 +213,26 @@ ideas:
     exam: Real-data control regions
     status: candidate
     note: Harder to grade on real data than the others.
+  - id: quakenet-multistation
+    name: QuakeNet v2, multi-station
+    domain: Geophysics
+    question: "Where and how big, from several stations together, not one?"
+    physics: "QuakeNet's Syngine Green's functions and simulator, per station"
+    data: "EarthScope FDSN (QuakeNet's source)"
+    data_url: https://service.earthscope.org/
+    exam: "QuakeNet's exam events with 2+ stations, against USGS locations"
+    status: candidate
+    note: "Brainstorm 18 Nov 2026, as a learner-family project: graph network, with stations as nodes and their separations on the edges. Already on QuakeNet's own next list."
+  - id: diffusionnet
+    name: DiffusionNet
+    domain: Biophysics
+    question: "From one tracked particle's wiggles inside a living cell: what kind of motion is it (Brownian, confined, anomalous, directed), and with what exponent?"
+    physics: "Fractional Brownian motion, continuous-time random walks, Lévy walks, confinement and directed motion, with localisation noise"
+    data: "AnDi challenge datasets and experimental single-particle tracking trajectories on Zenodo"
+    data_url: https://zenodo.org/
+    exam: "Experimental trajectories with independent labels; AnDi benchmark scores as context"
+    status: checked
+    note: "Brainstorm 18 Nov 2026, as a learner-family project: attention / sequence models. Find which experimental sets carry independent truth before building."
   - id: realtrain
     name: Real-train ladder
     kind: method
@@ -178,4 +243,48 @@ ideas:
     data_url: https://dogum.github.io/ML-Ratchet/mental-models/#real-data
     exam: "The same exam rows, with the simulation-only model, the simulation-plus-real model and the real-trained regression side by side; the second must beat the regression to count as a win"
     status: candidate
-    note: "Move in dial order: unlabelled real inputs, then a learned discrepancy term, then fine-tuning on labels. Signals and guardrails are on the Mental models page, section 07."
+    note: "Move in dial order: unlabelled real inputs, then a learned discrepancy term, then fine-tuning on labels. Signals and guardrails are on the Mental models page, section 07. Watershed / CAMELS is the strongest testbed: the real-data LSTM benchmark is well known (Kratzert et al. 2019) and FlowCast lost to regionalisation (0.341 vs 0.372). Compare three arms on the same exam rows: simulation-only, simulation pre-training plus real fine-tuning, and real-only."
+  - id: priorwars
+    name: Prior Wars (TabPFN vs the physics prior)
+    kind: method
+    domain: Method
+    question: "Does a domain simulator beat a generic synthetic prior (TabPFN) on the collection's real exams, and how many real labels does the generic prior need to catch up?"
+    physics: "Unchanged: each model's own simulator and training bank, delivered to TabPFN-v2 as in-context rows (G-sim)."
+    data: "Each model's existing dev and exam splits; TabPFN-v2 open weights (Prior Labs License 1.1). Six tabular exams: GridPulse, BasinDetective, BuildingDetective RECS and BDG2, PlantDetective, EnergyNet."
+    data_url: https://github.com/PriorLabs/TabPFN
+    exam: "Each model's own exam, scored once after a per-model hashed pre-registration; 95 % paired bootstrap over exam units"
+    status: done
+    note: "Run 18-19 Nov 2026 (docs/experiments/prior-wars.md). Given the dev labels, TabPFN beat the released model on 3 of 6 exams (RECS, BDG2, PlantDetective), tied on 2 (GridPulse, EnergyNet) and lost on 1 (BasinDetective). With 0 real labels, P was the best arm on 5 of 6. Labels needed to reach P: ~20-40, or 1,152 on EnergyNet. Simulated rows added to dev helped only BasinDetective. Next: TabPFN-2.5+ if its licence allows, GPU-sized contexts, and the 8 skipped tabular models."
+  - id: lawfinder
+    name: LawFinder
+    kind: method
+    domain: Method
+    question: "What readable law does each simulator imply? Symbolic regression on every platform, with the laws tested on the real exams."
+    physics: "Every shared simulator (RoadSim, GridSim, BuildingSim, WaterSim, FireSim)"
+    data: "The existing frozen splits; nothing new"
+    data_url: https://dogum.github.io/ML-Ratchet/model-families/
+    exam: "Each law beside the model that uses it, on that model's exam (e.g. GridPulse's 7.0 s × demand; the Budyko curve; road-load energy)"
+    status: candidate
+    note: "Brainstorm 18 Nov 2026: fills the symbolic-regression family; outputs are equations, not networks."
+  - id: river-twin
+    name: River digital twin
+    kind: method
+    domain: Earth science
+    question: "Can a filter on WaterSim, fed by real gauges, beat FlowCast's learned nowcast?"
+    physics: "WaterSim (HBV / GR4J / SAC-SMA) as the state equation; gauge noise as the measurement model"
+    data: "WaterData (Caravan, NWIS, NWM)"
+    data_url: https://api.waterdata.usgs.gov/
+    exam: "FlowCast's nowcast exam (leads 1, 3 and 7 days), beside persistence, FlowCast nowcast and NWM"
+    status: candidate
+    note: "Brainstorm 18 Nov 2026, as a learner-family project: data assimilation (an ensemble Kalman filter)."
+  - id: unlabelled-real
+    name: Unlabelled real inputs
+    kind: method
+    domain: Method
+    question: "Does domain adaptation on real inputs, with no labels, close the sim-to-real gap while keeping the zero-real-labels claim?"
+    physics: Unchanged
+    data: "Each model's real inputs from non-exam periods"
+    data_url: https://dogum.github.io/ML-Ratchet/mental-models/#real-data
+    exam: "The model's own exam, beside its released version"
+    status: candidate
+    note: "Brainstorm 18 Nov 2026; first stop on the real-data dial."

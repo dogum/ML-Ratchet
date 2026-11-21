@@ -138,8 +138,33 @@ see [water-platform.md](water-platform.md). Nothing has been re-trained here. Wh
    instantaneous values plus hourly forcing); real truth for storage and groundwater (GRACE, well records) so
    BasinDetective's hidden properties can be graded on real basins.
 
+## The fire platform
+
+Built. FireSim, FireData and four models (FireCast, FireSize, FireDetective, FirePilot) came in on 21 Nov 2026; see
+[fire-platform.md](fire-platform.md). Nothing has been re-trained or re-scored here. What is open, in order (section 7
+of `shared/fire/HANDOFF.md`):
+
+1. **Fix U1 and add fire persistence** (backlog `firesim-p2`). Timed suppression lines leak diagonally (a closed
+   4-connected ring let 3,551 of 3,972 outside cells burn), and simulated fires grow on 91 % of half-days against 50 %
+   for real ones. Fold FireDetective's night recovery and wind-sensitive WAF and FireCast's fire-age factor into one
+   documented persistence module, then rebuild every frozen set as physics p2 and re-score every rung. This one change
+   touches all four models.
+2. **Merge the FEDS emulator into `firesim.observe`** (FireCast and FireDetective each built one), and add agriculture
+   fuel (LANDFIRE 93 burns) with ignition relocation to the nearest burnable cell, FireSize's biggest gain.
+3. **FireCast's calibration rule:** a monotone (isotonic or beta) calibration fitted on dev, which needs a rule change
+   from widen-only, logged as a method decision. Its probabilities above 0.35 are over-confident.
+4. **Data** (backlog `fire-data`): FEMS dead-fuel moisture (help wanted: no public download found), ICS-209
+   suppression records, the per-fire MTBS severity mosaics (an e-mail queue), and larger replay windows (45 of 48
+   replay fires hit the stored landscape edge).
+5. **Model rungs named by the build:** FireCast a 12 h product and lower thresholds; FireSize T = 1 for P(escape) and
+   Southeast physics (agricultural and debris burning, a WUI suppression term); FireDetective a simulated dNBR-like
+   severity label and conformal bands; FirePilot re-planning each morning (receding horizon) and a ranking loss
+   against the perfect-foresight plans.
+
 ## New models
 
-The power-grid, building and water projects are in, along with WakeNet (Kelmarsh and Penmanshiel SCADA) and
+The power-grid, building, water and fire projects are in, along with WakeNet (Kelmarsh and Penmanshiel SCADA) and
 [StormNet](../models/stormnet/) (NASA OMNI solar wind and Kyoto Dst). See [backlog.md](backlog.md) for the next
-candidates with physics, data and an exam lined up.
+candidates with physics, data and an exam lined up; the next big-system candidates there are Sun-to-grid space
+weather (`spaceweather-chain`, which would put StormNet on a platform linked to GridSim) and Coast & Ocean
+(`coast-ocean`, building on SwellCast).

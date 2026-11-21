@@ -72,6 +72,10 @@ export const MODEL_NOTES: Record<string, ModelNote> = {
   snowsense: { t: ['ssm'], params: 50949, paramsFrom: 'weight files (plus 3 widen factors)', twin: 'Rung 1 read calibrated energy-balance twins at NSE 0.80 and the real pillows at 0.73, peaks 21% below the twin: the snow-parameter prior was wrong. The release reads twins at 0.914 and real at 0.888.' },
   basindetective: { t: ['mlp', 'ensemble'], params: 551795, paramsFrom: 'weight files: 5 members of 110,359 trainable weights', twin: 'Dev twins showed ERA5-Land precipitation running about 6% higher in the 1980s than in 1999–2008; with that drift in the bank, hidden properties read back at Spearman 0.70–0.79 on 260 twins.' },
   reservoirpilot: { t: ['mlp', 'diffsim'], params: 5344, paramsFrom: 'weight files' },
+  firecast: { t: ['cnn2d'], params: 373122, paramsFrom: 'weight files: U-Net, FiLM weather layers and their scalar MLP', twin: 'Dev twins of 470 fire-days grew too slowly on the first day and too fast after day 10 (the status doc gives median log10 ratios −0.44 and +0.35; the shipped twin_p0.json does not split by day), and 34% of real days fell below all three members. On a 126-day subset, a fire-age spread factor (p1) moved the first day from −0.82 to +0.20 and days after 10 from +0.44 to +0.01. Simulated AP is 0.59 against real dev 0.32.' },
+  firesize: { t: ['mlp', 'ensemble'], params: 83364, paramsFrom: 'weight files: 3 members of 27,788', twin: 'The network reads 911 dev twins the way the simulator does (AUC 0.906 against the twins’ own outcomes), but the twins match the real outcomes at only 0.671: the ceiling is the simulator’s suppression and fuels, not the network.' },
+  firedetective: { t: ['cnn1d', 'ensemble'], params: 188694, paramsFrom: 'weight files: 3 members of 62,898', twin: 'Re-simulated dev fires grew on 91% of half-days against 50% for the real ones, with 3× the VIIRS pixels and rounder shapes (elongation 0.40 against 0.70). A wind-sensitive WAF raised sim-vs-real per-step growth ρ from 0.36 to 0.44.' },
+  firepilot: { t: ['mlp'], params: 6338, paramsFrom: 'weight files', twin: 'From each dev fire’s first detection, the uncalibrated simulator over-predicted 72 h new area 3.9× (Dice 0.29); the stored replay calibration brought it to 1.5× (Dice 0.45). On the exam fires the free run matches observed growth at Dice 0.40, against 0.19 for persistence.' },
   wakenet: { t: ['gnn', 'anchor'], params: 245767, paramsFrom: 'model.yaml', twin: 'Rung 4 read flat-terrain v2 twins with 0.0% low-elevation bias and real Kelmarsh dev +2.3% high on KWF5–KWF6; adding 3-D hill speedup and separated meandering cut it to −0.5%. The same physics tuned on dev, with no network, then beat the network on real dev (9.31% against 9.48% waked MAE) and on 13 of 18 never-seen exam rows: the graph adds +0.011 in simulation and nothing on real turbines yet.' },
 };
 
@@ -91,7 +95,7 @@ export const FAMILIES: Family[] = [
     unc: 'Output heads: Gaussian or β-NLL, von Mises for angles.',
     extrap: 'Holds within the signal family; weak for amplitudes, durations or sources outside the bank.',
     risk: 'The receptive field can miss long-range links. QuakeNet’s 41-minute record holds P, S and surface waves far apart.',
-    used: ['QuakeNet', 'BeatNet', 'BearingNet', 'CellSense', 'ChirpNet', 'TransitNet', 'StarQuake', 'TripDetective'], refs: [] },
+    used: ['QuakeNet', 'BeatNet', 'BearingNet', 'CellSense', 'ChirpNet', 'TransitNet', 'StarQuake', 'TripDetective', 'FireDetective (over 12 half-day steps of a fire’s satellite record)'], refs: [] },
   { id: 'cnn2d', name: '2-D CNN on a physics grid', g: 'sig', st: 'y', np: 3, web: 3, data: 2,
     one: 'Local 2-D patterns, read the same way anywhere on the grid.',
     physics: 'The grid is the physics: days × solar time (SunDoctor), frequency × time where swell arrives as a dispersion ridge (SwellCast), autocorrelation in units of Δν (StarQuake).',
@@ -99,7 +103,7 @@ export const FAMILIES: Family[] = [
     unc: 'Output heads.',
     extrap: 'As for 1-D CNNs.',
     risk: 'Treating every position alike is wrong where an axis has absolute meaning, such as hour of day or frequency. Coordinate channels fix it.',
-    used: ['SunDoctor', 'SwellCast', 'StarQuake', 'ChirpNet'], refs: ['cohen16'] },
+    used: ['SunDoctor', 'SwellCast', 'StarQuake', 'ChirpNet', 'FireCast (a U-Net on the 90 m fire map, weather joined by FiLM)'], refs: ['cohen16'] },
   { id: 'attn', name: 'Attention and transformers', g: 'sig', st: 'n', np: 2, web: 2, data: 1,
     one: 'Any part of the input can draw on any other part; order comes from position encodings.',
     physics: 'Tokens can be physical units: seismic phases, heartbeats, hours of a price curve, stations.',
@@ -123,7 +127,7 @@ export const FAMILIES: Family[] = [
     unc: 'Gaussian NLL heads and ensembles.',
     extrap: 'A ReLU network continues linearly from the edge of the data, which is right only where the trend is linear.',
     risk: 'Capacity is rarely the limit here. EnergyNet’s wider networks (0.73 M weights each) lost 0.019 of skill; three times the data gained 0.019.',
-    used: ['EnergyNet', 'DemandCast', 'GridPulse', 'PlantDetective', 'HybridPilot', 'BatteryPilot', 'BasinDetective', 'ReservoirPilot'], refs: [] },
+    used: ['EnergyNet', 'DemandCast', 'GridPulse', 'PlantDetective', 'HybridPilot', 'BatteryPilot', 'BasinDetective', 'ReservoirPilot', 'FireSize', 'FirePilot (a value net that ranks candidate line plans)'], refs: [] },
   { id: 'gbm', name: 'Gradient-boosted trees', g: 'tab', st: 'n', np: 3, web: 3, data: 3,
     one: 'Hundreds of shallow trees summed: thresholds on one input at a time, which handle step changes, counts and useless columns well.',
     physics: 'The same feature tables as the MLPs. Monotone constraints can encode signs the physics knows: more grade, more energy.',
@@ -195,7 +199,7 @@ export const FAMILIES: Family[] = [
     unc: 'Spread plus predicted variance.',
     extrap: 'Members disagree away from the data, which is a signal in itself.',
     risk: 'Cost × members. EnergyNet v2-r6 (5 seeds) gained +0.004 and was rejected, short of the margin.',
-    used: ['EnergyNet (5)', 'PlantDetective (3)', 'CellSense NMC811 (4)'], refs: ['lakshminarayanan17', 'seitzer22'] },
+    used: ['EnergyNet (5)', 'PlantDetective (3)', 'CellSense NMC811 (4)', 'BasinDetective (5)', 'FireSize (3)', 'FireDetective (3)'], refs: ['lakshminarayanan17', 'seitzer22'] },
   { id: 'diffusion', name: 'Diffusion and score models', g: 'dist', st: 'n', np: 1, web: 1, data: 1,
     one: 'Learn to remove noise step by step; sample by running the noise process backwards.',
     physics: 'Can sample posteriors conditioned on data, or emulate a simulator’s outputs.',
@@ -318,6 +322,11 @@ export const CELLS: Cell[] = [
   { m: 'flowcast', f: 'assim', s: 2, inr: true, why: 'The gauged nowcast mode already feeds the last observed flows into the LSTM, and beats persistence at 1–7 days. A filter that corrects the simulated stores with each observation is the classical form of the same idea, and gives each lead its own error bar.', gap: 'Nowcast NSE 0.569 at one day against 0.550 for NWM, but 0.474 at three days.', judge: 'Same frozen set and dev gate; leads 1, 3 and 7 days reported on their own.', change: 'An ensemble Kalman update of the LSTM state (or a GR4J state) from each day’s observed flow' },
   { m: 'basindetective', f: 'ssm', s: 3, why: 'It reads about 150 summary features of nine years of daily flow. Its own next list asks for a small sequence encoder next to the features: recessions after storms and the timing of the seasonal peak are in the daily order the summaries average away.', gap: 'Level with calibrated GR4J on five of six decade-to-decade changes, behind on mean flow (rho 0.76 against 0.79); BFI change rho 0.20.', judge: 'Same frozen set (val-v4) and dev composite.', change: 'A 1-D convolutional or recurrent encoder over the daily P, PET, T and Q of the gauged decade, concatenated with the features' },
   { m: 'reservoirpilot', f: 'ssm', s: 2, why: 'The policy sees today and a few inflow summaries. Its losses come in drier scored decades on large supply reservoirs; a recurrent state over the last years of inflow could adapt demand and climatology online, which its next list proposes as an inflow moving average.', gap: 'Loses to SOP on 37 of 244 exam dams, mostly large supply reservoirs in a drier decade.', judge: 'Same frozen set (g4) and the 15-dam dev gate; the drier-decade dams reported on their own.', change: 'A GRU over the past three years of daily inflow feeding the policy head' },
+  // Fire platform
+  { m: 'firecast', f: 'assim', s: 2, why: 'A fire is seen again at every VIIRS overpass, twice a day. Correcting FireSim’s spread-rate factors from each observed perimeter is the classical way to keep a fire model on track, and it would hand the network a fire-specific growth rate instead of a bank-wide guess.', gap: 'The dev-calibrated replay scores AP 0.165 on the 48 replay fires against FireCast’s 0.351, and over-predicts new area 3.5×.', judge: 'Same frozen set (p1) and the 40-fire dev gate, with the replay fires reported on their own.', change: 'An ensemble Kalman update of per-fire spread-rate factors from each overpass, fed to the U-Net as an extra channel' },
+  { m: 'firesize', f: 'gbm', s: 2, why: 'Its 75 inputs are a table: cause, agency and region codes, fuel-class fractions and daily weather, the shapes trees split well. Trained on the same simulated ignitions, trees would show whether the MLP or the simulator limits it; the twin test says mostly the simulator (twins match reality at AUC 0.67).', gap: 'Escape AUC 0.727 against 0.777 for a GBM fitted on real dev labels; Southeast 0.566 against 0.704.', judge: 'Frozen-sim RPSS plus the dev-gate escape AUC and size MAE.', change: 'Gradient-boosted trees on the same 75 features and simulated bank (soft labels, importance weights), beside the MLP ensemble' },
+  { m: 'firedetective', f: 'conformal', s: 3, why: 'Its own next list asks for conformal severity bands. The 80% severity band covers 69% of forest exam fires, and one widening factor fitted on 30 dev fires cannot tell forest from grass fires.', gap: 'Forest severity 80% band covers 69%; wind 83%; live moisture 90%.', judge: 'Coverage on the dev fires with severity truth, by fuel group; the frozen-sim primary must not move.', change: 'Split-conformal severity bands, one quantile per fuel group (forest, shrub, grass)' },
+  { m: 'firepilot', f: 'gbm', s: 2, why: 'The value net picks the argmax of its own noisy predictions and pays for it (the winner’s curse). Its next list asks for a ranking loss; a ranking forest over the same 31 features learns the order of the 10 truth-scored plans per scenario, not their values.', gap: 'It predicted 0.568 on its own picks and the truth was 0.454; it beats MPC on only 46% of exam fires.', judge: 'Same frozen set (val_p1, 160 scenarios) and the 12-fire dev gate at both budgets.', change: 'A pairwise ranking forest (LambdaMART) over the 31 plan features, used in place of the value net inside the same search' },
   // WakeNet
   { m: 'wakenet', f: 'conformal', s: 3, why: 'Bars calibrated on Kelmarsh’s gentle 21.5 m farmland cover 72% on Kelmarsh 2020–21, then fall to 51% zero-shot on Penmanshiel’s 48 m coastal ridge (42% in 2021–23). Mondrian conformal quantiles grouped by relative terrain relief |Δz/D| widen steep-ridge intervals directly.', gap: 'Penmanshiel waked 68% bars cover 50.7% (exam 1) and 41.9% (exam 2).', judge: 'Per-relief-stratum coverage on simulated hill banks plus the H1/H2 Kelmarsh dev gate.', change: 'Relief-stratified Mondrian conformal widening of per-turbine η_sig' },
   { m: 'wakenet', f: 'gp', s: 2, why: 'Surrounding coastal ridges and forestry blocks create smooth wind-direction-dependent speedup fields across a farm that tower elevations alone cannot see. A directional spatial GP over simulated WAsP/Jackson–Hunt hill flows captures smooth terrain speedup.', gap: 'Penmanshiel hilltop ridge turbines: 15.92% against 13.19% for unwaked (−9.2% bias).', judge: 'Frozen hill-flow set plus the per-half-year Kelmarsh dev gate.', change: 'Spatial Gaussian-process prior over terrain-induced inflow speedup feeding the wake anchor' },
@@ -360,7 +369,7 @@ export const LENSES: Lens[] = [
     see: 'Why forests, small MLPs, sets, graphs and formulas port easily, and tabular foundation models and diffusion samplers do not.',
     blind: 'It can bias choices toward what is easy to port over what reads best.',
     ask: 'Can inference be written in numpy in an afternoon and checked against training to 1e-6?',
-    evi: 'DemandCast: numpy equals torch to 3e-7. site/src/lib/nn runs all 26 instruments, each with parity tests.' },
+    evi: 'DemandCast: numpy equals torch to 3e-7. site/src/lib/nn runs all 30 instruments, each with parity tests.' },
   { tag: 'Decisions', name: 'Grade the decision, not the forecast',
     one: 'For a controller, a better forecast can make a worse decision. Train and grade on the outcome.',
     see: 'Why BatteryPilot puts the battery physics inside its loss and is graded on its share of perfect hindsight.',
@@ -387,6 +396,8 @@ export const BACKLOG_FIT: Record<string, { f: string[]; why: string }> = {
   frbnet: { f: ['cnn2d', 'anchor'], why: 'A dynamic spectrum is a 2-D grid with a dispersion sweep; incoherent dedispersion gives the classical DM to correct.' },
   xrdnet: { f: ['cnn1d', 'sets'], why: 'A pattern is 1-D; the answer is a set of phases, so a set-valued output fits.' },
   jetnet: { f: ['sets', 'gnn'], why: 'A jet is a set of particles. Energy Flow Networks are deep sets for jets; graph networks over particles are the other standard.' },
+  'quakenet-multistation': { f: ['gnn', 'sets'], why: 'Stations are nodes and their separations are edges; the answer must not depend on how many stations recorded the quake or in which order.' },
+  diffusionnet: { f: ['attn', 'ssm'], why: 'A trajectory is a sequence of steps whose correlations over many lags set the exponent; attention or a recurrent state reads long lags directly.' },
 };
 
 /** Section 08: rough sizes for families the collection does not use (estimates, drawn dashed). */

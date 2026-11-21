@@ -77,7 +77,9 @@ the weights' `meta`. Never shrink bars.
 
 `training/exam.py`: model vs a classical method vs a dumb baseline fitted on dev, with exam coverage of the 68% bars
 and a breakdown by stratum. Run it after the ratchet has chosen the release. Copy the headline rows into
-`model.yaml` with honest verdicts; put the full tables in `MODEL_CARD.md`.
+`model.yaml` with honest verdicts; put the full tables in `MODEL_CARD.md`. Build the exam inputs only after the ratchet
+has closed too. If they exist earlier (FireDetective's were built during rung R4, never opened or scored), say so in
+the card and in `ratchet.yaml`.
 
 ## 8. Ship
 
@@ -92,6 +94,7 @@ and a breakdown by stratum. Run it after the ratchet has chosen the release. Cop
 ## Compute
 
 The first nine models were each built in 1–2 hours of wall time on a shared 2-core, 7 GB cloud machine. The first
-vehicle and grid models were also built on 2 shared cores, three or four builds at a time. The vehicle models' v2
+vehicle and grid models were also built on 2 shared cores, three or four builds at a time; the four wildfire models
+shared 2 cores and about 6.3 GB of RAM, each process kept under about 1.2 GB. The vehicle models' v2
 rebuilds ran on a 16-core machine with an RTX 3080 GPU; nothing in the recipe needs one. Small is enough: one thread, ≤ ~500k parameters (QuakeNet's 1.44 M is the outlier), banks ≤ ~60k examples, ≤ ~30 minutes per
 rung, a resumable checkpoint every ~500 steps.

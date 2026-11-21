@@ -1,10 +1,11 @@
-# Lessons from twenty-six models
+# Lessons from thirty models
 
 What building ChirpNet, SunDoctor, CellSense, TransitNet, QuakeNet, BearingNet, SwellCast, BeatNet and StarQuake,
 then the vehicle platform with EnergyNet, TripDetective and HybridPilot, the grid platform with GridPulse,
 BatteryPilot, PlantDetective and DemandCast, WakeNet, the building platform with LoadCast, BuildingDetective,
-FaultFinder and ThermoPilot, StormNet, and the water platform with FlowCast, SnowSense, BasinDetective and
-ReservoirPilot, taught, in rough order of how much it mattered.
+FaultFinder and ThermoPilot, StormNet, the water platform with FlowCast, SnowSense, BasinDetective and
+ReservoirPilot, and the wildfire platform with FireCast, FireSize, FireDetective and FirePilot, taught, in rough order
+of how much it mattered.
 
 ## The simulator is the model
 
@@ -145,3 +146,39 @@ ReservoirPilot, taught, in rough order of how much it mattered.
   twin, because the mean of many zero-SWE days pulls the curve up; quantile heads fixed it (R4).
 - **Rung decisions near the margin are noise.** FlowCast's r5 gained +0.02 on a 300-basin frozen subset and lost
   0.006 on the full 800. Size the frozen set for the margin.
+
+## Big systems (the wildfire platform)
+
+- **The biggest physics gap was a process nobody modelled: fires stop.** Simulated fires grow on 91 % of half-days;
+  real ones grow on 50 %. Three models found it on their own: FireDetective's twins grew too continuously, with 3×
+  the VIIRS pixels; FireCast's twins ran too slow on the first day (median log10 ratio −0.44) and too fast after day
+  10 (+0.35); FirePilot's uncalibrated runs over-predicted 72 h new area 3.9× (1.5× after the dev calibration). The
+  dev-calibrated physics replays still over-predict next-day area 4-12×. One missing persistence module (burnout,
+  stalls, night inactivity) drives the over-prediction in FireCast, FireDetective and the replays.
+- **Learning beat the physics it learned from.** On the same 48 exam fires FireCast scores AP 0.355 against 0.165 for
+  the dev-calibrated physics replay, which over-predicts new area 3.5×. Trained on noisy, randomised simulations
+  (spread-rate factors, night slow-down, growing containment, wind error), the network learned to hedge where the
+  deterministic physics over-commits. For snow and wind farms the dev-tuned physics alone tied or beat the network;
+  here the physics is missing a process, and the randomisation covers part of it.
+- **The simulator, not the network, sets the ceiling.** FireSize's network reproduces its own dev twins' outcomes at
+  AUC 0.906, but the twins reproduce the real outcomes at only 0.671. The binding constraint is human behaviour:
+  suppression, agricultural and debris burning. In the Southeast, where both dominate, FireSize scores 0.566 against
+  0.704 for a GBM fitted on real dev labels. It is the building and grid pattern again.
+- **A planner win in simulation is not a real win.** FirePilot stops 0.474 of the 72 h growth inside FireSim against
+  0.316 for anchor-and-flank, but the same simulator, run free from detection, matches the observed fire at Dice 0.40
+  (F1 0.34 on new area). Report the simulator's fidelity next to the gain. Its value net also fell for its own argmax:
+  it predicted 0.568 on the plans it picked, and the truth was 0.454.
+- **Let the fire start where fires start.** LANDFIRE marks agriculture (class 93) non-burnable, but thousands of
+  FPA-FOD fires start in fields, and an ignition on a non-burnable cell never grew. Burning class 93 as grass and
+  moving such ignitions to the nearest burnable cell within 180 m took FireSize's dev-gate AUC from 0.675 to 0.757,
+  its biggest single gain.
+- **Fit the widening on the number you report.** FireSize's widen-only temperature (T = 1.459) was fitted on the
+  size-class likelihood, and it doubled P(escape): 0.050 against a real dev rate of 0.026, and 0.055 against 0.027 on
+  the exam, so its Brier score is worse than prevalence. Before widening, the escape rate ran only 12-15 % low.
+- **Test the property, not the documentation.** The platform docs said suppression lines are 4-connected, so fire
+  cannot pass diagonally. That holds for non-burnable cells, not for timed lines: a closed 4-connected ring in grass
+  let 3,551 of 3,972 outside cells burn (U1). FirePilot found it with a leak test and built 8-connected lines.
+- **The dev gate can refuse a better simulator.** FireSize's rungs r3 and r3b fitted regional suppression offsets
+  and reporting floors: the twin likelihood improved and the simulated score rose, but dev-gate AUC fell from 0.757
+  to 0.655 and 0.634. The offsets soaked up variance the landscape and weather should explain, and the gate kept them
+  out.

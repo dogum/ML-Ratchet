@@ -1,0 +1,67 @@
+{
+ "name": "p0",
+ "note": "base priors: ROS factor lognormal around the dev-calibrated replay level, night slow-down, growing containment, spotting share",
+ "days": [
+  2,
+  8
+ ],
+ "ign_hour": [
+  10,
+  17
+ ],
+ "ign_box": 40,
+ "p_real": 0.7,
+ "ros_med": 0.35,
+ "ros_sd": 0.7,
+ "ros_clip": [
+  0.03,
+  2.5
+ ],
+ "ros_grp_sd": 0.3,
+ "night": [
+  0.15,
+  1.0
+ ],
+ "p_supp": 0.7,
+ "c_max": [
+  0.2,
+  0.95
+ ],
+ "c_tau_days": [
+  1.0,
+  4.0
+ ],
+ "p_spot": 0.3,
+ "ember": [
+  0.5,
+  5.0
+ ],
+ "ws_sd_fire": 0.2,
+ "ws_sd_day": 0.15,
+ "wd_sd_day": 15.0,
+ "rh_sd_fire": 0.15,
+ "mherb": [
+  40,
+  150
+ ],
+ "mwoody": [
+  60,
+  150
+ ],
+ "fmc": [
+  80,
+  130
+ ],
+ "p_cloud": 0.3,
+ "cloud_frac": [
+  0.1,
+  0.6
+ ],
+ "abort_after_h": 48,
+ "abort_km2": 0.4,
+ "p_first_boost": 0.5,
+ "first_boost": [
+  1.0,
+  3.0
+ ]
+}

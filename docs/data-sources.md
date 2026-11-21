@@ -54,13 +54,23 @@ find another documented source or download it yourself and note it.
 | [NRCS SNOTEL Report Generator](https://wcc.sc.egov.usda.gov/reportGenerator/) | Daily SWE, precipitation, temperature at 934 stations | SnowSense, WaterSim's snow check | SWE and accumulated precipitation are start-of-day; temperatures carry the 2000s sensor-change inhomogeneity |
 | [ResOpsUS v2](https://doi.org/10.5281/zenodo.6612040) (Zenodo) + ResOpsUS+CARS GRanD attributes | Daily storage, inflow, release for 678 US dams | ReservoirPilot | Negative back-calculated inflows at 189 dams; only 171 of 277 close their daily mass balance (corr ≥ 0.9). CARS attribute CSVs read from the remote zip by HTTP range |
 | [California CDEC](https://cdec.water.ca.gov/) | Daily reservoir storage, inflow, outflow, 18 reservoirs | ReservoirPilot's recent exam | |
+| [FEDS-MTBS](https://zenodo.org/records/20187963) (Zenodo) | 12-hourly perimeters, active fire lines and VIIRS S-NPP 375 m pixels for 7,739 MTBS fires, 2012-2024 | Fire platform: FireCast, FireDetective, FirePilot, the dev replays and the next-day exam | CC BY 4.0. `farea` is in m² (the readme does not say); half-day labels are nominal (`12:00` is the ~13:30 local overpass); the last steps above 99.9 % of the final area were removed by the authors. 171 MB processed |
+| [GOFER-Combined](https://zenodo.org/records/14642378) (Zenodo) | Hourly GOES perimeters, 28 California fires 2019-2021 | FireData's truth-quality check (FEDS against GOES on 4 dev fires: Dice 0.77-0.93) | CC BY 4.0 |
+| [WildfireSpreadTS](https://zenodo.org/records/8006177) (Zenodo) | Daily VIIRS active fire, weather, fuel and terrain for 607 US fires, 2018-2021 | Benchmark context for FireCast (published AP numbers, a different target) | CC BY 4.0. One large zip streamed fire by fire with HTTP range reads (about 2 fires a minute); 269 MB kept |
+| [FPA-FOD 6th ed.](https://doi.org/10.2737/RDS-2013-0009.6) (USDA Forest Service Research Data Archive) | 1.59 M CONUS wildfire ignition records 2001-2020 (2012-2020 used) | FireSize | Sizes are heavily rounded (0.01, 0.1, 1 acre); no records after 2020 |
+| [Globe-LFMC 2.0](https://doi.org/10.6084/m9.figshare.25413790) (figshare) | 239k CONUS live fuel moisture samples | FireDetective's live-moisture truth | CC0 |
+| [LANDFIRE LFPS](https://lfps.usgs.gov/) ImageServer `exportImage` | FBFM40, canopy cover, height, base height, bulk density (LF2016/2022/2023); elevation, slope, aspect (LF2020) | Fire platform landscapes (40 dev and 48 replay fires); training windows | Works per window at 180 m with 4 threads (network-bound). LF2016 is post-fire for 2012-2016 fires; no pre-fire layer exists for them |
+| [HRRR](https://registry.opendata.aws/noaa-hrrr-pds/) via `hrrrzarr` (University of Utah, AWS Open Data) | Hourly 2 m T, RH, 10 m wind, gust, radiation, cloud; 1 h precipitation from short-lead forecasts | FireSim replays and training weather | Starts 25 Aug 2016; analysis precipitation chunks do not exist and forecasts start mid-2018, so precipitation is NaN for 2017-early 2018 fires; 1-5.5 % of hours missing on 2017-18 fires (archive gaps); float16 chunks switch to float32 during 2024 |
+| [gridMET](https://www.northwestknowledge.net/metdata/data/) HTTP files | Daily weather and NFDRS fm100, fm1000, ERC, BI at fires, ignitions and moisture sites | All four fire models; FireData's baselines | The THREDDS server on port 8080 timed out; the plain HTTP files worked |
 
 ## Checked for backlog ideas
 
 Answered: NESO API, OMNIWeb, Kyoto Dst, INTERMAGNET/BGS, NOAA NCTR/DART (landing), NGL GNSS (landing),
 Crystallography Open Database, CHIME/FRB, Baseball Savant, IRSA ZTF TAP, JPL SBDB, HITRAN, NIST WebBook, CERN Open
 Data, Iowa Mesonet ASOS, NASA POWER, LISIRD, Open-Meteo archive, RCSB PDB, PubChem, UCI, OpenML, Hugging Face API,
-EIA, Zenodo.
+EIA, Zenodo. On 18 Nov 2026, from the claude.ai build sandbox: NIFC WFIGS, FIRMS, GOES-16 FDC on S3, MTBS, Copernicus
+DEM on S3, WRCC, WFAS, CDAWeb, NOAA CO-OPS tides API, NDBC, NOAA NGDC tsunami event search, NGL over https, Hugging Face
+Prior-Labs.
 
 ## Blocked or unreliable from the cloud build machine
 
@@ -81,7 +91,11 @@ EIA, Zenodo.
 | github.com (from the claude.ai build sandbox, Nov 2026) | Blocked, so no EnergyPlus binary: BuildingSim has no EnergyPlus reference run |
 | ecobee Donate Your Data, UK Data Service (RHPP, Electrification of Heat), Pecan Street | Gated by application or registration: no real thermostat logs and no UK heat-pump trials yet |
 | NCAR GDEX (original CAMELS Daymet/Maurer/NLDAS forcing), Daymet API (ORNL) | Timed out from the claude.ai build sandbox on 13 and 18 Nov 2026, so every water model runs on ERA5-Land. Not yet tried from the repository's own machine |
+| wfas.net/nfmd (National Fuel Moisture Database) | 404 on 18 Nov 2026: NFMD moved into FEMS (fems.fs2c.usda.gov), and no documented public download was found. No real dead-fuel stick data, so FireSim's Nelson model is checked only against gridMET NFDRS |
+| raws.dri.edu; thredds.northwestknowledge.net:8080; Synoptic API | RAWS pages did not answer (WRCC's are interactive forms only); gridMET THREDDS timed out (HTTP files used instead); Synoptic needs a key. No hourly RAWS or fuel-stick records |
+| github.com/pyregence | 403 from the claude.ai build sandbox; pyretechnics was installed from PyPI instead for FireSim's cross-check |
+| NASA FIRMS archive; MTBS per-fire severity mosaics; ICS-209 | FIRMS archive downloads need a free MAP_KEY (not needed: FEDS ships the VIIRS pixels it used); the severity mosaics go through an e-mail queue (FireDetective read severity through LANDFIRE Annual Disturbance); no validated suppression records were fetched |
 
 ## Python packages that helped
 
-pvlib, PyBaMM, FLORIS, highspy (HiGHS MILP with duals), pandapower / PYPOWER / ANDES (GridSim checks only), batman-package, astroquery, wfdb, LALSuite (training only), libarchive-c.
+pvlib, PyBaMM, FLORIS, highspy (HiGHS MILP with duals), pandapower / PYPOWER / ANDES (GridSim checks only), batman-package, astroquery, wfdb, LALSuite (training only), libarchive-c, pyretechnics and xclim (FireSim checks only, in an isolated environment).
