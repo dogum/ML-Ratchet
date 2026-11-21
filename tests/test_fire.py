@@ -358,6 +358,20 @@ def test_generated_weather_covers_a_fractional_start():
     assert len(fs.generate_weather(s.floor("h"), hours=72, rng=1)) == 72      # on-the-hour starts unchanged
 
 
+def test_initial_attack_at_ignition_time_does_not_contain_an_empty_fire():
+    """PR #7 review, 21 Nov 2026: with initial_attack starting at the ignition hour, the first heap entry saw zero
+    burned cells, a zero perimeter, and 'contained' the fire before it ignited (even at line rate 0)."""
+    import pandas as pd
+    import firesim as fs
+    ls = fs.generate_landscape((25, 25), 90.0, kind="parametric", region="great_basin", rng=1)
+    ls["fuel"][:] = 102
+    s = pd.Timestamp("2020-08-01 18:00", tz="UTC")
+    w = fs.generate_weather(s - pd.Timedelta(hours=72), hours=96, climate="west_dry_summer", lon=-110, rng=3)
+    out = fs.simulate(ls, w, {"rowcol": [(12, 12)]}, s, s + pd.Timedelta(hours=2), rng=1, return_perimeters=False,
+                      suppression={"initial_attack": dict(start_h=0.0, line_rate_m_per_h=0.0)})
+    assert np.isfinite(out["rasters"]["arrival_time"]).sum() > 1
+
+
 def test_u1_setup_is_meaningful(u1):
     """Without a line the fire leaves the ring; a ring of non-burnable fuel holds it (the corner rule works there)."""
     assert u1["no_line"] > 100 and u1["nonburnable"] == 0

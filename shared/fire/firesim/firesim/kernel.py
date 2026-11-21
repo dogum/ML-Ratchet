@@ -240,7 +240,7 @@ def run_mtt(ny, nx, res_m, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd,
             break
         if ia_on:
             # Fried & Fried (1996)-style containment: line built since ia_start vs perimeter of an ellipse of area A
-            if t >= ia_start:
+            if t >= ia_start and burned > 0:   # an empty fire is never "contained" (PR #7 review, 21 Nov 2026)
                 A = burned * cell_area
                 per = math.pi * math.sqrt(2.0 * A / math.pi * (ia_lw + 1.0 / ia_lw))
                 if ia_rate * (t - ia_start) >= per:

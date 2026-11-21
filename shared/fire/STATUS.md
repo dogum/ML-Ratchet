@@ -159,3 +159,12 @@ rung re-scored. Not measured here; the analytic checks (constant weather) cannot
 - `generate_weather` cut the series at `start`, so a start with minutes (18:30) lost the 18:00 row and `simulate()`
   refused the weather for its first partial hour. It now keeps the row at `start.floor('h')`; on-the-hour starts are
   unchanged. Test: test_generated_weather_covers_a_fractional_start.
+- Initial attack starting at (or after) the first ignition's hour: the first heap entry saw zero burned cells, a zero
+  perimeter, and the solver stopped as "contained" before the fire ignited, even at line rate 0. Containment is now
+  only tested once at least one cell has burned. Runs whose initial attack starts after the first cell burns (all
+  shipped uses: FireDetective's banks start it at 1-6 h) are unchanged. Test:
+  test_initial_attack_at_ignition_time_does_not_contain_an_empty_fire (fails on the old code).
+- U11 (not fixed): a timed suppression line is checked against the departure time for every intermediate cell of a
+  multi-cell stencil step, and only the destination's build time is checked at arrival, so a line finished while
+  the fire is mid-step can be crossed (Codex's example: a (1, 2) step at 10 m/min crosses a line finished at
+  0.00001 h). Same family as U1 (lines leaking); both change default physics and belong in physics p2.
