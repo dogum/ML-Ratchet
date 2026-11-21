@@ -329,6 +329,23 @@ def test_real_weather_covers_the_requested_window():
         assert w.index[0] <= s - pd.Timedelta(hours=72) and w.index[-1] >= s + pd.Timedelta(hours=72), seed
 
 
+def test_custom_fuels_keep_the_standard_fm10_crown_bundle():
+    """PR #7 review, 21 Nov 2026: overriding a fuel numbered 1-10 reordered the table, and the Rothermel 1991
+    crown-spread reference bundle was read from the wrong row (FM9 when fuel 1 was overridden)."""
+    import pandas as pd
+    import firesim as fs
+    import importlib
+    S = importlib.import_module("firesim.simulate")
+    ls = fs.generate_landscape((20, 20), 90.0, kind="parametric", region="great_basin", rng=1)
+    start = pd.Timestamp("2021-08-02 18:00", tz="UTC")
+    w = fs.generate_weather(start - pd.Timedelta(hours=72), hours=96, climate="west_dry_summer", lon=-110, rng=3)
+    end = start + pd.Timedelta(hours=3)
+    custom = {1: dict(w1=0.05, w10=0.0, w100=0.0, wherb=0.0, wwoody=0.0, sav1=3000.0, depth=1.2, mx=0.15)}
+    base = S.prepare(ls, w, start, end, {}, "nelson")
+    over = S.prepare(ls, w, start, end, {"custom_fuels": custom}, "nelson")
+    assert np.array_equal(base["bundle10"], over["bundle10"])
+
+
 def test_u1_setup_is_meaningful(u1):
     """Without a line the fire leaves the ring; a ring of non-burnable fuel holds it (the corner rule works there)."""
     assert u1["no_line"] > 100 and u1["nonburnable"] == 0

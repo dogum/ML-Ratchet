@@ -152,3 +152,7 @@ rung re-scored. Not measured here; the analytic checks (constant weather) cannot
   each local solar day out in UTC, so at lon = -120 the last 8 hours of a local day take the next day's flags (wind
   persistence, direction swing, cloud). Not fixed: it changes the default weather generator that every simulated
   bank was drawn from, so it goes with U1 and U9 into the next physics version.
+- `prepare()` took the Rothermel 1991 crown-spread reference bundle (standard fuel model 10) from the default table at
+  the row index of the custom table; with `custom_fuels` overriding a fuel numbered 1-10 that row was another fuel
+  (FM9 when fuel 1 was overridden). It now always uses FM10 in the default table. Runs without custom fuels are
+  unchanged. Test: test_custom_fuels_keep_the_standard_fm10_crown_bundle (fails on the old code).

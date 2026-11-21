@@ -174,7 +174,7 @@ def prepare(landscape, weather, start, end, params, moisture):
     m1 = np.zeros((nk, nz))
     tair = np.zeros((nk, nz))
     rows = np.arange(nrow, dtype=np.int64)
-    r10 = int(fm['lut'][10]) if fm['lut'][10] >= 0 else int(FM['lut'][10])
+    r10 = int(FM['lut'][10])   # standard FM10 in the default table (custom fuels reorder fm; PR #7 review)
     cur = -1.0 if P['curing'] is None else float(P['curing'])
     for z, df in enumerate(m_all):
         M = df[['m1h', 'm10h', 'm100h', 'm1h', 'mherb', 'mwoody']].to_numpy(float) / 100.0
