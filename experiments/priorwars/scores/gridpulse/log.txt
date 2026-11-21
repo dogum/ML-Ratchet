@@ -1,0 +1,20 @@
+18:32:57 P on dev headline -17.7326
+18:33:10 G-dev CV prep=raw headline -26.7374
+18:33:22 G-dev CV prep=norm headline -26.5889
+18:33:22 tune_dev chosen prep norm
+18:53:21   sim raw@1024 log_E 80s
+18:54:19   sim raw@1024 log_loss 58s
+18:54:19 G-sim raw@1024 headline -15.7067 (P on simval -14.5519)
+18:55:48   sim norm@1024 log_E 89s
+18:57:21   sim norm@1024 log_loss 94s
+18:57:21 G-sim norm@1024 headline -15.6176 (P on simval -14.5519)
+19:18:38 tune_sim chosen norm@1024
+19:18:50 contexts: G-dev 8 of 8 real rows; G-sim 1024 sim rows; G-sim+dev 1024 sim + 8 real (R_max 2048)
+19:19:07 exam_predict G-dev log_E 17s
+19:20:47 exam_predict G-sim log_E 100s
+19:22:22 exam_predict G-sim+dev log_E 95s
+19:22:33 exam_predict G-dev log_loss 11s
+19:23:52 exam_predict G-sim log_loss 79s
+19:25:15 exam_predict G-sim+dev log_loss 83s
+19:25:15 exam_predict done
+20:03:48 scored: P -18.965, G-dev -20.095, G-sim -21.527, G-sim+dev -20.854, constant 230 GW s / dev-median loss (dumb) -24.508, k x demand / RoCoF with 230 GW s (classical) -19.120

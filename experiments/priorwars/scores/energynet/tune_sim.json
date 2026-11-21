@@ -1,0 +1,81 @@
+{
+ "grid": {
+  "raw@1024": {
+   "scores": {
+    "ICE": {
+     "mape": 10.048040527620838
+    },
+    "HEV": {
+     "mape": 11.499654127912368
+    },
+    "PHEV": {
+     "mape": 22.50107567995279
+    },
+    "EV": {
+     "mape": 11.724022593061086
+    },
+    "all trips": {
+     "mape": 11.136550378884136
+    },
+    "log ratio": {
+     "rho": 0.7540134625841411,
+     "mdae": 0.10915021863179106
+    }
+   },
+   "headline": -14.682923445161999
+  },
+  "norm@1024": {
+   "scores": {
+    "ICE": {
+     "mape": 9.779785364640095
+    },
+    "HEV": {
+     "mape": 12.446127093926243
+    },
+    "PHEV": {
+     "mape": 22.958176828396883
+    },
+    "EV": {
+     "mape": 11.270090328085791
+    },
+    "all trips": {
+     "mape": 11.202494808377283
+    },
+    "log ratio": {
+     "rho": 0.756392477452984,
+     "mdae": 0.11016752332932153
+    }
+   },
+   "headline": -15.061363095654407
+  }
+ },
+ "n_pool": 28744,
+ "n_val_used": 400,
+ "rule": "prep chosen at ctx 1024 (raw unless norm wins by > 0.01); ctx 2048 kept only if it beats ctx 1024 by > 0.01 headline skill on the frozen simulated set",
+ "P_on_simval": {
+  "ICE": {
+   "mape": 6.72333958473092
+  },
+  "HEV": {
+   "mape": 10.4454244124867
+  },
+  "PHEV": {
+   "mape": 25.563460891311742
+  },
+  "EV": {
+   "mape": 7.510686531252571
+  },
+  "all trips": {
+   "mape": 8.604137566289902
+  },
+  "log ratio": {
+   "rho": 0.8400585003656271,
+   "mdae": 0.08479188075471722
+  }
+ },
+ "P_on_simval_headline": -14.24407496284312,
+ "chosen_prep": "raw",
+ "r_max": 1152,
+ "ctx_note": "ctx 2048 not tried (Amendment A3: dropped for every model for CPU cost; R_max = 1152 rows for 149 features)",
+ "chosen_ctx": 1024
+}
