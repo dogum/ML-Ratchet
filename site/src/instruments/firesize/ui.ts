@@ -189,8 +189,24 @@ export function show(ctx: InstrumentContext, weights: Pack<FSMeta>, examples: Pa
       g.fillStyle = FUEL[fuelClass(codes[r * 13 + q])].col;
       g.fillRect(x0 + q * cell, y0 + r * cell, Math.ceil(cell), Math.ceil(cell));
     }
+    // thin cell lines: each square is one 250 m cell, exactly what the model reads (no finer detail is used)
+    g.strokeStyle = 'rgba(0,0,0,.18)'; g.lineWidth = 1;
+    g.beginPath();
+    for (let k = 1; k < 13; k++) {
+      const p = Math.round(k * cell) + 0.5;
+      g.moveTo(x0 + p, y0); g.lineTo(x0 + p, y0 + side);
+      g.moveTo(x0, y0 + p); g.lineTo(x0 + side, y0 + p);
+    }
+    g.stroke();
     g.strokeStyle = SCOPE.ink; g.lineWidth = 1;
     g.strokeRect(x0 + 4 * cell + 0.5, y0 + 4 * cell + 0.5, 5 * cell, 5 * cell);
+    {
+      // caption sized to the patch width so it never runs into the size chart
+      g.font = '9px ui-monospace, monospace';
+      const cap = ['the model reads exactly these cells: 13 × 13 at 250 m', 'model input: 13 × 13 cells, 250 m',
+        'model input: 250 m cells'].find((t) => g.measureText(t).width * 1.15 <= side - 24);
+      if (cap) label(c, cap, x0, y0 + side + 12, SCOPE.faint, 'left', 9);
+    }
     g.lineWidth = 2;
     const cx = x0 + 6.5 * cell, cy = y0 + 6.5 * cell;
     g.beginPath(); g.arc(cx, cy, cell * 0.38, 0, 2 * Math.PI); g.stroke();

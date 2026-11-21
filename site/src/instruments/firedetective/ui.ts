@@ -7,7 +7,7 @@ import type { InstrumentContext } from '../types.ts';
 import { shell, picker, slider, button, gauges, canvas, scheduler, h } from '../kit.ts';
 import { read, type FDMeta, type Reading } from './net.ts';
 import { apply, fireRecord, keepMask, isRecorded, RECORDED, type Examples, type FireRecord, type WhatIf } from './whatif.ts';
-import { drawMap, drawSteps, DAY, NIGHT } from './scope.ts';
+import { drawMap, drawSteps, burnRamp, rgb, DAY, NIGHT, FOREST, BURNABLE, NONBURN, LATER, PIXEL_M } from './scope.ts';
 
 export async function mount(ctx: InstrumentContext) {
   const [weights, examples] = await Promise.all([
@@ -34,10 +34,23 @@ export function show(ctx: InstrumentContext, weights: Pack<FDMeta>, examples: Pa
     .fd-inst .fd-group { font: 10px/1.4 var(--mono, monospace); text-transform: uppercase; letter-spacing: .06em; color: var(--scr-3ink); grid-column: 1 / -1; margin-top: 4px; }
     .fd-inst .fd-row { display: flex; gap: 8px; flex-wrap: wrap; grid-column: 1 / -1; }
     .fd-inst .fd-cv2 { border-top: 1px solid var(--scr-rule); }
-    .fd-inst .fd-key { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 6px 10px; font: 10.5px/1.5 var(--mono, monospace); color: var(--scr-2ink); }
-    .fd-inst .fd-key span { display: inline-flex; align-items: center; gap: 5px; }
-    .fd-inst .fd-key i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--k); }
-    .fd-inst .fd-key i.sq { border-radius: 1px; } .fd-inst .fd-key i.ring { background: none; border: 1px solid var(--k); }
+    .fd-inst .fd-key { display: flex; gap: 6px 12px; align-items: flex-start; padding: 6px 10px; font: 10.5px/1.5 var(--mono, monospace); color: var(--scr-2ink); }
+    .fd-inst .fd-keys { display: flex; flex-wrap: wrap; gap: 4px 14px; flex: 1; }
+    .fd-inst .fd-keys > span { display: inline-flex; align-items: center; gap: 5px; }
+    .fd-inst .fd-key i { display: inline-block; width: 9px; height: 9px; border-radius: 1px; background: var(--k); box-shadow: inset 0 0 0 1px rgb(235 230 216 / 0.12); }
+    .fd-inst .fd-key i.fp { border-radius: 0; background: none; border: 1.5px solid var(--k); box-shadow: 0 0 0 1px rgb(8 9 7 / 0.9); }
+    .fd-inst .fd-key em { font-style: normal; color: var(--scr-ink); }
+    .fd-inst .fd-ramp { display: inline-flex; gap: 1px; }
+    .fd-inst .fd-ramp button { display: block; width: 10px; height: 12px; padding: 0; border: 0; border-radius: 1px; cursor: pointer; }
+    .fd-inst .fd-ramp button:disabled { cursor: default; }
+    .fd-inst .fd-ramp button.on { outline: 1.5px solid var(--scr-ink); outline-offset: 1px; }
+    .fd-inst .fd-ramp button:focus-visible { outline: 1.5px solid var(--c); outline-offset: 1px; }
+    .fd-inst .fd-key small { color: var(--scr-3ink); font-size: 9.5px; }
+    .fd-inst .fd-key .fd-time { flex-basis: 100%; flex-wrap: wrap; }
+    .fd-inst .fd-key .fd-fine { flex-basis: 100%; font-size: 9.5px; color: var(--scr-3ink); }
+    .fd-inst .fd-tools { display: flex; gap: 6px; flex-shrink: 0; }
+    .fd-inst .fd-tog { padding: 3px 8px; font-size: 9.5px; }
+    @media (max-width: 540px) { .fd-inst .fd-key { flex-direction: column; } }
     @media (max-width: 540px) { .fd-inst .inst-picker { display: grid; grid-template-columns: repeat(2, 1fr); } }
   `));
 
@@ -48,18 +61,57 @@ export function show(ctx: InstrumentContext, weights: Pack<FDMeta>, examples: Pa
   let nowInput = rec.input;
 
   // ---- screen: the fire from above, then the record step by step
-  const box1 = h('div', { role: 'img', 'aria-label': 'Map of the burned area by half-day step, fuels and VIIRS fire pixels' });
+  const box1 = h('div', { role: 'img', 'aria-label': 'Map of the burned area coloured by the half-day pass that first mapped it, muted fuels, and VIIRS fire-pixel footprints' });
   const key1 = h('div', { class: 'fd-key' });
-  for (const [txt, col, cls] of [['burned (bright = early)', ctx.accent, 'sq'], ['forest fuel', 'rgba(95,160,110,0.6)', 'sq'],
-    ['VIIRS pixel, day pass', DAY, ''], ['night pass', NIGHT, ''], ['pixel lost to the what-if', 'rgba(235,230,216,0.6)', 'ring']]) {
-    key1.append(h('span', {}, h('i', { class: cls, style: `--k:${col}` }), txt));
-  }
+  const keyItems = h('div', { class: 'fd-keys' });
+  const tools = h('div', { class: 'fd-tools' });
+  let full = false, pixels = true, pass: number | null = null;
+  const fitBtn = h('button', { type: 'button', class: 'inst-btn fd-tog', 'aria-pressed': 'false',
+    title: 'The full frame is the grid the record comes on: the burned area plus about 2.5 km. The network reads fuels within 2 km of the final burned area.' }, 'Full frame');
+  const pixBtn = h('button', { type: 'button', class: 'inst-btn fd-tog', 'aria-pressed': 'true' }, 'Hide pixels');
+  fitBtn.addEventListener('click', () => { full = !full; fitBtn.textContent = full ? 'Fit fire' : 'Full frame'; fitBtn.setAttribute('aria-pressed', String(full)); plot1.redraw(); });
+  pixBtn.addEventListener('click', () => { pixels = !pixels; pixBtn.textContent = pixels ? 'Hide pixels' : 'Show pixels'; pixBtn.setAttribute('aria-pressed', String(pixels)); render(lastMs); });
+  tools.append(fitBtn, pixBtn);
+  key1.append(keyItems, tools);
   const box2 = h('div', { class: 'fd-cv2', role: 'img', 'aria-label': 'New burned area per half-day pass and total fire radiative power' });
   ui.screen.append(box1, key1, box2);
   const narrow = ctx.root.getBoundingClientRect().width < 560;
-  const mapState = () => ({ rec: rec.input, now: nowInput, keep: keepMask(rec, w), frp: w.frp, accent: ctx.accent });
+  const mapState = () => ({ rec: rec.input, now: nowInput, keep: keepMask(rec, w), frp: w.frp, accent: ctx.accent, full, pixels, pass });
+  let lastMs = 0;
+
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const passName = (k: number) => {
+    const d = rec.info.steps[k] ?? '';
+    return `${Number(d.slice(8, 10))} ${MON[Number(d.slice(5, 7)) - 1] ?? ''} ${rec.input.day[k] ? 'day' : 'night'}`;
+  };
+  /** The map key: the burn-time ramp with the first and last pass, then fuels and VIIRS footprints. */
+  function drawKey() {
+    const n = rec.input.masks.n, nNow = nowInput.masks.n, ramp = burnRamp(ctx.accent, n);
+    const sw = h('span', { class: 'fd-ramp' });
+    ramp.forEach((c, k) => {
+      const b = h('button', { type: 'button', style: `background:${k < nNow ? rgb(c) : LATER}`, 'aria-pressed': String(pass === k),
+        title: `pass ${k + 1}: ${passName(k)} · click to show only its pixels and the area burned by then`,
+        'aria-label': `Pass ${k + 1}, ${passName(k)}` });
+      if (pass === k) b.classList.add('on');
+      if (k >= nNow) b.disabled = true;
+      b.addEventListener('click', () => { pass = pass === k ? null : k; render(lastMs); });
+      sw.append(b);
+    });
+    const item = (cls: string, col: string, txt: string) => h('span', {}, h('i', { class: cls, style: `--k:${col}` }), txt);
+    const items: HTMLElement[] = [
+      h('span', { class: 'fd-time' }, 'burned in pass', h('em', {}, passName(0)), sw, h('em', {}, passName(n - 1)),
+        h('small', {}, pass != null && pass < nNow ? `showing pass ${pass + 1}, ${passName(pass)}: click it again for all` : 'click a pass to step through the growth'))];
+    if (nNow < n) items.push(item('sq', LATER, 'burned after the passes read'));
+    items.push(item('sq', FOREST, 'forest fuel'), item('sq', BURNABLE, 'grass, shrub'), item('sq', NONBURN, 'non-burnable'));
+    if (pixels) {
+      items.push(item('fp', DAY, 'VIIRS pixels, day pass'), item('fp', NIGHT, 'night pass'));
+      if (w.drop > 0) items.push(item('fp', 'rgba(235,230,216,0.45)', 'lost to the what-if'));
+      items.push(h('span', { class: 'fd-fine' }, `drawn at the nominal ${PIXEL_M} m footprint (not in the export; real pixels grow off-nadir), overlaps merged`));
+    }
+    keyItems.replaceChildren(...items);
+  }
   const plot1 = canvas(box1, ctx.compact || narrow ? 1.15 : 1.6, (c) => drawMap(c, mapState()));
-  const plot2 = canvas(box2, ctx.compact || narrow ? 2.2 : 3.4, (c) => drawSteps(c, { rec: rec.input, now: nowInput, steps: rec.info.steps, accent: ctx.accent }));
+  const plot2 = canvas(box2, ctx.compact || narrow ? 2.2 : 3.4, (c) => drawSteps(c, { rec: rec.input, now: nowInput, steps: rec.info.steps, accent: ctx.accent, pass }));
 
   // ---- readout
   const who = h('p', { class: 'fd-who' });
@@ -121,7 +173,7 @@ export function show(ctx: InstrumentContext, weights: Pack<FDMeta>, examples: Pa
   button(row, 'Restore the real record', () => reset());
 
   picker(ui.picker, fires.map((f, i) => ({ label: f.short, sub: `${STRATUM[f.stratum] ?? f.stratum} · ${f.year}`, value: i })), (i) => {
-    rec = fireRecord(examples, i); reset();
+    rec = fireRecord(examples, i); pass = null; reset();
   });
 
   function reset() {
@@ -194,6 +246,8 @@ export function show(ctx: InstrumentContext, weights: Pack<FDMeta>, examples: Pa
     }
     note.textContent = bits.join(' ');
 
+    lastMs = ms;
+    drawKey();
     plot1.redraw();
     plot2.redraw();
     ui.stamp(ms, touched ? 'what-if input: features recomputed from the raw record, 3 networks rerun twice' : 'features from the raw record, 3 networks run twice (with and without wind)');
