@@ -1,0 +1,317 @@
+id: firesize
+name: FireSize
+version: "1.0"
+status: released
+released: 2026-11-19
+order: 28
+domain: Wildfire
+platform: fire
+tags: [wildfire, fire size, initial attack, escape probability, FPA-FOD, LANDFIRE, gridMET, Rothermel, suppression, MLP ensemble]
+accent: "#b8401a"
+tagline: Escape probability and final size of a new US wildfire, from its ignition record
+question: Will this new fire escape to 100 acres or more, and how big will it get?
+question_short: "Will a new fire escape, and how big will it get?"
+summary: >-
+  FireSize reads a US wildfire ignition record (place, date, cause, reporting agency, discovery hour), a 250 m
+  LANDFIRE summary around the point and gridMET weather on the discovery day and the day before. It returns
+  P(escape to ≥ 100 acres), P(≥ 1,000 acres) and the final-size distribution over 12 FPA-FOD size classes with a
+  median and an 80 % range. It is an ensemble of three small MLPs (83,364 weights) trained only on 8,500 simulated
+  ignitions: FireSim free-burn spread in real 90 m LANDFIRE windows under real gridMET weather, then a containment
+  race whose parameters were fitted on 911 real dev ignitions. Graded once on 655,869 real FPA-FOD exam ignitions
+  (2012-2020), it ranks escapes better than climatology (AUC 0.727 vs 0.688) and fire-danger indices (0.634) but not
+  as well as a gradient-boosting model fitted on real dev labels (0.777). It ranks fires that reach 1,000 acres
+  better than every baseline (AUC 0.815 vs 0.803), and beats the GBM in California, the Northwest and the Rocky
+  Mountain region. Its probabilities are about twice too high and its size point estimate is worse than climatology.
+disclaimer: >-
+  Its escape probabilities are about twice too high (mean 0.055 against a real 0.027), so read them as a ranking,
+  not as calibrated chances. Research model: not for dispatch or resource decisions.
+
+reads: "One ignition (CONUS, 2012-2020 in the exam): 75 inputs that `firesize.make_features` builds from 13 x 13 patches of the 250 m LANDFIRE 2016 grids around the point (FBFM40 fuel model code, canopy cover %, canopy height, slope in degrees; fuel class at the point and class fractions in 1.25 km and 3.25 km boxes, mean CC, CH and slope in the 5 x 5 box, slope at the point), gridMET daily values for the discovery day and the day before (ERC, BI, FM100 %, FM1000 %, wind m/s, RHmin and RHmax %, Tmax and Tmin °C, precipitation mm, VPD kPa), the log1p Rothermel head spread rate (m/min) of the fuels under the afternoon weather (point, 5 x 5 and 13 x 13 means, the point the day before), and the record: NWCG cause class, federal reporting agency (0/1), local discovery hour (sin, cos, missing flag), day of year (sin, cos) and one of 9 GACC-like regions. Missing values are filled with the training medians."
+returns:
+  - "P(escape): the chance the final reported size is ≥ 100 acres, from the widened distribution (T = 1.459). Not calibrated: the exam mean is 0.055 against a real rate of 0.027"
+  - "P(large): the chance of ≥ 1,000 acres"
+  - "Final-size distribution over the 12 FPA-FOD size classes (< 0.1 acre to ≥ 20,000 acres), widened by one dev-fitted temperature (T = 1.459), with an 80 % range (the 10 % and 90 % points, interpolated in log size within a class); `temp=1.0` gives the raw distribution"
+  - "Median final size (acres) from the raw T = 1 distribution (decided on dev before the exam)"
+
+physics:
+  summary: >-
+    FireSim, the shared fire platform's simulator (shared/fire/firesim): Rothermel/Albini surface fire on the 40
+    Scott & Burgan fuel models, Van Wagner crown fire, minimum-travel-time spread on the real 90 m LANDFIRE window,
+    Nelson dead fuel moisture from hourly weather disaggregated from gridMET, live moisture from the GSI; no spotting.
+    Fires smaller than one 90 m cell (0.81 ha) are tracked as an analytic sub-cell ellipse, because most FPA-FOD
+    fires are. Each simulated fire burns freely for 96 h; a Fried & Fried (1996) containment race then sets its final
+    size: line building starts after a response time and escalates, and the fire is contained when the line built
+    catches the line needed (a share of the ellipse perimeter). FireSize wraps FireSim without editing it, with two
+    physics versions: v0 as shipped and v1 (agriculture, LANDFIRE 93, burns as GR1; an ignition on a non-burnable
+    cell moves to the nearest burnable cell within 180 m).
+  simulator:
+    - "Ignition prior (prior.py): 2,400 windows of 18 km centred on dev ignition locations with N(0, 20 km) jitter, 8 ignitions each; each ignition borrows the cause, agency, discovery hour and date (± 7 days) of a dev ignition within 150 km. Every window passes the platform's check_landscape and every weather period its check_weather, so no exam footprint or exam fire-day weather is used. 304 windows are frozen for validation"
+    - "Free burn (sim.py): pre-discovery burn time ~ LN(0, 1) h and a ROS multiplier ~ logU[0.2, 1.5] per simulation, both reweighted to the calibrated distributions by importance weights; about 1 s per simulation. The v1 bank holds 8,500 training ignitions plus the twins (18 MB)"
+    - "Suppression and reporting (supp.py, calib.py): two attack modes (a share of fires only confined or monitored, at 2 % of the line rate), access, slope and federal line-rate terms, reporting floors (0.1 acre, regional 1-acre shares, a 0.01-acre share). 31 parameters fitted by Powell on 911 dev twins (calib half: dev ignitions simulated 4 times each in their own landscape and weather) by the likelihood of each twin's real size class plus an escape term"
+    - "Labels: each simulated ignition's reported-size distribution over 24 suppression draws (soft labels)"
+  checks:
+    - "FireSim (platform checks, shared/fire/checks): 436 of 436 published BehavePlus / GTR values within half the last digit; agreement with pyretechnics to 5e-5 (6,720 cases); uniform-fuel fires grow as the predicted ellipse (mean area ratio 0.981)"
+    - "Suppression fit (results/calibration/calib_v1rep2.json): twin size-class NLL 3.60 with literature values, 2.64 fitted; 2-fold held out 2.66 / 2.73 against 3.56 / 3.68 for the literature values. Twin escape rate 0.024 against a real 0.026"
+    - "Twin test (twin.py, 911 dev twins, results/twin_final.json): the released network predicts the escape of the simulated twin of each real ignition at AUC 0.906, but the calibrated simulator predicts the real outcome at only 0.671. The network reads a real ignition the way the simulator does; the ceiling is the physics and suppression model, not the network. The network's own AUC against the real outcome is 0.734"
+    - "Rothermel inputs: a lookup table from FireSim's behave() (ros_lut.npz, fuel code x 14 1-h moistures x 12 wind speeds). On import, recomputing the four ROS columns of the 8 demo ignitions from their 13 x 13 fuel patches reproduces the exam features to 1.1e-7"
+    - "The released weights file is byte-identical to the model the exam ran (sha256 72289217…3902 in results/exam.json); demo.py reproduces the exam's P(escape) for its 8 ignitions to 1e-4. The site instrument (TypeScript, float16 weights) matches numpy on the same weights to 1.1e-14 on 104 cases (8 ignitions x 13 what-ifs, Rothermel inputs included); float16 moves P(escape) by at most 6.4e-6 from the float64 release"
+
+noise: "No real recordings are laid into the training signals. The landscapes (90 m LANDFIRE windows near dev ignitions, exam footprints excluded) and the daily weather (gridMET) are real; the ignition attributes are borrowed from dev records. The randomness is in the simulator: pre-discovery burn time, a ROS multiplier, and 24 draws of the calibrated suppression and reporting model per ignition, which give the soft label."
+network: "An ensemble of 3 MLPs, 75 → 128 → 128 → 12 with ReLU (27,788 weights each, 83,364 in all), averaged after a softmax. Inputs standardised with the training mean and sd; NaN filled with the training medians. Trained in torch with soft-label cross-entropy weighted by the importance weights, AdamW lr 2e-3, batches of 256, up to 60 epochs with early stopping on held-out windows (patience 8), seeds 0/100/200, one CPU thread, a few minutes per rung. One widen-only temperature T = 1.459 on the logits, fitted on the dev calib half by size-class log-likelihood. numpy inference (firesize.py) matches the page's JavaScript to 4 decimals of P(escape)."
+
+approach:
+  real_backdrop: "Real 90 m LANDFIRE windows near dev ignitions (exam footprints excluded by the platform's guard) and real gridMET daily weather drive every simulated ignition; cause, agency, hour and date are borrowed from real dev ignitions"
+  physics_inputs: "The log1p Rothermel head spread rate of the LANDFIRE fuels around the point under the afternoon weather (Simard 1-h moisture at Tmax and RHmin, 10 m wind = 1.45 x the daily mean), from a FireSim behave() lookup table: at the point, 5 x 5 and 13 x 13 means, and the point the day before"
+  physics_anchor: false
+  real_data_roles: [backdrop, calibration, gate, error_bars, exam]
+
+data:
+  - name: "FPA-FOD 6th edition (Short, K. C. 2022, Spatial wildfire occurrence data for the United States, 1992-2020, USDA Forest Service Research Data Archive), 2012-2020 CONUS"
+    url: https://doi.org/10.2737/RDS-2013-0009.6
+    licence: "U.S. public data; cite Short (2022)"
+    role: "dev (8,913 ignitions: ignition attributes of the simulated prior, the 911 twins of the suppression fit, the dev gate, the widening), exam (655,869 ignitions, run once), examples/ (8 exam records)"
+  - name: "LANDFIRE 2016 Remap (FBFM40 fuel models, canopy cover, canopy height, slope), via the LFPS ImageServer"
+    url: https://landfire.gov/
+    licence: "U.S. public domain (USGS and USDA Forest Service)"
+    role: "physics (2,400 90 m windows for the simulations), inputs (250 m national grids for the landscape features, rebuilt by natgrid.py), examples/ (13 x 13 fuel patches)"
+  - name: "gridMET (Abatzoglou, J. T. 2013, Int. J. Climatol. 33:121) daily weather and NFDRS indices"
+    url: https://www.climatologylab.org/gridmet.html
+    licence: "U.S. public domain"
+    role: "physics (weather of every simulated ignition, disaggregated to hours), inputs (discovery day and the day before at every dev and exam ignition), examples/"
+  - name: "MTBS (USGS and USDA Forest Service) fire IDs, through FPA-FOD's MTBS_ID and the platform's splits"
+    url: https://www.mtbs.gov/
+    licence: "U.S. public domain"
+    role: "split (an FOD fire with an MTBS_ID inherits that fire's split), exam (the MTBS-matched subset, 3,818 ignitions); the guard footprints that keep exam fires out of the simulations"
+  - name: "FireData baselines (shared/fire/data/scripts/baselines_firesize.py): median / prevalence, climatology region x cause, logistic on ERC + BI + wind, gradient boosting fitted on dev real labels"
+    url: https://github.com/dogum/ML-Ratchet/tree/main/shared/fire
+    licence: "MIT (code); scores derived from the public-domain data above"
+    role: "exam (baselines, run by the platform agent on the same records; re-run per region by post_exam.py)"
+
+split:
+  dev: "FireData's frozen FireSize split (shared/fire/data/proc/firesize_split.parquet): a seeded 1.5 % of 2012-2019 CONUS ignitions plus FOD fires inheriting a dev MTBS fire, 8,913 in all. Split again by a seeded hash of the FOD_ID (common.dev_half, seed 20261119) into a calib half (suppression fit, 911 twins, widening) and a gate half (4,429 ignitions, the ratchet's dev gate, never used for calibration)"
+  exam: "Every other FPA-FOD CONUS ignition of 2012-2020: 655,869, of which 582,986 main (2012-19) and 72,883 recent (all of 2020, a whole season held out). Scored once by exam.py (audit file results/exam.started: one line, per the status doc; not shipped) after the ratchet closed. The 8 demo ignitions are a seeded draw (seed 20261126) of two per size group among exam ignitions with a discovery time, drawn after the exam"
+
+exam:
+  short: "655,869 real FPA-FOD ignitions, 2012-2020"
+  summary: >-
+    One run of exam.py on every exam ignition (training/results/exam.json), against FireData's baselines on the same
+    records: the median / prevalence, climatology by region x cause, a logistic model on ERC + BI + wind, and a
+    gradient-boosting model (GBM) fitted on the real labels of the 8,913 dev ignitions with lat/lon, owner, cause,
+    hour, day of year and two days of gridMET. The GBM is a fair and strong baseline: it learns from real fire
+    outcomes, which FireSize never does, and it reads lat/lon and owner, which FireSize cannot. Escape = final size ≥ 100
+    acres (2.68 % of exam ignitions), large = ≥ 1,000 acres (0.63 %). Size error is the median |log10| error of the
+    median. The only interval shipped is a bootstrap of the all-exam escape-AUC differences (post_exam.py: 100
+    resamples of ignitions, seed 20261119, results/post_exam.json); no other row has one. The per-region baselines
+    were re-run after the exam with the platform's own code (post_exam.py) and reproduce its stored all-exam AUCs to
+    every digit.
+  results:
+    - metric: "Escape (≥ 100 acres) AUC, all 655,869 exam ignitions"
+      better: higher
+      model: 0.727
+      baselines:
+        - { name: "Gradient boosting fitted on dev real labels (GBM)", kind: classical, value: 0.777 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.688 }
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.634 }
+        - { name: "Prevalence", kind: dumb, value: 0.500 }
+      verdict: loss
+      note: "Bootstrap of the AUC difference (100 resamples of ignitions, seed 20261119, post_exam.json): vs GBM −0.050 (95 % −0.053 to −0.047), loss; vs climatology +0.039 (+0.035 to +0.044) and vs ERC/BI/wind +0.093 (+0.090 to +0.097), both wins. Main 2012-19: 0.725 against GBM 0.776, climatology 0.685, ERC 0.632. By era: 2012-16 0.708, 2017-19 0.750."
+    - metric: "Escape AUC, recent exam: all of 2020 (72,883 ignitions, a held-out season)"
+      better: higher
+      model: 0.740
+      baselines:
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.789 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.711 }
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.648 }
+        - { name: "Prevalence", kind: dumb, value: 0.500 }
+      verdict: loss
+      note: "No interval shipped. The model card and status doc compare the 2020 AUC with the GBM's all-years 0.777; the GBM's own 2020 score in exam.json is 0.789. AP 0.070 against GBM 0.092 and climatology 0.067."
+    - metric: "Large fire (≥ 1,000 acres) AUC, all exam ignitions"
+      better: higher
+      model: 0.815
+      baselines:
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.803 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.767 }
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.748 }
+        - { name: "Prevalence", kind: dumb, value: 0.500 }
+      verdict: win
+      note: "Better than every baseline, the real-label GBM included (+0.011); no interval shipped for this row. Main 2012-19 0.815 vs GBM 0.805; 2020 0.811 vs GBM 0.800 and climatology 0.763. AP 0.029 against GBM 0.029 and climatology 0.025. On the 3,818 MTBS-matched ignitions (91 % of them large) it is 0.734 against climatology 0.779 and GBM 0.602."
+    - metric: "Escape average precision, all exam ignitions"
+      better: higher
+      model: 0.071
+      baselines:
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.099 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.061 }
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.042 }
+        - { name: "Prevalence", kind: dumb, value: 0.027 }
+      verdict: loss
+      note: "No interval shipped. 2020: 0.070 against GBM 0.092."
+    - metric: "Escape Brier score, all exam ignitions"
+      better: lower
+      model: 0.0273
+      baselines:
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.0255 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.0256 }
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.0259 }
+        - { name: "Prevalence (0.027 for everyone)", kind: dumb, value: 0.0260 }
+      verdict: loss
+      note: "Worse than predicting the prevalence for everyone. Mean P(escape) 0.055 against a real rate of 0.027: about twice too high. In 20 equal-count bins the observed rate is below the predicted one from the 6th bin up (top bin: predicted 0.210, observed 0.105). The widen-only temperature caused most of it: on the dev twins the unwidened r5 ran at 0.023 against a real 0.026, and on the dev gate the widening raised the Brier score from 0.0274 to 0.0285, before the exam. Log loss 0.125 against prevalence 0.123."
+    - metric: "Final size, median |log10 error| of the median, all exam ignitions"
+      better: lower
+      model: 0.642
+      baselines:
+        - { name: "Climatology, region x cause", kind: classical, value: 0.505 }
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.510 }
+        - { name: "Linear on ERC + BI + wind", kind: classical, value: 0.645 }
+        - { name: "Global median", kind: dumb, value: 0.699 }
+      verdict: loss
+      note: "Bias +0.22 log10 overall (over-sized), +0.87 in the NW and +1.07 in the GB, −0.21 in the SE. FPA-FOD sizes are heavily rounded (0.1, 1, 0.01 acres); the climatology median lands on those values and a smooth median does not. MTBS-matched ignitions (3,818, 99 % escapes): bias −3.26 log10, so FireSize badly under-sizes the big fires (GBM −3.36, climatology −4.22)."
+    - metric: "Final size, Spearman ρ with the real size, all exam ignitions"
+      better: higher
+      model: 0.286
+      baselines:
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.533 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.369 }
+        - { name: "Linear on ERC + BI + wind", kind: classical, value: 0.201 }
+      verdict: loss
+      note: "No interval shipped. 2020: 0.168 against GBM 0.343 and climatology 0.264."
+    - metric: "Escape AUC, California (72,386 exam ignitions)"
+      better: higher
+      model: 0.739
+      baselines:
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.690 }
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.631 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.570 }
+      verdict: info
+      note: "Regional breakdown; baselines re-run per region by post_exam.py after the exam. No interval shipped. Escape rate 2.0 %. Breakdown shown as info (import, 21 Nov 2026): baselines were re-run per region on the same records, but no interval was shipped; read without intervals this row would be a win."
+    - metric: "Escape AUC, Northwest (33,066)"
+      better: higher
+      model: 0.776
+      baselines:
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.742 }
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.735 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.594 }
+      verdict: info
+      note: "No interval shipped. Escape rate 3.9 %. Size is badly over-sized here (bias +0.87 log10). Breakdown shown as info (import, 21 Nov 2026): baselines were re-run per region on the same records, but no interval was shipped; read without intervals this row would be a win."
+    - metric: "Escape AUC, Rocky Mountain (76,488)"
+      better: higher
+      model: 0.748
+      baselines:
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.703 }
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.603 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.569 }
+      verdict: info
+      note: "No interval shipped. Escape rate 3.0 %. Breakdown shown as info (import, 21 Nov 2026): baselines were re-run per region on the same records, but no interval was shipped; read without intervals this row would be a win."
+    - metric: "Escape AUC, Northern Rockies (35,474)"
+      better: higher
+      model: 0.681
+      baselines:
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.714 }
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.673 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.612 }
+      verdict: info
+      note: "No interval shipped. Escape rate 6.2 %. Breakdown shown as info (import, 21 Nov 2026): baselines were re-run per region on the same records, but no interval was shipped; read without intervals this row would be a loss."
+    - metric: "Escape AUC, Great Basin (16,400)"
+      better: higher
+      model: 0.639
+      baselines:
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.655 }
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.563 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.562 }
+      verdict: info
+      note: "No interval shipped. Escape rate 6.2 %; mean P(escape) 0.162. Size bias +1.07 log10, the worst region. Breakdown shown as info (import, 21 Nov 2026): baselines were re-run per region on the same records, but no interval was shipped; read without intervals this row would be a loss."
+    - metric: "Escape AUC, Southwest (49,550)"
+      better: higher
+      model: 0.757
+      baselines:
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.782 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.724 }
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.548 }
+      verdict: info
+      note: "No interval shipped. Escape rate 2.7 %. Breakdown shown as info (import, 21 Nov 2026): baselines were re-run per region on the same records, but no interval was shipped; read without intervals this row would be a loss."
+    - metric: "Escape AUC, Southern Plains (82,481)"
+      better: higher
+      model: 0.715
+      baselines:
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.808 }
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.642 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.563 }
+      verdict: info
+      note: "No interval shipped. Escape rate 4.3 %. The second-largest gap to the GBM (−0.093). Breakdown shown as info (import, 21 Nov 2026): baselines were re-run per region on the same records, but no interval was shipped; read without intervals this row would be a loss."
+    - metric: "Escape AUC, Southeast (170,705, the largest region)"
+      better: higher
+      model: 0.566
+      baselines:
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.704 }
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.544 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.539 }
+      verdict: info
+      note: "No interval shipped. Escape rate 2.1 %. The largest gap to the GBM (−0.138): prescribed, debris and agricultural burning, small parcels and dense fast suppression are not in the simulator, and LANDFIRE 2016 fuels are stale by 2020. Large-fire AUC 0.619. Breakdown shown as info (import, 21 Nov 2026): baselines were re-run per region on the same records, but no interval was shipped; read without intervals this row would be a loss."
+    - metric: "Escape AUC, Northeast / Midwest (119,319)"
+      better: higher
+      model: 0.782
+      baselines:
+        - { name: "GBM fitted on dev real labels", kind: classical, value: 0.821 }
+        - { name: "Logistic on ERC + BI + wind", kind: classical, value: 0.638 }
+        - { name: "Climatology, region x cause", kind: classical, value: 0.505 }
+      verdict: info
+      note: "No interval shipped. Escape rate 0.7 %. Breakdown shown as info (import, 21 Nov 2026): baselines were re-run per region on the same records, but no interval was shipped; read without intervals this row would be a loss."
+    - metric: "80 % size range: share of exam ignitions whose real size class lies inside it (nominal 80 %)"
+      better: closer
+      model: 90.0
+      unit: "%"
+      baselines: []
+      verdict: info
+      note: "Conservative: the widening (T = 1.459) was fitted on dev to the size-class likelihood and brought dev-gate coverage from 0.835 to 0.899. 2020: 91.7 %. By region 83 % (SE) to 96 % (GB, NE/MW). MTBS-matched big fires: 9.4 %."
+
+wins:
+  - "Large fires: the best of every method at ranking which ignitions reach 1,000 acres (AUC 0.815 against 0.803 for the GBM fitted on real dev labels, 0.767 for climatology), in both 2012-19 and 2020."
+  - "Escape ranking beats climatology (+0.039 AUC, 95 % bootstrap +0.035 to +0.044) and the fire-danger indices (+0.093) without ever training on a real fire outcome."
+  - "In California (0.739 vs 0.690), the Northwest (0.776 vs 0.735) and the Rocky Mountain region (0.748 vs 0.703) it ranks escapes better than the GBM fitted on real labels, and better than every other baseline there."
+losses:
+  - "Escape ranking overall: AUC 0.727 against 0.777 for the GBM fitted on dev real labels (−0.050, 95 % −0.053 to −0.047); 0.740 against 0.789 in 2020."
+  - "Southeast (AUC 0.566 against 0.704) and Southern Plains (0.715 against 0.808), the two biggest gaps; also behind the GBM in the Northern Rockies, Great Basin, Southwest and Northeast/Midwest."
+  - "Calibration: mean P(escape) 0.055 against a real rate of 0.027, so its Brier score (0.0273) is worse than predicting the prevalence (0.0260)."
+  - "Size point estimate: median |log10 error| 0.642 against 0.505 for climatology and 0.510 for the GBM, with a +0.22 log10 bias; it under-sizes the big MTBS fires by 3.3 log10."
+
+limits:
+  - "Escape probabilities are about twice too high. The widen-only temperature was fitted to the size-class likelihood, not to escape, and raised the dev-gate Brier score from 0.0274 to 0.0285 before the exam; the release kept it as frozen."
+  - "Suppression is an effective race model fitted on dev twins, not a measured one: 10 of its 31 fitted parameters sit at a bound (response 0.1 h, line rates 30 times the handbook values, a federal line-rate term of e^−3, a confine-only share of 0.5, ROS spread 0.3, and five more; ratchet.yaml lists them). No validated suppression data (ICS-209) were used."
+  - "The simulator has no spotting, no re-burn after containment and no weather after 96 h; daily gridMET is disaggregated to hours. The largest fires are under-sized as a result."
+  - "Southeast and Southern Plains: debris, prescribed and agricultural burning, small parcels and dense fast suppression are not in the simulator. LANDFIRE 2016 fuels are stale for 2017-2020 and scarred by 2012-16 fires."
+  - "Landscape inputs are 250 m national grids (a coarse summary by design; the simulator ran on 90 m windows). Labels are FPA-FOD reported sizes, rounded to 0.01, 0.1 or 1 acre in most records; complexes and merged fires are booked to one record."
+  - "Twin-test ceiling: the network matches the simulator (AUC 0.906 against the simulated twin's outcome), but the simulator matches reality at 0.671. Better networks will not help much; better physics and suppression would."
+  - "Rule notes: FireSize read FPA-FOD records straight from the platform's parquet, filtered by its split (common.fod_records), because firedata has no FPA-FOD accessor. It loads the whole 2012-2020 table, then filters; in the shipped scripts only exam.py and, after the exam, post_exam.py and build_release.py select the exam records, and every other script asks for 'dev'. The dev calib half fitted the suppression model, the importance weights and the temperature; the gate half is out of sample. r7 passed the gate AUC test by 0.0004, and no interval was computed for any rung decision."
+  - "CONUS, 2012-2020 only (FPA-FOD has no later records); a 2021 or later ignition is outside both the training weather years and the exam."
+
+next:
+  - "Escape-aware calibration: keep T = 1 for P(escape) and widen only the size tail, or fit the temperature on the escape term. On the dev twins the unwidened escape rate already matches (0.023 vs 0.026). It is likely, but not computed, that T = 1 would also have given a better exam Brier."
+  - "Southeast and Southern Plains physics: burnable agricultural and debris-burn fuel states by season, and a WUI or parcel suppression term fitted on dev twins in those regions."
+  - "Containment beyond 96 h with real multi-day gridMET for fires that are not contained, to fix the −3.3 log10 under-sizing of MTBS fires."
+  - "Model FPA-FOD's reporting granularity (0.1 and 1 acre point masses) inside the simulator's reporting floor."
+  - "More twins per region: the guard skipped 45 % of the escaped dev twins; LANDFIRE windows that pass the guard could recover some."
+  - "Widen the suppression-parameter bounds or change the race's form; add owner class and position through the simulator (the GBM gains from them between regions)."
+help_wanted:
+  - "ICS-209 incident records or another source of validated suppression timing and resources, to replace the effective containment race fitted on dev twins."
+  - "Fresh fuels: a LANDFIRE layer for 2017-2020 fires (LF2016 is used throughout) and ignition records after 2020 (FPA-FOD ends in 2020)."
+
+usage:
+  install: pip install numpy
+  demo: python demo.py
+  python: |
+    import firesize
+    m = firesize.FireSize()                 # firesize_weights.npz next to this file
+    out = m.predict(X)                      # DataFrame or dict with the 75 columns (m.features), or an n x 75 array
+    out['p_escape'], out['p_large'], out['median_acres'], out['interval80_acres'], out['probs']   # probs: n x 12
+    # one ignition from its 13 x 13 LANDFIRE patches, two days of gridMET and the record:
+    f = firesize.make_features(fuel13, cc13, ch13, slope13, wx0, wx1, cause='Human', federal=0, hour=14.5,
+                               doy=200, region='CA')
+
+files:
+  inference: [firesize.py]
+  weights: [firesize_weights.npz, ros_lut.npz]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 1
