@@ -59,6 +59,7 @@ const upgrades = getModels().flatMap((m) => [
   .it { display: flex; justify-content: space-between; }
   .status { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--rule); color: var(--ink-2); }
   .s-checked .status { color: var(--win); border-color: currentColor; }
+  .s-done .status { color: var(--ink); border-color: currentColor; }
   .s-blocked .status { color: var(--loss); border-color: currentColor; border-style: dashed; }
   .idea h2 { font-size: 40px; line-height: 1; }
   .q { margin: 0; font-weight: 500; line-height: 1.4; }
