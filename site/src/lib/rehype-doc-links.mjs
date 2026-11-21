@@ -14,6 +14,7 @@ export const DOC_ROUTES = {
   'grid-platform.md': 'grid',
   'building-platform.md': 'building',
   'water-platform.md': 'water',
+  'fire-platform.md': 'fire',
 };
 
 const REPO = 'https://github.com/dogum/ML-Ratchet/blob/main/';

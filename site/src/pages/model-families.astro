@@ -19,11 +19,12 @@ const ORDER: [string, string[]][] = [
   ['Grid platform', ['gridpulse', 'batterypilot', 'plantdetective', 'demandcast']],
   ['Building platform', ['loadcast', 'buildingdetective', 'faultfinder', 'thermopilot']],
   ['Water platform', ['flowcast', 'snowsense', 'basindetective', 'reservoirpilot']],
+  ['Fire platform', ['firecast', 'firesize', 'firedetective', 'firepilot']],
 ];
 const byId = Object.fromEntries(all.map((m) => [m.id, m]));
 const groups = ORDER.map(([label, ids]) => ({ label, models: ids.map((id) => byId[id]).filter((m): m is Model => !!m && !!MODEL_NOTES[m.id]) }));
 const models = groups.flatMap((g) => g.models);
-const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty', 'twenty-one', 'twenty-two', 'twenty-three', 'twenty-four', 'twenty-five', 'twenty-six', 'twenty-seven', 'twenty-eight', 'twenty-nine', 'thirty'];
+const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty', 'twenty-one', 'twenty-two', 'twenty-three', 'twenty-four', 'twenty-five', 'twenty-six', 'twenty-seven', 'twenty-eight', 'twenty-nine', 'thirty', 'thirty-one', 'thirty-two', 'thirty-three', 'thirty-four', 'thirty-five', 'thirty-six', 'thirty-seven', 'thirty-eight', 'thirty-nine', 'forty'];
 const Say = (n: number) => { const w = WORDS[n] ?? String(n); return w[0].toUpperCase() + w.slice(1); };
 const missing = all.filter((m) => !MODEL_NOTES[m.id]).map((m) => m.name);
 if (missing.length) throw new Error(`model-families: no MODEL_NOTES entry for ${missing.join(', ')}`);
@@ -417,7 +418,7 @@ const toc: [string, string][] = [
       <p class="muted">Numbers each model stores for inference, on a log scale, beside rough sizes for families the collection does not use yet. Every model runs live on this site, so a new family has to fit the same budget and pass the same numpy and TypeScript parity checks. Formulas and forests fit easily. Tabular foundation models and diffusion samplers do not.</p>
     </header>
     <div class="frame pad"><svg class="budget" viewBox={budget.vb} role="img" aria-label="Numbers stored for inference per model, log scale" set:html={budget.svg} /></div>
-    <p class="note faint">Counts are from each <code>model.yaml</code>, except CellSense (3,455,900: three LFP and four NMC811 networks), EnergyNet (5 × 204,295) and TransitNet (321,900), counted from the shipped weight files on 16 Nov 2026. ChirpNet’s figure covers its finder and coincidence checker only. Dashed rows are estimates for one plausible size of each family, not measured models.</p>
+    <p class="note faint">Counts are from each <code>model.yaml</code>, except CellSense (3,455,900: three LFP and four NMC811 networks), EnergyNet (5 × 204,295) and TransitNet (321,900), counted from the shipped weight files on 16 Nov 2026, and the water and fire models, counted from their weight files when they were imported (18 and 21 Nov 2026). ChirpNet’s figure covers its finder and coincidence checker only. Dashed rows are estimates for one plausible size of each family, not measured models.</p>
   </section>
 
   <section class="sec wrap" id="lenses">

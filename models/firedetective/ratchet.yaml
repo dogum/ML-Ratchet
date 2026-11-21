@@ -1,0 +1,85 @@
+# The ratchet ladder, normalised from training/ratchet.json (written by training/ratchet.py) and
+# weights/calib.json (training/calibrate.py). Nothing was re-run on import (21 Nov 2026).
+model: firedetective
+ladders:
+  - name: "FireDetective v1.0 (FireSim physics v1-v3, 18-19 Nov 2026)"
+    objective: "Sim primary: mean of max(R2, 0) over three targets on the frozen simulated set of the current physics version: simulated crown-fire share, wind read with the wind inputs blanked, and live fuel moisture (val_v1, then val_v3; about 650 simulated fires each, same seeds)"
+    rule: "Keep if the sim primary beats the incumbent, re-scored on the same frozen set, by more than 0.01 AND the real dev composite (mean of the Spearman rho of predicted crown share vs MTBS high-severity share on the 30 dev fires with severity, and of blind wind vs gridMET wind on the 40 dev fires) is no more than 0.05 below the incumbent's. When the physics (frozen set) changes, the incumbent is re-scored on the new frozen set first."
+    margin: 0.01
+    dev_gate: "Dev composite may not drop by more than 0.05 (40 dev fires; 30 with MTBS severity, 16 of them forest; 9 with Globe-LFMC samples). The threshold is wide because the dev set is small."
+    frozen_sets: [val_v1, val_v3]
+    scored_on: val_v3
+    note: >-
+      Physics versions (training/simbank.py wrappers around FireSim, no edit to the shared package): v1 FireSim as
+      shipped; v2 + night fine-fuel moisture recovery and anchor-and-flank control lines; v3 = v2 + a fixed wind
+      adjustment factor U(0.25, 0.6) in half the runs. v2 and v3 came from twin tests on the dev fires
+      (training/twin.py, results/twin_v1.json and twin_waf.json), so dev data fed the physics AND the gate: the gate
+      is partly in-sample. The FEDS perimeter emulator was also fitted on real dev VIIRS pixels (results/calib_feds.json).
+      A frozen set val_v2 was built (results/compare_val_v2.json) but no rung was scored on it: R2 went straight to
+      the v3 bank and val_v3. Each gate compares a rung with the current incumbent only. The dev composite uses the
+      all-fuel severity rho (30 fires), not the forest one. R6's dev wind rho (0.11) and dev wind MAE (1.21 m/s) are
+      worse than R4's (0.20, 1.10); its composite still passed (-0.004). The bank counts in ratchet.json disagree a
+      little: R3 says v2 has 131 sims, the status doc says v2 has 108 in the final bank (the banks are not shipped).
+      Rule note (disclosed in the model card and in ratchet.json 'closed'): `exam.py build` ran on 19 Nov
+      10:15-10:23 local, while R4 was the incumbent and before R6 was trained and the ratchet closed (11:53). It
+      fetched LANDFIRE for the 944 listed exam fires, built their input records, which hold the truth values in the
+      same files, and computed the classical index values. Nothing was predicted, scored, compared or opened before
+      the close; R6 (the R4 recipe on more simulations) was decided on the frozen sim set and dev only, and
+      `exam.py score` ran once after calibration.
+    columns_source: "training/ratchet.json: sim primary on the rung's frozen set and the incumbent's on the same set, then the real dev gate on 40 dev fires (Spearman rho; raw network outputs)"
+    columns: ["Frozen set", "Sim primary", "Incumbent sim (same set)", "Sim R² crown share", "Sim R² blind wind", "Sim R² LFMC", "Dev ρ severity, all fuels (30)", "Dev ρ severity, forest (16)", "Dev ρ blind wind (40)", "Dev ρ LFMC (9)", "Dev composite"]
+    rungs:
+      - id: R0
+        change: "1-D CNN (63k weights) over up to 12 half-day steps x 25 features plus 17 statics, Gaussian heads, half the samples wind-blind; bank v1 (1,340 sims: FireSim + VIIRS and FEDS emulators, real dev HRRR weather, gridMET inputs)"
+        sim: 0.2399
+        dev: {hs_rho_all: 0.182, hs_rho_forest: 0.492, wind_rho: 0.024, wind_mae: 1.099, lfmc_rho: -0.033, composite: 0.103}
+        decision: kept
+        why: "First rung (baseline network)."
+        metrics: [val_v1, 0.2399, "–", 0.464, 0.196, 0.060, 0.182, 0.492, 0.024, -0.033, 0.103]
+      - id: R1
+        change: "R0 without the shape-elongation input (twin test: simulated fires are rounder than real ones, elongation 0.40 vs 0.70; the FEDS emulator preserves shape, so the gap is physics)"
+        sim: 0.2542
+        dev: {hs_rho_all: 0.221, hs_rho_forest: 0.434, wind_rho: -0.027, wind_mae: 1.116, lfmc_rho: 0.133, composite: 0.097}
+        decision: kept
+        why: "sim 0.2542 vs 0.2399 (+0.0143, need > +0.01); dev composite 0.097 vs 0.103 (-0.006, need >= -0.05)."
+        metrics: [val_v1, 0.2542, 0.2399, 0.459, 0.194, 0.109, 0.221, 0.434, -0.027, 0.133, 0.097]
+      - id: R2
+        change: "Physics v3 in the bank (from dev twin tests): night fine-fuel recovery, anchor-and-flank control lines, and a wind-sensitive WAF in half the sims; trained on v1 + v2 + v3 sims (2,121); new frozen set val_v3, incumbent re-scored on it"
+        sim: 0.2614
+        dev: {hs_rho_all: 0.347, hs_rho_forest: 0.532, wind_rho: 0.164, wind_mae: 1.115, lfmc_rho: 0.350, composite: 0.256}
+        decision: kept
+        why: "sim 0.2614 vs R1 re-scored on val_v3 0.2246 (+0.0368); dev composite 0.256 vs 0.097 (+0.159). The v3 physics was fitted to the same dev fires that gate it (rule note)."
+        metrics: [val_v3, 0.2614, 0.2246, 0.464, 0.242, 0.078, 0.347, 0.532, 0.164, 0.350, 0.256]
+      - id: R3
+        change: "More v3 simulations: the bank grows to 2,548 (v1 1,340 + v2 131 + v3 1,077), same network and seed"
+        sim: 0.3072
+        dev: {hs_rho_all: 0.438, hs_rho_forest: 0.695, wind_rho: 0.126, wind_mae: 1.093, lfmc_rho: 0.617, composite: 0.282}
+        decision: kept
+        why: "sim 0.3072 vs 0.2614 (+0.0457); dev composite 0.282 vs 0.256 (+0.026)."
+        metrics: [val_v3, 0.3072, 0.2614, 0.580, 0.239, 0.102, 0.438, 0.695, 0.126, 0.617, 0.282]
+      - id: R4
+        change: "3-seed ensemble of the R3 network (mean of means; variance = mean variance + spread of means)"
+        sim: 0.3383
+        dev: {hs_rho_all: 0.497, hs_rho_forest: 0.711, wind_rho: 0.200, wind_mae: 1.099, lfmc_rho: 0.667, composite: 0.348}
+        decision: kept
+        why: "sim 0.3383 vs 0.3072 (+0.0312); dev composite 0.348 vs 0.282 (+0.066). The exam input build ran while R4 was the incumbent (rule note)."
+        metrics: [val_v3, 0.3383, 0.3072, 0.609, 0.290, 0.116, 0.497, 0.711, 0.200, 0.667, 0.348]
+      - id: R5
+        change: "Dev-informed prior: training sims re-weighted toward the dev replay rate-of-spread factors (median 0.45) and fire-season live moisture (100 ± 30 %); 3-seed ensemble"
+        sim: 0.2739
+        dev: {hs_rho_all: 0.479, hs_rho_forest: 0.705, wind_rho: 0.059, wind_mae: 1.096, lfmc_rho: 0.667, composite: 0.269}
+        decision: rejected
+        why: "sim 0.2739 vs 0.3383 (-0.0644, need > +0.01); dev composite 0.269 vs 0.348 (-0.080, need >= -0.05). Fails both."
+        metrics: [val_v3, 0.2739, 0.3383, 0.582, 0.240, -0.058, 0.479, 0.705, 0.059, 0.667, 0.269]
+      - id: R6
+        change: "The R4 recipe (3-seed ensemble) on the full v3 bank: train_v3 grows from 25 to 60 shards (about 4,100 sims in all: v1 1,340, v2 108, v3 2,652)"
+        sim: 0.3759
+        dev: {hs_rho_all: 0.581, hs_rho_forest: 0.753, wind_rho: 0.108, wind_mae: 1.207, lfmc_rho: 0.550, composite: 0.344}
+        decision: released
+        why: "sim 0.3759 vs R4 0.3383 (+0.0376); dev composite 0.344 vs 0.348 (-0.004, inside 0.05). Released as v1.0; the ratchet closed at 11:53 on 19 Nov 2026, before any exam scoring. On val_v3: crown share R² 0.68 (0.51 wind-blind), blind wind 0.31, LFMC 0.14, 1-h moisture 0.72 (0.22 blind), spread-rate factor 0.14 (0.01 blind), fuel-model mismatch 0.01, spotting AUC 0.47, initial attack AUC 0.81."
+        metrics: [val_v3, 0.3759, 0.3383, 0.682, 0.307, 0.139, 0.581, 0.753, 0.108, 0.550, 0.344]
+      - id: calib
+        change: "Dev calibration of R6 (training/calibrate.py, 40 dev fires): severity map hs = 0.017 + 0.271 x crown share (least squares on 30 dev fires; the same 2-number map is fitted for every classical index), and widen-only sigma factors so the 80 % band covers at least 80 % of dev truths"
+        decision: kept
+        why: "Factors: severity x2.53, wind x1.98, LFMC x1.09 (9 dev fires). No effect on the ranks; the dev fires that gate the rungs also fit the map and the factors."
+        metrics: ["–", "–", "–", "–", "–", "–", "–", "–", "–", "–", "–"]

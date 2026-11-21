@@ -1,0 +1,164 @@
+<!-- Generated from model.yaml and ratchet.yaml by `mlratchet readme --write`. Edit those, not this file. -->
+# FirePilot <sub>v1.0</sub>
+
+> **A learned containment-line planner, graded in a fire simulator on 48 real exam fires**
+
+> [!WARNING]
+> Graded inside the simulator. Every outcome is a FireSim outcome on real exam landscapes, weather and detections, with a holding rule for the line; a free run of the same physics matches the observed 72 h perimeters only partly (Dice 0.40, F1 on new area 0.34), the real fires were fought, and the planner was never tested against real line-building records. A research benchmark, not a tool for directing crews.
+
+*Where should two crews build containment line over a wildfire's first 72 hours, knowing only its first satellite detection and a forecast?*
+
+FirePilot is given a wildfire at its first afternoon satellite detection, one forecast FireSim run from that burned area and a crew budget in metres of line per working hour. It picks one line plan for the next 72 h: a build order (centre-out, or ends-in from anchors), a centre angle and half-width around the fire, and offsets from the fire edge at the centre and the far side. A 6,338-weight value network ranks 301 candidate plans by their predicted share of the no-action growth stopped; it learned only from simulated fires scored in a hidden truth world. Graded once in FireSim on 48 real exam fires (real LANDFIRE fuels and terrain, real HRRR weather, real first FEDS detection), it stopped 0.474 of the simulated no-action growth at 300 m/h and 0.644 at 1000 m/h, against 0.316 and 0.480 for anchor and flank, the best classical plan, and 0.400 and 0.591 for a 29-simulation forecast search (MPC). It beats anchor and flank on 71 % of fires but MPC on only 46 %. A perfect-foresight search, a bound, reaches 0.614 and 0.792. These are simulated outcomes: the simulator gets the size of the real 72 h growth about right and its shape only partly.
+
+[Interactive lab](https://dogum.github.io/ML-Ratchet/models/firepilot/lab/) · [Project page](https://dogum.github.io/ML-Ratchet/models/firepilot/) · [Model card](MODEL_CARD.md) · [Lab notebook](NOTEBOOK.md) · [The method](https://github.com/dogum/ML-Ratchet/blob/main/docs/method.md)
+
+| | |
+|---|---|
+| **Reads** | At the first afternoon FEDS detection, on a 90 m grid: the detected burned area; one FORECAST FireSim run from it (arrival time and flame length over 72 h, on the real LANDFIRE landscape and the HRRR weather with the forecast's wind error); the line-building cost per metre from the fuel map (grass 0.6-0.8, timber litter 1.0, shrub 1.7, slash 2.0, non-burnable 0); the crew clock (two crews, 08:00-20:00 local solar time, from 2 h after detection); and the budget in metres of line per working hour. Thirteen scenario features and 18 plan-against-forecast features per candidate plan. Never the truth world's hidden spread error. |
+| **Returns** | One line plan: build order (0 centre-out, 1 ends-in), centre angle φc from the forecast head (°), half-width ω (5-180°), offsets d_h at the centre and d_f at the far side (90 m-8 km). The line is the 8-connected inner boundary of {distance from the fire ≥ d(Φ)} inside the sector, d(Φ) = d_f + (d_h − d_f)·((1 + cos(Φ − φc))/2)²<br>The plan's line cells, each cell's build completion time (h after detection, on the crew clock's 0.05 h steps; FireSim rounds them up to 15 min) and the km built within 72 h<br>The network's predicted share of the no-action 72 h growth stopped, with σ (Gaussian; the widen-only factor fitted on the dev gate is 1.0). On the exam the 90 % range covered the truth on 98 % / 100 % of fires and the prediction was optimistic by 0.11 / 0.07 (300 / 1000 m/h) |
+| **Learned from** | Fire spread is FireSim (Wildfire Phase 1, shared/fire/firesim), wrapped without editing it: Rothermel 1972 surface spread with Albini 1976 on the Scott & Burgan 40 fuel models, Van Wagner 1977 crown fire, Nelson dead-fuel moisture and minimum-travel-time spread on a 16-neighbour stencil, at 90 m on real LANDFIRE fuels and terrain with hourly HRRR weather, crown fire on, no spotting, and the dev-calibrated ROS factors (physics p1). Suppression is FireSim's timed line: each line cell blocks spread from the moment it is built, unless the fire reaches it with a flame length above 2.4 m (8 ft, the NWCG hauling-chart limit), where the line fails. Two worlds per scenario: the truth world (the scenario's weather and the calibrated ROS factors × a hidden f_ros ~ LogNormal(0, 0.5)) and the forecast the planner sees (wind speed × LogNormal(0, 0.25), direction + N(0, 20°), held constant; no hidden factor). |
+| **Noise** | Simulated: a hidden truth-world ROS factor f_ros ~ LogNormal(0, 0.5) (the spread of the Phase 1 replay ensemble) that the planner never sees, and forecast wind errors (speed × LogNormal(0, 0.25), direction + N(0, 20°), constant over 72 h). The background is real: LANDFIRE fuels and terrain and HRRR weather from 28 dev fires in 60 % and 75 % of the training scenarios. |
+| **Network** | MLP 31 → 64 → 64 → 2, tanh, 6,338 weights (plus 62 feature-scaling numbers). Heads: the mean saved fraction (sigmoid, MSE) and log σ (Gaussian NLL on the detached residual). 300 epochs with early stopping on a 10 % simulated selection set: RMSE 0.124, Spearman 0.82 (the geometric proxy alone 0.70). Planning: score 205 candidates (5 baselines, a 40-plan grid, 160 prior draws), then 2 rounds of CEM on the network (48 plans each) around the top 6, and take the argmax: about 3 s median on one core (53 s on the largest, 650,000-cell window). numpy + scipy inference. |
+| **Physics also enters** | inputs: Every plan feature comes from one forecast FireSim run: arrival time and flame length along the line, the share of the line built before the forecast fire arrives and the share it would overrun (flames > 2.4 m), the forecast growth in the line's shadow, and two connectivity proxies of the area saved<br>output: The connectivity proxy on the forecast run (rung r0, no learning) is both a feature and the planner the network had to beat; every training target and exam outcome is a FireSim truth-world simulation of the plan with the flame-length holding rule |
+| **Real data's jobs** | backdrop, calibration, gate, error bars, exam (never training labels) |
+| **Dev set** | FireData's frozen split (shared/fire/data/proc/splits.json, seed 20261118, frozen 18 Nov 2026): 40 dev fires, CONUS 2017-2021. FirePilot drew 12 of them as the gate (seed 20261119, never in a training bank) and used the other 28 for training landscapes and weather; all 40 set the physics p1 calibration and its fidelity check, so the gate is partly in-sample for the physics |
+| **Exam** | FireData's exam replay subset: 48 exam fires 2017-2024 (32 main-period 2017-21, 16 recent 2022-24), drawn once by region share and systematic sampling, each with its LANDFIRE window and HRRR weather. Each fire got one seeded hidden draw (truth ROS factor, forecast wind errors), shared by both budgets (300 and 1000 m/h). Run once after the ratchet closed, in two stages split before any exam output existed: stage A (no action, 5 fixed plans, r0, FirePilot) and stage B (MPC and the perfect-foresight bound, in a seeded fire order, seed 20261121); both finished on all 48 fires, none skipped |
+
+## Run it
+
+```bash
+cd models/firepilot
+pip install numpy scipy
+python demo.py        # about 5 s
+```
+
+or from anywhere in the repo: `mlratchet demo firepilot`.
+
+```python
+import numpy as np, firepilot as fp
+net = fp.ValueNet('firepilot_weights.npz')
+clock = fp.work_clock(start_utc, lon)             # crews 08:00-20:00 local solar time, from 2 h after detection
+ctx = fp.Context(burned0, arrival_h, flame_len_m, fp.cost_raster(fuel), rate_m_per_h, clock, 90.0)
+plan, info = fp.plan_value(ctx, net, np.random.default_rng(0))      # info: pred, sigma
+idx, build_h, km = fp.build_times(ctx.fr, plan, ctx.cost, ctx.rate, ctx.clock)
+# arrival_h and flame_len_m come from one forecast FireSim run; pipeline.plan_fire does it (needs shared/fire/firesim)
+```
+
+## The exam
+
+The 48-fire exam replay subset, run once after the ratchet closed (training/exam.py, training/results/exam_summary.json). Every method planned from the same forecast run and was scored in the same truth world, with a hidden spread error per fire. The metric is the share of the no-action 72 h growth a plan stops, (area without action − area with the plan) / (area without action − detected area), averaged over fires. Baselines on the same fires and draws: the five fixed plans (anchor and flank, the best of them; direct attack at the head; indirect lines at 1, 2 and 4 km), r0 (the proxy planner, no learning), the oracle pick of the best fixed plan per fire, and MPC, a cross-entropy search over plans in the forecast world with 29 FireSim runs per fire. The perfect-foresight bound runs the same search in the truth world (about 44 runs) and is a bound, not a competitor (own row). Intervals: 95 % bootstrap over fires, as shipped; the paired intervals are of FirePilot minus each baseline. A verdict is win only if FirePilot beats every baseline on the row and each paired interval excludes zero. All outcomes are simulated. Every number here is on real data that never chose anything.
+
+| Metric | FirePilot | Baselines | |
+|---|---|---|---|
+| Exam, 300 m/h of line (3.6 km per 12 h shift): mean share of the no-action 72 h growth stopped, simulated (48 fires)<br><sub>95 % intervals over fires: FirePilot 0.366-0.572, MPC 0.308-0.492, anchor and flank 0.226-0.403. Paired, FirePilot minus: MPC +0.074 (0.012 to 0.139), anchor and flank +0.158 (0.084 to 0.228), r0 +0.108 (0.065 to 0.153), direct attack +0.295 (0.213 to 0.375). Per fire it beats anchor and flank on 70.8 %, r0 on 70.8 % (2.1 % ties) and direct attack on 93.8 %, but MPC on only 45.8 % (MPC is better on 54.2 %): it wins on the mean by winning by more where it wins (next row). Hectares kept unburned, summed over 48 fires: FirePilot 20,651, MPC 18,467, anchor and flank 8,248, bound 45,768. Simulated outcomes.</sub> | **0.474** | MPC: forecast-world search, 29 FireSim runs per fire (classical): 0.4<br>Best fixed plan per fire (oracle pick of 5, uses the truth) (classical): 0.401<br>r0: proxy planner on the forecast run, no learning (classical): 0.365<br>Anchor and flank (best classical plan) (classical): 0.316<br>Direct attack at the head (classical): 0.179<br>Indirect line at 1 km (classical): 0.122<br>Indirect line at 2 km (classical): 0.056<br>Indirect line at 4 km (classical): 0.01<br>No action (dumb baseline): 0 | ✅ wins |
+| Exam, 1000 m/h of line (12 km per 12 h shift): mean share of the no-action 72 h growth stopped, simulated (48 fires)<br><sub>Highest mean, but level with MPC: paired FirePilot minus MPC +0.053 (95 % −0.020 to +0.128), so a tie, not a win. Against the rest the paired intervals exclude zero: anchor and flank +0.164 (0.078 to 0.258), r0 +0.120 (0.061 to 0.184). 95 % intervals over fires: FirePilot 0.541-0.735, MPC 0.483-0.693, anchor and flank 0.365-0.586. Per fire it beats anchor and flank on 70.8 % (4.2 % ties), r0 on 64.6 %, MPC on 45.8 % (6.3 % ties; MPC better on 47.9 %). Hectares kept unburned, summed: FirePilot 65,230, MPC 51,543, anchor and flank 15,454, bound 95,853. Simulated outcomes.</sub> | **0.644** | MPC: forecast-world search, 29 FireSim runs per fire (classical): 0.591<br>Best fixed plan per fire (oracle pick of 5, uses the truth) (classical): 0.562<br>r0: proxy planner on the forecast run, no learning (classical): 0.524<br>Anchor and flank (best classical plan) (classical): 0.48<br>Direct attack at the head (classical): 0.215<br>Indirect line at 1 km (classical): 0.147<br>Indirect line at 2 km (classical): 0.082<br>Indirect line at 4 km (classical): 0.026<br>No action (dumb baseline): 0 | ➖ tie |
+| Per fire, paired: share of the 48 exam fires on which FirePilot stops more growth than MPC (300 / 1000 m/h)<br><sub>FirePilot's mean gain over MPC comes from fewer, larger wins: MPC is better on more fires at 300 m/h and on about as many at 1000 m/h. MPC runs 29 forecast simulations per fire; FirePilot runs one and lets the network rank plans. Against anchor and flank FirePilot is better on 70.8 % of fires at both budgets.</sub> | **45.8 % / 45.8 %** | MPC stops more (the rest are ties: 0 % / 6.3 %) (classical): 54.2 % / 47.9 % | ↔️ mixed |
+| Perfect-foresight bound (a truth-world search that knows the hidden spread error, about 44 FireSim runs per fire): mean share stopped, 300 / 1000 m/h<br><sub>FirePilot reaches 77 % / 81 % of the bound. Paired FirePilot minus bound −0.141 (95 % −0.184 to −0.103) / −0.149 (−0.198 to −0.104); it never beats the bound and ties it on 8.3 % / 14.6 % of fires. 95 % intervals of the bound 0.513-0.708 / 0.707-0.868. The gap is mostly the hidden spread error the forecast cannot see; re-planning each morning is the obvious next rung.</sub> | **0.474 / 0.644** | Perfect-foresight bound (not a policy anyone can run) (classical): 0.614 / 0.792 | ℹ️ |
+| Recent exam (16 fires, 2022-24, whole seasons held out): mean share stopped, 300 / 1000 m/h<br><sub>With 16 fires most paired intervals include zero: minus MPC (−0.069 to 0.177) / (−0.061 to 0.167); minus anchor and flank (0.021 to 0.285) / (−0.068 to 0.232); minus r0 (0.085 to 0.227) / (−0.002 to 0.161). Main period (32 fires, 2017-21): FirePilot 0.446 / 0.631, MPC 0.364 / 0.573, anchor and flank 0.285 / 0.422, bound 0.574 / 0.761.</sub> | **0.530 / 0.670** | MPC, forecast-world search (classical): 0.473 / 0.626<br>Anchor and flank (classical): 0.379 / 0.595<br>r0 proxy planner (classical): 0.377 / 0.594<br>Perfect-foresight bound (classical): 0.696 / 0.855 | ℹ️ |
+| By detected area, 300 m/h: mean share stopped on the large-fire tercile (detected above about 160 ha)<br><sub>From the model card and status doc; the per-fire rows (results/exam/) were not shipped, so the tercile numbers cannot be re-derived here. Small fires (detected ≤ 24 ha): FirePilot 0.74, anchor and flank 0.50, bound 0.86. Mid (≤ 160 ha): 0.49, 0.32, 0.65. Large fires are where any one line placed at detection does least.</sub> | **0.2** | Anchor and flank (classical): 0.14<br>Perfect-foresight bound (classical): 0.33 | ℹ️ |
+| Simulator fidelity on the 48 exam fires: median Dice on total burned area at 72 h, free run of the truth physics from first detection vs the observed FEDS perimeter<br><sub>This grades FireSim (physics p1), the world FirePilot is graded in, not FirePilot. F1 on newly burned area 0.34; simulated / observed new area ×1.14 (median). At 24 h: Dice 0.48 against persistence 0.47, F1 0.27, ×1.55; at 48 h: 0.43 against 0.25, F1 0.34, ×1.11. The real fires were also fought, so no action is not their real counterfactual.</sub> | **0.4** | Persistence (the detected area) (dumb baseline): 0.19 | ℹ️ |
+| The network's prediction for its own pick against the simulated truth, mean over 48 fires (300 / 1000 m/h)<br><sub>Optimistic by 0.113 / 0.069 (winner's curse: the argmax of a noisy surrogate). The 90 % range (pred ± 1.645 σ, widen factor 1.0 from the dev gate) covers the truth on 97.9 % / 100 % of fires and the 50 % range on 68.8 % / 77.1 %: honest but wide, often ±0.8 on a 0-1 score. In the r4 on-policy round r1 predicted 0.568 for its own picks against a truth of 0.454.</sub> | **predicted 0.587 / 0.713** | Simulated truth for the same plans (classical): 0.474 / 0.644 | ℹ️ |
+
+### Where it wins
+
+- Simulated, on 48 real exam fires: it stops 0.474 of the no-action 72 h growth at 300 m/h and 0.644 at 1000 m/h, against 0.316 and 0.480 for anchor and flank (paired +0.16, 95 % intervals 0.08-0.23 and 0.08-0.26), and it is better than anchor and flank on 71 % of fires at both budgets.
+- At 300 m/h it beats the 29-simulation forecast search on the mean (0.474 against 0.400, paired +0.074, 0.012 to 0.139) with one forecast run and about 3 s of planning; it also beats the oracle pick of the best fixed plan per fire (0.401 / 0.562).
+- It keeps 20,651 ha unburned at 300 m/h and 65,230 ha at 1000 m/h, summed over the 48 fires (MPC 18,467 and 51,543; anchor and flank 8,248 and 15,454): 77-81 % of the perfect-foresight bound's mean.
+- It found and worked around a FireSim bug (U1): timed suppression lines leak diagonally; its 8-connected lines hold, with the line length counted so they are not longer.
+- Trained only in simulation: no real fire outcome was a training target, and the exam was run once, after the ratchet closed.
+
+### Where it loses
+
+- At 1000 m/h it only ties MPC: +0.053, 95 % −0.020 to +0.128.
+- Per fire it beats MPC on only 46 % of fires at both budgets; at 300 m/h MPC is better on more fires (54 %).
+- Large fires (detected above about 160 ha): only 0.20 of the growth stopped at 300 m/h, against 0.33 for the perfect-foresight bound.
+- Its error bars are wide (90 % coverage 0.98-1.00; the 90 % range is often ±0.8 on a 0-1 score) and it is optimistic about its own pick by 0.07-0.11 (winner's curse).
+- On the 16 recent fires (2022-24) no paired interval against MPC or, at 1000 m/h, against anchor and flank excludes zero.
+
+## Limits
+
+- Simulated outcomes only. Every number above is a FireSim outcome; a free run of the same physics matches the observed 72 h growth in size (×1.14) but only partly in shape (Dice 0.40, F1 on new area 0.34), the simulated fire is often in the wrong place, the real fires were fought, and FirePilot has not been tested against real line-building records (ICS-209 or similar).
+- FireSim upstream bug U1: its corner rule blocks a diagonal step only past permanently non-burnable cells, not past cells blocked by a timed line (t_block ≤ t), so 4-connected suppression lines leak. Every outcome here (training targets, the ratchet, the exam, all baselines) was scored in a FireSim with this bug. FirePilot's lines, and so every plan's, are 8-connected to avoid it, with the 8-boundary's cells sharing the 4-connected line length, so each cell's build time is a modelling choice made around the bug. A FireSim fix (physics p2) needs the frozen sets rebuilt and every rung and baseline re-scored; how far the numbers move is not known.
+- One line, two crews, one decision at detection: no re-planning, no aircraft, no spotting (off in the planning world), no values at risk and no line loss other than the 2.4 m flame-length rule.
+- The domain is the stored LANDFIRE window: on 45 of 48 exam fires the 15 km crop reaches the window edge (FireSim upstream U2), so growth beyond it is cut off for every method alike.
+- Training fires are synthetic fires grown from point ignitions on dev landscapes; real detections are more ragged. Live fuel moisture is constant, and FireSim's fires do not stall or burn out as real fires do (simulated fires grow on 91 % of half-days, real ones on 50 %).
+- Rule notes: the exam was split into two stages for compute (stage A: no action, fixed plans, r0, FirePilot; stage B: MPC and the bound in a seeded order), decided before any exam output existed; both stages finished on all 48 fires, so the split changed nothing. The 40 dev fires set the physics p1 calibration and supplied the 12 gate fires, so the gate is partly in-sample for the physics. The tercile numbers come from per-fire rows that were not shipped.
+
+## The ratchet
+
+**Objective:** Mean share of the no-action 72 h growth stopped (the saved fraction, scored in each scenario's FireSim truth world) on the frozen simulated validation set val_p1: 160 synthetic scenarios, physics p1, seeds 900000+. The fixed plans on val_p1: direct attack 0.107, indirect 1 km 0.261, 2 km 0.203, 4 km 0.078, anchor and flank 0.195.  
+**Rule:** Keep a rung if its val_p1 mean saved fraction beats the incumbent's by more than 0.01 AND its dev-gate mean saved fraction is no more than 5 % (relative) below the incumbent's. The first rung (r0) had to beat every fixed plan on val_p1 and on the gate.
+
+| Rung | Change | Frozen-set score | Decision | Why | Val mean | Val median | Gate mean | Gate median | Gate vs incumbent |
+|---|---|---|---|---|---|---|---|---|---|
+| r0 | Proxy planner, no learning: the argmax over 205 candidate plans (5 baselines, a 40-plan grid, 160 prior draws) of the connectivity proxy on the forecast run (forecast burn still connected to the detected fire once the line cells built before the forecast fire arrives block it) | 0.403 | ● kept | Base rung. Val 0.403 beats every fixed plan (best: indirect 1 km 0.261); gate 0.383 beats every fixed plan (best: anchor and flank 0.263). | 0.403 | 0.361 | 0.383 | 0.24 | – |
+| r1 | Value network: 31 features (13 on the scenario as seen through the forecast, 18 on the plan against the forecast, including the line's shadow and two connectivity proxies), 31 → 64 → 64 → 2 tanh MLP (6,338 weights), mean head (sigmoid, MSE on the saved fraction) and log-σ head (Gaussian NLL on the detached residual); trained on 297 synthetic scenarios × 10 truth-scored plans; planning = argmax over the 205 candidates plus 2 CEM rounds of 48 on the network | 0.484 | **◆ released** | Val 0.484 vs r0 0.403 (+0.081); gate 0.481 vs 0.383 (+26 %). Released as v1.0; no later rung passed. | 0.484 | 0.52 | 0.481 | 0.41 | +25.8 % |
+| r2 | Same network, the full 596-scenario training bank | 0.470 | ○ rejected | Val 0.470 vs r1 0.484 (−0.014); gate 0.473 vs 0.481 (−1.7 %, within 5 %). More data of the same kind did not help. | 0.47 | 0.495 | 0.473 | 0.411 | −1.7 % |
+| r3 | Ensemble of 4 seeds of the r1 network (same training scenarios; the log says 298), mean prediction, the ensemble spread added to σ | 0.476 | ○ rejected | Val 0.476 vs 0.484 (−0.008, not +0.01); gate 0.494 vs 0.481 (+2.7 %, passes). Fails the sim margin. | 0.476 | 0.495 | 0.494 | 0.428 | +2.7 % |
+| r4 | r1 recipe retrained on r1's data plus one on-policy round: 195 scenarios planned by r1, its plan + 4 jitters + 2 prior plans, all truth-scored (DAgger-like) | 0.483 | ○ rejected | Val 0.483 vs 0.484 (−0.001); gate 0.483 vs 0.481 (+0.4 %). Winner's curse: on the 195 on-policy scenarios r1 predicted 0.568 for its own picks and the truth was 0.454. The new rows removed part of that optimism but did not pick better plans. | 0.483 | 0.515 | 0.483 | 0.492 | +0.4 % |
+
+<sub>Columns after *Why*: training/ratchet.json: mean and median saved fraction on val_p1 (160 scenarios) and on the dev gate (24 cases); the gate's change against the incumbent at the time.</sub>
+
+Two environment decisions were taken before r0 and are logged in training/ratchet.json as physics_rungs, not as ladder rungs. Physics p0 → p1 (kept): the planning world uses the dev-calibrated FireSim replay ROS factors (shared/fire/checks/replay_calibration.json); a 72 h free run from first detection on 40 dev fires moved the median Dice on total area from 0.29 to 0.45, F1 on new area from 0.26 to 0.33 and the simulated / observed new-area ratio from ×3.9 to ×1.5 (training/results/fidelity_dev_p0.json, fidelity_dev_p1.json). Every rung is scored with p1. U1 line geometry (kept, environment correctness): lines are the 8-connected inner boundary of the plan region, because FireSim's corner rule lets fire pass diagonally between two cells of a 4-connected timed suppression line (a closed 4-connected ring let 3,551 of 3,972 outside cells burn in 48 h; the same ring as non-burnable fuel, or as an 8-connected line, held: training/results/upstream_U1_leak.json). The fix is FirePilot's, not FireSim's: FireSim was wrapped, not edited. The perfect-foresight column (gate cases where it ran) was added from r2 on: 7 of 24 cases for r2, all 24 for r3 and r4. The exam was run once, after r1 was released (stage A and stage B, both on all 48 fires).
+
+Raw per-rung logs are in [`training/`](training/).
+
+## Physics
+
+Fire spread is FireSim (Wildfire Phase 1, shared/fire/firesim), wrapped without editing it: Rothermel 1972 surface spread with Albini 1976 on the Scott & Burgan 40 fuel models, Van Wagner 1977 crown fire, Nelson dead-fuel moisture and minimum-travel-time spread on a 16-neighbour stencil, at 90 m on real LANDFIRE fuels and terrain with hourly HRRR weather, crown fire on, no spotting, and the dev-calibrated ROS factors (physics p1). Suppression is FireSim's timed line: each line cell blocks spread from the moment it is built, unless the fire reaches it with a flame length above 2.4 m (8 ft, the NWCG hauling-chart limit), where the line fails. Two worlds per scenario: the truth world (the scenario's weather and the calibrated ROS factors × a hidden f_ros ~ LogNormal(0, 0.5)) and the forecast the planner sees (wind speed × LogNormal(0, 0.25), direction + N(0, 20°), held constant; no hidden factor).
+
+**Simulator**
+
+- FireSim v1 (shared/fire/firesim): surface and crown fire, minimum-travel-time spread, timed suppression lines; FirePilot's environment (training/fp/env.py) adds per-cell build times from the crew clock and the line cost, rounded up to 15 min, and the flame-length holding rule
+- Training scenarios (training/fp/scenarios.py): 60 % real LANDFIRE windows of 28 dev fires (the 12 gate fires excluded, firedata.guard checked) and 40 % FireSim parametric landscapes; 75 % real HRRR weather from those dev fires and 25 % FireSim synthetic weather; 140-360 cells a side; the fire grown from a point ignition for 6-30 h to an afternoon detection; a random budget and a hidden truth / forecast draw
+- Banks: 297 training scenarios (seeds 0-149 and 300-449) × 10 plans scored in the truth world (2 baselines, 4 prior draws, the 4 best by a geometric proxy), 2,970 rows; frozen validation val_p1, 160 scenarios (seeds 900000+); a further 299 training scenarios (r2) and 195 on-policy scenarios (r4)
+- Physics rung p0 → p1, kept: the dev-calibrated FireSim replay ROS factors (shared/fire/checks/replay_calibration.json). 72 h free run from first detection on 40 dev fires: median Dice on total area 0.29 → 0.45, F1 on new area 0.26 → 0.33, simulated / observed new area ×3.9 → ×1.5
+
+**Checked against independent references**
+
+- FireSim (shared/fire/checks, Phase 1): 436 of 436 published Rothermel / BehavePlus values within half the last published digit; against pyretechnics on 6,720 flat and slope cases, ROS median difference 4.9e-5; uniform-fuel ellipses 0.98 of the predicted area (0.99 with level_set); dev replays 40 fires, next-day F1 0.153 uncalibrated, 0.194 calibrated (0.184 leave-one-out)
+- Line geometry (training/leak_test.py, training/results/upstream_U1_leak.json): a closed ring built at t = 0 around a point ignition in uniform grass, cells burned outside after 48 h: no line 3,972; 4-connected timed line 3,551 (it leaks diagonally, FireSim upstream candidate U1); the same ring as non-burnable fuel 0; the 8-connected timed line FirePilot builds 0. The km of line are counted on the 4-connected boundary × π/4, so the 8-boundary does not inflate the line length
+- Fidelity on the 48 exam fires (training/results/exam_summary.json, fidelity): a free run of the truth physics with no line and no hidden error, from first detection, against the observed FEDS PM perimeters, medians: Dice on total area 0.48 / 0.43 / 0.40 at 24 / 48 / 72 h (persistence 0.47 / 0.25 / 0.19); F1 on new area 0.27 / 0.34 / 0.34; simulated / observed new area ×1.55 / ×1.11 / ×1.14. The size of the growth is about right by 48-72 h, its shape only partly
+- Implementation (as shipped): numpy == torch 8.7e-8; the page's JavaScript vs Python on its six fires, 66 plans: predictions within 8.5e-7, features within 1e-7 except one timing feature off by one 0.05 h clock step (6.9e-4); the release demo reproduces the exam plans on 6 of 6 fire-budgets. Re-checked on import (21 Nov 2026): firepilot.py is byte-identical to the module build_release.py generates from training/fp; the demo reproduces 6 of 6 exam plans; the site instrument (TypeScript, with numpy's float32 line-cost arithmetic) matches firepilot.py on 90 cases to 4.4e-16
+
+## Help wanted
+
+- Real suppression records (ICS-209 incident reports, line-construction and containment logs) to test any planner outside the simulator; FireSim has no validated suppression data.
+- Dead-fuel stick moisture from FEMS (the old NFMD has no public download) and larger LANDFIRE windows for the exam replay fires.
+
+## Next rungs
+
+- Re-plan each morning (receding horizon): run the value net at each shift with the new detection. The biggest realism gain and probably the biggest score gain; the bound is about 15 points higher.
+- Imitate the perfect-foresight search: use the truth-CEM plans on the training bank as targets, or a ranking loss, instead of an MSE value net that suffers the winner's curse on its own argmax.
+- Fix U1 upstream in FireSim (treat a side cell as blocked when fuel_row < 0 or t_block[c] ≤ t), rebuild the frozen sets as physics p2 and re-score every rung and baseline; then store larger replay windows (U2).
+- Values-at-risk targets (WUI cells), multi-segment lines, aircraft and spotting, and a fire-persistence (burnout and stall) module in FireSim.
+
+## Files
+
+| Path | What |
+|---|---|
+| `firepilot.py`, `pipeline.py` | Inference — numpy/scipy only |
+| `firepilot_weights.npz` | Weights |
+| `demo.py`, `examples/` | Demo on real exam examples (fixed random draw, not picked by result) |
+| `MODEL_CARD.md` | Full model card: every number, every caveat |
+| `model.yaml`, `ratchet.yaml` | Structured card and ladder (this README, the CLI and the site are generated from them) |
+| `training/` | Every script that built it, as run; paths via `training/_paths.py` |
+| `lab/index.html` | The original interactive page, self-contained (the network runs in the browser) |
+| `NOTEBOOK.md` | Lab notebook: the build story, dead ends and sandbox gotchas, as recorded |
+
+## Data and credits
+
+| Source | Used for | Licence / terms |
+|---|---|---|
+| [FEDS-MTBS fire progression: 12-hourly perimeters and VIIRS fire pixels for MTBS fires 2012-2024 (Chen et al. 2022 FEDS method, MTBS-constrained)](https://zenodo.org/records/20187963) | dev (the real first detection of the 12 gate fires; the 40 dev fires' perimeters for the physics p1 calibration and fidelity check), exam (the first afternoon detection of the 48 exam fires; the observed PM perimeters for the fidelity check) | CC BY 4.0 |
+| [MTBS fire perimeters and Event_IDs (USGS / USFS), through FireData's frozen split](https://www.mtbs.gov) | dev, exam (the fire list and split; exam footprints guard the training landscapes) | Public domain (US Government) |
+| [LANDFIRE fuels (FBFM40), canopy and terrain](https://landfire.gov) | physics (real training landscapes from dev fires), exam (each exam fire's landscape window) | Public domain (US Government) |
+| [HRRR hourly analyses (NOAA), via the University of Utah hrrrzarr archive on AWS Open Data](https://registry.opendata.aws/noaa-hrrr-pds/) | physics (real training weather from dev fires), exam (each exam fire's 72 h weather for the forecast and truth runs) | Public domain (NOAA) |
+| [gridMET daily weather (Abatzoglou 2013): precipitation where HRRR has none](https://www.climatologylab.org/gridmet.html) | physics, exam (gap filling of hourly precipitation) | Public domain |
+| [FireSim and FireData (Wildfire Phase 1): simulator, dev-calibrated replay factors, frozen splits, exam replay subset](https://github.com/dogum/ML-Ratchet/tree/main/shared/fire) | physics (training and scoring), dev (replay calibration on the 40 dev fires), exam (shared/fire/data/proc/baselines/replay_subset.json) | MIT (code in this repository) |
+
+Please cite the data providers when you use this model. Data stays under its providers' terms; see [DATA_LICENSES.md](../../DATA_LICENSES.md).
+
+---
+
+Part of **[ML Ratchet](https://github.com/dogum/ML-Ratchet)** — physics-first models that are trained only on simulations, kept only when they ratchet up, and graded on real data they never saw.

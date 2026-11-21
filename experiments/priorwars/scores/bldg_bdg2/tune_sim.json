@@ -1,0 +1,51 @@
+{
+ "grid": {
+  "raw@1024": {
+   "scores": {
+    "floor area": {
+     "mape": 28.700422924711923
+    },
+    "primary use": {
+     "acc": 58.75
+    },
+    "year built": {
+     "mae": 20.692622468406984
+    }
+   },
+   "headline": 15.024788537644039
+  },
+  "norm@1024": {
+   "scores": {
+    "floor area": {
+     "mape": 29.71070258941517
+    },
+    "primary use": {
+     "acc": 60.0
+    },
+    "year built": {
+     "mae": 20.56011532950332
+    }
+   },
+   "headline": 15.144648705292415
+  }
+ },
+ "n_pool": 12000,
+ "n_val_used": 400,
+ "rule": "prep chosen at ctx 1024 (raw unless norm wins by > 0.01); ctx 2048 kept only if it beats ctx 1024 by > 0.01 headline skill on the frozen simulated set",
+ "P_on_simval": {
+  "floor area": {
+   "mape": 28.476094818917787
+  },
+  "primary use": {
+   "acc": 67.25
+  },
+  "year built": {
+   "mae": 20.255609936529396
+  }
+ },
+ "P_on_simval_headline": 19.386952590541107,
+ "chosen_prep": "norm",
+ "r_max": 1600,
+ "ctx_note": "ctx 2048 not tried (Amendment A3: dropped for every model for CPU cost; R_max = 1600 rows for 112 features)",
+ "chosen_ctx": 1024
+}

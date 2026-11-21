@@ -1,0 +1,546 @@
+{
+ "what": "FireSim vs pyretechnics 2026.10.20 (PyPI sdist, built in firesim/.refenv with Cython 3.0.12); 16960 surface cases = 53 fuel models x 16 moisture scenarios x 4 midflame winds x slopes/wind directions; crown and WAF grids. Wind limit off, L/W = 1 + 0.25 UE (both), pyretechnics curing rule used in both. pyretechnics computes in float32.",
+ "surface_same_table": {
+  "r0": {
+   "n": 6720,
+   "median_abs_rel": 4.879741827580871e-05,
+   "p99_abs_rel": 4.922061177511519e-05,
+   "max_abs_rel": 4.9328892889556155e-05,
+   "frac_within_0p1pct": 1.0,
+   "frac_within_1pct": 1.0
+  },
+  "ros": {
+   "n": 6720,
+   "median_abs_rel": 4.8668060574756076e-05,
+   "p99_abs_rel": 4.922136363799641e-05,
+   "max_abs_rel": 5.177203845594419e-05,
+   "frac_within_0p1pct": 1.0,
+   "frac_within_1pct": 1.0
+  },
+  "fli": {
+   "n": 6720,
+   "median_abs_rel": 7.008377735540533e-05,
+   "p99_abs_rel": 0.00015140514218517728,
+   "max_abs_rel": 0.0001704718247380239,
+   "frac_within_0p1pct": 1.0,
+   "frac_within_1pct": 1.0
+  },
+  "fl": {
+   "n": 6720,
+   "median_abs_rel": 4.8699685489515224e-05,
+   "p99_abs_rel": 4.908654181234736e-05,
+   "max_abs_rel": 4.9295592233517545e-05,
+   "frac_within_0p1pct": 1.0,
+   "frac_within_1pct": 1.0
+  },
+  "lw": {
+   "n": 6720,
+   "median_abs_rel": 1.0677108116445723e-07,
+   "p99_abs_rel": 3.494304492589557e-05,
+   "max_abs_rel": 3.507927457393499e-05,
+   "frac_within_0p1pct": 1.0,
+   "frac_within_1pct": 1.0
+  },
+  "wind_on_slope_ros": {
+   "n": 10080,
+   "median_abs_rel": 0.01286598141365117,
+   "max_abs_rel": 0.29282228711909714
+  },
+  "wind_on_slope_direction_deg": {
+   "median_abs": 0.049723161806497274,
+   "max_abs": 5.684821618329124
+  },
+  "n_cases_over_1pct_by_model": {},
+  "worst": []
+ },
+ "surface_own_tables": {
+  "r0": {
+   "n": 6720,
+   "median_abs_rel": 0.00022630852033174486,
+   "p99_abs_rel": 0.375634575524024,
+   "max_abs_rel": 0.657706933556333,
+   "frac_within_0p1pct": 0.7928571428571428,
+   "frac_within_1pct": 0.9238095238095239
+  },
+  "ros": {
+   "n": 6720,
+   "median_abs_rel": 0.00020378121582228164,
+   "p99_abs_rel": 0.37530391372723815,
+   "max_abs_rel": 0.657706933556333,
+   "frac_within_0p1pct": 0.7788690476190476,
+   "frac_within_1pct": 0.9238095238095239
+  },
+  "fli": {
+   "n": 6720,
+   "median_abs_rel": 0.0005741416566721542,
+   "p99_abs_rel": 0.4435738133570091,
+   "max_abs_rel": 0.836939476107565,
+   "frac_within_0p1pct": 0.638095238095238,
+   "frac_within_1pct": 0.9226190476190477
+  },
+  "fl": {
+   "n": 6720,
+   "median_abs_rel": 0.00028428993122560153,
+   "p99_abs_rel": 0.23630025941256402,
+   "max_abs_rel": 0.5657741959297482,
+   "frac_within_0p1pct": 0.7476190476190476,
+   "frac_within_1pct": 0.9238095238095239
+  },
+  "lw": {
+   "n": 6720,
+   "median_abs_rel": 1.621169388070431e-05,
+   "p99_abs_rel": 0.00015649397860158476,
+   "max_abs_rel": 0.0015348095213960316,
+   "frac_within_0p1pct": 0.9904761904761905,
+   "frac_within_1pct": 1.0
+  },
+  "wind_on_slope_ros": {
+   "n": 10080,
+   "median_abs_rel": 0.03272803864018969,
+   "max_abs_rel": 0.7249961574517279
+  },
+  "wind_on_slope_direction_deg": {
+   "median_abs": 0.04980288046172632,
+   "max_abs": 5.686070335678153
+  },
+  "n_cases_over_1pct_by_model": {
+   "FM5": 128,
+   "FM4": 128,
+   "FM10": 128,
+   "FM7": 128
+  },
+  "worst": [
+   {
+    "rel": 0.657706933556333,
+    "model": "FM5",
+    "dead": "D4",
+    "live": "L1",
+    "wind_mph": 0.0,
+    "slope_pct": 0.0,
+    "firesim": 0.25374792552234915,
+    "pyretechnics": 0.7413177490234375
+   },
+   {
+    "rel": 0.6575640023994984,
+    "model": "FM5",
+    "dead": "D4",
+    "live": "L1",
+    "wind_mph": 0.0,
+    "slope_pct": 30.0,
+    "firesim": 0.9797174927029639,
+    "pyretechnics": 2.8610236644744873
+   },
+   {
+    "rel": 0.6575640023994984,
+    "model": "FM5",
+    "dead": "D4",
+    "live": "L1",
+    "wind_mph": 0.0,
+    "slope_pct": 30.0,
+    "firesim": 0.9797174927029639,
+    "pyretechnics": 2.8610236644744873
+   },
+   {
+    "rel": 0.6575256516475303,
+    "model": "FM5",
+    "dead": "D4",
+    "live": "L1",
+    "wind_mph": 0.0,
+    "slope_pct": 70.0,
+    "firesim": 4.206248902394586,
+    "pyretechnics": 12.281938552856445
+   },
+   {
+    "rel": 0.6575256516475303,
+    "model": "FM5",
+    "dead": "D4",
+    "live": "L1",
+    "wind_mph": 0.0,
+    "slope_pct": 70.0,
+    "firesim": 4.206248902394586,
+    "pyretechnics": 12.281938552856445
+   },
+   {
+    "rel": 0.6575127531984021,
+    "model": "FM5",
+    "dead": "D4",
+    "live": "L1",
+    "wind_mph": 2.0,
+    "slope_pct": 0.0,
+    "firesim": 1.7098662143799812,
+    "pyretechnics": 4.992496013641357
+   },
+   {
+    "rel": 0.6574894896145966,
+    "model": "FM5",
+    "dead": "D4",
+    "live": "L1",
+    "wind_mph": 5.0,
+    "slope_pct": 0.0,
+    "firesim": 5.4804111889132345,
+    "pyretechnics": 16.000709533691406
+   },
+   {
+    "rel": 0.6574830688086508,
+    "model": "FM5",
+    "dead": "D4",
+    "live": "L1",
+    "wind_mph": 10.0,
+    "slope_pct": 0.0,
+    "firesim": 13.996917076684158,
+    "pyretechnics": 40.864891052246094
+   },
+   {
+    "rel": 0.5834785051195921,
+    "model": "FM5",
+    "dead": "D3",
+    "live": "L2",
+    "wind_mph": 0.0,
+    "slope_pct": 0.0,
+    "firesim": 0.22113923161122362,
+    "pyretechnics": 0.5309191346168518
+   },
+   {
+    "rel": 0.5833045985679872,
+    "model": "FM5",
+    "dead": "D3",
+    "live": "L2",
+    "wind_mph": 0.0,
+    "slope_pct": 30.0,
+    "firesim": 0.8538157428732397,
+    "pyretechnics": 2.0490164756774902
+   },
+   {
+    "rel": 0.5833045985679872,
+    "model": "FM5",
+    "dead": "D3",
+    "live": "L2",
+    "wind_mph": 0.0,
+    "slope_pct": 30.0,
+    "firesim": 0.8538157428732397,
+    "pyretechnics": 2.0490164756774902
+   },
+   {
+    "rel": 0.58325790634077,
+    "model": "FM5",
+    "dead": "D3",
+    "live": "L2",
+    "wind_mph": 0.0,
+    "slope_pct": 70.0,
+    "firesim": 3.665711348482202,
+    "pyretechnics": 8.796114921569824
+   },
+   {
+    "rel": 0.58325790634077,
+    "model": "FM5",
+    "dead": "D3",
+    "live": "L2",
+    "wind_mph": 0.0,
+    "slope_pct": 70.0,
+    "firesim": 3.665711348482202,
+    "pyretechnics": 8.796114921569824
+   },
+   {
+    "rel": 0.5832422438470865,
+    "model": "FM5",
+    "dead": "D3",
+    "live": "L2",
+    "wind_mph": 2.0,
+    "slope_pct": 0.0,
+    "firesim": 1.4901343529315971,
+    "pyretechnics": 3.575540781021118
+   },
+   {
+    "rel": 0.5832139092148442,
+    "model": "FM5",
+    "dead": "D3",
+    "live": "L2",
+    "wind_mph": 5.0,
+    "slope_pct": 0.0,
+    "firesim": 4.776133309208405,
+    "pyretechnics": 11.45943546295166
+   }
+  ]
+ },
+ "crown": {
+  "i0": {
+   "max_abs_rel": 0.005073680538852258,
+   "median_abs_rel": 0.004897952443998476
+  },
+  "cros": {
+   "max_abs_rel": 9.324141600734726e-08,
+   "median_abs_rel": 3.775458331480654e-08
+  },
+  "lw": {
+   "max_abs_rel": 1.3696567464865245e-06,
+   "median_abs_rel": 1.1433577442605693e-06
+  },
+  "fire_type_agreement": 1.0,
+  "note": "I0: FireSim uses 25.9 per percent foliar moisture (Van Wagner 1977), pyretechnics 2600 per unit fraction (26.0); the I0 difference is that constant."
+ },
+ "waf": {
+  "n": 80,
+  "max_abs": 3.366869427701147e-08,
+  "n_agree_1e3": 80,
+  "disagreements": []
+ },
+ "fuel_table_differences": [
+  {
+   "number": 2,
+   "code": "FM2",
+   "diffs": {
+    "load_1h_lbft2": [
+     0.09183,
+     0.092
+    ],
+    "load_10h_lbft2": [
+     0.04591,
+     0.046
+    ]
+   }
+  },
+  {
+   "number": 3,
+   "code": "FM3",
+   "diffs": {
+    "load_1h_lbft2": [
+     0.13774,
+     0.138
+    ]
+   }
+  },
+  {
+   "number": 4,
+   "code": "FM4",
+   "diffs": {
+    "load_1h_lbft2": [
+     0.22957,
+     0.23
+    ],
+    "load_10h_lbft2": [
+     0.18365,
+     0.184
+    ],
+    "load_100h_lbft2": [
+     0.09183,
+     0.092
+    ],
+    "load_liveherb_lbft2": [
+     0.0,
+     0.23
+    ],
+    "load_livewoody_lbft2": [
+     0.22957,
+     0.0
+    ],
+    "sav_livewoody": [
+     1500.0,
+     0.0
+    ]
+   }
+  },
+  {
+   "number": 5,
+   "code": "FM5",
+   "diffs": {
+    "load_1h_lbft2": [
+     0.04591,
+     0.046
+    ],
+    "load_liveherb_lbft2": [
+     0.0,
+     0.092
+    ],
+    "load_livewoody_lbft2": [
+     0.09183,
+     0.0
+    ],
+    "sav_livewoody": [
+     1500.0,
+     0.0
+    ]
+   }
+  },
+  {
+   "number": 6,
+   "code": "FM6",
+   "diffs": {
+    "load_1h_lbft2": [
+     0.06887,
+     0.069
+    ],
+    "load_10h_lbft2": [
+     0.11478,
+     0.115
+    ],
+    "load_100h_lbft2": [
+     0.09183,
+     0.092
+    ]
+   }
+  },
+  {
+   "number": 7,
+   "code": "FM7",
+   "diffs": {
+    "load_1h_lbft2": [
+     0.05188,
+     0.052
+    ],
+    "load_10h_lbft2": [
+     0.08586,
+     0.086
+    ],
+    "load_100h_lbft2": [
+     0.06887,
+     0.069
+    ],
+    "load_liveherb_lbft2": [
+     0.0,
+     0.017
+    ],
+    "sav_liveherb": [
+     1500.0,
+     1550.0
+    ],
+    "load_livewoody_lbft2": [
+     0.01699,
+     0.0
+    ],
+    "sav_livewoody": [
+     1500.0,
+     0.0
+    ]
+   }
+  },
+  {
+   "number": 8,
+   "code": "FM8",
+   "diffs": {
+    "load_1h_lbft2": [
+     0.06887,
+     0.069
+    ],
+    "load_10h_lbft2": [
+     0.04591,
+     0.046
+    ],
+    "load_100h_lbft2": [
+     0.11478,
+     0.115
+    ]
+   }
+  },
+  {
+   "number": 9,
+   "code": "FM9",
+   "diffs": {
+    "load_1h_lbft2": [
+     0.13407,
+     0.134
+    ],
+    "load_10h_lbft2": [
+     0.01882,
+     0.019
+    ],
+    "load_100h_lbft2": [
+     0.00689,
+     0.007
+    ]
+   }
+  },
+  {
+   "number": 10,
+   "code": "FM10",
+   "diffs": {
+    "load_1h_lbft2": [
+     0.13774,
+     0.138
+    ],
+    "load_10h_lbft2": [
+     0.09183,
+     0.092
+    ],
+    "load_100h_lbft2": [
+     0.22957,
+     0.23
+    ],
+    "load_liveherb_lbft2": [
+     0.0,
+     0.092
+    ],
+    "load_livewoody_lbft2": [
+     0.09183,
+     0.0
+    ],
+    "sav_livewoody": [
+     1500.0,
+     0.0
+    ]
+   }
+  },
+  {
+   "number": 11,
+   "code": "FM11",
+   "diffs": {
+    "load_1h_lbft2": [
+     0.06887,
+     0.069
+    ],
+    "load_10h_lbft2": [
+     0.20661,
+     0.207
+    ],
+    "load_100h_lbft2": [
+     0.25253,
+     0.253
+    ]
+   }
+  },
+  {
+   "number": 12,
+   "code": "FM12",
+   "diffs": {
+    "load_1h_lbft2": [
+     0.18365,
+     0.184
+    ],
+    "load_10h_lbft2": [
+     0.64279,
+     0.644
+    ],
+    "load_100h_lbft2": [
+     0.75758,
+     0.759
+    ]
+   }
+  },
+  {
+   "number": 13,
+   "code": "FM13",
+   "diffs": {
+    "load_1h_lbft2": [
+     0.3214,
+     0.322
+    ],
+    "load_10h_lbft2": [
+     1.05601,
+     1.058
+    ],
+    "load_100h_lbft2": [
+     1.28558,
+     1.288
+    ]
+   }
+  }
+ ],
+ "notes": [
+  "pyretechnics stores Anderson models 4, 5 and 10 live load in the herbaceous slot (live herbaceous moisture is then used); BehavePlus/GTR-371 treat it as live woody.",
+  "pyretechnics FM7 live SAV 1550 vs 1500 in GTR-371 Table 8.",
+  "pyretechnics loads are rounded to 4 decimals of lb/ft2.",
+  "pyretechnics' 'behave' L/W option uses Anderson (1983) coefficients for m/s with a wind in mi/h; we compare with the 'rothermel' option (1 + 0.25 UE), which is BehavePlus's documented relation.",
+  "Wind-on-slope cases differ by design and are reported separately: pyretechnics projects the horizontal wind and the slope onto the slope-tangential plane (a horizontal wind gains magnitude 1/cos(slope) in that plane and ROS is a slope-plane distance); FireSim follows BehavePlus (Rothermel wind factor from the given midflame wind, horizontal vector addition of wind and slope effects). Flat and slope-only cases test the same equations."
+ ],
+ "generated": "2026-11-18 23:31 UTC",
+ "python": "3.13.18"
+}

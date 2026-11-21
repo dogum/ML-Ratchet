@@ -1,0 +1,241 @@
+{
+ "what": "VIIRS S-NPP emulator driven by the observed FEDS progression vs real FEDS VIIRS pixels, dev fires only",
+ "n_fires": 40,
+ "n_overpasses": 1570,
+ "uncalibrated": {
+  "D": {
+   "n_overpasses": 777,
+   "real_total": 22666,
+   "emu_total": 13566,
+   "median_log10_ratio_expected": -0.09961746108436328,
+   "mean_abs_log10_ratio": 0.3216539279815828,
+   "spearman_counts": 0.7943295081110519,
+   "pearson_log_counts": 0.8067109287949539,
+   "frac_zero_real": 0.16087516087516088,
+   "frac_zero_emu": 0.2947232947232947,
+   "within_factor2": 0.6164736164736164,
+   "frp_real_median": 16.31999969482422,
+   "frp_emu_median": 8.902,
+   "frp_real_p90": 104.38000106811523,
+   "frp_emu_p90": 51.269999999999996
+  },
+  "N": {
+   "n_overpasses": 793,
+   "real_total": 46869,
+   "emu_total": 23796,
+   "median_log10_ratio_expected": -0.16536321305738166,
+   "mean_abs_log10_ratio": 0.36155235104248773,
+   "spearman_counts": 0.7825747662735115,
+   "pearson_log_counts": 0.8139420984802929,
+   "frac_zero_real": 0.07944514501891552,
+   "frac_zero_emu": 0.23959646910466584,
+   "within_factor2": 0.5825977301387137,
+   "frp_real_median": 2.9100000858306885,
+   "frp_emu_median": 2.5735,
+   "frp_real_p90": 15.880000114440918,
+   "frp_emu_p90": 12.530000000000001
+  },
+  "all": {
+   "n_overpasses": 1570,
+   "real_total": 69535,
+   "emu_total": 37362,
+   "median_log10_ratio_expected": -0.13539275710943763,
+   "mean_abs_log10_ratio": 0.34180644357858764,
+   "spearman_counts": 0.7886693848553631,
+   "pearson_log_counts": 0.8115588229446548,
+   "frac_zero_real": 0.1197452229299363,
+   "frac_zero_emu": 0.26687898089171974,
+   "within_factor2": 0.5993630573248407,
+   "frp_real_median": 4.940000057220459,
+   "frp_emu_median": 3.81,
+   "frp_real_p90": 42.27000045776367,
+   "frp_emu_p90": 26.271800000000002
+  }
+ },
+ "calibration": {
+  "multipliers": {
+   "e": 2.0,
+   "D": 1.0,
+   "N": 0.5
+  },
+  "energy_multiplier": 2.0,
+  "frp50_day_mw": 1.2,
+  "frp50_night_mw": 0.25,
+  "adopted_as_defaults": "firesim.satellite: SENSORS viirs frp50_night=0.25, ENERGY_MULT=2.0",
+  "rule": "energy multiplier from [1.0, 2.0, 4.0] matching the median FRP of detected pixels; then FRP50 multipliers from [0.25, 0.5, 1.0, 2.0, 4.0, 8.0] minimising |median log10((expected+1)/(real+1))| per day/night"
+ },
+ "calibrated_in_sample": {
+  "D": {
+   "n_overpasses": 777,
+   "real_total": 22666,
+   "emu_total": 17135,
+   "median_log10_ratio_expected": 0.0016312099399275989,
+   "mean_abs_log10_ratio": 0.3007956097188796,
+   "spearman_counts": 0.798510028625444,
+   "pearson_log_counts": 0.8105845358207548,
+   "frac_zero_real": 0.16087516087516088,
+   "frac_zero_emu": 0.2187902187902188,
+   "within_factor2": 0.637065637065637,
+   "frp_real_median": 16.31999969482422,
+   "frp_emu_median": 11.155,
+   "frp_real_p90": 104.38000106811523,
+   "frp_emu_p90": 90.4604
+  },
+  "N": {
+   "n_overpasses": 793,
+   "real_total": 46869,
+   "emu_total": 35249,
+   "median_log10_ratio_expected": 0.031850403692597104,
+   "mean_abs_log10_ratio": 0.32761254106477494,
+   "spearman_counts": 0.8042836566721092,
+   "pearson_log_counts": 0.8240375887032418,
+   "frac_zero_real": 0.07944514501891552,
+   "frac_zero_emu": 0.1450189155107188,
+   "within_factor2": 0.5939470365699874,
+   "frp_real_median": 2.9100000858306885,
+   "frp_emu_median": 2.786,
+   "frp_real_p90": 15.880000114440918,
+   "frp_emu_p90": 18.8882
+  },
+  "all": {
+   "n_overpasses": 1570,
+   "real_total": 69535,
+   "emu_total": 52384,
+   "median_log10_ratio_expected": 0.010971484713432521,
+   "mean_abs_log10_ratio": 0.3143407221757554,
+   "spearman_counts": 0.7993075627998619,
+   "pearson_log_counts": 0.8190221099298073,
+   "frac_zero_real": 0.1197452229299363,
+   "frac_zero_emu": 0.18152866242038215,
+   "within_factor2": 0.6152866242038216,
+   "frp_real_median": 4.940000057220459,
+   "frp_emu_median": 4.249,
+   "frp_real_p90": 42.27000045776367,
+   "frp_emu_p90": 38.40580000000001
+  }
+ },
+ "calibrated_2fold": {
+  "fits": [
+   {
+    "e": 2.0,
+    "D": 1.0,
+    "N": 0.5
+   },
+   {
+    "e": 4.0,
+    "D": 2.0,
+    "N": 2.0
+   }
+  ],
+  "fold_stats": [
+   {
+    "D": {
+     "n_overpasses": 304,
+     "real_total": 3023,
+     "emu_total": 3021,
+     "median_log10_ratio_expected": 0.015379570354012747,
+     "mean_abs_log10_ratio": 0.23158012438864636,
+     "spearman_counts": 0.8096018195286964,
+     "pearson_log_counts": 0.8334446963948706,
+     "frac_zero_real": 0.21052631578947367,
+     "frac_zero_emu": 0.2598684210526316,
+     "within_factor2": 0.7269736842105263,
+     "frp_real_median": 16.239999771118164,
+     "frp_emu_median": 5.788,
+     "frp_real_p90": 101.64000091552748,
+     "frp_emu_p90": 37.999
+    },
+    "N": {
+     "n_overpasses": 314,
+     "real_total": 3556,
+     "emu_total": 4571,
+     "median_log10_ratio_expected": 0.09725541793065814,
+     "mean_abs_log10_ratio": 0.29017246283169357,
+     "spearman_counts": 0.7463170788668158,
+     "pearson_log_counts": 0.7780059341255655,
+     "frac_zero_real": 0.10828025477707007,
+     "frac_zero_emu": 0.17197452229299362,
+     "within_factor2": 0.6369426751592356,
+     "frp_real_median": 1.9500000476837158,
+     "frp_emu_median": 1.958,
+     "frp_real_p90": 6.670000076293945,
+     "frp_emu_p90": 13.423
+    },
+    "all": {
+     "n_overpasses": 618,
+     "real_total": 6579,
+     "emu_total": 7592,
+     "median_log10_ratio_expected": 0.033182869498130846,
+     "mean_abs_log10_ratio": 0.26135034165582566,
+     "spearman_counts": 0.7732092069906008,
+     "pearson_log_counts": 0.8036779425510194,
+     "frac_zero_real": 0.15857605177993528,
+     "frac_zero_emu": 0.215210355987055,
+     "within_factor2": 0.6812297734627831,
+     "frp_real_median": 4.920000076293945,
+     "frp_emu_median": 3.2895000000000003,
+     "frp_real_p90": 48.218000793457016,
+     "frp_emu_p90": 23.474800000000034
+    }
+   },
+   {
+    "D": {
+     "n_overpasses": 473,
+     "real_total": 19643,
+     "emu_total": 14114,
+     "median_log10_ratio_expected": -0.02054965541755684,
+     "mean_abs_log10_ratio": 0.3452808265061754,
+     "spearman_counts": 0.7847910779723607,
+     "pearson_log_counts": 0.7882273441604705,
+     "frac_zero_real": 0.12896405919661733,
+     "frac_zero_emu": 0.19238900634249473,
+     "within_factor2": 0.5792811839323467,
+     "frp_real_median": 16.31999969482422,
+     "frp_emu_median": 26.4175,
+     "frp_real_p90": 104.7300033569336,
+     "frp_emu_p90": 195.73690000000005
+    },
+    "N": {
+     "n_overpasses": 479,
+     "real_total": 43313,
+     "emu_total": 26198,
+     "median_log10_ratio_expected": -0.08120611293138304,
+     "mean_abs_log10_ratio": 0.36449826221920906,
+     "spearman_counts": 0.8130108642083776,
+     "pearson_log_counts": 0.8197929826040905,
+     "frac_zero_real": 0.060542797494780795,
+     "frac_zero_emu": 0.15031315240083507,
+     "within_factor2": 0.5448851774530271,
+     "frp_real_median": 3.0199999809265137,
+     "frp_emu_median": 7.715,
+     "frp_real_p90": 16.700000762939453,
+     "frp_emu_p90": 43.76169999999999
+    },
+    "all": {
+     "n_overpasses": 952,
+     "real_total": 62956,
+     "emu_total": 40312,
+     "median_log10_ratio_expected": -0.050801829892982556,
+     "mean_abs_log10_ratio": 0.3549501035088467,
+     "spearman_counts": 0.7999560394911397,
+     "pearson_log_counts": 0.8070571717074251,
+     "frac_zero_real": 0.09453781512605042,
+     "frac_zero_emu": 0.17121848739495799,
+     "within_factor2": 0.5619747899159664,
+     "frp_real_median": 4.940000057220459,
+     "frp_emu_median": 11.022,
+     "frp_real_p90": 41.880001068115234,
+     "frp_emu_p90": 91.11370000000001
+    }
+   }
+  ]
+ },
+ "notes": [
+  "real counts include cloud and smoke omission; the emulator here has no cloud",
+  "commission (false alarms) cannot be measured with FEDS pixels: FEDS keeps only pixels it assigned to a fire",
+  "canopy fuel energy is not included in the emulator HPA here (crown fires: FRP low)",
+  "overpass times are approximate (FEDS half-day label + 1.5 h - lon/15; second orbit +100 min)"
+ ],
+ "generated": "2026-11-19 00:52 UTC",
+ "python": "3.13.18"
+}

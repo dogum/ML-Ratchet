@@ -1,0 +1,78 @@
+{
+ "grid": {
+  "raw@1024": {
+   "scores": {
+    "inertia N=10": {
+     "mape": 15.49898834382325
+    },
+    "inertia N=60": {
+     "mape": 15.463177854002252
+    },
+    "MW lost medium N=60": {
+     "mape": 16.157870180956195
+    },
+    "MW lost medium N=10": {
+     "mape": 19.88865282826648
+    },
+    "MW lost low N=60": {
+     "mape": NaN
+    },
+    "MW lost low N=10": {
+     "mape": NaN
+    }
+   },
+   "headline": -15.706678792927233
+  },
+  "norm@1024": {
+   "scores": {
+    "inertia N=10": {
+     "mape": 15.697110986120293
+    },
+    "inertia N=60": {
+     "mape": 15.245495474193651
+    },
+    "MW lost medium N=60": {
+     "mape": 15.910057573216225
+    },
+    "MW lost medium N=10": {
+     "mape": 18.881322443034488
+    },
+    "MW lost low N=60": {
+     "mape": NaN
+    },
+    "MW lost low N=10": {
+     "mape": NaN
+    }
+   },
+   "headline": -15.617554677843392
+  }
+ },
+ "n_pool": 12473,
+ "n_val_used": 400,
+ "rule": "prep chosen at ctx 1024 (raw unless norm wins by > 0.01); ctx 2048 kept only if it beats ctx 1024 by > 0.01 headline skill on the frozen simulated set",
+ "P_on_simval": {
+  "inertia N=10": {
+   "mape": 15.41448842675731
+  },
+  "inertia N=60": {
+   "mape": 13.293831578333624
+  },
+  "MW lost medium N=60": {
+   "mape": 14.947492486691278
+  },
+  "MW lost medium N=10": {
+   "mape": 17.887271740257937
+  },
+  "MW lost low N=60": {
+   "mape": NaN
+  },
+  "MW lost low N=10": {
+   "mape": NaN
+  }
+ },
+ "P_on_simval_headline": -14.551937497260738,
+ "chosen_prep": "norm",
+ "r_max": 2048,
+ "ctx_note": "ctx 2048 not tried (Amendment A3: dropped for every model for CPU cost; R_max = 2048 rows for 86 features)",
+ "chosen_ctx": 1024
+}
