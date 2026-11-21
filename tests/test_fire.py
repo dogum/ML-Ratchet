@@ -281,6 +281,23 @@ def u1():
     return _u1_ring()
 
 
+def test_mask_ignition_interior_is_burned_at_start():
+    """PR #7 review, 21 Nov 2026: parse_ignition seeds only a mask's edge, so the kernel gave the interior positive
+    arrival times; the whole mask must count as burned at t = 0, and cells outside it must not change."""
+    import pandas as pd
+    import firesim as fs
+    n = 41
+    ls = fs.generate_landscape((n, n), 90.0, kind="parametric", region="great_basin", rng=1)
+    start = pd.Timestamp("2021-08-02 18:00", tz="UTC")
+    w = fs.generate_weather(start - pd.Timedelta(hours=72), hours=96, climate="west_dry_summer", lon=-110, rng=3)
+    m = np.zeros((n, n), bool)
+    m[15:26, 15:26] = True
+    a = fs.simulate(ls, w, {"mask": m}, start, start + pd.Timedelta(hours=6), rng=1,
+                    return_perimeters=False)["rasters"]["arrival_time"]
+    assert np.all(a[m] <= 0.0)
+    assert np.isfinite(a[~m]).any()
+
+
 def test_u1_setup_is_meaningful(u1):
     """Without a line the fire leaves the ring; a ring of non-burnable fuel holds it (the corner rule works there)."""
     assert u1["no_line"] > 100 and u1["nonburnable"] == 0

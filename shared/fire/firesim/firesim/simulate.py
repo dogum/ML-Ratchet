@@ -300,7 +300,9 @@ def simulate(landscape, weather, ignition, start, end, dt='1h', spread='rotherme
     arr = arr.reshape(ny, nx) - offset_h
     arr[~np.isfinite(arr)] = np.nan
     if burned0 is not None:
-        arr[burned0 & np.isnan(arr)] = 0.0
+        # The whole ignition mask is burned at the start (parse_ignition seeds only its edge, so the kernel would
+        # otherwise give the interior positive arrival times). PR #7 review, 21 Nov 2026.
+        arr[burned0] = np.minimum(np.nan_to_num(arr[burned0], nan=0.0), 0.0)
     res = _postprocess(arr, ftype.reshape(ny, nx), cfb.reshape(ny, nx), rosd.reshape(ny, nx),
                        roshead.reshape(ny, nx), hpa.reshape(ny, nx), cfl.reshape(ny, nx), ls.res)
     rasters = dict(arrival_time=arr, **res, phi_w=phiw.reshape(ny, nx), phi_s=phis.reshape(ny, nx),

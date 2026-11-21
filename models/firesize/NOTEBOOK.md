@@ -254,3 +254,11 @@ reference cases (8 ignitions × 13 what-ifs: wind, humidity, temperature, ERC wi
 discovery hour, cause, agency, region, and a combination) to 1.1e-14 relative, including the Rothermel inputs
 recomputed from the fuel patches. Weights are float16 (P(escape) moves by at most 6.4e-6 against the float64 release);
 normalisation and the ROS table rows are float32 (the table is float32 already). Public assets: 346 kB.
+
+## 2026-11-21 — PR #7 review: missing weather crashed make_features()
+
+With a missing or NaN temperature, minimum humidity or wind speed, `make_features()` passed NaN into the ROS lookup
+and its integer indexing raised an IndexError before the advertised missing-value fill could run. Training
+(training/src/physfeat.py) substitutes 1-h moisture 10 % and 10 m wind 3 m/s before the same lookup; inference now
+does the same. Complete inputs are unchanged: the demo's golden output is identical. Test:
+tests/test_firesize_inputs.py.

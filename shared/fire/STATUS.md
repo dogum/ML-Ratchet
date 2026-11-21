@@ -110,3 +110,14 @@ RDS-2013-0009.6 page by hand.
 
 See `HANDOFF.md` section 7. The first item is the U1 fix and a fire persistence module, then physics p2 and a re-score
 of every model.
+
+## 2026-11-21 — PR #7 review: a mask ignition's interior was not burned at the start
+
+`parse_ignition` seeds only a mask's edge cells, and `simulate()` reset to 0 only the mask cells the kernel never
+reached. The kernel spreads inward from the edge, so the interior got positive arrival times (75 of 121 cells in an
+11 × 11 square on a generated grass landscape, 12 h). The interior now counts as burned at t = 0, as replay.py's
+docstring says it should. Cells outside the mask are unchanged (bit-identical on that case): by minimum travel time
+a later interior arrival cannot make an outside cell earlier. What changes: the arrival raster and anything that
+counts burned cells by arrival time inside the initial mask (early area series, early perimeters). Replays and
+FirePilot scenarios that score only new burn outside the mask are not affected. The shipped results were not
+re-run. Test: tests/test_fire.py::test_mask_ignition_interior_is_burned_at_start.

@@ -147,9 +147,12 @@ def make_features(fuel13, cc13, ch13, slope13, wx0, wx1, cause, federal, hour, d
         f[nm] = float(cause == k)
     for rg in REGIONS:
         f[f'r_{rg}'] = float(region == rg)
-    m1 = np.clip(simard_emc(f['tmmx'], f['rmin']), 1, 35); u = f['vs'] * 1.45
+    # Missing weather: the same fallbacks as training (training/src/physfeat.py): 1-h moisture 10 %, 10 m wind 3 m/s.
+    m1 = float(np.nan_to_num(np.clip(simard_emc(f['tmmx'], f['rmin']), 1, 35), nan=10.0))
+    u = float(np.nan_to_num(f['vs'] * 1.45, nan=3.0))
     R = np.log1p(ros_mmin(np.asarray(fuel13, int), np.full((13, 13), m1), np.full((13, 13), u)))
     f['ros_pt'] = float(R[6, 6]); f['ros5'] = float(R[4:9, 4:9].mean()); f['ros13'] = float(R.mean())
-    m1b = np.clip(simard_emc(f['tmmx_m1'], f['rmin_m1']), 1, 35)
-    f['ros_pt_m1'] = float(np.log1p(ros_mmin(int(np.asarray(fuel13)[6, 6]), m1b, f['vs_m1'] * 1.45)))
+    m1b = float(np.nan_to_num(np.clip(simard_emc(f['tmmx_m1'], f['rmin_m1']), 1, 35), nan=10.0))
+    f['ros_pt_m1'] = float(np.log1p(ros_mmin(int(np.asarray(fuel13)[6, 6]), m1b,
+                                             float(np.nan_to_num(f['vs_m1'] * 1.45, nan=3.0)))))
     return f
