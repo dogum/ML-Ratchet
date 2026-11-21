@@ -1,0 +1,369 @@
+<title>FireDetective</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: a single reading column of "case file" sheets on survey-map paper; the explorer breaks wider. */
+:root {
+  --paper: #edf0eb; --sheet: #f8faf6; --ink: #1b2620; --muted: #56655c; --rule: #c7cfc6;
+  --ember: #b9481a; --ember-soft: #f1d9cc; --smoke: #7d8b92;
+  --sev0: #2f6b3e; --sev1: #5fb59b; --sev2: #cfa92a; --sev3: #bf3527;
+  --good: #2f7a4a; --bad: #b23a2a; --night: #3c4c6b; --day: #d08a2a;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0f1416; --sheet: #161d20; --ink: #e2e8e3; --muted: #9aa8a0; --rule: #2b3639;
+  --ember: #ec7a43; --ember-soft: #3a2418; --smoke: #8d9ba1;
+  --sev0: #4f9a63; --sev1: #6fcbb0; --sev2: #e3c24a; --sev3: #e8584a;
+  --good: #5cbf80; --bad: #ef6b58; --night: #8ea3d1; --day: #e8a64a; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #0f1416; --sheet: #161d20; --ink: #e2e8e3; --muted: #9aa8a0; --rule: #2b3639;
+  --ember: #ec7a43; --ember-soft: #3a2418; --smoke: #8d9ba1;
+  --sev0: #4f9a63; --sev1: #6fcbb0; --sev2: #e3c24a; --sev3: #e8584a;
+  --good: #5cbf80; --bad: #ef6b58; --night: #8ea3d1; --day: #e8a64a; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--paper); color: var(--ink); font: 16px/1.6 var(--body); margin: 0 }
+.wrap { max-width: 1060px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 48px }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.05; text-wrap: balance; margin: 0 }
+h2 { font-size: clamp(30px, 4vw, 42px); letter-spacing: .01em }
+h3 { font-size: 22px; font-weight: 600 }
+p { margin: 0; max-width: 68ch }
+.eyebrow { font: 600 13px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--ember) }
+.mono, .num { font-family: var(--mono); font-variant-numeric: tabular-nums }
+section { padding-block: 44px 8px; display: grid; gap: 18px }
+.lede { font-size: 18px; color: var(--ink) }
+.muted { color: var(--muted) }
+a { color: var(--ember) }
+/* hero */
+.hero { padding-block: 40px 16px; display: grid; gap: 18px; border-bottom: 1px solid var(--rule) }
+.hero h1 { font-size: clamp(54px, 9vw, 104px); letter-spacing: -.01em }
+.hero h1 span { color: var(--ember) }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 500 13px var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted) }
+.legend i { display: inline-block; width: 22px; height: 10px; margin-right: 6px; vertical-align: middle; border-radius: 2px }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px }
+.stat { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 4px; min-width: 0 }
+.stat b { font: 700 34px/1 var(--display) }
+.stat small { color: var(--muted); font-size: 13px; line-height: 1.4 }
+/* case file */
+.case { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden }
+.case-head { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px dashed var(--rule) }
+.case-id { font: 500 13px var(--mono); color: var(--muted) }
+.case-name { font: 700 28px/1 var(--display) }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+select, button, input[type=search] { font: 500 14px var(--body); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 5px; padding: 6px 10px }
+button { cursor: pointer }
+button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); border-color: var(--ink) }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px }
+.case-body { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 0 }
+.case-body > div { padding: 16px; min-width: 0 }
+.case-body > div + div { border-left: 1px dashed var(--rule) }
+@media (max-width: 760px) { .case-body { grid-template-columns: 1fr } .case-body > div + div { border-left: 0; border-top: 1px dashed var(--rule) } }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 6px 14px; font-size: 13px; margin-top: 10px }
+.facts div { display: grid } .facts span { color: var(--muted); font: 500 12px var(--display); letter-spacing: .08em; text-transform: uppercase }
+.reading { display: grid; gap: 4px; padding-block: 10px; border-bottom: 1px solid var(--rule) }
+.reading:last-child { border-bottom: 0 }
+.reading .lab { display: flex; justify-content: space-between; gap: 8px; font: 600 15px var(--display); letter-spacing: .05em; text-transform: uppercase }
+.reading .lab .num { font-size: 14px; letter-spacing: 0; text-transform: none; font-weight: 500 }
+.reading .note { font-size: 13px; color: var(--muted) }
+svg text { fill: var(--muted); font: 11px var(--mono) }
+.chip { display: inline-block; font: 600 12px var(--display); letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; border: 1px solid var(--rule); color: var(--muted) }
+/* lab */
+.lab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px 22px; padding: 16px; border-top: 1px dashed var(--rule) }
+.lab-grid label { display: grid; gap: 4px; font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase }
+.lab-grid output { font: 500 13px var(--mono); color: var(--ember); text-transform: none; letter-spacing: 0 }
+input[type=range] { width: 100%; accent-color: var(--ember) }
+/* tables */
+.tbl { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--sheet) }
+table { border-collapse: collapse; width: 100%; font-size: 14px }
+th, td { padding: 7px 10px; text-align: right; border-bottom: 1px solid var(--rule); white-space: nowrap }
+th:first-child, td:first-child { text-align: left }
+th { font: 600 13px var(--display); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); background: var(--paper) }
+td.num { font-family: var(--mono) }
+tr.best td { font-weight: 600 }
+tr.net td:first-child { color: var(--ember); font-weight: 600 }
+.kept { color: var(--good); font-weight: 600 } .rejected { color: var(--bad); font-weight: 600 }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px }
+.cols > * { min-width: 0 }
+#examTables > div { min-width: 0 }
+.tbl td .muted { white-space: nowrap }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px }
+.step { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 12px; display: grid; gap: 6px; align-content: start }
+.step b { font: 700 18px/1.1 var(--display) }
+.step small { font-size: 13px; color: var(--muted); line-height: 1.45 }
+ul.plain { margin: 0; padding-left: 20px; max-width: 70ch; display: grid; gap: 6px }
+pre { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 12px; overflow-x: auto; font: 13px/1.5 var(--mono); margin: 0 }
+.scatter-wrap { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 10px }
+footer { border-top: 1px solid var(--rule); margin-top: 36px; padding-top: 16px; font-size: 13px; color: var(--muted) }
+@media (prefers-reduced-motion: no-preference) { .reading .bar-anim { transition: all .25s ease } }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">ML Ratchet · Wildfire · Phase 2 project 3 · trained on physics, graded on reality</div>
+  <h1>Fire<span>Detective</span></h1>
+  <p class="lede">Give it a wildfire's satellite record: the burned area every half day, the VIIRS fire pixels and their radiative power, the weather and the fuel map. It tells you what drove the fire: how much of it burned as crown fire, how windy it was, how wet the live fuels were. It never saw a real fire while learning. Every answer below is graded against a measurement it did not use.</p>
+  <div class="stats" id="stats"></div>
+  <div class="legend"><span><i style="background:var(--sev0)"></i>unburned / low</span><span><i style="background:var(--sev1)"></i>low</span><span><i style="background:var(--sev2)"></i>moderate</span><span><i style="background:var(--sev3)"></i>high severity (MTBS classes)</span></div>
+</header>
+
+<section id="explorer">
+  <div class="eyebrow">Case files</div>
+  <h2>Pick a real exam fire</h2>
+  <p class="muted">Every exam fire the detective was scored on is in this list. The network runs here in your browser on the same inputs it saw in the exam. Grey markers are the truths: MTBS burn severity, gridMET wind, Globe-LFMC samples near the fire.</p>
+  <div class="case">
+    <div class="case-head">
+      <div><div class="case-id" id="caseId"></div><div class="case-name" id="caseName"></div></div>
+      <div class="controls">
+        <input type="search" id="q" placeholder="Search name or ID" aria-label="Search fires">
+        <select id="pick" aria-label="Fire"></select>
+        <button id="rand" type="button">Random fire</button>
+      </div>
+    </div>
+    <div class="controls" style="padding:10px 16px;border-bottom:1px dashed var(--rule)" role="group" aria-label="Filter">
+      <span class="muted" style="font-size:13px">Show</span>
+      <button type="button" data-f="all" aria-pressed="true">All</button>
+      <button type="button" data-f="forest" aria-pressed="false">Forest, with MTBS severity</button>
+      <button type="button" data-f="lfmc" aria-pressed="false">With LFMC samples</button>
+      <button type="button" data-f="recent" aria-pressed="false">Recent 2022-23</button>
+      <span class="muted mono" id="count" style="font-size:12px"></span>
+    </div>
+    <div class="case-body">
+      <div>
+        <h3>What the satellite saw</h3>
+        <svg id="prog" viewBox="0 0 520 250" role="img" aria-label="Burned area and fire radiative power per half-day step" style="width:100%;height:auto"></svg>
+        <div class="legend" style="margin-top:4px"><span><i style="background:var(--day)"></i>day pass growth</span><span><i style="background:var(--night)"></i>night pass growth</span><span><i style="background:var(--ember);height:3px"></i>FRP (MW, log)</span></div>
+        <div class="facts" id="facts"></div>
+      </div>
+      <div>
+        <h3>What the detective infers</h3>
+        <div id="readings"></div>
+      </div>
+    </div>
+    <div class="lab-grid" id="lab">
+      <label for="sGrowth">Faster growth <output id="oGrowth">×1.00</output><input type="range" id="sGrowth" min="0.25" max="3" step="0.05" value="1"></label>
+      <label for="sDry">Drier fuels (fm100, ERC) <output id="oDry">+0 %pts</output><input type="range" id="sDry" min="-6" max="6" step="0.5" value="0"></label>
+      <label for="sFrp">Hotter fire (FRP) <output id="oFrp">×1.0</output><input type="range" id="sFrp" min="0.1" max="10" step="0.1" value="1"></label>
+      <label for="sCanopy">Canopy base height <output id="oCanopy">×1.00</output><input type="range" id="sCanopy" min="0.3" max="3" step="0.05" value="1"></label>
+      <div style="display:grid;gap:6px;align-content:end"><button type="button" id="reset">Reset the lab</button><small class="muted" style="font-size:12px">The lab edits the input features of this fire and reruns the network. It does not rerun the fire.</small></div>
+    </div>
+  </div>
+</section>
+
+<section id="exam">
+  <div class="eyebrow">The exam</div>
+  <h2>Graded on what really happened</h2>
+  <p id="examIntro"></p>
+  <div class="cols">
+    <div class="scatter-wrap"><h3 style="margin:2px 4px 6px">Severity: forest fires</h3><svg id="scat" viewBox="0 0 420 330" role="img" aria-label="Predicted versus MTBS high-severity fraction" style="width:100%;height:auto"></svg>
+      <div class="controls" style="padding:4px"><button type="button" data-sc="net" aria-pressed="true">FireDetective</button><button type="button" data-sc="erc" aria-pressed="false">ERC (classical)</button><button type="button" data-sc="cfp" aria-pressed="false">Van Wagner crown potential</button></div></div>
+    <div style="display:grid;gap:12px;align-content:start" id="examTables"></div>
+  </div>
+</section>
+
+<section id="ladder">
+  <div class="eyebrow">The ratchet</div>
+  <h2>Every rung, kept or not</h2>
+  <p class="muted">A rung stays only if it beats the incumbent by more than 0.01 on a frozen simulated validation set (mean R² of crown fraction, blind wind and live moisture) and does not lose more than 0.05 on the dev composite (Spearman ρ on 40 real dev fires). When the physics changed, the incumbent was re-scored on the new frozen set first.</p>
+  <div class="tbl"><table id="rungs"></table></div>
+</section>
+
+<section id="built">
+  <div class="eyebrow">How it learned</div>
+  <h2>Simulated fires, seen through a simulated satellite</h2>
+  <div class="flow" id="flow"></div>
+  <h3>Twin test: where the simulator and reality disagree</h3>
+  <p class="muted">Each of the 40 dev fires was re-run in FireSim from its first mapped perimeter, with its own fuels and weather, then seen through the same satellite and perimeter emulators. The table compares the inputs the network sees.</p>
+  <div class="tbl"><table id="twin"></table></div>
+</section>
+
+<section id="limits">
+  <div class="eyebrow">Limits</div>
+  <h2>Where it fails</h2>
+  <ul class="plain" id="limitsList"></ul>
+</section>
+
+<section id="use">
+  <div class="eyebrow">Use it</div>
+  <h2>The release</h2>
+  <p>The zip holds a numpy-only model (no torch), the feature code, a demo on four real exam fires drawn at random within strata, the model card and every training script.</p>
+  <pre>unzip firedetective-v1.0.zip &amp;&amp; cd firedetective-v1.0
+python3 demo.py            # 4 real exam fires, about 2 s
+
+import pipeline
+out = pipeline.run([fire])   # fire = dict(masks, dets, day, wx, layers, doy, gamma)
+out['hs'], out['hs_sd'], out['wind'], out['lfmc']</pre>
+</section>
+
+<footer>
+  <p id="credits"></p>
+</footer>
+</div>
+
+<script>
+const DATA = __DATA__;
+__FDNET__
+</script>
+<script>
+(() => {
+const $ = (s) => document.querySelector(s);
+const W = DATA.weights.map(FDNet.load), CAL = DATA.calib, F = DATA.fires, E = DATA.exam;
+const WIND_COLS = DATA.wind_cols, HID = DATA.hidden_col, SN = DATA.seq_names, TN = DATA.stat_names;
+const fmt = (x, d = 2) => (x === null || x === undefined || !isFinite(x)) ? 'n/a' : Number(x).toFixed(d);
+const svgNS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent, text) { const e = document.createElementNS(svgNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; if (parent) parent.appendChild(e); return e; }
+
+// ---------- hero stats ----------
+const st = DATA.headline;
+$('#stats').innerHTML = st.map((s) => `<div class="stat"><span class="eyebrow" style="color:var(--muted)">${s.k}</span><b class="num">${s.v}</b><small>${s.d}</small></div>`).join('');
+
+// ---------- picker ----------
+let filter = 'all', cur = 0;
+const lab = { g: 1, d: 0, f: 1, c: 1 };
+function passes(f) {
+  if (filter === 'forest') return f.forest >= 0.5 && f.hs !== null;
+  if (filter === 'lfmc') return f.lfmc !== null;
+  if (filter === 'recent') return f.period === 'recent';
+  return true;
+}
+function fillPick() {
+  const q = $('#q').value.trim().toLowerCase();
+  const idx = F.map((f, i) => i).filter((i) => passes(F[i]) && (!q || F[i].name.toLowerCase().includes(q) || F[i].fid.toLowerCase().includes(q)));
+  $('#pick').innerHTML = idx.map((i) => `<option value="${i}">${F[i].name} ${F[i].year} · ${F[i].region}</option>`).join('');
+  $('#count').textContent = idx.length + ' fires';
+  if (idx.length && !idx.includes(cur)) cur = idx[0];
+  if (idx.length) $('#pick').value = cur;
+  render();
+}
+document.querySelectorAll('[data-f]').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-f]').forEach((x) => x.setAttribute('aria-pressed', x === b)); filter = b.dataset.f; fillPick(); }));
+$('#q').addEventListener('input', fillPick);
+$('#pick').addEventListener('change', (e) => { cur = +e.target.value; render(); });
+$('#rand').addEventListener('click', () => { const o = [...$('#pick').options]; if (!o.length) return; cur = +o[Math.floor(Math.random() * o.length)].value; $('#pick').value = cur; render(); });
+
+// ---------- lab ----------
+const sl = [['sGrowth', 'oGrowth', 'g', (v) => '×' + (+v).toFixed(2)], ['sDry', 'oDry', 'd', (v) => (v > 0 ? '+' : '') + (+v).toFixed(1) + ' %pts drier'],
+            ['sFrp', 'oFrp', 'f', (v) => '×' + (+v).toFixed(1)], ['sCanopy', 'oCanopy', 'c', (v) => '×' + (+v).toFixed(2)]];
+sl.forEach(([s, o, k, f]) => $('#' + s).addEventListener('input', (e) => { lab[k] = +e.target.value; $('#' + o).textContent = f(e.target.value); render(); }));
+$('#reset').addEventListener('click', () => { sl.forEach(([s, o, k, f]) => { const d = k === 'd' ? 0 : 1; $('#' + s).value = d; lab[k] = d; $('#' + o).textContent = f(d); }); render(); });
+const ix = (n) => SN.indexOf(n);
+function edited(f) {
+  const seq = f.seq.map((r) => r.slice());
+  const L = seq.map((r) => r[ix('valid')] > 0);
+  // growth: scale the area gained each step by lab.g, rebuild logA, dlogA, dr
+  let A = 0, prev = 0;
+  for (let t = 0; t < seq.length; t++) {
+    if (!L[t]) break;
+    const a0 = Math.max(Math.pow(10, f.seq[t][ix('logA')]) - 0.01, 0);
+    const ap = t ? Math.max(Math.pow(10, f.seq[t - 1][ix('logA')]) - 0.01, 0) : 0;
+    A = t ? A + Math.max(a0 - ap, 0) * lab.g : a0;
+    seq[t][ix('logA')] = Math.log10(A + 0.01);
+    seq[t][ix('dlogA')] = t ? Math.log10(A + 0.01) - Math.log10(prev + 0.01) : 0;
+    seq[t][ix('dr_km')] = Math.sqrt(A / Math.PI) - Math.sqrt(prev / Math.PI);
+    seq[t][ix('logFRP')] = f.seq[t][ix('logFRP')] > 0 ? Math.log10(1 + (Math.pow(10, f.seq[t][ix('logFRP')]) - 1) * lab.f) : 0;
+    seq[t][ix('logFRPmean')] = f.seq[t][ix('logFRPmean')] > 0 ? Math.log10(1 + (Math.pow(10, f.seq[t][ix('logFRPmean')]) - 1) * lab.f) : 0;
+    seq[t][ix('fm100')] = Math.max(f.seq[t][ix('fm100')] - lab.d / 20, 0.05);
+    seq[t][ix('fm1000')] = Math.max(f.seq[t][ix('fm1000')] - lab.d / 20, 0.05);
+    seq[t][ix('erc')] = f.seq[t][ix('erc')] + lab.d * 0.035;
+    seq[t][ix('rmin')] = Math.max(f.seq[t][ix('rmin')] - lab.d * 0.01, 0.02);
+    prev = A;
+  }
+  const stv = f.st.slice(); stv[TN.indexOf('cbh')] *= lab.c;
+  const seqH = seq.map((r) => { const h = r.slice(); if (h[0] > 0) { WIND_COLS.forEach((j) => (h[j] = 0)); h[HID] = 1; } return h; });
+  return { seq, seqH, stv };
+}
+const isLab = () => lab.g !== 1 || lab.d !== 0 || lab.f !== 1 || lab.c !== 1;
+
+// ---------- render one fire ----------
+function gauge(label, val, lo, hi, sd, truth, unit, lo0, hi0, note, colorFn) {
+  const w = 300, x = (v) => 8 + (w - 16) * (Math.min(Math.max(v, lo0), hi0) - lo0) / (hi0 - lo0);
+  let s = `<svg viewBox="0 0 ${w} 34" style="width:100%;height:auto" aria-hidden="true"><line x1="8" x2="${w - 8}" y1="17" y2="17" stroke="var(--rule)" stroke-width="6" stroke-linecap="round"/>`;
+  if (colorFn) for (let i = 0; i < 40; i++) { const a = lo0 + (hi0 - lo0) * i / 40, b = lo0 + (hi0 - lo0) * (i + 1) / 40; s += `<line x1="${x(a)}" x2="${x(b)}" y1="17" y2="17" stroke="${colorFn((a + b) / 2)}" stroke-width="6" opacity=".55"/>`; }
+  s += `<rect class="bar-anim" x="${x(lo)}" y="9" width="${Math.max(x(hi) - x(lo), 2)}" height="16" rx="3" fill="var(--ember)" opacity=".28"/>`;
+  s += `<line class="bar-anim" x1="${x(val)}" x2="${x(val)}" y1="5" y2="29" stroke="var(--ember)" stroke-width="3"/>`;
+  if (truth !== null && truth !== undefined && isFinite(truth)) s += `<path d="M${x(truth) - 6} 33 L${x(truth) + 6} 33 L${x(truth)} 23 Z" fill="var(--ink)" opacity=".7"/>`;
+  s += `<text x="8" y="9">${lo0}</text><text x="${w - 8}" y="9" text-anchor="end">${hi0}${unit}</text></svg>`;
+  return `<div class="reading"><div class="lab"><span>${label}</span><span class="num">${val.toFixed(unit === ' m/s' ? 1 : (unit === ' %' ? 0 : 2))}${unit} <span class="muted">truth ${truth === null || truth === undefined ? 'n/a' : (+truth).toFixed(unit === ' m/s' ? 1 : (unit === ' %' ? 0 : 2)) + unit}</span></span></div>${s}<div class="note">${note}</div></div>`;
+}
+const sevColor = (v) => (v < 0.05 ? 'var(--sev0)' : v < 0.15 ? 'var(--sev1)' : v < 0.3 ? 'var(--sev2)' : 'var(--sev3)');
+function render() {
+  const f = F[cur]; if (!f) return;
+  $('#caseId').textContent = `MTBS ${f.fid} · ${f.period} · ${f.n_steps} half-day steps`;
+  $('#caseName').textContent = `${f.name} ${f.year}`;
+  const { seq, seqH, stv } = edited(f);
+  const p = FDNet.predict(W, CAL, seq, seqH, stv);
+  // chart
+  const g = $('#prog'); g.innerHTML = '';
+  const n = f.seq.filter((r) => r[0] > 0).length, X0 = 46, X1 = 470, Y0 = 210, Y1 = 18;
+  const A = seq.slice(0, n).map((r) => Math.max(Math.pow(10, r[ix('logA')]) - 0.01, 0));
+  const amax = Math.max(...A, 0.1), bw = (X1 - X0) / Math.max(n, 1);
+  const ny = (v) => Y0 - (Y0 - Y1) * v / amax;
+  for (let k = 0; k <= 4; k++) { const v = amax * k / 4, y = ny(v); el('line', { x1: X0, x2: X1, y1: y, y2: y, stroke: 'var(--rule)', 'stroke-width': 1 }, g); el('text', { x: X0 - 6, y: y + 4, 'text-anchor': 'end' }, g, v >= 10 ? v.toFixed(0) : v.toFixed(1)); }
+  el('text', { x: 4, y: 12 }, g, 'km²');
+  for (let t = 0; t < n; t++) {
+    const prevA = t ? A[t - 1] : 0, day = seq[t][ix('is_day')] > 0;
+    el('rect', { x: X0 + t * bw + 3, y: ny(prevA), width: Math.max(bw - 6, 2), height: Math.max(Y0 - ny(prevA), 0), fill: 'var(--smoke)', opacity: 0.35 }, g);
+    el('rect', { x: X0 + t * bw + 3, y: ny(A[t]), width: Math.max(bw - 6, 2), height: Math.max(ny(prevA) - ny(A[t]), 0.5), fill: day ? 'var(--day)' : 'var(--night)' }, g);
+    if (n <= 12) el('text', { x: X0 + (t + 0.5) * bw, y: Y0 + 14, 'text-anchor': 'middle' }, g, (day ? 'D' : 'N') + (Math.floor(t / 2) + 1));
+  }
+  const frp = seq.slice(0, n).map((r) => r[ix('logFRP')]), fmax = Math.max(4.5, ...frp);
+  let d = ''; frp.forEach((v, t) => { d += (t ? 'L' : 'M') + (X0 + (t + 0.5) * bw).toFixed(1) + ' ' + (Y0 - (Y0 - Y1) * v / fmax).toFixed(1); });
+  el('path', { d, fill: 'none', stroke: 'var(--ember)', 'stroke-width': 2.2 }, g);
+  frp.forEach((v, t) => el('circle', { cx: X0 + (t + 0.5) * bw, cy: Y0 - (Y0 - Y1) * v / fmax, r: 3, fill: 'var(--ember)' }, g));
+  [1, 10, 100, 1000, 10000].forEach((m) => { const v = Math.log10(1 + m); if (v <= fmax) el('text', { x: X1 + 6, y: Y0 - (Y0 - Y1) * v / fmax + 4 }, g, m >= 1000 ? (m / 1000) + 'k' : m); });
+  el('text', { x: X1 + 4, y: 12 }, g, 'FRP MW');
+  el('text', { x: (X0 + X1) / 2, y: 244, 'text-anchor': 'middle' }, g, 'day (D) and night (N) S-NPP passes, from first detection');
+  // facts
+  const wx0 = f.seq[0];
+  $('#facts').innerHTML = [['Region', f.region], ['Dominant fuel', f.fuel], ['Forest share', Math.round(f.forest * 100) + '%'],
+    ['Burned (window)', fmt(A[n - 1], 1) + ' km²'], ['ERC max', f.erc === null ? 'n/a' : f.erc], ['Van Wagner crown pot.', fmt(f.cfp)]]
+    .map(([k, v]) => `<div><span>${k}</span><b class="num" style="font-weight:500">${v}</b></div>`).join('');
+  // readings
+  const L = isLab();
+  $('#readings').innerHTML =
+    gauge('High-severity fraction', p.hs, Math.max(p.hs - p.hs_sd, 0), Math.min(p.hs + p.hs_sd, 1), p.hs_sd, f.hs, '', 0, 0.8,
+      `Simulated crown-fire share ${fmt(p.crown)}, mapped to MTBS units on dev fires. ${f.hs === null ? 'No MTBS severity layer for this fire.' : 'Truth: MTBS high-severity share of the burned area.'}${f.forest < 0.5 ? ' Mostly non-forest: severity here is not crown fire.' : ''}`, sevColor) +
+    gauge('Wind, read blind', p.wind, p.wind_lo, p.wind_hi, 0, f.wind, ' m/s', 0, 10,
+      `Inferred with the wind inputs removed, from growth, shape and fire power. Truth: gridMET daily mean 10 m wind. Rothermel back-calculation: ${fmt(f.wind_bc, 1)} m/s.`) +
+    gauge('Live fuel moisture', p.lfmc, p.lfmc - p.lfmc_sd, p.lfmc + p.lfmc_sd, 0, f.lfmc, ' %', 40, 240,
+      f.lfmc === null ? 'No Globe-LFMC sample within 25 km and 10 days.' : 'Truth: median Globe-LFMC sample within 25 km and 10 days.') +
+    `<div class="reading"><div class="lab"><span>Simulator-only reads</span><span class="chip">no real truth</span></div><div class="note mono" style="color:var(--ink)">ROS factor ${fmt(p.ros_adj)} · 1-h fuel moisture ${fmt(p.m1, 1)} % · wind-dominated area ${Math.round(p.wind_regime * 100)} % · P(spotting) ${fmt(p.p_spot)}</div></div>` +
+    (L ? `<div class="note" style="color:var(--ember);font-size:13px;padding-top:6px">Lab edits are active: readings show the edited fire.</div>` : '');
+}
+
+// ---------- exam ----------
+$('#examIntro').innerHTML = DATA.exam_intro;
+function rhoCell(r) { return r && isFinite(r.rho) ? `${r.rho.toFixed(2)} <span class="muted">[${r.ci[0].toFixed(2)}, ${r.ci[1].toFixed(2)}]</span>` : 'n/a'; }
+function maeCell(r, d = 3) { return r && isFinite(r.mae) ? `${r.mae.toFixed(d)} <span class="muted">[${r.ci[0].toFixed(d)}, ${r.ci[1].toFixed(d)}]</span>` : 'n/a'; }
+$('#examTables').innerHTML = DATA.exam_tables.map((t) => `<div><h3 style="margin-bottom:6px">${t.title}</h3><div class="tbl"><table><thead><tr>${t.head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${t.rows.map((r) => `<tr class="${r.cls || ''}">${r.cells.map((c, i) => `<td class="${i ? 'num' : ''}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${t.note ? `<p class="muted" style="font-size:13px;margin-top:6px">${t.note}</p>` : ''}</div>`).join('');
+let sc = 'net';
+function scatter() {
+  const g = $('#scat'); g.innerHTML = '';
+  const pts = F.filter((f) => f.forest >= 0.5 && f.hs !== null);
+  const val = (f) => (sc === 'net' ? f.hs_pred : sc === 'erc' ? f.erc : f.cfp);
+  const xs = pts.map(val).filter((v) => v !== null && isFinite(v));
+  const xlo = sc === 'erc' ? Math.min(...xs) : 0, xhi = sc === 'erc' ? Math.max(...xs) : (sc === 'cfp' ? 1 : Math.max(0.5, ...xs));
+  const X0 = 46, X1 = 405, Y0 = 290, Y1 = 14, ymax = 0.8;
+  const px = (v) => X0 + (X1 - X0) * (v - xlo) / (xhi - xlo || 1), py = (v) => Y0 - (Y0 - Y1) * Math.min(v, ymax) / ymax;
+  for (let k = 0; k <= 4; k++) { const v = ymax * k / 4; el('line', { x1: X0, x2: X1, y1: py(v), y2: py(v), stroke: 'var(--rule)' }, g); el('text', { x: X0 - 6, y: py(v) + 4, 'text-anchor': 'end' }, g, v.toFixed(1)); }
+  for (let k = 0; k <= 4; k++) { const v = xlo + (xhi - xlo) * k / 4; el('text', { x: px(v), y: Y0 + 16, 'text-anchor': 'middle' }, g, sc === 'erc' ? v.toFixed(0) : v.toFixed(2)); }
+  el('text', { x: (X0 + X1) / 2, y: 326, 'text-anchor': 'middle' }, g, sc === 'net' ? 'FireDetective predicted high-severity fraction' : sc === 'erc' ? 'gridMET ERC, max over the window' : 'Van Wagner crown-fire potential (fraction of cells)');
+  el('text', { x: 4, y: 10 }, g, 'MTBS high-severity fraction');
+  if (sc === 'net') el('line', { x1: px(0), y1: py(0), x2: px(Math.min(xhi, ymax)), y2: py(Math.min(xhi, ymax)), stroke: 'var(--smoke)', 'stroke-dasharray': '4 4' }, g);
+  pts.forEach((f) => { const v = val(f); if (v === null || !isFinite(v)) return; const c = el('circle', { cx: px(v), cy: py(f.hs), r: 3.4, fill: sevColor(f.hs), stroke: 'var(--sheet)', 'stroke-width': 0.6, opacity: 0.9, tabindex: 0 }, g); el('title', {}, c, `${f.name} ${f.year}: truth ${f.hs}, x ${fmt(v)}`); c.addEventListener('click', () => { cur = F.indexOf(f); filter = 'all'; document.querySelectorAll('[data-f]').forEach((x) => x.setAttribute('aria-pressed', x.dataset.f === 'all')); fillPick(); document.getElementById('explorer').scrollIntoView({ behavior: 'smooth' }); }); });
+}
+document.querySelectorAll('[data-sc]').forEach((b) => b.addEventListener('click', () => { document.querySelectorAll('[data-sc]').forEach((x) => x.setAttribute('aria-pressed', x === b)); sc = b.dataset.sc; scatter(); }));
+
+// ---------- ladder, flow, twin, limits ----------
+$('#rungs').innerHTML = '<thead><tr><th>Rung</th><th>What changed</th><th>Frozen set</th><th>Sim score</th><th>vs incumbent</th><th>Dev ρ severity</th><th>Dev ρ wind</th><th>Decision</th></tr></thead><tbody>' +
+  DATA.rungs.map((r) => `<tr><td class="mono">${r.rung}</td><td style="white-space:normal;min-width:260px;text-align:left">${r.desc}</td><td class="mono">${r.frozen}</td><td class="num">${fmt(r.sim, 3)}</td><td class="num">${r.inc === null ? '—' : fmt(r.inc, 3)}</td><td class="num">${fmt(r.dev_hs)}</td><td class="num">${fmt(r.dev_wind)}</td><td class="${r.decision === 'keep' ? 'kept' : 'rejected'}">${r.decision}</td></tr>`).join('') + '</tbody>';
+$('#flow').innerHTML = DATA.flow.map((s) => `<div class="step"><b>${s[0]}</b><small>${s[1]}</small></div>`).join('');
+$('#twin').innerHTML = '<thead><tr><th>Input feature</th><th>Simulated twins</th><th>Real dev fires</th><th>Correlation across fires</th></tr></thead><tbody>' +
+  DATA.twin.map((r) => `<tr><td>${r[0]}</td><td class="num">${r[1]}</td><td class="num">${r[2]}</td><td class="num">${r[3]}</td></tr>`).join('') + '</tbody>';
+$('#limitsList').innerHTML = DATA.limits.map((l) => `<li>${l}</li>`).join('');
+$('#credits').innerHTML = DATA.credits;
+
+fillPick(); scatter();
+})();
+</script>

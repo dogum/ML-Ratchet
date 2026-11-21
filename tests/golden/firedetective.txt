@@ -1,0 +1,26 @@
+
+COOKS PEAK (2022, SW, recent): 12 half-day steps, burned 12.0 -> 179.1 km2
+  high-severity fraction  predicted 0.16 +- 0.14   MTBS truth 0.12   (Van Wagner crown potential 0.79, ERC max 80)
+  wind (inferred blind)   3.4 m/s [2.4-4.9]   gridMET truth 6.8   (Rothermel back-calc 27.3)
+  live fuel moisture      116 +- 34 %   Globe-LFMC truth   n/a
+  simulator-only reads    crown fraction 0.51, ROS factor 0.66, 1-h moisture 2.2 %, P(spotting) 0.46
+
+POWDER MILL (2017, SP, forest_main): 6 half-day steps, burned 1.1 -> 1.6 km2
+  high-severity fraction  predicted 0.02 +- 0.02   MTBS truth 0.00   (Van Wagner crown potential 0.06, ERC max 40)
+  wind (inferred blind)   4.6 m/s [2.9-7.4]   gridMET truth 5.1   (Rothermel back-calc 6.9)
+  live fuel moisture      134 +- 46 %   Globe-LFMC truth   n/a
+  simulator-only reads    crown fraction 0.01, ROS factor 0.65, 1-h moisture 9.1 %, P(spotting) 0.47
+
+BLACK (2018, GB, nonforest_main): 6 half-day steps, burned 0.1 -> 1.9 km2
+  high-severity fraction  predicted 0.04 +- 0.08   MTBS truth 0.05   (Van Wagner crown potential 0.20, ERC max 92)
+  wind (inferred blind)   4.3 m/s [2.8-6.6]   gridMET truth 4.4   (Rothermel back-calc 6.7)
+  live fuel moisture      146 +- 44 %   Globe-LFMC truth   n/a
+  simulator-only reads    crown fraction 0.10, ROS factor 0.39, 1-h moisture 1.9 %, P(spotting) 0.46
+
+MAPLE (2018, NW, forest_main): 12 half-day steps, burned 0.1 -> 7.3 km2
+  high-severity fraction  predicted 0.03 +- 0.03   MTBS truth 0.22   (Van Wagner crown potential 0.19, ERC max 52)
+  wind (inferred blind)   3.2 m/s [2.5-4.3]   gridMET truth 1.9   (Rothermel back-calc 0.0)
+  live fuel moisture      132 +- 40 %   Globe-LFMC truth   n/a
+  simulator-only reads    crown fraction 0.03, ROS factor 0.77, 1-h moisture 18.3 %, P(spotting) 0.54
+
+4 fires in 0.05 s
