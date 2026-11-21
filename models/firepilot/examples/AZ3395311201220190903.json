@@ -1,0 +1,50 @@
+{
+ "fire_id": "AZ3395311201220190903",
+ "fire_name": "River",
+ "period": "main",
+ "k": 27,
+ "res": 90.0,
+ "head": 309.8361434426797,
+ "a0_ha": 219.51,
+ "forecast_none_ha": 2710.26,
+ "budgets": {
+  "300": {
+   "firepilot_plan": {
+    "mode": 0,
+    "phi_c": -27.943939725681304,
+    "omega": 180.0,
+    "d_h": 438.35023024855116,
+    "d_f": 1092.287849791972
+   },
+   "truth_saved": {
+    "none": 0.0,
+    "direct_head": 0.012,
+    "indirect_1km": 0.318,
+    "indirect_2km": 0.332,
+    "anchor_flank": 0.042,
+    "mpc_forecast": 0.35,
+    "firepilot": 0.293,
+    "pf_bound": 0.56
+   }
+  },
+  "1000": {
+   "firepilot_plan": {
+    "mode": 0,
+    "phi_c": 35.473509698881685,
+    "omega": 180.0,
+    "d_h": 448.2525879612823,
+    "d_f": 373.83970155239825
+   },
+   "truth_saved": {
+    "none": 0.0,
+    "direct_head": 0.013,
+    "indirect_1km": 0.429,
+    "indirect_2km": 0.332,
+    "anchor_flank": 0.167,
+    "mpc_forecast": 0.577,
+    "firepilot": 0.934,
+    "pf_bound": 0.943
+   }
+  }
+ }
+}

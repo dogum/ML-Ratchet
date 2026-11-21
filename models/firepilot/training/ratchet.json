@@ -1,0 +1,192 @@
+{
+ "rule": "keep a rung if frozen-sim val mean saved fraction beats the incumbent by > 0.01 AND the real dev gate (12 dev fires x 2 budgets, sim on real landscape+weather) mean saved fraction is no more than 5 % (relative) worse than the incumbent",
+ "frozen_set": "val_p1 (160 synthetic scenarios, physics p1)",
+ "gate": "gate_p1 (24 cases)",
+ "rungs": [
+  {
+   "rung": "r0",
+   "change": "proxy planner (no learning): argmax over 205 candidate plans of the connectivity proxy on the forecast run",
+   "decision": "kept",
+   "reason": "base rung; beats every fixed baseline on val (best fixed indirect_1km 0.261) and gate (anchor_flank 0.263)",
+   "val": {
+    "rung": "r0",
+    "set": "val",
+    "n": 160,
+    "saved_mean": 0.40325145411600366,
+    "saved_median": 0.36126482377500424,
+    "base_direct_head": 0.10653736771367228,
+    "base_indirect_1km": 0.2608703923460073,
+    "base_indirect_2km": 0.20284365135224647,
+    "base_indirect_4km": 0.07829294529293743,
+    "base_anchor_flank": 0.19516311957441343
+   },
+   "gate": {
+    "rung": "r0",
+    "set": "gate",
+    "n": 24,
+    "saved_mean": 0.3827828186476349,
+    "saved_median": 0.24004129536705848,
+    "base_direct_head": 0.1442871435759425,
+    "base_indirect_1km": 0.10700432485767297,
+    "base_indirect_2km": 0.11059306747094517,
+    "base_indirect_4km": 0.0251938965198731,
+    "base_anchor_flank": 0.262565443058635
+   },
+   "incumbent": null,
+   "logged": "2026-11-19 08:33"
+  },
+  {
+   "rung": "r1",
+   "change": "value net (31 features, 2x64 tanh, 6.3k weights) on 297 training scenarios x 10 truth-scored plans; argmax + 2 rounds surrogate CEM",
+   "decision": "kept",
+   "reason": "val +0.081 over r0; gate 0.481 vs 0.383 (better)",
+   "val": {
+    "rung": "r1",
+    "set": "val",
+    "n": 160,
+    "saved_mean": 0.484055496370249,
+    "saved_median": 0.520054601587018,
+    "base_direct_head": 0.10653736771367228,
+    "base_indirect_1km": 0.2608703923460073,
+    "base_indirect_2km": 0.20284365135224647,
+    "base_indirect_4km": 0.07829294529293743,
+    "base_anchor_flank": 0.19516311957441343
+   },
+   "gate": {
+    "rung": "r1",
+    "set": "gate",
+    "n": 24,
+    "saved_mean": 0.4814813412338402,
+    "saved_median": 0.41004281302536094,
+    "base_direct_head": 0.1442871435759425,
+    "base_indirect_1km": 0.10700432485767297,
+    "base_indirect_2km": 0.11059306747094517,
+    "base_indirect_4km": 0.0251938965198731,
+    "base_anchor_flank": 0.262565443058635
+   },
+   "incumbent": "r0",
+   "logged": "2026-11-19 08:33"
+  },
+  {
+   "rung": "r2",
+   "change": "same net, full training bank (596 scenarios)",
+   "decision": "rejected",
+   "reason": "val 0.470 vs incumbent r1 0.484 (-0.014); gate 0.473 vs 0.481",
+   "val": {
+    "rung": "r2",
+    "set": "val",
+    "n": 160,
+    "saved_mean": 0.46969350436159474,
+    "saved_median": 0.4952556069793298,
+    "base_direct_head": 0.10653736771367228,
+    "base_indirect_1km": 0.2608703923460073,
+    "base_indirect_2km": 0.20284365135224647,
+    "base_indirect_4km": 0.07829294529293743,
+    "base_anchor_flank": 0.19516311957441343
+   },
+   "gate": {
+    "rung": "r2",
+    "set": "gate",
+    "n": 24,
+    "saved_mean": 0.47316690592294836,
+    "saved_median": 0.41135253725432697,
+    "base_direct_head": 0.1442871435759425,
+    "base_indirect_1km": 0.10700432485767297,
+    "base_indirect_2km": 0.11059306747094517,
+    "base_indirect_4km": 0.0251938965198731,
+    "base_anchor_flank": 0.262565443058635,
+    "pf_n": 7,
+    "pf_mean": 0.2609911793828313,
+    "rung_on_pf_cases": 0.13204207576150992
+   },
+   "incumbent": "r1",
+   "logged": "2026-11-19 09:26"
+  },
+  {
+   "rung": "r3",
+   "change": "ensemble of 4 seeds of the r1 net (same 298 training scenarios), mean prediction, ensemble spread added to sigma",
+   "decision": "rejected",
+   "reason": "val 0.476 vs incumbent r1 0.484 (-0.008, not > +0.01); gate 0.494 vs 0.481 (passes)",
+   "val": {
+    "rung": "r3",
+    "set": "val",
+    "n": 160,
+    "saved_mean": 0.4762115139682698,
+    "saved_median": 0.49549557763115004,
+    "base_direct_head": 0.10653736771367228,
+    "base_indirect_1km": 0.2608703923460073,
+    "base_indirect_2km": 0.20284365135224647,
+    "base_indirect_4km": 0.07829294529293743,
+    "base_anchor_flank": 0.19516311957441343
+   },
+   "gate": {
+    "rung": "r3",
+    "set": "gate",
+    "n": 24,
+    "saved_mean": 0.4943885832939639,
+    "saved_median": 0.4279916036341765,
+    "base_direct_head": 0.1442871435759425,
+    "base_indirect_1km": 0.10700432485767297,
+    "base_indirect_2km": 0.11059306747094517,
+    "base_indirect_4km": 0.0251938965198731,
+    "base_anchor_flank": 0.262565443058635,
+    "pf_n": 24,
+    "pf_mean": 0.5883745831855985,
+    "rung_on_pf_cases": 0.4943885832939639
+   },
+   "incumbent": "r1",
+   "logged": "2026-11-19 10:46"
+  },
+  {
+   "rung": "r4",
+   "change": "r1 recipe retrained on train_p1 (r1 seeds) + on-policy round onpol1 (195 scenarios planned by r1, its plan + 4 jitters + 2 prior plans truth-scored; DAgger-like)",
+   "decision": "rejected",
+   "reason": "val 0.483 vs incumbent r1 0.484 (no gain > +0.01); gate 0.483 vs 0.481 (passes). On-policy data removed r1's optimism on its own picks (r1 predicted 0.568, truth 0.454 on the 195 on-policy scenarios) but did not pick better plans.",
+   "val": {
+    "rung": "r4",
+    "set": "val",
+    "n": 160,
+    "saved_mean": 0.4831839637357637,
+    "saved_median": 0.515367028039839,
+    "base_direct_head": 0.10653736771367228,
+    "base_indirect_1km": 0.2608703923460073,
+    "base_indirect_2km": 0.20284365135224647,
+    "base_indirect_4km": 0.07829294529293743,
+    "base_anchor_flank": 0.19516311957441343
+   },
+   "gate": {
+    "rung": "r4",
+    "set": "gate",
+    "n": 24,
+    "saved_mean": 0.48322063111836694,
+    "saved_median": 0.49240763394875287,
+    "base_direct_head": 0.1442871435759425,
+    "base_indirect_1km": 0.10700432485767297,
+    "base_indirect_2km": 0.11059306747094517,
+    "base_indirect_4km": 0.0251938965198731,
+    "base_anchor_flank": 0.262565443058635,
+    "pf_n": 24,
+    "pf_mean": 0.5883745831855985,
+    "rung_on_pf_cases": 0.48322063111836694
+   },
+   "incumbent": "r1",
+   "logged": "2026-11-19 11:18"
+  }
+ ],
+ "physics_rungs": [
+  {
+   "rung": "p0->p1",
+   "change": "planning world uses the dev-calibrated FireSim replay ROS factors (checks/replay_calibration.json) instead of uncalibrated FireSim",
+   "decision": "kept",
+   "evidence": "dev fidelity, 72 h free run from first detection on dev fires (results/fidelity_dev_p0/p1.json): median Dice-total 0.29 -> 0.45, F1-new 0.26 -> 0.33, log10 new-area ratio +0.59 -> +0.17",
+   "note": "all planner rungs (r0..r4) are scored on frozen sets built with p1"
+  },
+  {
+   "rung": "U1 line geometry",
+   "change": "lines are the 8-connected inner boundary of the plan region, not 4-connected",
+   "decision": "kept (env correctness, before any rung)",
+   "evidence": "results/upstream_U1_leak.json: closed 4-connected ring as a time-blocked FireSim suppression line lets 3551 of 3972 outside cells burn; the same ring as non-burnable fuel or as an 8-boundary holds (0)"
+  }
+ ],
+ "final": "r1"
+}

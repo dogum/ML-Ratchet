@@ -1,0 +1,30 @@
+
+== River (AZ3395311201220190903, main): detected 220 ha; forecast without action 2710 ha after 72 h
+  budget 300 m/h of line (3.6 km per 12 h shift), planned in 0.9 s:
+    plan: centre-out, centre -28 deg from the forecast head, half-width 180 deg, offset head 0.4 km / rear 1.1 km
+    predicted share of the no-action growth stopped: 0.70 (90 % range 0.00-1.00)   [same plan as the exam run]
+    exam truth (sim), share of growth stopped:  none 0.00  direct_head 0.01  indirect_1km 0.32  indirect_2km 0.33  anchor_flank 0.04  mpc_forecast 0.35  firepilot 0.29  pf_bound 0.56
+  budget 1000 m/h of line (12.0 km per 12 h shift), planned in 1.0 s:
+    plan: centre-out, centre +35 deg from the forecast head, half-width 180 deg, offset head 0.4 km / rear 0.4 km
+    predicted share of the no-action growth stopped: 0.81 (90 % range 0.00-1.00)   [same plan as the exam run]
+    exam truth (sim), share of growth stopped:  none 0.00  direct_head 0.01  indirect_1km 0.43  indirect_2km 0.33  anchor_flank 0.17  mpc_forecast 0.58  firepilot 0.93  pf_bound 0.94
+
+== Boulder Lake (MT4707111382020220904, recent): detected 66 ha; forecast without action 350 ha after 72 h
+  budget 300 m/h of line (3.6 km per 12 h shift), planned in 0.5 s:
+    plan: centre-out, centre +24 deg from the forecast head, half-width 180 deg, offset head 0.2 km / rear 0.2 km
+    predicted share of the no-action growth stopped: 0.79 (90 % range 0.00-1.00)   [same plan as the exam run]
+    exam truth (sim), share of growth stopped:  none 0.00  direct_head 0.02  indirect_1km 0.21  indirect_2km 0.08  anchor_flank 0.14  mpc_forecast 0.25  firepilot 0.10  pf_bound 0.36
+  budget 1000 m/h of line (12.0 km per 12 h shift), planned in 0.5 s:
+    plan: ends-in (anchor), centre +0 deg from the forecast head, half-width 180 deg, offset head 0.1 km / rear 0.1 km
+    predicted share of the no-action growth stopped: 0.85 (90 % range 0.00-1.00)   [same plan as the exam run]
+    exam truth (sim), share of growth stopped:  none 0.00  direct_head 0.26  indirect_1km 0.28  indirect_2km 0.10  anchor_flank 0.47  mpc_forecast 0.47  firepilot 0.47  pf_bound 0.98
+
+== Duncan Fire (OK3464409522620180309, main): detected 7 ha; forecast without action 247 ha after 72 h
+  budget 300 m/h of line (3.6 km per 12 h shift), planned in 0.5 s:
+    plan: centre-out, centre +43 deg from the forecast head, half-width 180 deg, offset head 0.2 km / rear 0.1 km
+    predicted share of the no-action growth stopped: 0.81 (90 % range 0.00-1.00)   [same plan as the exam run]
+    exam truth (sim), share of growth stopped:  none 0.00  direct_head 0.32  indirect_1km 0.29  indirect_2km 0.00  anchor_flank 0.45  mpc_forecast 0.45  firepilot 0.97  pf_bound 0.99
+  budget 1000 m/h of line (12.0 km per 12 h shift), planned in 0.4 s:
+    plan: centre-out, centre -35 deg from the forecast head, half-width 180 deg, offset head 0.1 km / rear 0.1 km
+    predicted share of the no-action growth stopped: 0.81 (90 % range 0.00-1.00)   [same plan as the exam run]
+    exam truth (sim), share of growth stopped:  none 0.00  direct_head 0.32  indirect_1km 0.29  indirect_2km 0.00  anchor_flank 0.99  mpc_forecast 0.99  firepilot 1.00  pf_bound 1.00

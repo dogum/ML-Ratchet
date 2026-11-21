@@ -1,0 +1,32 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json (written by training/ratchet_log.py from
+# training/eval_rung.py summaries; physics_rungs hold the two environment decisions taken before r0).
+model: firepilot
+ladders:
+  - name: "FirePilot v1.0 (FireSim containment-line planning, physics p1, 19 Nov 2026)"
+    objective: "Mean share of the no-action 72 h growth stopped (the saved fraction, scored in each scenario's FireSim truth world) on the frozen simulated validation set val_p1: 160 synthetic scenarios, physics p1, seeds 900000+. The fixed plans on val_p1: direct attack 0.107, indirect 1 km 0.261, 2 km 0.203, 4 km 0.078, anchor and flank 0.195."
+    rule: "Keep a rung if its val_p1 mean saved fraction beats the incumbent's by more than 0.01 AND its dev-gate mean saved fraction is no more than 5 % (relative) below the incumbent's. The first rung (r0) had to beat every fixed plan on val_p1 and on the gate."
+    margin: 0.01
+    dev_gate: "gate_p1: 12 seeded dev fires (seed 20261119, never used for training banks) × 2 budgets (300 and 1000 m/h) = 24 cases, on the real LANDFIRE landscape and HRRR weather, scored in FireSim's truth world; mean saved fraction no more than 5 % below the incumbent's. Fixed plans on the gate: direct attack 0.144, indirect 1 km 0.107, 2 km 0.111, 4 km 0.025, anchor and flank 0.263; the perfect-foresight CEM search (about 70 truth simulations per case) 0.588."
+    frozen_sets: [val_p1]
+    scored_on: val_p1
+    note: >-
+      Two environment decisions were taken before r0 and are logged in training/ratchet.json as physics_rungs, not as
+      ladder rungs. Physics p0 → p1 (kept): the planning world uses the dev-calibrated FireSim replay ROS factors
+      (shared/fire/checks/replay_calibration.json); a 72 h free run from first detection on 40 dev fires moved the median
+      Dice on total area from 0.29 to 0.45, F1 on new area from 0.26 to 0.33 and the simulated / observed new-area ratio
+      from ×3.9 to ×1.5 (training/results/fidelity_dev_p0.json, fidelity_dev_p1.json). Every rung is scored with p1.
+      U1 line geometry (kept, environment correctness): lines are the 8-connected inner boundary of the plan region,
+      because FireSim's corner rule lets fire pass diagonally between two cells of a 4-connected timed suppression line
+      (a closed 4-connected ring let 3,551 of 3,972 outside cells burn in 48 h; the same ring as non-burnable fuel, or as
+      an 8-connected line, held: training/results/upstream_U1_leak.json). The fix is FirePilot's, not FireSim's: FireSim
+      was wrapped, not edited. The perfect-foresight column (gate cases where it ran) was added from r2 on: 7 of 24 cases
+      for r2, all 24 for r3 and r4. The exam was run once, after r1 was released (stage A and stage B, both on all 48
+      fires).
+    columns_source: "training/ratchet.json: mean and median saved fraction on val_p1 (160 scenarios) and on the dev gate (24 cases); the gate's change against the incumbent at the time"
+    columns: ["Val mean", "Val median", "Gate mean", "Gate median", "Gate vs incumbent"]
+    rungs:
+      - { id: r0, change: "Proxy planner, no learning: the argmax over 205 candidate plans (5 baselines, a 40-plan grid, 160 prior draws) of the connectivity proxy on the forecast run (forecast burn still connected to the detected fire once the line cells built before the forecast fire arrives block it)", sim: 0.4033, decision: kept, why: "Base rung. Val 0.403 beats every fixed plan (best: indirect 1 km 0.261); gate 0.383 beats every fixed plan (best: anchor and flank 0.263).", metrics: [0.403, 0.361, 0.383, 0.240, "–"] }
+      - { id: r1, change: "Value network: 31 features (13 on the scenario as seen through the forecast, 18 on the plan against the forecast, including the line's shadow and two connectivity proxies), 31 → 64 → 64 → 2 tanh MLP (6,338 weights), mean head (sigmoid, MSE on the saved fraction) and log-σ head (Gaussian NLL on the detached residual); trained on 297 synthetic scenarios × 10 truth-scored plans; planning = argmax over the 205 candidates plus 2 CEM rounds of 48 on the network", sim: 0.4841, decision: released, why: "Val 0.484 vs r0 0.403 (+0.081); gate 0.481 vs 0.383 (+26 %). Released as v1.0; no later rung passed.", metrics: [0.484, 0.520, 0.481, 0.410, "+25.8 %"] }
+      - { id: r2, change: "Same network, the full 596-scenario training bank", sim: 0.4697, decision: rejected, why: "Val 0.470 vs r1 0.484 (−0.014); gate 0.473 vs 0.481 (−1.7 %, within 5 %). More data of the same kind did not help.", metrics: [0.470, 0.495, 0.473, 0.411, "−1.7 %"] }
+      - { id: r3, change: "Ensemble of 4 seeds of the r1 network (same training scenarios; the log says 298), mean prediction, the ensemble spread added to σ", sim: 0.4762, decision: rejected, why: "Val 0.476 vs 0.484 (−0.008, not +0.01); gate 0.494 vs 0.481 (+2.7 %, passes). Fails the sim margin.", metrics: [0.476, 0.495, 0.494, 0.428, "+2.7 %"] }
+      - { id: r4, change: "r1 recipe retrained on r1's data plus one on-policy round: 195 scenarios planned by r1, its plan + 4 jitters + 2 prior plans, all truth-scored (DAgger-like)", sim: 0.4832, decision: rejected, why: "Val 0.483 vs 0.484 (−0.001); gate 0.483 vs 0.481 (+0.4 %). Winner's curse: on the 195 on-policy scenarios r1 predicted 0.568 for its own picks and the truth was 0.454. The new rows removed part of that optimism but did not pick better plans.", metrics: [0.483, 0.515, 0.483, 0.492, "+0.4 %"] }

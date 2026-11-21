@@ -1,0 +1,50 @@
+{
+ "fire_id": "MT4707111382020220904",
+ "fire_name": "Boulder Lake",
+ "period": "recent",
+ "k": 36,
+ "res": 90.0,
+ "head": 25.45368762217161,
+ "a0_ha": 65.61,
+ "forecast_none_ha": 349.92,
+ "budgets": {
+  "300": {
+   "firepilot_plan": {
+    "mode": 0,
+    "phi_c": 23.960050285406453,
+    "omega": 180.0,
+    "d_h": 170.23583638281386,
+    "d_f": 226.67181953322068
+   },
+   "truth_saved": {
+    "none": 0.0,
+    "direct_head": 0.019,
+    "indirect_1km": 0.215,
+    "indirect_2km": 0.082,
+    "anchor_flank": 0.138,
+    "mpc_forecast": 0.248,
+    "firepilot": 0.102,
+    "pf_bound": 0.363
+   }
+  },
+  "1000": {
+   "firepilot_plan": {
+    "mode": 1,
+    "phi_c": 0.0,
+    "omega": 180.0,
+    "d_h": 90.0,
+    "d_f": 90.0
+   },
+   "truth_saved": {
+    "none": 0.0,
+    "direct_head": 0.257,
+    "indirect_1km": 0.275,
+    "indirect_2km": 0.1,
+    "anchor_flank": 0.467,
+    "mpc_forecast": 0.467,
+    "firepilot": 0.467,
+    "pf_bound": 0.981
+   }
+  }
+ }
+}
