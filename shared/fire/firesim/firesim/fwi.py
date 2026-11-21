@@ -120,7 +120,9 @@ def daily_from_hourly(w, lon=None):
     """Noon-LST daily inputs from hourly contract weather: T, RH, wind (km/h) at local noon; rain summed over the
     24 h ending at noon."""
     lon = lon if lon is not None else w.attrs.get('lon', -115.0)
-    off = pd.Timedelta(hours=-lon / 15.0)
+    # local solar time = UTC + lon / 15 h (west is negative). PR #7 review, 21 Nov 2026: the sign was reversed, so
+    # at lon = -100 'noon' was 05:20 UTC (local night).
+    off = pd.Timedelta(hours=lon / 15.0)
     lst = w.index + off
     noon = w[(lst.hour == 12)]
     rain = w['precip'].rolling(24, min_periods=1).sum()

@@ -168,3 +168,10 @@ rung re-scored. Not measured here; the analytic checks (constant weather) cannot
   multi-cell stencil step, and only the destination's build time is checked at arrival, so a line finished while
   the fire is mid-step can be crossed (Codex's example: a (1, 2) step at 10 m/min crosses a line finished at
   0.00001 h). Same family as U1 (lines leaking); both change default physics and belong in physics p2.
+- `fwi.daily_from_hourly` converted UTC to local solar time with the longitude sign reversed, so "noon" was local
+  night (05:20 UTC at lon = -100; 04:00 UTC at lon = -120). Only the physics checks call it (FireDetective's FWI
+  baseline uses `fwi_series` on gridMET daily values and is not affected). After the fix, check_moisture's
+  FFMC-implied noon moisture is 3.84 % against the simulator's noon 1-h moisture 3.42 % (r = 0.946); the shipped
+  numbers, taken at night, were 12.60 % and r = 0.681. moisture.json is updated for those two values only. The FWI
+  check's xclim season comparison now has different inputs from the shipped xclim output, so without
+  firesim/.refenv it is skipped rather than compared. Test: test_fwi_daily_inputs_are_taken_at_local_noon.

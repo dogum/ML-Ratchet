@@ -372,6 +372,17 @@ def test_initial_attack_at_ignition_time_does_not_contain_an_empty_fire():
     assert np.isfinite(out["rasters"]["arrival_time"]).sum() > 1
 
 
+def test_fwi_daily_inputs_are_taken_at_local_noon():
+    """PR #7 review, 21 Nov 2026: daily_from_hourly converted UTC to solar time with the longitude sign reversed."""
+    import pandas as pd
+    from firesim import fwi
+    idx = pd.date_range("2021-07-01", periods=72, freq="h", tz="UTC")
+    w = pd.DataFrame({"T": 0.0, "RH": 50.0, "wind_speed": 1.0, "precip": 0.0}, index=idx)
+    w.loc[w.index.hour == 20, "T"] = 30.0          # local noon at lon = -120 is 20:00 UTC
+    d = fwi.daily_from_hourly(w, lon=-120.0)
+    assert (d["T"] == 30.0).all() and len(d) == 3
+
+
 def test_u1_setup_is_meaningful(u1):
     """Without a line the fire leaves the ring; a ring of non-burnable fuel holds it (the corner rule works there)."""
     assert u1["no_line"] > 100 and u1["nonburnable"] == 0
