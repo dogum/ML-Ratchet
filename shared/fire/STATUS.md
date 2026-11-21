@@ -132,3 +132,13 @@ re-run. Test: tests/test_fire.py::test_mask_ignition_interior_is_burned_at_start
   It now reads a day either side, shifts, and trims to the requested window; without `start` nothing changes.
 Training banks built with the old code are not re-built here. Tests: tests/test_fire.py
 (test_hourly_from_daily_keeps_every_hour_at_half_hour_offsets, test_real_weather_covers_the_requested_window).
+
+## 2026-11-21 — PR #7 review: U9, simplex updates use one weather step for the whole trip (not fixed)
+
+The kernel's two-point (simplex) update in `kernel.py` scores its candidate with the spread rates cached at the
+departure step for the whole trip, while the single-segment traversal before it integrates through later hourly
+steps. When the trip crosses an hour boundary into slower weather, the simplex candidate can beat the correctly
+integrated time. Simplex is on by default (`method='mtt'`), so this touches ordinary runs, every simulated bank and
+the dev replays. Like U1 it is a physics change: the fix (integrate the simplex path through the hourly forcing, or
+reject updates that leave the current step) belongs in physics p2 with U1, with every frozen set rebuilt and every
+rung re-scored. Not measured here; the analytic checks (constant weather) cannot see it.

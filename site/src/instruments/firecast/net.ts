@@ -80,9 +80,9 @@ export function pixelRaster(d: Float32Array[] | null, H: number, W: number): Flo
     const hx = 0.5 * ps[i] * 1000.0 / RES, hy = 0.5 * pt[i] * 1000.0 / RES;
     let r0 = Math.floor(r - hy + 0.5), r1 = Math.floor(r + hy + 0.5);
     let c0 = Math.floor(c - hx + 0.5), c1 = Math.floor(c + hx + 0.5);
-    r0 = Math.max(r0, 0); c0 = Math.max(c0, 0);
-    r1 = Math.min(Math.max(r1, r0 + 1), H); c1 = Math.min(Math.max(c1, c0 + 1), W);
+    r1 = Math.max(r1, r0 + 1); c1 = Math.max(c1, c0 + 1);   // at least one cell, then drop off-grid footprints, then clip
     if (r0 >= H || c0 >= W || r1 <= 0 || c1 <= 0) continue;
+    r0 = Math.max(r0, 0); c0 = Math.max(c0, 0); r1 = Math.min(r1, H); c1 = Math.min(c1, W);
     const v = f32(Math.log1p(Math.max(frp[i], 0)));
     for (let y = r0; y < r1; y++) for (let x = c0; x < c1; x++) if (out[y * W + x] < v) out[y * W + x] = v;
   }

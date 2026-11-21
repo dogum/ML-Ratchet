@@ -59,10 +59,12 @@ def pixel_raster(det, shape, frp_key='frp'):
         hy = 0.5 * pt * 1000.0 / RES
         r0, r1 = int(np.floor(r - hy + 0.5)), int(np.floor(r + hy + 0.5))
         c0, c1 = int(np.floor(c - hx + 0.5)), int(np.floor(c + hx + 0.5))
-        r0, c0 = max(r0, 0), max(c0, 0)
-        r1, c1 = min(max(r1, r0 + 1), ny), min(max(c1, c0 + 1), nx)
+        # At least one cell, then drop footprints that miss the grid, then clip (PR #7 review, 21 Nov 2026: clipping
+        # first pulled a footprint lying wholly off the north or west edge onto row or column 0).
+        r1, c1 = max(r1, r0 + 1), max(c1, c0 + 1)
         if r0 >= ny or c0 >= nx or r1 <= 0 or c1 <= 0:
             continue
+        r0, c0, r1, c1 = max(r0, 0), max(c0, 0), min(r1, ny), min(c1, nx)
         v = np.log1p(max(float(f), 0.0))
         sub = out[r0:r1, c0:c1]
         np.maximum(sub, v, out=sub)

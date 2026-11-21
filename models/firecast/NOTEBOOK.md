@@ -196,3 +196,12 @@ against the float32 release (Pole Creek). The window changes the scores slightly
 (Pole Creek AP 0.532 on the window, 0.575 on the full grid); the instrument shows both. Public assets 1.52 MB
 (weights 0.75 MB, fire-days 0.28 MB, reference 0.48 MB). A blocked 3×3 convolution (four output channels per pass) keeps a run to about 0.7-0.8 s on the two smaller
 windows and 1.9 s on Pole Creek's 240 × 240 (Node 24 on a laptop CPU; ops.conv2d took 2.3-6.7 s).
+
+## 2026-11-21 — PR #7 review: off-grid detections were pulled onto the grid edge
+
+`pixel_raster` clipped a footprint's lower bounds before enforcing its one-cell minimum, so a detection lying wholly
+north or west of the grid (row 5, col -100, 375 m footprint on the 90 m grid) became a pixel in column 0. Fixed in
+firecast.py, training/src/features.py and the site instrument: off-grid footprints are dropped before clipping.
+On-grid detections give identical rasters; the golden demo and the 35 instrument parity cases are unchanged. The exam
+was scored with the old code; real-day detections come from the fire's own FEDS record inside a crop with a 10 km
+margin, so few if any can be affected, but this was not re-scored.
