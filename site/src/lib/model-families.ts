@@ -60,6 +60,7 @@ export const MODEL_NOTES: Record<string, ModelNote> = {
   plantdetective: { t: ['mlp', 'ensemble', 'anchor'], params: 440797, paramsFrom: 'model.yaml' },
   starquake: { t: ['cnn1d', 'cnn2d', 'anchor'], params: 412e3, paramsFrom: 'model.yaml' },
   sundoctor: { t: ['cnn2d'], params: 591e3, paramsFrom: 'model.yaml' },
+  roomsense: { t: ['cnn1d', 'anchor'], params: 10040, paramsFrom: 'model.yaml', twin: 'The two geometry-matched dev twins had 3.05 dB too much late-to-early energy. Reducing diffuse pressure made the targeted correction and the RT60 rung still failed.' },
   swellcast: { t: ['cnn2d', 'anchor'], params: 296e3, paramsFrom: 'model.yaml' },
   transitnet: { t: ['cnn1d', 'anchor'], params: 321900, paramsFrom: 'weight files' },
   tripdetective: { t: ['cnn1d', 'sets', 'anchor'], params: 0.40e6, paramsFrom: 'model.yaml', twin: 'A dev hybrid’s twin stops its engine 0.29 of the time; the real car 0.09.', ladder: 3 },

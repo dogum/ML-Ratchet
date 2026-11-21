@@ -28,7 +28,10 @@ instrument noise, the fetch scripts in `models/*/training/` download that noise 
 | StarQuake | [Gaia DR3](https://www.cosmos.esa.int/web/gaia/dr3) (ESA/Gaia/DPAC) | CC BY-SA 3.0 IGO | No |
 | WakeNet | [Kelmarsh Wind Farm Data](https://doi.org/10.5281/zenodo.16807551) (2025 version; concept DOI 10.5281/zenodo.5841834) — Charlie Plumley / Cubico Sustainable Investments | CC BY 4.0 | Four single-timestamp 6-turbine excerpts (`examples/`, instrument, `lab/`) |
 | WakeNet | [Penmanshiel Wind Farm Data](https://doi.org/10.5281/zenodo.16807304) (2025 version; concept DOI 10.5281/zenodo.5946808) — Charlie Plumley / Cubico Sustainable Investments | CC BY 4.0 | Two single-timestamp 14-turbine excerpts (`examples/`, instrument, `lab/`) |
-
+| RoomSense | [University of Surrey RealRoomBRIRs](https://github.com/IoSR-Surrey/RealRoomBRIRs) — Cal Armstrong, Institute of Sound Recording | MIT notice in the source repository | Four generated claps passed through measured responses in rooms A and B, with the [license and credits](models/roomsense/examples/ATTRIBUTION.md) |
+| RoomSense | [Kitamura Laboratory impulse response measurements](https://github.com/kitamura-laboratory/impResDataset) | Public academic download. Audio redistribution terms unspecified. | Scoring summaries |
+| RoomSense | [ESC-10 environmental audio](https://github.com/karolpiczak/ESC-50#license) — Karol J. Piczak and the original Freesound contributors | ESC-10 is CC BY. The bundled sources have individual CC BY and CC0 terms. | Noise excerpts in four clips, [credited by source](models/roomsense/examples/ATTRIBUTION.md) |
+| RoomSense | [ClapRIR phone examples](https://github.com/Akinesia112/ClapRIR) — Lai et al. | Public listening examples. Audio reuse terms unspecified. | Input acceptance summary |
 
 ### The vehicle platform (`shared/vehicle`) and its models (EnergyNet, TripDetective, HybridPilot)
 

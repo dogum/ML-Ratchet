@@ -131,11 +131,11 @@ ideas:
     domain: Acoustics
     question: How big is this room and how long does it ring, from one recorded clap?
     physics: Image-source and ray-tracing room acoustics (pyroomacoustics)
-    data: Measured room impulse responses on Zenodo
-    data_url: https://zenodo.org
-    exam: Rooms with measured geometry and RT60
-    status: candidate
-    note: Impulse-response sets not yet checked.
+    data: University of Surrey and Kitamura Laboratory measured responses. ARPEGE for paired claps when reachable.
+    data_url: https://github.com/IoSR-Surrey/RealRoomBRIRs
+    exam: Three held-out rooms using synthetic claps through measured impulse responses. Paired handclap exam pending.
+    status: in-progress
+    note: RoomSense 1.0 partial release. Need paired recorded claps, octave-band references, and reuse terms.
   - id: tsunaminet
     name: TsunamiNet
     domain: Geophysics

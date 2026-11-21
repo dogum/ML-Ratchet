@@ -1,0 +1,276 @@
+{
+  "seed": 20261121,
+  "unit": "physical room",
+  "target": "Median of 500, 1000, 2000 Hz sweep-derived RT60",
+  "actual_clap_exam": "pending a measured reference matched to real clap recordings",
+  "esc_url": "https://raw.githubusercontent.com/karoldvl/ESC-50/33c8ce9eb2cf0b1c2f8bcf322eb349b6be34dbb6/audio/",
+  "archives": {
+    "surrey": {
+      "url": "https://codeload.github.com/IoSR-Surrey/RealRoomBRIRs/zip/b41d237c03d1fe535810954ac4a8496f4e88f8fc",
+      "sha256": "8cf10073d88baa05e8299b10486e34619922c6893e650c1039c15ad4498664f4",
+      "licence": "MIT"
+    },
+    "kitamura": {
+      "url": "https://codeload.github.com/kitamura-laboratory/impResDataset/zip/ebbc8afc2f43620d174c6515ed48bcc50367d73b",
+      "sha256": "5fb275eeb481835e0b4a8356af067346087185afeaebee70e2d4ab0ae7dc51f8",
+      "licence": "Public measurements, redistribution terms unspecified"
+    },
+    "claprir": {
+      "url": "https://raw.githubusercontent.com/Akinesia112/ClapRIR/759b0181185e3ba1d11800c93662a7a15deb6715/docs/static/audio_examples.zip",
+      "sha256": "552f0603ff15b8fd0ee94ad9b4ead4af12e6191942f238134b2e6f11782fe9fa",
+      "licence": "Public audio examples, redistribution terms unspecified"
+    }
+  },
+  "rooms": [
+    {
+      "source": "surrey",
+      "name": "C",
+      "role": "dev",
+      "positions": [
+        0,
+        6,
+        12,
+        18,
+        24,
+        30,
+        36
+      ],
+      "dimensions_m": null,
+      "published_midband_rt60_s": 0.68
+    },
+    {
+      "source": "surrey",
+      "name": "D",
+      "role": "dev",
+      "positions": [
+        0,
+        6,
+        12,
+        18,
+        24,
+        30,
+        36
+      ],
+      "dimensions_m": [
+        8.02,
+        8.72,
+        4.25
+      ],
+      "published_midband_rt60_s": 0.89
+    },
+    {
+      "source": "surrey",
+      "name": "B",
+      "role": "exam",
+      "positions": [
+        0,
+        6,
+        12,
+        18,
+        24,
+        30,
+        36
+      ],
+      "dimensions_m": [
+        4.65,
+        4.65,
+        2.68
+      ],
+      "published_midband_rt60_s": 0.47
+    },
+    {
+      "source": "surrey",
+      "name": "A",
+      "role": "exam",
+      "positions": [
+        0,
+        6,
+        12,
+        18,
+        24,
+        30,
+        36
+      ],
+      "dimensions_m": [
+        5.72,
+        6.64,
+        2.31
+      ],
+      "published_midband_rt60_s": 0.32
+    },
+    {
+      "source": "kitamura",
+      "name": "openLounge",
+      "role": "dev",
+      "positions": [
+        "2A",
+        "2B",
+        "2C",
+        "3A",
+        "3B"
+      ],
+      "dimensions_m": [
+        8,
+        7,
+        2.2
+      ],
+      "published_midband_rt60_s": null
+    },
+    {
+      "source": "kitamura",
+      "name": "musicRoom",
+      "role": "exam",
+      "positions": [
+        "2A",
+        "2B",
+        "2C",
+        "3A",
+        "3B"
+      ],
+      "dimensions_m": null,
+      "published_midband_rt60_s": null
+    }
+  ],
+  "noise": [
+    {
+      "file": "3-164688-A-38.wav",
+      "category": "clock_tick",
+      "source_id": "164688",
+      "role": "train",
+      "sha256": "9ab49e668972a4d80ce6afdc17b03e8093d9a63a151e4f07b14cf6322d5bf68c"
+    },
+    {
+      "file": "5-201194-A-38.wav",
+      "category": "clock_tick",
+      "source_id": "201194",
+      "role": "train",
+      "sha256": "61599b9d388e887b0318d4b008ca3f545b28f327ba3ecb12afdff7a128162c28"
+    },
+    {
+      "file": "3-142593-A-38.wav",
+      "category": "clock_tick",
+      "source_id": "142593",
+      "role": "train",
+      "sha256": "8eb0915dab65e09fd489c3ccac93e620892cb795abe4b16e7a103c5bbc92446b"
+    },
+    {
+      "file": "1-42139-A-38.wav",
+      "category": "clock_tick",
+      "source_id": "42139",
+      "role": "train",
+      "sha256": "169e283f52931f7de0c752e59a5b5149c96fc33ed7323031fe22392e1abab283"
+    },
+    {
+      "file": "4-181865-A-38.wav",
+      "category": "clock_tick",
+      "source_id": "181865",
+      "role": "validation",
+      "sha256": "0321714c36d8186de7b7089f372b853d76ffdd68f84c42872adb8ea3ba6c8f61"
+    },
+    {
+      "file": "3-143933-A-38.wav",
+      "category": "clock_tick",
+      "source_id": "143933",
+      "role": "validation",
+      "sha256": "02809701aa82027a54a463637255b4e26ef3ccd1a47d69b59289e185b28ed675"
+    },
+    {
+      "file": "4-191327-A-38.wav",
+      "category": "clock_tick",
+      "source_id": "191327",
+      "role": "dev",
+      "sha256": "f68408749999319178d1dba0d2f107bf91ffd92262c18610429ce74ed16cc25e"
+    },
+    {
+      "file": "1-57163-A-38.wav",
+      "category": "clock_tick",
+      "source_id": "57163",
+      "role": "dev",
+      "sha256": "be4ee5f3dbf6cfdf65a4afa6b0dc98914e5e36728d1d3778039de70f21579303"
+    },
+    {
+      "file": "5-212181-A-38.wav",
+      "category": "clock_tick",
+      "source_id": "212181",
+      "role": "exam",
+      "sha256": "b920b5a43853cfe138924b3e9278b09f1c45af9e7ee065598605c7d589d57ce7"
+    },
+    {
+      "file": "3-171012-A-38.wav",
+      "category": "clock_tick",
+      "source_id": "171012",
+      "role": "exam",
+      "sha256": "caec02091ae6803d4dec5136f0aa6d539a8788609d83063409bc3b534ae21024"
+    },
+    {
+      "file": "5-193339-A-10.wav",
+      "category": "rain",
+      "source_id": "193339",
+      "role": "train",
+      "sha256": "aec7a17013e61faedb111983e0699a8b63c0e1af9569bb4a819ffba86a28f778"
+    },
+    {
+      "file": "1-21189-A-10.wav",
+      "category": "rain",
+      "source_id": "21189",
+      "role": "train",
+      "sha256": "5f15ab2d8f6ef9932909b1b75c8ac254cbea46c93b4b2f0f3542abdf09b9abc0"
+    },
+    {
+      "file": "2-82367-A-10.wav",
+      "category": "rain",
+      "source_id": "82367",
+      "role": "train",
+      "sha256": "2cce637e5f60368db490c8ec980eb0cc7dbdd623c077bcd456a2fb60afdd4820"
+    },
+    {
+      "file": "3-132852-A-10.wav",
+      "category": "rain",
+      "source_id": "132852",
+      "role": "train",
+      "sha256": "5d4960883ceabe28c008721ea3b5f5206a6f0234cacd4c1af81dd7594b4d3503"
+    },
+    {
+      "file": "1-63871-A-10.wav",
+      "category": "rain",
+      "source_id": "63871",
+      "role": "validation",
+      "sha256": "9ae1461223eaecf2df3818b51e0d7b5987ef497b17038594455bbcee6673d350"
+    },
+    {
+      "file": "3-157487-A-10.wav",
+      "category": "rain",
+      "source_id": "157487",
+      "role": "validation",
+      "sha256": "2acadf44d110c13b39bf17d6db9afa13bb4db19c8b3147b1a61b4f492caf1e97"
+    },
+    {
+      "file": "4-181286-A-10.wav",
+      "category": "rain",
+      "source_id": "181286",
+      "role": "dev",
+      "sha256": "f4adde0e7a70a466a161325824b020a28ae3aaf76568436116c82b6b25d76fdf"
+    },
+    {
+      "file": "5-194892-A-10.wav",
+      "category": "rain",
+      "source_id": "194892",
+      "role": "dev",
+      "sha256": "12df0d996db614fff7148063232490f76413448b6b193034b5f9655ec5172a37"
+    },
+    {
+      "file": "4-164206-A-10.wav",
+      "category": "rain",
+      "source_id": "164206",
+      "role": "exam",
+      "sha256": "75f81596617c19cb01f4e0a0422798f100d1bedd796cd13aa59687b2bac13d16"
+    },
+    {
+      "file": "4-177250-A-10.wav",
+      "category": "rain",
+      "source_id": "177250",
+      "role": "exam",
+      "sha256": "daae54d9bcfb4f31adfac8adbca4ab54c3543b8ed68c555b5a98c3fc20283358"
+    }
+  ]
+}

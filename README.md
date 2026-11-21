@@ -51,13 +51,14 @@ The losses are published too.
 | [**FireSize**](models/firesize/) | Will a new fire escape, and how big will it get? | 655,869 real FPA-FOD ignitions, 2012-2020 | 1 win · 6 losses |
 | [**FireDetective**](models/firedetective/) | What drove a wildfire, from its satellite record | 944 real exam fires, 2017-23 | 3 wins · 2 losses · 3 ties |
 | [**FirePilot**](models/firepilot/) | Where to build containment line in a fire's first 72 h *(graded in simulation)* | 48 real exam fires, outcomes simulated in FireSim, once | 1 win · 0 losses · 1 mixed · 1 tie |
+| [**RoomSense**](models/roomsense/) | How long does a room ring after one clap? *(actual-clap exam pending)* | 38 synthetic claps through measured responses · 3 held-out rooms | 1 win · 1 loss |
 <!-- collection:end -->
 
 Every model also runs **live in your browser** on the website — the real network, ported to TypeScript and checked
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
 <!-- totals:start (generated) -->
-**0** real labelled examples were used for training. **405** rung decisions are logged, **195** of them rejections.
+**0** real labelled examples were used for training. **409** rung decisions are logged, **198** of them rejections.
 <!-- totals:end -->
 
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself. The three
