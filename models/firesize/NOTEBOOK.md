@@ -262,3 +262,13 @@ and its integer indexing raised an IndexError before the advertised missing-valu
 (training/src/physfeat.py) substitutes 1-h moisture 10 % and 10 m wind 3 m/s before the same lookup; inference now
 does the same. Complete inputs are unchanged: the demo's golden output is identical. Test:
 tests/test_firesize_inputs.py.
+
+## 2026-11-22 — exam re-run on rebuilt data (reproduction check, nothing chosen)
+
+The real data were rebuilt from the live hosts on Windows (FPA-FOD 6th ed., gridMET 2012-2024, Globe-LFMC; see
+`shared/fire/STATUS.md`), and `natgrid.py` re-fetched the 250 m LANDFIRE grids (fuel, CC, CH, slope; 160 MB, the
+notebook said about 154 MB). `exam.py ../../firesize_weights.npz` then ran once into `work/results/` with the shipped
+`ros_lut.npz` copied to `work/data/`. All 560 numbers in `exam.json` match `training/results/exam.json`; the largest
+difference is 7.8e-16 (escape AUC 0.727, large-fire AUC 0.815, n = 655,869). Run time 52 s (sandbox 146 s).
+`baselines_firesize.py` re-run on the rebuilt data matches the shipped `firesize_exam.json` to 6.0e-7 (only the ERC
+rows move, at float32 rounding); the shipped file was put back afterwards.

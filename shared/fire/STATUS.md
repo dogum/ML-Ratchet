@@ -201,3 +201,47 @@ FPA-FOD 211 MB, Globe-LFMC 70 MB.
 - `verify`: 230 of 230 shipped files identical, splits OK, loader smoke test passes (40 dev fires, 4,197 exam fires).
 - Not run yet: `wsts` (5 h or more), `gridmet` (tens of GB transferred), `landscapes` for the 48 replay fires,
   `baselines`. The exams are not re-scored.
+
+## 2026-11-22 — Rebuild, long stages, and the four exams re-scored
+
+The rest of `build.py` was run on Windows from the main checkout, and the four fire exams were re-run on the rebuilt
+data with the released weights. All outputs went to git-ignored folders (`data/`, `models/*/work/`). Nothing was
+chosen from an exam; this was a reproduction check.
+
+- **gridmet:** 33 files, 89 MB in `proc/weather/gridmet`: gridMET daily values sampled at the fires (13 yearly
+  tables), the FPA-FOD records (9) and the LFMC sites (11).
+- **landscapes:** LANDFIRE landscapes (76 MB) and HRRR weather (68 MB) for 88 fires: the 48 replay fires and the 40
+  dev fires.
+- **wsts:** all 607 fires, no failures, about 4.5 h by HTTP range reads (the first try failed every fire for
+  lack of output folders; fixed in PR #8). 128 MB of daily fire and weather arrays plus 607 header files (1.1 MB).
+  The 4 dev fires load through `fd.wsts`; the guard refuses exam fires, as it should. The handoff recorded 269 MB.
+  The likely gap is the static layers (elevation, land cover, NDVI) that the sandbox once kept for 299 fires: the
+  shipped `fetch_wsts.py meta` writes only headers (the layer code after its `return` never runs), and no code reads
+  those layers. Not checked further.
+- **baselines:** `spread_exam.jsonl` rebuilt (4,197 fires, 93 MB) and `moisture_split.json` written (122 dev sites
+  of 1,167, as the reconstruction predicted). The spread summary matches all 1,844 shipped numbers exactly, the moisture
+  metrics to 7e-15 (GBM MAE 24.72 % on 138,113 exam samples), and the FireSize baselines to 6e-7.
+- **Side effect, undone:** the `landscapes` stage's precip and repair steps rewrote 21 shipped dev HRRR files. 14
+  differed only in container bytes; 7 had one or two wind_speed cells moved by one float16 step (0.00195 m/s).
+  Re-running the baselines for comparison also overwrote three shipped baseline files. All were restored with
+  `build.py --from-zip <zip> --only verify`; verify then reported 230 of 230 identical. Running `landscapes` on a
+  data root that already holds the shipped files should not rewrite them; not fixed yet.
+- **numba** was missing from `.venv` and is needed by FireSim's fast path; installed (0.68.1). Fire tests: 31 passed,
+  1 xfailed.
+
+Re-scores (details in each model's NOTEBOOK.md, 22 Nov entries):
+
+| Model | What was compared | Result |
+|---|---|---|
+| FireSize | 560 exam numbers | all match, largest difference 7.8e-16 |
+| FireDetective | 391 exam numbers, 944 fires rebuilt from LANDFIRE | largest difference 4.6e-5 |
+| FirePilot | 324 planner numbers, stages A and B (48 fires) | within 2e-9; headline 0.474 / 0.644 |
+| FireCast | 616 metric numbers, 3,030 fires, 25,105 days; replay 627 days | within 3.7e-5; AP 0.323, replay ensemble 0.165 |
+
+One real change: FirePilot's fidelity check (FireSim vs observed total burned area) now gives Dice 0.49 / 0.44 /
+0.40 at 24 / 48 / 72 h, against 0.48 / 0.44 / 0.40 shipped. Running the same 48 fires with FireSim before PR #7's
+mask-ignition fix (3383dfa, interior cells of the start mask burn at t = 0) gives the shipped numbers exactly, so
+the fix is the cause. Planner outcomes do not change. The model card now says so.
+
+The sandbox exams loaded torch checkpoints that were not shipped. Two small scripts re-run them from the released
+numpy weights: `models/firecast/training/src/rescore_np.py` and `models/firedetective/training/rescore_release.py`.

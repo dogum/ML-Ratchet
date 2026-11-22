@@ -212,3 +212,14 @@ ports `FireDetective.raw` and `.predict`, and `whatif.ts` the exporter's what-if
 drier or wetter dead fuels, wind ×, canopy base height ×, fewer half-day passes. Parity: 40 cases (4 fires × 10
 what-ifs), worst relative difference 8.3e-16 over the 13 outputs and all 365 features; float16 weights move the
 outputs by ≤ 3.1e-4 relative.
+
+## 2026-11-22 — exam re-run on rebuilt data (reproduction check, nothing chosen)
+
+The sandbox's exam loaded `R6.ens.json` and three torch checkpoints, which were not shipped. `training/rescore_release.py`
+rebuilds the same ensemble from `weights/firedetective_v1.npz` (export.py wrote its state_dict there) and runs
+`exam.py build` and `score` unchanged, into `work/`. `build` fetched LANDFIRE layers and the annual disturbance layer
+for all 944 exam fires (no failures); the inputs came from the rebuilt FEDS-MTBS, gridMET, Globe-LFMC
+(`lfmc_us.parquet`, reconstructed) and the rebuilt `moisture_split.json` (122 of 1,167 sites, as shipped).
+All 391 summary numbers match `training/results/exam.json`: 379 within 1e-6, the largest difference 4.6e-5 (the
+Rothermel wind back-calculation baseline's MAE interval). The severity truths match to 1e-6, so the LFPS disturbance
+layers have not changed since 19 Nov. Forest severity rho 0.580, wind rho 0.298, LFMC rho 0.168, as shipped.
