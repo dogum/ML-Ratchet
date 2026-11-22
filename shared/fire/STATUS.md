@@ -82,7 +82,7 @@ They need the FEDS-MTBS progression and gridMET, which are not in the zip.
   outside cells burn in 12 h with a timed line at t = 0, and 0 with the same ring as non-burnable fuel.
   `tests/test_fire.py::test_u1_timed_line_holds_like_nonburnable_fuel` is `xfail(strict=True)`: the fix flips it.
   The fix changes physics p1, so it waits for the round that rebuilds every frozen set as p2 and re-scores.
-- **`lfmc_us.parquet` has no script.** `build_lfmc.py` writes `data/proc/lfmc/lfmc_all.parquet`, but
+- **`lfmc_us.parquet` has no script** (closed 21 Nov 2026 by a checked reconstruction; see the rebuild entry). `build_lfmc.py` writes `data/proc/lfmc/lfmc_all.parquet`, but
   `build_gridmet.py` and `baselines_moisture.py` read `lfmc_us.parquet` (CONUS samples, a `date` column and Globe-LFMC's
   column names). The step that made it in the sandbox was not shipped. The `lfmc` build stage reports it missing.
 - **`moisture_split.json` is not in the zip.** The live-moisture split (10 % of Globe-LFMC sites, seed 20261118 + 3)
@@ -102,9 +102,8 @@ They need the FEDS-MTBS progression and gridMET, which are not in the zip.
 ## Data hosts (record failures in `help_wanted`; do not route around them)
 
 From `data/DATA.md` section 7: NFMD dead-fuel sticks (wfas.net 404, moved into FEMS, no public download), RAWS via
-Synoptic (key needed), FIRMS (MAP_KEY needed; not used). No download stage was run on import. The FPA-FOD URL in
-`build.py` follows the RDS archive's file naming and was not tested; if it fails, download the GeoPackage zip from the
-RDS-2013-0009.6 page by hand.
+Synoptic (key needed), FIRMS (MAP_KEY needed; not used). No download stage was run on import. The FPA-FOD GeoPackage
+link was renamed by the archive (Format2 to Format3); see the 2026-11-21 rebuild entry below.
 
 ## Next
 
@@ -175,3 +174,30 @@ rung re-scored. Not measured here; the analytic checks (constant weather) cannot
   numbers, taken at night, were 12.60 % and r = 0.681. moisture.json is updated for those two values only. The FWI
   check's xclim season comparison now has different inputs from the shipped xclim output, so without
   firesim/.refenv it is skipped rather than compared. Test: test_fwi_daily_inputs_are_taken_at_local_noon.
+
+## 2026-11-21 — Rebuild, first four download stages (gofer, fpafod, lfmc, feds)
+
+Run on Windows from the main checkout with `.venv` (Python 3.14) and the `fire-data` extra installed. About 1.1 GB
+downloaded, 7 min in all. Raw files are in `data/raw/` (git-ignored): FEDS-MTBS 619 MB, GOFER 828 MB with its unpacked files,
+FPA-FOD 211 MB, Globe-LFMC 70 MB.
+
+- **FEDS-MTBS:** 7,739 fires, 171 MB processed (as the handoff recorded). All 29 columns `fires_raw.parquet` shares
+  with the frozen `fires.parquet` match for every fire, except how missing text is stored (NaN vs None). The
+  perimeters, fire lines and VIIRS pixels have no shipped hashes to check against.
+- **GOFER:** 28 fires, 20,301 progression rows. **FPA-FOD:** 1,593,067 CONUS records 2001-2020 (handoff: 1.59 M).
+- **Three fixes to the scripts, none changing outputs:**
+  - The FPA-FOD link `..._Data_Format2_GPKG.zip` returns 404. The RDS-2013-0009.6 catalog page lists the same
+    edition's GeoPackage as `..._Data_Format3_GPKG.zip` (221 MB, same host). `build.py` now uses it.
+  - figshare names the Globe-LFMC file `Globe-LFMC-2.0 final.xlsx` (a space). `build.py` now matches either spelling
+    and saves it under the underscore name `build_lfmc.py` reads.
+  - `build_feds.py` imported `resource`, which is POSIX only, for the sandbox's 1.1 GB memory guard. On Windows the
+    guard is skipped.
+- **`lfmc_us.parquet` gap closed (reconstruction):** new `data/scripts/build_lfmc_us.py`, run by the `lfmc` stage. It
+  keeps Country == 'USA' without Alaska (238,997 rows, 1,244 sites, 1977-2023) and adds `date`. Checked against
+  the shipped `proc/baselines/moisture_exam.json`: with `baselines_moisture.py`'s filters it gives exactly 1,167
+  sites and 15,361 dev + 138,113 exam samples, and the seeded site split gives exactly 122 dev sites. So
+  `moisture_split.json`, when the `baselines` stage writes it, should match the frozen one. It is still not
+  byte-checked, because the shipped file was never in the zip.
+- `verify`: 230 of 230 shipped files identical, splits OK, loader smoke test passes (40 dev fires, 4,197 exam fires).
+- Not run yet: `wsts` (5 h or more), `gridmet` (tens of GB transferred), `landscapes` for the 48 replay fires,
+  `baselines`. The exams are not re-scored.
