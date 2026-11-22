@@ -291,7 +291,8 @@ def _u1_ring(n=31, radius=5.0, hours=12.0, physics="p2"):
     ls["fuel"][:] = 102
     ls["slope"][:] = 0
     start = pd.Timestamp("2020-08-01 18:00", tz="UTC")
-    w = fs.generate_weather(start - pd.Timedelta(hours=72), hours=120, climate="west_dry_summer", lon=-110, rng=3)
+    w = fs.generate_weather(start - pd.Timedelta(hours=72), hours=120, climate="west_dry_summer", lon=-110, rng=3,
+                            physics=physics)
     yy, xx = np.mgrid[:n, :n]
     inside = np.hypot(yy - n // 2, xx - n // 2) < radius
     ring4 = ndi.binary_dilation(inside) & ~inside                  # diagonal neighbours touch only at corners
@@ -475,6 +476,35 @@ def test_u11_knight_step_does_not_cross_a_line_built_mid_step():
     assert east("p2", 1e-5) == 0
     assert east("p1", 1e-5) > 100                 # the p1 leak, kept for reproduction
     assert east("p2", 0.05) > 100                 # the fire reaches the line cell (about 0.03 h) before it is built
+
+
+def test_ignition_on_a_finished_line_does_not_spread():
+    """PR #10 review: p2 skipped the line check on a segment's source cell, so an ignition placed on a line already
+    built (or a scheduled one after the line) spread outward. As in p1, such a source burns but does not spread."""
+    import pandas as pd
+    import firesim as fs
+    ls = _grass()
+    s = pd.Timestamp("2021-08-02 18:00", tz="UTC")
+    w = _given_weather(s, 4)
+    line = np.zeros(ls.shape, bool)
+    line[15, 15] = True
+    for physics, t_ign in (("p2", 0.0), ("p2", 1.0), ("p1", 0.0)):
+        a = fs.simulate(ls, w, {"rowcol": [(15, 15)], "time": t_ign}, s, s + pd.Timedelta(hours=2),
+                        moisture="given", params={"physics": physics}, rng=0, return_perimeters=False,
+                        suppression={"lines": [{"mask": line, "time": 0.0}]})["rasters"]["arrival_time"]
+        assert int(np.isfinite(a).sum()) <= 1, (physics, t_ign)
+
+
+def test_check_physics_switch_reaches_the_weather_generator():
+    """PR #10 review: FIRESIM_PHYSICS=p1 (and physics('p1') here) must give p1 generated weather too, or the FWI,
+    moisture and speed checks compare p2 weather against shipped p1 results."""
+    import pandas as pd
+    import firesim as fs
+    s = pd.Timestamp("2021-07-01 00:00", tz="UTC")
+    with physics("p1"):
+        w = fs.generate_weather(s, hours=120, lon=-120.0, rng=0, p_wet=0.3)
+    assert w.attrs["physics"] == "p1"
+    assert w.equals(fs.generate_weather(s, hours=120, lon=-120.0, rng=0, p_wet=0.3, physics="p1"))
 
 
 def test_u9_two_point_update_follows_a_weather_slowdown():

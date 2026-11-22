@@ -396,7 +396,13 @@ def run_mtt(ny, nx, res_m, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd,
                 s0 = seg_start[o]
                 for s in range(s0, s0 + seg_n[o]):
                     cs = (cy + seg_dy[s]) * nx + cx + seg_dx[s]
-                    if s > s0:
+                    if s == s0:
+                        # a source already lined at its own arrival (an ignition on a finished line) does not spread,
+                        # as in p1 (PR #10 review)
+                        if t_block[cs] <= tt:
+                            blocked = True
+                            break
+                    else:
                         if fuel_row[cs] < 0 or t_block[cs] <= tt:
                             blocked = True
                             break
@@ -514,6 +520,8 @@ def run_mtt(ny, nx, res_m, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd,
                         cw = wy * nx + wx
                         if not done[cw] or fuel_row[cw] < 0:
                             continue
+                        if p2 and t_block[cw] <= arrival[cw]:
+                            continue                        # w was lined when it ignited: not a source
                         okw = True
                         for s_ in range(seg_start[opp[ow]], seg_start[opp[ow]] + seg_n[opp[ow]]):
                             if fuel_row[(wy + seg_dy[s_]) * nx + wx + seg_dx[s_]] < 0:

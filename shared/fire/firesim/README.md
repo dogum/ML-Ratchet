@@ -215,7 +215,7 @@ Nominal overpasses come from a sun-synchronous orbit model with the real equator
   - non-burnable features: rock, lakes, rivers along flow paths, roads, agriculture, urban
   - latent fields and settings in `.meta['labels']`
 - `kind='real'` cuts a non-exam window from B's real landscapes (see "Real data").
-- `fs.generate_weather(start, hours, climate=..., lat, lon, rng, physics='p2', **overrides)`:
+- `fs.generate_weather(start, hours, climate=..., lat, lon, rng, physics=None, **overrides)` (None: FireSim's default physics):
   - AR(1) daily synoptic anomalies
   - diurnal temperature and RH, with overnight recovery
   - an afternoon wind peak and a night slow-down

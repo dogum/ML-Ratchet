@@ -177,7 +177,7 @@ CLIMATES = {
 
 
 def generate_weather(start, hours=72, climate='west_dry_summer', lat=40.0, lon=-115.0, rng=None, kind='parametric',
-                     physics='p2', **over):
+                     physics=None, **over):
     """Stochastic hourly fire weather in the contract format.
 
     Daily synoptic anomalies (AR(1), lag-1 0.7) drive Tmax/Tmin, afternoon RH and wind. Within a day: temperature
@@ -186,7 +186,8 @@ def generate_weather(start, hours=72, climate='west_dry_summer', lat=40.0, lon=-
     (foehn/Santa Ana-like: strong wind from `event_dir`, very low RH, poor overnight recovery) occur with
     probability p_event per day and last 1-3 days. Wet days follow a Markov chain; rain falls in the afternoon.
     Returns a DataFrame; df.attrs holds the climate, the event days and the latent anomalies (labels).
-    physics='p2' (22 Nov 2026, U10) applies each day's event and wet flags to that local solar day's hours, the day
+    physics=None takes FireSim's default (simulate.DEFAULTS['physics']). 'p2' (22 Nov 2026, U10) applies each
+    day's event and wet flags to that local solar day's hours, the day
     hourly_from_daily lays out; 'p1' used the UTC date (at lon = -120 a day's last 8 hours took the next day's flags).
     kind='real': real HRRR hours from B's dev-fire packages instead (realdata.random_weather; exam-guarded).
     """
@@ -232,6 +233,9 @@ def generate_weather(start, hours=72, climate='west_dry_summer', lat=40.0, lon=-
     h = hourly_from_daily(daily, lat, lon, wind_amp=0.5)
     # events: weaker night slow-down (downslope winds persist) and diurnal direction swing otherwise
     lst = ((h.index.hour + lon / 15.0) % 24).to_numpy()
+    if physics is None:
+        from .simulate import DEFAULTS
+        physics = DEFAULTS['physics']
     if physics == 'p2':
         dnorm = pd.DatetimeIndex(_local_days(h.index, days, lon))
     elif physics == 'p1':
