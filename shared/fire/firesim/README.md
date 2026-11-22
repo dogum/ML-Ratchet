@@ -142,6 +142,7 @@ out = fs.simulate(landscape, weather, ignition, start, end, dt='1h', spread='rot
 | `ros_factor` | a raster multiplier |
 | `stencil` | 8, 16 or 32 |
 | `simplex` | two-point updates on or off |
+| `physics` | `'p2'` (default since 22 Nov 2026) or `'p1'`, the solver the v1.0 fire models were built and scored with; `'p1'` reproduces it exactly, bugs included (see "Physics versions") |
 | `moisture_spinup_h` | default 72 |
 | `nelson` | Nelson model parameter overrides |
 | spotting | `ember_rate`, `spot_med_frac`, `spot_sigma`, `spot_dir_sd`, `spot_p_est`, `spot_delay_h`, `spot_surface_fli`, `shade` |
@@ -149,7 +150,7 @@ out = fs.simulate(landscape, weather, ignition, start, end, dt='1h', spread='rot
 **Barriers and suppression:**
 - `barriers`: a bool raster, `{'mask': ...}` or `{'lines': [...], 'width_cells': 1}`. These cells become non-burnable.
 - `suppression`:
-  - `{'lines': [{'lines' or 'mask', 'time'}]}`: control lines that block spread after their build time
+  - `{'lines': [{'lines' or 'mask', 'time'}]}`: control lines that block spread after their build time. Under p2 a line cell stops the fire if it is finished before the fire enters the cell, also mid-step and at a diagonal corner
   - `'ros_factor'`: a raster, e.g. retardant
   - `'initial_attack'`: `{start_h, line_rate_m_per_h, lw}`. Fried & Fried 1996-style containment: line built since `start_h` vs the perimeter of an ellipse of the burned area. The run stops when the line wins.
 - `fs.generate.fuel_treatment(ls, mask, kind='thin'|'prescribed_burn'|'masticate'|'fuelbreak'|'nonburnable')` edits a landscape.
@@ -214,7 +215,7 @@ Nominal overpasses come from a sun-synchronous orbit model with the real equator
   - non-burnable features: rock, lakes, rivers along flow paths, roads, agriculture, urban
   - latent fields and settings in `.meta['labels']`
 - `kind='real'` cuts a non-exam window from B's real landscapes (see "Real data").
-- `fs.generate_weather(start, hours, climate=..., lat, lon, rng, **overrides)`:
+- `fs.generate_weather(start, hours, climate=..., lat, lon, rng, physics='p2', **overrides)`:
   - AR(1) daily synoptic anomalies
   - diurnal temperature and RH, with overnight recovery
   - an afternoon wind peak and a night slow-down
@@ -259,7 +260,7 @@ Nominal overpasses come from a sun-synchronous orbit model with the real equator
 - Dijkstra over a 16-cell stencil (default; `level_set` = 32 cells, `ca` = 8 cells).
 - Edge times are integrated cell by cell along each straight segment, and through the hourly weather steps.
 - Two-point "simplex" updates (a semi-Lagrangian step from the segment between two accepted neighbours) remove most of the stencil's direction bias. Without them, a 16-neighbour MTT underestimates elongated ellipses by up to 36 %; with them, by at most 6 % (see "Checks").
-- Segments through a grid corner are blocked when both side cells are non-burnable.
+- Segments through a grid corner are blocked when both side cells are non-burnable, or (p2) lined by the time the fire reaches the corner.
 - Edges whose integration already exceeds the current best arrival are pruned. This is exact and gives a 2x speed-up.
 - The vertex-based Huygens method (FARSITE) is **not** implemented. `method='huygens'` raises an error and points to `mtt` / `level_set`, which give the same elliptical shapes.
 
@@ -293,6 +294,25 @@ Nominal overpasses come from a sun-synchronous orbit model with the real equator
 **Diurnal cycle.** It comes from the hourly weather: overnight RH recovery, and slower night winds through the moisture model and the WAF. The generators reproduce it.
 
 **FWI.** Van Wagner & Pickett 1985 / Van Wagner 1987, following Wang et al. 2015.
+
+### Physics versions
+
+`params['physics']` picks the solver; `generate_weather(physics=...)` the weather generator. p1 is what Phase 1
+shipped and every v1.0 fire model used. p2 (22 Nov 2026) fixes four bugs found on import:
+
+| Bug | p1 behaviour | p2 |
+|---|---|---|
+| U1 | the corner rule ignored timed suppression lines, so fire stepped diagonally through a 4-connected line | a side cell counts as blocked once its line is built |
+| U9 | the two-point update used the departure hour's spread rates for the whole trip | the trip is integrated through the hourly weather |
+| U10 | `generate_weather` applied daily event and wet flags by UTC date | by the local solar day `hourly_from_daily` laid out |
+| U11 | every cell of a multi-cell step was checked against the departure time | each cell against the time the fire enters it |
+
+p2 also walks each straight segment cell by cell through the weather hours. p1 spread the segment's
+progress evenly over its cells when a step crossed an hour. In constant weather p2 equals p1 to 2e-7 h, and every
+analytic check below is unchanged (largest relative change 1.5e-5; `checks/p2/analytic.json`). In generated
+weather, burned area changes by -2.4 % to +0.2 % without spotting (`shared/fire/STATUS.md`), and a diagonal line of single
+cells now holds. The kernel is 5-8 % slower (`checks/p2/speed.json`). The JSON files in `checks/` are p1;
+`FIRESIM_PHYSICS=p1` re-runs a check script with p1.
 
 ## Checks (shared/fire/checks/*.json)
 

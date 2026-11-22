@@ -88,6 +88,19 @@ def check_weather(w):
     return w
 
 
+def _utc_hours(times):
+    """hourly_from_daily's UTC hour for each local-solar-hour time (naive UTC): nearest hour, ties up."""
+    return (pd.DatetimeIndex(times).tz_localize('UTC').round('s') + pd.Timedelta(seconds=1)).round('h')
+
+
+def _local_days(index, days, lon):
+    """The local solar day hourly_from_daily laid each UTC hour of `index` out from (same rounding, first kept)."""
+    off = lon / 15.0
+    t = [pd.Timestamp(d) + pd.Timedelta(hours=hh - off) for d in days for hh in range(24)]
+    mp = pd.Series(np.repeat(np.asarray(days, 'datetime64[ns]'), 24), index=_utc_hours(t))
+    return mp[~mp.index.duplicated()].reindex(index).to_numpy()
+
+
 def hourly_from_daily(daily, lat, lon, t_peak_lst=15.0, wind_amp=0.45, rh_from='minmax'):
     """Disaggregate daily weather (gridMET-like) to hourly in the contract.
 
@@ -132,7 +145,7 @@ def hourly_from_daily(daily, lat, lon, t_peak_lst=15.0, wind_amp=0.45, rh_from='
     # Round to the hour with ties going up: for longitudes whose solar offset ends in half an hour (lon = -112.5),
     # pandas' round-half-to-even sent alternate hours onto the same timestamp and the dedup below dropped half the
     # series (PR #7 review, 21 Nov 2026). Other longitudes are unchanged.
-    out.index = (pd.DatetimeIndex(out.index).tz_localize('UTC').round('s') + pd.Timedelta(seconds=1)).round('h')
+    out.index = _utc_hours(out.index)
     out = out[~out.index.duplicated()]
     if 'srad' in d:
         cs = clear_sky_ghi(out.index, lat, lon)
@@ -164,7 +177,7 @@ CLIMATES = {
 
 
 def generate_weather(start, hours=72, climate='west_dry_summer', lat=40.0, lon=-115.0, rng=None, kind='parametric',
-                     **over):
+                     physics='p2', **over):
     """Stochastic hourly fire weather in the contract format.
 
     Daily synoptic anomalies (AR(1), lag-1 0.7) drive Tmax/Tmin, afternoon RH and wind. Within a day: temperature
@@ -173,6 +186,8 @@ def generate_weather(start, hours=72, climate='west_dry_summer', lat=40.0, lon=-
     (foehn/Santa Ana-like: strong wind from `event_dir`, very low RH, poor overnight recovery) occur with
     probability p_event per day and last 1-3 days. Wet days follow a Markov chain; rain falls in the afternoon.
     Returns a DataFrame; df.attrs holds the climate, the event days and the latent anomalies (labels).
+    physics='p2' (22 Nov 2026, U10) applies each day's event and wet flags to that local solar day's hours, the day
+    hourly_from_daily lays out; 'p1' used the UTC date (at lon = -120 a day's last 8 hours took the next day's flags).
     kind='real': real HRRR hours from B's dev-fire packages instead (realdata.random_weather; exam-guarded).
     """
     if kind == 'real':
@@ -217,7 +232,12 @@ def generate_weather(start, hours=72, climate='west_dry_summer', lat=40.0, lon=-
     h = hourly_from_daily(daily, lat, lon, wind_amp=0.5)
     # events: weaker night slow-down (downslope winds persist) and diurnal direction swing otherwise
     lst = ((h.index.hour + lon / 15.0) % 24).to_numpy()
-    dnorm = h.index.tz_convert(None).normalize()
+    if physics == 'p2':
+        dnorm = pd.DatetimeIndex(_local_days(h.index, days, lon))
+    elif physics == 'p1':
+        dnorm = h.index.tz_convert(None).normalize()
+    else:
+        raise ValueError(f"physics must be 'p1' or 'p2', not {physics!r}")
     ev_h = pd.Series(event, index=days).reindex(dnorm, method='ffill').to_numpy().astype(bool)
     swing = 30.0 * np.sin(2 * np.pi * (lst - 9.0) / 24.0) * (~ev_h)
     h['wind_dir'] = (h['wind_dir'] + swing) % 360.0
@@ -228,6 +248,6 @@ def generate_weather(start, hours=72, climate='west_dry_summer', lat=40.0, lon=-
     # keep the hour that contains a fractional start (PR #7 review, 21 Nov 2026); on-the-hour starts are unchanged
     h = h[(h.index >= start.floor('h')) & (h.index < start + pd.Timedelta(hours=hours))]
     h = ensure_srad(h, lat, lon)
-    h.attrs = dict(lat=lat, lon=lon, climate=c, event_days=[str(d.date()) for d in days[event]],
+    h.attrs = dict(lat=lat, lon=lon, physics=physics, climate=c, event_days=[str(d.date()) for d in days[event]],
                    wet_days=[str(d.date()) for d in days[wet]])
     return h

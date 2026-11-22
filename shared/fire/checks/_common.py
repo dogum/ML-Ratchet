@@ -13,6 +13,12 @@ sys.path.insert(0, os.path.join(_CODE, 'firesim'))
 sys.path.insert(0, _CODE)
 import numpy as np  # noqa: E402
 
+# FIRESIM_PHYSICS=p1 re-runs a check with the solver the v1.0 models used (checks/*.json were made with it);
+# unset, the checks run FireSim's default physics (p2 since 22 Nov 2026; its results are in checks/p2/).
+if os.environ.get('FIRESIM_PHYSICS'):
+    from firesim.simulate import DEFAULTS as _D  # noqa: E402 (the package name `simulate` is the function)
+    _D["physics"] = os.environ["FIRESIM_PHYSICS"]
+
 CHECKS = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(FIRE_ROOT, 'checks', 'out')
 os.makedirs(OUT, exist_ok=True)
