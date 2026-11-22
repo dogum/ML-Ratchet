@@ -209,3 +209,17 @@ Found on import (recorded, not fixed):
 - **U1 touches every outcome here.** The leak is in FireSim's kernel, which scored every training target, the ratchet
   and the exam. FirePilot avoids it with 8-connected lines whose cells share the 4-connected length, so a fix (physics
   p2) means rebuilding the frozen sets and re-scoring every rung and baseline. Recorded in `model.yaml` limits and next.
+
+## 2026-11-22 — exam re-run on rebuilt data (reproduction check, nothing chosen)
+
+The 48 replay fires' landscapes and HRRR were rebuilt from LANDFIRE and AWS on Windows. `firepilot_weights.npz` was
+copied to `work/models/r1.npz` (build_release.py copied it the other way) and `exam.py A`, `B` (12 shards, numba
+0.68) and `summary` ran once into `work/results/`. Stage B finished all 48 fires, as shipped.
+- **Planner outcomes reproduce:** all 324 numbers in `exam_summary.json`'s planner tables match within 2e-9. Share of
+  growth stopped 0.474 / 0.644 (300 / 1000 m/h); perfect-foresight bound 0.614 / 0.792; r0 0.365 / 0.524.
+- **Fidelity Dice on total area does not, because of a later fix.** With the current FireSim the 24 h median is
+  0.494 (shipped 0.484) and the 48 h median 0.4355 (0.435); 72 h, F1 on new area and persistence are unchanged.
+  Running the same 48 fires with FireSim as imported (bcaf80b) gives the shipped 0.4836 / 0.435 / 0.405 exactly. The
+  cause is the 21 Nov PR #7 review fix that burns a mask ignition's interior at t = 0: in the free run, pockets
+  inside the first detected perimeter used to burn later, which lowered Dice on the total area at 24-48 h. Planner
+  outcomes score growth outside the start mask and are unaffected.

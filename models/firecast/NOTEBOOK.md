@@ -205,3 +205,21 @@ firecast.py, training/src/features.py and the site instrument: off-grid footprin
 On-grid detections give identical rasters; the golden demo and the 35 instrument parity cases are unchanged. The exam
 was scored with the old code; real-day detections come from the fire's own FEDS record inside a crop with a 10 km
 margin, so few if any can be affected, but this was not re-scored.
+
+## 2026-11-22 — exam re-run on rebuilt data (reproduction check, nothing chosen)
+
+The sandbox's exam loaded torch checkpoints that were not shipped. `training/src/rescore_np.py` runs `exam.py`
+unchanged except that the net is the released numpy forward pass (`FireCastNP` on `firecast_weights.npz`, rung r2),
+writing to `work/`. Inputs were the rebuilt FEDS-MTBS, gridMET and replay landscapes (21–22 Nov), and the current
+features.py, so the off-grid footprint fix above is included.
+- 3,030 fires, 25,105 fire-days, as shipped. about 9,700 s on one CPU (3.2 s per fire).
+- All 616 metric numbers in `training/results/exam_summary_r2.json` match within 3.7e-5 (largest: one reliability
+  bin's observed rate, 0.60976 vs 0.60980). AP 0.323, F1 0.239, fl_prev AP 0.252; AP win rate over fl_prev 71.45%
+  and F1 win rate 50.09%, identical.
+- 16 of 45 reliability-bin counts differ, by at most 24 cells in 1.3 billion (relative 1e-4): cells moving across a
+  bin edge. These can come from numpy vs torch float order or from the footprint fix; not separated.
+- Calibrated physics replay rebuilt for the 48 replay fires: 627 replay days, ensemble AP 0.165, deterministic 0.150,
+  FireCast F 0.351 and L 0.355 on the same days, as shipped. Fire-days whose crop exceeds the memory cap are skipped
+  inside the replay, as in the sandbox.
+- My slip: a second copy of the run was started by mistake and appended two fires twice before it was stopped. The
+  rows were byte-identical; the second copies were removed before scoring.
