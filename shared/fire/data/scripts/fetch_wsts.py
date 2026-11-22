@@ -110,6 +110,8 @@ def do_full(f, days):
 
 if __name__ == '__main__':
     mode = sys.argv[1]
+    os.makedirs(f'{PROC}/meta', exist_ok=True)      # the sandbox had these folders; a fresh data root does not
+    os.makedirs(f'{PROC}/fires', exist_ok=True)
     F = fires()
     order = sorted(F)
     if len(sys.argv) > 2:

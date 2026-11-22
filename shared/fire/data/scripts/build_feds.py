@@ -80,8 +80,11 @@ def year(yr):
         except Exception as e:
             print('FAIL', n, repr(e), flush=True)
         os.remove(fn)
-        import resource
-        rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1e3
+        try:
+            import resource             # POSIX only; the guard was for the sandbox's memory cap
+            rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1e3
+        except ImportError:             # Windows: no guard (outputs are unchanged either way)
+            rss = 0.0
         if k % 200 == 0 or rss > 900: print(yr, k, len(names), ev, f'maxrss {rss:.0f} MB', flush=True)
         if rss > 1100: raise MemoryError(f'RSS {rss} MB at {ev}')
     P = pd.concat(P, ignore_index=True); L = pd.concat(L, ignore_index=True)

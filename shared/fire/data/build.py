@@ -35,8 +35,9 @@ Stages (in order), with their size and time where the handoff recorded them (19 
   fpafod     FPA-FOD 6th ed. (USFS RDS-2013-0009.6) GeoPackage zip, then build_fpafod.py -> data/proc/fpafod/fod.parquet
              (1.59 M CONUS records 2001-2020). The 0.93 GB extracted GeoPackage is deleted after; the zip is kept.
   lfmc       Globe-LFMC 2.0 (figshare 25413790, CC0) xlsx, then build_lfmc.py -> data/proc/lfmc/lfmc_all.parquet.
-             KNOWN GAP (found on import, 21 Nov 2026): gridmet and the moisture baselines read lfmc_us.parquet (CONUS
-             only, with `date` and renamed columns), and no shipped script writes it. This stage reports it missing.
+             Then build_lfmc_us.py -> lfmc_us.parquet (CONUS, with `date`), which gridmet, the moisture baselines and
+             FireDetective read. That step was not shipped; it was reconstructed on 21 Nov 2026 and checked against
+             moisture_exam.json's site and sample counts (shared/fire/STATUS.md).
   gridmet    build_gridmet.py: gridMET daily at fire centroids, FPA-FOD points and Globe-LFMC sites, 2012-2024, from
              northwestknowledge.net. 12 variables x 13 years of 100-300 MB files, each downloaded, read and deleted
              (tens of GB of transfer, many hours). Needs fpafod and lfmc first.
@@ -94,7 +95,9 @@ FROZEN_TABLES = ('fires.parquet', 'firesize_split.parquet', 'guard/exam_footprin
 FEDS_RECORD = 'https://zenodo.org/api/records/20187963'            # FEDS-MTBS (Chen et al. 2022 method), CC BY 4.0
 FEDS_FILES = ('FEDS25MTBS.zip', 'fireslist_FEDS25MTBS_2012-2024.geojson')
 GOFER_RECORD = 'https://zenodo.org/api/records/14642378'           # GOFER-Combined (Liu et al.), CC BY 4.0
-FPAFOD_ZIP = 'https://www.fs.usda.gov/rds/archive/products/RDS-2013-0009.6/RDS-2013-0009.6_Data_Format2_GPKG.zip'
+FPAFOD_ZIP = 'https://www.fs.usda.gov/rds/archive/products/RDS-2013-0009.6/RDS-2013-0009.6_Data_Format3_GPKG.zip'
+# (was ..._Format2_GPKG.zip in the handoff; that link returned 404 on 21 Nov 2026 and the catalog page lists the same
+# edition's GeoPackage as Format3, 221 MB)
 FPAFOD_PAGE = 'https://www.fs.usda.gov/rds/archive/catalog/RDS-2013-0009.6'
 LFMC_ARTICLE = 'https://api.figshare.com/v2/articles/25413790'     # Globe-LFMC 2.0 (Yebra et al. 2024), CC0
 LFMC_FILE = 'Globe-LFMC-2.0_final.xlsx'
@@ -348,7 +351,8 @@ def stage_lfmc():
     xl = RAW / 'lfmc' / LFMC_FILE
     if not xl.exists():
         art = api_json(LFMC_ARTICLE) or {}
-        f = next((f for f in art.get('files', []) if f.get('name') == LFMC_FILE), None)
+        # figshare lists it as 'Globe-LFMC-2.0 final.xlsx' (a space, 21 Nov 2026); build_lfmc.py reads the underscore name
+        f = next((f for f in art.get('files', []) if f.get('name', '').replace(' ', '_') == LFMC_FILE), None)
         if not f or not download(f['download_url'], xl):
             log('  Globe-LFMC: put', LFMC_FILE, 'in', xl.parent, '(figshare 10.6084/m9.figshare.25413790)')
             return {'missing': str(xl)}
@@ -357,9 +361,8 @@ def stage_lfmc():
         if rc:
             return rc
     if not (PROC / 'lfmc' / 'lfmc_us.parquet').exists():
-        log('  lfmc_us.parquet is missing: no shipped script writes it from lfmc_all.parquet (CONUS filter, `date`'
-            ' column). gridmet and the moisture baselines need it. Known gap, recorded in shared/fire/STATUS.md.')
-        return {'missing': str(PROC / 'lfmc' / 'lfmc_us.parquet')}
+        # reconstructed on import (the sandbox step was not shipped); checked against moisture_exam.json's counts
+        return steps(('build_lfmc_us.py',))
     return 0
 
 
