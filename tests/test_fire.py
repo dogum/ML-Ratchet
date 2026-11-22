@@ -478,6 +478,36 @@ def test_u11_knight_step_does_not_cross_a_line_built_mid_step():
     assert east("p2", 0.05) > 100                 # the fire reaches the line cell (about 0.03 h) before it is built
 
 
+def test_u12_a_line_built_after_a_cell_burns_does_not_change_that_cell():
+    """U12 (p2, 22 Nov 2026): when the straight step to a cell met that cell's line before arriving, p1 counted the
+    step as blocked and skipped the two-point update, which can arrive hours earlier. A line could then stop fire
+    that reached its cell before the line was built (FirePilot's direct attack: a cell reached at 0.995 h stayed
+    unburned under a line built at 5 h). Here: each of 40 burned cells gets a one-cell line finished 0.02 h after
+    the no-line arrival; that cell's arrival must not change. p1 fails 3 of 40."""
+    import pandas as pd
+    import firesim as fs
+    ls = fs.generate_landscape((60, 60), 90.0, kind="parametric", region="great_basin", rng=1)
+    s = pd.Timestamp("2021-08-02 18:00", tz="UTC")
+    w = fs.generate_weather(s - pd.Timedelta(hours=72), hours=120, lon=-110, rng=3, physics="p2")
+    e = s + pd.Timedelta(hours=24)
+
+    def changed(physics):
+        kw = dict(rng=0, return_perimeters=False, params={"physics": physics})
+        a = fs.simulate(ls, w, {"rowcol": [(30, 30)]}, s, e, **kw)["rasters"]["arrival_time"]
+        cells = np.argwhere(np.isfinite(a) & (a > 2))
+        cells = cells[np.random.default_rng(0).choice(len(cells), 40, replace=False)]
+        n = 0
+        for y, x in cells:
+            m = np.zeros(a.shape, bool)
+            m[y, x] = True
+            b = fs.simulate(ls, w, {"rowcol": [(30, 30)]}, s, e, suppression={"lines": [{"mask": m,
+                            "time": float(a[y, x]) + 0.02}]}, **kw)["rasters"]["arrival_time"]
+            n += not (np.isfinite(b[y, x]) and abs(b[y, x] - a[y, x]) < 1e-9)
+        return n
+    assert changed("p2") == 0
+    assert changed("p1") == 3
+
+
 def test_ignition_on_a_finished_line_does_not_spread():
     """PR #10 review: p2 skipped the line check on a segment's source cell, so an ignition placed on a line already
     built (or a scheduled one after the line) spread outward. As in p1, such a source burns but does not spread."""

@@ -272,3 +272,25 @@ notebook said about 154 MB). `exam.py ../../firesize_weights.npz` then ran once 
 difference is 7.8e-16 (escape AUC 0.727, large-fire AUC 0.815, n = 655,869). Run time 52 s (sandbox 146 s).
 `baselines_firesize.py` re-run on the rebuilt data matches the shipped `firesize_exam.json` to 6.0e-7 (only the ERC
 rows move, at float32 rounding); the shipped file was put back afterwards.
+
+## 2026-11-22 — r7 scored on a FireSim physics p2 frozen set; the p1 rebuild does not reproduce exactly
+
+FireSize's inference never calls FireSim; its spread-rate features come from `ros_lut.npz`, made with behave(). So
+the exam cannot change. Only the simulated frozen set can.
+- **Code:** `sim.py` gets physics keys `v1p1` and `v1p2` (v1 with FireSim's solver named). `fetch_windows.py frozen
+  N` fetches only the frozen-set windows of the first N train ignitions.
+- **Rebuild steps:** `prior.py` (ignitions and windows; seeded), `fetch_windows.py frozen 8500` (147 LFPS windows),
+  `gridmet_pts.py` (gridMET 2011-2020 at all 20,107 ignition points; 1.8 % of values missing), `trainfeat.py`, and the sim columns of
+  `physfeat.build_tables`. Then `simbank.py train 1 v1p1 8500` and the same for `v1p2`, 1,175 sims each at 0.21 s.
+- **Scoring:** r7 = `firesize_weights.npz` with temp 1, scored with `train.score_sim` on `v1p1|v1rep2` and
+  `v1p2|v1rep2`.
+- **p1 rebuild vs shipped:**
+  - n 1,175 and the predicted escape rate (0.016978) match, so the network inputs reproduce.
+  - The simulated labels do not: simulated escape rate 1.563 % against 1.445 %. So RPSS is 0.2841 against 0.2799,
+    and escape AUC 0.8613 against 0.8744.
+  - The likely causes are the live LANDFIRE windows or the 30-day gridMET series behind the simulations; neither was
+    shipped, so this is not checked.
+- **p2 vs the p1 rebuild (same inputs, paired seeds):** RPSS 0.2841 → 0.2846; escape AUC 0.8613 both; simulated
+  escape rate 1.563 % → 1.536 %. p2 changes FireSize's set by almost nothing; the solver acts only on fires above
+  about 8 acres.
+- Only r7's weights were shipped; no decision was re-taken.

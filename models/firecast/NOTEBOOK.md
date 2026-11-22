@@ -223,3 +223,19 @@ features.py, so the off-grid footprint fix above is included.
   inside the replay, as in the sandbox.
 - My slip: a second copy of the run was started by mistake and appended two fires twice before it was stopped. The
   rows were byte-identical; the second copies were removed before scoring.
+
+## 2026-11-22 — r2 scored on a FireSim physics p2 frozen set (nothing re-decided)
+
+FireSim's solver is now p2 (U1, U9, U10, U11, U12 fixed; `shared/fire/STATUS.md`). FireCast's own "p1" is its
+priors file. `simbank.py` now passes FireSim's solver from the priors file: absent means p1, the solver every
+shipped bank used. `phys/p2.json` is `p1.json` plus `"physics": "p2"`.
+- **p1 rebuild:** the val split was rebuilt with `simbank.py p1 val`. The shipped attempt count was not recorded;
+  300 attempts (12 shards) keep 149 fires, as shipped. r2 (released numpy weights, `rescore_np.py`'s loader) scores
+  AP F 0.586571 and L 0.595789 against the shipped 0.586571 and 0.595789 (difference 2e-8). F1 matches exactly.
+- **p2 set:** the same 300 seeds keep 147 fires (564 fire-days). r2 scores AP F 0.5923 (+0.006) and L 0.5991
+  (+0.003); F1 F 0.3752 (+0.005).
+- **Why so little changes:** p2's line fixes do not apply here, because simbank's containment is a non-burnable
+  mask. The weather fix does not apply either, because the weather is real HRRR. What remains is U9 and the
+  cell-by-cell step.
+- Only r2's weights were shipped, so r0, r1 and r3 were not re-scored and no decision was re-taken. r2 was trained
+  on the p1 solver.

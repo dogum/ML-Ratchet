@@ -177,7 +177,10 @@ def point_growth(pr, cell, t_ign_k, tgrid):
 PHYS = {'v0': dict(ag=None, reloc=0),            # LANDFIRE as is: agriculture (93) and urban (91) never burn
         'v1': dict(ag=101, reloc=2),             # agriculture burns as GR1; NB ignition cell -> nearest burnable <= 2 cells
         'v1b': dict(ag=102, reloc=2),
-        'v1c': dict(ag=None, reloc=2)}
+        'v1c': dict(ag=None, reloc=2),
+        # 22 Nov 2026: v1 with FireSim's solver named. Plain versions use p1, the solver every shipped bank used.
+        'v1p1': dict(ag=101, reloc=2, fs='p1'),
+        'v1p2': dict(ag=101, reloc=2, fs='p2')}
 
 
 def run_one(ign, rs, ros_mult=None, tau0=None, physics='v0'):
@@ -214,7 +217,7 @@ def run_one(ign, rs, ros_mult=None, tau0=None, physics='v0'):
             r, c = int(max(r - k, 0) + j[0]), int(max(c - k, 0) + j[1])
     fuel_pt = fuel0
     fuel0 = int(ls['fuel'][r, c])
-    params = dict(ros_adjust={'all': ros_mult}, moisture_spinup_h=0)
+    params = dict(ros_adjust={'all': ros_mult}, moisture_spinup_h=0, physics=ph.get('fs', 'p1'))
     w = w[(w.index >= start - pd.Timedelta(hours=1)) & (w.index <= end + pd.Timedelta(hours=1))]
     if not (100 < fuel0 < 210):         # non-burnable ignition cell: the fire cannot spread
         z = np.zeros(len(TG), np.float32)

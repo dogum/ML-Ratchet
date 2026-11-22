@@ -20,7 +20,7 @@ SPIN = 72
 DEV = list(fd.fires('dev').Event_ID)
 LABELS = ['crown', 'crown_active', 'log_ros_adj', 'log_mfac', 'm1_eff', 'lfmc', 'wind', 'spot', 'ia', 'contained',
           'wind_regime', 'log_wf', 'area_km2', 'edge', 'parametric', 'cruz']
-PHYS = dict(v2=False, v3=False)
+PHYS = dict(v2=False, v3=False, fs='p1')
 
 
 @functools.lru_cache(64)
@@ -164,7 +164,7 @@ def one(seed):
     ls = fs.Landscape(meta=dict(crs='EPSG:5070', res_m=RES, transform=(lmeta['x0'], RES, 0.0, lmeta['y1'], 0.0, -RES),
                                 nodata=-9999, lat=wmeta['lat'], lon=lon), res_m=RES, **L)
     params = dict(ros_adjust={'all': ros_adj}, fmc=fmc, crown_spread='cruz2005' if cruz else 'rothermel1991',
-                  ember_rate=ember)
+                  ember_rate=ember, physics=PHYS['fs'])
     waf_fixed = -1.0
     if PHYS['v3'] and rng2.random() < 0.5:
         # v3: wind sensitivity. Half the sims use one unsheltered-style WAF for every cell, U(0.25, 0.6), instead of
@@ -279,6 +279,8 @@ def one(seed):
 def run(name, seed0, n_shards, shard=100):
     global LABELS
     PHYS['v3'] = name.endswith('_v3')
+    # FireSim physics: banks named *_p2_* use p2 (22 Nov 2026); every other name is the p1 solver the shipped banks used
+    PHYS['fs'] = 'p2' if '_p2_' in name else 'p1'
     PHYS['v2'] = name.endswith('_v2') or PHYS['v3']
     if PHYS['v2']:
         LABELS = LABELS + ['f_night', 'contain_q', 'contain_t']
