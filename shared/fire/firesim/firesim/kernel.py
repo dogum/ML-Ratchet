@@ -169,11 +169,43 @@ def dir_ros(st, theta, crown_mode, res3):
 
 
 @njit(cache=True)
+def _load_state(cs, kk, k, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd, ch, adj, bundles, bundle10,
+                u20_ftmin, wind_to, u10_kmh, m1_pct, fmc, crown_mode, wl_mode, lw_mode, lw_max, crown_ros_mult,
+                cache, cache_k, cache_la, cache_la_k, nla, out, st_full, tmp_bd):
+    """Fields 0-8 of cell cs's state at weather step kk into out (what dir_ros reads). Step k (the popped cell's
+    step) uses the float64 cache; any other step the float32 look-ahead cache, as the p1 segment code does."""
+    if kk == k:
+        if cache_k[cs] != k:
+            cell_state(cs, k, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd, ch, adj, bundles, bundle10,
+                       u20_ftmin, wind_to, u10_kmh, m1_pct, fmc, crown_mode, wl_mode, lw_mode, lw_max,
+                       crown_ros_mult, cache[cs], tmp_bd)
+            cache_k[cs] = k
+        for q_ in range(NLAS):
+            out[q_] = cache[cs, q_]
+    else:
+        sl = kk % nla
+        if cache_la_k[cs, sl] != kk:
+            cell_state(cs, kk, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd, ch, adj, bundles, bundle10,
+                       u20_ftmin, wind_to, u10_kmh, m1_pct, fmc, crown_mode, wl_mode, lw_mode, lw_max,
+                       crown_ros_mult, st_full, tmp_bd)
+            for q_ in range(NLAS):
+                cache_la[cs, sl, q_] = st_full[q_]
+            cache_la_k[cs, sl] = kk
+        for q_ in range(NLAS):
+            out[q_] = cache_la[cs, sl, q_]
+
+
+@njit(cache=True)
+def _side_blocked(c, fuel_row, t_block, tt):
+    return fuel_row[c] < 0 or t_block[c] <= tt
+
+
+@njit(cache=True)
 def run_mtt(ny, nx, res_m, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd, ch, adj, t_block,
             bundles, bundle10, u20_ftmin, wind_to, u10_kmh, m1_pct, tair, fmc, dt_w,
             crown_mode, wl_mode, lw_mode, lw_max, crown_ros_mult,
             off_dy, off_dx, off_len, seg_start, seg_n, seg_dy, seg_dx, seg_frac, corner_a, corner_b,
-            opp, nb_prev, nb_next, simplex,
+            opp, nb_prev, nb_next, simplex, p2, corner_j,
             ign_cells, ign_times, t_end,
             spot_on, spot_seed, ember_rate, spot_med_frac, spot_sigma, spot_dir_sd, spot_p_est, spot_delay_h,
             spot_surface_fli, shade,
@@ -207,6 +239,10 @@ def run_mtt(ny, nx, res_m, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd,
     cache_la = np.zeros((n, nla, NLAS), np.float32)
     tmp_bd = np.zeros(8)
     st_tmp = np.zeros(NS)
+    st_a = np.zeros(NS)      # p2 state buffers (segment walk; simplex v, u, w)
+    st_b = np.zeros(NS)
+    st_c = np.zeros(NS)
+    st_full = np.zeros(NS)
     res3 = np.zeros(3)
     nk = bundles.shape[0]
     K = off_dy.shape[0]
@@ -337,8 +373,8 @@ def run_mtt(ny, nx, res_m, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd,
             c2 = ny2 * nx + nx2
             if done[c2] or fuel_row[c2] < 0:
                 continue
-            # corner rule: a segment through a grid corner is blocked if both side cells cannot burn
-            if corner_a[o, 0] != -999:
+            # corner rule (p1): a segment through a grid corner is blocked if both side cells cannot burn
+            if not p2 and corner_a[o, 0] != -999:
                 ca = (cy + corner_a[o, 0]) * nx + cx + corner_a[o, 1]
                 cb = (cy + corner_b[o, 0]) * nx + cx + corner_b[o, 1]
                 if fuel_row[ca] < 0 and fuel_row[cb] < 0:
@@ -351,7 +387,62 @@ def run_mtt(ny, nx, res_m, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd,
             kk = k
             blocked = False
             pruned = False
-            while True:
+            if p2:
+                # Physics p2 (22 Nov 2026): walk the segment cell by cell, each cell's part at its own spread rate,
+                # stepping through the hourly weather. A cell the fire enters after its line is finished blocks the
+                # step (U11: p1 checked every cell against the departure time), and a corner crossing is blocked when
+                # both side cells are unburnable or lined by the time the fire reaches the corner (U1: p1 ignored
+                # lines there). In constant weather the travel time equals p1's.
+                s0 = seg_start[o]
+                for s in range(s0, s0 + seg_n[o]):
+                    cs = (cy + seg_dy[s]) * nx + cx + seg_dx[s]
+                    if s == s0:
+                        # a source already lined at its own arrival (an ignition on a finished line) does not spread,
+                        # as in p1 (PR #10 review)
+                        if t_block[cs] <= tt:
+                            blocked = True
+                            break
+                    else:
+                        if fuel_row[cs] < 0 or t_block[cs] <= tt:
+                            blocked = True
+                            break
+                        if s - s0 == corner_j[o]:
+                            ca = (cy + corner_a[o, 0]) * nx + cx + corner_a[o, 1]
+                            cb = (cy + corner_b[o, 0]) * nx + cx + corner_b[o, 1]
+                            if _side_blocked(ca, fuel_row, t_block, tt) and _side_blocked(cb, fuel_row, t_block, tt):
+                                blocked = True
+                                break
+                    rem = seg_frac[s]
+                    while rem > 0.0:
+                        _load_state(cs, kk, k, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd, ch, adj,
+                                    bundles, bundle10, u20_ftmin, wind_to, u10_kmh, m1_pct, fmc, crown_mode,
+                                    wl_mode, lw_mode, lw_max, crown_ros_mult, cache, cache_k, cache_la, cache_la_k,
+                                    nla, st_a, st_full, tmp_bd)
+                        dir_ros(st_a, theta, crown_mode, res3)
+                        r_ = res3[0]
+                        tstep_end = (kk + 1) * dt_w if kk < nk - 1 else INF
+                        if r_ <= 1e-9:
+                            if tstep_end >= INF:
+                                blocked = True
+                                break
+                            tt = tstep_end
+                            kk += 1
+                        else:
+                            need = rem * dist / r_ / 60.0          # hours
+                            if tt + need <= tstep_end:
+                                tt = tt + need
+                                rem = 0.0
+                            else:
+                                rem -= (tstep_end - tt) * 60.0 * r_ / dist
+                                tt = tstep_end
+                                kk += 1
+                        if tt > t_end or tt >= arrival[c2]:
+                            # no straight-segment candidate; the two-point update below may still reach c2 in time
+                            pruned = True
+                            break
+                    if blocked or pruned:
+                        break
+            while not p2:
                 slow = 0.0
                 for s in range(seg_start[o], seg_start[o] + seg_n[o]):
                     cs = (cy + seg_dy[s]) * nx + cx + seg_dx[s]
@@ -429,6 +520,8 @@ def run_mtt(ny, nx, res_m, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd,
                         cw = wy * nx + wx
                         if not done[cw] or fuel_row[cw] < 0:
                             continue
+                        if p2 and t_block[cw] <= arrival[cw]:
+                            continue                        # w was lined when it ignited: not a source
                         okw = True
                         for s_ in range(seg_start[opp[ow]], seg_start[opp[ow]] + seg_n[opp[ow]]):
                             if fuel_row[(wy + seg_dy[s_]) * nx + wx + seg_dx[s_]] < 0:
@@ -473,16 +566,89 @@ def run_mtt(ny, nx, res_m, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd,
                         vn = dun - sv * L * dn
                         dd = math.sqrt(ve * ve + vn * vn)
                         th2 = math.atan2(ve, vn)
-                        dir_ros(st2, th2, crown_mode, res3)
-                        r_v = res3[0]
-                        dir_ros(cache[c], th2, crown_mode, res3)
-                        r_u = res3[0]
-                        dir_ros(cache[cw], th2, crown_mode, res3)
-                        r_w = res3[0]
-                        if r_v <= 1e-9 or r_u <= 1e-9 or r_w <= 1e-9:
-                            continue
-                        slow = 0.5 / r_v + 0.5 * ((1.0 - sv) / r_u + sv / r_w)
-                        cand = (1.0 - sv) * t + sv * tw + dd * slow / 60.0
+                        if p2:
+                            # U9 (p2): integrate the two-point path through the hourly weather from its start time,
+                            # each step with that step's spread rates (p1 used the departure step's for the trip)
+                            tt2 = (1.0 - sv) * t + sv * tw
+                            kk2 = int(tt2 / dt_w)
+                            if kk2 >= nk:
+                                kk2 = nk - 1
+                            if kk2 < 0:
+                                kk2 = 0
+                            rem2 = 1.0
+                            okc = True
+                            while True:
+                                _load_state(c2, kk2, k, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd, ch,
+                                            adj, bundles, bundle10, u20_ftmin, wind_to, u10_kmh, m1_pct, fmc,
+                                            crown_mode, wl_mode, lw_mode, lw_max, crown_ros_mult, cache, cache_k,
+                                            cache_la, cache_la_k, nla, st_a, st_full, tmp_bd)
+                                _load_state(c, kk2, k, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd, ch,
+                                            adj, bundles, bundle10, u20_ftmin, wind_to, u10_kmh, m1_pct, fmc,
+                                            crown_mode, wl_mode, lw_mode, lw_max, crown_ros_mult, cache, cache_k,
+                                            cache_la, cache_la_k, nla, st_b, st_full, tmp_bd)
+                                _load_state(cw, kk2, k, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd, ch,
+                                            adj, bundles, bundle10, u20_ftmin, wind_to, u10_kmh, m1_pct, fmc,
+                                            crown_mode, wl_mode, lw_mode, lw_max, crown_ros_mult, cache, cache_k,
+                                            cache_la, cache_la_k, nla, st_c, st_full, tmp_bd)
+                                dir_ros(st_a, th2, crown_mode, res3)
+                                r_v = res3[0]
+                                dir_ros(st_b, th2, crown_mode, res3)
+                                r_u = res3[0]
+                                dir_ros(st_c, th2, crown_mode, res3)
+                                r_w = res3[0]
+                                tstep_end = (kk2 + 1) * dt_w if kk2 < nk - 1 else INF
+                                if r_v <= 1e-9 or r_u <= 1e-9 or r_w <= 1e-9:
+                                    if tstep_end >= INF:
+                                        okc = False
+                                        break
+                                    tt2 = tstep_end
+                                    kk2 += 1
+                                else:
+                                    slow = 0.5 / r_v + 0.5 * ((1.0 - sv) / r_u + sv / r_w)
+                                    need = rem2 * dd * slow / 60.0
+                                    if tt2 + need <= tstep_end:
+                                        tt2 = tt2 + need
+                                        break
+                                    rem2 -= (tstep_end - tt2) * 60.0 / (dd * slow)
+                                    tt2 = tstep_end
+                                    kk2 += 1
+                                if tt2 >= best or tt2 > t_end or tt2 >= arrival[c2]:
+                                    okc = False
+                                    break
+                            if not okc:
+                                continue
+                            # lines on either leg (u -> v, w -> v) finished before the arrival block the update, and
+                            # so does a leg's corner with both sides unburnable or lined (U1/U11 for this update)
+                            for leg in range(2):
+                                ol = o if leg == 0 else opp[ow]
+                                by = cy if leg == 0 else wy
+                                bx = cx if leg == 0 else wx
+                                for s_ in range(seg_start[ol] + 1, seg_start[ol] + seg_n[ol] - 1):
+                                    if _side_blocked((by + seg_dy[s_]) * nx + bx + seg_dx[s_], fuel_row, t_block, tt2):
+                                        okc = False
+                                        break
+                                if okc and corner_j[ol] >= 0:
+                                    ca = (by + corner_a[ol, 0]) * nx + bx + corner_a[ol, 1]
+                                    cb = (by + corner_b[ol, 0]) * nx + bx + corner_b[ol, 1]
+                                    if _side_blocked(ca, fuel_row, t_block, tt2) and _side_blocked(cb, fuel_row,
+                                                                                                    t_block, tt2):
+                                        okc = False
+                                if not okc:
+                                    break
+                            if not okc:
+                                continue
+                            cand = tt2
+                        else:
+                            dir_ros(st2, th2, crown_mode, res3)
+                            r_v = res3[0]
+                            dir_ros(cache[c], th2, crown_mode, res3)
+                            r_u = res3[0]
+                            dir_ros(cache[cw], th2, crown_mode, res3)
+                            r_w = res3[0]
+                            if r_v <= 1e-9 or r_u <= 1e-9 or r_w <= 1e-9:
+                                continue
+                            slow = 0.5 / r_v + 0.5 * ((1.0 - sv) / r_u + sv / r_w)
+                            cand = (1.0 - sv) * t + sv * tw + dd * slow / 60.0
                         if cand < best:
                             best = cand
                             best_th = th2

@@ -223,3 +223,10 @@ copied to `work/models/r1.npz` (build_release.py copied it the other way) and `e
   cause is the 21 Nov PR #7 review fix that burns a mask ignition's interior at t = 0: in the free run, pockets
   inside the first detected perimeter used to burn later, which lowered Dice on the total area at 24-48 h. Planner
   outcomes score growth outside the start mask and are unaffected.
+
+## 2026-11-22 — pipeline.py pinned to FireSim physics p1
+
+FireSim's default physics became p2 today (U1, U9, U10, U11 fixed; `shared/fire/STATUS.md`). FirePilot v1.0 was
+trained, gated and graded in p1, so `pipeline.plan_fire` now passes `physics='p1'` with the calibrated ROS factors.
+Its forecasts are unchanged. The demo reads stored examples and does not call FireSim. Moving FirePilot to p2 means
+a p2 frozen set (val_p2) and a re-score, not this edit.

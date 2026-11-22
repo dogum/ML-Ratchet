@@ -47,6 +47,7 @@ def traverse(dy, dx):
         else:
             cells.append([cy, cx, tb - ta])
     corners = []
+    cum = np.cumsum([0.0] + [c[2] for c in cells])
     for t in ts[1:-1]:
         x = x0 + t * (x1 - x0)
         y = y0 + t * (y1 - y0)
@@ -57,7 +58,8 @@ def traverse(dy, dx):
             # cells touching the corner off the path
             a = (Y - (1 if sy > 0 else 0), X - (1 if sx > 0 else 0) + (1 if sx > 0 else -1))
             b = (Y - (1 if sy > 0 else 0) + (1 if sy > 0 else -1), X - (1 if sx > 0 else 0))
-            corners.append((a, b))
+            j = int(np.argmin(np.abs(cum - t)))     # index of the cell entered at the corner
+            corners.append((a, b, j))
     return cells, corners
 
 
@@ -72,6 +74,7 @@ def build(n=16):
     sdy, sdx, sfr = [], [], []
     corner_a = np.full((K, 2), -999, np.int64)
     corner_b = np.full((K, 2), -999, np.int64)
+    corner_j = np.full(K, -1, np.int64)
     for k, (dy, dx) in enumerate(offs):
         cells, corners = traverse(dy, dx)
         seg_start[k] = len(sdy)
@@ -81,13 +84,14 @@ def build(n=16):
             sdx.append(cx)
             sfr.append(fr)
         if corners:
-            (ay, ax), (by, bx) = corners[0]
+            (ay, ax), (by, bx), j = corners[0]
             corner_a[k] = (ay, ax)
             corner_b[k] = (by, bx)
+            corner_j[k] = j
     idx = {o: i for i, o in enumerate(offs)}
     opp = np.array([idx[(-o[0], -o[1])] for o in offs], np.int64)
     nb_prev = np.array([(i - 1) % K for i in range(K)], np.int64)
     nb_next = np.array([(i + 1) % K for i in range(K)], np.int64)
     return dict(opp=opp, nb_prev=nb_prev, nb_next=nb_next, off_dy=off_dy, off_dx=off_dx, off_len=off_len, seg_start=seg_start, seg_n=seg_n,
                 seg_dy=np.array(sdy, np.int64), seg_dx=np.array(sdx, np.int64), seg_frac=np.array(sfr, float),
-                corner_a=corner_a, corner_b=corner_b)
+                corner_a=corner_a, corner_b=corner_b, corner_j=corner_j)

@@ -13,6 +13,8 @@ from .weather import check_weather, U10_TO_U20
 from . import stencil as _st
 
 DEFAULTS = dict(
+    physics='p2',               # 'p2' (22 Nov 2026: U1, U9, U11 fixed in the solver) or 'p1' (the solver every v1.0 model
+                                # was built and scored with; reproduces it exactly). See shared/fire/STATUS.md.
     wind_limit='none',          # 'none' (Andrews et al. 2013 recommendation), 'rothermel' (0.9 IR), 'andrews2013'
     lw='behaveplus',            # 'behaveplus' (1 + 0.25 UE mi/h, Andrews 2018) or 'anderson1983' (U in mi/h)
     lw_max=8.0,
@@ -265,6 +267,8 @@ def simulate(landscape, weather, ignition, start, end, dt='1h', spread='rotherme
         nst = int(params['stencil'])
     else:
         nst = meth[method]
+    if P['physics'] not in ('p1', 'p2'):
+        raise ValueError(f"params['physics'] must be 'p1' or 'p2', not {P['physics']!r}")
     nonburn, t_block, sup_rf, ia = _blocking(ls, barriers, suppression, pr['start'])
     adj = pr['adj'] * (sup_rf if sup_rf is not None else 1.0)
     rowsc = np.where(nonburn, -1, pr['rowsc'])
@@ -289,6 +293,7 @@ def simulate(landscape, weather, ignition, start, end, dt='1h', spread='rotherme
                   stn['off_dy'], stn['off_dx'], stn['off_len'], stn['seg_start'], stn['seg_n'], stn['seg_dy'],
                   stn['seg_dx'], stn['seg_frac'], stn['corner_a'], stn['corner_b'],
                   stn['opp'], stn['nb_prev'], stn['nb_next'], bool(method != 'ca' if P['simplex'] is None else P['simplex']),
+                  P['physics'] == 'p2', stn['corner_j'],
                   cells, kern_times, t_end + offset_h,
                   bool(spotting), seed, float(P['ember_rate']), float(P['spot_med_frac']), float(P['spot_sigma']),
                   float(P['spot_dir_sd']), float(P['spot_p_est']), float(P['spot_delay_h']),

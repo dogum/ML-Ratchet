@@ -245,3 +245,44 @@ the fix is the cause. Planner outcomes do not change. The model card now says so
 
 The sandbox exams loaded torch checkpoints that were not shipped. Two small scripts re-run them from the released
 numpy weights: `models/firecast/training/src/rescore_np.py` and `models/firedetective/training/rescore_release.py`.
+
+## 2026-11-22 — Physics p2: U1, U9, U10 and U11 fixed
+
+FireSim has a physics version: `params['physics']` for the solver and `generate_weather(physics=...)` for the
+weather generator. The default is now `'p2'`. `'p1'` reproduces the old code exactly: 16 test runs (three solvers,
+timed lines, spotting, initial attack, the U1 ring, constant weather) give arrival rasters identical to the code
+before this change. Every shipped `checks/*.json` was made with p1, and the tests now re-run them with p1.
+
+- **U1 and U11, timed lines** (`kernel.py`): p2 walks each straight segment cell by cell. A cell blocks the step
+  if its line is finished before the fire enters it. A corner crossing is blocked if both side cells are unburnable
+  or lined by the time the fire reaches the corner. The two-point update checks the cells and corners of both its
+  legs against its arrival time; in p1 it never checked lines on its second leg. Results:
+  - The U1 ring (31 × 31 grass, 4-connected line at t = 0) now holds: 0 of 852 outside cells burn, against 282
+    in p1.
+  - A line of diagonal single cells holds: burned area falls from 4,567 to 2,439 cells and from 3,712 to 1,874.
+  - A line finished 0.00001 h after ignition stops (1, 2) steps across it. In p1, 244 cells past it burned.
+- **U9, two-point update** (`kernel.py`): the trip is integrated through the hourly weather from its start time.
+  Test: fast spread for one hour, then 1-h moisture 14.9 % with no wind (0.009 m/min). After 1 h, p1 reached 62 more
+  cells and p2 reaches 2.
+- **U10, generated weather** (`weather.py`): event and wet flags follow the local solar day that
+  `hourly_from_daily` laid out, using its own hour rounding. At lon = -120, 8 hours a day changed day.
+- **Also changed in p2:** when a segment crosses an hour, p1 spread its progress evenly over all its cells; p2
+  gives each cell its own part.
+  - In strictly constant weather, p2 equals p1 to 2e-7 h. The start step of a two-point trip can use the float32
+    look-ahead cache.
+  - A first version blocked the two-point update when the straight segment arrived after the end time. That
+    dropped cells at the edge of the run and moved the ellipse summary (0.981 to 0.979); fixed before commit.
+- **Checks under p2** (`checks/p2/`):
+  - Ellipse summaries are identical: default mean 0.981, minimum 0.940, orientation bias 3.4 %; level_set
+    0.992 / 0.973.
+  - All 2,343 analytic numbers agree to 1.5e-5 relative. The fuel break still leaks 0 cells.
+  - Speed: 0.51 s against 0.47 s for 30 × 30 km at 60 m over 24 h (8 % slower).
+- **Effect on ordinary runs** (generated landscapes and weather, 36 h, the cases above):
+  - Burned area changes by -1.9 % to +0.2 % (straight timed lines included, diagonal ones not); the speed check's 24 h runs change by -0.2 % (mtt) and
+    -2.4 % (level_set).
+  - Arrival times move by a median 0.02 to 0.19 h; the 90th percentile is 0.13 to 0.82 h.
+  - The `replay_dev` calibration, the VIIRS emulator check and the dev replays were not re-run under p2.
+- **Not done here:** nothing was re-scored under p2. The models' code still calls FireSim with default params, so
+  re-running their training or exam scripts now uses p2. Only the released rung's weights were shipped for each
+  model, so "score every rung" needs the other rungs retrained from rebuilt banks. The one released inference path
+  that runs FireSim, FirePilot's `pipeline.plan_fire`, now passes `physics='p1'` (its v1.0 physics).

@@ -31,7 +31,8 @@ def plan_fire(landscape, weather, burned_mask, start_utc, lon, rate_m_per_h, fir
     from firesim import replay as RP
     start = pd.Timestamp(start_utc)
     start = start.tz_localize('UTC') if start.tz is None else start
-    P = RP.calibrated_params(json.load(open(calibration)))
+    # v1.0 was trained and graded in FireSim physics p1; keep it there (p2, 22 Nov 2026, is FireSim's default)
+    P = dict(RP.calibrated_params(json.load(open(calibration))), physics='p1')
     o = fs.simulate(landscape, weather, {'mask': np.asarray(burned_mask, bool)}, start,
                     start + pd.Timedelta(hours=horizon_h), crown='van_wagner', spotting=False, params=P,
                     return_perimeters=False)
