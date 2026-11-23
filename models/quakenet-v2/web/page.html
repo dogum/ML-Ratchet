@@ -1,0 +1,334 @@
+<title>QuakeNet v2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: one 1120px column; the explorer is a two-panel instrument (whole-Earth view centred on the quake + close-up) over a control strip. */
+:root {
+  --bg: #f3f5f7; --panel: #ffffff; --ink: #1b2430; --muted: #5b6878; --line: #d6dde5; --grid: #e7ecf1;
+  --land: #e3e8ee; --sea: #f8fafc;
+  --v2: #c2410c; --v12: #2f5f9e; --tt: #0f7a6c; --cen: #8a94a3; --truth: #111827;
+  --good: #1f7a3f; --bad: #b42318;
+  --display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f141a; --panel: #161d26; --ink: #e6ebf1; --muted: #93a1b2; --line: #2a3542; --grid: #1f2833;
+  --land: #253140; --sea: #121921; --v2: #fb8a4c; --v12: #7aa7e6; --tt: #4cc2b0; --cen: #8792a1; --truth: #f8fafc; --good: #5fc27f; --bad: #f2786c; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f141a; --panel: #161d26; --ink: #e6ebf1; --muted: #93a1b2; --line: #2a3542; --grid: #1f2833;
+  --land: #253140; --sea: #121921; --v2: #fb8a4c; --v12: #7aa7e6; --tt: #4cc2b0; --cen: #8792a1; --truth: #f8fafc; --good: #5fc27f; --bad: #f2786c; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--body); margin: 0 }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.12; margin: 0 }
+h1 { font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 700; letter-spacing: -0.01em }
+h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 600 }
+h3 { font-size: 1.1rem; font-weight: 600 }
+p { margin: 0; max-width: 68ch }
+.mono, .num { font-family: var(--mono); font-variant-numeric: tabular-nums }
+.eyebrow { font: 500 0.75rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted) }
+section { padding-block: 2.5rem; border-top: 1px solid var(--line); display: grid; gap: 1rem }
+header.hero { padding-block: 2.5rem 1.5rem; display: grid; gap: 1rem }
+.lede { font-size: 1.15rem; color: var(--ink) }
+.muted { color: var(--muted) }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.5rem }
+.stat { border-left: 3px solid var(--line); padding: 0.2rem 0 0.2rem 0.8rem; display: grid; gap: 0.15rem }
+.stat b { font: 600 1.6rem/1.1 var(--display) }
+.stat.v2 { border-color: var(--v2) } .stat.v12 { border-color: var(--v12) }
+.stat span { font-size: 0.85rem; color: var(--muted) }
+/* explorer */
+.inst { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; display: grid; gap: 0 }
+.maps { display: grid; grid-template-columns: 1.1fr 1fr; border-bottom: 1px solid var(--line) }
+.maps > div { min-width: 0; position: relative }
+.maps > div + div { border-left: 1px solid var(--line) }
+.maps svg { display: block; width: 100%; height: auto }
+.panel-label { position: absolute; left: 10px; top: 8px; font: 500 0.7rem/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted) }
+.ctrl { display: grid; gap: 0.9rem; padding: 1rem }
+.ctrl > *, .inst > * { min-width: 0 }
+#ev { flex: 1 1 16rem; min-width: 0; width: 100% }
+#examtab th:nth-child(2), #examtab td:nth-child(2), #covtab th:nth-child(2), #covtab td:nth-child(2) { text-align: left }
+.row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center }
+.row > label.k { font: 500 0.75rem/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); min-width: 7.5rem }
+select, button, input[type=range] { font: inherit }
+select { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; padding: 0.35rem 0.5rem; max-width: 100% }
+.chip { border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 999px; padding: 0.2rem 0.65rem; font: 500 0.8rem/1.4 var(--mono); cursor: pointer }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink) }
+.chip:focus-visible, select:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--v2); outline-offset: 2px }
+.readout { overflow-x: auto }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem }
+th, td { text-align: right; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--grid); white-space: nowrap; font-variant-numeric: tabular-nums }
+th:first-child, td:first-child { text-align: left }
+th { font: 500 0.72rem/1.2 var(--mono); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted) }
+td.m { font-family: var(--mono) }
+.sw { display: inline-block; width: 0.7rem; height: 0.7rem; border-radius: 2px; margin-right: 0.4rem; vertical-align: -1px }
+.legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; font-size: 0.85rem; color: var(--muted) }
+.note { font-size: 0.85rem; color: var(--muted) }
+.tw { overflow-x: auto }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem }
+.two > * { min-width: 0 }
+.chart svg { width: 100%; height: auto; display: block }
+.tag { font: 500 0.7rem/1 var(--mono); padding: 0.2rem 0.45rem; border-radius: 3px; border: 1px solid var(--line); text-transform: uppercase; letter-spacing: 0.05em }
+.tag.kept { color: var(--good); border-color: var(--good) } .tag.rejected { color: var(--bad); border-color: var(--bad) } .tag.released { background: var(--v2); color: var(--panel); border-color: var(--v2) } .tag.baseline { color: var(--muted) }
+pre { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 0.8rem; overflow-x: auto; font: 0.82rem/1.5 var(--mono); margin: 0 }
+ul { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.35rem; max-width: 72ch }
+footer { padding-block: 2rem 3rem; border-top: 1px solid var(--line); font-size: 0.85rem; color: var(--muted) }
+@media (max-width: 760px) { .maps { grid-template-columns: 1fr } .maps > div + div { border-left: 0; border-top: 1px solid var(--line) } .two { grid-template-columns: 1fr } .row > label.k { min-width: 100% } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <span class="eyebrow">ML Ratchet · Geophysics · graph network</span>
+  <h1>QuakeNet v2</h1>
+  <p class="lede">Several seismometers, one earthquake. Each station's record is read by QuakeNet v1.2. A small graph network, with stations as nodes and station pairs as edges, combines the readings and the P-wave arrival times into an epicentre, depth, magnitude and origin time, each with an error bar. It learned only from simulated earthquakes laid into real station noise. It was graded once on real USGS-located earthquakes.</p>
+  <div class="stats" id="stats"></div>
+</header>
+
+<section id="explore">
+  <span class="eyebrow">Explorer · the network runs in your browser</span>
+  <h2>Pick a real exam earthquake, then switch stations on and off</h2>
+  <p class="muted">The left panel is centred on the true epicentre, with distance from it drawn to scale (an azimuthal equidistant map; the ring marks 90°). Lines run from each station along its v1.2 back-azimuth reading. The right panel zooms to 1,000 km around the USGS epicentre. Every change re-runs the classical combination and QuakeNet v2 here, in JavaScript.</p>
+  <div class="inst">
+    <div class="maps">
+      <div><span class="panel-label">Whole Earth, centred on the quake</span><svg id="globe" viewBox="0 0 440 440" role="img" aria-label="Stations around the earthquake"></svg></div>
+      <div><span class="panel-label">Close-up, ±1,000 km</span><svg id="zoom" viewBox="0 0 400 400" role="img" aria-label="Close-up of the estimated epicentres"></svg></div>
+    </div>
+    <div class="ctrl">
+      <div class="row"><label class="k" for="ev">Earthquake</label><select id="ev"></select></div>
+      <div class="row"><label class="k">Stations</label><div class="row" id="chips"></div></div>
+      <div class="row"><label class="k">Use first</label><div class="row" id="firstn"></div></div>
+      <div class="row"><label class="k" for="shift">Lab: move a pick</label>
+        <select id="shiftsta" aria-label="Station whose P pick moves"></select>
+        <input type="range" id="shift" min="-30" max="30" step="1" value="0" aria-label="Pick shift in seconds"><span class="mono" id="shiftv">0 s</span></div>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--truth)"></span>USGS (truth)</span>
+        <span><span class="sw" style="background:var(--v2)"></span>QuakeNet v2, 68% ellipse</span>
+        <span><span class="sw" style="background:var(--v12)"></span>v1.2 combined classically</span>
+        <span><span class="sw" style="background:var(--tt)"></span>travel-time locator</span>
+        <span><span class="sw" style="background:var(--cen)"></span>station centroid</span>
+      </div>
+      <div class="readout"><table id="readout"></table></div>
+      <p class="note" id="evnote"></p>
+    </div>
+  </div>
+</section>
+
+<section id="exam">
+  <span class="eyebrow">The exam · run once, chose nothing</span>
+  <h2>Against USGS, with the same stations for every method</h2>
+  <p class="muted" id="examnote"></p>
+  <div class="chart" id="epichart"></div>
+  <div class="tw"><table id="examtab"></table></div>
+  <div class="tw"><table id="covtab"></table></div>
+</section>
+
+<section id="ratchet">
+  <span class="eyebrow">The ratchet · every rung, kept or not</span>
+  <h2>What earned its place</h2>
+  <p class="muted" id="rnote"></p>
+  <div class="tw"><table id="rtab"></table></div>
+</section>
+
+<section id="twin">
+  <span class="eyebrow">Twin test · dev events only</span>
+  <h2>Real records against their simulated twins</h2>
+  <p class="muted">Each of the 40 dev earthquakes was re-simulated from its USGS moment tensor at the same stations, in real noise from those stations, and read the same way. Where the twin reads right and the real record does not, the simulator is missing something.</p>
+  <div class="tw"><table id="twintab"></table></div>
+  <p class="note" id="twinnote"></p>
+</section>
+
+<section id="how">
+  <span class="eyebrow">How it was built</span>
+  <h2>Physics first, then a small graph</h2>
+  <div class="two">
+    <ul id="howlist"></ul>
+    <ul id="limits"></ul>
+  </div>
+</section>
+
+<section id="use">
+  <span class="eyebrow">Use the release</span>
+  <h2>numpy and scipy only</h2>
+<pre>pip install numpy scipy
+python demo.py                    # four real exam earthquakes, all their stations
+
+from quakenet2 import QuakeNet2
+net = QuakeNet2()
+r = net.locate([dict(zne=zne, lat=lat, lon=lon, t_start=t_start, p_guess=300), ...])   # 2-10 stations
+print(r["lat"], r["lon"], r["err_ellipse"], r["depth"], r["mw"], r["t0"])</pre>
+</section>
+
+<footer>
+  <p>Data: USGS ComCat catalogue and moment tensors (public domain). EarthScope / IRIS DMC waveforms of the IU (GSN, Albuquerque Seismological Laboratory/USGS, doi:10.7914/SN/IU) and II (IRIS/IDA, doi:10.7914/SN/II) networks. Green's functions from EarthScope Syngine (ak135f). Travel times from ObsPy TauP (ak135). Land outlines from Natural Earth (public domain). Part of ML Ratchet: trained on physics, graded on reality.</p>
+</footer>
+</div>
+
+<script>/*QNET2*/</script>
+<script>
+const DATA = /*DATA*/null;
+const LAND = /*LAND*/null;
+QNet2.init(DATA.tt, { meta: DATA.meta, w: DATA.w });
+const $ = (id) => document.getElementById(id);
+const fmt = (v, d = 0) => (v == null || !isFinite(v)) ? '–' : Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+const D2R = Math.PI / 180, R2D = 180 / Math.PI, KM = Math.PI * 6371 / 180;
+
+// ---------- hero numbers
+(function () {
+  const E = DATA.exam, a = E.quakenet_v2, b = E.v12_combined;
+  const s = [
+    ['v2', fmt(a['2'].epi_med_km) + ' km', `median epicentre miss from 2 stations (${fmt(a['2'].n)} exam quakes); v1.2 combined: ${fmt(b['2'].epi_med_km)} km`],
+    ['v2', fmt(a['all'].epi_med_km) + ' km', `from all stations (up to 10; ${fmt(a['all'].n)} quakes); v1.2 combined: ${fmt(b['all'].epi_med_km)} km`],
+    ['v12', fmt(a['all'].t0_med_s, 1) + ' s', `median origin-time error from all stations; travel-time locator: ${fmt(E.tt_locator['all'].t0_med_s, 1)} s`],
+    ['v12', fmt(a['all'].mw_mae, 3), `mean Mw error from all stations; v1.2 combined does better: ${fmt(b['all'].mw_mae, 3)}`]];
+  $('stats').innerHTML = s.map(([c, v, t]) => `<div class="stat ${c}"><b class="num">${v}</b><span>${t}</span></div>`).join('');
+})();
+
+// ---------- explorer
+let EV = null, ON = [], SHIFT = { i: 0, s: 0 };
+const evsel = $('ev');
+DATA.events.forEach((e, i) => { const o = document.createElement('option'); o.value = i; const d = new Date(e.time * 1000).toISOString().slice(0, 10);
+  o.textContent = `${d} · M${e.mw.toFixed(1)} · ${Math.round(e.depth)} km · ${e.place}`; evsel.appendChild(o); });
+evsel.addEventListener('change', () => load(+evsel.value));
+$('shift').addEventListener('input', () => { SHIFT.s = +$('shift').value; $('shiftv').textContent = `${SHIFT.s > 0 ? '+' : ''}${SHIFT.s} s`; run(); });
+$('shiftsta').addEventListener('change', () => { SHIFT.i = +$('shiftsta').value; run(); });
+
+function load(i) {
+  EV = DATA.events[i]; ON = EV.st.map(() => true); SHIFT = { i: 0, s: 0 }; $('shift').value = 0; $('shiftv').textContent = '0 s';
+  $('chips').innerHTML = ''; $('shiftsta').innerHTML = '';
+  EV.st.forEach((s, k) => {
+    const b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.textContent = s.code.split('.')[1]; b.title = s.code; b.setAttribute('aria-pressed', 'true');
+    b.addEventListener('click', () => { const n = ON.filter(Boolean).length; if (ON[k] && n <= 2) return; ON[k] = !ON[k]; b.setAttribute('aria-pressed', ON[k]); run(); });
+    $('chips').appendChild(b);
+    const o = document.createElement('option'); o.value = k; o.textContent = s.code; $('shiftsta').appendChild(o);
+  });
+  $('firstn').innerHTML = '';
+  [2, 3, 5, EV.st.length].filter((v, j, a) => v <= EV.st.length && a.indexOf(v) === j).forEach(n => {
+    const b = document.createElement('button'); b.className = 'chip'; b.type = 'button'; b.textContent = n === EV.st.length ? `all ${n}` : n;
+    b.addEventListener('click', () => { ON = EV.st.map((_, k) => k < n); [...$('chips').children].forEach((c, k) => c.setAttribute('aria-pressed', ON[k])); run(); });
+    $('firstn').appendChild(b);
+  });
+  run();
+}
+
+function presetTag() {
+  const n = ON.filter(Boolean).length, prefix = ON.every((v, k) => v === (k < n));
+  if (!prefix) return null; if (n === EV.st.length) return 'all'; return ['2', '3', '5'].includes(String(n)) ? String(n) : null;
+}
+
+function run() {
+  const st = EV.st.map((s, k) => ({ ...s, pz: s.pz.map(v => v * s.pzs / 127), tpick: s.tpick + (k === SHIFT.i ? SHIFT.s : 0) })).filter((_, k) => ON[k]);
+  const v2 = QNet2.locate(st), v12 = QNet2.combine(st);
+  v12.t0 = v2.anchor.t0; v12.depth = Math.pow(10, v12.logz);
+  const tag = SHIFT.s === 0 ? presetTag() : null, pre = tag && EV.base[tag];
+  draw(st, v2, v12, pre);
+  const err = (p) => p && isFinite(p.lat) ? QNet2.dist(EV.lat, EV.lon, p.lat, p.lon) * KM : NaN;
+  const rows = [
+    ['QuakeNet v2', 'var(--v2)', err(v2), v2.depth, v2.mw, v2.t0, `±${fmt(Math.sqrt((v2.cov[0][0] + v2.cov[1][1]) / 2))} km`],
+    ['v1.2 combined', 'var(--v12)', err(v12), v12.depth, v12.mw, v12.t0, ''],
+    ['Travel-time locator', 'var(--tt)', pre ? err(pre.tt) : NaN, pre ? pre.tt.depth : NaN, NaN, pre ? pre.tt.t0 : NaN, pre ? '' : 'preset station sets only'],
+    ['Station centroid', 'var(--cen)', pre ? err(pre.centroid) : err(centroid(st)), 77, 5.85, NaN, '']];
+  $('readout').innerHTML = `<tr><th>Method</th><th>Epicentre miss</th><th>Depth</th><th>Mw</th><th>Origin time error</th><th></th></tr>` +
+    `<tr><td><span class="sw" style="background:var(--truth)"></span>USGS</td><td class="m">–</td><td class="m">${fmt(EV.depth)} km</td><td class="m">${EV.mw.toFixed(1)} ${EV.magType}</td><td class="m">0 s</td><td></td></tr>` +
+    rows.map(r => `<tr><td><span class="sw" style="background:${r[1]}"></span>${r[0]}</td><td class="m">${isFinite(r[2]) ? fmt(r[2]) + ' km' : '–'}</td><td class="m">${isFinite(r[3]) ? fmt(r[3]) + ' km' : '–'}</td><td class="m">${isFinite(r[4]) ? r[4].toFixed(2) : '–'}</td><td class="m">${isFinite(r[5]) ? (r[5] > 0 ? '+' : '') + r[5].toFixed(1) + ' s' : '–'}</td><td class="note">${r[6]}</td></tr>`).join('');
+  $('evnote').textContent = `${st.length} of ${EV.st.length} stations in use. Origin-time errors are against the USGS origin time.` + (SHIFT.s ? ` The pick at ${EV.st[SHIFT.i].code} is moved by ${SHIFT.s} s.` : '');
+}
+function centroid(st) { let x = 0, y = 0, z = 0; st.forEach(s => { x += Math.cos(s.lat * D2R) * Math.cos(s.lon * D2R); y += Math.cos(s.lat * D2R) * Math.sin(s.lon * D2R); z += Math.sin(s.lat * D2R); });
+  return { lat: Math.atan2(z, Math.hypot(x, y)) * R2D, lon: Math.atan2(y, x) * R2D }; }
+
+// azimuthal equidistant projection centred on the true epicentre; radius 200 px = 100 degrees
+function aeqd(lat, lon, scale, cx, cy) { const d = QNet2.dist(EV.lat, EV.lon, lat, lon), a = QNet2.azim(EV.lat, EV.lon, lat, lon) * D2R; return [cx + scale * d * Math.sin(a), cy - scale * d * Math.cos(a), d]; }
+function draw(st, v2, v12, pre) {
+  const g = $('globe'); g.innerHTML = ''; const S = 2.0, C = 220;
+  el('circle', { cx: C, cy: C, r: 200, fill: 'var(--sea)', stroke: 'var(--line)' }, g);
+  const clip = el('clipPath', { id: 'disc' }, el('defs', {}, g)); el('circle', { cx: C, cy: C, r: 200 }, clip);
+  const lg = el('g', { 'clip-path': 'url(#disc)' }, g);
+  LAND.forEach(poly => { let d = '', pen = false; poly.forEach(([lo, la]) => { const [x, y, dd] = aeqd(la, lo, S, C, C); if (dd > 100) { pen = false; return; } d += (pen ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); pen = true; });
+    if (d) el('path', { d, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 0.6, 'stroke-opacity': 0.55 }, lg); });
+  [30, 60, 90].forEach(r => el('circle', { cx: C, cy: C, r: r * S, fill: 'none', stroke: 'var(--line)', 'stroke-dasharray': r === 90 ? '' : '2 3' }, g));
+  el('text', { x: C + 4, y: C - 90 * S + 12, fill: 'var(--muted)', 'font-size': 10, 'font-family': 'var(--mono)' }, g).textContent = '90°';
+  EV.st.forEach((s, k) => { if (!ON[k]) return; const [x, y] = aeqd(s.lat, s.lon, S, C, C);
+    let d = 'M' + x.toFixed(1) + ' ' + y.toFixed(1); for (let t = 2; t <= s.dist + 10; t += 2) { const p = QNet2.dest(s.lat, s.lon, s.baz, t), q = aeqd(p[0], p[1], S, C, C); d += 'L' + q[0].toFixed(1) + ' ' + q[1].toFixed(1); }
+    el('path', { d, fill: 'none', stroke: 'var(--v12)', 'stroke-width': 0.9, 'stroke-opacity': 0.6 }, lg); });
+  const on = EV.st.map((s, k) => [s, k]).filter(([, k]) => ON[k]);
+  for (let a = 0; a < on.length; a++) for (let b = a + 1; b < on.length; b++) { const p = aeqd(on[a][0].lat, on[a][0].lon, S, C, C), q = aeqd(on[b][0].lat, on[b][0].lon, S, C, C);
+    el('line', { x1: p[0], y1: p[1], x2: q[0], y2: q[1], stroke: 'var(--muted)', 'stroke-width': 0.4, 'stroke-opacity': 0.35 }, lg); }
+  EV.st.forEach((s, k) => { const [x, y] = aeqd(s.lat, s.lon, S, C, C);
+    el('path', { d: `M${x} ${y - 6}L${x + 5.5} ${y + 4}L${x - 5.5} ${y + 4}Z`, fill: ON[k] ? 'var(--ink)' : 'var(--panel)', stroke: 'var(--ink)', 'stroke-width': 1 }, g);
+    el('text', { x: x + 7, y: y + 4, fill: ON[k] ? 'var(--ink)' : 'var(--muted)', 'font-size': 9.5, 'font-family': 'var(--mono)' }, g).textContent = s.code.split('.')[1]; });
+  el('circle', { cx: C, cy: C, r: 4, fill: 'var(--truth)' }, g);
+  // zoom: local equidistant, 1000 km = 180 px
+  const z = $('zoom'); z.innerHTML = ''; const Z = 180 / 1000 * KM, c = 200;
+  el('rect', { x: 0, y: 0, width: 400, height: 400, fill: 'var(--sea)' }, z);
+  const zl = el('g', {}, z);
+  LAND.forEach(poly => { let d = '', pen = false; poly.forEach(([lo, la]) => { const [x, y, dd] = aeqd(la, lo, Z, c, c); if (dd > 20) { pen = false; return; } d += (pen ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); pen = true; });
+    if (d) el('path', { d, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 0.8, 'stroke-opacity': 0.6 }, zl); });
+  [250, 500, 750, 1000].forEach(r => el('circle', { cx: c, cy: c, r: r * 0.18, fill: 'none', stroke: 'var(--line)', 'stroke-dasharray': '2 3' }, z));
+  el('text', { x: c + 3, y: c - 500 * 0.18 + 11, fill: 'var(--muted)', 'font-size': 9.5, 'font-family': 'var(--mono)' }, z).textContent = '500 km';
+  const mark = (p, col, shape) => { if (!p || !isFinite(p.lat)) return; let [x, y] = aeqd(p.lat, p.lon, Z, c, c); const out = Math.hypot(x - c, y - c) > 190;
+    if (out) { const a = Math.atan2(y - c, x - c); x = c + 188 * Math.cos(a); y = c + 188 * Math.sin(a); }
+    if (shape === 'sq') el('rect', { x: x - 4.5, y: y - 4.5, width: 9, height: 9, fill: col, stroke: 'var(--panel)' }, z);
+    else if (shape === 'di') el('path', { d: `M${x} ${y - 6}L${x + 6} ${y}L${x} ${y + 6}L${x - 6} ${y}Z`, fill: col, stroke: 'var(--panel)' }, z);
+    else el('circle', { cx: x, cy: y, r: 5, fill: col, stroke: 'var(--panel)' }, z);
+    if (out) el('text', { x: x + (x > c ? -8 : 8), y: Math.min(Math.max(y - 7, 12), 392), 'text-anchor': x > c ? 'end' : 'start', fill: col, 'font-size': 9, 'font-family': 'var(--mono)' }, z).textContent = 'off map →'; };
+  // v2 ellipse (cov in km^2, north/east)
+  { const [x0, y0] = aeqd(v2.lat, v2.lon, Z, c, c), C2 = v2.cov, a = C2[0][0], b = C2[0][1], d = C2[1][1];
+    const tr = (a + d) / 2, df = Math.sqrt(((a - d) / 2) ** 2 + b * b), l1 = tr + df, l2 = Math.max(tr - df, 1e-6);
+    const k = Math.sqrt(2.2789), e1 = Math.sqrt(l1) * k * 0.18, e2 = Math.sqrt(l2) * k * 0.18;
+    // major-axis eigenvector (n, e) = (b, l1 - a); on screen x = e, y = -n
+    const rot = Math.abs(b) < 1e-9 ? (a >= d ? 90 : 0) : Math.atan2(-b, l1 - a) * R2D;
+    el('ellipse', { cx: x0, cy: y0, rx: Math.min(e1, 400), ry: Math.min(e2, 400), transform: `rotate(${rot} ${x0} ${y0})`, fill: 'var(--v2)', 'fill-opacity': 0.12, stroke: 'var(--v2)', 'stroke-width': 1.2 }, z); }
+  mark(pre ? pre.centroid : centroid(st), 'var(--cen)', 'sq'); if (pre) mark(pre.tt, 'var(--tt)', 'di'); mark(v12, 'var(--v12)', 'c'); mark(v2, 'var(--v2)', 'c');
+  el('path', { d: `M${c} ${c - 8}L${c + 2.4} ${c - 2.5}L${c + 8} ${c - 2.5}L${c + 3.5} ${c + 1}L${c + 5} ${c + 7}L${c} ${c + 3.5}L${c - 5} ${c + 7}L${c - 3.5} ${c + 1}L${c - 8} ${c - 2.5}L${c - 2.4} ${c - 2.5}Z`, fill: 'var(--truth)' }, z);
+}
+
+// ---------- exam
+(function () {
+  const E = DATA.exam, M = [['QuakeNet v2', 'quakenet_v2', 'var(--v2)'], ['v1.2 combined', 'v12_combined', 'var(--v12)'], ['Travel-time locator', 'tt_locator', 'var(--tt)'], ['Station centroid', 'centroid', 'var(--cen)']];
+  const tags = ['2', '3', '5', 'all'], lab = { '2': '2 stations', '3': '3 stations', '5': '5 stations', 'all': 'all (up to 10)' };
+  $('examnote').textContent = `Exam earthquakes are QuakeNet v1.2's own (2012–2025, M ≥ 5.5, 25–95° from the stations). "2 stations" uses every exam quake with at least two records (${fmt(E.quakenet_v2['2'].n)} quakes, v1.2's original station pairs); 3, 5 and all use the first stations, in a fixed order, of a 400-quake subset with extra stations fetched (${fmt(E.quakenet_v2['all'].n)} quakes). Bars show the median epicentre miss on a log scale.`;
+  // chart: grouped bars, log scale 10..10000 km
+  const W = 760, H = 270, L = 70, B = 40, T = 26, svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Median epicentre miss by number of stations' });
+  const y = (v) => T + (H - T - B) * (1 - (Math.log10(v) - 1) / 3);
+  [10, 30, 100, 300, 1000, 3000, 10000].forEach(v => { el('line', { x1: L, x2: W - 8, y1: y(v), y2: y(v), stroke: 'var(--grid)' }, svg);
+    el('text', { x: L - 6, y: y(v) + 4, 'text-anchor': 'end', fill: 'var(--muted)', 'font-size': 11, 'font-family': 'var(--mono)' }, svg).textContent = v >= 1000 ? (v / 1000) + ',000' : v; });
+  el('text', { x: L - 6, y: 11, 'text-anchor': 'end', fill: 'var(--muted)', 'font-size': 11, 'font-family': 'var(--mono)' }, svg).textContent = 'km';
+  const gw = (W - L - 8) / 4, bw = gw / 6;
+  tags.forEach((t, i) => { M.forEach(([n, k, col], j) => { const v = E[k][t] && E[k][t].epi_med_km; if (!v) return; const x = L + i * gw + bw * (0.9 + j);
+      el('rect', { x, y: y(v), width: bw * 0.85, height: H - B - y(v), fill: col }, svg);
+      el('text', { x: x + bw * 0.42, y: y(v) - 4, 'text-anchor': 'middle', fill: 'var(--ink)', 'font-size': 10, 'font-family': 'var(--mono)' }, svg).textContent = Math.round(v); });
+    el('text', { x: L + i * gw + gw / 2, y: H - 14, 'text-anchor': 'middle', fill: 'var(--ink)', 'font-size': 12, 'font-family': 'var(--body)' }, svg).textContent = lab[t]; });
+  $('epichart').appendChild(svg);
+  const hdr = `<tr><th>Stations</th><th>Method</th><th>n</th><th>Epicentre median</th><th>mean</th><th>Depth median</th><th>Depth ×2</th><th>Shallow depth median</th><th>Deep depth median</th><th>Mw mean |err|</th><th>Origin time median</th></tr>`;
+  let rows = '';
+  tags.forEach(t => M.forEach(([n, k, col]) => { const s = E[k][t]; if (!s) return;
+    rows += `<tr><td>${lab[t]}</td><td><span class="sw" style="background:${col}"></span>${n}</td><td class="m">${fmt(s.n)}</td><td class="m">${fmt(s.epi_med_km)} km</td><td class="m">${fmt(s.epi_mean_km)} km</td><td class="m">${fmt(s.depth_med_km)} km</td><td class="m">${k === 'centroid' ? '–' : fmt(100 * s.depth_f2) + '%'}</td><td class="m">${fmt(s.shallow.depth_med_km)} km</td><td class="m">${fmt(s.deep.depth_med_km)} km</td><td class="m">${k === 'tt_locator' ? '–' : fmt(s.mw_mae, 3)}</td><td class="m">${fmt(s.t0_med_s, 1)} s</td></tr>`; }));
+  $('examtab').innerHTML = hdr + rows;
+  let cv = `<tr><th>Stations</th><th>Method</th><th>Epicentre</th><th>Depth</th><th>Mw</th><th>Origin time</th></tr>`;
+  tags.forEach(t => [['QuakeNet v2', 'quakenet_v2'], ['v1.2 combined', 'v12_combined']].forEach(([n, k]) => { const s = E[k][t];
+    cv += `<tr><td>${lab[t]}</td><td>${n}</td>${['cov_epi', 'cov_z', 'cov_mw', 'cov_t0'].map(c => `<td class="m">${fmt(100 * s[c])}%</td>`).join('')}</tr>`; }));
+  $('covtab').innerHTML = `<caption class="note" style="text-align:left;caption-side:top;padding-bottom:0.4rem">Coverage: the share of exam truths inside the 68% error bars (ellipse for the epicentre), after one widen-only factor per output fitted on the dev events.</caption>` + cv;
+})();
+
+// ---------- ratchet
+(function () {
+  const R = DATA.ratchet; $('rnote').textContent = DATA.ratchetNote || '';
+  $('rtab').innerHTML = `<tr><th>Rung</th><th>Change</th><th>Frozen set</th><th>Sim objective</th><th>Dev epicentre</th><th>Dev origin time</th><th>Decision</th><th>Why</th></tr>` +
+    R.map(r => `<tr><td class="m">${r.rung}</td><td style="text-align:left;white-space:normal;min-width:16rem">${r.change}</td><td class="m">${r.frozen}</td><td class="m">${r.objective.toFixed(3)}</td><td class="m">${fmt(r.dev.epi_cap)} km</td><td class="m">${r.dev.t0.toFixed(1)} s</td><td><span class="tag ${r.decision}">${r.decision}</span></td><td class="note" style="text-align:left;white-space:normal;min-width:14rem">${r.why}</td></tr>`).join('');
+})();
+
+// ---------- twin
+(function () {
+  const T = DATA.twin, k = Object.keys(T), pairs = [...new Set(k.map(x => x.split('/')[0]))];
+  const name = (c) => c === 'anchor' ? 'v1.2 combined' : (c === DATA.meta.ckpt ? 'QuakeNet v2 (released)' : c);
+  $('twintab').innerHTML = `<tr><th>Method</th><th>Record</th><th>Epicentre median</th><th>Shallow depth ×true</th><th>Mw mean |err|</th><th>Origin time median</th><th>P-pick spread</th></tr>` +
+    pairs.flatMap(p => ['real', 'twin'].map(w => { const s = T[`${p}/${w}`]; return `<tr><td>${name(p)}</td><td>${w}</td><td class="m">${fmt(s.epi_med_km)} km</td><td class="m">${s.depth_ratio_shallow.toFixed(2)}</td><td class="m">${s.mw_mae.toFixed(2)}</td><td class="m">${s.t0_med_s.toFixed(1)} s</td><td class="m">${s.pick_robust_sd.toFixed(1)} s</td></tr>`; })).join('');
+  $('twinnote').textContent = DATA.twinNote || '';
+})();
+$('howlist').innerHTML = (DATA.how || []).map(x => `<li>${x}</li>`).join('');
+$('limits').innerHTML = (DATA.limits || []).map(x => `<li>${x}</li>`).join('');
+load(0);
+</script>

@@ -1,0 +1,174 @@
+id: quakenet-v2
+name: QuakeNet v2
+version: "1.0"
+status: released
+released: "2026-11-22"
+order: 31
+domain: Geophysics
+tags: [seismology, graph network, location, uncertainty, multi-station]
+accent: "#c2410c"
+tagline: Several seismometers, one earthquake.
+question: Where was that earthquake, how deep, how big, and when, from several stations together?
+question_short: "Where, how deep, how big and when — from 2–10 seismometers together?"
+summary: >-
+  QuakeNet v1.2 reads each station's 41-minute record; a graph network with stations as nodes and station pairs as
+  edges combines those readings and the P-wave arrival times into an epicentre, depth, Mw and origin time, each with an
+  error bar. It learned only from simulated earthquakes seen at 2-10 real stations at once, laid into real station noise,
+  and was examined on 1,456 real earthquakes at 2 stations and 400 at up to 10.
+
+reads: "2-10 stations, each with 41 minutes of three-component ground velocity (1 sample/s, response removed), its coordinates, the time of its first sample and a rough P time"
+returns:
+  - Epicentre (latitude, longitude) with a 68% error ellipse (km)
+  - Depth (km) with a bar on log depth
+  - Moment magnitude Mw ± 68% bar
+  - Origin time ± bar (s)
+
+physics:
+  summary: >-
+    QuakeNet v1.2's simulator run per station for one shared source: Syngine ak135f Green's functions with v1.2's
+    measured corrections (physics v7), exact distances, ak135 P times plus station residuals, and real noise from the same
+    station. Physics v2 and v3 add how v1.2 reads real records differently from their simulated twins, measured on dev.
+  simulator:
+    - "One source per event at 2-10 real GSN stations 25-95 degrees away: shared epicentre, depth, Mw, mechanism, source duration and ocean layer"
+    - "QuakeNet v1.2's per-station chain (physics v7 with layering), the nearest 1-degree Green's function stretched so S-P matches ak135 at the exact distance"
+    - "Absolute timing: ak135 P time + station residual N(0, 1.5 s) + record-start rounding; the simulated STA/LTA picker's own errors"
+    - "Epicentres from the 1990-2011 USGS catalogue (80%, jittered) or uniform on the sphere (20%); v1.2's world mix of depth and Mw"
+    - "v2/v3: simulated v1.2 readings get the dev-twin mismatches (distance +1.5 deg, extra distance and back-azimuth scatter, shallow-depth shift +0.37 in log10, Mw +0.02-0.06); pick errors x0.75"
+  checks:
+    - "ak135 travel-time table (bilinear) vs direct ObsPy TauP: max 0.078 s; vs iasp91: max 0.24 s (40 random points)"
+    - "Great-circle distance vs ObsPy locations2degrees: 6e-14 degrees"
+    - "Inherited: local Green's-function synthesis vs Syngine full synthetics, correlation 0.9999"
+noise: 1,284 real quiet-time windows from the 127 IU/II stations (QuakeNet v1.2's pool), from the same station where possible (80%)
+network: "Graph network, 115k weights: node and edge MLPs, 3 rounds of message passing (width 64), mean + max readout; corrects a classical anchor; bivariate Gaussian NLL on the epicentre offset, beta-NLL on log depth, Mw and origin time"
+
+approach:
+  real_backdrop: "1,284 real quiet-time windows from the 127 GSN stations"
+  physics_inputs: "ak135 P travel times and slownesses at the anchor, station geometry in the anchor's frame"
+  physics_anchor: "QuakeNet v1.2's per-station readings combined classically (least squares on distance and back-azimuth; inverse-variance Mw and depth; origin time from P picks)"
+  real_data_roles: [backdrop, calibration, gate, error_bars, exam]
+
+data:
+  - name: USGS ComCat catalogue and moment tensors
+    url: https://earthquake.usgs.gov/fdsnws/event/1/
+    licence: Public domain (U.S. Government)
+    role: truth
+  - name: EarthScope / IRIS DMC waveforms (IU and II networks)
+    url: https://service.earthscope.org/
+    licence: Open; cite the networks (IU doi:10.7914/SN/IU, II doi:10.7914/SN/II)
+    role: exam, dev, noise
+  - name: EarthScope Syngine Green's functions (ak135f_2s), QuakeNet v1.2's grid
+    url: https://ds.iris.edu/ds/products/syngine/
+    licence: Open; cite Syngine
+    role: physics
+  - name: ak135 travel times (ObsPy TauP)
+    url: https://docs.obspy.org/packages/obspy.taup.html
+    licence: ObsPy LGPL; model published (Kennett et al. 1995)
+    role: physics
+
+split:
+  dev: "QuakeNet v1.2's 40 dev events (seed 2026), each at its 2 original stations plus up to 8 more (399 records)"
+  exam: "QuakeNet v1.2's exam events: 1,456 with 2+ records (original pairs); a 400-event subset (seed 7, depth strata) at up to 10 stations (3,523 records fetched for dev + subset)"
+
+exam:
+  short: "1,456 quakes at 2 stations; 400 at up to 10"
+  summary: "Real earthquakes (2012-2025, M >= 5.5) graded against USGS: first 2 stations for 1,456 quakes, and first 3, 5 and all (up to 10) stations for 400."
+  results:
+    - metric: Epicentre, 2 stations, median miss
+      better: lower
+      model: 427
+      unit: km
+      baselines:
+        - { name: "v1.2 per station, combined classically", kind: classical, value: 521 }
+        - { name: "Travel-time locator (STA/LTA P + AIC S, ak135 grid search)", kind: classical, value: 4139 }
+        - { name: "Station centroid", kind: dumb, value: 6190 }
+      verdict: win
+    - metric: Epicentre, all stations (up to 10), median miss
+      better: lower
+      model: 127
+      unit: km
+      baselines:
+        - { name: "v1.2 per station, combined classically", kind: classical, value: 240 }
+        - { name: "Travel-time locator", kind: classical, value: 173 }
+        - { name: "Station centroid", kind: dumb, value: 4223 }
+      verdict: win
+    - metric: Depth, all stations, median |error|
+      better: lower
+      model: 17.6
+      unit: km
+      baselines:
+        - { name: "v1.2 combined (inverse-variance)", kind: classical, value: 29.1 }
+        - { name: "Travel-time locator", kind: classical, value: 152.5 }
+        - { name: "Always guess the dev median, 77 km", kind: dumb, value: 67.0 }
+      verdict: win
+    - metric: "Deep quakes (> 70 km), all stations, median depth |error|"
+      better: lower
+      model: 38.3
+      unit: km
+      baselines:
+        - { name: "v1.2 combined (inverse-variance)", kind: classical, value: 27.7 }
+      verdict: loss
+    - metric: Mw, all stations, mean |error|
+      better: lower
+      model: 0.097
+      unit: Mw
+      baselines:
+        - { name: "v1.2 combined (inverse-variance)", kind: classical, value: 0.089 }
+        - { name: "Always guess the dev median, 5.85", kind: dumb, value: 0.315 }
+      verdict: loss
+    - metric: Origin time, all stations, median |error|
+      better: lower
+      model: 4.3
+      unit: s
+      baselines:
+        - { name: "v1.2 combined (P picks at its epicentre)", kind: classical, value: 5.8 }
+        - { name: "Travel-time locator", kind: classical, value: 14.4 }
+        - { name: "Station centroid", kind: dumb, value: 72.3 }
+      verdict: win
+  coverage:
+    - { output: Epicentre ellipse (all stations), actual: 62 }
+    - { output: Epicentre ellipse (2 stations), actual: 65 }
+    - { output: Depth (all), actual: 60 }
+    - { output: Mw (all), actual: 64 }
+    - { output: Origin time (all), actual: 74 }
+
+wins:
+  - "Epicentre at every station count: median miss 427 / 279 / 188 / 127 km at 2 / 3 / 5 / all stations, against 521 / 410 / 320 / 240 km for v1.2 combined classically and 4,139 / 669 / 276 / 173 km for the travel-time locator."
+  - "Shallow depth (<= 70 km): median error 11.7 km with all stations against 29.3 km for v1.2 combined: the dev-twin depth calibration (r6) carried over."
+  - "Origin time: median 4.3 s with all stations, against 5.8 s (v1.2 combined) and 14.4 s (travel-time locator)."
+losses:
+  - "Mw: 0.097 mean error against 0.089 for simply averaging v1.2's per-station Mw (0.114 against 0.109 at 2 stations)."
+  - "Deep quakes (> 70 km) read too shallow: median depth error 38 km against 28 km for v1.2 combined (all stations)."
+limits:
+  - "Long-period (LH) records only, 25-95 degrees, M >= 5.5; 2 to 10 stations."
+  - "The P pick searches +-30 s around a guess; in the exam (as in v1.2) the guess came from the catalogue origin."
+  - "Two stations leave most of the location uncertain: median miss 427 km."
+  - "Error bars: epicentre ellipses cover 62-68% and depth bars 60% for a nominal 68%."
+  - "The dev-twin calibrations (r5, r6) are shifts fitted on 40 dev quakes; deep quakes are now over-corrected."
+help_wanted:
+  - "EarthScope dataselect answered 'too many requests' for 51 of about 4,200 requests; events still reached 10 stations from other stations."
+next:
+  - "Mw: let the classical inverse-variance Mw through unchanged (or learn a per-event bias only), and measure the deep-depth over-correction on dev by depth class."
+  - "Bigger station sets and regional distances; broadband (BH) channels and a sharper P picker for timing."
+  - "A second pass: re-linearise at the network's own epicentre and run the graph again."
+
+usage:
+  install: pip install numpy scipy
+  demo: python demo.py
+  python: |
+    import numpy as np, json
+    from quakenet2 import QuakeNet2
+    net = QuakeNet2()
+    z = np.load("examples/us7000kulj.npz"); m = json.loads(str(z["meta"]))
+    st = [dict(zne=x, lat=s["lat"], lon=s["lon"], t_start=s["t_start"], p_guess=s["p_guess"]) for x, s in zip(z["zne"], m["stations"])]
+    r = net.locate(st)
+    print(r["lat"], r["lon"], r["err_ellipse"], r["depth"], r["mw"], r["t0"])
+
+files:
+  inference: [quakenet2.py, quakenet.py, pipeline.py]
+  weights: [quakenet2_weights.npz, quakenet_weights.npz, tt_ak135.npz]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 2
