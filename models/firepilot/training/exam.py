@@ -4,6 +4,8 @@ landscapes and HRRR weather, graded in the simulator.
   python3 exam.py A <final_model> [shard nshard]   stage A, all 48 fires (cheap)
   python3 exam.py B <final_model> [shard nshard]   stage B, seeded fire order, as compute allows (MPC + PF bound)
   python3 exam.py summary <final_model>             -> results/exam_summary.json
+  Physics: FIREPILOT_PHYSICS (default p1, as v1.0 was graded). p1 writes results/exam/ and exam_summary.json; any
+  other physics writes results/exam_<physics>/ and exam_summary_<physics>.json and reads sigma_widen_<physics>.json.
   (resumable per fire: a crash resumes the same run; nothing is re-chosen. Stage A/B split decided at ~10:58 EST on
   2026-11-19 BEFORE any exam output existed, because the shared machine was ~2.5x oversubscribed.)
 
@@ -26,11 +28,13 @@ import numpy as np
 
 from fp.scenarios import real_scenario, BUDGETS_EVAL, hidden_draw
 from fp.planner import Context, ValueNet, plan_value, plan_proxy, cem_search, BASELINES
+from fp.env import PHYSICS as VERSION
 from fidelity import fidelity_case
 import firedata as fd
 
 ROOT = _paths.WORK
-OUT = os.path.join(ROOT, 'results', 'exam')
+SUF = '' if VERSION == 'p1' else '_' + VERSION        # p1 keeps the shipped names
+OUT = os.path.join(ROOT, 'results', 'exam' + SUF)
 SEED = 20261121
 
 
@@ -256,14 +260,14 @@ if __name__ == '__main__':
         # Stage B is a prefix of the seeded order per shard; the summary uses whatever stage B fires finished.
         assert all(os.path.exists(os.path.join(OUT, f + '.json')) for f in fires), 'stage A incomplete'
         recs = [merged(f) for f in fires]
-        cal = json.load(open(_paths.latest('results/sigma_widen.json')))
+        cal = json.load(open(_paths.latest(f'results/sigma_widen{SUF}.json')))
         from fidelity import summarize as fsum
         fid_sum = fsum([r['fidelity'] for r in recs if 'fidelity' in r])
-        summ = dict(model=model, widen=cal['widen'], n_fires=len(fires), n_scored=sum('skip' not in r for r in recs),
+        summ = dict(model=model, physics=VERSION, widen=cal['widen'], n_fires=len(fires), n_scored=sum('skip' not in r for r in recs),
                     n_stage_b=sum(bool(r.get('stage_b')) for r in recs),
                     stage_b_fires=[r['fire_id'] for r in recs if r.get('stage_b')],
                     skipped={r['fire_id']: r['skip'] for r in recs if 'skip' in r},
                     planner=summarize(recs, cal['widen']), fidelity=fid_sum)
-        json.dump(summ, open(os.path.join(ROOT, 'results', 'exam_summary.json'), 'w'), indent=1)
+        json.dump(summ, open(os.path.join(ROOT, 'results', f'exam_summary{SUF}.json'), 'w'), indent=1)
         print(json.dumps({k: {m: (v[m]['saved_mean'] if isinstance(v.get(m), dict) else v[m]) for m in v
                               if isinstance(v.get(m), dict) or m in ('n', 'coverage90')} for k, v in summ['planner'].items()}, indent=0)[:6000])

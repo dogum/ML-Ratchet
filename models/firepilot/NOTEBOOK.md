@@ -255,3 +255,63 @@ which became p2 today, while still writing to `*_p1` folders.
   credited for some line built behind the front. That includes the exam and the fixed-plan baselines. r1's
   advantage over r0 holds under p2 on val. The exam and the gate were not re-run under p2. `pipeline.py` stays on p1.
 - Only r1's weights were shipped, so r2 to r4 were not re-scored and no decision was re-taken.
+
+## 2026-11-22 — gate and exam re-run under FireSim physics p2 (released r1 weights, nothing chosen)
+
+The dev gate (12 gate fires x 2 budgets) was rebuilt twice, as `gate_p1` and `gate_p2`, from the same seeds. r0 and
+r1 were scored on both, and the widen factor was refitted on each. The 48-fire exam then ran once under p2 with the
+released r1 weights: stage A, stage B on all 48 fires (16 shards), and the summary. Nothing was retrained or chosen.
+The p2 outputs are kept in `training/results/` as `exam_summary_p2.json`, `sigma_widen_p2.json` and
+`fidelity_dev_p2.json`. `exam.py` and `fit_widen.py` now follow `FIREPILOT_PHYSICS`. p1 keeps the shipped names
+(`results/exam/`, `exam_summary.json`, `sigma_widen.json`); p2 adds a `_p2` suffix.
+
+- **Gate, p1 rebuild:** identical to the ratchet log. r1 0.4815, r0 0.3828, and all five baselines match to the last
+  digit. The widen fit is identical too: bias −0.040, 90 % coverage 0.917, factor 1.0.
+- **Gate, p2 (24 cases):** r1 0.487 (median 0.526), r0 0.354.
+  - Anchor and flank falls from 0.263 to 0.209.
+  - Direct attack falls from 0.144 to 0.133.
+  - Indirect 1 / 2 / 4 km: 0.104 / 0.118 / 0.033 (p1: 0.107 / 0.111 / 0.025).
+  - The widen factor is still 1.0 (90 % coverage 0.958, bias −0.042).
+- **Exam, p2 (48 fires, all scored, stage B on all 48), p1 → p2 mean share of the no-action growth stopped:**
+
+  | 300 / 1000 m/h | p1 (shipped) | p2 |
+  |---|---|---|
+  | FirePilot r1 | 0.474 / 0.644 | 0.401 / 0.629 |
+  | MPC (forecast search) | 0.400 / 0.591 | 0.351 / 0.526 |
+  | r0 | 0.365 / 0.524 | 0.347 / 0.526 |
+  | Anchor and flank | 0.316 / 0.480 | 0.198 / 0.372 |
+  | Direct attack | 0.179 / 0.215 | 0.138 / 0.176 |
+  | Indirect 1 km | 0.122 / 0.147 | 0.120 / 0.147 |
+  | Oracle best fixed plan | 0.401 / 0.562 | 0.316 / 0.480 |
+  | Perfect-foresight bound | 0.614 / 0.792 | 0.582 / 0.780 |
+
+  - **300 m/h:**
+    - FirePilot minus MPC is +0.050 (paired 95 % −0.013 to 0.115). In p1 it was +0.074 (0.012 to 0.139).
+    - FirePilot minus r0 is +0.054 (−0.025 to 0.131). In p1 it was +0.108 (0.065 to 0.153).
+    - So at the short budget FirePilot no longer clearly beats MPC or r0. It still beats anchor and flank (0.128 to
+      0.278) and direct attack.
+    - FirePilot beats MPC on 64.6 % of fires (p1 45.8 %).
+  - **1000 m/h:**
+    - FirePilot minus MPC is +0.103 (0.030 to 0.179). In p1 it was +0.053 (−0.020 to 0.128).
+    - MPC lost more than FirePilot did, so the tie becomes a win.
+    - FirePilot beats MPC on 56.2 % of fires, ties on 6.2 %.
+  - **Share of the bound:** 0.689 / 0.806 (p1 0.771 / 0.812).
+  - **Hectares kept unburned, summed:** FirePilot 15,529 / 51,870, MPC 15,601 / 46,880.
+  - **Recent fires (16), 300 / 1000 m/h:** FirePilot 0.487 / 0.651, MPC 0.413 / 0.565.
+  - **Main-period fires (32):** FirePilot 0.358 / 0.618, MPC 0.319 / 0.506.
+  - **Error bars:** the network predicts 0.589 / 0.718 for its own picks, optimistic by 0.188 / 0.089 (p1 0.113 /
+    0.069). The 90 % range still covers 100 % / 100 % of fires; the 50 % range covers 64.6 % / 75.0 %.
+- **Where the 300 m/h loss is:** 44 of 48 FirePilot picks at 300 m/h are centre-out (mode 0); their mean fell from
+  0.511 to 0.434. Only 23 % of them are the same plan as under p1, because the forecast run the planner reads
+  changes with the physics too. This is consistent with the val_p2 finding (short budgets mean lines built close
+  to the fire, which U12 and U13 credited), but the U12/U13 cell-removal test was not repeated on exam fires.
+- **Fidelity, free run vs the observed perimeters (48 exam fires, median Dice on total area 24 / 48 / 72 h):**
+  - p1: 0.484 / 0.435 / 0.405 as shipped (0.494 / 0.436 / 0.405 with today's mask-ignition fix).
+  - p2: 0.500 / 0.427 / 0.411. F1 on new area 0.267 / 0.346 / 0.341 (p1 0.271 / 0.343 / 0.341).
+  - The dev fidelity (40 dev fires) moves by less than 0.01 from the p1 rebuild. The p1 rebuild's 24 h Dice is
+    0.581 against 0.527 shipped, from the same mask-ignition fix.
+- **What it means:** r1 still beats r0 on the p2 gate (0.487 against 0.354), so the r1 decision stands under p2. On
+  the exam, part of v1.0's 300 m/h lead came from line credited behind the front. At 1000 m/h the result holds and
+  gets stronger against MPC. The fixed near-fire plans, anchor and flank and direct attack, were also overstated in
+  p1. `pipeline.py` and the released weights are unchanged, and v1.0's headline stays the p1 exam, which is what was
+  graded. The model card adds the p2 numbers.

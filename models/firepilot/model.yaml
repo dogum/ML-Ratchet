@@ -26,6 +26,8 @@ summary: >-
   stopped 0.474 of the simulated no-action growth at 300 m/h and 0.644 at 1000 m/h, against 0.316 and 0.480 for
   anchor and flank, the best classical plan, and 0.400 and 0.591 for a 29-simulation forecast search (MPC). It beats
   anchor and flank on 71 % of fires but MPC on only 46 %. A perfect-foresight search, a bound, reaches 0.614 and 0.792.
+  Re-scored on 22 Nov 2026 in FireSim physics p2, which fixes two solver bugs that credited line built behind the fire
+  front, the same weights stop 0.401 and 0.629 (MPC 0.351 and 0.526, anchor and flank 0.198 and 0.372).
   These are simulated outcomes: the simulator gets the size of the real 72 h growth about right and its shape only
   partly.
 
@@ -171,6 +173,18 @@ exam:
         - { name: "Perfect-foresight bound", kind: classical, value: "0.696 / 0.855" }
       verdict: info
       note: "With 16 fires most paired intervals include zero: minus MPC (−0.069 to 0.177) / (−0.061 to 0.167); minus anchor and flank (0.021 to 0.285) / (−0.068 to 0.232); minus r0 (0.085 to 0.227) / (−0.002 to 0.161). Main period (32 fires, 2017-21): FirePilot 0.446 / 0.631, MPC 0.364 / 0.573, anchor and flank 0.285 / 0.422, bound 0.574 / 0.761."
+    - metric: "Same exam re-scored in FireSim physics p2 (22 Nov 2026; U1, U12 and the p1-only U13 no longer credit line built behind the front): mean share stopped, 300 / 1000 m/h"
+      better: higher
+      model: "0.401 / 0.629"
+      baselines:
+        - { name: "MPC, forecast-world search", kind: classical, value: "0.351 / 0.526" }
+        - { name: "r0 proxy planner", kind: classical, value: "0.347 / 0.526" }
+        - { name: "Best fixed plan per fire (oracle pick of 5)", kind: classical, value: "0.316 / 0.480" }
+        - { name: "Anchor and flank", kind: classical, value: "0.198 / 0.372" }
+        - { name: "Direct attack at the head", kind: classical, value: "0.138 / 0.176" }
+        - { name: "Perfect-foresight bound", kind: classical, value: "0.582 / 0.780" }
+      verdict: info
+      note: "Same released weights, same 48 fires and hidden draws, all re-simulated in p2 (training/results/exam_summary_p2.json). Paired FirePilot minus MPC +0.050 (95 % −0.013 to 0.115) / +0.103 (0.030 to 0.179); minus r0 +0.054 (−0.025 to 0.131) / +0.103 (0.051 to 0.160); minus anchor and flank (0.128 to 0.278) / (0.164 to 0.355). So at 300 m/h FirePilot no longer clearly beats MPC or r0; at 1000 m/h it now beats MPC. It reaches 69 % / 81 % of the bound. Fixed plans that close line near the fire lost most (anchor and flank −0.12 / −0.11). Prediction optimistic by 0.188 / 0.089; the 90 % range still covers every fire. On the p2 dev gate r1 scores 0.487 and r0 0.354."
     - metric: "By detected area, 300 m/h: mean share stopped on the large-fire tercile (detected above about 160 ha)"
       better: higher
       model: 0.20
@@ -196,7 +210,7 @@ exam:
 
 wins:
   - "Simulated, on 48 real exam fires: it stops 0.474 of the no-action 72 h growth at 300 m/h and 0.644 at 1000 m/h, against 0.316 and 0.480 for anchor and flank (paired +0.16, 95 % intervals 0.08-0.23 and 0.08-0.26), and it is better than anchor and flank on 71 % of fires at both budgets."
-  - "At 300 m/h it beats the 29-simulation forecast search on the mean (0.474 against 0.400, paired +0.074, 0.012 to 0.139) with one forecast run and about 3 s of planning; it also beats the oracle pick of the best fixed plan per fire (0.401 / 0.562)."
+  - "At 300 m/h it beats the 29-simulation forecast search on the mean (0.474 against 0.400, paired +0.074, 0.012 to 0.139) with one forecast run and about 3 s of planning; it also beats the oracle pick of the best fixed plan per fire (0.401 / 0.562). Under FireSim physics p2 this 300 m/h lead over MPC is no longer clear (paired −0.013 to 0.115), while at 1000 m/h it becomes one (+0.103, 0.030 to 0.179)."
   - "It keeps 20,651 ha unburned at 300 m/h and 65,230 ha at 1000 m/h, summed over the 48 fires (MPC 18,467 and 51,543; anchor and flank 8,248 and 15,454): 77-81 % of the perfect-foresight bound's mean."
   - "It found and worked around a FireSim bug (U1): timed suppression lines leak diagonally; its 8-connected lines hold, with the line length counted so they are not longer."
   - "Trained only in simulation: no real fire outcome was a training target, and the exam was run once, after the ratchet closed."
@@ -209,7 +223,7 @@ losses:
 limits:
   - "Simulated outcomes only. Every number above is a FireSim outcome; a free run of the same physics matches the observed 72 h growth in size (×1.14) but only partly in shape (Dice 0.40, F1 on new area 0.34), the simulated fire is often in the wrong place, the real fires were fought, and FirePilot has not been tested against real line-building records (ICS-209 or similar)."
   - "FireSim upstream bug U1: its corner rule blocks a diagonal step only past permanently non-burnable cells, not past cells blocked by a timed line (t_block ≤ t), so 4-connected suppression lines leak. Every outcome here (training targets, the ratchet, the exam, all baselines) was scored in a FireSim with this bug. FirePilot's lines, and so every plan's, are 8-connected to avoid it, with the 8-boundary's cells sharing the 4-connected line length, so each cell's build time is a modelling choice made around the bug. A FireSim fix (physics p2) needs the frozen sets rebuilt and every rung and baseline re-scored; how far the numbers move is not known."
-  - "FireSim p1 bugs U12 and U13 (found 22 Nov 2026 in the physics p2 re-score): a line could take credit for cells the fire reached before the line was built (the cell stayed unburned, or spread in transit from it was cancelled at an hour boundary). Plans that close lines near the fire gained most. On the p2 frozen set (159 scenarios) r1 scores 0.460 against 0.484 on p1 and r0 0.403 (unchanged), so r1 still leads; direct attack falls from 0.107 to 0.054 and anchor and flank from 0.195 to 0.114, while the indirect plans barely move. The exam and the gate were not re-run under p2. See NOTEBOOK.md."
+  - "FireSim p1 bugs U12 and U13 (found 22 Nov 2026 in the physics p2 re-score): a line could take credit for cells the fire reached before the line was built (the cell stayed unburned, or spread in transit from it was cancelled at an hour boundary). Plans that close lines near the fire gained most. On the p2 frozen set (159 scenarios) r1 scores 0.460 against 0.484 on p1 and r0 0.403 (unchanged), so r1 still leads; direct attack falls from 0.107 to 0.054 and anchor and flank from 0.195 to 0.114, while the indirect plans barely move. On the p2 dev gate r1 scores 0.487 and r0 0.354 (p1 0.481 and 0.383), so the r1 decision stands. On the p2 exam r1 stops 0.401 / 0.629 (p1 0.474 / 0.644); at 300 m/h its leads over MPC (+0.050, −0.013 to 0.115) and r0 (+0.054, −0.025 to 0.131) are no longer clear, and the network's optimism grows to 0.19 / 0.09 (training/results/exam_summary_p2.json). See NOTEBOOK.md."
   - "One line, two crews, one decision at detection: no re-planning, no aircraft, no spotting (off in the planning world), no values at risk and no line loss other than the 2.4 m flame-length rule."
   - "The domain is the stored LANDFIRE window: on 45 of 48 exam fires the 15 km crop reaches the window edge (FireSim upstream U2), so growth beyond it is cut off for every method alike."
   - "Training fires are synthetic fires grown from point ignitions on dev landscapes; real detections are more ragged. Live fuel moisture is constant, and FireSim's fires do not stall or burn out as real fires do (simulated fires grow on 91 % of half-days, real ones on 50 %)."
@@ -217,7 +231,7 @@ limits:
 next:
   - "Re-plan each morning (receding horizon): run the value net at each shift with the new detection. The biggest realism gain and probably the biggest score gain; the bound is about 15 points higher."
   - "Imitate the perfect-foresight search: use the truth-CEM plans on the training bank as targets, or a ranking loss, instead of an MSE value net that suffers the winner's curse on its own argmax."
-  - "Score FirePilot in FireSim physics p2 (U1 and U12 fixed upstream on 22 Nov 2026; r1 already scored on val_p2): rebuild the gate and the training banks as p2, retrain and re-take the rungs, and re-run the exam if a p2 rung is released."
+  - "Train in FireSim physics p2 (U1 and U12 fixed upstream on 22 Nov 2026; r1 already scored on val_p2, gate_p2 and the p2 exam): rebuild the training banks as p2, retrain and re-take the rungs against val_p2 and gate_p2, and release a p2 rung only through a new exam."
   - "Values-at-risk targets (WUI cells), multi-segment lines, aircraft and spotting, and a fire-persistence (burnout and stall) module in FireSim."
 help_wanted:
   - "Real suppression records (ICS-209 incident reports, line-construction and containment logs) to test any planner outside the simulator; FireSim has no validated suppression data."
