@@ -1,0 +1,43 @@
+{
+ "acsza1": {
+  "max_uplift": 0.3516927411625362,
+  "max_subsidence": -0.1259340329050579,
+  "rel_maxdiff_vs_geoclaw": 3.614533979273435e-14
+ },
+ "acszb1": {
+  "max_uplift": 0.4542209417841706,
+  "max_subsidence": -0.15312405227466655,
+  "rel_maxdiff_vs_geoclaw": 3.876557760941308e-13
+ },
+ "kisza22": {
+  "max_uplift": 0.3428108967556084,
+  "max_subsidence": -0.07235487210609448,
+  "rel_maxdiff_vs_geoclaw": 2.4451334293190896e-14
+ },
+ "kiszb22": {
+  "max_uplift": 0.4865122479583107,
+  "max_subsidence": -0.11616885274933691,
+  "rel_maxdiff_vs_geoclaw": 2.732700106868737e-13
+ },
+ "cssza60": {
+  "max_uplift": 0.3832686198806166,
+  "max_subsidence": -0.20130052074852345,
+  "rel_maxdiff_vs_geoclaw": 2.385451386715666e-13
+ },
+ "ntsza30": {
+  "max_uplift": 0.36359423354090137,
+  "max_subsidence": -0.041554856752272065,
+  "rel_maxdiff_vs_geoclaw": 5.0229533557851016e-14
+ },
+ "geoclaw_worst_rel_diff_all_rakes": 3.876557760941308e-13,
+ "noaa_most_acsza1": {
+  "corr": 0.9947640001563584,
+  "most_max": 0.34906432032585144,
+  "most_min": -0.1277448982000351,
+  "mine_max": 0.35176001554599945,
+  "mine_min": -0.12578841480415814,
+  "rms_diff": 0.0051458390966491584,
+  "rel_rms": 0.014741807732871464,
+  "volume_ratio": 1.0342056459885227
+ }
+}

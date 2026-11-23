@@ -1,0 +1,23 @@
+# The ratchet ladder, normalised. Raw log: training/ratchet.json (written by training/ratchet.py).
+model: tsunaminet
+ladders:
+  - name: TsunamiNet
+    objective: Mean skill of the posterior-median Mw and along-trench centroid against guessing the frozen set's median
+    rule: >-
+      Keep a rung if its frozen-set score beats the incumbent's by more than 0.01 AND its dev error (Mw MAE/0.3 +
+      centroid MAE/100 km + held-out amplitude MAE/0.2 dex, on the 5 real dev events) is no more than 5 % worse.
+    margin: 0.01
+    dev_gate: Dev error (5 real dev events, 18 held-out DART forecasts) may not get more than 5 % worse
+    frozen_sets: [val_p0, val_p1]
+    scored_on: val_p1
+    note: >-
+      Physics changed once (p0 -> p1, from the dev twin test), so a new frozen set val_p1 was built and r1 re-scored on it
+      before any p1 rung was judged. r4 was trained and judged before r3; decisions were taken in that order.
+    columns_source: Frozen simulated set val_p1 (3,000 sims) and the 5 real dev events; never the exam
+    columns: ["Sim Mw MAE", "Sim centroid MAE (km)", "Dev Mw MAE", "Dev centroid MAE (km)", "Dev amplitude MAE (dex)"]
+    rungs:
+      - { id: r1, change: "p0 textbook physics (linear SWE 8', instantaneous rupture), 40k sims in real DART noise, CNN set encoder + RealNVP", sim: 0.327, decision: kept, why: "First rung (0.438 on val_p0). Its flow never learned the centroid: skill 0.006 on val_p0.", metrics: [0.155, 82, 0.21, 91, 0.40] }
+      - { id: r2, change: "p1 physics from the dev twin test: arrivals 1.65 % of travel time later, amplitudes x1.60 (sd 0.17 dex) per DART, rupture at 2.5 km/s; forecasts with the same delay and gain", sim: 0.663, decision: kept, why: "+0.336 on val_p1; dev error x0.753", metrics: [0.092, 39, 0.21, 79, 0.24] }
+      - { id: r4, change: "Mixed bank: 20k p0 + 20k p1 simulations", sim: 0.641, decision: rejected, why: "-0.022 vs r2 on val_p1; dev error x1.054", metrics: [0.104, 40, 0.28, 54, 0.28] }
+      - { id: r3, change: "Physics anchor: the SIFT-style NNLS solution on the same windows (Mw, centroid, deep share, misfit, 18 slip shares) joins the flow's context", sim: 0.718, decision: released, why: "+0.054 vs r2; dev error x0.969", metrics: [0.091, 30, 0.23, 57, 0.26] }
+      - { id: r5, change: "Polish: r3 trained 3,000 more steps at a 3x lower learning rate", sim: 0.724, decision: rejected, why: "+0.006, short of the 0.01 margin; dev error x0.987", metrics: [0.090, 29, 0.22, 59, 0.25] }

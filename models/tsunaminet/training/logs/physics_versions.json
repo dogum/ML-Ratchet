@@ -1,0 +1,4 @@
+{
+ "p1": {"delay_frac": 0.0165, "delay_sd": 1.0, "amp_gain": 1.60, "amp_sd_log10": 0.17, "amp_sd": 0.0, "rupture_vel": 2.5,
+        "why": "Twin test p0 on dev (data/twin_p0.json): real first waves arrive 1.65% of the travel time later than the linear model (IQR 1.1-1.8%, 15 interface records with r>0.4; Watada et al. 2014 report 1-2% from elastic loading, compressibility and stratification); real/twin max amplitude median x1.60 (log10 +0.205, robust sd 0.17, 17 interface records). Rupture propagates from the epicentre at 2.5 km/s (textbook kinematics)."}
+}
