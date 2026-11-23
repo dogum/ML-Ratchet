@@ -91,7 +91,8 @@ for e in explorer:
 
 # ---- results
 exam = J('exam.json'); rat = J('ratchet.json'); twin = J('twin_dev.json'); ver = J('verify_physics.json'); cal = J('calibration.json')
-TXT = json.load(open(os.path.join(HERE, 'page_text.json')))
+ASSET = lambda n: os.path.join(HERE, 'web_' + n) if os.path.exists(os.path.join(HERE, 'web_' + n)) else os.path.join(HERE, n)   # training/ names them web_*, lab/src/ not
+TXT = json.load(open(ASSET('page_text.json')))
 METH = [('AirfoilNet', 'AirfoilNet'), ('NeuralFoil', 'NeuralFoil'), ('physics', 'raw solver'), ('thin_airfoil', 'thin airfoil'), ('mean_polar', 'mean dev polar')]
 ROWS = [('cl_pre', 'Cl error before stall', 3), ('cl_post', 'Cl error after stall', 3), ('clmax', 'Cl max error', 3),
         ('a_stall', 'stall angle error (deg)', 2), ('lncd', 'Cd error (|ln ratio|)', 3), ('cd_design', 'Cd at Cl 0.5 (|ln ratio|)', 3),
@@ -149,6 +150,6 @@ DATA = dict(defaultRun=dR, weights=weights, library=library, explorer=explorer, 
             defaultExplorer=dE, examTable=examTable, physTable=physTable, ratchet=ratchet, twinChart=twinChart,
             twinTable=twinTable, text=TXT)
 s = json.dumps(DATA, separators=(',', ':'), allow_nan=False).replace('</', '<\\/')
-html = open(os.path.join(HERE, 'template.html')).read().replace('/*DATA*/', s)
+html = open(ASSET('template.html')).read().replace('/*DATA*/', s)
 open(OUT, 'w').write(html)
 print('wrote', OUT, round(len(html) / 1e6, 2), 'MB')
