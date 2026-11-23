@@ -68,3 +68,15 @@
   `web/export_web.py`, the shell wrappers; `build_release.sh` writes its zip to `WORK/out/`).
 - Training still needs v1.2's work folder and its rung-7 torch checkpoint `q7_zrt.pt`, which is not in the
   repository (`training/_paths.py`).
+
+## 2026-11-22 — QuakeNet v1.2 torch checkpoints received (not committed)
+
+- The owner supplied `quakenet-v1.2-torch-checkpoints.zip` (36.7 MB, sha256 `3f4b2517c42f4dde4912d86b92ad6ca5b160097287bf8db629f056f17672ac4b`),
+  the seven v1.2 rung checkpoints from the build sandbox. Per the repository rules they are not committed.
+- Contents (sha256): `q1_base.pt` 8d912901…, `q2_slowsw.pt` 86bf5af2…, `q3_coda.pt` 6e983a61…, `q4_world.pt` 6e555af0…,
+  `q5_layers.pt` e9312210…, `q6_swdamp.pt` 9aa32b3c…, `q7_zrt.pt` d736c0a0acf5e926dec9f8f00902ca50feaffd4f123df5fd005f002a6223b254.
+- To train v2, put `q7_zrt.pt` at `models/quakenet-v2/work/ckpt/q7_zrt.pt` (`training/prep.py` reads `H + 'ckpt/q7_zrt.pt'`).
+  `prep.py` loads it with `torch.load(..., weights_only=False)`, which runs pickle code: check the sha256 above first.
+- Open (owner's decision): publish the zip as a GitHub release asset and point `models/quakenet/training/_paths.py` at
+  it, as the cloud project's follow-up list suggests. Not done.
+- Nothing was loaded or run from the checkpoints in this import.
