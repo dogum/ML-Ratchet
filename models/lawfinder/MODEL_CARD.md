@@ -90,7 +90,7 @@ Full ladders with every decision: `ratchet.yaml`, `training/results/<law>_ratche
 | Inertia (410) | MdAPE | 33.0 % | 33.0 % | 7.00 s × D: **15.1 %** | GridPulse 16.4 % | 24.0 % | loss |
 | Nadir (148) | MAE | **0.060 Hz** | 0.106 | k ΔP²/E: 0.173 | GridPulse (5 s of trace) 0.080 | 0.129 | win |
 | Homes (6,019) | MdAPE | 39.3 % | 39.7 % | a + b HDD + c CDD: 35.6 % | none in the collection | **33.4 %** | loss (to dumb) |
-| Road, VED trips (22,877) | MdAPE | 18.6 % | 20.9 % | road-load / η: 18.3 % | EnergyNet: not scored pooled (8.6 / 13.4 / 23.2 % by powertrain) | 21.3 %; MOVES-like **11.8 %** | loss |
+| Road, VED trips (22,877) | MdAPE | 18.6 % | 20.9 % | road-load / η: 18.3 % | EnergyNet **10.1 %** | 21.3 %; MOVES-like 11.8 % | loss |
 | Road, EPA tests (52,522) | MdAPE | 17.3 % | 15.1 % | road-load / η: 23.8 % | EnergyNet **7.5 %** | 24.6 % | loss |
 
 Also: water R² 0.594 (Fu 0.43, FlowCast 0.64); inertia rank correlation 0.975 (7 s × D 0.60, GridPulse 0.61);
@@ -148,6 +148,7 @@ Built in the repository after the import, following `law_bldg.py` / `exam_bldg.p
 | Stratum | n | Law | RoadSim's law | Road-load (dev η) | EnergyNet v2.1 | Label × distance | MOVES-like | Dev median |
 |---|---|---|---|---|---|---|---|---|
 | VED petrol | 14,469 | 19.3 | 14.0 | 20.0 | **8.6** | 13.0 | 10.3 | 22.4 |
+| VED, all three | 22,877 | 18.6 | 20.9 | 18.3 | **10.1** | 14.1 | 11.8 | 21.3 |
 | VED hybrids | 8,241 | 16.8 | 40.4 | 15.7 | **13.4** | 16.2 | 15.3 | 19.0 |
 | VED electric (2 Leafs) | 167 | 43.3 | 21.9 | 21.7 | 23.2 | 21.5 | **19.0** | 28.0 |
 | EPA petrol | 46,876 | 17.3 | 14.5 | 25.0 | **7.5** | – | – | 25.3 |
@@ -159,11 +160,12 @@ Built in the repository after the import, following `law_bldg.py` / `exam_bldg.p
   generator EVs heavier than the real ones.
 - RoadSim's own shorter law beats the released one on VED petrol and on EPA petrol: the dev gate preferred the longer law.
 - **Errata, exam run 1.** `exam_road.py` multiplied EnergyNet's VED frame by its unit factor although the frame is
-  already in MJ, so EnergyNet's three VED rows came out ×0.042 (petrol, hybrids) and ×3.6 (electric). The output is kept
-  as written (`training/results/exam_road.json`); `exam_road_errata.py` writes `exam_road_reported.json`, which replaces
-  those rows with EnergyNet's own published values on the same trips (the trip counts and RoadData's baseline rows match
-  its exam exactly) and marks EnergyNet's pooled VED row not scored. Every law, rung, road-load, RoadSim-law, RoadData
-  and dumb row is unaffected. Re-scoring EnergyNet's pooled VED row is left to the owner.
+  already in MJ, so EnergyNet's VED rows came out ×0.042 (petrol, hybrids) and ×3.6 (electric): 95.8 %, 95.6 % and
+  187 % MdAPE. The run's output is kept as written (`training/results/exam_road.json`). With the owner's agreement,
+  `exam_road_errata.py` re-computed EnergyNet's VED rows only, from its stored per-trip predictions against run 1's
+  stored truth (which agrees with EnergyNet's own to 6e-8): petrol 8.6 %, hybrids 13.4 %, electric 23.2 % (its published
+  values exactly) and 10.1 % on the pooled trips. The law's exam was not re-run; every law, rung, road-load,
+  RoadSim-law, RoadData and dumb row is unchanged. The page, release and card read `exam_road_reported.json`.
 
 ## Limits
 

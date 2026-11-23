@@ -3,5 +3,5 @@
  "Grid inertia: rescale GridSim's GB fleet to NESO's inertia per MW (the GridPulse wrapper's fix) as physics i2, and re-take the ladder; the shape term (1 − 0.85 s) should survive.",
  "Water: a recession law −dQ/dt = a Q^b on the same banks, and a Daymet/NLDAS exam to separate law skill from ERA5-Land bias.",
  "Homes: add heating fuel and system as inputs (a law per fuel) and occupants; RECS dev shows the fuel matters most.",
- "Road: give the law the car's engine size or label fuel economy, cold start and trip length as inputs (RoadData has them), and widen the generator toward lighter cars; re-score EnergyNet's pooled VED row from its frame (exam run 1 unit bug) if the owner agrees."
+ "Road: give the law the car's engine size or label fuel economy, cold start and trip length as inputs (RoadData has them), and widen the generator toward lighter cars."
 ]

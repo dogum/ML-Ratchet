@@ -65,11 +65,14 @@
     "r2": -0.1603076203206042
    },
    "energynet": {
-    "name": "EnergyNet v2.1 (published, same trips)",
+    "name": "EnergyNet v2.1 (network; its exam predictions, re-computed)",
     "n": 14469,
-    "mdape": 8.6,
-    "bias_median_pct": 0.3,
-    "note": "EnergyNet v2.1, published exam value on the same trips (models/energynet/model.yaml); run 1 of this exam mis-scaled its VED rows (units), see training/exam_road_errata.py"
+    "mdape": 8.63636483597956,
+    "bias_median_pct": 0.3007699906570682,
+    "mae": 0.372799306941892,
+    "rho": 0.8667585533731739,
+    "r2": 0.7875498907216565,
+    "published_mdape": 8.6
    },
    "b_label": {
     "name": "Window label x distance (RoadData)",
@@ -147,11 +150,14 @@
     "r2": 0.2914330429189973
    },
    "energynet": {
-    "name": "EnergyNet v2.1 (published, same trips)",
+    "name": "EnergyNet v2.1 (network; its exam predictions, re-computed)",
     "n": 8241,
-    "mdape": 13.4,
-    "bias_median_pct": 3.8,
-    "note": "EnergyNet v2.1, published exam value on the same trips (models/energynet/model.yaml); run 1 of this exam mis-scaled its VED rows (units), see training/exam_road_errata.py"
+    "mdape": 13.444145634377325,
+    "bias_median_pct": 3.797403896908569,
+    "mae": 0.2944125607407845,
+    "rho": 0.6781266713562141,
+    "r2": 0.5315524591149057,
+    "published_mdape": 13.4
    },
    "b_label": {
     "name": "Window label x distance (RoadData)",
@@ -229,11 +235,14 @@
     "r2": -0.10501848228775756
    },
    "energynet": {
-    "name": "EnergyNet v2.1 (published, same trips)",
+    "name": "EnergyNet v2.1 (network; its exam predictions, re-computed)",
     "n": 167,
-    "mdape": 23.2,
-    "bias_median_pct": -20.3,
-    "note": "EnergyNet v2.1, published exam value on the same trips (models/energynet/model.yaml); run 1 of this exam mis-scaled its VED rows (units), see training/exam_road_errata.py"
+    "mdape": 23.22390211103348,
+    "bias_median_pct": -20.280898017994076,
+    "mae": 0.18453941786628572,
+    "rho": 0.6591953786059551,
+    "r2": 0.22917057824640208,
+    "published_mdape": 23.2
    },
    "b_label": {
     "name": "Window label x distance (RoadData)",
@@ -311,9 +320,13 @@
     "r2": 0.36549186081965557
    },
    "energynet": {
-    "name": "EnergyNet v2.1 (not scored on the pooled trips)",
-    "n": 0,
-    "note": "EnergyNet v2.1, published exam value on the same trips (models/energynet/model.yaml); run 1 of this exam mis-scaled its VED rows (units), see training/exam_road_errata.py"
+    "name": "EnergyNet v2.1 (network; its exam predictions, re-computed)",
+    "n": 22877,
+    "mdape": 10.053119847542291,
+    "bias_median_pct": 1.1369123223295308,
+    "mae": 0.343187706779329,
+    "rho": 0.9284217471899893,
+    "r2": 0.8580041131558026
    },
    "b_label": {
     "name": "Window label x distance (RoadData)",
@@ -3655,6 +3668,15 @@
    "rho": 0.7692615668204853,
    "r2": 0.36549186081965557
   },
+  "energynet": {
+   "name": "EnergyNet v2.1 (network; its exam predictions, re-computed)",
+   "n": 22877,
+   "mdape": 10.053119847542291,
+   "bias_median_pct": 1.1369123223295308,
+   "mae": 0.343187706779329,
+   "rho": 0.9284217471899893,
+   "r2": 0.8580041131558026
+  },
   "b_label": {
    "name": "Window label x distance (RoadData)",
    "n": 22872,
@@ -4017,13 +4039,57 @@
  "errata": {
   "date": "2026-11-22",
   "run": 1,
-  "what": "The bug: exam_road.py multiplied EnergyNet's VED frame (exam2_ved_v2.parquet) by its `conv` column, but that frame already stores y and pred in MJ (EnergyNet's realfeat.py multiplies by conv before saving). EnergyNet's three VED rows are therefore scaled by 0.042 (petrol, hybrids) and 3.6 (electric). Nothing else depends on it: the law, every rung, road-load, RoadSim's law, the dumb rows and RoadData's baselines are correct (the baselines were not multiplied, and they match EnergyNet's published RoadData rows: petrol 13.0 / 10.3 / 22.8 %). The fix here: on each VED stratum, EnergyNet's row is replaced by its own published exam value on the same trips (models/energynet/model.yaml; the trip counts match: 14,469 / 8,241 / 167); the pooled VED row, which EnergyNet never published, is marked not scored. The EPA rows were computed as ratios to EnergyNet's own truth and are correct. Re-scoring EnergyNet's VED rows from its frame is left to the owner (the exam runs once). ",
-  "checks_run1": {
-   "ved_truth_max_rel_diff": 2.600000205157792,
-   "ved_trips_en": 22877,
-   "ved_trips_law": 22877,
-   "epa_rows_en": 52522,
-   "epa_rows_law": 52522
+  "what": "The bug: exam_road.py multiplied EnergyNet's VED frame (exam2_ved_v2.parquet) by its `conv` column, but that frame already stores y and pred in MJ (EnergyNet's realfeat.py multiplies by conv before saving). EnergyNet's VED rows were therefore scaled by 0.042 (petrol, hybrids) and 3.6 (electric). Nothing else depends on it: the law, every rung, road-load, RoadSim's law, the dumb rows and RoadData's baselines are correct (the baselines were not multiplied, and they match EnergyNet's published RoadData rows: petrol 13.0 / 10.3 / 22.8 %). EnergyNet's EPA rows were computed as ratios to its own truth and are correct.",
+  "fix": "The fix (the owner agreed to a re-score, 22 Nov 2026): EnergyNet's VED rows only are re-computed from its stored per-trip predictions (pred / trip km, in MJ/km, no unit factor), against run 1's stored truth for the same trips (the script checks EnergyNet's own truth agrees trip by trip). Its published values on the same trips are kept beside them as a cross-check (models/energynet/model.yaml).",
+  "checks": {
+   "ved_trips": 22877,
+   "truth_max_rel_diff": 5.870221808645937e-08,
+   "truth_median_rel_diff": 2.073253990708679e-08,
+   "run1_energynet_ratio_median": 0.042
+  },
+  "energynet_ved_before": {
+   "VED_ICE": {
+    "n": 14469,
+    "mdape": 95.7873676603924,
+    "bias_median_pct": -95.7873676603924
+   },
+   "VED_HEV": {
+    "n": 8241,
+    "mdape": 95.64050903632983,
+    "bias_median_pct": -95.64050903632983
+   },
+   "VED_EV": {
+    "n": 167,
+    "mdape": 186.98876713522128,
+    "bias_median_pct": 186.98876713522128
+   },
+   "VED_all": {
+    "n": 22877,
+    "mdape": 95.75284099911971,
+    "bias_median_pct": -95.74232316510961
+   }
+  },
+  "energynet_ved_after": {
+   "VED_ICE": {
+    "n": 14469,
+    "mdape": 8.63636483597956,
+    "bias_median_pct": 0.3007699906570682
+   },
+   "VED_HEV": {
+    "n": 8241,
+    "mdape": 13.444145634377325,
+    "bias_median_pct": 3.797403896908569
+   },
+   "VED_EV": {
+    "n": 167,
+    "mdape": 23.22390211103348,
+    "bias_median_pct": -20.280898017994076
+   },
+   "VED_all": {
+    "n": 22877,
+    "mdape": 10.053119847542291,
+    "bias_median_pct": 1.1369123223295308
+   }
   }
  }
 }

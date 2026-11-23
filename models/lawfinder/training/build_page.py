@@ -49,10 +49,9 @@ META = {
                  exam_desc='VED exam trips (petrol, hybrid, electric)', exam_unit='trips',
                  exam_note=("Truth: RoadData's per-second VED label (MAF-estimated fuel for most petrol cars; battery "
                             'energy for the Leafs) over the trip, per km. EnergyNet v2.1 reads the whole speed trace and '
-                            'much more about the car; the law reads ten numbers. EnergyNet was not scored on the pooled '
-                            'trips (exam run 1 mis-scaled its VED rows); its published values on the same trips are '
-                            'petrol 8.6 %, hybrids 13.4 %, electric 23.2 %. The EPA exam (dynamometer tests) is in the '
-                            'model card.'),
+                            "much more about the car; the law reads ten numbers. Exam run 1 mis-scaled EnergyNet's VED "
+                            'rows (units); they were re-computed from its stored predictions (training/exam_road_errata.py). '
+                            'The EPA exam (dynamometer tests) is in the model card.'),
                  textbook_rows=('roadload_dev',), network='energynet', short={'energynet': 'EnergyNet', 'b_label': 'label × distance',
                                                                              'b_vsp': 'MOVES-like', 'b_class': 'class median'},
                  target_ml='<mi>E</mi>'),

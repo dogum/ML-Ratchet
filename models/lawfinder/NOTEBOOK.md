@@ -81,3 +81,21 @@ Asked for by the owner after the import ("Follow the existing pipelines exactly"
   `ratchet.yaml` by `build_card.py`'s own ladder code; `model.yaml` was edited by hand (as the shipped one had been).
 - Windows note: the scripts need Python's UTF-8 mode (`PYTHONUTF8=1`) for the JSON and HTML they read.
 - Backlog: `lawfinder-road` removed (built).
+
+## 2026-11-22 — road exam: EnergyNet's VED rows re-computed (owner's OK)
+
+- **What was wrong.** `exam_road.py` (exam run 1) multiplied EnergyNet's VED frame (`exam2_ved_v2.parquet`) by its
+  `conv` column. That frame already stores `y` and `pred` in MJ (EnergyNet's `realfeat.py` multiplies before saving), so
+  EnergyNet's VED predictions came out ×0.042 for petrol and hybrids and ×3.6 for electric cars. Only those comparison
+  rows were wrong; the law's predictions, every rung and every other row never touched the factor.
+- **What was re-computed.** EnergyNet's VED rows only, in `exam_road_errata.py`: its stored per-trip predictions / trip
+  km (MJ/km), against run 1's stored truth for the same 22,877 trips (`exam_road_points.parquet`). EnergyNet's own
+  truth agrees with it to 6e-8 (max relative difference); run 1's EnergyNet column is exactly 0.042× the corrected one
+  at the median. The law's exam was not re-run, and `exam_road.json` is left as run 1 wrote it.
+- **Before → after (MdAPE, bias):** petrol 95.8 % (−95.8 %) → 8.6 % (+0.3 %); hybrids 95.6 % (−95.6 %) → 13.4 %
+  (+3.8 %); electric 187.0 % (+187.0 %) → 23.2 % (−20.3 %); all VED trips 95.8 % → 10.1 % (+1.1 %). The three
+  per-powertrain values equal EnergyNet's published exam values. The interim report (published values, pooled row "not
+  scored") is replaced.
+- **What changed downstream.** The pooled VED headline now shows EnergyNet at 10.1 %; the page verdict reads "loses
+  to EnergyNet" (was "loses to MOVES-like", 11.8 %). Every road verdict is still a loss. `exam_road_reported.json`,
+  `lawfinder_laws.json`, the lab page, `model.yaml` (rows, limits, help_wanted, next) and `MODEL_CARD.md` updated.
