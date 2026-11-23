@@ -8,7 +8,7 @@ thin-airfoil theory, and the dumb mean dev polar.
 import os, sys, json, time
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
-sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(ROOT, 'release'))
+sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(ROOT, 'release')); sys.path.insert(2, os.path.abspath(ROOT))   # ROOT: airfoilnet.py in the repository layout
 import realeval as rev  # noqa
 import baselines as bl  # noqa
 import airfoilnet as an  # noqa

@@ -5,7 +5,7 @@ usage: python twin_dev.py [weights.npz]   -> work/twin_dev.json (+ printed table
 import os, sys, json
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
-sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(ROOT, 'release'))
+sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(ROOT, 'release')); sys.path.insert(2, os.path.abspath(ROOT))   # ROOT: airfoilnet.py in the repository layout
 import realeval as rev  # noqa
 import baselines as bl  # noqa
 

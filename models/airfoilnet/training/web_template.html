@@ -392,7 +392,7 @@ for (const grp of ['exam', 'dev']) { const og = document.createElement('optgroup
   EXS.forEach((a, i) => { if (a.split !== grp) return; const op = document.createElement('option'); op.value = i; op.textContent = a.name + ' · ' + a.family; og.appendChild(op); }); ef.appendChild(og); }
 function fillRuns() { const a = EXS[+ef.value]; er.replaceChildren(); a.runs.forEach((r, i) => { const op = document.createElement('option'); op.value = i; op.textContent = 'Re ' + Math.round(r.Re).toLocaleString('en-US') + (a.models > 1 ? ' · model ' + r.model : ''); er.appendChild(op); }); drawEx(); }
 function drawEx() {
-  const a = EXS[+ef.value], run = a.runs[+er.value]; const g = D.grid; const p = a.p;
+  const a = EXS[+ef.value], run = a.runs[+er.value]; const g = D.grid; const p = run.p || a.p;   // a run from another physical build carries its own geometry
   const r = predict(p, run.Re, g); const s1 = css('--s1'), s2 = css('--s2'), s3 = css('--s3');
   const items = [{label: 'tunnel', dot: true}, {label: 'AirfoilNet', color: s1}];
   const ser = (y, extra) => Object.assign({x: g, y}, extra);

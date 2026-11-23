@@ -4,7 +4,7 @@ usage: python webdata.py <weights.npz> <out.html>
 import os, sys, json, base64, glob, re
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
-sys.path.insert(0, os.path.join(ROOT, 'src')); sys.path.insert(0, os.path.join(ROOT, 'release'))
+sys.path.insert(0, os.path.join(ROOT, 'src')); sys.path.insert(0, os.path.join(ROOT, 'release')); sys.path.insert(2, os.path.abspath(ROOT))   # ROOT: airfoilnet.py in the repository layout
 import airfoilnet as an  # noqa
 import baselines as bl  # noqa
 import realeval as rev  # noqa

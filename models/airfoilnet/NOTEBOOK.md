@@ -96,3 +96,13 @@ The drag trend with Re was built into physics version p1c (see the ratchet). The
   Some scripts expect `splits.json` at the folder root (it ships as `training/splits.json`). The two shell wrappers
   (`run_bank.sh`, `chain_A.sh`) now `cd` to `training/` instead of the sandbox folder.
 - Not done: no site instrument (no `export_instrument.py`; the lab page has the JS port, == numpy to 1.3e-14).
+
+## 2026-11-22 — PR #13 review: training imports and the lab explorer
+
+- The training entry points (`train.py`, `calibrate.py`, `exam.py`, `baselines.py`, `twin_dev.py`, `web_webdata.py` and
+  its copy `lab/src/webdata.py`) put the flat build's `release/` on the path but not this folder, so `import airfoilnet`
+  failed in the repository layout. They now add the model folder after `release/` (a rebuilt release still wins).
+- The lab explorer predicted every run from the default build's geometry (`a.p`). 31 runs of E387, SA7036, SD7032 and
+  SD7037 come from other physical builds and carry their own geometry, which the NeuralFoil and solver curves already
+  used. `drawEx()` now uses `run.p || a.p` (template, its training copy and the shipped `lab/index.html`; one expression
+  changed, page not rebuilt). The exam (`training/exam.py`) is not affected.
