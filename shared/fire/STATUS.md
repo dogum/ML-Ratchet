@@ -357,3 +357,20 @@ is in `models/firepilot/training/results/exam_summary_p2.json`.
 - Plans that close line near the fire lost most, consistent with U12 and U13 crediting line built behind the front.
 - Exam fidelity (free run vs observed perimeters) moves by at most 0.016 in median Dice.
 - Still not done: retraining any fire model in p2.
+
+## 2026-11-22 — LawFinder: FireSim's implied growth is a median 36× too large (recorded, not fixed)
+
+LawFinder v1.0 (`models/lawfinder/`) ran symbolic regression on FireSim banks (physics p1 with the dev-calibrated ROS
+factors, 1,680 multi-day fires) and graded the laws on FireData's real exam fire-days. Nothing in `shared/fire/` was
+changed.
+
+- FireSim's own law, G ≈ (0.32 P)^1.6 km² a day (P = perimeter, km), over-predicts real next-day growth a median 36×
+  at the same perimeter, wind and moisture (bias +1.56 decades).
+- On all 38,599 exam fire-days it scores 1.80 mean |log₁₀|; no growth at all scores 1.40.
+- The released law, log₁₀ G = −0.559 / P, exists only because the dev gate refused every law that kept growth rising
+  with perimeter. It beats FireCast on growth days (0.693 against 0.757) and loses to yesterday's growth on all days
+  (1.15 against 0.671).
+- The same gap shows in FireDetective's dev twins (growth on 91 % of half-days against 50 %) and in FirePilot's
+  uncalibrated replays (3.9×). Persistence (stalls, burnout, night recovery) is the known missing piece; p2 did not add
+  it, and the 36× was not re-measured under p2.
+- Backlog: `firesim-growth` (docs/backlog.yaml).

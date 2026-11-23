@@ -1,0 +1,884 @@
+[
+ {
+  "rung": "r0",
+  "ckpt": "anchor",
+  "change": "QuakeNet v1.2 per station, combined classically (least squares on distance + back-azimuth; inverse-variance Mw and depth; origin time from P picks)",
+  "frozen": "val1",
+  "decision": "baseline",
+  "why": "Rung 0: the classical combination every later rung must beat.",
+  "objective": 0.0,
+  "skill": {
+   "epi_cap": 0.0,
+   "logz": 0.0,
+   "mw": 0.0,
+   "t0": 0.0
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 187.98250080204616,
+   "epi_mean_km": 292.12188912265117,
+   "depth_med_km": 3.5126117951664213,
+   "depth_f2": 0.9659180977542933,
+   "mw_mae": 0.07053979708116966,
+   "t0_med_s": 7.296889708127298,
+   "t0_mean_s": 9.639064005763078,
+   "cov_epi": 0.8311756935270805,
+   "cov_z": 0.8385733157199472,
+   "cov_mw": 0.5141347424042272,
+   "cov_t0": 0.8174372523117569
+  },
+  "dev": {
+   "epi_cap": 532.9977256537371,
+   "logz": 0.23210593621174186,
+   "mw": 0.07720036312885616,
+   "t0": 12.69426653711474
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 406.6993741023598,
+   "epi_mean_km": 560.7223953730565,
+   "depth_med_km": 27.156925521195788,
+   "depth_f2": 0.7,
+   "mw_mae": 0.07720036312885616,
+   "t0_med_s": 7.4269675489416045,
+   "t0_mean_s": 12.69426653711474,
+   "cov_epi": 0.575,
+   "cov_z": 0.4625,
+   "cov_mw": 0.5625,
+   "cov_t0": 0.8625
+  }
+ },
+ {
+  "rung": "r1",
+  "ckpt": "r1_notime",
+  "change": "Graph network correcting rung 0 from v1.2's per-station readings and the station geometry (no pick times)",
+  "frozen": "val1",
+  "decision": "kept",
+  "why": "+0.084 on val1 vs r0 (beats the 0.01 margin); dev error ratio 0.989 (passes the 1.05 gate)",
+  "objective": 0.08390025676602067,
+  "skill": {
+   "epi_cap": 0.09795629448915544,
+   "logz": 0.040341821156397506,
+   "mw": 0.09790701305583649,
+   "t0": 0.09939589836269325
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 157.3511872089663,
+   "epi_mean_km": 266.2353543772988,
+   "depth_med_km": 3.424855105217346,
+   "depth_f2": 0.9690885072655218,
+   "mw_mae": 0.06363345624738752,
+   "t0_med_s": 6.218918124276113,
+   "t0_mean_s": 8.680980579534756,
+   "cov_epi": 0.6663143989431969,
+   "cov_z": 0.7640686922060766,
+   "cov_mw": 0.702774108322325,
+   "cov_t0": 0.6758256274768825
+  },
+  "dev": {
+   "epi_cap": 487.1448150149621,
+   "logz": 0.2237550648136389,
+   "mw": 0.08889430757876621,
+   "t0": 11.751484041642914
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 351.9467715920027,
+   "epi_mean_km": 518.9253617471452,
+   "depth_med_km": 25.585601324287335,
+   "depth_f2": 0.7125,
+   "mw_mae": 0.08889430757876621,
+   "t0_med_s": 7.1389766246080395,
+   "t0_mean_s": 11.751484041642914,
+   "cov_epi": 0.4125,
+   "cov_z": 0.35,
+   "cov_mw": 0.6625,
+   "cov_t0": 0.625
+  }
+ },
+ {
+  "rung": "r2",
+  "ckpt": "r2_time",
+  "change": "+ P pick times: each station's pick residual at the anchor and the ak135 slowness on the nodes, residual differences on the edges",
+  "frozen": "val1",
+  "decision": "kept",
+  "why": "+0.053 on val1 vs r1 (beats the 0.01 margin); dev error ratio 0.927 (passes the 1.05 gate)",
+  "objective": 0.13701943728843324,
+  "skill": {
+   "epi_cap": 0.23920965320750487,
+   "logz": 0.04097603167394237,
+   "mw": 0.08018312518797177,
+   "t0": 0.18770893908431396
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 126.80661414563028,
+   "epi_mean_km": 226.87438763735835,
+   "depth_med_km": 3.449761619411407,
+   "depth_f2": 0.9701453104359313,
+   "mw_mae": 0.0648836957010761,
+   "t0_med_s": 5.341739777358369,
+   "t0_mean_s": 7.829725527475493,
+   "cov_epi": 0.6533685601056803,
+   "cov_z": 0.7624834874504623,
+   "cov_mw": 0.6898282694848085,
+   "cov_t0": 0.6771466314398943
+  },
+  "dev": {
+   "epi_cap": 375.1157297958454,
+   "logz": 0.22042345320244866,
+   "mw": 0.0865304934639942,
+   "t0": 11.520510028042418
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 221.946464523373,
+   "epi_mean_km": 376.4194800051952,
+   "depth_med_km": 26.774373593666404,
+   "depth_f2": 0.7125,
+   "mw_mae": 0.0865304934639942,
+   "t0_med_s": 8.124027556180954,
+   "t0_mean_s": 11.520510028042418,
+   "cov_epi": 0.3625,
+   "cov_z": 0.35,
+   "cov_mw": 0.65,
+   "cov_t0": 0.55
+  }
+ },
+ {
+  "rung": "r3",
+  "ckpt": "r3_emb",
+  "change": "+ QuakeNet v1.2's 256-number summary of each record (its last hidden layer), projected to 32 per node",
+  "frozen": "val1",
+  "decision": "rejected",
+  "why": "-0.010 on val1 vs r2 (short of the 0.01 margin); dev error ratio 1.023 (passes the 1.05 gate)",
+  "objective": 0.12729997360193984,
+  "skill": {
+   "epi_cap": 0.23519095717719185,
+   "logz": 0.03946993794313913,
+   "mw": 0.053243337311036476,
+   "t0": 0.1812956619763919
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 127.16710722253967,
+   "epi_mean_km": 227.54065898277128,
+   "depth_med_km": 3.444269514785219,
+   "depth_f2": 0.9704095112285337,
+   "mw_mae": 0.06678402287132487,
+   "t0_med_s": 5.440952018566213,
+   "t0_mean_s": 7.8915435160054495,
+   "cov_epi": 0.6546895640686922,
+   "cov_z": 0.766446499339498,
+   "cov_mw": 0.697225891677675,
+   "cov_t0": 0.6850726552179657
+  },
+  "dev": {
+   "epi_cap": 373.30974898760036,
+   "logz": 0.2304629400062403,
+   "mw": 0.08837968751531852,
+   "t0": 11.863378542620277
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 214.75834041103568,
+   "epi_mean_km": 373.30974898760036,
+   "depth_med_km": 27.249768600123673,
+   "depth_f2": 0.7,
+   "mw_mae": 0.08837968751531852,
+   "t0_med_s": 8.405001938343048,
+   "t0_mean_s": 11.863378542620277,
+   "cov_epi": 0.375,
+   "cov_z": 0.25,
+   "cov_mw": 0.625,
+   "cov_t0": 0.5625
+  }
+ },
+ {
+  "rung": "r4",
+  "ckpt": "r4_cc",
+  "change": "+ P-wave cross-correlation on the edges: the lag that best aligns each station pair's P waves around their picks, and the correlation (either polarity)",
+  "frozen": "val1",
+  "decision": "rejected",
+  "why": "+0.000 on val1 vs r2 (short of the 0.01 margin); dev error ratio 1.003 (passes the 1.05 gate)",
+  "objective": 0.1371919215909957,
+  "skill": {
+   "epi_cap": 0.24387519422434578,
+   "logz": 0.033571879869027765,
+   "mw": 0.0781801917868602,
+   "t0": 0.19314042048374902
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 125.1437687351995,
+   "epi_mean_km": 225.15056970251712,
+   "depth_med_km": 3.4518281870645637,
+   "depth_f2": 0.9677675033025099,
+   "mw_mae": 0.0650249822167576,
+   "t0_med_s": 5.2416648142506626,
+   "t0_mean_s": 7.777371130620227,
+   "cov_epi": 0.6488771466314399,
+   "cov_z": 0.7635402906208718,
+   "cov_mw": 0.6953764861294583,
+   "cov_t0": 0.6856010568031704
+  },
+  "dev": {
+   "epi_cap": 370.85743832287665,
+   "logz": 0.22201124371490666,
+   "mw": 0.08250403306722082,
+   "t0": 12.24964195924863
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 218.26867732776108,
+   "epi_mean_km": 373.68170227562666,
+   "depth_med_km": 26.51419148702449,
+   "depth_f2": 0.7125,
+   "mw_mae": 0.08250403306722082,
+   "t0_med_s": 8.799860048294068,
+   "t0_mean_s": 12.24964195924863,
+   "cov_epi": 0.4375,
+   "cov_z": 0.3125,
+   "cov_mw": 0.6375,
+   "cov_t0": 0.4875
+  }
+ },
+ {
+  "rung": "r0",
+  "ckpt": "anchor",
+  "change": "QuakeNet v1.2 per station, combined classically (least squares on distance + back-azimuth; inverse-variance Mw and depth; origin time from P picks)",
+  "frozen": "val2",
+  "decision": "baseline",
+  "why": "Rung 0, re-scored on val2.",
+  "objective": 0.0,
+  "skill": {
+   "epi_cap": 0.0,
+   "logz": 0.0,
+   "mw": 0.0,
+   "t0": 0.0
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 387.35279405763856,
+   "epi_mean_km": 508.02312688646447,
+   "depth_med_km": 3.5126117951664213,
+   "depth_f2": 0.9659180977542933,
+   "mw_mae": 0.07053979708116966,
+   "t0_med_s": 8.684342689983216,
+   "t0_mean_s": 12.091509503284398,
+   "cov_epi": 0.4655217965653897,
+   "cov_z": 0.8385733157199472,
+   "cov_mw": 0.5141347424042272,
+   "cov_t0": 0.7793923381770145
+  },
+  "dev": {
+   "epi_cap": 532.9977256537371,
+   "logz": 0.23210593621174186,
+   "mw": 0.07720036312885616,
+   "t0": 12.69426653711474
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 406.6993741023598,
+   "epi_mean_km": 560.7223953730565,
+   "depth_med_km": 27.156925521195788,
+   "depth_f2": 0.7,
+   "mw_mae": 0.07720036312885616,
+   "t0_med_s": 7.4269675489416045,
+   "t0_mean_s": 12.69426653711474,
+   "cov_epi": 0.575,
+   "cov_z": 0.4625,
+   "cov_mw": 0.5625,
+   "cov_t0": 0.8625
+  }
+ },
+ {
+  "rung": "r1",
+  "ckpt": "r1_notime",
+  "change": "Graph network correcting rung 0 from v1.2's per-station readings and the station geometry (no pick times)",
+  "frozen": "val2",
+  "decision": "kept",
+  "why": "re-taken on val2: +0.040 vs r0 (beats the 0.01 margin); dev error ratio 0.989 (passes the 1.05 gate)",
+  "objective": 0.04033043564655869,
+  "skill": {
+   "epi_cap": 0.02157446462743673,
+   "logz": -0.009254466817887996,
+   "mw": 0.07464838017586162,
+   "t0": 0.07435336460082442
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 380.6130117574175,
+   "epi_mean_km": 496.2727867128982,
+   "depth_med_km": 3.6810490613576548,
+   "depth_f2": 0.9661822985468956,
+   "mw_mae": 0.06527411549112637,
+   "t0_med_s": 7.979390212851975,
+   "t0_mean_s": 11.192465088612359,
+   "cov_epi": 0.22430647291941877,
+   "cov_z": 0.7733157199471599,
+   "cov_mw": 0.7225891677675033,
+   "cov_t0": 0.5981505944517833
+  },
+  "dev": {
+   "epi_cap": 487.1448150149621,
+   "logz": 0.2237550648136389,
+   "mw": 0.08889430757876621,
+   "t0": 11.751484041642914
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 351.9467715920027,
+   "epi_mean_km": 518.9253617471452,
+   "depth_med_km": 25.585601324287335,
+   "depth_f2": 0.7125,
+   "mw_mae": 0.08889430757876621,
+   "t0_med_s": 7.1389766246080395,
+   "t0_mean_s": 11.751484041642914,
+   "cov_epi": 0.4125,
+   "cov_z": 0.35,
+   "cov_mw": 0.6625,
+   "cov_t0": 0.625
+  }
+ },
+ {
+  "rung": "r2",
+  "ckpt": "r2_time",
+  "change": "+ P pick times: each station's pick residual at the anchor and the ak135 slowness on the nodes, residual differences on the edges",
+  "frozen": "val2",
+  "decision": "kept",
+  "why": "re-taken on val2: +0.053 vs r1 (beats the 0.01 margin); dev error ratio 0.927 (passes the 1.05 gate)",
+  "objective": 0.09284190926838903,
+  "skill": {
+   "epi_cap": 0.20326534735495583,
+   "logz": -0.005221273657631809,
+   "mw": 0.06715733196851303,
+   "t0": 0.10616623140771908
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 285.77798905634995,
+   "epi_mean_km": 407.03234015152,
+   "depth_med_km": 3.705325189378364,
+   "depth_f2": 0.9682959048877147,
+   "mw_mae": 0.065802532511598,
+   "t0_med_s": 7.43768118259467,
+   "t0_mean_s": 10.807799507290072,
+   "cov_epi": 0.23778071334214002,
+   "cov_z": 0.7733157199471599,
+   "cov_mw": 0.7247027741083223,
+   "cov_t0": 0.5556142668428006
+  },
+  "dev": {
+   "epi_cap": 375.1157297958454,
+   "logz": 0.22042345320244866,
+   "mw": 0.0865304934639942,
+   "t0": 11.520510028042418
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 221.946464523373,
+   "epi_mean_km": 376.4194800051952,
+   "depth_med_km": 26.774373593666404,
+   "depth_f2": 0.7125,
+   "mw_mae": 0.0865304934639942,
+   "t0_med_s": 8.124027556180954,
+   "t0_mean_s": 11.520510028042418,
+   "cov_epi": 0.3625,
+   "cov_z": 0.35,
+   "cov_mw": 0.65,
+   "cov_t0": 0.55
+  }
+ },
+ {
+  "rung": "r3",
+  "ckpt": "r3_emb",
+  "change": "+ QuakeNet v1.2's 256-number summary of each record (its last hidden layer), projected to 32 per node",
+  "frozen": "val2",
+  "decision": "rejected",
+  "why": "re-taken on val2: +0.003 vs r2 (short of the 0.01 margin); dev error ratio 1.023 (passes the 1.05 gate)",
+  "objective": 0.09576939884063215,
+  "skill": {
+   "epi_cap": 0.21095234903457294,
+   "logz": 0.016446177622108427,
+   "mw": 0.04185578010784141,
+   "t0": 0.11382328859800583
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 282.6879107506147,
+   "epi_mean_km": 402.4084038879709,
+   "depth_med_km": 3.534183852999087,
+   "depth_f2": 0.9709379128137384,
+   "mw_mae": 0.06758729884568847,
+   "t0_med_s": 7.456361378734151,
+   "t0_mean_s": 10.715214127506528,
+   "cov_epi": 0.23593130779392338,
+   "cov_z": 0.7611624834874504,
+   "cov_mw": 0.697225891677675,
+   "cov_t0": 0.5527080581241743
+  },
+  "dev": {
+   "epi_cap": 373.30974898760036,
+   "logz": 0.2304629400062403,
+   "mw": 0.08837968751531852,
+   "t0": 11.863378542620277
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 214.75834041103568,
+   "epi_mean_km": 373.30974898760036,
+   "depth_med_km": 27.249768600123673,
+   "depth_f2": 0.7,
+   "mw_mae": 0.08837968751531852,
+   "t0_med_s": 8.405001938343048,
+   "t0_mean_s": 11.863378542620277,
+   "cov_epi": 0.375,
+   "cov_z": 0.25,
+   "cov_mw": 0.625,
+   "cov_t0": 0.5625
+  }
+ },
+ {
+  "rung": "r4",
+  "ckpt": "r4_cc",
+  "change": "+ P-wave cross-correlation on the edges: the lag that best aligns each station pair's P waves around their picks, and the correlation (either polarity)",
+  "frozen": "val2",
+  "decision": "rejected",
+  "why": "re-taken on val2: +0.003 vs r2 (short of the 0.01 margin); dev error ratio 1.003 (passes the 1.05 gate)",
+  "objective": 0.09603039923443937,
+  "skill": {
+   "epi_cap": 0.21393986042420543,
+   "logz": -0.0010739676828863676,
+   "mw": 0.0610708453192389,
+   "t0": 0.11018485887719953
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 280.7298443974988,
+   "epi_mean_km": 401.5500430672329,
+   "depth_med_km": 3.6348200080765913,
+   "depth_f2": 0.9680317040951123,
+   "mw_mae": 0.06623187204477504,
+   "t0_med_s": 7.451044244278539,
+   "t0_mean_s": 10.75920823505269,
+   "cov_epi": 0.24121532364597092,
+   "cov_z": 0.7767503302509907,
+   "cov_mw": 0.71889035667107,
+   "cov_t0": 0.5550858652575957
+  },
+  "dev": {
+   "epi_cap": 370.85743832287665,
+   "logz": 0.22201124371490666,
+   "mw": 0.08250403306722082,
+   "t0": 12.24964195924863
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 218.26867732776108,
+   "epi_mean_km": 373.68170227562666,
+   "depth_med_km": 26.51419148702449,
+   "depth_f2": 0.7125,
+   "mw_mae": 0.08250403306722082,
+   "t0_med_s": 8.799860048294068,
+   "t0_mean_s": 12.24964195924863,
+   "cov_epi": 0.4375,
+   "cov_z": 0.3125,
+   "cov_mw": 0.6375,
+   "cov_t0": 0.4875
+  }
+ },
+ {
+  "rung": "r5",
+  "ckpt": "r5_v2",
+  "change": "Physics v2, measured on the dev twins: v1.2's simulated readings get the real distance shift (+1.5 deg) and extra scatter (distance 3 deg, back-azimuth 6.5 deg); simulated pick errors x0.75. Fine-tuned from r2.",
+  "frozen": "val2",
+  "decision": "kept",
+  "why": "+0.083 on val2 vs r2 (beats the 0.01 margin); dev error ratio 0.971 (passes the 1.05 gate)",
+  "objective": 0.17542747362142083,
+  "skill": {
+   "epi_cap": 0.35762472743979545,
+   "logz": 0.03537485890141223,
+   "mw": 0.07836812719541186,
+   "t0": 0.23034218094906378
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 203.849670582746,
+   "epi_mean_km": 331.91960473312855,
+   "depth_med_km": 3.5256167992617957,
+   "depth_f2": 0.9677675033025099,
+   "mw_mae": 0.06501172529117401,
+   "t0_med_s": 5.917630356717792,
+   "t0_mean_s": 9.306324833331539,
+   "cov_epi": 0.6435931307793923,
+   "cov_z": 0.7632760898282694,
+   "cov_mw": 0.7001321003963011,
+   "cov_t0": 0.6628797886393659
+  },
+  "dev": {
+   "epi_cap": 330.6457218415618,
+   "logz": 0.22161352149560506,
+   "mw": 0.08827351639716861,
+   "t0": 11.260901362393568
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 197.73195329912036,
+   "epi_mean_km": 330.6457218415618,
+   "depth_med_km": 23.889305865117844,
+   "depth_f2": 0.7,
+   "mw_mae": 0.08827351639716861,
+   "t0_med_s": 8.000218707323075,
+   "t0_mean_s": 11.260901362393568,
+   "cov_epi": 0.5375,
+   "cov_z": 0.3375,
+   "cov_mw": 0.6125,
+   "cov_t0": 0.5625
+  }
+ },
+ {
+  "rung": "r0",
+  "ckpt": "anchor",
+  "change": "QuakeNet v1.2 per station, combined classically (least squares on distance + back-azimuth; inverse-variance Mw and depth; origin time from P picks)",
+  "frozen": "val3",
+  "decision": "baseline",
+  "why": "Rung 0, re-scored on val3.",
+  "objective": 0.0,
+  "skill": {
+   "epi_cap": 0.0,
+   "logz": 0.0,
+   "mw": 0.0,
+   "t0": 0.0
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 387.35279405763856,
+   "epi_mean_km": 508.02312688646447,
+   "depth_med_km": 36.63312154054628,
+   "depth_f2": 0.5088507265521797,
+   "mw_mae": 0.08828285157768516,
+   "t0_med_s": 9.376253572346698,
+   "t0_mean_s": 12.957802307015493,
+   "cov_epi": 0.4655217965653897,
+   "cov_z": 0.2274768824306473,
+   "cov_mw": 0.3904887714663144,
+   "cov_t0": 0.7569352708058125
+  },
+  "dev": {
+   "epi_cap": 532.9977256537371,
+   "logz": 0.23210593621174186,
+   "mw": 0.07720036312885616,
+   "t0": 12.69426653711474
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 406.6993741023598,
+   "epi_mean_km": 560.7223953730565,
+   "depth_med_km": 27.156925521195788,
+   "depth_f2": 0.7,
+   "mw_mae": 0.07720036312885616,
+   "t0_med_s": 7.4269675489416045,
+   "t0_mean_s": 12.69426653711474,
+   "cov_epi": 0.575,
+   "cov_z": 0.4625,
+   "cov_mw": 0.5625,
+   "cov_t0": 0.8625
+  }
+ },
+ {
+  "rung": "r1",
+  "ckpt": "r1_notime",
+  "change": "Graph network correcting rung 0 from v1.2's per-station readings and the station geometry (no pick times)",
+  "frozen": "val3",
+  "decision": "kept",
+  "why": "re-taken on val3: +0.025 vs r0 (beats the 0.01 margin); dev error ratio 0.989 (passes the 1.05 gate)",
+  "objective": 0.02518528815798035,
+  "skill": {
+   "epi_cap": 0.021873956269036987,
+   "logz": 0.08293470551049831,
+   "mw": -0.03535857876468307,
+   "t0": 0.03129106961706918
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 380.1101320280787,
+   "epi_mean_km": 496.1365710784821,
+   "depth_med_km": 31.90367033073619,
+   "depth_f2": 0.5487450462351388,
+   "mw_mae": 0.09140440773876557,
+   "t0_med_s": 9.042454749608046,
+   "t0_mean_s": 12.552338812942452,
+   "cov_epi": 0.2214002642007926,
+   "cov_z": 0.21003963011889035,
+   "cov_mw": 0.5516512549537649,
+   "cov_t0": 0.5365918097754293
+  },
+  "dev": {
+   "epi_cap": 487.1448150149621,
+   "logz": 0.2237550648136389,
+   "mw": 0.08889430757876621,
+   "t0": 11.751484041642914
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 351.9467715920027,
+   "epi_mean_km": 518.9253617471452,
+   "depth_med_km": 25.585601324287335,
+   "depth_f2": 0.7125,
+   "mw_mae": 0.08889430757876621,
+   "t0_med_s": 7.1389766246080395,
+   "t0_mean_s": 11.751484041642914,
+   "cov_epi": 0.4125,
+   "cov_z": 0.35,
+   "cov_mw": 0.6625,
+   "cov_t0": 0.625
+  }
+ },
+ {
+  "rung": "r2",
+  "ckpt": "r2_time",
+  "change": "+ P pick times: each station's pick residual at the anchor and the ak135 slowness on the nodes, residual differences on the edges",
+  "frozen": "val3",
+  "decision": "kept",
+  "why": "re-taken on val3: +0.045 vs r1 (beats the 0.01 margin); dev error ratio 0.927 (passes the 1.05 gate)",
+  "objective": 0.06975273535930182,
+  "skill": {
+   "epi_cap": 0.20275345700251002,
+   "logz": 0.0720822068678717,
+   "mw": -0.043374155796627845,
+   "t0": 0.04754943336345341
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 285.5358718554633,
+   "epi_mean_km": 407.2142246776185,
+   "depth_med_km": 31.867779593725373,
+   "depth_f2": 0.5418758256274769,
+   "mw_mae": 0.09211204573618625,
+   "t0_med_s": 8.949949757750996,
+   "t0_mean_s": 12.341666149681258,
+   "cov_epi": 0.23381770145310435,
+   "cov_z": 0.21003963011889035,
+   "cov_mw": 0.5529722589167767,
+   "cov_t0": 0.4774108322324967
+  },
+  "dev": {
+   "epi_cap": 375.1157297958454,
+   "logz": 0.22042345320244866,
+   "mw": 0.0865304934639942,
+   "t0": 11.520510028042418
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 221.946464523373,
+   "epi_mean_km": 376.4194800051952,
+   "depth_med_km": 26.774373593666404,
+   "depth_f2": 0.7125,
+   "mw_mae": 0.0865304934639942,
+   "t0_med_s": 8.124027556180954,
+   "t0_mean_s": 11.520510028042418,
+   "cov_epi": 0.3625,
+   "cov_z": 0.35,
+   "cov_mw": 0.65,
+   "cov_t0": 0.55
+  }
+ },
+ {
+  "rung": "r3",
+  "ckpt": "r3_emb",
+  "change": "+ QuakeNet v1.2's 256-number summary of each record (its last hidden layer), projected to 32 per node",
+  "frozen": "val3",
+  "decision": "rejected",
+  "why": "re-taken on val3: +0.001 vs r2 (short of the 0.01 margin); dev error ratio 1.023 (passes the 1.05 gate)",
+  "objective": 0.07124327466433389,
+  "skill": {
+   "epi_cap": 0.21078931670102385,
+   "logz": 0.07102776066443994,
+   "mw": -0.04371845886541914,
+   "t0": 0.0468744801572909
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 283.317373119061,
+   "epi_mean_km": 402.48720779753756,
+   "depth_med_km": 32.120200507207414,
+   "depth_f2": 0.5394980184940554,
+   "mw_mae": 0.0921424417929061,
+   "t0_med_s": 9.105416491837833,
+   "t0_mean_s": 12.350412059893197,
+   "cov_epi": 0.23540290620871862,
+   "cov_z": 0.1965653896961691,
+   "cov_mw": 0.5323645970937912,
+   "cov_t0": 0.4705416116248349
+  },
+  "dev": {
+   "epi_cap": 373.30974898760036,
+   "logz": 0.2304629400062403,
+   "mw": 0.08837968751531852,
+   "t0": 11.863378542620277
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 214.75834041103568,
+   "epi_mean_km": 373.30974898760036,
+   "depth_med_km": 27.249768600123673,
+   "depth_f2": 0.7,
+   "mw_mae": 0.08837968751531852,
+   "t0_med_s": 8.405001938343048,
+   "t0_mean_s": 11.863378542620277,
+   "cov_epi": 0.375,
+   "cov_z": 0.25,
+   "cov_mw": 0.625,
+   "cov_t0": 0.5625
+  }
+ },
+ {
+  "rung": "r4",
+  "ckpt": "r4_cc",
+  "change": "+ P-wave cross-correlation on the edges: the lag that best aligns each station pair's P waves around their picks, and the correlation (either polarity)",
+  "frozen": "val3",
+  "decision": "rejected",
+  "why": "re-taken on val3: +0.006 vs r2 (short of the 0.01 margin); dev error ratio 1.003 (passes the 1.05 gate)",
+  "objective": 0.07528336592626361,
+  "skill": {
+   "epi_cap": 0.2131519407739516,
+   "logz": 0.07077294659770172,
+   "mw": -0.029927917907984103,
+   "t0": 0.04713649424138522
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 282.13093353064016,
+   "epi_mean_km": 401.92440596751493,
+   "depth_med_km": 32.220217836439744,
+   "depth_f2": 0.5421400264200793,
+   "mw_mae": 0.09092497351238486,
+   "t0_med_s": 8.90144976417212,
+   "t0_mean_s": 12.347016933189849,
+   "cov_epi": 0.23857331571994717,
+   "cov_z": 0.20607661822985468,
+   "cov_mw": 0.5627476882430648,
+   "cov_t0": 0.4745046235138705
+  },
+  "dev": {
+   "epi_cap": 370.85743832287665,
+   "logz": 0.22201124371490666,
+   "mw": 0.08250403306722082,
+   "t0": 12.24964195924863
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 218.26867732776108,
+   "epi_mean_km": 373.68170227562666,
+   "depth_med_km": 26.51419148702449,
+   "depth_f2": 0.7125,
+   "mw_mae": 0.08250403306722082,
+   "t0_med_s": 8.799860048294068,
+   "t0_mean_s": 12.24964195924863,
+   "cov_epi": 0.4375,
+   "cov_z": 0.3125,
+   "cov_mw": 0.6375,
+   "cov_t0": 0.4875
+  }
+ },
+ {
+  "rung": "r5",
+  "ckpt": "r5_v2",
+  "change": "Physics v2, measured on the dev twins: v1.2's simulated readings get the real distance shift (+1.5 deg) and extra scatter (distance 3 deg, back-azimuth 6.5 deg); simulated pick errors x0.75. Fine-tuned from r2.",
+  "frozen": "val3",
+  "decision": "kept",
+  "why": "re-taken on val3: +0.038 vs r2 (beats the 0.01 margin); dev error ratio 0.971 (passes the 1.05 gate)",
+  "objective": 0.10798482988363561,
+  "skill": {
+   "epi_cap": 0.3564849519834834,
+   "logz": 0.05885809362158534,
+   "mw": -0.04634916447972448,
+   "t0": 0.0629454384091982
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 205.4781455139709,
+   "epi_mean_km": 332.3722745743634,
+   "depth_med_km": 33.29254027745685,
+   "depth_f2": 0.5373844121532365,
+   "mw_mae": 0.0923746879861984,
+   "t0_med_s": 8.712522116135755,
+   "t0_mean_s": 12.142167759980683,
+   "cov_epi": 0.6417437252311757,
+   "cov_z": 0.1952443857331572,
+   "cov_mw": 0.5120211360634082,
+   "cov_t0": 0.523117569352708
+  },
+  "dev": {
+   "epi_cap": 330.6457218415618,
+   "logz": 0.22161352149560506,
+   "mw": 0.08827351639716861,
+   "t0": 11.260901362393568
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 197.73195329912036,
+   "epi_mean_km": 330.6457218415618,
+   "depth_med_km": 23.889305865117844,
+   "depth_f2": 0.7,
+   "mw_mae": 0.08827351639716861,
+   "t0_med_s": 8.000218707323075,
+   "t0_mean_s": 11.260901362393568,
+   "cov_epi": 0.5375,
+   "cov_z": 0.3375,
+   "cov_mw": 0.6125,
+   "cov_t0": 0.5625
+  }
+ },
+ {
+  "rung": "r6",
+  "ckpt": "r6_v3",
+  "change": "Physics v3, measured on the dev twins: v1.2's simulated depth readings get the real shallow-quake shift (log10 depth +0.37, shared by the event's stations, plus scatter; deep +0.04) and Mw +0.06/+0.02. Fine-tuned from r5.",
+  "frozen": "val3",
+  "decision": "released",
+  "why": "+0.111 on val3 vs r5 (beats the 0.01 margin); dev error ratio 0.952 (passes the 1.05 gate). Released.",
+  "objective": 0.21919890247307913,
+  "skill": {
+   "epi_cap": 0.3526715120153725,
+   "logz": 0.3357519225015938,
+   "mw": 0.07260784293981548,
+   "t0": 0.11576433243553474
+  },
+  "sim": {
+   "n": 3785,
+   "epi_med_km": 210.26475066628967,
+   "epi_mean_km": 333.2090250772922,
+   "depth_med_km": 15.171096984452433,
+   "depth_f2": 0.6935270805812418,
+   "mw_mae": 0.08187282415605356,
+   "t0_med_s": 7.860776473575525,
+   "t0_mean_s": 11.457750973112212,
+   "cov_epi": 0.5920739762219287,
+   "cov_z": 0.6803170409511229,
+   "cov_mw": 0.6821664464993396,
+   "cov_t0": 0.6673712021136063
+  },
+  "dev": {
+   "epi_cap": 322.2037258113095,
+   "logz": 0.1898907053783902,
+   "mw": 0.0862322371504972,
+   "t0": 11.243505074121575
+  },
+  "dev_summary": {
+   "n": 80,
+   "epi_med_km": 192.22954240996444,
+   "epi_mean_km": 324.0511023696833,
+   "depth_med_km": 19.14876129488558,
+   "depth_f2": 0.775,
+   "mw_mae": 0.0862322371504972,
+   "t0_med_s": 6.637995088100433,
+   "t0_mean_s": 11.243505074121575,
+   "cov_epi": 0.4875,
+   "cov_z": 0.75,
+   "cov_mw": 0.675,
+   "cov_t0": 0.7125
+  }
+ }
+]

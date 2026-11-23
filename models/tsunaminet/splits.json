@@ -1,0 +1,174 @@
+{
+ "rule": "Build the event table and freeze the dev/exam split (splits.json) BEFORE any training.\nEligible: the NGDC Pacific candidates (fetch_meta.py) that NGDC lists with at least one deep-ocean (DART) gauge reading.\nNamed exam events (the brief lists them): Tohoku 2011, Maule 2010, Iquique 2014, Illapel 2015, Kamchatka 2025.\nDev: 5 events drawn with seed 20261122 from the rest, 2 with Mw >= 8.0 and 3 below (strata). Everything else is exam.",
+ "seed": 20261122,
+ "frozen": "2026-11-22, before any network training or real-waveform comparison",
+ "dev": [
+  {
+   "id": 3016,
+   "name": "2006-11-15 S. Kuril Islands",
+   "mw": 8.3
+  },
+  {
+   "id": 3019,
+   "name": "2007-01-13 S. Kuril Islands",
+   "mw": 8.0
+  },
+  {
+   "id": 5636,
+   "name": "2016-12-17 Solomon Sea",
+   "mw": 7.9
+  },
+  {
+   "id": 5755,
+   "name": "2020-10-19 Shumagin Islands, Ak",
+   "mw": 7.6
+  },
+  {
+   "id": 6061,
+   "name": "2025-09-18 Kamchatka Peninsula, Russia",
+   "mw": 7.8
+  }
+ ],
+ "exam": [
+  {
+   "id": 3037,
+   "name": "2007-04-01 Solomon Islands",
+   "mw": 8.1
+  },
+  {
+   "id": 3168,
+   "name": "2007-08-15 S. Peru",
+   "mw": 8.2
+  },
+  {
+   "id": 3293,
+   "name": "2007-11-14 Northern Chile",
+   "mw": 7.8
+  },
+  {
+   "id": 4312,
+   "name": "2009-03-19 Tonga",
+   "mw": 7.6
+  },
+  {
+   "id": 4376,
+   "name": "2009-07-15 Off West Coast Of South Island",
+   "mw": 7.8
+  },
+  {
+   "id": 4440,
+   "name": "2009-09-29 Samoa Islands",
+   "mw": 8.1
+  },
+  {
+   "id": 4442,
+   "name": "2009-10-07 Vanuatu Islands",
+   "mw": 7.6
+  },
+  {
+   "id": 4682,
+   "name": "2010-02-27 Central Chile",
+   "mw": 8.8
+  },
+  {
+   "id": 5413,
+   "name": "2011-03-11 Honshu Island",
+   "mw": 9.1
+  },
+  {
+   "id": 5463,
+   "name": "2012-08-31 Philippine Islands",
+   "mw": 7.6
+  },
+  {
+   "id": 5464,
+   "name": "2012-09-05 Costa Rica",
+   "mw": 7.6
+  },
+  {
+   "id": 5467,
+   "name": "2012-10-28 British Columbia",
+   "mw": 7.8
+  },
+  {
+   "id": 5476,
+   "name": "2013-02-06 Santa Cruz Islands",
+   "mw": 7.986120830698416
+  },
+  {
+   "id": 5557,
+   "name": "2014-04-01 Northern Chile",
+   "mw": 8.2
+  },
+  {
+   "id": 5559,
+   "name": "2014-04-12 Solomon Islands",
+   "mw": 7.6
+  },
+  {
+   "id": 5590,
+   "name": "2015-09-16 Central Chile",
+   "mw": 8.3
+  },
+  {
+   "id": 5599,
+   "name": "2016-04-16 Off Coast",
+   "mw": 7.8
+  },
+  {
+   "id": 5630,
+   "name": "2016-12-08 Solomon Islands",
+   "mw": 7.8
+  },
+  {
+   "id": 5658,
+   "name": "2017-09-08 S. Mexico",
+   "mw": 8.2
+  },
+  {
+   "id": 5673,
+   "name": "2018-01-23 Kodiak Island, Ak",
+   "mw": 7.9
+  },
+  {
+   "id": 5746,
+   "name": "2020-03-25 N. Kuril Islands",
+   "mw": 7.5
+  },
+  {
+   "id": 5753,
+   "name": "2020-07-22 Shumagin Islands, Ak",
+   "mw": 7.8
+  },
+  {
+   "id": 5763,
+   "name": "2021-02-10 Loyalty Islands",
+   "mw": 7.7
+  },
+  {
+   "id": 5771,
+   "name": "2021-03-04 S Of Raoul Island, Kermadec Islands",
+   "mw": 8.1
+  },
+  {
+   "id": 5799,
+   "name": "2021-07-29 Kodiak Island, Ak",
+   "mw": 8.2
+  },
+  {
+   "id": 5881,
+   "name": "2023-05-19 Loyalty Islands",
+   "mw": 7.7
+  },
+  {
+   "id": 5903,
+   "name": "2023-12-02 E. Mindanao Island",
+   "mw": 7.6
+  },
+  {
+   "id": 6044,
+   "name": "2025-07-29 Kamchatka Peninsula, Russia",
+   "mw": 8.8
+  }
+ ]
+}

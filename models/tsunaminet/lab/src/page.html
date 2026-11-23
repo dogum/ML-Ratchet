@@ -1,0 +1,178 @@
+<title>TsunamiNet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a nautical-chart page. Full-width ocean bands for the hero and the exam; a single 68ch reading column elsewhere. */
+:root {
+  --paper: #eef3f3; --paper2: #e2eaeb; --ink: #0d2230; --muted: #4d6472; --rule: #c4d2d6;
+  --sea: #1d5f86; --sea2: #8fb8cc; --buoy: #d9891a; --good: #2f7d4f; --bad: #b2412e; --twin: #7a5aa8;
+  --card: #f7fafa; --land: #c9d3c6;
+  --f-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #07141d; --paper2: #0c1e2a; --ink: #d8e6eb; --muted: #8ea6b2; --rule: #1d3442;
+  --sea: #5fa8d3; --sea2: #2b5a75; --buoy: #f0a53a; --good: #5cbf83; --bad: #ef7a62; --twin: #b59be0;
+  --card: #0b1b26; --land: #23332c; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #07141d; --paper2: #0c1e2a; --ink: #d8e6eb; --muted: #8ea6b2; --rule: #1d3442;
+  --sea: #5fa8d3; --sea2: #2b5a75; --buoy: #f0a53a; --good: #5cbf83; --bad: #ef7a62; --twin: #b59be0;
+  --card: #0b1b26; --land: #23332c; color-scheme: dark }
+body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.col { max-width: 68ch; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; letter-spacing: 0.01em; text-wrap: balance; line-height: 1.1; margin: 0; }
+h1 { font-size: clamp(3rem, 9vw, 6.2rem); font-weight: 700; letter-spacing: 0.02em; }
+h2 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+h3 { font-size: 1.35rem; }
+p { margin: 0; }
+.eyebrow { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.mono, .num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+section { padding-block: 3.2rem; border-top: 1px solid var(--rule); }
+.stack { display: flex; flex-direction: column; gap: 1rem; }
+.hero { margin-top: calc(-1 * env(safe-area-inset-top, 0px)); padding-top: calc(env(safe-area-inset-top, 0px) + 2.2rem); padding-bottom: 2rem; background: var(--paper2); border-bottom: 1px solid var(--rule); }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 2rem; align-items: center; }
+.hero .lede { font-size: 1.22rem; max-width: 34ch; }
+.mapbox { position: relative; width: 100%; aspect-ratio: 173 / 115; max-width: 100%; border: 1px solid var(--rule); background: var(--paper); }
+.mapbox canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.clock { position: absolute; left: 10px; bottom: 8px; font-family: var(--f-mono); font-size: 0.8rem; color: var(--ink); background: color-mix(in srgb, var(--paper) 80%, transparent); padding: 2px 6px; }
+.maplegend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: -1px; margin-right: 5px; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-top: 1.6rem; }
+.stat { background: var(--card); padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.2rem; }
+.stat b { font-family: var(--f-display); font-size: 2rem; font-weight: 600; line-height: 1; }
+.stat span { font-size: 0.85rem; color: var(--muted); }
+button, select, input[type=range] { font: inherit; }
+button { cursor: pointer; border: 1px solid var(--rule); background: var(--card); color: var(--ink); padding: 0.35rem 0.8rem; border-radius: 3px; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--buoy); outline-offset: 2px; }
+button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.evlist { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.evlist button { font-size: 0.82rem; padding: 0.25rem 0.55rem; }
+.evlist button .k { font-family: var(--f-mono); font-size: 0.72rem; color: var(--muted); margin-left: 4px; }
+.evlist button[aria-pressed="true"] .k { color: var(--paper); }
+.panels { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 1.2rem; margin-top: 1.2rem; }
+.panel { border: 1px solid var(--rule); background: var(--card); padding: 0.9rem; display: flex; flex-direction: column; gap: 0.6rem; min-width: 0; }
+.panel h3 { font-size: 1.1rem; }
+.panel svg { width: 100%; height: auto; display: block; }
+.note { font-size: 0.85rem; color: var(--muted); }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 0.15rem 0.8rem; font-size: 0.9rem; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.lab { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 1.2rem; margin-top: 1.2rem; }
+.ctrl { display: flex; flex-direction: column; gap: 0.2rem; }
+.ctrl label { display: flex; justify-content: space-between; font-size: 0.9rem; }
+.ctrl output { font-family: var(--f-mono); }
+input[type=range] { width: 100%; accent-color: var(--buoy); }
+.tablewrap { overflow-x: auto; border: 1px solid var(--rule); }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; background: var(--card); }
+th, td { padding: 0.45rem 0.7rem; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+th:first-child, td:first-child { text-align: left; white-space: normal; }
+th { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
+td.best { font-weight: 600; color: var(--good); }
+.pill { display: inline-block; font-family: var(--f-mono); font-size: 0.7rem; padding: 1px 7px; border-radius: 9px; border: 1px solid currentColor; }
+.pill.kept { color: var(--good); } .pill.rejected { color: var(--bad); } .pill.released { color: var(--buoy); }
+.pill.win { color: var(--good); } .pill.loss { color: var(--bad); } .pill.mixed, .pill.tie { color: var(--muted); }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; }
+ul.plain { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.45rem; }
+pre { background: var(--card); border: 1px solid var(--rule); padding: 0.9rem; overflow-x: auto; font-family: var(--f-mono); font-size: 0.82rem; margin: 0; }
+.scrollx { overflow-x: auto; } .scrollx svg { min-width: 620px; }
+#examText, #ratchetText, #twinText { display: flex; flex-direction: column; gap: 0.8rem; }
+.flow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.6rem; }
+.flow div { border-top: 3px solid var(--sea); padding-top: 0.5rem; font-size: 0.88rem; }
+.flow b { display: block; font-family: var(--f-display); font-size: 1.1rem; font-weight: 600; }
+footer { padding-block: 2.5rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--rule); }
+@media (max-width: 820px) {
+  .hero-grid, .panels, .lab, .two { grid-template-columns: minmax(0, 1fr); }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="stack">
+      <div class="eyebrow">ML Ratchet · Geophysics · Normalizing flow</div>
+      <h1>TsunamiNet</h1>
+      <p class="lede">A network that never saw a real tsunami reads the first hour of deep-ocean pressure and says how big the earthquake was, where it slipped, and how high the wave will be at buoys it has not reached yet.</p>
+      <p class="note" id="heroNote"></p>
+    </div>
+    <div>
+      <div class="mapbox"><canvas id="heroMap" width="1038" height="690" aria-label="Map of the Pacific: the 2011 Tohoku tsunami front sweeping across the ocean, coloured by its 24-hour maximum height, with DART buoys marked"></canvas><div class="clock" id="heroClock">0 h 00 min</div></div>
+      <div class="maplegend"><span><i class="sw" style="background:var(--buoy)"></i>DART buoy</span><span>Colour: 24 h maximum height of the simulated 2011 Tohoku tsunami (this project's 8′ linear model, USGS finite-fault source)</span><button id="heroPlay" type="button" aria-pressed="true">Pause</button></div>
+    </div>
+  </div>
+  <div class="wrap"><div class="stats" id="stats"></div></div>
+</header>
+
+<main>
+<section><div class="wrap">
+  <div class="stack col">
+    <div class="eyebrow">Explorer · real exam events</div>
+    <h2>Pick a real tsunami. Watch the network read it.</h2>
+    <p>Each button is a DART-recorded tsunami from the exam: the network never trained on it and nothing was tuned on it. The network runs here, in your browser, on the same 90-minute windows the Python release reads. Grey dots are the buoy's detided record; the blue band is what the posterior says the buoy should have seen.</p>
+  </div>
+  <div class="evlist" id="evlist" style="margin-top:1rem"></div>
+  <div class="panels">
+    <div class="panel"><h3>Input buoys: record vs posterior</h3><div id="traces"></div><p class="note" id="traceNote"></p></div>
+    <div class="panel"><h3>Source posterior</h3><svg id="post" viewBox="0 0 360 300" role="img" aria-label="Posterior samples of magnitude against centroid position"></svg><dl class="kv" id="postkv"></dl></div>
+  </div>
+  <div class="panel" style="margin-top:1.2rem"><h3>Forecasts at buoys the network did not read</h3><div class="scrollx"><svg id="fcast" viewBox="0 0 720 260" role="img" aria-label="Forecast maximum wave height at held-out DARTs against observed"></svg></div><p class="note">Each row is a held-out DART. Black tick: observed maximum in the 3 hours after arrival. Blue: TsunamiNet median and 68% range. Other marks: SIFT-style inversion, seismic-magnitude scaling, and the finite-fault twin (hindsight, not available in real time).</p></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="stack col">
+    <div class="eyebrow">Lab</div>
+    <h2>Make a tsunami, then let the network read it</h2>
+    <p>Set a source on the unit sources around the selected event's epicentre. The page sums the Green's functions at the same input buoys (only the 9 × 2 unit sources around the epicentre), adds 0.2 cm of Gaussian noise plus whatever you set, keeps that event's real data gaps, and runs the network on it. Then change the noise or drop a buoy and see how the posterior widens.</p>
+  </div>
+  <div class="lab">
+    <div class="stack">
+      <div class="ctrl"><label for="lMw">Magnitude Mw <output id="oMw"></output></label><input id="lMw" type="range" min="7.4" max="9.2" step="0.05" value="8.4"></div>
+      <div class="ctrl"><label for="lSc">Centroid along the trench (km) <output id="oSc"></output></label><input id="lSc" type="range" min="-300" max="300" step="10" value="0"></div>
+      <div class="ctrl"><label for="lFd">Share of slip on the deep row <output id="oFd"></output></label><input id="lFd" type="range" min="0" max="1" step="0.05" value="0.5"></div>
+      <div class="ctrl"><label for="lNz">Extra noise (cm, Gaussian) <output id="oNz"></output></label><input id="lNz" type="range" min="0" max="5" step="0.1" value="0"></div>
+      <div class="ctrl"><label for="lSh">Arrival delay vs the model (min) <output id="oSh"></output></label><input id="lSh" type="range" min="-5" max="10" step="1" value="0"></div>
+      <div class="ctrl"><span class="note">Buoys used</span><div class="evlist" id="labSt"></div></div>
+      <dl class="kv" id="labkv"></dl>
+    </div>
+    <div class="panel"><h3>Network reading of your tsunami</h3><div id="labTr"></div><svg id="labPost" viewBox="0 0 360 300" role="img" aria-label="Posterior for the lab source"></svg></div>
+  </div>
+</div></section>
+
+<section><div class="wrap stack">
+  <div class="eyebrow">Final exam · run once</div>
+  <h2 id="examH">The exam</h2>
+  <div class="col" id="examText"></div>
+  <div class="tablewrap"><table id="examTable"></table></div>
+  <div class="tablewrap"><table id="eventTable"></table></div>
+</div></section>
+
+<section><div class="wrap stack">
+  <div class="eyebrow">The ratchet</div>
+  <h2>Every rung, kept or not</h2>
+  <div class="col" id="ratchetText"></div>
+  <div class="tablewrap"><table id="ratchetTable"></table></div>
+  <div class="col" id="twinText"></div>
+</div></section>
+
+<section><div class="wrap stack">
+  <div class="eyebrow">How it was built</div>
+  <h2>Physics first, then a flow</h2>
+  <div class="flow" id="flowSteps"></div>
+  <div class="two" style="margin-top:1rem">
+    <div class="stack"><h3>Checks of the physics</h3><ul class="plain" id="checks"></ul></div>
+    <div class="stack"><h3>Where it fails</h3><ul class="plain" id="limits"></ul></div>
+  </div>
+</div></section>
+
+<section><div class="wrap two">
+  <div class="stack"><div class="eyebrow">Use it</div><h2>Release</h2><p id="useText"></p><pre id="useCode"></pre></div>
+  <div class="stack"><div class="eyebrow">Credits</div><h2>Data</h2><ul class="plain" id="credits"></ul></div>
+</div></section>
+</main>
+<footer><div class="wrap" id="foot"></div></footer>
+<script>/*TNETJS*/</script>
+<script>const DATA = /*DATA*/;</script>
+<script>/*APPJS*/</script>

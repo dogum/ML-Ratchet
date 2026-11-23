@@ -1,0 +1,170 @@
+id: tsunaminet
+name: TsunamiNet
+version: "1.0"
+status: released
+released: 2026-11-22
+order: 32
+domain: Geophysics
+tags: [tsunami, DART, normalizing flow, posterior estimation, Green's functions, shallow water, Okada]
+accent: "#d9891a"
+tagline: A flow trained on simulated tsunamis reads real DART buoys and forecasts the next ones.
+question: How big is the tsunami coming, from the first deep-ocean pressure readings?
+question_short: "How big is the tsunami coming, from the first DART readings?"
+summary: >-
+  From up to three DART bottom-pressure records (a 90-minute window around each buoy's predicted arrival) after a
+  Pacific subduction earthquake, a conditional RealNVP normalizing flow gives the posterior of the seafloor source on
+  NOAA's SIFT unit sources: magnitude, where along the trench the slip is centred, how much sits on the deeper row,
+  and how long the rupture is. Pushing posterior samples through linear shallow-water Green's functions forecasts the
+  maximum wave at DARTs the network did not read. Trained only on simulated tsunamis laid into real quiet DART noise;
+  graded once on 28 real DART-recorded tsunamis (2007-2025).
+disclaimer: Research only. Not a tsunami warning system; official forecasts come from NOAA's tsunami warning centers.
+
+reads: "Detided, high-passed 1-minute DART water-column height (NDBC historical files) for up to 3 DARTs, the USGS epicentre and origin time."
+returns:
+  - "Posterior samples of Mw, along-trench centroid (km from the epicentre's unit-source column), deep-row slip share and log10 rupture length; 68 % and 90 % ranges widened on dev (Mw x3.18, centroid x4.40)"
+  - "Forecast maximum |eta| at any other DART with Green's functions, in a 190-minute window after its predicted arrival: median and 68 % range (widened x2.08 on dev)"
+
+physics:
+  summary: >-
+    Okada (1985) vertical seafloor displacement from 1 m of thrust slip on each of 1,317 Pacific SIFT unit sources
+    (100 x 50 km, NOAA geometry), propagated by the linear shallow-water equations on a spherical C-grid over ETOPO 2022
+    at 8 arc-min (dt 20 s, 24 h). Green's functions come from one receiver-started run per DART (discrete reciprocity),
+    so any slip pattern is a sum. Simulated physics version p1 adds what the dev twin test measured: arrivals 1.65 % of
+    the travel time late, amplitudes x1.60 with 0.17 dex scatter per DART, and rupture spreading at 2.5 km/s.
+  simulator:
+    - "Random interface earthquakes Mw 7.3-9.3 on any Pacific SIFT column; length from Strasser et al. (2010); heterogeneous slip along strike; random up-dip/down-dip share"
+    - "DART network of a random date 2006-2025 from NDBC deployment history; the 3 earliest-arriving DARTs with data are the input"
+    - "Laid into 712 real quiet DART noise windows (event-mode 1-minute data away from every NGDC tsunami), with their real data gaps"
+    - "The same causal detiding and 3-hour high-pass on records and on every Green's function"
+  checks:
+    - "Okada vs GeoClaw's independent implementation: largest relative difference 4e-13 over 6 unit sources and 3 rakes"
+    - "Okada vs NOAA MOST's own deformation for unit source acsza1: r = 0.995, peak uplift 0.352 vs 0.349 m, volume ratio 1.03"
+    - "1-D flat basin: wave speed 198.5 vs sqrt(gh) = 198.1 m/s, rms error 0.1 % of the peak"
+    - "Green's law on a slope from 4,000 m: amplitude x1.416 at 1,000 m (law 1.414) and x1.868 at 281 m (law 1.943, -3.9 %)"
+    - "2-D flat basin vs the exact Hankel-transform solution: front at 607 km in both, peak 0.0747 vs 0.0763 (-2.1 %)"
+    - "Reciprocity on the real 8' Pacific grid: forward run vs receiver-started run, relative difference 2.4e-6"
+    - "8' vs 4' (NOAA MOST's resolution) Green's functions at DART 46409, all unit sources: 3-hour peak ratio median 0.99 within 1,500 km and 0.97 beyond; window correlation 0.98 near, 0.73-0.81 beyond 3,000 km"
+
+noise: "Real DART bottom-pressure noise: 955 quiet 24-hour windows starting at event-mode (1-minute) triggers 2006-2025 that are more than 2 days from any NGDC tsunami (712 for training, 243 for the frozen sets), with the same detiding, gaps and glitches as real records."
+network: "Per-DART 1-D CNN over 20 channels (record, mask, 18 unit-source responses) x 90 minutes, permutation-invariant mean/max pooling over up to 3 DARTs, plus 23 features of the SIFT-style NNLS solution on the same windows (physics anchor), conditioning an 8-layer RealNVP flow over 4 source parameters. 520k weights."
+
+approach:
+  real_backdrop: "Real quiet DART noise windows (event-mode 1-minute data), with their gaps"
+  physics_inputs: "Each DART's own Green's-function responses to the 18 unit sources around the epicentre, as input channels"
+  physics_anchor: "The SIFT-style non-negative least-squares inversion on the same windows feeds the flow; forecasts are posterior samples pushed through the Green's functions"
+  real_data_roles: [backdrop, calibration, gate, error_bars, exam]
+
+data:
+  - { name: "NDBC historical DART water-column height (820 Pacific station-year files)", url: "https://www.ndbc.noaa.gov/data/historical/dart/", licence: "US Government work (public domain)", role: exam }
+  - { name: "NDBC station metadata (DART deployment positions and dates)", url: "https://www.ndbc.noaa.gov/metadata/stationmetadata.xml", licence: "US Government work (public domain)", role: physics }
+  - { name: "NCEI/WDS Global Historical Tsunami Database (events, DART readings)", url: "https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/tsunamis/events", licence: "US Government work (public domain)", role: truth }
+  - { name: "USGS ComCat: W-phase moment tensors and finite-fault models", url: "https://earthquake.usgs.gov/fdsnws/event/1/", licence: "US Government work (public domain)", role: truth }
+  - { name: "ETOPO 2022 15 Arc-Second Global Relief Model (60 arc-sec surface, NCEI THREDDS)", url: "https://www.ncei.noaa.gov/products/etopo-global-relief-model", licence: "US Government work (public domain)", role: physics }
+  - { name: "NOAA NCTR SIFT unit-source table (info_sz.dat) and MOST deformation for unit source acsza1", url: "https://sift.pmel.noaa.gov/ComMIT/compressed/info_sz.dat", licence: "US Government work (public domain)", role: physics }
+  - { name: "GeoClaw dtopotools Okada (reference implementation for the check only)", url: "https://github.com/clawpack/geoclaw", licence: "BSD-3-Clause", role: physics }
+
+split:
+  dev: "5 events drawn with seed 20261122 (2 with Mw >= 8, 3 below) from the 33 eligible ones, the 5 named exam events excluded: Kuril 2006 (8.3), Kuril 2007 (8.0, outer rise), Solomon Sea 2016 (7.9), Shumagin Oct 2020 (7.6, strike-slip), Kamchatka Sep 2025 (7.8). Frozen in splits.json before training."
+  exam: "The other 28: every Pacific NGDC tsunami 2006-2025 with eq Mw >= 7.5 within 200 km of a SIFT unit source and at least one NGDC deep-ocean reading, including Tohoku 2011, Maule 2010, Iquique 2014, Illapel 2015 and Kamchatka Jul 2025 (named in advance). 19 interface thrusts, 9 other mechanisms."
+
+exam:
+  short: "28 real DART-recorded Pacific tsunamis, 119 held-out DART forecasts"
+  summary: >-
+    Run once on 28 real tsunamis (2007-2025): source magnitude and centroid against USGS, and the maximum wave at 119
+    held-out DARTs (15 events) against what they recorded, beside a SIFT-style NNLS inversion on the same windows, seismic
+    W-phase scaling and a dumb baseline. 95 % intervals are bootstrap over events.
+  results:
+    - metric: Mw error vs USGS W-phase (28 events, mean |error|)
+      better: lower
+      model: 0.23
+      baselines:
+        - { name: "SIFT-style NNLS on unit sources", kind: classical, value: 0.25 }
+        - { name: "Dev-median Mw (7.9)", kind: dumb, value: 0.30 }
+      verdict: win
+      note: "95 % interval 0.18-0.27 (NNLS 0.18-0.33). TsunamiNet reads low on average (bias -0.22); Tohoku 8.67 vs 9.1. Seismic W-phase Mw is the truth here, so it is not a rival on this row."
+    - metric: Centroid distance to the USGS finite-fault centroid (median, km)
+      better: lower
+      model: 45
+      baselines:
+        - { name: "SIFT-style NNLS", kind: classical, value: 82 }
+        - { name: "Epicentre's unit-source column", kind: dumb, value: 56 }
+      verdict: win
+      note: "Mean 59 km (NNLS 112, epicentre 63)."
+    - metric: Centroid along the trench, mean error (km)
+      better: lower
+      model: 42
+      baselines:
+        - { name: "SIFT-style NNLS", kind: classical, value: 98 }
+        - { name: "Epicentre's unit-source column", kind: dumb, value: 39 }
+      verdict: loss
+      note: "95 % intervals 29-58 and 26-54 km: a tie with the epicentre, a clear win over NNLS."
+    - metric: Held-out DART max amplitude, mean |log10(forecast/observed)|, all 119 forecasts
+      better: lower
+      model: 0.20
+      baselines:
+        - { name: "SIFT-style NNLS", kind: classical, value: 0.23 }
+        - { name: "SIFT-style NNLS with dev-calibrated p1 Green's functions", kind: classical, value: 0.21 }
+        - { name: "Seismic W-phase Mw, standard rupture", kind: classical, value: 0.28 }
+        - { name: "Dev-median amplitude (2.8 cm)", kind: dumb, value: 0.34 }
+      verdict: win
+      note: "95 % interval 0.16-0.27. Within a factor 2: 79 % (NNLS 71 %, seismic 56 %, dumb 52 %). USGS finite-fault twin (hindsight): 0.30."
+    - metric: Same, each event weighted once (15 events)
+      better: lower
+      model: 0.34
+      baselines:
+        - { name: "SIFT-style NNLS", kind: classical, value: 0.32 }
+        - { name: "NNLS with p1 Green's functions", kind: classical, value: 0.30 }
+        - { name: "Seismic W-phase Mw", kind: classical, value: 0.35 }
+        - { name: "Dev-median amplitude", kind: dumb, value: 0.27 }
+      verdict: loss
+      note: "The pooled win comes from the big, well-instrumented events (Tohoku 26 forecasts, Kamchatka 18, Illapel 16, Maule 15). On small events with one or two held-out DARTs a constant 2.8 cm does better."
+  coverage:
+    - { output: "Mw (dev-widened x3.18; 90 % range covers 96 %)", actual: 68 }
+    - { output: "Centroid along the trench (x4.40)", actual: 89 }
+    - { output: "Held-out DART amplitude (x2.08)", actual: 78 }
+
+wins:
+  - "Beats the SIFT-style NNLS inversion on the same windows for Mw (0.23 vs 0.25), centroid (45 vs 82 km median) and held-out amplitudes (0.20 vs 0.23 dex), and beats seismic-Mw scaling on amplitudes (0.20 vs 0.28)."
+  - "79 % of 119 held-out DART forecasts within a factor 2 of what the buoy recorded."
+  - "Dev-widened Mw ranges cover 68 % of exam truths at nominal 68 %."
+  - "Kamchatka 2025: 8.58 [8.34, 8.84] vs 8.8; Maule 2010: 8.84 vs 8.8; Illapel 2015: 8.21 vs 8.3."
+losses:
+  - "Reads magnitudes low (mean bias -0.22). Tohoku 2011: 8.67 [8.44, 8.92] vs 9.1."
+  - "The along-trench centroid ties the epicentre's own column (42 vs 39 km)."
+  - "Weighted by event, the dumb 2.8 cm amplitude wins (0.27 vs 0.34 dex)."
+  - "Non-interface events (outer-rise, strike-slip, intraslab): Mw 68 % coverage 44 % (interface 79 %)."
+limits:
+  - "Linear propagation at 8 arc-min (not NOAA's 4'): far-field window correlation 0.73-0.81 against 4'; no dispersion, Coriolis or Kajiura filter."
+  - "Only thrust slip on the two shallowest SIFT rows; other mechanisms are read as if they were interface thrusts."
+  - "Hindcast-quality data: NDBC real-time files with event-mode gaps; the detiding is causal but tuned on the 3 days before."
+  - "Not strictly real-time: glitch removal and gap filling read up to 34 later observed samples (about 34 min at 1-minute sampling, longer across gaps), so a live input window is final only that long after its last minute. Training and the exam used the same processing."
+  - "Dev is 5 events; the widening factors (x2-4.4) rest on them."
+  - "The released widening factors were computed with the interval sides swapped (training/calibrate.py took the upper half-width for a truth below the median; fixed 22 Nov 2026, not re-run: the per-event dev rows are not shipped). The exam coverage above is for the factors as shipped."
+  - "Green's functions exist for 68 DART sites (those that recorded the eligible events); no coastal tide gauges."
+help_wanted:
+  - "NOAA's compressed propagation database (sift.pmel.noaa.gov/ComMIT/compressed) answers, but its amplitude encoding is undocumented and the documented THREDDS/OpenDAP access returns 404, so MOST waveforms could not be compared directly."
+next:
+  - "4' Green's functions (NOAA's resolution) for the 68 sites: 10 min each on one core; check the far-field loss of correlation and the low magnitude bias."
+  - "Teach the flow other mechanisms (outer-rise normal, strike-slip) with their own unit sources, or a mechanism prior from the W-phase."
+  - "Coastal tide gauges (CO-OPS) with nested grids or a learned amplification per gauge."
+
+usage:
+  install: pip install numpy scipy
+  demo: python demo.py
+  python: |
+    import numpy as np, tsunaminet as T
+    net = T.TsunamiNet(); gf = T.GreensFunctions(); gf.cal = net.cal
+    # records: {site: (eta_m[1441], mask[1441])} minute series from the origin, from pipeline.detided_minutes
+    ev = gf.event(lon, lat, records)
+    post = net.posterior(ev)                        # Mw, centroid, ranges, samples
+    fc = gf.forecast(ev, post, '46402_1', a, b, widen=net.cal['widen']['amp'])
+
+files:
+  inference: [tsunaminet.py, pipeline.py]
+  weights: [tsunaminet_weights.npz, gf_compact.npz]
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 2

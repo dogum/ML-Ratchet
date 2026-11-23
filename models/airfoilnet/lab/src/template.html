@@ -1,0 +1,440 @@
+<title>AirfoilNet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a test report on drafting vellum. One wide instrument panel up top, then report sections in a
+   single 72rem column; data in mono, headings in condensed caps like a tunnel data sheet. */
+:root {
+  --paper: #f2f5f7; --panel: #ffffff; --ink: #12202b; --ink2: #475866; --ink3: #6f7f8b;
+  --rule: #d5dee5; --grid: #e4ebf0; --accent: #1d4fb8;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --neutral: #8a96a0; --band: rgba(42,120,214,0.16);
+  --meas: #12202b; --good: #0b7a3e; --bad: #b3261e;
+  --f-disp: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0d1418; --panel: #141d23; --ink: #e3eaef; --ink2: #b3c0c9; --ink3: #8696a2;
+  --rule: #2a3741; --grid: #1e2a32; --accent: #7aa7ff;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --neutral: #7d8a94; --band: rgba(57,135,229,0.22);
+  --meas: #f3f6f8; --good: #4cc27f; --bad: #ff7a70; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --paper: #0d1418; --panel: #141d23; --ink: #e3eaef; --ink2: #b3c0c9; --ink3: #8696a2;
+  --rule: #2a3741; --grid: #1e2a32; --accent: #7aa7ff;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --neutral: #7d8a94; --band: rgba(57,135,229,0.22);
+  --meas: #f3f6f8; --good: #4cc27f; --bad: #ff7a70; color-scheme: dark; }
+body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 72rem; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0; }
+h1, h2, h3 { font-family: var(--f-disp); text-transform: uppercase; letter-spacing: 0.04em; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.6rem, 7vw, 4.4rem); line-height: 0.95; font-weight: 700; }
+h2 { font-size: 1.7rem; font-weight: 600; }
+h3 { font-size: 1.15rem; font-weight: 600; color: var(--ink2); }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+header.hero { padding-block: 2.2rem 1.2rem; display: grid; gap: 0.8rem; border-bottom: 1px solid var(--rule); }
+.thesis { font-size: 1.15rem; color: var(--ink2); max-width: 60ch; }
+section { padding-block: 2.2rem; border-bottom: 1px solid var(--rule); display: grid; gap: 1rem; }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 14px; min-width: 0; }
+.lab { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 14px; }
+@media (max-width: 860px) { .lab { grid-template-columns: minmax(0, 1fr); } }
+.charts3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 860px) { .charts3 { grid-template-columns: minmax(0, 1fr); } }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end; }
+.ctl { display: grid; gap: 3px; font-size: 0.8rem; color: var(--ink2); min-width: 0; }
+.ctl output { font-family: var(--f-mono); color: var(--ink); font-size: 0.85rem; }
+select, button, input[type=range] { font: inherit; font-size: 0.85rem; }
+select, button { background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 3px; padding: 5px 8px; max-width: 100%; }
+button { cursor: pointer; } button:hover { border-color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#foil { width: 100%; height: auto; aspect-ratio: 2.6 / 1; max-width: 100%; display: block; touch-action: none; }
+.readouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: 8px; }
+.ro { border-top: 2px solid var(--rule); padding-top: 4px; }
+.ro b { display: block; font-family: var(--f-mono); font-size: 1.15rem; font-weight: 500; }
+.ro span { font-size: 0.75rem; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.06em; }
+svg.chart { width: 100%; height: auto; display: block; overflow: visible; }
+svg.chart text { fill: var(--ink3); font-family: var(--f-mono); font-size: 10px; }
+svg.chart .ttl { fill: var(--ink); font-family: var(--f-disp); font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; color: var(--ink2); }
+.legend i { display: inline-block; width: 16px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 5px; }
+.legend i.dot { width: 8px; height: 8px; border: 1.5px solid var(--meas); border-radius: 50%; }
+.legend i.dash { border-top-style: dashed; }
+.tip { position: fixed; pointer-events: none; background: var(--panel); border: 1px solid var(--rule); border-radius: 3px; padding: 6px 8px; font-size: 0.78rem; z-index: 20; box-shadow: 0 2px 8px rgba(0,0,0,.12); min-width: 9rem; }
+.tip .row { display: flex; gap: 6px; align-items: center; } .tip .row b { font-family: var(--f-mono); font-weight: 500; }
+.tip .row i { width: 12px; border-top: 2px solid; display: inline-block; }
+table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+.tablewrap { overflow-x: auto; }
+th, td { text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--rule); white-space: nowrap; font-variant-numeric: tabular-nums; }
+th:first-child, td:first-child { text-align: left; }
+th { font-family: var(--f-disp); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: var(--ink2); }
+td.best { font-weight: 600; color: var(--ink); background: var(--grid); }
+td.txt { text-align: left; white-space: normal; min-width: 12rem; max-width: 26rem; }
+.pill { font-family: var(--f-mono); font-size: 0.72rem; padding: 1px 6px; border-radius: 9px; border: 1px solid currentColor; }
+.pill.kept { color: var(--good); } .pill.rejected { color: var(--bad); } .pill.released { color: var(--accent); }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+@media (max-width: 760px) { .two { grid-template-columns: minmax(0, 1fr); } }
+ol.recipe { margin: 0; padding-left: 1.3rem; display: grid; gap: 0.6rem; max-width: 72ch; }
+ul.plain { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.4rem; max-width: 72ch; }
+pre { background: var(--panel); border: 1px solid var(--rule); padding: 10px; border-radius: 3px; overflow-x: auto; font-family: var(--f-mono); font-size: 0.8rem; }
+.note { font-size: 0.82rem; color: var(--ink3); max-width: 72ch; }
+footer { padding-block: 2rem 3rem; font-size: 0.8rem; color: var(--ink3); display: grid; gap: 0.6rem; }
+a { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">ML Ratchet · model 4 of the B batch · the wind tunnel</div>
+  <h1>AirfoilNet</h1>
+  <p class="thesis">An airfoil's lift, drag and moment curves from its shape and Reynolds number, with error bars. It learned only from an XFOIL-class flow solver, and it is graded on real wind-tunnel polars from the UIUC low-speed tests.</p>
+  <p class="note" id="heroNumbers"></p>
+</header>
+
+<section aria-labelledby="lab-h">
+  <h2 id="lab-h">The lab: shape an airfoil, read its polar</h2>
+  <p>Pick a tested airfoil or a library shape, then drag the handles on the surface to push the skin in or out. The network runs in this page on every change. The shaded band is its 68% error bar (already widened on the dev airfoils).</p>
+  <div class="lab">
+    <div class="panel" style="display:grid;gap:10px">
+      <div class="controls">
+        <label class="ctl" for="preset">Airfoil<select id="preset"></select></label>
+        <label class="ctl" for="re">Reynolds number <output id="reOut"></output><input id="re" type="range" min="4.6" max="5.78" step="0.01" value="5.3"></label>
+        <label class="ctl" for="tk">Thickness × <output id="tkOut">1.00</output><input id="tk" type="range" min="0.5" max="1.6" step="0.01" value="1"></label>
+        <label class="ctl" for="cb">Camber × <output id="cbOut">1.00</output><input id="cb" type="range" min="-0.5" max="2" step="0.01" value="1"></label>
+        <button id="reset" type="button">Reset shape</button>
+      </div>
+      <canvas id="foil" width="1040" height="400" aria-label="Airfoil shape editor: drag the round handles"></canvas>
+      <p class="note" id="foilNote"></p>
+      <div class="readouts" id="readouts"></div>
+    </div>
+    <div class="panel" style="display:grid;gap:8px">
+      <div class="legend" id="labLegend"></div>
+      <div id="labCl"></div>
+    </div>
+  </div>
+  <div class="charts3">
+    <div class="panel"><div id="labCd"></div></div>
+    <div class="panel"><div id="labCm"></div></div>
+    <div class="panel"><div id="labLd"></div></div>
+  </div>
+</section>
+
+<section aria-labelledby="ex-h">
+  <h2 id="ex-h">Into the tunnel: every tested airfoil</h2>
+  <p>Measured polars (open circles) from the UIUC 3×4 ft tunnel against AirfoilNet, NeuralFoil and the raw flow solver. Dev airfoils helped calibrate; exam airfoils were never used to choose anything.</p>
+  <div class="controls">
+    <label class="ctl" for="exFoil">Airfoil<select id="exFoil"></select></label>
+    <label class="ctl" for="exRe">Run<select id="exRe"></select></label>
+  </div>
+  <div class="legend" id="exLegend"></div>
+  <div class="charts3">
+    <div class="panel"><div id="exCl"></div></div>
+    <div class="panel"><div id="exCd"></div></div>
+    <div class="panel"><div id="exCm"></div></div>
+  </div>
+  <p class="note" id="exNote"></p>
+</section>
+
+<section aria-labelledby="exam-h">
+  <h2 id="exam-h">The exam</h2>
+  <p id="examIntro"></p>
+  <div class="tablewrap"><table id="examTable"></table></div>
+  <h3>On the runs the raw solver was asked about</h3>
+  <p id="physIntro"></p>
+  <div class="tablewrap"><table id="physTable"></table></div>
+  <h3>Error bars</h3>
+  <p id="covText"></p>
+</section>
+
+<section aria-labelledby="twin-h">
+  <h2 id="twin-h">Where the physics fails</h2>
+  <p id="twinText"></p>
+  <div class="two">
+    <div class="panel"><div id="twinChart"></div></div>
+    <div class="panel"><div class="tablewrap"><table id="twinTable"></table></div></div>
+  </div>
+</section>
+
+<section aria-labelledby="rat-h">
+  <h2 id="rat-h">The ratchet</h2>
+  <p id="ratRule"></p>
+  <div class="tablewrap"><table id="ratTable"></table></div>
+</section>
+
+<section aria-labelledby="how-h">
+  <h2 id="how-h">How it was built</h2>
+  <ol class="recipe" id="recipe"></ol>
+</section>
+
+<section aria-labelledby="lim-h">
+  <h2 id="lim-h">Limits</h2>
+  <ul class="plain" id="limits"></ul>
+</section>
+
+<section aria-labelledby="use-h">
+  <h2 id="use-h">Use the release</h2>
+  <p>numpy only. Unzip <span class="mono">airfoilnet-v1.0.zip</span>, then:</p>
+  <pre>pip install numpy scipy
+python demo.py
+
+from airfoilnet import AirfoilNet, read_dat
+net = AirfoilNet()
+pol = net.polar(read_dat("my_airfoil.dat"), Re=2e5)
+print(pol["clmax"], pol["alpha_stall"])
+print(pol["alpha"], pol["cl"], pol["cl_sd"], pol["cd"], pol["cm"])</pre>
+</section>
+
+<footer class="wrap" id="credits"></footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script id="data" type="application/json">/*DATA*/</script>
+<script>
+"use strict";
+const D = JSON.parse(document.getElementById('data').textContent);
+const $ = s => document.querySelector(s);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const fmt = (v, d = 3) => (v == null || !isFinite(v)) ? '–' : (+v).toFixed(d);
+
+/* ---------------- network port (mirrors release/airfoilnet.py) ---------------- */
+const NW = 8;
+const XS = Array.from({length: 24}, (_, i) => 0.5 * (1 - Math.cos(Math.PI * (i + 1) / 25)));
+function comb(n, k) { let r = 1; for (let i = 1; i <= k; i++) r = r * (n - k + i) / i; return r; }
+function basisRow(x) { const C = Math.sqrt(Math.max(x, 0)) * (1 - x), n = NW - 1, r = [];
+  for (let i = 0; i <= n; i++) r.push(C * comb(n, i) * Math.pow(x, i) * Math.pow(1 - x, n - i)); return r; }
+const leT = x => Math.sqrt(Math.max(x, 0)) * Math.pow(1 - x, NW - 1 + 0.5);
+function cstEval(p, x) { const B = basisRow(x), L = leT(x); let u = 0, l = 0;
+  for (let i = 0; i < NW; i++) { u += B[i] * p[i]; l += B[i] * p[NW + i]; }
+  u += p[2 * NW] * L + x * p[2 * NW + 1] / 2; l += p[2 * NW] * L - x * p[2 * NW + 1] / 2; return [u, l]; }
+function solveSym(A, b) { const n = b.length, M = A.map((r, i) => r.concat([b[i]]));
+  for (let c = 0; c < n; c++) { let piv = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[piv][c])) piv = r;
+    [M[c], M[piv]] = [M[piv], M[c]];
+    for (let r = c + 1; r < n; r++) { const f = M[r][c] / M[c][c]; for (let k = c; k <= n; k++) M[r][k] -= f * M[c][k]; } }
+  const x = new Array(n).fill(0); for (let r = n - 1; r >= 0; r--) { let s = M[r][n]; for (let k = r + 1; k < n; k++) s -= M[r][k] * x[k]; x[r] = s / M[r][r]; } return x; }
+/* least-squares CST fit to upper points (x ascending) and lower points */
+function cstFit(up, lo) {
+  const rows = [], b = [];
+  for (const [x, y] of up) { const B = basisRow(x), r = new Array(18).fill(0); for (let i = 0; i < NW; i++) r[i] = B[i]; r[16] = leT(x); r[17] = x / 2; rows.push(r); b.push(y); }
+  for (const [x, y] of lo) { const B = basisRow(x), r = new Array(18).fill(0); for (let i = 0; i < NW; i++) r[NW + i] = B[i]; r[16] = leT(x); r[17] = -x / 2; rows.push(r); b.push(y); }
+  const fit = m => { const A = Array.from({length: m}, () => new Array(m).fill(0)), v = new Array(m).fill(0);
+    rows.forEach((r, k) => { for (let i = 0; i < m; i++) { v[i] += r[i] * b[k]; for (let j = 0; j < m; j++) A[i][j] += r[i] * r[j]; } });
+    for (let i = 0; i < m; i++) A[i][i] += 1e-6; return solveSym(A, v); };
+  let p = fit(18); if (p[17] < 0) { p = fit(17); p.push(0); } return p; }
+function thinAirfoil(p) { const n = 801, th = [], x = [], c = [];
+  for (let i = 0; i < n; i++) { const t = 1e-4 + (Math.PI - 2e-4) * i / (n - 1); th.push(t); x.push(0.5 * (1 - Math.cos(t))); const [u, l] = cstEval(p, x[i]); c.push(0.5 * (u + l)); }
+  const dc = c.map((_, i) => { if (i === 0) return (c[1] - c[0]) / (x[1] - x[0]); if (i === n - 1) return (c[n - 1] - c[n - 2]) / (x[n - 1] - x[n - 2]);
+    const h0 = x[i] - x[i - 1], h1 = x[i + 1] - x[i]; return (h0 * h0 * c[i + 1] - h1 * h1 * c[i - 1] + (h1 * h1 - h0 * h0) * c[i]) / (h0 * h1 * (h0 + h1)); });  /* = numpy.gradient */
+  const trap = f => { let s = 0; for (let i = 1; i < n; i++) s += 0.5 * (f(i) + f(i - 1)) * (th[i] - th[i - 1]); return s; };
+  const aL0 = -trap(i => dc[i] * (Math.cos(th[i]) - 1)) / Math.PI;
+  const A1 = 2 / Math.PI * trap(i => dc[i] * Math.cos(th[i])), A2 = 2 / Math.PI * trap(i => dc[i] * Math.cos(2 * th[i]));
+  return [aL0 * 180 / Math.PI, Math.PI / 4 * (A2 - A1)]; }
+function features(p, Re) { const t = [], c = []; let tm = 0;
+  for (const x of XS) { const [u, l] = cstEval(p, x); t.push((u - l) / 0.12); c.push(0.5 * (u + l) / 0.04); tm = Math.max(tm, u - l); }
+  return t.concat(c, [(Math.log10(Re) - 5) / 0.6, tm / 0.12]); }
+function b64f32(s) { const bin = atob(s), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); return new Float32Array(u8.buffer); }
+const W = D.weights; const OUT_SCALE = [0.5, 1.0, 0.05];
+W.members.forEach(m => { for (const part of ['branch', 'trunk', 'net']) if (m[part]) m[part] = m[part].map(L => ({w: b64f32(L.w), b: b64f32(L.b), o: L.o, i: L.i})); if (m.bias) m.bias = b64f32(m.bias); });
+function mlp(layers, x) { let h = x; layers.forEach((L, k) => { const y = new Float64Array(L.o);
+  for (let o = 0; o < L.o; o++) { let s = L.b[o]; const off = o * L.i; for (let i = 0; i < L.i; i++) s += L.w[off + i] * h[i]; y[o] = (k < layers.length - 1) ? s / (1 + Math.exp(-s)) : s; }
+  h = y; }); return h; }
+function predict(p, Re, alphas) {
+  const F = features(p, Re), [aL0, cm0] = thinAirfoil(p); let tm = 0; for (const x of XS) { const [u, l] = cstEval(p, x); tm = Math.max(tm, u - l); }
+  const out = {alpha: alphas, cl: [], cd: [], cm: [], cl_sd: [], lncd_sd: [], cm_sd: [], cl_thin: []};
+  let branches = null;
+  if (W.arch === 'deeponet') branches = W.members.map(m => mlp(m.branch, F));
+  for (const a of alphas) {
+    const T = [a / 10, Math.sin(2 * a * Math.PI / 180), Math.cos(a * Math.PI / 180)];
+    const clT = 2 * Math.PI * (1 + 0.77 * tm) * Math.sin((a - aL0) * Math.PI / 180);
+    const anc = W.anchor ? [clT, Math.log(0.01), cm0] : [0, Math.log(0.01), 0];
+    const mus = [], vars = [];
+    W.members.forEach((m, k) => { let o;
+      if (W.arch === 'deeponet') { const t = mlp(m.trunk, T), b = branches[k]; o = [];
+        for (let j = 0; j < 6; j++) { let s = m.bias[j]; for (let q = 0; q < W.P; q++) s += b[q * 6 + j] * t[q]; o.push(s); } }
+      else o = Array.from(mlp(m.net, F.concat(T)));
+      mus.push([0, 1, 2].map(j => o[j] * OUT_SCALE[j] + anc[j]));
+      vars.push([0, 1, 2].map(j => Math.exp(2 * (Math.min(3, Math.max(-7, o[3 + j])) + Math.log(OUT_SCALE[j]))))); });
+    const n = mus.length;
+    for (let j = 0; j < 3; j++) { const mu = mus.reduce((s, v) => s + v[j], 0) / n;
+      const v = vars.reduce((s, x) => s + x[j], 0) / n + mus.reduce((s, x) => s + (x[j] - mu) ** 2, 0) / n;
+      const sd = Math.sqrt(v) * W.widen[j];
+      if (j === 0) { out.cl.push(mu); out.cl_sd.push(sd); } else if (j === 1) { out.cd.push(Math.exp(mu)); out.lncd_sd.push(sd); } else { out.cm.push(mu); out.cm_sd.push(sd); } }
+    out.cl_thin.push(2 * Math.PI * (a - aL0) * Math.PI / 180);
+  }
+  return out; }
+
+/* ---------------- chart helper (SVG, one scale per axis, crosshair tooltip) ---------------- */
+const tip = $('#tip');
+function niceTicks(lo, hi, n = 5) { const span = hi - lo, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n + 0.5); const t = [];
+  for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) t.push(+v.toFixed(10)); return t; }
+function chart(el, o) {
+  const Wd = 440, H = 310, m = {l: 46, r: 12, t: 38, b: 36};
+  const iw = Wd - m.l - m.r, ih = H - m.t - m.b;
+  const [x0, x1] = o.x, [y0, y1] = o.y;
+  const X = v => m.l + (v - x0) / (x1 - x0) * iw, Y = v => m.t + ih - (v - y0) / (y1 - y0) * ih;
+  const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${Wd} ${H}`); svg.setAttribute('class', 'chart'); svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', o.title);
+  const add = (tag, at, txt) => { const e = document.createElementNS(ns, tag); for (const k in at) e.setAttribute(k, at[k]); if (txt != null) e.textContent = txt; svg.appendChild(e); return e; };
+  add('text', {x: 0, y: 14, class: 'ttl'}, o.title);
+  const clip = 'c' + Math.random().toString(36).slice(2); const cp = add('clipPath', {id: clip}); const cr = document.createElementNS(ns, 'rect');
+  cr.setAttribute('x', m.l); cr.setAttribute('y', m.t); cr.setAttribute('width', iw); cr.setAttribute('height', ih); cp.appendChild(cr);
+  for (const t of (o.xt || niceTicks(x0, x1))) { add('line', {x1: X(t), x2: X(t), y1: m.t, y2: m.t + ih, stroke: css('--grid'), 'stroke-width': 1}); add('text', {x: X(t), y: H - m.b + 14, 'text-anchor': 'middle'}, o.xfmt ? o.xfmt(t) : t); }
+  for (const t of (o.yt || niceTicks(y0, y1))) { add('line', {x1: m.l, x2: m.l + iw, y1: Y(t), y2: Y(t), stroke: css('--grid'), 'stroke-width': 1}); add('text', {x: m.l - 6, y: Y(t) + 3, 'text-anchor': 'end'}, o.yfmt ? o.yfmt(t) : t); }
+  if (y0 < 0 && y1 > 0) add('line', {x1: m.l, x2: m.l + iw, y1: Y(0), y2: Y(0), stroke: css('--rule'), 'stroke-width': 1});
+  add('text', {x: m.l + iw / 2, y: H - 4, 'text-anchor': 'middle'}, o.xlab); add('text', {x: m.l - 6, y: m.t - 8, 'text-anchor': 'end'}, o.ylab);
+  const g = add('g', {'clip-path': `url(#${clip})`});
+  const gadd = (tag, at) => { const e = document.createElementNS(ns, tag); for (const k in at) e.setAttribute(k, at[k]); g.appendChild(e); return e; };
+  for (const s of o.series) {
+    const pts = s.y ? s.x.map((xv, i) => [xv, s.y[i]]).filter(q => isFinite(q[0]) && q[1] != null && isFinite(q[1])) : [];
+    if (s.kind === 'band') { const up = s.x.map((xv, i) => [xv, s.hi[i]]).filter(q => isFinite(q[1])), lo = s.x.map((xv, i) => [xv, s.lo[i]]).filter(q => isFinite(q[1]));
+      if (up.length > 1) gadd('path', {d: 'M' + up.map(q => X(q[0]) + ',' + Y(q[1])).join('L') + 'L' + lo.reverse().map(q => X(q[0]) + ',' + Y(q[1])).join('L') + 'Z', fill: css('--band'), stroke: 'none'}); }
+    else if (s.kind === 'dots') { for (const q of pts) gadd('circle', {cx: X(q[0]), cy: Y(q[1]), r: 3.6, fill: css('--panel'), stroke: css('--meas'), 'stroke-width': 1.4}); }
+    else { // lines; break on NaN gaps
+      let d = '', pen = false; s.x.forEach((xv, i) => { const yv = s.y[i]; if (isFinite(xv) && isFinite(yv)) { d += (pen ? 'L' : 'M') + X(xv).toFixed(1) + ',' + Y(yv).toFixed(1); pen = true; } else pen = false; });
+      gadd('path', {d, fill: 'none', stroke: s.color, 'stroke-width': s.w || 2, 'stroke-dasharray': s.dash || '', 'stroke-linejoin': 'round'}); }
+  }
+  // crosshair
+  const vline = add('line', {x1: 0, x2: 0, y1: m.t, y2: m.t + ih, stroke: css('--ink3'), 'stroke-width': 1, visibility: 'hidden'});
+  const hit = add('rect', {x: m.l, y: m.t, width: iw, height: ih, fill: 'transparent', tabindex: 0});
+  const show = (ev, xv) => { vline.setAttribute('x1', X(xv)); vline.setAttribute('x2', X(xv)); vline.setAttribute('visibility', 'visible');
+    tip.replaceChildren(); const h = document.createElement('div'); h.className = 'mono'; h.textContent = (o.xname || o.xlab) + ' ' + (+xv).toFixed(2); tip.appendChild(h);
+    for (const s of o.series) { if (s.kind === 'band' || !s.label) continue; let best = null, bd = 1e9;
+      s.x.forEach((v, i) => { if (isFinite(s.y[i]) && Math.abs(v - xv) < bd) { bd = Math.abs(v - xv); best = i; } });
+      if (best == null || bd > (o.snap || 1.0)) continue;
+      const r = document.createElement('div'); r.className = 'row'; const k = document.createElement('i'); k.style.borderTopColor = s.kind === 'dots' ? css('--meas') : s.color; if (s.dash) k.style.borderTopStyle = 'dashed';
+      const b = document.createElement('b'); b.textContent = (o.yfmtTip || (v => (+v).toFixed(3)))(s.y[best]) + (s.sd ? ' ± ' + (o.yfmtTip || (v => (+v).toFixed(3)))(s.sd[best]) : '');
+      const t = document.createElement('span'); t.textContent = s.label; r.append(k, b, t); tip.appendChild(r); }
+    tip.hidden = false; const tx = Math.min(ev.clientX + 14, window.innerWidth - tip.offsetWidth - 8); tip.style.left = tx + 'px'; tip.style.top = (ev.clientY + 14) + 'px'; };
+  hit.addEventListener('pointermove', ev => { const r = svg.getBoundingClientRect(); const px = (ev.clientX - r.left) / r.width * Wd; show(ev, x0 + (px - m.l) / iw * (x1 - x0)); });
+  hit.addEventListener('pointerleave', () => { tip.hidden = true; vline.setAttribute('visibility', 'hidden'); });
+  el.replaceChildren(svg); }
+function legend(el, items) { el.replaceChildren(); for (const it of items) { const s = document.createElement('span'); const i = document.createElement('i');
+  if (it.dot) i.className = 'dot'; else { i.style.borderTopColor = it.color; if (it.dash) i.className = 'dash'; } s.append(i, document.createTextNode(it.label)); el.appendChild(s); } }
+const lim = (arr, pad = 0.08) => { const v = arr.flat().filter(isFinite); let lo = Math.min(...v), hi = Math.max(...v); const d = (hi - lo) || 1; return [lo - pad * d, hi + pad * d]; };
+
+/* ---------------- the lab ---------------- */
+const LIB = D.library; const sel = $('#preset');
+const groups = {};
+LIB.forEach((a, i) => { (groups[a.group] = groups[a.group] || []).push([i, a]); });
+for (const gname of Object.keys(groups)) { const og = document.createElement('optgroup'); og.label = gname;
+  for (const [i, a] of groups[gname]) { const op = document.createElement('option'); op.value = i; op.textContent = a.name; og.appendChild(op); } sel.appendChild(og); }
+sel.value = String(D.defaultPreset || 0);
+const HX = [0.04, 0.12, 0.25, 0.42, 0.6, 0.8];
+let base = null, bumps = null, P = null;
+function shapePoints(p) { const xs = Array.from({length: 81}, (_, i) => 0.5 * (1 - Math.cos(Math.PI * i / 80))); return xs.map(x => [x, ...cstEval(p, x)]); }
+function rebuild() {
+  const kt = +$('#tk').value, kc = +$('#cb').value; $('#tkOut').textContent = kt.toFixed(2); $('#cbOut').textContent = kc.toFixed(2);
+  const pts = shapePoints(base); const up = [], lo = [];
+  for (const [x, u, l] of pts) { let c = 0.5 * (u + l) * kc, t = (u - l) * kt; let bu = 0, bl = 0;
+    HX.forEach((hx, k) => { const w = Math.exp(-(((x - hx) / 0.09) ** 2)) * Math.sqrt(Math.max(x, 0)) * (1 - x) / (Math.sqrt(hx) * (1 - hx)); bu += bumps[0][k] * w; bl += bumps[1][k] * w; });
+    up.push([x, c + t / 2 + bu]); lo.push([x, c - t / 2 + bl]); }
+  P = cstFit(up, lo); drawFoil(); runLab(); }
+function loadPreset() { base = LIB[+sel.value].p.slice(); bumps = [HX.map(() => 0), HX.map(() => 0)]; $('#tk').value = 1; $('#cb').value = 1;
+  const rs = (LIB[+sel.value].runs || []).map(x => x.Re); let best = 2e5, bd = 9;
+  for (const v of rs) { const d = Math.abs(Math.log10(v) - Math.log10(2e5)); if (d < bd && v >= 4e4) { bd = d; best = v; } }
+  $('#re').value = Math.log10(best).toFixed(2); rebuild(); }
+const cv = $('#foil'), cx = cv.getContext('2d');
+const FX = x => 40 + x * (cv.width - 80), FY = y => cv.height / 2 - y * (cv.width - 80) * 0.9;
+function handles() { const h = []; HX.forEach((x, k) => { const [u, l] = cstEval(P, x); h.push({s: 0, k, x, y: u}); h.push({s: 1, k, x, y: l}); }); return h; }
+function drawFoil() { const w = cv.width, h = cv.height; cx.clearRect(0, 0, w, h);
+  cx.strokeStyle = css('--grid'); cx.lineWidth = 1; for (let x = 0; x <= 1.0001; x += 0.1) { cx.beginPath(); cx.moveTo(FX(x), 10); cx.lineTo(FX(x), h - 10); cx.stroke(); }
+  cx.beginPath(); cx.moveTo(FX(0), FY(0)); cx.lineTo(FX(1), FY(0)); cx.strokeStyle = css('--rule'); cx.stroke();
+  const pts = shapePoints(P); cx.beginPath(); pts.forEach(([x, u], i) => i ? cx.lineTo(FX(x), FY(u)) : cx.moveTo(FX(x), FY(u)));
+  for (let i = pts.length - 1; i >= 0; i--) cx.lineTo(FX(pts[i][0]), FY(pts[i][2]));
+  cx.closePath(); cx.fillStyle = css('--band'); cx.fill(); cx.lineWidth = 2.5; cx.strokeStyle = css('--s1'); cx.stroke();
+  cx.beginPath(); pts.forEach(([x, u, l], i) => i ? cx.lineTo(FX(x), FY(0.5 * (u + l))) : cx.moveTo(FX(x), FY(0.5 * (u + l)))); cx.setLineDash([6, 5]); cx.lineWidth = 1.2; cx.strokeStyle = css('--ink3'); cx.stroke(); cx.setLineDash([]);
+  for (const hd of handles()) { cx.beginPath(); cx.arc(FX(hd.x), FY(hd.y), 9, 0, 2 * Math.PI); cx.fillStyle = css('--panel'); cx.fill(); cx.lineWidth = 2; cx.strokeStyle = css('--ink'); cx.stroke(); }
+  let tm = 0, xt = 0; for (const [x, u, l] of pts) if (u - l > tm) { tm = u - l; xt = x; }
+  const [aL0] = thinAirfoil(P);
+  $('#foilNote').textContent = `max thickness ${(100 * tm).toFixed(1)}% at x/c = ${xt.toFixed(2)} · thin-airfoil zero-lift angle ${aL0.toFixed(2)}° · dashed line: camber line`; }
+let drag = null;
+function cvPos(ev) { const r = cv.getBoundingClientRect(); return [(ev.clientX - r.left) / r.width * cv.width, (ev.clientY - r.top) / r.height * cv.height]; }
+cv.addEventListener('pointerdown', ev => { const [px, py] = cvPos(ev); let best = null, bd = 30;
+  for (const hd of handles()) { const d = Math.hypot(FX(hd.x) - px, FY(hd.y) - py); if (d < bd) { bd = d; best = hd; } }
+  if (best) { drag = {hd: best, y0: py, b0: bumps[best.s][best.k]}; cv.setPointerCapture(ev.pointerId); } });
+cv.addEventListener('pointermove', ev => { if (!drag) return; const [, py] = cvPos(ev); const dy = -(py - drag.y0) / ((cv.width - 80) * 0.9);
+  bumps[drag.hd.s][drag.hd.k] = Math.max(-0.06, Math.min(0.06, drag.b0 + dy)); rebuild(); });
+cv.addEventListener('pointerup', () => { drag = null; });
+const AL = Array.from({length: 105}, (_, i) => -6 + i * 0.25);
+function runLab() {
+  const Re = Math.pow(10, +$('#re').value); $('#reOut').textContent = Math.round(Re).toLocaleString('en-US');
+  const r = predict(P, Re, AL);
+  const lib = LIB[+sel.value]; const meas = (lib.runs || []).filter(x => Math.abs(Math.log10(x.Re) - Math.log10(Re)) < 0.06);
+  const s1 = css('--s1'), nt = css('--neutral');
+  legend($('#labLegend'), [{label: 'AirfoilNet (band: 68%)', color: s1}, {label: 'thin-airfoil theory', color: nt, dash: true}].concat(meas.length ? [{label: 'tunnel, this Re', dot: true}] : []));
+  const ml = meas.filter(x => x.lift), md = meas.filter(x => x.drag);
+  const mlA = ml.flatMap(x => x.lift.map(q => q[0])), mlC = ml.flatMap(x => x.lift.map(q => q[1])), mlM = ml.flatMap(x => x.lift.map(q => q[2]));
+  chart($('#labCl'), {title: 'Lift coefficient', xlab: 'angle of attack α (deg)', ylab: 'Cl', xname: 'α', x: [-6, 20], y: lim([r.cl.map((v, i) => v + r.cl_sd[i]), r.cl.map((v, i) => v - r.cl_sd[i]), mlC]),
+    series: [{kind: 'band', x: AL, hi: r.cl.map((v, i) => v + r.cl_sd[i]), lo: r.cl.map((v, i) => v - r.cl_sd[i])},
+      {x: AL, y: r.cl_thin, color: nt, dash: '5 4', w: 1.5, label: 'thin airfoil'}, {x: AL, y: r.cl, sd: r.cl_sd, color: s1, label: 'AirfoilNet'},
+      {kind: 'dots', x: mlA, y: mlC, label: 'tunnel'}]});
+  const mdC = md.flatMap(x => x.drag.map(q => q[1])), mdD = md.flatMap(x => x.drag.map(q => q[2]));
+  let kmax = 0; r.cl.forEach((v, i) => { if (v > r.cl[kmax]) kmax = i; });
+  const pre = AL.map((a, i) => a >= -4 && i <= kmax + 4);
+  const pcd = r.cd.filter((_, i) => pre[i]), pcl = r.cl.filter((_, i) => pre[i]);
+  chart($('#labCd'), {title: 'Drag polar (to just past Cl max)', xlab: 'drag coefficient Cd', ylab: 'Cl', xname: 'Cd', x: [0, Math.min(0.1, Math.max(0.03, ...pcd, ...mdD) * 1.1)], y: lim([pcl, mdC]), snap: 0.004,
+    xfmt: t => t.toFixed(2), series: [{x: pcd, y: pcl, color: s1, label: 'AirfoilNet'}, {kind: 'dots', x: mdD, y: mdC, label: 'tunnel'}], yfmtTip: v => (+v).toFixed(3)});
+  chart($('#labCm'), {title: 'Moment about c/4', xlab: 'angle of attack α (deg)', ylab: 'Cm', xname: 'α', x: [-6, 20], y: lim([r.cm.map((v, i) => v + r.cm_sd[i]), r.cm.map((v, i) => v - r.cm_sd[i]), mlM.filter(v => v != null)]),
+    series: [{kind: 'band', x: AL, hi: r.cm.map((v, i) => v + r.cm_sd[i]), lo: r.cm.map((v, i) => v - r.cm_sd[i])}, {x: AL, y: r.cm, sd: r.cm_sd, color: s1, label: 'AirfoilNet'}, {kind: 'dots', x: mlA, y: mlM, label: 'tunnel'}]});
+  const ld = r.cl.map((v, i) => v / r.cd[i]);
+  chart($('#labLd'), {title: 'Lift-to-drag ratio', xlab: 'angle of attack α (deg)', ylab: 'Cl/Cd', xname: 'α', x: [-6, 20], y: lim([ld]), series: [{x: AL, y: ld, color: s1, label: 'AirfoilNet'}], yfmtTip: v => (+v).toFixed(1)});
+  let k = 0; r.cl.forEach((v, i) => { if (v > r.cl[k]) k = i; });
+  let kld = 0; ld.forEach((v, i) => { if (v > ld[kld]) kld = i; });
+  let cdd = null; for (let i = 0; i < k; i++) if (r.cl[i] <= 0.5 && r.cl[i + 1] > 0.5) { const f = (0.5 - r.cl[i]) / (r.cl[i + 1] - r.cl[i]); cdd = Math.exp(Math.log(r.cd[i]) + f * (Math.log(r.cd[i + 1]) - Math.log(r.cd[i]))); }
+  const ro = [['Cl max', fmt(r.cl[k], 2) + ' ± ' + fmt(r.cl_sd[k], 2)], ['stall angle', AL[k] >= 19.9 ? '> 20°' : AL[k].toFixed(1) + '°'], ['Cd at Cl 0.5', cdd ? cdd.toFixed(4) : '–'], ['best Cl/Cd', ld[kld].toFixed(0) + ' at ' + AL[kld].toFixed(1) + '°']];
+  const el = $('#readouts'); el.replaceChildren(); for (const [a, b] of ro) { const d = document.createElement('div'); d.className = 'ro'; const bb = document.createElement('b'); bb.textContent = b; const s = document.createElement('span'); s.textContent = a; d.append(bb, s); el.appendChild(d); } }
+sel.addEventListener('change', loadPreset); $('#re').addEventListener('input', runLab);
+$('#tk').addEventListener('input', rebuild); $('#cb').addEventListener('input', rebuild); $('#reset').addEventListener('click', loadPreset);
+
+/* ---------------- explorer ---------------- */
+const EXS = D.explorer; const ef = $('#exFoil'), er = $('#exRe');
+for (const grp of ['exam', 'dev']) { const og = document.createElement('optgroup'); og.label = grp === 'exam' ? 'Exam airfoils' : 'Dev airfoils (used for calibration)';
+  EXS.forEach((a, i) => { if (a.split !== grp) return; const op = document.createElement('option'); op.value = i; op.textContent = a.name + ' · ' + a.family; og.appendChild(op); }); ef.appendChild(og); }
+function fillRuns() { const a = EXS[+ef.value]; er.replaceChildren(); a.runs.forEach((r, i) => { const op = document.createElement('option'); op.value = i; op.textContent = 'Re ' + Math.round(r.Re).toLocaleString('en-US') + (a.models > 1 ? ' · model ' + r.model : ''); er.appendChild(op); }); drawEx(); }
+function drawEx() {
+  const a = EXS[+ef.value], run = a.runs[+er.value]; const g = D.grid; const p = run.p || a.p;   // a run from another physical build carries its own geometry
+  const r = predict(p, run.Re, g); const s1 = css('--s1'), s2 = css('--s2'), s3 = css('--s3');
+  const items = [{label: 'tunnel', dot: true}, {label: 'AirfoilNet', color: s1}];
+  const ser = (y, extra) => Object.assign({x: g, y}, extra);
+  const cl = [{kind: 'band', x: g, hi: r.cl.map((v, i) => v + r.cl_sd[i]), lo: r.cl.map((v, i) => v - r.cl_sd[i])}, ser(r.cl, {color: s1, label: 'AirfoilNet', sd: r.cl_sd})];
+  const cd = [ser(r.cd, {color: s1, label: 'AirfoilNet'})], cm = [ser(r.cm, {color: s1, label: 'AirfoilNet', sd: r.cm_sd})];
+  if (run.nf) { items.push({label: 'NeuralFoil', color: s2}); cl.push(ser(run.nf[0], {color: s2, label: 'NeuralFoil'})); cd.push(ser(run.nf[1], {color: s2, label: 'NeuralFoil'})); cm.push(ser(run.nf[2], {color: s2, label: 'NeuralFoil'})); }
+  if (run.phys) { items.push({label: 'raw solver (mfoil)', color: s3, dash: true}); cl.push(ser(run.phys[0], {color: s3, dash: '6 4', label: 'raw solver'})); cd.push(ser(run.phys[1], {color: s3, dash: '6 4', label: 'raw solver'})); }
+  legend($('#exLegend'), items);
+  const L = run.lift || [], Dg = run.drag || [];
+  cl.push({kind: 'dots', x: L.map(q => q[0]), y: L.map(q => q[1]), label: 'tunnel'});
+  cd.push({kind: 'dots', x: Dg.map(q => q[0]), y: Dg.map(q => q[2]), label: 'tunnel'});
+  cm.push({kind: 'dots', x: L.map(q => q[0]), y: L.map(q => q[2]), label: 'tunnel'});
+  const xr = [Math.min(-6, ...L.map(q => q[0]), ...Dg.map(q => q[0])) , Math.max(16, ...L.map(q => q[0]))];
+  const inR = (arr) => arr.filter((v, i) => g[i] >= xr[0] && g[i] <= xr[1]);
+  chart($('#exCl'), {title: 'Lift Cl', xlab: 'α (deg)', ylab: 'Cl', xname: 'α', x: xr, y: lim([inR(r.cl), L.map(q => q[1]), run.nf ? inR(run.nf[0]) : []]), series: cl});
+  const cdv = [Dg.map(q => q[2]), inR(r.cd).filter((v, i) => v < 0.1)];
+  chart($('#exCd'), {title: 'Drag Cd (wake rake)', xlab: 'α (deg)', ylab: 'Cd', xname: 'α', x: xr, y: [0, Math.min(0.1, Math.max(0.03, ...cdv.flat()) * 1.1)], series: cd, yfmt: t => t.toFixed(2), yfmtTip: v => (+v).toFixed(4)});
+  chart($('#exCm'), {title: 'Moment Cm (c/4)', xlab: 'α (deg)', ylab: 'Cm', xname: 'α', x: xr, y: lim([inR(r.cm), L.map(q => q[2]).filter(v => v != null)]), series: cm});
+  $('#exNote').textContent = `${a.name}: ${a.family} family, ${a.split === 'exam' ? 'exam airfoil' : 'dev airfoil'}, tested shape fitted with CST (rms ${(a.fit_rms * 1000).toFixed(2)}‰ chord). ` +
+    (L.length && L[0][2] == null ? 'Volume 1 moment data are not valid, so Cm is not shown. ' : '') + (run.phys ? '' : 'The raw solver was not run at this Reynolds number. ');
+}
+ef.addEventListener('change', fillRuns); er.addEventListener('change', drawEx);
+
+/* ---------------- report sections ---------------- */
+function table(el, head, rows, best) { el.replaceChildren(); const th = document.createElement('tr'); head.forEach(h => { const c = document.createElement('th'); c.textContent = h; th.appendChild(c); }); el.appendChild(th);
+  rows.forEach(r => { const tr = document.createElement('tr'); r.forEach((v, j) => { const c = document.createElement('td'); if (v && typeof v === 'object' && v.pill) { const s = document.createElement('span'); s.className = 'pill ' + v.pill; s.textContent = v.pill; c.appendChild(s); } else c.textContent = v; if (best && best(r, j)) c.className = 'best'; if (typeof v === 'string' && v.length > 24) c.className = 'txt'; tr.appendChild(c); }); el.appendChild(tr); }); }
+function render() {
+  $('#heroNumbers').textContent = D.text.hero;
+  $('#examIntro').textContent = D.text.examIntro; $('#physIntro').textContent = D.text.physIntro; $('#covText').textContent = D.text.cov;
+  const T = D.examTable; table($('#examTable'), T.head, T.rows, (r, j) => j > 0 && T.best[T.rows.indexOf(r)] === j);
+  const P2 = D.physTable; table($('#physTable'), P2.head, P2.rows, (r, j) => j > 0 && P2.best[P2.rows.indexOf(r)] === j);
+  $('#twinText').textContent = D.text.twin; table($('#twinTable'), D.twinTable.head, D.twinTable.rows);
+  const tw = D.twinChart; chart($('#twinChart'), {title: tw.title, xlab: 'Reynolds number (×1000)', ylab: tw.ylab, xname: 'Re/1000', x: tw.x, y: tw.y,
+    series: tw.series.map((s, i) => Object.assign(s, {color: css(['--s3', '--s1', '--s2'][i])}))});
+  $('#ratRule').textContent = D.text.ratchet; table($('#ratTable'), D.ratchet.head, D.ratchet.rows.map(r => r.map((v, j) => j === D.ratchet.pillCol ? {pill: v} : v)));
+  const rec = $('#recipe'); D.text.recipe.forEach(t => { const li = document.createElement('li'); li.textContent = t; rec.appendChild(li); });
+  const lm = $('#limits'); D.text.limits.forEach(t => { const li = document.createElement('li'); li.textContent = t; lm.appendChild(li); });
+  const cr = $('#credits'); D.text.credits.forEach(t => { const p = document.createElement('p'); p.textContent = t; cr.appendChild(p); });
+}
+render(); loadPreset(); ef.value = String(D.defaultExplorer || 0); fillRuns(); er.value = String(D.defaultRun || 0); drawEx();
+const mq = window.matchMedia('(prefers-color-scheme: dark)'); const redraw = () => { drawFoil(); runLab(); drawEx(); render2(); };
+function render2() { const tw = D.twinChart; chart($('#twinChart'), {title: tw.title, xlab: 'Reynolds number (×1000)', ylab: tw.ylab, xname: 'Re/1000', x: tw.x, y: tw.y, series: tw.series.map((s, i) => Object.assign(s, {color: css(['--s3', '--s1', '--s2'][i])}))}); }
+mq.addEventListener && mq.addEventListener('change', redraw);
+new MutationObserver(redraw).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+</script>

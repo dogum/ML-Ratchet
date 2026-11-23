@@ -1,0 +1,56 @@
+# The ratchet ladder, normalised. Raw per-rung log: training/ratchet.json (ratchet2.py writes it; every frozen-set version).
+model: quakenet-v2
+ladders:
+  - name: QuakeNet v2
+    objective: "Mean over epicentre (error capped at 2,000 km), log depth, Mw and origin time of 1 - mean error / mean error of rung 0 (QuakeNet v1.2 per station, combined classically) on the frozen simulated set"
+    rule: Keep if the simulated objective beats the incumbent by more than 0.01 AND the real dev events get no more than 5% worse.
+    margin: 0.01
+    dev_gate: "Mean over epicentre, log depth, Mw and origin time of (dev mean error / incumbent's) must be <= 1.05; 40 dev quakes, first 2 stations and all stations (80 graphs)"
+    frozen_sets: [val1, val2, val3]
+    scored_on: val3
+    note: "val1: physics v1 (QuakeNet v1.2's physics v7 per station, shared source, P residual 1.5 s). val2 and val3 add reading-level mismatches measured on the dev twins. Every rung was re-scored on each new set and every decision re-taken in order; no decision flipped."
+    columns_source: Real exam (1,456 quakes at 2 stations; 400 at all stations), reported after the fact; never used to choose
+    columns: ["Epicentre, 2 stations (km, median)", "Epicentre, all stations (km, median)", "Depth, all (km, median)", "Mw, all (mean |error|)", "Origin time, all (s, median)"]
+    rungs:
+      - id: r0
+        change: "QuakeNet v1.2 per station, combined classically: least squares on the sphere from distance + back-azimuth; inverse-variance Mw and log depth; origin time from P picks"
+        sim: 0.000
+        decision: kept
+        why: "Rung 0, the classical combination every later rung must beat (dev: epicentre 533 km mean, origin time 12.7 s)."
+        metrics: [521, 240, 29.1, 0.089, 5.8]
+      - id: r1
+        change: Graph network correcting rung 0 from v1.2's per-station readings and the station geometry, no pick times
+        sim: 0.025
+        decision: kept
+        why: "+0.084 on val1 (+0.025 on val3) over r0; dev error ratio 0.989."
+        metrics: [512, 205, 27.8, 0.111, 5.9]
+      - id: r2
+        change: "+ P pick times: each station's pick residual at the anchor and the ak135 slowness on the nodes, residual differences on the edges"
+        sim: 0.070
+        decision: kept
+        why: "+0.053 on val1 (+0.045 on val3) over r1; dev error ratio 0.927 (dev epicentre 487 -> 375 km)."
+        metrics: [452, 114, 25.3, 0.104, 5.7]
+      - id: r3
+        change: "+ v1.2's 256-number summary of each record (last hidden layer), projected to 32 per node"
+        sim: 0.071
+        decision: rejected
+        why: "-0.010 on val1, +0.001 on val3 over r2: short of the 0.01 margin."
+        metrics: [451, 122, 26.9, 0.102, 5.8]
+      - id: r4
+        change: "+ P-wave cross-correlation on the edges (best lag around the picks, and |correlation|)"
+        sim: 0.075
+        decision: rejected
+        why: "+0.000 on val1, +0.006 on val3 over r2: short of the 0.01 margin."
+        metrics: [446, 117, 26.7, 0.098, 6.1]
+      - id: r5
+        change: "Physics v2 from the dev twins: simulated v1.2 distance readings +1.5 deg with 3 deg extra scatter, back-azimuth 6.5 deg extra scatter, simulated pick errors x0.75 (real picks are tighter). Fine-tuned from r2."
+        sim: 0.108
+        decision: kept
+        why: "+0.083 on val2 (+0.038 on val3) over r2; dev error ratio 0.971 (dev epicentre 375 -> 331 km)."
+        metrics: [417, 121, 28.4, 0.110, 5.9]
+      - id: r6
+        change: "Physics v3 from the dev twins: simulated depth readings of shallow quakes +0.37 in log10 depth (shared by the event's stations, plus scatter; deep +0.04), Mw readings +0.06 / +0.02. Fine-tuned from r5."
+        sim: 0.219
+        decision: released
+        why: "+0.111 on val3 over r5; dev error ratio 0.952 (dev log-depth error 0.222 -> 0.190)."
+        metrics: [427, 127, 17.6, 0.097, 4.3]

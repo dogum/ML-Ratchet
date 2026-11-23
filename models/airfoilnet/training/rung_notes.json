@@ -1,0 +1,10 @@
+{
+ "r1": "MLP on polars: shape sensors + log Re + alpha -> Cl, ln Cd, Cm with log-sigmas; 151 sweeps (snapshot A)",
+ "r2": "DeepONet (branch: shape + Re, trunk: alpha), same data",
+ "r3": "DeepONet predicting corrections to thin-airfoil Cl and Cm",
+ "r4": "r3 trained on strictly converged points only (drop loose Newton limit cycles)",
+ "r3b": "MLP predicting corrections to thin-airfoil Cl and Cm",
+ "r5": "Physics p1c: dev-measured drag mismatch (ln Cd += 0.015 + 0.21 (log10 Re - 5)) built into the labels",
+ "r6": "MLP on 256 sweeps (snapshot B)",
+ "r7": "Physics p1c and 256 sweeps"
+}

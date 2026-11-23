@@ -1,0 +1,30 @@
+{
+ "hero": "Exam: 75 airfoils from 34 designer families, 4×10⁴ ≤ Re ≤ 5×10⁵. AirfoilNet reads maximum lift (error 0.082) and the stall angle (1.8°) better than NeuralFoil (0.096, 2.2°) and the raw solver; NeuralFoil, trained on far more XFOIL runs, still wins on lift before stall, drag and moment.",
+ "examIntro": "Run once, after everything else was frozen: all clean wind-tunnel runs of the 75 exam airfoils (vols 1-5 of the UIUC low-speed tests). Errors are averaged per run, then per airfoil, then over airfoils. Drag comes from wake-rake runs, which stop before stall, so there is no post-stall drag. The thin-airfoil line has no stall, so it has no maximum-lift or stall entry. The shaded cell is the best value in each row.",
+ "physIntro": "The raw solver (mfoil, Ncrit 9) was run at one Reynolds number per exam airfoil, a fixed draw. Where it converges it is the most accurate thing here before stall (lift error 0.071). But it answered only 61% of the measured angles, and its last converged point sits well before the real stall, so its maximum lift is 0.22 off and its stall angle 4.0° early.",
+ "cov": "AirfoilNet's raw 68% bars were too narrow on dev (they covered 33% of Cl, 36% of ln Cd, 17% of Cm), so each was widened by one factor fitted on dev only: ×2.77, ×2.44, ×4.75. On the exam the widened bars cover 69% of Cl points before stall, 74% of drag points and 83% of moment points (nominal 68%). The Cm factor was too generous on the exam.",
+ "twin": "Before any network, the solver re-ran each dev airfoil at its tunnel Reynolds numbers (the twin). It gave no answer at 40-45% of the measured angles, mostly near and past stall: the Newton iteration of an XFOIL-class code fails when the boundary layer separates. At Re ≤ 10⁵ its polar stops 4.2° before the real stall and 0.11 below the real maximum lift, and its drag is 13% high; above 10⁵ its drag is 15% low. FX 63-137 gave no converged point at all. The drag trend became physics version p1c; the ratchet rejected it (+0.006 in simulation, short of the 0.01 margin), so the stall gap stays the main open rung.",
+ "ratchet": "A rung is kept if it beats the incumbent on the frozen simulated set by more than 0.01 (skill = mean over Cl, ln Cd, Cm of 1 − MAE / MAE of a constant guess) and its error D on the real dev airfoils is at most 5% worse. Physics p1c brought a second frozen set (val2); every decision was re-taken on it and none changed. The first rung was never beaten: the operator network (DeepONet) lost to a plain MLP on this small bank, thin-airfoil anchors hurt after stall, and more simulations raised the simulated score but made the real dev airfoils worse.",
+ "recipe": [
+  "Physics: mfoil (K. Fidkowski, MIT licence), an XFOIL-class code: linear-vorticity panels, two-equation integral boundary layer, e^N transition (Ncrit 9), lag-entrainment turbulence, wake, all coupled in one Newton solve. XFOIL itself could not be compiled here. We ported its hot loops to numba (same arithmetic; whole solves match the original to 1e-13) and fixed sharp trailing edges and Newton limit cycles.",
+  "Checks: the panel method matches the exact Joukowski airfoil to 0.1-0.2% in lift (Cp error 0.001); thin-airfoil theory for NACA 2404 to 0.02° in zero-lift angle; published XFOIL polars (NACA 0012, 2412, 4412) to 0.004 in Cl and 0.5% in Cd; NACA 2412 at Re 3×10⁶ lands near the classic NACA book values.",
+  "Simulations: 151 alpha sweeps (1,305 converged points) of 1,283 UIUC database shapes and blends, every tested airfoil and near-duplicate removed, Re log-uniform in 4×10⁴-6×10⁵. No noise injection: tunnel noise is not a public record here; the scatter is the solver's own.",
+  "Network: an MLP on polars. Inputs: thickness and camber at 24 stations (from an 18-parameter CST fit of the coordinates), log Re, and alpha. Outputs: Cl, ln Cd and Cm, each with a log-sigma, trained with β-NLL; 3 seeds, averaged (3 × 40,700 parameters). It never saw a wind-tunnel number.",
+  "Ratchet: 8 rungs on two frozen simulated sets and a 7-airfoil dev gate (4 families: Archer A18; Wortmann FX 63-137 and FX 74-CL5-140 MOD; Mueller M06-13-128, M6 65%, M6 85%; Trainer 60).",
+  "Twin test on dev located the physics gap: stall and laminar separation at low Re, where the solver stops answering.",
+  "Error bars widened once on dev (widen-only), then the exam ran once against NeuralFoil, the raw solver, thin-airfoil theory and the mean dev polar."
+ ],
+ "limits": [
+  "Low Reynolds numbers only (4×10⁴-6×10⁵), incompressible, clean airfoils: no trips, flaps or roughness.",
+  "Small simulated bank (151 sweeps): drag before stall is 19% off on average (|ln ratio| 0.18), against 13% for NeuralFoil, which was trained on millions of XFOIL runs.",
+  "The solver does not converge near stall for many airfoils, so the network learned stall from incomplete polars. Its stall angle is 1.3° early on average.",
+  "Shapes outside the UIUC database family (very thick, very cambered, blunt) are extrapolation. The lab lets you make such shapes; the bars widen, but not always enough.",
+  "Moment error bars were widened ×4.75 on dev and cover 83% on the exam: too wide.",
+  "Data quality: the UIUC tunnel data carry their own corrections and uncertainties; volume 1 has no valid moment data."
+ ],
+ "credits": [
+  "Wind-tunnel data: UIUC Low-Speed Airfoil Tests, Summary of Low-Speed Airfoil Data vols 1-5 (Selig, Guglielmo, Broeren, Giguère, Lyon, Ninham, Gopalarathnam, McGranahan, Williamson et al., 1995-2012), m-selig.ae.illinois.edu. The tabulated data are distributed under the GNU GPL v2; the measured polars embedded in this page are covered by it.",
+  "Airfoil shapes: UIUC Airfoil Coordinates Database (M. Selig and contributors). Solver: mfoil by K. J. Fidkowski (MIT licence), via the pymfoil PyPI package. Rival: NeuralFoil 0.3.3 by P. Sharpe (MIT licence), run from its published weights. Verification polars: XFOIL results published on airfoiltools.com.",
+  "AirfoilNet is part of ML Ratchet (github.com/dogum/ML-Ratchet): trained on physics, graded on reality. Built 22 November 2026."
+ ]
+}

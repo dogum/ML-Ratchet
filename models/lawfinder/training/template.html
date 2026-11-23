@@ -1,0 +1,485 @@
+<title>LawFinder</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=STIX+Two+Text:ital,wght@0,400;0,500;1,400&display=swap">
+<style>
+/* Layout: a lab notebook of laws. Graph-paper ground, one specimen (law) open at a time:
+   equation + controls on the left, the plot on the right; ladder, rival and exam underneath. */
+:root {
+  --paper: #f2f5f7; --sheet: #ffffff; --grid: #e3e9ee; --ink: #13202b; --ink2: #4a5966; --ink3: #7b8894;
+  --rule: #cfd8df; --chip: #e8eef2;
+  --water: #1d6fb8; --fire: #c8501a; --grid-c: #6a4bd0; --bldg: #1f8a5f; --road: #a4741a;
+  --good: #1f8a5f; --bad: #b8322a; --warn: #a4741a;
+  --sim: #8fa1b0; --accent: var(--water);
+  --f-eq: 'STIX Two Text', 'Cambria Math', 'Times New Roman', serif;
+  --f-head: 'IBM Plex Sans Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --f-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0e1419; --sheet: #151d24; --grid: #1a242c; --ink: #e4ebf0; --ink2: #a9b6c1; --ink3: #7d8b97;
+  --rule: #2a3742; --chip: #1e2a33;
+  --water: #5aa7ec; --fire: #f08048; --grid-c: #a08cf5; --bldg: #4cc08d; --road: #d9a443;
+  --good: #4cc08d; --bad: #f0736a; --warn: #d9a443; --sim: #5d6e7c; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #0e1419; --sheet: #151d24; --grid: #1a242c; --ink: #e4ebf0; --ink2: #a9b6c1; --ink3: #7d8b97;
+  --rule: #2a3742; --chip: #1e2a33;
+  --water: #5aa7ec; --fire: #f08048; --grid-c: #a08cf5; --bldg: #4cc08d; --road: #d9a443;
+  --good: #4cc08d; --bad: #f0736a; --warn: #d9a443; --sim: #5d6e7c; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--paper); color: var(--ink); font: 16px/1.55 var(--f-body);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--f-head); text-wrap: balance; margin: 0; letter-spacing: -0.01em }
+h2 { font-size: 1.7rem; font-weight: 600 }
+h3 { font-size: 1.15rem; font-weight: 600 }
+p { margin: 0; max-width: 68ch }
+.eyebrow { font: 500 0.75rem/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink3) }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums }
+a { color: var(--accent) }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+
+/* hero */
+.hero { padding-block: 2.6rem 1.6rem; display: grid; gap: 1.1rem }
+.hero h1 { font-size: clamp(2.6rem, 7vw, 4.4rem); font-weight: 700; line-height: 0.95 }
+.hero h1 span { font-family: var(--f-eq); font-style: italic; font-weight: 400; color: var(--ink3) }
+.thesis { font-size: 1.2rem; color: var(--ink2); max-width: 60ch }
+.specimens { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-top: 0.4rem }
+.spec { background: var(--sheet); border: 1px solid var(--rule); border-top: 3px solid var(--c); padding: 12px 14px 12px;
+  display: grid; gap: 6px; cursor: pointer; text-align: left; color: var(--ink); font: inherit; min-width: 0 }
+.spec:hover, .spec[aria-pressed="true"] { border-color: var(--c) }
+.spec .eq { font: 1.05rem/1.3 var(--f-eq); overflow-x: auto; white-space: nowrap; padding-bottom: 2px }
+.spec .q { font-size: 0.86rem; color: var(--ink2) }
+.pill { display: inline-block; white-space: normal; line-height: 1.25; font: 500 0.72rem/1 var(--f-mono); padding: 4px 7px; border-radius: 99px; background: var(--chip);
+  color: var(--ink2); letter-spacing: 0.02em }
+.pill.win { background: color-mix(in srgb, var(--good) 18%, transparent); color: var(--good) }
+.pill.loss { background: color-mix(in srgb, var(--bad) 16%, transparent); color: var(--bad) }
+.pill.tie, .pill.mixed { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn) }
+
+/* law panel */
+.panel { background: var(--sheet); border: 1px solid var(--rule); margin-block: 1rem 2.5rem; min-width: 0; overflow: hidden }
+.panel-head { padding: 18px 20px 6px; display: grid; gap: 6px; border-bottom: 1px solid var(--rule) }
+.bigeq { font-family: var(--f-eq); font-size: clamp(1.5rem, 3.6vw, 2.6rem); line-height: 1.25; padding: 14px 0 10px;
+  overflow-x: auto; color: var(--ink) }
+.bigeq math { font-family: var(--f-eq) }
+.reading { color: var(--ink2); font-size: 0.98rem }
+.cols { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 0 }
+@media (max-width: 860px) { .cols { grid-template-columns: minmax(0, 1fr) } }
+.ctrl { padding: 16px 20px; border-right: 1px solid var(--rule); display: grid; gap: 14px; align-content: start }
+@media (max-width: 860px) { .ctrl { border-right: 0; border-bottom: 1px solid var(--rule) } }
+.slider { display: grid; gap: 4px }
+.slider label { display: flex; justify-content: space-between; gap: 8px; font-size: 0.88rem }
+.slider label b { font-family: var(--f-eq); font-weight: 500; font-size: 1.05rem }
+.slider output { font: 0.85rem var(--f-mono); color: var(--ink2) }
+.slider .hint { font-size: 0.76rem; color: var(--ink3) }
+input[type=range] { width: 100%; accent-color: var(--accent) }
+select { font: inherit; padding: 4px 6px; background: var(--sheet); color: var(--ink); border: 1px solid var(--rule) }
+.readout { border: 1px solid var(--rule); padding: 10px 12px; display: grid; gap: 4px; background: var(--paper) }
+.readout .big { font: 500 1.5rem/1.1 var(--f-mono) }
+.readout .row { display: flex; justify-content: space-between; gap: 10px; font-size: 0.86rem; color: var(--ink2) }
+.plotbox { padding: 12px 14px 10px; display: grid; gap: 8px; min-width: 0 }
+.plotbar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 0.85rem; color: var(--ink2) }
+.plotbar label { display: inline-flex; gap: 5px; align-items: center; min-width: 0; max-width: 100%; flex-wrap: wrap }
+select { max-width: 100% }
+#xsel { max-width: min(100%, 320px) }
+canvas.plot { width: 100%; height: 420px; display: block; touch-action: none }
+@media (max-width: 560px) { canvas.plot { height: 320px } }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.8rem; color: var(--ink2) }
+.legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 5px }
+.legend i.dot { width: 8px; height: 8px; border: 0; border-radius: 50%; }
+.lower { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); border-top: 1px solid var(--rule) }
+@media (max-width: 960px) { .lower { grid-template-columns: minmax(0, 1fr) } }
+.lower > section { padding: 16px 20px; display: grid; gap: 10px; align-content: start; min-width: 0 }
+.lower > section + section { border-left: 1px solid var(--rule) }
+@media (max-width: 960px) { .lower > section + section { border-left: 0; border-top: 1px solid var(--rule) } }
+.ladder { display: grid; gap: 0; overflow-x: auto }
+.rung { display: grid; grid-template-columns: 34px minmax(0, 1fr) 64px 64px 72px; gap: 8px; align-items: center; padding: 7px 4px;
+  border-top: 1px solid var(--rule); cursor: pointer; font-size: 0.85rem; min-width: 520px; background: none; color: var(--ink);
+  border-left: 0; border-right: 0; border-bottom: 0; text-align: left; font-family: inherit }
+.rung:hover { background: var(--paper) }
+.rung[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 10%, transparent) }
+.rung.head { cursor: default; font: 500 0.7rem var(--f-mono); color: var(--ink3); text-transform: uppercase; letter-spacing: 0.05em; background: none }
+.rung .cx { font: 500 0.8rem var(--f-mono); color: var(--ink2); display: grid; gap: 2px }
+.rung .cx span { display: block; height: 3px; background: var(--accent); opacity: 0.6 }
+.rung .ex { font-family: var(--f-eq); font-size: 0.98rem; overflow-x: auto; white-space: nowrap }
+.rung .n { font-family: var(--f-mono); text-align: right; font-variant-numeric: tabular-nums }
+.rung.rel .ex { font-weight: 600 }
+.dec { font: 500 0.68rem var(--f-mono); text-transform: uppercase; letter-spacing: 0.04em }
+.dec.kept { color: var(--good) } .dec.rejected { color: var(--ink3) } .dec.released { color: var(--accent) }
+.why { font-size: 0.82rem; color: var(--ink2); min-height: 2.6em }
+.rival { display: grid; gap: 6px; border: 1px dashed var(--rule); padding: 10px 12px }
+.rival .eq { font: 1.2rem var(--f-eq); overflow-x: auto }
+table.exam { border-collapse: collapse; width: 100%; font-size: 0.84rem; min-width: 460px }
+table.exam th, table.exam td { padding: 6px 6px; border-top: 1px solid var(--rule); text-align: right; font-variant-numeric: tabular-nums }
+table.exam th:first-child, table.exam td:first-child { text-align: left }
+table.exam th { font: 500 0.7rem var(--f-mono); text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink3); border-top: 0 }
+table.exam tr.me td { font-weight: 600 }
+table.exam tr.me td:first-child { color: var(--accent) }
+.tscroll { overflow-x: auto }
+.note { font-size: 0.82rem; color: var(--ink3) }
+/* sections */
+.block { padding-block: 1.6rem; display: grid; gap: 1rem; border-top: 1px solid var(--rule) }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem 2rem }
+.two > div { display: grid; gap: 0.6rem; align-content: start; min-width: 0 }
+ol.steps { margin: 0; padding-left: 1.3rem; display: grid; gap: 0.45rem; max-width: 70ch }
+ul.plain { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.4rem; max-width: 72ch }
+pre { background: var(--sheet); border: 1px solid var(--rule); padding: 12px; overflow-x: auto; font: 0.82rem/1.5 var(--f-mono); margin: 0 }
+.score { overflow-x: auto }
+footer { padding-block: 1.5rem 3rem; color: var(--ink3); font-size: 0.82rem; border-top: 1px solid var(--rule) }
+@media (prefers-reduced-motion: no-preference) { .spec { transition: border-color .15s } }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">ML Ratchet · B batch · symbolic regression</div>
+  <h1>LawFinder <span>y = f(x)</span></h1>
+  <p class="thesis">What does each of the collection's simulators actually believe, in one line? LawFinder asks each
+    simulator thousands of questions, searches for the shortest equation that answers them, and then grades that
+    equation once on real data it never saw, beside the textbook law and the collection's network.</p>
+  <div class="specimens" id="specimens"></div>
+</header>
+
+<main id="lawpanel" class="panel" aria-live="polite"></main>
+
+<section class="block" id="score">
+  <div class="eyebrow">The exam, all laws</div>
+  <h2>Is each belief true in the real world?</h2>
+  <p>Each law was chosen on simulations and a small real dev set, then run once on the platform's real exam.
+    The verdict is a win only if the law beats every rival on the row's metric.</p>
+  <div class="score tscroll" id="scoretable"></div>
+</section>
+
+<section class="block">
+  <div class="eyebrow">How it was built</div>
+  <h2>The recipe, with equations instead of networks</h2>
+  <div class="two">
+    <div>
+      <ol class="steps">
+        <li><b>Real physics.</b> Each platform's shared simulator (WaterSim, FireSim, GridSim, BuildingSim, RoadSim), already checked against independent references, used unchanged.</li>
+        <li><b>Simulated banks.</b> Thousands of simulated basins, fire-days, grid trips, homes and car trips, built under each platform's split rules (free forcing windows, guarded landscapes, train-input years, the prior split, RoadData's train-noise routes).</li>
+        <li><b>Symbolic regression on simulations only.</b> An evolutionary search over expression trees (+ − × ÷ power, exp, log, sqrt), with every constant fitted by least squares. It keeps the best equation at every size: the Pareto front of complexity against error.</li>
+        <li><b>The ratchet.</b> The rungs are the front's equations from simplest to most complex, then each newer physics version. A rung is kept only if its R² on a frozen simulated set beats the incumbent by more than 0.01 and its error on the real dev set gets no more than 5 % worse. After a physics change every rung is re-scored and every decision re-taken.</li>
+        <li><b>Error bars.</b> The residual spread on the frozen set, widened once (never narrowed) to cover 68 % of the dev residuals.</li>
+        <li><b>The exam, once.</b> A separate script per platform, beside the textbook law with its constant fitted on the same dev set, the collection's network, and a dumb baseline.</li>
+      </ol>
+    </div>
+    <div>
+      <h3>Why not PySR?</h3>
+      <p>PySR needs Julia (about 1 GB with its packages) and a long compile on the two shared cores. gplearn has no constant fitting, so its laws come out with long chains of random constants. LawFinder uses a 300-line numpy/scipy engine in the PySR style: island populations, regularised evolution, Levenberg–Marquardt constants, and a hall of fame per complexity.</p>
+      <h3>What "complexity" means</h3>
+      <p>The number of nodes in the expression tree. <span class="mono">0.395^φ</span> has 3: a constant, a power and a variable.</p>
+      <h3>Seeds</h3>
+      <p>The water search was seeded with Fu's Budyko curve, so the search could pick the textbook form if it was the best. It did not.</p>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="limits">
+  <div class="eyebrow">Limits</div>
+  <h2>Where the laws fail</h2>
+  <ul class="plain" id="limitslist"></ul>
+</section>
+
+<section class="block">
+  <div class="eyebrow">Use the release</div>
+  <h2>lawfinder-v1.0</h2>
+  <div class="two">
+    <div><p>numpy only. The laws, their constants, error bars and textbook rivals live in one JSON file.</p>
+<pre>from lawfinder import LawFinder
+lf = LawFinder()
+law = lf['water']
+print(law.expr)
+mu, sigma = law.predict(phi=0.8, fs=0.1, sync=-0.2, S=0.14)
+lf['water'].textbook(phi=0.8)</pre></div>
+    <div><p><span class="mono">python demo.py</span> prints every law on a fixed random draw of real exam examples, beside the truth and the textbook rival, in about a second.</p>
+      <p class="note">Folder <span class="mono">models/lawfinder/</span>: model.yaml, ratchet.yaml, MODEL_CARD.md, lawfinder.py, lawfinder_laws.json, demo.py, examples/, training/.</p></div>
+  </div>
+</section>
+
+<footer class="wrap" id="credits"></footer>
+</div>
+
+<script>
+const DATA = /*DATA*/null;
+const COLORS = {water: '--water', fire: '--fire', grid_inertia: '--grid-c', grid_nadir: '--grid-c', bldg: '--bldg', road: '--road'};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt = (v, d = 3) => typeof v === 'string' ? v : (v == null || !isFinite(v)) ? '–' : Math.abs(v) < 1e-9 ? '0' : (Math.abs(v) >= 1000 ? v.toFixed(0) : Number(v.toPrecision(d)).toString());
+const LAWS = DATA.laws;
+let cur = null, state = {};
+
+function fn(js, vars) { try { return new Function(...vars, 'return ' + js + ';'); } catch (e) { return () => NaN; } }
+
+function specimens() {
+  const el = document.getElementById('specimens');
+  el.innerHTML = '';
+  LAWS.forEach(L => {
+    const b = document.createElement('button');
+    b.className = 'spec'; b.style.setProperty('--c', `var(${COLORS[L.id]})`);
+    b.setAttribute('aria-pressed', 'false'); b.dataset.id = L.id;
+    const v = L.verdict ? `<span class="pill ${L.verdict.cls}">${L.verdict.text}</span>` : '<span class="pill">exam pending</span>';
+    b.innerHTML = `<div class="eyebrow">${L.platform}</div><div class="eq"><math>${L.released.mathml_eq}</math></div><div class="q">${L.question}</div><div>${v}</div>`;
+    b.onclick = () => { show(L.id); document.getElementById('lawpanel').scrollIntoView({behavior: 'smooth', block: 'start'}); };
+    el.appendChild(b);
+  });
+}
+
+function sliderVal(v, t) { // t in [0,1] -> value
+  const [lo, hi] = v.range;
+  return v.log ? Math.exp(Math.log(lo) + t * (Math.log(hi) - Math.log(lo))) : lo + t * (hi - lo);
+}
+function sliderPos(v, x) {
+  const [lo, hi] = v.range;
+  return v.log ? (Math.log(x) - Math.log(lo)) / (Math.log(hi) - Math.log(lo)) : (x - lo) / (hi - lo);
+}
+
+function show(id) {
+  const L = LAWS.find(l => l.id === id); cur = L;
+  document.documentElement.style.setProperty('--accent', `var(${COLORS[L.id]})`);
+  document.querySelectorAll('.spec').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === id ? 'true' : 'false'));
+  const vars = L.vars.map(v => v.id);
+  state = {x: L.xdef, vals: {}, rung: L.released.id, near: true, showSim: true, showExam: true, showRival: true};
+  L.vars.forEach(v => state.vals[v.id] = v.choices ? v.choices[v.default_choice ?? 0].value : (v.median ?? (v.range[0] + v.range[1]) / 2));
+  L._f = {}; L.ladder.forEach(r => L._f[r.id] = fn(r.js, vars));
+  L._rival = L.textbook ? fn(L.textbook.js, vars.concat(['TB'])) : null;
+  if (L.ros_table && L.textbookArgs && !L.textbookArgs.ros) {
+    const T = L.ros_table;
+    L.textbookArgs.ros = (r0, w, m) => {
+      const g = T.groups.find(g => Math.abs(T.r0[g] - r0) < 1e-6) || 'TU';
+      const fi = (arr, v) => { const k = Math.max(0, Math.min(arr.length - 2, Math.floor((v - arr[0]) / (arr[1] - arr[0]))));
+        return [k, Math.max(0, Math.min(1, (v - arr[k]) / (arr[1] - arr[0])))]; };
+      const [i, a] = fi(T.W, w), [j, b] = fi(T.M, m), R = T.ros[g];
+      return (1 - a) * ((1 - b) * R[i][j] + b * R[i][j + 1]) + a * ((1 - b) * R[i + 1][j] + b * R[i + 1][j + 1]);
+    };
+  }
+  const ex = L.exam && L.exam.rows ? L.exam.rows : null;
+  const p = document.getElementById('lawpanel');
+  const tgt = L.target;
+  p.innerHTML = `
+  <div class="panel-head">
+    <div class="eyebrow">${L.platform} · ${L.title}</div>
+    <h2>${L.question}</h2>
+    <div class="bigeq" id="bigeq"><math display="block"><mi>${tgt.symbol_ml || tgt.symbol}</mi><mo>=</mo>${L.released.mathml}</math></div>
+    <p class="reading">${L.reading || ''}</p>
+  </div>
+  <div class="cols">
+    <div class="ctrl">
+      <div class="eyebrow">Inputs</div>
+      <div id="sliders" style="display:grid;gap:12px"></div>
+      <div class="readout" id="readout"></div>
+    </div>
+    <div class="plotbox">
+      <div class="plotbar">
+        <label>x-axis <select id="xsel">${L.vars.filter(v => !v.choices).map(v => `<option value="${v.id}" ${v.id === state.x ? 'selected' : ''}>${v.symbol}: ${v.label}</option>`).join('')}</select></label>
+        <label><input type="checkbox" id="cnear" checked> fade points far from the other sliders</label>
+        <label><input type="checkbox" id="csim" checked> simulated</label>
+        <label><input type="checkbox" id="cex" checked> real exam</label>
+        <label><input type="checkbox" id="criv" checked> textbook</label>
+      </div>
+      <canvas class="plot" id="plot" role="img" aria-label="Simulated cloud, real exam points and the law curve"></canvas>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--sim)"></i>${L.platform} simulations (frozen set, sample)</span>
+        <span><i class="dot" style="background:var(--accent)"></i>real exam ${L.exam_unit || ''}</span>
+        <span><i class="dot" style="background:transparent;border:2px solid var(--ink)"></i>real dev</span>
+        <span><i style="border-color:var(--accent)"></i>law (selected rung)</span>
+        <span><i style="border-color:var(--ink2);border-top-style:dashed"></i>textbook rival</span>
+      </div>
+    </div>
+  </div>
+  <div class="lower">
+    <section>
+      <div class="eyebrow">The law ladder · simplest to most complex · click a rung</div>
+      <div class="ladder" id="ladder"></div>
+      <div class="why" id="why"></div>
+      <p class="note">sim = R² on the frozen simulated set (${L.history[L.history.length - 1].frozen_set}); dev = ${L.dev_metric}; exam = ${L.exam_metric}, reported after the fact and never used to choose.</p>
+    </section>
+    <section>
+      <div class="eyebrow">The textbook rival</div>
+      <div class="rival">${L.textbook ? `<div class="eq"><math>${L.textbook.mathml}</math></div><p class="note">${L.textbook.note}</p>` : ''}</div>
+      <div class="eyebrow">Real exam ${ex ? `· ${L.exam_desc}` : '(pending)'}</div>
+      <div class="tscroll" id="examtable"></div>
+      <p class="note">${L.exam_note || ''}</p>
+    </section>
+  </div>`;
+  // sliders
+  const sl = document.getElementById('sliders');
+  L.vars.forEach(v => {
+    const d = document.createElement('div'); d.className = 'slider';
+    if (v.choices) {
+      d.innerHTML = `<label for="s_${v.id}"><span><b>${v.symbol}</b> ${v.label}</span></label>
+        <select id="s_${v.id}">${v.choices.map((c, i) => `<option value="${i}" ${i === (v.default_choice ?? 0) ? 'selected' : ''}>${c.name} (${fmt(c.value)} ${v.unit})</option>`).join('')}</select>`;
+      sl.appendChild(d);
+      d.querySelector('select').oninput = e => { state.vals[v.id] = v.choices[+e.target.value].value; draw(); };
+    } else {
+      d.innerHTML = `<label for="s_${v.id}"><span><b>${v.symbol}</b> ${v.label}</span><output id="o_${v.id}"></output></label>
+        <input type="range" id="s_${v.id}" min="0" max="1000" value="${Math.round(1000 * Math.min(1, Math.max(0, sliderPos(v, state.vals[v.id]))))}">
+        <div class="hint">${v.unit !== '-' ? v.unit + ' · ' : ''}dev median ${fmt(v.median)}</div>`;
+      sl.appendChild(d);
+      d.querySelector('input').oninput = e => { state.vals[v.id] = sliderVal(v, e.target.value / 1000); draw(); };
+    }
+  });
+  document.getElementById('xsel').oninput = e => { state.x = e.target.value; draw(); };
+  document.getElementById('cnear').oninput = e => { state.near = e.target.checked; draw(); };
+  document.getElementById('csim').oninput = e => { state.showSim = e.target.checked; draw(); };
+  document.getElementById('cex').oninput = e => { state.showExam = e.target.checked; draw(); };
+  document.getElementById('criv').oninput = e => { state.showRival = e.target.checked; draw(); };
+  // ladder
+  const ld = document.getElementById('ladder');
+  const maxc = Math.max(...L.ladder.map(r => r.complexity));
+  ld.innerHTML = `<div class="rung head"><span>size</span><span>equation</span><span class="n">sim R²</span><span class="n">dev</span><span class="n">exam</span></div>`;
+  L.ladder.forEach(r => {
+    const b = document.createElement('button');
+    b.className = 'rung' + (r.id === L.released.id ? ' rel' : ''); b.dataset.id = r.id;
+    const dec = r.id === L.released.id ? 'released' : r.decision;
+    const exv = r.exam ? r.exam[L.exam_key] : null;
+    b.innerHTML = `<span class="cx">${r.complexity}<span style="width:${100 * r.complexity / maxc}%"></span></span>
+      <span class="ex"><math>${r.mathml}</math> <span class="dec ${dec}">${dec}</span>${r.version !== L.ladder[0].version && r.id !== 'r0' ? ` <span class="pill">${r.version}</span>` : ''}</span>
+      <span class="n">${fmt(r.sim, 3)}</span><span class="n">${fmt(r.dev, 3)}</span><span class="n">${fmt(exv, 3)}</span>`;
+    b.onclick = () => { state.rung = r.id; ladderSel(); draw(); };
+    ld.appendChild(b);
+  });
+  ladderSel();
+  // exam table
+  if (ex) {
+    const cols = L.exam_cols;
+    let h = `<table class="exam"><thead><tr><th>method</th>${cols.map(c => `<th>${c[1]}</th>`).join('')}</tr></thead><tbody>`;
+    L.exam_order.forEach(k => { const r = ex[k]; if (!r) return;
+      h += `<tr class="${k === 'law' ? 'me' : ''}"><td>${r.name}</td>${cols.map(c => `<td>${fmt(r[c[0]], 3)}${c[2] || ''}</td>`).join('')}</tr>`; });
+    document.getElementById('examtable').innerHTML = h + '</tbody></table>';
+  }
+  draw();
+}
+
+function ladderSel() {
+  document.querySelectorAll('.rung[data-id]').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === state.rung ? 'true' : 'false'));
+  const r = cur.ladder.find(r => r.id === state.rung);
+  document.getElementById('why').innerHTML = `<b>${r.id}</b> (${r.version}, size ${r.complexity}): ${r.why}`;
+}
+
+function evalAt(f, x) {
+  const args = cur.vars.map(v => v.id === state.x ? x : state.vals[v.id]);
+  if (cur.textbookArgs && f === cur._rival) args.push(cur.textbookArgs);
+  try { return f(...args); } catch (e) { return NaN; }
+}
+
+function draw() {
+  const L = cur, cv = document.getElementById('plot');
+  if (!cv) return;
+  const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+  cv.width = W * dpr; cv.height = H * dpr;
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+  const xv = L.vars.find(v => v.id === state.x), xi = state.x;
+  const ink = css('--ink'), ink2 = css('--ink2'), ink3 = css('--ink3'), rule = css('--rule'), simc = css('--sim'), acc = css(COLORS[L.id]);
+  const pad = {l: 56, r: 14, t: 12, b: 42};
+  const [x0, x1] = xv.range;
+  const yr = L.yrange;
+  const X = x => xv.log ? pad.l + (Math.log(x) - Math.log(x0)) / (Math.log(x1) - Math.log(x0)) * (W - pad.l - pad.r)
+                        : pad.l + (x - x0) / (x1 - x0) * (W - pad.l - pad.r);
+  const Y = y => H - pad.b - (y - yr[0]) / (yr[1] - yr[0]) * (H - pad.t - pad.b);
+  // grid + ticks
+  g.strokeStyle = rule; g.fillStyle = ink3; g.lineWidth = 1; g.font = '11px "IBM Plex Mono", monospace';
+  const yt = ticks(yr[0], yr[1], 6);
+  g.textAlign = 'right'; g.textBaseline = 'middle';
+  yt.forEach(t => { g.beginPath(); g.moveTo(pad.l, Y(t)); g.lineTo(W - pad.r, Y(t)); g.stroke(); g.fillText(fmtTick(t), pad.l - 6, Y(t)); });
+  const xt = xv.log ? logTicks(x0, x1) : ticks(x0, x1, Math.max(3, Math.floor((W - 80) / 80)));
+  g.textAlign = 'center'; g.textBaseline = 'top';
+  xt.forEach(t => { g.beginPath(); g.moveTo(X(t), pad.t); g.lineTo(X(t), H - pad.b); g.stroke(); g.fillText(fmtTick(t), X(t), H - pad.b + 6); });
+  g.fillStyle = ink2; g.font = '12px "IBM Plex Sans", sans-serif';
+  g.fillText(`${xv.symbol} · ${xv.label}${xv.unit && xv.unit !== '-' ? ' (' + xv.unit + ')' : ''}`, pad.l + (W - pad.l - pad.r) / 2, H - 18);
+  g.save(); g.translate(14, pad.t + (H - pad.t - pad.b) / 2); g.rotate(-Math.PI / 2);
+  g.fillText(`${L.target.symbol}${L.target.unit ? ' (' + L.target.unit + ')' : ''}`, 0, 0); g.restore();
+  g.save(); g.beginPath(); g.rect(pad.l, pad.t, W - pad.l - pad.r, H - pad.t - pad.b); g.clip();
+  // nearness weights in the other inputs
+  const others = L.vars.filter(v => v.id !== xi);
+  const wgt = (P, i) => {
+    if (!state.near) return 1;
+    let d2 = 0;
+    others.forEach(v => { const a = P[v.id][i], b = state.vals[v.id];
+      const s = v.choices ? 1e-3 : (v.log ? Math.log(v.range[1] / v.range[0]) : (v.range[1] - v.range[0]));
+      const dd = v.choices ? (Math.abs(a - b) < 1e-6 ? 0 : 3) : (v.log ? Math.log(a / b) : (a - b)) / s;
+      d2 += v.choices ? dd : (dd / 0.12) ** 2; });
+    return Math.max(0.06, Math.exp(-d2 / 2));
+  };
+  const pts = (P, color, r, fill, maxA) => {
+    if (!P) return; const n = P.y.length;
+    for (let i = 0; i < n; i++) {
+      const x = P[xi][i], y = P.y[i]; if (x == null || y == null || x < x0 || x > x1) continue;
+      g.globalAlpha = maxA * wgt(P, i); g.beginPath(); g.arc(X(x), Y(y), r, 0, 6.283);
+      if (fill) { g.fillStyle = color; g.fill(); } else { g.strokeStyle = color; g.lineWidth = 1.6; g.stroke(); }
+    }
+    g.globalAlpha = 1;
+  };
+  if (state.showSim) pts(L.cloud, simc, 2.0, true, 0.55);
+  if (state.showExam) pts(L.exam_points, acc, 2.3, true, 0.7);
+  pts(L.dev, ink, 3.6, false, 1.0);
+  // curves
+  const curve = (f, color, lw, dash) => {
+    g.strokeStyle = color; g.lineWidth = lw; g.setLineDash(dash || []); g.beginPath(); let pen = false;
+    for (let k = 0; k <= 240; k++) {
+      const x = xv.log ? Math.exp(Math.log(x0) + k / 240 * (Math.log(x1) - Math.log(x0))) : x0 + k / 240 * (x1 - x0);
+      const y = evalAt(f, x);
+      if (!isFinite(y)) { pen = false; continue; }
+      pen ? g.lineTo(X(x), Y(y)) : g.moveTo(X(x), Y(y)); pen = true;
+    }
+    g.stroke(); g.setLineDash([]);
+  };
+  const sig = L.bars.sigma;
+  // error band of the released law
+  const fr = L._f[state.rung];
+  if (state.rung === L.released.id) {
+    g.fillStyle = acc; g.globalAlpha = 0.12; g.beginPath();
+    const xs = [...Array(121).keys()].map(k => xv.log ? Math.exp(Math.log(x0) + k / 120 * (Math.log(x1) - Math.log(x0))) : x0 + k / 120 * (x1 - x0));
+    let ok = true; xs.forEach((x, k) => { const y = evalAt(fr, x) + sig; if (!isFinite(y)) ok = false; k ? g.lineTo(X(x), Y(y)) : g.moveTo(X(x), Y(y)); });
+    xs.slice().reverse().forEach(x => g.lineTo(X(x), Y(evalAt(fr, x) - sig)));
+    if (ok) g.fill(); g.globalAlpha = 1;
+  }
+  if (state.showRival && L._rival) curve(L._rival, ink2, 2, [6, 5]);
+  curve(fr, acc, 3);
+  g.restore();
+  // readout
+  const at = state.vals[xi] ?? (xv.median);
+  const yl = evalAt(fr, at), yrv = L._rival ? evalAt(L._rival, at) : NaN;
+  const tf = L.target.fmt ? (v => L.target.fmt.replace('{}', fmt(v))) : (v => fmt(v));
+  const xslider = document.getElementById('o_' + xi);
+  L.vars.forEach(v => { const o = document.getElementById('o_' + v.id); if (o) o.textContent = fmt(state.vals[v.id]) + (v.unit && v.unit !== '-' ? ' ' + v.unit : ''); });
+  document.getElementById('readout').innerHTML = `
+    <div class="eyebrow">At the slider values</div>
+    <div class="big">${L.target.symbol} = ${fmt(yl)}${state.rung === L.released.id ? ` <span style="font-size:.9rem;color:var(--ink2)">± ${fmt(sig, 2)}</span>` : ''}</div>
+    ${L.decode ? `<div class="row"><span>${L.decode.label}</span><span class="mono">${L.decode.f ? fmt(new Function('y', 'return ' + L.decode.f)(yl)) : ''} ${L.decode.unit || ''}</span></div>` : ''}
+    <div class="row"><span>textbook rival</span><span class="mono">${fmt(yrv)}</span></div>
+    <div class="row"><span>rung</span><span class="mono">${state.rung}</span></div>`;
+  // mark the slider point
+  if (isFinite(yl) && at >= x0 && at <= x1) {
+    g.fillStyle = acc; g.strokeStyle = css('--sheet'); g.lineWidth = 2; g.beginPath(); g.arc(X(at), Y(yl), 6, 0, 6.283); g.fill(); g.stroke();
+  }
+}
+
+function ticks(a, b, n) {
+  const span = b - a, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n) || 10 * mag;
+  const out = []; for (let t = Math.ceil(a / step) * step; t <= b + 1e-9; t += step) out.push(+t.toFixed(10)); return out;
+}
+function logTicks(a, b) {
+  const out = []; for (let e = Math.floor(Math.log10(a)); e <= Math.ceil(Math.log10(b)); e++)
+    [1, 2, 5].forEach(m => { const t = m * Math.pow(10, e); if (t >= a && t <= b) out.push(t); }); return out;
+}
+function fmtTick(t) { return Math.abs(t) >= 1000 ? t.toFixed(0) : (+t.toPrecision(3)).toString(); }
+
+function scoreboard() {
+  let h = `<table class="exam" style="min-width:720px"><thead><tr><th>law</th><th>exam</th><th>metric</th><th>released law</th><th>simulator's law</th><th>textbook (dev-tuned)</th><th>network</th><th>dumb</th><th>verdict</th></tr></thead><tbody>`;
+  LAWS.forEach(L => { const s = L.score; if (!s) { h += `<tr><td>${L.title}</td><td colspan="8">exam pending</td></tr>`; return; }
+    h += `<tr><td style="color:var(${COLORS[L.id]})">${L.title}</td><td>${s.exam}</td><td>${s.metric}</td><td><b>${fmt(s.law)}</b></td><td>${fmt(s.sim_law)}</td><td>${fmt(s.textbook)}</td><td>${s.network == null ? '–' : fmt(s.network)}</td><td>${fmt(s.dumb)}</td><td><span class="pill ${L.verdict.cls}">${L.verdict.text}</span></td></tr>`; });
+  document.getElementById('scoretable').innerHTML = h + '</tbody></table>';
+  document.getElementById('limitslist').innerHTML = DATA.limits.map(l => `<li>${l}</li>`).join('');
+  document.getElementById('credits').innerHTML = DATA.credits;
+}
+
+specimens(); scoreboard();
+let start = (location.hash || '').slice(1); if (!LAWS.find(l => l.id === start)) start = LAWS[0].id;
+show(start);
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (LAWS.find(l => l.id === h)) show(h); });
+let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(draw, 120); });
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+new MutationObserver(draw).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+</script>

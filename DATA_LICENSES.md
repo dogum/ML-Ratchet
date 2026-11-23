@@ -28,6 +28,13 @@ instrument noise, the fetch scripts in `models/*/training/` download that noise 
 | StarQuake | [Gaia DR3](https://www.cosmos.esa.int/web/gaia/dr3) (ESA/Gaia/DPAC) | CC BY-SA 3.0 IGO | No |
 | WakeNet | [Kelmarsh Wind Farm Data](https://doi.org/10.5281/zenodo.16807551) (2025 version; concept DOI 10.5281/zenodo.5841834) — Charlie Plumley / Cubico Sustainable Investments | CC BY 4.0 | Four single-timestamp 6-turbine excerpts (`examples/`, instrument, `lab/`) |
 | WakeNet | [Penmanshiel Wind Farm Data](https://doi.org/10.5281/zenodo.16807304) (2025 version; concept DOI 10.5281/zenodo.5946808) — Charlie Plumley / Cubico Sustainable Investments | CC BY 4.0 | Two single-timestamp 14-turbine excerpts (`examples/`, instrument, `lab/`) |
+| QuakeNet v2 | [USGS ComCat](https://earthquake.usgs.gov/fdsnws/event/1/) (locations, origin times, moment tensors); [EarthScope / IRIS DMC](https://service.earthscope.org/) LH waveforms, networks IU (GSN, ASL/USGS, doi:10.7914/SN/IU) and II (IRIS/IDA, doi:10.7914/SN/II); Syngine ak135f_2s Green's functions (Krischer et al. 2017); ak135 travel times via ObsPy TauP | USGS: U.S. public domain; waveforms open, cite the networks; ObsPy LGPL (the table is computed from the published model) | Four exam quakes at 10 stations each (`examples/`), `tt_ak135.npz`, records embedded in `lab/`; details in `models/quakenet-v2/DATA_LICENSES.md` |
+| TsunamiNet | [NOAA NDBC historical DART](https://www.ndbc.noaa.gov/data/historical/dart/) water-column height and station metadata; [NCEI/WDS Global Historical Tsunami Database](https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/tsunamis/events); [USGS ComCat](https://earthquake.usgs.gov/fdsnws/event/1/) W-phase moment tensors and finite faults; [ETOPO 2022](https://www.ncei.noaa.gov/products/etopo-global-relief-model); NOAA NCTR SIFT unit sources | U.S. public domain | Four exam events' detided DART minutes (`examples/`), Green's functions computed on ETOPO 2022 (`gf_compact.npz`), the 28 exam events in `lab/` |
+| TsunamiNet | [GeoClaw](https://github.com/clawpack/geoclaw) dtopotools Okada | BSD-3-Clause | No (the Okada check only) |
+| LawFinder | The water, fire, grid, building and vehicle platforms' sources (sections below) | As listed there | Five real exam rows per law (`examples/`), exam rows in `lawfinder_laws.json` and `lab/` |
+| AirfoilNet | [UIUC Low-Speed Airfoil Tests](https://m-selig.ae.illinois.edu/uiuc_lsat.html), *Summary of Low-Speed Airfoil Data* vols 1-5 — Selig et al. (1995-2012) | GNU GPL v2 (stated in the volumes) | Four exam runs (`examples/`, with `examples/LICENSE-GPL-DATA.txt`) and the tested polars in `lab/` |
+| AirfoilNet | [UIUC Airfoil Coordinates Database](https://m-selig.ae.illinois.edu/ads/coord_database.html) | No explicit licence; cited | No (CST fits of its shapes in training only) |
+| AirfoilNet | [mfoil](https://pypi.org/project/pymfoil/) (K. J. Fidkowski) solver; [NeuralFoil](https://pypi.org/project/neuralfoil/) 0.3.3 (P. Sharpe) baseline | MIT | mfoil vendored in `training/mfoil.py` with its header; NeuralFoil weights not redistributed |
 
 
 ### The vehicle platform (`shared/vehicle`) and its models (EnergyNet, TripDetective, HybridPilot)
@@ -182,6 +189,9 @@ NASA SPDF OMNIWeb and its contributing instrument teams supply the hourly solar 
 - Some providers ask for a specific citation or acknowledgement sentence; copy it from their page.
 - Paderborn and CWRU publish terms on their own pages rather than a standard licence; read them before reusing the
   excerpts outside this project.
+- AirfoilNet's UIUC tunnel excerpts (`models/airfoilnet/examples/`, the polars in its `lab/index.html`) are GPL v2
+  data. Keep `examples/LICENSE-GPL-DATA.txt` next to them when you copy them; the MIT licence of the code does not
+  extend to them.
 - BDG2-derived files are CC BY-SA 4.0: anything you build from them and share must carry the same licence and the
   credit to Miller et al. (2020). The MIT licence of the code does not extend to them.
 - If you add a model, add its rows here, and only bundle data whose terms allow redistribution. Otherwise ship a

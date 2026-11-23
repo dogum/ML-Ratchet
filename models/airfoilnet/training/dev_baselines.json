@@ -1,0 +1,56 @@
+{
+ "NeuralFoil": {
+  "cl_pre": 0.13324060979926605,
+  "cl_post": 0.21857356044334025,
+  "clmax": 0.09202608759612249,
+  "a_stall": 2.747928571428571,
+  "lncd": 0.22672879535339216,
+  "cd_design": 0.2451424050479383,
+  "cm_pre": 0.024721340798507258,
+  "clmax_signed": 0.06986097873736682,
+  "a_stall_signed": -0.4751190476190476,
+  "lncd_signed": -0.03248660533951269,
+  "n_airfoils": 7,
+  "coverage": {
+   "cl": NaN,
+   "lncd": NaN,
+   "cm": NaN
+  }
+ },
+ "thin_airfoil": {
+  "cl_pre": 0.3152994859078172,
+  "cl_post": 1.15286247455843,
+  "clmax": 1.4658481956918643,
+  "a_stall": 8.205833333333334,
+  "lncd": NaN,
+  "cd_design": NaN,
+  "cm_pre": 0.05004920346419569,
+  "clmax_signed": 1.4658481956918643,
+  "a_stall_signed": 8.205833333333334,
+  "lncd_signed": NaN,
+  "n_airfoils": 7,
+  "coverage": {
+   "cl": NaN,
+   "lncd": NaN,
+   "cm": NaN
+  }
+ },
+ "mean_polar": {
+  "cl_pre": 0.28634644541838916,
+  "cl_post": 0.30927545683240504,
+  "clmax": 0.3297589187955154,
+  "a_stall": 7.501071428571429,
+  "lncd": 0.3776841776236299,
+  "cd_design": 0.436530459209864,
+  "cm_pre": 0.05216852532628093,
+  "clmax_signed": 0.059798122873639274,
+  "a_stall_signed": 7.501071428571429,
+  "lncd_signed": -0.10724432943672786,
+  "n_airfoils": 7,
+  "coverage": {
+   "cl": NaN,
+   "lncd": NaN,
+   "cm": NaN
+  }
+ }
+}

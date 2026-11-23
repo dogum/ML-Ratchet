@@ -1,0 +1,8 @@
+{
+ "inherited": "QuakeNet v1.2 Green's-function synthesis vs EarthScope Syngine full synthetics: correlation 0.9999 (quake/physics_check.json)",
+ "tt_table_vs_direct_ak135_taup": "max |difference| 0.078 s over 40 random (25-95 deg, 2-690 km) points (bilinear interpolation of the 0.25 deg x 27-depth table)",
+ "tt_ak135_vs_iasp91_taup": "P: mean +0.04 s, max |difference| 0.24 s over 40 random points (independent Earth model)",
+ "distance_vs_obspy_locations2degrees": "max |difference| 5.7e-14 deg over 200 random pairs",
+ "azimuth_spherical_vs_geodetic_gps2dist": "median |difference| 0.07 deg, max 4.5 deg over 200 random pairs (ellipticity; ignored)",
+ "date": "2026-11-22"
+}

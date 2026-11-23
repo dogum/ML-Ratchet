@@ -29,10 +29,11 @@ export const TRAITS: { id: string; label: string; g: Group }[] = [
   { id: 'ssm', label: 'State-space', g: 'sig' },
   { id: 'anchor', label: 'Physics anchor', g: 'phys' },
   { id: 'diffsim', label: 'Decides through physics', g: 'phys' },
+  { id: 'symbolic', label: 'Formulas', g: 'phys' },
 ];
 export const ABSENT: { id: string; label: string }[] = [
   { id: 'gbm', label: 'Trees' }, { id: 'attn', label: 'Attention' },
-  { id: 'gp', label: 'GPs' }, { id: 'symbolic', label: 'Formulas' }, { id: 'assim', label: 'Filters' },
+  { id: 'gp', label: 'GPs' }, { id: 'assim', label: 'Filters' },
 ];
 
 export interface ModelNote {
@@ -77,6 +78,10 @@ export const MODEL_NOTES: Record<string, ModelNote> = {
   firedetective: { t: ['cnn1d', 'ensemble'], params: 188694, paramsFrom: 'weight files: 3 members of 62,898', twin: 'Re-simulated dev fires grew on 91% of half-days against 50% for the real ones, with 3× the VIIRS pixels and rounder shapes (elongation 0.40 against 0.70). A wind-sensitive WAF raised sim-vs-real per-step growth ρ from 0.36 to 0.44.' },
   firepilot: { t: ['mlp'], params: 6338, paramsFrom: 'weight files', twin: 'From each dev fire’s first detection, the uncalibrated simulator over-predicted 72 h new area 3.9× (Dice 0.29); the stored replay calibration brought it to 1.5× (Dice 0.45). On the exam fires the free run matches observed growth at Dice 0.40, against 0.19 for persistence.' },
   wakenet: { t: ['gnn', 'anchor'], params: 245767, paramsFrom: 'model.yaml', twin: 'Rung 4 read flat-terrain v2 twins with 0.0% low-elevation bias and real Kelmarsh dev +2.3% high on KWF5–KWF6; adding 3-D hill speedup and separated meandering cut it to −0.5%. The same physics tuned on dev, with no network, then beat the network on real dev (9.31% against 9.48% waked MAE) and on 13 of 18 never-seen exam rows: the graph adds +0.011 in simulation and nothing on real turbines yet.' },
+  'quakenet-v2': { t: ['cnn1d', 'gnn', 'anchor'], params: 115e3, paramsFrom: 'model.yaml; the graph network only (each station is also read by QuakeNet v1.2, 1.44 M)', twin: 'All 40 dev quakes were re-simulated from their USGS moment tensors in real station noise. QuakeNet v1.2 read the real records 1.5° farther than their twins, with more back-azimuth scatter (8.6° against 5.5°), and put shallow quakes 2.4× too deep; real P picks were tighter (8.9 s against 11.8 s). Physics v2 and v3 put these into the simulated readings.' },
+  tsunaminet: { t: ['cnn1d', 'sets', 'flow', 'anchor'], params: 520e3, paramsFrom: 'model.yaml', twin: 'Five dev events re-simulated from USGS finite faults: real waves arrived 1.65% of the travel time later than simulated (IQR 1.1–1.8%) and were 1.60× larger (sd 0.17 dex). Physics p1 builds both in; the frozen-set score rose from 0.327 to 0.663.' },
+  lawfinder: { t: ['symbolic'], twin: 'Water: the released law reads WaterSim’s ungauged dev twins at MAE 0.091 and the real basins at 0.130; the ungauged twins are themselves 0.111 from reality, calibrated twins 0.059.' },
+  airfoilnet: { t: ['mlp', 'ensemble'], params: 122130, paramsFrom: 'model.yaml: 3 x 40,710', twin: 'Before any network, mfoil gave no answer at 40–45% of the measured dev angles (none at all for FX 63-137). At Re ≤ 10⁵ its polar stopped 4.2° before stall and 0.11 below Cl max, with drag 13% high (15% low above 10⁵). The drag trend became physics p1c, which the ratchet rejected.' },
 };
 
 export interface Family {
@@ -167,7 +172,7 @@ export const FAMILIES: Family[] = [
     unc: 'Output heads.',
     extrap: 'Carries over to graphs of new sizes if the local rule is right.',
     risk: 'Deep stacks blur node features together. The graph itself must be right.',
-    used: ['WakeNet (directed wake graph)'], refs: ['battaglia18', 'vandenende20', 'lam23'] },
+    used: ['WakeNet (directed wake graph)', 'QuakeNet v2 (stations as nodes, station pairs as edges)'], refs: ['battaglia18', 'vandenende20', 'lam23'] },
   { id: 'operator', name: 'Neural operators', g: 'struct', st: 'n', np: 2, web: 2, data: 1,
     one: 'Learns a map between functions, independent of grid resolution (FNO, DeepONet).',
     physics: 'A fast stand-in for a PDE solver: the forward direction, the mirror image of what this collection does.',
@@ -175,15 +180,15 @@ export const FAMILIES: Family[] = [
     unc: 'Ensembles or output heads.',
     extrap: 'Within the family of PDE solutions it was trained on.',
     risk: 'A surrogate inherits the simulator’s errors. Its best use here may be a faster simulator, and so a bigger bank.',
-    used: [], refs: ['li21', 'lu21'] },
-  { id: 'flow', name: 'Normalizing flows (posterior estimation)', g: 'dist', st: 'p', np: 2, web: 2, data: 1,
+    used: ['Tried, not kept: AirfoilNet rung r2, a DeepONet (frozen-set skill 0.727 against 0.765 for the MLP; dev error 1.21 against 1.03)'], refs: ['li21', 'lu21'] },
+  { id: 'flow', name: 'Normalizing flows (posterior estimation)', g: 'dist', st: 'y', np: 2, web: 2, data: 1,
     one: 'An invertible map from a simple distribution to the posterior, conditioned on an encoding of the input.',
     physics: 'The prior over physical parameters is the simulator’s own prior.',
     suits: 'Answers that are degenerate or have several modes.',
     unc: 'A full posterior.',
     extrap: 'Can be confidently wrong outside the prior; simulation-based calibration checks it.',
     risk: 'Needs a good encoder and calibration checks. Heavier than a Gaussian head.',
-    used: ['ChirpNet (8-layer RealNVP)'], refs: ['dinh17', 'papamakarios21', 'talts18', 'dax21'] },
+    used: ['ChirpNet (8-layer RealNVP)', 'TsunamiNet (8-layer RealNVP over the tsunami source)'], refs: ['dinh17', 'papamakarios21', 'talts18', 'dax21'] },
   { id: 'conformal', name: 'Conformal prediction', g: 'dist', st: 'n', np: 3, web: 3, data: 2,
     one: 'A wrapper that turns any model’s errors into intervals with guaranteed coverage, when calibration and test data are interchangeable.',
     physics: 'None; it sits on top of any learner.',
@@ -216,14 +221,14 @@ export const FAMILIES: Family[] = [
     extrap: 'Degrades to the classical estimate rather than to nonsense.',
     risk: 'If the classical estimate is poor, the correction is as large as the answer and buys nothing.',
     used: ['TransitNet', 'EnergyNet', 'DemandCast', 'PlantDetective', 'TripDetective', 'StarQuake', 'ChirpNet', 'SwellCast', 'BatteryPilot', 'HybridPilot'], refs: ['psichogios92'] },
-  { id: 'symbolic', name: 'Symbolic regression and sparse libraries', g: 'phys', st: 'n', np: 3, web: 3, data: 3,
+  { id: 'symbolic', name: 'Symbolic regression and sparse libraries', g: 'phys', st: 'y', np: 3, web: 3, data: 3,
     one: 'Short formulas, found by search over operators (PySR) or by a sparse fit over a library of terms (SINDy).',
     physics: 'The output is a law that can be read, checked and written into the simulator.',
     suits: 'A few inputs, the gap list, discrepancy terms, compact baselines.',
     unc: 'Bootstrap over the fit, or none.',
     extrap: 'Strong when the form is right; risky when the form is only close.',
     risk: 'The search is expensive and can find spurious forms. A formula still has to pass the frozen set and the dev gate.',
-    used: [], refs: ['brunton16', 'cranmer23', 'udrescu20'] },
+    used: ['LawFinder (one short law per shared simulator, own PySR-style search)'], refs: ['brunton16', 'cranmer23', 'udrescu20'] },
   { id: 'diffsim', name: 'Learning through the physics', g: 'phys', st: 'y', np: 3, web: 3, data: 2,
     one: 'Train for the outcome of the decision, with the physics executor inside the loss.',
     physics: 'The executor: battery limits, losses and wear; the powertrain model.',
@@ -256,7 +261,7 @@ export const COL_LABEL: Record<string, string> = { gbm: 'Trees', ssm: 'Sequence'
 export interface Cell { m: string; f: string; s: 1 | 2 | 3; inr?: boolean; why: string; gap: string; judge: string; change: string }
 export const CELLS: Cell[] = [
   // QuakeNet
-  { m: 'quakenet', f: 'gnn', s: 3, why: 'Multi-station reading is on QuakeNet’s own next list: it would turn a one-station locator into a real one. A graph with stations as nodes and their separations on the edges is the standard way to pool several records.', gap: 'Depth from one station: shallow quakes read too deep (median ratio 3.7).', judge: 'A new frozen set of simulated multi-station events; the dev gate on dev events recorded at several stations.', change: 'Graph network over the stations that recorded each event (nodes: per-station CNN embeddings; edges: inter-station distance and azimuth), reading Mw, location and depth jointly' },
+  { m: 'quakenet', f: 'gnn', s: 3, inr: true, why: 'Built as a separate model, QuakeNet v2 (22 Nov 2026), which reads each station with this network. Multi-station reading is on QuakeNet’s own next list: it would turn a one-station locator into a real one. A graph with stations as nodes and their separations on the edges is the standard way to pool several records.', gap: 'Depth from one station: shallow quakes read too deep (median ratio 3.7).', judge: 'A new frozen set of simulated multi-station events; the dev gate on dev events recorded at several stations.', change: 'Graph network over the stations that recorded each event (nodes: per-station CNN embeddings; edges: inter-station distance and azimuth), reading Mw, location and depth jointly' },
   { m: 'quakenet', f: 'ssm', s: 2, why: 'The twin test put the shallow-depth problem in the surface waves after S. Attention or a long-memory sequence model can link the P, S and surface-wave segments of the 41-minute record directly, as EQTransformer does for phase picking.', gap: 'Shallow quakes (≤ 70 km): 33 km median error against 21 km for always guessing 31 km.', judge: 'Same frozen set (val8) and dev gate; the shallow stratum reported on its own.', change: 'Attention layers over phase-aligned segments of the 41-minute record on top of the existing CNN stem' },
   { m: 'quakenet', f: 'flow', s: 2, why: 'Depth bars cover 51% of a nominal 68%. Depth can be ambiguous between a shallow and a deeper solution; a flow head can show two modes where one wide Gaussian hides them.', gap: 'Depth 68% bars cover 51% on the exam.', judge: 'Frozen-set skill plus coverage on simulations; dev gate unchanged.', change: 'Conditional normalizing-flow head on log depth and distance in place of the β-NLL Gaussian' },
   { m: 'quakenet', f: 'conformal', s: 2, why: 'A conformal widening per output, fitted on dev, would address the depth coverage directly. With 74 dev records the quantile is coarse, so strata need enough records each.', gap: 'Depth 68% bars cover 51%.', judge: 'Leave-one-event-out coverage on dev, as EnergyNet’s rung v2-r12 did.', change: 'Split-conformal widening per output on dev residuals (leave-one-event-out), replacing the single widen-only factor' },
@@ -387,7 +392,6 @@ export const LENSES: Lens[] = [
 /** Section 10: a first learner for each new-model idea in docs/backlog.yaml (keyed by its id). */
 export const BACKLOG_FIT: Record<string, { f: string[]; why: string }> = {
   dispatchnet: { f: ['gnn', 'diffsim'], why: 'The transmission network is a graph, and the task is a decision: train through the dispatch cost, grade on EIA-930 generation and prices.' },
-  tsunaminet: { f: ['operator', 'flow'], why: 'A neural operator can stand in for the shallow-water solver to grow the bank; a flow reads the Okada source with its uncertainty.' },
   gpsquake: { f: ['gp', 'symbolic'], why: 'A GNSS series is seasonal terms plus steps plus transients: a GP with periodic and step kernels, or a sparse library of those terms.' },
   roomsense: { f: ['cnn1d', 'anchor'], why: 'An impulse response is a 1-D signal; Sabine’s law is the classical estimate to correct.' },
   spinnet: { f: ['symbolic', 'gbm'], why: 'Drag and Magnus force give the flight equations; a handful of tracked numbers per pitch is a small table.' },
@@ -396,7 +400,6 @@ export const BACKLOG_FIT: Record<string, { f: string[]; why: string }> = {
   frbnet: { f: ['cnn2d', 'anchor'], why: 'A dynamic spectrum is a 2-D grid with a dispersion sweep; incoherent dedispersion gives the classical DM to correct.' },
   xrdnet: { f: ['cnn1d', 'sets'], why: 'A pattern is 1-D; the answer is a set of phases, so a set-valued output fits.' },
   jetnet: { f: ['sets', 'gnn'], why: 'A jet is a set of particles. Energy Flow Networks are deep sets for jets; graph networks over particles are the other standard.' },
-  'quakenet-multistation': { f: ['gnn', 'sets'], why: 'Stations are nodes and their separations are edges; the answer must not depend on how many stations recorded the quake or in which order.' },
   diffusionnet: { f: ['attn', 'ssm'], why: 'A trajectory is a sequence of steps whose correlations over many lags set the exponent; attention or a recurrent state reads long lags directly.' },
 };
 

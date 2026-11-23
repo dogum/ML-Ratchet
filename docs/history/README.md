@@ -12,6 +12,9 @@ repository: paths, page links and "status" refer to the cloud sessions where the
 | `repo-notes-2026-11-13.md` | The repository notes as updated 13 Nov 2026, after publication. |
 | `ideas-2026-11-14.md` | The idea pool updated 14 Nov 2026: the power-grid project done (GridSim and four models), next big-system candidates (BuildingSim, Watershed, WindFarm), grid lessons. |
 | `repo-notes-2026-11-14.md` | The repository notes as updated 14 Nov 2026: the grid project waiting to come in as a shared module next to RoadSim. |
+| `ideas-2026-11-22.md` | The idea pool updated 22 Nov 2026: the B batch done (QuakeNet v2, TsunamiNet, LawFinder, AirfoilNet), the wind-tunnel scope, the Rust/WebAssembly idea (spec: [../wasm-pilot.md](../wasm-pilot.md)), lessons to 22 Nov. |
+| `repo-notes-2026-11-22.md` | The repository notes as updated 22 Nov 2026: what was still to come into the repository, the B batch included. |
+| `quakenet-v2-status-2026-11-22.md`, `tsunaminet-status-2026-11-22.md`, `lawfinder-status-2026-11-22.md`, `airfoilnet-status-2026-11-22.md` | The B batch's four status notes as handed over with the release zips (22 Nov 2026). Each model's current record is its own folder. |
 
 ## Edits since
 
@@ -25,3 +28,6 @@ repository: paths, page links and "status" refer to the cloud sessions where the
 Each model's own build notes are in `models/<id>/NOTEBOOK.md`. The vehicle platform's status as of 13 Nov 2026 is
 [shared/vehicle/STATUS.md](../../shared/vehicle/STATUS.md); the grid platform's, as of 14 Nov 2026,
 [shared/grid/STATUS.md](../../shared/grid/STATUS.md).
+
+- **22 Nov 2026.** The B batch's notes added (`*-2026-11-22.md`) with the same neutral wording and page links replaced
+  by each model's `lab/` folder. The repo notes reuse the 14 Nov text below their header, which was otherwise unchanged.
