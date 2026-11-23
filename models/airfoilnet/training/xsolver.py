@@ -10,7 +10,7 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
-os.environ.setdefault('NUMBA_CACHE_DIR', os.path.join(HERE, '..', 'numba_cache'))
+from _paths import WORK as _WORK; os.environ.setdefault('NUMBA_CACHE_DIR', os.path.join(_WORK, 'numba_cache'))
 import mfoil_fast  # noqa: E402
 mf = mfoil_fast.mf
 warnings.filterwarnings('ignore')

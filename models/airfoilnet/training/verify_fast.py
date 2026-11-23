@@ -28,5 +28,5 @@ for naca, Re, alphas in [('2412', 1e6, [2, 5]), ('0012', 2e5, [0, 4]), ('4415', 
     res[f'NACA{naca}_Re{Re:.0e}'] = dict(orig=a.tolist(), fast=b.tolist(), max_abs_diff=float(np.max(np.abs(a - b))),
                                        max_abs_dU=dU, t_orig=round(ta, 2), t_fast=round(tb, 2))
     print(naca, Re, 'maxdiff', np.max(np.abs(a - b)), 'dU', dU, 't', round(ta, 1), round(tb, 1), flush=True)
-os.makedirs(os.path.join(HERE, '..', 'work'), exist_ok=True)
-json.dump(res, open(os.path.join(HERE, '..', 'work', 'verify_fast.json'), 'w'), indent=1)
+from _paths import WORK
+json.dump(res, open(os.path.join(WORK, 'verify_fast.json'), 'w'), indent=1)

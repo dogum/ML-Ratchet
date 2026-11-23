@@ -1,12 +1,12 @@
 """Data for the showpiece page: the released graph network (float32, base64), ak135 P table, land outlines, 24 exam
 events for the explorer (a fixed draw within depth strata from the 400-event subset: 12 shallow, 12 deep; seed 3), the
 exam tables, the ratchet ladder and the twin test. Also writes parity cases for the JS == Python check."""
-import sys, json, base64, numpy as np
+import os, sys, json, base64, numpy as np
 from _paths import H; sys.path.insert(0, H + 'src')
 import train2 as T2
 z = np.load(H + 'release/quakenet2_weights.npz'); meta = json.loads(str(z['meta']))
 W = {k: dict(b64=base64.b64encode(z[k].astype('<f4').tobytes()).decode(), s=list(z[k].shape)) for k in z.files if k != 'meta'}
-tt = np.load(H + 'data/tt_ak135.npz'); TT = dict(depths=tt['depths'].tolist(), P=np.round(tt['P'], 2).tolist())
+tt = np.load(H + 'data/tt_ak135.npz' if os.path.exists(H + 'data/tt_ak135.npz') else os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'tt_ak135.npz')); TT = dict(depths=tt['depths'].tolist(), P=np.round(tt['P'], 2).tolist())
 D = T2.load(H + 'data/exam_samples.npz'); rows = json.load(open(H + 'data/real_nodes.json')); SP = json.load(open(H + 'splits.json'))
 preds = json.load(open(H + 'data/exam_preds.json')); ER = json.load(open(H + 'exam_results.json'))
 by = {}

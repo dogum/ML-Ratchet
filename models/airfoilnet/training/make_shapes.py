@@ -12,9 +12,9 @@ import xsolver as xs  # noqa
 import shapes as sh  # noqa
 
 ROOT = os.path.join(HERE, '..')
-from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
+from _paths import WORK, SPLITS   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
 units = json.load(open(os.path.join(ROOT, 'data', 'units.json')))
-splits = json.load(open(os.path.join(ROOT, 'splits.json')))
+splits = json.load(open(SPLITS))
 
 # tested shapes
 tested = {}

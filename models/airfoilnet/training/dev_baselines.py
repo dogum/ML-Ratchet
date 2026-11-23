@@ -2,9 +2,9 @@
 import os, sys, json
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..'); sys.path.insert(0, HERE)
-from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
+from _paths import WORK, SPLITS   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
 import realeval as rev, baselines as bl
-units = json.load(open(os.path.join(ROOT, 'data', 'units.json'))); splits = json.load(open(os.path.join(ROOT, 'splits.json')))
+units = json.load(open(os.path.join(ROOT, 'data', 'units.json'))); splits = json.load(open(SPLITS))
 z = np.load(os.path.join(WORK, 'shapes.npz')); pmap = {k: p for k, p in zip(z['tested_keys'], z['tested_p'])}
 out = {}
 for name, f in (('NeuralFoil', bl.NeuralFoilMethod()), ('thin_airfoil', bl.thin_airfoil), ('mean_polar', bl.MeanPolar(units, splits['dev']))):

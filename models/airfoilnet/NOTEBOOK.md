@@ -115,3 +115,16 @@ The drag trend with Re was built into physics version p1c (see the ratchet). The
 - `training/_paths.py` now creates the work folder on import; a fresh rebuild failed at `make_shapes.py`'s first save.
 - `web_webdata.py` (and its `lab/src` copy) read `page_text.json` / `template.html`, but `training/` ships them as `web_page_text.json` / `web_template.html`; it now takes the `web_` name if present, else the plain one.
 - `make_release.py` read the page assets from `web/` (shipped as `training/web_*`) and copied into a `release/` it never created; both fixed.
+
+## 2026-11-22 — rebuild sweep: every training path checked
+
+Every path the training scripts read or write was listed and checked against a fresh work folder.
+- **Fixed:** the frozen split is read through `_paths.SPLITS` (the model folder's `splits.json` if `make_splits.py`
+  wrote one, else the shipped `training/splits.json`; 12 places); `verify_fast.py` writes to `WORK`; the numba cache
+  goes to `WORK/numba_cache` (it was created inside the model folder). Output folders were already created by the
+  scripts (`WORK`, `bank/`, `runs/<rung>/`, `release/`, `release/examples/`, `release/training/`).
+- **Inputs no shipped script fetches** (downloaded by hand in the build sandbox; a rebuild needs them placed first):
+  the UIUC Low-Speed Airfoil Tests volumes 1-5 in `data/raw/volume0N/` and the UIUC coordinate database in
+  `data/raw/coord_seligFmt/` (`uiuc_lsat.py`, `dataset.py`); the published XFOIL polars from airfoiltools.com in
+  `data/xfoil_published/xf-<airfoil>-il-<Re>.csv` (`verify_physics.py` only); NeuralFoil 0.3.3's `nn-*.npz` weights
+  from its wheel (`NEURALFOIL_WEIGHTS`). The training snapshots `snap_A/B.json` (above) are not reproducible.

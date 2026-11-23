@@ -14,7 +14,9 @@ SRC = os.path.dirname(os.path.abspath(__file__))
 MODEL = os.path.dirname(SRC)
 WORK = os.path.abspath(os.path.join(os.environ['ML_RATCHET_WORK'], 'airfoilnet')
                        if os.environ.get('ML_RATCHET_WORK') else os.path.join(MODEL, 'work'))
-os.makedirs(WORK, exist_ok=True)   # a fresh work folder (make_shapes.py is the first step that writes here)
+os.makedirs(WORK, exist_ok=True)
+# the frozen split: models/airfoilnet/splits.json if make_splits.py wrote one, else the shipped training/splits.json
+SPLITS = os.path.join(MODEL, 'splits.json') if os.path.exists(os.path.join(MODEL, 'splits.json')) else os.path.join(SRC, 'splits.json')   # a fresh work folder (make_shapes.py is the first step that writes here)
 
 
 def work(*parts, mkdir=False):

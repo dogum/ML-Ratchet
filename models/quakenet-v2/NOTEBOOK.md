@@ -96,3 +96,15 @@
   `quakenet2.tt`).
 - `training/export2.py` and `js_parity.py` now also look for `quakenet2.py` in the model folder (they searched only `WORK/src` and `WORK/release`).
 - `training/_paths.py` now creates the work subfolders the scripts write into (data, bank, ckpt, release, release/examples, web, tmp); `export2.py` failed on a fresh work folder.
+
+## 2026-11-22 — rebuild sweep: every training path checked
+
+- **Fixed:** `_paths.py` seeds a fresh work folder, once and never overwriting, with the frozen `splits.json`, the
+  planned station order (`data/station_order.json`; `fetch2.py` writes it only if missing, so a rebuild keeps the
+  frozen plan) and `physics_check.json` (no shipped script writes it); `build_page.py` reads `page.html` and `qnet2.js`
+  from `WORK/web/` if present, else from the shipped `web/`; `export_web.py` (both copies) falls back to the shipped
+  `tt_ak135.npz`. Output folders: created by `_paths.py` (above).
+- **Inputs no shipped script produces:** QuakeNet v1.2's work folder (`Q`: `stations.json`, noise windows `wf/`,
+  `catalog_1990_2011.csv`, `real_meta.json`, Green's functions), rebuilt by v1.2's own scripts; v1.2's `q7_zrt.pt`
+  (the owner's checkpoint zip, above); `web/land.json` for the page (Natural Earth 1:110m land outlines, prepared by hand).
+  The ratchet log `ratchet.json` and `exam_results.json` are written by a rebuild's own runs (the exam still runs once).

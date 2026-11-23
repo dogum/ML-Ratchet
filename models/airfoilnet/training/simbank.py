@@ -10,12 +10,12 @@ work/bank/<physics>_<set>_w<worker>.jsonl and finished task ids are skipped on r
 import os, sys, json, time
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
-os.environ.setdefault('NUMBA_CACHE_DIR', os.path.join(HERE, '..', 'numba_cache'))
+from _paths import WORK as _WORK; os.environ.setdefault('NUMBA_CACHE_DIR', os.path.join(_WORK, 'numba_cache'))
 import xsolver as xs  # noqa
 import shapes as sh  # noqa
 
 ROOT = os.path.join(HERE, '..')
-from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
+from _paths import WORK, SPLITS   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
 OUTD = os.path.join(WORK, 'bank'); os.makedirs(OUTD, exist_ok=True)
 RE_LO, RE_HI = 4e4, 6e5
 N_TRAIN_SYN = 600
@@ -59,7 +59,7 @@ def tasks(setname, physics):
                           up=list(a0 + np.arange(0, 21, 2.)), dn=list(a0 - np.arange(2, 9, 2.))))
     else:
         units = json.load(open(os.path.join(ROOT, 'data', 'units.json')))
-        splits = json.load(open(os.path.join(ROOT, 'splits.json')))
+        splits = json.load(open(SPLITS))
         keys = list(z['tested_keys']); tp = z['tested_p']
         want = splits['dev'] if setname == 'twin_dev' else splits['exam']
         for aid in want:

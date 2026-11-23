@@ -7,12 +7,12 @@ Fit r = a + b (log10 Re - 5) by least squares (dev only). p1c labels = p1 labels
 import os, sys, json
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
-from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
+from _paths import WORK, SPLITS   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
 sys.path.insert(0, HERE)
 import baselines as bl  # noqa
 
 units = json.load(open(os.path.join(ROOT, 'data', 'units.json')))
-splits = json.load(open(os.path.join(ROOT, 'splits.json')))
+splits = json.load(open(SPLITS))
 S = bl.load_sweeps('p1_twin_dev')
 X, R, A = [], [], []
 for aid in splits['dev']:

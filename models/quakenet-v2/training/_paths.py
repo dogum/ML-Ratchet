@@ -20,3 +20,11 @@ for p in (SRC, os.path.join(SRC, 'v12')):
     if p not in sys.path: sys.path.insert(0, p)
 for d in ('data', 'bank', 'ckpt', 'release', os.path.join('release', 'examples'), 'web', 'tmp'):   # what the scripts write into
     os.makedirs(os.path.join(H, d), exist_ok=True)
+# frozen records a fresh work folder needs, copied once from the release (never overwritten): the split, the planned
+# station order (fetch2.py writes it only if missing) and the physics checks (no shipped script writes them)
+import shutil
+for src, dst in ((os.path.join(MODEL, 'splits.json'), 'splits.json'),
+                 (os.path.join(SRC, 'results', 'station_order.json'), os.path.join('data', 'station_order.json')),
+                 (os.path.join(SRC, 'results', 'physics_check.json'), 'physics_check.json')):
+    if os.path.exists(src) and not os.path.exists(os.path.join(H, dst)):
+        shutil.copy2(src, os.path.join(H, dst))

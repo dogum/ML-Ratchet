@@ -6,7 +6,7 @@ import os, sys, json, glob, time
 import numpy as np
 import torch
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
-from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
+from _paths import WORK, SPLITS   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
 sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(ROOT, 'release')); sys.path.insert(2, os.path.abspath(ROOT))   # ROOT: airfoilnet.py in the repository layout
 import airfoilnet as an  # noqa
 import realeval as rev  # noqa
@@ -170,7 +170,7 @@ class Loaded(an.AirfoilNet):
 
 def dev_metrics(model, split='dev'):
     units = json.load(open(os.path.join(ROOT, 'data', 'units.json')))
-    splits = json.load(open(os.path.join(ROOT, 'splits.json')))
+    splits = json.load(open(SPLITS))
     z = np.load(os.path.join(WORK, 'shapes.npz'))
     pmap = {k: p for k, p in zip(z['tested_keys'], z['tested_p'])}
     def f(p, Re, al):

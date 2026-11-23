@@ -4,7 +4,7 @@ usage: python webdata.py <weights.npz> <out.html>
 import os, sys, json, base64, glob, re
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
-from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
+from _paths import WORK, SPLITS   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
 sys.path.insert(0, os.path.join(ROOT, 'src')); sys.path.insert(0, os.path.join(ROOT, 'release')); sys.path.insert(2, os.path.abspath(ROOT))   # ROOT: airfoilnet.py in the repository layout
 import airfoilnet as an  # noqa
 import baselines as bl  # noqa
@@ -14,7 +14,7 @@ import shapes as sh  # noqa
 
 W = sys.argv[1]; OUT = sys.argv[2]
 units = json.load(open(os.path.join(ROOT, 'data', 'units.json')))
-splits = json.load(open(os.path.join(ROOT, 'splits.json')))
+splits = json.load(open(SPLITS))
 z = np.load(os.path.join(WORK, 'shapes.npz'))
 pmap = {k: p for k, p in zip(z['tested_keys'], z['tested_p'])}
 fitrms = {k: r for k, r in zip(z['tested_keys'], z['tested_rms'])}

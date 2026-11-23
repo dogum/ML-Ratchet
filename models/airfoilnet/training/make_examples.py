@@ -5,8 +5,9 @@ Each example = as-tested coordinates + one measured lift run and the drag run at
 import os, json
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
+from _paths import SPLITS   # the frozen split (training/_paths.py)
 units = json.load(open(os.path.join(ROOT, 'data', 'units.json')))
-splits = json.load(open(os.path.join(ROOT, 'splits.json')))
+splits = json.load(open(SPLITS))
 OUT = os.path.join(ROOT, 'release', 'examples'); os.makedirs(OUT, exist_ok=True)
 rng = np.random.default_rng(4)
 for lab, lo, hi in (('lowRe', 0, 1.05e5), ('highRe', 1.05e5, 1e7)):

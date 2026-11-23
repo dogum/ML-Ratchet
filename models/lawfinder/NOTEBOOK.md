@@ -99,3 +99,11 @@ Asked for by the owner after the import ("Follow the existing pipelines exactly"
 - **What changed downstream.** The pooled VED headline now shows EnergyNet at 10.1 %; the page verdict reads "loses
   to EnergyNet" (was "loses to MOVES-like", 11.8 %). Every road verdict is still a loss. `exam_road_reported.json`,
   `lawfinder_laws.json`, the lab page, `model.yaml` (rows, limits, help_wanted, next) and `MODEL_CARD.md` updated.
+
+## 2026-11-22 — rebuild sweep: every training path checked
+
+No change needed: `_paths.py` creates `banks/`, `results/`, `logs/`, `web/`, `release/` and `tmp/` and seeds the shipped
+results and page inputs; the bank scripts and `build_release.py` create their own subfolders. Inputs from outside:
+each platform's data root (`$ML_RATCHET_WATER`, `_FIRE`, `_GRID`, `_BUILDING`, `_VEHICLE`) and the exam outputs of
+FlowCast, FireCast, GridPulse and EnergyNet in their work folders (`$ML_RATCHET_PEER_REPO`). Not reproducible from this
+folder: the other four laws' banks and exam point files (not shipped), which is why `add_road_release.py` exists.

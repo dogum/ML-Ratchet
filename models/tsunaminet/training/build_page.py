@@ -3,6 +3,8 @@ import os, json, base64, pickle, numpy as np
 from _paths import ROOT, BANK, DATA as DDIR
 import tsim
 W = os.path.join(ROOT, 'web')
+LAB = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'lab', 'src')   # page.html, tnet.js, app.js as shipped
+SRC = lambda n: os.path.join(W, n) if os.path.exists(os.path.join(W, n)) else os.path.join(LAB, n)
 b64 = lambda a: base64.b64encode(np.ascontiguousarray(a).tobytes()).decode()
 D = json.load(open(os.path.join(W, 'page_text.json')))      # text, tables (written by summarize.py)
 # hero
@@ -21,6 +23,6 @@ z = np.load(os.path.join(ROOT, 'release', 'tsunaminet_weights.npz'))
 meta = json.loads(str(z['meta'])); D['weights'] = dict(meta=meta, t={k: [list(z[k].shape), b64(z[k].astype(np.float32))] for k in z.files if k != 'meta'})
 D['delay_frac'] = meta['calibration'].get('delay_frac', 0.0)
 open(os.path.join(W, 'tsunaminet.html'), 'w').write(
-    open(os.path.join(W, 'page.html')).read().replace('/*TNETJS*/', open(os.path.join(W, 'tnet.js')).read())
-    .replace('/*DATA*/', json.dumps(D, separators=(',', ':'))).replace('/*APPJS*/', open(os.path.join(W, 'app.js')).read()))
+    open(SRC('page.html')).read().replace('/*TNETJS*/', open(SRC('tnet.js')).read())
+    .replace('/*DATA*/', json.dumps(D, separators=(',', ':'))).replace('/*APPJS*/', open(SRC('app.js')).read()))
 print('page MB', os.path.getsize(os.path.join(W, 'tsunaminet.html')) / 1e6)

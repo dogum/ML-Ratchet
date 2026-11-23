@@ -139,3 +139,17 @@ Rule: keep if the frozen-set score is more than 0.01 above the incumbent's **and
 - `training/export.py` and `export_gf.py` imported `tsunaminet` from `WORK/release/` only; they now also look in the model
   folder, where `tsunaminet.py` lives (22 Nov 2026).
 - `training/_paths.py` now also creates `WORK/release/`, where `export.py` and `export_gf.py` write (a fresh work folder failed there).
+
+## 2026-11-22 — rebuild sweep: every training path checked
+
+- **Fixed:** `_paths.py` creates every folder the scripts write into (`data/`, `data/checks/`, `work/`, `work/ckpt/`,
+  `logs/`, `exam/`, `release/`, `release/examples/`, `web/`); `build_page.py` reads `page.html`, `tnet.js` and `app.js`
+  from `WORK/web/` if present, else from the shipped `lab/src/`.
+- **Inputs no shipped script produces** (fetched or built by hand in the build sandbox; a rebuild needs them placed in
+  `WORK/data/` first): `sift/info_sz.dat` (NOAA SIFT unit-source table, sift.pmel.noaa.gov/ComMIT/compressed/;
+  `fetch_meta.py`, `okada.py`); `dart_hist_list.txt` (the file list of ndbc.noaa.gov/data/historical/dart/;
+  `fetch_dart.py`); `dart_sites.json` (DART sites with their deployment spans, built from the NDBC station metadata by a
+  step that is not in the release; `events_scan.py`, `realdata.py`, `simbank.py`, `build_page.py`);
+  `ngdc_all_events_2005_2026.json` (all NGDC tsunami events, used to keep noise windows 2 days from any event;
+  `noise_bank.py`); `nctr_check/ac001a_src.nc` (NOAA MOST deformation for the Okada check only). Everything else is
+  written by an earlier step in `training/README.md` or shipped (`training/logs/`, `gf_compact.npz`).
