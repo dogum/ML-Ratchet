@@ -257,17 +257,6 @@ ideas:
     exam: "Each model's own exam, scored once after a per-model hashed pre-registration; 95 % paired bootstrap over exam units"
     status: done
     note: "Run 18-19 Nov 2026 (docs/experiments/prior-wars.md). Given the dev labels, TabPFN beat the released model on 3 of 6 exams (RECS, BDG2, PlantDetective), tied on 2 (GridPulse, EnergyNet) and lost on 1 (BasinDetective). With 0 real labels, P was the best arm on 5 of 6. Labels needed to reach P: ~20-40, or 1,152 on EnergyNet. Simulated rows added to dev helped only BasinDetective. Next: TabPFN-2.5+ if its licence allows, GPU-sized contexts, and the 8 skipped tabular models."
-  - id: lawfinder-road
-    name: LawFinder, the RoadSim law
-    kind: method
-    domain: Method
-    question: "What one-line trip-energy law does RoadSim imply, and does it beat road-load energy on the real vehicle exam? The fifth LawFinder law, planned but not built (22 Nov 2026)."
-    physics: "RoadSim (shared/vehicle), unchanged; LawFinder's lawsearch and ratchet"
-    data: "The vehicle platform's frozen splits (VED trips, EPA test data); nothing new"
-    data_url: https://github.com/gsoh/VED
-    exam: "The law beside road-load energy, EnergyNet and a dumb baseline on the VED/EPA exam"
-    status: candidate
-    note: "LawFinder v1.0 (22 Nov 2026) built four platforms' laws and ran out of time before this one (models/lawfinder, help_wanted)."
   - id: river-twin
     name: River digital twin
     kind: method

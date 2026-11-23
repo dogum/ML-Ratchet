@@ -6,17 +6,18 @@ import lawratchet as lr
 import pretty
 
 ROOT = lr.ROOT
-LAWS = ['water', 'fire', 'grid_inertia', 'grid_nadir', 'bldg']
+LAWS = ['water', 'fire', 'grid_inertia', 'grid_nadir', 'bldg', 'road']
 QUESTION = {
     'water': 'What share of the rain and snow leaves a basin as river flow, over a decade?',
     'fire': 'How much new ground does a running wildfire burn in the next 24 hours?',
     'grid_inertia': 'How much spinning inertia does the GB grid have at a given demand?',
     'grid_nadir': 'How far does GB frequency fall after a power station trips?',
     'bldg': 'How much energy does a single-family home use per square metre in a year?',
+    'road': 'How much energy does a car use per kilometre on a given trip?',
 }
-PLATFORM = {'water': 'WaterSim', 'fire': 'FireSim', 'grid_inertia': 'GridSim', 'grid_nadir': 'GridSim', 'bldg': 'BuildingSim'}
-XLOG = {'fire': ['P', 'R0'], 'grid_nadir': [], 'bldg': []}
-XDEF = {'water': 'phi', 'fire': 'P', 'grid_inertia': 'D', 'grid_nadir': 'L', 'bldg': 'H'}
+PLATFORM = {'water': 'WaterSim', 'fire': 'FireSim', 'grid_inertia': 'GridSim', 'grid_nadir': 'GridSim', 'bldg': 'BuildingSim', 'road': 'RoadSim'}
+XLOG = {'fire': ['P', 'R0'], 'grid_nadir': [], 'bldg': [], 'road': []}
+XDEF = {'water': 'phi', 'fire': 'P', 'grid_inertia': 'D', 'grid_nadir': 'L', 'bldg': 'H', 'road': 'v'}
 
 
 def r(v, n=4):
@@ -30,7 +31,8 @@ def sample(df, n, seed=0):
 def law_block(name):
     L = importlib.import_module(f'law_{name}')
     R = json.load(open(f'{ROOT}/results/{name}_ratchet.json'))
-    exf = {'grid_inertia': 'exam_grid.json', 'grid_nadir': 'exam_grid.json'}.get(name, f'exam_{name}.json')
+    exf = {'grid_inertia': 'exam_grid.json', 'grid_nadir': 'exam_grid.json',
+           'road': 'exam_road_reported.json'}.get(name, f'exam_{name}.json')   # road: run 1 with its errata
     E = json.load(open(f'{ROOT}/results/{exf}')) if os.path.exists(f'{ROOT}/results/{exf}') else None
     if E is not None and name.startswith('grid_'):
         E = dict(E[name.split('_')[1]], k_demand_GVAs_per_GW=E['k_demand_GVAs_per_GW'], k_swing=E['k_swing'])

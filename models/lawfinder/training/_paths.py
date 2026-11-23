@@ -46,8 +46,12 @@ VEHICLE = _root('ML_RATCHET_VEHICLE', 'vehicle')
 
 
 def other_work(model_id):
+    """Another model's work folder: $ML_RATCHET_WORK/<id>, else <checkout>/models/<id>/work, where <checkout> is
+    $ML_RATCHET_PEER_REPO (a checkout whose work folders hold those models' outputs, e.g. when this one is a fresh
+    worktree) or this repository."""
     w = os.environ.get('ML_RATCHET_WORK')
-    return os.path.abspath(os.path.join(w, model_id) if w else os.path.join(REPO, 'models', model_id, 'work')).replace(os.sep, '/')
+    repo = os.environ.get('ML_RATCHET_PEER_REPO') or REPO
+    return os.path.abspath(os.path.join(w, model_id) if w else os.path.join(repo, 'models', model_id, 'work')).replace(os.sep, '/')
 
 
 for p in (os.path.join(SHARED, 'water'), os.path.join(SHARED, 'water', 'watersim'),
@@ -83,7 +87,7 @@ def _seed():
     res = os.path.join(SRC, 'results')
     for f in os.listdir(res) if os.path.isdir(res) else []:
         dst = os.path.join(WORK, 'results', f)
-        if not os.path.exists(dst):
+        if os.path.isfile(os.path.join(res, f)) and not os.path.exists(dst):
             shutil.copy2(os.path.join(res, f), dst)
     for f in ('readings.json', 'limits.json', 'next.json', 'fire_ros.json', 'credits.html', 'template.html'):
         src, dst = os.path.join(SRC, f), os.path.join(WORK, 'web', f)

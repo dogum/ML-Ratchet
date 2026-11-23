@@ -157,8 +157,8 @@ footer { padding-block: 1.5rem 3rem; color: var(--ink3); font-size: 0.82rem; bor
   <div class="two">
     <div>
       <ol class="steps">
-        <li><b>Real physics.</b> Each platform's shared simulator (WaterSim, FireSim, GridSim, BuildingSim), already checked against independent references, used unchanged.</li>
-        <li><b>Simulated banks.</b> Thousands of simulated basins, fire-days, grid trips and homes, built under each platform's split rules (free forcing windows, guarded landscapes, train-input years, the prior split).</li>
+        <li><b>Real physics.</b> Each platform's shared simulator (WaterSim, FireSim, GridSim, BuildingSim, RoadSim), already checked against independent references, used unchanged.</li>
+        <li><b>Simulated banks.</b> Thousands of simulated basins, fire-days, grid trips, homes and car trips, built under each platform's split rules (free forcing windows, guarded landscapes, train-input years, the prior split, RoadData's train-noise routes).</li>
         <li><b>Symbolic regression on simulations only.</b> An evolutionary search over expression trees (+ − × ÷ power, exp, log, sqrt), with every constant fitted by least squares. It keeps the best equation at every size: the Pareto front of complexity against error.</li>
         <li><b>The ratchet.</b> The rungs are the front's equations from simplest to most complex, then each newer physics version. A rung is kept only if its R² on a frozen simulated set beats the incumbent by more than 0.01 and its error on the real dev set gets no more than 5 % worse. After a physics change every rung is re-scored and every decision re-taken.</li>
         <li><b>Error bars.</b> The residual spread on the frozen set, widened once (never narrowed) to cover 68 % of the dev residuals.</li>

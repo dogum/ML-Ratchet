@@ -931,6 +931,337 @@
      "r2": -0.04426186299800805
     }
    }
+  },
+  "road": {
+   "title": "Trip energy per km",
+   "platform": "RoadSim",
+   "vars": [
+    "v",
+    "K",
+    "G",
+    "U",
+    "M",
+    "D",
+    "R",
+    "T",
+    "h",
+    "e"
+   ],
+   "var_info": {
+    "v": {
+     "label": "mean speed, stops included",
+     "symbol": "v\u0304",
+     "unit": "m/s",
+     "range": [
+      3,
+      30
+     ]
+    },
+    "K": {
+     "label": "positive kinetic energy per metre",
+     "symbol": "PKE",
+     "unit": "m/s\u00b2",
+     "range": [
+      0.05,
+      0.8
+     ]
+    },
+    "G": {
+     "label": "net grade",
+     "symbol": "g_net",
+     "unit": "%",
+     "range": [
+      -2,
+      2
+     ]
+    },
+    "U": {
+     "label": "absolute grade",
+     "symbol": "g_abs",
+     "unit": "%",
+     "range": [
+      0,
+      4
+     ]
+    },
+    "M": {
+     "label": "mass with driver",
+     "symbol": "m",
+     "unit": "t",
+     "range": [
+      1.1,
+      3.2
+     ]
+    },
+    "D": {
+     "label": "drag area",
+     "symbol": "CdA",
+     "unit": "m\u00b2",
+     "range": [
+      0.45,
+      1.4
+     ]
+    },
+    "R": {
+     "label": "rolling resistance",
+     "symbol": "Crr",
+     "unit": "\u00d710\u207b\u00b3",
+     "range": [
+      5,
+      13
+     ]
+    },
+    "T": {
+     "label": "ambient temperature",
+     "symbol": "T",
+     "unit": "\u00b0C",
+     "range": [
+      -15,
+      35
+     ]
+    },
+    "h": {
+     "label": "hybrid (1) or not (0)",
+     "symbol": "hyb",
+     "unit": "",
+     "range": [
+      0,
+      1
+     ]
+    },
+    "e": {
+     "label": "battery-electric (1) or not (0)",
+     "symbol": "EV",
+     "unit": "",
+     "range": [
+      0,
+      1
+     ]
+    }
+   },
+   "target": {
+    "name": "E",
+    "label": "energy per km (fuel at LHV or DC battery)",
+    "symbol": "E",
+    "unit": "MJ/km"
+   },
+   "rung": "p1-c23",
+   "expr": "(M * (sq(exp((((1.48 + v) ^ (-0.5951)) - e))) ^ (((K - ((-0.06983) * (G + R))) - h) + K)))",
+   "text": "M\u00b7exp((-2\u00b7e + 2/(v + 1.48)^0.5951)\u00b7(0.06983\u00b7G + 2\u00b7K + 0.06983\u00b7R - h))",
+   "tree": [
+    "*",
+    [
+     "x",
+     4
+    ],
+    [
+     "^",
+     [
+      "sq",
+      [
+       "exp",
+       [
+        "-",
+        [
+         "^",
+         [
+          "+",
+          [
+           "c",
+           0
+          ],
+          [
+           "x",
+           0
+          ]
+         ],
+         [
+          "c",
+          1
+         ]
+        ],
+        [
+         "x",
+         9
+        ]
+       ]
+      ]
+     ],
+     [
+      "+",
+      [
+       "-",
+       [
+        "-",
+        [
+         "x",
+         1
+        ],
+        [
+         "*",
+         [
+          "c",
+          2
+         ],
+         [
+          "+",
+          [
+           "x",
+           2
+          ],
+          [
+           "x",
+           6
+          ]
+         ]
+        ]
+       ],
+       [
+        "x",
+        8
+       ]
+      ],
+      [
+       "x",
+       1
+      ]
+     ]
+    ]
+   ],
+   "consts": [
+    1.4801449570265772,
+    -0.5950854918429108,
+    -0.06982843295542114
+   ],
+   "sigma": 0.7829597254334687,
+   "sigma_sim": 0.7829597254334687,
+   "widen_dev": 1.0,
+   "simulator_law": {
+    "rung": "p2-c10",
+    "text": "sqrt(K)\u00b7(M - h)/(e + 0.2383)",
+    "tree": [
+     "/",
+     [
+      "-",
+      [
+       "x",
+       4
+      ],
+      [
+       "x",
+       8
+      ]
+     ],
+     [
+      "/",
+      [
+       "-",
+       [
+        "x",
+        9
+       ],
+       [
+        "c",
+        0
+       ]
+      ],
+      [
+       "sqrt",
+       [
+        "x",
+        1
+       ]
+      ]
+     ]
+    ],
+    "consts": [
+     -0.23833224360030544
+    ]
+   },
+   "textbook": {
+    "form": "road_load",
+    "const": {
+     "ICE": 0.1854705796721329,
+     "HEV": 0.27996006101968285,
+     "EV": 1.1544428811661056
+    },
+    "label": "road-load energy / eta, eta per powertrain fitted on dev"
+   },
+   "exam": {
+    "law": {
+     "name": "LawFinder law (p1-c23)",
+     "n": 22877,
+     "mdape": 18.596165937255872,
+     "bias_median_pct": -15.931247935139236,
+     "mae": 0.6220810235545301,
+     "rho": 0.8870437988601446,
+     "r2": 0.49866627533899777,
+     "cov68": 0.7165275167198496
+    },
+    "sim_law": {
+     "name": "RoadSim's law (p2-c10)",
+     "n": 22877,
+     "mdape": 20.92598756158308,
+     "bias_median_pct": -16.706341360639854,
+     "mae": 0.6621083954461444,
+     "rho": 0.851743465117546,
+     "r2": 0.4532606509070507
+    },
+    "roadload_dev": {
+     "name": "Road-load energy / eta, eta per powertrain fitted on dev",
+     "n": 22877,
+     "mdape": 18.343464240979102,
+     "bias_median_pct": -9.84227399295624,
+     "mae": 0.6499824183741613,
+     "rho": 0.7739871246424339,
+     "r2": 0.38726255969334644
+    },
+    "roadload_sim": {
+     "name": "Road-load energy / eta, eta per powertrain fitted on RoadSim",
+     "n": 22877,
+     "mdape": 18.733495497628617,
+     "bias_median_pct": -10.961668298817106,
+     "mae": 0.6633503888840753,
+     "rho": 0.7692615668204853,
+     "r2": 0.36549186081965557
+    },
+    "b_label": {
+     "name": "Window label x distance (RoadData)",
+     "n": 22872,
+     "mdape": 14.138002800626792,
+     "bias_median_pct": 2.3402581346550044,
+     "mae": 0.49589214568514445,
+     "rho": 0.8559655244340023,
+     "r2": 0.6665494046529055
+    },
+    "b_vsp": {
+     "name": "MOVES-like VSP bins (RoadData)",
+     "n": 22877,
+     "mdape": 11.797369246186173,
+     "bias_median_pct": -1.7035331083008698,
+     "mae": 0.3895569387515722,
+     "rho": 0.9136286575122734,
+     "r2": 0.82145842761257
+    },
+    "b_class": {
+     "name": "Class median (RoadData)",
+     "n": 22877,
+     "mdape": 20.778834913586696,
+     "bias_median_pct": -13.018160549499047,
+     "mae": 0.7519064351240239,
+     "rho": 0.7081488675349845,
+     "r2": 0.20095301885391803
+    },
+    "dumb": {
+     "name": "Dev median per powertrain",
+     "n": 22877,
+     "mdape": 21.285317809983194,
+     "bias_median_pct": -10.660481456885273,
+     "mae": 0.7657445536641541,
+     "rho": 0.751657769674381,
+     "r2": 0.16334315746230155
+    }
+   }
   }
  }
 }

@@ -5,21 +5,21 @@
 
 *What readable law does each shared simulator imply, and does that law hold on the platform's real exam?*
 
-LawFinder runs symbolic regression on simulated banks from WaterSim, FireSim, GridSim and BuildingSim and returns short equations with error bars: the long-term runoff ratio of a basin, the next-day growth of a wildfire, GB system inertia, the GB frequency nadir after a trip, and the annual energy intensity of a single-family home. Each law is a rung on a ratchet of complexity levels and physics versions, chosen on a frozen simulated set and a small real dev set, then examined once on the platform's real exam beside the textbook law (its constant fitted on the same dev set), the collection's network and a dumb baseline.
+LawFinder runs symbolic regression on simulated banks from WaterSim, FireSim, GridSim, BuildingSim and RoadSim and returns short equations with error bars: the long-term runoff ratio of a basin, the next-day growth of a wildfire, GB system inertia, the GB frequency nadir after a trip, the annual energy intensity of a single-family home, and a car's energy per km on a trip. Each law is a rung on a ratchet of complexity levels and physics versions, chosen on a frozen simulated set and a small real dev set, then examined once on the platform's real exam beside the textbook law (its constant fitted on the same dev set), the collection's network and a dumb baseline.
 
 [Interactive lab](https://dogum.github.io/ML-Ratchet/models/lawfinder/lab/) · [Project page](https://dogum.github.io/ML-Ratchet/models/lawfinder/) · [Model card](MODEL_CARD.md) · [Lab notebook](NOTEBOOK.md) · [The method](https://github.com/dogum/ML-Ratchet/blob/main/docs/method.md)
 
 | | |
 |---|---|
-| **Reads** | Per law: water - aridity PET/P, snow fraction, P-PET seasonal synchrony, soil storage index; fire - perimeter (km), daily 10 m wind (m/s), 100-h dead fuel moisture (%), fuel group; grid inertia - demand (GW), inverter-based share; grid nadir - MW lost, inertia (GVA s), demand; homes - HDD and CDD (base 18 C), floor area, year built. |
-| **Returns** | Long-term runoff ratio: runoff ratio Q/P with a 68 % bar (frozen-set residual sd, dev-widened)<br>Daily fire growth: log10(new area km² + 1 cell) with a 68 % bar (frozen-set residual sd, dev-widened)<br>GB system inertia: system inertia E with a 68 % bar (frozen-set residual sd, dev-widened)<br>GB frequency nadir: frequency drop to the nadir f0 - f_min with a 68 % bar (frozen-set residual sd, dev-widened)<br>Home energy signature: site energy per floor area with a 68 % bar (frozen-set residual sd, dev-widened) |
-| **Learned from** | No new physics: the collection's shared simulators are used unchanged (WaterSim v1, FireSim v1, GridSim 1.1 via GridPulse's GB state sampler, BuildingSim 1.0/1.4). Each law is a statement about what one simulator implies. |
-| **Noise** | Platform noise models as shipped: WaterSim forcing error on the inputs the law sees; FireSim runs on real HRRR; GridSim events measured as 1 s means; BuildingSim weather shifts. No real labels in training. |
+| **Reads** | Per law: water - aridity PET/P, snow fraction, P-PET seasonal synchrony, soil storage index; fire - perimeter (km), daily 10 m wind (m/s), 100-h dead fuel moisture (%), fuel group; grid inertia - demand (GW), inverter-based share; grid nadir - MW lost, inertia (GVA s), demand; homes - HDD and CDD (base 18 C), floor area, year built; road - mean speed, positive kinetic energy per metre, net and absolute grade, mass, CdA, Crr, ambient temperature, hybrid and electric flags. |
+| **Returns** | Long-term runoff ratio: runoff ratio Q/P with a 68 % bar (frozen-set residual sd, dev-widened)<br>Daily fire growth: log10(new area km² + 1 cell) with a 68 % bar (frozen-set residual sd, dev-widened)<br>GB system inertia: system inertia E with a 68 % bar (frozen-set residual sd, dev-widened)<br>GB frequency nadir: frequency drop to the nadir f0 - f_min with a 68 % bar (frozen-set residual sd, dev-widened)<br>Home energy signature: site energy per floor area with a 68 % bar (frozen-set residual sd, dev-widened)<br>Trip energy per km: energy per km, fuel at LHV or DC battery (MJ/km), with a 68 % bar (frozen-set residual sd, dev-widened) |
+| **Learned from** | No new physics: the collection's shared simulators are used unchanged (WaterSim v1, FireSim v1, GridSim 1.1 via GridPulse's GB state sampler, BuildingSim 1.0/1.4, RoadSim physics v1/v2). Each law is a statement about what one simulator implies. |
+| **Noise** | Platform noise models as shipped: WaterSim forcing error on the inputs the law sees; FireSim runs on real HRRR; GridSim events measured as 1 s means; BuildingSim weather shifts; RoadSim drives the true weather (ambient + N(0, 1.5) C, wind x U(0.4, 0.9)) while the law reads the observed one. No real labels in training. |
 | **Network** | No network: symbolic regression (lawsearch, numpy/scipy; PySR-style regularised evolution with Levenberg-Marquardt constants and a hall of fame per complexity). Operators + - * / ^ exp log sqrt inv sq; complexity = node count, up to 25. |
 | **Physics also enters** | inputs: Every law input is a physical quantity (aridity, perimeter, inertia, degree days) |
 | **Real data's jobs** | backdrop, calibration, gate, error bars, exam (never training labels) |
-| **Dev set** | Each platform's frozen dev split, copied in splits.json: 52 CAMELS basins; 40 fires (791 fire-days); 4 GB events of 2019; RECS dev single-family homes |
-| **Exam** | Each platform's exam split: 619 CAMELS basins (WY1990-99); FireData exam fire-days 2012-2024; 410 GB events (inertia) and the loss-labelled ones (nadir), 2018-2025; RECS exam single-family homes |
+| **Dev set** | Each platform's frozen dev split, copied in splits.json: 52 CAMELS basins; 40 fires (791 fire-days); 4 GB events of 2019; RECS dev single-family homes; 14 VED dev cars (1,143 trips) and 1,178 EPA dev tests (seeded draw) |
+| **Exam** | Each platform's exam split: 619 CAMELS basins (WY1990-99); FireData exam fire-days 2012-2024; 410 GB events (inertia) and the loss-labelled ones (nadir), 2018-2025; RECS exam single-family homes; 22,877 VED exam trips and 52,522 EPA exam tests (EnergyNet's exam sets) |
 
 ## Run it
 
@@ -49,8 +49,14 @@ Each law run once on its platform's real exam by a separate script, beside the t
 | GB system inertia: MdAPE of inertia (410 real exam units)<br><sub>Released law i1-c7: E = D·(6.603 - 5.617·s). GridSim's own law (i1-c7): D·(6.603 - 5.617·s).</sub> | **33%** | GridSim's law (i1-c7) (classical): 33%<br>7.00 s x demand (dev fit) (classical): 15.1%<br>GridPulse v1.0 (network: 60 s trace + demand) (published): 16.4%<br>Dev median inertia (dumb baseline): 24% | ❌ loses |
 | GB frequency nadir: MAE of the nadir depth (148 real exam units)<br><sub>Released law g1-c12: Δf = (ΔP + 2)^2/(52940·E - 3.541e+6)^0.2084. GridSim's own law (g2-c3): 0.4334·ΔP.</sub> | **0.06 Hz** | GridSim's law (g2-c3) (classical): 0.106 Hz<br>Swing equation + ramp response, k L^2/E (k = 108, dev) (classical): 0.173 Hz<br>GridPulse v1.0 nadir forecast after 5 s of trace (context: reads the trace) (published): 0.0799 Hz<br>Dev median drop (dumb baseline): 0.129 Hz | ✅ wins |
 | Home energy signature: MdAPE of annual site energy per m2 (6019 real exam units)<br><sub>Released law b2-c13: EUI = -H·Y + 2022·H + 186.5/1.926^A. BuildingSim's own law (b2-c9): 2021·H - Y·(H - 0.03403).</sub> | **39.3%** | BuildingSim's law (b2-c9) (classical): 39.7%<br>Degree-day signature 85 + 22.9 HDD + 17.4 CDD (dev) (classical): 35.6%<br>Degree-day signature 23 + 61.2 HDD + 15.6 CDD (BuildingSim) (classical): 45.1%<br>BuildingData-style: log energy ~ log area + HDD + CDD (dev) (classical): 26.6%<br>Dev median EUI (dumb baseline): 33.4% | ❌ loses |
+| Trip energy per km: MdAPE, petrol cars, VED trips (14,469 real exam units)<br><sub>Bias -18.9 %, coverage of the 68 % bar 62 %. EnergyNet: its published value on the same trips (exam run 1 mis-scaled its VED rows; training/exam_road_errata.py).</sub> | **19.3%** | RoadSim's law (p2-c10) (classical): 14%<br>Road-load / eta, eta per powertrain fitted on dev (classical): 20%<br>Road-load / eta, eta per powertrain fitted on RoadSim (classical): 20.6%<br>EnergyNet v2.1 (network) (published): 8.6%<br>Window label x distance (RoadData) (classical): 13%<br>MOVES-like VSP bins (RoadData) (classical): 10.3%<br>Class median (RoadData) (dumb baseline): 22.8%<br>Dev median per powertrain (dumb baseline): 22.4% | ❌ loses |
+| Trip energy per km: MdAPE, hybrids, VED trips (8,241 real exam units)<br><sub>Bias -7.1 %, coverage of the 68 % bar 89 %. EnergyNet: its published value on the same trips (exam run 1 mis-scaled its VED rows; training/exam_road_errata.py).</sub> | **16.8%** | RoadSim's law (p2-c10) (classical): 40.4%<br>Road-load / eta, eta per powertrain fitted on dev (classical): 15.7%<br>Road-load / eta, eta per powertrain fitted on RoadSim (classical): 15.7%<br>EnergyNet v2.1 (network) (published): 13.4%<br>Window label x distance (RoadData) (classical): 16.2%<br>MOVES-like VSP bins (RoadData) (classical): 15.3%<br>Class median (RoadData) (dumb baseline): 17.2%<br>Dev median per powertrain (dumb baseline): 19% | ❌ loses |
+| Trip energy per km: MdAPE, electric (2 Nissan Leafs), VED trips (167 real exam units)<br><sub>Bias -42.2 %, coverage of the 68 % bar 94 %. EnergyNet: its published value on the same trips (exam run 1 mis-scaled its VED rows; training/exam_road_errata.py).</sub> | **43.3%** | RoadSim's law (p2-c10) (classical): 21.9%<br>Road-load / eta, eta per powertrain fitted on dev (classical): 21.7%<br>Road-load / eta, eta per powertrain fitted on RoadSim (classical): 17.3%<br>EnergyNet v2.1 (network) (published): 23.2%<br>Window label x distance (RoadData) (classical): 21.5%<br>MOVES-like VSP bins (RoadData) (classical): 19%<br>Class median (RoadData) (dumb baseline): 27.1%<br>Dev median per powertrain (dumb baseline): 28% | ❌ loses |
+| Trip energy per km: MdAPE, petrol cars, EPA tests (46,876 real exam units)<br><sub>Bias +10.6 %, coverage of the 68 % bar 81 %.</sub> | **17.3%** | RoadSim's law (p2-c10) (classical): 14.5%<br>Road-load / eta, eta per powertrain fitted on dev (classical): 25%<br>Road-load / eta, eta per powertrain fitted on RoadSim (classical): 24.3%<br>EnergyNet v2.1 (network) (published): 7.49%<br>Dev median per powertrain (dumb baseline): 25.3% | ❌ loses |
+| Trip energy per km: MdAPE, hybrids, EPA tests (4,154 real exam units)<br><sub>Bias +5.8 %, coverage of the 68 % bar 98 %.</sub> | **13.1%** | RoadSim's law (p2-c10) (classical): 22.3%<br>Road-load / eta, eta per powertrain fitted on dev (classical): 19.6%<br>Road-load / eta, eta per powertrain fitted on RoadSim (classical): 19.4%<br>EnergyNet v2.1 (network) (published): 7.82%<br>Dev median per powertrain (dumb baseline): 21.9% | ❌ loses |
+| Trip energy per km: MdAPE, battery-electric, EPA tests (1,492 real exam units)<br><sub>Bias +42.2 %, coverage of the 68 % bar 100 %.</sub> | **43.1%** | RoadSim's law (p2-c10) (classical): 26.8%<br>Road-load / eta, eta per powertrain fitted on dev (classical): 11.9%<br>Road-load / eta, eta per powertrain fitted on RoadSim (classical): 12.9%<br>EnergyNet v2.1 (network) (published): 6.27%<br>Dev median per powertrain (dumb baseline): 15.8% | ❌ loses |
 
-Coverage of the 68% error bars on the exam: Long-term runoff ratio **82.9%**, Daily fire growth **69.1%**, GB system inertia **91.2%**, GB frequency nadir **100%**, Home energy signature **69.3%**.
+Coverage of the 68% error bars on the exam: Long-term runoff ratio **82.9%**, Daily fire growth **69.1%**, GB system inertia **91.2%**, GB frequency nadir **100%**, Home energy signature **69.3%**, Trip energy per km (VED trips) **71.7%**, Trip energy per km (EPA tests) **82.6%**.
 
 ## Limits
 
@@ -59,7 +65,8 @@ Coverage of the 68% error bars on the exam: Long-term runoff ratio **82.9%**, Da
 - <b>Grid inertia:</b> GridSim's raw GB fleets commit about 4.5 s of inertia per MW of demand where NESO's outturn shows about 7, so the law is 33 % low (MdAPE) and loses to 7 s × demand (15.1 %) and to the dev median (24 %). Its ranking is the best of all rows (ρ 0.975).
 - <b>Grid nadir:</b> the loss labels are noisy (REMIT/FUELINST matches); 148 events. The dev gate had only 4 events, one of them (9 Aug 2019) a cascade. The 68 % bar (±0.31 Hz) is far too wide: it covers 100 % of exam events.
 - <b>Homes:</b> the law loses to the dumb dev median (MdAPE 39.3 % vs 33.4 %) and to a log-linear fit on dev (26.6 %). BuildingSim's homes are about 1.4 times too energy-intensive at physics 1.0; 1.4 fixes the median but not the spread. RECS energy is EIA's billing-based estimate, and home-to-home variation (occupants, setpoints) is not in the inputs.
-- <b>Method:</b> one search per physics version, time-boxed at 4-7 minutes on a shared core; another seed can give a different front. Dev sets are small (4 grid events, 40 fires, 52 basins), so the gate is coarse. The road law (RoadSim trip energy) was not built in this batch.
+- <b>Road:</b> the law loses to EnergyNet everywhere and, on real VED trips, to RoadData's MOVES-like and window-label baselines (18.6 % against 11.8 % and 14.1 %). It beats road-load on EPA petrol and hybrid tests (17.3 % and 13.1 % against 25.0 % and 19.6 %) and loses to it on electric cars: it reads the 2 VED Leafs 42 % low and EPA BEVs 42 % high, one exponent for every electric car. RoadSim's own shorter law (p2-c10) beats the released one on VED petrol (14.0 %) and on EPA (15.1 %); the dev gate (14 dev cars, 1,178 EPA dev tests) picked the longer law. Real CdA and Crr are class defaults on VED (EPA: from the road-load coefficients); VED fuel is MAF-estimated for most cars. Exam run 1 mis-scaled EnergyNet's VED rows (units); its published values on the same trips are shown instead.
+- <b>Method:</b> one search per physics version, time-boxed at 4-7 minutes on a shared core; another seed can give a different front. Dev sets are small (4 grid events, 40 fires, 52 basins), so the gate is coarse. The road law (RoadSim trip energy) was added on 22 Nov 2026, after the other four.
 
 ## The ratchet
 
@@ -231,11 +238,61 @@ Coverage of the 68% error bars on the exam: Long-term runoff ratio **82.9%**, Da
 
 <sub>Columns after *Why*: Dev error (the gate), then the real exam metric reported after the fact (never used to choose).</sub>
 
+### LawFinder Trip energy per km (RoadSim)
+
+**Objective:** R^2 of energy per km (fuel at LHV or DC battery) on the frozen simulated set  
+**Rule:** Keep a rung if its frozen-set R^2 beats the incumbent by more than 0.01 AND its dev error is no more than 5% worse. Rungs = Pareto-front laws in order of complexity, then physics versions; after a physics change every rung is re-scored on the new frozen set and every decision re-taken.
+
+| Rung | Change | Frozen-set score | Decision | Why | Dev error | Exam MdAPE of energy per km |
+|---|---|---|---|---|---|---|
+| r0 | A constant (the simulator mean): E = 2.532 | -0.013 | ● kept | First rung (the incumbent to beat). | 0.282 | 30.8 |
+| p1-c2 | Physics p1, complexity 2: E = exp(D) | 0.058 | ○ rejected | Frozen-set skill 0.058 beats -0.012, but the dev error 0.3118 is more than 5% worse than 0.282. | 0.312 | 35.3 |
+| p1-c3 | Physics p1, complexity 3: E = 2.752 - e | 0.228 | ○ rejected | Frozen-set skill 0.228 beats -0.012, but the dev error 0.3082 is more than 5% worse than 0.282. | 0.308 | 29.9 |
+| p1-c4 | Physics p1, complexity 4: E = 2.998·exp(-e) | 0.345 | ○ rejected | Frozen-set skill 0.345 beats -0.012, but the dev error 0.3525 is more than 5% worse than 0.282. | 0.353 | 29.5 |
+| p1-c5 | Physics p1, complexity 5: E = M·(1.377 - e) | 0.474 | ● kept | Frozen-set skill 0.474 > -0.012 + 0.01, dev error 0.2526 vs 0.282 (within 5%). | 0.253 | 29.4 |
+| p1-c7 | Physics p1, complexity 7: E = M·exp(2·K - 2·e) | 0.567 | ● kept | Frozen-set skill 0.567 > 0.474 + 0.01, dev error 0.1884 vs 0.2526 (within 5%). | 0.188 | 27.5 |
+| p1-c9 | Physics p1, complexity 9: E = M·(-e - 0.5278·h + 1.503) | 0.554 | ○ rejected | Frozen-set skill 0.554 does not beat the incumbent's 0.567 by more than 0.01. | 0.227 | 21.5 |
+| p1-c10 | Physics p1, complexity 10: E = M·exp(-(K - e)·(h - 2.293)) | 0.658 | ● kept | Frozen-set skill 0.658 > 0.567 + 0.01, dev error 0.1684 vs 0.1884 (within 5%). | 0.168 | 21.6 |
+| p1-c11 | Physics p1, complexity 11: E = M·exp(-2·(K - e)·(h - 1.27)) | 0.696 | ● kept | Frozen-set skill 0.696 > 0.658 + 0.01, dev error 0.1601 vs 0.1684 (within 5%). | 0.16 | 17.9 |
+| p1-c12 | Physics p1, complexity 12: E = M·exp((1.618 - h)·(-e + v^(-0.5426))) | 0.717 | ○ rejected | Frozen-set skill 0.717 beats 0.696, but the dev error 0.1716 is more than 5% worse than 0.1601. | 0.172 | 19.2 |
+| p1-c13 | Physics p1, complexity 13: E = M·exp(-2·e + 2·(v + 0.0096)^(-h - 0.6261)) | 0.727 | ○ rejected | Frozen-set skill 0.727 beats 0.696, but the dev error 0.1685 is more than 5% worse than 0.1601. | 0.169 | 18.0 |
+| p1-c14 | Physics p1, complexity 14: E = M·exp((0.9649 - h)·(-2·e + 2/v^0.6057)) | 0.728 | ● kept | Frozen-set skill 0.728 > 0.696 + 0.01, dev error 0.1674 vs 0.1601 (within 5%). | 0.167 | 18.0 |
+| p1-c17 | Physics p1, complexity 17: E = M·exp((0.3353·sqrt(R) - h)·(-2·e + 2/v^0.6288)) | 0.754 | ● kept | Frozen-set skill 0.754 > 0.728 + 0.01, dev error 0.1753 vs 0.1674 (within 5%). | 0.175 | 18.7 |
+| p1-c18 | Physics p1, complexity 18: E = M·exp((-2·e + 2/(v + 3.136)^0.6499)·(sqrt(K)·sqrt(R) - h)) | 0.763 | ○ rejected | Frozen-set skill 0.763 does not beat the incumbent's 0.754 by more than 0.01. | 0.165 | 18.0 |
+| p1-c19 | Physics p1, complexity 19: E = M·exp((-2·e + 2/(v + 0.9515)^0.6285)·(K + 0.09243·R - h)) | 0.749 | ○ rejected | Frozen-set skill 0.749 does not beat the incumbent's 0.754 by more than 0.01. | 0.178 | 19.9 |
+| p1-c20 | Physics p1, complexity 20: E = M·exp((-2·e + 2/(v + 2.013)^0.5779)·(0.7864·sqrt(K)·sqrt(R) - h)) | 0.764 | ○ rejected | Frozen-set skill 0.764 does not beat the incumbent's 0.754 by more than 0.01. | 0.159 | 18.1 |
+| p1-c21 | Physics p1, complexity 21: E = M·exp((-2·e + 2/(v + 1.821)^0.5851)·(2.403·K + 0.06157·R - h)) | 0.764 | ○ rejected | Frozen-set skill 0.764 does not beat the incumbent's 0.754 by more than 0.01. | 0.165 | 18.5 |
+| p1-c23 | Physics p1, complexity 23: E = M·exp((-2·e + 2/(v + 1.48)^0.5951)·(0.06983·G + 2·K + 0.06983·R - h)) | 0.767 | **◆ released** | Frozen-set skill 0.767 > 0.754 + 0.01, dev error 0.168 vs 0.1753 (within 5%). | 0.168 | 18.6 |
+| p1-c25 | Physics p1, complexity 25: E = (M - 0.03307)·exp((-2·e + 2/(v + 1.555)^0.5865)·(0.07119·G + 2·K + 0.07119·R - h)) | 0.766 | ○ rejected | Frozen-set skill 0.766 does not beat the incumbent's 0.767 by more than 0.01. | 0.171 | 19.0 |
+| p2-c2 | Physics p2, complexity 2: E = sqrt(R) | 0.102 | ○ rejected | Frozen-set skill 0.102 does not beat the incumbent's 0.767 by more than 0.01. | 0.335 | 29.1 |
+| p2-c3 | Physics p2, complexity 3: E = 2.91 - e | 0.239 | ○ rejected | Frozen-set skill 0.239 does not beat the incumbent's 0.767 by more than 0.01. | 0.338 | 29.5 |
+| p2-c4 | Physics p2, complexity 4: E = 1/(e + 0.3088) | 0.371 | ○ rejected | Frozen-set skill 0.371 does not beat the incumbent's 0.767 by more than 0.01. | 0.386 | 30.9 |
+| p2-c5 | Physics p2, complexity 5: E = M/(e + 0.6681) | 0.448 | ○ rejected | Frozen-set skill 0.448 does not beat the incumbent's 0.767 by more than 0.01. | 0.256 | 27.6 |
+| p2-c6 | Physics p2, complexity 6: E = sqrt(K)/(e + 0.131) | 0.419 | ○ rejected | Frozen-set skill 0.419 does not beat the incumbent's 0.767 by more than 0.01. | 0.231 | 28.6 |
+| p2-c7 | Physics p2, complexity 7: E = (M - h)/(e + 0.5706) | 0.561 | ○ rejected | Frozen-set skill 0.561 does not beat the incumbent's 0.767 by more than 0.01. | 0.288 | 23.7 |
+| p2-c8 | Physics p2, complexity 8: E = (M - h)/(e + 0.7497)^2 | 0.635 | ○ rejected | Frozen-set skill 0.635 does not beat the incumbent's 0.767 by more than 0.01. | 0.249 | 23.1 |
+| p2-c9 | Physics p2, complexity 9: E = K·(M - h)/(e + 0.1086) | 0.623 | ○ rejected | Frozen-set skill 0.623 does not beat the incumbent's 0.767 by more than 0.01. | 0.247 | 25.4 |
+| p2-c10 | Physics p2, complexity 10: E = sqrt(K)·(M - h)/(e + 0.2383) | 0.711 | ○ rejected | Frozen-set skill 0.711 does not beat the incumbent's 0.767 by more than 0.01. | 0.152 | 20.9 |
+| p2-c11 | Physics p2, complexity 11: E = sqrt(K)·(M - h)/(exp(e) - 0.7619) | 0.711 | ○ rejected | Frozen-set skill 0.711 does not beat the incumbent's 0.767 by more than 0.01. | 0.147 | 21.0 |
+| p2-c12 | Physics p2, complexity 12: E = sqrt(K)·(M - h)^0.8128/(e + 0.2077) | 0.721 | ○ rejected | Frozen-set skill 0.721 does not beat the incumbent's 0.767 by more than 0.01. | 0.153 | 17.0 |
+| p2-c14 | Physics p2, complexity 14: E = sqrt(K)·(M - h)^(v^(-0.1335))/(e + 0.1979) | 0.733 | ○ rejected | Frozen-set skill 0.733 does not beat the incumbent's 0.767 by more than 0.01. | 0.149 | 15.4 |
+| p2-c15 | Physics p2, complexity 15: E = sqrt(K)·(M - h)^(log(v)^(-0.3821))/(e + 0.1991) | 0.736 | ○ rejected | Frozen-set skill 0.736 does not beat the incumbent's 0.767 by more than 0.01. | 0.147 | 15.3 |
+| p2-c16 | Physics p2, complexity 16: E = ((M - h)^(v^(-0.4844)) - 0.6371)·exp(K)/(e + 0.2089) | 0.737 | ○ rejected | Frozen-set skill 0.737 does not beat the incumbent's 0.767 by more than 0.01. | 0.208 | 17.9 |
+| p2-c17 | Physics p2, complexity 17: E = ((M - h)^(v^(-0.2933)) - 0.4207)·exp(2·K)/(e + 0.6392)^2 | 0.741 | ○ rejected | Frozen-set skill 0.741 does not beat the incumbent's 0.767 by more than 0.01. | 0.178 | 17.5 |
+| p2-c18 | Physics p2, complexity 18: E = sqrt(K)·(M - h)^(v^((G - 1.132)/R))/(e + 0.1985) | 0.741 | ○ rejected | Frozen-set skill 0.741 does not beat the incumbent's 0.767 by more than 0.01. | 0.144 | 15.2 |
+| p2-c20 | Physics p2, complexity 20: E = sqrt(K)·(-K + (M - h)^(v^((G - 1.551)/R)))/(e + 0.1639) | 0.750 | ○ rejected | Frozen-set skill 0.750 does not beat the incumbent's 0.767 by more than 0.01. | 0.155 | 16.1 |
+| p2-c21 | Physics p2, complexity 21: E = sqrt(K)·(-K + (M - h)^(v^((G - 1.594)/R)))/sqrt(e + 0.02657) | 0.752 | ○ rejected | Frozen-set skill 0.752 does not beat the incumbent's 0.767 by more than 0.01. | 0.158 | 15.9 |
+| p2-c22 | Physics p2, complexity 22: E = sqrt(K)·sqrt(M)·(-K + (M - h)^(v^((G - 2.647)/R)))/(e + 0.2163) | 0.763 | ○ rejected | Frozen-set skill 0.763 does not beat the incumbent's 0.767 by more than 0.01. | 0.129 | 17.6 |
+| p2-c24 | Physics p2, complexity 24: E = sqrt(K)·(-K + (1.483·M - 1.483·h)^(v^((G - 2.132)/(M + R))))/(e + 0.2169) | 0.764 | ○ rejected | Frozen-set skill 0.764 does not beat the incumbent's 0.767 by more than 0.01. | 0.138 | 14.6 |
+| p2-c25 | Physics p2, complexity 25: E = sqrt(K)·sqrt(M)·(-K·h + (M - h)^(v^((2·G - 4.154)/R)))/(e + 0.2193) | 0.749 | ○ rejected | Frozen-set skill 0.749 does not beat the incumbent's 0.767 by more than 0.01. | 0.126 | 14.6 |
+
+<sub>Columns after *Why*: Dev error (the gate), then the real exam metric reported after the fact (never used to choose).</sub>
+
 Raw per-rung logs are in [`training/`](training/).
 
 ## Physics
 
-No new physics: the collection's shared simulators are used unchanged (WaterSim v1, FireSim v1, GridSim 1.1 via GridPulse's GB state sampler, BuildingSim 1.0/1.4). Each law is a statement about what one simulator implies.
+No new physics: the collection's shared simulators are used unchanged (WaterSim v1, FireSim v1, GridSim 1.1 via GridPulse's GB state sampler, BuildingSim 1.0/1.4, RoadSim physics v1/v2). Each law is a statement about what one simulator implies.
 
 **Simulator**
 
@@ -243,16 +300,17 @@ No new physics: the collection's shared simulators are used unchanged (WaterSim 
 - FireSim: 1,680 multi-day fires on guarded real dev LANDFIRE windows or parametric landscapes, real dev HRRR weather; f2 uses the dev-calibrated ROS factors
 - GridSim: generate_states GB fleets (inertia law); GridPulse's GB sampler p0/p1 for trips, measured like GridData's catalogue (1 s means, 10 s fall <= -0.15 Hz)
 - BuildingSim: 2,600 single-family homes from the ResStock-bootstrapped generator, TMYx weather shifted by U(-3, 3) C; b2 = physics 1.4
+- RoadSim: 16,000 trips (two physics versions) of light-duty generator vehicles (petrol, three hybrid kinds, battery-electric) on RoadData's train_noise VED routes (real Ann Arbor routes, lidar grade, airport weather) and on dynamometer schedules; p2 = physics v2 (dev-calibrated on-road loads and maps)
 
 **Checked against independent references**
 
 - lawsearch recovers a planted Budyko-Fu law with 1 % noise to the noise floor (MSE 1.0e-4 vs 1.0e-4)
 - Every simulator's own Phase 1 checks apply (shared/*/checks)
-- Release evaluator (numpy) equals the search engine to machine precision; the page's JS equals numpy (training/results/js_parity.json)
+- Release evaluator (numpy) equals the search engine to machine precision; the page's JS equals numpy (training/results/js_parity.json; road law: 6e-16 on 1,500 points, js_parity_road.json)
 
 ## Help wanted
 
-- RoadSim trip-energy law (VED/EPA exam) not built in this batch
+- Road: EnergyNet's pooled VED row was not scored (exam run 1 mis-scaled its VED rows); re-scoring it from EnergyNet's frame is the owner's decision
 - Daymet/NLDAS forcing would separate law skill from ERA5-Land bias (WaterData help_wanted)
 
 ## Next rungs
@@ -260,7 +318,7 @@ No new physics: the collection's shared simulators are used unchanged (WaterSim 
 - Fire: add a persistence module to FireSim (stall and burnout probability by fuel and weather) and re-run the search; the law ladder shows exactly where FireSim's growth departs from reality.
 - Grid inertia: rescale GridSim's GB fleet to NESO's inertia per MW (the GridPulse wrapper's fix) as physics i2, and re-take the ladder; the shape term (1 − 0.85 s) should survive.
 - Water: a recession law −dQ/dt = a Q^b on the same banks, and a Daymet/NLDAS exam to separate law skill from ERA5-Land bias.
-- Road: RoadSim trip-energy law against road-load on the VED/EPA exam (the fifth platform, not built here).
+- Road: give the law the car's engine size or label fuel economy, cold start and trip length as inputs (RoadData has them), and widen the generator toward lighter cars; re-score EnergyNet's pooled VED row from its frame (exam run 1 unit bug) if the owner agrees.
 - Homes: add heating fuel and system as inputs (a law per fuel) and occupants; RECS dev shows the fuel matters most.
 
 ## Files
@@ -286,6 +344,8 @@ No new physics: the collection's shared simulators are used unchanged (WaterSim 
 | [NESO 1 s frequency, outturn inertia, generation mix; Elexon REMIT/B1610 labels via GridData](https://www.neso.energy/data-portal) | dev, exam, physics (train-year operating points) | NESO Open Data Licence; Elexon BMRS licence |
 | [EIA RECS 2020](https://www.eia.gov/consumption/residential/) | dev, exam | Public domain |
 | [TMYx weather (climate.onebuilding.org)](https://climate.onebuilding.org) | physics | Free with attribution |
+| [Vehicle Energy Dataset (VED) via RoadData (USGS 3DEP lidar grades, Iowa Mesonet ASOS weather)](https://github.com/gsoh/VED) | dev, exam, physics (train_noise routes) | Apache-2.0 (VED); U.S. public domain (3DEP); free use with credit (IEM) |
+| [US EPA test-car data and drive cycles via RoadData](https://www.epa.gov/compliance-and-fuel-economy-data/data-cars-used-testing-fuel-economy) | dev, exam, physics (cycles) | Public domain |
 
 Please cite the data providers when you use this model. Data stays under its providers' terms; see [DATA_LICENSES.md](../../DATA_LICENSES.md).
 

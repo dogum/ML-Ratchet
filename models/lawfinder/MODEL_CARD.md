@@ -17,8 +17,10 @@ sliders, simulated cloud, real points, law ladder, textbook rival, exam).
 | GB system inertia | GridSim | demand D (GW), inverter-based share s | inertia E (GVA·s) | 410 GB events 2018-25 |
 | GB frequency nadir | GridSim (GridPulse sampler) | MW lost ΔP (GW), inertia E, demand D | drop to the nadir Δf (Hz) | 148 loss-labelled GB events |
 | Home energy signature | BuildingSim | HDD and CDD base 18 °C (1000 K·d), floor area A (100 m²), year built Y | site energy per m² (kWh/m²/yr) | 6,019 RECS 2020 single-family homes |
+| Trip energy per km | RoadSim | mean speed v̄ (m/s), positive kinetic energy per metre PKE (m/s²), net and absolute grade (%), mass m (t), CdA (m²), Crr ×1000, ambient T (°C), hybrid and electric flags | energy per km at the tank or battery (MJ/km) | 22,877 VED trips, 52,522 EPA tests |
 
-The RoadSim trip-energy law (fifth in the brief's order) was not built: out of time on the shared machine.
+The RoadSim trip-energy law (fifth in the brief's order) was not built in the cloud batch; it was added in the
+repository on 22 Nov 2026 (section "The road law" below).
 
 ## The laws (released rung, constants fitted on simulations only)
 
@@ -27,6 +29,8 @@ The RoadSim trip-energy law (fifth in the brief's order) was not built: out of t
 - **Inertia** (i1-c7): E = D · (6.603 − 5.617 s). Same as GridSim's own pick.
 - **Nadir** (g1-c12): Δf = (ΔP + 2)² / (52,940 E − 3.54·10⁶)^0.208. GridSim (g2, GridPulse's release physics) alone (g2-c3): Δf = 0.433 ΔP.
 - **Homes** (b2-c13): EUI = 186.5 / 1.926^A + HDD · (2022 − Y). BuildingSim's simplest strong belief (b2-c9): EUI ≈ HDD · (2021 − Y).
+- **Road** (p1-c23): E = m · exp[(2 / (v̄ + 1.48)^0.595 − 2·EV) · (2·PKE + 0.0698·(Crr×1000 + g_net) − hybrid)].
+  RoadSim's simplest strong belief (p2-c10): E = √PKE · (m − hybrid) / (EV + 0.238).
 
 "Simulator's own law" = PySR's model-selection rule applied to the final frozen set only: among rungs with loss within
 1.5× of the best, the largest drop in log loss per added node. It uses no real data.
@@ -72,6 +76,7 @@ The RoadSim trip-energy law (fifth in the brief's order) was not built: out of t
 | Inertia | 10 | 5 | i1-c7 (R² 0.964, dev 37 %) | val_i1 | Bigger laws gained < 0.001 |
 | Nadir | 16 | 3 | g1-c12 (R² 0.259 on g1, −0.005 on g2) | val_g1, val_g2 | g2 laws (R² 0.12-0.20 on g2) read the 4 dev events 2.5-4.5× worse |
 | Homes | 37 | 8 | b2-c13 (R² 0.694, dev MdAPE 39 %) | val_b1, val_b2 | c15+ gained < 0.01 |
+| Road | 40 | 8 | p1-c23 (R² 0.767 on val_p2, dev MdAPE 16.8 %) | val_p1, val_p2 | No p2 rung beat it by 0.01 on val_p2 (p2-c22: 0.763, dev 12.9 %) |
 
 Full ladders with every decision: `ratchet.yaml`, `training/results/<law>_ratchet.json`.
 
@@ -85,11 +90,14 @@ Full ladders with every decision: `ratchet.yaml`, `training/results/<law>_ratche
 | Inertia (410) | MdAPE | 33.0 % | 33.0 % | 7.00 s × D: **15.1 %** | GridPulse 16.4 % | 24.0 % | loss |
 | Nadir (148) | MAE | **0.060 Hz** | 0.106 | k ΔP²/E: 0.173 | GridPulse (5 s of trace) 0.080 | 0.129 | win |
 | Homes (6,019) | MdAPE | 39.3 % | 39.7 % | a + b HDD + c CDD: 35.6 % | none in the collection | **33.4 %** | loss (to dumb) |
+| Road, VED trips (22,877) | MdAPE | 18.6 % | 20.9 % | road-load / η: 18.3 % | EnergyNet: not scored pooled (8.6 / 13.4 / 23.2 % by powertrain) | 21.3 %; MOVES-like **11.8 %** | loss |
+| Road, EPA tests (52,522) | MdAPE | 17.3 % | 15.1 % | road-load / η: 23.8 % | EnergyNet **7.5 %** | 24.6 % | loss |
 
 Also: water R² 0.594 (Fu 0.43, FlowCast 0.64); inertia rank correlation 0.975 (7 s × D 0.60, GridPulse 0.61);
 homes: BuildingData-style log-linear fit on dev 26.6 % (best).
 
-**Coverage of the 68 % bars on the exam:** water 83 %, fire 69 %, inertia 91 %, nadir 100 %, homes 69 %. Water,
+**Coverage of the 68 % bars on the exam:** water 83 %, fire 69 %, inertia 91 %, nadir 100 %, homes 69 %, road 72 % (VED)
+and 83 % (EPA). Water,
 inertia and nadir bars are too wide (inertia's ×6.7 widening was fitted on 4 dev events).
 
 ## What the simulators believe, and whether it is true
@@ -112,6 +120,51 @@ inertia and nadir bars are too wide (inertia's ×6.7 widening was fitted on 4 de
   load for small homes. On RECS homes it loses to the dev median (39.3 % vs 33.4 %): home-to-home variation (fuel,
   occupants, setpoints) is larger than what these inputs carry. At physics 1.0 the homes used 1.4× too much energy.
 
+## The road law (added 22 Nov 2026)
+
+Built in the repository after the import, following `law_bldg.py` / `exam_bldg.py`. Scripts: `training/road_bank.py`,
+`law_road.py`, `fit_law.py road`, `exam_road.py`, `exam_road_errata.py`, `add_road_release.py`.
+
+- **Bank.** 16,000 RoadSim trips: 6,000 train + 2,000 frozen per physics version (p1 = RoadSim physics v1, p2 = v2, the
+  dev-calibrated default; same vehicles and routes in both). Light-duty generator vehicles (petrol 50 %, hybrids 28 %,
+  battery-electric 22 %; car, SUV, pickup, van), spread as EnergyNet's fleet is. Routes: RoadData's 1,092 train_noise
+  VED trips (real routes, lidar grade, airport weather; no labels exist) 60 %, dynamometer schedules 40 %. The
+  simulator drives the true weather; the law reads the observed one. 0.04 s per trip on one core.
+- **Dev.** 1,143 VED dev trips (7 petrol cars, 5 hybrids, 1 Leaf; plug-ins left out) and 1,178 EPA dev tests (a seeded
+  draw of the same size). Dev error = MdAPE.
+- **Search and ratchet.** 600 s per physics version. 40 rungs: p1's front kept 8 on val_p1; on val_p2 every p2 rung
+  failed the 0.01 margin against p1-c23 (best p2-c24 0.764 vs 0.767), although several read dev better (p2-c22: 12.9 %
+  against 16.8 %). The rule decided; the exam was not consulted. Error bar ±0.78 MJ/km; dev widening 1.0 (raw dev
+  coverage 84 %, widen-only).
+- **A first ratchet run** used a dev set that dropped 35 trips of vehicles with no recorded mass (it released p1-c18,
+  dev 16.6 %). Before the exam those vehicles got their class-default mass, as EnergyNet does, and the ratchet was
+  re-scored on the corrected dev set (same fronts). Both runs are logged (`training/results/superseded/`).
+- **Textbook rival.** Road-load energy at the wheels, (m g Crr + ½ ρ CdA v̄² + m·PKE + m g g_net) per km, over one η
+  per powertrain fitted on dev (petrol 0.185, hybrid 0.280, electric 1.15; on RoadSim 0.189, 0.280, 1.08). The electric
+  η is above 1 because the sum counts no regenerative braking.
+
+**Exam (run once, 22 Nov 2026), MdAPE %:**
+
+| Stratum | n | Law | RoadSim's law | Road-load (dev η) | EnergyNet v2.1 | Label × distance | MOVES-like | Dev median |
+|---|---|---|---|---|---|---|---|---|
+| VED petrol | 14,469 | 19.3 | 14.0 | 20.0 | **8.6** | 13.0 | 10.3 | 22.4 |
+| VED hybrids | 8,241 | 16.8 | 40.4 | 15.7 | **13.4** | 16.2 | 15.3 | 19.0 |
+| VED electric (2 Leafs) | 167 | 43.3 | 21.9 | 21.7 | 23.2 | 21.5 | **19.0** | 28.0 |
+| EPA petrol | 46,876 | 17.3 | 14.5 | 25.0 | **7.5** | – | – | 25.3 |
+| EPA hybrids | 4,154 | 13.1 | 22.3 | 19.6 | **7.8** | – | – | 21.9 |
+| EPA battery-electric | 1,492 | 43.1 | 26.8 | 11.9 | **6.3** | – | – | 15.8 |
+
+- The law loses every row. It beats road-load and the dumb guess on EPA petrol and hybrid tests, and loses badly on
+  electric cars (bias −42 % on the VED Leafs, +42 % on EPA BEVs): one exponent for every electric car, learnt on
+  generator EVs heavier than the real ones.
+- RoadSim's own shorter law beats the released one on VED petrol and on EPA petrol: the dev gate preferred the longer law.
+- **Errata, exam run 1.** `exam_road.py` multiplied EnergyNet's VED frame by its unit factor although the frame is
+  already in MJ, so EnergyNet's three VED rows came out ×0.042 (petrol, hybrids) and ×3.6 (electric). The output is kept
+  as written (`training/results/exam_road.json`); `exam_road_errata.py` writes `exam_road_reported.json`, which replaces
+  those rows with EnergyNet's own published values on the same trips (the trip counts and RoadData's baseline rows match
+  its exam exactly) and marks EnergyNet's pooled VED row not scored. Every law, rung, road-load, RoadSim-law, RoadData
+  and dumb row is unaffected. Re-scoring EnergyNet's pooled VED row is left to the owner.
+
 ## Limits
 
 - One search per physics version, time-boxed on a shared core; another seed may give a different front. Fronts are
@@ -121,7 +174,8 @@ inertia and nadir bars are too wide (inertia's ×6.7 widening was fitted on 4 de
   and FireCast's rows exist on growth days only. Nadir loss labels are noisy REMIT/FUELINST matches.
 - Inputs are computed the same way for simulated and real units, but some come from different products (gridMET
   fm100 vs FireSim's Nelson m100h; RECS 2020 degree days vs TMYx-shifted runs; NESO generation as demand).
-- The road law was not built.
+- Road: real CdA and Crr are class defaults on VED (EPA: from the road-load coefficients); VED fuel is MAF-estimated
+  for most cars; plug-in hybrids are left out; cold start and trip length are not inputs.
 
 ## Rule notes
 

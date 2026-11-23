@@ -1028,3 +1028,340 @@ ladders:
     metrics:
     - 0.375
     - 36.4
+- name: LawFinder Trip energy per km (RoadSim)
+  objective: R^2 of energy per km (fuel at LHV or DC battery) on the frozen simulated set
+  rule: Keep a rung if its frozen-set R^2 beats the incumbent by more than 0.01 AND its dev error is no more than 5% worse.
+    Rungs = Pareto-front laws in order of complexity, then physics versions; after a physics change every rung is re-scored
+    on the new frozen set and every decision re-taken.
+  margin: 0.01
+  dev_gate: Dev error may not get more than 5 % worse
+  frozen_sets:
+  - val_p1
+  - val_p2
+  scored_on: val_p2
+  columns_source: Dev error (the gate), then the real exam metric reported after the fact (never used to choose)
+  columns:
+  - Dev error
+  - Exam MdAPE of energy per km
+  rungs:
+  - id: r0
+    change: 'A constant (the simulator mean): E = 2.532'
+    sim: -0.0125
+    decision: kept
+    why: First rung (the incumbent to beat).
+    metrics:
+    - 0.282
+    - 30.8
+  - id: p1-c2
+    change: 'Physics p1, complexity 2: E = exp(D)'
+    sim: 0.0578
+    decision: rejected
+    why: Frozen-set skill 0.058 beats -0.012, but the dev error 0.3118 is more than 5% worse than 0.282.
+    metrics:
+    - 0.312
+    - 35.3
+  - id: p1-c3
+    change: 'Physics p1, complexity 3: E = 2.752 - e'
+    sim: 0.228
+    decision: rejected
+    why: Frozen-set skill 0.228 beats -0.012, but the dev error 0.3082 is more than 5% worse than 0.282.
+    metrics:
+    - 0.308
+    - 29.9
+  - id: p1-c4
+    change: 'Physics p1, complexity 4: E = 2.998·exp(-e)'
+    sim: 0.345
+    decision: rejected
+    why: Frozen-set skill 0.345 beats -0.012, but the dev error 0.3525 is more than 5% worse than 0.282.
+    metrics:
+    - 0.353
+    - 29.5
+  - id: p1-c5
+    change: 'Physics p1, complexity 5: E = M·(1.377 - e)'
+    sim: 0.474
+    decision: kept
+    why: Frozen-set skill 0.474 > -0.012 + 0.01, dev error 0.2526 vs 0.282 (within 5%).
+    metrics:
+    - 0.253
+    - 29.4
+  - id: p1-c7
+    change: 'Physics p1, complexity 7: E = M·exp(2·K - 2·e)'
+    sim: 0.567
+    decision: kept
+    why: Frozen-set skill 0.567 > 0.474 + 0.01, dev error 0.1884 vs 0.2526 (within 5%).
+    metrics:
+    - 0.188
+    - 27.5
+  - id: p1-c9
+    change: 'Physics p1, complexity 9: E = M·(-e - 0.5278·h + 1.503)'
+    sim: 0.554
+    decision: rejected
+    why: Frozen-set skill 0.554 does not beat the incumbent's 0.567 by more than 0.01.
+    metrics:
+    - 0.227
+    - 21.5
+  - id: p1-c10
+    change: 'Physics p1, complexity 10: E = M·exp(-(K - e)·(h - 2.293))'
+    sim: 0.658
+    decision: kept
+    why: Frozen-set skill 0.658 > 0.567 + 0.01, dev error 0.1684 vs 0.1884 (within 5%).
+    metrics:
+    - 0.168
+    - 21.6
+  - id: p1-c11
+    change: 'Physics p1, complexity 11: E = M·exp(-2·(K - e)·(h - 1.27))'
+    sim: 0.696
+    decision: kept
+    why: Frozen-set skill 0.696 > 0.658 + 0.01, dev error 0.1601 vs 0.1684 (within 5%).
+    metrics:
+    - 0.16
+    - 17.9
+  - id: p1-c12
+    change: 'Physics p1, complexity 12: E = M·exp((1.618 - h)·(-e + v^(-0.5426)))'
+    sim: 0.717
+    decision: rejected
+    why: Frozen-set skill 0.717 beats 0.696, but the dev error 0.1716 is more than 5% worse than 0.1601.
+    metrics:
+    - 0.172
+    - 19.2
+  - id: p1-c13
+    change: 'Physics p1, complexity 13: E = M·exp(-2·e + 2·(v + 0.0096)^(-h - 0.6261))'
+    sim: 0.727
+    decision: rejected
+    why: Frozen-set skill 0.727 beats 0.696, but the dev error 0.1685 is more than 5% worse than 0.1601.
+    metrics:
+    - 0.169
+    - 18.0
+  - id: p1-c14
+    change: 'Physics p1, complexity 14: E = M·exp((0.9649 - h)·(-2·e + 2/v^0.6057))'
+    sim: 0.728
+    decision: kept
+    why: Frozen-set skill 0.728 > 0.696 + 0.01, dev error 0.1674 vs 0.1601 (within 5%).
+    metrics:
+    - 0.167
+    - 18.0
+  - id: p1-c17
+    change: 'Physics p1, complexity 17: E = M·exp((0.3353·sqrt(R) - h)·(-2·e + 2/v^0.6288))'
+    sim: 0.754
+    decision: kept
+    why: Frozen-set skill 0.754 > 0.728 + 0.01, dev error 0.1753 vs 0.1674 (within 5%).
+    metrics:
+    - 0.175
+    - 18.7
+  - id: p1-c18
+    change: 'Physics p1, complexity 18: E = M·exp((-2·e + 2/(v + 3.136)^0.6499)·(sqrt(K)·sqrt(R) - h))'
+    sim: 0.763
+    decision: rejected
+    why: Frozen-set skill 0.763 does not beat the incumbent's 0.754 by more than 0.01.
+    metrics:
+    - 0.165
+    - 18.0
+  - id: p1-c19
+    change: 'Physics p1, complexity 19: E = M·exp((-2·e + 2/(v + 0.9515)^0.6285)·(K + 0.09243·R - h))'
+    sim: 0.749
+    decision: rejected
+    why: Frozen-set skill 0.749 does not beat the incumbent's 0.754 by more than 0.01.
+    metrics:
+    - 0.178
+    - 19.9
+  - id: p1-c20
+    change: 'Physics p1, complexity 20: E = M·exp((-2·e + 2/(v + 2.013)^0.5779)·(0.7864·sqrt(K)·sqrt(R) - h))'
+    sim: 0.764
+    decision: rejected
+    why: Frozen-set skill 0.764 does not beat the incumbent's 0.754 by more than 0.01.
+    metrics:
+    - 0.159
+    - 18.1
+  - id: p1-c21
+    change: 'Physics p1, complexity 21: E = M·exp((-2·e + 2/(v + 1.821)^0.5851)·(2.403·K + 0.06157·R - h))'
+    sim: 0.764
+    decision: rejected
+    why: Frozen-set skill 0.764 does not beat the incumbent's 0.754 by more than 0.01.
+    metrics:
+    - 0.165
+    - 18.5
+  - id: p1-c23
+    change: 'Physics p1, complexity 23: E = M·exp((-2·e + 2/(v + 1.48)^0.5951)·(0.06983·G + 2·K + 0.06983·R - h))'
+    sim: 0.767
+    decision: released
+    why: Frozen-set skill 0.767 > 0.754 + 0.01, dev error 0.168 vs 0.1753 (within 5%).
+    metrics:
+    - 0.168
+    - 18.6
+  - id: p1-c25
+    change: 'Physics p1, complexity 25: E = (M - 0.03307)·exp((-2·e + 2/(v + 1.555)^0.5865)·(0.07119·G + 2·K + 0.07119·R -
+      h))'
+    sim: 0.766
+    decision: rejected
+    why: Frozen-set skill 0.766 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.171
+    - 19.0
+  - id: p2-c2
+    change: 'Physics p2, complexity 2: E = sqrt(R)'
+    sim: 0.102
+    decision: rejected
+    why: Frozen-set skill 0.102 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.335
+    - 29.1
+  - id: p2-c3
+    change: 'Physics p2, complexity 3: E = 2.91 - e'
+    sim: 0.239
+    decision: rejected
+    why: Frozen-set skill 0.239 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.338
+    - 29.5
+  - id: p2-c4
+    change: 'Physics p2, complexity 4: E = 1/(e + 0.3088)'
+    sim: 0.371
+    decision: rejected
+    why: Frozen-set skill 0.371 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.386
+    - 30.9
+  - id: p2-c5
+    change: 'Physics p2, complexity 5: E = M/(e + 0.6681)'
+    sim: 0.448
+    decision: rejected
+    why: Frozen-set skill 0.448 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.256
+    - 27.6
+  - id: p2-c6
+    change: 'Physics p2, complexity 6: E = sqrt(K)/(e + 0.131)'
+    sim: 0.419
+    decision: rejected
+    why: Frozen-set skill 0.419 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.231
+    - 28.6
+  - id: p2-c7
+    change: 'Physics p2, complexity 7: E = (M - h)/(e + 0.5706)'
+    sim: 0.561
+    decision: rejected
+    why: Frozen-set skill 0.561 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.288
+    - 23.7
+  - id: p2-c8
+    change: 'Physics p2, complexity 8: E = (M - h)/(e + 0.7497)^2'
+    sim: 0.635
+    decision: rejected
+    why: Frozen-set skill 0.635 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.249
+    - 23.1
+  - id: p2-c9
+    change: 'Physics p2, complexity 9: E = K·(M - h)/(e + 0.1086)'
+    sim: 0.623
+    decision: rejected
+    why: Frozen-set skill 0.623 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.247
+    - 25.4
+  - id: p2-c10
+    change: 'Physics p2, complexity 10: E = sqrt(K)·(M - h)/(e + 0.2383)'
+    sim: 0.711
+    decision: rejected
+    why: Frozen-set skill 0.711 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.152
+    - 20.9
+  - id: p2-c11
+    change: 'Physics p2, complexity 11: E = sqrt(K)·(M - h)/(exp(e) - 0.7619)'
+    sim: 0.711
+    decision: rejected
+    why: Frozen-set skill 0.711 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.147
+    - 21.0
+  - id: p2-c12
+    change: 'Physics p2, complexity 12: E = sqrt(K)·(M - h)^0.8128/(e + 0.2077)'
+    sim: 0.721
+    decision: rejected
+    why: Frozen-set skill 0.721 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.153
+    - 17.0
+  - id: p2-c14
+    change: 'Physics p2, complexity 14: E = sqrt(K)·(M - h)^(v^(-0.1335))/(e + 0.1979)'
+    sim: 0.733
+    decision: rejected
+    why: Frozen-set skill 0.733 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.149
+    - 15.4
+  - id: p2-c15
+    change: 'Physics p2, complexity 15: E = sqrt(K)·(M - h)^(log(v)^(-0.3821))/(e + 0.1991)'
+    sim: 0.736
+    decision: rejected
+    why: Frozen-set skill 0.736 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.147
+    - 15.3
+  - id: p2-c16
+    change: 'Physics p2, complexity 16: E = ((M - h)^(v^(-0.4844)) - 0.6371)·exp(K)/(e + 0.2089)'
+    sim: 0.737
+    decision: rejected
+    why: Frozen-set skill 0.737 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.208
+    - 17.9
+  - id: p2-c17
+    change: 'Physics p2, complexity 17: E = ((M - h)^(v^(-0.2933)) - 0.4207)·exp(2·K)/(e + 0.6392)^2'
+    sim: 0.741
+    decision: rejected
+    why: Frozen-set skill 0.741 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.178
+    - 17.5
+  - id: p2-c18
+    change: 'Physics p2, complexity 18: E = sqrt(K)·(M - h)^(v^((G - 1.132)/R))/(e + 0.1985)'
+    sim: 0.741
+    decision: rejected
+    why: Frozen-set skill 0.741 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.144
+    - 15.2
+  - id: p2-c20
+    change: 'Physics p2, complexity 20: E = sqrt(K)·(-K + (M - h)^(v^((G - 1.551)/R)))/(e + 0.1639)'
+    sim: 0.75
+    decision: rejected
+    why: Frozen-set skill 0.750 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.155
+    - 16.1
+  - id: p2-c21
+    change: 'Physics p2, complexity 21: E = sqrt(K)·(-K + (M - h)^(v^((G - 1.594)/R)))/sqrt(e + 0.02657)'
+    sim: 0.752
+    decision: rejected
+    why: Frozen-set skill 0.752 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.158
+    - 15.9
+  - id: p2-c22
+    change: 'Physics p2, complexity 22: E = sqrt(K)·sqrt(M)·(-K + (M - h)^(v^((G - 2.647)/R)))/(e + 0.2163)'
+    sim: 0.763
+    decision: rejected
+    why: Frozen-set skill 0.763 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.129
+    - 17.6
+  - id: p2-c24
+    change: 'Physics p2, complexity 24: E = sqrt(K)·(-K + (1.483·M - 1.483·h)^(v^((G - 2.132)/(M + R))))/(e + 0.2169)'
+    sim: 0.764
+    decision: rejected
+    why: Frozen-set skill 0.764 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.138
+    - 14.6
+  - id: p2-c25
+    change: 'Physics p2, complexity 25: E = sqrt(K)·sqrt(M)·(-K·h + (M - h)^(v^((2·G - 4.154)/R)))/(e + 0.2193)'
+    sim: 0.749
+    decision: rejected
+    why: Frozen-set skill 0.749 does not beat the incumbent's 0.767 by more than 0.01.
+    metrics:
+    - 0.126
+    - 14.6

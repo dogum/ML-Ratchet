@@ -43,6 +43,19 @@ META = {
                  exam_desc='RECS 2020 single-family homes', exam_unit='homes',
                  exam_note='Truth: EIA\'s billing-based annual site energy / floor area. No network in the collection predicts it.',
                  textbook_rows=('signature_dev',), network=None, target_ml='<mi>EUI</mi>'),
+    'road': dict(exam_key='mdape', exam_cols=[['mdape', 'MdAPE', '%'], ['bias_median_pct', 'bias', '%'], ['rho', 'ρ'], ['r2', 'R²']],
+                 exam_order=['law', 'sim_law', 'roadload_dev', 'roadload_sim', 'energynet', 'b_label', 'b_vsp', 'b_class', 'dumb'],
+                 yrange=[0, 6], dev_metric='median |error| / truth on the dev trips and EPA dev tests', exam_metric='MdAPE %',
+                 exam_desc='VED exam trips (petrol, hybrid, electric)', exam_unit='trips',
+                 exam_note=("Truth: RoadData's per-second VED label (MAF-estimated fuel for most petrol cars; battery "
+                            'energy for the Leafs) over the trip, per km. EnergyNet v2.1 reads the whole speed trace and '
+                            'much more about the car; the law reads ten numbers. EnergyNet was not scored on the pooled '
+                            'trips (exam run 1 mis-scaled its VED rows); its published values on the same trips are '
+                            'petrol 8.6 %, hybrids 13.4 %, electric 23.2 %. The EPA exam (dynamometer tests) is in the '
+                            'model card.'),
+                 textbook_rows=('roadload_dev',), network='energynet', short={'energynet': 'EnergyNet', 'b_label': 'label × distance',
+                                                                             'b_vsp': 'MOVES-like', 'b_class': 'class median'},
+                 target_ml='<mi>E</mi>'),
 }
 
 
@@ -70,6 +83,19 @@ def textbook(L, E):
                     mathml=f'<mi>Δ</mi><mi>f</mi><mo>=</mo><mi>k</mi><mfrac><msup><mi>ΔP</mi><mn>2</mn></msup><mi>E</mi></mfrac><mo>,</mo><mspace width="0.5em"/><mi>k</mi><mo>=</mo><mn>{k:.3g}</mn>',
                     note='Swing equation with a primary response that ramps linearly to full: nadir depth = f0 ΔP² T / (4 E R). '
                          'T/R is unknown on real events, so it is one constant fitted on the 4 dev events.')
+    if i == 'road':
+        e = E['eta_dev']
+        return dict(js='(function () { var m = M * 1000, rho = 101325 / (287.05 * (T + 273.15)), r = m * 9.81 * R / 1000; '
+                       'var w = Math.max(r + 0.5 * rho * D * v * v + m * K + m * 9.81 * G / 100, 0.05 * r) / 1000; '
+                       'return w / (e > 0.5 ? TB.EV : (h > 0.5 ? TB.HEV : TB.ICE)); })()', args=e,
+                    mathml='<mi>E</mi><mo>=</mo><mfrac><mrow><mi>m</mi><mi>g</mi><msub><mi>C</mi><mtext>rr</mtext></msub><mo>+</mo>'
+                           '<mfrac><mn>1</mn><mn>2</mn></mfrac><mi>ρ</mi><mi>CdA</mi><msup><mover><mi>v</mi><mo>¯</mo></mover><mn>2</mn></msup>'
+                           '<mo>+</mo><mi>m</mi><msub><mi>a</mi><mo>+</mo></msub><mo>+</mo><mi>m</mi><mi>g</mi><msub><mi>g</mi><mtext>net</mtext></msub></mrow>'
+                           '<mi>η</mi></mfrac>',
+                    note=f'Road-load energy at the wheels per km over a powertrain efficiency, one η per powertrain fitted on dev '
+                         f'(petrol {e["ICE"]:.3f}, hybrid {e["HEV"]:.3f}, electric {e["EV"]:.3f}). The electric η is above 1 because '
+                         f'the road-load sum counts no regenerative braking; η absorbs it. On RoadSim: petrol {E["eta_sim"]["ICE"]:.3f}, '
+                         f'hybrid {E["eta_sim"]["HEV"]:.3f}, electric {E["eta_sim"]["EV"]:.3f}.')
     if i == 'bldg':
         c = E['coef_dev']
         return dict(js='TB[0] + TB[1] * H + TB[2] * C', args=c,
@@ -94,53 +120,64 @@ def verdict(L, E, M):
     return {'cls': 'loss', 'text': f"loses to {M.get('short', {}).get(name, name.replace('_', ' '))}"}
 
 
+def process(L):
+    """one law block from webdata.law_block -> the page's form (in place)"""
+    M = META[L['id']]
+    L.update({k: v for k, v in M.items() if k not in ('textbook_rows', 'network', 'target_ml')})
+    L['target']['symbol_ml'] = None
+    L['released']['mathml_eq'] = M['target_ml'] + '<mo>=</mo>' + L['released']['mathml']
+    L['released']['mathml'] = L['released']['mathml']
+    L['reading'] = READING.get(L['id'], '')
+    if L['id'] == 'fire':
+        r0 = json.load(open(f'{ROOT}/web/fire_ros.json'))
+        for v in L['vars']:
+            if v['id'] == 'R0':
+                v['choices'] = [{'name': g, 'value': r0['r0'][g]} for g in r0['groups']]
+                v['default_choice'] = r0['groups'].index('TU')
+        L['ros_table'] = r0
+    if L['id'] == 'road':
+        for v in L['vars']:
+            if v['id'] in ('h', 'e'):
+                v['choices'] = [{'name': 'no', 'value': 0.0}, {'name': 'yes', 'value': 1.0}]
+                v['default_choice'] = 0
+    E = L.get('exam')
+    if E and 'sim_law' in E['rows']:
+        E['rows']['sim_law']['name'] = f"{L['platform']}'s own law ({E.get('knee', '')}, PySR-style pick on simulations only)"
+    if E:
+        tb = textbook(L, E)
+        L['textbook'] = {'js': tb['js'], 'mathml': tb['mathml'], 'note': tb['note']}
+        L['textbookArgs'] = tb['args']
+        L['verdict'] = verdict(L, E, M)
+        k = M['exam_key']
+        L['score'] = {'exam': f"{E['rows']['law']['n']} {M['exam_unit']}", 'metric': M['exam_metric'],
+                      'law': E['rows']['law'][k], 'textbook': E['rows'][M['textbook_rows'][0]][k],
+                      'network': E['rows'].get(M['network'], {}).get(k) if M['network'] else None, 'dumb': E['rows'][M.get('dumb_row', 'dumb')][k], 'sim_law': E['rows']['sim_law'][k]}
+    if E and L['id'] == 'fire':
+        for kk, row in E['rows'].items():
+            g = E['growth_days'].get(kk, {})
+            row['g_mae'] = g.get('mae_log10'); row['g_rho'] = g.get('rho')
+            if kk == 'firecast':
+                row['mae_log10'] = None; row['bias_log10'] = None     # FireCast rows exist on growth days only
+        gd = E['growth_days']
+        L['score'].update(metric='mean |log₁₀ ratio|, growth days / all days',
+                          law=f"{gd['law']['mae_log10']:.3f} / {E['rows']['law']['mae_log10']:.3f}",
+                          sim_law=f"{gd['sim_law']['mae_log10']:.3f} / {E['rows']['sim_law']['mae_log10']:.3f}",
+                          textbook=f"{gd['rothermel_dev']['mae_log10']:.3f} / {E['rows']['rothermel_dev']['mae_log10']:.3f}",
+                          network=f"{gd['firecast']['mae_log10']:.3f} / –",
+                          dumb=f"{gd['clim']['mae_log10']:.3f} / {E['rows']['clim']['mae_log10']:.3f}")
+        L['verdict'] = {'cls': 'mixed', 'text': "best on growth days, loses on all days"}
+    # compact the exam block: rows + rungs only
+    if E:
+        L['exam'] = {'rows': E['rows'], 'rungs': E.get('rungs')}
+    for r in L['ladder']:
+        r['exam'] = (E or {}).get('rungs', {}).get(r['id']) if E else None
+    return L
+
+
 def main():
     D = json.load(open(f'{ROOT}/web/data.json'))
     for L in D['laws']:
-        M = META[L['id']]
-        L.update({k: v for k, v in M.items() if k not in ('textbook_rows', 'network', 'target_ml')})
-        L['target']['symbol_ml'] = None
-        L['released']['mathml_eq'] = M['target_ml'] + '<mo>=</mo>' + L['released']['mathml']
-        L['released']['mathml'] = L['released']['mathml']
-        L['reading'] = READING.get(L['id'], '')
-        if L['id'] == 'fire':
-            r0 = json.load(open(f'{ROOT}/web/fire_ros.json'))
-            for v in L['vars']:
-                if v['id'] == 'R0':
-                    v['choices'] = [{'name': g, 'value': r0['r0'][g]} for g in r0['groups']]
-                    v['default_choice'] = r0['groups'].index('TU')
-            L['ros_table'] = r0
-        E = L.get('exam')
-        if E and 'sim_law' in E['rows']:
-            E['rows']['sim_law']['name'] = f"{L['platform']}'s own law ({E.get('knee', '')}, PySR-style pick on simulations only)"
-        if E:
-            tb = textbook(L, E)
-            L['textbook'] = {'js': tb['js'], 'mathml': tb['mathml'], 'note': tb['note']}
-            L['textbookArgs'] = tb['args']
-            L['verdict'] = verdict(L, E, M)
-            k = M['exam_key']
-            L['score'] = {'exam': f"{E['rows']['law']['n']} {M['exam_unit']}", 'metric': M['exam_metric'],
-                          'law': E['rows']['law'][k], 'textbook': E['rows'][M['textbook_rows'][0]][k],
-                          'network': E['rows'][M['network']][k] if M['network'] else None, 'dumb': E['rows'][M.get('dumb_row', 'dumb')][k], 'sim_law': E['rows']['sim_law'][k]}
-        if E and L['id'] == 'fire':
-            for kk, row in E['rows'].items():
-                g = E['growth_days'].get(kk, {})
-                row['g_mae'] = g.get('mae_log10'); row['g_rho'] = g.get('rho')
-                if kk == 'firecast':
-                    row['mae_log10'] = None; row['bias_log10'] = None     # FireCast rows exist on growth days only
-            gd = E['growth_days']
-            L['score'].update(metric='mean |log₁₀ ratio|, growth days / all days',
-                              law=f"{gd['law']['mae_log10']:.3f} / {E['rows']['law']['mae_log10']:.3f}",
-                              sim_law=f"{gd['sim_law']['mae_log10']:.3f} / {E['rows']['sim_law']['mae_log10']:.3f}",
-                              textbook=f"{gd['rothermel_dev']['mae_log10']:.3f} / {E['rows']['rothermel_dev']['mae_log10']:.3f}",
-                              network=f"{gd['firecast']['mae_log10']:.3f} / –",
-                              dumb=f"{gd['clim']['mae_log10']:.3f} / {E['rows']['clim']['mae_log10']:.3f}")
-            L['verdict'] = {'cls': 'mixed', 'text': "best on growth days, loses on all days"}
-        # compact the exam block: rows + rungs only
-        if E:
-            L['exam'] = {'rows': E['rows'], 'rungs': E.get('rungs')}
-        for r in L['ladder']:
-            r['exam'] = (E or {}).get('rungs', {}).get(r['id']) if E else None
+        process(L)
     D['limits'] = json.load(open(f'{ROOT}/web/limits.json')) if os.path.exists(f'{ROOT}/web/limits.json') else []
     D['credits'] = open(f'{ROOT}/web/credits.html').read() if os.path.exists(f'{ROOT}/web/credits.html') else ''
     page = open(f'{ROOT}/web/template.html').read()

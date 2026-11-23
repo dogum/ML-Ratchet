@@ -8,23 +8,25 @@ import pretty
 
 ROOT = lr.ROOT
 REL = f'{ROOT}/release'
-LAWS = ['water', 'fire', 'grid_inertia', 'grid_nadir', 'bldg']
-PLAT = {'water': 'WaterSim', 'fire': 'FireSim', 'grid_inertia': 'GridSim', 'grid_nadir': 'GridSim', 'bldg': 'BuildingSim'}
+LAWS = ['water', 'fire', 'grid_inertia', 'grid_nadir', 'bldg', 'road']
+PLAT = {'water': 'WaterSim', 'fire': 'FireSim', 'grid_inertia': 'GridSim', 'grid_nadir': 'GridSim', 'bldg': 'BuildingSim', 'road': 'RoadSim'}
 KEY = {'water': ('mae', 'mean |error| of Q/P', '', 'lower'), 'fire': ('mae_log10', 'mean |log10 ratio| of new area', '', 'lower'),
        'grid_inertia': ('mdape', 'MdAPE of inertia', '%', 'lower'), 'grid_nadir': ('mae', 'MAE of the nadir depth', 'Hz', 'lower'),
-       'bldg': ('mdape', 'MdAPE of annual site energy per m2', '%', 'lower')}
+       'bldg': ('mdape', 'MdAPE of annual site energy per m2', '%', 'lower'),
+       'road': ('mdape', 'MdAPE of energy per km', '%', 'lower')}
 KIND = {'fu_dev': 'classical', 'fu_2.6': 'classical', 'fu_sim': 'classical', 'flowcast': 'published', 'dumb': 'dumb',
         'rothermel_dev': 'classical', 'rothermel_sim': 'classical', 'fl_prev': 'classical', 'firecast': 'published',
         'clim': 'dumb', 'persist': 'dumb', 'k_x_demand': 'classical', 'gridpulse': 'published', 'swing_ramp': 'classical',
         'gridpulse_5s': 'published', 'signature_dev': 'classical', 'signature_sim': 'classical', 'loglin_dev': 'classical',
-        'sim_law': 'classical'}
+        'sim_law': 'classical', 'roadload_dev': 'classical', 'roadload_sim': 'classical', 'energynet': 'published',
+        'b_label': 'classical', 'b_vsp': 'classical', 'b_class': 'dumb'}
 
 
 def exam(name):
     if name.startswith('grid_'):
         p = f'{ROOT}/results/exam_grid.json'
         return json.load(open(p))[name.split('_')[1]] if os.path.exists(p) else None
-    p = f'{ROOT}/results/exam_{name}.json'
+    p = f'{ROOT}/results/' + ('exam_road_reported.json' if name == 'road' else f'exam_{name}.json')
     return json.load(open(p)) if os.path.exists(p) else None
 
 

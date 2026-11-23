@@ -14,28 +14,31 @@ tags:
 - fire growth
 - grid inertia
 - energy signature
+- trip energy
 accent: '#6741d9'
 tagline: What does each simulator believe, in one line, and is it true?
 question: What readable law does each shared simulator imply, and does that law hold on the platform's real exam?
 question_short: One-line laws extracted from the simulators, graded on real exams
-summary: 'LawFinder runs symbolic regression on simulated banks from WaterSim, FireSim, GridSim and BuildingSim and returns
+summary: 'LawFinder runs symbolic regression on simulated banks from WaterSim, FireSim, GridSim, BuildingSim and RoadSim and returns
   short equations with error bars: the long-term runoff ratio of a basin, the next-day growth of a wildfire, GB system inertia,
-  the GB frequency nadir after a trip, and the annual energy intensity of a single-family home. Each law is a rung on a ratchet
+  the GB frequency nadir after a trip, the annual energy intensity of a single-family home, and a car''s energy per km on a trip. Each law is a rung on a ratchet
   of complexity levels and physics versions, chosen on a frozen simulated set and a small real dev set, then examined once
   on the platform''s real exam beside the textbook law (its constant fitted on the same dev set), the collection''s network
   and a dumb baseline.'
 reads: 'Per law: water - aridity PET/P, snow fraction, P-PET seasonal synchrony, soil storage index; fire - perimeter (km),
   daily 10 m wind (m/s), 100-h dead fuel moisture (%), fuel group; grid inertia - demand (GW), inverter-based share; grid
-  nadir - MW lost, inertia (GVA s), demand; homes - HDD and CDD (base 18 C), floor area, year built.'
+  nadir - MW lost, inertia (GVA s), demand; homes - HDD and CDD (base 18 C), floor area, year built; road - mean speed,
+  positive kinetic energy per metre, net and absolute grade, mass, CdA, Crr, ambient temperature, hybrid and electric flags.'
 returns:
 - 'Long-term runoff ratio: runoff ratio Q/P with a 68 % bar (frozen-set residual sd, dev-widened)'
 - 'Daily fire growth: log10(new area km² + 1 cell) with a 68 % bar (frozen-set residual sd, dev-widened)'
 - 'GB system inertia: system inertia E with a 68 % bar (frozen-set residual sd, dev-widened)'
 - 'GB frequency nadir: frequency drop to the nadir f0 - f_min with a 68 % bar (frozen-set residual sd, dev-widened)'
 - 'Home energy signature: site energy per floor area with a 68 % bar (frozen-set residual sd, dev-widened)'
+- 'Trip energy per km: energy per km, fuel at LHV or DC battery (MJ/km), with a 68 % bar (frozen-set residual sd, dev-widened)'
 physics:
   summary: 'No new physics: the collection''s shared simulators are used unchanged (WaterSim v1, FireSim v1, GridSim 1.1 via
-    GridPulse''s GB state sampler, BuildingSim 1.0/1.4). Each law is a statement about what one simulator implies.'
+    GridPulse''s GB state sampler, BuildingSim 1.0/1.4, RoadSim physics v1/v2). Each law is a statement about what one simulator implies.'
   simulator:
   - 'WaterSim: 16,000 generated basins (two physics versions), 4 runoff models, 2 snow routines, real ERA5-Land forcing from
     free windows, 10-year runs; w2 adds FlowCast''s dev-fitted ERA5 water-yield multiplier'
@@ -45,16 +48,22 @@ physics:
     catalogue (1 s means, 10 s fall <= -0.15 Hz)'
   - 'BuildingSim: 2,600 single-family homes from the ResStock-bootstrapped generator, TMYx weather shifted by U(-3, 3) C;
     b2 = physics 1.4'
+  - 'RoadSim: 16,000 trips (two physics versions) of light-duty generator vehicles (petrol, three hybrid kinds,
+    battery-electric) on RoadData''s train_noise VED routes (real Ann Arbor routes, lidar grade, airport weather) and
+    on dynamometer schedules; p2 = physics v2 (dev-calibrated on-road loads and maps)'
   checks:
   - lawsearch recovers a planted Budyko-Fu law with 1 % noise to the noise floor (MSE 1.0e-4 vs 1.0e-4)
   - Every simulator's own Phase 1 checks apply (shared/*/checks)
-  - Release evaluator (numpy) equals the search engine to machine precision; the page's JS equals numpy (training/results/js_parity.json)
+  - "Release evaluator (numpy) equals the search engine to machine precision; the page's JS equals numpy (training/results/js_parity.json;
+    road law: 6e-16 on 1,500 points, js_parity_road.json)"
 noise: 'Platform noise models as shipped: WaterSim forcing error on the inputs the law sees; FireSim runs on real HRRR; GridSim
-  events measured as 1 s means; BuildingSim weather shifts. No real labels in training.'
+  events measured as 1 s means; BuildingSim weather shifts; RoadSim drives the true weather (ambient + N(0, 1.5) C, wind
+  x U(0.4, 0.9)) while the law reads the observed one. No real labels in training.'
 network: 'No network: symbolic regression (lawsearch, numpy/scipy; PySR-style regularised evolution with Levenberg-Marquardt
   constants and a hall of fame per complexity). Operators + - * / ^ exp log sqrt inv sq; complexity = node count, up to 25.'
 approach:
-  real_backdrop: Real ERA5-Land forcing windows, real dev LANDFIRE/HRRR, NESO train-year operating points, TMYx weather
+  real_backdrop: Real ERA5-Land forcing windows, real dev LANDFIRE/HRRR, NESO train-year operating points, TMYx weather,
+    RoadData's unlabelled VED routes
   physics_inputs: Every law input is a physical quantity (aridity, perimeter, inertia, degree days)
   physics_anchor: false
   real_data_roles:
@@ -88,13 +97,22 @@ data:
   url: https://climate.onebuilding.org
   licence: Free with attribution
   role: physics
+- name: Vehicle Energy Dataset (VED) via RoadData (USGS 3DEP lidar grades, Iowa Mesonet ASOS weather)
+  url: https://github.com/gsoh/VED
+  licence: Apache-2.0 (VED); U.S. public domain (3DEP); free use with credit (IEM)
+  role: dev, exam, physics (train_noise routes)
+- name: US EPA test-car data and drive cycles via RoadData
+  url: https://www.epa.gov/compliance-and-fuel-economy-data/data-cars-used-testing-fuel-economy
+  licence: Public domain
+  role: dev, exam, physics (cycles)
 split:
   dev: 'Each platform''s frozen dev split, copied in splits.json: 52 CAMELS basins; 40 fires (791 fire-days); 4 GB events
-    of 2019; RECS dev single-family homes'
+    of 2019; RECS dev single-family homes; 14 VED dev cars (1,143 trips) and 1,178 EPA dev tests (seeded draw)'
   exam: 'Each platform''s exam split: 619 CAMELS basins (WY1990-99); FireData exam fire-days 2012-2024; 410 GB events (inertia)
-    and the loss-labelled ones (nadir), 2018-2025; RECS exam single-family homes'
+    and the loss-labelled ones (nadir), 2018-2025; RECS exam single-family homes; 22,877 VED exam trips and 52,522 EPA
+    exam tests (EnergyNet''s exam sets)'
 exam:
-  short: Four platforms' real exams, five laws
+  short: Five platforms' real exams, six laws
   summary: Each law run once on its platform's real exam by a separate script, beside the textbook law tuned on dev, the collection's
     network and a dumb baseline.
   results:
@@ -237,6 +255,168 @@ exam:
       value: 33.4
     verdict: loss
     note: 'Released law b2-c13: EUI = -H·Y + 2022·H + 186.5/1.926^A. BuildingSim''s own law (b2-c9): 2021·H - Y·(H - 0.03403).'
+  - metric: 'Trip energy per km: MdAPE, petrol cars, VED trips (14,469 real exam units)'
+    better: lower
+    unit: '%'
+    model: 19.3
+    baselines:
+    - name: RoadSim's law (p2-c10)
+      kind: classical
+      value: 14.0
+    - name: Road-load / eta, eta per powertrain fitted on dev
+      kind: classical
+      value: 20.0
+    - name: Road-load / eta, eta per powertrain fitted on RoadSim
+      kind: classical
+      value: 20.6
+    - name: EnergyNet v2.1 (network)
+      kind: published
+      value: 8.6
+    - name: Window label x distance (RoadData)
+      kind: classical
+      value: 13.0
+    - name: MOVES-like VSP bins (RoadData)
+      kind: classical
+      value: 10.3
+    - name: Class median (RoadData)
+      kind: dumb
+      value: 22.8
+    - name: Dev median per powertrain
+      kind: dumb
+      value: 22.4
+    verdict: loss
+    note: 'Bias -18.9 %, coverage of the 68 % bar 62 %. EnergyNet: its published value on the same trips (exam run 1 mis-scaled
+      its VED rows; training/exam_road_errata.py).'
+  - metric: 'Trip energy per km: MdAPE, hybrids, VED trips (8,241 real exam units)'
+    better: lower
+    unit: '%'
+    model: 16.8
+    baselines:
+    - name: RoadSim's law (p2-c10)
+      kind: classical
+      value: 40.4
+    - name: Road-load / eta, eta per powertrain fitted on dev
+      kind: classical
+      value: 15.7
+    - name: Road-load / eta, eta per powertrain fitted on RoadSim
+      kind: classical
+      value: 15.7
+    - name: EnergyNet v2.1 (network)
+      kind: published
+      value: 13.4
+    - name: Window label x distance (RoadData)
+      kind: classical
+      value: 16.2
+    - name: MOVES-like VSP bins (RoadData)
+      kind: classical
+      value: 15.3
+    - name: Class median (RoadData)
+      kind: dumb
+      value: 17.2
+    - name: Dev median per powertrain
+      kind: dumb
+      value: 19.0
+    verdict: loss
+    note: 'Bias -7.1 %, coverage of the 68 % bar 89 %. EnergyNet: its published value on the same trips (exam run 1 mis-scaled
+      its VED rows; training/exam_road_errata.py).'
+  - metric: 'Trip energy per km: MdAPE, electric (2 Nissan Leafs), VED trips (167 real exam units)'
+    better: lower
+    unit: '%'
+    model: 43.3
+    baselines:
+    - name: RoadSim's law (p2-c10)
+      kind: classical
+      value: 21.9
+    - name: Road-load / eta, eta per powertrain fitted on dev
+      kind: classical
+      value: 21.7
+    - name: Road-load / eta, eta per powertrain fitted on RoadSim
+      kind: classical
+      value: 17.3
+    - name: EnergyNet v2.1 (network)
+      kind: published
+      value: 23.2
+    - name: Window label x distance (RoadData)
+      kind: classical
+      value: 21.5
+    - name: MOVES-like VSP bins (RoadData)
+      kind: classical
+      value: 19.0
+    - name: Class median (RoadData)
+      kind: dumb
+      value: 27.1
+    - name: Dev median per powertrain
+      kind: dumb
+      value: 28.0
+    verdict: loss
+    note: 'Bias -42.2 %, coverage of the 68 % bar 94 %. EnergyNet: its published value on the same trips (exam run 1 mis-scaled
+      its VED rows; training/exam_road_errata.py).'
+  - metric: 'Trip energy per km: MdAPE, petrol cars, EPA tests (46,876 real exam units)'
+    better: lower
+    unit: '%'
+    model: 17.3
+    baselines:
+    - name: RoadSim's law (p2-c10)
+      kind: classical
+      value: 14.5
+    - name: Road-load / eta, eta per powertrain fitted on dev
+      kind: classical
+      value: 25.0
+    - name: Road-load / eta, eta per powertrain fitted on RoadSim
+      kind: classical
+      value: 24.3
+    - name: EnergyNet v2.1 (network)
+      kind: published
+      value: 7.49
+    - name: Dev median per powertrain
+      kind: dumb
+      value: 25.3
+    verdict: loss
+    note: Bias +10.6 %, coverage of the 68 % bar 81 %.
+  - metric: 'Trip energy per km: MdAPE, hybrids, EPA tests (4,154 real exam units)'
+    better: lower
+    unit: '%'
+    model: 13.1
+    baselines:
+    - name: RoadSim's law (p2-c10)
+      kind: classical
+      value: 22.3
+    - name: Road-load / eta, eta per powertrain fitted on dev
+      kind: classical
+      value: 19.6
+    - name: Road-load / eta, eta per powertrain fitted on RoadSim
+      kind: classical
+      value: 19.4
+    - name: EnergyNet v2.1 (network)
+      kind: published
+      value: 7.82
+    - name: Dev median per powertrain
+      kind: dumb
+      value: 21.9
+    verdict: loss
+    note: Bias +5.8 %, coverage of the 68 % bar 98 %.
+  - metric: 'Trip energy per km: MdAPE, battery-electric, EPA tests (1,492 real exam units)'
+    better: lower
+    unit: '%'
+    model: 43.1
+    baselines:
+    - name: RoadSim's law (p2-c10)
+      kind: classical
+      value: 26.8
+    - name: Road-load / eta, eta per powertrain fitted on dev
+      kind: classical
+      value: 11.9
+    - name: Road-load / eta, eta per powertrain fitted on RoadSim
+      kind: classical
+      value: 12.9
+    - name: EnergyNet v2.1 (network)
+      kind: published
+      value: 6.27
+    - name: Dev median per powertrain
+      kind: dumb
+      value: 15.8
+    verdict: loss
+    note: Bias +42.2 %, coverage of the 68 % bar 100 %.
   coverage:
   - output: Long-term runoff ratio
     actual: 82.9
@@ -248,6 +428,10 @@ exam:
     actual: 100.0
   - output: Home energy signature
     actual: 69.3
+  - output: Trip energy per km (VED trips)
+    actual: 71.7
+  - output: Trip energy per km (EPA tests)
+    actual: 82.6
 limits:
 - '<b>Water:</b> FlowCast, the collection''s ungauged network, beats the law (MAE 0.112 vs 0.129 on 619 basins). The law beats
   Budyko-Fu (0.141-0.154). In snowy basins (f_s > 0.3, 88 basins) every method is poor (law 0.22). All rows share ERA5-Land
@@ -264,11 +448,12 @@ limits:
 - <b>Homes:</b> the law loses to the dumb dev median (MdAPE 39.3 % vs 33.4 %) and to a log-linear fit on dev (26.6 %). BuildingSim's
   homes are about 1.4 times too energy-intensive at physics 1.0; 1.4 fixes the median but not the spread. RECS energy is EIA's
   billing-based estimate, and home-to-home variation (occupants, setpoints) is not in the inputs.
+- "<b>Road:</b> the law loses to EnergyNet everywhere and, on real VED trips, to RoadData's MOVES-like and window-label baselines (18.6 % against 11.8 % and 14.1 %). It beats road-load on EPA petrol and hybrid tests (17.3 % and 13.1 % against 25.0 % and 19.6 %) and loses to it on electric cars: it reads the 2 VED Leafs 42 % low and EPA BEVs 42 % high, one exponent for every electric car. RoadSim's own shorter law (p2-c10) beats the released one on VED petrol (14.0 %) and on EPA (15.1 %); the dev gate (14 dev cars, 1,178 EPA dev tests) picked the longer law. Real CdA and Crr are class defaults on VED (EPA: from the road-load coefficients); VED fuel is MAF-estimated for most cars. Exam run 1 mis-scaled EnergyNet's VED rows (units); its published values on the same trips are shown instead."
 - <b>Method:</b> one search per physics version, time-boxed at 4-7 minutes on a shared core; another seed can give a different
   front. Dev sets are small (4 grid events, 40 fires, 52 basins), so the gate is coarse. The road law (RoadSim trip energy)
-  was not built in this batch.
+  was added on 22 Nov 2026, after the other four.
 help_wanted:
-- RoadSim trip-energy law (VED/EPA exam) not built in this batch
+- 'Road: EnergyNet''s pooled VED row was not scored (exam run 1 mis-scaled its VED rows); re-scoring it from EnergyNet''s frame is the owner''s decision'
 - Daymet/NLDAS forcing would separate law skill from ERA5-Land bias (WaterData help_wanted)
 next:
 - 'Fire: add a persistence module to FireSim (stall and burnout probability by fuel and weather) and re-run the search; the
@@ -276,7 +461,7 @@ next:
 - 'Grid inertia: rescale GridSim''s GB fleet to NESO''s inertia per MW (the GridPulse wrapper''s fix) as physics i2, and re-take
   the ladder; the shape term (1 − 0.85 s) should survive.'
 - 'Water: a recession law −dQ/dt = a Q^b on the same banks, and a Daymet/NLDAS exam to separate law skill from ERA5-Land bias.'
-- 'Road: RoadSim trip-energy law against road-load on the VED/EPA exam (the fifth platform, not built here).'
+- 'Road: give the law the car''s engine size or label fuel economy, cold start and trip length as inputs (RoadData has them), and widen the generator toward lighter cars; re-score EnergyNet''s pooled VED row from its frame (exam run 1 unit bug) if the owner agrees.'
 - 'Homes: add heating fuel and system as inputs (a law per fuel) and occupants; RECS dev shows the fuel matters most.'
 usage:
   install: pip install numpy

@@ -48,3 +48,36 @@
   work folders. GridPulse's `gpsim` is imported through `_paths.import_gpsim()` (both modules are named `_paths`).
   The shell wrappers `cd` to `training/` and source a portable `env_sandbox.sh`. Only `fit_law.py`-level imports were
   smoke-tested; no shipped bank or search was re-run.
+
+## 2026-11-22 — the fifth law: RoadSim trip energy per km (built in the repository)
+
+Asked for by the owner after the import ("Follow the existing pipelines exactly"). Details and the exam table are in
+`MODEL_CARD.md` ("The road law"); the steps, as run:
+
+- **Data.** Nothing downloaded. RoadData's processed VED trips, EPA tables and cycles were read from an existing data root
+  (`ML_RATCHET_VEHICLE` pointed at another checkout's git-ignored `shared/vehicle/data`). EnergyNet's exam frames
+  (`exam2_ved_v2.parquet`, `exam2_epa_v2.parquet`) and its corrected EPA labels (`epa_fixed.parquet`) came from that
+  checkout's `models/energynet/work/` (`ML_RATCHET_PEER_REPO`, a new switch in `training/_paths.py`). RoadData's splits
+  were not changed.
+- **Bank** (`road_bank.py`, `run_road_banks.sh`): 2 physics versions × (6,000 train + 2,000 frozen) trips, 6 workers,
+  about 4 minutes. 0 trips failed. Simulated energy per km sits above the dev cars' (petrol 3.4-3.5 against 2.6-2.7
+  MJ/km; electric 0.6-0.75 against 0.44-0.47): the generator's cars are heavier (median 2.2 t, electric 2.65 t, against 1.3-1.5 t for the VED dev cars
+  and 1.9 t for the EPA dev tests).
+- **Search + ratchet** (`fit_law.py road`, 600 s per version): released p1-c23, R² 0.767 on val_p2, dev MdAPE 16.8 %.
+  No p2 rung cleared the 0.01 margin. First run on a dev set missing the 35 trips of mass-less VED cars released
+  p1-c18; the missing masses were set to class defaults (EnergyNet's rule) and the ratchet re-scored before the exam.
+- **Dry run** on dev units (`exam_road.py --dry-dev`), then **the exam, once** (logs/exam_road.started). The law loses
+  every stratum: VED trips 18.6 % (MOVES-like 11.8 %, road-load 18.3 %), EPA tests 17.3 % (EnergyNet 7.5 %, road-load
+  23.8 %). Electric cars are its worst case (±42 % bias).
+- **What failed.** Exam run 1 mis-scaled EnergyNet's VED rows (its frame is already in MJ; the script multiplied by the
+  unit factor again). A corrected re-score was not run: the exam runs once, and the re-run was stopped for the owner to
+  decide. `exam_road_errata.py` reports EnergyNet's published values on the same trips instead and marks its pooled VED
+  row not scored. The law's own numbers do not depend on the bug.
+- **Release.** `add_road_release.py`: the road entry merged into `lawfinder_laws.json`, `examples/road.csv` (fixed
+  draw by terciles of v̄, seed 20261122), the road block added to the lab page (JS == numpy to 6e-16 on 1,500 points,
+  `training/results/js_parity_road.json`). The other four laws were not rebuilt (their banks and point files are not
+  shipped); their entries are unchanged. `lawfinder.py` gained the `road_load` textbook and the missing
+  `degree_day_signature` form (`lf['bldg'].textbook()` raised KeyError before). The ratchet ladder was appended to
+  `ratchet.yaml` by `build_card.py`'s own ladder code; `model.yaml` was edited by hand (as the shipped one had been).
+- Windows note: the scripts need Python's UTF-8 mode (`PYTHONUTF8=1`) for the JSON and HTML they read.
+- Backlog: `lawfinder-road` removed (built).

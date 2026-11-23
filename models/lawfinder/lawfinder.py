@@ -89,7 +89,22 @@ def _rothermel(k, ros_mmin, P, **_):
     return np.log10(k * np.asarray(ros_mmin, float) * np.asarray(P, float) * 1.44 + 0.0081)
 
 
-_TEXTBOOK = {'budyko_fu': _fu, 'k_times_demand': _k_times, 'swing_ramp': _swing, 'rothermel_x_perimeter': _rothermel}
+def _signature(c, H, C, **_):
+    return c[0] + c[1] * np.asarray(H, float) + c[2] * np.asarray(C, float)
+
+
+def _road_load(eta, v, K, G, M, D, R, T, h, e, **_):
+    """road-load energy at the wheels per km (MJ/km) over one efficiency per powertrain (eta: {'ICE', 'HEV', 'EV'})"""
+    v, K, G, M, D, R, T, h, e = (np.asarray(x, float) for x in (v, K, G, M, D, R, T, h, e))
+    m = M * 1e3
+    rho = 101325.0 / (287.05 * (T + 273.15))
+    roll = m * 9.81 * R / 1e3
+    w = np.maximum(roll + 0.5 * rho * D * v ** 2 + m * K + m * 9.81 * G / 100, 0.05 * roll) / 1e3
+    return w / np.where(e > 0.5, eta['EV'], np.where(h > 0.5, eta['HEV'], eta['ICE']))
+
+
+_TEXTBOOK = {'budyko_fu': _fu, 'k_times_demand': _k_times, 'swing_ramp': _swing, 'rothermel_x_perimeter': _rothermel,
+             'degree_day_signature': _signature, 'road_load': _road_load}
 
 
 class LawFinder:
