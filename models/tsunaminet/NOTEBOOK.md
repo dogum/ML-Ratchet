@@ -112,3 +112,19 @@ Rule: keep if the frozen-set score is more than 0.01 above the incumbent's **and
 - Backlog entry `tsunaminet` removed (built). Model families: `flow` now lists TsunamiNet.
 - Not done: no site instrument. `lab/src/tnet.js` is the JS port (== numpy to 4.2e-7 on 6 exam events) but there is no
   `export_instrument.py`.
+
+## 2026-11-22 — PR #13 review: release pipeline and dev calibration
+
+- **`pipeline.py` was not the training preprocessing.** The shipped file was an older version: it fitted the tide on
+  samples up to 26 h *after* the origin (so it returned nothing for a recent event without future data) and had no
+  3-hour high-pass and no QC, while the training noise, dev, exam and `examples/` all went through `training/dart.py`
+  (causal pre-event tide fit, QC, despike, the 3-hour high-pass also applied to the Green's functions). `pipeline.py`
+  is now `training/dart.py` with its data folder from `$DART_DIR`. On synthetic NDBC files the two agree exactly (max
+  difference 0.0, same masks). The demo does not call it (it reads `examples/`), so the golden output is unchanged; the
+  model card already described the causal processing.
+- **`training/calibrate.py` swapped the interval sides.** With `err = truth - median`, a truth below the median must be
+  compared with the lower half-width; the code used the upper one (its comment said the right thing). Fixed in the
+  script. The released factors (Mw ×3.18, centroid ×4.40, amplitude ×2.08) were computed the swapped way and are left
+  as shipped: the per-event dev rows behind them are not in the release, so recomputing them needs the dev DART records
+  re-fetched and `dev_eval.py` re-run. The exam coverage (Mw 0.68, centroid 0.89, amplitude 0.78) is for the shipped
+  factors. Recorded in `model.yaml` limits.

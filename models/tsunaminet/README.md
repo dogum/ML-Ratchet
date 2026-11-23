@@ -77,6 +77,7 @@ Coverage of the 68% error bars on the exam: Mw (dev-widened x3.18; 90 % range co
 - Only thrust slip on the two shallowest SIFT rows; other mechanisms are read as if they were interface thrusts.
 - Hindcast-quality data: NDBC real-time files with event-mode gaps; the detiding is causal but tuned on the 3 days before.
 - Dev is 5 events; the widening factors (x2-4.4) rest on them.
+- The released widening factors were computed with the interval sides swapped (training/calibrate.py took the upper half-width for a truth below the median; fixed 22 Nov 2026, not re-run: the per-event dev rows are not shipped). The exam coverage above is for the factors as shipped.
 - Green's functions exist for 68 DART sites (those that recorded the eligible events); no coastal tide gauges.
 
 ## The ratchet

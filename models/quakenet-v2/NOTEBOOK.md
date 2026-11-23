@@ -80,3 +80,13 @@
 - Open (owner's decision): publish the zip as a GitHub release asset and point `models/quakenet/training/_paths.py` at
   it, as the cloud project's follow-up list suggests. Not done.
 - Nothing was loaded or run from the checkpoints in this import.
+
+## 2026-11-22 — PR #13 review: `err_ellipse` is now the 68 % contour
+
+- `quakenet2.py` returned `err_ellipse` semi-axes as the square roots of the covariance eigenvalues: the 1-sigma
+  contour, which holds about 39 % of a bivariate Gaussian. The model card, the coverage scoring (`training/score2.py`,
+  Mahalanobis² < 2.2789) and the lab page (axes × √2.2789) all mean the 68 % contour. The axes are now multiplied by
+  √2.2789 = 1.51; `cov_km2` and `epi_sig_km` are unchanged.
+- The demo prints the ellipse, so `tests/golden/quakenet-v2.txt` changed on those 8 numbers only (e.g. 1,421 × 680 km
+  → 2,145 × 1,026 km). The published coverage (ellipse 62 % all stations, 65 % at 2) was always scored on the 68 %
+  contour and stands.

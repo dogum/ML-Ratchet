@@ -12,8 +12,9 @@ import simbank; PH = simbank.load_phys()[physics]; delay = PH.get('delay_frac', 
 geo = tsim.Geometry(); gf = tsim.GFBank(); net = evallib.load_net(rung)
 summ, rows = dev_eval.evaluate(net, gf, geo, delay_frac=delay, n=1000, gain=gain)
 def factor(err, lo_w, hi_w):
-    z = [abs(e) / (h if e < 0 else l) for e, l, h in zip(err, lo_w, hi_w) if (h if e < 0 else l) > 0]
-    # err = truth - median; truth below median -> compare with the lower half-width
+    # err = truth - median; truth below median -> compare with the lower half-width (fixed 22 Nov 2026: the release's
+    # factors were computed with the two sides swapped; see NOTEBOOK.md)
+    z = [abs(e) / (l if e < 0 else h) for e, l, h in zip(err, lo_w, hi_w) if (l if e < 0 else h) > 0]
     return float(max(1.0, np.percentile(z, 68))) if z else 1.0
 e0 = [r['mw_true'] - r['mw'] for r in rows]
 f0 = factor(e0, [r['mw'] - r['mw_lo'] for r in rows], [r['mw_hi'] - r['mw'] for r in rows])

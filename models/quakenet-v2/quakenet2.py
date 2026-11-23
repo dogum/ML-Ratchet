@@ -16,6 +16,8 @@ HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import pipeline as PL
 from quakenet import QuakeNet, _gelu
 KM = np.pi * 6371.0 / 180
+CHI2_68 = 2.2789      # chi-square (2 dof) at 68 %: err_ellipse is the 68 % contour of cov_km2 (as training/score2.py scores it
+                      # and the lab page draws it); fixed 22 Nov 2026, the release returned the 1-sigma (39 %) axes
 
 # ---------------------------------------------------------------- geometry and ak135 travel times
 _TT = np.load(os.path.join(HERE, 'tt_ak135.npz')); _DEP = _TT['depths']; _P, _S = _TT['P'], _TT['S']
@@ -152,7 +154,7 @@ class QuakeNet2:
         n, e = o[0] * 100, o[1] * 100; lat, lon = destination(A['lat'], A['lon'], np.degrees(np.arctan2(e, n)) % 360, np.hypot(n, e) / KM)
         ev, evec = np.linalg.eigh(C); s = np.exp(np.clip(o[8:11], -6, 3))
         return dict(lat=float(lat), lon=float(lon), cov_km2=C, epi_sig_km=float(np.sqrt(np.trace(C) / 2)),
-                    err_ellipse=dict(major_km=float(np.sqrt(ev[1])), minor_km=float(np.sqrt(ev[0])), major_azimuth=float(np.degrees(np.arctan2(evec[1, 1], evec[0, 1])) % 180)),
+                    err_ellipse=dict(major_km=float(np.sqrt(ev[1] * CHI2_68)), minor_km=float(np.sqrt(ev[0] * CHI2_68)), major_azimuth=float(np.degrees(np.arctan2(evec[1, 1], evec[0, 1])) % 180)),
                     depth=float(10 ** (A['logz'] + o[2])), logz=float(A['logz'] + o[2]), logz_sig=float(s[0] * f['z']), mw=float(A['mw'] + o[3]), mw_sig=float(s[1] * f['mw']),
                     t0=float(ref + t0A + 10 * o[4]), t0_sig=float(10 * s[2] * f['t0']),
                     anchor=dict(lat=A['lat'], lon=A['lon'], depth=A['depth'], mw=A['mw'], t0=ref + A['t0']), stations=[dict(R={k: float(v) for k, v in r['R'].items()}, pick=r['pick']) for r in rd])

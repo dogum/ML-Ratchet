@@ -1,9 +1,28 @@
-"""pipeline.py (numpy only): read NDBC historical DART files and turn them into detided 1-minute series after an origin time.
-Detiding: least-squares fit of 8 tidal constituents (M2 S2 N2 K2 K1 O1 P1 Q1) plus a quadratic trend to all samples
-(15-min, 1-min, 15-s) in [t0 - 3 d, t0 + 3 d] EXCLUDING [t0 - 10 min, t0 + 26 h]; the fit is subtracted.
-Samples are then put on a 1-minute grid (t0 .. t0 + 24 h): each minute takes the mean of the samples within +-30 s;
-minutes with no sample are masked. The same code serves real events and the quiet noise windows."""
+"""pipeline.py (numpy + scipy): read NDBC historical DART files and turn them into detided 1-minute series after an
+origin time, exactly as training/dart.py did for the training noise, the dev set, the exam and examples/ (this file is
+that code with the data folder taken from $DART_DIR, default ./dart next to this file).
+Processing is causal (uses only data up to each minute), so it could run in real time:
+ 1. Detide: least-squares fit of 8 tidal constituents (M2 S2 N2 K2 K1 O1 P1 Q1) plus a quadratic trend to all samples
+    (15-min, 1-min, 15-s) in the 3 days BEFORE the origin [t0 - 3 d, t0 - 10 min]; the prediction is subtracted.
+ QC: records whose pre-event tide-fit residual exceeds 3 cm rms, or with > 5 % of pre-event samples flagged as
+    outliers by the robust fit, are rejected, and
+    single samples more than 3 m from the tide prediction are dropped.
+ 2. Minute grid from t0 - 12 h to t0 + 24 h: each minute is the mean of samples within +-30 s; gross glitches are
+    removed (> 6 local robust sigmas + 1 cm from a 9-sample running median, or > 0.5 m from it).
+ 3. High-pass: gaps filled by linear interpolation, then a causal 2nd-order Butterworth high-pass with a 3-hour cutoff
+    (removes the tide-prediction error and drift; tsunami periods of 5-60 min pass). The same filter is applied to
+    every Green's function (tsim.GFBank, release), so simulations, basis channels and forecasts see the same processing.
+Returned: t0 .. t0 + 24 h; minutes with no real sample are masked. The same code serves real events and noise windows."""
 import os, gzip, numpy as np, datetime as dt
+from scipy.signal import butter, sosfilt, sosfilt_zi
+SOS = butter(2, 1.0 / 180.0, 'highpass', fs=1.0, output='sos')   # per-minute samples, 3 h cutoff
+PRE = 720
+
+def highpass(x):
+    """Causal 3-h high-pass, started at rest (the series' first value is taken as the initial level)."""
+    x = np.asarray(x, np.float64)
+    return sosfilt(SOS, x, zi=sosfilt_zi(SOS) * x[0])[0]
+
 DDIR = os.environ.get('DART_DIR', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dart'))
 PER_H = {'M2': 12.4206012, 'S2': 12.0, 'N2': 12.65834751, 'K2': 11.96723606, 'K1': 23.93447213, 'O1': 25.81933871, 'P1': 24.06588766, 'Q1': 26.868350}
 _cache = {}
@@ -50,31 +69,38 @@ def tide_design(t, tref):
 
 def detided_minutes(station, t0, hours=24, robust=True):
     """Return (eta[m], mask[bool], info) on the minute grid t0 + 60 k, k = 0..60*hours. eta in metres."""
-    r = read_span(station, t0 - 3 * 86400, t0 + 3 * 86400)
-    n = 60 * hours + 1
+    r = read_span(station, t0 - 3 * 86400, t0 + hours * 3600 + 60)
+    n = 60 * hours + 1; N = PRE + n
     if r is None: return None
     T, H, Y = r
-    fit = (T < t0 - 600) | (T > t0 + 26 * 3600)
-    if fit.sum() < 100 or (T[fit] < t0).sum() < 50 or (T[fit] > t0).sum() < 50: return None
+    fit = T < t0 - 600
+    if fit.sum() < 100 or (T[fit] < t0 - 2 * 86400).sum() < 20: return None
     A = tide_design(T[fit], t0); w = np.ones(fit.sum())
     for it in range(3 if robust else 1):
         coef = np.linalg.lstsq(A * w[:, None], H[fit] * w, rcond=None)[0]
         res = H[fit] - A @ coef
         s = 1.4826 * np.median(np.abs(res)) + 1e-4
-        w = 1.0 / np.maximum(1.0, np.abs(res) / (4 * s))   # Huber-like down-weighting of spikes
-    win = (T >= t0 - 30) & (T <= t0 + hours * 3600 + 30)
+        w = 1.0 / np.maximum(1.0, np.abs(res) / (4 * s))
+    qc_frac = float(np.mean(w < 1))
+    if np.sqrt(np.mean((res * (w >= 1)) ** 2)) > 0.03 or qc_frac > 0.05: return None   # QC: jumps/glitches before the event
+    tg0 = t0 - PRE * 60
+    win = (T >= tg0 - 30) & (T <= t0 + hours * 3600 + 30)
     Tw, Rw = T[win], H[win] - tide_design(T[win], t0) @ coef
-    k = np.round((Tw - t0) / 60.0).astype(int); ok = (k >= 0) & (k < n) & (np.abs(Tw - t0 - 60 * k) <= 30)
-    s = np.zeros(n); c = np.zeros(n)
-    np.add.at(s, k[ok], Rw[ok]); np.add.at(c, k[ok], 1)
-    eta = np.where(c > 0, s / np.maximum(c, 1), 0.0)
-    mask = c > 0
-    # despike gross glitches only: points more than 0.1 m + 0.5 |median| away from the 5-sample running median
+    g = np.abs(Rw) < 3.0; Tw, Rw = Tw[g], Rw[g]                       # QC: no deep-ocean tsunami exceeds 3 m
+    k = np.round((Tw - tg0) / 60.0).astype(int); ok = (k >= 0) & (k < N) & (np.abs(Tw - tg0 - 60 * k) <= 30)
+    sm = np.zeros(N); c = np.zeros(N)
+    np.add.at(sm, k[ok], Rw[ok]); np.add.at(c, k[ok], 1)
+    eta = np.where(c > 0, sm / np.maximum(c, 1), 0.0); mask = c > 0
     idx = np.nonzero(mask)[0]
-    if len(idx) > 10:
-        v = eta[idx]; med = np.array([np.median(v[max(0, i - 2):i + 3]) for i in range(len(v))])
-        bad = np.abs(v - med) > 0.1 + 0.5 * np.abs(med)
-        mask[idx[bad]] = False; eta[idx[bad]] = 0.0
-    info = dict(tide_rms_fit=float(np.sqrt(np.mean(res ** 2))), n_fit=int(fit.sum()),
-                frac_1min=float(np.mean(mask)), types=np.bincount(Y[win], minlength=4)[1:].tolist())
-    return eta.astype(np.float32), mask, info
+    if len(idx) < 30 or mask[PRE:].sum() < 10: return None
+    v = eta[idx]; med = np.array([np.median(v[max(0, i - 4):i + 5]) for i in range(len(v))]); dev = np.abs(v - med)
+    loc = np.array([np.median(dev[max(0, i - 30):i + 31]) for i in range(len(v))]) * 1.4826
+    bad = (dev > 6 * loc + 0.01) | (dev > 0.5)
+    mask[idx[bad]] = False
+    idx = np.nonzero(mask)[0]
+    filled = np.interp(np.arange(N), idx, eta[idx])
+    hp = highpass(filled)
+    out = np.where(mask, hp, 0.0)[PRE:].astype(np.float32); m = mask[PRE:]
+    info = dict(tide_rms_fit=float(np.sqrt(np.mean(res ** 2))), n_fit=int(fit.sum()), frac_1min=float(np.mean(m)),
+                types=np.bincount(Y[win], minlength=4)[1:].tolist(), n_despiked=int(bad.sum()), qc_frac=qc_frac)
+    return out, m, info
