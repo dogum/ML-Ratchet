@@ -6,13 +6,14 @@ usage: python calibrate.py <weights.npz> <out.npz>   (copies the weights and wri
 import os, sys, json
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
+from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
 sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(ROOT, 'release')); sys.path.insert(2, os.path.abspath(ROOT))   # ROOT: airfoilnet.py in the repository layout
 import realeval as rev  # noqa
 import airfoilnet as an  # noqa
 
 units = json.load(open(os.path.join(ROOT, 'data', 'units.json')))
 splits = json.load(open(os.path.join(ROOT, 'splits.json')))
-z = np.load(os.path.join(ROOT, 'work', 'shapes.npz'))
+z = np.load(os.path.join(WORK, 'shapes.npz'))
 pmap = {k: p for k, p in zip(z['tested_keys'], z['tested_p'])}
 net = an.AirfoilNet(sys.argv[1])
 R = {'cl': [], 'lncd': [], 'cm': []}
@@ -42,4 +43,4 @@ meta = json.loads(str(zz['meta'])); meta['widen'] = fac; meta['dev_raw_coverage'
 zz['meta'] = np.array(json.dumps(meta))
 np.savez(sys.argv[2], **zz)
 json.dump(dict(widen=fac, dev_raw_coverage=raw_cov, n={k: len(v) for k, v in R.items()}),
-          open(os.path.join(ROOT, 'work', 'calibration.json'), 'w'), indent=1)
+          open(os.path.join(WORK, 'calibration.json'), 'w'), indent=1)

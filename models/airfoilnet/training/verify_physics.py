@@ -13,6 +13,7 @@ import xsolver as xs  # noqa
 import neuralfoil_np as nfn  # noqa
 mf = xs.mf
 ROOT = os.path.join(HERE, '..')
+from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
 OUT = {}
 
 
@@ -136,4 +137,4 @@ OUT['naca2412_Re3e6'] = dict(aL0_deg=float(-s[1] / s[0]), slope_per_deg=float(s[
                              reference='Abbott & von Doenhoff (1959), NACA 2412 smooth, Re ~3e6: aL0 ~ -2.0 deg, '
                                        'slope ~0.105/deg, clmax ~1.6, cdmin ~0.006, cm,c/4 ~ -0.045 (approximate values)')
 print('naca2412', OUT['naca2412_Re3e6'], flush=True)
-json.dump(OUT, open(os.path.join(ROOT, 'work', 'verify_physics.json'), 'w'), indent=1, default=float)
+json.dump(OUT, open(os.path.join(WORK, 'verify_physics.json'), 'w'), indent=1, default=float)

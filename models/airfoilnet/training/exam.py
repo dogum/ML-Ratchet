@@ -8,19 +8,20 @@ thin-airfoil theory, and the dumb mean dev polar.
 import os, sys, json, time
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
+from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
 sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(ROOT, 'release')); sys.path.insert(2, os.path.abspath(ROOT))   # ROOT: airfoilnet.py in the repository layout
 import realeval as rev  # noqa
 import baselines as bl  # noqa
 import airfoilnet as an  # noqa
 
-FLAG = os.path.join(ROOT, 'work', 'EXAM_STARTED')
+FLAG = os.path.join(WORK, 'EXAM_STARTED')
 if os.path.exists(FLAG):
     raise SystemExit('exam already started at ' + open(FLAG).read())
 open(FLAG, 'w').write(time.strftime('%Y-%m-%d %H:%M:%S'))
 
 units = json.load(open(os.path.join(ROOT, 'data', 'units.json')))
 splits = json.load(open(os.path.join(ROOT, 'splits.json')))
-z = np.load(os.path.join(ROOT, 'work', 'shapes.npz'))
+z = np.load(os.path.join(WORK, 'shapes.npz'))
 pmap = {k: p for k, p in zip(z['tested_keys'], z['tested_p'])}
 EX = splits['exam']
 
@@ -68,7 +69,7 @@ for lab, flt in (('Re_le_1e5', lambda a, r: r['Re'] <= 1.05e5), ('Re_gt_1e5', la
     for name in ('AirfoilNet', 'NeuralFoil', 'mean_polar'):
         s, _ = rev.evaluate(M[name], units, EX, pmap, flt)
         out[lab][name] = s
-json.dump(out, open(os.path.join(ROOT, 'work', 'exam.json'), 'w'), indent=1, default=float)
+json.dump(out, open(os.path.join(WORK, 'exam.json'), 'w'), indent=1, default=float)
 
 # predictions for the page explorer: every exam airfoil, its first build, all its Re
 preds = {}
@@ -86,5 +87,5 @@ for aid in EX:
                                r['cl_sd'].round(4).tolist(), r['lncd_sd'].round(4).tolist()],
                           nf=[o['cl'].round(4).tolist(), o['cd'].round(5).tolist(), o['cm'].round(4).tolist()],
                           phys=None if ph is None else [np.round(ph['cl'], 4).tolist(), np.round(ph['cd'], 5).tolist()])
-json.dump(dict(grid=g.tolist(), preds=preds), open(os.path.join(ROOT, 'work', 'exam_preds.json'), 'w'))
+json.dump(dict(grid=g.tolist(), preds=preds), open(os.path.join(WORK, 'exam_preds.json'), 'w'))
 print('exam done')

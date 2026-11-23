@@ -21,7 +21,7 @@ site_ll = np.array([[gf.meta[s]['lon'], gf.meta[s]['lat']] for s in sites])
 out = os.path.join(ROOT, 'release', 'gf_compact.npz')
 np.savez_compressed(out, sites=np.array(sites), site_ll=site_ll, q=q, scale=sc, arr=arr, w0=W0, units=json.dumps(geo.U), centers=geo.centers, chains=json.dumps(chains))
 # check reconstruction error on the input-window scale
-import sys; sys.path.insert(0, os.path.join(ROOT, 'release')); import tsunaminet
+import sys; sys.path.insert(0, os.path.join(ROOT, 'release')); sys.path.insert(1, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # model folder: tsunaminet.py; import tsunaminet
 C = tsunaminet.GreensFunctions(out); rng = np.random.default_rng(0); errs = []
 for _ in range(300):
     s = sites[rng.integers(len(sites))]; u = int(rng.integers(nu)); a = arr[sites.index(s), u]

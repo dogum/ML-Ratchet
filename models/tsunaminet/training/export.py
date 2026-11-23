@@ -2,7 +2,7 @@
 import os, sys, json, numpy as np, torch
 from _paths import ROOT, BANK
 import evallib
-sys.path.insert(0, os.path.join(ROOT, 'release'))
+sys.path.insert(0, os.path.join(ROOT, 'release')); sys.path.insert(1, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # model folder: tsunaminet.py
 rung = sys.argv[1]
 net = evallib.load_net(rung)
 W = {}

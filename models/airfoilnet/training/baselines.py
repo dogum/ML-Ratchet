@@ -9,13 +9,14 @@ neuralfoil(...)       : NeuralFoil 0.3.3 xxxlarge (trained on XFOIL), ncrit 9, n
 import os, sys, json, glob
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
+from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
 sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(ROOT, 'release')); sys.path.insert(2, os.path.abspath(ROOT))   # ROOT: airfoilnet.py in the repository layout
 import airfoilnet as an  # noqa
 
 
 def load_sweeps(tag):
     S = {}
-    for f in glob.glob(os.path.join(ROOT, 'work', 'bank', f'{tag}_w*.jsonl')):
+    for f in glob.glob(os.path.join(WORK, 'bank', f'{tag}_w*.jsonl')):
         for line in open(f):
             r = json.loads(line)
             aid, model, Re = r['id'].split('|')

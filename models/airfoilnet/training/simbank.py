@@ -15,7 +15,8 @@ import xsolver as xs  # noqa
 import shapes as sh  # noqa
 
 ROOT = os.path.join(HERE, '..')
-OUTD = os.path.join(ROOT, 'work', 'bank'); os.makedirs(OUTD, exist_ok=True)
+from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
+OUTD = os.path.join(WORK, 'bank'); os.makedirs(OUTD, exist_ok=True)
 RE_LO, RE_HI = 4e4, 6e5
 N_TRAIN_SYN = 600
 N_VAL = 50            # frozen simulated validation sweeps (val1)
@@ -37,7 +38,7 @@ def synth(pool, rng):
 
 
 def tasks(setname, physics):
-    z = np.load(os.path.join(ROOT, 'work', 'shapes.npz'))
+    z = np.load(os.path.join(WORK, 'shapes.npz'))
     pool, isval = z['pool'], z['isval']
     rng = np.random.default_rng({'train': 11, 'val': 12, 'twin_dev': 13, 'phys_exam': 14}[setname] +
                                 (100 if physics == 'p2' else 0))

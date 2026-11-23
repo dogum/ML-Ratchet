@@ -109,3 +109,6 @@ The drag trend with Re was built into physics version p1c (see the ratchet). The
 - The frozen training snapshots `work/snap_A.json` (151 sweeps, rungs r1-r5) and `snap_B.json` (256 sweeps, r6-r7) were
   not shipped, and no script writes them. `train.py` now uses them if present, else the first 151 / 256 sweeps by id
   with a warning. A rebuild therefore cannot reproduce the exact training sets of the released rungs.
+- The training scripts built `models/airfoilnet/work` by hand (32 places in 14 files), ignoring `$ML_RATCHET_WORK`. They
+  now take `WORK` from `training/_paths.py`. `data/` and `release/` stay next to the model folder (ignored by its
+  `.gitignore`).

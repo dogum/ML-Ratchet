@@ -8,6 +8,7 @@ usage: python ratchet.py r1 r2 r3 ...  (order = the order the rungs were tried)
 """
 import os, sys, json
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
+from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
 MARGIN, GATE = 0.01, 1.05
 NORM = dict(cl_pre=0.10, lncd=0.20, clmax=0.20, a_stall=3.0)
 
@@ -20,7 +21,7 @@ def main(order, notes=None, key='sim_skill', frozen='val1 (physics p1)', out='ra
     notes = notes or {}
     log = []; inc = None
     for rid in order:
-        f = os.path.join(ROOT, 'work', 'runs', rid, 'result.json')
+        f = os.path.join(WORK, 'runs', rid, 'result.json')
         if not os.path.exists(f):
             continue
         r = json.load(open(f)); D = dev_D(r['dev'])
@@ -44,7 +45,7 @@ def main(order, notes=None, key='sim_skill', frozen='val1 (physics p1)', out='ra
         log.append(row)
         print(row['id'], row['decision'], row['sim'], row['dev_D'], row['why'])
     json.dump(dict(rule=__doc__, log=log, incumbent=inc['id'] if inc else None),
-              open(os.path.join(ROOT, 'work', out), 'w'), indent=1)
+              open(os.path.join(WORK, out), 'w'), indent=1)
     return log, inc
 
 

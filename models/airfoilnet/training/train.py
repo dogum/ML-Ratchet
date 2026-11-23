@@ -6,6 +6,7 @@ import os, sys, json, glob, time
 import numpy as np
 import torch
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
+from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
 sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(ROOT, 'release')); sys.path.insert(2, os.path.abspath(ROOT))   # ROOT: airfoilnet.py in the repository layout
 import airfoilnet as an  # noqa
 import realeval as rev  # noqa
@@ -22,8 +23,8 @@ RUNGS = {
     'r6': dict(snapshot='B', arch='mlp', anchor=False, loose=True, banks=['p1'], width=128, depth=3),
     'r7': dict(snapshot='B', arch='mlp', anchor=False, loose=True, banks=['p1'], width=128, depth=3, calib=True),
 }
-CALIB = json.load(open(os.path.join(ROOT, 'work', 'calib_sim.json'))) if os.path.exists(
-    os.path.join(ROOT, 'work', 'calib_sim.json')) else None
+CALIB = json.load(open(os.path.join(WORK, 'calib_sim.json'))) if os.path.exists(
+    os.path.join(WORK, 'calib_sim.json')) else None
 
 
 def apply_calib(D):
@@ -42,7 +43,7 @@ def load_bank(tags, sets, loose=True, max_sweeps=None, snapshot=None):
     recs = []
     for t in tags:
         for st in sets:
-            for f in sorted(glob.glob(os.path.join(ROOT, 'work', 'bank', f'{t}_{st}_w*.jsonl'))):
+            for f in sorted(glob.glob(os.path.join(WORK, 'bank', f'{t}_{st}_w*.jsonl'))):
                 for line in open(f):
                     try:
                         recs.append(json.loads(line))
@@ -50,7 +51,7 @@ def load_bank(tags, sets, loose=True, max_sweeps=None, snapshot=None):
                         pass
     recs.sort(key=lambda r: r['id'])
     if snapshot:
-        sp = os.path.join(ROOT, 'work', f'snap_{snapshot}.json')
+        sp = os.path.join(WORK, f'snap_{snapshot}.json')
         if os.path.exists(sp):
             keep = set(json.load(open(sp)))
             recs = [r for r in recs if r['id'] in keep]
@@ -170,7 +171,7 @@ class Loaded(an.AirfoilNet):
 def dev_metrics(model, split='dev'):
     units = json.load(open(os.path.join(ROOT, 'data', 'units.json')))
     splits = json.load(open(os.path.join(ROOT, 'splits.json')))
-    z = np.load(os.path.join(ROOT, 'work', 'shapes.npz'))
+    z = np.load(os.path.join(WORK, 'shapes.npz'))
     pmap = {k: p for k, p in zip(z['tested_keys'], z['tested_p'])}
     def f(p, Re, al):
         r = model.predict(p, Re, al)
@@ -181,7 +182,7 @@ def dev_metrics(model, split='dev'):
 def main():
     rid = sys.argv[1]; cfg = RUNGS[rid]
     epochs = int(os.environ.get('EPOCHS', 300)); members = int(os.environ.get('MEMBERS', 3))
-    od = os.path.join(ROOT, 'work', 'runs', rid); os.makedirs(od, exist_ok=True)
+    od = os.path.join(WORK, 'runs', rid); os.makedirs(od, exist_ok=True)
     logf = open(os.path.join(od, 'train.log'), 'a')
     def log(s):
         print(s, flush=True); logf.write(s + '\n'); logf.flush()
