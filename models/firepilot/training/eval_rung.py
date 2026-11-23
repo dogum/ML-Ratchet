@@ -1,8 +1,9 @@
 """Score a planner on a frozen set (val = simulated, gate = real dev fires), resumable per case.
 
   python3 eval_rung.py <rung> <set> [n]      rung: r0 (proxy) | a model name in models/ | mpc (forecast-world CEM)
-  -> results/eval_<set>_<rung>.jsonl, summary printed (mean saved fraction of the no-action growth, with baselines
-     on the same cases and the perfect-foresight bound where it exists).
+  -> results/eval_<set>_<physics>_<rung>.jsonl (physics: FIREPILOT_PHYSICS, default p1), summary printed (mean
+     saved fraction of the no-action growth, with baselines on the same cases and the perfect-foresight bound where
+     it exists).
 """
 import os
 import sys
@@ -13,7 +14,7 @@ import _paths  # noqa: E402  (repository paths: shared/fire on sys.path; outputs
 import numpy as np
 
 from fp.planner import Context, ValueNet, plan_value, plan_proxy, cem_search, BASELINES
-from bank import case_dir, rebuild
+from bank import case_dir, rebuild, VERSION
 
 ROOT = _paths.WORK
 
@@ -43,7 +44,7 @@ def choose(rung, ctx, seed, S=None):
 def run(rung, setname, n=None):
     d = case_dir(setname)
     os.makedirs(os.path.join(ROOT, 'results'), exist_ok=True)
-    fn = os.path.join(ROOT, 'results', f'eval_{setname}_{rung}.jsonl')
+    fn = os.path.join(ROOT, 'results', f'eval_{setname}_{VERSION}_{rung}.jsonl')
     done = set()
     if os.path.exists(fn):
         done = {json.loads(l)['name'] for l in open(fn)}
@@ -77,7 +78,7 @@ def run(rung, setname, n=None):
 
 
 def summary(rung, setname, n=None):
-    fn = os.path.join(ROOT, 'results', f'eval_{setname}_{rung}.jsonl')
+    fn = os.path.join(ROOT, 'results', f'eval_{setname}_{VERSION}_{rung}.jsonl')
     ev = {json.loads(l)['name']: json.loads(l) for l in open(fn)}
     cs = [c for c in (cases(setname)[:n] if n else cases(setname)) if c['name'] in ev]
     d = case_dir(setname)

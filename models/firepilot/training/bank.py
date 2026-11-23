@@ -23,7 +23,7 @@ from fp.scenarios import synth_scenario, real_scenario, gate_ids, BUDGETS_EVAL, 
 from fp.planner import Context, BASELINES, sample_plan, candidate_set, plan_proxy, cem_search
 
 ROOT = _paths.WORK + '/data'
-VERSION = 'p1'   # physics/env version of the frozen sets
+from fp.env import PHYSICS as VERSION  # noqa: E402  physics/env version of the frozen sets (FIREPILOT_PHYSICS, default p1)
 
 
 def case_dir(kind):

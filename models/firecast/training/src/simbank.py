@@ -125,7 +125,8 @@ def sim_fire(seed, P, cal_feds, cal_wx):
     spot = rng.random() < P['p_spot']
     ember = float(np.exp(rng.uniform(np.log(P['ember'][0]), np.log(P['ember'][1]))))
     base = dict(mherb=float(rng.uniform(*P['mherb'])), mwoody=float(rng.uniform(*P['mwoody'])),
-                fmc=float(rng.uniform(*P['fmc'])), ember_rate=ember)
+                fmc=float(rng.uniform(*P['fmc'])), ember_rate=ember,
+                physics=P.get('physics', 'p1'))   # FireSim solver: p1 unless the priors file says (p2.json)
     # ---- ignition point: burnable, near the centre
     for _ in range(100):
         r0 = int(rng.integers(N // 2 - P['ign_box'], N // 2 + P['ign_box']))

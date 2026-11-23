@@ -223,3 +223,17 @@ for all 944 exam fires (no failures); the inputs came from the rebuilt FEDS-MTBS
 All 391 summary numbers match `training/results/exam.json`: 379 within 1e-6, the largest difference 4.6e-5 (the
 Rothermel wind back-calculation baseline's MAE interval). The severity truths match to 1e-6, so the LFPS disturbance
 layers have not changed since 19 Nov. Forest severity rho 0.580, wind rho 0.298, LFMC rho 0.168, as shipped.
+
+## 2026-11-22 — R6 scored on a FireSim physics p2 frozen set (nothing re-decided)
+
+`simbank.py` now passes FireSim's solver from the set name: names containing `_p2_` use p2, every other name p1
+(the solver of the shipped banks). Both sets use the same command, 15 shards × 100 attempts from seed 9,000,000;
+R6 was loaded from `weights/firedetective_v1.npz` (`rescore_release.py`).
+- **p1 rebuild (`val_v3`):** 650 fires; primary 0.37591 against the shipped 0.37593.
+- **p2 (`val_p2_v3`):** 641 fires; primary 0.36774 (-0.008, inside the 0.01 margin).
+  - Crown share R² 0.682 → 0.667; wind-blind wind 0.307 → 0.304; LFMC 0.139 → 0.132; 1-h moisture 0.724 → 0.718.
+  - Spotting AUC 0.465 → 0.466.
+- The p2 set was built twice: before and after U12 (FireSim; found in this re-score). The primary was 0.367741 both
+  times, to six digits.
+- Only R6's weights were shipped, so R0 to R5 were not re-scored and no decision was re-taken. R6 was trained on p1
+  banks.

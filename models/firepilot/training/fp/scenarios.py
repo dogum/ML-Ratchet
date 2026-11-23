@@ -44,7 +44,7 @@ def hidden_draw(rs):
                 d_wd=float(PERTURB['wd_sd_deg'] * rs.standard_normal()))
 
 
-def real_scenario(fid, rate_mph, hidden, for_exam_scoring=False, physics='p1', crop_m=CROP_M, day=None):
+def real_scenario(fid, rate_mph, hidden, for_exam_scoring=False, physics=None, crop_m=CROP_M, day=None):
     L = fd.landscape(fid, for_exam_scoring=for_exam_scoring)
     W = fd.weather(fid, for_exam_scoring=for_exam_scoring)
     prog = fd.progression(fid, for_exam_scoring=for_exam_scoring)
@@ -87,8 +87,10 @@ def _pm_start(w, lon, spin_h):
     return None
 
 
-def synth_scenario(seed, physics='p1', rate_mph=None, p_real_ls=0.6, p_real_w=0.75, max_tries=30):
+def synth_scenario(seed, physics=None, rate_mph=None, p_real_ls=0.6, p_real_w=0.75, max_tries=30):
     """Seeded synthetic scenario (training / frozen validation). Returns a Scenario or raises."""
+    from .env import PHYSICS, firesim_physics
+    physics = physics or PHYSICS
     rs = np.random.default_rng(seed)
     tids = train_ids()
     for attempt in range(max_tries):
@@ -116,7 +118,7 @@ def synth_scenario(seed, physics='p1', rate_mph=None, p_real_ls=0.6, p_real_w=0.
                 lon = float(rs.uniform(-122, -95))
                 d0 = pd.Timestamp('2019-06-01', tz='UTC') + pd.Timedelta(days=int(rs.integers(0, 120)))
                 w = fs.generate_weather(d0, hours=spin + int(HORIZON_H) + 24, climate=clim, lon=lon,
-                                        rng=int(rs.integers(2 ** 31)))
+                                        rng=int(rs.integers(2 ** 31)), physics=firesim_physics(physics))
             start = _pm_start(w, lon, spin)
             if start is None:
                 continue

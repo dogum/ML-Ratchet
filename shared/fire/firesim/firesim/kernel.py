@@ -403,14 +403,25 @@ def run_mtt(ny, nx, res_m, fuel_row, zone, slope_tan, upslope_az, waf, cbh, cbd,
                             blocked = True
                             break
                     else:
-                        if fuel_row[cs] < 0 or t_block[cs] <= tt:
+                        # Unburnable fuel blocks the step, and the two-point update below with it. A line the straight
+                        # path reaches after it is built only removes the straight candidate: the two-point update may
+                        # still arrive before that line exists and checks its own legs against its own arrival time.
+                        # (p1 counted such a line as a block and skipped the two-point update, so a line could stop
+                        # fire that arrived hours before it was built; U12, found in the p2 re-score, 22 Nov 2026.)
+                        if fuel_row[cs] < 0:
                             blocked = True
+                            break
+                        if t_block[cs] <= tt:
+                            pruned = True
                             break
                         if s - s0 == corner_j[o]:
                             ca = (cy + corner_a[o, 0]) * nx + cx + corner_a[o, 1]
                             cb = (cy + corner_b[o, 0]) * nx + cx + corner_b[o, 1]
-                            if _side_blocked(ca, fuel_row, t_block, tt) and _side_blocked(cb, fuel_row, t_block, tt):
+                            if fuel_row[ca] < 0 and fuel_row[cb] < 0:
                                 blocked = True
+                                break
+                            if _side_blocked(ca, fuel_row, t_block, tt) and _side_blocked(cb, fuel_row, t_block, tt):
+                                pruned = True
                                 break
                     rem = seg_frac[s]
                     while rem > 0.0:

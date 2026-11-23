@@ -230,3 +230,28 @@ FireSim's default physics became p2 today (U1, U9, U10, U11 fixed; `shared/fire/
 trained, gated and graded in p1, so `pipeline.plan_fire` now passes `physics='p1'` with the calibrated ROS factors.
 Its forecasts are unchanged. The demo reads stored examples and does not call FireSim. Moving FirePilot to p2 means
 a p2 frozen set (val_p2) and a re-score, not this edit.
+
+## 2026-11-22 — r1 scored on a FireSim physics p2 frozen set; p1's lines were helped by two solver bugs
+
+`FIREPILOT_PHYSICS` (p1 default, p2) now sets the planning world. `calibrated_params` passes FireSim's solver
+explicitly, and so does the weather generator. Banks go to `work/data/val_<physics>`; results go to
+`work/results/eval_val_<physics>_<rung>.jsonl`. Before this, the training code called FireSim with its default,
+which became p2 today, while still writing to `*_p1` folders.
+- **p1 rebuild (`val_p1`, 160 scenarios):** everything matches the ratchet: r1 0.4841, r0 0.4033, direct attack
+  0.107, indirect 1 / 2 / 4 km 0.261 / 0.203 / 0.078, anchor and flank 0.195.
+- **p2 (`val_p2`, 159 scenarios; one had no growth):**
+  - r1 0.460 (median 0.453), r0 0.403. r1 still beats r0 by +0.057.
+  - Indirect 1 / 2 / 4 km 0.269 / 0.215 / 0.079.
+  - Direct attack 0.054 and anchor and flank 0.114: both close lines near the fire.
+- **Why the near-fire plans fell:** the same scenario and the same 42 line cells saved 0.873 under p1 and 0.007
+  under p2 (case v0117). Two p1 solver bugs let a line take credit for cells the fire reached before the line was
+  built:
+  - U12: the cell itself stayed unburned (8 such cells in v0117).
+  - U13: spread in transit from a cell was cancelled once a line was built on it, if the step crossed an hour.
+  - Test: under p1, removing from the plan the line cells the free fire reaches before they are built takes
+    direct attack's saved share from 0.87 / 0.78 / 0.67 / 0.75 / 0.30 to 0.004 / 0.071 / 0.012 / 0.068 / 0.052
+    (v0117, v0145, v0007, v0058, v0017). Under p2 the same removal changes nothing.
+- **What this means for v1.0:** every FirePilot number was scored in p1, so plans with lines close to the fire were
+  credited for some line built behind the front. That includes the exam and the fixed-plan baselines. r1's
+  advantage over r0 holds under p2 on val. The exam and the gate were not re-run under p2. `pipeline.py` stays on p1.
+- Only r1's weights were shipped, so r2 to r4 were not re-scored and no decision was re-taken.

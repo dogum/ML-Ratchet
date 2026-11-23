@@ -286,3 +286,54 @@ before this change. Every shipped `checks/*.json` was made with p1, and the test
   re-running their training or exam scripts now uses p2. Only the released rung's weights were shipped for each
   model, so "score every rung" needs the other rungs retrained from rebuilt banks. The one released inference path
   that runs FireSim, FirePilot's `pipeline.plan_fire`, now passes `physics='p1'` (its v1.0 physics).
+
+## 2026-11-22 — Released rungs scored on physics p2 frozen sets; U12 fixed, U13 found in p1
+
+For each model a p1 rebuild and a p2 version of the frozen simulated set were built from the same seeds. Each
+released rung was scored on both with its shipped weights. The p1 rebuild checks that the environment reproduces
+the shipped score; p2 minus the p1 rebuild is the physics change alone. Only released weights were shipped, so
+no other rung was scored and no ratchet decision was re-taken. Outputs are in `models/*/work/` (git-ignored); details
+are in each model's NOTEBOOK.md (22 Nov entries).
+
+| Model (rung, score) | Shipped (p1) | p1 rebuild | p2 | p2 - p1 rebuild |
+|---|---|---|---|---|
+| FireCast (r2, AP F) | 0.5866 (149 fires) | 0.5866 (149) | 0.5923 (147) | +0.006 |
+| FireDetective (R6, primary) | 0.3759 (~650) | 0.3759 (650) | 0.3677 (641) | -0.008 |
+| FirePilot (r1, saved share) | 0.484 (160) | 0.484 (160) | 0.460 (159) | -0.024 |
+| FirePilot (r0) | 0.403 | 0.403 | 0.403 | 0.000 |
+| FireSize (r7, RPSS) | 0.2799 (1,175) | 0.2841 (1,175) | 0.2846 (1,175) | +0.0005 |
+
+- **Reproduction:**
+  - FireCast, FireDetective and FirePilot reproduce exactly (to 2e-8, 2e-5 and to the last printed digit).
+  - FireSize's network inputs reproduce (predicted escape rate identical), but its simulated labels do not
+    (simulated escape rate 1.563 % against 1.445 %; escape AUC 0.861 against 0.874). Its LANDFIRE windows and
+    30-day gridMET series were re-downloaded and the originals were not shipped. Open.
+- **Physics was implicit:** the models' training code called FireSim with default params, so since PR #10 it ran p2
+  while writing p1-named folders. Each model now names its solver:
+  - FirePilot: the `FIREPILOT_PHYSICS` variable.
+  - FireDetective: a `_p2_` tag in the bank name.
+  - FireCast: a `"physics"` key in `phys/*.json`; `phys/p2.json` is added.
+  - FireSize: `v1p1` / `v1p2` in `sim.py`'s table.
+  - Absent, they use p1 as before.
+- **U12, found here and fixed in p2:** when the straight step to a cell met that cell's (or an intermediate cell's)
+  line before arriving, the step counted as blocked and the two-point update was skipped. The two-point update can
+  arrive hours earlier, so a line could stop fire that reached its cell before the line existed. Example:
+  FirePilot v0117, a cell reached at 0.995 h stayed unburned under a line built at 5 h.
+  - p2 now treats such a line as removing only the straight candidate; unburnable fuel still blocks.
+  - The merged p2 had the bug in milder form: 1 of 40 cells in the new test, p1 3 of 40.
+  - Test: `test_u12_a_line_built_after_a_cell_burns_does_not_change_that_cell`.
+  - p1 is unchanged: the 16 comparison runs are identical to the old code. No check or comparison run without
+    timed lines moved.
+- **U13, p1 only (not a p2 change):** p1 re-checked every cell of a step, the departure cell included, at each hour
+  boundary. A line built on a cell the fire had already left therefore cancelled spread still in transit from it.
+  p2 checks the departure cell once, at departure.
+- **What U12 and U13 did to FirePilot:** plans that close lines near the fire were credited for line built behind
+  the front.
+  - Same scenario and plan: direct attack saved 0.873 under p1 and 0.007 under p2.
+  - Removing the line cells the free fire reaches before they are built brings p1 down to p2 in all five
+    scenarios tried.
+  - On val_p2, direct attack falls from 0.107 to 0.054 and anchor and flank from 0.195 to 0.114; the indirect plans
+    move by at most +0.012.
+  - FirePilot v1.0's exam was scored in p1; its model card now says so.
+- **Not done:** the FirePilot gate and exam, FireDetective's dev composite and FireCast's dev metrics were not
+  re-run under p2. The dev metrics use real data only and are unchanged. No rung was retrained.

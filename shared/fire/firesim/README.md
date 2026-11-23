@@ -298,7 +298,8 @@ Nominal overpasses come from a sun-synchronous orbit model with the real equator
 ### Physics versions
 
 `params['physics']` picks the solver; `generate_weather(physics=...)` the weather generator. p1 is what Phase 1
-shipped and every v1.0 fire model used. p2 (22 Nov 2026) fixes four bugs found on import:
+shipped and every v1.0 fire model used. p2 (22 Nov 2026) fixes four bugs found on import and a fifth (U12) found
+in the p2 re-score:
 
 | Bug | p1 behaviour | p2 |
 |---|---|---|
@@ -306,6 +307,7 @@ shipped and every v1.0 fire model used. p2 (22 Nov 2026) fixes four bugs found o
 | U9 | the two-point update used the departure hour's spread rates for the whole trip | the trip is integrated through the hourly weather |
 | U10 | `generate_weather` applied daily event and wet flags by UTC date | by the local solar day `hourly_from_daily` laid out |
 | U11 | every cell of a multi-cell step was checked against the departure time | each cell against the time the fire enters it |
+| U12 | a line the straight step reached after it was built counted as a block and skipped the two-point update, so a line could stop fire that reached its cell hours before the line existed | it only removes the straight candidate; the two-point update checks its own legs at its own arrival time |
 
 p2 also walks each straight segment cell by cell through the weather hours. p1 spread the segment's
 progress evenly over its cells when a step crossed an hour. In constant weather p2 equals p1 to 2e-7 h, and every

@@ -33,12 +33,25 @@ PERTURB = dict(ros_sd=0.5, ws_sd=0.25, wd_sd_deg=20.0)
 assert all(list(GROUPS[k]) == list(_FS_GROUPS[k]) for k in GROUPS)
 
 
-def calibrated_params(physics='p1'):
-    """Model physics. p0 = uncalibrated FireSim; p1 = dev-calibrated per-fuel-group ROS factors as stored."""
+# Planning-world version for banks and scoring: p1 (v1.0) unless FIREPILOT_PHYSICS says otherwise. p2 = the same
+# calibration in FireSim physics p2 (U1, U9, U10, U11 fixed; 22 Nov 2026). FireSim's own default is p2, so p0 and
+# p1 pin FireSim's physics to p1 explicitly.
+PHYSICS = os.environ.get('FIREPILOT_PHYSICS', 'p1')
+assert PHYSICS in ('p0', 'p1', 'p2'), PHYSICS
+
+
+def firesim_physics(physics):
+    return 'p2' if physics == 'p2' else 'p1'
+
+
+def calibrated_params(physics=None):
+    """Model physics. p0 = uncalibrated FireSim; p1 = dev-calibrated per-fuel-group ROS factors as stored;
+    p2 = p1's factors in FireSim physics p2."""
+    physics = physics or PHYSICS
     if physics == 'p0':
-        return {}
+        return dict(physics='p1')
     cal = json.load(open(CAL_FILE))
-    return RP.calibrated_params(cal)
+    return dict(RP.calibrated_params(cal), physics=firesim_physics(physics))
 
 
 class Scenario:
@@ -46,7 +59,8 @@ class Scenario:
     start: UTC Timestamp of detection; lon: degrees (for local solar time); rate_mph: crew budget (m of line per
     working hour, two crews); hidden: dict(f_ros, f_ws, d_wd) (truth ROS factor, forecast wind errors)."""
 
-    def __init__(self, ls, w, burned0, start, lon, rate_mph, hidden, physics='p1', horizon_h=HORIZON_H, meta=None):
+    def __init__(self, ls, w, burned0, start, lon, rate_mph, hidden, physics=None, horizon_h=HORIZON_H, meta=None):
+        physics = physics or PHYSICS
         self.ls, self.w, self.burned0 = ls, w, np.asarray(burned0, bool)
         self.start = pd.Timestamp(start)
         if self.start.tz is None:
