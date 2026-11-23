@@ -1,0 +1,174 @@
+{
+ "rule": "The ratchet: re-take every rung decision in order from work/runs/<rung>/result.json -> work/ratchet.json\n\nRule (fixed before the first rung was scored):\n  keep a rung if  sim_skill(frozen set) > incumbent + 0.01   AND   dev error D <= 1.05 x incumbent's D\n  sim_skill = mean over Cl, ln Cd, Cm of (1 - MAE / MAE of a constant guess) on the frozen simulated set\n  D = mean( Cl_pre/0.10, lnCd/0.20, Clmax/0.20, alpha_stall/3 deg )  on the real dev airfoils\nusage: python ratchet.py r1 r2 r3 ...  (order = the order the rungs were tried)\n",
+ "log": [
+  {
+   "id": "r1",
+   "change": "MLP on polars: shape sensors + log Re + alpha -> Cl, ln Cd, Cm with log-sigmas; 151 sweeps (snapshot A)",
+   "sim": 0.7506,
+   "dev_D": 1.0329,
+   "frozen": "val2 (physics p1c)",
+   "dev": {
+    "cl_pre": 0.142,
+    "lncd": 0.2714,
+    "clmax": 0.1189,
+    "a_stall": 2.2808
+   },
+   "dev_cov": {
+    "cl": 0.3304442036836403,
+    "lncd": 0.35697940503432496,
+    "cm": 0.16578947368421051
+   },
+   "n_train_sweeps": 151,
+   "decision": "kept",
+   "why": "First rung."
+  },
+  {
+   "id": "r2",
+   "change": "DeepONet (branch: shape + Re, trunk: alpha), same data",
+   "sim": 0.714,
+   "dev_D": 1.2137,
+   "frozen": "val2 (physics p1c)",
+   "dev": {
+    "cl_pre": 0.1568,
+    "lncd": 0.2849,
+    "clmax": 0.1873,
+    "a_stall": 2.7791
+   },
+   "dev_cov": {
+    "cl": 0.3358613217768147,
+    "lncd": 0.3318077803203661,
+    "cm": 0.11315789473684211
+   },
+   "n_train_sweeps": 151,
+   "decision": "rejected",
+   "why": "sim -0.037 not > +0.01; dev D 1.214 > 1.05 x 1.033"
+  },
+  {
+   "id": "r3",
+   "change": "DeepONet predicting corrections to thin-airfoil Cl and Cm",
+   "sim": 0.6911,
+   "dev_D": 1.553,
+   "frozen": "val2 (physics p1c)",
+   "dev": {
+    "cl_pre": 0.1912,
+    "lncd": 0.2806,
+    "clmax": 0.3539,
+    "a_stall": 3.384
+   },
+   "dev_cov": {
+    "cl": 0.27843986998916576,
+    "lncd": 0.2517162471395881,
+    "cm": 0.23684210526315788
+   },
+   "n_train_sweeps": 151,
+   "decision": "rejected",
+   "why": "sim -0.059 not > +0.01; dev D 1.553 > 1.05 x 1.033"
+  },
+  {
+   "id": "r4",
+   "change": "r3 trained on strictly converged points only (drop loose Newton limit cycles)",
+   "sim": 0.6853,
+   "dev_D": 1.6016,
+   "frozen": "val2 (physics p1c)",
+   "dev": {
+    "cl_pre": 0.1857,
+    "lncd": 0.2931,
+    "clmax": 0.426,
+    "a_stall": 2.8634
+   },
+   "dev_cov": {
+    "cl": 0.36836403033586135,
+    "lncd": 0.32494279176201374,
+    "cm": 0.28157894736842104
+   },
+   "n_train_sweeps": 151,
+   "decision": "rejected",
+   "why": "sim -0.065 not > +0.01; dev D 1.602 > 1.05 x 1.033"
+  },
+  {
+   "id": "r3b",
+   "change": "MLP predicting corrections to thin-airfoil Cl and Cm",
+   "sim": 0.7345,
+   "dev_D": 1.2048,
+   "frozen": "val2 (physics p1c)",
+   "dev": {
+    "cl_pre": 0.1561,
+    "lncd": 0.3207,
+    "clmax": 0.1509,
+    "a_stall": 2.7013
+   },
+   "dev_cov": {
+    "cl": 0.3640303358613218,
+    "lncd": 0.20823798627002288,
+    "cm": 0.3105263157894737
+   },
+   "n_train_sweeps": 151,
+   "decision": "rejected",
+   "why": "sim -0.016 not > +0.01; dev D 1.205 > 1.05 x 1.033"
+  },
+  {
+   "id": "r5",
+   "change": "Physics p1c: dev-measured drag mismatch (ln Cd += 0.015 + 0.21 (log10 Re - 5)) built into the labels",
+   "sim": 0.7569,
+   "dev_D": 1.0139,
+   "frozen": "val2 (physics p1c)",
+   "dev": {
+    "cl_pre": 0.1445,
+    "lncd": 0.2662,
+    "clmax": 0.1097,
+    "a_stall": 2.1944
+   },
+   "dev_cov": {
+    "cl": 0.27518959913326113,
+    "lncd": 0.2906178489702517,
+    "cm": 0.1763157894736842
+   },
+   "n_train_sweeps": 151,
+   "decision": "rejected",
+   "why": "sim +0.006 not > +0.01"
+  },
+  {
+   "id": "r6",
+   "change": "MLP on 256 sweeps (snapshot B)",
+   "sim": 0.7583,
+   "dev_D": 1.2232,
+   "frozen": "val2 (physics p1c)",
+   "dev": {
+    "cl_pre": 0.1562,
+    "lncd": 0.3312,
+    "clmax": 0.1509,
+    "a_stall": 2.7621
+   },
+   "dev_cov": {
+    "cl": 0.24918743228602383,
+    "lncd": 0.2379862700228833,
+    "cm": 0.19210526315789472
+   },
+   "n_train_sweeps": 256,
+   "decision": "rejected",
+   "why": "sim +0.008 not > +0.01; dev D 1.223 > 1.05 x 1.033"
+  },
+  {
+   "id": "r7",
+   "change": "Physics p1c and 256 sweeps",
+   "sim": 0.776,
+   "dev_D": 1.1197,
+   "frozen": "val2 (physics p1c)",
+   "dev": {
+    "cl_pre": 0.1605,
+    "lncd": 0.2865,
+    "clmax": 0.1286,
+    "a_stall": 2.3941
+   },
+   "dev_cov": {
+    "cl": 0.23185265438786565,
+    "lncd": 0.39816933638443935,
+    "cm": 0.2236842105263158
+   },
+   "n_train_sweeps": 256,
+   "decision": "rejected",
+   "why": "dev D 1.120 > 1.05 x 1.033"
+  }
+ ],
+ "incumbent": "r1"
+}

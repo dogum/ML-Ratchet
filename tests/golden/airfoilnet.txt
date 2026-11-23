@@ -1,0 +1,56 @@
+AirfoilNet demo: polars from shape + Reynolds number, against UIUC tunnel data (exam airfoils)
+
+BW-3  (kit:bw3, Re = 100,000)
+  Cl max   tunnel 1.35 at 12.8 deg | AirfoilNet 1.26 at 9.2 deg
+  alpha  Cl tunnel  Cl AirfoilNet (68% bar)
+   -5.1    -0.351    -0.368 +- 0.237
+   -0.4     0.151     0.227 +- 0.268
+    3.6     0.794     0.875 +- 0.398
+    7.5     1.102     1.193 +- 0.270
+   11.8     1.327     1.139 +- 0.446
+   15.4     1.174     0.836 +- 1.200
+   20.0     1.193     0.541 +- 2.950
+  min Cd   tunnel 0.0181 at 5.8 deg | AirfoilNet 0.0221 (x/ 4.91)
+  mean |Cl error| 0.186,  median |ln Cd ratio| 0.438
+
+CG Ultimate  (kit:ultimate, Re = 202,200)
+  Cl max   tunnel 0.90 at 11.7 deg | AirfoilNet 1.02 at 11.0 deg
+  alpha  Cl tunnel  Cl AirfoilNet (68% bar)
+   -5.8    -0.650    -0.616 +- 0.055
+   -1.7    -0.234    -0.133 +- 0.132
+    2.5     0.222     0.454 +- 0.088
+    6.7     0.638     0.799 +- 0.064
+   10.7     0.882     1.012 +- 0.081
+   14.8     0.731     0.755 +- 0.128
+   18.9     0.748     0.564 +- 0.331
+  min Cd   tunnel 0.0095 at 0.2 deg | AirfoilNet 0.0114 (x/ 1.29)
+  mean |Cl error| 0.127,  median |ln Cd ratio| 0.099
+
+Ultra-Sport 1000  (kit:us1000, Re = 101,800)
+  Cl max   tunnel 0.93 at 11.8 deg | AirfoilNet 0.60 at 12.2 deg
+  alpha  Cl tunnel  Cl AirfoilNet (68% bar)
+   -6.0    -0.665    -0.726 +- 0.068
+   -1.6    -0.157    -0.181 +- 0.111
+    2.4     0.162     0.147 +- 0.249
+    6.5     0.594     0.355 +- 0.329
+   10.6     0.898     0.542 +- 0.295
+   14.5     0.865     0.436 +- 0.571
+   18.5     0.852     0.093 +- 1.182
+  min Cd   tunnel 0.0205 at -2.0 deg | AirfoilNet 0.0252 (x/ 1.14)
+  mean |Cl error| 0.245,  median |ln Cd ratio| 0.472
+
+WASP  (kit:wasp, Re = 203,200)
+  Cl max   tunnel 1.23 at 11.1 deg | AirfoilNet 1.31 at 11.2 deg
+  alpha  Cl tunnel  Cl AirfoilNet (68% bar)
+   -5.9    -0.350    -0.368 +- 0.093
+   -2.6     0.018     0.068 +- 0.045
+    0.4     0.349     0.378 +- 0.071
+    3.5     0.661     0.704 +- 0.038
+    6.6     0.961     1.027 +- 0.046
+    9.8     1.197     1.279 +- 0.074
+   12.5     1.223     1.280 +- 0.147
+   15.4     1.101     0.996 +- 0.231
+   18.8     0.938     0.725 +- 0.304
+  min Cd   tunnel 0.0088 at -0.3 deg | AirfoilNet 0.0096 (x/ 1.29)
+  mean |Cl error| 0.070,  median |ln Cd ratio| 0.071
+

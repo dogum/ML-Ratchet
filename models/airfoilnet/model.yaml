@@ -1,0 +1,267 @@
+id: airfoilnet
+name: AirfoilNet
+version: '1.0'
+status: released
+released: '2026-11-22'
+order: 34
+domain: Aerodynamics
+tags:
+- airfoils
+- wind tunnel
+- polars
+- XFOIL
+- low Reynolds number
+- MLP
+- uncertainty
+accent: '#1d4fb8'
+tagline: 'The wind tunnel: an airfoil polar from its shape, graded on real tunnel data.'
+question: What lift, drag and moment curves will this airfoil have, and where does it stall?
+question_short: What polar will this airfoil have, and where does it stall?
+summary: From an airfoil's coordinates and a Reynolds number (4e4-6e5), AirfoilNet predicts Cl, Cd and Cm against angle of
+  attack, with 68% error bars, and from them Cl max and the stall angle. It learned only from 151 alpha sweeps of mfoil, an
+  XFOIL-class viscous-inviscid solver, on airfoil shapes from the UIUC database with every tested airfoil removed. It was
+  examined once on the clean wind-tunnel polars of 75 airfoils from 34 families in the UIUC Low-Speed Airfoil Tests. It beats
+  NeuralFoil on maximum lift and stall angle and loses to it on lift before stall, drag and moment.
+reads: Airfoil coordinates (any .dat, Selig or Lednicer; refitted with an 18-parameter CST), Reynolds number 4e4-6e5, angles
+  of attack (deg). Incompressible, clean (free transition).
+returns:
+- Cl(alpha) +- 68% bar
+- Cd(alpha) with a bar on ln Cd
+- Cm about c/4 (alpha) +- 68% bar
+- Cl max and stall angle from the predicted polar
+physics:
+  summary: 'XFOIL-class viscous-inviscid analysis: linear-vorticity panel method with transpiration, two-equation integral
+    boundary layer (Drela closures), e^N transition (Ncrit 9), lag-entrainment turbulent shear, wake, all coupled in one global
+    Newton solve (mfoil by K. Fidkowski).'
+  simulator:
+  - mfoil v2023-06-28 (MIT) with numba kernels (same arithmetic, 1e-13 agreement), sharp-trailing-edge and Newton limit-cycle
+    fixes
+  - 'Shapes: 1,283 UIUC database airfoils (tested airfoils and near-duplicates removed) plus blends, CST-smoothed, 120 panels'
+  - Re log-uniform 4e4-6e5; alpha sweeps in 2-deg steps with warm starts; points flagged when only loosely converged
+  - Physics p1c (dev-fitted drag-vs-Re correction) was tried and rejected by the ratchet
+  checks:
+  - 'Panel method vs exact Joukowski airfoil: Cl within 0.10-0.22%, Cp mean abs error 0.0012 (training/verify_physics.json)'
+  - 'Thin-airfoil theory, NACA 2404: zero-lift angle -2.096 vs -2.077 deg; lift slope 1.031 x 2pi (thickness rule 1.031)'
+  - 'Published XFOIL 6.99 polars (airfoiltools.com, Ncrit 9), NACA 0012/2412/4412, 42 points: Cl 0.0037, Cd median 0.5%, Cm
+    0.0007'
+  - 'NACA 2412 at Re 3e6: aL0 -2.21 deg, slope 0.111/deg, Clmax 1.75, Cdmin 0.0051 vs book values ~-2.0, ~0.105, ~1.6, ~0.006'
+  - 'Numba port vs original mfoil: Cl, Cd, Cm within 4e-13 (training/verify_fast.json)'
+noise: 'None injected: no public record of tunnel noise for these polars. Scatter comes from the solver itself (loose-convergence
+  points, different panelings).'
+network: 'MLP on polars: 50 shape/Re features + 3 alpha features -> 3 hidden layers of 128 (SiLU) -> Cl, ln Cd, Cm and their
+  log-sigmas; beta-NLL; 3 seeds averaged (3 x 40,710 parameters)'
+approach:
+  real_backdrop: false
+  physics_inputs: CST thickness and camber at 24 stations (a shape fit, not a solver output)
+  physics_anchor: false
+  real_data_roles:
+  - calibration
+  - gate
+  - error_bars
+  - exam
+data:
+- name: UIUC Low-Speed Airfoil Tests, Summary of Low-Speed Airfoil Data vols 1-5 (Selig et al. 1995-2012)
+  url: https://m-selig.ae.illinois.edu/uiuc_lsat.html
+  licence: GNU GPL v2 (stated in the data volumes)
+  role: dev, exam
+- name: UIUC Airfoil Coordinates Database
+  url: https://m-selig.ae.illinois.edu/ads/coord_database.html
+  licence: No explicit licence; compiled from many sources; cited
+  role: physics (training shapes)
+- name: mfoil (K. J. Fidkowski), via the pymfoil 0.1.0 PyPI package
+  url: https://pypi.org/project/pymfoil/
+  licence: MIT
+  role: physics
+- name: NeuralFoil 0.3.3 weights (P. Sharpe)
+  url: https://pypi.org/project/neuralfoil/
+  licence: MIT
+  role: baseline
+- name: XFOIL polars published on airfoiltools.com
+  url: http://airfoiltools.com/
+  licence: Used for verification only, not redistributed
+  role: physics check
+split:
+  dev: '7 airfoils from 4 families drawn by seed 20261122 from families with <= 3 airfoils: A18; FX 63-137, FX 74-CL5-140
+    MOD; M06-13-128, M6 65%, M6 85%; Trainer 60 (splits.json)'
+  exam: All other 75 tested airfoils (34 families), every clean run in vols 1-5, Re 3e4-5e5
+exam:
+  short: 75 airfoils, 34 families, UIUC tunnel
+  summary: Mean absolute errors per run, then per airfoil, then over airfoils, on all clean UIUC runs of 75 exam airfoils;
+    the raw solver on a paired one-Re-per-airfoil subset.
+  results:
+  - metric: Cl before stall, mean |error|
+    better: lower
+    model: 0.091
+    unit: Cl
+    baselines:
+    - name: NeuralFoil 0.3.3 xxxlarge (trained on XFOIL)
+      kind: published
+      value: 0.082
+    - name: Thin-airfoil theory
+      kind: classical
+      value: 0.195
+    - name: Mean dev polar
+      kind: dumb
+      value: 0.196
+    verdict: loss
+  - metric: Cl after stall (up to +10 deg), mean |error|
+    better: lower
+    model: 0.208
+    unit: Cl
+    baselines:
+    - name: NeuralFoil 0.3.3 xxxlarge (trained on XFOIL)
+      kind: published
+      value: 0.165
+    - name: Mean dev polar
+      kind: dumb
+      value: 0.292
+    verdict: loss
+  - metric: Cl max, mean |error|
+    better: lower
+    model: 0.082
+    unit: Cl
+    baselines:
+    - name: NeuralFoil 0.3.3 xxxlarge (trained on XFOIL)
+      kind: published
+      value: 0.096
+    - name: Mean dev polar
+      kind: dumb
+      value: 0.258
+    verdict: win
+  - metric: Stall angle, mean |error|
+    better: lower
+    model: 1.76
+    unit: deg
+    baselines:
+    - name: NeuralFoil 0.3.3 xxxlarge (trained on XFOIL)
+      kind: published
+      value: 2.19
+    - name: Mean dev polar
+      kind: dumb
+      value: 7.85
+    verdict: win
+  - metric: Drag before stall, mean |ln(Cd_pred/Cd)|
+    better: lower
+    model: 0.177
+    unit: ln ratio
+    baselines:
+    - name: NeuralFoil 0.3.3 xxxlarge (trained on XFOIL)
+      kind: published
+      value: 0.126
+    - name: Mean dev polar
+      kind: dumb
+      value: 0.377
+    verdict: loss
+  - metric: Cd at Cl = 0.5, mean |ln ratio|
+    better: lower
+    model: 0.175
+    unit: ln ratio
+    baselines:
+    - name: NeuralFoil 0.3.3 xxxlarge (trained on XFOIL)
+      kind: published
+      value: 0.108
+    - name: Mean dev polar
+      kind: dumb
+      value: 0.406
+    verdict: loss
+  - metric: Cm about c/4 before stall, mean |error|
+    better: lower
+    model: 0.0173
+    unit: Cm
+    baselines:
+    - name: NeuralFoil 0.3.3 xxxlarge (trained on XFOIL)
+      kind: published
+      value: 0.0153
+    - name: Thin-airfoil theory
+      kind: classical
+      value: 0.0256
+    - name: Mean dev polar
+      kind: dumb
+      value: 0.0432
+    verdict: loss
+  - metric: Cl max, mean |error| (runs the raw solver was run on)
+    better: lower
+    model: 0.084
+    unit: Cl
+    baselines:
+    - name: NeuralFoil 0.3.3 xxxlarge (trained on XFOIL)
+      kind: published
+      value: 0.102
+    - name: Raw solver (mfoil, Ncrit 9)
+      kind: classical
+      value: 0.223
+    - name: Mean dev polar
+      kind: dumb
+      value: 0.248
+    verdict: win
+    note: 'Paired subset: one Reynolds number per exam airfoil, 74 airfoils. The raw solver answered 61% of measured angles.'
+  - metric: Cl before stall, mean |error| (runs the raw solver was run on)
+    better: lower
+    model: 0.084
+    unit: Cl
+    baselines:
+    - name: NeuralFoil 0.3.3 xxxlarge (trained on XFOIL)
+      kind: published
+      value: 0.077
+    - name: Raw solver (mfoil, Ncrit 9)
+      kind: classical
+      value: 0.07
+    - name: Thin-airfoil theory
+      kind: classical
+      value: 0.186
+    - name: Mean dev polar
+      kind: dumb
+      value: 0.194
+    verdict: loss
+    note: Paired subset. Where it converges the raw solver is the most accurate method before stall.
+  coverage:
+  - output: Cl (before stall)
+    actual: 69
+  - output: ln Cd
+    actual: 74
+  - output: Cm
+    actual: 83
+wins:
+- 'Cl max: 0.082 mean error against 0.096 for NeuralFoil and 0.22 for the raw solver.'
+- 'Stall angle: 1.76 deg against 2.19 for NeuralFoil and 4.0 for the raw solver, which stops converging before stall.'
+losses:
+- Lift before stall (0.091 vs 0.082), drag (|ln ratio| 0.177 vs 0.126) and moment (0.0173 vs 0.0153) all lose to NeuralFoil,
+  trained on far more XFOIL runs.
+- Where the raw solver converges it beats both networks before stall (Cl 0.071).
+limits:
+- 'Low Reynolds numbers (4e4-6e5), incompressible, clean airfoils only: no trips, flaps or roughness.'
+- Trained on 151 sweeps (1,305 points); more simulations improved the simulated score but not the dev airfoils.
+- The solver gives no answer near stall on many airfoils, so stall was learned from incomplete polars; predicted stall is
+  1.3 deg early on average.
+- 'Error bars: Cm bars widened x4.75 on dev cover 83% (too wide); Cl and Cd cover 69% and 74%.'
+help_wanted:
+- XFOIL itself (needs gfortran, not installable on the build machine); websites.umich.edu (mfoil home) and github.com answered
+  403 from the build machine.
+next:
+- 'Stall: a solver that converges past separation (XFOIL proper, or mfoil with a better Newton globalisation) so the bank
+  has post-stall polars.'
+- A bigger bank on a free machine (the 2-core build ran 30-50 s per sweep).
+- Ncrit and tunnel-turbulence nuisance (draw Ncrit per sweep), judged on the dev twins.
+usage:
+  install: pip install numpy scipy
+  demo: python demo.py
+  python: 'from airfoilnet import AirfoilNet, read_dat
+
+    net = AirfoilNet()
+
+    pol = net.polar(read_dat("my_airfoil.dat"), Re=2e5)
+
+    print(pol["clmax"], pol["alpha_stall"], pol["cl"], pol["cl_sd"], pol["cd"], pol["cm"])
+
+    '
+files:
+  inference:
+  - airfoilnet.py
+  weights:
+  - airfoilnet_weights.npz
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 1
