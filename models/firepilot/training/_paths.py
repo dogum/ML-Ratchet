@@ -19,7 +19,8 @@ checks/, data/). In this repository:
     CALIBRATION FIRE/checks/replay_calibration.json, the dev-calibrated ROS factors (physics p1)
 
 The released results are kept as shipped in this folder: ratchet.json and results/*.json (exam_summary,
-fidelity_dev_p0/p1, sigma_widen, upstream_U1_leak, page_extra). Re-running a script writes new copies under WORK;
+fidelity_dev_p0/p1, sigma_widen, upstream_U1_leak, page_extra), plus the 22 Nov 2026 physics p2 re-score
+(exam_summary_p2, sigma_widen_p2, fidelity_dev_p2). Re-running a script writes new copies under WORK;
 latest(rel) returns the WORK copy if there is one, else the shipped copy.
 
 What runs where: inference (../firepilot.py) and the demo need only numpy and scipy; the pipeline adds pandas and

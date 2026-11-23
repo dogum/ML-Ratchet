@@ -337,3 +337,23 @@ are in each model's NOTEBOOK.md (22 Nov entries).
   - FirePilot v1.0's exam was scored in p1; its model card now says so.
 - **Not done:** the FirePilot gate and exam, FireDetective's dev composite and FireCast's dev metrics were not
   re-run under p2. The dev metrics use real data only and are unchanged. No rung was retrained.
+
+## 2026-11-22 — FirePilot gate and exam re-run under physics p2
+
+FirePilot's dev gate was rebuilt as p1 and p2 from the same seeds. The 48-fire exam then ran once under p2 with the
+released r1 weights; nothing was retrained or chosen. Details are in `models/firepilot/NOTEBOOK.md`, and the summary
+is in `models/firepilot/training/results/exam_summary_p2.json`.
+
+| FirePilot, mean share of no-action growth stopped | p1 | p2 |
+|---|---|---|
+| Gate (24 cases): r1 / r0 | 0.481 / 0.383 (rebuild identical) | 0.487 / 0.354 |
+| Exam 300 m/h: r1 / MPC / anchor and flank | 0.474 / 0.400 / 0.316 | 0.401 / 0.351 / 0.198 |
+| Exam 1000 m/h: r1 / MPC / anchor and flank | 0.644 / 0.591 / 0.480 | 0.629 / 0.526 / 0.372 |
+| Exam perfect-foresight bound, 300 / 1000 m/h | 0.614 / 0.792 | 0.582 / 0.780 |
+
+- r1 still beats r0 on the p2 gate, so the ratchet decision stands.
+- On the exam at 300 m/h, r1's leads over MPC (paired −0.013 to 0.115) and r0 (−0.025 to 0.131) no longer exclude
+  zero. At 1000 m/h r1 now beats MPC (0.030 to 0.179).
+- Plans that close line near the fire lost most, consistent with U12 and U13 crediting line built behind the front.
+- Exam fidelity (free run vs observed perimeters) moves by at most 0.016 in median Dice.
+- Still not done: retraining any fire model in p2.

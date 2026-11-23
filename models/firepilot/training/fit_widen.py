@@ -1,6 +1,6 @@
 """Widen-only sigma factor for the value net's predicted saved fraction, fitted on the real dev gate only.
 
-  python3 fit_widen.py <rung>  -> results/sigma_widen.json
+  python3 fit_widen.py <rung>  -> results/sigma_widen.json (p1) or sigma_widen_<physics>.json (FIREPILOT_PHYSICS)
 
 For the chosen plan on each gate case the net predicts (pred, sigma); the truth-world saved fraction is the target.
 factor = smallest k >= 1 such that |saved - pred| <= 1.645 k sigma on >= 90 % of gate cases (widen-only rule).
@@ -26,5 +26,6 @@ widen = max(1.0, k90)
 out = dict(rung=rung, n=len(ev), bias=float(np.mean(y - m)), cov90_raw=float(np.mean(z <= 1.645)),
            cov50_raw=float(np.mean(z <= 0.674)), k90=k90, widen=widen,
            cov90_widened=float(np.mean(z <= 1.645 * widen)), cov50_widened=float(np.mean(z <= 0.674 * widen)))
-json.dump(out, open(os.path.join(ROOT, 'results', 'sigma_widen.json'), 'w'), indent=1)
+SUF = '' if VERSION == 'p1' else '_' + VERSION        # p1 keeps the shipped name; exam.py reads the same file
+json.dump(dict(out, physics=VERSION), open(os.path.join(ROOT, 'results', f'sigma_widen{SUF}.json'), 'w'), indent=1)
 print(out)
