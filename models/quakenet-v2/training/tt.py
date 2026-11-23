@@ -1,26 +1,28 @@
 """Travel times and spherical geometry for QuakeNet v2.
 ak135 P and S first-arrival times (ObsPy TauP) on QuakeNet's 27 source depths x 0-100 degrees every 0.25 degrees,
-built once into data/tt_ak135.npz; interpolated bilinearly (distance, depth). Geometry on a sphere: positions as unit
+built once into WORK/data/tt_ak135.npz (training/_paths.py H; the release ships the same table as ../tt_ak135.npz); interpolated bilinearly (distance, depth). Geometry on a sphere: positions as unit
 vectors, great-circle distance and azimuth, and the point at a given distance and azimuth."""
 import os, numpy as np
-H = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from _paths import H                     # the work folder (ends with a separator), as every other training script
+SHIPPED = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'tt_ak135.npz')   # release copy
 DEPTHS = np.array([2, 5, 10, 15, 20, 25, 33, 40, 50, 60, 70, 85, 100, 120, 140, 165, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700], float)
 DIST = np.arange(0, 100.001, 0.25); R_KM = 6371.0; KM_PER_DEG = np.pi * R_KM / 180
 _T = None
 
-def build(path=H + '/data/tt_ak135.npz'):
+def build(path=os.path.join(H, 'data', 'tt_ak135.npz')):
     from obspy.taup import TauPyModel
     tp = TauPyModel('ak135'); P = np.full((len(DEPTHS), len(DIST)), np.nan); S = P.copy()
     for i, z in enumerate(DEPTHS):
         for j, d in enumerate(DIST):
             a = tp.get_travel_times(z, max(d, 0.01), ['p', 'P', 'Pdiff']); P[i, j] = min(x.time for x in a) if a else np.nan
             a = tp.get_travel_times(z, max(d, 0.01), ['s', 'S', 'Sdiff']); S[i, j] = min(x.time for x in a) if a else np.nan
-    np.savez(path, depths=DEPTHS, dist=DIST, P=P, S=S); return path
+    os.makedirs(os.path.dirname(path), exist_ok=True); np.savez(path, depths=DEPTHS, dist=DIST, P=P, S=S); return path
 
 def tables():
     global _T
     if _T is None:
-        z = np.load(H + '/data/tt_ak135.npz'); _T = (z['P'], z['S'])
+        w = os.path.join(H, 'data', 'tt_ak135.npz')
+        z = np.load(w if os.path.exists(w) else SHIPPED); _T = (z['P'], z['S'])
     return _T
 
 def tt(phase, dist, depth):

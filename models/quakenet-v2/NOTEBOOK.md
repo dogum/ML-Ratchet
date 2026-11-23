@@ -90,3 +90,7 @@
 - The demo prints the ellipse, so `tests/golden/quakenet-v2.txt` changed on those 8 numbers only (e.g. 1,421 × 680 km
   → 2,145 × 1,026 km). The published coverage (ellipse 62 % all stations, 65 % at 2) was always scored on the 68 %
   contour and stands.
+- `training/tt.py` looked for its travel-time table in `models/quakenet-v2/data/`, which neither the work layout nor
+  the release uses, so a rebuild's `TT.tt()` calls raised FileNotFoundError. It now builds into `WORK/data/` via
+  `_paths.H` and reads that copy if present, else the shipped `tt_ak135.npz` (P at 40°, 33 km: 451.56 s, the same as
+  `quakenet2.tt`).
