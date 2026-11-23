@@ -11,9 +11,11 @@ import json
 import numpy as np
 
 import _paths  # noqa: E402  (repository paths: shared/fire on sys.path; outputs under WORK, see _paths.py)
+from fp.env import PHYSICS as VERSION  # noqa: E402  (same physics-versioned file eval_rung.py writes)
+
 ROOT = _paths.WORK
 rung = sys.argv[1]
-ev = [json.loads(l) for l in open(os.path.join(ROOT, 'results', f'eval_gate_{rung}.jsonl'))]
+ev = [json.loads(l) for l in open(os.path.join(ROOT, 'results', f'eval_gate_{VERSION}_{rung}.jsonl'))]
 ev = list({e['name']: e for e in ev}.values())
 y = np.array([e['saved'] for e in ev])
 m = np.array([e['pred'] for e in ev])

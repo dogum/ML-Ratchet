@@ -1,8 +1,9 @@
 """Score a planner on a frozen set (val = simulated, gate = real dev fires), resumable per case.
 
   python3 eval_rung.py <rung> <set> [n]      rung: r0 (proxy) | a model name in models/ | mpc (forecast-world CEM)
-  -> results/eval_<set>_<rung>.jsonl, summary printed (mean saved fraction of the no-action growth, with baselines
-     on the same cases and the perfect-foresight bound where it exists).
+  -> results/eval_<set>_<physics>_<rung>.jsonl (physics: FIREPILOT_PHYSICS, default p1), summary printed (mean
+     saved fraction of the no-action growth, with baselines on the same cases and the perfect-foresight bound where
+     it exists).
 """
 import os
 import sys
