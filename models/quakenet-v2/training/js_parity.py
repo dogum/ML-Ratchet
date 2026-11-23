@@ -1,6 +1,6 @@
 """JS == Python check: run web/qnet2.js (node) and release/quakenet2.py on the dev 'all' samples' node inputs."""
-import sys, json, base64, subprocess, numpy as np
-from _paths import H; sys.path.insert(0, H + 'release'); sys.path.insert(0, H + 'src')
+import os, sys, json, base64, subprocess, numpy as np
+from _paths import H; sys.path.insert(0, H + 'release'); sys.path.insert(0, H + 'src'); sys.path.insert(2, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # model root: quakenet2.py
 import quakenet2 as Q2, train2 as T2
 z = np.load(H + 'release/quakenet2_weights.npz'); meta = json.loads(str(z['meta']))
 W = {k: dict(b64=base64.b64encode(z[k].astype('<f4').tobytes()).decode(), s=list(z[k].shape)) for k in z.files if k != 'meta'}

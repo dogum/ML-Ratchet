@@ -1,7 +1,7 @@
 """Export the released graph network to numpy (release/quakenet2_weights.npz) and check numpy == torch on dev samples.
 Usage: export2.py <ckpt name>"""
-import sys, json, numpy as np, torch
-from _paths import H; sys.path.insert(0, H + 'src'); sys.path.insert(0, H + 'release')
+import os, sys, json, numpy as np, torch
+from _paths import H; sys.path.insert(0, H + 'src'); sys.path.insert(0, H + 'release'); sys.path.insert(2, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # model root: quakenet2.py
 import score2 as SC, train2 as T2
 
 def linears(seq):

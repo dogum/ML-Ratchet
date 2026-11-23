@@ -114,3 +114,4 @@ The drag trend with Re was built into physics version p1c (see the ratchet). The
   `.gitignore`).
 - `training/_paths.py` now creates the work folder on import; a fresh rebuild failed at `make_shapes.py`'s first save.
 - `web_webdata.py` (and its `lab/src` copy) read `page_text.json` / `template.html`, but `training/` ships them as `web_page_text.json` / `web_template.html`; it now takes the `web_` name if present, else the plain one.
+- `make_release.py` read the page assets from `web/` (shipped as `training/web_*`) and copied into a `release/` it never created; both fixed.

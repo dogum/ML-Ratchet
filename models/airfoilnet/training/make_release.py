@@ -4,7 +4,7 @@ usage: python make_release.py <final weights.npz>
 import os, sys, json, shutil, glob
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
 from _paths import WORK   # models/airfoilnet/work or $ML_RATCHET_WORK/airfoilnet (training/_paths.py)
-REL = os.path.join(ROOT, 'release')
+REL = os.path.join(ROOT, 'release'); os.makedirs(REL, exist_ok=True)
 shutil.copy(sys.argv[1], os.path.join(REL, 'airfoilnet_weights.npz'))
 TR = os.path.join(REL, 'training'); os.makedirs(TR, exist_ok=True)
 for f in ['mfoil.py', 'MFOIL_PYPI_LICENSE.txt', 'mfoil_fast.py', 'xsolver.py', 'verify_fast.py', 'verify_physics.py',
@@ -13,7 +13,8 @@ for f in ['mfoil.py', 'MFOIL_PYPI_LICENSE.txt', 'mfoil_fast.py', 'xsolver.py', '
           'ratchet.py', 'calibrate.py', 'dev_baselines.py', 'exam.py', 'make_examples.py', 'make_release.py']:
     shutil.copy(os.path.join(HERE, f), os.path.join(TR, f))
 for f in ['webdata.py', 'template.html', 'shot.js', 'page_text.json']:
-    shutil.copy(os.path.join(ROOT, 'web', f), os.path.join(TR, 'web_' + f))
+    src = os.path.join(HERE, 'web_' + f)            # shipped as training/web_*; the build ran them from web/
+    shutil.copy(src if os.path.exists(src) else os.path.join(ROOT, 'web', f), os.path.join(TR, 'web_' + f))
 shutil.copy(os.path.join(ROOT, 'splits.json'), os.path.join(TR, 'splits.json'))
 W = os.path.join(WORK)
 for f in ['verify_fast.json', 'verify_physics.json', 'twin_dev.json', 'calib_sim.json', 'calibration.json', 'ratchet.json',
