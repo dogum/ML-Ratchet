@@ -106,3 +106,16 @@ See `gridsim-handoff.md`:
 2. **P1:** coal/gas commitment, scarcity pricing, low-net-load inertia, frequency response by era.
 3. **Data still missing:** sub-second frequency, a day-ahead forecast-weather archive, older CAISO prices, CAMPD for more states.
 4. **Not built yet:** DispatchNet.
+
+## 2026-11-22 — LawFinder: GridSim's GB inertia is about 35 % low (recorded, not fixed)
+
+LawFinder v1.0 (`models/lawfinder/`) ran symbolic regression on 6,000 GridSim `generate_states` GB states and graded
+the law on 410 real GB events (NESO outturn inertia). Nothing in `shared/grid/` was changed.
+
+- GridSim's raw GB fleets commit about 4.5 s of inertia per MW of demand; NESO's outturn shows about 7 s.
+- The law, E = D (6.60 − 5.62 s) (D = demand, s = inverter-based share), ranks the events best of every row
+  (ρ 0.975) but sits 33 % low (MdAPE 33.0 %). It loses to 7 s × demand (15.1 %), GridPulse (16.4 %) and the dev
+  median (24.0 %).
+- The bias by year runs from −83 to −50 GVA·s and shrinks as GB inertia per MW falls in 2023-25.
+- GridPulse already rescales the level in its wrapper; the fix belongs in GridSim. Backlog: `gridsim-gb-inertia`
+  (docs/backlog.yaml).

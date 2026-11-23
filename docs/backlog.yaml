@@ -27,6 +27,17 @@ ideas:
     exam: "Each gap's 'done when' in shared/grid/HANDOFF.md (e.g. coal and gas within 10 % on held-out years, hours above $1,000 within 25 %, minimum inertia within 15 %); then every model's frozen set rebuilt and every rung re-scored"
     status: in-progress
     note: "First, the possible exam leak: the default outage rates cite Texas RE 2024/2025 aggregates; replace them with pre-2023 values and re-run the checks. Then PJM or CAISO dispatched and calibrated like ERCOT."
+  - id: gridsim-gb-inertia
+    name: GridSim GB inertia level
+    kind: platform
+    domain: Power grids
+    question: "GridSim's GB fleets commit too little inertia: about 4.5 s per MW of demand where NESO's outturn shows about 7, roughly 35 % low. Fix the level in GridSim itself, not only in GridPulse's wrapper."
+    physics: "GridSim generate_states GB fleets: unit commitment and the synchronous share at a given demand; GridPulse's wrapper rescale to NESO's inertia per MW is the known fix to upstream"
+    data: "Dev years only (NESO outturn inertia, GB dev events of 2019)"
+    data_url: https://www.neso.energy/data-portal
+    exam: "Simulated GB inertia per MW within about 10 % of NESO's dev-year outturn; then LawFinder's inertia ladder (physics i2) and GridPulse's frozen set re-scored"
+    status: candidate
+    note: "Found by LawFinder v1.0 (22 Nov 2026), recorded here, not fixed. Its inertia law E = D (6.60 - 5.62 s) ranks the 410 GB exam events best of every row (rho 0.975) but sits 33 % low (MdAPE 33.0 %), behind 7 s x demand (15.1 %) and the dev median (24.0 %). Bias by year -83 to -50 GVA s, shrinking as GB inertia per MW falls in 2023-25 (models/lawfinder/MODEL_CARD.md)."
   - id: forecastwx
     name: Forecast-weather archive
     kind: data
@@ -104,6 +115,17 @@ ideas:
     exam: "Nelson dead moisture against real 10-h sticks at dev sites (today only against gridMET NFDRS: 2.4 points drier); FireSize's containment race against ICS-209 on dev fires; FireDetective's severity truth from the per-fire mosaics; replays no longer cut at the window edge (45 of 48 today)"
     status: candidate
     note: "No documented public FEMS download was found on 18 Nov 2026 (wfas.net/nfmd returns 404); the MTBS mosaics go through an e-mail queue. Record refusals in help_wanted; don't route around them."
+  - id: firesim-growth
+    name: FireSim next-day growth level
+    kind: platform
+    domain: Wildfire
+    question: "FireSim grows fires far too much: at the same perimeter, wind and moisture its implied next-day growth is a median 36 times the real one (+1.56 decades). Bring the growth level to real fire-days."
+    physics: "FireSim spread with the dev-calibrated ROS factors (LawFinder's f2 bank); the missing piece is persistence (stalls, burnout, night recovery), listed under firesim-p2"
+    data: "Dev splits only (40 dev fires, 791 dev fire-days)"
+    data_url: https://zenodo.org/records/20187963
+    exam: "FireSim's implied growth law within a factor of 3 of real dev fire-days at the median; then LawFinder's fire ladder (physics f3) and the four fire models' frozen sets re-scored"
+    status: candidate
+    note: "Found by LawFinder v1.0 (22 Nov 2026), recorded here, not fixed. FireSim's own law, G = (0.32 P)^1.6 km2 a day, scores 1.80 mean |log10| on 38,599 real exam fire-days against 1.40 for no growth at all. The same gap shows in FireDetective's dev twins (growth on 91 % of half-days against 50 %) and FirePilot's uncalibrated replays (3.9x). Measured on physics p1; not re-measured under p2, which did not add persistence."
   - id: spaceweather-chain
     name: Sun-to-grid space weather
     kind: platform
@@ -136,16 +158,6 @@ ideas:
     exam: Rooms with measured geometry and RT60
     status: candidate
     note: Impulse-response sets not yet checked.
-  - id: tsunaminet
-    name: TsunamiNet
-    domain: Geophysics
-    question: How big is the tsunami coming, from the first deep-ocean pressure readings?
-    physics: Shallow-water propagation from Okada seafloor sources
-    data: NOAA NCTR / DART buoys
-    data_url: https://nctr.pmel.noaa.gov/Dart/
-    exam: Real tsunamis against USGS finite-fault sources
-    status: checked
-    note: "Landing page answered; file path still to confirm. A learner-family project: a neural operator stands in for the shallow-water solver to grow the bank, and a normalizing flow reads the Okada source with its uncertainty. NOAA NGDC tsunami event search answered on 18 Nov 2026."
   - id: gpsquake
     name: GPSQuake
     domain: Geophysics
@@ -213,16 +225,6 @@ ideas:
     exam: Real-data control regions
     status: candidate
     note: Harder to grade on real data than the others.
-  - id: quakenet-multistation
-    name: QuakeNet v2, multi-station
-    domain: Geophysics
-    question: "Where and how big, from several stations together, not one?"
-    physics: "QuakeNet's Syngine Green's functions and simulator, per station"
-    data: "EarthScope FDSN (QuakeNet's source)"
-    data_url: https://service.earthscope.org/
-    exam: "QuakeNet's exam events with 2+ stations, against USGS locations"
-    status: candidate
-    note: "Brainstorm 18 Nov 2026, as a learner-family project: graph network, with stations as nodes and their separations on the edges. Already on QuakeNet's own next list."
   - id: diffusionnet
     name: DiffusionNet
     domain: Biophysics
@@ -255,17 +257,17 @@ ideas:
     exam: "Each model's own exam, scored once after a per-model hashed pre-registration; 95 % paired bootstrap over exam units"
     status: done
     note: "Run 18-19 Nov 2026 (docs/experiments/prior-wars.md). Given the dev labels, TabPFN beat the released model on 3 of 6 exams (RECS, BDG2, PlantDetective), tied on 2 (GridPulse, EnergyNet) and lost on 1 (BasinDetective). With 0 real labels, P was the best arm on 5 of 6. Labels needed to reach P: ~20-40, or 1,152 on EnergyNet. Simulated rows added to dev helped only BasinDetective. Next: TabPFN-2.5+ if its licence allows, GPU-sized contexts, and the 8 skipped tabular models."
-  - id: lawfinder
-    name: LawFinder
+  - id: lawfinder-road
+    name: LawFinder, the RoadSim law
     kind: method
     domain: Method
-    question: "What readable law does each simulator imply? Symbolic regression on every platform, with the laws tested on the real exams."
-    physics: "Every shared simulator (RoadSim, GridSim, BuildingSim, WaterSim, FireSim)"
-    data: "The existing frozen splits; nothing new"
-    data_url: https://dogum.github.io/ML-Ratchet/model-families/
-    exam: "Each law beside the model that uses it, on that model's exam (e.g. GridPulse's 7.0 s × demand; the Budyko curve; road-load energy)"
+    question: "What one-line trip-energy law does RoadSim imply, and does it beat road-load energy on the real vehicle exam? The fifth LawFinder law, planned but not built (22 Nov 2026)."
+    physics: "RoadSim (shared/vehicle), unchanged; LawFinder's lawsearch and ratchet"
+    data: "The vehicle platform's frozen splits (VED trips, EPA test data); nothing new"
+    data_url: https://github.com/gsoh/VED
+    exam: "The law beside road-load energy, EnergyNet and a dumb baseline on the VED/EPA exam"
     status: candidate
-    note: "Brainstorm 18 Nov 2026: fills the symbolic-regression family; outputs are equations, not networks."
+    note: "LawFinder v1.0 (22 Nov 2026) built four platforms' laws and ran out of time before this one (models/lawfinder, help_wanted)."
   - id: river-twin
     name: River digital twin
     kind: method
@@ -288,3 +290,14 @@ ideas:
     exam: "The model's own exam, beside its released version"
     status: candidate
     note: "Brainstorm 18 Nov 2026; first stop on the real-data dial."
+  - id: simulators-wasm
+    name: Simulators in the browser (Rust to WebAssembly)
+    kind: method
+    domain: Method
+    question: "Run a shared simulator itself live on the site, not only the networks: first FireSim's spread kernel, ported to one Rust crate with a WebAssembly front end for the browser and a PyO3 front end for Python."
+    physics: "FireSim's minimum-travel-time spread (Rothermel surface spread for the 53 fuel models, 16-cell stencil with two-point updates, hourly weather, non-burnable cells and timed lines with the U1 rule); crown fire, spotting and moisture models later"
+    data: "One dev landscape at 90 m (fuel, slope, aspect, canopy) shipped as compact typed arrays; nothing new"
+    data_url: https://rustwasm.github.io/docs/wasm-pack/
+    exam: "The Python package stays the reference: the Rust engine passes every FireSim check the numba engine passes and matches the 40 dev replays' arrival times to 1e-6 h (or a documented tolerance); a pytest parity test and a site parity test; WASM bundle at most about 300 KB gzipped; about 1 s for 24 h on 300 x 300 cells in the browser"
+    status: candidate
+    note: "Spec written 22 Nov 2026: docs/wasm-pilot.md. Not started. Wait for FireSim physics p2 to settle (the U12/U13 line rules changed on 22 Nov), so the port copies the final kernel."
