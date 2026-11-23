@@ -106,3 +106,6 @@ The drag trend with Re was built into physics version p1c (see the ratchet). The
   SD7037 come from other physical builds and carry their own geometry, which the NeuralFoil and solver curves already
   used. `drawEx()` now uses `run.p || a.p` (template, its training copy and the shipped `lab/index.html`; one expression
   changed, page not rebuilt). The exam (`training/exam.py`) is not affected.
+- The frozen training snapshots `work/snap_A.json` (151 sweeps, rungs r1-r5) and `snap_B.json` (256 sweeps, r6-r7) were
+  not shipped, and no script writes them. `train.py` now uses them if present, else the first 151 / 256 sweeps by id
+  with a warning. A rebuild therefore cannot reproduce the exact training sets of the released rungs.

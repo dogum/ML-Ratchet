@@ -35,6 +35,9 @@ def apply_calib(D):
 FROZEN = 'p1_val'          # frozen simulated validation set (val1 = physics p1)
 
 
+SNAP_N = {'A': 151, 'B': 256}      # training sweeps per snapshot, from rung_r1_result.json / rung_r6_result.json
+
+
 def load_bank(tags, sets, loose=True, max_sweeps=None, snapshot=None):
     recs = []
     for t in tags:
@@ -47,8 +50,14 @@ def load_bank(tags, sets, loose=True, max_sweeps=None, snapshot=None):
                         pass
     recs.sort(key=lambda r: r['id'])
     if snapshot:
-        keep = set(json.load(open(os.path.join(ROOT, 'work', f'snap_{snapshot}.json'))))
-        recs = [r for r in recs if r['id'] in keep]
+        sp = os.path.join(ROOT, 'work', f'snap_{snapshot}.json')
+        if os.path.exists(sp):
+            keep = set(json.load(open(sp)))
+            recs = [r for r in recs if r['id'] in keep]
+        else:   # the frozen ID lists were not shipped (NOTEBOOK, 22 Nov 2026): first N sweeps by id, N as recorded
+            n = SNAP_N[snapshot]
+            print(f'warning: {sp} missing; using the first {n} sweeps by id (the release used a frozen list not shipped)', flush=True)
+            recs = recs[:n]
     if max_sweeps:
         recs = recs[:max_sweeps]
     F, A, Y, ANC, ANC0, G, RE = [], [], [], [], [], [], []

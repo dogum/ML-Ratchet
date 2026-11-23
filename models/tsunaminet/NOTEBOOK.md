@@ -134,3 +134,5 @@ Rule: keep if the frozen-set score is more than 0.01 above the incumbent's **and
   both docstrings, the model card and `model.yaml` limits; not changed, because the network was trained and examined on
   exactly this processing. A trailing-only version would be a new physics/processing version: new frozen set, re-scored
   rungs and a new dev calibration.
+- `training/simbank.py`'s `load_phys()` read `WORK/data/physics_versions.json` only, so a fresh work folder silently had
+  no p1 physics. It now falls back to the shipped `training/logs/physics_versions.json` (22 Nov 2026).

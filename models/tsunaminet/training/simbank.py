@@ -11,6 +11,8 @@ PHYS = {
 }
 def load_phys():
     fn = os.path.join(DATA, 'physics_versions.json')
+    if not os.path.exists(fn):   # a fresh work folder: the shipped record of the physics versions (p1 from the twin test)
+        fn = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs', 'physics_versions.json')
     if os.path.exists(fn): PHYS.update(json.load(open(fn)))
     return PHYS
 
