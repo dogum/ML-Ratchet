@@ -128,3 +128,9 @@ Rule: keep if the frozen-set score is more than 0.01 above the incumbent's **and
   as shipped: the per-event dev rows behind them are not in the release, so recomputing them needs the dev DART records
   re-fetched and `dev_eval.py` re-run. The exam coverage (Mw 0.68, centroid 0.89, amplitude 0.78) is for the shipped
   factors. Recorded in `model.yaml` limits.
+- **Look-ahead in the DART processing (review, 22 Nov 2026).** `pipeline.py` and `training/dart.py` called the processing
+  causal, but the glitch removal uses centred windows (a 9-sample running median and a 61-sample robust scale of its
+  deviations: up to 34 later observed samples) and gap filling interpolates to the next observed sample. Documented in
+  both docstrings, the model card and `model.yaml` limits; not changed, because the network was trained and examined on
+  exactly this processing. A trailing-only version would be a new physics/processing version: new frozen set, re-scored
+  rungs and a new dev calibration.

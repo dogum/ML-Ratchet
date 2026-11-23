@@ -6,7 +6,7 @@ tsunami source, then forecasts the largest wave at other DART buoys. It was trai
 into real quiet DART noise, and graded once on 28 real DART-recorded tsunamis. Research only: not a warning system.
 
 ## Inputs
-- 1-minute DART water-column height from NDBC historical files, processed by `pipeline.py` (causal):
+- 1-minute DART water-column height from NDBC historical files, processed by `pipeline.py` (causal apart from a look-ahead of up to 34 observed samples in glitch removal and gap filling, see `pipeline.py`):
   tide fit on the 3 days before the origin (8 constituents + quadratic trend), glitch removal, a 1-minute grid from
   12 h before to 24 h after the origin, gaps linearly filled for filtering, then a causal 2nd-order Butterworth
   high-pass with a 3-hour cutoff. Minutes without a real sample stay masked.

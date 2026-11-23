@@ -1,7 +1,12 @@
 """pipeline.py (numpy + scipy): read NDBC historical DART files and turn them into detided 1-minute series after an
 origin time, exactly as training/dart.py did for the training noise, the dev set, the exam and examples/ (this file is
 that code with the data folder taken from $DART_DIR, default ./dart next to this file).
-Processing is causal (uses only data up to each minute), so it could run in real time:
+Processing is causal except for a short look-ahead, so it can run in near real time: the tide fit uses only the 3 days
+before the origin and the high-pass is causal, but the glitch removal reads up to 34 LATER observed samples (a 9-sample
+running median, centred, and a 61-sample robust scale of its deviations, centred) and gap filling interpolates to the
+next observed sample. A minute's value and mask are final once 34 more observed samples have arrived (about 34 min at
+1-minute sampling, longer across gaps). Training, dev, exam and examples/ all used this processing as written (22 Nov
+2026: documented, not changed, so inference stays identical to training):
  1. Detide: least-squares fit of 8 tidal constituents (M2 S2 N2 K2 K1 O1 P1 Q1) plus a quadratic trend to all samples
     (15-min, 1-min, 15-s) in the 3 days BEFORE the origin [t0 - 3 d, t0 - 10 min]; the prediction is subtracted.
  QC: records whose pre-event tide-fit residual exceeds 3 cm rms, or with > 5 % of pre-event samples flagged as
