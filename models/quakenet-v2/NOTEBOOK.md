@@ -95,3 +95,4 @@
   `_paths.H` and reads that copy if present, else the shipped `tt_ak135.npz` (P at 40°, 33 km: 451.56 s, the same as
   `quakenet2.tt`).
 - `training/export2.py` and `js_parity.py` now also look for `quakenet2.py` in the model folder (they searched only `WORK/src` and `WORK/release`).
+- `training/_paths.py` now creates the work subfolders the scripts write into (data, bank, ckpt, release, release/examples, web, tmp); `export2.py` failed on a fresh work folder.

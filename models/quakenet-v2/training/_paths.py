@@ -18,3 +18,5 @@ H = os.path.join(os.path.abspath(os.path.join(_W, 'quakenet-v2') if _W else os.p
 Q = os.path.join(os.path.abspath(os.path.join(_W, 'quakenet', 'data') if _W else os.path.join(MODEL, '..', 'quakenet', 'work', 'data')), '')
 for p in (SRC, os.path.join(SRC, 'v12')):
     if p not in sys.path: sys.path.insert(0, p)
+for d in ('data', 'bank', 'ckpt', 'release', os.path.join('release', 'examples'), 'web', 'tmp'):   # what the scripts write into
+    os.makedirs(os.path.join(H, d), exist_ok=True)
