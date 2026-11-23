@@ -1,0 +1,301 @@
+id: lawfinder
+name: LawFinder
+version: '1.0'
+status: released
+released: '2026-11-22'
+order: 33
+domain: Method
+tags:
+- symbolic regression
+- equations
+- Pareto front
+- textbook laws
+- water balance
+- fire growth
+- grid inertia
+- energy signature
+accent: '#6741d9'
+tagline: What does each simulator believe, in one line, and is it true?
+question: What readable law does each shared simulator imply, and does that law hold on the platform's real exam?
+question_short: One-line laws extracted from the simulators, graded on real exams
+summary: 'LawFinder runs symbolic regression on simulated banks from WaterSim, FireSim, GridSim and BuildingSim and returns
+  short equations with error bars: the long-term runoff ratio of a basin, the next-day growth of a wildfire, GB system inertia,
+  the GB frequency nadir after a trip, and the annual energy intensity of a single-family home. Each law is a rung on a ratchet
+  of complexity levels and physics versions, chosen on a frozen simulated set and a small real dev set, then examined once
+  on the platform''s real exam beside the textbook law (its constant fitted on the same dev set), the collection''s network
+  and a dumb baseline.'
+reads: 'Per law: water - aridity PET/P, snow fraction, P-PET seasonal synchrony, soil storage index; fire - perimeter (km),
+  daily 10 m wind (m/s), 100-h dead fuel moisture (%), fuel group; grid inertia - demand (GW), inverter-based share; grid
+  nadir - MW lost, inertia (GVA s), demand; homes - HDD and CDD (base 18 C), floor area, year built.'
+returns:
+- 'Long-term runoff ratio: runoff ratio Q/P with a 68 % bar (frozen-set residual sd, dev-widened)'
+- 'Daily fire growth: log10(new area km² + 1 cell) with a 68 % bar (frozen-set residual sd, dev-widened)'
+- 'GB system inertia: system inertia E with a 68 % bar (frozen-set residual sd, dev-widened)'
+- 'GB frequency nadir: frequency drop to the nadir f0 - f_min with a 68 % bar (frozen-set residual sd, dev-widened)'
+- 'Home energy signature: site energy per floor area with a 68 % bar (frozen-set residual sd, dev-widened)'
+physics:
+  summary: 'No new physics: the collection''s shared simulators are used unchanged (WaterSim v1, FireSim v1, GridSim 1.1 via
+    GridPulse''s GB state sampler, BuildingSim 1.0/1.4). Each law is a statement about what one simulator implies.'
+  simulator:
+  - 'WaterSim: 16,000 generated basins (two physics versions), 4 runoff models, 2 snow routines, real ERA5-Land forcing from
+    free windows, 10-year runs; w2 adds FlowCast''s dev-fitted ERA5 water-yield multiplier'
+  - 'FireSim: 1,680 multi-day fires on guarded real dev LANDFIRE windows or parametric landscapes, real dev HRRR weather;
+    f2 uses the dev-calibrated ROS factors'
+  - 'GridSim: generate_states GB fleets (inertia law); GridPulse''s GB sampler p0/p1 for trips, measured like GridData''s
+    catalogue (1 s means, 10 s fall <= -0.15 Hz)'
+  - 'BuildingSim: 2,600 single-family homes from the ResStock-bootstrapped generator, TMYx weather shifted by U(-3, 3) C;
+    b2 = physics 1.4'
+  checks:
+  - lawsearch recovers a planted Budyko-Fu law with 1 % noise to the noise floor (MSE 1.0e-4 vs 1.0e-4)
+  - Every simulator's own Phase 1 checks apply (shared/*/checks)
+  - Release evaluator (numpy) equals the search engine to machine precision; the page's JS equals numpy (training/results/js_parity.json)
+noise: 'Platform noise models as shipped: WaterSim forcing error on the inputs the law sees; FireSim runs on real HRRR; GridSim
+  events measured as 1 s means; BuildingSim weather shifts. No real labels in training.'
+network: 'No network: symbolic regression (lawsearch, numpy/scipy; PySR-style regularised evolution with Levenberg-Marquardt
+  constants and a hall of fame per complexity). Operators + - * / ^ exp log sqrt inv sq; complexity = node count, up to 25.'
+approach:
+  real_backdrop: Real ERA5-Land forcing windows, real dev LANDFIRE/HRRR, NESO train-year operating points, TMYx weather
+  physics_inputs: Every law input is a physical quantity (aridity, perimeter, inertia, degree days)
+  physics_anchor: false
+  real_data_roles:
+  - backdrop
+  - calibration
+  - gate
+  - error_bars
+  - exam
+data:
+- name: Caravan / CAMELS-US (ERA5-Land forcing, streamflow)
+  url: https://zenodo.org/records/7944025
+  licence: CC BY 4.0
+  role: dev, exam, physics (free forcing windows)
+- name: USGS NWIS daily values
+  url: https://waterdata.usgs.gov
+  licence: Public domain
+  role: dev, exam
+- name: FEDS-MTBS fire progression; MTBS; LANDFIRE; HRRR; gridMET
+  url: https://zenodo.org/records/20187963
+  licence: CC BY 4.0 / US public data
+  role: dev, exam, physics
+- name: NESO 1 s frequency, outturn inertia, generation mix; Elexon REMIT/B1610 labels via GridData
+  url: https://www.neso.energy/data-portal
+  licence: NESO Open Data Licence; Elexon BMRS licence
+  role: dev, exam, physics (train-year operating points)
+- name: EIA RECS 2020
+  url: https://www.eia.gov/consumption/residential/
+  licence: Public domain
+  role: dev, exam
+- name: TMYx weather (climate.onebuilding.org)
+  url: https://climate.onebuilding.org
+  licence: Free with attribution
+  role: physics
+split:
+  dev: 'Each platform''s frozen dev split, copied in splits.json: 52 CAMELS basins; 40 fires (791 fire-days); 4 GB events
+    of 2019; RECS dev single-family homes'
+  exam: 'Each platform''s exam split: 619 CAMELS basins (WY1990-99); FireData exam fire-days 2012-2024; 410 GB events (inertia)
+    and the loss-labelled ones (nadir), 2018-2025; RECS exam single-family homes'
+exam:
+  short: Four platforms' real exams, five laws
+  summary: Each law run once on its platform's real exam by a separate script, beside the textbook law tuned on dev, the collection's
+    network and a dumb baseline.
+  results:
+  - metric: 'Long-term runoff ratio: mean |error| of Q/P (619 real exam units)'
+    better: lower
+    unit: ''
+    model: 0.129
+    baselines:
+    - name: WaterSim's law (w2-c3, simplest within 0.02 of best sim R2)
+      kind: classical
+      value: 0.14
+    - name: Budyko-Fu, w = 2.6 (WaterData baseline)
+      kind: classical
+      value: 0.141
+    - name: Budyko-Fu, w = 2.38 fitted on dev
+      kind: classical
+      value: 0.146
+    - name: Budyko-Fu, w = 2.23 fitted on WaterSim
+      kind: classical
+      value: 0.154
+    - name: Dev median (0.433)
+      kind: dumb
+      value: 0.211
+    - name: FlowCast v1.0 (network, ungauged)
+      kind: published
+      value: 0.112
+    verdict: loss
+    note: 'Released law w2-c13: Q/P = 1.84·(δ + 3.733)^(0.3644·f_s - φ - 0.2988). WaterSim''s own law (w2-c3): 0.338/φ.'
+  - metric: 'Daily fire growth: mean |log10 ratio| of new area (38599 real exam units)'
+    better: lower
+    unit: ''
+    model: 1.15
+    baselines:
+    - name: FireSim's law (f2-c6)
+      kind: classical
+      value: 1.8
+    - name: Rothermel ROS x perimeter, k = 0.0152 (dev)
+      kind: classical
+      value: 1.06
+    - name: Rothermel ROS x perimeter, k = 0.175 (FireSim)
+      kind: classical
+      value: 1.34
+    - name: 'FireData best baseline: yesterday''s growth from the active line'
+      kind: classical
+      value: 0.671
+    - name: 'FireData clim (dumb: dev median growth by size)'
+      kind: dumb
+      value: 1.37
+    - name: Persistence (no growth)
+      kind: dumb
+      value: 1.4
+    verdict: loss
+    note: 'Released law f2-c3: log₁₀ G = -0.5585/P. FireSim''s own law (f2-c6): 0.6979·log(P) - 0.7956. FireCast has growth-day
+      rows only (see the next row).'
+  - metric: Daily fire growth, growth days only (FireData's convention; 25105 fire-days)
+    better: lower
+    unit: ''
+    model: 0.693
+    baselines:
+    - name: FireSim's law (f2-c6)
+      kind: classical
+      value: 1.13
+    - name: Rothermel ROS x perimeter, k = 0.0152 (dev)
+      kind: classical
+      value: 0.87
+    - name: Rothermel ROS x perimeter, k = 0.175 (FireSim)
+      kind: classical
+      value: 0.771
+    - name: 'FireData best baseline: yesterday''s growth from the active line'
+      kind: classical
+      value: 0.849
+    - name: 'FireData clim (dumb: dev median growth by size)'
+      kind: dumb
+      value: 2.07
+    - name: Persistence (no growth)
+      kind: dumb
+      value: 2.15
+    - name: FireCast v1.0 (network, threshold area)
+      kind: published
+      value: 0.757
+    verdict: win
+    note: FireCast is scored on growth days only, so this is the row where it can be compared.
+  - metric: 'GB system inertia: MdAPE of inertia (410 real exam units)'
+    better: lower
+    unit: '%'
+    model: 33.0
+    baselines:
+    - name: GridSim's law (i1-c7)
+      kind: classical
+      value: 33.0
+    - name: 7.00 s x demand (dev fit)
+      kind: classical
+      value: 15.1
+    - name: 'GridPulse v1.0 (network: 60 s trace + demand)'
+      kind: published
+      value: 16.4
+    - name: Dev median inertia
+      kind: dumb
+      value: 24.0
+    verdict: loss
+    note: 'Released law i1-c7: E = D·(6.603 - 5.617·s). GridSim''s own law (i1-c7): D·(6.603 - 5.617·s).'
+  - metric: 'GB frequency nadir: MAE of the nadir depth (148 real exam units)'
+    better: lower
+    unit: Hz
+    model: 0.06
+    baselines:
+    - name: GridSim's law (g2-c3)
+      kind: classical
+      value: 0.106
+    - name: Swing equation + ramp response, k L^2/E (k = 108, dev)
+      kind: classical
+      value: 0.173
+    - name: 'GridPulse v1.0 nadir forecast after 5 s of trace (context: reads the trace)'
+      kind: published
+      value: 0.0799
+    - name: Dev median drop
+      kind: dumb
+      value: 0.129
+    verdict: win
+    note: 'Released law g1-c12: Δf = (ΔP + 2)^2/(52940·E - 3.541e+6)^0.2084. GridSim''s own law (g2-c3): 0.4334·ΔP.'
+  - metric: 'Home energy signature: MdAPE of annual site energy per m2 (6019 real exam units)'
+    better: lower
+    unit: '%'
+    model: 39.3
+    baselines:
+    - name: BuildingSim's law (b2-c9)
+      kind: classical
+      value: 39.7
+    - name: Degree-day signature 85 + 22.9 HDD + 17.4 CDD (dev)
+      kind: classical
+      value: 35.6
+    - name: Degree-day signature 23 + 61.2 HDD + 15.6 CDD (BuildingSim)
+      kind: classical
+      value: 45.1
+    - name: 'BuildingData-style: log energy ~ log area + HDD + CDD (dev)'
+      kind: classical
+      value: 26.6
+    - name: Dev median EUI
+      kind: dumb
+      value: 33.4
+    verdict: loss
+    note: 'Released law b2-c13: EUI = -H·Y + 2022·H + 186.5/1.926^A. BuildingSim''s own law (b2-c9): 2021·H - Y·(H - 0.03403).'
+  coverage:
+  - output: Long-term runoff ratio
+    actual: 82.9
+  - output: Daily fire growth
+    actual: 69.1
+  - output: GB system inertia
+    actual: 91.2
+  - output: GB frequency nadir
+    actual: 100.0
+  - output: Home energy signature
+    actual: 69.3
+limits:
+- '<b>Water:</b> FlowCast, the collection''s ungauged network, beats the law (MAE 0.112 vs 0.129 on 619 basins). The law beats
+  Budyko-Fu (0.141-0.154). In snowy basins (f_s > 0.3, 88 basins) every method is poor (law 0.22). All rows share ERA5-Land
+  forcing, which under-catches mountain precipitation: 50 basins carry more water out than ERA5 says falls in.'
+- '<b>Fire:</b> FireSim''s own law over-predicts real next-day growth a median 36 times (bias +1.56 decades). The released
+  law survives only because the dev gate cut it down to a saturating curve. Over all fire-days it loses to FireData''s yesterday''s-growth
+  baseline (1.15 vs 0.67 mean |log₁₀|); on growth days it is the best row (0.69 vs FireCast 0.76). FireSim has no fire persistence
+  (stalls, burnout), the platform''s known gap. Slope was not an input: real exam fires have no landscape.'
+- <b>Grid inertia:</b> GridSim's raw GB fleets commit about 4.5 s of inertia per MW of demand where NESO's outturn shows about
+  7, so the law is 33 % low (MdAPE) and loses to 7 s × demand (15.1 %) and to the dev median (24 %). Its ranking is the best
+  of all rows (ρ 0.975).
+- '<b>Grid nadir:</b> the loss labels are noisy (REMIT/FUELINST matches); 148 events. The dev gate had only 4 events, one
+  of them (9 Aug 2019) a cascade. The 68 % bar (±0.31 Hz) is far too wide: it covers 100 % of exam events.'
+- <b>Homes:</b> the law loses to the dumb dev median (MdAPE 39.3 % vs 33.4 %) and to a log-linear fit on dev (26.6 %). BuildingSim's
+  homes are about 1.4 times too energy-intensive at physics 1.0; 1.4 fixes the median but not the spread. RECS energy is EIA's
+  billing-based estimate, and home-to-home variation (occupants, setpoints) is not in the inputs.
+- <b>Method:</b> one search per physics version, time-boxed at 4-7 minutes on a shared core; another seed can give a different
+  front. Dev sets are small (4 grid events, 40 fires, 52 basins), so the gate is coarse. The road law (RoadSim trip energy)
+  was not built in this batch.
+help_wanted:
+- RoadSim trip-energy law (VED/EPA exam) not built in this batch
+- Daymet/NLDAS forcing would separate law skill from ERA5-Land bias (WaterData help_wanted)
+next:
+- 'Fire: add a persistence module to FireSim (stall and burnout probability by fuel and weather) and re-run the search; the
+  law ladder shows exactly where FireSim''s growth departs from reality.'
+- 'Grid inertia: rescale GridSim''s GB fleet to NESO''s inertia per MW (the GridPulse wrapper''s fix) as physics i2, and re-take
+  the ladder; the shape term (1 − 0.85 s) should survive.'
+- 'Water: a recession law −dQ/dt = a Q^b on the same banks, and a Daymet/NLDAS exam to separate law skill from ERA5-Land bias.'
+- 'Road: RoadSim trip-energy law against road-load on the VED/EPA exam (the fifth platform, not built here).'
+- 'Homes: add heating fuel and system as inputs (a law per fuel) and occupants; RECS dev shows the fuel matters most.'
+usage:
+  install: pip install numpy
+  demo: python demo.py
+  python: 'from lawfinder import LawFinder
+
+    lf = LawFinder()
+
+    mu, sigma = lf["water"].predict(phi=0.8, fs=0.1, sync=-0.2, S=0.14)
+
+    '
+files:
+  inference:
+  - lawfinder.py
+  weights:
+  - lawfinder_laws.json
+  demo: demo.py
+  examples: examples/
+  card: MODEL_CARD.md
+  lab: lab/index.html
+  notebook: NOTEBOOK.md
+demo_seconds: 1

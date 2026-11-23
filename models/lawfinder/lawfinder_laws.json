@@ -1,0 +1,936 @@
+{
+ "version": "1.0",
+ "released": "2026-11-22",
+ "laws": {
+  "water": {
+   "title": "Long-term runoff ratio",
+   "platform": "WaterSim",
+   "vars": [
+    "phi",
+    "fs",
+    "sync",
+    "S"
+   ],
+   "var_info": {
+    "phi": {
+     "label": "aridity PET/P",
+     "symbol": "\u03c6",
+     "unit": "-",
+     "range": [
+      0.2,
+      5.0
+     ]
+    },
+    "fs": {
+     "label": "snow fraction of P",
+     "symbol": "f_s",
+     "unit": "-",
+     "range": [
+      0.0,
+      0.7
+     ]
+    },
+    "sync": {
+     "label": "P-PET seasonal synchrony (corr. of monthly means)",
+     "symbol": "\u03b4",
+     "unit": "-",
+     "range": [
+      -1,
+      1
+     ]
+    },
+    "S": {
+     "label": "soil storage index S_max / annual P",
+     "symbol": "S",
+     "unit": "-",
+     "range": [
+      0.02,
+      0.4
+     ]
+    }
+   },
+   "target": {
+    "name": "rr",
+    "label": "runoff ratio Q/P",
+    "symbol": "Q/P"
+   },
+   "rung": "w2-c13",
+   "expr": "(((3.733 + sync) ^ (((fs * 0.3644) - phi) + (-0.2988))) * 1.84)",
+   "text": "1.84\u00b7(\u03b4 + 3.733)^(0.3644\u00b7f_s - \u03c6 - 0.2988)",
+   "tree": [
+    "*",
+    [
+     "^",
+     [
+      "+",
+      [
+       "c",
+       0
+      ],
+      [
+       "x",
+       2
+      ]
+     ],
+     [
+      "+",
+      [
+       "-",
+       [
+        "*",
+        [
+         "x",
+         1
+        ],
+        [
+         "c",
+         1
+        ]
+       ],
+       [
+        "x",
+        0
+       ]
+      ],
+      [
+       "c",
+       2
+      ]
+     ]
+    ],
+    [
+     "c",
+     3
+    ]
+   ],
+   "consts": [
+    3.733065364117281,
+    0.36439621932281757,
+    -0.2987954185452261,
+    1.8402218386360694
+   ],
+   "sigma": 0.19847748435317397,
+   "sigma_sim": 0.19847748435317397,
+   "widen_dev": 1.0,
+   "simulator_law": {
+    "rung": "w2-c3",
+    "text": "0.338/\u03c6",
+    "tree": [
+     "/",
+     [
+      "c",
+      0
+     ],
+     [
+      "x",
+      0
+     ]
+    ],
+    "consts": [
+     0.3379959996488483
+    ]
+   },
+   "textbook": {
+    "form": "budyko_fu",
+    "const": 2.3836450816299033,
+    "label": "Budyko-Fu, w fitted on dev"
+   },
+   "exam": {
+    "law": {
+     "name": "LawFinder law (w2-c13)",
+     "n": 619,
+     "mae": 0.12917481071031295,
+     "rmse": 0.18743787098048434,
+     "bias": 0.032156702426816404,
+     "r2": 0.5940920947605983,
+     "rho": 0.8186433269394752,
+     "median_abs": 0.10127001240486952,
+     "cov68": 0.8287560581583199
+    },
+    "sim_law": {
+     "name": "WaterSim's law (w2-c3, simplest within 0.02 of best sim R2)",
+     "n": 619,
+     "mae": 0.13972787982480658,
+     "rmse": 0.20397129551160326,
+     "bias": 0.020925688344283037,
+     "r2": 0.5193256665503718,
+     "rho": 0.74424162842387,
+     "median_abs": 0.10757081461492368
+    },
+    "fu_2.6": {
+     "name": "Budyko-Fu, w = 2.6 (WaterData baseline)",
+     "n": 619,
+     "mae": 0.1410058030659528,
+     "rmse": 0.2249770861096183,
+     "bias": -0.055219873962667955,
+     "r2": 0.4152241899846131,
+     "rho": 0.74424162842387,
+     "median_abs": 0.08720603434063545
+    },
+    "fu_dev": {
+     "name": "Budyko-Fu, w = 2.38 fitted on dev",
+     "n": 619,
+     "mae": 0.14641883686460302,
+     "rmse": 0.22280789509518883,
+     "bias": -0.03009844591046987,
+     "r2": 0.42644644527526177,
+     "rho": 0.74424162842387,
+     "median_abs": 0.09893307518720007
+    },
+    "fu_sim": {
+     "name": "Budyko-Fu, w = 2.23 fitted on WaterSim",
+     "n": 619,
+     "mae": 0.15370103724031559,
+     "rmse": 0.2231718517207047,
+     "bias": -0.008956466561181486,
+     "r2": 0.42457111575302864,
+     "rho": 0.74424162842387,
+     "median_abs": 0.11325662562760408
+    },
+    "dumb": {
+     "name": "Dev median (0.433)",
+     "n": 619,
+     "mae": 0.21137292349601228,
+     "rmse": 0.2945502587577245,
+     "bias": -0.014347418289261483,
+     "r2": -0.0023782655458368662,
+     "rho": NaN,
+     "median_abs": 0.14762727916240692
+    },
+    "flowcast": {
+     "name": "FlowCast v1.0 (network, ungauged)",
+     "n": 619,
+     "mae": 0.11175534007480557,
+     "rmse": 0.1772450098707752,
+     "bias": -0.006461162582720305,
+     "r2": 0.6370382517664173,
+     "rho": 0.8191259960323143,
+     "median_abs": 0.07082594652677837
+    }
+   }
+  },
+  "fire": {
+   "title": "Daily fire growth",
+   "platform": "FireSim",
+   "vars": [
+    "P",
+    "W",
+    "M",
+    "R0"
+   ],
+   "var_info": {
+    "P": {
+     "label": "current perimeter (equivalent circle, 2\u00b7sqrt(pi\u00b7A))",
+     "symbol": "P",
+     "unit": "km",
+     "range": [
+      0.5,
+      60
+     ]
+    },
+    "W": {
+     "label": "daily mean 10 m wind",
+     "symbol": "U",
+     "unit": "m/s",
+     "range": [
+      0.5,
+      10
+     ]
+    },
+    "M": {
+     "label": "100-h dead fuel moisture",
+     "symbol": "M",
+     "unit": "%",
+     "range": [
+      2,
+      25
+     ]
+    },
+    "R0": {
+     "label": "fuel speed: Rothermel head ROS of the group at a standard day",
+     "symbol": "R\u2080",
+     "unit": "m/min",
+     "range": [
+      0.7,
+      13
+     ]
+    }
+   },
+   "target": {
+    "name": "log10 new area",
+    "label": "log10(new area km\u00b2 + 1 cell)",
+    "symbol": "log\u2081\u2080 G"
+   },
+   "rung": "f2-c3",
+   "expr": "((-0.5585) / P)",
+   "text": "-0.5585/P",
+   "tree": [
+    "/",
+    [
+     "c",
+     0
+    ],
+    [
+     "x",
+     0
+    ]
+   ],
+   "consts": [
+    -0.5585285149217328
+   ],
+   "sigma": 1.944562430913496,
+   "sigma_sim": 0.5186862516872374,
+   "widen_dev": 3.749014793794935,
+   "simulator_law": {
+    "rung": "f2-c6",
+    "text": "0.6979\u00b7log(P) - 0.7956",
+    "tree": [
+     "*",
+     [
+      "c",
+      0
+     ],
+     [
+      "log",
+      [
+       "*",
+       [
+        "x",
+        0
+       ],
+       [
+        "c",
+        1
+       ]
+      ]
+     ]
+    ],
+    "consts": [
+     0.697946896223042,
+     0.31984687879008267
+    ]
+   },
+   "textbook": {
+    "form": "rothermel_x_perimeter",
+    "const": 0.015241096596173558,
+    "label": "Rothermel head ROS x perimeter x 24 h, k fitted on dev"
+   },
+   "exam": {
+    "law": {
+     "name": "LawFinder law (f2-c3)",
+     "n": 38599,
+     "mae_log10": 1.1527301748888306,
+     "median_abs_log10": 1.0668394728205355,
+     "bias_log10": 0.45550291783137614,
+     "rho": 0.17248554934614038,
+     "within_x3": 0.27000699499987046,
+     "cov68": 0.6911578020155963
+    },
+    "sim_law": {
+     "name": "FireSim's law (f2-c6)",
+     "n": 38599,
+     "mae_log10": 1.800288155438018,
+     "median_abs_log10": 1.5686693655479538,
+     "bias_log10": 1.558047380398772,
+     "rho": 0.17248554934614038,
+     "within_x3": 0.15350138604627062
+    },
+    "rothermel_dev": {
+     "name": "Rothermel ROS x perimeter, k = 0.0152 (dev)",
+     "n": 38599,
+     "mae_log10": 1.0614885575613502,
+     "median_abs_log10": 1.0445849415777213,
+     "bias_log10": 5.329070518200751e-15,
+     "rho": 0.230404635927337,
+     "within_x3": 0.2164563848804373
+    },
+    "rothermel_sim": {
+     "name": "Rothermel ROS x perimeter, k = 0.175 (FireSim)",
+     "n": 38599,
+     "mae_log10": 1.3443704820446227,
+     "median_abs_log10": 1.0810381759110286,
+     "bias_log10": 0.981559103607237,
+     "rho": 0.23040451724954725,
+     "within_x3": 0.28290888364983546
+    },
+    "fl_prev": {
+     "name": "FireData best baseline: yesterday's growth from the active line",
+     "n": 38599,
+     "mae_log10": 0.6711769358270673,
+     "median_abs_log10": 0.36908326864956387,
+     "bias_log10": 0.0,
+     "rho": 0.6630997963341234,
+     "within_x3": 0.5453768232337626
+    },
+    "clim": {
+     "name": "FireData clim (dumb: dev median growth by size)",
+     "n": 38599,
+     "mae_log10": 1.3710882630846648,
+     "median_abs_log10": 1.4913616938342729,
+     "bias_log10": -1.4313637641589874,
+     "rho": 0.11171493527403446,
+     "within_x3": 0.3823156040311925
+    },
+    "persist": {
+     "name": "Persistence (no growth)",
+     "n": 38599,
+     "mae_log10": 1.399125615619326,
+     "median_abs_log10": 1.5563025007672875,
+     "bias_log10": -1.5563025007672875,
+     "rho": NaN,
+     "within_x3": 0.3786626596543952
+    },
+    "firecast": {
+     "name": "FireCast v1.0 (network, threshold area)",
+     "n": 25122,
+     "mae_log10": 0.7572795721067422,
+     "median_abs_log10": 0.5604229237998088,
+     "bias_log10": 0.2770108446417602,
+     "rho": 0.6554803701526126,
+     "within_x3": 0.43237003423294323
+    }
+   }
+  },
+  "grid_inertia": {
+   "title": "GB system inertia",
+   "platform": "GridSim",
+   "vars": [
+    "D",
+    "s"
+   ],
+   "var_info": {
+    "D": {
+     "label": "demand (transmission generation)",
+     "symbol": "D",
+     "unit": "GW",
+     "range": [
+      15,
+      50
+     ]
+    },
+    "s": {
+     "label": "inverter-based share (wind, solar, imports)",
+     "symbol": "s",
+     "unit": "-",
+     "range": [
+      0.05,
+      0.8
+     ]
+    }
+   },
+   "target": {
+    "name": "inertia",
+    "label": "system inertia E",
+    "symbol": "E",
+    "unit": "GVA\u00b7s"
+   },
+   "rung": "i1-c7",
+   "expr": "(D * (6.603 - (5.617 * s)))",
+   "text": "D\u00b7(6.603 - 5.617\u00b7s)",
+   "tree": [
+    "*",
+    [
+     "x",
+     0
+    ],
+    [
+     "-",
+     [
+      "c",
+      0
+     ],
+     [
+      "*",
+      [
+       "c",
+       1
+      ],
+      [
+       "x",
+       1
+      ]
+     ]
+    ]
+   ],
+   "consts": [
+    6.602547295915936,
+    5.617421572780627
+   ],
+   "sigma": 99.54603776967201,
+   "sigma_sim": 14.783102215303787,
+   "widen_dev": 6.733771864650967,
+   "simulator_law": {
+    "rung": "i1-c7",
+    "text": "D\u00b7(6.603 - 5.617\u00b7s)",
+    "tree": [
+     "*",
+     [
+      "x",
+      0
+     ],
+     [
+      "-",
+      [
+       "c",
+       0
+      ],
+      [
+       "*",
+       [
+        "c",
+        1
+       ],
+       [
+        "x",
+        1
+       ]
+      ]
+     ]
+    ],
+    "consts": [
+     6.602547295915936,
+     5.617421572780627
+    ]
+   },
+   "textbook": {
+    "form": "k_times_demand",
+    "const": 7.0005156080072215,
+    "label": "k x demand, k fitted on dev"
+   },
+   "exam": {
+    "law": {
+     "name": "LawFinder law (i1-c7)",
+     "n": 410,
+     "mae": 69.64511214568448,
+     "mdape": 32.99839864888748,
+     "bias_median": -69.62460149877981,
+     "rho": 0.9749017074311137,
+     "r2": -0.5402593397711661,
+     "cov68": 0.9121951219512195
+    },
+    "sim_law": {
+     "name": "GridSim's law (i1-c7)",
+     "n": 410,
+     "mae": 69.64511214568448,
+     "mdape": 32.99839864888748,
+     "bias_median": -69.62460149877981,
+     "rho": 0.9749017074311137,
+     "r2": -0.5402593397711661
+    },
+    "k_x_demand": {
+     "name": "7.00 s x demand (dev fit)",
+     "n": 410,
+     "mae": 40.80771648127858,
+     "mdape": 15.070610946804608,
+     "bias_median": 20.491867065429688,
+     "rho": 0.5984623198606991,
+     "r2": 0.23823783328038117
+    },
+    "gridpulse": {
+     "name": "GridPulse v1.0 (network: 60 s trace + demand)",
+     "n": 410,
+     "mae": 43.77845245919576,
+     "mdape": 16.443841769556084,
+     "bias_median": 24.48248291015625,
+     "rho": 0.6117419918856254,
+     "r2": 0.0822559114566358
+    },
+    "dumb": {
+     "name": "Dev median inertia",
+     "n": 410,
+     "mae": 57.56585365853658,
+     "mdape": 24.002400240024002,
+     "bias_median": 40.0,
+     "rho": NaN,
+     "r2": -0.41140637279198433
+    }
+   }
+  },
+  "grid_nadir": {
+   "title": "GB frequency nadir",
+   "platform": "GridSim",
+   "vars": [
+    "L",
+    "E",
+    "D"
+   ],
+   "var_info": {
+    "L": {
+     "label": "power lost",
+     "symbol": "\u0394P",
+     "unit": "GW",
+     "range": [
+      0.15,
+      2.0
+     ]
+    },
+    "E": {
+     "label": "system inertia",
+     "symbol": "E",
+     "unit": "GVA\u00b7s",
+     "range": [
+      90,
+      420
+     ]
+    },
+    "D": {
+     "label": "demand",
+     "symbol": "D",
+     "unit": "GW",
+     "range": [
+      16,
+      46
+     ]
+    }
+   },
+   "target": {
+    "name": "nadir depth",
+    "label": "frequency drop to the nadir f0 - f_min",
+    "symbol": "\u0394f",
+    "unit": "Hz"
+   },
+   "rung": "g1-c12",
+   "expr": "sq((((((-66.89) + E) * 5.294e+04) ^ (-0.1042)) * (L - (-2))))",
+   "text": "(\u0394P + 2)^2/(52940\u00b7E - 3.541e+6)^0.2084",
+   "tree": [
+    "sq",
+    [
+     "*",
+     [
+      "^",
+      [
+       "*",
+       [
+        "+",
+        [
+         "c",
+         0
+        ],
+        [
+         "x",
+         1
+        ]
+       ],
+       [
+        "c",
+        1
+       ]
+      ],
+      [
+       "c",
+       2
+      ]
+     ],
+     [
+      "-",
+      [
+       "x",
+       0
+      ],
+      [
+       "c",
+       3
+      ]
+     ]
+    ]
+   ],
+   "consts": [
+    -66.88733774916228,
+    52937.86096773479,
+    -0.1041777556535203,
+    -1.999864334865862
+   ],
+   "sigma": 0.31021531109447703,
+   "sigma_sim": 0.31021531109447703,
+   "widen_dev": 1.0,
+   "simulator_law": {
+    "rung": "g2-c3",
+    "text": "0.4334\u00b7\u0394P",
+    "tree": [
+     "*",
+     [
+      "x",
+      0
+     ],
+     [
+      "c",
+      0
+     ]
+    ],
+    "consts": [
+     0.4334169271460358
+    ]
+   },
+   "textbook": {
+    "form": "swing_ramp",
+    "const": 107.52345197544393,
+    "label": "swing + ramp response, k L^2/E, k fitted on dev"
+   },
+   "exam": {
+    "law": {
+     "name": "LawFinder law (g1-c12)",
+     "n": 148,
+     "mae": 0.06000449181265878,
+     "mdape": 22.314960055729266,
+     "bias_median": 0.030139998254788664,
+     "rho": 0.5095715410808006,
+     "r2": -0.05514208462580661,
+     "cov68": 1.0
+    },
+    "sim_law": {
+     "name": "GridSim's law (g2-c3)",
+     "n": 148,
+     "mae": 0.10631724513709008,
+     "mdape": 38.36530568671499,
+     "bias_median": 0.06260005149484169,
+     "rho": 0.5652347341360999,
+     "r2": -2.1278749449182985
+    },
+    "swing_ramp": {
+     "name": "Swing equation + ramp response, k L^2/E (k = 108, dev)",
+     "n": 148,
+     "mae": 0.17300632669816926,
+     "mdape": 54.55498178281505,
+     "bias_median": -0.008190473434344814,
+     "rho": 0.5165976121355564,
+     "r2": -9.010734922563383
+    },
+    "gridpulse_5s": {
+     "name": "GridPulse v1.0 nadir forecast after 5 s of trace (context: reads the trace)",
+     "n": 148,
+     "mae": 0.07993982946369337,
+     "mdape": 26.468335471187487,
+     "bias_median": 0.024707532405854243,
+     "rho": 0.6662273829831635,
+     "r2": -1.1587721329013383
+    },
+    "dumb": {
+     "name": "Dev median drop",
+     "n": 148,
+     "mae": 0.12869819819820022,
+     "mdape": 56.65895735423489,
+     "bias_median": 0.13309166666666528,
+     "rho": NaN,
+     "r2": -2.707761168929462
+    }
+   }
+  },
+  "bldg": {
+   "title": "Home energy signature",
+   "platform": "BuildingSim",
+   "vars": [
+    "H",
+    "C",
+    "A",
+    "Y"
+   ],
+   "var_info": {
+    "H": {
+     "label": "heating degree days, base 18 \u00b0C",
+     "symbol": "HDD",
+     "unit": "1000 K\u00b7d",
+     "range": [
+      0.2,
+      6.0
+     ]
+    },
+    "C": {
+     "label": "cooling degree days, base 18 \u00b0C",
+     "symbol": "CDD",
+     "unit": "1000 K\u00b7d",
+     "range": [
+      0.0,
+      2.5
+     ]
+    },
+    "A": {
+     "label": "floor area",
+     "symbol": "A",
+     "unit": "100 m\u00b2",
+     "range": [
+      0.5,
+      4.0
+     ]
+    },
+    "Y": {
+     "label": "year built",
+     "symbol": "Y",
+     "unit": "year",
+     "range": [
+      1920,
+      2020
+     ]
+    }
+   },
+   "target": {
+    "name": "EUI",
+    "label": "site energy per floor area",
+    "symbol": "EUI",
+    "unit": "kWh/m\u00b2/yr"
+   },
+   "rung": "b2-c13",
+   "expr": "(((186.5 / (1.926 ^ A)) + (H * 2022)) - (H * Y))",
+   "text": "-H\u00b7Y + 2022\u00b7H + 186.5/1.926^A",
+   "tree": [
+    "-",
+    [
+     "+",
+     [
+      "/",
+      [
+       "c",
+       0
+      ],
+      [
+       "^",
+       [
+        "c",
+        1
+       ],
+       [
+        "x",
+        2
+       ]
+      ]
+     ],
+     [
+      "*",
+      [
+       "x",
+       0
+      ],
+      [
+       "c",
+       2
+      ]
+     ]
+    ],
+    [
+     "*",
+     [
+      "x",
+      0
+     ],
+     [
+      "x",
+      3
+     ]
+    ]
+   ],
+   "consts": [
+    186.48735665118332,
+    1.9263896903345104,
+    2021.8721660805875
+   ],
+   "sigma": 87.27876889359564,
+   "sigma_sim": 61.867199204965985,
+   "widen_dev": 1.410743819264246,
+   "simulator_law": {
+    "rung": "b2-c9",
+    "text": "2021\u00b7H - Y\u00b7(H - 0.03403)",
+    "tree": [
+     "-",
+     [
+      "*",
+      [
+       "x",
+       0
+      ],
+      [
+       "c",
+       0
+      ]
+     ],
+     [
+      "*",
+      [
+       "+",
+       [
+        "x",
+        0
+       ],
+       [
+        "c",
+        1
+       ]
+      ],
+      [
+       "x",
+       3
+      ]
+     ]
+    ],
+    "consts": [
+     2020.9987524625546,
+     -0.0340320446371114
+    ]
+   },
+   "textbook": {
+    "form": "degree_day_signature",
+    "const": [
+     85.16792856758846,
+     22.877467987044255,
+     17.416107434313133
+    ],
+    "label": "degree-day signature a + b HDD + c CDD, fitted on dev"
+   },
+   "exam": {
+    "law": {
+     "name": "LawFinder law (b2-c13)",
+     "n": 6019,
+     "mdape": 39.282465221410376,
+     "mae": 76.10603275623902,
+     "bias_median_pct": 4.826350275920288,
+     "rho": 0.473302267865587,
+     "r2": -0.42978178415497315,
+     "cov68": 0.6926399734175113
+    },
+    "sim_law": {
+     "name": "BuildingSim's law (b2-c9)",
+     "n": 6019,
+     "mdape": 39.739343464523735,
+     "mae": 81.63366076275574,
+     "bias_median_pct": 15.874719798219505,
+     "rho": 0.34934894631582974,
+     "r2": -0.653048331645459
+    },
+    "signature_dev": {
+     "name": "Degree-day signature 85 + 22.9 HDD + 17.4 CDD (dev)",
+     "n": 6019,
+     "mdape": 35.574580017369705,
+     "mae": 62.236826067146545,
+     "bias_median_pct": 16.44802108243484,
+     "rho": 0.2496022482908505,
+     "r2": 0.048668396556331706
+    },
+    "signature_sim": {
+     "name": "Degree-day signature 23 + 61.2 HDD + 15.6 CDD (BuildingSim)",
+     "n": 6019,
+     "mdape": 45.11370599264634,
+     "mae": 81.20661428674111,
+     "bias_median_pct": 29.859647421522183,
+     "rho": 0.2509112872871562,
+     "r2": -0.41227074891013404
+    },
+    "loglin_dev": {
+     "name": "BuildingData-style: log energy ~ log area + HDD + CDD (dev)",
+     "n": 6019,
+     "mdape": 26.602800140805762,
+     "mae": 50.561612828892805,
+     "bias_median_pct": -1.5631538296225433,
+     "rho": 0.5491567382448018,
+     "r2": 0.3048965532546529
+    },
+    "dumb": {
+     "name": "Dev median EUI",
+     "n": 6019,
+     "mdape": 33.37930905511295,
+     "mae": 61.46975331141042,
+     "bias_median_pct": 0.2896980225185253,
+     "rho": NaN,
+     "r2": -0.04426186299800805
+    }
+   }
+  }
+ }
+}

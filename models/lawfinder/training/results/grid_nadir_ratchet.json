@@ -1,0 +1,1000 @@
+{
+ "bars": {
+  "sigma_sim": 0.31021531109447703,
+  "widen_dev": 1.0,
+  "sigma": 0.31021531109447703,
+  "dev_cov68_raw": 0.75,
+  "dev_cov68_widened": 0.75
+ },
+ "law": "grid_nadir",
+ "title": "GB frequency nadir",
+ "vars": [
+  "L",
+  "E",
+  "D"
+ ],
+ "var_info": {
+  "L": {
+   "label": "power lost",
+   "symbol": "\u0394P",
+   "unit": "GW",
+   "range": [
+    0.15,
+    2.0
+   ]
+  },
+  "E": {
+   "label": "system inertia",
+   "symbol": "E",
+   "unit": "GVA\u00b7s",
+   "range": [
+    90,
+    420
+   ]
+  },
+  "D": {
+   "label": "demand",
+   "symbol": "D",
+   "unit": "GW",
+   "range": [
+    16,
+    46
+   ]
+  }
+ },
+ "target": {
+  "name": "nadir depth",
+  "label": "frequency drop to the nadir f0 - f_min",
+  "symbol": "\u0394f",
+  "unit": "Hz"
+ },
+ "margin": 0.01,
+ "dev_tol": 1.05,
+ "rule": "Keep a rung if its frozen-set R^2 beats the incumbent by more than 0.01 AND its dev error is no more than 5% worse. Rungs = Pareto-front laws in order of complexity, then physics versions; after a physics change every rung is re-scored on the new frozen set and every decision re-taken.",
+ "rungs": [
+  {
+   "id": "r0",
+   "version": "g1",
+   "change": "A constant (the simulator mean)",
+   "tree": [
+    "c",
+    0
+   ],
+   "consts": [
+    0.40492660830468774
+   ],
+   "complexity": 1,
+   "expr": "0.4049",
+   "js": "0.40492660830468774",
+   "label": null,
+   "scores": {
+    "g1": {
+     "sim": -0.000614642228172757,
+     "dev": 0.08595994163802312
+    },
+    "g2": {
+     "sim": -0.13960385341948722,
+     "dev": 0.08595994163802312
+    }
+   },
+   "sim": -0.13960385341948722,
+   "dev": 0.08595994163802312,
+   "dev_r2": -0.17155662889927004,
+   "sigma_sim": 0.3437493723717191
+  },
+  {
+   "id": "g1-c3",
+   "version": "g1",
+   "change": "Physics g1, complexity 3",
+   "tree": [
+    "*",
+    [
+     "c",
+     0
+    ],
+    [
+     "x",
+     0
+    ]
+   ],
+   "consts": [
+    0.30740613479716333
+   ],
+   "complexity": 3,
+   "expr": "(0.3074 * L)",
+   "js": "(0.30740613479716333 * L)",
+   "label": null,
+   "scores": {
+    "g1": {
+     "sim": 0.1859261352034154,
+     "dev": 0.03706527368390464
+    },
+    "g2": {
+     "sim": -0.07120849660343676,
+     "dev": 0.03706527368390464
+    }
+   },
+   "sim": -0.07120849660343676,
+   "dev": 0.03706527368390464,
+   "dev_r2": -0.3113631816456972,
+   "sigma_sim": 0.3146065389775409
+  },
+  {
+   "id": "g1-c5",
+   "version": "g1",
+   "change": "Physics g1, complexity 5",
+   "tree": [
+    "*",
+    [
+     "^",
+     [
+      "x",
+      1
+     ],
+     [
+      "c",
+      0
+     ]
+    ],
+    [
+     "x",
+     0
+    ]
+   ],
+   "consts": [
+    -0.21908150697008855
+   ],
+   "complexity": 5,
+   "expr": "((E ^ (-0.2191)) * L)",
+   "js": "(Math.pow(E, -0.21908150697008855) * L)",
+   "label": null,
+   "scores": {
+    "g1": {
+     "sim": 0.2301678118874373,
+     "dev": 0.05169807112003301
+    },
+    "g2": {
+     "sim": -0.049218562373162245,
+     "dev": 0.05169807112003301
+    }
+   },
+   "sim": -0.049218562373162245,
+   "dev": 0.05169807112003301,
+   "dev_r2": -0.31321533496772314,
+   "sigma_sim": 0.31011579664899785
+  },
+  {
+   "id": "g1-c7",
+   "version": "g1",
+   "change": "Physics g1, complexity 7",
+   "tree": [
+    "*",
+    [
+     "^",
+     [
+      "x",
+      1
+     ],
+     [
+      "c",
+      0
+     ]
+    ],
+    [
+     "^",
+     [
+      "c",
+      1
+     ],
+     [
+      "x",
+      0
+     ]
+    ]
+   ],
+   "consts": [
+    -0.32108914809059164,
+    1.8476894626055496
+   ],
+   "complexity": 7,
+   "expr": "((E ^ (-0.3211)) * (1.848 ^ L))",
+   "js": "(Math.pow(E, -0.32108914809059164) * Math.pow(1.8476894626055496, L))",
+   "label": null,
+   "scores": {
+    "g1": {
+     "sim": 0.2565598549797552,
+     "dev": 0.042365434088574544
+    },
+    "g2": {
+     "sim": -0.008278360532351314,
+     "dev": 0.042365434088574544
+    }
+   },
+   "sim": -0.008278360532351314,
+   "dev": 0.042365434088574544,
+   "dev_r2": -0.2854046834923192,
+   "sigma_sim": 0.3118196000966734
+  },
+  {
+   "id": "g1-c9",
+   "version": "g1",
+   "change": "Physics g1, complexity 9",
+   "tree": [
+    "sq",
+    [
+     "*",
+     [
+      "^",
+      [
+       "log",
+       [
+        "x",
+        1
+       ]
+      ],
+      [
+       "c",
+       0
+      ]
+     ],
+     [
+      "-",
+      [
+       "x",
+       0
+      ],
+      [
+       "c",
+       1
+      ]
+     ]
+    ]
+   ],
+   "consts": [
+    -0.9793942696836668,
+    -1.983806435481354
+   ],
+   "complexity": 9,
+   "expr": "sq(((log(E) ^ (-0.9794)) * (L - (-1.984))))",
+   "js": "((Math.pow(Math.log(E), -0.9793942696836668) * (L - -1.983806435481354)) * (Math.pow(Math.log(E), -0.9793942696836668) * (L - -1.983806435481354)))",
+   "label": null,
+   "scores": {
+    "g1": {
+     "sim": 0.26290014725375854,
+     "dev": 0.044749403335566595
+    },
+    "g2": {
+     "sim": -0.003526684301503158,
+     "dev": 0.044749403335566595
+    }
+   },
+   "sim": -0.003526684301503158,
+   "dev": 0.044749403335566595,
+   "dev_r2": -0.2756578045506266,
+   "sigma_sim": 0.31003405227711023
+  },
+  {
+   "id": "g1-c12",
+   "version": "g1",
+   "change": "Physics g1, complexity 12",
+   "tree": [
+    "sq",
+    [
+     "*",
+     [
+      "^",
+      [
+       "*",
+       [
+        "+",
+        [
+         "c",
+         0
+        ],
+        [
+         "x",
+         1
+        ]
+       ],
+       [
+        "c",
+        1
+       ]
+      ],
+      [
+       "c",
+       2
+      ]
+     ],
+     [
+      "-",
+      [
+       "x",
+       0
+      ],
+      [
+       "c",
+       3
+      ]
+     ]
+    ]
+   ],
+   "consts": [
+    -66.88733774916228,
+    52937.86096773479,
+    -0.1041777556535203,
+    -1.999864334865862
+   ],
+   "complexity": 12,
+   "expr": "sq((((((-66.89) + E) * 5.294e+04) ^ (-0.1042)) * (L - (-2))))",
+   "js": "((Math.pow(((-66.88733774916228 + E) * 52937.86096773479), -0.1041777556535203) * (L - -1.999864334865862)) * (Math.pow(((-66.88733774916228 + E) * 52937.86096773479), -0.1041777556535203) * (L - -1.999864334865862)))",
+   "label": null,
+   "scores": {
+    "g1": {
+     "sim": 0.25910800510748344,
+     "dev": 0.038695055810867796
+    },
+    "g2": {
+     "sim": -0.0048342540529298095,
+     "dev": 0.038695055810867796
+    }
+   },
+   "sim": -0.0048342540529298095,
+   "dev": 0.038695055810867796,
+   "dev_r2": -0.27906013790431694,
+   "sigma_sim": 0.31021531109447703
+  },
+  {
+   "id": "g1-c13",
+   "version": "g1",
+   "change": "Physics g1, complexity 13",
+   "tree": [
+    "*",
+    [
+     "^",
+     [
+      "+",
+      [
+       "c",
+       0
+      ],
+      [
+       "*",
+       [
+        "x",
+        2
+       ],
+       [
+        "+",
+        [
+         "x",
+         1
+        ],
+        [
+         "c",
+         1
+        ]
+       ]
+      ]
+     ],
+     [
+      "c",
+      2
+     ]
+    ],
+    [
+     "-",
+     [
+      "x",
+      0
+     ],
+     [
+      "c",
+      3
+     ]
+    ]
+   ],
+   "consts": [
+    1474.1176752211916,
+    -126.19563528053196,
+    -0.16978376570364295,
+    -0.3613525449608844
+   ],
+   "complexity": 13,
+   "expr": "(((1474 + (D * (E + (-126.2)))) ^ (-0.1698)) * (L - (-0.3614)))",
+   "js": "(Math.pow((1474.1176752211916 + (D * (E + -126.19563528053196))), -0.16978376570364295) * (L - -0.3613525449608844))",
+   "label": null,
+   "scores": {
+    "g1": {
+     "sim": 0.257323454509612,
+     "dev": 0.042718588533388197
+    },
+    "g2": {
+     "sim": -0.015929955238520366,
+     "dev": 0.042718588533388197
+    }
+   },
+   "sim": -0.015929955238520366,
+   "dev": 0.042718588533388197,
+   "dev_r2": -0.28126249809909987,
+   "sigma_sim": 0.3094970233330948
+  },
+  {
+   "id": "g2-c3",
+   "version": "g2",
+   "change": "Physics g2, complexity 3",
+   "tree": [
+    "*",
+    [
+     "x",
+     0
+    ],
+    [
+     "c",
+     0
+    ]
+   ],
+   "consts": [
+    0.4334169271460358
+   ],
+   "complexity": 3,
+   "expr": "(L * 0.4334)",
+   "js": "(L * 0.4334169271460358)",
+   "label": null,
+   "scores": {
+    "g2": {
+     "sim": 0.12291815281097884,
+     "dev": 0.09858685640916476
+    }
+   },
+   "sim": 0.12291815281097884,
+   "dev": 0.09858685640916476,
+   "dev_r2": 0.03365582842754833,
+   "sigma_sim": 0.32155215003378546
+  },
+  {
+   "id": "g2-c4",
+   "version": "g2",
+   "change": "Physics g2, complexity 4",
+   "tree": [
+    "exp",
+    [
+     "/",
+     [
+      "c",
+      0
+     ],
+     [
+      "x",
+      0
+     ]
+    ]
+   ],
+   "consts": [
+    -0.6624920817102179
+   ],
+   "complexity": 4,
+   "expr": "exp(((-0.6625) / L))",
+   "js": "Math.exp((-0.6624920817102179 / L))",
+   "label": null,
+   "scores": {
+    "g2": {
+     "sim": 0.15639796834735376,
+     "dev": 0.17327371965656838
+    }
+   },
+   "sim": 0.15639796834735376,
+   "dev": 0.17327371965656838,
+   "dev_r2": 0.08922923777614677,
+   "sigma_sim": 0.31572356081716807
+  },
+  {
+   "id": "g2-c5",
+   "version": "g2",
+   "change": "Physics g2, complexity 5",
+   "tree": [
+    "*",
+    [
+     "+",
+     [
+      "c",
+      0
+     ],
+     [
+      "x",
+      0
+     ]
+    ],
+    [
+     "c",
+     1
+    ]
+   ],
+   "consts": [
+    0.4555011085345008,
+    0.3262984269121151
+   ],
+   "complexity": 5,
+   "expr": "((0.4555 + L) * 0.3263)",
+   "js": "((0.4555011085345008 + L) * 0.3262984269121151)",
+   "label": null,
+   "scores": {
+    "g2": {
+     "sim": 0.16039969928060271,
+     "dev": 0.13766288660838127
+    }
+   },
+   "sim": 0.16039969928060271,
+   "dev": 0.13766288660838127,
+   "dev_r2": 0.05499600570874108,
+   "sigma_sim": 0.3149358310482738
+  },
+  {
+   "id": "g2-c6",
+   "version": "g2",
+   "change": "Physics g2, complexity 6",
+   "tree": [
+    "sqrt",
+    [
+     "*",
+     [
+      "/",
+      [
+       "x",
+       0
+      ],
+      [
+       "x",
+       1
+      ]
+     ],
+     [
+      "c",
+      0
+     ]
+    ]
+   ],
+   "consts": [
+    56.41842204601896
+   ],
+   "complexity": 6,
+   "expr": "sqrt(((L / E) * 56.42))",
+   "js": "Math.sqrt(((L / E) * 56.41842204601896))",
+   "label": null,
+   "scores": {
+    "g2": {
+     "sim": 0.19917146200870728,
+     "dev": 0.13955894217553666
+    }
+   },
+   "sim": 0.19917146200870728,
+   "dev": 0.13955894217553666,
+   "dev_r2": 0.1212156390546485,
+   "sigma_sim": 0.3073684599223227
+  },
+  {
+   "id": "g2-c7",
+   "version": "g2",
+   "change": "Physics g2, complexity 7",
+   "tree": [
+    "-",
+    [
+     "/",
+     [
+      "c",
+      0
+     ],
+     [
+      "x",
+      1
+     ]
+    ],
+    [
+     "*",
+     [
+      "x",
+      0
+     ],
+     [
+      "c",
+      1
+     ]
+    ]
+   ],
+   "consts": [
+    33.359982346882845,
+    -0.3208195031828065
+   ],
+   "complexity": 7,
+   "expr": "((33.36 / E) - (L * (-0.3208)))",
+   "js": "((33.359982346882845 / E) - (L * -0.3208195031828065))",
+   "label": null,
+   "scores": {
+    "g2": {
+     "sim": 0.20286269515981536,
+     "dev": 0.12100265894561799
+    }
+   },
+   "sim": 0.20286269515981536,
+   "dev": 0.12100265894561799,
+   "dev_r2": 0.08257326796335795,
+   "sigma_sim": 0.30676781047677526
+  },
+  {
+   "id": "g2-c8",
+   "version": "g2",
+   "change": "Physics g2, complexity 8",
+   "tree": [
+    "^",
+    [
+     "*",
+     [
+      "/",
+      [
+       "x",
+       0
+      ],
+      [
+       "sqrt",
+       [
+        "x",
+        1
+       ]
+      ]
+     ],
+     [
+      "c",
+      0
+     ]
+    ],
+    [
+     "c",
+     1
+    ]
+   ],
+   "consts": [
+    5.282671114607832,
+    0.7029711689163646
+   ],
+   "complexity": 8,
+   "expr": "(((L / sqrt(E)) * 5.283) ^ 0.703)",
+   "js": "Math.pow(((L / Math.sqrt(E)) * 5.282671114607832), 0.7029711689163646)",
+   "label": null,
+   "scores": {
+    "g2": {
+     "sim": 0.20167320416869694,
+     "dev": 0.12821840480368651
+    }
+   },
+   "sim": 0.20167320416869694,
+   "dev": 0.12821840480368651,
+   "dev_r2": 0.10842686230279619,
+   "sigma_sim": 0.3070653269141218
+  },
+  {
+   "id": "g2-c10",
+   "version": "g2",
+   "change": "Physics g2, complexity 10",
+   "tree": [
+    "^",
+    [
+     "/",
+     [
+      "/",
+      [
+       "x",
+       0
+      ],
+      [
+       "sqrt",
+       [
+        "*",
+        [
+         "x",
+         1
+        ],
+        [
+         "x",
+         2
+        ]
+       ]
+      ]
+     ],
+     [
+      "c",
+      0
+     ]
+    ],
+    [
+     "c",
+     1
+    ]
+   ],
+   "consts": [
+    0.03661696250575836,
+    0.6482670105714184
+   ],
+   "complexity": 10,
+   "expr": "(((L / sqrt((E * D))) / 0.03662) ^ 0.6483)",
+   "js": "Math.pow(((L / Math.sqrt((E * D))) / 0.03661696250575836), 0.6482670105714184)",
+   "label": null,
+   "scores": {
+    "g2": {
+     "sim": 0.1971793038794849,
+     "dev": 0.12205167245903223
+    }
+   },
+   "sim": 0.1971793038794849,
+   "dev": 0.12205167245903223,
+   "dev_r2": 0.08874571277433851,
+   "sigma_sim": 0.307919073981849
+  },
+  {
+   "id": "g2-c11",
+   "version": "g2",
+   "change": "Physics g2, complexity 11",
+   "tree": [
+    "^",
+    [
+     "/",
+     [
+      "/",
+      [
+       "x",
+       0
+      ],
+      [
+       "^",
+       [
+        "*",
+        [
+         "x",
+         1
+        ],
+        [
+         "x",
+         2
+        ]
+       ],
+       [
+        "c",
+        0
+       ]
+      ]
+     ],
+     [
+      "c",
+      1
+     ]
+    ],
+    [
+     "c",
+     2
+    ]
+   ],
+   "consts": [
+    0.36657998126323804,
+    0.11012513419829315,
+    0.7074344016659238
+   ],
+   "complexity": 11,
+   "expr": "(((L / ((E * D) ^ 0.3666)) / 0.1101) ^ 0.7074)",
+   "js": "Math.pow(((L / Math.pow((E * D), 0.36657998126323804)) / 0.11012513419829315), 0.7074344016659238)",
+   "label": null,
+   "scores": {
+    "g2": {
+     "sim": 0.19703800579318365,
+     "dev": 0.12268548423934689
+    }
+   },
+   "sim": 0.19703800579318365,
+   "dev": 0.12268548423934689,
+   "dev_r2": 0.08739512525128201,
+   "sigma_sim": 0.3079710052402123
+  },
+  {
+   "id": "g2-c14",
+   "version": "g2",
+   "change": "Physics g2, complexity 14",
+   "tree": [
+    "^",
+    [
+     "*",
+     [
+      "/",
+      [
+       "x",
+       0
+      ],
+      [
+       "sqrt",
+       [
+        "*",
+        [
+         "+",
+         [
+          "x",
+          1
+         ],
+         [
+          "c",
+          0
+         ]
+        ],
+        [
+         "^",
+         [
+          "x",
+          2
+         ],
+         [
+          "c",
+          1
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      "c",
+      2
+     ]
+    ],
+    [
+     "c",
+     3
+    ]
+   ],
+   "consts": [
+    33.66661830489833,
+    0.5764957389017913,
+    15.31807601501014,
+    0.7053045930889784
+   ],
+   "complexity": 14,
+   "expr": "(((L / sqrt(((E + 33.67) * (D ^ 0.5765)))) * 15.32) ^ 0.7053)",
+   "js": "Math.pow(((L / Math.sqrt(((E + 33.66661830489833) * Math.pow(D, 0.5764957389017913)))) * 15.31807601501014), 0.7053045930889784)",
+   "label": null,
+   "scores": {
+    "g2": {
+     "sim": 0.1995306590608561,
+     "dev": 0.1236670134260717
+    }
+   },
+   "sim": 0.1995306590608561,
+   "dev": 0.1236670134260717,
+   "dev_r2": 0.09621389069210684,
+   "sigma_sim": 0.30748496693013716
+  }
+ ],
+ "history": [
+  {
+   "frozen_set": "val_g1",
+   "decisions": [
+    {
+     "id": "r0",
+     "decision": "kept",
+     "why": "First rung (the incumbent to beat)."
+    },
+    {
+     "id": "g1-c3",
+     "decision": "kept",
+     "why": "Frozen-set skill 0.186 > -0.001 + 0.01, dev error 0.03707 vs 0.08596 (within 5%)."
+    },
+    {
+     "id": "g1-c5",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.230 beats 0.186, but the dev error 0.0517 is more than 5% worse than 0.03707."
+    },
+    {
+     "id": "g1-c7",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.257 beats 0.186, but the dev error 0.04237 is more than 5% worse than 0.03707."
+    },
+    {
+     "id": "g1-c9",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.263 beats 0.186, but the dev error 0.04475 is more than 5% worse than 0.03707."
+    },
+    {
+     "id": "g1-c12",
+     "decision": "kept",
+     "why": "Frozen-set skill 0.259 > 0.186 + 0.01, dev error 0.0387 vs 0.03707 (within 5%)."
+    },
+    {
+     "id": "g1-c13",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.257 does not beat the incumbent's 0.259 by more than 0.01."
+    }
+   ],
+   "released": "g1-c12"
+  },
+  {
+   "frozen_set": "val_g2",
+   "decisions": [
+    {
+     "id": "r0",
+     "decision": "kept",
+     "why": "First rung (the incumbent to beat)."
+    },
+    {
+     "id": "g1-c3",
+     "decision": "kept",
+     "why": "Frozen-set skill -0.071 > -0.140 + 0.01, dev error 0.03707 vs 0.08596 (within 5%)."
+    },
+    {
+     "id": "g1-c5",
+     "decision": "rejected",
+     "why": "Frozen-set skill -0.049 beats -0.071, but the dev error 0.0517 is more than 5% worse than 0.03707."
+    },
+    {
+     "id": "g1-c7",
+     "decision": "rejected",
+     "why": "Frozen-set skill -0.008 beats -0.071, but the dev error 0.04237 is more than 5% worse than 0.03707."
+    },
+    {
+     "id": "g1-c9",
+     "decision": "rejected",
+     "why": "Frozen-set skill -0.004 beats -0.071, but the dev error 0.04475 is more than 5% worse than 0.03707."
+    },
+    {
+     "id": "g1-c12",
+     "decision": "kept",
+     "why": "Frozen-set skill -0.005 > -0.071 + 0.01, dev error 0.0387 vs 0.03707 (within 5%)."
+    },
+    {
+     "id": "g1-c13",
+     "decision": "rejected",
+     "why": "Frozen-set skill -0.016 does not beat the incumbent's -0.005 by more than 0.01."
+    },
+    {
+     "id": "g2-c3",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.123 beats -0.005, but the dev error 0.09859 is more than 5% worse than 0.0387."
+    },
+    {
+     "id": "g2-c4",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.156 beats -0.005, but the dev error 0.1733 is more than 5% worse than 0.0387."
+    },
+    {
+     "id": "g2-c5",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.160 beats -0.005, but the dev error 0.1377 is more than 5% worse than 0.0387."
+    },
+    {
+     "id": "g2-c6",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.199 beats -0.005, but the dev error 0.1396 is more than 5% worse than 0.0387."
+    },
+    {
+     "id": "g2-c7",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.203 beats -0.005, but the dev error 0.121 is more than 5% worse than 0.0387."
+    },
+    {
+     "id": "g2-c8",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.202 beats -0.005, but the dev error 0.1282 is more than 5% worse than 0.0387."
+    },
+    {
+     "id": "g2-c10",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.197 beats -0.005, but the dev error 0.1221 is more than 5% worse than 0.0387."
+    },
+    {
+     "id": "g2-c11",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.197 beats -0.005, but the dev error 0.1227 is more than 5% worse than 0.0387."
+    },
+    {
+     "id": "g2-c14",
+     "decision": "rejected",
+     "why": "Frozen-set skill 0.200 beats -0.005, but the dev error 0.1237 is more than 5% worse than 0.0387."
+    }
+   ],
+   "released": "g1-c12"
+  }
+ ],
+ "released": "g1-c12"
+}
