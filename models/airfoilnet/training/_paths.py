@@ -14,6 +14,7 @@ SRC = os.path.dirname(os.path.abspath(__file__))
 MODEL = os.path.dirname(SRC)
 WORK = os.path.abspath(os.path.join(os.environ['ML_RATCHET_WORK'], 'airfoilnet')
                        if os.environ.get('ML_RATCHET_WORK') else os.path.join(MODEL, 'work'))
+os.makedirs(WORK, exist_ok=True)   # a fresh work folder (make_shapes.py is the first step that writes here)
 
 
 def work(*parts, mkdir=False):

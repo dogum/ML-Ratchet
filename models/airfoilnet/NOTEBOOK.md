@@ -112,3 +112,4 @@ The drag trend with Re was built into physics version p1c (see the ratchet). The
 - The training scripts built `models/airfoilnet/work` by hand (32 places in 14 files), ignoring `$ML_RATCHET_WORK`. They
   now take `WORK` from `training/_paths.py`. `data/` and `release/` stay next to the model folder (ignored by its
   `.gitignore`).
+- `training/_paths.py` now creates the work folder on import; a fresh rebuild failed at `make_shapes.py`'s first save.
