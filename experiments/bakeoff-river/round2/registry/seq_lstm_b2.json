@@ -1,0 +1,66 @@
+{
+ "arm_id": "seq_lstm_b2",
+ "hash": "20c85ab784e6a45bbac06aa158c4ddecb54abc2e43cfa071f27fe1603f02ba74",
+ "files": {
+  "../../../arms_seq/common/SEQLIB_FROZEN.sha256": "fcdc4e4ed854dddb6abe4239d13fa020e928607008edaab732f17f206d1836f3",
+  "../../../arms_seq/common/seqlib.py": "d53f7d73f085fd0546b4fb55d8d4dc513e4f53b3460d3617f70b39dcf32f3dda",
+  "card.md": "e0d323f1294756e14d1e1f8d57fd27d3618c1afad55e0b2395742c3f211ee373",
+  "predict.py": "86ef951762aa8f1474c27694243ab4df1f1bdc150fde2e2d2a6f72177aa975b4",
+  "ratchet.json": "5e0e51a4203fcffd154653f2a69baa76c0e1023f529519b628e1d156871009bd",
+  "weights.npz": "eef9d985401a1d4e6b1a3ae0ef308d53b3b17ae576e1a877a5402d5284abf708"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "LSTM (FlowCast's network) retrained on bank b2",
+  "family": "ssm",
+  "family_label": "State-space and recurrent models (LSTM)",
+  "group": "round2",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.317,
+   "notes": "one rung: the v1.0 recipe retrained on bank b2, one thread (process_time), shared 16-core Windows machine"
+  },
+  "released": "b2",
+  "feature_engineering": "identical to seq_lstm (round 1); only the training bank differs",
+  "compare_to": [
+   "seq_lstm"
+  ]
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "ungauged": {
+   "dev_nse": [
+    0.5255,
+    0.1416,
+    0.4136
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 0.172
+  },
+  "files_used": [
+   "arms_seq/common/seqlib.py",
+   "round2/arms/seq_lstm_b2/predict.py",
+   "round2/arms/seq_lstm_b2/ratchet.json",
+   "round2/arms/seq_lstm_b2/weights.npz",
+   "round2/work/banks/b2/val/F.npy",
+   "round2/work/banks/b2/val/attrs.npy",
+   "round2/work/banks/b2/val/lat.npy",
+   "round2/work/banks/b2/val/lon.npy",
+   "round2/work/banks/b2/val/qo.npy",
+   "round2/work/banks/b2/val/st.npy",
+   "round2/work/banks/b2/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 3.5
+ },
+ "harness_hash": "779e51f025d454d74d15d1cec8ad94cbf6c8703e1d2fed15cb50f49a0956272f",
+ "arm_dir_rel": "round2/arms/seq_lstm_b2",
+ "smoke_simval_bank": "b2",
+ "registered_at": "2026-11-25T00:00:41",
+ "history": []
+}

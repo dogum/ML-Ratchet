@@ -1,0 +1,104 @@
+{
+ "arm_id": "ens_e1",
+ "hash": "42733b915cc4d4edab26123eb1da2db9470b6d422a6f77b002398c81016c8f74",
+ "files": {
+  "../../../arms_seq/common/SEQLIB_FROZEN.sha256": "fcdc4e4ed854dddb6abe4239d13fa020e928607008edaab732f17f206d1836f3",
+  "../../../arms_seq/common/seqlib.py": "d53f7d73f085fd0546b4fb55d8d4dc513e4f53b3460d3617f70b39dcf32f3dda",
+  "../../../arms_seq/lstm/card.md": "9a4c47338dcc94b98e1d1ee3bb074ad55ece35deaeec6207315aa876f53f3272",
+  "../../../arms_seq/lstm/predict.py": "6648c35d1a3e9ed3c1cb2d0f260f9f988295f4768b73cb9439b61410fd8b7a9d",
+  "../../../arms_seq/lstm/ratchet.json": "ea257f33e6d621f82dca454110f6eb31f74a3c7d9784256a896444b7aa6c4c7c",
+  "../../../arms_seq/lstm/weights.npz": "9210223bd90db9fabe64500a9e71296497d647af937063bfd801e3d688ea86cb",
+  "../../../arms_seq/ssm/card.md": "bd1525ca201992d291e20502b8c67998391b58039f0e6ba61b184ed401b14de3",
+  "../../../arms_seq/ssm/predict.py": "802fb204415b32c538d0497600c2f95ae045bcda3f7a44c18dcac1a02b21fe0f",
+  "../../../arms_seq/ssm/ratchet.json": "7463eefad05e78917ecd0da22c87eaeeabc6ba043640477cb1098d01b072fd75",
+  "../../../arms_seq/ssm/weights.npz": "769032323228cbd049d5f3f196bcb973d7ff55d3fe65bec68006b7ffb9d26ee4",
+  "../../../arms_seq/tcn/card.md": "ca8ed52141c50e2af8b3f526f8d737f3511d5170df48330ea4339d904d89843f",
+  "../../../arms_seq/tcn/predict.py": "ba06ff6527898b56321a915aaf05d53d7a70cbc695459ca0c520b75af11d94cc",
+  "../../../arms_seq/tcn/ratchet.json": "62bc93c8f140c4239e920330125c7e24e1acc70d592eb66b33729115786dd2ea",
+  "../../../arms_seq/tcn/weights.npz": "f47a6ebc54c3c104cf30839056e29e5e4e529b8c6171a8fab73ccaca60132f44",
+  "../../../arms_tab/tab_gbm/card.md": "d653c84bc8efa93bbe48afc9adc99c3a2320b9f3a2668f90f33a251f9f63a576",
+  "../../../arms_tab/tab_gbm/feats.py": "34308612173b6143cab16f91585923988f4e4adef1c2dc1a2c587ffbed2fbc2f",
+  "../../../arms_tab/tab_gbm/gbm_trees.npz": "f61e064a5eb4263c23dd217fa12ceb0d5c07184a2c25d710ddb1eb3298ec0d39",
+  "../../../arms_tab/tab_gbm/predict.py": "504c4c2ea6db7f949f573814e8cf7fa26a6d6cf916862d4a909658299954583f",
+  "../../../arms_tab/tab_gbm/ratchet.json": "8bcf3a241d9e75026cb425c20abd8db39794f5cbe33ffc4d6f577d7038f49caa",
+  "../../../arms_tab/tab_gbm/treeexport.py": "d8986b3fbdba560196beb92ec002571c3bb4c500a6c2655593f5e8f97a232c01",
+  "../../../harness/arms_ref/flowcast_v1/card.md": "ea3b8943a2b2e6bd7ac2aabc4520fe3e9d67947d996f480ab8ab1629998119bc",
+  "../../../harness/arms_ref/flowcast_v1/flowcast.py": "6d98b1bd2d585042345e1253428e5e7e4fde0dabcd052ef192a49dfa9ceb2e45",
+  "../../../harness/arms_ref/flowcast_v1/flowcast_nowcast_weights.npz": "788db343064d80436c71f3bb73e3f909364e57e494c655906c7de81504c3b801",
+  "../../../harness/arms_ref/flowcast_v1/flowcast_weights.npz": "bbf1830f5ed5971e465fdb5db754cb2b2dd3ca34c66d2cf4edc5ec06f6dbe289",
+  "../../../harness/arms_ref/flowcast_v1/predict.py": "cc96c414b1bf5c9767e41f8a5f655490c4a91f7ce2745d8eefd3fbd9dbca008a",
+  "../../../harness/arms_ref/flowcast_v1/ratchet.json": "a3e1ffa30f73c7ce533cb161f0ef3f43daa8d682b7411d465d64a3a738a7e274",
+  "card.md": "1a0c1405384870b58542be129f42e51445767c60cd087143a0ebd2fd3a1fdcd7",
+  "members.json": "0f9f733e6a4676c6b5cae2290b8e5f74153649ed046878a240d6cc2969152c07",
+  "predict.py": "9578b97b2d79eef5a036a63b54c3b5882a72e77e77785b8ef98d777d9ddf6695",
+  "ratchet.json": "c51ae02a56162a2e1e112f85df719cd146257d6153683283ebe485326d327627"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "E1: equal-weight ensemble of the five v1.0 tied arms",
+  "family": "ensemble",
+  "family_label": "Ensembles",
+  "group": "round2",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.0,
+   "notes": "No training: the five members are the registered v1.0 arms, unchanged. Dev + sim-val evaluation 11 CPU-min."
+  },
+  "released": "r0",
+  "feature_engineering": "None of its own: each member reads the batch as in round 1. Combination per target day, weights 1/5: mean of the members' means; each quantile = mean of the members' same quantile, then sorted.",
+  "compare_to": [
+   "seq_lstm",
+   "tab_gbm",
+   "seq_tcn",
+   "seq_ssm"
+  ]
+ },
+ "smoke": {
+  "load_cpu_s": 0.0,
+  "ungauged": {
+   "dev_nse": [
+    0.5887,
+    0.1795,
+    0.6809
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 6.536
+  },
+  "files_used": [
+   "arms_seq/common/seqlib.py",
+   "arms_seq/lstm/predict.py",
+   "arms_seq/lstm/weights.npz",
+   "arms_seq/ssm/predict.py",
+   "arms_seq/ssm/weights.npz",
+   "arms_seq/tcn/predict.py",
+   "arms_seq/tcn/weights.npz",
+   "arms_tab/tab_gbm/gbm_trees.npz",
+   "arms_tab/tab_gbm/predict.py",
+   "harness/arms_ref/flowcast_v1/flowcast.py",
+   "harness/arms_ref/flowcast_v1/flowcast_weights.npz",
+   "harness/arms_ref/flowcast_v1/predict.py",
+   "round2/arms/ens_e1/members.json",
+   "round2/arms/ens_e1/predict.py",
+   "round2/arms/ens_e1/ratchet.json",
+   "round2/work/banks/b2/val/F.npy",
+   "round2/work/banks/b2/val/attrs.npy",
+   "round2/work/banks/b2/val/lat.npy",
+   "round2/work/banks/b2/val/lon.npy",
+   "round2/work/banks/b2/val/qo.npy",
+   "round2/work/banks/b2/val/st.npy",
+   "round2/work/banks/b2/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 133.1
+ },
+ "harness_hash": "779e51f025d454d74d15d1cec8ad94cbf6c8703e1d2fed15cb50f49a0956272f",
+ "arm_dir_rel": "round2/arms/ens_e1",
+ "smoke_simval_bank": "b2",
+ "registered_at": "2026-11-24T23:57:38",
+ "history": []
+}

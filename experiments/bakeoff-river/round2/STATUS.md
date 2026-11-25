@@ -54,3 +54,14 @@ Exam 2 has NOT been run and must not be run by an agent: the owner runs `exam2.p
 - 00:01 family retrains on b2 started: S4D (ssm_r2), TCN (tcn_r1), trees (gbm r2 recipe; lightgbm 4.7.0 locally,
   round 1 used 4.6.0). The LSTM's b2 rung is the control's seed-0 run on b2b (same recipe, same seed): not re-run.
   v1.0 arms being scored on b2's frozen val.
+- Clock note: the two entries above marked 00:00 and 00:01 happened at about 23:54-23:57 (queue log times).
+- 23:58 E1 registered (ens_e1, hash 42733b91...). Its conformal wrapper (round 1's Mondrian layer, fitted on E1's
+  dev residuals) registered as ens_e1_conformal (d41da9d2...); dev mean coverage cov90 0.88 -> 0.88 (LOBO),
+  cov50 0.52 -> 0.50, CRPS/Q (mean over basins) 0.520 -> 0.497.
+- 23:59 disagreement on E1's members (descriptive extra; the pre-registered test is on E2's members): Spearman rho
+  0.29, 95 % CI 0.02..0.50; with |volume bias| 0.51 (0.27..0.70).
+- 00:00 LSTM family rung on b2 (= the control's seed-0 run on b2b): sim val on b2's frozen set 0.445 vs v1.0
+  seq_lstm 0.394 (+0.051); dev 0.4386 vs 0.4408 (x 0.995) -> **KEPT**, registered as seq_lstm_b2 (20c85ab7...).
+  By class it moves a lot: snow 0.535 -> 0.589, arid 0.182 -> -0.100, humid 0.573 -> 0.569, regulated 0.279 ->
+  0.311, large 0.307 -> -0.100. The constant multiplier helps snowy basins and hurts dry ones; the overall median
+  barely moves. TCN (0.71 s/step, ~71 min) and S4D (1.08 s/step, ~1.8 h) are training; trees training.

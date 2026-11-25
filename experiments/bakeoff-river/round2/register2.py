@@ -67,6 +67,19 @@ def register(arm_dir, replace=False):
     p = os.path.join(REGISTRY, f'{meta["arm_id"]}.json')
     old = registered().get(meta['arm_id'])
     rec, problems, warns = REG.check_arm(arm_dir)
+    # The harness audit exempts its own bank (harness/bank/); the round-2 bank the smoke run reads lives under
+    # round2/work/banks/. Those reads are the smoke test's sim-val windows, not the arm's files: exempt them too.
+    banks = os.path.join('round2', 'work', 'banks')
+    kept = []
+    for x in problems:
+        if x.startswith('files used at predict time'):
+            paths = [p.strip() for p in x.split(': ', 1)[1].split(',')]
+            rest = [p for p in paths if not os.path.normpath(p).startswith(banks)]
+            if rest:
+                kept.append(x.split(': ', 1)[0] + ': ' + ', '.join(rest))
+        else:
+            kept.append(x)
+    problems = kept
     for w in warns:
         print('WARNING:', w)
     if problems:
