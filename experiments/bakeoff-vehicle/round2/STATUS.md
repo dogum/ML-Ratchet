@@ -126,3 +126,20 @@ Pre-registration: `PREREG.md` (committed d1a98a4 before any training). Exam-2 is
   (build_real.hd writes diesel = 1 for both fuels), so no bank or physics change can move CNG without moving diesel
   (dev -3 %); the Mersin diesel exam miss is not visible on dev (February week, no A/C). Cold Leafs: the one dev Leaf
   is +4.6 % (EnergyNet), the exam -20 %: not visible on dev.
+
+## 2026-11-25 — exam 2 run once (coordinator, run 20261125T031425)
+
+- Reviewed the branch first: PREREG is the first commit (d1a98a4); A1-A3 each precede the results they affect; the
+  PREREG says rejected rungs are not examined (section 4), so the 12 registered arms are the right set.
+- Added `exam2.py --jobs N` before the run (N workers at once, each target in its own process, hashed before and
+  after; run time only). Ran `--check`, then `--run --jobs 6`; 12 arms, all exit 0, about 1.5 h wall.
+- Reproduction: the v1.0 GRU and transformer re-scored here equal their main-exam MdAPEs on every set (max |diff| 2e-16).
+- E16 (mean exam MdAPE over 16 sets): EnergyNet v2.1 10.96 %; D2 transformer ensemble **11.10 %** (vs EnergyNet
+  +0.14, -0.04..+0.36 tie; vs the v1.0 transformer -0.57 win); D1 GRU ensemble 11.55 % (vs EnergyNet +0.59 loss;
+  vs the v1.0 GRU -0.47 win); X cross-family 11.49 % (vs D2 +0.39 loss; vs D1 tie; beats MLP and GP).
+- CRPS(log) mean over the 16 sets, with conformal: D2 0.088, X 0.090, D1 0.090; EnergyNet 0.094.
+- Shared misses persist: median cross-family per-unit error correlation 0.948 (four learners: D2, D1, MLP, GP);
+  10 of 16 sets have every learner's median bias of one sign beyond 3 % (VED EV -20 to -23 %, plug-ins -9 to -15 %,
+  VED hybrids +5.5 to +8.9 %).
+- Full ZTBus: not scored here (the hook is unwired on this branch); the main board's full-ZTBus supplement
+  (results/supp_ztbfull) covers the v1.0 arms.

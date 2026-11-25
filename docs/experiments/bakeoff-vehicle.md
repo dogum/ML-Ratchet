@@ -110,3 +110,22 @@ and the classical baselines reproduced their published exam numbers. The TabPFN 
 and recorded in `registry/excluded.json` with its reason; the documented mechanism needed a two-line harness fix
 (`register.registered()` read `excluded.json` as an arm record). Zero real labels in training; dev only for rung gates
 and conformal calibration. Page: the Vehicle Bake-off artifact (the same HTML is in `page/`).
+
+## Round 2 (24-25 Nov 2026, in the repository): more data, ensembles and a physics pass
+
+Pre-registered in `experiments/bakeoff-vehicle/round2/PREREG.md` before any training; exam 2 run once (run
+20261125T031425). Every rung, kept or rejected, is in `round2/STATUS.md`.
+
+- **Data and ensembling paid.** The transformer and the GRU, retrained on all three of EnergyNet v2.1's banks as
+  5-member ensembles, beat their v1.0 single-bank, single-network arms on the exam by 0.57 and 0.47 points of E16
+  (wins). The transformer ensemble (11.10 %) now ties EnergyNet v2.1 (10.96 %; +0.14, interval -0.04..+0.36), and
+  with conformal bands it has the lowest CRPS of any row (0.088 vs 0.094). The MLP on three banks missed its sim-val
+  margin by 0.0001 and was not examined.
+- **No physics fix passed.** The ICCT trucks' dyno-vs-road gap is not the cause (road and dyno twins differ by 1 %
+  against a +19 % dev bias). A plug-in cold-start rule passed its dev check but overshot (+4 to +14 % bias) and
+  failed every retrain's gate. The Mersin buses and cold Leafs could not be attacked from dev.
+- **A cross-family ensemble did not help.** Equal weights over the transformer, GRU, MLP and GP (11.49 %) lose to
+  the transformer ensemble alone.
+- **The families still fail together.** Per-trip errors correlate at 0.95 across the four round-2 learners, and on
+  10 of 16 sets every learner's median bias has the same sign beyond 3 %. The label-free gap detector failed on
+  dev: the families agree most on the Mersin buses, where all of them are wrong.

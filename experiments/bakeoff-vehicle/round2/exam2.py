@@ -641,16 +641,25 @@ def drive(mode, named=None, resume=False):
     env = dict(os.environ)
     if mode == 'exam':
         env['BAKEOFF_EXAM_RUN'] = rid
-    for target in ['__refs__'] + sorted(arms):
-        if os.path.exists(os.path.join(outdir(mode, rid), 'preds', target, 'DONE.json')):
-            continue
-        print(f'== {target}', flush=True)
+    # --jobs N (added 25 Nov 2026, before the exam ran): N workers at once, each target still in its own process and
+    # hashed before and after; run time only, scoring unchanged. Slow trace ensembles start first.
+    todo = [t for t in ['__refs__'] + sorted(arms)
+            if not os.path.exists(os.path.join(outdir(mode, rid), 'preds', t, 'DONE.json'))]
+    todo.sort(key=lambda t: (not ('gru' in t or 'transformer' in t or t.startswith('r2_x')), t))
+
+    def one(target):
         t0 = time.time()
+        log = open(os.path.join(outdir(mode, rid), f'worker_{target}.log'), 'a')
         rc = subprocess.call([sys.executable, os.path.abspath(__file__), '--worker', target, '--mode', mode,
-                              '--run-id', rid], env=env)
-        if rc != 0:
-            raise Refused(f'worker {target} failed (exit {rc})' + ('; fix and use --resume' if mode == 'exam' else ''))
-        print(f'== {target} finished in {time.time() - t0:.0f} s', flush=True)
+                              '--run-id', rid], env=env, stdout=log, stderr=subprocess.STDOUT)
+        print(f'== {target} exit {rc} in {time.time() - t0:.0f} s', flush=True)
+        return target, rc
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max(1, JOBS)) as ex:
+        res = list(ex.map(one, todo))
+    bad = [t for t, rc in res if rc != 0]
+    if bad:
+        raise Refused(f'workers failed: {bad}' + ('; fix and use --resume' if mode == 'exam' else ''))
     zf = os.path.join(outdir(mode, rid), 'ztbus_full.json')
     if not os.path.exists(zf):                       # >>> full-ZTBus HOOK (see ztbfull_hook) <<<
         json.dump(ztbfull_hook(mode, rid, arms, outdir(mode, rid)), open(zf, 'w'), indent=1, default=float)
@@ -670,6 +679,9 @@ def drive(mode, named=None, resume=False):
                        and isinstance(x, dict) and x.get('n')} for k, r in v['rows'].items()})
 
 
+JOBS = 1
+
+
 def main():
     ap = argparse.ArgumentParser()
     g = ap.add_mutually_exclusive_group(required=True)
@@ -681,7 +693,10 @@ def main():
     ap.add_argument('--arm', action='append', default=None)
     ap.add_argument('--mode', default='exam', help=argparse.SUPPRESS)
     ap.add_argument('--run-id', default=None, help=argparse.SUPPRESS)
+    ap.add_argument('--jobs', type=int, default=1)
     a = ap.parse_args()
+    global JOBS
+    JOBS = a.jobs
     try:
         if a.worker:
             if a.mode == 'exam':
