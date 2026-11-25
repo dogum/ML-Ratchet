@@ -201,12 +201,24 @@ def register(arm_dir, replace=False):
     return 0
 
 
+CLOUD_BAKEOFF = '/home/claude/bakeoff/river/'      # where the bake-off ran (22-24 Nov 2026); registry records keep it
+
+
+def local_dir(d):
+    """an arm folder as the registry records it (cloud path) -> the same folder in this checkout (records unchanged)."""
+    if d.startswith(CLOUD_BAKEOFF):
+        return os.path.abspath(os.path.join(C.BAKEOFF, d[len(CLOUD_BAKEOFF):]))
+    return d
+
+
 def registered():
+    """registry records, arm_dir resolved into this checkout (local_dir); the files on disk are not changed."""
     out = {}
     if os.path.isdir(C.REGISTRY):
         for f in sorted(os.listdir(C.REGISTRY)):
             if f.endswith('.json'):
                 r = json.load(open(os.path.join(C.REGISTRY, f)))
+                r['arm_dir'] = local_dir(r['arm_dir'])
                 out[r['arm_id']] = r
     return out
 

@@ -83,7 +83,7 @@ def preflight(named=None, mode='exam'):
     regs = REG.registered()
     if not regs:
         reasons.append('no registered arms')
-    excluded = json.load(open(EXCLUDED)) if os.path.exists(EXCLUDED) else {}
+    excluded = {REG.local_dir(k): v for k, v in (json.load(open(EXCLUDED)) if os.path.exists(EXCLUDED) else {}).items()}  # keys: cloud paths
     by_dir = {r['arm_dir']: k for k, r in regs.items()}
     for d in discover_arm_dirs():
         if d not in by_dir and d not in excluded:

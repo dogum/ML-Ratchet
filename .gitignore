@@ -121,3 +121,7 @@ experiments/bakeoff-vehicle/results/supp_*/exam_*/preds/
 experiments/bakeoff-vehicle/results/supp_*/rehearsal_*
 experiments/bakeoff-vehicle/results/supp_*/exam_access.log
 experiments/bakeoff-vehicle/results/supp_*/exam_*/scores.parquet
+# Bake-off banks rebuilt by harness/run_bank.sh: only the shipped MANIFEST.json files are tracked
+experiments/bakeoff-*/harness/bank/**/*
+!experiments/bakeoff-*/harness/bank/**/
+!experiments/bakeoff-*/harness/bank/**/MANIFEST.json
