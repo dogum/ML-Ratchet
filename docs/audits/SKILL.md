@@ -30,6 +30,7 @@ Run all ten checks for each target model (`models/<id>/`):
 ### 1. Intended-Use Contract & Operational Information Boundary
 - Write down the model's intended real-world use in one sentence.
 - List everything an operator would actually know at prediction/decision time `t`, then compare it against everything the exam and example pipelines knew when selecting windows, aligning timestamps, computing normalization stats, or filtering inputs.
+- Reconstruct the eligible scoring population from information available at issue time. For maps, count candidate cells outside the archived grid. For demos, count eligible observations before and after any display filter and recompute the summary over both groups.
 
 ### 2. Weight, Normalization & Feature-Sensitivity Health (Shipped `.npz` Files)
 Load every `.npz` weight file in `models/<id>/` and verify:
@@ -39,6 +40,7 @@ Load every `.npz` weight file in `models/<id>/` and verify:
 - **Counterfactual sensitivity ablation:** On real shipped examples, replace suspect feature columns with their median across examples (holding all other inputs fixed) and compare the max prediction shift against a healthy control feature.
   - *Precedent:* `EnergyNet v2.1` — 4 work-fraction inputs (`aero/Ep`, `rolling/Ep`, `grade_dn/Ep`, `inertia_pos/Ep`) had `sd` up to `53,606` from moving-downhill trips where `ph[0] = 0`; holding all 4 constant moved shipped VED predictions by at most `0.00039%` vs `6.08%` for control `grade_up/Ep`.
 - **Ensemble diversity:** Compute pairwise cosine similarity of first-layer weights across ensemble seeds.
+- Test feature attribution in both directions. Change only the suspected field, then regenerate every dependent feature from a consistent input change. On an otherwise perturbed input, restore only the suspected field to measure how much of the output shift it explains.
 
 ### 3. Training-Framework ↔ Inference-Runtime Forward Parity
 - Reconstruct the PyTorch `nn.Module` from `models/<id>/training/` using the shipped `.npz` weights (`model.eval()`), and compare outputs against the shipped NumPy module (`models/<id>/<id>.py`) on random non-trivial inputs and shipped examples (`max_abs_diff < 1e-5` float32).
@@ -48,6 +50,7 @@ Load every `.npz` weight file in `models/<id>/` and verify:
 For any time-series, streaming, nowcast, or sequential-decision model:
 - Freeze everything an operator knew up to decision time `t`, perturb **only** future observations `> t` (including secondary paths like weather/wear planners or global normalization), and verify the submitted decision/prediction at `t` changes by `0.0`.
 - Test **cold-start / boundary padding** at `t = 0` (ensure missing history is never back-filled with the clearing/target value at `t = 0`).
+- Repeat the future-perturbation test with a gap that straddles the forecast cutoff. Hold onset fixed to isolate interpolation, then test automatic alignment separately. Include a complete-prefix control.
 - Test **API guardrails** (e.g., verify lagged/nowcast APIs reject `lead <= 0` rather than silently leaking same-day truth).
   - *Precedent:* `BatteryPilot v1.3` — perturbing future temperatures moved an already-submitted 2 p.m. offer via the day-ahead wear planner (`$1.19/MWh`), and cold-start history back-filled hour 0's clearing real-time price (`$3.02/MWh`); `FlowCast v1.0` nowcast API silently accepted `lead=0`.
 
