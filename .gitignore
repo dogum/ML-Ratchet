@@ -115,3 +115,7 @@ shared/fire/firesim/pids/
 experiments/bakeoff-vehicle/results/exam_*/scores.parquet
 # River Bake-off round 2: dev rehearsal working folders (the rehearsal2_<id>.json summary is tracked)
 experiments/bakeoff-river/round2/results/rehearsal2_*/
+# River Bake-off round 2 exam: per-row predictions, the showcase arrays and the access log stay local
+experiments/bakeoff-river/round2/results/exam2_*/rows/
+experiments/bakeoff-river/round2/results/exam2_*/showcase.npz
+experiments/bakeoff-river/round2/results/exam_access.log

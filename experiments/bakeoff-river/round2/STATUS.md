@@ -112,3 +112,14 @@ Exam 2 has NOT been run and must not be run by an agent: the owner runs `exam2.p
 - **STOPPED here as instructed. Exam 2 has not been run.** The owner runs, once:
   `cd experiments/bakeoff-river/round2; python exam2.py --check; python exam2.py --run --jobs 5`.
   Needs the water data tree (shared/water/data) but no bank.
+
+## 2026-11-25 — exam 2 run once (coordinator, run 20261125T013911)
+
+- Run by the coordinating session after reviewing the branch (PREREG first commit b5f165b; amendment A1 is dated
+  before any control result but reached git only in f29492d, after the bank rungs; it is two factual corrections).
+  `python exam2.py --check` then `--run --jobs 4`; 12 arms, all exit 0; v1.0 rows read from the v1.0 exam scores.
+- Main (WY1990-99, 619 basins), median NSE, paired vs the v1.0 arm of the same family: LSTM b2 0.364 (+0.024 win),
+  trees b2 0.361 (+0.016 win), S4D b2 0.358 (+0.022 win), TCN b2 0.354 (+0.016 win). E2 0.376: vs U-dev +0.003
+  (-0.021..+0.019) tie; vs E1 +0.025 win; vs its best member +0.012 win. E1 0.350. Every row loses to NWM and GR4J.
+- Recent (WY2016-23, 603 basins): the b2 gains vanish (each b2 arm ties its v1.0 arm, -0.000 to +0.008); every
+  row loses to U-dev by 0.032-0.045. E2 0.401, E1 0.399 (tie).
