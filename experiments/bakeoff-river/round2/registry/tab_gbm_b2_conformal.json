@@ -1,0 +1,74 @@
+{
+ "arm_id": "tab_gbm_b2_conformal",
+ "hash": "79f72b42e9a492133cf50ea72352d02d1390768a723624734874bb6fc4083490",
+ "files": {
+  "../../../arms_filt/conformal/lib/cf_mondrian.py": "8de2a4956b525f96e7494ebe16e5d0cd7b435fa8baf72a3d0d20ec7ff815223a",
+  "../tab_gbm_b2/card.md": "4caf217c8196a171ff1e74bb9bac1234563b09117e4237283e99bc5360add110",
+  "../tab_gbm_b2/feats.py": "34308612173b6143cab16f91585923988f4e4adef1c2dc1a2c587ffbed2fbc2f",
+  "../tab_gbm_b2/gbm_trees.npz": "3224c683bbd87e6304b48255a9f20fe2f7aa3fa56dc62904ea920fdd70574c70",
+  "../tab_gbm_b2/predict.py": "504c4c2ea6db7f949f573814e8cf7fa26a6d6cf916862d4a909658299954583f",
+  "../tab_gbm_b2/ratchet.json": "eb3e2b03297a9123dd5d507aa544affdf98f89a08e10a0623ba1a5d5ca43aaff",
+  "../tab_gbm_b2/treeexport.py": "d8986b3fbdba560196beb92ec002571c3bb4c500a6c2655593f5e8f97a232c01",
+  "calib.json": "c0639e859ba8b46329c858f58bdd84ffe3e559d3e8b5b03ea23bd79f4131e53a",
+  "card.md": "b5cbb375a16aaa7221c777cea334d8ce67eb73ba671245a4cb3a4c5776e54bfe",
+  "predict.py": "c743752d37aedb8fd8782a92cdd735d94553d39bd69e024449d8ea4f19c39e56",
+  "ratchet.json": "e10bb9e9cba5e2ed6c99db81aa05642022413748f8534c870601f1629dd60b36"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "Gradient-boosted trees (LightGBM -> numpy trees) retrained on bank b2 + Mondrian conformal",
+  "family": "conformal",
+  "family_label": "Conformal prediction (wrapper around tab_gbm_b2)",
+  "group": "round2",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.0029,
+   "notes": "conformal fit only on dev predictions of tab_gbm_b2"
+  },
+  "released": "c0",
+  "feature_engineering": "none beyond tab_gbm_b2's; the offset uses static[11] and the class list (strata)",
+  "compare_to": [
+   "tab_gbm_conformal"
+  ]
+ },
+ "smoke": {
+  "load_cpu_s": 0.03,
+  "ungauged": {
+   "dev_nse": [
+    0.5601,
+    0.1853,
+    0.4082
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 3.828
+  },
+  "files_used": [
+   "arms_filt/conformal/lib/cf_mondrian.py",
+   "round2/arms/tab_gbm_b2/gbm_trees.npz",
+   "round2/arms/tab_gbm_b2/predict.py",
+   "round2/arms/tab_gbm_b2/ratchet.json",
+   "round2/arms/tab_gbm_b2_conformal/calib.json",
+   "round2/arms/tab_gbm_b2_conformal/predict.py",
+   "round2/arms/tab_gbm_b2_conformal/ratchet.json",
+   "round2/work/banks/b2/val/F.npy",
+   "round2/work/banks/b2/val/attrs.npy",
+   "round2/work/banks/b2/val/lat.npy",
+   "round2/work/banks/b2/val/lon.npy",
+   "round2/work/banks/b2/val/qo.npy",
+   "round2/work/banks/b2/val/st.npy",
+   "round2/work/banks/b2/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 78.0
+ },
+ "harness_hash": "779e51f025d454d74d15d1cec8ad94cbf6c8703e1d2fed15cb50f49a0956272f",
+ "arm_dir_rel": "round2/arms/tab_gbm_b2_conformal",
+ "smoke_simval_bank": "b2",
+ "registered_at": "2026-11-25T00:30:14",
+ "history": []
+}

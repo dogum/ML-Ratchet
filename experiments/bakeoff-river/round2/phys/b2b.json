@@ -1,0 +1,19 @@
+{
+ "version": "b2b",
+ "parent": "p1",
+ "note": "p1 with the reconciled water-yield prior (round2/calib_prior.py, dev only): form M0, log m = -0.026 + 0.0 elev_km + 0.0 frac_snow + 0.0 log(P/3) + N(0, 0.153) (sd = leave-one-basin-out robust RMSE)",
+ "camels_share": 0.5,
+ "muskingum_share": 0.25,
+ "undercatch": {
+  "a": -0.026,
+  "b_elev": 0.0,
+  "b_snow": 0.0,
+  "b_wet": 0.0,
+  "sd": 0.153,
+  "lo": 0.4,
+  "hi": 2.5
+ },
+ "forcing_error": {},
+ "obs_noise": {},
+ "b2": {}
+}

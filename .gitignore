@@ -113,6 +113,12 @@ shared/fire/firesim/pids/
 
 # Bake-off exam per-unit scores (194 MB): release zip only, not in git (see experiments/bakeoff-vehicle/README.md)
 experiments/bakeoff-vehicle/results/exam_*/scores.parquet
+# River Bake-off round 2: dev rehearsal working folders (the rehearsal2_<id>.json summary is tracked)
+experiments/bakeoff-river/round2/results/rehearsal2_*/
+# River Bake-off round 2 exam: per-row predictions, the showcase arrays and the access log stay local
+experiments/bakeoff-river/round2/results/exam2_*/rows/
+experiments/bakeoff-river/round2/results/exam2_*/showcase.npz
+experiments/bakeoff-river/round2/results/exam_access.log
 # TabPFN third-party code and weights (Prior Labs License 1.1; restore with pip / Hugging Face, see the arm card)
 experiments/bakeoff-vehicle/arms_table/tab_tabpfn/pylib/
 experiments/bakeoff-vehicle/arms_table/tab_tabpfn/weights/

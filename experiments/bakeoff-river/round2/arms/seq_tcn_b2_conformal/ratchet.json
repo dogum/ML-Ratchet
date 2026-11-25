@@ -1,0 +1,38 @@
+{
+ "arm_id": "seq_tcn_b2_conformal",
+ "label": "TCN (dilated 1-D CNN) retrained on bank b2 + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around seq_tcn_b2)",
+ "group": "round2",
+ "protocols": [
+  "ungauged"
+ ],
+ "wraps": "seq_tcn_b2",
+ "wraps_hash": "807ed6e01ba5a071b6209d2c0a083434a261497060d728e47c38ea7d3d4a1df6",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.0023,
+  "notes": "conformal fit only on dev predictions of seq_tcn_b2"
+ },
+ "feature_engineering": "none beyond seq_tcn_b2's; the offset uses static[11] and the class list (strata)",
+ "extra_files": [
+  "../seq_tcn_b2",
+  "../../../arms_filt/conformal/lib",
+  "../../../arms_seq/common"
+ ],
+ "margin": 0.0,
+ "compare_to": [
+  "seq_tcn_conformal"
+ ],
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance).",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands fitted on dev residuals",
+   "decision": "released",
+   "why": "dev cov90 (mean over basins, LOBO) 0.88"
+  }
+ ],
+ "released": "c0"
+}

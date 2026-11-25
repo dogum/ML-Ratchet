@@ -1,0 +1,73 @@
+{
+ "arm_id": "seq_ssm_b2",
+ "label": "S4D state space + MLP encoder retrained on bank b2",
+ "family": "ssm",
+ "family_label": "State-space models (S4D)",
+ "group": "round2",
+ "protocols": [
+  "ungauged"
+ ],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 1.245,
+  "notes": "one rung: the v1.0 recipe retrained on bank b2, one thread (process_time), shared 16-core Windows machine"
+ },
+ "feature_engineering": "identical to seq_ssm (round 1); only the training bank differs",
+ "extra_files": [
+  "../../../arms_seq/common"
+ ],
+ "compare_to": [
+  "seq_ssm"
+ ],
+ "bank": "b2 (= b2b: p1 + the reconciled water-yield prior)",
+ "margin": 0.01,
+ "rule": "PREREG section 4: keep if sim val median NSE (both on b2's frozen val) > v1.0 + 0.01 AND dev median NSE >= 0.95 x v1.0's",
+ "rungs": [
+  {
+   "id": "v1.0",
+   "change": "seq_ssm as registered in round 1 (bank p1)",
+   "decision": "base",
+   "why": "the incumbent",
+   "simval_nse_b2": 0.3828,
+   "dev_nse": 0.4349,
+   "dev_kge": 0.4299,
+   "dev_by_class_nse": {
+    "snow": 0.565,
+    "arid": 0.192,
+    "humid": 0.594,
+    "regulated": 0.272,
+    "large": 0.267
+   }
+  },
+  {
+   "id": "b2",
+   "change": "same recipe (seq_ssm r2: d 48, N 16, 3 layers, pointwise MLP encoder 48, 6,000 steps x 32, seed 0) trained on bank b2",
+   "decision": "released",
+   "why": "sim val on b2's frozen set 0.4238 vs v1.0 0.3828 (+0.0410 > 0.01) and dev 0.4316 >= 0.95 x 0.4349: kept",
+   "simval_nse_b2": 0.4238,
+   "simval_nse_p1": 0.4031,
+   "dev_nse": 0.4316,
+   "dev_kge": 0.4374,
+   "dev_fhv": -28.4,
+   "dev_cov50": 0.565,
+   "dev_cov90": 0.97,
+   "dev_crps_rel": 0.373,
+   "dev_by_class_nse": {
+    "snow": 0.584,
+    "arid": -0.133,
+    "humid": 0.591,
+    "regulated": 0.347,
+    "large": -0.19
+   },
+   "dev_vs": {
+    "udev": "-0.035 tie",
+    "uk12": "-0.026 tie",
+    "gr4j": "-0.154 loss",
+    "nwm": "-0.141 loss",
+    "clim": "+0.340 win"
+   }
+  }
+ ],
+ "released": "b2"
+}

@@ -1,0 +1,6 @@
+{"version": "b2a", "parent": "p1",
+ "note": "p1 + reservoir operations: reservoirs in every run whose storage attribute is > 0, run by ReservoirPilot's simulated historical operator (round2/bank2.py)",
+ "camels_share": 0.5, "muskingum_share": 0.25,
+ "undercatch": {"a": -0.088, "b_elev": 0.058, "b_snow": 0.153, "b_wet": 0.397, "sd": 0.146, "lo": 0.4, "hi": 2.5},
+ "forcing_error": {}, "obs_noise": {},
+ "b2": {"reservoirs": {"consistent": true, "operator": "rp"}}}

@@ -1,0 +1,37 @@
+{
+ "arm_id": "tab_gbm_b2_conformal",
+ "label": "Gradient-boosted trees (LightGBM -> numpy trees) retrained on bank b2 + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around tab_gbm_b2)",
+ "group": "round2",
+ "protocols": [
+  "ungauged"
+ ],
+ "wraps": "tab_gbm_b2",
+ "wraps_hash": "0326ced564c223b0c9f65f1e4277a74df10fabb0db431f4df989490f6fab5748",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.0029,
+  "notes": "conformal fit only on dev predictions of tab_gbm_b2"
+ },
+ "feature_engineering": "none beyond tab_gbm_b2's; the offset uses static[11] and the class list (strata)",
+ "extra_files": [
+  "../tab_gbm_b2",
+  "../../../arms_filt/conformal/lib"
+ ],
+ "margin": 0.0,
+ "compare_to": [
+  "tab_gbm_conformal"
+ ],
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance).",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands fitted on dev residuals",
+   "decision": "released",
+   "why": "dev cov90 (mean over basins, LOBO) 0.88"
+  }
+ ],
+ "released": "c0"
+}

@@ -1,0 +1,26 @@
+{
+ "arm_id": "ens_e1",
+ "label": "E1: equal-weight ensemble of the five v1.0 tied arms",
+ "family": "ensemble",
+ "family_label": "Ensembles",
+ "group": "round2",
+ "protocols": ["ungauged"],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {"train_cpu_hours": 0.0, "notes": "No training: the five members are the registered v1.0 arms, unchanged. Dev + sim-val evaluation 11 CPU-min."},
+ "feature_engineering": "None of its own: each member reads the batch as in round 1. Combination per target day, weights 1/5: mean of the members' means; each quantile = mean of the members' same quantile, then sorted.",
+ "extra_files": ["members.json", "../../../arms_tab/tab_gbm", "../../../harness/arms_ref/flowcast_v1", "../../../arms_seq/lstm",
+                 "../../../arms_seq/tcn", "../../../arms_seq/ssm", "../../../arms_seq/common"],
+ "compare_to": ["seq_lstm", "tab_gbm", "seq_tcn", "seq_ssm"],
+ "compare_note": "seq_lstm is the best member on dev (0.4408), fixed before the exam (STATUS.md 23:54); flowcast_v1 is an anchor for every arm",
+ "margin": 0.01,
+ "rule": "PREREG section 5: registered if dev median NSE >= 0.95 x the best member's dev median NSE; 'ensembling helps on dev' only if > best member + 0.01",
+ "rungs": [
+  {"id": "r0", "change": "equal-weight mean of tab_gbm, flowcast_v1, seq_lstm, seq_tcn, seq_ssm (quantile averaging)", "decision": "released",
+   "why": "dev 0.445 >= 0.95 x 0.441 (best member seq_lstm): gate passes. +0.004 over the best member (paired bootstrap -0.026..+0.025, tie): no claim that ensembling helps on dev.",
+   "simval_nse_p1": 0.435, "simval_kge_p1": 0.375, "dev_nse": 0.4451, "dev_kge": 0.4346, "dev_fhv": -32.5, "dev_cov50": 0.594, "dev_cov90": 0.969, "dev_crps_rel": 0.383,
+   "dev_by_class_nse": {"snow": 0.532, "arid": 0.204, "humid": 0.591, "regulated": 0.289, "large": 0.354},
+   "dev_vs": {"seq_lstm": "+0.004 tie", "flowcast_v1": "+0.020 tie", "tab_gbm": "+0.024 tie", "seq_tcn": "+0.026 tie", "seq_ssm": "+0.010 tie", "udev": "-0.021 tie", "nwm": "-0.128 loss", "gr4j": "-0.141 loss"}}
+ ],
+ "released": "r0"
+}

@@ -150,3 +150,35 @@ whole budget (S4D, transformer) did not gain from it on the exam. The exam ran i
   display only, as the seeded storm draw did before it.
 - GR4J calibrated and NWM are not ungauged rows; they are shown, as in FlowCast's exam, as the bar to clear.
 - The 806 MB bank is not in the repo; `harness/bank/MANIFEST.json` and `build_bank.py` rebuild it (7.5 min, one core).
+
+## Round 2 (24-25 Nov 2026, in the repository): a better bank, the tied learners retrained
+
+The next rung the verdict pointed to: change the bank, not the learner. Pre-registered in
+`experiments/bakeoff-river/round2/PREREG.md` before any training; exam 2 run once (run 20261125T013911).
+
+**The bank.** Three dev-calibrated changes were each judged with the LSTM recipe trained three times (dev seed spread
+is about 0.02). Only one cleared the 0.01 margin: a refit water-yield prior (b2b: log m = -0.026 + N(0, 0.153),
+chosen by leave-one-basin-out robust RMSE; dev +0.012, at the margin). More reservoirs (+0.002) and two-structure
+runoff mixtures (+0.008) were rejected. Bank b2 = p1 + that prior.
+
+**Retrained families** (FlowCast's recipe for each; median exam NSE, paired bootstrap over basins against the same
+family's v1.0 arm):
+
+| Arm | Main WY1990-99 | vs v1.0 | Recent WY2016-23 | vs v1.0 |
+|---|---|---|---|---|
+| LSTM b2 | 0.364 | +0.024 win | 0.391 | -0.000 tie |
+| Trees b2 | 0.361 | +0.016 win | 0.394 | +0.006 tie |
+| S4D b2 | 0.358 | +0.022 win | 0.394 | +0.008 tie |
+| TCN b2 | 0.354 | +0.016 win | 0.388 | +0.006 tie |
+| E2: equal-weight ensemble of the four b2 arms + FlowCast v1.0 | **0.376** | U-dev +0.003 tie | **0.401** | U-dev -0.032 loss |
+| E1: the same ensemble of the five v1.0 arms | 0.350 | FlowCast +0.009 win | 0.399 | FlowCast +0.021 win |
+
+- **The bank moved every family together** on the main period, by about 0.02 NSE, as round 1's verdict predicted.
+  On the recent period the gain does not hold.
+- **E2 is the first learner row to tie the regionalisation baseline U-dev** (main: 0.376 vs 0.372). It still loses
+  to U-dev on recent, and every row loses to GR4J calibrated per basin and to NWM in both periods.
+- **The label-free gap detector fails.** Between-family spread does not predict a dev basin's error
+  (Spearman 0.21, 95 % interval -0.10..0.48).
+- On dev, b2 trades classes: snow basins gain (LSTM 0.54 to 0.59) and arid basins lose (0.18 to -0.10).
+
+Full log: `experiments/bakeoff-river/round2/STATUS.md`.
