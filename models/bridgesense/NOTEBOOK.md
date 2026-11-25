@@ -32,3 +32,30 @@ Initial run caught three real numerical issues before any bank was generated:
 - **Export parity:** `bridgesense_weights.npz` (`670.3 KB`, `179,144` params), numpy vs PyTorch max abs diff **`2.67e-6`**.
 - **Biggest win (zero-shot concrete freeze-thaw):** On the unseen 2-mode Hamburg concrete box-girder bridge during `-7.9 °C` and `-5.0 °C` January freezes, Linear OLS and KW51-dev-tuned Bilinear hallucinated `+9.51%` and `+6.31%` structural shifts; BridgeSense read **`-0.01% ± 1.16%`** and **`+0.01% ± 0.36%`**, cutting healthy freeze MAE 7× (`0.881%` vs `6.372% / 6.246%`) and lifting cold-vs-load AUC from `0.146` to **`0.729`**.
 - **Biggest honest losses:** (1) HBTA local secondary-member cracks (`DS1–DS2`) barely move global frequencies (`all-damage AUC 0.595` vs OLS `0.645`, though global primary damage `DS5–DS8` wins `0.800` vs `0.690`); (2) short constant-temperature shaker campaigns (`HBTA UDS`) lack a baseline temperature gradient, causing `UDS` false alarms (`mean P = 0.825`); (3) zero-shot 68% coverage is under-covered (`50.0%` concrete, `33.3%` HBTA vs `96.8%` on KW51).
+
+## 2026-11-25 — review on import (ML Ratchet coordinator)
+
+An independent review of the PR before merging. What holds: inference is numpy-only and imports nothing from
+mlratchet; training reads only simulated banks; checkpoints are chosen on simulated validation; the KW51 noise pool
+(2018-10-01 to 11-11) ends the day before the first dev or exam block, so it overlaps neither; no KW51 rows ship in
+examples/ or the site; no banks or checkpoints are committed. `mlratchet validate`, `demo bridgesense`,
+`physics_check.py` (5/5) and the site tests (24 parity cases, worst 7.96e-7) reproduce.
+
+Corrected in the card (model.yaml, MODEL_CARD.md; this notebook's entry above is left as written):
+- **Two verdicts changed from win to loss.** The contract's dumb baseline is the dev-median guess. On the KW51
+  healthy-weeks row and the box-girder freezing row the truth is 0 % by construction, so the 0 % guess is exact. The
+  card had used raw 2·df/f as the dumb baseline there. Tally: **3 wins, 6 losses, 1 tie** (was 5 · 4 · 1).
+- The box-girder note now gives all four freezing blocks (−0.01, +0.01, −1.57, +1.94 %), not the best two.
+- Physics check 5 is a plausibility range, not a match to KW51's FEM: no FEM values are parsed, and the simulated
+  f4 (7.76 Hz) is above KW51's published span.
+- The cross-attention ablation's 240x rests on n = 2 freezing dev blocks.
+- `r7_ens3` was r4_mix plus two r6 seed runs (r6_s2, r6_s3), not a 3-seed anchored ensemble.
+- The split file's sha256 (0f6990ce…) is recorded in model.yaml; the weights' NC-SA licence is named there too.
+
+Open, and not fixable from this repository (the data and work/ folder are where the model was built):
+- The raw logs are not committed: `exam.json`, `calibration.json`, `twin_dev.json`, the ratchet log and the dated
+  exam-run record. So "opened once" cannot be checked from the repo.
+- Checkpoints were selected on `val3`, the same frozen set the ratchet judges r6 on; this inflates its +0.074
+  margin. The r6 seed runs are not logged, so whether r6 was picked among seeds is unknown.
+- The post-retrofit truth (+1.17 %) comes from an OLS fit on the exam blocks themselves.
+- The KW51 detection task is easy (all methods AUC 1.000); HBTA and the box girder have 4-5 negatives each.

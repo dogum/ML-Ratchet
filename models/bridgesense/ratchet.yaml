@@ -125,7 +125,7 @@ ladders:
     - 0.0
     - 0.071
   - id: r7_ens3
-    change: 3-seed Transformer ensemble on mixed p2 + p3 bank with OLS physics anchor
+    change: "ensemble of r4_mix (OLS-anchored) and two r6 seed runs, r6_s2 and r6_s3 (training/ratchet.py; the r6 seed runs themselves are not logged as rungs)"
     sim: 0.87642
     dev:
       dev_auc: 1.0

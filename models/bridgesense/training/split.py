@@ -1,7 +1,7 @@
 """Create and freeze models/bridgesense/splits.json BEFORE any training.
 
 Split rules (seed 20261124):
-  - KW51 warm reference baseline: 2018-10-01 .. 2018-11-11 (6 weeks, T > 2 C, healthy only).
+  - KW51 warm reference baseline: 2018-10-01 .. 2018-11-11 (6 weeks of autumn, pre-winter, healthy only).
     Also supplies the unlabelled healthy OMA residual noise & missing-mode pool.
   - KW51 Dev (10 blocks): stratified seeded draw from KW51 pre-retrofit healthy (4 mild + 2 freezing)
     and post-retrofit (4 blocks). Used ONLY for the ratchet dev gate, twin-test calibration,

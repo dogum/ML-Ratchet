@@ -279,8 +279,8 @@ def load_boxgirder_episodes(block_days: int = 5) -> dict:
     f = np.stack([f1, f2], axis=-1)
 
     # Reference healthy baseline: 2024-01-25 to 2024-02-21 (4 weeks of mild/cool unloaded winter-spring)
-    # Wait: choosing mild unloaded period (Jan 25 - Feb 21) as baseline lets Jan 1 - Jan 24 freezing snap
-    # serve as a genuine unseen cold-snap false-alarm test on a concrete bridge!
+    # The baseline is the mild, unloaded period (Jan 25 - Feb 21), so the Jan 1 - Jan 24 freezing weeks stay outside it
+    # and serve as unseen cold-snap false-alarm tests on a concrete bridge.
     t_ref_start = datetime(2024, 1, 25, 0, 0, 0)
     t_load_start = datetime(2024, 2, 22, 9, 58, 0)
     ref_idx = [i for i, dt in enumerate(dts) if t_ref_start <= dt < t_load_start]

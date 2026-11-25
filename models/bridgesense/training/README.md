@@ -12,7 +12,7 @@ Run every script from `models/bridgesense/training/` (or from the repo root with
 | 6. HBTA OMA modes | `python3 extract_hbta_modes.py` — UDS-anchored Welch PSD tracking across 50 recordings × 8 windows | `work/hbta_modes.npz` |
 | 7. Banks (`p1`, `p2`) | `python3 simbank.py val1 2000 101 --physics p1`, `simbank.py train1 10000 1 --physics p1`, `simbank.py val2 2000 102 --physics p2`, `simbank.py train2 12000 2 --physics p2` | `work/bank/` |
 | 8. Twin test (`p3`) | `python3 twin_dev.py` — inspect KW51 Dev healthy residuals, calibrate `p3` (`work/cal_p3.json`), then generate `val3` (2k) & `train3` (12k) with `--physics p3 --cal work/cal_p3.json` | `work/cal_p3.json`, `work/bank/` |
-| 9. Train rungs | `python3 train.py --name r6_mix_no_anchor --bank train2,train3 --val val3 --steps 4500 --no-anchor` (and ablations `r1..r7`) | `work/ckpt/` |
+| 9. Train rungs | `python3 train.py --name r6_mix_no_anchor --bank train2,train3 --val val3 --steps 4500 --no-anchor` (and ablations `r1..r7`) | `work/checkpoints/` |
 | 10. Ratchet replay | `python3 ratchet.py --val val3 --release r6_mix_no_anchor` — frozen-bank score + KW51 Dev gate | `../ratchet.yaml` (committed), `work/ratchet_log.json` |
 | 11. Calibrate | `python3 calibrate.py r6_mix_no_anchor` — Dev-only widen / temperature fit | `work/calibration.json` |
 | 12. Export numpy | `python3 export.py r6_mix_no_anchor --verify` — pure-numpy weights + PyTorch parity check | `../bridgesense_weights.npz` |
