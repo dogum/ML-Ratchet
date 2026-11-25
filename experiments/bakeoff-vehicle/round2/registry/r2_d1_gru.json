@@ -1,0 +1,86 @@
+{
+ "arm_id": "r2_d1_gru",
+ "arm_dir": "C:\\Developer\\ML-ratchet\\.claude\\worktrees\\agent-a3ec76151df65ba78\\experiments\\bakeoff-vehicle\\round2\\arms\\r2_d1_gru",
+ "hash": "6dffca65c3424a9b5b0494878f0aa1b90bde0dba7e24d240e9dd490b6b2ac266",
+ "files": {
+  "..\\..\\..\\arms_trace\\common\\tracelib.py": "d64d133881a5285ea393ef568e9922c5acc39c4acf630862f24316ef783be25a",
+  "..\\common\\enslib.py": "ba0f7bc8d61c53d898ffc052c624d851011b8a1969f8cfbad83e54f6a8d38271",
+  "..\\common\\xlib.py": "01d5c3cfadb46e51f64e4b3b6f7b563c7a10d4e79fb3e921578f6f248941178c",
+  "card.md": "52c44693bc499241d57065ba72d31c7e4b691c1ca7d7d971243bcf0033223bfa",
+  "predict.py": "c775091f0e14da8bf6d97a3759f1a2f681c969bfc06986eb7706be8de0029c9f",
+  "ratchet.json": "b2b13e9d9c394ef6a14fb595db3e58b7aaaa5f41c3394cebc239820eac51e89b",
+  "weights\\m0.npz": "048f467db68bff7ff550024b7d54f7212ddfbc22eb11a6a70dea9822b5dc41d9",
+  "weights\\m1.npz": "a1cc683679b8f3e4b066f6a1ed9eba0b63d7032c5b32a00b929ff831f7c07415",
+  "weights\\m2.npz": "3d5d59f0ceb392568fd1b9da804c20bda8cf780299d8f1da715f4be063446423",
+  "weights\\m3.npz": "3cfe6449cf928395b112909ce508d258b07eb6fe10553252f46fadd91bddeba6",
+  "weights\\m4.npz": "97e3c090905ed6d2c4dd21e5d7fe5752e3bc591734021839790ea0b8c02bfd16"
+ },
+ "tracks": [
+  "trace"
+ ],
+ "meta": {
+  "label": "Bidirectional GRU, 5-member ensemble on 3 banks (round 2, D1)",
+  "family": "rnn",
+  "family_label": "Recurrent networks (bidirectional GRU), 5-member ensemble",
+  "group": "round2",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 1.294,
+   "train_gpu_hours": 1.39,
+   "notes": "5 members x 12 epochs on 86,400 trips (3 banks), RTX 3080 shared by up to 8 jobs: 14-20 min wall per member (1.39 GPU-h in all), process CPU 0.23-0.31 h per member (1.29 h). The v1.0 rungs r0-r2 (1.65 single-thread CPU-h) are the incumbent's."
+  },
+  "released": "d1",
+  "feature_engineering": "as v1.0 trace_gru r1 (arms_trace/common/tracelib.py, unchanged): 5-s block means of the 1 Hz trace (12 channels), spec (49) and road load (5) standardised with train101 statistics, log distance / duration, physics anchor E_phys recomputed from the trace inputs (bake.e_phys_from_trace, declared), target log(y / E_phys), log(E_phys / A0) as an input. Ensemble: mean log-quantile per level over the 5 members, pred = exp(mean log q50) (round2/arms/common/enslib.py)"
+ },
+ "smoke": {
+  "load_cpu_s": 0.03,
+  "trace": {
+   "ved": {
+    "cpu_s_per_row": 0.02799,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 0.02214,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 0.25781,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "simval": {
+    "cpu_s_per_row": 0.05273,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "files_used": [
+   "arms_trace\\common\\tracelib.py",
+   "harness\\build_bank.py",
+   "round2\\arms\\common\\enslib.py",
+   "round2\\arms\\r2_d1_gru\\predict.py",
+   "round2\\arms\\r2_d1_gru\\ratchet.json",
+   "round2\\arms\\r2_d1_gru\\weights\\m0.npz",
+   "round2\\arms\\r2_d1_gru\\weights\\m1.npz",
+   "round2\\arms\\r2_d1_gru\\weights\\m2.npz",
+   "round2\\arms\\r2_d1_gru\\weights\\m3.npz",
+   "round2\\arms\\r2_d1_gru\\weights\\m4.npz"
+  ],
+  "exam_cpu_estimate_min": 58.4
+ },
+ "harness_hash": "716753ba90c88a710666b2c1273e7d7e7afe38c2f083873c5cc7ffd4b6ce0f9e",
+ "registered_at": "2026-11-25T01:15:42",
+ "history": []
+}

@@ -62,6 +62,22 @@ Pre-registration: `PREREG.md` (committed d1a98a4 before any training). Exam-2 is
   record set), max 0.0026: PASS. X runs as a pure trace-track arm.
 - 00:20 `phevcold` banks: val_pc (134 of 290 plug-in rows changed), train101_pc (1,104 changed; median energy of a
   changed row +13.5 %, +31 % below 10 C); replay exact (5 re-simulated unchanged rows: max |rel diff| of the targets 0).
+- 00:58 **P3 (MLP control recipe on the phevcold banks) REJECTED** (PREREG section 2 + A3). Incumbent v1.0 tab_mlp.
+  (i) own-version val (`val_pc`): skill 0.6761 vs tab_mlp re-scored on val_pc 0.6630 (+0.0131 > 0.01) and D16 0.1133
+  <= 0.1203 + 0.01: passes. (ii) D16 must improve by > 0.01: 0.1203 -> 0.1133 = -0.0070: FAILS. On the v2 val: skill
+  0.6724 (tab_mlp 0.6682). Dev plug-in bias -7.1 % (D3, same 3-bank data on v2 physics) -> **+14.0 %** (VED_PHEV MdAPE
+  0.169 -> 0.190): the bank rule overshoots on dev, as the twin's cold trips said it would. D3 vs P3 (deciding nothing):
+  D16 0.1118 vs 0.1133. Other shared-bias dev sets barely move (Leaf +5.0 -> +5.3 %, CNG -17.1 -> -17.0 %, ICCT +20.5
+  -> +19.4 %).
+- 01:10 **D1 (GRU, 5 members, 3 banks) KEPT and released as `r2_d1_gru`**: sim val skill 0.6696 vs v1.0 trace_gru
+  0.6390 (+0.0306 > 0.01), dev D16 0.1084 vs 0.1089. Diagnostic: member 0 alone 0.6547 / 0.1090, so data +0.0157 and
+  ensembling +0.0149 skill; neither moves D16. Dev bias of the shared-bias sets: Leaf 0.0 %, plug-ins -15.4 %, Mersin
+  diesel -2.9 %, CNG -18.9 %, ICCT +16.5 %. Registered in round2/registry (hash 6dffca65c342). **arms/common is now
+  frozen** (enslib.py, xlib.py are hashed with every round-2 arm).
+- 01:05 D2 subset (members 0-2; P2's incumbent per A3): skill 0.6693, D16 0.1061 (v1.0 transformer 0.6442 / 0.1135);
+  plug-in dev bias -10.2 %.
+- PREREG section 2 evidence rule for the plug-in candidate: dev plug-in bias D1 -15.4 %, D2(3) -10.2 %, D3 -7.1 %,
+  EnergyNet v2.1 -7.3 %: 4 of 4 same sign above 3 %: P rungs pursued (already training; P3 above is rejected).
 - Candidates 1 and 2 (not attempted, reasons fixed now): Mersin CNG (dev -17 %) has the same inputs as a diesel bus
   (build_real.hd writes diesel = 1 for both fuels), so no bank or physics change can move CNG without moving diesel
   (dev -3 %); the Mersin diesel exam miss is not visible on dev (February week, no A/C). Cold Leafs: the one dev Leaf

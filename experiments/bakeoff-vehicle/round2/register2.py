@@ -46,6 +46,23 @@ class Audit(_Audit):
 
 REG.Audit = Audit
 
+TEXT = ('.py', '.json', '.md', '.txt', '.csv')
+
+
+def lf_normalize(d):
+    """the repo checks text out with LF (.gitattributes eol=lf); files Python wrote on Windows have CRLF. Normalise a
+    round-2 arm folder to LF before hashing it, so the registered hash is the hash of what git stores."""
+    n = 0
+    for root, dirs, fs in os.walk(d):
+        dirs[:] = [x for x in dirs if x != 'work']
+        for f in fs:
+            if f.endswith(TEXT):
+                p = os.path.join(root, f)
+                b = open(p, 'rb').read()
+                if b'\r\n' in b:
+                    open(p, 'wb').write(b.replace(b'\r\n', b'\n')); n += 1
+    return n
+
 FAMILY_PAIRS = [   # (round-2 arm, comparison row, why) -- PREREG section 5
     ('r2_d1_gru', 'trace_gru', 'D1 vs v1.0 GRU: data + ensembling'),
     ('r2_d2_transformer', 'trace_transformer', 'D2 vs v1.0 transformer: data + ensembling'),
@@ -80,4 +97,9 @@ if __name__ == '__main__':
     elif a[0] == '--pairs':
         pairs()
     else:
+        if os.path.abspath(a[0]).startswith(P.ARMS):
+            lf_normalize(os.path.abspath(a[0]))
+            lf_normalize(os.path.join(P.ARMS, 'common'))
+            if os.path.isdir(os.path.join(P.ARMS, 'lib')):
+                lf_normalize(os.path.join(P.ARMS, 'lib'))
         sys.exit(REG.register(a[0], '--replace' in a))
