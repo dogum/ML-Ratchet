@@ -113,3 +113,6 @@ shared/fire/firesim/pids/
 
 # Bake-off exam per-unit scores (194 MB): release zip only, not in git (see experiments/bakeoff-vehicle/README.md)
 experiments/bakeoff-vehicle/results/exam_*/scores.parquet
+# Vehicle Bake-off round 2 (exam-2 and its dev rehearsals): per-record predictions and per-unit scores stay local
+experiments/bakeoff-vehicle/round2/results/*/preds/
+experiments/bakeoff-vehicle/round2/results/*/scores.parquet
