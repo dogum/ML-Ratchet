@@ -1,0 +1,12 @@
+{
+ "what": "Round-2 exam plan (PREREG section 7). Read by exam2.py; its sha256 is written into the exam-2 lock file.",
+ "periods": ["main", "recent"],
+ "protocol": "ungauged",
+ "v1_exam": "20261123T074907",
+ "v1_rows": ["flowcast_v1", "tab_gbm", "seq_lstm", "seq_tcn", "seq_ssm",
+             "flowcast_v1_conformal", "tab_gbm_conformal", "seq_lstm_conformal", "seq_tcn_conformal", "seq_ssm_conformal"],
+ "references": ["udev", "uk12", "gr4j", "nwm", "clim"],
+ "anchors": ["flowcast_v1", "udev", "nwm", "gr4j"],
+ "per_arm_comparators": "ratchet.json compare_to of each round-2 arm (family b2 arm -> its v1.0 arm; E1 -> its best dev member; E2 -> E1)",
+ "rule": "paired bootstrap over basins of the difference in medians, 10,000 resamples, default_rng(20261118); win/loss only when the 95 % interval excludes 0"
+}

@@ -1,0 +1,20 @@
+{
+ "arm_id": "ens_e1",
+ "label": "E1: equal-weight ensemble of the five v1.0 tied arms",
+ "family": "ensemble",
+ "family_label": "Ensembles",
+ "group": "round2",
+ "protocols": ["ungauged"],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {"train_cpu_hours": 0.0, "notes": "No training: the five members are the registered v1.0 arms, unchanged."},
+ "feature_engineering": "None of its own: each member reads the batch as in round 1. Combination per target day, weights 1/5: mean of the members' means; each quantile = mean of the members' same quantile, then sorted.",
+ "extra_files": ["members.json", "../../../arms_tab/tab_gbm", "../../../harness/arms_ref/flowcast_v1", "../../../arms_seq/lstm",
+                 "../../../arms_seq/tcn", "../../../arms_seq/ssm", "../../../arms_seq/common"],
+ "margin": 0.01,
+ "rule": "PREREG section 5: registered if dev median NSE >= 0.95 x the best member's dev median NSE",
+ "rungs": [
+  {"id": "r0", "change": "equal-weight mean of tab_gbm, flowcast_v1, seq_lstm, seq_tcn, seq_ssm (quantile averaging)", "decision": "released", "why": "pending dev gate"}
+ ],
+ "released": "r0"
+}

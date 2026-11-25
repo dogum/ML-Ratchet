@@ -170,4 +170,8 @@ append an amendment before its results.
 
 ## Amendments
 
-(none yet)
+**A1 (2026-11-24 23:05, before any control result).** Two factual corrections, no change of plan.
+(1) Section 2, b2a: the p1 train bank has 3.3 % of *all* runs (not "about 3 % of camels-prior runs") with a storage
+attribute > 0 and no reservoir; b2a raises the runs with reservoirs from 16.6 % to 19.9 %.
+(2) The single-thread LSTM recipe takes about 24 minutes per run on this machine with 5 jobs in parallel, so the
+12 control runs and the 4 family retrains fit the budget; no scaling down.
