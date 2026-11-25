@@ -1,0 +1,38 @@
+{
+ "arm_id": "seq_ssm_b2_conformal",
+ "label": "S4D state space + MLP encoder retrained on bank b2 + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around seq_ssm_b2)",
+ "group": "round2",
+ "protocols": [
+  "ungauged"
+ ],
+ "wraps": "seq_ssm_b2",
+ "wraps_hash": "c009c95f5618c7eb5dc9c552e77f056dc05558357e3a6e10ce9e53ec34a0f720",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.0018,
+  "notes": "conformal fit only on dev predictions of seq_ssm_b2"
+ },
+ "feature_engineering": "none beyond seq_ssm_b2's; the offset uses static[11] and the class list (strata)",
+ "extra_files": [
+  "../seq_ssm_b2",
+  "../../../arms_filt/conformal/lib",
+  "../../../arms_seq/common"
+ ],
+ "margin": 0.0,
+ "compare_to": [
+  "seq_ssm_conformal"
+ ],
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance).",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands fitted on dev residuals",
+   "decision": "released",
+   "why": "dev cov90 (mean over basins, LOBO) 0.88"
+  }
+ ],
+ "released": "c0"
+}

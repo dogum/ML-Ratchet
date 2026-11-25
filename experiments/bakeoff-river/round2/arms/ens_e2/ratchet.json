@@ -1,0 +1,21 @@
+{
+ "arm_id": "ens_e2",
+ "label": "E2: equal-weight ensemble of the five round-2 entries",
+ "family": "ensemble",
+ "family_label": "Ensembles",
+ "group": "round2",
+ "protocols": ["ungauged"],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {"train_cpu_hours": 0.0, "notes": "No training of its own: members are tab_gbm_b2, flowcast_v1, seq_lstm_b2, seq_tcn_b2, seq_ssm_b2 (registered)."},
+ "feature_engineering": "None of its own: each member reads the batch as registered. Combination per target day, weights 1/5: mean of the members' means; each quantile = mean of the members' same quantile, then sorted.",
+ "extra_files": ["members.json", "../tab_gbm_b2", "../../../harness/arms_ref/flowcast_v1", "../seq_lstm_b2", "../seq_tcn_b2",
+                 "../seq_ssm_b2", "../../../arms_seq/common"],
+ "compare_to": ["ens_e1"],
+ "margin": 0.01,
+ "rule": "PREREG section 5: registered if dev median NSE >= 0.95 x the best member's dev median NSE; 'ensembling helps on dev' only if > best member + 0.01",
+ "rungs": [
+  {"id": "r0", "change": "equal-weight mean of tab_gbm_b2, flowcast_v1, seq_lstm_b2, seq_tcn_b2, seq_ssm_b2 (quantile averaging)", "decision": "released", "why": "pending dev gate"}
+ ],
+ "released": "r0"
+}

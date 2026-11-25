@@ -85,3 +85,13 @@ Exam 2 has NOT been run and must not be run by an agent: the owner runs `exam2.p
 - 00:57 TCN family rung on b2: sim val on b2 0.436 vs v1.0 seq_tcn 0.386 (+0.050); dev 0.433 vs 0.420
   (x 1.032) -> **KEPT**, registered as seq_tcn_b2 (807ed6e0...); sim val on p1's frozen set 0.401. Conformal
   wrapper seq_tcn_b2_conformal registered (dev mean cov90 0.89 -> LOBO see its card).
+- 01:17 S4D family rung on b2: sim val on b2 0.424 vs v1.0 seq_ssm 0.383 (+0.041); dev 0.4316 vs 0.4349
+  (x 0.992) -> **KEPT**, registered as seq_ssm_b2 (c009c95f...), with seq_ssm_b2_conformal. All four families'
+  b2 rungs are kept; every one passes on the sim criterion by +0.04-0.05 (b2's own val) while dev moves by
+  -0.003..+0.013 only.
+- 01:20 E2 = tab_gbm_b2, flowcast_v1, seq_lstm_b2, seq_tcn_b2, seq_ssm_b2 (round2/arms/ens_e2).
+- 01:20 **Disagreement test (PREREG section 6, E2's members, dev only):** Spearman rho(relative spread, 1 - NSE of
+  E2's mean) = 0.21, 95 % CI -0.10..0.48 (10,000 basin bootstraps): **does not pass** (CI covers 0). Extras: with
+  |volume bias| rho 0.57 (0.33..0.74); per member 1 - NSE rho 0.24 (trees) and others in
+  results/disagreement_e2_members.json. For E1's members the same test gave 0.29 (0.02..0.50): the signal is weak
+  and its sign is stable, but it does not clear the pre-registered bar for the round-2 entries.

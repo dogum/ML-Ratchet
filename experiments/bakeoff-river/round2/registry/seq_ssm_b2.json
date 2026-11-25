@@ -1,0 +1,66 @@
+{
+ "arm_id": "seq_ssm_b2",
+ "hash": "c009c95f5618c7eb5dc9c552e77f056dc05558357e3a6e10ce9e53ec34a0f720",
+ "files": {
+  "../../../arms_seq/common/SEQLIB_FROZEN.sha256": "fcdc4e4ed854dddb6abe4239d13fa020e928607008edaab732f17f206d1836f3",
+  "../../../arms_seq/common/seqlib.py": "d53f7d73f085fd0546b4fb55d8d4dc513e4f53b3460d3617f70b39dcf32f3dda",
+  "card.md": "47e6c751b2865139d389e7b4661980c33db03fa49df6d9c96b145b9a0467c99f",
+  "predict.py": "9a4c5a2eefaca8d64e533956b30a3fb0039e7f277349280450b17d4cca023ab4",
+  "ratchet.json": "a3702a8dc58ac8bce13e3f7b7fa0addf6e34bb267deb5abb00b84c1e986faeb3",
+  "weights.npz": "42b2c875883b75c7a9f16be1423710b97a4cb32599f878ec3965ce7b01d44c98"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "S4D state space + MLP encoder retrained on bank b2",
+  "family": "ssm",
+  "family_label": "State-space models (S4D)",
+  "group": "round2",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 1.245,
+   "notes": "one rung: the v1.0 recipe retrained on bank b2, one thread (process_time), shared 16-core Windows machine"
+  },
+  "released": "b2",
+  "feature_engineering": "identical to seq_ssm (round 1); only the training bank differs",
+  "compare_to": [
+   "seq_ssm"
+  ]
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "ungauged": {
+   "dev_nse": [
+    0.5491,
+    0.1448,
+    0.4221
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 0.422
+  },
+  "files_used": [
+   "arms_seq/common/seqlib.py",
+   "round2/arms/seq_ssm_b2/predict.py",
+   "round2/arms/seq_ssm_b2/ratchet.json",
+   "round2/arms/seq_ssm_b2/weights.npz",
+   "round2/work/banks/b2/val/F.npy",
+   "round2/work/banks/b2/val/attrs.npy",
+   "round2/work/banks/b2/val/lat.npy",
+   "round2/work/banks/b2/val/lon.npy",
+   "round2/work/banks/b2/val/qo.npy",
+   "round2/work/banks/b2/val/st.npy",
+   "round2/work/banks/b2/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 8.6
+ },
+ "harness_hash": "779e51f025d454d74d15d1cec8ad94cbf6c8703e1d2fed15cb50f49a0956272f",
+ "arm_dir_rel": "round2/arms/seq_ssm_b2",
+ "smoke_simval_bank": "b2",
+ "registered_at": "2026-11-25T01:15:12",
+ "history": []
+}
