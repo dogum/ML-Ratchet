@@ -2,6 +2,19 @@
  "bank": "b2b",
  "rule": "keep if sim val NSE (b2 frozen val, both) > v1.0 + 0.01 AND dev >= 0.95 x v1.0 dev",
  "families": {
+  "tab_gbm": {
+   "run": "b2b_gbm",
+   "b2_arm_id": "tab_gbm_b2",
+   "b2_simval_on_b2": 0.41516304849296365,
+   "b2_dev": 0.43028801672789563,
+   "b2_dev_kge": 0.43894185604112584,
+   "v1_simval_on_b2": 0.3659137610122279,
+   "v1_dev": 0.4209283636710687,
+   "v1_dev_kge": 0.4441591119729813,
+   "sim_gain": 0.04924928748073576,
+   "dev_ratio": 1.0222357385831595,
+   "kept": true
+  },
   "seq_lstm": {
    "run": "b2b_lstm_r1_s0",
    "b2_arm_id": "seq_lstm_b2",

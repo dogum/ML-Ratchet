@@ -18,6 +18,14 @@ bank, out = sys.argv[1], os.path.abspath(sys.argv[2])
 r2.use_bank(bank)
 SRC = os.path.join(r2.BAKEOFF, 'arms_tab', 'src')
 sys.path.insert(0, SRC)
+# The released tab_gbm (r2) was trained with the 47-feature module, kept as src/feats_v1.py and shipped as
+# tab_gbm/feats.py (byte-identical); src/feats.py is r3's 54-feature version (rejected rung). Use the released one.
+import importlib.util  # noqa: E402
+_spec = importlib.util.spec_from_file_location('feats', os.path.join(r2.BAKEOFF, 'arms_tab', 'tab_gbm', 'feats.py'))
+_feats = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_feats)
+sys.modules['feats'] = _feats
+assert len(_feats.NAMES) == 47
 os.makedirs(out, exist_ok=True)
 c0 = time.process_time()
 tab = os.path.join(out, 'tab_train.npz')

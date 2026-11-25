@@ -1,0 +1,71 @@
+{
+ "arm_id": "tab_gbm_b2",
+ "label": "Gradient-boosted trees (LightGBM -> numpy trees) retrained on bank b2",
+ "family": "gbm",
+ "family_label": "Gradient-boosted decision trees",
+ "group": "round2",
+ "protocols": [
+  "ungauged"
+ ],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.097,
+  "notes": "one rung: the v1.0 recipe retrained on bank b2, one thread (process_time), shared 16-core Windows machine"
+ },
+ "feature_engineering": "identical to tab_gbm (round 1); only the training bank differs",
+ "extra_files": [],
+ "compare_to": [
+  "tab_gbm"
+ ],
+ "bank": "b2 (= b2b: p1 + the reconciled water-yield prior)",
+ "margin": 0.01,
+ "rule": "PREREG section 4: keep if sim val median NSE (both on b2's frozen val) > v1.0 + 0.01 AND dev median NSE >= 0.95 x v1.0's",
+ "rungs": [
+  {
+   "id": "v1.0",
+   "change": "tab_gbm as registered in round 1 (bank p1)",
+   "decision": "base",
+   "why": "the incumbent",
+   "simval_nse_b2": 0.3659,
+   "dev_nse": 0.4209,
+   "dev_kge": 0.4442,
+   "dev_by_class_nse": {
+    "snow": 0.56,
+    "arid": 0.202,
+    "humid": 0.613,
+    "regulated": 0.365,
+    "large": 0.325
+   }
+  },
+  {
+   "id": "b2",
+   "change": "same recipe (tab_gbm r2: 47 features (feats.py), 1 window x 100 days per train run (1.2 M rows), L2 mean booster (63 leaves, lr 0.05, early stop on train runs >= 11,400) + 5 quantile boosters (31 leaves, lr 0.1); no monotone constraints. LightGBM 4.7.0 here (round 1: 4.6.0); inference walks the exported numpy trees) trained on bank b2",
+   "decision": "released",
+   "why": "sim val on b2's frozen set 0.4152 vs v1.0 0.3659 (+0.0492 > 0.01) and dev 0.4303 >= 0.95 x 0.4209: kept",
+   "simval_nse_b2": 0.4152,
+   "simval_nse_p1": null,
+   "dev_nse": 0.4303,
+   "dev_kge": 0.4389,
+   "dev_fhv": -29.3,
+   "dev_cov50": 0.545,
+   "dev_cov90": 0.941,
+   "dev_crps_rel": 0.388,
+   "dev_by_class_nse": {
+    "snow": 0.58,
+    "arid": -0.152,
+    "humid": 0.565,
+    "regulated": 0.39,
+    "large": -0.208
+   },
+   "dev_vs": {
+    "udev": "-0.036 tie",
+    "uk12": "-0.027 tie",
+    "gr4j": "-0.156 loss",
+    "nwm": "-0.142 loss",
+    "clim": "+0.338 win"
+   }
+  }
+ ],
+ "released": "b2"
+}

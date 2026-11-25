@@ -191,10 +191,10 @@ def run_worker(target, mode, rid):
     os.makedirs(od, exist_ok=True)
     D = Data(mode, rid)
     rec = None
-    if target.startswith('v1:'):
+    if target.startswith('v1__'):
         if mode == 'exam':
             raise Refused('v1.0 rows are read from the stored v1.0 exam, never re-scored')
-        row = target[3:]
+        row = target[4:]
         arm = armlib.Arm(v1_arm_dir(row))
     else:
         if target not in regs:
@@ -262,7 +262,7 @@ def run_worker(target, mode, rid):
 # ============================================================================ stored rows
 def stored_rows(mode):
     """Reference rows and v1.0 arm rows: from v1.0's exam (exam) or the dev gate (rehearsal: references only; the
-    v1.0 arms are scored live by workers 'v1:<row>')."""
+    v1.0 arms are scored live by workers 'v1__<row>')."""
     if mode == 'exam':
         sc = pd.read_parquet(V1_SCORES)
         keep = sc.row.isin(REF_NAMES + plan()['v1_rows']) & sc.period.isin(PERIODS_EXAM)
@@ -371,7 +371,7 @@ def drive(mode, named=None, resume=False):
     else:
         arms, notes = preflight(named, mode)
         rid = time.strftime('%Y%m%dT%H%M%S')
-        workers = sorted(arms) + [f'v1:{r}' for r in plan()['v1_rows']]
+        workers = sorted(arms) + [f'v1__{r}' for r in plan()['v1_rows']]
     for n in notes:
         print(n, flush=True)
     os.makedirs(outdir(mode, rid), exist_ok=True)

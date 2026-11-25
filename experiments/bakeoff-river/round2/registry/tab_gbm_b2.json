@@ -1,0 +1,71 @@
+{
+ "arm_id": "tab_gbm_b2",
+ "hash": "0326ced564c223b0c9f65f1e4277a74df10fabb0db431f4df989490f6fab5748",
+ "files": {
+  "card.md": "4caf217c8196a171ff1e74bb9bac1234563b09117e4237283e99bc5360add110",
+  "feats.py": "34308612173b6143cab16f91585923988f4e4adef1c2dc1a2c587ffbed2fbc2f",
+  "gbm_trees.npz": "3224c683bbd87e6304b48255a9f20fe2f7aa3fa56dc62904ea920fdd70574c70",
+  "predict.py": "504c4c2ea6db7f949f573814e8cf7fa26a6d6cf916862d4a909658299954583f",
+  "ratchet.json": "eb3e2b03297a9123dd5d507aa544affdf98f89a08e10a0623ba1a5d5ca43aaff",
+  "treeexport.py": "d8986b3fbdba560196beb92ec002571c3bb4c500a6c2655593f5e8f97a232c01"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "Gradient-boosted trees (LightGBM -> numpy trees) retrained on bank b2",
+  "family": "gbm",
+  "family_label": "Gradient-boosted decision trees",
+  "group": "round2",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.097,
+   "notes": "one rung: the v1.0 recipe retrained on bank b2, one thread (process_time), shared 16-core Windows machine"
+  },
+  "released": "b2",
+  "feature_engineering": "identical to tab_gbm (round 1); only the training bank differs",
+  "compare_to": [
+   "tab_gbm"
+  ]
+ },
+ "smoke": {
+  "load_cpu_s": 0.03,
+  "ungauged": {
+   "dev_nse": [
+    0.5601,
+    0.1853,
+    0.4082
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 3.573
+  },
+  "files_used": [
+   "round2/arms/tab_gbm_b2/gbm_trees.npz",
+   "round2/arms/tab_gbm_b2/predict.py",
+   "round2/arms/tab_gbm_b2/ratchet.json",
+   "round2/work/banks/b2/val/F.npy",
+   "round2/work/banks/b2/val/attrs.npy",
+   "round2/work/banks/b2/val/lat.npy",
+   "round2/work/banks/b2/val/lon.npy",
+   "round2/work/banks/b2/val/qo.npy",
+   "round2/work/banks/b2/val/st.npy",
+   "round2/work/banks/b2/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 72.8
+ },
+ "harness_hash": "779e51f025d454d74d15d1cec8ad94cbf6c8703e1d2fed15cb50f49a0956272f",
+ "arm_dir_rel": "round2/arms/tab_gbm_b2",
+ "smoke_simval_bank": "b2",
+ "registered_at": "2026-11-25T00:29:11",
+ "history": [
+  {
+   "hash": "bd7bc43b20ccd9518218b2bfc56f517c6cd4b5cbe952e2467a565db4436e59a6",
+   "registered_at": "2026-11-25T00:28:42",
+   "replaced_at": "2026-11-25T00:29:11"
+  }
+ ]
+}

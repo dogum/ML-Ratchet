@@ -65,3 +65,18 @@ Exam 2 has NOT been run and must not be run by an agent: the owner runs `exam2.p
   By class it moves a lot: snow 0.535 -> 0.589, arid 0.182 -> -0.100, humid 0.573 -> 0.569, regulated 0.279 ->
   0.311, large 0.307 -> -0.100. The constant multiplier helps snowy basins and hurts dry ones; the overall median
   barely moves. TCN (0.71 s/step, ~71 min) and S4D (1.08 s/step, ~1.8 h) are training; trees training.
+- 00:03 register2 now converts arm text files to LF before hashing (the repo's .gitattributes checks out eol=lf;
+  Python on Windows wrote CRLF, so a fresh checkout would not have matched the hash). seq_lstm_b2, ens_e1 and
+  ens_e1_conformal re-registered with --replace (logged in registry history; ens_e1's hash did not change).
+- 00:06 trees: the first b2 training imported `arms_tab/src/feats.py`, which is round 1's rejected r3 module (54
+  features); the released r2 arm uses `src/feats_v1.py` = `tab_gbm/feats.py` (47 features). It crashed at
+  evaluation (feature index out of range), unscored, and was moved to work/gbm/b2b_failed_54feat. gbm2.py now loads
+  the released feats.py; retrained.
+- 00:10 exam2.py rehearsal tested on seq_lstm_b2 alone: full pipeline OK (v1.0 rows scored live on dev, dev refs,
+  paired comparisons). Fixed: worker folder names cannot hold ':' on Windows (v1__<row>). Test output deleted.
+- 00:24 trees family rung on b2: sim val on b2's frozen set 0.415 vs v1.0 tab_gbm 0.366 (+0.049); dev 0.430 vs
+  0.421 (x 1.022) -> **KEPT**, registered as tab_gbm_b2 (0326ced5...). numpy trees == LightGBM 4.7.0 to 1.6e-14.
+  v1.0 arms on b2's frozen val: seq_lstm 0.394, seq_tcn 0.386, seq_ssm 0.383, tab_gbm 0.366, flowcast_v1 0.370
+  (they scored 0.398-0.426 on p1's val: b2's val is harder for nets trained on p1).
+- 00:27 conformal wrappers registered: seq_lstm_b2_conformal (dev mean cov90 0.86 -> 0.88 LOBO),
+  tab_gbm_b2_conformal (0.84 -> 0.88).
