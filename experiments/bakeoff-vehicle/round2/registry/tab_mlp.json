@@ -1,0 +1,87 @@
+{
+ "arm_id": "tab_mlp",
+ "arm_dir": "C:\\Developer\\ML-ratchet\\.claude\\worktrees\\agent-a3ec76151df65ba78\\experiments\\bakeoff-vehicle\\arms_table\\tab_mlp",
+ "hash": "e3b9db918067ba16dc608beffb513e4a0d770c46f1007fdff0d61795d9669f50",
+ "files": {
+  "card.md": "a18ec5de2d70f050b34f958f678037a34090e03ea878a057c41afbca1a7e1e0c",
+  "model_np.py": "c01520f5101e7189dac72d12023e404087f943b3a8f58674ad1a08613f9ce9a1",
+  "predict.py": "109674a6f41669eb3c33f7b141dee0f08f162ac9dc1734db19dd29d917bef740",
+  "ratchet.json": "a73e7dd1545400af87f279479cf7173a43830f653b5fd05f3f57c02e84808a5f",
+  "training\\train_mlp.py": "ac0df3228c9ed54e667873b89350f0d28f02e366f84f8473637caf2e196ae1ed",
+  "weights\\s0.npz": "1668d3dbf4a66bbc9f3871038a6e59926c84c4521c2bf19b6dd316324d461525",
+  "weights\\s1.npz": "440257932fd652218b849affba5ad8ed227292f741efac0d28be7558cfaf54a3",
+  "weights\\s2.npz": "50ed0b92f9e8b60e6acc05b769832d6b882ae36e43ec874437c3432b9d464b12",
+  "weights\\s3.npz": "aa1a13b7d46ff6a3df5c1b790600940233364279ef286dcb305da97c4cf6226f",
+  "weights\\s4.npz": "325f8156759e8bf4bcbb8e2658e295566c8151a2d3e988660bcd1382c57492bc"
+ },
+ "tracks": [
+  "table"
+ ],
+ "meta": {
+  "label": "MLP control (EnergyNet v2.1's network, retrained on the shared bank)",
+  "family": "mlp",
+  "family_label": "Multilayer perceptron (ensemble of 5, correction to a physics estimate)",
+  "group": "table",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.62,
+   "train_cpu_s": {
+    "r0": 90,
+    "r1": 471,
+    "r2": 1482,
+    "r3": 263
+   },
+   "notes": "torch 2.15 CPU, one thread, time.process_time() inside train_mlp.py; r1 reuses r0's seed-0 network (471 s = all 5 members); harness evaluations (~8 s prediction CPU each) not counted"
+  },
+  "released": "r3",
+  "feature_engineering": "none: the 151 EnergyNet inputs, standardised as EnergyNet does (mean / sd from one tier draw, clipped at +-8); target log(y / E_phys) + the 5 log component shares (EnergyNet's auxiliary head)"
+ },
+ "smoke": {
+  "load_cpu_s": 0.03,
+  "table": {
+   "ved": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 0.00065,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 0.00065,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "simval": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "files_used": [
+   "arms_table\\tab_mlp\\predict.py",
+   "arms_table\\tab_mlp\\ratchet.json",
+   "arms_table\\tab_mlp\\weights\\s0.npz",
+   "arms_table\\tab_mlp\\weights\\s1.npz",
+   "arms_table\\tab_mlp\\weights\\s2.npz",
+   "arms_table\\tab_mlp\\weights\\s3.npz",
+   "arms_table\\tab_mlp\\weights\\s4.npz"
+  ],
+  "exam_cpu_estimate_min": 1.0
+ },
+ "harness_hash": "716753ba90c88a710666b2c1273e7d7e7afe38c2f083873c5cc7ffd4b6ce0f9e",
+ "registered_at": "2026-11-25T00:27:36",
+ "history": []
+}

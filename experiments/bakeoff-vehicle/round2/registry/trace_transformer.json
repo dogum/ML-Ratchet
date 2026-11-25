@@ -1,0 +1,74 @@
+{
+ "arm_id": "trace_transformer",
+ "arm_dir": "C:\\Developer\\ML-ratchet\\.claude\\worktrees\\agent-a3ec76151df65ba78\\experiments\\bakeoff-vehicle\\arms_trace\\transformer",
+ "hash": "e518f107cd50d9fbf4e5b7823c0feacdd17c6023b8f6f4dda8ea573338b3944c",
+ "files": {
+  "..\\common\\tracelib.py": "d64d133881a5285ea393ef568e9922c5acc39c4acf630862f24316ef783be25a",
+  "card.md": "3015a2f29ff338dc9ab4497d8ecb5b872354f36480405d586b54bc44f7b09523",
+  "predict.py": "d7405c2881d88a9b4bfcaefd723515ce627af7fb7a2ae5cd430a5c9e59950c5a",
+  "ratchet.json": "a2e7e66c19200b8f451a04af885c09790556f3807c52cbc35afc67b583cf44a3",
+  "weights.npz": "5fa9c6e1f0b6761f707aed09c7956c4e8db246c7506de89cc4c2de32f327c8d2"
+ },
+ "tracks": [
+  "trace"
+ ],
+ "meta": {
+  "label": "Transformer on the trip trace (20-s patch tokens)",
+  "family": "attn",
+  "family_label": "Attention and transformers",
+  "group": "trace",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 1.635,
+   "notes": "r0 0.19, r1 0.17, r2 0.33, r3 0.90 (rejected); + 0.05 for a 1-epoch smoke run (0.015), a speed benchmark, a 2-min first launch killed for memory and r3 steps lost to a container restart; one thread, shared 2-core machine"
+  },
+  "released": "r2",
+  "feature_engineering": "trace-track inputs only: the harness's shared 5-s block means (bake.block_means rule: 8 channel means + mean v^2, mean v^3, summed positive kinetic-energy increment per unit mass) + the block's valid-second fraction -> 12 scaled channels; spec (49) and rl (5, logs of mass / CdA / Crr) standardised with train-bank statistics; log distance and log duration from the trace; chunks of <= 1,440 blocks mean-pooled for longer traces; anchor r0 = sim-train median MJ/km per (architecture, class) (bake.dumb_rates) x distance; from r1: E_phys recomputed from the trace inputs by bake.e_phys_from_trace (EnergyNet's generic road-load estimate; declared), target log(y / E_phys), log(E_phys / A0) as an input"
+ },
+ "smoke": {
+  "load_cpu_s": 0.0,
+  "trace": {
+   "ved": {
+    "cpu_s_per_row": 0.00326,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 0.00651,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 0.05924,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "simval": {
+    "cpu_s_per_row": 0.00684,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "files_used": [
+   "arms_trace\\common\\tracelib.py",
+   "arms_trace\\transformer\\predict.py",
+   "arms_trace\\transformer\\ratchet.json",
+   "arms_trace\\transformer\\weights.npz",
+   "harness\\build_bank.py"
+  ],
+  "exam_cpu_estimate_min": 14.3
+ },
+ "harness_hash": "716753ba90c88a710666b2c1273e7d7e7afe38c2f083873c5cc7ffd4b6ce0f9e",
+ "registered_at": "2026-11-25T00:27:33",
+ "history": []
+}

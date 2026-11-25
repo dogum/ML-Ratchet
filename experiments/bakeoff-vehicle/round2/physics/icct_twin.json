@@ -1,0 +1,44 @@
+{
+ "preset": "roadsim-physics-v2",
+ "rows": [
+  {
+   "truck": "BIC-US",
+   "cycle": "US_55mph_grade",
+   "test_mass_kg": 34408.0,
+   "ref_mass_kg": 30837.0,
+   "measured_g_km": 237.12,
+   "twin_road_g_km": 290.6158329281672,
+   "twin_dyno_g_km": 293.43793547827374,
+   "err_road": 0.22560658286170376,
+   "err_dyno": 0.2375081624421127,
+   "road_over_dyno": -0.009617374609410367
+  },
+  {
+   "truck": "BIC-US",
+   "cycle": "US_55mph_flat",
+   "test_mass_kg": 34408.0,
+   "ref_mass_kg": 30837.0,
+   "measured_g_km": 203.84,
+   "twin_road_g_km": 276.21920360908126,
+   "twin_dyno_g_km": 279.2159493268218,
+   "err_road": 0.3550785106410972,
+   "err_dyno": 0.36977997118731243,
+   "road_over_dyno": -0.010732716827120847
+  },
+  {
+   "truck": "BIC-US",
+   "cycle": "US_ARB_transient",
+   "test_mass_kg": 34408.0,
+   "ref_mass_kg": 30837.0,
+   "measured_g_km": 535.8080000000001,
+   "twin_road_g_km": 516.1827489204063,
+   "twin_dyno_g_km": 518.5874270707113,
+   "err_road": -0.03662739466300202,
+   "err_dyno": -0.03213944720737427,
+   "road_over_dyno": -0.004636977344183002
+  }
+ ],
+ "median_err_road": 0.22560658286170376,
+ "median_err_dyno": 0.2375081624421127,
+ "median_road_over_dyno": -0.009617374609410367
+}

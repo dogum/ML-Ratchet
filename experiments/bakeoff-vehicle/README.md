@@ -48,3 +48,12 @@ instead of `/home/claude/...`, and `analyze.py` maps the registry's cloud arm fo
 their cloud paths: they are the record of what ran. LawFinder's packaging of the formula arm's law is in
 `arms_phys/lawfinder_road/` (with its exam conversion in `exam_results/`); it was not merged into LawFinder, which
 already released its own road law (models/lawfinder/NOTEBOOK.md, 24 Nov 2026).
+
+**Round 2 (24-25 Nov 2026, in `round2/`; exam-2 not yet run).** Pre-registered in `round2/PREREG.md` (with dated
+amendments), logged in `round2/STATUS.md`. Data rungs on EnergyNet v2.1's three banks: the GRU and transformer as
+5-member ensembles were kept (sim val skill 0.670 / 0.672, dev D16 0.108 / 0.106); the MLP control on 3 banks missed
+the skill margin by 0.0001 and was rejected. A bank-recipe fix for plug-ins (cold engine when the pack has charge)
+moved the plug-in dev bias past zero but passed no physics-rung gate; the heavy-truck dynamometer idea failed its dev
+check. The cross-family ensemble is registered but is not a gain before the exam; the between-family spread does not
+flag the shared misses on dev. Exam-2 (`round2/exam2.py`, own registry, lock and done files) is for the owner to run
+once. v1.0's registry, results and exam lock are untouched.

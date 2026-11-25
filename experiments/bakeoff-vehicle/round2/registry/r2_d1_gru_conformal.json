@@ -1,0 +1,100 @@
+{
+ "arm_id": "r2_d1_gru_conformal",
+ "arm_dir": "C:\\Developer\\ML-ratchet\\.claude\\worktrees\\agent-a3ec76151df65ba78\\experiments\\bakeoff-vehicle\\round2\\arms\\r2_d1_gru_conformal",
+ "hash": "e584721094e8f978936bfcddb4d38effd21fd8051524d4d2c1d802491fdac4cc",
+ "files": {
+  "..\\..\\..\\arms_trace\\common\\tracelib.py": "d64d133881a5285ea393ef568e9922c5acc39c4acf630862f24316ef783be25a",
+  "..\\common\\enslib.py": "ba0f7bc8d61c53d898ffc052c624d851011b8a1969f8cfbad83e54f6a8d38271",
+  "..\\common\\xlib.py": "01d5c3cfadb46e51f64e4b3b6f7b563c7a10d4e79fb3e921578f6f248941178c",
+  "..\\lib\\vcf_mondrian.py": "8ee71cd60c842c8871bacc7fd1544d791a188f5b25d3483c6a4d8f8cff279abc",
+  "..\\r2_d1_gru\\card.md": "52c44693bc499241d57065ba72d31c7e4b691c1ca7d7d971243bcf0033223bfa",
+  "..\\r2_d1_gru\\predict.py": "c775091f0e14da8bf6d97a3759f1a2f681c969bfc06986eb7706be8de0029c9f",
+  "..\\r2_d1_gru\\ratchet.json": "b2b13e9d9c394ef6a14fb595db3e58b7aaaa5f41c3394cebc239820eac51e89b",
+  "..\\r2_d1_gru\\weights\\m0.npz": "048f467db68bff7ff550024b7d54f7212ddfbc22eb11a6a70dea9822b5dc41d9",
+  "..\\r2_d1_gru\\weights\\m1.npz": "a1cc683679b8f3e4b066f6a1ed9eba0b63d7032c5b32a00b929ff831f7c07415",
+  "..\\r2_d1_gru\\weights\\m2.npz": "3d5d59f0ceb392568fd1b9da804c20bda8cf780299d8f1da715f4be063446423",
+  "..\\r2_d1_gru\\weights\\m3.npz": "3cfe6449cf928395b112909ce508d258b07eb6fe10553252f46fadd91bddeba6",
+  "..\\r2_d1_gru\\weights\\m4.npz": "97e3c090905ed6d2c4dd21e5d7fe5752e3bc591734021839790ea0b8c02bfd16",
+  "calib.json": "f5cd69e61a3018f78933f42231e3773ac017dc85862d6c78cad1bd9cb2bf0f9d",
+  "card.md": "a04662efb8e363e88fd5e4230509ea2798b5254b0111cd99e032c2dd37b799d3",
+  "predict.py": "6de4f8af7e11edbcf664aeba8e22b593de6bc3329db45b65bbf1c94eefaa7fcb",
+  "ratchet.json": "5d374225e19f12bc434935bb62b04c589a4b574e19e757ebf9f76ed3aac72f4d"
+ },
+ "tracks": [
+  "trace"
+ ],
+ "meta": {
+  "label": "Bidirectional GRU, 5-member ensemble on 3 banks (round 2, D1) + Mondrian conformal",
+  "family": "conformal",
+  "family_label": "Conformal prediction (wrapper around r2_d1_gru)",
+  "group": "round2",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.0019,
+   "base_train_cpu_hours": 1.294,
+   "notes": "conformal fit only on dev residuals of r2_d1_gru"
+  },
+  "released": "c0",
+  "feature_engineering": "none beyond r2_d1_gru's; strata from arch, cls and the dynamometer flag"
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "trace": {
+   "ved": {
+    "cpu_s_per_row": 0.02474,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 0.02474,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 0.30924,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "simval": {
+    "cpu_s_per_row": 0.06283,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "files_used": [
+   "arms_trace\\common\\tracelib.py",
+   "harness\\build_bank.py",
+   "round2\\arms\\common\\enslib.py",
+   "round2\\arms\\r2_d1_gru\\predict.py",
+   "round2\\arms\\r2_d1_gru\\ratchet.json",
+   "round2\\arms\\r2_d1_gru\\weights\\m0.npz",
+   "round2\\arms\\r2_d1_gru\\weights\\m1.npz",
+   "round2\\arms\\r2_d1_gru\\weights\\m2.npz",
+   "round2\\arms\\r2_d1_gru\\weights\\m3.npz",
+   "round2\\arms\\r2_d1_gru\\weights\\m4.npz",
+   "round2\\arms\\r2_d1_gru_conformal\\calib.json",
+   "round2\\arms\\r2_d1_gru_conformal\\predict.py",
+   "round2\\arms\\r2_d1_gru_conformal\\ratchet.json"
+  ],
+  "exam_cpu_estimate_min": 63.4
+ },
+ "harness_hash": "716753ba90c88a710666b2c1273e7d7e7afe38c2f083873c5cc7ffd4b6ce0f9e",
+ "registered_at": "2026-11-25T01:17:50",
+ "history": [
+  {
+   "hash": "ec39d4561f5f68a4aabbac6410e2ad541a54228d244c3d326290abda7d7cdde9",
+   "registered_at": "2026-11-25T01:17:01",
+   "replaced_at": "2026-11-25T01:17:50"
+  }
+ ]
+}

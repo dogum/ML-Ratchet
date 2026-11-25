@@ -1,0 +1,63 @@
+{
+ "r2_d1_gru": {
+  "folder": "r2_d1_gru",
+  "label": "Bidirectional GRU, 5-member ensemble on 3 banks (round 2, D1)",
+  "family": "rnn",
+  "family_label": "Recurrent networks (bidirectional GRU), 5-member ensemble",
+  "tracks": ["trace"],
+  "extra_files": ["../common", "../../../arms_trace/common"],
+  "feature_engineering": "as v1.0 trace_gru r1 (arms_trace/common/tracelib.py, unchanged): 5-s block means of the 1 Hz trace (12 channels), spec (49) and road load (5) standardised with train101 statistics, log distance / duration, physics anchor E_phys recomputed from the trace inputs (bake.e_phys_from_trace, declared), target log(y / E_phys), log(E_phys / A0) as an input. Ensemble: mean log-quantile per level over the 5 members, pred = exp(mean log q50) (round2/arms/common/enslib.py)",
+  "compute": {"train_cpu_hours": 1.294, "train_gpu_hours": 1.39, "notes": "5 members x 12 epochs on 86,400 trips (3 banks), RTX 3080 shared by up to 8 jobs: 14-20 min wall per member (1.39 GPU-h in all), process CPU 0.23-0.31 h per member (1.29 h). The v1.0 rungs r0-r2 (1.65 single-thread CPU-h) are the incumbent's."},
+  "rungs": [
+   {"id": "v1-r1", "change": "incumbent: v1.0 trace_gru r1 (one network, one bank of 28,800 trips; not in this folder)", "decision": "base", "why": "v1.0 release, re-scored on the rebuilt frozen val and dev", "simval_skill": 0.63897, "simval_MdAPE": 0.08426, "dev_D16": 0.1089},
+   {"id": "d1-m0", "change": "diagnostic, not a rung: member 0 alone (one network, the 3 banks)", "decision": "rejected", "why": "diagnostic only (PREREG section 1): the data effect alone is +0.0157 skill; D16 0.1090", "simval_skill": 0.65472, "simval_MdAPE": 0.08127, "dev_D16": 0.10896},
+   {"id": "d1", "change": "v1.0 r1 recipe, 5 members (seeds 0-4), each on all three v2.1 banks (86,400 trips), GPU", "decision": "released", "why": "sim val skill +0.0306 over the incumbent (> 0.01) and dev D16 0.1084 vs 0.1089 (not worse): kept (PREREG section 0 gate)", "simval_skill": 0.66959, "simval_MdAPE": 0.07776, "dev_D16": 0.1084}
+  ],
+  "released": "d1",
+  "card": {
+   "what": "Five bidirectional GRUs over 5-s blocks of the 1 Hz trip trace, each correcting EnergyNet's road-load estimate E_phys, trained on EnergyNet v2.1's three simulated banks (RoadSim physics v2) instead of the one bank the v1.0 GRU saw, and averaged in log-quantile space. Round 2's data rung D1: it separates the data and ensembling effect from physics. numpy inference (the v1.0 tracelib cores, unchanged).",
+   "training": "round2/trace/train_ens.py (imports v1.0 arms_trace/train/nets.py and the v1.0 recipe gru_r1.json unchanged): 12 epochs, token budget 8,192 blocks, <= 64 trips per batch, AdamW peak lr 2e-3 one-cycle cosine, pinball loss on 5 log-quantiles + 0.2 x component MSE, fresh tiers per bank per epoch, last step used. Member m: torch seed m, data seed m. Zero real labels. Banks rebuilt with harness/build_bank.py (round2/bank/build.py; PREREG A1 / A2 for the manifest check).",
+   "limits": "Same simulator as v1.0 (RoadSim physics v2): the misses every learner shares on dev remain (dev bias: plug-ins -15.4 %, Mersin CNG -18.9 %, ICCT +16.5 %). Bands are raw pinball quantiles (conformal wrapper available). Numpy inference runs 5 GRUs: ~5x the v1.0 arm's predict time. Heavy-duty traces longer than 7,200 s are chunked as in v1.0."
+  }
+ },
+ "r2_d2_transformer": {
+  "folder": "r2_d2_transformer",
+  "label": "Transformer over 20-s patches, 5-member ensemble on 3 banks (round 2, D2)",
+  "family": "attn",
+  "family_label": "Attention (transformer encoder over 20-s patch tokens), 5-member ensemble",
+  "tracks": ["trace"],
+  "extra_files": ["../common", "../../../arms_trace/common"],
+  "feature_engineering": "as v1.0 trace_transformer r2 (arms_trace/common/tracelib.py, unchanged): 5-s block means of the 1 Hz trace (12 channels), 4-block (20-s) patch tokens, spec (49) and road load (5) standardised with train101 statistics, log distance / duration, physics anchor E_phys recomputed from the trace inputs (bake.e_phys_from_trace, declared), target log(y / E_phys), log(E_phys / A0) as an input. Ensemble: mean log-quantile per level over the 5 members, pred = exp(mean log q50) (round2/arms/common/enslib.py)",
+  "compute": {"train_cpu_hours": 4.883, "train_gpu_hours": 5.21, "notes": "5 members x (12 + 24) epochs on 86,400 trips (3 banks), RTX 3080 shared by up to 8 jobs: 63 min wall per member (5.21 GPU-h in all), process CPU ~1.0 h per member (4.88 h). The v1.0 rungs (1.64 single-thread CPU-h) are the incumbent's."},
+  "rungs": [
+   {"id": "v1-r2", "change": "incumbent: v1.0 trace_transformer r2 (one network, one bank; not in this folder)", "decision": "base", "why": "v1.0 release, re-scored on the rebuilt frozen val and dev", "simval_skill": 0.64417, "simval_MdAPE": 0.08291, "dev_D16": 0.1135},
+   {"id": "d2-m0", "change": "diagnostic, not a rung: member 0 alone (one network, the 3 banks)", "decision": "rejected", "why": "diagnostic only (PREREG section 1): the data effect alone is +0.0161 skill; D16 0.1048", "simval_skill": 0.66028, "simval_MdAPE": 0.07925, "dev_D16": 0.10483},
+   {"id": "d2", "change": "v1.0 r2 recipe (r1 phase 12 epochs lr 2e-3, then warm restart 24 epochs lr 1e-3), 5 members (seeds 0-4), each on all three v2.1 banks (86,400 trips), GPU", "decision": "released", "why": "sim val skill +0.0273 over the incumbent (> 0.01) and dev D16 0.1065 vs 0.1135 (better): kept (PREREG section 0 gate)", "simval_skill": 0.6715, "simval_MdAPE": 0.07709, "dev_D16": 0.10647}
+  ],
+  "released": "d2",
+  "card": {
+   "what": "Five transformer encoders over 20-s patch tokens of the 1 Hz trip trace, each correcting EnergyNet's road-load estimate E_phys, trained on EnergyNet v2.1's three simulated banks (RoadSim physics v2) instead of one, averaged in log-quantile space. Round 2's data rung D2. numpy inference (the v1.0 tracelib cores, unchanged).",
+   "training": "round2/trace/train_ens.py (imports v1.0 arms_trace/train/nets.py and the v1.0 configs transformer_r1.json then transformer_r2.json unchanged): phase 1 12 epochs peak lr 2e-3 (data seed m), phase 2 warm restart 24 epochs peak lr 1e-3 (data seed m + 100), token budget 8,192 blocks, <= 64 trips per batch, pinball loss on 5 log-quantiles + 0.2 x component MSE, fresh tiers per bank per epoch, last step used. Zero real labels.",
+   "limits": "Same simulator as v1.0 (RoadSim physics v2): the shared dev misses remain (dev bias: plug-ins -9.9 %, Mersin CNG -18.8 %, ICCT +18.1 %). Bands are raw pinball quantiles (conformal wrapper available). numpy inference runs 5 transformers: ~5x the v1.0 arm's predict time."
+  }
+ },
+ "r2_x_cross": {
+  "folder": "r2_x_cross",
+  "label": "Cross-family ensemble: transformer + GRU + MLP + GP, equal weights (round 2, X)",
+  "family": "ensemble",
+  "family_label": "Ensemble across learner families (equal-weight log-quantile average)",
+  "tracks": ["trace"],
+  "extra_files": ["../common", "../../../arms_trace/common", "../r2_d2_transformer", "../r2_d1_gru", "../../../arms_table/tab_mlp", "../../../arms_table/tab_gp"],
+  "feature_engineering": "none of its own. Members: r2_d2_transformer and r2_d1_gru on the trace batch; v1.0 tab_mlp and tab_gp on EnergyNet's 151 table inputs rebuilt from the trace batch by round2/arms/common/xlib.py (route vector, physics vector and E_phys from the trace and rl with EnergyNet's own feature code; the vehicle vector from spec with the label entries made relative again; checked against the table batch: median |log difference| of the members' predictions 1e-6 to 8e-5, arms/check_xinputs.json). Combination fixed in PREREG section 3: each level's log-quantile is the mean of the 4 members' (weights 1/4), pred = exp(mean log q50).",
+  "compute": {"train_cpu_hours": 0.0, "notes": "no training of its own; members: D2 4.88 CPU-h / 5.21 GPU-h, D1 1.29 / 1.39, v1.0 tab_mlp 0.62, v1.0 tab_gp 0.81 single-thread CPU-h"},
+  "rungs": [
+   {"id": "r0", "change": "equal-weight cross-family ensemble of the four round-2 family entries (D2 transformer, D1 GRU, v1.0 tab_mlp, v1.0 tab_gp)", "decision": "released", "why": "registered as a base rung (PREREG section 3: D16 0.1111 is not worse than its best member's 0.1065 by more than 0.01). Pre-exam verdict: NOT a gain: sim val skill 0.6691 is below its best member's 0.6715 (the GP member, 0.596, pulls it down), D16 +0.0046 worse.", "simval_skill": 0.66905, "simval_MdAPE": 0.07759, "dev_D16": 0.11108}
+  ],
+  "released": "r0",
+  "card": {
+   "what": "The Vehicle Bake-off's next-rung 4: one forecast from four learner families at once. The transformer and GRU ensembles read the trip trace; the MLP and the sparse GP read EnergyNet's 151 physics features, rebuilt from the same trace batch. Their 5 log-quantiles are averaged level by level with equal weights. It also produces the between-family spread that round 2's label-free gap detector reads (round2/gap/).",
+   "training": "none: the members are frozen round-2 / v1.0 arms (hashed with this folder through extra_files). The member list is in members.json.",
+   "limits": "Quantile averaging keeps each member's band width and adds no between-member spread. Equal weights let the weakest member (the GP, sim skill 0.596) pull the average below the best member on sim val. Predict cost is the sum of the four members' (two 5-network trace ensembles). The members share the simulator's misses (dev bias: plug-ins -9.7 %, Mersin CNG -18.4 %, ICCT +21.9 %), so averaging them cannot remove those."
+  }
+ }
+}

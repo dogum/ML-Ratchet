@@ -1,0 +1,83 @@
+{
+ "arm_id": "enet_v21",
+ "arm_dir": "C:\\Developer\\ML-ratchet\\.claude\\worktrees\\agent-a3ec76151df65ba78\\experiments\\bakeoff-vehicle\\harness\\arms_ref\\enet_v21",
+ "hash": "7eb22f40ddf00c9e039acba4696d6780d0c94abff18e8013b816e598e29d284d",
+ "files": {
+  "card.md": "9deb2b665a32b609e21bc61b5df600dafdefe7ab4c3b15612e106383ef142280",
+  "model_np.py": "c01520f5101e7189dac72d12023e404087f943b3a8f58674ad1a08613f9ce9a1",
+  "predict.py": "5973e78b3cb9453ff95d48f0c3b3485f522915eb1eec13c6af85749ac3755c2d",
+  "ratchet.json": "c32d24a2d6f4997d1c1592a104447d257356c0a407bfd12eb38c3cb17e29cd52",
+  "sigma_factors.json": "1b3a661f05c1594fa2834f51975442720d0018aad11bf12c72d2d2d76c6c82b5",
+  "weights\\r15_s0.npz": "7969b39342b18ce584a02e5510bdb13ac18919094015afb20b4ddc2c2167394f",
+  "weights\\r15_s1.npz": "18c5f9ae11aa3f3446574c82dcf5c61b29e791e2b21f6a3e87d52cd8cd414deb",
+  "weights\\r15_s2.npz": "98b87d98466a21212ac765e7d53c85473490bd56749a7fe99aae7504b8098dc7",
+  "weights\\r15_s3.npz": "cfc2ff154f5e031caed9f726c410543df2cdf0ff12907f590d679e3bec2fcce6",
+  "weights\\r15_s4.npz": "005b6b886a49fdb0356533f179f960905fbc5fcd31ce51ecdbd86d83e1810646"
+ },
+ "tracks": [
+  "table"
+ ],
+ "meta": {
+  "label": "EnergyNet v2.1 as released",
+  "family": "mlp",
+  "family_label": "Multilayer perceptron (ensemble of 5, correction to a physics estimate)",
+  "group": "ref",
+  "reference": true,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0,
+   "notes": "released model, not retrained here (trained by EnergyNet on an RTX 3080, 5 networks x ~5 min, 86,400 simulated trips)"
+  },
+  "released": "v2.1",
+  "feature_engineering": "EnergyNet's own 151 inputs (the table track's definition)"
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "table": {
+   "ved": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 0.00065,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 0.00065,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "simval": {
+    "cpu_s_per_row": 0.00033,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "files_used": [
+   "harness\\arms_ref\\enet_v21\\model_np.py",
+   "harness\\arms_ref\\enet_v21\\predict.py",
+   "harness\\arms_ref\\enet_v21\\ratchet.json",
+   "harness\\arms_ref\\enet_v21\\sigma_factors.json",
+   "harness\\arms_ref\\enet_v21\\weights\\r15_s0.npz",
+   "harness\\arms_ref\\enet_v21\\weights\\r15_s1.npz",
+   "harness\\arms_ref\\enet_v21\\weights\\r15_s2.npz",
+   "harness\\arms_ref\\enet_v21\\weights\\r15_s3.npz",
+   "harness\\arms_ref\\enet_v21\\weights\\r15_s4.npz"
+  ],
+  "exam_cpu_estimate_min": 1.0
+ },
+ "harness_hash": "716753ba90c88a710666b2c1273e7d7e7afe38c2f083873c5cc7ffd4b6ce0f9e",
+ "registered_at": "2026-11-25T00:27:09",
+ "history": []
+}
