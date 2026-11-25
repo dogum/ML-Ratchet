@@ -1,0 +1,240 @@
+{
+ "per_set": {
+  "VED_ICE": {
+   "n": 645,
+   "n_clusters": 8,
+   "spearman": 0.012299916507500237,
+   "ci": [
+    -0.10802833190667242,
+    0.1796553040914219
+   ],
+   "median_spread": 0.02795111462620241,
+   "median_abs_log_err": 0.06800372619941979,
+   "shared_bias_set": false
+  },
+  "VED_HEV": {
+   "n": 275,
+   "n_clusters": 5,
+   "spearman": 0.057367646634546035,
+   "ci": [
+    -0.1251692563877522,
+    0.2289758737207042
+   ],
+   "median_spread": 0.046386801065100194,
+   "median_abs_log_err": 0.11565982153786275,
+   "shared_bias_set": false
+  },
+  "VED_EV": {
+   "n": 258,
+   "n_clusters": 1,
+   "spearman": 0.1893492054563451,
+   "ci": [
+    0.1893492054563451,
+    0.1893492054563451
+   ],
+   "median_spread": 0.03570246096426792,
+   "median_abs_log_err": 0.13062970130760304,
+   "shared_bias_set": true
+  },
+  "VED_PHEV": {
+   "n": 318,
+   "n_clusters": 2,
+   "spearman": 0.3205423844938324,
+   "ci": [
+    0.3128631931448833,
+    0.38942901925660545
+   ],
+   "median_spread": 0.08255133948381121,
+   "median_abs_log_err": 0.17336517256096146,
+   "shared_bias_set": true
+  },
+  "EPA_conv_FTP": {
+   "n": 2877,
+   "n_clusters": 2877,
+   "spearman": 0.08179002197792161,
+   "ci": [
+    0.046937351978796775,
+    0.11764637953875455
+   ],
+   "median_spread": 0.026967451550503698,
+   "median_abs_log_err": 0.0768345217894997,
+   "shared_bias_set": false
+  },
+  "EPA_conv_HWY": {
+   "n": 2835,
+   "n_clusters": 2835,
+   "spearman": -0.12862009009844724,
+   "ci": [
+    -0.16705481623677199,
+    -0.09213671092634743
+   ],
+   "median_spread": 0.035043183604433405,
+   "median_abs_log_err": 0.06605798974839042,
+   "shared_bias_set": false
+  },
+  "EPA_conv_US06": {
+   "n": 371,
+   "n_clusters": 371,
+   "spearman": -0.1392429827388137,
+   "ci": [
+    -0.23640255869499557,
+    -0.038472139777318476
+   ],
+   "median_spread": 0.05547118247769651,
+   "median_abs_log_err": 0.09792340364455424,
+   "shared_bias_set": false
+  },
+  "EPA_conv_FTPcold": {
+   "n": 280,
+   "n_clusters": 280,
+   "spearman": 0.3125583045567808,
+   "ci": [
+    0.19744102258889856,
+    0.42760534423869834
+   ],
+   "median_spread": 0.048876466664018056,
+   "median_abs_log_err": 0.08893488423747288,
+   "shared_bias_set": false
+  },
+  "EPA_conv_SC03": {
+   "n": 302,
+   "n_clusters": 302,
+   "spearman": -0.363427038837479,
+   "ci": [
+    -0.4603865201848015,
+    -0.2468332585147677
+   ],
+   "median_spread": 0.02805890743502338,
+   "median_abs_log_err": 0.09223757598030306,
+   "shared_bias_set": false
+  },
+  "EPA_hev_FTP": {
+   "n": 70,
+   "n_clusters": 70,
+   "spearman": -0.7300359682831005,
+   "ci": [
+    -0.81788969005854,
+    -0.5828950674175831
+   ],
+   "median_spread": 0.03395795881755165,
+   "median_abs_log_err": 0.13809775153320236,
+   "shared_bias_set": false
+  },
+  "EPA_hev_HWY": {
+   "n": 72,
+   "n_clusters": 72,
+   "spearman": -0.00815328827305564,
+   "ci": [
+    -0.2648298581985129,
+    0.23912579135263082
+   ],
+   "median_spread": 0.019189355149801596,
+   "median_abs_log_err": 0.07764951295575995,
+   "shared_bias_set": false
+  },
+  "EPA_bev_FTP": {
+   "n": 98,
+   "n_clusters": 98,
+   "spearman": 0.1117235444158819,
+   "ci": [
+    -0.12203620922648326,
+    0.3354124000131878
+   ],
+   "median_spread": 0.04003422755366524,
+   "median_abs_log_err": 0.052943725199803116,
+   "shared_bias_set": false
+  },
+  "EPA_bev_HWY": {
+   "n": 97,
+   "n_clusters": 97,
+   "spearman": 0.014938621476688074,
+   "ci": [
+    -0.20762852205478421,
+    0.23575896092585935
+   ],
+   "median_spread": 0.020938170841883038,
+   "median_abs_log_err": 0.06917778314706044,
+   "shared_bias_set": false
+  },
+  "Mersin_diesel": {
+   "n": 56,
+   "n_clusters": 56,
+   "spearman": -0.33773069036226927,
+   "ci": [
+    -0.5142476546815417,
+    -0.11654900111560221
+   ],
+   "median_spread": 0.019734716066132203,
+   "median_abs_log_err": 0.13401811411910353,
+   "shared_bias_set": true
+  },
+  "Mersin_cng": {
+   "n": 56,
+   "n_clusters": 56,
+   "spearman": 0.15454545454545457,
+   "ci": [
+    -0.14190077271792378,
+    0.43312672438916183
+   ],
+   "median_spread": 0.018792382974702683,
+   "median_abs_log_err": 0.20353606154822385,
+   "shared_bias_set": true
+  },
+  "ICCT": {
+   "n": 3,
+   "n_clusters": 3,
+   "spearman": 1.0,
+   "ci": [
+    1.0,
+    1.0
+   ],
+   "median_spread": 0.049302836223130045,
+   "median_abs_log_err": 0.1980227804749879,
+   "shared_bias_set": true
+  },
+  "ZTBus_legs": {
+   "n": 5,
+   "n_clusters": 2,
+   "spearman": -0.19999999999999998,
+   "ci": [
+    -0.19999999999999998,
+    0.0
+   ],
+   "median_spread": 0.02634174407399358,
+   "median_abs_log_err": 0.11992458230251442,
+   "shared_bias_set": false
+  }
+ },
+ "median_spearman_D16": 0.036153134055617056,
+ "enrichment": {
+  "value": 1.5724171038471506,
+  "ci": [
+   1.3523459570850058,
+   1.7883345675506246
+  ],
+  "base_share_shared": 0.3125,
+  "flagged_weight_by_set": {
+   "EPA_bev_FTP": 0.03191036040970606,
+   "EPA_conv_FTP": 0.020000264821265892,
+   "EPA_conv_FTPcold": 0.07147920731774157,
+   "EPA_conv_HWY": 0.00794213414641573,
+   "EPA_conv_SC03": 0.03727806341902085,
+   "EPA_conv_US06": 0.1584680539591441,
+   "VED_EV": 0.09211952105871733,
+   "VED_HEV": 0.1660267042698452,
+   "VED_ICE": 0.015514866704626078,
+   "VED_PHEV": 0.3992608238935173
+  }
+ },
+ "pass_marks": "enrichment CI lower bound > 1.0 AND median per-set Spearman > 0.10 (PREREG section 4)",
+ "verdict": "does not flag the shared misses on dev",
+ "inputs": {
+  "x": "work\\eval\\r2_x_cross\\cand_trace_dev_preds.parquet",
+  "members": [
+   "work\\eval\\r2_d2_transformer\\cand_trace_dev_preds.parquet",
+   "work\\eval\\r2_d1_gru\\cand_trace_dev_preds.parquet",
+   "work\\eval\\tab_mlp\\r3_table_dev_preds.parquet",
+   "work\\eval\\tab_gp\\r3_table_dev_preds.parquet"
+  ]
+ }
+}

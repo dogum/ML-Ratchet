@@ -94,6 +94,21 @@ Pre-registration: `PREREG.md` (committed d1a98a4 before any training). Exam-2 is
   MLP -7 -> +14 %) and improves the plug-in dev error for the two trace learners, but it is worth at most 0.007 of D16
   (MLP) and costs 0.002-0.008 sim skill on the v2 val; no P rung passes. The families' round-2 entries stay D1, D2,
   v1.0 tab_mlp and v1.0 tab_gp. No physics change was made (RoadSim untouched); CALIBRATION.md has the dated R2 entries.
+- 02:40 **X (cross-family ensemble: D2 + D1 + v1.0 tab_mlp + v1.0 tab_gp, equal weights) registered as `r2_x_cross`
+  r0; pre-exam verdict NOT a gain**: sim val skill 0.6691 vs best member D2 0.6715 (fails "> +0.01"), D16 0.1111 vs
+  0.1065 (+0.0046, inside the 0.01 registration bound). Raw bands are closer to nominal than any member's (sim val
+  cov50 / cov90 0.59 / 0.94; dev D16-mean 0.48 / 0.84). Conformal wrapper `r2_x_cross_conformal` (cross-fit 0.48 /
+  0.85, CRPS 0.0922 -> 0.0899).
+- 02:45 **G, the label-free gap detector (dev only; `gap/gap.py` -> `gap/gap_dev.json`): does NOT flag the shared
+  misses** by the pre-registered marks. Median per-set Spearman(spread, |log error of X|) over the 16 D16 sets 0.036
+  (mark > 0.10: fails); enrichment of the five shared-bias sets in the top 10 % of set-weighted spread 1.57 (95 % CI
+  1.35-1.79; mark: lower bound > 1.0: passes). The enrichment is almost all plug-ins (40 % of the flagged weight; the
+  plug-ins' Spearman is +0.32). The families agree most where they are most wrong: median spread on the Mersin buses
+  is 0.019-0.020 (the lowest of all sets) with median |log error| 0.13-0.20; ICCT (3 units) spread 0.049. Per-set
+  Spearman ranges from -0.73 (EPA hybrid FTP) to +0.32; it is negative on 6 of 16 sets.
+- 02:45 exam-2 `--check` PASSED with 12 arms (6 round-2: r2_d1_gru, r2_d2_transformer, r2_x_cross + 3 conformal
+  wrappers; 6 v1.0 references: enet_v21, climatology, trace_gru, trace_transformer, tab_mlp, tab_gp, each file-identical
+  to its v1.0 registration). Full dev rehearsal started.
 - 02:05 RoadSim / vehicle tests: `pytest -q tests/test_roadsim*.py tests/test_vehicle.py`: 70 passed (RoadSim unchanged).
 - 02:10 debug: a partial exam-2 dev rehearsal (enet_v21, trace_gru, r2_d1_gru) ran end to end; its output was deleted
   (round2/results/*/preds and scores.parquet are git-ignored).
