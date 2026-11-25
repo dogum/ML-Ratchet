@@ -78,6 +78,10 @@ Pre-registration: `PREREG.md` (committed d1a98a4 before any training). Exam-2 is
   plug-in dev bias -10.2 %.
 - PREREG section 2 evidence rule for the plug-in candidate: dev plug-in bias D1 -15.4 %, D2(3) -10.2 %, D3 -7.1 %,
   EnergyNet v2.1 -7.3 %: 4 of 4 same sign above 3 %: P rungs pursued (already training; P3 above is rejected).
+- 01:45 **P2 (transformer, 3 members, phevcold banks) REJECTED** vs its A3 incumbent D2 members 0-2. (i) val_pc:
+  skill 0.6688 vs 0.6674 (+0.0014 < 0.01): fails. (ii) D16 0.1048 vs 0.1061 (-0.0013, needs < -0.01): fails. On v2
+  val 0.6646 vs 0.6693. Dev plug-in bias -10.2 -> +5.8 % (VED_PHEV MdAPE 0.186 -> 0.168: for the transformer the rule
+  helps the plug-ins; for the MLP it overshot); Leaf +2.8 -> +1.6 %, CNG -19.0 -> -17.8 %, ICCT +17.1 -> +16.1 %.
 - Candidates 1 and 2 (not attempted, reasons fixed now): Mersin CNG (dev -17 %) has the same inputs as a diesel bus
   (build_real.hd writes diesel = 1 for both fuels), so no bank or physics change can move CNG without moving diesel
   (dev -3 %); the Mersin diesel exam miss is not visible on dev (February week, no A/C). Cold Leafs: the one dev Leaf

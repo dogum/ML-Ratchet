@@ -1,0 +1,38 @@
+{
+ "arm_id": "r2_d2_transformer_conformal",
+ "label": "Transformer over 20-s patches, 5-member ensemble on 3 banks (round 2, D2) + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around r2_d2_transformer)",
+ "group": "round2",
+ "tracks": [
+  "trace"
+ ],
+ "wraps": "r2_d2_transformer",
+ "wraps_hash": "a83d255c2a2424da3dc59f73fe0fad73e2ead9465ce3ab8d32abb62b76a3775e",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {
+  "train_cpu_hours": 0.0019,
+  "base_train_cpu_hours": 4.883,
+  "notes": "conformal fit only on dev residuals of r2_d2_transformer"
+ },
+ "feature_engineering": "none beyond r2_d2_transformer's; strata from arch, cls and the dynamometer flag",
+ "extra_files": [
+  "../r2_d2_transformer",
+  "../lib",
+  "../common",
+  "../../../arms_trace/common"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (v1.0 method, fixed in advance).",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands fitted on dev residuals (v1.0 method)",
+   "decision": "released",
+   "why": "the only rung; dev coverage over the D16 sets (grouped 10-fold cross-fit): trace cov50/90 0.50/0.86"
+  }
+ ],
+ "released": "c0"
+}

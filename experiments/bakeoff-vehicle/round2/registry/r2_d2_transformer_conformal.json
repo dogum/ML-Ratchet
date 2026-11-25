@@ -1,0 +1,94 @@
+{
+ "arm_id": "r2_d2_transformer_conformal",
+ "arm_dir": "C:\\Developer\\ML-ratchet\\.claude\\worktrees\\agent-a3ec76151df65ba78\\experiments\\bakeoff-vehicle\\round2\\arms\\r2_d2_transformer_conformal",
+ "hash": "f32aec17c6edfaee7b0f32f6caf45f5fb3d0f9f7ba037a6b8d6c94553b7fcac4",
+ "files": {
+  "..\\..\\..\\arms_trace\\common\\tracelib.py": "d64d133881a5285ea393ef568e9922c5acc39c4acf630862f24316ef783be25a",
+  "..\\common\\enslib.py": "ba0f7bc8d61c53d898ffc052c624d851011b8a1969f8cfbad83e54f6a8d38271",
+  "..\\common\\xlib.py": "01d5c3cfadb46e51f64e4b3b6f7b563c7a10d4e79fb3e921578f6f248941178c",
+  "..\\lib\\vcf_mondrian.py": "8ee71cd60c842c8871bacc7fd1544d791a188f5b25d3483c6a4d8f8cff279abc",
+  "..\\r2_d2_transformer\\card.md": "13530f56045b1f8d95ff995962a9d93e4dcd563c24f4285646d1628e3f37e25e",
+  "..\\r2_d2_transformer\\predict.py": "c775091f0e14da8bf6d97a3759f1a2f681c969bfc06986eb7706be8de0029c9f",
+  "..\\r2_d2_transformer\\ratchet.json": "8b18c3cf60772621b5bbc05ff5843c0db730e8104e08aae11ed2dc9463002466",
+  "..\\r2_d2_transformer\\weights\\m0.npz": "d16cb95badff97c8f29a07990aab6f2a72cf62d6f844f2587f5c5cc0d4d82b34",
+  "..\\r2_d2_transformer\\weights\\m1.npz": "3719c377f29ffe88f331f55e5b24992e8ee4d17a5661bd7889cabc17b5ff3602",
+  "..\\r2_d2_transformer\\weights\\m2.npz": "9e01f07a550d04387df10bc422aa6f0cc4d9d28c339798c8a3f8d989c48f269f",
+  "..\\r2_d2_transformer\\weights\\m3.npz": "8bbe36fd1fcb8953e8037aa600f562388fea12662a2509506f87b793f13442d8",
+  "..\\r2_d2_transformer\\weights\\m4.npz": "bae0f8197f16b0a21b73336952b90041d602249087ea035411faf04b9824d7f4",
+  "calib.json": "27c6a60d4061c16fca670badb1c3e2f4fe8ad94e3c6e77b8a5e7761b323d429a",
+  "card.md": "2ec6f2998a060aca96e7590eb4c4ed6ec87f262b4771a08415db033663fbba6d",
+  "predict.py": "6b3ad37c99fa86828de1dd5deaaefb4ad595e5d20c7e8baa7537dbf3b0aef13d",
+  "ratchet.json": "26371ee30f7b4aa029aba173af0771963ffd18a78cb8cfccc2d28395dd974788"
+ },
+ "tracks": [
+  "trace"
+ ],
+ "meta": {
+  "label": "Transformer over 20-s patches, 5-member ensemble on 3 banks (round 2, D2) + Mondrian conformal",
+  "family": "conformal",
+  "family_label": "Conformal prediction (wrapper around r2_d2_transformer)",
+  "group": "round2",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.0019,
+   "base_train_cpu_hours": 4.883,
+   "notes": "conformal fit only on dev residuals of r2_d2_transformer"
+  },
+  "released": "c0",
+  "feature_engineering": "none beyond r2_d2_transformer's; strata from arch, cls and the dynamometer flag"
+ },
+ "smoke": {
+  "load_cpu_s": 0.05,
+  "trace": {
+   "ved": {
+    "cpu_s_per_row": 0.00911,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 0.02474,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 0.20508,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "simval": {
+    "cpu_s_per_row": 0.02214,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "files_used": [
+   "arms_trace\\common\\tracelib.py",
+   "harness\\build_bank.py",
+   "round2\\arms\\common\\enslib.py",
+   "round2\\arms\\r2_d2_transformer\\predict.py",
+   "round2\\arms\\r2_d2_transformer\\ratchet.json",
+   "round2\\arms\\r2_d2_transformer\\weights\\m0.npz",
+   "round2\\arms\\r2_d2_transformer\\weights\\m1.npz",
+   "round2\\arms\\r2_d2_transformer\\weights\\m2.npz",
+   "round2\\arms\\r2_d2_transformer\\weights\\m3.npz",
+   "round2\\arms\\r2_d2_transformer\\weights\\m4.npz",
+   "round2\\arms\\r2_d2_transformer_conformal\\calib.json",
+   "round2\\arms\\r2_d2_transformer_conformal\\predict.py",
+   "round2\\arms\\r2_d2_transformer_conformal\\ratchet.json"
+  ],
+  "exam_cpu_estimate_min": 51.8
+ },
+ "harness_hash": "716753ba90c88a710666b2c1273e7d7e7afe38c2f083873c5cc7ffd4b6ce0f9e",
+ "registered_at": "2026-11-25T02:08:53",
+ "history": []
+}
