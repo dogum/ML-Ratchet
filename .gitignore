@@ -113,3 +113,10 @@ shared/fire/firesim/pids/
 
 # Bake-off exam per-unit scores (194 MB): release zip only, not in git (see experiments/bakeoff-vehicle/README.md)
 experiments/bakeoff-vehicle/results/exam_*/scores.parquet
+# TabPFN third-party code and weights (Prior Labs License 1.1; restore with pip / Hugging Face, see the arm card)
+experiments/bakeoff-vehicle/arms_table/tab_tabpfn/pylib/
+experiments/bakeoff-vehicle/arms_table/tab_tabpfn/weights/
+# Supplementary exams: per-record predictions, rehearsals and access logs stay local
+experiments/bakeoff-vehicle/results/supp_*/exam_*/preds/
+experiments/bakeoff-vehicle/results/supp_*/rehearsal_*
+experiments/bakeoff-vehicle/results/supp_*/exam_access.log
