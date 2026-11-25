@@ -1,0 +1,47 @@
+{
+ "base_id": "ens_e2",
+ "base_hash": "a559dcd29bd66df5db901ed4aa4ba8126fa1440bb53c438fcd06751a1f896071",
+ "base_rel": "../ens_e2",
+ "method": "Mondrian split-conformal (asymmetric CQR in log space), strata snow/arid/humid/other, basins weighted equally (round 1 arms_filt/conformal/lib/cf_mondrian.py)",
+ "c_frac": 0.05,
+ "min_basins": 6,
+ "jobs": {
+  "ungauged": {
+   "snow": {
+    "n_basins": 10,
+    "b90_lo": -0.5621745586395264,
+    "b90_hi": -0.07978129386901855,
+    "b50_lo": -0.5917822122573853,
+    "b50_hi": 0.2335910201072693
+   },
+   "arid": {
+    "n_basins": 12,
+    "b90_lo": 0.06723308563232422,
+    "b90_hi": -0.31897759437561035,
+    "b50_lo": 0.27577269077301025,
+    "b50_hi": -0.614715576171875
+   },
+   "humid": {
+    "n_basins": 8,
+    "b90_lo": -0.5182154178619385,
+    "b90_hi": -0.0024929046630859375,
+    "b50_lo": -0.2805863916873932,
+    "b50_hi": 0.04788494110107422
+   },
+   "other": {
+    "n_basins": 22,
+    "b90_lo": -0.15392327308654785,
+    "b90_hi": -0.23418162763118744,
+    "b50_lo": -0.09472490847110748,
+    "b50_hi": -0.10233116149902344
+   },
+   "pooled": {
+    "n_basins": 52,
+    "b90_lo": 0.023860454559326172,
+    "b90_hi": -0.15725421905517578,
+    "b50_lo": 0.0398097038269043,
+    "b50_hi": -0.04324376583099365
+   }
+  }
+ }
+}

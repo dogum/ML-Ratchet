@@ -1,0 +1,44 @@
+{
+ "arm_id": "ens_e2_conformal",
+ "label": "E2: equal-weight ensemble of the five round-2 entries + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around ens_e2)",
+ "group": "round2",
+ "protocols": [
+  "ungauged"
+ ],
+ "wraps": "ens_e2",
+ "wraps_hash": "a559dcd29bd66df5db901ed4aa4ba8126fa1440bb53c438fcd06751a1f896071",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.0021,
+  "notes": "conformal fit only on dev predictions of ens_e2"
+ },
+ "feature_engineering": "none beyond ens_e2's; the offset uses static[11] and the class list (strata)",
+ "extra_files": [
+  "../ens_e2",
+  "../../../arms_filt/conformal/lib",
+  "../ens_e2/members.json",
+  "../tab_gbm_b2",
+  "../../../harness/arms_ref/flowcast_v1",
+  "../seq_lstm_b2",
+  "../seq_tcn_b2",
+  "../seq_ssm_b2",
+  "../../../arms_seq/common"
+ ],
+ "margin": 0.0,
+ "compare_to": [
+  "seq_lstm_b2_conformal"
+ ],
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance).",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands fitted on dev residuals",
+   "decision": "released",
+   "why": "dev cov90 (mean over basins, LOBO) 0.88"
+  }
+ ],
+ "released": "c0"
+}
