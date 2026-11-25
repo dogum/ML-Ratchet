@@ -1,0 +1,6 @@
+[
+ ["transformer", "../r2_d2_transformer/predict.py", "trace"],
+ ["gru", "../r2_d1_gru/predict.py", "trace"],
+ ["mlp", "../../../arms_table/tab_mlp/predict.py", "table"],
+ ["gp", "../../../arms_table/tab_gp/predict.py", "table"]
+]

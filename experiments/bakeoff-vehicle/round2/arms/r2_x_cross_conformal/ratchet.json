@@ -1,0 +1,42 @@
+{
+ "arm_id": "r2_x_cross_conformal",
+ "label": "Cross-family ensemble: transformer + GRU + MLP + GP, equal weights (round 2, X) + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around r2_x_cross)",
+ "group": "round2",
+ "tracks": [
+  "trace"
+ ],
+ "wraps": "r2_x_cross",
+ "wraps_hash": "d1f140fda3455a4fef3650cb509f61d6f3275dee16aa023ceeb34bedda77a3dd",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {
+  "train_cpu_hours": 0.0019,
+  "base_train_cpu_hours": 0.0,
+  "notes": "conformal fit only on dev residuals of r2_x_cross"
+ },
+ "feature_engineering": "none beyond r2_x_cross's; strata from arch, cls and the dynamometer flag",
+ "extra_files": [
+  "../r2_x_cross",
+  "../lib",
+  "../common",
+  "../../../arms_trace/common",
+  "../r2_d2_transformer",
+  "../r2_d1_gru",
+  "../../../arms_table/tab_mlp",
+  "../../../arms_table/tab_gp"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (v1.0 method, fixed in advance).",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands fitted on dev residuals (v1.0 method)",
+   "decision": "released",
+   "why": "the only rung; dev coverage over the D16 sets (grouped 10-fold cross-fit): trace cov50/90 0.47/0.85"
+  }
+ ],
+ "released": "c0"
+}

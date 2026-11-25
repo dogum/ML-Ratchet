@@ -82,6 +82,21 @@ Pre-registration: `PREREG.md` (committed d1a98a4 before any training). Exam-2 is
   skill 0.6688 vs 0.6674 (+0.0014 < 0.01): fails. (ii) D16 0.1048 vs 0.1061 (-0.0013, needs < -0.01): fails. On v2
   val 0.6646 vs 0.6693. Dev plug-in bias -10.2 -> +5.8 % (VED_PHEV MdAPE 0.186 -> 0.168: for the transformer the rule
   helps the plug-ins; for the MLP it overshot); Leaf +2.8 -> +1.6 %, CNG -19.0 -> -17.8 %, ICCT +17.1 -> +16.1 %.
+- 02:15 **D2 (transformer, 5 members, 3 banks) KEPT and released as `r2_d2_transformer`**: skill 0.6715 vs v1.0
+  0.6442 (+0.0273), D16 0.1065 vs 0.1135. Member 0 alone 0.6603 / 0.1048 (data +0.0161, ensembling +0.0112). Dev bias:
+  Leaf +2.4 %, plug-ins -9.9 %, Mersin diesel -1.5 %, CNG -18.8 %, ICCT +18.1 %. Registered (a83d255c2a24), with
+  `r2_d2_transformer_conformal` (D16-mean cov50 / cov90 raw 0.44 / 0.76 -> cross-fit 0.50 / 0.86; CRPS 0.0940 ->
+  0.0894). D1's wrapper `r2_d1_gru_conformal`: 0.42 / 0.76 -> 0.49 / 0.86; CRPS 0.0941 -> 0.0892.
+- 02:25 **P1 (GRU, 5 members, phevcold banks) REJECTED** vs D1. (i) val_pc skill 0.6636 vs D1 on val_pc 0.6659
+  (-0.0023): fails. (ii) D16 0.1082 vs 0.1084 (-0.0002): fails. v2 val 0.6612 vs 0.6696. Dev plug-in bias -15.4 ->
+  +4.4 % (VED_PHEV MdAPE 0.197 -> 0.160); other shared-bias sets within 1 point. **P0 verdict:** the plug-in start
+  rule moves the plug-in dev bias toward or past zero for all three learners (GRU -15 -> +4, transformer -10 -> +6,
+  MLP -7 -> +14 %) and improves the plug-in dev error for the two trace learners, but it is worth at most 0.007 of D16
+  (MLP) and costs 0.002-0.008 sim skill on the v2 val; no P rung passes. The families' round-2 entries stay D1, D2,
+  v1.0 tab_mlp and v1.0 tab_gp. No physics change was made (RoadSim untouched); CALIBRATION.md has the dated R2 entries.
+- 02:05 RoadSim / vehicle tests: `pytest -q tests/test_roadsim*.py tests/test_vehicle.py`: 70 passed (RoadSim unchanged).
+- 02:10 debug: a partial exam-2 dev rehearsal (enet_v21, trace_gru, r2_d1_gru) ran end to end; its output was deleted
+  (round2/results/*/preds and scores.parquet are git-ignored).
 - Candidates 1 and 2 (not attempted, reasons fixed now): Mersin CNG (dev -17 %) has the same inputs as a diesel bus
   (build_real.hd writes diesel = 1 for both fuels), so no bank or physics change can move CNG without moving diesel
   (dev -3 %); the Mersin diesel exam miss is not visible on dev (February week, no A/C). Cold Leafs: the one dev Leaf

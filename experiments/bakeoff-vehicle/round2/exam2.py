@@ -524,7 +524,16 @@ def prereg_block(units, regs, arms, rng):
             dE = float(np.mean([per[s]['d_MdAPE'] for s in S.D16]))
             r.update(d_E16=dE, ci_E16=[float(lo), float(hi)], verdict='win' if hi < 0 else ('loss' if lo > 0 else 'tie'))
         res['pairs'][f'{a}|{b}'] = r
+    # the round-2 family entries = the cross-family ensemble's members (PREREG section 1); else the round-2 learners
     learners = [k for k in arms if regs[k].get('meta', {}).get('group') == 'round2' and not k.endswith('_conformal')]
+    xs = [k for k in learners if regs[k]['meta'].get('family') == 'ensemble' and os.path.exists(
+        os.path.join(regs[k]['arm_dir'], 'members.json'))]
+    if xs:
+        mem = json.load(open(os.path.join(regs[xs[0]]['arm_dir'], 'members.json')))
+        ids = [json.load(open(os.path.join(regs[xs[0]]['arm_dir'], os.path.dirname(p), 'ratchet.json')))['arm_id']
+               for _, p, _ in mem]
+        learners = [k for k in ids if k in arms]
+    res['learners'] = learners
     for sk in S.D16:
         bias = {k: float(np.median(units[key(k)][0][sk].pred / units[key(k)][0][sk].y - 1))
                 for k in learners if sk in units[key(k)][0] and len(units[key(k)][0][sk])}

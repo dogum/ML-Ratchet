@@ -5,8 +5,43 @@
   "D1 vs v1.0 GRU: data + ensembling"
  ],
  [
+  "r2_d2_transformer",
+  "trace_transformer",
+  "D2 vs v1.0 transformer: data + ensembling"
+ ],
+ [
   "r2_d1_gru",
   "enet_v21",
   "round-2 arm vs EnergyNet v2.1"
+ ],
+ [
+  "r2_d2_transformer",
+  "enet_v21",
+  "round-2 arm vs EnergyNet v2.1"
+ ],
+ [
+  "r2_x_cross",
+  "enet_v21",
+  "round-2 arm vs EnergyNet v2.1"
+ ],
+ [
+  "r2_x_cross",
+  "r2_d2_transformer",
+  "X vs its member"
+ ],
+ [
+  "r2_x_cross",
+  "r2_d1_gru",
+  "X vs its member"
+ ],
+ [
+  "r2_x_cross",
+  "tab_mlp",
+  "X vs its member"
+ ],
+ [
+  "r2_x_cross",
+  "tab_gp",
+  "X vs its member"
  ]
 ]

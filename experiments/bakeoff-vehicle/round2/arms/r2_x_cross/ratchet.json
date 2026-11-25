@@ -1,0 +1,41 @@
+{
+ "arm_id": "r2_x_cross",
+ "label": "Cross-family ensemble: transformer + GRU + MLP + GP, equal weights (round 2, X)",
+ "family": "ensemble",
+ "family_label": "Ensemble across learner families (equal-weight log-quantile average)",
+ "group": "round2",
+ "tracks": [
+  "trace"
+ ],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {
+  "train_cpu_hours": 0.0,
+  "notes": "no training of its own; members: D2 4.88 CPU-h / 5.21 GPU-h, D1 1.29 / 1.39, v1.0 tab_mlp 0.62, v1.0 tab_gp 0.81 single-thread CPU-h"
+ },
+ "feature_engineering": "none of its own. Members: r2_d2_transformer and r2_d1_gru on the trace batch; v1.0 tab_mlp and tab_gp on EnergyNet's 151 table inputs rebuilt from the trace batch by round2/arms/common/xlib.py (route vector, physics vector and E_phys from the trace and rl with EnergyNet's own feature code; the vehicle vector from spec with the label entries made relative again; checked against the table batch: median |log difference| of the members' predictions 1e-6 to 8e-5, arms/check_xinputs.json). Combination fixed in PREREG section 3: each level's log-quantile is the mean of the 4 members' (weights 1/4), pred = exp(mean log q50).",
+ "extra_files": [
+  "../common",
+  "../../../arms_trace/common",
+  "../r2_d2_transformer",
+  "../r2_d1_gru",
+  "../../../arms_table/tab_mlp",
+  "../../../arms_table/tab_gp"
+ ],
+ "margin": 0.01,
+ "rule": "keep a rung if its full frozen sim val skill beats the incumbent by > 0.01 AND its dev D16 is not worse than the incumbent's by more than 0.01 (the bake-off's rule; PREREG.md section 0). Physics rungs: PREREG.md section 2.",
+ "rungs": [
+  {
+   "id": "r0",
+   "change": "equal-weight cross-family ensemble of the four round-2 family entries (D2 transformer, D1 GRU, v1.0 tab_mlp, v1.0 tab_gp)",
+   "decision": "released",
+   "why": "registered as a base rung (PREREG section 3: D16 0.1111 is not worse than its best member's 0.1065 by more than 0.01). Pre-exam verdict: NOT a gain: sim val skill 0.6691 is below its best member's 0.6715 (the GP member, 0.596, pulls it down), D16 +0.0046 worse.",
+   "simval_skill": 0.66905,
+   "simval_MdAPE": 0.07759,
+   "dev_D16": 0.11108
+  }
+ ],
+ "released": "r0",
+ "prereg": "round2/PREREG.md"
+}
