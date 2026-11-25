@@ -1,10 +1,10 @@
 """Headless check of the page at desktop and phone widths, light and dark: horizontal overflow, console errors,
 section screenshots. usage: python3 check_page.py <page.html> [shots_dir]"""
-import asyncio, os, sys
+import asyncio, os, sys, tempfile
 from playwright.async_api import async_playwright
 SRC = sys.argv[1]
 OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(os.path.dirname(SRC), 'shots')
-TMP = '/tmp/claude-0/706c0d77-bfd2-594c-b22e-e532edd10b67/scratchpad/vbo_wrapped.html'
+TMP = os.path.join(tempfile.gettempdir(), 'vbo_wrapped.html')   # cloud: a sandbox scratchpad path
 async def main():
     os.makedirs(OUT, exist_ok=True); os.makedirs(os.path.dirname(TMP), exist_ok=True)
     html = open(SRC).read()
