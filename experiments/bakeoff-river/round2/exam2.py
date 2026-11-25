@@ -4,6 +4,7 @@ usage: python exam2.py --check                  preflight only (no exam data): h
        python exam2.py --run                    THE exam (once): every round-2 registered arm, main + recent, ungauged
        python exam2.py --resume                 continue an interrupted run (same run id; finished jobs are kept)
        python exam2.py --rehearsal [--arm ID]   the same pipeline on the DEV gate (no exam data, no lock)
+       add --jobs N to --run / --resume / --rehearsal to score N arms at once (one process each; default 1)
 
 The logic is harness/exam.py's (copied, not imported, so v1.0's exam stays as it ran), with these differences:
   - round 2's own registry (round2/registry/, register2.py), lock and done files (round2/results/EXAM2_RUNNING.json,
@@ -347,7 +348,7 @@ def aggregate(mode, rid, arms):
 
 
 # ============================================================================ driver
-def drive(mode, named=None, resume=False):
+def drive(mode, named=None, resume=False, jobs=1):
     if mode == 'exam':
         if resume:
             if not os.path.exists(bake.LOCK):
@@ -378,16 +379,25 @@ def drive(mode, named=None, resume=False):
     env = dict(os.environ)
     if mode == 'exam':
         env['BAKEOFF_EXAM_RUN'] = rid
-    for target in workers:
-        if os.path.exists(os.path.join(outdir(mode, rid), 'rows', target, 'DONE.json')):
-            continue
-        print(f'== {target}', flush=True)
-        t0 = time.time()
-        rc = subprocess.call([sys.executable, '-X', 'utf8', os.path.abspath(__file__), '--worker', target,
-                              '--mode', mode, '--run-id', rid], env=env)
-        if rc != 0:
-            raise Refused(f'worker {target} failed (exit {rc})' + ('; fix and use --resume' if mode == 'exam' else ''))
-        print(f'== {target} finished in {time.time() - t0:.0f} s', flush=True)
+    todo = [t for t in workers if not os.path.exists(os.path.join(outdir(mode, rid), 'rows', t, 'DONE.json'))]
+    running, failed = [], []
+    while todo or running:           # one process per arm, at most `jobs` at once (order does not matter)
+        while todo and len(running) < max(1, jobs):
+            target = todo.pop(0)
+            print(f'== {target}', flush=True)
+            p = subprocess.Popen([sys.executable, '-X', 'utf8', os.path.abspath(__file__), '--worker', target,
+                                  '--mode', mode, '--run-id', rid], env=env)
+            running.append((target, p, time.time()))
+        time.sleep(2)
+        for item in list(running):
+            target, p, t0 = item
+            if p.poll() is not None:
+                running.remove(item)
+                if p.returncode != 0:
+                    failed.append(f'{target} (exit {p.returncode})')
+                print(f'== {target} finished in {time.time() - t0:.0f} s (exit {p.returncode})', flush=True)
+    if failed:
+        raise Refused(f'workers failed: {failed}' + ('; fix and use --resume' if mode == 'exam' else ''))
     fn, out = aggregate(mode, rid, arms)
     if mode == 'exam':
         json.dump({'run_id': rid, 'finished': out['finished'], 'result': os.path.relpath(fn, r2.ROUND2),
@@ -409,6 +419,7 @@ def main():
     ap.add_argument('--arm', action='append', default=None)
     ap.add_argument('--mode', default='exam', help=argparse.SUPPRESS)
     ap.add_argument('--run-id', default=None, help=argparse.SUPPRESS)
+    ap.add_argument('--jobs', type=int, default=1, help='arm workers in parallel (one thread each; default 1)')
     a = ap.parse_args()
     try:
         if a.worker:
@@ -421,11 +432,11 @@ def main():
                 print(n)
             print('CHECK PASSED: exam 2 can run (python exam2.py --run). Nothing was read from the exam.')
         elif a.run:
-            drive('exam', a.arm)
+            drive('exam', a.arm, jobs=a.jobs)
         elif a.resume:
-            drive('exam', None, resume=True)
+            drive('exam', None, resume=True, jobs=a.jobs)
         elif a.rehearsal:
-            drive('rehearsal', a.arm)
+            drive('rehearsal', a.arm, jobs=a.jobs)
     except Refused as e:
         print('REFUSED:\n' + str(e), flush=True)
         sys.exit(3)
