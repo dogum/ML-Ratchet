@@ -1,0 +1,73 @@
+{
+  "all_pass": true,
+  "checks": [
+    {
+      "check": "Simply-supported Euler-Bernoulli beam (bending modes 1-6, 24 elements)",
+      "analytical_hz": [
+        0.6012,
+        2.40478,
+        5.41076,
+        9.61912,
+        15.02988,
+        21.64303
+      ],
+      "fem_hz": [
+        0.6012,
+        2.40479,
+        5.41085,
+        9.61962,
+        15.03177,
+        21.64865
+      ],
+      "max_rel_err": 0.000259662249284527,
+      "pass": true
+    },
+    {
+      "check": "Cantilever Euler-Bernoulli beam (bending modes 1-4, 24 elements)",
+      "analytical_hz": [
+        0.44767,
+        2.80552,
+        7.85553,
+        15.39371
+      ],
+      "fem_hz": [
+        0.44767,
+        2.80552,
+        7.8556,
+        15.39418
+      ],
+      "max_rel_err": 3.026943494991539e-05,
+      "pass": true
+    },
+    {
+      "check": "Rayleigh perturbation & Rayleigh-Ritz vs full eigh (20% local damage + freeze)",
+      "uniform_scaling_max_err": 9.703349235223868e-14,
+      "rayleigh_first_order_max_err": 8.372880018675045e-10,
+      "rayleigh_ritz_vs_full_eigh_max_rel_err": 3.2926442864396116e-13,
+      "pass": true
+    },
+    {
+      "check": "1-D Fourier deck heat diffusion vs exact periodic slab solution (Crank-Nicolson)",
+      "amp_num_K": 0.60591,
+      "amp_exact_K": 0.60555,
+      "amp_rel_err": 0.0005870346414708783,
+      "phase_lag_num_rad": 0.77939,
+      "phase_lag_exact_rad": 0.7854,
+      "phase_err_rad": 0.006003264960455557,
+      "pass": true
+    },
+    {
+      "kw51_fem_file_found": true,
+      "parsed_E_values": [],
+      "parsed_L_values": [],
+      "check": "Parametric steel bowstring arch-deck FEM modal frequency range vs KW51 (0.51-6.3 Hz)",
+      "sim_arch_median_f1_hz": 2.872,
+      "sim_arch_median_f4_hz": 7.757,
+      "kw51_published_range_hz": [
+        0.51,
+        6.31
+      ],
+      "pass": true
+    }
+  ]
+}

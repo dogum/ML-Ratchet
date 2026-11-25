@@ -35,6 +35,10 @@ instrument noise, the fetch scripts in `models/*/training/` download that noise 
 | AirfoilNet | [UIUC Low-Speed Airfoil Tests](https://m-selig.ae.illinois.edu/uiuc_lsat.html), *Summary of Low-Speed Airfoil Data* vols 1-5 — Selig et al. (1995-2012) | GNU GPL v2 (stated in the volumes) | Four exam runs (`examples/`, with `examples/LICENSE-GPL-DATA.txt`) and the tested polars in `lab/` |
 | AirfoilNet | [UIUC Airfoil Coordinates Database](https://m-selig.ae.illinois.edu/ads/coord_database.html) | No explicit licence; cited | No (CST fits of its shapes in training only) |
 | AirfoilNet | [mfoil](https://pypi.org/project/pymfoil/) (K. J. Fidkowski) solver; [NeuralFoil](https://pypi.org/project/neuralfoil/) 0.3.3 (P. Sharpe) baseline | MIT | mfoil vendored in `training/mfoil.py` with its header; NeuralFoil weights not redistributed |
+| BridgeSense | [KW51 Railway Bridge](https://zenodo.org/records/3745914) tracked modal data & [KW51 FEM](https://zenodo.org/records/17366772) — Maes & Lombaert (2020, 2025), KU Leuven | CC BY-NC-SA 4.0 | Not redistributed in git; `training/fetch_data.py` downloads into git-ignored `work/` for the noise pool, dev split and Exam A |
+| BridgeSense | [Concrete Box-Girder Bridge SHM](https://zenodo.org/records/20522191) — Koehncke et al. (2026), Helmut Schmidt University / TUM; [NASA POWER](https://power.larc.nasa.gov/) hourly `T2M` (Hamburg, 2024) | CC BY 4.0 (bridge); NASA POWER open data (cite POWER) | Four exam blocks (`examples/` and live instrument) |
+| BridgeSense | [Hell Bridge Test Arena (HBTA)](https://zenodo.org/records/14632942) — Svendsen, Frøseth, Øiseth & Rønnquist (2025), NTNU | CC BY 4.0 | Four FDD-extracted exam recordings (`examples/` and live instrument) |
+
 
 
 ### The vehicle platform (`shared/vehicle`) and its models (EnergyNet, TripDetective, HybridPilot)
@@ -194,5 +198,10 @@ NASA SPDF OMNIWeb and its contributing instrument teams supply the hourly solar 
   extend to them.
 - BDG2-derived files are CC BY-SA 4.0: anything you build from them and share must carry the same licence and the
   credit to Miller et al. (2020). The MIT licence of the code does not extend to them.
+- BridgeSense's shipped weights (`models/bridgesense/bridgesense_weights.npz` and
+  `site/public/instruments/bridgesense/weights.bin`) are treated as **CC BY-NC-SA 4.0** on the same cautious reading
+  (`models/bridgesense/LICENSE-WEIGHTS.md`) because `train3` injects healthy KW51 autumn OMA noise windows and the
+  environmental widening factor is fitted on KW51 dev. Its code is MIT and its bundled examples (`examples/` and
+  `site/public/instruments/bridgesense/examples.json`) are CC BY 4.0 + NASA POWER with zero KW51 data.
 - If you add a model, add its rows here, and only bundle data whose terms allow redistribution. Otherwise ship a
   fetch script.

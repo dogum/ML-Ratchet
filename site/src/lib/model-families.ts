@@ -31,9 +31,10 @@ export const TRAITS: { id: string; label: string; g: Group }[] = [
   { id: 'anchor', label: 'Physics anchor', g: 'phys' },
   { id: 'diffsim', label: 'Decides through physics', g: 'phys' },
   { id: 'symbolic', label: 'Formulas', g: 'phys' },
+  { id: 'attn', label: 'Attention', g: 'sig' },
 ];
 export const ABSENT: { id: string; label: string }[] = [
-  { id: 'gbm', label: 'Trees' }, { id: 'attn', label: 'Attention' },
+  { id: 'gbm', label: 'Trees' },
   { id: 'gp', label: 'GPs' }, { id: 'assim', label: 'Filters' },
 ];
 
@@ -83,6 +84,7 @@ export const MODEL_NOTES: Record<string, ModelNote> = {
   tsunaminet: { t: ['cnn1d', 'sets', 'flow', 'anchor'], params: 520e3, paramsFrom: 'model.yaml', twin: 'Five dev events re-simulated from USGS finite faults: real waves arrived 1.65% of the travel time later than simulated (IQR 1.1–1.8%) and were 1.60× larger (sd 0.17 dex). Physics p1 builds both in; the frozen-set score rose from 0.327 to 0.663.' },
   lawfinder: { t: ['symbolic'], twin: 'Water: the released law reads WaterSim’s ungauged dev twins at MAE 0.091 and the real basins at 0.130; the ungauged twins are themselves 0.111 from reality, calibrated twins 0.059.' },
   airfoilnet: { t: ['mlp', 'ensemble'], params: 122130, paramsFrom: 'model.yaml: 3 x 40,710', twin: 'Before any network, mfoil gave no answer at 40–45% of the measured dev angles (none at all for FX 63-137). At Re ≤ 10⁵ its polar stopped 4.2° before stall and 0.11 below Cl max, with drag 13% high (15% low above 10⁵). The drag trend became physics p1c, which the ratchet rejected.' },
+  bridgesense: { t: ['attn', 'sets'], params: 179144, paramsFrom: 'model.yaml', twin: 'Rung 1 (linear thermoelastic p1) fired three false alarms on healthy KW51 dev weeks (Brier 0.239) where seasonal/moisture drift was only 0.15–0.22% per mode; adding 1-D heat lag, freezing and axial restraint dropped dev Brier to 0.000, while dropping thermal cross-attention raised winter freezing false-alarm probability 240× (0.002 to 0.456).' },
 };
 
 export interface Family {
@@ -123,14 +125,14 @@ export const FAMILIES: Family[] = [
     extrap: 'As for 1-D CNNs.',
     risk: 'Treating every position alike is wrong where an axis has absolute meaning, such as hour of day or frequency. Coordinate channels fix it.',
     used: ['SunDoctor', 'SwellCast', 'StarQuake', 'ChirpNet', 'FireCast (a U-Net on the 90 m fire map, weather joined by FiLM)'], refs: ['cohen16'] },
-  { id: 'attn', name: 'Attention and transformers', g: 'sig', st: 'n', np: 2, web: 2, data: 1,
+  { id: 'attn', name: 'Attention and transformers', g: 'sig', st: 'y', np: 2, web: 2, data: 1,
     one: 'Any part of the input can draw on any other part; order comes from position encodings.',
-    physics: 'Tokens can be physical units: seismic phases, heartbeats, hours of a price curve, stations.',
+    physics: 'Tokens can be physical units: seismic phases, heartbeats, hours of a price curve, stations, bridge vibration modes.',
     suits: 'Long or variable-length records where distant parts must be linked.',
     unc: 'Output heads.',
     extrap: 'Weak beyond the training lengths unless the position encoding generalises.',
     risk: 'Needs more simulations than a CNN (simulations are free here) and can fit simulator quirks. Cost grows with the square of the length.',
-    used: [], refs: ['vaswani17', 'mousavi20'],
+    used: ['BridgeSense (baseline-to-query thermal cross-attention + masked mode-set self-attention)'], refs: ['vaswani17', 'mousavi20'],
     bake: { arm: 'seq_transformer', text: 'A causal transformer over daily tokens needed 4× FlowCast’s training steps to catch up on simulations and still lost to FlowCast v1.0 on the exam (0.323 / 0.360, −0.018 in both periods).' },
     vbake: { arm: 'trace_transformer', text: 'A transformer over 20-s patch tokens of the 1 Hz trip was the best new learner (11.7 %): 0.4 points ahead of the GRU control and 0.9 ahead of a dev-fitted classical composite. With conformal bands it had the lowest CRPS of any row.' } },
   { id: 'ssm', name: 'State-space and recurrent models', g: 'sig', st: 'y', np: 2, web: 2, data: 2,
