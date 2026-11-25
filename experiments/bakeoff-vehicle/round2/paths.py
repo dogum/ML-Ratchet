@@ -130,6 +130,24 @@ def patch_registry(REG):
         return out
     REG.registered = registered
 
+    def verify(rec):
+        """(ok, hash, changed) like register.verify, for records whatever their key spelling. Round-2 arms were
+        registered on Windows before armlib wrote '/' keys (25 Nov 2026), so their per-file keys use '\\'. Files are
+        compared with '/' keys; the aggregate hash is recomputed with the record's own key spelling, so content
+        integrity is checked exactly as at registration."""
+        import hashlib
+        import json as _json
+        import armlib
+        meta = armlib.read_meta(rec['arm_dir'])
+        _, per = armlib.artefact_hash(rec['arm_dir'], meta)          # '/' keys
+        norm = lambda k: k.replace('\\', '/')                        # noqa: E731
+        recorded = {norm(k): v for k, v in rec['files'].items()}
+        changed = sorted(k for k in set(per) | set(recorded) if per.get(k) != recorded.get(k))
+        spell = {norm(k): k for k in rec['files']}
+        h = hashlib.sha256(_json.dumps({spell.get(k, k): v for k, v in per.items()}, sort_keys=True).encode()).hexdigest()
+        return (not changed and h == rec['hash']), h, changed
+    REG.verify = verify
+
 
 def setup():
     """Call once in a process that uses bake.* on round-2 banks."""
