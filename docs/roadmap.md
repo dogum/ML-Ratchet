@@ -31,9 +31,9 @@ Where the collection goes next, beyond each model's own next rungs (in its `mode
 
 ## The method
 
-- **A reusable twin-test harness** in `mlratchet`, since it found the biggest simulator gaps in three projects.
-- **Per-stratum σ widening** (StarQuake showed one pooled factor isn't enough across observing lengths).
-- **Saliency on real vs twin** inputs, to show where a network looks when it misreads real data.
+- ~~**A reusable twin-test harness** in `mlratchet`~~, Done 24 Nov 2026: `mlratchet/twintest.py` (`twin_report`, `shap_twin_diff`, `shap_residual_gap`, `disagreement_detector`) with unit-grouped bootstrap CIs and cross-platform validation in [experiments/treetwin.md](experiments/treetwin.md).
+- ~~**Per-stratum σ widening**~~ Done 24 Nov 2026: `mlratchet/calibrate.py` (`conformal_quantile`, `MondrianConformal` with widen-only empirical-Bayes shrinkage toward the global quantile, `stratum_coverage`). In [experiments/treetwin.md](experiments/treetwin.md), shrunk Mondrian conformal cut worst-stratum exam under-coverage on all three tested neural incumbents (BuildingDetective RECS `15.3 -> 5.7 pp`, AirfoilNet `21.6 -> 4.7 pp`, EnergyNet `31.1 -> 27.0 pp`).
+- ~~**Saliency on real vs twin** inputs~~, Done 24 Nov 2026 for tabular models via exact path-dependent TreeSHAP in pure numpy (`mlratchet/gbm.py`, `mlratchet/twintest.py`) and TypeScript (`site/src/lib/nn/trees.ts`), replacing the placeholder chart on the Model families page with measured EnergyNet VED dev vs RoadSim attributions ([experiments/treetwin.md](experiments/treetwin.md)). Signal/image CNN saliency remains open.
 - **Gate each dev year separately.** BatteryPilot v1.3 passed a dev gate pooled over 2019 and 2021, carried by Winter
   Storm Uri alone, and lost ground on the exam (15 Nov 2026).
 - **Commit every split as a file.** The 15 Nov 2026 pass could not rebuild TransitNet's v1.0 split or QuakeNet's dev
