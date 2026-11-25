@@ -32,7 +32,7 @@ for p in (os.path.join(ENET, 'training'), os.path.join(VEHICLE, 'roadsim'), VEHI
         sys.path.insert(0, p)
 
 BANK = os.path.join(HARNESS, 'bank')
-REAL = os.path.join(HARNESS, 'real')                      # real records (dev in real/dev, exam built by exam.py only)
+REAL = os.path.join(WORK, 'real')                         # real records (dev in real/dev, exam built by exam.py only); cloud: harness/real
 RESULTS = os.path.join(HARNESS, 'results') if os.path.isdir(os.path.join(HARNESS, 'results')) else os.path.join(BAKEOFF, 'results')  # repo: beside harness/
 # MOCK exam (tests/test_exam_mock.sh only): the DEV records stand in for the exam and every result goes to tmp/, so the
 # exam-mode code path (lock, guard, workers, aggregation) can be tested end to end without any exam data.

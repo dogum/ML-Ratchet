@@ -198,6 +198,16 @@ def register(arm_dir, replace=False):
     return 0
 
 
+CLOUD_BAKEOFF = '/home/claude/bakeoff/vehicle/'      # where the bake-off ran (22-24 Nov 2026); registry records keep it
+
+
+def local_dir(d):
+    """an arm folder as the registry records it (cloud path) -> the same folder in this checkout (records unchanged)."""
+    if d.startswith(CLOUD_BAKEOFF):
+        return os.path.abspath(os.path.join(C.BAKEOFF, d[len(CLOUD_BAKEOFF):]))
+    return d
+
+
 def registered(include_excluded=False):
     """registry records; arms whose folder is listed in registry/excluded.json (with a reason) are left out unless
     include_excluded (Phase 3 fix: excluded.json lives in registry/ and is not an arm record)."""
@@ -210,6 +220,7 @@ def registered(include_excluded=False):
                 r = json.load(open(os.path.join(C.REGISTRY, f)))
                 if r.get('arm_dir') in excl and not include_excluded:
                     continue
+                r['arm_dir'] = local_dir(r['arm_dir'])     # resolved after the exclusion check (excluded.json keys are cloud paths)
                 out[r['arm_id']] = r
     return out
 

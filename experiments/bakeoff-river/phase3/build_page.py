@@ -1,12 +1,24 @@
-"""Assemble the River Bake-off page: template.html + analysis.json + showcase_page.json + text.json -> river-bakeoff.html.
-usage: python3 build_page.py
+"""Assemble the River Bake-off page: page_template.html + analysis.json + showcase_page.json + page_text.json -> river-bakeoff.html.
+usage: python build_page.py
+Reads the newest analysis (work/phase3/, written by analyze.py; else the shipped results/) and writes
+work/phase3/river-bakeoff.html (the artifact page) and work/phase3/site-index.html (the same page with a document
+head, as served at site/public/experiments/river-bakeoff/index.html). Copy them there by hand once checked.
 """
 import json
 import os
 
 P3 = os.path.dirname(os.path.abspath(__file__))  # cloud: /home/claude/bakeoff/river/phase3
-R = json.load(open(f'{P3}/results/analysis.json'))
-SH = json.load(open(f'{P3}/results/showcase_page.json'))
+BK = os.path.dirname(P3)
+WK = os.path.join(BK, 'work', 'phase3')
+
+
+def _latest(name):
+    w = os.path.join(WK, name)
+    return w if os.path.exists(w) else os.path.join(BK, 'results', name)
+
+
+R = json.load(open(_latest('analysis.json')))
+SH = json.load(open(_latest('showcase_page.json')))
 NAMES = {'01078000': 'Smith River near Bristol, NH', '09066200': 'Booth Creek near Minturn, CO',
          '08158810': 'Bear Creek below FM 1826 near Driftwood, TX', '13161500': 'Bruneau River at Rowland, NV',
          '01054200': 'Wild River at Gilead, ME', '12411000': "North Fork Coeur d'Alene River near Prichard, ID",
@@ -14,7 +26,7 @@ NAMES = {'01078000': 'Smith River near Bristol, NH', '09066200': 'Booth Creek ne
          '04056500': 'Manistique River near Manistique, MI', '12414500': 'St. Joe River at Calder, ID'}
 for _b in SH['basins']:     # display names (USGS station names, tidied by hand)
     _b['name'] = NAMES.get(_b['id'], _b['name'])
-T = json.load(open(f'{P3}/page/text.json'))
+T = json.load(open(f'{P3}/page_text.json', encoding='utf-8'))
 FAMURL = 'https://dogum.github.io/ML-Ratchet/model-families/'
 
 ARMS = {
@@ -105,7 +117,10 @@ for c in T['families']:
 
 DATA = {'run_id': R['run_id'], 'arms': arms, 'boards': boards, 'classtab': classtab, 'wins': wins, 'compute': comp,
         'show': SH, 'families': fams, 'findings': T['findings'], 'text': T['text']}
-html = open(f'{P3}/page/template.html').read().replace('/*__DATA__*/null', json.dumps(DATA, separators=(',', ':')))
-out = f'{P3}/page/river-bakeoff.html'
-open(out, 'w').write(html)
+html = open(f'{P3}/page_template.html', encoding='utf-8').read().replace('/*__DATA__*/null', json.dumps(DATA, separators=(',', ':')))
+os.makedirs(WK, exist_ok=True)
+out = os.path.join(WK, 'river-bakeoff.html')
+open(out, 'w', encoding='utf-8', newline='\n').write(html)
+open(os.path.join(WK, 'site-index.html'), 'w', encoding='utf-8', newline='\n').write(
+    '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n' + html)
 print('wrote', out, os.path.getsize(out), 'bytes')

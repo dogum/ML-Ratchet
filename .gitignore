@@ -119,3 +119,15 @@ experiments/bakeoff-river/round2/results/rehearsal2_*/
 experiments/bakeoff-river/round2/results/exam2_*/rows/
 experiments/bakeoff-river/round2/results/exam2_*/showcase.npz
 experiments/bakeoff-river/round2/results/exam_access.log
+# TabPFN third-party code and weights (Prior Labs License 1.1; restore with pip / Hugging Face, see the arm card)
+experiments/bakeoff-vehicle/arms_table/tab_tabpfn/pylib/
+experiments/bakeoff-vehicle/arms_table/tab_tabpfn/weights/
+# Supplementary exams: per-record predictions, rehearsals and access logs stay local
+experiments/bakeoff-vehicle/results/supp_*/exam_*/preds/
+experiments/bakeoff-vehicle/results/supp_*/rehearsal_*
+experiments/bakeoff-vehicle/results/supp_*/exam_access.log
+experiments/bakeoff-vehicle/results/supp_*/exam_*/scores.parquet
+# Bake-off banks rebuilt by harness/run_bank.sh: only the shipped MANIFEST.json files are tracked
+experiments/bakeoff-*/harness/bank/**/*
+!experiments/bakeoff-*/harness/bank/**/
+!experiments/bakeoff-*/harness/bank/**/MANIFEST.json
