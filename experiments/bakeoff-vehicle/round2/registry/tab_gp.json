@@ -1,0 +1,86 @@
+{
+ "arm_id": "tab_gp",
+ "arm_dir": "C:\\Developer\\ML-ratchet\\.claude\\worktrees\\agent-a3ec76151df65ba78\\experiments\\bakeoff-vehicle\\arms_table\\tab_gp",
+ "hash": "c61f27de70c2e1a2de3a058d1f80d83af44bf0351cf4a5ef24306a8570f0c2df",
+ "files": {
+  "card.md": "48789b9a53e3e0dabe4ad2645db7e3cb80be8586f02bb2355e0b44adcd42c9c1",
+  "gp.npz": "b48c24d19527d2eae34d212a4a4aac352a4825809800bb9b28467036e129f63f",
+  "predict.py": "fe4d4ce32714d21e79a26a98ea41b12172cb2367035a0de88cc485be21ed6ca8",
+  "ratchet.json": "838450b390a49853acca9e10d60fa4c905d4c172361224c444d1611aa6036a6c",
+  "training\\cfg_r0.json": "5c570b90b824bfb1409788d893b97c778b1f3c719b046dbd9fa04b74d8c8af03",
+  "training\\cfg_r1.json": "11a9793e081eddc152dd5cdc0dbe08aba786010105e6f1884462306c3ac0322b",
+  "training\\cfg_r2_bev.json": "07cb3f16401d86196d3c3f97a4dc3ced0c9ad82344b2c7294ed27a2ae78ce61c",
+  "training\\cfg_r2_hev.json": "76e895def566ef1ebf63178bd14447d9280b2e4d495e9c1f0596d0be2e985908",
+  "training\\cfg_r2_ice.json": "23c31f5edad993b1627e71d4caff460f82983050a2cf3fe8275e0bef3c822d9a",
+  "training\\cfg_r2_phev.json": "ae43ff59abda1eb63248ef29e7f584e3100fbdc1240da6d3b771a3916e6348a5",
+  "training\\cfg_r3.json": "162b4cad04a6a91887eda72da8f192c1d179333f1789012edb19c63db198301a",
+  "training\\featsel.py": "a66d2c8778b7c4ff73985e03a09b5a0bac918308dc23ed19d1b1912ece3aabd4",
+  "training\\train_gp.py": "207ad76e3f14be295f5eec1f5c72d4e59cbf191d4fdd3e6baee2865126c3e9b1"
+ },
+ "tracks": [
+  "table"
+ ],
+ "meta": {
+  "label": "Sparse Gaussian process (SGPR, 500 inducing points)",
+  "family": "gp",
+  "family_label": "Gaussian processes (sparse, inducing points)",
+  "group": "table",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.81,
+   "train_cpu_s": {
+    "r0": 670,
+    "r1": 894,
+    "r2": 980,
+    "r3": 359
+   },
+   "notes": "torch (float64, one thread) for the bound optimisation and the posterior, time.process_time() inside train_gp.py; r1 includes a first attempt (M 1000, 20,000 rows per step) stopped by us at ~140 s because it used 1.4 GB; harness evaluations (<1 s prediction CPU each) not counted"
+  },
+  "released": "r3",
+  "feature_engineering": "a scoped, standardised input set: the top-ranked of the 151 inputs by the GBM r0 mean model's gain on the simulated train bank (one-hot architecture / class columns skipped there; 32 in the released rung) + the 14 one-hot architecture / class columns; target z = log(y / E_phys); rows = the train bank under K = 3 tier draws"
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "table": {
+   "ved": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "simval": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "files_used": [
+   "arms_table\\tab_gp\\gp.npz",
+   "arms_table\\tab_gp\\predict.py",
+   "arms_table\\tab_gp\\ratchet.json"
+  ],
+  "exam_cpu_estimate_min": 0.0
+ },
+ "harness_hash": "716753ba90c88a710666b2c1273e7d7e7afe38c2f083873c5cc7ffd4b6ce0f9e",
+ "registered_at": "2026-11-25T00:27:39",
+ "history": []
+}

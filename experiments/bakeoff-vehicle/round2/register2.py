@@ -25,6 +25,27 @@ bake.DONE = os.path.join(C.RESULTS, 'EXAM2_DONE.json')
 import register as REG  # noqa: E402
 P.patch_registry(REG)          # registry arm_dir (worktree / cloud path) -> this checkout
 
+
+class _Paths(set):
+    """the audit's record of files read under the bake-off tree, minus round 2's data and path layer (they play the
+    part v1.0's harness/bank, harness/real and harness/*.py played, which the audit exempted)."""
+    def add(self, p):
+        if not (p.startswith(P.WORK + os.sep) or os.path.dirname(p) == P.R2):
+            set.add(self, p)
+
+
+_Audit = REG.Audit
+
+
+class Audit(_Audit):
+    def __enter__(self):
+        r = _Audit.__enter__(self)
+        self.paths = _Paths()
+        return r
+
+
+REG.Audit = Audit
+
 FAMILY_PAIRS = [   # (round-2 arm, comparison row, why) -- PREREG section 5
     ('r2_d1_gru', 'trace_gru', 'D1 vs v1.0 GRU: data + ensembling'),
     ('r2_d2_transformer', 'trace_transformer', 'D2 vs v1.0 transformer: data + ensembling'),

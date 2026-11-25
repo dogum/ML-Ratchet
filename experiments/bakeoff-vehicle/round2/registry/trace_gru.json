@@ -1,0 +1,74 @@
+{
+ "arm_id": "trace_gru",
+ "arm_dir": "C:\\Developer\\ML-ratchet\\.claude\\worktrees\\agent-a3ec76151df65ba78\\experiments\\bakeoff-vehicle\\arms_trace\\gru",
+ "hash": "6c80aa9e06de57801314d941ac2e563f380a29cbadfe14e44a43587888c886b4",
+ "files": {
+  "..\\common\\tracelib.py": "d64d133881a5285ea393ef568e9922c5acc39c4acf630862f24316ef783be25a",
+  "card.md": "dda7213446b56a02049e15b503b8de5ee9fbadae47f07cfd7162bcd0970b9cb1",
+  "predict.py": "86fa9f8362f47ca8504f41e2c5a97e11d813608d802cefb3930836f0247b1c69",
+  "ratchet.json": "6a5d5d1a5419efa97fa26bb1cba5d0cbe26b9754e87cc20f60e79626aa2fe5e4",
+  "weights.npz": "30f8361653c809326103693bfc2cc50169174a132218426c9e96e65a01f29f95"
+ },
+ "tracks": [
+  "trace"
+ ],
+ "meta": {
+  "label": "Bidirectional GRU on the trip trace",
+  "family": "ssm",
+  "family_label": "State-space and recurrent models (bidirectional GRU)",
+  "group": "trace",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 1.648,
+   "notes": "r0 0.58, r1 0.54, r2 0.51 (rejected); + 0.02 for a speed benchmark and a 2-min first launch killed for memory; one thread, shared 2-core machine"
+  },
+  "released": "r1",
+  "feature_engineering": "trace-track inputs only: the harness's shared 5-s block means (bake.block_means rule: 8 channel means + mean v^2, mean v^3, summed positive kinetic-energy increment per unit mass) + the block's valid-second fraction -> 12 scaled channels; spec (49) and rl (5, logs of mass / CdA / Crr) standardised with train-bank statistics; log distance and log duration from the trace; chunks of <= 1,440 blocks mean-pooled for longer traces; anchor r0 = sim-train median MJ/km per (architecture, class) (bake.dumb_rates) x distance; from r1: E_phys recomputed from the trace inputs by bake.e_phys_from_trace (EnergyNet's generic road-load estimate; declared), target log(y / E_phys), log(E_phys / A0) as an input"
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "trace": {
+   "ved": {
+    "cpu_s_per_row": 0.00586,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 0.00521,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 0.06836,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 1.8021963480838257e-16
+   },
+   "simval": {
+    "cpu_s_per_row": 0.01335,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "files_used": [
+   "arms_trace\\common\\tracelib.py",
+   "arms_trace\\gru\\predict.py",
+   "arms_trace\\gru\\ratchet.json",
+   "arms_trace\\gru\\weights.npz",
+   "harness\\build_bank.py"
+  ],
+  "exam_cpu_estimate_min": 13.8
+ },
+ "harness_hash": "716753ba90c88a710666b2c1273e7d7e7afe38c2f083873c5cc7ffd4b6ce0f9e",
+ "registered_at": "2026-11-25T00:27:24",
+ "history": []
+}

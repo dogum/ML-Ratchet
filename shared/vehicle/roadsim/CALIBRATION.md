@@ -809,3 +809,30 @@ within 1-8 % on FTP and HWY, converter P2s gain 2 points in the city. The clutch
 large open errors are untouched: older Toyota engines (exam-3 FTP +31 %, n 3), converter P2s in the city (+15 to +22 %),
 TMED (-10 %), plug-in series SC03 (+43 %), plug-ins on VED roads (-20 to -23 %). v2 stays the default, as decided
 before this report.
+
+## 25 Nov 2026 — Vehicle Bake-off round 2: dev checks of two shared misses (no physics change; RoadSim v2 unchanged)
+
+The Vehicle Bake-off (experiments/bakeoff-vehicle) found misses that every learner shares on its exam. Round 2
+(experiments/bakeoff-vehicle/round2, PREREG.md) looked for their cause on dev data only, with RoadSim's own twins.
+Neither check changes RoadSim: no option, preset or golden moved; physics v2 stays the bake-off's pinned physics.
+
+### R2-1 Heavy trucks on the dynamometer: not the cause (rejected)
+EnergyNet's bank never runs a heavy-duty vehicle on a dynamometer; the ICCT truck records are dynamometer tests. Twin of
+the one ICCT dev truck (BIC-US) = ref_class8_sleeper_diesel at the 34,408 kg test mass, its three dev cycles with
+traces at 22 C, physics.sim road vs dyno (`round2/physics/icct_twin.py`). Fuel, twin vs published: road +22.6 / +35.5
+/ -3.7 % (55 mph grade / 55 mph flat / ARB transient), dyno +23.8 / +37.0 / -3.2 %; road vs dyno -1.0 % (median).
+The dyno / road distinction is worth 1 %, not the +19 % the learners show on this truck. What the twin shows instead:
+the reference Class 8 burns 25-35 % more than this best-in-class 2015 truck at 55 mph (consistent with C8: 85.3
+g/ton-mile against the 75.7 standard). One dev truck, labelled best-in-class, cannot ground a change to the Class 8
+model: not attempted. Open (LIMITS.md heavy duty).
+
+### R2-2 Plug-in start state on VED roads: the H25 cause, as a bank rule
+H25 found the VED dev plug-in twins start every fragment with a warm (85 C) engine that heats the cabin for free.
+EnergyNet's bank does the same (training/bank.py init_state: moving starts are warm). Round 2 tried, as a BANK recipe
+(not a RoadSim option), the rule "a plug-in road trip with usable charge (> 5 % of the SOC window) starts with engine
+and oil at ambient", checked on RoadSim's v2 VED dev twins with check_ved_twin.run_trip unchanged
+(`round2/physics/ved_phev_twin.py`). Trip median energy error, warm -> rule: Energi (VED_11, 143 trips) -12.6 ->
++6.2 %; Volt-type (VED_537, 164 trips) -10.7 -> +5.3 %. Below 10 C: -36.7 -> +12.8 %, -27.0 -> +39.5 %. Mean |error|
+32.7 -> 35.7 %, 39.8 -> 50.7 %. The medians halve and change sign; the cold trips overshoot, as H25a's logged-engine rule
+did (the Volt driver uses about half the twin's electric heat, H28). Used by round 2 only as a bank recipe for its P
+rungs (results in round2/STATUS.md); RoadSim's twin harness stays 'warm'.

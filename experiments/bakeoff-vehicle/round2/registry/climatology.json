@@ -1,0 +1,103 @@
+{
+ "arm_id": "climatology",
+ "arm_dir": "C:\\Developer\\ML-ratchet\\.claude\\worktrees\\agent-a3ec76151df65ba78\\experiments\\bakeoff-vehicle\\harness\\arms_ref\\climatology",
+ "hash": "686ea477fe3c7895e6b70743ebb30eeeb52282ff603014a32b5432ba9f940142",
+ "files": {
+  "card.md": "7b1f95d78ce18e8348cb81cbb1d83c7259632160ddbd6f82b03e46451ce26b0f",
+  "clim.json": "cad6dbe75e4bfe0ddfc774262254d8b92c3f99f26710957a8f687e903ae56ccb",
+  "predict.py": "b5daa8e282a274c4af9730c5de6a80780e58119f4d76f2bc96d827468b9d3007",
+  "ratchet.json": "17503b60902441bd3069912f11ea1bf4dba0b42f72811e654a05450ffdc79208"
+ },
+ "tracks": [
+  "table",
+  "trace"
+ ],
+ "meta": {
+  "label": "Climatology: sim-train median energy per km x distance",
+  "family": "baseline",
+  "family_label": "Dumb baseline",
+  "group": "ref",
+  "reference": true,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.001,
+   "notes": "medians and quantiles on the simulated train bank"
+  },
+  "released": "r0",
+  "feature_engineering": "distance (from R[1] or the trace) and the architecture / class indices only"
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "table": {
+   "ved": {
+    "cpu_s_per_row": 0.00065,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "simval": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "trace": {
+   "ved": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "simval": {
+    "cpu_s_per_row": 0.0,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "files_used": [
+   "harness\\arms_ref\\climatology\\clim.json",
+   "harness\\arms_ref\\climatology\\predict.py",
+   "harness\\arms_ref\\climatology\\ratchet.json",
+   "harness\\build_bank.py"
+  ],
+  "exam_cpu_estimate_min": 0.3
+ },
+ "harness_hash": "716753ba90c88a710666b2c1273e7d7e7afe38c2f083873c5cc7ffd4b6ce0f9e",
+ "registered_at": "2026-11-25T00:27:13",
+ "history": []
+}

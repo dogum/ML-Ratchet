@@ -128,9 +128,13 @@ def v1_reference_check(regs):
             reasons.append(f'{k}: no v1.0 registry record')
             continue
         v1 = json.load(open(p))
-        if v1['hash'] != regs[k]['hash']:
-            changed = sorted(f for f in set(v1['files']) | set(regs[k]['files']) if v1['files'].get(f) != regs[k]['files'].get(f))
-            reasons.append(f'{k}: artefact differs from v1.0 registered hash ({v1["hash"][:12]} vs {regs[k]["hash"][:12]}; {changed})')
+        # per-file sha256, path separators normalised (the total hash is over the relpath strings, which use '\' on
+        # Windows and '/' on Linux, so only the per-file hashes are comparable across machines)
+        a = {f.replace('\\', '/'): h for f, h in v1['files'].items()}
+        b = {f.replace('\\', '/'): h for f, h in regs[k]['files'].items()}
+        changed = sorted(f for f in set(a) | set(b) if a.get(f) != b.get(f))
+        if changed:
+            reasons.append(f'{k}: artefact differs from its v1.0 registered files: {changed}')
     return reasons
 
 
@@ -148,9 +152,11 @@ def preflight(named=None, mode='exam'):
         p = os.path.join(P.BANKS, b, 'MANIFEST.json')
         if os.path.exists(p):
             a = json.load(open(p))['files']; v = json.load(open(os.path.join(C.HARNESS, 'bank', s, 'MANIFEST.json')))['files']
-            if any(a[f]['sha256'] != v[f]['sha256'] for f in v):
-                reasons.append(f'round-2 bank {b} differs from harness/bank/{s}/MANIFEST.json')
-    notes.append('round-2 banks val / train101 equal the v1.0 manifests' if not any('differs' in r for r in reasons) else '')
+            if a['trace_v.npy']['sha256'] != v['trace_v.npy']['sha256']:
+                reasons.append(f'round-2 bank {b}: trace_v.npy differs from harness/bank/{s}/MANIFEST.json')
+            diff = [f for f in v if a[f]['sha256'] != v[f]['sha256']]
+            notes.append(f'round-2 bank {b}: trace_v equal to the v1.0 manifest; differing (cross-platform floats, '
+                         f'PREREG A1 / A2): {diff or "none"}')
     if os.path.exists(os.path.join(P.BAKEOFF, 'results', 'EXAM_DONE.json')):
         notes.append('v1.0 exam is done (results/EXAM_DONE.json, untouched); this is exam-2')
     regs = REG.registered()
