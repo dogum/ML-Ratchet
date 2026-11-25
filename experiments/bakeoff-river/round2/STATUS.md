@@ -80,3 +80,8 @@ Exam 2 has NOT been run and must not be run by an agent: the owner runs `exam2.p
   (they scored 0.398-0.426 on p1's val: b2's val is harder for nets trained on p1).
 - 00:27 conformal wrappers registered: seq_lstm_b2_conformal (dev mean cov90 0.86 -> 0.88 LOBO),
   tab_gbm_b2_conformal (0.84 -> 0.88).
+- 00:30 exam2.py gained `--jobs N` (arm workers in parallel processes; chooses nothing). Estimated exam time with
+  one process is several hours (each ensemble re-runs its five members).
+- 00:57 TCN family rung on b2: sim val on b2 0.436 vs v1.0 seq_tcn 0.386 (+0.050); dev 0.433 vs 0.420
+  (x 1.032) -> **KEPT**, registered as seq_tcn_b2 (807ed6e0...); sim val on p1's frozen set 0.401. Conformal
+  wrapper seq_tcn_b2_conformal registered (dev mean cov90 0.89 -> LOBO see its card).

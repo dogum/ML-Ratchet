@@ -1,0 +1,66 @@
+{
+ "arm_id": "seq_tcn_b2",
+ "hash": "807ed6e01ba5a071b6209d2c0a083434a261497060d728e47c38ea7d3d4a1df6",
+ "files": {
+  "../../../arms_seq/common/SEQLIB_FROZEN.sha256": "fcdc4e4ed854dddb6abe4239d13fa020e928607008edaab732f17f206d1836f3",
+  "../../../arms_seq/common/seqlib.py": "d53f7d73f085fd0546b4fb55d8d4dc513e4f53b3460d3617f70b39dcf32f3dda",
+  "card.md": "1885da9907109e4ca0d16898749ea33a90f5ae991a6095135a222872a24fa1a8",
+  "predict.py": "4ae90c11536960df5362274d4d3c82487baa9ad3cfa819be771c3dcf61bbfd8b",
+  "ratchet.json": "fd7dc5bfbf3de6c3e62dfc765d603053b9e2250cd9a1cc98debecdf19f7a93ea",
+  "weights.npz": "8094db8502bde4e06d6075e344298fe1a56529b67ea2e35642cc6f1271292e9c"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "TCN (dilated 1-D CNN) retrained on bank b2",
+  "family": "cnn1d",
+  "family_label": "1-D convolutional network",
+  "group": "round2",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.974,
+   "notes": "one rung: the v1.0 recipe retrained on bank b2, one thread (process_time), shared 16-core Windows machine"
+  },
+  "released": "b2",
+  "feature_engineering": "identical to seq_tcn (round 1); only the training bank differs",
+  "compare_to": [
+   "seq_tcn"
+  ]
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "ungauged": {
+   "dev_nse": [
+    0.5413,
+    0.1571,
+    0.4549
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 0.328
+  },
+  "files_used": [
+   "arms_seq/common/seqlib.py",
+   "round2/arms/seq_tcn_b2/predict.py",
+   "round2/arms/seq_tcn_b2/ratchet.json",
+   "round2/arms/seq_tcn_b2/weights.npz",
+   "round2/work/banks/b2/val/F.npy",
+   "round2/work/banks/b2/val/attrs.npy",
+   "round2/work/banks/b2/val/lat.npy",
+   "round2/work/banks/b2/val/lon.npy",
+   "round2/work/banks/b2/val/qo.npy",
+   "round2/work/banks/b2/val/st.npy",
+   "round2/work/banks/b2/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 6.7
+ },
+ "harness_hash": "779e51f025d454d74d15d1cec8ad94cbf6c8703e1d2fed15cb50f49a0956272f",
+ "arm_dir_rel": "round2/arms/seq_tcn_b2",
+ "smoke_simval_bank": "b2",
+ "registered_at": "2026-11-25T00:58:11",
+ "history": []
+}

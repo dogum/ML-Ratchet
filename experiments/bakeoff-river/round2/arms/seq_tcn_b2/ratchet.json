@@ -1,0 +1,73 @@
+{
+ "arm_id": "seq_tcn_b2",
+ "label": "TCN (dilated 1-D CNN) retrained on bank b2",
+ "family": "cnn1d",
+ "family_label": "1-D convolutional network",
+ "group": "round2",
+ "protocols": [
+  "ungauged"
+ ],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.974,
+  "notes": "one rung: the v1.0 recipe retrained on bank b2, one thread (process_time), shared 16-core Windows machine"
+ },
+ "feature_engineering": "identical to seq_tcn (round 1); only the training bank differs",
+ "extra_files": [
+  "../../../arms_seq/common"
+ ],
+ "compare_to": [
+  "seq_tcn"
+ ],
+ "bank": "b2 (= b2b: p1 + the reconciled water-yield prior)",
+ "margin": 0.01,
+ "rule": "PREREG section 4: keep if sim val median NSE (both on b2's frozen val) > v1.0 + 0.01 AND dev median NSE >= 0.95 x v1.0's",
+ "rungs": [
+  {
+   "id": "v1.0",
+   "change": "seq_tcn as registered in round 1 (bank p1)",
+   "decision": "base",
+   "why": "the incumbent",
+   "simval_nse_b2": 0.3856,
+   "dev_nse": 0.4196,
+   "dev_kge": 0.4326,
+   "dev_by_class_nse": {
+    "snow": 0.543,
+    "arid": 0.193,
+    "humid": 0.581,
+    "regulated": 0.281,
+    "large": 0.317
+   }
+  },
+  {
+   "id": "b2",
+   "change": "same recipe (seq_tcn r1: 26 channels, kernel 3, dilations 1-256, dropout 0.1, 6,000 steps x 32, seed 0) trained on bank b2",
+   "decision": "released",
+   "why": "sim val on b2's frozen set 0.4360 vs v1.0 0.3856 (+0.0505 > 0.01) and dev 0.4329 >= 0.95 x 0.4196: kept",
+   "simval_nse_b2": 0.436,
+   "simval_nse_p1": 0.4011,
+   "dev_nse": 0.4329,
+   "dev_kge": 0.4402,
+   "dev_fhv": -30.2,
+   "dev_cov50": 0.578,
+   "dev_cov90": 0.971,
+   "dev_crps_rel": 0.366,
+   "dev_by_class_nse": {
+    "snow": 0.56,
+    "arid": -0.018,
+    "humid": 0.557,
+    "regulated": 0.322,
+    "large": -0.004
+   },
+   "dev_vs": {
+    "udev": "-0.033 tie",
+    "uk12": "-0.024 tie",
+    "gr4j": "-0.153 loss",
+    "nwm": "-0.140 loss",
+    "clim": "+0.341 win"
+   }
+  }
+ ],
+ "released": "b2"
+}
