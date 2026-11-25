@@ -153,3 +153,18 @@ Also reported, deciding nothing: both arms on the v2 frozen val, and the five sh
 About 8 hours of wall time; at most 8 CPU processes and under 5 GB of GPU memory. If a rung is clearly too slow, it is
 scaled down by a dated amendment here, before its results exist (first choices: fewer epochs per member for D2 / P2, then
 3 members instead of 5, then P rungs on the GRU and MLP only). Compute is logged per rung (GPU wall time and CPU time).
+
+## Amendments
+
+**A1 (24 Nov 2026, 23:50 EST; before any sim-val number on the rebuilt banks).** The rebuilt `val` bank's
+`trace_v.npy` and `trace_x.npy` equal the v1.0 manifest byte for byte, but `rows.npz` (same size, 3,175,964 bytes) and
+`fleet.json` (438,240 vs 438,245 bytes) do not. The npz members carry a fixed 1980 timestamp, so the difference is in
+content: the generator's and RoadSim's floating-point results on this Windows machine vs the Linux cloud (fleet.json is
+5 characters shorter: float reprs). Byte equality of these two files is therefore not reachable on this machine, and
+section 0's "stop if not byte-equal" is replaced by a functional check of the same frozen set: (i) the trace files equal
+byte for byte (val and train101); (ii) row counts equal; (iii) EnergyNet v2.1 scored on the rebuilt val reproduces its
+frozen-set numbers (n 3,985, MdAPE 0.0746, skill 0.6797) to |diff| < 0.0005; (iv) v1.0's GRU, transformer and MLP
+control re-scored on it reproduce their v1.0 sim val skill to |diff| < 0.002 (they were trained on the cloud train101).
+If (i)-(iv) hold, round 2 continues on the rebuilt banks; every round-2 comparison is between arms scored on the same
+rebuilt val by the same code. If not, round 2 stops and reports. Dev records were rebuilt too (harness/build_real.py);
+EnergyNet v2.1's dev D16 on them is 0.1133 and the MLP / GP controls' 0.1203 / 0.1260, as v1.0 (already checked).
