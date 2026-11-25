@@ -1,6 +1,6 @@
 ---
 name: ml-audit
-description: Forensic ML and physics honesty audit for ML Ratchet models. Inspects shipped weights, normalization stats, PyTorch-to-NumPy/TS export parity, train-vs-real feature alignment, loss/gradient integrity, calibration, and twin-test triage to surface silent defects and undocumented limits without assuming intent.
+description: Forensic ML and physics honesty audit for ML Ratchet models. Inspects intended-use information boundaries, shipped weights, normalization stats, counterfactual feature sensitivity, PyTorch-to-NumPy/TS export parity, causal/look-ahead leakage, metadata shortcuts, seed reproducibility, rung arithmetic, calibration, and twin-test triage without assuming intent.
 ---
 
 # ML & Physics Honesty Audit (`ml-audit`)
@@ -9,73 +9,79 @@ Use this skill to perform a **read-only forensic audit** of one or more models i
 
 ## Operating Principles
 
-1. **Audit mode is read-only first.** Never modify model code, weights, or splits while auditing. Document every finding with exact file paths, line numbers, measured numbers, and reproducible verification commands.
-2. **Test falsifiable symptoms, never speculate on intent.** Whether a model is degraded by an accidental engineering bug, an undocumented shortcut, or silent hobbling, the evidence lives in the weights, training code, feature pipeline, and logs. Separate every finding into one of four categories:
-   - **`CRITICAL DEFECT`**: Verified bug in code, normalization, export, loss, or preprocessing that materially degrades inference or training while passing existing tests.
-   - **`MINOR HYGIENE`**: Real code discrepancy or unmasked edge case with small or bounded impact.
+1. **Audit mode is read-only first.** Never modify model code, weights, or splits during an audit pass. Record exact commit hashes, file paths, line numbers, measured numbers, and reproducible verification commands.
+2. **Test falsifiable symptoms, never speculate on intent.** Accidental bugs, undocumented shortcuts, and silent degradation all leave objective fingerprints in code, weights, and replay behavior. Classify every finding strictly by evidence:
+   - **`CRITICAL DEFECT`**: Verified bug in normalization, export, causality/look-ahead, loss, or preprocessing that materially affects training, inference, or what the exam measures while passing existing tests.
+   - **`MINOR HYGIENE`**: Real code discrepancy, API guardrail gap, or reproducibility defect with bounded or conditional impact.
    - **`UNDOCUMENTED LIMIT`**: Deliberate or resource-driven design choice (small capacity, single seed, short step budget, last-step checkpointing) that caps performance and should be stated plainly rather than mistaken for a bug.
    - **`CLEAN`**: Verified healthy with measured numbers.
-3. **Never trust surface tests alone.** Passing `mlratchet validate` and `site/tests/parity.test.ts` (NumPy vs. TypeScript) does **not** prove that PyTorch training matches exported NumPy inference, that input normalization is unpoisoned, or that the training loop converged properly.
+3. **Every finding must answer three questions:**
+   - **What failed?** Exact `file:line`, mechanism, and reproduction probe.
+   - **What changed when we tested it?** Measured output shift, perturbation delta, ablation, or replay impact.
+   - **What consequence remains unmeasured?** Honest scope boundary (e.g., whether a repair rung improves the full exam, or whether a historical keep/reject decision would flip).
+4. **Never trust surface tests alone.** Passing `mlratchet validate` and `site/tests/parity.test.ts` (NumPy vs. TypeScript) does **not** verify PyTorch-vs-NumPy export parity, unpoisoned input scaling, operational causality, or seed reproducibility.
 
 ---
 
-## The 7-Point Forensic Audit Checklist
+## The 10-Point Forensic Audit Checklist
 
-Run all seven checks for each target model (`models/<id>/`):
+Run all ten checks for each target model (`models/<id>/`):
 
-### 1. Weight & Normalization Health (Shipped `.npz` Files)
-Load every `.npz` weight file shipped in `models/<id>/` (and `weights/` if present) and verify:
-- **Finiteness & dead units:** Zero `NaN`/`Inf` values; check row norms of every 2-D weight matrix for dead/collapsed rows (`norm < 1e-4`), collapsed biases, or saturated normalization layers.
-- **Input normalization poison check (high priority):** Inspect all stored input scaling arrays (`x_mu`, `x_sd`, `st_mu`, `st_sd`, `mean`, `std`). Flag any channel with extreme `sd` (e.g., `sd > 1e2` or `sd <= 1.001e-3`).
-- **Real-input post-normalization spread:** Pass real dev or shipped example inputs through the exact normalization formula `(X - mu) / sd` (with any clipping). Flag any non-constant physical feature whose post-normalization `std` collapses (`< 1e-2`), saturates at a clip boundary, or explodes (`> 10`).
-  - *Precedent:* Audit #1 (`EnergyNet v2.1`) caught four core physics work-fraction features (`aero/Ep`, `rolling/Ep`, `grade_dn/Ep`, `inertia_pos/Ep`) crushed to `std = 4e-6 .. 4.5e-5` on real VED trips because `Ep = max(ph[0], 1e-6)` exploded on standstill/downhill bank rows before raw `X0.mean(0)` / `X0.std(0)`.
-- **Ensemble diversity:** For multi-member ensembles, compute pairwise cosine similarity of first-layer weights across members (and prediction spread on real inputs) to confirm seeds are genuinely independent and not duplicated or collapsed.
+### 1. Intended-Use Contract & Operational Information Boundary
+- Write down the model's intended real-world use in one sentence.
+- List everything an operator would actually know at prediction/decision time `t`, then compare it against everything the exam and example pipelines knew when selecting windows, aligning timestamps, computing normalization stats, or filtering inputs.
 
-### 2. Training-Framework ↔ Inference-Runtime Forward Parity
-`site/tests/parity.test.ts` checks NumPy ↔ TypeScript, not PyTorch ↔ NumPy.
-- Reconstruct the exact PyTorch `nn.Module` from `training/` using the shipped `.npz` weights, set `model.eval()`, and compare forward outputs against the shipped NumPy module (`models/<id>/<id>.py`) on random non-trivial inputs and shipped examples.
-- Verify:
-  - `max_abs_diff` `< 1e-5` (float32) or explain any documented precision gap.
-  - Activation exactness (e.g., `GELU(approximate='tanh')` vs exact `erf`), BatchNorm/LayerNorm `eps` and `running_mean`/`running_var` export in `eval()` mode, Conv padding modes, and output clamps.
+### 2. Weight, Normalization & Feature-Sensitivity Health (Shipped `.npz` Files)
+Load every `.npz` weight file in `models/<id>/` and verify:
+- **Finiteness & dead units:** Zero `NaN`/`Inf`; inspect 2-D weight row norms (`norm < 1e-4`), collapsed biases, and saturated norms.
+- **Outlier-poisoned standardization:** Inspect all stored scaling vectors (`x_mu`, `x_sd`, `st_mu`, `st_sd`). Flag extreme `sd` (`> 1e2` or `<= 1.001e-3`).
+- **Real-input post-normalization spread:** Pass shipped `examples/` or real dev inputs through the exact normalization transform and flag non-constant physical features whose normalized `std` collapses (`< 1e-2`) or saturates at a clip bound.
+- **Counterfactual sensitivity ablation:** On real shipped examples, replace suspect feature columns with their median across examples (holding all other inputs fixed) and compare the max prediction shift against a healthy control feature.
+  - *Precedent:* `EnergyNet v2.1` — 4 work-fraction inputs (`aero/Ep`, `rolling/Ep`, `grade_dn/Ep`, `inertia_pos/Ep`) had `sd` up to `53,606` from moving-downhill trips where `ph[0] = 0`; holding all 4 constant moved shipped VED predictions by at most `0.00039%` vs `6.08%` for control `grade_up/Ep`.
+- **Ensemble diversity:** Compute pairwise cosine similarity of first-layer weights across ensemble seeds.
 
-### 3. Train-vs-Real Feature, Unit & Split Alignment
-Read the bank builder (`simbank.py` / `bank.py`), dataset loader (`dataset.py`), real featurizer (`realfeat.py` / `evalreal.py`), and release module (`<id>.py`) side by side:
-- Confirm identical feature ordering, units, scaling constants, temporal alignment (DOY, warm-up length, lag sign, off-by-one shifts), and `NaN` fallback/interpolation behavior.
-- Confirm frozen dev/exam splits cannot leak into training banks, scaling statistics, or donor tables.
+### 3. Training-Framework ↔ Inference-Runtime Forward Parity
+- Reconstruct the PyTorch `nn.Module` from `models/<id>/training/` using the shipped `.npz` weights (`model.eval()`), and compare outputs against the shipped NumPy module (`models/<id>/<id>.py`) on random non-trivial inputs and shipped examples (`max_abs_diff < 1e-5` float32).
+- Verify activation variants (`GELU(approximate='tanh')` vs exact `erf`), BatchNorm/LayerNorm `eps` and `running_mean`/`running_var` export, padding, and clamps.
 
-### 4. Loss, Gradient & Optimization Integrity
-Inspect `train.py` and the training configs for the released rung:
-- Verify loss formulas (signs, factors of `0.5`, variance/log-sigma parameterization, quantile monotonicity, pinball signs).
-- Confirm invalid-target masks (`okm` / `mask`) are applied consistently to **both** primary and auxiliary loss terms.
-- Check gradient flow (no accidental `.detach()`, wrong `no_grad()`, or frozen parameters that should train).
-- Check optimizer, weight decay, gradient clipping, LR schedule completion, and checkpoint selection (`best-on-sim-val` vs `last-step`).
-- Check whether training logs / ratchet rungs show clear convergence or early termination while validation loss was still falling.
+### 4. Causal / Future-Perturbation & Cold-Start Leakage Test
+For any time-series, streaming, nowcast, or sequential-decision model:
+- Freeze everything an operator knew up to decision time `t`, perturb **only** future observations `> t` (including secondary paths like weather/wear planners or global normalization), and verify the submitted decision/prediction at `t` changes by `0.0`.
+- Test **cold-start / boundary padding** at `t = 0` (ensure missing history is never back-filled with the clearing/target value at `t = 0`).
+- Test **API guardrails** (e.g., verify lagged/nowcast APIs reject `lead <= 0` rather than silently leaking same-day truth).
+  - *Precedent:* `BatteryPilot v1.3` — perturbing future temperatures moved an already-submitted 2 p.m. offer via the day-ahead wear planner (`$1.19/MWh`), and cold-start history back-filled hour 0's clearing real-time price (`$3.02/MWh`); `FlowCast v1.0` nowcast API silently accepted `lead=0`.
 
-### 5. Twin-Test Attribution & Bottleneck Triage
-Inspect `ratchet.yaml`, `MODEL_CARD.md`, `NOTEBOOK.md`, and any `twin_*.json` logs:
-- Does the released model perform cleanly on **its own simulated twins**?
-- If the model fails on its own simulated twins (not just real data), treat that as a **learner, loss, or pipeline defect** and trace why.
-- Check whether rejected rungs or single-seed wins masked noise inside the ratchet margin.
+### 5. Metadata-Only & Signal-Scrambled Shortcut Test
+- Discard or scramble the primary physical signal (waveform, time series, image) and test whether a simple baseline using only metadata, timestamps, window alignment, or helper tables can recover the target.
+  - *Precedent:* `QuakeNet v2` — discarding waveforms entirely and fitting only station coordinates + catalogue-derived `t_start + p_guess` timestamps recovered all 4 shipped 10-station epicentres to `< 5 m`.
 
-### 6. Uncertainty Calibration & Interval Honesty
-Inspect calibration scripts (`calib*.py`, `sigma*.py`) and shipped widening factors:
+### 6. Train-vs-Real Feature, Unit & Split Alignment
+- Compare `simbank.py`/`bank.py`, `dataset.py`, `realfeat.py`/`evalreal.py`, and `<id>.py` side by side for identical feature ordering, units, scaling constants, DOY/window alignment, and `NaN` handling.
+- Verify zero unit/event ID overlap between dev and exam in `splits.json`, and zero exam leakage into donor tables, priors, or scalers.
+
+### 7. Loss, Gradient, Seed & Optimization Reproducibility
+- Verify loss formulas (signs, `0.5` factors, log-sigma parameterization, quantile monotonicity) and check that invalid-target masks apply consistently to **both** primary and auxiliary loss terms.
+- Check gradient flow (no accidental `.detach()`, frozen trainable parameters, or missing `eval()`/`no_grad()`).
+- **Seed & resume reproducibility:** Verify whether the trainer seeds **both** NumPy and PyTorch (`torch.manual_seed`), and whether resume checkpoints save and restore RNG state — especially critical when ratchet margins are small (e.g., `0.01`).
+  - *Precedent:* `FlowCast v1.0` — `train.py` seeded NumPy's batch sampler but never seeded PyTorch weight init or dropout, and resume created a fresh RNG stream.
+
+### 8. Rung Promotion-Rule Arithmetic Replay
+- Independently reapply the published keep/reject promotion rule from `ratchet.yaml` to the raw logged component scores in `training/ratchet*.json` across all rungs (including rejected rungs). Confirm every logged decision matches the stated rule, and flag any margins sitting inside bootstrap noise.
+
+### 9. Twin-Test Attribution & Bottleneck Triage
+- Check whether the released model passes cleanly on **its own simulated twins** (`twin_*.json`, `ratchet.yaml`, `MODEL_CARD.md`).
+- Missing its own twins points to a learner, loss, or feature-pipeline defect rather than a simulator defect.
+
+### 10. Calibration & Interval Honesty
 - Verify widen-only compliance (`k >= 1.0`) unless explicitly documented as a simulation-side pre-scaling factor.
-- Check whether a single pooled factor hides severe under-coverage in specific physical strata (e.g., cold weather, low-Re high-alpha, rare powertrains, short observing lengths).
-- Check whether calibration factors were fitted strictly on dev (never exam) and with enough units per stratum.
-
-### 7. Reproducibility & Audit Record
-Write or update `docs/audits/<model>-v<ver>.md` and add a row to `docs/audits/README.md` containing:
-- Exact commit/date audited and files inspected.
-- Summary verdict (`CLEAN`, `MINOR HYGIENE`, `CRITICAL DEFECT`) + table of all 7 checks.
-- Exact measured numbers (weight stats, Torch-vs-NumPy parity, normalized real-input spread, ensemble cosine similarity).
-- Clear separation of **verified defects** vs. **documented/undocumented design limits** vs. **recommended follow-up rungs** (without applying fixes during an audit-only pass).
+- Check per-stratum coverage (not just pooled coverage) and verify calibration factors were fitted strictly on dev with sufficient units per stratum.
 
 ---
 
-## Quick Verification Probe Pattern
+## Multi-Reviewer Collaboration Structure (`docs/audits/`)
 
-When auditing a model, run a short inline Python probe (no repo edits) that:
-1. Iterates over every `.npz` file in `models/<id>/` and checks finiteness, 2-D row norms, and `min`/`max` of every normalization vector (`mu`/`sd`).
-2. Loads the shipped `.npz` weights back into the PyTorch `nn.Module` from `models/<id>/training/` and computes `max |torch_out - numpy_out|`.
-3. Passes real dev or `examples/` inputs through the exact input transform and prints `(raw p5..p95, mu, sd, normalized p5..p95, normalized std)` for the most extreme channels.
-4. For ensembles, prints pairwise cosine similarity of first-layer weights across members.
+To keep independent reviews unbiased while converging on a single source of truth:
+- **`docs/audits/SKILL.md`**: Canonical audit protocol (this file).
+- **`docs/audits/README.md`**: Master audit index, severity rubric, and review status table.
+- **`docs/audits/<model>-v<ver>.md`**: Canonical cross-checked audit report for a model.
+- **`docs/audits/reviews/<reviewer>/`**: Optional workspace for independent first-pass notes before cross-checking and reconciling into the canonical report. When two agents audit the same model, keep independent passes separate until each has run its own probes, then merge verified findings and explicitly note any disagreements or corrections.

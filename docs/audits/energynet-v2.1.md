@@ -1,6 +1,6 @@
 # ML & Physics Audit: EnergyNet v2.1
 
-- **Date:** 2026-11-25
+- **Date:** 2026-11-25 (cross-checked by two independent reviewers)
 - **Base commit:** `61c70bf` (`origin/main`)
 - **Mode:** Read-only forensic audit (no model code or weights modified)
 - **Shipped weights audited:** `models/energynet/weights/r15_s0.npz` .. `r15_s4.npz` (5-member MLP ensemble)
@@ -12,23 +12,24 @@
   - `models/energynet/training/model_np.py`
   - `models/energynet/training/release.py`
   - `models/energynet/energynet.py`
+  - `models/energynet/examples/examples.json` + `.npz` trips
   - `models/energynet/sigma_factors.json`
   - `models/energynet/ratchet.yaml`
-- **Overall verdict:** **`CRITICAL DEFECT`** (1 high-impact silent normalization bug + 1 minor loss-masking hygiene item; PyTorch↔NumPy parity, ensemble diversity, feature alignment, and NLL math are all clean).
+- **Overall verdict:** **`CRITICAL DEFECT`** (1 verified high-impact silent normalization bug + 1 minor loss-masking observation; PyTorch↔NumPy parity, ensemble diversity, feature alignment, and NLL math are all clean).
 
 ---
 
-## 7-Point Checklist Summary
+## Checklist Summary
 
 | # | Check | Status | Summary |
 |---|---|---|---|
-| 1 | Weight & normalization health | **CRITICAL DEFECT** | Zero NaN/Inf, zero dead rows, healthy 5-seed diversity (`cos 0.11–0.14`), **but** 4 of 5 physics work-fraction features are crushed to near-constants (`std = 4e-6 .. 4.5e-5`) by outlier-poisoned `x_mu`/`x_sd` (`sd` up to `53,606`). |
+| 1 | Weight, normalization & sensitivity | **CRITICAL DEFECT** | Zero NaN/Inf, zero dead rows, healthy 5-seed diversity (`cos 0.11–0.14`), **but** 4 of 5 physics work-fraction features are crushed to near-constants (`std = 4e-6 .. 4.5e-5`) by outlier-poisoned `x_mu`/`x_sd` (`sd` up to `53,606`); counterfactual ablation moves predictions `<= 0.00039%` vs `6.08%` control. |
 | 2 | PyTorch ↔ NumPy parity | **CLEAN** | Reconstructed `train.Net` from all 5 shipped `.npz` files; max abs diff vs `ENet.forward`: `mu <= 2.69e-6`, `sig <= 1.49e-5`, `comp <= 1.20e-5`. |
 | 3 | Train-vs-real feature alignment | **CLEAN** | `dataset.py`, `realfeat.py`, and `energynet.py` call the same `features.py` helpers with matching units, `PHYS_K`, and tier masks. |
-| 4 | Loss, gradient & optimization | **MINOR HYGIENE** | Exact Gaussian NLL (`ls + 0.5 * ((y - m)/exp(ls))^2`), AdamW + OneCycleLR (60 ep), grad clip `5.0`. Minor: auxiliary component MSE (`train.py:91`) is not masked by `w = (yv > 0.02)`, unlike NLL. |
-| 5 | Twin-test triage | **DOCUMENTED** | Known `-4.5%` FTP twin read is logged in `ratchet.yaml` / `MODEL_CARD.md`; fixing the crushed `phys_vec` ratios is a concrete hypothesis for a future rung. |
-| 6 | Uncertainty calibration | **MINOR HYGIENE** | Per-fleet dev factors in `sigma_factors.json` are `>= 1.0`; simulation-side `SIM_conv = 0.9656` is `< 1.0` (product `SIM_conv * VED_ICE = 1.45 > 1.0`, so effective VED ICE factor is widen-only). |
-| 7 | Undocumented limits | **CLEAN** | Final-epoch checkpointing (no best-val early stop) and fixed normalization seed `12345` across all 5 seeds are transparent in `train.py`. |
+| 4 | Loss, gradient & optimization | **MINOR HYGIENE** | Exact Gaussian NLL (`ls + 0.5 * ((y - m)/exp(ls))^2`), AdamW + OneCycleLR (60 ep), grad clip `5.0`. Auxiliary component MSE (`train.py:91`) is not masked by `w = (yv > 0.02)`, unlike NLL (see caveat below). |
+| 5 | Twin-test triage | **DOCUMENTED** | Known `-4.5%` FTP twin read is logged in `ratchet.yaml` / `MODEL_CARD.md`; whether restoring the 4 crushed `phys_vec` ratios closes part of that gap is testable in a matched-seed repair rung. |
+| 6 | Uncertainty calibration | **MINOR HYGIENE** | Per-fleet dev factors in `sigma_factors.json` are `>= 1.0`; simulation-side `SIM_conv = 0.9656` is `< 1.0` (effective `SIM_conv * VED_ICE = 1.45 > 1.0`). |
+| 7 | Undocumented limits | **CLEAN** | Final-epoch checkpointing (no best-val early stop) and fixed normalization seed `12345` across all 5 ensemble members are transparent in `train.py`. |
 
 ---
 
@@ -36,47 +37,41 @@
 
 ### Finding 1 (`CRITICAL DEFECT`): Four core physics work-fraction features crushed by 20,000×–250,000×
 
-**Where:**
-- `models/energynet/training/features.py:136-143` (`phys_vec`):
-  ```python
-  Ep = max(ph[0], 1e-6)
-  F[3] = ph[2] / Ep; F[4] = ph[3] / Ep; F[5] = ph[4] / Ep; F[6] = ph[5] / Ep; F[7] = ph[6] / Ep
-  ```
-- `models/energynet/training/train.py:59-61`:
-  ```python
-  T0 = tiers(np.random.default_rng(12345))
-  X0, E0 = DS.assemble(B, T0)
-  mu = X0.mean(0); sd = X0.std(0) + 1e-3
-  ```
+- **What failed?**
+  - In `models/energynet/training/features.py:136-143` (`phys_vec`), aerodynamic (`ph[2]`), rolling (`ph[3]`), downhill-grade (`ph[5]`), and positive-inertia (`ph[6]`) work are divided by `Ep = max(ph[0], 1e-6)`.
+  - On a **moving downhill trip** (note: a fully stationary trip gives `0` for all five ratios), net positive wheel work `ph[0]` can be `0.0` while aero drag, rolling resistance, and gravity still do substantial work. Independently reproduced on a synthetic `-8%` grade trip at constant `15 m/s` (`300 s`): `ph[0] = 0.0`, `aero/Ep = +377,943`, `roll/Ep = +654,192`, `grade_dn/Ep = -5,808,582`.
+  - In `models/energynet/training/train.py:59-61`, raw sample `mu = X0.mean(0); sd = X0.std(0) + 1e-3` is computed before clipping, using fixed seed `12345` across all 5 ensemble seeds, poisoning `x_mu` and `x_sd` in all 5 shipped `.npz` files.
 
-**Mechanism:**
-On standstill or pure-downhill simulated bank trips where positive wheel work `ph[0] ≈ 0`, `Ep` hits the floor `1e-6` while `ph[2]` (aero), `ph[3]` (rolling), `ph[5]` (downhill grade), and `ph[6]` (positive inertia) remain non-zero or tiny negative/positive residuals, sending the ratios `ph[k] / Ep` to `~10^7`. Because `train.py` computes raw sample mean and standard deviation across `X0` without clipping or robust quantiles — and uses the same fixed seed `12345` for all 5 ensemble members — all 5 shipped `.npz` files store poisoned `x_mu` and `x_sd` values.
+- **What changed when we tested it?**
+  1. **Real-trip post-normalization spread (1,496 real VED dev trips, shipped `r15_s0.npz`):**
 
-**Measured impact across 1,496 real VED dev trips (shipped `r15_s0.npz`):**
+     | Col | Feature | Raw real-trip p5..p95 | Shipped `x_mu` | Shipped `x_sd` | Normalized `(X - mu)/sd` p5..p95 | Normalized real-trip `std` |
+     |---:|---|---:|---:|---:|---:|---:|
+     | 90 | `log(E)` (control) | `-0.366 .. 3.096` | `3.10` | `1.58` | `-2.1925 .. -0.0050` | `0.676188` |
+     | 93 | **`aero / Ep`** | `0.072 .. 0.418` | `8.42` | **`2,385.44`** | `-0.003500 .. -0.003355` | **`0.000045`** |
+     | 94 | **`rolling / Ep`** | `0.238 .. 0.585` | `16.23` | **`4,639.52`** | `-0.003447 .. -0.003372` | **`0.000024`** |
+     | 95 | `grade_up / Ep` (control) | `0.077 .. 0.427` | `0.19` | `0.15` | `-0.7748 .. +1.5674` | `0.713481` |
+     | 96 | **`grade_dn / Ep`** | `-0.602 .. -0.060` | `-183.11` | **`53,606.09`** | `+0.003405 .. +0.003415` | **`0.000004`** |
+     | 97 | **`inertia_pos / Ep`** | `0.373 .. 0.840` | `30.71` | **`8,865.52`** | `-0.003422 .. -0.003369` | **`0.000016`** |
 
-| Col | Feature | Raw real-trip p5..p95 | Shipped `x_mu` | Shipped `x_sd` | Normalized `(X - mu)/sd` p5..p95 | Normalized real-trip `std` |
-|---:|---|---:|---:|---:|---:|---:|
-| 90 | `log(E)` (control) | `-0.366 .. 3.096` | `3.10` | `1.58` | `-2.1925 .. -0.0050` | `0.676188` |
-| 93 | **`aero / Ep`** | `0.072 .. 0.418` | `8.42` | **`2,385.44`** | `-0.003500 .. -0.003355` | **`0.000045`** |
-| 94 | **`rolling / Ep`** | `0.238 .. 0.585` | `16.23` | **`4,639.52`** | `-0.003447 .. -0.003372` | **`0.000024`** |
-| 95 | `grade_up / Ep` (control) | `0.077 .. 0.427` | `0.19` | `0.15` | `-0.7748 .. +1.5674` | `0.713481` |
-| 96 | **`grade_dn / Ep`** | `-0.602 .. -0.060` | `-183.11` | **`53,606.09`** | `+0.003405 .. +0.003415` | **`0.000004`** |
-| 97 | **`inertia_pos / Ep`** | `0.373 .. 0.840` | `30.71` | **`8,865.52`** | `-0.003422 .. -0.003369` | **`0.000016`** |
+  2. **Counterfactual feature-sensitivity ablation (5 shipped real VED examples in `models/energynet/examples/`, holding suspect inputs constant at their median across the 5 trips while keeping all other inputs unchanged):**
+     - Holding all four columns `[93, 94, 96, 97]` constant together: max prediction change **`0.00039%`**.
+     - Holding healthy control column `95` (`grade_up / Ep`) constant alone: max prediction change **`6.077%`**.
 
-For every normal real trip, EnergyNet v2.1 receives essentially constant values (`std ~ 1e-5`) for the aerodynamic, rolling, downhill-grade, and acceleration-inertia fractions of wheel work.
+- **What consequence remains unmeasured?**
+  - **Predictive accuracy cost is still unmeasured.** Other channels (`log(E)`, `log(Ep/E)`, `log(En/E)`, speed×accel histogram, grade histogram) carry correlated information. Measuring whether bounding these work ratios improves total-energy, component, or downhill-trip accuracy requires a matched-seed repair rung on the same simulation bank judged strictly on the existing dev gate (leaving exam untouched).
+  - Identifying the exact historical bank rows that dominated each `x_sd` requires the original `train2di+train2bdi+train2cdi` bank files.
 
-**Why existing tests did not catch it:**
-- `mlratchet validate` checks schema and golden smoke outputs.
-- `site/tests/parity.test.ts` checks NumPy ↔ TypeScript using the same poisoned `x_mu`/`x_sd`.
-- `train.py` still converges smoothly because `log(E)`, `log(Ep/E)`, `log(En/E)`, and the 56-bin speed×accel histogram carry correlated signal.
+### Finding 2 (`MINOR HYGIENE`): Auxiliary component loss unmasked on near-zero net-energy trips
 
-**Candidate fix (for a future ratchet rung, not applied here):**
-Clamp `phys_vec` ratios cleanly (e.g., divide by `max(ph[0], 0.05)` or clip `F[3:8]` to `[-5, 5]`) and/or compute `x_mu`/`x_sd` with robust quantiles or on `okm = yv > 0.02` rows before standardizing, then judge on the existing frozen `val2` + dev `D2` gate.
+- **What failed?** `models/energynet/training/train.py:90-91` masks `nll` by `w = (yv > 0.02)`, whereas `a.wc * ((c - Ct[idx]) ** 2).mean()` averages over all rows including `yv <= 0.02`.
+- **What changed when we tested it?** Not replayed; `comp_targets` clips components to `>= 1e-3 * E` (`E >= 1e-3`), preventing `NaN`/`Inf`.
+- **What consequence remains unmeasured?** A small net-energy target (e.g., regenerative downhill EV/HEV trip) can still have meaningful positive component work (`aero`, `rolling`, `aux`); inspect those rows' component targets before deciding whether to mask them or keep them unmasked.
 
-### Finding 2 (`MINOR HYGIENE`): Auxiliary component loss unmasked on near-zero trips
-- `models/energynet/training/train.py:90-91`: `nll` is masked by `w = (yv > 0.02)`, whereas `a.wc * ((c - Ct[idx]) ** 2).mean()` averages over all rows including `yv <= 0.02`. Bounded impact because `comp_targets` clips components to `1e-3 * E` (`E >= 1e-3`), preventing NaN/Inf.
+---
 
-### Clean Checks (Verified Measurements)
+## Clean Checks (Verified Measurements)
+
 - **PyTorch ↔ NumPy parity (64 random inputs, `float32` vs `float64`):**
   - `r15_s0.npz`: `mu=2.29e-6`, `sig=6.81e-6`, `comp=9.14e-6`
   - `r15_s1.npz`: `mu=2.54e-6`, `sig=6.24e-6`, `comp=8.07e-6`
