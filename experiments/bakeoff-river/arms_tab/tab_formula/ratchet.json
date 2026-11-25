@@ -1,0 +1,25 @@
+{
+ "arm_id": "tab_formula",
+ "label": "Formulas: symbolic attribute -> WaterSim HBV parameter laws (LawFinder-style search), run in WaterSim",
+ "family": "symbolic",
+ "family_label": "Symbolic regression (formula search)",
+ "group": "tab",
+ "protocols": ["ungauged"],
+ "numpy_only": false,
+ "numpy_only_reason": "The prediction IS a WaterSim run: 17 closed-form formulas give the parameters, then predict.py calls the harness's vendored WaterSim (numba-compiled HBV + degree-day snow + gamma channel UH + irrigation) through wsim.py.",
+ "compute": {"train_cpu_hours": 0.25,
+  "notes": "One thread (process_time). Symbolic search 251 s (17 parameters x 50 s wall each; lawsearch.py vendored unchanged from LawFinder); r1 constant tuning through the torch simulator 613 s; band fitting + exports 3 x ~8 s. The teacher mapping is arm tab_dpl r1 (its 2.25 CPU h are counted there, not here)."},
+ "feature_engineering": "Formula inputs: the 18 raw static-vector values (log_area, elev_mean_km, elev_range_km, log_slope_mkm, forest_frac, soil_porosity, log_ksat_cmh, carbonate_frac, reservoir_frac, irrigation_frac, urban_frac, log_p_mean, pet_mean, log_aridity, frac_snow, hp_freq, lp_freq, t_mean_c). Simulator input as tab_dpl: batch forcing (P x PMULT, PET, T_mean) and a spec from the attributes; spin-up = the 365 warm-up rows.",
+ "extra_files": [],
+ "margin": 0.01,
+ "rule": "keep if sim val median NSE > incumbent + 0.01 AND dev median NSE >= 0.95 x incumbent's (all 800 frozen sim val runs; 52 dev basins)",
+ "rungs": [
+  {"id": "r0", "change": "base: for each of the 17 parameters, lawsearch (regularised evolution of expression trees over the 18 static values; + - * / ^ exp log sqrt inv sq; Levenberg-Marquardt constants) fits the unbounded value z that the tab_dpl r1 network gives on 11,400 sim-train basins; pick the simplest formula on the Pareto front within 0.02 R^2 of the best (complexity <= 15); z -> sigmoid bounds -> WaterSim",
+   "decision": "released", "why": "first rung; equals its teacher (tab_dpl r1: 0.414 / 0.383) with 17 short formulas", "simval_nse": 0.415, "dev_nse": 0.386},
+  {"id": "r1", "change": "formula structures fixed, constants tuned through the torch simulator (loss MSE of q/p_mean, 400 iterations, Adam 1e-2 -> 1e-3)",
+   "decision": "rejected", "why": "sim val -0.007; dev 0.376", "simval_nse": 0.408, "dev_nse": 0.376},
+  {"id": "r2", "change": "most accurate formula on each Pareto front instead of the simplest within 0.02 R^2 (complexity 10 -> 14 on average)",
+   "decision": "rejected", "why": "sim val +0.003 (< 0.01); dev 0.392", "simval_nse": 0.418, "dev_nse": 0.392}
+ ],
+ "released": "r0"
+}

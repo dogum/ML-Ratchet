@@ -1,0 +1,207 @@
+{
+ "published_D2": 0.10768011980685205,
+ "terms": {
+  "VED_ICE": {
+   "local": 0.0662631503178398,
+   "published": 0.0662631503178398,
+   "diff": 0.0,
+   "n_local": 645,
+   "n_published": 645
+  },
+  "VED_HEV": {
+   "local": 0.12608709361681059,
+   "published": 0.12608709361681059,
+   "diff": 0.0,
+   "n_local": 275,
+   "n_published": 275
+  },
+  "VED_EV": {
+   "local": 0.1395831744519292,
+   "published": 0.13958317445192925,
+   "diff": -5.551115123125783e-17,
+   "n_local": 258,
+   "n_published": 258
+  },
+  "VED_PHEV": {
+   "local": 0.16314756511748718,
+   "published": 0.16314756511748718,
+   "diff": 0.0,
+   "n_local": 318,
+   "n_published": 318
+  },
+  "EPA_conv_FTP": {
+   "local": 0.09294393805675161,
+   "published": 0.09294393805675161,
+   "diff": 0.0,
+   "n_local": 2877,
+   "n_published": 2877
+  },
+  "EPA_conv_HWY": {
+   "local": 0.07037850972499782,
+   "published": 0.07037850972499782,
+   "diff": 0.0,
+   "n_local": 2835,
+   "n_published": 2835
+  },
+  "EPA_conv_US06": {
+   "local": 0.05267100109483058,
+   "published": 0.05267100109483058,
+   "diff": 0.0,
+   "n_local": 371,
+   "n_published": 371
+  },
+  "EPA_conv_FTPcold": {
+   "local": 0.10933774779252653,
+   "published": 0.10933774779252653,
+   "diff": 0.0,
+   "n_local": 280,
+   "n_published": 280
+  },
+  "EPA_conv_SC03": {
+   "local": 0.09567600112152652,
+   "published": 0.09567600112152652,
+   "diff": 0.0,
+   "n_local": 302,
+   "n_published": 302
+  },
+  "EPA_hev_powersplit_FTP": {
+   "local": 0.15741042074941497,
+   "published": 0.15741042074941497,
+   "diff": 0.0,
+   "n_local": 70,
+   "n_published": 70
+  },
+  "EPA_hev_powersplit_HWY": {
+   "local": 0.10022837878295732,
+   "published": 0.10022837878295676,
+   "diff": 5.551115123125783e-16,
+   "n_local": 72,
+   "n_published": 72
+  },
+  "EPA_bev_FTP": {
+   "local": 0.08943113973097777,
+   "published": 0.08943113973097783,
+   "diff": -5.551115123125783e-17,
+   "n_local": 98,
+   "n_published": 98
+  },
+  "EPA_bev_HWY": {
+   "local": 0.058949440711214995,
+   "published": 0.058949440711214995,
+   "diff": 0.0,
+   "n_local": 97,
+   "n_published": 97
+  },
+  "EPA_hev_powersplit_US06": {
+   "local": 0.0596520216705807,
+   "published": 0.0596520216705807,
+   "diff": 0.0,
+   "n_local": 29,
+   "n_published": 29
+  },
+  "EPA_hev_powersplit_SC03": {
+   "local": 0.11413576115287039,
+   "published": 0.11413576115287039,
+   "diff": 0.0,
+   "n_local": 29,
+   "n_published": 29
+  },
+  "EPA_hev_powersplit_FTPcold": {
+   "local": 0.10316986973480957,
+   "published": 0.10316986973480957,
+   "diff": 0.0,
+   "n_local": 29,
+   "n_published": 29
+  },
+  "HD_Mersin_diesel": {
+   "local": 0.1302766700369578,
+   "published": 0.1302766700369578,
+   "diff": 0.0,
+   "n_local": 56,
+   "n_published": 56
+  },
+  "HD_Mersin_cng": {
+   "local": 0.17000551177543194,
+   "published": 0.17000551177543188,
+   "diff": 5.551115123125783e-17,
+   "n_local": 56,
+   "n_published": 56
+  },
+  "HD_ICCT": {
+   "local": 0.19033035895806916,
+   "published": 0.19033035895806916,
+   "diff": 0.0,
+   "n_local": 3,
+   "n_published": 3
+  },
+  "HD_ZTBus_legs": {
+   "local": 0.14038099771782853,
+   "published": 0.14038099771782853,
+   "diff": 0.0,
+   "n_local": 5,
+   "n_published": 5
+  },
+  "HD_ZTBus_traced_missions": {
+   "local": 0.0965045376016706,
+   "published": 0.0965045376016706,
+   "diff": 0.0,
+   "n_local": 2,
+   "n_published": 2
+  }
+ },
+ "D16_local": 0.11329500637748274,
+ "D16_published": 0.1132950063774827,
+ "n_terms_D16": 16,
+ "ZTBus_full_terms_published_not_local": {
+  "legs": {
+   "n": 1641,
+   "MdAPE": 0.06985369215786696,
+   "bias": -0.005736294965064892
+  },
+  "missions": {
+   "n": 294,
+   "MdAPE": 0.05566836232574651,
+   "bias": -0.020078377486529575,
+   "layover_share": 0.0062153375072918435
+  }
+ },
+ "ZTBus_v1_legs_with_curb_mass": {
+  "n": 5,
+  "MdAPE": 0.09199990003658176,
+  "bias": -0.06837124216284418
+ },
+ "VED_full": {
+  "EV": {
+   "n": 258,
+   "n_veh": 1,
+   "trip_MdAPE": 0.1395831744519292,
+   "trip_MAPE": 0.19055505590624663,
+   "bias": 0.046327680396465065,
+   "veh_MdAPE": 0.034484691612331364
+  },
+  "HEV": {
+   "n": 275,
+   "n_veh": 5,
+   "trip_MdAPE": 0.12608709361681059,
+   "trip_MAPE": 0.15814701473399118,
+   "bias": -0.0010524041745253454,
+   "veh_MdAPE": 0.04330467349327005
+  },
+  "ICE": {
+   "n": 645,
+   "n_veh": 8,
+   "trip_MdAPE": 0.0662631503178398,
+   "trip_MAPE": 0.08162790644641008,
+   "bias": -0.007688062565559872,
+   "veh_MdAPE": 0.04316163435451342
+  },
+  "PHEV": {
+   "n": 318,
+   "n_veh": 2,
+   "trip_MdAPE": 0.16314756511748718,
+   "trip_MAPE": 0.23246497413954695,
+   "bias": -0.07342749844042207,
+   "veh_MdAPE": 0.11082236789338817
+  }
+ }
+}

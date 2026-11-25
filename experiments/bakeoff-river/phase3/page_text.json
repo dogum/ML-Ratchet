@@ -1,0 +1,388 @@
+{
+ "families": [
+  {
+   "fam": "ssm",
+   "famname": "State-space and recurrent models",
+   "armid": "seq_lstm",
+   "name": "LSTM",
+   "arm": "seq_lstm · FlowCast v1.0",
+   "assume": "A small learned state is carried from day to day and gated: keep, add, release. It is a learned bucket model, with stores that fill and drain.",
+   "here": "The in-bake-off control. Retrained on the new bank it matched FlowCast v1.0 on main (0.340 vs 0.341, tie) and beat it on recent (0.391 vs 0.378, win). Best learner in arid basins in both periods (0.217, 0.232), where it beats the TCN and the GP outright. The cheapest network to train and to run.",
+   "score": [
+    [
+     "main",
+     "0.340"
+    ],
+    [
+     "recent",
+     "0.391"
+    ],
+    [
+     "vs FlowCast",
+     "tie / win"
+    ],
+    [
+     "train",
+     "0.87 CPU-h"
+    ]
+   ]
+  },
+  {
+   "fam": "ssm",
+   "famname": "State-space and recurrent models",
+   "armid": "seq_ssm",
+   "name": "S4D state space",
+   "arm": "seq_ssm",
+   "assume": "Memory is linear and the same on every day: each channel passes through a fixed bank of decaying exponentials (linear reservoirs with time constants from days to years). Nonlinearity lives only between the filters.",
+   "here": "Tied with the LSTM overall. Best learner in humid basins in both periods (0.528, 0.533), where a stack of linear reservoirs is close to the truth. It trails in arid basins (0.176 main, a loss against the LSTM) and large ones (0.112 main, a loss): a fixed filter cannot make a storm's response depend on how dry the basin already is.",
+   "score": [
+    [
+     "main",
+     "0.336"
+    ],
+    [
+     "recent",
+     "0.386"
+    ],
+    [
+     "vs FlowCast",
+     "tie / tie"
+    ],
+    [
+     "train",
+     "3.69 CPU-h"
+    ]
+   ]
+  },
+  {
+   "fam": "cnn1d",
+   "famname": "1-D convolutional network",
+   "armid": "seq_tcn",
+   "name": "TCN (dilated 1-D CNN)",
+   "arm": "seq_tcn",
+   "assume": "Flow is a learned function of the weather at fixed lags (1, 2, 4 ... 256 days back), read the same way on every date. No store is carried forward: memory is a fixed-lag pattern detector.",
+   "here": "Tied with the LSTM overall. Strong in snow (0.440, 0.474) and regulated basins (best on recent, 0.437), where seasonal melt repeats at fixed lags. It loses to the LSTM in arid basins in both periods (−0.049, −0.030): fixed lags read threshold runoff badly.",
+   "score": [
+    [
+     "main",
+     "0.338"
+    ],
+    [
+     "recent",
+     "0.382"
+    ],
+    [
+     "vs FlowCast",
+     "tie / tie"
+    ],
+    [
+     "train",
+     "1.25 CPU-h"
+    ]
+   ]
+  },
+  {
+   "fam": "attn",
+   "famname": "Attention and transformers",
+   "armid": "seq_transformer",
+   "name": "Transformer",
+   "arm": "seq_transformer",
+   "assume": "Any earlier day can be looked up directly, weighted by content and a position code. Memory is a lookup, not an integrator: nothing fills, nothing drains.",
+   "here": "The only sequence learner to lose to FlowCast in both periods (0.323 and 0.360, −0.018 each). It needed 4× the training steps to catch up on simulations, and on the real exam it had not. It is also the slowest network to run, because attention cost grows with the square of the 730-day window.",
+   "score": [
+    [
+     "main",
+     "0.323"
+    ],
+    [
+     "recent",
+     "0.360"
+    ],
+    [
+     "vs FlowCast",
+     "loss / loss"
+    ],
+    [
+     "train",
+     "3.55 CPU-h"
+    ]
+   ]
+  },
+  {
+   "fam": "gbm",
+   "famname": "Gradient-boosted trees",
+   "armid": "tab_gbm",
+   "name": "Gradient-boosted trees",
+   "arm": "tab_gbm",
+   "assume": "Flow on a day is a step function of a hand-built summary of the past: 47 numbers (recent rain, a snow proxy, wetness averages over 3 to 365 days, two buckets). What the features do not carry, the trees cannot see.",
+   "here": "Top of the main board (0.345) and a win over FlowCast on recent (0.388). Best learner in snow basins in both periods (0.461, 0.493) and in regulated basins on main (0.353). Thresholds on a snow proxy and on wetness memories are what those basins need. Cheap to train; the slowest arm to run (1.2 CPU-s per basin-period, nearly all of it numpy feature building).",
+   "score": [
+    [
+     "main",
+     "0.345"
+    ],
+    [
+     "recent",
+     "0.388"
+    ],
+    [
+     "vs FlowCast",
+     "tie / win"
+    ],
+    [
+     "train",
+     "0.43 CPU-h"
+    ]
+   ]
+  },
+  {
+   "fam": "gp",
+   "famname": "Gaussian processes",
+   "armid": "tab_gp",
+   "name": "Sparse Gaussian process",
+   "arm": "tab_gp",
+   "assume": "Flow is a smooth function of 20 of those features: days with similar recent water, snow and climate have similar flow, with one length scale per input and one Gaussian noise level. Error bars come for free.",
+   "here": "Last of the learners (0.297, 0.344; losses of −0.044 and −0.034). Smoothness costs peaks (|FHV| 44–46 %, the worst) and arid basins (0.097, 0.114), where flow is a rare, thresholded response. Its raw 50 % band held 64–67 % of days. The conformal layer brought that to 0.47–0.48.",
+   "score": [
+    [
+     "main",
+     "0.297"
+    ],
+    [
+     "recent",
+     "0.344"
+    ],
+    [
+     "vs FlowCast",
+     "loss / loss"
+    ],
+    [
+     "train",
+     "0.94 CPU-h"
+    ]
+   ]
+  },
+  {
+   "fam": "diffsim",
+   "famname": "Learning through the physics",
+   "armid": "tab_dpl",
+   "name": "Physics in the loop",
+   "arm": "tab_dpl",
+   "assume": "Every basin is an HBV bucket model; only its 17 parameters differ, and they are a smooth function of the basin's attributes. A network picks the parameters, trained through the simulator. Mass balance is guaranteed.",
+   "here": "Lost to FlowCast in both periods (0.313, 0.366) and to the LSTM by 0.025–0.027. The gap is in humid basins (0.421 against 0.508 for the LSTM, a loss): one lumped HBV per basin, with no reservoirs. Guaranteed mass balance did not buy NSE. Its raw 90 % band was already close to nominal (0.905, 0.915).",
+   "score": [
+    [
+     "main",
+     "0.313"
+    ],
+    [
+     "recent",
+     "0.366"
+    ],
+    [
+     "vs FlowCast",
+     "loss / loss"
+    ],
+    [
+     "train",
+     "2.25 CPU-h"
+    ]
+   ]
+  },
+  {
+   "fam": "symbolic",
+   "famname": "Symbolic regression",
+   "armid": "tab_formula",
+   "name": "Formulas",
+   "arm": "tab_formula",
+   "assume": "The same HBV model, but the attribute-to-parameter link is simple enough to write down: 17 short formulas of 7 to 15 symbols, distilled from the physics-in-the-loop network by a LawFinder search.",
+   "here": "Matched the teacher on the exam too: 0.306 against 0.313 on main and 0.363 against 0.366 on recent, both paired ties. Seventeen readable laws, with its teacher the fastest learner at inference, and the top snow score on main (0.462, tied with eight others). It shares the teacher's weakness in humid basins.",
+   "score": [
+    [
+     "main",
+     "0.306"
+    ],
+    [
+     "recent",
+     "0.363"
+    ],
+    [
+     "vs teacher",
+     "tie / tie"
+    ],
+    [
+     "train",
+     "0.25 CPU-h + teacher"
+    ]
+   ]
+  },
+  {
+   "fam": "assim",
+   "famname": "Filters and data assimilation",
+   "armid": "enkf_watersim",
+   "name": "Ensemble Kalman filter",
+   "arm": "enkf_watersim · gauged",
+   "assume": "A physical model (HBV in WaterSim, 32 members) is right in structure, and the gauge tells it each day how wrong its stores and 8 of its parameters are. No training on flow at all.",
+   "here": "Wins at one day: 0.599 against FlowCast's nowcast at 0.569 on main (a win), and 0.615 against 0.591 on recent (a tie), with a clearly sharper CRPS (0.207 against 0.248). At 3 days it ties on main and loses on recent by 0.024; at 7 days FlowCast leads (−0.021, −0.044). Its correction sits in the stores and fades as the model runs on alone. It was never trained on flow.",
+   "score": [
+    [
+     "L1",
+     "0.599 / 0.615"
+    ],
+    [
+     "L3",
+     "0.465 / 0.487"
+    ],
+    [
+     "L7",
+     "0.405 / 0.422"
+    ],
+    [
+     "tune",
+     "0.98 CPU-h"
+    ]
+   ]
+  },
+  {
+   "fam": "conformal",
+   "famname": "Conformal prediction",
+   "armid": "flowcast_v1",
+   "name": "Conformal layer",
+   "arm": "10 wrappers",
+   "assume": "Any learner's errors on 52 dev basins say how wide its bands should be on new basins of the same class (Mondrian: snow, arid, humid, other). It moves band edges only; the mean is untouched.",
+   "here": "It fixed coverage and nothing else. Every ungauged arm's 90 % band now holds 0.87–0.89 of exam days (raw 0.87–0.95), and every 50 % band 0.46–0.49 (raw 0.50–0.67). CRPS got slightly worse in 14 of 18 arm-periods, because shifts fitted to coverage on 52 dev basins narrowed FlowCast's deliberately wide bands. For the EnKF at 7 days it helped both (90 % coverage 0.85 → 0.89, CRPS −0.006).",
+   "score": [
+    [
+     "cov90",
+     "0.87–0.89"
+    ],
+    [
+     "cov50",
+     "0.46–0.49"
+    ],
+    [
+     "CRPS",
+     "worse in 14 of 18"
+    ],
+    [
+     "fit",
+     "< 0.04 CPU-h each"
+    ]
+   ]
+  }
+ ],
+ "findings": [
+  {
+   "big": "+0.024",
+   "title": "The state-space model needed an input-side nonlinearity",
+   "body": "Plain S4D learned no more from twice the training (sim val 0.398 → 0.399). A small pointwise MLP <i>before</i> the linear filters lifted it to 0.422 (dev 0.435) and made it the released rung. A linear reservoir cascade needs someone to split rain from snow and apply thresholds first. Mamba-lite (input-dependent decay) reached 0.415 without it."
+  },
+  {
+   "big": "4×",
+   "title": "The transformer needed four times the steps",
+   "body": "At FlowCast's recipe (3,000 steps) attention scored sim val 0.364, against 0.410 for the LSTM. It took 12,000 steps (and 2 wider heads) to reach 0.420, the level the LSTM, TCN and SSM reached at 6,000. Weekly patch tokens were 10× cheaper per step and lost (0.341)."
+  },
+  {
+   "big": "−0.031",
+   "title": "Monotone constraints cost the trees and gained nothing",
+   "body": "Forcing all 21 water-input features to push flow up (the sign physics fixes) gave sim val 0.367. Dropping the constraint gave 0.398, with dev unchanged (0.418 → 0.421). The sign holds one feature at a time but not jointly for 21 correlated memories: the constraint removed useful interactions."
+  },
+  {
+   "big": "17",
+   "title": "Seventeen formulas matched their teacher network",
+   "body": "Short laws (7 to 15 symbols) for every HBV parameter explain only 54 to 92 % of the teacher's parameter variance, yet the simulated flow scores the same: sim val 0.415 vs 0.414, dev 0.386 vs 0.383. What the network learned about parameters is low-dimensional, and the simulator forgives the rest."
+  },
+  {
+   "big": "0.410",
+   "title": "FlowCast's recipe reproduces only 0.410 on the new bank",
+   "body": "Retraining FlowCast's exact network and recipe (3,000 steps) on the bake-off bank gave sim val 0.410 for three seeds (0.409 to 0.410), against 0.426 for the released weights on the same frozen set. Twice the steps closed it (0.4255). Candidate causes, not resolved: the bank used the repo's newer WaterSim (6 files differ), and initialisation and dropout streams."
+  }
+ ],
+ "text": {
+  "thesis": "Nine learner families trained on the same simulated rivers, with the same inputs and budget, then graded once on 619 real basins. The built-in assumption moved the exam score by at most 0.05 NSE. Five families tie. None reaches the regionalisation baseline. Where a gauge exists, a Kalman filter on a physical model, never trained on flow, beats the trained network at one day ahead.",
+  "facts": [
+   [
+    "21",
+    "registered arms"
+   ],
+   [
+    "9",
+    "ungauged learners + 1 filter"
+   ],
+   [
+    "619 + 603",
+    "exam basin-periods"
+   ],
+   [
+    "1",
+    "exam run, 3 h on one core"
+   ],
+   [
+    "0",
+    "real labels in training"
+   ]
+  ],
+  "verdicts": [
+   [
+    "Ungauged: a five-way tie",
+    "Trees 0.345, FlowCast 0.341, LSTM 0.340, TCN 0.338, S4D 0.336 on main. Every 95 % interval against FlowCast covers zero. Attention, the GP and both HBV arms lose by 0.02–0.04."
+   ],
+   [
+    "The bank caps everyone",
+    "All nine learners lose to donor regionalisation (U-dev 0.372 / 0.433) and to NOAA's NWM (0.550 / 0.687). They share one simulated bank and the same ERA5-Land forcing."
+   ],
+   [
+    "Gauged: the filter wins day 1",
+    "EnKF 0.599 against FlowCast's nowcast 0.569 (a win), with sharper bands. It ties at 3 days and falls behind at 7, as its correction fades."
+   ],
+   [
+    "Conformal: calibration, not sharpness",
+    "Every arm's 90 % band now covers 0.87–0.89 of days. CRPS did not improve."
+   ]
+  ],
+  "boards_lede": "Medians over basins. Each arm's difference from FlowCast v1.0 is a paired bootstrap over basins (10,000 resamples). A win or a loss means the 95 % interval excludes zero. FlowCast v1.0 re-scored by this harness gives exactly its published exam: 0.341 main, 0.378 recent; nowcast 0.569 / 0.474 / 0.426.",
+  "board_notes": {
+   "ungauged": "Ungauged arms never see the river's flow. U-dev and U-k12 are ungauged regionalisations (calibrated GR4J from donor basins). GR4J calibrated on each basin's own 1999–2008 flow and NOAA's NWM are not ungauged; they are the bar to clear, as in FlowCast's exam.",
+   "gauged_L1": "Gauged rows read the observed flow up to 1 day before each predicted day, plus that day's known weather (a hindcast). GR4J and NWM do not read the gauge; they are shown for scale.",
+   "gauged_L3": "Gauged rows read the observed flow up to 3 days before each predicted day. GR4J and NWM do not read the gauge.",
+   "gauged_L7": "Gauged rows read the observed flow up to 7 days before each predicted day. GR4J and NWM do not read the gauge."
+  },
+  "per_notes": {
+   "main": "Main exam: WY1990–99, Caravan Q, 619 basins (NWM 600).",
+   "recent": "Recent exam: WY2016–23, NWIS Q, 603 basins; NWM ends in September 2022."
+  },
+  "shows": [
+   "With the same bank, inputs and budget, the built-in assumption moved median exam NSE by at most 0.05 across nine learners (0.297 to 0.345 on main). Gated recurrence, linear state space, dilated convolution and trees cannot be separated on 619 basins.",
+   "The ceiling is shared. Every learner loses to donor regionalisation by 0.03–0.09 and to NWM by 0.20–0.34. All of them learned from the same simulated bank and read the same ERA5-Land weather.",
+   "Assumptions do show by basin class, at the margins. The LSTM leads in arid basins and beats the TCN and the GP there in both periods. The two HBV arms lose to the LSTM in humid basins by 0.07–0.10. The GP is worst in arid basins in both periods, where flow is a rare, thresholded response.",
+   "Given a gauge, a 32-member Kalman filter on HBV, never trained on flow, beats the trained nowcast at one day (NSE +0.030, CRPS −0.041 on main). It ties at 3 days and falls behind at 7.",
+   "A Mondrian conformal layer fitted on 52 dev basins made every arm's coverage nearly equal (0.87–0.89 at 90 %) but did not make any arm sharper.",
+   "The harness reproduces FlowCast's published exam exactly, so these rows sit on the same scale as every earlier water result in the collection."
+  ],
+  "doesnt": [
+   "It does not rank these families in general. It covers one problem, one bank, networks of about 26k weights and at most 4 CPU-hours each. A transformer with GPU-scale training, or a GP with more data, could rank differently.",
+   "One seed per arm. On dev the LSTM's seed spread was about 0.02 sd. The exam's paired bootstrap covers basins, not seeds, so a tie here is a tie within about 0.01–0.02.",
+   "Most per-class winners are inside a tie. Only cells marked as clear of the others, and the win and loss pills, are real differences.",
+   "The gauged comparison against NWM and GR4J is not like for like. Neither reads the gauge, and NWM runs on better forcing with its own calibration.",
+   "It does not say whether the EnKF's day-1 edge comes from HBV or from the filter. Swapping in the learned tab_dpl parameters (rung r3) did not help on dev.",
+   "No ensemble of the tied learners was scored. Averaging them would be a new arm, and it would need its own dev gate before any exam."
+  ],
+  "limits": [
+   "One simulated bank (FlowCast's recipe, physics p1), shared by every arm, with its blind spots: ERA5-Land undercatch in the mountains, reservoirs in only 17 % of runs, and four lumped runoff structures.",
+   "Equal CPU budgets, not equal craft. The four sequence arms share one pipeline. The trees and the GP lean on 47 and 20 hand-built features. The GP was scoped down to 200k rows and 500 inducing points.",
+   "Rungs were chosen on 800 simulated runs and 52 dev basins. Dev differences under about 0.04 are noise.",
+   "The EnKF and both physics arms use one structure (HBV with degree-day snow) and no reservoirs. Large and regulated classes hold only 35–48 basins, so their intervals are wide.",
+   "Conformal shifts come from 52 dev basins (8–22 per stratum). The exam periods differ from dev in climate, and the recent one in gauge source (NWIS).",
+   "The rain bars in the showcase are ERA5-Land basin means, read for display after the exam was done, the same way the seeded storm draw read them."
+  ],
+  "next": [
+   "Fix the bank, not the learner. Build physics p2 (reservoir operations, a better precipitation prior, more structures) and re-run the five tied learners: the shared ceiling is the bank.",
+   "Pre-register an equal-weight ensemble of the tied five as a new arm with its own dev gate. Test the label-free gap detector from the Model families page: does the spread between families predict a basin's error on dev?",
+   "Gauged: a fixed lead gate (the EnKF at 1 day, the nowcast at 3–7), or the EnKF's analysed stores fed into the LSTM as inputs.",
+   "Give the transformer 24k steps to test whether it was budget-bound. Train the GP as a stochastic variational GP on the full 1.2M rows.",
+   "Conformal for sharpness: conformalised quantile regression with a CRPS-aware shift, and strata by basin size.",
+   "Run the vehicle bake-off on the same harness pattern."
+  ],
+  "footer": "River Bake-off v1.0 · exam run 20261123T074907, run once on 23 Nov 2026 by <code>harness/exam.py</code>; 21 arms re-hashed before and after scoring, all unchanged. Showcase basins and storms drawn by seed 20261118 from the forcing alone. Families link to the <a href=\"https://dogum.github.io/ML-Ratchet/model-families/\" target=\"_blank\" rel=\"noopener\">ML Ratchet Model families page</a>. Proposed write-up: <code>docs/experiments/bakeoff-river.md</code>; scripts, arms and raw results: <code>experiments/bakeoff-river/</code>."
+ }
+}

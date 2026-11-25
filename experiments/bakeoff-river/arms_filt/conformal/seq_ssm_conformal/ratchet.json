@@ -1,0 +1,36 @@
+{
+ "arm_id": "seq_ssm_conformal",
+ "label": "State-space model (S4D with a pointwise encoder) + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around seq_ssm)",
+ "group": "filt",
+ "protocols": [
+  "ungauged"
+ ],
+ "wraps": "seq_ssm",
+ "wraps_hash": "d93736f3c9c12f38397986d92ec29e62edc769481165dfd765d0a963723305bd",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.0077,
+  "base_train_cpu_hours": 3.693,
+  "notes": "conformal fit only (dev predictions of seq_ssm + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond seq_ssm's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)",
+ "extra_files": [
+  "../../../arms_seq/ssm",
+  "../lib",
+  "../../../arms_seq/common"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata snow/arid/humid/other) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage (LOBO) ungauged 0.95"
+  }
+ ],
+ "released": "c0"
+}

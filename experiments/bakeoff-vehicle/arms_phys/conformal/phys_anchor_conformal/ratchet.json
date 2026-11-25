@@ -1,0 +1,37 @@
+{
+ "arm_id": "phys_anchor_conformal",
+ "label": "Physics anchor: road-load estimate E_phys alone (+ simulation bands) + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around phys_anchor)",
+ "group": "phys",
+ "tracks": [
+  "table",
+  "trace"
+ ],
+ "wraps": "phys_anchor",
+ "wraps_hash": "c646d0fb9e424d1be69d3b84a6f1e405cc6d7a50526f706a56c724880c3a73e3",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {
+  "train_cpu_hours": 0.0135,
+  "base_train_cpu_hours": 0.002,
+  "notes": "conformal fit only (dev predictions of phys_anchor + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond phys_anchor's; strata from arch, cls and the dynamometer flag",
+ "extra_files": [
+  "../../phys_anchor",
+  "../lib"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata powertrain x road/dyno/hd) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage over the D16 sets (grouped 10-fold cross-fit): table cov50/90 0.45/0.81, trace cov50/90 0.45/0.81"
+  }
+ ],
+ "released": "c0"
+}

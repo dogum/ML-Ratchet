@@ -1,0 +1,107 @@
+{
+ "arm_id": "enet_v21_conformal",
+ "arm_dir": "/home/claude/bakeoff/vehicle/arms_phys/conformal/enet_v21_conformal",
+ "hash": "95a0d3433c3a199f65468e3254cc372f633761c5051be2b91e0685c9988bac0e",
+ "files": {
+  "calib.json": "0da3ff4bfc78dd55af1833b1ddfa0ab3120d7ee80fc489e24f28810cf9d41151",
+  "card.md": "d2fc349a27b40ceb14c10b7cad9acd47b8cf9989368a91bcb3a96380565818cc",
+  "predict.py": "caf5f75c55b6b7c5529bba04c5d55c917fa9536461bf06541a2aa297c9cf6fa7",
+  "ratchet.json": "c3f42a7185d2b757bc5e10534d49187ebc6019bcbcb073fc9dafe5d1f2ffc3eb",
+  "../lib/vcf_mondrian.py": "8ee71cd60c842c8871bacc7fd1544d791a188f5b25d3483c6a4d8f8cff279abc",
+  "../../../harness/arms_ref/enet_v21/card.md": "9deb2b665a32b609e21bc61b5df600dafdefe7ab4c3b15612e106383ef142280",
+  "../../../harness/arms_ref/enet_v21/model_np.py": "c01520f5101e7189dac72d12023e404087f943b3a8f58674ad1a08613f9ce9a1",
+  "../../../harness/arms_ref/enet_v21/predict.py": "5973e78b3cb9453ff95d48f0c3b3485f522915eb1eec13c6af85749ac3755c2d",
+  "../../../harness/arms_ref/enet_v21/ratchet.json": "c32d24a2d6f4997d1c1592a104447d257356c0a407bfd12eb38c3cb17e29cd52",
+  "../../../harness/arms_ref/enet_v21/sigma_factors.json": "1b3a661f05c1594fa2834f51975442720d0018aad11bf12c72d2d2d76c6c82b5",
+  "../../../harness/arms_ref/enet_v21/weights/r15_s0.npz": "7969b39342b18ce584a02e5510bdb13ac18919094015afb20b4ddc2c2167394f",
+  "../../../harness/arms_ref/enet_v21/weights/r15_s1.npz": "18c5f9ae11aa3f3446574c82dcf5c61b29e791e2b21f6a3e87d52cd8cd414deb",
+  "../../../harness/arms_ref/enet_v21/weights/r15_s2.npz": "98b87d98466a21212ac765e7d53c85473490bd56749a7fe99aae7504b8098dc7",
+  "../../../harness/arms_ref/enet_v21/weights/r15_s3.npz": "cfc2ff154f5e031caed9f726c410543df2cdf0ff12907f590d679e3bec2fcce6",
+  "../../../harness/arms_ref/enet_v21/weights/r15_s4.npz": "005b6b886a49fdb0356533f179f960905fbc5fcd31ce51ecdbd86d83e1810646"
+ },
+ "tracks": [
+  "table"
+ ],
+ "meta": {
+  "label": "EnergyNet v2.1 as released + Mondrian conformal",
+  "family": "conformal",
+  "family_label": "Conformal prediction (wrapper around enet_v21)",
+  "group": "phys",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.0066,
+   "base_train_cpu_hours": 0,
+   "notes": "conformal fit only (dev predictions of enet_v21 + shifts); the base arm is not retrained"
+  },
+  "released": "c0",
+  "feature_engineering": "none beyond enet_v21's; strata from arch, cls and the dynamometer flag"
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "table": {
+   "ved": {
+    "cpu_s_per_row": 0.00055,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 0.00053,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 0.00069,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "simval": {
+    "cpu_s_per_row": 0.00063,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "files_used": [
+   "arms_phys/conformal/enet_v21_conformal/calib.json",
+   "arms_phys/conformal/enet_v21_conformal/predict.py",
+   "arms_phys/conformal/enet_v21_conformal/ratchet.json",
+   "harness/arms_ref/enet_v21/model_np.py",
+   "harness/arms_ref/enet_v21/predict.py",
+   "harness/arms_ref/enet_v21/ratchet.json",
+   "harness/arms_ref/enet_v21/sigma_factors.json",
+   "harness/arms_ref/enet_v21/weights/r15_s0.npz",
+   "harness/arms_ref/enet_v21/weights/r15_s1.npz",
+   "harness/arms_ref/enet_v21/weights/r15_s2.npz",
+   "harness/arms_ref/enet_v21/weights/r15_s3.npz",
+   "harness/arms_ref/enet_v21/weights/r15_s4.npz",
+   "harness/bank/val/rows.npz",
+   "harness/bank/val/trace_v.npy",
+   "harness/bank/val/trace_x.npy",
+   "harness/real/dev/epa.npz",
+   "harness/real/dev/epa_meta.parquet",
+   "harness/real/dev/hd.npz",
+   "harness/real/dev/hd_meta.parquet",
+   "harness/real/dev/ved.npz",
+   "harness/real/dev/ved_meta.parquet"
+  ],
+  "exam_cpu_estimate_min": 1.1
+ },
+ "harness_hash": "45717be5e49d99933ebbaac1761ee133693cb5d0bde986d8da9bda4a1071b014",
+ "registered_at": "2026-11-23T14:18:20",
+ "history": [
+  {
+   "hash": "f2bf39cb75af1dc4ddba265ae6fc897df911fa3b768f586bebb030654b00d5db",
+   "registered_at": "2026-11-23T14:13:49",
+   "replaced_at": "2026-11-23T14:18:20"
+  }
+ ]
+}

@@ -3,8 +3,9 @@
 // Model facts (name, accent, reads, network, approach, losses, dev gate) are read from model.yaml and ratchet.yaml at
 // build time; backlog questions from docs/backlog.yaml. What lives here is the page's own framing: the families, the fit
 // ratings and their reasons, the lenses, and per-model notes that model.yaml does not carry (traits, weight counts,
-// twin-test findings). Fit ratings are judgement calls: none has been run as a rung. Pure data: no imports, so the
-// browser script and the tests can load it too.
+// twin-test findings). Fit ratings are judgement calls: none has been run as a rung. The River Bake-off
+// (docs/experiments/bakeoff-river.md) ran nine families on one shared problem; its exam evidence is in each family's
+// `bake` field. Pure data: no imports, so the browser script and the tests can load it too.
 
 export type Group = 'sig' | 'tab' | 'struct' | 'dist' | 'phys';
 export type FamilyStatus = 'y' | 'p' | 'n';
@@ -90,7 +91,18 @@ export interface Family {
   np: number; web: number; data: number;
   one: string; physics: string; suits: string; unc: string; extrap: string; risk: string;
   used: string[]; refs: string[];
+  /** Vehicle Bake-off evidence: the arm that tested this family and what happened on the shared exam */
+  vbake?: { arm: string; text: string };
+  /** River Bake-off evidence: the arm that tested this family and what happened on the shared exam */
+  bake?: { arm: string; text: string };
 }
+
+/** The River Bake-off: one problem (daily streamflow, 619 CAMELS-US exam basins), every family on equal terms. */
+export const BAKEOFF_RIVER = { doc: 'docs/experiments/bakeoff-river.md', dir: 'experiments/bakeoff-river', run: '20261123T074907', date: '23 Nov 2026' };
+
+/** The Vehicle Bake-off: one problem (trip energy, EnergyNet’s exam), every family on equal terms; exam evidence in
+ * each family's `vbake` field (mean exam MdAPE over the 16 D16 sets). */
+export const BAKEOFF_VEHICLE = { doc: 'docs/experiments/bakeoff-vehicle.md', dir: 'experiments/bakeoff-vehicle', run: '20261123T204251', date: '23 Nov 2026' };
 
 export const FAMILIES: Family[] = [
   { id: 'cnn1d', name: '1-D convolutional network', g: 'sig', st: 'y', np: 3, web: 3, data: 2,
@@ -100,7 +112,9 @@ export const FAMILIES: Family[] = [
     unc: 'Output heads: Gaussian or β-NLL, von Mises for angles.',
     extrap: 'Holds within the signal family; weak for amplitudes, durations or sources outside the bank.',
     risk: 'The receptive field can miss long-range links. QuakeNet’s 41-minute record holds P, S and surface waves far apart.',
-    used: ['QuakeNet', 'BeatNet', 'BearingNet', 'CellSense', 'ChirpNet', 'TransitNet', 'StarQuake', 'TripDetective', 'FireDetective (over 12 half-day steps of a fire’s satellite record)'], refs: [] },
+    used: ['QuakeNet', 'BeatNet', 'BearingNet', 'CellSense', 'ChirpNet', 'TransitNet', 'StarQuake', 'TripDetective', 'FireDetective (over 12 half-day steps of a fire’s satellite record)'], refs: [],
+    bake: { arm: 'seq_tcn', text: 'A dilated causal TCN (1,023-day reach) tied the LSTM on the ungauged exam (0.338 / 0.382). Strong in snow basins, behind the LSTM in arid ones (−0.049 / −0.030): fixed lags read threshold runoff badly.' },
+    vbake: { arm: 'trace_cnn', text: 'A dilated 1-D CNN on the trip trace scored 12.7 %, 0.7 points behind the GRU control; best on VED petrol trips (8.6 %, tied with five others).' } },
   { id: 'cnn2d', name: '2-D CNN on a physics grid', g: 'sig', st: 'y', np: 3, web: 3, data: 2,
     one: 'Local 2-D patterns, read the same way anywhere on the grid.',
     physics: 'The grid is the physics: days × solar time (SunDoctor), frequency × time where swell arrives as a dispersion ridge (SwellCast), autocorrelation in units of Δν (StarQuake).',
@@ -116,7 +130,9 @@ export const FAMILIES: Family[] = [
     unc: 'Output heads.',
     extrap: 'Weak beyond the training lengths unless the position encoding generalises.',
     risk: 'Needs more simulations than a CNN (simulations are free here) and can fit simulator quirks. Cost grows with the square of the length.',
-    used: [], refs: ['vaswani17', 'mousavi20'] },
+    used: [], refs: ['vaswani17', 'mousavi20'],
+    bake: { arm: 'seq_transformer', text: 'A causal transformer over daily tokens needed 4× FlowCast’s training steps to catch up on simulations and still lost to FlowCast v1.0 on the exam (0.323 / 0.360, −0.018 in both periods).' },
+    vbake: { arm: 'trace_transformer', text: 'A transformer over 20-s patch tokens of the 1 Hz trip was the best new learner (11.7 %): 0.4 points ahead of the GRU control and 0.9 ahead of a dev-fitted classical composite. With conformal bands it had the lowest CRPS of any row.' } },
   { id: 'ssm', name: 'State-space and recurrent models', g: 'sig', st: 'y', np: 2, web: 2, data: 2,
     one: 'A hidden state updated step by step: long memory at a cost linear in length (LSTM, S4, Mamba).',
     physics: 'The state can mirror a physical one: stored water, state of charge, ring current.',
@@ -124,7 +140,9 @@ export const FAMILIES: Family[] = [
     unc: 'Output heads.',
     extrap: 'Stable within trained regimes; long forecasts can drift.',
     risk: 'Harder to train. Plain recurrent networks forget; gated or structured state spaces are needed for long records.',
-    used: ['FlowCast (LSTM over two years of daily weather)', 'SnowSense (two-layer GRU over a water year)', 'StormNet (physical recurrence with a learned residual readout)'], refs: ['hochreiter97', 'gu22', 'gu23', 'kratzert19'] },
+    used: ['FlowCast (LSTM over two years of daily weather)', 'SnowSense (two-layer GRU over a water year)', 'StormNet (physical recurrence with a learned residual readout)'], refs: ['hochreiter97', 'gu22', 'gu23', 'kratzert19'],
+    bake: { arm: 'seq_lstm, seq_ssm', text: 'Ungauged exam NSE (main / recent): FlowCast’s LSTM retrained on the shared bank 0.340 / 0.391, tied with the best and ahead of FlowCast v1.0 on recent, best in arid basins. An S4D state space needed a nonlinear encoder in front of its linear filters (+0.024 on simulations) and then tied (0.336 / 0.386), best in humid basins.' },
+    vbake: { arm: 'trace_gru, trace_s4d', text: 'A bidirectional GRU on the trip trace scored 12.0 %, tied with EnergyNet v2.1 in every trip condition and best in the cold. An S4D state space had the best simulated skill of the trace arms and the worst exam score (13.0 %).' } },
   { id: 'mlp', name: 'MLP on physics features', g: 'tab', st: 'y', np: 3, web: 3, data: 2,
     one: 'Almost no built-in assumption beyond smoothness. The structure comes from the features.',
     physics: 'The inputs are physics: road-load work integrals (EnergyNet), building-stock components (DemandCast), implied heat-rate bins (PlantDetective).',
@@ -132,7 +150,8 @@ export const FAMILIES: Family[] = [
     unc: 'Gaussian NLL heads and ensembles.',
     extrap: 'A ReLU network continues linearly from the edge of the data, which is right only where the trend is linear.',
     risk: 'Capacity is rarely the limit here. EnergyNet’s wider networks (0.73 M weights each) lost 0.019 of skill; three times the data gained 0.019.',
-    used: ['EnergyNet', 'DemandCast', 'GridPulse', 'PlantDetective', 'HybridPilot', 'BatteryPilot', 'BasinDetective', 'ReservoirPilot', 'FireSize', 'FirePilot (a value net that ranks candidate line plans)'], refs: [] },
+    used: ['EnergyNet', 'DemandCast', 'GridPulse', 'PlantDetective', 'HybridPilot', 'BatteryPilot', 'BasinDetective', 'ReservoirPilot', 'FireSize', 'FirePilot (a value net that ranks candidate line plans)'], refs: [],
+    vbake: { arm: 'tab_mlp', text: 'EnergyNet’s network retrained on one simulated bank (a third of v2.1’s data) scored 12.1 % mean exam MdAPE over 16 sets, best of the table learners; the same network on 3x the data (EnergyNet v2.1) scored 11.0 %. Tied a dev-fitted classical composite.' } },
   { id: 'gbm', name: 'Gradient-boosted trees', g: 'tab', st: 'n', np: 3, web: 3, data: 3,
     one: 'Hundreds of shallow trees summed: thresholds on one input at a time, which handle step changes, counts and useless columns well.',
     physics: 'The same feature tables as the MLPs. Monotone constraints can encode signs the physics knows: more grade, more energy.',
@@ -140,7 +159,9 @@ export const FAMILIES: Family[] = [
     unc: 'Quantile objectives, distributional boosting (NGBoost), ensembles or a conformal wrapper.',
     extrap: 'Constant beyond the last split, so flat outside the bank. Predicting a correction to physics makes that mild.',
     risk: 'The output is piecewise constant: wrong for smooth control signals and for anything that needs derivatives.',
-    used: [], refs: ['friedman01', 'chen16', 'ke17', 'prok18', 'grinsztajn22', 'duan20', 'lundberg20'] },
+    used: [], refs: ['friedman01', 'chen16', 'ke17', 'prok18', 'grinsztajn22', 'duan20', 'lundberg20'],
+    bake: { arm: 'tab_gbm', text: 'LightGBM on 47 hand-built memory features topped the main ungauged board (0.345, tied) and beat FlowCast v1.0 on recent (0.388); best in snow basins. Monotone constraints on 21 water features cost 0.031 on simulations and were dropped.' },
+    vbake: { arm: 'tab_gbm', text: 'LightGBM on the 151 physics features scored 12.6 %, 0.5 points behind the MLP, with the best hybrid average (9.0 %). Monotone constraints on physics-signed inputs cost simulated skill and were dropped, as in the River Bake-off.' } },
   { id: 'gp', name: 'Gaussian processes', g: 'tab', st: 'n', np: 2, web: 2, data: 3,
     one: 'Smooth functions whose correlations are set by a kernel; nearby inputs give similar outputs.',
     physics: 'The mean function can be the physics estimate. Kernels can encode periodicity, length scales and known noise such as granulation or seasonal loading.',
@@ -148,7 +169,9 @@ export const FAMILIES: Family[] = [
     unc: 'Native. The bars widen away from the data.',
     extrap: 'Falls back to the mean function away from data, with growing error bars.',
     risk: 'Cost grows as n³; past a few thousand points it needs sparse or inducing-point methods. Weak in high dimensions.',
-    used: [], refs: ['rasmussen06', 'foreman17', 'kennedy01'] },
+    used: [], refs: ['rasmussen06', 'foreman17', 'kennedy01'],
+    bake: { arm: 'tab_gp', text: 'A sparse GP (500 inducing points, 20 features) came last of the learners (0.297 / 0.344): peaks smoothed away (|FHV| 44 %), worst in arid basins; its raw 50 % band held 64–67 % of days.' },
+    vbake: { arm: 'tab_gp', text: 'A sparse GP (500 inducing points, 46 inputs) tied the trees at 12.6 % and was best on battery-electric cars (11.2 %) and long trips. Its raw bands were too wide (the 50 % band held 61 %).' } },
   { id: 'tabfm', name: 'Tabular foundation models', g: 'tab', st: 'n', np: 1, web: 1, data: 3,
     one: 'A transformer pretrained on millions of synthetic datasets from a generic prior. It predicts by reading a context table, with no training step (TabPFN and its successors).',
     physics: 'None by default. It learns only from synthetic data, as this collection does, but from a generic prior instead of a domain simulator.',
@@ -196,7 +219,9 @@ export const FAMILIES: Family[] = [
     unc: 'Guaranteed coverage on average, under that interchangeability.',
     extrap: 'Under a sim-to-real shift the guarantee becomes a calibrated widening, not a proof.',
     risk: 'Here the calibration set is dev: 16 to 400 units, so the quantiles are coarse.',
-    used: [], refs: ['angelopoulos21', 'romano19'] },
+    used: [], refs: ['angelopoulos21', 'romano19'],
+    bake: { arm: '10 wrappers', text: 'A Mondrian layer fitted on 52 dev basins brought every arm’s 90 % band to 0.87–0.89 exam coverage (raw 0.87–0.95), but made CRPS slightly worse in 14 of 18 arm-periods: calibration, not sharpness.' },
+    vbake: { arm: '10 wrappers', text: 'A Mondrian layer fitted on dev residuals per powertrain improved CRPS for all 10 wrapped arms and lifted the networks’ and trees’ 90 % coverage from 0.71–0.77 to 0.82–0.89.' } },
   { id: 'ensemble', name: 'Ensembles and heteroscedastic heads', g: 'dist', st: 'y', np: 3, web: 3, data: 2,
     one: 'Several independently trained members. Their spread adds the model’s own uncertainty to the predicted noise.',
     physics: 'None directly.',
@@ -204,7 +229,8 @@ export const FAMILIES: Family[] = [
     unc: 'Spread plus predicted variance.',
     extrap: 'Members disagree away from the data, which is a signal in itself.',
     risk: 'Cost × members. EnergyNet v2-r6 (5 seeds) gained +0.004 and was rejected, short of the margin.',
-    used: ['EnergyNet (5)', 'PlantDetective (3)', 'CellSense NMC811 (4)', 'BasinDetective (5)', 'FireSize (3)', 'FireDetective (3)'], refs: ['lakshminarayanan17', 'seitzer22'] },
+    used: ['EnergyNet (5)', 'PlantDetective (3)', 'CellSense NMC811 (4)', 'BasinDetective (5)', 'FireSize (3)', 'FireDetective (3)'], refs: ['lakshminarayanan17', 'seitzer22'],
+    vbake: { arm: 'enet_v21', text: 'EnergyNet v2.1 (5 MLPs, three banks) was the reference: 11.0 % mean exam MdAPE, ahead of every bake-off learner by 0.7–2.0 points and best on plug-ins, VED hybrids and five of seven trip conditions. It reproduced its published exam exactly.' } },
   { id: 'diffusion', name: 'Diffusion and score models', g: 'dist', st: 'n', np: 1, web: 1, data: 1,
     one: 'Learn to remove noise step by step; sample by running the noise process backwards.',
     physics: 'Can sample posteriors conditioned on data, or emulate a simulator’s outputs.',
@@ -220,7 +246,8 @@ export const FAMILIES: Family[] = [
     unc: 'The correction’s head.',
     extrap: 'Degrades to the classical estimate rather than to nonsense.',
     risk: 'If the classical estimate is poor, the correction is as large as the answer and buys nothing.',
-    used: ['TransitNet', 'EnergyNet', 'DemandCast', 'PlantDetective', 'TripDetective', 'StarQuake', 'ChirpNet', 'SwellCast', 'BatteryPilot', 'HybridPilot'], refs: ['psichogios92'] },
+    used: ['TransitNet', 'EnergyNet', 'DemandCast', 'PlantDetective', 'TripDetective', 'StarQuake', 'ChirpNet', 'SwellCast', 'BatteryPilot', 'HybridPilot'], refs: ['psichogios92'],
+    vbake: { arm: 'phys_anchor', text: 'Road-load E_phys alone scored 22.9 %; every learner that corrects it reached 11.7–13.0 %, and adding the anchor gave each trace network +0.016 to +0.034 simulated skill. Across families the per-trip errors correlate at 0.92.' } },
   { id: 'symbolic', name: 'Symbolic regression and sparse libraries', g: 'phys', st: 'y', np: 3, web: 3, data: 3,
     one: 'Short formulas, found by search over operators (PySR) or by a sparse fit over a library of terms (SINDy).',
     physics: 'The output is a law that can be read, checked and written into the simulator.',
@@ -228,7 +255,9 @@ export const FAMILIES: Family[] = [
     unc: 'Bootstrap over the fit, or none.',
     extrap: 'Strong when the form is right; risky when the form is only close.',
     risk: 'The search is expensive and can find spurious forms. A formula still has to pass the frozen set and the dev gate.',
-    used: ['LawFinder (one short law per shared simulator, own PySR-style search)'], refs: ['brunton16', 'cranmer23', 'udrescu20'] },
+    used: ['LawFinder (one short law per shared simulator, own PySR-style search)'], refs: ['brunton16', 'cranmer23', 'udrescu20'],
+    bake: { arm: 'tab_formula', text: '17 attribute-to-HBV-parameter formulas (7–15 symbols) distilled from the physics-in-the-loop network matched their teacher on simulations, dev and the exam (0.306 vs 0.313, 0.363 vs 0.366: paired ties).' },
+    vbake: { arm: 'formula', text: 'A three-formula trip-energy law (LawFinder’s road law) scored 21.1 %: 19 points better than road-load on VED petrol trips (14.0 vs 33.0 %), but 9 points behind the networks. It misses dynamometer highway cycles.' } },
   { id: 'diffsim', name: 'Learning through the physics', g: 'phys', st: 'y', np: 3, web: 3, data: 2,
     one: 'Train for the outcome of the decision, with the physics executor inside the loss.',
     physics: 'The executor: battery limits, losses and wear; the powertrain model.',
@@ -236,7 +265,8 @@ export const FAMILIES: Family[] = [
     unc: 'Bootstrap over outcomes.',
     extrap: 'As good as the executor.',
     risk: 'A controller can be graded only inside the simulator. RoadSim burns about 20% less fuel than real hybrids, more than the 1–3% between strategies.',
-    used: ['BatteryPilot', 'HybridPilot', 'ReservoirPilot (back-propagates the cost through a reservoir mass balance)'], refs: ['donti17', 'elmachtoub22'] },
+    used: ['BatteryPilot', 'HybridPilot', 'ReservoirPilot (back-propagates the cost through a reservoir mass balance)'], refs: ['donti17', 'elmachtoub22'],
+    bake: { arm: 'tab_dpl', text: 'A network choosing HBV parameters, trained through a torch copy of WaterSim (matches to 7e-14 mm/day), lost to FlowCast v1.0 (0.313 / 0.366), most in humid basins. Mass balance did not buy NSE.' } },
   { id: 'assim', name: 'Filters and data assimilation', g: 'phys', st: 'n', np: 3, web: 3, data: 3,
     one: 'A physics model carries a state forward and each new measurement corrects it (Kalman, ensemble and particle filters).',
     physics: 'All of it: the state equation and the measurement model.',
@@ -244,7 +274,8 @@ export const FAMILIES: Family[] = [
     unc: 'Native: the state covariance.',
     extrap: 'As good as the model.',
     risk: 'A different product: tracking, not one cold read. It needs a state-space form and noise models.',
-    used: [], refs: ['kalman60', 'evensen94'] },
+    used: [], refs: ['kalman60', 'evensen94'],
+    bake: { arm: 'enkf_watersim', text: 'A 32-member EnKF on WaterSim’s HBV, never trained on flow, beat FlowCast’s nowcast at 1 day (0.599 vs 0.569; CRPS 0.207 vs 0.248), tied at 3 days and fell behind at 7 (0.405 vs 0.426).' } },
   { id: 'experts', name: 'Gates, stacking and mixtures of experts', g: 'phys', st: 'p', np: 3, web: 3, data: 2,
     one: 'Different models for different regimes, chosen or weighted by a small gate.',
     physics: 'The regimes are physical: battery duration, observing length, rig, powertrain.',

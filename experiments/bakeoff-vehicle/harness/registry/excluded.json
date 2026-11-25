@@ -1,0 +1,20 @@
+{
+ "/home/claude/bakeoff/vehicle/arms_table/tab_tabpfn": {
+  "arm_id": "tab_tabpfn",
+  "registered_hash": "cb26e0c49f796b7d4220798cccfdf6d8e2da2ea600241af7fe3edd96e72f5f1f",
+  "reason": "compute: ~937 single-thread CPU-min on a shared 2-core box; TabPFN is a yardstick (lens, not a release); its sim/dev numbers stand; a dated supplementary exam can be run later on a larger machine.",
+  "decided_by": "bake-off coordinator, before the exam, for compute reasons only",
+  "decided_at": "2026-11-23 (before exam.py --run)",
+  "registry_estimate_min": 480.3,
+  "note": "registry record kept unchanged; register.registered() skips folders listed here"
+ },
+ "/home/claude/bakeoff/vehicle/arms_phys/conformal/tab_tabpfn_conformal": {
+  "arm_id": "tab_tabpfn_conformal",
+  "registered_hash": "e07f73a743b3e67b812edb9d417294eda0de63f88a3573e7f9af9b555b687960",
+  "reason": "compute: ~937 single-thread CPU-min on a shared 2-core box; TabPFN is a yardstick (lens, not a release); its sim/dev numbers stand; a dated supplementary exam can be run later on a larger machine.",
+  "decided_by": "bake-off coordinator, before the exam, for compute reasons only",
+  "decided_at": "2026-11-23 (before exam.py --run)",
+  "registry_estimate_min": 457.1,
+  "note": "registry record kept unchanged; register.registered() skips folders listed here"
+ }
+}

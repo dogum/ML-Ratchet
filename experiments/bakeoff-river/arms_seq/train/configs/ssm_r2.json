@@ -1,0 +1,1 @@
+{"arm": "ssm", "rung": "r2", "arch": "ssm", "d": 48, "N2": 16, "layers": 3, "dt_min": 0.001, "dt_max": 0.1, "dropout": 0.1, "inner_dropout": 0.0, "steps": 6000, "batch": 32, "lr": 0.002, "seed": 0, "note": "pointwise nonlinear encoder (MLP 48->48->48, residual) before the linear time-invariant SSM layers; 6000 steps", "pre_mlp": 48}

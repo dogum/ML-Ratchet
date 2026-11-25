@@ -1,0 +1,625 @@
+<title>Vehicle Bake-off</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a fuel-economy label sheet. Heavy ruled label boxes, big tabular numbers, one wide column; the trip bench is the hero's sequel. */
+:root {
+  --paper: #f6f6f2; --panel: #ffffff; --ink: #121417; --ink-2: #3d434a; --ink-3: #6a7079; --rule: #d6d8d4; --wash: #ebece7;
+  --band: #121417; --band-ink: #f6f6f2; --accent: #1d5fb0; --accent-ink: #ffffff; --meas: #121417;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #6250d6; --s8: #e34948;
+  --ref: #858b93; --win: #0b7a3b; --loss: #c23b3b; --tie: #6a7079;
+  --c1: #2a78d6; --c2: #eb6834; --c3: #1baf7a; --c4: #eda100; --c5: #e87ba4;
+  --q1: #eef4fc; --q2: #cde2fb; --q3: #9ec5f4; --q4: #5598e7; --q5: #1c5cab;
+  --f-display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Barlow", "Segoe UI", Helvetica, Arial, sans-serif;
+  --f-data: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #111316; --panel: #191c20; --ink: #eceeea; --ink-2: #bfc4c9; --ink-3: #8f959c; --rule: #2e3338; --wash: #20242a;
+  --band: #04060a; --band-ink: #eceeea; --accent: #6aa6ec; --accent-ink: #0b0d10; --meas: #f4f5f1;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767;
+  --ref: #979da5; --win: #3ccf7a; --loss: #ee7a7a; --tie: #8f959c;
+  --c1: #3987e5; --c2: #d95926; --c3: #199e70; --c4: #c98500; --c5: #d55181;
+  --q1: #17212e; --q2: #184f95; --q3: #256abf; --q4: #3987e5; --q5: #86b6ef; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #111316; --panel: #191c20; --ink: #eceeea; --ink-2: #bfc4c9; --ink-3: #8f959c; --rule: #2e3338; --wash: #20242a;
+  --band: #04060a; --band-ink: #eceeea; --accent: #6aa6ec; --accent-ink: #0b0d10; --meas: #f4f5f1;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767;
+  --ref: #979da5; --win: #3ccf7a; --loss: #ee7a7a; --tie: #8f959c;
+  --c1: #3987e5; --c2: #d95926; --c3: #199e70; --c4: #c98500; --c5: #d55181;
+  --q1: #17212e; --q2: #184f95; --q3: #256abf; --q4: #3987e5; --q5: #86b6ef; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--paper); color: var(--ink); font: 400 16px/1.55 var(--f-body); }
+.wrap { max-width: 1140px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
+h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 700; line-height: 1.02; text-transform: uppercase; letter-spacing: 0.01em }
+h3 { font-size: 1.3rem; font-weight: 700; line-height: 1.15; letter-spacing: 0.01em }
+p { margin: 0 }
+a { color: var(--accent) }
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.kicker { font: 500 0.72rem/1.2 var(--f-data); text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3) }
+.num { font-family: var(--f-data); font-variant-numeric: tabular-nums }
+.lede { max-width: 68ch; color: var(--ink-2); font-size: 1.05rem }
+section.sec { padding-block: 56px 8px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px }
+section.sec > * { min-width: 0 }
+section.sec > header { display: grid; gap: 8px; max-width: 74ch; border-top: 6px solid var(--ink); padding-top: 12px }
+
+/* hero: the label's black band */
+.hero { background: var(--band); color: var(--band-ink); margin-top: calc(-1 * env(safe-area-inset-top, 0px)); padding-top: calc(env(safe-area-inset-top, 0px) + 36px); padding-bottom: 34px }
+.hero .wrap { display: grid; gap: 18px }
+.hero .kicker { color: color-mix(in srgb, var(--band-ink) 68%, transparent) }
+.hero h1 { font-size: clamp(3rem, 10vw, 6.8rem); font-weight: 800; line-height: 0.88; text-transform: uppercase; letter-spacing: -0.005em }
+.hero h1 span { display: block; font-weight: 500; font-size: 0.32em; letter-spacing: 0.08em; margin-top: 10px; color: color-mix(in srgb, var(--band-ink) 72%, transparent) }
+.hero p.thesis { max-width: 64ch; font-size: 1.14rem; color: color-mix(in srgb, var(--band-ink) 90%, transparent) }
+.hero .facts { display: flex; flex-wrap: wrap; gap: 8px 22px; font: 500 0.8rem/1.3 var(--f-data); color: color-mix(in srgb, var(--band-ink) 72%, transparent) }
+.hero .facts b { color: var(--band-ink); font-weight: 500 }
+.stickers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 2px solid var(--band-ink); }
+@media (max-width: 860px) { .stickers { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+@media (max-width: 460px) { .stickers { grid-template-columns: minmax(0, 1fr) } }
+.stickers > div { padding: 12px 14px; display: grid; gap: 4px; align-content: start; min-width: 0; border-right: 1px solid color-mix(in srgb, var(--band-ink) 40%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--band-ink) 40%, transparent) }
+.stickers .big { font: 700 2.3rem/1 var(--f-display); font-variant-numeric: tabular-nums }
+.stickers .big small { font-size: 0.45em; font-weight: 500; letter-spacing: 0.04em; margin-left: 4px }
+.stickers b { font: 600 1rem/1.2 var(--f-display); letter-spacing: 0.02em; text-transform: uppercase }
+.stickers span { font-size: 0.9rem; color: color-mix(in srgb, var(--band-ink) 80%, transparent) }
+
+/* controls */
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end }
+.ctl { display: grid; gap: 4px; min-width: 0; max-width: 100% }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1.5px solid var(--ink); border-radius: 3px; overflow: hidden; background: var(--panel) }
+.seg button { font: 600 0.86rem/1 var(--f-body); padding: 8px 12px; border: 0; background: transparent; color: var(--ink-2); cursor: pointer; border-right: 1px solid var(--rule) }
+.seg button:last-child { border-right: 0 }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper) }
+select { font: 500 0.92rem/1.2 var(--f-body); padding: 7px 10px; border: 1.5px solid var(--ink); border-radius: 3px; background: var(--panel); color: var(--ink); max-width: 100% }
+.chips { display: flex; flex-wrap: wrap; gap: 6px }
+.chip { display: inline-flex; align-items: center; gap: 7px; font: 500 0.84rem/1 var(--f-body); padding: 6px 10px 6px 8px; border: 1px solid var(--rule); border-radius: 999px; background: var(--panel); color: var(--ink-2); cursor: pointer }
+.chip[aria-pressed="false"] { opacity: 0.5; background: transparent }
+.chip[aria-pressed="false"] .sw { background: transparent !important }
+.sw { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 2px solid currentColor; flex: none }
+.chk { display: inline-flex; align-items: center; gap: 6px; font-size: 0.92rem; color: var(--ink-2); cursor: pointer }
+
+/* the bench */
+.bench { background: var(--panel); border: 2px solid var(--ink); display: grid; min-width: 0 }
+.bench > * { min-width: 0 }
+.bench-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; align-items: baseline; padding: 12px 16px; background: var(--ink); color: var(--paper) }
+.bench-head h3 { font-size: 1.45rem; text-transform: uppercase }
+.bench-head .meta { font: 0.8rem/1.4 var(--f-data); color: color-mix(in srgb, var(--paper) 75%, transparent) }
+.bench-body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+@media (max-width: 880px) { .bench-body { grid-template-columns: minmax(0, 1fr) } }
+.bench-body > div { padding: 14px 16px; display: grid; gap: 12px; align-content: start; min-width: 0 }
+.bench-body > div + div { border-left: 1px solid var(--rule) }
+@media (max-width: 880px) { .bench-body > div + div { border-left: 0; border-top: 1px solid var(--rule) } }
+.specs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--rule) }
+.specs div { padding: 8px 10px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); display: grid; gap: 2px; min-width: 0 }
+.specs div:nth-child(3n) { border-right: 0 }
+.specs b { font: 600 1.25rem/1.1 var(--f-display); font-variant-numeric: tabular-nums }
+.specs span { font: 500 0.66rem/1.2 var(--f-data); text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3) }
+.measured { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; border: 2px solid var(--ink); padding: 10px 12px }
+.measured .big { font: 800 2.6rem/1 var(--f-display); font-variant-numeric: tabular-nums }
+.measured .unit { font: 600 1rem var(--f-display); text-transform: uppercase; letter-spacing: 0.05em }
+.measured .alt { font: 0.82rem var(--f-data); color: var(--ink-3) }
+.chart { position: relative; width: 100%; min-width: 0 }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible }
+.axis text, .lab { font: 11px var(--f-data); fill: var(--ink-3) }
+.lab-ink { font: 12px var(--f-body); fill: var(--ink) }
+.grid line { stroke: var(--rule); stroke-width: 1 }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1.5px solid var(--ink); border-radius: 3px; padding: 8px 10px; font: 12px/1.45 var(--f-data); color: var(--ink); box-shadow: 0 4px 14px rgba(0,0,0,0.14); min-width: 170px; z-index: 3 }
+.tip .d { color: var(--ink-3); margin-bottom: 3px }
+.tip .r { display: flex; justify-content: space-between; gap: 14px }
+.legend-row { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 0.85rem; color: var(--ink-2) }
+.legend-row i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px }
+
+/* tables */
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem }
+th { font: 500 0.68rem/1.2 var(--f-data); text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-3); text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--ink); white-space: nowrap; vertical-align: bottom }
+td { padding: 7px 10px; border-bottom: 1px solid var(--rule); vertical-align: middle }
+td.n, th.n { text-align: right; font-family: var(--f-data); font-variant-numeric: tabular-nums; white-space: nowrap }
+tr.ref td { color: var(--ink-2) }
+tr.ref td:first-child { font-style: italic }
+tr.sep td { border-bottom: 2px solid var(--ink-3); padding: 0 }
+tr.conf td:first-child { padding-left: 26px; color: var(--ink-2) }
+td.nm { min-width: 190px; max-width: 260px }
+.tframe { overflow-x: auto; background: var(--panel); border: 2px solid var(--ink) }
+.pill { display: inline-block; font: 500 0.68rem/1 var(--f-data); letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 6px; border-radius: 3px; border: 1px solid currentColor; white-space: nowrap }
+.pill.win { color: var(--win) } .pill.loss { color: var(--loss) } .pill.tie { color: var(--tie) }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; vertical-align: 0 }
+.bar { display: inline-block; height: 8px; background: var(--ink-3); border-radius: 0 3px 3px 0; vertical-align: middle; margin-right: 8px }
+.note { font-size: 0.88rem; color: var(--ink-3); max-width: 84ch }
+
+/* wins map */
+.wmap td.c { text-align: center; font: 500 0.84rem var(--f-data); font-variant-numeric: tabular-nums; min-width: 58px; position: relative }
+.wmap td.c.best { outline: 2.5px solid var(--ink); outline-offset: -4px; font-weight: 700 }
+.wmap td.c.tied::after { content: ""; position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.85 }
+.ramp { display: inline-flex; border-radius: 2px; overflow: hidden; vertical-align: middle }
+.ramp i { width: 22px; height: 10px; display: block; margin: 0 }
+.wins-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 2px solid var(--ink); background: var(--panel) }
+@media (max-width: 860px) { .wins-cards { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+@media (max-width: 440px) { .wins-cards { grid-template-columns: minmax(0, 1fr) } }
+.wins-cards div { padding: 12px; display: grid; gap: 4px; min-width: 0; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); align-content: start }
+.wins-cards b { font: 700 1.05rem/1.15 var(--f-display); letter-spacing: 0.01em }
+.wins-cards span { font-size: 0.86rem; color: var(--ink-2) }
+
+/* families */
+.fams { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px }
+@media (max-width: 700px) { .fams { grid-template-columns: minmax(0, 1fr) } }
+.fam { background: var(--panel); border: 1.5px solid var(--ink); padding: 14px 16px; display: grid; gap: 9px; align-content: start; min-width: 0; border-left: 8px solid var(--c) }
+.fam .top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap }
+.fam .grp { font: 500 0.68rem/1.2 var(--f-data); text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3) }
+.fam p { font-size: 0.95rem; color: var(--ink-2) }
+.fam p b { color: var(--ink); font-weight: 600 }
+.fam .score { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 0.8rem/1.3 var(--f-data); color: var(--ink-3) }
+.fam .score b { color: var(--ink); font-weight: 500 }
+.fam a.more { font-size: 0.9rem; font-weight: 600; text-decoration: none }
+.fam a.more:hover { text-decoration: underline }
+
+/* findings, compare, limits */
+.finds { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px }
+.find { border-left: 4px solid var(--ink); padding: 4px 0 4px 14px; display: grid; gap: 6px; min-width: 0; align-content: start }
+.find .big { font: 800 1.9rem/1 var(--f-display); font-variant-numeric: tabular-nums }
+.find p { color: var(--ink-2); font-size: 0.95rem }
+.find .who { font: 500 0.7rem/1.2 var(--f-data); text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3) }
+.vs td:first-child { font-weight: 600; width: 22% }
+.vs td { vertical-align: top }
+.cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px }
+.cols2 ul { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; color: var(--ink-2) }
+.cols2 h3 { margin-bottom: 8px; text-transform: uppercase }
+footer { padding-block: 48px 40px; color: var(--ink-3); font-size: 0.85rem; display: grid; gap: 6px }
+@media (max-width: 560px) {
+  .bench-body > div { padding: 12px }
+  td, th { padding: 6px 7px }
+  .specs b { font-size: 1.1rem }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+</style>
+
+<div class="hero">
+  <div class="wrap">
+    <p class="kicker">ML Ratchet · experiment · trip energy · run <span id="rid"></span></p>
+    <h1>Vehicle Bake-off<span>One problem · every learner family · one exam</span></h1>
+    <p class="thesis" id="thesis"></p>
+    <div class="facts" id="facts"></div>
+    <div class="stickers" id="stickers"></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="sec" id="showcase">
+    <header>
+      <p class="kicker">Watch them work</p>
+      <h2>Eight exam trips</h2>
+      <p class="lede">The trips were drawn by seed from their inputs alone (powertrain, distance, speed, temperature, climb) before any result existed. Every estimate below is the learner's saved exam prediction for that trip.</p>
+    </header>
+    <div class="controls">
+      <div class="ctl"><span class="kicker">Trip</span><div class="seg" id="seg-trip" role="group" aria-label="Showcase trip"></div></div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h3 id="b-title"></h3><span class="meta" id="b-meta"></span></div>
+      <div class="bench-body">
+        <div>
+          <div class="specs" id="b-specs"></div>
+          <div class="ctl"><span class="kicker">Route profile (5-s means)</span><div class="chart" id="profile"></div></div>
+        </div>
+        <div>
+          <div class="measured" id="b-meas"></div>
+          <div class="ctl"><span class="kicker">Learners (tap to show or hide)</span><div class="chips" id="chips"></div></div>
+          <div class="controls">
+            <label class="chk"><input type="checkbox" id="cb-conf"> Conformal bands (recalibrated on dev)</label>
+          </div>
+          <div class="chart" id="est"></div>
+          <div class="legend-row" id="est-legend"></div>
+          <div class="ctl"><span class="kicker">Where the energy goes (each learner's own split, MJ)</span><div class="chart" id="comp"></div></div>
+          <div class="legend-row" id="comp-legend"></div>
+          <p class="note" id="b-note"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="boards">
+    <header>
+      <p class="kicker">The exam, run once</p>
+      <h2>Leaderboards</h2>
+      <p class="lede" id="boards-lede"></p>
+    </header>
+    <div class="controls">
+      <div class="ctl"><span class="kicker">Track</span><div class="seg" id="seg-track" role="group" aria-label="Track"></div></div>
+      <label class="chk"><input type="checkbox" id="cb-confrows"> Show conformal rows</label>
+    </div>
+    <div class="tframe"><table id="t-board"></table></div>
+    <p class="note" id="board-note"></p>
+    <h3>Every exam set</h3>
+    <div class="controls">
+      <div class="ctl"><span class="kicker">Set</span><select id="sel-set" aria-label="Exam set"></select></div>
+    </div>
+    <div class="tframe"><table id="t-set"></table></div>
+    <p class="note" id="set-note"></p>
+    <h3>Error bars: raw against conformal</h3>
+    <div class="tframe"><table id="t-unc"></table></div>
+    <p class="note">Coverage is the share of exam units inside the 50 % (q25 to q75) and 90 % (q05 to q95) bands, averaged over the 16 headline sets; nominal 0.50 and 0.90. CRPS is the 5-quantile score on log energy; lower is better. The conformal layer keeps each arm's point estimate and moves only the band edges, one set of shifts per powertrain, fitted on dev residuals.</p>
+  </section>
+
+  <section class="sec" id="wins">
+    <header>
+      <p class="kicker">By powertrain and by trip</p>
+      <h2>Where each assumption wins</h2>
+      <p class="lede">Exam MdAPE in percent for every raw learner on both tracks and EnergyNet v2.1. The ringed cell is the lowest in its column; a dot marks learners the paired bootstrap cannot separate from it. Trip conditions pool the VED trips of all four powertrains and are read from the inputs only. Reference rows sit below the line.</p>
+    </header>
+    <div class="controls">
+      <div class="ctl"><span class="kicker">Columns</span><div class="seg" id="seg-wcols" role="group" aria-label="Columns"></div></div>
+    </div>
+    <div class="wins-cards" id="wins-cards"></div>
+    <div class="tframe"><table class="wmap" id="t-wins"></table></div>
+    <div class="legend-row"><span>MdAPE against the column's best: within 5 %, 15 %, 30 %, 60 %, more</span><span class="ramp" id="ramp"></span><span>◯ best in column</span><span>• tied with best (95 % CI covers 0)</span></div>
+  </section>
+
+  <section class="sec" id="families">
+    <header>
+      <p class="kicker">One card per family</p>
+      <h2>The built-in assumptions, and what happened to them</h2>
+      <p class="lede">Each learner family brings an assumption about how trip energy works. The cards say which one, how it did on the exam, and link to its entry on ML Ratchet's Model families page.</p>
+    </header>
+    <div class="fams" id="fams"></div>
+  </section>
+
+  <section class="sec" id="compute">
+    <header>
+      <p class="kicker">Cost against skill</p>
+      <h2>Compute vs skill</h2>
+      <p class="lede" id="compute-lede"></p>
+    </header>
+    <div class="bench" style="padding:14px 16px"><div class="chart" id="cvs"></div></div>
+    <div class="tframe"><table id="t-compute"></table></div>
+  </section>
+
+  <section class="sec" id="findings">
+    <header>
+      <p class="kicker">Before the exam</p>
+      <h2>What the arm agents found on simulations and dev</h2>
+      <p class="lede">Rung decisions were made on the frozen simulated validation set (3,985 trips) and the dev gate only. These are the findings that shaped the released arms.</p>
+    </header>
+    <div class="finds" id="finds"></div>
+  </section>
+
+  <section class="sec" id="river">
+    <header>
+      <p class="kicker">Second bake-off</p>
+      <h2>River vs Vehicle</h2>
+      <p class="lede" id="river-lede"></p>
+    </header>
+    <div class="tframe"><table class="vs" id="t-river"></table></div>
+  </section>
+
+  <section class="sec" id="limits">
+    <header>
+      <p class="kicker">Read with care</p>
+      <h2>Limits and rules</h2>
+    </header>
+    <div class="cols2" id="limits-cols"></div>
+  </section>
+
+  <footer id="foot"></footer>
+</main>
+
+<script>
+const D = /*__DATA__*/null;
+const $ = (s) => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const f = (x, p = 3) => (x === null || x === undefined || !isFinite(x)) ? '–' : Number(x).toFixed(p);
+const pct = (x, p = 1) => (x === null || x === undefined || !isFinite(x)) ? '–' : (100 * x).toFixed(p);
+const sgn = (x, p = 3) => (x === null || x === undefined || !isFinite(x)) ? '–' : (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(p);
+const col = (id) => `var(${(D.arms[id] || {}).color || '--ref'})`;
+function el(tag, attrs = {}, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function seg(host, items, cur, onpick) {
+  host.innerHTML = '';
+  for (const [v, lab] of items) {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = lab; b.setAttribute('aria-pressed', String(v === cur));
+    b.onclick = () => { for (const x of host.children) x.setAttribute('aria-pressed', 'false'); b.setAttribute('aria-pressed', 'true'); onpick(v); };
+    host.appendChild(b);
+  }
+}
+function pill(v) { return v ? `<span class="pill ${v}">${v}</span>` : ''; }
+function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+
+/* ---------------- hero ---------------- */
+$('#rid').textContent = D.run_id;
+$('#thesis').textContent = D.text.thesis;
+$('#facts').innerHTML = D.text.facts.map(([k, v]) => `<span>${esc(k)} <b>${esc(v)}</b></span>`).join('');
+$('#stickers').innerHTML = D.text.stickers.map((s) => `<div><b>${esc(s.k)}</b><span class="big">${esc(s.big)}<small>${esc(s.unit || '')}</small></span><span>${esc(s.t)}</span></div>`).join('');
+
+/* ---------------- showcase ---------------- */
+const SH = D.show;
+let tripIx = 0;
+const defaultOn = new Set(D.show_default);
+const on = new Set(defaultOn);
+function convUnits(t, mj) {
+  if (t.unit === 'L') return `${(mj / 0.042 / 745).toFixed(2)} L petrol-equivalent`;
+  if (t.unit === 'kWh') return `${(mj / 3.6).toFixed(2)} kWh`;
+  return `${(mj / 3.6).toFixed(2)} kWh-equivalent`;
+}
+function drawProfile(t) {
+  const host = $('#profile'); host.innerHTML = '';
+  const P = t.profile; const n = P.v.length; const W = Math.max(300, Math.min(520, host.clientWidth || 460)), ph = 70, gap = 26, padL = 44, padR = 10, padT = 18;
+  const panels = [['Speed', 'km/h', P.v.map((x) => x * 3.6), 'var(--accent)', 0],
+                  ['Elevation', 'm rel. start', P.e, 'var(--ink-2)', null],
+                  ['Temperature', '°C', P.T, 'var(--c2)', null]];
+  const H = padT + panels.length * (ph + gap) + 14;
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': `Route profile of ${t.title}` }, host);
+  const tx = (i) => padL + (W - padL - padR) * i / Math.max(n - 1, 1);
+  const tmax = (n * 5) / 60;
+  panels.forEach(([name, unit, ys, c, zero], pi) => {
+    const y0 = padT + pi * (ph + gap);
+    let lo = Math.min(...ys), hi = Math.max(...ys);
+    if (zero === 0) lo = 0;
+    if (hi - lo < 1) { const m = (hi + lo) / 2; lo = m - 1; hi = m + 1; }
+    const pad = (hi - lo) * 0.08; if (zero !== 0) lo -= pad; hi += pad;
+    const sy = (v) => y0 + ph - (v - lo) / (hi - lo) * ph;
+    const g = el('g', { class: 'grid' }, svg);
+    for (const v of [lo, (lo + hi) / 2, hi]) el('line', { x1: padL, x2: W - padR, y1: sy(v), y2: sy(v) }, g);
+    const ax = el('g', { class: 'axis' }, svg);
+    for (const v of [lo, hi]) { const tt = el('text', { x: padL - 6, y: sy(v) + 4, 'text-anchor': 'end' }, ax); tt.textContent = Math.round(v); }
+    const lab = el('text', { x: padL, y: y0 - 8, class: 'lab' }, svg); lab.textContent = `${name} (${unit})`;
+    let d = ''; ys.forEach((v, i) => { d += (i ? 'L' : 'M') + tx(i).toFixed(1) + ',' + sy(v).toFixed(1); });
+    if (pi === 1) { el('path', { d: d + `L${tx(n - 1)},${y0 + ph}L${tx(0)},${y0 + ph}Z`, fill: 'var(--wash)', stroke: 'none' }, svg); }
+    el('path', { d, fill: 'none', stroke: c, 'stroke-width': 2, 'stroke-linejoin': 'round' }, svg);
+  });
+  const ax = el('g', { class: 'axis' }, svg);
+  const yb = padT + panels.length * (ph + gap) - gap + 14;
+  const step = tmax > 60 ? 15 : tmax > 20 ? 5 : tmax > 8 ? 2 : 1;
+  for (let m = 0; m <= tmax + 1e-9; m += step) { const x = padL + (W - padL - padR) * m / tmax; const tt = el('text', { x, y: yb, 'text-anchor': 'middle' }, ax); tt.textContent = m + (m === 0 ? ' min' : ''); }
+  // hover crosshair
+  const tip = document.createElement('div'); tip.className = 'tip'; tip.hidden = true; host.appendChild(tip);
+  const vline = el('line', { y1: padT, y2: yb - 12, stroke: 'var(--ink-3)', 'stroke-width': 1, visibility: 'hidden' }, svg);
+  const hit = el('rect', { x: padL, y: padT, width: W - padL - padR, height: yb - padT, fill: 'transparent' }, svg);
+  hit.addEventListener('pointermove', (ev) => {
+    const r = svg.getBoundingClientRect(); const x = (ev.clientX - r.left) / r.width * W;
+    const i = Math.max(0, Math.min(n - 1, Math.round((x - padL) / (W - padL - padR) * (n - 1))));
+    vline.setAttribute('x1', tx(i)); vline.setAttribute('x2', tx(i)); vline.setAttribute('visibility', 'visible');
+    tip.hidden = false;
+    tip.innerHTML = `<div class="d">${(i * 5 / 60).toFixed(1)} min</div><div class="r"><span>speed</span><span>${(P.v[i] * 3.6).toFixed(0)} km/h</span></div><div class="r"><span>grade</span><span>${(P.g[i] * 100).toFixed(1)} %</span></div><div class="r"><span>elevation</span><span>${P.e[i].toFixed(0)} m</span></div><div class="r"><span>temperature</span><span>${P.T[i].toFixed(1)} °C</span></div>`;
+    const px = tx(i) / W * r.width; tip.style.left = Math.min(px + 12, r.width - 190) + 'px'; tip.style.top = '8px';
+  });
+  hit.addEventListener('pointerleave', () => { tip.hidden = true; vline.setAttribute('visibility', 'hidden'); });
+}
+function rowFor(t, id, conf) {
+  const k = conf && t.rows[id + '_conformal'] ? id + '_conformal' : id;
+  return t.rows[k] ? { k, r: t.rows[k] } : null;
+}
+function drawEst(t) {
+  const host = $('#est'); host.innerHTML = '';
+  const conf = $('#cb-conf').checked;
+  const ids = D.show_order.filter((id) => on.has(id) && t.rows[id]);
+  const W = Math.max(300, Math.min(620, host.clientWidth || 560)), rh = 26, padL = W < 440 ? 100 : 150, padR = 52, padT = 22;
+  const H = padT + ids.length * rh + 30;
+  let hi = t.y * 1.6, lo = 0;
+  for (const id of ids) { const x = rowFor(t, id, conf).r; hi = Math.max(hi, (x.q95 ?? x.pred) * 1.04); }
+  hi = Math.min(hi, t.y * 3.2);
+  const sx = (v) => padL + (Math.min(v, hi) - lo) / (hi - lo) * (W - padL - padR);
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Energy estimates against the measured energy' }, host);
+  const g = el('g', { class: 'grid' }, svg); const ax = el('g', { class: 'axis' }, svg);
+  const st = niceStep(hi - lo, 5);
+  for (let v = 0; v <= hi + 1e-9; v += st) { el('line', { x1: sx(v), x2: sx(v), y1: padT - 6, y2: H - 22 }, g); const tt = el('text', { x: sx(v), y: H - 8, 'text-anchor': 'middle' }, ax); tt.textContent = +v.toFixed(2); }
+  const ul = el('text', { x: W - padR + 6, y: H - 8, class: 'lab' }, svg); ul.textContent = 'MJ';
+  el('line', { x1: sx(t.y), x2: sx(t.y), y1: padT - 14, y2: H - 22, stroke: 'var(--meas)', 'stroke-width': 2, 'stroke-dasharray': '5 3' }, svg);
+  const ml = el('text', { x: sx(t.y), y: padT - 16, 'text-anchor': 'middle', class: 'lab-ink' }, svg); ml.textContent = `measured ${t.y.toFixed(2)}`;
+  const tip = document.createElement('div'); tip.className = 'tip'; tip.hidden = true; host.appendChild(tip);
+  ids.forEach((id, i) => {
+    const { k, r } = rowFor(t, id, conf); const y = padT + i * rh + rh / 2; const c = col(id);
+    const lab = el('text', { x: padL - 10, y: y + 4, 'text-anchor': 'end', class: 'lab-ink' }, svg); lab.textContent = D.arms[id].short;
+    if (r.q05 !== undefined && r.q95 !== r.q05) {
+      el('line', { x1: sx(r.q05), x2: sx(r.q95), y1: y, y2: y, stroke: c, 'stroke-width': 2, 'stroke-linecap': 'round', opacity: 0.75 }, svg);
+      el('rect', { x: sx(r.q25), y: y - 5, width: Math.max(2, sx(r.q75) - sx(r.q25)), height: 10, rx: 2, fill: c, opacity: 0.35 }, svg);
+    }
+    el('circle', { cx: sx(r.pred), cy: y, r: 5.5, fill: c, stroke: 'var(--panel)', 'stroke-width': 2 }, svg);
+    const e = r.pred / t.y - 1; const ep = Math.round(100 * e);
+    const et = el('text', { x: W - padR + 6, y: y + 4, class: 'lab' }, svg); et.textContent = (ep === 0 ? '±' : ep > 0 ? '+' : '−') + Math.abs(ep) + ' %';
+    const hit = el('rect', { x: 0, y: y - rh / 2, width: W, height: rh, fill: 'transparent' }, svg);
+    hit.addEventListener('pointerenter', () => {
+      tip.hidden = false;
+      const inn = r.q05 !== undefined && r.q95 !== r.q05 ? (t.y >= r.q05 && t.y <= r.q95 ? 'inside' : 'outside') : '';
+      tip.innerHTML = `<div class="d">${esc(D.arms[k] ? D.arms[k].label : D.arms[id].label)}</div><div class="r"><span>estimate</span><span>${r.pred.toFixed(2)} MJ</span></div>` +
+        (r.q05 !== undefined && r.q95 !== r.q05 ? `<div class="r"><span>50 % band</span><span>${r.q25.toFixed(2)}–${r.q75.toFixed(2)}</span></div><div class="r"><span>90 % band</span><span>${r.q05.toFixed(2)}–${r.q95.toFixed(2)}</span></div>` : '<div class="r"><span>band</span><span>point only</span></div>') +
+        `<div class="r"><span>error</span><span>${sgn(100 * e, 1)} %</span></div>` + (inn ? `<div class="r"><span>measured</span><span>${inn} 90 %</span></div>` : '');
+      const rr = svg.getBoundingClientRect(); tip.style.left = Math.min(sx(r.pred) / W * rr.width + 12, rr.width - 190) + 'px'; tip.style.top = ((y + 10) / H * rr.height) + 'px';
+    });
+    hit.addEventListener('pointerleave', () => { tip.hidden = true; });
+  });
+  $('#est-legend').innerHTML = `<span><i style="background:var(--ink-3);height:3px"></i>90 % band</span><span><i style="background:var(--ink-3);opacity:.45"></i>50 % band</span><span><i style="background:var(--ink-3);border-radius:50%;width:10px"></i>estimate (error vs measured at right)</span><span>- - measured energy</span>`;
+}
+function niceStep(range, n) { const raw = range / n; const p = Math.pow(10, Math.floor(Math.log10(raw))); const m = raw / p; return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p; }
+function drawComp(t) {
+  const host = $('#comp'); host.innerHTML = '';
+  const ids = D.show_order.filter((id) => on.has(id) && t.rows[id] && t.rows[id].comp);
+  if (!ids.length) { host.innerHTML = '<p class="note">None of the shown learners gives a component split.</p>'; $('#comp-legend').innerHTML = ''; return; }
+  const W = Math.max(300, Math.min(620, host.clientWidth || 560)), rh = 24, padL = W < 440 ? 100 : 150, padR = 52, padT = 6;
+  const H = padT + ids.length * rh + 26;
+  let hi = 0; for (const id of ids) hi = Math.max(hi, t.rows[id].comp.reduce((a, b) => a + Math.max(b, 0), 0));
+  hi *= 1.05;
+  const sx = (v) => padL + v / hi * (W - padL - padR);
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Component split of each learner' }, host);
+  const g = el('g', { class: 'grid' }, svg); const ax = el('g', { class: 'axis' }, svg);
+  const st = niceStep(hi, 5);
+  for (let v = 0; v <= hi + 1e-9; v += st) { el('line', { x1: sx(v), x2: sx(v), y1: padT, y2: H - 20 }, g); const tt = el('text', { x: sx(v), y: H - 6, 'text-anchor': 'middle' }, ax); tt.textContent = +v.toFixed(2); }
+  const tip = document.createElement('div'); tip.className = 'tip'; tip.hidden = true; host.appendChild(tip);
+  ids.forEach((id, i) => {
+    const y = padT + i * rh + 4; const c = t.rows[id].comp;
+    const lab = el('text', { x: padL - 10, y: y + 12, 'text-anchor': 'end', class: 'lab-ink' }, svg); lab.textContent = D.arms[id].short;
+    let x0 = 0;
+    c.forEach((v, j) => {
+      const w = Math.max(v, 0); if (w <= 0) return;
+      el('rect', { x: sx(x0), y, width: Math.max(0.5, sx(x0 + w) - sx(x0) - 2), height: 16, fill: `var(--c${j + 1})`, rx: j === c.length - 1 ? 3 : 0 }, svg);
+      x0 += w;
+    });
+    const tot = el('text', { x: sx(x0) + 6, y: y + 12, class: 'lab' }, svg); tot.textContent = x0.toFixed(1);
+    const hit = el('rect', { x: 0, y: y - 4, width: W, height: rh, fill: 'transparent' }, svg);
+    hit.addEventListener('pointerenter', () => {
+      tip.hidden = false;
+      tip.innerHTML = `<div class="d">${esc(D.arms[id].label)}</div>` + D.comp_names.map((nm, j) => `<div class="r"><span><i style="display:inline-block;width:9px;height:9px;margin-right:6px;background:var(--c${j + 1})"></i>${nm}</span><span>${c[j].toFixed(2)} MJ</span></div>`).join('');
+      const rr = svg.getBoundingClientRect(); tip.style.left = Math.min(sx(x0) / W * rr.width * 0.5 + 40, rr.width - 200) + 'px'; tip.style.top = ((y + 22) / H * rr.height) + 'px';
+    });
+    hit.addEventListener('pointerleave', () => { tip.hidden = true; });
+  });
+  $('#comp-legend').innerHTML = D.comp_names.map((nm, j) => `<span><i style="background:var(--c${j + 1})"></i>${nm}</span>`).join('');
+}
+function drawChips(t) {
+  const host = $('#chips'); host.innerHTML = '';
+  for (const id of D.show_order) {
+    if (!t.rows[id]) continue;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.setAttribute('aria-pressed', String(on.has(id)));
+    b.innerHTML = `<span class="sw" style="color:${col(id)};background:${col(id)}"></span>${esc(D.arms[id].short)}`;
+    b.onclick = () => { on.has(id) ? on.delete(id) : on.add(id); b.setAttribute('aria-pressed', String(on.has(id))); drawEst(t); drawComp(t); };
+    host.appendChild(b);
+  }
+}
+function showTrip(i) {
+  tripIx = i; store('vbo-trip', String(i));
+  const t = SH[i];
+  $('#b-title').textContent = t.title;
+  $('#b-meta').textContent = `${t.trip_id} · ${t.vehicle}`;
+  $('#b-specs').innerHTML = [[t.dist_km.toFixed(1), 'km'], [(t.dur_s / 60).toFixed(1), 'minutes'], [t.kmh.toFixed(0), 'km/h mean'],
+    [t.T.toFixed(0), '°C mean'], [t.climb.toFixed(1), 'm climb / km'], [t.stratum, 'stratum']].map(([b, s]) => `<div><b>${esc(b)}</b><span>${esc(s)}</span></div>`).join('');
+  $('#b-meas').innerHTML = `<span class="kicker" style="width:100%">Measured energy</span><span class="big">${t.y.toFixed(2)}</span><span class="unit">MJ</span><span class="alt">${esc(convUnits(t, t.y))}</span>`;
+  $('#b-note').textContent = t.note;
+  drawProfile(t); drawChips(t); drawEst(t); drawComp(t);
+}
+{
+  const saved = parseInt(store('vbo-trip') || '0', 10);
+  seg($('#seg-trip'), SH.map((t, i) => [i, t.stratum]), isFinite(saved) && saved < SH.length ? saved : 0, (i) => showTrip(i));
+  $('#cb-conf').onchange = () => { drawEst(SH[tripIx]); };
+  showTrip(isFinite(saved) && saved < SH.length ? saved : 0);
+  let rz = null, lastW = innerWidth;
+  addEventListener('resize', () => { if (Math.abs(innerWidth - lastW) < 40) return; clearTimeout(rz); rz = setTimeout(() => { lastW = innerWidth; const t = SH[tripIx]; drawProfile(t); drawEst(t); drawComp(t); }, 200); });
+}
+
+/* ---------------- leaderboards ---------------- */
+let track = 'table';
+$('#boards-lede').textContent = D.text.boards_lede;
+function verdictCell(v) { return v ? `<span class="num">${sgn(v.diff)}</span> <span class="note num">(${sgn(v.ci95[0])}..${sgn(v.ci95[1])})</span> ${pill(v.verdict)}` : ''; }
+function drawBoard() {
+  const rows = D.boards[track]; const showConf = $('#cb-confrows').checked;
+  const max = Math.max(...rows.filter((r) => r.E16 !== null).map((r) => r.E16));
+  const ctrl = D.control[track];
+  let h = `<thead><tr><th>Row</th><th class="n">E16 (mean MdAPE)</th><th>vs EnergyNet v2.1 (95 % CI)</th><th>vs ${esc(D.arms[ctrl].short)} (control)</th>` +
+    D.pt_cols.map(([k, l]) => `<th class="n">${esc(l)}</th>`).join('') + `<th class="n">cov50 / cov90</th><th class="n">CRPS (log)</th></tr></thead><tbody>`;
+  let sep = false;
+  for (const r of rows) {
+    if (r.conformal && !showConf) continue;
+    if (r.kind === 'reference' && !sep && !r.id.startsWith('enet_v21')) { h += `<tr class="sep"><td colspan="${6 + D.pt_cols.length}"></td></tr>`; sep = true; }
+    const cls = (r.kind === 'reference' && !r.id.startsWith('enet_v21') ? 'ref' : '') + (r.conformal ? ' conf' : '');
+    const bw = r.E16 === null ? 0 : Math.round(80 * r.E16 / max);
+    h += `<tr class="${cls}"><td class="nm" title="${esc(r.label)}"><span class="dot" style="background:${col(r.base)}"></span>${esc((D.arms[r.id] || {}).mid || r.label)}</td>` +
+      `<td class="n"><span class="bar" style="width:${bw}px;background:${col(r.base)}"></span>${pct(r.E16)} %</td>` +
+      `<td>${r.id === 'enet_v21' ? '<span class="note">reference</span>' : verdictCell(r.vs_enet)}</td><td>${r.id === ctrl ? '<span class="note">control</span>' : verdictCell(r.vs_ctrl)}</td>` +
+      D.pt_cols.map(([k]) => `<td class="n">${pct(r.pt[k])}</td>`).join('') +
+      `<td class="n">${r.cov50 === null || r.cov50 === undefined ? '–' : f(r.cov50, 2) + ' / ' + f(r.cov90, 2)}</td><td class="n">${f(r.crps)}</td></tr>`;
+  }
+  $('#t-board').innerHTML = h + '</tbody>';
+  $('#board-note').textContent = D.text.board_note[track];
+}
+seg($('#seg-track'), [['table', 'Table track (151 features)'], ['trace', 'Trace track (1 Hz trip)']], track, (v) => { track = v; drawBoard(); drawSet(); drawUnc(); });
+$('#cb-confrows').onchange = drawBoard;
+drawBoard();
+{
+  const sel = $('#sel-set');
+  sel.innerHTML = D.sets.map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join('');
+  sel.onchange = drawSet;
+}
+function drawSet() {
+  const k = $('#sel-set').value; const S = D.setboards[track][k] || [];
+  let h = `<thead><tr><th>Row</th><th class="n">n</th><th class="n">MdAPE %</th><th class="n">bias %</th><th class="n">cov50 / cov90</th><th class="n">CRPS (log)</th><th>vs EnergyNet v2.1, MdAPE</th></tr></thead><tbody>`;
+  let sep = false;
+  for (const r of S) {
+    if (r.kind === 'reference' && !sep && !r.id.startsWith('enet_v21')) { h += `<tr class="sep"><td colspan="7"></td></tr>`; sep = true; }
+    h += `<tr class="${r.kind === 'reference' && !r.id.startsWith('enet_v21') ? 'ref' : ''}"><td class="nm" title="${esc(r.label)}"><span class="dot" style="background:${col(r.base)}"></span>${esc((D.arms[r.id] || {}).mid || r.label)}</td><td class="n">${r.n}</td><td class="n">${pct(r.MdAPE)}</td><td class="n">${r.bias === null ? '–' : sgn(100 * r.bias, 1)}</td>` +
+      `<td class="n">${r.cov50 === null || r.cov50 === undefined ? '–' : f(r.cov50, 2) + ' / ' + f(r.cov90, 2)}</td><td class="n">${f(r.crps_log)}</td><td>${r.vs ? `<span class="num">${sgn(r.vs.d)}</span> <span class="note num">(${sgn(r.vs.ci[0])}..${sgn(r.vs.ci[1])})</span> ${pill(r.vs.verdict)}` : ''}</td></tr>`;
+  }
+  $('#t-set').innerHTML = h + '</tbody>';
+  $('#set-note').textContent = D.set_notes[k] || '';
+}
+drawSet();
+function drawUnc() {
+  const U = D.unc[track];
+  let h = `<thead><tr><th>Arm</th><th class="n">raw cov50 / cov90</th><th class="n">conformal cov50 / cov90</th><th class="n">raw CRPS</th><th class="n">conformal CRPS</th><th>conformal vs raw, CRPS (95 % CI)</th></tr></thead><tbody>`;
+  for (const r of U) h += `<tr><td class="nm" title="${esc(r.label)}"><span class="dot" style="background:${col(r.id)}"></span>${esc((D.arms[r.id] || {}).mid || r.label)}</td><td class="n">${f(r.raw50, 2)} / ${f(r.raw90, 2)}</td><td class="n">${f(r.c50, 2)} / ${f(r.c90, 2)}</td><td class="n">${f(r.rawc)}</td><td class="n">${f(r.cc)}</td><td>${verdictCell(r.d)}</td></tr>`;
+  $('#t-unc').innerHTML = h + '</tbody>';
+}
+drawUnc();
+
+/* ---------------- wins map ---------------- */
+let wcols = 'pt';
+{
+  const r = $('#ramp'); r.innerHTML = ['--q5', '--q4', '--q3', '--q2', '--q1'].map((q) => `<i style="background:var(${q})"></i>`).join('');
+}
+function drawWins() {
+  const W = D.wins; const cols = W.cols.filter((c) => c.grp === wcols);
+  let h = `<thead><tr><th>Learner</th>${cols.map((c) => `<th class="n" title="${esc(c.long)}">${esc(c.label)}<br><span style="text-transform:none;letter-spacing:0">n ${c.n}</span></th>`).join('')}</tr></thead><tbody>`;
+  const rowsAll = W.rows.concat([null], W.refs);
+  for (const id of rowsAll) {
+    if (id === null) { h += `<tr class="sep"><td colspan="${cols.length + 1}"></td></tr>`; continue; }
+    const isRef = W.refs.includes(id);
+    const a = D.arms[id.split('|')[0]] || { label: id };
+    h += `<tr class="${isRef ? 'ref' : ''}"><td class="nm" title="${esc(a.label)}"><span class="dot" style="background:${col(id.split('|')[0])}"></span>${esc(a.mid || a.label)}</td>`;
+    for (const c of cols) {
+      const v = isRef ? c.ref[id] : c.md[id];
+      if (v === undefined || v === null) { h += '<td class="c">·</td>'; continue; }
+      const best = c.md[c.best]; const ratio = v / best;
+      const q = ratio <= 1.05 ? 0 : ratio <= 1.15 ? 1 : ratio <= 1.3 ? 2 : ratio <= 1.6 ? 3 : 4;
+      const bg = isRef ? 'transparent' : `var(--q${5 - q})`;
+      const dark = !isRef && q <= 1;
+      const cls = 'c' + (!isRef && c.best === id ? ' best' : '') + (!isRef && c.tied.includes(id) ? ' tied' : '');
+      h += `<td class="${cls}" style="background:${bg};color:${dark ? 'var(--paper)' : 'var(--ink)'}">${pct(v)}</td>`;
+    }
+    h += '</tr>';
+  }
+  $('#t-wins').innerHTML = h + '</tbody>';
+  $('#wins-cards').innerHTML = D.text.wins_cards[wcols].map((c) => `<div><b>${esc(c.k)}</b><span>${esc(c.t)}</span></div>`).join('');
+}
+seg($('#seg-wcols'), [['pt', 'Powertrain sets'], ['cond', 'Trip conditions (VED)']], wcols, (v) => { wcols = v; drawWins(); });
+drawWins();
+
+/* ---------------- families ---------------- */
+$('#fams').innerHTML = D.families.map((c) => `<article class="fam" style="--c:${col(c.armid)}"><div class="top"><h3>${esc(c.name)}</h3><span class="grp">${esc(c.grp)}</span></div>` +
+  `<p><b>Assumption.</b> ${esc(c.assume)}</p><p><b>On the exam.</b> ${esc(c.result)}</p><div class="score">${c.score.map(([k, v]) => `<span>${esc(k)} <b>${esc(v)}</b></span>`).join('')}</div>` +
+  `<a class="more" href="${esc(c.link)}" target="_blank" rel="noopener">${esc(c.famname)} on the Model families page ↗</a></article>`).join('');
+
+/* ---------------- compute vs skill ---------------- */
+$('#compute-lede').textContent = D.text.compute_lede;
+function drawCvs() {
+  const host = $('#cvs'); host.innerHTML = '';
+  const P = D.compute.filter((c) => c.plot);
+  const W = 760, H = 330, padL = 54, padR = 20, padT = 16, padB = 44;
+  const xmax = 3.2;
+  const ys = P.map((c) => c.e16); const ylo = Math.floor(Math.min(...ys) * 100 - 1) / 100, yhi = Math.ceil(Math.max(...ys) * 100 + 1) / 100;
+  const sx = (v) => padL + v / xmax * (W - padL - padR);
+  const sy = (v) => padT + (v - ylo) / (yhi - ylo) * (H - padT - padB);
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Training CPU hours against exam E16' }, host);
+  const g = el('g', { class: 'grid' }, svg); const ax = el('g', { class: 'axis' }, svg);
+  for (let v = 0; v <= xmax + 1e-9; v += 0.5) { el('line', { x1: sx(v), x2: sx(v), y1: padT, y2: H - padB }, g); const t = el('text', { x: sx(v), y: H - padB + 16, 'text-anchor': 'middle' }, ax); t.textContent = v; }
+  const yst = niceStep(yhi - ylo, 5);
+  for (let v = Math.ceil(ylo / yst) * yst; v <= yhi + 1e-9; v += yst) { el('line', { x1: padL, x2: W - padR, y1: sy(v), y2: sy(v) }, g); const t = el('text', { x: padL - 6, y: sy(v) + 4, 'text-anchor': 'end' }, ax); t.textContent = (100 * v).toFixed(0) + ' %'; }
+  const xl = el('text', { x: (W + padL) / 2, y: H - 6, 'text-anchor': 'middle', class: 'lab' }, svg); xl.textContent = 'training CPU-hours on the shared bank (one thread)';
+  const yl = el('text', { x: 12, y: padT + 6, class: 'lab', transform: `rotate(-90 12 ${padT + 6})`, 'text-anchor': 'end' }, svg); yl.textContent = 'exam E16, lower is better';
+  if (D.enet_e16) { el('line', { x1: padL, x2: W - padR, y1: sy(D.enet_e16), y2: sy(D.enet_e16), stroke: 'var(--ink)', 'stroke-width': 1.5, 'stroke-dasharray': '6 4' }, svg); const t = el('text', { x: padL + 8, y: sy(D.enet_e16) - 6, 'text-anchor': 'start', class: 'lab-ink' }, svg); t.textContent = `EnergyNet v2.1 ${pct(D.enet_e16)} % (3x the data, trained elsewhere)`; }
+  const tip = document.createElement('div'); tip.className = 'tip'; tip.hidden = true; host.appendChild(tip);
+  for (const c of P) {
+    const cx = sx(Math.min(c.train_h, xmax)), cy = sy(c.e16);
+    el('circle', { cx, cy, r: 6, fill: col(c.id), stroke: 'var(--panel)', 'stroke-width': 2 }, svg);
+    const t = el('text', { x: cx + (c.lx || 9), y: cy + (c.ly || 4), class: 'lab-ink', 'text-anchor': c.la || 'start' }, svg); t.textContent = D.arms[c.id].short;
+    const hit = el('circle', { cx, cy, r: 14, fill: 'transparent' }, svg);
+    hit.addEventListener('pointerenter', () => { tip.hidden = false; tip.innerHTML = `<div class="d">${esc(D.arms[c.id].label)}</div><div class="r"><span>train</span><span>${f(c.train_h, 2)} CPU-h</span></div><div class="r"><span>E16</span><span>${pct(c.e16)} %</span></div><div class="r"><span>exam predict</span><span>${c.exam_s} CPU-s</span></div>`; const r = svg.getBoundingClientRect(); tip.style.left = Math.min(cx / W * r.width + 12, r.width - 190) + 'px'; tip.style.top = (cy / H * r.height + 10) + 'px'; });
+    hit.addEventListener('pointerleave', () => { tip.hidden = true; });
+  }
+}
+drawCvs();
+$('#t-compute').innerHTML = `<thead><tr><th>Arm</th><th>Track</th><th class="n">Train CPU-h</th><th class="n">Exam predict CPU-s</th><th class="n">Stored numbers</th><th class="n">Sim val skill</th><th class="n">Dev D16 %</th><th class="n">Exam E16 %</th></tr></thead><tbody>` +
+  D.compute.map((c) => `<tr><td><span class="dot" style="background:${col(c.id)}"></span>${esc(D.arms[c.id].label)}</td><td>${esc(c.track)}</td><td class="n">${c.id === 'enet_v21' ? 'elsewhere' : f(c.train_h, 2)}</td><td class="n">${c.exam_s}</td><td class="n">${c.params ? c.params.toLocaleString('en-US') : '–'}</td><td class="n">${f(c.sim_skill)}</td><td class="n">${pct(c.d16)}</td><td class="n">${pct(c.e16)}</td></tr>`).join('') + '</tbody>';
+
+/* ---------------- findings, river, limits ---------------- */
+$('#finds').innerHTML = D.findings.map((x) => `<div class="find"><span class="who">${esc(x.who)}</span><span class="big">${esc(x.big)}</span><p>${esc(x.t)}</p></div>`).join('');
+$('#river-lede').textContent = D.text.river_lede;
+$('#t-river').innerHTML = `<thead><tr><th>Question</th><th>River Bake-off (streamflow)</th><th>Vehicle Bake-off (trip energy)</th></tr></thead><tbody>` +
+  D.river.map(([q, r, v]) => `<tr><td>${esc(q)}</td><td>${esc(r)}</td><td>${esc(v)}</td></tr>`).join('') + '</tbody>';
+$('#limits-cols').innerHTML = D.limits.map(([h, items]) => `<div><h3>${esc(h)}</h3><ul>${items.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>`).join('');
+$('#foot').innerHTML = D.text.foot.map((x) => `<p>${x}</p>`).join('');
+</script>

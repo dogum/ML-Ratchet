@@ -1,0 +1,141 @@
+{
+ "arm_id": "seq_lstm",
+ "label": "LSTM (FlowCast's network, retrained on the bake-off bank)",
+ "family": "ssm",
+ "family_label": "State-space and recurrent models (LSTM)",
+ "group": "seq",
+ "protocols": [
+  "ungauged"
+ ],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.867,
+  "eval_note": "harness evaluate.py per rung (800 sim val runs + 52 dev basins) not included: about 0.5-4 CPU-min per rung",
+  "notes": "3 rungs + 2 seed re-runs (noise check); one thread (torch.set_num_threads(1)), time.process_time() of the training process, shared 2-core machine"
+ },
+ "feature_engineering": "None beyond the shared arms_seq pipeline (common/seqlib.py), identical for all four sequence arms: FlowCast's 11 scaled daily features (P/10, log1p P, PET/5, T_mean/T_min/T_max /10, SRAD/150, vp/1000, wind/3, sin/cos day of year) + FlowCast's 18-value static vector (batch[\"static\"], standardised with the train bank mean/sd) repeated every day; target in units of the basin mean precipitation exp(static[11]); 730-day windows (365 warm-up + 365 target), inference in 365-day blocks each with its own 365-day warm-up (FlowCast). Causal: day t uses forcing up to day t only.",
+ "extra_files": [
+  "../common"
+ ],
+ "margin": 0.01,
+ "rule": "keep if sim val median NSE (all 800 frozen runs) > incumbent + 0.01 AND dev median NSE (52 dev basins, WY2001-2014) >= 0.95 x incumbent's",
+ "rungs": [
+  {
+   "id": "r0",
+   "change": "FlowCast r1b recipe exactly (3000 steps x 32 windows)",
+   "decision": "base",
+   "why": "the control: FlowCast's network and recipe on the shared bank. Scores below FlowCast v1.0 as released (sim 0.426, dev 0.425) at the same recipe; 3 seeds agree on sim (0.409-0.410), so the gap is not seed noise (see notes).",
+   "simval_nse": 0.4099,
+   "dev_nse": 0.3906,
+   "simval_kge": 0.3569,
+   "dev_kge": 0.4202,
+   "dev_fhv": -34.1,
+   "dev_cov50": 0.562,
+   "dev_cov90": 0.951,
+   "dev_crps_rel": 0.381,
+   "train_cpu_h": 0.097,
+   "n_params": 24710,
+   "steps": 3000
+  },
+  {
+   "id": "r1",
+   "change": "2x training: 6000 steps (cosine over 6000)",
+   "decision": "released",
+   "why": "sim +0.016 over r0 (> 0.01 margin; seed noise on sim is ~0.001) and dev 0.441 >= 0.95 x 0.391: kept. Released (r2 did not beat it).",
+   "simval_nse": 0.4255,
+   "dev_nse": 0.4408,
+   "simval_kge": 0.3799,
+   "dev_kge": 0.4377,
+   "dev_fhv": -29.5,
+   "dev_cov50": 0.572,
+   "dev_cov90": 0.962,
+   "dev_crps_rel": 0.389,
+   "train_cpu_h": 0.186,
+   "n_params": 24710,
+   "steps": 6000
+  },
+  {
+   "id": "r2",
+   "change": "4x training: 12000 steps",
+   "decision": "rejected",
+   "why": "sim +0.003 over r1 (< 0.01 margin; paired bootstrap -0.011..+0.017), dev 0.440 vs 0.441: no gain from more training beyond 6000 steps.",
+   "simval_nse": 0.428,
+   "dev_nse": 0.4395,
+   "simval_kge": 0.3677,
+   "dev_kge": 0.4417,
+   "dev_fhv": -26.4,
+   "dev_cov50": 0.584,
+   "dev_cov90": 0.959,
+   "dev_crps_rel": 0.374,
+   "train_cpu_h": 0.4,
+   "n_params": 24710,
+   "steps": 12000
+  }
+ ],
+ "released": "r1",
+ "noise_checks": [
+  {
+   "id": "seed1",
+   "simval_nse": 0.4097,
+   "dev_nse": 0.4312,
+   "train_cpu_h": 0.091
+  },
+  {
+   "id": "seed2",
+   "simval_nse": 0.4088,
+   "dev_nse": 0.4043,
+   "train_cpu_h": 0.093
+  }
+ ],
+ "released_scores": {
+  "simval_nse": 0.4255,
+  "simval_kge": 0.3799,
+  "simval_cov90": 0.941,
+  "dev_nse": 0.4408,
+  "dev_kge": 0.4377,
+  "dev_fhv": -29.5,
+  "dev_cov50": 0.572,
+  "dev_cov90": 0.962,
+  "dev_crps_rel": 0.389,
+  "dev_by_class_nse": {
+   "snow": {
+    "n": 10,
+    "nse": 0.535
+   },
+   "arid": {
+    "n": 14,
+    "nse": 0.182
+   },
+   "humid": {
+    "n": 11,
+    "nse": 0.573
+   },
+   "regulated": {
+    "n": 5,
+    "nse": 0.279
+   },
+   "large": {
+    "n": 6,
+    "nse": 0.307
+   }
+  },
+  "train_cpu_h": 0.186,
+  "n_params": 24710,
+  "steps": 6000
+ },
+ "n_params": 24710,
+ "export_check": {
+  "arm": "lstm",
+  "rung": "r1",
+  "cases": 19,
+  "max_abs_diff_mean_rel_to_mean_flow": 3.249543255347738e-06,
+  "max_abs_diff_quantiles_rel_to_mean_flow": 4.859702913444467e-06,
+  "torch_float64": {
+   "max_abs_diff_mean_rel": 3.1501198285441517e-15,
+   "max_abs_diff_quantiles_rel": 7.856457490145715e-15
+  },
+  "note": "numpy float64 (released predict.py) vs torch float32 (training checkpoint), mm/day, 16 sim val windows + 3 dev basins (14 years each)"
+ },
+ "bands": "raw pinball quantiles (no dev widening; arm C conformalises every arm)"
+}

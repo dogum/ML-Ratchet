@@ -50,6 +50,8 @@ test('model families: families, glyphs, references and backlog fits resolve', ()
     for (const f of b.f) assert.ok(fam.has(f), `${id}: unknown family ${f}`);
   }
   assert.equal(LENSES.length, 8);
+  for (const f of FAMILIES) if (f.vbake) assert.ok(f.vbake.arm && f.vbake.text.length > 40, `${f.id}: empty Vehicle Bake-off evidence`);
+  for (const f of FAMILIES) if (f.bake) assert.ok(f.bake.arm && f.bake.text.length > 40, `${f.id}: empty River Bake-off evidence`);
   for (const c of SHAP_CASES) assert.ok(c.twin.length === SHAP_FEATURES.length && c.real.length === SHAP_FEATURES.length, `${c.name}: wrong length`);
 });
 

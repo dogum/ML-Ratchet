@@ -1,0 +1,37 @@
+{
+ "arm_id": "trace_s4d_conformal",
+ "label": "S4D state-space model on the trip trace + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around trace_s4d)",
+ "group": "phys",
+ "tracks": [
+  "trace"
+ ],
+ "wraps": "trace_s4d",
+ "wraps_hash": "280230f3ffa5dcee9209f6eece6e51835293550956690e1efb4672c8440b5e3d",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {
+  "train_cpu_hours": 0.008,
+  "base_train_cpu_hours": 2.75,
+  "notes": "conformal fit only (dev predictions of trace_s4d + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond trace_s4d's; strata from arch, cls and the dynamometer flag",
+ "extra_files": [
+  "../../../arms_trace/s4d",
+  "../lib",
+  "../../../arms_trace/common"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata powertrain x road/dyno/hd) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage over the D16 sets (grouped 10-fold cross-fit): trace cov50/90 0.51/0.85"
+  }
+ ],
+ "released": "c0"
+}

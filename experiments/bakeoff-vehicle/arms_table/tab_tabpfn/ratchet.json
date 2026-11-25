@@ -1,0 +1,27 @@
+{
+ "arm_id": "tab_tabpfn",
+ "label": "TabPFN v2 in context on simulated rows (a lens, not a release; Built with PriorLabs-TabPFN)",
+ "family": "tabfm",
+ "family_label": "Tabular foundation model (TabPFN v2, in-context, zero real labels)",
+ "group": "table",
+ "tracks": ["table"],
+ "lens_not_release": true,
+ "attribution": "Built with PriorLabs-TabPFN (TabPFN v2 regressor weights and tabpfn 10.2.0 code, Prior Labs License 1.1: weights/LICENSE.txt, pylib/tabpfn-10.2.0.dist-info/licenses/)",
+ "numpy_only": false,
+ "numpy_only_reason": "TabPFN is a transformer run with torch (tabpfn 10.2.0, copied in pylib/); it has no numpy port. A yardstick, not a release candidate.",
+ "real_labels_in_training": false,
+ "compute": {"train_cpu_hours": 0.0, "train_cpu_s": {"r0": 0, "r1": 0, "r2": 0, "r3": 0},
+             "in_context_fit_cpu_s": {"r0": 8, "r1": 22, "r2": 22, "r3": 33},
+             "notes": "no training (in-context learning: no gradient step); building a context takes ~3 s; the context forward pass (fit_mode fit_with_cache) runs at load in every process (r1: ~22 s CPU); prediction ~10.6 ms CPU per row at r1 (sim val 66 s, dev gate 128 s; the exam's ~121k rows ~21 min); setup probes of speed / memory (8 runs, ~0.13 CPU-h) are not training"},
+ "feature_engineering": "a scoped input set: the 38 top-ranked of the 151 inputs by the GBM r0 mean model's gain on the simulated train bank (one-hot architecture / class columns skipped there) + architecture and class as two categorical codes (argmax of the one-hot blocks); target z = log(y / E_phys); context = 2,048 random simulated train trips under one tier draw (default_rng(5))",
+ "extra_files": [],
+ "margin": 0.01,
+ "rule": "keep a rung if its frozen sim val skill beats the incumbent's by more than 0.01 AND its dev D16 is not worse than the incumbent's by more than 0.01 (HARNESS.md section 7); rungs limited to settings that keep one process <= 1.2 GB and the exam under ~30 CPU-min",
+ "rungs": [
+  {"id": "r0", "change": "base: TabPFN v2 regressor, n_estimators 1, context 1,024 random simulated train trips, 40 scoped inputs (38 + arch / class codes), fit_with_cache", "decision": "base", "why": "first rung (151 inputs: 1.5 GB and 24 ms per row at 1,024 rows, and no better on a 512-trip probe, so the scoped set)", "simval_skill": 0.5266, "simval_MdAPE": 0.1110, "dev_D16": 0.1348},
+  {"id": "r1", "change": "context 2,048 random simulated trips", "decision": "released", "why": "sim val skill +0.036 (0.5626); dev D16 0.1249 (0.010 better)", "simval_skill": 0.5626, "simval_MdAPE": 0.1017, "dev_D16": 0.1249},
+  {"id": "r2", "change": "context 2,048 trips, half balanced over the architecture x class cells, half random", "decision": "rejected", "why": "sim val skill -0.019 (0.5440); dev D16 0.1259 (same)", "simval_skill": 0.5440, "simval_MdAPE": 0.1067, "dev_D16": 0.1259},
+  {"id": "r3", "change": "context 3,072 random trips with 30 inputs (28 + codes): more rows, fewer columns at the same memory", "decision": "rejected", "why": "sim val skill -0.002 (0.5610); dev D16 0.1298 (0.005 worse)", "simval_skill": 0.5610, "simval_MdAPE": 0.1013, "dev_D16": 0.1298}
+ ],
+ "released": "r1"
+}

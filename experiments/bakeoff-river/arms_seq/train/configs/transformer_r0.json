@@ -1,0 +1,1 @@
+{"arm": "transformer", "rung": "r0", "arch": "transformer", "d": 32, "heads": 4, "ff": 64, "layers": 3, "dropout": 0.1, "inner_dropout": 0.0, "steps": 3000, "batch": 32, "lr": 2e-3, "seed": 0, "note": "causal pre-LN encoder over daily tokens, sinusoidal position encoding; FlowCast's training recipe"}

@@ -1,0 +1,36 @@
+{
+ "arm_id": "enet_v21_conformal",
+ "label": "EnergyNet v2.1 as released + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around enet_v21)",
+ "group": "phys",
+ "tracks": [
+  "table"
+ ],
+ "wraps": "enet_v21",
+ "wraps_hash": "7f29a28638ca3e91d66b3a1164b97eb9f6481b642c6fd68b8022c1c665c739a3",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {
+  "train_cpu_hours": 0.0066,
+  "base_train_cpu_hours": 0,
+  "notes": "conformal fit only (dev predictions of enet_v21 + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond enet_v21's; strata from arch, cls and the dynamometer flag",
+ "extra_files": [
+  "../../../harness/arms_ref/enet_v21",
+  "../lib"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata powertrain x road/dyno/hd) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage over the D16 sets (grouped 10-fold cross-fit): table cov50/90 0.48/0.86"
+  }
+ ],
+ "released": "c0"
+}

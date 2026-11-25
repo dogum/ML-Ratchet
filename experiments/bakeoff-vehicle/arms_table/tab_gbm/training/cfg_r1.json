@@ -1,0 +1,2 @@
+{"K": 3, "monotone": {"137": 1, "140": 1, "146": 1, "145": -1, "122": 1, "79": 1, "80": 1},
+ "monotone_note": "V35 label fuel energy vs physics (+), V38 label electric energy vs physics (+), V44 cold start (+), V43 warm start (-), V20 log displacement (+, engine friction), R79 share of time below 0 C (+, heating / warm-up), R80 share of time above 25 C (+, air conditioning); on the mean model only (LightGBM has no monotone constraints for the quantile objective)"}

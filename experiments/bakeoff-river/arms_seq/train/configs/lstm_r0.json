@@ -1,0 +1,1 @@
+{"arm": "lstm", "rung": "r0", "arch": "lstm", "H": 64, "dropout": 0.1, "steps": 3000, "batch": 32, "lr": 2e-3, "seed": 0, "note": "FlowCast r1b recipe exactly: 1 LSTM layer, 64 units, dropout 0.1 before the head, 3000 steps x 32 windows, Adam 2e-3 cosine to 1e-4, clip 1.0"}

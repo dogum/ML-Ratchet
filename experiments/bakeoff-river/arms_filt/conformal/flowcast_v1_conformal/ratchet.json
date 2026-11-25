@@ -1,0 +1,36 @@
+{
+ "arm_id": "flowcast_v1_conformal",
+ "label": "FlowCast v1.0 as released + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around flowcast_v1)",
+ "group": "filt",
+ "protocols": [
+  "ungauged",
+  "gauged"
+ ],
+ "wraps": "flowcast_v1",
+ "wraps_hash": "6400ea99ca6cfc34bb5204fef546e2404d583a7911a8083d3bdf76411f7c96fa",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.005,
+  "base_train_cpu_hours": 0.0,
+  "notes": "conformal fit only (dev predictions of flowcast_v1 + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond flowcast_v1's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)",
+ "extra_files": [
+  "../../../harness/arms_ref/flowcast_v1",
+  "../lib"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata snow/arid/humid/other) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage (LOBO) ungauged 0.95, gauged_L1 0.93, gauged_L3 0.93, gauged_L7 0.93"
+  }
+ ],
+ "released": "c0"
+}

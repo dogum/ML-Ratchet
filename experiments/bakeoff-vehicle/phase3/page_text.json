@@ -1,0 +1,126 @@
+{
+ "text": {
+  "thesis": "Seven network and tree learners got EnergyNet's simulated bank and a physics estimate to correct. On 105,000 real exam records they finish within 1.3 points of each other and make the same mistakes: their per-trip errors correlate at 0.92. The physics anchor is worth 11 points, and the bank's size and blind spots decide most of what is left. River's verdict holds for vehicles.",
+  "facts": [["run", "20261123T204251, once"], ["arms scored", "21 (10 learners + 10 conformal wrappers + climatology)"], ["exam records", "25,793 VED trips · 76,037 EPA test legs · 2,732 heavy-duty"], ["training", "28,800 simulated trips, zero real labels, ≤ 4 CPU-h per arm"]],
+  "stickers": [
+   {"k": "Best new learner", "big": "11.7", "unit": "% E16", "t": "Transformer on the 1 Hz trace. EnergyNet v2.1, trained on 3x the data: 11.0 %."},
+   {"k": "Family spread", "big": "1.3", "unit": "points", "t": "Seven networks and trees, 11.7 to 13.0 %. Correcting E_phys is worth 11 points."},
+   {"k": "Shared mistakes", "big": "0.92", "unit": "r", "t": "Median correlation of per-trip errors between different families (same family: 0.95)."},
+   {"k": "Conformal layer", "big": "10 / 10", "unit": "CRPS better", "t": "Every wrapper improved CRPS. The networks' and trees' 90 % coverage rose from 0.71–0.77 to 0.82–0.89."}
+  ],
+  "boards_lede": "E16 is the mean exam MdAPE (median |estimate / measured − 1|) over the same 16 sets as the dev score D16: VED trips of four powertrains, nine EPA test types, Mersin buses and ICCT trucks. Lower is better. Intervals come from a paired cluster bootstrap (VED cars, EPA test vehicles, bus trips) with 2,000 resamples per set. A win or loss is called only when the 95 % interval excludes 0. Reference rows sit below the line. The classical composite was fitted on dev, so its exam score is honest.",
+  "board_note": {
+   "table": "EnergyNet v2.1 is the MLP control's network (an ensemble of five) trained on three banks, so 3x the data, on a GPU. The control saw one bank. Per-powertrain columns average that powertrain's set MdAPEs; Heavy includes the 78 ZTBus legs. Conformal rows share their base arm's estimate, so only the bands and CRPS change.",
+   "trace": "Trace arms read 5-s block means of the 1 Hz trip plus the spec vector. From rung r1 on, each predicts a correction to E_phys recomputed from the trace. Each is a single network trained on one bank; EnergyNet is an ensemble of five trained on three. The formula and the physics anchor read the same quantities on both tracks and score the same."
+  },
+  "wins_cards": {
+   "pt": [
+    {"k": "Hybrids: trees", "t": "Gradient-boosted trees have the best hybrid average (9.0 %, EnergyNet 9.3 %) and EPA hybrid FTP outright (7.0 %)."},
+    {"k": "Battery-electric: the GP", "t": "The sparse GP has the best BEV average (11.2 %) and wins EPA BEV city (7.0 %), EPA FTP and cold FTP."},
+    {"k": "Plug-ins and VED hybrids: EnergyNet", "t": "Where the spec is least known, the 3x bank wins: plug-ins 16.8 %, VED hybrids 13.4 %, US06 and BEV highway."},
+    {"k": "Buses: a dev median", "t": "On the Mersin buses every learner is 17–29 % low, and the dev median beats the best of them by 10–13 points. The simulator misses this fleet."}
+   ],
+   "cond": [
+    {"k": "EnergyNet leads 5 of 7", "t": "City, highway, hot, hilly and short trips; the GRU is statistically tied with it in every one."},
+    {"k": "Cold: the GRU", "t": "11.7 % below 0 °C, tied with EnergyNet, the MLP, the GP and the transformer."},
+    {"k": "Long trips: the GP", "t": "9.4 % over 15 km. Every learner is tied with it, including the formula."},
+    {"k": "Learners beat MOVES-like", "t": "In every condition the best new learner is 1.3–2.8 points below the dev-fitted MOVES-like model. The leader's margin is significant in six of seven; long trips are a tie."}
+   ]
+  },
+  "compute_lede": "Training CPU-hours on one thread against exam E16. Price bought nothing here: the cheapest learner (trees, 0.24 h) is 0.5 points behind the MLP control, and the costliest (S4D, 2.75 h) is last of the networks. Pre-exam rankings carried over only in part: Spearman 0.60 between sim val skill and exam E16, 0.62 for dev D16.",
+  "river_lede": "River's headline was that, with the same bank and budget, learner families converge and the simulator is the lever. Vehicles bring strong physics and two input forms. The headline holds, and more sharply: the families agree even on which trips they get wrong.",
+  "foot": [
+   "ML Ratchet · Vehicle Bake-off v1.0 · exam run 20261123T204251, run once on 23 Nov 2026 (20:42–23:57) on a shared 2-core machine.",
+   "The problem, the bank recipe and the reference arm are EnergyNet v2.1's (models/energynet), on RoadSim physics v2. Real data: RoadData (VED, EPA test cars, Mersin, ICCT, ZTBus v1). TabPFN v2 (Built with PriorLabs-TabPFN) was registered but excluded from the exam for compute.",
+   "Family pages: <a href=\"https://dogum.github.io/ML-Ratchet/model-families/\" target=\"_blank\" rel=\"noopener\">ML Ratchet Model families</a>. The release zip holds the harness, every arm, the exam outputs and this page."
+  ]
+ },
+ "trip_notes": {
+  "city": "5.8 km at 28 km/h near 0 °C. Every network and tree lands within about 5 % of the measured 20.9 MJ. E_phys alone says 15.2 MJ, 27 % low: stop-and-go engine losses are what the correction learns.",
+  "highway": "7.8 km at 86 km/h. Aerodynamic drag is now a large road load (about 3 MJ in the learned splits). The networks and trees land 2–11 % low; the formula and E_phys are 18 % and 29 % low.",
+  "hilly": "A power-split hybrid climbing 15.5 m per km, measured 9.56 MJ. EnergyNet is 11 % high and the trace learners 14–18 % high, even though they read the hills directly.",
+  "cold": "−13 °C, 4.5 km, a cold engine. E_phys says 10.4 MJ against a measured 20.3: at this temperature about half the fuel goes to warm-up and idling. The networks reach 18.3–19.0 MJ (6–9 % low); MOVES-like, fitted on dev, gets 20.4.",
+  "hybrid": "3.3 km at −8.5 °C, measured 7.0 MJ. Every learner is 26–47 % low (3.8–5.2 MJ), and climatology comes closest (6.5). A short, cold hybrid trip is one the bank gets wrong for every family.",
+  "ev": "A 2013 Leaf at −24 °C, measured 7.06 MJ (2.0 kWh) for 4.9 km. The learners say 4.6–5.9 MJ and E_phys 2.8. Their own splits put 2.4–4.1 MJ into auxiliaries and HVAC: cabin and battery heating.",
+  "plugin": "14.4 km at highway speed and 25 °C in a Volt-type plug-in, measured 9.5 MJ. The GRU is closest (9.64); the window label × distance says 15.7. Without the charge-depleting share, plug-ins are the hardest powertrain for every row.",
+  "bus": "A 14.8 km leg of a Zurich electric bus, mostly downhill (−84 m), measured 93.4 MJ (26 kWh). The networks land at 81–91 MJ (2–13 % low) and E_phys at 65 MJ. In the learned splits, rolling resistance and auxiliaries each take about a third."
+ },
+ "set_notes": {
+  "VED_EV": "Two exam Leafs (167 trips). The car-clustered bootstrap has only two clusters, so these intervals mean little.",
+  "VED_EV_cars": "Two cars.",
+  "ZTBus_legs": "RoadData v1 subset: 78 traced legs of 8 exam missions, clustered by mission. EnergyNet's full-ZTBus rows (5,847 legs, 1,115 missions) are out of scope because their traces are not on this machine. No published v2.1 number exists for this subset.",
+  "ZTBus_missions": "Eight missions (sums of their legs).",
+  "ICCT": "Six tractor-trailer tests.",
+  "Mersin_diesel": "Mean of two synthetic route draws per trip (EnergyNet's generator). The dev median is the city fleet's own average.",
+  "Mersin_cng": "Mean of two synthetic route draws per trip; CNG at 0.0471 MJ/g.",
+  "EPA_conv_FTP": "Per test vehicle: 0.43 cold + 0.57 hot UDDS, gallons per mile.",
+  "EPA_hev_FTPcold": "Not one of the 16 E16 sets.",
+  "EPA_hev_US06": "Not one of the 16 E16 sets.",
+  "EPA_hev_SC03": "Not one of the 16 E16 sets."
+ },
+ "cvs_labels": {
+  "tab_gbm": {"lx": 9, "ly": 4},
+  "tab_gp": {"lx": 9, "ly": 14},
+  "tab_mlp": {"lx": 9, "ly": -4},
+  "trace_gru": {"lx": 10, "ly": 14},
+  "trace_cnn": {"lx": -9, "ly": 14, "la": "end"},
+  "trace_transformer": {"lx": -10, "ly": -2, "la": "end"},
+  "trace_s4d": {"lx": -9, "ly": 4, "la": "end"},
+  "formula": {"lx": 9, "ly": 4},
+  "phys_anchor": {"lx": 9, "ly": 4}
+ },
+ "families": [
+  {"fam": "mlp", "armid": "tab_mlp", "name": "MLP, EnergyNet's net retrained", "famname": "MLP on physics features", "grp": "Table track · control", "assume": "Almost none beyond smoothness. Structure comes from the 151 physics features and from predicting a correction log(E / E_phys).", "result": "Best table learner at 12.1 % E16, 1.2 points behind the same architecture trained on 3x the data (EnergyNet v2.1). That gap is the cleanest measure of the data lever here. It ties the dev-fitted classical composite.", "score": [["E16", "12.1 %"], ["vs EnergyNet", "+1.2 loss"], ["train", "0.62 CPU-h"]]},
+  {"fam": "ensemble", "armid": "enet_v21", "name": "EnergyNet v2.1, as released", "famname": "Ensembles and heteroscedastic heads", "grp": "Reference · 5-member ensemble", "assume": "Five MLPs on the same physics features, trained on three simulated banks; the members' spread adds to the predicted noise.", "result": "Reproduced its published exam exactly on all 19 in-scope rows. Beats every new learner on E16 (11.0 %), by 0.7 to 2.0 points. Best on plug-ins, VED hybrids and five of seven trip conditions.", "score": [["E16", "11.0 %"], ["cov50 / 90", "0.52 / 0.85"], ["CRPS", "0.094"]]},
+  {"fam": "gbm", "armid": "tab_gbm", "name": "Gradient-boosted trees", "famname": "Gradient-boosted trees", "grp": "Table track", "assume": "The answer is piecewise constant over axis-aligned splits of the features. It is flat outside the bank, which is mild when predicting a correction.", "result": "12.6 % E16, 0.5 points behind the MLP (a loss) and tied with the classical composite. Best hybrid average (9.0 %) and EPA highway among learners. Monotone constraints cost simulated skill again, as in River.", "score": [["E16", "12.6 %"], ["vs MLP", "+0.5 loss"], ["train", "0.24 CPU-h"]]},
+  {"fam": "gp", "armid": "tab_gp", "name": "Sparse Gaussian process", "famname": "Gaussian processes", "grp": "Table track", "assume": "Smooth in a scoped set of 46 inputs, with correlations set by a kernel; 500 inducing points summarise the bank.", "result": "12.6 % E16, tied with the trees, and the best on battery-electric (11.2 %), EPA city and cold FTP, and long trips. Its raw bands were the only ones too wide (cov50 0.61); conformal brought them to 0.47 / 0.87.", "score": [["E16", "12.6 %"], ["BEV", "11.2 %"], ["train", "0.81 CPU-h"]]},
+  {"fam": "attn", "armid": "trace_transformer", "name": "Transformer on the trace", "famname": "Attention and transformers", "grp": "Trace track", "assume": "Any part of the trip can attend to any other. The only notion of order is a position code over 20-s patch tokens.", "result": "Best new learner on either track (11.7 %). It beats the GRU control by 0.4 points and the classical composite by 0.9, and lowest CRPS of any row once conformal (0.090). River's transformer lost; this one had patches and 2x the training steps.", "score": [["E16", "11.7 %"], ["vs GRU", "−0.4 win"], ["train", "1.64 CPU-h"]]},
+  {"fam": "ssm", "armid": "trace_gru", "name": "Bidirectional GRU", "famname": "State-space and recurrent models", "grp": "Trace track · control", "assume": "A hidden state is updated block by block in both directions, so the trip is read as a sequence with memory.", "result": "12.0 % E16. Best in cold trips (11.7 %, tied with EnergyNet) and on the ICCT trucks. Statistically tied with EnergyNet in every trip condition. A warm restart for 2x training was rejected (+0.008 skill).", "score": [["E16", "12.0 %"], ["cold", "11.7 %"], ["train", "1.65 CPU-h"]]},
+  {"fam": "ssm", "armid": "trace_s4d", "name": "S4D state space", "famname": "State-space and recurrent models", "grp": "Trace track", "assume": "Long linear filters with a learned diagonal state, behind the shared input-side MLP that River found S4D needs.", "result": "Best simulated skill of the trace arms (0.655) and last of them on the exam (13.0 %). It fitted the bank most closely and transferred least, at the highest cost (2.75 CPU-h).", "score": [["E16", "13.0 %"], ["sim skill", "0.655"], ["train", "2.75 CPU-h"]]},
+  {"fam": "cnn1d", "armid": "trace_cnn", "name": "1-D dilated CNN", "famname": "1-D convolutional network", "grp": "Trace track", "assume": "Local patterns of speed, grade and temperature mean the same wherever they occur in the trip, stacked by dilation.", "result": "12.7 % E16, 0.7 points behind the GRU. Best on VED petrol trips (8.6 %, tied with five others) and EPA SC03. Slowest at inference (23 CPU-min for the exam).", "score": [["E16", "12.7 %"], ["VED petrol", "8.6 %"], ["train", "1.57 CPU-h"]]},
+  {"fam": "symbolic", "armid": "formula", "name": "Trip-energy law", "famname": "Symbolic regression and sparse libraries", "grp": "Both tracks · LawFinder's fifth law", "assume": "Energy per km is a short formula in seven trip summaries: wheel work, braking work, minutes per km, mass, temperature, start state and distance.", "result": "21.1 % E16. It beats road-load by 1.8 points overall and by 19 points on VED petrol trips (14.0 vs 33.0 %), but trails the networks by 9 points. It misses dynamometer highway cycles (EPA HWY 30.5 %), the miss its rejected r2 rung fixed on dev.", "score": [["E16", "21.1 %"], ["VED petrol", "14.0 %"], ["search", "0.87 CPU-h"]]},
+  {"fam": "anchor", "armid": "phys_anchor", "name": "Physics anchor alone", "famname": "Classical estimate + learned correction", "grp": "Both tracks", "assume": "Energy is road-load physics, E_phys, with no learning. The bands are simulated quantiles of log(E / E_phys).", "result": "22.9 % E16, 33 % on VED petrol trips and 66 % on trucks. Every network gains 10 to 11 points by learning the correction to it. That correction rung added 0.016 to 0.034 of simulated skill to each trace arm.", "score": [["E16", "22.9 %"], ["bias VED petrol", "−33 %"], ["train", "0 h"]]},
+  {"fam": "conformal", "armid": "tab_mlp_conformal", "name": "Mondrian conformal layer", "famname": "Conformal prediction", "grp": "Wrapper on every arm", "assume": "Dev residuals are exchangeable with exam residuals within a powertrain, so shifting the band edges per stratum calibrates them.", "result": "All 10 wrappers improved CRPS (wins of 0.003 to 0.013). They lifted the networks' and trees' 90 % coverage from 0.71–0.77 to 0.82–0.89 and brought the GP's too-wide 0.92 down to 0.87. Unlike in River, calibration paid in CRPS here.", "score": [["wrappers", "10"], ["CRPS", "10 better"], ["fit", "dev only"]]},
+  {"fam": "tabfm", "armid": "tab_tabpfn", "name": "TabPFN v2 in context (excluded)", "famname": "Tabular foundation models", "grp": "Table track · lens, not a release", "assume": "A transformer pretrained on synthetic tables predicts from 2,048 simulated trips held in context, with no training step.", "result": "Not examined: it was excluded before the exam for compute. Its pre-exam numbers stand: sim val skill 0.563 and dev D16 12.5 %. Its raw dev bands were the closest to nominal (VED petrol 0.51 / 0.91). Built with PriorLabs-TabPFN.", "score": [["sim skill", "0.563"], ["dev D16", "12.5 %"], ["exam", "excluded"]]}
+ ],
+ "findings": [
+  {"who": "Trace agent · rung r1", "big": "+0.016 to +0.034", "t": "Simulated skill each trace arm gained by predicting a correction to E_phys instead of energy per km (GRU +0.034, S4D +0.028, transformer +0.022, CNN +0.016). Every trace arm kept it."},
+  {"who": "Table agent · MLP", "big": "0.597 vs 0.668", "t": "Five nets for 180 epochs memorised the one bank (skill 0.597). 30 epochs scored 0.668 and was released. More epochs cannot replace EnergyNet's three banks."},
+  {"who": "Table agent · trees", "big": "−0.005", "t": "Monotone constraints where physics fixes the sign cost simulated skill (dev improved by 0.007), so the rung was rejected, as in River. 8 tier redraws per trip were the rung that paid."},
+  {"who": "Table agent · GP", "big": "+0.0135 D16", "t": "One GP per powertrain gained on simulations and failed the dev gate. M = 1,000 inducing points gained nothing over 500."},
+  {"who": "Trace agent · transformer", "big": "+0.0145", "t": "24 more epochs (the River lesson) paid. 10-s patches over 36 epochs from scratch did not (−0.004), so 20-s patches were released."},
+  {"who": "Physics agent · formula", "big": "0.262 → 0.096", "t": "Adding a dynamometer flag fixed EPA highway on dev, but median skill on simulations could not see it, so r2 was rejected. The exam shows the cost: EPA HWY 30.5 %."},
+  {"who": "Physics agent · conformal", "big": "0.73 → 0.85", "t": "The MLP's 90 % coverage on dev (mean over the D16 sets), raw against cross-fitted conformal. Every network's raw band was too narrow on real trips; the GP's was too wide."},
+  {"who": "Table agent · TabPFN", "big": "10.6 ms / row", "t": "Measured predict cost: ~20–30 CPU-min for the exam per arm. The registry's 480-min estimate spread a one-off context fit over 24 smoke rows; the exclusion used that estimate."}
+ ],
+ "river": [
+  ["Do families converge?", "Five of nine tied within 0.01 NSE; attention, the GP and both HBV arms lost by 0.02–0.04.", "Seven networks and trees fall within 1.3 points of E16 (11.7–13.0 %). With 105k exam records most gaps are statistically separable, but all are small."],
+  ["Do they make the same mistakes?", "Not measured.", "Yes. Per-trip log errors correlate at 0.92 across families (0.95 within one). In 5 of 16 sets every learner's bias has the same sign and exceeds 3 %: Leafs in the cold, plug-ins, both Mersin fleets, ICCT trucks."],
+  ["What is the lever?", "The bank: all nine learners lost to the U-dev regionalisation and to NWM.", "Physics first: correcting E_phys is worth 11 points. Then the bank: the same MLP on 3x the data (EnergyNet) gains 1.2 points, and the bank's misses (Mersin buses, cold Leafs) are shared by every family."],
+  ["Learners against classical methods", "Classical regionalisation and NWM beat every learner.", "The best learners beat or tie the dev-fitted classical composite (the transformer wins by 0.9 points). Classical methods still win EPA highway (regression) and the Mersin buses (dev median, by 10–13 points)."],
+  ["Attention", "The transformer lost to FlowCast (−0.018 NSE).", "The transformer is the best new learner (11.7 %), with patch tokens and 2x the steps."],
+  ["State space", "S4D tied after an input encoder.", "S4D had the best simulated skill and was last on the exam: it fitted the bank most closely."],
+  ["Trees", "Topped the main board, tied.", "0.5 points behind the MLP; best on hybrids. Monotone constraints were rejected again."],
+  ["Formulas", "Matched their teacher network.", "A readable law beats road-load by 19 points on VED petrol trips but trails the networks by 9."],
+  ["Conformal", "Coverage to 0.87–0.89; CRPS slightly worse in 14 of 18.", "Networks' and trees' coverage to 0.82–0.89 from 0.71–0.77; CRPS better in all 10."]
+ ],
+ "limits": [
+  ["Limits", [
+   "ZTBus is scoped to RoadData's v1 subset: 78 traced legs of 8 exam missions. EnergyNet's full-ZTBus exam rows (5,847 legs, 1,115 missions) are out of scope because their traces are not on this machine. Argonne D3 is not used by EnergyNet and is absent.",
+   "Every arm trained on one of EnergyNet's three banks (28,800 trips, a third of its data), and each trace arm is a single network; EnergyNet is an ensemble of five. The MLP control matches EnergyNet's architecture and ensemble, so its gap is the data effect.",
+   "TabPFN v2 and its conformal wrapper were excluded from the exam for compute (estimated ~937 single-thread CPU-min on a shared 2-core box). TabPFN is a yardstick (a lens, not a release), its simulated and dev numbers stand, and a dated supplementary exam can run later on a larger machine.",
+   "One seed per arm. Dev D16 moves by ~0.005 between seeds of one network, so gaps under ~0.5 points are fragile even when the bootstrap calls them.",
+   "E16 is an unweighted mean of 16 sets of very different sizes (6 ICCT tests, 20,426 EPA highway vehicles). VED Leaf has two exam cars, so its bootstrap is uninformative.",
+   "Equal CPU is not equal craft. The trees and the GP use the 151 hand-built physics features; the trace arms rebuild E_phys from the trace.",
+   "Component splits come from each learner's auxiliary head, trained on RoadSim's energy ledger. They are not measured on the real trips."
+  ]],
+  ["Rules as run", [
+   "Exam run once (run 20261123T204251) after `exam.py --check` passed; 21 arms, each re-hashed unchanged after scoring; 0 error rows; no resume.",
+   "The exclusion was decided by the coordinator before the exam and recorded in `registry/excluded.json`. It needed a two-line harness fix: `register.registered()` read `excluded.json` as an arm record.",
+   "Zero real labels in training. Dev was used only for rung gates and the conformal fits. The classical references are fitted on dev, so their exam scores are honest.",
+   "EnergyNet v2.1 reproduced its published exam on all 19 in-scope rows (same n, MdAPE difference 0).",
+   "The analysis reads only exam outputs and the arms' pre-exam metadata. Its bootstraps share cluster resamples across rows, so every pair is paired.",
+   "No writes to the repo or the claude.ai project. The Model families change ships as a patch."
+  ]]
+ ]
+}

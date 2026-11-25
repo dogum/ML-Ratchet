@@ -1,0 +1,21 @@
+{
+ "arm_id": "enet_v21",
+ "label": "EnergyNet v2.1 as released",
+ "family": "mlp",
+ "family_label": "Multilayer perceptron (ensemble of 5, correction to a physics estimate)",
+ "group": "ref",
+ "reference": true,
+ "tracks": ["table"],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {"train_cpu_hours": 0, "notes": "released model, not retrained here (trained by EnergyNet on an RTX 3080, 5 networks x ~5 min, 86,400 simulated trips)"},
+ "feature_engineering": "EnergyNet's own 151 inputs (the table track's definition)",
+ "extra_files": [],
+ "margin": 0.01,
+ "rule": "released model; no rungs in the bake-off",
+ "rungs": [
+  {"id": "v2.1", "change": "EnergyNet v2.1 as released (rung r17: r15 networks + EPA hybrid system + ZTBus curb mass inputs)", "decision": "released", "why": "reference row", "simval_skill": 0.680, "dev_D16": 0.1133}
+ ],
+ "released": "v2.1"
+}

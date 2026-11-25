@@ -1,0 +1,56 @@
+{
+ "arm_id": "trace_cnn",
+ "label": "1-D dilated CNN on the trip trace",
+ "family": "cnn1d",
+ "family_label": "1-D convolutional network (dilated residual CNN)",
+ "group": "trace",
+ "tracks": [
+  "trace"
+ ],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {
+  "train_cpu_hours": 1.572,
+  "notes": "r0 0.52, r1 0.52, r2 0.51 (rejected); + 0.02 for a speed benchmark, a 2-min first launch killed for memory and the r2 harness eval re-run after a container restart; one thread, shared 2-core machine"
+ },
+ "feature_engineering": "trace-track inputs only: the harness's shared 5-s block means (bake.block_means rule: 8 channel means + mean v^2, mean v^3, summed positive kinetic-energy increment per unit mass) + the block's valid-second fraction -> 12 scaled channels; spec (49) and rl (5, logs of mass / CdA / Crr) standardised with train-bank statistics; log distance and log duration from the trace; chunks of <= 1,440 blocks mean-pooled for longer traces; anchor r0 = sim-train median MJ/km per (architecture, class) (bake.dumb_rates) x distance; from r1: E_phys recomputed from the trace inputs by bake.e_phys_from_trace (EnergyNet's generic road-load estimate; declared), target log(y / E_phys), log(E_phys / A0) as an input",
+ "extra_files": [
+  "../common"
+ ],
+ "margin": 0.01,
+ "rule": "keep a rung if its full sim val skill beats the incumbent by > 0.01 AND its dev D16 is not worse than the incumbent's by more than 0.01 (HARNESS.md section 7, EnergyNet's model-rung rule)",
+ "rungs": [
+  {
+   "id": "r0",
+   "change": "base: pure trace learner; anchor A0 = sim-train median MJ/km (architecture x class) x distance, no physics estimate; 12 epochs",
+   "decision": "base",
+   "why": "first rung: what the CNN finds from the raw trace alone (skill 0.617, D16 0.117)",
+   "simval_skill": 0.6174,
+   "simval_MdAPE": 0.0888,
+   "dev_D16": 0.117,
+   "train_cpu_hours": 0.519
+  },
+  {
+   "id": "r1",
+   "change": "physics anchor: target log(E / E_phys) with E_phys recomputed from the trace inputs (bake.e_phys_from_trace), log(E_phys / A0) as an input; 12 epochs from scratch",
+   "decision": "released",
+   "why": "sim val skill +0.016 over r0 (bootstrap +0.002..+0.029) and D16 0.1134 better than r0 0.1170: kept; released (r2 did not beat it)",
+   "simval_skill": 0.6334,
+   "simval_MdAPE": 0.0851,
+   "dev_D16": 0.1134,
+   "train_cpu_hours": 0.524
+  },
+  {
+   "id": "r2",
+   "change": "2x training: warm restart from r1 for 12 more epochs (one-cycle cosine, peak lr 1e-3, data stream seed 1)",
+   "decision": "rejected",
+   "why": "sim val skill +0.008 over r1 (bootstrap -0.001..+0.019) < the 0.01 margin; D16 0.1085 vs 0.1134 is better, but a dev move under 0.01 is seed noise and the rule needs the sim margin: rejected",
+   "simval_skill": 0.6414,
+   "simval_MdAPE": 0.0835,
+   "dev_D16": 0.1085,
+   "train_cpu_hours": 0.509
+  }
+ ],
+ "released": "r1"
+}

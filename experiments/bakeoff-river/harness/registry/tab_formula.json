@@ -1,0 +1,97 @@
+{
+ "arm_id": "tab_formula",
+ "arm_dir": "/home/claude/bakeoff/river/arms_tab/tab_formula",
+ "hash": "3f8047a78c60ebe02f949d6d06596634e8cf765a59153537e88706f247a9d9dc",
+ "files": {
+  "bands.npz": "5b1c21f6259abdefe89186ec90e65ee032590b13c8093d32e7bdc374be600693",
+  "card.md": "d5823f800354f68b7490e942813467e871b3a7de5147e9fb48c9e3f72594abf1",
+  "formula_eval.py": "b2cf907e256df9fa216aaaab50a78abc12c8a2b84900fa8405f798a298aa84dd",
+  "formulas.json": "620c2c752fa4a3c52b0ac4a06d5ba41cee64a52b3a0a2272f603f4013d2ccb38",
+  "lawsearch.py": "9550b4a2508cf19a2d911e352f8a3ca365c01f4633bde09dc53bf5f3c8f67962",
+  "physarm.py": "9742a0f85cccb3e2c7d2113c9f073f8fc6a4b6eb03a922c9c50085ea66d1c36a",
+  "predict.py": "a0b3ad6e490c8bba64551d25bd4aa0dca379926b4ac136cf74e44eb3e0731d96",
+  "ratchet.json": "3d354f98adf0564815d1006b12e98147f8b988ffc340b9d657ed4e88ee93c609",
+  "wsim.py": "55c1b8934bc5b1c52ed725bc8138fd7294bf8f94987840c9a3905c2cdc6db171"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "Formulas: symbolic attribute -> WaterSim HBV parameter laws (LawFinder-style search), run in WaterSim",
+  "family": "symbolic",
+  "family_label": "Symbolic regression (formula search)",
+  "group": "tab",
+  "reference": null,
+  "numpy_only": false,
+  "numpy_only_reason": "The prediction IS a WaterSim run: 17 closed-form formulas give the parameters, then predict.py calls the harness's vendored WaterSim (numba-compiled HBV + degree-day snow + gamma channel UH + irrigation) through wsim.py.",
+  "compute": {
+   "train_cpu_hours": 0.25,
+   "notes": "One thread (process_time). Symbolic search 251 s (17 parameters x 50 s wall each; lawsearch.py vendored unchanged from LawFinder); r1 constant tuning through the torch simulator 613 s; band fitting + exports 3 x ~8 s. The teacher mapping is arm tab_dpl r1 (its 2.25 CPU h are counted there, not here)."
+  },
+  "released": "r0",
+  "feature_engineering": "Formula inputs: the 18 raw static-vector values (log_area, elev_mean_km, elev_range_km, log_slope_mkm, forest_frac, soil_porosity, log_ksat_cmh, carbonate_frac, reservoir_frac, irrigation_frac, urban_frac, log_p_mean, pet_mean, log_aridity, frac_snow, hp_freq, lp_freq, t_mean_c). Simulator input as tab_dpl: batch forcing (P x PMULT, PET, T_mean) and a spec from the attributes; spin-up = the 365 warm-up rows."
+ },
+ "smoke": {
+  "load_cpu_s": 0.44,
+  "ungauged": {
+   "dev_nse": [
+    0.5528,
+    0.1699,
+    0.6944
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 0.129
+  },
+  "files_used": [
+   "arms_tab/tab_formula/bands.npz",
+   "arms_tab/tab_formula/formulas.json",
+   "arms_tab/tab_formula/predict.py",
+   "arms_tab/tab_formula/ratchet.json",
+   "harness/.numba/models_402d61191ceddfe11ab4281424ed5fc95e2d253c",
+   "harness/.numba/watersim_0ad550ac7c63e5c16e70a71f8bbad988d7d7020e",
+   "harness/.numba/watersim_0ad550ac7c63e5c16e70a71f8bbad988d7d7020e/engine.run_core-41.py313.1.nbc",
+   "harness/.numba/watersim_0ad550ac7c63e5c16e70a71f8bbad988d7d7020e/engine.run_core-41.py313.nbi",
+   "harness/.numba/watersim_0ad550ac7c63e5c16e70a71f8bbad988d7d7020e/routing.convolve_uh-100.py313.1.nbc",
+   "harness/.numba/watersim_0ad550ac7c63e5c16e70a71f8bbad988d7d7020e/routing.convolve_uh-100.py313.nbi",
+   "harness/bank/val/F.npy",
+   "harness/bank/val/attrs.npy",
+   "harness/bank/val/lat.npy",
+   "harness/bank/val/lon.npy",
+   "harness/bank/val/qo.npy",
+   "harness/bank/val/st.npy",
+   "harness/bank/val/start.npy",
+   "harness/vendor/watersim/__init__.py",
+   "harness/vendor/watersim/__pycache__/watersim_src.sha1",
+   "harness/vendor/watersim/_nb.py",
+   "harness/vendor/watersim/calibrate.py",
+   "harness/vendor/watersim/constants.py",
+   "harness/vendor/watersim/data/prior_adjust.json",
+   "harness/vendor/watersim/engine.py",
+   "harness/vendor/watersim/forcing.py",
+   "harness/vendor/watersim/generator.py",
+   "harness/vendor/watersim/labels.py",
+   "harness/vendor/watersim/metrics.py",
+   "harness/vendor/watersim/models/__init__.py",
+   "harness/vendor/watersim/models/gr4j.py",
+   "harness/vendor/watersim/models/hbv.py",
+   "harness/vendor/watersim/models/sacsma.py",
+   "harness/vendor/watersim/models/vic_lite.py",
+   "harness/vendor/watersim/noise.py",
+   "harness/vendor/watersim/pet.py",
+   "harness/vendor/watersim/realdata.py",
+   "harness/vendor/watersim/reservoir.py",
+   "harness/vendor/watersim/routing.py",
+   "harness/vendor/watersim/signatures.py",
+   "harness/vendor/watersim/simulate.py",
+   "harness/vendor/watersim/snow.py",
+   "harness/vendor/watersim/spec.py",
+   "harness/vendor/watersim/weather.py"
+  ],
+  "exam_cpu_estimate_min": 2.6
+ },
+ "harness_hash": "111d13ef04a576a20f04d180eb326e8eaa4e0909651d1cc1086d3e8d85e083bf",
+ "registered_at": "2026-11-23T05:37:05",
+ "history": []
+}

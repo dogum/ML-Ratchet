@@ -1,0 +1,118 @@
+{
+ "arm_id": "enkf_watersim",
+ "arm_dir": "/home/claude/bakeoff/river/arms_filt/enkf_watersim",
+ "hash": "bd85c400356020832b4ccfe14c964840018b73a88913e45b69a11f6fd4b492d8",
+ "files": {
+  "card.md": "e1d692d1c2cea366a7a224cff25679d8e2a65e860ed78952886da7e42a9fd535",
+  "enkf_core.py": "3d1695c3a98c47607a938887a36182684d6990cc319e1afc01d293817761bcb8",
+  "hyper.json": "f3ed146c3e9902557dc1fb181a2f811162f679d88cdd18e777699e309b8c3314",
+  "predict.py": "7332107a21cc7548ec80de6c0a0d6bc6f42b1a4cb5039868ea44e4141c064c80",
+  "ratchet.json": "3954ec0b6ef9af454cf51df300b392958be398bd1444f539de48b5b62fce43e3"
+ },
+ "protocols": [
+  "gauged"
+ ],
+ "meta": {
+  "label": "Ensemble Kalman filter on WaterSim (HBV + snow), joint state-parameter",
+  "family": "assim",
+  "family_label": "Data assimilation (ensemble Kalman filter)",
+  "group": "filt",
+  "reference": null,
+  "numpy_only": false,
+  "numpy_only_reason": "runs the vendored WaterSim kernels (HBV step, degree-day snow) inside a numba-compiled filter loop; numba compiles at first call (~3 s), no cache files written (cache=False). A pure-numpy port would be ~100x slower (daily loop x 32 members x 4,000+ days).",
+  "compute": {
+   "train_cpu_hours": 0.98,
+   "notes": "No network training. 0.64 CPU-h tuning filter settings on 250 simulated TRAIN runs (tools/tune.py, ~75 variants, work/tune/*.jsonl) + 0.32 CPU-h rung evaluations (4 rungs + an open-loop diagnostic; 800 sim val runs + 52 dev basins x 3 leads) + ~0.02 smoke tests. One thread, nice 5."
+  },
+  "released": "r1",
+  "feature_engineering": "No learned features. Uses forcing columns P, PET, T_mean; the 11 attributes -> a WaterSim basin spec (elevation bands from mean and range, slope, forest, porosity, ksat, carbonate, urban; aridity and p_mean from the static vector) -> WaterSim's attribute transfer functions for HBV + degree-day snow parameters and the p1 water-yield multiplier prior (elevation, frac_snow, p_mean); observed flow qobs up to the forecast origin (t - lead) is assimilated as log(Q + c), c = 0.02 x p_mean."
+ },
+ "smoke": {
+  "load_cpu_s": 0.35,
+  "gauged_L1": {
+   "dev_nse": [
+    0.7338,
+    -1.0234,
+    0.7731
+   ],
+   "causality_maxdiff": 0.0
+  },
+  "gauged_L3": {
+   "dev_nse": [
+    0.6748,
+    -0.0083,
+    0.7712
+   ],
+   "causality_maxdiff": 0.0
+  },
+  "gauged_L7": {
+   "dev_nse": [
+    0.6336,
+    0.0747,
+    0.7634
+   ],
+   "causality_maxdiff": 0.0
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "gauged_L1": 1.605,
+   "gauged_L3": 0.372,
+   "gauged_L7": 0.641
+  },
+  "files_used": [
+   "arms_filt/enkf_watersim/enkf_core.py",
+   "arms_filt/enkf_watersim/hyper.json",
+   "arms_filt/enkf_watersim/predict.py",
+   "arms_filt/enkf_watersim/ratchet.json",
+   "harness/.numba/models_402d61191ceddfe11ab4281424ed5fc95e2d253c",
+   "harness/.numba/models_402d61191ceddfe11ab4281424ed5fc95e2d253c/hbv.step-38.py313.1.nbc",
+   "harness/.numba/models_402d61191ceddfe11ab4281424ed5fc95e2d253c/hbv.step-38.py313.nbi",
+   "harness/.numba/watersim_0ad550ac7c63e5c16e70a71f8bbad988d7d7020e",
+   "harness/.numba/watersim_0ad550ac7c63e5c16e70a71f8bbad988d7d7020e/snow.dd_step-66.py313.1.nbc",
+   "harness/.numba/watersim_0ad550ac7c63e5c16e70a71f8bbad988d7d7020e/snow.dd_step-66.py313.nbi",
+   "harness/bank/val/F.npy",
+   "harness/bank/val/attrs.npy",
+   "harness/bank/val/lat.npy",
+   "harness/bank/val/lon.npy",
+   "harness/bank/val/qo.npy",
+   "harness/bank/val/st.npy",
+   "harness/bank/val/start.npy",
+   "harness/vendor/watersim/__init__.py",
+   "harness/vendor/watersim/__pycache__/watersim_src.sha1",
+   "harness/vendor/watersim/_nb.py",
+   "harness/vendor/watersim/calibrate.py",
+   "harness/vendor/watersim/constants.py",
+   "harness/vendor/watersim/data/prior_adjust.json",
+   "harness/vendor/watersim/engine.py",
+   "harness/vendor/watersim/forcing.py",
+   "harness/vendor/watersim/generator.py",
+   "harness/vendor/watersim/labels.py",
+   "harness/vendor/watersim/metrics.py",
+   "harness/vendor/watersim/models/__init__.py",
+   "harness/vendor/watersim/models/gr4j.py",
+   "harness/vendor/watersim/models/hbv.py",
+   "harness/vendor/watersim/models/sacsma.py",
+   "harness/vendor/watersim/models/vic_lite.py",
+   "harness/vendor/watersim/noise.py",
+   "harness/vendor/watersim/pet.py",
+   "harness/vendor/watersim/realdata.py",
+   "harness/vendor/watersim/reservoir.py",
+   "harness/vendor/watersim/routing.py",
+   "harness/vendor/watersim/signatures.py",
+   "harness/vendor/watersim/simulate.py",
+   "harness/vendor/watersim/snow.py",
+   "harness/vendor/watersim/spec.py",
+   "harness/vendor/watersim/weather.py"
+  ],
+  "exam_cpu_estimate_min": 53.3
+ },
+ "harness_hash": "111d13ef04a576a20f04d180eb326e8eaa4e0909651d1cc1086d3e8d85e083bf",
+ "registered_at": "2026-11-23T05:54:47",
+ "history": [
+  {
+   "hash": "a2f6ae02d95df35f755408489c24cdadb3ea8cf01e2227ac86f413d6ad8af61d",
+   "registered_at": "2026-11-23T01:51:54",
+   "replaced_at": "2026-11-23T05:54:47"
+  }
+ ]
+}

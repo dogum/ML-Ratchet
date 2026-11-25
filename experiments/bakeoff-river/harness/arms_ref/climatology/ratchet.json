@@ -1,0 +1,18 @@
+{
+ "arm_id": "climatology",
+ "label": "Climatology: constant water-balance flow (dumb baseline)",
+ "family": "dumb",
+ "family_label": "Dumb baseline (no learner)",
+ "group": "ref",
+ "reference": true,
+ "protocols": ["ungauged"],
+ "numpy_only": true,
+ "compute": {"train_cpu_hours": 0.001, "notes": "fit.py: pooled ratios over 2,000 sim train runs, ~5 s."},
+ "feature_engineering": "Fu runoff ratio (w 2.6) of the forcing's aridity x the forcing's mean precipitation (static indices 13 and 11). Nothing else.",
+ "margin": 0.01,
+ "rule": "No ladder: a fixed dumb baseline and the harness's test arm.",
+ "rungs": [
+  {"id": "r0", "change": "constant mean = 1.198 x Fu x p_mean; quantiles = fixed multiples (sim train bank)", "decision": "released", "why": "Harness test arm and the ungauged dumb baseline."}
+ ],
+ "released": "r0"
+}

@@ -1,0 +1,24 @@
+{
+ "arm_id": "tab_mlp",
+ "label": "MLP control (EnergyNet v2.1's network, retrained on the shared bank)",
+ "family": "mlp",
+ "family_label": "Multilayer perceptron (ensemble of 5, correction to a physics estimate)",
+ "group": "table",
+ "tracks": ["table"],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {"train_cpu_hours": 0.62, "train_cpu_s": {"r0": 90, "r1": 471, "r2": 1482, "r3": 263},
+             "notes": "torch 2.15 CPU, one thread, time.process_time() inside train_mlp.py; r1 reuses r0's seed-0 network (471 s = all 5 members); harness evaluations (~8 s prediction CPU each) not counted"},
+ "feature_engineering": "none: the 151 EnergyNet inputs, standardised as EnergyNet does (mean / sd from one tier draw, clipped at +-8); target log(y / E_phys) + the 5 log component shares (EnergyNet's auxiliary head)",
+ "extra_files": [],
+ "margin": 0.01,
+ "rule": "keep a rung if its frozen sim val skill beats the incumbent's by more than 0.01 AND its dev D16 is not worse than the incumbent's by more than 0.01 (HARNESS.md section 7)",
+ "rungs": [
+  {"id": "r0", "change": "base: EnergyNet v2.1's network and recipe (train.py --version e --mode corr --era: 151-256-256-256-128, GELU, Gaussian NLL + 0.2 x component MSE, AdamW 2e-3 OneCycle, batch 256, 60 epochs, tiers redrawn every epoch), single network (seed 0), on the bake-off train bank (28,800 trips; v2.1 had 86,400)", "decision": "base", "why": "first rung", "simval_skill": 0.6460, "simval_MdAPE": 0.0827, "dev_D16": 0.1205},
+  {"id": "r1", "change": "ensemble of 5 seeds (v2.1's release structure), log-space average, sigma^2 = mean member sigma^2 + spread", "decision": "kept", "why": "sim val skill +0.011 (0.6573); dev D16 0.1188 (0.002 better)", "simval_skill": 0.6573, "simval_MdAPE": 0.0796, "dev_D16": 0.1188},
+  {"id": "r2", "change": "180 epochs per member (step-matched to v2.1's 3 banks x 60 epochs)", "decision": "rejected", "why": "sim val skill -0.060 (0.5970): the networks memorise the single bank (train median |log error| 0.028 vs 0.060 at 60 epochs); more epochs do not replace more trips", "simval_skill": 0.5970, "simval_MdAPE": 0.0943, "dev_D16": 0.1224},
+  {"id": "r3", "change": "30 epochs per member (half of v2.1's per-bank schedule; same OneCycle shape)", "decision": "released", "why": "sim val skill +0.011 vs r1 (0.6682); dev D16 0.1203 (0.0015 worse, within the 0.01 margin)", "simval_skill": 0.6682, "simval_MdAPE": 0.0775, "dev_D16": 0.1203}
+ ],
+ "released": "r3"
+}

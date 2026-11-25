@@ -1,0 +1,36 @@
+{
+ "arm_id": "tab_gp_conformal",
+ "label": "Sparse Gaussian process (SGPR, 500 inducing points) + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around tab_gp)",
+ "group": "phys",
+ "tracks": [
+  "table"
+ ],
+ "wraps": "tab_gp",
+ "wraps_hash": "131f5c73c54ed1a93818d62a91fd4b2282c5e975a8352f7d59ce2f7344e2e89c",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {
+  "train_cpu_hours": 0.0073,
+  "base_train_cpu_hours": 0.81,
+  "notes": "conformal fit only (dev predictions of tab_gp + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond tab_gp's; strata from arch, cls and the dynamometer flag",
+ "extra_files": [
+  "../../../arms_table/tab_gp",
+  "../lib"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata powertrain x road/dyno/hd) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage over the D16 sets (grouped 10-fold cross-fit): table cov50/90 0.46/0.85"
+  }
+ ],
+ "released": "c0"
+}

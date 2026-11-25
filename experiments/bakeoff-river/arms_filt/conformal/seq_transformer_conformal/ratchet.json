@@ -1,0 +1,36 @@
+{
+ "arm_id": "seq_transformer_conformal",
+ "label": "Transformer (causal encoder over daily tokens) + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around seq_transformer)",
+ "group": "filt",
+ "protocols": [
+  "ungauged"
+ ],
+ "wraps": "seq_transformer",
+ "wraps_hash": "58490e2c52a25844432906dafe78e4b192bb7204b71ca528a73f43ceb95b2cbe",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.0146,
+  "base_train_cpu_hours": 3.553,
+  "notes": "conformal fit only (dev predictions of seq_transformer + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond seq_transformer's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)",
+ "extra_files": [
+  "../../../arms_seq/transformer",
+  "../lib",
+  "../../../arms_seq/common"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata snow/arid/humid/other) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage (LOBO) ungauged 0.94"
+  }
+ ],
+ "released": "c0"
+}

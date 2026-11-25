@@ -1,0 +1,36 @@
+{
+ "arm_id": "tab_gbm_conformal",
+ "label": "Gradient-boosted trees (LightGBM, numpy export) + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around tab_gbm)",
+ "group": "phys",
+ "tracks": [
+  "table"
+ ],
+ "wraps": "tab_gbm",
+ "wraps_hash": "57349fe2297a02a8e9ce264d208e6ac1afc971e799148c64bbb18ae88563e036",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {
+  "train_cpu_hours": 0.0065,
+  "base_train_cpu_hours": 0.24,
+  "notes": "conformal fit only (dev predictions of tab_gbm + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond tab_gbm's; strata from arch, cls and the dynamometer flag",
+ "extra_files": [
+  "../../../arms_table/tab_gbm",
+  "../lib"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata powertrain x road/dyno/hd) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage over the D16 sets (grouped 10-fold cross-fit): table cov50/90 0.46/0.84"
+  }
+ ],
+ "released": "c0"
+}

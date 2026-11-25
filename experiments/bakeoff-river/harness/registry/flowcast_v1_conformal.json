@@ -1,0 +1,101 @@
+{
+ "arm_id": "flowcast_v1_conformal",
+ "arm_dir": "/home/claude/bakeoff/river/arms_filt/conformal/flowcast_v1_conformal",
+ "hash": "da549e656a0f040081c4f3b9447e1aa1f90543b0e8317b9e262be034d05d7ecb",
+ "files": {
+  "calib.json": "6cad412e4c59f7aed87906d48a74bb5d1c16c6b41fff8ce4183581765ab52071",
+  "card.md": "ffbab6cb854e0a958ed98965de1577d71f87d5b4f4fda768cb2a59588972a6bc",
+  "predict.py": "03121f12f4f846da1462876546b92a65d075ecf5fb5ff329ef429352328a25fb",
+  "ratchet.json": "df483d8d37b844b9bb11edf16a553ee42c446ff8eaa494656168109f5d4b2063",
+  "../lib/cf_mondrian.py": "8de2a4956b525f96e7494ebe16e5d0cd7b435fa8baf72a3d0d20ec7ff815223a",
+  "../../../harness/arms_ref/flowcast_v1/card.md": "ea3b8943a2b2e6bd7ac2aabc4520fe3e9d67947d996f480ab8ab1629998119bc",
+  "../../../harness/arms_ref/flowcast_v1/flowcast.py": "6d98b1bd2d585042345e1253428e5e7e4fde0dabcd052ef192a49dfa9ceb2e45",
+  "../../../harness/arms_ref/flowcast_v1/flowcast_nowcast_weights.npz": "788db343064d80436c71f3bb73e3f909364e57e494c655906c7de81504c3b801",
+  "../../../harness/arms_ref/flowcast_v1/flowcast_weights.npz": "bbf1830f5ed5971e465fdb5db754cb2b2dd3ca34c66d2cf4edc5ec06f6dbe289",
+  "../../../harness/arms_ref/flowcast_v1/predict.py": "cc96c414b1bf5c9767e41f8a5f655490c4a91f7ce2745d8eefd3fbd9dbca008a",
+  "../../../harness/arms_ref/flowcast_v1/ratchet.json": "a3e1ffa30f73c7ce533cb161f0ef3f43daa8d682b7411d465d64a3a738a7e274"
+ },
+ "protocols": [
+  "ungauged",
+  "gauged"
+ ],
+ "meta": {
+  "label": "FlowCast v1.0 as released + Mondrian conformal",
+  "family": "conformal",
+  "family_label": "Conformal prediction (wrapper around flowcast_v1)",
+  "group": "filt",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.005,
+   "base_train_cpu_hours": 0.0,
+   "notes": "conformal fit only (dev predictions of flowcast_v1 + shifts); the base arm is not retrained"
+  },
+  "released": "c0",
+  "feature_engineering": "none beyond flowcast_v1's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)"
+ },
+ "smoke": {
+  "load_cpu_s": 0.01,
+  "ungauged": {
+   "dev_nse": [
+    0.5339,
+    0.175,
+    0.6283
+   ]
+  },
+  "gauged_L1": {
+   "dev_nse": [
+    0.6896,
+    0.279,
+    0.764
+   ],
+   "causality_maxdiff": 0.0
+  },
+  "gauged_L3": {
+   "dev_nse": [
+    0.6498,
+    0.1258,
+    0.7384
+   ],
+   "causality_maxdiff": 0.0
+  },
+  "gauged_L7": {
+   "dev_nse": [
+    0.5785,
+    0.1461,
+    0.7171
+   ],
+   "causality_maxdiff": 0.0
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 0.066,
+   "gauged_L1": 0.06,
+   "gauged_L3": 0.064,
+   "gauged_L7": 0.068
+  },
+  "files_used": [
+   "arms_filt/conformal/flowcast_v1_conformal/calib.json",
+   "arms_filt/conformal/flowcast_v1_conformal/predict.py",
+   "arms_filt/conformal/flowcast_v1_conformal/ratchet.json",
+   "arms_filt/conformal/lib/cf_mondrian.py",
+   "harness/arms_ref/flowcast_v1/flowcast.py",
+   "harness/arms_ref/flowcast_v1/flowcast_nowcast_weights.npz",
+   "harness/arms_ref/flowcast_v1/flowcast_weights.npz",
+   "harness/arms_ref/flowcast_v1/predict.py",
+   "harness/arms_ref/flowcast_v1/ratchet.json",
+   "harness/bank/val/F.npy",
+   "harness/bank/val/attrs.npy",
+   "harness/bank/val/lat.npy",
+   "harness/bank/val/lon.npy",
+   "harness/bank/val/qo.npy",
+   "harness/bank/val/st.npy",
+   "harness/bank/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 5.3
+ },
+ "harness_hash": "111d13ef04a576a20f04d180eb326e8eaa4e0909651d1cc1086d3e8d85e083bf",
+ "registered_at": "2026-11-22T23:48:09",
+ "history": []
+}

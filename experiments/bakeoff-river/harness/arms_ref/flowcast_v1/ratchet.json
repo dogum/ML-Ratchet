@@ -1,0 +1,21 @@
+{
+ "arm_id": "flowcast_v1",
+ "label": "FlowCast v1.0 as released",
+ "family": "ssm",
+ "family_label": "LSTM (State-space and recurrent models)",
+ "group": "ref",
+ "reference": true,
+ "protocols": ["ungauged", "gauged"],
+ "numpy_only": true,
+ "compute": {"train_cpu_hours": 0.0, "notes": "Not trained in the bake-off: the released FlowCast v1.0 weights (models/flowcast). Its own training: r1b ~15 min on one shared core + 12k bank 7-15 min; nowcast fine-tune 2,500 steps."},
+ "feature_engineering": "FlowCast's own: 11 scaled daily features (P/10, log1p P, PET/5, T/10 x3, SRAD/150, vp/1000, wind/3, sin/cos day of year) + the 18-value static vector (config.STATIC_NAMES); target in units of the basin's mean precipitation. Nowcast adds log1p(5 x qobs/p_mean) lagged by the lead, an availability flag and lead/7.",
+ "margin": 0.01,
+ "rule": "FlowCast's own ladder (models/flowcast/ratchet.yaml): keep if sim NSE > incumbent + 0.01 AND dev median NSE >= 95 % of the incumbent's.",
+ "rungs": [
+  {"id": "r0", "change": "WaterSim as shipped (p0)", "decision": "base", "why": "FlowCast's first rung (record only; not run in the bake-off)."},
+  {"id": "r0b", "change": "loss scaled by Fu runoff ratio of the forcing", "decision": "kept", "why": "FlowCast ratchet: sim 0.476 vs 0.441, dev 0.436."},
+  {"id": "r1b", "change": "p1 water-yield multiplier + new loss", "decision": "released", "why": "FlowCast v1.0 as released (sim 0.425 on p1, dev 0.425). Copied unchanged as the bake-off's incumbent reference."}
+ ],
+ "released": "r1b",
+ "source": "/home/claude/mlr-repo/models/flowcast (flowcast.py, flowcast_weights.npz, flowcast_nowcast_weights.npz; sha256 in card.md)"
+}

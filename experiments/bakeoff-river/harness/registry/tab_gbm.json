@@ -1,0 +1,61 @@
+{
+ "arm_id": "tab_gbm",
+ "arm_dir": "/home/claude/bakeoff/river/arms_tab/tab_gbm",
+ "hash": "86b5fa6bcbd682a8ff75861bf3656ba7a3049cf8f05e702433e8dcd016fbc737",
+ "files": {
+  "card.md": "d653c84bc8efa93bbe48afc9adc99c3a2320b9f3a2668f90f33a251f9f63a576",
+  "feats.py": "34308612173b6143cab16f91585923988f4e4adef1c2dc1a2c587ffbed2fbc2f",
+  "gbm_trees.npz": "f61e064a5eb4263c23dd217fa12ceb0d5c07184a2c25d710ddb1eb3298ec0d39",
+  "predict.py": "504c4c2ea6db7f949f573814e8cf7fa26a6d6cf916862d4a909658299954583f",
+  "ratchet.json": "8bcf3a241d9e75026cb425c20abd8db39794f5cbe33ffc4d6f577d7038f49caa",
+  "treeexport.py": "d8986b3fbdba560196beb92ec002571c3bb4c500a6c2655593f5e8f97a232c01"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "Gradient-boosted trees (LightGBM -> numpy trees)",
+  "family": "gbm",
+  "family_label": "Gradient-boosted decision trees",
+  "group": "tab",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.43,
+   "notes": "One thread (process_time). Feature tables 7 s + 15 s + 15 s + 20 s reorder; a failed first launch (LightGBM refuses monotone constraints with the quantile objective) ~125 s; r0 223 s; r1 609 s; r2 221 s; r3 289 s. Six boosters per rung (mean + 5 quantiles). Harness evaluation (not training) used another ~0.8 CPU h over the 4 rungs."
+  },
+  "released": "r2",
+  "feature_engineering": "Per day, from the batch forcing + static vector only (feats.py): P(t+1), P(t), P(t-1), P(t-2), sum P(t-6..t-3); liquid input W = rain + melt of a fixed one-band degree-day snow proxy (TT 0 C, 2 C interval, 3 mm/C/day) at t, t-1, t-2 and melt(t); EMAs of W over 3, 10, 30, 90, 365 days; two bucket models (50 and 300 mm: fill fraction, spill EMA, drain) and a 60-day linear store; T(t), EMA10 T, PET(t), EMA30 PET; SWE proxy, log1p(SWE); sin/cos day of year; the 18-value static vector. Water features and the target are divided by p_mean (the forcing's mean precipitation); target = qo / p_mean. 47 features."
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "ungauged": {
+   "dev_nse": [
+    0.6134,
+    0.1868,
+    0.6682
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 2.495
+  },
+  "files_used": [
+   "arms_tab/tab_gbm/gbm_trees.npz",
+   "arms_tab/tab_gbm/predict.py",
+   "arms_tab/tab_gbm/ratchet.json",
+   "harness/bank/val/F.npy",
+   "harness/bank/val/attrs.npy",
+   "harness/bank/val/lat.npy",
+   "harness/bank/val/lon.npy",
+   "harness/bank/val/qo.npy",
+   "harness/bank/val/st.npy",
+   "harness/bank/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 50.8
+ },
+ "harness_hash": "111d13ef04a576a20f04d180eb326e8eaa4e0909651d1cc1086d3e8d85e083bf",
+ "registered_at": "2026-11-23T03:03:57",
+ "history": []
+}

@@ -1,0 +1,98 @@
+{
+ "arm_id": "tab_gp_conformal",
+ "arm_dir": "/home/claude/bakeoff/vehicle/arms_phys/conformal/tab_gp_conformal",
+ "hash": "97b339478708167eac5badaa052f3bb159b99d911f31eae710bd9f9849a9db8f",
+ "files": {
+  "../lib/vcf_mondrian.py": "8ee71cd60c842c8871bacc7fd1544d791a188f5b25d3483c6a4d8f8cff279abc",
+  "calib.json": "22a17d89b028ada413100a37cc52b319287c5ed461eba52c08889838b3211fe0",
+  "card.md": "30fc760f9f54ec451f514449a705f22f8daa7b3dfcc918d8706b28f75e087f03",
+  "predict.py": "0c219b30251834b46befa1948920d06268ea79b5e71b0c97d7689e4fbe9ba8eb",
+  "ratchet.json": "83e97cea4f0d9e8d1cc39be56527db1c4e0d22010c934a0fc09c566713d4727c",
+  "../../../arms_table/tab_gp/card.md": "48789b9a53e3e0dabe4ad2645db7e3cb80be8586f02bb2355e0b44adcd42c9c1",
+  "../../../arms_table/tab_gp/gp.npz": "b48c24d19527d2eae34d212a4a4aac352a4825809800bb9b28467036e129f63f",
+  "../../../arms_table/tab_gp/predict.py": "fe4d4ce32714d21e79a26a98ea41b12172cb2367035a0de88cc485be21ed6ca8",
+  "../../../arms_table/tab_gp/ratchet.json": "838450b390a49853acca9e10d60fa4c905d4c172361224c444d1611aa6036a6c",
+  "../../../arms_table/tab_gp/training/cfg_r0.json": "5c570b90b824bfb1409788d893b97c778b1f3c719b046dbd9fa04b74d8c8af03",
+  "../../../arms_table/tab_gp/training/cfg_r1.json": "11a9793e081eddc152dd5cdc0dbe08aba786010105e6f1884462306c3ac0322b",
+  "../../../arms_table/tab_gp/training/cfg_r2_bev.json": "07cb3f16401d86196d3c3f97a4dc3ced0c9ad82344b2c7294ed27a2ae78ce61c",
+  "../../../arms_table/tab_gp/training/cfg_r2_hev.json": "76e895def566ef1ebf63178bd14447d9280b2e4d495e9c1f0596d0be2e985908",
+  "../../../arms_table/tab_gp/training/cfg_r2_ice.json": "23c31f5edad993b1627e71d4caff460f82983050a2cf3fe8275e0bef3c822d9a",
+  "../../../arms_table/tab_gp/training/cfg_r2_phev.json": "ae43ff59abda1eb63248ef29e7f584e3100fbdc1240da6d3b771a3916e6348a5",
+  "../../../arms_table/tab_gp/training/cfg_r3.json": "162b4cad04a6a91887eda72da8f192c1d179333f1789012edb19c63db198301a",
+  "../../../arms_table/tab_gp/training/featsel.py": "a66d2c8778b7c4ff73985e03a09b5a0bac918308dc23ed19d1b1912ece3aabd4",
+  "../../../arms_table/tab_gp/training/train_gp.py": "207ad76e3f14be295f5eec1f5c72d4e59cbf191d4fdd3e6baee2865126c3e9b1"
+ },
+ "tracks": [
+  "table"
+ ],
+ "meta": {
+  "label": "Sparse Gaussian process (SGPR, 500 inducing points) + Mondrian conformal",
+  "family": "conformal",
+  "family_label": "Conformal prediction (wrapper around tab_gp)",
+  "group": "phys",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.0073,
+   "base_train_cpu_hours": 0.81,
+   "notes": "conformal fit only (dev predictions of tab_gp + shifts); the base arm is not retrained"
+  },
+  "released": "c0",
+  "feature_engineering": "none beyond tab_gp's; strata from arch, cls and the dynamometer flag"
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "table": {
+   "ved": {
+    "cpu_s_per_row": 9e-05,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 5e-05,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 3e-05,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "simval": {
+    "cpu_s_per_row": 2e-05,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "files_used": [
+   "arms_phys/conformal/tab_gp_conformal/calib.json",
+   "arms_phys/conformal/tab_gp_conformal/predict.py",
+   "arms_phys/conformal/tab_gp_conformal/ratchet.json",
+   "arms_table/tab_gp/gp.npz",
+   "arms_table/tab_gp/predict.py",
+   "arms_table/tab_gp/ratchet.json",
+   "harness/bank/val/rows.npz",
+   "harness/bank/val/trace_v.npy",
+   "harness/bank/val/trace_x.npy",
+   "harness/real/dev/epa.npz",
+   "harness/real/dev/epa_meta.parquet",
+   "harness/real/dev/hd.npz",
+   "harness/real/dev/hd_meta.parquet",
+   "harness/real/dev/ved.npz",
+   "harness/real/dev/ved_meta.parquet"
+  ],
+  "exam_cpu_estimate_min": 0.1
+ },
+ "harness_hash": "45717be5e49d99933ebbaac1761ee133693cb5d0bde986d8da9bda4a1071b014",
+ "registered_at": "2026-11-23T19:57:59",
+ "history": []
+}

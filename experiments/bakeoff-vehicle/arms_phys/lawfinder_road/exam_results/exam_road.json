@@ -1,0 +1,646 @@
+{
+ "source": "20261123T204251",
+ "released": "s1-c21",
+ "expr": "(((4.342 * p) ^ 0.8346) + (m * ((t * (1.184 ^ exp(c))) / exp(((16.47 + m) / 17.26)))))",
+ "sigma": 0.19427247621518964,
+ "sigma_kind": "log",
+ "headline_set": "VED_ICE",
+ "rows": {
+  "law": {
+   "name": "LawFinder road law (bake-off formula arm)",
+   "n": 14469,
+   "mdape": 13.980289618704411,
+   "bias_median_pct": -12.461724748090553,
+   "rho": 0.9722290545227795,
+   "crps_log": 0.10829118216223689,
+   "cov50": 0.45518004008570045,
+   "cov90": 0.9331674614693483
+  },
+  "law_conformal": {
+   "name": "Road law + Mondrian conformal bands",
+   "n": 14469,
+   "mdape": 13.980289618704411,
+   "bias_median_pct": -12.461724748090553,
+   "rho": 0.9722290545227795,
+   "crps_log": 0.09461533423344268,
+   "cov50": 0.43092127997788376,
+   "cov90": 0.7793904208998549
+  },
+  "textbook": {
+   "name": "Road-load estimate E_phys (EnergyNet constants)",
+   "n": 14469,
+   "mdape": 33.000433170301456,
+   "bias_median_pct": -32.98800786339115,
+   "rho": 0.9643977706848658,
+   "crps_log": 0.40403057697409345
+  },
+  "network": {
+   "name": "EnergyNet v2.1",
+   "n": 14469,
+   "mdape": 8.63636154053291,
+   "bias_median_pct": 0.30077445885987597,
+   "rho": 0.9798804021145473,
+   "crps_log": 0.07017626742617804,
+   "cov50": 0.3864123298085562,
+   "cov90": 0.7724099799571498
+  },
+  "moves_like": {
+   "name": "MOVES-like VSP model (dev-fitted)",
+   "n": 14469,
+   "mdape": 10.262873842304575,
+   "bias_median_pct": -4.31252671766681,
+   "rho": 0.9755360843278668,
+   "crps_log": 0.12577176100446924
+  },
+  "label": {
+   "name": "Window-sticker label x distance",
+   "n": 14464,
+   "mdape": 13.048536726376936,
+   "bias_median_pct": 1.046684965085376,
+   "rho": 0.9537851131716433,
+   "crps_log": 0.16364962173127662
+  },
+  "dumb": {
+   "name": "Climatology (sim median per km)",
+   "n": 14469,
+   "mdape": 18.77703494923173,
+   "bias_median_pct": 3.276126439407401,
+   "rho": 0.9198043272031783,
+   "crps_log": 0.14234874785166182,
+   "cov50": 0.597829843112862,
+   "cov90": 0.9606054323035456
+  }
+ },
+ "by_set": {
+  "VED_ICE": {
+   "law": {
+    "name": "LawFinder road law (bake-off formula arm)",
+    "n": 14469,
+    "mdape": 13.980289618704411,
+    "bias_median_pct": -12.461724748090553,
+    "rho": 0.9722290545227795,
+    "crps_log": 0.10829118216223689,
+    "cov50": 0.45518004008570045,
+    "cov90": 0.9331674614693483
+   },
+   "law_conformal": {
+    "name": "Road law + Mondrian conformal bands",
+    "n": 14469,
+    "mdape": 13.980289618704411,
+    "bias_median_pct": -12.461724748090553,
+    "rho": 0.9722290545227795,
+    "crps_log": 0.09461533423344268,
+    "cov50": 0.43092127997788376,
+    "cov90": 0.7793904208998549
+   },
+   "textbook": {
+    "name": "Road-load estimate E_phys (EnergyNet constants)",
+    "n": 14469,
+    "mdape": 33.000433170301456,
+    "bias_median_pct": -32.98800786339115,
+    "rho": 0.9643977706848658,
+    "crps_log": 0.40403057697409345
+   },
+   "network": {
+    "name": "EnergyNet v2.1",
+    "n": 14469,
+    "mdape": 8.63636154053291,
+    "bias_median_pct": 0.30077445885987597,
+    "rho": 0.9798804021145473,
+    "crps_log": 0.07017626742617804,
+    "cov50": 0.3864123298085562,
+    "cov90": 0.7724099799571498
+   },
+   "moves_like": {
+    "name": "MOVES-like VSP model (dev-fitted)",
+    "n": 14469,
+    "mdape": 10.262873842304575,
+    "bias_median_pct": -4.31252671766681,
+    "rho": 0.9755360843278668,
+    "crps_log": 0.12577176100446924
+   },
+   "label": {
+    "name": "Window-sticker label x distance",
+    "n": 14464,
+    "mdape": 13.048536726376936,
+    "bias_median_pct": 1.046684965085376,
+    "rho": 0.9537851131716433,
+    "crps_log": 0.16364962173127662
+   },
+   "dumb": {
+    "name": "Climatology (sim median per km)",
+    "n": 14469,
+    "mdape": 18.77703494923173,
+    "bias_median_pct": 3.276126439407401,
+    "rho": 0.9198043272031783,
+    "crps_log": 0.14234874785166182,
+    "cov50": 0.597829843112862,
+    "cov90": 0.9606054323035456
+   }
+  },
+  "EPA_conv_FTP": {
+   "law": {
+    "name": "LawFinder road law (bake-off formula arm)",
+    "n": 20065,
+    "mdape": 23.962380564640974,
+    "bias_median_pct": 23.072973552515784,
+    "rho": 0.7385556323576692,
+    "crps_log": 0.13486409525934034,
+    "cov50": 0.3143284325940693,
+    "cov90": 0.7803139795664091
+   },
+   "law_conformal": {
+    "name": "Road law + Mondrian conformal bands",
+    "n": 20065,
+    "mdape": 23.962380564640974,
+    "bias_median_pct": 23.072973552515784,
+    "rho": 0.7385556323576692,
+    "crps_log": 0.10738125914367541,
+    "cov50": 0.5595315225517069,
+    "cov90": 0.8788935958136058
+   },
+   "textbook": {
+    "name": "Road-load estimate E_phys (EnergyNet constants)",
+    "n": 20065,
+    "mdape": 15.555097815338303,
+    "bias_median_pct": -14.690750309904587,
+    "rho": 0.7436310756275086,
+    "crps_log": 0.1984707372719629
+   },
+   "network": {
+    "name": "EnergyNet v2.1",
+    "n": 20065,
+    "mdape": 8.567264238599748,
+    "bias_median_pct": -5.004549626131594,
+    "rho": 0.9094299821117332,
+    "crps_log": 0.07179122494907755,
+    "cov50": 0.47610266633441317,
+    "cov90": 0.8277597807126837
+   },
+   "regression": {
+    "name": "EPA dev regression",
+    "n": 20065,
+    "mdape": 7.067237185959208,
+    "bias_median_pct": -1.2199813530121895,
+    "rho": 0.9129547641602896,
+    "crps_log": 0.08958983491458755
+   },
+   "dev_median": {
+    "name": "Dev median",
+    "n": 20065,
+    "mdape": 18.672197587262563,
+    "bias_median_pct": 2.9045611496288037,
+    "rho": NaN,
+    "crps_log": 0.21539367801863507
+   },
+   "dumb": {
+    "name": "Climatology (sim median per km)",
+    "n": 20065,
+    "mdape": 22.112537595878724,
+    "bias_median_pct": 15.813075936543664,
+    "rho": 0.1541462143786954,
+    "crps_log": 0.15100619944585297,
+    "cov50": 0.5258410166957388,
+    "cov90": 0.9428357837029654
+   }
+  },
+  "EPA_conv_HWY": {
+   "law": {
+    "name": "LawFinder road law (bake-off formula arm)",
+    "n": 20426,
+    "mdape": 30.520137586522456,
+    "bias_median_pct": 30.476404408184756,
+    "rho": 0.7945916275267831,
+    "crps_log": 0.14750114291807392,
+    "cov50": 0.19783609125624205,
+    "cov90": 0.7241750709879565
+   },
+   "law_conformal": {
+    "name": "Road law + Mondrian conformal bands",
+    "n": 20426,
+    "mdape": 30.520137586522456,
+    "bias_median_pct": 30.476404408184756,
+    "rho": 0.7945916275267831,
+    "crps_log": 0.10540885199875634,
+    "cov50": 0.5409282287280917,
+    "cov90": 0.9182414569666112
+   },
+   "textbook": {
+    "name": "Road-load estimate E_phys (EnergyNet constants)",
+    "n": 20426,
+    "mdape": 11.888149321819197,
+    "bias_median_pct": 8.286508774316093,
+    "rho": 0.7889037057849552,
+    "crps_log": 0.12741953264748024
+   },
+   "network": {
+    "name": "EnergyNet v2.1",
+    "n": 20426,
+    "mdape": 6.786804812764729,
+    "bias_median_pct": -0.783596039962231,
+    "rho": 0.9164820242006049,
+    "crps_log": 0.05081004933763732,
+    "cov50": 0.5581611671399197,
+    "cov90": 0.9279839420346617
+   },
+   "regression": {
+    "name": "EPA dev regression",
+    "n": 20426,
+    "mdape": 5.043482599848669,
+    "bias_median_pct": 0.6183070558127168,
+    "rho": 0.9372836340130533,
+    "crps_log": 0.06504607415670856
+   },
+   "dev_median": {
+    "name": "Dev median",
+    "n": 20426,
+    "mdape": 16.80216388650704,
+    "bias_median_pct": 3.252028385152017,
+    "rho": NaN,
+    "crps_log": 0.1914807198099161
+   },
+   "dumb": {
+    "name": "Climatology (sim median per km)",
+    "n": 20426,
+    "mdape": 77.9254019798687,
+    "bias_median_pct": 77.9254019798687,
+    "rho": 0.2708463976323402,
+    "crps_log": 0.363532761096455,
+    "cov50": 0.08503867619700382,
+    "cov90": 0.42073827474787034
+   }
+  },
+  "EPA_conv_US06": {
+   "law": {
+    "name": "LawFinder road law (bake-off formula arm)",
+    "n": 2832,
+    "mdape": 15.335732280173842,
+    "bias_median_pct": 14.940457387367424,
+    "rho": 0.8662689935957676,
+    "crps_log": 0.09001519810046639,
+    "cov50": 0.4932909604519774,
+    "cov90": 0.9576271186440678
+   },
+   "law_conformal": {
+    "name": "Road law + Mondrian conformal bands",
+    "n": 2832,
+    "mdape": 15.335732280173842,
+    "bias_median_pct": 14.940457387367424,
+    "rho": 0.8662689935957676,
+    "crps_log": 0.07926709024294683,
+    "cov50": 0.7838983050847458,
+    "cov90": 0.9184322033898306
+   },
+   "textbook": {
+    "name": "Road-load estimate E_phys (EnergyNet constants)",
+    "n": 2832,
+    "mdape": 9.05882793012629,
+    "bias_median_pct": 6.265420171038083,
+    "rho": 0.8620679724435785,
+    "crps_log": 0.10559329752682237
+   },
+   "network": {
+    "name": "EnergyNet v2.1",
+    "n": 2832,
+    "mdape": 5.205200059378368,
+    "bias_median_pct": 1.9539245632979707,
+    "rho": 0.93999747839534,
+    "crps_log": 0.04666449808213474,
+    "cov50": 0.6790254237288136,
+    "cov90": 0.945268361581921
+   },
+   "regression": {
+    "name": "EPA dev regression",
+    "n": 2832,
+    "mdape": 6.856129336972633,
+    "bias_median_pct": -3.303726024291498,
+    "rho": 0.9221627886435126,
+    "crps_log": 0.08212272051919682
+   },
+   "dev_median": {
+    "name": "Dev median",
+    "n": 2832,
+    "mdape": 17.25490046482461,
+    "bias_median_pct": -7.843137254901955,
+    "rho": NaN,
+    "crps_log": 0.20836197221142222
+   },
+   "dumb": {
+    "name": "Climatology (sim median per km)",
+    "n": 2832,
+    "mdape": 17.81112271286599,
+    "bias_median_pct": 10.187279691608708,
+    "rho": 0.3995892982073833,
+    "crps_log": 0.13013017527125445,
+    "cov50": 0.6299435028248588,
+    "cov90": 0.9717514124293786
+   }
+  },
+  "EPA_conv_FTPcold": {
+   "law": {
+    "name": "LawFinder road law (bake-off formula arm)",
+    "n": 1734,
+    "mdape": 15.17076880236507,
+    "bias_median_pct": 8.207398230079576,
+    "rho": 0.7845102657568769,
+    "crps_log": 0.11913377973641949,
+    "cov50": 0.4809688581314879,
+    "cov90": 0.8690888119953863
+   },
+   "law_conformal": {
+    "name": "Road law + Mondrian conformal bands",
+    "n": 1734,
+    "mdape": 15.17076880236507,
+    "bias_median_pct": 8.207398230079576,
+    "rho": 0.7845102657568769,
+    "crps_log": 0.1283861521689813,
+    "cov50": 0.49480968858131485,
+    "cov90": 0.7422145328719724
+   },
+   "textbook": {
+    "name": "Road-load estimate E_phys (EnergyNet constants)",
+    "n": 1734,
+    "mdape": 23.79667139312379,
+    "bias_median_pct": -21.69324094652162,
+    "rho": 0.798866206887436,
+    "crps_log": 0.29503459647239116
+   },
+   "network": {
+    "name": "EnergyNet v2.1",
+    "n": 1734,
+    "mdape": 8.454791691285429,
+    "bias_median_pct": -6.081577826590023,
+    "rho": 0.9388825704953828,
+    "crps_log": 0.07125033012488456,
+    "cov50": 0.4544405997693195,
+    "cov90": 0.825836216839677
+   },
+   "regression": {
+    "name": "EPA dev regression",
+    "n": 1734,
+    "mdape": 9.659276792025384,
+    "bias_median_pct": -0.016035782110079833,
+    "rho": 0.9283067199206297,
+    "crps_log": 0.11878908508337374
+   },
+   "dev_median": {
+    "name": "Dev median",
+    "n": 1734,
+    "mdape": 24.50294167083362,
+    "bias_median_pct": -12.582358832127127,
+    "rho": NaN,
+    "crps_log": 0.28656894258182997
+   },
+   "dumb": {
+    "name": "Climatology (sim median per km)",
+    "n": 1734,
+    "mdape": 22.380146751928763,
+    "bias_median_pct": -6.961875237186977,
+    "rho": 0.14165922900471659,
+    "crps_log": 0.16718371081318908,
+    "cov50": 0.48500576701268744,
+    "cov90": 0.9446366782006921
+   }
+  },
+  "EPA_conv_SC03": {
+   "law": {
+    "name": "LawFinder road law (bake-off formula arm)",
+    "n": 1819,
+    "mdape": 11.225817747367262,
+    "bias_median_pct": -7.181233859236025,
+    "rho": 0.7542121881594259,
+    "crps_log": 0.11262741379760972,
+    "cov50": 0.5420560747663551,
+    "cov90": 0.8873007146783948
+   },
+   "law_conformal": {
+    "name": "Road law + Mondrian conformal bands",
+    "n": 1819,
+    "mdape": 11.225817747367262,
+    "bias_median_pct": -7.181233859236025,
+    "rho": 0.7542121881594259,
+    "crps_log": 0.1605198807985902,
+    "cov50": 0.2682792743265531,
+    "cov90": 0.5057724024189115
+   },
+   "textbook": {
+    "name": "Road-load estimate E_phys (EnergyNet constants)",
+    "n": 1819,
+    "mdape": 28.52718401084571,
+    "bias_median_pct": -28.040018965891246,
+    "rho": 0.7637724336180723,
+    "crps_log": 0.35562054225551726
+   },
+   "network": {
+    "name": "EnergyNet v2.1",
+    "n": 1819,
+    "mdape": 8.607959094888217,
+    "bias_median_pct": -6.162167909897387,
+    "rho": 0.9118064204213873,
+    "crps_log": 0.07631324440198554,
+    "cov50": 0.4161627267729522,
+    "cov90": 0.7894447498625619
+   },
+   "regression": {
+    "name": "EPA dev regression",
+    "n": 1819,
+    "mdape": 9.251769588021475,
+    "bias_median_pct": -2.7042807398382496,
+    "rho": 0.8983004337021533,
+    "crps_log": 0.11941566278466884
+   },
+   "dev_median": {
+    "name": "Dev median",
+    "n": 1819,
+    "mdape": 21.658986175115192,
+    "bias_median_pct": -6.912438880463334,
+    "rho": NaN,
+    "crps_log": 0.24722596449214132
+   },
+   "dumb": {
+    "name": "Climatology (sim median per km)",
+    "n": 1819,
+    "mdape": 21.983659958117897,
+    "bias_median_pct": -6.9618787059221425,
+    "rho": 0.1716440429608223,
+    "crps_log": 0.14972470980663258,
+    "cov50": 0.5283122594832326,
+    "cov90": 0.9516217702034084
+   }
+  },
+  "Mersin_diesel": {
+   "law": {
+    "name": "LawFinder road law (bake-off formula arm)",
+    "n": 652,
+    "mdape": 23.71811981703806,
+    "bias_median_pct": -23.71811981703806,
+    "rho": -0.5095123535723906,
+    "crps_log": 0.1749893755084259,
+    "cov50": 0.26993865030674846,
+    "cov90": 0.6042944785276073
+   },
+   "law_conformal": {
+    "name": "Road law + Mondrian conformal bands",
+    "n": 652,
+    "mdape": 23.71811981703806,
+    "bias_median_pct": -23.71811981703806,
+    "rho": -0.5095123535723906,
+    "crps_log": 0.12566686372199076,
+    "cov50": 0.4447852760736196,
+    "cov90": 0.897239263803681
+   },
+   "textbook": {
+    "name": "Road-load estimate E_phys (EnergyNet constants)",
+    "n": 652,
+    "mdape": 30.094403581939616,
+    "bias_median_pct": -30.094403581939616,
+    "rho": -0.5764213321678879,
+    "crps_log": 0.37197340898015935
+   },
+   "network": {
+    "name": "EnergyNet v2.1",
+    "n": 652,
+    "mdape": 17.15967933920779,
+    "bias_median_pct": -16.669036889394768,
+    "rho": -0.35859841899889144,
+    "crps_log": 0.12803592781093562,
+    "cov50": 0.4371165644171779,
+    "cov90": 0.8205521472392638
+   },
+   "dev_median": {
+    "name": "Dev median",
+    "n": 652,
+    "mdape": 8.609274804542222,
+    "bias_median_pct": -8.609274804542222,
+    "rho": NaN,
+    "crps_log": 0.12283761845309693
+   },
+   "dumb": {
+    "name": "Climatology (sim median per km)",
+    "n": 652,
+    "mdape": 11.349363921209232,
+    "bias_median_pct": -11.349363921209232,
+    "rho": -0.5347883556019318,
+    "crps_log": 0.10114105606768842,
+    "cov50": 0.5950920245398773,
+    "cov90": 0.9938650306748467
+   }
+  },
+  "Mersin_cng": {
+   "law": {
+    "name": "LawFinder road law (bake-off formula arm)",
+    "n": 672,
+    "mdape": 25.848020982235532,
+    "bias_median_pct": -25.848020982235532,
+    "rho": -0.09488489862139615,
+    "crps_log": 0.20194361435693592,
+    "cov50": 0.23660714285714285,
+    "cov90": 0.5550595238095238
+   },
+   "law_conformal": {
+    "name": "Road law + Mondrian conformal bands",
+    "n": 672,
+    "mdape": 25.848020982235532,
+    "bias_median_pct": -25.848020982235532,
+    "rho": -0.09488489862139615,
+    "crps_log": 0.1445732330381139,
+    "cov50": 0.40476190476190477,
+    "cov90": 0.8020833333333334
+   },
+   "textbook": {
+    "name": "Road-load estimate E_phys (EnergyNet constants)",
+    "n": 672,
+    "mdape": 33.19035622346444,
+    "bias_median_pct": -33.19035622346444,
+    "rho": -0.12873669343499758,
+    "crps_log": 0.3830948643338229
+   },
+   "network": {
+    "name": "EnergyNet v2.1",
+    "n": 672,
+    "mdape": 19.170608757801034,
+    "bias_median_pct": -18.75372286577324,
+    "rho": -0.009852062376145878,
+    "crps_log": 0.14810729429322886,
+    "cov50": 0.39732142857142855,
+    "cov90": 0.7619047619047619
+   },
+   "dev_median": {
+    "name": "Dev median",
+    "n": 672,
+    "mdape": 7.142855033327167,
+    "bias_median_pct": -6.250000997567263,
+    "rho": NaN,
+    "crps_log": 0.15020428077340997
+   },
+   "dumb": {
+    "name": "Climatology (sim median per km)",
+    "n": 672,
+    "mdape": 13.331986379948258,
+    "bias_median_pct": -13.321707133114957,
+    "rho": -0.10904291429887904,
+    "crps_log": 0.13545444399657397,
+    "cov50": 0.6145833333333334,
+    "cov90": 0.8735119047619048
+   }
+  },
+  "ICCT": {
+   "law": {
+    "name": "LawFinder road law (bake-off formula arm)",
+    "n": 6,
+    "mdape": 27.44854364085795,
+    "bias_median_pct": 27.44854364085795,
+    "rho": 0.8285714285714287,
+    "crps_log": 0.12853253679751533,
+    "cov50": 0.3333333333333333,
+    "cov90": 0.6666666666666666
+   },
+   "law_conformal": {
+    "name": "Road law + Mondrian conformal bands",
+    "n": 6,
+    "mdape": 27.44854364085795,
+    "bias_median_pct": 27.44854364085795,
+    "rho": 0.8285714285714287,
+    "crps_log": 0.21977093837277226,
+    "cov50": 0.0,
+    "cov90": 0.16666666666666666
+   },
+   "textbook": {
+    "name": "Road-load estimate E_phys (EnergyNet constants)",
+    "n": 6,
+    "mdape": 65.64831870843518,
+    "bias_median_pct": 65.64831870843518,
+    "rho": 0.8285714285714287,
+    "crps_log": 0.49026143646695663
+   },
+   "network": {
+    "name": "EnergyNet v2.1",
+    "n": 6,
+    "mdape": 10.668248148775128,
+    "bias_median_pct": 10.668248148775128,
+    "rho": 0.8285714285714287,
+    "crps_log": 0.07060418758538457,
+    "cov50": 0.8333333333333334,
+    "cov90": 1.0
+   },
+   "dev_median": {
+    "name": "Dev median",
+    "n": 6,
+    "mdape": 6.98273172417681,
+    "bias_median_pct": -2.3232623776309302,
+    "rho": 0.956182887467515,
+    "crps_log": 0.0750266737911538
+   },
+   "dumb": {
+    "name": "Climatology (sim median per km)",
+    "n": 6,
+    "mdape": 36.02791329668476,
+    "bias_median_pct": 32.377288714776874,
+    "rho": 0.8280786712108252,
+    "crps_log": 0.19896962781420716,
+    "cov50": 0.0,
+    "cov90": 1.0
+   }
+  }
+ }
+}

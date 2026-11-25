@@ -1,0 +1,41 @@
+{
+ "rung": "r1",
+ "n_members": 32,
+ "seed": 20261123,
+ "param_scatter": 1.0,
+ "pmult_prior": true,
+ "spinup": true,
+ "sigma_P": 0.2,
+ "sigma_T": 1.0,
+ "sigma_S": 0.1,
+ "sigma_obs": 0.3,
+ "c_frac": 0.02,
+ "inflation": 0.9,
+ "update_snow": false,
+ "update_buffers": true,
+ "augment": [
+  "pmult",
+  "FC",
+  "BETA",
+  "K1",
+  "K2",
+  "PERC",
+  "K0",
+  "LP"
+ ],
+ "sigma_fcst_obs": 0.1,
+ "n_noise_draws": 8,
+ "augment_init_sd": {
+  "pmult": 0.15
+ },
+ "augment_rw_sd": {
+  "pmult": 0.003,
+  "FC": 0.005,
+  "BETA": 0.005,
+  "K1": 0.005,
+  "K2": 0.005,
+  "PERC": 0.005,
+  "K0": 0.005,
+  "LP": 0.005
+ }
+}

@@ -1,0 +1,37 @@
+{
+ "arm_id": "trace_gru_conformal",
+ "label": "Bidirectional GRU on the trip trace + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around trace_gru)",
+ "group": "phys",
+ "tracks": [
+  "trace"
+ ],
+ "wraps": "trace_gru",
+ "wraps_hash": "ef837cb12962b17b957a6e0832d5edcfeacbe0664d9a6c1f11bebd2c56549297",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {
+  "train_cpu_hours": 0.0071,
+  "base_train_cpu_hours": 1.648,
+  "notes": "conformal fit only (dev predictions of trace_gru + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond trace_gru's; strata from arch, cls and the dynamometer flag",
+ "extra_files": [
+  "../../../arms_trace/gru",
+  "../lib",
+  "../../../arms_trace/common"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata powertrain x road/dyno/hd) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage over the D16 sets (grouped 10-fold cross-fit): trace cov50/90 0.48/0.86"
+  }
+ ],
+ "released": "c0"
+}

@@ -1,0 +1,1 @@
+{"arm": "tcn", "rung": "r0", "arch": "tcn", "c": 26, "k": 3, "dilations": [1, 2, 4, 8, 16, 32, 64, 128, 256], "dropout": 0.1, "inner_dropout": 0.0, "steps": 3000, "batch": 32, "lr": 2e-3, "seed": 0, "note": "dilated causal 1-D CNN, kernel 3, dilations 1..256 (receptive field 1023 days); FlowCast's training recipe"}

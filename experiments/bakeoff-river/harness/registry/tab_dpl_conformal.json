@@ -1,0 +1,103 @@
+{
+ "arm_id": "tab_dpl_conformal",
+ "arm_dir": "/home/claude/bakeoff/river/arms_filt/conformal/tab_dpl_conformal",
+ "hash": "e73ea1c1e1d2909b71952415fd80a8d8e5f4c8e7ad172140339080da00629a7c",
+ "files": {
+  "../lib/cf_mondrian.py": "8de2a4956b525f96e7494ebe16e5d0cd7b435fa8baf72a3d0d20ec7ff815223a",
+  "calib.json": "ac3df8c7d3082f04555fc0c99b6c886ccef5bba0f6d055b15d6d3100566f77cc",
+  "card.md": "6aac2a1a63eb3990c33266b39e9e25490722c3943a41fa7dce14d6a5199f7bb1",
+  "predict.py": "60b11079dd02b0f135d702a7b8af6cc1417c5ee2cc75df6a26272d3f559a94d1",
+  "ratchet.json": "8823f332ef67d617675414b6bdc96042f0e82e2259dd80719eeb1a75b506a29a",
+  "../../../arms_tab/tab_dpl/card.md": "0a18b7b173c7622eafd206ecf6a006b293d5ca252220dd7de122ba3d6ed9654a",
+  "../../../arms_tab/tab_dpl/dpl_weights.npz": "71ff21e02f417eab9afbdeeb8437b77a904bc75e72e87c2c51fbef7070de0b29",
+  "../../../arms_tab/tab_dpl/physarm.py": "9742a0f85cccb3e2c7d2113c9f073f8fc6a4b6eb03a922c9c50085ea66d1c36a",
+  "../../../arms_tab/tab_dpl/predict.py": "da2e6c0886a130d68a43834cf23bb8335427f592cd2d4147630542597f493be8",
+  "../../../arms_tab/tab_dpl/ratchet.json": "6bf0bb2dc3ab331cf9fff8cc8c1bf93177987a084d32273e5a8ebea0acc898a9",
+  "../../../arms_tab/tab_dpl/wsim.py": "55c1b8934bc5b1c52ed725bc8138fd7294bf8f94987840c9a3905c2cdc6db171"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "Decides through physics: MLP -> WaterSim HBV parameters, trained through the simulator + Mondrian conformal",
+  "family": "conformal",
+  "family_label": "Conformal prediction (wrapper around tab_dpl)",
+  "group": "filt",
+  "reference": null,
+  "numpy_only": false,
+  "numpy_only_reason": "wraps tab_dpl: The prediction IS a WaterSim run: predict.py maps attributes to parameters with a numpy MLP and then calls the harness's vendored WaterSim (numba-compiled HBV + degree-day snow + gamma channel UH + irrigation) through wsim.py. Re-writing WaterSim in numpy would duplicate the simulator the arm is meant to use.",
+  "compute": {
+   "train_cpu_hours": 0.003,
+   "base_train_cpu_hours": 2.25,
+   "notes": "conformal fit only (dev predictions of tab_dpl + shifts); the base arm is not retrained"
+  },
+  "released": "c0",
+  "feature_engineering": "none beyond tab_dpl's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)"
+ },
+ "smoke": {
+  "load_cpu_s": 0.3,
+  "ungauged": {
+   "dev_nse": [
+    0.5604,
+    0.1517,
+    0.6556
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 0.091
+  },
+  "files_used": [
+   "arms_filt/conformal/lib/cf_mondrian.py",
+   "arms_filt/conformal/tab_dpl_conformal/calib.json",
+   "arms_filt/conformal/tab_dpl_conformal/predict.py",
+   "arms_filt/conformal/tab_dpl_conformal/ratchet.json",
+   "arms_tab/tab_dpl/dpl_weights.npz",
+   "arms_tab/tab_dpl/predict.py",
+   "arms_tab/tab_dpl/ratchet.json",
+   "harness/.numba/models_402d61191ceddfe11ab4281424ed5fc95e2d253c",
+   "harness/.numba/watersim_0ad550ac7c63e5c16e70a71f8bbad988d7d7020e",
+   "harness/.numba/watersim_0ad550ac7c63e5c16e70a71f8bbad988d7d7020e/engine.run_core-41.py313.1.nbc",
+   "harness/.numba/watersim_0ad550ac7c63e5c16e70a71f8bbad988d7d7020e/engine.run_core-41.py313.nbi",
+   "harness/.numba/watersim_0ad550ac7c63e5c16e70a71f8bbad988d7d7020e/routing.convolve_uh-100.py313.1.nbc",
+   "harness/.numba/watersim_0ad550ac7c63e5c16e70a71f8bbad988d7d7020e/routing.convolve_uh-100.py313.nbi",
+   "harness/bank/val/F.npy",
+   "harness/bank/val/attrs.npy",
+   "harness/bank/val/lat.npy",
+   "harness/bank/val/lon.npy",
+   "harness/bank/val/qo.npy",
+   "harness/bank/val/st.npy",
+   "harness/bank/val/start.npy",
+   "harness/vendor/watersim/__init__.py",
+   "harness/vendor/watersim/__pycache__/watersim_src.sha1",
+   "harness/vendor/watersim/_nb.py",
+   "harness/vendor/watersim/calibrate.py",
+   "harness/vendor/watersim/constants.py",
+   "harness/vendor/watersim/data/prior_adjust.json",
+   "harness/vendor/watersim/engine.py",
+   "harness/vendor/watersim/forcing.py",
+   "harness/vendor/watersim/generator.py",
+   "harness/vendor/watersim/labels.py",
+   "harness/vendor/watersim/metrics.py",
+   "harness/vendor/watersim/models/__init__.py",
+   "harness/vendor/watersim/models/gr4j.py",
+   "harness/vendor/watersim/models/hbv.py",
+   "harness/vendor/watersim/models/sacsma.py",
+   "harness/vendor/watersim/models/vic_lite.py",
+   "harness/vendor/watersim/noise.py",
+   "harness/vendor/watersim/pet.py",
+   "harness/vendor/watersim/realdata.py",
+   "harness/vendor/watersim/reservoir.py",
+   "harness/vendor/watersim/routing.py",
+   "harness/vendor/watersim/signatures.py",
+   "harness/vendor/watersim/simulate.py",
+   "harness/vendor/watersim/snow.py",
+   "harness/vendor/watersim/spec.py",
+   "harness/vendor/watersim/weather.py"
+  ],
+  "exam_cpu_estimate_min": 1.9
+ },
+ "harness_hash": "111d13ef04a576a20f04d180eb326e8eaa4e0909651d1cc1086d3e8d85e083bf",
+ "registered_at": "2026-11-23T05:38:19",
+ "history": []
+}

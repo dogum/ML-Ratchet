@@ -1,0 +1,96 @@
+{
+ "arm_id": "tab_gbm_conformal",
+ "arm_dir": "/home/claude/bakeoff/vehicle/arms_phys/conformal/tab_gbm_conformal",
+ "hash": "dae72a03f31e65f67b2ba53a5f9c18921669fb24e9ce3390008b2da8374bf7f0",
+ "files": {
+  "../lib/vcf_mondrian.py": "8ee71cd60c842c8871bacc7fd1544d791a188f5b25d3483c6a4d8f8cff279abc",
+  "calib.json": "32b671be7e896de90701d34bc2482e3056d65f6951ff4fae0bc1679b6403fb21",
+  "card.md": "547708f3b08499e735ce5b39bcefefc30a8caae0f05b70a483780d7011636f0e",
+  "predict.py": "d6374994ed044b649ec44fca2ec7f974055fbdb07c0a8d48eba92b8a5e38a17f",
+  "ratchet.json": "c930ad46f202407f01eb3254f809d0aca5ea2d9594f81c4fcf4005dc709cd3f8",
+  "../../../arms_table/tab_gbm/card.md": "75b70be54323bd502055a87ebfa6de2d6024784320a07e6ec5685fb7913bfd2b",
+  "../../../arms_table/tab_gbm/gbm_trees.npz": "eb6d5766e2d3e6fd945e3f2fb94c74d1930e21ccee4c226747b96d04a66e2541",
+  "../../../arms_table/tab_gbm/predict.py": "06720934f887fd3e084d0f7156e445902ce772272d315c9ab3443907021dc1d9",
+  "../../../arms_table/tab_gbm/ratchet.json": "13717837d22e0833a247f5b662c337f9bb794acf726db2eef88e71c35b3c47d8",
+  "../../../arms_table/tab_gbm/training/cfg_r0.json": "e7a94c8f72988529cc0ed2b4c3d9941dbb7fe29b56f99ae343ad6d9b0d508236",
+  "../../../arms_table/tab_gbm/training/cfg_r1.json": "d43f616b8ec8adbe9cdde989c9fc71e410cabf88c642067bdbe0822f3ec881f0",
+  "../../../arms_table/tab_gbm/training/cfg_r2.json": "0e1e19ddea31005aef1e255753c6cca30bd0001dea53b55a37da86cfd498d216",
+  "../../../arms_table/tab_gbm/training/cfg_r3.json": "7238b60f2c6503893482974b99594eb96c1b06fcd3b1e51e024865983a9e5c25",
+  "../../../arms_table/tab_gbm/training/train_gbm.py": "53835b02973dcc2a19444e6eb7baacae9f5d6822ade7b3f332ef5fbff59b81e4",
+  "../../../arms_table/tab_gbm/training/treeexport.py": "d8986b3fbdba560196beb92ec002571c3bb4c500a6c2655593f5e8f97a232c01",
+  "../../../arms_table/tab_gbm/treeexport.py": "d8986b3fbdba560196beb92ec002571c3bb4c500a6c2655593f5e8f97a232c01"
+ },
+ "tracks": [
+  "table"
+ ],
+ "meta": {
+  "label": "Gradient-boosted trees (LightGBM, numpy export) + Mondrian conformal",
+  "family": "conformal",
+  "family_label": "Conformal prediction (wrapper around tab_gbm)",
+  "group": "phys",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.0065,
+   "base_train_cpu_hours": 0.24,
+   "notes": "conformal fit only (dev predictions of tab_gbm + shifts); the base arm is not retrained"
+  },
+  "released": "c0",
+  "feature_engineering": "none beyond tab_gbm's; strata from arch, cls and the dynamometer flag"
+ },
+ "smoke": {
+  "load_cpu_s": 0.04,
+  "table": {
+   "ved": {
+    "cpu_s_per_row": 0.00122,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 0.001,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 0.001,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "simval": {
+    "cpu_s_per_row": 0.00116,
+    "n_cross": 0,
+    "components": false,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "files_used": [
+   "arms_phys/conformal/tab_gbm_conformal/calib.json",
+   "arms_phys/conformal/tab_gbm_conformal/predict.py",
+   "arms_phys/conformal/tab_gbm_conformal/ratchet.json",
+   "arms_table/tab_gbm/gbm_trees.npz",
+   "arms_table/tab_gbm/predict.py",
+   "arms_table/tab_gbm/ratchet.json",
+   "harness/bank/val/rows.npz",
+   "harness/bank/val/trace_v.npy",
+   "harness/bank/val/trace_x.npy",
+   "harness/real/dev/epa.npz",
+   "harness/real/dev/epa_meta.parquet",
+   "harness/real/dev/hd.npz",
+   "harness/real/dev/hd_meta.parquet",
+   "harness/real/dev/ved.npz",
+   "harness/real/dev/ved_meta.parquet"
+  ],
+  "exam_cpu_estimate_min": 2.1
+ },
+ "harness_hash": "45717be5e49d99933ebbaac1761ee133693cb5d0bde986d8da9bda4a1071b014",
+ "registered_at": "2026-11-23T16:37:26",
+ "history": []
+}

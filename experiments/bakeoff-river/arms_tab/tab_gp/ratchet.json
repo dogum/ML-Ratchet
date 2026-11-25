@@ -1,0 +1,27 @@
+{
+ "arm_id": "tab_gp",
+ "label": "Sparse Gaussian process (SGPR, 500 inducing points, scoped features)",
+ "family": "gp",
+ "family_label": "Gaussian process",
+ "group": "tab",
+ "protocols": ["ungauged"],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {"train_cpu_hours": 0.94,
+  "notes": "One thread (process_time). r0 652 s; r1 732 s; r2 724 s; r3 1266 s (hyperparameter + inducing-input optimisation with the collapsed bound on 20,000 rows, then the posterior over 200,000 rows). Shares the sim-train feature table of tab_gbm (7 s to build)."},
+ "feature_engineering": "SCOPED subset (20 of tab_gbm's 47 daily features, feats.py, from the batch forcing + static vector only): P(t+1), P(t), liquid input W(t), W(t-1), melt(t) of a one-band degree-day snow proxy, EMAs of W over 3/10/30/90/365 days, two bucket fill fractions and spills, a 60-day slow store, EMA10 T, EMA30 PET, log1p SWE proxy, log aridity, snow fraction. Water features and target divided by p_mean; target transform z = sqrt(qo / p_mean). Inputs standardised with the training mean/sd.",
+ "extra_files": [],
+ "margin": 0.01,
+ "rule": "keep if sim val median NSE > incumbent + 0.01 AND dev median NSE >= 0.95 x incumbent's (all 800 frozen sim val runs; 52 dev basins)",
+ "rungs": [
+  {"id": "r0", "change": "base: SGPR (Titsias 2009 collapsed bound), ARD squared-exponential kernel, M = 500 inducing inputs (optimised), 14 features, target sqrt(qo / p_mean); Adam 300 its on 20,000 rows, posterior on 200,000 rows",
+   "decision": "base", "why": "first rung", "simval_nse": 0.291, "dev_nse": 0.364},
+  {"id": "r1", "change": "target log(qo / p_mean + 0.02) instead of sqrt (log-normal back-transform)",
+   "decision": "rejected", "why": "sim val -0.072; dev 0.278", "simval_nse": 0.219, "dev_nse": 0.278},
+  {"id": "r2", "change": "20 features instead of 14 (+ melt, EMA90, both bucket spills, EMA10 T, EMA30 PET)",
+   "decision": "released", "why": "sim val +0.022 (0.313 vs 0.291); dev 0.369 >= 0.95 x 0.364", "simval_nse": 0.313, "dev_nse": 0.369},
+  {"id": "r3", "change": "M = 1000 inducing inputs (200 optimisation its)",
+   "decision": "rejected", "why": "sim val -0.005; dev 0.352", "simval_nse": 0.308, "dev_nse": 0.352}
+ ],
+ "released": "r2"
+}

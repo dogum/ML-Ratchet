@@ -1,0 +1,58 @@
+--- a/src/lawsearch.py
++++ b/src/lawsearch.py  (Vehicle Bake-off agent C: log_target option)
+@@ -1,5 +1,9 @@
+ """lawsearch: a small symbolic-regression engine (numpy + scipy only).
+ 
++VENDORED from LawFinder (a/src/lawsearch.py, 22 Nov 2026) for the Vehicle Bake-off (agent C).
++One change: Search(..., log_target=True) fits and scores the law on log(yhat) - log(y) (squared log error, i.e.
++relative error) instead of yhat - y; a law value <= 0 is an invalid fit. Everything else is byte-identical in logic.
++
+ PySR-style: island populations evolve expression trees by mutation and crossover; constants inside each tree are
+ fitted by Levenberg-Marquardt (scipy.optimize.least_squares); a hall of fame keeps the best expression found at
+ every complexity, so the result is a Pareto front of complexity vs error.
+@@ -144,7 +148,7 @@
+     """
+ 
+     def __init__(self, names, unary=UNA, binary=BIN, maxsize=25, maxdepth=8, n_islands=4, pop=120,
+-                 tourn=8, parsimony=0.002, p_opt=0.15, seed=0, n_fit=1200, fixed_seeds=()):
++                 tourn=8, parsimony=0.002, p_opt=0.15, seed=0, n_fit=1200, fixed_seeds=(), log_target=False):
+         self.names = list(names); self.d = len(names)
+         self.una = tuple(unary); self.bin = tuple(binary)
+         self.maxsize = maxsize; self.maxdepth = maxdepth
+@@ -154,6 +158,7 @@
+         self.fixed_seeds = list(fixed_seeds)    # list of (tree, consts) to plant in the first population
+         self.hof = {}                           # complexity -> (loss, tree, consts)
+         self.n_eval = 0
++        self.log_target = log_target
+ 
+     # ---------- random trees ----------
+     def _leaf(self):
+@@ -184,11 +189,17 @@
+         return renumber(t, np.array(c, float))
+ 
+     # ---------- fitness ----------
++    def _resid(self, yh, y):
++        if self.log_target:
++            with np.errstate(all='ignore'):
++                return np.where(yh > 0, np.log(np.abs(yh) + 1e-300) - np.log(y), np.nan)
++        return yh - y
++
+     def _loss(self, t, c, X, y, w):
+         yh = evaluate(t, X, c)
+-        if not np.all(np.isfinite(yh)):
++        r = self._resid(yh, y)
++        if not np.all(np.isfinite(r)):
+             return np.inf
+-        r = yh - y
+         return float(np.sum(w * r * r) / np.sum(w))
+ 
+     def optimise(self, t, c, X, y, w, nfev=40):
+@@ -198,7 +209,7 @@
+ 
+         def res(p):
+             yh = evaluate(t, X, p)
+-            r = (yh - y) * sw
++            r = self._resid(yh, y) * sw
+             return np.where(np.isfinite(r), r, 1e3)
+         try:
+             r = least_squares(res, c, method='lm', max_nfev=nfev * (len(c) + 1))

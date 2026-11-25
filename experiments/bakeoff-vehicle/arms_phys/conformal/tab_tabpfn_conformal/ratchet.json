@@ -1,0 +1,36 @@
+{
+ "arm_id": "tab_tabpfn_conformal",
+ "label": "TabPFN v2 in context on simulated rows (a lens, not a release; Built with PriorLabs-TabPFN) + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around tab_tabpfn)",
+ "group": "phys",
+ "tracks": [
+  "table"
+ ],
+ "wraps": "tab_tabpfn",
+ "wraps_hash": "cb26e0c49f796b7d4220798cccfdf6d8e2da2ea600241af7fe3edd96e72f5f1f",
+ "numpy_only": false,
+ "numpy_only_reason": "wraps tab_tabpfn: TabPFN is a transformer run with torch (tabpfn 10.2.0, copied in pylib/); it has no numpy port. A yardstick, not a release candidate.",
+ "real_labels_in_training": false,
+ "compute": {
+  "train_cpu_hours": 0.0576,
+  "base_train_cpu_hours": 0.0,
+  "notes": "conformal fit only (dev predictions of tab_tabpfn + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond tab_tabpfn's; strata from arch, cls and the dynamometer flag",
+ "extra_files": [
+  "../../../arms_table/tab_tabpfn",
+  "../lib"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata powertrain x road/dyno/hd) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage over the D16 sets (grouped 10-fold cross-fit): table cov50/90 0.45/0.84"
+  }
+ ],
+ "released": "c0"
+}

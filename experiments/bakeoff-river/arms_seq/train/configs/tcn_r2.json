@@ -1,0 +1,1 @@
+{"arm": "tcn", "rung": "r2", "arch": "tcn", "c": 20, "k": 3, "dilations": [1, 2, 4, 8, 16, 32, 64, 128, 256], "dropout": 0.1, "inner_dropout": 0.0, "steps": 6000, "batch": 32, "lr": 0.002, "seed": 0, "note": "gated activations (WaveNet tanh x sigmoid) instead of GELU, c 26 -> 20 to keep ~26k parameters; 6000 steps", "gated": true}

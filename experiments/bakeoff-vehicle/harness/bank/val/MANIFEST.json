@@ -1,0 +1,31 @@
+{
+ "split": "val",
+ "recipe": {
+  "fleet": "val2",
+  "n": 400,
+  "fseed": 202,
+  "K": 10,
+  "bseed": 777
+ },
+ "physics": "roadsim-physics-v2",
+ "n_rows": 4000,
+ "n_vehicles": 400,
+ "files": {
+  "rows.npz": {
+   "bytes": 3175964,
+   "sha256": "711054aef5cd4dd612a7c9288e3f1568aac79be4966c3f7876c590fd5a230642"
+  },
+  "trace_v.npy": {
+   "bytes": 19159580,
+   "sha256": "0a23951d96713eb97918fe6a7a7505feed367abea71baff5a035f1515f4615c5"
+  },
+  "trace_x.npy": {
+   "bytes": 67058210,
+   "sha256": "38e176ada4ac019a0040bb8022c5c0572d5800fd202262d2444ee9f9c99332ce"
+  },
+  "fleet.json": {
+   "bytes": 438245,
+   "sha256": "7628994fb44b6aa5282a3a5e17446795605126f2f7f881a8ccc14b8beb370694"
+  }
+ }
+}

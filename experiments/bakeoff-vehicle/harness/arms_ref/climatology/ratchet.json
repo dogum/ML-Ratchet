@@ -1,0 +1,19 @@
+{
+ "arm_id": "climatology",
+ "label": "Climatology: sim-train median energy per km x distance",
+ "family": "baseline",
+ "family_label": "Dumb baseline",
+ "group": "ref",
+ "reference": true,
+ "tracks": ["table", "trace"],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {"train_cpu_hours": 0.001, "notes": "medians and quantiles on the simulated train bank"},
+ "feature_engineering": "distance (from R[1] or the trace) and the architecture / class indices only",
+ "extra_files": [],
+ "margin": 0.01,
+ "rule": "baseline; no rungs",
+ "rungs": [{"id": "r0", "change": "median energy per km per (architecture, class) on the sim train bank", "decision": "released", "why": "dumb baseline"}],
+ "released": "r0"
+}

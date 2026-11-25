@@ -1,0 +1,145 @@
+{
+ "arm_id": "seq_ssm",
+ "label": "State-space model (S4D with a pointwise encoder)",
+ "family": "ssm",
+ "family_label": "State-space and recurrent models (S4D diagonal state space)",
+ "group": "seq",
+ "protocols": [
+  "ungauged"
+ ],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 3.693,
+  "eval_note": "harness evaluate.py per rung (800 sim val runs + 52 dev basins) not included: about 0.5-4 CPU-min per rung",
+  "notes": "4 rungs; one thread (torch.set_num_threads(1)), time.process_time() of the training process, shared 2-core machine"
+ },
+ "feature_engineering": "None beyond the shared arms_seq pipeline (common/seqlib.py), identical for all four sequence arms: FlowCast's 11 scaled daily features (P/10, log1p P, PET/5, T_mean/T_min/T_max /10, SRAD/150, vp/1000, wind/3, sin/cos day of year) + FlowCast's 18-value static vector (batch[\"static\"], standardised with the train bank mean/sd) repeated every day; target in units of the basin mean precipitation exp(static[11]); 730-day windows (365 warm-up + 365 target), inference in 365-day blocks each with its own 365-day warm-up (FlowCast). Causal: day t uses forcing up to day t only.",
+ "extra_files": [
+  "../common"
+ ],
+ "margin": 0.01,
+ "rule": "keep if sim val median NSE (all 800 frozen runs) > incumbent + 0.01 AND dev median NSE (52 dev basins, WY2001-2014) >= 0.95 x incumbent's",
+ "rungs": [
+  {
+   "id": "r0",
+   "change": "base: S4D (3 layers, 48 channels, 16 complex modes each), FlowCast's training recipe (3000 steps)",
+   "decision": "base",
+   "why": "first rung.",
+   "simval_nse": 0.3984,
+   "dev_nse": 0.4101,
+   "simval_kge": 0.3569,
+   "dev_kge": 0.4012,
+   "dev_fhv": -33.9,
+   "dev_cov50": 0.563,
+   "dev_cov90": 0.957,
+   "dev_crps_rel": 0.397,
+   "train_cpu_h": 0.501,
+   "n_params": 25734,
+   "steps": 3000
+  },
+  {
+   "id": "r1",
+   "change": "2x training: 6000 steps",
+   "decision": "rejected",
+   "why": "sim +0.001 (0.399 vs 0.398): unlike the LSTM, TCN and transformer, the linear time-invariant SSM gains nothing from more training (dev 0.428).",
+   "simval_nse": 0.399,
+   "dev_nse": 0.4281,
+   "simval_kge": 0.3615,
+   "dev_kge": 0.4482,
+   "dev_fhv": -29.4,
+   "dev_cov50": 0.564,
+   "dev_cov90": 0.957,
+   "dev_crps_rel": 0.394,
+   "train_cpu_h": 0.879,
+   "n_params": 25734,
+   "steps": 6000
+  },
+  {
+   "id": "r2",
+   "change": "pointwise nonlinear encoder before the SSM layers (residual MLP 48 -> 48 -> 48, GELU); 30.4k parameters; 6000 steps",
+   "decision": "released",
+   "why": "sim 0.422 vs incumbent r0 0.398 (+0.024; r1 shows the 6000 steps alone add nothing) and dev 0.435 >= 0.95 x 0.410: kept. Released (r3 did not beat it). A nonlinearity BEFORE the linear memory (e.g. rain vs snow, thresholds) is what the fixed filter lacked.",
+   "simval_nse": 0.422,
+   "dev_nse": 0.4349,
+   "simval_kge": 0.3885,
+   "dev_kge": 0.4299,
+   "dev_fhv": -30.1,
+   "dev_cov50": 0.584,
+   "dev_cov90": 0.972,
+   "dev_crps_rel": 0.392,
+   "train_cpu_h": 0.925,
+   "n_params": 30438,
+   "steps": 6000
+  },
+  {
+   "id": "r3",
+   "change": "Mamba-lite: replace the S4D layers by selective state-space layers (input-dependent step dt and input/output maps B, C; scalar decay per head, 6 heads x 8, state 16; Mamba-2 style, gated output; no pre-MLP); 28.9k parameters; 6000 steps",
+   "decision": "rejected",
+   "why": "sim 0.415 vs incumbent r2 0.422 (-0.007; dev 0.429 vs 0.435). Selectivity beats the plain fixed filter (r1 0.399) but not the fixed filter with a nonlinear encoder in front. torch's chunked SSD equals numpy's day-by-day recurrence to 1.6e-15 (float64).",
+   "simval_nse": 0.4152,
+   "dev_nse": 0.4291,
+   "simval_kge": 0.362,
+   "dev_kge": 0.436,
+   "dev_fhv": -29.5,
+   "dev_cov50": 0.606,
+   "dev_cov90": 0.969,
+   "dev_crps_rel": 0.397,
+   "train_cpu_h": 1.388,
+   "n_params": 28926,
+   "steps": 6000
+  }
+ ],
+ "released": "r2",
+ "noise_checks": [],
+ "released_scores": {
+  "simval_nse": 0.422,
+  "simval_kge": 0.3885,
+  "simval_cov90": 0.964,
+  "dev_nse": 0.4349,
+  "dev_kge": 0.4299,
+  "dev_fhv": -30.1,
+  "dev_cov50": 0.584,
+  "dev_cov90": 0.972,
+  "dev_crps_rel": 0.392,
+  "dev_by_class_nse": {
+   "snow": {
+    "n": 10,
+    "nse": 0.565
+   },
+   "arid": {
+    "n": 14,
+    "nse": 0.192
+   },
+   "humid": {
+    "n": 11,
+    "nse": 0.594
+   },
+   "regulated": {
+    "n": 5,
+    "nse": 0.272
+   },
+   "large": {
+    "n": 6,
+    "nse": 0.267
+   }
+  },
+  "train_cpu_h": 0.925,
+  "n_params": 30438,
+  "steps": 6000
+ },
+ "n_params": 30438,
+ "export_check": {
+  "arm": "ssm",
+  "rung": "r2",
+  "cases": 19,
+  "max_abs_diff_mean_rel_to_mean_flow": 2.784290560438651e-05,
+  "max_abs_diff_quantiles_rel_to_mean_flow": 7.199123384097195e-05,
+  "torch_float64": {
+   "max_abs_diff_mean_rel": 7.809989122144137e-15,
+   "max_abs_diff_quantiles_rel": 1.874397389314593e-14
+  },
+  "note": "numpy float64 (released predict.py) vs torch float32 (training checkpoint), mm/day, 16 sim val windows + 3 dev basins (14 years each)"
+ },
+ "bands": "raw pinball quantiles (no dev widening; arm C conformalises every arm)"
+}

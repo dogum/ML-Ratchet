@@ -1,0 +1,116 @@
+{
+ "gru": {
+  "released": "r1",
+  "feature_engineering": "trace-track inputs only: the harness's shared 5-s block means (bake.block_means rule: 8 channel means + mean v^2, mean v^3, summed positive kinetic-energy increment per unit mass) + the block's valid-second fraction -> 12 scaled channels; spec (49) and rl (5, logs of mass / CdA / Crr) standardised with train-bank statistics; log distance and log duration from the trace; chunks of <= 1,440 blocks mean-pooled for longer traces; anchor r0 = sim-train median MJ/km per (architecture, class) (bake.dumb_rates) x distance; from r1: E_phys recomputed from the trace inputs by bake.e_phys_from_trace (EnergyNet's generic road-load estimate; declared), target log(y / E_phys), log(E_phys / A0) as an input",
+  "extra_cpu_h": 0.02,
+  "compute_notes": "r0 0.58, r1 0.54, r2 0.51 (rejected); + 0.02 for a speed benchmark and a 2-min first launch killed for memory; one thread, shared 2-core machine",
+  "limits": "- Simulation only (RoadSim physics v2, EnergyNet v2.1's bank recipe): what the simulator does not model (real hybrid and plug-in control, A/C habits, ageing, driver behaviour beyond the speed trace) shows up as dev error. Plug-ins are the weakest dev set (VED PHEV MdAPE ~0.22 vs EnergyNet v2.1's 0.163).\n- One third of EnergyNet v2.1's training data (one of its three banks) and a single network (EnergyNet: a 5-member ensemble on a GPU): the sim val gap to EnergyNet (skill ~0.64-0.66 vs 0.680) is partly data and ensembling, not only the input form.\n- 5-s blocks keep mean v^2, v^3 and positive kinetic-energy increments but lose the exact sub-5-s sequence of accelerations and stops.\n- From r1 on it needs EnergyNet's physics estimate at inference (bake.e_phys_from_trace from the harness); the r0 rung is the physics-free version.\n- Heavy-duty traces beyond 7,200 s (ZTBus legs up to 37,919 s) are outside the training range: they are chunked and mean-pooled, an extrapolation checked only on the 5 ZTBus dev legs.\n- Bands are the raw pinball-loss quantiles (sim val cov50 / cov90 ~0.50 / 0.89; no dev widening here; arm C's conformal layer calibrates them on dev).\n- Sequential: numpy inference loops over the blocks (two directions), the slowest of the four on long trips.",
+  "rungs": [
+   {
+    "id": "r0",
+    "change": "base: pure trace learner; anchor A0 = sim-train median MJ/km (architecture x class) x distance, no physics estimate; 12 epochs",
+    "decision": "base",
+    "why": "first rung: what the GRU finds from the raw trace alone (skill 0.605, D16 0.119)"
+   },
+   {
+    "id": "r1",
+    "change": "physics anchor: target log(E / E_phys) with E_phys recomputed from the trace inputs (bake.e_phys_from_trace), log(E_phys / A0) as an input; 12 epochs from scratch",
+    "decision": "released",
+    "why": "sim val skill +0.034 over r0 (paired bootstrap +0.019..+0.046) and D16 0.1089 better than r0 0.1192: kept; released (r2 did not beat it)"
+   },
+   {
+    "id": "r2",
+    "change": "2x training: warm restart from r1 for 12 more epochs (one-cycle cosine, peak lr 1e-3, data stream seed 1)",
+    "decision": "rejected",
+    "why": "sim val skill +0.008 over r1 (bootstrap -0.001..+0.016) < the 0.01 margin; D16 0.1102 vs 0.1089: no gain from 2x training"
+   }
+  ]
+ },
+ "s4d": {
+  "released": "r2",
+  "feature_engineering": "trace-track inputs only: the harness's shared 5-s block means (bake.block_means rule: 8 channel means + mean v^2, mean v^3, summed positive kinetic-energy increment per unit mass) + the block's valid-second fraction -> 12 scaled channels; spec (49) and rl (5, logs of mass / CdA / Crr) standardised with train-bank statistics; log distance and log duration from the trace; chunks of <= 1,440 blocks mean-pooled for longer traces; anchor r0 = sim-train median MJ/km per (architecture, class) (bake.dumb_rates) x distance; from r1: E_phys recomputed from the trace inputs by bake.e_phys_from_trace (EnergyNet's generic road-load estimate; declared), target log(y / E_phys), log(E_phys / A0) as an input",
+  "extra_cpu_h": 0.02,
+  "compute_notes": "r0 0.96, r1 0.90, r2 0.87; + 0.02 for speed benchmarks and a 2-min first launch killed for memory; one thread, shared 2-core machine",
+  "limits": "- Simulation only (RoadSim physics v2, EnergyNet v2.1's bank recipe): what the simulator does not model (real hybrid and plug-in control, A/C habits, ageing, driver behaviour beyond the speed trace) shows up as dev error. Plug-ins are the weakest dev set (VED PHEV MdAPE ~0.22 vs EnergyNet v2.1's 0.163).\n- One third of EnergyNet v2.1's training data (one of its three banks) and a single network (EnergyNet: a 5-member ensemble on a GPU): the sim val gap to EnergyNet (skill ~0.64-0.66 vs 0.680) is partly data and ensembling, not only the input form.\n- 5-s blocks keep mean v^2, v^3 and positive kinetic-energy increments but lose the exact sub-5-s sequence of accelerations and stops.\n- From r1 on it needs EnergyNet's physics estimate at inference (bake.e_phys_from_trace from the harness); the r0 rung is the physics-free version.\n- Heavy-duty traces beyond 7,200 s (ZTBus legs up to 37,919 s) are outside the training range: they are chunked and mean-pooled, an extrapolation checked only on the 5 ZTBus dev legs.\n- Bands are the raw pinball-loss quantiles (sim val cov50 / cov90 ~0.50 / 0.89; no dev widening here; arm C's conformal layer calibrates them on dev).\n- Linear time-invariant filters: what the trip does is weighted the same wherever it happens; interactions come only through the pointwise nonlinearities. Its D16 drifted up from r0 (0.1149) to r2 (0.1187) while sim skill rose; each step was inside the 0.01 tolerance.",
+  "rungs": [
+   {
+    "id": "r0",
+    "change": "base: pure trace learner; anchor A0 = sim-train median MJ/km (architecture x class) x distance, no physics estimate; 12 epochs",
+    "decision": "base",
+    "why": "first rung: what S4D finds from the raw trace alone (skill 0.616, D16 0.115)"
+   },
+   {
+    "id": "r1",
+    "change": "physics anchor: target log(E / E_phys) with E_phys recomputed from the trace inputs (bake.e_phys_from_trace), log(E_phys / A0) as an input; 12 epochs from scratch",
+    "decision": "kept",
+    "why": "sim val skill +0.028 over r0 (bootstrap +0.011..+0.038); D16 0.1200 vs 0.1149, worse by 0.005, inside the 0.01 tolerance: kept"
+   },
+   {
+    "id": "r2",
+    "change": "2x training: warm restart from r1 for 12 more epochs (one-cycle cosine, peak lr 1e-3, data stream seed 1)",
+    "decision": "released",
+    "why": "sim val skill +0.0103 over r1 (bootstrap +0.003..+0.020), just over the 0.01 margin; D16 0.1187 vs 0.1200: kept; released"
+   }
+  ]
+ },
+ "cnn": {
+  "released": "r1",
+  "feature_engineering": "trace-track inputs only: the harness's shared 5-s block means (bake.block_means rule: 8 channel means + mean v^2, mean v^3, summed positive kinetic-energy increment per unit mass) + the block's valid-second fraction -> 12 scaled channels; spec (49) and rl (5, logs of mass / CdA / Crr) standardised with train-bank statistics; log distance and log duration from the trace; chunks of <= 1,440 blocks mean-pooled for longer traces; anchor r0 = sim-train median MJ/km per (architecture, class) (bake.dumb_rates) x distance; from r1: E_phys recomputed from the trace inputs by bake.e_phys_from_trace (EnergyNet's generic road-load estimate; declared), target log(y / E_phys), log(E_phys / A0) as an input",
+  "extra_cpu_h": 0.02,
+  "compute_notes": "r0 0.52, r1 0.52, r2 0.51 (rejected); + 0.02 for a speed benchmark, a 2-min first launch killed for memory and the r2 harness eval re-run after a container restart; one thread, shared 2-core machine",
+  "limits": "- Simulation only (RoadSim physics v2, EnergyNet v2.1's bank recipe): what the simulator does not model (real hybrid and plug-in control, A/C habits, ageing, driver behaviour beyond the speed trace) shows up as dev error. Plug-ins are the weakest dev set (VED PHEV MdAPE ~0.22 vs EnergyNet v2.1's 0.163).\n- One third of EnergyNet v2.1's training data (one of its three banks) and a single network (EnergyNet: a 5-member ensemble on a GPU): the sim val gap to EnergyNet (skill ~0.64-0.66 vs 0.680) is partly data and ensembling, not only the input form.\n- 5-s blocks keep mean v^2, v^3 and positive kinetic-energy increments but lose the exact sub-5-s sequence of accelerations and stops.\n- From r1 on it needs EnergyNet's physics estimate at inference (bake.e_phys_from_trace from the harness); the r0 rung is the physics-free version.\n- Heavy-duty traces beyond 7,200 s (ZTBus legs up to 37,919 s) are outside the training range: they are chunked and mean-pooled, an extrapolation checked only on the 5 ZTBus dev legs.\n- Bands are the raw pinball-loss quantiles (sim val cov50 / cov90 ~0.50 / 0.89; no dev widening here; arm C's conformal layer calibrates them on dev).\n- No memory beyond the 255-block (21 min) receptive field except through the mean pooling.",
+  "rungs": [
+   {
+    "id": "r0",
+    "change": "base: pure trace learner; anchor A0 = sim-train median MJ/km (architecture x class) x distance, no physics estimate; 12 epochs",
+    "decision": "base",
+    "why": "first rung: what the CNN finds from the raw trace alone (skill 0.617, D16 0.117)"
+   },
+   {
+    "id": "r1",
+    "change": "physics anchor: target log(E / E_phys) with E_phys recomputed from the trace inputs (bake.e_phys_from_trace), log(E_phys / A0) as an input; 12 epochs from scratch",
+    "decision": "released",
+    "why": "sim val skill +0.016 over r0 (bootstrap +0.002..+0.029) and D16 0.1134 better than r0 0.1170: kept; released (r2 did not beat it)"
+   },
+   {
+    "id": "r2",
+    "change": "2x training: warm restart from r1 for 12 more epochs (one-cycle cosine, peak lr 1e-3, data stream seed 1)",
+    "decision": "rejected",
+    "why": "sim val skill +0.008 over r1 (bootstrap -0.001..+0.019) < the 0.01 margin; D16 0.1085 vs 0.1134 is better, but a dev move under 0.01 is seed noise and the rule needs the sim margin: rejected"
+   }
+  ]
+ },
+ "transformer": {
+  "released": "r2",
+  "feature_engineering": "trace-track inputs only: the harness's shared 5-s block means (bake.block_means rule: 8 channel means + mean v^2, mean v^3, summed positive kinetic-energy increment per unit mass) + the block's valid-second fraction -> 12 scaled channels; spec (49) and rl (5, logs of mass / CdA / Crr) standardised with train-bank statistics; log distance and log duration from the trace; chunks of <= 1,440 blocks mean-pooled for longer traces; anchor r0 = sim-train median MJ/km per (architecture, class) (bake.dumb_rates) x distance; from r1: E_phys recomputed from the trace inputs by bake.e_phys_from_trace (EnergyNet's generic road-load estimate; declared), target log(y / E_phys), log(E_phys / A0) as an input",
+  "extra_cpu_h": 0.05,
+  "compute_notes": "r0 0.19, r1 0.17, r2 0.33, r3 0.90 (rejected); + 0.05 for a 1-epoch smoke run (0.015), a speed benchmark, a 2-min first launch killed for memory and r3 steps lost to a container restart; one thread, shared 2-core machine",
+  "limits": "- Simulation only (RoadSim physics v2, EnergyNet v2.1's bank recipe): what the simulator does not model (real hybrid and plug-in control, A/C habits, ageing, driver behaviour beyond the speed trace) shows up as dev error. Plug-ins are the weakest dev set (VED PHEV MdAPE ~0.22 vs EnergyNet v2.1's 0.163).\n- One third of EnergyNet v2.1's training data (one of its three banks) and a single network (EnergyNet: a 5-member ensemble on a GPU): the sim val gap to EnergyNet (skill ~0.64-0.66 vs 0.680) is partly data and ensembling, not only the input form.\n- 5-s blocks keep mean v^2, v^3 and positive kinetic-energy increments but lose the exact sub-5-s sequence of accelerations and stops.\n- From r1 on it needs EnergyNet's physics estimate at inference (bake.e_phys_from_trace from the harness); the r0 rung is the physics-free version.\n- Heavy-duty traces beyond 7,200 s (ZTBus legs up to 37,919 s) are outside the training range: they are chunked and mean-pooled, an extrapolation checked only on the 5 ZTBus dev legs.\n- Bands are the raw pinball-loss quantiles (sim val cov50 / cov90 ~0.50 / 0.89; no dev widening here; arm C's conformal layer calibrates them on dev).\n- Attention cost grows with the square of the number of tokens (fine up to 1,440 blocks per chunk).\n- Finer tokens did not help: 10-s patches (r3, 36 epochs from scratch) scored sim val skill 0.640 vs the released 20-s patches' 0.644, so the 20-s patch is the released resolution.",
+  "rungs": [
+   {
+    "id": "r0",
+    "change": "base: pure trace learner; anchor A0 = sim-train median MJ/km (architecture x class) x distance, no physics estimate; 12 epochs",
+    "decision": "base",
+    "why": "first rung: what the transformer finds from the raw trace alone (skill 0.608, D16 0.121)"
+   },
+   {
+    "id": "r1",
+    "change": "physics anchor: target log(E / E_phys) with E_phys recomputed from the trace inputs (bake.e_phys_from_trace), log(E_phys / A0) as an input; 12 epochs from scratch",
+    "decision": "kept",
+    "why": "sim val skill +0.0215 over r0 (bootstrap +0.006..+0.035) and D16 0.1087 better than r0 0.1210: kept"
+   },
+   {
+    "id": "r2",
+    "change": "3x training (the River lesson: transformers need more steps): warm restart from r1 for 24 more epochs (one-cycle cosine, peak lr 1e-3, data stream seed 1); 36 epochs in all",
+    "decision": "released",
+    "why": "sim val skill +0.0145 over r1 (bootstrap +0.004..+0.025); D16 0.1135 vs 0.1087, worse by 0.005, inside the 0.01 tolerance: kept; released (r3 did not beat it)"
+   },
+   {
+    "id": "r3",
+    "change": "10-s patch tokens (2 blocks) instead of 20-s (4 blocks): finer attention resolution, the only place the transformer coarsens the shared 5-s input; 36 epochs from scratch (= r2's total training), peak lr 2e-3, data seed 0",
+    "decision": "rejected",
+    "why": "sim val skill -0.0037 vs r2 (bootstrap -0.017..+0.010): no gain at 2.7x the CPU of r2; D16 0.1122 vs 0.1135 is a move under 0.01 (seed noise): rejected"
+   }
+  ]
+ }
+}

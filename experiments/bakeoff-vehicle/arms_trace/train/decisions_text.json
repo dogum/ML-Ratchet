@@ -1,0 +1,20 @@
+{
+ "FE": "trace-track inputs only: the harness's shared 5-s block means (bake.block_means rule: 8 channel means + mean v^2, mean v^3, summed positive kinetic-energy increment per unit mass) + the block's valid-second fraction -> 12 scaled channels; spec (49) and rl (5, logs of mass / CdA / Crr) standardised with train-bank statistics; log distance and log duration from the trace; chunks of <= 1,440 blocks mean-pooled for longer traces; anchor r0 = sim-train median MJ/km per (architecture, class) (bake.dumb_rates) x distance; from r1: E_phys recomputed from the trace inputs by bake.e_phys_from_trace (EnergyNet's generic road-load estimate; declared), target log(y / E_phys), log(E_phys / A0) as an input",
+ "LIM_SHARED": [
+  "Simulation only (RoadSim physics v2, EnergyNet v2.1's bank recipe): what the simulator does not model (real hybrid and plug-in control, A/C habits, ageing, driver behaviour beyond the speed trace) shows up as dev error. Plug-ins are the weakest dev set (VED PHEV MdAPE ~0.22 vs EnergyNet v2.1's 0.163).",
+  "One third of EnergyNet v2.1's training data (one of its three banks) and a single network (EnergyNet: a 5-member ensemble on a GPU): the sim val gap to EnergyNet (skill ~0.64-0.66 vs 0.680) is partly data and ensembling, not only the input form.",
+  "5-s blocks keep mean v^2, v^3 and positive kinetic-energy increments but lose the exact sub-5-s sequence of accelerations and stops.",
+  "From r1 on it needs EnergyNet's physics estimate at inference (bake.e_phys_from_trace from the harness); the r0 rung is the physics-free version.",
+  "Heavy-duty traces beyond 7,200 s (ZTBus legs up to 37,919 s) are outside the training range: they are chunked and mean-pooled, an extrapolation checked only on the 5 ZTBus dev legs.",
+  "Bands are the raw pinball-loss quantiles (sim val cov50 / cov90 ~0.50 / 0.89; no dev widening here; arm C's conformal layer calibrates them on dev)."
+ ],
+ "LIM": {
+  "gru": "Sequential: numpy inference loops over the blocks (two directions), the slowest of the four on long trips.",
+  "s4d": "Linear time-invariant filters: what the trip does is weighted the same wherever it happens; interactions come only through the pointwise nonlinearities. Its D16 drifted up from r0 (0.1149) to r2 (0.1187) while sim skill rose; each step was inside the 0.01 tolerance.",
+  "cnn": "No memory beyond the 255-block (21 min) receptive field except through the mean pooling.",
+  "transformer": "Attention cost grows with the square of the number of tokens (fine up to 1,440 blocks per chunk)."
+ },
+ "R0": "base: pure trace learner; anchor A0 = sim-train median MJ/km (architecture x class) x distance, no physics estimate; 12 epochs",
+ "R1": "physics anchor: target log(E / E_phys) with E_phys recomputed from the trace inputs (bake.e_phys_from_trace), log(E_phys / A0) as an input; 12 epochs from scratch",
+ "R2": "2x training: warm restart from r1 for 12 more epochs (one-cycle cosine, peak lr 1e-3, data stream seed 1)"
+}

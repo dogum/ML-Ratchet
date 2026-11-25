@@ -1,0 +1,91 @@
+{
+ "arm_id": "flowcast_v1",
+ "arm_dir": "/home/claude/bakeoff/river/harness/arms_ref/flowcast_v1",
+ "hash": "6400ea99ca6cfc34bb5204fef546e2404d583a7911a8083d3bdf76411f7c96fa",
+ "files": {
+  "card.md": "ea3b8943a2b2e6bd7ac2aabc4520fe3e9d67947d996f480ab8ab1629998119bc",
+  "flowcast.py": "6d98b1bd2d585042345e1253428e5e7e4fde0dabcd052ef192a49dfa9ceb2e45",
+  "flowcast_nowcast_weights.npz": "788db343064d80436c71f3bb73e3f909364e57e494c655906c7de81504c3b801",
+  "flowcast_weights.npz": "bbf1830f5ed5971e465fdb5db754cb2b2dd3ca34c66d2cf4edc5ec06f6dbe289",
+  "predict.py": "cc96c414b1bf5c9767e41f8a5f655490c4a91f7ce2745d8eefd3fbd9dbca008a",
+  "ratchet.json": "a3e1ffa30f73c7ce533cb161f0ef3f43daa8d682b7411d465d64a3a738a7e274"
+ },
+ "protocols": [
+  "ungauged",
+  "gauged"
+ ],
+ "meta": {
+  "label": "FlowCast v1.0 as released",
+  "family": "ssm",
+  "family_label": "LSTM (State-space and recurrent models)",
+  "group": "ref",
+  "reference": true,
+  "numpy_only": true,
+  "numpy_only_reason": null,
+  "compute": {
+   "train_cpu_hours": 0.0,
+   "notes": "Not trained in the bake-off: the released FlowCast v1.0 weights (models/flowcast). Its own training: r1b ~15 min on one shared core + 12k bank 7-15 min; nowcast fine-tune 2,500 steps."
+  },
+  "released": "r1b",
+  "feature_engineering": "FlowCast's own: 11 scaled daily features (P/10, log1p P, PET/5, T/10 x3, SRAD/150, vp/1000, wind/3, sin/cos day of year) + the 18-value static vector (config.STATIC_NAMES); target in units of the basin's mean precipitation. Nowcast adds log1p(5 x qobs/p_mean) lagged by the lead, an availability flag and lead/7."
+ },
+ "smoke": {
+  "load_cpu_s": 0.0,
+  "ungauged": {
+   "dev_nse": [
+    0.5339,
+    0.175,
+    0.6283
+   ]
+  },
+  "gauged_L1": {
+   "dev_nse": [
+    0.6896,
+    0.279,
+    0.764
+   ],
+   "causality_maxdiff": 0.0
+  },
+  "gauged_L3": {
+   "dev_nse": [
+    0.6498,
+    0.1258,
+    0.7384
+   ],
+   "causality_maxdiff": 0.0
+  },
+  "gauged_L7": {
+   "dev_nse": [
+    0.5785,
+    0.1461,
+    0.7171
+   ],
+   "causality_maxdiff": 0.0
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 0.059,
+   "gauged_L1": 0.058,
+   "gauged_L3": 0.045,
+   "gauged_L7": 0.081
+  },
+  "files_used": [
+   "harness/arms_ref/flowcast_v1/flowcast.py",
+   "harness/arms_ref/flowcast_v1/flowcast_nowcast_weights.npz",
+   "harness/arms_ref/flowcast_v1/flowcast_weights.npz",
+   "harness/arms_ref/flowcast_v1/predict.py",
+   "harness/arms_ref/flowcast_v1/ratchet.json",
+   "harness/bank/val/F.npy",
+   "harness/bank/val/attrs.npy",
+   "harness/bank/val/lat.npy",
+   "harness/bank/val/lon.npy",
+   "harness/bank/val/qo.npy",
+   "harness/bank/val/st.npy",
+   "harness/bank/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 4.9
+ },
+ "harness_hash": "111d13ef04a576a20f04d180eb326e8eaa4e0909651d1cc1086d3e8d85e083bf",
+ "registered_at": "2026-11-22T23:25:26",
+ "history": []
+}

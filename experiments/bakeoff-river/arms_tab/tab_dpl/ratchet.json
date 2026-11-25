@@ -1,0 +1,25 @@
+{
+ "arm_id": "tab_dpl",
+ "label": "Decides through physics: MLP -> WaterSim HBV parameters, trained through the simulator",
+ "family": "diffsim",
+ "family_label": "Differentiable simulator / physics in the loop",
+ "group": "tab",
+ "protocols": ["ungauged"],
+ "numpy_only": false,
+ "numpy_only_reason": "The prediction IS a WaterSim run: predict.py maps attributes to parameters with a numpy MLP and then calls the harness's vendored WaterSim (numba-compiled HBV + degree-day snow + gamma channel UH + irrigation) through wsim.py. Re-writing WaterSim in numpy would duplicate the simulator the arm is meant to use.",
+ "compute": {"train_cpu_hours": 2.25,
+  "notes": "One thread (process_time). torch-vs-WaterSim verification 25 s; two aborted pilot runs of the base (NSE* loss 336 s, log(1+NSE*) loss 558 s: both drove the volume bias to ~0.75); r0 0.745 h; r1 0.819 h; r2 0.425 h; band fitting + exports ~25 s. Harness evaluation ~1 min per rung."},
+ "feature_engineering": "Network input: the 18-value static vector as given, standardised with the sim-train mean/sd. The simulator input: the batch forcing (P x the learned PMULT, PET from the forcing, T_mean) and a spec built from the attributes (area, elevation mean +- range/2 -> 5 equal-area bands, slope, irrigation share, lat/lon); spin-up = the 365 warm-up rows. Nothing else.",
+ "extra_files": [],
+ "margin": 0.01,
+ "rule": "keep if sim val median NSE > incumbent + 0.01 AND dev median NSE >= 0.95 x incumbent's (all 800 frozen sim val runs; 52 dev basins)",
+ "rungs": [
+  {"id": "r0", "change": "base: MLP 18-64-64-17 (SiLU) -> 17 HBV / degree-day snow / channel-velocity / P-multiplier parameters (sigmoid into WaterSim's bounds), trained through the torch copy of WaterSim (equal to 7e-14 mm/day) on sim-train windows (365 warm-up rows without gradient + 730 days), batch 64, Adam 2e-3 -> 1e-4 cosine, 2,000 iterations, bounded NSE loss x/(1+x) with x = NSE* per run",
+   "decision": "base", "why": "first rung (after two aborted pilots with NSE* and log(1+NSE*) losses)", "simval_nse": 0.354, "dev_nse": 0.365},
+  {"id": "r1", "change": "loss = MSE of flow / p_mean (the forcing's mean P, an input): no per-run 1/variance weighting",
+   "decision": "released", "why": "sim val +0.060 (0.414 vs 0.354); dev 0.383 >= 0.95 x 0.365. The variance-normalised losses shrank volumes (median bias 0.75) because dry runs weigh most; the input-scaled MSE keeps volumes (bias ~1)", "simval_nse": 0.414, "dev_nse": 0.383},
+  {"id": "r2", "change": "warm start from r1, effective batch 128 (2 x 64 accumulated), Adam 3e-4 -> 3e-5, 500 more iterations",
+   "decision": "rejected", "why": "sim val +0.004 (< 0.01); dev 0.388", "simval_nse": 0.418, "dev_nse": 0.388}
+ ],
+ "released": "r1"
+}

@@ -1,0 +1,36 @@
+{
+ "arm_id": "seq_tcn_conformal",
+ "label": "TCN (dilated causal 1-D CNN) + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around seq_tcn)",
+ "group": "filt",
+ "protocols": [
+  "ungauged"
+ ],
+ "wraps": "seq_tcn",
+ "wraps_hash": "d85e8142dafdc01cef6d90aea75706547b7985720ae9104ea847cad43e0a37f8",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.0071,
+  "base_train_cpu_hours": 1.251,
+  "notes": "conformal fit only (dev predictions of seq_tcn + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond seq_tcn's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)",
+ "extra_files": [
+  "../../../arms_seq/tcn",
+  "../lib",
+  "../../../arms_seq/common"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata snow/arid/humid/other) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage (LOBO) ungauged 0.95"
+  }
+ ],
+ "released": "c0"
+}

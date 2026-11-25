@@ -1,0 +1,23 @@
+{
+ "arm_id": "phys_anchor",
+ "label": "Physics anchor: road-load estimate E_phys alone (+ simulation bands)",
+ "family": "physics",
+ "family_label": "Physics model (generic road-load estimate, no learning)",
+ "group": "phys",
+ "tracks": ["table", "trace"],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "dev_fitted_scale": false,
+ "compute": {"train_cpu_hours": 0.002, "notes": "no training: sim-train quantiles of log(y / E_phys) per architecture x duty (1.6 CPU s) + the two scale rungs (seconds)"},
+ "feature_engineering": "table: the input log E_phys (X[:, 90]); trace: E_phys recomputed from trace + spec + rl with EnergyNet's own features.phys_ints / e_phys (byte copy enet_features.py) = bake.e_phys_from_trace; strata of the bands: arch and class",
+ "extra_files": [],
+ "margin": 0.01,
+ "rule": "keep a rung if its sim val skill beats the incumbent by > 0.01 AND its dev D16 is not worse than the incumbent's by more than 0.01 (EnergyNet's model-rung rule, the harness's suggested rule)",
+ "rungs": [
+  {"id": "r0", "change": "E_phys with EnergyNet's dev-free defaults (PHYS_K, fitted by EnergyNet on simulations); bands = E_phys x sim-train quantiles of log(y / E_phys) per architecture x light/heavy duty", "decision": "released", "why": "base; the point prediction equals the harness's E_phys reference row", "simval_skill": 0.0478, "simval_MdAPE": 0.2104, "dev_D16": 0.2278, "dev_D16_trace": 0.2277},
+  {"id": "r1", "change": "x a per-powertrain scale fitted on SIMULATIONS (median log(y / E_phys) on the train bank, two tier draws: conv +0.198, hybrid +0.158, plug-in +0.089, BEV +0.069)", "decision": "rejected", "why": "sim val skill 0.199 (+0.151) but dev D16 0.2521 vs 0.2278 (+0.024 > 0.01): the scale fixes city / cold trips (VED ICE 0.299 -> 0.153, EPA FTP 0.190 -> 0.107) and breaks highway, US06 and the ICCT truck (EPA HWY 0.093 -> 0.276, US06 0.078 -> 0.295, ICCT 0.865 -> 1.272)", "simval_skill": 0.1991, "simval_MdAPE": 0.1892, "dev_D16": 0.2521},
+  {"id": "r2", "change": "x a per-powertrain scale fitted on DEV (scale calibration, not training: the median over the powertrain's dev sets of each set's median log(y / E_phys): conv +0.197, hybrid +0.163, plug-in +0.150, BEV -0.017)", "decision": "rejected", "why": "sim val skill 0.203 but dev D16 0.2416 vs 0.2278 (+0.014 > 0.01) even IN-SAMPLE on the dev it was fitted on: one scale per powertrain cannot fix a city-vs-highway error", "simval_skill": 0.2033, "simval_MdAPE": 0.1855, "dev_D16": 0.2416, "dev_in_sample": true}
+ ],
+ "released": "r0"
+}

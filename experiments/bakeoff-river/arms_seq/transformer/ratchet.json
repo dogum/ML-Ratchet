@@ -1,0 +1,145 @@
+{
+ "arm_id": "seq_transformer",
+ "label": "Transformer (causal encoder over daily tokens)",
+ "family": "attn",
+ "family_label": "Attention and transformers",
+ "group": "seq",
+ "protocols": [
+  "ungauged"
+ ],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 3.553,
+  "eval_note": "harness evaluate.py per rung (800 sim val runs + 52 dev basins) not included: about 0.5-4 CPU-min per rung",
+  "notes": "4 rungs; one thread (torch.set_num_threads(1)), time.process_time() of the training process, shared 2-core machine"
+ },
+ "feature_engineering": "None beyond the shared arms_seq pipeline (common/seqlib.py), identical for all four sequence arms: FlowCast's 11 scaled daily features (P/10, log1p P, PET/5, T_mean/T_min/T_max /10, SRAD/150, vp/1000, wind/3, sin/cos day of year) + FlowCast's 18-value static vector (batch[\"static\"], standardised with the train bank mean/sd) repeated every day; target in units of the basin mean precipitation exp(static[11]); 730-day windows (365 warm-up + 365 target), inference in 365-day blocks each with its own 365-day warm-up (FlowCast). Causal: day t uses forcing up to day t only.",
+ "extra_files": [
+  "../common"
+ ],
+ "margin": 0.01,
+ "rule": "keep if sim val median NSE (all 800 frozen runs) > incumbent + 0.01 AND dev median NSE (52 dev basins, WY2001-2014) >= 0.95 x incumbent's",
+ "rungs": [
+  {
+   "id": "r0",
+   "change": "base: daily tokens, FlowCast's training recipe (3000 steps)",
+   "decision": "base",
+   "why": "first rung; learns slowly (quick val 0.30 / 0.34 / 0.39 at 1k / 2k / 3k steps vs the LSTM's 0.38 / 0.40 / 0.45).",
+   "simval_nse": 0.3643,
+   "dev_nse": 0.362,
+   "simval_kge": 0.3318,
+   "dev_kge": 0.3646,
+   "dev_fhv": -40.4,
+   "dev_cov50": 0.618,
+   "dev_cov90": 0.956,
+   "dev_crps_rel": 0.428,
+   "train_cpu_h": 0.591,
+   "n_params": 26854,
+   "steps": 3000
+  },
+  {
+   "id": "r1",
+   "change": "2x training: 6000 steps",
+   "decision": "kept",
+   "why": "sim +0.037 over r0 (paired bootstrap +0.016..+0.053) and dev 0.389 >= 0.95 x 0.362: kept (superseded by r3).",
+   "simval_nse": 0.4008,
+   "dev_nse": 0.3893,
+   "simval_kge": 0.3618,
+   "dev_kge": 0.3933,
+   "dev_fhv": -33.5,
+   "dev_cov50": 0.604,
+   "dev_cov90": 0.968,
+   "dev_crps_rel": 0.403,
+   "train_cpu_h": 1.273,
+   "n_params": 26854,
+   "steps": 6000
+  },
+  {
+   "id": "r2",
+   "change": "causal 7-day patches (105 tokens, 2 blocks): each day reads the attention output of all earlier complete weeks + a depthwise causal conv over its own last 7 days; 25.8k parameters; 6000 steps",
+   "decision": "rejected",
+   "why": "sim 0.341 vs incumbent r1 0.401: weekly tokens lose more than they save (10x cheaper per step).",
+   "simval_nse": 0.3407,
+   "dev_nse": 0.3529,
+   "simval_kge": 0.3251,
+   "dev_kge": 0.3835,
+   "dev_fhv": -36.2,
+   "dev_cov50": 0.561,
+   "dev_cov90": 0.961,
+   "dev_crps_rel": 0.418,
+   "train_cpu_h": 0.136,
+   "n_params": 25798,
+   "steps": 6000
+  },
+  {
+   "id": "r3",
+   "change": "r1 with 2x training (12000 steps, cosine over 12000) and 2 attention heads of size 16 instead of 4 of size 8 (same 26.9k parameters; halves the attention cost so the run fits the 4 CPU-hour budget)",
+   "decision": "released",
+   "why": "sim 0.4205 vs incumbent r1 0.4008 (+0.020; paired bootstrap +0.002..+0.032) and dev 0.411 >= 0.95 x 0.389 (dev +0.022, CI -0.028..+0.047): kept. Released (last rung). Two changes in one rung (steps and heads), so the gain cannot be split between them; the LSTM's 12000-step rung gained only +0.003, so most of it is probably the transformer's slower learning catching up.",
+   "simval_nse": 0.4205,
+   "dev_nse": 0.4109,
+   "simval_kge": 0.381,
+   "dev_kge": 0.4058,
+   "dev_fhv": -30.1,
+   "dev_cov50": 0.614,
+   "dev_cov90": 0.97,
+   "dev_crps_rel": 0.4,
+   "train_cpu_h": 1.553,
+   "n_params": 26854,
+   "steps": 12000
+  }
+ ],
+ "released": "r3",
+ "noise_checks": [],
+ "released_scores": {
+  "simval_nse": 0.4205,
+  "simval_kge": 0.381,
+  "simval_cov90": 0.949,
+  "dev_nse": 0.4109,
+  "dev_kge": 0.4058,
+  "dev_fhv": -30.1,
+  "dev_cov50": 0.614,
+  "dev_cov90": 0.97,
+  "dev_crps_rel": 0.4,
+  "dev_by_class_nse": {
+   "snow": {
+    "n": 10,
+    "nse": 0.512
+   },
+   "arid": {
+    "n": 14,
+    "nse": 0.195
+   },
+   "humid": {
+    "n": 11,
+    "nse": 0.586
+   },
+   "regulated": {
+    "n": 5,
+    "nse": 0.316
+   },
+   "large": {
+    "n": 6,
+    "nse": 0.302
+   }
+  },
+  "train_cpu_h": 1.553,
+  "n_params": 26854,
+  "steps": 12000
+ },
+ "n_params": 26854,
+ "export_check": {
+  "arm": "transformer",
+  "rung": "r3",
+  "cases": 19,
+  "max_abs_diff_mean_rel_to_mean_flow": 1.2496433677746482e-05,
+  "max_abs_diff_quantiles_rel_to_mean_flow": 3.2864608747017186e-05,
+  "torch_float64": {
+   "max_abs_diff_mean_rel": 7.40810653734861e-07,
+   "max_abs_diff_quantiles_rel": 1.895159915177055e-06
+  },
+  "note": "numpy float64 (released predict.py) vs torch float32 (training checkpoint), mm/day, 16 sim val windows + 3 dev basins (14 years each)"
+ },
+ "bands": "raw pinball quantiles (no dev widening; arm C conformalises every arm)"
+}
