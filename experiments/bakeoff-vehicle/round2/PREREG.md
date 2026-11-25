@@ -168,3 +168,16 @@ control re-scored on it reproduce their v1.0 sim val skill to |diff| < 0.002 (th
 If (i)-(iv) hold, round 2 continues on the rebuilt banks; every round-2 comparison is between arms scored on the same
 rebuilt val by the same code. If not, round 2 stops and reports. Dev records were rebuilt too (harness/build_real.py);
 EnergyNet v2.1's dev D16 on them is 0.1133 and the MLP / GP controls' 0.1203 / 0.1260, as v1.0 (already checked).
+
+**A2 (24 Nov 2026, 23:52 EST; before any sim-val number on the rebuilt banks and before any training).** train101's
+`trace_v.npy` equals the manifest, but its `trace_x.npy` does not (same size, 465,302,798 bytes): A1 (i) fails for
+train101. trace_x holds the float16 weather and grade channels; synthetic routes and weather draws go through the same
+platform math as fleet.json, so this is the same cross-platform float difference, now visible after float16 rounding.
+It cannot be measured element by element (the cloud bank is not shipped). Rather than stop with the owner asleep, one
+more functional check is added and decides, together with A1 (iii)-(iv): (v) v1.0's MLP-control recipe (tab_mlp r3:
+5 nets x 30 epochs, seeds 0-4) retrained on the rebuilt train101 alone must reach the v1.0 tab_mlp's sim val skill
+(0.6682) within 0.005 (the seed-to-seed spread of a 5-net set is about this size) and dev D16 (0.1203) within 0.005.
+If (iii)-(v) hold, round 2 continues; the train-bank difference is reported. If not, round 2 stops and reports.
+Composition of the rebuilt train banks (A1 / section 0): 28,800 rows each; SC03 + 20 F cold-FTP dyno rows 450 / 454 /
+455 (EnergyNet: 1,359 over its three banks: 450 + 454 + 455 = 1,359, equal); idle-stop-off rows 2,964 each (EnergyNet:
+8,892 = 3 x 2,964, equal).
