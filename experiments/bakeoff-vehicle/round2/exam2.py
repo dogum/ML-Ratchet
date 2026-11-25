@@ -17,7 +17,7 @@ ROUND-2 CHANGES (everything else is v1.0's code and text below):
     their hashes must equal v1.0's registry hashes, checked by --check);
   - reproduction: EnergyNet v2.1 vs training/exam3.json (as v1.0) and every v1.0 arm vs its own v1.0 exam numbers
     (results/exam_20261123T204251.json), per set;
-  - PREREG.md section 5's comparisons are added under out['prereg'] (pairs in registry/prereg_pairs.json, fixed at
+  - PREREG.md section 5's comparisons are added under out['prereg'] (pairs in round2/prereg_pairs.json, fixed at
     registration; E16 paired bootstrap; shared-bias set count; cross-family per-unit error correlation);
   - full ZTBus: a marked HOOK, ztbfull_hook(), for the owner's harness/exam_supp_ztbfull.py; 'not run' until wired.
 
@@ -80,7 +80,7 @@ ANCHORS = ['enet_v21', 'ephys']
 CLASSICAL = {'VED': ['moves_like', 'label'], 'EPA': ['regression'], 'HD': ['dev_median']}
 NBOOT_EXAM = 2000
 SHARED_BIAS_SETS = ['VED_EV', 'VED_PHEV', 'Mersin_diesel', 'Mersin_cng', 'ICCT']
-PREREG_PAIRS = os.path.join(R2, 'registry', 'prereg_pairs.json')   # [[a, b, why], ...], fixed before exam-2
+PREREG_PAIRS = os.path.join(R2, 'prereg_pairs.json')   # [[a, b, why], ...], fixed before exam-2 (not in registry/)
 
 
 class Refused(Exception):

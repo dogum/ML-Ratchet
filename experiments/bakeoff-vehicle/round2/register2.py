@@ -2,7 +2,7 @@
 
 python register2.py <arm_dir> [--replace]       register a round-2 arm or a v1.0 reference arm (from its repo folder)
 python register2.py --list                      every round-2 record, re-hashed
-python register2.py --pairs                     write registry/prereg_pairs.json (PREREG section 5's pairs) from the
+python register2.py --pairs                     write prereg_pairs.json (PREREG section 5's pairs) from the
                                                 registered arms (fixed before exam-2)
 v1.0's harness/registry is never written. Registration is refused once exam-2 has started (EXAM2_RUNNING / DONE).
 """
@@ -84,7 +84,7 @@ def pairs():
         for m in json.load(open(os.path.join(regs[k]['arm_dir'], 'members.json'))):
             mid = json.load(open(os.path.join(regs[k]['arm_dir'], os.path.dirname(m[1]), 'ratchet.json')))['arm_id']
             out.append([k, mid, 'X vs its member'])
-    json.dump(out, open(os.path.join(C.REGISTRY, 'prereg_pairs.json'), 'w'), indent=1)
+    json.dump(out, open(os.path.join(P.R2, 'prereg_pairs.json'), 'w', newline='\n'), indent=1)
     print(json.dumps(out, indent=1))
 
 
