@@ -311,4 +311,16 @@ ideas:
     data_url: https://rustwasm.github.io/docs/wasm-pack/
     exam: "The Python package stays the reference: the Rust engine passes every FireSim check the numba engine passes and matches the 40 dev replays' arrival times to 1e-6 h (or a documented tolerance); a pytest parity test and a site parity test; WASM bundle at most about 300 KB gzipped; about 1 s for 24 h on 300 x 300 cells in the browser"
     status: candidate
-    note: "Spec written 22 Nov 2026: docs/wasm-pilot.md. Not started. Wait for FireSim physics p2 to settle (the U12/U13 line rules changed on 22 Nov), so the port copies the final kernel."
+    note: "Spec written 22 Nov 2026: docs/wasm-pilot.md. Not started. FireSim physics p2 landed on main; held for a future branch."
+  - id: treetwin
+    name: TreeTwin (GBDT + TreeSHAP twin diagnostics & Mondrian conformal)
+    kind: method
+    domain: Method
+    question: "Can physics-trained gradient-boosted trees with TreeSHAP turn the twin test into an automated per-feature list of simulator gaps, while adding Mondrian conformal error bars?"
+    physics: "Unchanged: existing tabular platform simulators (RoadSim, GridSim, BuildingSim, FireSim), with monotone physics constraints where the sign is known"
+    data: "Existing platform dev and exam splits; zero real training labels"
+    data_url: https://dogum.github.io/ML-Ratchet/model-families/#trees
+    exam: "Real-exam comparison as rungs on existing tabular models (pure numpy + TypeScript tree export), plus real TreeSHAP real-minus-twin gap rankings and Mondrian conformal coverage"
+    status: candidate
+    note: "Brainstorm 24 Nov 2026 (docs/history/ideas-2026-11-24.md). Closes two unused learner families (gbm and conformal), builds the reusable twin-test harness from docs/roadmap.md, and replaces the placeholder TreeSHAP illustration on model-families.astro with real measurements."
+
