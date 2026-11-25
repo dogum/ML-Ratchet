@@ -56,6 +56,7 @@ import register as REG  # noqa: E402
 import armlib  # noqa: E402
 import exam as EX  # noqa: E402
 import score as S  # noqa: E402
+import refs as R  # noqa: E402
 
 CLOUD = '/home/claude/bakeoff/vehicle/'
 TABPFN = ('tab_tabpfn', 'tab_tabpfn_conformal')
@@ -100,11 +101,11 @@ REG.verify = verify
 
 
 # ---------------------------------------------------------------- ztbfull: records, sets, traces
-ZTB_SETS = ('ztb',)
+ZTB_SETS = ('hd',)                 # the record set name score.real_units and refs read ZTBus legs from (as the v1 legs)
 
 
 def build_ztb(split='exam'):
-    """legs of the full-ZTBus missions of a split (exam: 1,115) + one layover record per mission -> work/real_supp_ztbfull/<split>/ztb."""
+    """legs of the full-ZTBus missions of a split (exam: 1,115) + one layover record per mission -> work/real_supp_ztbfull/<split>/hd."""
     import build_real as BR
     rd, F, RF, routes = BR.rd, BR.F, BR.RF, BR.routes
     A = BR.Acc()
@@ -121,7 +122,7 @@ def build_ztb(split='exam'):
         A.add(P, 'bus', rec, dict(m_level=1, trans=True, thermal=True), m_rep=RF.ZTB_CURB_KG,
               meta=dict(set='ZTBus_leg' if lab else 'ZTBus_leg_nolabel', kind='leg', split=split, trip_id=meta['trip_id'],
                         mission=ms, vehicle_id=meta['vehicle_id'], dist_km=meta['distance_m'] / 1000,
-                        dur_s=float(len(P['v'])), T=meta['T_amb_mean'], y=y, trace_src=meta['trip_id'], n_s=0,
+                        dur_s=float(len(P['v'])), T=meta['T_amb_mean'], y=y, trace_src=meta['trip_id'], n_s=0, fuel='', cycle='',
                         T_test=np.nan, arch0='bev', m_level0=0, group='BUS', arch='bev', cls='bus'))
         seen[ms] = seen.get(ms, 0.0) + float(meta['duration_s'])
     for ms, r in M.iterrows():
@@ -135,11 +136,11 @@ def build_ztb(split='exam'):
         A.add(P, 'bus', rec, dict(m_level=1, trans=True, thermal=True), m_rep=RF.ZTB_CURB_KG,
               meta=dict(set='ZTBus_layover', kind='layover', split=split, trip_id=f'{ms}_layover', mission=ms,
                         vehicle_id=str(ms).split('_')[1] if '_' in str(ms) else '', dist_km=0.0, dur_s=float(max(gap, 0.0)),
-                        T=T, y=np.nan, trace_src=f'layover:{ms}', n_s=N, T_test=T, arch0='bev', m_level0=0, group='BUS',
+                        T=T, y=np.nan, trace_src=f'layover:{ms}', n_s=N, fuel='', cycle='', T_test=T, arch0='bev', m_level0=0, group='BUS',
                         arch='bev', cls='bus'))
     d = os.path.join(C.real_dir(split))
     os.makedirs(d, exist_ok=True)
-    A.save_to(os.path.join(d, 'ztb'))
+    A.save_to(os.path.join(d, 'hd'))
     json.dump({'split': split, 'supp': 'ztbfull', 'built': pd.Timestamp.utcnow().isoformat()},
               open(os.path.join(d, 'BUILT.json'), 'w'))
 
@@ -185,6 +186,8 @@ def _patch_ztb():
 
 if SUPP == 'ztbfull':
     _patch_ztb()
+    # the showcase is a draw of VED exam trips; this supplement has none
+    EX.showcase_dump = lambda *a, **k: {'note': 'no showcase: the full-ZTBus supplement holds only ZTBus records'}
 
 
 # ---------------------------------------------------------------- which arms
@@ -343,8 +346,12 @@ def ztb_boards(od, rid, arms, split='exam'):
         lm = lm.assign(unit=lm.mission, cluster=lm.mission)
         z = d[d.set.isin(['ZTBus_leg', 'ZTBus_leg_nolabel', 'ZTBus_layover'])]
         g = z.groupby('mission')[['pred'] + C.QKEYS].sum()
-        g = g.join(T[['kWh']])
+        g = g.join(T[['kWh', 'drivenDistance']])
         g['y'] = g.kWh * 3.6
+        if tr == 'ref':      # EnergyNet's mission baseline (exam2.py): pooled dev kWh/km x the mission's driven km
+            kpk, _ = R.ztbus_dev_kpk()
+            for c in ['pred'] + C.QKEYS:
+                g[c] = kpk * g.drivenDistance / 1000 * 3.6
         n_bad = int((~np.isfinite(z.pred) | (z.pred <= 0)).sum())
         em = g[np.isfinite(g.pred) & (g.pred > 0)].reset_index().rename(columns={'index': 'mission', 'name': 'mission'})
         em = em.assign(unit=em.mission, cluster=em.mission)
