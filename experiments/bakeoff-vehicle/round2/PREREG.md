@@ -181,3 +181,15 @@ If (iii)-(v) hold, round 2 continues; the train-bank difference is reported. If 
 Composition of the rebuilt train banks (A1 / section 0): 28,800 rows each; SC03 + 20 F cold-FTP dyno rows 450 / 454 /
 455 (EnergyNet: 1,359 over its three banks: 450 + 454 + 455 = 1,359, equal); idle-stop-off rows 2,964 each (EnergyNet:
 8,892 = 3 x 2,964, equal).
+
+**A3 (25 Nov 2026, 00:30 EST; before any P-rung network exists).** Budget scale-down (section 6). Measured GPU
+throughput (~120 steps/s over 4-5 concurrent jobs) puts the remaining D and P training at ~2.5 h only if P2 is cut.
+P2 (transformer on the P0 banks) is trained with **3 members (seeds 0-2) instead of 5**, recipe unchanged; its
+incumbent for the physics-rung gate is the 3-member subset of D2 (members 0-2, the same seeds), scored by the same code,
+so the comparison isolates the bank change. P1 (GRU) and P3 (MLP) keep 5 members. Also fixed now: (1) PREREG
+section 2's P0 bank candidate in use is `phevcold` (round2/bank/phevcold.py; banks `val_pc`, `train10x_pc`), the only
+candidate that passed its dev check; (2) its evidence rule (same-sign dev plug-in bias > 3 % in 3 of D1, D2, D3,
+EnergyNet v2.1) is read on the D ensembles' own dev results when they exist; if it fails, P1-P3 are logged "not
+pursued" and discarded whatever they show; (3) since D3 was rejected, P3's incumbent is the MLP family's round-2 entry,
+v1.0 tab_mlp, and P3's own-version val comparison uses tab_mlp re-scored on `val_pc`; the D3 candidate (3 banks, v2)
+is also reported next to P3, deciding nothing.

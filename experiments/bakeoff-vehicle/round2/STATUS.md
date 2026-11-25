@@ -40,6 +40,28 @@ Pre-registration: `PREREG.md` (committed d1a98a4 before any training). Exam-2 is
   Caveats, logged before any bank or network result: trips below 10 C overshoot (Energi -36.7 -> +12.8 %, Volt
   -27.0 -> +39.5 %), mean |error| gets worse (32.7 -> 35.7 %, 39.8 -> 50.7 %). This is H25a's finding again, with a
   SOC rule in place of the logged engine speed. Used for the P rungs only if the D rungs' dev evidence rule holds.
+- 23:45-00:10 dev records rebuilt (harness/build_real.py -> work/real/dev: VED 1,498, EPA 10,345, HD 232 records);
+  dev reference rows (eval.py --refs). Banks finalized 23:50 (8 workers, ~65 min wall). Manifest: val trace_v / trace_x
+  EQUAL, rows.npz / fleet.json DIFFERENT; train101 trace_v EQUAL, trace_x / rows.npz / fleet.json DIFFERENT (same
+  sizes; fleet.json 3-5 bytes shorter): cross-platform float results. PREREG amendments A1 / A2 (functional checks,
+  written before the checks ran). Results: (iii) EnergyNet v2.1 on the rebuilt val: n 3,985, MdAPE 0.0746, skill
+  0.6797 (= v1.0); dev D16 0.1133 (= v1.0). (iv) v1.0 arms on the rebuilt val / dev: GRU 0.6390 / 0.1089, transformer
+  0.6442 / 0.1135, MLP 0.6682 / 0.1203, GP 0.5963 / 0.1260 (all = v1.0). (v) v1.0 MLP recipe retrained on the
+  rebuilt train101 (GPU): skill 0.6644 (v1.0 0.6682, -0.0038 < 0.005), D16 0.1195 (0.1203): PASS. Composition:
+  SC03 / cold-FTP dyno rows 450 / 454 / 455 (= EnergyNet's 1,359), idle-off rows 2,964 per bank (= 8,892 / 3).
+  Round 2 continues on the rebuilt banks.
+- 00:05 GPU training started: D1 GRU (m0 alone ~8 min/member at full speed; ~15 min with 5 jobs on the GPU),
+  D2 transformer (~45 min/member, 3 queues), then D3 MLP (~1 min/net). dyn caches 13 s per bank.
+- 00:15 **D3 (MLP control, 5 nets x 30 epochs, 3 banks, GPU) REJECTED**: sim val skill 0.67816 vs the v1.0 tab_mlp
+  0.66823 = +0.00993, under the 0.01 margin (by 0.00007); dev D16 0.1118 vs 0.1203 (better by 0.0085). Same shape as
+  EnergyNet's r11b (2x data, rejected by 0.001). The MLP family's round-2 entry stays v1.0 tab_mlp. Candidate folder
+  moved to work/cand/r2_d3_mlp (not an exam arm). Dev bias of the five shared-bias sets (D3): Leaf +5.0 %, plug-ins
+  -7.1 %, Mersin diesel -1.8 %, CNG -17.1 %, ICCT +20.5 %.
+- 00:21 X input rebuild check (`arms/check_xinputs.py`, PREREG section 3): table inputs rebuilt from trace batches vs
+  the table batch, member predictions median |log diff| 1e-6 to 8e-5 (sim val 400 trips, 200 records of each dev
+  record set), max 0.0026: PASS. X runs as a pure trace-track arm.
+- 00:20 `phevcold` banks: val_pc (134 of 290 plug-in rows changed), train101_pc (1,104 changed; median energy of a
+  changed row +13.5 %, +31 % below 10 C); replay exact (5 re-simulated unchanged rows: max |rel diff| of the targets 0).
 - Candidates 1 and 2 (not attempted, reasons fixed now): Mersin CNG (dev -17 %) has the same inputs as a diesel bus
   (build_real.hd writes diesel = 1 for both fuels), so no bank or physics change can move CNG without moving diesel
   (dev -3 %); the Mersin diesel exam miss is not visible on dev (February week, no A/C). Cold Leafs: the one dev Leaf

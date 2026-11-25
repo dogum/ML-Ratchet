@@ -77,7 +77,7 @@ def main(src, ncheck=0):
     out = {k: v.copy() for k, v in B.items()}
     for r, row in new.items():
         for k, v in row.items():
-            if not k.startswith('_') and k not in ('src', 'dyno', 'cold', 'warm'):
+            if not k.startswith('_') and k in out and k not in ('src', 'dyno', 'cold', 'warm'):
                 out[k][r] = v
         assert len(row['_tv']) == B['trace_len'][r]            # same trip: the trace is unchanged
     np.savez(os.path.join(dd, 'rows.npz'), **out)

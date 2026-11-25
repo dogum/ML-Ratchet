@@ -170,7 +170,7 @@ def main(src, ncheck=0):
     out = {k: v.copy() for k, v in B.items() if k not in ('trace_off', 'trace_len')}
     for r, row in new.items():
         for k, v in row.items():
-            if not k.startswith('_'):
+            if not k.startswith('_') and k in out:
                 out[k][r] = v
     lens = np.diff(off).astype(np.int64)
     for r, row in new.items():

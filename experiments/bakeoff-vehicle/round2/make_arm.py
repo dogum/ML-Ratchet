@@ -23,7 +23,10 @@ import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(os.path.dirname(HERE), 'common'))
+_d = os.path.dirname(HERE)            # released arms: round2/arms/<arm>/ -> ../common; candidates under round2/work/
+while not os.path.exists(os.path.join(_d, 'common', 'enslib.py')) and os.path.dirname(_d) != _d:
+    _d = os.path.join(_d, 'arms') if os.path.exists(os.path.join(_d, 'arms', 'common', 'enslib.py')) else os.path.dirname(_d)
+sys.path.insert(0, os.path.join(_d, 'common'))
 import enslib  # noqa: E402
 
 _M = enslib.TraceEnsemble(sorted(glob.glob(os.path.join(HERE, 'weights', 'm*.npz'))))
