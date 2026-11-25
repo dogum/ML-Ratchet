@@ -109,6 +109,16 @@ Pre-registration: `PREREG.md` (committed d1a98a4 before any training). Exam-2 is
 - 02:45 exam-2 `--check` PASSED with 12 arms (6 round-2: r2_d1_gru, r2_d2_transformer, r2_x_cross + 3 conformal
   wrappers; 6 v1.0 references: enet_v21, climatology, trace_gru, trace_transformer, tab_mlp, tab_gp, each file-identical
   to its v1.0 registration). Full dev rehearsal started.
+- 03:25 **Full exam-2 dev rehearsal** (`exam2.py --rehearsal`, all 12 registered arms, dev records; 0 error rows;
+  ~45 min): `results/rehearsal2_20261125T022759.json`. Every arm's dev D16 equals its evaluate.py number (D1 0.1084,
+  D2 0.1065, X 0.1111, v1.0 GRU 0.1089, transformer 0.1135, MLP 0.1203, GP 0.1260). PREREG section 5 block on dev
+  (rehearsal only, decides nothing): D2 vs v1.0 transformer E16 -0.0070 [-0.0113, -0.0024] win; D1 vs v1.0 GRU
+  -0.0005 tie; D1 / D2 vs EnergyNet v2.1 -0.0049 / -0.0068 wins; X vs EnergyNet -0.0022 tie, X vs D2 +0.0046 tie;
+  cross-family per-unit log-error correlation among the four round-2 entries 0.955 (median over the 16 sets).
+  Full-ZTBus hook: 'not run' (harness/exam_supp_ztbfull.py is not on this branch). Then `exam2.py --check`: PASSED,
+  12 arms, est. predict CPU 467 min (`work/logs/check_final.log`).
+- **STOP.** Exam-2 is the owner's to run once: `cd experiments/bakeoff-vehicle/round2; python exam2.py --run` (after
+  wiring the full-ZTBus hook if wanted). Nothing here has read an exam record.
 - 02:05 RoadSim / vehicle tests: `pytest -q tests/test_roadsim*.py tests/test_vehicle.py`: 70 passed (RoadSim unchanged).
 - 02:10 debug: a partial exam-2 dev rehearsal (enet_v21, trace_gru, r2_d1_gru) ran end to end; its output was deleted
   (round2/results/*/preds and scores.parquet are git-ignored).
