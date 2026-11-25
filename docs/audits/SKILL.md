@@ -51,6 +51,8 @@ For any time-series, streaming, nowcast, or sequential-decision model:
 - Freeze everything an operator knew up to decision time `t`, perturb **only** future observations `> t` (including secondary paths like weather/wear planners or global normalization), and verify the submitted decision/prediction at `t` changes by `0.0`.
 - Test **cold-start / boundary padding** at `t = 0` (ensure missing history is never back-filled with the clearing/target value at `t = 0`).
 - Repeat the future-perturbation test with a gap that straddles the forecast cutoff. Hold onset fixed to isolate interpolation, then test automatic alignment separately. Include a complete-prefix control.
+- Trace how the episode builds static inputs such as a building card. Perturb observations strictly beyond the planning horizon, rebuild the static input, and replay the same decision. Compare warm-cache and fresh-cache results when preprocessing is cached.
+- For sensor networks, exercise the supported input shape with every sensor unavailable. Record whether the public API abstains, raises an actionable error or returns an estimate. For held-out forecasts, compare the end of the input window with the target arrival and state how preprocessing latency was handled.
 - Test **API guardrails** (e.g., verify lagged/nowcast APIs reject `lead <= 0` rather than silently leaking same-day truth).
   - *Precedent:* `BatteryPilot v1.3` — perturbing future temperatures moved an already-submitted 2 p.m. offer via the day-ahead wear planner (`$1.19/MWh`), and cold-start history back-filled hour 0's clearing real-time price (`$3.02/MWh`); `FlowCast v1.0` nowcast API silently accepted `lead=0`.
 
