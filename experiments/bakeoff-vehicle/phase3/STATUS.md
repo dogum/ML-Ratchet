@@ -59,3 +59,15 @@
   (vs repo + `river-rebased.patch`); both `git apply --check` + `git apply` OK on copies; TS loads in node (10 vbake).
 - Docs: `/home/claude/bakeoff/vehicle/vehicle-bakeoff-status.md`, `release/bakeoff-vehicle.md`,
   `release/README_experiment.md`, `release/MERGE_NOTES.md`, `release/README_zip.md`.
+
+## 2026-11-25 — supplementary exams in the repository (TabPFN, full ZTBus)
+
+- `harness/exam_supp.py` (new): exam.py's worker and aggregation with its own lock, records and results folder
+  (`results/supp_<name>/`), parallel workers, a dev rehearsal mode, repo-mapped arm folders.
+- TabPFN, run 20261124T230626: E16 13.3 %, a loss to every table learner. Same-records check: 19 rows, 1,306,017 units.
+  The rebuilt arm: dev D16 0.1240 here vs 0.1249 at registration (`results/supp_tabpfn/PRE_EXAM.md`).
+- Full ZTBus, run 20261125T013250: EnergyNet v2.1's published full-ZTBus exam reproduced exactly; GRU, MLP and
+  transformer tie it on legs, everyone loses to it on missions (`results/supp_ztbfull/leaderboard.md`).
+- What failed on the way (all in rehearsal, before any exam data was read): TabPFN's own dependencies were missing
+  (pydantic, einops, huggingface-hub; installed to harness/work/tabpfn_deps); the ZTBus record set needed the name 'hd'
+  and empty fuel / cycle columns for the scorer and the reference rows; the VED showcase had to be skipped.

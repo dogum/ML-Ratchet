@@ -1,0 +1,5825 @@
+{
+ "run_id": "20261125T013250",
+ "mode": "exam",
+ "finished": "2026-11-25T01:54:14",
+ "harness_hash": "d49d2f7399d8f00f7383f15f8f1e968da29445c10a90af5ead6fd9c8839ce5c3",
+ "splits_sha256": "d917df78b099167ceadd7c5cd384a9fd9c45f2e14ca69fa3927c98b9b3233ad9",
+ "bank": {
+  "train": {
+   "rows.npz": {
+    "bytes": 22817564,
+    "sha256": "f3f500a0c46b54f1600b7796f636b49338cab3ec7eba4c886e06f18f6e9e6d06"
+   },
+   "trace_v.npy": {
+    "bytes": 132943748,
+    "sha256": "1783ad705eab3bdbfaf1ba223c5f6f11f00d52039a7c424892c32420b87126d2"
+   },
+   "trace_x.npy": {
+    "bytes": 465302798,
+    "sha256": "0d0b95702ca42dd002ca84196cc458f66f1985eff14b45a59ca2d19a49843888"
+   },
+   "fleet.json": {
+    "bytes": 2627174,
+    "sha256": "47d77034f6deda2d15d4cce93048ccc9d638c59993d2d83813905e7c0418ccc3"
+   }
+  },
+  "val": {
+   "rows.npz": {
+    "bytes": 3175964,
+    "sha256": "711054aef5cd4dd612a7c9288e3f1568aac79be4966c3f7876c590fd5a230642"
+   },
+   "trace_v.npy": {
+    "bytes": 19159580,
+    "sha256": "0a23951d96713eb97918fe6a7a7505feed367abea71baff5a035f1515f4615c5"
+   },
+   "trace_x.npy": {
+    "bytes": 67058210,
+    "sha256": "38e176ada4ac019a0040bb8022c5c0572d5800fd202262d2444ee9f9c99332ce"
+   },
+   "fleet.json": {
+    "bytes": 438245,
+    "sha256": "7628994fb44b6aa5282a3a5e17446795605126f2f7f881a8ccc14b8beb370694"
+   }
+  }
+ },
+ "arms": {
+  "climatology": {
+   "hash": "686ea477fe3c7895e6b70743ebb30eeeb52282ff603014a32b5432ba9f940142",
+   "unchanged_after": true,
+   "tracks": [
+    "table",
+    "trace"
+   ],
+   "label": "Climatology: sim-train median energy per km x distance",
+   "family": "baseline",
+   "family_label": "Dumb baseline",
+   "group": "ref",
+   "reference": true,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.001,
+    "notes": "medians and quantiles on the simulated train bank"
+   },
+   "released": "r0",
+   "feature_engineering": "distance (from R[1] or the trace) and the architecture / class indices only",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 0.0,
+     "n_errors": 0
+    },
+    "trace": {
+     "predict_cpu_s": 0.4,
+     "n_errors": 0
+    }
+   }
+  },
+  "enet_v21": {
+   "hash": "7f29a28638ca3e91d66b3a1164b97eb9f6481b642c6fd68b8022c1c665c739a3",
+   "unchanged_after": true,
+   "tracks": [
+    "table"
+   ],
+   "label": "EnergyNet v2.1 as released",
+   "family": "mlp",
+   "family_label": "Multilayer perceptron (ensemble of 5, correction to a physics estimate)",
+   "group": "ref",
+   "reference": true,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0,
+    "notes": "released model, not retrained here (trained by EnergyNet on an RTX 3080, 5 networks x ~5 min, 86,400 simulated trips)"
+   },
+   "released": "v2.1",
+   "feature_engineering": "EnergyNet's own 151 inputs (the table track's definition)",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 3.9,
+     "n_errors": 0
+    }
+   }
+  },
+  "enet_v21_conformal": {
+   "hash": "95a0d3433c3a199f65468e3254cc372f633761c5051be2b91e0685c9988bac0e",
+   "unchanged_after": true,
+   "tracks": [
+    "table"
+   ],
+   "label": "EnergyNet v2.1 as released + Mondrian conformal",
+   "family": "conformal",
+   "family_label": "Conformal prediction (wrapper around enet_v21)",
+   "group": "phys",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.0066,
+    "base_train_cpu_hours": 0,
+    "notes": "conformal fit only (dev predictions of enet_v21 + shifts); the base arm is not retrained"
+   },
+   "released": "c0",
+   "feature_engineering": "none beyond enet_v21's; strata from arch, cls and the dynamometer flag",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 4.1,
+     "n_errors": 0
+    }
+   }
+  },
+  "formula": {
+   "hash": "a5691cba86f7ee5c97d6bc82a742b1a280ad2ce3b599d94cb114ea4b41389822",
+   "unchanged_after": true,
+   "tracks": [
+    "table",
+    "trace"
+   ],
+   "label": "Trip-energy law (LawFinder-style symbolic regression, one formula per powertrain)",
+   "family": "symbolic",
+   "family_label": "Symbolic regression (readable laws)",
+   "group": "phys",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.87,
+    "notes": "7 time-boxed searches of 20 min wall each on a contended core (s1 ice/hev/bev, s2 ice/hev/bev, s3 plug-in): 0.857 CPU-h incl. constant refits on up to 30,000 train rows; sim-train bands seconds. Scoring the fronts and rungs (ladder.py, evaluate.py) took roughly another 0.5 CPU-h and is not training. One thread, nice 5."
+   },
+   "released": "r1",
+   "feature_engineering": "Seven named trip summaries per row (lawvars.py), identical on both tracks: p / n = positive / negative wheel work per km at the tier's road load, t = minutes per km, m = mass (t), T = mean ambient C, c = start state (-1 warm, 0 unknown, +1 cold), d = km (+ dyn = dynamometer flag in the s2 search, f = plug-in charge-depleting share in s3). Table: read from EnergyNet's 151 inputs (route vector, physics vector, vehicle vector). Trace: recomputed from the trace + spec + rl with EnergyNet's own physics integrals (enet_features.py = byte copy of features.py; equal to the table to 1.2e-4 in log). Target per km e = y / d, loss = squared log error.",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 0.0,
+     "n_errors": 0
+    },
+    "trace": {
+     "predict_cpu_s": 11.1,
+     "n_errors": 0
+    }
+   }
+  },
+  "formula_conformal": {
+   "hash": "22f1b89dcc02b3bc7ee613512216597ce237bc853b43fae1a8b85891408a032c",
+   "unchanged_after": true,
+   "tracks": [
+    "table",
+    "trace"
+   ],
+   "label": "Trip-energy law (LawFinder-style symbolic regression, one formula per powertrain) + Mondrian conformal",
+   "family": "conformal",
+   "family_label": "Conformal prediction (wrapper around formula)",
+   "group": "phys",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.0131,
+    "base_train_cpu_hours": 0.87,
+    "notes": "conformal fit only (dev predictions of formula + shifts); the base arm is not retrained"
+   },
+   "released": "c0",
+   "feature_engineering": "none beyond formula's; strata from arch, cls and the dynamometer flag",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 0.0,
+     "n_errors": 0
+    },
+    "trace": {
+     "predict_cpu_s": 10.1,
+     "n_errors": 0
+    }
+   }
+  },
+  "phys_anchor": {
+   "hash": "c646d0fb9e424d1be69d3b84a6f1e405cc6d7a50526f706a56c724880c3a73e3",
+   "unchanged_after": true,
+   "tracks": [
+    "table",
+    "trace"
+   ],
+   "label": "Physics anchor: road-load estimate E_phys alone (+ simulation bands)",
+   "family": "physics",
+   "family_label": "Physics model (generic road-load estimate, no learning)",
+   "group": "phys",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.002,
+    "notes": "no training: sim-train quantiles of log(y / E_phys) per architecture x duty (1.6 CPU s) + the two scale rungs (seconds)"
+   },
+   "released": "r0",
+   "feature_engineering": "table: the input log E_phys (X[:, 90]); trace: E_phys recomputed from trace + spec + rl with EnergyNet's own features.phys_ints / e_phys (byte copy enet_features.py) = bake.e_phys_from_trace; strata of the bands: arch and class",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 0.0,
+     "n_errors": 0
+    },
+    "trace": {
+     "predict_cpu_s": 10.2,
+     "n_errors": 0
+    }
+   }
+  },
+  "phys_anchor_conformal": {
+   "hash": "454013bde93e7e626c208c47d099ad673fcb2a2b01f76332d0452e4127c10d67",
+   "unchanged_after": true,
+   "tracks": [
+    "table",
+    "trace"
+   ],
+   "label": "Physics anchor: road-load estimate E_phys alone (+ simulation bands) + Mondrian conformal",
+   "family": "conformal",
+   "family_label": "Conformal prediction (wrapper around phys_anchor)",
+   "group": "phys",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.0135,
+    "base_train_cpu_hours": 0.002,
+    "notes": "conformal fit only (dev predictions of phys_anchor + shifts); the base arm is not retrained"
+   },
+   "released": "c0",
+   "feature_engineering": "none beyond phys_anchor's; strata from arch, cls and the dynamometer flag",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 0.1,
+     "n_errors": 0
+    },
+    "trace": {
+     "predict_cpu_s": 10.2,
+     "n_errors": 0
+    }
+   }
+  },
+  "tab_gbm": {
+   "hash": "57349fe2297a02a8e9ce264d208e6ac1afc971e799148c64bbb18ae88563e036",
+   "unchanged_after": true,
+   "tracks": [
+    "table"
+   ],
+   "label": "Gradient-boosted trees (LightGBM, numpy export)",
+   "family": "gbm",
+   "family_label": "Gradient-boosted trees",
+   "group": "table",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.24,
+    "train_cpu_s": {
+     "r0": 108,
+     "r1": 120,
+     "r2": 244,
+     "r3": 399
+    },
+    "notes": "LightGBM 4.7.0, num_threads 1, measured with time.process_time() inside train_gbm.py (table assembly + 6 models + numpy export); harness evaluations (sim val + dev gate, ~25 s CPU of prediction each) not counted"
+   },
+   "released": "r2",
+   "feature_engineering": "none: the 151 EnergyNet inputs as they are; target z = log(y / E_phys); training rows = the train bank under K independent tier draws (K = 8 in the released rung)",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 24.7,
+     "n_errors": 0
+    }
+   }
+  },
+  "tab_gbm_conformal": {
+   "hash": "dae72a03f31e65f67b2ba53a5f9c18921669fb24e9ce3390008b2da8374bf7f0",
+   "unchanged_after": true,
+   "tracks": [
+    "table"
+   ],
+   "label": "Gradient-boosted trees (LightGBM, numpy export) + Mondrian conformal",
+   "family": "conformal",
+   "family_label": "Conformal prediction (wrapper around tab_gbm)",
+   "group": "phys",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.0065,
+    "base_train_cpu_hours": 0.24,
+    "notes": "conformal fit only (dev predictions of tab_gbm + shifts); the base arm is not retrained"
+   },
+   "released": "c0",
+   "feature_engineering": "none beyond tab_gbm's; strata from arch, cls and the dynamometer flag",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 26.2,
+     "n_errors": 0
+    }
+   }
+  },
+  "tab_gp": {
+   "hash": "131f5c73c54ed1a93818d62a91fd4b2282c5e975a8352f7d59ce2f7344e2e89c",
+   "unchanged_after": true,
+   "tracks": [
+    "table"
+   ],
+   "label": "Sparse Gaussian process (SGPR, 500 inducing points)",
+   "family": "gp",
+   "family_label": "Gaussian processes (sparse, inducing points)",
+   "group": "table",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.81,
+    "train_cpu_s": {
+     "r0": 670,
+     "r1": 894,
+     "r2": 980,
+     "r3": 359
+    },
+    "notes": "torch (float64, one thread) for the bound optimisation and the posterior, time.process_time() inside train_gp.py; r1 includes a first attempt (M 1000, 20,000 rows per step) stopped by us at ~140 s because it used 1.4 GB; harness evaluations (<1 s prediction CPU each) not counted"
+   },
+   "released": "r3",
+   "feature_engineering": "a scoped, standardised input set: the top-ranked of the 151 inputs by the GBM r0 mean model's gain on the simulated train bank (one-hot architecture / class columns skipped there; 32 in the released rung) + the 14 one-hot architecture / class columns; target z = log(y / E_phys); rows = the train bank under K = 3 tier draws",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 0.3,
+     "n_errors": 0
+    }
+   }
+  },
+  "tab_gp_conformal": {
+   "hash": "97b339478708167eac5badaa052f3bb159b99d911f31eae710bd9f9849a9db8f",
+   "unchanged_after": true,
+   "tracks": [
+    "table"
+   ],
+   "label": "Sparse Gaussian process (SGPR, 500 inducing points) + Mondrian conformal",
+   "family": "conformal",
+   "family_label": "Conformal prediction (wrapper around tab_gp)",
+   "group": "phys",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.0073,
+    "base_train_cpu_hours": 0.81,
+    "notes": "conformal fit only (dev predictions of tab_gp + shifts); the base arm is not retrained"
+   },
+   "released": "c0",
+   "feature_engineering": "none beyond tab_gp's; strata from arch, cls and the dynamometer flag",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 0.4,
+     "n_errors": 0
+    }
+   }
+  },
+  "tab_mlp": {
+   "hash": "ab35c4248d5c8283c1a324154d13470cc6d433980060b8334df9c1fab853120c",
+   "unchanged_after": true,
+   "tracks": [
+    "table"
+   ],
+   "label": "MLP control (EnergyNet v2.1's network, retrained on the shared bank)",
+   "family": "mlp",
+   "family_label": "Multilayer perceptron (ensemble of 5, correction to a physics estimate)",
+   "group": "table",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.62,
+    "train_cpu_s": {
+     "r0": 90,
+     "r1": 471,
+     "r2": 1482,
+     "r3": 263
+    },
+    "notes": "torch 2.15 CPU, one thread, time.process_time() inside train_mlp.py; r1 reuses r0's seed-0 network (471 s = all 5 members); harness evaluations (~8 s prediction CPU each) not counted"
+   },
+   "released": "r3",
+   "feature_engineering": "none: the 151 EnergyNet inputs, standardised as EnergyNet does (mean / sd from one tier draw, clipped at +-8); target log(y / E_phys) + the 5 log component shares (EnergyNet's auxiliary head)",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 3.6,
+     "n_errors": 0
+    }
+   }
+  },
+  "tab_mlp_conformal": {
+   "hash": "ad2f61e586994c9fe57ce0fa0051d1c2374b701b4a3d445ff38fd884fde98a3a",
+   "unchanged_after": true,
+   "tracks": [
+    "table"
+   ],
+   "label": "MLP control (EnergyNet v2.1's network, retrained on the shared bank) + Mondrian conformal",
+   "family": "conformal",
+   "family_label": "Conformal prediction (wrapper around tab_mlp)",
+   "group": "phys",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.0065,
+    "base_train_cpu_hours": 0.62,
+    "notes": "conformal fit only (dev predictions of tab_mlp + shifts); the base arm is not retrained"
+   },
+   "released": "c0",
+   "feature_engineering": "none beyond tab_mlp's; strata from arch, cls and the dynamometer flag",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 3.9,
+     "n_errors": 0
+    }
+   }
+  },
+  "tab_tabpfn": {
+   "hash": "cb26e0c49f796b7d4220798cccfdf6d8e2da2ea600241af7fe3edd96e72f5f1f",
+   "unchanged_after": true,
+   "tracks": [
+    "table"
+   ],
+   "label": "TabPFN v2 in context on simulated rows (a lens, not a release; Built with PriorLabs-TabPFN)",
+   "family": "tabfm",
+   "family_label": "Tabular foundation model (TabPFN v2, in-context, zero real labels)",
+   "group": "table",
+   "reference": null,
+   "numpy_only": false,
+   "numpy_only_reason": "TabPFN is a transformer run with torch (tabpfn 10.2.0, copied in pylib/); it has no numpy port. A yardstick, not a release candidate.",
+   "compute": {
+    "train_cpu_hours": 0.0,
+    "train_cpu_s": {
+     "r0": 0,
+     "r1": 0,
+     "r2": 0,
+     "r3": 0
+    },
+    "in_context_fit_cpu_s": {
+     "r0": 8,
+     "r1": 22,
+     "r2": 22,
+     "r3": 33
+    },
+    "notes": "no training (in-context learning: no gradient step); building a context takes ~3 s; the context forward pass (fit_mode fit_with_cache) runs at load in every process (r1: ~22 s CPU); prediction ~10.6 ms CPU per row at r1 (sim val 66 s, dev gate 128 s; the exam's ~121k rows ~21 min); setup probes of speed / memory (8 runs, ~0.13 CPU-h) are not training"
+   },
+   "released": "r1",
+   "feature_engineering": "a scoped input set: the 38 top-ranked of the 151 inputs by the GBM r0 mean model's gain on the simulated train bank (one-hot architecture / class columns skipped there) + architecture and class as two categorical codes (argmax of the one-hot blocks); target z = log(y / E_phys); context = 2,048 random simulated train trips under one tier draw (default_rng(5))",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 371.0,
+     "n_errors": 0
+    }
+   }
+  },
+  "tab_tabpfn_conformal": {
+   "hash": "e07f73a743b3e67b812edb9d417294eda0de63f88a3573e7f9af9b555b687960",
+   "unchanged_after": true,
+   "tracks": [
+    "table"
+   ],
+   "label": "TabPFN v2 in context on simulated rows (a lens, not a release; Built with PriorLabs-TabPFN) + Mondrian conformal",
+   "family": "conformal",
+   "family_label": "Conformal prediction (wrapper around tab_tabpfn)",
+   "group": "phys",
+   "reference": null,
+   "numpy_only": false,
+   "numpy_only_reason": "wraps tab_tabpfn: TabPFN is a transformer run with torch (tabpfn 10.2.0, copied in pylib/); it has no numpy port. A yardstick, not a release candidate.",
+   "compute": {
+    "train_cpu_hours": 0.0576,
+    "base_train_cpu_hours": 0.0,
+    "notes": "conformal fit only (dev predictions of tab_tabpfn + shifts); the base arm is not retrained"
+   },
+   "released": "c0",
+   "feature_engineering": "none beyond tab_tabpfn's; strata from arch, cls and the dynamometer flag",
+   "exam_cpu": {
+    "table": {
+     "predict_cpu_s": 369.5,
+     "n_errors": 0
+    }
+   }
+  },
+  "trace_cnn": {
+   "hash": "d430085a6092145178a13369d86496a862326b108eb9ce8989ace83004a3d55a",
+   "unchanged_after": true,
+   "tracks": [
+    "trace"
+   ],
+   "label": "1-D dilated CNN on the trip trace",
+   "family": "cnn1d",
+   "family_label": "1-D convolutional network (dilated residual CNN)",
+   "group": "trace",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 1.572,
+    "notes": "r0 0.52, r1 0.52, r2 0.51 (rejected); + 0.02 for a speed benchmark, a 2-min first launch killed for memory and the r2 harness eval re-run after a container restart; one thread, shared 2-core machine"
+   },
+   "released": "r1",
+   "feature_engineering": "trace-track inputs only: the harness's shared 5-s block means (bake.block_means rule: 8 channel means + mean v^2, mean v^3, summed positive kinetic-energy increment per unit mass) + the block's valid-second fraction -> 12 scaled channels; spec (49) and rl (5, logs of mass / CdA / Crr) standardised with train-bank statistics; log distance and log duration from the trace; chunks of <= 1,440 blocks mean-pooled for longer traces; anchor r0 = sim-train median MJ/km per (architecture, class) (bake.dumb_rates) x distance; from r1: E_phys recomputed from the trace inputs by bake.e_phys_from_trace (EnergyNet's generic road-load estimate; declared), target log(y / E_phys), log(E_phys / A0) as an input",
+   "exam_cpu": {
+    "trace": {
+     "predict_cpu_s": 502.2,
+     "n_errors": 0
+    }
+   }
+  },
+  "trace_cnn_conformal": {
+   "hash": "d16fa8e571f75f75f58d40313b6e462b1f92984d31c73ad15c1bc365ebb05fe4",
+   "unchanged_after": true,
+   "tracks": [
+    "trace"
+   ],
+   "label": "1-D dilated CNN on the trip trace + Mondrian conformal",
+   "family": "conformal",
+   "family_label": "Conformal prediction (wrapper around trace_cnn)",
+   "group": "phys",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.0075,
+    "base_train_cpu_hours": 1.572,
+    "notes": "conformal fit only (dev predictions of trace_cnn + shifts); the base arm is not retrained"
+   },
+   "released": "c0",
+   "feature_engineering": "none beyond trace_cnn's; strata from arch, cls and the dynamometer flag",
+   "exam_cpu": {
+    "trace": {
+     "predict_cpu_s": 503.2,
+     "n_errors": 0
+    }
+   }
+  },
+  "trace_gru": {
+   "hash": "ef837cb12962b17b957a6e0832d5edcfeacbe0664d9a6c1f11bebd2c56549297",
+   "unchanged_after": true,
+   "tracks": [
+    "trace"
+   ],
+   "label": "Bidirectional GRU on the trip trace",
+   "family": "ssm",
+   "family_label": "State-space and recurrent models (bidirectional GRU)",
+   "group": "trace",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 1.648,
+    "notes": "r0 0.58, r1 0.54, r2 0.51 (rejected); + 0.02 for a speed benchmark and a 2-min first launch killed for memory; one thread, shared 2-core machine"
+   },
+   "released": "r1",
+   "feature_engineering": "trace-track inputs only: the harness's shared 5-s block means (bake.block_means rule: 8 channel means + mean v^2, mean v^3, summed positive kinetic-energy increment per unit mass) + the block's valid-second fraction -> 12 scaled channels; spec (49) and rl (5, logs of mass / CdA / Crr) standardised with train-bank statistics; log distance and log duration from the trace; chunks of <= 1,440 blocks mean-pooled for longer traces; anchor r0 = sim-train median MJ/km per (architecture, class) (bake.dumb_rates) x distance; from r1: E_phys recomputed from the trace inputs by bake.e_phys_from_trace (EnergyNet's generic road-load estimate; declared), target log(y / E_phys), log(E_phys / A0) as an input",
+   "exam_cpu": {
+    "trace": {
+     "predict_cpu_s": 452.7,
+     "n_errors": 0
+    }
+   }
+  },
+  "trace_gru_conformal": {
+   "hash": "eda5b385436c42cb2e4e5d9a5ca7a120b9ac665b39de123661c6342e68ecea32",
+   "unchanged_after": true,
+   "tracks": [
+    "trace"
+   ],
+   "label": "Bidirectional GRU on the trip trace + Mondrian conformal",
+   "family": "conformal",
+   "family_label": "Conformal prediction (wrapper around trace_gru)",
+   "group": "phys",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.0071,
+    "base_train_cpu_hours": 1.648,
+    "notes": "conformal fit only (dev predictions of trace_gru + shifts); the base arm is not retrained"
+   },
+   "released": "c0",
+   "feature_engineering": "none beyond trace_gru's; strata from arch, cls and the dynamometer flag",
+   "exam_cpu": {
+    "trace": {
+     "predict_cpu_s": 452.1,
+     "n_errors": 0
+    }
+   }
+  },
+  "trace_s4d": {
+   "hash": "280230f3ffa5dcee9209f6eece6e51835293550956690e1efb4672c8440b5e3d",
+   "unchanged_after": true,
+   "tracks": [
+    "trace"
+   ],
+   "label": "S4D state-space model on the trip trace",
+   "family": "ssm",
+   "family_label": "State-space and recurrent models (S4D diagonal state space)",
+   "group": "trace",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 2.75,
+    "notes": "r0 0.96, r1 0.90, r2 0.87; + 0.02 for speed benchmarks and a 2-min first launch killed for memory; one thread, shared 2-core machine"
+   },
+   "released": "r2",
+   "feature_engineering": "trace-track inputs only: the harness's shared 5-s block means (bake.block_means rule: 8 channel means + mean v^2, mean v^3, summed positive kinetic-energy increment per unit mass) + the block's valid-second fraction -> 12 scaled channels; spec (49) and rl (5, logs of mass / CdA / Crr) standardised with train-bank statistics; log distance and log duration from the trace; chunks of <= 1,440 blocks mean-pooled for longer traces; anchor r0 = sim-train median MJ/km per (architecture, class) (bake.dumb_rates) x distance; from r1: E_phys recomputed from the trace inputs by bake.e_phys_from_trace (EnergyNet's generic road-load estimate; declared), target log(y / E_phys), log(E_phys / A0) as an input",
+   "exam_cpu": {
+    "trace": {
+     "predict_cpu_s": 623.2,
+     "n_errors": 0
+    }
+   }
+  },
+  "trace_s4d_conformal": {
+   "hash": "151a00f02227ebdc3ae0b5ceaf122e5e71b0dd15b596ff04f95a707b55973b13",
+   "unchanged_after": true,
+   "tracks": [
+    "trace"
+   ],
+   "label": "S4D state-space model on the trip trace + Mondrian conformal",
+   "family": "conformal",
+   "family_label": "Conformal prediction (wrapper around trace_s4d)",
+   "group": "phys",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.008,
+    "base_train_cpu_hours": 2.75,
+    "notes": "conformal fit only (dev predictions of trace_s4d + shifts); the base arm is not retrained"
+   },
+   "released": "c0",
+   "feature_engineering": "none beyond trace_s4d's; strata from arch, cls and the dynamometer flag",
+   "exam_cpu": {
+    "trace": {
+     "predict_cpu_s": 623.6,
+     "n_errors": 0
+    }
+   }
+  },
+  "trace_transformer": {
+   "hash": "d42add9c9877dd385434df7d18c2519ffefcb610e2cf85dc649d4c2ebfd2157f",
+   "unchanged_after": true,
+   "tracks": [
+    "trace"
+   ],
+   "label": "Transformer on the trip trace (20-s patch tokens)",
+   "family": "attn",
+   "family_label": "Attention and transformers",
+   "group": "trace",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 1.635,
+    "notes": "r0 0.19, r1 0.17, r2 0.33, r3 0.90 (rejected); + 0.05 for a 1-epoch smoke run (0.015), a speed benchmark, a 2-min first launch killed for memory and r3 steps lost to a container restart; one thread, shared 2-core machine"
+   },
+   "released": "r2",
+   "feature_engineering": "trace-track inputs only: the harness's shared 5-s block means (bake.block_means rule: 8 channel means + mean v^2, mean v^3, summed positive kinetic-energy increment per unit mass) + the block's valid-second fraction -> 12 scaled channels; spec (49) and rl (5, logs of mass / CdA / Crr) standardised with train-bank statistics; log distance and log duration from the trace; chunks of <= 1,440 blocks mean-pooled for longer traces; anchor r0 = sim-train median MJ/km per (architecture, class) (bake.dumb_rates) x distance; from r1: E_phys recomputed from the trace inputs by bake.e_phys_from_trace (EnergyNet's generic road-load estimate; declared), target log(y / E_phys), log(E_phys / A0) as an input",
+   "exam_cpu": {
+    "trace": {
+     "predict_cpu_s": 532.6,
+     "n_errors": 0
+    }
+   }
+  },
+  "trace_transformer_conformal": {
+   "hash": "46ec6b2433f555364c037797d62577de88bbed7c2ee35084e583afd5da4a0a10",
+   "unchanged_after": true,
+   "tracks": [
+    "trace"
+   ],
+   "label": "Transformer on the trip trace (20-s patch tokens) + Mondrian conformal",
+   "family": "conformal",
+   "family_label": "Conformal prediction (wrapper around trace_transformer)",
+   "group": "phys",
+   "reference": null,
+   "numpy_only": true,
+   "numpy_only_reason": "",
+   "compute": {
+    "train_cpu_hours": 0.007,
+    "base_train_cpu_hours": 1.635,
+    "notes": "conformal fit only (dev predictions of trace_transformer + shifts); the base arm is not retrained"
+   },
+   "released": "c0",
+   "feature_engineering": "none beyond trace_transformer's; strata from arch, cls and the dynamometer flag",
+   "exam_cpu": {
+    "trace": {
+     "predict_cpu_s": 535.2,
+     "n_errors": 0
+    }
+   }
+  }
+ },
+ "references": {
+  "ephys": "EnergyNet physics estimate E_phys alone (generic road-load model, no network)",
+  "label": "VED: window-sticker label x distance (RoadData, dev-fitted mix)",
+  "moves_like": "VED: MOVES-like VSP operating-mode model (RoadData, dev-fitted)",
+  "class_median": "VED: dev median energy per km per (type, class) (RoadData)",
+  "regression": "EPA: dev-fitted log-linear regression on the test car spec",
+  "dev_median": "EPA / Mersin / ICCT / ZTBus: dev median (EPA, Mersin), dev truck same cycle (ICCT), dev kWh/km x distance (ZTBus)"
+ },
+ "boards": {
+  "table": {
+   "rows": {
+    "climatology": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.15158572484116073,
+      "MAPE": 0.24225317731852955,
+      "bias": 0.08672571895465131,
+      "med_log_err": 0.14950990890947216,
+      "crps_log": 0.14931520615089403,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.8156319480075253,
+      "cov90": 0.9811869334701556,
+      "width90_log": 1.5264083245515776
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.13047093298999402,
+      "MAPE": 0.14500873124712338,
+      "bias": 0.09252107959272382,
+      "med_log_err": 0.1257266117656389,
+      "crps_log": 0.11954539948524472,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.9650224215246637,
+      "cov90": 1.0,
+      "width90_log": 1.5264083245515776
+     },
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "enet_v21": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.07040771189094985,
+      "MAPE": 0.09261915891326127,
+      "bias": 0.0030297709805120476,
+      "med_log_err": 0.07031947681412934,
+      "crps_log": 0.06474073637662073,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.689584402257568,
+      "cov90": 0.961518727552591,
+      "width90_log": 0.5334820658244404
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.052243706137979684,
+      "MAPE": 0.06610560246515679,
+      "bias": -0.0010909408227833817,
+      "med_log_err": 0.05242360159953182,
+      "crps_log": 0.05022595809997656,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7910313901345292,
+      "cov90": 0.9955156950672646,
+      "width90_log": 0.5336064651873942
+     },
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "enet_v21_conformal": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.07040771189094985,
+      "MAPE": 0.09261915891326127,
+      "bias": 0.0030297709805120476,
+      "med_log_err": 0.07031947681412934,
+      "crps_log": 0.08025832535439432,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.48110141953138363,
+      "cov90": 0.6242517530357449,
+      "width90_log": 0.3617452963058758
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.052243706137979684,
+      "MAPE": 0.06610560246515679,
+      "bias": -0.0010909408227833817,
+      "med_log_err": 0.05242360159953182,
+      "crps_log": 0.06298904700433107,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.5282511210762332,
+      "cov90": 0.6502242152466368,
+      "width90_log": 0.3681181717742783
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "formula": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.09294267365065767,
+      "MAPE": 0.1085679421010994,
+      "bias": -0.0688240773560107,
+      "med_log_err": 0.09514577778417249,
+      "crps_log": 0.07988583280948114,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.8409440738840431,
+      "cov90": 0.9926458012656063,
+      "width90_log": 0.943899
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.08092180632653223,
+      "MAPE": 0.08752580990434927,
+      "bias": -0.06966589521356581,
+      "med_log_err": 0.08263859520939638,
+      "crps_log": 0.0694638541116854,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.9461883408071748,
+      "cov90": 1.0,
+      "width90_log": 0.943899
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "formula_conformal": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.09294267365065767,
+      "MAPE": 0.1085679421010994,
+      "bias": -0.0688240773560107,
+      "med_log_err": 0.09514577778417249,
+      "crps_log": 0.0867617216011547,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7817684282538053,
+      "cov90": 0.9861467419189328,
+      "width90_log": 0.8884520977705561
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.08092180632653223,
+      "MAPE": 0.08752580990434927,
+      "bias": -0.06966589521356581,
+      "med_log_err": 0.08263859520939638,
+      "crps_log": 0.0759865626222546,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.8475336322869955,
+      "cov90": 1.0,
+      "width90_log": 0.8884520977705561
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "phys_anchor": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.2147547960515721,
+      "MAPE": 0.21364095540274297,
+      "bias": -0.21158271647523952,
+      "med_log_err": 0.24117868515830285,
+      "crps_log": 0.09413715917155176,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.746023601847101,
+      "cov90": 0.991619634000342,
+      "width90_log": 1.034742
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.21273714319138048,
+      "MAPE": 0.21501015797326087,
+      "bias": -0.21273714319138048,
+      "med_log_err": 0.23919308784363685,
+      "crps_log": 0.08375025307028337,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.841255605381166,
+      "cov90": 1.0,
+      "width90_log": 1.0347419999999996
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "phys_anchor_conformal": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.2147547960515721,
+      "MAPE": 0.21364095540274297,
+      "bias": -0.21158271647523952,
+      "med_log_err": 0.24117868515830285,
+      "crps_log": 0.11408183567819036,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7102787754403967,
+      "cov90": 0.8524029416794937,
+      "width90_log": 0.9823341912432988
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.21273714319138048,
+      "MAPE": 0.21501015797326087,
+      "bias": -0.21273714319138048,
+      "med_log_err": 0.23919308784363685,
+      "crps_log": 0.09727368076730276,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7847533632286996,
+      "cov90": 0.9363228699551569,
+      "width90_log": 0.9823341912432983
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "tab_gbm": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.0825271008563091,
+      "MAPE": 0.10318604709921426,
+      "bias": -0.010304882088044587,
+      "med_log_err": 0.08268764260007831,
+      "crps_log": 0.0698690833556452,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.6880451513596716,
+      "cov90": 0.9803317940824354,
+      "width90_log": 0.6214703765998726
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.059945283883452105,
+      "MAPE": 0.0703225227052657,
+      "bias": -0.036221602309226,
+      "med_log_err": 0.06082299721349003,
+      "crps_log": 0.0564096086531858,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7910313901345292,
+      "cov90": 0.9982062780269059,
+      "width90_log": 0.6061070235487405
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "tab_gbm_conformal": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.0825271008563091,
+      "MAPE": 0.10318604709921426,
+      "bias": -0.010304882088044587,
+      "med_log_err": 0.08268764260007831,
+      "crps_log": 0.07862654145956006,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7299469813579613,
+      "cov90": 0.9707542329399692,
+      "width90_log": 0.7307111710662664
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.059945283883452105,
+      "MAPE": 0.0703225227052657,
+      "bias": -0.036221602309226,
+      "med_log_err": 0.06082299721349003,
+      "crps_log": 0.06418585916455416,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.842152466367713,
+      "cov90": 0.9964125560538116,
+      "width90_log": 0.7153478180151343
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "tab_gp": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.09522273475696252,
+      "MAPE": 0.12715339032862136,
+      "bias": 0.04825201763820064,
+      "med_log_err": 0.09447717120094208,
+      "crps_log": 0.079705618616252,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7075423293996922,
+      "cov90": 0.978450487429451,
+      "width90_log": 0.7140344026571963
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.06837450900421915,
+      "MAPE": 0.07886832168004441,
+      "bias": -0.003754960208591007,
+      "med_log_err": 0.06823534987257955,
+      "crps_log": 0.06283216758525784,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.8807174887892377,
+      "cov90": 1.0,
+      "width90_log": 0.7295285343063895
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "tab_gp_conformal": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.09522273475696252,
+      "MAPE": 0.12715339032862136,
+      "bias": 0.04825201763820064,
+      "med_log_err": 0.09447717120094208,
+      "crps_log": 0.09266020314844964,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.5929536514451855,
+      "cov90": 0.8164870873952454,
+      "width90_log": 0.6015306957860345
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.06837450900421915,
+      "MAPE": 0.07886832168004441,
+      "bias": -0.003754960208591007,
+      "med_log_err": 0.06823534987257955,
+      "crps_log": 0.06545148326384448,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.8080717488789237,
+      "cov90": 0.9668161434977578,
+      "width90_log": 0.6170248274352277
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "tab_mlp": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.07231354152656566,
+      "MAPE": 0.09584280393653002,
+      "bias": 0.002532864194263018,
+      "med_log_err": 0.0723152632081305,
+      "crps_log": 0.062378366147965644,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.6659825551564905,
+      "cov90": 0.9647682572259278,
+      "width90_log": 0.5129104167429439
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.05738830618243784,
+      "MAPE": 0.06921252446685927,
+      "bias": -0.015232439260889241,
+      "med_log_err": 0.05801175792245258,
+      "crps_log": 0.049677050184414484,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7488789237668162,
+      "cov90": 0.9856502242152466,
+      "width90_log": 0.496298071384615
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "tab_mlp_conformal": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.07231354152656566,
+      "MAPE": 0.09584280393653002,
+      "bias": 0.002532864194263018,
+      "med_log_err": 0.0723152632081305,
+      "crps_log": 0.0777124410746429,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.8151188643748931,
+      "cov90": 0.9772532922866427,
+      "width90_log": 0.6922794009955515
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.05738830618243784,
+      "MAPE": 0.06921252446685927,
+      "bias": -0.015232439260889241,
+      "med_log_err": 0.05801175792245258,
+      "crps_log": 0.06559522918947122,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.9237668161434978,
+      "cov90": 1.0,
+      "width90_log": 0.6756670556372235
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "tab_tabpfn": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.09300997246339748,
+      "MAPE": 0.12855985439929096,
+      "bias": 0.0283008944075529,
+      "med_log_err": 0.09324059817069862,
+      "crps_log": 0.07940627917331233,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.6748760047887806,
+      "cov90": 0.9823841286129639,
+      "width90_log": 0.6644322789753847
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.08198328426692436,
+      "MAPE": 0.09758742979333328,
+      "bias": 0.04259515417973603,
+      "med_log_err": 0.08178611280819313,
+      "crps_log": 0.06648823346776289,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7569506726457399,
+      "cov90": 1.0,
+      "width90_log": 0.721053807723802
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "tab_tabpfn_conformal": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.09300997246339748,
+      "MAPE": 0.12855985439929096,
+      "bias": 0.0283008944075529,
+      "med_log_err": 0.09324059817069862,
+      "crps_log": 0.0946912557169961,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.6215153069950402,
+      "cov90": 0.9016589704121771,
+      "width90_log": 0.7895684032100059
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.08198328426692436,
+      "MAPE": 0.09758742979333328,
+      "bias": 0.04259515417973603,
+      "med_log_err": 0.08178611280819313,
+      "crps_log": 0.08084695235035369,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.6358744394618834,
+      "cov90": 0.967713004484305,
+      "width90_log": 0.8461899319584223
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "ephys": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.21475484005550327,
+      "MAPE": 0.21364095460527963,
+      "bias": -0.21158262785615545,
+      "med_log_err": 0.2411786739537198,
+      "crps_log": 0.2474231740247583,
+      "point": true,
+      "n_clusters": 1115
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.21273726777111956,
+      "MAPE": 0.215010161679808,
+      "bias": -0.21273726777111956,
+      "med_log_err": 0.23919324608779616,
+      "crps_log": 0.24988724241280189,
+      "point": true,
+      "n_clusters": 1115
+     },
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "label": {
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "moves_like": {
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "class_median": {
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "regression": {
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "dev_median": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.14006357002726588,
+      "MAPE": 0.21600779303544243,
+      "bias": 0.02403044144662081,
+      "med_log_err": 0.14107919251416007,
+      "crps_log": 0.18552384033955555,
+      "point": true,
+      "n_clusters": 1115
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.1065156187995866,
+      "MAPE": 0.11951089007618075,
+      "bias": 0.02949136706115385,
+      "med_log_err": 0.10614746143285793,
+      "crps_log": 0.11785628045659022,
+      "point": true,
+      "n_clusters": 1115
+     },
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    }
+   },
+   "paired": {
+    "climatology": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.08117801295021088,
+       "ci_MdAPE": [
+        0.0743075526368339,
+        0.08832387458651365
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.0845744697742733,
+       "ci_crps_log": [
+        0.07971407693280097,
+        0.08993010991878583
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.06316911521434254,
+       "ci_MdAPE": [
+        -0.07774111402939118,
+        -0.04887940363045498
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.09810796787386428,
+       "ci_crps_log": [
+        -0.10800946916235889,
+        -0.08752103694111678
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.011522154813894847,
+       "ci_MdAPE": [
+        0.005236884832866187,
+        0.016647861353196257
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.03620863418866152,
+       "ci_crps_log": [
+        -0.040557892002797274,
+        -0.03225035331905569
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.07822722685201433,
+       "ci_MdAPE": [
+        0.0687636671226584,
+        0.08392039992733116
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.06931944138526816,
+       "ci_crps_log": [
+        0.06778532260110186,
+        0.07082088155077756
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.08226633478112555,
+       "ci_MdAPE": [
+        -0.09816631602491575,
+        -0.07173961828484254
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.13034184292755718,
+       "ci_crps_log": [
+        -0.1385799811797962,
+        -0.12212105847592085
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.023955314190407417,
+       "ci_MdAPE": [
+        0.01564955110026533,
+        0.030045197927235427
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.0016891190286544983,
+       "ci_crps_log": [
+        -0.0023062401296827365,
+        0.005691931272878396
+       ],
+       "verdict_crps_log": "tie"
+      }
+     }
+    },
+    "enet_v21": {
+     "ZTBus_legs": {
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.14434712816455342,
+       "ci_MdAPE": [
+        -0.15513027424596398,
+        -0.13412034433000175
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.18268243764813757,
+       "ci_crps_log": [
+        -0.19062164833138986,
+        -0.17471536365651305
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.06965585813631603,
+       "ci_MdAPE": [
+        -0.07741698921850859,
+        -0.06410243471003771
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.12078310396293482,
+       "ci_crps_log": [
+        -0.12961952622178236,
+        -0.11274170738024472
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.16049356163313988,
+       "ci_MdAPE": [
+        -0.16892678724376387,
+        -0.15205961525125083
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.19966128431282532,
+       "ci_crps_log": [
+        -0.20670409187400568,
+        -0.19304932697518482
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.054271912661606914,
+       "ci_MdAPE": [
+        -0.06261399901864284,
+        -0.04587503370784436
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.06763032235661365,
+       "ci_crps_log": [
+        -0.07221892055673086,
+        -0.06314921391456005
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "enet_v21_conformal": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.0,
+       "ci_MdAPE": [
+        0.0,
+        0.0
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": 0.015517588977773597,
+       "ci_crps_log": [
+        0.013526155470559234,
+        0.017545301078099287
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.14434712816455342,
+       "ci_MdAPE": [
+        -0.15483300771778932,
+        -0.13357142410154105
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.16716484867036396,
+       "ci_crps_log": [
+        -0.17679272712443078,
+        -0.1574041206867032
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.06965585813631603,
+       "ci_MdAPE": [
+        -0.07706445847583362,
+        -0.06428024685583537
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.10526551498516122,
+       "ci_crps_log": [
+        -0.11364461251750024,
+        -0.09771910575577347
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.0,
+       "ci_MdAPE": [
+        0.0,
+        0.0
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": 0.012763088904354507,
+       "ci_crps_log": [
+        0.010941623567089477,
+        0.014797495656945475
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.16049356163313988,
+       "ci_MdAPE": [
+        -0.16886269179639898,
+        -0.151225664306608
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1868981954084708,
+       "ci_crps_log": [
+        -0.19535175056960316,
+        -0.17805678445503298
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.054271912661606914,
+       "ci_MdAPE": [
+        -0.06287537038783338,
+        -0.04607047769634108
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.05486723345225915,
+       "ci_crps_log": [
+        -0.059414051290235755,
+        -0.050332863322508
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "formula": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.022534961759707817,
+       "ci_MdAPE": [
+        0.01832704565760867,
+        0.026412350710268602
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.015145096432860411,
+       "ci_crps_log": [
+        0.013436498468136148,
+        0.01682685658518714
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.1218121664048456,
+       "ci_MdAPE": [
+        -0.13071534251924882,
+        -0.11372553761110894
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.16753734121527716,
+       "ci_crps_log": [
+        -0.1756046379461205,
+        -0.15957795937676003
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.04712089637660821,
+       "ci_MdAPE": [
+        -0.055533318423471534,
+        -0.041367274193861214
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.10563800753007441,
+       "ci_crps_log": [
+        -0.11421607006188313,
+        -0.09787963778809416
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.028678100188552547,
+       "ci_MdAPE": [
+        0.02366696972650486,
+        0.03275244859429868
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.01923789601170884,
+       "ci_crps_log": [
+        0.018129876226171203,
+        0.02028913556750902
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.13181546144458733,
+       "ci_MdAPE": [
+        -0.1390328056047395,
+        -0.1257451972857474
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.18042338830111648,
+       "ci_crps_log": [
+        -0.18808536058518435,
+        -0.17262310328206992
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.025593812473054367,
+       "ci_MdAPE": [
+        -0.034780435315557516,
+        -0.017875699523321464
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.048392426344904815,
+       "ci_crps_log": [
+        -0.05307421521227035,
+        -0.044048522953277935
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "formula_conformal": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.022534961759707817,
+       "ci_MdAPE": [
+        0.017991964071050647,
+        0.026332341602294106
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.022020985224533968,
+       "ci_crps_log": [
+        0.020186338191958583,
+        0.023817891357651017
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.1218121664048456,
+       "ci_MdAPE": [
+        -0.13059527831525258,
+        -0.11352863626318092
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1606614524236036,
+       "ci_crps_log": [
+        -0.16897948800653032,
+        -0.1523224677157096
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.04712089637660821,
+       "ci_MdAPE": [
+        -0.055696888346040335,
+        -0.04114361215820606
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.09876211873840085,
+       "ci_crps_log": [
+        -0.10765537082003417,
+        -0.09115308387875731
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.028678100188552547,
+       "ci_MdAPE": [
+        0.023672782123633048,
+        0.03282486940278242
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.02576060452227804,
+       "ci_crps_log": [
+        0.02452590085186429,
+        0.0270590370509086
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.13181546144458733,
+       "ci_MdAPE": [
+        -0.14076763442329077,
+        -0.1255143586405478
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1739006797905473,
+       "ci_crps_log": [
+        -0.18182060798058347,
+        -0.1664637130748221
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.025593812473054367,
+       "ci_MdAPE": [
+        -0.03535667642154704,
+        -0.01782446458475292
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.041869717834335615,
+       "ci_crps_log": [
+        -0.046048003880852915,
+        -0.037358630160811146
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "phys_anchor": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.14434708416062225,
+       "ci_MdAPE": [
+        0.1338074183297744,
+        0.15522942097580147
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.02939642279493103,
+       "ci_crps_log": [
+        0.027131601879913703,
+        0.03174473799585554
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -4.400393116554824e-08,
+       "ci_MdAPE": [
+        -1.675077759832888e-07,
+        1.7070722853063094e-07
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": -0.15328601485320653,
+       "ci_crps_log": [
+        -0.16111129778958805,
+        -0.14576521627510713
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.07469122602430622,
+       "ci_MdAPE": [
+        0.06139411271150131,
+        0.08561202017004386
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.09138668116800379,
+       "ci_crps_log": [
+        -0.09939003732390324,
+        -0.0841328268296095
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.1604934370534008,
+       "ci_MdAPE": [
+        0.15151272906211016,
+        0.16934293742410864
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.03352429497030681,
+       "ci_crps_log": [
+        0.0319951224031784,
+        0.03504538160659364
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -1.245797390803105e-07,
+       "ci_MdAPE": [
+        -1.4899013611735512e-07,
+        1.3764067241517353e-07
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": -0.16613698934251853,
+       "ci_crps_log": [
+        -0.17266340490913487,
+        -0.15967364805854944
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.10622152439179389,
+       "ci_MdAPE": [
+        0.09428989848485433,
+        0.11616166259321473
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.034106027386306845,
+       "ci_crps_log": [
+        -0.03789491699917176,
+        -0.03024263635082688
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "phys_anchor_conformal": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.14434708416062225,
+       "ci_MdAPE": [
+        0.13428689196949128,
+        0.1554322892854007
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.04934109930156963,
+       "ci_crps_log": [
+        0.04633629791572602,
+        0.052383834717913184
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -4.400393116554824e-08,
+       "ci_MdAPE": [
+        -1.6821075505546457e-07,
+        1.6720846007789447e-07
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": -0.13334133834656794,
+       "ci_crps_log": [
+        -0.1425702220388202,
+        -0.12387676198099844
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.07469122602430622,
+       "ci_MdAPE": [
+        0.062099272548134105,
+        0.08574656910380861
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.07144200466136519,
+       "ci_crps_log": [
+        -0.07871142412674356,
+        -0.0647083979608352
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.1604934370534008,
+       "ci_MdAPE": [
+        0.1517238845834973,
+        0.16926105662062624
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.0470477226673262,
+       "ci_crps_log": [
+        0.04543598307655208,
+        0.04868393368992348
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -1.245797390803105e-07,
+       "ci_MdAPE": [
+        -1.5111563522740568e-07,
+        1.354313752255365e-07
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": -0.1526135616454991,
+       "ci_crps_log": [
+        -0.15999012038786278,
+        -0.14528459720908554
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.10622152439179389,
+       "ci_MdAPE": [
+        0.09467928492300724,
+        0.11778158772716463
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.020582599689287454,
+       "ci_crps_log": [
+        -0.024196346583245317,
+        -0.01685227712324379
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "tab_gbm": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.012119388965359246,
+       "ci_MdAPE": [
+        0.009074541508968826,
+        0.014612925598134792
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.0051283469790244784,
+       "ci_crps_log": [
+        0.0036048300779067933,
+        0.006478277061832263
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.13222773919919417,
+       "ci_MdAPE": [
+        -0.14207692174082315,
+        -0.12260253389965736
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1775540906691131,
+       "ci_crps_log": [
+        -0.18517265620344533,
+        -0.16912045719434907
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.05753646917095678,
+       "ci_MdAPE": [
+        -0.06550888887253267,
+        -0.05156009555275526
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.11565475698391034,
+       "ci_crps_log": [
+        -0.1239379955064071,
+        -0.10786870020350736
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.007701577745472421,
+       "ci_MdAPE": [
+        0.0018266578799952583,
+        0.012971315357523902
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.006183650553209234,
+       "ci_crps_log": [
+        0.005163679203383091,
+        0.0072903645804188
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.15279198388766746,
+       "ci_MdAPE": [
+        -0.16152246516410895,
+        -0.14491425550488837
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.19347763375961607,
+       "ci_crps_log": [
+        -0.20047270251499572,
+        -0.18695161817931977
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.04657033491613449,
+       "ci_MdAPE": [
+        -0.05658402679538203,
+        -0.03788114038032905
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.06144667180340442,
+       "ci_crps_log": [
+        -0.06584669905265961,
+        -0.05701580044588713
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "tab_gbm_conformal": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.012119388965359246,
+       "ci_MdAPE": [
+        0.009208646222261188,
+        0.014716827806282367
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.013885805082939337,
+       "ci_crps_log": [
+        0.012087524092875139,
+        0.015648667136862287
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.13222773919919417,
+       "ci_MdAPE": [
+        -0.1421058365201657,
+        -0.1229467538993665
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.16879663256519822,
+       "ci_crps_log": [
+        -0.17677885397105886,
+        -0.1605140645629278
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.05753646917095678,
+       "ci_MdAPE": [
+        -0.06520959579187091,
+        -0.05220556993274677
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.10689729887999548,
+       "ci_crps_log": [
+        -0.11515322140465654,
+        -0.09987934363527
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.007701577745472421,
+       "ci_MdAPE": [
+        0.0020112281000064375,
+        0.012805183777406654
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.013959901064577597,
+       "ci_crps_log": [
+        0.012810106427466205,
+        0.015041376975568189
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.15279198388766746,
+       "ci_MdAPE": [
+        -0.1611017211203636,
+        -0.14487685710201237
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.18570138324824773,
+       "ci_crps_log": [
+        -0.19301198721179583,
+        -0.17883925771331674
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.04657033491613449,
+       "ci_MdAPE": [
+        -0.05643241283620136,
+        -0.0380572277006862
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.05367042129203606,
+       "ci_crps_log": [
+        -0.057946583138955336,
+        -0.04943834556055374
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "tab_gp": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.02481502286601267,
+       "ci_MdAPE": [
+        0.020414734570712828,
+        0.02939758520321914
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.014964882239631272,
+       "ci_crps_log": [
+        0.012477490765542781,
+        0.01746196765854046
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.11953210529854075,
+       "ci_MdAPE": [
+        -0.1320928613175764,
+        -0.1069574649084114
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1677175554085063,
+       "ci_crps_log": [
+        -0.17721736623809392,
+        -0.15876809023977495
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.04484083527030336,
+       "ci_MdAPE": [
+        -0.05313896597677045,
+        -0.03840964021635499
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.10581822172330355,
+       "ci_crps_log": [
+        -0.11347384730318082,
+        -0.09874558012996436
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.01613080286623947,
+       "ci_MdAPE": [
+        0.009547646180048275,
+        0.02184638234659436
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.012606209485281274,
+       "ci_crps_log": [
+        0.011237699032122012,
+        0.01396350099728638
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.1443627587669004,
+       "ci_MdAPE": [
+        -0.1543805492552866,
+        -0.13538188751633698
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.18705507482754405,
+       "ci_crps_log": [
+        -0.19481578969748303,
+        -0.18004217139959888
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.038141109795367445,
+       "ci_MdAPE": [
+        -0.0473194897480889,
+        -0.02997890299201902
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.05502411287133238,
+       "ci_crps_log": [
+        -0.05922864166000574,
+        -0.0507197325307098
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "tab_gp_conformal": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.02481502286601267,
+       "ci_MdAPE": [
+        0.020507068934102264,
+        0.029523656997625918
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.02791946677182891,
+       "ci_crps_log": [
+        0.02465643390181255,
+        0.031511942723443834
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.11953210529854075,
+       "ci_MdAPE": [
+        -0.13107813772819837,
+        -0.10760270180336837
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.15476297087630866,
+       "ci_crps_log": [
+        -0.16424777416678404,
+        -0.14506891580476997
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.04484083527030336,
+       "ci_MdAPE": [
+        -0.05250551374042951,
+        -0.03876072402297833
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.09286363719110591,
+       "ci_crps_log": [
+        -0.10045864839294152,
+        -0.08644616702421112
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.01613080286623947,
+       "ci_MdAPE": [
+        0.009186685787670295,
+        0.02211769859813123
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.015225525163867916,
+       "ci_crps_log": [
+        0.01369547454158835,
+        0.01673226141027346
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.1443627587669004,
+       "ci_MdAPE": [
+        -0.1533971261467783,
+        -0.13538247894443103
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1844357591489574,
+       "ci_crps_log": [
+        -0.19204801186201306,
+        -0.17680556883866494
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.038141109795367445,
+       "ci_MdAPE": [
+        -0.04659755190941582,
+        -0.02999351973234051
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.05240479719274574,
+       "ci_crps_log": [
+        -0.05669814348859507,
+        -0.0482871662616016
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "tab_mlp": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.0019058296356158078,
+       "ci_MdAPE": [
+        -0.0004934870031809799,
+        0.004290997546871538
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": -0.0023623702286550835,
+       "ci_crps_log": [
+        -0.003778478347857302,
+        -0.0009979556081024898
+       ],
+       "verdict_crps_log": "win"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.1424412985289376,
+       "ci_MdAPE": [
+        -0.15312271989784546,
+        -0.13246722217702575
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.18504480787679267,
+       "ci_crps_log": [
+        -0.1932528730020379,
+        -0.17687671013357542
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.06775002850070022,
+       "ci_MdAPE": [
+        -0.0750174353669563,
+        -0.06266835838735121
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1231454741915899,
+       "ci_crps_log": [
+        -0.1310693361575118,
+        -0.11545416430914796
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.0051446000444581585,
+       "ci_MdAPE": [
+        0.0008266957724847313,
+        0.009637435661061643
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.0005489079155620788,
+       "ci_crps_log": [
+        -0.0015285521681573442,
+        0.0004114048851731011
+       ],
+       "verdict_crps_log": "tie"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.15534896158868172,
+       "ci_MdAPE": [
+        -0.16350572448234127,
+        -0.14689010778970202
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.2002101922283874,
+       "ci_crps_log": [
+        -0.20700358612616868,
+        -0.19339586517694532
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.049127312617148755,
+       "ci_MdAPE": [
+        -0.05676207322479618,
+        -0.041331817111350755
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.06817923027217573,
+       "ci_crps_log": [
+        -0.07230724244663385,
+        -0.06392581262699
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "tab_mlp_conformal": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.0019058296356158078,
+       "ci_MdAPE": [
+        -0.000481248939219249,
+        0.004265689319002887
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": 0.012971704698022168,
+       "ci_crps_log": [
+        0.011401082226289381,
+        0.014575321820697514
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.1424412985289376,
+       "ci_MdAPE": [
+        -0.15318986681139557,
+        -0.13213004476795265
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1697107329501154,
+       "ci_crps_log": [
+        -0.17814845148169037,
+        -0.16131896256414607
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.06775002850070022,
+       "ci_MdAPE": [
+        -0.07471723648408216,
+        -0.06254152284820517
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.10781139926491265,
+       "ci_crps_log": [
+        -0.11589775190510919,
+        -0.09995849304161153
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.0051446000444581585,
+       "ci_MdAPE": [
+        0.0013027768456530975,
+        0.009508817303536017
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.015369271089494659,
+       "ci_crps_log": [
+        0.014582739454340334,
+        0.01615985232084712
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.15534896158868172,
+       "ci_MdAPE": [
+        -0.16375656314064432,
+        -0.14679362100658197
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.18429201322333066,
+       "ci_crps_log": [
+        -0.19157454489351136,
+        -0.17721808983036755
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.049127312617148755,
+       "ci_MdAPE": [
+        -0.05684980353301462,
+        -0.0413428561699903
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.052261051267118996,
+       "ci_crps_log": [
+        -0.05671773317785129,
+        -0.04797111797008195
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "tab_tabpfn": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.02260226057244763,
+       "ci_MdAPE": [
+        0.01847032966252892,
+        0.02670443254741137
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.014665542796691605,
+       "ci_crps_log": [
+        0.012170107207229061,
+        0.0172898466864009
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.12174486759210579,
+       "ci_MdAPE": [
+        -0.13292648275189778,
+        -0.11084671397688944
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.16801689485144597,
+       "ci_crps_log": [
+        -0.17637326635629538,
+        -0.1592819151840701
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.0470535975638684,
+       "ci_MdAPE": [
+        -0.05317864504607885,
+        -0.042601784152910674
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.10611756116624321,
+       "ci_crps_log": [
+        -0.11333249986536433,
+        -0.0998670756888013
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.029739578128944677,
+       "ci_MdAPE": [
+        0.024068697099575678,
+        0.035585581909938796
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.01626227536778633,
+       "ci_crps_log": [
+        0.014881426343372875,
+        0.017770982006221726
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.1307539835041952,
+       "ci_MdAPE": [
+        -0.14088523448697957,
+        -0.12012213292552251
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.183399008945039,
+       "ci_crps_log": [
+        -0.19131549511067603,
+        -0.17576863496768041
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.024532334532662237,
+       "ci_MdAPE": [
+        -0.031411732081193015,
+        -0.018136074750473297
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.051368046988827326,
+       "ci_crps_log": [
+        -0.05528959984376522,
+        -0.04737286480608112
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "tab_tabpfn_conformal": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.02260226057244763,
+       "ci_MdAPE": [
+        0.018533431214804275,
+        0.027014616554169677
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.029950519340375376,
+       "ci_crps_log": [
+        0.026898877867320346,
+        0.03295803678783431
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.12174486759210579,
+       "ci_MdAPE": [
+        -0.132699931676594,
+        -0.11112402621076982
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1527319183077622,
+       "ci_crps_log": [
+        -0.16264407290198324,
+        -0.1435803359691193
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.0470535975638684,
+       "ci_MdAPE": [
+        -0.05324048639660325,
+        -0.04280013672487686
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.09083258462255944,
+       "ci_crps_log": [
+        -0.09787031890871584,
+        -0.08399863451754244
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.029739578128944677,
+       "ci_MdAPE": [
+        0.023975560825620756,
+        0.03565353239640668
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.030620994250377127,
+       "ci_crps_log": [
+        0.02875115926330268,
+        0.03244305666134657
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.1307539835041952,
+       "ci_MdAPE": [
+        -0.14117718591975933,
+        -0.11987065316946496
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1690402900624482,
+       "ci_crps_log": [
+        -0.17753241111458856,
+        -0.16054432269781957
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.024532334532662237,
+       "ci_MdAPE": [
+        -0.031003137301029028,
+        -0.017811542989633257
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.03700932810623653,
+       "ci_crps_log": [
+        -0.041132884998386625,
+        -0.03298526187058723
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    }
+   }
+  },
+  "trace": {
+   "rows": {
+    "climatology": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.15158568489622604,
+      "MAPE": 0.2422531765396749,
+      "bias": 0.08672573536194861,
+      "med_log_err": 0.14950989515526433,
+      "crps_log": 0.1493152059365838,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.8156319480075253,
+      "cov90": 0.9811869334701556,
+      "width90_log": 1.5264083245515776
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.1304709123194161,
+      "MAPE": 0.14500872657463323,
+      "bias": 0.0925210949373656,
+      "med_log_err": 0.12572653368310557,
+      "crps_log": 0.11954539850407762,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.9650224215246637,
+      "cov90": 1.0,
+      "width90_log": 1.5264083245515776
+     },
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "formula": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.09294256910242382,
+      "MAPE": 0.10856794229889917,
+      "bias": -0.06882249845332933,
+      "med_log_err": 0.09514828299946144,
+      "crps_log": 0.0798857714815894,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.8409440738840431,
+      "cov90": 0.9926458012656063,
+      "width90_log": 0.943899
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.08092355700723686,
+      "MAPE": 0.08752592459808228,
+      "bias": -0.06966606384583673,
+      "med_log_err": 0.08263699753512929,
+      "crps_log": 0.06946388646730976,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.9461883408071748,
+      "cov90": 1.0,
+      "width90_log": 0.943899
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "formula_conformal": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.09294256910242382,
+      "MAPE": 0.10856794229889917,
+      "bias": -0.06882249845332933,
+      "med_log_err": 0.09514828299946144,
+      "crps_log": 0.0867617636365657,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7817684282538053,
+      "cov90": 0.9861467419189328,
+      "width90_log": 0.8884513566884431
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.08092355700723686,
+      "MAPE": 0.08752592459808228,
+      "bias": -0.06966606384583673,
+      "med_log_err": 0.08263699753512929,
+      "crps_log": 0.07598662427412826,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.8475336322869955,
+      "cov90": 1.0,
+      "width90_log": 0.8884513566884431
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "phys_anchor": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.21474950868389242,
+      "MAPE": 0.21364112000038446,
+      "bias": -0.21158047493169452,
+      "med_log_err": 0.24117552516456559,
+      "crps_log": 0.09413713432852817,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.746023601847101,
+      "cov90": 0.991619634000342,
+      "width90_log": 1.034742
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.21273516498576095,
+      "MAPE": 0.21501035036015176,
+      "bias": -0.21273516498576095,
+      "med_log_err": 0.23919057508297878,
+      "crps_log": 0.08375030693343047,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.841255605381166,
+      "cov90": 1.0,
+      "width90_log": 1.0347419999999996
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "phys_anchor_conformal": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.21474950868389242,
+      "MAPE": 0.21364112000038446,
+      "bias": -0.21158047493169452,
+      "med_log_err": 0.24117552516456559,
+      "crps_log": 0.11408231933501135,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7102787754403967,
+      "cov90": 0.8524029416794937,
+      "width90_log": 0.9823326722598633
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.21273516498576095,
+      "MAPE": 0.21501035036015176,
+      "bias": -0.21273516498576095,
+      "med_log_err": 0.23919057508297878,
+      "crps_log": 0.09727401441084794,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7847533632286996,
+      "cov90": 0.9363228699551569,
+      "width90_log": 0.9823326722598633
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "trace_cnn": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.07522980714664329,
+      "MAPE": 0.09716683375091965,
+      "bias": -0.01612597888639622,
+      "med_log_err": 0.0760055960283302,
+      "crps_log": 0.0634512489214673,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.6408414571575167,
+      "cov90": 0.9589533093894305,
+      "width90_log": 0.48222557141115185
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.06528236957291544,
+      "MAPE": 0.0778483819033684,
+      "bias": -0.04765079022187624,
+      "med_log_err": 0.06650053007892082,
+      "crps_log": 0.051908367449674454,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.6869955156950672,
+      "cov90": 0.9838565022421525,
+      "width90_log": 0.44576055939162895
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "trace_cnn_conformal": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.07522980714664329,
+      "MAPE": 0.09716683375091965,
+      "bias": -0.01612597888639622,
+      "med_log_err": 0.0760055960283302,
+      "crps_log": 0.0777979755996439,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7438002394390285,
+      "cov90": 0.9167094236360527,
+      "width90_log": 0.6870674209390604
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.06528236957291544,
+      "MAPE": 0.0778483819033684,
+      "bias": -0.04765079022187624,
+      "med_log_err": 0.06650053007892082,
+      "crps_log": 0.0630088154648194,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.884304932735426,
+      "cov90": 0.9811659192825112,
+      "width90_log": 0.6506024089195366
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "trace_gru": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.07145046329408,
+      "MAPE": 0.09359518390822692,
+      "bias": -0.015249476352631408,
+      "med_log_err": 0.07196059942635152,
+      "crps_log": 0.06052163697798555,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.6599965794424492,
+      "cov90": 0.9635710620831196,
+      "width90_log": 0.470942906107493
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.057864303179595344,
+      "MAPE": 0.06743498018957263,
+      "bias": -0.027688197983893215,
+      "med_log_err": 0.05810875180935956,
+      "crps_log": 0.04681591314036574,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7013452914798206,
+      "cov90": 0.989237668161435,
+      "width90_log": 0.4362773998493701
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "trace_gru_conformal": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.07145046329408,
+      "MAPE": 0.09359518390822692,
+      "bias": -0.015249476352631408,
+      "med_log_err": 0.07196059942635152,
+      "crps_log": 0.07955121306772406,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7867282367025825,
+      "cov90": 0.9606635881648709,
+      "width90_log": 0.7238804938257202
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.057864303179595344,
+      "MAPE": 0.06743498018957263,
+      "bias": -0.027688197983893215,
+      "med_log_err": 0.05810875180935956,
+      "crps_log": 0.06537201758076047,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.8708520179372198,
+      "cov90": 0.9928251121076234,
+      "width90_log": 0.6892149875675972
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "trace_s4d": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.08621253753325675,
+      "MAPE": 0.10622340198291247,
+      "bias": -0.06074842241343026,
+      "med_log_err": 0.08785302779504531,
+      "crps_log": 0.07205484293066569,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.608175132546605,
+      "cov90": 0.9358645459209851,
+      "width90_log": 0.492604648578034
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.08771781777122956,
+      "MAPE": 0.09780079885394138,
+      "bias": -0.08555005923710146,
+      "med_log_err": 0.09171614397321504,
+      "crps_log": 0.06343448970296912,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.5641255605381166,
+      "cov90": 0.9354260089686098,
+      "width90_log": 0.4483119535944011
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "trace_s4d_conformal": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.08621253753325675,
+      "MAPE": 0.10622340198291247,
+      "bias": -0.06074842241343026,
+      "med_log_err": 0.08785302779504531,
+      "crps_log": 0.08093194949881531,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.8096459722934838,
+      "cov90": 0.9692149820420729,
+      "width90_log": 0.7345707249531452
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.08771781777122956,
+      "MAPE": 0.09780079885394138,
+      "bias": -0.08555005923710146,
+      "med_log_err": 0.09171614397321504,
+      "crps_log": 0.06907003209443192,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.9210762331838565,
+      "cov90": 0.9937219730941704,
+      "width90_log": 0.6902780299695133
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "trace_transformer": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.07292639353955399,
+      "MAPE": 0.09654610803236863,
+      "bias": 0.011640269275319914,
+      "med_log_err": 0.07238554166888385,
+      "crps_log": 0.06155229961903798,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.5654181631605951,
+      "cov90": 0.9201299811869335,
+      "width90_log": 0.4081669604553335
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.05741030670144276,
+      "MAPE": 0.06778134665325283,
+      "bias": -0.004957922577014995,
+      "med_log_err": 0.057997892052841366,
+      "crps_log": 0.04522103426841866,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.6322869955156951,
+      "cov90": 0.9721973094170404,
+      "width90_log": 0.3815977823919381
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "trace_transformer_conformal": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.07292639353955399,
+      "MAPE": 0.09654610803236863,
+      "bias": 0.011640269275319914,
+      "med_log_err": 0.07238554166888385,
+      "crps_log": 0.07815606990513112,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7694544210706346,
+      "cov90": 0.9173935351462288,
+      "width90_log": 0.6546118267738539
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.05741030670144276,
+      "MAPE": 0.06778134665325283,
+      "bias": -0.004957922577014995,
+      "med_log_err": 0.057997892052841366,
+      "crps_log": 0.0629330637036722,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.8556053811659193,
+      "cov90": 0.9739910313901345,
+      "width90_log": 0.6280426487104567
+     },
+     "_n_error_records": 0,
+     "_kind": "arm",
+     "_D16": null
+    },
+    "enet_v21": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.07040771189094985,
+      "MAPE": 0.09261915891326127,
+      "bias": 0.0030297709805120476,
+      "med_log_err": 0.07031947681412934,
+      "crps_log": 0.06474073637662073,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.689584402257568,
+      "cov90": 0.961518727552591,
+      "width90_log": 0.5334820658244404
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.052243706137979684,
+      "MAPE": 0.06610560246515679,
+      "bias": -0.0010909408227833817,
+      "med_log_err": 0.05242360159953182,
+      "crps_log": 0.05022595809997656,
+      "point": false,
+      "n_clusters": 1115,
+      "cov50": 0.7910313901345292,
+      "cov90": 0.9955156950672646,
+      "width90_log": 0.5336064651873942
+     },
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "ephys": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.21475484005550327,
+      "MAPE": 0.21364095460527963,
+      "bias": -0.21158262785615545,
+      "med_log_err": 0.2411786739537198,
+      "crps_log": 0.2474231740247583,
+      "point": true,
+      "n_clusters": 1115
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.21273726777111956,
+      "MAPE": 0.215010161679808,
+      "bias": -0.21273726777111956,
+      "med_log_err": 0.23919324608779616,
+      "crps_log": 0.24988724241280189,
+      "point": true,
+      "n_clusters": 1115
+     },
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "label": {
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "moves_like": {
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "class_median": {
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "regression": {
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    },
+    "dev_median": {
+     "ZTBus_legs": {
+      "n": 5847,
+      "MdAPE": 0.14006357002726588,
+      "MAPE": 0.21600779303544243,
+      "bias": 0.02403044144662081,
+      "med_log_err": 0.14107919251416007,
+      "crps_log": 0.18552384033955555,
+      "point": true,
+      "n_clusters": 1115
+     },
+     "ZTBus_missions": {
+      "n": 1115,
+      "MdAPE": 0.1065156187995866,
+      "MAPE": 0.11951089007618075,
+      "bias": 0.02949136706115385,
+      "med_log_err": 0.10614746143285793,
+      "crps_log": 0.11785628045659022,
+      "point": true,
+      "n_clusters": 1115
+     },
+     "_n_error_records": 0,
+     "_kind": "reference",
+     "_D16": null
+    }
+   },
+   "paired": {
+    "climatology": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.08117797300527618,
+       "ci_MdAPE": [
+        0.07401276475647113,
+        0.0881590705382421
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.08457446955996306,
+       "ci_crps_log": [
+        0.07985777402622114,
+        0.08998055142321859
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.06316915515927723,
+       "ci_MdAPE": [
+        -0.07753061719321645,
+        -0.04750701244119739
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.09810796808817451,
+       "ci_crps_log": [
+        -0.1084218776583947,
+        -0.08785895374484645
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.011522114868960154,
+       "ci_MdAPE": [
+        0.005311614764626905,
+        0.01674856421836683
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.03620863440297176,
+       "ci_crps_log": [
+        -0.04021428894328127,
+        -0.032278990310977446
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.07822720618143642,
+       "ci_MdAPE": [
+        0.06867507027931827,
+        0.083602248367538
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.06931944040410107,
+       "ci_crps_log": [
+        0.06783136324133512,
+        0.07090787522279403
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.08226635545170347,
+       "ci_MdAPE": [
+        -0.09713981149697629,
+        -0.07174498384491913
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.13034184390872428,
+       "ci_crps_log": [
+        -0.13805162433586765,
+        -0.12268473350572102
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.0239552935198295,
+       "ci_MdAPE": [
+        0.015042832717320324,
+        0.030195902210441238
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.0016891180474874062,
+       "ci_crps_log": [
+        -0.0021682088878212068,
+        0.005512103248132445
+       ],
+       "verdict_crps_log": "tie"
+      }
+     }
+    },
+    "formula": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.02253485721147397,
+       "ci_MdAPE": [
+        0.018062520347706966,
+        0.026504774963719474
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.015145035104968674,
+       "ci_crps_log": [
+        0.013386454311684583,
+        0.0168987736294031
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.12181227095307945,
+       "ci_MdAPE": [
+        -0.13070019414676595,
+        -0.11324926352839133
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1675374025431689,
+       "ci_crps_log": [
+        -0.17574626862467874,
+        -0.1594921821675843
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.04712100092484206,
+       "ci_MdAPE": [
+        -0.05509599319456098,
+        -0.040923919480460764
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.10563806885796614,
+       "ci_crps_log": [
+        -0.11376839554838851,
+        -0.09743024401583553
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.028679850869257173,
+       "ci_MdAPE": [
+        0.023656206671948767,
+        0.03284249829199459
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.0192379283673332,
+       "ci_crps_log": [
+        0.018147025848746265,
+        0.02030806427054266
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.1318137107638827,
+       "ci_MdAPE": [
+        -0.13925011099817472,
+        -0.12574960731110535
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.18042335594549214,
+       "ci_crps_log": [
+        -0.18795454312480242,
+        -0.1729939140319232
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.02559206179234974,
+       "ci_MdAPE": [
+        -0.034935835854818395,
+        -0.017687902004191392
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.048392393989280455,
+       "ci_crps_log": [
+        -0.05300749104619697,
+        -0.04385914398056315
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "formula_conformal": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.02253485721147397,
+       "ci_MdAPE": [
+        0.018450568794366046,
+        0.026533222870446866
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.022021027259944967,
+       "ci_crps_log": [
+        0.020078473823803473,
+        0.023880794523972432
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.12181227095307945,
+       "ci_MdAPE": [
+        -0.13106846094908486,
+        -0.11313530352985555
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1606614103881926,
+       "ci_crps_log": [
+        -0.16916988828288657,
+        -0.1520606534932889
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.04712100092484206,
+       "ci_MdAPE": [
+        -0.055654727173700305,
+        -0.041302619498255845
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.09876207670298985,
+       "ci_crps_log": [
+        -0.10715349459237354,
+        -0.09109966937118485
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.028679850869257173,
+       "ci_MdAPE": [
+        0.02361860336981958,
+        0.032845181213948874
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.0257606661741517,
+       "ci_crps_log": [
+        0.0245480860001678,
+        0.027090142814468178
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.1318137107638827,
+       "ci_MdAPE": [
+        -0.13881178055961718,
+        -0.125237136709354
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.17390061813867363,
+       "ci_crps_log": [
+        -0.1812831897858796,
+        -0.16586581402057055
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.02559206179234974,
+       "ci_MdAPE": [
+        -0.03471748762864434,
+        -0.017956770402329278
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.04186965618246195,
+       "ci_crps_log": [
+        -0.046204776487762673,
+        -0.037571816142625586
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "phys_anchor": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.14434179679294257,
+       "ci_MdAPE": [
+        0.13405124867059434,
+        0.1548049107893891
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.029396397951907446,
+       "ci_crps_log": [
+        0.027088301680821224,
+        0.03171533837146285
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -5.3313716108505105e-06,
+       "ci_MdAPE": [
+        -9.927299908896181e-06,
+        9.459240077602785e-06
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": -0.15328603969623011,
+       "ci_crps_log": [
+        -0.16085949030715366,
+        -0.14616171454722457
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.07468593865662654,
+       "ci_MdAPE": [
+        0.06105739606925836,
+        0.08624042931686941
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.09138670601102737,
+       "ci_crps_log": [
+        -0.09929095020263115,
+        -0.08377519023405341
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.16049145884778127,
+       "ci_MdAPE": [
+        0.15229407404912168,
+        0.16949737763582506
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.033524348833453906,
+       "ci_crps_log": [
+        0.03200606923193606,
+        0.03498156868295378
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -2.1027853586153e-06,
+       "ci_MdAPE": [
+        -3.2954072055640926e-06,
+        3.5011625105774158e-06
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": -0.16613693547937142,
+       "ci_crps_log": [
+        -0.17244702114539895,
+        -0.15965999412888007
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.10621954618617435,
+       "ci_MdAPE": [
+        0.0944532995641604,
+        0.1178311224808389
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.03410597352315975,
+       "ci_crps_log": [
+        -0.03778125342495205,
+        -0.03035491662845444
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "phys_anchor_conformal": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.14434179679294257,
+       "ci_MdAPE": [
+        0.1341940097605717,
+        0.15468357237751895
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.049341582958390626,
+       "ci_crps_log": [
+        0.04639972443653649,
+        0.0524043186541447
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -5.3313716108505105e-06,
+       "ci_MdAPE": [
+        -8.784940131545405e-06,
+        1.0656708998579845e-05
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": -0.13334085468974693,
+       "ci_crps_log": [
+        -0.142546033411066,
+        -0.12422822849830294
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.07468593865662654,
+       "ci_MdAPE": [
+        0.061100907239415705,
+        0.08588802777357206
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.07144152100454419,
+       "ci_crps_log": [
+        -0.07901500666722776,
+        -0.0644144948694714
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.16049145884778127,
+       "ci_MdAPE": [
+        0.15161124019517785,
+        0.16917544279397662
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.04704805631087138,
+       "ci_crps_log": [
+        0.04548599697821514,
+        0.04858770213752227
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -2.1027853586153e-06,
+       "ci_MdAPE": [
+        -3.2779467064036893e-06,
+        3.5011625105774158e-06
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": -0.15261322800195393,
+       "ci_crps_log": [
+        -0.1598065266921153,
+        -0.14482614824548917
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.10621954618617435,
+       "ci_MdAPE": [
+        0.09394524368380894,
+        0.11773326079535822
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.020582266045742273,
+       "ci_crps_log": [
+        -0.024296379256129083,
+        -0.01694903451735802
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "trace_cnn": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.004822095255693437,
+       "ci_MdAPE": [
+        0.00219259605684097,
+        0.0070911311979596405
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.0012894874551534347,
+       "ci_crps_log": [
+        -0.002532772411774127,
+        -0.00010033667748081759
+       ],
+       "verdict_crps_log": "win"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.13952503290885998,
+       "ci_MdAPE": [
+        -0.15048758750220823,
+        -0.13003324038237055
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.18397192510329102,
+       "ci_crps_log": [
+        -0.19275933104038712,
+        -0.17602426924820208
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.06483376288062259,
+       "ci_MdAPE": [
+        -0.0721994966252069,
+        -0.05945534292821403
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.12207259141808825,
+       "ci_crps_log": [
+        -0.13031771838358924,
+        -0.11391920218952288
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.01303866343493576,
+       "ci_MdAPE": [
+        0.008087012255357406,
+        0.018600517111511308
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.0016824093496978915,
+       "ci_crps_log": [
+        0.00020361238694215476,
+        0.003368738908324266
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.14745489819820412,
+       "ci_MdAPE": [
+        -0.15470686412918183,
+        -0.13969922349599423
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.19797887496312744,
+       "ci_crps_log": [
+        -0.20474283712233865,
+        -0.1913291892665303
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.041233249226671154,
+       "ci_MdAPE": [
+        -0.04976181398958124,
+        -0.032026908857042256
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.06594791300691577,
+       "ci_crps_log": [
+        -0.07028607506846044,
+        -0.061477861378792645
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "trace_cnn_conformal": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.004822095255693437,
+       "ci_MdAPE": [
+        0.0021888171402022786,
+        0.007113140638070391
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.013057239223023168,
+       "ci_crps_log": [
+        0.011450905618176473,
+        0.01465698214897581
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.13952503290885998,
+       "ci_MdAPE": [
+        -0.14945744393086188,
+        -0.1294698059866625
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.16962519842511442,
+       "ci_crps_log": [
+        -0.17804722737303272,
+        -0.1612175725917275
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.06483376288062259,
+       "ci_MdAPE": [
+        -0.07256431352928693,
+        -0.05923109483228708
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.10772586473991165,
+       "ci_crps_log": [
+        -0.11617103487765475,
+        -0.09994962922560895
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.01303866343493576,
+       "ci_MdAPE": [
+        0.008536380134643435,
+        0.018477855352241092
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.012782857364842838,
+       "ci_crps_log": [
+        0.01157013899264693,
+        0.01407645794293697
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.14745489819820412,
+       "ci_MdAPE": [
+        -0.15395709908899133,
+        -0.1394638334707161
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.18687842694798248,
+       "ci_crps_log": [
+        -0.19385036916260007,
+        -0.17940617224901162
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.041233249226671154,
+       "ci_MdAPE": [
+        -0.04979043085176473,
+        -0.03210420532381095
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.05484746499177082,
+       "ci_crps_log": [
+        -0.059301837155667315,
+        -0.05038018063484865
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "trace_gru": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.0010427514031301488,
+       "ci_MdAPE": [
+        -0.001855590513296297,
+        0.0033592690625073077
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": -0.004219099398635177,
+       "ci_crps_log": [
+        -0.005409503588397294,
+        -0.0030431846009172283
+       ],
+       "verdict_crps_log": "win"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.14330437676142327,
+       "ci_MdAPE": [
+        -0.15366194097472827,
+        -0.13338098105986282
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.18690153704677276,
+       "ci_crps_log": [
+        -0.19482371547343544,
+        -0.17889335862705932
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.06861310673318588,
+       "ci_MdAPE": [
+        -0.07611358603880898,
+        -0.0632784198088749
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.12500220336157,
+       "ci_crps_log": [
+        -0.13330249312887557,
+        -0.11696859387384081
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.00562059704161566,
+       "ci_MdAPE": [
+        0.001623913345897579,
+        0.009207129951456068
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.0034100449596108223,
+       "ci_crps_log": [
+        -0.004333183769500313,
+        -0.002454024695290946
+       ],
+       "verdict_crps_log": "win"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.15487296459152422,
+       "ci_MdAPE": [
+        -0.1633255652528464,
+        -0.1474950926512683
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.20307132927243615,
+       "ci_crps_log": [
+        -0.20973502096491553,
+        -0.19649217339664324
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.04865131561999125,
+       "ci_MdAPE": [
+        -0.05691508978596158,
+        -0.0412219354058746
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.07104036731622448,
+       "ci_crps_log": [
+        -0.07567589953186882,
+        -0.06651046699406021
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "trace_gru_conformal": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.0010427514031301488,
+       "ci_MdAPE": [
+        -0.0017524133779828256,
+        0.0034456250605267185
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": 0.01481047669110333,
+       "ci_crps_log": [
+        0.013304086985118252,
+        0.016328951308117394
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.14330437676142327,
+       "ci_MdAPE": [
+        -0.15357643223374173,
+        -0.13312323209802304
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.16787196095703424,
+       "ci_crps_log": [
+        -0.17599459520612498,
+        -0.15951274554183395
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.06861310673318588,
+       "ci_MdAPE": [
+        -0.0758761099429688,
+        -0.0635910498984907
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.10597262727183149,
+       "ci_crps_log": [
+        -0.11424311326883978,
+        -0.0979536201831074
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.00562059704161566,
+       "ci_MdAPE": [
+        0.0015266228659960635,
+        0.008867760958953766
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.015146059480783909,
+       "ci_crps_log": [
+        0.0142195244835831,
+        0.016064648511907195
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.15487296459152422,
+       "ci_MdAPE": [
+        -0.16225227705220344,
+        -0.147144767875546
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1845152248320414,
+       "ci_crps_log": [
+        -0.19175914988180826,
+        -0.17736962531224298
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.04865131561999125,
+       "ci_MdAPE": [
+        -0.057202357406877916,
+        -0.0416849402858148
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.052484262875829746,
+       "ci_crps_log": [
+        -0.056928703511713016,
+        -0.0481896962497421
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "trace_s4d": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.015804825642306897,
+       "ci_MdAPE": [
+        0.011972273024342684,
+        0.019340950711630146
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.0073141065540449635,
+       "ci_crps_log": [
+        0.0060677503394244775,
+        0.00871128806749325
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.12854230252224652,
+       "ci_MdAPE": [
+        -0.1383114799043214,
+        -0.11949712288762053
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1753683310940926,
+       "ci_crps_log": [
+        -0.18302647103695294,
+        -0.16766238391735427
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.05385103249400913,
+       "ci_MdAPE": [
+        -0.0620892639976575,
+        -0.04769466876440421
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.11346899740888985,
+       "ci_crps_log": [
+        -0.12197747803922429,
+        -0.10492547842834657
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.03547411163324987,
+       "ci_MdAPE": [
+        0.030216489724404348,
+        0.041831075426626965
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.013208531602992561,
+       "ci_crps_log": [
+        0.011408853001188391,
+        0.015056178815978937
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.12501944999989,
+       "ci_MdAPE": [
+        -0.1317279892260783,
+        -0.11678352805459294
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.18645275270983275,
+       "ci_crps_log": [
+        -0.1928465988374291,
+        -0.1799487586972286
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.018797801028357042,
+       "ci_MdAPE": [
+        -0.027954587567476617,
+        -0.008778880682449077
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.054421790753621094,
+       "ci_crps_log": [
+        -0.059305490659641844,
+        -0.04925808583926855
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "trace_s4d_conformal": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.015804825642306897,
+       "ci_MdAPE": [
+        0.011657687263144995,
+        0.01937294130191806
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.016191213122194584,
+       "ci_crps_log": [
+        0.01509759288929202,
+        0.017167817002620392
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.12854230252224652,
+       "ci_MdAPE": [
+        -0.13817420958850635,
+        -0.1195847345722357
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.166491224525943,
+       "ci_crps_log": [
+        -0.1740257061272893,
+        -0.15862501953178818
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.05385103249400913,
+       "ci_MdAPE": [
+        -0.06252722396324621,
+        -0.04802465625283359
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.10459189084074023,
+       "ci_crps_log": [
+        -0.11306446875100133,
+        -0.0967666478438049
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.03547411163324987,
+       "ci_MdAPE": [
+        0.03008630560022273,
+        0.04192199966538332
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.01884407399445536,
+       "ci_crps_log": [
+        0.0177051153246574,
+        0.01991977265727554
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.12501944999989,
+       "ci_MdAPE": [
+        -0.13193510035860492,
+        -0.11735397801925042
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.18081721031836995,
+       "ci_crps_log": [
+        -0.18753562480138125,
+        -0.17455851365462485
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.018797801028357042,
+       "ci_MdAPE": [
+        -0.027686249547246796,
+        -0.008725631462161923
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.048786248362158294,
+       "ci_crps_log": [
+        -0.053473515165486415,
+        -0.04421008798312642
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "trace_transformer": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.0025186816486041375,
+       "ci_MdAPE": [
+        -0.00015290763659475679,
+        0.004561281930632129
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": -0.0031884367575827494,
+       "ci_crps_log": [
+        -0.004545172677427656,
+        -0.0018668252980326154
+       ],
+       "verdict_crps_log": "win"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.14182844651594928,
+       "ci_MdAPE": [
+        -0.15248307028107125,
+        -0.13200440624608045
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1858708744057203,
+       "ci_crps_log": [
+        -0.19421720096466819,
+        -0.17712538761723562
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.06713717648771189,
+       "ci_MdAPE": [
+        -0.07510968835517016,
+        -0.061808466065266944
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.12397154072051757,
+       "ci_crps_log": [
+        -0.13247156322005335,
+        -0.11624306909177218
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.005166600563463075,
+       "ci_MdAPE": [
+        0.0014071105331216831,
+        0.008488383852825255
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": -0.0050049238315579,
+       "ci_crps_log": [
+        -0.006102860282145344,
+        -0.0037269199598167525
+       ],
+       "verdict_crps_log": "win"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.1553269610696768,
+       "ci_MdAPE": [
+        -0.163817882795305,
+        -0.14745307380519468
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.20466620814438322,
+       "ci_crps_log": [
+        -0.2123054425101125,
+        -0.19738121770463854
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.04910531209814384,
+       "ci_MdAPE": [
+        -0.0571396064376425,
+        -0.04166549934925296
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.07263524618817155,
+       "ci_crps_log": [
+        -0.07703492382422017,
+        -0.06800020108457992
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    },
+    "trace_transformer_conformal": {
+     "ZTBus_legs": {
+      "enet_v21": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.0025186816486041375,
+       "ci_MdAPE": [
+        -0.00016271219372815946,
+        0.004476077944112328
+       ],
+       "verdict_MdAPE": "tie",
+       "d_crps_log": 0.01341533352851039,
+       "ci_crps_log": [
+        0.011733061837399519,
+        0.014940966787258963
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.14182844651594928,
+       "ci_MdAPE": [
+        -0.151733502344872,
+        -0.13245517049863267
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.1692671041196272,
+       "ci_crps_log": [
+        -0.1774322615395747,
+        -0.16106797229741796
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 5847,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.06713717648771189,
+       "ci_MdAPE": [
+        -0.07521253754293085,
+        -0.06163687035487439
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.10736777043442443,
+       "ci_crps_log": [
+        -0.1153514871461531,
+        -0.09990356419384408
+       ],
+       "verdict_crps_log": "win"
+      }
+     },
+     "ZTBus_missions": {
+      "enet_v21": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": 0.005166600563463075,
+       "ci_MdAPE": [
+        0.0014501193246075268,
+        0.008517093497516783
+       ],
+       "verdict_MdAPE": "loss",
+       "d_crps_log": 0.012707105603695638,
+       "ci_crps_log": [
+        0.01165935453679878,
+        0.013830459931755246
+       ],
+       "verdict_crps_log": "loss"
+      },
+      "ephys": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.1553269610696768,
+       "ci_MdAPE": [
+        -0.16389393097465801,
+        -0.14682517788019858
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.18695417870912967,
+       "ci_crps_log": [
+        -0.19435956667033688,
+        -0.17924524988931254
+       ],
+       "verdict_crps_log": "win"
+      },
+      "dev_median": {
+       "n": 1115,
+       "n_clusters": 1115,
+       "d_MdAPE": -0.04910531209814384,
+       "ci_MdAPE": [
+        -0.05703345329780757,
+        -0.041501819727309465
+       ],
+       "verdict_MdAPE": "win",
+       "d_crps_log": -0.054923216752918017,
+       "ci_crps_log": [
+        -0.059281520240506015,
+        -0.050379469364769516
+       ],
+       "verdict_crps_log": "win"
+      }
+     }
+    }
+   }
+  }
+ },
+ "notes": [
+  "MdAPE = median |pred / y - 1| over units; bias = median (pred / y - 1); cov50 / cov90 = share of units inside q25-q75 / q05-q95; crps_log = 5-quantile CRPS on log energy (point rows: |log error|)",
+  "paired bootstrap over clusters (VED vehicles, ZTBus missions, EPA test vehicles, Mersin trips), 2,000 resamples, against EnergyNet v2.1, E_phys and the set's classical baseline(s); win / loss only when the 95 % interval of the difference excludes 0",
+  "VED predictions are scaled by the valid-energy share of the trip (EnergyNet / RoadData label definition)",
+  "reference rows label / moves_like / class_median / regression / dev_median are fitted on dev only"
+ ],
+ "reproduction_enet_v21": {
+  "_note": "ZTBus_full rows (5,847 legs, 1,115 missions) are out of scope here; ZTBus_legs / ZTBus_missions in the boards are the 78 legs / 8 missions of RoadData v1, a subset with no published v2.1 number"
+ },
+ "reproduction_refs": {},
+ "showcase": {
+  "note": "no showcase: the full-ZTBus supplement holds only ZTBus records"
+ },
+ "supplement": {
+  "supp": "ztbfull",
+  "note": "accepted differences (TabPFN arms only): the platform build of safetensors and pip install metadata in pylib/; TabPFN code, weights, context and predict code identical to registration",
+  "main_exam": "20261123T204251",
+  "ztbus_full": {
+   "climatology|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.15158572484116073,
+     "MAPE": 0.24225317731852955,
+     "bias": 0.08672571895465131,
+     "med_log_err": 0.14950990890947216,
+     "crps_log": 0.14931520615089403,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8156319480075253,
+     "cov90": 0.9811869334701556,
+     "width90_log": 1.5264083245515776
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.13047093298999402,
+     "MAPE": 0.14500873124712338,
+     "bias": 0.09252107959272382,
+     "med_log_err": 0.1257266117656389,
+     "crps_log": 0.11954539948524472,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.9650224215246637,
+     "cov90": 1.0,
+     "width90_log": 1.5264083245515776
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.12636435312763394,
+     "MAPE": 0.13808126561364337,
+     "bias": 0.07261664670624945,
+     "med_log_err": 0.12460850730304004,
+     "crps_log": 0.11851370370522842,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.9704035874439462,
+     "cov90": 1.0,
+     "width90_log": 1.5264083245515776
+    },
+    "n_records_without_prediction": 0
+   },
+   "climatology|trace": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.15158568489622604,
+     "MAPE": 0.2422531765396749,
+     "bias": 0.08672573536194861,
+     "med_log_err": 0.14950989515526433,
+     "crps_log": 0.1493152059365838,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8156319480075253,
+     "cov90": 0.9811869334701556,
+     "width90_log": 1.5264083245515776
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.1304709123194161,
+     "MAPE": 0.14500872657463323,
+     "bias": 0.0925210949373656,
+     "med_log_err": 0.12572653368310557,
+     "crps_log": 0.11954539850407762,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.9650224215246637,
+     "cov90": 1.0,
+     "width90_log": 1.5264083245515776
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.12636435748696073,
+     "MAPE": 0.1380812610926312,
+     "bias": 0.07261663032442245,
+     "med_log_err": 0.12460857110783538,
+     "crps_log": 0.11851370268169283,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.9704035874439462,
+     "cov90": 1.0,
+     "width90_log": 1.5264083245515776
+    },
+    "n_records_without_prediction": 0
+   },
+   "enet_v21|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.07040771189094985,
+     "MAPE": 0.09261915891326127,
+     "bias": 0.0030297709805120476,
+     "med_log_err": 0.07031947681412934,
+     "crps_log": 0.06474073637662073,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.689584402257568,
+     "cov90": 0.961518727552591,
+     "width90_log": 0.5334820658244404
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.052243706137979684,
+     "MAPE": 0.06610560246515679,
+     "bias": -0.0010909408227833817,
+     "med_log_err": 0.05242360159953182,
+     "crps_log": 0.05022595809997656,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7910313901345292,
+     "cov90": 0.9955156950672646,
+     "width90_log": 0.5336064651873942
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.05586520146734131,
+     "MAPE": 0.06856363434530566,
+     "bias": -0.01485844218977772,
+     "med_log_err": 0.05590394631851992,
+     "crps_log": 0.051455979619102206,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7802690582959642,
+     "cov90": 0.9964125560538116,
+     "width90_log": 0.538499443403933
+    },
+    "n_records_without_prediction": 0
+   },
+   "enet_v21_conformal|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.07040771189094985,
+     "MAPE": 0.09261915891326127,
+     "bias": 0.0030297709805120476,
+     "med_log_err": 0.07031947681412934,
+     "crps_log": 0.08025832535439432,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.48110141953138363,
+     "cov90": 0.6242517530357449,
+     "width90_log": 0.3617452963058758
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.052243706137979684,
+     "MAPE": 0.06610560246515679,
+     "bias": -0.0010909408227833817,
+     "med_log_err": 0.05242360159953182,
+     "crps_log": 0.06298904700433107,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.5282511210762332,
+     "cov90": 0.6502242152466368,
+     "width90_log": 0.3681181717742783
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.05586520146734131,
+     "MAPE": 0.06856363434530566,
+     "bias": -0.01485844218977772,
+     "med_log_err": 0.05590394631851992,
+     "crps_log": 0.061502539378278084,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6,
+     "cov90": 0.684304932735426,
+     "width90_log": 0.3719181753712455
+    },
+    "n_records_without_prediction": 0
+   },
+   "formula|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.09294267365065767,
+     "MAPE": 0.1085679421010994,
+     "bias": -0.0688240773560107,
+     "med_log_err": 0.09514577778417249,
+     "crps_log": 0.07988583280948114,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8409440738840431,
+     "cov90": 0.9926458012656063,
+     "width90_log": 0.943899
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.08092180632653223,
+     "MAPE": 0.08752580990434927,
+     "bias": -0.06966589521356581,
+     "med_log_err": 0.08263859520939638,
+     "crps_log": 0.0694638541116854,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.9461883408071748,
+     "cov90": 1.0,
+     "width90_log": 0.943899
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.0814797042050116,
+     "MAPE": 0.08654582686954829,
+     "bias": -0.06459947337485306,
+     "med_log_err": 0.08298280169077747,
+     "crps_log": 0.06965372183851874,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.9417040358744395,
+     "cov90": 1.0,
+     "width90_log": 0.943899
+    },
+    "n_records_without_prediction": 0
+   },
+   "formula|trace": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.09294256910242382,
+     "MAPE": 0.10856794229889917,
+     "bias": -0.06882249845332933,
+     "med_log_err": 0.09514828299946144,
+     "crps_log": 0.0798857714815894,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8409440738840431,
+     "cov90": 0.9926458012656063,
+     "width90_log": 0.943899
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.08092355700723686,
+     "MAPE": 0.08752592459808228,
+     "bias": -0.06966606384583673,
+     "med_log_err": 0.08263699753512929,
+     "crps_log": 0.06946388646730976,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.9461883408071748,
+     "cov90": 1.0,
+     "width90_log": 0.943899
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.08148042661283461,
+     "MAPE": 0.08654593029545996,
+     "bias": -0.06460246395648472,
+     "med_log_err": 0.0829834965148221,
+     "crps_log": 0.069653759051088,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.9417040358744395,
+     "cov90": 1.0,
+     "width90_log": 0.943899
+    },
+    "n_records_without_prediction": 0
+   },
+   "formula_conformal|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.09294267365065767,
+     "MAPE": 0.1085679421010994,
+     "bias": -0.0688240773560107,
+     "med_log_err": 0.09514577778417249,
+     "crps_log": 0.0867617216011547,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7817684282538053,
+     "cov90": 0.9861467419189328,
+     "width90_log": 0.8884520977705561
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.08092180632653223,
+     "MAPE": 0.08752580990434927,
+     "bias": -0.06966589521356581,
+     "med_log_err": 0.08263859520939638,
+     "crps_log": 0.0759865626222546,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8475336322869955,
+     "cov90": 1.0,
+     "width90_log": 0.8884520977705561
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.0814797042050116,
+     "MAPE": 0.08654582686954829,
+     "bias": -0.06459947337485306,
+     "med_log_err": 0.08298280169077747,
+     "crps_log": 0.07704041152003228,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8260089686098655,
+     "cov90": 1.0,
+     "width90_log": 0.8884520977705561
+    },
+    "n_records_without_prediction": 0
+   },
+   "formula_conformal|trace": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.09294256910242382,
+     "MAPE": 0.10856794229889917,
+     "bias": -0.06882249845332933,
+     "med_log_err": 0.09514828299946144,
+     "crps_log": 0.0867617636365657,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7817684282538053,
+     "cov90": 0.9861467419189328,
+     "width90_log": 0.8884513566884431
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.08092355700723686,
+     "MAPE": 0.08752592459808228,
+     "bias": -0.06966606384583673,
+     "med_log_err": 0.08263699753512929,
+     "crps_log": 0.07598662427412826,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8475336322869955,
+     "cov90": 1.0,
+     "width90_log": 0.8884513566884431
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.08148042661283461,
+     "MAPE": 0.08654593029545996,
+     "bias": -0.06460246395648472,
+     "med_log_err": 0.0829834965148221,
+     "crps_log": 0.07704049759169491,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8260089686098655,
+     "cov90": 1.0,
+     "width90_log": 0.8884513566884431
+    },
+    "n_records_without_prediction": 0
+   },
+   "phys_anchor|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.2147547960515721,
+     "MAPE": 0.21364095540274297,
+     "bias": -0.21158271647523952,
+     "med_log_err": 0.24117868515830285,
+     "crps_log": 0.09413715917155176,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.746023601847101,
+     "cov90": 0.991619634000342,
+     "width90_log": 1.034742
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.21273714319138048,
+     "MAPE": 0.21501015797326087,
+     "bias": -0.21273714319138048,
+     "med_log_err": 0.23919308784363685,
+     "crps_log": 0.08375025307028337,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.841255605381166,
+     "cov90": 1.0,
+     "width90_log": 1.0347419999999996
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.22313160799407306,
+     "MAPE": 0.22351075277227342,
+     "bias": -0.22313160799407306,
+     "med_log_err": 0.25248432261859555,
+     "crps_log": 0.086011372671915,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.810762331838565,
+     "cov90": 1.0,
+     "width90_log": 1.0347419999999996
+    },
+    "n_records_without_prediction": 0
+   },
+   "phys_anchor|trace": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.21474950868389242,
+     "MAPE": 0.21364112000038446,
+     "bias": -0.21158047493169452,
+     "med_log_err": 0.24117552516456559,
+     "crps_log": 0.09413713432852817,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.746023601847101,
+     "cov90": 0.991619634000342,
+     "width90_log": 1.034742
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.21273516498576095,
+     "MAPE": 0.21501035036015176,
+     "bias": -0.21273516498576095,
+     "med_log_err": 0.23919057508297878,
+     "crps_log": 0.08375030693343047,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.841255605381166,
+     "cov90": 1.0,
+     "width90_log": 1.0347419999999996
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.22312919902979256,
+     "MAPE": 0.22351095775504082,
+     "bias": -0.22312919902979256,
+     "med_log_err": 0.2524812217580504,
+     "crps_log": 0.08601141397734904,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.810762331838565,
+     "cov90": 1.0,
+     "width90_log": 1.0347419999999996
+    },
+    "n_records_without_prediction": 0
+   },
+   "phys_anchor_conformal|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.2147547960515721,
+     "MAPE": 0.21364095540274297,
+     "bias": -0.21158271647523952,
+     "med_log_err": 0.24117868515830285,
+     "crps_log": 0.11408183567819036,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7102787754403967,
+     "cov90": 0.8524029416794937,
+     "width90_log": 0.9823341912432988
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.21273714319138048,
+     "MAPE": 0.21501015797326087,
+     "bias": -0.21273714319138048,
+     "med_log_err": 0.23919308784363685,
+     "crps_log": 0.09727368076730276,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7847533632286996,
+     "cov90": 0.9363228699551569,
+     "width90_log": 0.9823341912432983
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.22313160799407306,
+     "MAPE": 0.22351075277227342,
+     "bias": -0.22313160799407306,
+     "med_log_err": 0.25248432261859555,
+     "crps_log": 0.0979668494091145,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8026905829596412,
+     "cov90": 0.9399103139013453,
+     "width90_log": 0.9823341912432983
+    },
+    "n_records_without_prediction": 0
+   },
+   "phys_anchor_conformal|trace": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.21474950868389242,
+     "MAPE": 0.21364112000038446,
+     "bias": -0.21158047493169452,
+     "med_log_err": 0.24117552516456559,
+     "crps_log": 0.11408231933501135,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7102787754403967,
+     "cov90": 0.8524029416794937,
+     "width90_log": 0.9823326722598633
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.21273516498576095,
+     "MAPE": 0.21501035036015176,
+     "bias": -0.21273516498576095,
+     "med_log_err": 0.23919057508297878,
+     "crps_log": 0.09727401441084794,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7847533632286996,
+     "cov90": 0.9363228699551569,
+     "width90_log": 0.9823326722598633
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.22312919902979256,
+     "MAPE": 0.22351095775504082,
+     "bias": -0.22312919902979256,
+     "med_log_err": 0.2524812217580504,
+     "crps_log": 0.097967139288632,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8026905829596412,
+     "cov90": 0.9399103139013453,
+     "width90_log": 0.9823326722598633
+    },
+    "n_records_without_prediction": 0
+   },
+   "tab_gbm|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.0825271008563091,
+     "MAPE": 0.10318604709921426,
+     "bias": -0.010304882088044587,
+     "med_log_err": 0.08268764260007831,
+     "crps_log": 0.0698690833556452,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6880451513596716,
+     "cov90": 0.9803317940824354,
+     "width90_log": 0.6214703765998726
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.059945283883452105,
+     "MAPE": 0.0703225227052657,
+     "bias": -0.036221602309226,
+     "med_log_err": 0.06082299721349003,
+     "crps_log": 0.0564096086531858,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7910313901345292,
+     "cov90": 0.9982062780269059,
+     "width90_log": 0.6061070235487405
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.06614449664857691,
+     "MAPE": 0.07647391180760262,
+     "bias": -0.0508215865365812,
+     "med_log_err": 0.06799156494711538,
+     "crps_log": 0.05813502890364458,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7560538116591928,
+     "cov90": 0.9964125560538116,
+     "width90_log": 0.6142455467954164
+    },
+    "n_records_without_prediction": 0
+   },
+   "tab_gbm_conformal|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.0825271008563091,
+     "MAPE": 0.10318604709921426,
+     "bias": -0.010304882088044587,
+     "med_log_err": 0.08268764260007831,
+     "crps_log": 0.07862654145956006,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7299469813579613,
+     "cov90": 0.9707542329399692,
+     "width90_log": 0.7307111710662664
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.059945283883452105,
+     "MAPE": 0.0703225227052657,
+     "bias": -0.036221602309226,
+     "med_log_err": 0.06082299721349003,
+     "crps_log": 0.06418585916455416,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.842152466367713,
+     "cov90": 0.9964125560538116,
+     "width90_log": 0.7153478180151343
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.06614449664857691,
+     "MAPE": 0.07647391180760262,
+     "bias": -0.0508215865365812,
+     "med_log_err": 0.06799156494711538,
+     "crps_log": 0.06482208303433346,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8573991031390135,
+     "cov90": 0.9973094170403587,
+     "width90_log": 0.7234863412618102
+    },
+    "n_records_without_prediction": 0
+   },
+   "tab_gp|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.09522273475696252,
+     "MAPE": 0.12715339032862136,
+     "bias": 0.04825201763820064,
+     "med_log_err": 0.09447717120094208,
+     "crps_log": 0.079705618616252,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7075423293996922,
+     "cov90": 0.978450487429451,
+     "width90_log": 0.7140344026571963
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.06837450900421915,
+     "MAPE": 0.07886832168004441,
+     "bias": -0.003754960208591007,
+     "med_log_err": 0.06823534987257955,
+     "crps_log": 0.06283216758525784,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8807174887892377,
+     "cov90": 1.0,
+     "width90_log": 0.7295285343063895
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.06507466035642184,
+     "MAPE": 0.07771228261347397,
+     "bias": -0.0197080878510002,
+     "med_log_err": 0.0656237363537277,
+     "crps_log": 0.06308469694366878,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8798206278026905,
+     "cov90": 1.0,
+     "width90_log": 0.7351602979282639
+    },
+    "n_records_without_prediction": 0
+   },
+   "tab_gp_conformal|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.09522273475696252,
+     "MAPE": 0.12715339032862136,
+     "bias": 0.04825201763820064,
+     "med_log_err": 0.09447717120094208,
+     "crps_log": 0.09266020314844964,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.5929536514451855,
+     "cov90": 0.8164870873952454,
+     "width90_log": 0.6015306957860345
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.06837450900421915,
+     "MAPE": 0.07886832168004441,
+     "bias": -0.003754960208591007,
+     "med_log_err": 0.06823534987257955,
+     "crps_log": 0.06545148326384448,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8080717488789237,
+     "cov90": 0.9668161434977578,
+     "width90_log": 0.6170248274352277
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.06507466035642184,
+     "MAPE": 0.07771228261347397,
+     "bias": -0.0197080878510002,
+     "med_log_err": 0.0656237363537277,
+     "crps_log": 0.06471116311255512,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.841255605381166,
+     "cov90": 0.9748878923766816,
+     "width90_log": 0.622656591057102
+    },
+    "n_records_without_prediction": 0
+   },
+   "tab_mlp|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.07231354152656566,
+     "MAPE": 0.09584280393653002,
+     "bias": 0.002532864194263018,
+     "med_log_err": 0.0723152632081305,
+     "crps_log": 0.062378366147965644,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6659825551564905,
+     "cov90": 0.9647682572259278,
+     "width90_log": 0.5129104167429439
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.05738830618243784,
+     "MAPE": 0.06921252446685927,
+     "bias": -0.015232439260889241,
+     "med_log_err": 0.05801175792245258,
+     "crps_log": 0.049677050184414484,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7488789237668162,
+     "cov90": 0.9856502242152466,
+     "width90_log": 0.496298071384615
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.0609935633814902,
+     "MAPE": 0.07203196457777568,
+     "bias": -0.029570153643662223,
+     "med_log_err": 0.06175775873705362,
+     "crps_log": 0.05123224398373885,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.736322869955157,
+     "cov90": 0.9838565022421525,
+     "width90_log": 0.5022819658204112
+    },
+    "n_records_without_prediction": 0
+   },
+   "tab_mlp_conformal|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.07231354152656566,
+     "MAPE": 0.09584280393653002,
+     "bias": 0.002532864194263018,
+     "med_log_err": 0.0723152632081305,
+     "crps_log": 0.0777124410746429,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8151188643748931,
+     "cov90": 0.9772532922866427,
+     "width90_log": 0.6922794009955515
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.05738830618243784,
+     "MAPE": 0.06921252446685927,
+     "bias": -0.015232439260889241,
+     "med_log_err": 0.05801175792245258,
+     "crps_log": 0.06559522918947122,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.9237668161434978,
+     "cov90": 1.0,
+     "width90_log": 0.6756670556372235
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.0609935633814902,
+     "MAPE": 0.07203196457777568,
+     "bias": -0.029570153643662223,
+     "med_log_err": 0.06175775873705362,
+     "crps_log": 0.06652107400433865,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.9363228699551569,
+     "cov90": 1.0,
+     "width90_log": 0.6816509500730188
+    },
+    "n_records_without_prediction": 0
+   },
+   "tab_tabpfn|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.09300997246339748,
+     "MAPE": 0.12855985439929096,
+     "bias": 0.0283008944075529,
+     "med_log_err": 0.09324059817069862,
+     "crps_log": 0.07940627917331233,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6748760047887806,
+     "cov90": 0.9823841286129639,
+     "width90_log": 0.6644322789753847
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.08198328426692436,
+     "MAPE": 0.09758742979333328,
+     "bias": 0.04259515417973603,
+     "med_log_err": 0.08178611280819313,
+     "crps_log": 0.06648823346776289,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7569506726457399,
+     "cov90": 1.0,
+     "width90_log": 0.721053807723802
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.08377464407589486,
+     "MAPE": 0.09873591929155394,
+     "bias": 0.03292715341866859,
+     "med_log_err": 0.08324818603723569,
+     "crps_log": 0.06769169566194039,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.757847533632287,
+     "cov90": 1.0,
+     "width90_log": 0.7339026872241599
+    },
+    "n_records_without_prediction": 0
+   },
+   "tab_tabpfn_conformal|table": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.09300997246339748,
+     "MAPE": 0.12855985439929096,
+     "bias": 0.0283008944075529,
+     "med_log_err": 0.09324059817069862,
+     "crps_log": 0.0946912557169961,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6215153069950402,
+     "cov90": 0.9016589704121771,
+     "width90_log": 0.7895684032100059
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.08198328426692436,
+     "MAPE": 0.09758742979333328,
+     "bias": 0.04259515417973603,
+     "med_log_err": 0.08178611280819313,
+     "crps_log": 0.08084695235035369,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6358744394618834,
+     "cov90": 0.967713004484305,
+     "width90_log": 0.8461899319584223
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.08377464407589486,
+     "MAPE": 0.09873591929155394,
+     "bias": 0.03292715341866859,
+     "med_log_err": 0.08324818603723569,
+     "crps_log": 0.08110552193608553,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6717488789237668,
+     "cov90": 0.9757847533632287,
+     "width90_log": 0.859038811458781
+    },
+    "n_records_without_prediction": 0
+   },
+   "trace_cnn|trace": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.07522980714664329,
+     "MAPE": 0.09716683375091965,
+     "bias": -0.01612597888639622,
+     "med_log_err": 0.0760055960283302,
+     "crps_log": 0.0634512489214673,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6408414571575167,
+     "cov90": 0.9589533093894305,
+     "width90_log": 0.48222557141115185
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.06528236957291544,
+     "MAPE": 0.0778483819033684,
+     "bias": -0.04765079022187624,
+     "med_log_err": 0.06650053007892082,
+     "crps_log": 0.051908367449674454,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6869955156950672,
+     "cov90": 0.9838565022421525,
+     "width90_log": 0.44576055939162895
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.06804340817241794,
+     "MAPE": 0.08006331860470653,
+     "bias": -0.0529543086248675,
+     "med_log_err": 0.06949476554482564,
+     "crps_log": 0.05311115788007266,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6708520179372197,
+     "cov90": 0.9847533632286996,
+     "width90_log": 0.4566025772044764
+    },
+    "n_records_without_prediction": 0
+   },
+   "trace_cnn_conformal|trace": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.07522980714664329,
+     "MAPE": 0.09716683375091965,
+     "bias": -0.01612597888639622,
+     "med_log_err": 0.0760055960283302,
+     "crps_log": 0.0777979755996439,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7438002394390285,
+     "cov90": 0.9167094236360527,
+     "width90_log": 0.6870674209390604
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.06528236957291544,
+     "MAPE": 0.0778483819033684,
+     "bias": -0.04765079022187624,
+     "med_log_err": 0.06650053007892082,
+     "crps_log": 0.0630088154648194,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.884304932735426,
+     "cov90": 0.9811659192825112,
+     "width90_log": 0.6506024089195366
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.06804340817241794,
+     "MAPE": 0.08006331860470653,
+     "bias": -0.0529543086248675,
+     "med_log_err": 0.06949476554482564,
+     "crps_log": 0.06384204346073934,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8923766816143498,
+     "cov90": 0.9856502242152466,
+     "width90_log": 0.6614444267323849
+    },
+    "n_records_without_prediction": 0
+   },
+   "trace_gru|trace": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.07145046329408,
+     "MAPE": 0.09359518390822692,
+     "bias": -0.015249476352631408,
+     "med_log_err": 0.07196059942635152,
+     "crps_log": 0.06052163697798555,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6599965794424492,
+     "cov90": 0.9635710620831196,
+     "width90_log": 0.470942906107493
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.057864303179595344,
+     "MAPE": 0.06743498018957263,
+     "bias": -0.027688197983893215,
+     "med_log_err": 0.05810875180935956,
+     "crps_log": 0.04681591314036574,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7013452914798206,
+     "cov90": 0.989237668161435,
+     "width90_log": 0.4362773998493701
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.062444231033276676,
+     "MAPE": 0.07191782206590108,
+     "bias": -0.04067115870210336,
+     "med_log_err": 0.06310676244450641,
+     "crps_log": 0.049143695857236304,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6860986547085202,
+     "cov90": 0.9901345291479821,
+     "width90_log": 0.45154658619502896
+    },
+    "n_records_without_prediction": 0
+   },
+   "trace_gru_conformal|trace": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.07145046329408,
+     "MAPE": 0.09359518390822692,
+     "bias": -0.015249476352631408,
+     "med_log_err": 0.07196059942635152,
+     "crps_log": 0.07955121306772406,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7867282367025825,
+     "cov90": 0.9606635881648709,
+     "width90_log": 0.7238804938257202
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.057864303179595344,
+     "MAPE": 0.06743498018957263,
+     "bias": -0.027688197983893215,
+     "med_log_err": 0.05810875180935956,
+     "crps_log": 0.06537201758076047,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8708520179372198,
+     "cov90": 0.9928251121076234,
+     "width90_log": 0.6892149875675972
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.062444231033276676,
+     "MAPE": 0.07191782206590108,
+     "bias": -0.04067115870210336,
+     "med_log_err": 0.06310676244450641,
+     "crps_log": 0.06685433217979615,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8878923766816144,
+     "cov90": 0.9946188340807175,
+     "width90_log": 0.7044841739132561
+    },
+    "n_records_without_prediction": 0
+   },
+   "trace_s4d|trace": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.08621253753325675,
+     "MAPE": 0.10622340198291247,
+     "bias": -0.06074842241343026,
+     "med_log_err": 0.08785302779504531,
+     "crps_log": 0.07205484293066569,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.608175132546605,
+     "cov90": 0.9358645459209851,
+     "width90_log": 0.492604648578034
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.08771781777122956,
+     "MAPE": 0.09780079885394138,
+     "bias": -0.08555005923710146,
+     "med_log_err": 0.09171614397321504,
+     "crps_log": 0.06343448970296912,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.5641255605381166,
+     "cov90": 0.9354260089686098,
+     "width90_log": 0.4483119535944011
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.09690979756544993,
+     "MAPE": 0.10426889204433047,
+     "bias": -0.09412439862593058,
+     "med_log_err": 0.1017310929049865,
+     "crps_log": 0.06643294883163538,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.5336322869955157,
+     "cov90": 0.9345291479820628,
+     "width90_log": 0.4562290907869384
+    },
+    "n_records_without_prediction": 0
+   },
+   "trace_s4d_conformal|trace": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.08621253753325675,
+     "MAPE": 0.10622340198291247,
+     "bias": -0.06074842241343026,
+     "med_log_err": 0.08785302779504531,
+     "crps_log": 0.08093194949881531,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8096459722934838,
+     "cov90": 0.9692149820420729,
+     "width90_log": 0.7345707249531452
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.08771781777122956,
+     "MAPE": 0.09780079885394138,
+     "bias": -0.08555005923710146,
+     "med_log_err": 0.09171614397321504,
+     "crps_log": 0.06907003209443192,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.9210762331838565,
+     "cov90": 0.9937219730941704,
+     "width90_log": 0.6902780299695133
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.09690979756544993,
+     "MAPE": 0.10426889204433047,
+     "bias": -0.09412439862593058,
+     "med_log_err": 0.1017310929049865,
+     "crps_log": 0.07073951655551967,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.9282511210762332,
+     "cov90": 0.9955156950672646,
+     "width90_log": 0.6981951671620505
+    },
+    "n_records_without_prediction": 0
+   },
+   "trace_transformer|trace": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.07292639353955399,
+     "MAPE": 0.09654610803236863,
+     "bias": 0.011640269275319914,
+     "med_log_err": 0.07238554166888385,
+     "crps_log": 0.06155229961903798,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.5654181631605951,
+     "cov90": 0.9201299811869335,
+     "width90_log": 0.4081669604553335
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.05741030670144276,
+     "MAPE": 0.06778134665325283,
+     "bias": -0.004957922577014995,
+     "med_log_err": 0.057997892052841366,
+     "crps_log": 0.04522103426841866,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6322869955156951,
+     "cov90": 0.9721973094170404,
+     "width90_log": 0.3815977823919381
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.05891014253264504,
+     "MAPE": 0.06890368760063902,
+     "bias": -0.014179558928284486,
+     "med_log_err": 0.059063983629346735,
+     "crps_log": 0.04609991857015871,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.6260089686098654,
+     "cov90": 0.9766816143497757,
+     "width90_log": 0.3950270492876298
+    },
+    "n_records_without_prediction": 0
+   },
+   "trace_transformer_conformal|trace": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.07292639353955399,
+     "MAPE": 0.09654610803236863,
+     "bias": 0.011640269275319914,
+     "med_log_err": 0.07238554166888385,
+     "crps_log": 0.07815606990513112,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.7694544210706346,
+     "cov90": 0.9173935351462288,
+     "width90_log": 0.6546118267738539
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.05741030670144276,
+     "MAPE": 0.06778134665325283,
+     "bias": -0.004957922577014995,
+     "med_log_err": 0.057997892052841366,
+     "crps_log": 0.0629330637036722,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8556053811659193,
+     "cov90": 0.9739910313901345,
+     "width90_log": 0.6280426487104567
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.05891014253264504,
+     "MAPE": 0.06890368760063902,
+     "bias": -0.014179558928284486,
+     "med_log_err": 0.059063983629346735,
+     "crps_log": 0.06357219586024215,
+     "point": false,
+     "n_clusters": 1115,
+     "cov50": 0.8645739910313901,
+     "cov90": 0.979372197309417,
+     "width90_log": 0.6414719156061492
+    },
+    "n_records_without_prediction": 0
+   },
+   "dev_median|ref": {
+    "legs": {
+     "n": 5847,
+     "MdAPE": 0.14006357002726588,
+     "MAPE": 0.21600779303544243,
+     "bias": 0.02403044144662081,
+     "med_log_err": 0.14107919251416007,
+     "crps_log": 0.18552384033955555,
+     "point": true,
+     "n_clusters": 1115
+    },
+    "missions_legsum": {
+     "n": 1115,
+     "MdAPE": 0.1065156187995866,
+     "MAPE": 0.11951089007618075,
+     "bias": 0.02949136706115385,
+     "med_log_err": 0.10614746143285793,
+     "crps_log": 0.11785628045659022,
+     "point": true,
+     "n_clusters": 1115
+    },
+    "missions_energynet": {
+     "n": 1115,
+     "MdAPE": 0.10655644690485955,
+     "MAPE": 0.11896932040992857,
+     "bias": 0.010831986908135915,
+     "med_log_err": 0.1056930611726453,
+     "crps_log": 0.11955951571379703,
+     "point": true,
+     "n_clusters": 1115
+    },
+    "n_records_without_prediction": 1173
+   }
+  }
+ }
+}
