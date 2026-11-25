@@ -95,3 +95,20 @@ Exam 2 has NOT been run and must not be run by an agent: the owner runs `exam2.p
   |volume bias| rho 0.57 (0.33..0.74); per member 1 - NSE rho 0.24 (trees) and others in
   results/disagreement_e2_members.json. For E1's members the same test gave 0.29 (0.02..0.50): the signal is weak
   and its sign is stable, but it does not clear the pre-registered bar for the round-2 entries.
+- 01:25 E2 (ens_e2): dev 0.454 (KGE 0.431, FHV -30.1, cov50/90 0.60 / 0.97, CRPS/Q 0.363); sim val on b2 0.446.
+  Best member seq_lstm_b2 0.4386: gate passes; +0.015 > 0.01, so by the pre-registered rule ensembling helps on dev
+  (paired bootstrap vs that member a tie, -0.013..+0.037). E2 vs E1 on dev +0.009 (tie). By class E2 / E1: snow
+  0.58 / 0.53, arid 0.08 / 0.20, humid 0.60 / 0.59, regulated 0.33 / 0.29, large 0.08 / 0.35. Registered ens_e2
+  (a559dcd2...) and ens_e2_conformal (f4536857...). **E2's best dev member for the exam comparison: seq_lstm_b2.**
+- 01:27 `exam2.py --check`: CHECK PASSED, 12 round-2 arms (registry smoke estimates sum to 623 CPU-min, inflated
+  by 4-6 concurrent jobs during registration; round 1's measured times suggest ~4 h in one process, ~1 h with
+  `--jobs 6`). PREREG amendment A2 added. Full dev rehearsal running (`--jobs 5`).
+- 01:37 **Dev rehearsal done** (`results/rehearsal2_20261125T012614.json`; 22 workers, 0 failures, 6 min with
+  `--jobs 5`): every round-2 arm and every v1.0 row re-scored on dev reproduces the numbers above (e.g. ens_e2
+  0.454, ens_e1 0.445, seq_lstm_b2 0.439, tab_gbm_b2 0.430; v1.0 rows identical to round 1). Dev paired NSE of
+  each b2 arm vs its v1.0 arm: trees +0.009, LSTM -0.002, TCN +0.013, S4D -0.003 (all ties); CRPS/Q -0.002 to
+  -0.026 (sharper or equal). The exam has ~15x the dev basin-years: expect ~1.5 h with `--jobs 5`.
+  E1 on b2's frozen val: 0.401 (on p1's 0.435).
+- **STOPPED here as instructed. Exam 2 has not been run.** The owner runs, once:
+  `cd experiments/bakeoff-river/round2; python exam2.py --check; python exam2.py --run --jobs 5`.
+  Needs the water data tree (shared/water/data) but no bank.

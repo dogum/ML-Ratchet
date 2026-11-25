@@ -175,3 +175,9 @@ append an amendment before its results.
 attribute > 0 and no reservoir; b2a raises the runs with reservoirs from 16.6 % to 19.9 %.
 (2) The single-thread LSTM recipe takes about 24 minutes per run on this machine with 5 jobs in parallel, so the
 12 control runs and the 4 family retrains fit the budget; no scaling down.
+
+**A2 (2026-11-25 01:30, before the exam; no exam data has been read).** Additions, no change to any pass mark.
+(1) Exam comparisons: E2 is also compared with its best dev member, `seq_lstm_b2` (dev 0.4386), as E1 is with
+`seq_lstm`; each round-2 conformal wrapper is compared with its v1.0 counterpart's wrapper where one exists.
+(2) `exam2.py --jobs N` scores N arms in parallel processes (each arm still in its own process, hashed before and
+after); it changes run time only. (3) Conformal wrappers were made for all six new arms (section 5 allowed it).
