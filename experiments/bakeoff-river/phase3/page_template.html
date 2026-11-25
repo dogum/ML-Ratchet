@@ -1,0 +1,615 @@
+<title>River Bake-off</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a gauge-station field sheet. One wide column; the hydrograph bench is the hero; tables scroll inside their own frames. */
+:root {
+  --paper: #f3f6f6; --panel: #ffffff; --ink: #10201f; --ink-2: #3c4f4f; --ink-3: #667a7a; --rule: #d3dddd; --wash: #e6eeee;
+  --accent: #0d6470; --accent-ink: #ffffff; --rain: #8fb4c4; --obs: #10201f;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #6250d6; --s8: #e34948;
+  --ref: #7d8b8b; --win: #0b7a3b; --loss: #c23b3b; --tie: #667a7a;
+  --q1: #e7eff9; --q2: #b7d3f6; --q3: #6da7ec; --q4: #2a78d6; --q5: #184f95;
+  --f-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Source Sans 3", "Segoe UI", Helvetica, Arial, sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0e1617; --panel: #152022; --ink: #e6efee; --ink-2: #b6c6c5; --ink-3: #8a9d9c; --rule: #2a3a3b; --wash: #1b2a2c;
+  --accent: #4fb3bf; --accent-ink: #0e1617; --rain: #3f6a7c; --obs: #f2f7f6;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767;
+  --ref: #93a3a2; --win: #3ccf7a; --loss: #ee7a7a; --tie: #8a9d9c;
+  --q1: #17283a; --q2: #184f95; --q3: #256abf; --q4: #3987e5; --q5: #86b6ef; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #0e1617; --panel: #152022; --ink: #e6efee; --ink-2: #b6c6c5; --ink-3: #8a9d9c; --rule: #2a3a3b; --wash: #1b2a2c;
+  --accent: #4fb3bf; --accent-ink: #0e1617; --rain: #3f6a7c; --obs: #f2f7f6;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767;
+  --ref: #93a3a2; --win: #3ccf7a; --loss: #ee7a7a; --tie: #8a9d9c;
+  --q1: #17283a; --q2: #184f95; --q3: #256abf; --q4: #3987e5; --q5: #86b6ef; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--paper); color: var(--ink); font: 400 16px/1.55 var(--f-body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--f-display); font-stretch: 80%; text-wrap: balance; margin: 0; letter-spacing: 0.005em; }
+h2 { font-size: clamp(1.6rem, 3.4vw, 2.2rem); font-weight: 750; line-height: 1.1 }
+h3 { font-size: 1.15rem; font-weight: 700; line-height: 1.2 }
+p { margin: 0 }
+a { color: var(--accent) }
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.kicker { font: 500 0.72rem/1.2 var(--f-data); text-transform: uppercase; letter-spacing: 0.09em; color: var(--ink-3) }
+.num { font-family: var(--f-data); font-variant-numeric: tabular-nums }
+.lede { max-width: 66ch; color: var(--ink-2); font-size: 1.06rem }
+section.sec { padding-block: 56px 8px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px }
+section.sec > * { min-width: 0 }
+.controls > .ctl { max-width: 100% }
+#sel-basin { width: 100%; max-width: 30rem }
+section.sec > header { display: grid; gap: 8px; max-width: 72ch }
+
+/* hero */
+.hero { background: var(--ink); color: var(--paper); margin-top: calc(-1 * env(safe-area-inset-top, 0px)); padding-top: calc(env(safe-area-inset-top, 0px) + 40px); padding-bottom: 36px }
+.hero .wrap { display: grid; gap: 18px }
+.hero h1 { font-size: clamp(2.8rem, 9vw, 6.2rem); font-weight: 800; font-stretch: 75%; line-height: 0.92; letter-spacing: -0.01em }
+.hero .kicker { color: color-mix(in srgb, var(--paper) 70%, transparent) }
+.hero p.thesis { max-width: 62ch; font-size: 1.15rem; color: color-mix(in srgb, var(--paper) 88%, transparent) }
+.hero .facts { display: flex; flex-wrap: wrap; gap: 8px 22px; font: 500 0.82rem/1.3 var(--f-data); color: color-mix(in srgb, var(--paper) 75%, transparent) }
+.hero .facts b { color: var(--paper); font-weight: 500 }
+.verdicts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px }
+.verdicts div { border-top: 2px solid color-mix(in srgb, var(--paper) 35%, transparent); padding-top: 10px; display: grid; gap: 4px; min-width: 0 }
+.verdicts b { font: 700 1.05rem/1.2 var(--f-display); font-stretch: 85% }
+.verdicts span { font-size: 0.95rem; color: color-mix(in srgb, var(--paper) 82%, transparent) }
+
+/* controls */
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end }
+.ctl { display: grid; gap: 4px; min-width: 0 }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--panel) }
+.seg button { font: 500 0.85rem/1 var(--f-body); padding: 8px 12px; border: 0; background: transparent; color: var(--ink-2); cursor: pointer; border-right: 1px solid var(--rule) }
+.seg button:last-child { border-right: 0 }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink) }
+select { font: 500 0.92rem/1.2 var(--f-body); padding: 7px 10px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); color: var(--ink); max-width: 100% }
+.chips { display: flex; flex-wrap: wrap; gap: 6px }
+.chip { display: inline-flex; align-items: center; gap: 7px; font: 500 0.84rem/1 var(--f-body); padding: 6px 10px 6px 8px; border: 1px solid var(--rule); border-radius: 999px; background: var(--panel); color: var(--ink-2); cursor: pointer }
+.chip[aria-pressed="false"] { opacity: 0.55; background: transparent }
+.chip[aria-pressed="false"] .sw { background: transparent !important }
+.sw { width: 14px; height: 4px; border-radius: 2px; display: inline-block; border: 1.5px solid currentColor; flex: none }
+.chk { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; color: var(--ink-2); cursor: pointer }
+
+/* bench (showcase) */
+.bench { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 16px; display: grid; gap: 14px; min-width: 0 }
+.bench-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; align-items: baseline }
+.bench-head h3 { font-size: 1.35rem }
+.bench-head .meta { font: 0.8rem/1.4 var(--f-data); color: var(--ink-3) }
+.chart { position: relative; width: 100%; min-width: 0 }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible }
+.axis text, .lab { font: 11px var(--f-data); fill: var(--ink-3) }
+.grid line { stroke: var(--rule); stroke-width: 1 }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; font: 12px/1.45 var(--f-data); color: var(--ink); box-shadow: 0 4px 14px rgba(0,0,0,0.12); min-width: 180px; z-index: 3 }
+.tip .d { color: var(--ink-3); margin-bottom: 3px }
+.tip .r { display: flex; justify-content: space-between; gap: 14px }
+.tip .r i { display: inline-block; width: 10px; height: 3px; margin-right: 6px; vertical-align: middle; border-radius: 1px }
+.storm-score { overflow-x: auto }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem }
+th { font: 500 0.7rem/1.2 var(--f-data); text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-3); text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap }
+td { padding: 7px 10px; border-bottom: 1px solid var(--rule); vertical-align: middle }
+td.n, th.n { text-align: right; font-family: var(--f-data); font-variant-numeric: tabular-nums; white-space: nowrap }
+tr.ref td { color: var(--ink-2) }
+tr.ref td:first-child { font-style: italic }
+tr.sep td { border-bottom: 2px solid var(--ink-3); padding: 0 }
+.tframe { overflow-x: auto; background: var(--panel); border: 1px solid var(--rule); border-radius: 8px }
+.pill { display: inline-block; font: 500 0.7rem/1 var(--f-data); letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 7px; border-radius: 4px; border: 1px solid currentColor; white-space: nowrap }
+.pill.win { color: var(--win) } .pill.loss { color: var(--loss) } .pill.tie { color: var(--tie) }
+.fam-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; vertical-align: 1px }
+.note { font-size: 0.88rem; color: var(--ink-3); max-width: 80ch }
+
+/* wins map */
+.wmap td.c { text-align: center; font: 500 0.85rem var(--f-data); font-variant-numeric: tabular-nums; min-width: 62px; position: relative }
+.wmap td.c.best { outline: 2.5px solid var(--ink); outline-offset: -4px; font-weight: 700 }
+.wmap td.c.tied::after { content: ""; position: absolute; top: 5px; right: 6px; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.8 }
+.legend-row { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 0.85rem; color: var(--ink-2) }
+.ramp { display: inline-flex; border-radius: 3px; overflow: hidden; vertical-align: middle }
+.ramp i { width: 22px; height: 10px; display: block }
+.wins-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px }
+@media (max-width: 760px) { .wins-cards { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+@media (max-width: 420px) { .wins-cards { grid-template-columns: minmax(0, 1fr) } }
+.wins-cards div { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 12px; display: grid; gap: 4px; min-width: 0 }
+.wins-cards b { font: 700 1rem/1.2 var(--f-display); font-stretch: 85% }
+.wins-cards span { font-size: 0.85rem; color: var(--ink-2) }
+
+/* families */
+.fams { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px }
+@media (max-width: 680px) { .fams { grid-template-columns: minmax(0, 1fr) } }
+.fam { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 16px; display: grid; gap: 10px; align-content: start; min-width: 0; border-top: 4px solid var(--c) }
+.fam .top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline }
+.fam .grp { font: 500 0.7rem/1.2 var(--f-data); text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3) }
+.fam p { font-size: 0.95rem; color: var(--ink-2) }
+.fam p b { color: var(--ink); font-weight: 600 }
+.fam .score { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 0.8rem/1.3 var(--f-data); color: var(--ink-3) }
+.fam .score b { color: var(--ink); font-weight: 500 }
+.fam a.more { font-size: 0.88rem; font-weight: 600; text-decoration: none }
+.fam a.more:hover { text-decoration: underline }
+
+/* findings */
+.finds { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px }
+.find { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; display: grid; gap: 6px; min-width: 0 }
+.find .big { font: 700 1.6rem/1 var(--f-display); font-stretch: 80%; color: var(--accent) }
+.find p { color: var(--ink-2); font-size: 0.95rem }
+.cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px }
+.cols2 ul { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; color: var(--ink-2) }
+.cols2 h3 { margin-bottom: 8px }
+footer { padding-block: 48px 40px; color: var(--ink-3); font-size: 0.85rem; display: grid; gap: 6px }
+@media (max-width: 560px) {
+  .bench { padding: 12px }
+  td, th { padding: 6px 7px }
+  .hero { padding-bottom: 28px }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+</style>
+
+<div class="hero">
+  <div class="wrap">
+    <p class="kicker">ML Ratchet · experiment · daily streamflow · run <span id="rid"></span></p>
+    <h1>River Bake-off</h1>
+    <p class="thesis" id="thesis"></p>
+    <div class="facts" id="facts"></div>
+    <div class="verdicts" id="verdicts"></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="sec" id="showcase">
+    <header>
+      <p class="kicker">Watch them work</p>
+      <h2>Ten exam basins, thirty storms</h2>
+      <p class="lede">Basins and storms were drawn by seed and class from the forcing alone, before any result existed. Every line is the learner's saved exam prediction. Bars at the top are the day's basin rainfall from ERA5-Land, the same weather the learners read.</p>
+    </header>
+    <div class="controls">
+      <div class="ctl"><span class="kicker">Basin</span><select id="sel-basin" aria-label="Basin"></select></div>
+      <div class="ctl"><span class="kicker">Storm</span><div class="seg" id="seg-storm" role="group" aria-label="Storm"></div></div>
+      <div class="ctl"><span class="kicker">Protocol</span><div class="seg" id="seg-mode" role="group" aria-label="Protocol"></div></div>
+    </div>
+    <div class="bench">
+      <div class="bench-head"><h3 id="b-title"></h3><span class="meta" id="b-meta"></span></div>
+      <div class="ctl"><span class="kicker">Learners (tap to show or hide)</span><div class="chips" id="chips"></div></div>
+      <div class="controls">
+        <div class="ctl"><span class="kicker">Bands for</span><select id="sel-band" aria-label="Show uncertainty bands for"></select></div>
+        <label class="chk"><input type="checkbox" id="cb-conf"> Conformal bands (recalibrated on dev)</label>
+        <label class="chk"><input type="checkbox" id="cb-log"> Log scale</label>
+      </div>
+      <div class="chart" id="hydro"></div>
+      <div class="storm-score" id="storm-score"></div>
+      <p class="note" id="b-note"></p>
+    </div>
+  </section>
+
+  <section class="sec" id="boards">
+    <header>
+      <p class="kicker">The exam, run once</p>
+      <h2>Leaderboards</h2>
+      <p class="lede" id="boards-lede"></p>
+    </header>
+    <div class="controls">
+      <div class="ctl"><span class="kicker">Exam period</span><div class="seg" id="seg-per" role="group" aria-label="Exam period"></div></div>
+      <div class="ctl"><span class="kicker">Board</span><div class="seg" id="seg-board" role="group" aria-label="Board"></div></div>
+    </div>
+    <div class="tframe"><table id="t-board"></table></div>
+    <p class="note" id="board-note"></p>
+    <h3>Error bars: raw against conformal</h3>
+    <div class="tframe"><table id="t-unc"></table></div>
+    <p class="note">Coverage is the mean over basins of the share of observed days inside the band (nominal 0.50 and 0.90). CRPS is divided by the basin's mean observed flow; lower is better. The conformal layer keeps each arm's mean and moves only the band edges, one shift per basin class, fitted on the 52 dev basins.</p>
+  </section>
+
+  <section class="sec" id="wins">
+    <header>
+      <p class="kicker">By basin class</p>
+      <h2>Where each assumption wins</h2>
+      <p class="lede">Median NSE by FlowCast's basin classes (a basin can sit in several). The ringed cell is the best learner in that column. A dot marks learners the paired bootstrap cannot separate from it. Reference rows are below the line.</p>
+    </header>
+    <div class="controls">
+      <div class="ctl"><span class="kicker">Exam period</span><div class="seg" id="seg-wper" role="group" aria-label="Exam period"></div></div>
+      <div class="ctl"><span class="kicker">Board</span><div class="seg" id="seg-wboard" role="group" aria-label="Board"></div></div>
+    </div>
+    <div class="wins-cards" id="wins-cards"></div>
+    <div class="tframe"><table class="wmap" id="t-wins"></table></div>
+    <div class="legend-row"><span>Median NSE</span><span class="ramp" id="ramp"></span><span id="ramp-lab" class="num"></span><span>◯ best learner</span><span>• tied with best (95 % CI covers 0)</span></div>
+  </section>
+
+  <section class="sec" id="families">
+    <header>
+      <p class="kicker">One card per family</p>
+      <h2>The built-in assumptions, and what happened to them</h2>
+      <p class="lede">Each learner family assumes something about rivers before it sees any data. Same bank, same inputs, same budget: only that assumption differs. Each card links to the family on the ML Ratchet Model families page.</p>
+    </header>
+    <div class="fams" id="fams"></div>
+  </section>
+
+  <section class="sec" id="compute">
+    <header>
+      <p class="kicker">Cost</p>
+      <h2>Compute against skill</h2>
+      <p class="lede">Single-thread CPU on a shared 2-core machine. Training counts every rung and pilot of the arm. Exam time is predict time per basin-period. The y axis is median exam NSE (ungauged board).</p>
+    </header>
+    <div class="controls">
+      <div class="ctl"><span class="kicker">x axis</span><div class="seg" id="seg-cx" role="group" aria-label="x axis"></div></div>
+      <div class="ctl"><span class="kicker">Exam period</span><div class="seg" id="seg-cper" role="group" aria-label="Exam period"></div></div>
+    </div>
+    <div class="bench"><div class="chart" id="cmp"></div></div>
+    <div class="tframe"><table id="t-cmp"></table></div>
+  </section>
+
+  <section class="sec" id="findings">
+    <header>
+      <p class="kicker">Before the exam</p>
+      <h2>What the arm agents found on simulations and dev</h2>
+      <p class="lede">These came out of the ratchet ladders, before anyone opened the exam. They are about how each assumption trains, not how it scores.</p>
+    </header>
+    <div class="finds" id="finds"></div>
+  </section>
+
+  <section class="sec" id="reading">
+    <header>
+      <p class="kicker">Reading the result</p>
+      <h2>What this shows, what it doesn't</h2>
+    </header>
+    <div class="cols2">
+      <div><h3>Shows</h3><ul id="shows"></ul></div>
+      <div><h3>Does not show</h3><ul id="doesnt"></ul></div>
+    </div>
+    <div class="cols2">
+      <div><h3>Limits</h3><ul id="limits"></ul></div>
+      <div><h3>Next rungs</h3><ul id="next"></ul></div>
+    </div>
+  </section>
+</main>
+<footer class="wrap" id="foot"></footer>
+
+<script>
+const DATA = /*__DATA__*/null;
+const $ = (s, r = document) => r.querySelector(s);
+const el = (t, a = {}, ...kids) => { const e = document.createElement(t); for (const [k, v] of Object.entries(a)) { if (k === 'class') e.className = v; else if (k === 'html') e.innerHTML = v; else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v); } for (const k of kids) if (k != null) e.append(k); return e; };
+const SVGNS = 'http://www.w3.org/2000/svg';
+const sv = (t, a = {}) => { const e = document.createElementNS(SVGNS, t); for (const [k, v] of Object.entries(a)) e.setAttribute(k, v); return e; };
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const f = (x, p = 3) => (x == null || !isFinite(x)) ? '–' : (+x).toFixed(p);
+const sgn = (x, p = 3) => (x == null || !isFinite(x)) ? '–' : ((x >= 0 ? '+' : '−') + Math.abs(x).toFixed(p));
+const A = DATA.arms;
+const store = { get(k, d) { try { const v = localStorage.getItem('rbo-' + k); return v == null ? d : JSON.parse(v); } catch { return d; } }, set(k, v) { try { localStorage.setItem('rbo-' + k, JSON.stringify(v)); } catch {} } };
+
+function seg(host, items, cur, on) {
+  host.innerHTML = '';
+  for (const [v, lab] of items) {
+    const b = el('button', { type: 'button', 'aria-pressed': String(v === cur) }, lab);
+    b.addEventListener('click', () => { for (const x of host.children) x.setAttribute('aria-pressed', 'false'); b.setAttribute('aria-pressed', 'true'); on(v); });
+    host.append(b);
+  }
+}
+const pill = (v) => v ? el('span', { class: 'pill ' + v }, v) : '';
+const famDot = (id) => el('span', { class: 'fam-dot', style: `background:var(${(A[id] || {}).color || '--ref'})` });
+
+/* ---------------- hero ---------------- */
+$('#rid').textContent = DATA.run_id;
+$('#thesis').textContent = DATA.text.thesis;
+for (const [k, v] of DATA.text.facts) $('#facts').append(el('span', {}, el('b', {}, k), ' ' + v));
+for (const [k, v] of DATA.text.verdicts) $('#verdicts').append(el('div', {}, el('b', {}, k), el('span', {}, v)));
+
+/* ---------------- showcase ---------------- */
+const SB = DATA.show.basins;
+const UNG = ['flowcast_v1', 'seq_lstm', 'seq_ssm', 'seq_tcn', 'seq_transformer', 'tab_gbm', 'tab_gp', 'tab_dpl', 'tab_formula'];
+const REFS = ['udev', 'nwm', 'gr4j'];
+let S = { b: store.get('b', 0), s: 0, mode: 'ung', on: store.get('on', ['flowcast_v1', 'tab_gbm', 'tab_dpl', 'udev']), band: store.get('band', 'flowcast_v1'), conf: false, log: false,
+          gon: ['enkf_watersim', 'flowcast_v1', 'persistence'], gband: 'enkf_watersim' };
+if (!(S.b >= 0 && S.b < SB.length)) S.b = 0;
+const selB = $('#sel-basin');
+SB.forEach((b, i) => selB.append(el('option', { value: i }, `${b.name} (${b.drawn_for})`)));
+selB.value = S.b;
+selB.addEventListener('change', () => { S.b = +selB.value; S.s = 0; store.set('b', S.b); drawStormSeg(); drawBench(); });
+function drawStormSeg() {
+  const B = SB[S.b];
+  seg($('#seg-storm'), B.storms.map((s, i) => [i, `${s.period === 'main' ? '' : ''}${fmtDate(s.peak_p_day, true)}`]), S.s, (v) => { S.s = v; drawBench(); });
+}
+seg($('#seg-mode'), [['ung', 'Ungauged'], ['L1', 'Gauged 1 d'], ['L3', 'Gauged 3 d'], ['L7', 'Gauged 7 d']], S.mode, (v) => { S.mode = v; drawBench(); });
+$('#cb-conf').addEventListener('change', (e) => { S.conf = e.target.checked; drawBench(); });
+$('#cb-log').addEventListener('change', (e) => { S.log = e.target.checked; drawBench(); });
+$('#sel-band').addEventListener('change', (e) => { if (S.mode === 'ung') { S.band = e.target.value; store.set('band', S.band); } else S.gband = e.target.value; drawBench(); });
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function fmtDate(s, yr) { const [y, m, d] = s.split('-').map(Number); return `${d} ${MON[m - 1]}${yr ? ' ' + y : ''}`; }
+function addDays(s, n) { const d = new Date(s + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+
+function series() {   // visible series for the current mode: [{id, label, color, dash, m (array), band [q05,q25,q75,q95] | null}]
+  const st = SB[S.b].storms[S.s];
+  const out = [];
+  if (S.mode === 'ung') {
+    for (const id of UNG.concat(REFS)) {
+      if (!S.on.includes(id)) continue;
+      if (UNG.includes(id)) { const x = st.ung[id]; if (!x) continue; out.push({ id, m: x[0], band: id === S.band ? (S.conf && st.cf[id] ? st.cf[id] : x.slice(1)) : null }); }
+      else { const x = st.ref[id]; if (!x) continue; out.push({ id, m: x, band: null }); }
+    }
+  } else {
+    const g = st.g[S.mode] || {};
+    for (const id of ['enkf_watersim', 'flowcast_v1', 'persistence']) {
+      if (!S.gon.includes(id) || !g[id]) continue;
+      if (id === 'persistence') { out.push({ id, m: g[id], band: null }); continue; }
+      out.push({ id: id === 'flowcast_v1' ? 'flowcast_now' : id, m: g[id][0], band: id === S.gband ? (S.conf && g[id + '_cf'] ? g[id + '_cf'] : g[id].slice(1)) : null });
+    }
+  }
+  return out;
+}
+
+function drawChips() {
+  const host = $('#chips'); host.innerHTML = '';
+  const ids = S.mode === 'ung' ? UNG.concat(REFS) : ['enkf_watersim', 'flowcast_now', 'persistence'];
+  for (const id of ids) {
+    const key = id === 'flowcast_now' ? 'flowcast_v1' : id;
+    const onList = S.mode === 'ung' ? S.on : S.gon;
+    const a = A[id];
+    const c = el('button', { type: 'button', class: 'chip', 'aria-pressed': String(onList.includes(key)), style: `color:var(${a.color})` },
+      el('span', { class: 'sw', style: `background:var(${a.color});${a.dash ? 'border-style:dashed;background:transparent' : ''}` }), el('span', { style: 'color:var(--ink-2)' }, a.short));
+    c.addEventListener('click', () => { const i = onList.indexOf(key); if (i >= 0) onList.splice(i, 1); else onList.push(key); if (S.mode === 'ung') store.set('on', S.on); drawBench(); });
+    host.append(c);
+  }
+  const sb = $('#sel-band'); sb.innerHTML = '';
+  const bands = S.mode === 'ung' ? UNG : ['enkf_watersim', 'flowcast_v1'];
+  sb.append(el('option', { value: '' }, 'none'));
+  for (const id of bands) sb.append(el('option', { value: id }, A[S.mode !== 'ung' && id === 'flowcast_v1' ? 'flowcast_now' : id].short));
+  sb.value = S.mode === 'ung' ? S.band : S.gband;
+}
+
+function drawBench() {
+  const B = SB[S.b];
+  if (S.s >= B.storms.length) S.s = 0;
+  const st = B.storms[S.s];
+  $('#b-title').textContent = `${B.name}`;
+  $('#b-meta').textContent = `USGS ${B.id} · ${B.area_km2.toLocaleString('en-US')} km² · classes: ${B.classes.join(', ')} · ${st.period === 'main' ? 'main exam WY1990–99 (Caravan Q)' : 'recent exam WY2016–23 (NWIS Q)'} · 3-day rain ${st.p3_mm} mm`;
+  drawChips();
+  const ser = series();
+  hydrograph($('#hydro'), st, ser);
+  stormScore(st, ser);
+  const g = S.mode !== 'ung';
+  $('#b-note').textContent = g
+    ? `Gauged: each line may use observed flow only up to ${S.mode.slice(1)} day(s) before the day it predicts, plus the known weather. Persistence repeats that last observed value.`
+    : 'Ungauged: forcing and basin attributes only. No learner has ever seen a flow record from this river.';
+}
+
+function hydrograph(host, st, ser) {
+  host.innerHTML = '';
+  const W = Math.max(320, host.clientWidth || 900), small = W < 560;
+  const H = small ? 330 : 400, ml = small ? 40 : 52, mr = 12, mt = 8, rainH = small ? 54 : 70, gap = 10, mb = 26;
+  const n = st.P.length, x0 = ml, x1 = W - mr, y0 = mt + rainH + gap, y1 = H - mb;
+  const X = (i) => x0 + (x1 - x0) * (i / (n - 1));
+  const vals = [];
+  (st.obs || []).forEach((v) => v != null && vals.push(v));
+  ser.forEach((s) => s.m.forEach((v) => v != null && vals.push(v)));
+  const core = Math.max(0.05, ...vals);
+  ser.forEach((s) => s.band && s.band[3].forEach((v) => v != null && vals.push(Math.min(v, core * 1.8))));
+  let ymax = Math.max(0.05, ...vals) * 1.06;
+  const pos = vals.filter((v) => v > 0);
+  let ymin = S.log ? Math.max(1e-3, Math.min(...pos) * 0.8) : 0;
+  const Y = S.log ? (v) => y1 - (y1 - y0) * (Math.log10(Math.max(v, ymin)) - Math.log10(ymin)) / (Math.log10(ymax) - Math.log10(ymin)) : (v) => y1 - (y1 - y0) * (v / ymax);
+  const svg = sv('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Hydrograph: observed flow and each visible learner over the storm window' });
+  // rain
+  const pmax = Math.max(5, ...st.P.filter((v) => v != null));
+  const bw = Math.max(2, (x1 - x0) / n - 2);
+  const gR = sv('g');
+  st.P.forEach((p, i) => { if (!p) return; const h = rainH * p / pmax; gR.append(sv('rect', { x: X(i) - bw / 2, y: mt, width: bw, height: h, fill: css('--rain'), rx: 1 })); });
+  svg.append(gR);
+  const rl = sv('text', { x: x0 - 6, y: mt + 10, 'text-anchor': 'end', class: 'lab' }); rl.textContent = 'P'; svg.append(rl);
+  const rl2 = sv('text', { x: x1, y: mt + 10, 'text-anchor': 'end', class: 'lab' }); rl2.textContent = `max ${Math.round(pmax)} mm/d`; svg.append(rl2);
+  // grid + y ticks
+  const gG = sv('g', { class: 'grid' }), gA = sv('g', { class: 'axis' });
+  let ticks = [];
+  if (S.log) { for (let e = Math.floor(Math.log10(ymin)); e <= Math.ceil(Math.log10(ymax)); e++) { const v = 10 ** e; if (v >= ymin && v <= ymax) ticks.push(v); } }
+  else { const step = niceStep(ymax / 4); for (let v = 0; v <= ymax + 1e-9; v += step) ticks.push(v); }
+  for (const v of ticks) {
+    gG.append(sv('line', { x1: x0, x2: x1, y1: Y(v), y2: Y(v) }));
+    const t = sv('text', { x: x0 - 6, y: Y(v) + 4, 'text-anchor': 'end' }); t.textContent = fmtTick(v); gA.append(t);
+  }
+  const yl = sv('text', { x: x0 - 6, y: y0 - 2, 'text-anchor': 'end' }); yl.textContent = 'mm/d'; gA.append(yl);
+  for (let i = 0; i < n; i += small ? 10 : 5) {
+    const t = sv('text', { x: X(i), y: H - 8, 'text-anchor': 'middle' }); t.textContent = fmtDate(addDays(st.start, i)); gA.append(t);
+    gG.append(sv('line', { x1: X(i), x2: X(i), y1: y1, y2: y1 + 4 }));
+  }
+  svg.append(gG, gA);
+  // bands
+  for (const s of ser) if (s.band) {
+    const col = css(A[s.id].color);
+    svg.append(area(s.band[0], s.band[3], X, Y, col, 0.14));
+    svg.append(area(s.band[1], s.band[2], X, Y, col, 0.26));
+  }
+  // lines
+  for (const s of ser) {
+    const a = A[s.id];
+    svg.append(sv('path', { d: line(s.m, X, Y), fill: 'none', stroke: css(a.color), 'stroke-width': a.kind === 'ref' ? 1.6 : 2, 'stroke-dasharray': a.dash || '', 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
+  }
+  // observed
+  if (st.obs) {
+    svg.append(sv('path', { d: line(st.obs, X, Y), fill: 'none', stroke: css('--obs'), 'stroke-width': 2.6, 'stroke-linejoin': 'round' }));
+    st.obs.forEach((v, i) => { if (v != null) svg.append(sv('circle', { cx: X(i), cy: Y(v), r: small ? 1.8 : 2.4, fill: css('--obs') })); });
+  }
+  // peak rain marker
+  const ip = Math.round((new Date(st.peak_p_day) - new Date(st.start)) / 864e5);
+  svg.append(sv('line', { x1: X(ip), x2: X(ip), y1: y0, y2: y1, stroke: css('--rain'), 'stroke-width': 1, 'stroke-dasharray': '2 3' }));
+  // hover
+  const cross = sv('line', { y1: mt, y2: y1, stroke: css('--ink-3'), 'stroke-width': 1, visibility: 'hidden' });
+  svg.append(cross);
+  const hit = sv('rect', { x: x0, y: mt, width: x1 - x0, height: y1 - mt, fill: 'transparent' });
+  svg.append(hit);
+  host.append(svg);
+  const tip = el('div', { class: 'tip', hidden: '' }); host.append(tip);
+  const move = (ev) => {
+    const r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width;
+    const i = Math.max(0, Math.min(n - 1, Math.round((px - x0) / (x1 - x0) * (n - 1))));
+    cross.setAttribute('x1', X(i)); cross.setAttribute('x2', X(i)); cross.setAttribute('visibility', 'visible');
+    const rows = [`<div class="d">${fmtDate(addDays(st.start, i), true)} · rain ${f(st.P[i], 1)} mm</div>`, `<div class="r"><span><i style="background:${css('--obs')}"></i>Observed</span><b>${f(st.obs && st.obs[i], 2)}</b></div>`];
+    for (const s of ser) rows.push(`<div class="r"><span><i style="background:${css(A[s.id].color)}"></i>${A[s.id].short}</span><span>${f(s.m[i], 2)}${s.band ? ` <small>[${f(s.band[0][i], 2)}–${f(s.band[3][i], 2)}]</small>` : ''}</span></div>`);
+    tip.innerHTML = rows.join('');
+    tip.hidden = false;
+    const tx = (X(i) / W) * r.width, tw = tip.offsetWidth;
+    tip.style.left = Math.max(0, Math.min(r.width - tw, tx + 14 > r.width - tw ? tx - tw - 14 : tx + 14)) + 'px';
+    tip.style.top = ((y0 / H) * r.height) + 'px';
+  };
+  hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
+  hit.addEventListener('pointerleave', () => { tip.hidden = true; cross.setAttribute('visibility', 'hidden'); });
+}
+function niceStep(x) { const e = 10 ** Math.floor(Math.log10(x)); const m = x / e; return (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * e; }
+function fmtTick(v) { return v >= 10 ? v.toFixed(0) : v >= 1 ? (+v.toFixed(1)).toString() : (+v.toPrecision(2)).toString(); }
+function line(a, X, Y) { let d = '', pen = false; a.forEach((v, i) => { if (v == null) { pen = false; return; } d += (pen ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1); pen = true; }); return d; }
+function area(lo, hi, X, Y, col, op) {
+  let d = '', segs = [], cur = [];
+  lo.forEach((v, i) => { if (v == null || hi[i] == null) { if (cur.length) segs.push(cur); cur = []; } else cur.push(i); });
+  if (cur.length) segs.push(cur);
+  for (const sg of segs) { d += 'M' + sg.map((i) => `${X(i).toFixed(1)} ${Y(hi[i]).toFixed(1)}`).join('L') + 'L' + sg.slice().reverse().map((i) => `${X(i).toFixed(1)} ${Y(lo[i]).toFixed(1)}`).join('L') + 'Z'; }
+  return sv('path', { d, fill: col, 'fill-opacity': op, stroke: 'none' });
+}
+function stormScore(st, ser) {
+  const host = $('#storm-score'); host.innerHTML = '';
+  if (!st.obs || !ser.length) return;
+  const ok = st.obs.map((v) => v != null);
+  const opk = Math.max(...st.obs.filter((v) => v != null));
+  const ipk = st.obs.indexOf(opk);
+  const t = el('table');
+  t.append(el('tr', {}, el('th', {}, 'In this 41-day window'), el('th', { class: 'n' }, 'Peak, mm/d'), el('th', { class: 'n' }, 'Peak / observed'), el('th', { class: 'n' }, 'Peak day shift'), el('th', { class: 'n' }, 'Days in shown 90 % band')));
+  t.append(el('tr', {}, el('td', {}, 'Observed'), el('td', { class: 'n' }, f(opk, 2)), el('td', { class: 'n' }, '1.00'), el('td', { class: 'n' }, '0'), el('td', { class: 'n' }, '')));
+  for (const s of ser) {
+    const vals = s.m.map((v, i) => (ok[i] && v != null) ? v : -1);
+    const pk = Math.max(...vals), ip = vals.indexOf(pk);
+    let cov = '';
+    if (s.band) { let k = 0, m = 0; st.obs.forEach((v, i) => { if (v == null || s.band[0][i] == null) return; m++; if (v >= s.band[0][i] && v <= s.band[3][i]) k++; }); cov = `${k} / ${m}`; }
+    t.append(el('tr', {}, el('td', {}, famDot(s.id), A[s.id].short), el('td', { class: 'n' }, f(pk, 2)), el('td', { class: 'n' }, f(pk / opk, 2)), el('td', { class: 'n' }, (ip - ipk > 0 ? '+' : '') + (ip - ipk) + ' d'), el('td', { class: 'n' }, cov)));
+  }
+  host.append(t);
+}
+drawStormSeg(); drawBench();
+let rsz; addEventListener('resize', () => { clearTimeout(rsz); rsz = setTimeout(() => { drawBench(); drawCmp(); }, 120); });
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { drawBench(); drawCmp(); drawWins(); });
+new MutationObserver(() => { drawBench(); drawCmp(); drawWins(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+/* ---------------- leaderboards ---------------- */
+$('#boards-lede').textContent = DATA.text.boards_lede;
+let LB = { per: 'main', board: 'ungauged' };
+const BOARDS = [['ungauged', 'Ungauged'], ['gauged_L1', 'Gauged 1 d'], ['gauged_L3', 'Gauged 3 d'], ['gauged_L7', 'Gauged 7 d']];
+seg($('#seg-per'), [['main', 'Main WY1990–99'], ['recent', 'Recent WY2016–23']], LB.per, (v) => { LB.per = v; drawBoard(); });
+seg($('#seg-board'), BOARDS, LB.board, (v) => { LB.board = v; drawBoard(); });
+function ciCell(d) {
+  if (!d || d.diff == null) return el('td', { class: 'n' }, '');
+  const W = 120, H = 18, lo = -0.3, hi = 0.3, X = (v) => Math.max(1, Math.min(W - 1, (v - lo) / (hi - lo) * W));
+  const s = sv('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img', 'aria-label': `difference ${sgn(d.diff)} (95 % CI ${sgn(d.lo)} to ${sgn(d.hi)})` });
+  s.append(sv('line', { x1: X(0), x2: X(0), y1: 1, y2: H - 1, stroke: css('--ink-3'), 'stroke-width': 1 }));
+  const col = css(d.verdict === 'win' ? '--win' : d.verdict === 'loss' ? '--loss' : '--tie');
+  s.append(sv('line', { x1: X(d.lo), x2: X(d.hi), y1: H / 2, y2: H / 2, stroke: col, 'stroke-width': 2.2, 'stroke-linecap': 'round' }));
+  s.append(sv('circle', { cx: X(d.diff), cy: H / 2, r: 3.6, fill: col, stroke: css('--panel'), 'stroke-width': 1.5 }));
+  return el('td', { class: 'n' }, el('span', { style: 'display:inline-flex;gap:8px;align-items:center' }, s, el('span', {}, sgn(d.diff)), pill(d.verdict)));
+}
+function drawBoard() {
+  const key = `${LB.per}/${LB.board}`, rows = DATA.boards[key] || [];
+  const t = $('#t-board'); t.innerHTML = '';
+  t.append(el('tr', {}, el('th', {}, 'Row'), el('th', { class: 'n' }, 'Basins'), el('th', { class: 'n' }, 'NSE'), el('th', { class: 'n' }, 'KGE'), el('th', { class: 'n' }, '|FHV| %'), el('th', { class: 'n' }, 'CRPS / Q'), el('th', {}, 'NSE minus FlowCast v1.0 (95 % CI; axis ±0.3)')));
+  const arms = rows.filter((r) => r.kind === 'arm' && !r.conformal).sort((a, b) => b.nse - a.nse);
+  const refs = rows.filter((r) => r.kind !== 'arm').sort((a, b) => b.nse - a.nse);
+  const put = (r, cls) => t.append(el('tr', { class: cls }, el('td', {}, famDot(r.id), r.label), el('td', { class: 'n' }, r.n), el('td', { class: 'n' }, el('b', {}, f(r.nse))), el('td', { class: 'n' }, f(r.kge)), el('td', { class: 'n' }, f(r.fhv_abs, 1)), el('td', { class: 'n' }, f(r.crps_rel)), r.id === 'flowcast_v1' ? el('td', { class: 'n' }, 'the anchor') : ciCell(r.d)));
+  arms.forEach((r) => put(r, ''));
+  t.append(el('tr', { class: 'sep' }, el('td', { colspan: 7 })));
+  refs.forEach((r) => put(r, 'ref'));
+  $('#board-note').textContent = (DATA.text.board_notes[LB.board] || '') + ' ' + (DATA.text.per_notes[LB.per] || '');
+  // uncertainty table
+  const u = $('#t-unc'); u.innerHTML = '';
+  u.append(el('tr', {}, el('th', {}, 'Arm'), el('th', { class: 'n' }, 'cov50 raw → conformal'), el('th', { class: 'n' }, 'cov90 raw → conformal'), el('th', { class: 'n' }, 'CRPS / Q raw → conformal'), el('th', { class: 'n' }, '90 % band width / Q raw → conformal')));
+  for (const r of arms) {
+    const c = rows.find((x) => x.id === r.id + '_conformal');
+    if (!c) continue;
+    u.append(el('tr', {}, el('td', {}, famDot(r.id), r.label), el('td', { class: 'n' }, `${f(r.cov50_mean, 2)} → ${f(c.cov50_mean, 2)}`), el('td', { class: 'n' }, `${f(r.cov90_mean, 2)} → ${f(c.cov90_mean, 2)}`), el('td', { class: 'n' }, `${f(r.crps_rel)} → ${f(c.crps_rel)}`), el('td', { class: 'n' }, `${f(r.width90_rel, 2)} → ${f(c.width90_rel, 2)}`)));
+  }
+}
+drawBoard();
+
+/* ---------------- wins map ---------------- */
+let WB = { per: 'main', board: 'ungauged' };
+seg($('#seg-wper'), [['main', 'Main'], ['recent', 'Recent']], WB.per, (v) => { WB.per = v; drawWins(); });
+seg($('#seg-wboard'), BOARDS, WB.board, (v) => { WB.board = v; drawWins(); });
+const CLS = ['all', 'snow', 'arid', 'humid', 'regulated', 'large'];
+function qcol(v, lo, hi) { const t = Math.max(0, Math.min(0.999, (v - lo) / (hi - lo))); return ['--q1', '--q2', '--q3', '--q4', '--q5'][Math.floor(t * 5)]; }
+function drawWins() {
+  const key = `${WB.per}/${WB.board}`, W = DATA.wins[key], CT = DATA.classtab[key];
+  if (!W) return;
+  const cards = $('#wins-cards'); cards.innerHTML = '';
+  for (const c of CLS) {
+    const w = W[c];
+    const tied = w.tied_with_best.length;
+    cards.append(el('div', {}, el('span', { class: 'kicker' }, `${c} · ${w.n} basins`), el('b', {}, A[w.best_nse].short + ' ' + f(w.best_nse_value)),
+      el('span', {}, tied ? `tied with ${w.tied_with_best.map((k) => A[k].short).join(', ')}` : 'clear of every other learner'),
+      w.best_ref ? el('span', {}, `best reference: ${A[w.best_ref].short} ${f(w.best_ref_value)} (${w.best_vs_best_ref.verdict === 'win' ? 'learner wins' : w.best_vs_best_ref.verdict === 'loss' ? 'reference wins' : 'tie'})`) : null));
+  }
+  const learners = Object.keys(W.all.nse), refs = Object.keys(W.all.ref_nse || {});
+  const all = learners.concat(refs).flatMap((k) => CLS.map((c) => (CT[k] || {})[c])).filter((v) => v != null);
+  const lo = Math.min(...all), hi = Math.max(...all);
+  const t = $('#t-wins'); t.innerHTML = '';
+  t.append(el('tr', {}, el('th', {}, 'Row'), ...CLS.map((c) => el('th', { class: 'n', style: 'text-align:center' }, `${c} (${W[c].n})`))));
+  const row = (k, isRef) => {
+    const tr = el('tr', { class: isRef ? 'ref' : '' }, el('td', {}, famDot(k), A[k].short));
+    for (const c of CLS) {
+      const v = (CT[k] || {})[c];
+      const q = v == null ? null : qcol(v, lo, hi);
+      const dark = q === '--q4' || q === '--q5';
+      const cls = ['c']; if (!isRef && W[c].best_nse === k) cls.push('best'); if (!isRef && W[c].tied_with_best.includes(k)) cls.push('tied');
+      tr.append(el('td', { class: cls.join(' '), style: q ? `background:var(${q});color:var(${dark ? '--paper' : '--ink'})` : '' , title: `${A[k].short}, ${c}: ${f(v)}` }, f(v)));
+    }
+    t.append(tr);
+  };
+  learners.sort((a, b) => (CT[b].all ?? -9) - (CT[a].all ?? -9)).forEach((k) => row(k, false));
+  t.append(el('tr', { class: 'sep' }, el('td', { colspan: 7 })));
+  refs.forEach((k) => row(k, true));
+  const r = $('#ramp'); r.innerHTML = ''; ['--q1', '--q2', '--q3', '--q4', '--q5'].forEach((q) => r.append(el('i', { style: `background:var(${q})` })));
+  $('#ramp-lab').textContent = `${f(lo, 2)} … ${f(hi, 2)}`;
+}
+drawWins();
+
+/* ---------------- families ---------------- */
+for (const c of DATA.families) {
+  const sc = el('div', { class: 'score' });
+  for (const [k, v] of c.score) sc.append(el('span', {}, k + ' ', el('b', {}, v)));
+  $('#fams').append(el('article', { class: 'fam', style: `--c:var(${c.color})` },
+    el('div', { class: 'top' }, el('h3', {}, c.name), el('span', { class: 'grp' }, c.arm)),
+    el('p', { html: `<b>Assumes:</b> ${c.assume}` }), el('p', { html: `<b>Here:</b> ${c.here}` }), sc,
+    el('a', { class: 'more', href: c.link, target: '_blank', rel: 'noopener' }, `${c.famname} on the Model families page →`)));
+}
+
+/* ---------------- compute ---------------- */
+let CX = { x: 'train', per: 'main' };
+seg($('#seg-cx'), [['train', 'Training CPU-hours'], ['exam', 'Exam CPU-s per basin-period']], CX.x, (v) => { CX.x = v; drawCmp(); });
+seg($('#seg-cper'), [['main', 'Main'], ['recent', 'Recent']], CX.per, (v) => { CX.per = v; drawCmp(); });
+function drawCmp() {
+  const host = $('#cmp'); host.innerHTML = '';
+  const pts = DATA.compute.filter((p) => p.ung).map((p) => ({ ...p, x: CX.x === 'train' ? p.train_h : p.exam_s_per_unit, y: p['nse_' + CX.per] })).filter((p) => p.x > 0 && p.y != null);
+  const W = Math.max(320, host.clientWidth || 900), small = W < 560, H = small ? 300 : 340, ml = 48, mr = small ? 12 : 24, mt = 14, mb = 40;
+  const xs = pts.map((p) => p.x), ys = pts.map((p) => p.y);
+  const lx0 = Math.floor(Math.log10(Math.min(...xs)) * 2) / 2, lx1 = Math.ceil(Math.log10(Math.max(...xs)) * 2) / 2;
+  const y0v = Math.floor(Math.min(...ys) * 50) / 50 - 0.01, y1v = Math.ceil(Math.max(...ys) * 50) / 50 + 0.01;
+  const X = (v) => ml + (W - ml - mr) * (Math.log10(v) - lx0) / (lx1 - lx0), Y = (v) => H - mb - (H - mb - mt) * (v - y0v) / (y1v - y0v);
+  const svg = sv('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Scatter of compute against median exam NSE, one point per ungauged learner' });
+  const gG = sv('g', { class: 'grid' }), gA = sv('g', { class: 'axis' });
+  for (let e = Math.ceil(lx0); e <= lx1; e++) for (const m of [1, 2, 5]) { const v = m * 10 ** e; if (Math.log10(v) < lx0 || Math.log10(v) > lx1) continue; gG.append(sv('line', { x1: X(v), x2: X(v), y1: mt, y2: H - mb })); const t = sv('text', { x: X(v), y: H - mb + 16, 'text-anchor': 'middle' }); t.textContent = v >= 1 ? v : v.toString(); gA.append(t); }
+  const step = (y1v - y0v) > 0.12 ? 0.05 : 0.02;
+  for (let v = Math.ceil(y0v / step) * step; v <= y1v; v += step) { gG.append(sv('line', { x1: ml, x2: W - mr, y1: Y(v), y2: Y(v) })); const t = sv('text', { x: ml - 6, y: Y(v) + 4, 'text-anchor': 'end' }); t.textContent = v.toFixed(2); gA.append(t); }
+  const xl = sv('text', { x: (ml + W - mr) / 2, y: H - 6, 'text-anchor': 'middle' }); xl.textContent = CX.x === 'train' ? 'training CPU-hours (log scale)' : 'exam predict CPU-seconds per basin-period (log scale)'; gA.append(xl);
+  svg.append(gG, gA);
+  const placed = [];
+  for (const p of pts.sort((a, b) => a.x - b.x)) {
+    const cx = X(p.x), cy = Y(p.y);
+    svg.append(sv('circle', { cx, cy, r: 6, fill: css(A[p.id].color), stroke: css('--panel'), 'stroke-width': 2 }));
+    let ly = cy - 10; for (const q of placed) if (Math.abs(q.x - cx) < 90 && Math.abs(q.y - ly) < 13) ly = q.y - 13;
+    placed.push({ x: cx, y: ly });
+    const right = cx > W - 130;
+    const t = sv('text', { x: right ? cx - 9 : cx + 9, y: ly, 'text-anchor': right ? 'end' : 'start', class: 'lab', style: `fill:${css('--ink-2')}` }); t.textContent = A[p.id].short; svg.append(t);
+  }
+  host.append(svg);
+}
+drawCmp();
+(function () {
+  const t = $('#t-cmp');
+  t.append(el('tr', {}, el('th', {}, 'Arm'), el('th', { class: 'n' }, 'Training CPU-h'), el('th', { class: 'n' }, 'Exam CPU-s (all jobs)'), el('th', { class: 'n' }, 'Per basin-period'), el('th', { class: 'n' }, 'Stored numbers'), el('th', {}, 'numpy-only')));
+  for (const p of DATA.compute.filter((q) => !q.id.endsWith('_conformal'))) t.append(el('tr', {}, el('td', { style: 'min-width:11rem' }, famDot(p.id), A[p.id] ? A[p.id].label : p.id), el('td', { class: 'n' }, p.train_h == null ? '–' : f(p.train_h, 2)), el('td', { class: 'n' }, Math.round(p.exam_s).toLocaleString('en-US')), el('td', { class: 'n' }, f(p.exam_s_per_unit, 2)), el('td', { class: 'n' }, p.params ? p.params.toLocaleString('en-US') : '–', p.params_note ? el('div', { class: 'note', style: 'font-family:var(--f-body);white-space:normal;min-width:12rem' }, p.params_note) : null), el('td', {}, p.numpy ? 'yes' : 'no (numba WaterSim)')));
+  const cf = DATA.compute.filter((q) => q.id.endsWith('_conformal'));
+  t.after(el('p', { class: 'note' }, `The ${cf.length} conformal wrappers each took ${f(Math.min(...cf.map((q) => q.train_h)), 3)}–${f(Math.max(...cf.map((q) => q.train_h)), 3)} CPU-h to fit and run in their base arm's exam time. FlowCast v1.0 was not trained in the bake-off (its own build took about 15 minutes), so it has no point on the training axis.`));
+})();
+
+/* ---------------- findings, reading ---------------- */
+for (const x of DATA.findings) $('#finds').append(el('div', { class: 'find' }, el('span', { class: 'big' }, x.big), el('h3', {}, x.title), el('p', { html: x.body })));
+for (const [id, key] of [['#shows', 'shows'], ['#doesnt', 'doesnt'], ['#limits', 'limits'], ['#next', 'next']]) for (const s of DATA.text[key]) $(id).append(el('li', { html: s }));
+$('#foot').innerHTML = DATA.text.footer;
+</script>

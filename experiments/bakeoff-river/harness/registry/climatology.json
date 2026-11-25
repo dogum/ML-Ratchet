@@ -1,0 +1,60 @@
+{
+ "arm_id": "climatology",
+ "arm_dir": "/home/claude/bakeoff/river/harness/arms_ref/climatology",
+ "hash": "7e9b2caf9d619de42222218edf32162df29cc350ecb66a75a193b0152193bfde",
+ "files": {
+  "card.md": "7276b2f71488b51be744a4fa8d1ccd67d176e24466f6ba9c4b380681c426ca49",
+  "clim_params.json": "e605567ec7028fb72f7643a51c61b77444f5dcc2a4bfacb1bb96389b7f42207f",
+  "fit.py": "2b0bf486741e44029aa47b1cf983b483ec2368175e498cd0eacc948757e1a9cd",
+  "predict.py": "cf8044166840749583e1a820f835986873822a375ec5fd32eaf20c729928d3be",
+  "ratchet.json": "bb9f4563d361549fb9b6e34a94e994b0debadba6c971dd7b53e16a0cfcf35f8c"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "Climatology: constant water-balance flow (dumb baseline)",
+  "family": "dumb",
+  "family_label": "Dumb baseline (no learner)",
+  "group": "ref",
+  "reference": true,
+  "numpy_only": true,
+  "numpy_only_reason": null,
+  "compute": {
+   "train_cpu_hours": 0.001,
+   "notes": "fit.py: pooled ratios over 2,000 sim train runs, ~5 s."
+  },
+  "released": "r0",
+  "feature_engineering": "Fu runoff ratio (w 2.6) of the forcing's aridity x the forcing's mean precipitation (static indices 13 and 11). Nothing else."
+ },
+ "smoke": {
+  "load_cpu_s": 0.0,
+  "ungauged": {
+   "dev_nse": [
+    -0.0159,
+    -0.0492,
+    -0.1532
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 0.0
+  },
+  "files_used": [
+   "harness/arms_ref/climatology/clim_params.json",
+   "harness/arms_ref/climatology/predict.py",
+   "harness/arms_ref/climatology/ratchet.json",
+   "harness/bank/val/F.npy",
+   "harness/bank/val/attrs.npy",
+   "harness/bank/val/lat.npy",
+   "harness/bank/val/lon.npy",
+   "harness/bank/val/qo.npy",
+   "harness/bank/val/st.npy",
+   "harness/bank/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 0.0
+ },
+ "harness_hash": "111d13ef04a576a20f04d180eb326e8eaa4e0909651d1cc1086d3e8d85e083bf",
+ "registered_at": "2026-11-22T23:25:23",
+ "history": []
+}

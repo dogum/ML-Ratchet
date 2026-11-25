@@ -1,0 +1,714 @@
+{
+ "n_files": 140,
+ "all_equal": true,
+ "different": [],
+ "data": {
+  "proc": "/home/claude/road/data/proc",
+  "raw/ved": {
+   "VED_Static_Data_ICE&HEV.xlsx": "addb23d937ef7d943620755f478cc5a24316a7d61dee232ffbfd9b6e50986dae",
+   "VED_Static_Data_PHEV&EV.xlsx": "e0f2b4d7a360074c17fd00068d8d8bf898f0e650f0cdda43c7e10883f6bf9340"
+  }
+ },
+ "files": {
+  "vehicle/roadsim/CALIBRATION.md": {
+   "sha256": "e047d559cbd89dd3462871728b93eb92c70c2dd9f73e7656a672ccadb3f1fa3f",
+   "repo": "shared/vehicle/roadsim/CALIBRATION.md",
+   "equal": true
+  },
+  "vehicle/roadsim/LIMITS.md": {
+   "sha256": "85872ff02384e61cce964e58a1c55d3fa5e68208d3c1f9d35c4bbc9b33ffa38d",
+   "repo": "shared/vehicle/roadsim/LIMITS.md",
+   "equal": true
+  },
+  "vehicle/roadsim/README.md": {
+   "sha256": "065bf81a8607edd1921c573eb4e06a5baae60b816cffa3a936f70fd29fe68eff",
+   "repo": "shared/vehicle/roadsim/README.md",
+   "equal": true
+  },
+  "vehicle/roadsim/demo.py": {
+   "sha256": "fd11d584549fc2ef57b8cb5d7f2efc2958100455bb2a460766fafbebeeb88c5e",
+   "repo": "shared/vehicle/roadsim/demo.py",
+   "equal": true
+  },
+  "vehicle/roadsim/demo_ledger.png": {
+   "sha256": "21868f760a24d4f378dd521d4e9a57812b708b285c70bd76412a9a93b267c55c",
+   "repo": "shared/vehicle/roadsim/demo_ledger.png",
+   "equal": true
+  },
+  "vehicle/roadsim/tools/build_cycles.py": {
+   "sha256": "3a472ea1e47cac1f8e18061b16bd55af8aec11904607df4c5cc593fa0fdcbe94",
+   "repo": "shared/vehicle/roadsim/tools/build_cycles.py",
+   "equal": true
+  },
+  "vehicle/roadsim/tools/build_generator_calib.py": {
+   "sha256": "f03398ac0743185eeb1bc13a11a3a76fc215f44ca7de3a7d243b5eb4fcb67ebb",
+   "repo": "shared/vehicle/roadsim/tools/build_generator_calib.py",
+   "equal": true
+  },
+  "vehicle/roadsim/tools/build_generator_donors_v2.py": {
+   "sha256": "f2862941cb50014c6c0386e8fd25c2f59670a0900f46ad880befa9788a1b824f",
+   "repo": "shared/vehicle/roadsim/tools/build_generator_donors_v2.py",
+   "equal": true
+  },
+  "vehicle/roadsim/tools/build_maps.py": {
+   "sha256": "84cb86e2e851116606bc775977c0bdfe844b50fafb659e81eeee0d8edadf9844",
+   "repo": "shared/vehicle/roadsim/tools/build_maps.py",
+   "equal": true
+  },
+  "vehicle/roadsim/tools/epa_candidates.py": {
+   "sha256": "69234e3aef3415697ef596ac928d3222fee54deeec29bbe878f938c4f466aa2c",
+   "repo": "shared/vehicle/roadsim/tools/epa_candidates.py",
+   "equal": true
+  },
+  "vehicle/roadsim/docs/v2_b1.md": {
+   "sha256": "f51001261ff3998f4570c294930b8000dbc0bf885b255772527afa5b83bd2293",
+   "repo": "shared/vehicle/roadsim/docs/v2_b1.md",
+   "equal": true
+  },
+  "vehicle/roadsim/docs/v2_b2.md": {
+   "sha256": "3346df49ce2d088bf60f59e7377e174d437f3e77482a2c5cf5a86819a4192b7d",
+   "repo": "shared/vehicle/roadsim/docs/v2_b2.md",
+   "equal": true
+  },
+  "vehicle/roadsim/docs/v2_b3.md": {
+   "sha256": "b4d1f125a02c823fa56ec9347b4fa19e350ec6c739d0e147817e9fb3996b30a9",
+   "repo": "shared/vehicle/roadsim/docs/v2_b3.md",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/__init__.py": {
+   "sha256": "7b2bfe137c39e6f63887016eb9db6c583f6003f3e9ecdb3b45c4611d2bd9c9be",
+   "repo": "shared/vehicle/roadsim/roadsim/__init__.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/aging.py": {
+   "sha256": "16a7d2244bc068081185f65012c0f503a0e78571b3c88d92c36cc85088355ba0",
+   "repo": "shared/vehicle/roadsim/roadsim/aging.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/calib.py": {
+   "sha256": "c5fb072ab5a794bd21ce0bd268cefb6cf2ebcdcd624d5b6c5da4b4756f32ae2c",
+   "repo": "shared/vehicle/roadsim/roadsim/calib.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/coastdown.py": {
+   "sha256": "34b56737fef35e6520a29ad03c3806729b54923d4b7a78219257d829300411e9",
+   "repo": "shared/vehicle/roadsim/roadsim/coastdown.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/components.py": {
+   "sha256": "edf2df451e294f46a1f008af0da2ecfc05d73650b78e35a45605f5539b8d3d1f",
+   "repo": "shared/vehicle/roadsim/roadsim/components.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/constants.py": {
+   "sha256": "590b0a49bce609f5c08695f892a26af2a818b1e5abd37194f7de25aeedbc0b7b",
+   "repo": "shared/vehicle/roadsim/roadsim/constants.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/dp.py": {
+   "sha256": "f1d7e5fcdbb1655d30aac2536be86cff77a046fab8927beeb5080392235a4837",
+   "repo": "shared/vehicle/roadsim/roadsim/dp.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/driver.py": {
+   "sha256": "4f401cb9dac35f926172276c9aaeae654cc56b3d60d8c8b9f9f9f974025128a1",
+   "repo": "shared/vehicle/roadsim/roadsim/driver.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/epa.py": {
+   "sha256": "4e40eb8de08b0462b6e9f029abe968564c0dba9a39baebadd13b1c2d191a3dd4",
+   "repo": "shared/vehicle/roadsim/roadsim/epa.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/eras.py": {
+   "sha256": "c9101fb570022b2433924fbf5576a23fde23e1ded17d161c517b5dc873d70092",
+   "repo": "shared/vehicle/roadsim/roadsim/eras.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/generator.py": {
+   "sha256": "ce07fca603211d04ebefa9246c9443f43bc62fb19bdc6fca14bd29e9357ff5f4",
+   "repo": "shared/vehicle/roadsim/roadsim/generator.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/hybrid_hw.py": {
+   "sha256": "bc7cdd3fa4facf0d1c9d0bbb980fed149c3a36e26f23403e8441876ef0b475d5",
+   "repo": "shared/vehicle/roadsim/roadsim/hybrid_hw.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/maps.py": {
+   "sha256": "2342cdaf0d024ac0cf1f0149a3a6937815505656408ed33e238fa54f6bd421f0",
+   "repo": "shared/vehicle/roadsim/roadsim/maps.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/obd.py": {
+   "sha256": "643095126d32ba2a1bcc2a4d2753db9d8dacabe0b2ec3cf567dde149a32277f1",
+   "repo": "shared/vehicle/roadsim/roadsim/obd.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/options.py": {
+   "sha256": "e8bf6156fddc1060ee04330c0b9c8fcec159805862157a23d3d385b0f6b6c3d3",
+   "repo": "shared/vehicle/roadsim/roadsim/options.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/powertrain.py": {
+   "sha256": "18d99f9a4041f218596e58b99db2fa1f4ba60f09422a5269fa54900995831fc0",
+   "repo": "shared/vehicle/roadsim/roadsim/powertrain.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/sim.py": {
+   "sha256": "242ea816df3db68850b21e849964f8577bd38d023726e3e3e0419a9665adf2e9",
+   "repo": "shared/vehicle/roadsim/roadsim/sim.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/strategies.py": {
+   "sha256": "acc2bfc6ec390f7b3f4ca051f9e9b1f03cab3b2d796d2034cefceed74d22895e",
+   "repo": "shared/vehicle/roadsim/roadsim/strategies.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/thermal.py": {
+   "sha256": "503bb2187c57e766541bbba5ce6e475211571331134fa0fe144dad1ec8384a5a",
+   "repo": "shared/vehicle/roadsim/roadsim/thermal.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/trips.py": {
+   "sha256": "66133c0e3d0eafd55ba470cb6ae42cb2d0b93997edb9ce79ef3e9d4369daf82a",
+   "repo": "shared/vehicle/roadsim/roadsim/trips.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/tyre.py": {
+   "sha256": "55ac1c2b5d8f5f5400ce59e14dc77feb2b72b0a988fe90f3d5734cb6be66e402",
+   "repo": "shared/vehicle/roadsim/roadsim/tyre.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/vehicle.py": {
+   "sha256": "ce5cba83451c3de0dfd28fd001306d4309cbbc8a0c8fcc3c02c0ef32df4053ee",
+   "repo": "shared/vehicle/roadsim/roadsim/vehicle.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/wind.py": {
+   "sha256": "23c87354e95cdb91a45c864a289f6a2fe012daf99c067adbfae473c384c01d1f",
+   "repo": "shared/vehicle/roadsim/roadsim/wind.py",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/calibration.json": {
+   "sha256": "da27b6449b110f13ed850e6076762f3bffa4f85e9c3e01ae8ffdfe143dcadf1c",
+   "repo": "shared/vehicle/roadsim/roadsim/data/calibration.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/calibration_v2.json": {
+   "sha256": "6ecbfef6e3f94b3e4e41d50718367ca909d039261c12fd48cb48509b90fd12a4",
+   "repo": "shared/vehicle/roadsim/roadsim/data/calibration_v2.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/calibration_v2_1.json": {
+   "sha256": "ff11b9d69f095e2ff8f71f062a0fe97f278e29c9e02b980cf393557bc497a352",
+   "repo": "shared/vehicle/roadsim/roadsim/data/calibration_v2_1.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/calibration_v3.json": {
+   "sha256": "2b4212fbba5aa22682dc9574850b35904871e72f6bbd3da9e31cb9a319352b4b",
+   "repo": "shared/vehicle/roadsim/roadsim/data/calibration_v3.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/calibration_v3_1.json": {
+   "sha256": "1303b049b593f51389474f5e69533d00303f68e5d90c5f7fc0c2c58200d4cd29",
+   "repo": "shared/vehicle/roadsim/roadsim/data/calibration_v3_1.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/cycles.npz": {
+   "sha256": "682c620ca7069870e01eb2d57f6fcf7fac4f15b04b02482280209651845ef6cb",
+   "repo": "shared/vehicle/roadsim/roadsim/data/cycles.npz",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/cycles_meta.json": {
+   "sha256": "bd067a48c134aea61e75d8de20613f6b92c530037bec31d51c6cfa95d5690581",
+   "repo": "shared/vehicle/roadsim/roadsim/data/cycles_meta.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/engine_era_d3.json": {
+   "sha256": "365b440337fc09dfa826c31e9b61b510ae7a606d88b199e1493a10675ef1b636",
+   "repo": "shared/vehicle/roadsim/roadsim/data/engine_era_d3.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/generator_calib.json": {
+   "sha256": "e7496b95ce7eb370e28958af7cad74505aeaf6543d7046542e8ad3bb0af1704e",
+   "repo": "shared/vehicle/roadsim/roadsim/data/generator_calib.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/generator_donors_v2.json": {
+   "sha256": "481e39646bd742280f68df7ceb31e100d8132487f132ad501cb6654a69cad112",
+   "repo": "shared/vehicle/roadsim/roadsim/data/generator_donors_v2.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/maps.npz": {
+   "sha256": "0b6fdac891fb4fc47425be7fa4d55e42990c05af6f2495514f3247d67ff3097e",
+   "repo": "shared/vehicle/roadsim/roadsim/data/maps.npz",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/maps_meta.json": {
+   "sha256": "4ab2e95678dd62123e698345d034476414114c649845cc2220ac48559d31316e",
+   "repo": "shared/vehicle/roadsim/roadsim/data/maps_meta.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/vehicles/ref_bus40_bev.json": {
+   "sha256": "3f14c07f25a450fc5e39ec29901048bc2b460f481946796029fdddbe7dfeabb7",
+   "repo": "shared/vehicle/roadsim/roadsim/data/vehicles/ref_bus40_bev.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/vehicles/ref_bus40_diesel.json": {
+   "sha256": "2ce2094e9eab328e23c5dfb4b7832ac9556d3a00a671956bcf4779f31ae66bb7",
+   "repo": "shared/vehicle/roadsim/roadsim/data/vehicles/ref_bus40_diesel.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/vehicles/ref_bus40_hybrid.json": {
+   "sha256": "4891760b611c61c7bb839d897cb2c6001ee9501788e2bae05ce36013964768f6",
+   "repo": "shared/vehicle/roadsim/roadsim/data/vehicles/ref_bus40_hybrid.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/vehicles/ref_class6_box_diesel.json": {
+   "sha256": "60dfb7af1ce06fb1d511daeb997bdb98dc2fb52f0159c03bf0a7ae8a52024e5e",
+   "repo": "shared/vehicle/roadsim/roadsim/data/vehicles/ref_class6_box_diesel.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/vehicles/ref_class8_bev.json": {
+   "sha256": "f324b5b4631f1023ccb64d402da20c9bf2dac0f2f9f49cf798281ef833153876",
+   "repo": "shared/vehicle/roadsim/roadsim/data/vehicles/ref_class8_bev.json",
+   "equal": true
+  },
+  "vehicle/roadsim/roadsim/data/vehicles/ref_class8_sleeper_diesel.json": {
+   "sha256": "f8f7b36ca489fa9b180608aa38b9441aeda1f71e0cda3c481131a2090fe193ca",
+   "repo": "shared/vehicle/roadsim/roadsim/data/vehicles/ref_class8_sleeper_diesel.json",
+   "equal": true
+  },
+  "vehicle/realdata/__init__.py": {
+   "sha256": "33615e42f595b9130caefe211f23f221e7602cd14a708710a2594d9a5dbd865f",
+   "repo": "shared/vehicle/realdata/__init__.py",
+   "equal": true
+  },
+  "vehicle/realdata/d3.py": {
+   "sha256": "0f7f47f68bca1355394091bdb442a9a267bc5d655fbefc4c7c8674e2c22b2687",
+   "repo": "shared/vehicle/realdata/d3.py",
+   "equal": true
+  },
+  "vehicle/realdata/geo.py": {
+   "sha256": "263de3e5c5580d80c4aaf336b598088eea3dbe074340bb3599b959938b3c8c43",
+   "repo": "shared/vehicle/realdata/geo.py",
+   "equal": true
+  },
+  "vehicle/realdata/vedspec.py": {
+   "sha256": "1cef30fd3567cec186f992f7c82d673356bf9b1aad17279d2717857e72df0248",
+   "repo": "shared/vehicle/realdata/vedspec.py",
+   "equal": true
+  },
+  "vehicle/realdata/weather.py": {
+   "sha256": "3055ab432e5ec6553b148d833567040948ff633e9c28d70bff8ff6b772f97892",
+   "repo": "shared/vehicle/realdata/weather.py",
+   "equal": true
+  },
+  "vehicle/checks/hybrid_specs.py": {
+   "sha256": "7eaeb9bba2afeb29524f5dbf5218b20ed2b116904309f865857cb3ee2b606cee",
+   "repo": "shared/vehicle/checks/hybrid_specs.py",
+   "equal": true
+  },
+  "energynet/MODEL_CARD.md": {
+   "sha256": "88fb3bf3dd7d6baba3deb60032cfc0eeea7c08f8c32d851a8288df1269bcec67",
+   "repo": "models/energynet/MODEL_CARD.md",
+   "equal": true
+  },
+  "energynet/energynet.py": {
+   "sha256": "8a1fd90755278e8d2791bbc9f6a4d866c63f200a22b2b0881c85839b0fde363a",
+   "repo": "models/energynet/energynet.py",
+   "equal": true
+  },
+  "energynet/features.py": {
+   "sha256": "cc5fff41062b90c208d8109ee49bfb599ad9d6879a514ca5b4527c81f74fa942",
+   "repo": "models/energynet/features.py",
+   "equal": true
+  },
+  "energynet/model_np.py": {
+   "sha256": "c01520f5101e7189dac72d12023e404087f943b3a8f58674ad1a08613f9ce9a1",
+   "repo": "models/energynet/model_np.py",
+   "equal": true
+  },
+  "energynet/sigma_factors.json": {
+   "sha256": "1b3a661f05c1594fa2834f51975442720d0018aad11bf12c72d2d2d76c6c82b5",
+   "repo": "models/energynet/sigma_factors.json",
+   "equal": true
+  },
+  "energynet/training/_paths.py": {
+   "sha256": "a6190094dcf2af22fce8f354338b92adc7d195aed4c4432f33f1042d5d71773a",
+   "repo": "models/energynet/training/_paths.py",
+   "equal": true
+  },
+  "energynet/training/bank.py": {
+   "sha256": "fa073861bd401180e15d4e616aafe48130b6b27b63f92b9244276f06ceaf9718",
+   "repo": "models/energynet/training/bank.py",
+   "equal": true
+  },
+  "energynet/training/bank_dyno.py": {
+   "sha256": "7c06bf791814367535a655fb214b6cf66f2e68fcbcf8a586f35f12f15ae5e434",
+   "repo": "models/energynet/training/bank_dyno.py",
+   "equal": true
+  },
+  "energynet/training/bank_idlestop.py": {
+   "sha256": "b9287c3ca4958ead4d28d7046eb6d1e04e1a126977d27bb8fa29f4ea805e90b4",
+   "repo": "models/energynet/training/bank_idlestop.py",
+   "equal": true
+  },
+  "energynet/training/bank_replay.py": {
+   "sha256": "4a1ce54fea26309e6fcf96b843a2a5046877af9366e2330dcfa1df960fa09dc3",
+   "repo": "models/energynet/training/bank_replay.py",
+   "equal": true
+  },
+  "energynet/training/calib.py": {
+   "sha256": "9bf2a7891ab64572eca61ea6ea8efcb9a4f3e6398d2c4dd104ff7cff3743bb17",
+   "repo": "models/energynet/training/calib.py",
+   "equal": true
+  },
+  "energynet/training/check_dynoproc.json": {
+   "sha256": "b8fc088393c3486992d077a8167e66cd540696b0d0abd3fba62e8736b2858135",
+   "repo": "models/energynet/training/check_dynoproc.json",
+   "equal": true
+  },
+  "energynet/training/check_dynoproc.py": {
+   "sha256": "3ba55994e9f3e38aa187288a40f5163bba3501e9021730e4d9b47484bbf60b12",
+   "repo": "models/energynet/training/check_dynoproc.py",
+   "equal": true
+  },
+  "energynet/training/common.py": {
+   "sha256": "703e79975d1e0a647018ed81004462e46021610a1960dc80b4ce7e5f63819f0d",
+   "repo": "models/energynet/training/common.py",
+   "equal": true
+  },
+  "energynet/training/dataset.py": {
+   "sha256": "f83ac9588a0338440a5899bf9d77969bd9fb0a9323a7cafe0d9c1f02578e9852",
+   "repo": "models/energynet/training/dataset.py",
+   "equal": true
+  },
+  "energynet/training/dynoproc.py": {
+   "sha256": "0f610d773f696716320f897dfc1f5c2ae09359e91a3054882f424a0544771bc0",
+   "repo": "models/energynet/training/dynoproc.py",
+   "equal": true
+  },
+  "energynet/training/epa_baseline_fixed.json": {
+   "sha256": "83ef7d3b3be515f0f42ec45f15f474b2228f6880e085b2286eed4d8ea3f0862d",
+   "repo": "models/energynet/training/epa_baseline_fixed.json",
+   "equal": true
+  },
+  "energynet/training/epa_fix.py": {
+   "sha256": "2d112302b62440858ce931209788b3149d099cd0ca54a89e44b8d62765ad4c74",
+   "repo": "models/energynet/training/epa_fix.py",
+   "equal": true
+  },
+  "energynet/training/epa_hybkind.py": {
+   "sha256": "89ab353a8f94862f8babd080487b8a36a67e4c720c56862b9ca7b381a9d8a8dd",
+   "repo": "models/energynet/training/epa_hybkind.py",
+   "equal": true
+  },
+  "energynet/training/era.py": {
+   "sha256": "e1c345ad1dbf7af7d5398d7595425a9f6ee8c55d0db822663d7dd0e1113caba8",
+   "repo": "models/energynet/training/era.py",
+   "equal": true
+  },
+  "energynet/training/era_prior.json": {
+   "sha256": "210d81ba24352868add2b5a9356b374c675d503108780dcbbbaf5b43951c65cf",
+   "repo": "models/energynet/training/era_prior.json",
+   "equal": true
+  },
+  "energynet/training/evaluate.py": {
+   "sha256": "e78beafd0295b75b93bd14a149067508da6bd7607a146e578c8176b2f607651d",
+   "repo": "models/energynet/training/evaluate.py",
+   "equal": true
+  },
+  "energynet/training/exam.json": {
+   "sha256": "6900cd75bf8ab6fc5157b194b8b38977fd76d205b174b98ffce78746c8eda09f",
+   "repo": "models/energynet/training/exam.json",
+   "equal": true
+  },
+  "energynet/training/exam.py": {
+   "sha256": "f64ad9e6b1d357b9285a00396db56fc018ae17d71e62476349d11617beefcded",
+   "repo": "models/energynet/training/exam.py",
+   "equal": true
+  },
+  "energynet/training/exam2.json": {
+   "sha256": "481b9422634bd9402aec2eef047cb9b99188df20d1775eeccbbb9e862f58d998",
+   "repo": "models/energynet/training/exam2.json",
+   "equal": true
+  },
+  "energynet/training/exam2.py": {
+   "sha256": "a4a170c813cc20ace8e94f17679b0114956d3fd82bf14bc00af4f2195b39e7fb",
+   "repo": "models/energynet/training/exam2.py",
+   "equal": true
+  },
+  "energynet/training/exam3.json": {
+   "sha256": "ba8157ef140f55cbbb0edb5cbe0f906f3cbebb2baa2d010e3650a958ed529dec",
+   "repo": "models/energynet/training/exam3.json",
+   "equal": true
+  },
+  "energynet/training/exp_hev.py": {
+   "sha256": "543fafc78df4e5ed1372439c281a2fb4a811eb156a78efd9597656d216769796",
+   "repo": "models/energynet/training/exp_hev.py",
+   "equal": true
+  },
+  "energynet/training/features.py": {
+   "sha256": "cc5fff41062b90c208d8109ee49bfb599ad9d6879a514ca5b4527c81f74fa942",
+   "repo": "models/energynet/training/features.py",
+   "equal": true
+  },
+  "energynet/training/fit_phys.py": {
+   "sha256": "ec269c9d4e56303c4474c76f4e3a670c54a5a6dded9687c1d30f18d8d2943873",
+   "repo": "models/energynet/training/fit_phys.py",
+   "equal": true
+  },
+  "energynet/training/fleet.py": {
+   "sha256": "6ccdf5eea45bb36c865b33982961967af9a30b7464f0505eb4b2d68c43771b74",
+   "repo": "models/energynet/training/fleet.py",
+   "equal": true
+  },
+  "energynet/training/make_examples.py": {
+   "sha256": "31f65470ff2a28fbeb96bbb2bf6d103efeaa122d18581e6a58cc5c39662583e0",
+   "repo": "models/energynet/training/make_examples.py",
+   "equal": true
+  },
+  "energynet/training/model_np.py": {
+   "sha256": "c01520f5101e7189dac72d12023e404087f943b3a8f58674ad1a08613f9ce9a1",
+   "repo": "models/energynet/training/model_np.py",
+   "equal": true
+  },
+  "energynet/training/physics.py": {
+   "sha256": "2a01622c3f2ee3b8da542fb9f3b5a69cc0c317a4d218480aaa0eb03203731a15",
+   "repo": "models/energynet/training/physics.py",
+   "equal": true
+  },
+  "energynet/training/ratchet.json": {
+   "sha256": "263bd1e3d56b8c64adf46ee179e478b7c54710072a18536ffd0ac422617a93e2",
+   "repo": "models/energynet/training/ratchet.json",
+   "equal": true
+  },
+  "energynet/training/ratchet.py": {
+   "sha256": "3478aa1478f46b1c4f37600475797aa6e10b389e3a2766056b0eb4db2b7eadc1",
+   "repo": "models/energynet/training/ratchet.py",
+   "equal": true
+  },
+  "energynet/training/ratchet2.json": {
+   "sha256": "585114d3683bd3d61aa80d8fd523d9b07a225085f73a4369fc38ec6940dcb075",
+   "repo": "models/energynet/training/ratchet2.json",
+   "equal": true
+  },
+  "energynet/training/ratchet2.py": {
+   "sha256": "ad108b51f381d4e3003a20f343aec99d36a6e60b2f5c9c424ae46c1624a19b44",
+   "repo": "models/energynet/training/ratchet2.py",
+   "equal": true
+  },
+  "energynet/training/realfeat.py": {
+   "sha256": "0bfdba8ebd037a396e6e06d8d825843cf66cee4b996e53b809b2401d80754b0d",
+   "repo": "models/energynet/training/realfeat.py",
+   "equal": true
+  },
+  "energynet/training/rebuild_phev.py": {
+   "sha256": "e1a217189a74344cbdf0a6ab0ff657b7e2f357d036e2713539f2b143bf3892ce",
+   "repo": "models/energynet/training/rebuild_phev.py",
+   "equal": true
+  },
+  "energynet/training/relabel.py": {
+   "sha256": "8f5bed3591671cc9aad39d336ccf236d30dad3f9e43c782c6901d4ac292d5ba4",
+   "repo": "models/energynet/training/relabel.py",
+   "equal": true
+  },
+  "energynet/training/release.py": {
+   "sha256": "77ea37a13e3b88edb0f8d59b03bba4029ce7383e73fdf04f871af65e20c36e62",
+   "repo": "models/energynet/training/release.py",
+   "equal": true
+  },
+  "energynet/training/rescore_v1_ztbus.py": {
+   "sha256": "0094ec058cc3a408dc5ee51214cac0f0fe040420992ac376ad0b0ce76a02725f",
+   "repo": "models/energynet/training/rescore_v1_ztbus.py",
+   "equal": true
+  },
+  "energynet/training/routes.py": {
+   "sha256": "4f45d9f187cc41bec76fbc87086853d4d53322a25cd4bea3257bd7ee1d6811f1",
+   "repo": "models/energynet/training/routes.py",
+   "equal": true
+  },
+  "energynet/training/run_ens.sh": {
+   "sha256": "cc9540583b0f9e165dc9052ceb99c1618e1e0a31d58546be0984cfed08624574",
+   "repo": "models/energynet/training/run_ens.sh",
+   "equal": true
+  },
+  "energynet/training/run_r14_banks.sh": {
+   "sha256": "9e4ab01768c8e070a0d907335c70379dbfbdefa1248fb037c088433767aeea3e",
+   "repo": "models/energynet/training/run_r14_banks.sh",
+   "equal": true
+  },
+  "energynet/training/run_r14_rest.sh": {
+   "sha256": "4a1f9fb96decf7012ac4c04eab6d882f4f9e2d161eb637756b0e9e126cea6254",
+   "repo": "models/energynet/training/run_r14_rest.sh",
+   "equal": true
+  },
+  "energynet/training/run_r15_banks.sh": {
+   "sha256": "95319b0e4d76143b500e007a0cde8ee387aee2b79ea0b957ffd750f4a9b57d49",
+   "repo": "models/energynet/training/run_r15_banks.sh",
+   "equal": true
+  },
+  "energynet/training/run_r15_train.sh": {
+   "sha256": "0bd85b8a1b971e6e136bd2f1f1e3ac1a58182f9f9e870aba66b5b279982c5069",
+   "repo": "models/energynet/training/run_r15_train.sh",
+   "equal": true
+  },
+  "energynet/training/run_r5.sh": {
+   "sha256": "1129e88f09d2ec65b06b92915fbba2e870d096dc8622ee80e3442da6e6eb14ce",
+   "repo": "models/energynet/training/run_r5.sh",
+   "equal": true
+  },
+  "energynet/training/run_rungs.sh": {
+   "sha256": "705d7cde6fa99a8769ba53d7ca38c486e8b923f45eb1c2972991004c4e23d9a6",
+   "repo": "models/energynet/training/run_rungs.sh",
+   "equal": true
+  },
+  "energynet/training/run_v2_banks.sh": {
+   "sha256": "ef6529685dd12d5428f20738832beb7305df4fb5804df57e46635fb5bcd13b38",
+   "repo": "models/energynet/training/run_v2_banks.sh",
+   "equal": true
+  },
+  "energynet/training/run_v2_rungs.sh": {
+   "sha256": "9ef5a6c3e08aa6602ebb94888cb589527c9bd35bf48c8eb42fd0abda640cb5af",
+   "repo": "models/energynet/training/run_v2_rungs.sh",
+   "equal": true
+  },
+  "energynet/training/rungs.json": {
+   "sha256": "ed556eb0819760f8c17fcf632dd774d452b4514443fa3ac65e71f863ae774548",
+   "repo": "models/energynet/training/rungs.json",
+   "equal": true
+  },
+  "energynet/training/rungs2.json": {
+   "sha256": "3b511b435f5222e7d661833719228612feb36939f02312280bb7122be1875f49",
+   "repo": "models/energynet/training/rungs2.json",
+   "equal": true
+  },
+  "energynet/training/sigma_dev.py": {
+   "sha256": "c7bc496d163b9b8cafaa3c920e4ea75054ce08f28b20f17b3d4817dfa043392b",
+   "repo": "models/energynet/training/sigma_dev.py",
+   "equal": true
+  },
+  "energynet/training/sigma_rung.json": {
+   "sha256": "1bef305376da546cfa34b1d514376e9c1ec3955e986c47ec4e7b46d528eb36d6",
+   "repo": "models/energynet/training/sigma_rung.json",
+   "equal": true
+  },
+  "energynet/training/train.py": {
+   "sha256": "543d0837ba622a4f5d2f73223f43d413eeabc7ab738783ee8bd75f5b96a8c427",
+   "repo": "models/energynet/training/train.py",
+   "equal": true
+  },
+  "energynet/training/twin.py": {
+   "sha256": "27c0d05481770fec431be61bed9b2a78a8b2f841618df659376cc03203789f87",
+   "repo": "models/energynet/training/twin.py",
+   "equal": true
+  },
+  "energynet/training/twin_feed_epa.py": {
+   "sha256": "415db7c7ea8c6d929aaea34b849b710204b6986acf0a696fc2d7003763b65fd4",
+   "repo": "models/energynet/training/twin_feed_epa.py",
+   "equal": true
+  },
+  "energynet/training/twin_feed_epa_r13_data3.json": {
+   "sha256": "3d231ef502bec1a548ff4dbf637540b80d8a44724094315004c69cfb94dbc6f1",
+   "repo": "models/energynet/training/twin_feed_epa_r13_data3.json",
+   "equal": true
+  },
+  "energynet/training/twin_read.py": {
+   "sha256": "5a9c4ba6f09170e596f503773cd5aa11cd2e7aff3306a32c49d071d9e96ee1b7",
+   "repo": "models/energynet/training/twin_read.py",
+   "equal": true
+  },
+  "energynet/training/twin_read_epa.py": {
+   "sha256": "e6c54315150b901a8275c4e29acd162ab37f5786b61ba62b58593f73c2e7bfbd",
+   "repo": "models/energynet/training/twin_read_epa.py",
+   "equal": true
+  },
+  "energynet/training/twin_read_epa_r13_data3.json": {
+   "sha256": "449656f34685f75bc691e612e26e7b9e0e226d80df3d5b5385e54ffa5e912072",
+   "repo": "models/energynet/training/twin_read_epa_r13_data3.json",
+   "equal": true
+  },
+  "energynet/training/twin_read_epa_r17_noidle_inputs.json": {
+   "sha256": "d47f90a69c1ac6bed8bdeea22100e6a80b24e1fd23c523879fc32153ef31d4f0",
+   "repo": "models/energynet/training/twin_read_epa_r17_noidle_inputs.json",
+   "equal": true
+  },
+  "energynet/training/twin_read_r13_data3.json": {
+   "sha256": "036e9a1ed99b3663ce1229702b01b498f473001c4570bd0a6377c4e3fde28380",
+   "repo": "models/energynet/training/twin_read_r13_data3.json",
+   "equal": true
+  },
+  "energynet/training/twin_read_r17_noidle_inputs.json": {
+   "sha256": "391e8b81e6e9d25a4903adf02caf16812c19bc006a2d26fd17362a51897466af",
+   "repo": "models/energynet/training/twin_read_r17_noidle_inputs.json",
+   "equal": true
+  },
+  "energynet/training/twin_read_r2_corr.json": {
+   "sha256": "ca851538e24de91a50af60a91c4566770d8aadd36af528ed7aa2545b40a898a8",
+   "repo": "models/energynet/training/twin_read_r2_corr.json",
+   "equal": true
+  },
+  "energynet/training/twin_read_r3_lab.json": {
+   "sha256": "500f72576d91c603caad335ddc3a974fb9fa025b9f18ed07bf6cc342202b0fe9",
+   "repo": "models/energynet/training/twin_read_r3_lab.json",
+   "equal": true
+  },
+  "energynet/training/twin_read_r7_era.json": {
+   "sha256": "a382f6a965da7444749f5542cd75bd66ce50b8e80e4d2549aad30e266d97bff6",
+   "repo": "models/energynet/training/twin_read_r7_era.json",
+   "equal": true
+  },
+  "energynet/training/twin_summary.json": {
+   "sha256": "206a97e641b450880fd394c303389f1e65b279850849c15ceffd2f906d58820b",
+   "repo": "models/energynet/training/twin_summary.json",
+   "equal": true
+  },
+  "energynet/training/vehfit.py": {
+   "sha256": "bd7be9988f30e98febfbd8fa9e7503cd19441b6ec5cc1b0c9995735b3444bddf",
+   "repo": "models/energynet/training/vehfit.py",
+   "equal": true
+  },
+  "energynet/training/webdata.py": {
+   "sha256": "9560471ded1f037da7f34d0903ec55ae55e1498549050b46417cdeae3cf853a6",
+   "repo": "models/energynet/training/webdata.py",
+   "equal": true
+  },
+  "energynet/training/wrappers.py": {
+   "sha256": "160de3aba3376dbe3d0618aafb14fe293c51655a853c238c4f05b9b31d1c3b2f",
+   "repo": "models/energynet/training/wrappers.py",
+   "equal": true
+  },
+  "energynet/training/write_ratchet_yaml.py": {
+   "sha256": "dd8918bac7a1c352f1da5ac89357a62c77be1e214abfcf0fbe4586b1d7d817da",
+   "repo": "models/energynet/training/write_ratchet_yaml.py",
+   "equal": true
+  },
+  "energynet/weights/r15_s0.npz": {
+   "sha256": "7969b39342b18ce584a02e5510bdb13ac18919094015afb20b4ddc2c2167394f",
+   "repo": "models/energynet/weights/r15_s0.npz",
+   "equal": true
+  },
+  "energynet/weights/r15_s1.npz": {
+   "sha256": "18c5f9ae11aa3f3446574c82dcf5c61b29e791e2b21f6a3e87d52cd8cd414deb",
+   "repo": "models/energynet/weights/r15_s1.npz",
+   "equal": true
+  },
+  "energynet/weights/r15_s2.npz": {
+   "sha256": "98b87d98466a21212ac765e7d53c85473490bd56749a7fe99aae7504b8098dc7",
+   "repo": "models/energynet/weights/r15_s2.npz",
+   "equal": true
+  },
+  "energynet/weights/r15_s3.npz": {
+   "sha256": "cfc2ff154f5e031caed9f726c410543df2cdf0ff12907f590d679e3bec2fcce6",
+   "repo": "models/energynet/weights/r15_s3.npz",
+   "equal": true
+  },
+  "energynet/weights/r15_s4.npz": {
+   "sha256": "005b6b886a49fdb0356533f179f960905fbc5fcd31ce51ecdbd86d83e1810646",
+   "repo": "models/energynet/weights/r15_s4.npz",
+   "equal": true
+  }
+ }
+}

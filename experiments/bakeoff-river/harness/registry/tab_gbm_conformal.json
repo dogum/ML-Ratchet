@@ -1,0 +1,71 @@
+{
+ "arm_id": "tab_gbm_conformal",
+ "arm_dir": "/home/claude/bakeoff/river/arms_filt/conformal/tab_gbm_conformal",
+ "hash": "986e6c2ed61222a6866f5fb0a31faf62e6cb0507a7743fa7c755fa11cce3757b",
+ "files": {
+  "../lib/cf_mondrian.py": "8de2a4956b525f96e7494ebe16e5d0cd7b435fa8baf72a3d0d20ec7ff815223a",
+  "calib.json": "4b7c4af3d9532a00746989f094fa0287e0e0565824b79f536dfb9a1020a4c2f6",
+  "card.md": "bf61e5a5ca5ab13d2bafb78774e2f7c677ec445b581b61c582bbdc1454f9f940",
+  "predict.py": "3b6bed6a5dafaafe600d372a0f976a48b186c906cae8207e12fae8844cc428af",
+  "ratchet.json": "48da253ca42fa5ba70ba64ddee6abe1811e74ec5c8ba7c89f545aacbd8177ad4",
+  "../../../arms_tab/tab_gbm/card.md": "d653c84bc8efa93bbe48afc9adc99c3a2320b9f3a2668f90f33a251f9f63a576",
+  "../../../arms_tab/tab_gbm/feats.py": "34308612173b6143cab16f91585923988f4e4adef1c2dc1a2c587ffbed2fbc2f",
+  "../../../arms_tab/tab_gbm/gbm_trees.npz": "f61e064a5eb4263c23dd217fa12ceb0d5c07184a2c25d710ddb1eb3298ec0d39",
+  "../../../arms_tab/tab_gbm/predict.py": "504c4c2ea6db7f949f573814e8cf7fa26a6d6cf916862d4a909658299954583f",
+  "../../../arms_tab/tab_gbm/ratchet.json": "8bcf3a241d9e75026cb425c20abd8db39794f5cbe33ffc4d6f577d7038f49caa",
+  "../../../arms_tab/tab_gbm/treeexport.py": "d8986b3fbdba560196beb92ec002571c3bb4c500a6c2655593f5e8f97a232c01"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "Gradient-boosted trees (LightGBM -> numpy trees) + Mondrian conformal",
+  "family": "conformal",
+  "family_label": "Conformal prediction (wrapper around tab_gbm)",
+  "group": "filt",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.037,
+   "base_train_cpu_hours": 0.43,
+   "notes": "conformal fit only (dev predictions of tab_gbm + shifts); the base arm is not retrained"
+  },
+  "released": "c0",
+  "feature_engineering": "none beyond tab_gbm's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)"
+ },
+ "smoke": {
+  "load_cpu_s": 0.03,
+  "ungauged": {
+   "dev_nse": [
+    0.6134,
+    0.1868,
+    0.6682
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 2.412
+  },
+  "files_used": [
+   "arms_filt/conformal/lib/cf_mondrian.py",
+   "arms_filt/conformal/tab_gbm_conformal/calib.json",
+   "arms_filt/conformal/tab_gbm_conformal/predict.py",
+   "arms_filt/conformal/tab_gbm_conformal/ratchet.json",
+   "arms_tab/tab_gbm/gbm_trees.npz",
+   "arms_tab/tab_gbm/predict.py",
+   "arms_tab/tab_gbm/ratchet.json",
+   "harness/bank/val/F.npy",
+   "harness/bank/val/attrs.npy",
+   "harness/bank/val/lat.npy",
+   "harness/bank/val/lon.npy",
+   "harness/bank/val/qo.npy",
+   "harness/bank/val/st.npy",
+   "harness/bank/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 49.1
+ },
+ "harness_hash": "111d13ef04a576a20f04d180eb326e8eaa4e0909651d1cc1086d3e8d85e083bf",
+ "registered_at": "2026-11-23T03:20:13",
+ "history": []
+}

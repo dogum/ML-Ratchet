@@ -110,3 +110,6 @@ shared/fire/firesim/demo_out/
 shared/fire/firesim/.refenv/
 shared/fire/firesim/tmp/
 shared/fire/firesim/pids/
+
+# Bake-off exam per-unit scores (194 MB): release zip only, not in git (see experiments/bakeoff-vehicle/README.md)
+experiments/bakeoff-vehicle/results/exam_*/scores.parquet

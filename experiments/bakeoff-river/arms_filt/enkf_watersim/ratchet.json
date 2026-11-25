@@ -1,0 +1,100 @@
+{
+ "arm_id": "enkf_watersim",
+ "label": "Ensemble Kalman filter on WaterSim (HBV + snow), joint state-parameter",
+ "family": "assim",
+ "family_label": "Data assimilation (ensemble Kalman filter)",
+ "group": "filt",
+ "protocols": [
+  "gauged"
+ ],
+ "numpy_only": false,
+ "numpy_only_reason": "runs the vendored WaterSim kernels (HBV step, degree-day snow) inside a numba-compiled filter loop; numba compiles at first call (~3 s), no cache files written (cache=False). A pure-numpy port would be ~100x slower (daily loop x 32 members x 4,000+ days).",
+ "compute": {
+  "train_cpu_hours": 0.98,
+  "notes": "No network training. 0.64 CPU-h tuning filter settings on 250 simulated TRAIN runs (tools/tune.py, ~75 variants, work/tune/*.jsonl) + 0.32 CPU-h rung evaluations (4 rungs + an open-loop diagnostic; 800 sim val runs + 52 dev basins x 3 leads) + ~0.02 smoke tests. One thread, nice 5."
+ },
+ "feature_engineering": "No learned features. Uses forcing columns P, PET, T_mean; the 11 attributes -> a WaterSim basin spec (elevation bands from mean and range, slope, forest, porosity, ksat, carbonate, urban; aridity and p_mean from the static vector) -> WaterSim's attribute transfer functions for HBV + degree-day snow parameters and the p1 water-yield multiplier prior (elevation, frac_snow, p_mean); observed flow qobs up to the forecast origin (t - lead) is assimilated as log(Q + c), c = 0.02 x p_mean.",
+ "extra_files": [],
+ "margin": 0.01,
+ "rule": "keep if sim val median NSE at lead 3 > incumbent + 0.01 AND dev median NSE at lead 3 >= 0.95 x the incumbent's (harness's suggested gauged rule). Filter settings tuned on simulated TRAIN runs only; rung decisions on the frozen sim val set + dev gate.",
+ "rungs": [
+  {
+   "id": "r0",
+   "change": "state-only EnKF: HBV + degree-day snow (WaterSim kernels), attribute-prior parameters (scatter 0.5), p1 water-yield multiplier prior; EnSRF on log(Q + 0.02 P), states in log space; settings tuned on 250 sim TRAIN runs: sigma_P 0.2, sigma_T 1 C, store noise 0.1, obs error 0.3 (log), RTPS 0.9, innovation clip 3 sd, 32 members",
+   "decision": "base",
+   "why": "first rung",
+   "simval_nse_L1": 0.777,
+   "simval_nse_L3": 0.538,
+   "simval_nse_L7": 0.45,
+   "dev_nse_L1": 0.64,
+   "dev_nse_L3": 0.5,
+   "dev_nse_L7": 0.46,
+   "simval_nse": 0.538,
+   "dev_nse": 0.5
+  },
+  {
+   "id": "r1",
+   "change": "+ joint state-parameter estimation: 8 augmented log parameters (precipitation multiplier, FC, BETA, K1, K2, PERC, K0, LP; random walk 0.003-0.005/day) and wider initial parameter spread (scatter 1.0); tuned on sim train",
+   "decision": "released",
+   "why": "lead-3 rule: sim val 0.672 vs 0.538 (+0.134 > 0.01), dev 0.528 >= 0.95 x 0.5",
+   "simval_nse_L1": 0.839,
+   "simval_nse_L3": 0.672,
+   "simval_nse_L7": 0.589,
+   "dev_nse_L1": 0.635,
+   "dev_nse_L3": 0.528,
+   "dev_nse_L7": 0.413,
+   "simval_nse": 0.672,
+   "dev_nse": 0.528
+  },
+  {
+   "id": "r2",
+   "change": "+ UZL augmented and observation offset c 0.02 -> 0.2 x mean P (less weight on low flows; sim-train peaks FHV -14 -> -12 %)",
+   "decision": "rejected",
+   "why": "sim val 0.705 (+0.033 > 0.01) but dev 0.488 < 0.95 x 0.528 = 0.502: fails the dev gate",
+   "simval_nse_L1": 0.852,
+   "simval_nse_L3": 0.705,
+   "simval_nse_L7": 0.645,
+   "dev_nse_L1": 0.595,
+   "dev_nse_L3": 0.488,
+   "dev_nse_L7": 0.459,
+   "simval_nse": 0.705,
+   "dev_nse": 0.488
+  },
+  {
+   "id": "r3",
+   "change": "r1 with parameters from agent B's physics-in-the-loop mapping (tab_dpl, registered hash 5a86b90b36cc9ef1: NN attributes -> HBV + snow + CH_VEL + PMULT, trained through WaterSim on the sim bank) instead of WaterSim's attribute transfer functions; same filter settings",
+   "decision": "rejected",
+   "why": "sim val 0.673 vs r1 0.672 (+0.001, not > 0.01) and dev 0.461 < 0.95 x 0.528 = 0.502",
+   "simval_nse_L1": 0.842,
+   "simval_nse_L3": 0.673,
+   "simval_nse_L7": 0.575,
+   "dev_nse_L1": 0.61,
+   "dev_nse_L3": 0.461,
+   "dev_nse_L7": 0.403,
+   "simval_nse": 0.673,
+   "dev_nse": 0.461,
+   "dev_fhv_L3": -22.6,
+   "dev_kge_L3": 0.583
+  }
+ ],
+ "released": "r1",
+ "diagnostic_openloop": {
+  "what": "r0 settings, no assimilation (prior WaterSim ensemble mean); dev only",
+  "dev_nse_L1": 0.381,
+  "dev_kge": 0.359
+ },
+ "references_dev": {
+  "flowcast_nowcast_L1_L3_L7": [
+   0.633,
+   0.567,
+   0.52
+  ],
+  "persistence": [
+   0.549,
+   -0.139,
+   -0.515
+  ],
+  "nwm": 0.573,
+  "gr4j_calibrated": 0.586
+ }
+}

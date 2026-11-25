@@ -1,0 +1,449 @@
+{
+ "road": {
+  "title": "Trip fuel energy (conventional vehicles)",
+  "platform": "RoadSim",
+  "vars": [
+   "p",
+   "n",
+   "t",
+   "m",
+   "T",
+   "c",
+   "d"
+  ],
+  "var_info": {
+   "p": {
+    "label": "positive wheel work per km (road load: aero + rolling + climbing + accelerating)",
+    "symbol": "p",
+    "unit": "MJ/km",
+    "range": [
+     0.05,
+     3.0
+    ]
+   },
+   "n": {
+    "label": "negative wheel work per km (braking / descending)",
+    "symbol": "n",
+    "unit": "MJ/km",
+    "range": [
+     0.0,
+     1.5
+    ]
+   },
+   "t": {
+    "label": "time per km (60 / mean speed in km/h)",
+    "symbol": "t",
+    "unit": "min/km",
+    "range": [
+     0.5,
+     6.0
+    ]
+   },
+   "m": {
+    "label": "vehicle mass",
+    "symbol": "m",
+    "unit": "t",
+    "range": [
+     1.0,
+     40.0
+    ]
+   },
+   "T": {
+    "label": "mean ambient temperature",
+    "symbol": "T",
+    "unit": "\u00b0C",
+    "range": [
+     -25,
+     40
+    ]
+   },
+   "c": {
+    "label": "start state: -1 warm, 0 unknown, +1 cold soak",
+    "symbol": "c",
+    "unit": "-",
+    "range": [
+     -1,
+     1
+    ]
+   },
+   "d": {
+    "label": "trip distance",
+    "symbol": "d",
+    "unit": "km",
+    "range": [
+     0.5,
+     100.0
+    ]
+   }
+  },
+  "target": {
+   "name": "e",
+   "label": "trip fuel energy per km",
+   "symbol": "e",
+   "unit": "MJ/km"
+  },
+  "rung": "s1-c21",
+  "expr": "(((4.342 * p) ^ 0.8346) + (m * ((t * (1.184 ^ exp(c))) / exp(((16.47 + m) / 17.26)))))",
+  "text": "0.3851\u00b71.184^exp(c)\u00b7m\u00b7t\u00b7exp(-0.05794\u00b7m) + 3.406\u00b7p^0.8346",
+  "tree": [
+   "+",
+   [
+    "^",
+    [
+     "*",
+     [
+      "c",
+      0
+     ],
+     [
+      "x",
+      0
+     ]
+    ],
+    [
+     "c",
+     1
+    ]
+   ],
+   [
+    "*",
+    [
+     "x",
+     3
+    ],
+    [
+     "/",
+     [
+      "*",
+      [
+       "x",
+       2
+      ],
+      [
+       "^",
+       [
+        "c",
+        2
+       ],
+       [
+        "exp",
+        [
+         "x",
+         5
+        ]
+       ]
+      ]
+     ],
+     [
+      "exp",
+      [
+       "/",
+       [
+        "+",
+        [
+         "c",
+         3
+        ],
+        [
+         "x",
+         3
+        ]
+       ],
+       [
+        "c",
+        4
+       ]
+      ]
+     ]
+    ]
+   ]
+  ],
+  "consts": [
+   4.342088542404126,
+   0.834629384259492,
+   1.1835804389914582,
+   16.466310539121338,
+   17.255882718179333
+  ],
+  "sigma": 0.19427247621518964,
+  "sigma_sim": 0.19427247621518964,
+  "widen_dev": 1.0,
+  "sigma_kind": "log",
+  "simulator_law": {
+   "rung": "s1-c5",
+   "text": "3.37\u00b7p + t",
+   "tree": [
+    "+",
+    [
+     "*",
+     [
+      "c",
+      0
+     ],
+     [
+      "x",
+      0
+     ]
+    ],
+    [
+     "x",
+     2
+    ]
+   ],
+   "consts": [
+    3.3700259355793936
+   ],
+   "vars": [
+    "p",
+    "n",
+    "t",
+    "m",
+    "T",
+    "c",
+    "d"
+   ]
+  },
+  "textbook": {
+   "form": "road_load",
+   "const": [
+    3.6158642234202554,
+    0.7927568200118393
+   ],
+   "const_energynet": [
+    3.5149384885764503,
+    0.27852
+   ],
+   "label": "road-load estimate e = a p + k (m / 1.5)^0.7 t (EnergyNet E_phys, conventional form), a and k fitted on the VED ICE dev trips; EnergyNet's simulation constants in const_energynet"
+  },
+  "exam": null,
+  "exam_note": "Graded once in the Vehicle Bake-off exam (harness/exam.py) as the formula arm; exam_road.py turns that result into this block.",
+  "companions": {
+   "hev": {
+    "vars": [
+     "p",
+     "n",
+     "t",
+     "m",
+     "T",
+     "c",
+     "d"
+    ],
+    "tree": [
+     "+",
+     [
+      "*",
+      [
+       "c",
+       0
+      ],
+      [
+       "-",
+       [
+        "x",
+        0
+       ],
+       [
+        "*",
+        [
+         "*",
+         [
+          "c",
+          1
+         ],
+         [
+          "x",
+          1
+         ]
+        ],
+        [
+         "x",
+         5
+        ]
+       ]
+      ]
+     ],
+     [
+      "-",
+      [
+       "*",
+       [
+        "*",
+        [
+         "^",
+         [
+          "c",
+          2
+         ],
+         [
+          "x",
+          1
+         ]
+        ],
+        [
+         "c",
+         3
+        ]
+       ],
+       [
+        "x",
+        2
+       ]
+      ],
+      [
+       "log",
+       [
+        "/",
+        [
+         "c",
+         4
+        ],
+        [
+         "x",
+         3
+        ]
+       ]
+      ]
+     ]
+    ],
+    "consts": [
+     2.831904036813337,
+     -0.17263508566405142,
+     0.017814577469908416,
+     0.5824995273575244,
+     1.6047027259219748
+    ],
+    "expr": "((2.832 * (p - (((-0.1726) * n) * c))) + ((((0.01781 ^ n) * 0.5825) * t) - log((1.605 / m))))",
+    "text": "0.5825\u00b70.01781^n\u00b7t + 0.4888\u00b7c\u00b7n + 2.832\u00b7p + log(m) - 0.4731"
+   },
+   "bev": {
+    "vars": [
+     "p",
+     "n",
+     "t",
+     "m",
+     "T",
+     "c",
+     "d"
+    ],
+    "tree": [
+     "+",
+     [
+      "*",
+      [
+       "c",
+       0
+      ],
+      [
+       "x",
+       0
+      ]
+     ],
+     [
+      "-",
+      [
+       "*",
+       [
+        "x",
+        1
+       ],
+       [
+        "+",
+        [
+         "c",
+         1
+        ],
+        [
+         "^",
+         [
+          "exp",
+          [
+           "*",
+           [
+            "x",
+            2
+           ],
+           [
+            "x",
+            4
+           ]
+          ]
+         ],
+         [
+          "c",
+          2
+         ]
+        ]
+       ]
+      ],
+      [
+       "*",
+       [
+        "*",
+        [
+         "c",
+         3
+        ],
+        [
+         "x",
+         3
+        ]
+       ],
+       [
+        "x",
+        2
+       ]
+      ]
+     ]
+    ],
+    "consts": [
+     1.1011415831779305,
+     -1.4426655356040745,
+     -0.017145541717797176,
+     -0.04056859589050463
+    ],
+    "expr": "((1.101 * p) + ((n * ((-1.443) + (exp((t * T)) ^ (-0.01715)))) - (((-0.04057) * m) * t)))",
+    "text": "0.04057\u00b7m\u00b7t - 1.443\u00b7n + n\u00b7exp(-0.01715\u00b7T\u00b7t) + 1.101\u00b7p"
+   }
+  },
+  "companions_note": "hev = the three hybrid systems; bev = battery-electric; plug-ins use the phev law if present, else f x E_bev + (1 - f) x E_hev. All laws give e in MJ/km (E = e x d).",
+  "bakeoff": {
+   "arm": "formula",
+   "rung": "r1",
+   "simval_skill": 0.3225546026807088,
+   "simval_MdAPE": 0.1594973035663838,
+   "dev_D16": 0.17516669303270666,
+   "dev_sets": {
+    "VED_EV": 0.1417,
+    "VED_EV_cars": 0.0004,
+    "VED_HEV": 0.1619,
+    "VED_HEV_cars": 0.1493,
+    "VED_ICE": 0.098,
+    "VED_ICE_cars": 0.0997,
+    "VED_PHEV": 0.1953,
+    "VED_PHEV_cars": 0.1335,
+    "VED_arch_bev": 0.1417,
+    "VED_arch_conv": 0.098,
+    "VED_arch_hev_powersplit": 0.1619,
+    "VED_arch_phev_powersplit": 0.1964,
+    "VED_arch_phev_series": 0.1807,
+    "EPA_bev_FTP": 0.1514,
+    "EPA_bev_HWY": 0.1089,
+    "EPA_conv_FTP": 0.1944,
+    "EPA_conv_FTPcold": 0.1326,
+    "EPA_conv_HWY": 0.2623,
+    "EPA_conv_SC03": 0.14,
+    "EPA_conv_US06": 0.1666,
+    "EPA_hev_FTP": 0.0955,
+    "EPA_hev_FTPcold": 0.223,
+    "EPA_hev_HWY": 0.2275,
+    "EPA_hev_SC03": 0.163,
+    "EPA_hev_US06": 0.113,
+    "ZTBus_legs": 0.1701,
+    "ZTBus_missions": 0.1698,
+    "Mersin_cng": 0.2233,
+    "Mersin_diesel": 0.1057,
+    "ICCT": 0.3975
+   }
+  }
+ }
+}

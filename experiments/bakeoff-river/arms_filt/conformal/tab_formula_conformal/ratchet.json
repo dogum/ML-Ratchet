@@ -1,0 +1,35 @@
+{
+ "arm_id": "tab_formula_conformal",
+ "label": "Formulas: symbolic attribute -> WaterSim HBV parameter laws (LawFinder-style search), run in WaterSim + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around tab_formula)",
+ "group": "filt",
+ "protocols": [
+  "ungauged"
+ ],
+ "wraps": "tab_formula",
+ "wraps_hash": "3f8047a78c60ebe02f949d6d06596634e8cf765a59153537e88706f247a9d9dc",
+ "numpy_only": false,
+ "numpy_only_reason": "wraps tab_formula: The prediction IS a WaterSim run: 17 closed-form formulas give the parameters, then predict.py calls the harness's vendored WaterSim (numba-compiled HBV + degree-day snow + gamma channel UH + irrigation) through wsim.py.",
+ "compute": {
+  "train_cpu_hours": 0.0031,
+  "base_train_cpu_hours": 0.25,
+  "notes": "conformal fit only (dev predictions of tab_formula + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond tab_formula's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)",
+ "extra_files": [
+  "../../../arms_tab/tab_formula",
+  "../lib"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata snow/arid/humid/other) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage (LOBO) ungauged 0.93"
+  }
+ ],
+ "released": "c0"
+}

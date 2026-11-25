@@ -1,0 +1,35 @@
+{
+ "arm_id": "tab_dpl_conformal",
+ "label": "Decides through physics: MLP -> WaterSim HBV parameters, trained through the simulator + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around tab_dpl)",
+ "group": "filt",
+ "protocols": [
+  "ungauged"
+ ],
+ "wraps": "tab_dpl",
+ "wraps_hash": "5a86b90b36cc9ef13f06bc0e114099f9bcfb1f60372a469cd45b3a6079ca6186",
+ "numpy_only": false,
+ "numpy_only_reason": "wraps tab_dpl: The prediction IS a WaterSim run: predict.py maps attributes to parameters with a numpy MLP and then calls the harness's vendored WaterSim (numba-compiled HBV + degree-day snow + gamma channel UH + irrigation) through wsim.py. Re-writing WaterSim in numpy would duplicate the simulator the arm is meant to use.",
+ "compute": {
+  "train_cpu_hours": 0.003,
+  "base_train_cpu_hours": 2.25,
+  "notes": "conformal fit only (dev predictions of tab_dpl + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond tab_dpl's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)",
+ "extra_files": [
+  "../../../arms_tab/tab_dpl",
+  "../lib"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata snow/arid/humid/other) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage (LOBO) ungauged 0.93"
+  }
+ ],
+ "released": "c0"
+}

@@ -1,0 +1,35 @@
+{
+ "arm_id": "tab_gp_conformal",
+ "label": "Sparse Gaussian process (SGPR, 500 inducing points, scoped features) + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around tab_gp)",
+ "group": "filt",
+ "protocols": [
+  "ungauged"
+ ],
+ "wraps": "tab_gp",
+ "wraps_hash": "2806d12cceedb34f9bcea256818ffe9b85fd80b766960bfb518888657f27b8dd",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.0059,
+  "base_train_cpu_hours": 0.94,
+  "notes": "conformal fit only (dev predictions of tab_gp + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond tab_gp's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)",
+ "extra_files": [
+  "../../../arms_tab/tab_gp",
+  "../lib"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata snow/arid/humid/other) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage (LOBO) ungauged 0.93"
+  }
+ ],
+ "released": "c0"
+}

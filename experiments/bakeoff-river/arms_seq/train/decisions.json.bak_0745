@@ -1,0 +1,177 @@
+{
+ "lstm": {
+  "arm_id": "seq_lstm",
+  "label": "LSTM (FlowCast's network, retrained on the bake-off bank)",
+  "family": "ssm",
+  "family_label": "State-space and recurrent models (LSTM)",
+  "released": "r1",
+  "assumption": "A small learned state is carried from day to day and updated through gates: each day the network decides how much of each memory cell to keep (forget gate), what to add (input gate) and what to release into the output. That is a learned version of a bucket model: snow, soil and groundwater stores that fill and drain. It is FlowCast v1.0's choice and the in-bake-off control: same network, same loss, same bank as the three other sequence arms.",
+  "core": "One LSTM layer with 64 units over the 29 daily channels, dropout 0.1 before the head: exactly FlowCast v1.0's network (`models/flowcast/training/src/model.py`), retrained from scratch on the harness bank with FlowCast's recipe.",
+  "rungs": [
+   {
+    "id": "r0",
+    "change": "FlowCast r1b recipe exactly (3000 steps x 32 windows)",
+    "decision": "base",
+    "why": "the control: FlowCast's network and recipe on the shared bank. Scores below FlowCast v1.0 as released (sim 0.426, dev 0.425) at the same recipe; 3 seeds agree on sim (0.409-0.410), so the gap is not seed noise (see notes)."
+   },
+   {
+    "id": "r1",
+    "change": "2x training: 6000 steps (cosine over 6000)",
+    "decision": "released",
+    "why": "sim +0.016 over r0 (> 0.01 margin; seed noise on sim is ~0.001) and dev 0.441 >= 0.95 x 0.391: kept. Released (r2 did not beat it)."
+   },
+   {
+    "id": "r2",
+    "change": "4x training: 12000 steps",
+    "decision": "rejected",
+    "why": "sim +0.003 over r1 (< 0.01 margin; paired bootstrap -0.011..+0.017), dev 0.440 vs 0.441: no gain from more training beyond 6000 steps."
+   }
+  ],
+  "noise_checks": [
+   "seed1",
+   "seed2"
+  ],
+  "limits": [
+   "Ungauged only: it never reads streamflow, so it cannot correct a basin's own water balance (ERA5-Land undercatch, losses). The water-yield multiplier p1 is learned only as a prior from attributes.",
+   "Memory is limited to the 365-day warm-up of each block (FlowCast's design): multi-year groundwater carry-over is not represented.",
+   "Dev seed noise is large: three seeds of r0 gave dev 0.391, 0.431, 0.404 on the same sim score (0.409-0.410). Dev differences under ~0.04 between arms are not meaningful.",
+   "Bands are raw pinball quantiles; FlowCast widened its 90 % band x1.08 on dev, this arm does not (arm C's conformal layer calibrates every arm)."
+  ],
+  "notes": [
+   "Retraining FlowCast's exact recipe (3000 steps) on the harness bank gave sim 0.410 (3 seeds: 0.410, 0.410, 0.409) against 0.426 for the released FlowCast v1.0 weights on the same frozen set. Candidate causes, not resolved: the harness train bank was built with the repo's latest WaterSim (6 files differ from the copy FlowCast used; the val set reproduces FlowCast's), and torch initialisation/dropout streams. At 6000 steps the retrained network matches FlowCast v1.0 on sim (0.4255 vs 0.426) and is higher on dev (0.441 vs 0.425; within dev seed noise).",
+   "The quick validation printed during training (first 200 val runs) is monitoring only; every decision uses harness evaluate.py on all 800 runs + the dev gate."
+  ]
+ },
+ "tcn": {
+  "arm_id": "seq_tcn",
+  "label": "TCN (dilated causal 1-D CNN)",
+  "family": "cnn1d",
+  "family_label": "1-D convolutional network (temporal convolutional network)",
+  "released": "r1",
+  "assumption": "The flow today is a learned function of the weather at fixed lags. A stack of causal convolutions reads the last 1, 2, 4 ... 256 days at fixed offsets (receptive field 1,023 days, more than the 730-day window), the same way on every date, and builds longer features with depth. There is no explicit store carried forward: memory is a fixed-lag pattern detector, like a bank of learned unit hydrographs with nonlinear mixing between layers.",
+  "core": "Linear 29 -> 26 channels, then 9 residual blocks (pre-LayerNorm, causal convolution with kernel 3 and dilation 1, 2, 4, ..., 256 days, GELU, 1x1 channel mix), final LayerNorm, dropout 0.1 before the head.",
+  "rungs": [
+   {
+    "id": "r0",
+    "change": "base: FlowCast's training recipe (3000 steps)",
+    "decision": "base",
+    "why": "first rung; same recipe as the LSTM control's r0."
+   },
+   {
+    "id": "r1",
+    "change": "2x training: 6000 steps (cosine over 6000)",
+    "decision": "released",
+    "why": "sim +0.015 over r0 (paired bootstrap +0.001..+0.032) and dev 0.420 >= 0.95 x 0.412: kept. Released (r2 did not beat it)."
+   },
+   {
+    "id": "r2",
+    "change": "gated activations (WaveNet tanh x sigmoid) instead of GELU; channels 26 -> 20 to keep 26.9k parameters; 6000 steps",
+    "decision": "rejected",
+    "why": "sim 0.405 vs 0.416 (-0.012) although dev 0.425: multiplicative gating did not help the convolution."
+   }
+  ],
+  "limits": [
+   "Ungauged only: it never reads streamflow.",
+   "Memory is a fixed set of lags inside the 730-day window (each 365-day block gets its own 365-day warm-up): no multi-year carry-over, and the response to a storm is shaped by learned kernels rather than by a store that depends on how wet the basin already is (that dependence can only come from the nonlinear mixing between layers).",
+   "Dev seed noise (measured on the LSTM control) is ~0.02 sd: dev differences under ~0.04 between arms are not meaningful.",
+   "Bands are raw pinball quantiles (no dev widening). Its 90 % band is the widest of the four sequence arms on sim val (coverage 0.97)."
+  ],
+  "notes": [
+   "Training cost per step is about 0.3 s on one core (LSTM 0.11 s, S4D 0.5-0.6 s, daily-token transformer 0.7 s); numpy inference ~0.015 s per 365-day block.",
+   "The quick validation printed during training (first 200 val runs) is monitoring only; every decision uses harness evaluate.py on all 800 runs + the dev gate."
+  ]
+ },
+ "transformer": {
+  "arm_id": "seq_transformer",
+  "label": "Transformer (causal encoder over daily tokens)",
+  "family": "attn",
+  "family_label": "Attention and transformers",
+  "released": "TBD",
+  "assumption": "Any earlier day can be looked up directly. Each day's output is built from learned weighted averages (attention) over all earlier days of the 730-day window, the weights set by content and by a sinusoidal position encoding. There is no built-in store that fills and drains and no built-in fading of memory: memory is a lookup, not an integrator. Causal mask: day t attends to days <= t only.",
+  "core": "Linear 29 -> 32, + sinusoidal position encoding (positions 0-729), 3 pre-LayerNorm blocks of causal multi-head self-attention (4 heads of size 8; 2 heads of size 16 in r3) and a GELU feed-forward layer (64), final LayerNorm, dropout 0.1 before the head. r2 (rejected) used causal 7-day patches instead of daily tokens.",
+  "rungs": [
+   {
+    "id": "r0",
+    "change": "base: daily tokens, FlowCast's training recipe (3000 steps)",
+    "decision": "base",
+    "why": "first rung; learns slowly (quick val 0.30 / 0.34 / 0.39 at 1k / 2k / 3k steps vs the LSTM's 0.38 / 0.40 / 0.45)."
+   },
+   {
+    "id": "r1",
+    "change": "2x training: 6000 steps",
+    "decision": "kept",
+    "why": "sim +0.037 over r0 and dev 0.389 >= 0.95 x 0.362: kept."
+   },
+   {
+    "id": "r2",
+    "change": "causal 7-day patches (105 tokens, 2 blocks): each day reads the attention output of all earlier complete weeks + a depthwise causal conv over its own last 7 days; 25.8k parameters; 6000 steps",
+    "decision": "rejected",
+    "why": "sim 0.341 vs incumbent r1 0.401: weekly tokens lose more than they save (10x cheaper per step)."
+   },
+   {
+    "id": "r3",
+    "change": "TBD",
+    "decision": "TBD",
+    "why": "TBD"
+   }
+  ],
+  "limits": [
+   "Ungauged only: it never reads streamflow.",
+   "Memory is the 730-day window (each 365-day block gets its own 365-day warm-up). Attention cost grows with the square of the window: numpy inference ~0.07 s per block, about 15x the LSTM (the exam estimate is in the registry).",
+   "It is the slowest learner of the four: it was still improving when stopped, so its standing here is partly a statement about training budget (4 CPU-hours) rather than about attention itself.",
+   "Dev seed noise (measured on the LSTM control) is ~0.02 sd: dev differences under ~0.04 between arms are not meaningful.",
+   "Bands are raw pinball quantiles (no dev widening)."
+  ],
+  "notes": [
+   "Training cost per step about 0.7 s on one core with 4 heads (0.47 s with 2), mostly PyTorch's CPU flash attention.",
+   "The quick validation printed during training (first 200 val runs) is monitoring only; every decision uses harness evaluate.py on all 800 runs + the dev gate."
+  ]
+ },
+ "ssm": {
+  "arm_id": "seq_ssm",
+  "label": "State-space model (S4D with a pointwise encoder)",
+  "family": "ssm",
+  "family_label": "State-space and recurrent models (S4D diagonal state space)",
+  "released": "r2",
+  "assumption": "Memory is linear and time-invariant: each of 48 channels passes through a fixed filter made of 16 decaying, oscillating exponentials (S4D), i.e. a bank of linear reservoirs with learned time constants from days to years, applied the same way whatever the weather. Nonlinearity happens only between the filters. That is the unit-hydrograph / linear-reservoir view of a catchment, stacked three deep. The released rung adds a pointwise nonlinear encoder before the first filter, so the day's inputs can be partitioned (rain vs snow, thresholds) before they enter the linear memory.",
+  "core": "Linear 29 -> 48 channels, a residual pointwise MLP (48 -> 48 -> 48, GELU; added in r2), then 3 S4D layers (pre-LayerNorm; per channel 16 complex diagonal modes, S4D-Lin initialisation, zero-order hold with a learned step in 1e-3..1e-1, the 730-day kernel applied by FFT convolution, skip term D; then GELU and a GLU channel mix, residual), final LayerNorm, dropout 0.1 before the head. numpy builds the same kernel and convolves by FFT (length 2048, exact linear convolution).",
+  "rungs": [
+   {
+    "id": "r0",
+    "change": "base: S4D (3 layers, 48 channels, 16 complex modes each), FlowCast's training recipe (3000 steps)",
+    "decision": "base",
+    "why": "first rung."
+   },
+   {
+    "id": "r1",
+    "change": "2x training: 6000 steps",
+    "decision": "rejected",
+    "why": "sim +0.001 (0.399 vs 0.398): unlike the LSTM, TCN and transformer, the linear time-invariant SSM gains nothing from more training (dev 0.428)."
+   },
+   {
+    "id": "r2",
+    "change": "pointwise nonlinear encoder before the SSM layers (residual MLP 48 -> 48 -> 48, GELU); 30.4k parameters; 6000 steps",
+    "decision": "released",
+    "why": "sim 0.422 vs incumbent r0 0.398 (+0.024; r1 shows the 6000 steps alone add nothing) and dev 0.435 >= 0.95 x 0.410: kept. Released (r3 did not beat it). A nonlinearity BEFORE the linear memory (e.g. rain vs snow, thresholds) is what the fixed filter lacked."
+   },
+   {
+    "id": "r3",
+    "change": "Mamba-lite: replace the S4D layers by selective state-space layers (input-dependent step dt and input/output maps B, C; scalar decay per head, 6 heads x 8, state 16; Mamba-2 style, gated output; no pre-MLP); 28.9k parameters; 6000 steps",
+    "decision": "rejected",
+    "why": "sim 0.415 vs incumbent r2 0.422 (-0.007; dev 0.429 vs 0.435). Selectivity beats the plain fixed filter (r1 0.399) but not the fixed filter with a nonlinear encoder in front. torch's chunked SSD equals numpy's day-by-day recurrence to 1.6e-15 (float64)."
+   }
+  ],
+  "limits": [
+   "Ungauged only: it never reads streamflow.",
+   "Memory is limited to the 730-day window (each 365-day block gets its own 365-day warm-up).",
+   "The S4D filter is the same for every day: how strongly a storm becomes flow cannot depend on how wet the basin already is except through the nonlinear layers between filters. The pointwise encoder (r2) fixes the input side only.",
+   "Dev seed noise (measured on the LSTM control) is ~0.02 sd: dev differences under ~0.04 between arms are not meaningful.",
+   "Bands are raw pinball quantiles (no dev widening)."
+  ],
+  "notes": [
+   "Training cost per step: S4D about 0.5 s on one core (FFT convolutions), Mamba-lite 0.8 s; numpy inference ~0.017 s per 365-day block.",
+   "numpy vs torch float32: ~3e-5 of the mean flow (torch's float32 complex exponentials over 730 lags); numpy equals torch float64 to 8e-15.",
+   "The quick validation printed during training (first 200 val runs) is monitoring only; every decision uses harness evaluate.py on all 800 runs + the dev gate."
+  ]
+ }
+}

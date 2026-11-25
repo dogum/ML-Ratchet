@@ -4,11 +4,11 @@
 // Content: src/lib/model-families.ts. Browser side: src/lib/model-families-ui.ts. Model facts come from model.yaml and
 // ratchet.yaml at build time; backlog questions from docs/backlog.yaml.
 import Base from '../layouts/Base.astro';
-import { getModels, getBacklog, type Model, type Ladder } from '../lib/data';
+import { getModels, getBacklog, ghFile, type Model, type Ladder } from '../lib/data';
 import { url } from '../lib/url';
 import {
   GROUPS, TRAITS, ABSENT, MODEL_NOTES, FAMILIES, COLS, COL_LABEL, CELLS, LENSES, BACKLOG_FIT, BUDGET_EXTRA,
-  SHAP_CASES, REFS, REF_EXTRA, type Group,
+  SHAP_CASES, REFS, REF_EXTRA, BAKEOFF_RIVER, BAKEOFF_VEHICLE, type Group,
 } from '../lib/model-families';
 import { GLYPHS } from '../lib/model-families-glyphs';
 
@@ -255,6 +255,8 @@ const toc: [string, string][] = [
               ))}
             </div>
             {f.used.length > 0 ? <p class="used"><b>Here:</b> {f.used.join(', ')}</p> : targets.length > 0 && <p class="used"><b>Candidates:</b> {targets.join(', ')}</p>}
+            {f.bake && <p class="used bake"><b>River Bake-off:</b> {f.bake.text} <a href={ghFile(BAKEOFF_RIVER.doc)}>Results</a></p>}
+            {f.vbake && <p class="used bake"><b>Vehicle Bake-off:</b> {f.vbake.text} <a href={ghFile(BAKEOFF_VEHICLE.doc)}>Results</a></p>}
             <details>
               <summary>Details</summary>
               <dl>
@@ -698,6 +700,7 @@ const toc: [string, string][] = [
   .mf .pips i.on { background: var(--c); }
   .mf .fam .used { font-size: 12.5px; color: var(--ink-3); margin: 0; }
   .mf .fam .used b { color: var(--ink-2); font-weight: 500; }
+  .mf .fam .used.bake { border-left: 2px solid var(--c); padding-left: 8px; }
   .mf .fam summary { cursor: pointer; font-size: 13px; color: var(--ink-2); }
   .mf .fam dl { margin: 10px 0 0; display: grid; gap: 8px; font-size: 13.5px; }
   .mf .fam dt { font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); }

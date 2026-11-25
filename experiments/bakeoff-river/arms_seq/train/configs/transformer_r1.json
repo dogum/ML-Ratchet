@@ -1,0 +1,1 @@
+{"arm": "transformer", "rung": "r1", "arch": "transformer", "d": 32, "heads": 4, "ff": 64, "layers": 3, "dropout": 0.1, "inner_dropout": 0.0, "steps": 6000, "batch": 32, "lr": 0.002, "seed": 0, "note": "r0 with 2x training: 6000 steps x 32 windows (cosine over 6000)"}

@@ -341,6 +341,25 @@ const toc = [
       </div>
       <p class="note faint">Built with PriorLabs-TabPFN. TabPFN-v2 weights: Prior Labs License 1.1 (Apache 2.0 plus an attribution clause); not redistributed here.</p>
     </div>
+    <div class="frame pad pw reveal" id="bakeoffs">
+      <p class="kicker">Measured · method experiments · 22–24 Nov 2026</p>
+      <h3 class="display h3">Bake-offs: every learner family on one problem</h3>
+      <p class="small">Two real problems, each run through many learner families on equal terms: the same simulated bank, the same inputs and targets, the same dev gate, about 4 CPU-hours and at most 3 rungs per arm, and zero real labels in training. Each exam was run once, for every arm at the same time.</p>
+      <ul class="ticks">
+        <li><b>The families converge.</b> On streamflow (FlowCast’s problem), five families tie within 0.01 NSE at about 0.34. On trip energy (EnergyNet’s), seven networks and trees span 11.7–13.0 % median error.</li>
+        <li><b>They fail together.</b> On trip energy, per-trip errors correlate at 0.92 between different families, and every learner misses the same fleets: Mersin buses, cold-weather Leafs, plug-ins.</li>
+        <li><b>The levers are the simulator, the physics anchor and the data.</b> Correcting the physics estimate is worth about 11 points on trip energy; three times the bank is worth 1.2. On streamflow, every learner loses to regionalisation and to NWM, because they share one bank.</li>
+      </ul>
+      <ul class="ticks wait">
+        <li><b>One bank, one seed, small networks.</b> Gaps under about 0.01 NSE or 0.5 points are within seed noise. This is a result about equal budgets, not a general ranking of families.</li>
+      </ul>
+      <div class="next">
+        <a class="btn" href={url('experiments/river-bakeoff/')}>River Bake-off <span class="arrow">→</span></a>
+        <a class="btn" href={url('experiments/vehicle-bakeoff/')}>Vehicle Bake-off <span class="arrow">→</span></a>
+        <a class="btn ghost" href={ghFile('docs/experiments/bakeoff-river.md')}>River write-up</a>
+        <a class="btn ghost" href={ghFile('docs/experiments/bakeoff-vehicle.md')}>Vehicle write-up</a>
+      </div>
+    </div>
   </section>
 
   <section class="sec wrap" id="neighbours">

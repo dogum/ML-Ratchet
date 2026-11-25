@@ -1,0 +1,13 @@
+{
+ "w": 2.6,
+ "ratio_mean": 1.198275437853783,
+ "ratio_quantiles": [
+  0.004367647614241564,
+  0.13417719380649634,
+  0.44900626427469487,
+  1.1681114108745576,
+  4.579654681009815
+ ],
+ "n_runs": 2000,
+ "what": "mean = ratio_mean x Fu(aridity) x p_mean; quantile k = ratio_quantiles[k] x Fu x p_mean"
+}

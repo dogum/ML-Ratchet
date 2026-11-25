@@ -1,0 +1,327 @@
+{
+ "what": "River Bake-off frozen simulated bank (FlowCast released recipe, physics p1)",
+ "physics": "p1",
+ "phys_json": {
+  "version": "p1",
+  "parent": "p0",
+  "note": "p0 + water-yield correction measured on the 52 dev basins (calib_water.py): the basin's true precipitation is ERA5-Land x m, log m = -0.088 + 0.058 elev_km + 0.153 frac_snow + 0.397 log(p_mean/3) + N(0, 0.146); the network still sees ERA5-Land. m > 1 = orographic undercatch (Pacific NW, mountains); m < 1 = losses in dry plains basins",
+  "camels_share": 0.5,
+  "muskingum_share": 0.25,
+  "undercatch": {
+   "a": -0.088,
+   "b_elev": 0.058,
+   "b_snow": 0.153,
+   "b_wet": 0.397,
+   "sd": 0.146,
+   "lo": 0.4,
+   "hi": 2.5
+  },
+  "forcing_error": {},
+  "obs_noise": {}
+ },
+ "watersim_version": "1.0.0",
+ "watersim_source": "vendor/watersim = byte copy of mlr-repo shared/water/watersim/watersim (VENDOR.json)",
+ "seeds": {
+  "train": 1,
+  "val": 7
+ },
+ "ndays": 1462,
+ "dyn": [
+  "P",
+  "PET",
+  "T_mean",
+  "T_min",
+  "T_max",
+  "SRAD",
+  "vp",
+  "wind"
+ ],
+ "attr_names": [
+  "area_km2",
+  "elev_mean_m",
+  "elev_range_m",
+  "slope_mkm",
+  "forest_frac",
+  "soil_porosity",
+  "ksat_cmh",
+  "carbonate_frac",
+  "reservoir_storage_frac",
+  "irrigation_frac",
+  "urban_frac"
+ ],
+ "static_names": [
+  "log_area",
+  "elev_mean_km",
+  "elev_range_km",
+  "log_slope_mkm",
+  "forest_frac",
+  "soil_porosity",
+  "log_ksat_cmh",
+  "carbonate_frac",
+  "reservoir_frac",
+  "irrigation_frac",
+  "urban_frac",
+  "log_p_mean",
+  "pet_mean",
+  "log_aridity",
+  "frac_snow",
+  "hp_freq",
+  "lp_freq",
+  "t_mean_c"
+ ],
+ "theta_cols": [
+  "hbv.FC",
+  "hbv.LP",
+  "hbv.BETA",
+  "hbv.PERC",
+  "hbv.UZL",
+  "hbv.K0",
+  "hbv.K1",
+  "hbv.K2",
+  "hbv.MAXBAS",
+  "gr4j.X1",
+  "gr4j.X2",
+  "gr4j.X3",
+  "gr4j.X4",
+  "sacsma.UZTWM",
+  "sacsma.UZFWM",
+  "sacsma.UZK",
+  "sacsma.PCTIM",
+  "sacsma.ADIMP",
+  "sacsma.RIVA",
+  "sacsma.ZPERC",
+  "sacsma.REXP",
+  "sacsma.LZTWM",
+  "sacsma.LZFSM",
+  "sacsma.LZFPM",
+  "sacsma.LZSK",
+  "sacsma.LZPK",
+  "sacsma.PFREE",
+  "sacsma.SIDE",
+  "sacsma.RSERV",
+  "sacsma.UH_SHAPE",
+  "sacsma.UH_SCALE",
+  "vic_lite.W1M",
+  "vic_lite.B_INF",
+  "vic_lite.ROOT1",
+  "vic_lite.KSAT",
+  "vic_lite.EXPT",
+  "vic_lite.W2M",
+  "vic_lite.DSMAX",
+  "vic_lite.DS",
+  "vic_lite.WS",
+  "vic_lite.UH_SHAPE",
+  "vic_lite.UH_SCALE",
+  "snow_dd.TT",
+  "snow_dd.TTI",
+  "snow_dd.CFMAX",
+  "snow_dd.SFCF",
+  "snow_dd.CFR",
+  "snow_dd.CWH",
+  "snow_dd.TLAPSE",
+  "snow_dd.PGRAD",
+  "snow_eb.TT",
+  "snow_eb.TTI",
+  "snow_eb.SFCF",
+  "snow_eb.CWH",
+  "snow_eb.ALB_MAX",
+  "snow_eb.ALB_MIN",
+  "snow_eb.ALB_DECAY",
+  "snow_eb.Z0",
+  "snow_eb.TURB",
+  "snow_eb.GHEAT",
+  "snow_eb.CANOPY",
+  "snow_eb.TLAPSE",
+  "snow_eb.PGRAD",
+  "routing.CH_VEL",
+  "routing.CH_N",
+  "latent.storage",
+  "latent.perm",
+  "latent.quick",
+  "latent.snow",
+  "pmult"
+ ],
+ "state_names": [
+  "swe",
+  "soil",
+  "groundwater",
+  "routing_store",
+  "channel_storage"
+ ],
+ "models": [
+  "hbv",
+  "gr4j",
+  "sacsma",
+  "vic_lite"
+ ],
+ "snows": [
+  "degree_day",
+  "energy_balance"
+ ],
+ "routings": [
+  "uh",
+  "muskingum"
+ ],
+ "splits": {
+  "val": {
+   "n": 800,
+   "seed": 7,
+   "shards": 2,
+   "build_seconds": 50.5,
+   "files": {
+    "F": {
+     "sha256": "b9efa2bfbaaf9a69ad8ebe04a3ca0d64a1cb805935233def549c76833e9548ea",
+     "bytes": 18713728
+    },
+    "qo": {
+     "sha256": "ac6ab100d12453762cffa8ec45a4f1a344064335b54d6a2a822066e094a764ed",
+     "bytes": 4678528
+    },
+    "q": {
+     "sha256": "2114579986454a9cfc436fed6bdec07dd3340a747e71d31c954cc3e0e6c77e5e",
+     "bytes": 4678528
+    },
+    "states": {
+     "sha256": "cb86b320212dfeabde70dbc235f7f86d40f1ec646dc8605d88bfac5ede461495",
+     "bytes": 23392128
+    },
+    "attrs": {
+     "sha256": "b46ffc6876a40b7480873b35a8ebba03c952b17e529fbe811f46925da1158441",
+     "bytes": 35328
+    },
+    "st": {
+     "sha256": "106405a04be304a504dc048f474db17887150d04740c64cefd36c853ccbbb997",
+     "bytes": 57728
+    },
+    "theta": {
+     "sha256": "6cfd412d6f4281b60f323150d386e5f135e9ff16f291edebc730d26b5d4b666d",
+     "bytes": 224128
+    },
+    "doy0": {
+     "sha256": "17524ba55d96db874ae69c7b7d1e3ed3152d1387317174f891f402a5c0f97d9e",
+     "bytes": 1728
+    },
+    "model": {
+     "sha256": "cca991f6a2f86b43b5e60a562bd6fccce7abd0abd06d6bb361c55f79315e8155",
+     "bytes": 928
+    },
+    "snow": {
+     "sha256": "9fe080657203e9bcd143637e5a85de62a78050d4c43061ee65cb0d2a2ebf18f1",
+     "bytes": 928
+    },
+    "routing": {
+     "sha256": "482d1f45549e01cc4979979e9978cf2d902b9b78ceff12224373cc819725c452",
+     "bytes": 928
+    },
+    "prior": {
+     "sha256": "42d6f5cd2bf158f67323bb162059be0815c914e7e6fda38c74aa064a60f31487",
+     "bytes": 928
+    },
+    "reg": {
+     "sha256": "6fc4f1bd97b4dcec490dff777da44a934b610d2cde7f1a118dfdf50ccfe30121",
+     "bytes": 928
+    },
+    "pmult": {
+     "sha256": "10510f978ac5b90e240b9201dcc0a35f4e3557b99f82e3d3d856162702b682dc",
+     "bytes": 3328
+    },
+    "lat": {
+     "sha256": "0bd8a6172e615292b27b92d3679c5d0822c2154f12498ab90e9ea9fe7bdd3845",
+     "bytes": 3328
+    },
+    "lon": {
+     "sha256": "564be78ffc522cb96cee137db4e256ff8ccaa554d059011d27953007eb2d61f2",
+     "bytes": 3328
+    },
+    "start": {
+     "sha256": "6502b1f9a65a409ea5cc4384e242051a7ddd810806f209accdbe842e24af76a6",
+     "bytes": 32128
+    },
+    "fbid": {
+     "sha256": "5ad83746cdff2d6bcddaf564f9d1da627a04e943e0ffe97f9de0e3e82a630b18",
+     "bytes": 48128
+    }
+   }
+  },
+  "train": {
+   "n": 12000,
+   "seed": 1,
+   "shards": 30,
+   "build_seconds": 398.3,
+   "files": {
+    "F": {
+     "sha256": "879a8dbba40d550cadf2717eba3aab73ce6a021fbbd4ca5cbd2a3050b16ed39e",
+     "bytes": 280704128
+    },
+    "qo": {
+     "sha256": "3b41d3059c82ba2108682892c17a7d78d46c02fa30e72c2de699b45b6e9d628c",
+     "bytes": 70176128
+    },
+    "q": {
+     "sha256": "41b08bc6b5adfd68ebd1d673d4c8a234cbe9ae79f58476474c8f3fc657c6bf26",
+     "bytes": 70176128
+    },
+    "states": {
+     "sha256": "0c55c14da9820ad5cb9ebbfb4f523ff8869a654feeee8214e6e24ad39b9b858b",
+     "bytes": 350880128
+    },
+    "attrs": {
+     "sha256": "f553b8a20fdf87c5f13cdcca318e711226f0fce37ca70a296be3df6924c0995a",
+     "bytes": 528128
+    },
+    "st": {
+     "sha256": "083654c0c461d0e907dbc655bc0e2ce4d11c51427ae6c452877f91e8465b48e0",
+     "bytes": 864128
+    },
+    "theta": {
+     "sha256": "d317ad3e4975f8a8816dd5b7d502c3302e1d60852e9f4d595385e524e20c7990",
+     "bytes": 3360128
+    },
+    "doy0": {
+     "sha256": "90d9b654f515de9ebbd9c19207ae81df550a0fac487fafe07f5e25ab2d86146a",
+     "bytes": 24128
+    },
+    "model": {
+     "sha256": "53e7637c7f21e94d8e848a0c37673bb2531fabc8b4fc3d6f28a4f8930ccc9418",
+     "bytes": 12128
+    },
+    "snow": {
+     "sha256": "fce3fbb404d91cc54f4f432b016283b10003675e72605d4a010ed38e09a7e25e",
+     "bytes": 12128
+    },
+    "routing": {
+     "sha256": "95c6a146b66f381633c298c29af63dcc4fbcb8b62fce54bda8c5e56aa81ad4d2",
+     "bytes": 12128
+    },
+    "prior": {
+     "sha256": "c1ec5c4a3c0b615e4a15d8265261ec5f39dfce75b81e73374f09f33a9482ff5d",
+     "bytes": 12128
+    },
+    "reg": {
+     "sha256": "a0d05dffce8cb590da899b7ca22983d59c700dca3f01707888f1e6b28d309e9c",
+     "bytes": 12128
+    },
+    "pmult": {
+     "sha256": "e65107275b4ba2ecb4c459781f2ddc470aacf9180cf950d90d54fa3bfdb09ea9",
+     "bytes": 48128
+    },
+    "lat": {
+     "sha256": "b7d80f2598016db94f8457e744e55ffc3770f427687dcb50bdae5e9deea7fc4a",
+     "bytes": 48128
+    },
+    "lon": {
+     "sha256": "cd2b4d108346298a73a515bd283cbe9dee0c0a45bb495637313f82925c8df194",
+     "bytes": 48128
+    },
+    "start": {
+     "sha256": "c767f1055396c528fa71c8e013f280e71d30304b7da4a015b498bd5ceb539b1f",
+     "bytes": 480128
+    },
+    "fbid": {
+     "sha256": "8f83f349fb7f79fe3f51ca7e9e104c1eca184f93ba9623a3e36ce5848d7db633",
+     "bytes": 720128
+    }
+   }
+  }
+ }
+}

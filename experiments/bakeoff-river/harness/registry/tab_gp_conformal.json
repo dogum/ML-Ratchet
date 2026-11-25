@@ -1,0 +1,70 @@
+{
+ "arm_id": "tab_gp_conformal",
+ "arm_dir": "/home/claude/bakeoff/river/arms_filt/conformal/tab_gp_conformal",
+ "hash": "046590d007be5ba9ec58f88bb3685663620b5531c447eebc190ba947fcf41d7b",
+ "files": {
+  "../lib/cf_mondrian.py": "8de2a4956b525f96e7494ebe16e5d0cd7b435fa8baf72a3d0d20ec7ff815223a",
+  "calib.json": "91178d86b02b0dae16aec992b7fc18ba8c9cae77aaff8cfa2131baa377ff10dd",
+  "card.md": "e764e8e90c3b5c80c9d6daeff1398f332f5800a72ec9522ba02f004d0e657b25",
+  "predict.py": "d326f36b49f0b67004f603f15385b55884d9656afab105fc7f9e363d96294991",
+  "ratchet.json": "18d1006d4897445970cfbf2477579e9a3d464928479bae484a6721d8c31d6138",
+  "../../../arms_tab/tab_gp/card.md": "2d51ac11e93b203b768a11b38015f9c1aea00e2e9e154d69973084dd83d51008",
+  "../../../arms_tab/tab_gp/feats.py": "34308612173b6143cab16f91585923988f4e4adef1c2dc1a2c587ffbed2fbc2f",
+  "../../../arms_tab/tab_gp/gp.npz": "4c5147e973c8b5f2396a03342164674d70a840c2ef5a2e823c9dc76478cf6763",
+  "../../../arms_tab/tab_gp/predict.py": "09eb4b50326614771ec4cc86a5ba169d2dc17f9967bf4d988cacb32b83f1b6d0",
+  "../../../arms_tab/tab_gp/ratchet.json": "81721288e0fdd995822c40df44be74b7093e50547a3ec83c7a97ca5f2b8e506d"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "Sparse Gaussian process (SGPR, 500 inducing points, scoped features) + Mondrian conformal",
+  "family": "conformal",
+  "family_label": "Conformal prediction (wrapper around tab_gp)",
+  "group": "filt",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.0059,
+   "base_train_cpu_hours": 0.94,
+   "notes": "conformal fit only (dev predictions of tab_gp + shifts); the base arm is not retrained"
+  },
+  "released": "c0",
+  "feature_engineering": "none beyond tab_gp's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)"
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "ungauged": {
+   "dev_nse": [
+    0.4266,
+    0.2147,
+    0.5004
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 0.201
+  },
+  "files_used": [
+   "arms_filt/conformal/lib/cf_mondrian.py",
+   "arms_filt/conformal/tab_gp_conformal/calib.json",
+   "arms_filt/conformal/tab_gp_conformal/predict.py",
+   "arms_filt/conformal/tab_gp_conformal/ratchet.json",
+   "arms_tab/tab_gp/gp.npz",
+   "arms_tab/tab_gp/predict.py",
+   "arms_tab/tab_gp/ratchet.json",
+   "harness/bank/val/F.npy",
+   "harness/bank/val/attrs.npy",
+   "harness/bank/val/lat.npy",
+   "harness/bank/val/lon.npy",
+   "harness/bank/val/qo.npy",
+   "harness/bank/val/st.npy",
+   "harness/bank/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 4.1
+ },
+ "harness_hash": "111d13ef04a576a20f04d180eb326e8eaa4e0909651d1cc1086d3e8d85e083bf",
+ "registered_at": "2026-11-23T06:18:04",
+ "history": []
+}

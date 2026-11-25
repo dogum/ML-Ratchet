@@ -1,0 +1,100 @@
+{
+ "seed": 20261123,
+ "rule": "\nReads only RoadData's trip index columns that describe the input (architecture, distance, duration, mean speed,\nmean temperature, climb, quality flag) for VED exam trips and the ZTBus v1 leg table (distance); never a label, never\na result. Strata (eligible: q_label_ok, >= 3 km and >= 300 s):\n  city      conventional, mean speed < 30 km/h          highway   conventional, mean speed > 70 km/h\n  hilly     conventional or hybrid, climb >= 15 m/km    cold      conventional, mean temperature < -10 C\n  hybrid    power-split hybrid                          ev        battery-electric (2013 Leaf)\n  plugin    plug-in hybrid (either kind)                bus       a ZTBus exam leg (78 traced legs), >= 3 km\nOne trip per stratum, drawn with default_rng(config.SEED) in that order, never the same vehicle twice.",
+ "trips": [
+  {
+   "stratum": "city",
+   "trip_id": "VED_575_974",
+   "vehicle_id": "VED_575",
+   "arch": "conv",
+   "dist_km": 5.82,
+   "dur_s": 738.0,
+   "kmh": 28.4,
+   "T": 0.0,
+   "climb_per_km": 11.2,
+   "n_eligible": 2350
+  },
+  {
+   "stratum": "highway",
+   "trip_id": "VED_147_949",
+   "vehicle_id": "VED_147",
+   "arch": "conv",
+   "dist_km": 7.77,
+   "dur_s": 326.0,
+   "kmh": 85.9,
+   "T": -0.6,
+   "climb_per_km": 10.1,
+   "n_eligible": 605
+  },
+  {
+   "stratum": "hilly",
+   "trip_id": "VED_374_1346",
+   "vehicle_id": "VED_374",
+   "arch": "hev_powersplit",
+   "dist_km": 4.9,
+   "dur_s": 399.0,
+   "kmh": 44.2,
+   "T": 0.9,
+   "climb_per_km": 15.5,
+   "n_eligible": 211
+  },
+  {
+   "stratum": "cold",
+   "trip_id": "VED_230_1265",
+   "vehicle_id": "VED_230",
+   "arch": "conv",
+   "dist_km": 4.55,
+   "dur_s": 578.0,
+   "kmh": 28.3,
+   "T": -13.0,
+   "climb_per_km": 14.5,
+   "n_eligible": 412
+  },
+  {
+   "stratum": "hybrid",
+   "trip_id": "VED_549_727",
+   "vehicle_id": "VED_549",
+   "arch": "hev_powersplit",
+   "dist_km": 3.31,
+   "dur_s": 404.0,
+   "kmh": 29.5,
+   "T": -8.5,
+   "climb_per_km": 3.6,
+   "n_eligible": 4974
+  },
+  {
+   "stratum": "ev",
+   "trip_id": "VED_10_1737",
+   "vehicle_id": "VED_10",
+   "arch": "bev",
+   "dist_km": 4.95,
+   "dur_s": 683.0,
+   "kmh": 26.1,
+   "T": -23.9,
+   "climb_per_km": 10.3,
+   "n_eligible": 111
+  },
+  {
+   "stratum": "plugin",
+   "trip_id": "VED_492_2410",
+   "vehicle_id": "VED_492",
+   "arch": "phev_series",
+   "dist_km": 14.41,
+   "dur_s": 683.0,
+   "kmh": 75.9,
+   "T": 25.4,
+   "climb_per_km": 7.4,
+   "n_eligible": 2134
+  },
+  {
+   "stratum": "bus",
+   "trip_id": "ZTBus_B208_2021-05-27_04-09-18_2021-05-27_18-21-41_leg02",
+   "vehicle_id": "ZTBus_B208",
+   "arch": "bev",
+   "dist_km": 14.81,
+   "dur_s": 3635.0,
+   "T": 12.3,
+   "n_eligible": 78
+  }
+ ]
+}

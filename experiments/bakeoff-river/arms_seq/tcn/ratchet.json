@@ -1,0 +1,128 @@
+{
+ "arm_id": "seq_tcn",
+ "label": "TCN (dilated causal 1-D CNN)",
+ "family": "cnn1d",
+ "family_label": "1-D convolutional network (temporal convolutional network)",
+ "group": "seq",
+ "protocols": [
+  "ungauged"
+ ],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 1.251,
+  "eval_note": "harness evaluate.py per rung (800 sim val runs + 52 dev basins) not included: about 0.5-4 CPU-min per rung",
+  "notes": "3 rungs; one thread (torch.set_num_threads(1)), time.process_time() of the training process, shared 2-core machine"
+ },
+ "feature_engineering": "None beyond the shared arms_seq pipeline (common/seqlib.py), identical for all four sequence arms: FlowCast's 11 scaled daily features (P/10, log1p P, PET/5, T_mean/T_min/T_max /10, SRAD/150, vp/1000, wind/3, sin/cos day of year) + FlowCast's 18-value static vector (batch[\"static\"], standardised with the train bank mean/sd) repeated every day; target in units of the basin mean precipitation exp(static[11]); 730-day windows (365 warm-up + 365 target), inference in 365-day blocks each with its own 365-day warm-up (FlowCast). Causal: day t uses forcing up to day t only.",
+ "extra_files": [
+  "../common"
+ ],
+ "margin": 0.01,
+ "rule": "keep if sim val median NSE (all 800 frozen runs) > incumbent + 0.01 AND dev median NSE (52 dev basins, WY2001-2014) >= 0.95 x incumbent's",
+ "rungs": [
+  {
+   "id": "r0",
+   "change": "base: FlowCast's training recipe (3000 steps)",
+   "decision": "base",
+   "why": "first rung; same recipe as the LSTM control's r0.",
+   "simval_nse": 0.4013,
+   "dev_nse": 0.4124,
+   "simval_kge": 0.3448,
+   "dev_kge": 0.4377,
+   "dev_fhv": -35.8,
+   "dev_cov50": 0.569,
+   "dev_cov90": 0.962,
+   "dev_crps_rel": 0.394,
+   "train_cpu_h": 0.261,
+   "n_params": 26266,
+   "steps": 3000
+  },
+  {
+   "id": "r1",
+   "change": "2x training: 6000 steps (cosine over 6000)",
+   "decision": "released",
+   "why": "sim +0.015 over r0 (paired bootstrap +0.001..+0.032) and dev 0.420 >= 0.95 x 0.412: kept. Released (r2 did not beat it).",
+   "simval_nse": 0.4164,
+   "dev_nse": 0.4196,
+   "simval_kge": 0.3608,
+   "dev_kge": 0.4326,
+   "dev_fhv": -33.3,
+   "dev_cov50": 0.587,
+   "dev_cov90": 0.972,
+   "dev_crps_rel": 0.391,
+   "train_cpu_h": 0.545,
+   "n_params": 26266,
+   "steps": 6000
+  },
+  {
+   "id": "r2",
+   "change": "gated activations (WaveNet tanh x sigmoid) instead of GELU; channels 26 -> 20 to keep 26.9k parameters; 6000 steps",
+   "decision": "rejected",
+   "why": "sim 0.405 vs 0.416 (-0.012) although dev 0.425: multiplicative gating did not help the convolution.",
+   "simval_nse": 0.4047,
+   "dev_nse": 0.4254,
+   "simval_kge": 0.3633,
+   "dev_kge": 0.4435,
+   "dev_fhv": -33.8,
+   "dev_cov50": 0.578,
+   "dev_cov90": 0.97,
+   "dev_crps_rel": 0.392,
+   "train_cpu_h": 0.445,
+   "n_params": 26866,
+   "steps": 6000
+  }
+ ],
+ "released": "r1",
+ "noise_checks": [],
+ "released_scores": {
+  "simval_nse": 0.4164,
+  "simval_kge": 0.3608,
+  "simval_cov90": 0.97,
+  "dev_nse": 0.4196,
+  "dev_kge": 0.4326,
+  "dev_fhv": -33.3,
+  "dev_cov50": 0.587,
+  "dev_cov90": 0.972,
+  "dev_crps_rel": 0.391,
+  "dev_by_class_nse": {
+   "snow": {
+    "n": 10,
+    "nse": 0.543
+   },
+   "arid": {
+    "n": 14,
+    "nse": 0.193
+   },
+   "humid": {
+    "n": 11,
+    "nse": 0.581
+   },
+   "regulated": {
+    "n": 5,
+    "nse": 0.281
+   },
+   "large": {
+    "n": 6,
+    "nse": 0.317
+   }
+  },
+  "train_cpu_h": 0.545,
+  "n_params": 26266,
+  "steps": 6000
+ },
+ "n_params": 26266,
+ "export_check": {
+  "arm": "tcn",
+  "rung": "r1",
+  "cases": 19,
+  "max_abs_diff_mean_rel_to_mean_flow": 4.137409561517716e-06,
+  "max_abs_diff_quantiles_rel_to_mean_flow": 9.125237459684943e-06,
+  "torch_float64": {
+   "max_abs_diff_mean_rel": 6.284788683504488e-15,
+   "max_abs_diff_quantiles_rel": 1.530770462926967e-14
+  },
+  "note": "numpy float64 (released predict.py) vs torch float32 (training checkpoint), mm/day, 16 sim val windows + 3 dev basins (14 years each)"
+ },
+ "bands": "raw pinball quantiles (no dev widening; arm C conformalises every arm)"
+}

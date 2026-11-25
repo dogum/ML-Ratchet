@@ -1,0 +1,28 @@
+{
+ "run_id": "20261123T074907",
+ "finished": "2026-11-23T10:44:40",
+ "result": "results/exam_20261123T074907.json",
+ "arms": {
+  "climatology": "7e9b2caf9d619de42222218edf32162df29cc350ecb66a75a193b0152193bfde",
+  "enkf_watersim": "bd85c400356020832b4ccfe14c964840018b73a88913e45b69a11f6fd4b492d8",
+  "enkf_watersim_conformal": "c4f91252aa3baef880c4ea62a0deea1bdf16c18c309d6eaec7a1b5e4767d864c",
+  "flowcast_v1": "6400ea99ca6cfc34bb5204fef546e2404d583a7911a8083d3bdf76411f7c96fa",
+  "flowcast_v1_conformal": "da549e656a0f040081c4f3b9447e1aa1f90543b0e8317b9e262be034d05d7ecb",
+  "seq_lstm": "93421517ac8df0b76f96842d6540f381afaf1014b9fe0ea01bfa6015ff6e8501",
+  "seq_lstm_conformal": "847a3c714914bcd1cdf87c170031760876a8139710b5d12e979de529328f030f",
+  "seq_ssm": "d93736f3c9c12f38397986d92ec29e62edc769481165dfd765d0a963723305bd",
+  "seq_ssm_conformal": "a2fe7765713450f4660ab02a83b8f626fd68504249b9312c0c6570a07711c72d",
+  "seq_tcn": "d85e8142dafdc01cef6d90aea75706547b7985720ae9104ea847cad43e0a37f8",
+  "seq_tcn_conformal": "0ada27abaea21071fb1d598dcd100d9745d5ac73b7d346371fe6dcbc7e91baa6",
+  "seq_transformer": "58490e2c52a25844432906dafe78e4b192bb7204b71ca528a73f43ceb95b2cbe",
+  "seq_transformer_conformal": "61c41d94aab115d64ec61cdf9a4ffc6f55485a099e43c25ff265a7861f67e966",
+  "tab_dpl": "5a86b90b36cc9ef13f06bc0e114099f9bcfb1f60372a469cd45b3a6079ca6186",
+  "tab_dpl_conformal": "e73ea1c1e1d2909b71952415fd80a8d8e5f4c8e7ad172140339080da00629a7c",
+  "tab_formula": "3f8047a78c60ebe02f949d6d06596634e8cf765a59153537e88706f247a9d9dc",
+  "tab_formula_conformal": "dacb390ac9f0073a718faba07dcc53713ff43c4def5fa073455047f350fb9f77",
+  "tab_gbm": "86b5fa6bcbd682a8ff75861bf3656ba7a3049cf8f05e702433e8dcd016fbc737",
+  "tab_gbm_conformal": "986e6c2ed61222a6866f5fb0a31faf62e6cb0507a7743fa7c755fa11cce3757b",
+  "tab_gp": "2806d12cceedb34f9bcea256818ffe9b85fd80b766960bfb518888657f27b8dd",
+  "tab_gp_conformal": "046590d007be5ba9ec58f88bb3685663620b5531c447eebc190ba947fcf41d7b"
+ }
+}

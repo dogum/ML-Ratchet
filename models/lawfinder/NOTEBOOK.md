@@ -107,3 +107,21 @@ results and page inputs; the bank scripts and `build_release.py` create their ow
 each platform's data root (`$ML_RATCHET_WATER`, `_FIRE`, `_GRID`, `_BUILDING`, `_VEHICLE`) and the exam outputs of
 FlowCast, FireCast, GridPulse and EnergyNet in their work folders (`$ML_RATCHET_PEER_REPO`). Not reproducible from this
 folder: the other four laws' banks and exam point files (not shipped), which is why `add_road_release.py` exists.
+
+## 2026-11-24 — a second road law from the Vehicle Bake-off (recorded, not adopted)
+
+- **What arrived.** The Vehicle Bake-off (cloud, 23-24 Nov 2026; `experiments/bakeoff-vehicle`) built its own road law as
+  its formula arm, on its own RoadSim physics v2 bank (EnergyNet v2.1's recipe) with a log-target search, and packaged it
+  for LawFinder (`experiments/bakeoff-vehicle/arms_phys/lawfinder_road/`, MERGE_NOTES.md). The handoff called it ready
+  to merge as the fifth law.
+- **Why it is not merged as the fifth law.** LawFinder already released a road law here on 22 Nov 2026 (p1-c23), and its
+  exam ran once. The bake-off law was graded on the bake-off's exam, and it scores better: on the same 14,469 VED petrol
+  exam trips, MdAPE 14.0 % (s1-c21) against 19.3 % for p1-c23. Swapping the release after seeing both exam scores would
+  let the exam choose the law. So p1-c23 stays released, and s1-c21 stays where it was built, as the bake-off's formula arm.
+- **For the record (exam, VED petrol trips, n 14,469):** bake-off s1-c21 14.0 % (bias −12.5 %); LawFinder p1-c23 19.3 %
+  (−18.9 %); RoadSim's own law p2-c10 14.0 %; road-load E_phys 33.0 %; MOVES-like 10.3 %; EnergyNet v2.1 8.6 %. The
+  bake-off law misses dynamometer cycles (EPA conv HWY 30.5 %).
+- **What it suggests for a next rung.** The two searches differ in the bank (EnergyNet's recipe, heavier coverage of
+  real routes) and in the loss (squared log error). Both are changes LawFinder can try as its own rung on its own frozen
+  val set and dev gate, with no exam involved. LawFinder's own rule, applied to the bake-off's fronts, would have kept the
+  simpler s1-c16 (`road_ratchet.json`).

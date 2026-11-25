@@ -1,0 +1,23 @@
+{
+ "arm_id": "formula",
+ "label": "Trip-energy law (LawFinder-style symbolic regression, one formula per powertrain)",
+ "family": "symbolic",
+ "family_label": "Symbolic regression (readable laws)",
+ "group": "phys",
+ "tracks": ["table", "trace"],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {"train_cpu_hours": 0.87, "notes": "7 time-boxed searches of 20 min wall each on a contended core (s1 ice/hev/bev, s2 ice/hev/bev, s3 plug-in): 0.857 CPU-h incl. constant refits on up to 30,000 train rows; sim-train bands seconds. Scoring the fronts and rungs (ladder.py, evaluate.py) took roughly another 0.5 CPU-h and is not training. One thread, nice 5."},
+ "feature_engineering": "Seven named trip summaries per row (lawvars.py), identical on both tracks: p / n = positive / negative wheel work per km at the tier's road load, t = minutes per km, m = mass (t), T = mean ambient C, c = start state (-1 warm, 0 unknown, +1 cold), d = km (+ dyn = dynamometer flag in the s2 search, f = plug-in charge-depleting share in s3). Table: read from EnergyNet's 151 inputs (route vector, physics vector, vehicle vector). Trace: recomputed from the trace + spec + rl with EnergyNet's own physics integrals (enet_features.py = byte copy of features.py; equal to the table to 1.2e-4 in log). Target per km e = y / d, loss = squared log error.",
+ "extra_files": [],
+ "margin": 0.01,
+ "rule": "keep a rung if its sim val skill beats the incumbent by > 0.01 AND its dev D16 (table track) is not worse than the incumbent's by more than 0.01 (EnergyNet's model-rung rule, the harness's suggestion; stated in src/rungs_formula.py before any rung was scored). Within a rung, laws are chosen on simulations only (knee or lowest sim val median |log error| of the group).",
+ "rungs": [
+  {"id": "r0", "change": "search s1 (7 variables p, n, t, m, T, c, d; 20 min per group): the knee of each group's Pareto front (LawFinder's rule, simulations only): ice c5 e = 3.37 p + t; hev c5 e = 3.321 p + 0.253; bev c16 e = p - n + n exp(-0.0395 T) + 0.0294 m t; plug-ins f E_bev + (1 - f) E_hev", "decision": "base", "why": "first rung", "simval_skill": 0.2306, "simval_MdAPE": 0.1816, "dev_D16": 0.2060, "dev_D16_trace": 0.2060},
+  {"id": "r1", "change": "search s1: the most accurate law of each front (lowest sim val median |log error| of the group): ice c21, hev c22, bev c20", "decision": "released", "why": "sim val skill 0.3226 > 0.2306 + 0.01 and dev D16 0.1752 <= 0.2060 + 0.01", "simval_skill": 0.3226, "simval_MdAPE": 0.1595, "dev_D16": 0.1752, "dev_D16_trace": 0.1751},
+  {"id": "r2", "change": "search s2 adds the dynamometer-test flag dyn as a law variable; per group the most accurate law on the union of the s1 and s2 fronts: ice s2 c18 e = (p (exp(c/2) - dyn + 3.671))^0.817 + t ln(m + 0.277), hev s1 c22 (unchanged), bev s2 c24", "decision": "rejected", "why": "sim val skill 0.3219 does not beat r1's 0.3226 by more than 0.01 (dynamometer trips are 9 % of the sim val set, so the median-based skill cannot see the dyn term), although dev D16 is much better: 0.1518 vs 0.1752 (EPA conv HWY 0.262 -> 0.096, FTP 0.194 -> 0.108, ICCT 0.398 -> 0.196; VED ICE 0.098 -> 0.133, EPA bev HWY 0.109 -> 0.185 worse). Rule kept as stated.", "simval_skill": 0.3219, "simval_MdAPE": 0.1595, "dev_D16": 0.1518, "dev_D16_trace": 0.1518}
+ ],
+ "searched_without_rung": {"s3": "a dedicated plug-in law (vars + f, 20 min): no member beats r1's mixing rule on simulated plug-in trips (best median |log error| 0.337 vs 0.315; road-load 0.340), so no rung was built (work/ladder_s3_phev.json)"},
+ "released": "r1"
+}

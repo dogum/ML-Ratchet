@@ -1,0 +1,23 @@
+--- /home/claude/bakeoff/vehicle/phase3/logs/register.py.orig	2026-11-23 13:13:51.363327587 -0500
++++ register.py	2026-11-23 20:42:35.158495124 -0500
+@@ -198,12 +198,18 @@
+     return 0
+ 
+ 
+-def registered():
++def registered(include_excluded=False):
++    """registry records; arms whose folder is listed in registry/excluded.json (with a reason) are left out unless
++    include_excluded (Phase 3 fix: excluded.json lives in registry/ and is not an arm record)."""
+     out = {}
+     if os.path.isdir(C.REGISTRY):
++        xp = os.path.join(C.REGISTRY, 'excluded.json')
++        excl = json.load(open(xp)) if os.path.exists(xp) else {}
+         for f in sorted(os.listdir(C.REGISTRY)):
+-            if f.endswith('.json'):
++            if f.endswith('.json') and f != 'excluded.json':
+                 r = json.load(open(os.path.join(C.REGISTRY, f)))
++                if r.get('arm_dir') in excl and not include_excluded:
++                    continue
+                 out[r['arm_id']] = r
+     return out
+ 

@@ -1,0 +1,122 @@
+{
+ "guard: exam_batches table refused without the exam lock": {
+  "pass": true,
+  "detail": "exam data is guarded: only exam.py (run once, after every arm is registered) reads it"
+ },
+ "guard: exam_batches trace refused without the exam lock": {
+  "pass": true,
+  "detail": "exam data is guarded: only exam.py (run once, after every arm is registered) reads it"
+ },
+ "guard: exam_frame refused without the exam lock": {
+  "pass": true,
+  "detail": "exam data is guarded: only exam.py (run once, after every arm is registered) reads it"
+ },
+ "guard: real_frame exam refused without the exam lock": {
+  "pass": true,
+  "detail": "exam data is guarded: only exam.py (run once, after every arm is registered) reads it"
+ },
+ "guard: real_batches exam refused without the exam lock": {
+  "pass": true,
+  "detail": "exam data is guarded: only exam.py (run once, after every arm is registered) reads it"
+ },
+ "guard: _load_real exam refused without the exam lock": {
+  "pass": true,
+  "detail": "exam data is guarded: only exam.py (run once, after every arm is registered) reads it"
+ },
+ "guard: real_trace exam refused without the exam lock": {
+  "pass": true,
+  "detail": "exam data is guarded: only exam.py (run once, after every arm is registered) reads it"
+ },
+ "guard: build_real.build exam refused without the exam lock": {
+  "pass": true,
+  "detail": "exam data is guarded: only exam.py (run once, after every arm is registered) reads it"
+ },
+ "build_real.py exam refused from the command line": {
+  "pass": true,
+  "detail": "only dev from the command line; the exam records are built by exam.py\n"
+ },
+ "guard: env var alone (no lock file) is refused": {
+  "pass": true,
+  "detail": "exam data is guarded: only exam.py (run once, after every arm is registered) reads it"
+ },
+ "guard: a separate process with a fake run id is refused": {
+  "pass": true,
+  "detail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import bake; bake.exam_frame()\n                 ~~~~~~~~~~~~~~~^^\n  File \"/home/claude/bakeoff/vehicle/harness/bake.py\", line 436, in exam_frame\n    _guard()\n    ~~~~~~^^\n  File \"/home/claude/bakeoff/vehicle/harness/bake.py\", line 403, in _guard\n    raise PermissionError('exam data is guarded: only exam.py (run once, after every arm is registered) reads it')\nPermissionError: exam data is guarded: only exam.py (run once, after every arm is registered) reads it\n"
+ },
+ "no exam records were built by the tests": {
+  "pass": true,
+  "detail": ""
+ },
+ "guard: a lock naming a different run id is refused": {
+  "pass": true,
+  "detail": "exam lock names a different run"
+ },
+ "exam: --run refused while a run is in progress (lock present)": {
+  "pass": true,
+  "detail": "an exam run is in progress (results/EXAM_RUNNING.json); use --resume"
+ },
+ "exam: refused once EXAM_DONE exists (runs once)": {
+  "pass": true,
+  "detail": "the exam already ran (run-A); it runs once"
+ },
+ "register: refused once the exam has started or finished": {
+  "pass": true,
+  "detail": ""
+ },
+ "exam --check passes with the registered arms": {
+  "pass": true,
+  "detail": "splits.json sha256 OK (d917df78)\n2 arms: climatology, enet_v21; estimated predict CPU 1 min (+ building the exam records ~15 min, references and aggregation ~15 min)\nCHECK PASSED: the exam can run (python3 exam.py --run). Nothing was read from the exam.\n"
+ },
+ "exam --check refuses an unregistered arm folder": {
+  "pass": true,
+  "detail": "REFUSED:\nunregistered arm folder harness/arms_ref/_guardtest_unregistered (register it, or list it in registry/excluded.json with a reason)\n"
+ },
+ "exam --check --arm <unregistered> is refused": {
+  "pass": true,
+  "detail": "REFUSED:\nunregistered arm folder harness/arms_ref/_guardtest_unregistered (register it, or list it in registry/excluded.json with a reason)\n--arm guardtest_unregistered: not registered\n"
+ },
+ "exam --check refuses an unregistered folder under arms_table/": {
+  "pass": true,
+  "detail": "REFUSED:\nunregistered arm folder arms_table/_guardtest_unregistered_arm (register it, or list it in registry/excluded.json with a reason)\n"
+ },
+ "exam --check refuses a registered arm whose artefact changed": {
+  "pass": true,
+  "detail": "REFUSED:\nclimatology: artefact changed since registration (686ea477fe3c -> 61b7cc7893a3; files ['card.md'])\n"
+ },
+ "register --verify reports the change": {
+  "pass": true,
+  "detail": "CHANGED since registration: ['card.md']\n"
+ },
+ "register.py refuses a silent re-registration (needs --replace)": {
+  "pass": true,
+  "detail": "REFUSED: climatology is registered with a different hash (686ea477fe3c vs now 61b7cc7893a3). Pass --replace to re-register before the exam (logged).\n"
+ },
+ "exam --check refuses an arm with an added file": {
+  "pass": true,
+  "detail": "REFUSED:\nclimatology: artefact changed since registration (686ea477fe3c -> 46f58e224a9a; files ['extra_weights.npz'])\n"
+ },
+ "exam --check passes again after restoring the bytes": {
+  "pass": true,
+  "detail": "splits.json sha256 OK (d917df78)\n2 arms: climatology, enet_v21; estimated predict CPU 1 min (+ building the exam records ~15 min, references and aggregation ~15 min)\nCHECK PASSED: the exam can run (python3 exam.py --run). Nothing was read from the exam.\n"
+ },
+ "exam worker refuses an unregistered arm id": {
+  "pass": true,
+  "detail": "no_such_arm: not registered"
+ },
+ "register: audit refuses an arm that reads a file outside its artefact": {
+  "pass": true,
+  "detail": "['files used at predict time but not in the hashed artefact (add them to the arm folder or to ratchet.json \"extra_files\"): harness/arms_ref/climatology/clim.json']"
+ },
+ "register: refuses an arm whose outputs are not > 0": {
+  "pass": true,
+  "detail": "['table/ved: pred has 24 values <= 0 (energy in MJ must be > 0)', 'table/epa: pred has 24 values <= 0 (energy in MJ must be > 0)', 'table/hd: pred has 24 values <= 0 (energy in MJ must be > 0)', 'table/simval: pred has 48 values <= 0 (energy in MJ must be > 0)']"
+ },
+ "register: warns about an arm whose outputs depend on the batch": {
+  "pass": true,
+  "detail": "['table/ved: outputs depend on the batch (rows reversed: max relative diff 0.23); each row must be predicted from its own inputs', 'table/epa: outputs depend on the batch (rows reversed: max relative diff 0.23); each row must be predicted from its own inputs', 'table/hd: outputs depend on the batch (rows reversed: max relative diff 0.23); each row must be predicted from its own inputs', 'table/simval: outputs depend on the batch (rows reversed: max relative diff 0.47); each row must be predicted from its own inputs']"
+ },
+ "register: refuses an arm that declares real labels in training": {
+  "pass": true,
+  "detail": "['real_labels_in_training must be false (zero real labels in training)']"
+ }
+}

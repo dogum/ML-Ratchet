@@ -1,0 +1,27 @@
+{
+ "arm_id": "tab_gbm",
+ "label": "Gradient-boosted trees (LightGBM -> numpy trees)",
+ "family": "gbm",
+ "family_label": "Gradient-boosted decision trees",
+ "group": "tab",
+ "protocols": ["ungauged"],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {"train_cpu_hours": 0.43,
+  "notes": "One thread (process_time). Feature tables 7 s + 15 s + 15 s + 20 s reorder; a failed first launch (LightGBM refuses monotone constraints with the quantile objective) ~125 s; r0 223 s; r1 609 s; r2 221 s; r3 289 s. Six boosters per rung (mean + 5 quantiles). Harness evaluation (not training) used another ~0.8 CPU h over the 4 rungs."},
+ "feature_engineering": "Per day, from the batch forcing + static vector only (feats.py): P(t+1), P(t), P(t-1), P(t-2), sum P(t-6..t-3); liquid input W = rain + melt of a fixed one-band degree-day snow proxy (TT 0 C, 2 C interval, 3 mm/C/day) at t, t-1, t-2 and melt(t); EMAs of W over 3, 10, 30, 90, 365 days; two bucket models (50 and 300 mm: fill fraction, spill EMA, drain) and a 60-day linear store; T(t), EMA10 T, PET(t), EMA30 PET; SWE proxy, log1p(SWE); sin/cos day of year; the 18-value static vector. Water features and the target are divided by p_mean (the forcing's mean precipitation); target = qo / p_mean. 47 features.",
+ "extra_files": [],
+ "margin": 0.01,
+ "rule": "keep if sim val median NSE > incumbent + 0.01 AND dev median NSE >= 0.95 x incumbent's (all 800 frozen sim val runs; 52 dev basins)",
+ "rungs": [
+  {"id": "r0", "change": "base: LightGBM L2 mean model (63 leaves, lr 0.05, early stop on held-out TRAIN runs, 218 trees) with monotone +1 constraints on the 21 water-input features; 5 quantile boosters (31 leaves, unconstrained: LightGBM forbids monotone constraints for the quantile objective); 1.2 M rows (12,000 train runs x 1 window x 100 days)",
+   "decision": "base", "why": "first rung", "simval_nse": 0.367, "dev_nse": 0.418},
+  {"id": "r1", "change": "twice the data (2 windows per run, 2.4 M rows), 127 leaves, lr 0.03 (577 trees)",
+   "decision": "rejected", "why": "sim val +0.004 (< 0.01 margin); dev 0.403", "simval_nse": 0.371, "dev_nse": 0.403},
+  {"id": "r2", "change": "r0 without the monotone constraints (mean model 256 trees)",
+   "decision": "released", "why": "sim val +0.031 (0.398 vs 0.367); dev 0.421 >= 0.95 x 0.418", "simval_nse": 0.398, "dev_nse": 0.421},
+  {"id": "r3", "change": "r2 + 7 elevation-band snow-proxy features (5 bands from the elevation range, lapse -6.5 C/km)",
+   "decision": "rejected", "why": "sim val +0.009 (< 0.01 margin; paired bootstrap 95% CI -0.012..+0.020); dev 0.418", "simval_nse": 0.407, "dev_nse": 0.418}
+ ],
+ "released": "r2"
+}

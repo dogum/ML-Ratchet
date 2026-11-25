@@ -1,0 +1,66 @@
+{
+ "arm_id": "trace_transformer",
+ "label": "Transformer on the trip trace (20-s patch tokens)",
+ "family": "attn",
+ "family_label": "Attention and transformers",
+ "group": "trace",
+ "tracks": [
+  "trace"
+ ],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {
+  "train_cpu_hours": 1.635,
+  "notes": "r0 0.19, r1 0.17, r2 0.33, r3 0.90 (rejected); + 0.05 for a 1-epoch smoke run (0.015), a speed benchmark, a 2-min first launch killed for memory and r3 steps lost to a container restart; one thread, shared 2-core machine"
+ },
+ "feature_engineering": "trace-track inputs only: the harness's shared 5-s block means (bake.block_means rule: 8 channel means + mean v^2, mean v^3, summed positive kinetic-energy increment per unit mass) + the block's valid-second fraction -> 12 scaled channels; spec (49) and rl (5, logs of mass / CdA / Crr) standardised with train-bank statistics; log distance and log duration from the trace; chunks of <= 1,440 blocks mean-pooled for longer traces; anchor r0 = sim-train median MJ/km per (architecture, class) (bake.dumb_rates) x distance; from r1: E_phys recomputed from the trace inputs by bake.e_phys_from_trace (EnergyNet's generic road-load estimate; declared), target log(y / E_phys), log(E_phys / A0) as an input",
+ "extra_files": [
+  "../common"
+ ],
+ "margin": 0.01,
+ "rule": "keep a rung if its full sim val skill beats the incumbent by > 0.01 AND its dev D16 is not worse than the incumbent's by more than 0.01 (HARNESS.md section 7, EnergyNet's model-rung rule)",
+ "rungs": [
+  {
+   "id": "r0",
+   "change": "base: pure trace learner; anchor A0 = sim-train median MJ/km (architecture x class) x distance, no physics estimate; 12 epochs",
+   "decision": "base",
+   "why": "first rung: what the transformer finds from the raw trace alone (skill 0.608, D16 0.121)",
+   "simval_skill": 0.6082,
+   "simval_MdAPE": 0.0914,
+   "dev_D16": 0.121,
+   "train_cpu_hours": 0.185
+  },
+  {
+   "id": "r1",
+   "change": "physics anchor: target log(E / E_phys) with E_phys recomputed from the trace inputs (bake.e_phys_from_trace), log(E_phys / A0) as an input; 12 epochs from scratch",
+   "decision": "kept",
+   "why": "sim val skill +0.0215 over r0 (bootstrap +0.006..+0.035) and D16 0.1087 better than r0 0.1210: kept",
+   "simval_skill": 0.6297,
+   "simval_MdAPE": 0.0866,
+   "dev_D16": 0.1087,
+   "train_cpu_hours": 0.174
+  },
+  {
+   "id": "r2",
+   "change": "3x training (the River lesson: transformers need more steps): warm restart from r1 for 24 more epochs (one-cycle cosine, peak lr 1e-3, data stream seed 1); 36 epochs in all",
+   "decision": "released",
+   "why": "sim val skill +0.0145 over r1 (bootstrap +0.004..+0.025); D16 0.1135 vs 0.1087, worse by 0.005, inside the 0.01 tolerance: kept; released (r3 did not beat it)",
+   "simval_skill": 0.6442,
+   "simval_MdAPE": 0.0829,
+   "dev_D16": 0.1135,
+   "train_cpu_hours": 0.33
+  },
+  {
+   "id": "r3",
+   "change": "10-s patch tokens (2 blocks) instead of 20-s (4 blocks): finer attention resolution, the only place the transformer coarsens the shared 5-s input; 36 epochs from scratch (= r2's total training), peak lr 2e-3, data seed 0",
+   "decision": "rejected",
+   "why": "sim val skill -0.0037 vs r2 (bootstrap -0.017..+0.010): no gain at 2.7x the CPU of r2; D16 0.1122 vs 0.1135 is a move under 0.01 (seed noise): rejected",
+   "simval_skill": 0.6404,
+   "simval_MdAPE": 0.0837,
+   "dev_D16": 0.1122,
+   "train_cpu_hours": 0.896
+  }
+ ],
+ "released": "r2"
+}

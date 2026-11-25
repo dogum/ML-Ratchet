@@ -1,0 +1,72 @@
+{
+ "arm_id": "seq_ssm_conformal",
+ "arm_dir": "/home/claude/bakeoff/river/arms_filt/conformal/seq_ssm_conformal",
+ "hash": "a2fe7765713450f4660ab02a83b8f626fd68504249b9312c0c6570a07711c72d",
+ "files": {
+  "../lib/cf_mondrian.py": "8de2a4956b525f96e7494ebe16e5d0cd7b435fa8baf72a3d0d20ec7ff815223a",
+  "calib.json": "b733dc033ecef3e9797c583549d637f99b41c319cb1e9820650ba2825de82004",
+  "card.md": "a8563a0352cf5a0187cc2d5605fc693ef2d22ae2974960cbceb1fb42faffbe0e",
+  "predict.py": "7adf31f4900fc6e4d0b2125ac56748cee54dd04ba02037c0a70cd65132d790cd",
+  "ratchet.json": "1a73e0449560579792f71cbb76dec6ebc8e058809122bace97d0f050588d4032",
+  "../../../arms_seq/common/SEQLIB_FROZEN.sha256": "fcdc4e4ed854dddb6abe4239d13fa020e928607008edaab732f17f206d1836f3",
+  "../../../arms_seq/common/seqlib.py": "d53f7d73f085fd0546b4fb55d8d4dc513e4f53b3460d3617f70b39dcf32f3dda",
+  "../../../arms_seq/ssm/card.md": "bd1525ca201992d291e20502b8c67998391b58039f0e6ba61b184ed401b14de3",
+  "../../../arms_seq/ssm/predict.py": "802fb204415b32c538d0497600c2f95ae045bcda3f7a44c18dcac1a02b21fe0f",
+  "../../../arms_seq/ssm/ratchet.json": "7463eefad05e78917ecd0da22c87eaeeabc6ba043640477cb1098d01b072fd75",
+  "../../../arms_seq/ssm/weights.npz": "769032323228cbd049d5f3f196bcb973d7ff55d3fe65bec68006b7ffb9d26ee4"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "State-space model (S4D with a pointwise encoder) + Mondrian conformal",
+  "family": "conformal",
+  "family_label": "Conformal prediction (wrapper around seq_ssm)",
+  "group": "filt",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.0077,
+   "base_train_cpu_hours": 3.693,
+   "notes": "conformal fit only (dev predictions of seq_ssm + shifts); the base arm is not retrained"
+  },
+  "released": "c0",
+  "feature_engineering": "none beyond seq_ssm's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)"
+ },
+ "smoke": {
+  "load_cpu_s": 0.01,
+  "ungauged": {
+   "dev_nse": [
+    0.5899,
+    0.1747,
+    0.6951
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 0.397
+  },
+  "files_used": [
+   "arms_filt/conformal/lib/cf_mondrian.py",
+   "arms_filt/conformal/seq_ssm_conformal/calib.json",
+   "arms_filt/conformal/seq_ssm_conformal/predict.py",
+   "arms_filt/conformal/seq_ssm_conformal/ratchet.json",
+   "arms_seq/common/seqlib.py",
+   "arms_seq/ssm/predict.py",
+   "arms_seq/ssm/ratchet.json",
+   "arms_seq/ssm/weights.npz",
+   "harness/bank/val/F.npy",
+   "harness/bank/val/attrs.npy",
+   "harness/bank/val/lat.npy",
+   "harness/bank/val/lon.npy",
+   "harness/bank/val/qo.npy",
+   "harness/bank/val/st.npy",
+   "harness/bank/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 8.1
+ },
+ "harness_hash": "111d13ef04a576a20f04d180eb326e8eaa4e0909651d1cc1086d3e8d85e083bf",
+ "registered_at": "2026-11-23T07:45:18",
+ "history": []
+}

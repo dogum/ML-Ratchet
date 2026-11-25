@@ -1,0 +1,24 @@
+{
+ "arm_id": "tab_gp",
+ "label": "Sparse Gaussian process (SGPR, 500 inducing points)",
+ "family": "gp",
+ "family_label": "Gaussian processes (sparse, inducing points)",
+ "group": "table",
+ "tracks": ["table"],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {"train_cpu_hours": 0.81, "train_cpu_s": {"r0": 670, "r1": 894, "r2": 980, "r3": 359},
+             "notes": "torch (float64, one thread) for the bound optimisation and the posterior, time.process_time() inside train_gp.py; r1 includes a first attempt (M 1000, 20,000 rows per step) stopped by us at ~140 s because it used 1.4 GB; harness evaluations (<1 s prediction CPU each) not counted"},
+ "feature_engineering": "a scoped, standardised input set: the top-ranked of the 151 inputs by the GBM r0 mean model's gain on the simulated train bank (one-hot architecture / class columns skipped there; 32 in the released rung) + the 14 one-hot architecture / class columns; target z = log(y / E_phys); rows = the train bank under K = 3 tier draws",
+ "extra_files": [],
+ "margin": 0.01,
+ "rule": "keep a rung if its frozen sim val skill beats the incumbent's by more than 0.01 AND its dev D16 is not worse than the incumbent's by more than 0.01 (HARNESS.md section 7)",
+ "rungs": [
+  {"id": "r0", "change": "base: SGPR (Titsias bound), ARD squared-exponential kernel, M 500 inducing points, 20 ranked inputs + 14 one-hots (34 dims), hyperparameters by Adam on 20,000 rows (300 steps), exact posterior over all 77,568 training rows", "decision": "base", "why": "first rung", "simval_skill": 0.5570, "simval_MdAPE": 0.1025, "dev_D16": 0.1271},
+  {"id": "r1", "change": "M 1000 inducing points (10,000 rows per step, 250 steps)", "decision": "rejected", "why": "sim val skill +0.002 (0.5589); dev D16 0.1352 (0.008 worse)", "simval_skill": 0.5589, "simval_MdAPE": 0.1025, "dev_D16": 0.1352},
+  {"id": "r2", "change": "one GP per powertrain group (ICE / HEV / PHEV / BEV; own lengthscales and noise), M 500 each", "decision": "rejected", "why": "sim val skill +0.028 (0.5845) but dev D16 0.1406, 0.0135 worse than r0 (EPA conventional FTP 0.079 -> 0.109, HWY 0.085 -> 0.120, hybrid FTP 0.114 -> 0.185): fails the dev gate", "simval_skill": 0.5845, "simval_MdAPE": 0.0969, "dev_D16": 0.1406},
+  {"id": "r3", "change": "pooled GP with 32 ranked inputs + 14 one-hots (46 dims), M 500, 15,000 rows per step", "decision": "released", "why": "sim val skill +0.039 vs r0 (0.5963); dev D16 0.1260 (0.001 better)", "simval_skill": 0.5963, "simval_MdAPE": 0.0942, "dev_D16": 0.1260}
+ ],
+ "released": "r3"
+}

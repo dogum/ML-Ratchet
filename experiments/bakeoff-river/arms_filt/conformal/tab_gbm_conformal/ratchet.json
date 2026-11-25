@@ -1,0 +1,35 @@
+{
+ "arm_id": "tab_gbm_conformal",
+ "label": "Gradient-boosted trees (LightGBM -> numpy trees) + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around tab_gbm)",
+ "group": "filt",
+ "protocols": [
+  "ungauged"
+ ],
+ "wraps": "tab_gbm",
+ "wraps_hash": "86b5fa6bcbd682a8ff75861bf3656ba7a3049cf8f05e702433e8dcd016fbc737",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.037,
+  "base_train_cpu_hours": 0.43,
+  "notes": "conformal fit only (dev predictions of tab_gbm + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond tab_gbm's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)",
+ "extra_files": [
+  "../../../arms_tab/tab_gbm",
+  "../lib"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata snow/arid/humid/other) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage (LOBO) ungauged 0.95"
+  }
+ ],
+ "released": "c0"
+}

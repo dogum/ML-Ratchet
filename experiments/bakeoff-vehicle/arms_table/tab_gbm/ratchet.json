@@ -1,0 +1,24 @@
+{
+ "arm_id": "tab_gbm",
+ "label": "Gradient-boosted trees (LightGBM, numpy export)",
+ "family": "gbm",
+ "family_label": "Gradient-boosted trees",
+ "group": "table",
+ "tracks": ["table"],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {"train_cpu_hours": 0.24, "train_cpu_s": {"r0": 108, "r1": 120, "r2": 244, "r3": 399},
+             "notes": "LightGBM 4.7.0, num_threads 1, measured with time.process_time() inside train_gbm.py (table assembly + 6 models + numpy export); harness evaluations (sim val + dev gate, ~25 s CPU of prediction each) not counted"},
+ "feature_engineering": "none: the 151 EnergyNet inputs as they are; target z = log(y / E_phys); training rows = the train bank under K independent tier draws (K = 8 in the released rung)",
+ "extra_files": [],
+ "margin": 0.01,
+ "rule": "keep a rung if its frozen sim val skill beats the incumbent's by more than 0.01 AND its dev D16 is not worse than the incumbent's by more than 0.01 (HARNESS.md section 7)",
+ "rungs": [
+  {"id": "r0", "change": "base: LightGBM on the 151 inputs, K = 3 tier draws of the train bank (86,175 rows), 63 leaves, lr 0.05, early stopping on held-out train vehicles; mean (L2) + 5 quantile models", "decision": "base", "why": "first rung", "simval_skill": 0.6208, "simval_MdAPE": 0.0877, "dev_D16": 0.1321},
+  {"id": "r1", "change": "monotone constraints on the mean model where physics fixes the sign of the correction: label fuel and label electric energy vs physics (+), cold start (+), warm start (-), log displacement (+), share of time below 0 C (+) and above 25 C (+)", "decision": "rejected", "why": "sim val skill -0.005 vs r0 (rule needs +0.01); dev D16 0.1253 was 0.007 better than r0 (within the 0.01 seed noise)", "simval_skill": 0.6156, "simval_MdAPE": 0.0895, "dev_D16": 0.1253},
+  {"id": "r2", "change": "K = 8 tier draws (229,800 rows) and 127 leaves / min 50 rows per leaf for the mean model", "decision": "released", "why": "sim val skill +0.011 vs r0 (0.6316 vs 0.6208); dev D16 0.1279, 0.004 better", "simval_skill": 0.6316, "simval_MdAPE": 0.0860, "dev_D16": 0.1279},
+  {"id": "r3", "change": "K = 12 tier draws (344,700 rows) and learning rate 0.03 for the mean model", "decision": "rejected", "why": "sim val skill +0.006 vs r2 (rule needs +0.01); dev D16 0.1221 (0.006 better, within noise)", "simval_skill": 0.6373, "simval_MdAPE": 0.0846, "dev_D16": 0.1221}
+ ],
+ "released": "r2"
+}

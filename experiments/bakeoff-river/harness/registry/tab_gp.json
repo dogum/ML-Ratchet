@@ -1,0 +1,60 @@
+{
+ "arm_id": "tab_gp",
+ "arm_dir": "/home/claude/bakeoff/river/arms_tab/tab_gp",
+ "hash": "2806d12cceedb34f9bcea256818ffe9b85fd80b766960bfb518888657f27b8dd",
+ "files": {
+  "card.md": "2d51ac11e93b203b768a11b38015f9c1aea00e2e9e154d69973084dd83d51008",
+  "feats.py": "34308612173b6143cab16f91585923988f4e4adef1c2dc1a2c587ffbed2fbc2f",
+  "gp.npz": "4c5147e973c8b5f2396a03342164674d70a840c2ef5a2e823c9dc76478cf6763",
+  "predict.py": "09eb4b50326614771ec4cc86a5ba169d2dc17f9967bf4d988cacb32b83f1b6d0",
+  "ratchet.json": "81721288e0fdd995822c40df44be74b7093e50547a3ec83c7a97ca5f2b8e506d"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "Sparse Gaussian process (SGPR, 500 inducing points, scoped features)",
+  "family": "gp",
+  "family_label": "Gaussian process",
+  "group": "tab",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.94,
+   "notes": "One thread (process_time). r0 652 s; r1 732 s; r2 724 s; r3 1266 s (hyperparameter + inducing-input optimisation with the collapsed bound on 20,000 rows, then the posterior over 200,000 rows). Shares the sim-train feature table of tab_gbm (7 s to build)."
+  },
+  "released": "r2",
+  "feature_engineering": "SCOPED subset (20 of tab_gbm's 47 daily features, feats.py, from the batch forcing + static vector only): P(t+1), P(t), liquid input W(t), W(t-1), melt(t) of a one-band degree-day snow proxy, EMAs of W over 3/10/30/90/365 days, two bucket fill fractions and spills, a 60-day slow store, EMA10 T, EMA30 PET, log1p SWE proxy, log aridity, snow fraction. Water features and target divided by p_mean; target transform z = sqrt(qo / p_mean). Inputs standardised with the training mean/sd."
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "ungauged": {
+   "dev_nse": [
+    0.4266,
+    0.2147,
+    0.5004
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 0.355
+  },
+  "files_used": [
+   "arms_tab/tab_gp/gp.npz",
+   "arms_tab/tab_gp/predict.py",
+   "arms_tab/tab_gp/ratchet.json",
+   "harness/bank/val/F.npy",
+   "harness/bank/val/attrs.npy",
+   "harness/bank/val/lat.npy",
+   "harness/bank/val/lon.npy",
+   "harness/bank/val/qo.npy",
+   "harness/bank/val/st.npy",
+   "harness/bank/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 7.2
+ },
+ "harness_hash": "111d13ef04a576a20f04d180eb326e8eaa4e0909651d1cc1086d3e8d85e083bf",
+ "registered_at": "2026-11-23T06:16:49",
+ "history": []
+}

@@ -1,0 +1,35 @@
+{
+ "arm_id": "enkf_watersim_conformal",
+ "label": "Ensemble Kalman filter on WaterSim (HBV + snow), joint state-parameter + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around enkf_watersim)",
+ "group": "filt",
+ "protocols": [
+  "gauged"
+ ],
+ "wraps": "enkf_watersim",
+ "wraps_hash": "bd85c400356020832b4ccfe14c964840018b73a88913e45b69a11f6fd4b492d8",
+ "numpy_only": false,
+ "numpy_only_reason": "wraps enkf_watersim: runs the vendored WaterSim kernels (HBV step, degree-day snow) inside a numba-compiled filter loop; numba compiles at first call (~3 s), no cache files written (cache=False). A pure-numpy port would be ~100x slower (daily loop x 32 members x 4,000+ days).",
+ "compute": {
+  "train_cpu_hours": 0.0261,
+  "base_train_cpu_hours": 0.98,
+  "notes": "conformal fit only (dev predictions of enkf_watersim + shifts); the base arm is not retrained"
+ },
+ "feature_engineering": "none beyond enkf_watersim's; the conformal offset uses static[11] (mean forcing P) and the class list (strata)",
+ "extra_files": [
+  "../../enkf_watersim",
+  "../lib"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (method fixed in advance). Reported raw vs conformal.",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands (asymmetric CQR, log space, strata snow/arid/humid/other) fitted on dev residuals",
+   "decision": "released",
+   "why": "the only rung; dev coverage (LOBO) gauged_L1 0.93, gauged_L3 0.92, gauged_L7 0.91"
+  }
+ ],
+ "released": "c0"
+}

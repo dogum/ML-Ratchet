@@ -1,0 +1,99 @@
+{
+ "arm_id": "tab_mlp_conformal",
+ "arm_dir": "/home/claude/bakeoff/vehicle/arms_phys/conformal/tab_mlp_conformal",
+ "hash": "ad2f61e586994c9fe57ce0fa0051d1c2374b701b4a3d445ff38fd884fde98a3a",
+ "files": {
+  "../lib/vcf_mondrian.py": "8ee71cd60c842c8871bacc7fd1544d791a188f5b25d3483c6a4d8f8cff279abc",
+  "calib.json": "f5bf4d30400e84579b41da823a14746c712f369da91fdf3be38559aa0e750e6e",
+  "card.md": "aace10ec89ab19ee794bb68557599f5992f06833260f6316e38e2ba7d25fc90a",
+  "predict.py": "767640818d3a69bacb376e3328b1eb4524c24762e6f27cac36dcf0c5f5495a72",
+  "ratchet.json": "fb6ca5200e37e324284af795adc2c6b5bc3dbb346ff5bf5c9d6a7da6409c7b98",
+  "../../../arms_table/tab_mlp/card.md": "a18ec5de2d70f050b34f958f678037a34090e03ea878a057c41afbca1a7e1e0c",
+  "../../../arms_table/tab_mlp/model_np.py": "c01520f5101e7189dac72d12023e404087f943b3a8f58674ad1a08613f9ce9a1",
+  "../../../arms_table/tab_mlp/predict.py": "109674a6f41669eb3c33f7b141dee0f08f162ac9dc1734db19dd29d917bef740",
+  "../../../arms_table/tab_mlp/ratchet.json": "a73e7dd1545400af87f279479cf7173a43830f653b5fd05f3f57c02e84808a5f",
+  "../../../arms_table/tab_mlp/training/train_mlp.py": "ac0df3228c9ed54e667873b89350f0d28f02e366f84f8473637caf2e196ae1ed",
+  "../../../arms_table/tab_mlp/weights/s0.npz": "1668d3dbf4a66bbc9f3871038a6e59926c84c4521c2bf19b6dd316324d461525",
+  "../../../arms_table/tab_mlp/weights/s1.npz": "440257932fd652218b849affba5ad8ed227292f741efac0d28be7558cfaf54a3",
+  "../../../arms_table/tab_mlp/weights/s2.npz": "50ed0b92f9e8b60e6acc05b769832d6b882ae36e43ec874437c3432b9d464b12",
+  "../../../arms_table/tab_mlp/weights/s3.npz": "aa1a13b7d46ff6a3df5c1b790600940233364279ef286dcb305da97c4cf6226f",
+  "../../../arms_table/tab_mlp/weights/s4.npz": "325f8156759e8bf4bcbb8e2658e295566c8151a2d3e988660bcd1382c57492bc"
+ },
+ "tracks": [
+  "table"
+ ],
+ "meta": {
+  "label": "MLP control (EnergyNet v2.1's network, retrained on the shared bank) + Mondrian conformal",
+  "family": "conformal",
+  "family_label": "Conformal prediction (wrapper around tab_mlp)",
+  "group": "phys",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.0065,
+   "base_train_cpu_hours": 0.62,
+   "notes": "conformal fit only (dev predictions of tab_mlp + shifts); the base arm is not retrained"
+  },
+  "released": "c0",
+  "feature_engineering": "none beyond tab_mlp's; strata from arch, cls and the dynamometer flag"
+ },
+ "smoke": {
+  "load_cpu_s": 0.01,
+  "table": {
+   "ved": {
+    "cpu_s_per_row": 0.00061,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "epa": {
+    "cpu_s_per_row": 0.00058,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "hd": {
+    "cpu_s_per_row": 0.00055,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   },
+   "simval": {
+    "cpu_s_per_row": 0.00053,
+    "n_cross": 0,
+    "components": true,
+    "determinism_maxreldiff": 0.0,
+    "row_order_maxreldiff": 0.0
+   }
+  },
+  "files_used": [
+   "arms_phys/conformal/tab_mlp_conformal/calib.json",
+   "arms_phys/conformal/tab_mlp_conformal/predict.py",
+   "arms_phys/conformal/tab_mlp_conformal/ratchet.json",
+   "arms_table/tab_mlp/predict.py",
+   "arms_table/tab_mlp/ratchet.json",
+   "arms_table/tab_mlp/weights/s0.npz",
+   "arms_table/tab_mlp/weights/s1.npz",
+   "arms_table/tab_mlp/weights/s2.npz",
+   "arms_table/tab_mlp/weights/s3.npz",
+   "arms_table/tab_mlp/weights/s4.npz",
+   "harness/bank/val/rows.npz",
+   "harness/bank/val/trace_v.npy",
+   "harness/bank/val/trace_x.npy",
+   "harness/real/dev/epa.npz",
+   "harness/real/dev/epa_meta.parquet",
+   "harness/real/dev/hd.npz",
+   "harness/real/dev/hd_meta.parquet",
+   "harness/real/dev/ved.npz",
+   "harness/real/dev/ved_meta.parquet"
+  ],
+  "exam_cpu_estimate_min": 1.2
+ },
+ "harness_hash": "45717be5e49d99933ebbaac1761ee133693cb5d0bde986d8da9bda4a1071b014",
+ "registered_at": "2026-11-23T16:38:17",
+ "history": []
+}
