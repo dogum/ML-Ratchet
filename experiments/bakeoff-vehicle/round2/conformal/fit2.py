@@ -45,7 +45,7 @@ def main(base, devp):
     tracks = list(meta['tracks'])
     wid = f'{bid}_conformal'; wdir = os.path.join(P.ARMS, wid)
     os.makedirs(os.path.join(wdir, 'work'), exist_ok=True)
-    base_rel = os.path.relpath(base, wdir)
+    base_rel = os.path.relpath(base, wdir).replace(os.sep, "/")
     calib = {'base_id': bid, 'base_hash': h, 'base_rel': base_rel, 'method': 'Mondrian split-conformal (asymmetric CQR '
              'in log space), strata powertrain x road/dyno/hd (v1.0 arms_phys/conformal)', 'min_units': FW.CF.MIN_UNITS,
              'tracks': {}}
@@ -57,7 +57,7 @@ def main(base, devp):
         m = [rep[x]['D16_mean'] for x in ('raw', 'in_sample', 'cross_fit')]
         print(f"{bid} [{t}] D16-mean cov50/cov90 raw {m[0]['cov50']:.3f}/{m[0]['cov90']:.3f} -> cv {m[2]['cov50']:.3f}/"
               f"{m[2]['cov90']:.3f}; crps {m[0]['crps_log']:.4f} -> cv {m[2]['crps_log']:.4f}", flush=True)
-    extra = [base_rel, '../lib'] + [os.path.relpath(os.path.normpath(os.path.join(base, x)), wdir)
+    extra = [base_rel, "../lib"] + [os.path.relpath(os.path.normpath(os.path.join(base, x)), wdir).replace(os.sep, "/")
                                     for x in meta.get('extra_files', [])]
     json.dump(calib, open(os.path.join(wdir, 'calib.json'), 'w'), indent=1)
     tpl = open(os.path.join(V1, 'wrapper_predict_template.py')).read().replace('{base_id}', bid)

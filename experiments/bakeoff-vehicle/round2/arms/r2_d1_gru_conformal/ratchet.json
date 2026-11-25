@@ -1,0 +1,38 @@
+{
+ "arm_id": "r2_d1_gru_conformal",
+ "label": "Bidirectional GRU, 5-member ensemble on 3 banks (round 2, D1) + Mondrian conformal",
+ "family": "conformal",
+ "family_label": "Conformal prediction (wrapper around r2_d1_gru)",
+ "group": "round2",
+ "tracks": [
+  "trace"
+ ],
+ "wraps": "r2_d1_gru",
+ "wraps_hash": "6dffca65c3424a9b5b0494878f0aa1b90bde0dba7e24d240e9dd490b6b2ac266",
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "real_labels_in_training": false,
+ "compute": {
+  "train_cpu_hours": 0.0019,
+  "base_train_cpu_hours": 1.294,
+  "notes": "conformal fit only on dev residuals of r2_d1_gru"
+ },
+ "feature_engineering": "none beyond r2_d1_gru's; strata from arch, cls and the dynamometer flag",
+ "extra_files": [
+  "../r2_d1_gru",
+  "../lib",
+  "../common",
+  "../../../arms_trace/common"
+ ],
+ "margin": 0.0,
+ "rule": "No ladder: one conformal fit on dev residuals (v1.0 method, fixed in advance).",
+ "rungs": [
+  {
+   "id": "c0",
+   "change": "Mondrian split-conformal bands fitted on dev residuals (v1.0 method)",
+   "decision": "released",
+   "why": "the only rung; dev coverage over the D16 sets (grouped 10-fold cross-fit): trace cov50/90 0.49/0.86"
+  }
+ ],
+ "released": "c0"
+}
