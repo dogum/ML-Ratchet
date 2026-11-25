@@ -123,3 +123,16 @@ Exam 2 has NOT been run and must not be run by an agent: the owner runs `exam2.p
   (-0.021..+0.019) tie; vs E1 +0.025 win; vs its best member +0.012 win. E1 0.350. Every row loses to NWM and GR4J.
 - Recent (WY2016-23, 603 basins): the b2 gains vanish (each b2 arm ties its v1.0 arm, -0.000 to +0.008); every
   row loses to U-dev by 0.032-0.045. E2 0.401, E1 0.399 (tie).
+
+## 2026-11-25 — b2a's rejection is void (a sizing bug, found in review after exam 2)
+
+- Codex review on PR #17: `bank2.apply_reservoir` sized each b2a reservoir from the operated inflow
+  (`I = upstream_frac x q_nat`) instead of the whole basin's mean flow, which is how the storage attribute and WaterSim
+  p1 define capacity (`simulate.py` passes the whole-basin mean to `reservoir_from_spec`). So b2a's reservoirs were
+  30-95 % of the intended capacity while the attribute the network sees was unchanged.
+- Consequence: the b2a rung (+0.002 dev, rejected) did not test "more reservoirs at the attribute's capacity"; its
+  result is confounded and its rejection is void. It does not affect exam 2: bank b2 is p1 + the refit prior (b2b)
+  only, and no b2a run is in it.
+- Fixed in `bank2.py` (capacity from `q_nat.mean()`; the operator still sees `I`). Not re-run: bank b2 is chosen and
+  examined, and a re-run cannot change exam 2. Next rung: b2a with the corrected capacity, judged the same way
+  (3 LSTM seeds, dev +0.01), as a new dated rung.

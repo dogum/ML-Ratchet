@@ -114,7 +114,10 @@ def apply_reservoir(q_nat, doy, spec, opt, rng):
     up = float(res[-1]['upstream_frac'])            # the terminal reservoir's share of the basin
     cy = float(spec['reservoir_storage_frac'])      # storage in years of mean flow = the attribute the network sees
     I = up * q_nat
-    cap = max(cy * max(float(I.mean()), 1e-6) * 365.25, 1e-6)
+    # capacity in years of the WHOLE basin's mean flow, as the attribute and WaterSim p1 define it (simulate.py passes
+    # the whole-basin mean to reservoir_from_spec). Fixed 25 Nov 2026 after exam 2 (Codex review, PR #17): the rung
+    # b2a as judged used I.mean(), i.e. reservoirs upstream_frac x too small; its rejection is void (STATUS.md).
+    cap = max(cy * max(float(q_nat.mean()), 1e-6) * 365.25, 1e-6)
     R, Ss, dem, info = rp_operator(I, doy, cap, rng)
     withdraw = bool(res[-1]['policy_params'].get('withdraw', False))
     cons = float(res[-1].get('consumptive_frac', 0.6))
