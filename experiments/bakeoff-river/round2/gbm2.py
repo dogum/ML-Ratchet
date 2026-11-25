@@ -31,3 +31,14 @@ sys.argv = ['train_gbm.py', out, cfg]
 runpy.run_path(os.path.join(SRC, 'train_gbm.py'), run_name='__main__')
 json.dump({'bank': bank, 'table_cpu_s': round(c1 - c0, 1), 'train_cpu_s': round(time.process_time() - c1, 1)},
           open(os.path.join(out, 'gbm2.json'), 'w'), indent=1)
+# a candidate arm folder for eval2.py (evaluation only): round 1's predict.py / feats.py / treeexport.py + these trees
+import shutil  # noqa: E402
+cand = os.path.join(r2.WORK, 'cand', f'{bank}_gbm')
+os.makedirs(cand, exist_ok=True)
+for f in ('predict.py', 'feats.py', 'treeexport.py'):
+    shutil.copy(os.path.join(r2.BAKEOFF, 'arms_tab', 'tab_gbm', f), os.path.join(cand, f))
+shutil.copy(os.path.join(out, 'gbm_trees.npz'), os.path.join(cand, 'gbm_trees.npz'))
+json.dump({'arm_id': f'r2cand_{bank}_gbm', 'family': 'gbm', 'group': 'tab', 'protocols': ['ungauged'],
+           'numpy_only': True, 'compute': {'train_cpu_hours': 0}, 'feature_engineering': 'tab_gbm feats.py',
+           'rungs': [{'id': 'c', 'change': 'r2 recipe on ' + bank, 'decision': 'released', 'why': 'candidate'}],
+           'released': 'c'}, open(os.path.join(cand, 'ratchet.json'), 'w'), indent=1)

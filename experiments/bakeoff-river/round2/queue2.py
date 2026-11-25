@@ -26,6 +26,30 @@ def seq_cmds(bank, cfg, seed):
     return run, cmds, os.path.join(out, 'DONE')
 
 
+def gbm_cmds(bank):
+    run = f'{bank}_gbm'
+    cand = os.path.join(r2.WORK, 'cand', run)
+    out = os.path.join(r2.WORK, 'eval', run)
+    cmds = [[PY, '-X', 'utf8', 'gbm2.py', bank, os.path.join(r2.WORK, 'gbm', bank)],
+            [PY, '-X', 'utf8', 'eval2.py', bank, cand, '--sets', 'simval,dev', '--tag', 'own', '--out', out,
+             '--save-preds']]
+    if bank != 'p1':
+        cmds.append([PY, '-X', 'utf8', 'eval2.py', 'p1', cand, '--sets', 'simval', '--tag', 'p1val', '--out', out])
+    return run, cmds, os.path.join(out, 'DONE')
+
+
+def arm_cmds(bank, arm_id, arm_dir, sets):
+    """Evaluate a (registered or v1.0) arm folder: 'onb2' = sim val of <bank>; 'dev' = dev gate with --save-preds."""
+    out = os.path.join(r2.WORK, 'eval', arm_id)
+    cmds = []
+    if 'sim' in sets:
+        cmds.append([PY, '-X', 'utf8', 'eval2.py', bank, arm_dir, '--sets', 'simval', '--tag', 'onb2', '--out', out])
+    if 'dev' in sets:
+        cmds.append([PY, '-X', 'utf8', 'eval2.py', bank, arm_dir, '--sets', 'dev', '--tag', 'dev', '--out', out,
+                     '--save-preds'])
+    return f'eval_{arm_id}_{bank}_{sets}', cmds, os.path.join(out, f'DONE_{bank}_{sets}')
+
+
 def main():
     n = int(sys.argv[1])
     jobs = []
@@ -33,6 +57,10 @@ def main():
         kind, *a = j.split(':')
         if kind == 'seq':
             jobs.append(seq_cmds(a[0], a[1], int(a[2])))
+        elif kind == 'gbm':
+            jobs.append(gbm_cmds(a[0]))
+        elif kind == 'arm':           # arm:<bank>:<arm_id>:<dir relative to round2>:<sim|dev|simdev>
+            jobs.append(arm_cmds(a[0], a[1], os.path.normpath(os.path.join(r2.ROUND2, a[2])), a[3]))
     os.makedirs(os.path.join(r2.WORK, 'logs'), exist_ok=True)
     pending = [j for j in jobs if not os.path.exists(j[2])]
     running = []
