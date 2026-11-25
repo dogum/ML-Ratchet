@@ -145,7 +145,8 @@ missions 5.59 %; dev-median baseline 14.01 % and 10.66 %).
 | E_phys alone (physics anchor) | 21.5 % | | 21.3 % |
 
 On missions EnergyNet beats every learner by 0.5 points or more. The pattern of the main board holds on a fleet it did
-not include: the families sit within 2.5 points of each other, every learner halves the dev-median baseline, and the
-physics anchor alone is 21 % low. Unlike the Mersin buses, these electric buses are not a shared miss. One new
+not include: the families sit within 2.5 points of each other, every learner beats the dev-median baseline (legs
+14.0 % to 7.2-9.5 %, a 32-49 % cut; missions 10.7 % to 5.7-8.8 %, an 18-46 % cut), and the physics anchor alone is
+21 % low. Unlike the Mersin buses, these electric buses are not a shared miss. One new
 weakness: the conformal layer, calibrated on dev strata, made EnergyNet's bands too narrow for these buses (90 %
 coverage 0.96 raw, 0.62 after conformal; the GP 0.98 to 0.82). Full table: `results/supp_ztbfull/leaderboard.md`.
