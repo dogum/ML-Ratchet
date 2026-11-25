@@ -278,7 +278,7 @@ ideas:
     data_url: https://dogum.github.io/ML-Ratchet/experiments/vehicle-bakeoff/
     exam: "EnergyNet's exam, run once for 21 arms (TabPFN excluded before the exam, for compute); E16 = mean MdAPE over the 16 dev-score sets; paired cluster bootstrap"
     status: done
-    note: "Run 23-24 Nov 2026 in the cloud, imported 24 Nov 2026 (docs/experiments/bakeoff-vehicle.md, experiments/bakeoff-vehicle). Networks and trees span 11.7-13.0 % E16 (transformer best, 11.7 %); EnergyNet v2.1 (3x the data, 5-net ensemble) 11.0 %; E_phys alone 22.9 %. Per-trip errors correlate at 0.92 across families, and all miss the same sets (Mersin buses, cold Leafs, plug-ins, ICCT trucks). Not done in the cloud: the full ZTBus exam (traces not on that machine), TabPFN's supplementary exam, the bank fixes and data/ensemble rungs."
+    note: "Run 23-24 Nov 2026 in the cloud, imported 24 Nov 2026 (docs/experiments/bakeoff-vehicle.md, experiments/bakeoff-vehicle). Networks and trees span 11.7-13.0 % E16 (transformer best, 11.7 %); EnergyNet v2.1 (3x the data, 5-net ensemble) 11.0 %; E_phys alone 22.9 %. Per-trip errors correlate at 0.92 across families, and all miss the same sets (Mersin buses, cold Leafs, plug-ins, ICCT trucks). Supplementary exams run in the repository (24-25 Nov 2026): TabPFN 13.3 % E16, a loss to every table learner; full ZTBus (5,847 legs; EnergyNet's published exam reproduced exactly): GRU, MLP and transformer tie EnergyNet v2.1 on legs (7.0-7.3 %), every learner loses to it on missions. Next: the bank fixes and data/ensemble rungs (round 2)."
   - id: river-twin
     name: River digital twin
     kind: method
