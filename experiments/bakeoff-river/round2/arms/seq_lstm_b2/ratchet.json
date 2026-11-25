@@ -1,0 +1,73 @@
+{
+ "arm_id": "seq_lstm_b2",
+ "label": "LSTM (FlowCast's network) retrained on bank b2",
+ "family": "ssm",
+ "family_label": "State-space and recurrent models (LSTM)",
+ "group": "round2",
+ "protocols": [
+  "ungauged"
+ ],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {
+  "train_cpu_hours": 0.317,
+  "notes": "one rung: the v1.0 recipe retrained on bank b2, one thread (process_time), shared 16-core Windows machine"
+ },
+ "feature_engineering": "identical to seq_lstm (round 1); only the training bank differs",
+ "extra_files": [
+  "../../../arms_seq/common"
+ ],
+ "compare_to": [
+  "seq_lstm"
+ ],
+ "bank": "b2 (= b2b: p1 + the reconciled water-yield prior)",
+ "margin": 0.01,
+ "rule": "PREREG section 4: keep if sim val median NSE (both on b2's frozen val) > v1.0 + 0.01 AND dev median NSE >= 0.95 x v1.0's",
+ "rungs": [
+  {
+   "id": "v1.0",
+   "change": "seq_lstm as registered in round 1 (bank p1)",
+   "decision": "base",
+   "why": "the incumbent",
+   "simval_nse_b2": 0.3935,
+   "dev_nse": 0.4408,
+   "dev_kge": 0.4377,
+   "dev_by_class_nse": {
+    "snow": 0.535,
+    "arid": 0.182,
+    "humid": 0.573,
+    "regulated": 0.279,
+    "large": 0.307
+   }
+  },
+  {
+   "id": "b2",
+   "change": "same recipe (seq_lstm r1: H 64, dropout 0.1, 6,000 steps x 32 windows, lr 0.002 cosine, seed 0) trained on bank b2",
+   "decision": "released",
+   "why": "sim val on b2's frozen set 0.4449 vs v1.0 0.3935 (+0.0514 > 0.01) and dev 0.4386 >= 0.95 x 0.4408: kept",
+   "simval_nse_b2": 0.4449,
+   "simval_nse_p1": 0.408,
+   "dev_nse": 0.4386,
+   "dev_kge": 0.4503,
+   "dev_fhv": -27.9,
+   "dev_cov50": 0.611,
+   "dev_cov90": 0.963,
+   "dev_crps_rel": 0.365,
+   "dev_by_class_nse": {
+    "snow": 0.589,
+    "arid": -0.1,
+    "humid": 0.569,
+    "regulated": 0.311,
+    "large": -0.1
+   },
+   "dev_vs": {
+    "udev": "-0.028 tie",
+    "uk12": "-0.019 tie",
+    "gr4j": "-0.147 loss",
+    "nwm": "-0.134 loss",
+    "clim": "+0.347 win"
+   }
+  }
+ ],
+ "released": "b2"
+}

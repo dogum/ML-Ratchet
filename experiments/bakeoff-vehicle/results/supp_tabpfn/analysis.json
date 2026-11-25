@@ -1,0 +1,370 @@
+{
+ "run_id": "20261124T230626",
+ "source": "results/supp_tabpfn/exam_20261124T230626.json",
+ "main_exam": "20261123T204251",
+ "note": "accepted differences (TabPFN arms only): the platform build of safetensors and pip install metadata in pylib/; TabPFN code, weights, context and predict code identical to registration",
+ "same_records": {
+  "rows_checked": [
+   "class_median",
+   "climatology",
+   "dev_median",
+   "enet_v21",
+   "enet_v21_conformal",
+   "ephys",
+   "formula",
+   "formula_conformal",
+   "label",
+   "moves_like",
+   "phys_anchor",
+   "phys_anchor_conformal",
+   "regression",
+   "tab_gbm",
+   "tab_gbm_conformal",
+   "tab_gp",
+   "tab_gp_conformal",
+   "tab_mlp",
+   "tab_mlp_conformal"
+  ],
+  "units_both": 1306017,
+  "only_in_supplement": 0,
+  "only_in_main": 0,
+  "max_rel_diff_y": 1.6047384721051827e-07,
+  "max_rel_diff_pred": 1.156053031081683e-11
+ },
+ "E16": {
+  "enet_v21": {
+   "E16": 0.1096,
+   "E16_crps": 0.0942,
+   "n_sets": 16
+  },
+  "tab_mlp": {
+   "E16": 0.1212,
+   "E16_crps": 0.1038,
+   "n_sets": 16
+  },
+  "tab_gbm": {
+   "E16": 0.1262,
+   "E16_crps": 0.0988,
+   "n_sets": 16
+  },
+  "tab_gp": {
+   "E16": 0.1255,
+   "E16_crps": 0.1025,
+   "n_sets": 16
+  },
+  "tab_tabpfn": {
+   "E16": 0.1328,
+   "E16_crps": 0.1052,
+   "n_sets": 16
+  },
+  "tab_tabpfn_conformal": {
+   "E16": 0.1328,
+   "E16_crps": 0.0972,
+   "n_sets": 16
+  },
+  "tab_mlp_conformal": {
+   "E16": 0.1212,
+   "E16_crps": 0.0943,
+   "n_sets": 16
+  },
+  "tab_gbm_conformal": {
+   "E16": 0.1262,
+   "E16_crps": 0.094,
+   "n_sets": 16
+  },
+  "tab_gp_conformal": {
+   "E16": 0.1255,
+   "E16_crps": 0.0957,
+   "n_sets": 16
+  },
+  "formula": {
+   "E16": 0.2105,
+   "E16_crps": 0.1406,
+   "n_sets": 16
+  },
+  "phys_anchor": {
+   "E16": 0.2285,
+   "E16_crps": 0.1636,
+   "n_sets": 16
+  },
+  "climatology": {
+   "E16": 0.3103,
+   "E16_crps": 0.189,
+   "n_sets": 16
+  },
+  "ephys": {
+   "E16": 0.2285,
+   "E16_crps": 0.2605,
+   "n_sets": 16
+  },
+  "classical": {
+   "E16": 0.1253,
+   "E16_crps": 0.1599,
+   "n_sets": 16
+  }
+ },
+ "pairs": {
+  "tab_tabpfn vs enet_v21": {
+   "E16": {
+    "diff": 0.0232,
+    "ci95": [
+     0.0179,
+     0.0285
+    ],
+    "verdict": "loss"
+   },
+   "E16_crps": {
+    "diff": 0.011,
+    "ci95": [
+     0.0089,
+     0.0123
+    ],
+    "verdict": "loss"
+   }
+  },
+  "tab_tabpfn vs tab_mlp": {
+   "E16": {
+    "diff": 0.0116,
+    "ci95": [
+     0.0054,
+     0.0188
+    ],
+    "verdict": "loss"
+   },
+   "E16_crps": {
+    "diff": 0.0014,
+    "ci95": [
+     -0.0021,
+     0.0047
+    ],
+    "verdict": "tie"
+   }
+  },
+  "tab_tabpfn vs tab_gbm": {
+   "E16": {
+    "diff": 0.0066,
+    "ci95": [
+     0.002,
+     0.0102
+    ],
+    "verdict": "loss"
+   },
+   "E16_crps": {
+    "diff": 0.0064,
+    "ci95": [
+     -0.0009,
+     0.0097
+    ],
+    "verdict": "tie"
+   }
+  },
+  "tab_tabpfn vs tab_gp": {
+   "E16": {
+    "diff": 0.0073,
+    "ci95": [
+     0.0006,
+     0.0144
+    ],
+    "verdict": "loss"
+   },
+   "E16_crps": {
+    "diff": 0.0027,
+    "ci95": [
+     -0.0015,
+     0.0047
+    ],
+    "verdict": "tie"
+   }
+  },
+  "tab_tabpfn vs classical": {
+   "E16": {
+    "diff": 0.0075,
+    "ci95": [
+     0.001,
+     0.0143
+    ],
+    "verdict": "loss"
+   },
+   "E16_crps": {
+    "diff": -0.0547,
+    "ci95": [
+     -0.059,
+     -0.0451
+    ],
+    "verdict": "win"
+   }
+  },
+  "tab_tabpfn_conformal vs enet_v21": {
+   "E16": {
+    "diff": 0.0232,
+    "ci95": [
+     0.0179,
+     0.0285
+    ],
+    "verdict": "loss"
+   },
+   "E16_crps": {
+    "diff": 0.003,
+    "ci95": [
+     0.0008,
+     0.0045
+    ],
+    "verdict": "loss"
+   }
+  },
+  "tab_tabpfn_conformal vs tab_mlp": {
+   "E16": {
+    "diff": 0.0116,
+    "ci95": [
+     0.0054,
+     0.0188
+    ],
+    "verdict": "loss"
+   },
+   "E16_crps": {
+    "diff": -0.0066,
+    "ci95": [
+     -0.0099,
+     -0.0032
+    ],
+    "verdict": "win"
+   }
+  },
+  "tab_tabpfn_conformal vs tab_gbm": {
+   "E16": {
+    "diff": 0.0066,
+    "ci95": [
+     0.002,
+     0.0102
+    ],
+    "verdict": "loss"
+   },
+   "E16_crps": {
+    "diff": -0.0016,
+    "ci95": [
+     -0.009,
+     0.0015
+    ],
+    "verdict": "tie"
+   }
+  },
+  "tab_tabpfn_conformal vs tab_gp": {
+   "E16": {
+    "diff": 0.0073,
+    "ci95": [
+     0.0006,
+     0.0144
+    ],
+    "verdict": "loss"
+   },
+   "E16_crps": {
+    "diff": -0.0053,
+    "ci95": [
+     -0.0096,
+     -0.0033
+    ],
+    "verdict": "win"
+   }
+  },
+  "tab_tabpfn_conformal vs classical": {
+   "E16": {
+    "diff": 0.0075,
+    "ci95": [
+     0.001,
+     0.0143
+    ],
+    "verdict": "loss"
+   },
+   "E16_crps": {
+    "diff": -0.0627,
+    "ci95": [
+     -0.067,
+     -0.053
+    ],
+    "verdict": "win"
+   }
+  }
+ },
+ "tabpfn_per_set": {
+  "VED_ICE": {
+   "n": 14469,
+   "MdAPE": 0.0886,
+   "bias": -0.0246
+  },
+  "VED_HEV": {
+   "n": 8241,
+   "MdAPE": 0.1647,
+   "bias": 0.1115
+  },
+  "VED_EV": {
+   "n": 167,
+   "MdAPE": 0.2389,
+   "bias": -0.2195
+  },
+  "VED_PHEV": {
+   "n": 2916,
+   "MdAPE": 0.1664,
+   "bias": -0.0927
+  },
+  "EPA_conv_FTP": {
+   "n": 20065,
+   "MdAPE": 0.0841,
+   "bias": 0.0448
+  },
+  "EPA_conv_HWY": {
+   "n": 20426,
+   "MdAPE": 0.1106,
+   "bias": 0.1056
+  },
+  "EPA_conv_US06": {
+   "n": 2832,
+   "MdAPE": 0.16,
+   "bias": 0.1594
+  },
+  "EPA_conv_FTPcold": {
+   "n": 1734,
+   "MdAPE": 0.0844,
+   "bias": -0.059
+  },
+  "EPA_conv_SC03": {
+   "n": 1819,
+   "MdAPE": 0.1008,
+   "bias": -0.0798
+  },
+  "EPA_hev_FTP": {
+   "n": 1098,
+   "MdAPE": 0.1915,
+   "bias": 0.1887
+  },
+  "EPA_hev_HWY": {
+   "n": 1156,
+   "MdAPE": 0.0906,
+   "bias": 0.0798
+  },
+  "EPA_bev_FTP": {
+   "n": 746,
+   "MdAPE": 0.0899,
+   "bias": -0.0725
+  },
+  "EPA_bev_HWY": {
+   "n": 746,
+   "MdAPE": 0.1597,
+   "bias": -0.1595
+  },
+  "Mersin_diesel": {
+   "n": 652,
+   "MdAPE": 0.1598,
+   "bias": -0.1591
+  },
+  "Mersin_cng": {
+   "n": 672,
+   "MdAPE": 0.1783,
+   "bias": -0.1774
+  },
+  "ICCT": {
+   "n": 6,
+   "MdAPE": 0.0571,
+   "bias": 0.0571
+  }
+ }
+}

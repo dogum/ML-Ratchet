@@ -1,0 +1,75 @@
+{
+ "arm_id": "seq_ssm_b2_conformal",
+ "hash": "b06d647884a89c30f9078931e1cb517ed9fb3580ec4620abdf62bf743e7e1132",
+ "files": {
+  "../../../arms_filt/conformal/lib/cf_mondrian.py": "8de2a4956b525f96e7494ebe16e5d0cd7b435fa8baf72a3d0d20ec7ff815223a",
+  "../../../arms_seq/common/SEQLIB_FROZEN.sha256": "fcdc4e4ed854dddb6abe4239d13fa020e928607008edaab732f17f206d1836f3",
+  "../../../arms_seq/common/seqlib.py": "d53f7d73f085fd0546b4fb55d8d4dc513e4f53b3460d3617f70b39dcf32f3dda",
+  "../seq_ssm_b2/card.md": "47e6c751b2865139d389e7b4661980c33db03fa49df6d9c96b145b9a0467c99f",
+  "../seq_ssm_b2/predict.py": "9a4c5a2eefaca8d64e533956b30a3fb0039e7f277349280450b17d4cca023ab4",
+  "../seq_ssm_b2/ratchet.json": "a3702a8dc58ac8bce13e3f7b7fa0addf6e34bb267deb5abb00b84c1e986faeb3",
+  "../seq_ssm_b2/weights.npz": "42b2c875883b75c7a9f16be1423710b97a4cb32599f878ec3965ce7b01d44c98",
+  "calib.json": "b338f07edd197af23108d2b875d52f72927bc6eadd90d6c110bcfbf9623bc86a",
+  "card.md": "2ea465c7dbf8c499ad48023520976ac66da956869db2df23074059b0218147e3",
+  "predict.py": "530a016a22adbc249d90ba1974382cf07c8975a142bed0cb31ab47e8cad605e9",
+  "ratchet.json": "04a08a2365d7642187f4bf2f712cfe8cdac532c106ff5c3dbb04d3bdaaebe189"
+ },
+ "protocols": [
+  "ungauged"
+ ],
+ "meta": {
+  "label": "S4D state space + MLP encoder retrained on bank b2 + Mondrian conformal",
+  "family": "conformal",
+  "family_label": "Conformal prediction (wrapper around seq_ssm_b2)",
+  "group": "round2",
+  "reference": null,
+  "numpy_only": true,
+  "numpy_only_reason": "",
+  "compute": {
+   "train_cpu_hours": 0.0018,
+   "notes": "conformal fit only on dev predictions of seq_ssm_b2"
+  },
+  "released": "c0",
+  "feature_engineering": "none beyond seq_ssm_b2's; the offset uses static[11] and the class list (strata)",
+  "compare_to": [
+   "seq_ssm_conformal"
+  ]
+ },
+ "smoke": {
+  "load_cpu_s": 0.02,
+  "ungauged": {
+   "dev_nse": [
+    0.5491,
+    0.1448,
+    0.4221
+   ]
+  },
+  "determinism_maxdiff": 0.0,
+  "predict_cpu_s_per_basin_period": {
+   "ungauged": 0.365
+  },
+  "files_used": [
+   "arms_filt/conformal/lib/cf_mondrian.py",
+   "arms_seq/common/seqlib.py",
+   "round2/arms/seq_ssm_b2/predict.py",
+   "round2/arms/seq_ssm_b2/ratchet.json",
+   "round2/arms/seq_ssm_b2/weights.npz",
+   "round2/arms/seq_ssm_b2_conformal/calib.json",
+   "round2/arms/seq_ssm_b2_conformal/predict.py",
+   "round2/arms/seq_ssm_b2_conformal/ratchet.json",
+   "round2/work/banks/b2/val/F.npy",
+   "round2/work/banks/b2/val/attrs.npy",
+   "round2/work/banks/b2/val/lat.npy",
+   "round2/work/banks/b2/val/lon.npy",
+   "round2/work/banks/b2/val/qo.npy",
+   "round2/work/banks/b2/val/st.npy",
+   "round2/work/banks/b2/val/start.npy"
+  ],
+  "exam_cpu_estimate_min": 7.4
+ },
+ "harness_hash": "779e51f025d454d74d15d1cec8ad94cbf6c8703e1d2fed15cb50f49a0956272f",
+ "arm_dir_rel": "round2/arms/seq_ssm_b2_conformal",
+ "smoke_simval_bank": "b2",
+ "registered_at": "2026-11-25T01:15:54",
+ "history": []
+}

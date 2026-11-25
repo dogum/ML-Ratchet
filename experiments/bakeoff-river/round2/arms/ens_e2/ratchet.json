@@ -1,0 +1,26 @@
+{
+ "arm_id": "ens_e2",
+ "label": "E2: equal-weight ensemble of the five round-2 entries",
+ "family": "ensemble",
+ "family_label": "Ensembles",
+ "group": "round2",
+ "protocols": ["ungauged"],
+ "numpy_only": true,
+ "numpy_only_reason": "",
+ "compute": {"train_cpu_hours": 0.0, "notes": "No training of its own: members are tab_gbm_b2, flowcast_v1, seq_lstm_b2, seq_tcn_b2, seq_ssm_b2 (registered). Dev + sim-val evaluation 11 CPU-min."},
+ "feature_engineering": "None of its own: each member reads the batch as registered. Combination per target day, weights 1/5: mean of the members' means; each quantile = mean of the members' same quantile, then sorted.",
+ "extra_files": ["members.json", "../tab_gbm_b2", "../../../harness/arms_ref/flowcast_v1", "../seq_lstm_b2", "../seq_tcn_b2",
+                 "../seq_ssm_b2", "../../../arms_seq/common"],
+ "compare_to": ["ens_e1", "seq_lstm_b2"],
+ "compare_note": "ens_e1 is the pre-registered comparator; seq_lstm_b2 is E2's best member on dev (0.4386), recorded before the exam",
+ "margin": 0.01,
+ "rule": "PREREG section 5: registered if dev median NSE >= 0.95 x the best member's dev median NSE; 'ensembling helps on dev' only if > best member + 0.01",
+ "rungs": [
+  {"id": "r0", "change": "equal-weight mean of tab_gbm_b2, flowcast_v1, seq_lstm_b2, seq_tcn_b2, seq_ssm_b2 (quantile averaging)", "decision": "released",
+   "why": "dev 0.454 >= 0.95 x 0.439 (best member seq_lstm_b2): gate passes. +0.015 over the best member: by the pre-registered rule ensembling helps on dev, though the paired bootstrap against that member is a tie (-0.013..+0.037). E2 vs E1 on dev +0.009 (tie, -0.013..+0.073).",
+   "simval_nse_b2": 0.446, "simval_kge_b2": 0.381, "dev_nse": 0.4538, "dev_kge": 0.4308, "dev_fhv": -30.1, "dev_cov50": 0.600, "dev_cov90": 0.968, "dev_crps_rel": 0.363,
+   "dev_by_class_nse": {"snow": 0.584, "arid": 0.075, "humid": 0.598, "regulated": 0.332, "large": 0.079},
+   "dev_vs": {"seq_lstm_b2": "+0.015 tie", "tab_gbm_b2": "+0.024 tie", "seq_tcn_b2": "+0.021 win", "seq_ssm_b2": "+0.022 tie", "flowcast_v1": "+0.029 tie", "ens_e1": "+0.009 tie", "udev": "-0.013 tie", "nwm": "-0.119 loss", "gr4j": "-0.132 loss"}}
+ ],
+ "released": "r0"
+}

@@ -111,6 +111,46 @@ and recorded in `registry/excluded.json` with its reason; the documented mechani
 (`register.registered()` read `excluded.json` as an arm record). Zero real labels in training; dev only for rung gates
 and conformal calibration. Page: the Vehicle Bake-off artifact (the same HTML is in `page/`).
 
+## Supplementary exams (24-25 Nov 2026, in the repository, after the main exam)
+
+Two dated exams, each run once, reported here beside the main board and never folded into it. Driver:
+`harness/exam_supp.py` (exam.py's own worker and scoring, with its own lock and records); results in
+`results/supp_tabpfn/` and `results/supp_ztbfull/`, each with a PRE_EXAM.md written before its run.
+
+**TabPFN (handoff item 17; run 20261124T230626).** The two arms excluded before the main exam for compute, scored on
+the main exam's records rebuilt here. The other 19 table-track rows were re-scored beside them and match the main exam
+on all 1,306,017 units (prediction difference ≤ 1.2e-11). TabPFN's E16 is **13.3 %**, a loss to every table learner:
+trees and the GP by 0.7 points, the classical composite by 0.8, the MLP control by 1.2, EnergyNet v2.1 by 2.3 (95 %
+intervals all above 0). Its conformal wrapper lowers CRPS (0.105 to 0.097), not the point error. The rebuilt arm is not
+bit-identical to the cloud's: dev D16 0.1240 here against 0.1249 at registration (library versions), recorded before
+the run.
+
+**Full ZTBus (handoff item 21; run 20261125T013250).** The Zurich trolleybus exam the cloud machine could not hold:
+5,847 labelled legs of 1,115 missions. The records reproduce EnergyNet's published exam exactly (v2.1 legs 7.04 %,
+missions 5.59 %; dev-median baseline 14.01 % and 10.66 %).
+
+| Row | Legs MdAPE | vs EnergyNet v2.1 (legs) | Missions MdAPE (sum of legs) |
+|---|---|---|---|
+| EnergyNet v2.1 | **7.04 %** | | **5.22 %** |
+| GRU (trace) | 7.15 % | +0.1 tie | 5.79 % |
+| MLP control (table) | 7.23 % | +0.2 tie | 5.74 % |
+| Transformer (trace) | 7.29 % | +0.3 tie | 5.74 % |
+| 1-D CNN (trace) | 7.52 % | +0.5 loss | 6.53 % |
+| Trees (table) | 8.25 % | +1.2 loss | 5.99 % |
+| S4D (trace) | 8.62 % | +1.6 loss | 8.77 % |
+| Trip-energy law (formula) | 9.29 % | +2.3 loss | 8.09 % |
+| TabPFN (table) | 9.30 % | +2.3 loss | 8.20 % |
+| Sparse GP (table) | 9.52 % | +2.5 loss | 6.84 % |
+| Dev median (kWh/km x km) | 14.01 % | | 10.65 % |
+| E_phys alone (physics anchor) | 21.5 % | | 21.3 % |
+
+On missions EnergyNet beats every learner by 0.5 points or more. The pattern of the main board holds on a fleet it did
+not include: the families sit within 2.5 points of each other, every learner beats the dev-median baseline (legs
+14.0 % to 7.2-9.5 %, a 32-49 % cut; missions 10.7 % to 5.7-8.8 %, an 18-46 % cut), and the physics anchor alone is
+21 % low. Unlike the Mersin buses, these electric buses are not a shared miss. One new
+weakness: the conformal layer, calibrated on dev strata, made EnergyNet's bands too narrow for these buses (90 %
+coverage 0.96 raw, 0.62 after conformal; the GP 0.98 to 0.82). Full table: `results/supp_ztbfull/leaderboard.md`.
+
 ## Round 2 (24-25 Nov 2026, in the repository): more data, ensembles and a physics pass
 
 Pre-registered in `experiments/bakeoff-vehicle/round2/PREREG.md` before any training; exam 2 run once (run

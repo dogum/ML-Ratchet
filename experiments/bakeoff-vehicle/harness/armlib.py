@@ -91,7 +91,7 @@ def artefact_hash(arm_dir, meta=None):
     arm_dir = os.path.abspath(arm_dir)
     per = {}
     for p in artefact_files(arm_dir, meta):
-        per[os.path.relpath(p, arm_dir)] = sha256_file(p)
+        per[os.path.relpath(p, arm_dir).replace(os.sep, '/')] = sha256_file(p)   # '/' keys on every OS (Windows import, 24 Nov 2026)
     tot = hashlib.sha256(json.dumps(per, sort_keys=True).encode()).hexdigest()
     return tot, per
 

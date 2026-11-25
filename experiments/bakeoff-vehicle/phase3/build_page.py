@@ -1,6 +1,9 @@
 """Assemble the Vehicle Bake-off page: template.html + analysis.json + the exam's showcase (json + npz) + text.json
 -> vehicle-bakeoff.html. Reads only exam outputs, arm metadata and the frozen showcase draw.
-usage: python3 build_page.py [--rehearsal]
+usage: python build_page.py [--rehearsal]
+Reads the newest analysis (work/phase3/, written by analyze.py; else the shipped results/) and writes
+work/phase3/vehicle-bakeoff.html (the artifact page) and work/phase3/site-index.html (the same page with a document
+head, as served at site/public/experiments/vehicle-bakeoff/index.html). Copy them there by hand once checked.
 """
 import json
 import os
@@ -9,14 +12,17 @@ import sys
 import numpy as np
 
 P3 = os.path.dirname(os.path.abspath(__file__))  # cloud: /home/claude/bakeoff/vehicle/phase3
-H = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # results/ sits beside harness/ in the repo (cloud: /home/claude/bakeoff/vehicle/harness)
+BK = os.path.dirname(P3)                          # experiments/bakeoff-vehicle: results/ sits beside harness/ in the repo
+H = os.path.join(BK, 'harness')                     # cloud: /home/claude/bakeoff/vehicle/harness
+WK = os.path.join(BK, 'work', 'phase3')
 REH = '--rehearsal' in sys.argv
-R = json.load(open(f'{P3}/results/{"rehearsal_" if REH else ""}analysis.json'))
-od = os.path.join(H, R['source'][:-5])
+_an = f'{"rehearsal_" if REH else ""}analysis.json'
+R = json.load(open(os.path.join(WK, _an) if os.path.exists(os.path.join(WK, _an)) else os.path.join(BK, 'results', _an)))
+od = os.path.join(BK, R['source'][:-5])
 SHJ = json.load(open(os.path.join(od, 'showcase.json')))
 SHN = np.load(os.path.join(od, 'showcase.npz'))
 DRAW = {t['trip_id']: t for t in json.load(open(f'{H}/showcase.json'))['trips']}
-T = json.load(open(f'{P3}/page/{"text_rehearsal" if REH else "text"}.json'))
+T = json.load(open(f'{P3}/page_text.json', encoding='utf-8'))
 FAMURL = 'https://dogum.github.io/ML-Ratchet/model-families/'
 
 ARMS = {   # id: (short, label, color token)
@@ -237,7 +243,10 @@ DATA = {'run_id': R['run_id'], 'arms': arms, 'show': show(), 'show_order': SHOW_
         'setboards': SB, 'set_notes': T.get('set_notes', {}), 'unc': U, 'wins': wins(), 'families': families(),
         'compute': compute(), 'enet_e16': R['boards']['table'].get('enet_v21', {}).get('E16'),
         'findings': T['findings'], 'river': T['river'], 'limits': T['limits'], 'text': T['text']}
-html = open(f'{P3}/page/template.html').read().replace('/*__DATA__*/null', json.dumps(DATA, separators=(',', ':'), allow_nan=False))
-out = f'{P3}/page/{"rehearsal-" if REH else ""}vehicle-bakeoff.html'
-open(out, 'w').write(html)
+html = open(f'{P3}/page_template.html', encoding='utf-8').read().replace('/*__DATA__*/null', json.dumps(DATA, separators=(',', ':'), allow_nan=False))
+os.makedirs(WK, exist_ok=True)
+out = os.path.join(WK, f'{"rehearsal-" if REH else ""}vehicle-bakeoff.html')
+open(out, 'w', encoding='utf-8', newline='\n').write(html)
+open(os.path.join(WK, 'site-index.html'), 'w', encoding='utf-8', newline='\n').write(
+    '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n' + html)
 print('wrote', out, os.path.getsize(out), 'bytes')
