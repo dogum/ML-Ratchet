@@ -34,6 +34,19 @@ def _bank():
     return name
 
 
+def lf_normalize(arm_dir):
+    """The repo's .gitattributes checks text files out with LF (eol=lf), while Python on Windows writes CRLF.
+    Convert the arm folder's text files (not work/) to LF before hashing, so the registered hash matches any checkout."""
+    for root, dirs, fs in os.walk(arm_dir):
+        dirs[:] = [d for d in dirs if d not in ('work', '__pycache__')]
+        for f in fs:
+            if f.endswith(('.py', '.json', '.md', '.txt', '.csv')):
+                p = os.path.join(root, f)
+                b = open(p, 'rb').read()
+                if b'\r\n' in b:
+                    open(p, 'wb').write(b.replace(b'\r\n', b'\n'))
+
+
 def registered():
     out = {}
     if os.path.isdir(REGISTRY):
@@ -63,6 +76,7 @@ def register(arm_dir, replace=False):
     import register as REG  # harness
     import armlib
     arm_dir = os.path.abspath(arm_dir)
+    lf_normalize(arm_dir)
     meta = armlib.read_meta(arm_dir)
     p = os.path.join(REGISTRY, f'{meta["arm_id"]}.json')
     old = registered().get(meta['arm_id'])

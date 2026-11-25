@@ -1,6 +1,6 @@
 {
  "arm_id": "ens_e1_conformal",
- "hash": "d41da9d2d62280bdf499443f8c14b988670241a5bfdc8210f32abbbea613cf0d",
+ "hash": "0f8bd3d5981e566c6ae9b32a9496576b851877dd1d1cadda25a53d681415e0cc",
  "files": {
   "../../../arms_filt/conformal/lib/cf_mondrian.py": "8de2a4956b525f96e7494ebe16e5d0cd7b435fa8baf72a3d0d20ec7ff815223a",
   "../../../arms_seq/common/SEQLIB_FROZEN.sha256": "fcdc4e4ed854dddb6abe4239d13fa020e928607008edaab732f17f206d1836f3",
@@ -33,10 +33,10 @@
   "../ens_e1/members.json": "0f9f733e6a4676c6b5cae2290b8e5f74153649ed046878a240d6cc2969152c07",
   "../ens_e1/predict.py": "9578b97b2d79eef5a036a63b54c3b5882a72e77e77785b8ef98d777d9ddf6695",
   "../ens_e1/ratchet.json": "c51ae02a56162a2e1e112f85df719cd146257d6153683283ebe485326d327627",
-  "calib.json": "113c7647489c787c84403d8ddf4b034eb8d672ed50747342ab1d9d4a4a6b1014",
-  "card.md": "ff8a90fd9bffdac20457af189e4fb88ef3bfb67aa5d7e14eaa6059f26eacf1e4",
-  "predict.py": "1d1c5a5b32120d8bb5c052f4d4adfb270084ad6a81bfb0b24d68ba5eae8178a9",
-  "ratchet.json": "43b87e95bb4438412170121113048c92f8f4bff3acba29517600b55b7308d3b6"
+  "calib.json": "61dd312c5f6b8060d5003de00784e9316281d5d3e3eddefc201f0328fa0a7785",
+  "card.md": "593e5cbd13d774b10ad9ac9217e1869f03c7419ad07078d7b9100143396891a9",
+  "predict.py": "4a4e9154a67e915487684aefcde2f32c05cb2e43a0671263078bd4db75e66c46",
+  "ratchet.json": "e2d74fbc1549c75d9753ec8305e44a40d47c3f85be32420b4bee03f14fae16a9"
  },
  "protocols": [
   "ungauged"
@@ -73,7 +73,7 @@
   },
   "determinism_maxdiff": 0.0,
   "predict_cpu_s_per_basin_period": {
-   "ungauged": 6.766
+   "ungauged": 6.891
   },
   "files_used": [
    "arms_filt/conformal/lib/cf_mondrian.py",
@@ -103,11 +103,17 @@
    "round2/work/banks/b2/val/st.npy",
    "round2/work/banks/b2/val/start.npy"
   ],
-  "exam_cpu_estimate_min": 137.8
+  "exam_cpu_estimate_min": 140.3
  },
  "harness_hash": "779e51f025d454d74d15d1cec8ad94cbf6c8703e1d2fed15cb50f49a0956272f",
  "arm_dir_rel": "round2/arms/ens_e1_conformal",
  "smoke_simval_bank": "b2",
- "registered_at": "2026-11-24T23:59:30",
- "history": []
+ "registered_at": "2026-11-25T00:03:11",
+ "history": [
+  {
+   "hash": "d41da9d2d62280bdf499443f8c14b988670241a5bfdc8210f32abbbea613cf0d",
+   "registered_at": "2026-11-24T23:59:30",
+   "replaced_at": "2026-11-25T00:03:11"
+  }
+ ]
 }
