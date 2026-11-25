@@ -1,0 +1,1 @@
+{"name": "d2_transformer", "arm": "transformer", "base": ["transformer_r1", "transformer_r2"], "banks": ["train101", "train102", "train103"], "members": 5, "note": "D2: v1.0 transformer r2 recipe (r1 phase 12 epochs lr 2e-3, then warm restart 24 epochs lr 1e-3), 5 members, every member on the three v2.1 banks (86,400 trips), GPU"}

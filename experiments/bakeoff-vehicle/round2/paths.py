@@ -34,6 +34,10 @@ C.REAL = os.path.join(WORK, 'real')
 C.WORK = os.path.join(WORK, 'enet_work')
 C.LOGS = os.path.join(WORK, 'logs')
 os.makedirs(C.LOGS, exist_ok=True)
+# harness outputs that v1.0 wrote into results/ (dev reference rows, rehearsals) go to round2/work/harness_results;
+# v1.0's results/ (incl. EXAM_DONE.json) is never written. exam2.py sets its own results folder.
+C.RESULTS = os.path.join(WORK, 'harness_results')
+os.makedirs(os.path.join(C.RESULTS, 'dev'), exist_ok=True)
 
 # Bank names (round 2). 'val' is v2.1's frozen val2[h]; train101-103 are v2.1's three train banks (fleet train2, seed
 # 201; trip seeds 101-103). '<name>_v4' are the same draws under the round-2 physics preset (if one is kept).
@@ -99,6 +103,32 @@ def _patch_bake():
     bake.fleet = fleet
     bake.bank_info = bank_info
     C.BANK = BANKS
+
+
+def map_arm_dir(d):
+    """registry arm_dir -> this checkout's folder (records hold the absolute path where they were registered: a cloud
+    path for v1.0, a worktree path for round 2). Everything after 'bakeoff-vehicle/' (or the cloud 'bakeoff/vehicle/')
+    is joined onto this checkout's experiments/bakeoff-vehicle."""
+    if os.path.isdir(d):
+        return d
+    s = d.replace('\\', '/')
+    for tag in ('experiments/bakeoff-vehicle/', 'bakeoff/vehicle/'):
+        if tag in s:
+            return os.path.normpath(os.path.join(BAKEOFF, s.split(tag, 1)[1]))
+    return d
+
+
+def patch_registry(REG):
+    """harness register.registered() with arm_dir mapped onto this checkout (records on disk are unchanged)."""
+    orig = REG.registered
+
+    def registered(include_excluded=False):
+        out = orig(include_excluded)
+        for r in out.values():
+            r['arm_dir_recorded'] = r['arm_dir']
+            r['arm_dir'] = map_arm_dir(r['arm_dir'])
+        return out
+    REG.registered = registered
 
 
 def setup():
