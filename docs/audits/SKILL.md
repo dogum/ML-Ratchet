@@ -66,6 +66,8 @@ For any time-series, streaming, nowcast, or sequential-decision model:
 
 ### 6. Train-vs-Real Feature, Unit & Split Alignment
 - Compare `simbank.py`/`bank.py`, `dataset.py`, `realfeat.py`/`evalreal.py`, and `<id>.py` side by side for identical feature ordering, units, scaling constants, DOY/window alignment, and `NaN` handling.
+- Match split IDs to the underlying person, star or physical asset using the source catalogue. Include calibration records and real training backgrounds. A recording ID can change while the subject stays the same.
+- For symbolic physics, test units, joint constraints and input ranges before attributing a sign error. Run the same physical change through the simulator and fitted expression. Check whether each upstream output lies inside the next expression’s domain.
 - Verify zero unit/event ID overlap between dev and exam in `splits.json`, and zero exam leakage into donor tables, priors, or scalers.
 
 ### 7. Loss, Gradient, Seed & Optimization Reproducibility
