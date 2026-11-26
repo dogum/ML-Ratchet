@@ -43,6 +43,7 @@ Load every `.npz` weight file in `models/<id>/` and verify:
   - *Precedent:* `EnergyNet v2.1` — 4 work-fraction inputs (`aero/Ep`, `rolling/Ep`, `grade_dn/Ep`, `inertia_pos/Ep`) had `sd` up to `53,606` from moving-downhill trips where `ph[0] = 0`; holding all 4 constant moved shipped VED predictions by at most `0.00039%` vs `6.08%` for control `grade_up/Ep`.
 - **Ensemble diversity:** Compute pairwise cosine similarity of first-layer weights across ensemble seeds.
 - Test feature attribution in both directions. Change only the suspected field, then regenerate every dependent feature from a consistent input change. On an otherwise perturbed input, restore only the suspected field to measure how much of the output shift it explains.
+- For a rare category, rebuild the feature vector from one valid raw category change and confirm the original public prediction first. For a large binary mode flag, check whether training used the same value. Test a compensated change of scale and first-layer weight before drawing conclusions about trained-model accuracy.
 
 ### 3. Training-Framework ↔ Inference-Runtime Forward Parity
 - Reconstruct the PyTorch `nn.Module` from `models/<id>/training/` using the shipped `.npz` weights (`model.eval()`), and compare outputs against the shipped NumPy module (`models/<id>/<id>.py`) on random non-trivial inputs and shipped examples (`max_abs_diff < 1e-5` float32).

@@ -1,6 +1,6 @@
 # StarQuake v1.1 | Amplitude-driven white-noise false detections and quality-flagged cadence padding
 
-**Cross-checked broadband-amplitude false-detection mechanism and cadence-boundary sensitivity.** Reviewer A independently reran reviewer B's `69873b7` probes against model base `61c70bf`, ran a pure Gaussian white-noise amplitude sweep on the exact Kepler cadence mask to isolate the cue behind the `18/30` time-scrambled detections, and reproduced the boundary-padding mass shift through the `pipeline.load_kepler()` entry point using quality-flagged (`q = 16`) boundary rows. [Original report and probe](reviews/reviewer-b/starquake-v1.1.md) · [Released reader](../../models/starquake/starquake.py) · [Spectral preprocessing](../../models/starquake/pipeline.py)
+**Cross-checked broadband-amplitude false-detection mechanism and cadence-boundary sensitivity.** Reviewer A independently reran reviewer B's `69873b7` probes against model base `61c70bf`, ran a pure Gaussian white-noise amplitude sweep on the exact Kepler cadence mask to test the role of amplitude in the `18/30` time-scrambled detections, and reproduced the boundary-padding mass shift through the `pipeline.load_kepler()` entry point using quality-flagged (`q = 16`) boundary rows. [Original report and probe](reviews/reviewer-b/starquake-v1.1.md) · [Released reader](../../models/starquake/starquake.py) · [Spectral preprocessing](../../models/starquake/pipeline.py)
 
 **What failed and reproduced.**
 - **Time-scrambled detections (`18/30`):** Permuting finite flux values across timestamps on 90-day Kepler excerpts of three giants still triggered oscillation detections in **`10/10`** (`KIC 2695975`, `p_osc >= 0.943`), **`7/10`** (`KIC 7353997`), and **`1/10`** (`KIC 7618730`) runs. Constant `0.0` and all-`NaN` inputs cleanly returned `detected = False` (`p_osc < 1e-7`).
@@ -8,7 +8,7 @@
 - **Controls:** `0/1,361` near-zero kernel rows; folded PyTorch↔NumPy parity **`2.05e-6`** (real) / **`1.04e-6`** (random); all `5/5` logged network promotions matched; widen factors `1.00` and `1.71`.
 
 **Second-pass white-noise amplitude sweep & `load_kepler` quality-flagged boundary test.**
-- **RMS amplitude isolates the exact cue behind time-scrambled detections:** Feeding pure unstructured Gaussian white noise (`seed = 42`, zero oscillation comb) on `KIC 2695975`'s exact 90-day cadence mask (`3,986 / 4,404` finite cadences, `Teff = 5,800 K`) transitions sharply from `p_osc = 0.00001` at `200 ppm` to **`p_osc = 0.89319` (`detected = True`) at `500 ppm`**, directly matching the three giants' real RMS flux (`KIC 2695975 = 1,063 ppm → 10/10`, `KIC 7353997 = 480 ppm → 7/10`, `KIC 7618730 = 362 ppm → 1/10`):
+- **A fixed Gaussian noise draw triggers as amplitude increases:** Feeding pure unstructured Gaussian white noise (`seed = 42`, zero oscillation comb) on `KIC 2695975`'s exact 90-day cadence mask (`3,986 / 4,404` finite cadences, `Teff = 5,800 K`) transitions sharply from `p_osc = 0.00001` at `200 ppm` to **`p_osc = 0.89319` (`detected = True`) at `500 ppm`**, in the range of the three giants' real RMS flux (`KIC 2695975 = 1,063 ppm → 10/10`, `KIC 7353997 = 480 ppm → 7/10`, `KIC 7618730 = 362 ppm → 1/10`):
 
 | Pure white-noise RMS (`ppm`) on `KIC 2695975` mask | `detected` | `p_osc` | Inferred `νmax` / `Δν` (`µHz`) |
 |---:|---|---:|---:|
@@ -17,6 +17,8 @@
 | **`500`** | **`True`** | **`0.89319`** | `197.35` / `12.330` |
 | **`1,000`** | **`True`** | **`0.98724`** | `163.42` / `11.519` |
 | **`3,000`** | **`True`** | **`0.94740`** | `112.74` / `9.617` |
+
+**Closing control across random draws.** On the same cadence mask at 5,800 K, reviewer B centred each of ten Gaussian draws and normalized its measured RMS to the target. The detector triggered on 0/10 draws at 200 ppm, **5/10 at 500 ppm** (probability 0.00017–0.99970), and 10/10 at 1,000 ppm. Amplitude can drive detections on unstructured inputs. The spread at identical RMS rules out RMS alone as a sufficient explanation for individual decisions. The real-sky false-alarm rate remains open. [Fixed-RMS probe](reviews/reviewer-b/starquake_v1_1_probe.py)
 
 - **Full-record `load_kepler` entry point with quality-flagged (`q = 16`) boundary rows:** Appending 90 days of nonzero quality-flag (`q = 16`) cadences to full 4-year `2695975.npz` expanded `load_kepler()`'s output array from **`71,964 → 76,368`** while keeping `days = 1,470.48` unchanged, shifting **`Δν` from `1.5766 → 1.5562 µHz`** and inferred mass from **`1.677 → 1.777 M_sun` (`+6.0%`)** on identical valid flux measurements.
 

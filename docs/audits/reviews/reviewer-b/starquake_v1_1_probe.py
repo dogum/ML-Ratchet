@@ -39,6 +39,22 @@ def main():
             permuted = shuffled(seg, seed)
             probs.append(model.read_ppm(permuted, hybrid=False)["p_osc"])
         print(file.stem, "ten time permutations, detections/range", sum(p > .5 for p in probs), min(probs), max(probs))
+    # Fix the cadence mask, temperature and measured RMS while varying only the noise draw.
+    with np.load(ROOT / "examples/2695975.npz") as z:
+        mask = np.isfinite(pipeline.load_kepler(z)[20000:20000 + n])
+    for rms in (200., 500., 1000.):
+        detections = []
+        for seed in range(10):
+            noise = np.full(n, np.nan)
+            draw = np.random.default_rng(seed).standard_normal(mask.sum())
+            noise[mask] = rms * (draw - draw.mean()) / draw.std()
+            np.testing.assert_allclose(np.nanstd(noise), rms)
+            detections.append(model.read_ppm(noise, teff=5800.)["p_osc"])
+        count = sum(p > .5 for p in detections)
+        if rms == 500:
+            assert 0 < count < len(detections)
+        print("fixed RMS in ppm, detections, probability range", rms,
+              count, min(detections), max(detections))
     for value in (0., np.nan):
         r = model.read_ppm(np.full(n, value), teff=4800.)
         print("constant", value, {k: r[k] for k in ("days", "detected", "p_osc", "mass")})

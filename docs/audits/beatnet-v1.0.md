@@ -16,7 +16,7 @@ Recomputing the pooled DS2 confusion matrix with record `202` excluded (`2,136` 
 | DS2 excluding record `202` | `21` / `47,569` | **`0.89823`** | **`0.55306`** | **`0.63050`** | **`0.5873`** | **`0.6737`** |
 | Delta (`excl 202 − all`) | `−1` / `−2,136` | `+0.00114` | **`+0.00652`** | **`+0.01290`** | `+0.0095` | `+0.0163` |
 
-This scoring sensitivity check shows record `202` did not inflate the archived DS2 headline numbers; however, it does not replace a full subject-grouped retrain and recalibration with record `201` removed from `quiet_dev.npz` and `calib_v1.json`.
+Including record 202 lowered the pooled scores for the fixed released model. The effect of exposure to record 201 during background selection and calibration requires retraining and scoring the same exam population.
 
 **What remains open.** Retraining and recalibrating BeatNet with subject `201/202` wholly excluded from dev calibration and training backgrounds, plus measuring NaN prevalence in live Holter feeds, remain open.
 

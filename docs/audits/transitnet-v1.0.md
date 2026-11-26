@@ -8,9 +8,9 @@
 - **Controls:** `0/1,388` near-zero rows; folded PyTorch↔NumPy parity **`3.34e-6`** (real) / **`1.91e-6`** (random); all `4/4` logged network decisions matched; TIC-grouped split excludes shared dev TICs.
 
 **Second-pass partial in-transit coverage sweep & all-NaN guardrail.**
-Excising `|phase| < frac * duration` around transit centre on all 3 packaged candidates maps the exact transition from valid vetting to unflagged missing-data `"nothing"` calls (while `all_nan_flux` cleanly raises `ValueError`):
+Excising `|phase| < frac * duration` around transit centre on all 3 packaged candidates brackets the transition from valid vetting to unflagged missing-data `"nothing"` calls (while `all_nan_flux` cleanly raises `ValueError`):
 
-| Excision `|phase| < frac × dur` | Pi Men c (`top` / `P(nothing)` / `SNR`) | TOI-270 c (`top` / `P(nothing)` / `SNR`) | TOI-617 (`top` / `P(nothing)` / `SNR`) |
+| Excision `abs(phase) < frac × dur` | Pi Men c (`top` / `P(nothing)` / `SNR`) | TOI-270 c (`top` / `P(nothing)` / `SNR`) | TOI-617 (`top` / `P(nothing)` / `SNR`) |
 |---:|---|---|---|
 | `0.00` (full) | `planet` (`0.9999`) / `0.0000` / `58.94` | `planet` (`0.9999`) / `0.0000` / `53.98` | `blend` (`0.9786`) / `0.0000` / `105.02` |
 | `0.25` (half core left) | `planet` (`0.9990`) / `0.0001` / `35.58` | `planet` (`0.9993`) / `0.0000` / `29.99` | `blend` (`0.5906`) / `0.0001` / `45.41` |
