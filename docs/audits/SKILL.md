@@ -30,6 +30,8 @@ Run all ten checks for each target model (`models/<id>/`):
 ### 1. Intended-Use Contract & Operational Information Boundary
 - Write down the model's intended real-world use in one sentence.
 - List everything an operator would actually know at prediction/decision time `t`, then compare it against everything the exam and example pipelines knew when selecting windows, aligning timestamps, computing normalization stats, or filtering inputs.
+- Replay the same timestamped observations in a different row order. For incomplete meters, compare equal-duration gaps during high and low production, and check both the reported total and how many days the summary counts.
+- When predictions share a group reference (such as a daily mean), remove one member, replace its measurements by missing values, then by measured zero. Record the effect on every untouched member.
 - Reconstruct the eligible scoring population from information available at issue time. For maps, count candidate cells outside the archived grid. For demos, count eligible observations before and after any display filter and recompute the summary over both groups.
 
 ### 2. Weight, Normalization & Feature-Sensitivity Health (Shipped `.npz` Files)

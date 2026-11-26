@@ -10,9 +10,9 @@
 
 **Second-pass missing-input guardrails & solar-wind counterfactual ablations.**
 - **Missing-input API guardrails (CLEAN):** `StormNet.predict` properly rejects all-NaN inputs, all-NaN wind with valid `Dst = -100 nT`, and quiet wind with `NaN` `Dst`, raising `ValueError: Supply finite observations with positive speed and dynamic pressure` in all three cases (no silent hallucinated forecast).
-- **Solar-wind vs. `Dst` persistence counterfactual ablation (721 gallery issues):** Replacing all 36 hours of observed solar wind with quiet nominal conditions (`Bz = 0 nT, v = 400 km/s, n = 5 cm⁻³`) degrades MAE worse than persistence across every severity stratum, while zeroing current `Dst` causes large degradation (`56.20` to `189.23 nT`). This confirms StormNet relies on genuine solar-wind driving anchored on current `Dst`:
+- **Solar-wind and persistence comparison (721 issues).** Replacing all 36 hours of observed wind with fixed inputs (Bz 0 nT, speed 400 km/s, dynamic pressure 5 nPa) increases MAE in all three groups. The fixed-input run does worse than persistence overall and on storms. It does better than persistence on extremes, 45.38 versus 46.46 nT. The full model has the lowest MAE in each group. Zeroing current Dst also increases MAE in every group.
 
-| Stratum (observed 3-h min `Dst`) | Issues | Full StormNet MAE | `Dst` persistence MAE | Quiet solar wind (`Bz=0, v=400, n=5`) MAE | Zero `Dst` (`Dst=0`) MAE |
+| Stratum (observed 3-h min `Dst`) | Issues | Full StormNet MAE | `Dst` persistence MAE | Quiet solar wind (`Bz=0, v=400, pressure=5`) MAE | Zero `Dst` (`Dst=0`) MAE |
 |---|---:|---:|---:|---:|---:|
 | All matched gallery issues | `721` | **`8.97 nT`** | `10.60 nT` | `11.18 nT` | `56.20 nT` |
 | Storms (`<= -50 nT`) | `307` | **`15.54 nT`** | `18.46 nT` | `18.79 nT` | `98.82 nT` |

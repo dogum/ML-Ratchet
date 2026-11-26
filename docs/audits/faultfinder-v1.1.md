@@ -9,7 +9,7 @@
 
 **Second-pass public API guardrail probes (`self-reference` and `partial-day prefix`).**
 - **Reference chronology & self-reference leakage:** Reviewer B showed re-dating references two weeks later had zero effect; reviewer A verified that passing the target day itself as its own reference (`read_day(df_day, ref_days=[df_day])`) is silently accepted and shifts `P(fault)` across all four shipped examples—most sharply on `ornl_rtu` (**`-0.08888`**, `0.63244 -> 0.54357`).
-- **Truncated partial-day prefixes & empty inputs:** Reviewer B found an all-empty day silently returns `P(fault) = 0.45255`. Reviewer A passed true partial-day prefixes (`6 h = 24 rows` and `12 h = 48 rows`) to `read_day`: every example returned a silent diagnosis with **all three faulty-classified examples dropping below the `0.50` alarm threshold**:
+- **Truncated partial-day prefixes & empty inputs:** Reviewer B found an all-empty day silently returns `P(fault) = 0.45255`. Reviewer A passed true partial-day prefixes (`6 h = 24 rows` and `12 h = 48 rows`) to `read_day`: all three examples that triggered a full-day alarm fell below 0.50 on both prefixes. Two have documented faults. Iowa ERS is labelled healthy, so its full-day alarm was a false positive. [Example labels](../../models/faultfinder/examples/labels.json)
 
 | Packaged example | Full-day `P(fault)` (with shipped refs) | Self-reference `ref=[day]` (`Δ`) | `6 h` prefix (`24` rows) | `12 h` prefix (`48` rows) | Alarm flipped at `6 h`? |
 |---|---:|---:|---:|---:|---|
