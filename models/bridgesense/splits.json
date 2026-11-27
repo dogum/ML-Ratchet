@@ -1,0 +1,608 @@
+{
+  "seed": 20261124,
+  "kw51_reference_baseline": {
+    "start": "2018-10-01T00:00:00",
+    "end": "2018-11-11T23:00:00.000003",
+    "n_hours": 1008,
+    "T_min_C": -1.34,
+    "T_max_C": 26.58
+  },
+  "kw51_dev": [
+    {
+      "block_id": "kw51_b02",
+      "start": "2018-11-26",
+      "end": "2018-12-03",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 4.49,
+      "T_mean": 9.3
+    },
+    {
+      "block_id": "kw51_b03",
+      "start": "2018-12-03",
+      "end": "2018-12-10",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 2.17,
+      "T_mean": 10.05
+    },
+    {
+      "block_id": "kw51_b09",
+      "start": "2019-01-14",
+      "end": "2019-01-21",
+      "stratum": "healthy_freezing",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": -5.76,
+      "T_mean": 2.96
+    },
+    {
+      "block_id": "kw51_b13",
+      "start": "2019-02-11",
+      "end": "2019-02-18",
+      "stratum": "healthy_freezing",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": -1.5,
+      "T_mean": 5.24
+    },
+    {
+      "block_id": "kw51_b23",
+      "start": "2019-04-22",
+      "end": "2019-04-29",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 5.39,
+      "T_mean": 13.83
+    },
+    {
+      "block_id": "kw51_b25",
+      "start": "2019-05-06",
+      "end": "2019-05-13",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 1.22,
+      "T_mean": 10.76
+    },
+    {
+      "block_id": "kw51_b45",
+      "start": "2019-10-07",
+      "end": "2019-10-14",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": 9.47,
+      "T_mean": 14.52
+    },
+    {
+      "block_id": "kw51_b53",
+      "start": "2019-12-02",
+      "end": "2019-12-09",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": -2.75,
+      "T_mean": 4.71
+    },
+    {
+      "block_id": "kw51_b55",
+      "start": "2019-12-16",
+      "end": "2019-12-23",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": 6.5,
+      "T_mean": 10.28
+    },
+    {
+      "block_id": "kw51_b57",
+      "start": "2019-12-30",
+      "end": "2020-01-06",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": -1.21,
+      "T_mean": 5.08
+    }
+  ],
+  "kw51_exam": [
+    {
+      "block_id": "kw51_b00",
+      "start": "2018-11-12",
+      "end": "2018-11-19",
+      "stratum": "healthy_freezing",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": -1.36,
+      "T_mean": 7.51
+    },
+    {
+      "block_id": "kw51_b01",
+      "start": "2018-11-19",
+      "end": "2018-11-26",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 0.15,
+      "T_mean": 4.58
+    },
+    {
+      "block_id": "kw51_b04",
+      "start": "2018-12-10",
+      "end": "2018-12-17",
+      "stratum": "healthy_freezing",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": -3.13,
+      "T_mean": 2.36
+    },
+    {
+      "block_id": "kw51_b05",
+      "start": "2018-12-17",
+      "end": "2018-12-24",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 5.46,
+      "T_mean": 9.05
+    },
+    {
+      "block_id": "kw51_b06",
+      "start": "2018-12-24",
+      "end": "2018-12-31",
+      "stratum": "healthy_freezing",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": -3.39,
+      "T_mean": 2.41
+    },
+    {
+      "block_id": "kw51_b07",
+      "start": "2018-12-31",
+      "end": "2019-01-07",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 1.52,
+      "T_mean": 5.78
+    },
+    {
+      "block_id": "kw51_b08",
+      "start": "2019-01-07",
+      "end": "2019-01-14",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 0.93,
+      "T_mean": 6.01
+    },
+    {
+      "block_id": "kw51_b10",
+      "start": "2019-01-21",
+      "end": "2019-01-28",
+      "stratum": "healthy_freezing",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": -7.53,
+      "T_mean": 1.59
+    },
+    {
+      "block_id": "kw51_b11",
+      "start": "2019-01-28",
+      "end": "2019-02-04",
+      "stratum": "healthy_freezing",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": -3.85,
+      "T_mean": 2.15
+    },
+    {
+      "block_id": "kw51_b12",
+      "start": "2019-02-04",
+      "end": "2019-02-11",
+      "stratum": "healthy_freezing",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": -0.21,
+      "T_mean": 6.69
+    },
+    {
+      "block_id": "kw51_b14",
+      "start": "2019-02-18",
+      "end": "2019-02-25",
+      "stratum": "healthy_freezing",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": -0.7,
+      "T_mean": 8.08
+    },
+    {
+      "block_id": "kw51_b15",
+      "start": "2019-02-25",
+      "end": "2019-03-04",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 0.12,
+      "T_mean": 9.21
+    },
+    {
+      "block_id": "kw51_b16",
+      "start": "2019-03-04",
+      "end": "2019-03-11",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 4.57,
+      "T_mean": 9.59
+    },
+    {
+      "block_id": "kw51_b17",
+      "start": "2019-03-11",
+      "end": "2019-03-18",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 3.15,
+      "T_mean": 8.66
+    },
+    {
+      "block_id": "kw51_b18",
+      "start": "2019-03-18",
+      "end": "2019-03-25",
+      "stratum": "healthy_freezing",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": -0.86,
+      "T_mean": 8.7
+    },
+    {
+      "block_id": "kw51_b19",
+      "start": "2019-03-25",
+      "end": "2019-04-01",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 1.47,
+      "T_mean": 9.61
+    },
+    {
+      "block_id": "kw51_b20",
+      "start": "2019-04-01",
+      "end": "2019-04-08",
+      "stratum": "healthy_freezing",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": -0.17,
+      "T_mean": 9.7
+    },
+    {
+      "block_id": "kw51_b21",
+      "start": "2019-04-08",
+      "end": "2019-04-15",
+      "stratum": "healthy_freezing",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": -0.37,
+      "T_mean": 7.86
+    },
+    {
+      "block_id": "kw51_b22",
+      "start": "2019-04-15",
+      "end": "2019-04-22",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 1.12,
+      "T_mean": 14.98
+    },
+    {
+      "block_id": "kw51_b24",
+      "start": "2019-04-29",
+      "end": "2019-05-06",
+      "stratum": "healthy_mild",
+      "phase": "pre_healthy",
+      "is_changed": 0,
+      "T_min": 1.72,
+      "T_mean": 9.54
+    },
+    {
+      "block_id": "kw51_b26",
+      "start": "2019-05-20",
+      "end": "2019-05-27",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 6.96,
+      "T_mean": 14.72
+    },
+    {
+      "block_id": "kw51_b27",
+      "start": "2019-05-27",
+      "end": "2019-06-03",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 5.98,
+      "T_mean": 17.57
+    },
+    {
+      "block_id": "kw51_b28",
+      "start": "2019-06-03",
+      "end": "2019-06-10",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 7.81,
+      "T_mean": 16.2
+    },
+    {
+      "block_id": "kw51_b29",
+      "start": "2019-06-10",
+      "end": "2019-06-17",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 9.66,
+      "T_mean": 16.39
+    },
+    {
+      "block_id": "kw51_b30",
+      "start": "2019-06-17",
+      "end": "2019-06-24",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 9.03,
+      "T_mean": 19.63
+    },
+    {
+      "block_id": "kw51_b31",
+      "start": "2019-06-24",
+      "end": "2019-07-01",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 13.26,
+      "T_mean": 23.55
+    },
+    {
+      "block_id": "kw51_b32",
+      "start": "2019-07-01",
+      "end": "2019-07-08",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 10.57,
+      "T_mean": 18.77
+    },
+    {
+      "block_id": "kw51_b33",
+      "start": "2019-07-08",
+      "end": "2019-07-15",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 8.0,
+      "T_mean": 17.52
+    },
+    {
+      "block_id": "kw51_b34",
+      "start": "2019-07-15",
+      "end": "2019-07-22",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 9.25,
+      "T_mean": 19.03
+    },
+    {
+      "block_id": "kw51_b35",
+      "start": "2019-07-22",
+      "end": "2019-07-29",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 13.64,
+      "T_mean": 24.86
+    },
+    {
+      "block_id": "kw51_b36",
+      "start": "2019-07-29",
+      "end": "2019-08-05",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 12.95,
+      "T_mean": 19.58
+    },
+    {
+      "block_id": "kw51_b37",
+      "start": "2019-08-05",
+      "end": "2019-08-12",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 12.88,
+      "T_mean": 20.43
+    },
+    {
+      "block_id": "kw51_b38",
+      "start": "2019-08-12",
+      "end": "2019-08-19",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 9.26,
+      "T_mean": 17.21
+    },
+    {
+      "block_id": "kw51_b39",
+      "start": "2019-08-19",
+      "end": "2019-08-26",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 9.02,
+      "T_mean": 19.12
+    },
+    {
+      "block_id": "kw51_b40",
+      "start": "2019-08-26",
+      "end": "2019-09-02",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 9.85,
+      "T_mean": 21.23
+    },
+    {
+      "block_id": "kw51_b41",
+      "start": "2019-09-02",
+      "end": "2019-09-09",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 5.48,
+      "T_mean": 14.69
+    },
+    {
+      "block_id": "kw51_b42",
+      "start": "2019-09-09",
+      "end": "2019-09-16",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 7.0,
+      "T_mean": 16.49
+    },
+    {
+      "block_id": "kw51_b43",
+      "start": "2019-09-16",
+      "end": "2019-09-23",
+      "stratum": "during_retrofit",
+      "phase": "during_retrofit",
+      "is_changed": 1,
+      "T_min": 4.29,
+      "T_mean": 14.9
+    },
+    {
+      "block_id": "kw51_b44",
+      "start": "2019-09-30",
+      "end": "2019-10-07",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": 7.02,
+      "T_mean": 12.65
+    },
+    {
+      "block_id": "kw51_b46",
+      "start": "2019-10-14",
+      "end": "2019-10-21",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": 9.28,
+      "T_mean": 13.97
+    },
+    {
+      "block_id": "kw51_b47",
+      "start": "2019-10-21",
+      "end": "2019-10-28",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": 3.33,
+      "T_mean": 13.8
+    },
+    {
+      "block_id": "kw51_b48",
+      "start": "2019-10-28",
+      "end": "2019-11-04",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": 0.93,
+      "T_mean": 9.06
+    },
+    {
+      "block_id": "kw51_b49",
+      "start": "2019-11-04",
+      "end": "2019-11-11",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": -0.15,
+      "T_mean": 7.34
+    },
+    {
+      "block_id": "kw51_b50",
+      "start": "2019-11-11",
+      "end": "2019-11-18",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": -1.26,
+      "T_mean": 5.42
+    },
+    {
+      "block_id": "kw51_b51",
+      "start": "2019-11-18",
+      "end": "2019-11-25",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": -3.62,
+      "T_mean": 4.75
+    },
+    {
+      "block_id": "kw51_b52",
+      "start": "2019-11-25",
+      "end": "2019-12-02",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": -1.33,
+      "T_mean": 7.58
+    },
+    {
+      "block_id": "kw51_b54",
+      "start": "2019-12-09",
+      "end": "2019-12-16",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": 1.81,
+      "T_mean": 6.5
+    },
+    {
+      "block_id": "kw51_b56",
+      "start": "2019-12-23",
+      "end": "2019-12-30",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": -2.35,
+      "T_mean": 5.76
+    },
+    {
+      "block_id": "kw51_b58",
+      "start": "2020-01-06",
+      "end": "2020-01-13",
+      "stratum": "post_retrofit",
+      "phase": "post_retrofit",
+      "is_changed": 1,
+      "T_min": 3.7,
+      "T_mean": 8.45
+    }
+  ],
+  "zero_shot_exams": {
+    "boxgirder": "Zenodo 20522191 (CC BY 4.0) \u2014 100% exam, 0 blocks in dev",
+    "hbta": "Zenodo 14632942 (CC BY 4.0) \u2014 100% exam, 0 states in dev"
+  }
+}

@@ -1,0 +1,546 @@
+{
+ "ladder": {
+  "name": "v1.1 \u2014 fixed thermal fit, mode eligibility, separate selection sets",
+  "objective": "Composite skill in [0, 1] on frozen simulated bridge episodes: 0.35*AUC + 0.35*dK_skill + 0.15*env_skill + 0.15*cold_extrap_specificity",
+  "rule": "Keep if frozen-set composite skill beats the incumbent by more than +0.01 AND on KW51 dev (10 blocks, seed 20261124) AUC drops <= 0.02, Brier rises <= max(15%, +0.015), and 10-block dK/K MAE rises <= max(15%, +0.05 pp).",
+  "margin": 0.01,
+  "scored_on": "val3",
+  "rungs": [
+   {
+    "id": "r1",
+    "change": "Textbook linear thermoelastic 2-D modal FEM + synthetic Gaussian OMA noise (physics p1, train1)",
+    "sim": 0.30571,
+    "dev": {
+     "dev_auc": 1.0,
+     "dev_brier": 0.1116,
+     "dev_dk_mae": 0.077
+    },
+    "decision": "kept",
+    "why": "First rung.",
+    "metrics": [
+     0.784,
+     2.93,
+     0.073,
+     1.0,
+     0.1116,
+     0.077
+    ]
+   },
+   {
+    "id": "r2",
+    "change": "Add 1-D Fourier deck heat diffusion, asphalt/ballast freezing phase transition, axial bearing restraint, warm-to-cold extrapolation (physics p2, train2)",
+    "sim": 0.81765,
+    "dev": {
+     "dev_auc": 1.0,
+     "dev_brier": 0.0854,
+     "dev_dk_mae": 0.056
+    },
+    "decision": "kept",
+    "why": "+0.512 on the frozen set; dev gate passed.",
+    "metrics": [
+     0.925,
+     0.66,
+     0.719,
+     1.0,
+     0.0854,
+     0.056
+    ]
+   },
+   {
+    "id": "r2_no_xattn",
+    "change": "Architecture ablation on p2: remove baseline-to-query thermal cross-attention",
+    "sim": 0.80488,
+    "dev": {
+     "dev_auc": 1.0,
+     "dev_brier": 0.0,
+     "dev_dk_mae": 0.066
+    },
+    "decision": "rejected",
+    "why": "-0.013 on val3, needs more than +0.01.",
+    "metrics": [
+     0.916,
+     0.69,
+     0.692,
+     1.0,
+     0.0,
+     0.066
+    ]
+   },
+   {
+    "id": "r3",
+    "change": "Inject real healthy KW51 autumn OMA noise + correlated mode dropouts + dev-calibrated slow seasonal drift + mass-loaded retrofits (physics p3, train3)",
+    "sim": 0.87167,
+    "dev": {
+     "dev_auc": 1.0,
+     "dev_brier": 0.0001,
+     "dev_dk_mae": 0.409
+    },
+    "decision": "rejected",
+    "why": "+0.054 on the frozen set; dev gate: dev_dk_mae 0.409% > 0.106%.",
+    "metrics": [
+     0.963,
+     0.61,
+     0.957,
+     1.0,
+     0.0001,
+     0.409
+    ]
+   },
+   {
+    "id": "r4_mix",
+    "change": "Mixed bank (p2 + p3, 24k episodes) with linear-OLS physics anchor",
+    "sim": 0.87864,
+    "dev": {
+     "dev_auc": 1.0,
+     "dev_brier": 0.0,
+     "dev_dk_mae": 0.149
+    },
+    "decision": "rejected",
+    "why": "+0.061 on the frozen set; dev gate: dev_dk_mae 0.149% > 0.106%.",
+    "metrics": [
+     0.968,
+     0.54,
+     0.907,
+     1.0,
+     0.0,
+     0.149
+    ]
+   },
+   {
+    "id": "r5_no_anchor",
+    "change": "Anchor ablation on p3: predict dK/K directly without the OLS output anchor",
+    "sim": 0.87847,
+    "dev": {
+     "dev_auc": 1.0,
+     "dev_brier": 0.0,
+     "dev_dk_mae": 0.099
+    },
+    "decision": "kept",
+    "why": "+0.061 on the frozen set; dev gate passed.",
+    "metrics": [
+     0.965,
+     0.51,
+     0.902,
+     1.0,
+     0.0,
+     0.099
+    ]
+   },
+   {
+    "id": "r6_mix_no_anchor",
+    "change": "Mixed bank (p2 + p3, 24k episodes) without the OLS output anchor (seed 42)",
+    "sim": 0.88993,
+    "dev": {
+     "dev_auc": 1.0,
+     "dev_brier": 0.0,
+     "dev_dk_mae": 0.416
+    },
+    "decision": "rejected",
+    "why": "+0.011 on the frozen set; dev gate: dev_dk_mae 0.416% > 0.149%.",
+    "metrics": [
+     0.973,
+     0.47,
+     0.907,
+     1.0,
+     0.0,
+     0.416
+    ]
+   },
+   {
+    "id": "r6_s2",
+    "change": "Seed replicate of r6_mix_no_anchor (seed 2)",
+    "sim": 0.88972,
+    "dev": {
+     "dev_auc": 1.0,
+     "dev_brier": 0.0,
+     "dev_dk_mae": 0.234
+    },
+    "decision": "rejected",
+    "why": "+0.011 on the frozen set; dev gate: dev_dk_mae 0.234% > 0.149%.",
+    "metrics": [
+     0.971,
+     0.48,
+     0.92,
+     1.0,
+     0.0,
+     0.234
+    ]
+   },
+   {
+    "id": "r6_s3",
+    "change": "Seed replicate of r6_mix_no_anchor (seed 3)",
+    "sim": 0.88383,
+    "dev": {
+     "dev_auc": 1.0,
+     "dev_brier": 0.0,
+     "dev_dk_mae": 0.097
+    },
+    "decision": "rejected",
+    "why": "+0.005 on val3, needs more than +0.01.",
+    "metrics": [
+     0.967,
+     0.51,
+     0.922,
+     1.0,
+     0.0,
+     0.097
+    ]
+   },
+   {
+    "id": "r7_ens3",
+    "change": "Ensemble of r4_mix (OLS-anchored) with the r6_s2 and r6_s3 seed replicates; each member keeps its own config",
+    "sim": 0.89242,
+    "dev": {
+     "dev_auc": 1.0,
+     "dev_brier": 0.0,
+     "dev_dk_mae": 0.147
+    },
+    "decision": "released",
+    "why": "+0.014 on the frozen set; dev gate passed.",
+    "metrics": [
+     0.973,
+     0.47,
+     0.917,
+     1.0,
+     0.0,
+     0.147
+    ]
+   }
+  ],
+  "dev_gate": "KW51 dev AUC drops <= 0.02; Brier rises <= max(15%, +0.015); 10-block dK/K MAE rises <= max(15%, +0.05 pp)",
+  "frozen_sets": [
+   "val3"
+  ],
+  "columns_source": "Frozen set (val3) and KW51 dev (10 blocks); real exams never used to choose",
+  "columns": [
+   "Sim AUC",
+   "Sim dK MAE (%)",
+   "Sim cold spec",
+   "Dev AUC",
+   "Dev Brier",
+   "Dev dK MAE (%)"
+  ]
+ },
+ "registry": [
+  {
+   "id": "r1",
+   "ckpts": [
+    "r1"
+   ],
+   "change": "Textbook linear thermoelastic 2-D modal FEM + synthetic Gaussian OMA noise (physics p1, train1)",
+   "selected_on": {
+    "r1": "sel1"
+   }
+  },
+  {
+   "id": "r2",
+   "ckpts": [
+    "r2"
+   ],
+   "change": "Add 1-D Fourier deck heat diffusion, asphalt/ballast freezing phase transition, axial bearing restraint, warm-to-cold extrapolation (physics p2, train2)",
+   "selected_on": {
+    "r2": "sel2"
+   }
+  },
+  {
+   "id": "r2_no_xattn",
+   "ckpts": [
+    "r2_no_xattn"
+   ],
+   "change": "Architecture ablation on p2: remove baseline-to-query thermal cross-attention",
+   "selected_on": {
+    "r2_no_xattn": "sel2"
+   }
+  },
+  {
+   "id": "r3",
+   "ckpts": [
+    "r3"
+   ],
+   "change": "Inject real healthy KW51 autumn OMA noise + correlated mode dropouts + dev-calibrated slow seasonal drift + mass-loaded retrofits (physics p3, train3)",
+   "selected_on": {
+    "r3": "sel3"
+   }
+  },
+  {
+   "id": "r4_mix",
+   "ckpts": [
+    "r4_mix"
+   ],
+   "change": "Mixed bank (p2 + p3, 24k episodes) with linear-OLS physics anchor",
+   "selected_on": {
+    "r4_mix": "sel3"
+   }
+  },
+  {
+   "id": "r5_no_anchor",
+   "ckpts": [
+    "r5_no_anchor"
+   ],
+   "change": "Anchor ablation on p3: predict dK/K directly without the OLS output anchor",
+   "selected_on": {
+    "r5_no_anchor": "sel3"
+   }
+  },
+  {
+   "id": "r6_mix_no_anchor",
+   "ckpts": [
+    "r6_mix_no_anchor"
+   ],
+   "change": "Mixed bank (p2 + p3, 24k episodes) without the OLS output anchor (seed 42)",
+   "selected_on": {
+    "r6_mix_no_anchor": "sel3"
+   }
+  },
+  {
+   "id": "r6_s2",
+   "ckpts": [
+    "r6_s2"
+   ],
+   "change": "Seed replicate of r6_mix_no_anchor (seed 2)",
+   "selected_on": {
+    "r6_s2": "sel3"
+   }
+  },
+  {
+   "id": "r6_s3",
+   "ckpts": [
+    "r6_s3"
+   ],
+   "change": "Seed replicate of r6_mix_no_anchor (seed 3)",
+   "selected_on": {
+    "r6_s3": "sel3"
+   }
+  },
+  {
+   "id": "r7_ens3",
+   "ckpts": [
+    "r4_mix",
+    "r6_s2",
+    "r6_s3"
+   ],
+   "change": "Ensemble of r4_mix (OLS-anchored) with the r6_s2 and r6_s3 seed replicates; each member keeps its own config",
+   "selected_on": {
+    "r4_mix": "sel3",
+    "r6_s2": "sel3",
+    "r6_s3": "sel3"
+   }
+  }
+ ],
+ "cache": {
+  "sim": {
+   "r1@val3": {
+    "sim_score": 0.30571,
+    "auc": 0.78381,
+    "brier": 0.36954,
+    "dk_mae": 2.9303,
+    "dk_anchor_mae": 3.0225,
+    "dk_skill": 0.03048,
+    "env_mae": 1.4554,
+    "env_skill": 0.06536,
+    "cold_spec": 0.07268,
+    "cov_dk_68": 0.1355,
+    "cov_env_68": 0.195
+   },
+   "r2@val3": {
+    "sim_score": 0.81765,
+    "auc": 0.9254,
+    "brier": 0.17875,
+    "dk_mae": 0.6585,
+    "dk_anchor_mae": 3.0225,
+    "dk_skill": 0.78212,
+    "env_mae": 0.3932,
+    "env_skill": 0.74748,
+    "cold_spec": 0.7193,
+    "cov_dk_68": 0.465,
+    "cov_env_68": 0.5095
+   },
+   "r2_no_xattn@val3": {
+    "sim_score": 0.80488,
+    "auc": 0.91568,
+    "brier": 0.1972,
+    "dk_mae": 0.6895,
+    "dk_anchor_mae": 3.0225,
+    "dk_skill": 0.77187,
+    "env_mae": 0.4103,
+    "env_skill": 0.73651,
+    "cold_spec": 0.69173,
+    "cov_dk_68": 0.4215,
+    "cov_env_68": 0.45
+   },
+   "r3@val3": {
+    "sim_score": 0.87167,
+    "auc": 0.96339,
+    "brier": 0.07821,
+    "dk_mae": 0.6131,
+    "dk_anchor_mae": 3.0225,
+    "dk_skill": 0.79716,
+    "env_mae": 0.3958,
+    "env_skill": 0.74581,
+    "cold_spec": 0.95739,
+    "cov_dk_68": 0.7325,
+    "cov_env_68": 0.7385
+   },
+   "r4_mix@val3": {
+    "sim_score": 0.87864,
+    "auc": 0.96817,
+    "brier": 0.07096,
+    "dk_mae": 0.5377,
+    "dk_anchor_mae": 3.0225,
+    "dk_skill": 0.8221,
+    "env_mae": 0.3534,
+    "env_skill": 0.77303,
+    "cold_spec": 0.90727,
+    "cov_dk_68": 0.677,
+    "cov_env_68": 0.661
+   },
+   "r5_no_anchor@val3": {
+    "sim_score": 0.87847,
+    "auc": 0.96469,
+    "brier": 0.07569,
+    "dk_mae": 0.5089,
+    "dk_anchor_mae": 3.0225,
+    "dk_skill": 0.83162,
+    "env_mae": 0.3693,
+    "env_skill": 0.76284,
+    "cold_spec": 0.90226,
+    "cov_dk_68": 0.725,
+    "cov_env_68": 0.5905
+   },
+   "r6_mix_no_anchor@val3": {
+    "sim_score": 0.88993,
+    "auc": 0.97278,
+    "brier": 0.06597,
+    "dk_mae": 0.4732,
+    "dk_anchor_mae": 3.0225,
+    "dk_skill": 0.84344,
+    "env_mae": 0.3305,
+    "env_skill": 0.78778,
+    "cold_spec": 0.90727,
+    "cov_dk_68": 0.758,
+    "cov_env_68": 0.683
+   },
+   "r6_s2@val3": {
+    "sim_score": 0.88972,
+    "auc": 0.97133,
+    "brier": 0.06703,
+    "dk_mae": 0.4816,
+    "dk_anchor_mae": 3.0225,
+    "dk_skill": 0.84067,
+    "env_mae": 0.3369,
+    "env_skill": 0.78368,
+    "cold_spec": 0.9198,
+    "cov_dk_68": 0.74,
+    "cov_env_68": 0.6615
+   },
+   "r6_s3@val3": {
+    "sim_score": 0.88383,
+    "auc": 0.96734,
+    "brier": 0.06998,
+    "dk_mae": 0.5119,
+    "dk_anchor_mae": 3.0225,
+    "dk_skill": 0.83063,
+    "env_mae": 0.351,
+    "env_skill": 0.77462,
+    "cold_spec": 0.92231,
+    "cov_dk_68": 0.7515,
+    "cov_env_68": 0.66
+   },
+   "r7_ens3@val3": {
+    "sim_score": 0.89242,
+    "auc": 0.9731,
+    "brier": 0.06405,
+    "dk_mae": 0.4729,
+    "dk_anchor_mae": 3.0225,
+    "dk_skill": 0.84353,
+    "env_mae": 0.3217,
+    "env_skill": 0.79338,
+    "cold_spec": 0.91729,
+    "cov_dk_68": 0.7915,
+    "cov_env_68": 0.7575
+   }
+  },
+  "dev": {
+   "r1": {
+    "dev_auc": 1.0,
+    "dev_brier": 0.1116,
+    "dev_dk_mae": 0.077,
+    "dev_healthy_dk_mae": 0.107,
+    "dev_freeze_p_mean": 0.5,
+    "dev_post_dk_mean": 1.114
+   },
+   "r2": {
+    "dev_auc": 1.0,
+    "dev_brier": 0.0854,
+    "dev_dk_mae": 0.056,
+    "dev_healthy_dk_mae": 0.053,
+    "dev_freeze_p_mean": 0.457,
+    "dev_post_dk_mean": 1.134
+   },
+   "r2_no_xattn": {
+    "dev_auc": 1.0,
+    "dev_brier": 0.0,
+    "dev_dk_mae": 0.066,
+    "dev_healthy_dk_mae": 0.064,
+    "dev_freeze_p_mean": 0.0037,
+    "dev_post_dk_mean": 1.217
+   },
+   "r3": {
+    "dev_auc": 1.0,
+    "dev_brier": 0.0001,
+    "dev_dk_mae": 0.409,
+    "dev_healthy_dk_mae": 0.164,
+    "dev_freeze_p_mean": 0.0159,
+    "dev_post_dk_mean": 0.37
+   },
+   "r4_mix": {
+    "dev_auc": 1.0,
+    "dev_brier": 0.0,
+    "dev_dk_mae": 0.149,
+    "dev_healthy_dk_mae": 0.149,
+    "dev_freeze_p_mean": 0.002,
+    "dev_post_dk_mean": 0.997
+   },
+   "r5_no_anchor": {
+    "dev_auc": 1.0,
+    "dev_brier": 0.0,
+    "dev_dk_mae": 0.099,
+    "dev_healthy_dk_mae": 0.002,
+    "dev_freeze_p_mean": 0.0065,
+    "dev_post_dk_mean": 1.131
+   },
+   "r6_mix_no_anchor": {
+    "dev_auc": 1.0,
+    "dev_brier": 0.0,
+    "dev_dk_mae": 0.416,
+    "dev_healthy_dk_mae": 0.02,
+    "dev_freeze_p_mean": 0.0019,
+    "dev_post_dk_mean": 0.137
+   },
+   "r6_s2": {
+    "dev_auc": 1.0,
+    "dev_brier": 0.0,
+    "dev_dk_mae": 0.234,
+    "dev_healthy_dk_mae": 0.005,
+    "dev_freeze_p_mean": 0.0035,
+    "dev_post_dk_mean": 0.615
+   },
+   "r6_s3": {
+    "dev_auc": 1.0,
+    "dev_brier": 0.0,
+    "dev_dk_mae": 0.097,
+    "dev_healthy_dk_mae": 0.008,
+    "dev_freeze_p_mean": 0.008,
+    "dev_post_dk_mean": 1.204
+   },
+   "r7_ens3": {
+    "dev_auc": 1.0,
+    "dev_brier": 0.0,
+    "dev_dk_mae": 0.147,
+    "dev_healthy_dk_mae": 0.053,
+    "dev_freeze_p_mean": 0.0038,
+    "dev_post_dk_mean": 0.939
+   }
+  }
+ }
+}

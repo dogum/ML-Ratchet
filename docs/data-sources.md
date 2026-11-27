@@ -62,6 +62,9 @@ find another documented source or download it yourself and note it.
 | [LANDFIRE LFPS](https://lfps.usgs.gov/) ImageServer `exportImage` | FBFM40, canopy cover, height, base height, bulk density (LF2016/2022/2023); elevation, slope, aspect (LF2020) | Fire platform landscapes (40 dev and 48 replay fires); training windows | Works per window at 180 m with 4 threads (network-bound). LF2016 is post-fire for 2012-2016 fires; no pre-fire layer exists for them |
 | [HRRR](https://registry.opendata.aws/noaa-hrrr-pds/) via `hrrrzarr` (University of Utah, AWS Open Data) | Hourly 2 m T, RH, 10 m wind, gust, radiation, cloud; 1 h precipitation from short-lead forecasts | FireSim replays and training weather | Starts 25 Aug 2016; analysis precipitation chunks do not exist and forecasts start mid-2018, so precipitation is NaN for 2017-early 2018 fires; 1-5.5 % of hours missing on 2017-18 fires (archive gaps); float16 chunks switch to float32 during 2024 |
 | [gridMET](https://www.northwestknowledge.net/metdata/data/) HTTP files | Daily weather and NFDRS fm100, fm1000, ERC, BI at fires, ignitions and moisture sites | All four fire models; FireData's baselines | The THREDDS server on port 8080 timed out; the plain HTTP files worked |
+| [KW51 Railway Bridge](https://zenodo.org/records/3745914) + [KW51 FEM](https://zenodo.org/records/17366772) (Zenodo, KU Leuven) | 15 months hourly tracked natural frequencies (14 modes), steel/air temperatures, retrofit timeline, and FEM | BridgeSense | `trackedmodes.zip` (12.9 MB), CC BY-NC-SA 4.0; fetched into git-ignored `work/`, not redistributed in git |
+| [Concrete Box-Girder Bridge SHM](https://zenodo.org/records/20522191) (Zenodo, Koehncke et al. 2026) | 4 months tracked eigenfrequencies (2 modes), temperatures, winter freeze-thaw and static load test | BridgeSense | `box_girder_bridge_eigenfrequencies.h5` (0.89 MB), CC BY 4.0 |
+| [Hell Bridge Test Arena (HBTA)](https://zenodo.org/records/14632942) (Zenodo, NTNU) | Full-scale 35 m steel truss railway bridge 100 Hz accelerations under undamaged and imposed damage states | BridgeSense | `data_100Hz.h5` (2.5 GB), CC BY 4.0 |
 
 ## Checked for backlog ideas
 
@@ -70,7 +73,10 @@ Crystallography Open Database, CHIME/FRB, Baseball Savant, IRSA ZTF TAP, JPL SBD
 Data, Iowa Mesonet ASOS, NASA POWER, LISIRD, Open-Meteo archive, RCSB PDB, PubChem, UCI, OpenML, Hugging Face API,
 EIA, Zenodo. On 18 Nov 2026, from the claude.ai build sandbox: NIFC WFIGS, FIRMS, GOES-16 FDC on S3, MTBS, Copernicus
 DEM on S3, WRCC, WFAS, CDAWeb, NOAA CO-OPS tides API, NDBC, NOAA NGDC tsunami event search, NGL over https, Hugging Face
-Prior-Labs.
+Prior-Labs. On 24 Nov 2026, from the cloud devbox: ORNL Daymet v4 (`daymet.ornl.gov/single-pixel/api/data`), USGS
+`api.waterdata.usgs.gov`, NGL `IGS20/tenv3/<PLATE>/` and `steps.txt`, OpenSLR-28 (`rirs_noises.zip`), CHIME/FRB Catalog 1
+files, NIST WebBook JCAMP-DX IR downloads, USGS Geomagnetism API (`geomag.usgs.gov/ws/data/`), and Zenodo bridge SHM
+records (`3745914`, `17366772`, `20522191`, `14632942`).
 
 ## Blocked or unreliable from the cloud build machine
 
@@ -90,7 +96,8 @@ Prior-Labs.
 | nationalgrideso.com | 502 (the old ESO domain; the same reports are on neso.energy and ofgem.gov.uk) |
 | github.com (from the claude.ai build sandbox, Nov 2026) | Blocked, so no EnergyPlus binary: BuildingSim has no EnergyPlus reference run |
 | ecobee Donate Your Data, UK Data Service (RHPP, Electrification of Heat), Pecan Street | Gated by application or registration: no real thermostat logs and no UK heat-pump trials yet |
-| NCAR GDEX (original CAMELS Daymet/Maurer/NLDAS forcing), Daymet API (ORNL) | Timed out from the claude.ai build sandbox on 13 and 18 Nov 2026, so every water model runs on ERA5-Land. Not yet tried from the repository's own machine |
+| KU Leuven Z24 Highway Bridge (`bwk.kuleuven.be/bwm/z24/registration`) | Gated by registration form; not bypassed. Listed in BridgeSense's `help_wanted` |
+| NCAR GDEX (original CAMELS Daymet/Maurer/NLDAS forcing), Daymet API (ORNL) | Timed out from the claude.ai build sandbox on 13 and 18 Nov 2026, so every water model runs on ERA5-Land. ORNL Daymet v4 answered 200 from the cloud devbox on 24 Nov 2026 |
 | wfas.net/nfmd (National Fuel Moisture Database) | 404 on 18 Nov 2026: NFMD moved into FEMS (fems.fs2c.usda.gov), and no documented public download was found. No real dead-fuel stick data, so FireSim's Nelson model is checked only against gridMET NFDRS |
 | raws.dri.edu; thredds.northwestknowledge.net:8080; Synoptic API | RAWS pages did not answer (WRCC's are interactive forms only); gridMET THREDDS timed out (HTTP files used instead); Synoptic needs a key. No hourly RAWS or fuel-stick records |
 | github.com/pyregence | 403 from the claude.ai build sandbox; pyretechnics was installed from PyPI instead for FireSim's cross-check |

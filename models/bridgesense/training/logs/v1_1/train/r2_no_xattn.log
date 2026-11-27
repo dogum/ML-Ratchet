@@ -1,0 +1,11 @@
+[r2_no_xattn] params=179,144 | train=['train2'] (12000) | val=sel2 | steps=4500 | seed=42
+  step  500/4500 ( 60.4s) | loss=0.4690 | sim=0.8457 (auc=0.9627, dk_mae=0.73%, cold_spec=0.814)
+  step 1000/4500 (122.6s) | loss=0.3736 | sim=0.8775 (auc=0.9716, dk_mae=0.67%, cold_spec=0.934)
+  step 1500/4500 (185.0s) | loss=0.2907 | sim=0.8776 (auc=0.9745, dk_mae=0.60%, cold_spec=0.864)
+  step 2000/4500 (247.8s) | loss=0.4672 | sim=0.8853 (auc=0.9773, dk_mae=0.62%, cold_spec=0.930)
+  step 2500/4500 (309.4s) | loss=0.2579 | sim=0.8918 (auc=0.9770, dk_mae=0.55%, cold_spec=0.902)
+  step 3000/4500 (370.9s) | loss=0.1694 | sim=0.8978 (auc=0.9797, dk_mae=0.52%, cold_spec=0.909)
+  step 3500/4500 (430.4s) | loss=0.1273 | sim=0.8927 (auc=0.9804, dk_mae=0.54%, cold_spec=0.887)
+  step 4000/4500 (496.0s) | loss=0.1791 | sim=0.8954 (auc=0.9800, dk_mae=0.52%, cold_spec=0.896)
+  step 4500/4500 (558.9s) | loss=0.1516 | sim=0.8980 (auc=0.9799, dk_mae=0.51%, cold_spec=0.902)
+[r2_no_xattn] DONE -> best sim=0.8980 saved to models/bridgesense/work/checkpoints/r2_no_xattn.pt

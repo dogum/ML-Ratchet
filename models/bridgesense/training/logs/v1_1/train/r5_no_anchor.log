@@ -1,0 +1,11 @@
+[r5_no_anchor] params=179,144 | train=['train3'] (12000) | val=sel3 | steps=4500 | seed=42
+  step  500/4500 (130.5s) | loss=1.1208 | sim=0.8341 (auc=0.9536, dk_mae=0.65%, cold_spec=0.886)
+  step 1000/4500 (248.7s) | loss=0.5905 | sim=0.8601 (auc=0.9567, dk_mae=0.61%, cold_spec=0.919)
+  step 1500/4500 (358.6s) | loss=0.4487 | sim=0.8626 (auc=0.9636, dk_mae=0.60%, cold_spec=0.907)
+  step 2000/4500 (461.3s) | loss=0.3577 | sim=0.8616 (auc=0.9633, dk_mae=0.57%, cold_spec=0.896)
+  step 2500/4500 (565.4s) | loss=0.2307 | sim=0.8625 (auc=0.9645, dk_mae=0.56%, cold_spec=0.854)
+  step 3000/4500 (663.8s) | loss=0.2243 | sim=0.8687 (auc=0.9625, dk_mae=0.55%, cold_spec=0.886)
+  step 3500/4500 (756.7s) | loss=0.1430 | sim=0.8707 (auc=0.9623, dk_mae=0.52%, cold_spec=0.874)
+  step 4000/4500 (850.4s) | loss=0.1560 | sim=0.8687 (auc=0.9617, dk_mae=0.53%, cold_spec=0.856)
+  step 4500/4500 (940.9s) | loss=0.0432 | sim=0.8702 (auc=0.9624, dk_mae=0.52%, cold_spec=0.864)
+[r5_no_anchor] DONE -> best sim=0.8707 saved to models/bridgesense/work/checkpoints/r5_no_anchor.pt

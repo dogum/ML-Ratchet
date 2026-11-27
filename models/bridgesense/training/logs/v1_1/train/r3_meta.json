@@ -1,0 +1,33 @@
+{
+  "name": "r3",
+  "params": 179144,
+  "config": {
+    "d_model": 64,
+    "n_heads": 4,
+    "d_ff": 128,
+    "n_t_layers": 2,
+    "n_m_layers": 2,
+    "dropout": 0.05,
+    "use_cross_attn": true,
+    "use_anchor": true
+  },
+  "seed": 42,
+  "train_banks": [
+    "train3"
+  ],
+  "val_bank": "sel3",
+  "best_val": {
+    "sim_score": 0.86305,
+    "auc": 0.95783,
+    "brier": 0.08428,
+    "dk_mae": 0.626,
+    "dk_anchor_mae": 2.9573,
+    "dk_skill": 0.78833,
+    "env_mae": 0.3831,
+    "env_skill": 0.74494,
+    "cold_spec": 0.93434,
+    "cov_dk_68": 0.699,
+    "cov_env_68": 0.741
+  },
+  "elapsed_s": 941.1
+}

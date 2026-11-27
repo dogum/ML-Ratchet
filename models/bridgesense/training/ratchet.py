@@ -1,0 +1,178 @@
+"""Run the BridgeSense ratchet ladder using mlratchet.Ratchet.
+
+Reads work/rungs_registry.json (ordered list of trained rungs with checkpoint name(s) and change notes),
+scores every rung on the latest frozen simulated validation set (replaying all prior decisions in order
+whenever the physics version changes) and on the frozen KW51 real Dev split, and writes
+models/bridgesense/ratchet.yaml and work/ratchet_log.json.
+
+Never touches Exam A, Exam B, or Exam C.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import yaml
+
+from mlratchet import Ratchet, gates
+from _paths import MODEL, SRC, work
+from score_cache import DEV_CODE, SIM_CODE, cached, fingerprint
+from dev_eval import eval_on_kw51_dev, load_kw51_dev_blocks, load_model_ckpt, score_ensemble_on_bank
+
+
+# v1.1 ladder (2026-11-27). Every trained run is a rung, seed replicates included. Each rung's checkpoint is
+# chosen on its own selection bank (sel1/sel2/sel3), never on the frozen set that judges it (val3).
+DEFAULT_REGISTRY = [
+    {"id": "r1", "ckpts": ["r1"], "change": "Textbook linear thermoelastic 2-D modal FEM + synthetic Gaussian OMA noise (physics p1, train1)"},
+    {"id": "r2", "ckpts": ["r2"], "change": "Add 1-D Fourier deck heat diffusion, asphalt/ballast freezing phase transition, axial bearing restraint, warm-to-cold extrapolation (physics p2, train2)"},
+    {"id": "r2_no_xattn", "ckpts": ["r2_no_xattn"], "change": "Architecture ablation on p2: remove baseline-to-query thermal cross-attention"},
+    {"id": "r3", "ckpts": ["r3"], "change": "Inject real healthy KW51 autumn OMA noise + correlated mode dropouts + dev-calibrated slow seasonal drift + mass-loaded retrofits (physics p3, train3)"},
+    {"id": "r4_mix", "ckpts": ["r4_mix"], "change": "Mixed bank (p2 + p3, 24k episodes) with linear-OLS physics anchor"},
+    {"id": "r5_no_anchor", "ckpts": ["r5_no_anchor"], "change": "Anchor ablation on p3: predict dK/K directly without the OLS output anchor"},
+    {"id": "r6_mix_no_anchor", "ckpts": ["r6_mix_no_anchor"], "change": "Mixed bank (p2 + p3, 24k episodes) without the OLS output anchor (seed 42)"},
+    {"id": "r6_s2", "ckpts": ["r6_s2"], "change": "Seed replicate of r6_mix_no_anchor (seed 2)"},
+    {"id": "r6_s3", "ckpts": ["r6_s3"], "change": "Seed replicate of r6_mix_no_anchor (seed 3)"},
+    {"id": "r7_ens3", "ckpts": ["r4_mix", "r6_s2", "r6_s3"], "change": "Ensemble of r4_mix (OLS-anchored) with the r6_s2 and r6_s3 seed replicates; each member keeps its own config"},
+]
+LADDER_NAME = "v1.1 — fixed thermal fit, mode eligibility, separate selection sets"
+
+
+def run_ratchet(frozen_set: str, release_id: str | None = None) -> dict:
+    reg_path = work("rungs_registry.json")
+    registry = json.load(open(reg_path)) if os.path.exists(reg_path) else DEFAULT_REGISTRY
+    dev_blocks = load_kw51_dev_blocks()
+
+    # Guard: no checkpoint may have been selected on the frozen set that judges it
+    import torch
+    for entry in registry:
+        for ck in entry["ckpts"]:
+            sel = torch.load(work("checkpoints", f"{ck}.pt"), map_location="cpu", weights_only=False)["val_bank"]
+            if sel == frozen_set:
+                raise SystemExit(f"{ck} was selected on {sel}, the judging set; use a separate selection bank")
+            entry.setdefault("selected_on", {})[ck] = sel
+
+    # Cache scores per (rung_id, frozen_set) and per rung_id on KW51 dev. An entry is reused only if its
+    # content fingerprint (registry entry + checkpoint bytes + bank/dev data + scoring code) still matches.
+    cache_path = work("ratchet_scores_cache.json")
+    cache = json.load(open(cache_path)) if os.path.exists(cache_path) else {"sim": {}, "dev": {}}
+    sim_code = [os.path.join(SRC, f) for f in SIM_CODE]
+    dev_code = [os.path.join(SRC, f) for f in DEV_CODE]
+    dev_data = [os.path.join(MODEL, "splits.json"), work("raw", "kw51", "trackedmodes.mat")]
+    bank_path = work("banks", f"{frozen_set}.npz")
+
+    for entry in registry:
+        rid = entry["id"]
+        ckpts = entry["ckpts"]
+        ck_paths = [work("checkpoints", f"{c}.pt") for c in ckpts]
+        sim_key = f"{rid}@{frozen_set}"
+        sim_fp = fingerprint(entry, ck_paths, sim_code, [bank_path])
+        s, fresh = cached(cache["sim"], sim_key, sim_fp,
+                          lambda: score_ensemble_on_bank(load_model_ckpt(ckpts), frozen_set))
+        print(f"  {'scored' if fresh else 'cached'} {rid} on {frozen_set}: sim={s['sim_score']:.4f} "
+              f"(auc={s['auc']:.4f}, dk_mae={s['dk_mae']:.2f}%, cold_spec={s['cold_spec']:.3f})", flush=True)
+        dev_fp = fingerprint(entry, ck_paths, dev_code, dev_data)
+        d, fresh = cached(cache["dev"], rid, dev_fp,
+                          lambda: {k: v for k, v in eval_on_kw51_dev(ckpts, dev_blocks).items() if k != "rows"})
+        print(f"  {'scored' if fresh else 'cached'} {rid} on KW51 dev: auc={d['dev_auc']:.4f}, brier={d['dev_brier']:.4f}, "
+              f"healthy_dk_mae={d['dev_healthy_dk_mae']:.2f}%, freeze_P={d['dev_freeze_p_mean']:.3f}", flush=True)
+        entry["fingerprints"] = {"sim": sim_fp, "dev": dev_fp}
+
+    with open(cache_path, "w", encoding="utf-8") as f:
+        json.dump(cache, f, indent=2)
+
+    def _bridge_dev_gate(cand, inc):
+        reasons = []
+        ok = True
+        if cand["dev_auc"] < inc["dev_auc"] - 0.02:
+            ok = False
+            reasons.append(f"dev_auc {cand['dev_auc']:.3f} vs {inc['dev_auc']:.3f}")
+        brier_lim = max(inc["dev_brier"] * 1.15, inc["dev_brier"] + 0.015)
+        if cand["dev_brier"] > brier_lim:
+            ok = False
+            reasons.append(f"dev_brier {cand['dev_brier']:.4f} > {brier_lim:.4f}")
+        dk_lim = max(inc["dev_dk_mae"] * 1.15, inc["dev_dk_mae"] + 0.05)
+        if cand["dev_dk_mae"] > dk_lim:
+            ok = False
+            reasons.append(f"dev_dk_mae {cand['dev_dk_mae']:.3f}% > {dk_lim:.3f}%")
+        return ok, ("dev gate passed" if ok else "dev gate: " + "; ".join(reasons))
+
+    rat = Ratchet(
+        model="bridgesense",
+        name=LADDER_NAME,
+        margin=0.01,
+        dev_gate=_bridge_dev_gate,
+        higher_is_better=True,
+        objective=(
+            "Composite skill in [0, 1] on frozen simulated bridge episodes: "
+            "0.35*AUC + 0.35*dK_skill + 0.15*env_skill + 0.15*cold_extrap_specificity"
+        ),
+        rule=(
+            "Keep if frozen-set composite skill beats the incumbent by more than +0.01 AND on KW51 dev "
+            "(10 blocks, seed 20261124) AUC drops <= 0.02, Brier rises <= max(15%, +0.015), and 10-block "
+            "dK/K MAE rises <= max(15%, +0.05 pp)."
+        ),
+        frozen_set=frozen_set,
+    )
+
+    for entry in registry:
+        rid = entry["id"]
+        sim_m = cache["sim"][f"{rid}@{frozen_set}"]
+        dev_m = cache["dev"][rid]
+        rat.judge(
+            rid,
+            entry["change"],
+            sim=sim_m["sim_score"],
+            dev={
+                "dev_auc": dev_m["dev_auc"],
+                "dev_brier": dev_m["dev_brier"],
+                "dev_dk_mae": dev_m["dev_dk_mae"],
+            },
+            metrics=[
+                round(sim_m["auc"], 3),
+                round(sim_m["dk_mae"], 2),
+                round(sim_m["cold_spec"], 3),
+                round(dev_m["dev_auc"], 3),
+                round(dev_m["dev_brier"], 4),
+                round(dev_m["dev_dk_mae"], 3),
+            ],
+        )
+
+    if release_id is not None:
+        rat.release(release_id)
+    elif rat.incumbent is not None:
+        rat.release(rat.incumbent.id)
+
+    lad = rat.to_dict()
+    lad["dev_gate"] = "KW51 dev AUC drops <= 0.02; Brier rises <= max(15%, +0.015); 10-block dK/K MAE rises <= max(15%, +0.05 pp)"
+    lad["frozen_sets"] = sorted({k.split("@")[1] for k in cache["sim"]})
+    lad["columns_source"] = f"Frozen set ({frozen_set}) and KW51 dev (10 blocks); real exams never used to choose"
+    lad["columns"] = ["Sim AUC", "Sim dK MAE (%)", "Sim cold spec", "Dev AUC", "Dev Brier", "Dev dK MAE (%)"]
+
+    # Keep earlier ladders (v1.0 is history); replace only this ladder
+    yaml_path = os.path.join(MODEL, "ratchet.yaml")
+    old = yaml.safe_load(open(yaml_path, encoding="utf-8")) if os.path.exists(yaml_path) else {}
+    keep = [x for x in (old or {}).get("ladders", []) if x.get("name") != LADDER_NAME]
+    doc = {"model": "bridgesense", "ladders": keep + [lad]}
+    with open(yaml_path, "w", encoding="utf-8", newline="\n") as f:
+        yaml.safe_dump(doc, f, sort_keys=False, allow_unicode=True)
+
+    log_path = work("ratchet_log.json")
+    with open(log_path, "w", encoding="utf-8") as f:
+        json.dump({"ladder": lad, "registry": registry, "cache": cache}, f, indent=2)
+
+    print(f"\n=== RATCHET LADDER (scored on {frozen_set}) ===")
+    for r in rat.rungs:
+        print(f"  {r.id:12s} | sim={r.sim:.4f} | {r.decision:8s} | {r.why}")
+    return doc
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--val", default="val3")
+    ap.add_argument("--release", default=None)
+    args = ap.parse_args()
+    run_ratchet(args.val, release_id=args.release)
+
+
+if __name__ == "__main__":
+    main()

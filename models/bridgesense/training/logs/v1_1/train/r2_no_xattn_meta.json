@@ -1,0 +1,33 @@
+{
+  "name": "r2_no_xattn",
+  "params": 179144,
+  "config": {
+    "d_model": 64,
+    "n_heads": 4,
+    "d_ff": 128,
+    "n_t_layers": 2,
+    "n_m_layers": 2,
+    "dropout": 0.05,
+    "use_cross_attn": false,
+    "use_anchor": true
+  },
+  "seed": 42,
+  "train_banks": [
+    "train2"
+  ],
+  "val_bank": "sel2",
+  "best_val": {
+    "sim_score": 0.89803,
+    "auc": 0.97994,
+    "brier": 0.05773,
+    "dk_mae": 0.5142,
+    "dk_anchor_mae": 3.3066,
+    "dk_skill": 0.8445,
+    "env_mae": 0.2922,
+    "env_skill": 0.82731,
+    "cold_spec": 0.90249,
+    "cov_dk_68": 0.678,
+    "cov_env_68": 0.656
+  },
+  "elapsed_s": 558.9
+}

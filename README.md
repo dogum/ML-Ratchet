@@ -56,13 +56,14 @@ The losses are published too.
 | [**TsunamiNet**](models/tsunaminet/) | How big is the tsunami coming, from the first DART readings? | 28 real DART-recorded Pacific tsunamis, 119 held-out DART forecasts | 3 wins · 2 losses |
 | [**LawFinder**](models/lawfinder/) | One-line laws extracted from the simulators, graded on real exams | Five platforms' real exams, six laws | 2 wins · 10 losses |
 | [**AirfoilNet**](models/airfoilnet/) | What polar will this airfoil have, and where does it stall? | 75 airfoils, 34 families, UIUC tunnel | 3 wins · 6 losses |
+| [**BridgeSense**](models/bridgesense/) | Stiffness change or just winter weather, from a bridge's tracked frequencies? | 3 full-scale bridges: KW51 (49 wk), Concrete Box-Girder (0-shot), HBTA damage (0-shot) | 3 wins · 6 losses · 1 tie |
 <!-- collection:end -->
 
 Every model also runs **live in your browser** on the website — the real network, ported to TypeScript and checked
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
 <!-- totals:start (generated) -->
-**0** real labelled examples were used for training. **618** rung decisions are logged, **360** of them rejections.
+**0** real labelled examples were used for training. **636** rung decisions are logged, **371** of them rejections.
 <!-- totals:end -->
 
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself. The three
