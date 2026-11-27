@@ -178,3 +178,7 @@ Rebuilt in `work/data/` (git-ignored) for the next pass: `events.json`, `station
 was never fetched by any script; `catalog.py prior` now fetches it (USGS M5.4+, 1990–2011, 14,516 events; the original
 magnitude cut was not recorded). Needed before the next QuakeNet rung: a decision on a frozen dev list (for example
 40 events drawn by a fixed seed from 2012–2025 events not in the lab's exam list, written to a committed file).
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). The reader warns when the window around the pick is incomplete (a short trace read Mw 5.68 for 7.54) and refuses NaN inside the window.

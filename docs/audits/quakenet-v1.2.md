@@ -20,3 +20,11 @@ export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
 python3 -B docs/audits/reviews/reviewer-a/quakenet_v1_probe.py
 python3 -B docs/audits/reviews/reviewer-b/quakenet_v1_closing_probe.py
 ```
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Short trace zero-padded silently (IU.POHA 7.54 → 5.68) | Yes | **Warned**: `pipeline.read` warns when the 60 s before or 2,400 s after the pick are incomplete. Not refused, so callers can still read partial records knowingly. | Demo does not warn (complete examples); golden unchanged. |
+| One NaN at the pick makes every output nonfinite | Yes | **Fixed**: `ValueError` on NaN or inf inside the window. The exam builder already drops nonfinite records. | — |
+| Quiet windows read Mw 5.4–5.7 | Not a defect of an estimator | Documented: QuakeNet estimates a supplied event; it is not a detector. | Card limits. |

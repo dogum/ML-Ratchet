@@ -26,4 +26,13 @@ def normalize(W):
     sc = float(max(W.std(1).max(), 1e-12)); return (W / sc).astype(np.float32), np.log10(sc)
 
 def read(X, guess):
-    p, peak = pick(X[0], guess); W, ls = normalize(window(X, p)); return W, ls, p, peak
+    p, peak = pick(X[0], guess)
+    # Guards (audit, 25 Nov 2026): the window was zero-padded silently, so a trace ending 60 s after the guess read Mw 5.68
+    # for a 7.54 event; one NaN at the pick made every output nonfinite.
+    if p - PRE < 0 or p + POST > X.shape[1]:
+        import warnings
+        warnings.warn(f'QuakeNet: the trace covers {min(X.shape[1] - p, POST)} of the {POST} s after the pick (and '
+                      f'{min(p, PRE)} of {PRE} s before); the missing part is read as zeros, which lowers Mw', stacklevel=3)
+    if not np.isfinite(X[:, max(p - PRE, 0):p + POST]).all():
+        raise ValueError('NaN or inf inside the window; fill or cut the gap first')
+    W, ls = normalize(window(X, p)); return W, ls, p, peak

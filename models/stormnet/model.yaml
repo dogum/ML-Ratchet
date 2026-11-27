@@ -303,6 +303,7 @@ limits:
 - The two-state fit reaches the lower pressure-coefficient bound. Simulated dev minima are typically 8–14 nT deeper
   than their real twins. Re-running the physics with the actual next three hours of wind barely helps (dev 4.36
   → 4.21 nT), so the remaining error is the physics and the index's hourly noise, not the unknown wind.
+- "Freshness (audit, 25 Nov 2026): a one-hour-stale Dst raised gallery MAE from 8.97 to 11.21 nT (extremes 39.12 to 46.85 nT). The calibration file's bin labels now match the code: Dst < -50, -50 to < -30, >= -30 nT."
 next:
 - 'Teach the simulator something the anchor lacks, so the network has real structure to learn: a substorm or By-dependent
   injection term, or a ring-current asymmetry term fitted on SYM-H, each shown failing on dev first.'

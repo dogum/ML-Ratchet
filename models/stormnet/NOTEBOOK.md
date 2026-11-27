@@ -126,3 +126,7 @@ The instrument and lab now replay six whole storms chosen by rule (`training/sto
 only): the deepest storm of 2022, 2023, 2024 and 2025, the deepest primary-exam storm (Aug 2018) and one quiet block
 drawn with the example seed. The browser reruns every hourly forecast with all three physics competitors and the
 anchor's fast and slow reservoirs; 120 Python reference cases, including what-if winds, match to 4.5e-15.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). The calibration file's bin labels now match the code (< -50, -50 to < -30, >= -30 nT). The stale-Dst sensitivity is stated in the card.

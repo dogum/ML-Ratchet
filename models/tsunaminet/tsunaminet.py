@@ -7,7 +7,7 @@ and the posterior is pushed through linear shallow-water Green's functions to fo
     gf  = GreensFunctions()                  # compact 8' Green's-function bank shipped with the release
     ev  = gf.event(lon, lat, records)        # records: {site: (eta_m[1441], mask[1441])} minute series from origin
     post = net.posterior(ev)                 # dict with samples, medians, 68%/90% ranges (dev-widened)
-    fc  = gf.forecast(ev, post, site, eta, mask)   # amplitude forecast at a held-out DART
+    fc  = gf.forecast(ev, post, site, a, b, mask)  # max |eta| at a held-out DART in minutes [a, b] after origin
 """
 import os, json, numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -82,6 +82,10 @@ class TsunamiNet:
         return z * self.sd + self.mu
 
     def posterior(self, ev, n=2000, seed=0):
+        if not np.asarray(ev['M'], bool).any():
+            # No usable buoy: the max-pool sentinel (-1e4) reached the context network (audit: Mw -2053). All 28 exam
+            # events had at least one.
+            raise ValueError('no usable DART record in the input window; TsunamiNet needs at least one')
         P = self.sample(ev['X'], ev['S'], ev['M'], n, seed)
         med = np.median(P, 0); wf = self.cal.get('widen', {'0': 1.0, '1': 1.0})
         def rng(k, q):
@@ -102,7 +106,14 @@ def mw_to_m0(mw): return 10 ** (1.5 * mw + 9.1)
 class GreensFunctions:
     """Compact 8' linear shallow-water Green's functions (mm of sea level per m of slip on each SIFT unit source),
     int8-quantised windows [arrival-60, arrival+300] min per (DART site, unit source), plus the unit-source table."""
-    def __init__(self, path=os.path.join(HERE, 'gf_compact.npz')):
+    def __init__(self, path=os.path.join(HERE, 'gf_compact.npz'), cal=None):
+        # cal: the dev calibration (amplitude gain, delay, widening). By default it is read from the released weights
+        # next to this file, so GreensFunctions() alone forecasts as the demo and the card do. Until 27 Nov 2026 it
+        # defaulted to none (British Columbia's first target: 1.12 cm instead of the calibrated 1.76 cm; audit).
+        if cal is None:
+            wp = os.path.join(HERE, 'tsunaminet_weights.npz')
+            cal = json.loads(str(np.load(wp, allow_pickle=False)['meta'])).get('calibration', {}) if os.path.exists(wp) else {}
+        self.cal = cal
         z = np.load(path, allow_pickle=False)
         self.sites = [str(s) for s in z['sites']]; self.site_ll = z['site_ll']; self.sidx = {s: i for i, s in enumerate(self.sites)}
         self.q = z['q']; self.scale = z['scale']; self.arr = z['arr']; self.W0 = int(z['w0'])

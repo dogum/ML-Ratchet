@@ -25,3 +25,9 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_dc30c02_pr
 ```
 
 The second-pass probe uses NumPy, SciPy, and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_dc30c02_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Catalogue arrivals locate the exam events without waveforms | Yes (exam contract) | **Documented, queued.** No code change: the network does read waveforms (zero or noise waveforms move epicentres 519–16,307 km), but the location accuracy the exam reports rests on catalogue-assisted pick windows. The card now says so; an exam with independently picked arrivals is queued. | Card limits and next. |
