@@ -1,8 +1,8 @@
 id: demandcast
 name: DemandCast
-version: "1.1"
+version: "1.2"
 status: released
-released: 2026-11-15
+released: 2026-11-27
 order: 16
 domain: Power grids
 platform: grid
@@ -16,17 +16,16 @@ summary: >-
   balancing authorities (ERCOT, CAISO, PJM, MISO, SPP, ISO-NE, NYISO, BPA), each with a 95% band. The forecast is
   issued at 10:00 local standard time the day before, like a grid operator's own. Three small networks correct a
   building-stock heat-transfer model of demand and wind- and solar-farm physics on the real fleets, reading the last
-  week of metered output against the physics. They learned only from 182,500 simulated region-days. On 2023-2025 with
-  the weather that actually happened (an upper bound) demand is 2.38% off against 3.41% for the grids' own forecasts;
-  with real archived forecast weather (2024, as released) it is 2.92% against 3.20% and wins in 4 of 8 grids; a second
-  look over 2024-2025 gives 3.05% against 3.59%, but 2.92% against 2.70% without CAISO and SPP, whose published
-  forecasts are flawed. v1.1 (15 Nov 2026) reads the solar reporting offset from the week before issue, because
-  EIA-930's solar timestamps move between years: solar is now 16.1% off against 19.1% for persistence (v1.0: 29.9%).
-
+  week of metered output against the physics. They learned only from 180,000 simulated region-days. v1.2 (27 Nov 2026)
+  repairs inputs the simulator never varied (twilight solar, missing demand hours, 2 h solar offsets): solar is now
+  10.6% off against 19.1% for persistence (v1.1: 16.1%), but demand got worse. On 2023-2025 with the weather that
+  actually happened (an upper bound) demand is 2.49% off against 3.41% for the grids' own forecasts (v1.1 2.38%); with
+  real archived forecast weather 2024-2025 it is 3.14% against 3.59%, but 2.98% against 2.70% without CAISO and SPP,
+  whose published forecasts are flawed.
 reads: "Weather for the target day and the past week (population-weighted temperature, humidity, irradiance; hub-height wind, temperature, pressure and humidity at the wind points; irradiance at the solar points), the calendar (DST-aware hour, weekday / Saturday / Sunday-holiday), the grid's dev-fitted building-stock parameters and real EIA-860 wind and solar fleet, and the last 168 h of metered EIA-930 demand, wind and solar before issue"
 returns:
-  - Hourly demand (MW) for the 24 hours of the next day, with a log-scale sigma (widened × 1.14 on dev) and a 95% band
-  - Hourly wind and solar output as a capacity factor of the fleet online at issue (MW = CF × fleet MW), with sigma (wind × 1.00, solar × 1.37 on dev) and a 95% band; solar is 0 at night and is moved onto the reported clock (the reporting offset read at issue)
+  - Hourly demand (MW) for the 24 hours of the next day, with a log-scale sigma (widened × 1.34 on dev) and a 95% band
+  - Hourly wind and solar output as a capacity factor of the fleet online at issue (MW = CF × fleet MW), with sigma (wind × 1.00, solar × 1.12 on dev) and a 95% band; solar is 0 at night and is moved onto the reported clock (the reporting offset, -2 to +2 h, read at issue)
 
 physics:
   summary: >-
@@ -43,6 +42,7 @@ physics:
     - "Wind truth: reanalysis × exp(point bias + correlated AR(1) error); solar: a cloud error; random losses, specific-power and hub shifts, reporting scale and curtailment; the real fleet at a 2018-2022 date with random per-group scaling"
     - "Half of the samples carry synthetic day-ahead forecast-weather errors (the forecast-weather flag input)"
     - "Simulator v4 (15 Nov 2026, frozen set val_v4 only): the simulated solar is reported 1 h early, on time or 1 h late (15 / 70 / 15 %), constant over a region-year; in the non-exam years 2018-2022, 9 of 35 EIA-930 solar BA-years are 1 h off"
+    - "Simulator v5 (27 Nov 2026, the v1.2 training banks train_v5a-c and frozen set val_v5): v4 with -2 to +2 h solar offsets (3 / 12 / 70 / 12 / 3 %), output at the dark edge hours next to daylight in 30% of region-years (2-15% of the neighbouring hour), and a 1-48 h gap in the 168 h demand history of 8% of samples"
   checks:
     - "Envelope RC lag vs an ODE solver 3.2e-7 K; step response vs closed form 3.6e-15 K (training/checks/physics.json)"
     - "Stock-averaged thermostat hinge vs a 1e6-draw Monte Carlo 0.0035 K; degree-day limit exact (1,080,000 vs 1,080,000 MWh)"
@@ -50,7 +50,7 @@ physics:
     - "Tabulated wind farm curve vs GridSim's farm_curve: mean 0.0005 CF (max 0.038 away from the 25 m/s cut-out); GridSim wind and solar vs ERCOT EIA-930 (phase 1): hourly r 0.90 and 0.97-0.98"
     - "Dev calibration (2019, 2021): building model fitted per grid, in-sample 2.2-3.5% MAPE; twin test re-simulated each grid's dev year with the full simulator (training/checks/twin_r8_wide.json)"
 noise: "Real residuals of building-model fits to each grid's demand in the training-input years 2018, 2020 and 2022 (whole days, local-hour aligned); wind and solar weather-error widths sized to the dev-year physics mismatch"
-network: "Three MLPs (two hidden layers of 512, SiLU), inputs standardised: demand 329 inputs / 456k parameters, wind 164 / 372k, solar 156 / 368k; Gaussian negative log-likelihood, AdamW, one-cycle LR, 40 epochs; numpy equals torch to 3e-7. v1.1 adds no learned parameters: before the solar network, a two-term least-squares fit of the 168 h reported-minus-physics error on the physics diurnal profile and its slope reads the reporting offset (-1, 0 or +1 h, counted from each grid's dev-year value); the history is put back on the physics clock and the forecast is moved by the offset"
+network: "Three MLPs (two hidden layers of 512, SiLU), inputs standardised: demand 329 inputs / 456k parameters, wind 164 / 372k, solar 156 / 368k; Gaussian negative log-likelihood, AdamW, one-cycle LR, 40 epochs; numpy equals torch to 3e-7. v1.1 adds no learned parameters: before the solar network, a two-term least-squares fit of the 168 h reported-minus-physics error on the physics diurnal profile and its slope reads the reporting offset (-1, 0 or +1 h, counted from each grid's dev-year value); the history is put back on the physics clock and the forecast is moved by the offset. v1.2 (rung r10, 27 Nov 2026): the same three architectures retrained on 180,000 region-days of simulator v5 (base features, 40 epochs); offsets read up to ±2 h; the reported solar of the last 24 h is set to 0 at hours the physics calls dark before the network reads it; count-like inputs (flags, missing-hour fractions) have a standardisation floor of 0.05; standardised inputs are clipped at |z| 8"
 
 approach:
   real_backdrop: "Real 2018, 2020 and 2022 weather of the 8 grids (perturbed) and their real EIA-860 wind and solar fleets; demand noise is real residuals of building-model fits in those years"
@@ -86,7 +86,7 @@ data:
 
 split:
   dev: "2019 and 2021 for all 8 grids (GridData's frozen split, content sha256 895b4e9a…, seed 20261113): building and wind/solar calibration, sigma widening, and the rung gate (30 seeded days per grid). Each dev year is described by the other dev year's fit. Training-input years 2018, 2020 and 2022 give only weather and residual noise."
-  exam: "Every day of 2023-2025 for the 8 grids: 209,340 demand hours with actual weather; 66,079 hours of 2024 with Open-Meteo forecast weather. Run once on the final model, never used for choosing. Second look with forecast weather, 2024-2025 (135,700 hours), run once on 14 Nov 2026 from the shipped weights; it chose nothing."
+  exam: "Every day of 2023-2025 for the 8 grids: 209,340 demand hours with actual weather; 66,079 hours of 2024 with Open-Meteo forecast weather. Run once on the final model, never used for choosing. Second look with forecast weather, 2024-2025 (135,700 hours), run once on 14 Nov 2026 from the shipped weights; it chose nothing. Run once per version (v1.0 14 Nov, v1.1 15 Nov, v1.2 27 Nov 2026, each after its release choice was committed); the 27 Nov 2026 re-score of v1.1 with z_clip=8 (v1.1.1) was a dated supplement that changed no weights."
 
 exam:
   short: "2023-25, 8 US grids, 209,340 demand hours"
@@ -94,19 +94,17 @@ exam:
     Every day of 2023-2025, forecast at 10:00 local standard time the day before for the 24 hours of the next day.
     Demand error is the mean absolute percentage error over hours where every method has a value; wind and solar
     error is total absolute error over total output. The headline uses the weather that actually happened, an upper
-    bound: the grids' own forecasts had to use forecast weather. A second run uses real archived day-ahead forecasts,
-    reachable only for 2024 before the archive's rate limit. Raw results: training/exam_r8_wide.json. Re-scored in the
-    repository from the shipped weights (training/rescore_release.py): every actual-weather number reproduced; with the
-    archive fetched in full (14 Nov 2026), every forecast-weather number of the released 2024 row reproduced too
-    (training/rescore_forecast.py release2024, 338 numbers). A second look with forecast weather over 2024-2025 was then
-    run once (rescore_forecast.py full) and is reported next to the released row; 2023 cannot be graded this way because
-    the archive holds no humidity or radiation forecasts before 2024. v1.1 (15 Nov 2026) changes only solar; its exam
-    was run once after the release choice was committed (training/rescore_v11.py, actual weather and the 2024-2025
-    forecast-weather look), with v1.0 re-scored on the same rows: every demand and wind number is unchanged.
+    bound: the grids' own forecasts had to use forecast weather. A second run uses real archived day-ahead forecasts:
+    2024 as first released, and a second look over 2024-2025; 2023 cannot be graded this way because the archive holds
+    no humidity or radiation forecasts before 2024. The rows are v1.2's (27 Nov 2026, the audit repair rung r10), run
+    once after the ratchet promoted it and its weights were committed (training/repair.py exam; training/exam_v1_2.json
+    holds v1.1, v1.1.1 and v1.2 side by side). Each note keeps v1.1 (the r8 network; its demand and wind are v1.0's
+    first exam, training/exam_r8_wide.json; solar from 15 Nov 2026) and v1.1.1 (the same network with inputs clipped at
+    |z| 8, a dated supplementary re-score of 27 Nov 2026, training/rescore_zclip.py).
   results:
     - metric: "Demand, 8 grids pooled, actual weather (209,340 h)"
       better: lower
-      model: 2.38
+      model: 2.49
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 3.41 }
@@ -114,10 +112,10 @@ exam:
         - { name: "Persistence (same hour yesterday)", kind: dumb, value: 4.90 }
         - { name: "Same hour last week", kind: dumb, value: 7.95 }
       verdict: win
-      note: "Upper bound: actual weather. Bias 0.0%. Beats the grid's own forecast in 6 of 8 grids."
+      note: "Upper bound: actual weather. Bias +0.1%. Beats the grid's own forecast in 5 of 8 grids (ERCOT is now a narrow loss, 2.41 vs 2.40). v1.1: 2.38% (6 of 8); v1.1.1: 2.32% (6 of 8). v1.2 is worse on demand than v1.1.1 in every grid."
     - metric: "Demand, 8 grids pooled, real forecast weather (2024, 66,079 h)"
       better: lower
-      model: 2.92
+      model: 3.00
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 3.20 }
@@ -125,16 +123,16 @@ exam:
         - { name: "Persistence (same hour yesterday)", kind: dumb, value: 4.79 }
         - { name: "Same hour last week", kind: dumb, value: 8.12 }
       verdict: win
-      note: "Open-Meteo previous-runs day-1 forecasts at the top population points. Same days with actual weather: 2.44%. The pooled win rests on CAISO, whose published forecast is misaligned by 1 h (3.73 vs 7.00)."
+      note: "Open-Meteo previous-runs day-1 forecasts at the top population points (the release's 2024 cache). Same days with actual weather: 2.50%. The pooled win rests on CAISO, whose published forecast is misaligned by 1 h (3.75 vs 7.00). v1.1: 2.92%; v1.1.1: 2.83%."
     - metric: "Grids where demand beats the grid's own forecast, real forecast weather (2024)"
       better: higher
       model: "4 of 8"
       baselines: []
       verdict: mixed
-      note: "Wins CAISO 3.73 vs 7.00, PJM 2.84 vs 3.57, MISO 2.15 vs 2.80, NYISO 2.57 vs 3.28. Loses ERCOT 2.98 vs 2.05, SPP 2.74 vs 2.22, ISO-NE 3.93 vs 2.79, BPA 2.44 vs 1.92."
-    - metric: "Demand, 8 grids pooled, real forecast weather, 2024-2025 (second look, run once on 14 Nov 2026; 135,700 h)"
+      note: "Wins CAISO 3.75 vs 7.00, PJM 2.46 vs 3.57, MISO 2.10 vs 2.80, NYISO 2.76 vs 3.28. Loses ERCOT 3.38 vs 2.05, SPP 3.02 vs 2.22, ISO-NE 4.01 vs 2.79, BPA 2.50 vs 1.92. v1.1 and v1.1.1: the same 4 of 8."
+    - metric: "Demand, 8 grids pooled, real forecast weather, 2024-2025 (second look; 135,700 h)"
       better: lower
-      model: 3.05
+      model: 3.14
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 3.59 }
@@ -142,55 +140,55 @@ exam:
         - { name: "Persistence (same hour yesterday)", kind: dumb, value: 4.91 }
         - { name: "Same hour last week", kind: dumb, value: 8.16 }
       verdict: win
-      note: "Open-Meteo previous-runs day-1 forecasts at the shipped fetch list's points (top 4 population, 3 wind, 3 solar per grid; the released 2024 row used up to 8 population points). 2024 2.97% vs 3.20%, 2025 3.13% vs 3.97%. Same days with actual weather: 2.48%. Bands 71 / 93%. The pooled win rests on CAISO (misaligned by 1 h) and SPP (6.5% high in 2025): without them see the next row."
+      note: "Open-Meteo previous-runs day-1 forecasts at the shipped fetch list's points (top 4 population, 3 wind, 3 solar per grid). 2024 3.04% vs 3.20%, 2025 3.24% vs 3.97%. Same days with actual weather: 2.58%. Bands 70 / 92%. The pooled win rests on CAISO (misaligned by 1 h) and SPP (6.5% high in 2025): without them see the next row. v1.1: 3.05% (run once 14 Nov 2026); v1.1.1: 2.96%."
     - metric: "Demand, 6 grids pooled without CAISO and SPP, real forecast weather, 2024-2025 (second look; 101,874 h)"
       better: lower
-      model: 2.92
+      model: 2.98
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 2.70 }
       verdict: loss
-      note: "The grids whose published forecasts have no known defect: their own forecasts beat DemandCast with forecast weather."
+      note: "The grids whose published forecasts have no known defect: their own forecasts beat DemandCast with forecast weather. v1.1: 2.92%; v1.1.1: 2.84%."
     - metric: "Grids where demand beats the grid's own forecast, real forecast weather, 2024-2025 (second look)"
       better: higher
       model: "5 of 8"
       baselines: []
       verdict: mixed
-      note: "Wins CAISO 3.92 vs 7.58, PJM 2.71 vs 3.50, MISO 2.15 vs 2.58, SPP 2.96 vs 5.01, NYISO 2.84 vs 3.24. Loses ERCOT 3.33 vs 2.26, ISO-NE 4.18 vs 2.65, BPA 2.33 vs 1.96."
+      note: "Wins CAISO 4.01 vs 7.58, PJM 2.50 vs 3.50, MISO 2.11 vs 2.58, SPP 3.22 vs 5.01, NYISO 3.02 vs 3.24 (2025 alone 3.26 vs 3.21). Loses ERCOT 3.56 vs 2.26, ISO-NE 4.26 vs 2.65, BPA 2.43 vs 1.96. v1.1 and v1.1.1: the same 5 of 8."
     - metric: "Wind, 8 grids pooled, real forecast weather, 2024-2025 (second look; 131,024 h)"
       better: lower
-      model: 26.7
+      model: 26.9
       unit: "%"
       baselines:
         - { name: "Physics alone (real fleet, dev scale)", kind: classical, value: 39.0 }
         - { name: "Persistence (same hour yesterday)", kind: dumb, value: 42.9 }
         - { name: "Dev-year CF climatology × fleet", kind: dumb, value: 40.6 }
       verdict: win
-      note: "Same days with actual weather: 19.2%. Bands 65 / 91%. BPA 61.1%, ISO-NE 38.6%, CAISO 37.2%; ERCOT 26.0%, MISO 23.5%, SPP 23.5%."
+      note: "Same days with actual weather: 19.3%. Bands 65 / 91%. BPA 61.8%, ISO-NE 38.6%, CAISO 36.9%; ERCOT 26.3%, MISO 23.7%, SPP 23.6%. v1.1: 26.7%; v1.1.1: 26.7%."
     - metric: "Solar, 7 grids pooled, real forecast weather, 2024-2025 (second look; 119,348 h)"
       better: lower
-      model: 18.2
+      model: 12.0
       unit: "%"
       baselines:
         - { name: "Physics alone (real fleet, dev scale)", kind: classical, value: 39.2 }
         - { name: "Persistence (same hour yesterday)", kind: dumb, value: 18.9 }
         - { name: "Dev-year CF climatology × fleet", kind: dumb, value: 41.1 }
       verdict: win
-      note: "v1.1 (reporting offset read at issue), run once on 15 Nov 2026. v1.0: 34.7%, a loss (CAISO 72.2%, PJM 36.1%). v1.1: CAISO 28.3% (persistence 10.5%), PJM 15.1% (27.4%), BPA 51.9%, SPP 44.4%; ERCOT 11.6%, MISO 13.4%. Same days with actual weather: 16.2%. Bands 72 / 89% (v1.0 69 / 87%). A narrow win: 0.7 points."
+      note: "CAISO 12.1% (persistence 10.5%), PJM 11.5% (27.4%), BPA 21.7% (29.2%), SPP 28.1% (28.6%); ERCOT 11.7%, MISO 10.8%, ISO-NE 18.5%. Same days with actual weather: 10.5%. Bands 74 / 92%. v1.1: 18.2% (CAISO 28.3%, BPA 51.9%, SPP 44.4%), a 0.7-point win; v1.1.1: 18.1%; v1.0: 34.7%."
     - metric: "Demand ERCOT, actual weather"
       better: lower
-      model: 2.25
+      model: 2.41
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 2.40 }
         - { name: "Physics alone", kind: classical, value: 6.04 }
         - { name: "Persistence", kind: dumb, value: 4.56 }
         - { name: "Same hour last week", kind: dumb, value: 8.36 }
-      verdict: win
-      note: "Upper bound. By year 2.14 / 2.14 / 2.47 (grid 2.60 / 2.16 / 2.46). With forecast weather (2024): 2.98 vs 2.05, a loss. Bands 68 / 92%."
+      verdict: loss
+      note: "Upper bound. By year 2.32 / 2.41 / 2.50 (grid 2.60 / 2.16 / 2.46). With forecast weather (2024): 3.38 vs 2.05. Bands 69 / 93%. v1.1: 2.25 (a win); v1.1.1: 2.17."
     - metric: "Demand CAISO, actual weather"
       better: lower
-      model: 3.37
+      model: 3.44
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 6.86 }
@@ -198,10 +196,10 @@ exam:
         - { name: "Persistence", kind: dumb, value: 4.90 }
         - { name: "Same hour last week", kind: dumb, value: 6.46 }
       verdict: win
-      note: "Upper bound. CAISO's published forecast is misaligned by 1 h in EIA-930, which flatters DemandCast. Bands too narrow: 46 / 74%."
+      note: "Upper bound. CAISO's published forecast is misaligned by 1 h in EIA-930, which flatters DemandCast. Bands too narrow: 49 / 76%. v1.1: 3.37; v1.1.1: 3.24."
     - metric: "Demand PJM, actual weather"
       better: lower
-      model: 2.10
+      model: 2.01
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 3.49 }
@@ -209,10 +207,10 @@ exam:
         - { name: "Persistence", kind: dumb, value: 4.95 }
         - { name: "Same hour last week", kind: dumb, value: 8.32 }
       verdict: win
-      note: "Upper bound. With forecast weather (2024): 2.84 vs 3.57, still a win."
+      note: "Upper bound. With forecast weather (2024): 2.46 vs 3.57, still a win. v1.1: 2.10; v1.1.1: 1.91."
     - metric: "Demand MISO, actual weather"
       better: lower
-      model: 1.88
+      model: 1.84
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 2.71 }
@@ -220,10 +218,10 @@ exam:
         - { name: "Persistence", kind: dumb, value: 4.17 }
         - { name: "Same hour last week", kind: dumb, value: 6.98 }
       verdict: win
-      note: "Upper bound. With forecast weather (2024): 2.15 vs 2.80, still a win."
+      note: "Upper bound. With forecast weather (2024): 2.10 vs 2.80, still a win. v1.1: 1.88; v1.1.1: 1.79."
     - metric: "Demand SPP, actual weather"
       better: lower
-      model: 2.41
+      model: 2.60
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 4.31 }
@@ -231,10 +229,10 @@ exam:
         - { name: "Persistence", kind: dumb, value: 4.32 }
         - { name: "Same hour last week", kind: dumb, value: 8.21 }
       verdict: win
-      note: "Upper bound. SPP's own forecast ran 6.5% high in 2025 (7.68%); in 2024 it beat DemandCast (2.32 vs 2.54), and with forecast weather 2.22 vs 2.74."
+      note: "Upper bound. SPP's own forecast ran 6.5% high in 2025 (7.68%); in 2024 it beat DemandCast (2.32 vs 2.77), and with forecast weather 2.22 vs 3.02. v1.1: 2.41; v1.1.1: 2.41."
     - metric: "Demand ISO-NE, actual weather"
       better: lower
-      model: 3.00
+      model: 3.32
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 2.56 }
@@ -242,10 +240,10 @@ exam:
         - { name: "Persistence", kind: dumb, value: 7.27 }
         - { name: "Same hour last week", kind: dumb, value: 10.64 }
       verdict: loss
-      note: "Loses every year even with actual weather (2.77 / 3.13 / 3.10 vs 2.40 / 2.77 / 2.52)."
+      note: "Loses every year even with actual weather (3.03 / 3.37 / 3.56 vs 2.40 / 2.77 / 2.52). Bands 55 / 83%. v1.1: 3.00; v1.1.1: 3.00."
     - metric: "Demand NYISO, actual weather"
       better: lower
-      model: 1.97
+      model: 2.17
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 2.97 }
@@ -253,10 +251,10 @@ exam:
         - { name: "Persistence", kind: dumb, value: 5.34 }
         - { name: "Same hour last week", kind: dumb, value: 8.22 }
       verdict: win
-      note: "Upper bound. With forecast weather (2024): 2.57 vs 3.28, still a win."
+      note: "Upper bound. With forecast weather (2024): 2.76 vs 3.28, still a win. v1.1: 1.97; v1.1.1: 1.97."
     - metric: "Demand BPA, actual weather"
       better: lower
-      model: 2.10
+      model: 2.14
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 2.00 }
@@ -264,104 +262,106 @@ exam:
         - { name: "Persistence", kind: dumb, value: 3.69 }
         - { name: "Same hour last week", kind: dumb, value: 6.42 }
       verdict: loss
-      note: "With forecast weather (2024): 2.44 vs 1.92."
+      note: "With forecast weather (2024): 2.50 vs 1.92. v1.1: 2.10; v1.1.1: 2.10."
     - metric: "Wind, 8 grids pooled, actual weather (Σ|err| / Σ output)"
       better: lower
-      model: 19.2
+      model: 19.3
       unit: "%"
       baselines:
         - { name: "Physics alone (real fleet, dev scale)", kind: classical, value: 22.7 }
         - { name: "Persistence (same hour yesterday)", kind: dumb, value: 43.5 }
         - { name: "Dev-year CF climatology × fleet", kind: dumb, value: 41.4 }
       verdict: win
-      note: "BPA 50.1% and CAISO 32.7% (50 km reanalysis in complex terrain); ERCOT 17.8%, MISO 16.0%. With forecast weather (2024, 7,632 h, ERCOT only): 31.2% vs physics 47.9%, persistence 42.6%."
+      note: "BPA 50.2% and CAISO 32.2% (50 km reanalysis in complex terrain); ERCOT 18.0%, MISO 15.9%. With forecast weather (2024, 7,632 h, ERCOT only): 32.0% vs physics 47.9%, persistence 42.6%. v1.1: 19.2%; v1.1.1: 19.2%."
     - metric: "Solar, 7 grids pooled, actual weather (Σ|err| / Σ output)"
       better: lower
-      model: 16.1
+      model: 10.6
       unit: "%"
       baselines:
         - { name: "Physics alone (real fleet, dev scale)", kind: classical, value: 36.3 }
         - { name: "Persistence (same hour yesterday)", kind: dumb, value: 19.1 }
         - { name: "Dev-year CF climatology × fleet", kind: dumb, value: 39.2 }
       verdict: win
-      note: "v1.1 (reporting offset read at issue from the week before), run once on 15 Nov 2026; 183,858 h. v1.0: 29.9%, a loss: EIA-930 solar timestamps moved between dev and exam (CAISO -1 h in 2019/2021, 0 in 2023, +1 h in 2024-25; PJM in 2025), so its dev-calibrated shift was wrong (CAISO 59.4%, PJM 28.1%). v1.1: CAISO 24.9% (persistence 11.4%, still a loss there), PJM 11.9% (28.0%), BPA 52.0% (30.5%), SPP 41.5% (29.1%); ERCOT 10.6%, MISO 10.4%, ISO-NE 16.5%. NYISO reports no solar."
+      note: "183,858 h. CAISO 11.2% (persistence 11.4%), PJM 9.3% (28.0%), BPA 20.8% (30.5%), SPP 27.0% (29.1%); ERCOT 10.5%, MISO 9.3%, ISO-NE 13.7%: ahead of persistence in every grid, CAISO by 0.2 points. Bands 72 / 90%. v1.1: 16.1% (CAISO 24.9%, BPA 52.0%, SPP 41.5%, all three behind persistence); v1.1.1: 16.1%; v1.0: 29.9%. NYISO reports no solar."
     - metric: "Texas heat, Aug 2023 (ERCOT, 744 h)"
       better: lower
-      model: 1.96
+      model: 2.08
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 1.59 }
         - { name: "Physics alone", kind: classical, value: 3.03 }
       verdict: loss
-      note: "Peak over-predicted: 88.5 GW vs 85.4 GW metered."
+      note: "Peak over-predicted: 88.8 GW vs 85.4 GW metered. v1.1: 1.96%."
     - metric: "Eastern heat dome, Jun 2024 (PJM)"
       better: lower
-      model: 1.98
+      model: 2.37
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 4.50 }
         - { name: "Physics alone", kind: classical, value: 2.32 }
       verdict: win
-      note: "MISO 1.56 vs 4.01, NYISO 1.72 vs 2.73, ISO-NE 2.97 vs 3.38 in the same week."
+      note: "MISO 1.38 vs 4.01, NYISO 1.70 vs 2.73, ISO-NE 3.44 vs 3.38 (a loss) in the same week. v1.1: PJM 1.98%, ISO-NE 2.97%."
     - metric: "Arctic outbreak, Jan 2025 (ISO-NE)"
       better: lower
-      model: 4.78
+      model: 4.49
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 1.27 }
         - { name: "Physics alone", kind: classical, value: 8.50 }
       verdict: loss
-      note: "PJM in the same outbreak: 1.83 vs 4.17."
+      note: "PJM in the same outbreak: 2.32 vs 4.17. v1.1: ISO-NE 4.78%, PJM 1.83%."
     - metric: "Winter Storm Uri, Feb 2021 (ERCOT; a dev year, not exam)"
       better: lower
-      model: 14.5
+      model: 16.9
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: 18.6 }
         - { name: "Physics alone", kind: classical, value: 21.1 }
       verdict: info
-      note: "DemandCast forecast about 85 GW of demand; ERCOT served 69 GW under load shedding, so the metered 'truth' is curtailed."
+      note: "DemandCast forecast about 89 GW of demand; ERCOT served 69 GW under load shedding, so the metered 'truth' is curtailed. v1.1: 14.5% (85 GW)."
     - metric: "Demand error by temperature band, actual weather (7 bands, -10 to 50 °C)"
       better: lower
-      model: "2.2-2.7"
+      model: "2.3-2.9"
       unit: "%"
       baselines:
         - { name: "Grid's own day-ahead forecast", kind: published, value: "2.6-3.9" }
       verdict: info
-      note: "Flat across temperature; above 35 °C (1,211 h) 2.73% vs the grids' 2.55%. Below -10 °C (913 h) it rises to 3.25% (grids 3.33%)."
+      note: "Above 35 °C (1,211 h) 2.94% vs the grids' 2.55%; 30-35 °C 2.82% vs 3.12%. Below -10 °C (913 h) 3.35% (grids 3.33%). v1.1: 2.2-2.7% (2.73% above 35 °C)."
   coverage:
     - { output: "Demand, pooled (95% band: 89%)", actual: 64 }
-    - { output: "Demand, CAISO (95%: 74%)", actual: 46 }
-    - { output: "Demand, forecast weather 2024 (95%: 94%)", actual: 72 }
-    - { output: "Demand, forecast weather 2024-2025, second look (95%: 93%)", actual: 71 }
-    - { output: "Wind, pooled (95%: 94%)", actual: 71 }
-    - { output: "Solar, daylight hours, v1.1 (95%: 86%; v1.0 65 / 84%)", actual: 69 }
+    - { output: "Demand, CAISO (95%: 76%)", actual: 49 }
+    - { output: "Demand, forecast weather 2024 (95%: 93%)", actual: 72 }
+    - { output: "Demand, forecast weather 2024-2025, second look (95%: 92%)", actual: 70 }
+    - { output: "Wind, pooled (95%: 94%)", actual: 72 }
+    - { output: "Solar, daylight hours (95%: 90%; v1.1 69 / 86%)", actual: 72 }
 
 wins:
-  - "Demand with actual weather: 2.38% against 3.41% for the grids' own day-ahead forecasts, and ahead in 6 of 8 grids (an upper bound)."
-  - "With real forecast weather (2024): 2.92% against 3.20% pooled, and ahead in CAISO, PJM, MISO and NYISO."
-  - "Second look with real forecast weather, 2024-2025 (run once, 14 Nov 2026): wind 26.7% against 39.0% for the physics alone and 42.9% for persistence."
-  - "Wind: 19.2% against 22.7% for the physics alone and 43.5% for persistence."
-  - "Solar, v1.1 (15 Nov 2026): 16.1% against 19.1% for persistence with actual weather, and 18.2% against 18.9% with real forecast weather 2024-2025 (v1.0: 29.9% and 34.7%, both losses). The reporting offset is read from the week before issue."
-  - "Heat waves and cold snaps the grids missed in PJM: heat dome Jun 2024 1.98% vs 4.50%; Arctic outbreak Jan 2025 1.83% vs 4.17%. From -10 °C to 35 °C the error stays at 2.2-2.7% (grids 2.9-3.9%); below -10 °C (913 h) 3.25% vs 3.33%."
+  - "Solar, v1.2 (27 Nov 2026): 10.6% against 19.1% for persistence with actual weather and 12.0% against 18.9% with real forecast weather 2024-2025; ahead of persistence in every grid (v1.1: 16.1% and 18.2%, behind persistence in CAISO, BPA and SPP)."
+  - "Demand with actual weather: 2.49% against 3.41% for the grids' own day-ahead forecasts, ahead in 5 of 8 grids (an upper bound)."
+  - "With real forecast weather (2024): 3.00% against 3.20% pooled, and ahead in CAISO, PJM, MISO and NYISO."
+  - "Wind: 19.3% against 22.7% for the physics alone and 43.5% for persistence; with real forecast weather 2024-2025 26.9% against 39.0% and 42.9%."
+  - "Heat waves and cold snaps the grids missed in PJM and MISO: heat dome Jun 2024 PJM 2.37% vs 4.50%, MISO 1.38% vs 4.01%; Arctic outbreak Jan 2025 PJM 2.32% vs 4.17%."
 losses:
-  - "With real forecast weather (2024) it loses to ERCOT, SPP, ISO-NE and BPA's own forecasts (ERCOT 2.98% vs 2.05%)."
-  - "Second look with real forecast weather, 2024-2025: 3.05% vs 3.59% pooled, but without CAISO and SPP (flawed published forecasts) 2.92% vs the grids' 2.70%; behind ERCOT (3.33% vs 2.26%), ISO-NE (4.18% vs 2.65%) and BPA (2.33% vs 1.96%)."
-  - "Solar, per grid, v1.1: CAISO 24.9% vs persistence 11.4% (v1.0 59.4%), BPA 52.0% vs 30.5%, SPP 41.5% vs 29.1%. The pooled solar win rests on ERCOT, PJM, MISO and ISO-NE."
-  - "ISO-NE (3.00% vs 2.56%) and BPA (2.10% vs 2.00%) lose even with actual weather; ISO-NE's Jan 2025 cold snap 4.78% vs 1.27%."
-  - "Texas heat, Aug 2023: 1.96% vs ERCOT's 1.59%, with the peak 3% too high. Above 35 °C (1,211 h) 2.73% vs the grids' 2.55%."
+  - "v1.2 is worse than v1.1 on demand: 2.49% vs 2.38% with actual weather (v1.1.1 2.32%), 3.14% vs 3.05% with forecast weather 2024-2025. The dev gate showed it (dev demand 2.05% vs 1.98%, +3%), but the gate pools demand, wind and solar, and solar's dev gain (13.1% vs 15.7%) carried the rung."
+  - "With real forecast weather (2024) it loses to ERCOT, SPP, ISO-NE and BPA's own forecasts (ERCOT 3.38% vs 2.05%)."
+  - "Second look with real forecast weather, 2024-2025: 3.14% vs 3.59% pooled, but without CAISO and SPP (flawed published forecasts) 2.98% vs the grids' 2.70%; behind ERCOT (3.56% vs 2.26%), ISO-NE (4.26% vs 2.65%) and BPA (2.43% vs 1.96%)."
+  - "ERCOT (2.41% vs 2.40%), ISO-NE (3.32% vs 2.56%) and BPA (2.14% vs 2.00%) lose even with actual weather; ISO-NE's Jan 2025 cold snap 4.49% vs 1.27%."
+  - "Texas heat, Aug 2023: 2.08% vs ERCOT's 1.59%, with the peak 4% too high. Above 35 °C (1,211 h) 2.94% vs the grids' 2.55%."
+  - "Solar in SPP (27.0%) and BPA (20.8%) is still far worse than in the other grids, and CAISO beats persistence by only 0.2 points."
 limits:
   - "The headline uses actual weather and is an upper bound. With real forecast weather DemandCast wins in 4 of 8 grids in 2024 (released) and 5 of 8 over 2024-2025 (second look); the pooled win rests on CAISO and SPP. The archive holds no humidity or radiation forecasts before 2024, so 2023 cannot be graded with forecast weather."
-  - "Solar timestamps: v1.1 reads whole-hour offsets (-1, 0, +1 h) from the week before issue, counted from each grid's dev-year value. A change is picked up only once the week before issue shows it, and CAISO's dev-year error profile sits about half an hour off (r_hat 0.46), so some CAISO days near that boundary flip. CAISO solar still loses to persistence. BPA's tiny solar fleet is badly served."
-  - "Bands are too narrow on real data: demand 64% / 89% inside the 68% / 95% bands (CAISO 46% / 74%)."
-  - "Wind is limited by 50 km reanalysis in complex terrain (BPA 50%, CAISO 33%); the network trims the physics error by about 15%."
+  - "The pooled dev gate let solar decide: r10 passed with dev errors -4.8% (solar -16%, wind -1%, demand +3%), and the exam shows the same split. A per-output gate (no output worse by more than 2%), fixed before the next ladder, would have rejected r10 and kept v1.1.1's demand."
+  - "Solar timestamps: v1.2 reads whole-hour offsets (-2 to +2 h) from the week before issue, counted from each grid's dev-year value. A change is picked up only once the week before issue shows it, and CAISO's dev-year error profile sits about half an hour off (r_hat 0.46), so some CAISO days near that boundary flip. On val_v5 the reader gets 80% of 2 h offsets right (32 of 40 at +2, 55 of 80 at -2), and a misread offset costs solar error."
+  - "Bands are too narrow on real data: demand 64% / 89% inside the 68% / 95% bands (CAISO 49% / 76%, ISO-NE 55% / 83%)."
+  - "Wind is limited by 50 km reanalysis in complex terrain (BPA 50%, CAISO 32%); the network trims the physics error by about 15%."
   - "It needs the last week of metered output: physics alone is about 5% off (load growth since 2019-21). Building parameters are effective (several fits sit on bounds), so the heating / cooling split is indicative."
-  - "Over-predicts heat-wave peaks by about 3%."
+  - "Over-predicts heat-wave peaks by about 4%."
+  - "Inputs the simulator never varied (audit, 25 Nov 2026), repaired in v1.2: reported solar at hours the physics calls dark is now set to 0 before the network reads it (training and inference), simulator v5 adds twilight output, -2 to +2 h offsets and 1-48 h gaps in the demand history, count-like inputs have a standardisation floor of 0.05, and inputs are clipped at |z| 8 (from v1.1.1). In v1.1 the twilight input pinned two BPAT exam days at the 1.2 cap and missing demand hours reached |z| 286; on the 201 actual-weather exam rows with missing history hours demand error was 5.96% (v1.1) and 2.58% with the clip (v1.1.1)."
 next:
-  - "Train the solar network on simulator v4 (random 0 / ±1 h reporting offsets), so it reads the convention itself rather than through the v1.1 offset estimate; and allow half-hour offsets (CAISO)."
+  - "A per-output dev gate (each of demand, wind and solar no more than 2% worse), fixed before the next ladder; then a demand rung that keeps v1.1.1's demand network with v1.2's solar, judged by that gate (the exam chooses nothing, so this has to come from a new ladder)."
   - "Real forecast-error noise in training: the 2022 Open-Meteo temperature library is now fetched and built (training/make_tfc.py; day-ahead error 1.3-2.0 K RMS per grid). A rung that trains on it would be judged on dev."
   - "Better bands (64% inside the 68% band): per-grid noise-scale variety in the simulator, or a dev-fitted conformal widening."
-  - "Higher-resolution weather for wind in complex terrain (BPA, CAISO)."
+  - "Half-hour solar offsets (CAISO's dev reference sits at 0.46 h), and higher-resolution weather for wind in complex terrain (BPA, CAISO)."
   - "Upstream to GridSim: the building-stock demand model (1.7-3.0% cross-year on dev, replacing GridSim's demand regression) and the tabulated farm curve with fleet grouping; to GridData: flags for EIA-930 solar timestamp changes and negative night solar, and an archived forecast-weather table."
 help_wanted:
   - "Day-ahead forecast weather before 2024. Open-Meteo's Previous Runs API rate-limited the first build (HTTP 429 after 1-25 year-requests per half hour); on 14 Nov 2026 the shared build machine fetched all 220 year-requests with no refusal. The archive holds humidity, radiation and wind forecasts only from 2024 (temperature from 2022), so 2023 cannot be graded with forecast weather and the dev years 2019 and 2021 have no real forecast errors. An archive of day-ahead forecasts for 2019-2023 is wanted."

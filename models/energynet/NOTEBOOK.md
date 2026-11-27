@@ -462,3 +462,40 @@ Release: `weights/r15_s*.npz`, `sigma_factors.json`, examples' exam predictions 
 regenerated, live instrument re-exported (32 parity cases, worst 1.9e-7). The garage reference
 (`site/public/garage/reference.json`, written by `shared/vehicle/garage/export_garage.py`) still holds v2.0's EnergyNet
 outputs and must be re-exported for the site's garage test to pass.
+
+## 27 Nov 2026 — audit: crushed work-share inputs (training fix in code; repair rung queued)
+
+The two-reviewer audit (`docs/audits/energynet-v2.1.md`) found that v2.1's input scaling is set by a few simulated
+trips that move downhill with almost no positive wheel work, where aero, rolling, downhill-grade and inertia work divided
+by Ep reach 1e5-1e6. Rebuilt from the local banks: plain statistics reproduce the shipped scaler exactly, and 11 of
+86,400 bank rows (0.013 %) carry |aero/Ep| > 10. On the 1,496 real dev trips those four inputs then vary by less than
+0.0001 sd, so the networks cannot use them (holding all four fixed moves predictions 0.0004 %). `train.py --robust-norm`
+(percentile-clipped statistics) gives them 0.58-0.79 sd on the same trips, against 0.72 for the uphill-grade control.
+`--mask-comp` masks the component loss like the NLL. Both are off by default, so history reproduces. The matched
+retrain on the dev gate is queued; the exam stays closed.
+
+## 27 Nov 2026 — repair rung r18 (robust input scaling): rejected; v2.1 stays
+
+The queued repair rung, run on the owner's approval. r17's recipe on the same banks (`train2di+train2bdi+train2cdi`,
+label version e on the h banks, era input, 60 epochs, seeds 0-4), with `--robust-norm --mask-comp`
+(`training/run_r18_train.sh`, logs `work/logs/train_r18_s*.log`). The incumbent's two public-spec inputs (EPA hybrid
+system, ZTBus curb mass) are kept, so r18 is a model rung on val2[h] against r17 under the first rule: the val2 skill
+must beat r17's by more than 0.01 and dev D2 may not rise by more than 0.01.
+
+| | r17 (v2.1, released) | r18 (repair) |
+|---|---|---|
+| val2[h] skill | 0.680 | 0.679 (−0.001) |
+| val2[h] MdAPE | 7.5 % | 7.5 % |
+| dev D2 (18 terms) | 0.1077 | 0.1073 (−0.0004) |
+
+**Decision: rejected** (skill does not rise by 0.01). The exam was not opened. v2.1 stays as released.
+
+The repair works mechanically. On the dev sets, the four work-share inputs (aero, rolling, downhill grade and inertia,
+each over Ep) were held at their dev median. With r15's networks, VED dev predictions moved by a median of 0.000 %. With
+r18's networks they moved by 1.5 % (90th percentile 5.0 %), and EPA dev predictions by 0.8 % (2.7 %)
+(`training/probe_r18.py`, `training/r18_probe.json`). The networks now read those inputs, but the inputs carry no
+information that the route vector and the physics estimate did not already give. Skill and D2 stay within seed noise.
+
+The 18 dev terms move both ways. Better: EPA petrol highway 7.0 → 6.3 %, Mersin diesel 13.0 → 12.0 %, VED BEV
+14.0 → 13.5 %. Worse: ZTBus missions 5.6 → 6.5 %, ZTBus legs 7.0 → 7.3 %, EPA power-split SC03 11.4 → 12.9 % and
+US06 6.0 → 8.1 %. Raw log: `training/ratchet2.json` (r18_robust), ladder: `ratchet.yaml` v2-r18.

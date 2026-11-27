@@ -69,6 +69,7 @@ Coverage of the 68% error bars on the exam: Shaft speed (CWRU) **80%**.
 
 - "Healthy" is weak — a healthy bearing next to a faulty one is called healthy 10% of the time; Paderborn healthy 35%.
 - The dev set was small and optimistic (Paderborn dev 0.78 vs exam 0.45).
+- Missing samples (audit, 25 Nov 2026; fixed 27 Nov 2026): one NaN made every probability NaN and the label 'healthy' on all 14 packaged recordings. Windows with nonfinite samples are now skipped and a recording with none clean is refused. Separately, all four packaged healthy recordings raise fault alarms: the demo sample is too small for a false-alarm rate, and CWRU's split is by file, not by physical bearing.
 
 ## The ratchet
 

@@ -163,6 +163,7 @@ losses:
 limits:
   - "CdA and Crr are still weakly identified: CdA ×1.5 moves the estimate by 3%."
   - "Real cars turn power into acceleration differently from their twins (dev twin b0 ratio 0.83-1.37 per car); the dev Leaf's battery power fits a lighter car (0.83× its twin)."
+  - "Missing data (audit, 25 Nov 2026; fixed 27 Nov 2026): the bus reader used to read missing power as zero and keep the leg in its bus-day, so one leg without power moved the other 13 legs of the packaged day by +239 kg each. It now reads only 1,024 s windows that are at least 90 % valid; a leg with none returns NaN and leaves the day's means. With half of the longest leg's power missing, that leg moves -101 kg and the others at most 30 kg (was -790 and +142 kg). No ZTBus exam leg has missing power (0 of 35.7 M samples), so the exam is unchanged. The car reader now refuses logs with under 60 s of motion (all-NaN or all-zero speed returned 1,182 kg, conventional)."
   - "ZTBus: the logged power and the logged traction force both regress to ~0.7 × (19 t + passengers), so the bus mass level is not verified; per leg the physics fit scatters ±15%."
   - The energy ledger has only simulated truth; no skill on net grade work.
   - "Light duty is graded on 2017-18-era VED cars only. RoadSim v2 limits apply (older Toyota hybrids too frugal on the FTP, TMED P2 too thirsty, plug-in series engine-on too low)."

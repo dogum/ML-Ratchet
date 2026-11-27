@@ -81,6 +81,7 @@ Thirteen real events — five from O1/O2 and eight from O3, the O3 set named in 
 - No network can be retrained on this machine: the LALSuite waveform banks were never kept and LALSuite has no Windows build.
 - Real events tested come from O1–O3 (2015–2020); O4 is untested.
 - Very heavy mergers (detector-frame chirp mass above ~45) are outside the training range: GW190521 is missed.
+- False-alarm rate (audit, 25 Nov 2026): the 7.0 threshold was set above the maximum (6.20) of the 2.006 h time-slide background, so zero exceedances there are by construction. Until 27 Nov 2026 the reader reported 1/T = 0.50/h as an upper bound; it now reports the Poisson 90 % upper limit, 2.303/T = 1.15/h. On O3 dev time slides at least 4 of 64 pieces scored 7.0 or more (at least 0.38/h of slide exposure). A false-alarm rate for continuous data is not measured.
 
 ## The ratchet
 

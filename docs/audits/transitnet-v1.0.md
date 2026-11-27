@@ -30,3 +30,11 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_69873b7_pr
 ```
 
 Uses NumPy and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_69873b7_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Unobserved transit core read as 'nothing' with no flag | Yes | **Warned**: `read` warns when no point falls inside any predicted transit core (`ntr = 0`). | — |
+| Constant flux → NaN probabilities | Yes | **Fixed**: `ValueError` when the binned noise is zero or not finite. | Demo unchanged. |
+| Reversed rows inside a sector raise a negative-bin error | Acceptable | Not changed: the error is explicit; time must increase. | — |

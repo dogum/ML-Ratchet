@@ -85,6 +85,7 @@ The 48-fire exam replay subset, run once after the ratchet closed (training/exam
 - The domain is the stored LANDFIRE window: on 45 of 48 exam fires the 15 km crop reaches the window edge (FireSim upstream U2), so growth beyond it is cut off for every method alike.
 - Training fires are synthetic fires grown from point ignitions on dev landscapes; real detections are more ragged. Live fuel moisture is constant, and FireSim's fires do not stall or burn out as real fires do (simulated fires grow on 91 % of half-days, real ones on 50 %).
 - Rule notes: the exam was split into two stages for compute (stage A: no action, fixed plans, r0, FirePilot; stage B: MPC and the bound in a seeded order), decided before any exam output existed; both stages finished on all 48 fires, so the split changed nothing. The 40 dev fires set the physics p1 calibration and supplied the 12 gate fires, so the gate is partly in-sample for the physics. The tercile numbers come from per-fire rows that were not shipped.
+- Crew clock (audit, 25 Nov 2026): every training scenario started in the afternoon, 34 working hours in 72 h, so that input has sd 1e-6. A morning clock (36 h) sits about 55,000 sd away and raised predicted savings by .05-.15 on three packaged fires. All 48 exam fires had 34 h, so the exam is unaffected. Since 27 Nov 2026 the reader warns when the clock differs.
 
 ## The ratchet
 
@@ -134,6 +135,7 @@ Fire spread is FireSim (Wildfire Phase 1, shared/fire/firesim), wrapped without 
 - Imitate the perfect-foresight search: use the truth-CEM plans on the training bank as targets, or a ranking loss, instead of an MSE value net that suffers the winner's curse on its own argmax.
 - Train in FireSim physics p2 (U1 and U12 fixed upstream on 22 Nov 2026; r1 already scored on val_p2, gate_p2 and the p2 exam): rebuild the training banks as p2, retrain and re-take the rungs against val_p2 and gate_p2, and release a p2 rung only through a new exam.
 - Values-at-risk targets (WUI cells), multi-segment lines, aircraft and spotting, and a fire-persistence (burnout and stall) module in FireSim.
+- Queued (audit): train the value network on varied start times (morning, overnight) so the crew clock is a real input.
 
 ## Files
 

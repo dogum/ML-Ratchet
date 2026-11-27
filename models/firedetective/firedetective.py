@@ -74,6 +74,12 @@ class FireDetective:
         return mu, np.exp(ls), 1 / (1 + np.exp(-bl))
 
     def predict(self, seq, seq_hidden, static):
+        # A fire needs at least one observed step (audit, 25 Nov 2026: an empty history overflowed to infinite wind and
+        # 425,553 % live fuel moisture). Every scored exam fire had 3-12 steps.
+        empty = ~(np.asarray(seq)[..., 0] > 0).any(-1)
+        if np.any(empty):
+            raise ValueError(f'{int(np.sum(empty))} fire(s) have no observed step; FireDetective reads a burned-area '
+                             'history that starts at the first observation')
         c = self.cal
         mu, sd, pb = self.raw(seq, static)
         muh, sdh, _ = self.raw(seq_hidden, static)

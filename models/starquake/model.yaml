@@ -138,12 +138,14 @@ limits:
   - 11–15% of unscreened dwarfs are falsely called oscillating.
   - The most luminous giants (νmax 8–15 μHz) read about 4% high; their twins show the same bias.
   - Kepler long cadence only; no TESS yet.
+  - "False detections (audit, 25 Nov 2026): unstructured Gaussian noise on a real Kepler cadence mask triggers the detector on 5 of 10 draws at 500 ppm and 10 of 10 at 1,000 ppm, the RMS range of real giants. The real-sky false-alarm rate on high-RMS non-oscillating stars is not measured. Cadences without good flux at either end of a record lower the duty cycle and change the FFT grid (90 flagged days moved KIC 2695975 from 1.677 to 1.777 solar masses); the reader now warns, and grid_lc(trim=True) drops them (opt-in; 36 of 858 archived light curves start or end on a gap)."
 next:
   - Per-length σ widening, fitted on dev.
   - Make the simulator's νmax the one a SYD-style pipeline measures on the noiseless spectrum, so the blend weights learn the real classical reading.
   - A TESS version on quiet-star noise, examined on TESS giants.
   - More training and hard negatives (spotted and eclipsing dwarfs).
 
+  - "Queued (audit): high-RMS non-oscillating stars (spotted dwarfs, rotators, eclipsing binaries) in the noise bank, and a dated re-score with trimmed record ends, on the owner's approval."
 usage:
   install: pip install numpy scipy
   demo: python demo.py

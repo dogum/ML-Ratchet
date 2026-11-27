@@ -155,3 +155,7 @@ v1.0 numbers reproduce the 6 Nov exam (37.5% / 33.5 h / 19.2°, coverage 67 / 74
 - What it says: at these buoys the network's distance reading carries little beyond the climatological distance. The
   next rung worth trying is a buoy-specific prior from 1985–2007 IBTrACS storm geometry (not dev labels), or a network
   trained on a realistic distance prior.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). read() refuses windows with no finite energy (they read as a storm swell); read_ndbc(field_sentinels=True) keeps valid 99 bearings (opt-in; re-score queued).

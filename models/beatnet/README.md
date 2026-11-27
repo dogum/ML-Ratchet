@@ -73,6 +73,7 @@ Coverage of the 68% error bars on the exam: QRS width **72.5%**.
 - Not a medical device. Research and teaching only.
 - Models trained on real DS1 (de Chazal 2004, Zhang 2014) still do better on S and F beats.
 - Non-premature S beats are missed; aberrated APCs are called V.
+- Shared patient and missing samples (audit, 25 Nov 2026): MIT-BIH records 201 (dev calibration and training background) and 202 (DS2 exam) are the same patient. Leaving 202 out of the archived DS2 per-record scores moves macro-F1 from 0.5466 to 0.5531 and SV-F1 from 0.6176 to 0.6305; the effect of 201's exposure needs a retrain (queued). One NaN sample made every beat's probabilities NaN and its label 'N'; since 27 Nov 2026 gaps of up to 10 samples are filled and longer ones refused.
 
 ## The ratchet
 
@@ -113,6 +114,7 @@ A 2 mm voxel heart with eikonal activation through a Purkinje-lined endocardium;
 - Wider bundle-branch-block morphology in the simulator, calibrated on a DS1 LBBB record kept out of the exam.
 - A twin test per dev record — calibration so far is population-level only.
 - Refit the fusion visibility window to how annotators used F.
+- Queued (audit): retrain and recalibrate with patient 201/202 excluded from dev, backgrounds and exam, then a dated re-score.
 
 ## Files
 

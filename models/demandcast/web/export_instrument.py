@@ -32,7 +32,7 @@ sys.path.insert(0, os.path.join(MODEL, "training"))  # buildings.py (numpy/scipy
 sys.path.insert(0, REPO)
 
 import buildings as B  # noqa: E402
-from demandcast import DemandCast, align_solar_x, solar_offset  # noqa: E402
+from demandcast import DemandCast, align_solar_x, mask_dark_solar, solar_offset  # noqa: E402
 
 from mlratchet.webexport import instrument_dir, roundtrip, write_json, write_pack  # noqa: E402
 
@@ -62,7 +62,8 @@ def solar_offsets(m, days):
     for j, d in enumerate(days):
         i = key.get((d["ba"], d["day"]))
         if i is not None and "s" in d:
-            out[j] = solar_offset(np.nan_to_num(B["xs"][i].astype(np.float64)), m.offset_ref(d["ba"], 1))[0][0]
+            out[j] = solar_offset(np.nan_to_num(B["xs"][i].astype(np.float64)), m.offset_ref(d["ba"], 1),
+                                  rmax=m.solar_rmax)[0][0]
     return out
 
 
@@ -169,7 +170,7 @@ def outputs(m, d, st, prm, MW, MS, p):
     o = inputs(d, st, prm, MW, MS, p)
     from demandcast import _forward
     vec = list(o["ph"]["total"])
-    mu, sg = _forward(m.W["d"], o["xd"][None], "d")
+    mu, sg = _forward(m.W["d"], o["xd"][None], "d", z_clip=m.z_clip)
     r = m.predict_demand(o["xd"][None], o["ph"]["total"][None])
     vec += list(mu[0]) + list(sg[0]) + list(r["mw"][0]) + list(r["lo95"][0]) + list(r["hi95"][0])
     res = dict(demand=r, ph=o["ph"])
@@ -178,7 +179,9 @@ def outputs(m, d, st, prm, MW, MS, p):
             continue
         night = d["night"][None] if k == "s" else None
         xin = o[x][None] if k == "w" else align_solar_x(o[x][None], np.array([d["soff"]]))
-        mu, sg = _forward(m.W[k], xin, k, o[pk][None])
+        if k == "s" and m.mask_dark:
+            xin = mask_dark_solar(xin)
+        mu, sg = _forward(m.W[k], xin, k, o[pk][None], z_clip=m.z_clip)
         r = m.predict_cf(k, o[x][None], o[pk][None], night=night) if k == "w" else             m.predict_cf(k, o[x][None], o[pk][None], night=night, offset=d["soff"])
         vec += list(o[pk]) + list(mu[0]) + list(sg[0]) + list(r["cf"][0]) + list(r["lo95"][0]) + list(r["hi95"][0])
         res[k] = r
@@ -218,7 +221,7 @@ def main():
     calib = json.load(open(os.path.join(MODEL, "calib", "demand_dev.json")))
     assert all(D["params"][ba] == calib[ba]["params"] for ba in D["params"]), "page params = released dev calibration"
     m = DemandCast()
-    assert all(abs(D["sigma_scale"][k] - m.sigma_scale[k]) < 1e-12 for k in "dw")   # solar re-fitted for v1.1
+    assert abs(D["sigma_scale"]["w"] - m.sigma_scale["w"]) < 1e-12   # solar re-fitted for v1.1, demand for v1.1.1
     soff = solar_offsets(m, D["days"])
     step_err = check_stepper(D)
     assert step_err < 1e-9, step_err
@@ -228,7 +231,8 @@ def main():
     W = {n.replace(".", "_"): Z[n] for n in Z.files}
     keep = {k: "f32" for k in W if k.endswith("_xm") or k.endswith("_xs")}
     meta = dict(sigma_scale=m.sigma_scale, n_params=m.meta["n_params"], inputs=m.meta["inputs"], MW=MW, MS=MS,
-                params=D["params"], floor={"d": 0.004, "w": 0.005, "s": 0.003})
+                params=D["params"], floor={"d": 0.004, "w": 0.005, "s": 0.003}, z_clip=m.z_clip,
+                mask_dark_solar=m.mask_dark)
     write_pack(OUT / "weights", W, dtype="f16", meta=meta, keep=keep)
     R = roundtrip(W, "f16")
     for k in keep:

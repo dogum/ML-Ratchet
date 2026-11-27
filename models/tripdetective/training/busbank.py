@@ -166,7 +166,7 @@ def build_real(split, maxlegs=None, seed=0, all_legs=False):
         m, a = rd.load_trip(tid)
         T = np.where(np.isfinite(a['T_amb']), a['T_amb'], np.nanmean(a['T_amb']) if np.isfinite(a['T_amb']).any() else 12.0)
         rho = np.where(np.isfinite(a['rho_air']) & (a['rho_air'] > 0.5), a['rho_air'], 1.2)
-        P = np.nan_to_num(np.asarray(a['elec_power'], float))
+        P = np.asarray(a['elec_power'], float)  # NaN stays NaN: raw_from_log marks it invalid (none in ZTBus exam legs, 27 Nov 2026)
         raw = bus_raw(np.nan_to_num(a['v']), np.nan_to_num(a['grade']), T, rho, P, a.get('valid'))
         n = raw.shape[1]
         import realbank

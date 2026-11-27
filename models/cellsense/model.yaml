@@ -193,6 +193,7 @@ limits:
 
 help_wanted:
   - "More chemistries and rates: Sandia NCA / NMC / LFP cycling files (Preger et al. 2020) from BatteryArchive (download by email request), or Zhu et al. 2022 (Zenodo). NMC811 at C/20 is done (Pozzato et al. 2022 on OSF); it needs aged cells far from new and faster discharges."
+  - "Inputs (audit, 25 Nov 2026): an all-NaN discharge returned a finite capacity (0.82 Ah LFP, 4.03 Ah NMC811); since 27 Nov 2026 it is refused. The NMC811 reader switches from measured end capacity to a network estimate at the 1 mV completion tolerance, so 0.2 mV across it moves capacity 5.3 mAh and its sigma 10.75x; which sigma is better calibrated needs near-cutoff cycles."
 next:
   - "NMC811: on the dev cells a cut-short reading pulled toward their median by inverse variance reads 126 → 88 mAh (each dev cell left out), but the frozen set, whose cells age up to 2.5x further, scores it 0.033 lower, so the rule rejected it (rung n13). Whether such dev-population steps should be judged by a different rule has to be decided before the next one is scored."
   - "NMC811: the jitter is now measured on the dev cells (scale 1.15 ± 0.09, 7.0 mV per coefficient; frozen set val_ocpd), but every jitter-trained network scores 0.713-0.718 on it, so rungs that read the dev cells better (n10: 114 mAh, n11: 91 mAh, vs n8's 126) cannot clear the 0.01 margin. Next: a frozen-set objective that separates them (e.g. more pairs, or scoring the jitter-free twin of each pair), decided before the rungs are re-judged."

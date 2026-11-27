@@ -81,5 +81,9 @@ class SwellCast:
         return apply_prior(r, self.meta['prior']) if (prior and calibrated and 'prior' in self.meta) else r
 
     def read(self, window):
-        """window: (3, 80, 34) from pipeline.window(...). Returns one dict of floats."""
-        r = self.predict(np.asarray(window)[None]); return {k: float(v[0]) for k, v in r.items()}
+        """window: (3, 80, 34) from pipeline.window(...). Returns one dict of floats.
+        A window with no finite energy is refused: it read as a storm swell (p 0.57, 2,878 km; audit, 25 Nov 2026)."""
+        w = np.asarray(window, float)
+        if not np.isfinite(w[0]).any():
+            raise ValueError('the window has no finite spectral energy')
+        r = self.predict(w[None]); return {k: float(v[0]) for k, v in r.items()}

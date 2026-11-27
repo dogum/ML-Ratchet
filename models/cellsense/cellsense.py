@@ -27,7 +27,10 @@ VGRID = np.linspace(3.5, 2.0, 1000)[::4].copy()            # 250 voltage levels,
 
 def q_of_v(V, Q, T=None, vgrid=VGRID):
     """capacity (and temperature) at each grid voltage from a discharge recorded in time: V falling, Q rising"""
-    V, Q = np.asarray(V, float), np.asarray(Q, float); Vm = np.minimum.accumulate(V); ok = (vgrid <= Vm[0]) & (vgrid >= Vm[-1])
+    V, Q = np.asarray(V, float), np.asarray(Q, float)
+    if (np.isfinite(V) & np.isfinite(Q)).sum() < 2:
+        raise ValueError('the discharge has fewer than 2 finite (V, Q) points')   # all-NaN read 0.82 Ah (audit, 25 Nov 2026)
+    Vm = np.minimum.accumulate(V); ok = (vgrid <= Vm[0]) & (vgrid >= Vm[-1])
     q = np.full(len(vgrid), np.nan); q[ok] = np.interp(-vgrid[ok], -Vm, Q); q[vgrid > Vm[0]] = 0.0
     t = None
     if T is not None:
@@ -126,6 +129,8 @@ def q_of_v_nmc(V, Q, tol=0.001):
     -> capacity at each VGRID_NMC voltage. A test that stopped within tol of 2.50 V counts as complete (cyclers stop a hair
     above the cut-off); one that stopped earlier is a partial discharge and leaves NaN below where it stopped."""
     V, Q = np.asarray(V, float), np.asarray(Q, float)
+    if (np.isfinite(V) & np.isfinite(Q)).sum() < 2:
+        raise ValueError('the discharge has fewer than 2 finite (V, Q) points')   # all-NaN read 4.03 Ah (audit)
     if V[-1] - VGRID_NMC[-1] < tol: V, Q = np.append(V, VGRID_NMC[-1]), np.append(Q, Q[-1])
     return q_of_v(V, Q, vgrid=VGRID_NMC)[0]
 

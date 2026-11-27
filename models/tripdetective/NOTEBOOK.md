@@ -217,3 +217,14 @@ physics v2; only the frozen set moved to v3.1.
   (2 %). r 0.30, slope 0.15, bias +161 kg, 1σ coverage 66 %. It loses to the dev median in spring (548 vs 515 kg) and
   on bus B183 (478 vs 474 kg); 288 exam legs are alone in their day and read the dev level.
 - Nothing got worse on the exam. Not fixed: per-trip type, the Leafs row, the bus day level.
+
+## 27 Nov 2026 — audit fixes: missing bus power and empty car logs (no retrain, exam unchanged)
+
+The two-reviewer audit (`docs/audits/tripdetective-v2.1.md`) found that the bus reader zero-filled missing power and
+kept such a leg in its bus-day mean. One leg without power moved each of the packaged day's other 13 legs by +239 kg.
+- Fixed: NaN power now reaches `raw_from_log`, which marks it invalid. The bus reader reads only windows at least 90 %
+  valid. A leg with none returns NaN and leaves the day. With half the longest leg's power missing, that leg moves
+  −101 kg and the others at most 30 kg (was −790 and +142 kg).
+- Fixed: `read_car` refuses logs with under 60 s of motion. All-NaN or all-zero speed returned 1,182 kg (conventional).
+- Checked, no exam change: none of the 5,905 ZTBus exam legs has a missing power sample (0 of 35.7 M), because the data
+  build interpolates logged power onto the 1 Hz grid. The golden demo is unchanged.

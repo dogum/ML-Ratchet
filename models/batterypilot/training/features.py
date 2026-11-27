@@ -79,10 +79,11 @@ def build(path, t_idx, duration_h, c_lin, ps=None):
     zda = np.where(known, zq(da[idx], ps[:, None]), 0.0)
     o_rt = np.arange(-H_RT, 0)
     ridx = np.clip(t[:, None] + o_rt[None, :], 0, n - 1)
-    zrt = zq(rt[ridx], ps[:, None])
+    seen = ridx < t[:, None]       # t = 0 only: the clipped index is the current hour (see batterypilot.build)
+    zrt = np.where(seen, zq(rt[ridx], ps[:, None]), zq(da[ridx], ps[:, None]))
     o6 = np.arange(-6, 0)
     i6 = np.clip(t[:, None] + o6[None, :], 0, n - 1)
-    sp6 = zq(rt[i6], ps[:, None]) - zq(da[i6], ps[:, None])
+    sp6 = np.where(i6 < t[:, None], zq(rt[i6], ps[:, None]) - zq(da[i6], ps[:, None]), 0.0)
     # demand forecast relative to the trailing 30-day max of the forecast (tightness proxy)
     dfi = np.clip(t[:, None] + np.arange(H_DF)[None, :], 0, n - 1)
     if 'dmax' in path:

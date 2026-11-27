@@ -625,3 +625,10 @@ frozen exam days would fail it: AHU24 on 5 and 11 March 2019, both normal days (
 the frozen split, which was scored once and is not edited. They count only in the false-alarm rows, at 2 of 459
 normal days. `day_qc` now measures runtime from the rows' own spacing by default. `exam2_nehasil.py` passes the old
 15 minutes explicitly so `--check` still reproduces the frozen split ("rebuild matches frozen split").
+
+## 27 Nov 2026 — audit fixes: day cut first, reader guardrails, weather cache (exam unchanged)
+
+The two-reviewer audit (`docs/audits/faultfinder-v1.1.md`) found that `raw_day` checked for flat sensors over the whole
+file before cutting the day, so a later day could flip an alarm. The day is now cut first; the exam passed one-day
+frames. `read_day` refuses empty days and non-earlier reference days, and warns on days with under 75 % supply-air
+coverage. BuildingSim's weather cache now hashes every column (it keyed on temperature only).

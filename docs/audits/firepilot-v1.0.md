@@ -24,3 +24,9 @@ Reviewer A’s original probe also passed its weight-health, example and five-ru
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/firepilot_v1_0_probe.py
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-b/peer_ea2bfde_probe.py firepilot
 ```
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Work-hours input (sd 1e-6) explodes on non-afternoon clocks | Yes (outside the training regime) | **Warned**: `Context.scenario_features` warns when the clock is not 34 working hours in 72 h. Training on varied start times is queued. | All 48 exam fires had 34 h (audit), so the exam is unchanged; the demo does not warn. |

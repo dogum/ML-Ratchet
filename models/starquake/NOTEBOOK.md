@@ -186,3 +186,7 @@ five lengths by `training/hybrid.py real exam exam` (2,098 readings, the same co
 - Coverage (1σ, νmax / Δν): 4 yr 81 / 84% (v1.0 72 / 78%), 27 d 58 / 63% (54 / 58%).
 - Worse: νmax at 90 d (+0.05 points), Δν at 54 d (+0.14 points), the Gaia radius scatter, and over-wide bars on whole
   light curves.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). Edge cadences without good flux now trigger a warning; grid_lc(trim=True) drops them (opt-in; re-score queued). Broadband-noise detections need high-RMS non-oscillators in training; queued.

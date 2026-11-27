@@ -36,7 +36,7 @@ The losses are published too.
 | [**GridPulse**](models/gridpulse/) | From the grid frequency after a trip: MW lost, inertia, and how low it will go | 412 real GB trips (NESO 1 s), 292 ERCOT reports | 5 wins · 6 losses |
 | [**BatteryPilot**](models/batterypilot/) | When should a grid battery buy and sell, knowing only what is known before the hour? | 48 real node-years, ERCOT 2023-25 + CAISO 2024-25 | 1 win · 7 losses |
 | [**PlantDetective**](models/plantdetective/) | What is this power unit, and how flexibly does it run, from its hourly output? | 395 real Texas CAMPD units, 2018-2025 | 8 wins · 9 losses |
-| [**DemandCast**](models/demandcast/) | Tomorrow's hourly demand, wind and solar for a US grid? | 2023-25, 8 US grids, 209,340 demand hours | 14 wins · 5 losses · 2 mixed |
+| [**DemandCast**](models/demandcast/) | Tomorrow's hourly demand, wind and solar for a US grid? | 2023-25, 8 US grids, 209,340 demand hours | 13 wins · 6 losses · 2 mixed |
 | [**WakeNet**](models/wakenet/) | How much power is each wind turbine losing to its neighbours' wakes? | 35,592 never-seen snapshots · 2 farms | 1 win · 13 losses · 4 ties |
 | [**LoadCast**](models/loadcast/) | A building's hourly energy per meter for next year | 1,502 real BDG2 meters, 2017 from 2016 | 9 wins · 18 losses · 21 ties |
 | [**BuildingDetective**](models/buildingdetective/) | From meters and weather: floor area, systems, envelope, use *(no real row beats dev-fitted baselines)* | 1,428 BDG2 buildings, 7,401 RECS homes, 2,558 CBECS buildings, 24 HUE homes | 0 wins · 25 losses · 9 ties |
@@ -52,6 +52,7 @@ The losses are published too.
 | [**FireDetective**](models/firedetective/) | What drove a wildfire, from its satellite record | 944 real exam fires, 2017-23 | 3 wins · 2 losses · 3 ties |
 | [**FirePilot**](models/firepilot/) | Where to build containment line in a fire's first 72 h *(graded in simulation)* | 48 real exam fires, outcomes simulated in FireSim, once | 1 win · 0 losses · 1 mixed · 1 tie |
 | [**QuakeNet v2**](models/quakenet-v2/) | Where, how deep, how big and when — from 2–10 seismometers together? | 1,456 quakes at 2 stations; 400 at up to 10 | 4 wins · 2 losses |
+| [**RoomSense**](models/roomsense/) | How long does a room ring after one clap? *(actual-clap exam pending)* | 38 synthetic claps through measured responses · 3 held-out rooms | 1 win · 1 loss |
 | [**TsunamiNet**](models/tsunaminet/) | How big is the tsunami coming, from the first DART readings? | 28 real DART-recorded Pacific tsunamis, 119 held-out DART forecasts | 3 wins · 2 losses |
 | [**LawFinder**](models/lawfinder/) | One-line laws extracted from the simulators, graded on real exams | Five platforms' real exams, six laws | 2 wins · 10 losses |
 | [**AirfoilNet**](models/airfoilnet/) | What polar will this airfoil have, and where does it stall? | 75 airfoils, 34 families, UIUC tunnel | 3 wins · 6 losses |
@@ -62,7 +63,7 @@ Every model also runs **live in your browser** on the website — the real netwo
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
 <!-- totals:start (generated) -->
-**0** real labelled examples were used for training. **601** rung decisions are logged, **344** of them rejections.
+**0** real labelled examples were used for training. **624** rung decisions are logged, **363** of them rejections.
 <!-- totals:end -->
 
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself. The three

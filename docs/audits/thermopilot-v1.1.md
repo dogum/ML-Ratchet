@@ -27,3 +27,20 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_d903cb6_pr
 ```
 
 Uses NumPy, pandas, SciPy, pvlib, Numba, and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_d903cb6_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Exam cards fitted on the episode's own weather (realized wind beyond 24 h) | Yes (evaluation only) | **Queued, not changed.** The released policy reads a card at run time; the defect is in how the exam built cards. A causal card needs the evaluation twin rebuilt on the prior month's weather, then a dated re-score; both are queued in the card. | The audit's own 30-day closed-loop replay bounds it: −$1.02 to +$0.23 per month (≤ 0.21 %), 0.00 K·h comfort violations, every ranking kept. |
+| BuildingSim weather cache omits wind | Yes (shared) | **Fixed** (see FaultFinder): all columns hashed. | Test added. |
+| Future tariffs, base loads, observer history | Clean | — | Audit: 0.0 effect with a fixed card. |
+
+**Follow-up run (27 Nov 2026, owner-approved).** Dated re-score of v1.1 with each card fitted on the month before the
+episode (`models/thermopilot/training/scripts/rescore_causal_card.py`; 166 episodes; logs in
+`training/results/v1.1_causal_card_2026-11-27/`). Every exam row moved by at most 0.04 bill points and 0.009 skill.
+Causal minus episode card: RECS bill −0.02 [−0.05, +0.00], BDG2 −0.04 [−0.17, +0.08], WPuQ −0.00 [−0.02, +0.02]; RECS
+skill −0.009 [−0.016, −0.003] is the only interval that excludes zero. No verdict changed. The card window ends at the
+episode start (a first run padded it 26 h into the episode and was re-run). Per episode the monthly objective moved by up to 1.2 % (RECS), 0.7 % (BDG2) and 0.2 % (WPuQ), in both
+directions. So the audit's 0.21 % bound, taken from four episodes, is exceeded on single episodes but not on any
+row. model.yaml and the card now carry the causal numbers. The controller is unchanged.

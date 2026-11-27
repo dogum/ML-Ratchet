@@ -1,0 +1,42 @@
+{
+ "ckpt": "r8_wide",
+ "sigma_scale": {
+  "d": 1.140573501586914,
+  "w": 1.0,
+  "s": 1.3671801090240479
+ },
+ "n_params": {
+  "d": 456240,
+  "w": 371760,
+  "s": 367664
+ },
+ "inputs": {
+  "d": 329,
+  "w": 164,
+  "s": 156
+ },
+ "issue": "10:00 local standard time on D-1; target = 24 h of D in local standard time",
+ "lst_offset_h": {
+  "ERCO": -6,
+  "CISO": -8,
+  "PJM": -5,
+  "MISO": -6,
+  "SWPP": -6,
+  "ISNE": -5,
+  "NYIS": -5,
+  "BPAT": -8
+ },
+ "version": "1.1.1",
+ "solar_offset_ref": {
+  "ERCO": 0.05149014554267106,
+  "CISO": 0.4616960626588476,
+  "PJM": 0.09044057762299804,
+  "MISO": 0.10589530032649877,
+  "SWPP": 0.1877319976297086,
+  "ISNE": 0.08431233989477113,
+  "BPAT": 0.03749855254401485
+ },
+ "solar_offset": "v1.1: solar reporting offset read at issue from the 168 h history (demandcast.solar_offset, features 56-104 and 156-324 of xs), counted from each grid's dev-year reference solar_offset_ref (median over 2019 and 2021); the network still reads the first 156 solar features. sigma_scale.s re-fitted on dev for v1.1 (v1.0: 1.3399618864059448).",
+ "z_clip": 8.0,
+ "z_clip_note": "v1.1.1 (27 Nov 2026): standardised inputs clipped at |z| 8 by default (dated re-score of the exam, training/rescore_zclip.py); sigma scales re-fitted on dev with the clip (v1.1: d 1.1407731771469116, s 1.3686171770095825)."
+}

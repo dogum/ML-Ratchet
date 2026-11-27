@@ -88,6 +88,11 @@ def net_input(raw, fl, Lw=L, feat=1):
     return x, x[13], sc
 
 
+MIN_MOVING_S = 60      # read_car refuses logs with less motion than this (1 Hz samples above 0.5 m/s)
+MIN_VALID_S = 120      # a bus leg needs this many valid samples to enter its bus-day (one minimum window)
+MIN_VALID_FRAC = 0.9   # a bus window is read only if this share of its samples is valid
+
+
 def windows(n, Lw=L, min_len=120):
     if n <= Lw: return [(0, n)]
     k = int(np.ceil(n / Lw)); e = np.linspace(0, n, k + 1).astype(int)
@@ -307,6 +312,14 @@ class TripDetective:
     def read_car(self, trips, fuel_estimated=True):
         """trips: list of trip dicts (same car). Returns physical estimates with 1-sigma error bars."""
         raws, fls, tid = [], [], []
+        moving = 0
+        for a in trips:
+            v = np.asarray(a['v'], float)
+            moving += int(np.sum(np.isfinite(v) & (v > 0.5)))
+        if moving < MIN_MOVING_S:
+            # No usable speed: every window would be zeros and the heads would still return a confident car
+            # (audit 2026-11-25: all-NaN or all-zero speed gave 1,181.74 kg, conv).
+            raise ValueError(f'need at least {MIN_MOVING_S} samples moving above 0.5 m/s, got {moving}')
         for t, a in enumerate(trips):
             fl = flags_from_trip(a, fuel_estimated)
             raw = raw_from_log(a, fl)
@@ -376,15 +389,22 @@ class TripDetectiveBus:
     def raw(self, a):
         n = len(a['v'])
         t = dict(v=a['v'], grade=a.get('grade'), T_amb=a.get('T_amb'), rho_air=a.get('rho_air'), valid=a.get('valid'),
-                 batt_current=np.nan_to_num(np.asarray(a['power_W'], float)) / 1000.0 / self.SCALE, batt_voltage=np.full(n, 1000.0),
+                 # NaN power stays NaN: raw_from_log marks those samples invalid. (Before 27 Nov 2026 it was
+                 # zero-filled here, so missing power read as a stopped bus and the leg still counted in its day.)
+                 batt_current=np.asarray(a['power_W'], float) / 1000.0 / self.SCALE, batt_voltage=np.full(n, 1000.0),
                  soc=np.full(n, 0.5))
         fl = dict(has_fuel=False, fuel_est=False, has_rpm=False, has_batt=True, has_aux=False)
         return raw_from_log(t, fl), np.array([float(fl[k]) for k in FLAGS], np.float32)
 
     def network_leg(self, leg):
-        """the network's own reading of one leg (kg), its log-sigma, the leg's log b0 and its number of windows"""
+        """the network's own reading of one leg (kg), its log-sigma, the leg's log b0 and its number of windows.
+        Only windows with at least MIN_VALID_FRAC valid samples (finite power and the optional `valid` flag) are read:
+        the network was not trained on long invalid stretches, which it reads as a lighter bus. A leg with no such
+        window is unreadable: it returns NaNs and 0 windows, so it stays out of its bus-day's means."""
         raw, fl = self.raw(leg)
-        W = windows(raw.shape[1])
+        W = [(s, e) for s, e in windows(raw.shape[1]) if raw[10, s:e].mean() >= MIN_VALID_FRAC]
+        if not W or int(raw[10].sum()) < MIN_VALID_S:
+            return np.nan, np.nan, np.nan, 0
         I = [net_input(raw[:, s:e], fl, feat=self.td.feat) for s, e in W]
         h = self.td.heads([self.td.encode(*i) for i in I], [i[2] for i in I])
         ps = np.sum([pstats(raw[:, s:e], fl) for s, e in W], 0)
@@ -400,12 +420,16 @@ class TripDetectiveBus:
             return out
         m = np.array([r[0] for r in R]); lb = np.array([r[2] for r in R]); w = np.array([r[3] for r in R], float)
         def day(x):
-            ok = np.isfinite(x)
+            ok = np.isfinite(x) & (w > 0)
             return float(np.sum(x[ok] * w[ok]) / np.sum(w[ok])) if ok.any() else np.nan
         md, lbd = day(m), day(lb)
         a, b, c = self.cal['coef']; sk = self.cal['sigma_kg']
         out = []
         for mm, sg, l0, nw in R:
+            if nw == 0:
+                out.append(dict(mass_kg=np.nan, mass_kg_1sigma=(np.nan, np.nan), network_kg=np.nan, n_windows=0,
+                                n_legs_in_day=len(legs), unreadable=f'fewer than {MIN_VALID_S} valid samples'))
+                continue
             rel_b0 = l0 - lbd if np.isfinite(l0) and np.isfinite(lbd) else 0.0
             est = a + b * (mm - md) + c * rel_b0
             out.append(dict(mass_kg=float(est), mass_kg_1sigma=(float(est - sk), float(est + sk)), network_kg=mm,

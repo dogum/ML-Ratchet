@@ -103,12 +103,15 @@ export function read(W: Pack<CMeta>, x: Tensor, floor = 0): Reading {
   };
 }
 
-/** far_per_hour: (background windows at least this loud + 1) / livetime. `bound`: none louder (an upper limit).
+/** far_per_hour: (background windows at least this loud + 1) / livetime; with none, the Poisson 90 % upper limit
+ * 2.303 / livetime. `bound`: none louder (an upper limit).
  *  Only the loudest background values ship; below them the rate is a lower limit (`floor`). */
 export function farPerHour(m: CMeta, score: number): { far: number; bound: boolean; floor: boolean } {
   let n = 0;
   while (n < m.bg_top.length && m.bg_top[n] >= score) n++;
-  return { far: (n + 1) / (m.bg_live_s / 3600), bound: n === 0, floor: n === m.bg_top.length };
+  // none at or above: the Poisson 90 % upper limit 2.303 / T (chirpnet.far_per_hour, 27 Nov 2026; was 1 / T)
+  const T = m.bg_live_s / 3600;
+  return { far: n === 0 ? 2.303 / T : (n + 1) / T, bound: n === 0, floor: n === m.bg_top.length };
 }
 
 // ---------------------------------------------------------------- ChirpNet-PE (DINGO-style RealNVP flow)

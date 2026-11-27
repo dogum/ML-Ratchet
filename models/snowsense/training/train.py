@@ -61,6 +61,7 @@ w[WARM:WARM + 365] = 1.0
 W = torch.tensor(w)
 
 HEAD = os.environ.get('SS_HEAD', 'gauss')
+torch.manual_seed(SEED)   # 27 Nov 2026: torch was unseeded (audit); historical rungs were trained without it
 net = SnowNet(hidden=HID, head=HEAD)
 opt = torch.optim.AdamW(net.parameters(), lr=LR, weight_decay=1e-4)
 steps_per_epoch = n // BS

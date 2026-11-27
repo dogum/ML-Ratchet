@@ -392,3 +392,41 @@ before the next ladder, would have kept v1.1. The simulator change moved the twi
 **Not done.** No CAISO fit for the RT scarcity (no CAISO prices before Aug 2023): the CAISO-like family is unchanged.
 The calibration ends on grid edges again (σ, cold f_max). The shape-only GridSim fit's twin run was stopped when the
 parameter file changed under it; its $9.3-10.7k breakdown is from `diag_rolling.py` only.
+
+## 27 Nov 2026 — audit: hour-0 history fixed; causal wear plan opt-in (re-score queued)
+
+The two-reviewer audit (`docs/audits/batterypilot-v1.3.md`) found two information leaks. At the first hour of a path
+the RT price history clipped to that hour's own price; fixed (the packaged node-years move at most $0.002/kW-year).
+The day-ahead planner's wear cost used realized temperatures for the coming hours. `causal_wear()` (48 h persistence, so every plan reads only temperatures known when it is made; a first 24 h version still read up to 9 h ahead, Codex)
+is now available but off by default, so the card still describes v1.3. On the packaged node-years it moves annual net
+revenue by −$0.05, −$0.02 and −$0.03/kW-year. A dated re-score with it waits for the owner's approval.
+
+## 27 Nov 2026 — dated re-score with the causal wear plan; v1.3.1
+
+The owner approved the queued re-score. `training/rescore_causal.py run` ran `exam.main` once with the released weights
+(`batterypilot_weights.npz` = `work/ckpt/r8_v6.npz`) on all 48 exam node-years × 1, 2, 4 h, with two BatteryPilot
+variants on the same rows: `bp` (v1.3 as examined, plus the hour-0 fix) and `bpc` (`run_policy(...,
+c_lin_plan=causal_wear(bat, T))`: the day-ahead backbone's wear cost from each hour's temperature 48 h earlier).
+Settlement and wear still use realized temperatures. Nothing was chosen from these numbers; the 48 h lag was fixed by
+the audit. 30 min on one core. Outputs: `work/data/exam/v1_3_rescore_2026-11-27_*` (rows, daily, monthly, two reports,
+`_compare.json`; committed as `training/checks/exam_report_v1_3_1.json` and `exam_rescore_causal_2026-11-27.json`).
+
+Reproduction: `bp` per node-year is within $0.02/kW-yr of v1.3's exam (`training/checks/exam_report_v1_3.json`); that
+is the hour-0 fix plus rounding. Pooled and per-duration shares of perfect hindsight, v1.3 → v1.3.1:
+
+| | v1.3 (realized-T plan) | v1.3.1 (causal plan) | DA optimiser |
+|---|---|---|---|
+| ERCOT, all (108 cases) | 67.115 % | 67.127 % | 68.461 % |
+| ERCOT 1 h / 2 h / 4 h | 54.76 / 68.05 / 78.53 | 54.79 / 68.03 / 78.56 | 62.87 / 68.37 / 74.15 |
+| CAISO, all (36 cases) | 59.372 % | 59.326 % | 68.106 % |
+| CAISO 1 h / 2 h / 4 h | 48.35 / 57.95 / 71.82 | 48.12 / 58.05 / 71.82 | 64.05 / 67.99 / 72.28 |
+| Beats the optimiser, ERCOT / CAISO | 56.5 % / 19.4 % | 56.5 % / 19.4 % | |
+| Cycles a year, ERCOT / CAISO | 221.6 / 214.9 | 221.6 / 215.0 | 300.5 / 281.8 |
+
+Per node-year-battery, v1.3.1 − v1.3 ranges from −$0.14 to +$0.16/kW-yr in ERCOT (mean +$0.011; lower in 43 of 108)
+and −$0.26 to +$0.21 in CAISO (mean −$0.003; lower in 17 of 36). No count of wins against any baseline changed. So the
+perfect temperature forecast was worth almost nothing to the plan, and v1.3's exam stands as a fair measure.
+
+It holds, so the causal plan is now the default as **v1.3.1** (`batterypilot.run_policy(..., c_lin_plan='causal')`;
+`None` reproduces v1.3). The card's rows are v1.3.1's numbers with v1.3's in each note. Same weights, same ratchet: no
+rung was trained. The instrument now builds its backbone with the 48 h lag too (`plan_lag_h` in the weights meta).

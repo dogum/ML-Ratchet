@@ -31,3 +31,10 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_69873b7_pr
 ```
 
 Uses NumPy and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_69873b7_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Broadband noise triggers detections at real-giant RMS | Yes | **Documented, queued**: high-RMS non-oscillating stars in the noise bank. No inference guard can tell such noise from oscillations without that training. | Card limits and next. |
+| Flagged or empty cadences at the ends change duty and FFT grid | Yes | **Warned, opt-in fix, re-score queued**: `grid_lc` / `read_npz` / `load_kepler` take `trim=True`; by default they warn. | Counted 27 Nov 2026: 36 of the 858 archived light curves (exam, dev and noise) start or end on a gap (25 leading, 11 trailing). |

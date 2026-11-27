@@ -128,3 +128,7 @@ Every path the training scripts read or write was listed and checked against a f
   `data/raw/coord_seligFmt/` (`uiuc_lsat.py`, `dataset.py`); the published XFOIL polars from airfoiltools.com in
   `data/xfoil_published/xf-<airfoil>-il-<Re>.csv` (`verify_physics.py` only); NeuralFoil 0.3.3's `nn-*.npz` weights
   from its wheel (`NEURALFOIL_WEIGHTS`). The training snapshots `snap_A/B.json` (above) are not reproducible.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). polar(coords=...) reorders Lednicer blocks (they moved lift by up to 5.44); the module header now describes the released MLP ensemble.

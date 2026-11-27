@@ -60,3 +60,47 @@ Audits test **falsifiable evidence** in shipped `.npz` weights, input standardiz
 ## Coverage at close
 
 **34 of 34 registered models have two-reviewer canonical reports.** Coverage refers to the registered model snapshots above. Each linked report records the inputs tested, the measured consequences and any open questions about historical exam impact or retraining. The closing review changed audit documentation and probes only.
+
+## Resolution pass (27 Nov 2026)
+
+Each report now ends with a **Resolution** section: what was real, what changed, and why anything was left as it was.
+The rule used: a fix that cannot change a published exam number is on by default (each one was checked against the exam
+data, and the counts are in the reports). A fix that would change exam outputs is shipped opt-in, with a warning, so
+each card still describes the released model. Its dated re-score, like every retrain, waits for the owner's approval.
+
+| Model | Fixed now | Effect on the published exam | Queued for approval |
+|---|---|---|---|
+| EnergyNet | Training fix in code (`--robust-norm`, `--mask-comp`, off by default) | None (inference unchanged) | Run 27 Nov 2026 as rung v2-r18: rejected (skill 0.679 vs 0.680, D2 0.1073 vs 0.1077); v2.1 stays |
+| TripDetective | Missing bus power is invalid, not zero; car reader refuses logs without motion | None (0 of 35.7 M exam power samples missing) | — |
+| HybridPilot | Preview reads nothing past its window | None (released R22 uses no preview; 0 grade gaps on 216 exam trips) | — |
+| LawFinder | Range warnings (`strict=True` raises); EV grade sign in the card; UTF-8 JSON | None | Run 27 Nov 2026 (rungs p2s-*): rejected (best R² 0.757 vs 0.767); p1-c23 stays |
+| GridPulse | `window(f, i0, N)` reads only the prefix; live records accepted | None (0 gaps in 412 exam traces) | — |
+| DemandCast | Warnings on dark-hour solar and |z| > 8 inputs; opt-in `z_clip` | Not re-scored: 1,734 solar / 365 demand exam rows affected | **Run 27 Nov 2026.** Re-score with `z_clip=8` → v1.1.1 (demand 2.38 → 2.32 %; missing-history rows 5.96 → 2.58 %). Repair rung r10 promoted (val_v5 +0.015, dev −4.8 %); v1.2 exam once: solar 16.1 → 10.6 %, demand 2.32 → 2.49 % (worse) |
+| BatteryPilot | Hour 0 no longer reads its own RT price; opt-in `causal_wear` | ≤ $0.002/kW-yr on packaged years | **Run 27 Nov 2026.** All 48 node-years: ERCOT 67.1 → 67.1 %, CAISO 59.4 → 59.3 %; default since v1.3.1 |
+| PlantDetective | Missing stretches inside runs bridged (6179_3: 107.58 → 6.42 starts/yr) | None (0 missing hours in 407 exam files) | — |
+| LoadCast | Warning when no electricity meter; opt-in `assume_electricity` | Not re-scored: 58 of 1,584 exam buildings affected | **Run 27 Nov:** 19 exam meters (15 buildings) re-scored; no verdict changed; released as v1.0.1 (`assume_electricity` on). Representation rung not run (frozen set has no such building) |
+| BuildingDetective | Short records hold span inputs at one year; |z| > 8 warning | None (both exams full-year) | **Run 27 Nov:** rung r11 (district zero runs) rejected on the frozen set (0.8287 vs 0.8301); bounded variant logged; no exam |
+| FaultFinder | Day cut before QC; refuses empty days and self-reference; BuildingSim cache key | None (exam passed one-day frames) | — |
+| ThermoPilot | BuildingSim cache key hashes every weather column | Bounded by the audit at ≤ 0.21 % monthly cost | **Run 27 Nov:** causal cards, 166 episodes; rows moved ≤ 0.04 bill points and ≤ 0.009 skill, no verdict changed; card updated |
+| FlowCast | Nowcast refuses lead 0; torch seeded, resume restores RNG | None | — |
+| SnowSense | Partial water years stop at the last input; torch seeded | None (exam uses completed years) | — |
+| BasinDetective | Refuses unusable calibration flow | None | Matched retrain with a symmetric precipitation prior |
+| ReservoirPilot | Opt-in `causal_capacity` | Exam definition shared with the WaterData board | Re-score of all arms with causal capacity |
+| FireCast | Evaluation limit stated in the card | — | — |
+| FireSize | |z| > 8 warning; opt-in `z_clip` | Not re-scored: 91 of 655,869 ignitions on slash–blowdown | Bank with such ignitions, retrain, re-score |
+| FireDetective | Refuses empty histories | None (exam fires had 3–12 steps) | Retrain with an unscaled blind-wind flag |
+| FirePilot | Warning on non-afternoon crew clocks | None (all 48 exam fires had 34 h) | Train on varied start times |
+| QuakeNet | Incomplete-window warning; refuses NaN in the window | None | — |
+| QuakeNet v2 | Catalogue-assisted picking stated in the card | — | Exam with independent picks |
+| TsunamiNet | Refuses events without a buoy; calibrated `GreensFunctions()` default | None (all 28 exam events had a buoy) | — |
+| ChirpNet | FAR with no louder background is the Poisson 90 % limit (1.15/h, was 0.50/h) | Reporting only | — |
+| StormNet | Calibration bin labels match the code | None | — |
+| StarQuake | Edge-cadence warning; opt-in `trim` | Not re-scored: 36 of 858 light curves have edge gaps | High-RMS noise in the bank; re-score with trimming |
+| TransitNet | Refuses constant flux; warns on unobserved transit cores | None | — |
+| SwellCast | Refuses all-NaN windows; opt-in field-specific NDBC sentinels | Not re-scored (exam parsed with the generic rule) | Re-score with field sentinels |
+| SunDoctor | CSV rows sorted by time; daylight-gap warning; opt-in `min_daylight` | None for sorting | Re-score with `min_daylight` |
+| BearingNet | Skips windows with missing samples | None | — |
+| BeatNet | Fills ≤ 10-sample gaps, refuses longer; 201/202 patient in the card | Card shows DS2 without 202 | Retrain without patient 201/202, then re-score |
+| CellSense | Refuses all-NaN discharges | None | — |
+| WakeNet | Demo summary scores all 31 waked readings | None (exam already did) | — |
+| AirfoilNet | Lednicer blocks reordered in `polar(coords=...)`; header fixed | None (exam used canonical coordinates) | — |

@@ -452,6 +452,8 @@ limits:
 - <b>Method:</b> one search per physics version, time-boxed at 4-7 minutes on a shared core; another seed can give a different
   front. Dev sets are small (4 grid events, 40 fires, 52 basins), so the gate is coarse. The road law (RoadSim trip energy)
   was added on 22 Nov 2026, after the other four.
+- "<b>Road, electric cars and grade:</b> the released law's energy falls as the road gets steeper. On one battery-electric drive (same speed trace, start charge and seed) it gives 0.512, 0.408 and 0.324 MJ/km at -2 %, 0 and +2 % net grade, where RoadSim's battery energy is 0.009, 0.332 and 0.659 MJ/km (audit, 25 Nov 2026). At e = 1 the exponent's base is below one, so the sign holds for every BEV. Six of the 21 logged p2 candidates rise with grade; all six missed the pooled promotion margin. A sign-checked search (27 Nov 2026) found no replacement that passed the ratchet."
+- "<b>Input ranges:</b> each law is fitted inside its bank's input ranges (var_info in lawfinder_laws.json) and extrapolates freely outside them. The homes law's heating slope turns negative for homes built after 2020 (+1.87 at 2020, -3.13 at 2025, kWh/m² per 1000 K·d). Chaining the two grid laws, 615 of 2,356 inertia predictions on a regular grid fall below the nadir law's 90 GVA·s floor. Since 27 Nov 2026 predict() warns outside the declared ranges (strict=True raises). One of the demo's real grid events is outside them (a loss above 2 GW)."
 help_wanted:
 - Daymet/NLDAS forcing would separate law skill from ERA5-Land bias (WaterData help_wanted)
 next:
@@ -461,6 +463,7 @@ next:
   the ladder; the shape term (1 − 0.85 s) should survive.'
 - 'Water: a recession law −dQ/dt = a Q^b on the same banks, and a Daymet/NLDAS exam to separate law skill from ERA5-Land bias.'
 - 'Road: give the law the car''s engine size or label fuel economy, cold start and trip length as inputs (RoadData has them), and widen the generator toward lighter cars.'
+- 'Road: a powertrain-aware grade term. The sign-checked search (27 Nov 2026, rungs p2s-*) found no law that reads grade with the right sign; its best, p2s-c19, ignores grade and scored R^2 0.757 against 0.767, so it was rejected and p1-c23 stays. Options for the owner: an EV dev check as a rule, or a search seeded with a road-load grade term per powertrain.'
 - 'Homes: add heating fuel and system as inputs (a law per fuel) and occupants; RECS dev shows the fuel matters most.'
 usage:
   install: pip install numpy

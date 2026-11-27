@@ -72,6 +72,7 @@ Coverage of the 68% error bars on the exam: Exam 1 all hours (v1.0 single factor
 - 68% bars still under-cover storm hours: 59.9% of storm-strength, 52.9% of intense and 50.9% of extreme targets in exam 2 with v1.0.1 (v1.0: 51.5, 41.9 and 41.7%).
 - Retrospective Earth-arrival-aligned wind and the last completed historical Dst. Real telemetry latency and index revisions matter in operational use; 2022–2025 Dst in OMNI is Kyoto's provisional or quicklook index.
 - The two-state fit reaches the lower pressure-coefficient bound. Simulated dev minima are typically 8–14 nT deeper than their real twins. Re-running the physics with the actual next three hours of wind barely helps (dev 4.36 → 4.21 nT), so the remaining error is the physics and the index's hourly noise, not the unknown wind.
+- Freshness (audit, 25 Nov 2026): a one-hour-stale Dst raised gallery MAE from 8.97 to 11.21 nT (extremes 39.12 to 46.85 nT). The calibration file's bin labels now match the code: Dst < -50, -50 to < -30, >= -30 nT.
 
 ## The ratchet
 

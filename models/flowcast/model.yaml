@@ -300,6 +300,7 @@ limits:
   - "The climate statics are computed from the forcing of the window being predicted, so a prediction for a short or unusual window carries that window's climate (exam-period forcing, never flow)."
   - "Rung decisions near ±0.01 on the frozen set are noise-level: a 300-basin subset and the full 800 disagreed on r5. A paired bootstrap over the 800 frozen basins (added on import) gives r1b's gain over r0b on p1 as +0.030 (95 % CI +0.001 to +0.052)."
 
+  - "Reproducibility (audit, 25 Nov 2026): training seeded only NumPy's batch sampler, so the same config gave different initial weights; torch is seeded and resume restores both generators since 27 Nov 2026 (historical rungs were trained unseeded). The nowcast API now refuses lead 0, which would feed each day's own observed flow to its forecast; the exam used leads 1, 3 and 7."
 next:
   - "A snow rung driven by twins on the 10 snowy dev basins: the full dev snow shift (TT −0.66 °C, SFCF +0.11, CFMAX) and an elevation-dependent ERA5-Land temperature bias. Snow is the largest exam gap (−0.16 against U-dev)."
   - "Per-basin water yield learned from attributes with uncertainty, instead of the regional regression; or ERA5-Land snow water equivalent and soil-moisture states as inputs."

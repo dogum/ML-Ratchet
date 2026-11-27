@@ -1,6 +1,6 @@
 id: batterypilot
 name: BatteryPilot
-version: "1.3"
+version: "1.3.1"
 status: released
 released: 2026-11-15
 order: 14
@@ -21,6 +21,9 @@ summary: >-
   2023-25 and CAISO 2024-25 prices. v1.3 earns 67 % (ERCOT) and 59 % (CAISO) of perfect hindsight net of wear: better
   than the daily-spread and threshold rules, worse than the rolling day-ahead optimiser (69 % and 68 %), and worse
   than v1.1 (68 % and 61 %) although it was better on the real dev years. It wins only with 4 h ERCOT batteries.
+  v1.3.1 (27 Nov 2026) is the same network with the day-ahead plan's wear cost read from temperatures known at issue
+  (48 h earlier) instead of realized ones; a dated re-score on every exam node-year moved the pooled shares by at most
+  0.05 points (ERCOT 67.1 %, CAISO 59.3 %).
 
 reads: "Hourly and causal: real-time prices of the last 24 h, day-ahead prices for the rest of today (and tomorrow after 14:00 local; 36 h, masked where not yet published), the RT-DA spread of the last 6 h, the balancing authority's day-ahead demand forecast for 24 h (EIA-930, relative to its 30-day max), the last temperature, hour, day of year, weekend, and the battery (duration, wear cost / price scale, price scale). Prices are scaled by the 7-day median DA price and squashed with asinh; 135 features. v1.3 also reads the day-ahead backbone curve at the 5 knots (a backward dynamic programme over the DA prices known before the hour; 140 inputs)."
 returns:
@@ -102,8 +105,11 @@ exam:
     settles at the hourly RT price with rainflow wear at the BA's temperature. DA optimiser = a rolling LP that re-plans
     at 14:00 with day-ahead prices as the forecast; spread rule and threshold rule are GridData's baselines (the
     threshold uses the node's dev-period RT quartiles). Revenue intervals come from a weekly block bootstrap (2,000
-    draws). The rows below are v1.3's (run once after its release choice was committed); each note keeps v1.0's first
-    look and v1.1's second look (v1.1 re-scored on the same run: identical).
+    draws). The rows below are v1.3.1's: v1.3's network with the causal wear plan (default since 27 Nov 2026), from a
+    dated supplementary re-score of all 48 node-years (training/rescore_causal.py; the network and every choice were
+    fixed before it, and v1.3 as examined was re-run on the same rows: within $0.02/kW-yr of its exam). v1.3's own exam
+    was run once after its release choice was committed; each note keeps v1.3's number, v1.0's first look and v1.1's
+    second look (v1.1 re-scored on the same run: identical).
   results:
     - metric: Share of perfect hindsight, ERCOT 2023-25, all batteries (36 node-years × 1/2/4 h)
       better: higher
@@ -114,17 +120,17 @@ exam:
         - { name: "Daily spread rule (GridData)", kind: classical, value: 56.1 }
         - { name: "Threshold rule, dev RT quartiles (GridData)", kind: dumb, value: 11.4 }
       verdict: loss
-      note: "v1.3 beats the spread rule in 82 % of node-year-battery cases, the threshold rule in all, the DA optimiser in 56 %; 222 cycles a year vs 301 for the optimiser. v1.0: 66.7 % (beats the optimiser in 57 %); v1.1: 67.9 % (63 %). v1.3 is lower than v1.1 here although it was higher on dev (0.660 vs 0.638)."
+      note: "v1.3.1 beats the spread rule in 82 % of node-year-battery cases, the threshold rule in all, the DA optimiser in 56 %; 222 cycles a year vs 301 for the optimiser. v1.3 as examined: 67.1 % (realized-temperature plan; same shares). v1.0: 66.7 % (beats the optimiser in 57 %); v1.1: 67.9 % (63 %). v1.3 is lower than v1.1 here although it was higher on dev (0.660 vs 0.638)."
     - metric: Share of perfect hindsight, CAISO 2024-25, all batteries (12 node-years × 1/2/4 h)
       better: higher
-      model: 59.4
+      model: 59.3
       unit: "%"
       baselines:
         - { name: "Rolling day-ahead LP optimiser", kind: classical, value: 68.1 }
         - { name: "Daily spread rule (GridData)", kind: classical, value: 58.9 }
         - { name: "Threshold rule, dev RT quartiles (GridData)", kind: dumb, value: 15.8 }
       verdict: loss
-      note: "v1.3 beats the spread rule in 50 % of cases, the DA optimiser in 19 %. v1.0: 64.2 % (spread 81 %, optimiser 19 %); v1.1: 61.4 % (58 %, 11 %). Worse each version: the CAISO-like simulator family is hand-set and v1.3's GridSim scarcity has no CAISO fit."
+      note: "v1.3.1 beats the spread rule in 50 % of cases, the DA optimiser in 19 %. v1.3 as examined: 59.4 % (same shares). v1.0: 64.2 % (spread 81 %, optimiser 19 %); v1.1: 61.4 % (58 %, 11 %). Worse each version: the CAISO-like simulator family is hand-set and v1.3's GridSim scarcity has no CAISO fit."
     - metric: Share of perfect hindsight, ERCOT, 1 h battery (36 node-years)
       better: higher
       model: 54.8
@@ -134,47 +140,47 @@ exam:
         - { name: "Daily spread rule (GridData)", kind: classical, value: 53.1 }
         - { name: "Threshold rule (GridData)", kind: dumb, value: 1.8 }
       verdict: loss
-      note: "v1.3 beats the optimiser in 7 of 36 node-years; 2025 1 h −$3.7/kW-yr, 95 % CI [−7.7, −0.4]. v1.0: 55.9 % (25 %); v1.1: 57.8 % (36 %)."
+      note: "v1.3.1 beats the optimiser in 7 of 36 node-years; 2025 1 h −$3.7/kW-yr, 95 % CI [−7.7, −0.4]. v1.3: 54.8 %. v1.0: 55.9 % (25 %); v1.1: 57.8 % (36 %)."
     - metric: Share of perfect hindsight, ERCOT, 2 h battery (36 node-years)
       better: higher
-      model: 68.1
+      model: 68.0
       unit: "%"
       baselines:
         - { name: "Rolling day-ahead LP optimiser", kind: classical, value: 68.4 }
         - { name: "Daily spread rule (GridData)", kind: classical, value: 57.0 }
         - { name: "Threshold rule (GridData)", kind: dumb, value: 10.9 }
       verdict: loss
-      note: "v1.3 beats the optimiser in 24 of 36 node-years but loses on the mean by 0.3 points: 2024 +$2.2/kW-yr [+0.7, +3.6], 2025 −$3.9 [−8.1, −0.3], 2023 +$7.5 [−3.5, +18.1]. v1.0: 67.1 %; v1.1: 68.0 %."
+      note: "v1.3.1 beats the optimiser in 24 of 36 node-years but loses on the mean by 0.3 points: 2024 +$2.2/kW-yr [+0.7, +3.6], 2025 −$3.9 [−8.1, −0.3], 2023 +$7.5 [−3.5, +18.0]. v1.3: 68.1 %. v1.0: 67.1 %; v1.1: 68.0 %."
     - metric: Share of perfect hindsight, ERCOT, 4 h battery (36 node-years)
       better: higher
-      model: 78.5
+      model: 78.6
       unit: "%"
       baselines:
         - { name: "Rolling day-ahead LP optimiser", kind: classical, value: 74.2 }
         - { name: "Daily spread rule (GridData)", kind: classical, value: 58.3 }
         - { name: "Threshold rule (GridData)", kind: dumb, value: 21.6 }
       verdict: win
-      note: "v1.3 beats the optimiser in 30 of 36 node-years: 2023 +$12.9/kW-yr [+3.9, +24.7], 2024 +$4.9 [+3.0, +6.6], 2025 −$0.7 [−5.5, +2.9]. v1.0: 76.9 % (81 %); v1.1: 78.0 % (86 %)."
+      note: "v1.3.1 beats the optimiser in 30 of 36 node-years: 2023 +$12.9/kW-yr [+3.9, +24.7], 2024 +$4.9 [+3.1, +6.6], 2025 −$0.7 [−5.6, +2.9]. v1.3: 78.5 %. v1.0: 76.9 % (81 %); v1.1: 78.0 % (86 %)."
     - metric: Share of perfect hindsight, CAISO, 1 h battery (12 node-years)
       better: higher
-      model: 48.3
+      model: 48.1
       unit: "%"
       baselines:
         - { name: "Rolling day-ahead LP optimiser", kind: classical, value: 64.1 }
         - { name: "Daily spread rule (GridData)", kind: classical, value: 55.2 }
         - { name: "Threshold rule (GridData)", kind: dumb, value: 10.4 }
       verdict: loss
-      note: "v1.3 loses to the optimiser in all 12 node-years; 2024 −$3.2/kW-yr [−5.5, −1.7]. v1.0: 56.3 %; v1.1: 52.1 %."
+      note: "v1.3.1 loses to the optimiser in all 12 node-years; 2024 −$3.2/kW-yr [−5.6, −1.8]. v1.3: 48.3 %. v1.0: 56.3 %; v1.1: 52.1 %."
     - metric: Share of perfect hindsight, CAISO, 2 h battery (12 node-years)
       better: higher
-      model: 57.9
+      model: 58.0
       unit: "%"
       baselines:
         - { name: "Rolling day-ahead LP optimiser", kind: classical, value: 68.0 }
         - { name: "Daily spread rule (GridData)", kind: classical, value: 59.2 }
         - { name: "Threshold rule (GridData)", kind: dumb, value: 16.6 }
       verdict: loss
-      note: "v1.3 beats the optimiser in 1 of 12 node-years. v1.0: 63.4 % (1 of 12); v1.1: 60.4 % (0 of 12)."
+      note: "v1.3.1 beats the optimiser in 1 of 12 node-years. v1.3: 57.9 %. v1.0: 63.4 % (1 of 12); v1.1: 60.4 % (0 of 12)."
     - metric: Share of perfect hindsight, CAISO, 4 h battery (12 node-years)
       better: higher
       model: 71.8
@@ -184,7 +190,7 @@ exam:
         - { name: "Daily spread rule (GridData)", kind: classical, value: 62.3 }
         - { name: "Threshold rule (GridData)", kind: dumb, value: 20.3 }
       verdict: loss
-      note: "v1.3 beats the optimiser in 6 of 12 node-years; 2024 −$2.4/kW-yr [−6.2, +0.3], 2025 +$1.2 [−0.3, +2.6]. v1.0 won this row thinly (73.0 %); v1.1 71.9 % and v1.3 71.8 % lose it."
+      note: "v1.3.1 beats the optimiser in 6 of 12 node-years; 2024 −$2.4/kW-yr [−6.2, +0.3], 2025 +$1.2 [−0.3, +2.6]. v1.0 won this row thinly (73.0 %); v1.1 71.9 %, v1.3 71.8 % and v1.3.1 71.8 % lose it."
     - metric: "Comparison only: the same network trained on real ERCOT 2018/2020/2022 node prices (breaks the physics-only rule; not released)"
       better: higher
       model: "ERCOT 69.0, CAISO 56.4"
@@ -192,15 +198,15 @@ exam:
       baselines:
         - { name: "BatteryPilot v1.0 (simulator-trained)", kind: classical, value: "ERCOT 66.7, CAISO 64.2" }
       verdict: info
-      note: "What the simulator cost v1.0 in ERCOT (−2.3 points) and gained it in CAISO (+7.8 points), where no real training prices exist. v1.3: ERCOT 67.1, CAISO 59.4."
+      note: "What the simulator cost v1.0 in ERCOT (−2.3 points) and gained it in CAISO (+7.8 points), where no real training prices exist. v1.3: ERCOT 67.1, CAISO 59.4; v1.3.1: 67.1, 59.3."
 
 wins:
-  - "4 h ERCOT batteries: 0.785 vs 0.742 for the rolling day-ahead optimiser (v1.3; beats it in 30 of 36 node-years; 2023 +$12.9/kW-yr, CI [+3.9, +24.7]; 2024 +$4.9, CI [+3.0, +6.6])."
+  - "4 h ERCOT batteries: 0.786 vs 0.742 for the rolling day-ahead optimiser (v1.3.1; v1.3 0.785; beats it in 30 of 36 node-years; 2023 +$12.9/kW-yr, CI [+3.9, +24.7]; 2024 +$4.9, CI [+3.1, +6.6])."
   - "Beats GridData's daily-spread rule (ERCOT 0.671 vs 0.561 of perfect hindsight) in 82 % of ERCOT node-year-battery cases, and the threshold rule in every case."
   - "Cycles less: about 222 (ERCOT) and 215 (CAISO) cycles a year vs 301 and 282 for the optimiser; its worst month at the median node was −$0.07/kW (any node: −$0.09/kW, CAISO ZP26 December)."
   - "Trained without a single real price path: real dev years only calibrated the simulator and gated rungs; GridSim's RT scarcity was fitted on train-input-year prices."
 losses:
-  - "Loses to the classical rolling day-ahead optimiser on both pooled rows in every version: v1.3 ERCOT 0.671 vs 0.685, CAISO 0.594 vs 0.681 (v1.0 0.667 / 0.642, v1.1 0.679 / 0.614)."
+  - "Loses to the classical rolling day-ahead optimiser on both pooled rows in every version: v1.3.1 ERCOT 0.671 vs 0.685, CAISO 0.593 vs 0.681 (v1.3 0.671 / 0.594, v1.0 0.667 / 0.642, v1.1 0.679 / 0.614)."
   - "v1.3 is worse than v1.1 on the exam (ERCOT 0.671 vs 0.679, CAISO 0.594 vs 0.614) although it was better on the real dev years (0.660 vs 0.638) and on the new frozen set (0.772 vs 0.735). The dev gain came from 2021 alone (Uri; 0.48-0.50 vs 0.37-0.38); on dev 2019 (0.77-0.78 vs 0.81-0.82) and CAISO 2023 (0.73 / 0.81 vs 0.78 / 0.84) it was already worse, as it is on the exam. The pooled dev gate let the Uri year decide."
   - "1 h batteries lose clearly: ERCOT 0.548 vs 0.629 (7 of 36 node-years won); CAISO 0.483 vs 0.641, every node-year."
   - "CAISO 4 h, a thin win for v1.0 (0.730 vs 0.723), is a loss for v1.1 (0.719) and v1.3 (0.718)."
@@ -214,6 +220,7 @@ limits:
   - "The forced-outage rates of physics 1.1 and 1.2 are PJM class averages (demand-period EFORd), not ERCOT's own pre-2023 rates."
   - "The exams have been seen: v1.3's exam was run once after its release choice was committed, and the dev-chosen v1.3 lost ground on it."
   - "No error bar on the value curve itself; the exam's intervals are on revenue (weekly block bootstrap), so the recipe's coverage step does not apply."
+  - "Information boundary (audit, 25 Nov 2026): v1.3's day-ahead planner took its wear cost from realized temperatures for the coming hours, a perfect temperature forecast. v1.3.1 (27 Nov 2026) takes each hour's temperature from 48 h earlier, known when any plan covering that hour is made (plans run up to 33 h ahead); 48 h persistence is a crude temperature forecast, and the wear term is small, so the re-score moved each node-year-battery by -$0.26 to +$0.21/kW-year and the pooled shares by at most 0.05 points. v1.3's own exam used the realized form (run_policy(..., c_lin_plan=None) reproduces it). At the first hour of a path the price history clipped to that hour's own RT price; fixed 27 Nov 2026 (at most $0.02/kW-year on the exam)."
 next:
   - "Fix what the dev twin test still shows: the rolling DA optimiser captures 55-56 % on 1.2 twins of dev 2019 vs 79 % real. Real unforecast spikes put 86 % of their value in the day's 3 dearest DA hours (2019), the simulator 57 %; and the simulated DA carries a scarcity premium in those hours that real RT often undercuts by more. Calibrate the size and placement until the twin captures of the LP, the backbone and the network all match real dev."
   - "A dev gate that one year cannot carry (for example: no dev year worse by more than 0.01), decided before the next ladder: v1.3 passed the pooled gate on 2021 (Uri) alone and lost ground on the exam."
@@ -221,6 +228,7 @@ next:
   - "R9 (the hybrid on all 165 path-years) had the best dev score of any rung (0.685) but missed the margin on the frozen set by 0.004: a frozen set that agrees with dev would settle it."
   - "Nodal basis: a West Texas congestion model; a real CAISO import and hydro supply curve; ancillary services."
   - "Upstream to GridSim behind flags: the ORDC adder, the cold-outage curve, the gas-turbine ambient derate, the day-ahead price generator and the single-LP perfect-foresight baseline."
+  - "An issue-time day-ahead temperature forecast for the planner's wear cost instead of 48 h persistence (v1.3.1); the re-score says the wear term barely moves revenue, so this is low priority."
 help_wanted:
   - "CAISO OASIS serves only about 3 years (data from 2023-08): an archive of CAISO hub and DLAP prices for 2018-2022 would give the CAISO family real dev years, a GridSim RT scarcity fit for CAISO, and a longer exam."
   - "Pre-2023 ERCOT forced-outage rates by technology (NERC GADS or Texas RE): GridSim physics 1.1 and 1.2 use PJM 2017-2021 class averages and one ERCOT-wide planned-outage factor from 2017."

@@ -1,7 +1,10 @@
-"""BatteryPilot v1.3 -- a causal battery-arbitrage policy trained only on simulated grids (numpy/scipy only).
+"""BatteryPilot v1.3.1 -- a causal battery-arbitrage policy trained only on simulated grids (numpy/scipy only).
+
+v1.3.1 (27 Nov 2026) = the v1.3 network; the day-ahead plan's wear cost now reads temperatures from 48 h earlier
+(causal_wear), not the realized ones. run_policy(..., c_lin_plan=None) reproduces v1.3 as examined.
 
     import batterypilot as bp
-    net = bp.PolicyNet()                                     # batterypilot_weights.npz next to this file (v1.3)
+    net = bp.PolicyNet()                                     # batterypilot_weights.npz next to this file (v1.3 network)
     net_v11 = bp.PolicyNet(bp.WEIGHTS_V1_1)                  # the v1.1 release; bp.WEIGHTS_V1_0 = v1.0
     bat = bp.Battery(P=1.0, duration_h=2.0)                 # 1 MW / 2 MWh usable, 85 % round trip
     ch, dis, soc, V = bp.run_policy(net, path, bat, bat.c_lin(path['T']))
@@ -270,10 +273,14 @@ def build(path, t_idx, duration_h, c_lin, ps=None):
     zda = np.where(known, zq(da[idx], ps[:, None]), 0.0)
     o_rt = np.arange(-H_RT, 0)
     ridx = np.clip(t[:, None] + o_rt[None, :], 0, n - 1)
-    zrt = zq(rt[ridx], ps[:, None])
+    # History before the start of the path clips to index 0. At t = 0 that is the current hour, whose real-time price is
+    # not known before the hour (audit, 25 Nov 2026: +$100 at hour 0 moved the hour-0 offer by $3.02/MWh); there the
+    # day-ahead price stands in. From t = 1 on, every clipped index is already in the past, so nothing changes.
+    seen = ridx < t[:, None]
+    zrt = np.where(seen, zq(rt[ridx], ps[:, None]), zq(da[ridx], ps[:, None]))
     o6 = np.arange(-6, 0)
     i6 = np.clip(t[:, None] + o6[None, :], 0, n - 1)
-    sp6 = zq(rt[i6], ps[:, None]) - zq(da[i6], ps[:, None])
+    sp6 = np.where(i6 < t[:, None], zq(rt[i6], ps[:, None]) - zq(da[i6], ps[:, None]), 0.0)
     # demand forecast relative to the trailing 30-day max of the forecast (tightness proxy)
     dfi = np.clip(t[:, None] + np.arange(H_DF)[None, :], 0, n - 1)
     if 'dmax' in path:
@@ -425,17 +432,40 @@ class PolicyNet:
         return np.sinh(self.z_knots(X)) * np.asarray(ps, float)[:, None]
 
 
-def run_policy(net: PolicyNet, path, bat: Battery, c_lin, soc0=0.0):
+def causal_wear(bat: Battery, T, lag_h=48):
+    """Wear cost per hour for the day-ahead plan from temperatures known when the plan is made: each hour takes the
+    temperature lag_h earlier (the first lag_h hours take the first hour's). A plan made at 14:00 runs to 23:00 the next
+    day (33 h ahead), so lag_h must exceed the planning horizon: 48 h does; 24 h, the first version, did not (Codex,
+    PR #23). Pass it as run_policy(..., c_lin_plan=...)."""
+    T = np.asarray(T, float)
+    n, L = len(T), int(lag_h)
+    Tp = np.r_[np.full(min(L, n), T[0]), T[:max(n - L, 0)]]
+    return bat.c_lin(Tp)
+
+
+def run_policy(net: PolicyNet, path, bat: Battery, c_lin, soc0=0.0, c_lin_plan='causal'):
     """Run BatteryPilot causally over a whole path (dict/DataFrame with rt, da, df, T, hour, day, dow, doy).
     The value curves depend only on information before each hour, so they are computed for all hours at once; the
-    offer-curve execution against each hour's RT price is sequential.  Returns (ch, dis, soc, V)."""
+    offer-curve execution against each hour's RT price is sequential.  Returns (ch, dis, soc, V).
+
+    c_lin_plan: the wear cost the day-ahead planner uses for future hours. v1.3.1 (27 Nov 2026) default 'causal':
+    causal_wear(bat, path['T']), each hour's temperature from 48 h earlier, so every plan reads only temperatures known
+    when it is made. None (or an array equal to c_lin) is v1.3 as examined: the plan used realized temperatures, a
+    perfect temperature forecast (audit, 25 Nov 2026). The dated re-score over all 48 exam node-years moved the pooled
+    share of perfect hindsight by +0.0002 (ERCOT) and -0.0004 (CAISO)."""
     n = len(path['rt'])
     t = np.arange(n)
     ps = rolling_scale(np.asarray(path['da'], float))
     cl = np.broadcast_to(np.asarray(c_lin, float), (n,)).copy()
     X, ps = build(path, t, bat.d, cl, ps=ps)
     if net.hybrid:
-        lam = value_curves(np.asarray(path['da'], float), np.asarray(path['hour']), np.asarray(path['day']), cl,
+        if c_lin_plan is None:
+            clp = cl
+        elif isinstance(c_lin_plan, str) and c_lin_plan == 'causal':
+            clp = causal_wear(bat, path['T'])
+        else:
+            clp = np.broadcast_to(np.asarray(c_lin_plan, float), (n,))
+        lam = value_curves(np.asarray(path['da'], float), np.asarray(path['hour']), np.asarray(path['day']), clp,
                            bat.d, P=bat.P, eta_rt=bat.eta_rt)
         X = np.concatenate([X, np.arcsinh(lam / ps[:, None])], 1).astype(np.float32)
     V = net.values(X, ps)

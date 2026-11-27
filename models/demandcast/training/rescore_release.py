@@ -44,7 +44,7 @@ def masks(B, kind):   # train.masks, verbatim (train.py imports torch)
 
 
 def load(name):
-    return DC.DemandCast().W          # the released weights, float64 (stored float32)
+    return DC.DemandCast(DC.WEIGHTS_V1_1, DC.META_V1_1).W     # the r8 network (v1.0 / v1.1), float64 (stored float32)
 
 
 def predict(W, B):

@@ -16,6 +16,7 @@ weather of the discovery day and the day before, and the record (cause, agency, 
 Missing values (NaN) are filled with the training medians.
 """
 import os
+import warnings
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -47,12 +48,25 @@ class FireSize:
             return np.column_stack([np.atleast_1d(np.asarray(X[f], float)) for f in self.features])
         return np.atleast_2d(np.asarray(X, float))
 
+    z_clip = None   # e.g. 8.0 to clip standardised inputs (not the released behaviour, so off by default)
+
     def probs(self, X, temp=None):
-        """n x 12 class probabilities (ensemble mean of 3 MLPs; temp = widen-only temperature fitted on dev)."""
+        """n x 12 class probabilities (ensemble mean of 3 MLPs; temp = widen-only temperature fitted on dev).
+
+        Audit, 25 Nov 2026: no simulated ignition landed on slash-blowdown fuel (LANDFIRE 201-204), so pt_SB has sd 1e-6
+        and a real one enters at z = 1e6: escape probability exactly 0 and a 1.7263-acre median whatever the weather.
+        91 of the 655,869 exam ignitions were scored that way. A warning names such rows; set z_clip to clip."""
         W = self.W
         Z = self.matrix(X)
         Z = np.where(np.isfinite(Z), Z, W['fill'][None, :])
         z = (Z - W['mu']) / W['sd']
+        big = np.abs(z) > 8
+        if big.any():
+            cols = sorted({self.features[j] for j in np.nonzero(big)[1]})[:6]
+            warnings.warn(f'FireSize: {int(big.any(1).sum())} row(s) have inputs beyond 8 sd of the simulated training '
+                          f'data ({cols}; max {np.abs(z).max():.3g}); the network was never trained there', stacklevel=2)
+        if self.z_clip:                      # independent of the warning, so a row does not depend on its batch (Codex)
+            z = np.clip(z, -self.z_clip, self.z_clip)
         T = self.temp if temp is None else temp
         out = 0
         for e in range(int(W['n_ens'])):

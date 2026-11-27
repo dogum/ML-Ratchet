@@ -222,3 +222,7 @@ because SNOTEL's recent data are provisional and may be revised. Rule, written n
 decision is final, for that rung, v1.0 and every baseline (default and dev-tuned energy balance and degree-day,
 climatology, the per-station calibrated degree-day) together. The rung the import suggested: have the network
 correct the dev-tuned energy balance, judged against that baseline on the frozen set and the dev gate.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). predict() on a year the record ends inside now needs 30 days instead of 200, stops at the last input and reports the peak so far. Before, it returned nothing before day 200 and then 165 days of estimates past the last input. Completed years and the exam are unchanged. Two-sided temperature gap filling is kept: it holds the last reading at the end of a live record, and across a past gap it is smoothing (NSE moved at most 0.0003 on the packaged stations). Training now seeds torch.

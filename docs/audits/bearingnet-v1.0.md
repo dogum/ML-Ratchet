@@ -18,3 +18,11 @@ Reviewer A’s original weight, folded forward and four-rung probe also passed. 
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/bearingnet_v1_0_probe.py
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-b/peer_73ee7e6_probe.py bearingnet
 ```
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| One NaN → NaN posterior → 'healthy' | Yes | **Fixed**: windows with nonfinite samples are skipped; with no clean window the reader raises. | Golden demo unchanged. |
+| Healthy recordings raise fault alarms | Yes (model limit) | Documented in the card; the packaged sample cannot give a false-alarm rate. | — |
+| CWRU split by file, not bearing | Open | Documented; the CWRU catalogue needed to group by bearing is not in the repo. | — |

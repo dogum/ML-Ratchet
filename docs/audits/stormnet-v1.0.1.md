@@ -26,3 +26,10 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_db285c4_pr
 ```
 
 Uses NumPy and PyYAML. [Second-pass probe](reviews/reviewer-a/peer_db285c4_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Calibration bin labels disagree with the code at −50 and −30 nT | Yes (text) | **Fixed**: `calibration_sigma.json` now describes the bins as fitted and read (`< −50`, `−50 to < −30`, `≥ −30`). Factors unchanged. | — |
+| One-hour-stale Dst raises MAE 8.97 → 11.21 nT | Operational limit | Documented in the card. | — |

@@ -18,3 +18,19 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_dc30c02_pr
 ```
 
 The second-pass probe uses NumPy, SciPy, pandas, and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_dc30c02_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Day-ahead wear planner reads realized future temperatures | Yes (a perfect temperature forecast) | **Opt-in fix, re-score queued.** `causal_wear(bat, T)` takes each hour's temperature from 48 h earlier; plans run up to 33 h ahead, so every plan reads only temperatures known when it is made (a first 24 h version still read up to 9 h ahead; Codex, PR #23). `run_policy(..., c_lin_plan=...)` uses it. Default stays as released, so the card's exam numbers remain what v1.3 does. | Three packaged node-years: −$0.052, −$0.024, −$0.032/kW-year. Test: changing every temperature from an issue hour on leaves that plan's wear costs unchanged for the next 34 h. |
+| Hour 0 reads its own real-time price as history | Yes | **Fixed** in `build()` and `training/features.py`: at t = 0 the day-ahead price stands in; from t = 1 nothing changes. | +$100 on hour 0's RT no longer changes hour 0's features (test). Packaged node-years move by at most +$0.0016/kW-year. |
+| Day-ahead column 35 reaches |z| 24–34 in scarcity | Observation | Not changed: output knots are clamped and the exam ranks held; noted for the next retrain. | — |
+
+### Follow-up (27 Nov 2026, approved queue)
+
+- **Re-score with the causal wear plan** (`training/rescore_causal.py`, dated supplement, released weights, all 48 exam
+  node-years × 1/2/4 h, `bp` and `bpc` on the same rows): share of perfect hindsight ERCOT 67.115 → 67.127 %, CAISO
+  59.372 → 59.326 %; per node-year-battery −$0.26 to +$0.21/kW-yr; no count of wins against any baseline changed. The
+  re-run `bp` matches v1.3's exam per node-year to $0.02/kW-yr. The perfect temperature forecast was worth almost
+  nothing, so v1.3's exam stands. Made the default as **v1.3.1** (`run_policy(..., c_lin_plan='causal')`).

@@ -184,9 +184,14 @@ class ChirpNet:
                 'q': np.clip(o[:, 3], 0.05, 1.0), 'q_sigma': s_q, 't_merger': o[:, 5], 'coincidence': c}
 
     def far_per_hour(self, score):
-        """False-alarm rate estimated from the time-slid real-noise background shipped with the weights."""
+        """False-alarm rate estimated from the time-slid real-noise background shipped with the weights.
+        With no background window at or above `score` the value is the Poisson 90 % upper limit, 2.303 / T, and the flag
+        is True. (Until 27 Nov 2026 it was 1 / T, 0.50/h on the 2.006 h background, which is not an upper bound. The
+        release threshold of 7.0 was set above that background's maximum, 6.20, so its zero count is by construction;
+        on O3 dev time slides at least 4 of 64 pieces scored >= 7.0, at least 0.38/h; audit, 25 Nov 2026.)"""
         n = int(np.sum(self.bg >= score))
-        return (n + 1) / (self.bg_live_s / 3600.0), n == 0
+        T = self.bg_live_s / 3600.0
+        return ((n + 1) / T, False) if n else (2.303 / T, True)
 
     def _alone(self, H, L, t, slides=(5, 9, 13)):
         """Diagnostic: the statistic each detector earns on its own (partner slid by whole seconds).
@@ -360,7 +365,9 @@ class ChirpNetBNS:
         g = _gelu(g @ self.lin[0][0].T + self.lin[0][1]); return g @ self.lin[1][0].T + self.lin[1][1]
 
     def far_per_hour(self, score):
-        n = int(np.sum(self.bg >= score)); return (n + 1) / (self.bg_live_s / 3600.0), n == 0
+        """As ChirpNet.far_per_hour: the Poisson 90 % upper limit (2.303 / T) when no background window reaches score."""
+        n = int(np.sum(self.bg >= score)); T = self.bg_live_s / 3600.0
+        return ((n + 1) / T, False) if n else (2.303 / T, True)
 
     def scan(self, h1, l1, gps_start=0.0, fs=FS_IN, stride=0.25, threshold=None, whitened=False, gate_sigma=25.0):
         """Slide 16 s windows over two detectors' strain (minutes of 4 kHz data are best: the PSD needs it).

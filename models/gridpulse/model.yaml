@@ -209,6 +209,7 @@ limits:
   - "30-60 s behaviour (secondary response, operator actions, further events) is outside GridSim's single secondary ramp."
   - "ERCOT publishes no frequency traces: ERCOT is tested through report numbers only, and ERCOT noise is scaled GB noise."
   - "MW/Hz, headroom and FFR have simulated skill 0.5-0.7 but no real truth. Some detected GB 'events' are demand or interconnector ramps, and loss labels are noisy."
+  - "Live use (audit, 25 Nov 2026; fixed 27 Nov 2026): read() needed 60 s after the onset and filled gaps from the whole window, so a reading after N s could move an N s estimate (+100.6 MW at N = 10). It now reads only up to onset + N and fills gaps from that prefix. None of the 412 GB exam traces (or 4 dev) has a missing second, so the exam is unchanged."
 next:
   - "Era-aware priors: condition on year (or Dynamic Containment volume / battery fleet) so 2023-25 inertia per MW and ERCOT FFR are represented; weight up the 2022 inertia mix."
   - "Inertia from the ambient-noise spectrum, with simulations that drive noise through the swing equation; or sub-second (PMU-grade) data where available."

@@ -1,0 +1,60 @@
+model: roomsense
+ladders:
+- name: RoomSense
+  objective: RT60 MAE skill against the dev-median guess on frozen simulations
+  rule: Keep when simulated RT60 skill gains more than 0.01 and the measured dev gate
+    passes.
+  margin: 0.01
+  scored_on: val-1.1
+  rungs:
+  - id: r1
+    change: Image-source reflections and Eyring tails. Learn a correction to the classical
+      estimate.
+    sim: 0.7579829096794128
+    dev:
+      rt60_mae_s: 0.21267546266141438
+    decision: released
+    why: First rung.
+    metrics:
+    - 0.21268
+    - 0.616
+  - id: r2
+    change: Reduce diffuse pressure from 0.390 to 0.316 using the measured dev twin
+      gap.
+    sim: 0.7579036951065063
+    dev:
+      rt60_mae_s: 0.22816692160121677
+    decision: rejected
+    why: -0.000 on val-1.1, needs more than +0.01.
+    metrics:
+    - 0.22817
+    - 0.55599
+  - id: r3
+    change: Train on equal numbers of textbook and dev-calibrated simulations.
+    sim: 0.7555227279663086
+    dev:
+      rt60_mae_s: 0.24323013391246062
+    decision: rejected
+    why: -0.002 on val-1.1, needs more than +0.01.
+    metrics:
+    - 0.24323
+    - 0.61733
+  - id: r4
+    change: Add absolute RT60 error in seconds to the training objective on the mixed
+      bank.
+    sim: 0.7621974945068359
+    dev:
+      rt60_mae_s: 0.23522078099839638
+    decision: rejected
+    why: +0.004 on val-1.1, needs more than +0.01.
+    metrics:
+    - 0.23522
+    - 0.69967
+  frozen_sets:
+  - val-1.0
+  - val-1.1
+  dev_gate: Room-weighted dev RT60 MAE may grow by at most 5%.
+  columns_source: Measured dev experiments. Exam never used.
+  columns:
+  - Dev RT60 MAE (s)
+  - Dev volume MAE (ln m³)

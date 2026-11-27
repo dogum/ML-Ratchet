@@ -70,6 +70,14 @@ class TransitNet:
             for c in ('c1', 'c2'): d[c] = np.asarray(s[c], float)[ok] if c in s else np.full(ok.sum(), np.nan)
             secs.append(d)
         V, info = PL.read(secs, period, epoch, duration_hours / 24, sigP=period_err, others=others)
+        # Guards (audit, 25 Nov 2026): constant flux gave zero binned noise and NaN class probabilities; with no points
+        # in any transit core the network still answered 'nothing' at P 0.81-0.99, which then means 'no data'.
+        if not (np.isfinite(info['noise_bin']) and info['noise_bin'] > 0):
+            raise ValueError('the flux has no measurable scatter (constant or empty); TransitNet cannot vet it')
+        if info['ntr'] == 0:
+            import warnings
+            warnings.warn('TransitNet: no observed point falls inside any predicted transit core; a "nothing" here '
+                          'means the transit was not observed, not that it is absent', stacklevel=2)
         st = PL.star_scalars(hdr); s = PL.scalars(info['P'], duration_hours / 24, info, st)[None]
         R = self.predict_views({k: v[None] for k, v in V.items()}, s, np.array([np.log10(max(info['cent_noise'], 1e-4))]))
         out = {k: float(v[0]) for k, v in R.items()}

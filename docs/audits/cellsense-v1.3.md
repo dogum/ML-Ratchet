@@ -20,3 +20,10 @@ The step occurs where the reader switches from measured terminal capacity to a n
 ```sh
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-b/peer_ea2bfde_probe.py cellsense
 ```
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| All-NaN curves return a finite capacity | Yes | **Fixed**: `q_of_v` and `q_of_v_nmc` raise with fewer than 2 finite points (raise only, so finite exam curves are untouched). | Test. |
+| Sigma step at the completion tolerance | Yes (design) | Documented in the card; deciding which sigma is calibrated needs near-cutoff cycles. | — |

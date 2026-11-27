@@ -23,3 +23,10 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_759c345_pr
 ```
 
 Uses NumPy and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_759c345_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Generic 99 sentinel erases valid bearings | Yes | **Opt-in fix, re-score queued**: `read_ndbc(..., field_sentinels=True)` keeps 99 in `swdir` and `swr1` (999 stays missing). Default unchanged because the exam (and the demo) were parsed the old way. | Audit: 3,445 bearings in the packaged 51004 2018 file; Olivia −0.46°. |
+| All-NaN window reads as a storm swell | Yes | **Fixed**: `read` raises when the window has no finite energy. | Demo unchanged. |

@@ -276,3 +276,102 @@ demand and wind row is identical to v1.0 (2.38 %, 19.2 %; forecast weather 3.05 
 Golden demo output regenerated: only the CISO solar days change (26.8 % and 51.2 %, were 53.3 % and 82.3 %). The live
 instrument stores the offset each page day's history shows (read in Python from the exam bank's full feature vector)
 and does the same alignment and shift in the browser; parity 2.3e-7.
+
+## 27 Nov 2026 — audit: inputs the simulator never varies (warnings added; repair queued)
+
+The two-reviewer audit (`docs/audits/demandcast-v1.1.md`) found two inputs the released networks over-read. Reported
+solar at dark hours (20:00 LST twilight) pinned two BPAT exam days at the 1.2 cap. Missing demand-history hours sit
+at |z| up to 286. Counted on the exam bank's inputs: 1,734 of 12,642 solar rows and 365 of 14,448 demand rows are
+affected. The exam scored them as they were. The reader now warns on both and offers an opt-in `z_clip`. The repair
+(night-masked solar history, simulated missing demand hours, higher floor on count-like inputs, ±2 h solar offsets)
+needs a retrain and is queued, with a dated re-score after it on the owner's approval.
+
+## 27 Nov 2026 — dated z_clip re-score (v1.1.1), the repair rung r10, and its exam (v1.2)
+
+The owner approved the queue: a dated re-score of v1.1 with `z_clip=8`, then the repair rung judged by the ratchet,
+with the exam opened once only if the ratchet promoted it.
+
+**1. Re-score of v1.1 with z_clip=8** (`training/rescore_zclip.py`; the released weights and arithmetic, every
+standardised input clipped at ±8; sigma scales re-fitted on dev as exam.py does; nothing chosen, the 8 was the
+audit's). Counts first: the audit's 1,734 solar rows are those with output at 20:00 LST (feature 66) over every row of
+the bank (actual and forecast weather); any dark hour from 16:00 to 07:00 LST gives 4,029 bank rows, 2,350 of them
+actual-weather. The 365 missing-history demand rows are 201 actual-weather rows and 164 in the 2024-2025
+forecast-weather bank.
+
+| | v1.1 | v1.1.1 (z_clip 8) |
+|---|---|---|
+| Demand, actual weather (209,340 h) | 2.382 % | 2.323 % |
+| — the 201 rows with missing history hours | 5.96 % | 2.58 % |
+| — the other 8,559 rows | 2.32 % | 2.32 % |
+| Demand, forecast weather 2024-2025 | 3.051 % | 2.961 % |
+| — the 164 rows with missing history hours | 7.37 % | 3.25 % |
+| Demand, forecast weather 2024 (released row) | 2.923 % | 2.834 % |
+| Solar, actual weather | 16.14 % | 16.12 % |
+| — the 2,350 rows with output at a dark hour | 25.24 % | 25.20 % |
+| — the 973 rows with output at 20:00 LST | 26.29 % | 26.20 % |
+| Wind, actual weather | 19.21 % | 19.21 % |
+
+No grid got worse; ERCOT 2.25 -> 2.17, PJM 2.10 -> 1.91, CAISO 3.37 -> 3.24, MISO 1.88 -> 1.79 (actual weather). The
+clip repairs the missing-hour rows. It does nothing for the dark-hour solar rows, as the audit said: there the inputs
+sit at |z| ~3 under the 0.02 floor and the amplification is in the first-layer weights. It held, so it became the
+default as **v1.1.1** (`demandcast_meta.json` `z_clip: 8`, sigma scales d 1.1406, s 1.3672).
+
+**2. Rung r10, the repair** (`training/repair.py`, `train.py --repair --base`, `sim.py` with `DC_SIM=v5`). Fixed
+before training:
+- Simulator v5 = v4 + offsets -2..+2 h (3 / 12 / 70 / 12 / 3 %), output at dark edge hours next to daylight in 30 % of
+  region-years (2-15 % of the neighbouring hour), and a 1-48 h gap in the demand history of 8 % of samples.
+- New frozen set val_v5 (`sim.py val_v5 505 100 40`, 4,000 region-days, 295 with a gap), built before any training.
+  Training banks train_v5a-c (seeds 5101-5103, 1,500 regions × 40 days each, 180,000 region-days; ~52 min on 3 cores).
+- Solar: offsets read to ±2 h (`solar_offset(rmax=2)`), history aligned, then the reported last 24 h set to 0 where the
+  physics CF < 1e-6 (`mask_dark_solar`); the same transform runs on the training rows, whose target is put on the
+  physics clock by the offset read. Count-like inputs (demand day-type one-hot, DST, forecast flag, miss_frac; wind and
+  solar flag and missing fraction) get an sd floor of 0.05 (was 0.001 for demand: miss_frac's training sd was exactly
+  the floor). Inputs clipped at |z| 8. Three 512-512 MLPs on base features, 40 epochs, lr 2e-3 (as r8); 6 min on the GPU.
+
+Ratchet (training/ratchet.json; incumbent v1.1.1):
+
+| | val_v5 objective | demand / wind / solar err on val_v5 | demand, gap samples | dev demand / wind / solar |
+|---|---|---|---|---|
+| v1.1 | 0.3488 | 2.98 / 26.7 / 16.0 % | 11.18 % | 2.00 / 21.44 / 15.68 % |
+| v1.1.1 | 0.3908 | 2.34 / 26.7 / 15.9 % | 2.59 % | 1.98 / 21.44 / 15.67 % |
+| r10 | 0.4054 | 2.22 / 26.6 / 15.4 % | 2.36 % | 2.05 / 21.23 / 13.11 % |
+
+Solar error on val_v5 by true offset -2 / -1 / 0 / +1 / +2 h: v1.1.1 33.7 / 20.9 / 14.3 / 17.0 / 32.8 %, r10 18.3 /
+20.2 / 14.2 / 15.9 / 12.6 %. Offsets read on val_v5 (true -> read): -2 h 55 of 80 right, +2 h 32 of 40. On val_v4:
+0.3752 / 0.3751 / 0.3774. Decision: objective +0.015 (margin 0.01), dev errors -4.8 %: **promoted**. The dev gate
+already showed demand 3 % worse (1.98 -> 2.05 %); the pooled gate let solar's 16 % dev gain carry it.
+
+Weights exported (`demandcast_weights.npz`; v1.1's kept as `demandcast_weights_v1_1.npz` with
+`demandcast_meta_v1_1.json` = v1.1.1), sigma scales fitted on dev (d 1.3417, w 1.0, s 1.1204), the class checked against
+the rung's arithmetic (6e-8 on dev rows), and the choice committed (285eedd) before the exam.
+
+**3. Exam of v1.2, run once** (`repair.py exam`: actual weather, forecast weather 2024-2025, the released 2024 row;
+`repair.py events`; side by side in `training/exam_v1_2.json`):
+
+| | v1.1 | v1.1.1 | v1.2 |
+|---|---|---|---|
+| Demand, actual weather | 2.38 % | 2.32 % | 2.49 % |
+| Demand, forecast weather 2024-2025 | 3.05 % | 2.96 % | 3.14 % |
+| Demand, 6 grids without CAISO / SPP, forecast weather (grids 2.70 %) | 2.92 % | 2.84 % | 2.98 % |
+| Demand, forecast weather 2024 (grids 3.20 %) | 2.92 % | 2.83 % | 3.00 % |
+| Grids beating their own forecast, actual weather | 6 of 8 | 6 of 8 | 5 of 8 (ERCOT 2.41 vs 2.40) |
+| Wind, actual / forecast weather | 19.2 / 26.7 % | 19.2 / 26.7 % | 19.3 / 26.9 % |
+| Solar, actual weather (persistence 19.1 %) | 16.1 % | 16.1 % | 10.6 % |
+| Solar, forecast weather 2024-2025 (persistence 18.9 %) | 18.2 % | 18.1 % | 12.0 % |
+| Solar CAISO / BPA / SPP, actual weather | 24.9 / 52.0 / 41.5 % | 24.9 / 51.7 / 40.4 % | 11.2 / 20.8 / 27.0 % |
+| Demand bands 68 / 95 % | 64 / 89 % | 64 / 89 % | 64 / 89 % |
+| Solar bands 68 / 95 % | 69 / 86 % | 69 / 86 % | 72 / 90 % |
+
+What it says: the repair fixed solar. It now beats persistence in every grid, with CAISO only just ahead (11.2 vs
+11.4 %); BPA's two pinned days are gone. Demand got worse in every grid than v1.1.1 (ERCOT 2.17 -> 2.41, ISO-NE 3.00 ->
+3.32, NYISO 1.97 -> 2.17), as the dev gate's demand column said it would. The demand network changed in three ways at
+once (v5 banks only instead of r8's v1-v3 mix, gap samples, the 0.05 floors), so which one cost demand is not known.
+Events: Texas heat Aug 2023 1.96 -> 2.08 %, PJM heat dome Jun 2024 1.98 -> 2.37 %, ISO-NE Arctic outbreak Jan 2025 4.78
+-> 4.49 %, Uri (dev) 14.5 -> 16.9 %.
+
+The exam chooses nothing, so v1.2 ships as the ratchet promoted it, and the card reports the demand loss. The lesson,
+the same one BatteryPilot v1.3 taught with years: a pooled gate lets one strong component carry a loss elsewhere. Next
+ladder: a per-output gate fixed before training, and a rung that pairs v1.1.1's demand network with v1.2's solar.
+
+Golden demo output regenerated on purpose (new weights). The instrument was re-exported with the v1.2 weights; the
+browser clips inputs at |z| 8, aligns ±2 h offsets and masks dark hours as `demandcast.py` does.

@@ -28,7 +28,15 @@ def load(path=DEFAULT):
 
 
 def predict(det, cal, q_cal, tgt):
-    x, s_cal, names = featurize(cal, np.asarray(q_cal, float), tgt)
+    q = np.asarray(q_cal, float)
+    ok = np.isfinite(q)
+    # Input checks (audit, 25 Nov 2026): all-NaN or short flow failed with KeyError('bfi_lh'), and a record of zeros
+    # returned a finite estimate.
+    if ok.sum() < 365:
+        raise ValueError(f'q_cal needs at least 365 finite daily values, got {int(ok.sum())}')
+    if not (q[ok] > 0).any():
+        raise ValueError('q_cal has no positive flow; the calibration signatures are undefined')
+    x, s_cal, names = featurize(cal, q, tgt)
     assert names == det.names, 'feature list mismatch'
     r = det.predict(x[None, :])[0]
     out = {'changes': {}, 'target_period': {}, 'hidden': {}, 'regulation': {}}

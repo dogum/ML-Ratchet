@@ -48,4 +48,4 @@ WakeNet v1.0.1 — 6 real wind-farm exam snapshots (0 real wake labels in traini
     T06    loss +17.5% +- 14.4% (truth  +1.4%)  |  P   1151 +-  201 kW (truth   1377 kW)  yaw=  +2 deg [out]
     T09    loss +16.9% +- 14.7% (truth  +4.3%)  |  P   1160 +-  206 kW (truth   1337 kW)  yaw=  -1 deg [in 68%]
 
-Summary across 6 exam snapshots: waked-rotor MAE 14.0%  |  farm wake MAE 3.7%  |  68% bar coverage 67%  (0.10 s)
+Summary across 6 exam snapshots (31 waked readings): waked-rotor MAE 14.9%  |  farm wake MAE 3.7%  |  68% bar coverage 65%  (0.09 s)

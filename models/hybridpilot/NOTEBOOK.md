@@ -323,3 +323,13 @@ v2.0 98.43 -> 98.45; v1 98.54 -> 98.56; v2.2 − v2.1 +0.11 [+0.01, +0.24] uncha
 **Verdicts.** All trips: v2.2 is now 0.02 above MPC, well inside the interval, so the row moves from mixed to a tie
 (not a win). Every other verdict stands. Simulator-vs-real, golden demo and live instrument are not affected (twins of
 real cars only; no duplicate there).
+
+## 27 Nov 2026 — audit fixes: preview window bound; grade gaps measured (no retrain, exam unchanged)
+
+The two-reviewer audit (`docs/audits/hybridpilot-v2.2.md`) raised two points.
+- Preview read one second past its window: road power at second t uses speed and grade at t + 1. Fixed (power bins now
+  end at k + L). The released R22 uses no preview; only the rejected R4, R7 and R14 did, by margins a 0.07 % fuel
+  effect cannot flip. Not re-scored.
+- RoadSim fills a grade gap from both sides. Not changed: that is the simulator's estimate of the road at each second,
+  and `sets.py` zero-fills grade before RoadSim anyway. Measured on the local VED archive: 0 of 119,352 grade samples
+  are missing on the 216 exam trips (0 of 10,401 on 14 dev trips). The effect on the exam is zero.

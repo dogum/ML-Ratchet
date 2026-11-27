@@ -479,3 +479,50 @@ result was seen; nothing is chosen from it. Script `training/exam2_iblend_score.
   differences of 0.5-3.5 points whose intervals come from resampling three values, so they say "not worse", no more.
   Warm 90 % coverage 84 % (a year), 80 % (8 weeks), 84 % (2 weeks). Nowcasts (info, read the real 2017 meter):
   persistence 1 h 17 %, 24 h 35 %, same hour last week 25 %.
+
+## 27 Nov 2026 — audit: buildings without an electricity meter (warning added; re-score queued)
+
+The two-reviewer audit (`docs/audits/loadcast-v1.0.md`) found that a meter list without electricity puts one input at
+z = −1000, because every training building had an electricity meter. Two packaged steam and chilled-water forecasts rose
+24-50× in every hour. Counted on BDG2 metadata: 58 of the 1,584 exam buildings list no electricity meter and were
+scored that way. `forecast()` now warns, and `assume_electricity=True` adds the meter (off by default). A dated
+re-score of those buildings waits for the owner's approval.
+
+## 27 Nov 2026 — v1.0.1: buildings without an electricity meter, dated re-score (owner-approved)
+
+Plan, written before scoring: re-run the exam building-meters whose BDG2 meter list has no electricity meter with the
+released weights and `assume_electricity=True` (electricity added to the meter list, as `forecast()` does; the HVAC
+class read from the meters does not change). Every other exam unit, the baselines, the widening factors, the bootstrap
+seed (20261117) and the row definitions stay as the 17 Nov integrity pass. The exam is seen; nothing is chosen from it.
+If the fix does not make things worse overall, make it the default as v1.0.1. Script `training/rescore_noelec.py`
+(`score`, `boot`; `rescore_seen.boot` now takes the units file as an argument); summary
+`training/rescore_noelec_r3.json`.
+
+- **How many.** 58 of the 1,584 exam buildings list no electricity meter, but only 15 of them have an exam
+  building-meter with good data in both years: 19 units (5 chilled water, 13 steam, 1 gas) of 1,502. The scorer
+  reproduces the logged values of the unchanged units to 7e-6.
+- **The 19 units, median CV(RMSE) %, old → new:**
+
+| Meter (n) | Cold | Warm, a year | Warm, 8 weeks | Warm, 2 weeks |
+|---|---|---|---|---|
+| Chilled water (5) | 1,285 → 124 | 59.6 → 31.1 | 61.8 → 59.7 | 125.7 → 60.1 |
+| Steam (13) | 597 → 107 | 46.1 → 35.3 | 62.1 → 38.7 | 64.8 → 42.8 |
+| Gas (1) | 103 → 127 | 103.0 → 105.3 | 107.9 → 106.3 | 119.4 → 104.5 |
+| All 19 | 597 → 114 | 50.8 → 35.3 | 62.1 → 45.8 | 69.3 → 57.1 |
+
+  Cold is better on 18 of 19 (the gas meter is worse), warm (a year) on 15 of 19. Cold 90 % coverage on these units
+  went from 1 % (chilled water) and 17 % (steam) to 99 %. 13 of the 19 cold forecasts are still above 100 %, as cold
+  steam and chilled water are across the exam.
+- **Exam rows (all 1,502 units), old → new.** Chilled water: a year 42.9 → 42.4 (tie with the change-point model,
+  42.4), 2 weeks 87.3 → 86.6, no history 104.1 → 104.0, a year monthly 22.3 → 21.8. Steam: a year 45.5 → 43.6 (loss
+  to TOWT, 39.4; was +6.0 [+2.9, +8.2], now +4.2), 8 weeks 49.1 → 47.6, 2 weeks 57.1 → 53.8, no history 102.8 → 100.8
+  (tie), a year daily 36.0 → 34.1, monthly 29.2 → 27.9. Gas: only coverage and the monthly row (44.7 → 45.0) move.
+  Electricity and hot water: no unit affected. Pooled over the 1,502 units: cold 78.6 → 78.3, warm 26.95 → 26.79,
+  8 weeks 34.0 → 33.9, 2 weeks 41.2 → 40.9. **No verdict changed: 6 wins, 16 ties, 18 losses.**
+- **Released as v1.0.1:** `assume_electricity=True` is the default; `False` gives v1.0's behaviour with a warning. The
+  model.yaml rows for chilled water, steam and gas carry the new numbers and the old ones in their notes. The demo
+  meters all list electricity, so the golden output is unchanged; so are the site instrument's 16 meters.
+- **Not run: the representation rung** (simulated buildings whose meter list lacks electricity). The frozen set v2_val
+  has no such building, so the frozen objective cannot see the change and a rung could only tie; and the round-2 gate
+  (3-seed mean against R3's single selected seed) already blocks rungs that do not gain 3 dev points. A fair test needs
+  a frozen set with such meter lists, a rule change for the owner. Cost of a 3-seed rung: about 4 hours.

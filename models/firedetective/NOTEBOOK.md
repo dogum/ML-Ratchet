@@ -237,3 +237,7 @@ R6 was loaded from `weights/firedetective_v1.npz` (`rescore_release.py`).
   times, to six digits.
 - Only R6's weights were shipped, so R0 to R5 were not re-scored and no decision was re-taken. R6 was trained on p1
   banks.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). predict() refuses fires with no observed step (an empty history gave infinite wind). The blind-wind flag's z = 1000 scaling needs a matched retrain to judge; queued.

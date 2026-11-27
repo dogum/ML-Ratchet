@@ -195,3 +195,7 @@ After the release choice was committed (f13b4e7), `training/bns_mf_exam.py` ran 
 The row flips from loss to win on the value. The range is one-sided: on the fine 2e-5 grid the profile drops by more
 than 1 just below the peak, so the widened lower edge stays on the estimate. Every black-hole row is unchanged: the
 black-hole networks, threshold and code path did not change, and the golden demo still reproduces the O1/O2 readings.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). With no background window above a score, the false-alarm rate is now the Poisson 90 % upper limit (1.15/h on the 2.006 h background), not 1/T (0.50/h), in Python and on the site. The demo's FAR text changed accordingly.

@@ -1,4 +1,4 @@
-# DemandCast v1.1 model card
+# DemandCast v1.2 model card
 
 Part of ML Ratchet (github.com/dogum/ML-Ratchet): trained on physics, graded on reality. Built on the shared grid
 platform (GridSim + GridData, `shared/grid/`), phase 2.
@@ -21,7 +21,7 @@ time). Covers the 8 focus BAs: ERCO, CISO, PJM, MISO, SWPP, ISNE, NYIS, BPAT.
 ## Outputs
 24 hourly means and sigmas per output. Demand: `MW = prior_MW * exp(mu)`, sigma on the log scale. Wind/solar:
 capacity factor of the fleet online at issue. Sigmas include one widen-only factor per output fitted on dev
-(demand 1.14, wind 1.00, solar 1.37; v1.0 1.34).
+(v1.2: demand 1.34, wind 1.00, solar 1.12; v1.1 1.14 / 1.00 / 1.37; v1.0 solar 1.34).
 
 **v1.1 (15 Nov 2026), solar only.** EIA-930's solar timestamps move between years, so v1.1 reads the reporting offset of
 the solar history at issue. The 168 h reported-minus-physics error is fitted by least squares on the physics diurnal
@@ -30,6 +30,21 @@ the grid's dev-year value (`solar_offset_ref` in `demandcast_meta.json`: CISO 0.
 to -1, 0 or +1 h (|r_hat| <= 0.5 -> 0). The last 24 h of reported solar are put back on the physics clock, the same r8
 network runs, and its forecast is moved by r onto the reported clock. No learned parameters; only inputs available at
 issue. `predict_cf(..., align=False)` gives v1.0.
+
+**v1.1.1 (27 Nov 2026).** The same r8 network with standardised inputs clipped at |z| 8 by default, after a dated
+supplementary re-score of the exam (`training/rescore_zclip.py`): demand 2.38 -> 2.32 % with actual weather, 3.05 ->
+2.96 % with forecast weather 2024-2025; on the 201 actual-weather exam rows with missing demand-history hours 5.96 ->
+2.58 %; wind and solar unchanged to 0.1 point. Kept as `demandcast_weights_v1_1.npz` + `demandcast_meta_v1_1.json`.
+
+**v1.2 (27 Nov 2026), the audit repair (rung r10).** The audit found real inputs the simulator never produced: reported
+solar at hours the physics calls dark, 2 h solar offsets, and missing demand-history hours. Simulator v5 adds all three;
+the solar history is aligned with offsets read up to +-2 h and then set to 0 where the physics CF is below 1e-6
+(`mask_dark_solar`, in training and at inference); count-like inputs get a standardisation floor of 0.05; inputs are
+clipped at |z| 8. The three networks were retrained on 180,000 v5 region-days. Ratchet: val_v5 0.4054 vs 0.3908 for
+v1.1.1, dev gate -4.8 % (solar 15.67 -> 13.11 %, demand 1.98 -> 2.05 %). Exam, run once: solar 16.1 -> 10.6 % (actual
+weather) and 18.2 -> 12.0 % (forecast weather 2024-2025), now ahead of persistence in every grid; demand 2.38 -> 2.49 %
+and 3.05 -> 3.14 %, worse than v1.1 and v1.1.1. The pooled dev gate let solar carry a demand loss. The numbers in the
+Exam section below are v1.0 / v1.1's; v1.2's are in `model.yaml` and `training/exam_v1_2.json`.
 
 ## Physics
 - **Demand: building-stock thermal model** (`training/buildings.py`). Heating need = UA x E[max(T_set - T_eff, 0)] over
@@ -101,6 +116,8 @@ On val_v4 the offset is read right on 3,886 of 4,000 region-days; solar error on
 (30 seeded days per grid): v1.0 22.8 / 15.6 / 37.7 %, v1.1 15.6 / 15.7 / 16.4 %, persistence 16.6 %.
 
 ## Exam (2023-2025, never used for choosing)
+
+v1.0 / v1.1 numbers as first published; v1.2 and v1.1.1 side by side with them in `training/exam_v1_2.json`.
 Demand MAPE (%), actual weather (an upper bound: grids' own forecasts use forecast weather), all hours where every
 method has a value:
 

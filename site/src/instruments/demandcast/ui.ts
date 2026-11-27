@@ -172,9 +172,10 @@ export async function mount(ctx: InstrumentContext) {
     if (st.hum !== 1) changed.push(`humidity ×${st.hum.toFixed(2)}`);
     if (st.sun !== 1) changed.push(`sunshine ×${st.sun.toFixed(2)}`);
     if (st.wind !== 1) changed.push(`wind ×${st.wind.toFixed(2)}`);
-    const shiftNote = m.soff ? ` The week before issue shows this grid’s solar reported ${m.soff > 0 ? 'an hour late' : 'an hour early'}, so the solar forecast is moved by that hour (v1.1).` : '';
+    const hrs = Math.abs(m.soff ?? 0) === 1 ? 'an hour' : `${Math.abs(m.soff ?? 0)} hours`;
+    const shiftNote = m.soff ? ` The week before issue shows this grid’s solar reported ${hrs} ${m.soff > 0 ? 'late' : 'early'}, so the solar forecast is moved by that much.` : '';
     const solarNote = m.ba === 'CISO' || m.ba === 'PJM' || m.ba === 'BPAT'
-      ? ` EIA-930’s solar timestamps moved by an hour between the dev and exam years (CAISO, PJM in 2025). v1.1 reads the offset from the week before issue: solar 16.1 % against 19.1 % for persistence overall (v1.0 29.9 %), but CAISO (24.9 % vs 11.4 %) and BPA’s tiny fleet still lose to persistence.${shiftNote}`
+      ? ` EIA-930’s solar timestamps moved by an hour between the dev and exam years (CAISO, PJM in 2025). DemandCast reads the offset from the week before issue (up to 2 h since v1.2) and ignores reported output at hours its physics calls dark: solar 10.6 % against 19.1 % for persistence overall (v1.1 16.1 %, v1.0 29.9 %); CAISO 11.2 % vs 11.4 %, BPA 20.8 % vs 30.5 %.${shiftNote}`
       : m.ba === 'NYIS' ? ' NYISO does not report solar in EIA-930.' : '';
     note.innerHTML = changed.length
       ? `<b>Changed: ${changed.join(', ')}.</b> The metered values and the grid’s forecast are for the day as it happened; this is now a different day, so read the change, not the error.`

@@ -135,3 +135,7 @@ planet (66%).
   larger than any known planet, while every dev planet is under 20. val2 does not carry the stellar radius, so it would
   need its own rule; it was not tried.
 - **Outcome:** v1.0 stays the release; no exam was run (no new version).
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). The reader refuses constant flux (NaN probabilities) and warns when no point falls inside any transit core.

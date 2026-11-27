@@ -4,7 +4,7 @@ import pandas as pd
 
 from battery import Battery, settle
 from strategies import perfect_foresight, daily_spread, threshold_rule, rolling_da_lp, offer_policy_run
-from model import PolicyNet, run_policy
+from model import PolicyNet, run_policy, causal_wear
 
 
 def run_strategy(name, path, bat, net=None, thresholds=None):
@@ -27,6 +27,8 @@ def run_strategy(name, path, bat, net=None, thresholds=None):
         ch, dis, _ = offer_policy_run(bat, rt, V, cl)
     elif name == 'bp':
         ch, dis, _, _ = run_policy(net, path, bat, cl)
+    elif name == 'bpc':     # 27 Nov 2026: day-ahead plan wear from temperatures 48 h earlier (causal_wear)
+        ch, dis, _, _ = run_policy(net, path, bat, cl, c_lin_plan=causal_wear(bat, T))
     else:
         raise ValueError(name)
     s = settle(bat, rt, ch, dis, 0.0, T)

@@ -20,3 +20,9 @@ export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
 python3 -B docs/audits/reviews/reviewer-a/firesize_v1_0_probe.py
 python3 -B docs/audits/reviews/reviewer-b/firesize_closing_probe.py
 ```
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| `pt_SB` (sd 1e-6) collapses escape probability on slash–blowdown ignitions | Yes, and it reached the exam | **Warned, opt-in clip, repair and re-score queued.** `probs()` warns on any input beyond 8 sd; `FireSize.z_clip = 8` clips. Default unchanged so the card's exam numbers describe v1.0. | Counted 27 Nov 2026 in `work/results/exam_preds.parquet`: **91 of 655,869 exam ignitions** have escape probability exactly 0 and the identical 0.6986 ha median, the collapse's signature. That answers the report's open question about frequency; the pooled scores cannot move much (0.014 % of rows), the SB stratum's can. |

@@ -69,6 +69,7 @@ Coverage of the 68% error bars on the exam: Distance **55%**, Time **67%**, Dire
 - The calibrated v2/v3 simulators match dev statistics better but alone make real dev readings worse; the cause is not understood.
 - v1.1's time prior assumes the window is centred on the predicted 0.06 Hz arrival (±36 h); for other windows use predict(..., prior=False).
 - The distance prior comes from 29 dev arrivals at the same buoys; at other buoys or storm basins it would be wrong.
+- Queued (audit): a dated re-score of the exam with field-specific sentinels (99 kept in swdir and swr1), on the owner's approval.
 
 ## The ratchet
 
@@ -126,6 +127,7 @@ Deep-water dispersion (group speed g/4πf) from a moving, growing and decaying J
 ## Help wanted
 
 - Extratropical storm truth: the Open-Meteo archive and marine API hit its daily request limit from the shared build machine's IP, so only tropical cyclones (IBTrACS) are graded. A reachable, documented reanalysis endpoint would add Southern Ocean and North Pacific winter storms.
+- Parsing and empty windows (audit, 25 Nov 2026): the NDBC parser reads 99 as missing in every file, which erases valid 99° bearings (3,445 in the packaged 51004 2018 direction file; Olivia's bearing moves 0.46° when restored). read_ndbc(field_sentinels=True) keeps them (opt-in: the exam was parsed the old way). An all-NaN window read as a storm swell (p 0.57); read() now refuses it.
 
 ## Next rungs
 

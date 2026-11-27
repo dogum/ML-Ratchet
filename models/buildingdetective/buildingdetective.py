@@ -11,6 +11,7 @@ r: dict with 'floor_area_m2', 'year_built', 'UA_W_K', 'UA_W_m2K', 'tau_h', 'Tb_h
 """
 import os
 
+import warnings
 import numpy as np
 from scipy.special import erf
 
@@ -86,11 +87,32 @@ class Detective:
 
     def _run(self, mode, X):
         n = self.nets[mode]
+        z = np.abs((np.atleast_2d(X).astype(np.float64) - n.xm) / n.xs)
+        if (z > 8).any():
+            # Audit, 25 Nov 2026: on two BDG2 examples, two district-meter zero-fraction inputs alone (|z| > 8) moved
+            # floor area by 45-99 %; which reading is closer to truth is not established, so nothing is clipped.
+            cols = sorted(set(np.nonzero(z > 8)[1].tolist()))[:8]
+            warnings.warn(f'BuildingDetective {mode}: inputs beyond |z| 8 of the simulated training data (max '
+                          f'{z.max():.0f}; columns {cols}); the reading extrapolates', stacklevel=3)
         mu, sg, lg = n.raw(X)
         return decode(mu, sg, lg, n.temp)
 
     def read_hourly(self, meters, T, GHI, loc, lat):
-        return self._run('hourly', F.feat_hourly(meters, T, GHI, loc, lat))[0]
+        """Training showed partial records as a full year of weather with the meters masked, so its two record-span
+        inputs (days / 365 and log10(days) / 3) never moved (sd 0.0011 and 0.00017). A shorter date axis put them at
+        |z| ~ 90 and changed the answer (audit, 25 Nov 2026: HUE_2 at 330 days read 295.6 m2 healthcare instead of
+        99.5 m2 residential). Since 27 Nov 2026 those two inputs are held at their trained value. For the best reading,
+        pass a full year of weather with the meters NaN where there is no data, as training did: weather from part of a
+        year still shifts the climate inputs."""
+        x = F.feat_hourly(meters, T, GHI, loc, lat)
+        nd = int(round(10 ** (x[7] * 3)))
+        if nd < 360 or nd > 370:
+            warnings.warn(f'BuildingDetective hourly: the record covers {nd} days; training always saw one year of '
+                          'weather (missing meter hours as NaN). The span inputs are held at one year; the climate '
+                          'inputs still come from the days given.', stacklevel=2)
+            x = np.array(x, float, copy=True)
+            x[6], x[7] = 1.0, np.log10(365) / 3
+        return self._run('hourly', x)[0]
 
     def read_monthly(self, mm, Tm, Hm, Cm, nd, lat):
         return self._run('monthly', F.feat_monthly(mm, Tm, Hm, Cm, nd, lat))[0]

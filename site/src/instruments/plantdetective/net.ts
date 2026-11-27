@@ -93,6 +93,18 @@ function runs(on: Uint8Array) {
   }
   return { s, L, v };
 }
+/** pdcore._bridge: a missing stretch with running hours on both sides counts as running for run detection. */
+function bridge(on: Uint8Array, miss: Uint8Array): Uint8Array {
+  const out = on.slice();
+  for (let a = 0; a < miss.length; ) {
+    if (!miss[a]) { a++; continue; }
+    let b = a;
+    while (b < miss.length && miss[b]) b++;
+    if (a > 0 && b < miss.length && on[a - 1] && on[b]) out.fill(1, a, b);
+    a = b;
+  }
+  return out;
+}
 const fin = (v: number, fill: number) => (Number.isFinite(v) ? v : fill);
 
 // ---------------------------------------------------------------- features (pdcore.features)
@@ -134,7 +146,7 @@ export function features(M: PMeta, x: Float64Array, hour: Int32Array | null, dow
   for (const v of yi) { ss += (v - my) ** 2; if (Math.abs(v - 1) < 0.03) near++; }
   f.push(yi.length > 1 ? Math.sqrt(ss / yi.length) : 0, near / yi.length);
   // first / second / last hour of each run
-  const R = runs(on);
+  const R = runs(bridge(on, miss));
   const st: number[] = [];
   R.s.forEach((s, i) => { if (R.v[i] && s > 0) st.push(s); });
   const first = st.map((s) => y[s]);

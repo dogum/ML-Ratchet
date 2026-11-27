@@ -74,6 +74,7 @@ Coverage of the 68% error bars on the exam: Epicentre ellipse (all stations) **6
 - Two stations leave most of the location uncertain: median miss 427 km.
 - Error bars: epicentre ellipses cover 62-68% and depth bars 60% for a nominal 68%.
 - The dev-twin calibrations (r5, r6) are shifts fitted on 40 dev quakes; deep quakes are now over-corrected.
+- Queued (audit): an exam with arrivals picked independently from continuous records (no catalogue time), for all 400 multi-station events.
 
 ## The ratchet
 
@@ -117,6 +118,7 @@ QuakeNet v1.2's simulator run per station for one shared source: Syngine ak135f 
 ## Help wanted
 
 - EarthScope dataselect answered 'too many requests' for 51 of about 4,200 requests; events still reached 10 stations from other stations.
+- Catalogue arrivals (audit, 25 Nov 2026): the exam gives each station the catalogue's predicted P arrival as its pick guess. Station coordinates and those arrivals alone locate all four 10-station packaged events within 4.24 m, so the arrivals carry the location. The network does read the waveforms (zeroed or noise waveforms put the epicentre 519-16,307 km off), but jittering the guess by 60 s moves it 241-955 km. The exam's location numbers therefore describe catalogue-assisted picking, not independent detection.
 
 ## Next rungs
 

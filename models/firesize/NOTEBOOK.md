@@ -294,3 +294,7 @@ the exam cannot change. Only the simulated frozen set can.
   escape rate 1.563 % → 1.536 %. p2 changes FireSize's set by almost nothing; the solver acts only on fires above
   about 8 acres.
 - Only r7's weights were shipped; no decision was re-taken.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). probs() warns on inputs beyond 8 sd of training; z_clip is opt-in. 91 exam ignitions on slash-blowdown fuel were scored at z = 1e6 (escape probability exactly 0). A bank with such ignitions, a retrain and a dated re-score are queued.

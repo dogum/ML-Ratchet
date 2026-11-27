@@ -88,6 +88,7 @@ Coverage of the 68% error bars on the exam: Kelmarsh 2022-24 waked turbines **70
 - Below-rated active wake regime only (freestream 5.0–12.0 m/s); above rated wind speed pitch control caps all turbines at rated power and wakes cause near-zero power loss.
 - 10-minute nacelle SCADA carries no atmospheric stability (Obukhov length / heat-flux) measurement, so convective daytime mixing and stable nocturnal wakes share one turbulence-conditioned curve.
 - No digital elevation map or forestry roughness map around the farm perimeter is read — terrain enters only through the elevations at the turbine towers themselves.
+- Demo summary (audit, 25 Nov 2026; fixed 27 Nov 2026): the demo's summary scored only the six turbines shown per snapshot (24 of 31 waked readings), where WakeNet led tuned physics 14.04 to 14.29; over all 31, as the exam scores, it is 14.90 to 14.43. The summary now uses all 31; the exam was already right.
 
 ## The ratchet
 

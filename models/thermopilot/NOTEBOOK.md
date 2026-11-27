@@ -491,3 +491,62 @@ default, v1.0 network). There are no full BuildingSim runs of v1.1 for the lab w
 for v1.1 the reference mark is the v1.0 network on the same browser house. On the 150 lab weeks of the browser house
 (which is the twin's own linear model, so the card MPC plans on almost the house it controls) v1.1 saves 6.6 % of J
 against fixed, v1.0 3.7 %; v1.1 is lower in 122 weeks and higher in 9.
+
+## 27 Nov 2026 — audit: evaluation cards (queued) and the weather cache (fixed)
+
+The two-reviewer audit (`docs/audits/thermopilot-v1.1.md`) found that the exam fitted each house's card on the
+episode's own weather, including wind beyond the forecast horizon. The audit's closed-loop replay bounds the effect at
+0.21 % of monthly cost with all rankings kept. Fitting cards on the prior month and re-scoring are queued.
+BuildingSim's weather cache, which could reuse another run's wind, now hashes every weather column.
+
+## 27 Nov 2026 — causal evaluation cards: dated re-score of v1.1 (plan, written before the run)
+
+Owner-approved follow-up to the audit (`docs/audits/thermopilot-v1.1.md`). The released exam fitted each house's card
+(`full_card`: UA, C, P_fan, Qheat and the 12-number house map) on the nominal twin over the evaluation month itself,
+so it carried the realized weather (wind through infiltration) beyond the 24 h forecast.
+
+- **Change.** The card is fitted the same way on the nominal twin over the calendar month before the episode (December
+  2016 for RECS and BDG2 January 2017, June 2017 for July, December 2018 for WPuQ January 2019), same weather source and
+  comfort preferences. Everything else in the episode is as the released exam: true house, tariff, noisy 24 h forecast,
+  seed, the 6 h shield. Script `training/scripts/rescore_causal_card.py`; tag `card4causal`.
+- **Check first.** The script's `repro` path (episode-month card) reproduces `pol_card4.json`: J to 4 decimals on two
+  BDG2 episodes (2,312.8262 and 3,432.3403).
+- **Scored.** RECS (96 home-months), BDG2 (32), WPuQ (38); `intervals.py card4causal` (same baselines, 2,000
+  resamples over units, seed 20261117) and `intervals.py card4causal vs:card4`. HUE was never scored for v1.1.
+- **Expectation from the audit:** monthly cost within about 0.2 %, no ranking change. If the numbers differ from v1.1's
+  published rows, the published rows are replaced by these (a causal card is how the controller must be used), old and
+  new side by side here. Nothing is chosen from the result.
+
+## 27 Nov 2026 — causal evaluation cards: result
+
+Run as planned on all 166 episodes. Eight RECS episodes on the ERCOT real-time tariff first failed: the worktree had no
+`shared/grid/data/proc/prices`. They were re-run after the data were linked (`rescore_causal_card.py exam_recs fix`).
+Nothing else was re-run. Logs `training/results/v1.1_causal_card_2026-11-27/` (`intervals_card4causal.json`,
+`intervals_causal_vs_card4.json`).
+
+| Set | Row | Episode-month card (17 Nov) | Causal card | v1.1 − best baseline, causal [95 %] | Causal − episode card [95 %] |
+|---|---|---|---|---|---|
+| RECS (48 homes) | bill | 2.77 % | 2.76 % | MPC: −0.95 [−1.33, −0.60] loss | −0.02 [−0.05, +0.00] |
+| RECS | skill | 0.698 | 0.689 | −0.13 [−0.21, −0.02] loss | −0.009 [−0.016, −0.003] |
+| RECS | K h | 0.42 | 0.44 | −0.13 [−0.30, +0.04] tie | +0.013 [−0.002, +0.030] |
+| BDG2 (16) | bill | 4.97 % | 4.93 % | MPC: +2.24 [+1.44, +2.97] win | −0.04 [−0.17, +0.08] |
+| BDG2 | skill | 0.757 | 0.757 | +0.31 [+0.18, +0.45] win | +0.000 [−0.011, +0.012] |
+| BDG2 | K h | 0.00 | 0.00 | 0.00 tie | 0.00 |
+| WPuQ (38) | bill | 5.95 % | 5.95 % | MPC: −1.22 [−1.32, −1.11] loss | −0.00 [−0.02, +0.02] |
+| WPuQ | skill | 0.787 | 0.788 | −0.16 [−0.17, −0.15] loss | +0.001 [−0.002, +0.005] |
+| WPuQ | K h | 0.00 | 0.00 | 0.00 tie | 0.00 |
+
+- **Per episode:** the monthly objective J changed in 131 of 166 episodes. On RECS it moved by −$0.88 to +$2.51, up to
+  1.2 % of J. On BDG2 it moved by −$37 to +$104, up to 0.7 %. On WPuQ it moved by −$0.56 to +$0.71, up to 0.2 %. The
+  audit's bound (≤ 0.21 %) held for WPuQ; it came from four episodes and is exceeded on some RECS and BDG2 episodes,
+  in both directions, and nets out on every set.
+- **Correction (same day, before merge; Codex on PR #28):** the first run built the prior-month model through an
+  `Episode`, which pads the model window by 26 h into the evaluation month, and `Model.UA` and `card_map` average
+  over the whole window. So that card still saw the first 26 h of the episode's weather (UA off by 0.3 % on the
+  first BDG2 case). `prior_card` now builds the simulator on [first of the prior month, episode start) and asserts
+  it. All 166 episodes were re-run; the table above is the corrected run. The first run gave the same verdicts
+  (RECS skill −0.007 [−0.015, +0.001], BDG2 bill −0.02 [−0.14, +0.10]). With the strict window RECS skill is
+  slightly but clearly lower than with the episode card; every other difference spans zero.
+- **What changes:** the exam rows in model.yaml and the card now carry the causal numbers, with the old ones in their
+  notes. The controller is unchanged (the card is an input), so there is no new version. The v1.1 − v1.0 rows stay as
+  published: v1.0 was scored with the episode-month card too and was not re-run.

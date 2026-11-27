@@ -120,6 +120,20 @@ CTX_KEYS = ['pm_ct', 'pm_st', 'pm_ca', 'fuel_coal', 'chp', 'lnp_own', 'lnp_st', 
             'minload_has', 'cold_lh', 'cold_has', 'hr923', 'hr923_has', 'age']
 
 
+def _bridge(on, miss):
+    """Run detection treats a missing stretch with running hours on both sides as running. Read as zeros, one missing
+    hour inside a run became a stop and a start (audit, 25 Nov 2026: hiding one interior hour on 362 days of 6179_3 took
+    its predicted starts from 2.76 to 107.58 a year). Runs that contain missing hours are still left out of the
+    run-length statistics below."""
+    on = on.copy()
+    if miss.any():
+        d = np.diff(np.r_[0, miss.astype(np.int8), 0])
+        for a, b in zip(np.flatnonzero(d == 1), np.flatnonzero(d == -1)):
+            if a > 0 and b < len(on) and on[a - 1] and on[b]:
+                on[a:b] = True
+    return on
+
+
 def _q(a, qs):
     return np.percentile(a, qs) if len(a) else np.full(len(qs), np.nan)
 
@@ -149,7 +163,7 @@ def features(x, hour_local=None, dow=None, price=None, gas=None, ctx=None):
     f += list(np.nan_to_num(_q(yi, [0.5, 1, 2, 5, 10, 25, 50, 75, 90, 99]), nan=0.0))
     f += [yi.std() if len(yi) > 1 else 0.0, np.mean(np.abs(yi - 1) < 0.03) if len(yi) else 0.0]
     # first / second / last hour of each run (hourly averaging of starts and stops)
-    s, L, v = runs(on)
+    s, L, v = runs(_bridge(on, miss))
     st = s[v & (s > 0)]
     first = y[st] if len(st) else np.zeros(0)
     second = y[st[(st + 1) < n] + 1] if len(st) else np.zeros(0)
