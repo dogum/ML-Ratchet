@@ -220,8 +220,9 @@ def row_defs():
     return R
 
 
-def boot():
-    ex = pd.read_csv(f'{OUT}/exam_units_r3.csv')
+def boot(units_csv=None, write=True, quiet=False):
+    """units_csv: another exam-units file (27 Nov 2026: rescore_noelec.py); write=False returns the dict."""
+    ex = pd.read_csv(units_csv or f'{OUT}/exam_units_r3.csv')
     bl = pd.read_csv(f'{OUT}/baselines_r3_seen.csv')
     d = ex.merge(bl.drop(columns=['use', 'building_id']), on=['id', 'meter'], suffixes=('', '_new'))
     # BuildingData's fitted baselines use n - p in the denominators; put them on LoadCast's p = 0 (fair, and only
@@ -236,7 +237,7 @@ def boot():
         n = d[nn].astype(float); f = (n - p) / n
         d[f'{col}_cv_np'] = d[f'{col}_cv']; d[f'{col}_cv'] = d[f'{col}_cv'] * np.sqrt(f)
         d[f'{col}_nmbe_np'] = d[f'{col}_nmbe']; d[f'{col}_nmbe'] = d[f'{col}_nmbe'] * f
-    d.to_csv(f'{OUT}/rescore_units_r3_seen.csv', index=False)
+    if write: d.to_csv(f'{OUT}/rescore_units_r3_seen.csv', index=False)
     rng = np.random.default_rng(SEED)
     out = dict(seed=SEED, B=2000, note='SEEN exam (v1.0 took it once). Medians of CV(RMSE) %; BuildingData baselines '
                'converted to p = 0. Interval: 2,000 paired bootstrap resamples of exam building-meters.', rows=[])
@@ -265,12 +266,13 @@ def boot():
                      best_nmbe=float(g[f'{best}_nmbe'].median()))
             if f'{key}_cov' in g: r['cov90'] = float(g[f'{key}_cov'].mean())
             out['rows'].append(r)
-            print(f"{m:12s} {key:13s} n {r['n']:4d} model {r['model']:6.1f} best {best:24s} {meds[best]:6.1f} "
+            if not quiet: print(f"{m:12s} {key:13s} n {r['n']:4d} model {r['model']:6.1f} best {best:24s} {meds[best]:6.1f} "
                   f"diff {pt:+6.1f} [{lo:+6.1f}, {hi:+6.1f}] {verdict}", flush=True)
         out.setdefault('nowcast', {})[m] = {k: float(g[f'{k}_cv'].median()) for k in ('persistence_1h', 'persistence_24h', 'same_hour_last_week')}
         out.setdefault('p_conversion', {})[m] = {k: [float(g[f'{k}_cv_np'].median()), float(g[f'{k}_cv'].median())]
                                                  for k in ('towt', 'g14_changepoint', 'g14_changepoint_daily', 'g14_changepoint_monthly')}
-    C.jdump(out, f'{OUT}/rescore_seen_r3.json')
+    if write: C.jdump(out, f'{OUT}/rescore_seen_r3.json')
+    return out
 
 
 if __name__ == '__main__':

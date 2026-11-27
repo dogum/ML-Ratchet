@@ -70,3 +70,31 @@ original tables as they were run.
 | **BuildingDetective (RECS 2020)** | +0.081 | 0.00e+00 | 1.09× | +0.374 |
 | **AirfoilNet (UIUC LSAT drag)** | +0.229 | 0.00e+00 | 1.90× | +0.303 |
 | **EnergyNet (VED real trips)** | +0.157 | 0.00e+00 | 2.11× | +0.256 |
+
+## 5. Dated supplementary exam: BuildingDetective (RECS 2020), `2026-11-27-wind`
+
+GBDT arms retrained on BuildingSim banks with the real hourly wind and site elevation (the first banks used a constant 3 m/s and sea level; PR #19 review). Same scripts, seeds and PREREG; the incumbent is unchanged. Scored once (`scores/buildingdetective_2026-11-27-wind.json`, PREREG sha `352d3edf570a…`, scored 2026-11-27T18:40:35Z). Sections 1, 2 and 4 above keep the first exam; this table puts the two side by side.
+
+| Row | First exam (24 Nov) | Supplementary |
+|---|---:|---:|
+| Simulated validation, GBDT-Plain | 29.72 | 29.14 |
+| Simulated validation, GBDT-Mono | 30.58 | 29.74 |
+| Simulated validation, incumbent (reference) | 59.13 | 60.11 |
+| Exam floor-area MdAPE %, Incumbent | 33.62 | 33.62 |
+| Exam floor-area MdAPE %, GBDT-Plain | 45.30 | 46.03 |
+| Exam floor-area MdAPE %, GBDT-Mono | 44.96 | 45.78 |
+| Mono − Inc (95% CI) | +11.34 [+10.07, +12.53] | +12.15 [+10.99, +13.14] |
+| Plain − Inc (95% CI) | +11.68 [+10.44, +12.79] | +12.41 [+11.28, +13.57] |
+| Mono − Plain (95% CI) | -0.34 [-0.80, +0.25] | -0.26 [-0.86, +0.18] |
+| Stratum `cold_elec` (n 298): Inc / Plain / Mono | 63.4 / 33.6 / 34.8 | 63.4 / 33.7 / 35.8 |
+| Stratum `cold_fuel` (n 2544): Inc / Plain / Mono | 31.8 / 56.9 / 57.6 | 31.8 / 58.3 / 58.7 |
+| Stratum `mixed_elec` (n 652): Inc / Plain / Mono | 47.1 / 31.6 / 30.5 | 47.1 / 32.1 / 31.5 |
+| Stratum `mixed_fuel` (n 2004): Inc / Plain / Mono | 31.4 / 46.4 / 46.0 | 31.4 / 47.0 / 46.0 |
+| Stratum `warm_elec` (n 742): Inc / Plain / Mono | 37.6 / 29.6 / 28.3 | 37.6 / 30.4 / 28.6 |
+| Stratum `warm_fuel` (n 1161): Inc / Plain / Mono | 30.4 / 34.6 / 34.9 | 30.4 / 34.1 / 35.4 |
+| GBDT-Mono coverage, raw (worst under-gap) | 35.1% (`-51.0 pp`) | 37.0% (`-48.5 pp`) |
+| GBDT-Mono coverage, pooled_widen (worst under-gap) | 66.1% (`-16.3 pp`) | 66.6% (`-13.8 pp`) |
+| GBDT-Mono coverage, mondrian_raw (worst under-gap) | 66.6% (`-6.8 pp`) | 66.5% (`-6.0 pp`) |
+| GBDT-Mono coverage, mondrian_shrunk (worst under-gap) | 67.0% (`-5.9 pp`) | 66.8% (`-6.0 pp`) |
+| Disagreement Spearman r vs Incumbent abs. error (top-10% enrichment) | +0.081 (1.09×) | +0.076 (1.07×) |
+| Disagreement Spearman r vs GBDT-Mono abs. error (top-10% enrichment) | +0.374 (1.33×) | +0.397 (1.37×) |
