@@ -13,7 +13,7 @@ import body from '../observatory/body.html?raw';
 import { url } from '../lib/url';
 
 const json = JSON.stringify(data).replace(/</g, '\\u003c');
-const canonical = new URL('observatory/', Astro.site);
+const canonical = new URL(Astro.url.pathname, Astro.site); // includes the base (/ML-Ratchet/), as in Base.astro
 ---
 <!doctype html>
 <html lang="en">
