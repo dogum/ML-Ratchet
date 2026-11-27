@@ -1,0 +1,1538 @@
+{
+  "platform": "buildingdetective",
+  "title": "BuildingDetective (RECS 2020)",
+  "domain": "Buildings",
+  "target": "log10_floor_area",
+  "unit": "log10 m2",
+  "prereg_sha256": "352d3edf570a5adb741bc8250a31079123150cd204092a4b61924adb5bfde7ba",
+  "n_exam": 7401,
+  "n_exam_units": 7401,
+  "sim_val": {
+    "incumbent": 59.1262,
+    "gbdt_plain": 29.7243,
+    "gbdt_mono": 30.5753,
+    "mono_parity": 0.0,
+    "mono_treeshap_err": 6.661e-15,
+    "mono_params_all": 47037
+  },
+  "dev_metrics": {
+    "incumbent": {
+      "floor_area_mdape_pct": 32.91,
+      "log10_mae": 0.1694,
+      "strata": {
+        "cold_elec": {
+          "n": 72,
+          "mdape_pct": 73.15,
+          "log10_mae": 0.235
+        },
+        "cold_fuel": {
+          "n": 646,
+          "mdape_pct": 31.73,
+          "log10_mae": 0.1664
+        },
+        "mixed_elec": {
+          "n": 155,
+          "mdape_pct": 45.75,
+          "log10_mae": 0.1927
+        },
+        "mixed_fuel": {
+          "n": 499,
+          "mdape_pct": 32.23,
+          "log10_mae": 0.1604
+        },
+        "warm_elec": {
+          "n": 167,
+          "mdape_pct": 33.89,
+          "log10_mae": 0.1749
+        },
+        "warm_fuel": {
+          "n": 309,
+          "mdape_pct": 30.31,
+          "log10_mae": 0.1604
+        }
+      }
+    },
+    "gbdt_plain": {
+      "floor_area_mdape_pct": 44.06,
+      "log10_mae": 0.2645,
+      "strata": {
+        "cold_elec": {
+          "n": 72,
+          "mdape_pct": 31.09,
+          "log10_mae": 0.1912
+        },
+        "cold_fuel": {
+          "n": 646,
+          "mdape_pct": 56.29,
+          "log10_mae": 0.3516
+        },
+        "mixed_elec": {
+          "n": 155,
+          "mdape_pct": 29.68,
+          "log10_mae": 0.1707
+        },
+        "mixed_fuel": {
+          "n": 499,
+          "mdape_pct": 42.32,
+          "log10_mae": 0.2525
+        },
+        "warm_elec": {
+          "n": 167,
+          "mdape_pct": 31.79,
+          "log10_mae": 0.1593
+        },
+        "warm_fuel": {
+          "n": 309,
+          "mdape_pct": 40.7,
+          "log10_mae": 0.2229
+        }
+      }
+    },
+    "gbdt_mono": {
+      "floor_area_mdape_pct": 43.33,
+      "log10_mae": 0.2666,
+      "strata": {
+        "cold_elec": {
+          "n": 72,
+          "mdape_pct": 32.23,
+          "log10_mae": 0.1942
+        },
+        "cold_fuel": {
+          "n": 646,
+          "mdape_pct": 56.51,
+          "log10_mae": 0.3581
+        },
+        "mixed_elec": {
+          "n": 155,
+          "mdape_pct": 27.26,
+          "log10_mae": 0.165
+        },
+        "mixed_fuel": {
+          "n": 499,
+          "mdape_pct": 42.01,
+          "log10_mae": 0.25
+        },
+        "warm_elec": {
+          "n": 167,
+          "mdape_pct": 29.49,
+          "log10_mae": 0.1519
+        },
+        "warm_fuel": {
+          "n": 309,
+          "mdape_pct": 39.12,
+          "log10_mae": 0.2321
+        }
+      }
+    }
+  },
+  "exam_metrics": {
+    "incumbent": {
+      "floor_area_mdape_pct": 33.62,
+      "log10_mae": 0.1745,
+      "strata": {
+        "cold_elec": {
+          "n": 298,
+          "mdape_pct": 63.38,
+          "log10_mae": 0.2316
+        },
+        "cold_fuel": {
+          "n": 2544,
+          "mdape_pct": 31.8,
+          "log10_mae": 0.1679
+        },
+        "mixed_elec": {
+          "n": 652,
+          "mdape_pct": 47.12,
+          "log10_mae": 0.2153
+        },
+        "mixed_fuel": {
+          "n": 2004,
+          "mdape_pct": 31.37,
+          "log10_mae": 0.1656
+        },
+        "warm_elec": {
+          "n": 742,
+          "mdape_pct": 37.61,
+          "log10_mae": 0.1849
+        },
+        "warm_fuel": {
+          "n": 1161,
+          "mdape_pct": 30.44,
+          "log10_mae": 0.1599
+        }
+      }
+    },
+    "gbdt_plain": {
+      "floor_area_mdape_pct": 45.3,
+      "log10_mae": 0.27,
+      "strata": {
+        "cold_elec": {
+          "n": 298,
+          "mdape_pct": 33.57,
+          "log10_mae": 0.2198
+        },
+        "cold_fuel": {
+          "n": 2544,
+          "mdape_pct": 56.85,
+          "log10_mae": 0.3554
+        },
+        "mixed_elec": {
+          "n": 652,
+          "mdape_pct": 31.57,
+          "log10_mae": 0.1899
+        },
+        "mixed_fuel": {
+          "n": 2004,
+          "mdape_pct": 46.38,
+          "log10_mae": 0.274
+        },
+        "warm_elec": {
+          "n": 742,
+          "mdape_pct": 29.64,
+          "log10_mae": 0.1649
+        },
+        "warm_fuel": {
+          "n": 1161,
+          "mdape_pct": 34.58,
+          "log10_mae": 0.2012
+        }
+      }
+    },
+    "gbdt_mono": {
+      "floor_area_mdape_pct": 44.96,
+      "log10_mae": 0.2727,
+      "strata": {
+        "cold_elec": {
+          "n": 298,
+          "mdape_pct": 34.78,
+          "log10_mae": 0.2207
+        },
+        "cold_fuel": {
+          "n": 2544,
+          "mdape_pct": 57.6,
+          "log10_mae": 0.3628
+        },
+        "mixed_elec": {
+          "n": 652,
+          "mdape_pct": 30.47,
+          "log10_mae": 0.1854
+        },
+        "mixed_fuel": {
+          "n": 2004,
+          "mdape_pct": 46.02,
+          "log10_mae": 0.2716
+        },
+        "warm_elec": {
+          "n": 742,
+          "mdape_pct": 28.27,
+          "log10_mae": 0.1614
+        },
+        "warm_fuel": {
+          "n": 1161,
+          "mdape_pct": 34.91,
+          "log10_mae": 0.2106
+        }
+      }
+    }
+  },
+  "paired_bootstrap": {
+    "gbdt_mono_vs_incumbent": {
+      "a": 44.9593,
+      "b": 33.6216,
+      "diff_a_minus_b": 11.3377,
+      "ci95": [
+        10.0729,
+        12.5316
+      ],
+      "significant_a_better": false,
+      "significant_b_better": true
+    },
+    "gbdt_mono_vs_gbdt_plain": {
+      "a": 44.9593,
+      "b": 45.2967,
+      "diff_a_minus_b": -0.3374,
+      "ci95": [
+        -0.8047,
+        0.2516
+      ],
+      "significant_a_better": false,
+      "significant_b_better": false
+    },
+    "gbdt_plain_vs_incumbent": {
+      "a": 45.2967,
+      "b": 33.6216,
+      "diff_a_minus_b": 11.6751,
+      "ci95": [
+        10.4425,
+        12.787
+      ],
+      "significant_a_better": false,
+      "significant_b_better": true
+    }
+  },
+  "conformal_coverage": {
+    "incumbent": {
+      "raw": {
+        "target": 0.6826894921370859,
+        "n": 7401,
+        "pooled_coverage": 0.6483,
+        "pooled_gap": -0.0344,
+        "mean_halfwidth": 0.210786,
+        "worst_under_stratum": "mixed_elec",
+        "worst_under_gap": 0.1766,
+        "max_abs_stratum_gap": 0.1766,
+        "strata": {
+          "cold_elec": {
+            "n": 298,
+            "coverage": 0.5101,
+            "gap": -0.1726,
+            "mean_halfwidth": 0.226049
+          },
+          "cold_fuel": {
+            "n": 2544,
+            "coverage": 0.6828,
+            "gap": 0.0001,
+            "mean_halfwidth": 0.220017
+          },
+          "mixed_elec": {
+            "n": 652,
+            "coverage": 0.5061,
+            "gap": -0.1766,
+            "mean_halfwidth": 0.201578
+          },
+          "mixed_fuel": {
+            "n": 2004,
+            "coverage": 0.6682,
+            "gap": -0.0145,
+            "mean_halfwidth": 0.206457
+          },
+          "warm_elec": {
+            "n": 742,
+            "coverage": 0.593,
+            "gap": -0.0897,
+            "mean_halfwidth": 0.200981
+          },
+          "warm_fuel": {
+            "n": 1161,
+            "coverage": 0.6891,
+            "gap": 0.0064,
+            "mean_halfwidth": 0.205548
+          }
+        }
+      },
+      "pooled_widen": {
+        "target": 0.6826894921370859,
+        "n": 7401,
+        "pooled_coverage": 0.6683,
+        "pooled_gap": -0.0144,
+        "mean_halfwidth": 0.217854,
+        "worst_under_stratum": "mixed_elec",
+        "worst_under_gap": 0.1535,
+        "max_abs_stratum_gap": 0.1535,
+        "strata": {
+          "cold_elec": {
+            "n": 298,
+            "coverage": 0.5336,
+            "gap": -0.1491,
+            "mean_halfwidth": 0.233629
+          },
+          "cold_fuel": {
+            "n": 2544,
+            "coverage": 0.7024,
+            "gap": 0.0197,
+            "mean_halfwidth": 0.227395
+          },
+          "mixed_elec": {
+            "n": 652,
+            "coverage": 0.5291,
+            "gap": -0.1535,
+            "mean_halfwidth": 0.208337
+          },
+          "mixed_fuel": {
+            "n": 2004,
+            "coverage": 0.6891,
+            "gap": 0.0064,
+            "mean_halfwidth": 0.213379
+          },
+          "warm_elec": {
+            "n": 742,
+            "coverage": 0.6065,
+            "gap": -0.0762,
+            "mean_halfwidth": 0.20772
+          },
+          "warm_fuel": {
+            "n": 1161,
+            "coverage": 0.7097,
+            "gap": 0.027,
+            "mean_halfwidth": 0.212441
+          }
+        }
+      },
+      "mondrian_raw": {
+        "target": 0.6826894921370859,
+        "n": 7401,
+        "pooled_coverage": 0.675,
+        "pooled_gap": -0.0076,
+        "mean_halfwidth": 0.222066,
+        "worst_under_stratum": "mixed_elec",
+        "worst_under_gap": 0.0508,
+        "max_abs_stratum_gap": 0.0508,
+        "strata": {
+          "cold_elec": {
+            "n": 298,
+            "coverage": 0.6846,
+            "gap": 0.0019,
+            "mean_halfwidth": 0.315257
+          },
+          "cold_fuel": {
+            "n": 2544,
+            "coverage": 0.6828,
+            "gap": 0.0001,
+            "mean_halfwidth": 0.220017
+          },
+          "mixed_elec": {
+            "n": 652,
+            "coverage": 0.6319,
+            "gap": -0.0508,
+            "mean_halfwidth": 0.247932
+          },
+          "mixed_fuel": {
+            "n": 2004,
+            "coverage": 0.6801,
+            "gap": -0.0025,
+            "mean_halfwidth": 0.209944
+          },
+          "warm_elec": {
+            "n": 742,
+            "coverage": 0.6469,
+            "gap": -0.0358,
+            "mean_halfwidth": 0.227524
+          },
+          "warm_fuel": {
+            "n": 1161,
+            "coverage": 0.6891,
+            "gap": 0.0064,
+            "mean_halfwidth": 0.205548
+          }
+        }
+      },
+      "mondrian_shrunk": {
+        "target": 0.6826894921370859,
+        "n": 7401,
+        "pooled_coverage": 0.674,
+        "pooled_gap": -0.0087,
+        "mean_halfwidth": 0.221437,
+        "worst_under_stratum": "mixed_elec",
+        "worst_under_gap": 0.0569,
+        "max_abs_stratum_gap": 0.0569,
+        "strata": {
+          "cold_elec": {
+            "n": 298,
+            "coverage": 0.6779,
+            "gap": -0.0048,
+            "mean_halfwidth": 0.305318
+          },
+          "cold_fuel": {
+            "n": 2544,
+            "coverage": 0.6828,
+            "gap": 0.0001,
+            "mean_halfwidth": 0.220132
+          },
+          "mixed_elec": {
+            "n": 652,
+            "coverage": 0.6258,
+            "gap": -0.0569,
+            "mean_halfwidth": 0.245539
+          },
+          "mixed_fuel": {
+            "n": 2004,
+            "coverage": 0.6801,
+            "gap": -0.0025,
+            "mean_halfwidth": 0.210014
+          },
+          "warm_elec": {
+            "n": 742,
+            "coverage": 0.6442,
+            "gap": -0.0385,
+            "mean_halfwidth": 0.226411
+          },
+          "warm_fuel": {
+            "n": 1161,
+            "coverage": 0.6891,
+            "gap": 0.0064,
+            "mean_halfwidth": 0.205768
+          }
+        }
+      }
+    },
+    "gbdt_mono": {
+      "raw": {
+        "target": 0.6826894921370859,
+        "n": 7401,
+        "pooled_coverage": 0.3514,
+        "pooled_gap": -0.3313,
+        "mean_halfwidth": 0.163583,
+        "worst_under_stratum": "cold_fuel",
+        "worst_under_gap": 0.5105,
+        "max_abs_stratum_gap": 0.5105,
+        "strata": {
+          "cold_elec": {
+            "n": 298,
+            "coverage": 0.4027,
+            "gap": -0.28,
+            "mean_halfwidth": 0.141434
+          },
+          "cold_fuel": {
+            "n": 2544,
+            "coverage": 0.1722,
+            "gap": -0.5105,
+            "mean_halfwidth": 0.165255
+          },
+          "mixed_elec": {
+            "n": 652,
+            "coverage": 0.4325,
+            "gap": -0.2502,
+            "mean_halfwidth": 0.130966
+          },
+          "mixed_fuel": {
+            "n": 2004,
+            "coverage": 0.2984,
+            "gap": -0.3843,
+            "mean_halfwidth": 0.140093
+          },
+          "warm_elec": {
+            "n": 742,
+            "coverage": 0.6806,
+            "gap": -0.0021,
+            "mean_halfwidth": 0.213464
+          },
+          "warm_fuel": {
+            "n": 1161,
+            "coverage": 0.5668,
+            "gap": -0.1159,
+            "mean_halfwidth": 0.192588
+          }
+        }
+      },
+      "pooled_widen": {
+        "target": 0.6826894921370859,
+        "n": 7401,
+        "pooled_coverage": 0.6609,
+        "pooled_gap": -0.0218,
+        "mean_halfwidth": 0.36747,
+        "worst_under_stratum": "cold_fuel",
+        "worst_under_gap": 0.163,
+        "max_abs_stratum_gap": 0.2486,
+        "strata": {
+          "cold_elec": {
+            "n": 298,
+            "coverage": 0.745,
+            "gap": 0.0623,
+            "mean_halfwidth": 0.317715
+          },
+          "cold_fuel": {
+            "n": 2544,
+            "coverage": 0.5197,
+            "gap": -0.163,
+            "mean_halfwidth": 0.371227
+          },
+          "mixed_elec": {
+            "n": 652,
+            "coverage": 0.7561,
+            "gap": 0.0734,
+            "mean_halfwidth": 0.2942
+          },
+          "mixed_fuel": {
+            "n": 2004,
+            "coverage": 0.6098,
+            "gap": -0.0729,
+            "mean_halfwidth": 0.314702
+          },
+          "warm_elec": {
+            "n": 742,
+            "coverage": 0.9313,
+            "gap": 0.2486,
+            "mean_halfwidth": 0.479522
+          },
+          "warm_fuel": {
+            "n": 1161,
+            "coverage": 0.8105,
+            "gap": 0.1278,
+            "mean_halfwidth": 0.432626
+          }
+        }
+      },
+      "mondrian_raw": {
+        "target": 0.6826894921370859,
+        "n": 7401,
+        "pooled_coverage": 0.6659,
+        "pooled_gap": -0.0168,
+        "mean_halfwidth": 0.343963,
+        "worst_under_stratum": "mixed_elec",
+        "worst_under_gap": 0.0677,
+        "max_abs_stratum_gap": 0.0677,
+        "strata": {
+          "cold_elec": {
+            "n": 298,
+            "coverage": 0.6443,
+            "gap": -0.0384,
+            "mean_halfwidth": 0.253896
+          },
+          "cold_fuel": {
+            "n": 2544,
+            "coverage": 0.6847,
+            "gap": 0.0021,
+            "mean_halfwidth": 0.463713
+          },
+          "mixed_elec": {
+            "n": 652,
+            "coverage": 0.615,
+            "gap": -0.0677,
+            "mean_halfwidth": 0.213601
+          },
+          "mixed_fuel": {
+            "n": 2004,
+            "coverage": 0.6252,
+            "gap": -0.0574,
+            "mean_halfwidth": 0.324053
+          },
+          "warm_elec": {
+            "n": 742,
+            "coverage": 0.6806,
+            "gap": -0.0021,
+            "mean_halfwidth": 0.213464
+          },
+          "warm_fuel": {
+            "n": 1161,
+            "coverage": 0.7192,
+            "gap": 0.0365,
+            "mean_halfwidth": 0.295663
+          }
+        }
+      },
+      "mondrian_shrunk": {
+        "target": 0.6826894921370859,
+        "n": 7401,
+        "pooled_coverage": 0.67,
+        "pooled_gap": -0.0126,
+        "mean_halfwidth": 0.34637,
+        "worst_under_stratum": "mixed_elec",
+        "worst_under_gap": 0.0585,
+        "max_abs_stratum_gap": 0.0585,
+        "strata": {
+          "cold_elec": {
+            "n": 298,
+            "coverage": 0.6644,
+            "gap": -0.0183,
+            "mean_halfwidth": 0.261734
+          },
+          "cold_fuel": {
+            "n": 2544,
+            "coverage": 0.6828,
+            "gap": 0.0001,
+            "mean_halfwidth": 0.462311
+          },
+          "mixed_elec": {
+            "n": 652,
+            "coverage": 0.6242,
+            "gap": -0.0585,
+            "mean_halfwidth": 0.218512
+          },
+          "mixed_fuel": {
+            "n": 2004,
+            "coverage": 0.6252,
+            "gap": -0.0574,
+            "mean_halfwidth": 0.323878
+          },
+          "warm_elec": {
+            "n": 742,
+            "coverage": 0.7102,
+            "gap": 0.0276,
+            "mean_halfwidth": 0.228535
+          },
+          "warm_fuel": {
+            "n": 1161,
+            "coverage": 0.7209,
+            "gap": 0.0382,
+            "mean_halfwidth": 0.299976
+          }
+        }
+      }
+    }
+  },
+  "calibrators_dev": {
+    "incumbent": {
+      "pooled_widen": 1.0335319019937603,
+      "mondrian_raw": {
+        "target": 0.6826894921370859,
+        "widen_only": true,
+        "shrink_k": 0.0,
+        "min_n": 5,
+        "additive": false,
+        "global_factor": 1.0341000488672796,
+        "stratum_factors": {
+          "cold_elec": 1.3946390319773447,
+          "cold_fuel": 1.0,
+          "mixed_elec": 1.2299575500295563,
+          "mixed_fuel": 1.0168916896446587,
+          "warm_elec": 1.1320643273308835,
+          "warm_fuel": 1.0
+        },
+        "stratum_raw_factors": {
+          "cold_elec": 1.3946390319773447,
+          "cold_fuel": 1.0,
+          "mixed_elec": 1.2299575500295563,
+          "mixed_fuel": 1.0168916896446587,
+          "warm_elec": 1.1320643273308835,
+          "warm_fuel": 1.0
+        },
+        "stratum_counts": {
+          "cold_elec": 72,
+          "cold_fuel": 646,
+          "mixed_elec": 155,
+          "mixed_fuel": 499,
+          "warm_elec": 167,
+          "warm_fuel": 309
+        }
+      },
+      "mondrian_shrunk": {
+        "target": 0.6826894921370859,
+        "widen_only": true,
+        "shrink_k": 10.0,
+        "min_n": 5,
+        "additive": false,
+        "global_factor": 1.0341000488672796,
+        "stratum_factors": {
+          "cold_elec": 1.3506708633053857,
+          "cold_fuel": 1.0005198178180987,
+          "mixed_elec": 1.2180873984439637,
+          "mixed_fuel": 1.0172297713582663,
+          "warm_elec": 1.1265296223329397,
+          "warm_fuel": 1.001068967049131
+        },
+        "stratum_raw_factors": {
+          "cold_elec": 1.3946390319773447,
+          "cold_fuel": 1.0,
+          "mixed_elec": 1.2299575500295563,
+          "mixed_fuel": 1.0168916896446587,
+          "warm_elec": 1.1320643273308835,
+          "warm_fuel": 1.0
+        },
+        "stratum_counts": {
+          "cold_elec": 72,
+          "cold_fuel": 646,
+          "mixed_elec": 155,
+          "mixed_fuel": 499,
+          "warm_elec": 167,
+          "warm_fuel": 309
+        }
+      }
+    },
+    "gbdt_mono": {
+      "pooled_widen": 2.2463833378627283,
+      "mondrian_raw": {
+        "target": 0.6826894921370859,
+        "widen_only": true,
+        "shrink_k": 0.0,
+        "min_n": 5,
+        "additive": false,
+        "global_factor": 2.2496213696654177,
+        "stratum_factors": {
+          "cold_elec": 1.795156462808166,
+          "cold_fuel": 2.8060399297372003,
+          "mixed_elec": 1.6309683540506494,
+          "mixed_fuel": 2.3131288325443315,
+          "warm_elec": 1.0,
+          "warm_fuel": 1.5352111500984968
+        },
+        "stratum_raw_factors": {
+          "cold_elec": 1.795156462808166,
+          "cold_fuel": 2.8060399297372003,
+          "mixed_elec": 1.6309683540506494,
+          "mixed_fuel": 2.3131288325443315,
+          "warm_elec": 1.0,
+          "warm_fuel": 1.5352111500984968
+        },
+        "stratum_counts": {
+          "cold_elec": 72,
+          "cold_fuel": 646,
+          "mixed_elec": 155,
+          "mixed_fuel": 499,
+          "warm_elec": 167,
+          "warm_fuel": 309
+        }
+      },
+      "mondrian_shrunk": {
+        "target": 0.6826894921370859,
+        "widen_only": true,
+        "shrink_k": 10.0,
+        "min_n": 5,
+        "additive": false,
+        "global_factor": 2.2496213696654177,
+        "stratum_factors": {
+          "cold_elec": 1.850579012424904,
+          "cold_fuel": 2.797557939492204,
+          "mixed_elec": 1.6684624762091202,
+          "mixed_fuel": 2.311881141721563,
+          "warm_elec": 1.070600077382227,
+          "warm_fuel": 1.5576064547871151
+        },
+        "stratum_raw_factors": {
+          "cold_elec": 1.795156462808166,
+          "cold_fuel": 2.8060399297372003,
+          "mixed_elec": 1.6309683540506494,
+          "mixed_fuel": 2.3131288325443315,
+          "warm_elec": 1.0,
+          "warm_fuel": 1.5352111500984968
+        },
+        "stratum_counts": {
+          "cold_elec": 72,
+          "cold_fuel": 646,
+          "mixed_elec": 155,
+          "mixed_fuel": 499,
+          "warm_elec": 167,
+          "warm_fuel": 309
+        }
+      }
+    },
+    "gbdt_plain": {
+      "pooled_widen": 2.1815288131254813,
+      "mondrian_raw": {
+        "target": 0.6826894921370859,
+        "widen_only": true,
+        "shrink_k": 0.0,
+        "min_n": 5,
+        "additive": false,
+        "global_factor": 2.185016203942175,
+        "stratum_factors": {
+          "cold_elec": 1.6906338402204573,
+          "cold_fuel": 2.750506973985712,
+          "mixed_elec": 1.5536816657361514,
+          "mixed_fuel": 2.273180151015357,
+          "warm_elec": 1.0,
+          "warm_fuel": 1.5140295176763927
+        },
+        "stratum_raw_factors": {
+          "cold_elec": 1.6906338402204573,
+          "cold_fuel": 2.750506973985712,
+          "mixed_elec": 1.5536816657361514,
+          "mixed_fuel": 2.273180151015357,
+          "warm_elec": 1.0,
+          "warm_fuel": 1.5140295176763927
+        },
+        "stratum_counts": {
+          "cold_elec": 72,
+          "cold_fuel": 646,
+          "mixed_elec": 155,
+          "mixed_fuel": 499,
+          "warm_elec": 167,
+          "warm_fuel": 309
+        }
+      },
+      "mondrian_shrunk": {
+        "target": 0.6826894921370859,
+        "widen_only": true,
+        "shrink_k": 10.0,
+        "min_n": 5,
+        "additive": false,
+        "global_factor": 2.185016203942175,
+        "stratum_factors": {
+          "cold_elec": 1.7509243723816423,
+          "cold_fuel": 2.7418866878569994,
+          "mixed_elec": 1.591944365021365,
+          "mixed_fuel": 2.271448049894077,
+          "warm_elec": 1.066950068019332,
+          "warm_fuel": 1.5350635830765742
+        },
+        "stratum_raw_factors": {
+          "cold_elec": 1.6906338402204573,
+          "cold_fuel": 2.750506973985712,
+          "mixed_elec": 1.5536816657361514,
+          "mixed_fuel": 2.273180151015357,
+          "warm_elec": 1.0,
+          "warm_fuel": 1.5140295176763927
+        },
+        "stratum_counts": {
+          "cold_elec": 72,
+          "cold_fuel": 646,
+          "mixed_elec": 155,
+          "mixed_fuel": 499,
+          "warm_elec": 167,
+          "warm_fuel": 309
+        }
+      }
+    }
+  },
+  "treeshap_twin_dev": {
+    "mode": "input_shift_paired_twins",
+    "unit": "% floor-area shift",
+    "n_pairs": 300,
+    "ranked": [
+      {
+        "feature": "Electricity (kWh/yr)",
+        "mean_real": -49.101359,
+        "mean_twin": -2.574411,
+        "mean_diff": -46.526948,
+        "mean_abs_real": 50.972757,
+        "mean_abs_twin": 32.373164,
+        "mean_abs_diff": 52.158891,
+        "share_of_gap": 0.6461
+      },
+      {
+        "feature": "Fuel gas/oil (kWh/yr)",
+        "mean_real": 8.625595,
+        "mean_twin": 9.356578,
+        "mean_diff": -0.730982,
+        "mean_abs_real": 18.010122,
+        "mean_abs_twin": 15.246679,
+        "mean_abs_diff": 16.330107,
+        "share_of_gap": 0.2023
+      },
+      {
+        "feature": "Heating degree days",
+        "mean_real": -6.833459,
+        "mean_twin": -12.10557,
+        "mean_diff": 5.272111,
+        "mean_abs_real": 15.297404,
+        "mean_abs_twin": 17.442406,
+        "mean_abs_diff": 9.736374,
+        "share_of_gap": 0.1206
+      },
+      {
+        "feature": "Cooling degree days",
+        "mean_real": -0.120814,
+        "mean_twin": 0.281297,
+        "mean_diff": -0.402111,
+        "mean_abs_real": 2.161205,
+        "mean_abs_twin": 3.224754,
+        "mean_abs_diff": 2.503752,
+        "share_of_gap": 0.031
+      },
+      {
+        "feature": "District meters",
+        "mean_real": 0.0,
+        "mean_twin": 0.0,
+        "mean_diff": 0.0,
+        "mean_abs_real": 0.0,
+        "mean_abs_twin": 0.0,
+        "mean_abs_diff": 0.0,
+        "share_of_gap": 0.0
+      }
+    ],
+    "by_stratum": {
+      "cold_elec": [
+        {
+          "feature": "Electricity (kWh/yr)",
+          "mean_real": -62.84599,
+          "mean_twin": -21.840066,
+          "mean_diff": -41.005923,
+          "mean_abs_real": 62.84599,
+          "mean_abs_twin": 43.622573,
+          "mean_abs_diff": 41.005923,
+          "share_of_gap": 0.6725
+        },
+        {
+          "feature": "Heating degree days",
+          "mean_real": -21.452221,
+          "mean_twin": -24.212009,
+          "mean_diff": 2.759789,
+          "mean_abs_real": 21.452221,
+          "mean_abs_twin": 24.38156,
+          "mean_abs_diff": 14.259883,
+          "share_of_gap": 0.2339
+        },
+        {
+          "feature": "Fuel gas/oil (kWh/yr)",
+          "mean_real": -3.462602,
+          "mean_twin": 1.281183,
+          "mean_diff": -4.743785,
+          "mean_abs_real": 3.462602,
+          "mean_abs_twin": 4.58203,
+          "mean_abs_diff": 4.781929,
+          "share_of_gap": 0.0784
+        },
+        {
+          "feature": "Cooling degree days",
+          "mean_real": 0.494846,
+          "mean_twin": 1.09188,
+          "mean_diff": -0.597034,
+          "mean_abs_real": 0.863228,
+          "mean_abs_twin": 1.146028,
+          "mean_abs_diff": 0.930996,
+          "share_of_gap": 0.0153
+        },
+        {
+          "feature": "District meters",
+          "mean_real": 0.0,
+          "mean_twin": 0.0,
+          "mean_diff": 0.0,
+          "mean_abs_real": 0.0,
+          "mean_abs_twin": 0.0,
+          "mean_abs_diff": 0.0,
+          "share_of_gap": 0.0
+        }
+      ],
+      "cold_fuel": [
+        {
+          "feature": "Electricity (kWh/yr)",
+          "mean_real": -57.934562,
+          "mean_twin": 11.911334,
+          "mean_diff": -69.845896,
+          "mean_abs_real": 57.934562,
+          "mean_abs_twin": 30.796409,
+          "mean_abs_diff": 70.180306,
+          "share_of_gap": 0.74
+        },
+        {
+          "feature": "Fuel gas/oil (kWh/yr)",
+          "mean_real": 15.754526,
+          "mean_twin": 19.857921,
+          "mean_diff": -4.103394,
+          "mean_abs_real": 19.53103,
+          "mean_abs_twin": 20.223763,
+          "mean_abs_diff": 14.237742,
+          "share_of_gap": 0.1501
+        },
+        {
+          "feature": "Heating degree days",
+          "mean_real": -26.438925,
+          "mean_twin": -31.813921,
+          "mean_diff": 5.374995,
+          "mean_abs_real": 26.438925,
+          "mean_abs_twin": 31.813921,
+          "mean_abs_diff": 9.442034,
+          "share_of_gap": 0.0996
+        },
+        {
+          "feature": "Cooling degree days",
+          "mean_real": 0.579562,
+          "mean_twin": 1.320557,
+          "mean_diff": -0.740995,
+          "mean_abs_real": 0.714407,
+          "mean_abs_twin": 1.321927,
+          "mean_abs_diff": 0.983151,
+          "share_of_gap": 0.0104
+        },
+        {
+          "feature": "District meters",
+          "mean_real": 0.0,
+          "mean_twin": 0.0,
+          "mean_diff": 0.0,
+          "mean_abs_real": 0.0,
+          "mean_abs_twin": 0.0,
+          "mean_abs_diff": 0.0,
+          "share_of_gap": 0.0
+        }
+      ],
+      "mixed_elec": [
+        {
+          "feature": "Electricity (kWh/yr)",
+          "mean_real": -36.561527,
+          "mean_twin": -26.896268,
+          "mean_diff": -9.665259,
+          "mean_abs_real": 45.367755,
+          "mean_abs_twin": 40.366508,
+          "mean_abs_diff": 34.938774,
+          "share_of_gap": 0.6674
+        },
+        {
+          "feature": "Heating degree days",
+          "mean_real": 3.263821,
+          "mean_twin": -6.482026,
+          "mean_diff": 9.745847,
+          "mean_abs_real": 6.641709,
+          "mean_abs_twin": 7.737905,
+          "mean_abs_diff": 10.033041,
+          "share_of_gap": 0.1916
+        },
+        {
+          "feature": "Fuel gas/oil (kWh/yr)",
+          "mean_real": 0.685555,
+          "mean_twin": 2.652109,
+          "mean_diff": -1.966554,
+          "mean_abs_real": 2.4817,
+          "mean_abs_twin": 3.598069,
+          "mean_abs_diff": 4.118886,
+          "share_of_gap": 0.0787
+        },
+        {
+          "feature": "Cooling degree days",
+          "mean_real": 0.432301,
+          "mean_twin": 1.908446,
+          "mean_diff": -1.476146,
+          "mean_abs_real": 3.329927,
+          "mean_abs_twin": 2.46969,
+          "mean_abs_diff": 3.261522,
+          "share_of_gap": 0.0623
+        },
+        {
+          "feature": "District meters",
+          "mean_real": 0.0,
+          "mean_twin": 0.0,
+          "mean_diff": 0.0,
+          "mean_abs_real": 0.0,
+          "mean_abs_twin": 0.0,
+          "mean_abs_diff": 0.0,
+          "share_of_gap": 0.0
+        }
+      ],
+      "mixed_fuel": [
+        {
+          "feature": "Electricity (kWh/yr)",
+          "mean_real": -48.466567,
+          "mean_twin": -3.927347,
+          "mean_diff": -44.539219,
+          "mean_abs_real": 50.083626,
+          "mean_abs_twin": 32.146229,
+          "mean_abs_diff": 50.986306,
+          "share_of_gap": 0.6247
+        },
+        {
+          "feature": "Fuel gas/oil (kWh/yr)",
+          "mean_real": 9.948655,
+          "mean_twin": 12.541594,
+          "mean_diff": -2.592939,
+          "mean_abs_real": 24.877629,
+          "mean_abs_twin": 14.393775,
+          "mean_abs_diff": 17.941236,
+          "share_of_gap": 0.2198
+        },
+        {
+          "feature": "Heating degree days",
+          "mean_real": -1.33765,
+          "mean_twin": -6.090536,
+          "mean_diff": 4.752885,
+          "mean_abs_real": 6.332318,
+          "mean_abs_twin": 9.27891,
+          "mean_abs_diff": 9.839876,
+          "share_of_gap": 0.1206
+        },
+        {
+          "feature": "Cooling degree days",
+          "mean_real": 0.629882,
+          "mean_twin": 1.037049,
+          "mean_diff": -0.407167,
+          "mean_abs_real": 2.751373,
+          "mean_abs_twin": 3.828707,
+          "mean_abs_diff": 2.850293,
+          "share_of_gap": 0.0349
+        },
+        {
+          "feature": "District meters",
+          "mean_real": 0.0,
+          "mean_twin": 0.0,
+          "mean_diff": 0.0,
+          "mean_abs_real": 0.0,
+          "mean_abs_twin": 0.0,
+          "mean_abs_diff": 0.0,
+          "share_of_gap": 0.0
+        }
+      ],
+      "warm_elec": [
+        {
+          "feature": "Electricity (kWh/yr)",
+          "mean_real": -37.373234,
+          "mean_twin": -9.208064,
+          "mean_diff": -28.165171,
+          "mean_abs_real": 39.820357,
+          "mean_abs_twin": 30.338621,
+          "mean_abs_diff": 36.746996,
+          "share_of_gap": 0.5739
+        },
+        {
+          "feature": "Fuel gas/oil (kWh/yr)",
+          "mean_real": 0.214291,
+          "mean_twin": -8.854753,
+          "mean_diff": 9.069043,
+          "mean_abs_real": 1.526816,
+          "mean_abs_twin": 14.181497,
+          "mean_abs_diff": 13.987306,
+          "share_of_gap": 0.2185
+        },
+        {
+          "feature": "Heating degree days",
+          "mean_real": 14.805836,
+          "mean_twin": 5.742739,
+          "mean_diff": 9.063097,
+          "mean_abs_real": 14.805836,
+          "mean_abs_twin": 6.527023,
+          "mean_abs_diff": 9.976171,
+          "share_of_gap": 0.1558
+        },
+        {
+          "feature": "Cooling degree days",
+          "mean_real": -2.455714,
+          "mean_twin": -5.151604,
+          "mean_diff": 2.69589,
+          "mean_abs_real": 2.680286,
+          "mean_abs_twin": 5.353807,
+          "mean_abs_diff": 3.314374,
+          "share_of_gap": 0.0518
+        },
+        {
+          "feature": "District meters",
+          "mean_real": 0.0,
+          "mean_twin": 0.0,
+          "mean_diff": 0.0,
+          "mean_abs_real": 0.0,
+          "mean_abs_twin": 0.0,
+          "mean_abs_diff": 0.0,
+          "share_of_gap": 0.0
+        }
+      ],
+      "warm_fuel": [
+        {
+          "feature": "Electricity (kWh/yr)",
+          "mean_real": -41.205191,
+          "mean_twin": -6.823827,
+          "mean_diff": -34.381364,
+          "mean_abs_real": 43.353291,
+          "mean_abs_twin": 28.591583,
+          "mean_abs_diff": 36.687978,
+          "share_of_gap": 0.4476
+        },
+        {
+          "feature": "Fuel gas/oil (kWh/yr)",
+          "mean_real": 3.310308,
+          "mean_twin": -4.233104,
+          "mean_diff": 7.543412,
+          "mean_abs_real": 25.653289,
+          "mean_abs_twin": 17.560008,
+          "mean_abs_diff": 31.979146,
+          "share_of_gap": 0.3901
+        },
+        {
+          "feature": "Heating degree days",
+          "mean_real": 12.445263,
+          "mean_twin": 11.165242,
+          "mean_diff": 1.280021,
+          "mean_abs_real": 12.496053,
+          "mean_abs_twin": 12.132384,
+          "mean_abs_diff": 8.423654,
+          "share_of_gap": 0.1028
+        },
+        {
+          "feature": "Cooling degree days",
+          "mean_real": -2.596173,
+          "mean_twin": -1.914804,
+          "mean_diff": -0.681368,
+          "mean_abs_real": 3.621706,
+          "mean_abs_twin": 6.401508,
+          "mean_abs_diff": 4.881995,
+          "share_of_gap": 0.0596
+        },
+        {
+          "feature": "District meters",
+          "mean_real": 0.0,
+          "mean_twin": 0.0,
+          "mean_diff": 0.0,
+          "mean_abs_real": 0.0,
+          "mean_abs_twin": 0.0,
+          "mean_abs_diff": 0.0,
+          "share_of_gap": 0.0
+        }
+      ]
+    },
+    "twin_report": {
+      "overall": {
+        "n": 300,
+        "phys_bias_mean": 0.0,
+        "phys_bias_median": 0.0,
+        "phys_mae": 0.0,
+        "phys_bias_ci95": [
+          0.0,
+          0.0
+        ],
+        "real_mae": 0.2679,
+        "twin_mae": 0.155894,
+        "mae_gap_real_minus_twin": 0.112007,
+        "mae_gap_ci95": [
+          0.086647,
+          0.135219
+        ],
+        "pred_shift_mean": -0.184088,
+        "pred_shift_mae": 0.237124
+      },
+      "strata": {
+        "cold_elec": {
+          "n": 13,
+          "phys_bias_mean": 0.0,
+          "phys_bias_median": 0.0,
+          "phys_mae": 0.0,
+          "phys_bias_ci95": [
+            0.0,
+            0.0
+          ],
+          "real_mae": 0.171586,
+          "twin_mae": 0.186705,
+          "mae_gap_real_minus_twin": -0.015119,
+          "mae_gap_ci95": [
+            -0.095187,
+            0.069609
+          ],
+          "pred_shift_mean": -0.189296,
+          "pred_shift_mae": 0.193523
+        },
+        "cold_fuel": {
+          "n": 100,
+          "phys_bias_mean": 0.0,
+          "phys_bias_median": 0.0,
+          "phys_mae": 0.0,
+          "phys_bias_ci95": [
+            0.0,
+            0.0
+          ],
+          "real_mae": 0.349558,
+          "twin_mae": 0.148359,
+          "mae_gap_real_minus_twin": 0.2012,
+          "mae_gap_ci95": [
+            0.159572,
+            0.242205
+          ],
+          "pred_shift_mean": -0.301032,
+          "pred_shift_mae": 0.306644
+        },
+        "mixed_elec": {
+          "n": 30,
+          "phys_bias_mean": 0.0,
+          "phys_bias_median": 0.0,
+          "phys_mae": 0.0,
+          "phys_bias_ci95": [
+            0.0,
+            0.0
+          ],
+          "real_mae": 0.169347,
+          "twin_mae": 0.130737,
+          "mae_gap_real_minus_twin": 0.03861,
+          "mae_gap_ci95": [
+            -0.017874,
+            0.100789
+          ],
+          "pred_shift_mean": -0.014601,
+          "pred_shift_mae": 0.171614
+        },
+        "mixed_fuel": {
+          "n": 90,
+          "phys_bias_mean": 0.0,
+          "phys_bias_median": 0.0,
+          "phys_mae": 0.0,
+          "phys_bias_ci95": [
+            0.0,
+            0.0
+          ],
+          "real_mae": 0.261296,
+          "twin_mae": 0.164498,
+          "mae_gap_real_minus_twin": 0.096798,
+          "mae_gap_ci95": [
+            0.053842,
+            0.14496
+          ],
+          "pred_shift_mean": -0.185819,
+          "pred_shift_mae": 0.23289
+        },
+        "warm_elec": {
+          "n": 26,
+          "phys_bias_mean": 0.0,
+          "phys_bias_median": 0.0,
+          "phys_mae": 0.0,
+          "phys_bias_ci95": [
+            0.0,
+            0.0
+          ],
+          "real_mae": 0.173193,
+          "twin_mae": 0.149917,
+          "mae_gap_real_minus_twin": 0.023275,
+          "mae_gap_ci95": [
+            -0.032016,
+            0.086184
+          ],
+          "pred_shift_mean": -0.031865,
+          "pred_shift_mae": 0.155844
+        },
+        "warm_fuel": {
+          "n": 41,
+          "phys_bias_mean": 0.0,
+          "phys_bias_median": 0.0,
+          "phys_mae": 0.0,
+          "phys_bias_ci95": [
+            0.0,
+            0.0
+          ],
+          "real_mae": 0.245942,
+          "twin_mae": 0.167812,
+          "mae_gap_real_minus_twin": 0.07813,
+          "mae_gap_ci95": [
+            0.019242,
+            0.149304
+          ],
+          "pred_shift_mean": -0.113956,
+          "pred_shift_mae": 0.190158
+        }
+      }
+    }
+  },
+  "disagreement_exam": {
+    "vs_incumbent_error": {
+      "overall": {
+        "n": 7401,
+        "mean_disagreement": 0.236833,
+        "median_disagreement": 0.242864,
+        "p90_disagreement": 0.3535,
+        "spearman_r": 0.0814,
+        "spearman_p": 0.0,
+        "top10pct_mae": 0.18997,
+        "bottom50pct_mae": 0.16652,
+        "top10pct_enrichment": 1.089
+      },
+      "strata": {
+        "cold_elec": {
+          "n": 298,
+          "mean_disagreement": 0.36972,
+          "median_disagreement": 0.38105,
+          "p90_disagreement": 0.493119,
+          "spearman_r": 0.2207,
+          "spearman_p": 0.000122,
+          "top10pct_mae": 0.287007,
+          "bottom50pct_mae": 0.201798,
+          "top10pct_enrichment": 1.239
+        },
+        "cold_fuel": {
+          "n": 2544,
+          "mean_disagreement": 0.282465,
+          "median_disagreement": 0.287774,
+          "p90_disagreement": 0.344426,
+          "spearman_r": 0.0309,
+          "spearman_p": 0.119249,
+          "top10pct_mae": 0.163774,
+          "bottom50pct_mae": 0.165146,
+          "top10pct_enrichment": 0.975
+        },
+        "mixed_elec": {
+          "n": 652,
+          "mean_disagreement": 0.2367,
+          "median_disagreement": 0.267356,
+          "p90_disagreement": 0.336661,
+          "spearman_r": 0.2337,
+          "spearman_p": 0.0,
+          "top10pct_mae": 0.278927,
+          "bottom50pct_mae": 0.187819,
+          "top10pct_enrichment": 1.295
+        },
+        "mixed_fuel": {
+          "n": 2004,
+          "mean_disagreement": 0.219908,
+          "median_disagreement": 0.213898,
+          "p90_disagreement": 0.332877,
+          "spearman_r": -0.0072,
+          "spearman_p": 0.745805,
+          "top10pct_mae": 0.160243,
+          "bottom50pct_mae": 0.166587,
+          "top10pct_enrichment": 0.967
+        },
+        "warm_elec": {
+          "n": 742,
+          "mean_disagreement": 0.146596,
+          "median_disagreement": 0.144414,
+          "p90_disagreement": 0.2349,
+          "spearman_r": 0.1768,
+          "spearman_p": 1e-06,
+          "top10pct_mae": 0.258014,
+          "bottom50pct_mae": 0.164638,
+          "top10pct_enrichment": 1.395
+        },
+        "warm_fuel": {
+          "n": 1161,
+          "mean_disagreement": 0.189694,
+          "median_disagreement": 0.152711,
+          "p90_disagreement": 0.390281,
+          "spearman_r": 0.034,
+          "spearman_p": 0.246782,
+          "top10pct_mae": 0.164372,
+          "bottom50pct_mae": 0.156841,
+          "top10pct_enrichment": 1.028
+        }
+      }
+    },
+    "vs_gbdt_mono_error": {
+      "overall": {
+        "n": 7401,
+        "mean_disagreement": 0.236833,
+        "median_disagreement": 0.242864,
+        "p90_disagreement": 0.3535,
+        "spearman_r": 0.3739,
+        "spearman_p": 0.0,
+        "top10pct_mae": 0.362083,
+        "bottom50pct_mae": 0.206782,
+        "top10pct_enrichment": 1.328
+      },
+      "strata": {
+        "cold_elec": {
+          "n": 298,
+          "mean_disagreement": 0.36972,
+          "median_disagreement": 0.38105,
+          "p90_disagreement": 0.493119,
+          "spearman_r": 0.1098,
+          "spearman_p": 0.05829,
+          "top10pct_mae": 0.293563,
+          "bottom50pct_mae": 0.200121,
+          "top10pct_enrichment": 1.33
+        },
+        "cold_fuel": {
+          "n": 2544,
+          "mean_disagreement": 0.282465,
+          "median_disagreement": 0.287774,
+          "p90_disagreement": 0.344426,
+          "spearman_r": 0.3224,
+          "spearman_p": 0.0,
+          "top10pct_mae": 0.433584,
+          "bottom50pct_mae": 0.313093,
+          "top10pct_enrichment": 1.195
+        },
+        "mixed_elec": {
+          "n": 652,
+          "mean_disagreement": 0.2367,
+          "median_disagreement": 0.267356,
+          "p90_disagreement": 0.336661,
+          "spearman_r": -0.0569,
+          "spearman_p": 0.147011,
+          "top10pct_mae": 0.178342,
+          "bottom50pct_mae": 0.195925,
+          "top10pct_enrichment": 0.962
+        },
+        "mixed_fuel": {
+          "n": 2004,
+          "mean_disagreement": 0.219908,
+          "median_disagreement": 0.213898,
+          "p90_disagreement": 0.332877,
+          "spearman_r": 0.3494,
+          "spearman_p": 0.0,
+          "top10pct_mae": 0.424214,
+          "bottom50pct_mae": 0.215276,
+          "top10pct_enrichment": 1.562
+        },
+        "warm_elec": {
+          "n": 742,
+          "mean_disagreement": 0.146596,
+          "median_disagreement": 0.144414,
+          "p90_disagreement": 0.2349,
+          "spearman_r": -0.0093,
+          "spearman_p": 0.801348,
+          "top10pct_mae": 0.158902,
+          "bottom50pct_mae": 0.163615,
+          "top10pct_enrichment": 0.984
+        },
+        "warm_fuel": {
+          "n": 1161,
+          "mean_disagreement": 0.189694,
+          "median_disagreement": 0.152711,
+          "p90_disagreement": 0.390281,
+          "spearman_r": 0.286,
+          "spearman_p": 0.0,
+          "top10pct_mae": 0.452078,
+          "bottom50pct_mae": 0.17209,
+          "top10pct_enrichment": 2.147
+        }
+      }
+    }
+  }
+}

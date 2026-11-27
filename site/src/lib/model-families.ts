@@ -152,14 +152,14 @@ export const FAMILIES: Family[] = [
     risk: 'Capacity is rarely the limit here. EnergyNet’s wider networks (0.73 M weights each) lost 0.019 of skill; three times the data gained 0.019.',
     used: ['EnergyNet', 'DemandCast', 'GridPulse', 'PlantDetective', 'HybridPilot', 'BatteryPilot', 'BasinDetective', 'ReservoirPilot', 'FireSize', 'FirePilot (a value net that ranks candidate line plans)'], refs: [],
     vbake: { arm: 'tab_mlp', text: 'EnergyNet’s network retrained on one simulated bank (a third of v2.1’s data) scored 12.1 % mean exam MdAPE over 16 sets, best of the table learners; the same network on 3x the data (EnergyNet v2.1) scored 11.0 %. Tied a dev-fitted classical composite.' } },
-  { id: 'gbm', name: 'Gradient-boosted trees', g: 'tab', st: 'n', np: 3, web: 3, data: 3,
+  { id: 'gbm', name: 'Gradient-boosted trees', g: 'tab', st: 'p', np: 3, web: 3, data: 3,
     one: 'Hundreds of shallow trees summed: thresholds on one input at a time, which handle step changes, counts and useless columns well.',
     physics: 'The same feature tables as the MLPs. Monotone constraints can encode signs the physics knows: more grade, more energy.',
     suits: 'Tables with mixed scales, counts, missing values and thresholds.',
     unc: 'Quantile objectives, distributional boosting (NGBoost), ensembles or a conformal wrapper.',
     extrap: 'Constant beyond the last split, so flat outside the bank. Predicting a correction to physics makes that mild.',
     risk: 'The output is piecewise constant: wrong for smooth control signals and for anything that needs derivatives.',
-    used: [], refs: ['friedman01', 'chen16', 'ke17', 'prok18', 'grinsztajn22', 'duan20', 'lundberg20'],
+    used: ['Runtime in mlratchet.gbm (pure numpy + exact TreeSHAP) and site/src/lib/nn/trees.ts (1e-12 parity)', 'Method experiment M2 (TreeTwin, zero real labels): lost pooled exam headlines to neural incumbents on EnergyNet (15.7% vs 13.0%), AirfoilNet (0.184 vs 0.166) and BuildingDetective (45.0% vs 33.6%), while beating them on unseen EVs (17.7–19.4% vs 23.2%), RECS electric-heated homes (28–35% vs 38–63%) and AirfoilNet low-Re high-alpha (0.261 vs 0.290), and flagging 1.9–2.1x higher-error exam cases via |GBDT − MLP| disagreement'], refs: ['friedman01', 'chen16', 'ke17', 'prok18', 'grinsztajn22', 'duan20', 'lundberg20'],
     bake: { arm: 'tab_gbm', text: 'LightGBM on 47 hand-built memory features topped the main ungauged board (0.345, tied) and beat FlowCast v1.0 on recent (0.388); best in snow basins. Monotone constraints on 21 water features cost 0.031 on simulations and were dropped.' },
     vbake: { arm: 'tab_gbm', text: 'LightGBM on the 151 physics features scored 12.6 %, 0.5 points behind the MLP, with the best hybrid average (9.0 %). Monotone constraints on physics-signed inputs cost simulated skill and were dropped, as in the River Bake-off.' } },
   { id: 'gp', name: 'Gaussian processes', g: 'tab', st: 'n', np: 2, web: 2, data: 3,
@@ -212,14 +212,14 @@ export const FAMILIES: Family[] = [
     extrap: 'Can be confidently wrong outside the prior; simulation-based calibration checks it.',
     risk: 'Needs a good encoder and calibration checks. Heavier than a Gaussian head.',
     used: ['ChirpNet (8-layer RealNVP)', 'TsunamiNet (8-layer RealNVP over the tsunami source)'], refs: ['dinh17', 'papamakarios21', 'talts18', 'dax21'] },
-  { id: 'conformal', name: 'Conformal prediction', g: 'dist', st: 'n', np: 3, web: 3, data: 2,
+  { id: 'conformal', name: 'Conformal prediction', g: 'dist', st: 'p', np: 3, web: 3, data: 2,
     one: 'A wrapper that turns any model’s errors into intervals with guaranteed coverage, when calibration and test data are interchangeable.',
     physics: 'None; it sits on top of any learner.',
     suits: 'Any output. The Mondrian version keeps one quantile per stratum, such as observing length.',
     unc: 'Guaranteed coverage on average, under that interchangeability.',
     extrap: 'Under a sim-to-real shift the guarantee becomes a calibrated widening, not a proof.',
     risk: 'Here the calibration set is dev: 16 to 400 units, so the quantiles are coarse.',
-    used: [], refs: ['angelopoulos21', 'romano19'],
+    used: ['mlratchet.calibrate.MondrianConformal (widen-only + empirical-Bayes shrinkage toward global quantile)', 'Method experiment M2 (TreeTwin, nominal 68.3%): cut worst-stratum exam under-coverage on all three released neural incumbents — BuildingDetective RECS 15.3 pp → 5.7 pp, AirfoilNet 21.6 pp → 4.7 pp, EnergyNet 31.1 pp → 27.0 pp (and EnergyNet GBDT-Mono 14.4 pp → 5.8 pp)'], refs: ['angelopoulos21', 'romano19'],
     bake: { arm: '10 wrappers', text: 'A Mondrian layer fitted on 52 dev basins brought every arm’s 90 % band to 0.87–0.89 exam coverage (raw 0.87–0.95), but made CRPS slightly worse in 14 of 18 arm-periods: calibration, not sharpness.' },
     vbake: { arm: '10 wrappers', text: 'A Mondrian layer fitted on dev residuals per powertrain improved CRPS for all 10 wrapped arms and lifted the networks’ and trees’ 90 % coverage from 0.71–0.77 to 0.82–0.89.' } },
   { id: 'ensemble', name: 'Ensembles and heteroscedastic heads', g: 'dist', st: 'y', np: 3, web: 3, data: 2,
@@ -442,12 +442,12 @@ export const BUDGET_EXTRA: { name: string; n: number; note: string }[] = [
   { name: 'Symbolic law', n: 10, note: 'a formula with about ten constants' },
 ];
 
-/** Section 07: an illustrative TreeSHAP read of a unit and its simulated twin (made-up numbers). */
+/** Section 07: measured exact TreeSHAP attributions on real VED dev trips vs RoadSim (experiments/treetwin/, M2). */
 export const SHAP_FEATURES = ['Aero work', 'Rolling work', 'Grade work', 'Stop density', 'Ambient temperature', 'Accessory load', 'Mass', 'Model year'];
 export const SHAP_CASES: { name: string; twin: number[]; real: number[]; read: string }[] = [
-  { name: 'Cold-weather commute', twin: [4, 2, 1, 3, 2, 1, 2, 0.5], real: [4, 2.2, 1, 3, 5.5, 3.6, 2, 0.5], read: 'The real trip leans on ambient temperature and accessory load far harder than its twin does. Cabin heat and engine warm-up in the cold are the first suspects: the kind of gap RoadSim’s calibration rungs have chased before (a 250 W base accessory load, oil heat capacity doubled, belt A/C efficiency 0.25).' },
-  { name: 'City hybrid', twin: [1.5, 1.8, 0.5, 6, 1, 1, 2, 1], real: [1.5, 1.8, 0.5, 3, 1, 1, 2, 1], read: 'Stop density drives the twin’s correction twice as hard as the real car’s: the simulated hybrid gains or loses too much at each stop. TripDetective’s twin test found the same family of gap, a dev hybrid’s twin stopping its engine 0.29 of the time against 0.09 for the real car.' },
-  { name: 'Highway, twin agrees', twin: [6, 2.5, 1, 0.5, 1, 0.8, 2, 1], real: [6.2, 2.4, 1.1, 0.5, 1, 0.9, 2, 1], read: 'Twin and real lean on the same features by about the same amounts. If this unit still reads wrong, the gap is in something the model is not given, or in the label.' },
+  { name: 'Cold-weather commute (T < 0 °C)', twin: [-0.43, -1.7, 0.32, -3.88, 1.46, 0.87, 6.99, 7.25], real: [-0.14, -2.76, 0.31, -3.28, 7.84, 1.24, 6.94, 7.57], read: 'Across 327 real VED dev trips below 0 °C (15 cars), real vehicles burn +9.59% more energy than RoadSim predicts. Exact TreeSHAP isolates +6.38% of that gap to ambient temperature alone (+7.84% real vs +1.46% simulated twin), with rolling work (−1.06%) and stop density (+0.60%) second — pointing straight at cold cabin heating and warm-up losses.' },
+  { name: 'City hybrid (HEV stop-and-go)', twin: [-1.65, -1.42, 0.78, -1.13, -2.23, -0.31, 7.2, 6.26], real: [-1.49, -1.33, 0.84, -0.36, -1.56, -0.04, 7.16, 4.96], read: 'Across 138 stop-and-go HEV dev trips (5 hybrids), the net error looks small (−0.85%), yet TreeSHAP uncovers opposing gaps: real hybrids save less from stop density (+0.77%, −0.36% real vs −1.13% twin) and cold weather (+0.67%) than RoadSim assumes, masked by an opposing −1.30% model-year offset.' },
+  { name: 'Mild highway ICE (T ≥ 10 °C)', twin: [0.49, 0.03, 1.27, -0.68, -3.48, 0.47, 6.41, 5.34], real: [-0.06, 0.49, 1.18, -1.58, -4.82, -0.29, 5.85, 9.53], read: 'Across 12 mild highway ICE dev trips (3 cars, net error +0.89%), the road-load terms agree closely (aero −0.55%, rolling +0.46%, grade −0.09%), while model year (+4.19%) carries almost all of the remaining car-to-car calibration offset.' },
 ];
 
 /** References, each resolved on 16 Nov 2026 (DOIs through Crossref, arXiv ids through the arXiv API, other links fetched). */

@@ -1,0 +1,1417 @@
+{
+  "platform": "energynet",
+  "title": "EnergyNet (VED real trips)",
+  "domain": "Transportation",
+  "target": "log_energy_ratio",
+  "unit": "log(E / E_phys)",
+  "prereg_sha256": "352d3edf570a5adb741bc8250a31079123150cd204092a4b61924adb5bfde7ba",
+  "n_exam": 25793,
+  "n_exam_units": 350,
+  "sim_val": {
+    "incumbent": 11.4949,
+    "gbdt_plain": 15.3643,
+    "gbdt_mono": 16.0421,
+    "mono_parity": 0.0,
+    "mono_treeshap_err": 2.634e-14,
+    "mono_params_all": 368398
+  },
+  "dev_metrics": {
+    "incumbent": {
+      "headline_mdape_pct": 11.85,
+      "pooled_mdape_pct": 9.58,
+      "log_mae": 0.1527,
+      "strata": {
+        "EV": {
+          "n": 258,
+          "mdape_pct": 13.96,
+          "log_mae": 0.1798
+        },
+        "HEV": {
+          "n": 275,
+          "mdape_pct": 12.61,
+          "log_mae": 0.1593
+        },
+        "ICE": {
+          "n": 645,
+          "mdape_pct": 6.63,
+          "log_mae": 0.0818
+        },
+        "PHEV": {
+          "n": 318,
+          "mdape_pct": 16.31,
+          "log_mae": 0.2686
+        }
+      }
+    },
+    "gbdt_plain": {
+      "headline_mdape_pct": 14.61,
+      "pooled_mdape_pct": 12.24,
+      "log_mae": 0.1691,
+      "strata": {
+        "EV": {
+          "n": 258,
+          "mdape_pct": 17.88,
+          "log_mae": 0.2115
+        },
+        "HEV": {
+          "n": 275,
+          "mdape_pct": 13.29,
+          "log_mae": 0.1527
+        },
+        "ICE": {
+          "n": 645,
+          "mdape_pct": 8.46,
+          "log_mae": 0.1043
+        },
+        "PHEV": {
+          "n": 318,
+          "mdape_pct": 22.07,
+          "log_mae": 0.2802
+        }
+      }
+    },
+    "gbdt_mono": {
+      "headline_mdape_pct": 15.01,
+      "pooled_mdape_pct": 12.03,
+      "log_mae": 0.1685,
+      "strata": {
+        "EV": {
+          "n": 258,
+          "mdape_pct": 17.25,
+          "log_mae": 0.2089
+        },
+        "HEV": {
+          "n": 275,
+          "mdape_pct": 13.27,
+          "log_mae": 0.1545
+        },
+        "ICE": {
+          "n": 645,
+          "mdape_pct": 8.42,
+          "log_mae": 0.1029
+        },
+        "PHEV": {
+          "n": 318,
+          "mdape_pct": 23.34,
+          "log_mae": 0.2809
+        }
+      }
+    }
+  },
+  "exam_metrics": {
+    "incumbent": {
+      "headline_mdape_pct": 12.97,
+      "pooled_mdape_pct": 10.51,
+      "log_mae": 0.1523,
+      "strata": {
+        "EV": {
+          "n": 167,
+          "mdape_pct": 23.22,
+          "log_mae": 0.2953
+        },
+        "HEV": {
+          "n": 8241,
+          "mdape_pct": 13.44,
+          "log_mae": 0.1703
+        },
+        "ICE": {
+          "n": 14469,
+          "mdape_pct": 8.64,
+          "log_mae": 0.1076
+        },
+        "PHEV": {
+          "n": 2916,
+          "mdape_pct": 16.82,
+          "log_mae": 0.3149
+        }
+      }
+    },
+    "gbdt_plain": {
+      "headline_mdape_pct": 15.41,
+      "pooled_mdape_pct": 11.63,
+      "log_mae": 0.1579,
+      "strata": {
+        "EV": {
+          "n": 167,
+          "mdape_pct": 17.65,
+          "log_mae": 0.2387
+        },
+        "HEV": {
+          "n": 8241,
+          "mdape_pct": 14.33,
+          "log_mae": 0.1738
+        },
+        "ICE": {
+          "n": 14469,
+          "mdape_pct": 9.4,
+          "log_mae": 0.1193
+        },
+        "PHEV": {
+          "n": 2916,
+          "mdape_pct": 22.51,
+          "log_mae": 0.2994
+        }
+      }
+    },
+    "gbdt_mono": {
+      "headline_mdape_pct": 15.68,
+      "pooled_mdape_pct": 11.67,
+      "log_mae": 0.1579,
+      "strata": {
+        "EV": {
+          "n": 167,
+          "mdape_pct": 19.43,
+          "log_mae": 0.2446
+        },
+        "HEV": {
+          "n": 8241,
+          "mdape_pct": 14.36,
+          "log_mae": 0.1757
+        },
+        "ICE": {
+          "n": 14469,
+          "mdape_pct": 9.46,
+          "log_mae": 0.1201
+        },
+        "PHEV": {
+          "n": 2916,
+          "mdape_pct": 23.21,
+          "log_mae": 0.2899
+        }
+      }
+    }
+  },
+  "paired_bootstrap": {
+    "gbdt_mono_vs_incumbent": {
+      "a": 15.6789,
+      "b": 12.9652,
+      "diff_a_minus_b": 2.7137,
+      "ci95": [
+        0.4209,
+        5.3131
+      ],
+      "significant_a_better": false,
+      "significant_b_better": true
+    },
+    "gbdt_mono_vs_gbdt_plain": {
+      "a": 15.6789,
+      "b": 15.4122,
+      "diff_a_minus_b": 0.2667,
+      "ci95": [
+        -0.3907,
+        0.9504
+      ],
+      "significant_a_better": false,
+      "significant_b_better": false
+    },
+    "gbdt_plain_vs_incumbent": {
+      "a": 15.4122,
+      "b": 12.9652,
+      "diff_a_minus_b": 2.447,
+      "ci95": [
+        0.3538,
+        4.6159
+      ],
+      "significant_a_better": false,
+      "significant_b_better": true
+    }
+  },
+  "conformal_coverage": {
+    "incumbent": {
+      "raw": {
+        "target": 0.6826894921370859,
+        "n": 25793,
+        "pooled_coverage": 0.46,
+        "pooled_gap": -0.2227,
+        "mean_halfwidth": 0.115235,
+        "worst_under_stratum": "EV",
+        "worst_under_gap": 0.4372,
+        "max_abs_stratum_gap": 0.4372,
+        "strata": {
+          "EV": {
+            "n": 167,
+            "coverage": 0.2455,
+            "gap": -0.4372,
+            "mean_halfwidth": 0.141811
+          },
+          "HEV": {
+            "n": 8241,
+            "coverage": 0.6098,
+            "gap": -0.0729,
+            "mean_halfwidth": 0.191921
+          },
+          "ICE": {
+            "n": 14469,
+            "coverage": 0.3962,
+            "gap": -0.2865,
+            "mean_halfwidth": 0.068706
+          },
+          "PHEV": {
+            "n": 2916,
+            "coverage": 0.3659,
+            "gap": -0.3168,
+            "mean_halfwidth": 0.127866
+          }
+        }
+      },
+      "pooled_widen": {
+        "target": 0.6826894921370859,
+        "n": 25793,
+        "pooled_coverage": 0.6441,
+        "pooled_gap": -0.0386,
+        "mean_halfwidth": 0.183018,
+        "worst_under_stratum": "EV",
+        "worst_under_gap": 0.3114,
+        "max_abs_stratum_gap": 0.3114,
+        "strata": {
+          "EV": {
+            "n": 167,
+            "coverage": 0.3713,
+            "gap": -0.3114,
+            "mean_halfwidth": 0.225225
+          },
+          "HEV": {
+            "n": 8241,
+            "coverage": 0.7995,
+            "gap": 0.1168,
+            "mean_halfwidth": 0.304811
+          },
+          "ICE": {
+            "n": 14469,
+            "coverage": 0.5886,
+            "gap": -0.0941,
+            "mean_halfwidth": 0.109119
+          },
+          "PHEV": {
+            "n": 2916,
+            "coverage": 0.4959,
+            "gap": -0.1868,
+            "mean_halfwidth": 0.203078
+          }
+        }
+      },
+      "mondrian_raw": {
+        "target": 0.6826894921370859,
+        "n": 25793,
+        "pooled_coverage": 0.5909,
+        "pooled_gap": -0.0918,
+        "mean_halfwidth": 0.159692,
+        "worst_under_stratum": "EV",
+        "worst_under_gap": 0.2635,
+        "max_abs_stratum_gap": 0.2635,
+        "strata": {
+          "EV": {
+            "n": 167,
+            "coverage": 0.4192,
+            "gap": -0.2635,
+            "mean_halfwidth": 0.254404
+          },
+          "HEV": {
+            "n": 8241,
+            "coverage": 0.6442,
+            "gap": -0.0385,
+            "mean_halfwidth": 0.208235
+          },
+          "ICE": {
+            "n": 14469,
+            "coverage": 0.5523,
+            "gap": -0.1304,
+            "mean_halfwidth": 0.100759
+          },
+          "PHEV": {
+            "n": 2916,
+            "coverage": 0.642,
+            "gap": -0.0407,
+            "mean_halfwidth": 0.309504
+          }
+        }
+      },
+      "mondrian_shrunk": {
+        "target": 0.6826894921370859,
+        "n": 25793,
+        "pooled_coverage": 0.5938,
+        "pooled_gap": -0.0889,
+        "mean_halfwidth": 0.160474,
+        "worst_under_stratum": "EV",
+        "worst_under_gap": 0.2695,
+        "max_abs_stratum_gap": 0.2695,
+        "strata": {
+          "EV": {
+            "n": 167,
+            "coverage": 0.4132,
+            "gap": -0.2695,
+            "mean_halfwidth": 0.253316
+          },
+          "HEV": {
+            "n": 8241,
+            "coverage": 0.653,
+            "gap": -0.0297,
+            "mean_halfwidth": 0.211625
+          },
+          "ICE": {
+            "n": 14469,
+            "coverage": 0.553,
+            "gap": -0.1297,
+            "mean_halfwidth": 0.100887
+          },
+          "PHEV": {
+            "n": 2916,
+            "coverage": 0.6396,
+            "gap": -0.0431,
+            "mean_halfwidth": 0.30626
+          }
+        }
+      }
+    },
+    "gbdt_mono": {
+      "raw": {
+        "target": 0.6826894921370859,
+        "n": 25793,
+        "pooled_coverage": 0.4658,
+        "pooled_gap": -0.2169,
+        "mean_halfwidth": 0.131822,
+        "worst_under_stratum": "ICE",
+        "worst_under_gap": 0.2617,
+        "max_abs_stratum_gap": 0.2617,
+        "strata": {
+          "EV": {
+            "n": 167,
+            "coverage": 0.515,
+            "gap": -0.1677,
+            "mean_halfwidth": 0.229205
+          },
+          "HEV": {
+            "n": 8241,
+            "coverage": 0.4936,
+            "gap": -0.1891,
+            "mean_halfwidth": 0.154862
+          },
+          "ICE": {
+            "n": 14469,
+            "coverage": 0.421,
+            "gap": -0.2617,
+            "mean_halfwidth": 0.083393
+          },
+          "PHEV": {
+            "n": 2916,
+            "coverage": 0.6067,
+            "gap": -0.076,
+            "mean_halfwidth": 0.301433
+          }
+        }
+      },
+      "pooled_widen": {
+        "target": 0.6826894921370859,
+        "n": 25793,
+        "pooled_coverage": 0.5936,
+        "pooled_gap": -0.0891,
+        "mean_halfwidth": 0.178219,
+        "worst_under_stratum": "ICE",
+        "worst_under_gap": 0.1442,
+        "max_abs_stratum_gap": 0.1442,
+        "strata": {
+          "EV": {
+            "n": 167,
+            "coverage": 0.7126,
+            "gap": 0.0299,
+            "mean_halfwidth": 0.309876
+          },
+          "HEV": {
+            "n": 8241,
+            "coverage": 0.6266,
+            "gap": -0.0561,
+            "mean_halfwidth": 0.209367
+          },
+          "ICE": {
+            "n": 14469,
+            "coverage": 0.5385,
+            "gap": -0.1442,
+            "mean_halfwidth": 0.112745
+          },
+          "PHEV": {
+            "n": 2916,
+            "coverage": 0.7671,
+            "gap": 0.0845,
+            "mean_halfwidth": 0.407527
+          }
+        }
+      },
+      "mondrian_raw": {
+        "target": 0.6826894921370859,
+        "n": 25793,
+        "pooled_coverage": 0.6257,
+        "pooled_gap": -0.057,
+        "mean_halfwidth": 0.181819,
+        "worst_under_stratum": "PHEV",
+        "worst_under_gap": 0.0616,
+        "max_abs_stratum_gap": 0.0616,
+        "strata": {
+          "EV": {
+            "n": 167,
+            "coverage": 0.7126,
+            "gap": 0.0299,
+            "mean_halfwidth": 0.314907
+          },
+          "HEV": {
+            "n": 8241,
+            "coverage": 0.6244,
+            "gap": -0.0583,
+            "mean_halfwidth": 0.208184
+          },
+          "ICE": {
+            "n": 14469,
+            "coverage": 0.6264,
+            "gap": -0.0563,
+            "mean_halfwidth": 0.139488
+          },
+          "PHEV": {
+            "n": 2916,
+            "coverage": 0.6211,
+            "gap": -0.0616,
+            "mean_halfwidth": 0.30973
+          }
+        }
+      },
+      "mondrian_shrunk": {
+        "target": 0.6826894921370859,
+        "n": 25793,
+        "pooled_coverage": 0.6255,
+        "pooled_gap": -0.0572,
+        "mean_halfwidth": 0.181941,
+        "worst_under_stratum": "HEV",
+        "worst_under_gap": 0.0581,
+        "max_abs_stratum_gap": 0.0581,
+        "strata": {
+          "EV": {
+            "n": 167,
+            "coverage": 0.7126,
+            "gap": 0.0299,
+            "mean_halfwidth": 0.314724
+          },
+          "HEV": {
+            "n": 8241,
+            "coverage": 0.6246,
+            "gap": -0.0581,
+            "mean_halfwidth": 0.208229
+          },
+          "ICE": {
+            "n": 14469,
+            "coverage": 0.6251,
+            "gap": -0.0576,
+            "mean_halfwidth": 0.139081
+          },
+          "PHEV": {
+            "n": 2916,
+            "coverage": 0.6248,
+            "gap": -0.0579,
+            "mean_halfwidth": 0.312717
+          }
+        }
+      }
+    }
+  },
+  "calibrators_dev": {
+    "incumbent": {
+      "pooled_widen": 1.5882090407827616,
+      "mondrian_raw": {
+        "target": 0.6826894921370859,
+        "widen_only": true,
+        "shrink_k": 0.0,
+        "min_n": 5,
+        "additive": false,
+        "global_factor": 1.588462681415522,
+        "stratum_factors": {
+          "EV": 1.79397081085222,
+          "HEV": 1.0850000485695481,
+          "ICE": 1.4665311928935212,
+          "PHEV": 2.420533933154428
+        },
+        "stratum_raw_factors": {
+          "EV": 1.79397081085222,
+          "HEV": 1.0850000485695481,
+          "ICE": 1.4665311928935212,
+          "PHEV": 2.420533933154428
+        },
+        "stratum_counts": {
+          "EV": 258,
+          "HEV": 275,
+          "ICE": 645,
+          "PHEV": 318
+        }
+      },
+      "mondrian_shrunk": {
+        "target": 0.6826894921370859,
+        "widen_only": true,
+        "shrink_k": 10.0,
+        "min_n": 5,
+        "additive": false,
+        "global_factor": 1.588462681415522,
+        "stratum_factors": {
+          "EV": 1.7863025970672686,
+          "HEV": 1.1026654041080033,
+          "ICE": 1.4683927423366052,
+          "PHEV": 2.3951659071867786
+        },
+        "stratum_raw_factors": {
+          "EV": 1.79397081085222,
+          "HEV": 1.0850000485695481,
+          "ICE": 1.4665311928935212,
+          "PHEV": 2.420533933154428
+        },
+        "stratum_counts": {
+          "EV": 258,
+          "HEV": 275,
+          "ICE": 645,
+          "PHEV": 318
+        }
+      }
+    },
+    "gbdt_mono": {
+      "pooled_widen": 1.3519634770505844,
+      "mondrian_raw": {
+        "target": 0.6826894921370859,
+        "widen_only": true,
+        "shrink_k": 0.0,
+        "min_n": 5,
+        "additive": false,
+        "global_factor": 1.352514967509646,
+        "stratum_factors": {
+          "EV": 1.3739134607050318,
+          "HEV": 1.3443223654440726,
+          "ICE": 1.6726547090156294,
+          "PHEV": 1.0275254969040655
+        },
+        "stratum_raw_factors": {
+          "EV": 1.3739134607050318,
+          "HEV": 1.3443223654440726,
+          "ICE": 1.6726547090156294,
+          "PHEV": 1.0275254969040655
+        },
+        "stratum_counts": {
+          "EV": 258,
+          "HEV": 275,
+          "ICE": 645,
+          "PHEV": 318
+        }
+      },
+      "mondrian_shrunk": {
+        "target": 0.6826894921370859,
+        "widen_only": true,
+        "shrink_k": 10.0,
+        "min_n": 5,
+        "additive": false,
+        "global_factor": 1.352514967509646,
+        "stratum_factors": {
+          "EV": 1.3731150094663982,
+          "HEV": 1.3446098251656715,
+          "ICE": 1.6677670793743167,
+          "PHEV": 1.0374337124713089
+        },
+        "stratum_raw_factors": {
+          "EV": 1.3739134607050318,
+          "HEV": 1.3443223654440726,
+          "ICE": 1.6726547090156294,
+          "PHEV": 1.0275254969040655
+        },
+        "stratum_counts": {
+          "EV": 258,
+          "HEV": 275,
+          "ICE": 645,
+          "PHEV": 318
+        }
+      }
+    },
+    "gbdt_plain": {
+      "pooled_widen": 1.2995121369906546,
+      "mondrian_raw": {
+        "target": 0.6826894921370859,
+        "widen_only": true,
+        "shrink_k": 0.0,
+        "min_n": 5,
+        "additive": false,
+        "global_factor": 1.3001966746619567,
+        "stratum_factors": {
+          "EV": 1.435183308065427,
+          "HEV": 1.21633239955014,
+          "ICE": 1.5174451528222046,
+          "PHEV": 1.0
+        },
+        "stratum_raw_factors": {
+          "EV": 1.435183308065427,
+          "HEV": 1.21633239955014,
+          "ICE": 1.5174451528222046,
+          "PHEV": 1.0
+        },
+        "stratum_counts": {
+          "EV": 258,
+          "HEV": 275,
+          "ICE": 645,
+          "PHEV": 318
+        }
+      },
+      "mondrian_shrunk": {
+        "target": 0.6826894921370859,
+        "widen_only": true,
+        "shrink_k": 10.0,
+        "min_n": 5,
+        "additive": false,
+        "global_factor": 1.3001966746619567,
+        "stratum_factors": {
+          "EV": 1.430146493386193,
+          "HEV": 1.2192750056944142,
+          "ICE": 1.5141283821632694,
+          "PHEV": 1.0091523376421327
+        },
+        "stratum_raw_factors": {
+          "EV": 1.435183308065427,
+          "HEV": 1.21633239955014,
+          "ICE": 1.5174451528222046,
+          "PHEV": 1.0
+        },
+        "stratum_counts": {
+          "EV": 258,
+          "HEV": 275,
+          "ICE": 645,
+          "PHEV": 318
+        }
+      }
+    }
+  },
+  "treeshap_twin_dev": {
+    "mode": "forward_residual_gap",
+    "unit": "% energy correction",
+    "n_dev_diag": 1496,
+    "ranked": [
+      {
+        "feature": "Model year",
+        "mean_real": 9.091168,
+        "mean_twin": 9.090293,
+        "mean_diff": 0.000876,
+        "mean_abs_real": 12.561735,
+        "mean_abs_twin": 11.94545,
+        "mean_abs_diff": 3.942462,
+        "share_of_gap": 0.2824
+      },
+      {
+        "feature": "Ambient temperature",
+        "mean_real": -2.808391,
+        "mean_twin": -2.934815,
+        "mean_diff": 0.126424,
+        "mean_abs_real": 6.716832,
+        "mean_abs_twin": 3.937976,
+        "mean_abs_diff": 3.043479,
+        "share_of_gap": 0.218
+      },
+      {
+        "feature": "Accessory load",
+        "mean_real": 0.791068,
+        "mean_twin": 0.881193,
+        "mean_diff": -0.090125,
+        "mean_abs_real": 4.30929,
+        "mean_abs_twin": 3.624062,
+        "mean_abs_diff": 2.335124,
+        "share_of_gap": 0.1673
+      },
+      {
+        "feature": "Stop density",
+        "mean_real": -3.530127,
+        "mean_twin": -3.537056,
+        "mean_diff": 0.006929,
+        "mean_abs_real": 5.205778,
+        "mean_abs_twin": 4.600719,
+        "mean_abs_diff": 1.951411,
+        "share_of_gap": 0.1398
+      },
+      {
+        "feature": "Rolling work",
+        "mean_real": -0.908995,
+        "mean_twin": -0.841857,
+        "mean_diff": -0.067138,
+        "mean_abs_real": 1.335393,
+        "mean_abs_twin": 0.986359,
+        "mean_abs_diff": 0.932695,
+        "share_of_gap": 0.0668
+      },
+      {
+        "feature": "Mass",
+        "mean_real": 7.465803,
+        "mean_twin": 7.472488,
+        "mean_diff": -0.006684,
+        "mean_abs_real": 7.564942,
+        "mean_abs_twin": 7.473443,
+        "mean_abs_diff": 0.667488,
+        "share_of_gap": 0.0478
+      },
+      {
+        "feature": "Aero work",
+        "mean_real": -1.382395,
+        "mean_twin": -1.381091,
+        "mean_diff": -0.001304,
+        "mean_abs_real": 3.313622,
+        "mean_abs_twin": 3.262169,
+        "mean_abs_diff": 0.556319,
+        "share_of_gap": 0.0398
+      },
+      {
+        "feature": "Grade work",
+        "mean_real": 0.485015,
+        "mean_twin": 0.47335,
+        "mean_diff": 0.011666,
+        "mean_abs_real": 1.633042,
+        "mean_abs_twin": 1.341709,
+        "mean_abs_diff": 0.531563,
+        "share_of_gap": 0.0381
+      }
+    ],
+    "by_stratum": {
+      "EV": [
+        {
+          "feature": "Model year",
+          "mean_real": -5.06253,
+          "mean_twin": -1.456649,
+          "mean_diff": -3.605881,
+          "mean_abs_real": 6.391749,
+          "mean_abs_twin": 4.986349,
+          "mean_abs_diff": 3.605881,
+          "share_of_gap": 0.2429
+        },
+        {
+          "feature": "Ambient temperature",
+          "mean_real": -4.182237,
+          "mean_twin": -3.81453,
+          "mean_diff": -0.367706,
+          "mean_abs_real": 9.395669,
+          "mean_abs_twin": 6.066391,
+          "mean_abs_diff": 3.35491,
+          "share_of_gap": 0.226
+        },
+        {
+          "feature": "Accessory load",
+          "mean_real": -3.138467,
+          "mean_twin": -1.337422,
+          "mean_diff": -1.801045,
+          "mean_abs_real": 4.000222,
+          "mean_abs_twin": 2.275082,
+          "mean_abs_diff": 3.147848,
+          "share_of_gap": 0.212
+        },
+        {
+          "feature": "Stop density",
+          "mean_real": -6.060981,
+          "mean_twin": -5.446449,
+          "mean_diff": -0.614533,
+          "mean_abs_real": 6.952882,
+          "mean_abs_twin": 5.826908,
+          "mean_abs_diff": 2.463879,
+          "share_of_gap": 0.166
+        },
+        {
+          "feature": "Rolling work",
+          "mean_real": -0.236052,
+          "mean_twin": -0.16787,
+          "mean_diff": -0.068183,
+          "mean_abs_real": 1.455034,
+          "mean_abs_twin": 0.561268,
+          "mean_abs_diff": 1.05325,
+          "share_of_gap": 0.0709
+        },
+        {
+          "feature": "Aero work",
+          "mean_real": -1.832721,
+          "mean_twin": -1.473174,
+          "mean_diff": -0.359547,
+          "mean_abs_real": 3.559027,
+          "mean_abs_twin": 3.230445,
+          "mean_abs_diff": 0.592162,
+          "share_of_gap": 0.0399
+        },
+        {
+          "feature": "Grade work",
+          "mean_real": 0.547106,
+          "mean_twin": 0.695367,
+          "mean_diff": -0.148261,
+          "mean_abs_real": 1.404771,
+          "mean_abs_twin": 1.162768,
+          "mean_abs_diff": 0.453366,
+          "share_of_gap": 0.0305
+        },
+        {
+          "feature": "Mass",
+          "mean_real": 9.477531,
+          "mean_twin": 9.304588,
+          "mean_diff": 0.172944,
+          "mean_abs_real": 9.477531,
+          "mean_abs_twin": 9.304588,
+          "mean_abs_diff": 0.17512,
+          "share_of_gap": 0.0118
+        }
+      ],
+      "HEV": [
+        {
+          "feature": "Accessory load",
+          "mean_real": -0.014923,
+          "mean_twin": -0.518587,
+          "mean_diff": 0.503664,
+          "mean_abs_real": 1.39954,
+          "mean_abs_twin": 2.079886,
+          "mean_abs_diff": 2.638618,
+          "share_of_gap": 0.2332
+        },
+        {
+          "feature": "Ambient temperature",
+          "mean_real": -1.743265,
+          "mean_twin": -2.255425,
+          "mean_diff": 0.51216,
+          "mean_abs_real": 4.934249,
+          "mean_abs_twin": 2.666246,
+          "mean_abs_diff": 2.604077,
+          "share_of_gap": 0.2301
+        },
+        {
+          "feature": "Model year",
+          "mean_real": 6.853072,
+          "mean_twin": 7.774078,
+          "mean_diff": -0.921006,
+          "mean_abs_real": 10.566799,
+          "mean_abs_twin": 10.57549,
+          "mean_abs_diff": 1.944052,
+          "share_of_gap": 0.1718
+        },
+        {
+          "feature": "Stop density",
+          "mean_real": -2.419441,
+          "mean_twin": -2.220932,
+          "mean_diff": -0.198509,
+          "mean_abs_real": 4.106358,
+          "mean_abs_twin": 3.488436,
+          "mean_abs_diff": 1.612436,
+          "share_of_gap": 0.1425
+        },
+        {
+          "feature": "Rolling work",
+          "mean_real": -1.420616,
+          "mean_twin": -1.40047,
+          "mean_diff": -0.020145,
+          "mean_abs_real": 1.478826,
+          "mean_abs_twin": 1.422184,
+          "mean_abs_diff": 0.961781,
+          "share_of_gap": 0.085
+        },
+        {
+          "feature": "Grade work",
+          "mean_real": 0.927661,
+          "mean_twin": 0.733652,
+          "mean_diff": 0.194009,
+          "mean_abs_real": 1.446168,
+          "mean_abs_twin": 1.135796,
+          "mean_abs_diff": 0.641113,
+          "share_of_gap": 0.0567
+        },
+        {
+          "feature": "Aero work",
+          "mean_real": -1.495969,
+          "mean_twin": -1.639409,
+          "mean_diff": 0.14344,
+          "mean_abs_real": 3.098925,
+          "mean_abs_twin": 3.128644,
+          "mean_abs_diff": 0.484587,
+          "share_of_gap": 0.0428
+        },
+        {
+          "feature": "Mass",
+          "mean_real": 7.322441,
+          "mean_twin": 7.319471,
+          "mean_diff": 0.00297,
+          "mean_abs_real": 7.322441,
+          "mean_abs_twin": 7.319471,
+          "mean_abs_diff": 0.428824,
+          "share_of_gap": 0.0379
+        }
+      ],
+      "ICE": [
+        {
+          "feature": "Model year",
+          "mean_real": 13.058603,
+          "mean_twin": 8.726228,
+          "mean_diff": 4.332375,
+          "mean_abs_real": 13.414664,
+          "mean_abs_twin": 10.152859,
+          "mean_abs_diff": 4.337171,
+          "share_of_gap": 0.3692
+        },
+        {
+          "feature": "Ambient temperature",
+          "mean_real": -2.117814,
+          "mean_twin": -2.403443,
+          "mean_diff": 0.285629,
+          "mean_abs_real": 4.184248,
+          "mean_abs_twin": 2.723759,
+          "mean_abs_diff": 1.874048,
+          "share_of_gap": 0.1595
+        },
+        {
+          "feature": "Accessory load",
+          "mean_real": 5.129995,
+          "mean_twin": 4.448359,
+          "mean_diff": 0.681635,
+          "mean_abs_real": 5.293249,
+          "mean_abs_twin": 4.62566,
+          "mean_abs_diff": 1.484606,
+          "share_of_gap": 0.1264
+        },
+        {
+          "feature": "Stop density",
+          "mean_real": -2.188485,
+          "mean_twin": -1.992044,
+          "mean_diff": -0.196442,
+          "mean_abs_real": 4.445959,
+          "mean_abs_twin": 3.525125,
+          "mean_abs_diff": 1.399822,
+          "share_of_gap": 0.1192
+        },
+        {
+          "feature": "Mass",
+          "mean_real": 6.91348,
+          "mean_twin": 6.82718,
+          "mean_diff": 0.0863,
+          "mean_abs_real": 7.143421,
+          "mean_abs_twin": 6.829396,
+          "mean_abs_diff": 1.022944,
+          "share_of_gap": 0.0871
+        },
+        {
+          "feature": "Rolling work",
+          "mean_real": -0.811673,
+          "mean_twin": -0.848481,
+          "mean_diff": 0.036808,
+          "mean_abs_real": 1.084133,
+          "mean_abs_twin": 0.933623,
+          "mean_abs_diff": 0.765956,
+          "share_of_gap": 0.0652
+        },
+        {
+          "feature": "Aero work",
+          "mean_real": -1.417271,
+          "mean_twin": -1.338453,
+          "mean_diff": -0.078818,
+          "mean_abs_real": 3.492172,
+          "mean_abs_twin": 3.587008,
+          "mean_abs_diff": 0.488404,
+          "share_of_gap": 0.0416
+        },
+        {
+          "feature": "Grade work",
+          "mean_real": 0.548711,
+          "mean_twin": 0.522741,
+          "mean_diff": 0.02597,
+          "mean_abs_real": 1.384052,
+          "mean_abs_twin": 1.2306,
+          "mean_abs_diff": 0.374241,
+          "share_of_gap": 0.0319
+        }
+      ],
+      "PHEV": [
+        {
+          "feature": "Ambient temperature",
+          "mean_real": -4.015561,
+          "mean_twin": -3.886389,
+          "mean_diff": -0.129172,
+          "mean_abs_real": 11.221824,
+          "mean_abs_twin": 5.773713,
+          "mean_abs_diff": 5.542751,
+          "share_of_gap": 0.2769
+        },
+        {
+          "feature": "Model year",
+          "mean_real": 14.462664,
+          "mean_twin": 19.523914,
+          "mean_diff": -5.06125,
+          "mean_abs_real": 17.562755,
+          "mean_abs_twin": 22.412144,
+          "mean_abs_diff": 5.143134,
+          "share_of_gap": 0.2569
+        },
+        {
+          "feature": "Accessory load",
+          "mean_real": -4.12447,
+          "mean_twin": -3.34359,
+          "mean_diff": -0.78088,
+          "mean_abs_real": 5.08057,
+          "mean_abs_twin": 4.022345,
+          "mean_abs_diff": 3.138395,
+          "share_of_gap": 0.1568
+        },
+        {
+          "feature": "Stop density",
+          "mean_real": -5.158544,
+          "mean_twin": -6.259834,
+          "mean_diff": 1.10129,
+          "mean_abs_real": 6.280213,
+          "mean_abs_twin": 6.749397,
+          "mean_abs_diff": 2.947563,
+          "share_of_gap": 0.1472
+        },
+        {
+          "feature": "Rolling work",
+          "mean_real": -1.209925,
+          "mean_twin": -0.892163,
+          "mean_diff": -0.317761,
+          "mean_abs_real": 1.62392,
+          "mean_abs_twin": 1.061316,
+          "mean_abs_diff": 1.14793,
+          "share_of_gap": 0.0573
+        },
+        {
+          "feature": "Grade work",
+          "mean_real": -0.077344,
+          "mean_twin": -0.032061,
+          "mean_diff": -0.045283,
+          "mean_abs_real": 2.484875,
+          "mean_abs_twin": 1.890322,
+          "mean_abs_diff": 0.819365,
+          "share_of_gap": 0.0409
+        },
+        {
+          "feature": "Aero work",
+          "mean_real": -0.848081,
+          "mean_twin": -1.169478,
+          "mean_diff": 0.321397,
+          "mean_abs_real": 2.938034,
+          "mean_abs_twin": 2.744505,
+          "mean_abs_diff": 0.727023,
+          "share_of_gap": 0.0363
+        },
+        {
+          "feature": "Mass",
+          "mean_real": 7.077902,
+          "mean_twin": 7.427271,
+          "mean_diff": -0.34937,
+          "mean_abs_real": 7.077902,
+          "mean_abs_twin": 7.427271,
+          "mean_abs_diff": 0.552375,
+          "share_of_gap": 0.0276
+        }
+      ]
+    },
+    "spotlight_cases": [
+      {
+        "name": "Cold-weather commute (VED dev, T < 0 \u00b0C)",
+        "n_trips": 327,
+        "n_cars": 15,
+        "features": [
+          "Aero work",
+          "Rolling work",
+          "Grade work",
+          "Stop density",
+          "Ambient temperature",
+          "Accessory load",
+          "Mass",
+          "Model year"
+        ],
+        "twin_mean": [
+          -0.43,
+          -1.7,
+          0.32,
+          -3.88,
+          1.46,
+          0.87,
+          6.99,
+          7.25
+        ],
+        "real_mean": [
+          -0.14,
+          -2.76,
+          0.31,
+          -3.28,
+          7.84,
+          1.24,
+          6.94,
+          7.57
+        ],
+        "twin_abs": [
+          3.22,
+          1.74,
+          1.16,
+          4.82,
+          2.2,
+          3.58,
+          6.99,
+          10.81
+        ],
+        "real_abs": [
+          3.48,
+          2.92,
+          1.26,
+          5.44,
+          7.84,
+          3.35,
+          7.02,
+          11.6
+        ],
+        "diff_mean": [
+          0.3,
+          -1.06,
+          -0.01,
+          0.6,
+          6.38,
+          0.37,
+          -0.05,
+          0.32
+        ],
+        "mean_real_minus_sim_pct": 9.59
+      },
+      {
+        "name": "City hybrid (VED dev, HEV stop-and-go)",
+        "n_trips": 138,
+        "n_cars": 5,
+        "features": [
+          "Aero work",
+          "Rolling work",
+          "Grade work",
+          "Stop density",
+          "Ambient temperature",
+          "Accessory load",
+          "Mass",
+          "Model year"
+        ],
+        "twin_mean": [
+          -1.65,
+          -1.42,
+          0.78,
+          -1.13,
+          -2.23,
+          -0.31,
+          7.2,
+          6.26
+        ],
+        "real_mean": [
+          -1.49,
+          -1.33,
+          0.84,
+          -0.36,
+          -1.56,
+          -0.04,
+          7.16,
+          4.96
+        ],
+        "twin_abs": [
+          3.23,
+          1.46,
+          1.12,
+          3.13,
+          2.71,
+          2.23,
+          7.2,
+          9.99
+        ],
+        "real_abs": [
+          3.21,
+          1.4,
+          1.34,
+          3.39,
+          5.15,
+          1.26,
+          7.16,
+          9.72
+        ],
+        "diff_mean": [
+          0.16,
+          0.09,
+          0.06,
+          0.77,
+          0.67,
+          0.27,
+          -0.04,
+          -1.3
+        ],
+        "mean_real_minus_sim_pct": -0.85
+      },
+      {
+        "name": "Mild highway ICE (VED dev, twin agrees)",
+        "n_trips": 12,
+        "n_cars": 3,
+        "features": [
+          "Aero work",
+          "Rolling work",
+          "Grade work",
+          "Stop density",
+          "Ambient temperature",
+          "Accessory load",
+          "Mass",
+          "Model year"
+        ],
+        "twin_mean": [
+          0.49,
+          0.03,
+          1.27,
+          -0.68,
+          -3.48,
+          0.47,
+          6.41,
+          5.34
+        ],
+        "real_mean": [
+          -0.06,
+          0.49,
+          1.18,
+          -1.58,
+          -4.82,
+          -0.29,
+          5.85,
+          9.53
+        ],
+        "twin_abs": [
+          4.43,
+          0.29,
+          1.27,
+          1.65,
+          3.48,
+          0.52,
+          6.41,
+          5.34
+        ],
+        "real_abs": [
+          4.55,
+          0.49,
+          1.23,
+          2.3,
+          4.82,
+          0.73,
+          6.6,
+          9.53
+        ],
+        "diff_mean": [
+          -0.55,
+          0.46,
+          -0.09,
+          -0.9,
+          -1.34,
+          -0.76,
+          -0.56,
+          4.19
+        ],
+        "mean_real_minus_sim_pct": 0.89
+      }
+    ]
+  },
+  "disagreement_exam": {
+    "vs_incumbent_error": {
+      "overall": {
+        "n": 25793,
+        "mean_disagreement": 0.092619,
+        "median_disagreement": 0.063649,
+        "p90_disagreement": 0.201515,
+        "spearman_r": 0.1569,
+        "spearman_p": 0.0,
+        "top10pct_mae": 0.320631,
+        "bottom50pct_mae": 0.123875,
+        "top10pct_enrichment": 2.106
+      },
+      "strata": {
+        "EV": {
+          "n": 167,
+          "mean_disagreement": 0.115866,
+          "median_disagreement": 0.088562,
+          "p90_disagreement": 0.220813,
+          "spearman_r": 0.1966,
+          "spearman_p": 0.010902,
+          "top10pct_mae": 0.536782,
+          "bottom50pct_mae": 0.259236,
+          "top10pct_enrichment": 1.818
+        },
+        "HEV": {
+          "n": 8241,
+          "mean_disagreement": 0.092563,
+          "median_disagreement": 0.07535,
+          "p90_disagreement": 0.185541,
+          "spearman_r": 0.0875,
+          "spearman_p": 0.0,
+          "top10pct_mae": 0.260839,
+          "bottom50pct_mae": 0.15754,
+          "top10pct_enrichment": 1.532
+        },
+        "ICE": {
+          "n": 14469,
+          "mean_disagreement": 0.066678,
+          "median_disagreement": 0.050683,
+          "p90_disagreement": 0.142128,
+          "spearman_r": 0.0729,
+          "spearman_p": 0.0,
+          "top10pct_mae": 0.126195,
+          "bottom50pct_mae": 0.103133,
+          "top10pct_enrichment": 1.173
+        },
+        "PHEV": {
+          "n": 2916,
+          "mean_disagreement": 0.220162,
+          "median_disagreement": 0.179392,
+          "p90_disagreement": 0.449069,
+          "spearman_r": 0.2226,
+          "spearman_p": 0.0,
+          "top10pct_mae": 0.561094,
+          "bottom50pct_mae": 0.220435,
+          "top10pct_enrichment": 1.782
+        }
+      }
+    },
+    "vs_gbdt_mono_error": {
+      "overall": {
+        "n": 25793,
+        "mean_disagreement": 0.092619,
+        "median_disagreement": 0.063649,
+        "p90_disagreement": 0.201515,
+        "spearman_r": 0.2555,
+        "spearman_p": 0.0,
+        "top10pct_mae": 0.311527,
+        "bottom50pct_mae": 0.126289,
+        "top10pct_enrichment": 1.973
+      },
+      "strata": {
+        "EV": {
+          "n": 167,
+          "mean_disagreement": 0.115866,
+          "median_disagreement": 0.088562,
+          "p90_disagreement": 0.220813,
+          "spearman_r": 0.0228,
+          "spearman_p": 0.77023,
+          "top10pct_mae": 0.401293,
+          "bottom50pct_mae": 0.240417,
+          "top10pct_enrichment": 1.641
+        },
+        "HEV": {
+          "n": 8241,
+          "mean_disagreement": 0.092563,
+          "median_disagreement": 0.07535,
+          "p90_disagreement": 0.185541,
+          "spearman_r": 0.1017,
+          "spearman_p": 0.0,
+          "top10pct_mae": 0.246965,
+          "bottom50pct_mae": 0.161938,
+          "top10pct_enrichment": 1.405
+        },
+        "ICE": {
+          "n": 14469,
+          "mean_disagreement": 0.066678,
+          "median_disagreement": 0.050683,
+          "p90_disagreement": 0.142128,
+          "spearman_r": 0.1859,
+          "spearman_p": 0.0,
+          "top10pct_mae": 0.193084,
+          "bottom50pct_mae": 0.104751,
+          "top10pct_enrichment": 1.608
+        },
+        "PHEV": {
+          "n": 2916,
+          "mean_disagreement": 0.220162,
+          "median_disagreement": 0.179392,
+          "p90_disagreement": 0.449069,
+          "spearman_r": 0.3812,
+          "spearman_p": 0.0,
+          "top10pct_mae": 0.429807,
+          "bottom50pct_mae": 0.219743,
+          "top10pct_enrichment": 1.483
+        }
+      }
+    }
+  }
+}
