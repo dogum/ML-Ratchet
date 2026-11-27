@@ -14,3 +14,14 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_dc30c02_pr
 ```
 
 The second-pass probe uses NumPy, SciPy, pandas, and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_dc30c02_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| `window()` fills gaps over the whole −20…+60 s window, so a sample after +N s moves the +N s reading | Yes | **Fixed**: `window(f, i0, N)` reads only up to onset + N, interpolates inside that prefix and carries the last reading forward at its end; samples after +N are zero (the network masks them anyway). | Audit case (gap at +9/+10 s, change at +11 s): N = 5, 10, 30 now give exactly the live-prefix reading. Complete traces: identical outputs at N = 5, 10, 60. `tests/test_audit_grid.py`. |
+| `window()` rejects a live prefix (needs 60 s after onset) | Yes | **Fixed**: needs N s after onset. | Same tests read a record that ends at +N s. |
+| Exam evaluator (`training/evaluate.py:real_gb`) interpolates full traces | Real in code, no effect | Not changed. | All 412 GB exam traces and the 4 dev traces have no missing second (counted 27 Nov 2026 on the local griddata archive), so the interpolation never ran. The report's open question is answered: zero cutoff-straddling gaps. |
+| `read()` uses nominal 50 Hz instead of the measured pre-event mean | Not a defect | Not changed: matches training and the exam path (`evaluate.py:88`); ≤ 2.98e-4 change in raw outputs. | — |
+
+The golden demo is unchanged.

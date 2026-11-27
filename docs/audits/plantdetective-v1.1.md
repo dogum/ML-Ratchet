@@ -20,3 +20,13 @@ On 6179_3, hiding 4.13% of the year increased the explicit log-count contributio
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/plantdetective_v1_1_probe.py
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-b/peer_73ee7e6_probe.py plantdetective
 ```
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| A missing hour inside a run becomes a stop and a start | Yes | **Fixed** in `pdcore.py` (both copies) and the site port (`net.ts`): run detection bridges a missing stretch that has running hours on both sides. Runs containing missing hours still stay out of the run-length statistics. | Reviewer B's probe, rerun: daily test 6179_3 107.58 → **6.42** starts/yr (record 2.76); 55086_101 152.36 → 87.74 (85.35); 8063_CT2 47.34 → 27.95 (27.11). All 8 ratchet decisions still match. |
+| Exam impact | — | None. | The 407 exam unit files have no missing hours (CEMS substitutes and flags them in `meas`), counted 27 Nov 2026. |
+| Trainer shuffles with NumPy's global state | Minor | Not changed (no retrain planned for this alone). | — |
+
+The golden demo is unchanged. The original lab page (`lab/index.html`, built from `training/pd.js`) is a historical record and keeps the old run rule.

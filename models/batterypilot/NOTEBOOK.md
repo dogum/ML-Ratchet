@@ -392,3 +392,11 @@ before the next ladder, would have kept v1.1. The simulator change moved the twi
 **Not done.** No CAISO fit for the RT scarcity (no CAISO prices before Aug 2023): the CAISO-like family is unchanged.
 The calibration ends on grid edges again (σ, cold f_max). The shape-only GridSim fit's twin run was stopped when the
 parameter file changed under it; its $9.3-10.7k breakdown is from `diag_rolling.py` only.
+
+## 27 Nov 2026 — audit: hour-0 history fixed; causal wear plan opt-in (re-score queued)
+
+The two-reviewer audit (`docs/audits/batterypilot-v1.3.md`) found two information leaks. At the first hour of a path
+the RT price history clipped to that hour's own price; fixed (the packaged node-years move at most $0.002/kW-year).
+The day-ahead planner's wear cost used realized temperatures for the coming hours. `causal_wear()` (24 h persistence)
+is now available but off by default, so the card still describes v1.3. On the packaged node-years it moves annual net
+revenue by −$0.06 to +$0.01/kW-year. A dated re-score with it waits for the owner's approval.

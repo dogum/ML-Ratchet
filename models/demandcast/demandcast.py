@@ -12,16 +12,31 @@ v1.1 (15 Nov 2026): solar reads the reporting offset of the 168 h history at iss
 network on the history put back on the physics clock, and moves the forecast onto the reported clock. EIA-930 solar
 timestamps move between years; v1.0 relied on one fixed shift learned on the dev years. Pass align=False for v1.0.
 """
-import os, json
+import os, json, warnings
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FLOOR = {'d': 0.004, 'w': 0.005, 's': 0.003}
 
 
-def _forward(W, x, kind, prior=None):
+Z_WARN = 8.0   # inputs further than this many training sds from the simulated mean
+
+
+def _forward(W, x, kind, prior=None, z_clip=None):
+    """z_clip: clip standardised inputs to +-z_clip (None = the released v1.1 behaviour, unclipped).
+    Audit, 25 Nov 2026: inputs the simulator nearly never varies reach |z| 48 (solar reported at 20:00 LST where physics
+    is 0; 922 of 12,642 solar exam rows) and 286 (the demand history's missing fraction; 199 of 14,448 exam rows). The
+    released network amplifies them (BPAT solar pinned at the 1.2 cap for 11 h). A warning names the columns."""
     x = np.asarray(x, np.float64)[..., :W['xm'].shape[0]]       # v1.0 nets read the first (base) features
     z = (x - W['xm']) / W['xs']
+    big = np.abs(z) > Z_WARN
+    if big.any():
+        cols = sorted(set(np.nonzero(big)[-1].tolist()))[:8]
+        warnings.warn(f"DemandCast '{kind}': {int(big.any(-1).sum())} row(s) have inputs beyond |z| {Z_WARN:g} of the "
+                      f"simulated training data (max {np.abs(z).max():.0f}; columns {cols}); the forecast extrapolates"
+                      + ("" if z_clip else " (z_clip=8 clips them)"), stacklevel=3)
+    if z_clip:
+        z = np.clip(z, -z_clip, z_clip)
     i = 0
     while f'body.{i}.weight' in W:
         z = z @ W[f'body.{i}.weight'].T + W[f'body.{i}.bias']
@@ -110,25 +125,34 @@ class DemandCast:
             return np.zeros(n)
         return np.array([ref.get(b, 0.0) for b in np.broadcast_to(np.asarray(ba), (n,))], float)
 
-    def predict_demand(self, xd, prior_total):
+    def predict_demand(self, xd, prior_total, z_clip=None):
         """xd [n, 329] features; prior_total [n, 24] physics demand (MW). Returns mean MW, sigma of log demand
-        (already dev-scaled), and the 95 % band in MW."""
-        mu, sig = _forward(self.W['d'], xd, 'd')
+        (already dev-scaled), and the 95 % band in MW. z_clip: see _forward."""
+        mu, sig = _forward(self.W['d'], xd, 'd', z_clip=z_clip)
         sig = sig * self.sigma_scale['d']
         p = prior_total * np.exp(mu)
         return dict(mw=p, log_sigma=sig, lo95=prior_total * np.exp(mu - 1.96 * sig), hi95=prior_total * np.exp(mu + 1.96 * sig))
 
-    def predict_cf(self, kind, x, prior_cf, night=None, align=True, ba=None, offset=None):
+    def predict_cf(self, kind, x, prior_cf, night=None, align=True, ba=None, offset=None, z_clip=None):
         """kind 'w' or 's'; x [n, 164|156]; prior_cf [n, 24] physics capacity factor. Returns CF mean and sigma.
         align (solar only): read the reporting offset of the solar history from x (solar_offset), put the history back
         on the physics clock, run the network, then move the forecast by the same offset onto the reported clock.
         ba: the grid (or one per row), for its dev reference offset; None = 0. offset: offsets read beforehand (per
         row), used instead of reading them from x (the site's instrument stores only the first 156 solar features)."""
         x = np.atleast_2d(x); r = np.zeros(len(x), int)
+        if kind == 's' and x.shape[1] >= _S_P.stop:
+            dark = (x[:, _S_A] > 0.01) & (x[:, _S_P] < 1e-6)
+            if dark.any():
+                # Audit, 25 Nov 2026: the released network reads reported output at hours the physics calls dark
+                # (twilight, 20:00 LST) through very large first-layer weights; on two BPAT exam days it pinned 11 h of
+                # the forecast at the 1.2 cap (solar nMAE 43-52 % vs 11-16 % with that input zeroed). 1,734 of 12,642
+                # solar exam rows had such an hour.
+                warnings.warn(f"DemandCast solar: {int(dark.any(1).sum())} row(s) report output at an hour the physics "
+                              "calls dark; the released network over-reads it (see the model card's limits)", stacklevel=2)
         if kind == 's' and align:
             r = np.broadcast_to(np.asarray(offset, int), (len(x),)).copy() if offset is not None else                 solar_offset(x, self.offset_ref(ba, len(x)))[0]
             x = align_solar_x(x, r)
-        mu, sig = _forward(self.W[kind], x, kind, prior_cf)
+        mu, sig = _forward(self.W[kind], x, kind, prior_cf, z_clip=z_clip)
         mu = np.clip(mu, 0, 1.2); sig = sig * self.sigma_scale[kind]
         if kind == 's' and night is not None:
             mu = np.where(night > 0.5, 0.0, mu); sig = np.where(night > 0.5, FLOOR['s'], sig)

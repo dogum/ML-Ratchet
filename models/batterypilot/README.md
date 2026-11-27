@@ -85,6 +85,7 @@ Share of perfect-hindsight revenue net of wear (each node-year and battery's net
 - The forced-outage rates of physics 1.1 and 1.2 are PJM class averages (demand-period EFORd), not ERCOT's own pre-2023 rates.
 - The exams have been seen: v1.3's exam was run once after its release choice was committed, and the dev-chosen v1.3 lost ground on it.
 - No error bar on the value curve itself; the exam's intervals are on revenue (weekly block bootstrap), so the recipe's coverage step does not apply.
+- Information boundary (audit, 25 Nov 2026): the day-ahead planner's wear cost uses realized temperatures for the coming hours, a perfect temperature forecast. causal_wear(bat, T) (24 h persistence, opt-in since 27 Nov 2026) moves the three packaged node-years by -$0.06 to +$0.01/kW-year; the exam used the realized form. At the first hour of a path the price history clipped to that hour's own RT price; fixed 27 Nov 2026 (changes the packaged node-years by at most $0.002/kW-year).
 
 ## The ratchet
 
@@ -206,6 +207,7 @@ Battery: 1 MW grid side, usable energy = P × duration (5-95 % of nameplate), 85
 - R9 (the hybrid on all 165 path-years) had the best dev score of any rung (0.685) but missed the margin on the frozen set by 0.004: a frozen set that agrees with dev would settle it.
 - Nodal basis: a West Texas congestion model; a real CAISO import and hydro supply curve; ancillary services.
 - Upstream to GridSim behind flags: the ORDC adder, the cold-outage curve, the gas-turbine ambient derate, the day-ahead price generator and the single-LP perfect-foresight baseline.
+- Queued (audit): a dated re-score of the exam with the planner on causal_wear (24 h persistence or a day-ahead temperature forecast), on the owner's approval.
 
 ## Files
 

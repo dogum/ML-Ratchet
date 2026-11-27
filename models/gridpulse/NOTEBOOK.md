@@ -195,3 +195,10 @@ objective and dev no more than 10 % worse).**
 
 Next, if dev ever grows: GB dev events after 2020 (Dynamic Containment era) are what the 60 s and inertia rows need;
 the splits do not allow it now.
+
+## 27 Nov 2026 — audit fix: live readings use only the prefix (no retrain, exam unchanged)
+
+The two-reviewer audit (`docs/audits/gridpulse-v1.0.md`) found that `window()` filled gaps from the whole −20…+60 s
+window and needed 60 s after the onset. A reading at N s could change with data after N s (+100.6 MW at N = 10), and a
+true live record ending at +N s was refused. `window(f, i0, N)` now reads only up to onset + N. Complete traces give
+identical outputs. None of the 412 GB exam traces or 4 dev traces has a missing second, so the exam is unchanged.
