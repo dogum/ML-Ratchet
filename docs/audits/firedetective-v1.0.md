@@ -26,3 +26,11 @@ export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
 python3 -B docs/audits/reviews/reviewer-a/firedetective_v1_0_probe.py
 python3 -B docs/audits/reviews/reviewer-b/firedetective_closing_probe.py
 ```
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Empty history gives infinite wind | Yes | **Fixed**: `predict` raises `ValueError` for fires with no observed step. | Test. All 944 exam fires had 3–12 steps: exam unchanged. |
+| Blind-wind flag scaled to z = 1000 | Real scaling, unknown cost | **Queued**: a matched retrain with the flag unscaled. The audit's reparameterisation control shows the released outputs do not depend on the scale itself. | — |
+| Checkpoint omits RNG state | Minor | Queued with the retrain. | — |

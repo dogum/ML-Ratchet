@@ -22,3 +22,9 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_dc30c02_pr
 ```
 
 The second-pass probe uses NumPy, SciPy, and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_dc30c02_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Final-perimeter crop excludes 45–59 % of the 10 km window | Evaluation limit | **Documented, no code change.** The second pass already tested the concern: outward padding moved AP by +0.0049 / −0.0029 / 0.0000 with no exterior cell above 0.10. The card's limits now say so and name what remains untested (Mode FL exterior fuels, issue-time grids, archived forecasts). | Card limits. |

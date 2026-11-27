@@ -82,6 +82,7 @@ Coverage of the 68% error bars on the exam: Severity, forest fires, ±1 sigma (f
 - The dev set is small (40 fires; 16 forest with severity, 9 with LFMC) and fed the emulator tuning, the physics knobs, the gate, the severity map and the widening: the gate is partly in-sample.
 - Inputs follow FEDS-MTBS (MTBS-sized fires, ≥ 1,000 acres in the West, 500 in the East), CONUS 2017-23, S-NPP overpasses on a 180 m grid; LANDFIRE fuels can be stale or post-fire for later fire years.
 - Rule note: the exam input build, with the truths in the same records, ran before the ratchet closed (nothing was scored or opened before the close).
+- Queued (audit): retrain with the blind-wind flag left unscaled (sd 1) and the checkpoint storing its RNG state; compare on dev.
 
 ## The ratchet
 
@@ -128,6 +129,7 @@ FireSim, the shared fire platform's simulator (ML Ratchet Wildfire Phase 1, shar
 - Per-fire MTBS burn-severity mosaics (dNBR thematic rasters) are behind an e-mail order queue; LANDFIRE Annual Disturbance codes were used instead, which lag (only 15 recent forest fires have severity).
 - Real dead-fuel moisture sticks: NFMD moved into FEMS and has no public download.
 - More dev fires with severity and LFMC truth, for the severity map, the widening and the gate.
+- Inputs (audit, 25 Nov 2026): an empty burned-area history overflowed to infinite wind; predict() now refuses fires with no observed step (every exam fire had 3-12). The blind-wind flag is scaled by a 0.001 sd floor (z = 1000 in blind mode). Rescaling it with the matching weight change leaves every output unchanged, so whether it cost accuracy in training needs a matched retrain (queued).
 
 ## Next rungs
 

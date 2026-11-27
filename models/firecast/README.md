@@ -128,6 +128,7 @@ FireSim, the shared fire platform's simulator (shared/fire/firesim): Rothermel 1
 - LANDFIRE landscapes and HRRR for more exam fires (only the 48 replay fires are packaged), to test mode L and the physics replay beyond 48 fires.
 - Dead-fuel moisture observations (the NFMD moved into FEMS, which has no public download) and ICS-209 suppression records: the twin tests point at persistence and suppression as the largest physics gaps.
 - Memory and cores: the p1 twin test stopped at 126 of 470 dev days (1.3-1.45 GB), the p1 bank at 35 of 72 shards, and a 12-member replay ensemble on crops over 500k cells needs more than 1.2 GB.
+- Exam grids (audit, 25 Nov 2026): the archived grids are cropped to the final perimeter and exclude 45-59 % of the nominal 10 km window on two packaged days. Padding 112 unburned cells outward put no exterior cell above 0.10 and moved AP by +0.005, -0.003 and 0.000 on the three packaged Mode-F days, so the network does not lean on the grid edge there. Mode FL with real exterior fuels and issue-time grids remain untested.
 
 ## Next rungs
 
