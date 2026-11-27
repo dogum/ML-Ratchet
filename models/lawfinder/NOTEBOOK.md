@@ -162,3 +162,58 @@ Run on the owner's approval (`training/road_sign.py`, records `training/results/
   (p2-c20) 0.209. Choosing among these on EV dev is a different rule, and the owner's call. What a correct grade law
   needs, judging by these fronts, is a grade term that switches with the powertrain: energy rises with grade for every
   car, and BEVs recover part of the descent. The search's one-line, pooled form has not found one in 1,800 s.
+
+## 2026-11-27 — road law v1.1, part 1: the sign gate adopted as a release rule; p1-c17 chosen (before the exam)
+
+**Rule change (owner decision, 27 Nov 2026).** From now on a road-law candidate may not be kept, and so not released,
+if its energy falls as net grade rises at any val_p2 row (E(G + 0.25) ≥ E(G − 0.25) at every row, other inputs held;
+`road_sign.py`'s check). The reason is physics: tank and battery energy rise with uphill grade for every powertrain.
+The released v1.0 law p1-c23 failed the check on 21 % of val_p2 rows and on every battery-electric row. The audit
+(25 Nov 2026) prompted the rule. No exam result did. The rest of the rule is unchanged: frozen R² beats the incumbent
+by more than 0.01, dev error no more than 5 % worse.
+
+**The walk, re-run with no new search** (`training/road_gate.py`). It covers the 40 v1.0 rungs plus the 13 sign-checked
+p2s rungs, all on val_p2. The kept rungs are r0, p1-c5, c7, c10, c11, c14 and **p1-c17**. p1-c23 and p1-c25 are now
+rejected by the gate, and nothing after p1-c17 beats its R² by 0.01 while passing the gate. **Released: p1-c17**,
+`E = M·exp(2·(v^-0.6288 - e)·(sqrt(0.1124·R) - h))`, which does not read grade. It has frozen R² 0.754 (v1.0: 0.767)
+and dev MdAPE 0.175 (v1.0: 0.168). Its error bar is σ_sim 0.804 MJ/km, widen factor 1.0, and dev coverage 83 %.
+Records: `results/road_ratchet.json` (v1.1), `results/road_ratchet_v10.json` (v1.0 as released).
+
+**What is already known about the exam.** The v1.0 exam scored every rung after the fact (`exam_road.json`
+`strata_rungs`), so p1-c17's exam numbers were published with v1.0. On VED, all trips, its MdAPE was 18.67 % against
+p1-c23's 18.60 %. The switch therefore does not favour the exam: p1-c17 was slightly worse on it. The exam is run once
+more for v1.1 (part 2) so the release has its own dated record and bars.
+
+## 2026-11-27 — road law v1.1, part 2: the exam, once (p1-c17)
+
+The release choice (part 1) was committed first, in `5c63ef7`. Then `exam_road.py` ran once and `exam_road_errata.py`
+re-computed EnergyNet's VED rows, as for v1.0. v1.0's records are kept as `results/exam_road_v10.json` and
+`exam_road_reported_v10.json`. Every row other than the law's reproduced v1.0's exactly: RoadSim's law, road-load,
+EnergyNet, RoadData's baselines, the dumb row and every logged rung.
+
+| Stratum | n | v1.0 p1-c23 MdAPE (bias) % | v1.1 p1-c17 MdAPE (bias) % | Road-load (dev η) | EnergyNet v2.1 |
+|---|---|---|---|---|---|
+| VED petrol | 14,469 | 19.3 (−19) | 19.0 (−18) | 20.0 | 8.6 |
+| VED hybrids | 8,241 | 16.8 (−7) | 17.7 (−7) | 15.7 | 13.4 |
+| VED electric (2 Leafs) | 167 | 43.3 (−42) | 33.7 (−32) | 21.7 | 23.2 |
+| VED, all three | 22,877 | 18.6 (−16) | 18.7 (−15) | 18.3 | 10.1 |
+| EPA petrol | 46,876 | 17.3 (+11) | 19.6 (+14) | 25.0 | 7.5 |
+| EPA hybrids | 4,154 | 13.1 (+6) | 15.8 (+8) | 19.6 | 7.8 |
+| EPA battery-electric | 1,492 | 43.1 (+42) | 20.0 (+11) | 11.9 | 6.3 |
+| EPA, all | 52,522 | 17.3 (+11) | 19.4 (+14) | 23.8 | 7.5 |
+
+Coverage of the 68 % bar (±0.80 MJ/km): 72 % on VED trips (v1.0 72 %) and 80 % on EPA tests (v1.0 83 %).
+
+- **What got better:** electric cars. The EPA BEV error halves and the Leafs improve by 10 points. The law no longer
+  turns energy down on climbs, because it no longer reads grade at all.
+- **What got worse:** EPA petrol and hybrid tests, by 2-3 points, mostly on the highway (ICE HWY 24.0 → 30.4 %,
+  HEV HWY 17.9 → 27.0 %). VED overall is flat (18.6 → 18.7 %).
+- The law still loses every row, to EnergyNet everywhere and to road-load on electric cars.
+- **Side effect to note:** `exam_road.py` scores every rung after the fact, as it did for v1.0. So the 13 p2s rungs
+  now have exam numbers too (VED, all trips: p2s-c19 15.5 %). They were computed after the release choice and chose
+  nothing.
+
+Also rebuilt: `lawfinder_laws.json` (version 1.1; the road entry records v1.0 as `previous`), `lab/index.html`
+(road block, reading and limits), the golden demo (road block only), and `results/js_parity_road.json`, a new script
+(`js_parity_road.py`) checking the page JS against `lawfinder.py` on 1,500 points (law 5.6e-16, road-load 4.4e-16).
+`examples/road.csv` is unchanged: the examples carry truth and the textbook value, not the law's.

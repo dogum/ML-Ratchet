@@ -41,3 +41,12 @@ hard constraint (1,200 s, 143,084 evaluations) and found 14 laws, none of which 
 p2s-c19, ignores grade and scored R² 0.757 against the incumbent's 0.767, so it was **rejected** under the unchanged rule.
 The exam was not opened, and p1-c23 stays released with the documented limit. If the check were a gate (a rule change,
 not adopted), p1-c17 would be released. See `models/lawfinder/NOTEBOOK.md`, 2026-11-27.
+
+### Follow-up (27 Nov 2026): the sign gate adopted; road law v1.1
+
+The owner adopted the sign check as a release rule for the road ladder. The rule came from this audit, not from any exam
+result. Re-walking the logged ladder with no new search released **p1-c17** (R² 0.754, dev 17.5 %). p1-c17 does not
+read grade. The release was committed before the exam ran once as road law v1.1. Results: VED trips 18.7 % MdAPE (v1.0
+18.6 %), EPA tests 19.4 % (17.3 %), EPA battery-electric 20.0 % (43.1 %), VED Leafs 33.7 % (43.3 %). The grade
+inversion is gone, and electric cars improve most, while petrol and hybrid highway tests get worse. See
+`models/lawfinder/NOTEBOOK.md`, 2026-11-27 (road law v1.1).
