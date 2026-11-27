@@ -478,12 +478,19 @@ function drawWall(body) {
 }
 
 /* ============================================================ exams: decomposition tree */
+// A row can list a baseline that was not compared: "closer is better" rows (bias, closer to 0) and
+// non-numeric values have no computed comparison, which is not the same as having no baseline.
+function vsBase(r, kind, noun) {
+  const b = r.beat[kind];
+  if (b === undefined) return r.baselines.some(x => x.kind === kind) ? `${noun[0].toUpperCase() + noun.slice(1)} listed, not compared` : `No ${noun} on the row`;
+  return b === 'tie' ? `Ties the ${noun}` : b ? `Beats the ${noun}` : `Behind the ${noun}`;
+}
 const TDIM = {
   domain: { label: 'Domain', f: r => r.m.domain },
   platform: { label: 'Simulator family', f: r => PLAT[r.m.platform] },
   model: { label: 'Model', f: r => r.m.name },
-  dumb: { label: 'Against the dumb baseline', f: r => r.beat.dumb === undefined ? 'No dumb baseline on the row' : r.beat.dumb === 'tie' ? 'Ties the dumb baseline' : r.beat.dumb ? 'Beats the dumb baseline' : 'Behind the dumb baseline' },
-  classical: { label: 'Against the classical method', f: r => r.beat.classical === undefined ? 'No classical method on the row' : r.beat.classical === 'tie' ? 'Ties the classical method' : r.beat.classical ? 'Beats the classical method' : 'Behind the classical method' },
+  dumb: { label: 'Against the dumb baseline', f: r => vsBase(r, 'dumb', 'dumb baseline') },
+  classical: { label: 'Against the classical method', f: r => vsBase(r, 'classical', 'classical method') },
   better: { label: 'Metric direction', f: r => ({ lower: 'Lower is better', higher: 'Higher is better', closer: 'Closer is better' })[r.better] },
   audit: { label: 'Audit finding', f: r => ACLASS[r.m.auditCls] },
   bars: { label: 'Error bars fit on real dev', f: r => r.m.roles.has('error_bars') ? 'Error bars widened on dev' : 'No dev-fit error bars' },
@@ -1316,7 +1323,7 @@ $('#answerClose').onclick = () => { hideAnswer(); $('#ask').value = ''; resetFil
 /* ============================================================ Tour */
 const TOUR = [
   { k: 'The idea', h: 'Every dot is one real exam', go() { resetFilters(); S.swarmGroup = 'none'; setPage('overview'); pulse('swarm'); }, p: () => `${SROWS.length} comparisons on real data that chose nothing. Each dot puts one model's score beside the best baseline it was graded against. Right of the line the model did better; left, a baseline did. ${TOUCH ? 'Tap a dot for its numbers; tap it again to open the model.' : 'Hover any dot, click to open its model.'}` },
-  { k: 'Honest losses', h: 'Where a dumb baseline wins', go() { resetFilters(); S.f.dumb = false; setPage('exams'); pulse('wall'); }, p: () => { const n = ROWS.filter(r => r.beat.dumb === false && r.verdict !== 'info').length, t = ROWS.filter(r => r.beat.dumb !== undefined && r.verdict !== 'info').length; return `${n} of the ${t} graded rows that list a dumb baseline are behind it: a median, a climatology, yesterday's value. They stay on the record. The lit squares are those rows.`; } },
+  { k: 'Honest losses', h: 'Where a dumb baseline wins', go() { resetFilters(); S.f.dumb = false; setPage('exams'); pulse('wall'); }, p: () => { const n = ROWS.filter(r => r.beat.dumb === false && r.verdict !== 'info').length, t = ROWS.filter(r => r.beat.dumb !== undefined && r.verdict !== 'info').length; return `${n} of the ${t} graded rows compared with a dumb baseline are behind it: a median, a climatology, yesterday's value. They stay on the record. The lit squares are those rows.`; } },
   { k: 'A hard domain', h: 'Rivers and snow', go() { resetFilters(); S.f.domain.add('Hydrology'); S.swarmGroup = 'domain'; setPage('overview'); pulse('swarm'); }, p: () => { const g = ROWS.filter(r => r.m.domain === 'Hydrology' && r.verdict !== 'info'); return `Hydrology: ${g.filter(r => r.verdict === 'win').length} wins, ${g.filter(r => r.verdict === 'loss').length} losses and ${g.filter(r => r.verdict === 'tie').length} ties across ${new Set(g.map(r => r.m.id)).size} models. A tuned conceptual model is a hard baseline to beat on real rivers, and the collection says so.`; } },
   { k: 'The ratchet', h: 'Most rungs are refused', go() { resetFilters(); setPage('ratchet'); pulse('anatomy'); }, p: () => { const r = MODELS.flatMap(m => m.allRungs), j = r.filter(x => x.decision === 'rejected'); return `${fmt(j.length)} of ${fmt(r.length)} rung decisions were rejections. About ${j.filter(x => x.rc === 'gate').length} were stopped by the real dev gate after looking better on the simulator.`; } },
   { k: 'Error bars', h: 'Are the bands honest?', go() { resetFilters(); setPage('overview'); pulse('coverage'); }, p: () => { const c = COVS; return `${c.filter(x => covBand(x.actual) === 'near').length} of ${c.length} outputs put their 68% band around the truth within 10 points of 68%. ${c.filter(x => covBand(x.actual) === 'narrow').length} are too narrow on the real exam. Those numbers are next rungs.`; } },
