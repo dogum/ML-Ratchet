@@ -65,8 +65,8 @@ class FireSize:
             cols = sorted({self.features[j] for j in np.nonzero(big)[1]})[:6]
             warnings.warn(f'FireSize: {int(big.any(1).sum())} row(s) have inputs beyond 8 sd of the simulated training '
                           f'data ({cols}; max {np.abs(z).max():.3g}); the network was never trained there', stacklevel=2)
-            if self.z_clip:
-                z = np.clip(z, -self.z_clip, self.z_clip)
+        if self.z_clip:                      # independent of the warning, so a row does not depend on its batch (Codex)
+            z = np.clip(z, -self.z_clip, self.z_clip)
         T = self.temp if temp is None else temp
         out = 0
         for e in range(int(W['n_ens'])):

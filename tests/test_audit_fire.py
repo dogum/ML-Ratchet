@@ -39,3 +39,20 @@ def test_firesize_warns_on_inputs_it_never_saw():
     with pytest.warns(UserWarning, match="beyond 8 sd"):
         p = m.probs(x)
     assert np.isfinite(p).all()
+
+
+def test_firesize_clip_does_not_depend_on_the_batch():
+    fs = _load("firesize", "firesize")
+    m = fs.FireSize()
+    m.z_clip = 4.0
+    try:
+        base = {f: float(m.W["mu"][i]) for i, f in enumerate(m.features)}
+        j = 0
+        six = dict(base, **{m.features[j]: base[m.features[j]] + 6 * float(m.W["sd"][j])})
+        alone = m.probs({k: np.array([v]) for k, v in six.items()})
+        far = dict(base, pt_SB=1.0)
+        with pytest.warns(UserWarning):
+            both = m.probs({k: np.array([six[k], far[k]]) for k in six})
+        np.testing.assert_allclose(alone[0], both[0], atol=1e-12)
+    finally:
+        m.z_clip = None
