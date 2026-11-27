@@ -10,6 +10,7 @@ missing hours in the demand history (miss_frac's simulated sd was ~0, so one mis
 
     python repair.py val <ckpt>     # v1.1, v1.1.1 and <ckpt> on val_v5 (and val_v4, for reference)
     python repair.py add <ckpt>     # val_v5 + dev gate -> decision appended to training/ratchet.json
+    python repair.py add_per_output r11_split   # v1.3 ladder: incumbent v1.2, per-output dev gate
     python repair.py export <ckpt>  # numpy weights -> work/release_v12/ (only for a promoted rung)
     python repair.py events <ckpt>  # events.py for v1.1.1 and the rung (after the exam; reported only)
     python repair.py compare x      # v1.1 / v1.1.1 / v1.2 on every exam bank -> training/exam_v1_2.json
@@ -44,6 +45,8 @@ REF = META['solar_offset_ref']
 def weights(ckpt):
     if ckpt in ('v1.1', 'v1.1.1'):
         return DC.DemandCast(DC.WEIGHTS_V1_1, DC.META_V1_1).W
+    if ckpt == 'r11_split':       # v1.1.1's demand network (r8) with r10's wind and solar networks
+        return {'d': weights('v1.1')['d'], 'w': weights('r10_repair')['w'], 's': weights('r10_repair')['s']}
     import torch
     ck = torch.load(f'{ROOT}/ckpt/{ckpt}.pt', weights_only=False)
     return {k: {n: v.cpu().numpy().astype(np.float64) for n, v in ck[k].items()} for k in ('d', 'w', 's')}
@@ -81,6 +84,8 @@ def predict(B, W, cfg, k_only=None):
 
 
 def models(ckpt):
+    if ckpt == 'r11_split':       # the v1.3 ladder: incumbent v1.2 (r10)
+        return {'v1.2': (weights('r10_repair'), CAND), ckpt: (weights(ckpt), CAND)}
     return {'v1.1': (weights('v1.1'), CFG['v1.1']), 'v1.1.1': (weights('v1.1'), CFG['v1.1.1']), ckpt: (weights(ckpt), CAND)}
 
 
@@ -135,6 +140,27 @@ def add(ckpt, note):
                                                 for nm in ('v1.1', 'v1.1.1')},
                val_v4={nm: v4[nm]['objective'] for nm in ('v1.1', 'v1.1.1', ckpt)},
                confusion_rmax2=v.get('confusion_rmax2'), dev_rel=rel, vs=inc, accepted=bool(s_ok and d_ok), why=why)
+    log = json.load(open(LOG)); log.append(rec); jdump(log, LOG)
+    print('ACCEPTED' if rec['accepted'] else 'rejected', '-', why)
+
+
+def add_per_output(ckpt, note):
+    """The v1.3 ladder's rule (27 Nov 2026, exam-informed): objective on val_v5 > incumbent + 0.01 AND each output's
+    dev-gate error (demand, wind, solar) no more than 2 % worse than the incumbent's, separately."""
+    v = val(ckpt); v4 = val(ckpt, 'val_v4'); d = dev(ckpt)
+    inc = 'v1.2'
+    s_ok = v[ckpt]['objective'] > v[inc]['objective'] + 0.01
+    rel = {k: float(d[ckpt][k]['err'] / max(d[inc][k]['err'], 1e-9)) for k in ('d', 'w', 's')}
+    d_ok = all(r <= 1.02 for r in rel.values())
+    why = (f"objective {v[ckpt]['objective']:.4f} vs {v[inc]['objective']:.4f} on val_v5" + ('' if s_ok else ' (needs +0.01)')
+           + '; dev errors vs incumbent ' + ', '.join(f"{n} {100 * (rel[k] - 1):+.1f}%" for k, n in
+                                                     (('d', 'demand'), ('w', 'wind'), ('s', 'solar')))
+           + ('' if d_ok else ' (gate: each <= +2%)'))
+    rec = dict(ckpt=ckpt, date='2026-11-27', note=note, val_set='val_v5', rule='per-output dev gate (v1.3 ladder)',
+               val=v[ckpt], objective=v[ckpt]['objective'], dev=d[ckpt],
+               incumbent_rescored={inc: dict(val=v[inc], objective=v[inc]['objective'], dev=d[inc])},
+               val_v4={nm: v4[nm]['objective'] for nm in (inc, ckpt)}, dev_rel_per_output=rel, vs=inc,
+               accepted=bool(s_ok and d_ok), why=why)
     log = json.load(open(LOG)); log.append(rec); jdump(log, LOG)
     print('ACCEPTED' if rec['accepted'] else 'rejected', '-', why)
 
@@ -227,6 +253,8 @@ if __name__ == '__main__':
         val(ck); dev(ck)
     elif cmd == 'add':
         add(ck, sys.argv[3] if len(sys.argv) > 3 else '')
+    elif cmd == 'add_per_output':
+        add_per_output(ck, sys.argv[3] if len(sys.argv) > 3 else '')
     elif cmd == 'export':
         export(ck)
     elif cmd == 'exam':

@@ -93,7 +93,7 @@ Coverage of the 68% error bars on the exam: Demand, pooled (95% band: 89%) **64%
 ## Limits
 
 - The headline uses actual weather and is an upper bound. With real forecast weather DemandCast wins in 4 of 8 grids in 2024 (released) and 5 of 8 over 2024-2025 (second look); the pooled win rests on CAISO and SPP. The archive holds no humidity or radiation forecasts before 2024, so 2023 cannot be graded with forecast weather.
-- The pooled dev gate let solar decide: r10 passed with dev errors -4.8% (solar -16%, wind -1%, demand +3%), and the exam shows the same split. A per-output gate (no output worse by more than 2%), fixed before the next ladder, would have rejected r10 and kept v1.1.1's demand.
+- The pooled dev gate let solar decide: r10 passed with dev errors -4.8% (solar -16%, wind -1%, demand +3%), and the exam shows the same split. From 27 Nov 2026 the ladder uses a per-output dev gate (each output no more than 2% worse), an exam-informed rule change; it was not applied back to v1.2. Its first rung, r11 (v1.1.1's demand network with v1.2's wind and solar), passed that gate (dev demand 1.98% vs 2.05%) but was rejected on the frozen set (0.3973 vs 0.4054): val_v5's simulated history gaps favour v1.2's demand network, the real dev years do not.
 - Solar timestamps: v1.2 reads whole-hour offsets (-2 to +2 h) from the week before issue, counted from each grid's dev-year value. A change is picked up only once the week before issue shows it, and CAISO's dev-year error profile sits about half an hour off (r_hat 0.46), so some CAISO days near that boundary flip. On val_v5 the reader gets 80% of 2 h offsets right (32 of 40 at +2, 55 of 80 at -2), and a misread offset costs solar error.
 - Bands are too narrow on real data: demand 64% / 89% inside the 68% / 95% bands (CAISO 49% / 76%, ISO-NE 55% / 83%).
 - Wind is limited by 50 km reanalysis in complex terrain (BPA 50%, CAISO 32%); the network trims the physics error by about 15%.
@@ -153,6 +153,20 @@ The measurement model changed (EIA-930 solar timestamps move between years: in 2
 
 The audit (25 Nov 2026) found real inputs simulator v4 never produced: reported solar at hours the physics calls dark, 2 h solar offsets, and missing hours in the demand history (miss_frac had a simulated sd of ~0, so one missing hour reached |z| 286). So a new frozen set val_v5 was built before any training, and the incumbents re-scored on it. The incumbent is v1.1.1 (the r8 network with inputs clipped at |z| 8, the default since the dated re-score of 27 Nov 2026). One rung was trained, fixed before training. On val_v4 the three score 0.3752 (v1.1), 0.3751 (v1.1.1) and 0.3774 (r10). Log: training/ratchet.json (training/repair.py).
 
+### DemandCast v1.3 ladder (27 Nov 2026, per-output dev gate)
+
+**Objective:** Same objective on the frozen simulated set val_v5 (4,000 region-days, simulator v5, seed 505)  
+**Rule:** Keep a rung if the objective beats the incumbent by more than 0.01 AND each output's dev-gate error (demand, wind, solar) is no more than 2% worse than the incumbent's, separately: a gain in one output cannot carry a regression in another
+
+| Rung | Change | Frozen-set score | Decision | Why | Dev demand MAPE (%) | Dev wind (%) | Dev solar (%) | val_v5 demand, gap samples (%) |
+|---|---|---|---|---|---|---|---|---|
+| r10_repair | v1.2 as released (incumbent) | 0.405 | ● kept | Incumbent. | 2.05 | 21.23 | 13.11 | 2.36 |
+| r11_split | v1.1.1's demand network (r8, inputs clipped at \|z\| 8) with r10's wind and solar networks and r10's solar input changes (±2 h offsets, dark mask); no training | 0.397 | ○ rejected | Objective 0.3973 vs 0.4054 (needs +0.01): on val_v5 r8's demand skill is 0.535 vs r10's 0.560 (simulated gap samples 2.59 vs 2.36%). Dev gate passed per output: demand 1.98 vs 2.05% (-3.0%), wind and solar unchanged. The frozen set and dev disagree on demand: v5's simulated gaps reward r10's demand network, real dev years do not. No exam run. | 1.98 | 21.23 | 13.11 | 2.59 |
+
+<sub>Columns after *Why*: Dev gate errors (5,760 demand hours, 5,759 wind, 5,040 solar), never the exam; and the demand error on val_v5's 295 samples with a history gap.</sub>
+
+An exam-informed rule change, adopted by the owner on 27 Nov 2026 after v1.2's exam: v1.2 improved solar (10.6% vs 16.1%) but made demand worse (2.49% vs 2.32% for v1.1.1), and the old pooled gate had already shown dev demand +3% (1.98 -> 2.05%) while passing the rung on the mean. The rule applies from this ladder on; v1.2 stays released under the rule it was judged by. Log: training/ratchet.json (training/repair.py add_per_output).
+
 Raw per-rung logs are in [`training/`](training/).
 
 ## Physics
@@ -182,7 +196,7 @@ Demand is a building-stock thermal model (training/buildings.py): conductance ×
 
 ## Next rungs
 
-- A per-output dev gate (each of demand, wind and solar no more than 2% worse), fixed before the next ladder; then a demand rung that keeps v1.1.1's demand network with v1.2's solar, judged by that gate (the exam chooses nothing, so this has to come from a new ladder).
+- Make the frozen set agree with dev on demand: r11 (v1.1.1's demand with v1.2's solar) passed the per-output dev gate but lost on val_v5, whose gap samples reward v1.2's demand network. Check how val_v5's demand noise and gap rate compare with real dev before the next demand rung.
 - Real forecast-error noise in training: the 2022 Open-Meteo temperature library is now fetched and built (training/make_tfc.py; day-ahead error 1.3-2.0 K RMS per grid). A rung that trains on it would be judged on dev.
 - Better bands (64% inside the 68% band): per-grid noise-scale variety in the simulator, or a dev-fitted conformal widening.
 - Half-hour solar offsets (CAISO's dev reference sits at 0.46 h), and higher-resolution weather for wind in complex terrain (BPA, CAISO).
