@@ -150,3 +150,29 @@ registry entry, every checkpoint file, the scored bank (or the KW51 dev data) an
 (`training/score_cache.py`); any change forces a rescore. Replay with the cache cleared: all 10 rungs rescored, every
 logged metric identical (0 mismatches), and `ratchet.yaml` byte-identical, so the v1.1 decisions stand. Log:
 `training/logs/v1_1/ratchet_replay_2026-11-27.log`. No model, exam or card number changed.
+
+## 2026-11-27 (evening) — noise-pool detrending fixed for future rungs; v1.1 kept as trained
+
+Another review finding (Codex, PR #14): `training/noise.py` detrended each KW51 mode against temperature with an
+uncentred slope, `dot(x, df) / dot(x, x)`, where x was temperature minus the whole window's mean. When dropouts move
+the mean temperature of a mode's valid hours, the slope is biased and some thermal trend stays in the "noise".
+Codex's case (0–63 °C, last 32 hours valid, −0.001/K, no noise) gives −0.000250/K and a 0.69 % residual sd.
+`noise.py` now centres on each mode's valid readings, the same fix as the simulator's. Test:
+`tests/test_bridgesense.py::test_noise_pool_detrend_centres_on_each_modes_valid_readings`.
+
+The owner decided against a third retrain or exam: v1.1 stays as trained and examined, and the fix applies to future
+rungs. Measured on the pool v1.1 was trained with (`training/logs/v1_1/noise_pool_detrend_check_2026-11-27.json`;
+the old code path reproduces that pool bit for bit):
+- All 14 modes are affected: their valid hours average 0.30–1.25 °C colder than the window mean (12.10 °C);
+  modes 1, 8 and 7 most (−1.25, −1.06, −0.90 °C; 27 %, 31 % and 13 % availability).
+- Fitted slopes move by 0.3–7.8 % (largest: mode 11, −0.0267 → −0.0287 %/K; mode 8, −0.0162 → −0.0170 %/K).
+- Residual sd per mode changes by at most 0.0001 pp (mode 1: 0.2099 → 0.2098 %; mode 11: 0.6288 → 0.6287 %).
+  Pooled residual sd: 0.3261 % both ways.
+- All 436 pool windows contain readings of affected modes. 424 have at least one entry that changes by more than
+  0.01 pp; none changes by more than 0.05 pp. Per-window RMS change: median 0.0032 pp, max 0.0085 pp, against
+  0.33 % of real jitter.
+
+So the extra residual in v1.1's training noise is about 1 % of the jitter's size and below its fourth significant
+figure in sd. It cannot plausibly move any v1.1 number. The real pool shifts are small because the dropouts are
+spread over the whole window, unlike Codex's half-window case. Rebuild the pool and the p3 banks when another
+change needs a new rung.

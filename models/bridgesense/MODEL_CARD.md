@@ -107,6 +107,7 @@ What moved between v1.0 and v1.1: KW51 healthy false shift rose from 0.019 % to 
 
 - **Zero-temperature-spread baselines:** HBTA's short shaker tests span ~1–2 °C. There the raw frequency shift beats BridgeSense on all-damage AUC and dK/K MAE.
 - **Local secondary cracks:** HBTA `DS1–DS2` (stringer/cross-beam connections) barely perturb global frequencies (mean P 0.23 and 0.40); mode shapes (MAC) or local strains are needed. `DS6` is also missed (mean P 0.36).
+- **Training noise detrending:** v1.1 trained on a KW51 noise pool detrended with an uncentred thermal slope. Fixed on 27 Nov 2026 for future rungs; the measured effect on v1.1's pool is at most 0.0001 pp of residual sd per mode (pooled 0.3261 % both ways), so v1.1 was not retrained.
 - **Noisy dev gate:** seed alone moves dev dK/K MAE by 0.1–0.4 pp on 10 blocks.
 - **Post-retrofit truth:** the +1.17 % truth is a linear-temperature OLS fit on the exam blocks, the same method as the OLS baseline, which favours OLS on that row.
 - **Z24 waiting on data:** KU Leuven's Z24 highway bridge requires registration (`help_wanted`).

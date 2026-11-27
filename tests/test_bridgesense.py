@@ -187,3 +187,27 @@ def test_ratchet_cache_rescores_when_checkpoint_bytes_change(monkeypatch, tmp_pa
     legacy = {"r6@val3": {"sim_score": 0.9}}              # v1.0 cache entries have no fingerprint
     _, fresh = sc.cached(legacy, "r6@val3", fp(), score)
     assert fresh and len(calls) == 6
+
+
+def test_noise_pool_detrend_centres_on_each_modes_valid_readings(monkeypatch):
+    """Codex PR #14 (27 Nov): 0-63 C, last 32 readings valid, df = -0.001/K, no noise."""
+    _load("_paths", MODEL / "training" / "_paths.py", monkeypatch)
+    try:
+        _load("realdata", MODEL / "training" / "realdata.py", monkeypatch)
+        noise = _load("noise", MODEL / "training" / "noise.py", monkeypatch)
+    except ImportError:
+        pytest.skip("training data readers (scipy.io / h5py) not installed")
+    T = np.arange(64, dtype=float)
+    ok = T >= 32
+    x = T[ok] - T.mean()                       # temperature relative to the whole window's mean
+    df = -0.001 * (T[ok] - T[ok].mean())       # median-normalised shifts are ~zero-mean on the valid readings
+    a, _, r = noise.detrend_mode(x, df, centred=True)
+    assert a == pytest.approx(-0.001, rel=1e-6) and np.std(r) < 1e-9
+    a_old, _, r_old = noise.detrend_mode(x, df, centred=False)   # the pool v1.0 and v1.1 trained on
+    assert a_old == pytest.approx(-0.000250, abs=2e-6) and np.std(r_old) > 0.006
+
+    f = np.full((64, 2), np.nan)
+    f[ok, 0] = 5.0 * (1.0 - 0.001 * T[ok])     # mode 0 valid only on the warm half
+    f[:, 1] = 7.0 * (1.0 - 0.002 * T)          # mode 1 always valid
+    resid, mask = noise.detrend_pool(T, f)
+    assert mask[:, 0].sum() == 32 and np.abs(resid).max() < 1e-6

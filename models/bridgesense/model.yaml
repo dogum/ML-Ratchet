@@ -191,6 +191,7 @@ losses:
 
 limits:
   - "Needs a baseline window spanning at least several degrees of real temperature variation; on short constant-temperature shaker campaigns (HBTA) the raw frequency shift does better."
+  - "v1.1 trained on a KW51 noise pool detrended with an uncentred thermal slope (fixed in training/noise.py on 27 Nov 2026 for future rungs). Measured effect: per-mode residual sd changes by at most 0.0001 pp (pooled 0.3261 % both ways) and no pool entry by more than 0.05 pp; v1.1 was not retrained for it."
   - "The KW51 dev gate is noisy: three r6 seed replicates differ only in seed yet scored dev dK/K MAE 0.10 %, 0.23 % and 0.42 % (10 blocks), so single-run gate decisions near the limit are partly luck."
   - "Global natural frequencies are insensitive to local secondary-member cracks (HBTA DS1-DS2) until stiffness loss reaches ~1-2% of modal strain energy; mode shapes (MAC) or local strain gauges are needed for early local cracks."
   - "Does not separate added operational mass (+dM) from uniform stiffness loss (-dK) without mode-shape or traffic-load inputs; both read as negative effective dK/K."
@@ -204,6 +205,7 @@ next:
   - "Include zero-temperature-range (short shaker-campaign) episodes in the simulator so the network learns to widen uncertainty and avoid false alarms when baseline temperature spread is < 2 C (the exact HBTA UDS failure mode)."
   - "Add mode-shape Modal Assurance Criterion (MAC) vectors as an optional per-mode token channel to catch local secondary-member cracks (HBTA DS1-DS4) that barely move scalar frequencies."
   - "Fit a soft-gated physics anchor (using the OLS anchor only when T_q stays inside the baseline temperature range, and switching to the Transformer under cold extrapolation) to keep OLS's 0.07% matched-T retrofit precision alongside BridgeSense's freezing robustness."
+  - "When another change calls for a new rung, rebuild the KW51 noise pool with the centred detrending (training/noise.py) and regenerate the p3 banks before training."
   - "Score the dev gate on several seeds (or a larger dev set) so that seed noise of 0.1-0.4 pp in dev dK/K MAE does not decide rungs."
 
 usage:
