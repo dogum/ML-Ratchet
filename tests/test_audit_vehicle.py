@@ -81,14 +81,22 @@ def test_hybridpilot_preview_reads_nothing_past_its_window():
     np.testing.assert_array_equal(hp.TripContext(vp, changed).preview(k, L), base)
 
 
+def _energynet_norm_stats():
+    """train.norm_stats, read from the source: importing train.py needs torch and puts EnergyNet's `dataset` and
+    `features` modules under names other models' tests also use."""
+    src = (ROOT / "models/energynet/training/train.py").read_text(encoding="utf-8")
+    ns = {"np": np}
+    exec(src[src.index("def norm_stats"):src.index("def export")], ns)
+    return ns["norm_stats"]
+
+
 def test_energynet_robust_norm_keeps_work_shares_alive():
-    pytest.importorskip("torch")
-    train = _load("energynet/training", "train")
+    norm_stats = _energynet_norm_stats()
     rng = np.random.default_rng(1)
     X = rng.normal(0.3, 0.1, size=(20000, 3))
     X[:20, 1] = rng.uniform(1e5, 6e5, 20)          # 0.1 % moving-downhill trips with Ep ~ 0
-    mu0, sd0 = train.norm_stats(X)                  # historical rungs
-    mu1, sd1 = train.norm_stats(X, robust=True)
+    mu0, sd0 = norm_stats(X)                        # historical rungs
+    mu1, sd1 = norm_stats(X, robust=True)
     assert sd0[1] > 1e3                              # the defect: the column's scale is set by the outliers
     assert sd1[1] < 0.2 and abs(mu1[1] - 0.3) < 0.02
     np.testing.assert_allclose(sd1[[0, 2]], sd0[[0, 2]], rtol=0.05)
