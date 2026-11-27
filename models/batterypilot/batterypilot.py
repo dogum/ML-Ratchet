@@ -1,7 +1,10 @@
-"""BatteryPilot v1.3 -- a causal battery-arbitrage policy trained only on simulated grids (numpy/scipy only).
+"""BatteryPilot v1.3.1 -- a causal battery-arbitrage policy trained only on simulated grids (numpy/scipy only).
+
+v1.3.1 (27 Nov 2026) = the v1.3 network; the day-ahead plan's wear cost now reads temperatures from 48 h earlier
+(causal_wear), not the realized ones. run_policy(..., c_lin_plan=None) reproduces v1.3 as examined.
 
     import batterypilot as bp
-    net = bp.PolicyNet()                                     # batterypilot_weights.npz next to this file (v1.3)
+    net = bp.PolicyNet()                                     # batterypilot_weights.npz next to this file (v1.3 network)
     net_v11 = bp.PolicyNet(bp.WEIGHTS_V1_1)                  # the v1.1 release; bp.WEIGHTS_V1_0 = v1.0
     bat = bp.Battery(P=1.0, duration_h=2.0)                 # 1 MW / 2 MWh usable, 85 % round trip
     ch, dis, soc, V = bp.run_policy(net, path, bat, bat.c_lin(path['T']))
@@ -440,22 +443,28 @@ def causal_wear(bat: Battery, T, lag_h=48):
     return bat.c_lin(Tp)
 
 
-def run_policy(net: PolicyNet, path, bat: Battery, c_lin, soc0=0.0, c_lin_plan=None):
+def run_policy(net: PolicyNet, path, bat: Battery, c_lin, soc0=0.0, c_lin_plan='causal'):
     """Run BatteryPilot causally over a whole path (dict/DataFrame with rt, da, df, T, hour, day, dow, doy).
     The value curves depend only on information before each hour, so they are computed for all hours at once; the
     offer-curve execution against each hour's RT price is sequential.  Returns (ch, dis, soc, V).
 
-    c_lin_plan: the wear cost the day-ahead planner uses for future hours. By default it is c_lin, which the released
-    exam built from realized temperatures: a perfect temperature forecast (audit, 25 Nov 2026: +5 degC over the next
-    12 h moved a 14:00 offer by $1.19/MWh; the audit's 24 h persistence changed annual net revenue by at most $0.11/kW-year on three
-    node-years). causal_wear(bat, path['T']) gives a plan that reads only temperatures known at issue time."""
+    c_lin_plan: the wear cost the day-ahead planner uses for future hours. v1.3.1 (27 Nov 2026) default 'causal':
+    causal_wear(bat, path['T']), each hour's temperature from 48 h earlier, so every plan reads only temperatures known
+    when it is made. None (or an array equal to c_lin) is v1.3 as examined: the plan used realized temperatures, a
+    perfect temperature forecast (audit, 25 Nov 2026). The dated re-score over all 48 exam node-years moved the pooled
+    share of perfect hindsight by +0.0002 (ERCOT) and -0.0004 (CAISO)."""
     n = len(path['rt'])
     t = np.arange(n)
     ps = rolling_scale(np.asarray(path['da'], float))
     cl = np.broadcast_to(np.asarray(c_lin, float), (n,)).copy()
     X, ps = build(path, t, bat.d, cl, ps=ps)
     if net.hybrid:
-        clp = cl if c_lin_plan is None else np.broadcast_to(np.asarray(c_lin_plan, float), (n,))
+        if c_lin_plan is None:
+            clp = cl
+        elif isinstance(c_lin_plan, str) and c_lin_plan == 'causal':
+            clp = causal_wear(bat, path['T'])
+        else:
+            clp = np.broadcast_to(np.asarray(c_lin_plan, float), (n,))
         lam = value_curves(np.asarray(path['da'], float), np.asarray(path['hour']), np.asarray(path['day']), clp,
                            bat.d, P=bat.P, eta_rt=bat.eta_rt)
         X = np.concatenate([X, np.arcsinh(lam / ps[:, None])], 1).astype(np.float32)

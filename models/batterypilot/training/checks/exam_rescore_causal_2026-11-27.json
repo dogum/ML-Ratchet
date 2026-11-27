@@ -1,0 +1,105 @@
+{
+ "units": "$ per kW-year net of wear; capture = net / perfect-hindsight net, mean over node-year-batteries",
+ "CAISO": {
+  "cases": 36,
+  "bp_capture": 0.5937,
+  "bpc_capture": 0.5933,
+  "rolling_capture": 0.6811,
+  "spread_capture": 0.5891,
+  "threshold_capture": 0.1576,
+  "bpc_minus_bp_mean": -0.0026,
+  "bpc_minus_bp_min": -0.2566,
+  "bpc_minus_bp_max": 0.2099,
+  "bpc_below_bp": 17,
+  "bp_beats_rolling": 0.194,
+  "bpc_beats_rolling": 0.194,
+  "bp_cycles": 214.9,
+  "bpc_cycles": 215.0,
+  "1h": {
+   "bp": 0.4835,
+   "bpc": 0.4812,
+   "rolling": 0.6405,
+   "bp_beats_rolling": 0,
+   "bpc_beats_rolling": 0,
+   "n": 12
+  },
+  "2h": {
+   "bp": 0.5795,
+   "bpc": 0.5805,
+   "rolling": 0.6799,
+   "bp_beats_rolling": 1,
+   "bpc_beats_rolling": 1,
+   "n": 12
+  },
+  "4h": {
+   "bp": 0.7182,
+   "bpc": 0.7181,
+   "rolling": 0.7228,
+   "bp_beats_rolling": 6,
+   "bpc_beats_rolling": 6,
+   "n": 12
+  }
+ },
+ "ERCOT": {
+  "cases": 108,
+  "bp_capture": 0.6711,
+  "bpc_capture": 0.6713,
+  "rolling_capture": 0.6846,
+  "spread_capture": 0.5614,
+  "threshold_capture": 0.1144,
+  "bpc_minus_bp_mean": 0.0106,
+  "bpc_minus_bp_min": -0.1436,
+  "bpc_minus_bp_max": 0.1625,
+  "bpc_below_bp": 43,
+  "bp_beats_rolling": 0.565,
+  "bpc_beats_rolling": 0.565,
+  "bp_cycles": 221.6,
+  "bpc_cycles": 221.6,
+  "1h": {
+   "bp": 0.5476,
+   "bpc": 0.5479,
+   "rolling": 0.6287,
+   "bp_beats_rolling": 7,
+   "bpc_beats_rolling": 7,
+   "n": 36
+  },
+  "2h": {
+   "bp": 0.6805,
+   "bpc": 0.6803,
+   "rolling": 0.6837,
+   "bp_beats_rolling": 24,
+   "bpc_beats_rolling": 24,
+   "n": 36
+  },
+  "4h": {
+   "bp": 0.7853,
+   "bpc": 0.7856,
+   "rolling": 0.7415,
+   "bp_beats_rolling": 30,
+   "bpc_beats_rolling": 30,
+   "n": 36
+  }
+ },
+ "released_overall": {
+  "CAISO": {
+   "node_years": 12,
+   "bp_mean_capture": 0.594,
+   "rolling_mean_capture": 0.681,
+   "spread_mean_capture": 0.589,
+   "threshold_mean_capture": 0.158,
+   "bp_beats_rolling_share": 0.194,
+   "bp_beats_spread_share": 0.5,
+   "bp_beats_threshold_share": 1.0
+  },
+  "ERCOT": {
+   "node_years": 36,
+   "bp_mean_capture": 0.671,
+   "rolling_mean_capture": 0.685,
+   "spread_mean_capture": 0.561,
+   "threshold_mean_capture": 0.114,
+   "bp_beats_rolling_share": 0.565,
+   "bp_beats_spread_share": 0.824,
+   "bp_beats_threshold_share": 1.0
+  }
+ }
+}

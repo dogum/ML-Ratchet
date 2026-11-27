@@ -1,4 +1,4 @@
-# LoadCast v1.0 — model card
+# LoadCast v1.0.1 — model card
 
 **What it does.** Forecasts a building's hourly energy on one meter (electricity, chilled water, steam, hot water or gas) for any span of hours, from weather, calendar and what is known about the building. Each hour gets a mean (kW) and a 90 % band.
 
@@ -216,6 +216,7 @@ baseline was not run: the twin builder takes BDG2 buildings only.
 5. Dev set is small (5 hot water and 2 gas meters). The noise bank holds dev 2017 residuals, but the leak is below the noise: with 2016-only residuals the retrained dev score moved −0.1 points (95 % CI −2.7 to +2.7), against 1.8 points between two training seeds. The released dev score (49.2) is optimistic by about 4 points through selection: two retrains of the R3 recipe score 53.8 and 52.0 on dev, while R3's exam score (52.8) sits between theirs (53.8, 51.2).
 6. Single-zone simulator; no multi-zone reheat; district meters calibrated empirically (a, b), not physically.
 7. Trained on BDG2's 19 sites and their 2016-17 weather; other climates and years are extrapolation. Non-residential only.
+8. Every training building had an electricity meter. v1.0 put a meter list without one far outside training (cold forecasts 24-50× too high); v1.0.1 (27 Nov 2026) adds the meter by default (`assume_electricity=True`). Re-scored on the seen exam, the 19 building-meters this touches went from median cold CV 597 % to 114 % and warm (a year) 51 % to 35 %; the exam rows for chilled water and steam moved 0.1-3.3 points down, no verdict changed (training/rescore_noelec_r3.json). The exam tables above are v1.0's.
 
 ## Data credits and licences
 

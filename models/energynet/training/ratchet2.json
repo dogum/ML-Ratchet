@@ -7194,6 +7194,374 @@
    "decision": "kept",
    "frozen": "h",
    "why": "val2[h] skill 0.680 vs 0.673 (d +0.007); dev D2 0.1077 vs 0.1195 (d -0.0118); physics rung: dev D2 must improve by > 0.01; own-version skill 0.680 vs incumbent's 0.670 on its own version (may not drop by > 0.01); first rule: rejected"
+  },
+  {
+   "name": "r18_robust",
+   "version": "h",
+   "mode": "corr",
+   "members": [
+    "r18_s0",
+    "r18_s1",
+    "r18_s2",
+    "r18_s3",
+    "r18_s4"
+   ],
+   "era": true,
+   "bus_spec": true,
+   "epa_hyb": true,
+   "change": "repair rung (audit 25 Nov 2026): r17's recipe and banks, the 5 networks retrained with percentile-clipped input statistics (train.py --robust-norm: each column clipped to its 0.5-99.5 percentiles before the mean and sd) and the component loss masked like the NLL (--mask-comp); v2.1's scaling had left four work-share inputs (aero, rolling, downhill grade, inertia over Ep) at sd 0.00002-0.00005 on real trips",
+   "val": {
+    "a": {
+     "skill": 0.6390972515130673,
+     "med_log_err": 0.08424832357892824,
+     "MdAPE": 0.08441989250289317,
+     "phys_MdAPE": 0.20071767180429756,
+     "dumb_MdAPE": 0.231764152972179,
+     "n": 3985,
+     "z_cover68": 0.5984943538268507,
+     "MdAPE_conv": 0.07232435927515524,
+     "MdAPE_hev_parallel_p2": 0.09822054658390061,
+     "MdAPE_hev_series": 0.09311661048366293,
+     "MdAPE_hev_powersplit": 0.07922906653692446,
+     "MdAPE_phev_powersplit": 0.19043719736491127,
+     "MdAPE_phev_series": 0.2546764324238153,
+     "MdAPE_bev": 0.08923644542479447,
+     "MdAPE_car": 0.08804860475729237,
+     "MdAPE_suv": 0.08708264893294304,
+     "MdAPE_pickup": 0.08394809153285843,
+     "MdAPE_van": 0.08592366022419357,
+     "MdAPE_bus": 0.0797574089602322,
+     "MdAPE_truck_md": 0.08147589740385369,
+     "MdAPE_truck_hd": 0.07336047910358823
+    },
+    "b": {
+     "skill": 0.653856604233509,
+     "med_log_err": 0.08021985485905762,
+     "MdAPE": 0.07955295074858093,
+     "phys_MdAPE": 0.20677485032524334,
+     "dumb_MdAPE": 0.23182244636915095,
+     "n": 3985,
+     "z_cover68": 0.6238393977415307,
+     "MdAPE_conv": 0.0645218283800239,
+     "MdAPE_hev_parallel_p2": 0.09979593415247157,
+     "MdAPE_hev_series": 0.09523906367265333,
+     "MdAPE_hev_powersplit": 0.07946209223996287,
+     "MdAPE_phev_powersplit": 0.19043719736491127,
+     "MdAPE_phev_series": 0.25200972494006557,
+     "MdAPE_bev": 0.08923644542479447,
+     "MdAPE_car": 0.08111789407796399,
+     "MdAPE_suv": 0.08275131130246582,
+     "MdAPE_pickup": 0.07453033794315334,
+     "MdAPE_van": 0.07888208166886473,
+     "MdAPE_bus": 0.07805702806164405,
+     "MdAPE_truck_md": 0.0823261694042195,
+     "MdAPE_truck_hd": 0.07443398134183987
+    },
+    "c": {
+     "skill": 0.579943718808307,
+     "med_log_err": 0.09470942536670597,
+     "MdAPE": 0.09353059316303314,
+     "phys_MdAPE": 0.23774455504583691,
+     "dumb_MdAPE": 0.2267045824505749,
+     "n": 3991,
+     "z_cover68": 0.5364570283137058,
+     "MdAPE_conv": 0.07118986559706614,
+     "MdAPE_hev_parallel_p2": 0.13220806426038323,
+     "MdAPE_hev_series": 0.20451465953386466,
+     "MdAPE_hev_powersplit": 0.14187835312822866,
+     "MdAPE_phev_powersplit": 0.22349412538479752,
+     "MdAPE_phev_series": 0.2562342443411079,
+     "MdAPE_bev": 0.08639171366797271,
+     "MdAPE_car": 0.08805046961751212,
+     "MdAPE_suv": 0.10075537626493958,
+     "MdAPE_pickup": 0.07919639989728056,
+     "MdAPE_van": 0.12084196645565937,
+     "MdAPE_bus": 0.1742604955657422,
+     "MdAPE_truck_md": 0.08486878234342093,
+     "MdAPE_truck_hd": 0.0699546507466276
+    },
+    "d": {
+     "skill": 0.5943364803376598,
+     "med_log_err": 0.09196028265663408,
+     "MdAPE": 0.0907917587030842,
+     "phys_MdAPE": 0.2365318366757444,
+     "dumb_MdAPE": 0.2285166281933686,
+     "n": 3991,
+     "z_cover68": 0.5489852167376598,
+     "MdAPE_conv": 0.07118986559706614,
+     "MdAPE_hev_parallel_p2": 0.13220806426038323,
+     "MdAPE_hev_series": 0.20451465953386466,
+     "MdAPE_hev_powersplit": 0.14187835312822866,
+     "MdAPE_phev_powersplit": 0.16254601891736287,
+     "MdAPE_phev_series": 0.17962012577583492,
+     "MdAPE_bev": 0.08639171366797271,
+     "MdAPE_car": 0.08491136512247294,
+     "MdAPE_suv": 0.09614110109725726,
+     "MdAPE_pickup": 0.07638487964641133,
+     "MdAPE_van": 0.11705327535736165,
+     "MdAPE_bus": 0.1742604955657422,
+     "MdAPE_truck_md": 0.08486878234342093,
+     "MdAPE_truck_hd": 0.0699546507466276
+    },
+    "e": {
+     "skill": 0.6639493434773307,
+     "med_log_err": 0.07805804102453583,
+     "MdAPE": 0.07833319266114724,
+     "phys_MdAPE": 0.20604101155921706,
+     "dumb_MdAPE": 0.2335575340951357,
+     "n": 3985,
+     "z_cover68": 0.6303638644918445,
+     "MdAPE_conv": 0.0645218283800239,
+     "MdAPE_hev_parallel_p2": 0.09979593415247157,
+     "MdAPE_hev_series": 0.09523906367265333,
+     "MdAPE_hev_powersplit": 0.07946209223996287,
+     "MdAPE_phev_powersplit": 0.16925762203110184,
+     "MdAPE_phev_series": 0.18814469827511926,
+     "MdAPE_bev": 0.08923644542479447,
+     "MdAPE_car": 0.07871954876309023,
+     "MdAPE_suv": 0.0814485749919398,
+     "MdAPE_pickup": 0.07433642339528679,
+     "MdAPE_van": 0.07855757922332884,
+     "MdAPE_bus": 0.07805702806164405,
+     "MdAPE_truck_md": 0.0823261694042195,
+     "MdAPE_truck_hd": 0.07443398134183987
+    },
+    "f": {
+     "skill": 0.6473606793545659,
+     "med_log_err": 0.0826163379195709,
+     "MdAPE": 0.08268547643402702,
+     "phys_MdAPE": 0.2000491621556546,
+     "dumb_MdAPE": 0.23356084635791508,
+     "n": 3985,
+     "z_cover68": 0.6050188205771644,
+     "MdAPE_conv": 0.07232435927515524,
+     "MdAPE_hev_parallel_p2": 0.09822054658390061,
+     "MdAPE_hev_series": 0.09311661048366293,
+     "MdAPE_hev_powersplit": 0.07922906653692446,
+     "MdAPE_phev_powersplit": 0.16925762203110184,
+     "MdAPE_phev_series": 0.18814469827511926,
+     "MdAPE_bev": 0.08923644542479447,
+     "MdAPE_car": 0.08413343358157066,
+     "MdAPE_suv": 0.08504823873359346,
+     "MdAPE_pickup": 0.08240071580175529,
+     "MdAPE_van": 0.08174096890303673,
+     "MdAPE_bus": 0.0797574089602322,
+     "MdAPE_truck_md": 0.08147589740385369,
+     "MdAPE_truck_hd": 0.07336047910358823
+    },
+    "e+L": {
+     "skill": 0.6552020242864165,
+     "med_log_err": 0.08008987338970495,
+     "MdAPE": 0.08000800262543195,
+     "phys_MdAPE": 0.20604101155921706,
+     "dumb_MdAPE": 0.2335575340951357,
+     "n": 3985,
+     "z_cover68": 0.6228356336260978,
+     "MdAPE_conv": 0.06491986404826933,
+     "MdAPE_hev_parallel_p2": 0.10089018142352757,
+     "MdAPE_hev_series": 0.09211267240126375,
+     "MdAPE_hev_powersplit": 0.08050365193349523,
+     "MdAPE_phev_powersplit": 0.172066763280738,
+     "MdAPE_phev_series": 0.21539015392056815,
+     "MdAPE_bev": 0.0889277391258323,
+     "MdAPE_car": 0.08104038037908856,
+     "MdAPE_suv": 0.08367228851645825,
+     "MdAPE_pickup": 0.0746480113729373,
+     "MdAPE_van": 0.07853035713667006,
+     "MdAPE_bus": 0.07805702806164405,
+     "MdAPE_truck_md": 0.0823261694042195,
+     "MdAPE_truck_hd": 0.07443398134183987
+    },
+    "g": {
+     "skill": 0.6659255861952036,
+     "med_log_err": 0.07731418624145653,
+     "MdAPE": 0.07773325884604365,
+     "phys_MdAPE": 0.2062331653456133,
+     "dumb_MdAPE": 0.23199573941337015,
+     "n": 3985,
+     "z_cover68": 0.6336260978670013,
+     "MdAPE_conv": 0.06370944798858702,
+     "MdAPE_hev_parallel_p2": 0.09895680735367796,
+     "MdAPE_hev_series": 0.09134884496644169,
+     "MdAPE_hev_powersplit": 0.07946209223996287,
+     "MdAPE_phev_powersplit": 0.16925762203110184,
+     "MdAPE_phev_series": 0.1784668781832821,
+     "MdAPE_bev": 0.08753127345638567,
+     "MdAPE_car": 0.07797657020383986,
+     "MdAPE_suv": 0.07939655406990254,
+     "MdAPE_pickup": 0.07295598305424944,
+     "MdAPE_van": 0.0772739085133799,
+     "MdAPE_bus": 0.07805702806164405,
+     "MdAPE_truck_md": 0.0823261694042195,
+     "MdAPE_truck_hd": 0.07443398134183987
+    },
+    "h": {
+     "skill": 0.6791904115369989,
+     "med_log_err": 0.07476281233645554,
+     "MdAPE": 0.07516906711109272,
+     "phys_MdAPE": 0.2104145432779546,
+     "dumb_MdAPE": 0.23344086590463764,
+     "n": 3985,
+     "z_cover68": 0.6464240903387704,
+     "MdAPE_conv": 0.058771466685181406,
+     "MdAPE_hev_parallel_p2": 0.09895680735367796,
+     "MdAPE_hev_series": 0.09134884496644169,
+     "MdAPE_hev_powersplit": 0.07946209223996287,
+     "MdAPE_phev_powersplit": 0.16925762203110184,
+     "MdAPE_phev_series": 0.1784668781832821,
+     "MdAPE_bev": 0.08753127345638567,
+     "MdAPE_car": 0.0759938514490851,
+     "MdAPE_suv": 0.07657560171973066,
+     "MdAPE_pickup": 0.06468122362187667,
+     "MdAPE_van": 0.07434424820971908,
+     "MdAPE_bus": 0.07805702806164405,
+     "MdAPE_truck_md": 0.0823261694042195,
+     "MdAPE_truck_hd": 0.07443398134183987
+    }
+   },
+   "dev": {
+    "VED": {
+     "EV": {
+      "n": 258,
+      "n_veh": 1,
+      "trip_MdAPE": 0.1350047283430379,
+      "trip_MAPE": 0.18953265468009636,
+      "bias": 0.04867579771609154,
+      "veh_MdAPE": 0.031759201757926014
+     },
+     "HEV": {
+      "n": 275,
+      "n_veh": 5,
+      "trip_MdAPE": 0.12451030544626795,
+      "trip_MAPE": 0.15522139146125585,
+      "bias": 0.005714956250486347,
+      "veh_MdAPE": 0.04201415125416608
+     },
+     "ICE": {
+      "n": 645,
+      "n_veh": 8,
+      "trip_MdAPE": 0.06456139892922819,
+      "trip_MAPE": 0.08201562447022752,
+      "bias": -0.002221965878070997,
+      "veh_MdAPE": 0.04469279770355977
+     },
+     "PHEV": {
+      "n": 318,
+      "n_veh": 2,
+      "trip_MdAPE": 0.1610690803361251,
+      "trip_MAPE": 0.22812890691890322,
+      "bias": -0.08177066787302667,
+      "veh_MdAPE": 0.1152867372521783
+     }
+    },
+    "EPA": {
+     "bev_FTP": {
+      "n": 98,
+      "MdAPE": 0.08801802693798327,
+      "bias": -0.07073630292790334
+     },
+     "bev_HWY": {
+      "n": 97,
+      "MdAPE": 0.05480248935921206,
+      "bias": -0.04682402133259522
+     },
+     "conv_FTP": {
+      "n": 2877,
+      "MdAPE": 0.09359273233058452,
+      "bias": -0.015605106510905076
+     },
+     "conv_FTPcold": {
+      "n": 280,
+      "MdAPE": 0.10964780019941778,
+      "bias": -0.07568939180945944
+     },
+     "conv_HWY": {
+      "n": 2835,
+      "MdAPE": 0.06288489178793566,
+      "bias": 0.002482021818619229
+     },
+     "conv_SC03": {
+      "n": 302,
+      "MdAPE": 0.09339806745967716,
+      "bias": -0.03719014043838492
+     },
+     "conv_US06": {
+      "n": 371,
+      "MdAPE": 0.053605821439377754,
+      "bias": 0.028159428789028995
+     },
+     "hev_powersplit_FTP": {
+      "n": 70,
+      "MdAPE": 0.16780088434752805,
+      "bias": -0.16780088434752805
+     },
+     "hev_powersplit_FTPcold": {
+      "n": 29,
+      "MdAPE": 0.10871595848383897,
+      "bias": -0.09061628289707924
+     },
+     "hev_powersplit_HWY": {
+      "n": 72,
+      "MdAPE": 0.10030048417255155,
+      "bias": 0.09283300914543025
+     },
+     "hev_powersplit_SC03": {
+      "n": 29,
+      "MdAPE": 0.12936918985317625,
+      "bias": -0.12936918985317625
+     },
+     "hev_powersplit_US06": {
+      "n": 29,
+      "MdAPE": 0.08068832010063987,
+      "bias": 0.08068832010063987
+     }
+    },
+    "HD": {
+     "ZTBus_legs": {
+      "n": 5,
+      "MdAPE": 0.1512224623678461,
+      "bias": -0.1512224623678461
+     },
+     "ZTBus_traced_missions": {
+      "n": 2,
+      "MdAPE": 0.11845877035168306
+     },
+     "Mersin_cng": {
+      "n": 56,
+      "MdAPE": 0.16433368410860844,
+      "bias": -0.16433368410860844
+     },
+     "Mersin_diesel": {
+      "n": 56,
+      "MdAPE": 0.1197946215338403,
+      "bias": -0.048045807010706154
+     },
+     "ICCT": {
+      "n": 3,
+      "MdAPE": 0.19981613812934995,
+      "bias": 0.19981613812934995
+     }
+    },
+    "ZTB": {
+     "legs": {
+      "n": 1641,
+      "MdAPE": 0.07264406336761775,
+      "bias": -0.03987378418812626
+     },
+     "missions": {
+      "n": 294,
+      "MdAPE": 0.06521937398917727,
+      "bias": -0.05167629852493705,
+      "layover_share": 0.005782706781455142
+     }
+    },
+    "D": 0.10727803290097337,
+    "n_terms": 18
+   },
+   "rule1": "rejected",
+   "decision": "rejected",
+   "frozen": "h",
+   "why": "val2[h] skill 0.679 vs 0.680 (d -0.001); dev D2 0.1073 vs 0.1077 (d -0.0004); val skill must rise by > 0.01, dev D2 may not rise by > 0.01"
   }
  ],
  "incumbent": "r17_noidle_inputs"
