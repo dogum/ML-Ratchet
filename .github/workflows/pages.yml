@@ -1,7 +1,7 @@
 name: Deploy site
 
-# Builds site/ (Astro) from models/*/model.yaml + ratchet.yaml and the docs, copies each model's
-# interactive lab, and publishes to GitHub Pages. Pages must be enabled (Settings → Pages → Source:
+# Builds site/ (Astro) from models/*/model.yaml + ratchet.yaml and the docs (the Observatory's data is regenerated
+# first, from the full history), copies each model's interactive lab, and publishes to GitHub Pages. Pages must be enabled (Settings → Pages → Source:
 # GitHub Actions); on a private repository that needs a paid plan, so the deploy is skipped there.
 
 on:
@@ -24,6 +24,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # the Observatory's growth charts read the whole history
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -e .
+      - name: Observatory data from the repository as deployed (mlratchet/observatory.py)
+        run: python -m mlratchet.observatory
       - uses: actions/setup-node@v4
         with:
           node-version: 22

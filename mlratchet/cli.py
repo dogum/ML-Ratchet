@@ -216,13 +216,10 @@ def cmd_readme(args) -> int:
         elif args.check and current != text:
             stale += 1
             _out("✗ README.md (collection table or totals) is out of date — run `mlratchet readme --write`")
-        from . import observatory  # the site's Observatory dataset
+        from . import observatory  # the site's Observatory dataset (refreshed here; regenerated on deploy, not checked)
 
         if args.write and observatory.write(repo_root()):
             _out(f"wrote {observatory.OUT.as_posix()}")
-        elif args.check and not observatory.is_current(repo_root()):
-            stale += 1
-            _out(f"✗ {observatory.OUT.as_posix()} is out of date — run `mlratchet readme --write`")
     return 1 if stale else 0
 
 

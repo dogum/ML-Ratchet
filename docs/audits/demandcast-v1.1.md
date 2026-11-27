@@ -29,7 +29,7 @@ Measured first, on the local exam bank (`real_exam.npz`, inputs only, no labels)
 | Finding | Real? | Action | Evidence |
 |---|---|---|---|
 | Twilight solar input amplified (BPAT pinned at the 1.2 cap) | Yes | **Warned, repair queued.** Note: the 2e-2 floor already applies to solar (z ≈ 3 on the BPAT days); the amplification is in the first-layer weights the network grew on near-constant columns, so no inference-side scale fixes it. `predict_cf` now warns when reported output falls at an hour the physics calls dark. The repair (mask those history hours, retrain) is queued in the card. | The demo now warns on 4 rows. |
-| Missing demand history (`miss_frac`, sd floor 0.001) | Yes | **Warned, opt-in clip, repair queued.** `_forward` warns on any input beyond |z| 8 and takes `z_clip` (off by default, so the released numbers stand). Repair queued: simulated missing hours in training and a higher floor on count-like inputs. | — |
+| Missing demand history (`miss_frac`, sd floor 0.001) | Yes | **Warned, opt-in clip, repair queued.** `_forward` warns on any input beyond \|z\| 8 and takes `z_clip` (off by default, so the released numbers stand). Repair queued: simulated missing hours in training and a higher floor on count-like inputs. | — |
 | CISO solar offset clamped to ±1 h | Yes (limit) | Queued: allow ±2 h in the next solar rung. | Two CISO exam days are 2 h off. |
 | Unbounded softplus sigma | Consequence of the above | Not changed separately. | — |
 

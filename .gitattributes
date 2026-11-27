@@ -16,3 +16,4 @@ tests/golden/*.txt linguist-generated=true
 *.bin binary
 *.parquet binary
 site/public/instruments/** linguist-generated=true
+site/src/data/observatory.json linguist-generated=true -diff

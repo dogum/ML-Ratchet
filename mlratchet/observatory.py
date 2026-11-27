@@ -5,13 +5,15 @@ ratchet.yaml, docs/audits (tracker, resolution table, each report's Resolution s
 docs/experiments/prior-wars.md and git history. StormNet's live network is not copied in: the page reads the files
 its instrument already ships (site/public/instruments/stormnet/).
 
-`mlratchet readme --write` refreshes the file and `--check` fails when it is stale. The git-history fields
-(`head`, `series`, `days`) change with every commit, so the check leaves them out and they are refreshed whenever the
-rest of the file changes.
+`mlratchet readme --write` refreshes the committed copy, which local builds use. The site deploy regenerates it from
+the full history before building (.github/workflows/pages.yml), so the published page is always current; CI does not
+check the committed copy, because every model change on main would make open pull requests' copies stale.
 
 Derived fields, approximate and labelled so on the page: `margin` (log10 of the model against the best numeric
 baseline, positive = model better), `beat` (the model beats every numeric baseline of a kind), `rc` on rejected rungs
 (a keyword reading of the logged reason) and the audit class (from the tracker's verdict wording).
+
+Run directly to write the file: `python -m mlratchet.observatory`.
 """
 from __future__ import annotations
 
@@ -44,13 +46,12 @@ def _num(v) -> bool:
 
 
 def _beats(model, base, better):
-    if not (_num(model) and _num(base)):
+    """True if the model is strictly better than this baseline, False if strictly worse, "tie" if equal."""
+    if not (_num(model) and _num(base)) or better not in ("lower", "higher"):
         return None
-    if better == "lower":
-        return model < base
-    if better == "higher":
-        return model > base
-    return None
+    if model == base:
+        return "tie"
+    return model < base if better == "lower" else model > base
 
 
 def _margin(row) -> float | None:
@@ -186,7 +187,9 @@ def _models(root: Path, audit: dict) -> list[dict]:
             rows.append({"i": i, "metric": r["metric"], "better": r["better"], "unit": r.get("unit"), "model": r["model"],
                          "baselines": [{"name": b["name"], "kind": b["kind"], "value": b["value"]} for b in r["baselines"]],
                          "verdict": r["verdict"], "note": r.get("note"), "margin": _margin(r),
-                         "beat": {k: all(v) for k, v in bmap.items()}})
+                         # per baseline kind: True beats every one, False some baseline is better, "tie" otherwise
+                         "beat": {k: (False if False in v else True if all(x is True for x in v) else "tie")
+                                  for k, v in bmap.items()}})
         ladders = [{
             "name": re.sub(r"\bPhase [A-Z],\s*|\s*\(Phase [A-Z]\)|,\s*Phase [A-Z]\b", "", L["name"]),
             "objective": L.get("objective", ""), "rule": L.get("rule", ""), "margin": L.get("margin"),
@@ -315,3 +318,13 @@ def write(root: Path) -> bool:
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(_dumps(build(root)), encoding="utf-8", newline="\n")
     return True
+
+
+if __name__ == "__main__":
+    from .registry import repo_root
+
+    root = repo_root()
+    p = root / OUT
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(_dumps(build(root)), encoding="utf-8", newline="\n")
+    print(f"wrote {OUT.as_posix()}")

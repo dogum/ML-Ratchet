@@ -7,7 +7,8 @@ To build a new model, follow `docs/agent-brief.md` exactly.
 
 - `models/<id>/model.yaml` and `ratchet.yaml` drive the model READMEs, the CLI and the website.
   After editing them run `mlratchet readme --write`. Never hand-edit `models/*/README.md` or `docs/backlog.md`.
-  The same command writes `site/src/data/observatory.json`, the Observatory page's data (`mlratchet/observatory.py`).
+  The same command refreshes `site/src/data/observatory.json`, the Observatory page's data (`mlratchet/observatory.py`);
+  the deploy regenerates it, so a stale copy in a pull request is harmless (CI does not check it).
 - `docs/backlog.yaml` drives `docs/backlog.md` and the site's backlog page.
 - `models/*/lab/index.html` are the original self-contained pages (large, base64-embedded); don't reformat them.
 - `models/*/NOTEBOOK.md` and `docs/history/` are historical records; add dated entries, don't rewrite history.
