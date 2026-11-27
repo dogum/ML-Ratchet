@@ -26,3 +26,12 @@ The follow-up uses the release's Python dependencies, including NumPy and pandas
 | A meter list without electricity puts `has_electricity` at z = −1000 | Yes, and it reached the exam | **Warned, opt-in fix, re-score queued.** `forecast()` warns; `assume_electricity=True` adds the meter. The default stays as released so the card's exam numbers describe v1.0. | Training: `has_electricity` mean 1.0, sd 0.001 in both heads. Counted on BDG2 metadata: **58 of 1,584 exam buildings** list no electricity meter (0 of 52 dev), so their steam, chilled-water, hot-water and gas forecasts were scored at z = −1000. The report's open question ("prevalence of incomplete metadata") is answered; their accuracy cost needs the queued re-score. |
 
 The golden demo is unchanged.
+
+**Follow-up run (27 Nov 2026, owner-approved).** Dated re-score of the seen exam with `assume_electricity=True`
+(`models/loadcast/training/rescore_noelec.py`, `rescore_noelec_r3.json`). Of the 58 buildings, 15 have exam
+building-meters: 19 units (5 chilled water, 13 steam, 1 gas). On those 19, median cold CV(RMSE) fell from 597 % to
+114 % and warm (a year) from 51 % to 35 %; cold is better on 18 of 19 (the gas meter is worse). Exam rows: steam a
+year 45.5 → 43.6 %, chilled water a year 42.9 → 42.4 %, steam no history 102.8 → 100.8 %; no verdict changed
+(6 wins, 16 ties, 18 losses). Released as **v1.0.1** with `assume_electricity=True` by default; `False` keeps v1.0's
+behaviour with the warning. The representation rung (simulated buildings without an electricity meter) was not run:
+LoadCast's frozen set has no such building, so the ratchet cannot score it; that needs a frozen-set change first.
