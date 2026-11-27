@@ -22,7 +22,8 @@ def noise_bank():
 QUIET = None
 def quiet_bank():
     global QUIET
-    if QUIET is None: QUIET = np.load(_P.WORK + '/data/quiet_dev.npz')['x']
+    if QUIET is None:   # physics v5 uses the pool rebuilt without record 201 (quietnoise.py with BEAT_SPLIT=v2)
+        QUIET = np.load(_P.WORK + ('/data/quiet_dev_v2.npz' if sim.CAL.get('quiet_pool') == 'v2' else '/data/quiet_dev.npz'))['x']
     return QUIET
 
 

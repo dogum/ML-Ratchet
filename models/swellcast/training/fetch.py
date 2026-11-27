@@ -19,8 +19,11 @@ def get(b, k, y):
         os.rename(fn + '.part', fn); time.sleep(0.3)
     return fn
 
-def parse(fn, year):
-    """-> hour index within year (int), freqs, values (n, nf) with NaN for missing"""
+FIELD_SENTINELS = False   # keep 99 in swdir (a valid bearing) and swr1 (r1 = 0.99); 999 stays missing. See pipeline.read_ndbc.
+
+def parse(fn, year, keep_99=False):
+    """-> hour index within year (int), freqs, values (n, nf) with NaN for missing. keep_99: 99 is a value, not a gap
+    (direction and r1 files); 999 is always missing."""
     txt = gzip.open(fn, 'rt', errors='ignore').read().splitlines()
     hdr = [l for l in txt if l.startswith('#') or l.startswith('YY') or l.startswith('YYYY')]
     h = (hdr[0] if hdr else txt[0]).replace('#', '').split()
@@ -32,7 +35,9 @@ def parse(fn, year):
     A = np.array(rows, float); yy = A[:, 0].astype(int); yy = np.where(yy < 100, yy + 1900, yy)
     t = (np.array([np.datetime64(f'{a:04d}-{b:02d}-{c:02d}') for a, b, c in zip(yy, A[:, 1].astype(int), A[:, 2].astype(int))]).astype('datetime64[h]').astype(np.int64)
          + A[:, 3] + (A[:, 4] / 60 if nt == 5 else 0))
-    V = A[:, nt:]; V[(V >= 98.9) & (V <= 99.01)] = np.nan; V[V >= 998.9] = np.nan
+    V = A[:, nt:]
+    if not keep_99: V[(V >= 98.9) & (V <= 99.01)] = np.nan
+    V[V >= 998.9] = np.nan
     return np.round(t).astype(np.int64), fr, V
 
 def to_grid(fr, V, logint):
@@ -56,7 +61,7 @@ def buoy_year(b, y):
     t, fr, V = pw; k = (t >= h0) & (t < h0 + n); E[t[k] - h0] = to_grid(fr, V[k], True)
     fd, fj = get(b, 'd', y), get(b, 'j', y)
     if fd and fj:
-        pd_, pj = parse(fd, y), parse(fj, y)
+        pd_, pj = parse(fd, y, FIELD_SENTINELS), parse(fj, y, FIELD_SENTINELS)
         if pd_ is not None and pj is not None:
             td, frd, D = pd_; tj, frj, R = pj
             if np.nanmax(R) > 1.5: R = R / 100.0

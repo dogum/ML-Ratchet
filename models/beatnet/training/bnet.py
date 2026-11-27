@@ -45,7 +45,7 @@ def real_bank(db='mitdb'):
 def split_idx(which):
     if which == 'svdb': return 'svdb', np.arange(len(real_bank('svdb')['y']))
     z = real_bank('mitdb'); dev = C.dev_records()
-    recs = {'dev': dev, 'ds1rest': [r for r in C.DS1 if r not in dev], 'ds2': C.DS2}[which]; return 'mitdb', np.nonzero(np.isin(z['rec'], recs))[0]
+    recs = {'dev': dev, 'ds1rest': [r for r in C.DS1 if r not in dev], 'ds2': C.DS2_EXAM, 'ds2all': C.DS2}[which]; return 'mitdb', np.nonzero(np.isin(z['rec'], recs))[0]
 
 def rhythm(db):
     if 'rh_' + db not in _R: _R['rh_' + db] = np.load(D + f'{db}_rhythm.npy').astype(int)

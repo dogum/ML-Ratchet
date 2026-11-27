@@ -35,8 +35,9 @@ HIT = {'numax': 0.05, 'dnu': 0.02}
 
 
 def release_net():
+    """the released network, or the numpy weights named by SQ_NET (a candidate rung exported by export.py)"""
     import starquake
-    return starquake.Net(os.path.join(_P.MODEL, 'starquake_weights.npz'))
+    return starquake.Net(os.environ.get('SQ_NET') or os.path.join(_P.MODEL, 'starquake_weights.npz'))
 
 
 def reading(net, y):
@@ -65,6 +66,7 @@ def _sims_chunk(args):
 
 
 def sims(name, which, n, seed, neg=False, workers=3):
+    workers = int(os.environ.get('SQ_WORKERS', workers))
     from multiprocessing import Pool
     os.makedirs(H, exist_ok=True); t = time.time(); per = n // workers
     with Pool(workers) as p:

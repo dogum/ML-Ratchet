@@ -190,3 +190,22 @@ five lengths by `training/hybrid.py real exam exam` (2,098 readings, the same co
 ## 27 Nov 2026 — audit resolution
 
 The two-reviewer audit (`docs/audits/`). Edge cadences without good flux now trigger a warning; grid_lc(trim=True) drops them (opt-in; re-score queued). Broadband-noise detections need high-RMS non-oscillators in training; queued.
+
+## 27 Nov 2026 — rung r6: high-RMS non-oscillators in the noise bank (rule fixed before scoring)
+
+Audit queue. Pure white noise at 500 ppm or more triggers detections; the noise pool holds only quiet dwarfs, because
+`screen.py` dropped every dwarf with strong low-frequency variability (129 of 360 noise_train stars, 18 of 60
+noise_val). Those dropped stars are the high-RMS non-oscillators the audit asks for (spots, rotation, eclipses), and
+their light curves are already in `work/data/lc/`.
+
+- **Candidate r6** (`training/run_r6.sh`): r5's bank recipe rebuilt with new seeds (15k v1 physics, 15k v2, 10k v2 with
+  30% non-oscillating) plus 5k examples on the dropped noise_train stars (`simbank.py --pool noise_train_hard`, 50%
+  non-oscillating: the variable star alone, or a very luminous giant below the band). 45k examples, trained from scratch,
+  12,000 steps (r5 had 11,500 over three runs). The r1–r5 checkpoints were not kept, so no warm start.
+- **Judged as v1.1 was:** the network goes into the same hybrid (w, k refitted on the fit set with the r6 network, as
+  for h1); val3 and val3neg are regenerated from their seeds (first checked: the release network on the regenerated
+  sets must give the stored readings); keep if the val3 objective rises by more than 0.01 over h1 (0.788) AND the mean
+  ratio of the four dev median errors to h1's is at most 1.10.
+- **Reported, not used in the decision:** false-alarm rate on a new set `val3hard` (1,000 pieces of the 18 dropped
+  noise_val stars, no signal, seed 14), for h1 and r6.
+- The exam is opened only if r6 is released, as a new dated version.

@@ -8,9 +8,12 @@ sys.path.insert(0, _P.SRC); import sq, starsim as SS
 D = _P.WORK + '/data/'; B = _P.WORK + '/bank/'
 
 def load_pool(which):
+    """which: 'noise_train' / 'noise_val' = the dwarfs screen.py kept (quiet); '<pool>_hard' (27 Nov 2026) = the dwarfs it
+    dropped from that pool (rotation spots, eclipses, pulsations, strong systematics: high-RMS non-oscillators)"""
+    hard = which.endswith('_hard'); which = which[:-5] if hard else which
     sp = json.load(open(D + 'split.json')); out = []; scr = json.load(open(D + 'noise_screen.json'))
     for k in sp[which]:
-        if not scr[str(k)]['keep']: continue
+        if scr[str(k)]['keep'] == hard: continue
         p = f'{D}lc/{k}.npz'
         if os.path.exists(p):
             y = sq.read_npz(p); z = np.load(p); out.append((k, y.astype(np.float32), json.loads(str(z['hdr']))['KEPMAG']))
