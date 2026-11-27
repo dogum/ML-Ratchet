@@ -95,3 +95,46 @@ Research and teaching only; not a medical device. The rows are public, so the fi
 ## 27 Nov 2026 — audit resolution
 
 The two-reviewer audit (`docs/audits/`). Short gaps (up to 10 samples) are filled and longer ones refused (one NaN made every beat 'N'). Records 201 and 202 are one patient across dev and exam; the card gives DS2 without 202, and a retrain without that patient is queued.
+
+## 27 Nov 2026 — retrain without patient 201/202 (rules fixed before scoring)
+
+Audit queue. MIT-BIH 201 (dev, calibration, quiet background pool) and 202 (DS2) are one patient.
+
+- **Split v2** (`training/common.py`, `BEAT_SPLIT`, default v2): dev = 101, 112, 119, 203, 220 (201 dropped from the seeded
+  draw's result, not replaced); DS2 exam = 21 records (202 left out); 201 joins the held-out DS1 rest. `BEAT_SPLIT=v1`
+  gives the v1.0 split.
+- **Calibration without 201** (dev, 5 records): T peak 303 → 306 ms, noise floor 0.0034 → 0.0036, V QRS width 133 → 136
+  ms: kept. S-beat coupling moves: 0.555 → 0.64 of the local mean RR (IQR 0.59–0.73); 201's aberrated APCs (128 of the
+  229 dev S beats) set v4's coupling. **Physics v5** (`sim.py`): v4 with the coupling ranges moved 0.24 of the way back
+  to v3, and the quiet background rebuilt from the 5 dev records (`data/quiet_dev_v2.npz`, 450 pieces). One dev trial
+  (200 patients): simulated S coupling 0.632 (IQR 0.536–0.735) vs dev 0.64 (0.591–0.734); kept. V coupling is still
+  later in simulation (0.74 vs dev 0.60), as in v4; not changed.
+- **Frozen set v5val** (400 patients, seeds 900000–900399) and a training bank of 4,000 patients (64,000 beats).
+- **Ladder** (`ratchet_v2.json`): incumbent = the released r5 (rebuilt from `beatnet_weights.npz` by
+  `training/from_release.py`; matches numpy to 1.1e-5) re-scored on v5val and dev v2: macro-F1 0.879. Candidates r6_s0
+  and r6_s1: physics v5, from scratch (nothing inherited from 201-exposed rungs), 9,000 steps, lr 2e-3, seeds 0 and 1.
+  Rule unchanged: keep if v5val macro-F1 rises by more than 0.01 AND dev mean S/V F1 drops by no more than 0.02.
+  DS2 is not scored per rung any more; exam.py opens it once for the rung the ratchet releases.
+- If no rung is promoted, v1.0's DS2-without-202 score is recorded instead.
+
+## 27 Nov 2026 — result: retrain without 201/202 not promoted; v1.0's DS2 without 202 recorded
+
+Ladder `training/ratchet_v2.json` (v5val, dev split v2; rules fixed above, committed in e293787 before scoring):
+
+| Rung | v5val macro-F1 | dev S/V F1 | dev F1 N / S / V | decision |
+|---|---|---|---|---|
+| r5 (released, rebuilt from numpy) | 0.879 | 0.579 | 0.960 / 0.436 / 0.722 | incumbent |
+| r6_s0 (seed 0) | 0.896 | 0.409 | 0.923 / 0.247 / 0.572 | rejected: dev gate |
+| r6_s1 (seed 1) | 0.903 | 0.536 | 0.921 / 0.513 / 0.560 | rejected: dev gate |
+
+- Training: 9,000 steps each on one thread, about 75 minutes, two seeds in parallel; bank 64,000 beats
+  (v5 seeds 0–1499 plus v5x0/v5x1 seeds 1500–3999).
+- What failed: both from-scratch networks call far more dev beats V (V +P 0.40 against 0.57; dev N sensitivity 0.86
+  against 0.93), and dev S sensitivity depends on the seed (0.28 vs 0.60). r5 came through a warm-start ladder
+  (v1 → v2 → v4 banks); a single from-scratch run on v5 does not reproduce its dev behaviour. Not tried: a warm start
+  from r5 (it would carry the 201-exposed background), a seed ensemble.
+- DS2 was not opened for either rung. v1.0 stays.
+- **Dated DS2 score of v1.0 without 202** (`training/ds2_without_202.py`, 27 Nov 2026; record
+  `training/ds2_without_202.json`): released weights and their stored dev prior; 21 records: macro-F1 0.5531, SV-F1
+  0.6305 (rules 0.4321). All 22 records from the rebuilt bank: 0.5465 / 0.6176, which reproduces the published 0.547.
+- Calibration record: `training/calib_coupling.json` gains `v5_trial` (dev split v2 vs the v5 trial bank).

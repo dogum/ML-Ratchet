@@ -70,7 +70,7 @@ if __name__ == '__main__':
         if split == 'ds2': np.save(_P.WORK + '/ds2_probs.npy', p.astype(np.float32))
     # same exam with beats located by our own QRS detector (detbank.py): false detections count against PPV, missed beats against Se
     zd = np.load(BN.D + 'mitdb_det_beats.npz'); Zd = {k: zd[k] for k in zd.files}; dmeta = {m['rec']: m for m in json.load(open(BN.D + 'mitdb_det_beats_meta.json'))}
-    for split, recs in (('ds2_detector', C.DS2), ('dev_detector', C.dev_records())):
+    for split, recs in (('ds2_detector', C.DS2_EXAM), ('dev_detector', C.dev_records())):
         idx = np.nonzero(np.isin(Zd['rec'], recs))[0]; y = Zd['y'][idx]; o = BN.predict(net, Zd, idx); p = BN.probs(o, lp); missed = np.sum([dmeta[r]['missed'] for r in recs], 0)
         R[split] = dict(beatnet=det_scores(y, p.argmax(1), missed), rules=det_scores(y, BL.rules(Zd, idx), missed), majority=det_scores(y, np.zeros(len(y), int), missed),
                         detector=dict(n_ref=int(np.sum([dmeta[r]['ref_counts'][:4] for r in recs])), missed=missed.tolist(), false_det=int((y == 5).sum())))

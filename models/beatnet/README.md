@@ -73,9 +73,11 @@ Coverage of the 68% error bars on the exam: QRS width **72.5%**.
 - Not a medical device. Research and teaching only.
 - Models trained on real DS1 (de Chazal 2004, Zhang 2014) still do better on S and F beats.
 - Non-premature S beats are missed; aberrated APCs are called V.
-- Shared patient and missing samples (audit, 25 Nov 2026): MIT-BIH records 201 (dev calibration and training background) and 202 (DS2 exam) are the same patient. Leaving 202 out of the archived DS2 per-record scores moves macro-F1 from 0.5466 to 0.5531 and SV-F1 from 0.6176 to 0.6305; the effect of 201's exposure needs a retrain (queued). One NaN sample made every beat's probabilities NaN and its label 'N'; since 27 Nov 2026 gaps of up to 10 samples are filled and longer ones refused.
+- Shared patient and missing samples (audit, 25 Nov 2026): MIT-BIH records 201 (dev calibration and training background) and 202 (DS2 exam) are the same patient. Leaving 202 out of the archived DS2 per-record scores moves macro-F1 from 0.5466 to 0.5531 and SV-F1 from 0.6176 to 0.6305; a retrain without the patient (27 Nov 2026: dev without 201, calibration and quiet background rebuilt, physics v5, two seeds from scratch) beat v1.0 in simulation (macro-F1 0.896 and 0.903 vs 0.879) but failed the dev gate (S/V F1 0.409 and 0.536 vs 0.579), so v1.0 stays. Its dated DS2 score without 202 (27 Nov 2026): macro-F1 0.553, SV-F1 0.631 (all 22 records, re-scored: 0.547, 0.618). One NaN sample made every beat's probabilities NaN and its label 'N'; since 27 Nov 2026 gaps of up to 10 samples are filled and longer ones refused.
 
 ## The ratchet
+
+### BeatNet
 
 **Objective:** Macro-F1 (N/S/V/F) on a frozen simulated set of 400 patients, rebuilt for each physics version  
 **Rule:** Keep if macro-F1 rises by more than 0.01 AND the dev mean S/V F1 drops by no more than 0.02.
@@ -91,6 +93,21 @@ Coverage of the 68% error bars on the exam: QRS width **72.5%**.
 <sub>Columns after *Why*: Dev S/V F1 (gate input) and DS2 exam macro-F1 (reported after, never used).</sub>
 
 DS2 macro-F1 fell from rung 1 to rung 2; the exam never decided anything, so it is reported as is.
+
+### Without patient 201/202 (27 Nov 2026)
+
+**Objective:** Macro-F1 (N/S/V/F) on frozen v5val (400 simulated patients, physics v5 = v4 recalibrated on dev without record 201)  
+**Rule:** Keep if macro-F1 rises by more than 0.01 AND the dev mean S/V F1 drops by no more than 0.02. Unchanged; fixed in NOTEBOOK.md before scoring.
+
+| Rung | Change | Frozen-set score | Decision | Why | Dev S/V F1 |
+|---|---|---|---|---|---|
+| r5 | Released v1.0 network re-scored on v5val and the 5-record dev | 0.879 | ● kept | Incumbent. | 0.579 |
+| r6_s0 | Physics v5, from scratch, 4,000-patient bank, 9,000 steps, seed 0 | 0.896 | ○ rejected | Dev gate failed (0.409 vs 0.579). | 0.409 |
+| r6_s1 | As r6_s0, seed 1 | 0.903 | ○ rejected | Dev gate failed (0.536 vs 0.579). | 0.536 |
+
+<sub>Columns after *Why*: Dev mean S/V F1 (gate input).</sub>
+
+Records 201 (dev) and 202 (DS2) are one patient. The released r5 is re-scored as the incumbent; the candidates are trained from scratch on physics v5. Both beat it in simulation and both fail the dev gate, so v1.0 stays. DS2 is not scored per rung in this ladder.
 
 Raw per-rung logs are in [`training/`](training/).
 
@@ -111,10 +128,10 @@ A 2 mm voxel heart with eikonal activation through a Purkinje-lined endocardium;
 
 ## Next rungs
 
+- Why from-scratch training on physics v5 calls more dev beats V (V +P 0.40 vs 0.57) and swings S sensitivity 0.28-0.60 between seeds: a seed ensemble or a warm-start ladder on v5, judged on the 5-record dev.
 - Wider bundle-branch-block morphology in the simulator, calibrated on a DS1 LBBB record kept out of the exam.
 - A twin test per dev record — calibration so far is population-level only.
 - Refit the fusion visibility window to how annotators used F.
-- Queued (audit): retrain and recalibrate with patient 201/202 excluded from dev, backgrounds and exam, then a dated re-score.
 
 ## Files
 

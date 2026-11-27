@@ -26,6 +26,7 @@ CAL = dict(VERSIONS[1])
 VERSIONS[3] = dict(VERSIONS[2], fusion_share=(0.25, 0.75), quiet=(0.2, 0.65), snr=(40, 64), snr_bad=(24, 40), white=(0.00013, 0.0013))   # dev noise floor: v2 noise ~1.7x the dev floor at every percentile -> NSTDB -10 dB, + quiet real background from the dev records (quietnoise.py); trial c3try at -6 dB was still 1.5x;
 # fusion_share: r1 called 981 of 9110 non-AF dev N beats F; simulated 'fusions' whose ectopic front took only a sliver (or almost all) of the ventricles looked N (or V) but were labelled F
 VERSIONS[4] = dict(VERSIONS[3], s_coup=(0.28, 0.6), s_run=(0.3, 0.5), j_coup=(0.4, 0.7))   # dev: S beats arrive at 0.55 (IQR 0.49-0.64) of the local mean RR, v3 sims at 0.78 (0.69-0.88) -> earlier atrial/junctional coupling
+VERSIONS[5] = dict(VERSIONS[4], s_coup=(0.33, 0.67), s_run=(0.34, 0.54), j_coup=(0.44, 0.74), quiet_pool='v2')   # 27 Nov 2026: dev without record 201 (same patient as DS2 202): S beats at 0.64 (IQR 0.59-0.73) of the local mean RR, not 0.555 (201's aberrated APCs dominated); coupling moved 0.24 of the way back from v4 to v3; quiet background rebuilt from the 5 remaining dev records. Other dev numbers moved little (T peak 303 -> 306 ms, noise floor 0.0034 -> 0.0036, V width 133 -> 136 ms) and are kept.
 def set_version(v): CAL.clear(); CAL.update(VERSIONS[v]); CAL['version'] = v
 
 def rr_ecgsyn(n, hr, std, lfhf, rng, f1=0.1, f2=0.25, c1=0.01, c2=0.01):

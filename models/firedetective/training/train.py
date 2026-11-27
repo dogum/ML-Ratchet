@@ -3,6 +3,10 @@ validation set and the dev real records.
 
 python3 train.py <rung_name> --banks train_v1[,more] [--epochs 60] [--hidden-p 0.5] [--seed 0] [--h 48 --c 64 --d 128]
 Writes models/<rung>.pt, models/<rung>.json (sim + dev metrics).
+
+27 Nov 2026 (audit follow-up): --flag-sd1 stores the blind-wind flag (wind_hidden) with scale 1 instead of the 1e-3
+floor (the flag is 0 on every wind-visible row the scaler sees, so the floor made a blind row enter at z = 1000).
+Checkpoints now also hold the torch and numpy RNG states, so a resumed run continues the same random stream.
 """
 from common import *
 import argparse, glob, time
@@ -20,7 +24,8 @@ def load_bank(names, drop_edge=False):
     S, Sh, St, Lb = [], [], [], []
     labels = None
     for nm in names.split(','):
-        for fn in sorted(glob.glob(f'{BANK}/{nm}/shard_*.npz')):
+        nm, _, upto = nm.partition(':')         # 'train_v1:30' = shards 0-29 only (27 Nov 2026, to rebuild R6's bank)
+        for fn in sorted(glob.glob(f'{BANK}/{nm}/shard_*.npz'))[:int(upto) if upto else None]:
             z = np.load(fn)
             if len(z['lab']) == 0:
                 continue
@@ -128,6 +133,8 @@ def train(args):
     for nm in [x for x in args.drop_feats.split(',') if x]:
         j = feats.SEQ_NAMES.index(nm)          # dropped input: normalised to ~0 everywhere (train, numpy, JS)
         ns['seq_mu'][j] = 0.0; ns['seq_sd'][j] = 1e9
+    if args.flag_sd1:
+        ns['seq_sd'][feats.SEQ_NAMES.index('wind_hidden')] = 1.0
     Y, B = M.targets(Lb, labels)
     X, T, mk = prep(S, St, ns)
     Xh, _, _ = prep(Sh, St, ns)
@@ -140,6 +147,8 @@ def train(args):
     if os.path.exists(ck):
         c = torch.load(ck, weights_only=False)
         net.load_state_dict(c['net']); opt.load_state_dict(c['opt']); ep0 = c['epoch'] + 1
+        if 'torch_rng' in c:                           # checkpoints written from 27 Nov 2026 on
+            torch.set_rng_state(c['torch_rng']); np.random.set_state(c['np_rng'])
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, args.epochs, last_epoch=ep0 - 1) if ep0 else \
         torch.optim.lr_scheduler.CosineAnnealingLR(opt, args.epochs)
     wts = np.ones(n, np.float32)
@@ -170,7 +179,8 @@ def train(args):
             tot += float(loss.detach()) * len(idx)
         sched.step()
         if ep % 5 == 4 or ep == args.epochs - 1:
-            torch.save(dict(net=net.state_dict(), opt=opt.state_dict(), epoch=ep), ck)
+            torch.save(dict(net=net.state_dict(), opt=opt.state_dict(), epoch=ep, torch_rng=torch.get_rng_state(),
+                            np_rng=np.random.get_state()), ck)
             sm = sim_metrics(net, ns, val)
             print(f'ep {ep} loss {tot / n:.4f} primary {sm["primary"]:.4f} crown {sm["crown"]["r2"]:.3f} '
                   f'windH {sm["wind_hidden"]["r2"]:.3f} lfmc {sm["lfmc"]["r2"]:.3f} ros {sm["ros"]["r2"]:.3f}', flush=True)
@@ -193,4 +203,5 @@ if __name__ == '__main__':
     ap.add_argument('--drop-edge', action='store_true'); ap.add_argument('--wreg', default='')
     ap.add_argument('--drop-feats', default='')
     ap.add_argument('--prior', action='store_true')
+    ap.add_argument('--flag-sd1', action='store_true')
     train(ap.parse_args())

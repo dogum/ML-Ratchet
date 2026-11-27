@@ -1,10 +1,25 @@
-# BasinDetective v1.0: model card
+# BasinDetective v1.1: model card
 
 Imported into ML Ratchet on 18 Nov 2026 from the shipped `basindetective-v1.0` release. The text below is the
 shipped card with paths fixed, the "MAE" columns renamed to what they are (median absolute error), and four sections
 added: the weather-data caveat, the exam with intervals and verdicts, rule notes, and the import check; and, the
 same day, a reproduction re-score with paired bootstrap intervals (seen). Nothing was
 re-trained; weights and inference numbers are the release's.
+
+## v1.1 (27 Nov 2026): symmetric precipitation-drift prior
+
+The audit found that v1.0 predicted a mean-flow decline for identical forcing in both periods. Its bank's decadal
+precipitation-drift prior was asymmetric (delta ~ N(0.029, 0.038)). R6s is R5's recipe on banks matched basin for
+basin with delta ~ N(0, 0.038). The ratchet kept it (sim skill on the new frozen set 0.535 vs 0.515; dev composite
+0.439 vs 0.451, inside the 0.02 tolerance), and the paired dev check of the forward-plus-reverse mean-flow change fell
+from −0.149 to −0.040 (median, 51 basins). Examined once as v1.1 on the same 619 basins:
+- change ρ improved on five of six (mean flow 0.757 → 0.767, now level with calibrated GR4J at −0.025 [−0.051,
+  +0.001]); runoff ratio 0.453 → 0.439 is now a loss to GR4J (−0.059 [−0.111, −0.008]);
+- median errors grew on five of six (mean flow 0.083 → 0.092, now a loss to Budyko-Fu): v1.1 over-predicts the
+  exam's median mean-flow change (+0.197 vs +0.173; v1.0 under-predicted it, +0.133);
+- the bars got wider (68 % coverage 73-88 %) and regulation is still at chance.
+Everything below this section describes v1.0 unless it says otherwise; `model.yaml` and `NOTEBOOK.md` (27 Nov 2026)
+have the v1.1 numbers with v1.0's beside them.
 
 ## The weather-data caveat (read first)
 The forcing is ERA5-Land (via Caravan). It under-catches mountain and Pacific Northwest precipitation: 50 of the 671

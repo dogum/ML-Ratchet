@@ -74,13 +74,19 @@ def safe(r):
 def main():
     W = pd.read_parquet(f'{DATA}/windows.parquet')
     # twins first (needed for calibration), then train windows in id order
-    W = pd.concat([W[W.kind == 'twin'], W[W.kind == 'train']])
+    W = pd.concat([W[W.kind == 'twin'], W[W.kind == 'train'], W[W.kind == 'trainsb']])
     if len(sys.argv) > 2 and sys.argv[1] == 'frozen':
         # `fetch_windows.py frozen N`: only the frozen-set windows of the first N train ignitions (the 22 Nov 2026
         # physics p2 re-score needs the frozen set only: 147 windows for N = 8500)
         I = pd.read_parquet(f'{DATA}/ignitions.parquet')
         use = set(I[I.kind == 'train'].head(int(sys.argv[2])).win)
         W = W[(W.kind == 'train') & (W.frozen == 1) & W.win.isin(use)]
+    elif len(sys.argv) > 2 and sys.argv[1] in ('train', 'trainsb'):
+        # `fetch_windows.py train N`: every window of the first N train ignitions (27 Nov 2026 rebuild of the 8,500-
+        # ignition v1 bank, which was not shipped); `trainsb N`: the slash-blowdown windows of prior_sb.py
+        I = pd.read_parquet(f'{DATA}/ignitions.parquet')
+        use = set(I[I.kind == sys.argv[1]].head(int(sys.argv[2])).win)
+        W = W[(W.kind == sys.argv[1]) & W.win.isin(use)]
     todo = [r for r in W.itertuples() if not os.path.exists(f'{OUT}/{r.win}.npz')]
     print('todo', len(todo), flush=True)
     t0 = time.time()

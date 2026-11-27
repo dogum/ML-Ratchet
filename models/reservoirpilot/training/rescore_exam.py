@@ -15,6 +15,13 @@ already been seen, so this is a reproduction, not a rung: nothing is chosen from
 Writes: WORK/exam/* (final_exam.py's outputs), training/rescore_per_dam.csv (scores only, no time series) and
 training/rescore_exam.json.
 usage: ML_RATCHET_WATER=... python rescore_exam.py
+
+27 Nov 2026: with RESERVOIRPILOT_TASK=causal (task.py) the same script is the owner-approved dated re-score of every arm
+on the causal task (capacity from GRanD and the calibration half only; split before interpolating; split day in the
+scored half only). Set ML_RATCHET_WORK to a separate folder so its caches do not mix with the exam definition's. It
+then writes training/rescore_per_dam_causal.csv and training/rescore_exam_causal.json, compares the baselines with the
+table WaterData's run_baselines_reservoir.py --causal wrote (RESERVOIRPILOT_TABLES, default WORK/baselines_causal) and
+compares the medians with the shipped exam log, which is then the old board.
 """
 import json
 import os
@@ -27,13 +34,16 @@ import _paths  # noqa: E402  (repository paths; puts shared/water on sys.path)
 import final_exam  # noqa: E402
 from evaluate import prep  # noqa: E402
 from policy import load_policy, rollout_np  # noqa: E402
-from task import components  # noqa: E402
+from task import components, CAUSAL  # noqa: E402
 
 WEIGHTS = os.path.join(_paths.MODEL, 'reservoirpilot_weights.npz')
 SEED, NBOOT = 20261118, 10000
 POL = ['pilot', 'sop', 'rule', 'historical', 'tuned_rule_g4', 'tuned_rule_g1', 'tuned_rule_dev', 'dp']
 COLS = ['J', 'J_short', 'J_flood', 'shortage_ratio', 'shortage_days_frac', 'flood_days_per_yr', 'max_excess_ratio',
         'release_mean_over_D', 'S_mean_frac', 'S_min_frac', 'S_end_minus_start_frac', 'empty_days_frac', 'full_days_frac']
+TAG = '_causal' if CAUSAL else ''
+TABLES = os.environ.get('RESERVOIRPILOT_TABLES') or (f'{_paths.WORK}/baselines_causal' if CAUSAL
+                                                     else f'{_paths.WATER_DATA}/proc/baselines')
 MAIN = {'J': 'lower', 'shortage_ratio': 'lower', 'flood_days_per_yr': 'lower', 'S_mean_frac': 'higher',
         'S_end_minus_start_frac': 'higher'}
 
@@ -46,7 +56,7 @@ def check_dams(tasks):
     xw_exam = sorted(xw[xw.res_id.isin(sp['exam'])].cdec_id)
     rb = pd.read_parquet(f'{_paths.WATER_DATA}/proc/baselines/reservoir_recent_scores.parquet')
     want_cd = sorted(rb[rb.split == 'exam'].cdec_id.unique())            # WaterData's scored recent exam
-    b = pd.read_parquet(f'{_paths.WATER_DATA}/proc/baselines/reservoir_scores.parquet')
+    b = pd.read_parquet(f'{TABLES}/reservoir_scores.parquet')
     want_ex = sorted(b[b.split == 'exam'].res_id.unique())                # WaterData's 244 scored exam dams
     assert set(ex) <= set(sp['exam']) and len(ex) == len(set(ex)), 'exam task outside the frozen exam split'
     assert not set(ex) & set(sp['dev']) and not set(ex) & set(sp['aux'])
@@ -60,6 +70,11 @@ def write_tuned_sop():
         out = f'{_paths.WORK}/runs/{name}'
         os.makedirs(out, exist_ok=True)
         np.savez(f'{out}/weights.npz', fset='tuned_sop', f=f, tau=tau, H=H)
+    out = f'{_paths.WORK}/runs/tuned_sop_dev'                       # tune_rule_dev.py's frozen constants
+    if not os.path.exists(f'{out}/weights.npz'):
+        dv = json.load(open(os.path.join(_paths.SRC, 'dev_tuned_rule.json')))
+        os.makedirs(out, exist_ok=True)
+        np.savez(f'{out}/weights.npz', fset='tuned_sop', f=dv['f'], tau=dv['tau'], H=dv['H'])
 
 
 def boot(df, rng_idx):
@@ -103,10 +118,10 @@ if __name__ == '__main__':
     out = per[keep].copy()
     for c in COLS + ['mb_corr']:
         out[c] = out[c].astype(float).map(lambda v: float(f'{v:.5g}') if np.isfinite(v) else v)
-    out.sort_values(['split', 'res_id', 'policy']).to_csv(os.path.join(_paths.SRC, 'rescore_per_dam.csv'), index=False)
+    out.sort_values(['split', 'res_id', 'policy']).to_csv(os.path.join(_paths.SRC, f'rescore_per_dam{TAG}.csv'), index=False)
 
     # 4a. baselines per dam vs WaterData's shipped tables
-    b = pd.read_parquet(f'{_paths.WATER_DATA}/proc/baselines/reservoir_scores.parquet')
+    b = pd.read_parquet(f'{TABLES}/reservoir_scores.parquet')
     b = b[b.split == 'exam'].set_index(['res_id', 'policy'])
     e = per[per.split == 'exam'].set_index(['res_id', 'policy'])
     cmp = {}
@@ -180,10 +195,13 @@ if __name__ == '__main__':
             by_use[u][p] = {'median': float(sub[p].median()), 'diff_of_medians': float(sub.pilot.median() - sub[p].median()),
                             'ci95': [float(v) for v in np.percentile(d, [2.5, 97.5])]}
     failures['by_main_use_J'] = by_use
-    summary = {'what': 'Reproduction re-score of the released v1.0 weights on WaterData exam (seen); not a rung',
+    what = ('Dated supplementary re-score (27 Nov 2026) of every arm on the causal task definition (seen exam; '
+            'nothing chosen); old board = the shipped exam log' if CAUSAL else
+            'Reproduction re-score of the released v1.0 weights on WaterData exam (seen); not a rung')
+    summary = {'what': what, 'task': 'causal' if CAUSAL else 'exam definition', 'baseline_tables': TABLES,
                'data_root': 'ML_RATCHET_WATER rebuilt; build.py --only verify passed (splits sha256 33f88ca0..., field ed8109e5...)',
                'bootstrap': f'paired over dams, {NBOOT} resamples, numpy default_rng({SEED}); 95 % percentile interval of median(pilot) - median(baseline)',
                'dams': dams, 'baselines_vs_shipped_tables': cmp, 'shipped_vs_rescored_differences': vs,
                'dev_tuned_rule': {k2: dev[k2] for k2 in ('f', 'tau', 'H', 'dev_median_J')}, 'failure_checks': failures, 'results': res}
-    json.dump(summary, open(os.path.join(_paths.SRC, 'rescore_exam.json'), 'w'), indent=1, default=float)
+    json.dump(summary, open(os.path.join(_paths.SRC, f'rescore_exam{TAG}.json'), 'w'), indent=1, default=float)
     print(json.dumps({k2: v for k2, v in summary.items() if k2 in ('dams', 'baselines_vs_shipped_tables')}, indent=1, default=float))

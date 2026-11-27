@@ -25,12 +25,22 @@
     "mpc_forecast": 0.248,
     "firepilot": 0.102,
     "pf_bound": 0.363
+   },
+   "v1_0": {
+    "firepilot_plan": {
+     "mode": 0,
+     "phi_c": 23.960050285406453,
+     "omega": 180.0,
+     "d_h": 170.23583638281386,
+     "d_f": 226.67181953322068
+    },
+    "truth_saved_firepilot": 0.102
    }
   },
   "1000": {
    "firepilot_plan": {
     "mode": 1,
-    "phi_c": 0.0,
+    "phi_c": 54.40928065190187,
     "omega": 180.0,
     "d_h": 90.0,
     "d_f": 90.0
@@ -42,8 +52,18 @@
     "indirect_2km": 0.1,
     "anchor_flank": 0.467,
     "mpc_forecast": 0.467,
-    "firepilot": 0.467,
+    "firepilot": 0.392,
     "pf_bound": 0.981
+   },
+   "v1_0": {
+    "firepilot_plan": {
+     "mode": 1,
+     "phi_c": 0.0,
+     "omega": 180.0,
+     "d_h": 90.0,
+     "d_f": 90.0
+    },
+    "truth_saved_firepilot": 0.467
    }
   }
  }

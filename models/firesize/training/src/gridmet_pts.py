@@ -1,14 +1,17 @@
 """gridMET daily (Abatzoglou 2013; northwestknowledge.net/metdata/data HTTP files, public domain) at the training and
 twin ignition points, for the days [discovery - 24 d, discovery + 5 d] (30 days). Same nearest-cell rule and units as
 firedata's build_gridmet (temperatures degC). Each var-year file is downloaded to tmp, read, and deleted.
--> data/wx_points.npz: wx[n_ign, 12 vars, 30 days] float32, ign ids, var names. Resumable per year (data/wx_parts)."""
-import os, time
+-> data/wx_points.npz: wx[n_ign, 12 vars, 30 days] float32, ign ids, var names. Resumable per year (data/wx_parts).
+`gridmet_pts.py <kind>` (27 Nov 2026): only the ignitions of that kind (e.g. trainsb from prior_sb.py), into
+data/wx_parts_<kind>/ and data/wx_points_<kind>.npz; data/wx_points.npz is not touched."""
+import os, sys, time
 from common import *
 import h5py, requests
 
 URL = 'https://www.northwestknowledge.net/metdata/data/{v}_{y}.nc'
 TMP = f'{ROOT}/tmp/gridmet'
-PART = f'{DATA}/wx_parts'
+KIND = sys.argv[1] if len(sys.argv) > 1 else None
+PART = f'{DATA}/wx_parts' + (f'_{KIND}' if KIND else '')
 os.makedirs(TMP, exist_ok=True)
 os.makedirs(PART, exist_ok=True)
 S = requests.Session()
@@ -55,6 +58,8 @@ def read_points(fn, lon, lat):
 def main():
     from pyproj import Transformer
     I = pd.read_parquet(f'{DATA}/ignitions.parquet')
+    if KIND:
+        I = I[I.kind == KIND].reset_index(drop=True)
     tr = Transformer.from_crs(5070, 4326, always_xy=True)
     lon, lat = tr.transform(I.x.values + 45, I.y.values + 45)
     d0 = pd.to_datetime(I.date).values.astype('datetime64[D]')
@@ -88,7 +93,7 @@ def main():
         z = np.load(f'{PART}/{y}.npz')
         cur = W[z['sel']]
         W[z['sel']] = np.where(np.isnan(cur), z['G'], cur)
-    np.savez_compressed(f'{DATA}/wx_points.npz', wx=W, ign=I.ign.values, vars=np.array(WX), off=OFF)
+    np.savez_compressed(f'{DATA}/wx_points' + (f'_{KIND}' if KIND else '') + '.npz', wx=W, ign=I.ign.values, vars=np.array(WX), off=OFF)
     print('DONE missing frac', float(np.isnan(W).mean()), flush=True)
 
 

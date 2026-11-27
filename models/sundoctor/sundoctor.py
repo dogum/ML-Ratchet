@@ -175,7 +175,7 @@ class SunDoctor:
         return {k: v[:n] for k, v in out.items()}
 
     def diagnose(self, t_utc_hours, p_kw, poa_wm2, tamb_c, lat, lon, tilt=0.0, azimuth=180.0, dc_kw=1.0, n_strings=None, home=None,
-                 min_daylight=None,
+                 min_daylight=0.9,
                  mount='fixed', axis_azimuth=180.0, max_angle=55.0, gcr=0.4, backtrack=True):
         """Arrays of equal length: interval-center UTC hours (e.g. unix seconds / 3600), AC power (kW), POA (W/m2, or None for
         home mode), air temperature (C; from a weather service is fine). mount='tracker' for single-axis trackers."""
@@ -192,7 +192,10 @@ class SunDoctor:
         valid = (np.isfinite(P) & (True if home else np.isfinite(G))).mean(1) > 0.5
         # A day counts with half its intervals, and missing intervals count as zero energy, so a midday gap reads as an
         # outage (audit: 5 h missing at midday cut kWh 61-67 % and reported outage losses of 30 %). Warn on counted days
-        # missing more than 2 h between 08:00 and 16:00 solar time; min_daylight (a fraction) drops them instead.
+        # missing more than 2 h between 08:00 and 16:00 solar time. min_daylight (a fraction; 0.9 by default since v2.1.1,
+        # 27 Nov 2026) drops days with less than that share of 08:00-16:00 readings; min_daylight=None is the v2.1 rule
+        # (half the day's intervals) and only warns. The dated re-score with 0.9 dropped 328 of 17,468 inverter-days at
+        # PVDAQ 9068 and none at 2107.
         if P.shape[1] == 96:
             dl = np.isfinite(P[:, 32:64]).mean(1)
             gappy = valid & (dl < 0.75)
@@ -201,7 +204,7 @@ class SunDoctor:
             elif gappy.any():
                 import warnings
                 warnings.warn(f'SunDoctor: {int(gappy.sum())} counted day(s) miss more than 2 h of daylight readings; '
-                              'missing intervals count as zero energy and read as outages (min_daylight=0.9 drops them)',
+                              'missing intervals count as zero energy and read as outages (min_daylight=0.9, the default, drops them)',
                               stacklevel=2)
         o1 = self.run(P, G, Ta, lat, tilt, azimuth, doy, None, home, mount, **trk)
         ref = self.reference(o1['pf'], valid & (o1['outage'] < 0.2))

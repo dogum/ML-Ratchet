@@ -16,10 +16,20 @@ def beats(sample, symbol):
     """keep beat annotations only (AAMI classes 0-4) -> positions, class ids, original symbols"""
     k = np.array([s in AAMI for s in symbol]); return sample[k], np.array([AAMI[s] for s in symbol[k]]), symbol[k]
 
+import os
+# Split version. 'v1' = the v1.0 release (dev 101, 112, 119, 201, 203, 220; DS2 all 22 records).
+# 'v2' (default since 27 Nov 2026): MIT-BIH 201 and 202 are one patient (201 in DS1, 202 in DS2). 201 is dropped from dev,
+# so it no longer feeds the calibration or the quiet background pool (quietnoise.py); it goes to the held-out DS1 rest.
+# 202 is left out of the headline DS2 exam ('ds2'); 'ds2all' keeps all 22 records for comparison with published rows.
+SPLIT = os.environ.get('BEAT_SPLIT', 'v2')
+SAME_PATIENT = (201, 202)
+DS2_EXAM = [r for r in DS2 if r != 202] if SPLIT == 'v2' else list(DS2)
+
 def dev_records(seed=2026):
     """small real dev set, drawn by a fixed seed within strata of DS1: 2 records rich in S beats (>= 50), 2 rich in V beats
-    (>= 100), 2 others. Never part of any exam."""
+    (>= 100), 2 others. Never part of any exam. Split v2 drops 201 from the draw's result (same patient as DS2 record 202)."""
     rng = np.random.default_rng(seed); s_rich = [118, 201, 207, 209, 220, 223]; v_rich = [106, 116, 119, 203, 208, 215]
     a = list(rng.choice(s_rich, 2, replace=False)); b = list(rng.choice([r for r in v_rich if r not in a], 2, replace=False))
     rest = [r for r in DS1 if r not in a + b and r not in s_rich + v_rich]; c = list(rng.choice(rest, 2, replace=False))
-    return sorted(int(r) for r in a + b + c)
+    out = sorted(int(r) for r in a + b + c)
+    return [r for r in out if r != 201] if SPLIT == 'v2' else out

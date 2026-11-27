@@ -124,6 +124,40 @@ picks with an ak135 grid search; it gives no Mw.
 
 v1.2 combined, also widened on dev: epicentre 65-74%, depth 43-61%, Mw 41-70%, origin time 79-90%.
 
+## Supplementary exam: independent picks (27 Nov 2026)
+
+The exam above gave every station the catalogue's predicted P time as its pick guess (audit). This dated supplementary
+exam ran the released model once (27 Nov 2026, 19:18 UTC) on the same 400 multi-station quakes, from continuous LH
+records fetched again from EarthScope (`training/fetch_cont.py`). Each record runs from 10 minutes before the UTC hour
+of the origin to 2 hours after, so where P lies is not given. 3,986 records (same station order, first 10 usable).
+Two pickers, both fixed on the 40 dev quakes before the exam (`training/indep_exam.py`):
+
+- **per record:** the strongest STA/LTA trigger in the first 75 minutes after the hour;
+- **associated:** a grid search over 12,000 epicentres and origin times for the source on which most stations have one
+  of their 5 strongest triggers within ±6 s of the ak135 P time; each station's guess is that trigger.
+
+| stations | P guess | epicentre median | mean | depth median | Mw mean \|error\| | origin time median | ellipse coverage |
+|---|---|---|---|---|---|---|---|
+| all (≤10) | catalogue (control, same records) | 123 km | 179 | 17.6 km | 0.096 | 4.5 s | 63% |
+| all | associated | 497 | 1,346 | 26.6 | 0.122 | 40.4 | 26% |
+| all | per record | 1,284 | 1,603 | 47.0 | 0.159 | 475 | 4% |
+| 5 | catalogue | 191 | 324 | 17.0 | 0.098 | 7.2 | 67% |
+| 5 | associated | 1,251 | 2,211 | 35.0 | 0.142 | 130 | 21% |
+| 3 | catalogue | 279 | 583 | 21.2 | 0.102 | 9.7 | 64% |
+| 3 | associated | 1,865 | 2,841 | 34.6 | 0.154 | 207 | 17% |
+
+- The control reproduces the published exam (123 vs 127 km with all stations) from freshly fetched records.
+- Correction (27 Nov 2026, PR review): the first run associated over all of an event's stations before scoring the 3-
+  and 5-station subsets, so those two rows saw stations they should not (they read 694 and 548 km). The fixed code
+  (association on the subset alone; 10 three-station and 1 five-station subsets had no trigger and fell back to the
+  per-record pick) was run once more on the same records (`training/results/indep_exam_fix.json`); every other row
+  reproduced exactly. The table shows the corrected rows.
+- Picks against the catalogue P (grading only): associated 40% within 10 s, 51% within 30 s, 30% off by more than
+  5 minutes; per record 28% within 10 s. At 1 sample/s and 0.05–0.3 Hz the P of an M 5.5–6 quake is often not the
+  strongest trigger in two hours of record.
+- So the headline location skill depends on knowing roughly when P arrives. Without that, QuakeNet v2 misses by about
+  500 km (median) with all stations. The network was not changed.
+
 ## Where it fails
 
 - **Magnitude:** it loses to the plain inverse-variance average of v1.2's Mw at every station count (0.097 vs 0.089 with
@@ -131,6 +165,8 @@ v1.2 combined, also widened on dev: epicentre 65-74%, depth 43-61%, Mw 41-70%, o
 - **Deep quakes** are read too shallow (all stations: 38 km median error vs 28 km). The dev twins showed the
   over-correction (deep depth ratio 0.74) before the exam.
 - **Two stations** remain weak: median miss 427 km, mean 918 km. The P-time information needs more stations.
+- **Independent picking:** without the catalogue's P guess the median miss is 497 km with all stations, not 127 km
+  (supplementary exam above).
 - **Inputs inherited from v1.2:** LH only, 25-95°, a ±30 s P search around a guess (from the catalogue in the exam), and
   record start times rounded to the second when the archive was cut (±0.5 s on every pick).
 

@@ -1,5 +1,5 @@
 <!-- Generated from model.yaml and ratchet.yaml by `mlratchet readme --write`. Edit those, not this file. -->
-# StarQuake <sub>v1.1</sub>
+# StarQuake <sub>v1.1.1</sub>
 
 > **Weighing stars by listening to them ring.**
 
@@ -45,24 +45,24 @@ print(r["numax"], r["dnu"], r["mass"], r["radius"])
 
 | Metric | StarQuake | Baselines | |
 |---|---|---|---|
-| νmax median error, 4-year light curves<br><sub>v1.1 (classical backbone): 95% of stars within 5% (classical 91%), but the median error still loses. v1.0: 1.49% (re-scored: 1.49%).</sub> | **1.01%** | SYD-style classical pipeline (classical): 0.89%<br>Dev median guess (dumb baseline): 77% | ❌ loses |
+| νmax median error, 4-year light curves<br><sub>v1.1.1: record ends trimmed (dated re-score, 27 Nov 2026; v1.1 untrimmed: 1.01%). v1.1 (classical backbone): 95% of stars within 5% (classical 91%), but the median error still loses. v1.0: 1.49% (re-scored: 1.49%).</sub> | **0.99%** | SYD-style classical pipeline (classical): 0.89%<br>Dev median guess (dumb baseline): 77% | ❌ loses |
 | νmax median error, 1 year<br><sub>v1.0: 1.68% (re-scored: 1.67%), a tie. Not a dev target (on dev the network already led at 1 year); the gain comes with the long-length blend.</sub> | **1.41%** | SYD-style classical pipeline (classical): 1.67% | ✅ wins |
 | νmax median error, 90 days<br><sub>v1.0: 2.17%.</sub> | **2.22%** | SYD-style classical pipeline (classical): 3.89% | ✅ wins |
-| Δν median error, 27 days<br><sub>v1.0: 4.60%.</sub> | **4.29%** | SYD-style classical pipeline (classical): 26.8% | ✅ wins |
+| Δν median error, 27 days<br><sub>v1.1.1, record ends trimmed (v1.1: 4.29%; trimming shifts where the 27-day pieces fall in 22 stars). v1.0: 4.60%.</sub> | **4.37%** | SYD-style classical pipeline (classical): 26.8% | ✅ wins |
 | Giants found from 27 days<br><sub>Detection is the network's alone; unchanged in v1.1.</sub> | **100%** | Classical comb test (classical): 39.5% | ✅ wins |
-| Radius vs Gaia DR3 (scatter)<br><sub>v1.1: 8.04% vs Yu's 8.06%, a difference far inside the noise: a tie, not a win (ratio to Gaia 1.063, as Yu's). Worse than v1.0 (7.1%, ratio 1.076), which won this row. Gaia FLAME radii of the same 222 exam stars as for v1.0 (kept in lab/index.html): the ESA Gaia archive could not be reached on 15 Nov 2026.</sub> | **8%** | Yu et al. radii (published): 8.1%<br>Classical pipeline (classical): 8.7% | ➖ tie |
+| Radius vs Gaia DR3 (scatter)<br><sub>v1.1.1 (trimmed ends): 8.12%. v1.1: 8.04% vs Yu's 8.06%, a difference far inside the noise: a tie, not a win (ratio to Gaia 1.063, as Yu's). Worse than v1.0 (7.1%, ratio 1.076), which won this row. Gaia FLAME radii of the same 222 exam stars as for v1.0 (kept in lab/index.html): the ESA Gaia archive could not be reached on 15 Nov 2026.</sub> | **8.1%** | Yu et al. radii (published): 8.1%<br>Classical pipeline (classical): 8.7% | ➖ tie |
 
-Coverage of the 68% error bars on the exam: νmax (4 yr) **81%**, Δν (4 yr) **84%**, νmax (27 d) **58%**, Δν (27 d) **63%**.
+Coverage of the 68% error bars on the exam: νmax (4 yr) **81%**, Δν (4 yr) **83%**, νmax (27 d) **58%**, Δν (27 d) **63%**.
 
 ### Where it wins
 
-- On light curves of 1 year and shorter it beats the classical pipeline (νmax 1.41 % vs 1.67 % at 1 year, 2.2 % vs 3.9 % at 90 days, 3.4 % vs 16 % at 27 days).
+- On light curves of 1 year and shorter it beats the classical pipeline (νmax 1.41 % vs 1.67 % at 1 year, 2.2 % vs 3.9 % at 90 days, 3.5 % vs 16.5 % at 27 days).
 - Finds 100% of giants from 27 days against 39.5% for the classical comb test.
 
 ### Where it loses
 
-- On 4-year light curves the classical pipeline still wins on the median νmax error (0.89 % vs 1.01 %), though v1.1 blends it in — and the truth catalogue was made with a similar pipeline.
-- The radius scatter against Gaia rose from 7.1 % (v1.0) to 8.0 %, level with Yu et al.'s radii.
+- On 4-year light curves the classical pipeline still wins on the median νmax error (0.89 % vs 0.99 %), though v1.1 blends it in — and the truth catalogue was made with a similar pipeline.
+- The radius scatter against Gaia rose from 7.1 % (v1.0) to 8.1 %, level with Yu et al.'s radii.
 - Δν from 27 days is within 2% for only 23% of stars (often off by one comb tooth).
 
 ## Limits
@@ -73,7 +73,7 @@ Coverage of the 68% error bars on the exam: νmax (4 yr) **81%**, Δν (4 yr) **
 - 11–15% of unscreened dwarfs are falsely called oscillating.
 - The most luminous giants (νmax 8–15 μHz) read about 4% high; their twins show the same bias.
 - Kepler long cadence only; no TESS yet.
-- False detections (audit, 25 Nov 2026): unstructured Gaussian noise on a real Kepler cadence mask triggers the detector on 5 of 10 draws at 500 ppm and 10 of 10 at 1,000 ppm, the RMS range of real giants. The real-sky false-alarm rate on high-RMS non-oscillating stars is not measured. Cadences without good flux at either end of a record lower the duty cycle and change the FFT grid (90 flagged days moved KIC 2695975 from 1.677 to 1.777 solar masses); the reader now warns, and grid_lc(trim=True) drops them (opt-in; 36 of 858 archived light curves start or end on a gap).
+- False detections (audit, 25 Nov 2026): unstructured Gaussian noise on a real Kepler cadence mask triggers the detector on 5 of 10 draws at 500 ppm and 10 of 10 at 1,000 ppm, the RMS range of real giants. Measured 27 Nov 2026 on 999 pieces of the 18 held-out high-RMS dwarfs that the noise screen dropped (spots, rotation, eclipses): 16.9% are called oscillating, against 6.1% of quiet dwarfs. A rung trained with such stars in the noise bank cut that to 11.1% but failed the ratchet (val3 +0.007, needs +0.01; dev errors +22%). Cadences without good flux at either end of a record lower the duty cycle and change the FFT grid (90 flagged days moved KIC 2695975 from 1.677 to 1.777 solar masses); since v1.1.1 grid_lc trims them by default (36 of 858 archived light curves, 22 of 420 exam stars, start or end on a gap).
 
 ## The ratchet
 
@@ -103,6 +103,7 @@ Calibrated physics (v2) alone did not help. Mixing v1 and v2 banks, which widens
 |---|---|---|---|---|---|---|---|---|
 | r5 | Released v1.0 network, re-scored on val3 | 0.745 | ● kept | Incumbent on val3. | 1.01% | 0.78% | 2.34% | 1.57% |
 | h1 | Hybrid: network moved towards the classical SYD-style reading by w(T) per length bin where they agree within 5 network σ (w, k and σ scales fitted on simulations) | 0.788 | **◆ released** | +0.043 on val3 (νmax hits 0.752 → 0.763, Δν hits 0.518 → 0.637, detection unchanged); dev errors −10% vs r5. | 0.78% | 0.51% | 2.24% | 1.91% |
+| r6 | 27 Nov 2026: network retrained from scratch on r5's bank recipe plus 5k examples on high-RMS dwarfs (spots, rotation, eclipses), same hybrid refitted | 0.795 | ○ rejected | +0.007 (needs +0.01); dev errors +22% (gate: at most +10%). False alarms on held-out high-RMS dwarfs fell from 16.9% to 11.1%. | 1.10% | 0.85% | 1.91% | 1.78% |
 
 <sub>Columns after *Why*: Real dev stars, median errors (whole νmax, Δν; 90-day νmax, Δν).</sub>
 
@@ -132,8 +133,7 @@ Two super-Lorentzian granulation components, a Gaussian oscillation envelope, th
 - Per-length σ widening, fitted on dev.
 - Make the simulator's νmax the one a SYD-style pipeline measures on the noiseless spectrum, so the blend weights learn the real classical reading.
 - A TESS version on quiet-star noise, examined on TESS giants.
-- More training and hard negatives (spotted and eclipsing dwarfs).
-- Queued (audit): high-RMS non-oscillating stars (spotted dwarfs, rotators, eclipsing binaries) in the noise bank, and a dated re-score with trimmed record ends, on the owner's approval.
+- Hard negatives without losing dev accuracy: r6 (27 Nov 2026) cut high-RMS false alarms from 16.9% to 11.1% but read the dev stars 22% worse. A warm start from the released network, or the hard bank as a fine-tuning stage, is the next rung.
 
 ## Files
 

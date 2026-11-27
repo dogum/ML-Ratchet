@@ -23,8 +23,12 @@ def run_system(net, p, g, ta, geo, ref=None, home=False, D=None):
             out[k][s + lo:s + hi] = P[k][w] if k in ('eta0', 'ac_limit') else P[k][w, lo:hi]
     return out
 
-def diagnose(net, p, g, ta, geo, home=False):
+MIN_DAYLIGHT = None    # as sundoctor.diagnose(min_daylight=...): drop days with less than this share of 08:00-16:00 solar-time readings
+
+def diagnose(net, p, g, ta, geo, home=False, min_daylight=None):
     valid = (np.isfinite(p) & (True if home else np.isfinite(g))).mean(1) > 0.5
+    md = MIN_DAYLIGHT if min_daylight is None else min_daylight
+    if md is not None and p.shape[1] == 96: valid = valid & (np.isfinite(p[:, 32:64]).mean(1) >= md)
     o1 = run_system(net, p, g, ta, geo, None, home); ref = RX.reference(o1['pf'], valid & (o1['outage'] < 0.2))
     o = run_system(net, p, g, ta, geo, ref, home); o['ref'] = ref; o['valid'] = valid; return o
 

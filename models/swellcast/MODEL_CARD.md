@@ -1,4 +1,4 @@
-# SwellCast v1.1 model card
+# SwellCast v1.1.1 model card
 
 ## What it does
 SwellCast reads ten days of wave spectra from one ocean buoy and answers: is swell from a distant storm arriving near
@@ -105,6 +105,22 @@ v1.1 is better than v1.0 on distance and time and still loses to the dev-median 
 are too narrow on the exam (55% coverage). On the looser sets it gains on time and not on distance: visible (649):
 42.0% / 30.3 h vs v1.0 42.2% / 38.8 h and the median guess 38.6% / 30.0 h; all pairs (2,124): 44.3% / 34.4 h vs
 43.9% / 40.7 h and 41.0% / 33.0 h.
+
+**v1.1.1 (27 Nov 2026): field sentinels, dated re-score.** NDBC writes 99 for a missing value, but in direction files
+(swdir) 99° is a real bearing and in swr1 it is r1 = 0.99. v1.1 read every 99 as missing. The released v1.1 network was
+re-scored once with the direction files parsed with field sentinels (`training/rescore_fs.py`): 422 buoy-years
+re-downloaded; the old parse reproduced the stored grids for all 367 that have direction files; 7,547 more direction
+cells (+0.008%). Events and labels unchanged.
+
+| Set | Parse | Distance | Time | Direction | Detected | Coverage D / t0 / dir |
+|---|---|---|---|---|---|---|
+| exam confirmed (288) | v1.1 (generic 99) | 29.3% | 26.8 h | 19.2° | 63.2% | 55% / 67% / 70% |
+| exam confirmed (288) | field sentinels | 29.3% | 26.9 h | 19.3° | 63.2% | 55% / 67% / 71% |
+| exam visible (649) | v1.1 / field sentinels | 42.0% / 42.0% | 30.3 / 30.2 h | 36.2 / 36.3° | 58.2 / 58.1% | |
+| dev confirmed (29) | v1.1 / field sentinels | 24.6% / 24.6% | 25.5 / 25.4 h | 22.1 / 22.1° | 55.2 / 55.2% | |
+
+No verdict changes. Field sentinels are the default from v1.1.1 (`pipeline.read_ndbc`, `training/fetch.py`); the
+packaged pre-cut example windows were cut with the v1.1 parse. The demo's Olivia distance moves 1,948 → 1,952 km.
 
 The tables below are the v1.0 exam, kept as recorded.
 

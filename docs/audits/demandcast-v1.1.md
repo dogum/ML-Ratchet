@@ -49,3 +49,7 @@ Golden demo output unchanged (warnings go to stderr). Re-scoring the exam with t
   10.6 % with actual weather (v1.1 16.1 %; persistence 19.1 %) and 12.0 % with forecast weather (18.2 %); CAISO 24.9 →
   11.2 %, BPA 52.0 → 20.8 %. Demand got worse: 2.49 % (v1.1.1 2.32 %), 3.14 % with forecast weather (2.96 %). Details in
   the model's NOTEBOOK and `training/exam_v1_2.json`.
+- **Per-output dev gate** (owner, 27 Nov 2026; an exam-informed rule change after v1.2's demand loss, not applied
+  back to v1.2): each of demand, wind and solar must stay within +2 % on dev separately. Its first rung, r11 (v1.1.1's
+  demand network with v1.2's wind and solar), passed the gate (dev demand 1.98 vs 2.05 %) but was rejected on the frozen
+  set (val_v5 0.3973 vs 0.4054). No exam; v1.2 remains the release.

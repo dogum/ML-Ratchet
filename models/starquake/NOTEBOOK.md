@@ -190,3 +190,46 @@ five lengths by `training/hybrid.py real exam exam` (2,098 readings, the same co
 ## 27 Nov 2026 — audit resolution
 
 The two-reviewer audit (`docs/audits/`). Edge cadences without good flux now trigger a warning; grid_lc(trim=True) drops them (opt-in; re-score queued). Broadband-noise detections need high-RMS non-oscillators in training; queued.
+
+## 27 Nov 2026 — rung r6: high-RMS non-oscillators in the noise bank (rule fixed before scoring)
+
+Audit queue. Pure white noise at 500 ppm or more triggers detections; the noise pool holds only quiet dwarfs, because
+`screen.py` dropped every dwarf with strong low-frequency variability (129 of 360 noise_train stars, 18 of 60
+noise_val). Those dropped stars are the high-RMS non-oscillators the audit asks for (spots, rotation, eclipses), and
+their light curves are already in `work/data/lc/`.
+
+- **Candidate r6** (`training/run_r6.sh`): r5's bank recipe rebuilt with new seeds (15k v1 physics, 15k v2, 10k v2 with
+  30% non-oscillating) plus 5k examples on the dropped noise_train stars (`simbank.py --pool noise_train_hard`, 50%
+  non-oscillating: the variable star alone, or a very luminous giant below the band). 45k examples, trained from scratch,
+  12,000 steps (r5 had 11,500 over three runs). The r1–r5 checkpoints were not kept, so no warm start.
+- **Judged as v1.1 was:** the network goes into the same hybrid (w, k refitted on the fit set with the r6 network, as
+  for h1); val3 and val3neg are regenerated from their seeds (first checked: the release network on the regenerated
+  sets must give the stored readings); keep if the val3 objective rises by more than 0.01 over h1 (0.788) AND the mean
+  ratio of the four dev median errors to h1's is at most 1.10.
+- **Reported, not used in the decision:** false-alarm rate on a new set `val3hard` (1,000 pieces of the 18 dropped
+  noise_val stars, no signal, seed 14), for h1 and r6.
+- The exam is opened only if r6 is released, as a new dated version.
+
+## 27 Nov 2026 — results: r6 rejected; trimmed-ends re-score; v1.1.1 trims by default
+
+**r6** (rules above, committed in e293787 before scoring). Banks `sq6_*` (45,000 examples, seeds 201–231) built in about
+70 minutes on two processes; 12,000 steps from scratch in about 60 minutes on one thread. Exported to numpy (matches
+torch to 6.4e-7). Hybrid refitted on fit_r6 (3,000 readings, seed 11): νmax k 5, w 0.90 / 0.25 / 0.05 / 0.15 / 0.30;
+Δν k 5, w 0.20 / 0.15 / 0.35 / 0.30 / 0.60. val3 and val3neg regenerated from seeds 12 and 13 with 3 workers; check: the
+released network on the regenerated sets gives the stored readings exactly (first worker chunk, 1,666 readings,
+difference 0.0). Record: `training/r6_judgement.json`.
+
+| | val3 objective | νmax hit | Δν hit | detection | dev four (whole νmax, Δν; 90 d νmax, Δν) | high-RMS / quiet false alarms |
+|---|---|---|---|---|---|---|
+| h1 | 0.7884 | 0.763 | 0.637 | 0.965 | 0.78 / 0.51 / 2.24 / 1.91% | 16.9% / 6.1% |
+| r6 | 0.7953 | 0.785 | 0.634 | 0.967 | 1.10 / 0.85 / 1.91 / 1.78% | 11.1% / 5.6% |
+
+Rejected: +0.007 (needs +0.01) and dev ratio 1.218 (gate 1.10). The from-scratch network reads whole dev light curves
+worse (net alone 1.42% vs 1.01% νmax) and 27-day pieces worse (5.0% vs 2.6%), while 90- and 54-day pieces improve.
+Not tried: a warm start from the released weights (no torch checkpoint was kept; the numpy release has BatchNorm folded).
+
+**Trimmed ends, dated re-score** of the released v1.1 (record `training/exam_trim_result.json`): 22 of 420 exam stars
+start or end on a gap; 92 of 2,098 readings change; untouched readings are identical. Hybrid medians νmax / Δν: 4 yr
+1.01 → 0.99% / 0.65 → 0.62%; 1 yr unchanged; 90 d 2.22 / 1.77 → 1.75%; 54 d 2.69 → 2.68% / 2.61 → 2.63%; 27 d
+3.44 → 3.50% / 4.29 → 4.37%. Gaia radius scatter 8.04 → 8.12%. No verdict changes. v1.1.1: `trim=True` is the
+default in `pipeline.py`; `training/sq.py` gained the same option (default off, so banks and dev readings stay as built).

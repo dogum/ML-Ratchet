@@ -375,3 +375,27 @@ ladder: a per-output gate fixed before training, and a rung that pairs v1.1.1's 
 
 Golden demo output regenerated on purpose (new weights). The instrument was re-exported with the v1.2 weights; the
 browser clips inputs at |z| 8, aligns ±2 h offsets and masks dark hours as `demandcast.py` does.
+
+## 27 Nov 2026 — per-output dev gate (exam-informed rule change); rung r11 rejected
+
+**Rule change.** The owner adopted a per-output dev gate for DemandCast: a rung must keep each output's dev-gate error
+(demand, wind, solar) no more than 2 % worse than the incumbent's, separately, so a gain in one output cannot carry a
+regression in another. This is an exam-informed rule change. It was motivated by v1.2's exam, where demand got worse
+(2.49 % vs 2.32 % for v1.1.1) while solar improved (10.6 % vs 16.1 %). The old pooled gate had already shown dev demand
++3 % (1.98 -> 2.05 %) and passed r10 on the mean (-4.8 %). The rule applies from the next rung on; v1.2 stays released
+under the rule it was judged by. Recorded as a new ladder in ratchet.yaml ("DemandCast v1.3 ladder").
+
+**Rung r11** (`training/repair.py add_per_output r11_split`): v1.1.1's demand network (r8, inputs clipped at |z| 8) with
+r10's wind and solar networks and r10's solar input changes (±2 h offsets, dark-hour mask). No training. Incumbent v1.2.
+
+| | val_v5 objective | demand skill / err on val_v5 | dev demand / wind / solar |
+|---|---|---|---|
+| v1.2 (r10) | 0.4054 | 0.560 / 2.22 % | 2.046 / 21.23 / 13.11 % |
+| r11 | 0.3973 | 0.535 / 2.34 % | 1.984 / 21.23 / 13.11 % |
+
+Per-output gate: demand -3.0 %, wind +0.0 %, solar +0.0 %: passed. Objective -0.008 (needs +0.01): **rejected**. On
+val_v4: 0.3774 vs 0.3765. No exam was run and no weights changed. The frozen set and the dev years disagree on which
+demand network is better: val_v5's simulated history gaps (295 samples, demand 2.59 % for r8 vs 2.36 % for r10) and its
+v5 noise favour r10, the real dev days favour r8. Had r11 been promoted, both halves' exam scores were already known
+from v1.1.1 and v1.2, so its exam would have added little; the frozen set has to be brought into line with dev on demand
+before a demand rung can be judged fairly.

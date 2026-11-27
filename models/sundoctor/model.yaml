@@ -1,6 +1,6 @@
 id: sundoctor
 name: SunDoctor
-version: "2.1"
+version: "2.1.1"
 status: released
 released: 2026-11-15
 order: 2
@@ -96,14 +96,14 @@ exam:
       baselines:
         - { name: "SunDoctor v1", kind: classical, value: 0 }
       verdict: win
-      note: "v2.0: 77%." 
+      note: "v2.0: 77%. v2.1.1 (min_daylight 0.9 by default; dated re-score 27 Nov 2026): 71.7%." 
     - metric: Small tracker losses (2–5%) ranked, AUC
       better: higher
       model: 0.47
       baselines:
         - { name: "Coin flip", kind: dumb, value: 0.50 }
       verdict: loss
-      note: "v2.0: 0.50 (tie). Simulated tracker days rank these losses at AUC 0.79-0.81, so the gap is between the simulator and this farm." 
+      note: "v2.0: 0.50 (tie). v2.1.1 re-score (min_daylight 0.9): 0.46. Simulated tracker days rank these losses at AUC 0.79-0.81, so the gap is between the simulator and this farm." 
   coverage: []
 
 wins:
@@ -118,7 +118,7 @@ limits:
   - A panel buried in snow all day looks like a tripped inverter; it sometimes calls that an outage.
   - Colorado is not fully blind for rung 8 — the fronts change was prompted by rung 6's snow misses there.
   - Two farms tested, both utility scale. Rooftops, microinverters, bifacial and satellite irradiance are untested.
-  - "CSV input (audit, 25 Nov 2026; fixed 27 Nov 2026): rows are now sorted by time and duplicate timestamps dropped (a newest-first file gave 0 valid days). A day still counts with half its intervals and missing intervals count as zero energy, so a 5 h midday gap cut kWh 61-67 % and read as a 30 % outage; the reader now warns on counted days missing more than 2 h of daylight, and diagnose(min_daylight=0.9) drops them (opt-in: the exam used the half-day rule)."
+  - "CSV input (audit, 25 Nov 2026; fixed 27 Nov 2026): rows are now sorted by time and duplicate timestamps dropped (a newest-first file gave 0 valid days). A day still counts with half its intervals and missing intervals count as zero energy, so a 5 h midday gap cut kWh 61-67 % and read as a 30 % outage; the reader now warns on counted days missing more than 2 h of daylight, and diagnose(min_daylight=0.9) drops them. Since v2.1.1 (27 Nov 2026) that is the default: the dated re-score dropped 328 of 17,468 inverter-days at 9068 (none at 2107); outage days caught 92.9 -> 94.7%, tracker-loss AUC 0.471 -> 0.460, snow AUC unchanged at 0.89, string and offline-inverter counts unchanged."
 next:
   - Weather context (snowfall, precipitation) to separate buried days from trips.
   - A better soiling signal from longer windows plus rain data.

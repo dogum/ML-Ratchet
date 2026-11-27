@@ -1,4 +1,4 @@
-"""ReservoirPilot v1.0: a causal learned reservoir release policy (numpy only).
+"""ReservoirPilot v1.0.1: a causal learned reservoir release policy (numpy only).
 
 The policy decides today's release from what an operator knows today: storage, capacity, today's inflow, the recent
 inflow (5, 20, 60-day exponential means), the demand calendar D(doy), the safe channel capacity Qmax and (feature set
@@ -40,15 +40,16 @@ def doy_curve(values, dates, smooth=31):
     return np.convolve(v, np.ones(smooth) / smooth, mode='valid')
 
 
-def make_task(cal, ev, capacity_hm3, causal_capacity=False):
+def make_task(cal, ev, capacity_hm3, causal_capacity=True):
     """cal / ev: DataFrames (daily DatetimeIndex) with storage_hm3, inflow_cms, release_cms. The calibration record
     defines demand D(doy) (median release), Qmax (99th percentile release), the storage and inflow climatologies.
     The scored record supplies the inflow and the start storage only.
 
-    Capacity is the larger of capacity_hm3 and the highest storage observed, as in the frozen exam, which takes the
-    maximum over the scored window too: a later observation can then raise the capacity the first release sees
-    (audit, 25 Nov 2026: 21.853 -> 21.792 m3/s on a synthetic case). causal_capacity=True uses the calibration record
-    only (not the exam's definition, so off by default)."""
+    Capacity is the larger of capacity_hm3 and the highest storage in the calibration record (v1.0.1, 27 Nov 2026).
+    causal_capacity=False restores v1.0's exam definition, which also took the maximum over the scored window, so a
+    later observation could raise the capacity the first release sees (audit, 25 Nov 2026: 21.853 -> 21.792 m3/s on a
+    synthetic case). The 27 Nov 2026 re-score of every arm on the causal task moved the pilot's median J from 0.01543
+    to 0.01544 on 244 dams; every verdict stayed (NOTEBOOK)."""
     Dc = doy_curve(cal.release_cms, cal.index); Sc = doy_curve(cal.storage_hm3, cal.index)
     Ic = doy_curve(cal.inflow_cms, cal.index)
     seen = cal.storage_hm3.values if causal_capacity else np.r_[cal.storage_hm3.values, ev.storage_hm3.values]
