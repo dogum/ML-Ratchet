@@ -239,3 +239,61 @@ verdicts are unchanged (244: win; 151: win; CDEC: tie; shortage ratio and days a
 ## 27 Nov 2026 — audit resolution
 
 The two-reviewer audit (`docs/audits/`). The exam takes capacity as the largest storage observed, including the scored window. make_task(causal_capacity=True) now offers the calibration-only version. Changing the exam's own definition would re-score every arm on the shared board; that is queued for the owner.
+
+## 27 Nov 2026 — causal re-score of every arm; v1.0.1 makes the causal task the default
+
+Owner-approved follow-up to the audit. A dated supplementary exam on a seen exam: nothing was trained, tuned or chosen.
+
+**What changed in the task.** `training/task.py` and WaterData's `run_baselines_reservoir.py` gained a switch
+(`RESERVOIRPILOT_TASK=causal`, `--causal <out dir>`). Three changes, nothing else:
+1. capacity = max(GRanD capacity, highest storage in the calibration half). The exam definition also took the
+   maximum over the scored half.
+2. The record is split first and each half is interpolated (gaps up to 5 days) on its own.
+3. The split day belongs to the scored half only (it was the last calibration day and the first scored day).
+
+On the 244 scored exam dams this changes capacity on 37 (median ratio 0.977; grand_1585 1,900 → 128 hm³, grand_190
+861 → 260, grand_1595 262 → 154), Qmax slightly on 169, the start day on 3, and nothing else. The same 244 dams stay
+scorable. The CDEC recent task already took capacity, demand and Qmax from the 1980-2020 ResOpsUS record before its
+window: unchanged. Intermediates are in `work/causal/reservoirpilot/` (git-ignored).
+
+**Path.** `run_baselines_reservoir.py --causal` wrote the causal baseline table (SOP, rule curve, historical, DP), then
+`RESERVOIRPILOT_TASK=causal python training/rescore_exam.py` (the 18 Nov script, unchanged except output names and the
+table it compares with) re-scored the pilot, the sim-tuned rules (g4, g1), the dev-tuned rule and the four baselines,
+with the same 10,000-resample paired bootstrap (seed 20261118). Committed: `training/rescore_exam_causal.json`,
+`training/rescore_per_dam_causal.csv`. Cross-check: the re-scored baselines match the `--causal` table exactly for SOP,
+rule curve and DP on all 244 dams, historical on 243 (one dam by 1.9e-4, as in the 18 Nov reproduction).
+
+**Old vs new board** (medians over dams; old = the exam definition, reproduced 18 Nov 2026):
+
+| split | arm | J old | J new | shortage ratio old → new | mean storage old → new | end − start old → new |
+|---|---|---|---|---|---|---|
+| 244 dams | pilot | 0.01543 | 0.01544 | 0.066 → 0.066 | 0.380 → 0.381 | +0.008 → −0.003 |
+| 244 dams | sim-tuned rule g4 | 0.02852 | 0.02886 | 0.037 → 0.038 | 0.399 → 0.399 | +0.009 → +0.007 |
+| 244 dams | sim-tuned rule g1 | 0.02939 | 0.02944 | 0.019 → 0.019 | 0.485 → 0.489 | +0.118 → +0.111 |
+| 244 dams | dev-tuned rule | 0.03222 | 0.03222 | 0.065 → 0.065 | 0.615 → 0.617 | +0.176 → +0.172 |
+| 244 dams | SOP | 0.10837 | 0.10905 | 0.010 → 0.010 | 0.587 → 0.585 | +0.300 → +0.296 |
+| 244 dams | rule curve | 0.14300 | 0.14408 | 0.186 → 0.186 | 0.500 → 0.507 | +0.028 → +0.028 |
+| 244 dams | historical | 0.18326 | 0.18327 | 0.285 → 0.285 | 0.440 → 0.441 | +0.002 → +0.002 |
+| 244 dams | DP (bound) | 0.00625 | 0.00609 | 0.030 → 0.030 | 0.685 → 0.685 | +0.300 → +0.296 |
+| 151 mass-balance dams | pilot | 0.01619 | 0.01618 | | | |
+| 151 mass-balance dams | g4 rule | 0.03003 | 0.03041 | | | |
+| 151 mass-balance dams | SOP | 0.09918 | 0.09925 | | | |
+| 15 CDEC | every arm | identical | identical | | | |
+
+Paired bootstrap of median(pilot) − median(arm), 244 dams, old → new: g4 rule −0.0131 (−0.0201 to −0.0073) → −0.0134
+(−0.0211 to −0.0074); g1 rule −0.0140 → −0.0140 (−0.0256 to −0.0069); dev-tuned rule −0.0168 (−0.0257 to −0.0105) →
+−0.0168 (−0.0260 to −0.0112); SOP −0.093 → −0.094; rule curve −0.128 → −0.129; historical −0.168 → −0.168; DP +0.0092
+(+0.0035 to +0.0139) → +0.0093 (+0.0040 to +0.0139). Win fractions against the g4 rule 62.7 % → 62.3 % (55.9-68.4),
+SOP 84.4 % → 85.2 %. The pilot loses to SOP on 35 dams (was 37). **Every verdict is unchanged** on all three splits
+and every component row, with one exception in the storage row: the pilot's mean storage against the real operators
+was level (−0.06, −0.12 to +0.00) and is now lower (−0.06, −0.13 to −0.005). The largest single move is the
+recreation group (4 dams): pilot 0.017 → 0.030, because grand_1595's capacity fell from 262 to 154 hm³.
+
+What failed or stays open: nothing failed. The six packaged demo dams (`examples/exam_dams.json`) are v1.0 tasks; two
+change capacity under the causal task (grand_148 4,414 → 4,367 hm³, grand_470 39.09 → 39.04 hm³) and three Qmax by
+< 0.03 %. They were not regenerated, so the demo, its golden output and the site instrument still show v1.0 tasks.
+WaterData's frozen tables in `shared/water/data/proc/baselines` are untouched (they are the exam definition).
+
+**v1.0.1.** `make_task(..., causal_capacity=True)` is now the default; `pipeline.py` splits before interpolating and
+puts the split day in the scored half (`--exam-definition` restores v1.0). The weights are unchanged. `model.yaml`
+carries the causal numbers, with the exam-definition values in the notes.

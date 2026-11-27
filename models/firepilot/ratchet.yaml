@@ -26,7 +26,29 @@ ladders:
     columns: ["Val mean", "Val median", "Gate mean", "Gate median", "Gate vs incumbent"]
     rungs:
       - { id: r0, change: "Proxy planner, no learning: the argmax over 205 candidate plans (5 baselines, a 40-plan grid, 160 prior draws) of the connectivity proxy on the forecast run (forecast burn still connected to the detected fire once the line cells built before the forecast fire arrives block it)", sim: 0.4033, decision: kept, why: "Base rung. Val 0.403 beats every fixed plan (best: indirect 1 km 0.261); gate 0.383 beats every fixed plan (best: anchor and flank 0.263).", metrics: [0.403, 0.361, 0.383, 0.240, "–"] }
-      - { id: r1, change: "Value network: 31 features (13 on the scenario as seen through the forecast, 18 on the plan against the forecast, including the line's shadow and two connectivity proxies), 31 → 64 → 64 → 2 tanh MLP (6,338 weights), mean head (sigmoid, MSE on the saved fraction) and log-σ head (Gaussian NLL on the detached residual); trained on 297 synthetic scenarios × 10 truth-scored plans; planning = argmax over the 205 candidates plus 2 CEM rounds of 48 on the network", sim: 0.4841, decision: released, why: "Val 0.484 vs r0 0.403 (+0.081); gate 0.481 vs 0.383 (+26 %). Released as v1.0; no later rung passed.", metrics: [0.484, 0.520, 0.481, 0.410, "+25.8 %"] }
+      - { id: r1, change: "Value network: 31 features (13 on the scenario as seen through the forecast, 18 on the plan against the forecast, including the line's shadow and two connectivity proxies), 31 → 64 → 64 → 2 tanh MLP (6,338 weights), mean head (sigmoid, MSE on the saved fraction) and log-σ head (Gaussian NLL on the detached residual); trained on 297 synthetic scenarios × 10 truth-scored plans; planning = argmax over the 205 candidates plus 2 CEM rounds of 48 on the network", sim: 0.4841, decision: kept, why: "Superseded on 27 Nov 2026 by r5vs (v1.1, second ladder). Val 0.484 vs r0 0.403 (+0.081); gate 0.481 vs 0.383 (+26 %). Released as v1.0; no later rung passed.", metrics: [0.484, 0.520, 0.481, 0.410, "+25.8 %"] }
       - { id: r2, change: "Same network, the full 596-scenario training bank", sim: 0.4697, decision: rejected, why: "Val 0.470 vs r1 0.484 (−0.014); gate 0.473 vs 0.481 (−1.7 %, within 5 %). More data of the same kind did not help.", metrics: [0.470, 0.495, 0.473, 0.411, "−1.7 %"] }
       - { id: r3, change: "Ensemble of 4 seeds of the r1 network (same training scenarios; the log says 298), mean prediction, the ensemble spread added to σ", sim: 0.4762, decision: rejected, why: "Val 0.476 vs 0.484 (−0.008, not +0.01); gate 0.494 vs 0.481 (+2.7 %, passes). Fails the sim margin.", metrics: [0.476, 0.495, 0.494, 0.428, "+2.7 %"] }
       - { id: r4, change: "r1 recipe retrained on r1's data plus one on-policy round: 195 scenarios planned by r1, its plan + 4 jitters + 2 prior plans, all truth-scored (DAgger-like)", sim: 0.4832, decision: rejected, why: "Val 0.483 vs 0.484 (−0.001); gate 0.483 vs 0.481 (+0.4 %). Winner's curse: on the 195 on-policy scenarios r1 predicted 0.568 for its own picks and the truth was 0.454. The new rows removed part of that optimism but did not pick better plans.", metrics: [0.483, 0.515, 0.483, 0.492, "+0.4 %"] }
+  - name: "FirePilot v1.1: varied crew start times (audit follow-up, 27 Nov 2026)"
+    objective: "As above: mean saved fraction on val_p1 (160 synthetic scenarios, afternoon starts, physics p1)"
+    rule: "As above: keep if val_p1 beats r1 by more than 0.01 AND the dev gate is no more than 5 % below r1's. The exam is opened once, as a new version, only if kept."
+    margin: 0.01
+    dev_gate: "gate_p1 (24 cases), as above"
+    frozen_sets: [val_p1, valvs_p1]
+    scored_on: val_p1
+    note: >-
+      The audit: every training scenario started in the afternoon (34 working hours in 72 h), so the work-hours input had
+      sd 1e-6 and a morning clock moved predictions by .05-.15. r5vs is r1's recipe (train_value.py defaults: 64 hidden,
+      400 epochs, seed 0) on a new bank trainvs_p1: seeds 0-299 as in r1's bank (299 scenarios, 2,990 truth-scored
+      plans), with the crew start drawn from its own seeded stream (fp.scenarios.varied_start_hour: 06-18 h local
+      solar), so landscapes, weather and fires are the same draws as the afternoon bank's. r1's own bank was not
+      shipped and was not rebuilt, so there is no matched control; the comparison is with r1's released weights. Also
+      built: valvs_p1, the 160 val scenarios with varied starts (information only, not the decision set): r1 0.470,
+      r5vs 0.493 (paired +0.023, 95 % −0.002 to +0.050); prediction optimism r1 0.140, r5vs 0.033. On val_p1 the paired
+      difference is +0.011 (95 % −0.015 to +0.038) and on the gate +0.010 (−0.032 to +0.057): the rung clears the margin
+      by 0.001, inside the noise.
+    columns_source: "work/results/eval_{val,gate}_p1_{r1,r5vs}.jsonl (eval_rung.py)"
+    columns: ["Val mean", "Val median", "Gate mean", "Gate median", "Gate vs incumbent"]
+    rungs:
+      - { id: r5vs, change: "r1's network and recipe on 299 scenarios with crew starts 06-18 h (bank trainvs_p1)", sim: 0.4952, decision: released, why: "Val 0.4952 vs r1 0.4841 (+0.0111, needs > +0.01); gate 0.4916 vs 0.4815 (+2.1 %, within 5 %). Kept; widen factor refitted on the gate (1.0). Graded once as v1.1: 0.469 / 0.625 against v1.0's 0.474 / 0.644 (paired −0.005 and −0.019, both intervals include 0).", metrics: [0.495, 0.540, 0.492, 0.502, "+2.1 %"] }

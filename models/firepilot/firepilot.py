@@ -1,4 +1,4 @@
-"""FirePilot v1.0: a learned containment-line planner (numpy + scipy only).
+"""FirePilot v1.1: a learned containment-line planner (numpy + scipy only).
 
 Generated from the training code (fp/core.py + fp/planner.py). See MODEL_CARD.md.
 Main entry points: Context(...) or Context.from_store(npz, rec), ValueNet(path), plan_value(ctx, net, rng),
@@ -179,7 +179,8 @@ def from_vec(mode, v):
                 d_f=float(np.exp(np.clip(v[3], np.log(D_MIN), np.log(D_MAX)))))
 
 
-TRAINED_WORK_H = 34.0   # working hours in the 72 h horizon for every training scenario (afternoon starts)
+TRAINED_WORK_H = (34.0, 35.95)   # v1.1 (27 Nov 2026): working hours in 72 h over the training scenarios (crew start
+                                 # 06-18 h local solar); v1.0 saw 34.0 only (afternoon starts; firepilot_weights_v1.0.npz)
 
 
 class Context:
@@ -225,12 +226,12 @@ class Context:
         r_eq0 = np.sqrt(self.a0 * self.res ** 2 / np.pi)
         r_eq1 = np.sqrt(self.af * self.res ** 2 / np.pi)
         t, W = self.clock
-        if abs(W[-1] - TRAINED_WORK_H) > 0.5:
-            # Audit, 25 Nov 2026: every training scenario started in the afternoon (34 working hours in 72 h), so this
-            # input has sd 1e-6; a morning clock (36 h) sits ~55,000 sd away and raised predicted savings by .05-.15.
-            # All 48 exam fires had 34 h.
+        if not (TRAINED_WORK_H[0] - 0.5 <= W[-1] <= TRAINED_WORK_H[1] + 0.5):
+            # Audit, 25 Nov 2026: v1.0 trained on afternoon starts only (34 working hours in 72 h; input sd 1e-6), and a
+            # morning clock raised its predicted savings by .05-.15. v1.1 trained on crew starts 06-18 h (34.0-35.95 h,
+            # sd 0.013 in units of 36 h). All 48 exam fires had 34 h.
             warnings.warn(f'FirePilot: the crew clock gives {W[-1]:.1f} working hours in {self.horizon:.0f} h; the value '
-                          f'network only saw {TRAINED_WORK_H} (afternoon starts), so its savings are not reliable here',
+                          f'network saw {TRAINED_WORK_H[0]}-{TRAINED_WORK_H[1]} h, so its savings are not reliable here',
                           stacklevel=2)
         return np.array([
             np.log10(self.a0 * cell + 1), np.log10((self.af - self.a0) * cell + 1), g[0], g[1], g[2],

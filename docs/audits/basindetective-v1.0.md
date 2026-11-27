@@ -26,3 +26,10 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer
 | All-NaN or short flow fails with `KeyError('bfi_lh')`; zero flow returns an estimate | Yes | **Fixed**: `predict` raises `ValueError` below 365 finite daily values or with no positive flow. | Tests for all three. The exam could not have contained such basins (they failed with the KeyError). |
 | Negative mean-flow change for identical forcing; decline in both directions | Yes (model behaviour) | **Documented and queued**: a matched retrain with a symmetric precipitation-change prior, judged on dev by the forward-plus-reverse sum. | Card limits and next. |
 | Float32 parity above the probe's 1e-5 threshold on synthetic rows | Minor | Not changed: float64 7.1e-15, real rows 2.9e-6, shipped examples exact. | — |
+
+### Follow-up run (27 Nov 2026, owner-approved queue)
+
+| Queued item | What was run | Result |
+|---|---|---|
+| Matched retrain with a symmetric precipitation-change prior, judged on dev with the forward-plus-reverse sum | Banks v3s / v4s (delta ~ N(0, 0.038) instead of N(0.029, 0.038); same basins draw for draw); rung R6s = R5's recipe; `training/symmetry.py` on 51 paired dev basins | **Kept**: sim skill 0.5348 vs 0.5154 on the new frozen set; dev composite 0.4392 vs 0.4515 (inside −0.02). Paired dev sum −0.149 → −0.040; basins declining both ways 16 → 4 of 51 |
+| Exam once, only if promoted | v1.1 examined once (`training/exam_v11.py`, `exam_v11*.json/csv`) | Change ρ up on five of six; mean flow loss → tie vs GR4J, runoff ratio tie → loss; median errors up on five of six (median predicted mean-flow change +0.197 vs observed +0.173). Identical forcing on the four packaged basins: −0.130…−0.002 (v1.0) → −0.039…+0.086 |

@@ -21,3 +21,11 @@ OPENBLAS_NUM_THREADS=1 python -B docs/audits/reviews/reviewer-b/peer_b53c7c7_pro
 |---|---|---|---|
 | Capacity raised by storage observed in the scored window | Yes | **Opt-in fix, re-score queued.** `make_task(..., causal_capacity=True)` takes capacity from metadata and the calibration record only. The default stays as the exam defined it. | The exam's definition (`training/task.py`, mirroring WaterData's `run_baselines_reservoir.py`) applies to every arm, baselines included, so changing it is a re-score of the whole board, queued for the owner. |
 | Loader interpolates before splitting; split date in both halves | Yes (minor) | Queued with the same re-score (it changes the shared exam definition). | — |
+
+### Follow-up run (27 Nov 2026, owner-approved queue)
+
+| Queued item | What was run | Result |
+|---|---|---|
+| Re-score every arm with capacity from metadata and the calibration half | `RESERVOIRPILOT_TASK=causal` in `training/task.py` and `--causal` in WaterData's `run_baselines_reservoir.py`, then `rescore_exam.py`: pilot, g4/g1/dev-tuned rules, SOP, rule curve, historical, DP | 37 of 244 dams change capacity. **No verdict changed.** Median J: pilot 0.01543 → 0.01544, g4 rule 0.0285 → 0.0289, SOP 0.1084 → 0.1091, DP 0.0063 → 0.0061. One storage comparison moved (pilot vs real operators: level → lower) |
+| Loader: interpolate-before-split, split day in both halves | Fixed in the same causal task (split first, each half interpolated alone, split day scored only) | 169 dams change Qmax slightly, 3 change start day; included in the numbers above |
+| Make the fix the default | **v1.0.1**: `make_task(causal_capacity=True)` and `pipeline.py` default to the causal task | `model.yaml` carries the causal board; old vs new in NOTEBOOK 27 Nov 2026. The packaged demo dams stay v1.0 tasks |

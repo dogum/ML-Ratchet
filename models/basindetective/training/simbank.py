@@ -20,6 +20,9 @@ Physics versions (PHYS):
       water year, fitted on dev twins to the real annual flow-vs-precipitation correlation.
   v3  v2 + decadal drift of the forcing precipitation (calib_drift.py): TRUE target-period P = SEEN / exp(delta),
       delta ~ N(mu, sd) measured on dev twins.
+  v3s, v4s (27 Nov 2026, audit follow-up): v3 / v4 with a symmetric precipitation-change prior, delta ~ N(0, sd)
+      (the same sd 0.038; mu 0 instead of 0.029). The draw uses the same generator call, so every other random
+      choice is the same as in v3 / v4: the banks are matched basin by basin.
 
 Usage: python3 simbank.py <shard> [<shard> ...]   (shards of 250 basins; >= 900 = frozen validation)
 """
@@ -41,7 +44,9 @@ import waterdata as wd
 from common import D
 from features import featurize, sigs, delta_labels
 
-PHYS = os.environ.get('PHYS', 'v1')
+PHYS_TAG = os.environ.get('PHYS', 'v1')       # bank folder name
+SYM = PHYS_TAG in ('v3s', 'v4s')                # symmetric drift prior (27 Nov 2026)
+PHYS = PHYS_TAG[:-1] if SYM else PHYS_TAG       # the physics version the rest of this file switches on
 NPER = 250
 SPIN, TGT, CALY = 1, 10, 9
 MODELS = ['hbv', 'gr4j', 'sacsma', 'vic_lite']
@@ -71,7 +76,10 @@ def annual_sd():
 def drift_params():
     if PHYS in ('v1', 'v2'):
         return None
-    return json.load(open(f'{D}/models/drift_v3.json'))
+    dr = json.load(open(f'{D}/models/drift_v3.json'))
+    if SYM:
+        dr = dict(dr, mu=0.0)
+    return dr
 
 
 def _window(rng):
@@ -236,7 +244,7 @@ def one_basin(rng, k):
 
 
 def run_shard(shard):
-    path = f'{D}/bank/{PHYS}/shard_{shard:04d}.npz'
+    path = f'{D}/bank/{PHYS_TAG}/shard_{shard:04d}.npz'
     if os.path.exists(path):
         return
     os.makedirs(os.path.dirname(path), exist_ok=True)
