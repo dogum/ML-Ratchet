@@ -4,6 +4,7 @@ Generated from the training code (fp/core.py + fp/planner.py). See MODEL_CARD.md
 Main entry points: Context(...) or Context.from_store(npz, rec), ValueNet(path), plan_value(ctx, net, rng),
 plan_proxy(ctx, rng), BASELINES, build_times(...).
 """
+import warnings
 import numpy as np
 from scipy import ndimage as ndi
 
@@ -178,6 +179,9 @@ def from_vec(mode, v):
                 d_f=float(np.exp(np.clip(v[3], np.log(D_MIN), np.log(D_MAX)))))
 
 
+TRAINED_WORK_H = 34.0   # working hours in the 72 h horizon for every training scenario (afternoon starts)
+
+
 class Context:
     """What the planner knows. Built from a Scenario (runs one forecast simulation) or from stored arrays."""
 
@@ -221,6 +225,13 @@ class Context:
         r_eq0 = np.sqrt(self.a0 * self.res ** 2 / np.pi)
         r_eq1 = np.sqrt(self.af * self.res ** 2 / np.pi)
         t, W = self.clock
+        if abs(W[-1] - TRAINED_WORK_H) > 0.5:
+            # Audit, 25 Nov 2026: every training scenario started in the afternoon (34 working hours in 72 h), so this
+            # input has sd 1e-6; a morning clock (36 h) sits ~55,000 sd away and raised predicted savings by .05-.15.
+            # All 48 exam fires had 34 h.
+            warnings.warn(f'FirePilot: the crew clock gives {W[-1]:.1f} working hours in {self.horizon:.0f} h; the value '
+                          f'network only saw {TRAINED_WORK_H} (afternoon starts), so its savings are not reliable here',
+                          stacklevel=2)
         return np.array([
             np.log10(self.a0 * cell + 1), np.log10((self.af - self.a0) * cell + 1), g[0], g[1], g[2],
             np.log10(self.rate), W[-1] / 36.0, (r_eq1 - r_eq0) / self.horizon / 100.0,

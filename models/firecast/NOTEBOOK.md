@@ -239,3 +239,7 @@ shipped bank used. `phys/p2.json` is `p1.json` plus `"physics": "p2"`.
   cell-by-cell step.
 - Only r2's weights were shipped, so r0, r1 and r3 were not re-scored and no decision was re-taken. r2 was trained
   on the p1 solver.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). The audit's grid-crop concern is an evaluation limit; outward padding barely moved AP on the packaged days. The card now states it; no code change.

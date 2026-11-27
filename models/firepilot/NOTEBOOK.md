@@ -315,3 +315,7 @@ The p2 outputs are kept in `training/results/` as `exam_summary_p2.json`, `sigma
   gets stronger against MPC. The fixed near-fire plans, anchor and flank and direct attack, were also overstated in
   p1. `pipeline.py` and the released weights are unchanged, and v1.0's headline stays the p1 exam, which is what was
   graded. The model card adds the p2 numbers.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). The value network only saw afternoon starts (34 working hours). The reader now warns on other clocks. The exam fires all had 34 h; training on varied start times is queued.

@@ -91,6 +91,7 @@ One run of exam.py on every exam ignition (training/results/exam.json), against 
 - Twin-test ceiling: the network matches the simulator (AUC 0.906 against the simulated twin's outcome), but the simulator matches reality at 0.671. Better networks will not help much; better physics and suppression would.
 - Rule notes: FireSize read FPA-FOD records straight from the platform's parquet, filtered by its split (common.fod_records), because firedata has no FPA-FOD accessor. It loads the whole 2012-2020 table, then filters; in the shipped scripts only exam.py and, after the exam, post_exam.py and build_release.py select the exam records, and every other script asks for 'dev'. The dev calib half fitted the suppression model, the importance weights and the temperature; the gate half is out of sample. r7 passed the gate AUC test by 0.0004, and no interval was computed for any rung decision.
 - CONUS, 2012-2020 only (FPA-FOD has no later records); a 2021 or later ignition is outside both the training weather years and the exam.
+- Slash-blowdown ignitions (audit, 25 Nov 2026): no simulated ignition landed on LANDFIRE codes 201-204, so the point-fuel input pt_SB has sd 1e-6 and a real one enters at z = 1e6. Escape probability is then exactly 0 and the median 1.73 acres whatever the weather. 91 of the 655,869 exam ignitions were scored that way (exact zeros in exam_preds). Since 27 Nov 2026 probs() warns on inputs beyond 8 sd; FireSize.z_clip = 8 clips them (not the released behaviour).
 
 ## The ratchet
 
@@ -148,6 +149,7 @@ FireSim, the shared fire platform's simulator (shared/fire/firesim): Rothermel/A
 - Model FPA-FOD's reporting granularity (0.1 and 1 acre point masses) inside the simulator's reporting floor.
 - More twins per region: the guard skipped 45 % of the escaped dev twins; LANDFIRE windows that pass the guard could recover some.
 - Widen the suppression-parameter bounds or change the race's form; add owner class and position through the simulator (the GBM gains from them between regions).
+- Queued (audit): slash-blowdown ignitions in the simulated bank (or a floor on one-hot sds), retrained and judged on dev; a dated re-score of the 91 affected exam ignitions on the owner's approval.
 
 ## Files
 
