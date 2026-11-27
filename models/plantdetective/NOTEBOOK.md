@@ -274,3 +274,10 @@ moves the estimates by at most 2.8e-4.
 
 **Next.** Fit the run-statistic error-bar factors against truths that span more than the window. Unit-specific
 heat-rate evidence for combined cycles from sources other than CAMPD.
+
+## 27 Nov 2026 — audit fix: missing hours inside a run are not starts (no retrain, exam unchanged)
+
+The two-reviewer audit (`docs/audits/plantdetective-v1.1.md`) found that a missing hour inside a run read as a stop and a
+restart: hiding one interior hour a day took 6179_3 from 2.76 to 107.58 predicted starts a year. Run detection now
+bridges a missing stretch with running hours on both sides (6.42 on the same test; 55086_101 87.74 vs 85.35; 8063_CT2
+27.95 vs 27.11). The site port follows. The 407 exam unit files have no missing hours, so the exam is unchanged.

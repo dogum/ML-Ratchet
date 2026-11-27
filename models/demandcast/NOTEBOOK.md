@@ -276,3 +276,12 @@ demand and wind row is identical to v1.0 (2.38 %, 19.2 %; forecast weather 3.05 
 Golden demo output regenerated: only the CISO solar days change (26.8 % and 51.2 %, were 53.3 % and 82.3 %). The live
 instrument stores the offset each page day's history shows (read in Python from the exam bank's full feature vector)
 and does the same alignment and shift in the browser; parity 2.3e-7.
+
+## 27 Nov 2026 — audit: inputs the simulator never varies (warnings added; repair queued)
+
+The two-reviewer audit (`docs/audits/demandcast-v1.1.md`) found two inputs the released networks over-read. Reported
+solar at dark hours (20:00 LST twilight) pinned two BPAT exam days at the 1.2 cap. Missing demand-history hours sit
+at |z| up to 286. Counted on the exam bank's inputs: 1,734 of 12,642 solar rows and 365 of 14,448 demand rows are
+affected. The exam scored them as they were. The reader now warns on both and offers an opt-in `z_clip`. The repair
+(night-masked solar history, simulated missing demand hours, higher floor on count-like inputs, ±2 h solar offsets)
+needs a retrain and is queued, with a dated re-score after it on the owner's approval.

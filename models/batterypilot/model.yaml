@@ -214,6 +214,7 @@ limits:
   - "The forced-outage rates of physics 1.1 and 1.2 are PJM class averages (demand-period EFORd), not ERCOT's own pre-2023 rates."
   - "The exams have been seen: v1.3's exam was run once after its release choice was committed, and the dev-chosen v1.3 lost ground on it."
   - "No error bar on the value curve itself; the exam's intervals are on revenue (weekly block bootstrap), so the recipe's coverage step does not apply."
+  - "Information boundary (audit, 25 Nov 2026): the day-ahead planner's wear cost uses realized temperatures for the coming hours, a perfect temperature forecast. causal_wear(bat, T) (opt-in since 27 Nov 2026) takes each hour's temperature from 48 h earlier, which is known when any plan covering that hour is made (plans run up to 33 h ahead); it moves the three packaged node-years by -$0.05, -$0.02 and -$0.03/kW-year. The exam used the realized form. At the first hour of a path the price history clipped to that hour's own RT price; fixed 27 Nov 2026 (changes the packaged node-years by at most $0.002/kW-year)."
 next:
   - "Fix what the dev twin test still shows: the rolling DA optimiser captures 55-56 % on 1.2 twins of dev 2019 vs 79 % real. Real unforecast spikes put 86 % of their value in the day's 3 dearest DA hours (2019), the simulator 57 %; and the simulated DA carries a scarcity premium in those hours that real RT often undercuts by more. Calibrate the size and placement until the twin captures of the LP, the backbone and the network all match real dev."
   - "A dev gate that one year cannot carry (for example: no dev year worse by more than 0.01), decided before the next ladder: v1.3 passed the pooled gate on 2021 (Uri) alone and lost ground on the exam."
@@ -221,6 +222,7 @@ next:
   - "R9 (the hybrid on all 165 path-years) had the best dev score of any rung (0.685) but missed the margin on the frozen set by 0.004: a frozen set that agrees with dev would settle it."
   - "Nodal basis: a West Texas congestion model; a real CAISO import and hydro supply curve; ancillary services."
   - "Upstream to GridSim behind flags: the ORDC adder, the cold-outage curve, the gas-turbine ambient derate, the day-ahead price generator and the single-LP perfect-foresight baseline."
+  - "Queued (audit): a dated re-score of the exam with the planner on causal_wear (48 h persistence or an issue-time day-ahead temperature forecast), on the owner's approval."
 help_wanted:
   - "CAISO OASIS serves only about 3 years (data from 2023-08): an archive of CAISO hub and DLAP prices for 2018-2022 would give the CAISO family real dev years, a GridSim RT scarcity fit for CAISO, and a longer exam."
   - "Pre-2023 ERCOT forced-outage rates by technology (NERC GADS or Texas RE): GridSim physics 1.1 and 1.2 use PJM 2017-2021 class averages and one ERCOT-wide planned-outage factor from 2017."

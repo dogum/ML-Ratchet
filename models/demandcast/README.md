@@ -98,6 +98,7 @@ Coverage of the 68% error bars on the exam: Demand, pooled (95% band: 89%) **64%
 - Wind is limited by 50 km reanalysis in complex terrain (BPA 50%, CAISO 33%); the network trims the physics error by about 15%.
 - It needs the last week of metered output: physics alone is about 5% off (load growth since 2019-21). Building parameters are effective (several fits sit on bounds), so the heating / cooling split is indicative.
 - Over-predicts heat-wave peaks by about 3%.
+- Inputs the simulator never varies (audit, 25 Nov 2026): reported solar at hours the physics calls dark (20:00 LST twilight; 1,734 of 12,642 solar exam rows, mostly BPAT, CISO and SWPP) is read through very large first-layer weights: on two BPAT exam days 11 h were pinned at the 1.2 cap (solar nMAE 43-52 %, 11-16 % with that one input zeroed). Missing hours in the demand history (365 of 14,448 exam rows; up to 48 h) reach |z| 286 and raise demand error (2.3 % to 9.3-10.0 % with a consistent 24 h gap on the 16 packaged days). The exam includes these rows as they were. Since 27 Nov 2026 the reader warns on both; predict_*(z_clip=8) clips standardised inputs (not the released behaviour).
 
 ## The ratchet
 
@@ -169,6 +170,7 @@ Demand is a building-stock thermal model (training/buildings.py): conductance ×
 - Better bands (64% inside the 68% band): per-grid noise-scale variety in the simulator, or a dev-fitted conformal widening.
 - Higher-resolution weather for wind in complex terrain (BPA, CAISO).
 - Upstream to GridSim: the building-stock demand model (1.7-3.0% cross-year on dev, replacing GridSim's demand regression) and the tabulated farm curve with fleet grouping; to GridData: flags for EIA-930 solar timestamp changes and negative night solar, and an archived forecast-weather table.
+- Queued repair (audit): mask the solar history at hours the physics calls dark, train demand with simulated missing history hours, raise the 0.001 standardisation floor on count-like inputs, and allow ±2 h solar offsets (two CISO exam days sit 2 h off). Retrain and judge on dev; then a dated re-score of the exam on the owner's approval.
 
 ## Files
 

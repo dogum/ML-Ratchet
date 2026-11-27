@@ -22,15 +22,29 @@ def onset(f):
     return j - 1
 
 
-def window(f, i0):
-    """81-sample window -20..+60 s around onset index i0, as deviation from the 60 s pre-event mean."""
+def window(f, i0, N=POST):
+    """81-sample window -20..+60 s around onset index i0, as deviation from the 60 s pre-event mean.
+    Only samples up to onset + N are read: a live record may end at +N s, gaps are filled from the prefix alone
+    (interpolated inside it, the last reading carried forward at its end), and samples after +N are zero (the
+    network masks them). Before 27 Nov 2026 this needed 60 s after onset and filled gaps from the whole window,
+    so a reading after +N s could move a +N s estimate (audit: +100.6 MW at N = 10)."""
     f = np.asarray(f, float)
-    if i0 < 60 or i0 + POST >= len(f):
-        raise ValueError('need >= 60 s before and 60 s after the onset at 1 s resolution')
+    N = int(N)
+    if not 1 <= N <= POST:
+        raise ValueError(f'N must be 1..{POST} s')
+    if i0 < 60 or i0 + N >= len(f):
+        raise ValueError(f'need >= 60 s before and {N} s after the onset at 1 s resolution')
     f0 = np.nanmean(f[i0 - 60:i0])
-    w = f[i0 - PRE:i0 + POST + 1] - f0
-    if np.isnan(w).any():
-        idx = np.arange(len(w)); ok = ~np.isnan(w); w = np.interp(idx, idx[ok], w[ok])
+    if not np.isfinite(f0):
+        raise ValueError('no finite reading in the 60 s before the onset')
+    w = np.zeros(PRE + POST + 1)
+    pre = f[i0 - PRE:i0 + N + 1] - f0
+    ok = np.isfinite(pre)
+    if not ok.any():
+        raise ValueError('no finite reading between -20 s and the cutoff')
+    if not ok.all():
+        idx = np.arange(len(pre)); pre = np.interp(idx, idx[ok], pre[ok])
+    w[:len(pre)] = pre
     return w, f0
 
 
@@ -75,7 +89,7 @@ class GridPulse:
         nadir_Hz / settle_Hz are deviations from the pre-event mean (settle = mean of 55-65 s)."""
         f = np.asarray(f, float)
         i0 = onset(f) if onset_index is None else onset_index
-        w, f0 = window(f, i0)
+        w, f0 = window(f, i0, N)
         r = {k: float(v[0]) for k, v in self.read_windows(w[None], N, system, demand_MW).items()}
         r.update(onset_t=float(np.asarray(t)[i0]), f_pre_Hz=float(f0), N=N)
         return r

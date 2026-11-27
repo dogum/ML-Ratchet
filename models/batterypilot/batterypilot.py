@@ -270,10 +270,14 @@ def build(path, t_idx, duration_h, c_lin, ps=None):
     zda = np.where(known, zq(da[idx], ps[:, None]), 0.0)
     o_rt = np.arange(-H_RT, 0)
     ridx = np.clip(t[:, None] + o_rt[None, :], 0, n - 1)
-    zrt = zq(rt[ridx], ps[:, None])
+    # History before the start of the path clips to index 0. At t = 0 that is the current hour, whose real-time price is
+    # not known before the hour (audit, 25 Nov 2026: +$100 at hour 0 moved the hour-0 offer by $3.02/MWh); there the
+    # day-ahead price stands in. From t = 1 on, every clipped index is already in the past, so nothing changes.
+    seen = ridx < t[:, None]
+    zrt = np.where(seen, zq(rt[ridx], ps[:, None]), zq(da[ridx], ps[:, None]))
     o6 = np.arange(-6, 0)
     i6 = np.clip(t[:, None] + o6[None, :], 0, n - 1)
-    sp6 = zq(rt[i6], ps[:, None]) - zq(da[i6], ps[:, None])
+    sp6 = np.where(i6 < t[:, None], zq(rt[i6], ps[:, None]) - zq(da[i6], ps[:, None]), 0.0)
     # demand forecast relative to the trailing 30-day max of the forecast (tightness proxy)
     dfi = np.clip(t[:, None] + np.arange(H_DF)[None, :], 0, n - 1)
     if 'dmax' in path:
@@ -425,17 +429,34 @@ class PolicyNet:
         return np.sinh(self.z_knots(X)) * np.asarray(ps, float)[:, None]
 
 
-def run_policy(net: PolicyNet, path, bat: Battery, c_lin, soc0=0.0):
+def causal_wear(bat: Battery, T, lag_h=48):
+    """Wear cost per hour for the day-ahead plan from temperatures known when the plan is made: each hour takes the
+    temperature lag_h earlier (the first lag_h hours take the first hour's). A plan made at 14:00 runs to 23:00 the next
+    day (33 h ahead), so lag_h must exceed the planning horizon: 48 h does; 24 h, the first version, did not (Codex,
+    PR #23). Pass it as run_policy(..., c_lin_plan=...)."""
+    T = np.asarray(T, float)
+    n, L = len(T), int(lag_h)
+    Tp = np.r_[np.full(min(L, n), T[0]), T[:max(n - L, 0)]]
+    return bat.c_lin(Tp)
+
+
+def run_policy(net: PolicyNet, path, bat: Battery, c_lin, soc0=0.0, c_lin_plan=None):
     """Run BatteryPilot causally over a whole path (dict/DataFrame with rt, da, df, T, hour, day, dow, doy).
     The value curves depend only on information before each hour, so they are computed for all hours at once; the
-    offer-curve execution against each hour's RT price is sequential.  Returns (ch, dis, soc, V)."""
+    offer-curve execution against each hour's RT price is sequential.  Returns (ch, dis, soc, V).
+
+    c_lin_plan: the wear cost the day-ahead planner uses for future hours. By default it is c_lin, which the released
+    exam built from realized temperatures: a perfect temperature forecast (audit, 25 Nov 2026: +5 degC over the next
+    12 h moved a 14:00 offer by $1.19/MWh; the audit's 24 h persistence changed annual net revenue by at most $0.11/kW-year on three
+    node-years). causal_wear(bat, path['T']) gives a plan that reads only temperatures known at issue time."""
     n = len(path['rt'])
     t = np.arange(n)
     ps = rolling_scale(np.asarray(path['da'], float))
     cl = np.broadcast_to(np.asarray(c_lin, float), (n,)).copy()
     X, ps = build(path, t, bat.d, cl, ps=ps)
     if net.hybrid:
-        lam = value_curves(np.asarray(path['da'], float), np.asarray(path['hour']), np.asarray(path['day']), cl,
+        clp = cl if c_lin_plan is None else np.broadcast_to(np.asarray(c_lin_plan, float), (n,))
+        lam = value_curves(np.asarray(path['da'], float), np.asarray(path['hour']), np.asarray(path['day']), clp,
                            bat.d, P=bat.P, eta_rt=bat.eta_rt)
         X = np.concatenate([X, np.arcsinh(lam / ps[:, None])], 1).astype(np.float32)
     V = net.values(X, ps)
