@@ -149,3 +149,41 @@ def test_hbta_bands_come_from_reference_recordings_only(mods):
     assert refs and all(r.endswith("_01") for r in refs)
     assert held and not set(refs) & set(held) and all(h.endswith("_02") for h in held)
     assert bands["peak_freqs_hz"] == sorted(bands["peak_freqs_hz"])
+
+
+def test_ratchet_cache_rescores_when_checkpoint_bytes_change(monkeypatch, tmp_path):
+    """Codex PR #14 (27 Nov): a retrained checkpoint under the same rung id must not reuse old scores."""
+    sc = _load("score_cache", MODEL / "training" / "score_cache.py", monkeypatch)
+    ck, bank, code = tmp_path / "r6.pt", tmp_path / "val3.npz", tmp_path / "features.py"
+    ck.write_bytes(b"weights v1")
+    bank.write_bytes(b"bank")
+    code.write_text("x = 1")
+    entry = {"id": "r6", "ckpts": ["r6"]}
+    calls = []
+
+    def score():
+        calls.append(1)
+        return {"sim_score": 0.5 + len(calls)}
+
+    def fp(e=entry):
+        return sc.fingerprint(e, [str(ck)], [str(code)], [str(bank)])
+
+    cache = {}
+    s1, fresh1 = sc.cached(cache, "r6@val3", fp(), score)
+    s2, fresh2 = sc.cached(cache, "r6@val3", fp(), score)
+    assert fresh1 and not fresh2 and s2["sim_score"] == s1["sim_score"] and len(calls) == 1
+
+    ck.write_bytes(b"weights v2 (retrained)")            # same rung id, new checkpoint contents
+    _, fresh = sc.cached(cache, "r6@val3", fp(), score)
+    assert fresh and len(calls) == 2
+    code.write_text("x = 2")                              # feature extraction changed
+    _, fresh = sc.cached(cache, "r6@val3", fp(), score)
+    assert fresh and len(calls) == 3
+    bank.write_bytes(b"regenerated bank")
+    _, fresh = sc.cached(cache, "r6@val3", fp(), score)
+    assert fresh and len(calls) == 4
+    _, fresh = sc.cached(cache, "r6@val3", fp({"id": "r6", "ckpts": ["r6", "r6_s2"]}), score)
+    assert fresh and len(calls) == 5                      # registry entry edited
+    legacy = {"r6@val3": {"sim_score": 0.9}}              # v1.0 cache entries have no fingerprint
+    _, fresh = sc.cached(legacy, "r6@val3", fp(), score)
+    assert fresh and len(calls) == 6

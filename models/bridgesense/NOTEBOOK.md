@@ -141,3 +141,12 @@ weights are 1.0 MB (was 350 KB). 24 parity cases, worst relative difference 1.15
 - The post-retrofit truth (+1.17 %) is an OLS fit on the exam blocks, the same method as the OLS baseline.
 - KW51 detection is easy (every method AUC 1.000); box girder and HBTA have 4–5 negatives each.
 - The dev gate needs more seeds or more blocks to be trusted near its limits.
+
+## 2026-11-27 (later) — ratchet score cache keyed by content
+
+A further review finding (Codex, PR #14): `ratchet.py` cached scores by rung id and bank name only, so a rung retrained
+under the same name would be judged on its old scores. Each cached score now carries a sha256 fingerprint of the
+registry entry, every checkpoint file, the scored bank (or the KW51 dev data) and the scoring and feature code
+(`training/score_cache.py`); any change forces a rescore. Replay with the cache cleared: all 10 rungs rescored, every
+logged metric identical (0 mismatches), and `ratchet.yaml` byte-identical, so the v1.1 decisions stand. Log:
+`training/logs/v1_1/ratchet_replay_2026-11-27.log`. No model, exam or card number changed.

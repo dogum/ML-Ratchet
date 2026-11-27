@@ -15,7 +15,8 @@ import os
 import yaml
 
 from mlratchet import Ratchet, gates
-from _paths import MODEL, work
+from _paths import MODEL, SRC, work
+from score_cache import DEV_CODE, SIM_CODE, cached, fingerprint
 from dev_eval import eval_on_kw51_dev, load_kw51_dev_blocks, load_model_ckpt, score_ensemble_on_bank
 
 
@@ -50,25 +51,31 @@ def run_ratchet(frozen_set: str, release_id: str | None = None) -> dict:
                 raise SystemExit(f"{ck} was selected on {sel}, the judging set; use a separate selection bank")
             entry.setdefault("selected_on", {})[ck] = sel
 
-    # Cache scores per (rung_id, frozen_set) and per rung_id on KW51 dev
+    # Cache scores per (rung_id, frozen_set) and per rung_id on KW51 dev. An entry is reused only if its
+    # content fingerprint (registry entry + checkpoint bytes + bank/dev data + scoring code) still matches.
     cache_path = work("ratchet_scores_cache.json")
     cache = json.load(open(cache_path)) if os.path.exists(cache_path) else {"sim": {}, "dev": {}}
+    sim_code = [os.path.join(SRC, f) for f in SIM_CODE]
+    dev_code = [os.path.join(SRC, f) for f in DEV_CODE]
+    dev_data = [os.path.join(MODEL, "splits.json"), work("raw", "kw51", "trackedmodes.mat")]
+    bank_path = work("banks", f"{frozen_set}.npz")
 
     for entry in registry:
         rid = entry["id"]
         ckpts = entry["ckpts"]
+        ck_paths = [work("checkpoints", f"{c}.pt") for c in ckpts]
         sim_key = f"{rid}@{frozen_set}"
-        if sim_key not in cache["sim"]:
-            models = load_model_ckpt(ckpts)
-            cache["sim"][sim_key] = score_ensemble_on_bank(models, frozen_set)
-            print(f"  scored {rid} on {frozen_set}: sim={cache['sim'][sim_key]['sim_score']:.4f} "
-                  f"(auc={cache['sim'][sim_key]['auc']:.4f}, dk_mae={cache['sim'][sim_key]['dk_mae']:.2f}%, "
-                  f"cold_spec={cache['sim'][sim_key]['cold_spec']:.3f})", flush=True)
-        if rid not in cache["dev"]:
-            dres = eval_on_kw51_dev(ckpts, dev_blocks)
-            cache["dev"][rid] = {k: v for k, v in dres.items() if k != "rows"}
-            print(f"  scored {rid} on KW51 dev: auc={dres['dev_auc']:.4f}, brier={dres['dev_brier']:.4f}, "
-                  f"healthy_dk_mae={dres['dev_healthy_dk_mae']:.2f}%, freeze_P={dres['dev_freeze_p_mean']:.3f}", flush=True)
+        sim_fp = fingerprint(entry, ck_paths, sim_code, [bank_path])
+        s, fresh = cached(cache["sim"], sim_key, sim_fp,
+                          lambda: score_ensemble_on_bank(load_model_ckpt(ckpts), frozen_set))
+        print(f"  {'scored' if fresh else 'cached'} {rid} on {frozen_set}: sim={s['sim_score']:.4f} "
+              f"(auc={s['auc']:.4f}, dk_mae={s['dk_mae']:.2f}%, cold_spec={s['cold_spec']:.3f})", flush=True)
+        dev_fp = fingerprint(entry, ck_paths, dev_code, dev_data)
+        d, fresh = cached(cache["dev"], rid, dev_fp,
+                          lambda: {k: v for k, v in eval_on_kw51_dev(ckpts, dev_blocks).items() if k != "rows"})
+        print(f"  {'scored' if fresh else 'cached'} {rid} on KW51 dev: auc={d['dev_auc']:.4f}, brier={d['dev_brier']:.4f}, "
+              f"healthy_dk_mae={d['dev_healthy_dk_mae']:.2f}%, freeze_P={d['dev_freeze_p_mean']:.3f}", flush=True)
+        entry["fingerprints"] = {"sim": sim_fp, "dev": dev_fp}
 
     with open(cache_path, "w", encoding="utf-8") as f:
         json.dump(cache, f, indent=2)
