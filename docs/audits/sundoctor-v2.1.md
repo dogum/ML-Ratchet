@@ -33,3 +33,10 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_759c345_pr
 ```
 
 Uses NumPy, pandas, and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_759c345_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Newest-first or out-of-order CSV rows collapse to 0 days | Yes | **Fixed**: `diagnose_csv` sorts rows by time and drops duplicate timestamps. | An ascending file is unchanged; golden demo unchanged. |
+| Midday gaps count as zero energy and read as outages | Yes | **Warned, opt-in fix, re-score queued**: counted days missing > 2 h of 08:00–16:00 solar-time readings trigger a warning; `diagnose(min_daylight=0.9)` drops them. Default keeps the exam's half-day rule. | — |

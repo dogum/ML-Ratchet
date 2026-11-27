@@ -14,3 +14,11 @@ OPENBLAS_NUM_THREADS=1 python -B docs/audits/reviews/reviewer-b/peer_b53c7c7_pro
 ```
 
 [First-pass evidence](reviews/reviewer-a/airfoilnet-v1.0.md) · [Independent probe](reviews/reviewer-b/peer_b53c7c7_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Lednicer blocks passed to `polar(coords=...)` change lift by up to 5.44 | Yes | **Fixed**: `normalize` reorders Lednicer blocks to Selig (ends a chord apart; split at the largest step). | Test: Selig and Lednicer give identical lift on all four packaged airfoils. Exam used canonical coordinates: unchanged. |
+| Reflection asymmetry 0.20–1.13 | Yes (model limit) | Documented in the card. | — |
+| Module header describes the rejected DeepONet | Yes | **Fixed**: the header describes the released three-MLP ensemble. | — |

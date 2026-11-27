@@ -48,6 +48,15 @@ class BeatNet:
     def classify(self, ecg, fs, beats=None):
         """ecg: one lead (modified lead II), mV; fs: Hz; beats: sample positions of the beats (reference annotations if you
         have them; otherwise a simple QRS detector finds them). Returns per-beat results and rhythm numbers."""
+        ecg = np.asarray(ecg, float)
+        bad = ~np.isfinite(ecg)
+        if bad.any():
+            # One NaN spread through the whole-strip filter: every probability NaN, every beat 'N' (audit, 25 Nov 2026).
+            # Gaps up to 10 samples are filled linearly; longer ones are refused.
+            d = np.diff(np.r_[0, bad.astype(np.int8), 0]); runs = np.flatnonzero(d == -1) - np.flatnonzero(d == 1)
+            if bad.all() or runs.max() > 10:
+                raise ValueError(f'the ECG has a gap of {int(runs.max())} samples; fill or cut gaps longer than 10 samples')
+            i = np.arange(len(ecg)); ecg = ecg.copy(); ecg[bad] = np.interp(i[bad], i[~bad], ecg[~bad])
         beats = PL.detect(ecg, fs) if beats is None else np.asarray(beats); F = PL.features(ecg, fs, beats); out = self.predict_features(F)
         rr = np.diff(beats) / fs; out.update(beats=beats, heart_rate_bpm=60 / np.median(rr) if len(rr) else np.nan, rr_s=rr)
         if 'af_prob' in out: out['af_share'] = float(np.mean(out['af_prob'] > 0.5))   # share of beats read as atrial fibrillation

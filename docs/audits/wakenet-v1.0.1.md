@@ -14,3 +14,9 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_dc30c02_pr
 ```
 
 The second-pass probe uses NumPy and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_dc30c02_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Demo summary scores 24 of 31 waked readings | Yes | **Fixed**: the summary scores all 31 (display still shows six per snapshot). Golden regenerated: MAE 14.0 → 14.9 %, coverage 67 → 65 %, matching the audit. | `tests/golden/wakenet.txt`. The exam already scored all waked turbines. |

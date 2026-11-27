@@ -7,8 +7,9 @@ numpy-only inference (no torch, no mlratchet). Loads airfoilnet_weights.npz next
     pol = net.polar(read_dat('examples/sd7037.dat'), Re=2e5)        # alpha grid -6..20 deg
     pol['cl'], pol['cl_sd'], pol['cd'], pol['cm'], pol['clmax'], pol['alpha_stall']
 
-The network is a DeepONet: a branch net reads the shape (thickness and camber at 24 stations) and log Re,
-a trunk net reads the angle of attack, and their dot product gives Cl, ln Cd, Cm and a log-sigma for each.
+The released network (rung r1) is an ensemble of three MLPs that read the shape (thickness and camber at 24 stations),
+log Re and the angle of attack and give Cl, ln Cd, Cm and a log-sigma for each. (A DeepONet was tried and rejected;
+this header described it until 27 Nov 2026.)
 Lift and moment are predicted as corrections to thin-airfoil theory computed from the camber line.
 Trained only on mfoil (XFOIL-class) simulations; graded on UIUC wind-tunnel data.
 """
@@ -39,9 +40,23 @@ def read_dat(path):
     return a
 
 
-def normalize(X):
-    """LE at (0,0), TE midpoint at (1,0); Selig order (TE, upper, LE, lower, TE)."""
+def _selig_order(X):
+    """Selig order (TE, upper, LE, lower, TE) from Selig or Lednicer blocks (upper LE->TE, then lower LE->TE).
+    Selig starts and ends at the trailing edge; Lednicer blocks start at the leading edge and end at the trailing
+    edge, about a chord apart, with the largest single step where the lower surface starts again at the LE.
+    (Audit, 25 Nov 2026: Lednicer blocks passed straight to polar() moved lift by up to 5.44.)"""
     X = np.asarray(X, float)
+    chord = np.max(np.hypot(*(X[:, None, :] - X[None, :, :]).transpose(2, 0, 1)))
+    if np.hypot(*(X[0] - X[-1])) < 0.5 * chord:
+        return X
+    j = int(np.argmax(np.hypot(*np.diff(X, axis=0).T))) + 1
+    up, lo = X[:j], X[j:]
+    return np.vstack([up[::-1], lo[1:] if np.allclose(lo[0], up[0]) else lo])
+
+
+def normalize(X):
+    """LE at (0,0), TE midpoint at (1,0); Selig order (TE, upper, LE, lower, TE). Accepts Lednicer blocks too."""
+    X = _selig_order(X)
     keep = np.r_[True, np.any(np.abs(np.diff(X, axis=0)) > 1e-9, axis=1)]
     X = X[keep]
     te = 0.5 * (X[0] + X[-1])

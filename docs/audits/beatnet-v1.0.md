@@ -27,3 +27,10 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_69873b7_pr
 ```
 
 Uses NumPy, SciPy, and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_69873b7_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Records 201 (dev, backgrounds) and 202 (DS2) are one patient | Yes | **Documented, retrain queued.** The card states the DS2 scores without 202 (macro-F1 0.5531, SV-F1 0.6305) beside the published ones. | Card limits and next. |
+| One NaN → every beat 'N' | Yes | **Fixed**: gaps up to 10 samples are filled linearly; longer gaps raise. | Test: one missing sample gives finite probabilities within 0.05 of the complete strip. |
