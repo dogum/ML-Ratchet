@@ -90,3 +90,11 @@
 | `SIM_conv = 0.9656 < 1` | Not a defect | Not changed: the factor applied to ICE trips is `SIM_conv × VED_ICE = 1.45`, so the widen-only rule holds where bars are reported. | — |
 
 Inference (`energynet.py`, `model_np.py`) is unchanged; the golden demo is unchanged.
+
+### Follow-up (27 Nov 2026): the repair rung, run
+
+Rung v2-r18 retrained r17's 5 networks on the same banks with `--robust-norm --mask-comp`. It was **rejected** under the
+first rule: val2[h] skill 0.679 against r17's 0.680, dev D2 0.1073 against 0.1077. The exam was not opened. The four
+inputs are now read: holding them at their dev median moves VED dev predictions by a median of 1.5 %, against 0.000 % for
+the shipped networks. But accuracy does not move, so the predictive cost of the defect, unmeasured above, is below seed
+noise on both the frozen set and the dev gate. v2.1 stays as released. See `models/energynet/NOTEBOOK.md`, 27 Nov 2026.

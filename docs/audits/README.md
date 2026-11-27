@@ -70,10 +70,10 @@ each card still describes the released model. Its dated re-score, like every ret
 
 | Model | Fixed now | Effect on the published exam | Queued for approval |
 |---|---|---|---|
-| EnergyNet | Training fix in code (`--robust-norm`, `--mask-comp`, off by default) | None (inference unchanged) | Repair retrain on the dev gate |
+| EnergyNet | Training fix in code (`--robust-norm`, `--mask-comp`, off by default) | None (inference unchanged) | Run 27 Nov 2026 as rung v2-r18: rejected (skill 0.679 vs 0.680, D2 0.1073 vs 0.1077); v2.1 stays |
 | TripDetective | Missing bus power is invalid, not zero; car reader refuses logs without motion | None (0 of 35.7 M exam power samples missing) | — |
 | HybridPilot | Preview reads nothing past its window | None (released R22 uses no preview; 0 grade gaps on 216 exam trips) | — |
-| LawFinder | Range warnings (`strict=True` raises); EV grade sign in the card; UTF-8 JSON | None | Sign-checked road-law search |
+| LawFinder | Range warnings (`strict=True` raises); EV grade sign in the card; UTF-8 JSON | None | Run 27 Nov 2026 (rungs p2s-*): rejected (best R² 0.757 vs 0.767); p1-c23 stays |
 | GridPulse | `window(f, i0, N)` reads only the prefix; live records accepted | None (0 gaps in 412 exam traces) | — |
 | DemandCast | Warnings on dark-hour solar and |z| > 8 inputs; opt-in `z_clip` | Not re-scored: 1,734 solar / 365 demand exam rows affected | Retrain (masked night history, missing-hour training), then re-score |
 | BatteryPilot | Hour 0 no longer reads its own RT price; opt-in `causal_wear` | ≤ $0.002/kW-yr on packaged years | Re-score with causal wear plan |

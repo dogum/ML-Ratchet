@@ -31,3 +31,13 @@ python3 -B docs/audits/reviews/reviewer-b/lawfinder_bank_probe.py
 | Homes law extrapolates past 2020; grid laws chain below the nadir law's 90 GVA·s floor | Yes | **Fixed as a guardrail**: `Law.predict` warns when any input is outside its declared bank range (`var_info[..]['range']`); `strict=True` raises; `Law.out_of_range(**kw)` counts them. Exam code paths are unchanged (a warning, not a change of value). | Test added. One of the demo's own real grid-nadir events has a loss above the 2 GW range and now warns. |
 | BuildingSim's prepared-weather cache key omits wind | Yes (shared) | Fixed with the building platform (the cache lives in `shared/building/buildingsim/weather.py`). | See the building audit resolutions. |
 | (found here) `LawFinder()` opened its JSON with the platform default encoding | Yes | **Fixed**: `encoding='utf-8'`. On Windows (cp1252) the `°`, `⁻` and `·` in the law texts were mis-decoded. | — |
+
+### Follow-up (27 Nov 2026): the sign-checked search, run
+
+The p2 banks were rebuilt from their seeds and reproduce every logged frozen-set score exactly. The sign check on val_p2
+(energy may not fall as net grade rises) fails the released p1-c23 on 21 % of rows and on every BEV row. It also fails
+the six grade-rising p2 candidates, which fall on 4-14 % of the non-BEV rows. A new p2 search ran with the check as a
+hard constraint (1,200 s, 143,084 evaluations) and found 14 laws, none of which uses grade sensibly. The best,
+p2s-c19, ignores grade and scored R² 0.757 against the incumbent's 0.767, so it was **rejected** under the unchanged rule.
+The exam was not opened, and p1-c23 stays released with the documented limit. If the check were a gate (a rule change,
+not adopted), p1-c17 would be released. See `models/lawfinder/NOTEBOOK.md`, 2026-11-27.
