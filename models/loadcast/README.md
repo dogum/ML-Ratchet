@@ -118,6 +118,7 @@ Every BDG2 exam building-meter, forecast for local 2017 with the actual 2017 wea
 - The dev set is small: 5 hot water and 2 gas meters. The noise bank holds the dev buildings' 2017 residuals, but that leak is too small to measure: retraining the R3 recipe with only 2016 residuals moved the dev score by −0.1 points (95 % CI −2.7 to +2.7) and the seen exam by −0.9, against 1.8 (dev) and 2.7 (exam) points between two training seeds. The released R3 dev score (49.2) is 2.8-4.6 points better than two retrains of its own recipe (52.0, 53.8) while its exam score (52.8) sits between theirs (51.2, 53.8). R3 scores 3.6 points better on dev than on the exam; the retrains score 0.0 and 0.9 points worse. Picking the best rung on a noisy dev gate, not the residual leak, made the released dev number optimistic, by about 4 points.
 - Short-history modes were trained on year-end histories; 2-week and 8-week bands are unusable for chilled water and gas when the history is winter.
 - BDG2 timestamps were mixed (local DST vs standard) and are fixed to UTC; Peacock's weather does not match its stated location; four sites were located by temperature matching.
+- Buildings without an electricity meter (audit, 25 Nov 2026): every training building had one (has_electricity: mean 1, sd 0.001). A meter list without it puts that input at z = -1000; on two packaged buildings cold forecasts rose 24-50x in every hour. 58 of the 1,584 exam buildings list no electricity meter and were scored that way. Since 27 Nov 2026 forecast() warns, and assume_electricity=True adds the meter (not the released behaviour).
 
 ## The ratchet
 
@@ -198,6 +199,7 @@ The shared BuildingSim simulator (ML Ratchet building platform, Phase 1): an ISO
 - Warm mode trained on 4-12 week histories from every season, falling back to cold when the history is out of season.
 - The dev gate compares 3-seed means with the released R3's single selected seed (49.2; its own recipe retrained averages 53.3), so no rung of round 2 could pass it without a 3-point real gain; rebase the gate on the control's mean before the next round (a rule change, to be logged as one).
 - Upstream to BuildingSim behind flags: the US/CA/UK/IE holiday calendars, the BDG2-style spec maker, campus defaults (24/7 in 22 of 52, outdoor air ×2.5, VAV minimum flow), a per-meter district scale and base load, and a bounded-memory mode for long bank runs.
+- Queued (audit): a dated re-score of the 58 exam buildings without an electricity meter with assume_electricity=True, then a representation that can say 'no electricity meter' (simulated buildings without one), on the owner's approval.
 
 ## Files
 

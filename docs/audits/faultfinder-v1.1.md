@@ -26,3 +26,13 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_db285c4_pr
 ```
 
 Uses NumPy, pandas, CPU PyTorch, and BuildingSim dependencies. [Second-pass probe](reviews/reviewer-a/peer_db285c4_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Flatline check runs over the whole file before the day is cut | Yes | **Fixed**: `raw_day` cuts to the requested day first. | Test: a flat-sensor day reads the same alone and with a later 18 or 19 °C day appended (fails on the old code). The Nehasil exam passes one-day frames (`exam2_nehasil_score.py`), so it is unchanged. |
+| Self-reference accepted | Yes | **Fixed**: reference days must be earlier than the day read (`ValueError`). | Test. The exam's references are strictly earlier days. |
+| Empty day returns P(fault) = 0.45 | Yes | **Fixed**: `ValueError`. | Test. |
+| Partial-day prefixes score low | Yes (a limit) | **Warned** when supply-air temperature covers under 75 % of the day; not refused, since the exam's own day QC sets the coverage bar. | — |
+| BuildingSim weather cache keyed on temperature only | Yes (shared) | **Fixed** in `shared/building/buildingsim/buildingsim/weather.py`: every weather column is hashed. Results change only where two frames used to collide. | Test: 2 and 8 m/s frames now prepare different wind. The audit found no collision in a historical bank (they randomise temperature). |

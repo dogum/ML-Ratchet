@@ -216,7 +216,14 @@ def prepare(weather, meta, start=None, end=None, dt='1h', orientation=0.0, pv=No
     dt = pd.Timedelta(dt)
     key = None
     if cache:
-        h = hashlib.md5(np.ascontiguousarray(weather['T_out'].values, dtype=float).tobytes())
+        # Every column is hashed. Until 27 Nov 2026 only T_out was, so two frames that differed in wind, humidity or
+        # irradiance shared a cache entry (audit: a warm 2 m/s cache hid an 8 m/s run in FaultFinder and ThermoPilot).
+        h = hashlib.md5()
+        for c in sorted(map(str, weather.columns)):
+            col = weather[c]
+            h.update(c.encode())
+            h.update(np.ascontiguousarray(col.values, dtype=float).tobytes() if np.issubdtype(col.dtype, np.number)
+                     else str(col.tolist()).encode())
         h.update(str((len(weather), weather.index[0], weather.index[-1], tuple(sorted(meta.items())), start, end,
                       dt, orientation, None if pv is None else tuple(map(tuple, pv)), albedo)).encode())
         if holidays is not None:

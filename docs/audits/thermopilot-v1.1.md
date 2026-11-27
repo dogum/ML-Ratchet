@@ -27,3 +27,11 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_d903cb6_pr
 ```
 
 Uses NumPy, pandas, SciPy, pvlib, Numba, and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_d903cb6_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Exam cards fitted on the episode's own weather (realized wind beyond 24 h) | Yes (evaluation only) | **Queued, not changed.** The released policy reads a card at run time; the defect is in how the exam built cards. A causal card needs the evaluation twin rebuilt on the prior month's weather, then a dated re-score; both are queued in the card. | The audit's own 30-day closed-loop replay bounds it: −$1.02 to +$0.23 per month (≤ 0.21 %), 0.00 K·h comfort violations, every ranking kept. |
+| BuildingSim weather cache omits wind | Yes (shared) | **Fixed** (see FaultFinder): all columns hashed. | Test added. |
+| Future tariffs, base loads, observer history | Clean | — | Audit: 0.0 effect with a fixed card. |

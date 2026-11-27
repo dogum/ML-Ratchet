@@ -19,3 +19,11 @@ OPENBLAS_NUM_THREADS=1 python -B docs/audits/reviews/reviewer-b/peer_4820cf3_pro
 ```
 
 The follow-up uses NumPy, SciPy and pandas. [Selective probe](reviews/reviewer-b/peer_4820cf3_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Short date axis puts the two span inputs at about 90 sd | Yes | **Fixed**: `read_hourly` holds days/365 and log10(days)/3 at their trained one-year values and warns (span sd 0.0011 and 0.00017 in training). | HUE_2 through the public reader: 330 d 95.1 m² residential (was 295.6 healthcare), 180 d 76.0 (58.6), 90 d 88.3 (10.0); full year 99.5. Exams unaffected: BDG2 reads single-year 2017 records; HEAPO uses 365-day windows with bad hours as NaN. `tests/test_audit_building.py`. |
+| District-meter zero-fraction inputs (columns 904, 1197) drive Eagle and Peacock | Yes (out of distribution) | **Warned, not clipped.** `_run` warns on any input beyond 8 sd. The audit notes a clip is not validated (it worsened Lamb), so the repair is queued as a training change (simulated district meters with zero runs). | The demo warns on the three BDG2 examples. |
+| Hourly Torch/NumPy sigma difference 2.25e-5 | Minor | Not changed (above a generic 1e-5 tolerance, far below the sigmas reported). | — |

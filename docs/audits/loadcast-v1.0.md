@@ -18,3 +18,11 @@ OPENBLAS_NUM_THREADS=1 python -B docs/audits/reviews/reviewer-b/peer_4820cf3_pro
 ```
 
 The follow-up uses the release's Python dependencies, including NumPy and pandas. [Per-hour probe](reviews/reviewer-b/peer_4820cf3_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| A meter list without electricity puts `has_electricity` at z = −1000 | Yes, and it reached the exam | **Warned, opt-in fix, re-score queued.** `forecast()` warns; `assume_electricity=True` adds the meter. The default stays as released so the card's exam numbers describe v1.0. | Training: `has_electricity` mean 1.0, sd 0.001 in both heads. Counted on BDG2 metadata: **58 of 1,584 exam buildings** list no electricity meter (0 of 52 dev), so their steam, chilled-water, hot-water and gas forecasts were scored at z = −1000. The report's open question ("prevalence of incomplete metadata") is answered; their accuracy cost needs the queued re-score. |
+
+The golden demo is unchanged.

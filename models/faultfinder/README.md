@@ -128,6 +128,7 @@ Detection (P(fault)) and diagnosis on 217 real days. v1.0 took the exam once; th
 - Single-zone simulator with ideal controls and no exhaust damper, return fan, duct model, chiller-off or chilled-water sensor faults: 13 of the exam's 27 fault types cannot be diagnosed at all.
 - Small exam: 217 days from five facilities. The 95 % interval on AHU AUC minus the best baseline is about ±0.09, on the RTU ±0.4. The fixed-false-alarm recall rows set their thresholds on the exam's own healthy days and are report-only.
 - The energy-waste output is not validated (Spearman 0.23 on 46 paired ERS days; v1.0 0.19).
+- Reader guardrails (audit, 25 Nov 2026; fixed 27 Nov 2026): the flatline check ran over the whole file before the day was cut, so another day in the same file could flip an alarm (0.513 to 0.500). The day is now cut first; the exam passed one-day frames, so it is unchanged. read_day refuses an empty day (it returned 0.45) and reference days that are not earlier than the day read (self-reference moved ornl_rtu by -0.089), and warns when supply-air temperature covers under 75 % of the day (6 h prefixes dropped three full-day alarms below 0.5).
 
 ## The ratchet
 

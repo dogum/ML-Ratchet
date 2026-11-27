@@ -18,6 +18,7 @@ Input channels (contract names, any subset; missing ones are allowed):
 Index: local time (pandas DatetimeIndex, or a 'time_local' column).
 """
 import os
+import warnings
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -45,12 +46,25 @@ LABELS = {'none': 'no fault', 'oa_damper_stuck': 'outdoor-air damper stuck', 'oa
 
 
 # ------------------------------------------------------------------ trend log -> raw day [13, 96]
+def _first_day(df, day=None):
+    import pandas as pd
+    if day is not None:
+        return pd.Timestamp(day).normalize()
+    t = pd.to_datetime(df['time_local'].to_numpy()) if 'time_local' in df else pd.DatetimeIndex(df.index)
+    return pd.Timestamp(t[0]).normalize()
+
+
 def raw_day(df, day=None):
     """Contract trend log (pandas DataFrame, local time) -> raw day array [13, 96] (NaN = missing), 15-min means."""
     import pandas as pd
     d = df.copy()
     if 'time_local' in d:
         d.index = pd.DatetimeIndex(pd.to_datetime(d['time_local'].to_numpy()))
+    # Cut to the requested day before any quality check. Until 27 Nov 2026 the flatline check ran over the whole frame,
+    # so another day in the same file could decide whether this day's sensor was flat (audit: an appended day moved
+    # P(fault) from 0.513 to 0.500). Single-day frames, as the exam passes, are unchanged.
+    day = d.index[0].normalize() if day is None else pd.Timestamp(day)
+    d = d[(d.index >= day) & (d.index < day + pd.Timedelta(days=1))]
     n = len(d)
     g = lambda c: d[c].to_numpy(float) if c in d and d[c].notna().any() else np.full(n, np.nan)
     o = {}
@@ -86,9 +100,7 @@ def raw_day(df, day=None):
         o[c] = x
     for c in ('damper_oa', 'valve_cc', 'valve_hc', 'fan_speed'):
         o[c] = np.clip(o[c], -0.05, 1.05)
-    frame = pd.DataFrame(o, index=d.index)[RAWC]
-    day = frame.index[0].normalize() if day is None else pd.Timestamp(day)
-    sel = frame[(frame.index >= day) & (frame.index < day + pd.Timedelta(days=1))]
+    sel = pd.DataFrame(o, index=d.index)[RAWC]
     x = np.full((len(RAWC), NT), np.nan, np.float32)
     if len(sel):
         b = ((sel.index - day).total_seconds() // 900).astype(int)
@@ -230,7 +242,19 @@ class FaultFinder:
     def read_day(self, df, day=None, ref_days=None):
         """df: one day's trend log. ref_days: optional list of the same unit's earlier days, oldest first, each a
         DataFrame (its first local day is read) or a (DataFrame, day) pair."""
+        x = raw_day(df, day)
+        if not np.isfinite(x).any():
+            raise ValueError('no readings on the requested day')        # an empty day returned P(fault) = 0.45
+        if np.isfinite(x[RAWC.index('T_sa')]).mean() < 0.75:
+            warnings.warn('FaultFinder: supply air temperature covers under 75 % of the day; scores of partial days '
+                          'run low (audit: three full-day alarms fell below 0.5 on 6 h prefixes)', stacklevel=2)
         refs = None
         if ref_days:
-            refs = [[raw_day(*r) if isinstance(r, tuple) else raw_day(r) for r in ref_days]]
-        return self.predict_raw(raw_day(df, day)[None], refs)[0]
+            raws = [raw_day(*r) if isinstance(r, tuple) else raw_day(r) for r in ref_days]
+            target = _first_day(df, day)
+            for r in ref_days:
+                if _first_day(*(r if isinstance(r, tuple) else (r,))) >= target:
+                    raise ValueError('reference days must be earlier than the day read (a day cannot be its own '
+                                     'reference: on ornl_rtu that moved P(fault) by -0.089)')
+            refs = [raws]
+        return self.predict_raw(x[None], refs)[0]
