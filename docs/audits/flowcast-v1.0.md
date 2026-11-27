@@ -70,3 +70,10 @@
 ### PyTorch ↔ NumPy Exact Parity (4 × 60 random sequences)
 - `flowcast_weights.npz` (`n_dyn=11, n_st=18, H=64`): `max |mean_np - mean_torch| = 2.666e-7`, `max |q_np - q_torch| = 6.994e-7`.
 - `flowcast_nowcast_weights.npz` (`n_dyn=14, n_st=18, H=64`): `max |mean_np - mean_torch| = 3.943e-7`, `max |q_np - q_torch| = 5.969e-7`.
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Training seeds NumPy only; resume resets the generators | Yes | **Fixed for future runs**: `torch.manual_seed(seed)` before the network is built; resume files store and restore both generator states. Historical rungs stay as trained. | — |
+| Nowcast API accepts `lead = 0` | Yes | **Fixed**: `predict` raises unless 1 ≤ lead ≤ 7 when `qobs` is given. | Exam used leads 1, 3, 7 (unchanged). |

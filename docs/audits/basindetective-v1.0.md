@@ -18,3 +18,11 @@ Changing the gauged period changes the hydrological evidence available to the ne
 ```sh
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-b/peer_ea2bfde_probe.py basindetective
 ```
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| All-NaN or short flow fails with `KeyError('bfi_lh')`; zero flow returns an estimate | Yes | **Fixed**: `predict` raises `ValueError` below 365 finite daily values or with no positive flow. | Tests for all three. The exam could not have contained such basins (they failed with the KeyError). |
+| Negative mean-flow change for identical forcing; decline in both directions | Yes (model behaviour) | **Documented and queued**: a matched retrain with a symmetric precipitation-change prior, judged on dev by the forward-plus-reverse sum. | Card limits and next. |
+| Float32 parity above the probe's 1e-5 threshold on synthetic rows | Minor | Not changed: float64 7.1e-15, real rows 2.9e-6, shipped examples exact. | — |

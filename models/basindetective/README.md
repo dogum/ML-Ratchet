@@ -112,6 +112,7 @@ Coverage of the 68% error bars on the exam: Change of mean flow (95 % CI 78-84 %
 - Simulated reservoirs follow generic operating policies; CAMELS-US basins are chosen to be minimally impacted, and HydroATLAS upstream volumes can be wrong where a pour point snaps to a larger river. The log-storage sigma is not calibrated.
 - Hidden properties have no real truth in this data package; 'slow store' means a different store in each model structure (HBV lower box, GR4J routing store linearised, SAC-SMA lower primary, VIC-lite ARNO baseflow), and the precipitation-multiplier twins all have m = 1.
 - Rule notes: dev data were used both to fit physics and to gate rungs (the decadal-drift mean was fitted on the dev basins and gated on the same dev basins: partly in-sample). Free-window forcing from exam basins (1951-1988) was used in the bank, as the brief allows; no exam Q was used for training. The exam was untouched.
+- Direction (audit, 25 Nov 2026): with identical forcing in both periods all four packaged basins get a negative mean-flow change, and one basin is predicted to decline whichever period is the calibration one. The trainer's precipitation prior is asymmetric; separating its share needs a matched retrain (queued). Inputs: predict() now refuses calibration flow with under 365 finite days or no positive flow (they gave KeyError or a finite estimate).
 
 ## The ratchet
 
@@ -167,6 +168,7 @@ WaterSim, the shared water platform's simulator (ML Ratchet water platform, Phas
 - A small 1-D CNN sequence encoder on the daily record next to the features, and an ungauged attribute-only mode.
 - Add NWM v3.0 retrospective signature changes as an operational baseline.
 - Real truth for storage and groundwater (GRACE, well records) for the hidden properties.
+- Queued (audit): a matched retrain with a symmetric precipitation-change prior, judged on dev by the forward-plus-reverse sum on paired periods.
 
 ## Files
 

@@ -264,3 +264,7 @@ This replaces the "not re-scored" item of the previous entry.
   (+22.6 to +27.9), NWM hourly +29.1 (+26.0 to +31.8). Recent breakdowns vs U-dev: snow −0.150 (−0.193 to −0.067),
   humid −0.123 (−0.155 to −0.084); arid, regulated, large span 0. Every verdict is unchanged (the recent persistence
   row is a loss on the paired median, a tie on the binomial count).
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). Training now seeds torch and restores both random generators on resume (historical rungs were trained unseeded), and the nowcast API refuses lead 0. The exam used leads 1, 3 and 7 and is unchanged.

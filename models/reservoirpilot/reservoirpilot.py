@@ -40,13 +40,19 @@ def doy_curve(values, dates, smooth=31):
     return np.convolve(v, np.ones(smooth) / smooth, mode='valid')
 
 
-def make_task(cal, ev, capacity_hm3):
+def make_task(cal, ev, capacity_hm3, causal_capacity=False):
     """cal / ev: DataFrames (daily DatetimeIndex) with storage_hm3, inflow_cms, release_cms. The calibration record
     defines demand D(doy) (median release), Qmax (99th percentile release), the storage and inflow climatologies.
-    The scored record supplies the inflow and the start storage only."""
+    The scored record supplies the inflow and the start storage only.
+
+    Capacity is the larger of capacity_hm3 and the highest storage observed, as in the frozen exam, which takes the
+    maximum over the scored window too: a later observation can then raise the capacity the first release sees
+    (audit, 25 Nov 2026: 21.853 -> 21.792 m3/s on a synthetic case). causal_capacity=True uses the calibration record
+    only (not the exam's definition, so off by default)."""
     Dc = doy_curve(cal.release_cms, cal.index); Sc = doy_curve(cal.storage_hm3, cal.index)
     Ic = doy_curve(cal.inflow_cms, cal.index)
-    cap = max(float(capacity_hm3), float(np.nanmax(np.r_[cal.storage_hm3.values, ev.storage_hm3.values])))
+    seen = cal.storage_hm3.values if causal_capacity else np.r_[cal.storage_hm3.values, ev.storage_hm3.values]
+    cap = max(float(capacity_hm3), float(np.nanmax(seen)))
     doy = ev.index.day_of_year.values
     return {'I': ev.inflow_cms.values.astype(float), 'dates': ev.index, 'Dcurve': Dc, 'Icurve': Ic, 'Scurve': Sc,
             'D': Dc[doy - 1], 'Qmax': float(np.nanquantile(cal.release_cms, 0.99)), 'cap': cap,

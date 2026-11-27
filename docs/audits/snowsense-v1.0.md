@@ -14,3 +14,11 @@ OPENBLAS_NUM_THREADS=1 python -B docs/audits/reviews/reviewer-b/peer_b53c7c7_pro
 ```
 
 [First-pass evidence](reviews/reviewer-a/snowsense-v1.0.md) · [Independent probe](reviews/reviewer-b/peer_b53c7c7_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Partial water year: empty before day 200, then 165 dates past the last input | Yes | **Fixed**: a year the record ends inside needs 30 observed days, its daily output stops at the last input, and its annual row gives the peak so far with no melt-out and an `observed_through` date. Completed years follow the old path exactly. | `tests/test_audit_water.py` (cuts on 15 Jan, 17 Apr, 18 Apr 2022). The exam builds windows with `training/common.station_windows`, so it is unchanged; the golden demo is unchanged. |
+| Temperature gaps interpolated from both sides | Not changed | In live use the record ends today and `interpolate` holds the last reading, so nothing ahead is read. Across a gap inside a past record, using both sides is smoothing for a retrospective estimate, which is what the completed-year exam scores. | Audit: causal forward-fill moved station NSE by at most 0.00033 on the three packaged stations. |
+| Trainer seeds NumPy only | Yes | **Fixed for future runs** (`torch.manual_seed(SEED)`). | — |

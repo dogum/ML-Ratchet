@@ -240,3 +240,7 @@ from it.
   [-0.106, +0.291], tie. Against seasonal damping (0.639): +0.072 [-0.062, +0.217], tie. Row verdict: **tie**
   (unchanged). With only 11 positives, the interval is wide.
 - Cross-check: the unpaired Hanley-McNeil interval at import was [0.538, 0.885].
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). predict() refuses calibration flow with under 365 finite days or no positive flow. The negative bias in the direction of change (all four packaged basins decline with identical forcing) needs a matched retrain with a symmetric precipitation prior; it is queued.

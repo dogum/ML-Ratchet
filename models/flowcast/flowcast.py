@@ -167,7 +167,10 @@ class FlowCast:
 
     def predict(self, forcing, attrs, start, end, qobs=None, lead=1):
         """Ungauged by default. With nowcast weights (flowcast_nowcast_weights.npz) pass qobs (observed mm/day,
-        daily Series) and lead (1-7): each day then also uses the gauge record up to `lead` days earlier (GAUGED)."""
+        daily Series) and lead (1-7): each day then also uses the gauge record up to `lead` days earlier (GAUGED).
+        lead must be at least 1: lead 0 would feed each day's own observed flow to its forecast (audit, 25 Nov 2026)."""
+        if qobs is not None and not 1 <= int(lead) <= 7:
+            raise ValueError(f'lead must be 1..7 days, got {lead}')
         idx = pd.date_range(start, end)
         s0 = pd.Timestamp(start) - pd.Timedelta(days=WARM)
         df = forcing.loc[s0:pd.Timestamp(end) + pd.Timedelta(days=1), DYN].astype(float)
