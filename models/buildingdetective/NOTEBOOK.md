@@ -556,3 +556,12 @@ after a result was seen; nothing is chosen from it. Script `training/exam2_heapo
   0.79 hourly, 0.53 monthly, 0.81 annual). Its heating-type output misses the one thing every home has: from hourly
   data it puts heat pump on top for 10 % of homes. r10 hourly is worse than v1.0 on area and year and on the heat-pump
   share, which agrees with the dev reason it was not released.
+
+## 27 Nov 2026 — audit: short records fixed; district-meter inputs warned
+
+The two-reviewer audit (`docs/audits/buildingdetective-v1.0.md`) found that a date axis shorter than a year pushed the
+two record-span inputs to about 90 sd. HUE_2 at 330 days read 295.6 m² healthcare instead of 99.5 m² residential.
+Training only ever saw a full year of weather with masked meters, so `read_hourly` now holds those two inputs at one
+year and warns (330 / 180 / 90 days: 95.1 / 76.0 / 88.3 m², all residential). Both exams used full-year axes and are
+unchanged. Two district-meter zero-fraction inputs are also far outside training on real BDG2 meters. The reader warns
+there but does not clip, since no clip has been shown to be closer to the truth.

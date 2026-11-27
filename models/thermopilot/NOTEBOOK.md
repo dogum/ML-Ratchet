@@ -491,3 +491,10 @@ default, v1.0 network). There are no full BuildingSim runs of v1.1 for the lab w
 for v1.1 the reference mark is the v1.0 network on the same browser house. On the 150 lab weeks of the browser house
 (which is the twin's own linear model, so the card MPC plans on almost the house it controls) v1.1 saves 6.6 % of J
 against fixed, v1.0 3.7 %; v1.1 is lower in 122 weeks and higher in 9.
+
+## 27 Nov 2026 — audit: evaluation cards (queued) and the weather cache (fixed)
+
+The two-reviewer audit (`docs/audits/thermopilot-v1.1.md`) found that the exam fitted each house's card on the
+episode's own weather, including wind beyond the forecast horizon. The audit's closed-loop replay bounds the effect at
+0.21 % of monthly cost with all rankings kept. Fitting cards on the prior month and re-scoring are queued.
+BuildingSim's weather cache, which could reuse another run's wind, now hashes every weather column.

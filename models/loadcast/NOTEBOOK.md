@@ -479,3 +479,11 @@ result was seen; nothing is chosen from it. Script `training/exam2_iblend_score.
   differences of 0.5-3.5 points whose intervals come from resampling three values, so they say "not worse", no more.
   Warm 90 % coverage 84 % (a year), 80 % (8 weeks), 84 % (2 weeks). Nowcasts (info, read the real 2017 meter):
   persistence 1 h 17 %, 24 h 35 %, same hour last week 25 %.
+
+## 27 Nov 2026 — audit: buildings without an electricity meter (warning added; re-score queued)
+
+The two-reviewer audit (`docs/audits/loadcast-v1.0.md`) found that a meter list without electricity puts one input at
+z = −1000, because every training building had an electricity meter. Two packaged steam and chilled-water forecasts rose
+24-50× in every hour. Counted on BDG2 metadata: 58 of the 1,584 exam buildings list no electricity meter and were
+scored that way. `forecast()` now warns, and `assume_electricity=True` adds the meter (off by default). A dated
+re-score of those buildings waits for the owner's approval.

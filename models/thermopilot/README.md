@@ -89,6 +89,7 @@ All seen: v1.0 took these sets once at release, and on 17 Nov 2026 v1.1 and v1.0
 - Perfect foresight is a practical bound (a DP on a 0.25 K grid with the 36-pair menu, plus rules), not a proven optimum.
 - The comfort weight (λ = $3 per K h per 150 m²) is an input; the v1.0 network was trained at one λ and sees it only through log(λ / (mean price × size)).
 - Since 17 Nov 2026 the twin builder ranks tied ResStock matches by bldg_id (training/tp/twins.py), so RECS twins rebuild on any machine; v1.0's own RECS twins (sandbox tie order) cannot be rebuilt, so v1.0's release-day RECS numbers are not comparable with these.
+- Queued (audit): fit evaluation cards on the month before each episode, then a dated re-score on the owner's approval.
 
 ## The ratchet
 
@@ -156,6 +157,7 @@ BuildingSim v1 (shared/building, BuildingData + BuildingSim): ISO 13790 5R1C zon
 - UK heat-pump field trials (RHPP, Electrification of Heat): UK Data Service registration; they would test the heat-pump load shape the WPuQ check found wrong.
 - Pecan Street Dataport (paid): US homes with circuit-level HVAC data.
 - EnergyPlus as a reference engine: no PyPI wheel with an engine and GitHub was blocked in the build sandbox; install it outside and compare BuildingSim's zone response.
+- Evaluation card (audit, 25 Nov 2026): the exam fitted each house's card on the episode's own weather, including realized wind beyond the 24 h forecast (+6 m/s from hour 48 changed 19 of 72 first commands, by up to 2 °C). On four 30-day BuildingSim episodes a prior-month card moved v1.1's monthly cost by -$1.02 to +$0.23 (<= 0.21 %), with no comfort violations and every ranking kept. BuildingSim's weather cache keyed only on temperature and could reuse another run's wind; fixed 27 Nov 2026 (all columns are hashed).
 
 ## Next rungs
 

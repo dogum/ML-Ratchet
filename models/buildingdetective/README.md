@@ -138,6 +138,8 @@ Coverage of the 68% error bars on the exam: BDG2 floor area, hourly (1,428) **72
 - When every day of the record lies on one side of the best change-point balance point (a home heated all year, three winter months only), the PRISM fit is degenerate and the release's reading depends on floating-point tie-breaking: numpy and the site's JS port can pick different, equally good fits. The monthly 12-point fit has such ties often: re-run here (numpy 2.5), 157 of 1,428 BDG2 buildings get different monthly features and the monthly area error moves from 49.4 % to 49.6 %.
 - The balance points do not follow the weather the way physics says: with the meters unchanged, shifting the outdoor temperature by ±4 K should move them by ±4 K, but the hourly network moves Lamb_education_Bert's heating balance point by about ±1 K (11.3 / 12.4 / 13.4 °C) and the HUE home's not at all (17.2 / 17.1 / 16.3 °C); the monthly network follows more (5.8 / 10.1 / 13.0 °C). Four exam units, checked in the live instrument on 17 Nov 2026.
 - The simulator rows were not re-run: the training bank is not kept and the ResStock/ComStock samples (data/proc/stock, about 1.2 GB) are not unpacked here. Numpy-vs-torch parity of the shipped weights cannot be checked (no checkpoints shipped).
+- Record length (audit, 25 Nov 2026; fixed 27 Nov 2026): training saw partial records as a full year of weather with the meters masked, so the two record-span inputs never moved; a shorter date axis put them at |z| ~ 90 (HUE_2 at 330 days read 295.6 m² healthcare instead of 99.5 m² residential). read_hourly now holds them at one year and warns (330 d: 95.1 m², 180 d: 76.0, 90 d: 88.3, all residential). The BDG2 and HEAPO exams used full-year axes, so they are unchanged.
+- District meters: two zero-fraction inputs reach |z| > 8 on real BDG2 district meters and alone moved floor area 45-99 % on two packaged buildings. Which reading is closer to the truth is not established; the reader warns and nothing is clipped.
 
 ## The ratchet
 
@@ -251,6 +253,7 @@ BuildingSim, the collection's building simulator (shared building platform, Phas
 - Heat-pump realism: backup strips, defrost, sizing and ResStock-like controls fitted on RECS and HUE dev, or WPuQ heat-pump homes as a dev set (done when RECS dev heat pump vs resistance AUC > 0.7).
 - Domain-adversarial or twin-consistency training on unlabelled real BDG2 2016 meters, plus a dev-fitted population prior for the use classes.
 - Upstream to BuildingSim behind flags: W1 intensity factors, W2 campus factors, W3 base-load shares, and common.clean_labels (base_share undefined when metered site energy is ~0).
+- Queued (audit): simulated district meters with real zero runs (or bounded zero-fraction inputs), retrained and judged on dev, before any change to the district-meter reading.
 
 ## Files
 
