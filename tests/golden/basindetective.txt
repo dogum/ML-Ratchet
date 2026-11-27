@@ -1,46 +1,46 @@
 
 camels_04185000  Tiffin River at Stryker OH
   change 1999-2008 -> 1989-1999     network   +-1sd  observed    GR4J
-  mean flow                             -1%     18%       -2%     +9%
-  runoff ratio                       -0.011   0.061    -0.012  +0.026
-  baseflow index                     +0.012   0.026    -0.002  -0.002
-  low flow Q5                          -14%     37%       +0%    +35%
-  high flow Q95                         -1%     13%       -4%     +3%
-  half-flow date                        +6d     10d       -2d     +5d
-  reservoir upstream: p = 0.03   (HydroATLAS storage / annual flow = 0.00; regulated if > 0.1)
-  hidden (no real truth): slow store 80 d, groundwater share 0.38, soil capacity 385 mm, precipitation x 1.10
+  mean flow                             +7%     21%       -2%     +9%
+  runoff ratio                       +0.022   0.074    -0.012  +0.026
+  baseflow index                     +0.009   0.024    -0.002  -0.002
+  low flow Q5                           -6%     36%       +0%    +35%
+  high flow Q95                         +6%     16%       -4%     +3%
+  half-flow date                        +5d     10d       -2d     +5d
+  reservoir upstream: p = 0.05   (HydroATLAS storage / annual flow = 0.00; regulated if > 0.1)
+  hidden (no real truth): slow store 91 d, groundwater share 0.38, soil capacity 392 mm, precipitation x 1.11
 
 camels_08165300  N Fk Guadalupe Rv nr Hunt, TX
   change 1999-2008 -> 1989-1999     network   +-1sd  observed    GR4J
-  mean flow                             +4%     28%       +5%     -8%
-  runoff ratio                       +0.002   0.029    +0.002  -0.008
-  baseflow index                     -0.005   0.103    -0.011  +0.004
-  low flow Q5                          -15%     52%       +0%    +13%
-  high flow Q95                        +14%     28%      +16%     -8%
-  half-flow date                       +16d     21d      +34d     -3d
-  reservoir upstream: p = 0.89   (HydroATLAS storage / annual flow = 0.00; regulated if > 0.1)
-  hidden (no real truth): slow store 190 d, groundwater share 0.69, soil capacity 152 mm, precipitation x 0.95
+  mean flow                            +12%     34%       +5%     -8%
+  runoff ratio                       +0.011   0.039    +0.002  -0.008
+  baseflow index                     -0.015   0.091    -0.011  +0.004
+  low flow Q5                           -8%     55%       +0%    +13%
+  high flow Q95                        +25%     36%      +16%     -8%
+  half-flow date                       +18d     20d      +34d     -3d
+  reservoir upstream: p = 0.83   (HydroATLAS storage / annual flow = 0.00; regulated if > 0.1)
+  hidden (no real truth): slow store 189 d, groundwater share 0.68, soil capacity 153 mm, precipitation x 0.95
 
 camels_12388400  Revais Cr bl West Fork nr Dixon MT
   change 1999-2008 -> 1989-1999     network   +-1sd  observed    GR4J
-  mean flow                            +20%     13%      +18%    +20%
-  runoff ratio                       +0.022   0.058    +0.012  +0.017
-  baseflow index                     +0.004   0.031    -0.010  -0.066
+  mean flow                            +25%     16%      +18%    +20%
+  runoff ratio                       +0.041   0.069    +0.012  +0.017
+  baseflow index                     -0.004   0.029    -0.010  -0.066
   low flow Q5                           +5%     10%       +0%     +1%
-  high flow Q95                        +19%     15%      +17%    +28%
-  half-flow date                        -0d      6d       +0d     -2d
-  reservoir upstream: p = 0.41   (HydroATLAS storage / annual flow = 0.52; regulated if > 0.1)
-  hidden (no real truth): slow store 666 d, groundwater share 0.54, soil capacity 209 mm, precipitation x 1.11
+  high flow Q95                        +26%     17%      +17%    +28%
+  half-flow date                        +1d      6d       +0d     -2d
+  reservoir upstream: p = 0.40   (HydroATLAS storage / annual flow = 0.52; regulated if > 0.1)
+  hidden (no real truth): slow store 553 d, groundwater share 0.55, soil capacity 206 mm, precipitation x 1.09
 
 camels_14020000  UMATILLA RIVER ABOVE MEACHAM CREEK, NR GIBBON, OR
   change 1999-2008 -> 1989-1999     network   +-1sd  observed    GR4J
-  mean flow                            +12%      9%      +12%    +22%
-  runoff ratio                       +0.006   0.060    +0.015  +0.072
-  baseflow index                     -0.007   0.019    -0.064  -0.010
-  low flow Q5                           +7%      9%       +3%    +12%
-  high flow Q95                         +9%      9%      +19%    +15%
+  mean flow                            +16%     10%      +12%    +22%
+  runoff ratio                       +0.034   0.069    +0.015  +0.072
+  baseflow index                     -0.010   0.018    -0.064  -0.010
+  low flow Q5                           +9%      9%       +3%    +12%
+  high flow Q95                        +13%     10%      +19%    +15%
   half-flow date                        -4d      7d      -12d    -13d
-  reservoir upstream: p = 0.13   (HydroATLAS storage / annual flow = 0.00; regulated if > 0.1)
-  hidden (no real truth): slow store 129 d, groundwater share 0.64, soil capacity 243 mm, precipitation x 1.06
+  reservoir upstream: p = 0.18   (HydroATLAS storage / annual flow = 0.00; regulated if > 0.1)
+  hidden (no real truth): slow store 118 d, groundwater share 0.66, soil capacity 257 mm, precipitation x 1.06
 
 self-check vs expected.json: max |difference| = 0.00e+00 OK

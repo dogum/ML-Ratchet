@@ -30,3 +30,10 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer
 | Finding | Real? | Action | Evidence |
 |---|---|---|---|
 | Work-hours input (sd 1e-6) explodes on non-afternoon clocks | Yes (outside the training regime) | **Warned**: `Context.scenario_features` warns when the clock is not 34 working hours in 72 h. Training on varied start times is queued. | All 48 exam fires had 34 h (audit), so the exam is unchanged; the demo does not warn. |
+
+
+### Follow-up run (27 Nov 2026, owner-approved queue)
+
+| Queued item | What was run | Result |
+|---|---|---|
+| Train the value network on varied crew start times | Bank trainvs_p1 (299 scenarios, crew start 06-18 h; same seeds and draws as the afternoon bank); r5vs = r1's recipe; also a varied-start val set (information) | **Kept** (val 0.4952 vs 0.4841, +0.011; gate +2.1 %). Graded once as v1.1: 0.469 / 0.625 vs v1.0's 0.474 / 0.644 (paired intervals include 0); prediction optimism 0.113 / 0.069 → 0.054 / 0.005. On varied-start sims: 0.493 vs 0.470 |

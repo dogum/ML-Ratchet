@@ -319,3 +319,51 @@ The p2 outputs are kept in `training/results/` as `exam_summary_p2.json`, `sigma
 ## 27 Nov 2026 — audit resolution
 
 The two-reviewer audit (`docs/audits/`). The value network only saw afternoon starts (34 working hours). The reader now warns on other clocks. The exam fires all had 34 h; training on varied start times is queued.
+
+
+## 27 Nov 2026 — r5vs: value network trained on varied crew start times; promoted; v1.1 graded once
+
+Owner-approved follow-up (lowest priority in the queue) to the audit: every training scenario started in the afternoon
+(34 working hours in 72 h), so the work-hours input had sd 1e-6 and a morning clock moved predictions by .05-.15.
+
+**Bank.** `fp.scenarios.synth_scenario` gained `start_hour` (13 = the v1.0 afternoon; the default path is unchanged:
+rebuilding val_p1's v0001 gives the stored start) and `varied_start_hour(seed)`, a crew start of 06-18 h local solar
+drawn from its own seeded stream, so landscapes, weather and fires are the same draws as the afternoon scenario of the
+same seed. `bank.py trainvs 0 300` built 299 scenarios × 10 truth-scored plans (one seed skipped for no growth; r1 had
+297 or 298, see above), about 30 min, no failures. Start hours 06-18 give 34.0-35.95 working hours in 72 h; the input's sd is now
+0.013 (units of 36 h). `bank.py valvs 0 160`: the 160 val scenarios with varied starts (information only).
+
+**Rung r5vs** = r1's recipe (`train_value.py r5vs --banks trainvs_p1`; 64 hidden, 400 epochs, seed 0). r1's bank was not
+shipped or rebuilt, so this is not a matched pair; the incumbent is r1's released weights, whose val and gate scores
+reproduce (0.4841, 0.4815).
+
+| | val_p1 (decision set) | gate_p1 | valvs_p1 (information) | optimism on valvs |
+|---|---|---|---|---|
+| r1 (v1.0) | 0.4841 | 0.4815 | 0.4699 | +0.140 |
+| r5vs | 0.4952 | 0.4916 | 0.4930 | +0.033 |
+| paired r5vs − r1 (95 %) | +0.011 (−0.015 to +0.038) | +0.010 (−0.032 to +0.057) | +0.023 (−0.002 to +0.050) | |
+
+**Decision: kept** (val +0.0111 against the +0.01 margin; gate +2.1 %). It clears the margin by 0.001, well inside the
+noise; the rule does not ask for an interval and none was used to decide. Widen factor refitted on the gate
+(`fit_widen.py`, tagged): 1.0.
+
+**Exam, run once** (`FIREPILOT_EXAM_TAG=v1.1 exam.py A/B/summary r5vs`, 4 shards each, physics p1 as v1.0; outputs in
+`work/results/exam_v1.1/`, every start in its `exam.started`; the tag keeps v1.0's per-fire files apart, since the
+stages resume per fire). A first launch died at import on a syntax error in the new audit-line code, before any exam
+data was read; it wrote nothing. All 48 fires, stages A and B, no failures.
+
+| 48 exam fires | v1.0 | v1.1 | v1.1 − v1.0, paired (95 %) |
+|---|---|---|---|
+| 300 m/h, mean share stopped | 0.474 | 0.469 | −0.005 (−0.028 to +0.018); better on 17, worse on 18 |
+| 1000 m/h | 0.644 | 0.625 | −0.019 (−0.046 to +0.007); better on 15, worse on 22 |
+| own prediction minus truth, 300 / 1000 | +0.113 / +0.069 | +0.054 / +0.005 | |
+| vs MPC, paired, 300 / 1000 | +0.074 (win) / +0.053 (tie) | +0.069 (0.005 to 0.136, win) / +0.035 (−0.028 to 0.101, tie) | |
+
+Verdicts unchanged: win at 300 m/h, tie with MPC at 1000 m/h. The exam shows no gain in saved growth (it is all
+afternoon starts, as the audit said); the gain is calibration: the network's estimate of its own pick is now close to
+the simulated truth. Files: `training/results/exam_summary_v1.1.json`, `exam_v1.1_paired_vs_v1.0.json`.
+
+**Release (v1.1).** `firepilot_weights.npz` is r5vs; v1.0's file is `firepilot_weights_v1.0.npz`. The clock warning now
+fires outside 34.0-35.95 h (± 0.5 h). The three demo fires (same seeded draw) carry v1.1's exam plan and outcomes,
+with v1.0's under `v1_0`; the demo reproduces the exam plan on all six cases. Golden output and the site instrument
+regenerated; `lab/index.html` is still the v1.0 page. Not done: the p2 re-score of v1.1.

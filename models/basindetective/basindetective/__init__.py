@@ -1,7 +1,8 @@
-"""BasinDetective v1.0: what a basin's own gauge record says about the decade it has not seen.
+"""BasinDetective v1.1: what a basin's own gauge record says about the decade it has not seen.
 
     import basindetective as bd
-    det = bd.load()                                   # weights/basindetective_v1.npz
+    det = bd.load()                                   # weights/basindetective_v1_1.npz (v1.1, 27 Nov 2026)
+    det10 = bd.load(bd.V1_0)                          # the v1.0 release, kept for its exam record
     res = bd.predict(det, cal, q_cal, tgt)
 
 cal   DataFrame, daily, columns P (mm/d), T_mean (C), PET (mm/d): the calibration (gauged) period, ideally 9-10 years
@@ -16,7 +17,8 @@ from .features import featurize, EPSQ
 from .model import Detective, UNITS
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DEFAULT = os.path.join(HERE, '..', 'weights', 'basindetective_v1.npz')
+DEFAULT = os.path.join(HERE, '..', 'weights', 'basindetective_v1_1.npz')   # v1.1: symmetric precipitation-change prior
+V1_0 = os.path.join(HERE, '..', 'weights', 'basindetective_v1.npz')
 
 LEVEL = {'d_logq': 'q_mean', 'd_rr': 'runoff_ratio', 'd_bfi': 'bfi_lh', 'd_logq5': 'q5', 'd_logq95': 'q95',
          'd_hfd': 'hfd_mean'}

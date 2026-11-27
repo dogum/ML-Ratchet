@@ -5,6 +5,8 @@
   python3 bank.py gate               # real dev gate: 12 seeded dev fires x 2 budgets (dev only)
   python3 bank.py onpol r2 onpol1 600 800   # on-policy round with model r2 -> data/onpol1_p1
   python3 bank.py pf val 0 40        # perfect-foresight CEM bound on val cases 0..39 (and 'pf gate')
+  python3 bank.py trainvs 0 300      # 27 Nov 2026: as train, but the crew starts at a seeded local hour 06-18 h
+  python3 bank.py valvs 0 160        #   (fp.scenarios.varied_start_hour); same seeds, landscapes and weather draws
 
 Each case stores what the planner may see (detection mask, forecast arrival and flame length, line cost, budget,
 clock) plus the truth no-action flame length (holding rule) and areas, so features can be recomputed and rungs
@@ -19,7 +21,7 @@ import traceback
 import _paths  # noqa: E402  (repository paths: shared/fire on sys.path; outputs under WORK, see _paths.py)
 import numpy as np
 
-from fp.scenarios import synth_scenario, real_scenario, gate_ids, BUDGETS_EVAL, hidden_draw
+from fp.scenarios import synth_scenario, real_scenario, gate_ids, BUDGETS_EVAL, hidden_draw, varied_start_hour
 from fp.planner import Context, BASELINES, sample_plan, candidate_set, plan_proxy, cem_search
 
 ROOT = _paths.WORK + '/data'
@@ -55,12 +57,17 @@ def score_rows(S, ctx, plans, tags):
     return rows
 
 
-def do_train(seed):
-    d = case_dir('train')
+def _synth(kind, seed):
+    """train / val: the afternoon start of v1.0; trainvs / valvs: a varied crew start (27 Nov 2026)."""
+    return synth_scenario(seed, start_hour=varied_start_hour(seed) if kind.endswith('vs') else 13.0)
+
+
+def do_train(seed, kind='train'):
+    d = case_dir(kind)
     name = f's{seed:06d}'
     if os.path.exists(os.path.join(d, name + '.json')):
         return
-    S = synth_scenario(seed)
+    S = _synth(kind, seed)
     if S.none()['area'] - S.a0() < 50:          # nothing to plan: the fire barely grows
         json.dump(dict(name=name, skip='no growth'), open(os.path.join(d, name + '.json'), 'w'))
         return
@@ -103,12 +110,12 @@ def do_onpol(seed, model, tag):
     save_case(d, name, S, ctx, score_rows(S, ctx, plans, tags), extra=dict(policy_pred=info['pred']))
 
 
-def do_val(i):
-    d = case_dir('val')
+def do_val(i, kind='val'):
+    d = case_dir(kind)
     name = f'v{i:04d}'
     if os.path.exists(os.path.join(d, name + '.json')):
         return
-    S = synth_scenario(900000 + i)
+    S = _synth(kind, 900000 + i)
     if S.none()['area'] - S.a0() < 50:
         json.dump(dict(name=name, skip='no growth'), open(os.path.join(d, name + '.json'), 'w'))
         return
@@ -150,10 +157,10 @@ def do_gate(k):
 
 def rebuild(kind, rec):
     """Rebuild the Scenario of a stored case (deterministic from its seed / fire id)."""
-    if kind == 'train':
-        return synth_scenario(int(rec['name'][1:]))
-    if kind == 'val':
-        return synth_scenario(900000 + int(rec['name'][1:]))
+    if kind in ('train', 'trainvs'):
+        return _synth(kind, int(rec['name'][1:]))
+    if kind in ('val', 'valvs'):
+        return _synth(kind, 900000 + int(rec['name'][1:]))
     if kind == 'gate':
         k = int(rec['name'][1:3])
         fid, b, hid = gate_cases()[k]
@@ -198,7 +205,7 @@ if __name__ == '__main__':
     else:
         a, b = int(sys.argv[2]), int(sys.argv[3])
         ks = range(a, b)
-        fn = do_train if kind == 'train' else do_val
+        fn = (lambda k: do_train(k, kind)) if kind.startswith('train') else (lambda k: do_val(k, kind))  # noqa: E731
     t0 = time.time()
     for k in ks:
         t = time.time()

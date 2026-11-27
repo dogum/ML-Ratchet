@@ -69,11 +69,33 @@ ladders:
         change: "more data: banks v3 + v4 together (20,000 simulated basins), 60 epochs; 5-seed ensemble"
         sim: 0.5405
         dev: {"composite": 0.4515, "n_basins": 51, "n_regulated": 5, "median_abs_err": {"d_logq": 0.1257, "d_rr": 0.0415, "d_bfi": 0.0213, "d_logq5": 0.0923, "d_logq95": 0.1312, "d_hfd": 7.6346}, "cov68_raw": {"d_logq": 0.608, "d_rr": 0.647, "d_bfi": 0.569, "d_logq5": 0.824, "d_logq95": 0.706, "d_hfd": 0.431}, "sim_r2": {"reg_auc": 0.911, "d_logq": 0.587, "d_rr": 0.298, "d_bfi": 0.376, "d_logq5": 0.397, "d_logq95": 0.562, "d_hfd": 0.692, "log_kslow": 0.508, "gw_share": 0.682, "log_soilcap": 0.513, "log_pmult": 0.585, "log_dor": 0.465}}
-        decision: released
-        why: "sim skill 0.5405 vs incumbent R3 0.5082 on val-v4 (delta +0.0323, need > 0.01); dev composite 0.4515 vs 0.4613 (ok). Released as v1.0 with the widen-only factors below. Its dev composite is 0.027 below R1's: each gate compares with the current incumbent only."
+        decision: kept
+        why: "Superseded on 27 Nov 2026 by R6s (v1.1; second ladder). sim skill 0.5405 vs incumbent R3 0.5082 on val-v4 (delta +0.0323, need > 0.01); dev composite 0.4515 vs 0.4613 (ok). Released as v1.0 with the widen-only factors below. Its dev composite is 0.027 below R1's: each gate compares with the current incumbent only."
         metrics: ["–", "–", "–", 0.5405, 0.4515, 0.609, 0.253, 0.268, 0.586, 0.51, 0.35, 0.791]
       - id: widen
         change: "Error bars: one widen-only factor per output, f = max(1, 68th percentile of |error| / sigma): the six changes on the real dev basins (1999-2008 -> 1980-89), the hidden properties on the 260 dev twins, log storage none (no dev truth); regulation temperature by dev log loss, kept >= 1 (calib_sigma.py)"
         decision: kept
         why: "Factors: d_logq ×1.15, d_rr ×1.05, d_bfi ×1.49, d_logq5 ×1.00, d_logq95 ×1.00, d_hfd ×1.73, log_kslow ×1.12, gw_share ×1.00, log_soilcap ×1.00, log_pmult ×1.00, log_dor ×1.00; regulation temperature 1.3. Dev 68 % coverage after widening 0.69 for the changes widened (Q5 0.82 and Q95 0.71 were already above 0.68). No effect on the means. The sigma JSON says dev real (52); the coverages are counts out of 51."
         metrics: ["–", "–", "–", "–", "–", "–", "–", "–", "–", "–", "–", "–"]
+  - name: "BasinDetective v1.1: symmetric precipitation-drift prior (audit follow-up, 27 Nov 2026)"
+    objective: "Sim skill as above, on the frozen set of the new physics version val-v4s (shards 900-903 built with the symmetric prior)"
+    rule: "As above: keep if the sim skill on val-v4s beats the incumbent's (R5, re-scored there) by more than 0.01 AND the dev composite is no more than 0.02 below R5's. The exam is opened once, as a new version, only if kept."
+    margin: 0.01
+    dev_gate: "Dev composite may not drop by more than 0.02 (51 dev basins); also reported, as the audit asked: the forward-plus-reverse sum of predicted mean-flow change on the 51 dev basins with flow in 1980-89 and 1999-2008 (training/symmetry.py; median, 0 for a direction-consistent model)"
+    frozen_sets: [val-v4s, val-v4]
+    scored_on: val-v4s
+    note: >-
+      The audit found that identical forcing gave a negative mean-flow change on all four packaged basins and that one
+      basin declined in both directions. The v3 drift prior was asymmetric: TRUE target-decade P = SEEN / exp(delta),
+      delta ~ N(0.029, 0.038). Physics v3s / v4s use delta ~ N(0, 0.038) and nothing else changes: the draw uses the
+      same generator call, so the banks are matched basin for basin. None of v1.0's banks was shipped; they were rebuilt
+      first and R5 reproduces its val-v4 skill exactly (0.540498). R6s = R5's recipe (5 seeds 0-4 of the 2x256 MLP, banks
+      v3s + v4s shards 0-39, 60 epochs). Widen-only factors refitted on dev with the shipped calib_sigma.py (the rebuilt
+      dev twins reproduce R5's factors exactly): d_logq x1.39, d_rr x1.2, d_bfi x1.38, d_logq5 x1.0, d_logq95 x1.19,
+      d_hfd x1.71, log_kslow x1.15; regulation temperature 1.5. Log: training/rung_r6s.json. On R5's own frozen set
+      val-v4 R6s scores lower (0.5221 vs 0.5405): each is better on its own physics.
+    columns_source: "training/rung_r6s.json"
+    columns: ["Sim val-v4s", "Sim val-v4", "Dev composite", "Dev ρ mean flow", "Dev ρ runoff ratio", "Dev ρ BFI", "Dev ρ Q5", "Dev ρ Q95", "Dev ρ half-flow date", "Dev AUC regulated", "Dev paired sum Δlog mean flow (median)"]
+    rungs:
+      - { id: r5, change: "Incumbent (v1.0), re-scored on the new frozen set", sim: 0.5154, decision: kept, why: "Incumbent: the released v1.0 weights.", metrics: [0.5154, 0.5405, 0.4515, 0.609, 0.253, 0.268, 0.586, 0.51, 0.35, 0.791, -0.149] }
+      - { id: r6s, change: "R5's recipe on banks v3s + v4s: decadal precipitation-drift prior N(0, 0.038) instead of N(0.029, 0.038); 5-seed ensemble", sim: 0.5348, decision: released, why: "sim skill 0.5348 vs R5 0.5154 on val-v4s (delta +0.0194, need > 0.01); dev composite 0.4392 vs 0.4515 (delta -0.0123, need >= -0.02). Kept; with refitted widen-only factors it is v1.1, examined once (training/exam_v11.json). Paired dev sum of mean-flow change -0.149 → -0.040.", metrics: [0.5348, 0.5221, 0.4392, 0.601, 0.213, 0.281, 0.542, 0.528, 0.429, 0.74, -0.04] }

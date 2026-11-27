@@ -11,10 +11,10 @@
   "300": {
    "firepilot_plan": {
     "mode": 0,
-    "phi_c": 42.705363362018176,
-    "omega": 180.0,
-    "d_h": 230.8169982780174,
-    "d_f": 136.98900895549474
+    "phi_c": 77.65835708664076,
+    "omega": 178.19240397488045,
+    "d_h": 115.06909482391943,
+    "d_f": 90.0
    },
    "truth_saved": {
     "none": 0.0,
@@ -23,16 +23,26 @@
     "indirect_2km": 0.0,
     "anchor_flank": 0.453,
     "mpc_forecast": 0.453,
-    "firepilot": 0.969,
-    "pf_bound": 0.993
+    "firepilot": 0.984,
+    "pf_bound": 0.995
+   },
+   "v1_0": {
+    "firepilot_plan": {
+     "mode": 0,
+     "phi_c": 42.705363362018176,
+     "omega": 180.0,
+     "d_h": 230.8169982780174,
+     "d_f": 136.98900895549474
+    },
+    "truth_saved_firepilot": 0.969
    }
   },
   "1000": {
    "firepilot_plan": {
-    "mode": 0,
-    "phi_c": -34.77350489924709,
+    "mode": 1,
+    "phi_c": 10.991752206352686,
     "omega": 180.0,
-    "d_h": 90.0,
+    "d_h": 222.62374246369987,
     "d_f": 90.0
    },
    "truth_saved": {
@@ -42,8 +52,18 @@
     "indirect_2km": 0.0,
     "anchor_flank": 0.995,
     "mpc_forecast": 0.995,
-    "firepilot": 0.996,
+    "firepilot": 0.976,
     "pf_bound": 0.996
+   },
+   "v1_0": {
+    "firepilot_plan": {
+     "mode": 0,
+     "phi_c": -34.77350489924709,
+     "omega": 180.0,
+     "d_h": 90.0,
+     "d_f": 90.0
+    },
+    "truth_saved_firepilot": 0.996
    }
   }
  }

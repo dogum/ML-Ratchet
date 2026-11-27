@@ -1,4 +1,4 @@
-# FirePilot v1.0 — model card
+# FirePilot v1.1 — model card
 
 FirePilot is a learned planner for containment line. It is given a wildfire at its first afternoon satellite
 detection and a crew budget (metres of line per working hour). It chooses one line plan for the next 72 hours:
@@ -16,6 +16,17 @@ below are repository paths (the release zip's `demo_cases/`, `results/` and `rat
 `training/results/` and `training/ratchet.json`); no number changed. Lab page: `lab/index.html`; live instrument on
 the model's site page.
 
+
+## v1.1 (27 Nov 2026): trained on varied crew start times
+
+The audit found that every training scenario started in the afternoon, so the crew-clock input never varied. r5vs is
+the same network and recipe on 299 scenarios whose crews start between 06 and 18 h local solar time. The ratchet kept
+it (val 0.495 vs 0.484, +0.011 against a +0.01 margin; gate 0.492 vs 0.482). Graded once on the same 48 fires: 0.469 /
+0.625 of the growth stopped at 300 / 1000 m/h against v1.0's 0.474 / 0.644 (paired differences −0.005 and −0.019,
+both intervals include zero). It still beats MPC at 300 m/h and ties it at 1000 m/h. What improved is calibration: its
+prediction for its own pick is optimistic by 0.054 / 0.005 (v1.0 0.113 / 0.069). Start hours 06-18 cover only 34-36
+working hours in 72 h; the reader warns outside that. Everything below describes v1.0 unless it says otherwise;
+`model.yaml` and `NOTEBOOK.md` (27 Nov 2026) have v1.1's numbers.
 ## What it does
 
 - **Input:**

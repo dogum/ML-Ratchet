@@ -52,7 +52,7 @@ if __name__ == '__main__':
     W = {k: np.asarray(z[k], np.float32) for k in ('W0', 'W1', 'W2', 'b0', 'b1', 'b2')}
     assert all(np.array_equal(W[k], z[k]) for k in W)     # stored as float32: the pack is exact
     write_pack(out / 'weights', W, dtype='f32',
-               meta=dict(mu=z['mu'].tolist(), sd=z['sd'].tolist(), sig_scale=float(z['sig_scale']), version='1.0',
+               meta=dict(mu=z['mu'].tolist(), sd=z['sd'].tolist(), sig_scale=float(z['sig_scale']), version='1.1',
                          params=int(sum(v.size for v in W.values()))))
     net = fp.ValueNet(str(MODEL / 'firepilot_weights.npz'))
 

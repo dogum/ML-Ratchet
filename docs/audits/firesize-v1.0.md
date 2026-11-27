@@ -26,3 +26,11 @@ python3 -B docs/audits/reviews/reviewer-b/firesize_closing_probe.py
 | Finding | Real? | Action | Evidence |
 |---|---|---|---|
 | `pt_SB` (sd 1e-6) collapses escape probability on slash–blowdown ignitions | Yes, and it reached the exam | **Warned, opt-in clip, repair and re-score queued.** `probs()` warns on any input beyond 8 sd; `FireSize.z_clip = 8` clips. Default unchanged so the card's exam numbers describe v1.0. | Counted 27 Nov 2026 in `work/results/exam_preds.parquet`: **91 of 655,869 exam ignitions** have escape probability exactly 0 and the identical 0.6986 ha median, the collapse's signature. That answers the report's open question about frequency; the pooled scores cannot move much (0.014 % of rows), the SB stratum's can. |
+
+### Follow-up run (27 Nov 2026, owner-approved queue)
+
+| Queued item | What was run | Result |
+|---|---|---|
+| Repair rung: slash-blowdown ignitions in the bank, retrained | v1 bank rebuilt (control r8c reproduces r7 to 5e-6 in every weight); r8 adds 479 simulated slash-blowdown ignitions (64 held out) | **Rejected**: sim RPSS 0.2799 → 0.2881 (+0.008; the rule needs +0.01); gate passed. Exam not opened. On the 64 held-out SB sims: r7 −1.668, r7 clipped 0.254, r8 0.127 |
+| Dated re-score of v1.0 with `z_clip = 8` | `exam.py` on the released weights into `work/results/v1.0_rescore_2026-11-27_{noclip,zclip8}/` (the no-clip run reproduces v1.0 exactly) | Pooled escape AUC 0.7266 → 0.7264; on the 91 SB ignitions size MAE 1.237 → 0.750 log10, 80 % coverage 0.18 → 0.96. The clip touches 19,337 rows: all 16,400 Great Basin ignitions (r_GB at z = 8.1) |
+| Make the fix the default | **v1.0.1**: `FireSize.z_clip = 8` by default; demo, golden and site instrument updated | `model.yaml` carries the re-score; NOTEBOOK 27 Nov 2026 |

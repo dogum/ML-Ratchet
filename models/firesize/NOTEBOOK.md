@@ -298,3 +298,98 @@ the exam cannot change. Only the simulated frozen set can.
 ## 27 Nov 2026 — audit resolution
 
 The two-reviewer audit (`docs/audits/`). probs() warns on inputs beyond 8 sd of training; z_clip is opt-in. 91 exam ignitions on slash-blowdown fuel were scored at z = 1e6 (escape probability exactly 0). A bank with such ignitions, a retrain and a dated re-score are queued.
+
+## 27 Nov 2026 — slash-blowdown repair rung r8: rejected (below margin); no exam
+
+Owner-approved follow-up to the audit (`docs/audits/firesize-v1.0.md`): the 91 exam ignitions on slash-blowdown fuel
+(LANDFIRE FBFM40 201-204) were scored at z = 1e6 because no simulated training ignition sat on that fuel at the 250 m
+feature pixel (pt_SB sd 1e-6).
+
+**Rebuilding r7's bank.** The v1 training bank (8,500 ignitions) was not shipped. `fetch_windows.py train 8500` fetched
+the 916 missing LANDFIRE windows (1,063 in all, no failures) and `simbank.py train 1 v1p1 8500 v1p1full` simulated all
+8,500 with physics v1p1 (v1 with FireSim's p1 solver) in three parallel parts (`SIMBANK_PART`), 0.55-0.65 s per sim
+here (sandbox 0.21 s), no failures. `devfeat.py` (new) rebuilt `feat_dev.parquet` (not shipped) with the exam's own
+feature code; the released weights reproduce r7's gate scores on it exactly (AUC 0.7561, AP 0.0821, Brier 0.0274, MAE
+0.6267, ρ 0.3075). **Control r8c** = r7's recipe (`train.py`, 3 members, 75 features, theta v1rep2) on the rebuilt
+bank: sim RPSS 0.27988 and escape AUC 0.87443 on v1|v1rep2, gate AUC 0.75610, MAE 0.62671, every weight within 5.4e-6
+of `firesize_weights.npz`. The rebuild reproduces r7.
+
+Why the 22 Nov p1 rebuild of the frozen set did not reproduce its labels (escape rate 1.563 % against 1.445 %):
+`calib.Twins` draws the 24 suppression draws per sim for the whole bank in row order (`default_rng(7)`), so a bank
+holding only the frozen ignitions gets different draws. With the full bank the frozen set's escape rate is 1.4452 %,
+as shipped.
+
+**r8.** `prior_sb.py` (new) adds 479 slash-blowdown ignitions: 60 windows centred on seeded random SB cells of the
+250 m grid (uniform over its 7,184 SB cells; 14 candidate windows refused by the exam-footprint guard), 8 ignitions
+each on SB cells within 2 km whose feature pixel is SB, attributes from a dev ignition within 150 km as `prior.py`
+does (dev attributes only). Regions: RM 311, SE 69, CA 56, NE_MW 26, SW 16, SP 1. 8 windows (64 ignitions, seeded
+hash) are held out (`sbhold`), never trained on; every SB window has frozen = 0, so the ratchet's frozen set is
+unchanged. Their weather (`gridmet_pts.py trainsb`), features (`sbfeat.py`, appended to `feat_sim.parquet`; copies of
+the files before the append are in `work/data/pre_sb/`), windows and sims (479 sims, no failures) were built like the
+rest. r8 = r8c's recipe + `"sb": true`: 415 SB ignitions trained, pt_SB now has mean 0.054 and sd 0.225.
+
+| | sim RPSS v1\|v1rep2 | sim esc AUC | gate AUC | gate AP | gate Brier | gate MAE | gate ρ | gate mean P(esc) |
+|---|---|---|---|---|---|---|---|---|
+| r7 (incumbent, released) | 0.2799 | 0.8744 | 0.7561 | 0.0821 | 0.0274 | 0.6267 | 0.3075 | 0.025 |
+| r8c (control, rebuilt bank) | 0.2799 | 0.8744 | 0.7561 | 0.0821 | 0.0274 | 0.6267 | 0.3075 | 0.025 |
+| r8 (+ SB ignitions) | 0.2881 | 0.8727 | 0.7574 | 0.0849 | 0.0276 | 0.6371 | 0.3022 | 0.0267 |
+
+**Decision: rejected.** Sim RPSS +0.0082 against r7 (the rule needs more than +0.01); gate AUC +0.0013 and MAE +1.7 %
+pass. The exam was not opened. The frozen set holds no slash-blowdown ignition, so the sim score cannot see what the
+rung was for; the held-out SB sims can (64 ignitions, `work/results/sbhold_scores.json`, no hard-draw escapes so no
+AUC):
+
+| on the 64 held-out SB sims | RPSS | mean P(escape) | mean log10 median size |
+|---|---|---|---|
+| r7, T = 1, as released (z = 1e6) | −1.668 | 0 (all 64 exactly 0) | −0.156 |
+| r7, T = 1, z_clip = 8 | +0.254 | 0.019 | −0.522 |
+| r8 | +0.127 | 0.023 | −0.745 |
+
+(simulated soft escape share 0.027.) On SB fuel the clip alone does better than the retrain here. The sample is 8
+windows, so this is a pointer, not a measurement. Not tried: the alternative named in the audit (a floor on one-hot
+sds); it cannot move the frozen-set score either.
+
+Code changed for this (all opt-in, defaults unchanged): `fetch_windows.py` (train / trainsb modes; trainsb windows
+included in its list), `gridmet_pts.py` (kind filter), `simbank.py` (bank tag, parallel parts), `sim.py` (reads
+`wx_points_trainsb.npz` after the base table), `train.py` (`bank`, `sb`; sbhold rows never trained on and scored as
+`sim_sbhold`), `net.forward_np(..., z_clip)`, `exam.py` (output subfolder, z_clip, pt_SB strata; see below). New:
+`prior_sb.py`, `sbfeat.py`, `devfeat.py`. Rung logs: `training/results/rung_r8.json`, `rung_r8c.json`; ladder:
+`ratchet.yaml` (second ladder).
+
+## 27 Nov 2026 — dated re-score of v1.0 with the 8 sd clip; v1.0.1 makes the clip the default
+
+Owner-approved supplementary exam on the seen exam (nothing chosen). `exam.py` gained an output subfolder, a z_clip
+argument and two strata (pt_SB = 1 and its complement); the run-once guard and the `exam.started` audit line apply per
+folder. Two runs of the released weights:
+- `results/v1.0_rescore_2026-11-27_noclip/`: no clip. Every number of v1.0's `exam.json` reproduces exactly (largest
+  difference 0), so the strata below are v1.0's own.
+- `results/v1.0_rescore_2026-11-27_zclip8/`: standardised inputs clipped at ±8.
+(A first attempt crashed on import in the wrong Python environment before reading any exam data; it wrote nothing.)
+
+| stratum | n | escape AUC | AP | Brier | size MAE log10 | size ρ | mean P(esc) | 80 % coverage |
+|---|---|---|---|---|---|---|---|---|
+| all, v1.0 | 655,869 | 0.7266 | 0.0714 | 0.02727 | 0.6416 | 0.2857 | 0.0550 | 0.900 |
+| all, clip 8 | 655,869 | 0.7264 | 0.0711 | 0.02730 | 0.6418 | 0.2853 | 0.0552 | 0.900 |
+| slash-blowdown, v1.0 | 91 | 0.500 | 0.011 | 0.0110 | 1.237 | – | 0.000 | 0.176 |
+| slash-blowdown, clip 8 | 91 | 0.667 | 0.032 | 0.0204 | 0.750 | 0.100 | 0.085 | 0.956 |
+| not slash-blowdown, v1.0 | 655,778 | 0.7266 | 0.0714 | 0.02728 | 0.6416 | 0.2858 | 0.0551 | 0.900 |
+| not slash-blowdown, clip 8 | 655,778 | 0.7264 | 0.0712 | 0.02730 | 0.6417 | 0.2854 | 0.0552 | 0.900 |
+| 2020, v1.0 → clip | 72,883 | 0.7403 → 0.7401 | | | 0.6647 → 0.6651 | | | |
+| Great Basin, v1.0 → clip | 16,400 | 0.6393 → 0.6380 | | 0.07006 → 0.07047 | 1.1577 → 1.1606 | | | |
+| Southwest, v1.0 → clip | 49,550 | 0.7571 → 0.7550 | | | 0.7389 → 0.7411 | | | |
+| California, v1.0 → clip | 72,386 | 0.7393 → 0.7400 | | | | | | |
+| Northeast/Midwest, v1.0 → clip | 119,319 | 0.7817 → 0.7821 | | | | | | |
+
+The 91 slash-blowdown ignitions hold one escape, so their AUC and Brier say little; the size rows say the clip removes
+the collapse (one 1.73-acre answer for all 91). Found while counting which rows the clip touches
+(`beyond_8sd.json`): 19,337 exam ignitions have some input beyond 8 sd, not 91. All 16,400 Great Basin ignitions do,
+because the region one-hot r_GB sits at z = 8.1 (Great Basin is 1.5 % of the simulated bank and 2.5 % of the exam);
+the other 2,846 have shrub (f13_SH 1,761, f5_SH 1,187) or slash-blowdown fractions (f5_SB 1,157, f13_SB 892), rain
+(pr 592, pr_m1 195), slope (135) or wind (3) beyond 8 sd. Clipping r_GB from 8.1 to 8 is what moves the Great Basin
+row; it costs 0.0013 AUC there. Overall the clip costs 0.0002 pooled AUC and fixes the slash-blowdown collapse.
+
+**v1.0.1.** Following the owner's rule (after a re-score, the fixed behaviour becomes the default as a patch version):
+`FireSize.z_clip = 8.0` by default; `z_clip = None` gives v1.0. Weights unchanged. The demo now checks that v1.0
+reproduces the exam's P(escape) for its 8 ignitions (clip off) and prints v1.0.1's outputs: the Utah ignition (Great
+Basin) moves by 0.0002 and its median from 11.02 to 11.05 acres; golden output regenerated. The site instrument
+applies the same clip (`meta.z_clip`; reference cases regenerated). `model.yaml` carries the clip re-score.
