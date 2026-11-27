@@ -1030,9 +1030,10 @@ ladders:
     - 36.4
 - name: LawFinder Trip energy per km (RoadSim)
   objective: R^2 of energy per km (fuel at LHV or DC battery) on the frozen simulated set
-  rule: Keep a rung if its frozen-set R^2 beats the incumbent by more than 0.01 AND its dev error is no more than 5% worse.
+  rule: 'Keep a rung if its frozen-set R^2 beats the incumbent by more than 0.01 AND its dev error is no more than 5% worse.
     Rungs = Pareto-front laws in order of complexity, then physics versions; after a physics change every rung is re-scored
-    on the new frozen set and every decision re-taken.
+    on the new frozen set and every decision re-taken. Since 27 Nov 2026 (road law v1.1): sign gate (adopted 27 Nov 2026 after
+    the audit): energy may not fall as net grade rises at any val_p2 row.'
   margin: 0.01
   dev_gate: Dev error may not get more than 5 % worse
   frozen_sets:
@@ -1143,7 +1144,7 @@ ladders:
   - id: p1-c17
     change: 'Physics p1, complexity 17: E = M·exp((0.3353·sqrt(R) - h)·(-2·e + 2/v^0.6288))'
     sim: 0.754
-    decision: kept
+    decision: released
     why: Frozen-set skill 0.754 > 0.728 + 0.01, dev error 0.1753 vs 0.1674 (within 5%).
     metrics:
     - 0.175
@@ -1183,8 +1184,8 @@ ladders:
   - id: p1-c23
     change: 'Physics p1, complexity 23: E = M·exp((-2·e + 2/(v + 1.48)^0.5951)·(0.06983·G + 2·K + 0.06983·R - h))'
     sim: 0.767
-    decision: released
-    why: Frozen-set skill 0.767 > 0.754 + 0.01, dev error 0.168 vs 0.1753 (within 5%).
+    decision: rejected
+    why: 'Energy falls as net grade rises on 21 % of val_p2 rows (100 % of battery-electric rows): sign gate.'
     metrics:
     - 0.168
     - 18.6
@@ -1193,7 +1194,7 @@ ladders:
       h))'
     sim: 0.766
     decision: rejected
-    why: Frozen-set skill 0.766 does not beat the incumbent's 0.767 by more than 0.01.
+    why: 'Energy falls as net grade rises on 21 % of val_p2 rows (100 % of battery-electric rows): sign gate.'
     metrics:
     - 0.171
     - 19.0
@@ -1201,7 +1202,7 @@ ladders:
     change: 'Physics p2, complexity 2: E = sqrt(R)'
     sim: 0.102
     decision: rejected
-    why: Frozen-set skill 0.102 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.102 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.335
     - 29.1
@@ -1209,7 +1210,7 @@ ladders:
     change: 'Physics p2, complexity 3: E = 2.91 - e'
     sim: 0.239
     decision: rejected
-    why: Frozen-set skill 0.239 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.239 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.338
     - 29.5
@@ -1217,7 +1218,7 @@ ladders:
     change: 'Physics p2, complexity 4: E = 1/(e + 0.3088)'
     sim: 0.371
     decision: rejected
-    why: Frozen-set skill 0.371 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.371 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.386
     - 30.9
@@ -1225,7 +1226,7 @@ ladders:
     change: 'Physics p2, complexity 5: E = M/(e + 0.6681)'
     sim: 0.448
     decision: rejected
-    why: Frozen-set skill 0.448 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.448 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.256
     - 27.6
@@ -1233,7 +1234,7 @@ ladders:
     change: 'Physics p2, complexity 6: E = sqrt(K)/(e + 0.131)'
     sim: 0.419
     decision: rejected
-    why: Frozen-set skill 0.419 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.419 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.231
     - 28.6
@@ -1241,7 +1242,7 @@ ladders:
     change: 'Physics p2, complexity 7: E = (M - h)/(e + 0.5706)'
     sim: 0.561
     decision: rejected
-    why: Frozen-set skill 0.561 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.561 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.288
     - 23.7
@@ -1249,7 +1250,7 @@ ladders:
     change: 'Physics p2, complexity 8: E = (M - h)/(e + 0.7497)^2'
     sim: 0.635
     decision: rejected
-    why: Frozen-set skill 0.635 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.635 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.249
     - 23.1
@@ -1257,7 +1258,7 @@ ladders:
     change: 'Physics p2, complexity 9: E = K·(M - h)/(e + 0.1086)'
     sim: 0.623
     decision: rejected
-    why: Frozen-set skill 0.623 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.623 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.247
     - 25.4
@@ -1265,7 +1266,7 @@ ladders:
     change: 'Physics p2, complexity 10: E = sqrt(K)·(M - h)/(e + 0.2383)'
     sim: 0.711
     decision: rejected
-    why: Frozen-set skill 0.711 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.711 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.152
     - 20.9
@@ -1273,7 +1274,7 @@ ladders:
     change: 'Physics p2, complexity 11: E = sqrt(K)·(M - h)/(exp(e) - 0.7619)'
     sim: 0.711
     decision: rejected
-    why: Frozen-set skill 0.711 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.711 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.147
     - 21.0
@@ -1281,7 +1282,7 @@ ladders:
     change: 'Physics p2, complexity 12: E = sqrt(K)·(M - h)^0.8128/(e + 0.2077)'
     sim: 0.721
     decision: rejected
-    why: Frozen-set skill 0.721 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.721 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.153
     - 17.0
@@ -1289,7 +1290,7 @@ ladders:
     change: 'Physics p2, complexity 14: E = sqrt(K)·(M - h)^(v^(-0.1335))/(e + 0.1979)'
     sim: 0.733
     decision: rejected
-    why: Frozen-set skill 0.733 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.733 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.149
     - 15.4
@@ -1297,7 +1298,7 @@ ladders:
     change: 'Physics p2, complexity 15: E = sqrt(K)·(M - h)^(log(v)^(-0.3821))/(e + 0.1991)'
     sim: 0.736
     decision: rejected
-    why: Frozen-set skill 0.736 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.736 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.147
     - 15.3
@@ -1305,7 +1306,7 @@ ladders:
     change: 'Physics p2, complexity 16: E = ((M - h)^(v^(-0.4844)) - 0.6371)·exp(K)/(e + 0.2089)'
     sim: 0.737
     decision: rejected
-    why: Frozen-set skill 0.737 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.737 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.208
     - 17.9
@@ -1313,7 +1314,7 @@ ladders:
     change: 'Physics p2, complexity 17: E = ((M - h)^(v^(-0.2933)) - 0.4207)·exp(2·K)/(e + 0.6392)^2'
     sim: 0.741
     decision: rejected
-    why: Frozen-set skill 0.741 does not beat the incumbent's 0.767 by more than 0.01.
+    why: Frozen-set skill 0.741 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.178
     - 17.5
@@ -1321,7 +1322,7 @@ ladders:
     change: 'Physics p2, complexity 18: E = sqrt(K)·(M - h)^(v^((G - 1.132)/R))/(e + 0.1985)'
     sim: 0.741
     decision: rejected
-    why: Frozen-set skill 0.741 does not beat the incumbent's 0.767 by more than 0.01.
+    why: 'Energy falls as net grade rises on 14 % of val_p2 rows (0 % of battery-electric rows): sign gate.'
     metrics:
     - 0.144
     - 15.2
@@ -1329,7 +1330,7 @@ ladders:
     change: 'Physics p2, complexity 20: E = sqrt(K)·(-K + (M - h)^(v^((G - 1.551)/R)))/(e + 0.1639)'
     sim: 0.75
     decision: rejected
-    why: Frozen-set skill 0.750 does not beat the incumbent's 0.767 by more than 0.01.
+    why: 'Energy falls as net grade rises on 14 % of val_p2 rows (0 % of battery-electric rows): sign gate.'
     metrics:
     - 0.155
     - 16.1
@@ -1337,7 +1338,7 @@ ladders:
     change: 'Physics p2, complexity 21: E = sqrt(K)·(-K + (M - h)^(v^((G - 1.594)/R)))/sqrt(e + 0.02657)'
     sim: 0.752
     decision: rejected
-    why: Frozen-set skill 0.752 does not beat the incumbent's 0.767 by more than 0.01.
+    why: 'Energy falls as net grade rises on 14 % of val_p2 rows (0 % of battery-electric rows): sign gate.'
     metrics:
     - 0.158
     - 15.9
@@ -1345,7 +1346,7 @@ ladders:
     change: 'Physics p2, complexity 22: E = sqrt(K)·sqrt(M)·(-K + (M - h)^(v^((G - 2.647)/R)))/(e + 0.2163)'
     sim: 0.763
     decision: rejected
-    why: Frozen-set skill 0.763 does not beat the incumbent's 0.767 by more than 0.01.
+    why: 'Energy falls as net grade rises on 14 % of val_p2 rows (0 % of battery-electric rows): sign gate.'
     metrics:
     - 0.129
     - 17.6
@@ -1353,7 +1354,7 @@ ladders:
     change: 'Physics p2, complexity 24: E = sqrt(K)·(-K + (1.483·M - 1.483·h)^(v^((G - 2.132)/(M + R))))/(e + 0.2169)'
     sim: 0.764
     decision: rejected
-    why: Frozen-set skill 0.764 does not beat the incumbent's 0.767 by more than 0.01.
+    why: 'Energy falls as net grade rises on 4 % of val_p2 rows (0 % of battery-electric rows): sign gate.'
     metrics:
     - 0.138
     - 14.6
@@ -1361,111 +1362,111 @@ ladders:
     change: 'Physics p2, complexity 25: E = sqrt(K)·sqrt(M)·(-K·h + (M - h)^(v^((2·G - 4.154)/R)))/(e + 0.2193)'
     sim: 0.749
     decision: rejected
-    why: Frozen-set skill 0.749 does not beat the incumbent's 0.767 by more than 0.01.
+    why: 'Energy falls as net grade rises on 14 % of val_p2 rows (0 % of battery-electric rows): sign gate.'
     metrics:
     - 0.126
     - 14.6
   - id: p2s-c2
-    change: 'Physics p2, sign-checked search (27 Nov 2026), complexity 2: E = sqrt(R)'
+    change: 'Physics p2, sign-checked search (2026-11-27), complexity 2: E = sqrt(R)'
     sim: 0.102
     decision: rejected
-    why: 'Frozen-set skill 0.102 does not beat the incumbent''s 0.767 by more than 0.01. Sign check passed on val_p2.'
+    why: Frozen-set skill 0.102 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.335
-    - not run (exam closed)
+    - 29.1
   - id: p2s-c3
-    change: 'Physics p2, sign-checked search (27 Nov 2026), complexity 3: E = 2.91 - e'
+    change: 'Physics p2, sign-checked search (2026-11-27), complexity 3: E = 2.91 - e'
     sim: 0.239
     decision: rejected
-    why: 'Frozen-set skill 0.239 does not beat the incumbent''s 0.767 by more than 0.01. Sign check passed on val_p2.'
+    why: Frozen-set skill 0.239 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.338
-    - not run (exam closed)
+    - 29.5
   - id: p2s-c5
-    change: 'Physics p2, sign-checked search (27 Nov 2026), complexity 5: E = M/(e + 0.6681)'
+    change: 'Physics p2, sign-checked search (2026-11-27), complexity 5: E = M/(e + 0.6681)'
     sim: 0.448
     decision: rejected
-    why: 'Frozen-set skill 0.448 does not beat the incumbent''s 0.767 by more than 0.01. Sign check passed on val_p2.'
+    why: Frozen-set skill 0.448 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.256
-    - not run (exam closed)
+    - 27.6
   - id: p2s-c6
-    change: 'Physics p2, sign-checked search (27 Nov 2026), complexity 6: E = M/(e + 0.8112)^2'
+    change: 'Physics p2, sign-checked search (2026-11-27), complexity 6: E = M/(e + 0.8112)^2'
     sim: 0.508
     decision: rejected
-    why: 'Frozen-set skill 0.508 does not beat the incumbent''s 0.767 by more than 0.01. Sign check passed on val_p2.'
+    why: Frozen-set skill 0.508 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.221
-    - not run (exam closed)
+    - 27.1
   - id: p2s-c7
-    change: 'Physics p2, sign-checked search (27 Nov 2026), complexity 7: E = M·exp(2·K - 2·e)'
+    change: 'Physics p2, sign-checked search (2026-11-27), complexity 7: E = M·exp(2·K - 2·e)'
     sim: 0.567
     decision: rejected
-    why: 'Frozen-set skill 0.567 does not beat the incumbent''s 0.767 by more than 0.01. Sign check passed on val_p2.'
+    why: Frozen-set skill 0.567 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.188
-    - not run (exam closed)
+    - 27.5
   - id: p2s-c8
-    change: 'Physics p2, sign-checked search (27 Nov 2026), complexity 8: E = M·exp(2.209·K - 2.209·e)'
+    change: 'Physics p2, sign-checked search (2026-11-27), complexity 8: E = M·exp(2.209·K - 2.209·e)'
     sim: 0.573
     decision: rejected
-    why: 'Frozen-set skill 0.573 does not beat the incumbent''s 0.767 by more than 0.01. Sign check passed on val_p2.'
+    why: Frozen-set skill 0.573 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.185
-    - not run (exam closed)
+    - 26.3
   - id: p2s-c9
-    change: 'Physics p2, sign-checked search (27 Nov 2026), complexity 9: E = M·exp(2.282·K - 2·e)'
+    change: 'Physics p2, sign-checked search (2026-11-27), complexity 9: E = M·exp(2.282·K - 2·e)'
     sim: 0.578
     decision: rejected
-    why: 'Frozen-set skill 0.578 does not beat the incumbent''s 0.767 by more than 0.01. Sign check passed on val_p2.'
+    why: Frozen-set skill 0.578 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.17
-    - not run (exam closed)
+    - 25.7
   - id: p2s-c11
-    change: 'Physics p2, sign-checked search (27 Nov 2026), complexity 11: E = M·exp(2·K^h·(K - e))'
+    change: 'Physics p2, sign-checked search (2026-11-27), complexity 11: E = M·exp(2·K^h·(K - e))'
     sim: 0.632
     decision: rejected
-    why: 'Frozen-set skill 0.632 does not beat the incumbent''s 0.767 by more than 0.01. Sign check passed on val_p2.'
+    why: Frozen-set skill 0.632 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.178
-    - not run (exam closed)
+    - 22.4
   - id: p2s-c12
-    change: 'Physics p2, sign-checked search (27 Nov 2026), complexity 12: E = M·exp(0.1969^h·(2.716·K - e))'
+    change: 'Physics p2, sign-checked search (2026-11-27), complexity 12: E = M·exp(0.1969^h·(2.716·K - e))'
     sim: 0.651
     decision: rejected
-    why: 'Frozen-set skill 0.651 does not beat the incumbent''s 0.767 by more than 0.01. Sign check passed on val_p2.'
+    why: Frozen-set skill 0.651 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.156
-    - not run (exam closed)
+    - 16.7
   - id: p2s-c13
-    change: 'Physics p2, sign-checked search (27 Nov 2026), complexity 13: E = M·exp(2·K^h·(1.474·K - e))'
+    change: 'Physics p2, sign-checked search (2026-11-27), complexity 13: E = M·exp(2·K^h·(1.474·K - e))'
     sim: 0.725
     decision: rejected
-    why: 'Frozen-set skill 0.725 does not beat the incumbent''s 0.767 by more than 0.01. Sign check passed on val_p2.'
+    why: Frozen-set skill 0.725 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.141
-    - not run (exam closed)
+    - 15.4
   - id: p2s-c15
-    change: 'Physics p2, sign-checked search (27 Nov 2026), complexity 15: E = G + M·exp(2·K^h·(1.465·K - e))'
+    change: 'Physics p2, sign-checked search (2026-11-27), complexity 15: E = G + M·exp(2·K^h·(1.465·K - e))'
     sim: 0.725
     decision: rejected
-    why: 'Frozen-set skill 0.725 does not beat the incumbent''s 0.767 by more than 0.01. Sign check passed on val_p2.'
+    why: Frozen-set skill 0.725 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.159
-    - not run (exam closed)
+    - 17.4
   - id: p2s-c17
-    change: 'Physics p2, sign-checked search (27 Nov 2026), complexity 17: E = (M - 0.009655·T)·exp(2·K^h·(1.633·K - e))'
+    change: 'Physics p2, sign-checked search (2026-11-27), complexity 17: E = (M - 0.009655·T)·exp(2·K^h·(1.633·K - e))'
     sim: 0.737
     decision: rejected
-    why: 'Frozen-set skill 0.737 does not beat the incumbent''s 0.767 by more than 0.01. Sign check passed on val_p2.'
+    why: Frozen-set skill 0.737 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.13
-    - not run (exam closed)
+    - 15.3
   - id: p2s-c19
-    change: 'Physics p2, sign-checked search (27 Nov 2026), complexity 19: E = (M + 0.27·R/v)·exp(-2·K^h·(-1.142·K + e))'
+    change: 'Physics p2, sign-checked search (2026-11-27), complexity 19: E = (M + 0.27·R/v)·exp(-2·K^h·(-1.142·K + e))'
     sim: 0.757
     decision: rejected
-    why: 'Frozen-set skill 0.757 does not beat the incumbent''s 0.767 by more than 0.01. Sign check passed on val_p2.'
+    why: Frozen-set skill 0.757 does not beat the incumbent's 0.754 by more than 0.01.
     metrics:
     - 0.137
-    - not run (exam closed)
+    - 15.5

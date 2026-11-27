@@ -73,7 +73,7 @@ each card still describes the released model. Its dated re-score, like every ret
 | EnergyNet | Training fix in code (`--robust-norm`, `--mask-comp`, off by default) | None (inference unchanged) | Run 27 Nov 2026 as rung v2-r18: rejected (skill 0.679 vs 0.680, D2 0.1073 vs 0.1077); v2.1 stays |
 | TripDetective | Missing bus power is invalid, not zero; car reader refuses logs without motion | None (0 of 35.7 M exam power samples missing) | — |
 | HybridPilot | Preview reads nothing past its window | None (released R22 uses no preview; 0 grade gaps on 216 exam trips) | — |
-| LawFinder | Range warnings (`strict=True` raises); EV grade sign in the card; UTF-8 JSON | None | Run 27 Nov 2026 (rungs p2s-*): rejected (best R² 0.757 vs 0.767); p1-c23 stays |
+| LawFinder | Range warnings (`strict=True` raises); EV grade sign in the card; UTF-8 JSON | None | Sign gate adopted 27 Nov 2026; road law v1.1 = p1-c17 (exam once: VED 18.7 %, EPA 19.4 %, EPA BEV 20.0 % vs 43.1 %) |
 | GridPulse | `window(f, i0, N)` reads only the prefix; live records accepted | None (0 gaps in 412 exam traces) | — |
 | DemandCast | Warnings on dark-hour solar and |z| > 8 inputs; opt-in `z_clip` | Not re-scored: 1,734 solar / 365 demand exam rows affected | **Run 27 Nov 2026.** Re-score with `z_clip=8` → v1.1.1 (demand 2.38 → 2.32 %; missing-history rows 5.96 → 2.58 %). Repair rung r10 promoted (val_v5 +0.015, dev −4.8 %); v1.2 exam once: solar 16.1 → 10.6 %, demand 2.32 → 2.49 % (worse) |
 | BatteryPilot | Hour 0 no longer reads its own RT price; opt-in `causal_wear` | ≤ $0.002/kW-yr on packaged years | **Run 27 Nov 2026.** All 48 node-years: ERCOT 67.1 → 67.1 %, CAISO 59.4 → 59.3 %; default since v1.3.1 |

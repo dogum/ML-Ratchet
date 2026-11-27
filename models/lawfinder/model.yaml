@@ -1,8 +1,8 @@
 id: lawfinder
 name: LawFinder
-version: '1.0'
+version: '1.1'
 status: released
-released: '2026-11-22'
+released: '2026-11-27'
 order: 33
 domain: Method
 tags:
@@ -258,7 +258,7 @@ exam:
   - metric: 'Trip energy per km: MdAPE, petrol cars, VED trips (14,469 real exam units)'
     better: lower
     unit: '%'
-    model: 19.3
+    model: 19.0
     baselines:
     - name: RoadSim's law (p2-c10)
       kind: classical
@@ -285,12 +285,12 @@ exam:
       kind: dumb
       value: 22.4
     verdict: loss
-    note: Bias -18.9 %, coverage of the 68 % bar 62 %. EnergyNet's row re-computed from its stored predictions (exam run
+    note: Law v1.1 (p1-c17); v1.0 (p1-c23) scored 19.3. Bias -18.1 %, coverage of the 68 % bar 63 %. EnergyNet's row re-computed from its stored predictions (exam run
       1 mis-scaled it; training/exam_road_errata.py).
   - metric: 'Trip energy per km: MdAPE, hybrids, VED trips (8,241 real exam units)'
     better: lower
     unit: '%'
-    model: 16.8
+    model: 17.7
     baselines:
     - name: RoadSim's law (p2-c10)
       kind: classical
@@ -317,12 +317,12 @@ exam:
       kind: dumb
       value: 19.0
     verdict: loss
-    note: Bias -7.1 %, coverage of the 68 % bar 89 %. EnergyNet's row re-computed from its stored predictions (exam run
+    note: Law v1.1 (p1-c17); v1.0 (p1-c23) scored 16.8. Bias -6.8 %, coverage of the 68 % bar 88 %. EnergyNet's row re-computed from its stored predictions (exam run
       1 mis-scaled it; training/exam_road_errata.py).
   - metric: 'Trip energy per km: MdAPE, electric (2 Nissan Leafs), VED trips (167 real exam units)'
     better: lower
     unit: '%'
-    model: 43.3
+    model: 33.7
     baselines:
     - name: RoadSim's law (p2-c10)
       kind: classical
@@ -349,12 +349,12 @@ exam:
       kind: dumb
       value: 28.0
     verdict: loss
-    note: Bias -42.2 %, coverage of the 68 % bar 94 %. EnergyNet's row re-computed from its stored predictions (exam run
+    note: Law v1.1 (p1-c17); v1.0 (p1-c23) scored 43.3. Bias -32.4 %, coverage of the 68 % bar 96 %. EnergyNet's row re-computed from its stored predictions (exam run
       1 mis-scaled it; training/exam_road_errata.py).
   - metric: 'Trip energy per km: MdAPE, petrol cars, EPA tests (46,876 real exam units)'
     better: lower
     unit: '%'
-    model: 17.3
+    model: 19.6
     baselines:
     - name: RoadSim's law (p2-c10)
       kind: classical
@@ -372,11 +372,11 @@ exam:
       kind: dumb
       value: 25.3
     verdict: loss
-    note: Bias +10.6 %, coverage of the 68 % bar 81 %.
+    note: Law v1.1 (p1-c17); v1.0 (p1-c23) scored 17.3. Bias +14.5 %, coverage of the 68 % bar 78 %.
   - metric: 'Trip energy per km: MdAPE, hybrids, EPA tests (4,154 real exam units)'
     better: lower
     unit: '%'
-    model: 13.1
+    model: 15.8
     baselines:
     - name: RoadSim's law (p2-c10)
       kind: classical
@@ -394,11 +394,11 @@ exam:
       kind: dumb
       value: 21.9
     verdict: loss
-    note: Bias +5.8 %, coverage of the 68 % bar 98 %.
+    note: Law v1.1 (p1-c17); v1.0 (p1-c23) scored 13.1. Bias +7.7 %, coverage of the 68 % bar 98 %.
   - metric: 'Trip energy per km: MdAPE, battery-electric, EPA tests (1,492 real exam units)'
     better: lower
     unit: '%'
-    model: 43.1
+    model: 20.0
     baselines:
     - name: RoadSim's law (p2-c10)
       kind: classical
@@ -416,7 +416,7 @@ exam:
       kind: dumb
       value: 15.8
     verdict: loss
-    note: Bias +42.2 %, coverage of the 68 % bar 100 %.
+    note: Law v1.1 (p1-c17); v1.0 (p1-c23) scored 43.1. Bias +10.8 %, coverage of the 68 % bar 100 %.
   coverage:
   - output: Long-term runoff ratio
     actual: 82.9
@@ -429,9 +429,9 @@ exam:
   - output: Home energy signature
     actual: 69.3
   - output: Trip energy per km (VED trips)
-    actual: 71.7
+    actual: 72.2
   - output: Trip energy per km (EPA tests)
-    actual: 82.6
+    actual: 80.0
 limits:
 - '<b>Water:</b> FlowCast, the collection''s ungauged network, beats the law (MAE 0.112 vs 0.129 on 619 basins). The law beats
   Budyko-Fu (0.141-0.154). In snowy basins (f_s > 0.3, 88 basins) every method is poor (law 0.22). All rows share ERA5-Land
@@ -448,11 +448,11 @@ limits:
 - <b>Homes:</b> the law loses to the dumb dev median (MdAPE 39.3 % vs 33.4 %) and to a log-linear fit on dev (26.6 %). BuildingSim's
   homes are about 1.4 times too energy-intensive at physics 1.0; 1.4 fixes the median but not the spread. RECS energy is EIA's
   billing-based estimate, and home-to-home variation (occupants, setpoints) is not in the inputs.
-- "<b>Road:</b> the law loses to EnergyNet everywhere and, on real VED trips, to RoadData's MOVES-like and window-label baselines (18.6 % against 11.8 % and 14.1 %; EnergyNet 10.1 %). It beats road-load on EPA petrol and hybrid tests (17.3 % and 13.1 % against 25.0 % and 19.6 %) and loses to it on electric cars: it reads the 2 VED Leafs 42 % low and EPA BEVs 42 % high, one exponent for every electric car. RoadSim's own shorter law (p2-c10) beats the released one on VED petrol (14.0 %) and on EPA (15.1 %); the dev gate (14 dev cars, 1,178 EPA dev tests) picked the longer law. Real CdA and Crr are class defaults on VED (EPA: from the road-load coefficients); VED fuel is MAF-estimated for most cars. Exam run 1 mis-scaled EnergyNet's VED rows (units); they were re-computed from its stored predictions."
+- "<b>Road:</b> the law (v1.1, p1-c17) loses to EnergyNet everywhere and, on real VED trips, to RoadData's MOVES-like and window-label baselines (18.7 % against 11.8 % and 14.1 %; EnergyNet 10.1 %). It beats road-load on EPA petrol and hybrid tests (19.6 % and 15.8 % against 25.0 % and 19.6 %) and loses to it on electric cars (VED Leafs 33.7 %, read 32 % low; EPA BEVs 20.0 %, read 11 % high). RoadSim's own shorter law (p2-c10) beats it on VED petrol (14.0 % against 19.0 %) and on EPA (15.1 % against 19.4 %); the dev gate (14 dev cars, 1,178 EPA dev tests) picked the longer law. Real CdA and Crr are class defaults on VED (EPA: from the road-load coefficients); VED fuel is MAF-estimated for most cars. Exam run 1 mis-scaled EnergyNet's VED rows (units); they were re-computed from its stored predictions."
 - <b>Method:</b> one search per physics version, time-boxed at 4-7 minutes on a shared core; another seed can give a different
   front. Dev sets are small (4 grid events, 40 fires, 52 basins), so the gate is coarse. The road law (RoadSim trip energy)
   was added on 22 Nov 2026, after the other four.
-- "<b>Road, electric cars and grade:</b> the released law's energy falls as the road gets steeper. On one battery-electric drive (same speed trace, start charge and seed) it gives 0.512, 0.408 and 0.324 MJ/km at -2 %, 0 and +2 % net grade, where RoadSim's battery energy is 0.009, 0.332 and 0.659 MJ/km (audit, 25 Nov 2026). At e = 1 the exponent's base is below one, so the sign holds for every BEV. Six of the 21 logged p2 candidates rise with grade; all six missed the pooled promotion margin. A sign-checked search (27 Nov 2026) found no replacement that passed the ratchet."
+- "<b>Road, grade:</b> the released law (v1.1, p1-c17) does not read grade, so it gives the same energy on a climb as on the flat. RoadSim's battery energy on one BEV drive goes from 0.332 to 0.659 MJ/km between flat and +2 %. v1.0's law (p1-c23) read grade with the wrong sign for every electric car (0.408 to 0.324 MJ/km on the same drive); since 27 Nov 2026 a road law whose energy falls as net grade rises at any frozen-set row cannot be released. No law that reads grade with the right sign has been found yet (sign-checked search, rungs p2s-*)."
 - "<b>Input ranges:</b> each law is fitted inside its bank's input ranges (var_info in lawfinder_laws.json) and extrapolates freely outside them. The homes law's heating slope turns negative for homes built after 2020 (+1.87 at 2020, -3.13 at 2025, kWh/m² per 1000 K·d). Chaining the two grid laws, 615 of 2,356 inertia predictions on a regular grid fall below the nadir law's 90 GVA·s floor. Since 27 Nov 2026 predict() warns outside the declared ranges (strict=True raises). One of the demo's real grid events is outside them (a loss above 2 GW)."
 help_wanted:
 - Daymet/NLDAS forcing would separate law skill from ERA5-Land bias (WaterData help_wanted)
@@ -463,7 +463,7 @@ next:
   the ladder; the shape term (1 − 0.85 s) should survive.'
 - 'Water: a recession law −dQ/dt = a Q^b on the same banks, and a Daymet/NLDAS exam to separate law skill from ERA5-Land bias.'
 - 'Road: give the law the car''s engine size or label fuel economy, cold start and trip length as inputs (RoadData has them), and widen the generator toward lighter cars.'
-- 'Road: a powertrain-aware grade term. The sign-checked search (27 Nov 2026, rungs p2s-*) found no law that reads grade with the right sign; its best, p2s-c19, ignores grade and scored R^2 0.757 against 0.767, so it was rejected and p1-c23 stays. Options for the owner: an EV dev check as a rule, or a search seeded with a road-load grade term per powertrain.'
+- 'Road: a law that reads grade with the right sign. Since v1.1 (27 Nov 2026) the sign gate keeps grade-inverting laws out, and the released p1-c17 ignores grade; the sign-checked search (rungs p2s-*) found no law that uses grade correctly. Next: a search seeded with a road-load grade term per powertrain, or a squared-log loss on a bank weighted toward real routes.'
 - 'Homes: add heating fuel and system as inputs (a law per fuel) and occupants; RECS dev shows the fuel matters most.'
 usage:
   install: pip install numpy
