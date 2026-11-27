@@ -429,11 +429,14 @@ class PolicyNet:
         return np.sinh(self.z_knots(X)) * np.asarray(ps, float)[:, None]
 
 
-def causal_wear(bat: Battery, T):
+def causal_wear(bat: Battery, T, lag_h=48):
     """Wear cost per hour for the day-ahead plan from temperatures known when the plan is made: each hour takes the
-    temperature 24 h earlier (the first day takes its first hour's). Pass it as run_policy(..., c_lin_plan=...)."""
+    temperature lag_h earlier (the first lag_h hours take the first hour's). A plan made at 14:00 runs to 23:00 the next
+    day (33 h ahead), so lag_h must exceed the planning horizon: 48 h does; 24 h, the first version, did not (Codex,
+    PR #23). Pass it as run_policy(..., c_lin_plan=...)."""
     T = np.asarray(T, float)
-    Tp = np.r_[np.full(min(24, len(T)), T[0]), T[:-24]] if len(T) > 24 else np.full(len(T), T[0])
+    n, L = len(T), int(lag_h)
+    Tp = np.r_[np.full(min(L, n), T[0]), T[:max(n - L, 0)]]
     return bat.c_lin(Tp)
 
 
@@ -444,8 +447,8 @@ def run_policy(net: PolicyNet, path, bat: Battery, c_lin, soc0=0.0, c_lin_plan=N
 
     c_lin_plan: the wear cost the day-ahead planner uses for future hours. By default it is c_lin, which the released
     exam built from realized temperatures: a perfect temperature forecast (audit, 25 Nov 2026: +5 degC over the next
-    12 h moved a 14:00 offer by $1.19/MWh; 24 h persistence changed annual net revenue by at most $0.11/kW-year on three
-    node-years). causal_wear(bat, path['T']) gives a plan that reads only past temperatures."""
+    12 h moved a 14:00 offer by $1.19/MWh; the audit's 24 h persistence changed annual net revenue by at most $0.11/kW-year on three
+    node-years). causal_wear(bat, path['T']) gives a plan that reads only temperatures known at issue time."""
     n = len(path['rt'])
     t = np.arange(n)
     ps = rolling_scale(np.asarray(path['da'], float))

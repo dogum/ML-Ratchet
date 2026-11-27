@@ -94,4 +94,9 @@ def test_batterypilot_causal_wear_reads_only_past_temperatures():
     T = np.linspace(0, 30, 96)
     base = bp.causal_wear(bat, T)
     T2 = T.copy(); T2[60:] += 5.0
-    np.testing.assert_array_equal(bp.causal_wear(bat, T2)[:84], base[:84])   # hour h uses T[h - 24]
+    np.testing.assert_array_equal(bp.causal_wear(bat, T2)[:108], base[:108])  # hour h uses T[h - 48]
+    # a plan issued at hour s covers targets up to s + 34 h; their wear must come from hours before s
+    for s0 in (14, 38, 62):
+        for target in range(s0, min(s0 + 35, len(T))):
+            moved = T.copy(); moved[s0:] += 9.0                                   # change everything from s0 on
+            assert bp.causal_wear(bat, moved)[target] == base[target]

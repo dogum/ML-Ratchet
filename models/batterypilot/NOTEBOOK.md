@@ -397,6 +397,6 @@ parameter file changed under it; its $9.3-10.7k breakdown is from `diag_rolling.
 
 The two-reviewer audit (`docs/audits/batterypilot-v1.3.md`) found two information leaks. At the first hour of a path
 the RT price history clipped to that hour's own price; fixed (the packaged node-years move at most $0.002/kW-year).
-The day-ahead planner's wear cost used realized temperatures for the coming hours. `causal_wear()` (24 h persistence)
+The day-ahead planner's wear cost used realized temperatures for the coming hours. `causal_wear()` (48 h persistence, so every plan reads only temperatures known when it is made; a first 24 h version still read up to 9 h ahead, Codex)
 is now available but off by default, so the card still describes v1.3. On the packaged node-years it moves annual net
-revenue by −$0.06 to +$0.01/kW-year. A dated re-score with it waits for the owner's approval.
+revenue by −$0.05, −$0.02 and −$0.03/kW-year. A dated re-score with it waits for the owner's approval.
