@@ -25,10 +25,25 @@ SHIELD = 4          # card4: v1.0's 6 h shield (thermopilot_core.shield_sp mode 
 
 
 def prior_card(c):
-    """Card fitted on the nominal twin over the month before the episode (Dec of the previous year for January)."""
+    """Card fitted on the nominal twin over the month before the episode (Dec of the previous year for January).
+    The window ends exactly at the episode start: an Episode would pad its model window by H + 2 hours (into the
+    evaluation month), and Model's descriptors (UA) and card_map average over the whole window (Codex, PR #28)."""
+    import pandas as pd
+    import buildingsim as bs
+    from tp import env
+    from tp.episode import prep_spec
+    from tp.mpc import Model
     y, m = (c['year'] - 1, 12) if c['month'] == 1 else (c['year'], c['month'] - 1)
-    pe = Episode(c['spec_nom'], c['spec_nom'], c['wsrc'], y, m, c['tariff'], c['pref'], seed=c['seed'])
-    return full_card(pe.model, pe.ctx, c['pref']['hi']), (y, m)
+    df, meta = env.weather(c['wsrc'], y)
+    tz = meta['tz']
+    t0 = pd.Timestamp(year=y, month=m, day=1, tz=tz).tz_convert('UTC')
+    t1 = pd.Timestamp(year=c['year'], month=c['month'], day=1, tz=tz).tz_convert('UTC')
+    spec = prep_spec(c['spec_nom'], c['pref'])
+    sim = bs.Simulator(spec, (df, meta), t0, t1, dt='1h', warmup_days=0, record_trend=False)
+    M = Model(sim)
+    assert pd.Timestamp(sim.times[-1]) < t1 and M.n == len(M.To) == int(round((t1 - t0) / pd.Timedelta(hours=1)))
+    lo, hi, state = env.band_schedule(sim, c['pref'])
+    return full_card(M, dict(lo=lo, hi=hi), c['pref']['hi']), (y, m)
 
 
 def controller(ep, card, pref_hi):

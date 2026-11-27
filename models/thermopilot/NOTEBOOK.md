@@ -526,20 +526,27 @@ Nothing else was re-run. Logs `training/results/v1.1_causal_card_2026-11-27/` (`
 
 | Set | Row | Episode-month card (17 Nov) | Causal card | v1.1 − best baseline, causal [95 %] | Causal − episode card [95 %] |
 |---|---|---|---|---|---|
-| RECS (48 homes) | bill | 2.77 % | 2.76 % | MPC: −0.94 [−1.32, −0.59] loss | −0.01 [−0.04, +0.01] |
-| RECS | skill | 0.698 | 0.692 | −0.13 [−0.21, −0.02] loss | −0.007 [−0.015, +0.001] |
-| RECS | K h | 0.42 | 0.43 | −0.13 [−0.30, +0.02] tie | +0.007 [−0.012, +0.027] |
-| BDG2 (16) | bill | 4.97 % | 4.95 % | MPC: +2.26 [+1.48, +2.98] win | −0.02 [−0.14, +0.10] |
-| BDG2 | skill | 0.757 | 0.760 | +0.31 [+0.18, +0.45] win | +0.003 [−0.007, +0.014] |
+| RECS (48 homes) | bill | 2.77 % | 2.76 % | MPC: −0.95 [−1.33, −0.60] loss | −0.02 [−0.05, +0.00] |
+| RECS | skill | 0.698 | 0.689 | −0.13 [−0.21, −0.02] loss | −0.009 [−0.016, −0.003] |
+| RECS | K h | 0.42 | 0.44 | −0.13 [−0.30, +0.04] tie | +0.013 [−0.002, +0.030] |
+| BDG2 (16) | bill | 4.97 % | 4.93 % | MPC: +2.24 [+1.44, +2.97] win | −0.04 [−0.17, +0.08] |
+| BDG2 | skill | 0.757 | 0.757 | +0.31 [+0.18, +0.45] win | +0.000 [−0.011, +0.012] |
 | BDG2 | K h | 0.00 | 0.00 | 0.00 tie | 0.00 |
-| WPuQ (38) | bill | 5.95 % | 5.94 % | MPC: −1.22 [−1.32, −1.11] loss | −0.01 [−0.03, +0.02] |
-| WPuQ | skill | 0.787 | 0.787 | −0.16 [−0.18, −0.15] loss | +0.000 [−0.003, +0.004] |
+| WPuQ (38) | bill | 5.95 % | 5.95 % | MPC: −1.22 [−1.32, −1.11] loss | −0.00 [−0.02, +0.02] |
+| WPuQ | skill | 0.787 | 0.788 | −0.16 [−0.17, −0.15] loss | +0.001 [−0.002, +0.005] |
 | WPuQ | K h | 0.00 | 0.00 | 0.00 tie | 0.00 |
 
-- **Per episode:** the monthly objective J changed in 130 of 166 episodes. On RECS it moved by −$3.84 to +$2.51, up to
+- **Per episode:** the monthly objective J changed in 131 of 166 episodes. On RECS it moved by −$0.88 to +$2.51, up to
   1.2 % of J. On BDG2 it moved by −$37 to +$104, up to 0.7 %. On WPuQ it moved by −$0.56 to +$0.71, up to 0.2 %. The
   audit's bound (≤ 0.21 %) held for WPuQ; it came from four episodes and is exceeded on some RECS and BDG2 episodes,
   in both directions, and nets out on every set.
+- **Correction (same day, before merge; Codex on PR #28):** the first run built the prior-month model through an
+  `Episode`, which pads the model window by 26 h into the evaluation month, and `Model.UA` and `card_map` average
+  over the whole window. So that card still saw the first 26 h of the episode's weather (UA off by 0.3 % on the
+  first BDG2 case). `prior_card` now builds the simulator on [first of the prior month, episode start) and asserts
+  it. All 166 episodes were re-run; the table above is the corrected run. The first run gave the same verdicts
+  (RECS skill −0.007 [−0.015, +0.001], BDG2 bill −0.02 [−0.14, +0.10]). With the strict window RECS skill is
+  slightly but clearly lower than with the episode card; every other difference spans zero.
 - **What changes:** the exam rows in model.yaml and the card now carry the causal numbers, with the old ones in their
   notes. The controller is unchanged (the card is an input), so there is no new version. The v1.1 − v1.0 rows stay as
   published: v1.0 was scored with the episode-month card too and was not re-run.

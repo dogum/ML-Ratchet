@@ -38,8 +38,9 @@ Uses NumPy, pandas, SciPy, pvlib, Numba, and CPU PyTorch. [Second-pass probe](re
 
 **Follow-up run (27 Nov 2026, owner-approved).** Dated re-score of v1.1 with each card fitted on the month before the
 episode (`models/thermopilot/training/scripts/rescore_causal_card.py`; 166 episodes; logs in
-`training/results/v1.1_causal_card_2026-11-27/`). Every exam row moved by at most 0.02 bill points and 0.007 skill.
-Causal minus episode card: RECS bill −0.01 [−0.04, +0.01], BDG2 −0.02 [−0.14, +0.10], WPuQ −0.01 [−0.03, +0.02]. No
-verdict changed. Per episode the monthly objective moved by up to 1.2 % (RECS), 0.7 % (BDG2) and 0.2 % (WPuQ), in both
+`training/results/v1.1_causal_card_2026-11-27/`). Every exam row moved by at most 0.04 bill points and 0.009 skill.
+Causal minus episode card: RECS bill −0.02 [−0.05, +0.00], BDG2 −0.04 [−0.17, +0.08], WPuQ −0.00 [−0.02, +0.02]; RECS
+skill −0.009 [−0.016, −0.003] is the only interval that excludes zero. No verdict changed. The card window ends at the
+episode start (a first run padded it 26 h into the episode and was re-run). Per episode the monthly objective moved by up to 1.2 % (RECS), 0.7 % (BDG2) and 0.2 % (WPuQ), in both
 directions. So the audit's 0.21 % bound, taken from four episodes, is exceeded on single episodes but not on any
 row. model.yaml and the card now carry the causal numbers. The controller is unchanged.

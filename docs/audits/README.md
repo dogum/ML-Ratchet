@@ -81,7 +81,7 @@ each card still describes the released model. Its dated re-score, like every ret
 | LoadCast | Warning when no electricity meter; opt-in `assume_electricity` | Not re-scored: 58 of 1,584 exam buildings affected | **Run 27 Nov:** 19 exam meters (15 buildings) re-scored; no verdict changed; released as v1.0.1 (`assume_electricity` on). Representation rung not run (frozen set has no such building) |
 | BuildingDetective | Short records hold span inputs at one year; |z| > 8 warning | None (both exams full-year) | **Run 27 Nov:** rung r11 (district zero runs) rejected on the frozen set (0.8287 vs 0.8301); bounded variant logged; no exam |
 | FaultFinder | Day cut before QC; refuses empty days and self-reference; BuildingSim cache key | None (exam passed one-day frames) | — |
-| ThermoPilot | BuildingSim cache key hashes every weather column | Bounded by the audit at ≤ 0.21 % monthly cost | **Run 27 Nov:** causal cards, 166 episodes; rows moved ≤ 0.02 bill points, no verdict changed; card updated |
+| ThermoPilot | BuildingSim cache key hashes every weather column | Bounded by the audit at ≤ 0.21 % monthly cost | **Run 27 Nov:** causal cards, 166 episodes; rows moved ≤ 0.04 bill points and ≤ 0.009 skill, no verdict changed; card updated |
 | FlowCast | Nowcast refuses lead 0; torch seeded, resume restores RNG | None | — |
 | SnowSense | Partial water years stop at the last input; torch seeded | None (exam uses completed years) | — |
 | BasinDetective | Refuses unusable calibration flow | None | Matched retrain with a symmetric precipitation prior |

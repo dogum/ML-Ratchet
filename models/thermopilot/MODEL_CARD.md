@@ -108,9 +108,10 @@ on homes the classical MPC (BuildingSim's own hourly maps, true wind and humidit
 
 **Causal-card re-score (27 Nov 2026, seen).** The table above fitted each house's card on the evaluation month's own
 weather (audit finding). Fitted instead on the month before each episode (how the controller must be used), v1.1
-scores: RECS bill 2.76 % (−0.94 [−1.32, −0.59] vs MPC), skill 0.69, 0.43 K h; BDG2 bill 4.95 % (+2.26 [+1.48, +2.98]),
-skill 0.760, 0.00 K h; WPuQ bill 5.94 % (−1.22 [−1.32, −1.11]), skill 0.79, 0.00 K h. Causal minus episode card: at
-most 0.02 bill points and 0.007 skill on any set, every interval spans zero, no verdict changed. Per episode the
+scores: RECS bill 2.76 % (−0.95 [−1.33, −0.60] vs MPC), skill 0.69, 0.44 K h; BDG2 bill 4.93 % (+2.24 [+1.44, +2.97]),
+skill 0.757, 0.00 K h; WPuQ bill 5.95 % (−1.22 [−1.32, −1.11]), skill 0.79, 0.00 K h. Causal minus episode card: at
+most 0.04 bill points and 0.009 skill on any set; only RECS skill (−0.009 [−0.016, −0.003]) excludes zero; no verdict
+changed. The card window ends at the episode start (a first run padded it 26 h into the episode; fixed, PR #28). Per episode the
 monthly cost moved by up to 1.2 % (RECS), 0.7 % (BDG2) and 0.2 % (WPuQ). The controller is unchanged.
 Logs: `training/results/v1.1_causal_card_2026-11-27/`.
 
