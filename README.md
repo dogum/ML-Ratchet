@@ -52,6 +52,7 @@ The losses are published too.
 | [**FireDetective**](models/firedetective/) | What drove a wildfire, from its satellite record | 944 real exam fires, 2017-23 | 3 wins · 2 losses · 3 ties |
 | [**FirePilot**](models/firepilot/) | Where to build containment line in a fire's first 72 h *(graded in simulation)* | 48 real exam fires, outcomes simulated in FireSim, once | 1 win · 0 losses · 1 mixed · 1 tie |
 | [**QuakeNet v2**](models/quakenet-v2/) | Where, how deep, how big and when — from 2–10 seismometers together? | 1,456 quakes at 2 stations; 400 at up to 10 | 4 wins · 2 losses |
+| [**RoomSense**](models/roomsense/) | How long does a room ring after one clap? *(actual-clap exam pending)* | 38 synthetic claps through measured responses · 3 held-out rooms | 1 win · 1 loss |
 | [**TsunamiNet**](models/tsunaminet/) | How big is the tsunami coming, from the first DART readings? | 28 real DART-recorded Pacific tsunamis, 119 held-out DART forecasts | 3 wins · 2 losses |
 | [**LawFinder**](models/lawfinder/) | One-line laws extracted from the simulators, graded on real exams | Five platforms' real exams, six laws | 2 wins · 10 losses |
 | [**AirfoilNet**](models/airfoilnet/) | What polar will this airfoil have, and where does it stall? | 75 airfoils, 34 families, UIUC tunnel | 3 wins · 6 losses |
@@ -61,7 +62,7 @@ Every model also runs **live in your browser** on the website — the real netwo
 against Python, on real exam records, with controls that change the input so you can watch the reading respond.
 
 <!-- totals:start (generated) -->
-**0** real labelled examples were used for training. **583** rung decisions are logged, **333** of them rejections.
+**0** real labelled examples were used for training. **587** rung decisions are logged, **336** of them rejections.
 <!-- totals:end -->
 
 Every model runs on numpy in seconds and ships real exam examples, so you can check the numbers yourself. The three
