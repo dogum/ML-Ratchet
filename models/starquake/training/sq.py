@@ -65,18 +65,21 @@ def fill_short(y, maxgap=3):
         if 0 < a and b < len(y) and b - a <= maxgap: fill[a:b] = True
     out[fill] = np.interp(np.flatnonzero(fill), idx, y[idx]); return out
 
-def grid_lc(cad, flux, quarter, q):
-    """Real Kepler PDCSAP light curve -> ppm on the cadence grid (per-quarter median normalisation), NaN in gaps."""
+def grid_lc(cad, flux, quarter, q, trim=False):
+    """Real Kepler PDCSAP light curve -> ppm on the cadence grid (per-quarter median normalisation), NaN in gaps.
+    trim=True (27 Nov 2026, as pipeline.grid_lc) starts and ends the grid at the first and last good cadence."""
     c0 = cad.min(); n = cad.max() - c0 + 1; out = np.full(n, np.nan)
     good = np.isfinite(flux) & ((q & BAD) == 0)
     for qq in np.unique(quarter):
         s = good & (quarter == qq)
         if s.sum() < 50: continue
         out[cad[s] - c0] = 1e6 * (flux[s] / np.median(flux[s]) - 1)
+    m = np.isfinite(out)
+    if trim and m.any(): out = out[int(np.argmax(m)):len(m) - int(np.argmax(m[::-1]))]
     return out
 
-def read_npz(path):
-    z = np.load(path); return grid_lc(z['cad'], z['flux'].astype(np.float64), z['quarter'], z['q'])
+def read_npz(path, trim=False):
+    z = np.load(path); return grid_lc(z['cad'], z['flux'].astype(np.float64), z['quarter'], z['q'], trim=trim)
 
 def scalars(y):
     """observing length (days) and duty cycle -> 2 network scalars"""

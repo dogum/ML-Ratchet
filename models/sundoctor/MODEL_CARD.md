@@ -1,4 +1,4 @@
-# SunDoctor model card (v2.1, rung 9)
+# SunDoctor model card (v2.1.1, rung 9)
 
 **What it is.** A 2-D convolutional network (591,455 weights) that reads 14 days x 96 fifteen-minute steps (local *solar*
 time) of one PV system: AC power per kW of DC nameplate, air temperature and, if the site has one, plane-of-array (POA)
@@ -179,6 +179,26 @@ tracker angles). Answer keys, all from the plant's own instruments:
 | Outage days caught | 84.2% | 86.9% | 79.2% |
 | False outage alarms | 0.1% | 0.1% | 0.1% |
 | Outage AUC | 1.00 | 0.98 | 0.97 |
+
+## Supplementary re-score: daylight gaps (v2.1.1, 27 Nov 2026)
+
+A day used to count if half its intervals had data, and missing intervals counted as zero energy, so a midday gap read
+as an outage (audit). v2.1.1 drops days with less than 90% of their 08:00-16:00 solar-time readings
+(`diagnose(min_daylight=0.9)`, now the default; `min_daylight=None` gives the v2.1 rule). The released v2.1 weights were
+re-scored once on the same rebuilt data (`training/exam_v211.py`; record `training/exam_v211_min_daylight.json`). The
+half-day row reproduces the published exam exactly. 2107 has no gappy days; at 9068 the rule drops 328 of 17,468
+inverter-days (160 of them miss more than 2 h of daylight).
+
+| PVDAQ 9068 | v2.1 rule, with sensor | min_daylight 0.9, with sensor | v2.1 rule, power only | min_daylight 0.9, power only |
+|---|---|---|---|---|
+| Outage days caught | 92.9% | 94.7% | 90.8% | 90.8% |
+| False outage alarms | 0.09% | 0.06% | 0.08% | 0.08% |
+| Snow AUC | 0.891 | 0.891 | 0.821 | 0.822 |
+| Big tracker-loss days flagged | 72.2% | 71.7% | 78.9% | 80.8% |
+| Tracker loss AUC (over 2%) | 0.471 | 0.460 | 0.459 | 0.451 |
+
+String failures (55 / 56), offline inverters (48 / 49 and 47 / 49) and the 2107 dead-string count (95.7%) do not change.
+The demo's Colorado winter now counts 103 days, not 104, and its outage loss falls from 3.43% to 2.82%.
 
 ## Limits
 

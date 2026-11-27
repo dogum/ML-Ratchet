@@ -83,6 +83,26 @@ beats the incumbent by more than 0.01 AND, on the six real dev records (MIT-BIH 
 | 4 | r4: physics v3 = v2 + dev noise-floor calibration (NSTDB -10 dB + quiet real dev background) + fusion visibility rule | 0.892 | 0.441 | 0.528 | no | sim macro-F1 0.892 vs 0.873; dev S/V F1 0.441 vs 0.476 (dev gate failed) |
 | 5 | r5: physics v4 = v3 + dev-calibrated ectopic coupling (S beats at 0.56 of local RR on dev, 0.78 in v3 sims) | 0.897 | 0.509 | 0.549 | yes | sim macro-F1 0.897 vs 0.873; dev S/V F1 0.509 vs 0.476 |
 
+### Retrain without patient 201/202 (27 Nov 2026): not promoted
+
+MIT-BIH 201 (a dev record, so in the calibration and the quiet background pool) and 202 (DS2) are one patient. Split
+v2 drops 201 from dev (5 records: 101, 112, 119, 203, 220) and 202 from the DS2 exam. Without 201, dev S beats arrive at
+0.64 of the local RR, not 0.555, so physics v5 moves the coupling back (simulated 0.63) and rebuilds the quiet
+background from the 5 records. Frozen set v5val (400 patients). Same rule.
+
+| Rung | frozen-sim macro-F1 (v5val) | dev S/V F1 (5 records) | kept | why |
+|---|---|---|---|---|
+| r5 (released v1.0), re-scored | 0.879 | 0.579 | yes | incumbent |
+| r6_s0: physics v5, from scratch, 4,000-patient bank, 9,000 steps, seed 0 | 0.896 | 0.409 | no | dev gate failed |
+| r6_s1: as r6_s0, seed 1 | 0.903 | 0.536 | no | dev gate failed |
+
+Both candidates are better in simulation and worse on the real dev records: they call more dev beats V (V +P 0.40 vs
+0.57), and dev S sensitivity swings from 0.28 to 0.60 between the two seeds. v1.0 stays; DS2 was not opened for them.
+
+**Dated DS2 score of v1.0 without record 202** (27 Nov 2026, `training/ds2_without_202.py`, v1.0's own dev prior):
+21 records, macro-F1 **0.553**, SV-F1 0.631 (N 91.7 / 97.1, S 50.2 / 70.7, V 97.3 / 51.5, F 0.8 / 0.7, Se / +P %); rules
+0.432. All 22 records, re-scored from rebuilt data: 0.547 and 0.618, as published.
+
 ## Final exam: MIT-BIH Arrhythmia Database, inter-patient DS2 (de Chazal et al. 2004)
 22 records, 49,705 beats (N 44,259, S 1,837, V 3,221, F 388),
 MLII, paced records excluded. Beat positions = reference annotations. Se = sensitivity, +P = positive predictivity, in %.

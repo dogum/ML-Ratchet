@@ -1,5 +1,5 @@
 <!-- Generated from model.yaml and ratchet.yaml by `mlratchet readme --write`. Edit those, not this file. -->
-# SunDoctor <sub>v2.1</sub>
+# SunDoctor <sub>v2.1.1</sub>
 
 > **A day-by-day doctor for solar farms, trained on sunlight physics alone.**
 
@@ -49,8 +49,8 @@ Two real farms, graded against independent answer keys (sibling inverters, the p
 | Dead strings counted right, all inverter-days<br><sub>v2.0: 95.9%.</sub> | **95.7%** | — | ℹ️ |
 | Inverters offline caught<br><sub>v2.1 trains on multi-day inverter trips. v2.0: 44 / 49 (re-scored 44 / 49). Power only: 47 / 49 (v2.0: 39 / 49).</sub> | **48 / 49** | SunDoctor v1, with sensor (classical): 47 / 49<br>SunDoctor v1, power only (classical): 0 / 49 | ✅ wins |
 | Snow AUC (Colorado)<br><sub>Worse than v2.0 (0.98): v2.1 reads more buried-snow days as dark inverters. Power only 0.82 (v2.0: 0.94).</sub> | **0.89** | — | ✅ wins |
-| Big tracker-loss days (> 10%) flagged<br><sub>v2.0: 77%.</sub> | **72%** | SunDoctor v1 (classical): 0% | ✅ wins |
-| Small tracker losses (2–5%) ranked, AUC<br><sub>v2.0: 0.50 (tie). Simulated tracker days rank these losses at AUC 0.79-0.81, so the gap is between the simulator and this farm.</sub> | **0.47** | Coin flip (dumb baseline): 0.5 | ❌ loses |
+| Big tracker-loss days (> 10%) flagged<br><sub>v2.0: 77%. v2.1.1 (min_daylight 0.9 by default; dated re-score 27 Nov 2026): 71.7%.</sub> | **72%** | SunDoctor v1 (classical): 0% | ✅ wins |
+| Small tracker losses (2–5%) ranked, AUC<br><sub>v2.0: 0.50 (tie). v2.1.1 re-score (min_daylight 0.9): 0.46. Simulated tracker days rank these losses at AUC 0.79-0.81, so the gap is between the simulator and this farm.</sub> | **0.47** | Coin flip (dumb baseline): 0.5 | ❌ loses |
 
 ### Where it wins
 
@@ -69,7 +69,7 @@ Two real farms, graded against independent answer keys (sibling inverters, the p
 - A panel buried in snow all day looks like a tripped inverter; it sometimes calls that an outage.
 - Colorado is not fully blind for rung 8 — the fronts change was prompted by rung 6's snow misses there.
 - Two farms tested, both utility scale. Rooftops, microinverters, bifacial and satellite irradiance are untested.
-- CSV input (audit, 25 Nov 2026; fixed 27 Nov 2026): rows are now sorted by time and duplicate timestamps dropped (a newest-first file gave 0 valid days). A day still counts with half its intervals and missing intervals count as zero energy, so a 5 h midday gap cut kWh 61-67 % and read as a 30 % outage; the reader now warns on counted days missing more than 2 h of daylight, and diagnose(min_daylight=0.9) drops them (opt-in: the exam used the half-day rule).
+- CSV input (audit, 25 Nov 2026; fixed 27 Nov 2026): rows are now sorted by time and duplicate timestamps dropped (a newest-first file gave 0 valid days). A day still counts with half its intervals and missing intervals count as zero energy, so a 5 h midday gap cut kWh 61-67 % and read as a 30 % outage; the reader now warns on counted days missing more than 2 h of daylight, and diagnose(min_daylight=0.9) drops them. Since v2.1.1 (27 Nov 2026) that is the default: the dated re-score dropped 328 of 17,468 inverter-days at 9068 (none at 2107); outage days caught 92.9 -> 94.7%, tracker-loss AUC 0.471 -> 0.460, snow AUC unchanged at 0.89, string and offline-inverter counts unchanged.
 
 ## The ratchet
 

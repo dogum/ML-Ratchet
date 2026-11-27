@@ -49,12 +49,13 @@ def parse_raw(path, keep_99=False):
         v[v >= 998.9] = np.nan; rows.append(v)
     return np.array(out_t), freqs, np.array(rows)
 
-def read_ndbc(swden, swdir=None, swr1=None, field_sentinels=False):
+def read_ndbc(swden, swdir=None, swr1=None, field_sentinels=True):
     """-> dict(h0, E, C, S) on an hourly grid from h0; C, S = r1 cos(alpha1), r1 sin(alpha1) (NaN if no directional files)
 
-    The parser reads 99 as missing in every file. In a direction file (swdir) 99 is a valid bearing: 3,445 of them in
-    the packaged 51004 2018 file (audit, 25 Nov 2026), and in swr1 it is r1 = 0.99. field_sentinels=True keeps 99 in
-    swdir and swr1 (999 stays missing). Off by default: the exam was parsed the old way."""
+    In a direction file (swdir) 99 is a valid bearing: 3,445 of them in the packaged 51004 2018 file (audit, 25 Nov
+    2026), and in swr1 it is r1 = 0.99. field_sentinels=True (the default since v1.1.1, 27 Nov 2026) keeps 99 in swdir
+    and swr1; 999 stays missing everywhere, and 99 stays missing in swden. field_sentinels=False is the v1.1 parse
+    (99 missing in every file). The dated re-score with field sentinels moved the exam by at most 0.17 h and 0.09 deg."""
     t, fr, V = parse_raw(swden); h0, h1 = t.min(), t.max() + 1; n = h1 - h0
     Eg = np.full((n, 34), np.nan, np.float32); Eg[t - h0] = to_grid(fr, V, True); Cg = np.full_like(Eg, np.nan); Sg = np.full_like(Eg, np.nan)
     if swdir and swr1:

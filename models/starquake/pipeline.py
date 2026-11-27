@@ -65,14 +65,15 @@ def fill_short(y, maxgap=3):
         if 0 < a and b < len(y) and b - a <= maxgap: fill[a:b] = True
     out[fill] = np.interp(np.flatnonzero(fill), idx, y[idx]); return out
 
-def grid_lc(cad, flux, quarter, q, trim=False):
+def grid_lc(cad, flux, quarter, q, trim=True):
     """Real Kepler PDCSAP light curve -> ppm on the cadence grid (per-quarter median normalisation), NaN in gaps.
 
     The grid runs from the first to the last cadence supplied, flagged or not. Flagged or empty cadences at either end
     add only NaN, yet they lower the duty cycle and change the FFT grid (audit, 25 Nov 2026: 90 days of flagged rows
-    moved KIC 2695975 from 1.677 to 1.777 solar masses). trim=True starts and ends the grid at the first and last good
-    cadence. Off by default: the exam used the untrimmed grid, and 36 of the 858 archived light curves start or end
-    on a gap."""
+    moved KIC 2695975 from 1.677 to 1.777 solar masses). trim=True (the default since v1.1.1, 27 Nov 2026) starts and
+    ends the grid at the first and last good cadence; trim=False gives the v1.1 grid and warns. 36 of the 858 archived
+    light curves start or end on a gap (22 of the 420 exam stars); the dated re-score with trimming moved the exam's
+    whole-light-curve hybrid errors from 1.01 to 0.99% (numax) and 0.65 to 0.62% (dnu)."""
     c0 = cad.min(); n = cad.max() - c0 + 1; out = np.full(n, np.nan)
     good = np.isfinite(flux) & ((q & BAD) == 0)
     for qq in np.unique(quarter):
@@ -91,7 +92,7 @@ def grid_lc(cad, flux, quarter, q, trim=False):
                           stacklevel=2)
     return out
 
-def read_npz(path, trim=False):
+def read_npz(path, trim=True):
     z = np.load(path); return grid_lc(z['cad'], z['flux'].astype(np.float64), z['quarter'], z['q'], trim=trim)
 
 def scalars(y):
@@ -104,7 +105,7 @@ def prepare(y):
     yh = highpass(fill_short(y)); f, P = psd(yh); F1, F2 = features(f, P); s, T = scalars(yh); return F1, F2, s, (f, P), T
 
 
-def load_kepler(src, trim=False):
+def load_kepler(src, trim=True):
     """Kepler long-cadence light curve -> ppm on the cadence grid (NaN in gaps).
     src: list of *_llc.fits paths (needs astropy), or a dict/npz with arrays cad, flux (PDCSAP), quarter, q (SAP_QUALITY)."""
     if isinstance(src, (list, tuple)):

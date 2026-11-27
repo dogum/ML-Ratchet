@@ -91,16 +91,16 @@ each card still describes the released model. Its dated re-score, like every ret
 | FireDetective | Refuses empty histories | None (exam fires had 3–12 steps) | Run 27 Nov 2026: R7f held, no exam: with the flag at sd 1 blind mode reads wind from BI (blind-wind R² 0.99); the 1e-3 floor had blocked that |
 | FirePilot | Warning on non-afternoon crew clocks | None (all 48 exam fires had 34 h) | Run 27 Nov 2026: r5vs (crew starts 06-18 h) kept by +0.011; v1.1 graded once: 0.469 / 0.625 vs 0.474 / 0.644 (level), self-prediction bias halved or better |
 | QuakeNet | Incomplete-window warning; refuses NaN in the window | None | — |
-| QuakeNet v2 | Catalogue-assisted picking stated in the card | — | Exam with independent picks |
+| QuakeNet v2 | Catalogue-assisted picking stated in the card | Supplementary exam with independent picks (27 Nov 2026): median miss 497 km with all stations, vs 123 km with the catalogue guess on the same records | Run 27 Nov 2026 |
 | TsunamiNet | Refuses events without a buoy; calibrated `GreensFunctions()` default | None (all 28 exam events had a buoy) | — |
 | ChirpNet | FAR with no louder background is the Poisson 90 % limit (1.15/h, was 0.50/h) | Reporting only | — |
 | StormNet | Calibration bin labels match the code | None | — |
-| StarQuake | Edge-cadence warning; opt-in `trim` | Not re-scored: 36 of 858 light curves have edge gaps | High-RMS noise in the bank; re-score with trimming |
+| StarQuake | Edge trimming (default since v1.1.1) | Re-scored 27 Nov 2026: whole-curve νmax 1.01 → 0.99%, Δν 0.65 → 0.62% (22 exam stars affected) | Run 27 Nov 2026: high-RMS rung rejected (false alarms 16.9 → 11.1%, dev +22%) |
 | TransitNet | Refuses constant flux; warns on unobserved transit cores | None | — |
-| SwellCast | Refuses all-NaN windows; opt-in field-specific NDBC sentinels | Not re-scored (exam parsed with the generic rule) | Re-score with field sentinels |
-| SunDoctor | CSV rows sorted by time; daylight-gap warning; opt-in `min_daylight` | None for sorting | Re-score with `min_daylight` |
+| SwellCast | Refuses all-NaN windows; field-specific NDBC sentinels (default since v1.1.1) | Re-scored 27 Nov 2026: distance 29.3%, time 26.9 h, direction 19.3° (was 29.3%, 26.8 h, 19.2°) | Run 27 Nov 2026 |
+| SunDoctor | CSV rows sorted by time; `min_daylight=0.9` (default since v2.1.1) | Re-scored 27 Nov 2026: 328 of 17,468 inverter-days dropped at 9068; outage days caught 92.9 → 94.7%, tracker AUC 0.471 → 0.460, counts unchanged | Run 27 Nov 2026 |
 | BearingNet | Skips windows with missing samples | None | — |
-| BeatNet | Fills ≤ 10-sample gaps, refuses longer; 201/202 patient in the card | Card shows DS2 without 202 | Retrain without patient 201/202, then re-score |
+| BeatNet | Fills ≤ 10-sample gaps, refuses longer; 201/202 patient in the card | Dated DS2 without 202 (27 Nov 2026): macro-F1 0.553 | Retrain run 27 Nov 2026: two rungs failed the dev gate, v1.0 stays |
 | CellSense | Refuses all-NaN discharges | None | — |
 | WakeNet | Demo summary scores all 31 waked readings | None (exam already did) | — |
 | AirfoilNet | Lednicer blocks reordered in `polar(coords=...)`; header fixed | None (exam used canonical coordinates) | — |

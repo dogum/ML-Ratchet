@@ -5,7 +5,10 @@ DS2, the rest of DS1 and SVDB are scored and logged but never used in the decisi
 import _paths as _P  # portable paths (see _paths.py)
 import sys, os, json, numpy as np
 sys.path.insert(0, _P.SRC); import bnet as BN
-LOG = _P.WORK + '/ratchet.json'
+LOG = _P.WORK + '/' + os.environ.get('BEAT_LOG', 'ratchet.json')
+# Since 27 Nov 2026 (split v2 ladder, BEAT_LOG=ratchet_v2.json) the DS2 exam is not scored per rung: it is opened once,
+# by exam.py, for the rung the ratchet releases.
+EXAM_PER_RUNG = os.environ.get('BEAT_LOG', 'ratchet.json') == 'ratchet.json'
 
 def decide(rec, inc):
     if inc is None: rec['accepted'] = True; rec['why'] = 'first rung'; return
@@ -15,7 +18,7 @@ def decide(rec, inc):
                   f"; dev S/V F1 {rec['dev']['sv_f1']:.3f} vs {inc['dev']['sv_f1']:.3f}" + ('' if d_ok else ' (dev gate failed)'))
 
 def evaluate(ckpt):
-    net = BN.load_net(ckpt); v = BN.val(net); dv = BN.real(net, 'dev')[0]; ex = BN.real(net, 'ds2')[0]
+    net = BN.load_net(ckpt); v = BN.val(net); dv = BN.real(net, 'dev')[0]; ex = BN.real(net, 'ds2')[0] if EXAM_PER_RUNG else None
     return dict(ckpt=os.path.basename(ckpt), val=v, objective=v['objective'], dev=dv, exam=ex, valset=os.path.basename(BN.VAL))
 
 def fmt(s): return ' '.join(f"{c} Se {s['se'][i]:.2f} +P {s['ppv'][i]:.2f} |" for i, c in enumerate('NSVF'))
@@ -23,8 +26,8 @@ def fmt(s): return ' '.join(f"{c} Se {s['se'][i]:.2f} +P {s['ppv'][i]:.2f} |" fo
 def main(ckpt, note):
     rec = evaluate(ckpt); rec['note'] = note; log = json.load(open(LOG)) if os.path.exists(LOG) else []
     inc = next((r for r in reversed(log) if r['accepted']), None); decide(rec, inc); log.append(rec); json.dump(log, open(LOG, 'w'), indent=1)
-    if 'af' in rec['dev']: print('  AF (sim / dev / exam):', *[f"Se {d['af']['se']:.2f} +P {d['af']['ppv']:.2f} AUC {d['af']['auc']:.3f}" for d in (rec['val'], rec['dev'], rec['exam'])])
-    print(f"{rec['ckpt']}: objective {rec['objective']:.3f} (sim QRS MAE {rec['val']['qrs_mae_ms']:.1f} ms)\n  sim  {fmt(rec['val'])}\n  dev  {fmt(rec['dev'])}\n  exam {fmt(rec['exam'])}\n ",
+    if 'af' in rec['dev']: print('  AF (sim / dev / exam):', *[f"Se {d['af']['se']:.2f} +P {d['af']['ppv']:.2f} AUC {d['af']['auc']:.3f}" for d in (rec['val'], rec['dev'], rec['exam']) if d])
+    print(f"{rec['ckpt']}: objective {rec['objective']:.3f} (sim QRS MAE {rec['val']['qrs_mae_ms']:.1f} ms)\n  sim  {fmt(rec['val'])}\n  dev  {fmt(rec['dev'])}\n  exam {fmt(rec['exam']) if rec['exam'] else 'not scored'}\n ",
           'ACCEPTED' if rec['accepted'] else 'rejected', '-', rec['why'])
 
 def rescore():

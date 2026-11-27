@@ -29,4 +29,5 @@ Uses NumPy and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_759c345_
 | Finding | Real? | Action | Evidence |
 |---|---|---|---|
 | Generic 99 sentinel erases valid bearings | Yes | **Opt-in fix, re-score queued**: `read_ndbc(..., field_sentinels=True)` keeps 99 in `swdir` and `swr1` (999 stays missing). Default unchanged because the exam (and the demo) were parsed the old way. | Audit: 3,445 bearings in the packaged 51004 2018 file; Olivia −0.46°. |
+| Follow-up (27 Nov 2026): re-score with field sentinels | Run | **Dated re-score, then default (v1.1.1).** 422 buoy-years' direction files re-downloaded and re-parsed through `training/fetch.py` (`training/rescore_fs.py`); the old parse reproduced every stored grid. Confirmed exam: distance 29.32 → 29.27%, time 26.82 → 26.86 h, direction 19.23 → 19.31°, detected 63.2% both. No verdict changes. `read_ndbc(field_sentinels=True)` is now the default. | `training/exam_v111_fs.json`; NOTEBOOK 27 Nov 2026. |
 | All-NaN window reads as a storm swell | Yes | **Fixed**: `read` raises when the window has no finite energy. | Demo unchanged. |

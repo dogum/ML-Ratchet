@@ -17,3 +17,20 @@ ladders:
       - { id: r3, change: "Template channel (median neighbour beat)", sim: 0.860, decision: rejected, why: "Score fell (−0.013).", metrics: [0.465, 0.530] }
       - { id: r4, change: "Physics v3: dev noise floor and a fusion visibility rule", sim: 0.892, decision: rejected, why: "Dev gate failed (−0.035).", metrics: [0.441, 0.528] }
       - { id: r5, change: "Physics v4: dev-calibrated premature-beat coupling (S pre-RR ratio 0.78 → 0.59; dev 0.56)", sim: 0.897, decision: released, why: "+0.024 over rung 2; dev S/V F1 up.", metrics: [0.509, 0.549] }
+  - name: "Without patient 201/202 (27 Nov 2026)"
+    objective: Macro-F1 (N/S/V/F) on frozen v5val (400 simulated patients, physics v5 = v4 recalibrated on dev without record 201)
+    rule: Keep if macro-F1 rises by more than 0.01 AND the dev mean S/V F1 drops by no more than 0.02. Unchanged; fixed in NOTEBOOK.md before scoring.
+    margin: 0.01
+    dev_gate: "Dev (101, 112, 119, 203, 220; record 201 out) mean S/V F1 may not drop by more than 0.02"
+    frozen_sets: [v5val]
+    scored_on: v5val
+    note: >-
+      Records 201 (dev) and 202 (DS2) are one patient. The released r5 is re-scored as the incumbent; the candidates are
+      trained from scratch on physics v5. Both beat it in simulation and both fail the dev gate, so v1.0 stays. DS2 is
+      not scored per rung in this ladder.
+    columns_source: Dev mean S/V F1 (gate input)
+    columns: [Dev S/V F1]
+    rungs:
+      - { id: r5, change: "Released v1.0 network re-scored on v5val and the 5-record dev", sim: 0.879, decision: kept, why: Incumbent., metrics: [0.579] }
+      - { id: r6_s0, change: "Physics v5, from scratch, 4,000-patient bank, 9,000 steps, seed 0", sim: 0.896, decision: rejected, why: "Dev gate failed (0.409 vs 0.579).", metrics: [0.409] }
+      - { id: r6_s1, change: "As r6_s0, seed 1", sim: 0.903, decision: rejected, why: "Dev gate failed (0.536 vs 0.579).", metrics: [0.536] }
