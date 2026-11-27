@@ -83,16 +83,17 @@ def predict(B, W, cfg, k_only=None):
     return out
 
 
-def models(ckpt):
-    if ckpt == 'r11_split':       # the v1.3 ladder: incumbent v1.2 (r10)
+def models(ckpt, ladder='v1.2'):
+    """Incumbents by ladder: 'v1.2' (the r10 ladder: v1.1 and v1.1.1) or 'v1.3' (the per-output gate ladder: v1.2)."""
+    if ladder == 'v1.3':
         return {'v1.2': (weights('r10_repair'), CAND), ckpt: (weights(ckpt), CAND)}
     return {'v1.1': (weights('v1.1'), CFG['v1.1']), 'v1.1.1': (weights('v1.1'), CFG['v1.1.1']), ckpt: (weights(ckpt), CAND)}
 
 
-def val(ckpt, name='val_v5'):
+def val(ckpt, name='val_v5', ladder='v1.2'):
     Bv = load_banks([name])
     res = {}
-    for nm, (W, cfg) in models(ckpt).items():
+    for nm, (W, cfg) in models(ckpt, ladder).items():
         p = predict(Bv, W, cfg)
         res[nm] = E.sim_score(Bv, p)
         if 'meta_dgap' in Bv:
@@ -116,10 +117,10 @@ def val(ckpt, name='val_v5'):
     return res
 
 
-def dev(ckpt):
+def dev(ckpt, ladder='v1.2'):
     Bd = dict(np.load(f'{DATA}/banks/real_dev.npz')); rows = gate_rows(Bd)
     out = {}
-    for nm, (W, cfg) in models(ckpt).items():
+    for nm, (W, cfg) in models(ckpt, ladder).items():
         p = predict(Bd, W, cfg)
         out[nm] = {k: E.errors(Bd, p, k, rows=rows) for k in ('d', 'w', 's')}
         print(f"dev gate {nm}: d {out[nm]['d']['err']:.3f}% w {out[nm]['w']['err']:.2f}% s {out[nm]['s']['err']:.2f}% "
@@ -146,8 +147,8 @@ def add(ckpt, note):
 
 def add_per_output(ckpt, note):
     """The v1.3 ladder's rule (27 Nov 2026, exam-informed): objective on val_v5 > incumbent + 0.01 AND each output's
-    dev-gate error (demand, wind, solar) no more than 2 % worse than the incumbent's, separately."""
-    v = val(ckpt); v4 = val(ckpt, 'val_v4'); d = dev(ckpt)
+    dev-gate error (demand, wind, solar) no more than 2 % worse than the incumbent's, separately. Incumbent v1.2."""
+    v = val(ckpt, ladder='v1.3'); v4 = val(ckpt, 'val_v4', ladder='v1.3'); d = dev(ckpt, ladder='v1.3')
     inc = 'v1.2'
     s_ok = v[ckpt]['objective'] > v[inc]['objective'] + 0.01
     rel = {k: float(d[ckpt][k]['err'] / max(d[inc][k]['err'], 1e-9)) for k in ('d', 'w', 's')}
