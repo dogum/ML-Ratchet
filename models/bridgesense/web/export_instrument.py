@@ -23,6 +23,9 @@ OUT = instrument_dir("bridgesense")
 
 def main() -> None:
     net = BridgeSense()
+    # The browser port runs one member. Refuse an ensemble rather than ship a silently different model.
+    if net.n_members != 1:
+        raise SystemExit(f"export_instrument: release has {net.n_members} members; net.ts runs exactly one")
     # Export member 0 weights as float16 (browser sees f16; reference outputs use identical f16 roundtrip)
     W_raw = {k: v for k, v in net.members[0].items()}
     W_f16 = roundtrip(W_raw, "f16")

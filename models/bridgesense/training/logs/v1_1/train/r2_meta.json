@@ -1,0 +1,33 @@
+{
+  "name": "r2",
+  "params": 179144,
+  "config": {
+    "d_model": 64,
+    "n_heads": 4,
+    "d_ff": 128,
+    "n_t_layers": 2,
+    "n_m_layers": 2,
+    "dropout": 0.05,
+    "use_cross_attn": true,
+    "use_anchor": true
+  },
+  "seed": 42,
+  "train_banks": [
+    "train2"
+  ],
+  "val_bank": "sel2",
+  "best_val": {
+    "sim_score": 0.90543,
+    "auc": 0.98205,
+    "brier": 0.05335,
+    "dk_mae": 0.4934,
+    "dk_anchor_mae": 3.3066,
+    "dk_skill": 0.85079,
+    "env_mae": 0.2802,
+    "env_skill": 0.83442,
+    "cold_spec": 0.92517,
+    "cov_dk_68": 0.669,
+    "cov_env_68": 0.6655
+  },
+  "elapsed_s": 568.6
+}

@@ -540,16 +540,20 @@ def compute_physics_anchor(
     for m in range(M):
         ok = (mask_ref[:, m] > 0.5) & np.isfinite(df_ref[:, m]) & np.isfinite(T_ref)
         if np.sum(ok) >= 4:
+            # Fit with an intercept: centre T and df on THIS mode's valid readings (v1.1 fix; v1.0
+            # centred T on the whole window, which biased the slope whenever dropouts moved the mean).
             x = T_ref[ok] - T_ref_mean
             y = df_ref[ok, m]
-            vx = float(np.dot(x, x))
+            xm, ym = float(np.mean(x)), float(np.mean(y))
+            xc, yc = x - xm, y - ym
+            vx = float(np.dot(xc, xc))
             if vx > 1e-4:
-                a = float(np.dot(x, y) / (vx + 1e-2))
+                a = float(np.dot(xc, yc) / (vx + 1e-2))
                 # Physical sanity clip on linear thermal slope ([-0.015, +0.005] / K)
                 a = float(np.clip(a, -0.015, 0.005))
             else:
                 a = 0.0
-            b = float(np.mean(y) - a * np.mean(x))
+            b = float(ym - a * xm)
             slopes[m] = a
             intercepts[m] = b
             r = y - (a * x + b)
@@ -572,7 +576,10 @@ def compute_physics_anchor(
             mode_mean_resid[m] = float(np.mean(resid_q[ok, m]))
             mode_mean_raw[m] = float(np.mean(df_q[ok, m]))
 
-    active = q_counts > 0
+    # Eligible modes: >= 3 valid reference AND >= 2 valid query readings, the same rule as the
+    # network's mode mask (v1.1 fix; v1.0 let reference-less modes into the global summaries).
+    ref_counts = np.sum(mask_ref > 0.5, axis=0)
+    active = (ref_counts >= 3) & (q_counts >= 2)
     if np.any(active):
         # Implied stiffness change from linear-thermal residual: dK/K ~= 2 * df/f (in %)
         mean_resid = float(np.mean(mode_mean_resid[active]))
@@ -599,6 +606,7 @@ def compute_physics_anchor(
     freeze_frac_ref = float(np.mean(T_ref < 1.0)) if len(T_ref) else 0.0
 
     return {
+        "eligible": active,
         "slopes": slopes,
         "intercepts": intercepts,
         "ref_resid_std": ref_resid_std,

@@ -32,8 +32,8 @@ class LinearOLSBaseline:
             ep["T_ref"][:, 0], ep["df_ref"], ep["mask_ref"],
             ep["T_q"][:, 0], ep["df_q"], ep["mask_q"],
         )
-        # RMS z-score across active modes
-        act = np.sum(ep["mask_q"] > 0.5, axis=0) >= 2
+        # RMS z-score across eligible modes (>= 3 ref and >= 2 query readings, as in the network)
+        act = anc["eligible"]
         if np.any(act):
             z = anc["mode_mean_resid"][act] / anc["ref_resid_std"][act]
             rms_z = float(np.sqrt(np.mean(z * z)))
@@ -85,7 +85,7 @@ class DevTunedBilinearBaseline:
         df_r_corr = np.where(ep["mask_ref"] > 0.5, ep["df_ref"] - frz_r, 0.0)
         df_q_corr = np.where(ep["mask_q"] > 0.5, ep["df_q"] - frz_q, 0.0)
         anc = compute_physics_anchor(T_r, df_r_corr, ep["mask_ref"], T_q, df_q_corr, ep["mask_q"])
-        act = np.sum(ep["mask_q"] > 0.5, axis=0) >= 2
+        act = anc["eligible"]
         if np.any(act):
             z = anc["mode_mean_resid"][act] / anc["ref_resid_std"][act]
             rms_z = float(np.sqrt(np.mean(z * z)))

@@ -2,23 +2,32 @@
 for the Hell Bridge Test Arena (HBTA, Zenodo 14632942, CC BY 4.0).
 
 Uses the 18 global truss accelerometers (AG01..AG18, y and z channels = 36 channels) at 100 Hz.
-Reference modal peak bands are identified strictly from the undamaged reference recordings (UDS)
-alone, then tracked across overlapping 120-s segments of every recording (UDS + DS1..DS8) using
+Reference modal peak bands are identified strictly from the five first-replicate undamaged
+recordings (UDS *_01), which Exam C uses as the reference window. The second-replicate UDS *_02
+recordings are held-out healthy controls in Exam C and play no part in choosing the bands (v1.1 fix;
+v1.0 used all ten UDS recordings). The bands are frozen in training/hbta_bands.json, then tracked across overlapping 120-s segments of every recording (UDS + DS1..DS8) using
 parabolic sub-bin interpolation of the first singular value of the cross-spectral density matrix.
 
 Saves work/hbta_modes.npz for Exam C (opened once by exam.py after the ratchet closes).
 """
 from __future__ import annotations
 
+import json
 import os
 import time
 import h5py
 import numpy as np
 from scipy.signal import csd, find_peaks
 
-from _paths import work
+from _paths import SRC, work
 
 GLOBAL_SENSORS = [f"AG{i:02d}" for i in range(1, 19)]
+BANDS_PATH = os.path.join(SRC, "hbta_bands.json")
+
+
+def is_reference_recording(name: str, state: str) -> bool:
+    """Exam C reference pool: undamaged first replicates only (same rule as exam.load_hbta_exam_episodes)."""
+    return state == "UDS" and name.endswith("_01")
 
 
 def _load_global_matrix(rec_group: h5py.Group) -> np.ndarray:
@@ -87,8 +96,11 @@ def extract_all() -> str:
 
     with h5py.File(h5_path, "r") as hf:
         keys = sorted(hf.keys())
-        # Step 1: Discover global modal peak centers strictly from undamaged UDS recordings
-        uds_keys = [k for k in keys if hf[k].attrs.get("damage_state", "") == "UDS"]
+        # Step 1: Discover global modal peak centres from the UDS *_01 reference recordings only
+        uds_keys = [k for k in keys if is_reference_recording(k, str(hf[k].attrs.get("damage_state", "")))]
+        held_out = [k for k in keys if hf[k].attrs.get("damage_state", "") == "UDS" and k not in uds_keys]
+        print(f"[HBTA] band discovery on {len(uds_keys)} reference recordings {uds_keys}; "
+              f"{len(held_out)} UDS controls held out {held_out}")
         sv_sum = None
         f_ref_grid = None
         for k in uds_keys:
@@ -104,6 +116,16 @@ def extract_all() -> str:
         pks, props = find_peaks(sv_uds_mean, distance=min_dist, prominence=0.6)
         order = np.argsort(props["prominences"])[::-1][:8]
         peak_freqs = np.sort(f_ref_grid[pks[order]])
+        if os.path.exists(BANDS_PATH):
+            frozen = json.load(open(BANDS_PATH, encoding="utf-8"))
+            if frozen["reference_recordings"] != uds_keys or not np.allclose(frozen["peak_freqs_hz"], peak_freqs):
+                raise SystemExit(f"{BANDS_PATH} disagrees with a fresh discovery; delete it only on purpose")
+        else:
+            with open(BANDS_PATH, "w", encoding="utf-8", newline="\n") as f:
+                json.dump({"source": "Welch-SVD FDD peaks on HBTA UDS *_01 recordings (Zenodo 14632942, CC BY 4.0)",
+                           "reference_recordings": uds_keys, "held_out_uds": held_out,
+                           "peak_freqs_hz": [round(float(x), 6) for x in peak_freqs]}, f, indent=2)
+                f.write("\n")
         print(f"[HBTA UDS] Found {len(peak_freqs)} global reference modes (Hz): {[round(float(x), 3) for x in peak_freqs]}")
 
         # Step 2: Track those modes across overlapping 120-s windows of every recording

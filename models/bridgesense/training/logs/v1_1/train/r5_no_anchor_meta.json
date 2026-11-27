@@ -1,0 +1,33 @@
+{
+  "name": "r5_no_anchor",
+  "params": 179144,
+  "config": {
+    "d_model": 64,
+    "n_heads": 4,
+    "d_ff": 128,
+    "n_t_layers": 2,
+    "n_m_layers": 2,
+    "dropout": 0.05,
+    "use_cross_attn": true,
+    "use_anchor": false
+  },
+  "seed": 42,
+  "train_banks": [
+    "train3"
+  ],
+  "val_bank": "sel3",
+  "best_val": {
+    "sim_score": 0.87071,
+    "auc": 0.96226,
+    "brier": 0.08059,
+    "dk_mae": 0.5239,
+    "dk_anchor_mae": 2.9573,
+    "dk_skill": 0.82284,
+    "env_mae": 0.3518,
+    "env_skill": 0.76575,
+    "cold_spec": 0.87374,
+    "cov_dk_68": 0.7065,
+    "cov_env_68": 0.604
+  },
+  "elapsed_s": 940.9
+}

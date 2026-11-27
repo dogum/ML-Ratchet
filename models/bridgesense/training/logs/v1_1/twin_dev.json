@@ -1,0 +1,133 @@
+{
+ "kw51_dev_anchor_mild_dk_pct": [
+  -0.089,
+  -0.125,
+  -0.289,
+  -0.248
+ ],
+ "kw51_dev_anchor_freeze_dk_pct": [
+  0.037,
+  -0.219
+ ],
+ "kw51_dev_anchor_post_dk_pct": [
+  1.099,
+  1.111,
+  1.072,
+  1.118
+ ],
+ "r2_real_dev": {
+  "dev_auc": 1.0,
+  "dev_brier": 0.0854,
+  "dev_dk_mae": 0.056,
+  "dev_healthy_dk_mae": 0.053,
+  "dev_freeze_p_mean": 0.457,
+  "dev_post_dk_mean": 1.134,
+  "rows": [
+   {
+    "block_id": "kw51_b02",
+    "stratum": "healthy_mild",
+    "T_min": 4.49,
+    "is_changed": 0,
+    "p_change": 0.0037,
+    "dk_pct": 0.0,
+    "dk_sig": 0.08,
+    "anchor_dk_pct": -0.09
+   },
+   {
+    "block_id": "kw51_b03",
+    "stratum": "healthy_mild",
+    "T_min": 2.17,
+    "is_changed": 0,
+    "p_change": 0.0009,
+    "dk_pct": -0.05,
+    "dk_sig": 0.08,
+    "anchor_dk_pct": -0.13
+   },
+   {
+    "block_id": "kw51_b09",
+    "stratum": "healthy_freezing",
+    "T_min": -5.76,
+    "is_changed": 0,
+    "p_change": 0.0023,
+    "dk_pct": 0.03,
+    "dk_sig": 0.08,
+    "anchor_dk_pct": 0.04
+   },
+   {
+    "block_id": "kw51_b13",
+    "stratum": "healthy_freezing",
+    "T_min": -1.5,
+    "is_changed": 0,
+    "p_change": 0.9117,
+    "dk_pct": -0.08,
+    "dk_sig": 0.12,
+    "anchor_dk_pct": -0.22
+   },
+   {
+    "block_id": "kw51_b23",
+    "stratum": "healthy_mild",
+    "T_min": 5.39,
+    "is_changed": 0,
+    "p_change": 0.1505,
+    "dk_pct": -0.1,
+    "dk_sig": 0.08,
+    "anchor_dk_pct": -0.29
+   },
+   {
+    "block_id": "kw51_b25",
+    "stratum": "healthy_mild",
+    "T_min": 1.22,
+    "is_changed": 0,
+    "p_change": 0.0258,
+    "dk_pct": -0.05,
+    "dk_sig": 0.08,
+    "anchor_dk_pct": -0.25
+   },
+   {
+    "block_id": "kw51_b45",
+    "stratum": "post_retrofit",
+    "T_min": 9.47,
+    "is_changed": 1,
+    "p_change": 1.0,
+    "dk_pct": 1.21,
+    "dk_sig": 0.13,
+    "anchor_dk_pct": 1.1
+   },
+   {
+    "block_id": "kw51_b53",
+    "stratum": "post_retrofit",
+    "T_min": -2.75,
+    "is_changed": 1,
+    "p_change": 1.0,
+    "dk_pct": 1.03,
+    "dk_sig": 0.15,
+    "anchor_dk_pct": 1.11
+   },
+   {
+    "block_id": "kw51_b55",
+    "stratum": "post_retrofit",
+    "T_min": 6.5,
+    "is_changed": 1,
+    "p_change": 1.0,
+    "dk_pct": 1.18,
+    "dk_sig": 0.13,
+    "anchor_dk_pct": 1.07
+   },
+   {
+    "block_id": "kw51_b57",
+    "stratum": "post_retrofit",
+    "T_min": -1.21,
+    "is_changed": 1,
+    "p_change": 1.0,
+    "dk_pct": 1.11,
+    "dk_sig": 0.13,
+    "anchor_dk_pct": 1.12
+   }
+  ]
+ },
+ "r2_twin_p_means": {
+  "healthy_mild": 0.0614,
+  "healthy_freezing": 0.0589,
+  "changed": 0.9055
+ }
+}

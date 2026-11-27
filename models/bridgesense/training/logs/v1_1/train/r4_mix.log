@@ -1,0 +1,11 @@
+[r4_mix] params=179,144 | train=['train2', 'train3'] (24000) | val=sel3 | steps=4500 | seed=42
+  step  500/4500 (132.5s) | loss=0.4401 | sim=0.8127 (auc=0.9420, dk_mae=0.82%, cold_spec=0.838)
+  step 1000/4500 (249.7s) | loss=0.7428 | sim=0.8417 (auc=0.9569, dk_mae=0.67%, cold_spec=0.836)
+  step 1500/4500 (359.8s) | loss=0.4098 | sim=0.8547 (auc=0.9603, dk_mae=0.66%, cold_spec=0.909)
+  step 2000/4500 (463.4s) | loss=0.4355 | sim=0.8463 (auc=0.9605, dk_mae=0.63%, cold_spec=0.831)
+  step 2500/4500 (566.0s) | loss=0.3939 | sim=0.8690 (auc=0.9594, dk_mae=0.57%, cold_spec=0.909)
+  step 3000/4500 (662.7s) | loss=0.4007 | sim=0.8632 (auc=0.9610, dk_mae=0.57%, cold_spec=0.871)
+  step 3500/4500 (752.3s) | loss=0.2650 | sim=0.8652 (auc=0.9627, dk_mae=0.55%, cold_spec=0.859)
+  step 4000/4500 (844.1s) | loss=0.3834 | sim=0.8717 (auc=0.9629, dk_mae=0.53%, cold_spec=0.879)
+  step 4500/4500 (935.5s) | loss=0.1903 | sim=0.8714 (auc=0.9626, dk_mae=0.53%, cold_spec=0.876)
+[r4_mix] DONE -> best sim=0.8717 saved to models/bridgesense/work/checkpoints/r4_mix.pt

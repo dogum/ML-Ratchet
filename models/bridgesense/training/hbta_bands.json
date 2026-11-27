@@ -1,0 +1,27 @@
+{
+  "source": "Welch-SVD FDD peaks on HBTA UDS *_01 recordings (Zenodo 14632942, CC BY 4.0)",
+  "reference_recordings": [
+    "MVS_P1_UDS_SM_Y_01",
+    "MVS_P1_UDS_SM_Z_01",
+    "MVS_P2_UDS_NM_Z_01",
+    "MVS_P2_UDS_SM_Y_01",
+    "MVS_P2_UDS_SM_Z_01"
+  ],
+  "held_out_uds": [
+    "MVS_P1_UDS_SM_Y_02",
+    "MVS_P1_UDS_SM_Z_02",
+    "MVS_P2_UDS_NM_Z_02",
+    "MVS_P2_UDS_SM_Y_02",
+    "MVS_P2_UDS_SM_Z_02"
+  ],
+  "peak_freqs_hz": [
+    3.125,
+    7.226562,
+    8.056641,
+    9.399414,
+    10.668945,
+    12.817383,
+    15.014648,
+    18.286133
+  ]
+}

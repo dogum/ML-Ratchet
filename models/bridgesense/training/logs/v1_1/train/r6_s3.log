@@ -1,0 +1,11 @@
+[r6_s3] params=179,144 | train=['train2', 'train3'] (24000) | val=sel3 | steps=4500 | seed=3
+  step  500/4500 (132.4s) | loss=0.6621 | sim=0.8429 (auc=0.9537, dk_mae=0.68%, cold_spec=0.914)
+  step 1000/4500 (251.2s) | loss=0.3292 | sim=0.8508 (auc=0.9611, dk_mae=0.67%, cold_spec=0.917)
+  step 1500/4500 (360.6s) | loss=0.4921 | sim=0.8737 (auc=0.9625, dk_mae=0.56%, cold_spec=0.944)
+  step 2000/4500 (464.6s) | loss=0.4598 | sim=0.8732 (auc=0.9678, dk_mae=0.54%, cold_spec=0.907)
+  step 2500/4500 (566.7s) | loss=0.2555 | sim=0.8660 (auc=0.9672, dk_mae=0.55%, cold_spec=0.861)
+  step 3000/4500 (664.4s) | loss=0.2870 | sim=0.8786 (auc=0.9681, dk_mae=0.51%, cold_spec=0.894)
+  step 3500/4500 (757.8s) | loss=0.3419 | sim=0.8735 (auc=0.9700, dk_mae=0.52%, cold_spec=0.869)
+  step 4000/4500 (852.5s) | loss=0.2018 | sim=0.8785 (auc=0.9705, dk_mae=0.50%, cold_spec=0.876)
+  step 4500/4500 (942.9s) | loss=0.1031 | sim=0.8768 (auc=0.9711, dk_mae=0.50%, cold_spec=0.866)
+[r6_s3] DONE -> best sim=0.8786 saved to models/bridgesense/work/checkpoints/r6_s3.pt

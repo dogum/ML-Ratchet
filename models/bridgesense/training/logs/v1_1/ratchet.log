@@ -1,0 +1,32 @@
+  scored r1 on val3: sim=0.3057 (auc=0.7838, dk_mae=2.93%, cold_spec=0.073)
+  scored r1 on KW51 dev: auc=1.0000, brier=0.1116, healthy_dk_mae=0.11%, freeze_P=0.500
+  scored r2 on val3: sim=0.8176 (auc=0.9254, dk_mae=0.66%, cold_spec=0.719)
+  scored r2 on KW51 dev: auc=1.0000, brier=0.0854, healthy_dk_mae=0.05%, freeze_P=0.457
+  scored r2_no_xattn on val3: sim=0.8049 (auc=0.9157, dk_mae=0.69%, cold_spec=0.692)
+  scored r2_no_xattn on KW51 dev: auc=1.0000, brier=0.0000, healthy_dk_mae=0.06%, freeze_P=0.004
+  scored r3 on val3: sim=0.8717 (auc=0.9634, dk_mae=0.61%, cold_spec=0.957)
+  scored r3 on KW51 dev: auc=1.0000, brier=0.0001, healthy_dk_mae=0.16%, freeze_P=0.016
+  scored r4_mix on val3: sim=0.8786 (auc=0.9682, dk_mae=0.54%, cold_spec=0.907)
+  scored r4_mix on KW51 dev: auc=1.0000, brier=0.0000, healthy_dk_mae=0.15%, freeze_P=0.002
+  scored r5_no_anchor on val3: sim=0.8785 (auc=0.9647, dk_mae=0.51%, cold_spec=0.902)
+  scored r5_no_anchor on KW51 dev: auc=1.0000, brier=0.0000, healthy_dk_mae=0.00%, freeze_P=0.006
+  scored r6_mix_no_anchor on val3: sim=0.8899 (auc=0.9728, dk_mae=0.47%, cold_spec=0.907)
+  scored r6_mix_no_anchor on KW51 dev: auc=1.0000, brier=0.0000, healthy_dk_mae=0.02%, freeze_P=0.002
+  scored r6_s2 on val3: sim=0.8897 (auc=0.9713, dk_mae=0.48%, cold_spec=0.920)
+  scored r6_s2 on KW51 dev: auc=1.0000, brier=0.0000, healthy_dk_mae=0.01%, freeze_P=0.004
+  scored r6_s3 on val3: sim=0.8838 (auc=0.9673, dk_mae=0.51%, cold_spec=0.922)
+  scored r6_s3 on KW51 dev: auc=1.0000, brier=0.0000, healthy_dk_mae=0.01%, freeze_P=0.008
+  scored r7_ens3 on val3: sim=0.8924 (auc=0.9731, dk_mae=0.47%, cold_spec=0.917)
+  scored r7_ens3 on KW51 dev: auc=1.0000, brier=0.0000, healthy_dk_mae=0.05%, freeze_P=0.004
+
+=== RATCHET LADDER (scored on val3) ===
+  r1           | sim=0.3057 | kept     | First rung.
+  r2           | sim=0.8176 | kept     | +0.512 on the frozen set; dev gate passed.
+  r2_no_xattn  | sim=0.8049 | rejected | -0.013 on val3, needs more than +0.01.
+  r3           | sim=0.8717 | rejected | +0.054 on the frozen set; dev gate: dev_dk_mae 0.409% > 0.106%.
+  r4_mix       | sim=0.8786 | rejected | +0.061 on the frozen set; dev gate: dev_dk_mae 0.149% > 0.106%.
+  r5_no_anchor | sim=0.8785 | kept     | +0.061 on the frozen set; dev gate passed.
+  r6_mix_no_anchor | sim=0.8899 | rejected | +0.011 on the frozen set; dev gate: dev_dk_mae 0.416% > 0.149%.
+  r6_s2        | sim=0.8897 | rejected | +0.011 on the frozen set; dev gate: dev_dk_mae 0.234% > 0.149%.
+  r6_s3        | sim=0.8838 | rejected | +0.005 on val3, needs more than +0.01.
+  r7_ens3      | sim=0.8924 | released | +0.014 on the frozen set; dev gate passed.

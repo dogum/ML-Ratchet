@@ -19,22 +19,36 @@ from _paths import MODEL, work
 from dev_eval import eval_on_kw51_dev, load_kw51_dev_blocks, load_model_ckpt, score_ensemble_on_bank
 
 
+# v1.1 ladder (2026-11-27). Every trained run is a rung, seed replicates included. Each rung's checkpoint is
+# chosen on its own selection bank (sel1/sel2/sel3), never on the frozen set that judges it (val3).
 DEFAULT_REGISTRY = [
     {"id": "r1", "ckpts": ["r1"], "change": "Textbook linear thermoelastic 2-D modal FEM + synthetic Gaussian OMA noise (physics p1, train1)"},
     {"id": "r2", "ckpts": ["r2"], "change": "Add 1-D Fourier deck heat diffusion, asphalt/ballast freezing phase transition, axial bearing restraint, warm-to-cold extrapolation (physics p2, train2)"},
     {"id": "r2_no_xattn", "ckpts": ["r2_no_xattn"], "change": "Architecture ablation on p2: remove baseline-to-query thermal cross-attention"},
-    {"id": "r3", "ckpts": ["r3"], "change": "Inject real healthy KW51 autumn OMA noise + 44% correlated mode dropouts + dev-calibrated slow seasonal drift + mass-loaded retrofits (physics p3, train3)"},
+    {"id": "r3", "ckpts": ["r3"], "change": "Inject real healthy KW51 autumn OMA noise + correlated mode dropouts + dev-calibrated slow seasonal drift + mass-loaded retrofits (physics p3, train3)"},
     {"id": "r4_mix", "ckpts": ["r4_mix"], "change": "Mixed bank (p2 + p3, 24k episodes) with linear-OLS physics anchor"},
     {"id": "r5_no_anchor", "ckpts": ["r5_no_anchor"], "change": "Anchor ablation on p3: predict dK/K directly without the OLS output anchor"},
-    {"id": "r6_mix_no_anchor", "ckpts": ["r6_mix_no_anchor"], "change": "Mixed bank (p2 + p3, 24k episodes) without the OLS output anchor"},
-    {"id": "r7_ens3", "ckpts": ["r4_mix", "r6_s2", "r6_s3"], "change": "3-seed Transformer ensemble on mixed p2 + p3 bank with OLS physics anchor"},
+    {"id": "r6_mix_no_anchor", "ckpts": ["r6_mix_no_anchor"], "change": "Mixed bank (p2 + p3, 24k episodes) without the OLS output anchor (seed 42)"},
+    {"id": "r6_s2", "ckpts": ["r6_s2"], "change": "Seed replicate of r6_mix_no_anchor (seed 2)"},
+    {"id": "r6_s3", "ckpts": ["r6_s3"], "change": "Seed replicate of r6_mix_no_anchor (seed 3)"},
+    {"id": "r7_ens3", "ckpts": ["r4_mix", "r6_s2", "r6_s3"], "change": "Ensemble of r4_mix (OLS-anchored) with the r6_s2 and r6_s3 seed replicates; each member keeps its own config"},
 ]
+LADDER_NAME = "v1.1 — fixed thermal fit, mode eligibility, separate selection sets"
 
 
 def run_ratchet(frozen_set: str, release_id: str | None = None) -> dict:
     reg_path = work("rungs_registry.json")
     registry = json.load(open(reg_path)) if os.path.exists(reg_path) else DEFAULT_REGISTRY
     dev_blocks = load_kw51_dev_blocks()
+
+    # Guard: no checkpoint may have been selected on the frozen set that judges it
+    import torch
+    for entry in registry:
+        for ck in entry["ckpts"]:
+            sel = torch.load(work("checkpoints", f"{ck}.pt"), map_location="cpu", weights_only=False)["val_bank"]
+            if sel == frozen_set:
+                raise SystemExit(f"{ck} was selected on {sel}, the judging set; use a separate selection bank")
+            entry.setdefault("selected_on", {})[ck] = sel
 
     # Cache scores per (rung_id, frozen_set) and per rung_id on KW51 dev
     cache_path = work("ratchet_scores_cache.json")
@@ -77,7 +91,7 @@ def run_ratchet(frozen_set: str, release_id: str | None = None) -> dict:
 
     rat = Ratchet(
         model="bridgesense",
-        name="BridgeSense",
+        name=LADDER_NAME,
         margin=0.01,
         dev_gate=_bridge_dev_gate,
         higher_is_better=True,
@@ -127,14 +141,17 @@ def run_ratchet(frozen_set: str, release_id: str | None = None) -> dict:
     lad["columns_source"] = f"Frozen set ({frozen_set}) and KW51 dev (10 blocks); real exams never used to choose"
     lad["columns"] = ["Sim AUC", "Sim dK MAE (%)", "Sim cold spec", "Dev AUC", "Dev Brier", "Dev dK MAE (%)"]
 
-    doc = {"model": "bridgesense", "ladders": [lad]}
+    # Keep earlier ladders (v1.0 is history); replace only this ladder
     yaml_path = os.path.join(MODEL, "ratchet.yaml")
-    with open(yaml_path, "w", encoding="utf-8") as f:
+    old = yaml.safe_load(open(yaml_path, encoding="utf-8")) if os.path.exists(yaml_path) else {}
+    keep = [x for x in (old or {}).get("ladders", []) if x.get("name") != LADDER_NAME]
+    doc = {"model": "bridgesense", "ladders": keep + [lad]}
+    with open(yaml_path, "w", encoding="utf-8", newline="\n") as f:
         yaml.safe_dump(doc, f, sort_keys=False, allow_unicode=True)
 
     log_path = work("ratchet_log.json")
     with open(log_path, "w", encoding="utf-8") as f:
-        json.dump({"doc": doc, "cache": cache}, f, indent=2)
+        json.dump({"ladder": lad, "registry": registry, "cache": cache}, f, indent=2)
 
     print(f"\n=== RATCHET LADDER (scored on {frozen_set}) ===")
     for r in rat.rungs:

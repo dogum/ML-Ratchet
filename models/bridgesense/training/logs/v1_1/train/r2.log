@@ -1,0 +1,11 @@
+[r2] params=179,144 | train=['train2'] (12000) | val=sel2 | steps=4500 | seed=42
+  step  500/4500 ( 62.1s) | loss=0.4766 | sim=0.8372 (auc=0.9691, dk_mae=0.76%, cold_spec=0.776)
+  step 1000/4500 (125.7s) | loss=0.3051 | sim=0.8842 (auc=0.9703, dk_mae=0.57%, cold_spec=0.882)
+  step 1500/4500 (188.9s) | loss=0.2455 | sim=0.8755 (auc=0.9762, dk_mae=0.60%, cold_spec=0.841)
+  step 2000/4500 (251.6s) | loss=0.3935 | sim=0.8963 (auc=0.9790, dk_mae=0.54%, cold_spec=0.916)
+  step 2500/4500 (313.4s) | loss=0.2285 | sim=0.9044 (auc=0.9794, dk_mae=0.50%, cold_spec=0.930)
+  step 3000/4500 (375.3s) | loss=0.0370 | sim=0.9054 (auc=0.9820, dk_mae=0.49%, cold_spec=0.925)
+  step 3500/4500 (436.8s) | loss=0.0364 | sim=0.9032 (auc=0.9813, dk_mae=0.49%, cold_spec=0.905)
+  step 4000/4500 (504.8s) | loss=0.0591 | sim=0.9042 (auc=0.9820, dk_mae=0.47%, cold_spec=0.898)
+  step 4500/4500 (568.6s) | loss=0.1265 | sim=0.9051 (auc=0.9817, dk_mae=0.47%, cold_spec=0.902)
+[r2] DONE -> best sim=0.9054 saved to models/bridgesense/work/checkpoints/r2.pt

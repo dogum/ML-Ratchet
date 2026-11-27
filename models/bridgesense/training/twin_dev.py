@@ -29,7 +29,7 @@ def main() -> None:
         elif b["stratum"] == "healthy_freezing":
             freeze_resids.append(anc["anchor_dk_pct"])
             # Per-mode jump on freezing days relative to linear extrapolation
-            act = np.sum(b["mask_q"] > 0.5, axis=0) >= 2
+            act = anc["eligible"]
             freeze_extra_jumps.append(float(np.max(np.abs(anc["mode_mean_resid"][act]))))
         elif b["stratum"] == "post_retrofit":
             post_resids.append(anc["anchor_dk_pct"])
@@ -88,7 +88,7 @@ def main() -> None:
                 b["T_ref"][:, 0], b["df_ref"], b["mask_ref"],
                 b["T_q"][:, 0], b["df_q"], b["mask_q"],
             )
-            act = np.sum(b["mask_q"] > 0.5, axis=0) >= 2
+            act = anc["eligible"]
             res = anc["mode_mean_resid"][act]
             healthy_g_shifts.append(abs(float(np.mean(res))))
             healthy_m_stds.append(float(np.std(res)))

@@ -118,7 +118,31 @@ def load_hbta_exam_episodes() -> list[dict]:
     return episodes
 
 
+LOG_DIR = os.path.join(MODEL, "training", "logs", "v1_1")
+RUN_RECORD = os.path.join(LOG_DIR, "exam_run.json")
+
+
+def _sha256(path: str) -> str:
+    import hashlib
+    with open(path, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+def _write_json(path: str, obj, indent: int = 2) -> None:
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(obj, f, indent=indent)
+        f.write("\n")
+
+
 def run_exam() -> dict:
+    # Opened once: refuse to run again once a dated run record exists for this version
+    if os.path.exists(RUN_RECORD):
+        raise SystemExit(f"Exam already opened for v1.1 ({RUN_RECORD}); a re-run needs a new version")
+    import datetime
+    import subprocess
+    started = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
+    weights = os.path.join(MODEL, "bridgesense_weights.npz")
     model = BridgeSense()
     dev_blocks = load_kw51_dev_blocks()
     dev_prev = float(np.mean([b["is_changed"] for b in dev_blocks]))
@@ -255,7 +279,28 @@ def run_exam() -> dict:
     dst = work("exam_results.json", mkdir=True)
     with open(dst, "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2)
-    print(f"\nSaved {dst}")
+    _write_json(os.path.join(LOG_DIR, "exam.json"), out, indent=1)
+    try:
+        commit = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=MODEL).stdout.strip()
+        dirty = bool(subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True, cwd=MODEL).stdout.strip())
+    except OSError:
+        commit, dirty = "unknown", None
+    _write_json(RUN_RECORD, {
+        "model": "bridgesense",
+        "version": model.meta.get("version"),
+        "started_utc": started,
+        "finished_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+        "git_commit": commit,
+        "git_worktree_dirty": dirty,
+        "weights_sha256": _sha256(weights),
+        "members": model.meta.get("members"),
+        "splits_sha256": _sha256(os.path.join(MODEL, "splits.json")),
+        "hbta_bands_sha256": _sha256(os.path.join(MODEL, "training", "hbta_bands.json")),
+        "hbta_modes_sha256": _sha256(work("hbta_modes.npz")),
+        "command": "python training/exam.py",
+        "n_blocks": {"kw51": exam_a["n"], "boxgirder": exam_b["n"], "hbta": exam_c["n"]},
+    })
+    print(f"\nSaved {dst}, {LOG_DIR}/exam.json and the run record {RUN_RECORD}")
     return out
 
 

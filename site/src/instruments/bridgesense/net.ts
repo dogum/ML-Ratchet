@@ -6,20 +6,23 @@ import type { Pack } from '../../lib/nn/pack.ts';
 export const N_STEPS = 32;
 export const MAX_MODES = 14;
 
+export interface BSConfig {
+  d_model: number;
+  n_heads: number;
+  d_ff: number;
+  n_t_layers: number;
+  n_m_layers: number;
+  use_cross_attn: boolean;
+  use_anchor: boolean;
+}
+
 export interface BSMeta {
   model: string;
   version: string;
   n_members: number;
   total_params: number;
-  config: {
-    d_model: number;
-    n_heads: number;
-    d_ff: number;
-    n_t_layers: number;
-    n_m_layers: number;
-    use_cross_attn: boolean;
-    use_anchor: boolean;
-  };
+  config: BSConfig;
+  configs?: BSConfig[];
   widen_dk: number;
   widen_env: number;
   prob_temp: number;
@@ -204,16 +207,22 @@ export function extractFeatures(
     for (let i = 0; i < N_ref; i++) if (mask_ref[i * M + m] > 0.5) cnt++;
     refCounts[m] = cnt;
     if (cnt >= 4) {
-      let vx = 0, xy = 0, sx = 0, sy = 0;
+      // OLS with intercept, centred on this mode's valid readings (two passes, as in bridgesense.py)
+      let sx = 0, sy = 0;
+      for (let i = 0; i < N_ref; i++) {
+        if (mask_ref[i * M + m] > 0.5) { sx += Tr0[i] - T_ref_mean; sy += df_ref[i * M + m]; }
+      }
+      const xm = sx / cnt, ym = sy / cnt;
+      let vx = 0, xy = 0;
       for (let i = 0; i < N_ref; i++) {
         if (mask_ref[i * M + m] > 0.5) {
-          const x = Tr0[i] - T_ref_mean;
-          const y = df_ref[i * M + m];
-          vx += x * x; xy += x * y; sx += x; sy += y;
+          const xc = Tr0[i] - T_ref_mean - xm;
+          const yc = df_ref[i * M + m] - ym;
+          vx += xc * xc; xy += xc * yc;
         }
       }
       const a = vx > 1e-4 ? clip(xy / (vx + 1e-2), -0.015, 0.005) : 0;
-      const b = sy / cnt - a * (sx / cnt);
+      const b = ym - a * xm;
       slopes[m] = a; intercepts[m] = b;
       let mr = 0;
       for (let i = 0; i < N_ref; i++) if (mask_ref[i * M + m] > 0.5) mr += df_ref[i * M + m] - (a * (Tr0[i] - T_ref_mean) + b);
@@ -253,9 +262,16 @@ export function extractFeatures(
     if (cnt > 0) { mode_mean_resid[m] = sr / cnt; mode_mean_raw[m] = sraw / cnt; }
   }
 
+  // Global summaries use the same eligibility as the mode mask (>= 3 ref and >= 2 query readings)
+  const active = new Uint8Array(M);
+  const m_mask = new Float32Array(M);
+  let nAct = 0;
+  for (let m = 0; m < M; m++) {
+    if (refCounts[m] >= 3 && qCounts[m] >= 2) { active[m] = 1; m_mask[m] = 1; nAct++; }
+  }
   let actQCnt = 0, sumResQ = 0, sumRawQ = 0, maxAbsZ = 0, sumAbsZ = 0;
   for (let m = 0; m < M; m++) {
-    if (qCounts[m] > 0) {
+    if (active[m]) {
       actQCnt++; sumResQ += mode_mean_resid[m]; sumRawQ += mode_mean_raw[m];
       const az = Math.abs(mode_mean_resid[m] / ref_std[m]);
       if (az > maxAbsZ) maxAbsZ = az;
@@ -270,17 +286,11 @@ export function extractFeatures(
     mean_abs_z = sumAbsZ / actQCnt;
     if (actQCnt >= 2) {
       let vr = 0;
-      for (let m = 0; m < M; m++) if (qCounts[m] > 0) { const d = mode_mean_resid[m] - mr; vr += d * d; }
+      for (let m = 0; m < M; m++) if (active[m]) { const d = mode_mean_resid[m] - mr; vr += d * d; }
       resid_std_modes = Math.sqrt(vr / actQCnt);
     }
   }
 
-  const active = new Uint8Array(M);
-  const m_mask = new Float32Array(M);
-  let nAct = 0;
-  for (let m = 0; m < M; m++) {
-    if (refCounts[m] >= 3 && qCounts[m] >= 2) { active[m] = 1; m_mask[m] = 1; nAct++; }
-  }
   const nActSafe = Math.max(nAct, 1);
 
   function buildTime(T3: Float32Array, df: Float32Array, resid: Float64Array, msk: Float32Array, N: number): Float32Array {
@@ -399,7 +409,7 @@ export function predict(
 ): BSReading {
   const W = pack.t;
   const meta = pack.meta;
-  const { d_model: D, n_heads: nH, d_ff: dFF, n_t_layers: nT, n_m_layers: nM, use_cross_attn: useCross, use_anchor: useAnc } = meta.config;
+  const { d_model: D, n_heads: nH, d_ff: dFF, n_t_layers: nT, n_m_layers: nM, use_cross_attn: useCross, use_anchor: useAnc } = meta.configs?.[0] ?? meta.config;
   const f = extractFeatures(T_ref, T_q, df_ref, df_q, mask_ref, mask_q);
 
   // 1. Temporal cross-attention

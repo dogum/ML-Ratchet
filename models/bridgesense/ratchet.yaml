@@ -1,6 +1,7 @@
 model: bridgesense
 ladders:
-- name: BridgeSense
+- name: v1.0 — released 2026-11-24, superseded by v1.1 (feature bugs; checkpoints
+    chosen on val3)
   objective: 'Composite skill in [0, 1] on frozen simulated bridge episodes: 0.35*AUC
     + 0.35*dK_skill + 0.15*env_skill + 0.15*cold_extrap_specificity'
   rule: Keep if frozen-set composite skill beats the incumbent by more than +0.01
@@ -125,7 +126,8 @@ ladders:
     - 0.0
     - 0.071
   - id: r7_ens3
-    change: "ensemble of r4_mix (OLS-anchored) and two r6 seed runs, r6_s2 and r6_s3 (training/ratchet.py; the r6 seed runs themselves are not logged as rungs)"
+    change: ensemble of r4_mix (OLS-anchored) and two r6 seed runs, r6_s2 and r6_s3
+      (training/ratchet.py; the r6 seed runs themselves are not logged as rungs)
     sim: 0.87642
     dev:
       dev_auc: 1.0
@@ -145,6 +147,193 @@ ladders:
   frozen_sets:
   - val1
   - val2
+  - val3
+  columns_source: Frozen set (val3) and KW51 dev (10 blocks); real exams never used
+    to choose
+  columns:
+  - Sim AUC
+  - Sim dK MAE (%)
+  - Sim cold spec
+  - Dev AUC
+  - Dev Brier
+  - Dev dK MAE (%)
+- name: v1.1 — fixed thermal fit, mode eligibility, separate selection sets
+  objective: 'Composite skill in [0, 1] on frozen simulated bridge episodes: 0.35*AUC
+    + 0.35*dK_skill + 0.15*env_skill + 0.15*cold_extrap_specificity'
+  rule: Keep if frozen-set composite skill beats the incumbent by more than +0.01
+    AND on KW51 dev (10 blocks, seed 20261124) AUC drops <= 0.02, Brier rises <= max(15%,
+    +0.015), and 10-block dK/K MAE rises <= max(15%, +0.05 pp).
+  margin: 0.01
+  scored_on: val3
+  rungs:
+  - id: r1
+    change: Textbook linear thermoelastic 2-D modal FEM + synthetic Gaussian OMA noise
+      (physics p1, train1)
+    sim: 0.30571
+    dev:
+      dev_auc: 1.0
+      dev_brier: 0.1116
+      dev_dk_mae: 0.077
+    decision: kept
+    why: First rung.
+    metrics:
+    - 0.784
+    - 2.93
+    - 0.073
+    - 1.0
+    - 0.1116
+    - 0.077
+  - id: r2
+    change: Add 1-D Fourier deck heat diffusion, asphalt/ballast freezing phase transition,
+      axial bearing restraint, warm-to-cold extrapolation (physics p2, train2)
+    sim: 0.81765
+    dev:
+      dev_auc: 1.0
+      dev_brier: 0.0854
+      dev_dk_mae: 0.056
+    decision: kept
+    why: +0.512 on the frozen set; dev gate passed.
+    metrics:
+    - 0.925
+    - 0.66
+    - 0.719
+    - 1.0
+    - 0.0854
+    - 0.056
+  - id: r2_no_xattn
+    change: 'Architecture ablation on p2: remove baseline-to-query thermal cross-attention'
+    sim: 0.80488
+    dev:
+      dev_auc: 1.0
+      dev_brier: 0.0
+      dev_dk_mae: 0.066
+    decision: rejected
+    why: -0.013 on val3, needs more than +0.01.
+    metrics:
+    - 0.916
+    - 0.69
+    - 0.692
+    - 1.0
+    - 0.0
+    - 0.066
+  - id: r3
+    change: Inject real healthy KW51 autumn OMA noise + correlated mode dropouts +
+      dev-calibrated slow seasonal drift + mass-loaded retrofits (physics p3, train3)
+    sim: 0.87167
+    dev:
+      dev_auc: 1.0
+      dev_brier: 0.0001
+      dev_dk_mae: 0.409
+    decision: rejected
+    why: '+0.054 on the frozen set; dev gate: dev_dk_mae 0.409% > 0.106%.'
+    metrics:
+    - 0.963
+    - 0.61
+    - 0.957
+    - 1.0
+    - 0.0001
+    - 0.409
+  - id: r4_mix
+    change: Mixed bank (p2 + p3, 24k episodes) with linear-OLS physics anchor
+    sim: 0.87864
+    dev:
+      dev_auc: 1.0
+      dev_brier: 0.0
+      dev_dk_mae: 0.149
+    decision: rejected
+    why: '+0.061 on the frozen set; dev gate: dev_dk_mae 0.149% > 0.106%.'
+    metrics:
+    - 0.968
+    - 0.54
+    - 0.907
+    - 1.0
+    - 0.0
+    - 0.149
+  - id: r5_no_anchor
+    change: 'Anchor ablation on p3: predict dK/K directly without the OLS output anchor'
+    sim: 0.87847
+    dev:
+      dev_auc: 1.0
+      dev_brier: 0.0
+      dev_dk_mae: 0.099
+    decision: kept
+    why: +0.061 on the frozen set; dev gate passed.
+    metrics:
+    - 0.965
+    - 0.51
+    - 0.902
+    - 1.0
+    - 0.0
+    - 0.099
+  - id: r6_mix_no_anchor
+    change: Mixed bank (p2 + p3, 24k episodes) without the OLS output anchor (seed
+      42)
+    sim: 0.88993
+    dev:
+      dev_auc: 1.0
+      dev_brier: 0.0
+      dev_dk_mae: 0.416
+    decision: rejected
+    why: '+0.011 on the frozen set; dev gate: dev_dk_mae 0.416% > 0.149%.'
+    metrics:
+    - 0.973
+    - 0.47
+    - 0.907
+    - 1.0
+    - 0.0
+    - 0.416
+  - id: r6_s2
+    change: Seed replicate of r6_mix_no_anchor (seed 2)
+    sim: 0.88972
+    dev:
+      dev_auc: 1.0
+      dev_brier: 0.0
+      dev_dk_mae: 0.234
+    decision: rejected
+    why: '+0.011 on the frozen set; dev gate: dev_dk_mae 0.234% > 0.149%.'
+    metrics:
+    - 0.971
+    - 0.48
+    - 0.92
+    - 1.0
+    - 0.0
+    - 0.234
+  - id: r6_s3
+    change: Seed replicate of r6_mix_no_anchor (seed 3)
+    sim: 0.88383
+    dev:
+      dev_auc: 1.0
+      dev_brier: 0.0
+      dev_dk_mae: 0.097
+    decision: rejected
+    why: +0.005 on val3, needs more than +0.01.
+    metrics:
+    - 0.967
+    - 0.51
+    - 0.922
+    - 1.0
+    - 0.0
+    - 0.097
+  - id: r7_ens3
+    change: Ensemble of r4_mix (OLS-anchored) with the r6_s2 and r6_s3 seed replicates;
+      each member keeps its own config
+    sim: 0.89242
+    dev:
+      dev_auc: 1.0
+      dev_brier: 0.0
+      dev_dk_mae: 0.147
+    decision: released
+    why: +0.014 on the frozen set; dev gate passed.
+    metrics:
+    - 0.973
+    - 0.47
+    - 0.917
+    - 1.0
+    - 0.0
+    - 0.147
+  dev_gate: KW51 dev AUC drops <= 0.02; Brier rises <= max(15%, +0.015); 10-block
+    dK/K MAE rises <= max(15%, +0.05 pp)
+  frozen_sets:
   - val3
   columns_source: Frozen set (val3) and KW51 dev (10 blocks); real exams never used
     to choose

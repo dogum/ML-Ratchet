@@ -97,11 +97,14 @@ def compute_anchor_and_features(
     for m in range(M):
         ok = (mask_ref[:, m] > 0.5) & np.isfinite(df_ref[:, m]) & np.isfinite(T_r0)
         if np.sum(ok) >= 4:
+            # OLS with intercept, centred on this mode's valid readings
             x = T_r0[ok] - T_ref_mean
             y = df_ref[ok, m]
-            vx = float(np.dot(x, x))
-            a = float(np.clip(np.dot(x, y) / (vx + 1e-2), -0.015, 0.005)) if vx > 1e-4 else 0.0
-            b = float(np.mean(y) - a * np.mean(x))
+            xm, ym = float(np.mean(x)), float(np.mean(y))
+            xc, yc = x - xm, y - ym
+            vx = float(np.dot(xc, xc))
+            a = float(np.clip(np.dot(xc, yc) / (vx + 1e-2), -0.015, 0.005)) if vx > 1e-4 else 0.0
+            b = float(ym - a * xm)
             slopes[m], intercepts[m] = a, b
             ref_std[m] = float(max(np.std(y - (a * x + b)), 5e-4))
         elif np.sum(ok) >= 1:
@@ -121,15 +124,16 @@ def compute_anchor_and_features(
             mode_mean_resid[m] = float(np.mean(resid_q[ok, m]))
             mode_mean_raw[m] = float(np.mean(df_q[ok, m]))
 
-    active_q = q_counts > 0
-    if np.any(active_q):
-        mean_resid = float(np.mean(mode_mean_resid[active_q]))
+    # Same eligibility as the mode mask: >= 3 valid reference and >= 2 valid query readings
+    active = (np.sum(mask_ref > 0.5, axis=0) >= 3) & (q_counts >= 2)
+    if np.any(active):
+        mean_resid = float(np.mean(mode_mean_resid[active]))
         anchor_dk_pct = 200.0 * mean_resid
-        anchor_env_pct = 100.0 * float(np.mean(mode_mean_raw[active_q]) - mean_resid)
+        anchor_env_pct = 100.0 * float(np.mean(mode_mean_raw[active]) - mean_resid)
         mode_z = mode_mean_resid / ref_std
-        max_abs_z = float(np.max(np.abs(mode_z[active_q])))
-        mean_abs_z = float(np.mean(np.abs(mode_z[active_q])))
-        resid_std_modes = float(np.std(mode_mean_resid[active_q])) if np.sum(active_q) >= 2 else 0.0
+        max_abs_z = float(np.max(np.abs(mode_z[active])))
+        mean_abs_z = float(np.mean(np.abs(mode_z[active])))
+        resid_std_modes = float(np.std(mode_mean_resid[active])) if np.sum(active) >= 2 else 0.0
     else:
         anchor_dk_pct = anchor_env_pct = max_abs_z = mean_abs_z = resid_std_modes = 0.0
 
@@ -140,7 +144,6 @@ def compute_anchor_and_features(
     freeze_frac_q = float(np.mean(T_q0 < 1.0))
     freeze_frac_ref = float(np.mean(T_r0 < 1.0))
 
-    active = (np.sum(mask_ref > 0.5, axis=0) >= 3) & (np.sum(mask_q > 0.5, axis=0) >= 2)
     m_mask = active.astype(np.float32)
     n_act = max(int(np.sum(active)), 1)
 
@@ -261,7 +264,11 @@ class BridgeSense:
         raw = np.load(p, allow_pickle=False)
         self.meta = json.loads(str(raw["meta"].item()))
         self.n_members = int(self.meta.get("n_members", 1))
-        self.cfg = self.meta["config"]
+        # One config per ensemble member (v1.1). v1.0 files carry a single shared "config".
+        cfgs = self.meta.get("configs") or [self.meta["config"]] * self.n_members
+        if len(cfgs) != self.n_members:
+            raise ValueError(f"weights carry {len(cfgs)} configs for {self.n_members} members")
+        self.cfgs: list[dict] = list(cfgs)
         self.widen_dk = float(self.meta.get("widen_dk", 1.0))
         self.widen_env = float(self.meta.get("widen_env", 1.0))
         self.prob_temp = float(self.meta.get("prob_temp", 1.0))
@@ -272,12 +279,12 @@ class BridgeSense:
             W = {name[len(pref):]: raw[name].astype(np.float32) for name in raw.files if name.startswith(pref)}
             self.members.append(W)
 
-    def _forward_one(self, W: dict[str, np.ndarray], feat: dict[str, np.ndarray]) -> dict[str, np.ndarray | float]:
-        n_heads = int(self.cfg["n_heads"])
-        n_t = int(self.cfg["n_t_layers"])
-        n_m = int(self.cfg["n_m_layers"])
-        use_cross = bool(self.cfg.get("use_cross_attn", True))
-        use_anchor = bool(self.cfg.get("use_anchor", True))
+    def _forward_one(self, W: dict[str, np.ndarray], cfg: dict, feat: dict[str, np.ndarray]) -> dict[str, np.ndarray | float]:
+        n_heads = int(cfg["n_heads"])
+        n_t = int(cfg["n_t_layers"])
+        n_m = int(cfg["n_m_layers"])
+        use_cross = bool(cfg.get("use_cross_attn", True))
+        use_anchor = bool(cfg.get("use_anchor", True))
 
         x_ref = feat["x_ref"].astype(np.float32)
         x_q = feat["x_q"].astype(np.float32)
@@ -340,7 +347,7 @@ class BridgeSense:
         }
 
     def predict_features(self, feat: dict[str, np.ndarray], raw_bars: bool = False) -> dict:
-        outs = [self._forward_one(W, feat) for W in self.members]
+        outs = [self._forward_one(W, cfg, feat) for W, cfg in zip(self.members, self.cfgs)]
         logit = float(np.mean([o["logit"] for o in outs]))
         dks = np.array([o["dk_mu"] for o in outs], dtype=np.float64)
         dk_vars = np.array([o["dk_sig"] ** 2 for o in outs], dtype=np.float64)
