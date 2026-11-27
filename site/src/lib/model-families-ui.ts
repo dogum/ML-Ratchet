@@ -206,25 +206,43 @@ export function init() {
   const saved = (store.get('cell') || '').split(':');
   if (cellOf(saved[0], saved[1])) select(saved[0], saved[1]); else select('energynet', 'gbm');
 
-  /* ---- 07 TreeSHAP illustration ---- */
+  /* ---- 07 TreeSHAP real-vs-twin diagnostic ---- */
   let sk = 0;
   const shapBtns = qa('#mf-shap-cases [data-i]');
   const drawShap = () => {
-    const c = SHAP_CASES[sk], F = SHAP_FEATURES, W = 760, lw = 160, rw = 70, top = 26, rh = 32, H = top + F.length * rh + 30;
-    const vmax = 7, xs = (v: number) => lw + (v / vmax) * (W - lw - rw);
-    const D = F.map((_, i) => c.real[i] - c.twin[i]); const worst = D.reduce((b, d, i) => (Math.abs(d) > Math.abs(D[b]) ? i : b), 0);
-    let s = `<text x="${lw}" y="12" class="svg-t"><tspan style="fill:var(--sim)">■</tspan> simulated twin   <tspan style="fill:var(--real)">■</tspan> real dev unit</text><text x="${W}" y="12" text-anchor="end" class="svg-t">real − twin</text>`;
-    for (let v = 0; v <= vmax; v++) s += `<line x1="${xs(v)}" x2="${xs(v)}" y1="${top - 4}" y2="${top + F.length * rh}" style="stroke:var(--rule-2)"/>`;
+    const c = SHAP_CASES[sk], F = SHAP_FEATURES, W = 760, lw = 165, rw = 74, top = 26, rh = 32, H = top + F.length * rh + 30;
+    const allV = [...c.twin, ...c.real, 0];
+    const loRaw = Math.min(...allV), hiRaw = Math.max(...allV);
+    const hasNeg = loRaw < -0.05;
+    const span = Math.max(2, hiRaw - loRaw);
+    const step = span <= 6 ? 1 : span <= 15 ? 2 : span <= 35 ? 5 : 10;
+    const vmin = hasNeg ? Math.floor(loRaw / step) * step - step * 0.25 : 0;
+    const vmax = Math.ceil(hiRaw / step) * step + step * 0.25;
+    const xs = (v: number) => lw + ((v - vmin) / (vmax - vmin)) * (W - lw - rw);
+    const x0 = xs(0);
+    const D = F.map((_, i) => c.real[i] - c.twin[i]);
+    const worst = D.reduce((b, d, i) => (Math.abs(d) > Math.abs(D[b]) ? i : b), 0);
+    const sigThr = Math.max(0.4, 0.25 * Math.abs(D[worst]));
+    let s = `<text x="${lw}" y="12" class="svg-t"><tspan style="fill:var(--sim)">■</tspan> simulated twin   <tspan style="fill:var(--real)">■</tspan> real dev trips</text><text x="${W}" y="12" text-anchor="end" class="svg-t">real − twin</text>`;
+    const t0 = Math.ceil(vmin / step) * step;
+    for (let v = t0; v <= vmax + 1e-9; v += step) {
+      const xv = xs(v);
+      const isZero = Math.abs(v) < 1e-6;
+      s += `<line x1="${xv}" x2="${xv}" y1="${top - 4}" y2="${top + F.length * rh}" style="stroke:${isZero ? 'var(--ink-3)' : 'var(--rule-2)'};stroke-width:${isZero ? 1.2 : 1}"/>`;
+      s += `<text x="${xv}" y="${top + F.length * rh + 12}" text-anchor="middle" class="svg-t">${v > 0 ? '+' : ''}${v}</text>`;
+    }
     F.forEach((f, i) => {
       const y = top + i * rh;
-      if (i === worst && Math.abs(D[i]) > 0.5) s += `<rect x="0" y="${y - 3}" width="${W}" height="${rh}" style="fill:var(--paper-2)"/>`;
+      if (i === worst && Math.abs(D[i]) >= sigThr) s += `<rect x="0" y="${y - 3}" width="${W}" height="${rh}" style="fill:var(--paper-2)"/>`;
       s += `<text x="${lw - 10}" y="${y + 15}" text-anchor="end" class="svg-t2">${f}</text>`;
-      s += `<rect x="${lw}" y="${y + 2}" width="${xs(c.twin[i]) - lw}" height="10" style="fill:var(--sim)"/><rect x="${lw}" y="${y + 14}" width="${xs(c.real[i]) - lw}" height="10" style="fill:var(--real)"/>`;
-      s += `<text x="${W}" y="${y + 17}" text-anchor="end" class="svg-t" style="fill:${Math.abs(D[i]) > 0.5 ? 'var(--signal)' : 'var(--ink-3)'}">${D[i] >= 0 ? '+' : '−'}${Math.abs(D[i]).toFixed(1)}</text>`;
+      const xT = xs(c.twin[i]), xR = xs(c.real[i]);
+      s += `<rect x="${Math.min(x0, xT)}" y="${y + 2}" width="${Math.max(1.5, Math.abs(xT - x0))}" height="10" style="fill:var(--sim)"/>`;
+      s += `<rect x="${Math.min(x0, xR)}" y="${y + 14}" width="${Math.max(1.5, Math.abs(xR - x0))}" height="10" style="fill:var(--real)"/>`;
+      s += `<text x="${W}" y="${y + 17}" text-anchor="end" class="svg-t" style="fill:${Math.abs(D[i]) >= sigThr ? 'var(--signal)' : 'var(--ink-3)'}">${D[i] >= 0 ? '+' : '−'}${Math.abs(D[i]).toFixed(1)}%</text>`;
     });
-    s += `<text x="${lw}" y="${H - 6}" class="svg-t">contribution to the predicted correction (illustrative units)</text>`;
+    s += `<text x="${lw}" y="${H - 3}" class="svg-t">exact TreeSHAP contribution to log(E / E_phys) (% energy correction, real VED dev vs RoadSim)</text>`;
     const svg = q<SVGSVGElement>('#mf-shap-svg'); svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.innerHTML = s;
-    q('#mf-shap-read').innerHTML = `<b>How to read it.</b> ${esc(c.read)}`;
+    q('#mf-shap-read').innerHTML = `<b>Measured read.</b> ${esc(c.read)}`;
   };
   shapBtns.forEach((b) => b.addEventListener('click', () => { sk = +b.dataset.i!; press(shapBtns, b); drawShap(); }));
   drawShap();

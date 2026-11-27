@@ -14,7 +14,7 @@ import { GLYPHS } from '../lib/model-families-glyphs';
 
 const all = getModels();
 const ORDER: [string, string[]][] = [
-  ['Signals, fields and records', ['quakenet', 'beatnet', 'bearingnet', 'cellsense', 'chirpnet', 'starquake', 'sundoctor', 'swellcast', 'transitnet', 'wakenet', 'stormnet']],
+  ['Signals, fields and records', ['quakenet', 'beatnet', 'bearingnet', 'cellsense', 'chirpnet', 'roomsense', 'starquake', 'sundoctor', 'swellcast', 'transitnet', 'wakenet', 'stormnet']],
   ['Vehicle platform', ['energynet', 'tripdetective', 'hybridpilot']],
   ['Grid platform', ['gridpulse', 'batterypilot', 'plantdetective', 'demandcast']],
   ['Building platform', ['loadcast', 'buildingdetective', 'faultfinder', 'thermopilot']],
@@ -396,11 +396,11 @@ const toc: [string, string][] = [
     </div>
     <div class="frame pad shap">
       <div class="shap-head">
-        <div><p class="kicker illus">Illustration · made-up numbers</p><h3 class="display h3">TreeSHAP turns the twin test into a feature list</h3></div>
+        <div><p class="kicker">Measured · TreeTwin (VED dev vs RoadSim)</p><h3 class="display h3">TreeSHAP turns the twin test into a feature list</h3></div>
         <div class="togs" id="mf-shap-cases">{SHAP_CASES.map((c, i) => <button type="button" class="tog" data-i={String(i)} aria-pressed={i === 0}>{c.name}</button>)}</div>
       </div>
-      <p class="muted small">For trees, SHAP attributions are exact and fast. Computed for a real dev unit and for its simulated twin, the features whose attributions differ most point to where the simulator and reality part ways. The roadmap asks for "saliency on real vs twin inputs"; this is that idea with an exact attribution method. The cases show what such a read could look like for an EnergyNet-style trip.</p>
-      <svg id="mf-shap-svg" viewBox="0 0 760 300" role="img" aria-label="Attribution of each feature for a real unit and its simulated twin"></svg>
+      <p class="muted small">For trees, path-dependent TreeSHAP attributions are exact (Lundberg et al. 2020) and run in pure numpy (<code>mlratchet.gbm</code>) and TypeScript (<code>site/src/lib/nn/trees.ts</code>). Computed across the 1,496 real VED dev trips (16 cars) and a RoadSim-trained monotone forest (<code>experiments/treetwin/</code>, Method experiment M2), the features whose real and twin attributions diverge most rank where the simulator and reality part ways.</p>
+      <svg id="mf-shap-svg" viewBox="0 0 760 300" role="img" aria-label="Measured exact TreeSHAP attribution of each physical feature group for real VED dev trips and RoadSim"></svg>
       <p class="verdict" id="mf-shap-read"></p>
     </div>
     <p class="kicker">Where trees should not go</p>
@@ -517,7 +517,8 @@ const toc: [string, string][] = [
       from <code>docs/backlog.yaml</code>. Other numbers quote the model cards, <code>docs/lessons.md</code> and
       <code>docs/roadmap.md</code>. The family descriptions are general practice, with references. The fit ratings, the
       picker’s scores, the lens framings and the proposed rungs are this page’s judgement calls: none has been run as a
-      rung, and nothing in the repository commits to them. The TreeSHAP chart uses made-up numbers.
+      rung, and nothing in the repository commits to them. The TreeSHAP chart shows measured EnergyNet VED dev vs
+      RoadSim attributions from <code>experiments/treetwin/</code> (Method experiment M2, <code>docs/experiments/treetwin.md</code>).
     </p>
     <div class="next">
       <a class="btn" href={url('mental-models/')}>Mental models: where the method sits <span class="arrow">→</span></a>

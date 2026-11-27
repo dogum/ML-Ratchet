@@ -1,0 +1,4128 @@
+{
+  "experiment": "TreeTwin + ConformalRatchet (M2)",
+  "date": "2026-11-24",
+  "prereg_log": {
+    "file": "PREREG.md",
+    "sha256": "352d3edf570a5adb741bc8250a31079123150cd204092a4b61924adb5bfde7ba",
+    "frozen_utc": "2026-11-25T04:04:27Z",
+    "note": "TreeTwin + ConformalRatchet M2 pre-registration frozen before any exam"
+  },
+  "platforms": {
+    "buildingdetective": {
+      "platform": "buildingdetective",
+      "title": "BuildingDetective (RECS 2020)",
+      "domain": "Buildings",
+      "target": "log10_floor_area",
+      "unit": "log10 m2",
+      "prereg_sha256": "352d3edf570a5adb741bc8250a31079123150cd204092a4b61924adb5bfde7ba",
+      "n_exam": 7401,
+      "n_exam_units": 7401,
+      "sim_val": {
+        "incumbent": 59.1262,
+        "gbdt_plain": 29.7243,
+        "gbdt_mono": 30.5753,
+        "mono_parity": 0.0,
+        "mono_treeshap_err": 6.661e-15,
+        "mono_params_all": 47037
+      },
+      "dev_metrics": {
+        "incumbent": {
+          "floor_area_mdape_pct": 32.91,
+          "log10_mae": 0.1694,
+          "strata": {
+            "cold_elec": {
+              "n": 72,
+              "mdape_pct": 73.15,
+              "log10_mae": 0.235
+            },
+            "cold_fuel": {
+              "n": 646,
+              "mdape_pct": 31.73,
+              "log10_mae": 0.1664
+            },
+            "mixed_elec": {
+              "n": 155,
+              "mdape_pct": 45.75,
+              "log10_mae": 0.1927
+            },
+            "mixed_fuel": {
+              "n": 499,
+              "mdape_pct": 32.23,
+              "log10_mae": 0.1604
+            },
+            "warm_elec": {
+              "n": 167,
+              "mdape_pct": 33.89,
+              "log10_mae": 0.1749
+            },
+            "warm_fuel": {
+              "n": 309,
+              "mdape_pct": 30.31,
+              "log10_mae": 0.1604
+            }
+          }
+        },
+        "gbdt_plain": {
+          "floor_area_mdape_pct": 44.06,
+          "log10_mae": 0.2645,
+          "strata": {
+            "cold_elec": {
+              "n": 72,
+              "mdape_pct": 31.09,
+              "log10_mae": 0.1912
+            },
+            "cold_fuel": {
+              "n": 646,
+              "mdape_pct": 56.29,
+              "log10_mae": 0.3516
+            },
+            "mixed_elec": {
+              "n": 155,
+              "mdape_pct": 29.68,
+              "log10_mae": 0.1707
+            },
+            "mixed_fuel": {
+              "n": 499,
+              "mdape_pct": 42.32,
+              "log10_mae": 0.2525
+            },
+            "warm_elec": {
+              "n": 167,
+              "mdape_pct": 31.79,
+              "log10_mae": 0.1593
+            },
+            "warm_fuel": {
+              "n": 309,
+              "mdape_pct": 40.7,
+              "log10_mae": 0.2229
+            }
+          }
+        },
+        "gbdt_mono": {
+          "floor_area_mdape_pct": 43.33,
+          "log10_mae": 0.2666,
+          "strata": {
+            "cold_elec": {
+              "n": 72,
+              "mdape_pct": 32.23,
+              "log10_mae": 0.1942
+            },
+            "cold_fuel": {
+              "n": 646,
+              "mdape_pct": 56.51,
+              "log10_mae": 0.3581
+            },
+            "mixed_elec": {
+              "n": 155,
+              "mdape_pct": 27.26,
+              "log10_mae": 0.165
+            },
+            "mixed_fuel": {
+              "n": 499,
+              "mdape_pct": 42.01,
+              "log10_mae": 0.25
+            },
+            "warm_elec": {
+              "n": 167,
+              "mdape_pct": 29.49,
+              "log10_mae": 0.1519
+            },
+            "warm_fuel": {
+              "n": 309,
+              "mdape_pct": 39.12,
+              "log10_mae": 0.2321
+            }
+          }
+        }
+      },
+      "exam_metrics": {
+        "incumbent": {
+          "floor_area_mdape_pct": 33.62,
+          "log10_mae": 0.1745,
+          "strata": {
+            "cold_elec": {
+              "n": 298,
+              "mdape_pct": 63.38,
+              "log10_mae": 0.2316
+            },
+            "cold_fuel": {
+              "n": 2544,
+              "mdape_pct": 31.8,
+              "log10_mae": 0.1679
+            },
+            "mixed_elec": {
+              "n": 652,
+              "mdape_pct": 47.12,
+              "log10_mae": 0.2153
+            },
+            "mixed_fuel": {
+              "n": 2004,
+              "mdape_pct": 31.37,
+              "log10_mae": 0.1656
+            },
+            "warm_elec": {
+              "n": 742,
+              "mdape_pct": 37.61,
+              "log10_mae": 0.1849
+            },
+            "warm_fuel": {
+              "n": 1161,
+              "mdape_pct": 30.44,
+              "log10_mae": 0.1599
+            }
+          }
+        },
+        "gbdt_plain": {
+          "floor_area_mdape_pct": 45.3,
+          "log10_mae": 0.27,
+          "strata": {
+            "cold_elec": {
+              "n": 298,
+              "mdape_pct": 33.57,
+              "log10_mae": 0.2198
+            },
+            "cold_fuel": {
+              "n": 2544,
+              "mdape_pct": 56.85,
+              "log10_mae": 0.3554
+            },
+            "mixed_elec": {
+              "n": 652,
+              "mdape_pct": 31.57,
+              "log10_mae": 0.1899
+            },
+            "mixed_fuel": {
+              "n": 2004,
+              "mdape_pct": 46.38,
+              "log10_mae": 0.274
+            },
+            "warm_elec": {
+              "n": 742,
+              "mdape_pct": 29.64,
+              "log10_mae": 0.1649
+            },
+            "warm_fuel": {
+              "n": 1161,
+              "mdape_pct": 34.58,
+              "log10_mae": 0.2012
+            }
+          }
+        },
+        "gbdt_mono": {
+          "floor_area_mdape_pct": 44.96,
+          "log10_mae": 0.2727,
+          "strata": {
+            "cold_elec": {
+              "n": 298,
+              "mdape_pct": 34.78,
+              "log10_mae": 0.2207
+            },
+            "cold_fuel": {
+              "n": 2544,
+              "mdape_pct": 57.6,
+              "log10_mae": 0.3628
+            },
+            "mixed_elec": {
+              "n": 652,
+              "mdape_pct": 30.47,
+              "log10_mae": 0.1854
+            },
+            "mixed_fuel": {
+              "n": 2004,
+              "mdape_pct": 46.02,
+              "log10_mae": 0.2716
+            },
+            "warm_elec": {
+              "n": 742,
+              "mdape_pct": 28.27,
+              "log10_mae": 0.1614
+            },
+            "warm_fuel": {
+              "n": 1161,
+              "mdape_pct": 34.91,
+              "log10_mae": 0.2106
+            }
+          }
+        }
+      },
+      "paired_bootstrap": {
+        "gbdt_mono_vs_incumbent": {
+          "a": 44.9593,
+          "b": 33.6216,
+          "diff_a_minus_b": 11.3377,
+          "ci95": [
+            10.0729,
+            12.5316
+          ],
+          "significant_a_better": false,
+          "significant_b_better": true
+        },
+        "gbdt_mono_vs_gbdt_plain": {
+          "a": 44.9593,
+          "b": 45.2967,
+          "diff_a_minus_b": -0.3374,
+          "ci95": [
+            -0.8047,
+            0.2516
+          ],
+          "significant_a_better": false,
+          "significant_b_better": false
+        },
+        "gbdt_plain_vs_incumbent": {
+          "a": 45.2967,
+          "b": 33.6216,
+          "diff_a_minus_b": 11.6751,
+          "ci95": [
+            10.4425,
+            12.787
+          ],
+          "significant_a_better": false,
+          "significant_b_better": true
+        }
+      },
+      "conformal_coverage": {
+        "incumbent": {
+          "raw": {
+            "target": 0.6826894921370859,
+            "n": 7401,
+            "pooled_coverage": 0.6483,
+            "pooled_gap": -0.0344,
+            "mean_halfwidth": 0.210786,
+            "worst_under_stratum": "mixed_elec",
+            "worst_under_gap": 0.1766,
+            "max_abs_stratum_gap": 0.1766,
+            "strata": {
+              "cold_elec": {
+                "n": 298,
+                "coverage": 0.5101,
+                "gap": -0.1726,
+                "mean_halfwidth": 0.226049
+              },
+              "cold_fuel": {
+                "n": 2544,
+                "coverage": 0.6828,
+                "gap": 0.0001,
+                "mean_halfwidth": 0.220017
+              },
+              "mixed_elec": {
+                "n": 652,
+                "coverage": 0.5061,
+                "gap": -0.1766,
+                "mean_halfwidth": 0.201578
+              },
+              "mixed_fuel": {
+                "n": 2004,
+                "coverage": 0.6682,
+                "gap": -0.0145,
+                "mean_halfwidth": 0.206457
+              },
+              "warm_elec": {
+                "n": 742,
+                "coverage": 0.593,
+                "gap": -0.0897,
+                "mean_halfwidth": 0.200981
+              },
+              "warm_fuel": {
+                "n": 1161,
+                "coverage": 0.6891,
+                "gap": 0.0064,
+                "mean_halfwidth": 0.205548
+              }
+            }
+          },
+          "pooled_widen": {
+            "target": 0.6826894921370859,
+            "n": 7401,
+            "pooled_coverage": 0.6683,
+            "pooled_gap": -0.0144,
+            "mean_halfwidth": 0.217854,
+            "worst_under_stratum": "mixed_elec",
+            "worst_under_gap": 0.1535,
+            "max_abs_stratum_gap": 0.1535,
+            "strata": {
+              "cold_elec": {
+                "n": 298,
+                "coverage": 0.5336,
+                "gap": -0.1491,
+                "mean_halfwidth": 0.233629
+              },
+              "cold_fuel": {
+                "n": 2544,
+                "coverage": 0.7024,
+                "gap": 0.0197,
+                "mean_halfwidth": 0.227395
+              },
+              "mixed_elec": {
+                "n": 652,
+                "coverage": 0.5291,
+                "gap": -0.1535,
+                "mean_halfwidth": 0.208337
+              },
+              "mixed_fuel": {
+                "n": 2004,
+                "coverage": 0.6891,
+                "gap": 0.0064,
+                "mean_halfwidth": 0.213379
+              },
+              "warm_elec": {
+                "n": 742,
+                "coverage": 0.6065,
+                "gap": -0.0762,
+                "mean_halfwidth": 0.20772
+              },
+              "warm_fuel": {
+                "n": 1161,
+                "coverage": 0.7097,
+                "gap": 0.027,
+                "mean_halfwidth": 0.212441
+              }
+            }
+          },
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "n": 7401,
+            "pooled_coverage": 0.675,
+            "pooled_gap": -0.0076,
+            "mean_halfwidth": 0.222066,
+            "worst_under_stratum": "mixed_elec",
+            "worst_under_gap": 0.0508,
+            "max_abs_stratum_gap": 0.0508,
+            "strata": {
+              "cold_elec": {
+                "n": 298,
+                "coverage": 0.6846,
+                "gap": 0.0019,
+                "mean_halfwidth": 0.315257
+              },
+              "cold_fuel": {
+                "n": 2544,
+                "coverage": 0.6828,
+                "gap": 0.0001,
+                "mean_halfwidth": 0.220017
+              },
+              "mixed_elec": {
+                "n": 652,
+                "coverage": 0.6319,
+                "gap": -0.0508,
+                "mean_halfwidth": 0.247932
+              },
+              "mixed_fuel": {
+                "n": 2004,
+                "coverage": 0.6801,
+                "gap": -0.0025,
+                "mean_halfwidth": 0.209944
+              },
+              "warm_elec": {
+                "n": 742,
+                "coverage": 0.6469,
+                "gap": -0.0358,
+                "mean_halfwidth": 0.227524
+              },
+              "warm_fuel": {
+                "n": 1161,
+                "coverage": 0.6891,
+                "gap": 0.0064,
+                "mean_halfwidth": 0.205548
+              }
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "n": 7401,
+            "pooled_coverage": 0.674,
+            "pooled_gap": -0.0087,
+            "mean_halfwidth": 0.221437,
+            "worst_under_stratum": "mixed_elec",
+            "worst_under_gap": 0.0569,
+            "max_abs_stratum_gap": 0.0569,
+            "strata": {
+              "cold_elec": {
+                "n": 298,
+                "coverage": 0.6779,
+                "gap": -0.0048,
+                "mean_halfwidth": 0.305318
+              },
+              "cold_fuel": {
+                "n": 2544,
+                "coverage": 0.6828,
+                "gap": 0.0001,
+                "mean_halfwidth": 0.220132
+              },
+              "mixed_elec": {
+                "n": 652,
+                "coverage": 0.6258,
+                "gap": -0.0569,
+                "mean_halfwidth": 0.245539
+              },
+              "mixed_fuel": {
+                "n": 2004,
+                "coverage": 0.6801,
+                "gap": -0.0025,
+                "mean_halfwidth": 0.210014
+              },
+              "warm_elec": {
+                "n": 742,
+                "coverage": 0.6442,
+                "gap": -0.0385,
+                "mean_halfwidth": 0.226411
+              },
+              "warm_fuel": {
+                "n": 1161,
+                "coverage": 0.6891,
+                "gap": 0.0064,
+                "mean_halfwidth": 0.205768
+              }
+            }
+          }
+        },
+        "gbdt_mono": {
+          "raw": {
+            "target": 0.6826894921370859,
+            "n": 7401,
+            "pooled_coverage": 0.3514,
+            "pooled_gap": -0.3313,
+            "mean_halfwidth": 0.163583,
+            "worst_under_stratum": "cold_fuel",
+            "worst_under_gap": 0.5105,
+            "max_abs_stratum_gap": 0.5105,
+            "strata": {
+              "cold_elec": {
+                "n": 298,
+                "coverage": 0.4027,
+                "gap": -0.28,
+                "mean_halfwidth": 0.141434
+              },
+              "cold_fuel": {
+                "n": 2544,
+                "coverage": 0.1722,
+                "gap": -0.5105,
+                "mean_halfwidth": 0.165255
+              },
+              "mixed_elec": {
+                "n": 652,
+                "coverage": 0.4325,
+                "gap": -0.2502,
+                "mean_halfwidth": 0.130966
+              },
+              "mixed_fuel": {
+                "n": 2004,
+                "coverage": 0.2984,
+                "gap": -0.3843,
+                "mean_halfwidth": 0.140093
+              },
+              "warm_elec": {
+                "n": 742,
+                "coverage": 0.6806,
+                "gap": -0.0021,
+                "mean_halfwidth": 0.213464
+              },
+              "warm_fuel": {
+                "n": 1161,
+                "coverage": 0.5668,
+                "gap": -0.1159,
+                "mean_halfwidth": 0.192588
+              }
+            }
+          },
+          "pooled_widen": {
+            "target": 0.6826894921370859,
+            "n": 7401,
+            "pooled_coverage": 0.6609,
+            "pooled_gap": -0.0218,
+            "mean_halfwidth": 0.36747,
+            "worst_under_stratum": "cold_fuel",
+            "worst_under_gap": 0.163,
+            "max_abs_stratum_gap": 0.2486,
+            "strata": {
+              "cold_elec": {
+                "n": 298,
+                "coverage": 0.745,
+                "gap": 0.0623,
+                "mean_halfwidth": 0.317715
+              },
+              "cold_fuel": {
+                "n": 2544,
+                "coverage": 0.5197,
+                "gap": -0.163,
+                "mean_halfwidth": 0.371227
+              },
+              "mixed_elec": {
+                "n": 652,
+                "coverage": 0.7561,
+                "gap": 0.0734,
+                "mean_halfwidth": 0.2942
+              },
+              "mixed_fuel": {
+                "n": 2004,
+                "coverage": 0.6098,
+                "gap": -0.0729,
+                "mean_halfwidth": 0.314702
+              },
+              "warm_elec": {
+                "n": 742,
+                "coverage": 0.9313,
+                "gap": 0.2486,
+                "mean_halfwidth": 0.479522
+              },
+              "warm_fuel": {
+                "n": 1161,
+                "coverage": 0.8105,
+                "gap": 0.1278,
+                "mean_halfwidth": 0.432626
+              }
+            }
+          },
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "n": 7401,
+            "pooled_coverage": 0.6659,
+            "pooled_gap": -0.0168,
+            "mean_halfwidth": 0.343963,
+            "worst_under_stratum": "mixed_elec",
+            "worst_under_gap": 0.0677,
+            "max_abs_stratum_gap": 0.0677,
+            "strata": {
+              "cold_elec": {
+                "n": 298,
+                "coverage": 0.6443,
+                "gap": -0.0384,
+                "mean_halfwidth": 0.253896
+              },
+              "cold_fuel": {
+                "n": 2544,
+                "coverage": 0.6847,
+                "gap": 0.0021,
+                "mean_halfwidth": 0.463713
+              },
+              "mixed_elec": {
+                "n": 652,
+                "coverage": 0.615,
+                "gap": -0.0677,
+                "mean_halfwidth": 0.213601
+              },
+              "mixed_fuel": {
+                "n": 2004,
+                "coverage": 0.6252,
+                "gap": -0.0574,
+                "mean_halfwidth": 0.324053
+              },
+              "warm_elec": {
+                "n": 742,
+                "coverage": 0.6806,
+                "gap": -0.0021,
+                "mean_halfwidth": 0.213464
+              },
+              "warm_fuel": {
+                "n": 1161,
+                "coverage": 0.7192,
+                "gap": 0.0365,
+                "mean_halfwidth": 0.295663
+              }
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "n": 7401,
+            "pooled_coverage": 0.67,
+            "pooled_gap": -0.0126,
+            "mean_halfwidth": 0.34637,
+            "worst_under_stratum": "mixed_elec",
+            "worst_under_gap": 0.0585,
+            "max_abs_stratum_gap": 0.0585,
+            "strata": {
+              "cold_elec": {
+                "n": 298,
+                "coverage": 0.6644,
+                "gap": -0.0183,
+                "mean_halfwidth": 0.261734
+              },
+              "cold_fuel": {
+                "n": 2544,
+                "coverage": 0.6828,
+                "gap": 0.0001,
+                "mean_halfwidth": 0.462311
+              },
+              "mixed_elec": {
+                "n": 652,
+                "coverage": 0.6242,
+                "gap": -0.0585,
+                "mean_halfwidth": 0.218512
+              },
+              "mixed_fuel": {
+                "n": 2004,
+                "coverage": 0.6252,
+                "gap": -0.0574,
+                "mean_halfwidth": 0.323878
+              },
+              "warm_elec": {
+                "n": 742,
+                "coverage": 0.7102,
+                "gap": 0.0276,
+                "mean_halfwidth": 0.228535
+              },
+              "warm_fuel": {
+                "n": 1161,
+                "coverage": 0.7209,
+                "gap": 0.0382,
+                "mean_halfwidth": 0.299976
+              }
+            }
+          }
+        }
+      },
+      "calibrators_dev": {
+        "incumbent": {
+          "pooled_widen": 1.0335319019937603,
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 0.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 1.0341000488672796,
+            "stratum_factors": {
+              "cold_elec": 1.3946390319773447,
+              "cold_fuel": 1.0,
+              "mixed_elec": 1.2299575500295563,
+              "mixed_fuel": 1.0168916896446587,
+              "warm_elec": 1.1320643273308835,
+              "warm_fuel": 1.0
+            },
+            "stratum_raw_factors": {
+              "cold_elec": 1.3946390319773447,
+              "cold_fuel": 1.0,
+              "mixed_elec": 1.2299575500295563,
+              "mixed_fuel": 1.0168916896446587,
+              "warm_elec": 1.1320643273308835,
+              "warm_fuel": 1.0
+            },
+            "stratum_counts": {
+              "cold_elec": 72,
+              "cold_fuel": 646,
+              "mixed_elec": 155,
+              "mixed_fuel": 499,
+              "warm_elec": 167,
+              "warm_fuel": 309
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 10.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 1.0341000488672796,
+            "stratum_factors": {
+              "cold_elec": 1.3506708633053857,
+              "cold_fuel": 1.0005198178180987,
+              "mixed_elec": 1.2180873984439637,
+              "mixed_fuel": 1.0172297713582663,
+              "warm_elec": 1.1265296223329397,
+              "warm_fuel": 1.001068967049131
+            },
+            "stratum_raw_factors": {
+              "cold_elec": 1.3946390319773447,
+              "cold_fuel": 1.0,
+              "mixed_elec": 1.2299575500295563,
+              "mixed_fuel": 1.0168916896446587,
+              "warm_elec": 1.1320643273308835,
+              "warm_fuel": 1.0
+            },
+            "stratum_counts": {
+              "cold_elec": 72,
+              "cold_fuel": 646,
+              "mixed_elec": 155,
+              "mixed_fuel": 499,
+              "warm_elec": 167,
+              "warm_fuel": 309
+            }
+          }
+        },
+        "gbdt_mono": {
+          "pooled_widen": 2.2463833378627283,
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 0.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 2.2496213696654177,
+            "stratum_factors": {
+              "cold_elec": 1.795156462808166,
+              "cold_fuel": 2.8060399297372003,
+              "mixed_elec": 1.6309683540506494,
+              "mixed_fuel": 2.3131288325443315,
+              "warm_elec": 1.0,
+              "warm_fuel": 1.5352111500984968
+            },
+            "stratum_raw_factors": {
+              "cold_elec": 1.795156462808166,
+              "cold_fuel": 2.8060399297372003,
+              "mixed_elec": 1.6309683540506494,
+              "mixed_fuel": 2.3131288325443315,
+              "warm_elec": 1.0,
+              "warm_fuel": 1.5352111500984968
+            },
+            "stratum_counts": {
+              "cold_elec": 72,
+              "cold_fuel": 646,
+              "mixed_elec": 155,
+              "mixed_fuel": 499,
+              "warm_elec": 167,
+              "warm_fuel": 309
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 10.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 2.2496213696654177,
+            "stratum_factors": {
+              "cold_elec": 1.850579012424904,
+              "cold_fuel": 2.797557939492204,
+              "mixed_elec": 1.6684624762091202,
+              "mixed_fuel": 2.311881141721563,
+              "warm_elec": 1.070600077382227,
+              "warm_fuel": 1.5576064547871151
+            },
+            "stratum_raw_factors": {
+              "cold_elec": 1.795156462808166,
+              "cold_fuel": 2.8060399297372003,
+              "mixed_elec": 1.6309683540506494,
+              "mixed_fuel": 2.3131288325443315,
+              "warm_elec": 1.0,
+              "warm_fuel": 1.5352111500984968
+            },
+            "stratum_counts": {
+              "cold_elec": 72,
+              "cold_fuel": 646,
+              "mixed_elec": 155,
+              "mixed_fuel": 499,
+              "warm_elec": 167,
+              "warm_fuel": 309
+            }
+          }
+        },
+        "gbdt_plain": {
+          "pooled_widen": 2.1815288131254813,
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 0.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 2.185016203942175,
+            "stratum_factors": {
+              "cold_elec": 1.6906338402204573,
+              "cold_fuel": 2.750506973985712,
+              "mixed_elec": 1.5536816657361514,
+              "mixed_fuel": 2.273180151015357,
+              "warm_elec": 1.0,
+              "warm_fuel": 1.5140295176763927
+            },
+            "stratum_raw_factors": {
+              "cold_elec": 1.6906338402204573,
+              "cold_fuel": 2.750506973985712,
+              "mixed_elec": 1.5536816657361514,
+              "mixed_fuel": 2.273180151015357,
+              "warm_elec": 1.0,
+              "warm_fuel": 1.5140295176763927
+            },
+            "stratum_counts": {
+              "cold_elec": 72,
+              "cold_fuel": 646,
+              "mixed_elec": 155,
+              "mixed_fuel": 499,
+              "warm_elec": 167,
+              "warm_fuel": 309
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 10.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 2.185016203942175,
+            "stratum_factors": {
+              "cold_elec": 1.7509243723816423,
+              "cold_fuel": 2.7418866878569994,
+              "mixed_elec": 1.591944365021365,
+              "mixed_fuel": 2.271448049894077,
+              "warm_elec": 1.066950068019332,
+              "warm_fuel": 1.5350635830765742
+            },
+            "stratum_raw_factors": {
+              "cold_elec": 1.6906338402204573,
+              "cold_fuel": 2.750506973985712,
+              "mixed_elec": 1.5536816657361514,
+              "mixed_fuel": 2.273180151015357,
+              "warm_elec": 1.0,
+              "warm_fuel": 1.5140295176763927
+            },
+            "stratum_counts": {
+              "cold_elec": 72,
+              "cold_fuel": 646,
+              "mixed_elec": 155,
+              "mixed_fuel": 499,
+              "warm_elec": 167,
+              "warm_fuel": 309
+            }
+          }
+        }
+      },
+      "treeshap_twin_dev": {
+        "mode": "input_shift_paired_twins",
+        "unit": "% floor-area shift",
+        "n_pairs": 300,
+        "ranked": [
+          {
+            "feature": "Electricity (kWh/yr)",
+            "mean_real": -49.101359,
+            "mean_twin": -2.574411,
+            "mean_diff": -46.526948,
+            "mean_abs_real": 50.972757,
+            "mean_abs_twin": 32.373164,
+            "mean_abs_diff": 52.158891,
+            "share_of_gap": 0.6461
+          },
+          {
+            "feature": "Fuel gas/oil (kWh/yr)",
+            "mean_real": 8.625595,
+            "mean_twin": 9.356578,
+            "mean_diff": -0.730982,
+            "mean_abs_real": 18.010122,
+            "mean_abs_twin": 15.246679,
+            "mean_abs_diff": 16.330107,
+            "share_of_gap": 0.2023
+          },
+          {
+            "feature": "Heating degree days",
+            "mean_real": -6.833459,
+            "mean_twin": -12.10557,
+            "mean_diff": 5.272111,
+            "mean_abs_real": 15.297404,
+            "mean_abs_twin": 17.442406,
+            "mean_abs_diff": 9.736374,
+            "share_of_gap": 0.1206
+          },
+          {
+            "feature": "Cooling degree days",
+            "mean_real": -0.120814,
+            "mean_twin": 0.281297,
+            "mean_diff": -0.402111,
+            "mean_abs_real": 2.161205,
+            "mean_abs_twin": 3.224754,
+            "mean_abs_diff": 2.503752,
+            "share_of_gap": 0.031
+          },
+          {
+            "feature": "District meters",
+            "mean_real": 0.0,
+            "mean_twin": 0.0,
+            "mean_diff": 0.0,
+            "mean_abs_real": 0.0,
+            "mean_abs_twin": 0.0,
+            "mean_abs_diff": 0.0,
+            "share_of_gap": 0.0
+          }
+        ],
+        "by_stratum": {
+          "cold_elec": [
+            {
+              "feature": "Electricity (kWh/yr)",
+              "mean_real": -62.84599,
+              "mean_twin": -21.840066,
+              "mean_diff": -41.005923,
+              "mean_abs_real": 62.84599,
+              "mean_abs_twin": 43.622573,
+              "mean_abs_diff": 41.005923,
+              "share_of_gap": 0.6725
+            },
+            {
+              "feature": "Heating degree days",
+              "mean_real": -21.452221,
+              "mean_twin": -24.212009,
+              "mean_diff": 2.759789,
+              "mean_abs_real": 21.452221,
+              "mean_abs_twin": 24.38156,
+              "mean_abs_diff": 14.259883,
+              "share_of_gap": 0.2339
+            },
+            {
+              "feature": "Fuel gas/oil (kWh/yr)",
+              "mean_real": -3.462602,
+              "mean_twin": 1.281183,
+              "mean_diff": -4.743785,
+              "mean_abs_real": 3.462602,
+              "mean_abs_twin": 4.58203,
+              "mean_abs_diff": 4.781929,
+              "share_of_gap": 0.0784
+            },
+            {
+              "feature": "Cooling degree days",
+              "mean_real": 0.494846,
+              "mean_twin": 1.09188,
+              "mean_diff": -0.597034,
+              "mean_abs_real": 0.863228,
+              "mean_abs_twin": 1.146028,
+              "mean_abs_diff": 0.930996,
+              "share_of_gap": 0.0153
+            },
+            {
+              "feature": "District meters",
+              "mean_real": 0.0,
+              "mean_twin": 0.0,
+              "mean_diff": 0.0,
+              "mean_abs_real": 0.0,
+              "mean_abs_twin": 0.0,
+              "mean_abs_diff": 0.0,
+              "share_of_gap": 0.0
+            }
+          ],
+          "cold_fuel": [
+            {
+              "feature": "Electricity (kWh/yr)",
+              "mean_real": -57.934562,
+              "mean_twin": 11.911334,
+              "mean_diff": -69.845896,
+              "mean_abs_real": 57.934562,
+              "mean_abs_twin": 30.796409,
+              "mean_abs_diff": 70.180306,
+              "share_of_gap": 0.74
+            },
+            {
+              "feature": "Fuel gas/oil (kWh/yr)",
+              "mean_real": 15.754526,
+              "mean_twin": 19.857921,
+              "mean_diff": -4.103394,
+              "mean_abs_real": 19.53103,
+              "mean_abs_twin": 20.223763,
+              "mean_abs_diff": 14.237742,
+              "share_of_gap": 0.1501
+            },
+            {
+              "feature": "Heating degree days",
+              "mean_real": -26.438925,
+              "mean_twin": -31.813921,
+              "mean_diff": 5.374995,
+              "mean_abs_real": 26.438925,
+              "mean_abs_twin": 31.813921,
+              "mean_abs_diff": 9.442034,
+              "share_of_gap": 0.0996
+            },
+            {
+              "feature": "Cooling degree days",
+              "mean_real": 0.579562,
+              "mean_twin": 1.320557,
+              "mean_diff": -0.740995,
+              "mean_abs_real": 0.714407,
+              "mean_abs_twin": 1.321927,
+              "mean_abs_diff": 0.983151,
+              "share_of_gap": 0.0104
+            },
+            {
+              "feature": "District meters",
+              "mean_real": 0.0,
+              "mean_twin": 0.0,
+              "mean_diff": 0.0,
+              "mean_abs_real": 0.0,
+              "mean_abs_twin": 0.0,
+              "mean_abs_diff": 0.0,
+              "share_of_gap": 0.0
+            }
+          ],
+          "mixed_elec": [
+            {
+              "feature": "Electricity (kWh/yr)",
+              "mean_real": -36.561527,
+              "mean_twin": -26.896268,
+              "mean_diff": -9.665259,
+              "mean_abs_real": 45.367755,
+              "mean_abs_twin": 40.366508,
+              "mean_abs_diff": 34.938774,
+              "share_of_gap": 0.6674
+            },
+            {
+              "feature": "Heating degree days",
+              "mean_real": 3.263821,
+              "mean_twin": -6.482026,
+              "mean_diff": 9.745847,
+              "mean_abs_real": 6.641709,
+              "mean_abs_twin": 7.737905,
+              "mean_abs_diff": 10.033041,
+              "share_of_gap": 0.1916
+            },
+            {
+              "feature": "Fuel gas/oil (kWh/yr)",
+              "mean_real": 0.685555,
+              "mean_twin": 2.652109,
+              "mean_diff": -1.966554,
+              "mean_abs_real": 2.4817,
+              "mean_abs_twin": 3.598069,
+              "mean_abs_diff": 4.118886,
+              "share_of_gap": 0.0787
+            },
+            {
+              "feature": "Cooling degree days",
+              "mean_real": 0.432301,
+              "mean_twin": 1.908446,
+              "mean_diff": -1.476146,
+              "mean_abs_real": 3.329927,
+              "mean_abs_twin": 2.46969,
+              "mean_abs_diff": 3.261522,
+              "share_of_gap": 0.0623
+            },
+            {
+              "feature": "District meters",
+              "mean_real": 0.0,
+              "mean_twin": 0.0,
+              "mean_diff": 0.0,
+              "mean_abs_real": 0.0,
+              "mean_abs_twin": 0.0,
+              "mean_abs_diff": 0.0,
+              "share_of_gap": 0.0
+            }
+          ],
+          "mixed_fuel": [
+            {
+              "feature": "Electricity (kWh/yr)",
+              "mean_real": -48.466567,
+              "mean_twin": -3.927347,
+              "mean_diff": -44.539219,
+              "mean_abs_real": 50.083626,
+              "mean_abs_twin": 32.146229,
+              "mean_abs_diff": 50.986306,
+              "share_of_gap": 0.6247
+            },
+            {
+              "feature": "Fuel gas/oil (kWh/yr)",
+              "mean_real": 9.948655,
+              "mean_twin": 12.541594,
+              "mean_diff": -2.592939,
+              "mean_abs_real": 24.877629,
+              "mean_abs_twin": 14.393775,
+              "mean_abs_diff": 17.941236,
+              "share_of_gap": 0.2198
+            },
+            {
+              "feature": "Heating degree days",
+              "mean_real": -1.33765,
+              "mean_twin": -6.090536,
+              "mean_diff": 4.752885,
+              "mean_abs_real": 6.332318,
+              "mean_abs_twin": 9.27891,
+              "mean_abs_diff": 9.839876,
+              "share_of_gap": 0.1206
+            },
+            {
+              "feature": "Cooling degree days",
+              "mean_real": 0.629882,
+              "mean_twin": 1.037049,
+              "mean_diff": -0.407167,
+              "mean_abs_real": 2.751373,
+              "mean_abs_twin": 3.828707,
+              "mean_abs_diff": 2.850293,
+              "share_of_gap": 0.0349
+            },
+            {
+              "feature": "District meters",
+              "mean_real": 0.0,
+              "mean_twin": 0.0,
+              "mean_diff": 0.0,
+              "mean_abs_real": 0.0,
+              "mean_abs_twin": 0.0,
+              "mean_abs_diff": 0.0,
+              "share_of_gap": 0.0
+            }
+          ],
+          "warm_elec": [
+            {
+              "feature": "Electricity (kWh/yr)",
+              "mean_real": -37.373234,
+              "mean_twin": -9.208064,
+              "mean_diff": -28.165171,
+              "mean_abs_real": 39.820357,
+              "mean_abs_twin": 30.338621,
+              "mean_abs_diff": 36.746996,
+              "share_of_gap": 0.5739
+            },
+            {
+              "feature": "Fuel gas/oil (kWh/yr)",
+              "mean_real": 0.214291,
+              "mean_twin": -8.854753,
+              "mean_diff": 9.069043,
+              "mean_abs_real": 1.526816,
+              "mean_abs_twin": 14.181497,
+              "mean_abs_diff": 13.987306,
+              "share_of_gap": 0.2185
+            },
+            {
+              "feature": "Heating degree days",
+              "mean_real": 14.805836,
+              "mean_twin": 5.742739,
+              "mean_diff": 9.063097,
+              "mean_abs_real": 14.805836,
+              "mean_abs_twin": 6.527023,
+              "mean_abs_diff": 9.976171,
+              "share_of_gap": 0.1558
+            },
+            {
+              "feature": "Cooling degree days",
+              "mean_real": -2.455714,
+              "mean_twin": -5.151604,
+              "mean_diff": 2.69589,
+              "mean_abs_real": 2.680286,
+              "mean_abs_twin": 5.353807,
+              "mean_abs_diff": 3.314374,
+              "share_of_gap": 0.0518
+            },
+            {
+              "feature": "District meters",
+              "mean_real": 0.0,
+              "mean_twin": 0.0,
+              "mean_diff": 0.0,
+              "mean_abs_real": 0.0,
+              "mean_abs_twin": 0.0,
+              "mean_abs_diff": 0.0,
+              "share_of_gap": 0.0
+            }
+          ],
+          "warm_fuel": [
+            {
+              "feature": "Electricity (kWh/yr)",
+              "mean_real": -41.205191,
+              "mean_twin": -6.823827,
+              "mean_diff": -34.381364,
+              "mean_abs_real": 43.353291,
+              "mean_abs_twin": 28.591583,
+              "mean_abs_diff": 36.687978,
+              "share_of_gap": 0.4476
+            },
+            {
+              "feature": "Fuel gas/oil (kWh/yr)",
+              "mean_real": 3.310308,
+              "mean_twin": -4.233104,
+              "mean_diff": 7.543412,
+              "mean_abs_real": 25.653289,
+              "mean_abs_twin": 17.560008,
+              "mean_abs_diff": 31.979146,
+              "share_of_gap": 0.3901
+            },
+            {
+              "feature": "Heating degree days",
+              "mean_real": 12.445263,
+              "mean_twin": 11.165242,
+              "mean_diff": 1.280021,
+              "mean_abs_real": 12.496053,
+              "mean_abs_twin": 12.132384,
+              "mean_abs_diff": 8.423654,
+              "share_of_gap": 0.1028
+            },
+            {
+              "feature": "Cooling degree days",
+              "mean_real": -2.596173,
+              "mean_twin": -1.914804,
+              "mean_diff": -0.681368,
+              "mean_abs_real": 3.621706,
+              "mean_abs_twin": 6.401508,
+              "mean_abs_diff": 4.881995,
+              "share_of_gap": 0.0596
+            },
+            {
+              "feature": "District meters",
+              "mean_real": 0.0,
+              "mean_twin": 0.0,
+              "mean_diff": 0.0,
+              "mean_abs_real": 0.0,
+              "mean_abs_twin": 0.0,
+              "mean_abs_diff": 0.0,
+              "share_of_gap": 0.0
+            }
+          ]
+        },
+        "twin_report": {
+          "overall": {
+            "n": 300,
+            "phys_bias_mean": 0.0,
+            "phys_bias_median": 0.0,
+            "phys_mae": 0.0,
+            "phys_bias_ci95": [
+              0.0,
+              0.0
+            ],
+            "real_mae": 0.2679,
+            "twin_mae": 0.155894,
+            "mae_gap_real_minus_twin": 0.112007,
+            "mae_gap_ci95": [
+              0.086647,
+              0.135219
+            ],
+            "pred_shift_mean": -0.184088,
+            "pred_shift_mae": 0.237124
+          },
+          "strata": {
+            "cold_elec": {
+              "n": 13,
+              "phys_bias_mean": 0.0,
+              "phys_bias_median": 0.0,
+              "phys_mae": 0.0,
+              "phys_bias_ci95": [
+                0.0,
+                0.0
+              ],
+              "real_mae": 0.171586,
+              "twin_mae": 0.186705,
+              "mae_gap_real_minus_twin": -0.015119,
+              "mae_gap_ci95": [
+                -0.095187,
+                0.069609
+              ],
+              "pred_shift_mean": -0.189296,
+              "pred_shift_mae": 0.193523
+            },
+            "cold_fuel": {
+              "n": 100,
+              "phys_bias_mean": 0.0,
+              "phys_bias_median": 0.0,
+              "phys_mae": 0.0,
+              "phys_bias_ci95": [
+                0.0,
+                0.0
+              ],
+              "real_mae": 0.349558,
+              "twin_mae": 0.148359,
+              "mae_gap_real_minus_twin": 0.2012,
+              "mae_gap_ci95": [
+                0.159572,
+                0.242205
+              ],
+              "pred_shift_mean": -0.301032,
+              "pred_shift_mae": 0.306644
+            },
+            "mixed_elec": {
+              "n": 30,
+              "phys_bias_mean": 0.0,
+              "phys_bias_median": 0.0,
+              "phys_mae": 0.0,
+              "phys_bias_ci95": [
+                0.0,
+                0.0
+              ],
+              "real_mae": 0.169347,
+              "twin_mae": 0.130737,
+              "mae_gap_real_minus_twin": 0.03861,
+              "mae_gap_ci95": [
+                -0.017874,
+                0.100789
+              ],
+              "pred_shift_mean": -0.014601,
+              "pred_shift_mae": 0.171614
+            },
+            "mixed_fuel": {
+              "n": 90,
+              "phys_bias_mean": 0.0,
+              "phys_bias_median": 0.0,
+              "phys_mae": 0.0,
+              "phys_bias_ci95": [
+                0.0,
+                0.0
+              ],
+              "real_mae": 0.261296,
+              "twin_mae": 0.164498,
+              "mae_gap_real_minus_twin": 0.096798,
+              "mae_gap_ci95": [
+                0.053842,
+                0.14496
+              ],
+              "pred_shift_mean": -0.185819,
+              "pred_shift_mae": 0.23289
+            },
+            "warm_elec": {
+              "n": 26,
+              "phys_bias_mean": 0.0,
+              "phys_bias_median": 0.0,
+              "phys_mae": 0.0,
+              "phys_bias_ci95": [
+                0.0,
+                0.0
+              ],
+              "real_mae": 0.173193,
+              "twin_mae": 0.149917,
+              "mae_gap_real_minus_twin": 0.023275,
+              "mae_gap_ci95": [
+                -0.032016,
+                0.086184
+              ],
+              "pred_shift_mean": -0.031865,
+              "pred_shift_mae": 0.155844
+            },
+            "warm_fuel": {
+              "n": 41,
+              "phys_bias_mean": 0.0,
+              "phys_bias_median": 0.0,
+              "phys_mae": 0.0,
+              "phys_bias_ci95": [
+                0.0,
+                0.0
+              ],
+              "real_mae": 0.245942,
+              "twin_mae": 0.167812,
+              "mae_gap_real_minus_twin": 0.07813,
+              "mae_gap_ci95": [
+                0.019242,
+                0.149304
+              ],
+              "pred_shift_mean": -0.113956,
+              "pred_shift_mae": 0.190158
+            }
+          }
+        }
+      },
+      "disagreement_exam": {
+        "vs_incumbent_error": {
+          "overall": {
+            "n": 7401,
+            "mean_disagreement": 0.236833,
+            "median_disagreement": 0.242864,
+            "p90_disagreement": 0.3535,
+            "spearman_r": 0.0814,
+            "spearman_p": 0.0,
+            "top10pct_mae": 0.18997,
+            "bottom50pct_mae": 0.16652,
+            "top10pct_enrichment": 1.089
+          },
+          "strata": {
+            "cold_elec": {
+              "n": 298,
+              "mean_disagreement": 0.36972,
+              "median_disagreement": 0.38105,
+              "p90_disagreement": 0.493119,
+              "spearman_r": 0.2207,
+              "spearman_p": 0.000122,
+              "top10pct_mae": 0.287007,
+              "bottom50pct_mae": 0.201798,
+              "top10pct_enrichment": 1.239
+            },
+            "cold_fuel": {
+              "n": 2544,
+              "mean_disagreement": 0.282465,
+              "median_disagreement": 0.287774,
+              "p90_disagreement": 0.344426,
+              "spearman_r": 0.0309,
+              "spearman_p": 0.119249,
+              "top10pct_mae": 0.163774,
+              "bottom50pct_mae": 0.165146,
+              "top10pct_enrichment": 0.975
+            },
+            "mixed_elec": {
+              "n": 652,
+              "mean_disagreement": 0.2367,
+              "median_disagreement": 0.267356,
+              "p90_disagreement": 0.336661,
+              "spearman_r": 0.2337,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.278927,
+              "bottom50pct_mae": 0.187819,
+              "top10pct_enrichment": 1.295
+            },
+            "mixed_fuel": {
+              "n": 2004,
+              "mean_disagreement": 0.219908,
+              "median_disagreement": 0.213898,
+              "p90_disagreement": 0.332877,
+              "spearman_r": -0.0072,
+              "spearman_p": 0.745805,
+              "top10pct_mae": 0.160243,
+              "bottom50pct_mae": 0.166587,
+              "top10pct_enrichment": 0.967
+            },
+            "warm_elec": {
+              "n": 742,
+              "mean_disagreement": 0.146596,
+              "median_disagreement": 0.144414,
+              "p90_disagreement": 0.2349,
+              "spearman_r": 0.1768,
+              "spearman_p": 1e-06,
+              "top10pct_mae": 0.258014,
+              "bottom50pct_mae": 0.164638,
+              "top10pct_enrichment": 1.395
+            },
+            "warm_fuel": {
+              "n": 1161,
+              "mean_disagreement": 0.189694,
+              "median_disagreement": 0.152711,
+              "p90_disagreement": 0.390281,
+              "spearman_r": 0.034,
+              "spearman_p": 0.246782,
+              "top10pct_mae": 0.164372,
+              "bottom50pct_mae": 0.156841,
+              "top10pct_enrichment": 1.028
+            }
+          }
+        },
+        "vs_gbdt_mono_error": {
+          "overall": {
+            "n": 7401,
+            "mean_disagreement": 0.236833,
+            "median_disagreement": 0.242864,
+            "p90_disagreement": 0.3535,
+            "spearman_r": 0.3739,
+            "spearman_p": 0.0,
+            "top10pct_mae": 0.362083,
+            "bottom50pct_mae": 0.206782,
+            "top10pct_enrichment": 1.328
+          },
+          "strata": {
+            "cold_elec": {
+              "n": 298,
+              "mean_disagreement": 0.36972,
+              "median_disagreement": 0.38105,
+              "p90_disagreement": 0.493119,
+              "spearman_r": 0.1098,
+              "spearman_p": 0.05829,
+              "top10pct_mae": 0.293563,
+              "bottom50pct_mae": 0.200121,
+              "top10pct_enrichment": 1.33
+            },
+            "cold_fuel": {
+              "n": 2544,
+              "mean_disagreement": 0.282465,
+              "median_disagreement": 0.287774,
+              "p90_disagreement": 0.344426,
+              "spearman_r": 0.3224,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.433584,
+              "bottom50pct_mae": 0.313093,
+              "top10pct_enrichment": 1.195
+            },
+            "mixed_elec": {
+              "n": 652,
+              "mean_disagreement": 0.2367,
+              "median_disagreement": 0.267356,
+              "p90_disagreement": 0.336661,
+              "spearman_r": -0.0569,
+              "spearman_p": 0.147011,
+              "top10pct_mae": 0.178342,
+              "bottom50pct_mae": 0.195925,
+              "top10pct_enrichment": 0.962
+            },
+            "mixed_fuel": {
+              "n": 2004,
+              "mean_disagreement": 0.219908,
+              "median_disagreement": 0.213898,
+              "p90_disagreement": 0.332877,
+              "spearman_r": 0.3494,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.424214,
+              "bottom50pct_mae": 0.215276,
+              "top10pct_enrichment": 1.562
+            },
+            "warm_elec": {
+              "n": 742,
+              "mean_disagreement": 0.146596,
+              "median_disagreement": 0.144414,
+              "p90_disagreement": 0.2349,
+              "spearman_r": -0.0093,
+              "spearman_p": 0.801348,
+              "top10pct_mae": 0.158902,
+              "bottom50pct_mae": 0.163615,
+              "top10pct_enrichment": 0.984
+            },
+            "warm_fuel": {
+              "n": 1161,
+              "mean_disagreement": 0.189694,
+              "median_disagreement": 0.152711,
+              "p90_disagreement": 0.390281,
+              "spearman_r": 0.286,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.452078,
+              "bottom50pct_mae": 0.17209,
+              "top10pct_enrichment": 2.147
+            }
+          }
+        }
+      }
+    },
+    "airfoilnet": {
+      "platform": "airfoilnet",
+      "title": "AirfoilNet (UIUC LSAT drag)",
+      "domain": "Aerodynamics",
+      "target": "ln_cd",
+      "unit": "ln Cd",
+      "prereg_sha256": "352d3edf570a5adb741bc8250a31079123150cd204092a4b61924adb5bfde7ba",
+      "n_exam": 5565,
+      "n_exam_units": 71,
+      "sim_val": {
+        "incumbent": 0.1582,
+        "gbdt_plain": 0.1531,
+        "gbdt_mono": 0.1578,
+        "mono_parity": 0.0,
+        "mono_treeshap_err": 9.77e-15,
+        "mono_params_all": 57104
+      },
+      "dev_metrics": {
+        "incumbent": {
+          "lncd_mae": 0.224,
+          "cd_mdape_pct": 12.89,
+          "strata": {
+            "highRe_highA": {
+              "n": 109,
+              "lncd_mae": 0.18,
+              "cd_mdape_pct": 7.59
+            },
+            "highRe_lowA": {
+              "n": 179,
+              "lncd_mae": 0.2228,
+              "cd_mdape_pct": 11.55
+            },
+            "lowRe_highA": {
+              "n": 52,
+              "lncd_mae": 0.3415,
+              "cd_mdape_pct": 34.64
+            },
+            "lowRe_lowA": {
+              "n": 89,
+              "lncd_mae": 0.2118,
+              "cd_mdape_pct": 17.31
+            }
+          }
+        },
+        "gbdt_plain": {
+          "lncd_mae": 0.2316,
+          "cd_mdape_pct": 14.28,
+          "strata": {
+            "highRe_highA": {
+              "n": 109,
+              "lncd_mae": 0.2351,
+              "cd_mdape_pct": 16.15
+            },
+            "highRe_lowA": {
+              "n": 179,
+              "lncd_mae": 0.2534,
+              "cd_mdape_pct": 11.26
+            },
+            "lowRe_highA": {
+              "n": 52,
+              "lncd_mae": 0.2726,
+              "cd_mdape_pct": 29.16
+            },
+            "lowRe_lowA": {
+              "n": 89,
+              "lncd_mae": 0.1596,
+              "cd_mdape_pct": 11.19
+            }
+          }
+        },
+        "gbdt_mono": {
+          "lncd_mae": 0.2363,
+          "cd_mdape_pct": 14.13,
+          "strata": {
+            "highRe_highA": {
+              "n": 109,
+              "lncd_mae": 0.2314,
+              "cd_mdape_pct": 15.62
+            },
+            "highRe_lowA": {
+              "n": 179,
+              "lncd_mae": 0.2517,
+              "cd_mdape_pct": 12.0
+            },
+            "lowRe_highA": {
+              "n": 52,
+              "lncd_mae": 0.313,
+              "cd_mdape_pct": 33.66
+            },
+            "lowRe_lowA": {
+              "n": 89,
+              "lncd_mae": 0.1663,
+              "cd_mdape_pct": 10.71
+            }
+          }
+        }
+      },
+      "exam_metrics": {
+        "incumbent": {
+          "lncd_mae": 0.1659,
+          "cd_mdape_pct": 11.39,
+          "strata": {
+            "highRe_highA": {
+              "n": 1150,
+              "lncd_mae": 0.1586,
+              "cd_mdape_pct": 11.49
+            },
+            "highRe_lowA": {
+              "n": 2229,
+              "lncd_mae": 0.1291,
+              "cd_mdape_pct": 8.91
+            },
+            "lowRe_highA": {
+              "n": 718,
+              "lncd_mae": 0.2895,
+              "cd_mdape_pct": 25.5
+            },
+            "lowRe_lowA": {
+              "n": 1468,
+              "lncd_mae": 0.1669,
+              "cd_mdape_pct": 12.9
+            }
+          }
+        },
+        "gbdt_plain": {
+          "lncd_mae": 0.1788,
+          "cd_mdape_pct": 12.02,
+          "strata": {
+            "highRe_highA": {
+              "n": 1150,
+              "lncd_mae": 0.1907,
+              "cd_mdape_pct": 12.92
+            },
+            "highRe_lowA": {
+              "n": 2229,
+              "lncd_mae": 0.1431,
+              "cd_mdape_pct": 9.12
+            },
+            "lowRe_highA": {
+              "n": 718,
+              "lncd_mae": 0.2611,
+              "cd_mdape_pct": 22.34
+            },
+            "lowRe_lowA": {
+              "n": 1468,
+              "lncd_mae": 0.1833,
+              "cd_mdape_pct": 13.71
+            }
+          }
+        },
+        "gbdt_mono": {
+          "lncd_mae": 0.184,
+          "cd_mdape_pct": 12.51,
+          "strata": {
+            "highRe_highA": {
+              "n": 1150,
+              "lncd_mae": 0.1913,
+              "cd_mdape_pct": 13.29
+            },
+            "highRe_lowA": {
+              "n": 2229,
+              "lncd_mae": 0.1426,
+              "cd_mdape_pct": 9.15
+            },
+            "lowRe_highA": {
+              "n": 718,
+              "lncd_mae": 0.2955,
+              "cd_mdape_pct": 26.36
+            },
+            "lowRe_lowA": {
+              "n": 1468,
+              "lncd_mae": 0.1865,
+              "cd_mdape_pct": 14.12
+            }
+          }
+        }
+      },
+      "paired_bootstrap": {
+        "gbdt_mono_vs_incumbent": {
+          "a": 0.184,
+          "b": 0.1659,
+          "diff_a_minus_b": 0.0181,
+          "ci95": [
+            0.0055,
+            0.0303
+          ],
+          "significant_a_better": false,
+          "significant_b_better": true
+        },
+        "gbdt_mono_vs_gbdt_plain": {
+          "a": 0.184,
+          "b": 0.1788,
+          "diff_a_minus_b": 0.0052,
+          "ci95": [
+            0.0014,
+            0.009
+          ],
+          "significant_a_better": false,
+          "significant_b_better": true
+        },
+        "gbdt_plain_vs_incumbent": {
+          "a": 0.1788,
+          "b": 0.1659,
+          "diff_a_minus_b": 0.0129,
+          "ci95": [
+            0.0003,
+            0.0257
+          ],
+          "significant_a_better": false,
+          "significant_b_better": true
+        }
+      },
+      "conformal_coverage": {
+        "incumbent": {
+          "raw": {
+            "target": 0.6826894921370859,
+            "n": 5565,
+            "pooled_coverage": 0.4124,
+            "pooled_gap": -0.2703,
+            "mean_halfwidth": 0.104945,
+            "worst_under_stratum": "lowRe_highA",
+            "worst_under_gap": 0.4821,
+            "max_abs_stratum_gap": 0.4821,
+            "strata": {
+              "highRe_highA": {
+                "n": 1150,
+                "coverage": 0.3817,
+                "gap": -0.301,
+                "mean_halfwidth": 0.095721
+              },
+              "highRe_lowA": {
+                "n": 2229,
+                "coverage": 0.485,
+                "gap": -0.1977,
+                "mean_halfwidth": 0.100659
+              },
+              "lowRe_highA": {
+                "n": 718,
+                "coverage": 0.2006,
+                "gap": -0.4821,
+                "mean_halfwidth": 0.104171
+              },
+              "lowRe_lowA": {
+                "n": 1468,
+                "coverage": 0.4298,
+                "gap": -0.2529,
+                "mean_halfwidth": 0.119059
+              }
+            }
+          },
+          "pooled_widen": {
+            "target": 0.6826894921370859,
+            "n": 5565,
+            "pooled_coverage": 0.7335,
+            "pooled_gap": 0.0508,
+            "mean_halfwidth": 0.25424,
+            "worst_under_stratum": "lowRe_highA",
+            "worst_under_gap": 0.2161,
+            "max_abs_stratum_gap": 0.2161,
+            "strata": {
+              "highRe_highA": {
+                "n": 1150,
+                "coverage": 0.6626,
+                "gap": -0.0201,
+                "mean_halfwidth": 0.231892
+              },
+              "highRe_lowA": {
+                "n": 2229,
+                "coverage": 0.834,
+                "gap": 0.1513,
+                "mean_halfwidth": 0.243855
+              },
+              "lowRe_highA": {
+                "n": 718,
+                "coverage": 0.4666,
+                "gap": -0.2161,
+                "mean_halfwidth": 0.252365
+              },
+              "lowRe_lowA": {
+                "n": 1468,
+                "coverage": 0.767,
+                "gap": 0.0843,
+                "mean_halfwidth": 0.288432
+              }
+            }
+          },
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "n": 5565,
+            "pooled_coverage": 0.7504,
+            "pooled_gap": 0.0677,
+            "mean_halfwidth": 0.275085,
+            "worst_under_stratum": "highRe_highA",
+            "worst_under_gap": 0.0505,
+            "max_abs_stratum_gap": 0.1627,
+            "strata": {
+              "highRe_highA": {
+                "n": 1150,
+                "coverage": 0.6322,
+                "gap": -0.0505,
+                "mean_halfwidth": 0.215928
+              },
+              "highRe_lowA": {
+                "n": 2229,
+                "coverage": 0.7447,
+                "gap": 0.062,
+                "mean_halfwidth": 0.183847
+              },
+              "lowRe_highA": {
+                "n": 718,
+                "coverage": 0.8454,
+                "gap": 0.1627,
+                "mean_halfwidth": 0.549676
+              },
+              "lowRe_lowA": {
+                "n": 1468,
+                "coverage": 0.8052,
+                "gap": 0.1225,
+                "mean_halfwidth": 0.32566
+              }
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "n": 5565,
+            "pooled_coverage": 0.7468,
+            "pooled_gap": 0.0641,
+            "mean_halfwidth": 0.269484,
+            "worst_under_stratum": "highRe_highA",
+            "worst_under_gap": 0.047,
+            "max_abs_stratum_gap": 0.1191,
+            "strata": {
+              "highRe_highA": {
+                "n": 1150,
+                "coverage": 0.6357,
+                "gap": -0.047,
+                "mean_halfwidth": 0.217295
+              },
+              "highRe_lowA": {
+                "n": 2229,
+                "coverage": 0.7515,
+                "gap": 0.0688,
+                "mean_halfwidth": 0.187039
+              },
+              "lowRe_highA": {
+                "n": 718,
+                "coverage": 0.7981,
+                "gap": 0.1154,
+                "mean_halfwidth": 0.501775
+              },
+              "lowRe_lowA": {
+                "n": 1468,
+                "coverage": 0.8018,
+                "gap": 0.1191,
+                "mean_halfwidth": 0.321937
+              }
+            }
+          }
+        },
+        "gbdt_mono": {
+          "raw": {
+            "target": 0.6826894921370859,
+            "n": 5565,
+            "pooled_coverage": 0.4978,
+            "pooled_gap": -0.1849,
+            "mean_halfwidth": 0.146223,
+            "worst_under_stratum": "lowRe_highA",
+            "worst_under_gap": 0.2412,
+            "max_abs_stratum_gap": 0.2412,
+            "strata": {
+              "highRe_highA": {
+                "n": 1150,
+                "coverage": 0.493,
+                "gap": -0.1896,
+                "mean_halfwidth": 0.154417
+              },
+              "highRe_lowA": {
+                "n": 2229,
+                "coverage": 0.5469,
+                "gap": -0.1358,
+                "mean_halfwidth": 0.117597
+              },
+              "lowRe_highA": {
+                "n": 718,
+                "coverage": 0.4415,
+                "gap": -0.2412,
+                "mean_halfwidth": 0.244787
+              },
+              "lowRe_lowA": {
+                "n": 1468,
+                "coverage": 0.4544,
+                "gap": -0.2283,
+                "mean_halfwidth": 0.135061
+              }
+            }
+          },
+          "pooled_widen": {
+            "target": 0.6826894921370859,
+            "n": 5565,
+            "pooled_coverage": 0.6305,
+            "pooled_gap": -0.0521,
+            "mean_halfwidth": 0.202858,
+            "worst_under_stratum": "lowRe_lowA",
+            "worst_under_gap": 0.0982,
+            "max_abs_stratum_gap": 0.0982,
+            "strata": {
+              "highRe_highA": {
+                "n": 1150,
+                "coverage": 0.6139,
+                "gap": -0.0688,
+                "mean_halfwidth": 0.214226
+              },
+              "highRe_lowA": {
+                "n": 2229,
+                "coverage": 0.677,
+                "gap": -0.0057,
+                "mean_halfwidth": 0.163145
+              },
+              "lowRe_highA": {
+                "n": 718,
+                "coverage": 0.6072,
+                "gap": -0.0754,
+                "mean_halfwidth": 0.339598
+              },
+              "lowRe_lowA": {
+                "n": 1468,
+                "coverage": 0.5845,
+                "gap": -0.0982,
+                "mean_halfwidth": 0.187373
+              }
+            }
+          },
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "n": 5565,
+            "pooled_coverage": 0.6399,
+            "pooled_gap": -0.0428,
+            "mean_halfwidth": 0.207471,
+            "worst_under_stratum": "highRe_highA",
+            "worst_under_gap": 0.1149,
+            "max_abs_stratum_gap": 0.1149,
+            "strata": {
+              "highRe_highA": {
+                "n": 1150,
+                "coverage": 0.5678,
+                "gap": -0.1149,
+                "mean_halfwidth": 0.191387
+              },
+              "highRe_lowA": {
+                "n": 2229,
+                "coverage": 0.6918,
+                "gap": 0.0091,
+                "mean_halfwidth": 0.16771
+              },
+              "lowRe_highA": {
+                "n": 718,
+                "coverage": 0.6448,
+                "gap": -0.0378,
+                "mean_halfwidth": 0.362096
+              },
+              "lowRe_lowA": {
+                "n": 1468,
+                "coverage": 0.6151,
+                "gap": -0.0676,
+                "mean_halfwidth": 0.204815
+              }
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "n": 5565,
+            "pooled_coverage": 0.6401,
+            "pooled_gap": -0.0426,
+            "mean_halfwidth": 0.206882,
+            "worst_under_stratum": "highRe_highA",
+            "worst_under_gap": 0.1105,
+            "max_abs_stratum_gap": 0.1105,
+            "strata": {
+              "highRe_highA": {
+                "n": 1150,
+                "coverage": 0.5722,
+                "gap": -0.1105,
+                "mean_halfwidth": 0.193348
+              },
+              "highRe_lowA": {
+                "n": 2229,
+                "coverage": 0.6918,
+                "gap": 0.0091,
+                "mean_halfwidth": 0.167488
+              },
+              "lowRe_highA": {
+                "n": 718,
+                "coverage": 0.6435,
+                "gap": -0.0392,
+                "mean_halfwidth": 0.358595
+              },
+              "lowRe_lowA": {
+                "n": 1468,
+                "coverage": 0.6131,
+                "gap": -0.0696,
+                "mean_halfwidth": 0.203097
+              }
+            }
+          }
+        }
+      },
+      "calibrators_dev": {
+        "incumbent": {
+          "pooled_widen": 2.422591741530668,
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 0.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 2.4257289901750583,
+            "stratum_factors": {
+              "highRe_highA": 2.255818737783573,
+              "highRe_lowA": 1.8264383712329846,
+              "lowRe_highA": 5.276650344064948,
+              "lowRe_lowA": 2.7352756017853133
+            },
+            "stratum_raw_factors": {
+              "highRe_highA": 2.255818737783573,
+              "highRe_lowA": 1.8264383712329846,
+              "lowRe_highA": 5.276650344064948,
+              "lowRe_lowA": 2.7352756017853133
+            },
+            "stratum_counts": {
+              "highRe_highA": 109,
+              "highRe_lowA": 179,
+              "lowRe_highA": 52,
+              "lowRe_lowA": 89
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 10.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 2.4257289901750583,
+            "stratum_factors": {
+              "highRe_highA": 2.2700969102534456,
+              "highRe_lowA": 1.858146869589708,
+              "lowRe_highA": 4.816824319243998,
+              "lowRe_lowA": 2.704008267279227
+            },
+            "stratum_raw_factors": {
+              "highRe_highA": 2.255818737783573,
+              "highRe_lowA": 1.8264383712329846,
+              "lowRe_highA": 5.276650344064948,
+              "lowRe_lowA": 2.7352756017853133
+            },
+            "stratum_counts": {
+              "highRe_highA": 109,
+              "highRe_lowA": 179,
+              "lowRe_highA": 52,
+              "lowRe_lowA": 89
+            }
+          }
+        },
+        "gbdt_mono": {
+          "pooled_widen": 1.3873202043577348,
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 0.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 1.390548147782249,
+            "stratum_factors": {
+              "highRe_highA": 1.2394148888176508,
+              "highRe_lowA": 1.4261392699874509,
+              "lowRe_highA": 1.4792298483781137,
+              "lowRe_lowA": 1.5164666961759021
+            },
+            "stratum_raw_factors": {
+              "highRe_highA": 1.2394148888176508,
+              "highRe_lowA": 1.4261392699874509,
+              "lowRe_highA": 1.4792298483781137,
+              "lowRe_lowA": 1.5164666961759021
+            },
+            "stratum_counts": {
+              "highRe_highA": 109,
+              "highRe_lowA": 179,
+              "lowRe_highA": 52,
+              "lowRe_lowA": 89
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 10.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 1.390548147782249,
+            "stratum_factors": {
+              "highRe_highA": 1.2521151626802223,
+              "highRe_lowA": 1.4242561418284454,
+              "lowRe_highA": 1.4649263482820065,
+              "lowRe_lowA": 1.5037476508836138
+            },
+            "stratum_raw_factors": {
+              "highRe_highA": 1.2394148888176508,
+              "highRe_lowA": 1.4261392699874509,
+              "lowRe_highA": 1.4792298483781137,
+              "lowRe_lowA": 1.5164666961759021
+            },
+            "stratum_counts": {
+              "highRe_highA": 109,
+              "highRe_lowA": 179,
+              "lowRe_highA": 52,
+              "lowRe_lowA": 89
+            }
+          }
+        },
+        "gbdt_plain": {
+          "pooled_widen": 1.3486316178189688,
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 0.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 1.3546310651144573,
+            "stratum_factors": {
+              "highRe_highA": 1.3185052898494682,
+              "highRe_lowA": 1.3599168627412548,
+              "lowRe_highA": 1.3037274796961336,
+              "lowRe_lowA": 1.677405334570822
+            },
+            "stratum_raw_factors": {
+              "highRe_highA": 1.3185052898494682,
+              "highRe_lowA": 1.3599168627412548,
+              "lowRe_highA": 1.3037274796961336,
+              "lowRe_lowA": 1.677405334570822
+            },
+            "stratum_counts": {
+              "highRe_highA": 109,
+              "highRe_lowA": 179,
+              "lowRe_highA": 52,
+              "lowRe_lowA": 89
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 10.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 1.3546310651144573,
+            "stratum_factors": {
+              "highRe_highA": 1.321541069283501,
+              "highRe_lowA": 1.3596371909091491,
+              "lowRe_highA": 1.3119377354087662,
+              "lowRe_lowA": 1.644801873009573
+            },
+            "stratum_raw_factors": {
+              "highRe_highA": 1.3185052898494682,
+              "highRe_lowA": 1.3599168627412548,
+              "lowRe_highA": 1.3037274796961336,
+              "lowRe_lowA": 1.677405334570822
+            },
+            "stratum_counts": {
+              "highRe_highA": 109,
+              "highRe_lowA": 179,
+              "lowRe_highA": 52,
+              "lowRe_lowA": 89
+            }
+          }
+        }
+      },
+      "treeshap_twin_dev": {
+        "mode": "forward_residual_gap",
+        "unit": "% drag shift",
+        "n_dev_diag": 429,
+        "ranked": [
+          {
+            "feature": "Angle of attack (alpha)",
+            "mean_real": 13.192066,
+            "mean_twin": 13.237968,
+            "mean_diff": -0.045903,
+            "mean_abs_real": 19.446373,
+            "mean_abs_twin": 25.683626,
+            "mean_abs_diff": 10.981197,
+            "share_of_gap": 0.3828
+          },
+          {
+            "feature": "Mid-chord thickness (25-75% c)",
+            "mean_real": -1.584774,
+            "mean_twin": -1.611122,
+            "mean_diff": 0.026348,
+            "mean_abs_real": 8.952937,
+            "mean_abs_twin": 4.542526,
+            "mean_abs_diff": 8.675501,
+            "share_of_gap": 0.3024
+          },
+          {
+            "feature": "Mid/aft camber",
+            "mean_real": 5.424815,
+            "mean_twin": 5.274202,
+            "mean_diff": 0.150612,
+            "mean_abs_real": 11.218767,
+            "mean_abs_twin": 11.490424,
+            "mean_abs_diff": 4.656359,
+            "share_of_gap": 0.1623
+          },
+          {
+            "feature": "Reynolds number (log10 Re)",
+            "mean_real": -9.747925,
+            "mean_twin": -9.679714,
+            "mean_diff": -0.06821,
+            "mean_abs_real": 28.991298,
+            "mean_abs_twin": 30.996721,
+            "mean_abs_diff": 2.924702,
+            "share_of_gap": 0.1019
+          },
+          {
+            "feature": "Leading-edge thickness (0-25% c)",
+            "mean_real": -0.128039,
+            "mean_twin": -0.20925,
+            "mean_diff": 0.081211,
+            "mean_abs_real": 2.92675,
+            "mean_abs_twin": 2.903976,
+            "mean_abs_diff": 0.720523,
+            "share_of_gap": 0.0251
+          },
+          {
+            "feature": "Trailing-edge thickness (75-100% c)",
+            "mean_real": 1.332786,
+            "mean_twin": 1.32339,
+            "mean_diff": 0.009396,
+            "mean_abs_real": 3.739484,
+            "mean_abs_twin": 4.054977,
+            "mean_abs_diff": 0.437365,
+            "share_of_gap": 0.0152
+          },
+          {
+            "feature": "Leading-edge camber",
+            "mean_real": 0.907436,
+            "mean_twin": 0.921567,
+            "mean_diff": -0.014131,
+            "mean_abs_real": 2.675075,
+            "mean_abs_twin": 2.726653,
+            "mean_abs_diff": 0.293945,
+            "share_of_gap": 0.0102
+          }
+        ],
+        "by_stratum": {
+          "highRe_highA": [
+            {
+              "feature": "Angle of attack (alpha)",
+              "mean_real": 36.279733,
+              "mean_twin": 47.967159,
+              "mean_diff": -11.687427,
+              "mean_abs_real": 36.279733,
+              "mean_abs_twin": 47.967159,
+              "mean_abs_diff": 14.793526,
+              "share_of_gap": 0.4427
+            },
+            {
+              "feature": "Mid-chord thickness (25-75% c)",
+              "mean_real": 0.575058,
+              "mean_twin": -0.813395,
+              "mean_diff": 1.388452,
+              "mean_abs_real": 7.759651,
+              "mean_abs_twin": 2.822486,
+              "mean_abs_diff": 8.126812,
+              "share_of_gap": 0.2432
+            },
+            {
+              "feature": "Mid/aft camber",
+              "mean_real": 6.543613,
+              "mean_twin": 5.30254,
+              "mean_diff": 1.241073,
+              "mean_abs_real": 9.092936,
+              "mean_abs_twin": 9.193595,
+              "mean_abs_diff": 5.931482,
+              "share_of_gap": 0.1775
+            },
+            {
+              "feature": "Reynolds number (log10 Re)",
+              "mean_real": -26.819345,
+              "mean_twin": -29.272169,
+              "mean_diff": 2.452824,
+              "mean_abs_real": 26.819345,
+              "mean_abs_twin": 29.272169,
+              "mean_abs_diff": 3.270894,
+              "share_of_gap": 0.0979
+            },
+            {
+              "feature": "Trailing-edge thickness (75-100% c)",
+              "mean_real": 2.903487,
+              "mean_twin": 2.912078,
+              "mean_diff": -0.008591,
+              "mean_abs_real": 4.782528,
+              "mean_abs_twin": 5.380621,
+              "mean_abs_diff": 0.631323,
+              "share_of_gap": 0.0189
+            },
+            {
+              "feature": "Leading-edge thickness (0-25% c)",
+              "mean_real": -1.866354,
+              "mean_twin": -2.040145,
+              "mean_diff": 0.173791,
+              "mean_abs_real": 3.362911,
+              "mean_abs_twin": 3.680927,
+              "mean_abs_diff": 0.400535,
+              "share_of_gap": 0.012
+            },
+            {
+              "feature": "Leading-edge camber",
+              "mean_real": 1.931823,
+              "mean_twin": 1.853963,
+              "mean_diff": 0.07786,
+              "mean_abs_real": 2.111493,
+              "mean_abs_twin": 2.049921,
+              "mean_abs_diff": 0.264778,
+              "share_of_gap": 0.0079
+            }
+          ],
+          "highRe_lowA": [
+            {
+              "feature": "Mid-chord thickness (25-75% c)",
+              "mean_real": 0.677305,
+              "mean_twin": -1.052356,
+              "mean_diff": 1.729661,
+              "mean_abs_real": 11.165188,
+              "mean_abs_twin": 4.998741,
+              "mean_abs_diff": 11.530034,
+              "share_of_gap": 0.4045
+            },
+            {
+              "feature": "Angle of attack (alpha)",
+              "mean_real": 0.331599,
+              "mean_twin": -6.941611,
+              "mean_diff": 7.27321,
+              "mean_abs_real": 10.638853,
+              "mean_abs_twin": 12.994638,
+              "mean_abs_diff": 7.926283,
+              "share_of_gap": 0.2781
+            },
+            {
+              "feature": "Mid/aft camber",
+              "mean_real": 6.435764,
+              "mean_twin": 5.837021,
+              "mean_diff": 0.598744,
+              "mean_abs_real": 11.180144,
+              "mean_abs_twin": 11.80803,
+              "mean_abs_diff": 5.296011,
+              "share_of_gap": 0.1858
+            },
+            {
+              "feature": "Reynolds number (log10 Re)",
+              "mean_real": -29.196936,
+              "mean_twin": -30.369756,
+              "mean_diff": 1.172819,
+              "mean_abs_real": 29.196936,
+              "mean_abs_twin": 30.369756,
+              "mean_abs_diff": 2.130799,
+              "share_of_gap": 0.0747
+            },
+            {
+              "feature": "Leading-edge thickness (0-25% c)",
+              "mean_real": 0.622431,
+              "mean_twin": 0.309716,
+              "mean_diff": 0.312715,
+              "mean_abs_real": 2.31512,
+              "mean_abs_twin": 2.31458,
+              "mean_abs_diff": 0.89427,
+              "share_of_gap": 0.0314
+            },
+            {
+              "feature": "Trailing-edge thickness (75-100% c)",
+              "mean_real": 0.88467,
+              "mean_twin": 0.872893,
+              "mean_diff": 0.011777,
+              "mean_abs_real": 2.302108,
+              "mean_abs_twin": 2.412846,
+              "mean_abs_diff": 0.376026,
+              "share_of_gap": 0.0132
+            },
+            {
+              "feature": "Leading-edge camber",
+              "mean_real": 0.931829,
+              "mean_twin": 0.891151,
+              "mean_diff": 0.040677,
+              "mean_abs_real": 3.522409,
+              "mean_abs_twin": 3.590743,
+              "mean_abs_diff": 0.352745,
+              "share_of_gap": 0.0124
+            }
+          ],
+          "lowRe_highA": [
+            {
+              "feature": "Angle of attack (alpha)",
+              "mean_real": 29.845522,
+              "mean_twin": 45.134532,
+              "mean_diff": -15.28901,
+              "mean_abs_real": 30.444904,
+              "mean_abs_twin": 45.134532,
+              "mean_abs_diff": 17.008421,
+              "share_of_gap": 0.5297
+            },
+            {
+              "feature": "Reynolds number (log10 Re)",
+              "mean_real": 24.141948,
+              "mean_twin": 29.271234,
+              "mean_diff": -5.129286,
+              "mean_abs_real": 27.406614,
+              "mean_abs_twin": 31.358244,
+              "mean_abs_diff": 5.129286,
+              "share_of_gap": 0.1597
+            },
+            {
+              "feature": "Mid-chord thickness (25-75% c)",
+              "mean_real": -4.266644,
+              "mean_twin": -2.045038,
+              "mean_diff": -2.221606,
+              "mean_abs_real": 4.955857,
+              "mean_abs_twin": 3.506548,
+              "mean_abs_diff": 4.640773,
+              "share_of_gap": 0.1445
+            },
+            {
+              "feature": "Mid/aft camber",
+              "mean_real": 4.170476,
+              "mean_twin": 5.79846,
+              "mean_diff": -1.627983,
+              "mean_abs_real": 11.411484,
+              "mean_abs_twin": 11.230756,
+              "mean_abs_diff": 3.959499,
+              "share_of_gap": 0.1233
+            },
+            {
+              "feature": "Trailing-edge thickness (75-100% c)",
+              "mean_real": 2.02068,
+              "mean_twin": 1.983087,
+              "mean_diff": 0.037592,
+              "mean_abs_real": 6.213132,
+              "mean_abs_twin": 6.947098,
+              "mean_abs_diff": 0.733966,
+              "share_of_gap": 0.0229
+            },
+            {
+              "feature": "Leading-edge thickness (0-25% c)",
+              "mean_real": 0.351869,
+              "mean_twin": 0.494663,
+              "mean_diff": -0.142794,
+              "mean_abs_real": 2.762932,
+              "mean_abs_twin": 2.90814,
+              "mean_abs_diff": 0.458278,
+              "share_of_gap": 0.0143
+            },
+            {
+              "feature": "Leading-edge camber",
+              "mean_real": 1.277515,
+              "mean_twin": 1.415416,
+              "mean_diff": -0.1379,
+              "mean_abs_real": 1.795266,
+              "mean_abs_twin": 1.919896,
+              "mean_abs_diff": 0.180011,
+              "share_of_gap": 0.0056
+            }
+          ],
+          "lowRe_lowA": [
+            {
+              "feature": "Angle of attack (alpha)",
+              "mean_real": 1.051482,
+              "mean_twin": -7.345833,
+              "mean_diff": 8.397316,
+              "mean_abs_real": 10.118129,
+              "mean_abs_twin": 12.548532,
+              "mean_abs_diff": 8.934794,
+              "share_of_gap": 0.4201
+            },
+            {
+              "feature": "Mid-chord thickness (25-75% c)",
+              "mean_real": -7.2126,
+              "mean_twin": -3.458399,
+              "mean_diff": -3.754201,
+              "mean_abs_real": 8.300391,
+              "mean_abs_twin": 6.336824,
+              "mean_abs_diff": 5.963719,
+              "share_of_gap": 0.2804
+            },
+            {
+              "feature": "Reynolds number (log10 Re)",
+              "mean_real": 30.475497,
+              "mean_twin": 33.170237,
+              "mean_diff": -2.69474,
+              "mean_abs_real": 32.163626,
+              "mean_abs_twin": 34.158559,
+              "mean_abs_diff": 2.809365,
+              "share_of_gap": 0.1321
+            },
+            {
+              "feature": "Mid/aft camber",
+              "mean_real": 2.754214,
+              "mean_twin": 3.801228,
+              "mean_diff": -1.047014,
+              "mean_abs_real": 13.787393,
+              "mean_abs_twin": 13.81633,
+              "mean_abs_diff": 2.215354,
+              "share_of_gap": 0.1042
+            },
+            {
+              "feature": "Leading-edge thickness (0-25% c)",
+              "mean_real": 0.211141,
+              "mean_twin": 0.578045,
+              "mean_diff": -0.366904,
+              "mean_abs_real": 3.718421,
+              "mean_abs_twin": 3.135411,
+              "mean_abs_diff": 0.916193,
+              "share_of_gap": 0.0431
+            },
+            {
+              "feature": "Leading-edge camber",
+              "mean_real": -0.612435,
+              "mean_twin": -0.447723,
+              "mean_diff": -0.164713,
+              "mean_abs_real": 2.17516,
+              "mean_abs_twin": 2.288933,
+              "mean_abs_diff": 0.277976,
+              "share_of_gap": 0.0131
+            },
+            {
+              "feature": "Trailing-edge thickness (75-100% c)",
+              "mean_real": -0.091531,
+              "mean_twin": -0.101692,
+              "mean_diff": 0.010161,
+              "mean_abs_real": 3.907674,
+              "mean_abs_twin": 4.04437,
+              "mean_abs_diff": 0.149895,
+              "share_of_gap": 0.007
+            }
+          ]
+        }
+      },
+      "disagreement_exam": {
+        "vs_incumbent_error": {
+          "overall": {
+            "n": 5565,
+            "mean_disagreement": 0.138996,
+            "median_disagreement": 0.097944,
+            "p90_disagreement": 0.314318,
+            "spearman_r": 0.2292,
+            "spearman_p": 0.0,
+            "top10pct_mae": 0.314689,
+            "bottom50pct_mae": 0.136086,
+            "top10pct_enrichment": 1.897
+          },
+          "strata": {
+            "highRe_highA": {
+              "n": 1150,
+              "mean_disagreement": 0.161726,
+              "median_disagreement": 0.111611,
+              "p90_disagreement": 0.388269,
+              "spearman_r": 0.2694,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.294252,
+              "bottom50pct_mae": 0.125409,
+              "top10pct_enrichment": 1.856
+            },
+            "highRe_lowA": {
+              "n": 2229,
+              "mean_disagreement": 0.110544,
+              "median_disagreement": 0.083969,
+              "p90_disagreement": 0.211341,
+              "spearman_r": 0.2279,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.263568,
+              "bottom50pct_mae": 0.105518,
+              "top10pct_enrichment": 2.042
+            },
+            "lowRe_highA": {
+              "n": 718,
+              "mean_disagreement": 0.168113,
+              "median_disagreement": 0.12206,
+              "p90_disagreement": 0.363157,
+              "spearman_r": 0.1921,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.434843,
+              "bottom50pct_mae": 0.240358,
+              "top10pct_enrichment": 1.502
+            },
+            "lowRe_lowA": {
+              "n": 1468,
+              "mean_disagreement": 0.150152,
+              "median_disagreement": 0.105707,
+              "p90_disagreement": 0.338166,
+              "spearman_r": 0.1343,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.306741,
+              "bottom50pct_mae": 0.151887,
+              "top10pct_enrichment": 1.837
+            }
+          }
+        },
+        "vs_gbdt_mono_error": {
+          "overall": {
+            "n": 5565,
+            "mean_disagreement": 0.138996,
+            "median_disagreement": 0.097944,
+            "p90_disagreement": 0.314318,
+            "spearman_r": 0.303,
+            "spearman_p": 0.0,
+            "top10pct_mae": 0.42708,
+            "bottom50pct_mae": 0.137464,
+            "top10pct_enrichment": 2.321
+          },
+          "strata": {
+            "highRe_highA": {
+              "n": 1150,
+              "mean_disagreement": 0.161726,
+              "median_disagreement": 0.111611,
+              "p90_disagreement": 0.388269,
+              "spearman_r": 0.3781,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.523275,
+              "bottom50pct_mae": 0.127215,
+              "top10pct_enrichment": 2.735
+            },
+            "highRe_lowA": {
+              "n": 2229,
+              "mean_disagreement": 0.110544,
+              "median_disagreement": 0.083969,
+              "p90_disagreement": 0.211341,
+              "spearman_r": 0.2254,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.369741,
+              "bottom50pct_mae": 0.10768,
+              "top10pct_enrichment": 2.593
+            },
+            "lowRe_highA": {
+              "n": 718,
+              "mean_disagreement": 0.168113,
+              "median_disagreement": 0.12206,
+              "p90_disagreement": 0.363157,
+              "spearman_r": 0.2067,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.413288,
+              "bottom50pct_mae": 0.242162,
+              "top10pct_enrichment": 1.399
+            },
+            "lowRe_lowA": {
+              "n": 1468,
+              "mean_disagreement": 0.150152,
+              "median_disagreement": 0.105707,
+              "p90_disagreement": 0.338166,
+              "spearman_r": 0.2992,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.34823,
+              "bottom50pct_mae": 0.149108,
+              "top10pct_enrichment": 1.867
+            }
+          }
+        }
+      }
+    },
+    "energynet": {
+      "platform": "energynet",
+      "title": "EnergyNet (VED real trips)",
+      "domain": "Transportation",
+      "target": "log_energy_ratio",
+      "unit": "log(E / E_phys)",
+      "prereg_sha256": "352d3edf570a5adb741bc8250a31079123150cd204092a4b61924adb5bfde7ba",
+      "n_exam": 25793,
+      "n_exam_units": 350,
+      "sim_val": {
+        "incumbent": 11.4949,
+        "gbdt_plain": 15.3643,
+        "gbdt_mono": 16.0421,
+        "mono_parity": 0.0,
+        "mono_treeshap_err": 2.634e-14,
+        "mono_params_all": 368398
+      },
+      "dev_metrics": {
+        "incumbent": {
+          "headline_mdape_pct": 11.85,
+          "pooled_mdape_pct": 9.58,
+          "log_mae": 0.1527,
+          "strata": {
+            "EV": {
+              "n": 258,
+              "mdape_pct": 13.96,
+              "log_mae": 0.1798
+            },
+            "HEV": {
+              "n": 275,
+              "mdape_pct": 12.61,
+              "log_mae": 0.1593
+            },
+            "ICE": {
+              "n": 645,
+              "mdape_pct": 6.63,
+              "log_mae": 0.0818
+            },
+            "PHEV": {
+              "n": 318,
+              "mdape_pct": 16.31,
+              "log_mae": 0.2686
+            }
+          }
+        },
+        "gbdt_plain": {
+          "headline_mdape_pct": 14.61,
+          "pooled_mdape_pct": 12.24,
+          "log_mae": 0.1691,
+          "strata": {
+            "EV": {
+              "n": 258,
+              "mdape_pct": 17.88,
+              "log_mae": 0.2115
+            },
+            "HEV": {
+              "n": 275,
+              "mdape_pct": 13.29,
+              "log_mae": 0.1527
+            },
+            "ICE": {
+              "n": 645,
+              "mdape_pct": 8.46,
+              "log_mae": 0.1043
+            },
+            "PHEV": {
+              "n": 318,
+              "mdape_pct": 22.07,
+              "log_mae": 0.2802
+            }
+          }
+        },
+        "gbdt_mono": {
+          "headline_mdape_pct": 15.01,
+          "pooled_mdape_pct": 12.03,
+          "log_mae": 0.1685,
+          "strata": {
+            "EV": {
+              "n": 258,
+              "mdape_pct": 17.25,
+              "log_mae": 0.2089
+            },
+            "HEV": {
+              "n": 275,
+              "mdape_pct": 13.27,
+              "log_mae": 0.1545
+            },
+            "ICE": {
+              "n": 645,
+              "mdape_pct": 8.42,
+              "log_mae": 0.1029
+            },
+            "PHEV": {
+              "n": 318,
+              "mdape_pct": 23.34,
+              "log_mae": 0.2809
+            }
+          }
+        }
+      },
+      "exam_metrics": {
+        "incumbent": {
+          "headline_mdape_pct": 12.97,
+          "pooled_mdape_pct": 10.51,
+          "log_mae": 0.1523,
+          "strata": {
+            "EV": {
+              "n": 167,
+              "mdape_pct": 23.22,
+              "log_mae": 0.2953
+            },
+            "HEV": {
+              "n": 8241,
+              "mdape_pct": 13.44,
+              "log_mae": 0.1703
+            },
+            "ICE": {
+              "n": 14469,
+              "mdape_pct": 8.64,
+              "log_mae": 0.1076
+            },
+            "PHEV": {
+              "n": 2916,
+              "mdape_pct": 16.82,
+              "log_mae": 0.3149
+            }
+          }
+        },
+        "gbdt_plain": {
+          "headline_mdape_pct": 15.41,
+          "pooled_mdape_pct": 11.63,
+          "log_mae": 0.1579,
+          "strata": {
+            "EV": {
+              "n": 167,
+              "mdape_pct": 17.65,
+              "log_mae": 0.2387
+            },
+            "HEV": {
+              "n": 8241,
+              "mdape_pct": 14.33,
+              "log_mae": 0.1738
+            },
+            "ICE": {
+              "n": 14469,
+              "mdape_pct": 9.4,
+              "log_mae": 0.1193
+            },
+            "PHEV": {
+              "n": 2916,
+              "mdape_pct": 22.51,
+              "log_mae": 0.2994
+            }
+          }
+        },
+        "gbdt_mono": {
+          "headline_mdape_pct": 15.68,
+          "pooled_mdape_pct": 11.67,
+          "log_mae": 0.1579,
+          "strata": {
+            "EV": {
+              "n": 167,
+              "mdape_pct": 19.43,
+              "log_mae": 0.2446
+            },
+            "HEV": {
+              "n": 8241,
+              "mdape_pct": 14.36,
+              "log_mae": 0.1757
+            },
+            "ICE": {
+              "n": 14469,
+              "mdape_pct": 9.46,
+              "log_mae": 0.1201
+            },
+            "PHEV": {
+              "n": 2916,
+              "mdape_pct": 23.21,
+              "log_mae": 0.2899
+            }
+          }
+        }
+      },
+      "paired_bootstrap": {
+        "gbdt_mono_vs_incumbent": {
+          "a": 15.6789,
+          "b": 12.9652,
+          "diff_a_minus_b": 2.7137,
+          "ci95": [
+            0.4209,
+            5.3131
+          ],
+          "significant_a_better": false,
+          "significant_b_better": true
+        },
+        "gbdt_mono_vs_gbdt_plain": {
+          "a": 15.6789,
+          "b": 15.4122,
+          "diff_a_minus_b": 0.2667,
+          "ci95": [
+            -0.3907,
+            0.9504
+          ],
+          "significant_a_better": false,
+          "significant_b_better": false
+        },
+        "gbdt_plain_vs_incumbent": {
+          "a": 15.4122,
+          "b": 12.9652,
+          "diff_a_minus_b": 2.447,
+          "ci95": [
+            0.3538,
+            4.6159
+          ],
+          "significant_a_better": false,
+          "significant_b_better": true
+        }
+      },
+      "conformal_coverage": {
+        "incumbent": {
+          "raw": {
+            "target": 0.6826894921370859,
+            "n": 25793,
+            "pooled_coverage": 0.46,
+            "pooled_gap": -0.2227,
+            "mean_halfwidth": 0.115235,
+            "worst_under_stratum": "EV",
+            "worst_under_gap": 0.4372,
+            "max_abs_stratum_gap": 0.4372,
+            "strata": {
+              "EV": {
+                "n": 167,
+                "coverage": 0.2455,
+                "gap": -0.4372,
+                "mean_halfwidth": 0.141811
+              },
+              "HEV": {
+                "n": 8241,
+                "coverage": 0.6098,
+                "gap": -0.0729,
+                "mean_halfwidth": 0.191921
+              },
+              "ICE": {
+                "n": 14469,
+                "coverage": 0.3962,
+                "gap": -0.2865,
+                "mean_halfwidth": 0.068706
+              },
+              "PHEV": {
+                "n": 2916,
+                "coverage": 0.3659,
+                "gap": -0.3168,
+                "mean_halfwidth": 0.127866
+              }
+            }
+          },
+          "pooled_widen": {
+            "target": 0.6826894921370859,
+            "n": 25793,
+            "pooled_coverage": 0.6441,
+            "pooled_gap": -0.0386,
+            "mean_halfwidth": 0.183018,
+            "worst_under_stratum": "EV",
+            "worst_under_gap": 0.3114,
+            "max_abs_stratum_gap": 0.3114,
+            "strata": {
+              "EV": {
+                "n": 167,
+                "coverage": 0.3713,
+                "gap": -0.3114,
+                "mean_halfwidth": 0.225225
+              },
+              "HEV": {
+                "n": 8241,
+                "coverage": 0.7995,
+                "gap": 0.1168,
+                "mean_halfwidth": 0.304811
+              },
+              "ICE": {
+                "n": 14469,
+                "coverage": 0.5886,
+                "gap": -0.0941,
+                "mean_halfwidth": 0.109119
+              },
+              "PHEV": {
+                "n": 2916,
+                "coverage": 0.4959,
+                "gap": -0.1868,
+                "mean_halfwidth": 0.203078
+              }
+            }
+          },
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "n": 25793,
+            "pooled_coverage": 0.5909,
+            "pooled_gap": -0.0918,
+            "mean_halfwidth": 0.159692,
+            "worst_under_stratum": "EV",
+            "worst_under_gap": 0.2635,
+            "max_abs_stratum_gap": 0.2635,
+            "strata": {
+              "EV": {
+                "n": 167,
+                "coverage": 0.4192,
+                "gap": -0.2635,
+                "mean_halfwidth": 0.254404
+              },
+              "HEV": {
+                "n": 8241,
+                "coverage": 0.6442,
+                "gap": -0.0385,
+                "mean_halfwidth": 0.208235
+              },
+              "ICE": {
+                "n": 14469,
+                "coverage": 0.5523,
+                "gap": -0.1304,
+                "mean_halfwidth": 0.100759
+              },
+              "PHEV": {
+                "n": 2916,
+                "coverage": 0.642,
+                "gap": -0.0407,
+                "mean_halfwidth": 0.309504
+              }
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "n": 25793,
+            "pooled_coverage": 0.5938,
+            "pooled_gap": -0.0889,
+            "mean_halfwidth": 0.160474,
+            "worst_under_stratum": "EV",
+            "worst_under_gap": 0.2695,
+            "max_abs_stratum_gap": 0.2695,
+            "strata": {
+              "EV": {
+                "n": 167,
+                "coverage": 0.4132,
+                "gap": -0.2695,
+                "mean_halfwidth": 0.253316
+              },
+              "HEV": {
+                "n": 8241,
+                "coverage": 0.653,
+                "gap": -0.0297,
+                "mean_halfwidth": 0.211625
+              },
+              "ICE": {
+                "n": 14469,
+                "coverage": 0.553,
+                "gap": -0.1297,
+                "mean_halfwidth": 0.100887
+              },
+              "PHEV": {
+                "n": 2916,
+                "coverage": 0.6396,
+                "gap": -0.0431,
+                "mean_halfwidth": 0.30626
+              }
+            }
+          }
+        },
+        "gbdt_mono": {
+          "raw": {
+            "target": 0.6826894921370859,
+            "n": 25793,
+            "pooled_coverage": 0.4658,
+            "pooled_gap": -0.2169,
+            "mean_halfwidth": 0.131822,
+            "worst_under_stratum": "ICE",
+            "worst_under_gap": 0.2617,
+            "max_abs_stratum_gap": 0.2617,
+            "strata": {
+              "EV": {
+                "n": 167,
+                "coverage": 0.515,
+                "gap": -0.1677,
+                "mean_halfwidth": 0.229205
+              },
+              "HEV": {
+                "n": 8241,
+                "coverage": 0.4936,
+                "gap": -0.1891,
+                "mean_halfwidth": 0.154862
+              },
+              "ICE": {
+                "n": 14469,
+                "coverage": 0.421,
+                "gap": -0.2617,
+                "mean_halfwidth": 0.083393
+              },
+              "PHEV": {
+                "n": 2916,
+                "coverage": 0.6067,
+                "gap": -0.076,
+                "mean_halfwidth": 0.301433
+              }
+            }
+          },
+          "pooled_widen": {
+            "target": 0.6826894921370859,
+            "n": 25793,
+            "pooled_coverage": 0.5936,
+            "pooled_gap": -0.0891,
+            "mean_halfwidth": 0.178219,
+            "worst_under_stratum": "ICE",
+            "worst_under_gap": 0.1442,
+            "max_abs_stratum_gap": 0.1442,
+            "strata": {
+              "EV": {
+                "n": 167,
+                "coverage": 0.7126,
+                "gap": 0.0299,
+                "mean_halfwidth": 0.309876
+              },
+              "HEV": {
+                "n": 8241,
+                "coverage": 0.6266,
+                "gap": -0.0561,
+                "mean_halfwidth": 0.209367
+              },
+              "ICE": {
+                "n": 14469,
+                "coverage": 0.5385,
+                "gap": -0.1442,
+                "mean_halfwidth": 0.112745
+              },
+              "PHEV": {
+                "n": 2916,
+                "coverage": 0.7671,
+                "gap": 0.0845,
+                "mean_halfwidth": 0.407527
+              }
+            }
+          },
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "n": 25793,
+            "pooled_coverage": 0.6257,
+            "pooled_gap": -0.057,
+            "mean_halfwidth": 0.181819,
+            "worst_under_stratum": "PHEV",
+            "worst_under_gap": 0.0616,
+            "max_abs_stratum_gap": 0.0616,
+            "strata": {
+              "EV": {
+                "n": 167,
+                "coverage": 0.7126,
+                "gap": 0.0299,
+                "mean_halfwidth": 0.314907
+              },
+              "HEV": {
+                "n": 8241,
+                "coverage": 0.6244,
+                "gap": -0.0583,
+                "mean_halfwidth": 0.208184
+              },
+              "ICE": {
+                "n": 14469,
+                "coverage": 0.6264,
+                "gap": -0.0563,
+                "mean_halfwidth": 0.139488
+              },
+              "PHEV": {
+                "n": 2916,
+                "coverage": 0.6211,
+                "gap": -0.0616,
+                "mean_halfwidth": 0.30973
+              }
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "n": 25793,
+            "pooled_coverage": 0.6255,
+            "pooled_gap": -0.0572,
+            "mean_halfwidth": 0.181941,
+            "worst_under_stratum": "HEV",
+            "worst_under_gap": 0.0581,
+            "max_abs_stratum_gap": 0.0581,
+            "strata": {
+              "EV": {
+                "n": 167,
+                "coverage": 0.7126,
+                "gap": 0.0299,
+                "mean_halfwidth": 0.314724
+              },
+              "HEV": {
+                "n": 8241,
+                "coverage": 0.6246,
+                "gap": -0.0581,
+                "mean_halfwidth": 0.208229
+              },
+              "ICE": {
+                "n": 14469,
+                "coverage": 0.6251,
+                "gap": -0.0576,
+                "mean_halfwidth": 0.139081
+              },
+              "PHEV": {
+                "n": 2916,
+                "coverage": 0.6248,
+                "gap": -0.0579,
+                "mean_halfwidth": 0.312717
+              }
+            }
+          }
+        }
+      },
+      "calibrators_dev": {
+        "incumbent": {
+          "pooled_widen": 1.5882090407827616,
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 0.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 1.588462681415522,
+            "stratum_factors": {
+              "EV": 1.79397081085222,
+              "HEV": 1.0850000485695481,
+              "ICE": 1.4665311928935212,
+              "PHEV": 2.420533933154428
+            },
+            "stratum_raw_factors": {
+              "EV": 1.79397081085222,
+              "HEV": 1.0850000485695481,
+              "ICE": 1.4665311928935212,
+              "PHEV": 2.420533933154428
+            },
+            "stratum_counts": {
+              "EV": 258,
+              "HEV": 275,
+              "ICE": 645,
+              "PHEV": 318
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 10.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 1.588462681415522,
+            "stratum_factors": {
+              "EV": 1.7863025970672686,
+              "HEV": 1.1026654041080033,
+              "ICE": 1.4683927423366052,
+              "PHEV": 2.3951659071867786
+            },
+            "stratum_raw_factors": {
+              "EV": 1.79397081085222,
+              "HEV": 1.0850000485695481,
+              "ICE": 1.4665311928935212,
+              "PHEV": 2.420533933154428
+            },
+            "stratum_counts": {
+              "EV": 258,
+              "HEV": 275,
+              "ICE": 645,
+              "PHEV": 318
+            }
+          }
+        },
+        "gbdt_mono": {
+          "pooled_widen": 1.3519634770505844,
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 0.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 1.352514967509646,
+            "stratum_factors": {
+              "EV": 1.3739134607050318,
+              "HEV": 1.3443223654440726,
+              "ICE": 1.6726547090156294,
+              "PHEV": 1.0275254969040655
+            },
+            "stratum_raw_factors": {
+              "EV": 1.3739134607050318,
+              "HEV": 1.3443223654440726,
+              "ICE": 1.6726547090156294,
+              "PHEV": 1.0275254969040655
+            },
+            "stratum_counts": {
+              "EV": 258,
+              "HEV": 275,
+              "ICE": 645,
+              "PHEV": 318
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 10.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 1.352514967509646,
+            "stratum_factors": {
+              "EV": 1.3731150094663982,
+              "HEV": 1.3446098251656715,
+              "ICE": 1.6677670793743167,
+              "PHEV": 1.0374337124713089
+            },
+            "stratum_raw_factors": {
+              "EV": 1.3739134607050318,
+              "HEV": 1.3443223654440726,
+              "ICE": 1.6726547090156294,
+              "PHEV": 1.0275254969040655
+            },
+            "stratum_counts": {
+              "EV": 258,
+              "HEV": 275,
+              "ICE": 645,
+              "PHEV": 318
+            }
+          }
+        },
+        "gbdt_plain": {
+          "pooled_widen": 1.2995121369906546,
+          "mondrian_raw": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 0.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 1.3001966746619567,
+            "stratum_factors": {
+              "EV": 1.435183308065427,
+              "HEV": 1.21633239955014,
+              "ICE": 1.5174451528222046,
+              "PHEV": 1.0
+            },
+            "stratum_raw_factors": {
+              "EV": 1.435183308065427,
+              "HEV": 1.21633239955014,
+              "ICE": 1.5174451528222046,
+              "PHEV": 1.0
+            },
+            "stratum_counts": {
+              "EV": 258,
+              "HEV": 275,
+              "ICE": 645,
+              "PHEV": 318
+            }
+          },
+          "mondrian_shrunk": {
+            "target": 0.6826894921370859,
+            "widen_only": true,
+            "shrink_k": 10.0,
+            "min_n": 5,
+            "additive": false,
+            "global_factor": 1.3001966746619567,
+            "stratum_factors": {
+              "EV": 1.430146493386193,
+              "HEV": 1.2192750056944142,
+              "ICE": 1.5141283821632694,
+              "PHEV": 1.0091523376421327
+            },
+            "stratum_raw_factors": {
+              "EV": 1.435183308065427,
+              "HEV": 1.21633239955014,
+              "ICE": 1.5174451528222046,
+              "PHEV": 1.0
+            },
+            "stratum_counts": {
+              "EV": 258,
+              "HEV": 275,
+              "ICE": 645,
+              "PHEV": 318
+            }
+          }
+        }
+      },
+      "treeshap_twin_dev": {
+        "mode": "forward_residual_gap",
+        "unit": "% energy correction",
+        "n_dev_diag": 1496,
+        "ranked": [
+          {
+            "feature": "Model year",
+            "mean_real": 9.091168,
+            "mean_twin": 9.090293,
+            "mean_diff": 0.000876,
+            "mean_abs_real": 12.561735,
+            "mean_abs_twin": 11.94545,
+            "mean_abs_diff": 3.942462,
+            "share_of_gap": 0.2824
+          },
+          {
+            "feature": "Ambient temperature",
+            "mean_real": -2.808391,
+            "mean_twin": -2.934815,
+            "mean_diff": 0.126424,
+            "mean_abs_real": 6.716832,
+            "mean_abs_twin": 3.937976,
+            "mean_abs_diff": 3.043479,
+            "share_of_gap": 0.218
+          },
+          {
+            "feature": "Accessory load",
+            "mean_real": 0.791068,
+            "mean_twin": 0.881193,
+            "mean_diff": -0.090125,
+            "mean_abs_real": 4.30929,
+            "mean_abs_twin": 3.624062,
+            "mean_abs_diff": 2.335124,
+            "share_of_gap": 0.1673
+          },
+          {
+            "feature": "Stop density",
+            "mean_real": -3.530127,
+            "mean_twin": -3.537056,
+            "mean_diff": 0.006929,
+            "mean_abs_real": 5.205778,
+            "mean_abs_twin": 4.600719,
+            "mean_abs_diff": 1.951411,
+            "share_of_gap": 0.1398
+          },
+          {
+            "feature": "Rolling work",
+            "mean_real": -0.908995,
+            "mean_twin": -0.841857,
+            "mean_diff": -0.067138,
+            "mean_abs_real": 1.335393,
+            "mean_abs_twin": 0.986359,
+            "mean_abs_diff": 0.932695,
+            "share_of_gap": 0.0668
+          },
+          {
+            "feature": "Mass",
+            "mean_real": 7.465803,
+            "mean_twin": 7.472488,
+            "mean_diff": -0.006684,
+            "mean_abs_real": 7.564942,
+            "mean_abs_twin": 7.473443,
+            "mean_abs_diff": 0.667488,
+            "share_of_gap": 0.0478
+          },
+          {
+            "feature": "Aero work",
+            "mean_real": -1.382395,
+            "mean_twin": -1.381091,
+            "mean_diff": -0.001304,
+            "mean_abs_real": 3.313622,
+            "mean_abs_twin": 3.262169,
+            "mean_abs_diff": 0.556319,
+            "share_of_gap": 0.0398
+          },
+          {
+            "feature": "Grade work",
+            "mean_real": 0.485015,
+            "mean_twin": 0.47335,
+            "mean_diff": 0.011666,
+            "mean_abs_real": 1.633042,
+            "mean_abs_twin": 1.341709,
+            "mean_abs_diff": 0.531563,
+            "share_of_gap": 0.0381
+          }
+        ],
+        "by_stratum": {
+          "EV": [
+            {
+              "feature": "Model year",
+              "mean_real": -5.06253,
+              "mean_twin": -1.456649,
+              "mean_diff": -3.605881,
+              "mean_abs_real": 6.391749,
+              "mean_abs_twin": 4.986349,
+              "mean_abs_diff": 3.605881,
+              "share_of_gap": 0.2429
+            },
+            {
+              "feature": "Ambient temperature",
+              "mean_real": -4.182237,
+              "mean_twin": -3.81453,
+              "mean_diff": -0.367706,
+              "mean_abs_real": 9.395669,
+              "mean_abs_twin": 6.066391,
+              "mean_abs_diff": 3.35491,
+              "share_of_gap": 0.226
+            },
+            {
+              "feature": "Accessory load",
+              "mean_real": -3.138467,
+              "mean_twin": -1.337422,
+              "mean_diff": -1.801045,
+              "mean_abs_real": 4.000222,
+              "mean_abs_twin": 2.275082,
+              "mean_abs_diff": 3.147848,
+              "share_of_gap": 0.212
+            },
+            {
+              "feature": "Stop density",
+              "mean_real": -6.060981,
+              "mean_twin": -5.446449,
+              "mean_diff": -0.614533,
+              "mean_abs_real": 6.952882,
+              "mean_abs_twin": 5.826908,
+              "mean_abs_diff": 2.463879,
+              "share_of_gap": 0.166
+            },
+            {
+              "feature": "Rolling work",
+              "mean_real": -0.236052,
+              "mean_twin": -0.16787,
+              "mean_diff": -0.068183,
+              "mean_abs_real": 1.455034,
+              "mean_abs_twin": 0.561268,
+              "mean_abs_diff": 1.05325,
+              "share_of_gap": 0.0709
+            },
+            {
+              "feature": "Aero work",
+              "mean_real": -1.832721,
+              "mean_twin": -1.473174,
+              "mean_diff": -0.359547,
+              "mean_abs_real": 3.559027,
+              "mean_abs_twin": 3.230445,
+              "mean_abs_diff": 0.592162,
+              "share_of_gap": 0.0399
+            },
+            {
+              "feature": "Grade work",
+              "mean_real": 0.547106,
+              "mean_twin": 0.695367,
+              "mean_diff": -0.148261,
+              "mean_abs_real": 1.404771,
+              "mean_abs_twin": 1.162768,
+              "mean_abs_diff": 0.453366,
+              "share_of_gap": 0.0305
+            },
+            {
+              "feature": "Mass",
+              "mean_real": 9.477531,
+              "mean_twin": 9.304588,
+              "mean_diff": 0.172944,
+              "mean_abs_real": 9.477531,
+              "mean_abs_twin": 9.304588,
+              "mean_abs_diff": 0.17512,
+              "share_of_gap": 0.0118
+            }
+          ],
+          "HEV": [
+            {
+              "feature": "Accessory load",
+              "mean_real": -0.014923,
+              "mean_twin": -0.518587,
+              "mean_diff": 0.503664,
+              "mean_abs_real": 1.39954,
+              "mean_abs_twin": 2.079886,
+              "mean_abs_diff": 2.638618,
+              "share_of_gap": 0.2332
+            },
+            {
+              "feature": "Ambient temperature",
+              "mean_real": -1.743265,
+              "mean_twin": -2.255425,
+              "mean_diff": 0.51216,
+              "mean_abs_real": 4.934249,
+              "mean_abs_twin": 2.666246,
+              "mean_abs_diff": 2.604077,
+              "share_of_gap": 0.2301
+            },
+            {
+              "feature": "Model year",
+              "mean_real": 6.853072,
+              "mean_twin": 7.774078,
+              "mean_diff": -0.921006,
+              "mean_abs_real": 10.566799,
+              "mean_abs_twin": 10.57549,
+              "mean_abs_diff": 1.944052,
+              "share_of_gap": 0.1718
+            },
+            {
+              "feature": "Stop density",
+              "mean_real": -2.419441,
+              "mean_twin": -2.220932,
+              "mean_diff": -0.198509,
+              "mean_abs_real": 4.106358,
+              "mean_abs_twin": 3.488436,
+              "mean_abs_diff": 1.612436,
+              "share_of_gap": 0.1425
+            },
+            {
+              "feature": "Rolling work",
+              "mean_real": -1.420616,
+              "mean_twin": -1.40047,
+              "mean_diff": -0.020145,
+              "mean_abs_real": 1.478826,
+              "mean_abs_twin": 1.422184,
+              "mean_abs_diff": 0.961781,
+              "share_of_gap": 0.085
+            },
+            {
+              "feature": "Grade work",
+              "mean_real": 0.927661,
+              "mean_twin": 0.733652,
+              "mean_diff": 0.194009,
+              "mean_abs_real": 1.446168,
+              "mean_abs_twin": 1.135796,
+              "mean_abs_diff": 0.641113,
+              "share_of_gap": 0.0567
+            },
+            {
+              "feature": "Aero work",
+              "mean_real": -1.495969,
+              "mean_twin": -1.639409,
+              "mean_diff": 0.14344,
+              "mean_abs_real": 3.098925,
+              "mean_abs_twin": 3.128644,
+              "mean_abs_diff": 0.484587,
+              "share_of_gap": 0.0428
+            },
+            {
+              "feature": "Mass",
+              "mean_real": 7.322441,
+              "mean_twin": 7.319471,
+              "mean_diff": 0.00297,
+              "mean_abs_real": 7.322441,
+              "mean_abs_twin": 7.319471,
+              "mean_abs_diff": 0.428824,
+              "share_of_gap": 0.0379
+            }
+          ],
+          "ICE": [
+            {
+              "feature": "Model year",
+              "mean_real": 13.058603,
+              "mean_twin": 8.726228,
+              "mean_diff": 4.332375,
+              "mean_abs_real": 13.414664,
+              "mean_abs_twin": 10.152859,
+              "mean_abs_diff": 4.337171,
+              "share_of_gap": 0.3692
+            },
+            {
+              "feature": "Ambient temperature",
+              "mean_real": -2.117814,
+              "mean_twin": -2.403443,
+              "mean_diff": 0.285629,
+              "mean_abs_real": 4.184248,
+              "mean_abs_twin": 2.723759,
+              "mean_abs_diff": 1.874048,
+              "share_of_gap": 0.1595
+            },
+            {
+              "feature": "Accessory load",
+              "mean_real": 5.129995,
+              "mean_twin": 4.448359,
+              "mean_diff": 0.681635,
+              "mean_abs_real": 5.293249,
+              "mean_abs_twin": 4.62566,
+              "mean_abs_diff": 1.484606,
+              "share_of_gap": 0.1264
+            },
+            {
+              "feature": "Stop density",
+              "mean_real": -2.188485,
+              "mean_twin": -1.992044,
+              "mean_diff": -0.196442,
+              "mean_abs_real": 4.445959,
+              "mean_abs_twin": 3.525125,
+              "mean_abs_diff": 1.399822,
+              "share_of_gap": 0.1192
+            },
+            {
+              "feature": "Mass",
+              "mean_real": 6.91348,
+              "mean_twin": 6.82718,
+              "mean_diff": 0.0863,
+              "mean_abs_real": 7.143421,
+              "mean_abs_twin": 6.829396,
+              "mean_abs_diff": 1.022944,
+              "share_of_gap": 0.0871
+            },
+            {
+              "feature": "Rolling work",
+              "mean_real": -0.811673,
+              "mean_twin": -0.848481,
+              "mean_diff": 0.036808,
+              "mean_abs_real": 1.084133,
+              "mean_abs_twin": 0.933623,
+              "mean_abs_diff": 0.765956,
+              "share_of_gap": 0.0652
+            },
+            {
+              "feature": "Aero work",
+              "mean_real": -1.417271,
+              "mean_twin": -1.338453,
+              "mean_diff": -0.078818,
+              "mean_abs_real": 3.492172,
+              "mean_abs_twin": 3.587008,
+              "mean_abs_diff": 0.488404,
+              "share_of_gap": 0.0416
+            },
+            {
+              "feature": "Grade work",
+              "mean_real": 0.548711,
+              "mean_twin": 0.522741,
+              "mean_diff": 0.02597,
+              "mean_abs_real": 1.384052,
+              "mean_abs_twin": 1.2306,
+              "mean_abs_diff": 0.374241,
+              "share_of_gap": 0.0319
+            }
+          ],
+          "PHEV": [
+            {
+              "feature": "Ambient temperature",
+              "mean_real": -4.015561,
+              "mean_twin": -3.886389,
+              "mean_diff": -0.129172,
+              "mean_abs_real": 11.221824,
+              "mean_abs_twin": 5.773713,
+              "mean_abs_diff": 5.542751,
+              "share_of_gap": 0.2769
+            },
+            {
+              "feature": "Model year",
+              "mean_real": 14.462664,
+              "mean_twin": 19.523914,
+              "mean_diff": -5.06125,
+              "mean_abs_real": 17.562755,
+              "mean_abs_twin": 22.412144,
+              "mean_abs_diff": 5.143134,
+              "share_of_gap": 0.2569
+            },
+            {
+              "feature": "Accessory load",
+              "mean_real": -4.12447,
+              "mean_twin": -3.34359,
+              "mean_diff": -0.78088,
+              "mean_abs_real": 5.08057,
+              "mean_abs_twin": 4.022345,
+              "mean_abs_diff": 3.138395,
+              "share_of_gap": 0.1568
+            },
+            {
+              "feature": "Stop density",
+              "mean_real": -5.158544,
+              "mean_twin": -6.259834,
+              "mean_diff": 1.10129,
+              "mean_abs_real": 6.280213,
+              "mean_abs_twin": 6.749397,
+              "mean_abs_diff": 2.947563,
+              "share_of_gap": 0.1472
+            },
+            {
+              "feature": "Rolling work",
+              "mean_real": -1.209925,
+              "mean_twin": -0.892163,
+              "mean_diff": -0.317761,
+              "mean_abs_real": 1.62392,
+              "mean_abs_twin": 1.061316,
+              "mean_abs_diff": 1.14793,
+              "share_of_gap": 0.0573
+            },
+            {
+              "feature": "Grade work",
+              "mean_real": -0.077344,
+              "mean_twin": -0.032061,
+              "mean_diff": -0.045283,
+              "mean_abs_real": 2.484875,
+              "mean_abs_twin": 1.890322,
+              "mean_abs_diff": 0.819365,
+              "share_of_gap": 0.0409
+            },
+            {
+              "feature": "Aero work",
+              "mean_real": -0.848081,
+              "mean_twin": -1.169478,
+              "mean_diff": 0.321397,
+              "mean_abs_real": 2.938034,
+              "mean_abs_twin": 2.744505,
+              "mean_abs_diff": 0.727023,
+              "share_of_gap": 0.0363
+            },
+            {
+              "feature": "Mass",
+              "mean_real": 7.077902,
+              "mean_twin": 7.427271,
+              "mean_diff": -0.34937,
+              "mean_abs_real": 7.077902,
+              "mean_abs_twin": 7.427271,
+              "mean_abs_diff": 0.552375,
+              "share_of_gap": 0.0276
+            }
+          ]
+        },
+        "spotlight_cases": [
+          {
+            "name": "Cold-weather commute (VED dev, T < 0 \u00b0C)",
+            "n_trips": 327,
+            "n_cars": 15,
+            "features": [
+              "Aero work",
+              "Rolling work",
+              "Grade work",
+              "Stop density",
+              "Ambient temperature",
+              "Accessory load",
+              "Mass",
+              "Model year"
+            ],
+            "twin_mean": [
+              -0.43,
+              -1.7,
+              0.32,
+              -3.88,
+              1.46,
+              0.87,
+              6.99,
+              7.25
+            ],
+            "real_mean": [
+              -0.14,
+              -2.76,
+              0.31,
+              -3.28,
+              7.84,
+              1.24,
+              6.94,
+              7.57
+            ],
+            "twin_abs": [
+              3.22,
+              1.74,
+              1.16,
+              4.82,
+              2.2,
+              3.58,
+              6.99,
+              10.81
+            ],
+            "real_abs": [
+              3.48,
+              2.92,
+              1.26,
+              5.44,
+              7.84,
+              3.35,
+              7.02,
+              11.6
+            ],
+            "diff_mean": [
+              0.3,
+              -1.06,
+              -0.01,
+              0.6,
+              6.38,
+              0.37,
+              -0.05,
+              0.32
+            ],
+            "mean_real_minus_sim_pct": 9.59
+          },
+          {
+            "name": "City hybrid (VED dev, HEV stop-and-go)",
+            "n_trips": 138,
+            "n_cars": 5,
+            "features": [
+              "Aero work",
+              "Rolling work",
+              "Grade work",
+              "Stop density",
+              "Ambient temperature",
+              "Accessory load",
+              "Mass",
+              "Model year"
+            ],
+            "twin_mean": [
+              -1.65,
+              -1.42,
+              0.78,
+              -1.13,
+              -2.23,
+              -0.31,
+              7.2,
+              6.26
+            ],
+            "real_mean": [
+              -1.49,
+              -1.33,
+              0.84,
+              -0.36,
+              -1.56,
+              -0.04,
+              7.16,
+              4.96
+            ],
+            "twin_abs": [
+              3.23,
+              1.46,
+              1.12,
+              3.13,
+              2.71,
+              2.23,
+              7.2,
+              9.99
+            ],
+            "real_abs": [
+              3.21,
+              1.4,
+              1.34,
+              3.39,
+              5.15,
+              1.26,
+              7.16,
+              9.72
+            ],
+            "diff_mean": [
+              0.16,
+              0.09,
+              0.06,
+              0.77,
+              0.67,
+              0.27,
+              -0.04,
+              -1.3
+            ],
+            "mean_real_minus_sim_pct": -0.85
+          },
+          {
+            "name": "Mild highway ICE (VED dev, twin agrees)",
+            "n_trips": 12,
+            "n_cars": 3,
+            "features": [
+              "Aero work",
+              "Rolling work",
+              "Grade work",
+              "Stop density",
+              "Ambient temperature",
+              "Accessory load",
+              "Mass",
+              "Model year"
+            ],
+            "twin_mean": [
+              0.49,
+              0.03,
+              1.27,
+              -0.68,
+              -3.48,
+              0.47,
+              6.41,
+              5.34
+            ],
+            "real_mean": [
+              -0.06,
+              0.49,
+              1.18,
+              -1.58,
+              -4.82,
+              -0.29,
+              5.85,
+              9.53
+            ],
+            "twin_abs": [
+              4.43,
+              0.29,
+              1.27,
+              1.65,
+              3.48,
+              0.52,
+              6.41,
+              5.34
+            ],
+            "real_abs": [
+              4.55,
+              0.49,
+              1.23,
+              2.3,
+              4.82,
+              0.73,
+              6.6,
+              9.53
+            ],
+            "diff_mean": [
+              -0.55,
+              0.46,
+              -0.09,
+              -0.9,
+              -1.34,
+              -0.76,
+              -0.56,
+              4.19
+            ],
+            "mean_real_minus_sim_pct": 0.89
+          }
+        ]
+      },
+      "disagreement_exam": {
+        "vs_incumbent_error": {
+          "overall": {
+            "n": 25793,
+            "mean_disagreement": 0.092619,
+            "median_disagreement": 0.063649,
+            "p90_disagreement": 0.201515,
+            "spearman_r": 0.1569,
+            "spearman_p": 0.0,
+            "top10pct_mae": 0.320631,
+            "bottom50pct_mae": 0.123875,
+            "top10pct_enrichment": 2.106
+          },
+          "strata": {
+            "EV": {
+              "n": 167,
+              "mean_disagreement": 0.115866,
+              "median_disagreement": 0.088562,
+              "p90_disagreement": 0.220813,
+              "spearman_r": 0.1966,
+              "spearman_p": 0.010902,
+              "top10pct_mae": 0.536782,
+              "bottom50pct_mae": 0.259236,
+              "top10pct_enrichment": 1.818
+            },
+            "HEV": {
+              "n": 8241,
+              "mean_disagreement": 0.092563,
+              "median_disagreement": 0.07535,
+              "p90_disagreement": 0.185541,
+              "spearman_r": 0.0875,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.260839,
+              "bottom50pct_mae": 0.15754,
+              "top10pct_enrichment": 1.532
+            },
+            "ICE": {
+              "n": 14469,
+              "mean_disagreement": 0.066678,
+              "median_disagreement": 0.050683,
+              "p90_disagreement": 0.142128,
+              "spearman_r": 0.0729,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.126195,
+              "bottom50pct_mae": 0.103133,
+              "top10pct_enrichment": 1.173
+            },
+            "PHEV": {
+              "n": 2916,
+              "mean_disagreement": 0.220162,
+              "median_disagreement": 0.179392,
+              "p90_disagreement": 0.449069,
+              "spearman_r": 0.2226,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.561094,
+              "bottom50pct_mae": 0.220435,
+              "top10pct_enrichment": 1.782
+            }
+          }
+        },
+        "vs_gbdt_mono_error": {
+          "overall": {
+            "n": 25793,
+            "mean_disagreement": 0.092619,
+            "median_disagreement": 0.063649,
+            "p90_disagreement": 0.201515,
+            "spearman_r": 0.2555,
+            "spearman_p": 0.0,
+            "top10pct_mae": 0.311527,
+            "bottom50pct_mae": 0.126289,
+            "top10pct_enrichment": 1.973
+          },
+          "strata": {
+            "EV": {
+              "n": 167,
+              "mean_disagreement": 0.115866,
+              "median_disagreement": 0.088562,
+              "p90_disagreement": 0.220813,
+              "spearman_r": 0.0228,
+              "spearman_p": 0.77023,
+              "top10pct_mae": 0.401293,
+              "bottom50pct_mae": 0.240417,
+              "top10pct_enrichment": 1.641
+            },
+            "HEV": {
+              "n": 8241,
+              "mean_disagreement": 0.092563,
+              "median_disagreement": 0.07535,
+              "p90_disagreement": 0.185541,
+              "spearman_r": 0.1017,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.246965,
+              "bottom50pct_mae": 0.161938,
+              "top10pct_enrichment": 1.405
+            },
+            "ICE": {
+              "n": 14469,
+              "mean_disagreement": 0.066678,
+              "median_disagreement": 0.050683,
+              "p90_disagreement": 0.142128,
+              "spearman_r": 0.1859,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.193084,
+              "bottom50pct_mae": 0.104751,
+              "top10pct_enrichment": 1.608
+            },
+            "PHEV": {
+              "n": 2916,
+              "mean_disagreement": 0.220162,
+              "median_disagreement": 0.179392,
+              "p90_disagreement": 0.449069,
+              "spearman_r": 0.3812,
+              "spearman_p": 0.0,
+              "top10pct_mae": 0.429807,
+              "bottom50pct_mae": 0.219743,
+              "top10pct_enrichment": 1.483
+            }
+          }
+        }
+      }
+    }
+  }
+}
