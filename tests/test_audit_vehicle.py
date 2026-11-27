@@ -114,3 +114,10 @@ def test_lawfinder_warns_outside_declared_ranges():
     with pytest.raises(ValueError):
         bldg.predict(strict=True, **(inside | {"Y": 2025}))
     assert bldg.out_of_range(**(inside | {"Y": np.array([1990, 2024, 2030])})) == {"Y": 2}
+
+
+def test_hybridpilot_training_preview_matches_inference():
+    hp = _load("hybridpilot", "hybridpilot")
+    src = (ROOT / "models/hybridpilot/training/hp_policy.py").read_text(encoding="utf-8")
+    assert "lo, hi = (k + a - 1, k + b) if q in ('Ppos', 'Pneg') else (k + a, k + b + 1)" in src
+    assert "lo, hi = (k + a - 1, k + b) if q in ('Ppos', 'Pneg') else (k + a, k + b + 1)" in Path(hp.__file__).read_text(encoding="utf-8")
