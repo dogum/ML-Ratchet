@@ -282,3 +282,11 @@ def test_site_trees_reference_is_current():
     assert have.keys() == want.keys()
     for k in ("preds", "phi", "ev", "value", "thresh"):
         assert np.allclose(np.asarray(have[k], dtype=float), np.asarray(want[k], dtype=float), rtol=0, atol=1e-15), k
+
+
+def test_mondrian_unbounded_strata_stay_unbounded_and_count_in_coverage():
+    r = np.full(5, 10.0); sig = np.ones(5); st = np.array(["a"] * 5)
+    mc = MondrianConformal.fit(r, sig, st, target=0.95, shrink_k=0.0, min_n=1)
+    assert mc.stratum_factors["a"] == float("inf")          # 5 scores cannot carry 95 %: was 1.0 via inf + 0 * inf
+    cov = stratum_coverage(r, mc.halfwidth(sig, st), st, target=0.95)
+    assert cov["n"] == 5 and cov["pooled_coverage"] == 1.0 and cov["mean_halfwidth"] == float("inf")

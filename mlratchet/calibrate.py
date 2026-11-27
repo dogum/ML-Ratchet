@@ -127,8 +127,11 @@ class MondrianConformal:
             else:
                 q_raw = conformal_quantile(scores[m], alpha=alpha, floor=floor)
                 s_raw[g] = q_raw
-                w = ng / (ng + shrink_k) if shrink_k > 0 else 1.0
-                q_shrunk = w * q_raw + (1.0 - w) * q_global
+                if shrink_k > 0:
+                    w = ng / (ng + shrink_k)
+                    q_shrunk = w * q_raw + (1.0 - w) * q_global     # inf if either is inf (an unbounded interval)
+                else:
+                    q_shrunk = q_raw                               # avoid inf * 0 = NaN
                 s_factors[g] = float(max(floor, q_shrunk))
 
         return cls(
@@ -196,7 +199,9 @@ def stratum_coverage(
     r = np.abs(np.asarray(residual, dtype=np.float64))
     hw = np.asarray(halfwidth, dtype=np.float64)
     st = np.asarray(strata, dtype=str)
-    ok = np.isfinite(r) & np.isfinite(hw)
+    # +inf half-widths are valid (an undersized calibration set gives an unbounded interval): they cover every
+    # finite residual and make the mean width infinite. Only NaN or negative widths are dropped.
+    ok = np.isfinite(r) & ~np.isnan(hw) & (hw >= 0)
 
     pooled_cov = float(np.mean(r[ok] <= hw[ok])) if ok.any() else float("nan")
     mean_hw = float(np.mean(hw[ok])) if ok.any() else float("nan")
