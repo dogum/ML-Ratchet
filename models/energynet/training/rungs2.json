@@ -226,5 +226,21 @@
   "bus_spec": true,
   "epa_hyb": true,
   "change": "r15's networks (SC03 / cold-FTP test conditions and no idle-stop) with r16's two public-spec inputs; physics rung against the incumbent (planned before r15 was scored)"
+ },
+ {
+  "name": "r18_robust",
+  "version": "h",
+  "mode": "corr",
+  "members": [
+   "r18_s0",
+   "r18_s1",
+   "r18_s2",
+   "r18_s3",
+   "r18_s4"
+  ],
+  "era": true,
+  "bus_spec": true,
+  "epa_hyb": true,
+  "change": "repair rung (audit 25 Nov 2026): r17's recipe and banks, the 5 networks retrained with percentile-clipped input statistics (train.py --robust-norm: each column clipped to its 0.5-99.5 percentiles before the mean and sd) and the component loss masked like the NLL (--mask-comp); v2.1's scaling had left four work-share inputs (aero, rolling, downhill grade, inertia over Ep) at sd 0.00002-0.00005 on real trips"
  }
 ]

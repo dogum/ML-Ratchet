@@ -135,3 +135,30 @@ laws whose energy falls with net grade. `Law.predict` now warns when an input is
 (`strict=True` raises); the homes law's heating slope turns negative past 2020 and the grid inertia law can fall below the
 nadir law's floor. One of the demo's real grid events (a loss above 2 GW) is outside the nadir law's range. `LawFinder()`
 also read its JSON with the platform's default encoding; it now reads UTF-8.
+
+## 2026-11-27 — road: sign-checked search (the queued rung): rejected; p1-c23 stays
+
+Run on the owner's approval (`training/road_sign.py`, records `training/results/road_sign.json` and
+`road_search_p2s.json`).
+
+- **Banks rebuilt from their seeds.** This machine had no road banks, so `road_bank.py` rebuilt p2 val (2,000 trips,
+  425 BEV) and train (5,994 usable). Every logged rung re-scored on the rebuilt val_p2 gives exactly its logged R²
+  (worst |ΔR²| 0), and the released law's dev error is unchanged (0.1680). So this is the same frozen set.
+- **Sign check:** E(G + 0.25) ≥ E(G − 0.25) at every val_p2 row, with the other inputs held. The released p1-c23 fails
+  it on 21 % of rows and on every BEV row. The six p2 candidates that rise with grade for BEVs (c18, c20, c21, c22,
+  c24, c25) fail it too: they fall with grade on 4-14 % of the non-BEV rows. So none of the 40 logged laws both reads
+  grade and passes.
+- **The rung:** a new p2 search on the train bank, where a law that fails the sign check on its fitting rows gets an
+  infinite loss. Same engine and seed as the logged p2 search, 1,200 s instead of 600 s (the check triples the cost of
+  each evaluation), 143,084 evaluations. It found 14 laws, c1-c19. The search found no way to use grade with the right
+  sign. Only p2s-c15 reads G, and it just adds G (MJ/km per %), giving −1.41 MJ/km for a BEV at −2 %. The rest ignore
+  grade.
+- **Decision under the unchanged rule: all 14 rejected.** The best is p2s-c19, `E = (M + 0.27·R/v)·exp(−2·K^h·(e − 1.142·K))`:
+  frozen R² 0.757 against the incumbent's 0.767 (it needs more than 0.777). Its dev error is better (0.137 against
+  0.168), but the rule promotes on the frozen set. The exam was not opened. p1-c23 stays released.
+- **For the owner, not adopted:** if the sign check rejected a rung (a rule change), the same walk would release p1-c17
+  (R² 0.754, dev 0.175), which ignores grade. Dev MdAPE on electric-car rows (the Leaf's 258 VED trips plus 29 EPA BEV
+  tests in the dev draw): p1-c23 0.271, p1-c17 0.236, p2s-c19 0.221, and the best of the six grade-rising p2 laws
+  (p2-c20) 0.209. Choosing among these on EV dev is a different rule, and the owner's call. What a correct grade law
+  needs, judging by these fronts, is a grade term that switches with the powertrain: energy rises with grade for every
+  car, and BEVs recover part of the descent. The search's one-line, pooled form has not found one in 1,800 s.
