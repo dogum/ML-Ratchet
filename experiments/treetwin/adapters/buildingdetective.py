@@ -101,8 +101,10 @@ def _load_wx(cz: str) -> tuple[pd.DataFrame, dict, float, float]:
     GHI = np.maximum(0.0, np.array([p["ALLSKY_SFC_SW_DWN"][k] for k in keys], dtype=float))
     WS = np.maximum(0.1, np.array([p["WS10M"][k] for k in keys], dtype=float))
     RH = np.clip(np.array([p["RH2M"][k] for k in keys], dtype=float), 1.0, 100.0)
-    W = pd.DataFrame({"T_out": T, "RH": RH, "GHI": GHI, "wind": WS}, index=idx)
-    meta = {"lat": lat, "lon": lon, "tz": tz, "elev_m": elev}
+    # BuildingSim's weather contract (buildingsim/weather.py check_weather) names these
+    # `wind_speed` and meta `elev`; other names are silently replaced by 3 m/s and sea level.
+    W = pd.DataFrame({"T_out": T, "RH": RH, "GHI": GHI, "wind_speed": WS}, index=idx)
+    meta = {"lat": lat, "lon": lon, "tz": tz, "elev": elev}
     # Annual degree days (base 18.33 C = 65 F, matching RECS and BuildingDetective)
     Td = W["T_out"].resample("D").mean().to_numpy()
     hdd = float(np.maximum(18.33 - Td, 0.0).sum())

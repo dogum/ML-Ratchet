@@ -71,18 +71,30 @@ FEATURE_NAMES = (
 )
 assert len(FEATURE_NAMES) == 151
 
-# Exact 8 physical feature groups matching model-families.ts Section 07 (partitioning all 151 features!)
+# 8 physical feature groups partitioning all 151 features (model-families.ts Section 07).
+# Indices follow models/energynet/training/features.py exactly (see FEATURE_NAMES above):
+# log_cda = 119 and log_crr = 120 are road-load terms; 122..126 are engine size/power/diesel.
+# Fixed 27 Nov 2026 (Codex, PR #19): the first version filed 122-124 (engine) under aero and
+# rolling, 119-120 under mass, and powertrain, EPA labels, battery and SOC under "Model year".
 FEATURE_GROUPS = {
-    "Aero work": [9, 81, 82, 83, 84, 89, 93, 122],
-    "Rolling work": [85, 86, 87, 88, 94, 123, 124],
+    # v3_per_m, wind (head, cross, mean), air density, highway share, aero work share, CdA
+    "Aero work": [9, 81, 82, 83, 84, 89, 93, 119],
+    # wet/snow/gravel/concrete surface, rolling work share, Crr, road-load-known flag
+    "Rolling work": [85, 86, 87, 88, 94, 120, 121],
+    # grade histogram, climb/descent/net elevation, uphill and downhill work shares
     "Grade work": list(range(66, 76)) + [95, 96],
-    "Stop density": [2, 4, 5, 6, 7, 8] + list(range(10, 66)) + [92, 97, 98],
+    # mean speed, stop density, start/end speed, accel RMS, kinetic energy per m, speed-accel
+    # histogram, inertia work share, regen-able and specific wheel energy
+    "Speed & stops": [2, 4, 5, 6, 7, 8] + list(range(10, 66)) + [92, 97, 98],
+    # T mean/min/max, sub-zero and hot fractions, warm and cold start flags
     "Ambient temperature": [76, 77, 78, 79, 80, 145, 146],
-    "Accessory load": [0, 1, 3, 90, 91, 147, 148],
-    "Mass": [116, 117, 118, 119, 120, 121, 125, 126, 127, 128, 129] + list(range(109, 116)),
-    "Model year": [149, 150, 137, 138, 139, 140, 141, 142, 143, 144, 99, 100, 101]
-    + list(range(102, 109))
-    + list(range(130, 137)),
+    # trip duration and distance, idle share, physics energy scale and propulsive share
+    "Duration & idle": [0, 1, 3, 90, 91],
+    # vehicle class one-hots, mass and how it is known
+    "Mass & class": list(range(109, 116)) + [116, 117, 118],
+    # architecture, engine size/power/diesel, transmission, battery, EPA labels, SOC,
+    # hybrid/battery energy shares, PHEV charge-depleting share, OBD MAF and dyno flags, model year
+    "Powertrain, labels & year": list(range(102, 109)) + list(range(122, 145)) + [99, 100, 101, 147, 148, 149, 150],
 }
 # Verify exact disjoint partition of all 151 features (preserves exact Shapley efficiency!)
 _all_idx = [i for idxs in FEATURE_GROUPS.values() for i in idxs]

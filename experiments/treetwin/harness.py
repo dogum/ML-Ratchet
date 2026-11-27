@@ -398,9 +398,13 @@ def _paired_unit_boot(
     }
 
 
-def stage_exam(platform: str) -> dict:
+def stage_exam(platform: str, supplement: str | None = None) -> dict:
+    """Score the exam once. ``supplement`` names a dated supplementary exam (written to
+    ``scores/<platform>_<supplement>.json``), run only after a recorded fix to an arm; the
+    original score file is never touched."""
     prereg_sha = FR.verify_frozen()
-    score_path = P.HERE / "scores" / f"{platform}.json"
+    name = f"{platform}_{supplement}" if supplement else platform
+    score_path = P.HERE / "scores" / f"{name}.json"
     if score_path.exists():
         raise RuntimeError(f"Exam already scored once at {score_path}; refusing second run.")
 
@@ -493,15 +497,27 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("platform", choices=list(PLATFORMS) + ["all"])
     ap.add_argument("stage", choices=["train_tune", "dev_twin", "exam"])
+    ap.add_argument("--supplement", help="dated supplementary exam tag, e.g. 2026-11-27-wind (exam stage only)")
     args = ap.parse_args()
-    targets = list(PLATFORMS) if args.platform == "all" else [args.platform]
-    for p in targets:
-        if args.stage == "train_tune":
-            stage_train_tune(p)
-        elif args.stage == "dev_twin":
-            stage_dev_twin(p)
-        elif args.stage == "exam":
-            stage_exam(p)
+    if args.supplement and (args.stage != "exam" or args.platform == "all"):
+        ap.error("--supplement is for one platform's exam stage")
+    if args.platform == "all":
+        # Each platform imports its own model's training modules under generic top-level names
+        # (`dataset`, `_paths`). Sharing one interpreter makes later platforms pick up the first
+        # platform's cached modules, so run every platform in its own process.
+        import subprocess
+        import sys
+
+        for p in PLATFORMS:
+            subprocess.run([sys.executable, __file__, p, args.stage], check=True)
+        return
+    p = args.platform
+    if args.stage == "train_tune":
+        stage_train_tune(p)
+    elif args.stage == "dev_twin":
+        stage_dev_twin(p)
+    elif args.stage == "exam":
+        stage_exam(p, args.supplement)
 
 
 if __name__ == "__main__":

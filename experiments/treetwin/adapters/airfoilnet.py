@@ -50,7 +50,10 @@ FEATURE_NAMES = (
 FEATURE_GROUPS = {
     "Leading-edge thickness (0-25% c)": list(range(0, 8)),
     "Mid-chord thickness (25-75% c)": list(range(8, 16)),
-    "Trailing-edge thickness (75-100% c)": list(range(16, 24)) + [49],
+    # Stations are cosine-spaced (airfoilnet.py XS): 0-7 lie at 0.4-23 % c, 8-15 at 29-71 %, 16-23 at 77-100 %.
+    "Trailing-edge thickness (75-100% c)": list(range(16, 24)),
+    # tmax sits near 25-35 % c on most sections; it was filed under trailing edge until 27 Nov 2026.
+    "Maximum thickness (tmax)": [49],
     "Leading-edge camber": list(range(24, 32)),
     "Mid/aft camber": list(range(32, 48)),
     "Reynolds number (log10 Re)": [48],

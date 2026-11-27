@@ -44,16 +44,18 @@ def conformal_quantile(
     """Exact finite-sample split-conformal quantile of nonconformity ``scores``.
 
     Uses order statistic ``k = ceil((n + 1) * (1 - alpha))`` (Vovk et al. 2005 / Romano et al.
-    2019), clamped to ``max(scores)`` when ``k > n``. Guarantees marginal coverage ``>= 1 - alpha``
-    on exchangeable draws from the same distribution.
+    2019). When ``k > n`` (too few scores for the requested coverage, including ``n = 0``) the
+    k-th score is the extra ``+inf`` of the conformal construction, so the result is ``inf``:
+    no finite interval carries the guarantee. Otherwise marginal coverage is ``>= 1 - alpha`` on
+    exchangeable draws from the same distribution.
     """
     s = np.asarray(scores, dtype=np.float64)
     s = s[np.isfinite(s)]
     n = s.size
-    if n == 0:
-        return float(floor)
     k = int(math.ceil((n + 1) * (1.0 - alpha)))
-    k = max(1, min(k, n))
+    if k > n:
+        return float("inf")
+    k = max(1, k)
     q = float(np.partition(s, k - 1)[k - 1])
     return float(max(floor, q))
 

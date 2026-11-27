@@ -217,7 +217,13 @@ def test_mondrian_conformal_calibration():
     mc2 = MondrianConformal.from_dict(mc_shrunk.to_dict())
     assert np.allclose(mc2.halfwidth(s_ex, st_ex), mc_shrunk.halfwidth(s_ex, st_ex))
     # Conformal quantile finite-sample property
-    assert conformal_quantile([1.0, 2.0, 3.0], alpha=0.1) == 3.0
+    # 3 scores cannot carry 90 % coverage: k = ceil(4 * 0.9) = 4 > 3, so the quantile is unbounded
+    assert conformal_quantile([1.0, 2.0, 3.0], alpha=0.1) == float("inf")
+    assert conformal_quantile([], alpha=0.1) == float("inf")
+    # 9 scores at 90 %: k = ceil(10 * 0.9) = 9, the largest score
+    assert conformal_quantile(np.arange(1.0, 10.0), alpha=0.1) == 9.0
+    # 68.27 %: k = ceil(4 * 0.6827) = 3 <= 3
+    assert conformal_quantile([1.0, 2.0, 3.0], alpha=1.0 - ONE_SIGMA) == 3.0
     assert coverage(r_ex, s_ex, f_pool) > 0.5
 
 
@@ -258,3 +264,21 @@ def test_twintest_harness_and_disagreement():
     dis = disagreement_detector(pa, pb, abs_error=err)
     assert dis["overall"]["spearman_r"] > 0.85
     assert dis["overall"]["top10pct_enrichment"] > 1.5
+
+
+def test_site_trees_reference_is_current():
+    """site/tests/trees.test.ts checks the TypeScript tree runtime against a committed reference;
+    it must match what mlratchet.gbm computes now."""
+    import importlib.util
+
+    root = Path(__file__).resolve().parents[1]
+    spec = importlib.util.spec_from_file_location(
+        "export_trees_reference", root / "experiments" / "treetwin" / "export_trees_reference.py"
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    want = mod.build()
+    have = json.loads(mod.OUT.read_text(encoding="utf-8"))
+    assert have.keys() == want.keys()
+    for k in ("preds", "phi", "ev", "value", "thresh"):
+        assert np.allclose(np.asarray(have[k], dtype=float), np.asarray(want[k], dtype=float), rtol=0, atol=1e-15), k
