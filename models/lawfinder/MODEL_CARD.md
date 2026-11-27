@@ -1,4 +1,6 @@
-# LawFinder v1.0: what each simulator believes, in one line
+# LawFinder v1.1: what each simulator believes, in one line
+
+*v1.1 (27 Nov 2026) changes only the road law (section "Road law v1.1" below); the other five laws are v1.0.*
 
 LawFinder fills the symbolic-regression slot on the Model families page. It asks four of the collection's shared
 simulators thousands of questions, searches for the shortest equation that answers them, keeps an equation only if
@@ -29,7 +31,8 @@ repository on 22 Nov 2026 (section "The road law" below).
 - **Inertia** (i1-c7): E = D · (6.603 − 5.617 s). Same as GridSim's own pick.
 - **Nadir** (g1-c12): Δf = (ΔP + 2)² / (52,940 E − 3.54·10⁶)^0.208. GridSim (g2, GridPulse's release physics) alone (g2-c3): Δf = 0.433 ΔP.
 - **Homes** (b2-c13): EUI = 186.5 / 1.926^A + HDD · (2022 − Y). BuildingSim's simplest strong belief (b2-c9): EUI ≈ HDD · (2021 − Y).
-- **Road** (p1-c23): E = m · exp[(2 / (v̄ + 1.48)^0.595 − 2·EV) · (2·PKE + 0.0698·(Crr×1000 + g_net) − hybrid)].
+- **Road** (v1.1, p1-c17): E = m · exp[(0.3353·√(Crr×1000) − hybrid) · (2 / v̄^0.6288 − 2·EV)]. It does not read grade.
+  v1.0 (p1-c23, until 27 Nov 2026): E = m · exp[(2 / (v̄ + 1.48)^0.595 − 2·EV) · (2·PKE + 0.0698·(Crr×1000 + g_net) − hybrid)].
   RoadSim's simplest strong belief (p2-c10): E = √PKE · (m − hybrid) / (EV + 0.238).
 
 "Simulator's own law" = PySR's model-selection rule applied to the final frozen set only: among rungs with loss within
@@ -76,7 +79,7 @@ repository on 22 Nov 2026 (section "The road law" below).
 | Inertia | 10 | 5 | i1-c7 (R² 0.964, dev 37 %) | val_i1 | Bigger laws gained < 0.001 |
 | Nadir | 16 | 3 | g1-c12 (R² 0.259 on g1, −0.005 on g2) | val_g1, val_g2 | g2 laws (R² 0.12-0.20 on g2) read the 4 dev events 2.5-4.5× worse |
 | Homes | 37 | 8 | b2-c13 (R² 0.694, dev MdAPE 39 %) | val_b1, val_b2 | c15+ gained < 0.01 |
-| Road | 40 | 8 | p1-c23 (R² 0.767 on val_p2, dev MdAPE 16.8 %) | val_p1, val_p2 | No p2 rung beat it by 0.01 on val_p2 (p2-c22: 0.763, dev 12.9 %) |
+| Road | 53 | 7 | p1-c17 (R² 0.754 on val_p2, dev MdAPE 17.5 %; v1.1) | val_p1, val_p2 | Sign gate (27 Nov 2026): p1-c23 (0.767) and the grade-reading p2 laws let energy fall with grade; nothing that passes beats p1-c17 by 0.01 |
 
 Full ladders with every decision: `ratchet.yaml`, `training/results/<law>_ratchet.json`.
 
@@ -90,14 +93,14 @@ Full ladders with every decision: `ratchet.yaml`, `training/results/<law>_ratche
 | Inertia (410) | MdAPE | 33.0 % | 33.0 % | 7.00 s × D: **15.1 %** | GridPulse 16.4 % | 24.0 % | loss |
 | Nadir (148) | MAE | **0.060 Hz** | 0.106 | k ΔP²/E: 0.173 | GridPulse (5 s of trace) 0.080 | 0.129 | win |
 | Homes (6,019) | MdAPE | 39.3 % | 39.7 % | a + b HDD + c CDD: 35.6 % | none in the collection | **33.4 %** | loss (to dumb) |
-| Road, VED trips (22,877) | MdAPE | 18.6 % | 20.9 % | road-load / η: 18.3 % | EnergyNet **10.1 %** | 21.3 %; MOVES-like 11.8 % | loss |
-| Road, EPA tests (52,522) | MdAPE | 17.3 % | 15.1 % | road-load / η: 23.8 % | EnergyNet **7.5 %** | 24.6 % | loss |
+| Road, VED trips (22,877) | MdAPE | 18.7 % (v1.0: 18.6) | 20.9 % | road-load / η: 18.3 % | EnergyNet **10.1 %** | 21.3 %; MOVES-like 11.8 % | loss |
+| Road, EPA tests (52,522) | MdAPE | 19.4 % (v1.0: 17.3) | 15.1 % | road-load / η: 23.8 % | EnergyNet **7.5 %** | 24.6 % | loss |
 
 Also: water R² 0.594 (Fu 0.43, FlowCast 0.64); inertia rank correlation 0.975 (7 s × D 0.60, GridPulse 0.61);
 homes: BuildingData-style log-linear fit on dev 26.6 % (best).
 
 **Coverage of the 68 % bars on the exam:** water 83 %, fire 69 %, inertia 91 %, nadir 100 %, homes 69 %, road 72 % (VED)
-and 83 % (EPA). Water,
+and 80 % (EPA; v1.0 83 %). Water,
 inertia and nadir bars are too wide (inertia's ×6.7 widening was fitted on 4 dev events).
 
 ## What the simulators believe, and whether it is true
@@ -161,11 +164,42 @@ Built in the repository after the import, following `law_bldg.py` / `exam_bldg.p
 - RoadSim's own shorter law beats the released one on VED petrol and on EPA petrol: the dev gate preferred the longer law.
 - **Errata, exam run 1.** `exam_road.py` multiplied EnergyNet's VED frame by its unit factor although the frame is
   already in MJ, so EnergyNet's VED rows came out ×0.042 (petrol, hybrids) and ×3.6 (electric): 95.8 %, 95.6 % and
-  187 % MdAPE. The run's output is kept as written (`training/results/exam_road.json`). With the owner's agreement,
+  187 % MdAPE. The run's output is kept as written (`training/results/exam_road_v10.json`, renamed for v1.1). With the owner's agreement,
   `exam_road_errata.py` re-computed EnergyNet's VED rows only, from its stored per-trip predictions against run 1's
   stored truth (which agrees with EnergyNet's own to 6e-8): petrol 8.6 %, hybrids 13.4 %, electric 23.2 % (its published
   values exactly) and 10.1 % on the pooled trips. The law's exam was not re-run; every law, rung, road-load,
-  RoadSim-law, RoadData and dumb row is unchanged. The page, release and card read `exam_road_reported.json`.
+  RoadSim-law, RoadData and dumb row is unchanged. The page, release and card read `exam_road_reported.json` (v1.0's: `exam_road_reported_v10.json`).
+
+## Road law v1.1 (27 Nov 2026)
+
+The audit (`docs/audits/lawfinder-v1.0.md`) found that v1.0's road law gave a battery-electric car less energy on a
+steeper road. On 27 Nov 2026 the owner adopted a release rule for the road ladder: a law may not be released if its
+energy falls as net grade rises at any val_p2 row. Tank and battery energy rise with uphill grade. p1-c23 failed on 21 %
+of val_p2 rows and on every BEV row. The rule came from the audit, not from an exam result.
+
+The walk was re-run with no new search (`training/road_gate.py`) over the 40 v1.0 rungs and the 13 sign-checked p2s
+rungs. p1-c23, p1-c25 and the grade-reading p2 laws were rejected by the gate, and **p1-c17** was released (R² 0.754,
+dev 17.5 %, error bar ±0.80 MJ/km). The choice was committed before the exam ran. p1-c17 does not read grade at all.
+v1.0's exam had already scored p1-c17 after the fact, at 18.67 % on VED against p1-c23's 18.60 %. The exam was run once
+more for v1.1, and every non-law row reproduced v1.0's exactly.
+
+| Stratum | n | v1.0 p1-c23 MdAPE (bias) % | v1.1 p1-c17 MdAPE (bias) % | Road-load (dev η) | EnergyNet v2.1 |
+|---|---|---|---|---|---|
+| VED petrol | 14,469 | 19.3 (-19) | 19.0 (-18) | 20.0 | 8.6 |
+| VED hybrids | 8,241 | 16.8 (-7) | 17.7 (-7) | 15.7 | 13.4 |
+| VED electric (2 Leafs) | 167 | 43.3 (-42) | 33.7 (-32) | 21.7 | 23.2 |
+| VED, all three | 22,877 | 18.6 (-16) | 18.7 (-15) | 18.3 | 10.1 |
+| EPA petrol | 46,876 | 17.3 (+11) | 19.6 (+14) | 25.0 | 7.5 |
+| EPA hybrids | 4,154 | 13.1 (+6) | 15.8 (+8) | 19.6 | 7.8 |
+| EPA battery-electric | 1,492 | 43.1 (+42) | 20.0 (+11) | 11.9 | 6.3 |
+| EPA, all | 52,522 | 17.3 (+11) | 19.4 (+14) | 23.8 | 7.5 |
+
+- Electric cars improve most: the EPA BEV error halves (43.1 → 20.0 %) and the VED Leafs go from 43.3 to 33.7 %. Both
+  still lose to road-load.
+- Petrol and hybrid EPA tests get worse (17.3 → 19.6 %, 13.1 → 15.8 %), with more over-prediction on the highway
+  (ICE HWY 24.0 → 30.4 %).
+- The law still loses every row. Records: `training/results/road_ratchet.json` (v1.1; v1.0 in `road_ratchet_v10.json`),
+  `exam_road.json` / `exam_road_reported.json` (v1.1; v1.0 in `*_v10.json`).
 
 ## Limits
 
