@@ -82,9 +82,11 @@ Coverage of the 68% error bars on the exam: Severity, forest fires, ±1 sigma (f
 - The dev set is small (40 fires; 16 forest with severity, 9 with LFMC) and fed the emulator tuning, the physics knobs, the gate, the severity map and the widening: the gate is partly in-sample.
 - Inputs follow FEDS-MTBS (MTBS-sized fires, ≥ 1,000 acres in the West, 500 in the East), CONUS 2017-23, S-NPP overpasses on a 180 m grid; LANDFIRE fuels can be stale or post-fire for later fire years.
 - Rule note: the exam input build, with the truths in the same records, ran before the ratchet closed (nothing was scored or opened before the close).
-- Queued (audit): retrain with the blind-wind flag left unscaled (sd 1) and the checkpoint storing its RNG state; compare on dev.
+- Blind mode without fire-danger indices: the matched retrain of 27 Nov 2026 showed that BI (computed from gridMET wind) and ERC carry the wind into blind mode once the flag is scaled normally. Blank BI (and test ERC) in blind mode, then repeat the matched pair R6c / R7f on the same banks; this changes the blind task's definition and needs the owner's decision.
 
 ## The ratchet
+
+### FireDetective v1.0 (FireSim physics v1-v3, 18-19 Nov 2026)
 
 **Objective:** Sim primary: mean of max(R2, 0) over three targets on the frozen simulated set of the current physics version: simulated crown-fire share, wind read with the wind inputs blanked, and live fuel moisture (val_v1, then val_v3; about 650 simulated fires each, same seeds)  
 **Rule:** Keep if the sim primary beats the incumbent, re-scored on the same frozen set, by more than 0.01 AND the real dev composite (mean of the Spearman rho of predicted crown share vs MTBS high-severity share on the 30 dev fires with severity, and of blind wind vs gridMET wind on the 40 dev fires) is no more than 0.05 below the incumbent's. When the physics (frozen set) changes, the incumbent is re-scored on the new frozen set first.
@@ -103,6 +105,20 @@ Coverage of the 68% error bars on the exam: Severity, forest fires, ±1 sigma (f
 <sub>Columns after *Why*: training/ratchet.json: sim primary on the rung's frozen set and the incumbent's on the same set, then the real dev gate on 40 dev fires (Spearman rho; raw network outputs).</sub>
 
 Physics versions (training/simbank.py wrappers around FireSim, no edit to the shared package): v1 FireSim as shipped; v2 + night fine-fuel moisture recovery and anchor-and-flank control lines; v3 = v2 + a fixed wind adjustment factor U(0.25, 0.6) in half the runs. v2 and v3 came from twin tests on the dev fires (training/twin.py, results/twin_v1.json and twin_waf.json), so dev data fed the physics AND the gate: the gate is partly in-sample. The FEDS perimeter emulator was also fitted on real dev VIIRS pixels (results/calib_feds.json). A frozen set val_v2 was built (results/compare_val_v2.json) but no rung was scored on it: R2 went straight to the v3 bank and val_v3. Each gate compares a rung with the current incumbent only. The dev composite uses the all-fuel severity rho (30 fires), not the forest one. R6's dev wind rho (0.11) and dev wind MAE (1.21 m/s) are worse than R4's (0.20, 1.10); its composite still passed (-0.004). The bank counts in ratchet.json disagree a little: R3 says v2 has 131 sims, the status doc says v2 has 108 in the final bank (the banks are not shipped). Rule note (disclosed in the model card and in ratchet.json 'closed'): `exam.py build` ran on 19 Nov 10:15-10:23 local, while R4 was the incumbent and before R6 was trained and the ratchet closed (11:53). It fetched LANDFIRE for the 944 listed exam fires, built their input records, which hold the truth values in the same files, and computed the classical index values. Nothing was predicted, scored, compared or opened before the close; R6 (the R4 recipe on more simulations) was decided on the frozen sim set and dev only, and `exam.py score` ran once after calibration.
+
+### FireDetective audit follow-up: blind-wind flag scaling, matched retrain (27 Nov 2026)
+
+**Objective:** As above, on val_v3  
+**Rule:** As above: keep if the sim primary beats R6 (released) on val_v3 by more than 0.01 AND the dev composite is no more than 0.05 below R6's. The exam is opened once, as a new version, only for a promoted rung.
+
+| Rung | Change | Frozen-set score | Decision | Why | Frozen set | Sim primary | Incumbent sim (same set) | Sim R² crown share | Sim R² blind wind | Sim R² LFMC | Dev ρ severity, all fuels (30) | Dev ρ severity, forest (16) | Dev ρ blind wind (40) | Dev ρ LFMC (9) | Dev composite |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| R6c | Control: R6's recipe on the rebuilt bank, flag scaled as shipped (sd floor 1e-3) | 0.390 | ○ rejected | Not a candidate: it measures the rebuild. sim 0.3899 vs R6 0.3759 (+0.014); dev composite 0.325 vs 0.344 (-0.019). | val_v3 | 0.3899 | 0.3759 | 0.674 | 0.357 | 0.138 | 0.536 | 0.744 | 0.115 | 0.683 | 0.325 |
+| R7f | R6's recipe with the blind-wind flag stored at sd 1 (train.py --flag-sd1) | 0.612 | ○ rejected | Not promoted, held for the owner although it passes the rule's numbers (sim 0.6122 vs 0.3759, +0.236; dev composite 0.730 vs 0.344) but held, exam not opened: every blind output now equals the visible one (sim blind-wind R² 0.990 vs visible 0.994; crown 0.707 vs 0.706). BI, computed from the gridMET wind that is blanked in blind mode and is also the dev wind truth, stays in the blind input; with the flag at z = 1000 the network could not use it, at z = 1 it does. Neutralising BI drops R7f's blind-wind correlation with the sim truth from 0.995 to 0.224 (R6: 0.556 to 0.554). The gain is a leak, not a better blind estimate. | val_v3 | 0.6122 | 0.3759 | 0.706 | 0.99 | 0.14 | 0.551 | 0.742 | 0.908 | 0.867 | 0.73 |
+
+<sub>Columns after *Why*: training/rung_R7f.json.</sub>
+
+R6's training bank was not shipped; it was rebuilt with the shipped simbank.py commands, cut to the shards R6's log implies (train_v1 shards 0-30 = 1,340 sims, train_v2 0-2 = 108, train_v3 0-59 = 2,652: all three counts exact). Both arms are R6's recipe (3 seeds 0-2, elongation dropped); checkpoints now also store the torch and numpy RNG states. R6c (the shipped 1e-3 floor) is the control: it does not reproduce R6 exactly (sim primary 0.390 vs 0.376, dev composite 0.325 vs 0.344), so the rebuild alone moves these scores by about that much. R7f stores the flag with sd 1. Log: training/rung_R7f.json.
 
 Raw per-rung logs are in [`training/`](training/).
 
@@ -129,7 +145,7 @@ FireSim, the shared fire platform's simulator (ML Ratchet Wildfire Phase 1, shar
 - Per-fire MTBS burn-severity mosaics (dNBR thematic rasters) are behind an e-mail order queue; LANDFIRE Annual Disturbance codes were used instead, which lag (only 15 recent forest fires have severity).
 - Real dead-fuel moisture sticks: NFMD moved into FEMS and has no public download.
 - More dev fires with severity and LFMC truth, for the severity map, the widening and the gate.
-- Inputs (audit, 25 Nov 2026): an empty burned-area history overflowed to infinite wind; predict() now refuses fires with no observed step (every exam fire had 3-12). The blind-wind flag is scaled by a 0.001 sd floor (z = 1000 in blind mode). Rescaling it with the matching weight change leaves every output unchanged, so whether it cost accuracy in training needs a matched retrain (queued).
+- Inputs (audit, 25 Nov 2026): an empty burned-area history overflowed to infinite wind; predict() now refuses fires with no observed step (every exam fire had 3-12). The blind-wind flag is scaled by a 0.001 sd floor (z = 1000 in blind mode). The matched retrain (27 Nov 2026; rebuilt bank, 3 seeds per arm; training/rung_R7f.json) answered the audit's question the other way round: with the flag at sd 1 (R7f) the blind outputs equal the visible ones (sim blind-wind R² 0.99 vs 0.31 for R6; dev blind-wind ρ 0.91 vs 0.11), because BI, computed from the gridMET wind that is both the blanked input and the dev truth, stays in the blind input; neutralising BI drops R7f's blind-wind correlation with the truth from 0.995 to 0.224 and R6's from 0.556 to 0.554. The z = 1000 scaling kept the released model off that path. R7f passes the rule's numbers but was held, and the exam was not opened.
 
 ## Next rungs
 

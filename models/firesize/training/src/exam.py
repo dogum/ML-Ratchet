@@ -1,6 +1,11 @@
 """THE EXAM (run once, at the end): FireSize on the FPA-FOD exam (655,869 ignitions, 2012-2020; main = 2012-2019,
 recent = 2020), against B's baselines (proc/baselines/firesize_exam.json, same records).
-usage: exam.py <model npz>   -> results/exam.json, results/exam_preds.parquet"""
+usage: exam.py <model npz>   -> results/exam.json, results/exam_preds.parquet
+
+27 Nov 2026 (audit follow-up): exam.py <model npz> <out subdir> [z_clip] writes to results/<out subdir>/ instead, for
+a dated supplementary re-score of a released model (e.g. v1.0 with z_clip 8) or the one exam of a new version. The
+run-once guard and the exam.started audit line apply per output folder. Strata added: pt_SB (ignitions on
+slash-blowdown fuel at the 250 m point) and its complement."""
 import sys, json, os, time
 from common import *
 import supp, net
@@ -12,7 +17,12 @@ os.makedirs(OUT, exist_ok=True)
 
 
 def main():
+    global OUT
     mp = sys.argv[1]
+    if len(sys.argv) > 2:
+        OUT = f'{ROOT}/results/{sys.argv[2]}'
+        os.makedirs(OUT, exist_ok=True)
+    zc = float(sys.argv[3]) if len(sys.argv) > 3 else None
     if os.path.exists(f'{OUT}/exam.json'):
         raise SystemExit('exam already run: results/exam.json exists (the exam is run once)')
     t0 = time.time()
@@ -26,7 +36,7 @@ def main():
     d = fod_records('exam')
     d = F.fod_gridmet(d)
     print('exam records', len(d), flush=True)
-    parts, meds = [], []
+    parts, meds, sb = [], [], []
     for s in range(0, len(d), 100000):
         dd = d.iloc[s:s + 100000]
         X = F.fod_features(dd)
@@ -35,9 +45,10 @@ def main():
             X = pd.concat([X, PF.phys_features(dd.x.values, dd.y.values, dd.tmmx.values, dd.rmin.values, dd.vs.values,
                                                dd.tmmx_m1.values, dd.rmin_m1.values, dd.vs_m1.values)], axis=1)
         Xv = X[feats].values.astype(np.float64)
-        P = net.forward_np(W, Xv)
+        P = net.forward_np(W, Xv, zc)
+        sb.append(X['pt_SB'].values > 0.5)
         parts.append(P.astype(np.float32))
-        meds.append(supp.median_log10(net.forward_np(W1, Xv)))
+        meds.append(supp.median_log10(net.forward_np(W1, Xv, zc)))
         print(s, f'{time.time() - t0:.0f}s', flush=True)
     P = np.concatenate(parts)
     pe = P[:, supp.ESC_BIN:].sum(1)
@@ -49,18 +60,22 @@ def main():
     lo = np.argmax(cdf >= 0.1, 1); hi = np.argmax(cdf >= 0.9, 1)
     cover80 = (b_obs >= lo) & (b_obs <= hi)
     pit_lo = np.where(b_obs > 0, cdf[np.arange(len(P)), np.maximum(b_obs - 1, 0)], 0.0)
-    res = dict(model=os.path.basename(mp), model_sha256=sha, temp=float(W.get('temp', 1.0)), point='median of T=1 distribution',
+    sb = np.concatenate(sb)
+    res = dict(model=os.path.basename(mp), model_sha256=sha, z_clip=zc, temp=float(W.get('temp', 1.0)), point='median of T=1 distribution',
                n=int(len(d)), wall_s=None, periods={})
     masks = dict(all=np.ones(len(d), bool), main_2012_2019=(d.exam_period == 'main').values,
                  recent_2020=(d.exam_period == 'recent').values, mtbs_matched=d.MTBS_ID.notna().values,
                  early_2012_2016=(d.FIRE_YEAR <= 2016).values, late_2017_2019=((d.FIRE_YEAR >= 2017) & (d.FIRE_YEAR <= 2019)).values)
     for rg in REGIONS:
         masks[f'region_{rg}'] = (d.region == rg).values
+    if len(sys.argv) > 2:                                   # strata added 27 Nov 2026 (not in the v1.0 exam.json)
+        masks['fuel_SB'] = sb
+        masks['fuel_not_SB'] = ~sb
     for k, m in masks.items():
         r = dict(size=M.size_scores(d.size_ha.values[m], med[m]),
                  escape=M.binary_scores(d.escape.values[m], pe[m]) if d.escape.values[m].std() > 0 else None,
                  large=M.binary_scores(d.large.values[m], pl[m]) if d.large.values[m].std() > 0 else None,
-                 mean_p_escape=float(pe[m].mean()), cover80=float(cover80[m].mean()))
+                 mean_p_escape=float(pe[m].mean()), cover80=float(cover80[m].mean()), n=int(m.sum()))
         res['periods'][k] = r
         print(k, json.dumps({a: ({b: round(c, 4) for b, c in v.items()} if isinstance(v, dict) else v)
                              for a, v in r.items()}), flush=True)

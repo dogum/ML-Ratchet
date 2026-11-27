@@ -35,3 +35,29 @@ ladders:
       - { id: r6, change: "r5 trained on the full v1 bank (8,500 simulated ignitions instead of 4,800)", sim: 0.278, decision: rejected, why: "Sim RPSS +0.014 vs r5 passed; gate AUC 0.746 vs 0.766 (needs ≥ 0.756) failed. Log: sim RPSS +0.014 vs r5; gate AUC fails.", metrics: ["v1|v1rep2", 0.278, 0.278, 0.864, 0.746, 0.079, 0.0275, 0.626, 0.299, 0.024] }
       - { id: r7, change: "r6 + the Rothermel ROS inputs (75 features)", sim: 0.28, decision: released, why: "Sim RPSS +0.015 vs r5 (0.280 vs 0.265); gate AUC 0.756 vs 0.766 (−0.0096, inside the 0.01 tolerance); gate MAE 0.627 vs 0.618 (+1.4 %). Kept; with the widen-only temperature below it is v1.0. Log: sim RPSS +0.015 vs r5.", metrics: ["v1|v1rep2", 0.28, 0.28, 0.874, 0.756, 0.082, 0.0274, 0.627, 0.308, 0.025] }
       - { id: widen, change: "Widen-only temperature on r7’s logits, fitted on the dev calib half by size-class log-likelihood (widen.py, results/widen.json); probabilities and the 80 % range use it, the point median uses T = 1 (decided on dev before the exam)", decision: kept, why: "T = 1.459. Calib half: size-class NLL 1.881 → 1.827, 80 % coverage 0.830 → 0.900; gate half 1.876 → 1.822, coverage 0.835 → 0.899. The cost was visible on dev before the exam: gate Brier 0.0274 → 0.0285 and gate mean P(escape) 0.025 → 0.054 against a real 0.029. Gate MAE here uses the widened median (0.648); the release's point estimate is the T = 1 median (0.627).", metrics: ["–", "–", "–", "–", 0.759, 0.083, 0.0285, 0.648, 0.291, 0.054] }
+  - name: "FireSize audit follow-up: slash-blowdown repair rung (27 Nov 2026)"
+    objective: "As above: sim RPSS on the frozen v1|v1rep2 set (1,175 simulated ignitions), against r7 (the released network, incumbent)."
+    rule: "As above: keep if the sim RPSS beats r7's on v1|v1rep2 by more than 0.01 AND the dev-gate escape AUC is at least r7's − 0.01 AND the dev-gate size MAE is at most 1.05 × r7's. The exam is opened once, as a new dated version, only if the rung is kept."
+    margin: 0.01
+    dev_gate: "The same gate half (4,429 dev ignitions)"
+    frozen_sets: ["v1|v1rep2"]
+    scored_on: "v1|v1rep2"
+    note: >-
+      Why: no simulated training ignition sat on slash-blowdown fuel (LANDFIRE FBFM40 201-204) at the 250 m feature
+      pixel, so pt_SB had sd 1e-6 and 91 exam ignitions entered at z = 1e6. The v1 training bank (8,500 ignitions) was
+      not shipped; it was rebuilt with physics v1p1 (FireSim's p1 solver, the v1 physics) from the shipped prior
+      (training/src/prior.py rows already on disk): 916 more LANDFIRE windows, 8,500 sims, no failures. Control r8c,
+      r7's recipe on the rebuilt bank, reproduced r7: sim RPSS 0.27988 and escape AUC 0.87443 on v1|v1rep2, gate AUC
+      0.75610, gate MAE 0.62671, every weight within 5.4e-6 of firesize_weights.npz. So the frozen set and the gate
+      here are the ones r7 was decided on. (The 22 Nov 2026 p1 rebuild of the frozen set alone did not reproduce the
+      labels because calib.Twins draws the 24 suppression draws for the whole bank in order: a frozen-only bank got
+      different draws.) r8 adds 479 slash-blowdown ignitions (training/src/prior_sb.py: 60 windows centred on seeded
+      random SB cells of the 250 m grid, 8 ignitions each on SB cells within 2 km, attributes from dev ignitions within
+      150 km as prior.py does); 8 windows (64 ignitions) are held out and never trained on. On those 64 held-out SB
+      sims: r7 RPSS −1.668 (P(escape) exactly 0 for all 64), r7 with z_clip 8 +0.254, r8 +0.127 (no hard-draw escapes
+      among the 64, so no AUC; work/results/sbhold_scores.json). The repair helps where the clip already does, and does
+      less than the clip there. Log: models/firesize/training/results/rung_r8.json, rung_r8c.json.
+    columns_source: "work/models/r8.json and r8c.json (copied to training/results/rung_r8*.json): the same columns as the ladder above"
+    columns: ["Own frozen set", "Sim RPSS own set", "Sim RPSS v1|v1rep2", "Sim escape AUC v1|v1rep2", "Gate escape AUC", "Gate AP", "Gate Brier", "Gate size MAE log10", "Gate size ρ", "Gate mean P(escape)"]
+    rungs:
+      - { id: r8, change: "r7's recipe (3-member ensemble, 75 features, v1rep2 suppression fit) on the rebuilt v1 bank plus 415 simulated slash-blowdown ignitions (52 windows; 8 more held out), so pt_SB is trained (sd 0.23 instead of 1e-6)", sim: 0.2881, decision: rejected, why: "Sim RPSS 0.2881 vs r7 0.2799 on v1|v1rep2 (+0.0082, needs > +0.01): below the margin. Gate AUC 0.7574 vs 0.7561 and MAE 0.637 vs 0.627 (+1.7 %) both pass. Not kept, so the exam was not opened. The frozen set holds no slash-blowdown ignition, so the rung's purpose is not what the sim score measures; the held-out SB check is in the note.", metrics: ["v1|v1rep2", 0.2881, 0.2881, 0.8727, 0.7574, 0.0849, 0.0276, 0.6371, 0.3022, 0.0267] }

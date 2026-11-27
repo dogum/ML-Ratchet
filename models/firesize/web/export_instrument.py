@@ -149,8 +149,9 @@ def main():
             'edges_ac': fz.EDGES_AC.tolist(), 'E': E, 'class_labels': fz.CLASS_LABELS, 'esc_bin': fz.ESC_BIN,
             'large_bin': fz.LARGE_BIN, 'regions': fz.REGIONS, 'region_names': REGION_NAMES, 'causes': fz.CAUSES,
             'fcls': fz.FCLS, 'wxf': fz.WXF, 'erc_coupling': ERC_COUPLING, 'lut_codes': lut_codes,
-            'lut_m1': fz.M1.tolist(), 'lut_u10': fz.U10.tolist(), 'version': '1.0',
-            'note': 'FireSize v1.0, 3-member MLP ensemble; layers float16, normalisation and ROS table float32'}
+            'lut_m1': fz.M1.tolist(), 'lut_u10': fz.U10.tolist(), 'version': '1.0.1',
+            'z_clip': fz.FireSize.z_clip,
+            'note': 'FireSize v1.0.1, 3-member MLP ensemble, standardised inputs clipped at z_clip sd; layers float16, normalisation and ROS table float32'}
     write_pack(out_dir / 'weights', tensors, dtype='f16', meta=meta, keep=keep)
 
     # the weights and table the browser sees, back in the model's own class and functions

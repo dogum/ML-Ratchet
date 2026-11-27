@@ -1,6 +1,8 @@
 """Run free-burn simulations for a set of ignitions (resumable chunks).
-usage: simbank.py <kind: twin|train> <reps> <physics version> [max_ign]
--> data/bank/<ver>/<kind>_<chunk>.npz"""
+usage: simbank.py <kind: twin|train|trainsb> <reps> <physics version> [max_ign] [bank tag]
+-> data/bank/<bank tag, default the physics version>/<kind>_<chunk>.npz
+27 Nov 2026: the bank tag lets the full v1p1 train bank be rebuilt next to data/bank/v1p1/, whose train chunks hold
+only the frozen-set ignitions of the 22 Nov 2026 p2 re-score (a resumed run there would skip their other ignitions)."""
 import os, sys, time, glob
 from common import *
 import sim
@@ -8,7 +10,7 @@ import sim
 KIND, REPS, VER = sys.argv[1], int(sys.argv[2]), sys.argv[3]
 MAXI = int(sys.argv[4]) if len(sys.argv) > 4 else 10 ** 9
 CH = 100
-OUT = f'{DATA}/bank/{VER}'
+OUT = f'{DATA}/bank/{sys.argv[5] if len(sys.argv) > 5 else VER}'
 os.makedirs(OUT, exist_ok=True)
 
 
@@ -19,9 +21,10 @@ def main():
     I = I.set_index('ign', drop=False)
     nch = (len(jobs) + CH - 1) // CH
     t0 = time.time(); done = 0
+    part, nparts = (int(v) for v in os.environ.get('SIMBANK_PART', '0/1').split('/'))   # parallel parts (27 Nov 2026)
     for ch in range(nch):
         fn = f'{OUT}/{KIND}_{ch:04d}.npz'
-        if os.path.exists(fn):
+        if ch % nparts != part or os.path.exists(fn):
             continue
         rows = []
         for (i, k) in jobs[ch * CH:(ch + 1) * CH]:

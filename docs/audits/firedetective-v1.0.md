@@ -34,3 +34,11 @@ python3 -B docs/audits/reviews/reviewer-b/firedetective_closing_probe.py
 | Empty history gives infinite wind | Yes | **Fixed**: `predict` raises `ValueError` for fires with no observed step. | Test. All 944 exam fires had 3–12 steps: exam unchanged. |
 | Blind-wind flag scaled to z = 1000 | Real scaling, unknown cost | **Queued**: a matched retrain with the flag unscaled. The audit's reparameterisation control shows the released outputs do not depend on the scale itself. | — |
 | Checkpoint omits RNG state | Minor | Queued with the retrain. | — |
+
+
+### Follow-up run (27 Nov 2026, owner-approved queue)
+
+| Queued item | What was run | Result |
+|---|---|---|
+| Matched retrain with the blind-wind flag unscaled (sd 1), RNG state in checkpoints | R6's bank rebuilt (shard counts match R6's log exactly); control R6c (shipped scaling) and R7f (`--flag-sd1`), 3 seeds each; `training/rung_R7f.json` | **Held, exam not opened.** R7f's sim primary 0.612 vs 0.376 and dev composite 0.730 vs 0.344, but its blind outputs equal its visible ones (blind-wind R² 0.990): BI, computed from the blanked gridMET wind, carries it. Neutralising BI: R7f 0.995 -> 0.224, R6 0.556 -> 0.554. The 1e-3 floor was blocking the leak by accident. Control R6c: 0.390 / 0.325 |
+| Compare on dev | As above | Released v1.0 unchanged. Next (owner): blank BI (and test ERC) in blind mode and repeat the pair |

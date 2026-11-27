@@ -11,6 +11,7 @@ Two growth models are combined into one free-burn area curve A(t) (t = hours sin
 Suppression is applied afterwards (supp.py) as a Fried & Fried line-vs-perimeter race on A(t), so one simulation
 serves any suppression model and the suppression model can be calibrated without re-simulating.
 """
+import os
 import time
 from common import *
 import firesim as fs
@@ -53,6 +54,10 @@ def wx_table():
     if 'w' not in _WX:
         z = np.load(f'{DATA}/wx_points.npz')
         _WX['w'] = z['wx']
+        if os.path.exists(f'{DATA}/wx_points_trainsb.npz'):      # 27 Nov 2026: prior_sb.py rows (ign ids follow on)
+            zs = np.load(f'{DATA}/wx_points_trainsb.npz')
+            assert int(zs['ign'][0]) == len(z['ign']) and (np.diff(zs['ign']) == 1).all()
+            _WX['w'] = np.concatenate([z['wx'], zs['wx']])
         _WX['off'] = int(z['off'])
         _WX['vars'] = list(z['vars'])
     return _WX

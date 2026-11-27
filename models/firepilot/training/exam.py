@@ -34,6 +34,10 @@ import firedata as fd
 
 ROOT = _paths.WORK
 SUF = '' if VERSION == 'p1' else '_' + VERSION        # p1 keeps the shipped names
+# 27 Nov 2026: FIREPILOT_EXAM_TAG (e.g. v1.1) gives a new version its own exam folder, summary and widen file, so its
+# per-fire files can never be mixed with v1.0's (stage A and B resume per fire). Every start is logged in exam.started.
+_TAG = os.environ.get('FIREPILOT_EXAM_TAG', '')
+SUF = SUF + ('_' + _TAG if _TAG else '')
 OUT = os.path.join(ROOT, 'results', 'exam' + SUF)
 SEED = 20261121
 
@@ -233,6 +237,13 @@ if __name__ == '__main__':
     stage, model = sys.argv[1], sys.argv[2]           # stage: A | B | summary
     shard, nshard = (int(sys.argv[3]), int(sys.argv[4])) if len(sys.argv) > 4 else (0, 1)
     os.makedirs(OUT, exist_ok=True)
+    if _TAG and stage in ('A', 'B'):
+        import hashlib, datetime
+        mp = os.path.join(ROOT, 'models', model + '.npz')
+        with open(os.path.join(OUT, 'exam.started'), 'a') as fh:
+            fh.write(f"{datetime.datetime.utcnow().isoformat()}Z stage={stage} shard={shard}/{nshard} model={model} "
+                     f"sha256={hashlib.sha256(open(mp, 'rb').read()).hexdigest()} physics={VERSION}
+")
     fires = exam_fires()
     if stage == 'A':
         net = ValueNet(os.path.join(ROOT, 'models', model + '.npz'))

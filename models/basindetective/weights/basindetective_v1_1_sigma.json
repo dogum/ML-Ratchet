@@ -1,0 +1,67 @@
+{
+ "d_logq": {
+  "factor": 1.3936423064596495,
+  "source": "dev real (52)",
+  "cov68_before": 0.5686274509803921,
+  "cov68_after": 0.6862745098039216
+ },
+ "d_rr": {
+  "factor": 1.2038032390595477,
+  "source": "dev real (52)",
+  "cov68_before": 0.5882352941176471,
+  "cov68_after": 0.6862745098039216
+ },
+ "d_bfi": {
+  "factor": 1.3836171685641538,
+  "source": "dev real (52)",
+  "cov68_before": 0.5686274509803921,
+  "cov68_after": 0.6862745098039216
+ },
+ "d_logq5": {
+  "factor": 1.0,
+  "source": "dev real (52)",
+  "cov68_before": 0.8823529411764706,
+  "cov68_after": 0.8823529411764706
+ },
+ "d_logq95": {
+  "factor": 1.1901417618306307,
+  "source": "dev real (52)",
+  "cov68_before": 0.5882352941176471,
+  "cov68_after": 0.6862745098039216
+ },
+ "d_hfd": {
+  "factor": 1.7073895678270061,
+  "source": "dev real (52)",
+  "cov68_before": 0.39215686274509803,
+  "cov68_after": 0.6862745098039216
+ },
+ "log_kslow": {
+  "factor": 1.1545212130734852,
+  "source": "dev twins (260)",
+  "cov68_before": 0.6269230769230769,
+  "cov68_after": 0.6807692307692308
+ },
+ "gw_share": {
+  "factor": 1.0,
+  "source": "dev twins (260)",
+  "cov68_before": 0.6923076923076923,
+  "cov68_after": 0.6923076923076923
+ },
+ "log_soilcap": {
+  "factor": 1.0,
+  "source": "dev twins (260)",
+  "cov68_before": 0.6846153846153846,
+  "cov68_after": 0.6846153846153846
+ },
+ "log_pmult": {
+  "factor": 1.0,
+  "source": "dev twins (260)",
+  "cov68_before": 0.7846153846153846,
+  "cov68_after": 0.7846153846153846
+ },
+ "log_dor": {
+  "factor": 1.0,
+  "source": "none (no dev truth)"
+ },
+ "reg_temperature": 1.5
+}

@@ -244,3 +244,61 @@ from it.
 ## 27 Nov 2026 — audit resolution
 
 The two-reviewer audit (`docs/audits/`). predict() refuses calibration flow with under 365 finite days or no positive flow. The negative bias in the direction of change (all four packaged basins decline with identical forcing) needs a matched retrain with a symmetric precipitation prior; it is queued.
+
+## 27 Nov 2026 — R6s: symmetric precipitation-drift prior, promoted; v1.1 examined once
+
+Owner-approved follow-up to the audit (`docs/audits/basindetective-v1.0.md`): with identical forcing in both periods
+v1.0 predicted a mean-flow decline on all four packaged basins, and one basin declined in both directions.
+
+**What changed.** The v3 bank prior on decadal precipitation drift was asymmetric: TRUE target-decade P = SEEN /
+exp(delta), delta ~ N(0.029, 0.038). New physics versions v3s and v4s (`simbank.py`, `PHYS=v3s|v4s`) use
+delta ~ N(0, 0.038). Nothing else changes; the draw is the same generator call, so every basin, model, forcing window
+and noise draw is the same as in v3 / v4 (matched basin for basin).
+
+**Rebuild check.** No bank was shipped. The rebuilt v4 frozen set (shards 900-903) gives R5 a sim skill of 0.540498,
+the shipped 0.540498; the rebuilt dev features give R5 a dev composite of 0.451457, as shipped; the rebuilt dev twins
+(`twin.py build`, PHYS=v4) give exactly R5's shipped widen-only factors. Banks built: v4 900-903, v3s 0-39, v4s 0-39
+and 900-903 (21,000 basins, about 0.25 s each here, no failures).
+
+**Rung R6s** = R5's recipe (`train.py --phys v3s --train 0-39 --extra v4s:0-39 --valphys v4s --epochs 60`, seeds 0-4,
+about 45 s each), scored by `training/rung_r6s.py` (`training/rung_r6s.json`):
+
+| | sim val-v4s | sim val-v4 | dev composite | dev ρ mean flow | dev ρ RR | dev ρ BFI | dev ρ Q5 | dev ρ Q95 | dev ρ HFD | dev AUC reg | paired dev sum Δlog Q (median) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| R5 (v1.0) | 0.5154 | 0.5405 | 0.4515 | 0.609 | 0.253 | 0.268 | 0.586 | 0.510 | 0.350 | 0.791 | −0.149 |
+| R6s | 0.5348 | 0.5221 | 0.4392 | 0.601 | 0.213 | 0.281 | 0.542 | 0.528 | 0.429 | 0.740 | −0.040 |
+
+**Decision: kept** (sim +0.0194 on the new frozen set, needs > 0.01; dev composite −0.012, allowed −0.02). The paired
+dev check (`training/symmetry.py`: forward = 1999-2008 in, 1980-89 out; reverse = 1980-89 in, 1999-2008 out; each uses
+only its own input period's flow) fell from −0.149 to −0.040: closer to 0, still negative. Basins where both directions predict a decline: 16 of
+51 (31 %) → 4 of 51 (8 %). Identical forcing on the four packaged basins: v1.0 −0.032, −0.130, −0.002, −0.045; v1.1 +0.006, −0.039,
++0.086, +0.015.
+
+**Release steps before the exam (dev only).** Widen-only factors refitted with the shipped `calib_sigma.py`: d_logq
+×1.39 (v1.0 1.15), d_rr ×1.20 (1.05), d_bfi ×1.38 (1.49), d_logq5 ×1.00, d_logq95 ×1.19 (1.00), d_hfd ×1.71 (1.73),
+log_kslow ×1.15 (1.12); regulation temperature 1.5 (1.3). Packed as `weights/basindetective_v1_1.npz` (sha256
+bc59f9d6...).
+
+**Exam, run once** (`training/exam_v11.py`: the shipped `realfeats.build('exam')` and `exam.main` with the same
+stand-ins as the 18 Nov re-score; run-once guard and `exam.started` line in `work/exam_v1.1/`). Then the 18 Nov paired
+bootstrap code on its outputs (`exam_v11_rescore.json`, `exam_v11_per_basin.csv`). 619 basins:
+
+| change | ρ v1.0 → v1.1 | GR4J ρ | verdict v1.0 → v1.1 | median error v1.0 → v1.1 | no change | verdict v1.0 → v1.1 |
+|---|---|---|---|---|---|---|
+| mean flow | 0.757 → 0.767 | 0.793 | loss → tie (−0.025 [−0.051, +0.001]) | 0.083 → 0.092 | 0.184 | tie → loss (vs Budyko-Fu +0.015 [+0.006, +0.022]) |
+| runoff ratio | 0.453 → 0.439 | 0.499 | tie → loss (−0.059 [−0.111, −0.008]) | 0.0296 → 0.0324 | 0.0381 | tie |
+| BFI | 0.203 → 0.213 | 0.232 | tie | 0.0185 → 0.0198 | 0.0181 | tie |
+| Q5 | 0.440 → 0.460 | 0.421 | tie | 0.126 → 0.120 | 0.129 | tie |
+| Q95 | 0.709 → 0.729 | 0.722 | tie | 0.108 → 0.117 | 0.204 | tie |
+| half-flow date | 0.630 → 0.648 | 0.565 | tie | 5.97 → 6.07 d | 8.28 | tie |
+
+68 % coverage of the change bars: 73-88 % (v1.0 73-83 %); regulation still at chance (AUC 0.483 against storage > 10 %;
+100 false alarms for 5 hits). Levels: every verdict unchanged. Why the errors grew while the ranks improved: the
+median predicted mean-flow change is +0.197 (v1.0 +0.133) against an observed +0.173. v1.0's asymmetric prior pulled
+predictions down; the symmetric one overshoots. Nothing was chosen from this; it is recorded as the reason a
+per-region, per-era drift measurement is the next rung.
+
+**Release.** `basindetective.load()` now loads v1.1; `bd.V1_0` is the v1.0 file, kept for its exam record.
+`examples/expected.json` is v1.1's output on the same four basins (v1.0's is `expected_v1.0.json`); golden output and
+the site instrument regenerated. `lab/index.html` is still the v1.0 page. `model.yaml` rows are v1.1's with v1.0's
+value and verdict in each note; the hidden-property rows (dev twins) are v1.0's and were not re-run.
