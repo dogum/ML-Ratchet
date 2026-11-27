@@ -2,6 +2,9 @@
 // The Ratchet Machine: a ratchet wheel and pawl that play through every rung decision in the collection.
 // A kept rung advances the wheel one tooth (the pawl rides up the ramp and clicks down) and paints that tooth
 // in the model's colour. A rejected rung strains forward half a tooth and slips back against the pawl.
+// The wheel has a fixed 36 teeth and keeps turning, like a real ratchet: each tooth shows the colour of the last kept
+// rung that passed the pawl. (Until 27 Nov 2026 it grew a tooth per kept rung, which crowded past ~250 rungs.)
+// The timeline below is one segment per model, sized by its decisions, so it stays readable as the collection grows.
 import { getModels } from '../lib/data';
 
 const models = getModels();
@@ -16,7 +19,7 @@ for (const m of models) {
     }
   }
 }
-const N = Math.max(40, steps.filter((s) => s.d !== 'rejected').length + 4); // one tooth per kept rung, plus a few blank
+const N = 36; // fixed teeth: the wheel turns, it does not grow
 const R = 150, r = 120, CX = 200, CY = 200;
 const pitch = 360 / N;
 const pt = (deg: number, rad: number) => [CX + rad * Math.sin((deg * Math.PI) / 180), CY - rad * Math.cos((deg * Math.PI) / 180)];
@@ -30,10 +33,18 @@ const teeth = Array.from({ length: N }, (_, i) => {
 });
 const spokes = Array.from({ length: 6 }, (_, i) => i * 60);
 const kept = steps.filter((s) => s.d !== 'rejected').length;
+// one timeline segment per model (a model's ladders are consecutive in `steps`)
+type Seg = { m: string; name: string; c: string; from: number; to: number; kept: number };
+const segs: Seg[] = [];
+steps.forEach((st, i) => {
+  const last = segs[segs.length - 1];
+  if (last && last.m === st.m) { last.to = i; if (st.d !== 'rejected') last.kept++; }
+  else segs.push({ m: st.m, name: st.name, c: st.c, from: i, to: i, kept: st.d !== 'rejected' ? 1 : 0 });
+});
 ---
 <div class="machine" data-machine data-steps={JSON.stringify(steps)} data-teeth={N}>
   <div class="mach-fig">
-    <svg viewBox="0 0 400 400" class="wheel-svg" role="img" aria-label={`A ratchet wheel that has advanced ${kept} teeth for ${kept} kept rungs, and held still for ${steps.length - kept} rejected ones.`}>
+    <svg viewBox="0 0 400 400" class="wheel-svg" role="img" aria-label={`A ${N}-tooth ratchet wheel that has advanced ${kept} teeth (${Math.floor(kept / N)} full turns) for ${kept} kept rungs, and held still for ${steps.length - kept} rejected ones.`}>
       <defs>
         <radialGradient id="hub" cx="50%" cy="45%" r="60%">
           <stop offset="0" stop-color="var(--paper-3)" />
@@ -73,15 +84,20 @@ const kept = steps.filter((s) => s.d !== 'rejected').length;
     </div>
     <dl class="counters">
       <div><dt class="kicker">decisions</dt><dd class="num" data-n-all>0</dd></div>
-      <div><dt class="kicker">kept · teeth</dt><dd class="num" data-n-kept>0</dd></div>
+      <div><dt class="kicker">kept</dt><dd class="num" data-n-kept>0</dd></div>
       <div><dt class="kicker">rejected</dt><dd class="num" data-n-rej>0</dd></div>
+      <div><dt class="kicker">full turns</dt><dd class="num" data-n-turns>0</dd></div>
     </dl>
-    <div class="timeline" data-timeline role="group" aria-label="Every rung decision; click one to jump to it">
-      {steps.map((s, i) => (
-        <button type="button" class={`tk ${s.d}`} style={`--c:${s.c}`} data-i={i} aria-label={`${s.name} ${s.id}: ${s.d}`} title={`${s.name} ${s.id} — ${s.d}`}></button>
+    <div class="timeline" data-timeline role="group" aria-label="Every model's rung decisions, in order; click a model to jump to its first rung">
+      {segs.map((g) => (
+        <button type="button" class="seg" style={`--c:${g.c};flex-grow:${g.to - g.from + 1}`} data-from={g.from} data-to={g.to}
+          aria-label={`${g.name}: ${g.to - g.from + 1} decisions, ${g.kept} kept`} title={`${g.name} · ${g.to - g.from + 1} decisions, ${g.kept} kept`}>
+          <span class="fill"></span>
+        </button>
       ))}
       <span class="playhead" data-playhead></span>
     </div>
+    <p class="mono faint tl-label" data-tl-label></p>
     <div class="mach-ctl">
       <button type="button" class="mbtn" data-play aria-label="Pause">❚❚</button>
       <button type="button" class="mbtn" data-step aria-label="Next rung">→</button>
@@ -105,7 +121,7 @@ const kept = steps.filter((s) => s.d !== 'rejected').length;
     const flash = $<SVGGElement>('[data-flash]');
     const stamp = $<HTMLElement>('[data-stamp]');
     const teeth = [...root.querySelectorAll<SVGPathElement>('[data-tooth]')];
-    const ticks = [...root.querySelectorAll<HTMLButtonElement>('.tk')];
+    const segs = [...root.querySelectorAll<HTMLButtonElement>('.seg')];
     const playhead = $<HTMLElement>('[data-playhead]');
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -165,12 +181,23 @@ const kept = steps.filter((s) => s.d !== 'rejected').length;
       }
       stamp.textContent = s.d === 'released' ? 'released' : s.d === 'rejected' ? 'rejected' : 'kept';
       stamp.className = `stamp on ${s.d}`;
-      ticks.forEach((t, j) => t.classList.toggle('done', j <= k));
-      playhead.style.left = `${((k + 0.5) / steps.length) * 100}%`;
+      segs.forEach((g) => {
+        const a = +g.dataset.from!, b = +g.dataset.to!;
+        const f = k < a ? 0 : k >= b ? 1 : (k - a + 1) / (b - a + 1);
+        g.style.setProperty('--f', String(f));
+        g.classList.toggle('now', k >= a && k <= b);
+      });
+      const cur = segs.find((g) => k >= +g.dataset.from! && k <= +g.dataset.to!);
+      if (cur) {
+        const x = cur.offsetLeft + cur.offsetWidth * ((k - +cur.dataset.from! + 0.5) / (+cur.dataset.to! - +cur.dataset.from! + 1));
+        playhead.style.left = `${x}px`;
+      }
+      $('[data-tl-label]').textContent = `decision ${k + 1} of ${steps.length} · ${s.name}`;
       const done = steps.slice(0, k + 1);
       $('[data-n-all]').textContent = String(done.length);
       $('[data-n-kept]').textContent = String(done.filter((x) => x.d !== 'rejected').length);
       $('[data-n-rej]').textContent = String(done.filter((x) => x.d === 'rejected').length);
+      $('[data-n-turns]').textContent = String(Math.floor(done.filter((x) => x.d !== 'rejected').length / N));
     }
 
     function paint(k: number) {
@@ -246,7 +273,7 @@ const kept = steps.filter((s) => s.d !== 'rejected').length;
     $<HTMLButtonElement>('[data-reset]').addEventListener('click', () => { jump(0); next = performance.now() + 1200; });
     const sb = $<HTMLButtonElement>('[data-sound]');
     sb.addEventListener('click', () => { sound = !sound; sb.setAttribute('aria-pressed', String(sound)); sb.textContent = sound ? 'sound on' : 'sound off'; if (sound) click(true); });
-    ticks.forEach((t) => t.addEventListener('click', () => { setPlay(false); jump(+t.dataset.i!); }));
+    segs.forEach((g) => g.addEventListener('click', () => { setPlay(false); jump(+g.dataset.from!); }));
 
     setPlay(playing);
     if (reduce) jump(steps.length - 1);
@@ -300,18 +327,18 @@ const kept = steps.filter((s) => s.d !== 'rejected').length;
   .t-delta :global(b) { color: var(--ink); font-weight: 500; }
   .t-why { margin: 0; color: var(--ink-2); font-size: 15px; }
 
-  .counters { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border-top: 1px solid var(--ink); }
-  .counters div { padding-top: 10px; }
+  .counters { display: grid; grid-template-columns: repeat(4, 1fr); margin: 0; border-top: 1px solid var(--ink); }
+  .counters div { padding-top: 10px; min-width: 0; }
   .counters dd { margin: 4px 0 0; font-size: 34px; letter-spacing: -0.04em; line-height: 1; }
 
-  .timeline { position: relative; display: flex; gap: 2px; height: 34px; align-items: flex-end; }
-  .tk { flex: 1; min-width: 0; padding: 0; border: 0; cursor: pointer; background: var(--rule); height: 14px; border-radius: 1px; transition: height 0.2s, background 0.3s; }
-  .tk.rejected { height: 7px; background: transparent; box-shadow: inset 0 0 0 1px var(--ink-3); opacity: 0.6; }
-  .tk.done { background: var(--c); }
-  .tk.done.rejected { background: transparent; box-shadow: inset 0 0 0 1px var(--c); opacity: 1; }
-  .tk.released { height: 24px; }
-  .tk:hover { height: 30px; }
-  .playhead { position: absolute; bottom: -8px; width: 0; height: 0; border: 5px solid transparent; border-bottom-color: var(--ink); transform: translateX(-50%); transition: left 0.4s var(--ease); }
+  .timeline { position: relative; display: flex; gap: 2px; height: 26px; align-items: stretch; padding-bottom: 6px; }
+  .seg { --f: 0; position: relative; flex-basis: 0; min-width: 3px; padding: 0; border: 0; cursor: pointer; border-radius: 1px; overflow: hidden;
+    background: color-mix(in srgb, var(--c) 16%, var(--paper-3)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 35%, transparent); transition: transform 0.2s; }
+  .seg .fill { position: absolute; inset: 0 auto 0 0; width: calc(var(--f) * 100%); background: var(--c); transition: width 0.4s var(--ease); }
+  .seg.now { transform: scaleY(1.25); }
+  .seg:hover { transform: scaleY(1.35); }
+  .tl-label { font-size: 10px; margin: -12px 0 0; min-height: 1em; }
+  .playhead { position: absolute; bottom: -6px; width: 0; height: 0; border: 5px solid transparent; border-bottom-color: var(--ink); transform: translateX(-50%); transition: left 0.4s var(--ease); }
   .mach-ctl { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .mbtn { min-width: 38px; height: 34px; padding: 0 10px; border: 1px solid var(--rule); background: var(--paper-3); color: var(--ink); border-radius: var(--radius); cursor: pointer; font-family: var(--mono); font-size: 12px; }
   .mbtn:hover { border-color: var(--c); color: var(--c); }
@@ -322,5 +349,8 @@ const kept = steps.filter((s) => s.d !== 'rejected').length;
     .machine { grid-template-columns: minmax(0, 1fr); }
     .mach-fig { max-width: 420px; margin-inline: auto; width: 100%; }
     .ticker { min-height: 0; }
+  }
+  @media (max-width: 560px) {
+    .counters { grid-template-columns: repeat(2, 1fr); row-gap: 6px; }
   }
 </style>

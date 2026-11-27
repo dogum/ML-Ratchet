@@ -1,0 +1,64 @@
+---
+// The Ratchet Observatory: a BI-style report over the whole collection (tabs, slicers, cross-filtering, drill-through,
+// a decomposition tree, a tour, StormNet running in the page). A full-window app, so it has its own page shell rather
+// than the site layout; it shares the site's fonts, colours and stored theme. Built 27 Nov 2026 in a separate session
+// and moved in. Data: site/src/data/observatory.json, written by `mlratchet readme --write` (mlratchet/observatory.py).
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource-variable/schibsted-grotesk';
+import '@fontsource-variable/martian-mono';
+import data from '../data/observatory.json';
+import css from '../observatory/observatory.css?raw';
+import body from '../observatory/body.html?raw';
+import { url } from '../lib/url';
+
+const json = JSON.stringify(data).replace(/</g, '\\u003c');
+const canonical = new URL('observatory/', Astro.site);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ratchet Observatory · ML Ratchet</title>
+    <meta name="description" content="Every exam row, rung decision and audit finding in the ML Ratchet collection, as an interactive report: filter, cross-filter, drill through, and run StormNet in the page." />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
+    <meta name="theme-color" content="#f2eee4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0c0d0b" media="(prefers-color-scheme: dark)" />
+    <script is:inline>
+      try { var t = localStorage.getItem('mlr-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+    </script>
+    <style is:inline set:html={css}></style>
+    <style is:inline>
+      .site-back{display:block;margin-bottom:2px;font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);text-decoration:none;white-space:nowrap}
+      .site-back:hover{color:var(--ink)}
+    </style>
+  </head>
+  <body data-base={url()}>
+    <Fragment set:html={body} />
+    <script type="application/json" id="obs-data" set:html={json}></script>
+    <script>
+      import * as d3core from 'd3';
+      import * as d3sankey from 'd3-sankey';
+
+      // The app is a classic script that expects d3 (with d3-sankey's functions) on window, and StormNet's
+      // instrument files on the data object, so load both first.
+      (window as unknown as { d3: unknown }).d3 = { ...d3core, ...d3sankey };
+      const base = document.body.dataset.base || '/';
+      const inst = `${base}instruments/stormnet/`;
+      const get = (f: string) => fetch(inst + f).then((r) => { if (!r.ok) throw new Error(`${f}: ${r.status}`); return r; });
+      const el = document.getElementById('obs-data')!;
+      const D = JSON.parse(el.textContent!);
+      const [weights, weightsBin, storms, stormsBin, reference] = await Promise.all([
+        get('weights.json').then((r) => r.json()), get('weights.bin').then((r) => r.arrayBuffer()),
+        get('storms.json').then((r) => r.json()), get('storms.bin').then((r) => r.arrayBuffer()),
+        get('reference.json').then((r) => r.json()),
+      ]);
+      D.storm = { weights, weightsBin, storms, stormsBin, reference };
+      el.textContent = '';
+      (window as unknown as { __OBS__: unknown }).__OBS__ = D;
+      await import('../observatory/app.js');
+    </script>
+  </body>
+</html>

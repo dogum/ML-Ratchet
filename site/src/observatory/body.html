@@ -1,0 +1,31 @@
+<header class="top" id="hdr">
+  <div class="top-row">
+    <div class="brand">
+      <svg id="gear" viewBox="0 0 34 34" aria-hidden="true"><g class="wheel"></g><path class="pawl" d="M27 3 L33 9 L25 12 Z"/></svg>
+      <div><a class="site-back" href="../" title="Back to the ML Ratchet site">← ML Ratchet</a><h1>Ratchet Observatory</h1><span class="prov mono muted" id="prov"></span></div>
+    </div>
+    <div class="ask">
+      <span class="ico" aria-hidden="true">?</span>
+      <input id="ask" type="text" autocomplete="off" placeholder="Ask the collection: where does it lose to a dumb baseline in hydrology?" aria-label="Ask the collection a question">
+      <span class="kbd">/</span>
+    </div>
+    <div class="tb">
+      <button class="btn" id="tourBtn" title="Play a guided tour">Tour</button>
+      <button class="btn" id="palBtn" title="Jump to a model or view">Go <span class="kbd" id="kbdK">Ctrl K</span></button>
+      <button class="btn" id="paneBtn" aria-pressed="true" title="Show or hide the filter pane">Filters</button>
+      <button class="btn" id="themeBtn" title="Light or dark">Theme</button>
+    </div>
+  </div>
+  <div class="answer" id="answer" role="status" aria-live="polite"><p id="answerText"></p><button class="btn sm" id="answerClose">Clear</button></div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Report pages"></nav>
+</header>
+<div class="shell" id="shell">
+  <main id="main"></main>
+  <aside class="pane" id="pane" aria-label="Filters"></aside>
+</div>
+<footer class="status" id="status"></footer>
+<div id="tip" role="tooltip"></div>
+<div class="scrim" id="scrim"></div>
+<div class="palette" id="palette" role="dialog" aria-label="Go to"><input id="palIn" placeholder="Jump to a model, a page, a tour step or an action" aria-label="Search"><ul id="palList" role="listbox"></ul></div>
+<div class="tour" id="tour" role="dialog" aria-label="Guided tour"><div class="kick" id="tourK" style="color:var(--paper);opacity:.65"></div><h5 id="tourH"></h5><p id="tourP"></p><div class="bar"><div class="dots" id="tourDots"></div><button class="btn sm" id="tourPrev">Back</button><button class="btn sm primary" id="tourNext">Next</button><button class="btn sm" id="tourEnd">Close</button></div></div>
+<div class="toast" id="toast"></div>
