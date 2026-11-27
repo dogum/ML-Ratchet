@@ -129,7 +129,7 @@ exam:
   results:
     - metric: RECS exam twins (48 homes, 96 home-months, 12 tariffs), bill saving vs fixed thermostat
       better: higher
-      model: 2.77
+      model: 2.76
       unit: "%"
       baselines:
         - { name: "Fixed thermostat", kind: dumb, value: 0.0 }
@@ -140,10 +140,10 @@ exam:
         - { name: "Pre-cool rule tuned on dev (4 h, 3 K)", kind: classical, value: 2.56 }
         - { name: "MPC with forecast (same nominal house)", kind: classical, value: 3.70 }
       verdict: loss
-      note: "Seen, new RECS list. −0.93 points against the MPC, 95% CI [−1.30, −0.58] (bootstrap by home, n = 48). v1.0 network 2.34 % (−1.36 [−1.80, −0.95] against the MPC); v1.1 − v1.0 +0.43 [+0.24, +0.68]. v1.1 vs the occupant's setback: +0.49 [−0.28, +1.36], tie. v1.1 2.77 % [2.10, 3.49]; perfect foresight 3.91 %."
+      note: "Causal-card re-score (27 Nov 2026; the card fitted on the month before each episode, as the controller must be used): 2.76, −0.95 [−1.33, −0.60] against the MPC; causal minus episode card −0.02 [−0.05, +0.00] points. Published 17 Nov with the episode-month card: 2.77; the rest of this note is that run. Seen, new RECS list. −0.93 points against the MPC, 95% CI [−1.30, −0.58] (bootstrap by home, n = 48). v1.0 network 2.34 % (−1.36 [−1.80, −0.95] against the MPC); v1.1 − v1.0 +0.43 [+0.24, +0.68]. v1.1 vs the occupant's setback: +0.49 [−0.28, +1.36], tie. v1.1 2.77 % [2.10, 3.49]; perfect foresight 3.91 %."
     - metric: RECS exam twins, skill on cost + comfort (0 = fixed, 1 = perfect foresight)
       better: higher
-      model: 0.70
+      model: 0.69
       baselines:
         - { name: "Fixed thermostat", kind: dumb, value: 0.0 }
         - { name: "Setback (occupant's own schedule)", kind: dumb, value: -0.49 }
@@ -153,10 +153,10 @@ exam:
         - { name: "Pre-cool rule tuned on dev (4 h, 3 K)", kind: classical, value: 0.32 }
         - { name: "MPC with forecast (same nominal house)", kind: classical, value: 0.82 }
       verdict: loss
-      note: "Seen, new RECS list. −0.12 against the MPC, 95% CI [−0.20, −0.01] (bootstrap by home, n = 48). v1.0 network 0.28 (−0.54 [−0.75, −0.37]); v1.1 − v1.0 +0.42 [+0.25, +0.64]."
+      note: "Causal-card re-score (27 Nov 2026; the card fitted on the month before each episode, as the controller must be used): 0.69, −0.13 [−0.21, −0.02] against the MPC; causal minus episode card −0.009 [−0.016, −0.003] (a small real loss). Published 17 Nov with the episode-month card: 0.70; the rest of this note is that run. Seen, new RECS list. −0.12 against the MPC, 95% CI [−0.20, −0.01] (bootstrap by home, n = 48). v1.0 network 0.28 (−0.54 [−0.75, −0.37]); v1.1 − v1.0 +0.42 [+0.25, +0.64]."
     - metric: RECS exam twins, kelvin-hours outside the comfort band per episode
       better: lower
-      model: 0.42
+      model: 0.44
       unit: "K h"
       baselines:
         - { name: "Fixed thermostat", kind: dumb, value: 0.74 }
@@ -167,10 +167,10 @@ exam:
         - { name: "Pre-cool rule tuned on dev (4 h, 3 K)", kind: classical, value: 1.08 }
         - { name: "MPC with forecast (same nominal house)", kind: classical, value: 0.56 }
       verdict: tie
-      note: "Seen, new RECS list. −0.14 K h against the MPC, 95% CI [−0.32, +0.03] (bootstrap by home, n = 48). v1.0 network 1.55 K h; v1.1 − v1.0 −1.13 [−2.19, −0.33]. Perfect foresight 0.31 K h."
+      note: "Causal-card re-score (27 Nov 2026; the card fitted on the month before each episode, as the controller must be used): 0.44, −0.13 [−0.30, +0.04] K h against the MPC, tie; causal minus episode card +0.013 [−0.002, +0.030]. Published 17 Nov with the episode-month card: 0.42; the rest of this note is that run. Seen, new RECS list. −0.14 K h against the MPC, 95% CI [−0.32, +0.03] (bootstrap by home, n = 48). v1.0 network 1.55 K h; v1.1 − v1.0 −1.13 [−2.19, −0.33]. Perfect foresight 0.31 K h."
     - metric: BDG2 small commercial twins (16 buildings, 32 building-months, 4 demand tariffs), bill saving vs fixed thermostat
       better: higher
-      model: 4.97
+      model: 4.93
       unit: "%"
       baselines:
         - { name: "Fixed thermostat", kind: dumb, value: 0.0 }
@@ -181,7 +181,7 @@ exam:
         - { name: "Pre-cool rule tuned on dev (4 h, 3 K)", kind: classical, value: -0.03 }
         - { name: "MPC with forecast (same nominal house)", kind: classical, value: 2.69 }
       verdict: win
-      note: "Seen. +2.28 points against the MPC, 95% CI [+1.46, +3.08] (bootstrap by building, n = 16). v1.0 network 2.77 % (+0.08 [−0.85, +1.09], tie); v1.1 − v1.0 +2.20 [+1.53, +2.92]. v1.1 vs setback +3.79 [+2.85, +4.71]. Perfect foresight 7.23 %. Why the card MPC beats the classical MPC here was not investigated; the classical MPC's BDG2 result is the one that did not reproduce v1.0's (3.05 → 2.69 %). Tariffs PG&E B-19, OUC GSD, Xcel A15, Pepco GT."
+      note: "Causal-card re-score (27 Nov 2026; the card fitted on the month before each episode, as the controller must be used): 4.93, +2.24 [+1.44, +2.97] against the MPC; causal minus episode card −0.04 [−0.17, +0.08] points. Published 17 Nov with the episode-month card: 4.97; the rest of this note is that run. Seen. +2.28 points against the MPC, 95% CI [+1.46, +3.08] (bootstrap by building, n = 16). v1.0 network 2.77 % (+0.08 [−0.85, +1.09], tie); v1.1 − v1.0 +2.20 [+1.53, +2.92]. v1.1 vs setback +3.79 [+2.85, +4.71]. Perfect foresight 7.23 %. Why the card MPC beats the classical MPC here was not investigated; the classical MPC's BDG2 result is the one that did not reproduce v1.0's (3.05 → 2.69 %). Tariffs PG&E B-19, OUC GSD, Xcel A15, Pepco GT."
     - metric: BDG2 small commercial twins, skill on cost + comfort
       better: higher
       model: 0.757
@@ -193,7 +193,7 @@ exam:
         - { name: "Pre-cool rule tuned on dev (4 h, 3 K)", kind: classical, value: 0.161 }
         - { name: "MPC with forecast (same nominal house)", kind: classical, value: 0.452 }
       verdict: win
-      note: "Seen. +0.30 against the MPC, 95% CI [+0.18, +0.46] (bootstrap by building, n = 16). v1.0 network 0.451 (−0.00 [−0.11, +0.10], tie); v1.1 − v1.0 +0.31 [+0.19, +0.46]."
+      note: "Causal-card re-score (27 Nov 2026; the card fitted on the month before each episode, as the controller must be used): 0.757, +0.31 [+0.18, +0.45] against the MPC; causal minus episode card +0.000 [−0.011, +0.012]. Published 17 Nov with the episode-month card: 0.757; the rest of this note is that run. Seen. +0.30 against the MPC, 95% CI [+0.18, +0.46] (bootstrap by building, n = 16). v1.0 network 0.451 (−0.00 [−0.11, +0.10], tie); v1.1 − v1.0 +0.31 [+0.19, +0.46]."
     - metric: BDG2 small commercial twins, kelvin-hours outside the comfort band per episode
       better: lower
       model: 0.00
@@ -218,7 +218,7 @@ exam:
         - { name: "Pre-cool rule tuned on dev (= setback here)", kind: classical, value: 5.58 }
         - { name: "MPC with forecast (same nominal house)", kind: classical, value: 7.16 }
       verdict: loss
-      note: "Seen. −1.22 points against the MPC, 95% CI [−1.32, −1.11] (bootstrap by home, n = 38). v1.0 network 3.13 % (−4.03 [−4.66, −3.47]); v1.1 − v1.0 +2.81 [+2.27, +3.42]. v1.1 vs setback +0.37 [−0.36, +1.30], tie. Perfect foresight 7.50 %. Generic twins (no building metadata), stand-in tariff Xcel MN TOD."
+      note: "Causal-card re-score (27 Nov 2026; the card fitted on the month before each episode, as the controller must be used): 5.95, −1.22 [−1.32, −1.11] against the MPC; causal minus episode card −0.00 [−0.02, +0.02] points. Published 17 Nov with the episode-month card: 5.95; the rest of this note is that run. Seen. −1.22 points against the MPC, 95% CI [−1.32, −1.11] (bootstrap by home, n = 38). v1.0 network 3.13 % (−4.03 [−4.66, −3.47]); v1.1 − v1.0 +2.81 [+2.27, +3.42]. v1.1 vs setback +0.37 [−0.36, +1.30], tie. Perfect foresight 7.50 %. Generic twins (no building metadata), stand-in tariff Xcel MN TOD."
     - metric: WPuQ heat-pump home twins, skill on cost + comfort
       better: higher
       model: 0.79
@@ -229,7 +229,7 @@ exam:
         - { name: "In-band pre-cool rule (= setback here)", kind: classical, value: 0.65 }
         - { name: "MPC with forecast (same nominal house)", kind: classical, value: 0.95 }
       verdict: loss
-      note: "Seen. −0.16 against the MPC, 95% CI [−0.18, −0.15] (bootstrap by home, n = 38). v1.0 network 0.35 (−0.60 [−0.68, −0.53]); v1.1 − v1.0 +0.44 [+0.37, +0.51]."
+      note: "Causal-card re-score (27 Nov 2026; the card fitted on the month before each episode, as the controller must be used): 0.79, −0.16 [−0.17, −0.15] against the MPC (0.788 vs 0.787); causal minus episode card +0.001 [−0.002, +0.005]. Published 17 Nov with the episode-month card: 0.79; the rest of this note is that run. Seen. −0.16 against the MPC, 95% CI [−0.18, −0.15] (bootstrap by home, n = 38). v1.0 network 0.35 (−0.60 [−0.68, −0.53]); v1.1 − v1.0 +0.44 [+0.37, +0.51]."
     - metric: WPuQ heat-pump home twins, kelvin-hours outside the comfort band per episode
       better: lower
       model: 0.00
@@ -282,13 +282,12 @@ limits:
   - "The comfort weight (λ = $3 per K h per 150 m²) is an input; the v1.0 network was trained at one λ and sees it only through log(λ / (mean price × size))."
   - "Since 17 Nov 2026 the twin builder ranks tied ResStock matches by bldg_id (training/tp/twins.py), so RECS twins rebuild on any machine; v1.0's own RECS twins (sandbox tie order) cannot be rebuilt, so v1.0's release-day RECS numbers are not comparable with these."
 
-  - "Queued (audit): fit evaluation cards on the month before each episode, then a dated re-score on the owner's approval."
 help_wanted:
   - "Real thermostat logs: ecobee Donate Your Data (research application) would give a real exam of setpoints, run times and time constants."
   - "UK heat-pump field trials (RHPP, Electrification of Heat): UK Data Service registration; they would test the heat-pump load shape the WPuQ check found wrong."
   - "Pecan Street Dataport (paid): US homes with circuit-level HVAC data."
   - "EnergyPlus as a reference engine: no PyPI wheel with an engine and GitHub was blocked in the build sandbox; install it outside and compare BuildingSim's zone response."
-  - "Evaluation card (audit, 25 Nov 2026): the exam fitted each house's card on the episode's own weather, including realized wind beyond the 24 h forecast (+6 m/s from hour 48 changed 19 of 72 first commands, by up to 2 °C). On four 30-day BuildingSim episodes a prior-month card moved v1.1's monthly cost by -$1.02 to +$0.23 (<= 0.21 %), with no comfort violations and every ranking kept. BuildingSim's weather cache keyed only on temperature and could reuse another run's wind; fixed 27 Nov 2026 (all columns are hashed)."
+  - "Evaluation card (audit, 25 Nov 2026): the exam fitted each house's card on the episode's own weather, including realized wind beyond the 24 h forecast (+6 m/s from hour 48 changed 19 of 72 first commands, by up to 2 °C). On four 30-day BuildingSim episodes a prior-month card moved v1.1's monthly cost by -$1.02 to +$0.23 (<= 0.21 %), with no comfort violations and every ranking kept. BuildingSim's weather cache keyed only on temperature and could reuse another run's wind; fixed 27 Nov 2026 (all columns are hashed). Re-scored 27 Nov 2026 with cards fitted on the month before each episode (166 episodes): every exam row moved by at most 0.04 bill points or 0.009 skill, no verdict changed (RECS skill −0.009 [−0.016, −0.003] is the one difference whose interval excludes zero); per episode the monthly cost J moved by up to 1.2 % (RECS), 0.7 % (BDG2), 0.2 % (WPuQ), in both directions. The exam rows now carry these numbers."
 next:
   - "Identify the card's house map from a thermostat's own logs (indoor temperature, HVAC runtime, weather) and test the card MPC on maps fitted that way, in simulation first."
   - "Find out why the card MPC beats the classical MPC on BDG2 demand tariffs (shield, demand-charge handling or model error)."

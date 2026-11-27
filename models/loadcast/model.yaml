@@ -1,6 +1,6 @@
 id: loadcast
 name: LoadCast
-version: "1.0"
+version: "1.0.1"
 status: released
 released: 2026-11-17
 order: 18
@@ -97,7 +97,10 @@ exam:
     LoadCast's own ridge TOWT on the same history, the BuildingSim twin calibrated on the 52 dev buildings and run from
     each exam building's metadata, and two dev-fitted guesses. Median CV(RMSE) (ASHRAE Guideline 14), all with
     p = 0 (BuildingData's n − p converted). Verdict from a 95 % paired bootstrap interval over building-meters
-    (2,000 resamples) on LoadCast minus the best baseline: 6 wins, 16 ties, 18 losses.
+    (2,000 resamples) on LoadCast minus the best baseline: 6 wins, 16 ties, 18 losses. v1.0.1 (27 Nov 2026) adds the
+    electricity meter to a meter list that lacks one; re-scored on the seen exam it changes 19 chilled-water, steam and
+    gas building-meters (15 buildings), moves the chilled-water and steam medians 0.1-3.3 points down and changes no
+    verdict (still 6, 16, 18).
   results:
     - metric: "Electricity, a year of history (856 meters), median hourly CV(RMSE)"
       better: lower
@@ -186,14 +189,14 @@ exam:
       note: "Seen re-score (17 Nov 2026). +8.2 points against buildingSim twin calibrated on dev, by use type, monthly, 95 % CI [+4.9, +11.2] (paired bootstrap over 853 building-meters; paired medians 51.7 vs 43.5). Median NMBE +24.5 %. Not a verdict row in v1.0."
     - metric: "Chilled water, a year of history (323 meters), median hourly CV(RMSE)"
       better: lower
-      model: 42.9
+      model: 42.4
       unit: "%"
       baselines:
         - { name: "Change-point model fitted on 2016 (BuildingData)", kind: classical, value: 42.4 }
         - { name: "TOWT fitted on 2016 (BuildingData)", kind: classical, value: 45.2 }
         - { name: "Ridge TOWT fitted on 2016 (LoadCast's anchor)", kind: classical, value: 45.2 }
       verdict: tie
-      note: "Seen re-score (17 Nov 2026). +0.5 points against change-point model fitted on 2016 (BuildingData), 95 % CI [-1.5, +2.9] (paired bootstrap over 323 building-meters). Median NMBE -1.0 %; G14 pass 20 % vs 24 %; 90 % band covers 92 % of hours. Nowcasts (read the real 2017 meter): persistence 1 h 18.8, 24 h 40.3, same hour last week 51.8. v1.0 verdict: loss."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 42.9, +0.5 [-1.5, +2.9]). +0.1 points against change-point model fitted on 2016 (BuildingData), 95 % CI [-1.9, +2.3] (paired bootstrap over 323 building-meters). Median NMBE -1.0 %; G14 pass 20 % vs 24 %; 90 % band covers 93 % of hours. Nowcasts (read the real 2017 meter): persistence 1 h 18.8, 24 h 40.3, same hour last week 51.8. v1.0 verdict: loss."
     - metric: "Chilled water, 8 weeks of history (323 meters), median hourly CV(RMSE)"
       better: lower
       model: 62.6
@@ -205,10 +208,10 @@ exam:
         - { name: "Dev median intensity × dev TOWT shape", kind: dumb, value: 92.4 }
         - { name: "Median guess per use and meter, fitted on dev", kind: dumb, value: 101.6 }
       verdict: win
-      note: "Seen re-score (17 Nov 2026). -5.5 points against ridge TOWT fitted on the same 8 weeks, 95 % CI [-9.1, -0.1] (paired bootstrap over 323 building-meters). Median NMBE +19.0 %; G14 pass 8 % vs 7 %; 90 % band covers 90 % of hours. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 62.6, -5.5 [-9.1, -0.1]). -5.5 points against ridge TOWT fitted on the same 8 weeks, 95 % CI [-9.1, -0.3] (paired bootstrap over 323 building-meters). Median NMBE +18.4 %; G14 pass 8 % vs 7 %; 90 % band covers 92 % of hours. Not a verdict row in v1.0."
     - metric: "Chilled water, 2 weeks of history (323 meters), median hourly CV(RMSE)"
       better: lower
-      model: 87.3
+      model: 86.6
       unit: "%"
       baselines:
         - { name: "BuildingSim twin calibrated on dev (median knobs, a, b)", kind: classical, value: 85.8 }
@@ -217,10 +220,10 @@ exam:
         - { name: "Ridge TOWT fitted on the same 2 weeks", kind: classical, value: 92.5 }
         - { name: "Median guess per use and meter, fitted on dev", kind: dumb, value: 101.6 }
       verdict: tie
-      note: "Seen re-score (17 Nov 2026). +1.4 points against buildingSim twin calibrated on dev (median knobs, a, b), 95 % CI [-8.0, +7.9] (paired bootstrap over 322 building-meters; paired medians 87.2 vs 85.8). Median NMBE +42.1 %; G14 pass 3 % vs 2 %; 90 % band covers 91 % of hours. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 87.3, +1.4 [-8.0, +7.9]). +0.3 points against buildingSim twin calibrated on dev (median knobs, a, b), 95 % CI [-9.2, +7.2] (paired bootstrap over 322 building-meters; paired medians 86.1 vs 85.8). Median NMBE +41.0 %; G14 pass 3 % vs 2 %; 90 % band covers 92 % of hours. Not a verdict row in v1.0."
     - metric: "Chilled water, no history (323 meters), median hourly CV(RMSE)"
       better: lower
-      model: 104.1
+      model: 104.0
       unit: "%"
       baselines:
         - { name: "BuildingSim twin calibrated on dev (median knobs, a, b)", kind: classical, value: 85.8 }
@@ -228,28 +231,28 @@ exam:
         - { name: "Dev median intensity × dev TOWT shape", kind: dumb, value: 92.4 }
         - { name: "Median guess per use and meter, fitted on dev", kind: dumb, value: 101.6 }
       verdict: loss
-      note: "Seen re-score (17 Nov 2026). +18.2 points against buildingSim twin calibrated on dev (median knobs, a, b), 95 % CI [+9.5, +25.1] (paired bootstrap over 322 building-meters; paired medians 104.1 vs 85.8). Median NMBE +46.9 %; G14 pass 0 % vs 2 %; 90 % band covers 90 % of hours. v1.0 verdict: loss."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 104.1, +18.2 [+9.5, +25.1]). +18.1 points against buildingSim twin calibrated on dev (median knobs, a, b), 95 % CI [+9.3, +24.8] (paired bootstrap over 322 building-meters; paired medians 103.9 vs 85.8). Median NMBE +46.9 %; G14 pass 0 % vs 2 %; 90 % band covers 92 % of hours. v1.0 verdict: loss."
     - metric: "Chilled water, a year of history, daily totals (323 meters), median daily CV(RMSE)"
       better: lower
-      model: 32.4
+      model: 32.0
       unit: "%"
       baselines:
         - { name: "Change-point model fitted on 2016, daily (BuildingData)", kind: classical, value: 32.2 }
         - { name: "Ridge TOWT fitted on 2016 (LoadCast's anchor), daily", kind: classical, value: 32.3 }
       verdict: tie
-      note: "Seen re-score (17 Nov 2026). +0.1 points against change-point model fitted on 2016, daily (BuildingData), 95 % CI [-2.2, +2.8] (paired bootstrap over 323 building-meters). Median NMBE -0.7 %. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 32.4, +0.1 [-2.2, +2.8]). -0.3 points against change-point model fitted on 2016, daily (BuildingData), 95 % CI [-2.7, +2.2] (paired bootstrap over 323 building-meters). Median NMBE -0.8 %. Not a verdict row in v1.0."
     - metric: "Chilled water, a year of history, monthly totals (323 meters), median monthly CV(RMSE)"
       better: lower
-      model: 22.3
+      model: 21.8
       unit: "%"
       baselines:
         - { name: "Change-point model fitted on 2016, monthly (BuildingData)", kind: classical, value: 18.1 }
         - { name: "Ridge TOWT fitted on 2016 (LoadCast's anchor), monthly", kind: classical, value: 19.5 }
       verdict: loss
-      note: "Seen re-score (17 Nov 2026). +4.2 points against change-point model fitted on 2016, monthly (BuildingData), 95 % CI [+1.9, +6.1] (paired bootstrap over 323 building-meters). Median NMBE -1.0 %. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 22.3, +4.2 [+1.9, +6.1]). +3.6 points against change-point model fitted on 2016, monthly (BuildingData), 95 % CI [+1.6, +5.7] (paired bootstrap over 323 building-meters). Median NMBE -1.1 %. Not a verdict row in v1.0."
     - metric: "Chilled water, no history, daily totals (323 meters), median daily CV(RMSE)"
       better: lower
-      model: 95.5
+      model: 95.4
       unit: "%"
       baselines:
         - { name: "BuildingSim twin calibrated on dev, by use type, daily", kind: classical, value: 73.9 }
@@ -257,10 +260,10 @@ exam:
         - { name: "Dev median intensity × dev TOWT shape, daily", kind: dumb, value: 82.3 }
         - { name: "Median guess per use and meter, fitted on dev, daily", kind: dumb, value: 90.7 }
       verdict: loss
-      note: "Seen re-score (17 Nov 2026). +21.5 points against buildingSim twin calibrated on dev, by use type, daily, 95 % CI [+15.4, +27.3] (paired bootstrap over 322 building-meters; paired medians 95.4 vs 73.9). Median NMBE +46.9 %. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 95.5, +21.5 [+15.4, +27.3]). +21.5 points against buildingSim twin calibrated on dev, by use type, daily, 95 % CI [+15.4, +26.9] (paired bootstrap over 322 building-meters; paired medians 95.4 vs 73.9). Median NMBE +47.0 %. Not a verdict row in v1.0."
     - metric: "Chilled water, no history, monthly totals (323 meters), median monthly CV(RMSE)"
       better: lower
-      model: 90.8
+      model: 89.6
       unit: "%"
       baselines:
         - { name: "BuildingSim twin calibrated on dev, by use type, monthly", kind: classical, value: 66.8 }
@@ -268,20 +271,20 @@ exam:
         - { name: "Dev median intensity × dev TOWT shape, monthly", kind: dumb, value: 76.0 }
         - { name: "Median guess per use and meter, fitted on dev, monthly", kind: dumb, value: 85.5 }
       verdict: loss
-      note: "Seen re-score (17 Nov 2026). +23.9 points against buildingSim twin calibrated on dev, by use type, monthly, 95 % CI [+17.5, +29.9] (paired bootstrap over 322 building-meters; paired medians 90.8 vs 66.8). Median NMBE +46.3 %. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 90.8, +23.9 [+17.5, +29.9]). +22.6 points against buildingSim twin calibrated on dev, by use type, monthly, 95 % CI [+17.1, +29.0] (paired bootstrap over 322 building-meters; paired medians 89.5 vs 66.8). Median NMBE +46.8 %. Not a verdict row in v1.0."
     - metric: "Steam, a year of history (225 meters), median hourly CV(RMSE)"
       better: lower
-      model: 45.5
+      model: 43.6
       unit: "%"
       baselines:
         - { name: "TOWT fitted on 2016 (BuildingData)", kind: classical, value: 39.4 }
         - { name: "Change-point model fitted on 2016 (BuildingData)", kind: classical, value: 40.5 }
         - { name: "Ridge TOWT fitted on 2016 (LoadCast's anchor)", kind: classical, value: 41.4 }
       verdict: loss
-      note: "Seen re-score (17 Nov 2026). +6.0 points against tOWT fitted on 2016 (BuildingData), 95 % CI [+2.9, +8.2] (paired bootstrap over 225 building-meters). Median NMBE +8.8 %; G14 pass 10 % vs 26 %; 90 % band covers 88 % of hours. Nowcasts (read the real 2017 meter): persistence 1 h 24.9, 24 h 41.9, same hour last week 56.6. v1.0 verdict: loss."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 45.5, +6.0 [+2.9, +8.2]). +4.2 points against tOWT fitted on 2016 (BuildingData), 95 % CI [+1.7, +7.3] (paired bootstrap over 225 building-meters). Median NMBE +8.4 %; G14 pass 11 % vs 26 %; 90 % band covers 93 % of hours. Nowcasts (read the real 2017 meter): persistence 1 h 24.9, 24 h 41.9, same hour last week 56.6. v1.0 verdict: loss."
     - metric: "Steam, 8 weeks of history (225 meters), median hourly CV(RMSE)"
       better: lower
-      model: 49.1
+      model: 47.6
       unit: "%"
       baselines:
         - { name: "Ridge TOWT fitted on the same 8 weeks", kind: classical, value: 45.6 }
@@ -290,10 +293,10 @@ exam:
         - { name: "Dev median intensity × dev TOWT shape", kind: dumb, value: 104.9 }
         - { name: "Median guess per use and meter, fitted on dev", kind: dumb, value: 111.6 }
       verdict: tie
-      note: "Seen re-score (17 Nov 2026). +3.6 points against ridge TOWT fitted on the same 8 weeks, 95 % CI [-1.3, +6.4] (paired bootstrap over 225 building-meters). Median NMBE +11.4 %; G14 pass 4 % vs 22 %; 90 % band covers 85 % of hours. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 49.1, +3.6 [-1.3, +6.4]). +2.0 points against ridge TOWT fitted on the same 8 weeks, 95 % CI [-3.8, +4.0] (paired bootstrap over 225 building-meters). Median NMBE +8.7 %; G14 pass 4 % vs 22 %; 90 % band covers 89 % of hours. Not a verdict row in v1.0."
     - metric: "Steam, 2 weeks of history (225 meters), median hourly CV(RMSE)"
       better: lower
-      model: 57.1
+      model: 53.8
       unit: "%"
       baselines:
         - { name: "Ridge TOWT fitted on the same 2 weeks", kind: classical, value: 60.5 }
@@ -302,10 +305,10 @@ exam:
         - { name: "Dev median intensity × dev TOWT shape", kind: dumb, value: 104.9 }
         - { name: "Median guess per use and meter, fitted on dev", kind: dumb, value: 111.6 }
       verdict: tie
-      note: "Seen re-score (17 Nov 2026). -3.3 points against ridge TOWT fitted on the same 2 weeks, 95 % CI [-8.7, +2.9] (paired bootstrap over 225 building-meters). Median NMBE +20.1 %; G14 pass 1 % vs 12 %; 90 % band covers 87 % of hours. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 57.1, -3.3 [-8.7, +2.9]). -6.7 points against ridge TOWT fitted on the same 2 weeks, 95 % CI [-10.7, +0.4] (paired bootstrap over 225 building-meters). Median NMBE +18.1 %; G14 pass 1 % vs 12 %; 90 % band covers 92 % of hours. Not a verdict row in v1.0."
     - metric: "Steam, no history (225 meters), median hourly CV(RMSE)"
       better: lower
-      model: 102.8
+      model: 100.8
       unit: "%"
       baselines:
         - { name: "BuildingSim twin calibrated on dev, by use type", kind: classical, value: 99.7 }
@@ -313,28 +316,28 @@ exam:
         - { name: "Dev median intensity × dev TOWT shape", kind: dumb, value: 104.9 }
         - { name: "Median guess per use and meter, fitted on dev", kind: dumb, value: 111.6 }
       verdict: tie
-      note: "Seen re-score (17 Nov 2026). +3.1 points against buildingSim twin calibrated on dev, by use type, 95 % CI [-1.1, +6.8] (paired bootstrap over 225 building-meters). Median NMBE +59.2 %; G14 pass 0 % vs 0 %; 90 % band covers 84 % of hours. v1.0 verdict: win."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 102.8, +3.1 [-1.1, +6.8]). +1.1 points against buildingSim twin calibrated on dev, by use type, 95 % CI [-2.4, +4.9] (paired bootstrap over 225 building-meters). Median NMBE +61.9 %; G14 pass 0 % vs 0 %; 90 % band covers 89 % of hours. v1.0 verdict: win."
     - metric: "Steam, a year of history, daily totals (225 meters), median daily CV(RMSE)"
       better: lower
-      model: 36.0
+      model: 34.1
       unit: "%"
       baselines:
         - { name: "Change-point model fitted on 2016, daily (BuildingData)", kind: classical, value: 30.5 }
         - { name: "Ridge TOWT fitted on 2016 (LoadCast's anchor), daily", kind: classical, value: 31.6 }
       verdict: loss
-      note: "Seen re-score (17 Nov 2026). +5.5 points against change-point model fitted on 2016, daily (BuildingData), 95 % CI [+2.9, +7.5] (paired bootstrap over 225 building-meters). Median NMBE +10.0 %. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 36.0, +5.5 [+2.9, +7.5]). +3.6 points against change-point model fitted on 2016, daily (BuildingData), 95 % CI [+1.8, +5.8] (paired bootstrap over 225 building-meters). Median NMBE +8.7 %. Not a verdict row in v1.0."
     - metric: "Steam, a year of history, monthly totals (225 meters), median monthly CV(RMSE)"
       better: lower
-      model: 29.2
+      model: 27.9
       unit: "%"
       baselines:
         - { name: "Change-point model fitted on 2016, monthly (BuildingData)", kind: classical, value: 20.0 }
         - { name: "Ridge TOWT fitted on 2016 (LoadCast's anchor), monthly", kind: classical, value: 20.8 }
       verdict: loss
-      note: "Seen re-score (17 Nov 2026). +9.2 points against change-point model fitted on 2016, monthly (BuildingData), 95 % CI [+6.7, +13.2] (paired bootstrap over 225 building-meters). Median NMBE +8.7 %. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 29.2, +9.2 [+6.7, +13.2]). +7.9 points against change-point model fitted on 2016, monthly (BuildingData), 95 % CI [+5.8, +10.7] (paired bootstrap over 225 building-meters). Median NMBE +8.1 %. Not a verdict row in v1.0."
     - metric: "Steam, no history, daily totals (225 meters), median daily CV(RMSE)"
       better: lower
-      model: 96.6
+      model: 95.1
       unit: "%"
       baselines:
         - { name: "BuildingSim twin calibrated on dev (median knobs, a, b), daily", kind: classical, value: 92.7 }
@@ -342,10 +345,10 @@ exam:
         - { name: "Dev median intensity × dev TOWT shape, daily", kind: dumb, value: 99.7 }
         - { name: "Median guess per use and meter, fitted on dev, daily", kind: dumb, value: 106.6 }
       verdict: tie
-      note: "Seen re-score (17 Nov 2026). +3.9 points against buildingSim twin calibrated on dev (median knobs, a, b), daily, 95 % CI [-1.0, +10.3] (paired bootstrap over 225 building-meters). Median NMBE +59.2 %. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 96.6, +3.9 [-1.0, +10.3]). +2.4 points against buildingSim twin calibrated on dev (median knobs, a, b), daily, 95 % CI [-2.1, +8.1] (paired bootstrap over 225 building-meters). Median NMBE +62.7 %. Not a verdict row in v1.0."
     - metric: "Steam, no history, monthly totals (225 meters), median monthly CV(RMSE)"
       better: lower
-      model: 93.2
+      model: 91.5
       unit: "%"
       baselines:
         - { name: "BuildingSim twin calibrated on dev (median knobs, a, b), monthly", kind: classical, value: 87.1 }
@@ -353,7 +356,7 @@ exam:
         - { name: "Dev median intensity × dev TOWT shape, monthly", kind: dumb, value: 94.9 }
         - { name: "Median guess per use and meter, fitted on dev, monthly", kind: dumb, value: 101.8 }
       verdict: loss
-      note: "Seen re-score (17 Nov 2026). +6.1 points against buildingSim twin calibrated on dev (median knobs, a, b), monthly, 95 % CI [+1.8, +12.2] (paired bootstrap over 225 building-meters). Median NMBE +58.9 %. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 93.2, +6.1 [+1.8, +12.2]). +4.4 points against buildingSim twin calibrated on dev (median knobs, a, b), monthly, 95 % CI [+0.1, +10.4] (paired bootstrap over 225 building-meters). Median NMBE +61.7 %. Not a verdict row in v1.0."
     - metric: "Hot water, a year of history (72 meters), median hourly CV(RMSE)"
       better: lower
       model: 94.5
@@ -448,7 +451,7 @@ exam:
         - { name: "Ridge TOWT fitted on 2016 (LoadCast's anchor)", kind: classical, value: 94.7 }
         - { name: "Change-point model fitted on 2016 (BuildingData)", kind: classical, value: 95.8 }
       verdict: tie
-      note: "Seen re-score (17 Nov 2026). +15.9 points against tOWT fitted on 2016 (BuildingData), 95 % CI [-4.9, +27.2] (paired bootstrap over 26 building-meters). Median NMBE -0.9 %; G14 pass 0 % vs 0 %; 90 % band covers 73 % of hours. Nowcasts (read the real 2017 meter): persistence 1 h 64.3, 24 h 87.7, same hour last week 94.1. v1.0 verdict: loss."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 110.5, +15.9 [-4.9, +27.2]). +15.9 points against tOWT fitted on 2016 (BuildingData), 95 % CI [-4.9, +27.2] (paired bootstrap over 26 building-meters). Median NMBE -0.9 %; G14 pass 0 % vs 0 %; 90 % band covers 76 % of hours. Nowcasts (read the real 2017 meter): persistence 1 h 64.3, 24 h 87.7, same hour last week 94.1. v1.0 verdict: loss."
     - metric: "Gas, 8 weeks of history (26 meters), median hourly CV(RMSE)"
       better: lower
       model: 133.1
@@ -460,7 +463,7 @@ exam:
         - { name: "Median guess per use and meter, fitted on dev", kind: dumb, value: 190.4 }
         - { name: "Dev median intensity × dev TOWT shape", kind: dumb, value: 190.4 }
       verdict: loss
-      note: "Seen re-score (17 Nov 2026). +22.7 points against ridge TOWT fitted on the same 8 weeks, 95 % CI [+0.8, +43.8] (paired bootstrap over 26 building-meters). Median NMBE -30.5 %; G14 pass 0 % vs 0 %; 90 % band covers 72 % of hours. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 133.1, +22.7 [+0.8, +43.8]). +22.7 points against ridge TOWT fitted on the same 8 weeks, 95 % CI [+0.8, +43.8] (paired bootstrap over 26 building-meters). Median NMBE -30.5 %; G14 pass 0 % vs 0 %; 90 % band covers 76 % of hours. Not a verdict row in v1.0."
     - metric: "Gas, 2 weeks of history (26 meters), median hourly CV(RMSE)"
       better: lower
       model: 159.9
@@ -472,7 +475,7 @@ exam:
         - { name: "Median guess per use and meter, fitted on dev", kind: dumb, value: 190.4 }
         - { name: "Dev median intensity × dev TOWT shape", kind: dumb, value: 190.4 }
       verdict: loss
-      note: "Seen re-score (17 Nov 2026). +28.5 points against ridge TOWT fitted on the same 2 weeks, 95 % CI [+4.6, +62.3] (paired bootstrap over 26 building-meters). Median NMBE +1.3 %; G14 pass 0 % vs 0 %; 90 % band covers 95 % of hours. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 159.9, +28.5 [+4.6, +62.3]). +28.5 points against ridge TOWT fitted on the same 2 weeks, 95 % CI [+2.6, +62.3] (paired bootstrap over 26 building-meters). Median NMBE +1.3 %; G14 pass 0 % vs 0 %; 90 % band covers 98 % of hours. Not a verdict row in v1.0."
     - metric: "Gas, no history (26 meters), median hourly CV(RMSE)"
       better: lower
       model: 181.5
@@ -483,7 +486,7 @@ exam:
         - { name: "Median guess per use and meter, fitted on dev", kind: dumb, value: 190.4 }
         - { name: "Dev median intensity × dev TOWT shape", kind: dumb, value: 190.4 }
       verdict: tie
-      note: "Seen re-score (17 Nov 2026). -10.3 points against buildingSim twin calibrated on dev (median knobs, a, b), 95 % CI [-65.2, +94.7] (paired bootstrap over 25 building-meters; paired medians 169.5 vs 179.8). Median NMBE +14.9 %; G14 pass 0 % vs 0 %; 90 % band covers 74 % of hours. v1.0 verdict: win."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 181.5, -10.3 [-65.2, +94.7]). -10.3 points against buildingSim twin calibrated on dev (median knobs, a, b), 95 % CI [-65.2, +94.7] (paired bootstrap over 25 building-meters; paired medians 169.5 vs 179.8). Median NMBE +15.7 %; G14 pass 0 % vs 0 %; 90 % band covers 75 % of hours. v1.0 verdict: win."
     - metric: "Gas, a year of history, daily totals (26 meters), median daily CV(RMSE)"
       better: lower
       model: 75.5
@@ -492,16 +495,16 @@ exam:
         - { name: "Change-point model fitted on 2016, daily (BuildingData)", kind: classical, value: 61.7 }
         - { name: "Ridge TOWT fitted on 2016 (LoadCast's anchor), daily", kind: classical, value: 61.9 }
       verdict: tie
-      note: "Seen re-score (17 Nov 2026). +13.8 points against change-point model fitted on 2016, daily (BuildingData), 95 % CI [-1.0, +28.5] (paired bootstrap over 26 building-meters). Median NMBE +2.3 %. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 75.5, +13.8 [-1.0, +28.5]). +13.8 points against change-point model fitted on 2016, daily (BuildingData), 95 % CI [-0.9, +28.5] (paired bootstrap over 26 building-meters). Median NMBE +2.3 %. Not a verdict row in v1.0."
     - metric: "Gas, a year of history, monthly totals (26 meters), median monthly CV(RMSE)"
       better: lower
-      model: 44.7
+      model: 45.0
       unit: "%"
       baselines:
         - { name: "Change-point model fitted on 2016, monthly (BuildingData)", kind: classical, value: 36.2 }
         - { name: "Ridge TOWT fitted on 2016 (LoadCast's anchor), monthly", kind: classical, value: 38.1 }
       verdict: loss
-      note: "Seen re-score (17 Nov 2026). +8.6 points against change-point model fitted on 2016, monthly (BuildingData), 95 % CI [+0.8, +21.6] (paired bootstrap over 26 building-meters). Median NMBE +0.3 %. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 44.7, +8.6 [+0.8, +21.6]). +8.8 points against change-point model fitted on 2016, monthly (BuildingData), 95 % CI [+1.3, +22.2] (paired bootstrap over 26 building-meters). Median NMBE +0.3 %. Not a verdict row in v1.0."
     - metric: "Gas, no history, daily totals (26 meters), median daily CV(RMSE)"
       better: lower
       model: 131.8
@@ -512,7 +515,7 @@ exam:
         - { name: "Median guess per use and meter, fitted on dev, daily", kind: dumb, value: 130.5 }
         - { name: "Dev median intensity × dev TOWT shape, daily", kind: dumb, value: 131.4 }
       verdict: tie
-      note: "Seen re-score (17 Nov 2026). +1.3 points against buildingSim twin calibrated on dev (median knobs, a, b), daily, 95 % CI [-77.5, +98.9] (paired bootstrap over 25 building-meters; paired medians 129.1 vs 127.8). Median NMBE +28.6 %. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 131.8, +1.3 [-77.5, +98.9]). +1.3 points against buildingSim twin calibrated on dev (median knobs, a, b), daily, 95 % CI [-77.5, +98.9] (paired bootstrap over 25 building-meters; paired medians 129.1 vs 127.8). Median NMBE +30.7 %. Not a verdict row in v1.0."
     - metric: "Gas, no history, monthly totals (26 meters), median monthly CV(RMSE)"
       better: lower
       model: 96.5
@@ -523,7 +526,7 @@ exam:
         - { name: "Median guess per use and meter, fitted on dev, monthly", kind: dumb, value: 112.8 }
         - { name: "Dev median intensity × dev TOWT shape, monthly", kind: dumb, value: 112.9 }
       verdict: tie
-      note: "Seen re-score (17 Nov 2026). +1.3 points against buildingSim twin calibrated on dev (median knobs, a, b), monthly, 95 % CI [-54.9, +67.0] (paired bootstrap over 25 building-meters; paired medians 93.9 vs 92.5). Median NMBE +10.7 %. Not a verdict row in v1.0."
+      note: "Seen re-score, v1.0.1 (27 Nov 2026: 19 exam meters without an electricity meter in the list re-run with assume_electricity; v1.0 17 Nov: 96.5, +1.3 [-54.9, +67.0]). +1.3 points against buildingSim twin calibrated on dev (median knobs, a, b), monthly, 95 % CI [-54.9, +67.0] (paired bootstrap over 25 building-meters; paired medians 93.9 vs 92.5). Median NMBE +16.3 %. Not a verdict row in v1.0."
     - metric: "Fresh exam, I-BLEND (3 IIIT Delhi campus buildings, 2017): electricity, no history, median hourly CV(RMSE)"
       better: lower
       model: 125.7
@@ -620,7 +623,7 @@ limits:
   - "The dev set is small: 5 hot water and 2 gas meters. The noise bank holds the dev buildings' 2017 residuals, but that leak is too small to measure: retraining the R3 recipe with only 2016 residuals moved the dev score by −0.1 points (95 % CI −2.7 to +2.7) and the seen exam by −0.9, against 1.8 (dev) and 2.7 (exam) points between two training seeds. The released R3 dev score (49.2) is 2.8-4.6 points better than two retrains of its own recipe (52.0, 53.8) while its exam score (52.8) sits between theirs (51.2, 53.8). R3 scores 3.6 points better on dev than on the exam; the retrains score 0.0 and 0.9 points worse. Picking the best rung on a noisy dev gate, not the residual leak, made the released dev number optimistic, by about 4 points."
   - "Short-history modes were trained on year-end histories; 2-week and 8-week bands are unusable for chilled water and gas when the history is winter."
   - "BDG2 timestamps were mixed (local DST vs standard) and are fixed to UTC; Peacock's weather does not match its stated location; four sites were located by temperature matching."
-  - "Buildings without an electricity meter (audit, 25 Nov 2026): every training building had one (has_electricity: mean 1, sd 0.001). A meter list without it puts that input at z = -1000; on two packaged buildings cold forecasts rose 24-50x in every hour. 58 of the 1,584 exam buildings list no electricity meter and were scored that way. Since 27 Nov 2026 forecast() warns, and assume_electricity=True adds the meter (not the released behaviour)."
+  - "Buildings without an electricity meter (audit, 25 Nov 2026): every training building had one (has_electricity: mean 1, sd 0.001). A meter list without it puts that input at z = -1000; on two packaged buildings cold forecasts rose 24-50x in every hour. 58 of the 1,584 exam buildings list no electricity meter; 19 of their meters (15 buildings) are exam building-meters and were scored that way. v1.0.1 (27 Nov 2026) adds the meter by default (assume_electricity=True). On those 19, median cold CV(RMSE) fell from 597 % to 114 % and warm (a year) from 51 % to 35 % (cold better on 18 of 19, warm on 15; 13 cold forecasts stay above 100 %, as cold steam and chilled water do across the exam). The network still cannot say 'this building has no electricity meter'."
 next:
   - "Twin anchor with a median-aimed loss: round 2 tried the twin anchor (r8) and a median-aimed magnitude head (r7) separately and kept neither; r8's CV²-weighted loss pulled the twin's level down again (dev no-history CV 78 % against 65 % for the twin alone), r7 fixed the level (dev 71 %) without the twin. The combination is the next rung; at inference it needs the twin as an input, not BuildingSim inside the numpy module."
   - "Twin physics the residuals point at: a stronger weekday / weekend swing for campus electricity than the 24-7 calibration gives, and a sharper winter peak for heating meters."
@@ -628,7 +631,7 @@ next:
   - "Warm mode trained on 4-12 week histories from every season, falling back to cold when the history is out of season."
   - "The dev gate compares 3-seed means with the released R3's single selected seed (49.2; its own recipe retrained averages 53.3), so no rung of round 2 could pass it without a 3-point real gain; rebase the gate on the control's mean before the next round (a rule change, to be logged as one)."
   - "Upstream to BuildingSim behind flags: the US/CA/UK/IE holiday calendars, the BDG2-style spec maker, campus defaults (24/7 in 22 of 52, outdoor air ×2.5, VAV minimum flow), a per-meter district scale and base load, and a bounded-memory mode for long bank runs."
-  - "Queued (audit): a dated re-score of the 58 exam buildings without an electricity meter with assume_electricity=True, then a representation that can say 'no electricity meter' (simulated buildings without one), on the owner's approval."
+  - "A representation that can say 'no electricity meter' (simulated buildings whose meter list lacks one). Not run on 27 Nov 2026: the frozen set v2_val has no such building, so the ratchet cannot score the change, and a 3-seed rung costs about 4 hours; it needs a frozen set with such meter lists first (a rule change for the owner)."
 help_wanted:
   - "An EnergyPlus binary for a true reference engine: there is no PyPI wheel with an engine and GitHub was blocked in the build sandbox, so BESTEST ranges and ResStock/ComStock twins stand in."
   - "The official ASHRAE Standard 140 (BESTEST) result tables: BuildingSim's ranges were transcribed from the literature."

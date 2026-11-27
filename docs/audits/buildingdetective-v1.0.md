@@ -27,3 +27,11 @@ The follow-up uses NumPy, SciPy and pandas. [Selective probe](reviews/reviewer-b
 | Short date axis puts the two span inputs at about 90 sd | Yes | **Fixed**: `read_hourly` holds days/365 and log10(days)/3 at their trained one-year values and warns (span sd 0.0011 and 0.00017 in training). | HUE_2 through the public reader: 330 d 95.1 m² residential (was 295.6 healthcare), 180 d 76.0 (58.6), 90 d 88.3 (10.0); full year 99.5. Exams unaffected: BDG2 reads single-year 2017 records; HEAPO uses 365-day windows with bad hours as NaN. `tests/test_audit_building.py`. |
 | District-meter zero-fraction inputs (columns 904, 1197) drive Eagle and Peacock | Yes (out of distribution) | **Warned, not clipped.** `_run` warns on any input beyond 8 sd. The audit notes a clip is not validated (it worsened Lamb), so the repair is queued as a training change (simulated district meters with zero runs). | The demo warns on the three BDG2 examples. |
 | Hourly Torch/NumPy sigma difference 2.25e-5 | Minor | Not changed (above a generic 1e-5 tolerance, far below the sigmas reported). | — |
+
+**Follow-up run (27 Nov 2026, owner-approved).** Rung r11 (`models/buildingdetective/training/r11.py`, `r11.json`):
+r10's recipe with simulated district meters that have seasonal shutdowns and outages. It brought columns 904 and
+1197 from 387 / 347 sd (v1.0) to 6.1 / 6.1 sd on the 52 dev buildings, but scored 0.8287 on the frozen set against
+r10-hourly's 0.8301 (needs +0.01), so it was **rejected**; dev composite 0.2998 (floor 0.2881), BDG2 dev area 60.7 %
+(v1.0 50.8 %). The bounded-input variant (v1.0 with the two columns clipped at mean + 8 sd) gained only +0.007 on the
+frozen set but improved dev (area 43.5 %, composite 0.3157); it is logged, not released. The frozen set has no district
+zero runs, so neither change can pass the rule until it does. The exam was not opened. v1.0 is unchanged.
