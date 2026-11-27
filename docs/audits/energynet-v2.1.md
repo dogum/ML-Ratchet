@@ -80,3 +80,13 @@
   - `r15_s4.npz`: `mu=1.69e-6`, `sig=3.76e-6`, `comp=6.34e-6`
 - **Ensemble diversity (`body_0_weight` pairwise cosine similarity across `s0..s4`):** off-diagonal range `0.114 .. 0.143` (five genuinely independent seeds).
 - **Weight health:** Zero non-finite values, zero near-zero rows (`norm < 1e-4`) across all layers of all 5 members.
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Four work-share inputs crushed by outlier-set `x_sd` | Yes | **Training fix in code, repair rung queued.** `train.py --robust-norm` takes each column's statistics after clipping it to its 0.5–99.5 percentiles; the network's existing ±8 z-clip then saturates the outlier trips instead of letting them set the scale. Default off, so every historical rung reproduces. The retrain (5 seeds, same banks, dev gate; exam closed) waits for the owner's approval. | Rebuilt on the local banks (`train2di+train2bdi+train2cdi`, tiers seed 12345, 86,400 rows): plain statistics reproduce the shipped `x_sd` exactly. **11 rows (0.013 %)** have \|aero/Ep\| > 10. On the 1,496 real dev trips the four inputs' normalised sd is 0.0000 with the shipped scaler and **0.58 / 0.79 / 0.59 / 0.66** (aero, rolling, downhill grade, inertia) with `--robust-norm`, against 0.72 for the healthy uphill-grade control. `tests/test_audit_vehicle.py`. |
+| Component loss not masked like the NLL | Yes (minor) | **Training fix in code**: `--mask-comp`, in the same queued rung. | — |
+| `SIM_conv = 0.9656 < 1` | Not a defect | Not changed: the factor applied to ICE trips is `SIM_conv × VED_ICE = 1.45`, so the widen-only rule holds where bars are reported. | — |
+
+Inference (`energynet.py`, `model_np.py`) is unchanged; the golden demo is unchanged.
