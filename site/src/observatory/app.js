@@ -31,8 +31,8 @@ const ROLE = { backdrop: 'Real noise under the sims', calibration: 'Calibrates t
 const ROLES = Object.keys(ROLE);
 const RC = { frozen: 'Frozen set: not enough gain', gate: 'Real dev gate said no', other: 'Several or other reasons', stopped: 'Stopped before scoring' };
 const RCOL = { frozen: 'var(--ink-2)', gate: 'var(--brand)', other: 'var(--tie)', stopped: 'var(--info)' };
-const ACT = { fixed: 'Fixed', warned: 'Warned', documented: 'Documented', queued: 'Queued', kept: 'Kept as is', other: 'Other' };
-const ACOL = { fixed: 'var(--win)', warned: 'var(--mixed)', documented: 'var(--info)', queued: 'var(--sel)', kept: 'var(--tie)', other: 'var(--ink-3)' };
+const ACT = { fixed: 'Fixed', rescored: 'Re-scored, now default', retrained: 'Retrained (ratchet judged)', warned: 'Warned', optin: 'Opt-in fix', documented: 'Documented', queued: 'Queued', kept: 'Kept as is', other: 'Other' };
+const ACOL = { fixed: 'var(--win)', rescored: 'var(--clean)', retrained: 'var(--limit)', warned: 'var(--mixed)', optin: 'var(--brand)', documented: 'var(--info)', queued: 'var(--sel)', kept: 'var(--tie)', other: 'var(--ink-3)' };
 
 const MODELS = D.models;
 const BYID = new Map(MODELS.map(m => [m.id, m]));

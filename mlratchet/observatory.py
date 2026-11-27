@@ -106,38 +106,57 @@ def _audit_class(label: str) -> str:
     return "defect"
 
 
+def _action(act: str, real: str = "") -> str:
+    """Category of a resolution from its leading status phrase (the bold text up to the first comma or colon)."""
+    b = re.match(r"\*\*([^*]+)\*\*", act)
+    lead = (b.group(1) if b else act).split(",")[0].split(":")[0].strip(" .").lower()
+    if real.lower().startswith("not changed"):
+        return "kept"
+    if lead.startswith(("dated re-score", "re-scored", "supplementary exam")):
+        return "rescored"          # run with the owner's approval; the fixed behaviour is the new default
+    if lead.startswith(("retrained", "rung ")):
+        return "retrained"         # a repair rung, judged by the ratchet
+    if lead.startswith("fix"):
+        return "fixed"
+    if lead.startswith("warn"):
+        return "warned"
+    if lead.startswith("opt-in"):
+        return "optin"            # shipped off by default, re-score queued
+    if lead.startswith(("training fix", "queue")) or (lead.startswith("document") and "queued" in lead):
+        return "queued"
+    if lead.startswith("document"):
+        return "documented"
+    if lead.startswith(("not changed", "kept")):
+        return "kept"
+    return "other"
+
+
 def _resolutions(root: Path, report: str | None) -> list[dict]:
+    """Rows of the findings table under `## Resolution` (header `| Finding |`); later tables, such as the
+    follow-up runs added below it, are not findings."""
     if not report or not (root / "docs/audits" / report).exists():
         return []
     sec = (root / "docs/audits" / report).read_text(encoding="utf-8").split("## Resolution", 1)
     if len(sec) < 2:
         return []
-    out = []
+    out, inside = [], False
     for line in sec[1].splitlines():
         if line.startswith("## "):
             break
-        if not line.startswith("| ") or line.startswith("| Finding") or line.startswith("|---"):
+        if line.startswith("| Finding"):
+            inside = True
+            continue
+        if not inside:
+            continue
+        if not line.startswith("|"):
+            break                  # the findings table ended
+        if line.startswith("|---"):
             continue
         cells = _cells(line)
-        if len(cells) < 3:
-            continue
-        act = cells[2]
-        b = re.match(r"\*\*([^*]+)\*\*", act)
-        word = (b.group(1) if b else act.split(" ")[0]).strip(":. ").lower()
-        if "fix" in word:
-            kind = "fixed"
-        elif word.startswith("warn"):
-            kind = "warned"
-        elif word.startswith("document"):
-            kind = "queued" if "queued" in word else "documented"
-        elif word.startswith("queue"):
-            kind = "queued"
-        elif act.lower().startswith("not changed"):
-            kind = "kept"
-        else:
-            kind = "other"
+        if len(cells) < 3 or cells[2].strip(" .*").lower() in ("", "—", "-", "none"):
+            continue               # a summary or "clean" row with no action is not a resolution
         out.append({"finding": re.sub(r"[`*]", "", cells[0]), "real": re.sub(r"[`*]", "", cells[1]),
-                    "action": kind, "text": re.sub(r"\*\*", "", act)})
+                    "action": _action(cells[2], cells[1]), "text": re.sub(r"\*\*", "", cells[2])})
     return out
 
 
