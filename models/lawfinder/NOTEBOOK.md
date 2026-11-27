@@ -125,3 +125,13 @@ folder: the other four laws' banks and exam point files (not shipped), which is 
   real routes) and in the loss (squared log error). Both are changes LawFinder can try as its own rung on its own frozen
   val set and dev gate, with no exam involved. LawFinder's own rule, applied to the bake-off's fronts, would have kept the
   simpler s1-c16 (`road_ratchet.json`).
+
+## 2026-11-27 — audit resolution: EV grade sign documented, input-range warnings
+
+The two-reviewer audit (`docs/audits/lawfinder-v1.0.md`) found that the road law's battery energy falls as grade rises,
+for every battery-electric car (0.408 → 0.324 MJ/km from flat to +2 %, where RoadSim gives 0.332 → 0.659). The law is
+not refitted here: that needs a new search and a new exam. The card now says so, and `next` queues a search that rejects
+laws whose energy falls with net grade. `Law.predict` now warns when an input is outside the range its bank covered
+(`strict=True` raises); the homes law turns negative in year past 2020 and the grid inertia law can fall below the
+nadir law's floor. One of the demo's real grid events (a loss above 2 GW) is outside the nadir law's range. `LawFinder()`
+also read its JSON with the platform's default encoding; it now reads UTF-8.

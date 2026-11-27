@@ -9,8 +9,13 @@
 
 Each law is an expression tree with constants fitted by symbolic regression on that platform's simulator only.
 sig is the 68 % error bar: the residual spread on the frozen simulated set, widened once on the real dev set.
+
+Each input has a declared range (`law.d['var_info'][name]['range']`, the simulator bank's span). Outside it the
+expression extrapolates freely: the homes law's heating slope changes sign after 2020, and the grid inertia law can
+return less inertia than the nadir law was fitted on (90 GVA s). predict() warns when any input is outside its range
+(`strict=True` raises instead); `law.out_of_range(**kw)` lists them.
 """
-import json, os
+import json, os, warnings
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -57,10 +62,30 @@ class Law:
     def __call__(self, **kw):
         return self.predict(**kw)[0]
 
-    def predict(self, raw_sigma=False, **kw):
+    def out_of_range(self, **kw):
+        """{input: number of values outside its declared range} for the inputs that have any."""
+        out = {}
+        for v in self.vars:
+            r = self.d.get('var_info', {}).get(v, {}).get('range')
+            if r is None or v not in kw:
+                continue
+            x = np.asarray(kw[v], float)
+            n = int(np.sum(~np.isfinite(x) | (x < r[0]) | (x > r[1])))
+            if n:
+                out[v] = n
+        return out
+
+    def predict(self, raw_sigma=False, strict=False, **kw):
         missing = [v for v in self.vars if v not in kw]
         if missing:
             raise KeyError(f'missing inputs {missing}; this law reads {self.vars}')
+        bad = self.out_of_range(**kw)
+        if bad:
+            ranges = {v: self.d['var_info'][v]['range'] for v in bad}
+            msg = f'inputs outside the declared range {ranges} (values out: {bad}); the law extrapolates there'
+            if strict:
+                raise ValueError(msg)
+            warnings.warn(msg, stacklevel=2)
         X = [np.asarray(kw[v], float) for v in self.vars]
         with np.errstate(all='ignore'):
             y = _ev(self.tree, X, self.consts)
@@ -109,7 +134,8 @@ _TEXTBOOK = {'budyko_fu': _fu, 'k_times_demand': _k_times, 'swing_ramp': _swing,
 
 class LawFinder:
     def __init__(self, path=None):
-        self.data = json.load(open(path or os.path.join(HERE, 'lawfinder_laws.json')))
+        with open(path or os.path.join(HERE, 'lawfinder_laws.json'), encoding='utf-8') as f:
+            self.data = json.load(f)
         self.laws = {k: Law(v) for k, v in self.data['laws'].items()}
 
     def names(self):
