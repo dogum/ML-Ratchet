@@ -75,8 +75,8 @@ each card still describes the released model. Its dated re-score, like every ret
 | HybridPilot | Preview reads nothing past its window | None (released R22 uses no preview; 0 grade gaps on 216 exam trips) | — |
 | LawFinder | Range warnings (`strict=True` raises); EV grade sign in the card; UTF-8 JSON | None | Sign-checked road-law search |
 | GridPulse | `window(f, i0, N)` reads only the prefix; live records accepted | None (0 gaps in 412 exam traces) | — |
-| DemandCast | Warnings on dark-hour solar and |z| > 8 inputs; opt-in `z_clip` | Not re-scored: 1,734 solar / 365 demand exam rows affected | Retrain (masked night history, missing-hour training), then re-score |
-| BatteryPilot | Hour 0 no longer reads its own RT price; opt-in `causal_wear` | ≤ $0.002/kW-yr on packaged years | Re-score with causal wear plan |
+| DemandCast | Warnings on dark-hour solar and |z| > 8 inputs; opt-in `z_clip` | Not re-scored: 1,734 solar / 365 demand exam rows affected | **Run 27 Nov 2026.** Re-score with `z_clip=8` → v1.1.1 (demand 2.38 → 2.32 %; missing-history rows 5.96 → 2.58 %). Repair rung r10 promoted (val_v5 +0.015, dev −4.8 %); v1.2 exam once: solar 16.1 → 10.6 %, demand 2.32 → 2.49 % (worse) |
+| BatteryPilot | Hour 0 no longer reads its own RT price; opt-in `causal_wear` | ≤ $0.002/kW-yr on packaged years | **Run 27 Nov 2026.** All 48 node-years: ERCOT 67.1 → 67.1 %, CAISO 59.4 → 59.3 %; default since v1.3.1 |
 | PlantDetective | Missing stretches inside runs bridged (6179_3: 107.58 → 6.42 starts/yr) | None (0 missing hours in 407 exam files) | — |
 | LoadCast | Warning when no electricity meter; opt-in `assume_electricity` | Not re-scored: 58 of 1,584 exam buildings affected | Re-score of those 58, then a representation without the meter |
 | BuildingDetective | Short records hold span inputs at one year; |z| > 8 warning | None (both exams full-year) | District-meter repair retrain |

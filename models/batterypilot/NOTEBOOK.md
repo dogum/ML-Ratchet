@@ -409,7 +409,7 @@ variants on the same rows: `bp` (v1.3 as examined, plus the hour-0 fix) and `bpc
 c_lin_plan=causal_wear(bat, T))`: the day-ahead backbone's wear cost from each hour's temperature 48 h earlier).
 Settlement and wear still use realized temperatures. Nothing was chosen from these numbers; the 48 h lag was fixed by
 the audit. 30 min on one core. Outputs: `work/data/exam/v1_3_rescore_2026-11-27_*` (rows, daily, monthly, two reports,
-`_compare.json`).
+`_compare.json`; committed as `training/checks/exam_report_v1_3_1.json` and `exam_rescore_causal_2026-11-27.json`).
 
 Reproduction: `bp` per node-year is within $0.02/kW-yr of v1.3's exam (`training/checks/exam_report_v1_3.json`); that
 is the hour-0 fix plus rounding. Pooled and per-duration shares of perfect hindsight, v1.3 → v1.3.1:

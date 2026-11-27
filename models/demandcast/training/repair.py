@@ -11,6 +11,8 @@ missing hours in the demand history (miss_frac's simulated sd was ~0, so one mis
     python repair.py val <ckpt>     # v1.1, v1.1.1 and <ckpt> on val_v5 (and val_v4, for reference)
     python repair.py add <ckpt>     # val_v5 + dev gate -> decision appended to training/ratchet.json
     python repair.py export <ckpt>  # numpy weights -> work/release_v12/ (only for a promoted rung)
+    python repair.py events <ckpt>  # events.py for v1.1.1 and the rung (after the exam; reported only)
+    python repair.py compare x      # v1.1 / v1.1.1 / v1.2 on every exam bank -> training/exam_v1_2.json
     python repair.py exam <ckpt>    # the exam, run ONCE on a promoted rung after its release choice is committed:
                                     # actual weather (work/data/banks), forecast weather 2024-2025 (forecast_full) and
                                     # the released 2024 forecast row (forecast_release2024) -> exam/v1.2.json each
@@ -55,7 +57,7 @@ def predict(B, W, cfg, k_only=None):
     """evaluate.predict with the numpy forward and the v1.1 solar alignment (raw sigmas)."""
     import warnings
     out = {}
-    ref = 0.0 if 'meta_region' in B else np.array([REF.get(b, 0.0) for b in B['meta_ba']])
+    ref = 0.0 if 'meta_region' in B or 'meta_ba' not in B else np.array([REF.get(b, 0.0) for b in B['meta_ba']])
     for k in ('d', 'w', 's') if k_only is None else (k_only,):
         X = np.nan_to_num(B[XK[k]].astype(np.float32)).astype(np.float64)
         r = np.zeros(len(X), int)
@@ -163,6 +165,62 @@ def run_exam(ckpt):
         print('exam written', f'{data}/exam/v1.2.json', flush=True)
 
 
+def run_events(ckpt):
+    """events.py (named extreme periods, demand only, reported and never used for choosing) for v1.1.1 (exam name
+    v1.1_zclip8) and the rung (v1.2), next to the released r8 numbers in exam_r8_wide_events.json."""
+    import rescore_release as RR  # noqa: F401  (installs the evaluate shim)
+    import events
+    for name, W, cfg in (('v1.1_zclip8', weights('v1.1'), CFG['v1.1.1']), ('v1.2', weights(ckpt), CAND)):
+        events.E.load = lambda n, W=W: W
+        events.E.predict = lambda W_, B, cfg=cfg: predict(B, W_, cfg, k_only='d')
+        events.main(name)
+
+
+def compare():
+    """v1.1 / v1.1.1 / v1.2 side by side on every exam bank -> training/exam_v1_2.json (and the events)."""
+    import rescore_release as RR
+    out = {}
+    banks = (('actual', DATA, 'actual', ('v1.1', 'v1.1_zclip8', 'v1.2')),
+             ('forecast_2024_2025', f'{DATA}/forecast_full', 'forecast', ('v1.1', 'v1.1_zclip8', 'v1.2')),
+             ('forecast_2024_released_row', f'{DATA}/forecast_release2024', 'forecast', ('release', 'release_zclip8', 'v1.2')))
+    for tag, data, mode, names in banks:
+        B = dict(np.load(f'{data}/banks/real_exam.npz'))
+        fcb = B['meta_fc']
+        rows = fcb == 0 if mode == 'actual' else (fcb & 7) == 7
+        wr = rows if mode == 'actual' else (fcb & 8 > 0) & (fcb > 0)
+        sr = rows if mode == 'actual' else (fcb & 4 > 0) & (fcb > 0)
+        res = {}
+        for nm, lab in zip(names, ('v1.1', 'v1.1.1', 'v1.2')):
+            J = json.load(open(f'{data}/exam/{nm}.json')); Pz = dict(np.load(f'{data}/exam/{nm}_pred.npz'))
+            pred = {k: (Pz[f'{k}_mu'], Pz[f'{k}_sig']) for k in ('d', 'w', 's')}
+            one = {'d': 1.0, 'w': 1.0, 's': 1.0}
+            r = dict(sigma_scale_dev=J['sigma_scale_dev'], pooled=J['overall'][mode],
+                     by_grid={ba: J['table'][ba]['all'][mode] for ba in J['table'] if mode in J['table'][ba]['all']})
+            six = rows & ~np.isin(B['meta_ba'], ['CISO', 'SWPP'])
+            r['pooled_without_CISO_SWPP'] = RR.exam.block(B, pred, one, six, wr & six, sr & six)
+            r['grids_beating_grid_forecast'] = sorted(ba for ba, v in r['by_grid'].items()
+                                                      if v['demand']['model'] < v['demand']['ba_day_ahead'])
+            if mode == 'actual':
+                r['temp_bands'] = J['temp_bands']
+            res[lab] = r
+        out[tag] = res
+    out['events'] = {lab: json.load(open(f'{DATA}/exam/{nm}_events.json')) for lab, nm in (('v1.1.1', 'v1.1_zclip8'), ('v1.2', 'v1.2'))}
+    out['events']['v1.1'] = json.load(open(os.path.join(SRC, 'exam_r8_wide_events.json')))
+    jdump(out, os.path.join(SRC, 'exam_v1_2.json'))
+    for tag in ('actual', 'forecast_2024_2025', 'forecast_2024_released_row'):
+        for lab in ('v1.1', 'v1.1.1', 'v1.2'):
+            r = out[tag][lab]; po = r['pooled']; six = r['pooled_without_CISO_SWPP']
+            print(f"{tag:28s} {lab:7s} demand {po['demand']['model']:.3f} (grid {po['demand']['ba_day_ahead']:.2f}; 6 grids "
+                  f"{six['demand']['model']:.2f} vs {six['demand']['ba_day_ahead']:.2f}) cov {po['demand']['cov68']:.2f}/{po['demand']['cov95']:.2f}"
+                  f" | wind {po['wind']['model']:.2f} cov {po['wind']['cov68']:.2f}/{po['wind']['cov95']:.2f} | solar {po['solar']['model']:.2f} "
+                  f"(pers {po['solar']['persistence_24h']:.1f}) cov {po['solar']['cov68']:.2f}/{po['solar']['cov95']:.2f} | wins {len(r['grids_beating_grid_forecast'])}"
+                  f" {r['grids_beating_grid_forecast']}")
+            print('     ', {ba: (round(v['demand']['model'], 2), round(v['demand']['ba_day_ahead'], 2), round(v['wind']['model'] or 0, 1),
+                             round(v['solar']['model'], 1) if v['solar']['model'] == v['solar']['model'] else None,
+                             round(v['solar']['persistence_24h'], 1) if v['solar']['persistence_24h'] == v['solar']['persistence_24h'] else None,
+                             round(v['demand']['cov68'], 2)) for ba, v in r['by_grid'].items()})
+
+
 if __name__ == '__main__':
     cmd, ck = sys.argv[1], sys.argv[2]
     if cmd == 'val':
@@ -173,3 +231,7 @@ if __name__ == '__main__':
         export(ck)
     elif cmd == 'exam':
         run_exam(ck)
+    elif cmd == 'events':
+        run_events(ck)
+    elif cmd == 'compare':
+        compare()

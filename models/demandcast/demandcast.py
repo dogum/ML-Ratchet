@@ -1,4 +1,4 @@
-"""DemandCast v1.1: day-ahead hourly demand, wind and solar for a balancing authority, with error bars (numpy only).
+"""DemandCast v1.2: day-ahead hourly demand, wind and solar for a balancing authority, with error bars (numpy only).
 
 Three small MLPs (two hidden layers, SiLU) read feature vectors built by `features.py` from
   - the building-stock physics forecast for tomorrow (components: base, lighting, heating, cooling, rooftop PV),
@@ -11,6 +11,10 @@ Sigmas are multiplied by one widen-only factor per output fitted on dev years 20
 v1.1 (15 Nov 2026): solar reads the reporting offset of the 168 h history at issue (`solar_offset`), runs the same
 network on the history put back on the physics clock, and moves the forecast onto the reported clock. EIA-930 solar
 timestamps move between years; v1.0 relied on one fixed shift learned on the dev years. Pass align=False for v1.0.
+v1.1.1 (27 Nov 2026): standardised inputs clipped at |z| 8 by default (meta `z_clip`).
+v1.2 (27 Nov 2026, audit repair rung r10): networks retrained on simulator v5 (twilight solar, -2..+2 h offsets,
+missing demand-history hours); offsets read up to +-2 h; reported solar zeroed at hours the physics calls dark
+(mask_dark_solar). DemandCast(WEIGHTS_V1_1, META_V1_1) is v1.1.1.
 """
 import os, json, warnings
 import numpy as np
