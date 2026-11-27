@@ -33,3 +33,4 @@ ladders:
     rungs:
       - { id: r5, change: "Released v1.0 network, re-scored on val3", sim: 0.745, decision: kept, why: "Incumbent on val3.", metrics: ["1.01%", "0.78%", "2.34%", "1.57%"] }
       - { id: h1, change: "Hybrid: network moved towards the classical SYD-style reading by w(T) per length bin where they agree within 5 network σ (w, k and σ scales fitted on simulations)", sim: 0.788, decision: released, why: "+0.043 on val3 (νmax hits 0.752 → 0.763, Δν hits 0.518 → 0.637, detection unchanged); dev errors −10% vs r5.", metrics: ["0.78%", "0.51%", "2.24%", "1.91%"] }
+      - { id: r6, change: "27 Nov 2026: network retrained from scratch on r5's bank recipe plus 5k examples on high-RMS dwarfs (spots, rotation, eclipses), same hybrid refitted", sim: 0.795, decision: rejected, why: "+0.007 (needs +0.01); dev errors +22% (gate: at most +10%). False alarms on held-out high-RMS dwarfs fell from 16.9% to 11.1%.", metrics: ["1.10%", "0.85%", "1.91%", "1.78%"] }

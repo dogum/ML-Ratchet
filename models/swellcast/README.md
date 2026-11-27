@@ -1,5 +1,5 @@
 <!-- Generated from model.yaml and ratchet.yaml by `mlratchet readme --write`. Edit those, not this file. -->
-# SwellCast <sub>v1.1</sub>
+# SwellCast <sub>v1.1.1</sub>
 
 > **One buoy hears a storm thousands of kilometres away.**
 
@@ -69,7 +69,7 @@ Coverage of the 68% error bars on the exam: Distance **55%**, Time **67%**, Dire
 - The calibrated v2/v3 simulators match dev statistics better but alone make real dev readings worse; the cause is not understood.
 - v1.1's time prior assumes the window is centred on the predicted 0.06 Hz arrival (±36 h); for other windows use predict(..., prior=False).
 - The distance prior comes from 29 dev arrivals at the same buoys; at other buoys or storm basins it would be wrong.
-- Queued (audit): a dated re-score of the exam with field-specific sentinels (99 kept in swdir and swr1), on the owner's approval.
+- v1.1.1 (27 Nov 2026) parses NDBC direction files with field sentinels (99 kept in swdir and swr1). The published exam numbers are from the v1.1 parse; the dated re-score with field sentinels gives distance 29.3%, time 26.9 h, direction 19.3°, detected 63.2% on the 288 confirmed arrivals (v1.1 parse 29.3%, 26.8 h, 19.2°, 63.2%). The packaged pre-cut example windows were cut with the v1.1 parse.
 
 ## The ratchet
 
@@ -127,7 +127,7 @@ Deep-water dispersion (group speed g/4πf) from a moving, growing and decaying J
 ## Help wanted
 
 - Extratropical storm truth: the Open-Meteo archive and marine API hit its daily request limit from the shared build machine's IP, so only tropical cyclones (IBTrACS) are graded. A reachable, documented reanalysis endpoint would add Southern Ocean and North Pacific winter storms.
-- Parsing and empty windows (audit, 25 Nov 2026): the NDBC parser reads 99 as missing in every file, which erases valid 99° bearings (3,445 in the packaged 51004 2018 direction file; Olivia's bearing moves 0.46° when restored). read_ndbc(field_sentinels=True) keeps them (opt-in: the exam was parsed the old way). An all-NaN window read as a storm swell (p 0.57); read() now refuses it.
+- Parsing and empty windows (audit, 25 Nov 2026): the NDBC parser reads 99 as missing in every file, which erases valid 99° bearings (3,445 in the packaged 51004 2018 direction file; Olivia's bearing moves 0.46° when restored). read_ndbc keeps them since v1.1.1 (field_sentinels=True is the default; the dated re-score moved the exam by at most 0.17 h and 0.09°). An all-NaN window read as a storm swell (p 0.57); read() now refuses it.
 
 ## Next rungs
 

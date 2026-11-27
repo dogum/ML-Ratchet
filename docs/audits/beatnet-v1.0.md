@@ -33,4 +33,5 @@ Uses NumPy, SciPy, and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_
 | Finding | Real? | Action | Evidence |
 |---|---|---|---|
 | Records 201 (dev, backgrounds) and 202 (DS2) are one patient | Yes | **Documented, retrain queued.** The card states the DS2 scores without 202 (macro-F1 0.5531, SV-F1 0.6305) beside the published ones. | Card limits and next. |
+| Follow-up (27 Nov 2026): retrain without patient 201/202 | Run | **Retrained, not promoted.** Split v2 drops 201 from dev and 202 from DS2; calibration and quiet background rebuilt without 201 (dev S coupling 0.555 → 0.64 of the local RR, so physics v5); frozen v5val. Two from-scratch rungs beat r5 in simulation (0.896, 0.903 vs 0.879) and fail the dev gate (S/V F1 0.409, 0.536 vs 0.579). v1.0 stays; its dated DS2 score without 202 is macro-F1 0.553, SV-F1 0.631 (all 22 records re-scored: 0.547, as published). | `training/ratchet_v2.json`, `training/ds2_without_202.json`; NOTEBOOK 27 Nov 2026. |
 | One NaN → every beat 'N' | Yes | **Fixed**: gaps up to 10 samples are filled linearly; longer gaps raise. | Test: one missing sample gives finite probabilities within 0.05 of the complete strip. |

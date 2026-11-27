@@ -66,15 +66,15 @@ Coverage of the 68% error bars on the exam: Epicentre ellipse (all stations) **6
 
 - Mw: 0.097 mean error against 0.089 for simply averaging v1.2's per-station Mw (0.114 against 0.109 at 2 stations).
 - Deep quakes (> 70 km) read too shallow: median depth error 38 km against 28 km for v1.2 combined (all stations).
+- Without catalogue help it does not locate well (supplementary exam, 27 Nov 2026, same 400 quakes, continuous records that know only the UTC hour of the origin): with P picked by a grid-search associator over each event's records, the median epicentre miss is 497 km with all stations (mean 1,346 km), against 123 km for the same records with the catalogue's predicted P as the guess. A plain per-record trigger picker gives 1,284 km. Only 40% of the associator's picks lie within 10 s of the true P.
 
 ## Limits
 
 - Long-period (LH) records only, 25-95 degrees, M >= 5.5; 2 to 10 stations.
-- The P pick searches +-30 s around a guess; in the exam (as in v1.2) the guess came from the catalogue origin.
+- The P pick searches +-30 s around a guess; in the exam (as in v1.2) the guess came from the catalogue origin. The headline exam numbers are for catalogue-assisted picking; with independent picks (supplementary exam, 27 Nov 2026) the median miss is 497 km, not 127 km. The travel-time locator baseline also picks inside the catalogue window.
 - Two stations leave most of the location uncertain: median miss 427 km.
 - Error bars: epicentre ellipses cover 62-68% and depth bars 60% for a nominal 68%.
 - The dev-twin calibrations (r5, r6) are shifts fitted on 40 dev quakes; deep quakes are now over-corrected.
-- Queued (audit): an exam with arrivals picked independently from continuous records (no catalogue time), for all 400 multi-station events.
 
 ## The ratchet
 
@@ -122,6 +122,7 @@ QuakeNet v1.2's simulator run per station for one shared source: Syngine ak135f 
 
 ## Next rungs
 
+- An independent picker that works at 1 sample/s for M 5.5-6 (only 40% of associated picks lie within 10 s), or broadband (BH) picking for the P time only; the supplementary exam (training/indep_exam.py) is the benchmark.
 - Mw: let the classical inverse-variance Mw through unchanged (or learn a per-event bias only), and measure the deep-depth over-correction on dev by depth class.
 - Bigger station sets and regional distances; broadband (BH) channels and a sharper P picker for timing.
 - A second pass: re-linearise at the network's own epicentre and run the graph again.
