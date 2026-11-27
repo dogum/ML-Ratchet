@@ -23,13 +23,12 @@ OUT = instrument_dir("bridgesense")
 
 def main() -> None:
     net = BridgeSense()
-    # The browser port runs one member. Refuse an ensemble rather than ship a silently different model.
-    if net.n_members != 1:
-        raise SystemExit(f"export_instrument: release has {net.n_members} members; net.ts runs exactly one")
-    # Export member 0 weights as float16 (browser sees f16; reference outputs use identical f16 roundtrip)
-    W_raw = {k: v for k, v in net.members[0].items()}
-    W_f16 = roundtrip(W_raw, "f16")
-    net.members[0] = W_f16
+    # Export every ensemble member as float16 under "m{k}." (net.ts runs each with its own config).
+    # Reference outputs below use the identical f16 round trip.
+    W_raw = {}
+    for k, W in enumerate(net.members):
+        W_raw.update({f"m{k}.{name}": v for name, v in W.items()})
+        net.members[k] = roundtrip(dict(W), "f16")
     write_pack(OUT / "weights", W_raw, dtype="f16", meta=net.meta)
 
     ex_meta = json.loads((open(os.path.join(MODEL, "examples", "examples.json"), encoding="utf-8")).read())["examples"]

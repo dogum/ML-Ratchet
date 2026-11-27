@@ -1,8 +1,8 @@
 id: bridgesense
 name: BridgeSense
-version: "1.0"
+version: "1.1"
 status: released
-released: "2026-11-24"
+released: "2026-11-27"
 order: 35
 domain: Structural mechanics
 tags: [bridges, structural health monitoring, transformer, attention, modal analysis, FEM, freeze-thaw, uncertainty]
@@ -13,19 +13,20 @@ question_short: "Stiffness change or just winter weather, from a bridge's tracke
 summary: >-
   From a bridge's healthy baseline window and a monitoring window of tracked natural frequencies (1 to 14 modes,
   with missing-mode dropouts) and air temperature history, a dual-axis Transformer (baseline-to-query thermal
-  cross-attention plus masked mode-set self-attention) estimates the probability of a real structural change, the
+  cross-attention plus masked mode-set self-attention; v1.1 ships a 3-member ensemble) estimates the probability of a real structural change, the
   effective global stiffness shift dK/K (%) and the environmental frequency shift (%), each with a 68% error bar.
   Trained only on 2-D thermo-mechanical modal FEM simulations (girders, bowstring arches, trusses) with 1-D deck heat
   diffusion, asphalt/ballast freezing and real healthy OMA tracking noise. Graded once across three full-scale
   bridges: KW51 held-out weeks (steel arch retrofit), Concrete Box-Girder (zero-shot, 2 modes, -7.9 C freeze) and
-  Hell Bridge Test Arena (zero-shot, 7 modes, imposed physical damage DS1-DS8).
+  Hell Bridge Test Arena (zero-shot, 8 modes, imposed physical damage DS1-DS8). v1.1 (27 Nov 2026) fixes four
+  feature and export bugs found in review, retrains every rung and re-runs the exam once; v1.0 is kept in the notebook.
 disclaimer: Research only. Not a structural safety inspection tool; bridge assessments require licensed engineering inspection.
 
 reads: "Healthy reference window and query monitoring window (32 subsampled snapshots each): air temperature, 24 h and 72 h moving averages (C), and fractional natural frequency shifts (f - f0)/f0 with validity masks for 1-14 tracked modes."
 returns:
   - "P(structural change): probability that stiffness or structural mass changed beyond thermal/freezing variation"
   - "Effective global stiffness shift dK/K (%) +/- 68% bar (dev-widened x1.00)"
-  - "Environmental frequency shift (%) +/- 68% bar (dev-widened x2.34)"
+  - "Environmental frequency shift (%) +/- 68% bar (dev-widened x1.70)"
   - "Per-mode implied stiffness shift dK_m/K_m (%) for each active tracked mode"
 
 physics:
@@ -39,7 +40,7 @@ physics:
     - "Random 2-D bridge FEMs across three structural families (40% continuous/simple girders, 35% tied bowstring arches, 25% steel trusses) and three materials (steel, concrete, composite), tracking 2-14 modes"
     - "1-D Fourier heat conduction through deck slab (steel/concrete thermal diffusivities) yielding lagged structural and surface temperatures"
     - "Asphalt/ballast freezing stiffening across T_freeze in [-3.5, +2.0] C, axial bearing thermal compression via K_G, and 35-44% warm-baseline-to-freezing-query extrapolation episodes"
-    - "Physics p3 injects 436 real healthy KW51 autumn OMA residual noise and correlated missing-mode dropout windows (44% mean missingness) plus dev-twin-measured seasonal drift (global 0.115%, per-mode 0.222%)"
+    - "Physics p3 injects 436 real healthy KW51 autumn OMA residual noise and correlated missing-mode dropout windows (44% mean missingness) plus dev-twin-measured seasonal drift (v1.1: global 0.113%, per-mode 0.219%)"
   checks:
     - "Simply-supported Euler-Bernoulli beam (bending modes 1-6, 24 elements) vs analytical f_n: max rel error 2.60e-4 (0.026%) (training/verify_physics.json)"
     - "Cantilever Euler-Bernoulli beam (bending modes 1-4, 24 elements) vs analytical roots: max rel error 3.03e-5 (0.003%)"
@@ -48,12 +49,12 @@ physics:
     - "Plausibility range only: simulated bowstring-arch median f1 2.87 Hz and f4 7.76 Hz fall inside the check's wide bands (f1 0.3-3.5 Hz, f4 1.5-12 Hz); no KW51 FEM values are parsed, and f4 sits above KW51's published 0.51-6.31 Hz span (verify_physics.json)"
 
 noise: "436 real 32-step x 14-mode OMA tracking noise and missingness windows extracted strictly from KW51's early healthy autumn baseline (2018-10-01 to 2018-11-11, pre-winter, 6 months pre-retrofit, zero structural labels; residual std 0.326%, mode availability 56.0%)."
-network: "Dual-axis Transformer (179,144 parameters, d_model=64, 4 heads, LayerNorm + GELU, no BatchNorm): 2 baseline-to-query thermal cross-attention layers + 2 masked mode-set self-attention layers -> attention pooling + global anchor features -> change logit, beta-NLL heads for dK/K and thermal shift, and per-mode dK head. Numpy inference matches PyTorch to 2.67e-6."
+network: "Ensemble of 3 dual-axis Transformers (537,432 parameters = 3 x 179,144; d_model=64, 4 heads, LayerNorm + GELU, no BatchNorm): 2 baseline-to-query thermal cross-attention layers + 2 masked mode-set self-attention layers -> attention pooling + global anchor features -> change logit, beta-NLL heads for dK/K and thermal shift, and per-mode dK head. One member (r4_mix) adds its outputs to the linear-OLS anchor; two (r6 seed replicates) predict directly. Each member keeps its own config. Numpy inference matches PyTorch to 1.4e-6; the browser port matches numpy to 1.2e-6."
 
 approach:
   real_backdrop: "436 healthy autumn KW51 OMA residual jitter and correlated missing-mode dropout windows"
   physics_inputs: "Per-mode baseline linear-OLS thermal slopes, residuals, z-scores, freezing-hour residuals, 24 h / 72 h lagged air temperatures, and cold extrapolation distance"
-  physics_anchor: false
+  physics_anchor: "One of three ensemble members (r4_mix) predicts a correction to the per-mode linear-OLS thermal anchor (dK/K = anchor + correction); the other two predict dK/K directly"
   real_data_roles: [backdrop, calibration, gate, error_bars, exam]
 
 data:
@@ -65,13 +66,15 @@ data:
 
 split:
   dev: "10 non-overlapping 7-day KW51 blocks drawn with seed 20261124 (4 healthy mild, 2 healthy freezing, 4 post-retrofit; splits.json, sha256 0f6990ce…). Common warm reference baseline: 2018-10-01 to 2018-11-11 (also the unlabelled noise pool)."
-  exam: "Three real full-scale bridge exams, opened once: (A) 49 held-out KW51 weekly blocks (10 healthy mild, 10 healthy freezing, 18 during-retrofit scaffolding, 11 post-retrofit); (B) Concrete Box-Girder Bridge (16 blocks, 2 modes, zero-shot); (C) Hell Bridge Test Arena (45 shaker/ambient recordings across held-out UDS and imposed damage DS1-DS8, 7 modes, zero-shot)."
+  exam: "Three real full-scale bridge exams, opened once: (A) 49 held-out KW51 weekly blocks (10 healthy mild, 10 healthy freezing, 18 during-retrofit scaffolding, 11 post-retrofit); (B) Concrete Box-Girder Bridge (16 blocks, 2 modes, zero-shot); (C) Hell Bridge Test Arena (45 shaker/ambient recordings across held-out UDS and imposed damage DS1-DS8, 8 modes picked from the 5 UDS *_01 reference recordings only, zero-shot)."
 
 exam:
   short: "3 full-scale bridges: KW51 (49 wk), Concrete Box-Girder (0-shot), HBTA damage (0-shot)"
   summary: >-
-    Graded once across 110 real monitoring blocks/recordings on three full-scale bridges beside per-mode Linear Thermal
-    OLS, a KW51-dev-tuned Bilinear Freezing + RMS z-score baseline, and a dumb baseline.
+    Graded once (v1.1, 27 Nov 2026; run record training/logs/v1_1/exam_run.json) across 110 real monitoring
+    blocks/recordings on three full-scale bridges beside per-mode Linear Thermal OLS, a KW51-dev-tuned Bilinear
+    Freezing + RMS z-score baseline, and dumb baselines. Same tally as v1.0 (3 wins, 6 losses, 1 tie); no verdict
+    flipped. Raw results in training/logs/v1_1/exam.json.
   results:
     - metric: "KW51 Exam A: Structural-change detection ROC-AUC (49 held-out weeks)"
       better: higher
@@ -81,56 +84,57 @@ exam:
         - { name: "Linear thermal OLS + RMS z", kind: classical, value: 1.000 }
         - { name: "Raw frequency shift (dumb)", kind: dumb, value: 0.966 }
       verdict: tie
-      note: "95% CI [1.000, 1.000]. All three physics-aware methods separate the 20 healthy weeks (incl. 10 freezing) from the 29 during/post-retrofit weeks cleanly."
+      note: "95% CI [1.000, 1.000]. All three physics-aware methods separate the 20 healthy weeks (incl. 10 freezing) from the 29 during/post-retrofit weeks cleanly. v1.0: 1.000, tie."
     - metric: "KW51 Exam A: Detection Brier score (49 held-out weeks)"
       better: lower
       model: 0.0000
       baselines:
-        - { name: "Dev-tuned bilinear freezing + RMS z", kind: classical, value: 0.0016 }
+        - { name: "Dev-tuned bilinear freezing + RMS z", kind: classical, value: 0.0017 }
         - { name: "Linear thermal OLS + RMS z", kind: classical, value: 0.0019 }
         - { name: "Dev prevalence (0.40)", kind: dumb, value: 0.2784 }
       verdict: win
-      note: "0/10 freezing false alarms (mean P = 0.004); during-retrofit mean P = 0.999; post-retrofit mean P = 0.997."
+      note: "0/10 freezing false alarms (mean P = 0.003); during- and post-retrofit mean P = 1.000. The margin is small in absolute terms (bilinear 0.0017). v1.0: 0.0000, win."
     - metric: "KW51 Exam A: Healthy dK/K MAE, 20 weeks incl. 10 freezing (%)"
       better: lower
-      model: 0.019
+      model: 0.051
       unit: "%"
       baselines:
-        - { name: "Dev-tuned bilinear freezing", kind: classical, value: 0.188 }
-        - { name: "Linear thermal OLS", kind: classical, value: 0.189 }
+        - { name: "Dev-tuned bilinear freezing", kind: classical, value: 0.189 }
+        - { name: "Linear thermal OLS", kind: classical, value: 0.190 }
         - { name: "Dev median guess (0 % shift)", kind: dumb, value: 0.000 }
         - { name: "Raw uncompensated 2*df/f", kind: dumb, value: 0.217 }
       verdict: loss
-      note: "On healthy weeks the truth is 0 % by construction, so the dev-median guess (0 % shift) is exact and the row is a loss under the contract. As a false-shift measure, BridgeSense's 0.019 % is 10x below both classical thermal regressions (0.19 %). Changed from win on 25 Nov 2026 review: the card first used raw 2*df/f as the dumb baseline."
+      note: "Truth is 0 % by construction, so the 0 % guess is exact and the row is a loss. As a false-shift measure BridgeSense is 3.7x below both classical regressions (largest single-week error 0.08 %). v1.0: 0.019 %, loss."
     - metric: "KW51 Exam A: Post-retrofit dK/K MAE vs matched-T truth +1.17% (11 weeks)"
       better: lower
-      model: 0.169
+      model: 0.199
       unit: "%"
       baselines:
-        - { name: "Linear thermal OLS", kind: classical, value: 0.072 }
+        - { name: "Linear thermal OLS", kind: classical, value: 0.073 }
         - { name: "Dev-tuned bilinear freezing", kind: classical, value: 0.075 }
         - { name: "Zero shift (dumb)", kind: dumb, value: 1.170 }
       verdict: loss
-      note: "Mean prediction +1.13% vs +1.17% truth (OLS +1.10%); removing the output anchor traded 0.10 pp of matched-T precision for freeze robustness."
+      note: "Mean prediction +1.06 % vs +1.17 % truth (OLS +1.10 %). The truth is itself a linear-temperature OLS fit on the exam blocks, the same method as the OLS baseline. v1.0: 0.169 %, loss."
     - metric: "Concrete Box-Girder Exam B (0-shot, 2 modes): Healthy winter freeze dK/K MAE (%, Tmin -7.9 C)"
       better: lower
-      model: 0.881
+      model: 1.538
       unit: "%"
       baselines:
         - { name: "Dev median guess (0 % shift)", kind: dumb, value: 0.000 }
         - { name: "Raw uncompensated 2*df/f", kind: dumb, value: 4.068 }
-        - { name: "Dev-tuned bilinear freezing (KW51 dev)", kind: classical, value: 6.246 }
-        - { name: "Linear thermal OLS", kind: classical, value: 6.372 }
+        - { name: "Dev-tuned bilinear freezing (KW51 dev)", kind: classical, value: 6.264 }
+        - { name: "Linear thermal OLS", kind: classical, value: 6.369 }
       verdict: loss
-      note: "Healthy weeks, truth 0 % by construction: the dev-median guess is exact, so the row is a loss under the contract (changed from win on 25 Nov 2026 review). Against the classical methods BridgeSense's error is 7x lower. Its four freezing blocks read -0.01 %, +0.01 %, -1.57 % and +1.94 % (mean |error| 0.88 %); OLS read +9.51 % and +6.31 % on the two coldest weeks. n = 4."
+      note: "Truth 0 %, so the 0 % guess is exact: loss. The four freezing blocks read -1.71 %, -0.53 %, -0.96 % and +2.95 % (OLS +9.50 % and +6.31 % on the two coldest). 4.1x below the classical methods, but worse than v1.0 (0.881 %). n = 4."
     - metric: "Concrete Box-Girder Exam B (0-shot): Cold healthy vs 680-2,160 kg static load AUC (16 blocks)"
       better: higher
-      model: 0.729
+      model: 0.771
       baselines:
         - { name: "Linear thermal OLS + RMS z", kind: classical, value: 0.146 }
         - { name: "Dev-tuned bilinear freezing + RMS z", kind: classical, value: 0.146 }
+        - { name: "Raw frequency shift (dumb)", kind: dumb, value: 0.063 }
       verdict: win
-      note: "Classical baselines invert the ranking (AUC 0.146) because January freezing spikes look larger to OLS than the spring sand-bag loads."
+      note: "95% CI [0.33, 1.00]; only 4 negatives. Classical baselines invert the ranking because January freezing shifts look larger to OLS than the spring sand-bag loads. v1.0: 0.729, win."
     - metric: "Concrete Box-Girder Exam B (0-shot): Healthy freezing false-alarm rate at P >= 0.5 (4 blocks)"
       better: lower
       model: 0.50
@@ -138,55 +142,56 @@ exam:
         - { name: "Dev-tuned bilinear freezing", kind: classical, value: 0.00 }
         - { name: "Linear thermal OLS", kind: classical, value: 0.25 }
       verdict: loss
-      note: "Mean P = 0.469 across the 4 freezing concrete blocks (2/4 flagged). Ranking is strong (AUC 0.729), but the KW51-calibrated probability threshold sits too tight for extreme concrete freezing."
-    - metric: "HBTA Exam C (0-shot, 7 modes): Global primary-structure damage AUC (DS5-DS8 vs UDS, n=25)"
+      note: "Mean P = 0.583 across the 4 freezing concrete blocks (2/4 flagged: P = 1.00 at -3.0 C and 0.78 at -3.7 C). v1.0: 0.50 (mean P 0.469), loss."
+    - metric: "HBTA Exam C (0-shot, 8 modes): Global primary-structure damage AUC (DS5-DS8 vs UDS, n=25)"
       better: higher
-      model: 0.800
+      model: 0.870
       baselines:
-        - { name: "Raw frequency shift (dumb)", kind: dumb, value: 0.760 }
-        - { name: "Linear thermal OLS + RMS z", kind: classical, value: 0.690 }
-        - { name: "Dev-tuned bilinear freezing + RMS z", kind: classical, value: 0.690 }
+        - { name: "Raw frequency shift (dumb)", kind: dumb, value: 0.840 }
+        - { name: "Linear thermal OLS + RMS z", kind: classical, value: 0.720 }
+        - { name: "Dev-tuned bilinear freezing + RMS z", kind: classical, value: 0.720 }
       verdict: win
-      note: "95% CI [0.500, 1.000]; 5 undamaged recordings, so the interval reaches 0.5. Reads DS5, DS7, DS8 at P >= 0.998 with negative dK/K (-2.0% to -3.0%)."
-    - metric: "HBTA Exam C (0-shot, 7 modes): All imposed damage AUC (DS1-DS8 vs UDS, n=45)"
+      note: "95% CI [0.71, 1.00]; 5 undamaged recordings, and the margin over the raw shift (0.03) is far inside the interval. DS5 and DS7 read mean P >= 0.98 with dK/K -2.3 %; DS6 is missed (mean P 0.36). v1.0 (7 bands chosen with the held-out controls): 0.800, win."
+    - metric: "HBTA Exam C (0-shot, 8 modes): All imposed damage AUC (DS1-DS8 vs UDS, n=45)"
       better: higher
-      model: 0.595
+      model: 0.720
       baselines:
-        - { name: "Raw frequency shift (dumb)", kind: dumb, value: 0.665 }
-        - { name: "Linear thermal OLS + RMS z", kind: classical, value: 0.645 }
-        - { name: "Dev-tuned bilinear freezing + RMS z", kind: classical, value: 0.645 }
+        - { name: "Raw frequency shift (dumb)", kind: dumb, value: 0.795 }
+        - { name: "Linear thermal OLS + RMS z", kind: classical, value: 0.655 }
+        - { name: "Dev-tuned bilinear freezing + RMS z", kind: classical, value: 0.655 }
       verdict: loss
-      note: "95% CI [0.341, 0.849]. Secondary local stringer/cross-beam cracks (DS1-DS2) barely move global truss frequencies (< 0.4%), and HBTA's short 10-min shaker tests lack baseline temperature spread."
-    - metric: "HBTA Exam C (0-shot, 7 modes): dK/K MAE across all 45 recordings (%)"
+      note: "95% CI [0.55, 0.88]. The raw shift wins: HBTA's 10-min shaker tests have almost no temperature spread, so thermal compensation has nothing to remove. DS1-DS2 stringer/cross-beam cracks barely move global frequencies (mean P 0.23 and 0.40). v1.0: 0.595, loss."
+    - metric: "HBTA Exam C (0-shot, 8 modes): dK/K MAE across all 45 recordings (%)"
       better: lower
-      model: 0.880
+      model: 0.720
       unit: "%"
       baselines:
-        - { name: "Linear thermal OLS", kind: classical, value: 0.824 }
-        - { name: "Dev-tuned bilinear freezing", kind: classical, value: 0.824 }
-        - { name: "Zero shift (dumb)", kind: dumb, value: 1.045 }
+        - { name: "Raw uncompensated 2*df/f", kind: dumb, value: 0.473 }
+        - { name: "Linear thermal OLS", kind: classical, value: 0.888 }
+        - { name: "Dev-tuned bilinear freezing", kind: classical, value: 0.888 }
+        - { name: "Zero shift (dumb)", kind: dumb, value: 1.104 }
       verdict: loss
-      note: "95% CI [0.676, 1.091]. Beats zero shift but trails OLS by 0.06 pp due to high-excitation shaker vs ambient variance."
+      note: "95% CI [0.57, 0.91]. Beats OLS and zero shift but loses to the raw shift. The truth is itself the measured frequency shift against the UDS reference, so the raw shift is close to the truth by construction. v1.0 listed only OLS and zero shift (0.880 % vs OLS 0.824 %, loss); with that list v1.1 would read as a win, so the raw-shift baseline is added rather than flipping the verdict."
   coverage:
-    - { output: "dK/K on KW51 Exam A (n=31, dev-widened x1.00, mean sigma 0.22%)", actual: 97 }
+    - { output: "dK/K on KW51 Exam A (n=31, dev-widened x1.00, mean sigma 0.24%)", actual: 97 }
     - { output: "dK/K on Concrete Box-Girder Exam B healthy (n=4, 0-shot)", actual: 50 }
-    - { output: "dK/K on HBTA Exam C (n=45, 0-shot, mean sigma 0.49%)", actual: 33 }
+    - { output: "dK/K on HBTA Exam C (n=45, 0-shot, mean sigma 0.74%)", actual: 62 }
 
 wins:
-  - "Zero-shot on a 2-mode prestressed concrete box-girder bridge: cold-healthy vs static-load AUC 0.729 against 0.146 for both classical baselines (16 blocks, 4 negatives)."
-  - "On 49 held-out KW51 weeks: Brier 0.0000 against 0.0016 and 0.0019, with 0/10 freezing false alarms. The detection task itself is easy: AUC is 1.000 for both classical baselines too, and every rung scored dev AUC 1.0."
-  - "Zero-shot global primary-structure damage detection on the 1905 Hell Bridge Test Arena truss (DS5-DS8 vs UDS): AUC 0.800 vs 0.690 for classical baselines."
-  - "Removing baseline-to-query thermal cross-attention (r2_no_xattn) raised the mean false-alarm probability on KW51's 2 freezing dev blocks from 0.002 to 0.456 (n = 2)."
+  - "Zero-shot on a 2-mode prestressed concrete box-girder bridge: cold-healthy vs static-load AUC 0.771 against 0.146 for both classical baselines (16 blocks, 4 negatives)."
+  - "On 49 held-out KW51 weeks: Brier 0.0000 against 0.0017 and 0.0019, with 0/10 freezing false alarms. The detection task itself is easy: AUC is 1.000 for both classical baselines too, and every rung scored dev AUC 1.0."
+  - "Zero-shot global primary-structure damage detection on the 1905 Hell Bridge Test Arena truss (DS5-DS8 vs UDS): AUC 0.870 vs 0.840 for the raw shift and 0.720 for classical baselines (5 negatives)."
 
 losses:
-  - "Healthy dK/K error rows on KW51 (0.019 %) and the concrete box girder (0.88 %): the dev-median guess of 0 % shift is exact on healthy weeks, so both are losses under the contract, though BridgeSense beats both classical methods on them."
-  - "Secondary local damage on HBTA (DS1-DS2 stringer/cross-beam cracks) barely shifts global modal frequencies; all-damage HBTA AUC (0.595) loses to OLS (0.645) and raw shift (0.665), and dK/K MAE (0.880%) trails OLS (0.824%)."
-  - "Probability calibration does not transfer zero-shot to extreme concrete freezing (2/4 freezing concrete blocks flagged at P >= 0.5) or short constant-temperature shaker campaigns (HBTA UDS replicates flagged at mean P = 0.825)."
-  - "Zero-shot 68% error-bar coverage drops to 50% on Concrete Box-Girder and 33% on HBTA because dev widening (x1.00) was fitted on KW51 alone."
-  - "Post-retrofit dK/K MAE on KW51 (0.169%) trails matched-temperature Linear OLS (0.072%) because the winning rung dropped the linear output anchor."
+  - "Healthy dK/K error rows on KW51 (0.051 %) and the concrete box girder (1.54 %): the dev-median guess of 0 % shift is exact on healthy weeks, so both are losses, though BridgeSense is 3.7-4.1x below both classical methods on them."
+  - "HBTA: the raw uncompensated frequency shift beats BridgeSense on all-damage AUC (0.795 vs 0.720) and on dK/K MAE (0.473 % vs 0.720 %). With no temperature spread to compensate, the thermal machinery adds error."
+  - "Probability calibration does not transfer zero-shot to extreme concrete freezing (2/4 freezing concrete blocks flagged at P >= 0.5)."
+  - "Zero-shot 68% error-bar coverage is 50% on Concrete Box-Girder and 62% on HBTA because dev widening (x1.00) was fitted on KW51 alone."
+  - "Post-retrofit dK/K MAE on KW51 (0.199%) trails matched-temperature Linear OLS (0.073%)."
 
 limits:
-  - "Needs a baseline window spanning at least several degrees of real temperature variation; on short constant-temperature shaker campaigns (HBTA), the thermal cross-attention has no baseline temperature gradient to anchor against."
+  - "Needs a baseline window spanning at least several degrees of real temperature variation; on short constant-temperature shaker campaigns (HBTA) the raw frequency shift does better."
+  - "The KW51 dev gate is noisy: three r6 seed replicates differ only in seed yet scored dev dK/K MAE 0.10 %, 0.23 % and 0.42 % (10 blocks), so single-run gate decisions near the limit are partly luck."
   - "Global natural frequencies are insensitive to local secondary-member cracks (HBTA DS1-DS2) until stiffness loss reaches ~1-2% of modal strain energy; mode shapes (MAC) or local strain gauges are needed for early local cracks."
   - "Does not separate added operational mass (+dM) from uniform stiffness loss (-dK) without mode-shape or traffic-load inputs; both read as negative effective dK/K."
   - "Cannot replace licensed bridge engineering inspection; trained on 2-D simplified FEMs without 3-D torsion-warping or scour soil-structure interaction."
@@ -198,7 +203,8 @@ help_wanted:
 next:
   - "Include zero-temperature-range (short shaker-campaign) episodes in the simulator so the network learns to widen uncertainty and avoid false alarms when baseline temperature spread is < 2 C (the exact HBTA UDS failure mode)."
   - "Add mode-shape Modal Assurance Criterion (MAC) vectors as an optional per-mode token channel to catch local secondary-member cracks (HBTA DS1-DS4) that barely move scalar frequencies."
-  - "Fit a soft-gated physics anchor (using the OLS anchor only when T_q stays inside the baseline temperature range, and switching to the Transformer under cold extrapolation) to keep OLS's 0.07% matched-T retrofit precision alongside BridgeSense's 7x freezing win."
+  - "Fit a soft-gated physics anchor (using the OLS anchor only when T_q stays inside the baseline temperature range, and switching to the Transformer under cold extrapolation) to keep OLS's 0.07% matched-T retrofit precision alongside BridgeSense's freezing robustness."
+  - "Score the dev gate on several seeds (or a larger dev set) so that seed noise of 0.1-0.4 pp in dev dK/K MAE does not decide rungs."
 
 usage:
   install: pip install numpy

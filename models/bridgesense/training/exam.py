@@ -142,6 +142,13 @@ def run_exam() -> dict:
     import datetime
     import subprocess
     started = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
+    # Record the code state BEFORE this script writes its own outputs into the tracked logs folder.
+    # (The v1.1 run, 2026-11-27, checked after writing exam.json, so its record says dirty=true.)
+    try:
+        commit = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=MODEL).stdout.strip()
+        dirty = bool(subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True, cwd=MODEL).stdout.strip())
+    except OSError:
+        commit, dirty = "unknown", None
     weights = os.path.join(MODEL, "bridgesense_weights.npz")
     model = BridgeSense()
     dev_blocks = load_kw51_dev_blocks()
@@ -259,7 +266,7 @@ def run_exam() -> dict:
 
     # Exam C: Hell Bridge Test Arena (100% zero-shot imposed physical damage)
     hbta_eps = load_hbta_exam_episodes()
-    print(f"\n=== EXAM C: HELL BRIDGE TEST ARENA ZERO-SHOT ({len(hbta_eps)} recordings, 7 modes, DS1-DS8) ===")
+    print(f"\n=== EXAM C: HELL BRIDGE TEST ARENA ZERO-SHOT ({len(hbta_eps)} recordings, {hbta_eps[0]['df_q'].shape[1]} mode slots, DS1-DS8) ===")
     exam_c = eval_suite(hbta_eps, lambda ep: ep["true_dk_pct"])
     # Also compute Global Damage (DS5-DS8 vs UDS) specifically
     hbta_glob = [ep for ep in hbta_eps if ep["stratum"] in ("undamaged", "global_damage")]
@@ -280,11 +287,6 @@ def run_exam() -> dict:
     with open(dst, "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2)
     _write_json(os.path.join(LOG_DIR, "exam.json"), out, indent=1)
-    try:
-        commit = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=MODEL).stdout.strip()
-        dirty = bool(subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True, cwd=MODEL).stdout.strip())
-    except OSError:
-        commit, dirty = "unknown", None
     _write_json(RUN_RECORD, {
         "model": "bridgesense",
         "version": model.meta.get("version"),

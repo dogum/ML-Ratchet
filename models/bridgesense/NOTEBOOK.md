@@ -59,3 +59,85 @@ Open, and not fixable from this repository (the data and work/ folder are where 
   margin. The r6 seed runs are not logged, so whether r6 was picked among seeds is unknown.
 - The post-retrofit truth (+1.17 %) comes from an OLS fit on the exam blocks themselves.
 - The KW51 detection task is easy (all methods AUC 1.000); HBTA and the box girder have 4-5 negatives each.
+
+## 2026-11-27 — v1.1: four bugs fixed, retrained, exam re-run once
+
+The 25 Nov review held the merge for four bugs (Codex, PR #14) and for the missing raw logs. The owner chose to fix,
+retrain and re-examine as v1.1. The v1.0 entries above stay as written.
+
+### The bugs (all fixed, each with a test that fails on the v1.0 code)
+1. **Thermal fit without an intercept.** The per-mode OLS centred temperature on the whole reference window, not on
+   the mode's own valid readings. With dropouts the slope was biased. Test case: reference 0–31 °C, last 16 readings
+   valid, true slope −0.001/K. v1.0 fitted −0.000249/K and gave a healthy 5 °C query a +2.78 % anchor; v1.1 fits
+   −0.001/K and 0.00 %. This sat in the anchor features, both classical baselines, the twin test and all banks.
+2. **HBTA bands chosen with the exam's controls.** v1.0 picked modal bands from all ten UDS recordings, including the
+   five `_02` controls graded in Exam C. v1.1 uses the five `_01` references only and freezes the result in
+   `training/hbta_bands.json`: **8 bands** (3.125, 7.227, 8.057, 9.399, 10.669, 12.817, 15.015, 18.286 Hz), against
+   v1.0's 7 (a new band at 8.06 Hz; 7.300 → 7.227, 10.718 → 10.669 and 18.262 → 18.286 Hz).
+3. **Reference-less modes in the global features.** A mode seen in the query but never in the reference had a zero
+   fit and still entered the global anchor and z-scores (test: one such mode with a 5 % query shift gave a +5 %
+   anchor). Global summaries, baselines and the twin test now use the mode-mask rule (≥ 3 reference, ≥ 2 query).
+4. **Ensemble export kept one config.** `export.py` stored only the last member's config, so an anchored member lost
+   its anchor, and parity was checked after overwriting the weights. Configs are now per member, and the parity check
+   runs on a candidate file before it replaces the release.
+
+Also changed: each rung's checkpoint is chosen on its own selection bank (`sel1`/`sel2`/`sel3`, seeds 201–203), not on
+`val3`, which judges the ladder; `ratchet.py` refuses a rung selected on its judging set. The r6 seed replicates are
+logged rungs. All logs are committed in `training/logs/v1_1/`.
+
+### Data and compute
+All four Zenodo records and NASA POWER were reachable (one transient HTTP 500 from the Zenodo API, fine on retry).
+Banks take about 20 s per 2,000 episodes on 4 processes. Each rung trains 4,500 steps in about 10 minutes on one CPU
+thread; the ten runs took about 30 minutes wall clock in two parallel batches.
+
+### Twin test and ladder
+- `cal_p3`: global drift 0.113 %, per-mode 0.219 % (v1.0: 0.115 %, 0.222 %). Small change.
+- `r2` now fires on one freezing dev week (`kw51_b13`, −1.5 °C, P = 0.91; dev Brier 0.085). In v1.0, `r2` scored dev
+  Brier 0.000.
+- **The cross-attention ablation reversed.** v1.0: removing cross-attention raised freezing-week P from 0.002 to 0.456.
+  v1.1: `r2_no_xattn` scored dev Brier 0.000 (freezing P 0.004) and `r2` is the one with the false alarm. n = 2
+  freezing dev weeks both times. The claim is withdrawn from the card and the site.
+- **The dev gate is noisy.** `r6_mix_no_anchor`, `r6_s2` and `r6_s3` differ only in seed. Dev dK/K MAE: 0.416 %,
+  0.234 %, 0.097 %. On `val3` they scored 0.8899, 0.8897, 0.8838.
+- Ladder on `val3`: r1 0.3057 kept; r2 0.8176 kept; r2_no_xattn 0.8049 rejected; r3 0.8717 and r4_mix 0.8786 rejected
+  (dev gate); r5_no_anchor 0.8785 kept; r6 0.8899 and r6_s2 0.8897 rejected (dev gate); r6_s3 0.8838 rejected (+0.005);
+  **r7_ens3 (r4_mix + r6_s2 + r6_s3) 0.8924 released (+0.014; dev dK/K MAE 0.147 % against a 0.149 % limit).**
+  This is the mixed-config ensemble that bug 4 used to break. Exported parity: 1.4e-6.
+- Calibration: `widen_dk` 1.00, `widen_env` 1.70 (v1.0 2.34), `prob_temp` 1.00.
+
+### Exam, opened once (27 Nov 2026, 16:29 UTC, commit 6ebd021)
+The run record `exam_run.json` says `git_worktree_dirty: true`. That flag was taken after `exam.py` had written its own
+`exam.json` into the tracked logs folder; `git status` just before the run showed no changes. `exam.py` now takes the
+flag before writing anything. The record is left as written.
+
+| Row | v1.0 | v1.1 | Best baseline (v1.1) | Verdict v1.0 → v1.1 |
+|---|---:|---:|---|---|
+| A. KW51 detection AUC | 1.000 | 1.000 | all 1.000 | tie → tie |
+| A. KW51 Brier | 0.0000 | 0.0000 | bilinear 0.0017 | win → win |
+| A. KW51 healthy dK/K MAE | 0.019 % | 0.051 % | 0 % guess 0.000 % | loss → loss |
+| A. KW51 post-retrofit dK/K MAE | 0.169 % | 0.199 % | OLS 0.073 % | loss → loss |
+| B. Box-girder freeze dK/K MAE | 0.881 % | 1.538 % | 0 % guess 0.000 % | loss → loss |
+| B. Box-girder cold vs load AUC | 0.729 | 0.771 | classical 0.146 | win → win |
+| B. Box-girder freezing FAR | 0.50 | 0.50 | bilinear 0.00 | loss → loss |
+| C. HBTA global damage AUC | 0.800 | 0.870 | raw shift 0.840 | win → win |
+| C. HBTA all damage AUC | 0.595 | 0.720 | raw shift 0.795 | loss → loss |
+| C. HBTA dK/K MAE | 0.880 % | 0.720 % | raw shift 0.473 % | loss → loss |
+
+**Tally unchanged: 3 wins, 6 losses, 1 tie. No verdict flipped.** One row nearly did. On HBTA dK/K MAE v1.1 beats OLS
+(0.720 % vs 0.888 %) and zero shift (1.104 %), the only baselines v1.0 listed there, so with v1.0's list it would read
+as a win. The raw 2·df/f shift, which the card already uses as a dumb baseline on other rows, scores 0.473 %, and the
+HBTA truth is itself the measured shift. The row stays a loss, and the raw shift is now listed.
+
+What got worse: KW51 healthy false shift (0.019 → 0.051 %), box-girder freezing error (0.88 → 1.54 %; blocks −1.71,
+−0.53, −0.96, +2.95 %), KW51 post-retrofit error (0.169 → 0.199 %). What got better: box-girder AUC (0.729 → 0.771),
+all three HBTA rows, HBTA undamaged-control mean P (0.825 → 0.276), HBTA 68 % coverage (33 % → 62 %). The HBTA changes
+mix three causes we cannot separate: the bug-2 bands, the bug-1/3 feature fixes, and a different released model.
+
+### Browser instrument
+`net.ts` now runs every ensemble member with its own config and combines them as `bridgesense.py` does; the browser
+weights are 1.0 MB (was 350 KB). 24 parity cases, worst relative difference 1.15e-6.
+
+### Still open
+- The post-retrofit truth (+1.17 %) is an OLS fit on the exam blocks, the same method as the OLS baseline.
+- KW51 detection is easy (every method AUC 1.000); box girder and HBTA have 4–5 negatives each.
+- The dev gate needs more seeds or more blocks to be trusted near its limits.

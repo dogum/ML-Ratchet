@@ -401,16 +401,69 @@ export function extractFeatures(
   return { x_ref, x_q, x_mode, m_mask, active, g_feat, anchor_dk_pct, anchor_env_pct, mode_anchor };
 }
 
+type Features = ReturnType<typeof extractFeatures>;
+interface MemberOut { logit: number; dk_mu: number; dk_sig: number; env_mu: number; env_sig: number; mode_dk: Float32Array }
+
+// Ensemble members are stored as "m{k}.<name>"; a single-member pack may use bare names.
+const memberCache = new WeakMap<object, Pack<BSMeta>['t'][]>();
+function members(pack: Pack<BSMeta>): Pack<BSMeta>['t'][] {
+  let ms = memberCache.get(pack);
+  if (ms) return ms;
+  const n = pack.meta.n_members || 1;
+  if (!('m0.t_in.weight' in pack.t)) {
+    if (n !== 1) throw new Error(`bridgesense: ${n} members but no m0.* tensors`);
+    ms = [pack.t];
+  } else {
+    ms = [];
+    for (let k = 0; k < n; k++) {
+      const pre = `m${k}.`;
+      const W: Pack<BSMeta>['t'] = {};
+      for (const name in pack.t) if (name.startsWith(pre)) W[name.slice(pre.length)] = pack.t[name];
+      ms.push(W);
+    }
+  }
+  memberCache.set(pack, ms);
+  return ms;
+}
+
 export function predict(
   pack: Pack<BSMeta>,
   T_ref: Float32Array, T_q: Float32Array,
   df_ref: Float32Array, df_q: Float32Array,
   mask_ref: Float32Array, mask_q: Float32Array,
 ): BSReading {
-  const W = pack.t;
   const meta = pack.meta;
-  const { d_model: D, n_heads: nH, d_ff: dFF, n_t_layers: nT, n_m_layers: nM, use_cross_attn: useCross, use_anchor: useAnc } = meta.configs?.[0] ?? meta.config;
   const f = extractFeatures(T_ref, T_q, df_ref, df_q, mask_ref, mask_q);
+  const Ws = members(pack);
+  // Each member runs with its own config (bridgesense.py does the same)
+  const outs = Ws.map((W, k) => forwardOne(W, meta.configs?.[k] ?? meta.config, f));
+  const n = outs.length;
+  const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const pvar = (xs: number[]) => { const m = mean(xs); return mean(xs.map((x) => (x - m) * (x - m))); };
+  const logit_raw = mean(outs.map((o) => o.logit));
+  const dks = outs.map((o) => o.dk_mu);
+  const envs = outs.map((o) => o.env_mu);
+  const dk_sig_raw = Math.sqrt(mean(outs.map((o) => o.dk_sig * o.dk_sig)) + pvar(dks));
+  const env_sig_raw = Math.sqrt(mean(outs.map((o) => o.env_sig * o.env_sig)) + pvar(envs));
+  const mode_dk_pct = new Float32Array(MAX_MODES);
+  for (const o of outs) for (let m = 0; m < MAX_MODES; m++) mode_dk_pct[m] += o.mode_dk[m] / n;
+
+  return {
+    logit_raw,
+    p_change: sigmoid(clip(logit_raw / (meta.prob_temp || 1), -30, 30)),
+    delta_k_pct: mean(dks),
+    delta_k_sigma: dk_sig_raw * (meta.widen_dk || 1),
+    thermal_shift_pct: mean(envs),
+    thermal_shift_sigma: env_sig_raw * (meta.widen_env || 1),
+    anchor_dk_pct: f.anchor_dk_pct,
+    anchor_env_pct: f.anchor_env_pct,
+    mode_dk_pct,
+    active_modes: f.active,
+  };
+}
+
+function forwardOne(W: Pack<BSMeta>['t'], cfg: BSConfig, f: Features): MemberOut {
+  const { d_model: D, n_heads: nH, d_ff: dFF, n_t_layers: nT, n_m_layers: nM, use_cross_attn: useCross, use_anchor: useAnc } = cfg;
 
   // 1. Temporal cross-attention
   const hRef = geluInplace(linearRows(f.x_ref, N_STEPS, 10, W['t_in.weight'].data, W['t_in.bias'].data, D));
@@ -497,22 +550,12 @@ export function predict(
   const f2 = geluInplace(linearRows(f1, 1, D * 2, W['fuse2.weight'].data, W['fuse2.bias'].data, D));
   const out = linearRows(f2, 1, D, W['head.weight'].data, W['head.bias'].data, 5);
 
-  const logit_raw = out[0];
-  const delta_k_pct = useAnc ? f.anchor_dk_pct + out[1] : out[1];
-  const dk_sig_raw = Math.exp(clip(out[2], -2.5, 3.5));
-  const thermal_shift_pct = useAnc ? f.anchor_env_pct + out[3] : out[3];
-  const env_sig_raw = Math.exp(clip(out[4], -3.0, 3.0));
-
   return {
-    logit_raw,
-    p_change: sigmoid(clip(logit_raw / (meta.prob_temp || 1), -30, 30)),
-    delta_k_pct,
-    delta_k_sigma: dk_sig_raw * (meta.widen_dk || 1),
-    thermal_shift_pct,
-    thermal_shift_sigma: env_sig_raw * (meta.widen_env || 1),
-    anchor_dk_pct: f.anchor_dk_pct,
-    anchor_env_pct: f.anchor_env_pct,
-    mode_dk_pct,
-    active_modes: f.active,
+    logit: out[0],
+    dk_mu: useAnc ? f.anchor_dk_pct + out[1] : out[1],
+    dk_sig: Math.exp(clip(out[2], -2.5, 3.5)),
+    env_mu: useAnc ? f.anchor_env_pct + out[3] : out[3],
+    env_sig: Math.exp(clip(out[4], -3.0, 3.0)),
+    mode_dk: mode_dk_pct,
   };
 }

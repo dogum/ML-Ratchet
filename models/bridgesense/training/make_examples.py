@@ -28,7 +28,7 @@ def main() -> None:
     # Concrete Box-Girder (2 modes, concrete + asphalt freeze-thaw & static load)
     selected += _pick([e for e in bg_eps if e["stratum"] == "healthy_freezing"], 2)
     selected += _pick([e for e in bg_eps if e["stratum"] == "static_load"], 2)
-    # Hell Bridge Test Arena (7 global truss modes, undamaged & imposed physical damage)
+    # Hell Bridge Test Arena (8 global truss modes, undamaged & imposed physical damage)
     selected += _pick([e for e in hbta_eps if e["stratum"] == "undamaged"], 1)
     selected += _pick([e for e in hbta_eps if e["stratum"] == "local_damage"], 1)
     selected += _pick([e for e in hbta_eps if e["stratum"] == "global_damage"], 2)
@@ -55,7 +55,7 @@ def main() -> None:
                 truth_label = f"Static load +{ep['added_mass_kg']} kg ({ep['start']})"
                 true_dk = None
         else:
-            bridge_label = "Hell Bridge Test Arena (Norway, 7 modes)"
+            bridge_label = "Hell Bridge Test Arena (Norway, 8 modes)"
             st = ep["state"]
             if st == "UDS":
                 truth_label = "Undamaged control (UDS, dK=0%)"
@@ -89,7 +89,7 @@ def main() -> None:
 Eight real exam windows drawn with fixed seed `20261124` within strata from two unseen full-scale bridges (zero training overlap, zero dev overlap):
 
 - **Concrete Box-Girder Bridge (4 blocks, 2 modes):** Koehncke et al. (2026), Zenodo [20522191](https://zenodo.org/records/20522191), **CC BY 4.0**, paired with NASA POWER hourly air temperature (2024).
-- **Hell Bridge Test Arena (4 recordings, 7 global truss modes):** Svendsen et al. (2025), Zenodo [14632942](https://zenodo.org/records/14632942), **CC BY 4.0**.
+- **Hell Bridge Test Arena (4 recordings, 8 global truss modes):** Svendsen et al. (2025), Zenodo [14632942](https://zenodo.org/records/14632942), **CC BY 4.0**.
 
 KW51 railway bridge (`CC BY-NC-SA 4.0`, Zenodo 3745914) is not redistributed here; `training/fetch_data.py` downloads it into git-ignored `work/` to reproduce Exam A.
 """

@@ -1,5 +1,5 @@
 // BridgeSense live instrument: 8 real zero-shot exam cases (Concrete Box-Girder + Hell Bridge Test Arena,
-// CC BY 4.0), the real 179k-param Dual-Axis Transformer running live in the browser, with honest physical
+// CC BY 4.0), the real 3-member (3 × 179k-param) Dual-Axis Transformer ensemble running live in the browser, with honest physical
 // controls (injected stiffness change, cold-snap temperature shift, added OMA frequency noise).
 import type { InstrumentContext } from '../types.ts';
 import { fetchPack } from '../../lib/nn/pack.ts';
@@ -26,7 +26,7 @@ export async function mount(ctx: InstrumentContext) {
   const ui = shell(ctx.root, {
     title: 'BridgeSense',
     subtitle: 'tracked modal frequencies & temperature — zero-shot real exam bridges (CC BY 4.0)',
-    params: '179k parameters · Dual-Axis Transformer · matches Python to <1e-6',
+    params: '3 × 179k parameters · Dual-Axis Transformer ensemble · matches Python to <1e-5',
   });
 
   const st = { i: 1, dkInject: 0, dT: 0, noisePct: 0, dropPct: 0, seed: 11 };
@@ -46,7 +46,7 @@ export async function mount(ctx: InstrumentContext) {
     ui.picker,
     ex.map((e, i) => ({
       label: SHORT[e.id] ?? e.id,
-      sub: `${e.bridge === 'boxgirder' ? 'Concrete · 2 modes' : 'Steel truss · 7 modes'} · Tmin ${e.T_min.toFixed(1)} °C`,
+      sub: `${e.bridge === 'boxgirder' ? 'Concrete · 2 modes' : 'Steel truss · 8 modes'} · Tmin ${e.T_min.toFixed(1)} °C`,
       value: i,
     })),
     (i) => { st.i = i; run(); },

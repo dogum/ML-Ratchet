@@ -1,0 +1,23 @@
+{
+  "model": "bridgesense",
+  "version": "1.1",
+  "started_utc": "2026-11-27T16:29:57+00:00",
+  "finished_utc": "2026-11-27T16:30:25+00:00",
+  "git_commit": "6ebd021d129208562c6f41ec7f53d8657a7a50de",
+  "git_worktree_dirty": true,
+  "weights_sha256": "e300404dfef4f9cf710ba0816183f0f88c881a7cf48fa279ab8854c8b11008f9",
+  "members": [
+    "r4_mix",
+    "r6_s2",
+    "r6_s3"
+  ],
+  "splits_sha256": "0f6990ceeca8237d0f504fd36d7518f90cd9e73695ce218afaf8faa622844bd0",
+  "hbta_bands_sha256": "35a715a2eac54f943b46e208f5e5161f259c9bea61a877bdd69e3c99760ad844",
+  "hbta_modes_sha256": "ff2685db47517336a098816045f7bc3f56786bd1abf650f8bca8a7441aa52e66",
+  "command": "python training/exam.py",
+  "n_blocks": {
+    "kw51": 49,
+    "boxgirder": 16,
+    "hbta": 45
+  }
+}

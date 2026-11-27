@@ -18,7 +18,7 @@ def main() -> None:
     meta = json.loads((HERE / "examples" / "examples.json").read_text(encoding="utf-8"))
     data = np.load(HERE / "examples" / "examples.npz")
 
-    print("BridgeSense v1.0 — zero-shot real exam cases (Concrete Box-Girder + Hell Bridge Test Arena)")
+    print(f"BridgeSense v{model.meta.get('version', '?')} — zero-shot real exam cases (Concrete Box-Girder + Hell Bridge Test Arena)")
     print(f"{'Case':22s} | {'Stratum':16s} | {'P(chg)':>6s} | {'BridgeSense dK/K':>16s} | {'OLS anc':>8s} | Truth")
     print("-" * 108)
     for ex in meta["examples"]:
