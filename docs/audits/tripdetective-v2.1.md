@@ -30,3 +30,14 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_759c345_pr
 ```
 
 Uses NumPy, SciPy, and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_759c345_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Missing bus power read as zero; leg kept in its bus-day | Yes | **Fixed** in `tripdetective.py`. NaN power now reaches `raw_from_log`, which marks it invalid. `network_leg` reads only 1,024 s windows that are at least 90 % valid (`MIN_VALID_FRAC`). A leg with no such window returns NaN and 0 windows, and `day()` skips it. | Packaged day, longest leg: all power missing or `valid = 0` now leaves the other 13 legs exactly as if the leg were omitted (was +238.83 / +281.14 kg each). 50 % missing: leg −100.79 kg, others ≤ 29.78 kg (was −789.56 / +142.12 kg). 75 %: −186.40 / ≤ 37.86 kg (was −1,005.37 / +180.97 kg). `tests/test_audit_vehicle.py`. |
+| Exam loader zero-fills power the same way (`busbank.py:169`) | Yes, no exam impact | **Fixed** (NaN passes through). | All 5,905 ZTBus exam legs scanned: 0 of 35,678,242 power samples missing (`hd.py` interpolates logged power onto the 1 Hz grid), so the published exam is unchanged. |
+| Car reader returns a confident car for all-NaN or all-zero speed | Yes | **Fixed**: `read_car` raises `ValueError` below 60 s of motion (`MIN_MOVING_S`). | Was 1,181.74 kg, `conv`. Test added. |
+| Car reader zero-fills missing grade, no backward interpolation | Not a defect | Not changed. It is causal (reads nothing ahead); a flat road is the neutral guess. | Audit's own replay: all-NaN and flat grade identical. |
+
+The golden demo output is unchanged. Weights, parity and ratchet replay were already clean.

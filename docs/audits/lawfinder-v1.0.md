@@ -22,3 +22,12 @@ python3 -B docs/audits/reviews/reviewer-a/lawfinder_v1_0_probe.py
 python3 -B docs/audits/reviews/reviewer-b/peer_73ee7e6_probe.py lawfinder
 python3 -B docs/audits/reviews/reviewer-b/lawfinder_bank_probe.py
 ```
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Road law's battery energy falls with grade for every BEV | Yes | **Documented, not refitted.** The released law is the search's output; changing it means a new search and a new exam. The card's limits now state the inversion with the audit's numbers, and `next` queues a sign-checked search (energy must not fall with net grade on the frozen set) or an EV evaluation among the six p2 candidates that already rise with grade. | `models/lawfinder/model.yaml` limits and next. |
+| Homes law extrapolates past 2020; grid laws chain below the nadir law's 90 GVA·s floor | Yes | **Fixed as a guardrail**: `Law.predict` warns when any input is outside its declared bank range (`var_info[..]['range']`); `strict=True` raises; `Law.out_of_range(**kw)` counts them. Exam code paths are unchanged (a warning, not a change of value). | Test added. One of the demo's own real grid-nadir events has a loss above the 2 GW range and now warns. |
+| BuildingSim's prepared-weather cache key omits wind | Yes (shared) | Fixed with the building platform (the cache lives in `shared/building/buildingsim/weather.py`). | See the building audit resolutions. |
+| (found here) `LawFinder()` opened its JSON with the platform default encoding | Yes | **Fixed**: `encoding='utf-8'`. On Windows (cp1252) the `°`, `⁻` and `·` in the law texts were mis-decoded. | — |

@@ -96,7 +96,10 @@ class TripContext:
                 n = b - a + 1
                 for j, q in enumerate(('Ppos', 'Pneg', 'v', 'stop')):
                     c = self.cs[q]
-                    out[4 * i + j] = (c[k + b + 1] - c[k + a]) / n
+                    # same bins as hybridpilot.TripContext.preview: power at t uses speed and grade at t + 1, so the
+                    # power bins sum t = k+a-1 .. k+b-1 (fixed 27 Nov 2026; the old bins read k+b+1)
+                    lo, hi = (k + a - 1, k + b) if q in ('Ppos', 'Pneg') else (k + a, k + b + 1)
+                    out[4 * i + j] = (c[hi] - c[lo]) / n
                 out[20 + i] = 1.0
         return out
 

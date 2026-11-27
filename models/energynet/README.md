@@ -173,6 +173,7 @@ The shared RoadSim simulator (shared/vehicle), physics v2 (pinned: roadsim-physi
 - EPA petrol city: the network still reads RoadSim's own dev twins 4.5% low on the FTP (0.8% on the highway); the remaining generator difference is not found.
 - Argonne D3 as a dev and exam set: RoadData now holds it (65 vehicles, 1,661 usable 10 Hz tests, split by vehicle), with more dev hybrids, plug-ins and BEVs than VED's 5 hybrids and 1 Leaf.
 - A dev score weighted per data set, or more networks, so a one-group fix is not judged mostly by seed noise in other groups.
+- Queued repair rung (audit, 25 Nov 2026): v2.1's input scaling is set by a few moving downhill trips whose net positive wheel work is about zero, so four work-share inputs (aero, rolling, downhill grade, inertia over Ep) vary by 0.00002-0.00005 sd on real trips and the networks ignore them (holding all four fixed moves predictions 0.0004 %). Retrain the 5 seeds with train.py --robust-norm --mask-comp on the same banks and judge on the dev gate; the exam stays closed.
 
 ## Files
 

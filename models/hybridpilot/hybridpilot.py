@@ -130,7 +130,11 @@ class TripContext:
             if L >= b:
                 n = b - a + 1
                 for j, q in enumerate(('Ppos', 'Pneg', 'v', 'stop')):
-                    c = self.cs[q]; out[4 * i + j] = (c[k + b + 1] - c[k + a]) / n
+                    c = self.cs[q]
+                    # Road power at second t uses speed and grade at t + 1, so the power bins sum the intervals
+                    # t = k+a-1 .. k+b-1 and never read past k+b (fixed 27 Nov 2026; before, bin ends read k+b+1).
+                    lo, hi = (k + a - 1, k + b) if q in ('Ppos', 'Pneg') else (k + a, k + b + 1)
+                    out[4 * i + j] = (c[hi] - c[lo]) / n
                 out[20 + i] = 1.0
         return out
 

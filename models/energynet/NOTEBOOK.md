@@ -462,3 +462,14 @@ Release: `weights/r15_s*.npz`, `sigma_factors.json`, examples' exam predictions 
 regenerated, live instrument re-exported (32 parity cases, worst 1.9e-7). The garage reference
 (`site/public/garage/reference.json`, written by `shared/vehicle/garage/export_garage.py`) still holds v2.0's EnergyNet
 outputs and must be re-exported for the site's garage test to pass.
+
+## 27 Nov 2026 — audit: crushed work-share inputs (training fix in code; repair rung queued)
+
+The two-reviewer audit (`docs/audits/energynet-v2.1.md`) found that v2.1's input scaling is set by a few simulated
+trips that move downhill with almost no positive wheel work, where aero, rolling, downhill-grade and inertia work divided
+by Ep reach 1e5-1e6. Rebuilt from the local banks: plain statistics reproduce the shipped scaler exactly, and 11 of
+86,400 bank rows (0.013 %) carry |aero/Ep| > 10. On the 1,496 real dev trips those four inputs then vary by less than
+0.0001 sd, so the networks cannot use them (holding all four fixed moves predictions 0.0004 %). `train.py --robust-norm`
+(percentile-clipped statistics) gives them 0.58-0.79 sd on the same trips, against 0.72 for the uphill-grade control.
+`--mask-comp` masks the component loss like the NLL. Both are off by default, so history reproduces. The matched
+retrain on the dev gate is queued; the exam stays closed.
