@@ -106,6 +106,15 @@ pre-cool 2.54 %, dev-tuned pre-cool 2.56 % (skill 0.32), perfect foresight 3.91 
 classical MPC on BDG2 demand tariffs was not investigated. Reading: v1.1 is better than v1.0 everywhere it was scored;
 on homes the classical MPC (BuildingSim's own hourly maps, true wind and humidity) still beats it.
 
+**Causal-card re-score (27 Nov 2026, seen).** The table above fitted each house's card on the evaluation month's own
+weather (audit finding). Fitted instead on the month before each episode (how the controller must be used), v1.1
+scores: RECS bill 2.76 % (−0.95 [−1.33, −0.60] vs MPC), skill 0.69, 0.44 K h; BDG2 bill 4.93 % (+2.24 [+1.44, +2.97]),
+skill 0.757, 0.00 K h; WPuQ bill 5.95 % (−1.22 [−1.32, −1.11]), skill 0.79, 0.00 K h. Causal minus episode card: at
+most 0.04 bill points and 0.009 skill on any set; only RECS skill (−0.009 [−0.016, −0.003]) excludes zero; no verdict
+changed. The card window ends at the episode start (a first run padded it 26 h into the episode; fixed, PR #28). Per episode the
+monthly cost moved by up to 1.2 % (RECS), 0.7 % (BDG2) and 0.2 % (WPuQ). The controller is unchanged.
+Logs: `training/results/v1.1_causal_card_2026-11-27/`.
+
 ## v1.0 exam (never used for any choice; taken once with R7, re-scored as seen on the morning of 17 Nov 2026, old RECS list)
 Twins of real exam units, perturbed true house, noisy forecasts, real weather, real tariffs. Bill change vs a fixed
 thermostat (positive = cheaper); K h = kelvin-hours outside the band per episode; skill = share of the

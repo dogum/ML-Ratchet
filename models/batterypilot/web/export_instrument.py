@@ -63,13 +63,17 @@ def battery(d, eta=0.85, cost=130.0):
     return bp.Battery(P=1.0, duration_h=float(d), eta_rt=eta, cost_per_kWh=cost)
 
 
+PLAN_LAG_H = 48   # v1.3.1: the backbone's wear cost reads temperatures 48 h earlier (batterypilot.causal_wear)
+
+
 def values(net, p, bat, cl):
     """Raw network outputs (z knots, asinh of the value curve over the price scale) and the value curve V for every hour."""
     n = len(p["rt"])
     ps = bp.rolling_scale(p["da"])
     X, ps = bp.build(p, np.arange(n), bat.d, cl, ps=ps)
-    if net.hybrid:      # v1.3: the day-ahead backbone curve, as run_policy appends it
-        lam = bp.value_curves(p["da"], p["hour"], p["day"], cl, bat.d, P=bat.P, eta_rt=bat.eta_rt)
+    if net.hybrid:      # v1.3: the day-ahead backbone curve, as run_policy appends it (v1.3.1: causal wear plan)
+        lam = bp.value_curves(p["da"], p["hour"], p["day"], bp.causal_wear(bat, p["T"], PLAN_LAG_H), bat.d, P=bat.P,
+                              eta_rt=bat.eta_rt)
         X = np.concatenate([X, np.arcsinh(lam / ps[:, None])], 1).astype(np.float32)
     return net.z_knots(X), net.values(X, ps)
 
@@ -155,7 +159,8 @@ def main():
     n_params = int(sum(v.size for k, v in W.items() if k[0] in "Wb"))
     wmeta = dict(n_params=n_params, knots=bp.SOC_KNOTS.tolist(), H_DA=bp.H_DA, H_RT=bp.H_RT, H_DF=bp.H_DF,
                  publish_hour=bp.PUBLISH_HOUR, n_feat=bp.N_FEAT, layers=sum(1 for k in W if k.startswith("W")),
-                 f16_max_abs_z_diff=worst_f16, hybrid=bool(net.hybrid), min_step=float(net.min_step))
+                 f16_max_abs_z_diff=worst_f16, hybrid=bool(net.hybrid), min_step=float(net.min_step),
+                 plan_lag_h=PLAN_LAG_H)
     write_pack(OUT / "weights", {k: W[k] for k in ["x_mu", "x_sd"] + sorted(k for k in W if k[0] in "Wb")},
                dtype="f16", meta=wmeta)
     keep = {k: ("i32" if k.split("_")[-1] in INT else "f32") for k in tensors}

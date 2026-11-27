@@ -100,3 +100,67 @@ def test_batterypilot_causal_wear_reads_only_past_temperatures():
         for target in range(s0, min(s0 + 35, len(T))):
             moved = T.copy(); moved[s0:] += 9.0                                   # change everything from s0 on
             assert bp.causal_wear(bat, moved)[target] == base[target]
+
+
+def test_batterypilot_v131_default_plan_is_causal():
+    bp = _load("batterypilot", "batterypilot")
+    net = bp.PolicyNet()
+    n = 24 * 6
+    rng = np.random.default_rng(5)
+    T = 20 + 12 * np.sin(np.arange(n) / 9.0)
+    path = dict(rt=rng.uniform(10, 90, n), da=rng.uniform(10, 90, n), df=np.full(n, 30000.0), T=T,
+                hour=np.arange(n) % 24, day=np.arange(n) // 24, dow=(np.arange(n) // 24) % 7, doy=np.arange(n) // 24)
+    bat = bp.Battery(P=1.0, duration_h=2.0)
+    cl = bat.c_lin(T)
+    V_default = bp.run_policy(net, path, bat, cl)[3]
+    V_causal = bp.run_policy(net, path, bat, cl, c_lin_plan=bp.causal_wear(bat, T))[3]
+    V_v13 = bp.run_policy(net, path, bat, cl, c_lin_plan=None)[3]
+    np.testing.assert_array_equal(V_default, V_causal)
+    assert not np.array_equal(V_default, V_v13)          # None = v1.3 as examined (realized temperatures)
+
+
+def test_demandcast_solar_offset_rmax1_is_the_v11_reader():
+    dc = _load("demandcast", "demandcast")
+    E = dict(np.load(ROOT / "models/demandcast/examples/exam_days.npz"))
+    X = np.nan_to_num(E["xs"].astype(np.float64))
+    if X.shape[1] < 324:
+        pytest.skip("packaged rows carry only the base solar features")
+    r1, rh = dc.solar_offset(X)
+    np.testing.assert_array_equal(r1, np.where(np.abs(rh) > 0.5, np.sign(rh), 0).astype(int))
+    r2, _ = dc.solar_offset(X, rmax=2)
+    assert np.all(np.abs(r2) <= 2) and np.all(r2[np.abs(rh) <= 1.5] == r1[np.abs(rh) <= 1.5])
+
+
+def test_demandcast_shift_and_align_two_hours():
+    dc = _load("demandcast", "demandcast")
+    y = np.arange(48, dtype=float).reshape(2, 24)
+    out = dc._shift(y, np.array([2, -2]), -1.0)
+    np.testing.assert_array_equal(out[0, 2:], y[0, :22]); assert np.all(out[0, :2] == -1)
+    np.testing.assert_array_equal(out[1, :22], y[1, 2:]); assert np.all(out[1, 22:] == -1)
+    xs = np.zeros((1, 156)); xs[0, 56:80] = np.arange(24); xs[0, 80:104] = 0.5; xs[0, 55] = 2.0
+    al = dc.align_solar_x(xs, np.array([2]))
+    np.testing.assert_array_equal(al[0, 56:78], np.arange(2, 24))       # a_al[j] = a[j + 2]
+    np.testing.assert_array_equal(al[0, 78:80], [1.0, 1.0])              # outside the history: kappa x physics
+
+
+def test_demandcast_mask_dark_solar_zeroes_only_dark_hours():
+    dc = _load("demandcast", "demandcast")
+    xs = np.zeros((1, 156)); xs[0, 56:80] = 0.2; xs[0, 80:104] = np.r_[np.zeros(6), np.full(12, 0.3), np.zeros(6)]
+    m = dc.mask_dark_solar(xs)
+    np.testing.assert_array_equal(m[0, 56:62], 0.0); np.testing.assert_array_equal(m[0, 62:74], 0.2)
+    np.testing.assert_array_equal(m[0, 74:80], 0.0); np.testing.assert_array_equal(m[0, :56], xs[0, :56])
+
+
+def test_demandcast_versions_clip_by_default():
+    dc = _load("demandcast", "demandcast")
+    E = dict(np.load(ROOT / "models/demandcast/examples/exam_days.npz"))
+    v12, v111 = dc.DemandCast(), dc.DemandCast(dc.WEIGHTS_V1_1, dc.META_V1_1)
+    assert v12.z_clip == 8 and v12.solar_rmax == 2 and v12.mask_dark
+    assert v111.z_clip == 8 and v111.solar_rmax == 1 and not v111.mask_dark
+    xd = np.nan_to_num(E["xd"][:1].astype(np.float64)).copy()
+    xd[0, 328] = 0.25                                                    # 42 missing history hours
+    with pytest.warns(UserWarning):
+        a = v111.predict_demand(xd, E["pd_total"][:1])["mw"]
+    with pytest.warns(UserWarning):
+        b = v111.predict_demand(xd, E["pd_total"][:1], z_clip=None)["mw"]   # v1.1 as released
+    assert not np.allclose(a, b)

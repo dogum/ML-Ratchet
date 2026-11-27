@@ -6,6 +6,12 @@ import json
 import tt_paths as P
 
 PLATFORMS = ("buildingdetective", "airfoilnet", "energynet")
+# Dated supplementary exams (harness.py <platform> exam --supplement <tag>): (platform, tag, what changed)
+SUPPLEMENTS = (
+    ("buildingdetective", "2026-11-27-wind",
+     "GBDT arms retrained on BuildingSim banks with the real hourly wind and site elevation (the first banks used a "
+     "constant 3 m/s and sea level; PR #19 review). Same scripts, seeds and PREREG; the incumbent is unchanged."),
+)
 
 
 def build_results() -> dict:
@@ -16,11 +22,18 @@ def build_results() -> dict:
             raise FileNotFoundError(f"missing exam score file: {fp}")
         scores[p] = json.loads(fp.read_text(encoding="utf-8"))
 
+    supp = {}
+    for p, tag, why in SUPPLEMENTS:
+        fp = P.HERE / "scores" / f"{p}_{tag}.json"
+        if fp.exists():
+            supp[f"{p}_{tag}"] = {"platform": p, "tag": tag, "change": why,
+                                  "score": json.loads(fp.read_text(encoding="utf-8"))}
     summary = {
         "experiment": "TreeTwin + ConformalRatchet (M2)",
         "date": "2026-11-24",
         "prereg_log": json.loads((P.HERE / "prereg_log.json").read_text(encoding="utf-8")),
         "platforms": scores,
+        "supplements": supp,
     }
     (P.HERE / "results.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8", newline="\n")
 
@@ -117,6 +130,45 @@ def build_results() -> dict:
         )
 
     lines.append("")
+    for key, sp in supp.items():
+        p, n, o = sp["platform"], sp["score"], scores[sp["platform"]]
+        lines += [
+            f"## 5. Dated supplementary exam: {o['title']}, `{sp['tag']}`",
+            "",
+            f"{sp['change']} Scored once (`scores/{key}.json`, PREREG sha `{n['prereg_sha256'][:12]}…`, "
+            f"scored {n.get('scored_utc', '?')}). Sections 1, 2 and 4 above keep the first exam; this table puts the "
+            "two side by side.",
+            "",
+            "| Row | First exam (24 Nov) | Supplementary |",
+            "|---|---:|---:|",
+        ]
+        def _row(label, a, b, fmt="{:.2f}"):
+            lines.append(f"| {label} | {fmt.format(a)} | {fmt.format(b)} |")
+        _row("Simulated validation, GBDT-Plain", o["sim_val"]["gbdt_plain"], n["sim_val"]["gbdt_plain"])
+        _row("Simulated validation, GBDT-Mono", o["sim_val"]["gbdt_mono"], n["sim_val"]["gbdt_mono"])
+        _row("Simulated validation, incumbent (reference)", o["sim_val"]["incumbent"], n["sim_val"]["incumbent"])
+        for arm, lab in (("incumbent", "Incumbent"), ("gbdt_plain", "GBDT-Plain"), ("gbdt_mono", "GBDT-Mono")):
+            _row(f"Exam floor-area MdAPE %, {lab}", o["exam_metrics"][arm]["floor_area_mdape_pct"],
+                 n["exam_metrics"][arm]["floor_area_mdape_pct"])
+        for k, lab in (("gbdt_mono_vs_incumbent", "Mono − Inc"), ("gbdt_plain_vs_incumbent", "Plain − Inc"),
+                       ("gbdt_mono_vs_gbdt_plain", "Mono − Plain")):
+            bo, bn = o["paired_bootstrap"][k], n["paired_bootstrap"][k]
+            lines.append(f"| {lab} (95% CI) | {bo['diff_a_minus_b']:+.2f} [{bo['ci95'][0]:+.2f}, {bo['ci95'][1]:+.2f}] | "
+                         f"{bn['diff_a_minus_b']:+.2f} [{bn['ci95'][0]:+.2f}, {bn['ci95'][1]:+.2f}] |")
+        for st in o["exam_metrics"]["gbdt_mono"]["strata"]:
+            so = [o["exam_metrics"][a]["strata"][st]["mdape_pct"] for a in ("incumbent", "gbdt_plain", "gbdt_mono")]
+            sn = [n["exam_metrics"][a]["strata"][st]["mdape_pct"] for a in ("incumbent", "gbdt_plain", "gbdt_mono")]
+            lines.append(f"| Stratum `{st}` (n {o['exam_metrics']['gbdt_mono']['strata'][st]['n']}): Inc / Plain / Mono | "
+                         f"{so[0]:.1f} / {so[1]:.1f} / {so[2]:.1f} | {sn[0]:.1f} / {sn[1]:.1f} / {sn[2]:.1f} |")
+        for m in ("raw", "pooled_widen", "mondrian_raw", "mondrian_shrunk"):
+            co, cn = o["conformal_coverage"]["gbdt_mono"][m], n["conformal_coverage"]["gbdt_mono"][m]
+            lines.append(f"| GBDT-Mono coverage, {m} (worst under-gap) | {100*co['pooled_coverage']:.1f}% (`-{100*co['worst_under_gap']:.1f} pp`) | "
+                         f"{100*cn['pooled_coverage']:.1f}% (`-{100*cn['worst_under_gap']:.1f} pp`) |")
+        for k, lab in (("vs_incumbent_error", "Incumbent"), ("vs_gbdt_mono_error", "GBDT-Mono")):
+            do, dn = o["disagreement_exam"][k]["overall"], n["disagreement_exam"][k]["overall"]
+            lines.append(f"| Disagreement Spearman r vs {lab} abs. error (top-10% enrichment) | {do['spearman_r']:+.3f} ({do['top10pct_enrichment']:.2f}×) | "
+                         f"{dn['spearman_r']:+.3f} ({dn['top10pct_enrichment']:.2f}×) |")
+        lines.append("")
     (P.HERE / "RESULTS.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
     print(f"Wrote {P.HERE / 'results.json'} and {P.HERE / 'RESULTS.md'}")
     return summary

@@ -18,6 +18,8 @@ export interface DMeta {
   MS: number[]; // irradiance multipliers the solar physics is tabulated at
   params: Record<string, Params>; // dev-fitted building-stock parameters per grid
   floor: Record<Kind, number>;
+  z_clip?: number | null; // v1.1.1: standardised inputs clipped to +-z_clip (demandcast._forward); absent = unclipped
+  mask_dark_solar?: boolean; // v1.2 repair: reported solar zeroed at hours the physics calls dark (mask_dark_solar)
 }
 export interface DDay {
   ba: string; day: string; tag: string;
@@ -118,7 +120,11 @@ const softplus = (v: number) => (v > 0 ? v + Math.log1p(Math.exp(-v)) : Math.log
 /** Raw outputs: mu (log demand ratio, or CF = network + physics prior) and sigma (softplus + floor, not yet widened). */
 export function forward(W: Pack<DMeta>, kind: Kind, x: ArrayLike<number>, prior?: ArrayLike<number>) {
   const t = W.t, xm = t[`${kind}_xm`].data, xs = t[`${kind}_xs`].data;
-  let z: ArrayLike<number> = Float64Array.from({ length: xm.length }, (_, i) => (x[i] - xm[i]) / xs[i]);
+  const zc = W.meta.z_clip;
+  let z: ArrayLike<number> = Float64Array.from({ length: xm.length }, (_, i) => {
+    const v = (x[i] - xm[i]) / xs[i];
+    return zc ? Math.min(zc, Math.max(-zc, v)) : v;
+  });
   for (let i = 0; t[`${kind}_body_${i}_weight`]; i += 2) {
     const o = linear(z, t[`${kind}_body_${i}_weight`], t[`${kind}_body_${i}_bias`]);
     for (let j = 0; j < o.length; j++) o[j] = o[j] / (1 + Math.exp(-o[j])); // SiLU
@@ -179,6 +185,7 @@ export function predict(W: Pack<DMeta>, d: Day, p: Perturb = {}): Reading {
         xs[56 + j] = src >= 0 && src < 24 ? a[src] : kap * xs[80 + j];
       }
     }
+    if (M.mask_dark_solar) for (let j = 0; j < 24; j++) if (xs[80 + j] < 1e-6) xs[56 + j] = 0;
     const n = forward(W, 's', xs, pt), k = M.sigma_scale.s;
     const night = (h: number) => d.night[h] > 0.5;
     // ... then move the forecast onto the reported clock: out[h] = in[h - r] (demandcast._shift)

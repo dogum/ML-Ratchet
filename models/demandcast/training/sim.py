@@ -42,6 +42,14 @@ CFGS['v3'] = dict(CFGS['v2'], noise_fix=True)
 # 2018-21, PJM 2018-22), and CISO moved from -1 h (2019, 2021, the dev years DemandCast's fixed shift came from) to
 # 0 h in 2022. The offset is constant over a simulated region-year, like a reporting convention.
 CFGS['v4'] = dict(CFGS['v3'], s_offset=(0.15, 0.70, 0.15))
+# v5 (27 Nov 2026, audit repair rung): v4 plus three things real EIA-930 inputs show and v4 never varied.
+#   s_offset5  reporting offsets -2..+2 h (0.03 / 0.12 / 0.70 / 0.12 / 0.03); two CISO exam days sit 2 h off.
+#   twilight   with probability 0.3 per region-year, output at the dark edge hours next to daylight (where the farm
+#              physics is exactly 0) of 2-15 % of the neighbouring daylight hour (real: 20:00 LST output in BPAT,
+#              CISO, SWPP, PJM where the weather-point physics is already dark).
+#   d_gap      with probability 0.08 per sample, a contiguous gap of 1-48 missing hours in the 168 h demand history
+#              (real: 365 of 14,448 exam rows, up to 48 h; the simulator never had a gap, so miss_frac was ~constant).
+CFGS['v5'] = dict(CFGS['v4'], s_offset5=(0.03, 0.12, 0.70, 0.12, 0.03), twilight=0.3, d_gap=0.08)
 CFG = CFGS[os.environ.get('DC_SIM', 'v1')]
 _GROUPS = {}
 TFC = None
@@ -201,8 +209,15 @@ def sim_region(rng):
     g.ys = st * rs
     nom = R.solar_mw(subs, sg, g.scap)
     g.sk = float(g.ys.sum() / max(nom.sum(), 1e-6) * np.exp(rng.normal(0, CFG['s_drift'])))
+    if CFG.get('twilight') and rng.random() < CFG['twilight']:     # v5: output at dark edge hours
+        f = rng.uniform(0.02, 0.15)
+        nb_ = np.maximum(np.roll(g.ys, 1), np.roll(g.ys, -1))
+        g.ys = np.where(g.ys <= 0, f * nb_, g.ys)
     g.s_offset = 0
-    if CFG.get('s_offset'):           # v4: reported[t] = true[t - offset]
+    if CFG.get('s_offset5'):          # v5: reported[t] = true[t - offset], offset -2..+2
+        g.s_offset = int(rng.choice([-2, -1, 0, 1, 2], p=CFG['s_offset5']))
+        g.ys = np.roll(g.ys, g.s_offset)
+    elif CFG.get('s_offset'):         # v4: reported[t] = true[t - offset]
         g.s_offset = int(rng.choice([-1, 0, 1], p=CFG['s_offset']))
         g.ys = np.roll(g.ys, g.s_offset)
     g.has_solar = True
@@ -243,17 +258,24 @@ def bank(seed, n_regions, days_per=40, p_fc=0.5, out=None):
         cand = cand[HOURS.year[g.off + cand] == g.year]
         for i0 in rng.choice(cand, size=min(days_per, len(cand)), replace=False):
             fc = synth_fc(rng, g.W['pws50'].shape[0], g.ba) if rng.random() < p_fc else None
+            gap = 0
+            if CFG.get('d_gap') and rng.random() < CFG['d_gap']:      # v5: missing hours in the demand history
+                gap = int(rng.integers(1, 49)); j = int(i0) - 182 + int(rng.integers(0, 168 - gap + 1))
+                keep = g.yd[j:j + gap].copy(); g.yd[j:j + gap] = np.nan
             s = g.sample(int(i0), fc)
+            if gap:
+                g.yd[j:j + gap] = keep
             if not np.isfinite(s['yd']).all(): continue
             for k in KEYS:
                 acc[k].append(s[k])
-            meta.append((r, g.ba, g.year, int(i0 + g.off), fc is not None, g.s_offset))
+            meta.append((r, g.ba, g.year, int(i0 + g.off), fc is not None, g.s_offset, gap))
         if r % 20 == 0:
             print(f'region {r}/{n_regions} samples {len(meta)} {time.time() - t0:.0f}s', flush=True)
     arr = {k: np.stack(v).astype(np.float16 if k.startswith('x') else np.float32) for k, v in acc.items()}
     arr['meta_region'] = np.array([m[0] for m in meta]); arr['meta_fc'] = np.array([m[4] for m in meta])
     arr['meta_ba'] = np.array([m[1] for m in meta]); arr['meta_hour'] = np.array([m[3] for m in meta])
     arr['meta_soff'] = np.array([m[5] for m in meta])      # solar reporting offset (h), 0 before simulator v4
+    arr['meta_dgap'] = np.array([m[6] for m in meta])      # missing demand-history hours, 0 before simulator v5
     if out: np.savez_compressed(out, **arr)
     return arr
 

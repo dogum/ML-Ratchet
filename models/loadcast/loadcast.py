@@ -1,4 +1,4 @@
-"""LoadCast v1.0: hourly building energy per meter from weather, calendar and metadata, with 90% error bars.
+"""LoadCast v1.0.1: hourly building energy per meter from weather, calendar and metadata, with 90% error bars.
 numpy / pandas / scipy only. Trained only on BuildingSim simulations (see MODEL_CARD.md).
 
     import loadcast as lc
@@ -306,14 +306,15 @@ class LoadCast:
 
     def forecast(self, weather, tz, lat, use, area_m2, meter, meters_present=None, start=None, end=None,
                  history=None, year_built=None, hvac='unknown', sched='unknown', calibrated=True, frame=None,
-                 assume_electricity=False):
+                 assume_electricity=True):
         """Returns a DataFrame (UTC index over [start, end)) with kW, sigma, lo90, hi90 and mode ('cold'/'warm').
 
         Every simulated training building had an electricity meter (has_electricity: mean 1, sd 0.001), so a
-        meters_present list without 'electricity' puts that input at z = -1000. Audit, 25 Nov 2026: a steam or chilled
-        water forecast then rose 24-50x in every hour. 58 of the 1,584 exam buildings list no electricity meter and
-        were scored that way. A warning says so; assume_electricity=True adds 'electricity' to the list (not the
-        released behaviour, so off by default)."""
+        meters_present list without 'electricity' put that input at z = -1000 in v1.0 (audit, 25 Nov 2026: a steam or
+        chilled water forecast rose 24-50x in every hour). v1.0.1 (27 Nov 2026) adds 'electricity' to the list by
+        default (assume_electricity=True): on the 19 exam building-meters this touches, median cold CV(RMSE) fell from
+        597 % to 114 % and warm (a year) from 51 % to 35 %. assume_electricity=False gives v1.0's behaviour, with a
+        warning."""
         f = frame or self._frame(weather, tz)
         idx = f['idx']
         t0 = pd.Timestamp(start) if start is not None else idx[0]
@@ -328,9 +329,9 @@ class LoadCast:
             if assume_electricity:
                 meters_present.append('electricity')
             else:
-                warnings.warn("LoadCast: meters_present has no 'electricity'; every training building had one, so the "
-                              "network is far outside its training data (24-50x too high in the audit). Pass "
-                              "assume_electricity=True, or list the building's electricity meter.", stacklevel=2)
+                warnings.warn("LoadCast: meters_present has no 'electricity' and assume_electricity=False (v1.0 "
+                              "behaviour); every training building had one, so the network is far outside its training "
+                              "data (24-50x too high in the audit).", stacklevel=2)
         if hvac == 'unknown': hvac = hvac_class_from_meters(meters_present)
         st = static_features(use, area_m2, year_built, meter, meters_present, hvac, sched, clim, lat)
         unit = area_m2 * IREF[meter] / 1000.0           # kW per model unit

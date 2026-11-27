@@ -51,10 +51,19 @@ class PolicyNet:
         return np.sinh(self.z_knots(X)) * np.asarray(ps, float)[:, None]
 
 
-def run_policy(net: PolicyNet, path, bat: Battery, c_lin, soc0=0.0):
+def causal_wear(bat: Battery, T, lag_h=48):
+    """batterypilot.causal_wear: the day-ahead plan's wear cost from temperatures lag_h earlier (known at issue)."""
+    T = np.asarray(T, float)
+    n, L = len(T), int(lag_h)
+    Tp = np.r_[np.full(min(L, n), T[0]), T[:max(n - L, 0)]]
+    return bat.c_lin(Tp)
+
+
+def run_policy(net: PolicyNet, path, bat: Battery, c_lin, soc0=0.0, c_lin_plan=None):
     """Run BatteryPilot causally over a whole path (dict/DataFrame with rt, da, df, T, hour, day, dow, doy).
     The value curves depend only on information before each hour, so they are computed for all hours at once; the
-    offer-curve execution against each hour's RT price is sequential.  Returns (ch, dis, soc, V)."""
+    offer-curve execution against each hour's RT price is sequential.  Returns (ch, dis, soc, V).
+    c_lin_plan: wear cost for the day-ahead value curves (default c_lin, realized temperatures; see batterypilot.py)."""
     n = len(path['rt'])
     t = np.arange(n)
     ps = rolling_scale(np.asarray(path['da'], float))
@@ -62,7 +71,8 @@ def run_policy(net: PolicyNet, path, bat: Battery, c_lin, soc0=0.0):
     X, ps = build(path, t, bat.d, cl, ps=ps)
     if net.hybrid:
         from backbone import value_curves
-        lam = value_curves(np.asarray(path['da'], float), np.asarray(path['hour']), np.asarray(path['day']), cl,
+        clp = cl if c_lin_plan is None else np.broadcast_to(np.asarray(c_lin_plan, float), (n,))
+        lam = value_curves(np.asarray(path['da'], float), np.asarray(path['hour']), np.asarray(path['day']), clp,
                            bat.d, P=bat.P, eta_rt=bat.eta_rt)
         X = np.concatenate([X, np.arcsinh(lam / ps[:, None])], 1).astype(np.float32)
     V = net.values(X, ps)

@@ -656,7 +656,7 @@ next:
   - "Heat-pump realism: backup strips, defrost, sizing and ResStock-like controls fitted on RECS and HUE dev, or WPuQ heat-pump homes as a dev set (done when RECS dev heat pump vs resistance AUC > 0.7)."
   - "Domain-adversarial or twin-consistency training on unlabelled real BDG2 2016 meters, plus a dev-fitted population prior for the use classes."
   - "Upstream to BuildingSim behind flags: W1 intensity factors, W2 campus factors, W3 base-load shares, and common.clean_labels (base_share undefined when metered site energy is ~0)."
-  - "Queued (audit): simulated district meters with real zero runs (or bounded zero-fraction inputs), retrained and judged on dev, before any change to the district-meter reading."
+  - "District meters (audit follow-up, 27 Nov 2026): rung r11 (simulated district plants switched off for a season or an outage) brought the two zero-fraction inputs from 387 sd to 6 sd on dev but tied r10 on the frozen set (0.8287 vs 0.8301) and was rejected; clipping the two inputs in v1.0 gave dev area 43.5 % vs 50.8 % but only +0.007 on the frozen set. Next: a frozen set whose district meters include zero runs, so the ratchet can score this, then both again."
 help_wanted:
   - "Real thermostat logs (ecobee Donate Your Data, by application) would give a real exam for time constants and setpoint behaviour; none exists today."
   - "UK heat-pump field trials (RHPP, Electrification of Heat) need UK Data Service registration; they would test the heat-pump signature that fails on RECS and HUE."

@@ -34,3 +34,18 @@ Measured first, on the local exam bank (`real_exam.npz`, inputs only, no labels)
 | Unbounded softplus sigma | Consequence of the above | Not changed separately. | — |
 
 Golden demo output unchanged (warnings go to stderr). Re-scoring the exam with the repaired model waits for the owner's approval.
+
+### Follow-up (27 Nov 2026, approved queue)
+
+- **Re-score with `z_clip=8`** (`training/rescore_zclip.py`, dated supplement, released weights): demand 2.382 → 2.323 %
+  with actual weather, 3.051 → 2.961 % with forecast weather 2024-2025, 2.923 → 2.834 % on the released 2024 row. On the
+  201 actual-weather rows with missing history hours 5.96 → 2.58 % (the other 8,559 rows unchanged); solar 16.14 →
+  16.12 %, and the 2,350 dark-hour rows 25.24 → 25.20 % (the clip does not reach them, as found). No grid got worse.
+  Made the default as **v1.1.1**. The audit's 1,734 rows are those with output at 20:00 LST over the whole bank; any
+  dark hour gives 4,029 bank rows (2,350 with actual weather).
+- **Repair rung r10** (simulator v5 with twilight output, ±2 h offsets and 1-48 h demand-history gaps; dark-hour mask in
+  training and inference; floor 0.05 on count-like inputs; ±2 h offsets read): val_v5 0.4054 vs 0.3908 (v1.1.1), dev
+  gate −4.8 % (solar 15.67 → 13.11 %, demand 1.98 → 2.05 %). Promoted, committed, exam run once as **v1.2**: solar
+  10.6 % with actual weather (v1.1 16.1 %; persistence 19.1 %) and 12.0 % with forecast weather (18.2 %); CAISO 24.9 →
+  11.2 %, BPA 52.0 → 20.8 %. Demand got worse: 2.49 % (v1.1.1 2.32 %), 3.14 % with forecast weather (2.96 %). Details in
+  the model's NOTEBOOK and `training/exam_v1_2.json`.

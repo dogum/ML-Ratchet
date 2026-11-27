@@ -445,6 +445,7 @@ def stage_exam(platform: str, supplement: str | None = None) -> dict:
         "target": ad.TARGET_NAME,
         "unit": ad.UNIT,
         "prereg_sha256": prereg_sha,
+        "scored_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "n_exam": int(len(X)),
         "n_exam_units": int(len(set(uid.tolist()))),
         "sim_val": {

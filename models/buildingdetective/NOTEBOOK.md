@@ -565,3 +565,52 @@ Training only ever saw a full year of weather with masked meters, so `read_hourl
 year and warns (330 / 180 / 90 days: 95.1 / 76.0 / 88.3 m², all residential). Both exams used full-year axes and are
 unchanged. Two district-meter zero-fraction inputs are also far outside training on real BDG2 meters. The reader warns
 there but does not clip, since no clip has been shown to be closer to the truth.
+
+## 27 Nov 2026 — rung r11: district meters with real zero runs (plan, written before the run)
+
+Owner-approved follow-up to the audit. Dev and simulation only; no exam unit and no HEAPO home is read.
+
+- **What is out of range.** Input columns 904 and 1197 are the zero fraction of the district-heat and district-cooling
+  meters. v1.0 trained on bank f2 (physics v2, always-on base loads), where they are 0.0002 ± 0.002; on the 52 BDG2 dev
+  buildings they reach 387 sd and 347 sd (28 of 52 dev buildings have some input beyond 8 sd). r10's bank p12 (district
+  plants, physics 1.1) already gives simulated district meters zero fractions up to 0.5 (dev: up to 21.6 sd), but r10
+  was not released because its BDG2 dev area error rose from 50.8 % to 69.0 %. Dev district meters: zero fraction above
+  0.05 on 8 of 24 heat and 9 of 25 cooling meters, up to 0.88; in f3 training above 0.05 on 13 % and 35 %, up to 0.51.
+- **Rung r11 (hourly network only).** r10's recipe (bank p12, MLP 2×256, 60 epochs, seed 0, shards 0-59) with one
+  change to the training meter quirks (`features.quirk_hourly(..., Th=, district_zeros=True)`): each district-heat or
+  district-cooling meter gets, with probability 0.35, a seasonal plant shutdown (cooling off on days with mean T below
+  U(2, 14) °C, heating off on days above U(12, 22) °C), and with probability 0.15 one outage of U(5, 50) % of the
+  record. Features f4: training shards re-featurized with the change; the frozen set (shards 900-904) is f3's files,
+  copied unchanged. Script `training/r11.py`.
+- **Rule (the ladder's).** Keep if frozen-set skill beats the hourly incumbent by more than 0.01 and the dev composite
+  (r11 in place of v1.0's hourly network, v1.0 monthly and annual) is no more than 0.02 below v1.0's composite
+  (0.3081, floor 0.2881). The hourly ladder's incumbent is r10-hourly (0.8301 on p12, kept but not released); R9 on p12
+  is 0.7135. The frozen set holds no long district zero runs, so the rung can only pass the margin by being better in
+  simulation generally; expected outcome: within ±0.01 of r10-hourly, rejected. Also logged (information, no
+  decision): BDG2 dev area MdAPE and the largest dev |z| on columns 904 and 1197.
+- **Bounded inputs (variant, information only).** v1.0 with columns 904 and 1197 clipped at the training mean + 8 sd:
+  frozen-set skill and dev composite. An inference change cannot raise frozen skill by 0.01 when the frozen set is
+  inside the bound, so it is not a candidate under the rule.
+- **Exam:** opened once only if a rung is kept and then released. Otherwise not.
+
+## 27 Nov 2026 — r11 result: rejected; bounded variant logged; no exam
+
+Run as planned (features 7 min on 4 processes, training 60 epochs). Nothing was changed after a result was seen.
+`training/r11.json`.
+
+| Hourly network (with v1.0 monthly + annual) | Frozen p12 skill | Dev composite | BDG2 dev area MdAPE | BDG2 dev use F1 | Dev max \|z\|, cols 904 / 1197 | Dev buildings with any \|z\| > 8 |
+|---|---|---|---|---|---|---|
+| v1.0 (R9) | 0.7135 | 0.3081 | 50.8 % | 0.092 | 387 / 347 | 28 of 52 |
+| r10-hourly (kept, not released) | 0.8301 | 0.2903 | 69.0 % | 0.088 | 21.6 / 16.3 | 15 |
+| **r11-hourly** | **0.8287** | **0.2998** | **60.7 %** | **0.146** | **6.1 / 6.1** | 12 |
+| v1.0, cols 904 / 1197 clipped at mean + 8 sd | 0.7204 | 0.3157 | 43.5 % | 0.070 | (clipped) | 28 before the clip |
+
+- **Decision: r11 rejected.** Frozen skill −0.0014 against r10-hourly (needs > +0.01); the dev gate passes (0.2998,
+  floor 0.2881). The repair does what the audit asked of it: the two district inputs are now inside training
+  (6 sd), and the use F1 on BDG2 dev rises from 0.09 to 0.15. But the frozen set has no long district zero runs, so
+  it cannot reward the change, as the plan expected. And r11 still carries r10's area error (60.7 % vs v1.0's 50.8 %).
+- **Bounded variant:** information only, not a candidate. It gains +0.007 on the frozen set (below the margin) and is
+  better on dev (composite 0.3157, area 43.5 %). Dev is 52 buildings, and no rule lets dev alone keep a rung, so
+  v1.0's reader is unchanged: it warns and does not clip.
+- **What would decide it:** a frozen set whose simulated district meters include seasonal shutdowns and outages, built
+  once before either candidate is scored again (a frozen-set change for the owner). The exam was not opened.

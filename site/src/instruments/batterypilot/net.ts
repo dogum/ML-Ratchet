@@ -10,6 +10,7 @@ export interface BPMeta {
   n_params: number; knots: number[]; H_DA: number; H_RT: number; H_DF: number; publish_hour: number; n_feat: number;
   layers: number; f16_max_abs_z_diff: number;
   hybrid?: boolean; min_step?: number;   // v1.3: the network reads the backbone curve and outputs a residual on it
+  plan_lag_h?: number;   // v1.3.1: the backbone's wear cost uses the temperature this many hours earlier (causal_wear)
 }
 export interface Annual { bp: number; pf: number; rolling: number; spread: number; bp_cycles: number }
 export interface ExMeta {
@@ -143,7 +144,7 @@ function interpU(x: number, f: Float64Array): number {
 
 /** Backbone value curves ($ per stored MWh at the SOC knots) for hours [0, b): a backward dynamic programme over the
  * DA prices known at each re-plan (the first hour, then 14:00 local), as backward_pass / value_curves. */
-export function backbone(knots: number[], p: Path, bat: Battery, b: number, N = 200): Float64Array {
+export function backbone(knots: number[], p: Path, bat: Battery, b: number, N = 200, lag = 0): Float64Array {
   const K = knots.length, out = new Float64Array(b * K), n = p.da.length;
   const E = bat.P * bat.d, eta = Math.sqrt(bat.eta), up = (bat.P * eta) / E, dn = bat.P / (eta * E), dg = 1 / N;
   const grid = new Float64Array(N + 1);
@@ -163,7 +164,7 @@ export function backbone(knots: number[], p: Path, bat: Battery, b: number, N = 
     lam = Array.from({ length: H + 1 }, () => new Float64Array(N + 1));
     W.fill(0);
     for (let k = H - 1; k >= 0; k--) {
-      const pr = p.da[t0 + k], c = bat.clin(p.T[t0 + k]), nxt = lam[k + 1];
+      const pr = p.da[t0 + k], c = bat.clin(p.T[Math.max(t0 + k - lag, 0)]), nxt = lam[k + 1];   // causal_wear
       const slo = cross(nxt, pr / eta, dg), shi = cross(nxt, eta * (pr - c), dg);
       for (let i = 0; i <= N; i++) {
         let x = Math.min(Math.max(grid[i], slo), Math.max(shi, slo));
@@ -254,7 +255,7 @@ export interface Run { z: Float64Array; V: Float64Array; soc: Float64Array; ch: 
 export function runWindow(W: Pack<BPMeta>, p: Path, bat: Battery, a: number, b: number, net = makeNet(W)): Run {
   const K = W.meta.knots.length, n = b - a, knots = W.meta.knots;
   const x = new Float64Array(W.t.x_mu.data.length), zt = new Float64Array(K);
-  const bb = W.meta.hybrid ? backbone(knots, p, bat, b) : null;
+  const bb = W.meta.hybrid ? backbone(knots, p, bat, b, 200, W.meta.plan_lag_h ?? 0) : null;
   const r: Run = { z: new Float64Array(n * K), V: new Float64Array(n * K), soc: new Float64Array(n + 1), ch: new Float64Array(n), dis: new Float64Array(n), cl: new Float64Array(n) };
   for (let i = 0; i < n; i++) {
     const t = a + i, cl = bat.clin(p.T[t]);
@@ -350,7 +351,7 @@ export function settle(bat: Battery, p: Path, a: number, ch: ArrayLike<number>, 
 /** Parity vector: raw z knots at the given hours, then the state of charge over the window. */
 export function parityVector(W: Pack<BPMeta>, p: Path, bat: Battery, hours: number[], win: [number, number]) {
   const net = makeNet(W), K = W.meta.knots.length, x = new Float64Array(W.t.x_mu.data.length), z = new Float64Array(K);
-  const bb = W.meta.hybrid ? backbone(W.meta.knots, p, bat, Math.max(...hours) + 1) : null;
+  const bb = W.meta.hybrid ? backbone(W.meta.knots, p, bat, Math.max(...hours) + 1, 200, W.meta.plan_lag_h ?? 0) : null;
   const out: number[] = [];
   for (const t of hours) {
     features(W.meta, p, t, bat.d, bat.clin(p.T[t]), x);

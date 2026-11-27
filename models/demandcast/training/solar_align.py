@@ -25,7 +25,7 @@ MODEL = os.path.dirname(SRC)
 sys.path.insert(0, MODEL)
 import demandcast as DC  # noqa: E402
 
-M = DC.DemandCast()
+M = DC.DemandCast(DC.WEIGHTS_V1_1, DC.META_V1_1)     # the r8 network these rungs were scored with
 LOG = os.path.join(SRC, 'ratchet.json')
 
 

@@ -259,9 +259,12 @@ def feat_annual(kwh, hdd, cdd):
 
 
 # ----------------------------------------------------------------------------- quirks (simulated meters -> real-like)
-def quirk_hourly(meters, rng, n):
+def quirk_hourly(meters, rng, n, Th=None, district_zeros=False):
     """Real meter problems seen in BDG2 (DATA.md): gaps, zero runs, spikes, level shifts, daily-spread readings,
-    clock offsets, extra unmodelled load on shared meters, noise. Returns a new dict and the span mask."""
+    clock offsets, extra unmodelled load on shared meters, noise. Returns a new dict and the span mask.
+    district_zeros (rung r11, 27 Nov 2026; needs Th, the daily mean T of each hour): district plants switched off for
+    a season (cooling below U(2, 14) degC, heating above U(12, 22) degC, p = 0.35) and one long outage of 5-50 % of the
+    record (p = 0.15), as real BDG2 district meters show. Off by default (v1.0 and r10 features)."""
     out = {}
     # partial record: 25 % of samples see 30-330 days
     keep = np.ones(n, bool)
@@ -305,6 +308,14 @@ def quirk_hourly(meters, rng, n):
         if rng.random() < 0.1:
             k = rng.integers(0, n - 200)
             x[k:k + rng.integers(24, 200)] = 0.0
+        if district_zeros and c in ('dheat', 'dcool'):
+            if Th is not None and rng.random() < 0.35:
+                off = (Th < rng.uniform(2, 14)) if c == 'dcool' else (Th > rng.uniform(12, 22))
+                x[off[:n]] = 0.0
+            if rng.random() < 0.15:
+                L = int(rng.uniform(0.05, 0.5) * n)
+                k = rng.integers(0, max(n - L, 1))
+                x[k:k + L] = 0.0
         # gaps
         if rng.random() < 0.6:
             for _ in range(rng.integers(1, 6)):
