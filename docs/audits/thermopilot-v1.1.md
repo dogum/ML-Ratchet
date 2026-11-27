@@ -35,3 +35,11 @@ Uses NumPy, pandas, SciPy, pvlib, Numba, and CPU PyTorch. [Second-pass probe](re
 | Exam cards fitted on the episode's own weather (realized wind beyond 24 h) | Yes (evaluation only) | **Queued, not changed.** The released policy reads a card at run time; the defect is in how the exam built cards. A causal card needs the evaluation twin rebuilt on the prior month's weather, then a dated re-score; both are queued in the card. | The audit's own 30-day closed-loop replay bounds it: −$1.02 to +$0.23 per month (≤ 0.21 %), 0.00 K·h comfort violations, every ranking kept. |
 | BuildingSim weather cache omits wind | Yes (shared) | **Fixed** (see FaultFinder): all columns hashed. | Test added. |
 | Future tariffs, base loads, observer history | Clean | — | Audit: 0.0 effect with a fixed card. |
+
+**Follow-up run (27 Nov 2026, owner-approved).** Dated re-score of v1.1 with each card fitted on the month before the
+episode (`models/thermopilot/training/scripts/rescore_causal_card.py`; 166 episodes; logs in
+`training/results/v1.1_causal_card_2026-11-27/`). Every exam row moved by at most 0.02 bill points and 0.007 skill.
+Causal minus episode card: RECS bill −0.01 [−0.04, +0.01], BDG2 −0.02 [−0.14, +0.10], WPuQ −0.01 [−0.03, +0.02]. No
+verdict changed. Per episode the monthly objective moved by up to 1.2 % (RECS), 0.7 % (BDG2) and 0.2 % (WPuQ), in both
+directions. So the audit's 0.21 % bound, taken from four episodes, is exceeded on single episodes but not on any
+row. model.yaml and the card now carry the causal numbers. The controller is unchanged.
