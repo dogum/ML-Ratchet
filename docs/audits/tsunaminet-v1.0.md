@@ -20,3 +20,11 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_d903cb6_pr
 ```
 
 Uses NumPy, SciPy, and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_d903cb6_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| Zero buoys → sentinel reaches the network (Mw −2053) | Yes | **Fixed**: `posterior` raises `ValueError` when no buoy is usable. | All 28 exam events had one: exam unchanged. |
+| `GreensFunctions()` without calibration; docstring signature wrong | Yes | **Fixed**: the calibration loads from the released weights by default (`cal=` overrides); the module docstring shows `forecast(ev, post, site, a, b, mask)`. | The demo sets `gf.cal` itself and is unchanged. |
+| 5 of 119 target arrivals at or before the input endpoint | Yes (limit) | Documented in the card. | — |

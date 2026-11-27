@@ -158,6 +158,7 @@ A vectorized single-particle model of each electrode (PyBaMM Prada2013 open-circ
 ## Help wanted
 
 - More chemistries and rates: Sandia NCA / NMC / LFP cycling files (Preger et al. 2020) from BatteryArchive (download by email request), or Zhu et al. 2022 (Zenodo). NMC811 at C/20 is done (Pozzato et al. 2022 on OSF); it needs aged cells far from new and faster discharges.
+- Inputs (audit, 25 Nov 2026): an all-NaN discharge returned a finite capacity (0.82 Ah LFP, 4.03 Ah NMC811); since 27 Nov 2026 it is refused. The NMC811 reader switches from measured end capacity to a network estimate at the 1 mV completion tolerance, so 0.2 mV across it moves capacity 5.3 mAh and its sigma 10.75x; which sigma is better calibrated needs near-cutoff cycles.
 
 ## Next rungs
 

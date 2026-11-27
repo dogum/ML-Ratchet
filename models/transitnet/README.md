@@ -102,6 +102,7 @@ Exact quadratic limb-darkened occultation, Keplerian (eccentric) orbits, eclipsi
 ## Help wanted
 
 - Limb-darkening tables: VizieR / CDS reset the connection from the shared build machine, so the Claret TESS tables could not be used and limb darkening is a broad prior fitted on the dev planets. With the tables (or a reachable mirror) it could be set per star.
+- Coverage (audit, 25 Nov 2026): with the transit core unobserved the network answers 'nothing' at P 0.57-0.99 without saying the data are missing; since 27 Nov 2026 the reader warns when no point falls in any predicted core. Constant flux gave NaN class probabilities; it is now refused.
 
 ## Next rungs
 

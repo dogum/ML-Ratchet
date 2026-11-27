@@ -21,7 +21,7 @@ def to_grid(fr, V, logint):
         out[i] = np.exp(y) if logint else y
     return out
 
-def parse_raw(path):
+def parse_raw(path, keep_99=False):
     """-> hours since 1970-01-01 (int array), native frequencies (nf,), values (n, nf) with NaN for missing"""
     lines = _open(path).read().splitlines(); out_t, rows = [], []
     if any('(' in l for l in lines[:5]):        # realtime: value (freq) pairs
@@ -43,15 +43,22 @@ def parse_raw(path):
         if len(p) != nt + len(freqs): continue
         y = int(p[0]); y = y + 1900 if y < 100 else y; mi = int(p[4]) if nt == 5 else 0
         out_t.append(int(np.datetime64(f'{y:04d}-{int(p[1]):02d}-{int(p[2]):02d}T{int(p[3]):02d}', 'h').astype(np.int64) + round(mi / 60)))
-        v = np.array(p[nt:], float); v[(v >= 98.9) & (v <= 99.01)] = np.nan; v[v >= 998.9] = np.nan; rows.append(v)
+        v = np.array(p[nt:], float)
+        if not keep_99:
+            v[(v >= 98.9) & (v <= 99.01)] = np.nan
+        v[v >= 998.9] = np.nan; rows.append(v)
     return np.array(out_t), freqs, np.array(rows)
 
-def read_ndbc(swden, swdir=None, swr1=None):
-    """-> dict(h0, E, C, S) on an hourly grid from h0; C, S = r1 cos(alpha1), r1 sin(alpha1) (NaN if no directional files)"""
+def read_ndbc(swden, swdir=None, swr1=None, field_sentinels=False):
+    """-> dict(h0, E, C, S) on an hourly grid from h0; C, S = r1 cos(alpha1), r1 sin(alpha1) (NaN if no directional files)
+
+    The parser reads 99 as missing in every file. In a direction file (swdir) 99 is a valid bearing: 3,445 of them in
+    the packaged 51004 2018 file (audit, 25 Nov 2026), and in swr1 it is r1 = 0.99. field_sentinels=True keeps 99 in
+    swdir and swr1 (999 stays missing). Off by default: the exam was parsed the old way."""
     t, fr, V = parse_raw(swden); h0, h1 = t.min(), t.max() + 1; n = h1 - h0
     Eg = np.full((n, 34), np.nan, np.float32); Eg[t - h0] = to_grid(fr, V, True); Cg = np.full_like(Eg, np.nan); Sg = np.full_like(Eg, np.nan)
     if swdir and swr1:
-        td, frd, D = parse_raw(swdir); tj, frj, R = parse_raw(swr1)
+        td, frd, D = parse_raw(swdir, keep_99=field_sentinels); tj, frj, R = parse_raw(swr1, keep_99=field_sentinels)
         if np.nanmax(R) > 1.5: R = R / 100.0
         R = np.clip(R, 0, 1); common, a, b = np.intersect1d(td, tj, return_indices=True); k = (common >= h0) & (common < h1)
         ang = np.radians(D[a][k]); r = R[b][k]; Cg[common[k] - h0] = to_grid(frd, r * np.cos(ang), False); Sg[common[k] - h0] = to_grid(frd, r * np.sin(ang), False)

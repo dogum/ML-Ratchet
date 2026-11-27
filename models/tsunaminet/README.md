@@ -124,6 +124,7 @@ Okada (1985) vertical seafloor displacement from 1 m of thrust slip on each of 1
 ## Help wanted
 
 - NOAA's compressed propagation database (sift.pmel.noaa.gov/ComMIT/compressed) answers, but its amplitude encoding is undocumented and the documented THREDDS/OpenDAP access returns 404, so MOST waveforms could not be compared directly.
+- API (audit, 25 Nov 2026; fixed 27 Nov 2026): an event with no usable buoy reached the network as a pooling sentinel and returned Mw -2053; posterior() now refuses it (all 28 exam events had a buoy). GreensFunctions() now loads the dev calibration from the released weights by default; without it the first British Columbia forecast read 1.12 cm instead of 1.76 cm. Five of 119 exam target arrivals came at or before the end of the input window, so those are not forecasts ahead of the wave.
 
 ## Next rungs
 

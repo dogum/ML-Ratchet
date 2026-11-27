@@ -65,18 +65,34 @@ def fill_short(y, maxgap=3):
         if 0 < a and b < len(y) and b - a <= maxgap: fill[a:b] = True
     out[fill] = np.interp(np.flatnonzero(fill), idx, y[idx]); return out
 
-def grid_lc(cad, flux, quarter, q):
-    """Real Kepler PDCSAP light curve -> ppm on the cadence grid (per-quarter median normalisation), NaN in gaps."""
+def grid_lc(cad, flux, quarter, q, trim=False):
+    """Real Kepler PDCSAP light curve -> ppm on the cadence grid (per-quarter median normalisation), NaN in gaps.
+
+    The grid runs from the first to the last cadence supplied, flagged or not. Flagged or empty cadences at either end
+    add only NaN, yet they lower the duty cycle and change the FFT grid (audit, 25 Nov 2026: 90 days of flagged rows
+    moved KIC 2695975 from 1.677 to 1.777 solar masses). trim=True starts and ends the grid at the first and last good
+    cadence. Off by default: the exam used the untrimmed grid, and 36 of the 858 archived light curves start or end
+    on a gap."""
     c0 = cad.min(); n = cad.max() - c0 + 1; out = np.full(n, np.nan)
     good = np.isfinite(flux) & ((q & BAD) == 0)
     for qq in np.unique(quarter):
         s = good & (quarter == qq)
         if s.sum() < 50: continue
         out[cad[s] - c0] = 1e6 * (flux[s] / np.median(flux[s]) - 1)
+    m = np.isfinite(out)
+    if m.any() and (not m[0] or not m[-1]):
+        a, b = int(np.argmax(m)), len(m) - int(np.argmax(m[::-1]))
+        if trim:
+            out = out[a:b]
+        else:
+            import warnings
+            warnings.warn(f'StarQuake: the light curve starts with {a} and ends with {len(m) - b} cadences without good '
+                          'flux; they change the duty cycle and the FFT grid (grid_lc(..., trim=True) drops them)',
+                          stacklevel=2)
     return out
 
-def read_npz(path):
-    z = np.load(path); return grid_lc(z['cad'], z['flux'].astype(np.float64), z['quarter'], z['q'])
+def read_npz(path, trim=False):
+    z = np.load(path); return grid_lc(z['cad'], z['flux'].astype(np.float64), z['quarter'], z['q'], trim=trim)
 
 def scalars(y):
     """observing length (days) and duty cycle -> 2 network scalars"""
@@ -88,7 +104,7 @@ def prepare(y):
     yh = highpass(fill_short(y)); f, P = psd(yh); F1, F2 = features(f, P); s, T = scalars(yh); return F1, F2, s, (f, P), T
 
 
-def load_kepler(src):
+def load_kepler(src, trim=False):
     """Kepler long-cadence light curve -> ppm on the cadence grid (NaN in gaps).
     src: list of *_llc.fits paths (needs astropy), or a dict/npz with arrays cad, flux (PDCSAP), quarter, q (SAP_QUALITY)."""
     if isinstance(src, (list, tuple)):
@@ -99,4 +115,4 @@ def load_kepler(src):
                 d = h[1].data; C['cad'].append(np.asarray(d['CADENCENO'])); C['flux'].append(np.asarray(d['PDCSAP_FLUX'], float))
                 C['q'].append(np.asarray(d['SAP_QUALITY'])); C['quarter'].append(np.full(len(d), h[0].header['QUARTER']))
         src = {a: np.concatenate(v) for a, v in C.items()}
-    return grid_lc(np.asarray(src['cad']).astype(np.int64), np.asarray(src['flux'], np.float64), np.asarray(src['quarter']), np.asarray(src['q']).astype(np.int64))
+    return grid_lc(np.asarray(src['cad']).astype(np.int64), np.asarray(src['flux'], np.float64), np.asarray(src['quarter']), np.asarray(src['q']).astype(np.int64), trim=trim)

@@ -22,3 +22,10 @@ OPENBLAS_NUM_THREADS=1 python3 -B docs/audits/reviews/reviewer-a/peer_d903cb6_pr
 ```
 
 Uses NumPy, SciPy, h5py, and CPU PyTorch. [Second-pass probe](reviews/reviewer-a/peer_d903cb6_probe.py)
+
+## Resolution (27 Nov 2026)
+
+| Finding | Real? | Action | Evidence |
+|---|---|---|---|
+| 0.499/h is 1/T on a background the threshold was chosen above | Yes (reporting) | **Fixed**: `far_per_hour` (both searches, and the site port) returns the Poisson 90 % upper limit 2.303/T when no background window reaches the score. The demo now prints `FAR < 1.15/h`; the golden file was regenerated for that line only. | `tests/golden/chirpnet.txt`. |
+| O3 dev slides: ≥ 4 pieces ≥ 7.0 | Yes | Documented in the card (≥ 0.38/h of slide exposure; continuous-data FAR not measured). | — |

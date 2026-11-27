@@ -117,6 +117,7 @@ XFOIL-class viscous-inviscid analysis: linear-vorticity panel method with transp
 ## Help wanted
 
 - XFOIL itself (needs gfortran, not installable on the build machine); websites.umich.edu (mfoil home) and github.com answered 403 from the build machine.
+- Coordinates (audit, 25 Nov 2026; fixed 27 Nov 2026): polar(coords=...) assumed Selig order, so Lednicer blocks passed directly moved lift by up to 5.44; they are now reordered (the four packaged airfoils give identical lift either way). Reflecting a shape and the angle should reverse lift; the network's sum stays 0.20-1.13 within -6 to +6°, a symmetry it was not trained to keep.
 
 ## Next rungs
 

@@ -108,3 +108,7 @@
   `catalog_1990_2011.csv`, `real_meta.json`, Green's functions), rebuilt by v1.2's own scripts; v1.2's `q7_zrt.pt`
   (the owner's checkpoint zip, above); `web/land.json` for the page (Natural Earth 1:110m land outlines, prepared by hand).
   The ratchet log `ratchet.json` and `exam_results.json` are written by a rebuild's own runs (the exam still runs once).
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). Station coordinates and catalogue arrivals alone locate the packaged exam events; the network reads waveforms, but its exam location accuracy rests on catalogue pick windows. The card now says so; an exam with independent picks is queued.

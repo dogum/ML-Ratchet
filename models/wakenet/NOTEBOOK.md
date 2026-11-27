@@ -165,3 +165,7 @@ manufacturer Ct curve). The simulator never varied either, so the network could 
 - **v1.0.1 coverage on the (seen) exams** (waked turbines, v1.0 → v1.0.1): Kelmarsh 2020-21 72.2 → 77.6 %, Kelmarsh
   2022-24 64.1 → 70.3 %, Penmanshiel 2019-20 50.7 → 52.3 %, Penmanshiel 2021-23 41.9 → 48.9 %. Point predictions and
   every MAE are unchanged. Penmanshiel stays under-covered: terrain, not wind speed, drives its misses.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). The demo summary now scores all 31 waked readings, as the exam does (MAE 14.9 %, was 14.0 % on the 24 shown).

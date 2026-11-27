@@ -118,6 +118,7 @@ limits:
   - One-station epicentre misses by a median 764 km.
   - Depth error bars are too narrow (51% coverage for a 68% bar).
   - Magnitude bias rose to +0.05 at rung 7; watch it.
+  - "Input completeness (audit, 25 Nov 2026): the reader zero-padded a short trace, so data ending 60 s after the guess read Mw 5.68 for a 7.54 event. Since 27 Nov 2026 it warns when the 60 s before or 2,400 s after the pick are not all there, and refuses NaN or inf inside the window (one NaN made every output nonfinite). It estimates a supplied event: quiet windows with an assumed P read Mw 5.4-5.7, so it is not a detector."
 next:
   - Shallow depth, continued — source-region structure, overtones, or a saliency map on real vs twin records.
   - Multi-station reading, which turns the one-station locator into a real one.

@@ -175,6 +175,7 @@ class SunDoctor:
         return {k: v[:n] for k, v in out.items()}
 
     def diagnose(self, t_utc_hours, p_kw, poa_wm2, tamb_c, lat, lon, tilt=0.0, azimuth=180.0, dc_kw=1.0, n_strings=None, home=None,
+                 min_daylight=None,
                  mount='fixed', axis_azimuth=180.0, max_angle=55.0, gcr=0.4, backtrack=True):
         """Arrays of equal length: interval-center UTC hours (e.g. unix seconds / 3600), AC power (kW), POA (W/m2, or None for
         home mode), air temperature (C; from a weather service is fine). mount='tracker' for single-axis trackers."""
@@ -189,6 +190,19 @@ class SunDoctor:
         days = np.array([_dt.date(1970, 1, 1) + _dt.timedelta(days=int(d0 + i)) for i in range(len(P))])
         doy = np.array([d.timetuple().tm_yday for d in days])
         valid = (np.isfinite(P) & (True if home else np.isfinite(G))).mean(1) > 0.5
+        # A day counts with half its intervals, and missing intervals count as zero energy, so a midday gap reads as an
+        # outage (audit: 5 h missing at midday cut kWh 61-67 % and reported outage losses of 30 %). Warn on counted days
+        # missing more than 2 h between 08:00 and 16:00 solar time; min_daylight (a fraction) drops them instead.
+        if P.shape[1] == 96:
+            dl = np.isfinite(P[:, 32:64]).mean(1)
+            gappy = valid & (dl < 0.75)
+            if min_daylight is not None:
+                valid = valid & (dl >= min_daylight)
+            elif gappy.any():
+                import warnings
+                warnings.warn(f'SunDoctor: {int(gappy.sum())} counted day(s) miss more than 2 h of daylight readings; '
+                              'missing intervals count as zero energy and read as outages (min_daylight=0.9 drops them)',
+                              stacklevel=2)
         o1 = self.run(P, G, Ta, lat, tilt, azimuth, doy, None, home, mount, **trk)
         ref = self.reference(o1['pf'], valid & (o1['outage'] < 0.2))
         o = self.run(P, G, Ta, lat, tilt, azimuth, doy, ref, home, mount, **trk)
@@ -255,6 +269,10 @@ class SunDoctor:
         import pandas as pd
         df = pd.read_csv(path); c = df.columns
         time_col = time_col or c[0]; pick = lambda key, given: given or next((x for x in c if key in x.lower()), None)
+        # Rows in time order, duplicates dropped (audit, 25 Nov 2026: a newest-first file, or day 0 moved to the end,
+        # gave 0 valid days and 0 kWh; one swapped pair of days dropped a day and invented outage and snow losses).
+        df = df.assign(_t=pd.to_datetime(df[time_col])).sort_values('_t', kind='stable')
+        df = df.drop_duplicates('_t', keep='last').drop(columns='_t').reset_index(drop=True)
         power_col = pick('power', power_col); poa_col = pick('poa', poa_col); temp_col = pick('temp', temp_col)
         home = (poa_col is None) if home is None else home
         t = pd.to_datetime(df[time_col]); dt = t.diff().median()

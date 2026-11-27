@@ -1,5 +1,5 @@
 {
-  "variable": "last observed Dst (nT); bins <= -50, -50 to -30, > -30",
+  "variable": "last observed Dst (nT); bins < -50, -50 to < -30, >= -30 (numpy searchsorted side=right on edges [-50, -30], as fitted and as read)",
   "edges": [
     -50.0,
     -30.0

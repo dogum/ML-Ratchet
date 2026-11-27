@@ -91,3 +91,7 @@ Research and teaching only; not a medical device. The rows are public, so the fi
 ## Corrections
 
 - 14 Nov 2026: Card: S-beat coupling on dev is 0.56 of the local RR (calib_coupling.json median 0.555), was written 0.55; QRS-width error on QT DB lead MLII is 18 ms (exam.json 17.99), was written 17 ms. The demo now prints 'Research and teaching only. Not a medical device.' first; tests/golden/beatnet.txt was regenerated for that one line. No verdict changed.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). Short gaps (up to 10 samples) are filled and longer ones refused (one NaN made every beat 'N'). Records 201 and 202 are one patient across dev and exam; the card gives DS2 without 202, and a retrain without that patient is queued.

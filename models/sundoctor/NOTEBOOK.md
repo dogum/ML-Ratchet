@@ -153,3 +153,7 @@ it is restored in `realdata.py` (the sibling key gives the same 56 string failur
   days 77% -> 72%, repairs 40 -> 39, small tracker losses 0.50 -> 0.47 (tie -> loss against a coin flip). A whole-day
   dark module under snow now looks more like a trip. The simulated set did not show this cost (simulated snow skill rose),
   so the simulator's buried-snow days are easier to tell from trips than Colorado's.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). diagnose_csv sorts rows by time (newest-first files gave 0 days). Days with midday gaps now warn; min_daylight drops them (opt-in; re-score queued).

@@ -153,3 +153,7 @@ Rule: keep if the frozen-set score is more than 0.01 above the incumbent's **and
   `ngdc_all_events_2005_2026.json` (all NGDC tsunami events, used to keep noise windows 2 days from any event;
   `noise_bank.py`); `nctr_check/ac001a_src.nc` (NOAA MOST deformation for the Okada check only). Everything else is
   written by an earlier step in `training/README.md` or shipped (`training/logs/`, `gf_compact.npz`).
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). posterior() refuses events with no usable buoy (it returned Mw -2053); GreensFunctions() loads the dev calibration by default; the forecast docstring shows the real signature.

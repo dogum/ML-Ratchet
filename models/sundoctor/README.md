@@ -69,6 +69,7 @@ Two real farms, graded against independent answer keys (sibling inverters, the p
 - A panel buried in snow all day looks like a tripped inverter; it sometimes calls that an outage.
 - Colorado is not fully blind for rung 8 — the fronts change was prompted by rung 6's snow misses there.
 - Two farms tested, both utility scale. Rooftops, microinverters, bifacial and satellite irradiance are untested.
+- CSV input (audit, 25 Nov 2026; fixed 27 Nov 2026): rows are now sorted by time and duplicate timestamps dropped (a newest-first file gave 0 valid days). A day still counts with half its intervals and missing intervals count as zero energy, so a 5 h midday gap cut kWh 61-67 % and read as a 30 % outage; the reader now warns on counted days missing more than 2 h of daylight, and diagnose(min_daylight=0.9) drops them (opt-in: the exam used the half-day rule).
 
 ## The ratchet
 
@@ -139,6 +140,7 @@ Sun position and clear-sky irradiance, plane-of-array transposition for fixed an
 - A better soiling signal from longer windows plus rain data.
 - A real rooftop dataset.
 - A money view — dollars lost per cause.
+- Queued (audit): a dated re-score with days that miss daylight readings left out (min_daylight), on the owner's approval.
 
 ## Files
 

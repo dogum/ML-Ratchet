@@ -59,7 +59,13 @@ class BearingNet:
         g = BEARINGS[bearing] if isinstance(bearing, str) else bearing; f_nom = rpm_nominal / 60.0
         x = PL.pad_short(PL.to_fs(x, fs)); F, S = [], []
         for s in PL.windows(x, max_win):
+            # Windows with any nonfinite sample are skipped: one NaN made every probability NaN, and argmax then
+            # returned the first class, healthy (audit, 25 Nov 2026: 14 of 14 packaged recordings, 10 of them faulty).
+            if not np.isfinite(x[s:s + PL.NWIN]).all():
+                continue
             f, sc, _ = PL.window_features(x[s:s + PL.NWIN], g, f_nom); F.append(f); S.append(sc)
+        if not F:
+            raise ValueError('every window contains missing or nonfinite samples; BearingNet needs at least one clean window')
         o = self.forward(np.stack(F), np.stack(S)); m = self.meta; cal = m.get('calib', {}) if calibrated else {}
         lp = o[:, :4] / cal.get('temp', 1.0); lp = lp - lp.max(1, keepdims=True); lp = lp - np.log(np.exp(lp).sum(1, keepdims=True)); lp = lp.mean(0); lp[0] += cal.get('nbias', 0.0)
         p = np.exp(lp - lp.max()); p /= p.sum()

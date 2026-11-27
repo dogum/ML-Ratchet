@@ -416,3 +416,7 @@ is unchanged.
 ## Corrections
 
 - 14 Nov 2026: model.yaml: the partial-discharge loss said 'stopped at 0.6 Ah or below are no better than assuming no fade'. At 0.30 Ah the network beats no-fade (41.8 vs 45.7 mAh), so it now reads 0.45–0.6 Ah (46.5 and 52.0 vs 45.7 mAh); the card's limit says the same. Card: LFP rung 9 is marked released; LFP credits added. No verdict changed.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). All-NaN discharges are refused (they read 0.82 / 4.03 Ah). The sigma step at the completion tolerance is stated in the card.

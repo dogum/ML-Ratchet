@@ -91,3 +91,7 @@ the median guess). The rows are public, so the first question was whether the de
 ## Corrections
 
 - 14 Nov 2026: ratchet.yaml: the rule said dev balanced accuracy 'does not fall'; training/ratchet.py keeps a rung if it is no more than 0.03 below the incumbent (d >= -0.03), as the card says. The rule text now matches the code. Card: the code credit line now reads 'Code and weights: MIT (ML Ratchet)'. No decision changed.
+
+## 27 Nov 2026 — audit resolution
+
+The two-reviewer audit (`docs/audits/`). Windows with missing samples are skipped and a recording with no clean window is refused (one NaN read as healthy). The healthy-recording false alarms are stated in the card.

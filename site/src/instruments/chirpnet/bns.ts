@@ -133,5 +133,7 @@ export function gate(w: Float32Array, thresh = 25, half = 0.25, taper = 0.1, fs 
 export function bnsFar(m: BMeta, score: number) {
   let n = 0;
   while (n < m.bg_top.length && m.bg_top[n] >= score) n++;
-  return { far: (n + 1) / (m.bg_live_s / 3600), bound: n === 0, floor: n === m.bg_top.length };
+  // none at or above: the Poisson 90 % upper limit 2.303 / T (chirpnet.far_per_hour, 27 Nov 2026; was 1 / T)
+  const T = m.bg_live_s / 3600;
+  return { far: n === 0 ? 2.303 / T : (n + 1) / T, bound: n === 0, floor: n === m.bg_top.length };
 }
