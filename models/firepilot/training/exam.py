@@ -242,8 +242,7 @@ if __name__ == '__main__':
         mp = os.path.join(ROOT, 'models', model + '.npz')
         with open(os.path.join(OUT, 'exam.started'), 'a') as fh:
             fh.write(f"{datetime.datetime.utcnow().isoformat()}Z stage={stage} shard={shard}/{nshard} model={model} "
-                     f"sha256={hashlib.sha256(open(mp, 'rb').read()).hexdigest()} physics={VERSION}
-")
+                     f"sha256={hashlib.sha256(open(mp, 'rb').read()).hexdigest()} physics={VERSION}\n")
     fires = exam_fires()
     if stage == 'A':
         net = ValueNet(os.path.join(ROOT, 'models', model + '.npz'))

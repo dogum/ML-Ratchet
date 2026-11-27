@@ -89,7 +89,7 @@ each card still describes the released model. Its dated re-score, like every ret
 | FireCast | Evaluation limit stated in the card | — | — |
 | FireSize | |z| > 8 warning; opt-in `z_clip` | Not re-scored: 91 of 655,869 ignitions on slash–blowdown | Run 27 Nov 2026: repair rung r8 rejected (+0.008 sim RPSS, needs +0.01; no exam); `z_clip = 8` re-score (SB size error 1.24 → 0.75; pooled AUC −0.0002) is the v1.0.1 default |
 | FireDetective | Refuses empty histories | None (exam fires had 3–12 steps) | Run 27 Nov 2026: R7f held, no exam: with the flag at sd 1 blind mode reads wind from BI (blind-wind R² 0.99); the 1e-3 floor had blocked that |
-| FirePilot | Warning on non-afternoon crew clocks | None (all 48 exam fires had 34 h) | Train on varied start times |
+| FirePilot | Warning on non-afternoon crew clocks | None (all 48 exam fires had 34 h) | Run 27 Nov 2026: r5vs (crew starts 06-18 h) kept by +0.011; v1.1 graded once: 0.469 / 0.625 vs 0.474 / 0.644 (level), self-prediction bias halved or better |
 | QuakeNet | Incomplete-window warning; refuses NaN in the window | None | — |
 | QuakeNet v2 | Catalogue-assisted picking stated in the card | — | Exam with independent picks |
 | TsunamiNet | Refuses events without a buoy; calibrated `GreensFunctions()` default | None (all 28 exam events had a buoy) | — |
