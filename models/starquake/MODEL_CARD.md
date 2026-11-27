@@ -1,4 +1,4 @@
-# StarQuake v1.1 — model card
+# StarQuake v1.1.1 — model card
 
 ## What it does
 Reads a Kepler long-cadence light curve of a red giant (27 days to 4 years) and returns:
@@ -125,10 +125,44 @@ Mass and radius (whole light curve, Yu Teff): median |difference| vs Yu et al. 4
 median error bars 9.0% / 3.8%. Against Gaia DR3 FLAME radii (222 stars): R/R_Gaia median 1.076 (scatter 7.1%);
 Yu et al.'s radii 1.063 (8.1%); classical 1.055 (8.7%).
 
+## 27 Nov 2026: trimmed record ends (v1.1.1) and a hard-negative rung (not promoted)
+
+**Trimmed ends, dated re-score.** Flagged or empty cadences at the start or end of a record add only gaps, yet they
+lower the duty cycle and change the FFT grid (audit). 22 of the 420 exam stars (36 of the 858 archived light curves)
+start or end on a gap. The released v1.1 was re-read once on the exam with the ends trimmed (`training/hybrid.py
+real exam exam_trim` with `SQ_TRIM=1`, scored by `hybrid.py exam_trim`; record `training/exam_trim_result.json`).
+92 of 2,098 readings change, all from those 22 stars; the other readings are identical.
+
+| Length | νmax v1.1 → trimmed | Δν v1.1 → trimmed | classical νmax / Δν (trimmed) |
+|---|---|---|---|
+| 4 yr | 1.01 → 0.99% | 0.65 → 0.62% | 0.89 / 0.63% |
+| 1 yr | 1.41 → 1.41% | 0.81 → 0.81% | 1.67 / 1.05% |
+| 90 d | 2.22 → 2.22% | 1.77 → 1.75% | 3.89 / 3.03% |
+| 54 d | 2.69 → 2.68% | 2.61 → 2.63% | 5.97 / 7.63% |
+| 27 d | 3.44 → 3.50% | 4.29 → 4.37% | 16.51 / 26.80% |
+
+Radius scatter against Gaia: 8.04 → 8.12% (Yu et al. 8.06%). Shorter pieces move only because the random piece positions
+depend on the record length. No verdict changes. From v1.1.1 `pipeline.grid_lc`, `read_npz` and `load_kepler` trim by
+default (`trim=False` gives the v1.1 grid). The demo's three stars have no edge gaps; its output is unchanged.
+
+**High-RMS non-oscillators.** The noise screen had dropped every dwarf with strong low-frequency variability (spots,
+rotation, eclipses), so training never saw them. On 999 pieces of the 18 dropped held-out (noise_val) dwarfs, v1.1 calls
+**16.9%** oscillating (quiet dwarfs: 6.1%). Rung r6 (`training/run_r6.sh`, `eval_r6.py`) retrained the network from
+scratch on r5's bank recipe plus 5,000 examples on the 129 dropped noise_train dwarfs, refitted the hybrid, and was judged
+as h1 was:
+
+| | val3 objective | dev errors (whole νmax, Δν; 90 d νmax, Δν) | false alarms, high-RMS / quiet |
+|---|---|---|---|
+| h1 (released) | 0.788 | 0.78 / 0.51 / 2.24 / 1.91% | 16.9% / 6.1% |
+| r6 | 0.795 | 1.10 / 0.85 / 1.91 / 1.78% | 11.1% / 5.6% |
+
+r6 is **rejected**: +0.007 on val3 (needs +0.01) and dev errors +22% (gate: at most +10%); whole-light-curve dev errors
+got worse. It does cut false alarms on high-RMS dwarfs by a third. v1.1's network stays; the exam was not opened.
+
 ## Limits
-- On whole 4-year light curves the classical pipeline is better on the median νmax error (0.89% vs 1.01% for v1.1, 1.49% for v1.0); for Δν v1.1 matches it (0.65% vs 0.64%). The published answers were made with a similar pipeline on the same data, which favours it. StarQuake's advantage is on short light curves.
+- On whole 4-year light curves the classical pipeline is better on the median νmax error (0.89% vs 0.99% for v1.1.1, 1.01% for v1.1, 1.49% for v1.0); for Δν v1.1.1 matches it (0.62% vs 0.63%). The published answers were made with a similar pipeline on the same data, which favours it. StarQuake's advantage is on short light curves.
 - Δν from short light curves is hard: from 27 days only 23% of stars are within 2% and 46% are off by more than 5% (often by one comb tooth). The error bars do not fully catch these jumps.
-- False alarms: 11–15% of unscreened quiet dwarfs are called oscillating (spots, eclipses and instrument trouble look like a hump). The classical comb test has fewer false alarms on full light curves (4%) but far more on short pieces.
+- False alarms: 11–15% of unscreened quiet dwarfs are called oscillating (spots, eclipses and instrument trouble look like a hump); 16.9% of the high-RMS dwarfs the screen dropped (27 Nov 2026). The classical comb test has fewer false alarms on full light curves (4%) but far more on short pieces.
 - Masses carry a +3% median offset against Yu et al. (a small νmax bias, cubed). Radii from uncorrected scaling relations sit 8% above Gaia's (Yu et al.'s own: 6%); this is the known scaling-relation offset, not corrected here.
 - Error bars are too narrow on short pieces: within 1 sigma 72% / 78% of stars on whole light curves but 54% / 58% at 27 days (numax / dnu). The widening factor was fitted on dev pooled over lengths; a per-length factor is the obvious fix.
 - The most luminous giants (numax 8-15 uHz) read about 4% high in numax even from 4 years of data; the simulated twins of dev stars show the same bias, so it is the network, not the simulator.

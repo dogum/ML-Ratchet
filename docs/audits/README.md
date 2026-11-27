@@ -95,7 +95,7 @@ each card still describes the released model. Its dated re-score, like every ret
 | TsunamiNet | Refuses events without a buoy; calibrated `GreensFunctions()` default | None (all 28 exam events had a buoy) | — |
 | ChirpNet | FAR with no louder background is the Poisson 90 % limit (1.15/h, was 0.50/h) | Reporting only | — |
 | StormNet | Calibration bin labels match the code | None | — |
-| StarQuake | Edge-cadence warning; opt-in `trim` | Not re-scored: 36 of 858 light curves have edge gaps | High-RMS noise in the bank; re-score with trimming |
+| StarQuake | Edge trimming (default since v1.1.1) | Re-scored 27 Nov 2026: whole-curve νmax 1.01 → 0.99%, Δν 0.65 → 0.62% (22 exam stars affected) | Run 27 Nov 2026: high-RMS rung rejected (false alarms 16.9 → 11.1%, dev +22%) |
 | TransitNet | Refuses constant flux; warns on unobserved transit cores | None | — |
 | SwellCast | Refuses all-NaN windows; field-specific NDBC sentinels (default since v1.1.1) | Re-scored 27 Nov 2026: distance 29.3%, time 26.9 h, direction 19.3° (was 29.3%, 26.8 h, 19.2°) | Run 27 Nov 2026 |
 | SunDoctor | CSV rows sorted by time; `min_daylight=0.9` (default since v2.1.1) | Re-scored 27 Nov 2026: 328 of 17,468 inverter-days dropped at 9068; outage days caught 92.9 → 94.7%, tracker AUC 0.471 → 0.460, counts unchanged | Run 27 Nov 2026 |

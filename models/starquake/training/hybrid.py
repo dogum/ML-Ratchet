@@ -107,7 +107,7 @@ def fit(name):
         P[o] = {'k': float(k), 'w': [float(w) for w in ws], 's': s}
         print(o, 'k', k, 'w', ws, 's', np.round(s, 2))
     P['edges_days'] = EDGES[:-1] + ['inf']; P['fitted_on'] = name
-    json.dump(P, open(H + 'params.json', 'w'), indent=1); return P
+    json.dump(P, open(H + os.environ.get('SQ_PARAMS', 'params.json'), 'w'), indent=1); return P
 
 
 def scores(est, y, T):
